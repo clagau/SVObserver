@@ -14,7 +14,7 @@
 //Moved to precompiled header: #include <boost/assign/list_of.hpp>
 #include "SVToolAdjustmentDialogTwoImagePage.h"
 #include "SVMatroxLibrary\SVMatroxEnums.h"
-#include "ObjectInterfaces\ImageArthimeticOperators.h"
+#include "Definitions/ImageOperatorEnums.h"
 #include "SVObjectLibrary\SVClsids.h"
 #pragma endregion Includes
 
@@ -75,7 +75,7 @@ namespace SvOg
 		m_Values.Set<long>(ArithmeticOperatorTag, lOperator);
 		m_Values.Commit();
 		
-		if (SV_IMGOP_DOUBLE_HEIGHT == lOperator || SV_IMGOP_FLIP_VERTICAL == lOperator || SV_IMGOP_FLIP_HORIZONTAL == lOperator)
+		if (SvDef::SVImageOperatorDoubleHeight == lOperator || SvDef::SVImageOperatorFlipVertical == lOperator || SvDef::SVImageOperatorFlipHorizontal == lOperator)
 		{
 			m_secondAvailableSourceImageListBoxCtl.EnableWindow(false);
 			//hide second image tab, because in this mode is only on image aloud.
@@ -152,10 +152,10 @@ namespace SvOg
 		m_operatorCtrl.SetItemData( m_operatorCtrl.AddString( _T( "PASS" ) ), static_cast<DWORD_PTR>(SVImagePass) );	
 			
 		// Special Image Operator... ( not defined by MIL ! )
-		m_operatorCtrl.SetItemData( m_operatorCtrl.AddString( _T( "AVERAGE" ) ), static_cast<DWORD_PTR>(SV_IMGOP_AVERAGE) );	
-		m_operatorCtrl.SetItemData( m_operatorCtrl.AddString( _T( "DOUBLE HEIGHT" ) ), static_cast<DWORD_PTR>(SV_IMGOP_DOUBLE_HEIGHT) );	
-		m_operatorCtrl.SetItemData( m_operatorCtrl.AddString( _T( "FLIP VERTICAL" ) ), static_cast<DWORD_PTR>(SV_IMGOP_FLIP_VERTICAL) );	
-		m_operatorCtrl.SetItemData( m_operatorCtrl.AddString( _T( "FLIP HORIZONTAL" ) ), static_cast<DWORD_PTR>(SV_IMGOP_FLIP_HORIZONTAL) );
+		m_operatorCtrl.SetItemData( m_operatorCtrl.AddString( _T( "AVERAGE" ) ), static_cast<DWORD_PTR>(SvDef::SVImageOperatorAverage) );	
+		m_operatorCtrl.SetItemData( m_operatorCtrl.AddString( _T( "DOUBLE HEIGHT" ) ), static_cast<DWORD_PTR>(SvDef::SVImageOperatorDoubleHeight) );	
+		m_operatorCtrl.SetItemData( m_operatorCtrl.AddString( _T( "FLIP VERTICAL" ) ), static_cast<DWORD_PTR>(SvDef::SVImageOperatorFlipVertical) );	
+		m_operatorCtrl.SetItemData( m_operatorCtrl.AddString( _T( "FLIP HORIZONTAL" ) ), static_cast<DWORD_PTR>(SvDef::SVImageOperatorFlipHorizontal) );
 
 		// Get Current Arithmetic Operator...
 	

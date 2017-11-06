@@ -15,7 +15,7 @@
 #include "SharedmemWriter.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "ShareEvents.h"
-#include "ObjectInterfaces/SVObjectTypeInfoStruct.h"
+#include "Definitions/SVObjectTypeInfoStruct.h"
 #include "MLInspectionInfo.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include "SVMatroxLibrary/MatroxImageProps.h"

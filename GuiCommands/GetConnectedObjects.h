@@ -11,7 +11,7 @@
 //Moved to precompiled header: #include <boost/noncopyable.hpp>
 //Moved to precompiled header: #include <Guiddef.h>
 #include "ObjectInterfaces\IObjectClass.h"
-#include "ObjectInterfaces\SVObjectTypeInfoStruct.h"
+#include "Definitions/SVObjectTypeInfoStruct.h"
 #include "ObjectInterfaces\ISVImage.h"
 #include "ObjectInterfaces\ITaskObject.h"
 #include "ObjectInterfaces\IObjectManager.h"

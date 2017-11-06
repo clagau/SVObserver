@@ -165,8 +165,8 @@ bool SVPixelAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCreat
 	}
 	
 	// Set / Reset Printable Flags
-	m_pixelCount.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_pixelCountColor.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_pixelCount.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_pixelCountColor.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 	m_pixelCountColor.SetOutputFormat(OutputFormat_int);
 	
 	return m_isCreated;

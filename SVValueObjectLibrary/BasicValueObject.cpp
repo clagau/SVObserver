@@ -448,7 +448,7 @@ void BasicValueObject::Create( SVObjectClass* pOwner )
 	SetObjectDepth( 1 );
 	if( !m_Node )
 	{
-		SetObjectAttributesAllowed( SvOi::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute );
+		SetObjectAttributesAllowed( SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute );
 	}
 	if( nullptr != pOwner )
 	{

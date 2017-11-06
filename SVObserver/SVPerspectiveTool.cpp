@@ -44,7 +44,7 @@ bool SVPerspectiveToolClass::CreateObject( const SVObjectLevelCreateStruct& rCre
 
 	m_SourceImageNames.setStatic( true );
 	m_SourceImageNames.setSaveValueFlag(false);
-	m_SourceImageNames.SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
+	m_SourceImageNames.SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_isCreated = l_bOk;
 
@@ -390,7 +390,7 @@ void SVPerspectiveToolClass::LocalInitialize()
 	HRESULT l_hr = SetImageExtentProperty( SVExtentPropertyTranslationOffsetX, &m_svXOffset );
 	l_hr = SetImageExtentProperty( SVExtentPropertyTranslationOffsetY, &m_svYOffset );
 
-	m_OutputImage.InitializeImage( SvOi::SVImageTypeEnum::SVImageTypePhysical );
+	m_OutputImage.InitializeImage( SvDef::SVImageTypeEnum::SVImageTypePhysical );
 
 	// Set Default Warp Method to Use Horizontal
 	RegisterEmbeddedObject( &m_svWarpType, SVWarpTypeObjectGuid, IDS_OBJECTNAME_WARPTYPE, false, SvOi::SVResetItemTool );
@@ -398,7 +398,7 @@ void SVPerspectiveToolClass::LocalInitialize()
 	                                   PERSPECTIVE_WARP_TYPE_VERTICAL, WarpTypeVertical);
 	m_svWarpType.SetEnumTypes( EnumTypes.c_str() );
 	m_svWarpType.SetDefaultValue( PERSPECTIVE_WARP_TYPE_VERTICAL );
-	m_svWarpType.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_svWarpType.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 
 	// Set Default Interpolation Mode to use Nearest Neighbor
 	SVString Mode;

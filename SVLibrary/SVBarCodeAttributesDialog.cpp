@@ -22,28 +22,6 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-const SVBarCodeAttributesDialog::SVBarCodeErrorCorrectionEncodingStruct* SVBarCodeAttributesDialog::SVBarCodeEccEncArray::GetInfoByMil(long Mil)
-{
-	SVBarCodeAttributesDialog::SVBarCodeErrorCorrectionEncodingStruct* pInfo = nullptr;
-	for ( int i = 0; i < GetSize(); i++ )
-	{
-		if ( ElementAt(i).m_Mil == Mil )
-		{
-			pInfo = &(ElementAt(i));
-			break;
-		}
-	}
-	return pInfo;
-}
-
-SVBarCodeAttributesDialog::SVBarCodeEccEncArray::~SVBarCodeEccEncArray()
-{
-}
-
-/////////////////////////////////////////////////////////////////////////////
-// SVBarCodeAttributesDialog dialog
-
-
 SVBarCodeAttributesDialog::SVBarCodeAttributesDialog(CWnd* pParent /*=nullptr*/)
 	: CPropertyPage(SVBarCodeAttributesDialog::IDD)
 {
@@ -52,46 +30,46 @@ SVBarCodeAttributesDialog::SVBarCodeAttributesDialog(CWnd* pParent /*=nullptr*/)
 	m_iCorrection = -1;
 	//}}AFX_DATA_INIT
 
-	m_aMilEcc.Add( SVBarCodeErrorCorrectionEncodingStruct( SVValueEccNone, _T("None") ) );
-	m_aMilEcc.Add( SVBarCodeErrorCorrectionEncodingStruct( SVValueAny, _T("Any") ) );
-	m_aMilEcc.Add( SVBarCodeErrorCorrectionEncodingStruct( SVValueEcc050, _T("ECC-50") ) );
-	m_aMilEcc.Add( SVBarCodeErrorCorrectionEncodingStruct( SVValueEcc080, _T("ECC-80") ) );
-	m_aMilEcc.Add( SVBarCodeErrorCorrectionEncodingStruct( SVValueEcc100, _T("ECC-100") ) );
-	m_aMilEcc.Add( SVBarCodeErrorCorrectionEncodingStruct( SVValueEcc140, _T("ECC-140") ) );
-	m_aMilEcc.Add( SVBarCodeErrorCorrectionEncodingStruct( SVValueEcc200, _T("ECC-200") ) );
-	m_aMilEcc.Add( SVBarCodeErrorCorrectionEncodingStruct( SVValueEccCheckDigit, _T("Check Digit") ) );
+	m_aMilEcc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueEccNone, _T("None") ) );
+	m_aMilEcc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueAny, _T("Any") ) );
+	m_aMilEcc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueEcc050, _T("ECC-50") ) );
+	m_aMilEcc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueEcc080, _T("ECC-80") ) );
+	m_aMilEcc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueEcc100, _T("ECC-100") ) );
+	m_aMilEcc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueEcc140, _T("ECC-140") ) );
+	m_aMilEcc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueEcc200, _T("ECC-200") ) );
+	m_aMilEcc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueEccCheckDigit, _T("Check Digit") ) );
 
-	m_aMilEcc.Add( SVBarCodeErrorCorrectionEncodingStruct( SVValueEccReedSolomon, _T("Reed-Solomon") ) );
-	m_aMilEcc.Add( SVBarCodeErrorCorrectionEncodingStruct( SVValueEccReedSolomon1, _T("Reed-Solomon 1") ) );
-	m_aMilEcc.Add( SVBarCodeErrorCorrectionEncodingStruct( SVValueEccReedSolomon2, _T("Reed-Solomon 2") ) );
-	m_aMilEcc.Add( SVBarCodeErrorCorrectionEncodingStruct( SVValueEccReedSolomon3, _T("Reed-Solomon 3") ) );
-	m_aMilEcc.Add( SVBarCodeErrorCorrectionEncodingStruct( SVValueEccReedSolomon4, _T("Reed-Solomon 4") ) );
-	m_aMilEcc.Add( SVBarCodeErrorCorrectionEncodingStruct( SVValueEccReedSolomon5, _T("Reed-Solomon 5") ) );
-	m_aMilEcc.Add( SVBarCodeErrorCorrectionEncodingStruct( SVValueEccReedSolomon6, _T("Reed-Solomon 6") ) );
-	m_aMilEcc.Add( SVBarCodeErrorCorrectionEncodingStruct( SVValueEccReedSolomon7, _T("Reed-Solomon 7") ) );
-	m_aMilEcc.Add( SVBarCodeErrorCorrectionEncodingStruct( SVValueEccReedSolomon8, _T("Reed-Solomon 8") ) );
+	m_aMilEcc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueEccReedSolomon, _T("Reed-Solomon") ) );
+	m_aMilEcc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueEccReedSolomon1, _T("Reed-Solomon 1") ) );
+	m_aMilEcc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueEccReedSolomon2, _T("Reed-Solomon 2") ) );
+	m_aMilEcc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueEccReedSolomon3, _T("Reed-Solomon 3") ) );
+	m_aMilEcc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueEccReedSolomon4, _T("Reed-Solomon 4") ) );
+	m_aMilEcc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueEccReedSolomon5, _T("Reed-Solomon 5") ) );
+	m_aMilEcc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueEccReedSolomon6, _T("Reed-Solomon 6") ) );
+	m_aMilEcc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueEccReedSolomon7, _T("Reed-Solomon 7") ) );
+	m_aMilEcc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueEccReedSolomon8, _T("Reed-Solomon 8") ) );
 
-	m_aMilEnc.Add( SVBarCodeErrorCorrectionEncodingStruct( SVValueAny, _T("Any") ) );
-	m_aMilEnc.Add( SVBarCodeErrorCorrectionEncodingStruct( SVValueEncStandard, _T("Standard") ) );
-	m_aMilEnc.Add( SVBarCodeErrorCorrectionEncodingStruct( SVValueEncNum, _T("Numeric") ) );
-	m_aMilEnc.Add( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCAlpha, _T("Alpha") ) );
-	m_aMilEnc.Add( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCAlphaNum, _T("Alpha-Numeric") ) );
-	m_aMilEnc.Add( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCAlphaNumPunc, _T("Alpha-Numeric with Punctuation") ) );
-	m_aMilEnc.Add( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCAscii, _T("ASCII") ) );
-	m_aMilEnc.Add( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCIso8, _T("ISO-8") ) );
+	m_aMilEnc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueAny, _T("Any") ) );
+	m_aMilEnc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueEncStandard, _T("Standard") ) );
+	m_aMilEnc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueEncNum, _T("Numeric") ) );
+	m_aMilEnc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCAlpha, _T("Alpha") ) );
+	m_aMilEnc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCAlphaNum, _T("Alpha-Numeric") ) );
+	m_aMilEnc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCAlphaNumPunc, _T("Alpha-Numeric with Punctuation") ) );
+	m_aMilEnc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCAscii, _T("ASCII") ) );
+	m_aMilEnc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCIso8, _T("ISO-8") ) );
 
-	m_aMilEnc.Add( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCMode2, _T("Mode 2") ) );
-	m_aMilEnc.Add( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCMode3, _T("Mode 3") ) );
-	m_aMilEnc.Add( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCMode4, _T("Mode 4") ) );
-	m_aMilEnc.Add( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCMode5, _T("Mode 5") ) );
-	m_aMilEnc.Add( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCMode6, _T("Mode 6") ) );
-	m_aMilEnc.Add( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCRss14, _T("RSS-14") ) );
-	m_aMilEnc.Add( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCRss14Trunc, _T("RSS-14 Truncated") ) );
-	m_aMilEnc.Add( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCRssLimited, _T("RSS Limited") ) );
-	m_aMilEnc.Add( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCRssExpanded, _T("RSS Expanded") ) );
-	m_aMilEnc.Add( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCRss14Stacked, _T("RSS-14 Stacked") ) );
-	m_aMilEnc.Add( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCRss14StackedOmni, _T("RSS-14 Stacked Omni") ) );
-	m_aMilEnc.Add( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCRssExpandedStacked, _T("RSS Expanded Stacked") ) );
+	m_aMilEnc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCMode2, _T("Mode 2") ) );
+	m_aMilEnc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCMode3, _T("Mode 3") ) );
+	m_aMilEnc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCMode4, _T("Mode 4") ) );
+	m_aMilEnc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCMode5, _T("Mode 5") ) );
+	m_aMilEnc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCMode6, _T("Mode 6") ) );
+	m_aMilEnc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCRss14, _T("RSS-14") ) );
+	m_aMilEnc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCRss14Trunc, _T("RSS-14 Truncated") ) );
+	m_aMilEnc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCRssLimited, _T("RSS Limited") ) );
+	m_aMilEnc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCRssExpanded, _T("RSS Expanded") ) );
+	m_aMilEnc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCRss14Stacked, _T("RSS-14 Stacked") ) );
+	m_aMilEnc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCRss14StackedOmni, _T("RSS-14 Stacked Omni") ) );
+	m_aMilEnc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCRssExpandedStacked, _T("RSS Expanded Stacked") ) );
 
 	m_mapBarCodeEcc[ SVDataMatrix ].push_back( SVValueEccNone );
 	m_mapBarCodeEcc[ SVDataMatrix ].push_back( SVValueAny );
@@ -237,16 +215,15 @@ void SVBarCodeAttributesDialog::InitSelections(long lBarCodeType)
 	pEncodingBox->ResetContent();
 	
 	int iIndex;
-	std::vector<long>::iterator iter;
-	for ( iter = m_mapBarCodeEcc[ lBarCodeType ].begin(); iter != m_mapBarCodeEcc[ lBarCodeType ].end(); ++iter )
+	for (long MilID : m_mapBarCodeEcc[lBarCodeType])
 	{
-		iIndex = pErrCorrectionBox->AddString( m_aMilEcc.GetInfoByMil( *iter )->m_Name.c_str() );
-		pErrCorrectionBox->SetItemData( iIndex, *iter );
+		iIndex = pErrCorrectionBox->AddString( GetInfoNameByMil(m_aMilEcc, MilID).c_str() );
+		pErrCorrectionBox->SetItemData( iIndex, MilID );
 	}
-	for ( iter = m_mapBarCodeEnc[ lBarCodeType ].begin(); iter != m_mapBarCodeEnc[ lBarCodeType ].end(); ++iter )
+	for ( long MilID : m_mapBarCodeEnc[lBarCodeType])
 	{
-		iIndex = pEncodingBox->AddString( m_aMilEnc.GetInfoByMil( *iter )->m_Name.c_str() );
-		pEncodingBox->SetItemData( iIndex, *iter );
+		iIndex = pEncodingBox->AddString( GetInfoNameByMil(m_aMilEnc, MilID).c_str() );
+		pEncodingBox->SetItemData( iIndex, MilID );
 	}
 	
 	pErrCorrectionBox->SetCurSel(0);
@@ -304,3 +281,17 @@ DWORD SVBarCodeAttributesDialog::SetErrCorrection(DWORD dwErrCorrection)
   return dwErrCorrection;
 }
 
+SVString SVBarCodeAttributesDialog::GetInfoNameByMil(const SVBarCodeEccEncVector& rMilVector, long MilID)
+{
+	SVString Result;
+
+	for( auto& rElement : rMilVector)
+	{
+		if (MilID == rElement.m_Mil)
+		{
+			Result = rElement.m_Name;
+			break;
+		}
+	}
+	return Result;
+}

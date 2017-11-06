@@ -12,7 +12,7 @@
 #include "ObjectInterfaces\IObjectManager.h"
 #include "ObjectInterfaces\ITaskObjectListClass.h"
 #include "ObjectInterfaces\IObjectAppClass.h"
-#include "ObjectInterfaces\ObjectDefines.h"
+#include "Definitions/ObjectDefines.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #pragma endregion Includes
 
@@ -44,7 +44,7 @@ namespace SvCmd
 				if( ! pObject->is_Created() )
 				{
 					// And finally try to create the child object...
-					if( !pObjectApp->CreateChildObject(*pObject, SvOi::SVMFResetObject ) )
+					if( !pObjectApp->CreateChildObject(*pObject, SvDef::SVMFResetObject ) )
 					{
 						hr = SvStl::Err_10021_InsertTaskObject_CreateObjectFailed;
 

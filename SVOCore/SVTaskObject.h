@@ -20,7 +20,6 @@
 #include "SVObjectAppClass.h"
 #include "SVObjectLibrary/SVOutputInfoListClass.h"
 #include "SVValueObjectLibrary/SVValueObject.h"
-#include "SVObjectLibrary/SVObjectListClass.h"
 #include "SVImageLibrary/SVExtentMultiLineStruct.h"
 #include "ObjectSelectorLibrary/SelectorItemVector.h"
 #include "SVStatusLibrary/MessageContainer.h"
@@ -95,7 +94,7 @@ public:
 	void MovedEmbeddedObject(SVObjectClass* pToMoveObject, SVObjectClass* pPosObject);
 	bool RegisterInputObject( SVInObjectInfoStruct* PInObjectInfo, const SVString& p_rInputName );
 
-	HRESULT GetOutputListFiltered( SVObjectReferenceVector& rvecObjects, UINT uiAttributes = SvOi::SV_NO_ATTRIBUTES, bool bAND = true ); /* true means AND, false means OR */
+	HRESULT GetOutputListFiltered( SVObjectReferenceVector& rvecObjects, UINT uiAttributes = SvDef::SV_NO_ATTRIBUTES, bool bAND = true ); /* true means AND, false means OR */
 
 	HRESULT GetNonToolsetOutputList( SVOutputInfoListClass& p_rOutputInfoList ) const;
 
@@ -175,7 +174,7 @@ public:
 
 	void GetPrivateInputList( SVInputInfoListClass& RInputInterface ) const;
 
-	HRESULT GetImageList( SVImageListClass& p_rImageList, UINT uiAttributes = SvOi::SV_NO_ATTRIBUTES, bool bAND = true );
+	HRESULT GetImageList( SVImageListClass& p_rImageList, UINT uiAttributes = SvDef::SV_NO_ATTRIBUTES, bool bAND = true );
 
 	virtual HRESULT RegisterSubObject( SVObjectClass* pObject ) override;
 	virtual HRESULT UnregisterSubObject( SVObjectClass* pObject ) override;

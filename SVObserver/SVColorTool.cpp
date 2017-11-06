@@ -63,7 +63,7 @@ bool SVColorToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStr
 			{
 				//! We do not want the Logical ROI image showing up as an output image.
 				m_LogicalROIImage.InitializeImage(m_pInputImage);
-				m_LogicalROIImage.SetObjectAttributesAllowed(SvOi::SV_HIDDEN, SvOi::SetAttributeType::AddAttribute);
+				m_LogicalROIImage.SetObjectAttributesAllowed(SvDef::SV_HIDDEN, SvOi::SetAttributeType::AddAttribute);
 				m_OutputImage.InitializeImage(m_pInputImage);
 
 				BOOL hasROI(false);
@@ -117,12 +117,12 @@ bool SVColorToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStr
 	ToolSizeAdjustTask::EnsureInFriendList(this, true, true, true);
 
 	// Set / Reset Printable Flag
-	m_convertToHSI.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_hasROI.SetObjectAttributesAllowed(SvOi::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute);
+	m_convertToHSI.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_hasROI.SetObjectAttributesAllowed(SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute);
 
 	m_SourceImageNames.setStatic( true );
 	m_SourceImageNames.setSaveValueFlag(false);
-	m_SourceImageNames.SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
+	m_SourceImageNames.SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_isCreated = bOk;
 
@@ -296,17 +296,17 @@ void SVColorToolClass::LocalInitialize()
 	SVImageInfoClass ImageInfo = m_OutputImage.GetImageInfo();
 	//! Set Output image to color
 	ImageInfo.SetOwner(GetUniqueObjectID());
-	ImageInfo.SetImageProperty(SvOi::SVImagePropertyEnum::SVImagePropertyFormat, SVImageFormatRGB8888);
-	ImageInfo.SetImageProperty(SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, 3L);
+	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SVImageFormatRGB8888);
+	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 3L);
 	ImageInfo.SetTranslation(SVExtentTranslationNone);
 	m_LogicalROIImage.UpdateImage(ImageInfo);
-	m_LogicalROIImage.InitializeImage(SvOi::SVImageTypeEnum::SVImageTypeLogical);
+	m_LogicalROIImage.InitializeImage(SvDef::SVImageTypeEnum::SVImageTypeLogical);
 	m_OutputImage.UpdateImage(ImageInfo);
-	m_OutputImage.InitializeImage(SvOi::SVImageTypeEnum::SVImageTypePhysical);
+	m_OutputImage.InitializeImage(SvDef::SVImageTypeEnum::SVImageTypePhysical);
 
 	for (BandEnum Band : BandList)
 	{
-		m_bandImage[Band].InitializeImage(SvOi::SVImageTypeEnum::SVImageTypeDependent);
+		m_bandImage[Band].InitializeImage(SvDef::SVImageTypeEnum::SVImageTypeDependent);
 	}
 
 	ToolSizeAdjustTask::AddToFriendlist(this, true, true, true);
@@ -328,9 +328,9 @@ bool SVColorToolClass::createBandChildLayer(BandEnum Band)
 
 	// Setup...
 	ImageInfo.SetOwner(GetUniqueObjectID());
-	ImageInfo.SetImageProperty(SvOi::SVImagePropertyEnum::SVImagePropertyFormat, SVImageFormatMono8);
-	ImageInfo.SetImageProperty(SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, 1L);
-	ImageInfo.SetImageProperty(SvOi::SVImagePropertyEnum::SVImagePropertyBandLink, static_cast<long> (Band));
+	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SVImageFormatMono8);
+	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1L);
+	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, static_cast<long> (Band));
 
 	l_bOk = (S_OK == m_bandImage[Band].InitializeImage(InputID, ImageInfo));
 

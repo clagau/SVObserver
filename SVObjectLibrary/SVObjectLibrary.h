@@ -13,7 +13,7 @@
 #pragma region Includes
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVClassRegisterListClass.h"
-#include "ObjectInterfaces/ObjectDefines.h"
+#include "Definitions/ObjectDefines.h"
 #pragma endregion Includes
 
 class SVObjectClass;

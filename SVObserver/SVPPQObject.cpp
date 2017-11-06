@@ -208,20 +208,20 @@ HRESULT SVPPQObject::ProcessDelayOutputs( bool& rProcessed )
 
 	if( rProcessed )
 	{
-		SvOi::SVPPQOutputModeEnum oOutputMode = SvOi::SVPPQUnknownMode;
+		SvDef::SVPPQOutputModeEnum oOutputMode = SvDef::SVPPQUnknownMode;
 
 		GetPPQOutputMode(oOutputMode);
 		switch (oOutputMode)
 		{
-		case SvOi::SVPPQTimeDelayMode:
-		case SvOi::SVPPQExtendedTimeDelayMode:
+		case SvDef::SVPPQTimeDelayMode:
+		case SvDef::SVPPQExtendedTimeDelayMode:
 		{
 			l_Status = ProcessTimeDelayOutputs(*l_pProduct);
 
 			break;
 		}
-		case SvOi::SVPPQTimeDelayAndDataCompleteMode:
-		case SvOi::SVPPQExtendedTimeDelayAndDataCompleteMode:
+		case SvDef::SVPPQTimeDelayAndDataCompleteMode:
+		case SvDef::SVPPQExtendedTimeDelayAndDataCompleteMode:
 		{
 			l_Status = ProcessTimeDelayAndDataCompleteOutputs(*l_pProduct, rProcessed);
 
@@ -295,9 +295,9 @@ HRESULT SVPPQObject::ProcessTimeDelayAndDataCompleteOutputs( SVProductInfoStruct
 SVPPQObject::SVPPQObject(LPCSTR ObjectName)
 	: SVObjectClass(ObjectName)
 	, m_oTriggerQueue(10)
-	, m_NAKParameter(SvOi::DefaultNakParameter)
+	, m_NAKParameter(SvDef::DefaultNakParameter)
 	, m_NAKCount(0)
-	, m_NAKMode(SvOi::Bursts)
+	, m_NAKMode(SvDef::Bursts)
 	, m_FirstNAKProcessCount(0)
 	, m_NewNAKCount(0)
 	, m_ReducedPPQPosition(MinReducedPPQPosition)
@@ -311,9 +311,9 @@ SVPPQObject::SVPPQObject(LPCSTR ObjectName)
 SVPPQObject::SVPPQObject(SVObjectClass* POwner, int StringResourceID)
 	: SVObjectClass(POwner, StringResourceID)
 	, m_oTriggerQueue(10)
-	, m_NAKParameter(SvOi::DefaultNakParameter)
+	, m_NAKParameter(SvDef::DefaultNakParameter)
 	, m_NAKCount(0)
-	, m_NAKMode(SvOi::Bursts)
+	, m_NAKMode(SvDef::Bursts)
 	, m_FirstNAKProcessCount(0)
 	, m_NewNAKCount(0)
 	, m_ReducedPPQPosition(MinReducedPPQPosition)
@@ -354,7 +354,7 @@ SVPPQObject::~SVPPQObject()
 
 void SVPPQObject::init()
 {
-	m_oOutputMode = SvOi::SVPPQNextTriggerMode;
+	m_oOutputMode = SvDef::SVPPQNextTriggerMode;
 	m_isCreated = false;
 	m_bOnline = false;
 	m_bMaintainSourceImages = false;
@@ -375,15 +375,15 @@ void SVPPQObject::init()
 	m_pInputList = nullptr;
 	m_pOutputList = nullptr;
 
-	m_voTriggerToggle.SetObjectAttributesAllowed(SvOi::SV_EMBEDABLE | SvOi::SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute);
-	m_voOutputToggle.SetObjectAttributesAllowed(SvOi::SV_EMBEDABLE | SvOi::SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute);
-	m_voACK.SetObjectAttributesAllowed(SvOi::SV_EMBEDABLE | SvOi::SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute);
-	m_voNAK.SetObjectAttributesAllowed(SvOi::SV_EMBEDABLE | SvOi::SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute);
-	m_voMasterFault.SetObjectAttributesAllowed(SvOi::SV_EMBEDABLE | SvOi::SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute);
-	m_voMasterWarning.SetObjectAttributesAllowed(SvOi::SV_EMBEDABLE | SvOi::SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute);
-	m_voNotInspected.SetObjectAttributesAllowed(SvOi::SV_EMBEDABLE | SvOi::SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute);
-	m_voDataValid.SetObjectAttributesAllowed(SvOi::SV_EMBEDABLE | SvOi::SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute);
-	m_voOutputState.SetObjectAttributesAllowed(SvOi::SV_EMBEDABLE | SvOi::SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute);
+	m_voTriggerToggle.SetObjectAttributesAllowed(SvDef::SV_EMBEDABLE | SvDef::SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute);
+	m_voOutputToggle.SetObjectAttributesAllowed(SvDef::SV_EMBEDABLE | SvDef::SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute);
+	m_voACK.SetObjectAttributesAllowed(SvDef::SV_EMBEDABLE | SvDef::SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute);
+	m_voNAK.SetObjectAttributesAllowed(SvDef::SV_EMBEDABLE | SvDef::SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute);
+	m_voMasterFault.SetObjectAttributesAllowed(SvDef::SV_EMBEDABLE | SvDef::SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute);
+	m_voMasterWarning.SetObjectAttributesAllowed(SvDef::SV_EMBEDABLE | SvDef::SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute);
+	m_voNotInspected.SetObjectAttributesAllowed(SvDef::SV_EMBEDABLE | SvDef::SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute);
+	m_voDataValid.SetObjectAttributesAllowed(SvDef::SV_EMBEDABLE | SvDef::SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute);
+	m_voOutputState.SetObjectAttributesAllowed(SvDef::SV_EMBEDABLE | SvDef::SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute);
 
 	BasicValueObjectPtr pPpqLength = m_PpqValues.setValueObject(SvOl::FqnPpqLength, StandardPpqLength, this);
 	SVObjectManagerClass::Instance().IncrementShortPPQIndicator();
@@ -557,15 +557,15 @@ bool SVPPQObject::Create()
 		}// end for
 	}
 
-	m_voTriggerToggle.SetObjectAttributesAllowed(SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
-	m_voOutputToggle.SetObjectAttributesAllowed(SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
-	m_voACK.SetObjectAttributesAllowed(SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
-	m_voNAK.SetObjectAttributesAllowed(SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
-	m_voMasterFault.SetObjectAttributesAllowed(SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
-	m_voMasterWarning.SetObjectAttributesAllowed(SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
-	m_voNotInspected.SetObjectAttributesAllowed(SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
-	m_voDataValid.SetObjectAttributesAllowed(SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
-	m_voOutputState.SetObjectAttributesAllowed(SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
+	m_voTriggerToggle.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
+	m_voOutputToggle.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
+	m_voACK.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
+	m_voNAK.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
+	m_voMasterFault.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
+	m_voMasterWarning.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
+	m_voNotInspected.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
+	m_voDataValid.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
+	m_voOutputState.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
 
 	m_TriggerToggle = false;
 	m_OutputToggle = false;
@@ -756,7 +756,7 @@ void SVPPQObject::DetachAll()
 	}
 }
 
-void SVPPQObject::SetPPQOutputMode(SvOi::SVPPQOutputModeEnum oPPQOutputMode)
+void SVPPQObject::SetPPQOutputMode(SvDef::SVPPQOutputModeEnum oPPQOutputMode)
 {
 	m_oOutputMode = oPPQOutputMode;
 }
@@ -804,7 +804,7 @@ void SVPPQObject::SetInspectionTimeout(long lTimeoutMillisec)
 	m_lInspectionTimeoutMillisec = lTimeoutMillisec;
 }
 
-void SVPPQObject::GetPPQOutputMode(SvOi::SVPPQOutputModeEnum &oPPQOutputMode) const
+void SVPPQObject::GetPPQOutputMode(SvDef::SVPPQOutputModeEnum &oPPQOutputMode) const
 {
 	oPPQOutputMode = m_oOutputMode;
 }
@@ -1424,7 +1424,7 @@ void SVPPQObject::GoOnline()
 	}
 
 	//The timer should start when not "Next Trigger Mode" or when reset or data valid delay are not 0
-	bool StartTimer(SvOi::SVPPQNextTriggerMode != m_oOutputMode);
+	bool StartTimer(SvDef::SVPPQNextTriggerMode != m_oOutputMode);
 	StartTimer |= 0 < m_lResetDelay;
 	StartTimer |= 0 < m_DataValidDelay;
 	if (StartTimer)
@@ -1454,7 +1454,7 @@ void SVPPQObject::GoOnline()
 		void* l_pInit = nullptr != pObject ? dynamic_cast<SVPPQObject*>(pObject->GetOwner()) : nullptr;
 	}
 
-	if (SvOi::SVPPQNextTriggerMode == m_oOutputMode)
+	if (SvDef::SVPPQNextTriggerMode == m_oOutputMode)
 	{
 		m_NAKCount = -static_cast<long>(m_ppPPQPositions.size());
 	}
@@ -1466,7 +1466,7 @@ void SVPPQObject::GoOnline()
 	m_FirstNAKProcessCount = 0;
 	m_ReducedPPQPosition = MinReducedPPQPosition;
 	const int HundredPercent = 100;
-	if ((SvOi::FixedMaximum == m_NAKMode || SvOi::RepairedLegacy == m_NAKMode) && m_NAKParameter > 0 && m_NAKParameter <= HundredPercent)
+	if ((SvDef::FixedMaximum == m_NAKMode || SvDef::RepairedLegacy == m_NAKMode) && m_NAKParameter > 0 && m_NAKParameter <= HundredPercent)
 	{
 		m_ReducedPPQPosition = (long(m_ppPPQPositions.size()) * m_NAKParameter) / HundredPercent;
 		if (m_ReducedPPQPosition < MinReducedPPQPosition)
@@ -1997,7 +1997,7 @@ bool SVPPQObject::AddToAvailableInputs(SVIOObjectType eType, const SVString& rNa
 		pObject->SetName(rName.c_str());
 		pObject->SetObjectOwner(this);
 		pObject->SetObjectDepth(GetPPQLength() + g_lPPQExtraBufferSize);
-		pObject->SetObjectAttributesAllowed(SvOi::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute);
+		pObject->SetObjectAttributesAllowed(SvDef::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute);
 		pObject->ResetObject();
 
 		SVIOEntryHostStructPtr pIOEntry = new SVIOEntryHostStruct;
@@ -2694,7 +2694,7 @@ SVProductInfoStruct* SVPPQObject::IndexPPQ(SvTi::SVTriggerInfoStruct& p_rTrigger
 		m_ppPPQPositions.SetProductAt(0, l_pNewProduct);
 	}
 
-	if (SvOi::SVPPQNextTriggerMode == m_oOutputMode)
+	if (SvDef::SVPPQNextTriggerMode == m_oOutputMode)
 	{
 		l_pProduct = m_ppPPQPositions.GetProductAt(m_ppPPQPositions.size() - 1);
 	}
@@ -2865,7 +2865,7 @@ HRESULT SVPPQObject::StartInspection(const SVGUID& p_rInspectionID)
 
 	switch (m_NAKMode)
 	{
-	case SvOi::Legacy: ///old Behavior 
+	case SvDef::Legacy: ///old Behavior 
 		if (0 < m_NAKCount)
 		{
 			long l_NAKCount = m_NAKCount;
@@ -2879,14 +2879,14 @@ HRESULT SVPPQObject::StartInspection(const SVGUID& p_rInspectionID)
 			}
 		}
 		break;
-	case SvOi::Bursts:
+	case SvDef::Bursts:
 		if (m_FirstNAKProcessCount && !IsProductAlive(m_FirstNAKProcessCount))
 		{
 			m_FirstNAKProcessCount = 0;
 		}
 		break;
 
-	case SvOi::RepairedLegacy:
+	case SvDef::RepairedLegacy:
 		if (0 < m_NewNAKCount)
 		{
 			long l_NAKCount = m_NewNAKCount;
@@ -2901,7 +2901,7 @@ HRESULT SVPPQObject::StartInspection(const SVGUID& p_rInspectionID)
 		}
 		break;
 
-	case SvOi::FixedMaximum:
+	case SvDef::FixedMaximum:
 		l_Count = m_ReducedPPQPosition;
 		break;
 
@@ -2925,7 +2925,7 @@ HRESULT SVPPQObject::StartInspection(const SVGUID& p_rInspectionID)
 				{
 					l_pProduct = pTempProduct; // product info
 					l_ProductIndex = i;
-					if (SvOi::Bursts == m_NAKMode)
+					if (SvDef::Bursts == m_NAKMode)
 					{
 						if ((m_NewNAKCount > 2 && m_FirstNAKProcessCount == 0))
 						{
@@ -2998,7 +2998,7 @@ bool SVPPQObject::StartOutputs(SVProductInfoStruct* p_pProduct)
 
 		switch (m_oOutputMode)
 		{
-		case SvOi::SVPPQNextTriggerMode:
+		case SvDef::SVPPQNextTriggerMode:
 		{
 			// The trigger has come, time to write the outputs
 			WriteOutputs(p_pProduct);
@@ -3019,10 +3019,10 @@ bool SVPPQObject::StartOutputs(SVProductInfoStruct* p_pProduct)
 
 			break;
 		}
-		case SvOi::SVPPQTimeDelayMode:
-		case SvOi::SVPPQTimeDelayAndDataCompleteMode:
-		case SvOi::SVPPQExtendedTimeDelayMode:
-		case SvOi::SVPPQExtendedTimeDelayAndDataCompleteMode:
+		case SvDef::SVPPQTimeDelayMode:
+		case SvDef::SVPPQTimeDelayAndDataCompleteMode:
+		case SvDef::SVPPQExtendedTimeDelayMode:
+		case SvDef::SVPPQExtendedTimeDelayAndDataCompleteMode:
 		{
 			SvTl::SVTimeStamp l_Offset = p_pProduct->oOutputsInfo.lOutputDelay;
 
@@ -3218,8 +3218,8 @@ bool SVPPQObject::SetInspectionComplete(long p_PPQIndex)
 
 	if (pProduct->bDataComplete)
 	{
-		if ((SvOi::SVPPQTimeDelayAndDataCompleteMode == m_oOutputMode) ||
-			(SvOi::SVPPQExtendedTimeDelayAndDataCompleteMode == m_oOutputMode))
+		if ((SvDef::SVPPQTimeDelayAndDataCompleteMode == m_oOutputMode) ||
+			(SvDef::SVPPQExtendedTimeDelayAndDataCompleteMode == m_oOutputMode))
 		{
 			NotifyProcessTimerOutputs();
 		}
@@ -3605,8 +3605,8 @@ bool SVPPQObject::FinishTrigger(void *pCaller, SvTi::SVTriggerInfoStruct& p_rTri
 
 		switch (m_oOutputMode)
 		{
-		case SvOi::SVPPQTimeDelayMode:
-		case SvOi::SVPPQTimeDelayAndDataCompleteMode:
+		case SvDef::SVPPQTimeDelayMode:
+		case SvDef::SVPPQTimeDelayAndDataCompleteMode:
 		{
 			ResetOutputs();
 			break;
@@ -3681,8 +3681,8 @@ HRESULT SVPPQObject::GetProductIndex(long& p_rIndex, SvTl::SVTimeStamp p_TimeSta
 	bool l_SkipUpperThreshold = false;
 
 	l_SkipUpperThreshold = l_SkipUpperThreshold || (GetPPQLength() == 1);
-	l_SkipUpperThreshold = l_SkipUpperThreshold || (m_oOutputMode == SvOi::SVPPQExtendedTimeDelayAndDataCompleteMode);
-	l_SkipUpperThreshold = l_SkipUpperThreshold || ((m_oOutputMode == SvOi::SVPPQNextTriggerMode) && (GetPPQLength() == 2));
+	l_SkipUpperThreshold = l_SkipUpperThreshold || (m_oOutputMode == SvDef::SVPPQExtendedTimeDelayAndDataCompleteMode);
+	l_SkipUpperThreshold = l_SkipUpperThreshold || ((m_oOutputMode == SvDef::SVPPQNextTriggerMode) && (GetPPQLength() == 2));
 
 	if (l_SkipUpperThreshold)
 	{
@@ -3789,7 +3789,7 @@ bool SVPPQObject::IsObjectInPPQ(const SVObjectClass& object) const
 
 bool SVPPQObject::IsProductExpired(const SVProductInfoStruct* pProduct) const
 {
-	if (SvOi::SVPPQExtendedTimeDelayMode == m_oOutputMode && 0 < m_lInspectionTimeoutMillisec)
+	if (SvDef::SVPPQExtendedTimeDelayMode == m_oOutputMode && 0 < m_lInspectionTimeoutMillisec)
 	{
 		SvTl::SVTimeStamp l_CurrentTimestamp = SvTl::GetTimeStamp();
 		SvTl::SVTimeStamp l_ProductTimestamp = pProduct->oTriggerInfo.m_BeginProcess;
@@ -5164,7 +5164,7 @@ DWORD SVPPQObject::GetObjectColor() const
 {
 	return SV_DEFAULT_WHITE_COLOR;
 }
-void SVPPQObject::SetNAKMode(SvOi::NakGeneration nakMode, int NAKPar)
+void SVPPQObject::SetNAKMode(SvDef::NakGeneration nakMode, int NAKPar)
 {
 	m_NAKMode = nakMode;
 	m_NAKParameter = NAKPar;

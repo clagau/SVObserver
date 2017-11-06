@@ -12,9 +12,9 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVOCore/SVEquation.h"
-#include "ObjectInterfaces\TextDefineSvOi.h"
+#include "Definitions/TextDefineSVDef.h"
 #include "SVOCore/TableColumnEquation.h"
-#include "ObjectInterfaces\GlobalConst.h"
+#include "Definitions/GlobalConst.h"
 #include "SVUtilityLibrary\SVString.h"
 #pragma endregion Includes
 
@@ -47,7 +47,7 @@ bool TableTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure 
 {
 	bool bOk = SVToolClass::CreateObject(rCreateStructure);
 
-	m_MaxRow.SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+	m_MaxRow.SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
 
 	bOk &= (nullptr != GetTool());
 	bOk &= (nullptr != GetInspection());
@@ -58,7 +58,7 @@ bool TableTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure 
 		SVEquationClass* pEquation = dynamic_cast<SVEquationClass *>(m_friendList[j].m_pObject);
 		if (nullptr != pEquation)
 		{
-			if (SvOi::TableClearEquationName == SVString(pEquation->GetName()))
+			if (SvDef::TableClearEquationName == SVString(pEquation->GetName()))
 			{
 				m_pClearEquation = pEquation;
 				break;
@@ -83,16 +83,16 @@ bool TableTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure 
 
 	// Override base class exposure of the drawflag
 	// This value will not be exposed for the Table Tool.
-	drawToolFlag.SetObjectAttributesAllowed( SvOi::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	drawToolFlag.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
 
 	// Override base class exposure of the auxillaryextent variables
 	// These values will not be exposed for the Table Tool.
-	m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed( SvOi::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
-	m_svAuxiliarySourceX.SetObjectAttributesAllowed( SvOi::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
-	m_svAuxiliarySourceY.SetObjectAttributesAllowed( SvOi::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
-	m_svAuxiliarySourceAngle.SetObjectAttributesAllowed( SvOi::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
-	m_svAuxiliarySourceImageName.SetObjectAttributesAllowed( SvOi::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
-	m_svAuxiliaryDrawType.SetObjectAttributesAllowed( SvOi::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliarySourceX.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliarySourceY.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliarySourceAngle.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliarySourceImageName.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliaryDrawType.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
 
 	m_isCreated = bOk;
 
@@ -211,14 +211,14 @@ bool TableTool::ValidateLocal( SvStl::MessageContainerVector * pErrorMessages ) 
 
 	long maxRow = 0;
 	m_MaxRow.GetValue(maxRow);
-	if (SvOi::cTableMaxRowMin > maxRow || SvOi::cTableMaxRowMax < maxRow)
+	if (SvDef::cTableMaxRowMin > maxRow || SvDef::cTableMaxRowMax < maxRow)
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
 			SVStringVector messageList;
-			messageList.push_back(SvUl_SF::Format(_T("%d"), SvOi::cTableMaxRowMin));
-			messageList.push_back(SvUl_SF::Format(_T("%d"), SvOi::cTableMaxRowMax));
+			messageList.push_back(SvUl_SF::Format(_T("%d"), SvDef::cTableMaxRowMin));
+			messageList.push_back(SvUl_SF::Format(_T("%d"), SvDef::cTableMaxRowMax));
 			messageList.push_back(SvUl_SF::Format(_T("%d"), maxRow));
 			SvStl::MessageContainer message;
 			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_MaxRowWrongValue, messageList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
@@ -239,7 +239,7 @@ void TableTool::LocalInitialize ()
 	if( nullptr != pObject )
 	{
 		pObject->SetObjectOwner( this );
-		pObject->SetName(SvOi::TableClearEquationName);
+		pObject->SetName(SvDef::TableClearEquationName);
 		AddFriend( pObject->GetUniqueObjectID() );
 	}
 

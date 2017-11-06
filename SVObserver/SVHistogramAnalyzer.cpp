@@ -565,20 +565,20 @@ bool SVHistogramAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rC
         m_isCreated = true;
 	}
 
-	const UINT cAttributes = SvOi::SV_PRINTABLE | SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE;
-	msvHistogramValue.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	msvStdDevValue.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	msvMeanValue.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	const UINT cAttributes = SvDef::SV_PRINTABLE | SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE;
+	msvHistogramValue.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	msvStdDevValue.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	msvMeanValue.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 	msvRangeStartValue.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	msvRangeEndValue.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
-	msvMaxPixelValue.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	msvMinPixelValue.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	msvPixelCountValue.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	msvRangeSizeValue.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	msvMaxPixelValue.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	msvMinPixelValue.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	msvPixelCountValue.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	msvRangeSizeValue.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 	msvScaleValue.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
-	msvHighPeak.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	msvLowPeak.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	msvValley.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	msvHighPeak.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	msvLowPeak.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	msvValley.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 	msvPeakThreshold.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	msvDefaultPeak.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	msvAccumulateCounts.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
@@ -1151,9 +1151,9 @@ HRESULT SVHistogramAnalyzerClass::createHistogramImage()
 
 	ImageInfo.SetOwnerImage( m_histogramImage.GetUniqueObjectID() );
 
-	ImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyFormat, SVImageFormatMono8 );
-	ImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
-	ImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
+	ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SVImageFormatMono8 );
+	ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
+	ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
 
 	ImageInfo.SetExtentProperty( SVExtentPropertyPositionPoint, 0 );
 	ImageInfo.SetExtentProperty( SVExtentPropertyWidth, l_dWidth );
@@ -1161,7 +1161,7 @@ HRESULT SVHistogramAnalyzerClass::createHistogramImage()
 	ImageInfo.SetTranslation( SVExtentTranslationNone );
 
 	// Try to create image object...
-	if( S_OK != m_histogramImage.UpdateImage( SvOi::SVImageTypeEnum::SVImageTypeFixed, ImageInfo ) )
+	if( S_OK != m_histogramImage.UpdateImage( SvDef::SVImageTypeEnum::SVImageTypeFixed, ImageInfo ) )
 	{
 		return Err_SetImageInfo;
 	}

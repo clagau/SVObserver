@@ -20,7 +20,7 @@
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 
 #include "SVOCore/SVDataBuffer.h"
-#include "ObjectInterfaces/GlobalConst.h"
+#include "Definitions/GlobalConst.h"
 #include "SVOCore/SVImageProcessingClass.h"
 #include "SVOCore/SVTool.h"
 #pragma endregion Includes
@@ -65,7 +65,7 @@ bool SVColorThresholdClass::CreateObject( const SVObjectLevelCreateStruct& rCrea
       
 			long l_lPixelDepth = 0;
 
-			ImageInfo.GetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyPixelDepth, l_lPixelDepth );
+			ImageInfo.GetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, l_lPixelDepth );
 			
 			m_HistogramValueArraySize = 1 << ( l_lPixelDepth & SVBufferSize );
 
@@ -107,7 +107,7 @@ bool SVColorThresholdClass::CreateObject( const SVObjectLevelCreateStruct& rCrea
 			m_HistogramValueArraySize = 0;
 		}
 	}
-	const UINT cAttributes = SvOi::SV_PRINTABLE | SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE;
+	const UINT cAttributes = SvDef::SV_PRINTABLE | SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE;
 	// Set / Reset Printable Flags 
 	for (BandEnum Band : BandList)
 	{
@@ -116,10 +116,10 @@ bool SVColorThresholdClass::CreateObject( const SVObjectLevelCreateStruct& rCrea
 		m_BandThreshold[Band].m_ThresholdExclude.SetObjectAttributesAllowed(cAttributes, SvOi::SetAttributeType::AddAttribute);
 	}
 
-	m_ExtentLeft.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_ExtentTop.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_ExtentWidth.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_ExtentHeight.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_ExtentLeft.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_ExtentTop.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_ExtentWidth.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_ExtentHeight.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 
 	m_isCreated = bOk;
 
@@ -480,24 +480,24 @@ void SVColorThresholdClass::LocalInitialize()
 	RegisterEmbeddedObject(&m_ExtentWidth, SVExtentWidthObjectGuid, IDS_OBJECTNAME_EXTENT_WIDTH, false, SvOi::SVResetItemOwner);
 	RegisterEmbeddedObject(&m_ExtentHeight, SVExtentHeightObjectGuid, IDS_OBJECTNAME_EXTENT_HEIGHT, false, SvOi::SVResetItemOwner);
 
-	m_ExtentLeft.SetDefaultValue(SvOi::cDefaultWindowToolLeft, true);
-	m_ExtentTop.SetDefaultValue(SvOi::cDefaultWindowToolTop, true);
-	m_ExtentWidth.SetDefaultValue(SvOi::cDefaultWindowToolWidth, true);
-	m_ExtentHeight.SetDefaultValue(SvOi::cDefaultWindowToolHeight, true);
+	m_ExtentLeft.SetDefaultValue(SvDef::cDefaultWindowToolLeft, true);
+	m_ExtentTop.SetDefaultValue(SvDef::cDefaultWindowToolTop, true);
+	m_ExtentWidth.SetDefaultValue(SvDef::cDefaultWindowToolWidth, true);
+	m_ExtentHeight.SetDefaultValue(SvDef::cDefaultWindowToolHeight, true);
 
 	m_HistogramValueArraySize = 0;
 	m_PixelNumber = 0;
 
 	for (BandEnum Band : BandList)
 	{
-		m_BandThreshold[Band].m_UpperThreshold.SetDefaultValue(SvOi::cDefaultToolUpperThreshold, true);
-		m_BandThreshold[Band].m_LowerThreshold.SetDefaultValue(SvOi::cDefaultToolLowerThreshold, true);
+		m_BandThreshold[Band].m_UpperThreshold.SetDefaultValue(SvDef::cDefaultToolUpperThreshold, true);
+		m_BandThreshold[Band].m_LowerThreshold.SetDefaultValue(SvDef::cDefaultToolLowerThreshold, true);
 		m_BandThreshold[Band].m_ThresholdExclude.SetDefaultValue(BOOL(false), true);
-		GetBandHistogramImage(Band).InitializeImage(SvOi::SVImageTypeEnum::SVImageTypeIndependent);
-		GetBandOutputImage(Band).InitializeImage(SvOi::SVImageTypeEnum::SVImageTypeIndependent);
+		GetBandHistogramImage(Band).InitializeImage(SvDef::SVImageTypeEnum::SVImageTypeIndependent);
+		GetBandOutputImage(Band).InitializeImage(SvDef::SVImageTypeEnum::SVImageTypeIndependent);
 	}
 
-	m_OutputImage.InitializeImage(SvOi::SVImageTypeEnum::SVImageTypeIndependent);
+	m_OutputImage.InitializeImage(SvDef::SVImageTypeEnum::SVImageTypeIndependent);
 
 	// Identify our input type needs...
 	m_BandThreshold[BandEnum::Band0].m_InputImage.SetInputObjectType(SVBand0ImageObjectGuid, SVImageObjectType);
@@ -549,9 +549,9 @@ bool SVColorThresholdClass::createOutputImage( SVImageClass* pInputImage, SVImag
 	// Setup...
 	ImageInfo.SetOwner( GetOwnerID() );
 
-	ImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyFormat, SVImageFormatMono8 );
-	ImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
-	ImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
+	ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SVImageFormatMono8 );
+	ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
+	ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
 
 	Result = ( S_OK == pOutputImage->UpdateImage( InputID, ImageInfo ) );
 
@@ -589,9 +589,9 @@ bool SVColorThresholdClass::createHistogramImage( SVImageClass* pInputImage, SVI
 	ImageInfo.SetOwner( GetOwnerID() );
 	ImageInfo.SetOwnerImage( pOutputImage->GetUniqueObjectID() );
 
-	ImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyFormat, SVImageFormatMono8 );
-	ImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
-	ImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
+	ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SVImageFormatMono8 );
+	ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
+	ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
 
 	ImageInfo.SetExtentProperty( SVExtentPropertyPositionPoint, 0 );
 	ImageInfo.SetExtentProperty( SVExtentPropertyWidth, l_dWidth );

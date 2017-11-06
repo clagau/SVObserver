@@ -14,7 +14,7 @@
 //Moved to precompiled header: #include <algorithm>
 #include "ObjectTreeGenerator.h"
 #include "ObjectInterfaces/IObjectManager.h"
-#include "ObjectInterfaces/ObjectDefines.h"
+#include "Definitions/ObjectDefines.h"
 #include "SVObjectLibrary/GlobalConst.h"
 #include "SVContainerLibrary/ObjectSelectorItem.h"
 #include "SVMFCControls/ResizablePropertySheet.h"
@@ -41,7 +41,7 @@ namespace SvOsl
 		, m_LocationInputFilters()
 		, m_LocationOutputFilters()
 		, m_SelectorType( ObjectTreeGenerator::TypeNone )
-		, m_AttributesFilter( SvOi::SV_NO_ATTRIBUTES )
+		, m_AttributesFilter( SvDef::SV_NO_ATTRIBUTES )
 		, m_LeafCount( 0 )
 	{
 	}
@@ -71,7 +71,7 @@ namespace SvOsl
 		m_LocationInputFilters.clear();
 		m_LocationOutputFilters.clear();
 		m_SelectorType = ObjectTreeGenerator::TypeNone;
-		m_AttributesFilter = SvOi::SV_NO_ATTRIBUTES;
+		m_AttributesFilter = SvDef::SV_NO_ATTRIBUTES;
 	}
 		
 	void ObjectTreeGenerator::insertTreeObjects( const SelectorItemVector& rSelectorItems )
@@ -122,11 +122,11 @@ namespace SvOsl
 		}
 		else
 		{
-			if( SvOi::SV_VIEWABLE == m_AttributesFilter )
+			if( SvDef::SV_VIEWABLE == m_AttributesFilter )
 			{
 				HelpID = IDD_RESULTS_PICKER;
 			}
-			else if( SvOi::SV_PUBLISHABLE == m_AttributesFilter )
+			else if( SvDef::SV_PUBLISHABLE == m_AttributesFilter )
 			{
 				if (TypeSetAttributes == (m_SelectorType & TypeSetAttributes))
 				{

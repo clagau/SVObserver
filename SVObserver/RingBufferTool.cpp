@@ -50,13 +50,13 @@ bool RingBufferTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStruc
 	bOk &= (S_OK == m_svToolExtent.SetTranslation( SVExtentTranslationNone ));
 	SetToolROIExtentToFullInputImage ();
 
-	m_BufferDepth.SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+	m_BufferDepth.SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
 	if (bOk)
 	{
-		for (int i=0; i < SvOi::cRingBufferNumberOutputImages; i++)
+		for (int i=0; i < SvDef::cRingBufferNumberOutputImages; i++)
 		{
 			bOk &= (S_OK == m_OutputImages[i].InitializeImage( inputImage ));
-			m_ImageIndexManager[i].SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+			m_ImageIndexManager[i].SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
 		}
 	}
 
@@ -65,20 +65,20 @@ bool RingBufferTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStruc
 
 	m_SourceImageNames.setStatic( true );
 	m_SourceImageNames.setSaveValueFlag(false);
-	m_SourceImageNames.SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
+	m_SourceImageNames.SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
 
 	// Override base class exposure of the draw flag
 	// This value will not be exposed for the RingBuffer Tool.
-	drawToolFlag.SetObjectAttributesAllowed( SvOi::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	drawToolFlag.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
 
 	// Override base class exposure of the auxillary extent variables
 	// These values will not be exposed for the RingBuffer Tool.
-	m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed( SvOi::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
-	m_svAuxiliarySourceX.SetObjectAttributesAllowed( SvOi::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
-	m_svAuxiliarySourceY.SetObjectAttributesAllowed( SvOi::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
-	m_svAuxiliarySourceAngle.SetObjectAttributesAllowed( SvOi::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
-	m_svAuxiliarySourceImageName.SetObjectAttributesAllowed( SvOi::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
-	m_svAuxiliaryDrawType.SetObjectAttributesAllowed( SvOi::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliarySourceX.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliarySourceY.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliarySourceAngle.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliarySourceImageName.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliaryDrawType.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
 
 	m_isCreated = bOk;
 
@@ -103,14 +103,14 @@ bool RingBufferTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 
 	long ringBufferDepth = 0;
 	m_BufferDepth.GetValue(ringBufferDepth);
-	if( SvOi::cRingBufferDepthMin > ringBufferDepth || SvOi::cRingBufferDepthMax < ringBufferDepth )
+	if( SvDef::cRingBufferDepthMin > ringBufferDepth || SvDef::cRingBufferDepthMax < ringBufferDepth )
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
 			SVStringVector msgList;
-			msgList.push_back(SvUl_SF::Format("%d", SvOi::cRingBufferDepthMin));
-			msgList.push_back(SvUl_SF::Format("%d", SvOi::cRingBufferDepthMax));
+			msgList.push_back(SvUl_SF::Format("%d", SvDef::cRingBufferDepthMin));
+			msgList.push_back(SvUl_SF::Format("%d", SvDef::cRingBufferDepthMax));
 			msgList.push_back(SvUl_SF::Format("%d", ringBufferDepth));
 			SvStl::MessageContainer message( SVMSG_SVO_61_RINGBUFFER_ERROR, SvStl::Tid_RingBuffer_Depth_Invalid_Value, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10013_RingBuffer_DepthValueInvalid, GetUniqueObjectID() );
 			pErrorMessages->push_back(message);
@@ -170,7 +170,7 @@ SVImageClass* RingBufferTool::getInputImage()
 SVImageClass* RingBufferTool::getOutputImage(int index)
 {
 	SVImageClass *retValue = nullptr;
-	if (index >= 0 && index < SvOi::cRingBufferNumberOutputImages)
+	if (index >= 0 && index < SvDef::cRingBufferNumberOutputImages)
 	{
 		retValue = &m_OutputImages[index];
 	}
@@ -204,7 +204,7 @@ bool RingBufferTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContaine
 		}
 
 		//set output image
-		for (int i=0; i < SvOi::cRingBufferNumberOutputImages; ++i)
+		for (int i=0; i < SvDef::cRingBufferNumberOutputImages; ++i)
 		{
 			_variant_t depthVariant;
 			m_ImageIndexManager[i].GetValue( depthVariant );
@@ -258,10 +258,10 @@ void RingBufferTool::LocalInitialize ()
 	BuildInputObjectList ();
 	BuildEmbeddedObjectList ();
 
-	for (int i=0; i<SvOi::cRingBufferNumberOutputImages; i++)
+	for (int i=0; i<SvDef::cRingBufferNumberOutputImages; i++)
 	{
 		// The output image is referenced in the embedded list.
-		m_OutputImages[i].InitializeImage( SvOi::SVImageTypeEnum::SVImageTypePhysical );
+		m_OutputImages[i].InitializeImage( SvDef::SVImageTypeEnum::SVImageTypePhysical );
 	}
 
 	// Set up your type... in this case this will reference that this tool is a 
@@ -294,9 +294,9 @@ void RingBufferTool::BuildEmbeddedObjectList ()
 	m_FlagOfOutputImage.SetDefaultValue( 0, true );
 	m_FlagOfOutputImage.setSaveValueFlag(false);
 
-	int RingbufferIndexNames[SvOi::cRingBufferNumberOutputImages] = { IDS_OBJECTNAME_RINGBUFFER_INDEX1, IDS_OBJECTNAME_RINGBUFFER_INDEX2};
-	int ImageNames[SvOi::cRingBufferNumberOutputImages] = { IDS_OBJECTNAME_IMAGE1, IDS_OBJECTNAME_IMAGE2};
-	for( int i = 0; i < SvOi::cRingBufferNumberOutputImages; i++)
+	int RingbufferIndexNames[SvDef::cRingBufferNumberOutputImages] = { IDS_OBJECTNAME_RINGBUFFER_INDEX1, IDS_OBJECTNAME_RINGBUFFER_INDEX2};
+	int ImageNames[SvDef::cRingBufferNumberOutputImages] = { IDS_OBJECTNAME_IMAGE1, IDS_OBJECTNAME_IMAGE2};
+	for( int i = 0; i < SvDef::cRingBufferNumberOutputImages; i++)
 	{
 		RegisterEmbeddedObject( &m_ImageIndexManager[i], RingBuffer_IndexGuid[i], RingbufferIndexNames[i], true, SvOi::SVResetItemTool );
 		_variant_t vtTemp;

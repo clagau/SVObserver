@@ -2107,7 +2107,7 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 						aImageObjects.Add(pImage);	// add data object pointer to the list
 						bImageOK = true;
 					}
-					else if ( pImage->ObjectAttributesSet() & SvOi::SV_PUBLISH_RESULT_IMAGE )	// Published result image
+					else if ( pImage->ObjectAttributesSet() & SvDef::SV_PUBLISH_RESULT_IMAGE )	// Published result image
 					{
 						aImageObjects.Add(pImage);	// add data object pointer to the list
 						bImageOK = true;
@@ -2384,7 +2384,7 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo, SVSmartHandlePoin
 		oChildInfo = rImageInfo;
 		oChildHandle = rImageHandle;
 
-		long l_lType = SvOi::SVImageTypeEnum::SVImageTypeUnknown;
+		long l_lType = SvDef::SVImageTypeEnum::SVImageTypeUnknown;
 		long l_lBandNumber = 1;
 		long l_lBandLink = 0;
 
@@ -2402,14 +2402,14 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo, SVSmartHandlePoin
 			}
 		}
 
-		oChildInfo.GetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, l_lBandNumber );
-		oChildInfo.GetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandLink, l_lBandLink );
+		oChildInfo.GetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, l_lBandNumber );
+		oChildInfo.GetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, l_lBandLink );
 
-		if ( IsColor && l_lType == SvOi::SVImageTypeEnum::SVImageTypePhysical && l_lBandNumber == 3)
+		if ( IsColor && l_lType == SvDef::SVImageTypeEnum::SVImageTypePhysical && l_lBandNumber == 3)
 		{
 			bDestroyHandle = true;
 
-			oChildInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
+			oChildInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
 
 			HRESULT hrImage = SVImageProcessingClass::CreateImageBuffer( oChildInfo, oChildHandle );
 
@@ -2424,8 +2424,8 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo, SVSmartHandlePoin
 			l_Code = SVMatroxBufferInterface::CopyBuffer(l_ChildMilBuffer.GetBuffer(), l_MilBuffer.GetBuffer(), l_lBandLink );
 		} 
 
-		if ((l_lType == SvOi::SVImageTypeEnum::SVImageTypeLogicalAndPhysical) ||
-			(l_lType == SvOi::SVImageTypeEnum::SVImageTypeLogical))
+		if ((l_lType == SvDef::SVImageTypeEnum::SVImageTypeLogicalAndPhysical) ||
+			(l_lType == SvDef::SVImageTypeEnum::SVImageTypeLogical))
 		{
 			bDestroyHandle = true;
 
@@ -3003,9 +3003,9 @@ HRESULT CSVCommand::SVSetImageList(SAFEARRAY *psaNames, SAFEARRAY *psaImages, SA
 					l_pImageObject = dynamic_cast< SVImageClass* >( l_pObject );
 
 					if ( nullptr != l_pImageObject &&
-						(l_pImageObject->ObjectAttributesAllowed() & SvOi::SV_REMOTELY_SETABLE) == SvOi::SV_REMOTELY_SETABLE )
+						(l_pImageObject->ObjectAttributesAllowed() & SvDef::SV_REMOTELY_SETABLE) == SvDef::SV_REMOTELY_SETABLE )
 					{
-						// currently all SvOi::SV_REMOTELY_SETABLE parameters are also SvOi::SV_SETABLE_ONLINE
+						// currently all SvDef::SV_REMOTELY_SETABLE parameters are also SvDef::SV_SETABLE_ONLINE
 						// if this changes, this code needs updated
 						bAddRequest = true;
 					}// end if
@@ -3175,14 +3175,14 @@ HRESULT CSVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVa
 						::SafeArrayPutElement(*ppsaStatus, &l, &Status);
 						ItemErrorCount++;
 					}
-					else if ( (ObjectRef.ObjectAttributesAllowed() & SvOi::SV_REMOTELY_SETABLE) != SvOi::SV_REMOTELY_SETABLE )
+					else if ( (ObjectRef.ObjectAttributesAllowed() & SvDef::SV_REMOTELY_SETABLE) != SvDef::SV_REMOTELY_SETABLE )
 					{
 						// Item is not allowed to be set remotely
 						Status = SVMSG_OBJECT_CANNOT_BE_SET_REMOTELY;
 						::SafeArrayPutElement(*ppsaStatus, &l, &Status);
 						ItemErrorCount++;
 					}
-					else if (StateOnline && ((ObjectRef.ObjectAttributesAllowed() & SvOi::SV_SETABLE_ONLINE) != SvOi::SV_SETABLE_ONLINE)  ) 
+					else if (StateOnline && ((ObjectRef.ObjectAttributesAllowed() & SvDef::SV_SETABLE_ONLINE) != SvDef::SV_SETABLE_ONLINE)  ) 
 					{
 						Status = SVMSG_OBJECT_CANNOT_BE_SET_WHILE_ONLINE;
 						::SafeArrayPutElement(*ppsaStatus, &l, &Status);
@@ -3353,7 +3353,7 @@ HRESULT CSVCommand::SVLockImage(long p_lProcessCount, long p_lIndex, BSTR p_bsNa
 						l_svImageIndex = pMainImage->GetSourceImageIndex( &ProductInfo.oPPQInfo.m_ResultImagePublishedDMIndexHandle, ProductInfo.m_svCameraInfos );
 						l_DMImageIndexHandle.Assign( l_svImageIndex.m_CameraDMIndexHandle, SV_DCOM );
 					}
-					else if ( pImage->ObjectAttributesSet() & SvOi::SV_PUBLISH_RESULT_IMAGE )
+					else if ( pImage->ObjectAttributesSet() & SvDef::SV_PUBLISH_RESULT_IMAGE )
 					{
 						l_svImageIndex = pImage->GetSourceImageIndex( &ProductInfo.oPPQInfo.m_ResultImagePublishedDMIndexHandle, ProductInfo.m_svCameraInfos );
 						l_DMImageIndexHandle.Assign( l_svImageIndex.m_PublishedResultDMIndexHandle, SV_DCOM );
@@ -3615,17 +3615,17 @@ SVMatroxBuffer CSVCommand::CreateImageFromBSTR( BSTR bstrImage )
 	SVImageInfoClass oTempInfo;
 	SVSmartHandlePointer oTempHandle;
 
-	oTempInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyPixelDepth, pbmhInfo->biBitCount );
-	oTempInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
-	oTempInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
+	oTempInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, pbmhInfo->biBitCount );
+	oTempInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
+	oTempInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
 
 	oTempInfo.SetExtentProperty( SVExtentPropertyHeight, abs(pbmhInfo->biHeight) );
 	oTempInfo.SetExtentProperty( SVExtentPropertyWidth, pbmhInfo->biWidth );
 
 	if( pbmhInfo->biBitCount == 24 )
 	{
-		oTempInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyPixelDepth, 8 );
-		oTempInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, 3 );
+		oTempInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, 8 );
+		oTempInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 3 );
 	}// end if
 
 	if( S_OK != SVImageProcessingClass::CreateImageBuffer( oTempInfo, oTempHandle ) || oTempHandle.empty() )
@@ -4559,10 +4559,10 @@ STDMETHODIMP CSVCommand::SVGetFontCharacter(long lFontIdentifier, long  lCharID,
 				ImageInfo.SetExtentProperty(SVExtentPropertyHeight, l_lValue );
 
 				l_Code = SVMatroxBufferInterface::Get(lCharHandle, SVSizeBand, l_lValue );
-				ImageInfo.SetImageProperty(SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, l_lValue );
+				ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, l_lValue );
 
 				l_Code = SVMatroxBufferInterface::Get(lCharHandle, SVType, l_lValue );
-				ImageInfo.SetImageProperty(SvOi::SVImagePropertyEnum::SVImagePropertyPixelDepth, l_lValue );
+				ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, l_lValue );
 
 				SVSmartHandlePointer ImageBufferHandle = new SVImageBufferHandleStruct( lCharHandle );
 
@@ -4916,7 +4916,7 @@ STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionNam
 
 			if( nullptr != dynamic_cast<SvOi::IValueObject*> (pObject) )
 			{
-				if( pObject->ObjectAttributesSet() & SvOi::SV_DD_VALUE ) // if Data Definition List set.
+				if( pObject->ObjectAttributesSet() & SvDef::SV_DD_VALUE ) // if Data Definition List set.
 				{
 					SelectedObjects.push_back( pObject );
 				}
@@ -4953,7 +4953,7 @@ STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionNam
 
 			// Writable
 			l_Index[1] = 1;
-			bool l_bWritable = (SelectedObjects[i]->ObjectAttributesAllowed() & SvOi::SV_REMOTELY_SETABLE) == SvOi::SV_REMOTELY_SETABLE;
+			bool l_bWritable = (SelectedObjects[i]->ObjectAttributesAllowed() & SvDef::SV_REMOTELY_SETABLE) == SvDef::SV_REMOTELY_SETABLE;
 			Value.Clear();
 			Value.ChangeType(VT_BOOL);
 			Value = l_bWritable;
@@ -5071,7 +5071,7 @@ STDMETHODIMP CSVCommand::SVGetTransferImageDefinitionList(BSTR bstrInspectionNam
 				//
 				// Check for the required Output object attributes.
 				//
-				if ( (pImage->ObjectAttributesSet() & SvOi::SV_DD_IMAGE) != 0 )
+				if ( (pImage->ObjectAttributesSet() & SvDef::SV_DD_IMAGE) != 0 )
 				{
 					objectList.push_back( pImage );
 				}
@@ -5105,7 +5105,7 @@ STDMETHODIMP CSVCommand::SVGetTransferImageDefinitionList(BSTR bstrInspectionNam
 
 			// Writable
 			l_Index[1] = 1;
-			bool l_bWritable = (objectList[i]->ObjectAttributesAllowed() & SvOi::SV_REMOTELY_SETABLE) == SvOi::SV_REMOTELY_SETABLE;
+			bool l_bWritable = (objectList[i]->ObjectAttributesAllowed() & SvDef::SV_REMOTELY_SETABLE) == SvDef::SV_REMOTELY_SETABLE;
 			Value.Clear();
 			Value.ChangeType(VT_BOOL);
 			Value = l_bWritable;
@@ -5115,7 +5115,7 @@ STDMETHODIMP CSVCommand::SVGetTransferImageDefinitionList(BSTR bstrInspectionNam
 			l_Index[1] = 2;
 			Value.Clear();
 			Value.ChangeType(VT_BOOL);
-			Value = (objectList[i]->ObjectAttributesSet() & SvOi::SV_PUBLISH_RESULT_IMAGE) != 0;
+			Value = (objectList[i]->ObjectAttributesSet() & SvDef::SV_PUBLISH_RESULT_IMAGE) != 0;
 			//l_saData.PutElement( l_Index, l_vTmp );
 			hr = ::SafeArrayPutElement( l_psaData, l_Index, &Value );
 

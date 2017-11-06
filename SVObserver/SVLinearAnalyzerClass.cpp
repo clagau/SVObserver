@@ -87,8 +87,8 @@ bool SVLinearAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCrea
 		m_svNormalizer.SetNormalRange(m_dwMinThreshold, m_dwMaxThreshold);
 		m_svNormalizer.SetRealRange(m_dwMinThreshold, m_dwMaxThreshold);
 
-		m_svShowAllEdgeAOverlays.SetObjectAttributesAllowed(SvOi::SV_SETABLE_ONLINE | SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute);
-		m_svShowAllEdgeBOverlays.SetObjectAttributesAllowed(SvOi::SV_SETABLE_ONLINE | SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute);
+		m_svShowAllEdgeAOverlays.SetObjectAttributesAllowed(SvDef::SV_SETABLE_ONLINE | SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute);
+		m_svShowAllEdgeBOverlays.SetObjectAttributesAllowed(SvDef::SV_SETABLE_ONLINE | SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute);
 	}
 
 	return bOk;
@@ -259,7 +259,7 @@ HRESULT SVLinearAnalyzerClass::GetPixelDepth()
 	{
     SVImageInfoClass ImageInfo = GetInputImage()->GetImageInfo();
 
-		l_hrOk = ImageInfo.GetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyPixelDepth, m_lPixelDepth );
+		l_hrOk = ImageInfo.GetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, m_lPixelDepth );
 	}
 
 	return l_hrOk;

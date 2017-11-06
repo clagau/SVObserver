@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "ObjectInterfaces\SVImageEnums.h"
+#include "Definitions/SVImageEnums.h"
 
 class SVImagePropertiesClass
 {
@@ -24,12 +24,12 @@ public:
 
 	HRESULT Initialize();
 
-	HRESULT DisableImageProperty( SvOi::SVImagePropertyEnum p_eProperty );
+	HRESULT DisableImageProperty( SvDef::SVImagePropertyEnum p_eProperty );
 
-	HRESULT GetImageProperty( SvOi::SVImagePropertyEnum p_eProperty, int &p_riValue ) const;
-	HRESULT GetImageProperty( SvOi::SVImagePropertyEnum p_eProperty, long &p_rlValue ) const;
+	HRESULT GetImageProperty( SvDef::SVImagePropertyEnum p_eProperty, int &p_riValue ) const;
+	HRESULT GetImageProperty( SvDef::SVImagePropertyEnum p_eProperty, long &p_rlValue ) const;
 
-	HRESULT SetImageProperty( SvOi::SVImagePropertyEnum p_eProperty, long p_lValue );
+	HRESULT SetImageProperty( SvDef::SVImagePropertyEnum p_eProperty, long p_lValue );
 
 	bool operator==( const SVImagePropertiesClass &p_rsvValue ) const;
 	bool operator!=( const SVImagePropertiesClass &p_rsvValue ) const;

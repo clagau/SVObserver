@@ -168,7 +168,7 @@ bool GlobalConstantView::editItem( int Item )
 {
 	bool Result( false );
 
-	SvOi::GlobalConstantData GlobalData;
+	SvDef::GlobalConstantData GlobalData;
 	SvOg::GlobalConstantDlg GlobalDlg( GlobalData, this );
 
 	SVStringVector GlobalConstantList;
@@ -283,13 +283,13 @@ int GlobalConstantView::insertItem(const BasicValueObjectPtr& rpObject, int Pos 
 	{
 	case VT_R8:
 		{
-			Type = SvOg::GlobalConstantTypes[SvOi::GlobalConstantData::DecimalType];
+			Type = SvOg::GlobalConstantTypes[SvDef::GlobalConstantData::DecimalType];
 			ValueText = SvUl_SF::Format( _T("%.06f"), Value.dblVal );
 		}
 		break;
 	case VT_BSTR:
 		{
-			Type = SvOg::GlobalConstantTypes[SvOi::GlobalConstantData::TextType];
+			Type = SvOg::GlobalConstantTypes[SvDef::GlobalConstantData::TextType];
 			ValueText = SvUl_SF::createSVString( Value );
 		}
 		break;
@@ -312,7 +312,7 @@ int GlobalConstantView::insertItem(const BasicValueObjectPtr& rpObject, int Pos 
 	return InsertPos;
 }
 
-void GlobalConstantView::insertGlobalConstant( const SvOi::GlobalConstantData& rGlobalData ) const
+void GlobalConstantView::insertGlobalConstant( const SvDef::GlobalConstantData& rGlobalData ) const
 {
 	BasicValueObjectPtr pGlobalObject;
 
@@ -321,16 +321,16 @@ void GlobalConstantView::insertGlobalConstant( const SvOi::GlobalConstantData& r
 	{
 		pGlobalObject->setDescription( rGlobalData.m_Description.c_str() );
 		//All Global constants can be remotely settable
-		pGlobalObject->SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+		pGlobalObject->SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
 		//If the Global Constant is of type text then not selectable for equations so remove the attribute
 		if( VT_BSTR == rGlobalData.m_Value.vt )
 		{
-			pGlobalObject->SetObjectAttributesAllowed( SvOi::SV_SELECTABLE_FOR_EQUATION, SvOi::SetAttributeType::RemoveAttribute );
+			pGlobalObject->SetObjectAttributesAllowed( SvDef::SV_SELECTABLE_FOR_EQUATION, SvOi::SetAttributeType::RemoveAttribute );
 		}
 	}
 }
 
-void GlobalConstantView::editGlobalConstant( const SvOi::GlobalConstantData& rGlobalData ) const
+void GlobalConstantView::editGlobalConstant( const SvDef::GlobalConstantData& rGlobalData ) const
 {
 	BasicValueObject* pGlobalObject(nullptr);
 

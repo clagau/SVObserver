@@ -19,7 +19,7 @@
 
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "ObjectInterfaces/IToolSet.h"
-#include "ObjectInterfaces/SVResetStruct.h"
+#include "Definitions/SVResetStruct.h"
 #include "ObjectInterfaces/IFormulaController.h"
 #include "SVCommandLibrary/SVCommandTemplate.h"
 #include "SVContainerLibrary/SVBiUniqueMap.h"
@@ -442,7 +442,7 @@ protected:
 	// Map of All Value Objects
 	SVValueObjectMap m_mapValueObjects;
 
-	SvOi::SVResetStruct m_svReset;
+	SvDef::SVResetStruct m_svReset;
 
 	SvOi::IValueObjectPtrSet m_ValueObjectSet;
 	SVImageClassPtrSet m_ImageObjectSet;

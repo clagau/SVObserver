@@ -8,7 +8,7 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <iterator>
-#include "SVObjectTypeInfoStruct.h"
+#include "Definitions/SVObjectTypeInfoStruct.h"
 #include "SVUtilityLibrary\SVString.h"
 #include "SVUtilityLibrary\SVGUID.h"
 #pragma endregion Includes

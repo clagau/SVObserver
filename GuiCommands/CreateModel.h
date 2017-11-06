@@ -9,12 +9,12 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <boost/noncopyable.hpp>
-#include "ObjectInterfaces/ObjectDefines.h"
+#include "Definitions/ObjectDefines.h"
 #include "ObjectInterfaces/ISVImage.h"
 #include "ObjectInterfaces/IObjectClass.h"
 #include "ObjectInterfaces/ITaskObject.h"
 #include "ObjectInterfaces/IPatternAnalyzer.h"
-#include "ObjectInterfaces/TextDefineSvOi.h"
+#include "Definitions/TextDefineSVDef.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include "SVMatroxLibrary/SVMatroxSimpleEnums.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
@@ -52,7 +52,7 @@ namespace SvCmd
 			{
 				SvOi::MatroxImageSmartHandlePtr imageHandle;
 				SvOi::ITaskObject* pTaskObject = dynamic_cast<SvOi::ITaskObject*>(pObject);
-				if ( nullptr != pTaskObject && pTaskObject->getSpecialImage(SvOi::PatternModelImageName, imageHandle)  && !imageHandle->empty() )
+				if ( nullptr != pTaskObject && pTaskObject->getSpecialImage(SvDef::PatternModelImageName, imageHandle)  && !imageHandle->empty() )
 				{
 					SVFileNameClass svFileName( m_FileName.c_str() );
 

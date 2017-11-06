@@ -375,8 +375,8 @@ HRESULT SVImageProcessingClass::CreateImageChildBuffer( const SVImageInfoClass& 
 				Result = (l_Code == S_OK) ? S_OK : l_Code | SVMEE_MATROX_ERROR;
 				if ( S_OK == Result )
 				{
-					rChildInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, l_iParentBandNumber );
-					rChildInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
+					rChildInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, l_iParentBandNumber );
+					rChildInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
 				}
 			}
 		}
@@ -595,19 +595,19 @@ HRESULT SVImageProcessingClass::LoadImageBuffer( LPCTSTR tstrImagePathName, SVIm
 
 				if( M_EQUIVALENT_INTERNAL_FORMAT( M_BGR24, l_DataFormat ) )
 				{
-					rInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyFormat, SVImageFormatRGB888 );
+					rInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SVImageFormatRGB888 );
 				}
 				else if( M_EQUIVALENT_INTERNAL_FORMAT( M_BGR32, l_DataFormat ) )
 				{
-					rInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyFormat, SVImageFormatRGB8888 );
+					rInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SVImageFormatRGB8888 );
 				}
 
 				rInfo.SetExtentProperty( SVExtentPropertyOutputPositionPoint, 0 );
 				rInfo.SetExtentProperty( SVExtentPropertyWidth, l_lSizeX );
 				rInfo.SetExtentProperty( SVExtentPropertyHeight, l_lSizeY );
 
-				rInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, l_lBandSize );
-				rInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyPixelDepth, l_lPixelDepth );
+				rInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, l_lBandSize );
+				rInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, l_lPixelDepth );
 
 				newBuffer.clear();
 
@@ -695,11 +695,11 @@ HRESULT SVImageProcessingClass::LoadImageBuffer( void* pBuffer,
 		// and the pBits will fit.
 		if( pbmInfo->bmiHeader.biBitCount == 32 )
 		{
-			rBufferInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyFormat, SVImageFormatRGB8888 );
+			rBufferInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SVImageFormatRGB8888 );
 		}
 		if( pbmInfo->bmiHeader.biBitCount == 24 )
 		{
-			rBufferInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyFormat, SVImageFormatRGB888 );
+			rBufferInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SVImageFormatRGB888 );
 		}
 
 		if( S_OK != CreateImageBuffer( rBufferInfo, rBufferHandle ) )
@@ -713,16 +713,16 @@ HRESULT SVImageProcessingClass::LoadImageBuffer( void* pBuffer,
 
 	oTempInfo = rBufferInfo;
 
-	oTempInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
-	oTempInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
-	oTempInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyPixelDepth, 8 );
+	oTempInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
+	oTempInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
+	oTempInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, 8 );
 
 	oTempInfo.SetExtentProperty( SVExtentPropertyHeight, abs(pbmhInfo->biHeight) );
 	oTempInfo.SetExtentProperty( SVExtentPropertyWidth, pbmhInfo->biWidth );
 
 	if ( 8 < pbmhInfo->biBitCount )
 	{
-		oTempInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, 3 );
+		oTempInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 3 );
 	}
 
 	if( S_OK != CreateImageBuffer( oTempInfo, oTempHandle ) )
@@ -735,8 +735,8 @@ HRESULT SVImageProcessingClass::LoadImageBuffer( void* pBuffer,
 	int l_iBandNumber = 0;
 	int l_iBandLink = 0;
 
-	if ( S_OK != rCameraInfo.GetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, l_iBandNumber ) || 
-		S_OK != rCameraInfo.GetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandLink, l_iBandLink ) )
+	if ( S_OK != rCameraInfo.GetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, l_iBandNumber ) || 
+		S_OK != rCameraInfo.GetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, l_iBandLink ) )
 	{
 		return S_FALSE;
 	}
@@ -1066,7 +1066,7 @@ HRESULT SVImageProcessingClass::GetOutputImageCreateData( const SVImageInfoClass
 	{
 		int l_iFormat = SVImageFormatUnknown;
 
-		Result = p_rsvInfo.GetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyFormat, l_iFormat );
+		Result = p_rsvInfo.GetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, l_iFormat );
 
 		if ( S_OK == Result )
 		{
@@ -1076,17 +1076,17 @@ HRESULT SVImageProcessingClass::GetOutputImageCreateData( const SVImageInfoClass
 
 	if ( S_OK == Result )
 	{
-		Result = p_rsvInfo.GetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, p_riBandNumber );
+		Result = p_rsvInfo.GetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, p_riBandNumber );
 	}
 
 	if ( S_OK == Result )
 	{
-		Result = p_rsvInfo.GetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandLink, p_riBandLink );
+		Result = p_rsvInfo.GetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, p_riBandLink );
 	}
 
 	if ( S_OK == Result )
 	{
-		Result = p_rsvInfo.GetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyPixelDepth, p_riPixelDepth );
+		Result = p_rsvInfo.GetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, p_riPixelDepth );
 	}
 
 	return Result;
@@ -1111,7 +1111,7 @@ HRESULT SVImageProcessingClass::GetChildImageCreateData( const SVImageInfoClass 
 	{
 		int l_iFormat = SVImageFormatUnknown;
 
-		Result = p_rsvInfo.GetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyFormat, l_iFormat );
+		Result = p_rsvInfo.GetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, l_iFormat );
 
 		if ( S_OK == Result )
 		{
@@ -1121,17 +1121,17 @@ HRESULT SVImageProcessingClass::GetChildImageCreateData( const SVImageInfoClass 
 
 	if ( S_OK == Result )
 	{
-		Result = p_rsvInfo.GetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, p_riBandNumber );
+		Result = p_rsvInfo.GetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, p_riBandNumber );
 	}
 
 	if ( S_OK == Result )
 	{
-		Result = p_rsvInfo.GetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandLink, p_riBandLink );
+		Result = p_rsvInfo.GetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, p_riBandLink );
 	}
 
 	if ( S_OK == Result )
 	{
-		Result = p_rsvInfo.GetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyPixelDepth, p_riPixelDepth );
+		Result = p_rsvInfo.GetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, p_riPixelDepth );
 	}
 
 	return Result;

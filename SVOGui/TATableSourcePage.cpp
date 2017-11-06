@@ -16,7 +16,7 @@
 #include "GuiCommands\GetAvailableObjects.h"
 #include "GuiCommands\ConnectToObject.h"
 #include "GuiCommands\GetInputs.h"
-#include "ObjectInterfaces\TextDefineSvOi.h"
+#include "Definitions/TextDefineSVDef.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -79,7 +79,7 @@ namespace SvOg
 			}
 			else
 			{	//this block should not reached, but if no input found, use default inputName and try with them to solve the problem. 
-				m_inputName = SvOi::cInputTag_SourceTable;
+				m_inputName = SvDef::cInputTag_SourceTable;
 			}
 		}
 

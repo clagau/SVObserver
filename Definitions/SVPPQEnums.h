@@ -11,7 +11,7 @@
 
 #pragma once
 
-namespace SvOi
+namespace SvDef
 {
 	enum SVPPQOutputModeEnum
 	{

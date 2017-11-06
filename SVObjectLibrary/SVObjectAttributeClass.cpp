@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVObjectAttributeClass.h"
-#include "ObjectInterfaces/TextDefineSvOi.h"
+#include "Definitions/TextDefineSVDef.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -356,11 +356,11 @@ bool SVObjectAttributeClass::GetData(SvCl::SVObjectSVStringArrayClass& svData)
 				
 				if ( m_BoolArray[i] )
 				{
-					Temp = SvOi::cTrue;
+					Temp = SvDef::cTrue;
 				}
 				else
 				{
-					Temp = SvOi::cFalse;
+					Temp = SvDef::cFalse;
 				}
 
 				svData.InsertAt( i, Temp );

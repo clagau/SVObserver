@@ -17,6 +17,7 @@
 #include "SVImageAnalyzerClass.h"
 #include "SVStatusLibrary/MessageTextEnum.h"
 #include "ObjectInterfaces/IPatternAnalyzer.h"
+#include "CameraLibrary/SVTemplate.h"
 #pragma endregion Includes
 
 class SVPatternAnalyzerClass : public SVImageAnalyzerClass, public SvOi::IPatternAnalyzer  

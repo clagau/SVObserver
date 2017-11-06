@@ -22,7 +22,7 @@
 #include "SVEvaluateStartAngleClass.h"
 #include "SVEvaluateEndAngleClass.h"
 #include "SVEquation.h"
-#include "ObjectInterfaces/GlobalConst.h"
+#include "Definitions/GlobalConst.h"
 #include "SVImageProcessingClass.h"
 #include "SVPolarTransformationTool.h"
 #include "SVObjectLibrary/SVClsIds.h"
@@ -106,14 +106,14 @@ SVImagePolarTransformClass::SVImagePolarTransformClass( SVObjectClass* POwner, i
 
 	// Set Embedded defaults
 	m_interpolationMode.SetDefaultValue( SVNearestNeighOverScanEnable );	// Refer to MIL...
-	m_centerX.SetDefaultValue( ( double ) SvOi::cDefaultPolarTransformCenterX );
-	m_centerY.SetDefaultValue( ( double ) SvOi::cDefaultPolarTransformCenterY );
-	m_startRadius.SetDefaultValue( ( double ) SvOi::cDefaultPolarTransformStartRadius );
-	m_endRadius.SetDefaultValue( ( double ) SvOi::cDefaultPolarTransformEndRadius );
-	m_startAngle.SetDefaultValue( ( double ) SvOi::cDefaultPolarTransformStartAngle );
-	m_endAngle.SetDefaultValue( ( double ) SvOi::cDefaultPolarTransformEndAngle );
+	m_centerX.SetDefaultValue( ( double ) SvDef::cDefaultPolarTransformCenterX );
+	m_centerY.SetDefaultValue( ( double ) SvDef::cDefaultPolarTransformCenterY );
+	m_startRadius.SetDefaultValue( ( double ) SvDef::cDefaultPolarTransformStartRadius );
+	m_endRadius.SetDefaultValue( ( double ) SvDef::cDefaultPolarTransformEndRadius );
+	m_startAngle.SetDefaultValue( ( double ) SvDef::cDefaultPolarTransformStartAngle );
+	m_endAngle.SetDefaultValue( ( double ) SvDef::cDefaultPolarTransformEndAngle );
 
-	outputImageObject.InitializeImage( SvOi::SVImageTypeEnum::SVImageTypePhysical );
+	outputImageObject.InitializeImage( SvDef::SVImageTypeEnum::SVImageTypePhysical );
 
 	m_useFormulaInput.SetDefaultValue( BOOL(false) );	// Default: Don't use formulas...
 
@@ -143,15 +143,15 @@ bool SVImagePolarTransformClass::CreateObject( const SVObjectLevelCreateStruct& 
 	l_bOk &= S_OK == ( outputImageObject.InitializeImage( getInputImage() ) );
 
 	// Set / Reset Printable Flag
-	const UINT cAttributes = SvOi::SV_PRINTABLE | SvOi::SV_REMOTELY_SETABLE | SvOi::SV_EXTENT_OBJECT | SvOi::SV_SETABLE_ONLINE;
+	const UINT cAttributes = SvDef::SV_PRINTABLE | SvDef::SV_REMOTELY_SETABLE | SvDef::SV_EXTENT_OBJECT | SvDef::SV_SETABLE_ONLINE;
 	m_centerX.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	m_centerY.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	m_startRadius.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	m_endRadius.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	m_startAngle.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	m_endAngle.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
-	m_interpolationMode.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_useFormulaInput.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_interpolationMode.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_useFormulaInput.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 
 	SetCalculatedPrintableFlags();
 
@@ -722,7 +722,7 @@ bool SVImagePolarTransformClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Mes
 
 void SVImagePolarTransformClass::SetCalculatedPrintableFlags()
 {
-	const UINT cAttributes = SvOi::SV_PRINTABLE | SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE;
+	const UINT cAttributes = SvDef::SV_PRINTABLE | SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE;
 	BOOL bSetValue( false );
 
 	if ( ( S_OK == m_useFormulaInput.GetValue( bSetValue ) ) && bSetValue )

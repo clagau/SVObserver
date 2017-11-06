@@ -293,7 +293,7 @@ int SVExternalToolInputSelectPage::SelectObject( SVString& rObjectName, SVRPrope
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject );
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
 
-	SvOsl::SelectorOptions BuildOptions( m_InspectionID, SvOi::SV_ARCHIVABLE, GetToolSetGUID() );
+	SvOsl::SelectorOptions BuildOptions( m_InspectionID, SvDef::SV_ARCHIVABLE, GetToolSetGUID() );
 	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::GlobalSelector, SvOg::PPQSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 
 	SVStringSet Items;

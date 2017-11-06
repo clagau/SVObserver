@@ -11,7 +11,7 @@
 #pragma once
 
 #include "SVUtilityLibrary/SVString.h"
-#include "ObjectInterfaces/SVPPQEnums.h"
+#include "Definitions/SVPPQEnums.h"
 
 enum SVHardwareErrorEnums
 {
@@ -82,7 +82,7 @@ namespace SvLib
 		SVString m_ProductName;
 		long m_gigePacketSize;
 
-		SvOi::NakGeneration m_NAKMode;
+		SvDef::NakGeneration m_NAKMode;
 		int m_NAKParameter;
 
 		// The ForcedImageUpdateTimeInSeconds comes from the SVIM.ini file

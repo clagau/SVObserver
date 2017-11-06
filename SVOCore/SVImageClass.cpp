@@ -22,7 +22,7 @@
 #include "SVImageBuffer.h"
 #include "SVImageObjectClass.h"
 #include "SVImageProcessingClass.h"
-#include "ObjectInterfaces/GlobalConst.h"
+#include "Definitions/GlobalConst.h"
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "ObjectInterfaces/ITool.h"
 #include "SVTaskObject.h"
@@ -62,7 +62,7 @@ bool SVImageClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructur
 	l_bOk &= ( S_OK == UpdateFromToolInformation() );
 	l_bOk &= ( S_OK == UpdateBufferArrays() );
 
-	SetObjectAttributesAllowed( SvOi::SV_PUBLISH_RESULT_IMAGE | SvOi::SV_DD_IMAGE, SvOi::SetAttributeType::AddAttribute );	// add this to older configs
+	SetObjectAttributesAllowed( SvDef::SV_PUBLISH_RESULT_IMAGE | SvDef::SV_DD_IMAGE, SvOi::SetAttributeType::AddAttribute );	// add this to older configs
 	
 	m_isCreated = l_bOk;
 	
@@ -153,7 +153,7 @@ void SVImageClass::init()
 		m_bCriticalSectionCreated = false;
 	}
 
-	m_ImageType = SvOi::SVImageTypeEnum::SVImageTypeUnknown;
+	m_ImageType = SvDef::SVImageTypeEnum::SVImageTypeUnknown;
 
 	m_BufferArrayPtr = new SVImageObjectClass;
 	
@@ -161,18 +161,18 @@ void SVImageClass::init()
 	
 	// derived classes that are not result images (i.e. SVMainImageClass)
 	// need to remove the PUBLISH attribute.
-	SetObjectAttributesAllowed( SvOi::SV_ARCHIVABLE_IMAGE | SvOi::SV_PUBLISH_RESULT_IMAGE | SvOi::SV_DD_IMAGE, SvOi::SetAttributeType::OverwriteAttribute );
+	SetObjectAttributesAllowed( SvDef::SV_ARCHIVABLE_IMAGE | SvDef::SV_PUBLISH_RESULT_IMAGE | SvDef::SV_DD_IMAGE, SvOi::SetAttributeType::OverwriteAttribute );
 
 	m_ParentImageInfo.second = nullptr;
 
 	m_ImageInfo.SetOwnerImage( GetUniqueObjectID() );
 		
-	m_ImageInfo.SetExtentProperty( SVExtentPropertyPositionPointX, SvOi::cDefaultWindowToolLeft );
-	m_ImageInfo.SetExtentProperty( SVExtentPropertyPositionPointY, SvOi::cDefaultWindowToolTop );
-	m_ImageInfo.SetExtentProperty( SVExtentPropertyWidth, SvOi::cDefaultWindowToolWidth );
-	m_ImageInfo.SetExtentProperty( SVExtentPropertyHeight, SvOi::cDefaultWindowToolHeight );
-	m_ImageInfo.SetExtentProperty(	SVExtentPropertyWidthScaleFactor, SvOi::cDefaultWindowToolWidthScaleFactor );
-	m_ImageInfo.SetExtentProperty(	SVExtentPropertyHeightScaleFactor, SvOi::cDefaultWindowToolHeightScaleFactor );
+	m_ImageInfo.SetExtentProperty( SVExtentPropertyPositionPointX, SvDef::cDefaultWindowToolLeft );
+	m_ImageInfo.SetExtentProperty( SVExtentPropertyPositionPointY, SvDef::cDefaultWindowToolTop );
+	m_ImageInfo.SetExtentProperty( SVExtentPropertyWidth, SvDef::cDefaultWindowToolWidth );
+	m_ImageInfo.SetExtentProperty( SVExtentPropertyHeight, SvDef::cDefaultWindowToolHeight );
+	m_ImageInfo.SetExtentProperty(	SVExtentPropertyWidthScaleFactor, SvDef::cDefaultWindowToolWidthScaleFactor );
+	m_ImageInfo.SetExtentProperty(	SVExtentPropertyHeightScaleFactor, SvDef::cDefaultWindowToolHeightScaleFactor );
 }
 
 SVImageClass::~SVImageClass()
@@ -218,7 +218,7 @@ bool SVImageClass::DestroyImage()
 				m_BufferArrayPtr->clear();
 			}
 
-			m_ImageType = SvOi::SVImageTypeEnum::SVImageTypeUnknown;
+			m_ImageType = SvDef::SVImageTypeEnum::SVImageTypeUnknown;
 
 			m_isCreated = false;
 
@@ -237,7 +237,7 @@ bool SVImageClass::DestroyImage()
 	return bOk;
 }
 
-HRESULT SVImageClass::InitializeImage( SvOi::SVImageTypeEnum p_ImageType )
+HRESULT SVImageClass::InitializeImage( SvDef::SVImageTypeEnum p_ImageType )
 {
 	HRESULT l_Status = S_OK;
 
@@ -432,7 +432,7 @@ HRESULT SVImageClass::UpdateImage( const GUID& p_rParentID, const SVImageInfoCla
 	return l_Status;
 }
 
-HRESULT SVImageClass::UpdateImage( SvOi::SVImageTypeEnum p_ImageType )
+HRESULT SVImageClass::UpdateImage( SvDef::SVImageTypeEnum p_ImageType )
 {
 	HRESULT l_Status = S_OK;
 
@@ -448,7 +448,7 @@ HRESULT SVImageClass::UpdateImage( SvOi::SVImageTypeEnum p_ImageType )
 	return l_Status;
 }
 
-HRESULT SVImageClass::UpdateImage( SvOi::SVImageTypeEnum p_ImageType, const SVImageInfoClass& p_rImageInfo )
+HRESULT SVImageClass::UpdateImage( SvDef::SVImageTypeEnum p_ImageType, const SVImageInfoClass& p_rImageInfo )
 {
 	HRESULT l_Status = S_OK;
 
@@ -467,7 +467,7 @@ HRESULT SVImageClass::UpdateImage( SvOi::SVImageTypeEnum p_ImageType, const SVIm
 	return l_Status;
 }
 
-HRESULT SVImageClass::UpdateImage( SvOi::SVImageTypeEnum p_ImageType, const GUID& p_rParentID )
+HRESULT SVImageClass::UpdateImage( SvDef::SVImageTypeEnum p_ImageType, const GUID& p_rParentID )
 {
 	HRESULT l_Status = S_OK;
 
@@ -491,7 +491,7 @@ HRESULT SVImageClass::UpdateImage( SvOi::SVImageTypeEnum p_ImageType, const GUID
 	return l_Status;
 }
 
-HRESULT SVImageClass::UpdateImage( SvOi::SVImageTypeEnum p_ImageType, const GUID& p_rParentID, const SVImageInfoClass& p_rImageInfo )
+HRESULT SVImageClass::UpdateImage( SvDef::SVImageTypeEnum p_ImageType, const GUID& p_rParentID, const SVImageInfoClass& p_rImageInfo )
 {
 	HRESULT l_Status = S_OK;
 
@@ -623,7 +623,7 @@ HRESULT SVImageClass::UpdateFromParentInformation()
 {
 	HRESULT l_Status = S_OK;
 
-	if( ( m_ImageType != SvOi::SVImageTypeEnum::SVImageTypeMain ) && ( m_ImageType != SvOi::SVImageTypeEnum::SVImageTypeRGBMain ) )
+	if( ( m_ImageType != SvDef::SVImageTypeEnum::SVImageTypeMain ) && ( m_ImageType != SvDef::SVImageTypeEnum::SVImageTypeRGBMain ) )
 	{
 		SVImageClass* l_pParentImage = GetParentImage();
 
@@ -637,7 +637,7 @@ HRESULT SVImageClass::UpdateFromParentInformation()
 
 			l_Status = l_ImageInfo.SetImageProperties( l_ImageProperties );
 
-			if( m_ImageType == SvOi::SVImageTypeEnum::SVImageTypeDependent || m_ImageType == SvOi::SVImageTypeEnum::SVImageTypeVirtual )
+			if( m_ImageType == SvDef::SVImageTypeEnum::SVImageTypeDependent || m_ImageType == SvDef::SVImageTypeEnum::SVImageTypeVirtual )
 			{
 				l_ImageExtent = l_ImageInfo.GetExtents();
 
@@ -688,23 +688,23 @@ HRESULT SVImageClass::UpdateFromToolInformation()
 
 	// When initialized from CreateObject(), tool is nullptr.
 	SVTaskObjectClass*	pParentTask = dynamic_cast <SVTaskObjectClass*> (GetTool());
- 	if( ( m_ImageType != SvOi::SVImageTypeEnum::SVImageTypeRGBMain ) && ( nullptr != pParentTask ) )
+ 	if( ( m_ImageType != SvDef::SVImageTypeEnum::SVImageTypeRGBMain ) && ( nullptr != pParentTask ) )
 	{
 		SVImageExtentClass TempExtent;
 
-		if( ( SvOi::SVImageTypeEnum::SVImageTypeMain != m_ImageType ) && 
-			( SvOi::SVImageTypeEnum::SVImageTypeFixed != m_ImageType ) && 
-			( SvOi::SVImageTypeEnum::SVImageTypeIndependent != m_ImageType ) && 
-			( SvOi::SVImageTypeEnum::SVImageTypeDependent != m_ImageType ) && 
-			( SvOi::SVImageTypeEnum::SVImageTypeVirtual != m_ImageType ) && 
+		if( ( SvDef::SVImageTypeEnum::SVImageTypeMain != m_ImageType ) && 
+			( SvDef::SVImageTypeEnum::SVImageTypeFixed != m_ImageType ) && 
+			( SvDef::SVImageTypeEnum::SVImageTypeIndependent != m_ImageType ) && 
+			( SvDef::SVImageTypeEnum::SVImageTypeDependent != m_ImageType ) && 
+			( SvDef::SVImageTypeEnum::SVImageTypeVirtual != m_ImageType ) && 
 			( S_OK == pParentTask->GetImageExtent( TempExtent ) ) )
 		{
 
 
 			RECT l_Rect;
 
-			if (( SvOi::SVImageTypeEnum::SVImageTypeLogicalAndPhysical == m_ImageType)|| 
-				(SvOi::SVImageTypeEnum::SVImageTypeLogical == m_ImageType))
+			if (( SvDef::SVImageTypeEnum::SVImageTypeLogicalAndPhysical == m_ImageType)|| 
+				(SvDef::SVImageTypeEnum::SVImageTypeLogical == m_ImageType))
 			{
 				// @Hack
 				// It does not make sense that a logical buffer is not a 1:1 
@@ -731,9 +731,9 @@ HRESULT SVImageClass::UpdateFromToolInformation()
 			}
 		}
 
-		if( SvOi::SVImageTypeEnum::SVImageTypeFixed != m_ImageType && 
-			SvOi::SVImageTypeEnum::SVImageTypeIndependent != m_ImageType && 
-			SvOi::SVImageTypeEnum::SVImageTypeDependent != m_ImageType )
+		if( SvDef::SVImageTypeEnum::SVImageTypeFixed != m_ImageType && 
+			SvDef::SVImageTypeEnum::SVImageTypeIndependent != m_ImageType && 
+			SvDef::SVImageTypeEnum::SVImageTypeDependent != m_ImageType )
 		{
 			SvOi::ITool* pTool = GetToolInterface();
 			if( nullptr != pTool )
@@ -753,7 +753,7 @@ HRESULT SVImageClass::UpdateFromToolInformation()
 		m_LastUpdate = SvTl::GetTimeStamp();
 	}
 
-	if( ( SvOi::SVImageTypeEnum::SVImageTypeMain != m_ImageType ) && ( SvOi::SVImageTypeEnum::SVImageTypeIndependent != m_ImageType ) )
+	if( ( SvDef::SVImageTypeEnum::SVImageTypeMain != m_ImageType ) && ( SvDef::SVImageTypeEnum::SVImageTypeIndependent != m_ImageType ) )
 	{
 		l_Status = m_ImageInfo.SetExtents( l_ToolExtent );
 
@@ -783,9 +783,9 @@ HRESULT SVImageClass::IsValidChild( const GUID& p_rChildID, SVImageInfoClass p_s
 {
 	HRESULT l_hrOk = S_OK;
 
-	if( SvOi::SVImageTypeEnum::SVImageTypeDependent == m_ImageType || 
-		SvOi::SVImageTypeEnum::SVImageTypeVirtual == m_ImageType ||
-		SvOi::SVImageTypeEnum::SVImageTypeLogical == m_ImageType )
+	if( SvDef::SVImageTypeEnum::SVImageTypeDependent == m_ImageType || 
+		SvDef::SVImageTypeEnum::SVImageTypeVirtual == m_ImageType ||
+		SvDef::SVImageTypeEnum::SVImageTypeLogical == m_ImageType )
 	{
 		SVImageClass* l_pParentImage = GetParentImage();
 
@@ -840,9 +840,9 @@ HRESULT SVImageClass::UpdateChild( const GUID& p_rChildID, SVImageInfoClass p_sv
 
 	if ( Lock() )
 	{
-		if( SvOi::SVImageTypeEnum::SVImageTypeDependent == m_ImageType || 
-			SvOi::SVImageTypeEnum::SVImageTypeVirtual == m_ImageType ||
-			SvOi::SVImageTypeEnum::SVImageTypeLogical == m_ImageType )
+		if( SvDef::SVImageTypeEnum::SVImageTypeDependent == m_ImageType || 
+			SvDef::SVImageTypeEnum::SVImageTypeVirtual == m_ImageType ||
+			SvDef::SVImageTypeEnum::SVImageTypeLogical == m_ImageType )
 		{
 			SVImageClass* l_pParentImage = GetParentImage();
 
@@ -960,9 +960,9 @@ HRESULT SVImageClass::GetChildImageInfo( const GUID& p_rChildID, SVImageInfoClas
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if( SvOi::SVImageTypeEnum::SVImageTypeDependent == m_ImageType || 
-		SvOi::SVImageTypeEnum::SVImageTypeVirtual == m_ImageType ||
-		SvOi::SVImageTypeEnum::SVImageTypeLogical == m_ImageType )
+	if( SvDef::SVImageTypeEnum::SVImageTypeDependent == m_ImageType || 
+		SvDef::SVImageTypeEnum::SVImageTypeVirtual == m_ImageType ||
+		SvDef::SVImageTypeEnum::SVImageTypeLogical == m_ImageType )
 	{
 		SVImageClass* l_pParentImage = GetParentImage();
 
@@ -1000,9 +1000,9 @@ HRESULT SVImageClass::GetChildImageHandle( const GUID& p_rChildID, SVSmartHandle
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if( SvOi::SVImageTypeEnum::SVImageTypeDependent == m_ImageType|| 
-		SvOi::SVImageTypeEnum::SVImageTypeVirtual == m_ImageType ||
-		SvOi::SVImageTypeEnum::SVImageTypeLogical == m_ImageType )
+	if( SvDef::SVImageTypeEnum::SVImageTypeDependent == m_ImageType|| 
+		SvDef::SVImageTypeEnum::SVImageTypeVirtual == m_ImageType ||
+		SvDef::SVImageTypeEnum::SVImageTypeLogical == m_ImageType )
 	{
 		SVImageClass* l_pParentImage = GetParentImage();
 
@@ -1060,9 +1060,9 @@ HRESULT SVImageClass::GetChildImageHandle( const GUID& p_rChildID, SVImageIndexS
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if( SvOi::SVImageTypeEnum::SVImageTypeDependent == m_ImageType || 
-		SvOi::SVImageTypeEnum::SVImageTypeVirtual == m_ImageType ||
-		SvOi::SVImageTypeEnum::SVImageTypeLogical == m_ImageType )
+	if( SvDef::SVImageTypeEnum::SVImageTypeDependent == m_ImageType || 
+		SvDef::SVImageTypeEnum::SVImageTypeVirtual == m_ImageType ||
+		SvDef::SVImageTypeEnum::SVImageTypeLogical == m_ImageType )
 	{
 		SVImageClass* l_pParentImage = GetParentImage();
 
@@ -1177,9 +1177,9 @@ bool SVImageClass::GetImageHandleIndex( SVImageIndexStruct& rsvIndex ) const
 {
 	bool bOk = false;
 		
-	if( SvOi::SVImageTypeEnum::SVImageTypeDependent == m_ImageType|| 
-		SvOi::SVImageTypeEnum::SVImageTypeVirtual == m_ImageType ||
-		SvOi::SVImageTypeEnum::SVImageTypeLogical == m_ImageType )
+	if( SvDef::SVImageTypeEnum::SVImageTypeDependent == m_ImageType|| 
+		SvDef::SVImageTypeEnum::SVImageTypeVirtual == m_ImageType ||
+		SvDef::SVImageTypeEnum::SVImageTypeLogical == m_ImageType )
 	{
 		SVImageClass* l_pParentImage = GetParentImage();
 
@@ -1202,7 +1202,7 @@ bool SVImageClass::GetImageHandleIndex( SVImageIndexStruct& rsvIndex ) const
 		{
 			SVDataManagerHandle l_DMIndexHandle;
 			bOk = m_BufferArrayPtr->GetCurrentIndex( l_DMIndexHandle );
-			bool bIsPublished = (ObjectAttributesSet() & SvOi::SV_PUBLISH_RESULT_IMAGE) > 0;
+			bool bIsPublished = (ObjectAttributesSet() & SvDef::SV_PUBLISH_RESULT_IMAGE) > 0;
 			if ( bIsPublished )
 			{
 				rsvIndex.m_PublishedResultDMIndexHandle.Assign( l_DMIndexHandle, l_DMIndexHandle.GetLockType() );
@@ -1224,9 +1224,9 @@ bool SVImageClass::SetImageHandleIndex( SVImageIndexStruct svIndex )
 {
 	bool Result( false );
 		
-	if( SvOi::SVImageTypeEnum::SVImageTypeDependent == m_ImageType|| 
-		SvOi::SVImageTypeEnum::SVImageTypeVirtual == m_ImageType ||
-		SvOi::SVImageTypeEnum::SVImageTypeLogical == m_ImageType )
+	if( SvDef::SVImageTypeEnum::SVImageTypeDependent == m_ImageType|| 
+		SvDef::SVImageTypeEnum::SVImageTypeVirtual == m_ImageType ||
+		SvDef::SVImageTypeEnum::SVImageTypeLogical == m_ImageType )
 	{
 		Result = nullptr != GetParentImage() && GetParentImage() != this;
 	}
@@ -1266,9 +1266,9 @@ bool SVImageClass::CopyImageTo( SVImageIndexStruct svIndex )
 {
 	bool Result( false );
 		
-	if( SvOi::SVImageTypeEnum::SVImageTypeDependent == m_ImageType|| 
-		SvOi::SVImageTypeEnum::SVImageTypeVirtual == m_ImageType ||
-		SvOi::SVImageTypeEnum::SVImageTypeLogical == m_ImageType )
+	if( SvDef::SVImageTypeEnum::SVImageTypeDependent == m_ImageType|| 
+		SvDef::SVImageTypeEnum::SVImageTypeVirtual == m_ImageType ||
+		SvDef::SVImageTypeEnum::SVImageTypeLogical == m_ImageType )
 	{
 		SVImageClass* l_pParentImage = GetParentImage();
 
@@ -1313,9 +1313,9 @@ bool SVImageClass::GetImageHandle( SVSmartHandlePointer& p_rHandlePtr )
 {
 	bool bOk = false;
 		
-	if( SvOi::SVImageTypeEnum::SVImageTypeDependent == m_ImageType|| 
-		SvOi::SVImageTypeEnum::SVImageTypeVirtual == m_ImageType ||
-		SvOi::SVImageTypeEnum::SVImageTypeLogical == m_ImageType )
+	if( SvDef::SVImageTypeEnum::SVImageTypeDependent == m_ImageType|| 
+		SvDef::SVImageTypeEnum::SVImageTypeVirtual == m_ImageType ||
+		SvDef::SVImageTypeEnum::SVImageTypeLogical == m_ImageType )
 	{
 		bOk = ( S_OK == GetParentImageHandle( p_rHandlePtr ) );
 	}
@@ -1335,9 +1335,9 @@ bool SVImageClass::GetImageHandle( SVImageIndexStruct svIndex, SVSmartHandlePoin
 {
 	bool bOk = false;
 		
-	if( SvOi::SVImageTypeEnum::SVImageTypeDependent == m_ImageType || 
-		SvOi::SVImageTypeEnum::SVImageTypeVirtual == m_ImageType ||
-		SvOi::SVImageTypeEnum::SVImageTypeLogical == m_ImageType )
+	if( SvDef::SVImageTypeEnum::SVImageTypeDependent == m_ImageType || 
+		SvDef::SVImageTypeEnum::SVImageTypeVirtual == m_ImageType ||
+		SvDef::SVImageTypeEnum::SVImageTypeLogical == m_ImageType )
 	{
 		bOk = ( S_OK == GetParentImageHandle( svIndex, rHandle ) );
 	}
@@ -1611,9 +1611,9 @@ SVImageObjectClassPtr SVImageClass::GetBufferArrayPtr() const
 {
 	SVImageObjectClassPtr l_ArrayPtr;
 
-	if( SvOi::SVImageTypeEnum::SVImageTypeDependent == m_ImageType || 
-		SvOi::SVImageTypeEnum::SVImageTypeVirtual == m_ImageType ||
-		SvOi::SVImageTypeEnum::SVImageTypeLogical == m_ImageType )
+	if( SvDef::SVImageTypeEnum::SVImageTypeDependent == m_ImageType || 
+		SvDef::SVImageTypeEnum::SVImageTypeVirtual == m_ImageType ||
+		SvDef::SVImageTypeEnum::SVImageTypeLogical == m_ImageType )
 	{
 		SVImageClass* l_pParentImage = GetParentImage();
 
@@ -1646,17 +1646,17 @@ void SVImageClass::PersistImageAttributes( SVObjectWriter& rWriter )
 	long TempValue = 0;
 
 	// Add image pixel depth as trivial members
-	m_ImageInfo.GetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyPixelDepth, TempValue );
+	m_ImageInfo.GetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, TempValue );
 	_variant_t Value(TempValue);
 	rWriter.WriteAttribute(scPixelDepthTag, Value);
 
 	// Add Band Number as trivial members
-	m_ImageInfo.GetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, TempValue );
+	m_ImageInfo.GetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, TempValue );
 	Value = TempValue;
 	rWriter.WriteAttribute(scBandNumberTag, Value);
 
 	// Add Band Link as trivial members
-	m_ImageInfo.GetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandLink, TempValue );
+	m_ImageInfo.GetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, TempValue );
 	Value = TempValue;
 	rWriter.WriteAttribute(scBandLinkTag, Value);
 }
@@ -1669,7 +1669,7 @@ HRESULT SVImageClass::GetObjectValue( const SVString& rValueName, _variant_t& rV
 	{
 		long Value = 0;
 
-		m_ImageInfo.GetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyPixelDepth, Value );
+		m_ImageInfo.GetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, Value );
 
 		rValue = Value;
 	}
@@ -1677,7 +1677,7 @@ HRESULT SVImageClass::GetObjectValue( const SVString& rValueName, _variant_t& rV
 	{
 		long Value = 0;
 
-		m_ImageInfo.GetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, Value );
+		m_ImageInfo.GetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, Value );
 
 		rValue = Value;
 	}
@@ -1685,7 +1685,7 @@ HRESULT SVImageClass::GetObjectValue( const SVString& rValueName, _variant_t& rV
 	{
 		long Value = 0;
 
-		m_ImageInfo.GetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandLink, Value );
+		m_ImageInfo.GetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, Value );
 
 		rValue = Value;
 	}
@@ -1710,21 +1710,21 @@ HRESULT SVImageClass::SetObjectValue( SVObjectAttributeClass* PDataObject )
 	{
 		for ( int i = 0; i < svLongArray.GetSize(); i++ )
 		{
-			m_ImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyPixelDepth, svLongArray[i] );
+			m_ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, svLongArray[i] );
 		}
 	}
 	else if ( ( bOk = PDataObject->GetAttributeData( "BandNumber", svLongArray	) ) )
 	{
 		for ( int i = 0; i < svLongArray.GetSize(); i++ )
 		{
-			m_ImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, svLongArray[i] );
+			m_ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, svLongArray[i] );
 		}
 	}
 	else if ( ( bOk = PDataObject->GetAttributeData( "BandLink", svLongArray	) ) )
 	{
 		for ( int i = 0; i < svLongArray.GetSize(); i++ )
 		{
-			m_ImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandLink, svLongArray[i] );
+			m_ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, svLongArray[i] );
 		}
 	}
 	else
@@ -1746,7 +1746,7 @@ HRESULT SVImageClass::SetObjectValue( SVObjectAttributeClass* PDataObject )
 SVImageIndexStruct SVImageClass::GetSourceImageIndex( SVDataManagerHandle* pHandle, const SVGuidSVCameraInfoStructMap& rGuidCameraMap )
 {
 	SVImageIndexStruct svIndex;
-	if( SvOi::SV_PUBLISH_RESULT_IMAGE == (ObjectAttributesSet() & SvOi::SV_PUBLISH_RESULT_IMAGE) )
+	if( SvDef::SV_PUBLISH_RESULT_IMAGE == (ObjectAttributesSet() & SvDef::SV_PUBLISH_RESULT_IMAGE) )
 	{
 		SvOi::IInspectionProcess* pInspection = GetInspectionInterface();
 		assert( nullptr != pInspection );
@@ -1766,10 +1766,10 @@ HRESULT SVImageClass::UpdatePosition()
 	
 	m_ParentImageInfo.second = dynamic_cast< SVImageClass* >( SVObjectManagerClass::Instance().GetObject( m_ParentImageInfo.first ) );
 
-	if( SvOi::SVImageTypeEnum::SVImageTypeDependent == m_ImageType || 
-		SvOi::SVImageTypeEnum::SVImageTypeLogicalAndPhysical == m_ImageType || 
-		SvOi::SVImageTypeEnum::SVImageTypeLogical == m_ImageType ||
-		SvOi::SVImageTypeEnum::SVImageTypeVirtual == m_ImageType )
+	if( SvDef::SVImageTypeEnum::SVImageTypeDependent == m_ImageType || 
+		SvDef::SVImageTypeEnum::SVImageTypeLogicalAndPhysical == m_ImageType || 
+		SvDef::SVImageTypeEnum::SVImageTypeLogical == m_ImageType ||
+		SvDef::SVImageTypeEnum::SVImageTypeVirtual == m_ImageType )
 	{
 		if( nullptr != m_ParentImageInfo.second )
 		{
@@ -1857,7 +1857,7 @@ HRESULT SVImageClass::UpdateChildBuffers( SVImageObjectClassPtr p_psvChildBuffer
 		{
 			l_Size = GetImageDepth();
 
-			if( SvOi::SV_PUBLISH_RESULT_IMAGE == ( ObjectAttributesSet() & SvOi::SV_PUBLISH_RESULT_IMAGE ) )
+			if( SvDef::SV_PUBLISH_RESULT_IMAGE == ( ObjectAttributesSet() & SvDef::SV_PUBLISH_RESULT_IMAGE ) )
 			{
 				l_Size = SvOi::GetSourceImageDepth();
 			}
@@ -1891,8 +1891,8 @@ HRESULT SVImageClass::UpdateBufferArrays( bool p_ExcludePositionCheck, SvStl::Me
 {
 	HRESULT		l_Status = S_OK;
 
-	if ((SvOi::SVImageTypeEnum::SVImageTypeLogicalAndPhysical == m_ImageType ||
-		 SvOi::SVImageTypeEnum::SVImageTypeLogical == m_ImageType) &&
+	if ((SvDef::SVImageTypeEnum::SVImageTypeLogicalAndPhysical == m_ImageType ||
+		 SvDef::SVImageTypeEnum::SVImageTypeLogical == m_ImageType) &&
 		nullptr == m_ParentImageInfo.second)
 	{
 		// If the image type is logical, there MUST be a parent before 
@@ -1903,11 +1903,11 @@ HRESULT SVImageClass::UpdateBufferArrays( bool p_ExcludePositionCheck, SvStl::Me
 	bool	clear = false;
 	SVGUID	parentGuid;
 	parentGuid = m_ImageInfo.GetOwnerImageID ();
-	if( SvOi::SVImageTypeEnum::SVImageTypeUnknown == m_ImageType || 
-		SvOi::SVImageTypeEnum::SVImageTypeDependent == m_ImageType || 
-		SvOi::SVImageTypeEnum::SVImageTypeVirtual == m_ImageType || 
-		SvOi::SVImageTypeEnum::SVImageTypeMain == m_ImageType ||
-		SvOi::SVImageTypeEnum::SVImageTypeLogical == m_ImageType )
+	if( SvDef::SVImageTypeEnum::SVImageTypeUnknown == m_ImageType || 
+		SvDef::SVImageTypeEnum::SVImageTypeDependent == m_ImageType || 
+		SvDef::SVImageTypeEnum::SVImageTypeVirtual == m_ImageType || 
+		SvDef::SVImageTypeEnum::SVImageTypeMain == m_ImageType ||
+		SvDef::SVImageTypeEnum::SVImageTypeLogical == m_ImageType )
 		
 	{
 		m_BufferArrayPtr.clear();
@@ -1923,7 +1923,7 @@ HRESULT SVImageClass::UpdateBufferArrays( bool p_ExcludePositionCheck, SvStl::Me
 		{
 			size_t l_Size = GetImageDepth();
 
-			if( SvOi::SV_PUBLISH_RESULT_IMAGE == ( ObjectAttributesSet() & SvOi::SV_PUBLISH_RESULT_IMAGE ) )
+			if( SvDef::SV_PUBLISH_RESULT_IMAGE == ( ObjectAttributesSet() & SvDef::SV_PUBLISH_RESULT_IMAGE ) )
 			{
 				l_Size = SvOi::GetSourceImageDepth();
 			}
@@ -2045,7 +2045,7 @@ HRESULT SVImageClass::ValidateAgainstChildrenExtents( SVImageExtentClass& p_rsvE
 
 				l_Iter->second.m_ImageInfo.GetOwnerImage( l_pImage );
 
-				if( nullptr == l_pImage || SvOi::SVImageTypeEnum::SVImageTypeDependent != m_ImageType || SvOi::SVImageTypeEnum::SVImageTypeVirtual != l_pImage->GetImageType() )
+				if( nullptr == l_pImage || SvDef::SVImageTypeEnum::SVImageTypeDependent != m_ImageType || SvDef::SVImageTypeEnum::SVImageTypeVirtual != l_pImage->GetImageType() )
 				{
 					l_hrOk = S_FALSE;
 				}
@@ -2126,7 +2126,7 @@ void SVImageClass::GetChildExtents( SVChildExtentDeque& p_rChildExtents ) const
 }
 
 #pragma region virtual method (ISVImage)
-SvOi::SVImageTypeEnum SVImageClass::GetImageType() const
+SvDef::SVImageTypeEnum SVImageClass::GetImageType() const
 {
 	return m_ImageType;
 }
@@ -2141,9 +2141,9 @@ SvOi::MatroxImageSmartHandlePtr SVImageClass::getImageData()
 	SVSmartHandlePointer handle;
 	SvOi::MatroxImageSmartHandlePtr dataSmartPointer;
 
-	if ((SvOi::SVImageTypeEnum::SVImageTypeLogical == m_ImageType) ||
-		(SvOi::SVImageTypeEnum::SVImageTypeDependent == m_ImageType) ||
-		(SvOi::SVImageTypeEnum::SVImageTypeVirtual == m_ImageType))
+	if ((SvDef::SVImageTypeEnum::SVImageTypeLogical == m_ImageType) ||
+		(SvDef::SVImageTypeEnum::SVImageTypeDependent == m_ImageType) ||
+		(SvDef::SVImageTypeEnum::SVImageTypeVirtual == m_ImageType))
 	{
 		// For SVO Child buffers, the image data is actually allocated as 
 		// the Parent Image Child, and not as part of the SVImageObjectClass.
@@ -2215,14 +2215,14 @@ SVString SVImageClass::getDisplayedName() const
 long SVImageClass::getBands() const
 {
 	long bandNumber = 0;
-	m_ImageInfo.GetImageProperty(SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, bandNumber);
+	m_ImageInfo.GetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, bandNumber);
 	return bandNumber;
 }
 
 long SVImageClass::getPixelDepth() const
 {
 	long pixelDepth = 0;
-	m_ImageInfo.GetImageProperty(SvOi::SVImagePropertyEnum::SVImagePropertyPixelDepth, pixelDepth);
+	m_ImageInfo.GetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, pixelDepth);
 	return pixelDepth;
 }
 
@@ -2276,9 +2276,9 @@ bool SVImageClass::ValidateImage()
 	{
 		switch( m_ImageType )
 		{
-			case SvOi::SVImageTypeEnum::SVImageTypePhysical:
-			case SvOi::SVImageTypeEnum::SVImageTypeIndependent:
-			case SvOi::SVImageTypeEnum::SVImageTypeFixed:
+			case SvDef::SVImageTypeEnum::SVImageTypePhysical:
+			case SvDef::SVImageTypeEnum::SVImageTypeIndependent:
+			case SvDef::SVImageTypeEnum::SVImageTypeFixed:
 			{
 				SVImageObjectClassPtr l_BufferPtr = GetBufferArrayPtr();
 
@@ -2287,7 +2287,7 @@ bool SVImageClass::ValidateImage()
 
 				break;
 			}
-			case SvOi::SVImageTypeEnum::SVImageTypeLogicalAndPhysical:
+			case SvDef::SVImageTypeEnum::SVImageTypeLogicalAndPhysical:
 			{
 				SVImageObjectClassPtr l_BufferPtr = GetBufferArrayPtr();
 
@@ -2301,9 +2301,9 @@ bool SVImageClass::ValidateImage()
 
 				break;
 			}
-			case SvOi::SVImageTypeEnum::SVImageTypeLogical:
-			case SvOi::SVImageTypeEnum::SVImageTypeVirtual:
-			case SvOi::SVImageTypeEnum::SVImageTypeDependent:
+			case SvDef::SVImageTypeEnum::SVImageTypeLogical:
+			case SvDef::SVImageTypeEnum::SVImageTypeVirtual:
+			case SvDef::SVImageTypeEnum::SVImageTypeDependent:
 			{
 				SVImageObjectClassPtr l_BufferPtr = GetBufferArrayPtr();
 
@@ -2316,7 +2316,7 @@ bool SVImageClass::ValidateImage()
 
 				break;
 			}
-			case SvOi::SVImageTypeEnum::SVImageTypeMain:
+			case SvDef::SVImageTypeEnum::SVImageTypeMain:
 			{
 				SVImageObjectClassPtr l_BufferPtr = GetBufferArrayPtr();
 
@@ -2324,7 +2324,7 @@ bool SVImageClass::ValidateImage()
 
 				break;
 			}
-			case SvOi::SVImageTypeEnum::SVImageTypeRGBMain:
+			case SvDef::SVImageTypeEnum::SVImageTypeRGBMain:
 			{
 				SVImageObjectClassPtr l_BufferPtr = GetBufferArrayPtr();
 
@@ -2346,7 +2346,7 @@ HRESULT SVImageClass::GetImageIndex( SVDataManagerHandle& p_rHandle, const SVIma
 {
 	HRESULT l_Status( S_OK );
 
-	if( (ObjectAttributesSet() & SvOi::SV_PUBLISH_RESULT_IMAGE) > 0 )
+	if( (ObjectAttributesSet() & SvDef::SV_PUBLISH_RESULT_IMAGE) > 0 )
 	{
 		l_Status = p_rHandle.Assign( rIndex.m_PublishedResultDMIndexHandle, rIndex.m_PublishedResultDMIndexHandle.GetLockType() );
 	}

@@ -109,7 +109,7 @@ namespace SvOg
 
 	void FormulaController::BuildSelectableItems()
 	{
-		SvOsl::SelectorOptions BuildOptions( m_InspectionID, SvOi::SV_SELECTABLE_FOR_EQUATION, m_InspectionID, true );
+		SvOsl::SelectorOptions BuildOptions( m_InspectionID, SvDef::SV_SELECTABLE_FOR_EQUATION, m_InspectionID, true );
 		SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::GlobalSelector, SvOg::PPQSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 	}
 

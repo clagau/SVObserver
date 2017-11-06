@@ -17,7 +17,7 @@
 #pragma region Includes
 #include "SVLibrary/SVTaskObjectValueInterface.h"
 #include "SVOCore/SVTaskObjectList.h"
-#include "ObjectInterfaces\RangeEnum.h"
+#include "Definitions/RangeEnum.h"
 #include "SVStatusLibrary/MessageTextEnum.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes

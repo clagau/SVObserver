@@ -16,7 +16,7 @@
 #include "SVToolExtentClass.h"
 #include "SVImageClass.h"
 #include "ObjectInterfaces/IInspectionProcess.h"
-#include "ObjectInterfaces/SVResetStruct.h"
+#include "Definitions/SVResetStruct.h"
 #include "SVTool.h"
 #include "SVValueObjectLibrary/SVValueObject.h"
 #pragma endregion Includes
@@ -119,7 +119,7 @@ HRESULT SVToolExtentClass::UpdateExtentAgainstParentImage( const SVImageExtentCl
 	{
 		SVImageExtentClass l_Extent = p_rImageExtent;
 
-		SvOi::SVImageTypeEnum l_Type = m_psvToolImage->GetImageType();
+		SvDef::SVImageTypeEnum l_Type = m_psvToolImage->GetImageType();
 
 		SVImageClass* l_pParent = m_psvToolImage->GetParentImage();
 
@@ -151,20 +151,20 @@ HRESULT SVToolExtentClass::UpdateImageWithExtent( SVToolExtentTypeEnum p_ToolExt
 		{
 			SVImageExtentClass l_Extent;
 
-			SvOi::SVImageTypeEnum l_Type = m_psvToolImage->GetImageType();
+			SvDef::SVImageTypeEnum l_Type = m_psvToolImage->GetImageType();
 
 			SVImageClass* l_pParent = m_psvToolImage->GetParentImage();
 
 			if( nullptr != l_pParent )
 			{
-				if( ( SvOi::SVImageTypeEnum::SVImageTypeLogicalAndPhysical == l_Type ) && ( SVExtentTranslationProfile == GetTranslation() ) )
+				if( ( SvDef::SVImageTypeEnum::SVImageTypeLogicalAndPhysical == l_Type ) && ( SVExtentTranslationProfile == GetTranslation() ) )
 				{
-					l_Type = SvOi::SVImageTypeEnum::SVImageTypePhysical;
+					l_Type = SvDef::SVImageTypeEnum::SVImageTypePhysical;
 
 					m_psvToolImage->UpdateImage( l_Type );
 				}
 
-				if( SvOi::SVImageTypeEnum::SVImageTypeDependent == l_Type || SvOi::SVImageTypeEnum::SVImageTypeVirtual == l_Type )
+				if( SvDef::SVImageTypeEnum::SVImageTypeDependent == l_Type || SvDef::SVImageTypeEnum::SVImageTypeVirtual == l_Type )
 				{
 					l_Extent = l_pParent->GetImageExtents();
 
@@ -187,7 +187,7 @@ HRESULT SVToolExtentClass::UpdateImageWithExtent( SVToolExtentTypeEnum p_ToolExt
 
 					SvOi::IInspectionProcess* pInspection = m_psvToolImage->GetInspectionInterface();
 
-					if ( nullptr != pInspection && pInspection->IsResetStateSet( SvOi::SVResetAutoMoveAndResize ) )
+					if ( nullptr != pInspection && pInspection->IsResetStateSet(SvDef::SVResetAutoMoveAndResize ) )
 					{
 						if( l_Extent != m_psvToolImage->GetImageExtents() )
 						{

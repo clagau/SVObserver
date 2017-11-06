@@ -12,15 +12,9 @@
 #pragma once
 
 #include "ManagedIndexArray.h"
-#include "ManagedIndexArrayList.h"
 #include "SVDataManagerIndexArrayHandle.h"
 #include "SVDataManagerEnums.h"
 
-class ManagedIndexArray;
-
-/*
-This object manages object element resources in the system.
-*/
 class SVDataManager 
 {
 public:
@@ -74,7 +68,7 @@ protected:
 	long GetLockCountByType( LONGLONG IndexArrayHandle, SVDataManagerLockTypeEnum LockType );
 	
 	// This element holds the array of managed index containers.
-	SVManagedIndexArrayList svmManagedIndexArrayList;
+	SVManagedIndexArrayVector m_ManagedIndexArrayVector;
 	
 	// This references the first position in the svmManagedIndexArrayList which have been destroyed.
 	LONGLONG m_FirstUnusedIndex;

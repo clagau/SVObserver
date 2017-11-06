@@ -13,7 +13,7 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <set>
-#include "ObjectInterfaces/SVImageEnums.h"
+#include "Definitions/SVImageEnums.h"
 #include "ObjectInterfaces/IValueObject.h"
 #include "SVImageLibrary/SVImageExtentClass.h"
 #include "SVToolExtentPropertiesClass.h"
@@ -44,8 +44,8 @@ public:
 	inline SVImageClass* GetToolImage() const;
 	inline void SetToolImage( SVImageClass* p_psvToolImage );
 
-	inline SvOi::SVImageTypeEnum GetImageType() const;
-	inline void SetImageType( SvOi::SVImageTypeEnum p_eImageType );
+	inline SvDef::SVImageTypeEnum GetImageType() const;
+	inline void SetImageType( SvDef::SVImageTypeEnum p_eImageType );
 
 	inline SVImageClass* GetSelectedImage() const;
 	inline void SetSelectedImage( SVImageClass* p_psvSelectedImage );
@@ -130,7 +130,7 @@ private:
 	SVImageClass* m_psvToolImage;
 
 	// This value does not appear to get used.
-	SvOi::SVImageTypeEnum m_eImageType;
+	SvDef::SVImageTypeEnum m_eImageType;
 
 	SVExtentTranslationEnum m_eTranslation;
 	SVExtentShapeEnum m_eShape;

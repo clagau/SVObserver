@@ -15,7 +15,7 @@
 #include "SVInt64ValueObjectClass.h"
 #include "SVObjectLibrary\SVClsids.h"
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
-#include "ObjectInterfaces/TextDefineSvOi.h"
+#include "Definitions/TextDefineSVDef.h"
 #pragma endregion Includes
 
 #pragma region Declarations

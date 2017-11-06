@@ -1103,9 +1103,9 @@ bool SVTaskObjectClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStr
 		}
 	}
 
-	m_isObjectValid.SetObjectAttributesAllowed( SvOi::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
-	m_statusTag.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_statusColor.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_isObjectValid.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_statusTag.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_statusColor.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 	
 	m_isCreated = Result;
 	
@@ -1816,7 +1816,7 @@ void SVTaskObjectClass::RemoveEmbeddedObject( SVObjectClass* pObjectToRemove )
 void SVTaskObjectClass::hideEmbeddedObject(SVObjectClass& rObjectToHide)
 {
 	// Restrict selection (picked for resultView, published, used in an Equation, or selected for Archiving)
-	rObjectToHide.SetObjectAttributesAllowed( SvOi::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
+	rObjectToHide.SetObjectAttributesAllowed( SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
 	
 	// Reset any selection
 	rObjectToHide.SetObjectAttributesSet( 0, SvOi::SetAttributeType::OverwriteAttribute );
@@ -2020,7 +2020,7 @@ HRESULT SVTaskObjectClass::HideInputsOutputs(SVObjectPtrVector& rListOfObjects)
 	SVObjectPtrVector::iterator iter;
 	for ( iter = rListOfObjects.begin(); iter != rListOfObjects.end(); ++iter )
 	{
-		(*iter)->SetObjectAttributesSet( SvOi::SV_VIEWABLE , SvOi::SetAttributeType::RemoveAttribute );
+		(*iter)->SetObjectAttributesSet( SvDef::SV_VIEWABLE , SvOi::SetAttributeType::RemoveAttribute );
 	}
 	return S_OK;
 }

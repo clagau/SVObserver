@@ -15,7 +15,7 @@
 //Moved to precompiled header: #include <typeinfo.h>
 #include "SVLutDlg.h"
 #include "SVAcquisitionClass.h"
-#include "ObjectInterfaces/SVUserMessage.h"
+#include "Definitions/SVUserMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary/ErrorNumbers.h"

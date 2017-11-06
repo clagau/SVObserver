@@ -9,7 +9,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "TaTableAnalyzerPage.h"
-#include "ObjectInterfaces/ObjectDefines.h"
+#include "Definitions/ObjectDefines.h"
 #include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
 #include "TextDefinesSvOg.h"
 #include "GuiCommands/GetCreatableObjects.h"

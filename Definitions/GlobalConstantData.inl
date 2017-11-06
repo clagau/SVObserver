@@ -5,7 +5,7 @@
 /// Global constant data structure for comparing
 //******************************************************************************
 
-namespace SvOi
+namespace SvDef
 {
 #pragma region Constructor
 	GlobalConstantData::GlobalConstantData():

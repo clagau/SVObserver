@@ -28,7 +28,7 @@ SVDataManager::SVDataManager ()
 	::InitializeCriticalSection( &m_Lock );
 	m_IsLockCreated = true;
 
-	svmManagedIndexArrayList.SetSize( 100 );
+	m_ManagedIndexArrayVector.resize( 100 );
 }
 
 SVDataManager::~SVDataManager ()
@@ -50,7 +50,7 @@ HRESULT SVDataManager::ReleaseAllIndexes(LONGLONG IndexArrayHandle)
 	Result = ValidateIndexArrayHandle ( IndexArrayHandle);
 	if( S_OK == Result )
 	{
-		pManagedIndexArray = svmManagedIndexArrayList[ IndexArrayHandle ];
+		pManagedIndexArray = m_ManagedIndexArrayVector[IndexArrayHandle];
 		if( nullptr != pManagedIndexArray )
 		{
 			Result = pManagedIndexArray->ReleaseAllIndexes();
@@ -174,15 +174,16 @@ HRESULT SVDataManager::CreateManagedIndexArray (BSTR  aIndexArrayName, long  alI
 						if (m_FirstUnusedIndex == -1)
 						{
 							//------ There are no unused indexes. ---------------------------------------
-							*pIndexArrayHandle = static_cast< long >( svmManagedIndexArrayList.Add( pNewManagedIndexArray ) );
+							m_ManagedIndexArrayVector.push_back(pNewManagedIndexArray);
+							*pIndexArrayHandle = static_cast<LONGLONG> (m_ManagedIndexArrayVector.size()-1);
 						}
 						else
 						{
 							LONGLONG  temp;
 			
-							temp = reinterpret_cast<LONGLONG> (svmManagedIndexArrayList [m_FirstUnusedIndex]);
+							temp = reinterpret_cast<LONGLONG> (m_ManagedIndexArrayVector [m_FirstUnusedIndex]);
 			
-							svmManagedIndexArrayList [m_FirstUnusedIndex] = pNewManagedIndexArray;
+							m_ManagedIndexArrayVector [m_FirstUnusedIndex] = pNewManagedIndexArray;
 			
 							*pIndexArrayHandle = m_FirstUnusedIndex;
 							m_FirstUnusedIndex = temp;
@@ -258,7 +259,7 @@ HRESULT SVDataManager::GetNextAvailableBufferIndex( LONGLONG alIndexArrayHandle,
 		if( S_OK == Result )
 		{
 
-			pManagedIndexArray = svmManagedIndexArrayList [alIndexArrayHandle];
+			pManagedIndexArray = m_ManagedIndexArrayVector [alIndexArrayHandle];
 			if( nullptr != pManagedIndexArray )
 			{
 				Result = pManagedIndexArray->GetNextIndex( lAvailableBufferIndex, lTransactionId, p_WaitForLock );
@@ -333,7 +334,7 @@ HRESULT SVDataManager::LockBufferIndex (LONGLONG IndexArrayHandle, long    alBuf
 		
 	if( S_OK == Result )
 	{
-		SVManagedIndexArray* pManagedIndexArray = svmManagedIndexArrayList[ IndexArrayHandle ];
+		SVManagedIndexArray* pManagedIndexArray = m_ManagedIndexArrayVector[ IndexArrayHandle ];
 		
 		Result = pManagedIndexArray->AddReference( alBufferIndex, alTransactionId, aLockType );
 	}
@@ -357,7 +358,7 @@ HRESULT SVDataManager::LockBufferIndexNoLock( LONGLONG IndexArrayHandle, long al
 		
 	if( S_OK == Result )
 	{
-		SVManagedIndexArray* pManagedIndexArray = svmManagedIndexArrayList[ IndexArrayHandle ];
+		SVManagedIndexArray* pManagedIndexArray = m_ManagedIndexArrayVector[ IndexArrayHandle ];
 		
 		Result = pManagedIndexArray->AddReferenceNoLock( alBufferIndex, alTransactionId, aLockType );
 	}
@@ -381,7 +382,7 @@ HRESULT SVDataManager::ReleaseBufferIndex( LONGLONG IndexArrayHandle, long alBuf
 
 	if( S_OK == Result )
 	{
-		SVManagedIndexArray* pManagedIndexArray = svmManagedIndexArrayList[ IndexArrayHandle ];
+		SVManagedIndexArray* pManagedIndexArray = m_ManagedIndexArrayVector[ IndexArrayHandle ];
 
 		Result = pManagedIndexArray->ReleaseReference( alBufferIndex, alTransactionId, aLockType );
 	}
@@ -405,7 +406,7 @@ HRESULT SVDataManager::ReleaseBufferIndexNoLock( LONGLONG IndexArrayHandle, long
 
 	if( S_OK == Result )
 	{
-		SVManagedIndexArray* pManagedIndexArray = svmManagedIndexArrayList[ IndexArrayHandle ];
+		SVManagedIndexArray* pManagedIndexArray = m_ManagedIndexArrayVector[ IndexArrayHandle ];
 
 		Result = pManagedIndexArray->ReleaseReferenceNoLock( alBufferIndex, alTransactionId, aLockType );
 	}
@@ -422,7 +423,7 @@ HRESULT SVDataManager::DestroyIndexArray( LONGLONG IndexArrayHandle)
 	Result = ValidateIndexArrayHandle (IndexArrayHandle);
 	if( S_OK == Result )
 	{
-		pManagedIndexArray = svmManagedIndexArrayList [IndexArrayHandle];
+		pManagedIndexArray = m_ManagedIndexArrayVector [IndexArrayHandle];
 		
 		if( pManagedIndexArray->GetAvailableIndexCount() == pManagedIndexArray->GetSize() )
 		{
@@ -437,10 +438,10 @@ HRESULT SVDataManager::DestroyIndexArray( LONGLONG IndexArrayHandle)
 				{
 					//------ There are other unused indexes. 
 					//------ Please newly destroyed index at the end of the unused list. --------
-					svmManagedIndexArrayList [m_LastUnusedIndex] = reinterpret_cast<SVManagedIndexArray*> (IndexArrayHandle);
+					m_ManagedIndexArrayVector [m_LastUnusedIndex] = reinterpret_cast<SVManagedIndexArray*> (IndexArrayHandle);
 				}
 		
-				svmManagedIndexArrayList [IndexArrayHandle] = reinterpret_cast<SVManagedIndexArray*> (-1);
+				m_ManagedIndexArrayVector [IndexArrayHandle] = reinterpret_cast<SVManagedIndexArray*> (-1);
 				m_LastUnusedIndex = IndexArrayHandle;
 		
 				//--- The following delete, deletes the ManagedIndexArrayLock, so there is no
@@ -475,11 +476,11 @@ HRESULT SVDataManager::ValidateIndexArrayHandle( LONGLONG IndexArrayHandle ) con
 	
 	if( 0 <= IndexArrayHandle )
 	{
-		long lNbrOfElements = static_cast< long >( svmManagedIndexArrayList.GetSize() );
+		long lNbrOfElements = static_cast<long> (m_ManagedIndexArrayVector.size());
 
 		if (IndexArrayHandle < lNbrOfElements)
 		{
-			if ( nullptr == svmManagedIndexArrayList [IndexArrayHandle] )
+			if ( nullptr == m_ManagedIndexArrayVector [IndexArrayHandle] )
 			{
 				//------ This is a bit of an assumtion. If the handle is actually within 
 				//------ acceptable boundaries, but the contents of the contained pointer are
@@ -523,7 +524,7 @@ HRESULT SVDataManager::ValidateBufferIndex( LONGLONG IndexArrayHandle, long alBu
 {
 	HRESULT Result = S_OK;
 
-	SVManagedIndexArray* pManagedIndexArray = svmManagedIndexArrayList[ IndexArrayHandle ];
+	SVManagedIndexArray* pManagedIndexArray = m_ManagedIndexArrayVector[ IndexArrayHandle ];
 	if( nullptr != pManagedIndexArray )
 	{
 		if( -1 == alTransactionId )
@@ -547,7 +548,7 @@ HRESULT SVDataManager::ValidateBufferIndexNoLock( LONGLONG IndexArrayHandle, lon
 {
 	HRESULT Result = S_OK;
 	
-	SVManagedIndexArray* pManagedIndexArray = svmManagedIndexArrayList[ IndexArrayHandle ];
+	SVManagedIndexArray* pManagedIndexArray = m_ManagedIndexArrayVector[ IndexArrayHandle ];
 	
 	if( nullptr != pManagedIndexArray )
 	{
@@ -573,7 +574,7 @@ HRESULT	SVDataManager::GetNbrOfAvailableIndexes (LONGLONG IndexArrayHandle, long
 		
 		if( S_OK == Result )
 		{
-			SVManagedIndexArray* pManagedIndexArray = svmManagedIndexArrayList[ IndexArrayHandle ];
+			SVManagedIndexArray* pManagedIndexArray = m_ManagedIndexArrayVector[ IndexArrayHandle ];
 			if( nullptr != pManagedIndexArray )
 			{
 				*pNbrOfAvailableIndexes = static_cast<long> (pManagedIndexArray->GetAvailableIndexCount());
@@ -604,7 +605,7 @@ void SVDataManager::Dump (LONGLONG IndexArrayHandle, LPCSTR szSource ) const
 	Result = ValidateIndexArrayHandle( IndexArrayHandle);
 	if( S_OK == Result )
 	{
-		pManagedIndexArray = svmManagedIndexArrayList [IndexArrayHandle];
+		pManagedIndexArray = m_ManagedIndexArrayVector [IndexArrayHandle];
 		if(nullptr != pManagedIndexArray )
 		{
 			pManagedIndexArray->Dump( szSource );
@@ -616,7 +617,7 @@ void SVDataManager::Dump (LONGLONG IndexArrayHandle, LPCSTR szSource ) const
 // This function dumps all data associated with this handle to a file.
 void SVDataManager::Dump_All ()
 {
-	for( long alIndexArrayHandle = 0 ; alIndexArrayHandle < svmManagedIndexArrayList.GetSize() ; alIndexArrayHandle++ )
+	for( long alIndexArrayHandle = 0 ; alIndexArrayHandle < m_ManagedIndexArrayVector.size() ; alIndexArrayHandle++ )
 	{
 		
 		HRESULT Result = ValidateIndexArrayHandle (alIndexArrayHandle);
@@ -626,7 +627,7 @@ void SVDataManager::Dump_All ()
 			continue;
 		}
 		
-		SVManagedIndexArray* pManagedIndexArray = svmManagedIndexArrayList [alIndexArrayHandle];
+		SVManagedIndexArray* pManagedIndexArray = m_ManagedIndexArrayVector [alIndexArrayHandle];
 		
 		if( nullptr == pManagedIndexArray )
 		{
@@ -646,7 +647,7 @@ long SVDataManager::GetIndexLockCountByType( LONGLONG IndexArrayHandle, long Ind
 	{
 		if( S_OK == ValidateLockType( LockType ) )
 		{
-			SVManagedIndexArray* pManagedIndexArray = svmManagedIndexArrayList[ IndexArrayHandle ];
+			SVManagedIndexArray* pManagedIndexArray = m_ManagedIndexArrayVector[ IndexArrayHandle ];
 			
 			if( nullptr != pManagedIndexArray && 0 <= Index && Index < static_cast< long >( pManagedIndexArray->GetSize() ) )
 			{
@@ -666,7 +667,7 @@ long SVDataManager::GetLockCountByType( LONGLONG IndexArrayHandle, SVDataManager
 	{
 		if( S_OK == ValidateLockType( LockType ) )
 		{
-			SVManagedIndexArray* pManagedIndexArray = svmManagedIndexArrayList[ IndexArrayHandle ];
+			SVManagedIndexArray* pManagedIndexArray = m_ManagedIndexArrayVector[ IndexArrayHandle ];
 			
 			if( nullptr != pManagedIndexArray )
 			{

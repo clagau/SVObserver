@@ -54,7 +54,7 @@ void SVLoadImageToolClass::init()
 	m_currentPathName.SetDefaultValue( _T( "" ), true );
 	m_continuousReload.SetDefaultValue( false, true );
 
-	m_fileImage.InitializeImage( SvOi::SVImageTypeEnum::SVImageTypePhysical );
+	m_fileImage.InitializeImage( SvDef::SVImageTypeEnum::SVImageTypePhysical );
 
 	// Default taskObjectList items:
 
@@ -82,18 +82,18 @@ bool SVLoadImageToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreat
 
 		// Setup...
 		l_svImageInfo.SetOwner( GetUniqueObjectID() );
-		l_svImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyFormat, SVImageFormatMono8 );
-		l_svImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
-		l_svImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
-		l_svImageInfo.SetImageProperty(SvOi::SVImagePropertyEnum::SVImagePropertyPixelDepth,8);
+		l_svImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SVImageFormatMono8 );
+		l_svImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
+		l_svImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
+		l_svImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth,8);
 
 		bOk = ( S_OK == m_fileImage.UpdateImage( l_svImageInfo ) );
 	}
 
 	// Set / Reset Printable Flags
-	m_fileImage.SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute );
-	m_currentPathName.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_continuousReload.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_fileImage.SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute );
+	m_currentPathName.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_continuousReload.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 
 	if (bOk)
 	{

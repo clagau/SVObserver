@@ -114,14 +114,14 @@ bool SVLUTOperatorClass::CreateObject( const SVObjectLevelCreateStruct& rCreateS
 	bool bOk = SVUnaryImageOperatorClass::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable Flag
-	m_lutVector.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_lutVector.SetObjectAttributesAllowed( SvOi::SV_VIEWABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_lutVector.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_lutVector.SetObjectAttributesAllowed( SvDef::SV_VIEWABLE, SvOi::SetAttributeType::RemoveAttribute );
 	
-	m_useLUT.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_continuousRecalcLUT.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_lutMode.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_upperClip.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_lowerClip.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_useLUT.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_continuousRecalcLUT.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_lutMode.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_upperClip.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_lowerClip.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 
 	m_isCreated = bOk;
 

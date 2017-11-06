@@ -141,17 +141,12 @@ public:
 		long lDefaultErrorCorrection;
 		int iIndex;
 	};
+	typedef std::vector<SVBarCodeInfoStruct> SVBarCodeInfoVector;
 
+	const SVBarCodeInfoStruct* GetInfoByIndex(int iIndex);
+	const SVBarCodeInfoStruct* GetInfoByMilID(long lMilID);
 
-	class SVBarCodeInfoArray : public SVVector< SVBarCodeInfoStruct >
-	{
-	public:
-		virtual ~SVBarCodeInfoArray();
-		const SVBarCodeInfoStruct* GetInfoByIndex(int iIndex);
-		const SVBarCodeInfoStruct* GetInfoByMilID(long lMilID);
-	};
-
-	SVBarCodeInfoArray m_aBarCodeInfo;
+	SVBarCodeInfoVector m_aBarCodeInfo;
 	long m_lInitialBarCodeType;
 	int m_lStringFormat;
 	CComboBox m_StringFormatCombo;

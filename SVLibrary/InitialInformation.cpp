@@ -25,8 +25,8 @@ namespace SvLib
 #pragma region Constructor
 
 	InitialInformation::InitialInformation() : m_gigePacketSize(0)
-		, m_NAKMode(SvOi::NakGeneration::Bursts)
-		, m_NAKParameter(SvOi::DefaultNakParameter)
+		, m_NAKMode(SvDef::NakGeneration::Bursts)
+		, m_NAKParameter(SvDef::DefaultNakParameter)
 	, m_forcedImageUpdateTimeInSeconds(0) // zero means no forced image update
 	{}
 #pragma endregion Constructor

@@ -6,7 +6,7 @@
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
-#include "ObjectInterfaces\SVObjectTypeInfoStruct.h"
+#include "Definitions/SVObjectTypeInfoStruct.h"
 namespace SvSml
 {
 	const DWORD MonitorListCpy::ImageBufferHeaderSize = 1024; 

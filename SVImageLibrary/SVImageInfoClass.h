@@ -41,9 +41,9 @@ public:
 	SVExtentTranslationEnum GetTranslation();
 	HRESULT SetTranslation( SVExtentTranslationEnum p_eTranslation );
 
-	HRESULT GetImageProperty( SvOi::SVImagePropertyEnum p_eDefinition, int &p_riValue ) const;
-	HRESULT GetImageProperty( SvOi::SVImagePropertyEnum p_eDefinition, long &p_rlValue ) const;
-	HRESULT SetImageProperty( SvOi::SVImagePropertyEnum p_eDefinition, long p_lValue );
+	HRESULT GetImageProperty( SvDef::SVImagePropertyEnum p_eDefinition, int &p_riValue ) const;
+	HRESULT GetImageProperty( SvDef::SVImagePropertyEnum p_eDefinition, long &p_rlValue ) const;
+	HRESULT SetImageProperty( SvDef::SVImagePropertyEnum p_eDefinition, long p_lValue );
 
 	HRESULT GetExtentProperty( SVExtentPropertyEnum p_eProperty, long &p_rlValue ) const;
 	HRESULT GetExtentProperty( SVExtentPropertyEnum p_eProperty, double &p_rdValue ) const;

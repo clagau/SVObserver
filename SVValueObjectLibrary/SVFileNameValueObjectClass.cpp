@@ -18,7 +18,7 @@
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "SVSystemLibrary/SVFileNameManagerClass.h"
 #include "SVUtilityLibrary/SVStringConversions.h"
-#include "ObjectInterfaces\TextDefineSvOi.h"
+#include "Definitions/TextDefineSVDef.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -86,7 +86,7 @@ HRESULT SVFileNameValueObjectClass::SetObjectValue(SVObjectAttributeClass* pData
 
 		SetDefaultValue(GetDefaultValue().c_str(), false);
 	}
-	else if (bOk = pDataObject->GetAttributeData(SvOi::cBucketTag, BucketArray, DefaultValue()))
+	else if (bOk = pDataObject->GetAttributeData(SvDef::cBucketTag, BucketArray, DefaultValue()))
 	{
 		for (size_t i = 0; i < BucketArray.size(); i++)
 		{
@@ -130,7 +130,7 @@ HRESULT SVFileNameValueObjectClass::SetObjectValue(SVObjectAttributeClass* pData
 		SetValue(Value);
 	}
 	// new-style: store all array elements:
-	else if ( bOk = pDataObject->GetArrayData( SvOi::cArrayTag, ReadValueArray, DefaultValue() ) )
+	else if ( bOk = pDataObject->GetArrayData( SvDef::cArrayTag, ReadValueArray, DefaultValue() ) )
 	{
 		for (size_t i = 0; i < ReadValueArray.size(); i++)
 		{
@@ -297,7 +297,7 @@ void SVFileNameValueObjectClass::LocalInitialize()
 {
 	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVStringValueObjectType;
 	
-	SetObjectAttributesAllowed( SvOi::SV_VIEWABLE | SvOi::SV_PUBLISHABLE | SvOi::SV_ARCHIVABLE | SvOi::SV_EMBEDABLE | SvOi::SV_PRINTABLE | SvOi::SV_DD_VALUE, SvOi::SetAttributeType::OverwriteAttribute );
+	SetObjectAttributesAllowed( SvDef::SV_VIEWABLE | SvDef::SV_PUBLISHABLE | SvDef::SV_ARCHIVABLE | SvDef::SV_EMBEDABLE | SvDef::SV_PRINTABLE | SvDef::SV_DD_VALUE, SvOi::SetAttributeType::OverwriteAttribute );
 
 	SetTypeName( _T("FileName") );
 	

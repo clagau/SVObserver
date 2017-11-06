@@ -203,7 +203,7 @@ void Custom2Filter::init()
 	m_AbsoluteValue.SetDefaultValue(BOOL(true));
 	m_NormalizationFactor.SetDefaultValue( SvOi::ICustom2Filter::StandardKernelSize*SvOi::ICustom2Filter::StandardKernelSize );
 
-	const UINT cAttributes = SvOi::SV_PRINTABLE | SvOi::SV_SETABLE_ONLINE | SvOi::SV_REMOTELY_SETABLE;
+	const UINT cAttributes = SvDef::SV_PRINTABLE | SvDef::SV_SETABLE_ONLINE | SvDef::SV_REMOTELY_SETABLE;
 	m_KernelArray.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 
 	m_KernelWidth.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );

@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <boost/assign/list_of.hpp>
-#include "ObjectInterfaces/ObjectDefines.h"
+#include "Definitions/ObjectDefines.h"
 #include "SVObjectLibrary/GlobalConst.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "SVContainerLibrary/ObjectSelectorItem.h"
@@ -25,7 +25,7 @@
 #include "Scintilla.h"
 #include "SciLexer.h"
 #include "TextDefinesSvOg.h"
-#include "ObjectInterfaces/TextDefineSvOi.h"
+#include "Definitions/TextDefineSVDef.h"
 #include "TextDefinesSvOg.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #pragma endregion Includes

@@ -263,23 +263,24 @@
 			TableAnalyzerExcludeType				= 0x00004011,
 			TableAnalyzerLimitType					= 0x00004012,
 
-			//ValueObject SubTypes
-			SVDWordValueObjectType = 0x00005000,
-			SVLongValueObjectType = 0x00005001,
-			SVDoubleValueObjectType = 0x00005002,
-			SVBoolValueObjectType = 0x00005003,
-			SVPointValueObjectType = 0x00005004,
-			SVByteValueObjectType = 0x00005005,
-			SVStringValueObjectType = 0x00005006,
-			SVEnumValueObjectType = 0x00005007,
-			SVDPointValueObjectType = 0x00005008,
-			SVInt64ValueObjectType = 0x00005009,
-			SVCharValueObjectType = 0x0000500A,
-			SVVariantValueObjectType = 0x0000500B,
-			DoubleSortValueObjectType = 0x0000500C,
 
-			// unknown
-			SVRegressionTestModeObjectType				= 0x00011010,
+			//ValueObject SubTypes
+			SVDWordValueObjectType					= 0x00005000,
+			SVLongValueObjectType					= 0x00005001,
+			SVDoubleValueObjectType					= 0x00005002,
+			SVBoolValueObjectType					= 0x00005003,
+			SVPointValueObjectType					= 0x00005004,
+			SVByteValueObjectType					= 0x00005005,
+			SVStringValueObjectType					= 0x00005006,
+			SVEnumValueObjectType					= 0x00005007,
+			SVDPointValueObjectType					= 0x00005008,
+			SVInt64ValueObjectType					= 0x00005009,
+			SVCharValueObjectType					= 0x0000500A,
+			SVVariantValueObjectType				= 0x0000500B,
+			DoubleSortValueObjectType				= 0x0000500C,
+				
+				// unknown
+			SVRegressionTestModeObjectType			= 0x00011010,
 		};
 
 		struct SVObjectTypeInfoStruct

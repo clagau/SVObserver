@@ -14,7 +14,7 @@
 #pragma region Includes
 #include "SVOCore/SVTaskObject.h"
 #include "SVOCore/SVImageClass.h"
-#include "ObjectInterfaces\ImageArthimeticOperators.h"
+#include "Definitions/ImageOperatorEnums.h"
 #pragma endregion Includes
 
 class SVToolClass;

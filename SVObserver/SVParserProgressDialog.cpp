@@ -14,7 +14,7 @@
 #include "SVInspectionProcess.h"
 #include "SVObjectScriptParser.h"
 #include "SVParserProgressStruct.h"
-#include "ObjectInterfaces/SVUserMessage.h"
+#include "Definitions/SVUserMessage.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

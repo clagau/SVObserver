@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "SVIODigitalArrayClass.h"
+#include "SVIODigitalStruct.h"
 #include "SVIODigitalLoadLibraryClass.h"
 
 class SVIOConfigurationInterfaceClass  
@@ -85,8 +85,8 @@ private:
 	bool m_pbSVIMStrobeRising[4];
 	bool m_abSVIMStrobeStartFrame[4];
 
-	SVIODigitalArrayClass m_svDigitalInputs;
-	SVIODigitalArrayClass m_svDigitalOutputs;
+	SVIODigitalStructVector m_DigitalInputs;
+	SVIODigitalStructVector m_DigitalOutputs;
 
 };
 

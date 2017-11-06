@@ -15,7 +15,7 @@
 #include "SVMatroxLibrary\SVMatroxEnums.h"
 #include "SVWatershedFilterDlg.h"
 #include "SVObjectLibrary\SVClsids.h"
-#include "ObjectInterfaces\TextDefineSvOi.h"
+#include "Definitions/TextDefineSVDef.h"
 #pragma region Includes
 
 #ifdef _DEBUG
@@ -155,7 +155,7 @@ namespace SvOg
 		
 		const SvUl::InputNameGuidPairList& connectedImageList = GetConnectedImageList(m_filterID);
 		SVString currentMarkerImageName; 
-		if (0 < connectedImageList.size() && connectedImageList.begin()->first == SvOi::WatershedMarkerImageConnectionName)
+		if (0 < connectedImageList.size() && connectedImageList.begin()->first == SvDef::WatershedMarkerImageConnectionName)
 		{
 			currentMarkerImageName = connectedImageList.begin()->second.first;
 		}
@@ -204,7 +204,7 @@ namespace SvOg
 
 		if( !currentImageName.IsEmpty() )
 		{
-			ConnectToImage(SvOi::WatershedMarkerImageConnectionName, SVString(currentImageName), m_filterID);
+			ConnectToImage(SvDef::WatershedMarkerImageConnectionName, SVString(currentImageName), m_filterID);
 		}
 	}
 }  //namespace SvOg

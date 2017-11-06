@@ -17,7 +17,7 @@
 #include "SVObjectLibrary/SVClsIds.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "ObjectInterfaces/SVObjectTypeInfoStruct.h"
+#include "Definitions/SVObjectTypeInfoStruct.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "ObjectInterfaces/IInspectionProcess.h"
@@ -300,7 +300,7 @@ HRESULT SVTaskObjectListClass::RemoveChild( SVTaskObjectClass* pChildObject )
 {
 	HRESULT Result( S_OK );
 
-	if ( !DestroyChildObject(pChildObject, SvOi::SVMFSetDefaultInputs) )
+	if ( !DestroyChildObject(pChildObject, SvDef::SVMFSetDefaultInputs) )
 	{
 		Result = S_FALSE;
 	}
@@ -587,12 +587,12 @@ bool SVTaskObjectListClass::DestroyFriendObject(SvOi::IObjectClass& rObject, DWO
 	SvOi::IInspectionProcess* pInspection = GetInspectionInterface();
 	if( nullptr != pInspection )
 	{
-		if( SvOi::SVMFSetDefaultInputs == ( context & SvOi::SVMFSetDefaultInputs ) )
+		if( SvDef::SVMFSetDefaultInputs == ( context & SvDef::SVMFSetDefaultInputs ) )
 		{
 			pInspection->SetDefaultInputs();
 		}
 
-		if( SvOi::SVMFResetInspection == ( context & SvOi::SVMFResetInspection ) )
+		if( SvDef::SVMFResetInspection == ( context & SvDef::SVMFResetInspection ) )
 		{
 			GetInspection()->resetAllObjects();
 		}
@@ -1096,12 +1096,12 @@ void SVTaskObjectListClass::DestroyTaskObject(SVTaskObjectClass& rTaskObject, DW
 	SvOi::IInspectionProcess* pInspection = GetInspectionInterface();
 	if( nullptr != pInspection )
 	{
-		if( SvOi::SVMFSetDefaultInputs == ( context & SvOi::SVMFSetDefaultInputs ) )
+		if( SvDef::SVMFSetDefaultInputs == ( context & SvDef::SVMFSetDefaultInputs ) )
 		{
 			pInspection->SetDefaultInputs();
 		}
 
-		if( SvOi::SVMFResetInspection == ( context & SvOi::SVMFResetInspection ) )
+		if( SvDef::SVMFResetInspection == ( context & SvDef::SVMFResetInspection ) )
 		{
 			GetInspection()->resetAllObjects();
 		}

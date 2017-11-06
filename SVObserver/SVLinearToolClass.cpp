@@ -18,7 +18,7 @@
 #include "SVOCore/SVThresholdClass.h"
 #include "SVUserMaskOperatorClass.h"
 #include "ToolSizeAdjustTask.h"
-#include "ObjectInterfaces/GlobalConst.h"
+#include "Definitions/GlobalConst.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -62,14 +62,14 @@ bool SVLinearToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateSt
 			bOk &= S_OK == m_svToolExtent.SetTranslation( SVExtentTranslationProfileShift );
 		}
 	}
-	UINT Attributes = SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE | SvOi::SV_PRINTABLE;
+	UINT Attributes = SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE | SvDef::SV_PRINTABLE;
 	m_svRotationAngle.SetObjectAttributesAllowed( Attributes, SvOi::SetAttributeType::AddAttribute );
 	m_svRotationPointX.SetObjectAttributesAllowed( Attributes, SvOi::SetAttributeType::AddAttribute );
 	m_svRotationPointY.SetObjectAttributesAllowed( Attributes, SvOi::SetAttributeType::AddAttribute );
 	m_voProfileOrientation.SetObjectAttributesAllowed( Attributes, SvOi::SetAttributeType::AddAttribute );
 	m_voUseProfileRotation.SetObjectAttributesAllowed( Attributes, SvOi::SetAttributeType::AddAttribute );
 
-	Attributes = SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE;
+	Attributes = SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE;
 	m_SourceImageNames.setStatic( true );
 	m_SourceImageNames.setSaveValueFlag(false);
 	m_SourceImageNames.SetObjectAttributesAllowed( Attributes, SvOi::SetAttributeType::RemoveAttribute );
@@ -153,12 +153,12 @@ bool SVLinearToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 
 			if ( S_OK == l_svExtents.GetFigure( l_svFigure ) )
 			{
-				if( m_ExtentLeft.ObjectAttributesAllowed() != SvOi::SV_NO_ATTRIBUTES )
+				if( m_ExtentLeft.ObjectAttributesAllowed() != SvDef::SV_NO_ATTRIBUTES )
 				{
 					m_ExtentLeft.SetValue( l_svFigure.m_svTopLeft.m_dPositionX );
 				}
 				
-				if( m_ExtentTop.ObjectAttributesAllowed() != SvOi::SV_NO_ATTRIBUTES )
+				if( m_ExtentTop.ObjectAttributesAllowed() != SvDef::SV_NO_ATTRIBUTES )
 				{
 					m_ExtentTop.SetValue( l_svFigure.m_svTopLeft.m_dPositionY );
 				}
@@ -290,13 +290,13 @@ void SVLinearToolClass::init()
 
 	// Set Embedded defaults
 	m_svRotationAngle.SetDefaultValue( 0.0, true );
-	m_svRotationPointX.SetDefaultValue( SvOi::cDefaultWindowToolLeft, true);
-	m_svRotationPointY.SetDefaultValue( ( SvOi::cDefaultWindowToolTop + ( SvOi::cDefaultWindowToolHeight / 2 ) ), true);
+	m_svRotationPointX.SetDefaultValue( SvDef::cDefaultWindowToolLeft, true);
+	m_svRotationPointY.SetDefaultValue( ( SvDef::cDefaultWindowToolTop + ( SvDef::cDefaultWindowToolHeight / 2 ) ), true);
 	m_voProfileOrientation.SetEnumTypes(g_strOrientationEnums);
 	m_voProfileOrientation.SetDefaultValue( "Horizontal", true);
 	m_voUseProfileRotation.SetDefaultValue( BOOL(true), true);
 
-	m_svToolExtent.SetImageType( SvOi::SVImageTypeEnum::SVImageTypePhysical );
+	m_svToolExtent.SetImageType( SvDef::SVImageTypeEnum::SVImageTypePhysical );
 	m_svToolExtent.SetTranslation( SVExtentTranslationProfile );
 	m_svToolExtent.SetExtentObject( SVExtentPropertyPositionPointX, &m_svRotationPointX );
 	m_svToolExtent.SetExtentObject( SVExtentPropertyPositionPointY, &m_svRotationPointY );

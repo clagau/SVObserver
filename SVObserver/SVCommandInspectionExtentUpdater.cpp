@@ -117,7 +117,7 @@ HRESULT SVCommandInspectionExtentUpdater::Execute()
 			if(ResetModeAuto)
 			{
 				/// correct tool size when it does not fit to the parent image 
-				pInspection->AddResetState( SvOi::SVResetAutoMoveAndResize );
+				pInspection->AddResetState( SvDef::SVResetAutoMoveAndResize );
 			}
 			
 			SVToolClass* pToolRun(nullptr); 
@@ -166,7 +166,7 @@ HRESULT SVCommandInspectionExtentUpdater::Execute()
 
 			if(ResetModeAuto)
 			{
-				pInspection->RemoveResetState(SvOi::SVResetAutoMoveAndResize );
+				pInspection->RemoveResetState(SvDef::SVResetAutoMoveAndResize );
 			}
 			
 		}

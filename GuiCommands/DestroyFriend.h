@@ -52,13 +52,13 @@ namespace SvCmd
 				switch(m_flag)
 				{
 				case Flag_SetDefaultInputs:
-					flag = SvOi::SVMFSetDefaultInputs;
+					flag = SvDef::SVMFSetDefaultInputs;
 					break;
 				case Flag_ResetInspection:
-					flag = SvOi::SVMFResetInspection;
+					flag = SvDef::SVMFResetInspection;
 					break;
 				case Flag_SetDefaultInputs_And_ResetInspection:
-					flag = SvOi::SVMFSetDefaultInputs | SvOi::SVMFResetInspection;
+					flag = SvDef::SVMFSetDefaultInputs | SvDef::SVMFResetInspection;
 					break;
 				default:
 					flag = 0;

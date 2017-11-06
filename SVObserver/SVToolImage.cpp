@@ -134,15 +134,15 @@ bool SVImageToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStr
 	bool bOk = SVToolClass::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable Flags
-	outputEnableOffsetA.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	outputOffsetAPoint.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	outputEnableOffsetB.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	outputOffsetBPoint.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	outputOperator.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	outputEnableOffsetA.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	outputOffsetAPoint.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	outputEnableOffsetB.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	outputOffsetBPoint.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	outputOperator.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 
 	m_SourceImageNames.setStatic( true );
 	m_SourceImageNames.setSaveValueFlag(false);
-	m_SourceImageNames.SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
+	m_SourceImageNames.SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
 
 	bOk &= S_OK == UpdateTranslation();
 	
@@ -261,19 +261,19 @@ HRESULT SVImageToolClass::UpdateTranslation()
 		GetImageExtent	(toolImageExtents);
 		double	heightScaleFactor = 1.0;
 		
-		if ( l_lValue == SV_IMGOP_DOUBLE_HEIGHT )
+		if ( l_lValue == SvDef::SVImageOperatorDoubleHeight )
 		{
 			l_hrOK = toolImageExtents.SetTranslation (SVExtentTranslationDoubleHeight);
 			heightScaleFactor = 2.0;
 			toolImageExtents.SetExtentProperty (SVExtentPropertyHeightScaleFactor, heightScaleFactor);
 			extentChanged = true;
 		}
-		else if ( l_lValue == SV_IMGOP_FLIP_VERTICAL )
+		else if ( l_lValue == SvDef::SVImageOperatorFlipVertical )
 		{
 			l_hrOK = toolImageExtents.SetTranslation(SVExtentTranslationFlipVertical);
 			extentChanged = true;
 		}
-		else if ( l_lValue == SV_IMGOP_FLIP_HORIZONTAL )
+		else if ( l_lValue == SvDef::SVImageOperatorFlipHorizontal )
 		{
 			l_hrOK = toolImageExtents.SetTranslation(SVExtentTranslationFlipHorizontal);
 			extentChanged = true;

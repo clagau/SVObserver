@@ -7,8 +7,8 @@
 #pragma once
 
 #pragma region Includes
-#include "ObjectInterfaces/SVObjectTypeInfoStruct.h"
-#include "ObjectInterfaces/ObjectDefines.h"
+#include "Definitions/SVObjectTypeInfoStruct.h"
+#include "Definitions/ObjectDefines.h"
 #include "ObjectInterfaces/IObjectClass.h"
 #include "ObjectInterfaces/ISVImage.h"
 #include "ObjectInterfaces/IToolSet.h"
@@ -25,7 +25,7 @@ namespace SvCmd
 
 		bool IsHidden(SvOi::IObjectClass* pObject) const
 		{
-			return (pObject->ObjectAttributesAllowed() & SvOi::SV_HIDDEN) ? true : false;
+			return (pObject->ObjectAttributesAllowed() & SvDef::SV_HIDDEN) ? true : false;
 		}
 
 		bool HasOneBand(SvOi::ISVImage* pImage) const

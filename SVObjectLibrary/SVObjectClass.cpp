@@ -94,10 +94,10 @@ void SVObjectClass::init()
 
 	m_outObjectInfo.m_pObject = this;
 
-	m_ObjectAttributesAllowed = SvOi::SV_NO_ATTRIBUTES; 
+	m_ObjectAttributesAllowed = SvDef::SV_NO_ATTRIBUTES; 
 	m_ObjectAttributesSet.resize( 1 );
-	m_ObjectAttributesSet[0]  = SvOi::SV_NO_ATTRIBUTES;
-	m_DefaultObjectAttributesSet = SvOi::SV_NO_ATTRIBUTES;
+	m_ObjectAttributesSet[0]  = SvDef::SV_NO_ATTRIBUTES;
+	m_DefaultObjectAttributesSet = SvDef::SV_NO_ATTRIBUTES;
 }
 
 /*

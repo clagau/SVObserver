@@ -32,7 +32,7 @@
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVOCore/SVTool.h"
 #include "SVUtilityLibrary/SVString.h"
-#include "ObjectInterfaces/GlobalConst.h"
+#include "Definitions/GlobalConst.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -239,23 +239,23 @@ void SVPatternAnalyzerClass::SetDefaultSearchValues()
 	msv_lpatAdditionalCandidates.SetDefaultValue(SVValueDefault);
 	msv_dpatCandidateSpacingXMin.SetDefaultValue(SVValueDefault);
 	msv_dpatCandidateSpacingYMin.SetDefaultValue(SVValueDefault);
-	m_lpatModelWidth.SetDefaultValue(SvOi::cMinPatternModelNewSize);
-	m_lpatModelHeight.SetDefaultValue(SvOi::cMinPatternModelNewSize);
-	m_dontCareWidth.SetDefaultValue(SvOi::cMinPatternModelNewSize);
-	m_dontCareHeight.SetDefaultValue(SvOi::cMinPatternModelNewSize);
+	m_lpatModelWidth.SetDefaultValue(SvDef::cMinPatternModelNewSize);
+	m_lpatModelHeight.SetDefaultValue(SvDef::cMinPatternModelNewSize);
+	m_dontCareWidth.SetDefaultValue(SvDef::cMinPatternModelNewSize);
+	m_dontCareHeight.SetDefaultValue(SvDef::cMinPatternModelNewSize);
 
 	m_vec2dPatResults.fill(0.0);
 }
 
 bool SVPatternAnalyzerClass::UpdateModelFromInputImage(long posX, long posY, long modelWidth, long modelHeight)
 {
-	if (SvOi::cMinPatternModelNewSize > modelWidth)
+	if (SvDef::cMinPatternModelNewSize > modelWidth)
 	{
-		modelWidth = SvOi::cMinPatternModelNewSize;
+		modelWidth = SvDef::cMinPatternModelNewSize;
 	}
-	if (SvOi::cMinPatternModelNewSize > modelHeight)
+	if (SvDef::cMinPatternModelNewSize > modelHeight)
 	{
-		modelHeight = SvOi::cMinPatternModelNewSize;
+		modelHeight = SvDef::cMinPatternModelNewSize;
 	}
 
 	if ( S_OK == m_lpatModelWidth.SetValue(modelWidth) && S_OK == m_lpatModelHeight.SetValue(modelHeight) )
@@ -288,8 +288,8 @@ bool SVPatternAnalyzerClass::UpdateModelFromInputImage(long posX, long posY)
 		SVImageInfoClass childImageInfo;
 		SVSmartHandlePointer childImageHandle;
 		
-		childImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyPixelDepth, SV8BitUnsigned );
-		childImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
+		childImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, SV8BitUnsigned );
+		childImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
 
 		childImageInfo.SetExtentProperty( SVExtentPropertyPositionPointX, posX );
 		childImageInfo.SetExtentProperty( SVExtentPropertyPositionPointY, posY );
@@ -698,32 +698,32 @@ bool SVPatternAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCrea
 	bool bOk = SVImageAnalyzerClass::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable Flags
-	const UINT cAttributes = SvOi::SV_PRINTABLE | SvOi::SV_REMOTELY_SETABLE;
+	const UINT cAttributes = SvDef::SV_PRINTABLE | SvDef::SV_REMOTELY_SETABLE;
 	msv_dpatAcceptanceThreshold.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	msv_dpatCertaintyThreshold.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	msv_lpatAccuracy.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
-	msv_lpatMaxOccurances.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	msv_bpatSearchAngleMode.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	msv_lpatMaxOccurances.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	msv_bpatSearchAngleMode.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 	msv_lpatSpeed.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 
-	msv_dpatSearchAngle.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	msv_dpatAngleDeltaNeg.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	msv_dpatAngleDeltaPos.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	msv_dpatAngleTolerance.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	msv_dpatAngleAccuracy.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	msv_dpatAngleInterpolation.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	msv_dpatSearchAngle.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	msv_dpatAngleDeltaNeg.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	msv_dpatAngleDeltaPos.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	msv_dpatAngleTolerance.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	msv_dpatAngleAccuracy.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	msv_dpatAngleInterpolation.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 
-	msv_dpatResultMatchScore.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	msv_dpatResultX.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	msv_dpatResultY.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	msv_dpatResultAngle.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	msv_dpatResultMatchScore.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	msv_dpatResultX.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	msv_dpatResultY.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	msv_dpatResultAngle.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	msv_szModelImageFile.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 
-	msv_bpatCircularOverscan.SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
-	msv_bpatCircularOverscan.SetObjectAttributesAllowed( SvOi::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
-	m_bpatDontCare.SetObjectAttributesAllowed(SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute);
-	m_bpatDontCare.SetObjectAttributesAllowed(SvOi::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute);
+	msv_bpatCircularOverscan.SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+	msv_bpatCircularOverscan.SetObjectAttributesAllowed( SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
+	m_bpatDontCare.SetObjectAttributesAllowed(SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute);
+	m_bpatDontCare.SetObjectAttributesAllowed(SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute);
 	m_DontCareImageFile.SetObjectAttributesAllowed(cAttributes, SvOi::SetAttributeType::AddAttribute);
 	
 	msv_dpatPreliminaryAcceptanceThreshold.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
@@ -735,7 +735,7 @@ bool SVPatternAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCrea
 	msv_dpatCandidateSpacingXMin.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	msv_dpatCandidateSpacingYMin.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 
-	msv_lpatNumFoundOccurances.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	msv_lpatNumFoundOccurances.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	// Check if Result is present
 	SvOi::IObjectClass* pResult = GetResultObject();
@@ -847,7 +847,7 @@ bool SVPatternAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(GetInspection());
 
 		// Insures that the Pattern will be reloaded when going online.
-		if ( nullptr != pInspection && pInspection->IsResetStateSet(SvOi::SVResetStateLoadFiles ) )
+		if ( nullptr != pInspection && pInspection->IsResetStateSet(SvDef::SVResetStateLoadFiles ) )
 		{
 			ResetPattern();
 		}
@@ -923,18 +923,18 @@ bool SVPatternAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 
 void SVPatternAnalyzerClass::getSpecialImageList(std::vector<SVString>& rList) const
 {
-	rList.push_back(SvOi::PatternModelImageName);
-	rList.push_back(SvOi::PatternDontCareImageName);
+	rList.push_back(SvDef::PatternModelImageName);
+	rList.push_back(SvDef::PatternDontCareImageName);
 }
 
 bool SVPatternAnalyzerClass::getSpecialImage(const SVString& rName, SvOi::MatroxImageSmartHandlePtr& rImagePtr) const
 {
-	if (SvOi::PatternModelImageName == rName)
+	if (SvDef::PatternModelImageName == rName)
 	{
 		rImagePtr = new MatroxImageData(m_patBufferHandlePtr);
 		return true;
 	}
-	else if (SvOi::PatternDontCareImageName == rName)
+	else if (SvDef::PatternDontCareImageName == rName)
 	{
 		rImagePtr = new MatroxImageData(m_DontCareBufferHandlePtr);
 		return true;
@@ -1548,8 +1548,8 @@ bool SVPatternAnalyzerClass::CreateBuffer(long width, long height, SVSmartHandle
 
 	// Allocate Buffer for storing the Model Image
 	SVImageInfoClass patBuffer;
-	patBuffer.SetImageProperty(SvOi::SVImagePropertyEnum::SVImagePropertyPixelDepth, SV8BitUnsigned);
-	patBuffer.SetImageProperty(SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, 1);
+	patBuffer.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, SV8BitUnsigned);
+	patBuffer.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1);
 
 	patBuffer.SetExtentProperty(SVExtentPropertyPositionPoint, 0);
 	patBuffer.SetExtentProperty(SVExtentPropertyWidth, width);

@@ -254,15 +254,15 @@ bool SVOCVAnalyzeResultClass::CreateObject(	const SVObjectLevelCreateStruct& rCr
 	}
 
 	// Set / Reset Printable Flag
-	UINT cAttibutes = SvOi::SV_PRINTABLE | SvOi::SV_SETABLE_ONLINE | SvOi::SV_REMOTELY_SETABLE;
+	UINT cAttibutes = SvDef::SV_PRINTABLE | SvDef::SV_SETABLE_ONLINE | SvDef::SV_REMOTELY_SETABLE;
 	m_svoMatchString.SetObjectAttributesAllowed( cAttibutes, SvOi::SetAttributeType::AddAttribute );
-	m_svoFoundString.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_lvoMatchLineNumber.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_svoFoundString.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_lvoMatchLineNumber.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 	m_bvoPerformOCR.SetObjectAttributesAllowed( cAttibutes, SvOi::SetAttributeType::OverwriteAttribute );
 
-	m_dvoHighestMatchScore.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_dvoLowestMatchScore.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_dvoAverageMatchScore.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_dvoHighestMatchScore.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_dvoLowestMatchScore.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_dvoAverageMatchScore.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_fnvoFontFileName.SetObjectAttributesAllowed( cAttibutes, SvOi::SetAttributeType::AddAttribute );
 	m_fnvoConstraintsFileName.SetObjectAttributesAllowed( cAttibutes, SvOi::SetAttributeType::AddAttribute );
@@ -287,7 +287,7 @@ void SVOCVAnalyzeResultClass::HideResults()
 		for( long l = 0; l < OCV_MAX_RESULTS; l++ )
 		{
 			SVOCVCharacterResultClass *pResult = (SVOCVCharacterResultClass*) GetAt( l );
-			pResult->SetObjectAttributesAllowed( SvOi::SV_EMBEDABLE, SvOi::SetAttributeType::OverwriteAttribute );
+			pResult->SetObjectAttributesAllowed( SvDef::SV_EMBEDABLE, SvOi::SetAttributeType::OverwriteAttribute );
 
 			if( l < m_lFontStringLength )
 			{

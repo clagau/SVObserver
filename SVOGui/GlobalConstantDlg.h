@@ -10,7 +10,7 @@
 //Moved to precompiled header: #include <comutil.h>
 #include "SVOResource\resource.h"
 #include "SVUtilityLibrary\SVString.h"
-#include "ObjectInterfaces/GlobalConstantData.h"
+#include "Definitions/GlobalConstantData.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -32,7 +32,7 @@ namespace SvOg
 		//! \param rData [in] reference to the Global Constant data
 		//! \param pParent [in] the parent window for the dialog
 		//************************************
-		GlobalConstantDlg( SvOi::GlobalConstantData& rData, CWnd* pParent = nullptr );
+		GlobalConstantDlg( SvDef::GlobalConstantData& rData, CWnd* pParent = nullptr );
 
 		virtual ~GlobalConstantDlg();
 	#pragma endregion Constructor
@@ -54,13 +54,13 @@ namespace SvOg
 		virtual BOOL OnInitDialog() override;
 		virtual void OnOK() override;
 		
-		void DDV_GlobalConstantValue( CDataExchange* pDX, SvOi::GlobalConstantData::DataTypeEnum Type );
+		void DDV_GlobalConstantValue( CDataExchange* pDX, SvDef::GlobalConstantData::DataTypeEnum Type );
 		void DDV_GlobalName( CDataExchange* pDX, const SVString& rName );
 	#pragma region Private Methods
 
 	#pragma region Member variables
 	private:
-		SvOi::GlobalConstantData& m_rData;					//Reference to the global constant data
+		SvDef::GlobalConstantData& m_rData;					//Reference to the global constant data
 		SVStringVector			m_ExistingNames;			//List of existing global constant names
 		SVString				m_Branch;					//The branch in which the global resides 
 		CString					m_Name;						//The global constant name

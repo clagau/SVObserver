@@ -23,42 +23,6 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-SVBarCodeGeneralDialog::SVBarCodeInfoArray::~SVBarCodeInfoArray()
-{
-}
-
-const SVBarCodeGeneralDialog::SVBarCodeInfoStruct* SVBarCodeGeneralDialog::SVBarCodeInfoArray::GetInfoByIndex(int iIndex)
-{
-	SVBarCodeGeneralDialog::SVBarCodeInfoStruct* pInfo = nullptr;
-	for ( int i = 0; i < GetSize(); i++ )
-	{
-		if ( ElementAt(i).iIndex == iIndex )
-		{
-			pInfo = &(ElementAt(i));
-			break;
-		}
-	}
-
-	return pInfo;
-}
-
-const SVBarCodeGeneralDialog::SVBarCodeInfoStruct* SVBarCodeGeneralDialog::SVBarCodeInfoArray::GetInfoByMilID(long lMilID)
-{
-	SVBarCodeGeneralDialog::SVBarCodeInfoStruct* pInfo = nullptr;
-	for ( int i = 0; i < GetSize(); i++ )
-	{
-		if ( ElementAt(i).lMil == lMilID )
-		{
-			pInfo = &(ElementAt(i));
-			break;
-		}
-	}
-	return pInfo;
-}
-
-/////////////////////////////////////////////////////////////////////////////
-// SVBarCodeGeneralDialog dialog
-
 SVBarCodeGeneralDialog::SVBarCodeGeneralDialog(CWnd* pParent /*=nullptr*/)
 	: CPropertyPage(SVBarCodeGeneralDialog::IDD)
 	, m_lStringFormat(0)
@@ -84,23 +48,23 @@ SVBarCodeGeneralDialog::SVBarCodeGeneralDialog(CWnd* pParent /*=nullptr*/)
 	m_lInitialBarCodeType = SVDataMatrix;
 	m_bUnEvenGrid = false;
 
-	m_aBarCodeInfo.Add(SVBarCodeInfoStruct( SVDataMatrix, _T("Data Matrix"), SVValueAny, SVValueAny )); // 2D
-	m_aBarCodeInfo.Add(SVBarCodeInfoStruct( SVEan13, _T("EAN-13"), SVValueEncNum, SVValueEccCheckDigit ));
-	m_aBarCodeInfo.Add(SVBarCodeInfoStruct( SVCode39, _T("3 of 9"), SVValueEncStandard, SVValueEccNone ));
-	m_aBarCodeInfo.Add(SVBarCodeInfoStruct( SVInterleaved25, _T("Interleaved 2 of 5"), SVValueEncNum, SVValueEccNone ));
-	m_aBarCodeInfo.Add(SVBarCodeInfoStruct( SVCode128, _T("Code 128"), SVValueEncAscii, SVValueEccCheckDigit ));
+	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct( SVDataMatrix, _T("Data Matrix"), SVValueAny, SVValueAny )); // 2D
+	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct( SVEan13, _T("EAN-13"), SVValueEncNum, SVValueEccCheckDigit ));
+	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct( SVCode39, _T("3 of 9"), SVValueEncStandard, SVValueEccNone ));
+	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct( SVInterleaved25, _T("Interleaved 2 of 5"), SVValueEncNum, SVValueEccNone ));
+	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct( SVCode128, _T("Code 128"), SVValueEncAscii, SVValueEccCheckDigit ));
 
 	// Added for SVObserver 4.20
-	m_aBarCodeInfo.Add(SVBarCodeInfoStruct( SVPDF417, _T("PDF417"), SVValueEncStandard, SVValueAny ));	// 2D
-	m_aBarCodeInfo.Add(SVBarCodeInfoStruct( SVBC412, _T("BC412"), SVValueEncStandard, SVValueEccNone ));
-	m_aBarCodeInfo.Add(SVBarCodeInfoStruct( SVCodeABar, _T("Codabar"), SVValueEncStandard, SVValueEccNone ));
-	m_aBarCodeInfo.Add(SVBarCodeInfoStruct( SVMaxiCode, _T("Maxicode"), SVValueEncMode2, SVValueEccReedSolomon ));	// 2D
-	m_aBarCodeInfo.Add(SVBarCodeInfoStruct( SVPostNet, _T("Postnet"), SVValueEncStandard, SVValueAny ));
-	m_aBarCodeInfo.Add(SVBarCodeInfoStruct( SVPlanet, _T("Planet"), SVValueEncStandard, SVValueAny ));
-	m_aBarCodeInfo.Add(SVBarCodeInfoStruct( SVUpcA, _T("UPC-A"), SVValueEncStandard, SVValueAny ));
-	m_aBarCodeInfo.Add(SVBarCodeInfoStruct( SVUpcE, _T("UPC-E"), SVValueEncStandard, SVValueAny ));
-	m_aBarCodeInfo.Add(SVBarCodeInfoStruct( SVPharmaCode, _T("Pharmacode"), SVValueEncStandard, SVValueAny ));
-	m_aBarCodeInfo.Add(SVBarCodeInfoStruct( SVRssCode, _T("RSS"), SVValueEncRss14, SVValueAny ));
+	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct( SVPDF417, _T("PDF417"), SVValueEncStandard, SVValueAny ));	// 2D
+	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct( SVBC412, _T("BC412"), SVValueEncStandard, SVValueEccNone ));
+	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct( SVCodeABar, _T("Codabar"), SVValueEncStandard, SVValueEccNone ));
+	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct( SVMaxiCode, _T("Maxicode"), SVValueEncMode2, SVValueEccReedSolomon ));	// 2D
+	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct( SVPostNet, _T("Postnet"), SVValueEncStandard, SVValueAny ));
+	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct( SVPlanet, _T("Planet"), SVValueEncStandard, SVValueAny ));
+	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct( SVUpcA, _T("UPC-A"), SVValueEncStandard, SVValueAny ));
+	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct( SVUpcE, _T("UPC-E"), SVValueEncStandard, SVValueAny ));
+	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct( SVPharmaCode, _T("Pharmacode"), SVValueEncStandard, SVValueAny ));
+	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct( SVRssCode, _T("RSS"), SVValueEncRss14, SVValueAny ));
 }
 
 SVBarCodeGeneralDialog::~SVBarCodeGeneralDialog()
@@ -167,7 +131,7 @@ long SVBarCodeGeneralDialog::GetBarCodeType()
 	
 	if ( m_iBarCodeType != CB_ERR )
 	{
-		const SVBarCodeInfoStruct* pInfo = m_aBarCodeInfo.GetInfoByIndex( m_iBarCodeType );
+		const SVBarCodeInfoStruct* pInfo = GetInfoByIndex( m_iBarCodeType );
 		ASSERT( pInfo );
 		if ( pInfo )
 			lMil = pInfo->lMil;
@@ -187,7 +151,7 @@ long SVBarCodeGeneralDialog::SetBarCodeType(SVLongValueObjectClass& svlBarCodeTy
 	svlBarCodeType.GetValue(lBarCodeType);
 
 	m_lInitialBarCodeType = lBarCodeType;
-	const SVBarCodeInfoStruct* pInfo = m_aBarCodeInfo.GetInfoByMilID( lBarCodeType );
+	const SVBarCodeInfoStruct* pInfo = GetInfoByMilID( lBarCodeType );
 	ASSERT( pInfo );
 	if ( pInfo )
 	{
@@ -453,15 +417,15 @@ BOOL SVBarCodeGeneralDialog::OnInitDialog()
 	m_StringFormatCombo.SetCurSel( m_lStringFormat );
 
 
-	for (int i = 0; i < m_aBarCodeInfo.GetSize(); i++)
+	for (int i = 0; i < m_aBarCodeInfo.size(); i++)
 	{
-		SVBarCodeInfoStruct& rInfo = m_aBarCodeInfo.ElementAt(i);
+		SVBarCodeInfoStruct& rInfo = m_aBarCodeInfo.at(i);
 		int iIndex = m_cbBarcodeType.AddString( rInfo.strName );
 		m_cbBarcodeType.SetItemData( iIndex, static_cast<DWORD_PTR>(rInfo.lMil) );
 		rInfo.iIndex = iIndex;
 	}
 
-	const SVBarCodeInfoStruct* pInfo = m_aBarCodeInfo.GetInfoByMilID( m_lInitialBarCodeType );
+	const SVBarCodeInfoStruct* pInfo = GetInfoByMilID( m_lInitialBarCodeType );
 	ASSERT( pInfo );
 	if ( pInfo )
 	{
@@ -674,7 +638,7 @@ void SVBarCodeGeneralDialog::OnSelChangeBarCodeType()
 	
 	pPropPage = (SVBarCodeProperties*) GetParent();
 	
-	const SVBarCodeInfoStruct* pInfo = m_aBarCodeInfo.GetInfoByMilID( GetBarCodeType() );
+	const SVBarCodeInfoStruct* pInfo = GetInfoByMilID( GetBarCodeType() );
 	ASSERT( pInfo );
 	if ( pInfo )
 	{
@@ -833,4 +797,31 @@ void SVBarCodeGeneralDialog::UpdateUnEvenGrid()
 
 }
 
+const SVBarCodeGeneralDialog::SVBarCodeInfoStruct* SVBarCodeGeneralDialog::GetInfoByIndex(int Index)
+{
+	SVBarCodeInfoStruct* pResult{nullptr};
+	for ( auto& rElement : m_aBarCodeInfo)
+	{
+		if (Index == rElement.iIndex)
+		{
+			pResult = &rElement;
+			break;
+		}
+	}
+	return pResult;
+}
+
+const SVBarCodeGeneralDialog::SVBarCodeInfoStruct* SVBarCodeGeneralDialog::GetInfoByMilID(long MilID)
+{
+	SVBarCodeInfoStruct* pResult{nullptr};
+	for ( auto& rElement : m_aBarCodeInfo)
+	{
+		if (MilID == rElement.lMil)
+		{
+			pResult = &rElement;
+			break;
+		}
+	}
+	return pResult;
+}
 

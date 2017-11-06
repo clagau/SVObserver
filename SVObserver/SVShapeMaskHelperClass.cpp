@@ -95,18 +95,18 @@ bool SVShapeMaskHelperClass::CreateObject( const SVObjectLevelCreateStruct& rCre
 {
 	bool bOk = SVTaskObjectClass::CreateObject(rCreateStructure);
 
-	const UINT cAttributes = SvOi::SV_VIEWABLE | SvOi::SV_PUBLISHABLE | SvOi::SV_ARCHIVABLE | SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE | SvOi::SV_PRINTABLE;
+	const UINT cAttributes = SvDef::SV_VIEWABLE | SvDef::SV_PUBLISHABLE | SvDef::SV_ARCHIVABLE | SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE | SvDef::SV_PRINTABLE;
 	m_Data.bvoAutoResize.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::OverwriteAttribute );
 	m_Data.evoShapeType.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::OverwriteAttribute );
 	m_Data.evoMaskArea.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::OverwriteAttribute );
-	m_Data.lvoCenterX.SetObjectAttributesAllowed( cAttributes | SvOi::SV_SELECTABLE_FOR_EQUATION, SvOi::SetAttributeType::OverwriteAttribute );
-	m_Data.lvoCenterY.SetObjectAttributesAllowed( cAttributes | SvOi::SV_SELECTABLE_FOR_EQUATION, SvOi::SetAttributeType::OverwriteAttribute );
-	m_Data.lvoWidth.SetObjectAttributesAllowed( cAttributes | SvOi::SV_SELECTABLE_FOR_EQUATION, SvOi::SetAttributeType::OverwriteAttribute );
-	m_Data.lvoHeight.SetObjectAttributesAllowed( cAttributes | SvOi::SV_SELECTABLE_FOR_EQUATION, SvOi::SetAttributeType::OverwriteAttribute );
-	m_Data.lvoSideThickness.SetObjectAttributesAllowed( cAttributes | SvOi::SV_SELECTABLE_FOR_EQUATION, SvOi::SetAttributeType::OverwriteAttribute );
-	m_Data.lvoTopBottomThickness.SetObjectAttributesAllowed( cAttributes | SvOi::SV_SELECTABLE_FOR_EQUATION, SvOi::SetAttributeType::OverwriteAttribute );
-	m_Data.lvoOffset.SetObjectAttributesAllowed( cAttributes | SvOi::SV_SELECTABLE_FOR_EQUATION, SvOi::SetAttributeType::OverwriteAttribute );
-	m_Data.evoXYSymmetry.SetObjectAttributesAllowed( cAttributes | SvOi::SV_SELECTABLE_FOR_EQUATION, SvOi::SetAttributeType::OverwriteAttribute );
+	m_Data.lvoCenterX.SetObjectAttributesAllowed( cAttributes | SvDef::SV_SELECTABLE_FOR_EQUATION, SvOi::SetAttributeType::OverwriteAttribute );
+	m_Data.lvoCenterY.SetObjectAttributesAllowed( cAttributes | SvDef::SV_SELECTABLE_FOR_EQUATION, SvOi::SetAttributeType::OverwriteAttribute );
+	m_Data.lvoWidth.SetObjectAttributesAllowed( cAttributes | SvDef::SV_SELECTABLE_FOR_EQUATION, SvOi::SetAttributeType::OverwriteAttribute );
+	m_Data.lvoHeight.SetObjectAttributesAllowed( cAttributes | SvDef::SV_SELECTABLE_FOR_EQUATION, SvOi::SetAttributeType::OverwriteAttribute );
+	m_Data.lvoSideThickness.SetObjectAttributesAllowed( cAttributes | SvDef::SV_SELECTABLE_FOR_EQUATION, SvOi::SetAttributeType::OverwriteAttribute );
+	m_Data.lvoTopBottomThickness.SetObjectAttributesAllowed( cAttributes | SvDef::SV_SELECTABLE_FOR_EQUATION, SvOi::SetAttributeType::OverwriteAttribute );
+	m_Data.lvoOffset.SetObjectAttributesAllowed( cAttributes | SvDef::SV_SELECTABLE_FOR_EQUATION, SvOi::SetAttributeType::OverwriteAttribute );
+	m_Data.evoXYSymmetry.SetObjectAttributesAllowed( cAttributes | SvDef::SV_SELECTABLE_FOR_EQUATION, SvOi::SetAttributeType::OverwriteAttribute );
 	
 
 	// Set / Reset Printable Flag
@@ -155,32 +155,32 @@ bool SVShapeMaskHelperClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 		const bool bIsTrapezoid = eShapeType == SVMaskShapeTypeSymmetricTrapezoid;
 
 		SvOi::SetAttributeType AddRemoveType = bIsShape ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-		m_Data.bvoAutoResize.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, AddRemoveType );
-		m_Data.bvoAutoResize.SetObjectAttributesSet( SvOi::SV_PRINTABLE, AddRemoveType );
-		m_Data.evoShapeType.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, AddRemoveType );
-		m_Data.evoShapeType.SetObjectAttributesSet( SvOi::SV_PRINTABLE, AddRemoveType );
-		m_Data.evoMaskArea.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, AddRemoveType );
-		m_Data.evoMaskArea.SetObjectAttributesSet( SvOi::SV_PRINTABLE, AddRemoveType );
-		m_Data.lvoCenterX.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, AddRemoveType );
-		m_Data.lvoCenterX.SetObjectAttributesSet( SvOi::SV_PRINTABLE, AddRemoveType );
-		m_Data.lvoCenterY.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, AddRemoveType );
-		m_Data.lvoCenterY.SetObjectAttributesSet( SvOi::SV_PRINTABLE, AddRemoveType );
-		m_Data.lvoWidth.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, AddRemoveType );
-		m_Data.lvoWidth.SetObjectAttributesSet( SvOi::SV_PRINTABLE, AddRemoveType );
-		m_Data.lvoHeight.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, AddRemoveType );
-		m_Data.lvoHeight.SetObjectAttributesSet( SvOi::SV_PRINTABLE, AddRemoveType );
+		m_Data.bvoAutoResize.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, AddRemoveType );
+		m_Data.bvoAutoResize.SetObjectAttributesSet( SvDef::SV_PRINTABLE, AddRemoveType );
+		m_Data.evoShapeType.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, AddRemoveType );
+		m_Data.evoShapeType.SetObjectAttributesSet( SvDef::SV_PRINTABLE, AddRemoveType );
+		m_Data.evoMaskArea.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, AddRemoveType );
+		m_Data.evoMaskArea.SetObjectAttributesSet( SvDef::SV_PRINTABLE, AddRemoveType );
+		m_Data.lvoCenterX.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, AddRemoveType );
+		m_Data.lvoCenterX.SetObjectAttributesSet( SvDef::SV_PRINTABLE, AddRemoveType );
+		m_Data.lvoCenterY.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, AddRemoveType );
+		m_Data.lvoCenterY.SetObjectAttributesSet( SvDef::SV_PRINTABLE, AddRemoveType );
+		m_Data.lvoWidth.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, AddRemoveType );
+		m_Data.lvoWidth.SetObjectAttributesSet( SvDef::SV_PRINTABLE, AddRemoveType );
+		m_Data.lvoHeight.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, AddRemoveType );
+		m_Data.lvoHeight.SetObjectAttributesSet( SvDef::SV_PRINTABLE, AddRemoveType );
 
 		AddRemoveType = bIsShape && bIsDoughnut ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-		m_Data.lvoSideThickness.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, AddRemoveType );
-		m_Data.lvoSideThickness.SetObjectAttributesSet( SvOi::SV_PRINTABLE, AddRemoveType );
-		m_Data.lvoTopBottomThickness.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, AddRemoveType );
-		m_Data.lvoTopBottomThickness.SetObjectAttributesSet( SvOi::SV_PRINTABLE, AddRemoveType );
+		m_Data.lvoSideThickness.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, AddRemoveType );
+		m_Data.lvoSideThickness.SetObjectAttributesSet( SvDef::SV_PRINTABLE, AddRemoveType );
+		m_Data.lvoTopBottomThickness.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, AddRemoveType );
+		m_Data.lvoTopBottomThickness.SetObjectAttributesSet( SvDef::SV_PRINTABLE, AddRemoveType );
 
 		AddRemoveType = bIsShape && bIsTrapezoid ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-		m_Data.lvoOffset.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, AddRemoveType );
-		m_Data.lvoOffset.SetObjectAttributesSet( SvOi::SV_PRINTABLE, AddRemoveType );
-		m_Data.evoXYSymmetry.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, AddRemoveType );
-		m_Data.evoXYSymmetry.SetObjectAttributesSet( SvOi::SV_PRINTABLE, AddRemoveType );
+		m_Data.lvoOffset.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, AddRemoveType );
+		m_Data.lvoOffset.SetObjectAttributesSet( SvDef::SV_PRINTABLE, AddRemoveType );
+		m_Data.evoXYSymmetry.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, AddRemoveType );
+		m_Data.evoXYSymmetry.SetObjectAttributesSet( SvDef::SV_PRINTABLE, AddRemoveType );
 	}	
 
 	return __super::ResetObject(pErrorMessages);

@@ -44,7 +44,7 @@ bool SVCylindricalWarpToolClass::CreateObject( const SVObjectLevelCreateStruct& 
 
 	m_SourceImageNames.setStatic( true );
 	m_SourceImageNames.setSaveValueFlag(false);
-	m_SourceImageNames.SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
+	m_SourceImageNames.SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_isCreated = l_bOk;
 
@@ -77,7 +77,7 @@ void SVCylindricalWarpToolClass::LocalInitialize()
 	// Register SourceImageNames Value Object
 	RegisterEmbeddedObject( &m_SourceImageNames, SVSourceImageNamesGuid, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool );
 
-	m_OutputImage.InitializeImage( SvOi::SVImageTypeEnum::SVImageTypePhysical );
+	m_OutputImage.InitializeImage( SvDef::SVImageTypeEnum::SVImageTypePhysical );
 
 	// Set Default Warp Method to Use Horizontal
 	RegisterEmbeddedObject( &m_svWarpType, SVWarpTypeObjectGuid, IDS_OBJECTNAME_WARPTYPE, false, SvOi::SVResetItemTool );
@@ -85,7 +85,7 @@ void SVCylindricalWarpToolClass::LocalInitialize()
 	                                   CYLINDRICAL_WARP_TYPE_VERTICAL, WarpTypeVertical);
 	m_svWarpType.SetEnumTypes( EnumTypes.c_str() );
 	m_svWarpType.SetDefaultValue( CYLINDRICAL_WARP_TYPE_HORIZONTAL, true);
-	m_svWarpType.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_svWarpType.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 
 	// Set Default Interpolation Mode to use Nearest Neighbor
 	SVString Mode;
@@ -119,7 +119,7 @@ void SVCylindricalWarpToolClass::LocalInitialize()
 	// the work is done in SVImageExtentClass.
 	RegisterEmbeddedObject( &m_svWarpAngle, SVWarpAngleObjectGuid, IDS_OBJECTNAME_WARPANGLE, false, SvOi::SVResetItemTool );
 	m_svWarpAngle.SetDefaultValue( 180.0, true);
-	m_svWarpAngle.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_svWarpAngle.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 	m_svToolExtent.SetExtentObject( SVExtentPropertyStartAngle, &m_svWarpAngle );
 
 	// Add Default Inputs and Outputs
@@ -194,7 +194,7 @@ HRESULT SVCylindricalWarpToolClass::LocalCreate()
 
 		m_OutputImage.SetObjectOwner( this );
 
-		l_hrOk = m_OutputImage.UpdateImage( SvOi::SVImageTypeEnum::SVImageTypePhysical, l_InputID, l_ImageInfo );
+		l_hrOk = m_OutputImage.UpdateImage( SvDef::SVImageTypeEnum::SVImageTypePhysical, l_InputID, l_ImageInfo );
 
 		if( S_OK != l_hrOk )
 		{

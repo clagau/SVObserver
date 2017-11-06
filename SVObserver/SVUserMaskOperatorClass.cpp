@@ -129,9 +129,9 @@ bool SVUserMaskOperatorClass::CreateObject( const SVObjectLevelCreateStruct& rCr
 {
 	bool bOk = SVUnaryImageOperatorClass::CreateObject(rCreateStructure);
 
-	const UINT cAttributes = SvOi::SV_PRINTABLE | SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE;
+	const UINT cAttributes = SvDef::SV_PRINTABLE | SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE;
 	// Set / Reset Printable Flag
-	m_Data.bvoActivated.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_Data.bvoActivated.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 	m_Data.evoDrawCriteria.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	m_Data.dwvoMaskType.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	m_Data.evoCurrentMaskOperator.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
@@ -159,21 +159,21 @@ bool SVUserMaskOperatorClass::ResetObject(SvStl::MessageContainerVector *pErrorM
 		Result = pShapeHelper->ResetObject(pErrorMessages) && Result;
 
 		SvOi::SetAttributeType AddRemoveType = (dwMaskType == MASK_TYPE_SHAPE) ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-		pShapeHelper->SetObjectAttributesAllowed( SvOi::SV_PRINTABLE | SvOi::SV_VIEWABLE, AddRemoveType );
-		pShapeHelper->SetObjectAttributesSet( SvOi::SV_PRINTABLE, AddRemoveType );
-		pShapeHelper->SetObjectAttributesAllowed( SvOi::SV_SETABLE_ONLINE | SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
-		pShapeHelper->SetObjectAttributesSet( SvOi::SV_SETABLE_ONLINE | SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+		pShapeHelper->SetObjectAttributesAllowed( SvDef::SV_PRINTABLE | SvDef::SV_VIEWABLE, AddRemoveType );
+		pShapeHelper->SetObjectAttributesSet( SvDef::SV_PRINTABLE, AddRemoveType );
+		pShapeHelper->SetObjectAttributesAllowed( SvDef::SV_SETABLE_ONLINE | SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+		pShapeHelper->SetObjectAttributesSet( SvDef::SV_SETABLE_ONLINE | SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
 		AddRemoveType = (dwMaskType == MASK_TYPE_SHAPE) && bActive ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-		m_Data.evoFillArea.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE | SvOi::SV_VIEWABLE, AddRemoveType  );
-		m_Data.evoFillArea.SetObjectAttributesSet( SvOi::SV_PRINTABLE, AddRemoveType );
-		m_Data.lvoFillColor.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE | SvOi::SV_VIEWABLE, AddRemoveType  );
-		m_Data.lvoFillColor.SetObjectAttributesSet( SvOi::SV_PRINTABLE, AddRemoveType  );
+		m_Data.evoFillArea.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE | SvDef::SV_VIEWABLE, AddRemoveType  );
+		m_Data.evoFillArea.SetObjectAttributesSet( SvDef::SV_PRINTABLE, AddRemoveType );
+		m_Data.lvoFillColor.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE | SvDef::SV_VIEWABLE, AddRemoveType  );
+		m_Data.lvoFillColor.SetObjectAttributesSet( SvDef::SV_PRINTABLE, AddRemoveType  );
 
 		if ( !bActive )
 		{
 			//turn off items.
-			m_Data.evoFillArea.SetObjectAttributesSet( SvOi::SV_PRINTABLE| SvOi::SV_VIEWABLE, SvOi::SetAttributeType::RemoveAttribute );
-			m_Data.lvoFillColor.SetObjectAttributesSet( SvOi::SV_PRINTABLE| SvOi::SV_VIEWABLE, SvOi::SetAttributeType::RemoveAttribute );
+			m_Data.evoFillArea.SetObjectAttributesSet( SvDef::SV_PRINTABLE| SvDef::SV_VIEWABLE, SvOi::SetAttributeType::RemoveAttribute );
+			m_Data.lvoFillColor.SetObjectAttributesSet( SvDef::SV_PRINTABLE| SvDef::SV_VIEWABLE, SvOi::SetAttributeType::RemoveAttribute );
 		}
 	}
 	else
@@ -929,7 +929,7 @@ SvOi::MatroxImageSmartHandlePtr SVUserMaskOperatorClass::GetReferenceImage() con
 	SVImageClass* pImage = const_cast<SVUserMaskOperatorClass*>(this)->getReferenceImage();
 	if (pImage)
 	{
-		if (SvOi::SVImageTypeEnum::SVImageTypePhysical == pImage->GetImageType())
+		if (SvDef::SVImageTypeEnum::SVImageTypePhysical == pImage->GetImageType())
 		{
 			handlePtr = pImage->GetParentImageInterface()->getImageData();
 		}

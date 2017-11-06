@@ -9,7 +9,7 @@
  
 #pragma region Includes
 #include "SVUtilityLibrary/SVString.h"
-#include "ObjectInterfaces/GlobalConstantData.h"
+#include "Definitions/GlobalConstantData.h"
 #include "SVValueObjectLibrary/BasicValueObject.h"
 #pragma endregion Includes
  
@@ -100,13 +100,13 @@ private:
 	//! The method inserts a new Global Constant
 	//! \param rGlobalData <in> reference to the global data structure to insert
 	//************************************
-	void insertGlobalConstant( const SvOi::GlobalConstantData& rGlobalData ) const;
+	void insertGlobalConstant( const SvDef::GlobalConstantData& rGlobalData ) const;
 
 	//************************************
 	//! The method edits an existing Global Constant
 	//! \param rGlobalData <in> reference to the global data structure to edit
 	//************************************
-	void editGlobalConstant( const SvOi::GlobalConstantData& rGlobalData ) const;
+	void editGlobalConstant( const SvDef::GlobalConstantData& rGlobalData ) const;
  
 	//************************************
 	//! This method retrieves the corresponding IO document

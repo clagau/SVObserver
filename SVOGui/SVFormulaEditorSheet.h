@@ -14,7 +14,7 @@
 #pragma region Includes
 #include "SVFormulaEditorPage.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"
-#include "ObjectInterfaces/SVObjectTypeInfoStruct.h"
+#include "Definitions/SVObjectTypeInfoStruct.h"
 #pragma endregion Includes
 
 namespace SvOg

@@ -9,9 +9,9 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "ObjectInterfaces/SVUserMessage.h"
+#include "Definitions/SVUserMessage.h"
 #include "TextDefinesSvO.h"
-#include "ObjectInterfaces/TextDefineSvOi.h"
+#include "Definitions/TextDefineSVDef.h"
 #include "SVObserver.h" //needed only for one call to SVObserverApp::fileSaveAsSVX()
 #include "SVMainFrm.h"
 #include "SVLibrary/DirectoryUtilities.h"

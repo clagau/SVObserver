@@ -291,22 +291,22 @@ inline void SVConfigXMLPrint::WriteFileAcq(Writer writer, SVVirtualCamera* pCame
 	writer->WriteEndElement();
 }
 
-inline const wchar_t * PPQModeText(SvOi::SVPPQOutputModeEnum mode)
+inline const wchar_t * PPQModeText(SvDef::SVPPQOutputModeEnum mode)
 {
 	switch (mode)
 	{
-		case SvOi::SVPPQNextTriggerMode:	// Resets outputs on trigger. Writes outputs immediately.
+		case SvDef::SVPPQNextTriggerMode:	// Resets outputs on trigger. Writes outputs immediately.
 			return L"NextTrigger";
-		case SvOi::SVPPQTimeDelayMode:	// Resets outputs on trigger. Writes outputs after delay time is over, even if data isn't complete.
+		case SvDef::SVPPQTimeDelayMode:	// Resets outputs on trigger. Writes outputs after delay time is over, even if data isn't complete.
 			// Aborts waiting if new trigger occurs.
 			return L"TimeDelay";
-		case SvOi::SVPPQTimeDelayAndDataCompleteMode:	// Resets outputs on trigger. Writes outputs after delay time is over and data is complete.
+		case SvDef::SVPPQTimeDelayAndDataCompleteMode:	// Resets outputs on trigger. Writes outputs after delay time is over and data is complete.
 			// Aborts waiting if new trigger occurs.
 			return L"TimeDelayDataCompletion";
-		case SvOi::SVPPQExtendedTimeDelayMode:		// Doesn't reset outputs on trigger. Writes outputs after delay time is over, even if data isn't complete.
+		case SvDef::SVPPQExtendedTimeDelayMode:		// Doesn't reset outputs on trigger. Writes outputs after delay time is over, even if data isn't complete.
 															// Aborts waiting if product leaves PPQ.
 			return L"ExtendedTimeDelayMode";
-		case SvOi::SVPPQExtendedTimeDelayAndDataCompleteMode: // Doesn't reset outputs on trigger. Writes outputs after delay time is over and data is complete.
+		case SvDef::SVPPQExtendedTimeDelayAndDataCompleteMode: // Doesn't reset outputs on trigger. Writes outputs after delay time is over and data is complete.
 			// Aborts waiting if product leaves PPQ.
 			return L"ExtendedTimeDelayDataCompletion";
 		default:
@@ -350,7 +350,7 @@ inline void SVConfigXMLPrint::WritePPQs(Writer writer) const
 		writer->WriteStartElement(nullptr, L"PPQ", nullptr);
 		writer->WriteAttributeString(nullptr,XML_Name, nullptr, SvUl::to_utf16(pPPQ->GetName(), cp_dflt).c_str());
 
-		SvOi::SVPPQOutputModeEnum	enumPPQOutputMode;
+		SvDef::SVPPQOutputModeEnum	enumPPQOutputMode;
 		long	lPPQLength  = 0;	// PPQLength
 		long	lResetDelay = 0;	// PPQOutputResetDelay
 		long	lDelayTime  = 0;	// PPQOutputDelayTime
@@ -922,7 +922,7 @@ inline std::wstring utf16(const SVString & str) { return SvUl::to_utf16(str.c_st
 
 inline void SVConfigXMLPrint::WriteValueObject( Writer writer, SVObjectClass* pObj ) const
 {
-	if ( pObj->ObjectAttributesAllowed() & SvOi::SV_PRINTABLE )
+	if ( pObj->ObjectAttributesAllowed() & SvDef::SV_PRINTABLE )
 	{
 		writer->WriteStartElement(nullptr, SvUl::to_utf16(pObj->GetClassName(), cp_dflt).c_str(), nullptr);
 		writer->WriteAttributeString(nullptr,XML_Name, nullptr, SvUl::to_utf16(pObj->GetName(), cp_dflt).c_str());
@@ -1114,7 +1114,7 @@ inline void SVConfigXMLPrint::WriteObject( Writer writer, SVObjectClass* pObject
 		{
 			if ( dynamic_cast <SVShapeMaskHelperClass*> (pObject) )
 			{
-				if ( !( pObject->ObjectAttributesAllowed() & SvOi::SV_PRINTABLE) )	// EB 20050818 - hack this instead of doing it right
+				if ( !( pObject->ObjectAttributesAllowed() & SvDef::SV_PRINTABLE) )	// EB 20050818 - hack this instead of doing it right
 				{
 					break;
 				}

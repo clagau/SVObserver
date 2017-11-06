@@ -681,7 +681,7 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 	SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*> (pObject);
 	if( nullptr != pValueObject )
 	{
-		if ( pObject->ObjectAttributesAllowed() & SvOi::SV_PRINTABLE )
+		if ( pObject->ObjectAttributesAllowed() & SvDef::SV_PRINTABLE )
 		{
 			BOOL bGotValue = FALSE;
 
@@ -710,7 +710,7 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 				
 			ptCurPos.x   = (nIndentLevel + 1) * m_shortTabPixels;
 			PrintValueObject(pDC, ptCurPos, sLabel.c_str(), sValue.c_str());
-		}   // end if ( pObj->uObjectAttributesAllowed & SvOi::SV_PRINTABLE )
+		}   // end if ( pObj->uObjectAttributesAllowed & SvDef::SV_PRINTABLE )
 	}  // end if( nullptr != pValueObject )
 	else
 	{
@@ -718,7 +718,7 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 		{
 			if ( nullptr != dynamic_cast <SVShapeMaskHelperClass*> (pObject) )
 			{
-				if ( !( pObject->ObjectAttributesAllowed() & SvOi::SV_PRINTABLE) )	// EB 20050818 - hack this instead of doing it right
+				if ( !( pObject->ObjectAttributesAllowed() & SvDef::SV_PRINTABLE) )	// EB 20050818 - hack this instead of doing it right
 				{
 					break;
 				}
@@ -1876,7 +1876,7 @@ void SVConfigurationPrint::PrintPPQSummary(CDC* pDC, CPoint& ptCurPos, int nInde
 			ptTemp       = ptCurPos;
 			ptCurPos.y  += PrintString(pDC, ptTemp, pPPQ->GetName());
 			
-			SvOi::SVPPQOutputModeEnum	enumPPQOutputMode;
+			SvDef::SVPPQOutputModeEnum	enumPPQOutputMode;
 			long	lPPQLength  = 0;	// PPQLength
 			long	lResetDelay = 0;	// PPQOutputResetDelay
 			long	lDelayTime  = 0;	// PPQOutputDelayTime
@@ -1890,22 +1890,22 @@ void SVConfigurationPrint::PrintPPQSummary(CDC* pDC, CPoint& ptCurPos, int nInde
 			SVString Value;
 			switch (enumPPQOutputMode)
 			{
-				case SvOi::SVPPQNextTriggerMode:	// Resets outputs on trigger. Writes outputs immediately.
+				case SvDef::SVPPQNextTriggerMode:	// Resets outputs on trigger. Writes outputs immediately.
 					Value = _T("NextTrigger");
 					break;
-				case SvOi::SVPPQTimeDelayMode:	// Resets outputs on trigger. Writes outputs after delay time is over, even if data isn't complete.
+				case SvDef::SVPPQTimeDelayMode:	// Resets outputs on trigger. Writes outputs after delay time is over, even if data isn't complete.
 					// Aborts waiting if new trigger occurs.
 					Value = _T("TimeDelay");
 					break;
-				case SvOi::SVPPQTimeDelayAndDataCompleteMode:	// Resets outputs on trigger. Writes outputs after delay time is over and data is complete.
+				case SvDef::SVPPQTimeDelayAndDataCompleteMode:	// Resets outputs on trigger. Writes outputs after delay time is over and data is complete.
 					// Aborts waiting if new trigger occurs.
 					Value = _T("TimeDelayDataCompletion");
 					break;
-				case SvOi::SVPPQExtendedTimeDelayMode:		// Doesn't reset outputs on trigger. Writes outputs after delay time is over, even if data isn't complete.
+				case SvDef::SVPPQExtendedTimeDelayMode:		// Doesn't reset outputs on trigger. Writes outputs after delay time is over, even if data isn't complete.
 																	// Aborts waiting if product leaves PPQ.
 					Value = _T("ExtendedTimeDelayMode");
 					break;
-				case SvOi::SVPPQExtendedTimeDelayAndDataCompleteMode: // Doesn't reset outputs on trigger. Writes outputs after delay time is over and data is complete.
+				case SvDef::SVPPQExtendedTimeDelayAndDataCompleteMode: // Doesn't reset outputs on trigger. Writes outputs after delay time is over and data is complete.
 					// Aborts waiting if product leaves PPQ.
 					Value = _T("ExtendedTimeDelayDataCompletion");
 					break;

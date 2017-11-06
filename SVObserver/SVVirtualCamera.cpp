@@ -83,7 +83,7 @@ bool SVVirtualCamera::GetImageInfo(SVImageInfoClass *pImageInfo)
 		bOk = S_OK == mpsvDevice->GetImageInfo( pImageInfo );
 		if ( nullptr != pImageInfo )
 		{
-			bOk = S_OK == pImageInfo->SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandLink, mlBandLink );
+			bOk = S_OK == pImageInfo->SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, mlBandLink );
 		}
 	}
 
@@ -754,7 +754,7 @@ HRESULT SVVirtualCamera::updateCameraLongParameter( LPCTSTR Name, const SVLongVa
 		BasicValueObjectPtr pValueObject = m_CameraValues.setValueObject( Name, Value, this, SVCameraObjectType );
 		if( !pValueObject.empty() )
 		{
-			pValueObject->SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute );
+			pValueObject->SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute );
 			Result = S_OK;
 		}
 	}

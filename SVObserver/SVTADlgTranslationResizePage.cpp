@@ -17,7 +17,7 @@
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVGuiExtentUpdater.h"
 #include "ResizeTool.h"
-#include "ObjectInterfaces/GlobalConst.h"
+#include "Definitions/GlobalConst.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
@@ -731,7 +731,7 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 				// old values were also invalid.  Currently this can happen 
 				// with corruption or with Remote Access putting in an 
 				// invalid value.
-				newHeightScaleFactor = SvOi::cDefaultWindowToolHeightScaleFactor;
+				newHeightScaleFactor = SvDef::cDefaultWindowToolHeightScaleFactor;
 			}
 
 			editItem->SetItemValue(newHeightScaleFactor);
@@ -759,7 +759,7 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 				// old values were also invalid.  Currently this can happen 
 				// with corruption or with Remote Access putting in an 
 				// invalid value.
-				newWidthScaleFactor = SvOi::cDefaultWindowToolWidthScaleFactor;
+				newWidthScaleFactor = SvDef::cDefaultWindowToolWidthScaleFactor;
 			}
 			editItem->SetItemValue(newWidthScaleFactor);
 		}

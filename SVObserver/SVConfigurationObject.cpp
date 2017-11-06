@@ -44,7 +44,7 @@
 #include "SVIOController.h"
 #include "SVAcquisitionClass.h"
 #include "SVToolSet.h"
-#include "ObjectInterfaces/SVUserMessage.h"
+#include "Definitions/SVUserMessage.h"
 #include "TriggerHandling/SVAcquisitionInitiator.h"
 #include "TriggerInformation/SVTriggerProcessingClass.h"
 #include "SVDigitizerProcessingClass.h"
@@ -66,7 +66,7 @@
 #include "SVIPDoc.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
-#include "ObjectInterfaces\GlobalConst.h"
+#include "Definitions/GlobalConst.h"
 #include "TextDefinesSvO.h"
 #include "SVColorTool.h"
 #pragma endregion Includes
@@ -799,7 +799,7 @@ HRESULT SVConfigurationObject::AddRemoteInput(SVPPQObject* pPPQ, const SVString&
 	pValueObject->SetObjectDepth(10);
 	pValueObject->setResetOptions( false, SvOi::SVResetItemNone );
 	pValueObject->setBucketized(true);
-	pValueObject->SetObjectAttributesAllowed(SvOi::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute);
+	pValueObject->SetObjectAttributesAllowed(SvDef::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute);
 	pValueObject->ResetObject();
 
 	SVIOEntryHostStructPtr pIOEntry = new SVIOEntryHostStruct;
@@ -840,7 +840,7 @@ HRESULT SVConfigurationObject::AddDigitalInput(SVPPQObject* pPPQ, const SVString
 	pValueObject->SetObjectDepth(10);
 	pValueObject->setResetOptions(false, SvOi::SVResetItemNone);
 	pValueObject->setBucketized(true);
-	pValueObject->SetObjectAttributesAllowed(SvOi::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute);
+	pValueObject->SetObjectAttributesAllowed(SvDef::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute);
 	pValueObject->ResetObject();
 
 	SVIOEntryHostStructPtr pIOEntry = new SVIOEntryHostStruct;
@@ -1491,9 +1491,9 @@ bool SVConfigurationObject::LoadAcquisitionDevice( SVTreeType& rTree, SVString& 
 						if( DigitizerName.empty() && !DigName.empty() )
 						{
 							int CameraID = atoi( SvUl_SF::Mid( DigName, SVString(_T("Dig_")).length() ).c_str() );
-							if( SvOi::cMaximumCameras <= CameraID )
+							if( SvDef::cMaximumCameras <= CameraID )
 							{
-								CameraID -= SvOi::cMaximumCameras;
+								CameraID -= SvDef::cMaximumCameras;
 							}
 							DigitizerName = SVDigitizerProcessingClass::Instance().GetReOrderedCamera( CameraID );
 						}
@@ -1665,9 +1665,9 @@ bool  SVConfigurationObject::LoadCameras( SVTreeType&  rTree, long& lNumCameras,
 				if( SVString::npos !=  (Pos = DeviceName.find( _T("Dig_") )) )
 				{
 					CameraID = atoi( SvUl_SF::Mid( DeviceName, Pos + SVString(_T("Dig_")).length() ).c_str() );
-					if( SvOi::cMaximumCameras <= CameraID )
+					if( SvDef::cMaximumCameras <= CameraID )
 					{
-						CameraID -= SvOi::cMaximumCameras;
+						CameraID -= SvDef::cMaximumCameras;
 					}
 				}
 			}
@@ -2042,7 +2042,7 @@ bool SVConfigurationObject::LoadPPQ( SVTreeType& rTree )
 		{
 			lMode = Value;
 
-			pPPQ->SetPPQOutputMode( (SvOi::SVPPQOutputModeEnum)lMode );
+			pPPQ->SetPPQOutputMode( (SvDef::SVPPQOutputModeEnum)lMode );
 		}// end if
 
 		bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_PPQ_LENGTH, hSubChild, Value );
@@ -3365,7 +3365,7 @@ void SVConfigurationObject::SavePPQ_Attributes(SvXml::SVObjectXMLWriter& rWriter
 	rWriter.WriteAttribute( SvXml::CTAG_UNIQUE_REFERENCE_ID, svValue );
 	svValue.Clear();
 
-	SvOi::SVPPQOutputModeEnum lMode;
+	SvDef::SVPPQOutputModeEnum lMode;
 	rPPQ.GetPPQOutputMode( lMode );
 	svValue = lMode;
 	rWriter.WriteAttribute( SvXml::CTAG_PPQ_MODE, svValue );
@@ -4569,11 +4569,11 @@ HRESULT SVConfigurationObject::SetInspectionItems( const SVNameStorageMap& p_rIt
 				if( nullptr != ObjectRef.getObject() )
 				{
 					///someone wants to set this variable check if this is allowed
-					bool l_AddParameter = ( ( ObjectRef.ObjectAttributesAllowed() & SvOi::SV_REMOTELY_SETABLE ) == SvOi::SV_REMOTELY_SETABLE );
+					bool l_AddParameter = ( ( ObjectRef.ObjectAttributesAllowed() & SvDef::SV_REMOTELY_SETABLE ) == SvDef::SV_REMOTELY_SETABLE );
 
 					if( l_AddParameter )
 					{
-						l_AddParameter = !l_Online || ( ( ObjectRef.ObjectAttributesAllowed() & SvOi::SV_SETABLE_ONLINE ) == SvOi::SV_SETABLE_ONLINE );
+						l_AddParameter = !l_Online || ( ( ObjectRef.ObjectAttributesAllowed() & SvDef::SV_SETABLE_ONLINE ) == SvDef::SV_SETABLE_ONLINE );
 
 						if( !l_AddParameter )
 						{
@@ -4903,11 +4903,11 @@ HRESULT SVConfigurationObject::SetCameraItems( const SVNameStorageMap& rItems, S
 
 				if( nullptr != pValueObject )
 				{
-					bool Attribute = ( ( pValueObject->ObjectAttributesAllowed() & SvOi::SV_REMOTELY_SETABLE ) == SvOi::SV_REMOTELY_SETABLE );
+					bool Attribute = ( ( pValueObject->ObjectAttributesAllowed() & SvDef::SV_REMOTELY_SETABLE ) == SvDef::SV_REMOTELY_SETABLE );
 
 					if( Attribute )
 					{
-						Attribute = !Online || ( ( pValueObject->ObjectAttributesAllowed() & SvOi::SV_SETABLE_ONLINE ) == SvOi::SV_SETABLE_ONLINE );
+						Attribute = !Online || ( ( pValueObject->ObjectAttributesAllowed() & SvDef::SV_SETABLE_ONLINE ) == SvDef::SV_SETABLE_ONLINE );
 
 						if( Attribute )
 						{
@@ -5408,11 +5408,11 @@ HRESULT SVConfigurationObject::LoadGlobalConstants( SVTreeType& rTree )
 						SVObjectManagerClass::Instance().ChangeUniqueObjectID( pValue.get(), UniqueID );
 						pValue->setDescription( Description.c_str() );
 						//All Global constants can be remotely settable
-						pValue->SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+						pValue->SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
 						// If type string then remove Selectable for Equation flag.
 						if( VT_BSTR == Value.vt )
 						{
-							pValue->SetObjectAttributesAllowed( SvOi::SV_SELECTABLE_FOR_EQUATION, SvOi::SetAttributeType::RemoveAttribute );
+							pValue->SetObjectAttributesAllowed( SvDef::SV_SELECTABLE_FOR_EQUATION, SvOi::SetAttributeType::RemoveAttribute );
 						}
 					}
 				}

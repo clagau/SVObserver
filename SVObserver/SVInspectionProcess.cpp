@@ -444,7 +444,7 @@ void SVInspectionProcess::Init()
 	m_lInputRequestMarkerCount = 0L;
 	m_bInspecting = false;
 	m_dwThreadId = 0;
-	m_svReset.RemoveState(SvOi::SVResetStateAll);
+	m_svReset.RemoveState(SvDef::SVResetStateAll);
 	m_bForceOffsetUpdate = true;
 	m_publishList.m_pInspection = this;
 	m_pToolSetConditional = nullptr;
@@ -702,11 +702,11 @@ bool SVInspectionProcess::CanGoOnline()
 	CWaitCursor l_cwcMouse;
 
 	SetResetCounts();
-	m_svReset.AddState(SvOi::SVResetStateInitializeOnReset | SvOi::SVResetStateArchiveToolCreateFiles | SvOi::SVResetStateLoadFiles);
+	m_svReset.AddState(SvDef::SVResetStateInitializeOnReset | SvDef::SVResetStateArchiveToolCreateFiles | SvDef::SVResetStateLoadFiles);
 
 	l_bOk = (S_OK == InitializeRunOnce());
 
-	m_svReset.RemoveState(SvOi::SVResetStateInitializeOnReset | SvOi::SVResetStateArchiveToolCreateFiles | SvOi::SVResetStateLoadFiles);
+	m_svReset.RemoveState(SvDef::SVResetStateInitializeOnReset | SvDef::SVResetStateArchiveToolCreateFiles | SvDef::SVResetStateLoadFiles);
 
 	ClearResetCounts();
 
@@ -720,11 +720,11 @@ bool SVInspectionProcess::CanRegressionGoOnline()
 	CWaitCursor l_cwcMouse;
 
 	SetResetCounts();
-	m_svReset.AddState(SvOi::SVResetStateInitializeOnReset | SvOi::SVResetStateArchiveToolCreateFiles | SvOi::SVResetStateLoadFiles);
+	m_svReset.AddState(SvDef::SVResetStateInitializeOnReset | SvDef::SVResetStateArchiveToolCreateFiles | SvDef::SVResetStateLoadFiles);
 
 	l_bOk = resetAllObjects();
 
-	m_svReset.RemoveState(SvOi::SVResetStateInitializeOnReset | SvOi::SVResetStateArchiveToolCreateFiles | SvOi::SVResetStateLoadFiles);
+	m_svReset.RemoveState(SvDef::SVResetStateInitializeOnReset | SvDef::SVResetStateArchiveToolCreateFiles | SvDef::SVResetStateLoadFiles);
 
 	ClearResetCounts();
 
@@ -1114,7 +1114,7 @@ bool SVInspectionProcess::RebuildInspectionInputList()
 				SVBoolValueObjectClass* pIOObject = new SVBoolValueObjectClass(this);
 				pIOObject->setResetOptions(false, SvOi::SVResetItemNone);
 				pObject = dynamic_cast<SVObjectClass*> (pIOObject);
-				pObject->SetObjectAttributesAllowed(SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute);
+				pObject->SetObjectAttributesAllowed(SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute);
 				break;
 			}
 			case IO_REMOTE_INPUT:
@@ -1122,7 +1122,7 @@ bool SVInspectionProcess::RebuildInspectionInputList()
 				SVVariantValueObjectClass* pIOObject = new SVVariantValueObjectClass(this);
 				pIOObject->setResetOptions(false, SvOi::SVResetItemNone);
 				pObject = dynamic_cast<SVObjectClass*> (pIOObject);
-				pObject->SetObjectAttributesAllowed(SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute);
+				pObject->SetObjectAttributesAllowed(SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute);
 				break;
 			}
 			default:
@@ -1137,7 +1137,7 @@ bool SVInspectionProcess::RebuildInspectionInputList()
 			pObject->SetName(l_pObject->GetName());
 			pObject->SetObjectOwner(this);
 			pObject->SetObjectDepth(lLength + 50);
-			pObject->SetObjectAttributesSet(pObject->ObjectAttributesSet() & SvOi::SV_PUBLISHABLE, SvOi::SetAttributeType::OverwriteAttribute);
+			pObject->SetObjectAttributesSet(pObject->ObjectAttributesSet() & SvDef::SV_PUBLISHABLE, SvOi::SetAttributeType::OverwriteAttribute);
 			pObject->ResetObject();
 
 			CreateChildObject(pObject);
@@ -1159,7 +1159,7 @@ bool SVInspectionProcess::RebuildInspectionInputList()
 			if (nullptr != m_PPQInputs[iList].m_IOEntryPtr->getObject() &&
 				m_PPQInputs[iList].m_IOEntryPtr->getObject()->GetCompleteName() == m_arViewedInputNames[l])
 			{
-				m_PPQInputs[iList].m_IOEntryPtr->getObject()->SetObjectAttributesSet(SvOi::SV_VIEWABLE, SvOi::SetAttributeType::AddAttribute);
+				m_PPQInputs[iList].m_IOEntryPtr->getObject()->SetObjectAttributesSet(SvDef::SV_VIEWABLE, SvOi::SetAttributeType::AddAttribute);
 				bFound = true;
 				break;
 			}// end if
@@ -1167,11 +1167,11 @@ bool SVInspectionProcess::RebuildInspectionInputList()
 
 		if (!bFound || !m_PPQInputs[iList].m_IOEntryPtr->m_Enabled)
 		{
-			m_PPQInputs[iList].m_IOEntryPtr->getObject()->SetObjectAttributesSet(SvOi::SV_VIEWABLE, SvOi::SetAttributeType::RemoveAttribute);
+			m_PPQInputs[iList].m_IOEntryPtr->getObject()->SetObjectAttributesSet(SvDef::SV_VIEWABLE, SvOi::SetAttributeType::RemoveAttribute);
 		}// end if
 
 		SvOi::SetAttributeType AddRemoveType = m_PPQInputs[iList].m_IOEntryPtr->m_Enabled ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-		m_PPQInputs[iList].m_IOEntryPtr->getObject()->SetObjectAttributesAllowed(SvOi::SV_SELECTABLE_FOR_EQUATION, AddRemoveType);
+		m_PPQInputs[iList].m_IOEntryPtr->getObject()->SetObjectAttributesAllowed(SvDef::SV_SELECTABLE_FOR_EQUATION, AddRemoveType);
 
 	}// end for
 
@@ -1561,7 +1561,7 @@ void SVInspectionProcess::ValidateAndInitialize(bool p_Validate, bool p_IsNew)
 	{
 		SetResetCounts();
 
-		m_svReset.AddState(SvOi::SVResetAutoMoveAndResize | SvOi::SVResetStateInitializeOnReset | SvOi::SVResetStateArchiveToolCreateFiles | SvOi::SVResetStateLoadFiles);
+		m_svReset.AddState(SvDef::SVResetAutoMoveAndResize | SvDef::SVResetStateInitializeOnReset | SvDef::SVResetStateArchiveToolCreateFiles | SvDef::SVResetStateLoadFiles);
 
 		SVStdMapSVToolClassPtrSVInspectionProcessResetStruct l_svToolMap;
 
@@ -1569,7 +1569,7 @@ void SVInspectionProcess::ValidateAndInitialize(bool p_Validate, bool p_IsNew)
 
 		ProcessInputRequests(eResetItem, l_svToolMap);
 
-		m_svReset.RemoveState(SvOi::SVResetAutoMoveAndResize | SvOi::SVResetStateInitializeOnReset | SvOi::SVResetStateArchiveToolCreateFiles | SvOi::SVResetStateLoadFiles);
+		m_svReset.RemoveState(SvDef::SVResetAutoMoveAndResize | SvDef::SVResetStateInitializeOnReset | SvDef::SVResetStateArchiveToolCreateFiles | SvDef::SVResetStateLoadFiles);
 	}
 
 	if (!p_IsNew)
@@ -1721,7 +1721,7 @@ HRESULT SVInspectionProcess::ObserverUpdate(const SVAddTool& p_rData)
 		GetToolSet()->InsertAt(p_rData.m_Index, p_rData.m_pTool);
 
 		// And finally try to create the object...
-		if (GetToolSet()->CreateChildObject(p_rData.m_pTool, SvOi::SVMFResetObject))
+		if (GetToolSet()->CreateChildObject(p_rData.m_pTool, SvDef::SVMFResetObject))
 		{
 			BuildValueObjectMap();
 
@@ -2443,7 +2443,7 @@ void SVInspectionProcess::DisconnectToolSetMainImage()
 
 void SVInspectionProcess::ConnectToolSetMainImage()
 {
-	m_svReset.AddState(SvOi::SVResetAutoMoveAndResize);
+	m_svReset.AddState(SvDef::SVResetAutoMoveAndResize);
 
 	SVCameraImagePtrSet::iterator l_Iter = m_CameraImages.begin();
 
@@ -2463,7 +2463,7 @@ void SVInspectionProcess::ConnectToolSetMainImage()
 		}
 	}
 
-	m_svReset.RemoveState(SvOi::SVResetAutoMoveAndResize);
+	m_svReset.RemoveState(SvDef::SVResetAutoMoveAndResize);
 }
 
 void SVInspectionProcess::RemoveCamera(const SVString& rCameraName)
@@ -2743,26 +2743,26 @@ bool SVInspectionProcess::CheckAndResetConditionalHistory()
 	if (nullptr != pToolSet)
 	{
 		SVObjectReferenceVector vecObjects;
-		pToolSet->GetOutputListFiltered(vecObjects, SvOi::SV_CH_CONDITIONAL | SvOi::SV_CH_VALUE, false);
+		pToolSet->GetOutputListFiltered(vecObjects, SvDef::SV_CH_CONDITIONAL | SvDef::SV_CH_VALUE, false);
 		if (0 < vecObjects.size())
 		{
 			SVObjectReferenceVector::iterator iter;
 			for (iter = vecObjects.begin(); iter != vecObjects.end(); ++iter)
 			{
-				iter->SetObjectAttributesSet(SvOi::SV_CH_CONDITIONAL | SvOi::SV_CH_VALUE, SvOi::SetAttributeType::RemoveAttribute);
+				iter->SetObjectAttributesSet(SvDef::SV_CH_CONDITIONAL | SvDef::SV_CH_VALUE, SvOi::SetAttributeType::RemoveAttribute);
 			}
 			Result = true;
 		}
 
 		SVImageListClass listImages;
-		pToolSet->GetImageList(listImages, SvOi::SV_CH_IMAGE);
+		pToolSet->GetImageList(listImages, SvDef::SV_CH_IMAGE);
 		int NumberOfImages = listImages.GetSize();
 		if (0 < NumberOfImages)
 		{
 			for (int i = 0; i < NumberOfImages; i++)
 			{
 				SVObjectReference refImage(listImages.GetAt(i));
-				refImage.getObject()->SetObjectAttributesSet(SvOi::SV_CH_IMAGE, SvOi::SetAttributeType::RemoveAttribute);
+				refImage.getObject()->SetObjectAttributesSet(SvDef::SV_CH_IMAGE, SvOi::SetAttributeType::RemoveAttribute);
 			}
 			Result = true;
 		}
@@ -3983,17 +3983,17 @@ bool SVInspectionProcess::CreateChildObject(SVObjectClass* pChildObject, DWORD c
 
 		bool Return = pChildObject->createAllObjects(createStruct);
 
-		if (SvOi::SVMFResetObject == (context & SvOi::SVMFResetObject))
+		if (SvDef::SVMFResetObject == (context & SvDef::SVMFResetObject))
 		{
 			pChildObject->resetAllObjects();
 		}
 
-		if (SvOi::SVMFSetDefaultInputs == (context & SvOi::SVMFSetDefaultInputs))
+		if (SvDef::SVMFSetDefaultInputs == (context & SvDef::SVMFSetDefaultInputs))
 		{
 			SetDefaultInputs();
 		}
 
-		if (SvOi::SVMFResetInspection == (context & SvOi::SVMFResetInspection))
+		if (SvDef::SVMFResetInspection == (context & SvDef::SVMFResetInspection))
 		{
 			resetAllObjects();
 		}

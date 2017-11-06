@@ -12,7 +12,7 @@
 
 #define SV_IS_KIND_OF( XP, XCLASSNAME )	( nullptr != dynamic_cast< XCLASSNAME* >( XP ) )
 
-namespace SvOi
+namespace SvDef
 {
 	enum SVMessageFlags
 	{

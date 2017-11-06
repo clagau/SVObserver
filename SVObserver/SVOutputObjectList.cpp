@@ -854,7 +854,7 @@ bool SVOutputObjectList::OutputIsNotValid( SVString Name )
 	// Check if the object exists.
 	if( nullptr != l_pObject )
 	{
-		if( l_pObject->ObjectAttributesSet() & SvOi::SV_PUBLISHABLE )
+		if( l_pObject->ObjectAttributesSet() & SvDef::SV_PUBLISHABLE )
 		{
 			l_bRet = false;
 		}

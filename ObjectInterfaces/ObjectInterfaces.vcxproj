@@ -83,15 +83,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="GlobalConstantData.h" />
     <ClInclude Include="EquationTestResult.h" />
-    <ClInclude Include="GlobalConst.h" />
     <ClInclude Include="IBlobAnalyzer.h" />
     <ClInclude Include="ICustom2Filter.h" />
     <ClInclude Include="IDependencyManager.h" />
     <ClInclude Include="IEnumerateValueObject.h" />
     <ClInclude Include="IEquation.h" />
-    <ClInclude Include="ImageArthimeticOperators.h" />
     <ClInclude Include="IMask.h" />
     <ClInclude Include="IMatroxImageData.h" />
     <ClInclude Include="IObjectManager.h" />
@@ -112,19 +109,7 @@
     <ClInclude Include="IToolSet.h" />
     <ClInclude Include="IValueObject.h" />
     <ClInclude Include="NameValueList.h" />
-    <ClInclude Include="ObjectDefines.h" />
-    <ClInclude Include="RangeEnum.h" />
-    <ClInclude Include="SVImageEnums.h" />
     <ClInclude Include="SVInterfaceVector.h" />
-    <ClInclude Include="SVIMCommand.h" />
-    <ClInclude Include="SVObjectTypeInfoStruct.h" />
-    <ClInclude Include="SVPPQEnums.h" />
-    <ClInclude Include="SVResetStruct.h" />
-    <ClInclude Include="SVUserMessage.h" />
-    <ClInclude Include="TextDefineSvOi.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="GlobalConstantData.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

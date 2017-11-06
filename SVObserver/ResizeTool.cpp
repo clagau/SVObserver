@@ -40,10 +40,10 @@ void ResizeTool::LocalInitialize()
 	BuildInputObjectList();
 
 	// The output image is referenced in the embedded list.
-	m_OutputImage.InitializeImage(SvOi::SVImageTypeEnum::SVImageTypePhysical);
+	m_OutputImage.InitializeImage(SvDef::SVImageTypeEnum::SVImageTypePhysical);
 	// This logical ROI image is also referenced in the embedded list, but 
 	//  will be hidden from most exposure (within ResizeTool::Create).
-	m_LogicalROIImage.InitializeImage(SvOi::SVImageTypeEnum::SVImageTypeLogical);
+	m_LogicalROIImage.InitializeImage(SvDef::SVImageTypeEnum::SVImageTypeLogical);
 	
 	BuildEmbeddedObjectList();
 
@@ -185,7 +185,7 @@ bool ResizeTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure
 	// Since this value object is already 
 	// exposed as an extent, we do not want 
 	// it to be embeddable.
-	const UINT cAttributes = (SvOi::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES | SvOi::SV_REMOTELY_SETABLE | SvOi::SV_EXTENT_OBJECT | SvOi::SV_SETABLE_ONLINE) & ~SvOi::SV_EMBEDABLE;
+	const UINT cAttributes = (SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES | SvDef::SV_REMOTELY_SETABLE | SvDef::SV_EXTENT_OBJECT | SvDef::SV_SETABLE_ONLINE) & ~SvDef::SV_EMBEDABLE;
 
 	m_ExtentWidthScaleFactor.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::OverwriteAttribute );
 	m_ExtentHeightScaleFactor.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::OverwriteAttribute );
@@ -196,7 +196,7 @@ bool ResizeTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure
 	bOk &= (S_OK == m_LogicalROIImage.InitializeImage(inputImage));
 
 	// We do not want the ROI image showing up as an output image.
-	m_LogicalROIImage.SetObjectAttributesAllowed( SvOi::SV_HIDDEN, SvOi::SetAttributeType::AddAttribute);
+	m_LogicalROIImage.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::AddAttribute);
 
 	bOk &= (S_OK == m_svToolExtent.SetTranslation( SVExtentTranslationResize ));
 
@@ -210,7 +210,7 @@ bool ResizeTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure
 
 	m_SourceImageNames.setStatic( true );
 	m_SourceImageNames.setSaveValueFlag(false);
-	m_SourceImageNames.SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
+	m_SourceImageNames.SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
 	
 	m_isCreated = bOk;
 

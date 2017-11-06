@@ -65,7 +65,7 @@ bool SVAutoThresholdEquationClass::CreateObject( const SVObjectLevelCreateStruct
 	m_isCreated = SVEquationClass::CreateObject(rCreateStructure);
 
 	// Set/Reset printable Flags
-	result.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	result.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	return m_isCreated;
 }

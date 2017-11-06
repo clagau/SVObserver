@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
-#include "ObjectInterfaces/TextDefineSvOi.h"
+#include "Definitions/TextDefineSVDef.h"
 #include "SVUtilityLibrary/SVString.h"
 #include "SVValueObjectClass.h"
 #pragma endregion Includes
@@ -42,7 +42,7 @@ protected:
 	/// \returns bool Return value.
 	virtual BOOL ConvertString2Type( const SVString& rValue ) const override;
 
-	virtual SVString ConvertType2String( const BOOL& rValue ) const override {	return rValue ? SvOi::cTrue : SvOi::cFalse; };
+	virtual SVString ConvertType2String( const BOOL& rValue ) const override {	return rValue ? SvDef::cTrue : SvDef::cFalse; };
 
 	virtual void WriteValues(SVObjectWriter& rWriter) override;
 	virtual void WriteDefaultValues(SVObjectWriter& rWriter) override;

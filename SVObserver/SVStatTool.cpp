@@ -132,7 +132,7 @@ void SVStatisticsToolClass::init(void)
 	for (int i = SV_STATS_MIN_VALUE; i < SV_STATS_TOPOF_LIST; i = (SVStatisticsFeatureEnum) (i + 1))
 	{
 		m_Value [i].SetDefaultValue(0.0, true);
-		m_Value [i].SetObjectAttributesAllowed( SvOi::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
+		m_Value [i].SetObjectAttributesAllowed( SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
 		m_Value[i].setSaveValueFlag(false);
 
 		/*----- FEATURE LIST ---------------------------------------------------------*/
@@ -163,26 +163,26 @@ bool SVStatisticsToolClass::CreateObject(const SVObjectLevelCreateStruct& rCreat
 
 	for ( int i = 0; i < SV_NUMBER_OF_STAT_FEATURES; i++ )
 	{
-		m_Value[i].SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+		m_Value[i].SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 	}
 
-	m_OccurenceValue.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_PersistantFeaturesEnabled.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_VariableGUID_OBSOLETE.SetObjectAttributesAllowed( SvOi::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
-	m_VariableName.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_OccurenceValue.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_PersistantFeaturesEnabled.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_VariableGUID_OBSOLETE.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_VariableName.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	// Override base class exposure of the drawflag
 	// This value will not be exposed for the Statistics Tool.
-	drawToolFlag.SetObjectAttributesAllowed( SvOi::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	drawToolFlag.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
 
 	// Override base class exposure of the auxillaryextent variables
 	// These values will not be exposed for the Statistics Tool.
-	m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed( SvOi::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
-	m_svAuxiliarySourceX.SetObjectAttributesAllowed( SvOi::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
-	m_svAuxiliarySourceY.SetObjectAttributesAllowed( SvOi::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
-	m_svAuxiliarySourceAngle.SetObjectAttributesAllowed( SvOi::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
-	m_svAuxiliarySourceImageName.SetObjectAttributesAllowed( SvOi::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
-	m_svAuxiliaryDrawType.SetObjectAttributesAllowed( SvOi::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliarySourceX.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliarySourceY.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliarySourceAngle.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliarySourceImageName.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliaryDrawType.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
 
 	SVString Name;
 	m_VariableName.GetValue( Name );
@@ -284,7 +284,7 @@ void SVStatisticsToolClass::RestoreFeatureAttributes()
 		}
 		else
 		{
-			m_Value[iFeature].SetObjectAttributesAllowed( SvOi::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
+			m_Value[iFeature].SetObjectAttributesAllowed( SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
 		}
 	}
 }
@@ -295,7 +295,7 @@ void SVStatisticsToolClass::RestoreFeatureAttributes()
 DWORD SVStatisticsToolClass::DisableFeature (SVStatisticsFeatureEnum aIndex)
 {
 
-	m_Value[aIndex].SetObjectAttributesAllowed( SvOi::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
+	m_Value[aIndex].SetObjectAttributesAllowed( SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_Value[aIndex].SetObjectAttributesSet( 0, SvOi::SetAttributeType::OverwriteAttribute );
 
@@ -358,7 +358,7 @@ void SVStatisticsToolClass::AllocateResult (SVStatisticsFeatureEnum aFeatureInde
 		}
 
 		// Make it non visible for any selection
-		pValue->SetObjectAttributesAllowed( SvOi::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
+		pValue->SetObjectAttributesAllowed( SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
 
 		// Ensure this Object's inputs get connected
 		pResult->ConnectAllInputs();
@@ -404,7 +404,7 @@ DWORD SVStatisticsToolClass::FreeResult (SVStatisticsFeatureEnum aFeatureIndex)
 			break;
 		}
 		
-		DestroyChildObject(pResult, SvOi::SVMFSetDefaultInputs);
+		DestroyChildObject(pResult, SvDef::SVMFSetDefaultInputs);
 		pResult = nullptr;
 		break;
 	}
@@ -528,7 +528,7 @@ void SVStatisticsToolClass::SetVariableSelected( const SVString& rName )
 
 void SVStatisticsToolClass::UpdateTaskObjectOutputListAttributes()
 {
-	SVToolClass::UpdateTaskObjectOutputListAttributes( m_inputObjectInfo.GetInputObjectInfo().GetObjectReference(), SvOi::SV_SELECTABLE_FOR_STATISTICS );
+	SVToolClass::UpdateTaskObjectOutputListAttributes( m_inputObjectInfo.GetInputObjectInfo().GetObjectReference(), SvDef::SV_SELECTABLE_FOR_STATISTICS );
 }
 
 bool SVStatisticsToolClass::DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo )
@@ -605,7 +605,7 @@ bool SVStatisticsToolClass::HasVariable() const
 		{
 			// Special Check for BlobAnalyzer/StatTool Features
 			// which don't really go away they just change attributes
-			if ( refObject.ObjectAttributesAllowed() & SvOi::SV_SELECTABLE_FOR_STATISTICS )
+			if ( refObject.ObjectAttributesAllowed() & SvDef::SV_SELECTABLE_FOR_STATISTICS )
 			{
 				bRetVal = true;
 			}

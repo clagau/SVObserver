@@ -66,7 +66,7 @@ bool EQAdjustSize::CreateObject(const SVObjectLevelCreateStruct& rCreateStructur
 	m_isCreated = SVEquationClass::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable Flag
-	m_result.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_result.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	return m_isCreated;
 }

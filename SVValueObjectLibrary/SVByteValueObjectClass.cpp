@@ -16,7 +16,7 @@
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVObjectLibrary\SVClsids.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "ObjectInterfaces/TextDefineSvOi.h"
+#include "Definitions/TextDefineSVDef.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -67,7 +67,7 @@ HRESULT SVByteValueObjectClass::SetObjectValue( SVObjectAttributeClass* pDataObj
 		SvCl::SVObjectArrayClassTemplate<ValueType> svArray;	// for default values
 
 		if (   pDataObject->GetAttributeData( _T("pArray"), svArray )
-			|| pDataObject->GetAttributeData( SvOi::cBucketTag, svArray ) )
+			|| pDataObject->GetAttributeData( SvDef::cBucketTag, svArray ) )
 		{
 			SetArraySize( static_cast< int >( svArray.size() ) );
 			Result = SetArrayValues( svArray.begin(), svArray.end());

@@ -12,6 +12,9 @@
 #include "stdafx.h"
 #include "SVIOConfigurationInterfaceClass.h"
 
+constexpr size_t InputsDefaultNr = 8;
+constexpr size_t OutputsDefaultNr = 16;
+
 SVIOConfigurationInterfaceClass::SVIOConfigurationInterfaceClass()
 {
 	m_Opto22InputInvert = true;
@@ -24,8 +27,8 @@ SVIOConfigurationInterfaceClass::SVIOConfigurationInterfaceClass()
 		m_abSVIMStrobeStartFrame[i] = false;
 	}
 
-	m_svDigitalInputs.SetSize( 8 );
-	m_svDigitalOutputs.SetSize( 16 );
+	m_DigitalInputs.resize(InputsDefaultNr);
+	m_DigitalOutputs.resize(OutputsDefaultNr);
 }
 
 SVIOConfigurationInterfaceClass::~SVIOConfigurationInterfaceClass()
@@ -40,394 +43,378 @@ void SVIOConfigurationInterfaceClass::Shutdown()
 
 HRESULT SVIOConfigurationInterfaceClass::OpenDigital( LPCTSTR p_szName )
 {
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT Result{E_FAIL};
 
-	l_hrOk = m_svDigitalBoard.Open( p_szName );
+	Result = m_svDigitalBoard.Open( p_szName );
 
-	if ( S_OK == l_hrOk )
+	if ( S_OK == Result )
 	{
 		unsigned long l_ulSize = 0;
 
-		if ( S_OK == ( l_hrOk = m_svDigitalBoard.GetInputCount( &l_ulSize ) ) )
+		if ( S_OK == ( Result = m_svDigitalBoard.GetInputCount( &l_ulSize ) ) )
 		{
-			if ( l_ulSize < static_cast< unsigned long >( m_svDigitalInputs.GetSize() ) )
+			if ( l_ulSize < static_cast< unsigned long >( m_DigitalInputs.size() ) )
 			{
-				l_hrOk = S_FALSE;
+				Result = E_FAIL;
 			}
 		}
 	}
 
-	if ( S_OK == l_hrOk )
+	if ( S_OK == Result )
 	{
 		unsigned long l_ulSize = 0;
 
-		if ( S_OK == ( l_hrOk = m_svDigitalBoard.GetOutputCount( &l_ulSize ) ) )
+		if ( S_OK == ( Result = m_svDigitalBoard.GetOutputCount( &l_ulSize ) ) )
 		{
-			if ( l_ulSize < static_cast< unsigned long >( m_svDigitalOutputs.GetSize() ) )
+			if ( l_ulSize < static_cast< unsigned long >( m_DigitalOutputs.size() ) )
 			{
-				l_hrOk = S_FALSE;
+				Result = E_FAIL;
 			}
 		}
 	}
 
-	if ( S_OK == l_hrOk )
+	if ( S_OK == Result )
 	{
-		l_hrOk = ClearDigitalOutputs();
+		Result = ClearDigitalOutputs();
 	}
 
-	if ( S_OK != l_hrOk )
+	if ( S_OK != Result )
 	{
 		CloseDigital();
 	}
 
-	return l_hrOk;
+	return Result;
 }
 
 HRESULT SVIOConfigurationInterfaceClass::CloseDigital()
 {
-	HRESULT l_hrOk = S_FALSE;
-
-	l_hrOk = m_svDigitalBoard.Close();
-
-	return l_hrOk;
+	return m_svDigitalBoard.Close();
 }
 
-HRESULT SVIOConfigurationInterfaceClass::GetDigitalInputCount( unsigned long &p_rulCount )
+HRESULT SVIOConfigurationInterfaceClass::GetDigitalInputCount( unsigned long &rCount )
 {
-	HRESULT l_hrOk = S_OK;
+	rCount = static_cast<unsigned long> (m_DigitalInputs.size());
 
-	p_rulCount = static_cast< unsigned long >( m_svDigitalInputs.GetSize() );
-
-	return l_hrOk;
+	return S_OK;
 }
 
-HRESULT SVIOConfigurationInterfaceClass::GetDigitalInputIsInverted( unsigned long p_ulChannel, bool &p_rbValue )
+HRESULT SVIOConfigurationInterfaceClass::GetDigitalInputIsInverted( unsigned long Channel, bool &rValue )
 {
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT Result{E_FAIL};
 
-	unsigned long l_ulCount = static_cast< unsigned long >( m_svDigitalInputs.GetSize() );
+	unsigned long Count = static_cast<unsigned long> (m_DigitalInputs.size());
 
-	if ( 0 <= p_ulChannel && p_ulChannel < l_ulCount )
+	if ( 0 <= Channel && Channel < Count )
 	{
-		p_rbValue = m_svDigitalInputs[ p_ulChannel ].m_bIsInverted;
+		rValue = m_DigitalInputs[Channel].m_bIsInverted;
 
-		l_hrOk = S_OK;
+		Result = S_OK;
 	}
 
-	return l_hrOk;
+	return Result;
 }
 
-HRESULT SVIOConfigurationInterfaceClass::SetDigitalInputIsInverted( unsigned long p_ulChannel, bool p_bValue )
+HRESULT SVIOConfigurationInterfaceClass::SetDigitalInputIsInverted( unsigned long Channel, bool Value )
 {
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT Result{E_FAIL};
 
-	unsigned long l_ulCount = static_cast< unsigned long >( m_svDigitalInputs.GetSize() );
+	unsigned long Count = static_cast<unsigned long> (m_DigitalInputs.size());
 
-	if ( 0 <= p_ulChannel && p_ulChannel < l_ulCount )
+	if ( 0 <= Channel && Channel < Count )
 	{
-		m_svDigitalInputs[ p_ulChannel ].m_bIsInverted = p_bValue;
+		m_DigitalInputs[Channel].m_bIsInverted = Value;
 
-		l_hrOk = S_OK;
+		Result = S_OK;
 	}
 
-	return l_hrOk;
+	return Result;
 }
 
-HRESULT SVIOConfigurationInterfaceClass::GetDigitalInputIsForced( unsigned long p_ulChannel, bool &p_rbValue )
+HRESULT SVIOConfigurationInterfaceClass::GetDigitalInputIsForced( unsigned long Channel, bool& rValue )
 {
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT Result{E_FAIL};
 
-	unsigned long l_ulCount = static_cast< unsigned long >( m_svDigitalInputs.GetSize() );
+	unsigned long Count = static_cast<unsigned long> (m_DigitalInputs.size());
 
-	if ( 0 <= p_ulChannel && p_ulChannel < l_ulCount )
+	if ( 0 <= Channel && Channel < Count )
 	{
-		p_rbValue = m_svDigitalInputs[ p_ulChannel ].m_bIsForced;
+		rValue = m_DigitalInputs[Channel].m_bIsForced;
 
-		l_hrOk = S_OK;
+		Result = S_OK;
 	}
 
-	return l_hrOk;
+	return Result;
 }
 
-HRESULT SVIOConfigurationInterfaceClass::SetDigitalInputIsForced( unsigned long p_ulChannel, bool p_bValue )
+HRESULT SVIOConfigurationInterfaceClass::SetDigitalInputIsForced( unsigned long Channel, bool Value )
 {
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT Result{E_FAIL};
 
-	unsigned long l_ulCount = static_cast< unsigned long >( m_svDigitalInputs.GetSize() );
+	unsigned long Count = static_cast<unsigned long> (m_DigitalInputs.size());
 
-	if ( 0 <= p_ulChannel && p_ulChannel < l_ulCount )
+	if ( 0 <= Channel && Channel < Count )
 	{
-		m_svDigitalInputs[ p_ulChannel ].m_bIsForced = p_bValue;
+		m_DigitalInputs[Channel].m_bIsForced = Value;
 
-		l_hrOk = S_OK;
+		Result = S_OK;
 	}
 
-	return l_hrOk;
+	return Result;
 }
 
-HRESULT SVIOConfigurationInterfaceClass::GetDigitalInputForcedValue( unsigned long p_ulChannel, bool &p_rbValue )
+HRESULT SVIOConfigurationInterfaceClass::GetDigitalInputForcedValue( unsigned long Channel, bool &rValue )
 {
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT Result{E_FAIL};
 
-	unsigned long l_ulCount = static_cast< unsigned long >( m_svDigitalInputs.GetSize() );
+	unsigned long Count = static_cast<unsigned long> (m_DigitalInputs.size());
 
-	if ( 0 <= p_ulChannel && p_ulChannel < l_ulCount )
+	if ( 0 <= Channel && Channel < Count )
 	{
-		p_rbValue = m_svDigitalInputs[ p_ulChannel ].m_bForcedValue;
+		rValue = m_DigitalInputs[Channel].m_bForcedValue;
 
-		l_hrOk = S_OK;
+		Result = S_OK;
 	}
 
-	return l_hrOk;
+	return Result;
 }
 
-HRESULT SVIOConfigurationInterfaceClass::SetDigitalInputForcedValue( unsigned long p_ulChannel, bool p_bValue )
+HRESULT SVIOConfigurationInterfaceClass::SetDigitalInputForcedValue( unsigned long Channel, bool Value )
 {
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT Result{E_FAIL};
 
-	unsigned long l_ulCount = static_cast< unsigned long >( m_svDigitalInputs.GetSize() );
+	unsigned long Count = static_cast<unsigned long> (m_DigitalInputs.size());
 
-	if ( 0 <= p_ulChannel && p_ulChannel < l_ulCount )
+	if ( 0 <= Channel && Channel < Count )
 	{
-		m_svDigitalInputs[ p_ulChannel ].m_bForcedValue = p_bValue;
+		m_DigitalInputs[ Channel ].m_bForcedValue = Value;
 
-		l_hrOk = S_OK;
+		Result = S_OK;
 	}
 
-	return l_hrOk;
+	return Result;
 }
 
-HRESULT SVIOConfigurationInterfaceClass::GetDigitalInputValue( unsigned long p_ulChannel, bool &p_rbValue )
+HRESULT SVIOConfigurationInterfaceClass::GetDigitalInputValue( unsigned long Channel, bool &rValue )
 {
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT Result{E_FAIL};
 
-	unsigned long l_ulCount = static_cast< unsigned long >( m_svDigitalInputs.GetSize() );
+	unsigned long Count = static_cast<unsigned long> (m_DigitalInputs.size());
 
-	if ( 0 <= p_ulChannel && p_ulChannel < l_ulCount )
+	if ( 0 <= Channel && Channel < Count )
 	{
 		bool l_bValue = false;
 
-		l_hrOk = m_svDigitalBoard.GetInputValue( p_ulChannel, &l_bValue );
+		Result = m_svDigitalBoard.GetInputValue( Channel, &l_bValue );
 
-		if ( S_OK == l_hrOk )
+		if ( S_OK == Result )
 		{
-			m_svDigitalInputs[ p_ulChannel ].m_bValue = l_bValue;
+			m_DigitalInputs[ Channel ].m_bValue = l_bValue;
 		}
 
-		if ( m_svDigitalInputs[ p_ulChannel ].m_bIsForced )
+		if ( m_DigitalInputs[ Channel ].m_bIsForced )
 		{
-			l_bValue = m_svDigitalInputs[ p_ulChannel ].m_bForcedValue;
+			l_bValue = m_DigitalInputs[ Channel ].m_bForcedValue;
 		}
 
-		if ( m_svDigitalInputs[ p_ulChannel ].m_bIsInverted == m_Opto22InputInvert )
+		if ( m_DigitalInputs[ Channel ].m_bIsInverted == m_Opto22InputInvert )
 		{
 			l_bValue = ! l_bValue;
 		}
 
-		p_rbValue = l_bValue;
+		rValue = l_bValue;
 	}
 
-	return l_hrOk;
+	return Result;
 }
 
 HRESULT SVIOConfigurationInterfaceClass::GetDigitalInputPortCount( unsigned long &p_rulCount )
 {
-	HRESULT l_hrOk = S_OK;
-
-	l_hrOk = m_svDigitalBoard.GetInputPortCount( &p_rulCount );
-
-	return l_hrOk;
+	return m_svDigitalBoard.GetInputPortCount( &p_rulCount );
 }
 
 HRESULT SVIOConfigurationInterfaceClass::GetDigitalInputPortValue( unsigned long p_ulPort, unsigned long &p_rulValue )
 {
-	HRESULT l_hrOk = S_FALSE;
-
-	l_hrOk = m_svDigitalBoard.GetInputPortValue( p_ulPort, &p_rulValue );
-
-	return l_hrOk;
+	return m_svDigitalBoard.GetInputPortValue( p_ulPort, &p_rulValue );
 }
 
-HRESULT SVIOConfigurationInterfaceClass::GetDigitalOutputCount( unsigned long &p_rulCount )
+HRESULT SVIOConfigurationInterfaceClass::GetDigitalOutputCount( unsigned long& rCount )
 {
-	HRESULT l_hrOk = S_OK;
+	rCount = static_cast<unsigned long> (m_DigitalOutputs.size());
 
-	p_rulCount = static_cast< unsigned long >( m_svDigitalOutputs.GetSize() );
-
-	return l_hrOk;
+	return S_OK;
 }
 
-HRESULT SVIOConfigurationInterfaceClass::GetDigitalOutputIsInverted( unsigned long p_ulChannel, bool &p_rbValue )
+HRESULT SVIOConfigurationInterfaceClass::GetDigitalOutputIsInverted( unsigned long Channel, bool &rValue )
 {
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT Result{E_FAIL};
 
-	unsigned long l_ulCount = static_cast< unsigned long >( m_svDigitalOutputs.GetSize() );
+	unsigned long Count = static_cast<unsigned long> (m_DigitalOutputs.size());
 
-	if ( 0 <= p_ulChannel && p_ulChannel < l_ulCount )
+	if ( 0 <= Channel && Channel < Count )
 	{
-		p_rbValue = m_svDigitalOutputs[ p_ulChannel ].m_bIsInverted;
+		rValue = m_DigitalOutputs[ Channel ].m_bIsInverted;
 
-		l_hrOk = S_OK;
+		Result = S_OK;
 	}
 
-	return l_hrOk;
+	return Result;
 }
 
-HRESULT SVIOConfigurationInterfaceClass::SetDigitalOutputIsInverted( unsigned long p_ulChannel, bool p_bValue )
+HRESULT SVIOConfigurationInterfaceClass::SetDigitalOutputIsInverted( unsigned long Channel, bool Value )
 {
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT Result{E_FAIL};
 
-	unsigned long l_ulCount = static_cast< unsigned long >( m_svDigitalOutputs.GetSize() );
+	unsigned long Count = static_cast<unsigned long> (m_DigitalOutputs.size());
 
-	if ( 0 <= p_ulChannel && p_ulChannel < l_ulCount )
+	if ( 0 <= Channel && Channel < Count )
 	{
-		m_svDigitalOutputs[ p_ulChannel ].m_bIsInverted = p_bValue;
+		m_DigitalOutputs[ Channel ].m_bIsInverted = Value;
 
-		l_hrOk = S_OK;
+		Result = S_OK;
 	}
 
-	return l_hrOk;
+	return Result;
 }
 
-HRESULT SVIOConfigurationInterfaceClass::GetDigitalOutputIsForced( unsigned long p_ulChannel, bool &p_rbValue )
+HRESULT SVIOConfigurationInterfaceClass::GetDigitalOutputIsForced( unsigned long Channel, bool &rValue )
 {
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT Result{E_FAIL};
 
-	unsigned long l_ulCount = static_cast< unsigned long >( m_svDigitalOutputs.GetSize() );
+	unsigned long Count = static_cast<unsigned long> (m_DigitalOutputs.size());
 
-	if ( 0 <= p_ulChannel && p_ulChannel < l_ulCount )
+	if ( 0 <= Channel && Channel < Count )
 	{
-		p_rbValue = m_svDigitalOutputs[ p_ulChannel ].m_bIsForced;
+		rValue = m_DigitalOutputs[ Channel ].m_bIsForced;
 
-		l_hrOk = S_OK;
+		Result = S_OK;
 	}
 
-	return l_hrOk;
+	return Result;
 }
 
-HRESULT SVIOConfigurationInterfaceClass::SetDigitalOutputIsForced( unsigned long p_ulChannel, bool p_bValue )
+HRESULT SVIOConfigurationInterfaceClass::SetDigitalOutputIsForced( unsigned long Channel, bool Value )
 {
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT Result{E_FAIL};
 
-	unsigned long l_ulCount = static_cast< unsigned long >( m_svDigitalOutputs.GetSize() );
+	unsigned long Count = static_cast<unsigned long> (m_DigitalOutputs.size());
 
-	if ( 0 <= p_ulChannel && p_ulChannel < l_ulCount )
+	if ( 0 <= Channel && Channel < Count )
 	{
-		m_svDigitalOutputs[ p_ulChannel ].m_bIsForced = p_bValue;
+		m_DigitalOutputs[ Channel ].m_bIsForced = Value;
 
-		l_hrOk = S_OK;
+		Result = S_OK;
 	}
 
-	return l_hrOk;
+	return Result;
 }
 
-HRESULT SVIOConfigurationInterfaceClass::GetDigitalOutputForcedValue( unsigned long p_ulChannel, bool &p_rbValue )
+HRESULT SVIOConfigurationInterfaceClass::GetDigitalOutputForcedValue( unsigned long Channel, bool &rValue )
 {
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT Result{E_FAIL};
 
-	unsigned long l_ulCount = static_cast< unsigned long >( m_svDigitalOutputs.GetSize() );
+	unsigned long Count = static_cast<unsigned long> (m_DigitalOutputs.size());
 
-	if ( 0 <= p_ulChannel && p_ulChannel < l_ulCount )
+	if ( 0 <= Channel && Channel < Count )
 	{
-		p_rbValue = m_svDigitalOutputs[ p_ulChannel ].m_bForcedValue;
+		rValue = m_DigitalOutputs[ Channel ].m_bForcedValue;
 
-		l_hrOk = S_OK;
+		Result = S_OK;
 	}
 
-	return l_hrOk;
+	return Result;
 }
 
-HRESULT SVIOConfigurationInterfaceClass::SetDigitalOutputForcedValue( unsigned long p_ulChannel, bool p_bValue )
+HRESULT SVIOConfigurationInterfaceClass::SetDigitalOutputForcedValue( unsigned long Channel, bool Value )
 {
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT Result{E_FAIL};
 
-	unsigned long l_ulCount = static_cast< unsigned long >( m_svDigitalOutputs.GetSize() );
+	unsigned long Count = static_cast<unsigned long> (m_DigitalOutputs.size());
 
-	if ( 0 <= p_ulChannel && p_ulChannel < l_ulCount )
+	if ( 0 <= Channel && Channel < Count )
 	{
-		m_svDigitalOutputs[ p_ulChannel ].m_bForcedValue = p_bValue;
+		m_DigitalOutputs[ Channel ].m_bForcedValue = Value;
 
-		l_hrOk = S_OK;
+		Result = S_OK;
 	}
 
-	return l_hrOk;
+	return Result;
 }
 
-HRESULT SVIOConfigurationInterfaceClass::GetDigitalOutputValue( unsigned long p_ulChannel, bool &p_rbValue )
+HRESULT SVIOConfigurationInterfaceClass::GetDigitalOutputValue( unsigned long Channel, bool &rValue )
 {
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT Result{E_FAIL};
 
-	unsigned long l_ulCount = static_cast< unsigned long >( m_svDigitalOutputs.GetSize() );
+	unsigned long Count = static_cast<unsigned long> (m_DigitalOutputs.size());
 
-	if ( 0 <= p_ulChannel && p_ulChannel < l_ulCount )
+	if ( 0 <= Channel && Channel < Count )
 	{
-		bool l_bValue = m_svDigitalOutputs[ p_ulChannel ].m_bValue;
+		bool l_bValue = m_DigitalOutputs[ Channel ].m_bValue;
 
 		if ( m_Opto22OutputInvert )
 		{
 			l_bValue = ! l_bValue;
 		}
 
-		p_rbValue = l_bValue;
+		rValue = l_bValue;
 
-		l_hrOk = S_OK;
+		Result = S_OK;
 	}
 
-	return l_hrOk;
+	return Result;
 }
 
-HRESULT SVIOConfigurationInterfaceClass::SetDigitalOutputValue( unsigned long p_ulChannel, bool p_bValue )
+HRESULT SVIOConfigurationInterfaceClass::SetDigitalOutputValue( unsigned long Channel, bool Value )
 {
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT Result{E_FAIL};
 
-	unsigned long l_ulCount = static_cast< unsigned long >( m_svDigitalOutputs.GetSize() );
+	unsigned long Count = static_cast<unsigned long> (m_DigitalOutputs.size());
 
-	if ( 0 <= p_ulChannel && p_ulChannel < l_ulCount )
+	if ( 0 <= Channel && Channel < Count )
 	{
-		bool l_bValue = p_bValue;
+		bool l_bValue = Value;
 
-		if ( m_svDigitalOutputs[ p_ulChannel ].m_bIsForced )
+		if ( m_DigitalOutputs[ Channel ].m_bIsForced )
 		{
-			l_bValue = m_svDigitalOutputs[ p_ulChannel ].m_bForcedValue;
+			l_bValue = m_DigitalOutputs[ Channel ].m_bForcedValue;
 		}
 
-		if ( m_svDigitalOutputs[ p_ulChannel ].m_bIsInverted == m_Opto22OutputInvert )
+		if ( m_DigitalOutputs[ Channel ].m_bIsInverted == m_Opto22OutputInvert )
 		{
 			l_bValue = ! l_bValue;
 		}
 
-		m_svDigitalOutputs[ p_ulChannel ].m_bValue = l_bValue;
+		m_DigitalOutputs[ Channel ].m_bValue = l_bValue;
 
-		l_hrOk = m_svDigitalBoard.SetOutputValue( p_ulChannel, l_bValue );
+		Result = m_svDigitalBoard.SetOutputValue( Channel, l_bValue );
 	}
 
-	return l_hrOk;
+	return Result;
 }
 
 HRESULT SVIOConfigurationInterfaceClass::GetDigitalOutputState( unsigned long p_ulSizeInChars, unsigned char *p_pucBlock )
 {
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT Result{E_FAIL};
 
 	if( 0 < p_ulSizeInChars && nullptr != p_pucBlock )
 	{
-		unsigned long l_ulCount = 0;
+		unsigned long Count = 0;
 
-		l_hrOk = GetDigitalOutputCount( l_ulCount );
+		Result = GetDigitalOutputCount( Count );
 
-		if ( p_ulSizeInChars * 8 < l_ulCount )
+		if ( p_ulSizeInChars * 8 < Count )
 		{
-			l_hrOk = S_FALSE;
+			Result = E_FAIL;
 		}
 
 		memset( (void *)p_pucBlock, 0x00, p_ulSizeInChars );
 
-		for ( unsigned long l = 0; S_OK == l_hrOk && l < l_ulCount; l++ )
+		for ( unsigned long l = 0; S_OK == Result && l < Count; l++ )
 		{
 			bool l_bValue = false;
 
-			l_hrOk = GetDigitalOutputValue( l, l_bValue );
+			Result = GetDigitalOutputValue( l, l_bValue );
 
-			if ( S_OK == l_hrOk )
+			if ( S_OK == Result )
 			{
 				if ( l_bValue ) 
 				{
@@ -440,34 +427,24 @@ HRESULT SVIOConfigurationInterfaceClass::GetDigitalOutputState( unsigned long p_
 		}
 	}
 
-	return l_hrOk;
+	return Result;
 }
 
 HRESULT SVIOConfigurationInterfaceClass::GetDigitalOutputPortCount( unsigned long &p_rulCount )
 {
-	HRESULT l_hrOk = S_OK;
-
-	l_hrOk = m_svDigitalBoard.GetOutputPortCount( &p_rulCount );
-
-	return l_hrOk;
+	return m_svDigitalBoard.GetOutputPortCount( &p_rulCount );
 }
 
 HRESULT SVIOConfigurationInterfaceClass::SetDigitalOutputPortValue( unsigned long p_ulPort, unsigned long p_ulValue )
 {
-	HRESULT l_hrOk = S_FALSE;
-
-	l_hrOk = m_svDigitalBoard.SetOutputPortValue( p_ulPort, p_ulValue );
-
-	return l_hrOk;
+	return m_svDigitalBoard.SetOutputPortValue( p_ulPort, p_ulValue );
 }
 
 HRESULT SVIOConfigurationInterfaceClass::ClearDigitalOutputs()
 {
-	HRESULT l_hrOk = S_OK;
-
 	unsigned long i = 0;
 	
-	unsigned long l_iSize = static_cast< unsigned long >( m_svDigitalOutputs.GetSize() );
+	unsigned long l_iSize = static_cast<unsigned long> (m_DigitalOutputs.size());
 
 	for ( i = 0; i < l_iSize; i++ )
 	{
@@ -484,16 +461,14 @@ HRESULT SVIOConfigurationInterfaceClass::ClearDigitalOutputs()
 		m_svDigitalBoard.SetOutputValue( 23 - i, false );
 	}
 
-	return l_hrOk;
+	return S_OK;
 }
 
 HRESULT SVIOConfigurationInterfaceClass::TestDigitalOutputs()
 {
-	HRESULT l_hrOk = S_OK;
-
 	unsigned long i = 0;
 	unsigned long j = 0;
-	unsigned long l_ulCount = static_cast< unsigned long >( m_svDigitalOutputs.GetSize() );
+	unsigned long Count = static_cast<unsigned long> (m_DigitalOutputs.size());
 	unsigned long l_ulPortCount = 2;
 
 	for( i = 0; i < 10; ++ i )
@@ -513,7 +488,7 @@ HRESULT SVIOConfigurationInterfaceClass::TestDigitalOutputs()
 		Sleep( 100 );
 	}
 
-	for( i = 0; i < l_ulCount; ++ i )
+	for( i = 0; i < Count; ++ i )
 	{
 		for( j = 0; j < 20; ++ j )
 		{
@@ -528,73 +503,73 @@ HRESULT SVIOConfigurationInterfaceClass::TestDigitalOutputs()
 
 	ClearDigitalOutputs();
 
-	return l_hrOk;
+	return S_OK;
 }
 
-HRESULT SVIOConfigurationInterfaceClass::SetSVIMTriggerValue( unsigned long p_ulChannel, bool p_bRising )
+HRESULT SVIOConfigurationInterfaceClass::SetSVIMTriggerValue( unsigned long Channel, bool p_bRising )
 {
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT Result{E_FAIL};
 
-	if ( p_ulChannel < 4 )
+	if ( Channel < 4 )
 	{
-		m_pbSVIMTriggerRising[ p_ulChannel ] = p_bRising;
+		m_pbSVIMTriggerRising[ Channel ] = p_bRising;
 
-		l_hrOk = S_OK;
+		Result = S_OK;
 	}
 
-	return l_hrOk;
+	return Result;
 }
 
-HRESULT SVIOConfigurationInterfaceClass::SetSVIMStrobeValue( unsigned long p_ulChannel, bool p_bRising )
+HRESULT SVIOConfigurationInterfaceClass::SetSVIMStrobeValue( unsigned long Channel, bool p_bRising )
 {
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT Result{E_FAIL};
 
-	if ( p_ulChannel < 4 )
+	if ( Channel < 4 )
 	{
-		m_pbSVIMStrobeRising[ p_ulChannel ] = p_bRising;
+		m_pbSVIMStrobeRising[ Channel ] = p_bRising;
 
-		l_hrOk = S_OK;
+		Result = S_OK;
 	}
 
-	return l_hrOk;
+	return Result;
 }
 
-HRESULT SVIOConfigurationInterfaceClass::SetSVIMStrobeStartFrameActive( unsigned long p_ulChannel, bool p_bActive )
+HRESULT SVIOConfigurationInterfaceClass::SetSVIMStrobeStartFrameActive( unsigned long Channel, bool p_bActive )
 {
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT Result{E_FAIL};
 
-	if ( p_ulChannel < 4 )
+	if ( Channel < 4 )
 	{
-		m_abSVIMStrobeStartFrame[ p_ulChannel ] = p_bActive;
+		m_abSVIMStrobeStartFrame[ Channel ] = p_bActive;
 
-		l_hrOk = S_OK;
+		Result = S_OK;
 	}
 
-	return l_hrOk;
+	return Result;
 }
 
-HRESULT SVIOConfigurationInterfaceClass::GetSVIMStrobeStartFrameActive( unsigned long p_ulChannel, bool &p_rbActive )
+HRESULT SVIOConfigurationInterfaceClass::GetSVIMStrobeStartFrameActive( unsigned long Channel, bool &p_rbActive )
 {
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT Result{E_FAIL};
 
-	if ( p_ulChannel < 4 )
+	if ( Channel < 4 )
 	{
-		p_rbActive = m_abSVIMStrobeStartFrame[ p_ulChannel ];
+		p_rbActive = m_abSVIMStrobeStartFrame[ Channel ];
 
-		l_hrOk = S_OK;
+		Result = S_OK;
 	}
 
-	return l_hrOk;
+	return Result;
 }
 
 
-HRESULT SVIOConfigurationInterfaceClass::GetIOTriggerValue( unsigned long p_ulChannel, bool &p_rbRising )
+HRESULT SVIOConfigurationInterfaceClass::GetIOTriggerValue( unsigned long Channel, bool &p_rbRising )
 {
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT Result{E_FAIL};
 
-	if ( p_ulChannel < 4 )
+	if ( Channel < 4 )
 	{
-		if ( m_pbSVIMTriggerRising[ p_ulChannel ] )
+		if ( m_pbSVIMTriggerRising[ Channel ] )
 		{
 			// Rising
 
@@ -607,19 +582,19 @@ HRESULT SVIOConfigurationInterfaceClass::GetIOTriggerValue( unsigned long p_ulCh
 			p_rbRising = m_Opto22InputInvert;
 		}
 
-		l_hrOk = S_OK;
+		Result = S_OK;
 	}
 
-	return l_hrOk;
+	return Result;
 }
 
-HRESULT SVIOConfigurationInterfaceClass::GetIOStrobeValue( unsigned long p_ulChannel, bool &p_rbRising )
+HRESULT SVIOConfigurationInterfaceClass::GetIOStrobeValue( unsigned long Channel, bool &p_rbRising )
 {
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT Result{E_FAIL};
 
-	if ( p_ulChannel < 4 )
+	if ( Channel < 4 )
 	{
-		if ( m_pbSVIMStrobeRising[ p_ulChannel ] )
+		if ( m_pbSVIMStrobeRising[ Channel ] )
 		{
 			// Rising
 
@@ -632,54 +607,54 @@ HRESULT SVIOConfigurationInterfaceClass::GetIOStrobeValue( unsigned long p_ulCha
 			p_rbRising = m_Opto22OutputInvert;
 		}
 
-		l_hrOk = S_OK;
+		Result = S_OK;
 	}
 
-	return l_hrOk;
+	return Result;
 }
 
-HRESULT SVIOConfigurationInterfaceClass::SetCameraTriggerValue( unsigned long p_ulChannel, bool p_bRising )
+HRESULT SVIOConfigurationInterfaceClass::SetCameraTriggerValue( unsigned long Channel, bool p_bRising )
 {
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT Result{E_FAIL};
 
-	if ( p_ulChannel < 4 )
+	if ( Channel < 4 )
 	{
 		bool l_bRising = false;
 
-		l_hrOk = GetIOTriggerValue( p_ulChannel, l_bRising );
+		Result = GetIOTriggerValue( Channel, l_bRising );
 
-		if ( S_OK == l_hrOk )
+		if ( S_OK == Result )
 		{
 			// JMS - Set Output to FALSE to invert signal
 			// JMS - Set Output to TRUE to not invert signal
 
-			l_hrOk = m_svDigitalBoard.SetOutputValue( 23 - p_ulChannel, l_bRising == p_bRising );
+			Result = m_svDigitalBoard.SetOutputValue( 23 - Channel, l_bRising == p_bRising );
 		}
 	}
 
-	return l_hrOk;
+	return Result;
 }
 
-HRESULT SVIOConfigurationInterfaceClass::SetCameraStrobeValue( unsigned long p_ulChannel, bool p_bRising )
+HRESULT SVIOConfigurationInterfaceClass::SetCameraStrobeValue( unsigned long Channel, bool p_bRising )
 {
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT Result{E_FAIL};
 
-	if ( p_ulChannel < 4 )
+	if ( Channel < 4 )
 	{
 		bool l_bRising = false;
 
-		l_hrOk = GetIOStrobeValue( p_ulChannel, l_bRising );
+		Result = GetIOStrobeValue( Channel, l_bRising );
 
-		if ( S_OK == l_hrOk )
+		if ( S_OK == Result )
 		{
 			// JMS - Set Output to FALSE to invert signal
 			// JMS - Set Output to TRUE to not invert signal
 
-			l_hrOk = m_svDigitalBoard.SetOutputValue( 19 - p_ulChannel, l_bRising == p_bRising );
+			Result = m_svDigitalBoard.SetOutputValue( 19 - Channel, l_bRising == p_bRising );
 		}
 	}
 
-	return l_hrOk;
+	return Result;
 }
 
 // Parameter related functions. Not implemented in all dlls.

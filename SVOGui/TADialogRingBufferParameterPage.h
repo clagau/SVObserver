@@ -11,7 +11,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <boost\function.hpp>
 #include "SVOResource/resource.h"
-#include "ObjectInterfaces/GlobalConst.h"
+#include "Definitions/GlobalConst.h"
 #include "ISVPropertyPageDialog.h"
 #include "PictureDisplay.h"
 #include "ValuesAccessor.h"
@@ -80,7 +80,7 @@ namespace SvOg
 		GUID m_TaskObjectID;
 
 		CEdit m_EditRingDepth;
-		CEdit m_EditImageIndex[SvOi::cRingBufferNumberOutputImages];
+		CEdit m_EditImageIndex[SvDef::cRingBufferNumberOutputImages];
 		CButton m_ButtonImageIndex1;
 		CButton m_ButtonImageIndex2;
 		CBitmap m_downArrowBitmap;

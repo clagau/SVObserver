@@ -63,7 +63,7 @@ namespace SvOg
 				HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 				if (S_OK == hr)
 				{
-					if (commandPtr->AttributesAllowed() & SvOi::SV_SELECTABLE_FOR_EQUATION)
+					if (commandPtr->AttributesAllowed() & SvDef::SV_SELECTABLE_FOR_EQUATION)
 					{
 						bRetVal = true;
 					}

@@ -51,12 +51,12 @@ bool SVAcquisitionToolClass::CreateObject( const SVObjectLevelCreateStruct& rCre
 	if( bOk )
 	{
 		bOk = ( S_OK == SetImageExtent( mainImageObject.GetImageExtents() ) );
-		mainImageObject.SetObjectAttributesAllowed( SvOi::SV_PUBLISH_RESULT_IMAGE, SvOi::SetAttributeType::AddAttribute );
+		mainImageObject.SetObjectAttributesAllowed( SvDef::SV_PUBLISH_RESULT_IMAGE, SvOi::SetAttributeType::AddAttribute );
 	}
 
 	m_SourceImageNames.setStatic( true );
 	m_SourceImageNames.setSaveValueFlag(false);
-	m_SourceImageNames.SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
+	m_SourceImageNames.SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
 	m_SourceImageNames.SetValue( mainImageObject.GetCompleteName());
 
 	m_isCreated = bOk;

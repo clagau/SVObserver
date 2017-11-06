@@ -14,10 +14,10 @@
 #include "RemoteCommand.h"
 #include "SVLibrary/SVFileNameClass.h"
 #include "SVObserver.h"
-#include "ObjectInterfaces/SVUserMessage.h"
+#include "Definitions/SVUserMessage.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVGlobal.h"
-#include "ObjectInterfaces/SVIMCommand.h"
+#include "Definitions/SVIMCommand.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #pragma endregion includes
 
@@ -40,58 +40,58 @@ bool GlobalRCGetState( DWORD* pdwSVIMState )
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_READY ) )
 	{
-		*pdwSVIMState |= SvOi::SVIM_CONFIG_LOADED;
+		*pdwSVIMState |= SvDef::SVIM_CONFIG_LOADED;
 	}
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_SAVING ) )
 	{
-		*pdwSVIMState |= SvOi::SVIM_SAVING_CONFIG;
+		*pdwSVIMState |= SvDef::SVIM_SAVING_CONFIG;
 	}
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_LOADING ) )
 	{
-		*pdwSVIMState |= SvOi::SVIM_CONFIG_LOADING;
+		*pdwSVIMState |= SvDef::SVIM_CONFIG_LOADING;
 	}
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
 	{
-		*pdwSVIMState |= SvOi::SVIM_ONLINE;
+		*pdwSVIMState |= SvDef::SVIM_ONLINE;
 
 		// testing (but not regression testing) sets the running flag
 		if (! SVSVIMStateClass::CheckState( SV_STATE_TEST ) )
 		{
-			*pdwSVIMState |= SvOi::SVIM_RUNNING;
+			*pdwSVIMState |= SvDef::SVIM_RUNNING;
 		}
 	}
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) )
 	{
-		*pdwSVIMState |= SvOi::SVIM_REGRESSION_TEST;
+		*pdwSVIMState |= SvDef::SVIM_REGRESSION_TEST;
 	}
 	// can be testing without regression testing, but can't be regression testing without testing
 	else if ( SVSVIMStateClass::CheckState( SV_STATE_TEST ) )
 	{
-		*pdwSVIMState |= SvOi::SVIM_RUNNING_TEST;
+		*pdwSVIMState |= SvDef::SVIM_RUNNING_TEST;
 	}
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_EDIT ) )
 	{
-		*pdwSVIMState |= SvOi::SVIM_SETUPMODE;
+		*pdwSVIMState |= SvDef::SVIM_SETUPMODE;
 	}
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_CLOSING ) )
 	{
-		*pdwSVIMState |= SvOi::SVIM_STOPPING;
+		*pdwSVIMState |= SvDef::SVIM_STOPPING;
 	}
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_START_PENDING ) )
 	{
-		*pdwSVIMState |= SvOi::SVIM_ONLINE_PENDING;
+		*pdwSVIMState |= SvDef::SVIM_ONLINE_PENDING;
 	}
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_RAID_FAILURE ) )
 	{
-		*pdwSVIMState |= SvOi::SVIM_RAID_FAILURE;
+		*pdwSVIMState |= SvDef::SVIM_RAID_FAILURE;
 	}
 
 	bOk = *pdwSVIMState != 0 || bOk;

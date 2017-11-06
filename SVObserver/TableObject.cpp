@@ -54,7 +54,7 @@ bool TableObject::CreateObject( const SVObjectLevelCreateStruct& rCreateStructur
 {
 	bool l_bOk = SVTaskObjectClass::CreateObject(rCreateStructure);
 
-	m_NumberOfRows.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_NumberOfRows.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 	m_NumberOfRows.setSaveValueFlag(false);
 
 	return l_bOk;

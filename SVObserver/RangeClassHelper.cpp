@@ -524,7 +524,7 @@ bool RangeClassHelper::FillObjectSelector()
 				SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterOutput, PPQName, SVString( _T("")  ));
 				SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject );
 
-				SvOsl::SelectorOptions BuildOptions( pInspection->GetUniqueObjectID(), SvOi::SV_SELECTABLE_FOR_EQUATION, m_pRange->GetUniqueObjectID() );
+				SvOsl::SelectorOptions BuildOptions( pInspection->GetUniqueObjectID(), SvDef::SV_SELECTABLE_FOR_EQUATION, m_pRange->GetUniqueObjectID() );
 				SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::GlobalSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<SvCmd::RangeSelectorFilterType>>( BuildOptions );
 				bRetVal = true;
 			}//@TODO return meaningful error on else
@@ -571,7 +571,7 @@ bool RangeClassHelper::isValidReference( const SVString& rInspectionName, const 
 	{
 		Result = false;
 	}
-	else if( 0 == ( ObjectRef.ObjectAttributesAllowed() & SvOi::SV_SELECTABLE_FOR_EQUATION ) )
+	else if( 0 == ( ObjectRef.ObjectAttributesAllowed() & SvDef::SV_SELECTABLE_FOR_EQUATION ) )
 	{
 		Result = false;
 	}

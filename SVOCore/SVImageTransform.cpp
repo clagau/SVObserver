@@ -15,7 +15,7 @@
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
-#include "ObjectInterfaces/GlobalConst.h"
+#include "Definitions/GlobalConst.h"
 #include "SVTool.h"
 #include "SVTransformationTool.h"
 #include "SVUtilityLibrary/SVString.h"
@@ -84,10 +84,10 @@ SVImageTransformClass::SVImageTransformClass( SVObjectClass* POwner, int StringR
 	// Set Embedded defaults
 	m_useExtentsOnly.SetDefaultValue( BOOL(false) );
 
-	m_extentWidth.SetDefaultValue( SvOi::cDefaultWindowToolWidth );
-	m_extentHeight.SetDefaultValue( SvOi::cDefaultWindowToolHeight );
+	m_extentWidth.SetDefaultValue( SvDef::cDefaultWindowToolWidth );
+	m_extentHeight.SetDefaultValue( SvDef::cDefaultWindowToolHeight );
 
-	m_outputImageObject.InitializeImage( SvOi::SVImageTypeEnum::SVImageTypePhysical );
+	m_outputImageObject.InitializeImage( SvDef::SVImageTypeEnum::SVImageTypePhysical );
 
 	// Add Default Inputs and Outputs
 	addDefaultInputObjects();
@@ -121,14 +121,14 @@ bool SVImageTransformClass::CreateObject( const SVObjectLevelCreateStruct& rCrea
 	m_isCreated = l_bOk;
 
 	// Set / Reset Printable Flags
-	m_useExtentsOnly.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_extentWidth.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_extentHeight.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_extentDisplacementX.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_extentDisplacementY.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_extentSourceX.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_extentSourceY.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_extentRotationAngle.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_useExtentsOnly.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_extentWidth.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_extentHeight.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_extentDisplacementX.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_extentDisplacementY.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_extentSourceX.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_extentSourceY.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_extentRotationAngle.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	return l_bOk;
 }

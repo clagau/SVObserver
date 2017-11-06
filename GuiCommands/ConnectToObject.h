@@ -11,7 +11,7 @@
 //Moved to precompiled header: #include <boost/noncopyable.hpp>
 //Moved to precompiled header: #include <Guiddef.h>
 #include "ObjectInterfaces\ITaskObject.h"
-#include "ObjectInterfaces\SVObjectTypeInfoStruct.h"
+#include "Definitions/SVObjectTypeInfoStruct.h"
 #include "ObjectInterfaces\IObjectManager.h"
 #include "SVUtilityLibrary\SVString.h"
 #pragma endregion Includes

@@ -11,7 +11,7 @@
 #pragma once
 
 #pragma region Includes
-#include "ObjectInterfaces/SVPPQEnums.h"
+#include "Definitions/SVPPQEnums.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 

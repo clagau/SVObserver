@@ -573,6 +573,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SlotManagerTester", "SlotMa
 		{B479E2E3-2B4F-4E2C-A6AD-A0A03579FE59} = {B479E2E3-2B4F-4E2C-A6AD-A0A03579FE59}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Definitions", "Definitions\Definitions.vcxproj", "{97A52CEE-1E25-48B5-9D50-92EF5F35731C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -1083,6 +1085,14 @@ Global
 		{01BD7A65-25A4-4C8E-B36C-23D36972F58A}.Unicode Debug|x64.Build.0 = Debug|x64
 		{01BD7A65-25A4-4C8E-B36C-23D36972F58A}.Unicode Release|x64.ActiveCfg = Release|x64
 		{01BD7A65-25A4-4C8E-B36C-23D36972F58A}.Unicode Release|x64.Build.0 = Release|x64
+		{97A52CEE-1E25-48B5-9D50-92EF5F35731C}.Debug|x64.ActiveCfg = Debug|x64
+		{97A52CEE-1E25-48B5-9D50-92EF5F35731C}.Debug|x64.Build.0 = Debug|x64
+		{97A52CEE-1E25-48B5-9D50-92EF5F35731C}.Release|x64.ActiveCfg = Release|x64
+		{97A52CEE-1E25-48B5-9D50-92EF5F35731C}.Release|x64.Build.0 = Release|x64
+		{97A52CEE-1E25-48B5-9D50-92EF5F35731C}.Unicode Debug|x64.ActiveCfg = Debug|x64
+		{97A52CEE-1E25-48B5-9D50-92EF5F35731C}.Unicode Debug|x64.Build.0 = Debug|x64
+		{97A52CEE-1E25-48B5-9D50-92EF5F35731C}.Unicode Release|x64.ActiveCfg = Release|x64
+		{97A52CEE-1E25-48B5-9D50-92EF5F35731C}.Unicode Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

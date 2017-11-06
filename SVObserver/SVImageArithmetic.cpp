@@ -71,7 +71,7 @@ SVImageArithmeticClass::SVImageArithmeticClass( SVObjectClass* POwner, int Strin
 
 	// Set Embedded defaults
 
-	m_OutputImage.InitializeImage( SvOi::SVImageTypeEnum::SVImageTypePhysical );
+	m_OutputImage.InitializeImage( SvDef::SVImageTypeEnum::SVImageTypePhysical );
 
 	// Set up draw objects...
 //	graphFigure.SetDrawPen( TRUE, PS_SOLID, 1, SV_DEFAULT_SUB_FUNCTION_COLOR_1 );
@@ -92,7 +92,7 @@ bool SVImageArithmeticClass::CreateObject( const SVObjectLevelCreateStruct& rCre
 	bOk &= ( S_OK == m_OutputImage.InitializeImage( getInputImageA() ) );
 
 	// Reset Printable flag
-	m_OutputImage.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_OutputImage.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_isCreated = bOk;
 
@@ -354,10 +354,10 @@ bool SVImageArithmeticClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Message
 			HRESULT l_Code;
 
 			// Filter for special image arithmetic operators...
-			// e.g. SV_IMGOP_AVERAGE ( not defined by MIL )
+			// e.g. SvDef::SVImageOperatorAverage ( not defined by MIL )
 			switch( lOperator )
 			{
-			case SV_IMGOP_AVERAGE:
+			case SvDef::SVImageOperatorAverage:
 				{
 
 					l_Code = SVMatroxImageInterface::Arithmetic( l_MilOutHandle.GetBuffer(), l_MilAHandle.GetBuffer(), l_MilBHandle.GetBuffer(), SVImageMultipleAccumulate );
@@ -376,20 +376,20 @@ bool SVImageArithmeticClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Message
 				}
 				break;
 
-			case SV_IMGOP_FLIP_VERTICAL:
+			case SvDef::SVImageOperatorFlipVertical:
 				{
 					l_Code = SVMatroxImageInterface::Flip( l_MilOutHandle.GetBuffer(), l_MilAHandle.GetBuffer(), SVImageFlipVertical );
 				}
 				break;
 
-			case SV_IMGOP_FLIP_HORIZONTAL:
+			case SvDef::SVImageOperatorFlipHorizontal:
 				{
 					l_Code = SVMatroxImageInterface::Flip( l_MilOutHandle.GetBuffer(), l_MilAHandle.GetBuffer(), SVImageFlipHorizontal );
 				}
 				break;
 
 
-			case SV_IMGOP_DOUBLE_HEIGHT:
+			case SvDef::SVImageOperatorDoubleHeight:
 				{
 					ScaleWithAveraging( pImageA, pOutputImage );
 				}

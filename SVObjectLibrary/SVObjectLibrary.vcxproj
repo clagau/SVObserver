@@ -126,7 +126,6 @@
     <ClCompile Include="SVObjectClass.cpp" />
     <ClCompile Include="SVObjectInfoStruct.cpp" />
     <ClCompile Include="SVObjectLevelCreateStruct.cpp" />
-    <ClCompile Include="SVObjectListClass.cpp" />
     <ClCompile Include="SVObjectManagerClass.cpp" />
     <ClCompile Include="SVObjectNameInfo.cpp" />
     <ClCompile Include="SVObjectReference.cpp" />
@@ -158,7 +157,6 @@
     <ClInclude Include="SVObjectInfoStruct.h" />
     <ClInclude Include="SVObjectLevelCreateStruct.h" />
     <ClInclude Include="SVObjectLibrary.h" />
-    <ClInclude Include="SVObjectListClass.h" />
     <ClInclude Include="SVObjectManagerClass.h" />
     <ClInclude Include="SVObjectNameInfo.h" />
     <ClInclude Include="SVObjectNotifyTemplate.h" />

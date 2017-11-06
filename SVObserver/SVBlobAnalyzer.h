@@ -17,6 +17,7 @@
 #include "TableObject.h"
 #include "ObjectInterfaces/IBlobAnalyzer.h"
 #include "SVValueObjectLibrary/DoubleSortValueObject.h"
+#include "CameraLibrary/SVTemplate.h"
 #pragma endregion Includes
 
 class SVLongResultClass;

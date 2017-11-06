@@ -49,18 +49,18 @@ bool SVLinearImageOperatorListClass::CreateObject( const SVObjectLevelCreateStru
 
 	if( ( S_OK == getUseRotationAngle( UseRotation ) ) && !UseRotation )
 	{
-		outputImageObject.InitializeImage( SvOi::SVImageTypeEnum::SVImageTypeLogicalAndPhysical );
+		outputImageObject.InitializeImage( SvDef::SVImageTypeEnum::SVImageTypeLogicalAndPhysical );
 	}
 	else
 	{
-		outputImageObject.InitializeImage( SvOi::SVImageTypeEnum::SVImageTypePhysical );
+		outputImageObject.InitializeImage( SvDef::SVImageTypeEnum::SVImageTypePhysical );
 	}
 
 	l_bOk &= S_OK == UpdateLineExtentData();
-	m_svLinearData.SetObjectAttributesAllowed( SvOi::SV_VIEWABLE | SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_svLinearData.SetObjectAttributesAllowed( SvDef::SV_VIEWABLE | SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
-	m_svMaxThreshold.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_svMinThreshold.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_svMaxThreshold.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_svMinThreshold.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 
 	return l_bOk;
@@ -81,11 +81,11 @@ bool SVLinearImageOperatorListClass::ResetObject(SvStl::MessageContainerVector *
 
 	if( (S_OK == getUseRotationAngle( UseRotation )) && !UseRotation )
 	{
-		outputImageObject.InitializeImage( SvOi::SVImageTypeEnum::SVImageTypeLogicalAndPhysical );
+		outputImageObject.InitializeImage( SvDef::SVImageTypeEnum::SVImageTypeLogicalAndPhysical );
 	}
 	else
 	{
-		outputImageObject.InitializeImage( SvOi::SVImageTypeEnum::SVImageTypePhysical );
+		outputImageObject.InitializeImage( SvDef::SVImageTypeEnum::SVImageTypePhysical );
 	}
 
 	bool Result = __super::ResetObject(pErrorMessages);
@@ -422,7 +422,7 @@ void SVLinearImageOperatorListClass::init()
 
 	m_ulLineLength = 0;
 
-	outputImageObject.InitializeImage( SvOi::SVImageTypeEnum::SVImageTypePhysical );
+	outputImageObject.InitializeImage( SvDef::SVImageTypeEnum::SVImageTypePhysical );
 
 	// Set default inputs and outputs
 	addDefaultInputObjects();

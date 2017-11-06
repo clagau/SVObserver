@@ -12,7 +12,7 @@
 //Moved to precompiled header: #include <boost/function.hpp>
 //Moved to precompiled header: #include <Guiddef.h>
 #include "ObjectInterfaces\IObjectClass.h"
-#include "ObjectInterfaces\SVObjectTypeInfoStruct.h"
+#include "Definitions/SVObjectTypeInfoStruct.h"
 #include "ObjectInterfaces\ISVImage.h"
 #include "ObjectInterfaces\IObjectManager.h"
 #include "SVUtilityLibrary\SVString.h"

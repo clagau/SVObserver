@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVOResource/resource.h"
 #include "SVToolAdjustmentDialogFilterPageClass.h"
-#include "ObjectInterfaces/ObjectDefines.h"
+#include "Definitions/ObjectDefines.h"
 #include "SVCustomFilterDlg.h"
 #include "SVRankingFilterDlg.h"
 #include "SVThinningFilterDlg.h"

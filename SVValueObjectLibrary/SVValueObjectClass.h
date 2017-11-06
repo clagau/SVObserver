@@ -17,7 +17,7 @@
 //Moved to precompiled header: #include <memory>
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "ObjectInterfaces/IValueObject.h"
-#include "ObjectInterfaces/TextDefineSvOi.h"
+#include "Definitions/TextDefineSVDef.h"
 #include "SVMessage/SVMessage.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "SVObjectLibrary/SVObjectClass.h"

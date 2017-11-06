@@ -27,7 +27,7 @@ namespace SvOg
 		{
 			InstanceGuid = GetToolSetGUID();
 		}
-		SvOsl::SelectorOptions BuildOptions( m_InspectionID, SvOi::SV_SELECTABLE_FOR_EQUATION, InstanceGuid );
+		SvOsl::SelectorOptions BuildOptions( m_InspectionID, SvDef::SV_SELECTABLE_FOR_EQUATION, InstanceGuid );
 		SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<GlobalSelector, NoSelector, ToolsetItemSelector>( BuildOptions );
 
 		if(!rName.empty())

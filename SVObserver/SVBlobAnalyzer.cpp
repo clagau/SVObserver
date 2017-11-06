@@ -28,7 +28,7 @@
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
-#include "ObjectInterfaces\TextDefineSvOi.h"
+#include "Definitions/TextDefineSVDef.h"
 #include "SVUtilityLibrary/SVString.h"
 
 #pragma endregion Includes
@@ -322,7 +322,7 @@ void SVBlobAnalyzerClass::init()
 	for (SVBlobFeatureEnum i = SV_AREA; i < SV_TOPOF_LIST; i = (SVBlobFeatureEnum) (i + 1))
 	{
 		m_FeaturesEnabled [i] = _T('0');             // Not enabled.
-		m_Value[i].SetObjectAttributesAllowed( SvOi::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
+		m_Value[i].SetObjectAttributesAllowed( SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
 	}
 
 	m_PersistantFeaturesEnabled.SetDefaultValue (m_FeaturesEnabled, true);
@@ -449,7 +449,7 @@ DWORD SVBlobAnalyzerClass::AllocateResult (SVBlobFeatureEnum aFeatureIndex)
 			break;
 		}
 
-		pValue->SetObjectAttributesAllowed( SvOi::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
+		pValue->SetObjectAttributesAllowed( SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
 
 		// Ensure this Object's inputs get connected
 		pResult->ConnectAllInputs();
@@ -544,7 +544,7 @@ DWORD SVBlobAnalyzerClass::AllocateBlobResult ()
 			break;
 		}
 		
-		pValue->SetObjectAttributesAllowed( SvOi::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
+		pValue->SetObjectAttributesAllowed( SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
 		
 		// Ensure this Object's inputs get connected
 		m_pResultBlob->ConnectAllInputs();
@@ -595,7 +595,7 @@ DWORD SVBlobAnalyzerClass::FreeResult (SVBlobFeatureEnum aFeatureIndex)
 	{
 		m_guidResults[ aFeatureIndex ] = SV_GUID_NULL;
 
-		DestroyChildObject(dynamic_cast<SVTaskObjectClass*>(pResult), SvOi::SVMFSetDefaultInputs);
+		DestroyChildObject(dynamic_cast<SVTaskObjectClass*>(pResult), SvDef::SVMFSetDefaultInputs);
 
 		pResult = nullptr;
 	}
@@ -906,26 +906,26 @@ bool SVBlobAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateS
 
 		if ( m_FeaturesEnabled[i] != _T('1') )
 		{
-			m_Value[i].SetObjectAttributesAllowed( SvOi::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
+			m_Value[i].SetObjectAttributesAllowed( SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
 		}
 		else
 		{
-			m_Value[i].SetObjectAttributesAllowed( SvOi::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::AddAttribute );
+			m_Value[i].SetObjectAttributesAllowed( SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::AddAttribute );
 		}
 
-		if ( SvOi::SV_NO_ATTRIBUTES != m_Value[i].ObjectAttributesAllowed() )
+		if ( SvDef::SV_NO_ATTRIBUTES != m_Value[i].ObjectAttributesAllowed() )
 		{
-			m_Value[i].SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );	// for older configs
+			m_Value[i].SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );	// for older configs
 		}
 	}
 
 	// add printable for older configs
-	m_PersistantFeaturesEnabled.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_lvoBlobSampleSize.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_SortFeature.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_SortAscending.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_bExcludeFailed.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_lvoNumberOfBlobsFound.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_PersistantFeaturesEnabled.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_lvoBlobSampleSize.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_SortFeature.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_SortAscending.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_bExcludeFailed.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_lvoNumberOfBlobsFound.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	return m_isCreated;
 }
@@ -1864,9 +1864,9 @@ void SVBlobAnalyzerClass::addDefaultInputObjects( SVInputInfoListClass* PInputLi
 		UINT uiAttributes = m_Value[i].ObjectAttributesAllowed();
 		TCHAR tchEnabled = m_FeaturesEnabled[i];
 		bool l_bOk = ( tchEnabled == _T('1') && 
-			( uiAttributes & SvOi::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES) != SvOi::SV_NO_ATTRIBUTES ) ||
+			( uiAttributes & SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES) != SvDef::SV_NO_ATTRIBUTES ) ||
 			( tchEnabled == _T('0') && 
-			(uiAttributes & SvOi::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES) == SvOi::SV_NO_ATTRIBUTES );
+			(uiAttributes & SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES) == SvDef::SV_NO_ATTRIBUTES );
 
 		// if this ASSERT fires, verify that the attributes are being set correctly!!!!!!! jms & eb 2006 01 20
 		ASSERT( !IsCreated() || l_bOk || (i == SV_CENTER_X_SOURCE || i == SV_CENTER_Y_SOURCE) );

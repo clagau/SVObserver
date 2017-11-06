@@ -14,7 +14,7 @@
 #pragma region Includes
 #include "SVHBitmapUtilitiesLibrary/SVImageFormatEnum.h"
 #include "SVUtilityLibrary/SVString.h"
-#include "ObjectInterfaces/SVImageEnums.h"
+#include "Definitions/SVImageEnums.h"
 #pragma endregion Includes
 
 class SVCameraFormat

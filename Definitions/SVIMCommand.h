@@ -11,7 +11,7 @@
 
 #pragma once
 
-namespace SvOi
+namespace SvDef
 {
 	const DWORD SVIM_CONFIG_LOADING =	0x0001;
 	const DWORD SVIM_CONFIG_LOADED =	0x0002;

@@ -51,7 +51,7 @@ bool TableSortAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateSt
 {
 	bool l_bOk = __super::CreateObject(rCreateStructure);
 
-	m_isASC.SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+	m_isASC.SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
 
 	return l_bOk;
 }

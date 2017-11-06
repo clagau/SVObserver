@@ -894,7 +894,7 @@ int SVAcquisitionClass::GetBufferFormat() const
 {
 	int l_Format = SVImageFormatUnknown;
 
-	msvImageInfo.GetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyFormat, l_Format );
+	msvImageInfo.GetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, l_Format );
 
 	return l_Format;
 }

@@ -14,7 +14,7 @@
 #include "SVMFCControls\SVEditNumbers.h"
 #include "ISVPropertyPageDialog.h"
 #include "RangeController.h"
-#include "ObjectInterfaces\RangeEnum.h"
+#include "Definitions/RangeEnum.h"
 #include "ObjectSelectorController.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes

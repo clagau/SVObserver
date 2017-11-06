@@ -149,7 +149,7 @@ int SVEquationSymbolTableClass::AddSymbol(LPCTSTR name, SVObjectClass* pRequesto
 		return -1;
 	}
 
-	if( 0 == (ObjectReference.ObjectAttributesAllowed() & SvOi::SV_SELECTABLE_FOR_EQUATION) )
+	if( 0 == (ObjectReference.ObjectAttributesAllowed() & SvDef::SV_SELECTABLE_FOR_EQUATION) )
 	{
 		return -1;
 	}
@@ -307,7 +307,7 @@ bool SVEquationClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStru
 	bool bOk = SVTaskObjectClass::CreateObject(rCreateStructure) && nullptr != GetInspection();
 
 	// Set / Reset Printable Flag
-	enabled.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	enabled.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 
 	SVObjectClass *owner = enabled.GetOwner();
 	if (nullptr != owner)
@@ -317,7 +317,7 @@ bool SVEquationClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStru
 		if( owner->GetName() == conditionalString )
 		{
 			// Set / Reset Remotely Setable Flag, if owner is conditional class.
-			enabled.SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute );
+			enabled.SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute );
 		}
 	}
 

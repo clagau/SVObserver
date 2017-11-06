@@ -275,7 +275,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 				if( ! m_pCurrentAnalyzer->IsCreated() )
 				{
 					// And finally try to create the child object...
-					if( !m_pTool->CreateChildObject(m_pCurrentAnalyzer, SvOi::SVMFSetDefaultInputs | SvOi::SVMFResetInspection ) )
+					if( !m_pTool->CreateChildObject(m_pCurrentAnalyzer, SvDef::SVMFSetDefaultInputs | SvDef::SVMFResetInspection ) )
 					{
 						SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 						Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_AnalyzerCreationFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10211 );
@@ -347,7 +347,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::DestroyAnalyzer()
 		m_pCurrentAnalyzer->DisconnectImages();
 
 		// Close, Disconnect and Delete the Object
-		m_pTool->DestroyChildObject(m_pCurrentAnalyzer, SvOi::SVMFSetDefaultInputs | SvOi::SVMFResetInspection );
+		m_pTool->DestroyChildObject(m_pCurrentAnalyzer, SvDef::SVMFSetDefaultInputs | SvDef::SVMFResetInspection );
 
 		m_pCurrentAnalyzer = nullptr;
 	}
@@ -452,7 +452,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnPublishButton()
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, SVString(m_pTool->GetCompleteName()), SVString( _T("") ) );
 
-	SvOsl::SelectorOptions BuildOptions( pInspection->GetUniqueObjectID(), SvOi::SV_PUBLISHABLE, m_pCurrentAnalyzer->GetUniqueObjectID() );
+	SvOsl::SelectorOptions BuildOptions( pInspection->GetUniqueObjectID(), SvDef::SV_PUBLISHABLE, m_pCurrentAnalyzer->GetUniqueObjectID() );
 	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 
 	SVString PublishableResults = SvUl_SF::LoadSVString( IDS_PUBLISHABLE_RESULTS );

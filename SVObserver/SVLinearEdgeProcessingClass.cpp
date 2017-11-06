@@ -12,7 +12,7 @@
 #include "stdafx.h"
 #include "SVLinearEdgeProcessingClass.h"
 #include "SVRunControlLibrary/SVRunControlLibrary.h"
-#include "ObjectInterfaces/GlobalConst.h"
+#include "Definitions/GlobalConst.h"
 #include "SVOCore/SVImageClass.h"
 #include "SVOCore/SVTool.h"
 #include "SVOCore/SVAnalyzer.h"
@@ -75,7 +75,7 @@ SVLinearEdgeProcessingClass::SVLinearEdgeProcessingClass( SVObjectClass* POwner,
 	m_svUseLowerThresholdMaxMinusPercentDiff.SetDefaultValue(BOOL(false));
 	m_svUseLowerThresholdMaxMinusOffset.SetDefaultValue(BOOL(false));
 	m_svUseLowerThresholdMinPlusOffset.SetDefaultValue(BOOL(false));
-	m_svLowerThresholdValue.SetDefaultValue(SvOi::cDefaultToolLowerThreshold);
+	m_svLowerThresholdValue.SetDefaultValue(SvDef::cDefaultToolLowerThreshold);
 	m_svLowerMaxMinusPercentDiffValue.SetDefaultValue(0);
 	m_svLowerMaxMinusOffsetValue.SetDefaultValue(0);
 	m_svLowerMinPlusOffsetValue.SetDefaultValue(0);
@@ -84,7 +84,7 @@ SVLinearEdgeProcessingClass::SVLinearEdgeProcessingClass( SVObjectClass* POwner,
 	m_svUseUpperThresholdMaxMinusPercentDiff.SetDefaultValue(BOOL(false));
 	m_svUseUpperThresholdMaxMinusOffset.SetDefaultValue(BOOL(false));
 	m_svUseUpperThresholdMinPlusOffset.SetDefaultValue(BOOL(false));
-	m_svUpperThresholdValue.SetDefaultValue(SvOi::cDefaultToolUpperThreshold);
+	m_svUpperThresholdValue.SetDefaultValue(SvDef::cDefaultToolUpperThreshold);
 	m_svUpperMaxMinusPercentDiffValue.SetDefaultValue(0);
 	m_svUpperMaxMinusOffsetValue.SetDefaultValue(0);
 	m_svUpperMinPlusOffsetValue.SetDefaultValue(0);
@@ -120,13 +120,13 @@ bool SVLinearEdgeProcessingClass::CreateObject( const SVObjectLevelCreateStruct&
 	}
 
 	//set attributes for Upper and Lower Threshold values.
-	m_svUpperThresholdValue.SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute );
-	m_svUpperThresholdValue.SetObjectAttributesAllowed( SvOi::SV_EXTENT_OBJECT, SvOi::SetAttributeType::RemoveAttribute );
+	m_svUpperThresholdValue.SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute );
+	m_svUpperThresholdValue.SetObjectAttributesAllowed( SvDef::SV_EXTENT_OBJECT, SvOi::SetAttributeType::RemoveAttribute );
 
-	m_svLowerThresholdValue.SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute );
-	m_svLowerThresholdValue.SetObjectAttributesAllowed( SvOi::SV_EXTENT_OBJECT, SvOi::SetAttributeType::RemoveAttribute );
+	m_svLowerThresholdValue.SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute );
+	m_svLowerThresholdValue.SetObjectAttributesAllowed( SvDef::SV_EXTENT_OBJECT, SvOi::SetAttributeType::RemoveAttribute );
 
-	m_svLinearEdges.SetObjectAttributesAllowed( SvOi::SV_VIEWABLE | SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_svLinearEdges.SetObjectAttributesAllowed( SvDef::SV_VIEWABLE | SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 
 	BOOL bUpper = FALSE;
@@ -136,10 +136,10 @@ bool SVLinearEdgeProcessingClass::CreateObject( const SVObjectLevelCreateStruct&
 	m_svUseUpperThresholdSelectable.GetValue(bUpper);
 
 	SvOi::SetAttributeType AddRemoveType = bLower ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-	m_svLowerThresholdValue.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, AddRemoveType );
+	m_svLowerThresholdValue.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, AddRemoveType );
 
 	AddRemoveType = bUpper ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-	m_svUpperThresholdValue.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, AddRemoveType );
+	m_svUpperThresholdValue.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, AddRemoveType );
 
 
 	if ( SVDoubleValueObjectClass* pdvoLinearData = GetInputLinearData() )
@@ -163,10 +163,10 @@ bool SVLinearEdgeProcessingClass::ResetObject(SvStl::MessageContainerVector *pEr
 	m_svUpperThresholdValue.setSaveValueFlag(TRUE == bUpper);
 
 	SvOi::SetAttributeType AddRemoveType = bLower ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-	m_svLowerThresholdValue.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, AddRemoveType );
+	m_svLowerThresholdValue.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, AddRemoveType );
 
 	AddRemoveType = bUpper ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-	m_svUpperThresholdValue.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, AddRemoveType );
+	m_svUpperThresholdValue.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, AddRemoveType );
 
 	if( S_OK != GetPixelDepth() )
 	{
@@ -283,7 +283,7 @@ HRESULT SVLinearEdgeProcessingClass::GetPixelDepth()
 	{
 	  SVImageInfoClass ImageInfo = GetInputImage()->GetImageInfo();
 
-		l_hrOk = ImageInfo.GetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyPixelDepth, m_lPixelDepth );
+		l_hrOk = ImageInfo.GetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, m_lPixelDepth );
 	}
 
 	return l_hrOk;

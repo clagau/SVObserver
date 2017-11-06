@@ -35,7 +35,7 @@ namespace SvOg
 	#pragma endregion Declarations
 
 	#pragma region Constructor
-	GlobalConstantDlg::GlobalConstantDlg( SvOi::GlobalConstantData& rData, CWnd* pParent /*nullptr*/ )
+	GlobalConstantDlg::GlobalConstantDlg( SvDef::GlobalConstantData& rData, CWnd* pParent /*nullptr*/ )
 	  : CDialog(GlobalConstantDlg::IDD, pParent)
 	, m_rData( rData )
 	, m_Branch( SVString(SvOl::FqnGlobal) + _T(".") )
@@ -67,9 +67,9 @@ namespace SvOg
 		DDX_Control(pDX, IDC_GLOBAL_TYPE, m_Type);
 		DDX_Text(pDX, IDC_GLOBAL_VALUE, m_Value);
 		int CurrentSelection = m_Type.GetCurSel();
-		if( -1 != CurrentSelection && SvOi::GlobalConstantData::DataTypeMax >  CurrentSelection )
+		if( -1 != CurrentSelection && SvDef::GlobalConstantData::DataTypeMax >  CurrentSelection )
 		{
-			SvOi::GlobalConstantData::DataTypeEnum CurrentType( static_cast<SvOi::GlobalConstantData::DataTypeEnum> (CurrentSelection) );
+			SvDef::GlobalConstantData::DataTypeEnum CurrentType( static_cast<SvDef::GlobalConstantData::DataTypeEnum> (CurrentSelection) );
 			DDV_GlobalConstantValue( pDX, CurrentType );
 		}
 		DDX_Text(pDX, IDC_GLOBAL_DESCRIPTION, m_Description);
@@ -79,15 +79,15 @@ namespace SvOg
 	{
 		CDialog::OnInitDialog();
 
-		for(int i=0; i < SvOi::GlobalConstantData::DataTypeMax; i++ )
+		for(int i=0; i < SvDef::GlobalConstantData::DataTypeMax; i++ )
 		{
 			m_Type.AddString( GlobalConstantTypes[i] );
 		}
 
 		//Set default type as Decimal
-		if( SvOi::GlobalConstantData::DecimalType < m_Type.GetCount() )
+		if( SvDef::GlobalConstantData::DecimalType < m_Type.GetCount() )
 		{
-			m_Type.SetCurSel( SvOi::GlobalConstantData::DecimalType );
+			m_Type.SetCurSel( SvDef::GlobalConstantData::DecimalType );
 		}
 
 		if( !m_rData.m_DottedName.empty() )
@@ -105,18 +105,18 @@ namespace SvOg
 		case VT_R8:
 			{
 				m_Value.Format( _T("%.06f"), m_rData.m_Value.dblVal );
-				if( SvOi::GlobalConstantData::DecimalType < m_Type.GetCount() )
+				if( SvDef::GlobalConstantData::DecimalType < m_Type.GetCount() )
 				{
-					m_Type.SetCurSel( SvOi::GlobalConstantData::DecimalType );
+					m_Type.SetCurSel( SvDef::GlobalConstantData::DecimalType );
 				}
 			}
 			break;
 		case VT_BSTR:
 			{
 				m_Value = m_rData.m_Value;
-				if( SvOi::GlobalConstantData::TextType < m_Type.GetCount() )
+				if( SvDef::GlobalConstantData::TextType < m_Type.GetCount() )
 				{
-					m_Type.SetCurSel( SvOi::GlobalConstantData::TextType );
+					m_Type.SetCurSel( SvDef::GlobalConstantData::TextType );
 				}
 			}
 			break;
@@ -141,11 +141,11 @@ namespace SvOg
 			m_rData.m_DottedName = m_Branch;
 			m_rData.m_DottedName += m_Name.GetString();
 			//Determine which Global Constant type Number or Text
-			if( SvOi::GlobalConstantData::DecimalType == m_Type.GetCurSel() )
+			if( SvDef::GlobalConstantData::DecimalType == m_Type.GetCurSel() )
 			{
 				m_rData.m_Value = atof( m_Value );
 			}
-			else if( SvOi::GlobalConstantData::TextType == m_Type.GetCurSel() )
+			else if( SvDef::GlobalConstantData::TextType == m_Type.GetCurSel() )
 			{
 				m_rData.m_Value = m_Value;
 			}
@@ -154,14 +154,14 @@ namespace SvOg
 		}
 	}
 
-	void GlobalConstantDlg::DDV_GlobalConstantValue( CDataExchange* pDX, SvOi::GlobalConstantData::DataTypeEnum Type  )
+	void GlobalConstantDlg::DDV_GlobalConstantValue( CDataExchange* pDX, SvDef::GlobalConstantData::DataTypeEnum Type  )
 	{
 		SVString NewValue( m_Value );
 		if( !NewValue.empty() )
 		{
 			switch( Type )
 			{
-			case SvOi::GlobalConstantData::DecimalType:
+			case SvDef::GlobalConstantData::DecimalType:
 				{
 					if( !std::regex_match( NewValue.cbegin(), NewValue.cend(), std::regex( RegExp_AllRealNumbers ) ) )
 					{
@@ -171,7 +171,7 @@ namespace SvOg
 					}
 				}
 				break;
-			case SvOi::GlobalConstantData::TextType:
+			case SvDef::GlobalConstantData::TextType:
 				break;
 			default:
 				break;

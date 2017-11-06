@@ -7,7 +7,7 @@
 #pragma once
 
 #pragma region Includes
-#include "ObjectInterfaces/ObjectDefines.h"
+#include "Definitions/ObjectDefines.h"
 #include "ObjectInterfaces/IObjectClass.h"
 #include "ObjectInterfaces/IValueObject.h"
 #pragma endregion Includes
@@ -21,7 +21,7 @@ namespace SvCmd
 		{
 			bool Result( false );
 
-			if( SvOi::SV_NO_ATTRIBUTES == Attribute )
+			if( SvDef::SV_NO_ATTRIBUTES == Attribute )
 			{
 				Result = true;
 			}

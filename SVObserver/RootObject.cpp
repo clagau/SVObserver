@@ -99,16 +99,16 @@ bool RootObject::createConfigurationObject()
 	if( !pValueObject.empty() )
 	{
 		//Need to set the attributes to settable remotely and online for the Image Update object but should not be selectable
-		pValueObject->SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute );
-		pValueObject->SetObjectAttributesAllowed( SvOi::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
+		pValueObject->SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute );
+		pValueObject->SetObjectAttributesAllowed( SvDef::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
 	}
 
 	pValueObject = m_RootChildren.setValue( SvOl::FqnEnvironmentResultUpdate, Update );
 	if( !pValueObject.empty() )
 	{
 		//Need to set the attributes to settable remotely and online for the Result Update object but should not be selectable
-		pValueObject->SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute );
-		pValueObject->SetObjectAttributesAllowed( SvOi::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
+		pValueObject->SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute );
+		pValueObject->SetObjectAttributesAllowed( SvDef::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
 	}
 
 	return true;
@@ -228,17 +228,17 @@ bool RootObject::createRootChildren()
 		pValueObject = m_RootChildren.setValue( SvOl::FqnEnvironmentModelNumber, _T("") );
 		if( !pValueObject.empty() )
 		{
-			pValueObject->SetObjectAttributesAllowed( SvOi::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
+			pValueObject->SetObjectAttributesAllowed( SvDef::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
 		}
 		pValueObject = m_RootChildren.setValue( SvOl::FqnEnvironmentSerialNumber , _T("") );
 		if( !pValueObject.empty() )
 		{
-			pValueObject->SetObjectAttributesAllowed( SvOi::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
+			pValueObject->SetObjectAttributesAllowed( SvDef::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
 		}
 		pValueObject = m_RootChildren.setValue( SvOl::FqnEnvironmentWinKey, _T("") );
 		if( !pValueObject.empty() )
 		{
-			pValueObject->SetObjectAttributesAllowed( SvOi::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
+			pValueObject->SetObjectAttributesAllowed( SvDef::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
 		}
 
 		Result = createRootChild( SvOl::FqnGlobal, SVGlobalConstantObjectType );

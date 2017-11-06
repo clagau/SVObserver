@@ -76,8 +76,8 @@ bool SVLUTEquationClass::CreateObject( const SVObjectLevelCreateStruct& rCreateS
 	bool bOk = SVEquationClass::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable Flag
-	m_lutIndex.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_byteVectorResult.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE | SvOi::SV_VIEWABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_lutIndex.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_byteVectorResult.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE | SvDef::SV_VIEWABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_isCreated = bOk;
 

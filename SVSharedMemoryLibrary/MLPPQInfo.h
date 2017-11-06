@@ -6,7 +6,7 @@
 /// struct with PPQ informations for MLCpyContainer
 //******************************************************************************
 #pragma once
-#include "SVObserver\SVMonitorList.h"
+
 namespace SvSml
 {
 	/// struct with PPQ informations for MLCpyContainer

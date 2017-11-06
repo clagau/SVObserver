@@ -35,7 +35,7 @@ void SVMainImageClass::init()
 {
 	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVMainImageObjectType;
 
-	m_ImageType = SvOi::SVImageTypeEnum::SVImageTypeMain;
+	m_ImageType = SvDef::SVImageTypeEnum::SVImageTypeMain;
 }
 
 SVMainImageClass::~SVMainImageClass()

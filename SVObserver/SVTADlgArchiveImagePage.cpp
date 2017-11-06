@@ -201,7 +201,7 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 		{
 			ObjectRef.SetArrayIndex( Iter->getArrayIndex() );
 		}
-		ObjectRef.SetObjectAttributesSet( SvOi::SV_ARCHIVABLE_IMAGE, SvOi::SetAttributeType::AddAttribute );
+		ObjectRef.SetObjectAttributesSet( SvDef::SV_ARCHIVABLE_IMAGE, SvOi::SetAttributeType::AddAttribute );
 	}
 
 	m_pTool->RebuildImageArchiveList();
@@ -346,7 +346,7 @@ void SVTADlgArchiveImagePage::OnRemoveAllItems()
 			{
 				ObjectRef.SetArrayIndex( Iter->getArrayIndex() );
 			}
-			ObjectRef.SetObjectAttributesSet( SvOi::SV_ARCHIVABLE_IMAGE, SvOi::SetAttributeType::RemoveAttribute );
+			ObjectRef.SetObjectAttributesSet( SvDef::SV_ARCHIVABLE_IMAGE, SvOi::SetAttributeType::RemoveAttribute );
 		}
 	}
 	m_List.clear();
@@ -382,7 +382,7 @@ void SVTADlgArchiveImagePage::OnRemoveItem()
 			{
 				ObjectRef.SetArrayIndex( SelectedIter->getArrayIndex() );
 			}
-			ObjectRef.SetObjectAttributesSet( SvOi::SV_ARCHIVABLE_IMAGE, SvOi::SetAttributeType::RemoveAttribute );
+			ObjectRef.SetObjectAttributesSet( SvDef::SV_ARCHIVABLE_IMAGE, SvOi::SetAttributeType::RemoveAttribute );
 		}
 
 		m_List.erase( SelectedIter );
@@ -421,7 +421,7 @@ void SVTADlgArchiveImagePage::BuildImageList()
 	// Set the archivable attributes in images based on.
 	m_pTool->SetImageAttributesFromArchiveList(&ImageList);
 
-	SvOsl::SelectorOptions BuildOptions( m_pTool->GetInspection()->GetUniqueObjectID(), SvOi::SV_ARCHIVABLE_IMAGE );
+	SvOsl::SelectorOptions BuildOptions( m_pTool->GetInspection()->GetUniqueObjectID(), SvDef::SV_ARCHIVABLE_IMAGE );
 	SvOg::ToolSetItemSelector<SvCmd::AttributesSetFilterType> toolsetItemSelector;
 	SvOi::ISelectorItemVectorPtr pToolsetList = toolsetItemSelector( BuildOptions );
 	//Copy list to member variable for easier use
@@ -499,7 +499,7 @@ void SVTADlgArchiveImagePage::ShowObjectSelector()
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject );
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
 
-	SvOsl::SelectorOptions BuildOptions( InspectionGuid, SvOi::SV_ARCHIVABLE_IMAGE );
+	SvOsl::SelectorOptions BuildOptions( InspectionGuid, SvDef::SV_ARCHIVABLE_IMAGE );
 	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 
 	SvOsl::SelectorItemVector::const_iterator Iter;
@@ -552,7 +552,7 @@ void SVTADlgArchiveImagePage::ShowObjectSelector()
 					{
 						ObjectRef.SetArrayIndex( Iter->getArrayIndex() );
 					}
-					ObjectRef.SetObjectAttributesSet( SvOi::SV_ARCHIVABLE_IMAGE, SvOi::SetAttributeType::RemoveAttribute );
+					ObjectRef.SetObjectAttributesSet( SvDef::SV_ARCHIVABLE_IMAGE, SvOi::SetAttributeType::RemoveAttribute );
 				}
 			}
 		}

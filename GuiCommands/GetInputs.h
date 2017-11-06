@@ -11,7 +11,7 @@
 #include <boost/noncopyable.hpp>
 #include <Guiddef.h>
 #include "ObjectInterfaces\IObjectClass.h"
-#include "ObjectInterfaces\SVObjectTypeInfoStruct.h"
+#include "Definitions/SVObjectTypeInfoStruct.h"
 #include "ObjectInterfaces\ITaskObject.h"
 #include "ObjectInterfaces\IObjectManager.h"
 #include "SVUtilityLibrary\NameGuidList.h"

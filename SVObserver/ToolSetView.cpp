@@ -23,7 +23,7 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVObjectWriter.h"
 #include "SVConfigurationObject.h"
-#include "ObjectInterfaces/SVUserMessage.h"
+#include "Definitions/SVUserMessage.h"
 #include "SVMessage/SVMessage.h"
 #include "SVIPChildFrm.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"

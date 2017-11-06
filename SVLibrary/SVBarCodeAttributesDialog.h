@@ -14,6 +14,7 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <vector>
 #include "SVContainerLibrary/SVVector.h"
 #include "SVValueObjectLibrary/SVValueObject.h"
 #include "SVUtilityLibrary/SVString.h"
@@ -66,30 +67,26 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-public:
+private:
 	struct SVBarCodeErrorCorrectionEncodingStruct
 	{
 		long m_Mil;
 		SVString m_Name;
 
 		SVBarCodeErrorCorrectionEncodingStruct() { m_Mil = 0; }
-		SVBarCodeErrorCorrectionEncodingStruct(long Mil, const SVString& Name )
+		SVBarCodeErrorCorrectionEncodingStruct(long Mil, const SVString& rName )
 		{
 			m_Mil = Mil;
-			m_Name = Name;
+			m_Name = rName;
 		}
 	};
+	typedef std::vector<SVBarCodeErrorCorrectionEncodingStruct> SVBarCodeEccEncVector;
 
-	class SVBarCodeEccEncArray : public SVVector< SVBarCodeErrorCorrectionEncodingStruct >
-	{
-	public:
-		const SVBarCodeErrorCorrectionEncodingStruct* GetInfoByMil(long lMil);
-		virtual ~SVBarCodeEccEncArray();
-	};
 
-	SVBarCodeEccEncArray m_aMilEnc;
-	SVBarCodeEccEncArray m_aMilEcc;
+	SVString GetInfoNameByMil(const SVBarCodeEccEncVector& rMilVector, long MilID);
+	SVBarCodeEccEncVector m_aMilEnc;
+	SVBarCodeEccEncVector m_aMilEcc;
 
-	std::map< long, std::vector< long > > m_mapBarCodeEcc;
-	std::map< long, std::vector< long > > m_mapBarCodeEnc;
+	std::map<long, std::vector< long > > m_mapBarCodeEcc;
+	std::map<long, std::vector< long > > m_mapBarCodeEnc;
 };

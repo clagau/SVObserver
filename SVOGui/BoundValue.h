@@ -14,7 +14,7 @@
 //Moved to precompiled header: #include <string>
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <guiddef.h>
-#include "ObjectInterfaces\SVObjectTypeInfoStruct.h"
+#include "Definitions/SVObjectTypeInfoStruct.h"
 #pragma endregion Includes
 
 namespace SvOg

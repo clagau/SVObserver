@@ -11,7 +11,7 @@
 #pragma region Inlcudes
 #include "stdafx.h"
 #include "SVProgressDialog.h"
-#include "ObjectInterfaces/SVUserMessage.h"
+#include "Definitions/SVUserMessage.h"
 #pragma endregion Inlcudes
 
 #ifdef _DEBUG

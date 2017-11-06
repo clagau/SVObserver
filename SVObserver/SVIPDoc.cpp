@@ -53,7 +53,7 @@
 #include "SVIODoc.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVMessage/SVMessage.h"
-#include "ObjectInterfaces/SVUserMessage.h"
+#include "Definitions/SVUserMessage.h"
 #include "ObjectInterfaces/IDependencyManager.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
@@ -268,8 +268,8 @@ void SVIPDoc::init()
 	TheSVObserverApp.setCurrentDocument( this );
 
 	// Default result height and tool set view width.
-	m_nWidthToolSetView = SvOi::cDefaultToolsetViewWidth;
-	m_nHeightResultView = SvOi::cDefaultToolsetViewHeight;
+	m_nWidthToolSetView = SvDef::cDefaultToolsetViewWidth;
+	m_nHeightResultView = SvDef::cDefaultToolsetViewHeight;
 
 	m_bAllowRefresh = false;
 	m_bRegressionTestRunning = false;
@@ -1565,7 +1565,7 @@ void SVIPDoc::OnResultsPicker()
 			SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject);
 			SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
 
-			SvOsl::SelectorOptions BuildOptions( GetInspectionID(), SvOi::SV_VIEWABLE, GUID_NULL, true );
+			SvOsl::SelectorOptions BuildOptions( GetInspectionID(), SvDef::SV_VIEWABLE, GUID_NULL, true );
 			SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::GlobalSelector, SvOg::PPQSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 			
 			const SVObjectReferenceVector& rSelectedObjects( pResultList->GetSelectedObjects() );
@@ -1666,7 +1666,7 @@ void SVIPDoc::OnPublishedResultsPicker()
 		SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
 		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
 
-		SvOsl::SelectorOptions BuildOptions( GetInspectionID(), SvOi::SV_PUBLISHABLE );
+		SvOsl::SelectorOptions BuildOptions( GetInspectionID(), SvDef::SV_PUBLISHABLE );
 		SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 
 		SVString PublishableResults = SvUl_SF::LoadSVString( IDS_PUBLISHABLE_RESULTS );
@@ -1720,7 +1720,7 @@ void SVIPDoc::OnPublishedResultImagesPicker()
 		SVString RootName = SvUl_SF::LoadSVString( IDS_CLASSNAME_ROOTOBJECT );
 		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, RootName, SVString( _T("") ) );
 
-		SvOsl::SelectorOptions BuildOptions( GetInspectionID(), SvOi::SV_PUBLISH_RESULT_IMAGE );
+		SvOsl::SelectorOptions BuildOptions( GetInspectionID(), SvDef::SV_PUBLISH_RESULT_IMAGE );
 		SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 
 		SVString PublishableImages = SvUl_SF::LoadSVString( IDS_PUBLISHABLE_RESULT_IMAGES );

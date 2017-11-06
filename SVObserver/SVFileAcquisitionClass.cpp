@@ -244,10 +244,10 @@ HRESULT SVFileAcquisitionClass::GetCameraImageInfo(SVImageInfoClass *pImageInfo)
 		}
 	}
 
-	pImageInfo->SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyFormat, iFormat );
-	pImageInfo->SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyPixelDepth, 8 );
-	pImageInfo->SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, uiBandNumber );
-	pImageInfo->SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
+	pImageInfo->SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, iFormat );
+	pImageInfo->SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, 8 );
+	pImageInfo->SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, uiBandNumber );
+	pImageInfo->SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
 
 	pImageInfo->SetExtentProperty( SVExtentPropertyOutputPositionPoint, 0 );
 	pImageInfo->SetExtentProperty( SVExtentPropertyWidth, bufWidth );

@@ -7,7 +7,7 @@
 
 #pragma once
 #pragma region Includes
-#include "SVImageEnums.h"
+#include "Definitions/SVImageEnums.h"
 #include "IMatroxImageData.h"
 #include "SVUtilityLibrary\SVSharedPtr.h"
 #include "SVUtilityLibrary\SVString.h"
@@ -24,9 +24,9 @@ namespace SvOi
 
 		//************************************
 		/// Return the image type.
-		/// \returns SvOi::SVImageTypeEnum
+		/// \returns SvDef::SVImageTypeEnum
 		//************************************
-		virtual SvOi::SVImageTypeEnum GetImageType() const = 0;
+		virtual SvDef::SVImageTypeEnum GetImageType() const = 0;
 
 		//************************************
 		/// Return the parent image.

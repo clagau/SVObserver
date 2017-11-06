@@ -42,7 +42,7 @@
 #include "SVGuiExtentUpdater.h"
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary/GlobalPath.h"
-#include "ObjectInterfaces/GlobalConst.h"
+#include "Definitions/GlobalConst.h"
 
 #pragma endregion Includes
 
@@ -187,7 +187,7 @@ void SVImageViewClass::Initialize()
 
 	m_isPicked = FALSE;
 
-	m_hWindowBackgroundColor = ::CreateSolidBrush( SvOi::cDefaultImageViewBackgroundColor );
+	m_hWindowBackgroundColor = ::CreateSolidBrush( SvDef::cDefaultImageViewBackgroundColor );
 }
 
 SVImageViewClass::~SVImageViewClass()

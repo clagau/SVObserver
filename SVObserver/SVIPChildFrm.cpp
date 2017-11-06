@@ -12,10 +12,10 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVIPChildFrm.h"
-#include "ObjectInterfaces/GlobalConst.h"
+#include "Definitions/GlobalConst.h"
 #include "SVIPDoc.h"
 #include "ToolSetView.h"
-#include "ObjectInterfaces/SVUserMessage.h"
+#include "Definitions/SVUserMessage.h"
 #include "SVMainFrm.h"
 #include "ResultTabbedView.h"
 #pragma endregion Includes
@@ -76,8 +76,8 @@ SVIPSplitterFrame::~SVIPSplitterFrame()
 
 BOOL SVIPSplitterFrame::PreCreateWindow( CREATESTRUCT& cs )
 {
-	cs.cx = SvOi::cDefaultImageViewWidth + 100;
-	cs.cy = SvOi::cDefaultImageViewHeight + 100;
+	cs.cx = SvDef::cDefaultImageViewWidth + 100;
+	cs.cy = SvDef::cDefaultImageViewHeight + 100;
 
 	return CMDIChildWnd::PreCreateWindow( cs );
 }
@@ -223,7 +223,7 @@ BOOL SVIPSplitterFrame::OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* PCo
 	// Attach the ToolSetView to the top left pane
 	//
 	if( ! m_oWndSplitter2.CreateView( 0, 0, RUNTIME_CLASS( ToolSetView ),
-								CSize( SvOi::cDefaultToolsetViewWidth, SvOi::cDefaultToolsetViewHeight ), 
+								CSize( SvDef::cDefaultToolsetViewWidth, SvDef::cDefaultToolsetViewHeight ), 
 								PContext ) )
 	{
 		return FALSE;
@@ -309,7 +309,7 @@ BOOL SVIPSplitterFrame::OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* PCo
 	// SVResultViewClass view window
 	//
 	if( !m_oWndSplitter1.CreateView( 1, 0, RUNTIME_CLASS( ResultTabbedView ),
-									CSize( SvOi::cDefaultResultViewWidth, SvOi::cDefaultResultViewHeight ), 
+									CSize( SvDef::cDefaultResultViewWidth, SvDef::cDefaultResultViewHeight ), 
 									PContext ) )
 	{
 		return FALSE;
@@ -321,10 +321,10 @@ BOOL SVIPSplitterFrame::OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* PCo
 	// image view pane will be set in BOOL SVImageViewClass::BuildImageWindow()
 
 	// Set width of tool set view pane...
-	m_oWndSplitter2.SetColumnInfo( 0, SvOi::cDefaultToolsetViewWidth, 10 );
+	m_oWndSplitter2.SetColumnInfo( 0, SvDef::cDefaultToolsetViewWidth, 10 );
 
 	// Set height of result view pane...
-	m_oWndSplitter1.SetRowInfo( 1, SvOi::cDefaultToolsetViewHeight, 10 );
+	m_oWndSplitter1.SetRowInfo( 1, SvDef::cDefaultToolsetViewHeight, 10 );
 
 	//activate ImageScrollView #1
 	CView *pView = dynamic_cast< CView* >( m_oWndSplitter4.GetPane( 0, 0 ) );
@@ -342,24 +342,24 @@ void SVIPSplitterFrame::SetDefaultPaneSizes(RECT &BoundingRect)
 	long lHeight = oRect.Height();
 	long lWidth = oRect.Width();
 
-	m_oWndSplitter1.SetRowInfo( 0, SvOi::cDefaultToolsetViewHeight, 10 );
-	m_oWndSplitter1.SetRowInfo( 1, lHeight - SvOi::cDefaultToolsetViewHeight, 10 );
+	m_oWndSplitter1.SetRowInfo( 0, SvDef::cDefaultToolsetViewHeight, 10 );
+	m_oWndSplitter1.SetRowInfo( 1, lHeight - SvDef::cDefaultToolsetViewHeight, 10 );
 
-	m_oWndSplitter2.SetColumnInfo( 0, SvOi::cDefaultToolsetViewWidth, 10 );
-	m_oWndSplitter2.SetColumnInfo( 1, lWidth - SvOi::cDefaultToolsetViewWidth, 10 );
+	m_oWndSplitter2.SetColumnInfo( 0, SvDef::cDefaultToolsetViewWidth, 10 );
+	m_oWndSplitter2.SetColumnInfo( 1, lWidth - SvDef::cDefaultToolsetViewWidth, 10 );
 
-	m_oWndSplitter3.SetRowInfo( 0, SvOi::cDefaultToolsetViewHeight, 10 );
+	m_oWndSplitter3.SetRowInfo( 0, SvDef::cDefaultToolsetViewHeight, 10 );
 	m_oWndSplitter3.SetRowInfo( 1, 0, 10 );
 	m_oWndSplitter3.SetRowInfo( 2, 0, 10 );
 
-	m_oWndSplitter4.SetColumnInfo( 0, lWidth - SvOi::cDefaultToolsetViewWidth, 10 );
+	m_oWndSplitter4.SetColumnInfo( 0, lWidth - SvDef::cDefaultToolsetViewWidth, 10 );
 	m_oWndSplitter4.SetColumnInfo( 1, 0, 10 );
 
-	m_oWndSplitter5.SetColumnInfo( 0, lWidth - SvOi::cDefaultToolsetViewWidth, 10 );
+	m_oWndSplitter5.SetColumnInfo( 0, lWidth - SvDef::cDefaultToolsetViewWidth, 10 );
 	m_oWndSplitter5.SetColumnInfo( 1, 0, 10 );
 	m_oWndSplitter5.SetColumnInfo( 2, 0, 10 );
 
-	m_oWndSplitter6.SetColumnInfo( 0, lWidth - SvOi::cDefaultToolsetViewWidth, 10 );
+	m_oWndSplitter6.SetColumnInfo( 0, lWidth - SvDef::cDefaultToolsetViewWidth, 10 );
 	m_oWndSplitter6.SetColumnInfo( 1, 0, 10 );
 	m_oWndSplitter6.SetColumnInfo( 2, 0, 10 );
 

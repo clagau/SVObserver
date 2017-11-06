@@ -64,7 +64,7 @@ bool SVInPlaceImageOperatorListClass::ResetObject(SvStl::MessageContainerVector 
 		}
 		Valid = false;
 	}
-	else if( getInputImage()->GetImageType() != SvOi::SVImageTypeEnum::SVImageTypePhysical )
+	else if( getInputImage()->GetImageType() != SvDef::SVImageTypeEnum::SVImageTypePhysical )
 	{
 		if (nullptr != pErrorMessages)
 		{

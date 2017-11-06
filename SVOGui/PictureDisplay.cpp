@@ -40,7 +40,7 @@ namespace SvOg
 		if (nullptr != pImage)
 		{
 			SvOi::MatroxImageSmartHandlePtr data;
-			if( SvOi::SVImageTypeEnum::SVImageTypePhysical == pImage->GetImageType() )
+			if( SvDef::SVImageTypeEnum::SVImageTypePhysical == pImage->GetImageType() )
 			{
 				data = pImage->GetParentImageInterface()->getImageData();
 			}

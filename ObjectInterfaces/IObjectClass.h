@@ -10,10 +10,10 @@
 #pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <vector>
-#include "SVObjectTypeInfoStruct.h"
-#include "SVUtilityLibrary\NameGuidList.h"
-#include "SVStatusLibrary\MessageContainer.h"
-#include "SVUtilityLibrary\SVString.h"
+#include "Definitions/SVObjectTypeInfoStruct.h"
+#include "SVUtilityLibrary/NameGuidList.h"
+#include "SVStatusLibrary/MessageContainer.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 namespace SvOi

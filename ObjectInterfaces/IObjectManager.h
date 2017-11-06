@@ -8,8 +8,9 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary\SVString.h"
-#include "SVUtilityLibrary\SVGUID.h"
+#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/SVGUID.h"
+#include "Definitions/SVObjectTypeInfoStruct.h"
 #include "IObjectClass.h"
 #include "ISVImage.h"
 #pragma endregion Includes

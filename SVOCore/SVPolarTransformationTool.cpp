@@ -42,7 +42,7 @@ void SVPolarTransformationToolClass::init()
 	// Identify our input type needs
 
 	m_svToolExtent.SetTool( this );
-	m_svToolExtent.SetImageType( SvOi::SVImageTypeEnum::SVImageTypePhysical );
+	m_svToolExtent.SetImageType( SvDef::SVImageTypeEnum::SVImageTypePhysical );
 	m_svToolExtent.SetTranslation( SVExtentTranslationPolarUnwrap );
 	m_svToolExtent.SetAlwaysUpdate( true );
 
@@ -84,7 +84,7 @@ void SVPolarTransformationToolClass::init()
 	m_svAngularMethod.SetEnumTypes( _T("Angular Method1=0,Angular Method2=1") );
 
 	m_svAngularMethod.SetDefaultValue( _T("Angular Method1"), true );
-	m_svAngularMethod.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_svAngularMethod.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 
 	// Add the Image Transformation Class
 	SVImagePolarTransformClass* pTransform = new SVImagePolarTransformClass;
@@ -115,7 +115,7 @@ bool SVPolarTransformationToolClass::CreateObject( const SVObjectLevelCreateStru
 
 	m_SourceImageNames.setStatic( true );
 	m_SourceImageNames.setSaveValueFlag(false);
-	m_SourceImageNames.SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
+	m_SourceImageNames.SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
 
 	return m_isCreated;
 }

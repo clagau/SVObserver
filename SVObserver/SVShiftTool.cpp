@@ -54,8 +54,8 @@ bool SVShiftTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructur
 
 	l_Status &= (S_OK == m_OutputImage.InitializeImage( getInputImage() ) );
 
-	const UINT cAttributes = SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE | SvOi::SV_PRINTABLE;
-	m_SourceImageName.SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
+	const UINT cAttributes = SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE | SvDef::SV_PRINTABLE;
+	m_SourceImageName.SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
 	m_TranslationX.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
 	m_TranslationY.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
 	m_LearnedTranslationX.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
@@ -65,14 +65,14 @@ bool SVShiftTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructur
 	m_LeftResult.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
 	m_TopResult.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
 
-	m_ExtentRight.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_ExtentBottom.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_ExtentRight.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_ExtentBottom.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 	
-	m_LearnedTranslationX.SetObjectAttributesAllowed( SvOi::SV_EXTENT_OBJECT, SvOi::SetAttributeType::RemoveAttribute );
-	m_LearnedTranslationY.SetObjectAttributesAllowed( SvOi::SV_EXTENT_OBJECT, SvOi::SetAttributeType::RemoveAttribute );
+	m_LearnedTranslationX.SetObjectAttributesAllowed( SvDef::SV_EXTENT_OBJECT, SvOi::SetAttributeType::RemoveAttribute );
+	m_LearnedTranslationY.SetObjectAttributesAllowed( SvDef::SV_EXTENT_OBJECT, SvOi::SetAttributeType::RemoveAttribute );
 
 	// This value object is obsolete, hide it.
-	m_EnableSourceImageExtents.SetObjectAttributesAllowed( SvOi::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_EnableSourceImageExtents.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
 
 	m_isCreated = l_Status;
 
@@ -456,8 +456,8 @@ void SVShiftTool::LocalInitialize()
 	RegisterEmbeddedObject( &m_OutputImage, SVOutputImageObjectGuid, IDS_OBJECTNAME_IMAGE1 );
 	RegisterEmbeddedObject( &m_EnableSourceImageExtents, SVShiftToolEnableSourceImageExtentsGuid, IDS_OBJECTNAME_SHIFTTOOL_ENABLE_SOURCE_IMAGE_EXTENTS, false, SvOi::SVResetItemTool);
 
-	m_LearnedTranslationX.SetObjectAttributesAllowed( SvOi::SV_EXTENT_OBJECT, SvOi::SetAttributeType::RemoveAttribute );
-	m_LearnedTranslationY.SetObjectAttributesAllowed( SvOi::SV_EXTENT_OBJECT, SvOi::SetAttributeType::RemoveAttribute );
+	m_LearnedTranslationX.SetObjectAttributesAllowed( SvDef::SV_EXTENT_OBJECT, SvOi::SetAttributeType::RemoveAttribute );
+	m_LearnedTranslationY.SetObjectAttributesAllowed( SvDef::SV_EXTENT_OBJECT, SvOi::SetAttributeType::RemoveAttribute );
 
 	//Set Extent Information
 	m_svToolExtent.SetExtentObject( SVExtentPropertyTranslationOffsetX, &m_DisplacementX );
@@ -489,7 +489,7 @@ void SVShiftTool::LocalInitialize()
 
 	m_EnableSourceImageExtents.SetDefaultValue(true, true); // this embedded value object is not used anymore
 
-	m_OutputImage.InitializeImage( SvOi::SVImageTypeEnum::SVImageTypePhysical );
+	m_OutputImage.InitializeImage( SvDef::SVImageTypeEnum::SVImageTypePhysical );
 
 	m_evoShiftMode.SetEnumTypes(g_strShiftToolEnum);
 	m_evoShiftMode.SetDefaultValue(SV_SHIFT_NONE, true);

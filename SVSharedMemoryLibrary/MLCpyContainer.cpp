@@ -9,7 +9,7 @@
 #include "MLcpyContainer.h"
 #include "SVMonitorListReader.h"
 #include "SVMonitorListWriter.h"
-#include "ObjectInterfaces\SVObjectTypeInfoStruct.h"
+#include "Definitions/SVObjectTypeInfoStruct.h"
 
 namespace SvSml
 {

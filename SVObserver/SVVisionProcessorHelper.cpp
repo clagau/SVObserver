@@ -17,7 +17,7 @@
 #include "SVVisionProcessorHelper.h"
 
 #include "JsonLib/include/json.h"
-#include "ObjectInterfaces/SVIMCommand.h"
+#include "Definitions/SVIMCommand.h"
 #include "SVSystemLibrary/SVVersionInfo.h"
 
 #include "SVConfigurationObject.h"
@@ -31,7 +31,7 @@
 #include "RemoteMonitorListHelper.h"
 #include "SVObjectLibrary\GlobalConst.h"
 #include "SVObjectLibrary\SVObjectLibrary.h"
-#include "ObjectInterfaces\SVUserMessage.h"
+#include "Definitions/SVUserMessage.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -99,56 +99,56 @@ HRESULT SVVisionProcessorHelper::GetState( unsigned long& rState ) const
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_READY ) )
 	{
-		rState |= SvOi::SVIM_CONFIG_LOADED;
+		rState |= SvDef::SVIM_CONFIG_LOADED;
 	}
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_SAVING ) )
 	{
-		rState |= SvOi::SVIM_SAVING_CONFIG;
+		rState |= SvDef::SVIM_SAVING_CONFIG;
 	}
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_LOADING ) )
 	{
-		rState |= SvOi::SVIM_CONFIG_LOADING;
+		rState |= SvDef::SVIM_CONFIG_LOADING;
 	}
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
 	{
-		rState |= SvOi::SVIM_ONLINE;
+		rState |= SvDef::SVIM_ONLINE;
 
 		if (! SVSVIMStateClass::CheckState( SV_STATE_TEST ) ) // testing (but not regression testing) sets the running flag
 		{
-			rState |= SvOi::SVIM_RUNNING;
+			rState |= SvDef::SVIM_RUNNING;
 		}
 	}
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) )
 	{
-		rState |= SvOi::SVIM_REGRESSION_TEST;
+		rState |= SvDef::SVIM_REGRESSION_TEST;
 	}
 	else if ( SVSVIMStateClass::CheckState( SV_STATE_TEST ) )// can be testing without regression testing, but can't be regression testing without testing
 	{
-		rState |= SvOi::SVIM_RUNNING_TEST;
+		rState |= SvDef::SVIM_RUNNING_TEST;
 	}
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_EDIT ) )
 	{
-		rState |= SvOi::SVIM_SETUPMODE;
+		rState |= SvDef::SVIM_SETUPMODE;
 	}
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_CLOSING ) )
 	{
-		rState |= SvOi::SVIM_STOPPING;
+		rState |= SvDef::SVIM_STOPPING;
 	}
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_START_PENDING ) )
 	{
-		rState |= SvOi::SVIM_ONLINE_PENDING;
+		rState |= SvDef::SVIM_ONLINE_PENDING;
 	}
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_RAID_FAILURE ) )
 	{
-		rState |= SvOi::SVIM_RAID_FAILURE;
+		rState |= SvDef::SVIM_RAID_FAILURE;
 	}
 
 	return l_Status;
@@ -275,22 +275,22 @@ HRESULT SVVisionProcessorHelper::GetDataDefinitionList( const SVString& rInspect
 
 	if(0 != ( rListType & SelectedValues ))
 	{
-		l_ValueFilter = SvOi::SV_DD_VALUE;
+		l_ValueFilter = SvDef::SV_DD_VALUE;
 	}
 
 	if(0 != ( rListType & AllValues))
 	{
-		l_ValueFilter = SvOi::SV_DD_VALUE | SvOi::SV_VIEWABLE;
+		l_ValueFilter = SvDef::SV_DD_VALUE | SvDef::SV_VIEWABLE;
 	}
 
 	if(0 != ( rListType & SelectedImages))
 	{
-		l_ImageFilter = SvOi::SV_DD_IMAGE;
+		l_ImageFilter = SvDef::SV_DD_IMAGE;
 	}
 
 	if(0 != ( rListType & AllImages))
 	{
-		l_ImageFilter = SvOi::SV_DD_IMAGE | SvOi::SV_VIEWABLE;
+		l_ImageFilter = SvDef::SV_DD_IMAGE | SvDef::SV_VIEWABLE;
 	}
 
 	SVInspectionProcess* pInspection = nullptr;
@@ -727,11 +727,11 @@ HRESULT SVVisionProcessorHelper::SetStandardItems( const SVNameStorageMap& rItem
 
 			if( nullptr != pValueObject )
 			{
-				bool Attribute = ( ( pValueObject->ObjectAttributesAllowed() & SvOi::SV_REMOTELY_SETABLE ) == SvOi::SV_REMOTELY_SETABLE );
+				bool Attribute = ( ( pValueObject->ObjectAttributesAllowed() & SvDef::SV_REMOTELY_SETABLE ) == SvDef::SV_REMOTELY_SETABLE );
 
 				if( Attribute )
 				{
-					Attribute = !Online || ( ( pValueObject->ObjectAttributesAllowed() & SvOi::SV_SETABLE_ONLINE ) == SvOi::SV_SETABLE_ONLINE );
+					Attribute = !Online || ( ( pValueObject->ObjectAttributesAllowed() & SvDef::SV_SETABLE_ONLINE ) == SvDef::SV_SETABLE_ONLINE );
 
 					if( Attribute )
 					{
@@ -841,7 +841,7 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition( const SVObjectClass& rObje
 
 	//Check using the filter if object should be included
 	bool l_bValueIncluded = false;
-	if((SvOi::SV_DD_VALUE == Filter) || (SvOi::SV_DD_IMAGE == Filter))
+	if((SvDef::SV_DD_VALUE == Filter) || (SvDef::SV_DD_IMAGE == Filter))
 	{
 		//This is called when selected values or images
 		l_bValueIncluded = (rObject.ObjectAttributesSet() & Filter) != 0;
@@ -851,14 +851,14 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition( const SVObjectClass& rObje
 		//This is called when all values or all images
 		l_bValueIncluded = (rObject.ObjectAttributesAllowed() & Filter) != 0;
 	}
-	l_bValueIncluded = l_bValueIncluded && ( (rObject.ObjectAttributesAllowed() & SvOi::SV_HIDDEN) == 0 );
+	l_bValueIncluded = l_bValueIncluded && ( (rObject.ObjectAttributesAllowed() & SvDef::SV_HIDDEN) == 0 );
 	if( l_bValueIncluded )
 	{
 		SVString Temp;
 		Temp = _T("Inspections.") + rObject.GetCompleteName();
 		rDataDef.m_Name = Temp;
-		rDataDef.m_Writable = (rObject.ObjectAttributesAllowed() & SvOi::SV_REMOTELY_SETABLE) == SvOi::SV_REMOTELY_SETABLE;
-		rDataDef.m_Published = (rObject.ObjectAttributesSet() & SvOi::SV_PUBLISHABLE) != 0;
+		rDataDef.m_Writable = (rObject.ObjectAttributesAllowed() & SvDef::SV_REMOTELY_SETABLE) == SvDef::SV_REMOTELY_SETABLE;
+		rDataDef.m_Published = (rObject.ObjectAttributesSet() & SvDef::SV_PUBLISHABLE) != 0;
 		//If null we assume its an image
 		const SvOi::IValueObject* pValueObject = dynamic_cast<const SvOi::IValueObject*> (&rObject);
 		if( nullptr != pValueObject )

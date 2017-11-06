@@ -291,7 +291,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnPublishButton()
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, SVString(pInspection->GetToolSet()->GetCompleteName()), SVString( _T("") ) );
 
-	SvOsl::SelectorOptions BuildOptions( pInspection->GetUniqueObjectID(), SvOi::SV_PUBLISHABLE, m_pTool->GetUniqueObjectID() );
+	SvOsl::SelectorOptions BuildOptions( pInspection->GetUniqueObjectID(), SvDef::SV_PUBLISHABLE, m_pTool->GetUniqueObjectID() );
 	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>(BuildOptions);
 
 	SVString PublishableResults = SvUl_SF::LoadSVString( IDS_PUBLISHABLE_RESULTS );
@@ -332,7 +332,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnBtnObjectPicker()
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SelectorType );
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
 
-	SvOsl::SelectorOptions BuildOptions( pInspection->GetUniqueObjectID(), SvOi::SV_SELECTABLE_FOR_STATISTICS, m_pToolSet->GetUniqueObjectID() );
+	SvOsl::SelectorOptions BuildOptions( pInspection->GetUniqueObjectID(), SvDef::SV_SELECTABLE_FOR_STATISTICS, m_pToolSet->GetUniqueObjectID() );
 	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 
 	SVString ToolsetOutput = SvUl_SF::LoadSVString( IDS_SELECT_TOOLSET_OUTPUT );

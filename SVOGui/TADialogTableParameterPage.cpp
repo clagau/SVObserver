@@ -12,11 +12,11 @@
 #include "SVObjectLibrary\SVClsids.h"
 #include "SVFormulaEditorSheet.h"
 #include "GuiCommands\GetAvailableObjects.h"
-#include "ObjectInterfaces\TextDefineSvOi.h"
+#include "Definitions/TextDefineSVDef.h"
 #include "FormulaController.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage\SVMessage.h"
-#include "ObjectInterfaces\GlobalConst.h"
+#include "Definitions/GlobalConst.h"
 #include "GuiCommands\GetErrorMessageList.h"
 #pragma endregion Includes
 
@@ -65,7 +65,7 @@ namespace SvOg {
 		CPropertyPage::DoDataExchange(pDX);
 		//{{AFX_DATA_MAP(TADialogTableParameterPage)
 		DDX_Text(pDX, IDC_EDIT_TABLE_MAX_ROWS, m_maxRows);
-		DDV_MinMaxLong(pDX, m_maxRows, SvOi::cTableMaxRowMin, SvOi::cTableMaxRowMax);
+		DDV_MinMaxLong(pDX, m_maxRows, SvDef::cTableMaxRowMin, SvDef::cTableMaxRowMax);
 		DDX_Text(pDX, IDC_EDIT_TABLE_CLEAR_FORMULA, m_clearString);
 		//}}AFX_DATA_MAP
 	}
@@ -87,7 +87,7 @@ namespace SvOg {
 			availableList = commandPtr->AvailableObjects();
 			for(int i=0; i<availableList.size(); i++)
 			{
-				if (SvOi::TableClearEquationName == availableList[i].first)
+				if (SvDef::TableClearEquationName == availableList[i].first)
 				{
 					m_ClearEquationID = availableList[i].second;
 					m_pFormulaController = new FormulaController(m_InspectionID, m_TaskObjectID, m_ClearEquationID);

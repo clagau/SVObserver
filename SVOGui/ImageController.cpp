@@ -20,7 +20,7 @@
 #include "GuiCommands\InspectionRunOnce.h"
 #include "GuiCommands\GetObjectTypeInfo.h"
 #include "GuiCommands\SaveImage.h"
-#include "ObjectInterfaces\SVObjectTypeInfoStruct.h"
+#include "Definitions/SVObjectTypeInfoStruct.h"
 #include "ObjectInterfaces\IToolSet.h"
 #include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
 #include "GuiCommands\ResetObject.h"

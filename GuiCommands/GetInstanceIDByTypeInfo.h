@@ -10,8 +10,8 @@
 #pragma region Includes
 //Moved to precompiled header: #include <boost/noncopyable.hpp>
 //Moved to precompiled header: #include <Guiddef.h>
-#include "ObjectInterfaces/SVObjectTypeInfoStruct.h"
-#include "ObjectInterfaces/ObjectDefines.h"
+#include "Definitions/SVObjectTypeInfoStruct.h"
+#include "Definitions/ObjectDefines.h"
 #include "ObjectInterfaces/IObjectManager.h"
 #include "ObjectInterfaces/IObjectClass.h"
 #include "SVUtilityLibrary/SVGUID.h"

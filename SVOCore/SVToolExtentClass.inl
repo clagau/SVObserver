@@ -20,7 +20,7 @@ inline HRESULT SVToolExtentClass::Initialize()
 	m_psvTool = nullptr;
 	m_psvToolImage = nullptr;
 
-	m_eImageType = SvOi::SVImageTypeEnum::SVImageTypeUnknown;
+	m_eImageType = SvDef::SVImageTypeEnum::SVImageTypeUnknown;
 
 	m_eTranslation = SVExtentTranslationUnknown;
 	m_eShape = SVExtentShapeUnknown;
@@ -63,12 +63,12 @@ inline void SVToolExtentClass::SetToolImage( SVImageClass *p_psvToolImage )
 	}
 }
 
-inline SvOi::SVImageTypeEnum SVToolExtentClass::GetImageType() const
+inline SvDef::SVImageTypeEnum SVToolExtentClass::GetImageType() const
 {
 	return m_eImageType;
 }
 
-inline void SVToolExtentClass::SetImageType( SvOi::SVImageTypeEnum p_eImageType )
+inline void SVToolExtentClass::SetImageType( SvDef::SVImageTypeEnum p_eImageType )
 {
 	m_eImageType = p_eImageType;
 }

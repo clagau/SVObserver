@@ -10,7 +10,7 @@
 //******************************************************************************
 
 #include "SVUtilityLibrary/SVString.h"
-#include "ObjectInterfaces/SVUserMessage.h"
+#include "Definitions/SVUserMessage.h"
 
 template<typename Task>
 DWORD WINAPI SVImportProgress<Task>::TaskThread(LPVOID lpHost)

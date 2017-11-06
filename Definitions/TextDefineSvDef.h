@@ -8,7 +8,7 @@
 
 #pragma once
 
-namespace SvOi
+namespace SvDef
 {
 	const TCHAR* const WatershedMarkerImageConnectionName = _T( "WatershedFilterMarkerImage" );
 	const TCHAR* const ImageAnalyzerImageName = _T( "ImageAnalyzerImage" );

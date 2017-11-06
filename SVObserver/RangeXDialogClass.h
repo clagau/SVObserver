@@ -12,7 +12,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVContainerLibrary/SVVector.h"
 #include "SVOCore/SVTaskObjectList.h"
 #include "RangeClassHelper.h"
 #include "SVUtilityLibrary/SVString.h"

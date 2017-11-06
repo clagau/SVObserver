@@ -15,7 +15,7 @@
 #pragma endregion Includes
 
 
-namespace SvOi
+namespace SvDef
 {
 	struct GlobalConstantData
 	{

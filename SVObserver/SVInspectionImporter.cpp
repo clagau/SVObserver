@@ -214,7 +214,7 @@ static bool ImportPPQInputs(SVTreeType& rTree, Insertor insertor)
 }
 
 template<typename SVTreeType>
-static bool importGlobalConstants( SVTreeType& rTree, SvOi::GlobalConstantDataSet& rImportedGlobals )
+static bool importGlobalConstants( SVTreeType& rTree, SvDef::GlobalConstantDataSet& rImportedGlobals )
 {
 	bool Result( true );
 
@@ -227,7 +227,7 @@ static bool importGlobalConstants( SVTreeType& rTree, SvOi::GlobalConstantDataSe
 
 		while( Result && nullptr != hItemChild )
 		{
-			SvOi::GlobalConstantData GlobalData;
+			SvDef::GlobalConstantData GlobalData;
 			_variant_t Value;
 
 			GlobalData.m_DottedName = rTree.getBranchName( hItemChild );
@@ -255,9 +255,9 @@ static bool importGlobalConstants( SVTreeType& rTree, SvOi::GlobalConstantDataSe
 	return Result;
 }
 
-static void checkGlobalConstants( const SvOi::GlobalConstantDataSet& rImportedGlobals, SvOi::GlobalConflictPairVector& rGlobalConflicts )
+static void checkGlobalConstants( const SvDef::GlobalConstantDataSet& rImportedGlobals, SvDef::GlobalConflictPairVector& rGlobalConflicts )
 {
-	SvOi::GlobalConstantDataSet CurrentGlobals;
+	SvDef::GlobalConstantDataSet CurrentGlobals;
 
 	BasicValueObjects::ValueVector GlobalObjects;
 
@@ -265,7 +265,7 @@ static void checkGlobalConstants( const SvOi::GlobalConstantDataSet& rImportedGl
 	BasicValueObjects::ValueVector::const_iterator Iter( GlobalObjects.begin() );
 	while( GlobalObjects.end() != Iter && !Iter->empty() )
 	{
-		SvOi::GlobalConstantData GlobalData;
+		SvDef::GlobalConstantData GlobalData;
 		//Important here we intensionally do not fill the m_Guid value
 		GlobalData.m_DottedName = (*Iter)->GetCompleteName();
 		(*Iter)->getValue( GlobalData.m_Value );
@@ -275,11 +275,11 @@ static void checkGlobalConstants( const SvOi::GlobalConstantDataSet& rImportedGl
 		++Iter;
 	}
 
-	SvOi::GlobalConstantDataSet GlobalDiffs;
+	SvDef::GlobalConstantDataSet GlobalDiffs;
 
 	std::set_difference( rImportedGlobals.begin(), rImportedGlobals.end(), CurrentGlobals.begin(), CurrentGlobals.end(), std::inserter( GlobalDiffs, GlobalDiffs.begin() ) );
 
-	SvOi::GlobalConstantDataSet::const_iterator DiffIter( GlobalDiffs.cbegin() );
+	SvDef::GlobalConstantDataSet::const_iterator DiffIter( GlobalDiffs.cbegin() );
 	while( GlobalDiffs.cend() != DiffIter  )
 	{
 		BasicValueObjectPtr pGlobalConstant;
@@ -294,13 +294,13 @@ static void checkGlobalConstants( const SvOi::GlobalConstantDataSet& rImportedGl
 				pGlobalConstant->setDescription( DiffIter->m_Description.c_str() );
 				if( DiffIter->m_Value.vt == VT_BSTR)
 				{
-					pGlobalConstant->SetObjectAttributesAllowed( SvOi::SV_SELECTABLE_FOR_EQUATION, SvOi::SetAttributeType::RemoveAttribute );
+					pGlobalConstant->SetObjectAttributesAllowed( SvDef::SV_SELECTABLE_FOR_EQUATION, SvOi::SetAttributeType::RemoveAttribute );
 				}
 			}
 		}
 		else
 		{
-			SvOi::GlobalConstantData GlobalData;
+			SvDef::GlobalConstantData GlobalData;
 
 			GlobalData.m_Guid = pGlobalConstant->GetUniqueObjectID();
 			GlobalData.m_DottedName = pGlobalConstant->GetCompleteName();
@@ -316,14 +316,14 @@ static void checkGlobalConstants( const SvOi::GlobalConstantDataSet& rImportedGl
 
 typedef std::insert_iterator<SVImportedInputList> InputListInsertor;
 
-HRESULT LoadInspectionXml(const SVString& filename, const SVString& zipFilename, const SVString& inspectionName, const SVString& cameraName, SVImportedInspectionInfo& inspectionInfo, SvOi::GlobalConflictPairVector& rGlobalConflicts, SVIProgress& rProgress, int& currentOp, int numOperations)
+HRESULT LoadInspectionXml(const SVString& filename, const SVString& zipFilename, const SVString& inspectionName, const SVString& cameraName, SVImportedInspectionInfo& inspectionInfo, SvDef::GlobalConflictPairVector& rGlobalConflicts, SVIProgress& rProgress, int& currentOp, int numOperations)
 {
 	_bstr_t bstrRevisionHistory;
 	_bstr_t bstrChangedNode;
 	CWnd* pParentWnd = AfxGetApp()->GetMainWnd();
 
 	SvXml::SVXMLMaterialsTree XmlTree;
-	SvOi::GlobalConstantDataSet ImportedGlobals;
+	SvDef::GlobalConstantDataSet ImportedGlobals;
 
 	rProgress.UpdateText(_T("Loading Inspection XML..."));
 
@@ -445,7 +445,7 @@ HRESULT LoadInspectionXml(const SVString& filename, const SVString& zipFilename,
 	return hr;
 }
 
-HRESULT SVInspectionImporter::Import(const SVString& filename, const SVString& inspectionName, const SVString& cameraName, SVImportedInspectionInfo& inspectionInfo, SvOi::GlobalConflictPairVector& rGlobalConflicts, SVIProgress& rProgress)
+HRESULT SVInspectionImporter::Import(const SVString& filename, const SVString& inspectionName, const SVString& cameraName, SVImportedInspectionInfo& inspectionInfo, SvDef::GlobalConflictPairVector& rGlobalConflicts, SVIProgress& rProgress)
 {
 	HRESULT hr = S_OK;
 	::CoInitialize(nullptr);

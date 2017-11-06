@@ -69,7 +69,7 @@ ToolSizeAdjustTask::ToolSizeAdjustTask(bool AllowFullsize , bool AllowAdjustSize
 	{
 		m_InputModes[vType].SetEnumTypes( vec );
 		m_InputModes[vType].SetDefaultValue( TSModes::TSNone, true );
-		m_InputModes[vType].SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
+		m_InputModes[vType].SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
 	}
 
 	//Add Evaluation Objects 

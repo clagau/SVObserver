@@ -16,7 +16,7 @@
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "SVUtilityLibrary/SVStringConversions.h"
 #include "SVObjectLibrary/GlobalConst.h"
-#include "ObjectInterfaces/TextDefineSvOi.h"
+#include "Definitions/TextDefineSVDef.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -68,7 +68,7 @@ HRESULT SVVariantValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 	ValueVector ReadValueArray;
 	
 	// new-style: store all array elements:
-	if ( bOk = pDataObject->GetArrayData( SvOi::cArrayTag, ReadValueArray, DefaultValue() ) )
+	if ( bOk = pDataObject->GetArrayData( SvDef::cArrayTag, ReadValueArray, DefaultValue() ) )
 	{
 		for (size_t i = 0; i < ReadValueArray.size(); i++)
 		{

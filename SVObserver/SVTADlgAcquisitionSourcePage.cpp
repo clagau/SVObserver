@@ -96,8 +96,8 @@ void SVToolAdjustmentDialogAcquisitionSourcePageClass::refresh()
 
 			pMainImage->GetCamera()->mpsvDevice->GetImageInfo( &oImageInfo );
 
-			oImageInfo.GetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, availableBandNum );
-			oImageInfo.GetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandLink, availableBandLink );
+			oImageInfo.GetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, availableBandNum );
+			oImageInfo.GetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, availableBandLink );
 		}
 
 		// Get current settings...
@@ -107,8 +107,8 @@ void SVToolAdjustmentDialogAcquisitionSourcePageClass::refresh()
 		ImageInfo = pMainImage->GetImageInfo();
 
 		// Get current settings...
-		ImageInfo.GetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, bandNum );
-		ImageInfo.GetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandLink, bandLink );
+		ImageInfo.GetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, bandNum );
+		ImageInfo.GetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, bandLink );
 
 		// Set up channel states...
 		m_Channel0 = ( bandLink == 0 || ( bColor && bandNum > 1 ) );
@@ -239,8 +239,8 @@ void SVToolAdjustmentDialogAcquisitionSourcePageClass::OnSelectButton()
 		// Reset band number and link to defaults...
 		SVImageInfoClass ImageInfo = pMainImage->GetImageInfo();
 
-		ImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
-		ImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
+		ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
+		ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
 
 		if ( S_OK == pMainImage->UpdateImage( ImageInfo ) )
 		{
@@ -272,8 +272,8 @@ void SVToolAdjustmentDialogAcquisitionSourcePageClass::OnChannel0Check()
 		{
 			SVImageInfoClass ImageInfo = pMainImage->GetImageInfo();
 
-			ImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
-			ImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
+			ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
+			ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
 
 			if( S_OK == pMainImage->UpdateImage( ImageInfo ) )
 			{
@@ -299,8 +299,8 @@ void SVToolAdjustmentDialogAcquisitionSourcePageClass::OnChannel1Check()
 		{
 			SVImageInfoClass ImageInfo = pMainImage->GetImageInfo();
 
-			ImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
-			ImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandLink, 1 );
+			ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
+			ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, 1 );
 
 			if ( S_OK == pMainImage->UpdateImage( ImageInfo ) )
 			{
@@ -326,8 +326,8 @@ void SVToolAdjustmentDialogAcquisitionSourcePageClass::OnChannel2Check()
 		{
 			SVImageInfoClass ImageInfo = pMainImage->GetImageInfo();
 
-			ImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
-			ImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandLink, 2 );
+			ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
+			ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, 2 );
 
 			if( S_OK == pMainImage->UpdateImage( ImageInfo ) )
 			{
@@ -353,8 +353,8 @@ void SVToolAdjustmentDialogAcquisitionSourcePageClass::OnChannel3Check()
 		{
 			SVImageInfoClass ImageInfo = pMainImage->GetImageInfo();
 
-			ImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
-			ImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandLink, 3 );
+			ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
+			ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, 3 );
 
 			if ( S_OK == pMainImage->UpdateImage( ImageInfo ) )
 			{
@@ -378,8 +378,8 @@ void SVToolAdjustmentDialogAcquisitionSourcePageClass::OnMultibandRadio()
 	{
 		SVImageInfoClass ImageInfo = pMainImage->GetImageInfo();
 
-		ImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, availableBandNum );
-		ImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
+		ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, availableBandNum );
+		ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
 
 		if( S_OK == pMainImage->UpdateImage( ImageInfo ) )
 		{
@@ -406,13 +406,13 @@ void SVToolAdjustmentDialogAcquisitionSourcePageClass::OnSinglebandRadio()
 
 		long l_lBandLink = 0;
 
-		ImageInfo.GetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandLink, l_lBandLink );
+		ImageInfo.GetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, l_lBandLink );
 
-		ImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
+		ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
 
 		if ( l_lBandLink < 0 )
 		{
-			ImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
+			ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
 		}
 
 		if( S_OK == pMainImage->UpdateImage( ImageInfo ) )

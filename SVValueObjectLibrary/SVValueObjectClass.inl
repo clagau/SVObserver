@@ -90,15 +90,15 @@ bool SVValueObjectClass<T>::CreateObject( const SVObjectLevelCreateStruct& rCrea
 	bool l_bOk = SVObjectClass::CreateObject( rCreateStructure );
 
 	SVObjectManagerClass::Instance().RegisterSubObject(GetUniqueObjectID());
-	SetObjectAttributesAllowed( SvOi::SV_DD_VALUE, SvOi::SetAttributeType::AddAttribute );	// derived classes need to reset this
+	SetObjectAttributesAllowed( SvDef::SV_DD_VALUE, SvOi::SetAttributeType::AddAttribute );	// derived classes need to reset this
 
 	if ( m_NumberOfBuckets < 2 )
 	{
 		SetObjectDepth( 2 );
 	}
 
-	//A ValueObject with SvOi::SV_PUBLISHABLE set needs to be bucketized
-	const UINT cAttributes = SvOi::SV_PUBLISHABLE;
+	//A ValueObject with SvDef::SV_PUBLISHABLE set needs to be bucketized
+	const UINT cAttributes = SvDef::SV_PUBLISHABLE;
 	if( 0 != ( ObjectAttributesSet() & cAttributes )  )
 	{
 		setBucketized(true);
@@ -225,7 +225,7 @@ HRESULT SVValueObjectClass<T>::SetObjectValue(SVObjectAttributeClass* pDataObjec
 		}
 	}
 	//  BUCKET_TAG_LOAD; get buckets, not array; for backward compatibility;
-	else if (pDataObject->GetAttributeData(SvOi::cBucketTag, BucketArray, DefaultValue()))
+	else if (pDataObject->GetAttributeData(SvDef::cBucketTag, BucketArray, DefaultValue()))
 	{
 
 		if( !m_isBucketized )
@@ -261,7 +261,7 @@ HRESULT SVValueObjectClass<T>::SetObjectValue(SVObjectAttributeClass* pDataObjec
 		}
 		}
 	// new-style: store all array elements:
-	else if ( pDataObject->GetArrayData( SvOi::cArrayTag, ValueArray, DefaultValue() ) )
+	else if ( pDataObject->GetArrayData( SvDef::cArrayTag, ValueArray, DefaultValue() ) )
 	{
 		SetArraySize( static_cast< int >( ValueArray.size() ) );
 		if( !m_isBucketized )
@@ -554,7 +554,7 @@ UINT SVValueObjectClass<T>::SetObjectAttributesSet( UINT Attributes, SvOi::SetAt
 {
 	UINT newAttribute = __super::SetObjectAttributesSet( Attributes, Type, Index );
 
-	const UINT cBucketizedAttributes = SvOi::SV_PUBLISHABLE;
+	const UINT cBucketizedAttributes = SvDef::SV_PUBLISHABLE;
 	if (0 != (cBucketizedAttributes & Attributes))
 	{
 		if (0 != (cBucketizedAttributes & newAttribute))
@@ -846,7 +846,7 @@ void SVValueObjectClass<T>::Initialize()
 	m_ResultSize = 1;
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVValueObjectType;
 
-	SetObjectAttributesAllowed( SvOi::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute );
+	SetObjectAttributesAllowed( SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute );
 }
 
 template <typename T>

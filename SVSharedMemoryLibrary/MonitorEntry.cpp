@@ -1,7 +1,7 @@
 #pragma region Includes
 #include "StdAfx.h"
 #include "MonitorEntry.h"
-#include "ObjectInterfaces\SVObjectTypeInfoStruct.h"
+#include "Definitions/SVObjectTypeInfoStruct.h"
 #include "SVMatroxLibrary\MatroxImageProps.h"
 #include "SVUtilityLibrary\SVString.h"
 #pragma endregion Includes

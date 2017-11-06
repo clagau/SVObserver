@@ -13,7 +13,7 @@
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "ObjectInterfaces\IObjectClass.h"
-#include "ObjectInterfaces\TextDefineSvOi.h"
+#include "Definitions/TextDefineSVDef.h"
 #include "SVObjectLibrary\GlobalConst.h"
 #include "SVUtilityLibrary\SVString.h"
 #include "SVStatusLibrary\MessageManager.h"
@@ -95,13 +95,13 @@ void LinkedValue::UpdateLinkedName()
 	if( nullptr != m_LinkedObjectRef.getObject() )
 	{
 		m_LinkedName.SetValue( m_LinkedObjectRef.GetCompleteOneBasedObjectName() );
-		m_LinkedName.SetObjectAttributesAllowed( SvOi::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute );
+		m_LinkedName.SetObjectAttributesAllowed( SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute );
 	}
 	else
 	{
 		SVString Value = m_LinkedName.GetDefaultValue();
 		m_LinkedName.SetValue( Value );
-		m_LinkedName.SetObjectAttributesAllowed( SvOi::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+		m_LinkedName.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
 	}
 }
 

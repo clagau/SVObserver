@@ -221,7 +221,7 @@ void SVChildrenSetupDialogClass::OnAddButton()
 					pObject->ConnectAllInputs();
 
 					// And finally try to create the child object...
-					if( !m_pParentObject->CreateChildObject(pObject, SvOi::SVMFSetDefaultInputs | SvOi::SVMFResetInspection ) )
+					if( !m_pParentObject->CreateChildObject(pObject, SvDef::SVMFSetDefaultInputs | SvDef::SVMFResetInspection ) )
 					{
 						SVStringVector msgList;
 						msgList.push_back(SVString(pObject->GetName()));
@@ -269,7 +269,7 @@ void SVChildrenSetupDialogClass::OnRemoveButton()
 				if( rc )
 				{
 					// Close, Disconnect and Delete Children...
-					m_pParentObject->DestroyChildObject(pTaskObject, SvOi::SVMFSetDefaultInputs | SvOi::SVMFResetInspection );
+					m_pParentObject->DestroyChildObject(pTaskObject, SvDef::SVMFSetDefaultInputs | SvDef::SVMFResetInspection );
 				}
 			}
 		}
@@ -322,7 +322,7 @@ void SVChildrenSetupDialogClass::OnPublishButton()
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, SVString(m_pParentOwner->GetCompleteName()), SVString( _T("") ) );
 
-	SvOsl::SelectorOptions BuildOptions( m_pDocument->GetInspectionID(), SvOi::SV_PUBLISHABLE, m_pParentObject->GetUniqueObjectID() );
+	SvOsl::SelectorOptions BuildOptions( m_pDocument->GetInspectionID(), SvDef::SV_PUBLISHABLE, m_pParentObject->GetUniqueObjectID() );
 	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 
 	SVString PublishableResults = SvUl_SF::LoadSVString( IDS_PUBLISHABLE_RESULTS );

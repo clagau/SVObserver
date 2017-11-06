@@ -8,7 +8,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVObjectTypeInfoStruct.h"
+#include "Definitions/SVObjectTypeInfoStruct.h"
 #include "SVContainerLibrary/SVVector.h"
 #pragma endregion Includes
 

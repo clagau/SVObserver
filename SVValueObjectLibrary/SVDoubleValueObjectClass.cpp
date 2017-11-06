@@ -16,7 +16,7 @@
 #include "SVObjectLibrary\SVClsids.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "ObjectInterfaces/TextDefineSvOi.h"
+#include "Definitions/TextDefineSVDef.h"
 #include "SVContainerLibrary/SVObjectArrayClassTemplate.h"
 #pragma endregion Includes
 
@@ -77,7 +77,7 @@ HRESULT SVDoubleValueObjectClass::SetObjectValue( SVObjectAttributeClass* pDataO
 			return Result;
 		}
 		else if ( pDataObject->GetAttributeData( _T("pArray"), svArray )
-		          || pDataObject->GetAttributeData( SvOi::cBucketTag, svArray ) )
+		          || pDataObject->GetAttributeData( SvDef::cBucketTag, svArray ) )
 		{
 			SetArraySize( static_cast<int>(svArray.size()) );
 			Result = SetArrayValues( svArray.begin(), svArray.end());

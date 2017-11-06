@@ -18,7 +18,7 @@
 #include "SVLutEquation.h"
 #include "SVOCore/SVTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
-#include "ObjectInterfaces/SVUserMessage.h"
+#include "Definitions/SVUserMessage.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 

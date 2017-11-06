@@ -6,13 +6,13 @@
 //******************************************************************************
 
 #pragma once
+
 #pragma region Includes
 #include "IObjectClass.h"
 #include "IEnumerateValueObject.h"
 #include "SVUtilityLibrary\SVGUID.h"
-#include "SVValueObjectLibrary/SVEnumerateValueObjectClass.h"
 #include "ISVImage.h"
-
+#include "IValueObject.h"
 #pragma endregion Includes
 
 
@@ -42,6 +42,6 @@ namespace SvOi
 
 		virtual ISVImage* getCurrentImageInterface() = 0;
 
-		virtual SVEnumerateValueObjectClass* GetDrawFlagObject() = 0;
+		virtual IValueObject* GetDrawFlagObject() = 0;
 	};
 } //namespace SvOi

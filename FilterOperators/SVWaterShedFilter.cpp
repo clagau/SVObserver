@@ -17,7 +17,7 @@
 #include "SVOCore/SVTaskObjectList.h"
 #include "SVOCore/SVImageClass.h"
 #include "SVWaterShedFilter.h"
-#include "ObjectInterfaces/TextDefineSvOi.h"
+#include "Definitions/TextDefineSVDef.h"
 #include "CameraLibrary/SVDeviceParams.h"
 #include "SVObjectLibrary/SVClsIds.h"
 
@@ -56,14 +56,14 @@ void SVWatershedFilterClass::init()
 	m_lvoControlFlag.SetDefaultValue( SVImageWSWatershed + SVImageWSMinimaFill + SVImageWSRegular + SVImage4Connected );
 
 	// Set Attributes
-	const UINT cAttributes = SvOi::SV_PRINTABLE | SvOi::SV_SETABLE_ONLINE | SvOi::SV_REMOTELY_SETABLE;
-	m_bvoUseMarker.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	const UINT cAttributes = SvDef::SV_PRINTABLE | SvDef::SV_SETABLE_ONLINE | SvDef::SV_REMOTELY_SETABLE;
+	m_bvoUseMarker.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 	m_lvoMinVariation.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	m_lvoControlFlag.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 
 	m_MarkerImageInfo.SetInputObjectType( SVImageObjectType );
 	m_MarkerImageInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_MarkerImageInfo, SvOi::WatershedMarkerImageConnectionName );
+	RegisterInputObject( &m_MarkerImageInfo, SvDef::WatershedMarkerImageConnectionName );
 
 	
 	// Set default inputs and outputs

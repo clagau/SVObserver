@@ -11,7 +11,7 @@
 //Moved to precompiled header: #include <boost/noncopyable.hpp>
 #include "SVUtilityLibrary\NameGuidList.h"
 #include "SVUtilityLibrary\SVString.h"
-#include "ObjectInterfaces\SVObjectTypeInfoStruct.h"
+#include "Definitions/SVObjectTypeInfoStruct.h"
 #include "SVStatusLibrary\MessageContainer.h"
 #pragma endregion Includes
 

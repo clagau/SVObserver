@@ -13,7 +13,7 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
-#include "ObjectInterfaces/SVObjectTypeInfoStruct.h"
+#include "Definitions/SVObjectTypeInfoStruct.h"
 #include "ObjectInterfaces/IObjectClass.h"
 #include "ObjectInterfaces/IValueObject.h"
 #include "SVUtilityLibrary/SVString.h"

@@ -164,8 +164,8 @@ namespace SvLib
 		// Force Image Update Time (in seconds)
 		int forcedImageUpdateTime = SvimIni.GetValueInt( DisplaySectionTag, ForcedImageUpdateTimeInSecondsTag, 0 );
 		m_rInitialInfo.m_forcedImageUpdateTimeInSeconds = static_cast<unsigned char> (forcedImageUpdateTime);
-		m_rInitialInfo.m_NAKMode = static_cast<SvOi::NakGeneration>( SvimIni.GetValueInt(NAKSectionTag, NAKMode, SvOi::NakGeneration::Bursts));
-		m_rInitialInfo.m_NAKParameter = SvimIni.GetValueInt(NAKSectionTag, NAKParameter, SvOi::DefaultNakParameter);
+		m_rInitialInfo.m_NAKMode = static_cast<SvDef::NakGeneration>( SvimIni.GetValueInt(NAKSectionTag, NAKMode, SvDef::NakGeneration::Bursts));
+		m_rInitialInfo.m_NAKParameter = SvimIni.GetValueInt(NAKSectionTag, NAKParameter, SvDef::DefaultNakParameter);
 		return Result;
 	}
 

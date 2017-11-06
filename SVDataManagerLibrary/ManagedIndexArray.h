@@ -150,3 +150,4 @@ private:
 
 };
 
+typedef std::vector<SVManagedIndexArray*> SVManagedIndexArrayVector;

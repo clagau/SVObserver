@@ -41,9 +41,6 @@
     <ClCompile Include="SVObjectLevelCreateStruct.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVObjectListClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVObjectManagerClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -113,9 +110,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVObjectLibrary.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVObjectListClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVObjectManagerClass.h">

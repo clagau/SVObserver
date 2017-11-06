@@ -61,7 +61,7 @@
 #include "SVXMLLibrary\SVNavigateTree.h"
 
 #include "SVConfigurationObject.h"
-#include "ObjectInterfaces\SVUserMessage.h"
+#include "Definitions/SVUserMessage.h"
 
 #include "SVGigeCameraManagerDlg.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
@@ -72,7 +72,7 @@
 #include "SVIOLibrary\SVIOParameterEnum.h"
 #include "SoftwareTriggerDlg.h"
 
-#include "ObjectInterfaces/GlobalConst.h"
+#include "Definitions/GlobalConst.h"
 
 #include "SVIOController.h"
 
@@ -105,7 +105,7 @@
 #include "SVUtilityLibrary\LoadDll.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
-#include "ObjectInterfaces\TextDefineSvOi.h"
+#include "Definitions/TextDefineSVDef.h"
 #include "TextDefinesSvO.h"
 #include "SVXMLLibrary\SVObjectXMLWriter.h"
 #include "SVStatusLibrary\MessageContainer.h"
@@ -2109,18 +2109,18 @@ BOOL SVObserverApp::InitInstance()
 	m_lSouceImageDepth = GetProfileInt(_T( "Settings" ),_T( "Source Image Depth" ), -1 );
 	if ( m_lSouceImageDepth == -1 )
 	{
-		WriteProfileInt(_T( "Settings" ),_T( "Source Image Depth" ), SvOi::cDefaultSourceImageDepth );
+		WriteProfileInt(_T( "Settings" ),_T( "Source Image Depth" ), SvDef::cDefaultSourceImageDepth );
 
-		m_lSouceImageDepth = SvOi::cDefaultSourceImageDepth;
+		m_lSouceImageDepth = SvDef::cDefaultSourceImageDepth;
 	}
 
 	// Get SourceImageDepth
 	m_lResultImageDepth = GetProfileInt(_T( "Settings" ),_T( "Result Image Depth" ), -1 );
 	if ( m_lResultImageDepth == -1 )
 	{
-		WriteProfileInt(_T( "Settings" ),_T( "Result Image Depth" ), SvOi::cDefaultResultImageDepth );
+		WriteProfileInt(_T( "Settings" ),_T( "Result Image Depth" ), SvDef::cDefaultResultImageDepth );
 
-		m_lResultImageDepth = SvOi::cDefaultResultImageDepth;
+		m_lResultImageDepth = SvDef::cDefaultResultImageDepth;
 	}
 
 	// Get LogDataManager
@@ -3260,10 +3260,10 @@ bool SVObserverApp::IsMatroxGige() const
 {
 	bool l_bOk = false;
 
-	l_bOk = ( 0 == SvUl_SF::CompareNoCase(m_rInitialInfo.m_ProductName, SvOi::SVO_PRODUCT_KONTRON_X2_GD2A )
-		||  0 == SvUl_SF::CompareNoCase(m_rInitialInfo.m_ProductName, SvOi::SVO_PRODUCT_KONTRON_X2_GD4A )
-		||  0 == SvUl_SF::CompareNoCase(m_rInitialInfo.m_ProductName, SvOi::SVO_PRODUCT_KONTRON_X2_GD8A )
-		||  0 == SvUl_SF::CompareNoCase(m_rInitialInfo.m_ProductName, SvOi::SVO_PRODUCT_KONTRON_X2_GD8A_NONIO ) );
+	l_bOk = ( 0 == SvUl_SF::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_KONTRON_X2_GD2A )
+		||  0 == SvUl_SF::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_KONTRON_X2_GD4A )
+		||  0 == SvUl_SF::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_KONTRON_X2_GD8A )
+		||  0 == SvUl_SF::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_KONTRON_X2_GD8A_NONIO ) );
 
 	return l_bOk;
 }
@@ -3331,23 +3331,23 @@ SVIMProductEnum SVObserverApp::GetSVIMType() const
 {
 	SVIMProductEnum eType = SVIM_PRODUCT_TYPE_UNKNOWN;
 
-	if (0 == SvUl_SF::CompareNoCase(m_rInitialInfo.m_ProductName, SvOi::SVO_PRODUCT_KONTRON_X2_GD1A))
+	if (0 == SvUl_SF::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_KONTRON_X2_GD1A))
 	{
 		eType = SVIM_PRODUCT_X2_GD1A;
 	}
-	else if (0 == SvUl_SF::CompareNoCase(m_rInitialInfo.m_ProductName, SvOi::SVO_PRODUCT_KONTRON_X2_GD2A))
+	else if (0 == SvUl_SF::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_KONTRON_X2_GD2A))
 	{
 		eType = SVIM_PRODUCT_X2_GD2A;
 	}
-	else if (0 == SvUl_SF::CompareNoCase(m_rInitialInfo.m_ProductName, SvOi::SVO_PRODUCT_KONTRON_X2_GD4A))
+	else if (0 == SvUl_SF::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_KONTRON_X2_GD4A))
 	{
 		eType = SVIM_PRODUCT_X2_GD4A;
 	}
-	else if (0 == SvUl_SF::CompareNoCase(m_rInitialInfo.m_ProductName, SvOi::SVO_PRODUCT_KONTRON_X2_GD8A))
+	else if (0 == SvUl_SF::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_KONTRON_X2_GD8A))
 	{
 		eType = SVIM_PRODUCT_X2_GD8A;
 	}
-	else if (0 == SvUl_SF::CompareNoCase(m_rInitialInfo.m_ProductName, SvOi::SVO_PRODUCT_KONTRON_X2_GD8A_NONIO))
+	else if (0 == SvUl_SF::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_KONTRON_X2_GD8A_NONIO))
 	{
 		eType = SVIM_PRODUCT_X2_GD8A_NONIO;
 	}
@@ -4447,7 +4447,7 @@ bool SVObserverApp::IsMonochromeImageAvailable()
 
 						long l_lBandNumber = 1;
 
-						Monochrome = S_OK == ImageInfo.GetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, l_lBandNumber ) && 1 == l_lBandNumber;
+						Monochrome = S_OK == ImageInfo.GetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, l_lBandNumber ) && 1 == l_lBandNumber;
 					}
 					else
 					{

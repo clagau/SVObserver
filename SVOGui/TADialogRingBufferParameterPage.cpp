@@ -13,7 +13,7 @@
 //Moved to precompiled header: #include <boost/assign/list_of.hpp>
 #include "TADialogRingBufferParameterPage.h"
 
-#include "ObjectInterfaces/ObjectDefines.h"
+#include "Definitions/ObjectDefines.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
@@ -187,7 +187,7 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 		SVString Value = Text;
 		long depth = 0;
 		bool isNumber = SvUl_SF::Convert2Number( Value, depth, true );
-		if( isNumber && SvOi::cRingBufferDepthMin <= depth && SvOi::cRingBufferDepthMax >= depth )
+		if( isNumber && SvDef::cRingBufferDepthMin <= depth && SvDef::cRingBufferDepthMax >= depth )
 		{
 			m_Values.Set<long>(RingDepthTag, depth);
 		}
@@ -195,8 +195,8 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 		{
 			SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
 			SVStringVector msgList;
-			msgList.push_back( SvUl_SF::Format(_T("%d"), SvOi::cRingBufferDepthMin) );
-			msgList.push_back( SvUl_SF::Format(_T("%d"), SvOi::cRingBufferDepthMax) );
+			msgList.push_back( SvUl_SF::Format(_T("%d"), SvDef::cRingBufferDepthMin) );
+			msgList.push_back( SvUl_SF::Format(_T("%d"), SvDef::cRingBufferDepthMax) );
 			msgList.push_back( Value );
 			Exception.setMessage( SVMSG_SVO_62_RINGBUFFER_INVALID_VALUE, SvStl::Tid_RingBuffer_Depth_Invalid_ValueString, msgList, SvStl::SourceFileParams(StdMessageParams), Result );
 			Result = E_FAIL;
@@ -209,7 +209,7 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 	{
 		HRESULT Result( S_OK );
 
-		if( 0 <= Index && SvOi::cRingBufferNumberOutputImages > Index )
+		if( 0 <= Index && SvDef::cRingBufferNumberOutputImages > Index )
 		{
 			CString Value;
 			m_EditImageIndex[Index].GetWindowText( Value );

@@ -27,7 +27,7 @@
 #include "SVMatroxLibrary/SVMatroxPatternInterface.h"
 #include "SVImageLibrary/SVExtentPointStruct.h"
 #include "SVImageLibrary/SVImageExtentClass.h"
-#include "ObjectInterfaces/GlobalConst.h"
+#include "Definitions/GlobalConst.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -355,7 +355,7 @@ void SVPatModelPageClass::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 		switch (pItem->GetCtrlID())
 		{
 		case ModelWidth_Property:
-			if (lNewValue >= SvOi::cMinPatternModelNewSize && lNewValue <= m_sourceImageWidth-m_nXPos)
+			if (lNewValue >= SvDef::cMinPatternModelNewSize && lNewValue <= m_sourceImageWidth-m_nXPos)
 			{
 				m_lModelWidth = lNewValue;
 				setCircularOverscanCheckboxState();
@@ -367,7 +367,7 @@ void SVPatModelPageClass::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 			}
 			break;
 		case ModelHeight_Property:
-			if (lNewValue >= SvOi::cMinPatternModelNewSize && lNewValue <= m_sourceImageHeight-m_nYPos)
+			if (lNewValue >= SvDef::cMinPatternModelNewSize && lNewValue <= m_sourceImageHeight-m_nYPos)
 			{
 				m_lModelHeight = lNewValue;
 				setCircularOverscanCheckboxState();
@@ -509,7 +509,7 @@ void SVPatModelPageClass::ValidateModelWidth()
 	UpdateData(true);
 
 	long lMaxPixels = m_sourceImageWidth;
-	long minWidth = SvOi::cMinPatternModelLoadSize;
+	long minWidth = SvDef::cMinPatternModelLoadSize;
 
 	// Check for Circular Overscan as the Minimum applies to the Inner Rectangle Width
 	if (m_bCircularOverscan)
@@ -534,7 +534,7 @@ void SVPatModelPageClass::ValidateModelHeight()
 	UpdateData(true);
 
 	long lMaxPixels = m_sourceImageHeight;
-	long minHeight = SvOi::cMinPatternModelLoadSize;
+	long minHeight = SvDef::cMinPatternModelLoadSize;
 	
 	// Check for Circular Overscan as the Minimum applies to the Inner Rectangle height
 	if (m_bCircularOverscan)
@@ -569,7 +569,7 @@ void SVPatModelPageClass::ValidateModelFilename() // @TODO:  Add actual validati
 void SVPatModelPageClass::InitializeData()
 {
 	const SvUl::InputNameGuidPairList& rImageList = GetConnectedImageList();
-	const SvUl::InputNameGuidPairList::const_iterator Iter = rImageList.find(SvOi::ImageAnalyzerImageName); 
+	const SvUl::InputNameGuidPairList::const_iterator Iter = rImageList.find(SvDef::ImageAnalyzerImageName);
 	if (rImageList.cend() != Iter)
 	{
 		m_AnalyzerImageGUID = Iter->second.second;
@@ -818,7 +818,7 @@ HRESULT SVPatModelPageClass::BuildPropertyList()
 	pItem->SetCtrlID( ModelWidth_Property );
 	pItem->SetBold( false );
 	pItem->SetHeight(16);
-	Text= SvUl_SF::Format(_T("Width (%d - %d)"), SvOi::cMinPatternModelNewSize, m_sourceImageWidth);
+	Text= SvUl_SF::Format(_T("Width (%d - %d)"), SvDef::cMinPatternModelNewSize, m_sourceImageWidth);
 	pItem->SetLabelText( Text.c_str() );
 	pItem->OnRefresh();
 
@@ -828,7 +828,7 @@ HRESULT SVPatModelPageClass::BuildPropertyList()
 	pItem->SetCtrlID( ModelHeight_Property );
 	pItem->SetBold( false );
 	pItem->SetHeight(16);
-	Text= SvUl_SF::Format(_T("Height (%d - %d)"), SvOi::cMinPatternModelNewSize, m_sourceImageHeight);
+	Text= SvUl_SF::Format(_T("Height (%d - %d)"), SvDef::cMinPatternModelNewSize, m_sourceImageHeight);
 	pItem->SetLabelText( Text.c_str() );
 	pItem->OnRefresh();
 
@@ -883,12 +883,12 @@ void SVPatModelPageClass::setImages()
 		m_dialogImage.setImage( pFirstImage, ToolImageTab );
 	}
 
-	IPictureDisp* pSecondImage = GetImage(SvOi::PatternModelImageName);
+	IPictureDisp* pSecondImage = GetImage(SvDef::PatternModelImageName);
 	m_dialogImage.setImage( pSecondImage, ModelImageTab );
 
 	if (m_bDontCare)
 	{
-		IPictureDisp* pThirdImage = GetImage(SvOi::PatternDontCareImageName);
+		IPictureDisp* pThirdImage = GetImage(SvDef::PatternDontCareImageName);
 		m_dialogImage.setImage(pThirdImage, DontCareImageTab);
 		m_dialogImage.ShowTab(DontCareImageTab, true);
 	}
@@ -999,7 +999,7 @@ void SVPatModelPageClass::setCircularModelOverlay()
 	long modelWidth;
 	long modelHeight;
 	//Overlay for the model
-	IPictureDisp* pModelImage = GetImage(SvOi::PatternModelImageName, modelWidth, modelHeight);
+	IPictureDisp* pModelImage = GetImage(SvDef::PatternModelImageName, modelWidth, modelHeight);
 	if (nullptr != pModelImage)
 	{
 		CRect innerRect = SVMatroxPatternInterface::CalculateOverscanInnerRect(CPoint(0, 0), CSize(modelWidth, modelHeight));

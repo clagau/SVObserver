@@ -10,7 +10,7 @@
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
-#include "ObjectInterfaces/SVUserMessage.h"
+#include "Definitions/SVUserMessage.h"
 #include "SVDlgGraph.h"
 #pragma endregion Includes
 

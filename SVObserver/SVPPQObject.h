@@ -23,7 +23,7 @@
 #include "SVSharedMemoryLibrary/SMRingbuffer.h"
 #include "SVSystemLibrary/SVAsyncProcedure.h"
 #include "SVInfoStructs.h"
-#include "ObjectInterfaces/SVPPQEnums.h"
+#include "Definitions/SVPPQEnums.h"
 #include "SVPPQShiftRegister.h"
 #include "SVValueObjectLibrary/SVValueObject.h"
 #include "SVVirtualCamera.h"
@@ -55,7 +55,7 @@ public:
 	virtual ~SVPPQObject();
 
 public:
-	void SetNAKMode(SvOi::NakGeneration  NAKMode, int NAKPar);
+	void SetNAKMode(SvDef::NakGeneration  NAKMode, int NAKPar);
 	virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0 ) const override;
 	
 	virtual HRESULT ObserverUpdate( const SVInspectionCompleteInfoStruct& p_rData ) override;
@@ -65,7 +65,7 @@ public:
 	void Destroy();
 	void DetachAll();
 
-	void SetPPQOutputMode( SvOi::SVPPQOutputModeEnum ePPQOutputMode );
+	void SetPPQOutputMode( SvDef::SVPPQOutputModeEnum ePPQOutputMode );
 	void SetOutputDelay( long lDelayTime );
 	void SetResetDelay( long lResetTime );
 	void SetPPQLength( long lPPQLength );
@@ -73,7 +73,7 @@ public:
 	void SetInspectionTimeout( long lTimeoutMillisec );
 	void SetConditionalOutputName( const SVString& conditionName );
 
-	void GetPPQOutputMode( SvOi::SVPPQOutputModeEnum& rePPQOutputMode ) const;
+	void GetPPQOutputMode( SvDef::SVPPQOutputModeEnum& rePPQOutputMode ) const;
 	void GetOutputDelay( long& rlDelayTime ) const;
 	void GetResetDelay( long& rlResetTime ) const;
 	void GetPPQLength( long& rlPPQLength ) const;
@@ -517,7 +517,7 @@ private:
 	void CommitSharedMemory( SVProductInfoStruct& rProduct);
 
 	BasicValueObjects	m_PpqValues;
-	SvOi::SVPPQOutputModeEnum m_oOutputMode;
+	SvDef::SVPPQOutputModeEnum m_oOutputMode;
 	long m_lOutputDelay;
 	long m_lResetDelay;
 	long m_DataValidDelay;
@@ -527,7 +527,7 @@ private:
 
 	UINT m_uOutputTimer;
 
-	SvOi::NakGeneration  m_NAKMode;			//!Different Mode for NAK Behavior Legacy, Bursts,RepairedLegacy,FixedMaximum
+	SvDef::NakGeneration  m_NAKMode;			//!Different Mode for NAK Behavior Legacy, Bursts,RepairedLegacy,FixedMaximum
 	int m_NAKParameter;						//!Additional Parameter for NAK Behavior 	
 	long m_NAKCount;
 	long m_FirstNAKProcessCount;		///only trigger >= m_FirstNAKProcessCount will be inspected 

@@ -19,7 +19,7 @@
 #include "SVTestGigeAcquisitionSubsystem.h"
 #include "SVUnloadDeviceDialog.h"
 #include "SVStatusLibrary/GlobalPath.h"
-#include "ObjectInterfaces/TextDefineSvOi.h"
+#include "Definitions/TextDefineSVDef.h"
 
 #pragma endregion Includes
 
@@ -34,11 +34,11 @@ CWnd g_ImageTestDesktopWindow;
 bool IsGigeDigitizer(LPCTSTR ProductName)
 {
 	SVString Name = ProductName;
-	bool l_bOk = ( 0 == SvUl_SF::CompareNoCase( Name, SVString( SvOi::SVO_PRODUCT_KONTRON_X2_GD1A ) ) ||
-					0 == SvUl_SF::CompareNoCase( Name, SVString( SvOi::SVO_PRODUCT_KONTRON_X2_GD2A ) ) ||
-					0 == SvUl_SF::CompareNoCase( Name, SVString( SvOi::SVO_PRODUCT_KONTRON_X2_GD4A ) ) ||
-					0 == SvUl_SF::CompareNoCase( Name, SVString( SvOi::SVO_PRODUCT_KONTRON_X2_GD8A ) ) ||
-					0 == SvUl_SF::CompareNoCase( Name, SVString( SvOi::SVO_PRODUCT_KONTRON_X2_GD8A_NONIO ) ) ) ? true : false;
+	bool l_bOk = ( 0 == SvUl_SF::CompareNoCase( Name, SVString(SvDef::SVO_PRODUCT_KONTRON_X2_GD1A ) ) ||
+					0 == SvUl_SF::CompareNoCase( Name, SVString(SvDef::SVO_PRODUCT_KONTRON_X2_GD2A ) ) ||
+					0 == SvUl_SF::CompareNoCase( Name, SVString(SvDef::SVO_PRODUCT_KONTRON_X2_GD4A ) ) ||
+					0 == SvUl_SF::CompareNoCase( Name, SVString(SvDef::SVO_PRODUCT_KONTRON_X2_GD8A ) ) ||
+					0 == SvUl_SF::CompareNoCase( Name, SVString(SvDef::SVO_PRODUCT_KONTRON_X2_GD8A_NONIO ) ) ) ? true : false;
 
 	return l_bOk;
 }

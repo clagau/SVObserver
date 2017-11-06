@@ -97,7 +97,7 @@ bool SVRangeClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructu
 	m_isCreated = SVTaskObjectClass::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable Flags
-	const UINT cAttributes = SvOi::SV_PRINTABLE | SvOi::SV_SETABLE_ONLINE | SvOi::SV_REMOTELY_SETABLE;
+	const UINT cAttributes = SvDef::SV_PRINTABLE | SvDef::SV_SETABLE_ONLINE | SvDef::SV_REMOTELY_SETABLE;
 	FailHigh.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	WarnHigh.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	FailLow.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
@@ -105,7 +105,7 @@ bool SVRangeClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructu
 
 	for(int i = 0; i < RangeEnum::ER_COUNT; i++)
 	{
-		m_ValueIndirect[i].SetObjectAttributesAllowed( SvOi::SV_PRINTABLE | SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+		m_ValueIndirect[i].SetObjectAttributesAllowed( SvDef::SV_PRINTABLE | SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
 	}
 
 	return m_isCreated;
@@ -173,7 +173,7 @@ bool SVRangeClass::InitReferencesAndInputs(SvStl::MessageContainerVector *pError
 	{
 		ValueIndirect.clear();
 		m_ValueObjectReferences[i] = SVObjectReference();
-		m_ValueIndirect[i].SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+		m_ValueIndirect[i].SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 		m_ValueIndirect[i].GetValue( ValueIndirect );
 		if( !ValueIndirect.empty() )
 		{
@@ -200,7 +200,7 @@ bool SVRangeClass::InitReferencesAndInputs(SvStl::MessageContainerVector *pError
 			}
 			}
 			//check if we have an valid but disabled input
-			else if( 0 == (m_ValueObjectReferences[i].ObjectAttributesAllowed() & SvOi::SV_SELECTABLE_FOR_EQUATION ) )
+			else if( 0 == (m_ValueObjectReferences[i].ObjectAttributesAllowed() & SvDef::SV_SELECTABLE_FOR_EQUATION ) )
 			{
 				Result = false;
 				if (nullptr != pErrorMessages)
@@ -214,7 +214,7 @@ bool SVRangeClass::InitReferencesAndInputs(SvStl::MessageContainerVector *pError
 			}
 			else
 			{
-				m_ValueIndirect[i].SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+				m_ValueIndirect[i].SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 			}
 		}
 	}

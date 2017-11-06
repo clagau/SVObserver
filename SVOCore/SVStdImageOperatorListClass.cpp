@@ -47,7 +47,7 @@ void SVStdImageOperatorListClass::init()
 	RegisterEmbeddedObject( &outputImageObject, SVOutputImageObjectGuid, IDS_OBJECTNAME_IMAGE1 );
 
 	// Set Embedded defaults
-	outputImageObject.InitializeImage( SvOi::SVImageTypeEnum::SVImageTypeLogicalAndPhysical );
+	outputImageObject.InitializeImage( SvDef::SVImageTypeEnum::SVImageTypeLogicalAndPhysical );
 
 	// Set default inputs and outputs
 	addDefaultInputObjects();

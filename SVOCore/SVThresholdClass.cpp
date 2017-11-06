@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVThresholdClass.h"
-#include "ObjectInterfaces/GlobalConst.h"
+#include "Definitions/GlobalConst.h"
 #include "SVUpperThresholdEquation.h"
 #include "SVLowerThresholdEquation.h"
 #include "SVAutoThresholdEquation.h"
@@ -59,11 +59,11 @@ void SVThresholdClass::init()
 	RegisterEmbeddedObject( &m_useExternalUT, SVUseExternalUTObjectGuid, IDS_OBJECTNAME_USE_EXTERN_UT, false, SvOi::SVResetItemOwner );
 
 	// Set Embedded defaults
-	m_upperThresh.SetDefaultValue( SvOi::cDefaultToolUpperThreshold );
-	m_lowerThresh.SetDefaultValue( SvOi::cDefaultToolLowerThreshold );
-	m_threshActivate.SetDefaultValue( SvOi::cDefaultToolThresholdActivate, false );
-	m_upperThreshActivate.SetDefaultValue( SvOi::cDefaultToolUpperThresholdActivate );
-	m_lowerThreshActivate.SetDefaultValue( SvOi::cDefaultToolLowerThresholdActivate );
+	m_upperThresh.SetDefaultValue( SvDef::cDefaultToolUpperThreshold );
+	m_lowerThresh.SetDefaultValue( SvDef::cDefaultToolLowerThreshold );
+	m_threshActivate.SetDefaultValue( SvDef::cDefaultToolThresholdActivate, false );
+	m_upperThreshActivate.SetDefaultValue( SvDef::cDefaultToolUpperThresholdActivate );
+	m_lowerThreshActivate.SetDefaultValue( SvDef::cDefaultToolLowerThresholdActivate );
 
 	m_useExternalATM.SetDefaultValue(BOOL(false));
 	m_useExternalLT.SetDefaultValue(BOOL(false));
@@ -115,20 +115,20 @@ bool SVThresholdClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStr
 	bool bOk = SVUnaryImageOperatorClass::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable Flag
-	m_threshActivate.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_blackBackground.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_threshActivate.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_blackBackground.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 
-	m_upperThreshActivate.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_lowerThreshActivate.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_useExternalLT.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_useExternalUT.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_upperThreshActivate.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_lowerThreshActivate.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_useExternalLT.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_useExternalUT.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 	
-	m_autoThreshold.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE | SvOi::SV_SETABLE_ONLINE | SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
-	m_useExternalATM.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_autoThreshold.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE | SvDef::SV_SETABLE_ONLINE | SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+	m_useExternalATM.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 
-	m_upperThresh.SetObjectAttributesAllowed( SvOi::SV_SETABLE_ONLINE | SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
-	m_lowerThresh.SetObjectAttributesAllowed( SvOi::SV_SETABLE_ONLINE | SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
-	m_dAutoThresholdMultiplier.SetObjectAttributesAllowed( SvOi::SV_SETABLE_ONLINE | SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+	m_upperThresh.SetObjectAttributesAllowed( SvDef::SV_SETABLE_ONLINE | SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+	m_lowerThresh.SetObjectAttributesAllowed( SvDef::SV_SETABLE_ONLINE | SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+	m_dAutoThresholdMultiplier.SetObjectAttributesAllowed( SvDef::SV_SETABLE_ONLINE | SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
 
 	bOk = Rebuild();
 
@@ -542,13 +542,13 @@ bool SVThresholdClass::Rebuild()
 	m_useExternalUT.GetValue( l_bUTValue );
 
 	SvOi::SetAttributeType AddRemoveType = l_bATMValue ? SvOi::SetAttributeType::RemoveAttribute : SvOi::SetAttributeType::AddAttribute;
-	m_dAutoThresholdMultiplier.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, AddRemoveType );
+	m_dAutoThresholdMultiplier.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, AddRemoveType );
 
 	AddRemoveType = (l_bAutoValue || l_bLTValue) ? SvOi::SetAttributeType::RemoveAttribute : SvOi::SetAttributeType::AddAttribute;
-	m_lowerThresh.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, AddRemoveType );
+	m_lowerThresh.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, AddRemoveType );
 
 	AddRemoveType = (l_bAutoValue || l_bUTValue) ? SvOi::SetAttributeType::RemoveAttribute : SvOi::SetAttributeType::AddAttribute;
-	m_upperThresh.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, AddRemoveType );
+	m_upperThresh.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, AddRemoveType );
 
 	return Result;
 }

@@ -12,7 +12,7 @@
 #include "SVObjectLibrary\SVClsids.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
-#include "ObjectInterfaces\TextDefineSvOi.h"
+#include "Definitions/TextDefineSVDef.h"
 #include "SVGlobal.h"
 #include "SVResultLong.h"
 #include "TextDefinesSvO.h"
@@ -102,16 +102,16 @@ bool TableAnalyzerTool::CreateObject( const SVObjectLevelCreateStruct& rCreateSt
 
 	// Override base class exposure of the drawflag
 	// This value will not be exposed for the Table Tool.
-	drawToolFlag.SetObjectAttributesAllowed( SvOi::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	drawToolFlag.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
 
 	// Override base class exposure of the auxillaryextent variables
 	// These values will not be exposed for the Table Tool.
-	m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed( SvOi::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
-	m_svAuxiliarySourceX.SetObjectAttributesAllowed( SvOi::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
-	m_svAuxiliarySourceY.SetObjectAttributesAllowed( SvOi::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
-	m_svAuxiliarySourceAngle.SetObjectAttributesAllowed( SvOi::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
-	m_svAuxiliarySourceImageName.SetObjectAttributesAllowed( SvOi::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
-	m_svAuxiliaryDrawType.SetObjectAttributesAllowed( SvOi::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliarySourceX.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliarySourceY.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliarySourceAngle.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliarySourceImageName.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliaryDrawType.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
 
 	m_isCreated = bOk;
 
@@ -250,7 +250,7 @@ void TableAnalyzerTool::BuildInputObjectList ()
 	// Source Table.
 	m_sourceTableObjectInfo.SetInputObjectType( TableObjectType );
 	m_sourceTableObjectInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_sourceTableObjectInfo, SvOi::cInputTag_SourceTable );
+	RegisterInputObject( &m_sourceTableObjectInfo, SvDef::cInputTag_SourceTable );
 
 	addDefaultInputObjects();
 }

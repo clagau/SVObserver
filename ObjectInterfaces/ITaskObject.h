@@ -13,9 +13,9 @@
 #include "ISelectorItemVector.h"
 #include "ISVImage.h"
 #include "SVInterfaceVector.h"
-#include "SVObjectTypeInfoStruct.h"
-#include "SVStatusLibrary\MessageContainer.h"
-#include "SVUtilityLibrary\NameGuidList.h"
+#include "Definitions/SVObjectTypeInfoStruct.h"
+#include "SVStatusLibrary/MessageContainer.h"
+#include "SVUtilityLibrary/NameGuidList.h"
 #include "SVUtilityLibrary/SVString.h"
 #include "SVObjectLibrary/SVOutputInfoListClass.h"
 #pragma endregion Includes

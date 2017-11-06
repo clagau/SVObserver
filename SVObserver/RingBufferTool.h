@@ -10,7 +10,7 @@
 #include "SVOCore/SVTool.h"
 #include "SVValueObjectLibrary/SVStringValueObjectClass.h"
 #include "SVValueObjectLibrary/LinkedValue.h"
-#include "ObjectInterfaces\GlobalConst.h"
+#include "Definitions/GlobalConst.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -85,14 +85,14 @@ private:
 	// Source Image Name - embedded
 	SVStringValueObjectClass m_SourceImageNames;
 	// Output Image - embedded
-	SVImageClass m_OutputImages[SvOi::cRingBufferNumberOutputImages];
+	SVImageClass m_OutputImages[SvDef::cRingBufferNumberOutputImages];
 
 	// Source Image - input
 	SVInObjectInfoStruct m_InputImageObjectInfo;
 
 	//embedded parameter
 	SVLongValueObjectClass m_BufferDepth;
-	LinkedValue m_ImageIndexManager[SvOi::cRingBufferNumberOutputImages];
+	LinkedValue m_ImageIndexManager[SvDef::cRingBufferNumberOutputImages];
 	SVLongValueObjectClass m_FlagOfOutputImage;
 
 	//ringbuffer

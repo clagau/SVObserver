@@ -12,7 +12,7 @@
 #pragma once
 
 //Moved to precompiled header: #include <deque>
-#include "ObjectInterfaces/SVObjectTypeInfoStruct.h"
+#include "Definitions/SVObjectTypeInfoStruct.h"
 
 class SVObjectClass;
 

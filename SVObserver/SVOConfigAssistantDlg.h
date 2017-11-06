@@ -27,7 +27,7 @@
 #include "SVIOBoardCapabilities.h"
 #include "TriggerInformation/SVIMTypeInfoStruct.h"
 #include "SVImportedInspectionInfo.h" 
-#include "ObjectInterfaces/GlobalConstantData.h"
+#include "Definitions/GlobalConstantData.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
@@ -224,7 +224,7 @@ private:
 	void RemoveFileAcquisitionMessages( LPCTSTR CameraName );
 
 	HRESULT ConnectToolsetBuffers();
-	void resolveGlobalConflicts( SvOi::GlobalConflictPairVector& rGlobalConflicts );
+	void resolveGlobalConflicts( SvDef::GlobalConflictPairVector& rGlobalConflicts );
 
 	static SVString GetNameFromProductID( SVIMProductEnum p_ID );
 	static SVIMProductEnum GetProductIDFromName( const SVString& rName );

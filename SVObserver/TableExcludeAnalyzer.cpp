@@ -54,8 +54,8 @@ bool TableExcludeAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreat
 {
 	bool l_bOk = __super::CreateObject(rCreateStructure);
 
-	m_excludeHigh.SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
-	m_excludeLow.SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+	m_excludeHigh.SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+	m_excludeLow.SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
 
 	return l_bOk;
 }

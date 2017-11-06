@@ -33,7 +33,7 @@
 #include "SVXMLLibrary\SVConfigurationTags.h"
 #include "GlobalConstantView.h"
 #include "SVMainFrm.h"
-#include "ObjectInterfaces\SVUserMessage.h"
+#include "Definitions/SVUserMessage.h"
 #include "SVIOController.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "TextDefinesSvO.h"

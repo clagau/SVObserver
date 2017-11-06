@@ -7,7 +7,7 @@
 
 #pragma once
 
-namespace SvOi
+namespace SvDef
 {
 	enum SVImageTypeEnum // Used by SVImageClass
 	{

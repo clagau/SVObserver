@@ -24,7 +24,7 @@
 
 #include "SVRemoteControlConstants.h"
 #include "SVVisionProcessorHelper.h"
-#include "ObjectInterfaces/SVUserMessage.h"
+#include "Definitions/SVUserMessage.h"
 #include "RemoteMonitorNamedList.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"

@@ -2209,7 +2209,7 @@ BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVec
 				SVString PPQCameraName;
 				long lSize = 0;
 
-				pPPQ->SetPPQOutputMode((SvOi::SVPPQOutputModeEnum)pPPQObj->GetPPQMode());
+				pPPQ->SetPPQOutputMode((SvDef::SVPPQOutputModeEnum)pPPQObj->GetPPQMode());
 
 				// EB 20050225
 				long lOldPPQLength=0;
@@ -2807,7 +2807,7 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 				long lPPQDelayTime;
 				bool bPPQMaintainSrcImg;
 				long lInspectionTimeout;
-				SvOi::SVPPQOutputModeEnum ePPQMode;
+				SvDef::SVPPQOutputModeEnum ePPQMode;
 				pcfgPPQ->GetPPQLength(lPPQLength);
 				pcfgPPQ->GetPPQOutputMode(ePPQMode);
 				pcfgPPQ->GetOutputDelay(lPPQDelayTime);
@@ -4227,14 +4227,14 @@ void CSVOConfigAssistantDlg::OnBnClickedCancel()
 	CDialog::OnCancel();
 }
 
-void CSVOConfigAssistantDlg::resolveGlobalConflicts( SvOi::GlobalConflictPairVector& rGlobalConflicts )
+void CSVOConfigAssistantDlg::resolveGlobalConflicts( SvDef::GlobalConflictPairVector& rGlobalConflicts )
 {
 	if( 0 < rGlobalConflicts.size() )
 	{
 		SvOg::GlobalConstantConflictDlg ConflictDlg( rGlobalConflicts, AfxGetMainWnd() );
 		if( IDOK == ConflictDlg.DoModal() )
 		{
-			SvOi::GlobalConflictPairVector::const_iterator Iter( rGlobalConflicts.cbegin() );
+			SvDef::GlobalConflictPairVector::const_iterator Iter( rGlobalConflicts.cbegin() );
 
 			while( rGlobalConflicts.cend() != Iter )
 			{
@@ -4247,10 +4247,10 @@ void CSVOConfigAssistantDlg::resolveGlobalConflicts( SvOi::GlobalConflictPairVec
 					{
 						pGlobalObject->setValue( Iter->second.m_Value );
 						pGlobalObject->setDescription( Iter->second.m_Description.c_str() );
-						pGlobalObject->SetObjectAttributesAllowed( SvOi::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute );
+						pGlobalObject->SetObjectAttributesAllowed( SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute );
 						if( Iter->second.m_Value.vt == VT_BSTR )
 						{
-							pGlobalObject->SetObjectAttributesAllowed( SvOi::SV_SELECTABLE_FOR_EQUATION, SvOi::SetAttributeType::RemoveAttribute );
+							pGlobalObject->SetObjectAttributesAllowed( SvDef::SV_SELECTABLE_FOR_EQUATION, SvOi::SetAttributeType::RemoveAttribute );
 						}
 					}
 				}

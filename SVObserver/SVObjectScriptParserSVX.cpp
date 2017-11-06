@@ -16,7 +16,7 @@
 #include "SVOCore/SVTool.h"
 #include "SVObserver.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
-#include "ObjectInterfaces/SVUserMessage.h"
+#include "Definitions/SVUserMessage.h"
 #include "SVBarCodeAnalyzerClass.h"
 #include "SVTimerLibrary/SVFunctionProfiler.h"
 #include "SVObjectLibrary/GlobalConst.h"

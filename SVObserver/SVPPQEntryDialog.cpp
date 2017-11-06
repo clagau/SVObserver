@@ -251,9 +251,9 @@ INT_PTR SVPPQEntryDialogPropertySheetClass::DoModal()
 BOOL SVPPQEntryDialogPropertySheetClass::OkToAdd()
 {
 	BOOL bOK = TRUE;
-	SvOi::SVPPQOutputModeEnum eMode = SvOi::SVPPQUnknownMode;
+	SvDef::SVPPQOutputModeEnum eMode = SvDef::SVPPQUnknownMode;
 	m_pPPQ->GetPPQOutputMode( eMode );
-	if( eMode == SvOi::SVPPQNextTriggerMode )
+	if( eMode == SvDef::SVPPQNextTriggerMode )
 	{
 		long iLen;
 		m_pPPQ->GetPPQLength(iLen);

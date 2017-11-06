@@ -156,7 +156,7 @@ void SVRankingFilterClass::init()
 	m_lvoRankingHeight.SetDefaultValue( 3L );
 	m_lvoRankingRank.SetDefaultValue( SVValueMedian );
 
-	const UINT cAttributes = SvOi::SV_PRINTABLE | SvOi::SV_SETABLE_ONLINE | SvOi::SV_REMOTELY_SETABLE;
+	const UINT cAttributes = SvDef::SV_PRINTABLE | SvDef::SV_SETABLE_ONLINE | SvDef::SV_REMOTELY_SETABLE;
 	for( l = 0; l < 49; l++ )
 	{
 		m_plvoRankingCells[l]->SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
@@ -280,13 +280,13 @@ void SVRankingFilterClass::RebuildRanking()
 	delete [] pRankingData;	
 	for( l = 0; l < lWidth * lHeight; l++ )
 	{
-		m_plvoRankingCells[l]->SetObjectAttributesAllowed( SvOi::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES | SvOi::SV_PRINTABLE | SvOi::SV_SETABLE_ONLINE | SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::OverwriteAttribute );
+		m_plvoRankingCells[l]->SetObjectAttributesAllowed( SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES | SvDef::SV_PRINTABLE | SvDef::SV_SETABLE_ONLINE | SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::OverwriteAttribute );
 	}// end for
 
 	for( l = lWidth * lHeight; l < 49; l++ )
 	{
-		m_plvoRankingCells[l]->SetObjectAttributesAllowed( SvOi::SV_EMBEDABLE, SvOi::SetAttributeType::OverwriteAttribute );
-		m_plvoRankingCells[l]->SetObjectAttributesSet( SvOi::SV_EMBEDABLE, SvOi::SetAttributeType::OverwriteAttribute );
+		m_plvoRankingCells[l]->SetObjectAttributesAllowed( SvDef::SV_EMBEDABLE, SvOi::SetAttributeType::OverwriteAttribute );
+		m_plvoRankingCells[l]->SetObjectAttributesSet( SvDef::SV_EMBEDABLE, SvOi::SetAttributeType::OverwriteAttribute );
 	}// end for
 }
 

@@ -11,7 +11,7 @@
 #include "Windef.h"
 #pragma endregion Includes
 
-namespace SvOi
+namespace SvDef
 {
 #pragma region Declarations
 	const int			cRingBufferDepthMin = 2;

@@ -132,7 +132,7 @@ protected:
 private:
 	/// The method destroy a taskObject
 	/// \param rTaskObject [in] This object will destroyed.
-	/// \param context [in] Bits define action (e.g. SvOi::SVMFSetDefaultInputs = set default inputs, SvOi::SVMFResetInspection = reset inspection)
+	/// \param context [in] Bits define action (e.g. SvDef::SVMFSetDefaultInputs = set default inputs, SvDef::SVMFResetInspection = reset inspection)
 	void DestroyTaskObject(SVTaskObjectClass& rTaskObject, DWORD context);
 
 	SvOi::IObjectClass* getFirstObjectWithRequestor( const SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends, const SvOi::IObjectClass* pRequestor ) const;

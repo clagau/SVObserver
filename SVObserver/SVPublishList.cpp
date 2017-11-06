@@ -68,7 +68,7 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 
 	pRootObject->GetOutputList( l_OutputList );
 
-	l_OutputList.GetSetAttributesList( SvOi::SV_PUBLISHABLE, &newList );
+	l_OutputList.GetSetAttributesList( SvDef::SV_PUBLISHABLE, &newList );
 
 	SVPPQObject* pPPQ( nullptr );
 	SVOutputObjectList* pOutputList ( nullptr );

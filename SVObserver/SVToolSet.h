@@ -66,7 +66,7 @@ public:
 
 	int GetIndex( SVToolClass* PTool );
 
-	SVEnumerateValueObjectClass* GetDrawFlagObject(); 
+	SVEnumerateValueObjectClass* GetDrawFlagObject();
 
 	bool getConditionalResult() const;
 
