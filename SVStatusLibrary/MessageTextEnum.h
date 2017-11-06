@@ -385,6 +385,7 @@ namespace SvStl
 		Tid_TableColumnName_NotUnique,
 		Tid_TableColumnName_Empty,
 		Tid_TableColumn_AddingFailed,
+		Tid_TableColumn_MovingFailed,
 		Tid_TableColumn_RemovingFailed,
 		Tid_TableColumn_RenamingFailed,
 		Tid_TableColumn_TooManyEquation,

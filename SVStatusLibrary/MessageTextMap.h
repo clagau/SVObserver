@@ -419,6 +419,7 @@ namespace SvStl
 	(Tid_TableColumnName_NotUnique, _T("The name \"%s\" is used already by another column.\nThe name must be unique."))
 	(Tid_TableColumnName_Empty, _T("The name must not be empty."))
 	(Tid_TableColumn_AddingFailed, _T("Adding a column failed. Error number %s."))
+	(Tid_TableColumn_MovingFailed, _T("Moving a column failed. Error number %s."))
 	(Tid_TableColumn_RemovingFailed, _T("Removing a column failed. Error number %s."))
 	(Tid_TableColumn_RenamingFailed, _T("Renaming a column failed. Error number %s."))
 	(Tid_TableColumn_TooManyEquation, _T("Too many equation for columns. Max number = %s. Delete the last one."))

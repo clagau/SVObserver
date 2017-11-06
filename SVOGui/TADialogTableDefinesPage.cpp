@@ -415,8 +415,7 @@ namespace SvOg {
 			SVStringVector msgList;
 			msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
 			SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
-			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TableColumn_AddingFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
-			//@TODO[MZA][7.50][11.10.2017] add right error message
+			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TableColumn_MovingFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 		}
 	}
 
