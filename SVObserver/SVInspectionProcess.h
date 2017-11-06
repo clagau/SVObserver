@@ -84,7 +84,6 @@ public:
 	virtual ~SVInspectionProcess();
 
 	virtual bool resetAllObjects( SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
-	virtual bool GetChildObjectByName( LPCTSTR tszName, SVObjectClass** ppObject ) override;
 
 	virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0 ) const override;
 	

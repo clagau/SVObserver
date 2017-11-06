@@ -2099,7 +2099,7 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 			{
 				aInspections.Add( pInspection );
 				SVImageClass* pImage = nullptr;
-				if( pInspection->GetChildObjectByName(strName.c_str(), (SVObjectClass**) &pImage))
+				if(S_OK == SVObjectManagerClass::Instance().GetObjectByDottedName(strName.c_str(), pImage))
 				{
 					bool bImageOK = false;
 					if( dynamic_cast< SVCameraImageTemplate* >( pImage ) ) // Source image
@@ -2998,7 +2998,7 @@ HRESULT CSVCommand::SVSetImageList(SAFEARRAY *psaNames, SAFEARRAY *psaImages, SA
 			{
 				SVObjectClass *l_pObject = nullptr;
 				//got the inspection.
-				if ( pInspection->GetChildObjectByName( TmpName.c_str(), &l_pObject ))
+				if (S_OK == SVObjectManagerClass::Instance().GetObjectByDottedName(TmpName.c_str(), l_pObject))
 				{
 					l_pImageObject = dynamic_cast< SVImageClass* >( l_pObject );
 
@@ -3336,7 +3336,7 @@ HRESULT CSVCommand::SVLockImage(long p_lProcessCount, long p_lIndex, BSTR p_bsNa
 	//GetInspectionObject is only true if the pointer is valid
 	if ( nullptr != pConfig && pConfig->GetInspectionObject( TmpName.c_str(), &pInspection) )
 	{
-		if (pInspection->GetChildObjectByName(TmpName.c_str(), (SVObjectClass**) &pImage))
+		if (S_OK == SVObjectManagerClass::Instance().GetObjectByDottedName(TmpName.c_str(), pImage))
 		{
 			SVPPQObject* pPPQ = pInspection->GetPPQ();	// inspection can be part of only one PPQ
 

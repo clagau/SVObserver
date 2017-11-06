@@ -1658,28 +1658,6 @@ bool SVInspectionProcess::resetAllObjects(SvStl::MessageContainerVector *pErrorM
 	return Result;
 }
 
-bool SVInspectionProcess::GetChildObjectByName(LPCTSTR tszChildName, SVObjectClass** ppObject)
-{
-	ASSERT(nullptr != ppObject);
-	bool bReturn = false;
-
-	if (nullptr != ppObject)
-	{
-		*ppObject = nullptr;
-
-		SVString ChildName = tszChildName;
-		SVString Name = GetCompleteName();
-
-		if (SvUl_SF::Left(ChildName, Name.size()) == Name)
-		{
-			SVObjectManagerClass::Instance().GetObjectByDottedName(tszChildName, *ppObject);
-			bReturn = (nullptr != *ppObject);
-		}
-	}
-
-	return bReturn;
-}
-
 HRESULT SVInspectionProcess::FindPPQInputObjectByName(SVObjectClass*& p_rpObject, LPCTSTR p_FullName) const
 {
 	HRESULT l_Status = S_OK;
@@ -2345,8 +2323,7 @@ bool SVInspectionProcess::ProcessInputImageRequests(SVProductInfoStruct *p_psvPr
 				else
 				{
 					SVObjectClass* l_psvObject = nullptr;
-
-					if (GetChildObjectByName(l_pInRequest->m_ObjectName.c_str(), &l_psvObject))
+					if (S_OK == SVObjectManagerClass::Instance().GetObjectByDottedName(l_pInRequest->m_ObjectName.c_str(), l_psvObject))
 					{
 						pImage = dynamic_cast<SVImageClass*>(l_psvObject);
 					}

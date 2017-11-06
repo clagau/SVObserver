@@ -99,8 +99,6 @@ public:
 	virtual void Persist( SVObjectWriter& rWriter );
 	virtual void PersistAttributes( SVObjectWriter& rWriter );
 
-	virtual bool GetChildObjectByName( LPCTSTR tszName, SVObjectClass** ppObject );
-
 	virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0 ) const;
 
 	virtual HRESULT ResetObjectInputs();

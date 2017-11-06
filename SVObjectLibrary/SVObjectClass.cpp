@@ -913,30 +913,6 @@ void SVObjectClass::PersistAttributes( SVObjectWriter& rWriter )
 	rWriter.EndElement();
 }
 
-/*
-This method walks the object hierarchy to find a child object.
-*/
-bool SVObjectClass::GetChildObjectByName( LPCTSTR tszChildName, SVObjectClass** ppObject )
-{
-	assert( nullptr != ppObject );
-	bool bReturn = false;
-
-	if ( nullptr != ppObject )
-	{
-		*ppObject = nullptr;
-
-		SVString ChildName = tszChildName;
-		SVString Name = GetCompleteName();
-
-		if( SvUl_SF::Left( ChildName, Name.size() ) == Name )
-		{
-			SVObjectManagerClass::Instance().GetObjectByDottedName(tszChildName, *ppObject);
-			bReturn = ( nullptr != *ppObject );
-		}
-	}
-	return bReturn;
-}
-
 HRESULT SVObjectClass::GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index ) const
 {
 	HRESULT l_Status = S_OK;
