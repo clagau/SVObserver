@@ -14,7 +14,7 @@
 //Moved to precompiled header: #include <fstream>
 #include "SVJsonUtilities.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
-#include "SVUtilityLibrary/SVStringConversions.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 HRESULT SVJsonUtilities::ConvertJsonValueToVariant( const Json::Value& p_rJsonValue, VARIANT& p_rVariant )
@@ -163,7 +163,7 @@ HRESULT SVJsonUtilities::ConvertVariantToJsonValue( const _variant_t& p_rVariant
 				// The current version of the Json library does not support 64 bit so for now
 				// we are putting the result in a string.
 				// In the future we may put the result in a its native type.
-				SVString l_strTmp = SvUl_SF::Format( _T("0x%016I64x"), p_rVariant.llVal);
+				std::string l_strTmp = SvUl::Format( _T("0x%016I64x"), p_rVariant.llVal);
 				p_rJsonValue = Json::Value( SvUl::to_utf8(_bstr_t(l_strTmp.c_str()) ));
 				break;
 			}
@@ -200,18 +200,18 @@ HRESULT SVJsonUtilities::ConvertVariantToJsonValue( const _variant_t& p_rVariant
 	return l_Status;
 }
 
-HRESULT SVJsonUtilities::GetTempFileNameUsingPrefixAndExt( SVString& rTempFileName, const SVString& rPrefix, const SVString& rExt )
+HRESULT SVJsonUtilities::GetTempFileNameUsingPrefixAndExt( std::string& rTempFileName, const std::string& rPrefix, const std::string& rExt )
 {
 	HRESULT l_Status = S_OK;
 
 	rTempFileName.clear();
 
-	SVString l_TempString;
+	std::string l_TempString;
 	__int64 l_TimeStamp = 0;
 
 	::QueryPerformanceCounter( reinterpret_cast< LARGE_INTEGER* >( &l_TimeStamp ) );
 
-	l_TempString = SvUl_SF::Format( "%I64d", l_TimeStamp );
+	l_TempString = SvUl::Format( "%I64d", l_TimeStamp );
 
 	rTempFileName += rPrefix;
 	rTempFileName += "-";
@@ -221,7 +221,7 @@ HRESULT SVJsonUtilities::GetTempFileNameUsingPrefixAndExt( SVString& rTempFileNa
 	return l_Status;
 }
 
-HRESULT SVJsonUtilities::WriteJsonValueToFile( const Json::Value& p_rJsonValue, const SVString& p_rFileName )
+HRESULT SVJsonUtilities::WriteJsonValueToFile( const Json::Value& p_rJsonValue, const std::string& p_rFileName )
 {
 	HRESULT l_Status = S_OK;
 

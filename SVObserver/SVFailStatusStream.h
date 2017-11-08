@@ -18,7 +18,7 @@
 #include "RemoteMonitorNamedList.h"
 #include "SVInfoStructs.h"
 #include "SVObjectCommandDataJson.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion
 
 class SVFailStatusStream
@@ -40,7 +40,7 @@ public:
 	/// \param rList [in] - List of the items to Add
 	/// \return HRESULT - S_OK for success
 	//**********************************************
-	HRESULT Add(const SVString& rName, const MonitoredObjectList& rList);
+	HRESULT Add(const std::string& rName, const MonitoredObjectList& rList);
 
 	void Clear();
 
@@ -61,7 +61,7 @@ private:
 
 	#pragma region Private members
 	mutable SVCriticalSection m_CriticalSection;
-	SVString m_name;
+	std::string m_name;
 	SVObjectReferenceVector m_list;
 	#pragma endregion
 };

@@ -17,7 +17,7 @@
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <deque>
 
-#include "SVUtilityLibrary/SVString.h"
+
 #include "SVMultithread.h"
 #pragma endregion Includes
 
@@ -110,7 +110,7 @@ typedef SVSingleLockT<SVQueueObject> SVQueueObjectLock;
 
 //#define SV_LOG_STATUS_INFO
 #ifdef SV_LOG_STATUS_INFO
-	typedef SVTQueueObject< SVString > SVStatusDeque;
+	typedef SVTQueueObject< std::string > SVStatusDeque;
 #endif
 
 #include "SVTQueueObject.inl"

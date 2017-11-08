@@ -16,6 +16,8 @@
 #include "SVObjectLibrary\SVClsids.h"
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
 #include "Definitions/TextDefineSVDef.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -48,16 +50,16 @@ const SVInt64ValueObjectClass& SVInt64ValueObjectClass::operator = (const SVInt6
 	return *this;
 }
 
-__int64 SVInt64ValueObjectClass::ConvertString2Type( const SVString& rValue ) const
+__int64 SVInt64ValueObjectClass::ConvertString2Type( const std::string& rValue ) const
 {
 	__int64 Result(0LL);
-	SVString Digits = SvUl_SF::ValidateString( rValue, _T("0123456789- ") );
+	std::string Digits = SvUl::ValidateString( rValue, _T("0123456789- ") );
 	if( Digits == rValue )
 	{
 		return _atoi64( Digits.c_str() );
 	}
 
-	SVStringVector msgList;
+	SvDef::StringVector msgList;
 	msgList.push_back( rValue );
 	msgList.push_back( GetName() );
 	SvStl::MessageMgrStd Exception( SvStl::LogOnly );

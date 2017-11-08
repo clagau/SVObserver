@@ -18,7 +18,7 @@
 #include "SVOCore/SVTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVOCore/SVTransformationTool.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion
 
 #ifdef _DEBUG
@@ -90,12 +90,12 @@ BOOL SVToolAdjustmentDialogTranslationPageClass::OnInitDialog()
 		m_pInterpolationMode = dynamic_cast<SVEnumerateValueObjectClass*>(m_pTool->getFirstObject(objectInfo));
 		if( m_pInterpolationMode )
 		{
-			SVString EnumList;
+			std::string EnumList;
 
 			m_pInterpolationMode->GetEnumTypes( EnumList );
 			m_cbInterpolation.SetEnumTypes( EnumList.c_str() );
 
-			SVString EnumString;
+			std::string EnumString;
 			m_pInterpolationMode->getValue( EnumString );
 
 			m_cbInterpolation.SelectString( -1, EnumString.c_str() );
@@ -149,7 +149,7 @@ BOOL SVToolAdjustmentDialogTranslationPageClass::OnSetActive()
 {
 	if( m_pInterpolationMode )
 	{
-		SVString EnumString;
+		std::string EnumString;
 		m_pInterpolationMode->getValue( EnumString );
 		m_cbInterpolation.SelectString( -1, EnumString.c_str() );
 	}
@@ -161,7 +161,7 @@ void SVToolAdjustmentDialogTranslationPageClass::OnXFormulaButton()
 {
 	if (m_pEvaluateTranslationX)
 	{
-		SVString Caption = m_pEvaluateTranslationX->GetName();
+		std::string Caption = m_pEvaluateTranslationX->GetName();
 		Caption += _T(" Formula");
 
 		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
@@ -178,7 +178,7 @@ void SVToolAdjustmentDialogTranslationPageClass::OnYFormulaButton()
 {
 	if (m_pEvaluateTranslationY)
 	{
-		SVString Caption = m_pEvaluateTranslationY->GetName();
+		std::string Caption = m_pEvaluateTranslationY->GetName();
 		Caption += _T(" Formula");
 
 		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();

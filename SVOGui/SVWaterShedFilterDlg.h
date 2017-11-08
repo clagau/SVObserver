@@ -15,7 +15,7 @@
 #include "ValuesAccessor.h"
 #include "DataController.h"
 #include "ImageController.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 namespace SvOg
@@ -63,7 +63,7 @@ namespace SvOg
 		DECLARE_MESSAGE_MAP()
 
 	private:
-		std::vector<SVString*>    m_AvailableImages;
+		std::vector<std::string*>    m_AvailableImages;
 
 		const SVGUID& m_rInspectionID;
 		const SVGUID& m_rTaskObjectID;

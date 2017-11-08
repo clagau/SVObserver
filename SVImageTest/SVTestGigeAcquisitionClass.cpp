@@ -26,7 +26,7 @@ SVTestGigeAcquisitionClass::~SVTestGigeAcquisitionClass()
 {
 }
 
-HRESULT SVTestGigeAcquisitionClass::ReadCameraFile( const SVString& rFilename )
+HRESULT SVTestGigeAcquisitionClass::ReadCameraFile( const std::string& rFilename )
 {
 
 	SVGigeCameraFileReader reader(rFilename, false);
@@ -106,7 +106,7 @@ void SVTestGigeAcquisitionClass::StopAcquire()
 	m_gigeCameraProxy.GoOffline(m_hDigitizer, &m_rSubsystem.m_svDigitizers);
 }
 
-HRESULT SVTestGigeAcquisitionClass::SetGigeFeatureOverrides(const SVString& rFeatureOverrides)
+HRESULT SVTestGigeAcquisitionClass::SetGigeFeatureOverrides(const std::string& rFeatureOverrides)
 {
 	return m_gigeCameraProxy.SetGigeFeatureOverrides(rFeatureOverrides, m_hDigitizer, &m_rSubsystem.m_svDigitizers);
 }

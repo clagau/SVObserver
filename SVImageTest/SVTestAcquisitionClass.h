@@ -15,7 +15,7 @@
 #include "CameraLibrary/SVDeviceParamCollection.h"
 #include "SVImageLibrary/SVAcquisitionBufferInterface.h"
 #include "SVTimerLibrary/SVClock.h"
-#include "SVUtilityLibrary/SVString.h"
+
 
 class SVCameraPage;
 class SVTestAcquisitionSubsystem;
@@ -41,7 +41,7 @@ public:
 	virtual HRESULT GetNextBuffer( SVImageBufferInterface& p_rBuffer ) override;
 	virtual HRESULT UpdateWithCompletedBuffer( const SVImageBufferInterface& p_rBuffer ) override;
 
-	virtual HRESULT ReadCameraFile( const SVString& rFilename );
+	virtual HRESULT ReadCameraFile( const std::string& rFilename );
 
 	HRESULT GetDeviceParameters( SVDeviceParamCollection& rDeviceParams );
 	virtual HRESULT SetDeviceParameters( const SVDeviceParamCollection& rDeviceParams );

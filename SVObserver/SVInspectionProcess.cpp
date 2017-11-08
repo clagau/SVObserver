@@ -74,7 +74,7 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed, SVProductInfoSt
 
 		if (!l_Process)
 		{
-			SVStringVector msgList;
+			SvDef::StringVector msgList;
 			msgList.push_back(GetName());
 			SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 			Exception.setMessage(static_cast<DWORD> (hr), SvStl::Tid_InspThreadGetResultImageIndexError, msgList, SvStl::SourceFileParams(StdMessageParams));
@@ -180,7 +180,7 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed, SVProductInfoSt
 					pIPInfo->m_EndInspection = SvTl::GetTimeStamp();
 
 #ifdef _DEBUG
-					//					SVString l_TempStateString = SvUl_SF::Format( _T( "SVInspectionProcess::ProcessInspection|%s|TRI=%ld\n" ),
+					//					std::string l_TempStateString = SvUl::Format( _T( "SVInspectionProcess::ProcessInspection|%s|TRI=%ld\n" ),
 					//						GetName(), p_rProduct.ProcessCount() );
 					//					::OutputDebugString( l_TempStateString.c_str() );
 #endif
@@ -365,21 +365,21 @@ HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected(bool& p_rProcessed, 
 			}
 			catch (const std::exception& e)
 			{
-				SVStringVector msgList;
+				SvDef::StringVector msgList;
 				msgList.push_back(e.what());
 				SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 				Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ErrorProcessNotifyLastInspected, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15023);
 			}
 			catch (...)
 			{
-				SVStringVector msgList;
+				SvDef::StringVector msgList;
 				msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_Unknown));
 				SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 				Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ErrorProcessNotifyLastInspected, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15024);
 			}
 		}
 		SVInspectionCompleteInfoStruct l_Data(GetUniqueObjectID(), LastProduct);
-		SVObjectManagerClass::Instance().UpdateObservers(SVString(SvO::cInspectionProcessTag), GetUniqueObjectID(), l_Data);
+		SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cInspectionProcessTag), GetUniqueObjectID(), l_Data);
 
 		p_rProcessed = true;
 
@@ -464,7 +464,7 @@ SVInspectionProcess::~SVInspectionProcess()
 	m_SlotManager.reset();
 }
 
-bool SVInspectionProcess::IsCameraInInspection(const SVString& rCameraName) const
+bool SVInspectionProcess::IsCameraInInspection(const std::string& rCameraName) const
 {
 	bool Result(false);
 	SVCameraImagePtrSet::const_iterator l_Iter = m_CameraImages.begin();
@@ -547,7 +547,7 @@ HRESULT SVInspectionProcess::CreateResultImageIndexManager() const
 	HRESULT l_Status = S_OK;
 
 	// Create a managed index for the result data and image circle buffers
-	SVString l_Temp = SvUl_SF::Format(_T("%s Result Image"), GetName());
+	std::string l_Temp = SvUl::Format(_T("%s Result Image"), GetName());
 
 	l_Status = TheSVDataManager.CreateManagedIndexArray(m_pResultImageCircleBuffer, _bstr_t(l_Temp.c_str()), TheSVObserverApp.GetResultImageDepth());
 
@@ -584,7 +584,7 @@ void SVInspectionProcess::DestroyInspection()
 {
 	SVIOEntryStruct pIOEntry;
 	SVCommandStreamManager::Instance().EraseInspection(GetUniqueObjectID());
-	SVObjectManagerClass::Instance().UpdateObservers(SVString(SvO::cInspectionProcessTag), GetUniqueObjectID(), SVRemoveSubjectStruct());
+	SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cInspectionProcessTag), GetUniqueObjectID(), SVRemoveSubjectStruct());
 	::InterlockedExchange(&m_NotifyWithLastInspected, 0);
 	::Sleep(0);
 	m_AsyncProcedure.Destroy();
@@ -650,7 +650,7 @@ HRESULT SVInspectionProcess::GetInspectionValueObject(LPCTSTR Name, SVObjectRefe
 			l_NameInfo.m_NameArray.push_front(GetName());
 		}
 
-		const SVString& l_ObjectName = l_NameInfo.GetObjectName();
+		const std::string& l_ObjectName = l_NameInfo.GetObjectName();
 
 		SVValueObjectMap::index_const_iterator< from >::type l_Iter;
 
@@ -780,7 +780,7 @@ bool SVInspectionProcess::GoOffline()
 #ifdef EnableTracking
 	if (TheSVObserverApp.UpdateAndGetLogDataManager())
 	{
-		SVString l_FileName;
+		std::string l_FileName;
 
 		l_FileName.Format(_T("C:\\SVObserver\\ProductLastIndexes_%ld-%s.log"),
 			SVObjectManagerClass::Instance().GetFileSequenceNumber(), GetName());
@@ -789,7 +789,7 @@ bool SVInspectionProcess::GoOffline()
 
 		if (l_Stream.is_open())
 		{
-			SVString l_Info;
+			std::string l_Info;
 			SVProductInfoStruct l_Product = LastProductGet(SV_OTHER);
 
 			l_Product.DumpIndexInfo(l_Info);
@@ -801,7 +801,7 @@ bool SVInspectionProcess::GoOffline()
 			l_Stream.close();
 		}
 
-		SVString l_Name;
+		std::string l_Name;
 
 		l_Name.Format(_T("C:\\SVObserver\\%s-Counts-%ld.csv"), GetName(), SVObjectManagerClass::Instance().GetFileSequenceNumber());
 
@@ -1232,11 +1232,11 @@ bool SVInspectionProcess::AddInputRequest(SVInputRequestInfoStructPtr p_pInReque
 	}
 
 
-	SVString l_StringValue;
+	std::string l_StringValue;
 
 	if (VT_BSTR == p_pInRequest->m_Value.vt)
 	{
-		l_StringValue = SvUl_SF::createSVString(p_pInRequest->m_Value);
+		l_StringValue = SvUl::createStdString(p_pInRequest->m_Value);
 	}
 
 	if (l_StringValue == SvO::SVTOOLPARAMETERLIST_MARKER)
@@ -1310,7 +1310,7 @@ HRESULT SVInspectionProcess::AddInputImageRequest(SVImageClass* p_psvImage, BSTR
 	return l_Status;
 }
 
-HRESULT SVInspectionProcess::AddInputImageFileNameRequest(SVImageClass* p_psvImage, const SVString& p_rImageFileName)
+HRESULT SVInspectionProcess::AddInputImageFileNameRequest(SVImageClass* p_psvImage, const std::string& p_rImageFileName)
 {
 	HRESULT l_Status = S_OK;
 
@@ -1528,7 +1528,7 @@ HRESULT SVInspectionProcess::RebuildInspection()
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_IP)
 	int iCount = static_cast<int>(m_mapValueObjects.size());
-	SVString Text = SvUl_SF::Format(_T("%s value object count=%d\n"), GetName(), iCount);
+	std::string Text = SvUl::Format(_T("%s value object count=%d\n"), GetName(), iCount);
 	::OutputDebugString(Text.c_str());
 #endif
 
@@ -1613,7 +1613,7 @@ void SVInspectionProcess::SingleRunModeLoop(bool p_Refresh)
 		{
 			SVInspectionCompleteInfoStruct l_Data(GetUniqueObjectID(), l_svProduct);
 
-			SVObjectManagerClass::Instance().UpdateObservers(SVString(SvO::cInspectionProcessTag), GetUniqueObjectID(), l_Data);
+			SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cInspectionProcessTag), GetUniqueObjectID(), l_Data);
 		}
 	}
 }
@@ -1666,7 +1666,7 @@ HRESULT SVInspectionProcess::FindPPQInputObjectByName(SVObjectClass*& p_rpObject
 	{
 		if (!(m_PPQInputs[l].empty()))
 		{
-			SVString l_LocalName = GetName();
+			std::string l_LocalName = GetName();
 
 			l_LocalName += _T(".");
 			l_LocalName += m_PPQInputs[l].m_IOEntryPtr->getObject()->GetName();
@@ -1694,7 +1694,7 @@ HRESULT SVInspectionProcess::GetChildObject(SVObjectClass*& rpObject, const SVOb
 	{
 		if (static_cast<const size_t> (Index) < rNameInfo.m_NameArray.size() && rNameInfo.m_NameArray[Index] == GetName())
 		{
-			SVString l_ObjectName = rNameInfo.GetObjectName(Index);
+			std::string l_ObjectName = rNameInfo.GetObjectName(Index);
 
 			l_Status = FindPPQInputObjectByName(rpObject, l_ObjectName.c_str());
 
@@ -1953,7 +1953,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 				break;
 			}// end if
 
-			SVString Value;
+			std::string Value;
 
 			if (VT_ARRAY == (l_pInputRequest->m_Value.vt & VT_ARRAY))
 			{
@@ -1968,7 +1968,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 
 					l_SafeArray.GetElement(l_Bounds[0].lLbound, l_Variant);
 
-					Value = SvUl_SF::createSVString(l_Variant);
+					Value = SvUl::createStdString(l_Variant);
 				}
 				else if (1 < l_SafeArray.size())
 				{
@@ -1982,13 +1982,13 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 						{
 							Value += _T(",");
 						}
-						Value += SvUl_SF::Format(_T("`%s`"), SvUl_SF::createSVString(l_Variant).c_str());
+						Value += SvUl::Format(_T("`%s`"), SvUl::createStdString(l_Variant).c_str());
 					}
 				}
 			}
 			else
 			{
-				Value = SvUl_SF::createSVString(l_pInputRequest->m_Value);
+				Value = SvUl::createStdString(l_pInputRequest->m_Value);
 			}
 
 			// New delimiter added after each SVSetToolParameterList call
@@ -2029,7 +2029,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 						{
 							if (!bResetObject)
 							{
-								SVString PrevValue;
+								std::string PrevValue;
 
 								hrSet = pFileNameObj->GetValue(PrevValue, ObjectRef.ArrayIndex());
 
@@ -2044,13 +2044,13 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 				{
 					if (ObjectRef.isArray() && ObjectRef.isEntireArray())
 					{
-						hrSet = SetObjectArrayValues<SVString>(ObjectRef, Value, bResetObject);
+						hrSet = SetObjectArrayValues<std::string>(ObjectRef, Value, bResetObject);
 					}
 					else
 					{
 						if (!bResetObject)
 						{
-							SVString PrevValue;
+							std::string PrevValue;
 
 							hrSet = pStringValueObj->GetValue(PrevValue, ObjectRef.ArrayIndex());
 
@@ -2065,7 +2065,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 					BOOL NewValue(false);
 
 					// Convert to the appropriate type of value
-					if (0 == SvUl_SF::CompareNoCase(Value, _T("TRUE")))
+					if (0 == SvUl::CompareNoCase(Value, _T("TRUE")))
 					{
 						NewValue = true;
 					}
@@ -2163,11 +2163,11 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 
 						hrSet = ObjectRef.getValueObject()->getValue(PrevValue, ObjectRef.ArrayIndex());
 
-						SVString strNewValue(Value);
-						SvUl_SF::MakeLower(strNewValue);
+						std::string strNewValue(Value);
+						SvUl::MakeLower(strNewValue);
 						TCHAR* p = nullptr;
 						long lValue = 0;
-						if (SVString::npos != strNewValue.find(_T('x')))
+						if (std::string::npos != strNewValue.find(_T('x')))
 						{
 							lValue = _tcstol(strNewValue.c_str(), &p, 16);
 						}
@@ -2265,7 +2265,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 			{
 				SVRemoveValues l_Data;
 
-				SVObjectManagerClass::Instance().UpdateObservers(SVString(SvO::cInspectionProcessTag), GetUniqueObjectID(), l_Data);
+				SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cInspectionProcessTag), GetUniqueObjectID(), l_Data);
 			}
 		}// end if ( nullptr != m_pCurrentToolset )
 	}// end while( m_lInputRequestMarkerCount > 0L )
@@ -2466,7 +2466,7 @@ void SVInspectionProcess::ConnectToolSetMainImage()
 	m_svReset.RemoveState(SvDef::SVResetAutoMoveAndResize);
 }
 
-void SVInspectionProcess::RemoveCamera(const SVString& rCameraName)
+void SVInspectionProcess::RemoveCamera(const std::string& rCameraName)
 {
 	if (rCameraName == m_ToolSetCameraName)
 	{
@@ -2540,7 +2540,7 @@ HRESULT SVInspectionProcess::CollectOverlays(SVImageClass* p_pImage, SVExtentMul
 	return l_Status;
 }
 
-HRESULT SVInspectionProcess::AddInputImageRequestByCameraName(const SVString& rCameraName, const SVString& rFileName)
+HRESULT SVInspectionProcess::AddInputImageRequestByCameraName(const std::string& rCameraName, const std::string& rFileName)
 {
 	HRESULT hrOk = S_OK;
 
@@ -2960,7 +2960,7 @@ HRESULT SVInspectionProcess::AddSharedCamera(SVVirtualCamera* pCamera)
 	return l_Status;
 }
 
-HRESULT SVInspectionProcess::GetMainImages(const SVString& rCameraName, SVCameraImagePtrSet& rMainImages) const
+HRESULT SVInspectionProcess::GetMainImages(const std::string& rCameraName, SVCameraImagePtrSet& rMainImages) const
 {
 	HRESULT l_Status = S_OK;
 
@@ -2996,7 +2996,7 @@ HRESULT SVInspectionProcess::RemoveImage(SVImageClass* pImage)
 
 		l_Data.m_Images.insert(pImage->GetUniqueObjectID());
 
-		SVObjectManagerClass::Instance().UpdateObservers(SVString(SvO::cInspectionProcessTag), GetUniqueObjectID(), l_Data);
+		SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cInspectionProcessTag), GetUniqueObjectID(), l_Data);
 	}
 	else
 	{
@@ -3181,7 +3181,7 @@ bool SVInspectionProcess::RunInspection(long lResultDataIndex, SVImageIndexStruc
 {
 #ifdef _DEBUG_PERFORMANCE_INFO //Arvid 160212 this is helpful for debugging the creation of Performance Information
 	double del = SvTl::setReferenceTime();
-	SVString DebugString = SvUl_SF::.Format(_T("!\n!!Reset, %7.1lf: SVInspectionProcess::RunInspection(), del = %7.1lf\n"), SvTl::GetRelTimeStamp(), del);
+	std::string DebugString = SvUl::.Format(_T("!\n!!Reset, %7.1lf: SVInspectionProcess::RunInspection(), del = %7.1lf\n"), SvTl::GetRelTimeStamp(), del);
 	::OutputDebugString(DebugString.c_str());
 #endif
 
@@ -3422,7 +3422,7 @@ void SVInspectionProcess::ResetName()
 
 	SVInspectionNameUpdate l_Data(GetName());
 
-	SVObjectManagerClass::Instance().UpdateObservers(SVString(SvO::cInspectionProcessTag), GetUniqueObjectID(), l_Data);
+	SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cInspectionProcessTag), GetUniqueObjectID(), l_Data);
 }
 
 void SVInspectionProcess::SetName(LPCTSTR StrString)
@@ -3431,7 +3431,7 @@ void SVInspectionProcess::SetName(LPCTSTR StrString)
 
 	SVInspectionNameUpdate l_Data(GetName());
 
-	SVObjectManagerClass::Instance().UpdateObservers(SVString(SvO::cInspectionProcessTag), GetUniqueObjectID(), l_Data);
+	SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cInspectionProcessTag), GetUniqueObjectID(), l_Data);
 }
 
 HRESULT SVInspectionProcess::RegisterSubObject(SVObjectClass* pObject)
@@ -3508,7 +3508,7 @@ HRESULT SVInspectionProcess::UnregisterSubObject(SVObjectClass* pObject)
 	return Result;
 }
 
-void SVInspectionProcess::SetToolsetImage(const SVString& rToolsetImage)
+void SVInspectionProcess::SetToolsetImage(const std::string& rToolsetImage)
 {
 	m_ToolSetCameraName = rToolsetImage;
 }
@@ -3626,7 +3626,7 @@ void SVInspectionProcess::SVInspectionTracking::SetStartTime()
 	m_StartTime = SvTl::GetTimeStamp();
 }
 
-void SVInspectionProcess::SVInspectionTracking::EventStart(const SVString& p_rName)
+void SVInspectionProcess::SVInspectionTracking::EventStart(const std::string& p_rName)
 {
 	SvTl::SVTimeStamp l_StartTime = SvTl::GetTimeStamp();
 	__int64 l_EventTime = static_cast<__int64>(l_StartTime - m_StartTime);
@@ -3636,7 +3636,7 @@ void SVInspectionProcess::SVInspectionTracking::EventStart(const SVString& p_rNa
 	++(m_EventCounts[p_rName].m_Start[l_EventTime]);
 }
 
-void SVInspectionProcess::SVInspectionTracking::EventEnd(const SVString& p_rName)
+void SVInspectionProcess::SVInspectionTracking::EventEnd(const std::string& p_rName)
 {
 	SvTl::SVTimeStamp l_EndTime = SvTl::GetTimeStamp();
 	__int64 l_Duration = static_cast<__int64>(l_EndTime - m_EventCounts[p_rName].m_StartTime);
@@ -3697,7 +3697,7 @@ SvOi::ISelectorItemVectorPtr SVInspectionProcess::GetPPQSelectorList(const UINT 
 	SVPPQObject *pPPQ = GetPPQ();
 	if (nullptr != pPPQ)
 	{
-		SVString PpqName(pPPQ->GetName());
+		std::string PpqName(pPPQ->GetName());
 
 		SVObjectReferenceVector ObjectList;
 		SVObjectManagerClass::Instance().getTreeList(PpqName, ObjectList, Attribute);
@@ -3735,7 +3735,7 @@ SvOi::ISelectorItemVectorPtr SVInspectionProcess::GetPPQSelectorList(const UINT 
 	}
 
 
-	SVString InspectionName = GetName();
+	std::string InspectionName = GetName();
 
 	SVObjectPtrVector PpqVariables;
 	PpqVariables = getPPQVariables();
@@ -3749,12 +3749,12 @@ SvOi::ISelectorItemVectorPtr SVInspectionProcess::GetPPQSelectorList(const UINT 
 				SVObjectReference ObjectRef(pObject);
 				SvOsl::SelectorItem InsertItem;
 
-				SVString Location(ObjectRef.GetCompleteOneBasedObjectName());
+				std::string Location(ObjectRef.GetCompleteOneBasedObjectName());
 				InsertItem.setName(ObjectRef.GetName().c_str());
 				InsertItem.setLocation(Location.c_str());
 				//Need to replace the inspection name with the PPQ Variables name
 				// Only DIO and Remote Input, but is all that is in this list?
-				SvUl_SF::searchAndReplace(Location, InspectionName.c_str(), SvOl::FqnPPQVariables);
+				SvUl::searchAndReplace(Location, InspectionName.c_str(), SvOl::FqnPPQVariables);
 				InsertItem.setDisplayLocation(Location.c_str());
 				InsertItem.setItemKey(ObjectRef.getObject()->GetUniqueObjectID().ToVARIANT());
 				if (nullptr != ObjectRef.getValueObject())
@@ -3848,8 +3848,8 @@ bool SVInspectionProcess::IsDisabledPPQVariable(const SVObjectClass* pObject) co
 SVObjectPtrVector SVInspectionProcess::getPPQVariables() const
 {
 	SVObjectPtrVector Result;
-	std::map< SVString, SVObjectClass* > NameObjectMap;
-	SVStringVector PpqVariableNames;
+	std::map<std::string, SVObjectClass*> NameObjectMap;
+	SvDef::StringVector PpqVariableNames;
 
 	for (size_t i = 0; i < m_PPQInputs.size(); i++)
 	{
@@ -3861,7 +3861,7 @@ SVObjectPtrVector SVInspectionProcess::getPPQVariables() const
 			SVObjectClass* pObject(ioEntryPtr.get()->getObject());
 			if (nullptr != pObject)
 			{
-				SVString Name(pObject->GetCompleteName());
+				std::string Name(pObject->GetCompleteName());
 				NameObjectMap[Name] = pObject;
 				PpqVariableNames.push_back(Name);
 			}
@@ -3869,8 +3869,8 @@ SVObjectPtrVector SVInspectionProcess::getPPQVariables() const
 	}// end for
 
 	//Sort the PPQ variable names and return the respective SVObjectClass pointers in order
-	std::sort(PpqVariableNames.begin(), PpqVariableNames.end(), SvUl::NaturalStringCompare<SVString>()); // sort strings
-	std::for_each(PpqVariableNames.begin(), PpqVariableNames.end(), [&Result, &NameObjectMap](const SVString& rItem)->void
+	std::sort(PpqVariableNames.begin(), PpqVariableNames.end(), SvUl::NaturalStringCompare<std::string>()); // sort strings
+	std::for_each(PpqVariableNames.begin(), PpqVariableNames.end(), [&Result, &NameObjectMap](const std::string& rItem)->void
 	{
 		Result.push_back(NameObjectMap[rItem]);
 	}
@@ -4059,7 +4059,7 @@ SvOi::IObjectClass* SVInspectionProcess::getFirstObject(const SVObjectTypeInfoSt
 	return retValue;
 }
 
-void SVInspectionProcess::OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName)
+void SVInspectionProcess::OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName)
 {
 	if (GetToolSet())
 	{

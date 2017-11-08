@@ -9,11 +9,14 @@
 //* .Check In Date   : $Date:   02 Oct 2013 07:12:20  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <boost/config.hpp>
 //Moved to precompiled header: #include <boost/bind.hpp>
 #include "SVPPQShiftRegister.h"
 #include "SVInfoStructs.h"
+#include "SVUtilityLibrary/StringHelper.h"
+#pragma endregion Includes
 
 SVPPQShiftRegister::SVPPQShiftRegister()
 : m_Products(), m_HeadTriggerCount( 0 ), m_TailTriggerCount( 0 )
@@ -367,7 +370,7 @@ HRESULT SVPPQShiftRegister::GetIndexByTriggerTimeStamp( long& p_rIndex, SvTl::SV
 	return l_Status;
 }
 
-HRESULT SVPPQShiftRegister::GetProductStates( SVString& p_rProductStates ) const
+HRESULT SVPPQShiftRegister::GetProductStates( std::string& p_rProductStates ) const
 {
 	HRESULT l_Status = S_OK;
 
@@ -375,15 +378,15 @@ HRESULT SVPPQShiftRegister::GetProductStates( SVString& p_rProductStates ) const
 	{
 		for( size_t i = 0; i < m_Products.size(); ++i )
 		{
-			SVString l_TempString;
+			std::string l_TempString;
 
 			if( nullptr != m_Products[ i ] )
 			{
-				l_TempString = SvUl_SF::Format( _T( "%d:%s\n" ), i, m_Products[ i ]->m_ProductState.c_str() );
+				l_TempString = SvUl::Format( _T( "%d:%s\n" ), i, m_Products[ i ]->m_ProductState.c_str() );
 			}
 			else
 			{
-				l_TempString = SvUl_SF::Format( _T( "%d:NULL\n" ), i );
+				l_TempString = SvUl::Format( _T( "%d:NULL\n" ), i );
 			}
 
 			p_rProductStates += l_TempString;

@@ -128,7 +128,7 @@ namespace SvStl
 	}
 
 
-	void AppendFilename(LPCTSTR filename, SVString& rpath )
+	void AppendFilename(LPCTSTR filename, std::string& rpath )
 	{
 		if(nullptr != filename)
 		{
@@ -141,90 +141,90 @@ namespace SvStl
 	}
 
 
-	SVString GlobalPath::GetExternalToolPath(LPCTSTR filename)
+	std::string GlobalPath::GetExternalToolPath(LPCTSTR filename)
 	{
 		InitializePath();
-		SVString ret =  m_SVObserverExternalToolFolder;
+		std::string ret =  m_SVObserverExternalToolFolder;
 		AppendFilename(filename,ret );
 
 		return ret;
 	}
 
 
-	SVString GlobalPath::GetRunPath(LPCTSTR filename )
+	std::string GlobalPath::GetRunPath(LPCTSTR filename )
 	{
 		InitializePath();
-		SVString ret =  m_SVObserverRunFolder;
+		std::string ret =  m_SVObserverRunFolder;
 		AppendFilename(filename,ret );
 		return ret;
 	}
 
 
-	SVString GlobalPath::GetBinPath(LPCTSTR filename)
+	std::string GlobalPath::GetBinPath(LPCTSTR filename)
 	{
 		InitializePath();
-		SVString ret =  m_SVObserverBinFolder;
+		std::string ret =  m_SVObserverBinFolder;
 		AppendFilename(filename,ret );
 		return ret;
 	}
 
 
-	SVString GlobalPath::GetTempPath(LPCTSTR filename )
+	std::string GlobalPath::GetTempPath(LPCTSTR filename )
 	{
 		InitializePath();
-		SVString ret =  m_TempFolder;
+		std::string ret =  m_TempFolder;
 		AppendFilename(filename,ret );
 		return ret;
 	}
 
 
-	SVString GlobalPath::GetObserverPath(LPCTSTR filename )
+	std::string GlobalPath::GetObserverPath(LPCTSTR filename )
 	{
 		InitializePath();
-		SVString ret =  m_SVObserverFolder;
+		std::string ret =  m_SVObserverFolder;
 		AppendFilename(filename,ret );
 		return ret;
 	}
 
 
-	SVString GlobalPath::GetSecondObserverPath(LPCTSTR filename )
+	std::string GlobalPath::GetSecondObserverPath(LPCTSTR filename )
 	{
 		InitializePath();
-		SVString ret =  m_SVSecondObserverFolder;
+		std::string ret =  m_SVSecondObserverFolder;
 		AppendFilename(filename, ret);
 		return ret;
 	}
 
 
-	SVString GlobalPath::GetAutoSaveRootPath(LPCTSTR filename)
+	std::string GlobalPath::GetAutoSaveRootPath(LPCTSTR filename)
 	{
-		SVString ret =  GetSecondObserverPath(AutoSaveRelativePath);
+		std::string ret =  GetSecondObserverPath(AutoSaveRelativePath);
 		AppendFilename(filename, ret);
 		return ret;
 	}
 
 
-	SVString GlobalPath::GetAutoSaveTempPath(LPCTSTR filename)
+	std::string GlobalPath::GetAutoSaveTempPath(LPCTSTR filename)
 	{
-		SVString ret =  GetAutoSaveRootPath(AutoSaveTempRelativePath);
+		std::string ret =  GetAutoSaveRootPath(AutoSaveTempRelativePath);
 		AppendFilename(filename, ret);
 		return ret;
 	}
 
 
-	SVString  GlobalPath::GetLastValidPath(LPCTSTR filename )
+	std::string  GlobalPath::GetLastValidPath(LPCTSTR filename )
 	{
 
 		InitializePath();
-		SVString ret =  m_LastValidFolder;
+		std::string ret =  m_LastValidFolder;
 		AppendFilename(filename,ret );
 		return ret;
 	}
 
 
-	SVString GetValueString( LPCTSTR p_szSection, LPCTSTR p_szKey, LPCTSTR p_szDefault, LPCTSTR p_szFileName )
+	std::string GetValueString( LPCTSTR p_szSection, LPCTSTR p_szKey, LPCTSTR p_szDefault, LPCTSTR p_szFileName )
 	{
-		SVString sValue;
+		std::string sValue;
 		TCHAR szResult[ 1024 ];
 
 		unsigned long written  = ::GetPrivateProfileString( p_szSection, p_szKey, 

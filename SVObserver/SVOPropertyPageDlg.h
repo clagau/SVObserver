@@ -19,7 +19,6 @@
 #include "SVOInspectionObj.h"
 #include "SVOPPQObj.h"
 #include "TriggerInformation/SVOTriggerObj.h"
-#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 // defines for the dlgs
@@ -149,7 +148,7 @@ private: //data members
 	CMapStringToPtr	*m_pMap;
 	int				m_nID;
     SVIMProductEnum m_eProduct;
-	SVString m_InitialCameraFileName;
+	std::string m_InitialCameraFileName;
 
     void CameraAdvancedHideItems();
     void PPQHideItems();

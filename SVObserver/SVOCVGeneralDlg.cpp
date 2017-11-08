@@ -19,7 +19,8 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/GlobalPath.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -116,7 +117,7 @@ BOOL SVOCVGeneralDlg::OnInitDialog()
 	
 	SetTaskObject( pOCVAnalyzerResult );
 
-	SVString Value;
+	std::string Value;
 	pOCVAnalyzerResult->m_fnvoFontFileName.GetValue( Value );
 	m_fontFilename = Value.c_str();
 	pOCVAnalyzerResult->m_fnvoConstraintsFileName.GetValue( Value );
@@ -144,7 +145,7 @@ void SVOCVGeneralDlg::OnFontBrowseCmd()
 	                                                _T( "WitFontFilePath" ),
 	                                                SvStl::GlobalPath::Inst().GetRunPath().c_str() );
 
-	svfncFileName.SetDefaultPathName( SVString(Path) );
+	svfncFileName.SetDefaultPathName( std::string(Path) );
 
 	UpdateData( TRUE );
 
@@ -158,9 +159,9 @@ void SVOCVGeneralDlg::OnFontBrowseCmd()
 		}
 		else
 		{
-			if( 0 != SvUl_SF::CompareNoCase( svfncFileName.GetExtension(), SVString( _T(".mfo") ) ) )
+			if( 0 != SvUl::CompareNoCase( svfncFileName.GetExtension(), std::string( _T(".mfo") ) ) )
 			{
-				SVStringVector msgList;
+				SvDef::StringVector msgList;
 				msgList.push_back(svfncFileName.GetFullFileName());
 				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_FontNotMfoExt, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10172 ); 
@@ -173,14 +174,14 @@ void SVOCVGeneralDlg::OnFontBrowseCmd()
 				CFileStatus rStatus;
 				if ( !CFile::GetStatus( svfncFileName.GetFullFileName().c_str(), rStatus ) )
 				{
-					SVStringVector msgList;
+					SvDef::StringVector msgList;
 					msgList.push_back(svfncFileName.GetFullFileName());
 					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_FontFileNotExist, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10173 ); 
 				}
 				else if ( rStatus.m_size <= 0 )
 				{
-					SVStringVector msgList;
+					SvDef::StringVector msgList;
 					msgList.push_back(svfncFileName.GetFullFileName());
 					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_FontFileEmpty, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10174 );
@@ -210,7 +211,7 @@ void SVOCVGeneralDlg::OnConstraintsBrowseCmd()
 	                                                _T( "WitFontFilePath" ),
 	                                                SvStl::GlobalPath::Inst().GetRunPath().c_str() );
 
-	svfncFileName.SetDefaultPathName( SVString(Path) );
+	svfncFileName.SetDefaultPathName( std::string(Path) );
 
 	UpdateData( TRUE );
 
@@ -224,9 +225,9 @@ void SVOCVGeneralDlg::OnConstraintsBrowseCmd()
 		}
 		else
 		{
-			if ( 0 != SvUl_SF::CompareNoCase( svfncFileName.GetExtension(), SVString( _T(".mfo") ) )  )
+			if ( 0 != SvUl::CompareNoCase( svfncFileName.GetExtension(), std::string( _T(".mfo") ) )  )
 			{
-				SVStringVector msgList;
+				SvDef::StringVector msgList;
 				msgList.push_back(svfncFileName.GetFullFileName());
 				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_FontConstraintsRequiredMfoExt, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10176 ); 
@@ -239,14 +240,14 @@ void SVOCVGeneralDlg::OnConstraintsBrowseCmd()
 				CFileStatus rStatus;
 				if ( !CFile::GetStatus( svfncFileName.GetFullFileName().c_str(), rStatus ) )
 				{
-					SVStringVector msgList;
+					SvDef::StringVector msgList;
 					msgList.push_back(svfncFileName.GetFullFileName() );
 					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_FontConstraintsFileNotExist, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10177 ); 
 				}
 				else if ( rStatus.m_size <= 0 )
 				{
-					SVStringVector msgList;
+					SvDef::StringVector msgList;
 					msgList.push_back(svfncFileName.GetFullFileName() );
 					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_FontConstraintsFileEmpty, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10178 ); 
@@ -277,7 +278,7 @@ void SVOCVGeneralDlg::OnControlsBrowseCmd()
 	                                                _T( "WitFontFilePath" ),
 	                                                SvStl::GlobalPath::Inst().GetRunPath().c_str() );
 
-	svfncFileName.SetDefaultPathName( SVString(Path) );
+	svfncFileName.SetDefaultPathName( std::string(Path) );
 
 	UpdateData( TRUE );
 
@@ -291,9 +292,9 @@ void SVOCVGeneralDlg::OnControlsBrowseCmd()
 		}
 		else
 		{
-			if( 0 != SvUl_SF::CompareNoCase( svfncFileName.GetExtension(), SVString( _T(".mfo") ) ) )
+			if( 0 != SvUl::CompareNoCase( svfncFileName.GetExtension(), std::string( _T(".mfo") ) ) )
 			{
-				SVStringVector msgList;
+				SvDef::StringVector msgList;
 				msgList.push_back( svfncFileName.GetFullFileName() );
 				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_FontControlsRequiredMfoExt, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10180 ); 
@@ -306,14 +307,14 @@ void SVOCVGeneralDlg::OnControlsBrowseCmd()
 				CFileStatus rStatus;
 				if ( !CFile::GetStatus( svfncFileName.GetFullFileName().c_str(), rStatus ) )
 				{
-					SVStringVector msgList;
+					SvDef::StringVector msgList;
 					msgList.push_back( svfncFileName.GetFullFileName() );
 					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_FontControlsFileNotExist, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10181 ); 
 				}
 				else if ( rStatus.m_size <= 0 )
 				{
-					SVStringVector msgList;
+					SvDef::StringVector msgList;
 					msgList.push_back( svfncFileName.GetFullFileName() );
 					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_FontControlsFileEmpty, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10182 ); 

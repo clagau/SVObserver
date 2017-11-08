@@ -7,7 +7,7 @@ MatroxSharedBuffer::MatroxSharedBuffer(void)
 {
 }
 
-MatroxSharedBuffer::MatroxSharedBuffer( SVMatroxIdentifier Identifier, const SVString& rCreatorName )
+MatroxSharedBuffer::MatroxSharedBuffer( SVMatroxIdentifier Identifier, const std::string& rCreatorName )
 	: SVMatroxBufferTemplate( Identifier, rCreatorName )
 {
 	

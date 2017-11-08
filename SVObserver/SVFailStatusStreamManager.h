@@ -19,7 +19,7 @@
 #include "SVObjectLibrary/SVObserverTemplate.h"
 #include "SVJsonCommandServerLibrary/SVJsonCommandServer.h"
 #include "SVUtilityLibrary/SVGUID.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #include "RemoteMonitorList.h"
 #include "SVFailStatusStream.h"
 #include "SVInfoStructs.h"
@@ -92,7 +92,7 @@ private:
 	/// \param bStart [in] - boolean start/stop
 	/// \return HRESULT - S_OK for success
 	//**********************************************
-	HRESULT ProcessStartStopCommand(const SVString& name, bool bStart);
+	HRESULT ProcessStartStopCommand(const std::string& name, bool bStart);
 	#pragma endregion
 
 	#pragma region Private Members
@@ -102,11 +102,11 @@ private:
 	struct FailStatusList
 	{
 		bool m_IsStarted; // state (started/stopped)
-		SVString name; // name of the list
+		std::string name; // name of the list
 		SVFailStatusStream stream; // stream (Json) builder
 		FailStatusList() : m_IsStarted(false) {}
 	};
-	typedef std::map<SVString, FailStatusList> FailStatusLists;
+	typedef std::map<std::string, FailStatusList> FailStatusLists;
 	// Key is PPQ UniqueObjectID
 	typedef std::map<SVGUID, FailStatusLists> FailStatusListCollection;
 	typedef std::map<SVGUID, long> PPQObservers; // long is cookie from register observer

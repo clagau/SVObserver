@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVResultString.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVStringResultClass, SVStringResultClassGuid );
@@ -76,7 +76,7 @@ bool SVStringResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 
 		if( nullptr != pValueObject )
 		{
-			SVString Value;
+			std::string Value;
 			pValueObject->GetValue(Value);
 			m_Value.SetValue(Value);
 			return true;

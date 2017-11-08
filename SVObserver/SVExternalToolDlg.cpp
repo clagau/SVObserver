@@ -24,7 +24,7 @@
 #include "SVMFCControls\SVFileDialog.h"
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVStatusLibrary\GlobalPath.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "GuiCommands/GetInstanceIDByTypeInfo.h"
 #pragma endregion Includes
 
@@ -137,7 +137,7 @@ void SVExternalToolDlg::DoDataExchange(CDataExchange* pDX)
 
 BOOL SVExternalToolDlg::OnInitDialog() 
 {
-	SVString Value;
+	std::string Value;
 	// stuff the value before base OnInitDialog
 	m_pTask->m_Data.m_voDllPath.GetValue( Value );
 	m_strDLLPath = Value.c_str();
@@ -158,7 +158,7 @@ BOOL SVExternalToolDlg::OnInitDialog()
 	int iDependentsSize = static_cast< int >( m_pTask->m_Data.m_aDllDependencies.size() );
 	for( int i = 0 ; i < iDependentsSize ; i++)
 	{
-		SVString Temp;
+		std::string Temp;
 		m_pTask->m_Data.m_aDllDependencies[i].GetValue( Temp );
 		if( !Temp.empty() )
 		{
@@ -178,7 +178,7 @@ void SVExternalToolDlg::OnOK()
 	UpdateData();
 
 	// set dll path
-	m_pTask->m_Data.m_voDllPath.SetValue(SVString(m_strDLLPath));
+	m_pTask->m_Data.m_voDllPath.SetValue(std::string(m_strDLLPath));
 
 
 	// Copy DLL Dependents from listbox to Task Class FileNameValueObject List...
@@ -305,7 +305,7 @@ void SVExternalToolDlg::OnBrowse()
 		m_strDLLPath = cfd.GetPathName();
 		UpdateData(FALSE);
 
-		m_pTask->m_Data.m_voDllPath.SetValue(SVString(m_strDLLPath));
+		m_pTask->m_Data.m_voDllPath.SetValue(std::string(m_strDLLPath));
 
 		HRESULT hr;
 		hr = m_pTask->ClearData();
@@ -328,7 +328,7 @@ void SVExternalToolDlg::OnTest()
 	SetDependencies();
 
 	// DLL Path
-	m_pTask->m_Data.m_voDllPath.SetDefaultValue( SVString(m_strDLLPath), true );
+	m_pTask->m_Data.m_voDllPath.SetDefaultValue( std::string(m_strDLLPath), true );
 
 	InitializeDll();
 
@@ -350,7 +350,7 @@ void SVExternalToolDlg::SetDependencies()
 	int iDepSize = static_cast< int >( m_pTask->m_Data.m_aDllDependencies.size() );
 	for ( i = 0 ; i < iDepSize ; i++)
 	{
-		m_pTask->m_Data.m_aDllDependencies[i].SetDefaultValue( SVString(), true );
+		m_pTask->m_Data.m_aDllDependencies[i].SetDefaultValue( std::string(), true );
 	}
 
 	// Set all File Paths from listbox
@@ -360,8 +360,8 @@ void SVExternalToolDlg::SetDependencies()
 		//SVFileNameValueObjectClass svDependent;
 		CString Temp;
 		m_lbDependentList.GetText(i, Temp);
-		m_pTask->m_Data.m_aDllDependencies[i].SetDefaultValue( SVString(Temp), true );
-		m_pTask->m_Data.m_aDllDependencies[i].SetValue( SVString(Temp));
+		m_pTask->m_Data.m_aDllDependencies[i].SetDefaultValue( std::string(Temp), true );
+		m_pTask->m_Data.m_aDllDependencies[i].SetValue( std::string(Temp));
 	}
 
 	m_pTask->SetAllAttributes();	// update dependency attributes
@@ -474,9 +474,9 @@ bool SVExternalToolDlg::ShowDependentsDlg()
 		SVObjectPtrVector list;
 		m_pTask->FindInvalidatedObjects( list, m_pCancelData, SVExternalToolTask::FIND_ALL_OBJECTS );
 
-		SVString DisplayText = SvUl_SF::LoadSVString( IDS_CHANGE_DLL_EXTERNAL_TOOL );
-		SVString Name( m_pTask->GetName() );
-		DisplayText = SvUl_SF::Format( DisplayText.c_str() , Name.c_str(), Name.c_str(), Name.c_str(), Name.c_str() );
+		std::string DisplayText = SvUl::LoadStdString( IDS_CHANGE_DLL_EXTERNAL_TOOL );
+		std::string Name( m_pTask->GetName() );
+		DisplayText = SvUl::Format( DisplayText.c_str() , Name.c_str(), Name.c_str(), Name.c_str(), Name.c_str() );
 
 		SVGuidSet ObjectCheckList;
 		SVObjectPtrVector::const_iterator Iter(list.begin());
@@ -539,13 +539,13 @@ HRESULT SVExternalToolDlg::RestoreOriginalData()
 	InitializeDll();
 
 	// update display
-	SVString Value;
+	std::string Value;
 	m_pTask->m_Data.m_voDllPath.GetValue( Value );
 	m_strDLLPath = Value.c_str();
 	int iDependentsSize = static_cast< int >( m_pTask->m_Data.m_aDllDependencies.size() );
 	for( i = 0 ; i < iDependentsSize ; i++)
 	{
-		SVString Temp;
+		std::string Temp;
 		m_pTask->m_Data.m_aDllDependencies[i].GetValue(Temp);
 		if( !Temp.empty() )
 		{

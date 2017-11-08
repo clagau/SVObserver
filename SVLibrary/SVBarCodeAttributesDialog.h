@@ -17,7 +17,7 @@
 //Moved to precompiled header: #include <vector>
 #include "SVContainerLibrary/SVVector.h"
 #include "SVValueObjectLibrary/SVValueObject.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 /////////////////////////////////////////////////////////////////////////////
@@ -71,10 +71,10 @@ private:
 	struct SVBarCodeErrorCorrectionEncodingStruct
 	{
 		long m_Mil;
-		SVString m_Name;
+		std::string m_Name;
 
 		SVBarCodeErrorCorrectionEncodingStruct() { m_Mil = 0; }
-		SVBarCodeErrorCorrectionEncodingStruct(long Mil, const SVString& rName )
+		SVBarCodeErrorCorrectionEncodingStruct(long Mil, const std::string& rName )
 		{
 			m_Mil = Mil;
 			m_Name = rName;
@@ -83,7 +83,7 @@ private:
 	typedef std::vector<SVBarCodeErrorCorrectionEncodingStruct> SVBarCodeEccEncVector;
 
 
-	SVString GetInfoNameByMil(const SVBarCodeEccEncVector& rMilVector, long MilID);
+	std::string GetInfoNameByMil(const SVBarCodeEccEncVector& rMilVector, long MilID);
 	SVBarCodeEccEncVector m_aMilEnc;
 	SVBarCodeEccEncVector m_aMilEcc;
 

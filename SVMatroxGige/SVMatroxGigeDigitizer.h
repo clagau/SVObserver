@@ -17,7 +17,7 @@
 #include "SVGigeCameraParametersLibrary/SVGigeDeviceParameterStruct.h"
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerInterface.h"
 #include "SVTimerLibrary/SVClock.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #include "SVMatroxGigeCameraId.h"
 #include "SVMatroxGigeAcqParams.h"
 #include "SVMatroxGigeBufferCreator.h"
@@ -46,9 +46,9 @@ private:
 	SVMatroxBufferArray m_AcqBuffers;
 	SVGigeDeviceParameterMap m_featuresMap;
 	unsigned long m_deviceNumber;
-	SVString m_lineInputMoniker;
-	SVString m_lineInputRisingEventName;
-	SVString m_lineInputFallingEventName;
+	std::string m_lineInputMoniker;
+	std::string m_lineInputRisingEventName;
+	std::string m_lineInputFallingEventName;
 	bool m_lineState;
 	SVGigeEventList m_eventList;
 
@@ -74,9 +74,9 @@ public:
 	unsigned long GetDeviceNumber() const;
 
 	bool HasLineInput() const;
-	void SetLineInputMoniker(const SVString& moniker);
-	SVString GetLineInputRisingEventName() const;
-	SVString GetLineInputFallingEventName() const;
+	void SetLineInputMoniker(const std::string& moniker);
+	std::string GetLineInputRisingEventName() const;
+	std::string GetLineInputFallingEventName() const;
 
 	bool IsAcquisitionTriggered() const;
 	void SetAcquisitionTriggered(bool bAcquisitionTriggered);
@@ -95,8 +95,8 @@ public:
 
 #pragma region Member Variables
 public:
-	SVString m_Name;
-	SVString m_FullName;
+	std::string m_Name;
+	std::string m_FullName;
 
 	unsigned char m_SystemHandle;
 	unsigned char m_Handle;

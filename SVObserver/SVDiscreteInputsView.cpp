@@ -30,7 +30,7 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -164,7 +164,7 @@ void SVDiscreteInputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHin
 		for( i = 0; i < static_cast<long>(maxInput); ++i )
 		{
 			// First column: Module I/O
-			SVString Item = SvUl_SF::Format( _T( "Digital Input %d" ), i + 1 );
+			std::string Item = SvUl::Format( _T( "Digital Input %d" ), i + 1 );
 			GetListCtrl().InsertItem( LVIF_IMAGE | LVIF_TEXT | LVIF_STATE,
 									  i, Item.c_str(),
 									  INDEXTOSTATEIMAGEMASK( 1 ),	// state
@@ -193,7 +193,7 @@ void SVDiscreteInputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHin
 					// Column: Force
 					if( pDigInput->IsForced() )
 					{
-						Item = SvUl_SF::Format( _T( "%d" ), pDigInput->GetForcedValue() ? 1 : 0 );
+						Item = SvUl::Format( _T( "%d" ), pDigInput->GetForcedValue() ? 1 : 0 );
 						GetListCtrl().SetItemText( i, 2, Item.c_str() );
 					}// end if
 

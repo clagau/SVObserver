@@ -18,6 +18,8 @@
 #include "SVMessage/SVMessage.h"
 #include "SVVariantConverter.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -72,8 +74,8 @@ namespace SvXml
 		HRESULT hres = SVVariantConverter::RestoreVariant(Value.GetBSTR(), Type.GetBSTR() ,pVar);
 		if (S_OK != hres)
 		{
-			SVStringVector messageList;
-			messageList.push_back(SvUl_SF::Format(_T("%d"), hres));
+			SvDef::StringVector messageList;
+			messageList.push_back(SvUl::Format(_T("%d"), hres));
 			SvStl::MessageContainer Exception;
 			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvStl::Tid_RestoreVariantError, messageList, SvStl::SourceFileParams(StdMessageParams),SvStl::Err_16064_RESTOREVARIANT  );
 			throw Exception;

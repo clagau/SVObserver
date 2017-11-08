@@ -28,7 +28,8 @@
 
 #include "SVSocketLibrary\SVSocketLibrary.h"
 #include "SVSocketLibrary\SVServerSocket.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVRemoteControlConstants.h"
 #include "JsonLib\include\json.h"
 #include "SVSharedMemoryLibrary\SVMonitorListReader.h"
@@ -85,9 +86,9 @@ typedef void(*SignalHandlerPointer)(int);
 
 /// For last held product from GetProduct map with monitorlistname
 ///Map with monitorlistname 
-static std::map<SVString, SvSml::productPointer> g_LastProduct;
-static std::map<SVString, SvSml::productPointer> g_LastReject;
-static std::map<SVString, SvSml::FailstatusPointer> g_LastFailstatus;
+static std::map<std::string, SvSml::productPointer> g_LastProduct;
+static std::map<std::string, SvSml::productPointer> g_LastReject;
+static std::map<std::string, SvSml::FailstatusPointer> g_LastFailstatus;
 template<typename API>
 void ClearHeld();
 
@@ -125,7 +126,7 @@ bool EventHandler(DWORD event)
 		catch (std::exception& rExp)
 		{
 			SvStl::MessageMgrStd Exception(SvStl::LogOnly);
-			SVStringVector msgList;
+			SvDef::StringVector msgList;
 			msgList.push_back(rExp.what());
 			Exception.setMessage(SVMSG_RRS_2_STD_EXCEPTION, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams));
 		}
@@ -143,7 +144,7 @@ bool EventHandler(DWORD event)
 		catch (std::exception& rExp)
 		{
 			SvStl::MessageMgrStd Exception(SvStl::LogOnly);
-			SVStringVector msgList;
+			SvDef::StringVector msgList;
 			msgList.push_back(rExp.what());
 			Exception.setMessage(SVMSG_RRS_2_STD_EXCEPTION, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams));
 		}
@@ -202,7 +203,7 @@ DWORD WINAPI servimg(LPVOID ptr)
 							bool isready = SvSml::ShareEvents::GetInstance().GetIsReady();
 							if (isready)
 							{
-								SVString filename = SVString(reinterpret_cast<char *>(buf.get()), sz);
+								std::string filename = std::string(reinterpret_cast<char *>(buf.get()), sz);
 								DWORD ImageIndex, ImageStoreIndex, SlotIndex;
 								ScanImageFileName(filename.c_str(), ImageIndex, ImageStoreIndex, SlotIndex);
 								DWORD offset = sizeof(SvSol::header);
@@ -218,7 +219,7 @@ DWORD WINAPI servimg(LPVOID ptr)
 						catch (std::exception& rExp)
 						{
 							SvStl::MessageMgrStd Exception(SvStl::LogOnly);
-							SVStringVector msgList;
+							SvDef::StringVector msgList;
 							msgList.push_back(rExp.what());
 							Exception.setMessage(SVMSG_RRS_2_STD_EXCEPTION, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams));
 						}
@@ -227,8 +228,8 @@ DWORD WINAPI servimg(LPVOID ptr)
 				else
 				{
 					SvStl::MessageMgrStd Exception(SvStl::LogOnly);
-					SVStringVector msgList;
-					msgList.push_back(SVString(SvSol::SVSocketError::GetErrorText(SvSol::SVSocketError::GetLastSocketError())));
+					SvDef::StringVector msgList;
+					msgList.push_back(std::string(SvSol::SVSocketError::GetErrorText(SvSol::SVSocketError::GetLastSocketError())));
 					Exception.setMessage(SVMSG_RRS_3_GENERAL_ERROR, SvStl::Tid_SocketInvalid, msgList, SvStl::SourceFileParams(StdMessageParams));
 				}
 			}
@@ -242,7 +243,7 @@ DWORD WINAPI servimg(LPVOID ptr)
 	catch (std::exception& rExp)
 	{
 		SvStl::MessageMgrStd Exception(SvStl::LogOnly);
-		SVStringVector msgList;
+		SvDef::StringVector msgList;
 		msgList.push_back(rExp.what());
 		Exception.setMessage(SVMSG_RRS_2_STD_EXCEPTION, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}
@@ -297,7 +298,7 @@ JsonCmd ReadCommand(UdpSocket & sok)
 
 //for performance reason Bytevector is static. 
 //Function must not be called from more then one Thread
-SVString EncodeImg(SVMatroxBuffer& rMatroxBuffer)
+std::string EncodeImg(SVMatroxBuffer& rMatroxBuffer)
 {
 	static SVByteVector G_ByteVector;
 	SVMatroxBufferInterface::CopyBufferToFileDIB(G_ByteVector, rMatroxBuffer);
@@ -321,8 +322,8 @@ Json::Value NewResponse(const JsonCmd & cmd)
 	else
 	{
 		SvStl::MessageContainer MsgCont;
-		SVStringVector msgList;
-		msgList.push_back(SVString(cmd[SVRC::cmd::name].asString().c_str()));
+		SvDef::StringVector msgList;
+		msgList.push_back(std::string(cmd[SVRC::cmd::name].asString().c_str()));
 		MsgCont.setMessage(SVMSG_RRS_3_GENERAL_ERROR, SvStl::Tid_InvalidCommand, msgList, SvStl::SourceFileParams(StdMessageParams));
 		throw MsgCont;
 	}
@@ -368,7 +369,7 @@ Json::Value & GenerateImages<SvSol::UdpApi>(Json::Value & rArr, const SvSml::MLP
 			break;
 		int StoreIndex = MeP->data.InspectionStoreId;
 		int ImageIndex = MeP->data.ItemId;
-		SVString filename = SvUl::StringFunctions::Format(_T("%i %i  %i"), StoreIndex, ImageIndex, slot);
+		std::string filename = SvUl::Format(_T("%i %i  %i"), StoreIndex, ImageIndex, slot);
 		Json::Value val(Json::objectValue);
 		val[SVRC::vo::name] = MeP->name.c_str();
 		val[SVRC::vo::status] = pProduct->m_status;
@@ -461,7 +462,7 @@ Json::Value  DispatchCmdGetFailstatus(const JsonCmd & cmd, SvSml::SharedMemReade
 {
 	Json::Value rslt(Json::objectValue);
 	const Json::Value &args = cmd[SVRC::cmd::arg];
-	SVString listName;
+	std::string listName;
 	bool validArgs(false);
 	if (args.isMember(SVRC::arg::listName))
 	{
@@ -471,8 +472,8 @@ Json::Value  DispatchCmdGetFailstatus(const JsonCmd & cmd, SvSml::SharedMemReade
 	if (validArgs == false)
 	{
 		SvStl::MessageContainer MsgCont;
-		SVStringVector msgList;
-		msgList.push_back(SVString(listName.c_str()));
+		SvDef::StringVector msgList;
+		msgList.push_back(std::string(listName.c_str()));
 		MsgCont.setMessage(SVMSG_RRS_3_GENERAL_ERROR, SvStl::Tid_InvalidMonitorlist, msgList, SvStl::SourceFileParams(StdMessageParams));
 		throw MsgCont;
 	}
@@ -518,7 +519,7 @@ Json::Value  DispatchCmdGetReject(const JsonCmd & cmd, SvSml::SharedMemReader  *
 {
 	Json::Value rslt(Json::objectValue);
 	const Json::Value &args = cmd[SVRC::cmd::arg];
-	SVString listName;
+	std::string listName;
 	bool validArgs(false);
 	if (args.isMember(SVRC::arg::listName))
 	{
@@ -528,8 +529,8 @@ Json::Value  DispatchCmdGetReject(const JsonCmd & cmd, SvSml::SharedMemReader  *
 	if (validArgs == false)
 	{
 		SvStl::MessageContainer MsgCont;
-		SVStringVector msgList;
-		msgList.push_back(SVString(listName.c_str()));
+		SvDef::StringVector msgList;
+		msgList.push_back(std::string(listName.c_str()));
 		MsgCont.setMessage(SVMSG_RRS_3_GENERAL_ERROR, SvStl::Tid_InvalidMonitorlist, msgList, SvStl::SourceFileParams(StdMessageParams));
 		throw MsgCont;
 	}
@@ -595,8 +596,8 @@ Json::Value DispatchCommand<SvSol::TcpApi>(const JsonCmd & cmd, SvSml::SharedMem
 	if (false == cmd.isObject() || false == cmd.isMember(SVRC::cmd::name))
 	{
 		SvStl::MessageContainer MsgCont;
-		SVStringVector msgList;
-		msgList.push_back(SVString(cmd[SVRC::cmd::name].asString().c_str()));
+		SvDef::StringVector msgList;
+		msgList.push_back(std::string(cmd[SVRC::cmd::name].asString().c_str()));
 		MsgCont.setMessage(SVMSG_RRS_3_GENERAL_ERROR, SvStl::Tid_InvalidCommand, msgList, SvStl::SourceFileParams(StdMessageParams));
 		throw MsgCont;
 	}
@@ -619,8 +620,8 @@ Json::Value DispatchCommand<SvSol::TcpApi>(const JsonCmd & cmd, SvSml::SharedMem
 	else
 	{
 		SvStl::MessageContainer MsgCont;
-		SVStringVector msgList;
-		msgList.push_back(SVString());
+		SvDef::StringVector msgList;
+		msgList.push_back(std::string());
 		MsgCont.setMessage(SVMSG_RRS_3_GENERAL_ERROR, SvStl::Tid_InvalidCommand, msgList, SvStl::SourceFileParams(StdMessageParams));
 		throw MsgCont;
 	}
@@ -634,8 +635,8 @@ Json::Value DispatchCommand<SvSol::UdpApi>(const JsonCmd & cmd, SvSml::SharedMem
 	if (false == cmd.isObject() || false == cmd.isMember(SVRC::cmd::name))
 	{
 		SvStl::MessageContainer MsgCont;
-		SVStringVector msgList;
-		msgList.push_back(SVString());
+		SvDef::StringVector msgList;
+		msgList.push_back(std::string());
 		MsgCont.setMessage(SVMSG_RRS_3_GENERAL_ERROR, SvStl::Tid_InvalidCommand, msgList, SvStl::SourceFileParams(StdMessageParams));
 		throw MsgCont;
 	}
@@ -643,14 +644,14 @@ Json::Value DispatchCommand<SvSol::UdpApi>(const JsonCmd & cmd, SvSml::SharedMem
 	if (cmd[SVRC::cmd::name] != SVRC::cmdName::getProd)
 	{
 		SvStl::MessageContainer MsgCont;
-		SVStringVector msgList;
-		msgList.push_back(SVString(cmd[SVRC::cmd::name].asString().c_str()));
+		SvDef::StringVector msgList;
+		msgList.push_back(std::string(cmd[SVRC::cmd::name].asString().c_str()));
 		MsgCont.setMessage(SVMSG_RRS_3_GENERAL_ERROR, SvStl::Tid_InvalidCommand, msgList, SvStl::SourceFileParams(StdMessageParams));
 		throw MsgCont;
 	}
 
 	const Json::Value & args = cmd[SVRC::cmd::arg];
-	SVString listName;
+	std::string listName;
 	bool validArgs(false);
 
 	if (args.isMember(SVRC::arg::listName))
@@ -661,8 +662,8 @@ Json::Value DispatchCommand<SvSol::UdpApi>(const JsonCmd & cmd, SvSml::SharedMem
 	if (validArgs == false)
 	{
 		SvStl::MessageContainer MsgCont;
-		SVStringVector msgList;
-		msgList.push_back(SVString(listName.c_str()));
+		SvDef::StringVector msgList;
+		msgList.push_back(std::string(listName.c_str()));
 		MsgCont.setMessage(SVMSG_RRS_3_GENERAL_ERROR, SvStl::Tid_InvalidMonitorlist, msgList, SvStl::SourceFileParams(StdMessageParams));
 		throw MsgCont;
 	}
@@ -753,21 +754,21 @@ std::string GenerateResponse(const JsonCmd & cmd, SvSml::SharedMemReader* pMemRe
 		rsp[SVRC::cmd::hr] = Json::Value(E_FAIL);
 
 		SvStl::MessageMgrStd Exception(SvStl::LogOnly);
-		SVStringVector msgList;
+		SvDef::StringVector msgList;
 		msgList.push_back(rExp.what());
 		Exception.setMessage(SVMSG_RRS_2_STD_EXCEPTION, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}
 	Json::FastWriter writer;
-	return SVString(writer.write(rsp));
+	return std::string(writer.write(rsp));
 }
 
-SVString BusyMessage(const JsonCmd & cmd)
+std::string BusyMessage(const JsonCmd & cmd)
 {
 	Json::Value rsp = NewResponse(cmd);
 	rsp[SVRC::cmd::hr] = STG_E_INUSE;
 	rsp[SVRC::cmd::err] = "Server busy.";
 	Json::FastWriter writer;
-	return SVString(writer.write(rsp));
+	return std::string(writer.write(rsp));
 }
 
 
@@ -787,8 +788,8 @@ void Handler<SvSol::UdpApi, UdpServerSocket>(UdpServerSocket& sok, SvSml::Shared
 	if (FALSE == client.IsValidSocket())
 	{
 		SvStl::MessageMgrStd Exception(SvStl::LogOnly);
-		SVStringVector msgList;
-		msgList.push_back(SVString(SvSol::SVSocketError::GetErrorText(SvSol::SVSocketError::GetLastSocketError())));
+		SvDef::StringVector msgList;
+		msgList.push_back(std::string(SvSol::SVSocketError::GetErrorText(SvSol::SVSocketError::GetLastSocketError())));
 		Exception.setMessage(SVMSG_RRS_3_GENERAL_ERROR, SvStl::Tid_SocketInvalid, msgList, SvStl::SourceFileParams(StdMessageParams));
 		return;
 	}
@@ -801,7 +802,7 @@ void Handler<SvSol::UdpApi, UdpServerSocket>(UdpServerSocket& sok, SvSml::Shared
 			bool isready = SvSml::ShareEvents::GetInstance().GetIsReady();
 			if (isready)
 			{
-				SVString rResponse = GenerateResponse<API>(cmd, pMemRead);
+				std::string rResponse = GenerateResponse<API>(cmd, pMemRead);
 				client.Write(rResponse, SvSol::Traits<API>::needsHeader);
 			}
 			else
@@ -823,7 +824,7 @@ void Handler<SvSol::UdpApi, UdpServerSocket>(UdpServerSocket& sok, SvSml::Shared
 	catch (std::exception& rExp)
 	{
 		SvStl::MessageMgrStd Exception(SvStl::LogOnly);
-		SVStringVector msgList;
+		SvDef::StringVector msgList;
 		msgList.push_back(rExp.what());
 		Exception.setMessage(SVMSG_RRS_2_STD_EXCEPTION, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}
@@ -861,7 +862,7 @@ void Handler<SvSol::TcpApi, TcpServerSocket>(TcpServerSocket& sok, SvSml::Shared
 					if (isready)
 					{
 
-						SVString  rResponse = GenerateResponse<API>(cmd, pMemRead);
+						std::string  rResponse = GenerateResponse<API>(cmd, pMemRead);
 						client.Write(rResponse, SvSol::Traits<API>::needsHeader);
 						break;
 
@@ -871,7 +872,7 @@ void Handler<SvSol::TcpApi, TcpServerSocket>(TcpServerSocket& sok, SvSml::Shared
 						// check for version command
 						if (cmd[SVRC::cmd::name] == SVRC::cmdName::getVersion)
 						{
-							SVString rResponse = GenerateResponse<API>(cmd, pMemRead);
+							std::string rResponse = GenerateResponse<API>(cmd, pMemRead);
 							client.Write(rResponse, SvSol::Traits<API>::needsHeader);
 						}
 						else
@@ -890,7 +891,7 @@ void Handler<SvSol::TcpApi, TcpServerSocket>(TcpServerSocket& sok, SvSml::Shared
 			catch (std::exception & rExp)
 			{
 				SvStl::MessageMgrStd Exception(SvStl::LogOnly);
-				SVStringVector msgList;
+				SvDef::StringVector msgList;
 				msgList.push_back(rExp.what());
 				Exception.setMessage(SVMSG_RRS_2_STD_EXCEPTION, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams));
 			}
@@ -929,7 +930,7 @@ DWORD WINAPI servcmd(LPVOID ptr)
 	catch (std::exception & rExp)
 	{
 		SvStl::MessageMgrStd Exception(SvStl::LogOnly);
-		SVStringVector msgList;
+		SvDef::StringVector msgList;
 		msgList.push_back(rExp.what());
 		Exception.setMessage(SVMSG_RRS_2_STD_EXCEPTION, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}
@@ -973,7 +974,7 @@ void StartThreads(DWORD argc, LPTSTR  *argv)
 	HRESULT hr = SvSml::SVSharedConfiguration::SharedResourcesOk();
 	if (S_OK != hr)
 	{
-		SVString msg;
+		std::string msg;
 		if (STG_E_INSUFFICIENTMEMORY == hr)
 		{
 			if (!bCheckSizeOverride)
@@ -1008,7 +1009,7 @@ void StartThreads(DWORD argc, LPTSTR  *argv)
 		SvSml::ShareEvents::GetInstance().StartWatch();
 		previousHandler = signal(SIGSEGV, AccessViolationHandler);
 
-		SVString title = _T("Run/Reject Server ");
+		std::string title = _T("Run/Reject Server ");
 		title += RRSVersionString::Get();
 		SetConsoleTitle(title.c_str());
 		SvSol::SVSocketLibrary::Init();
@@ -1025,7 +1026,7 @@ void StartThreads(DWORD argc, LPTSTR  *argv)
 	catch (std::exception& rExp)
 	{
 		SvStl::MessageMgrStd Exception(SvStl::LogOnly);
-		SVStringVector msgList;
+		SvDef::StringVector msgList;
 		msgList.push_back(rExp.what());
 		Exception.setMessage(SVMSG_RRS_3_GENERAL_ERROR, SvStl::Tid_FailedtoStart, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}

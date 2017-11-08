@@ -119,5 +119,5 @@ namespace SvDef
 		SVImagePropertyBandNumber = 0x00000004,
 		SVImagePropertyBandLink = 0x00000008,
 	};
-} //namespace SvOi
+} //namespace SvDef
 

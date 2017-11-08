@@ -13,12 +13,12 @@
 
 //Moved to precompiled header: #include <vector>
 #include "ImageFileUtilities.h"
-#include "SVUtilityLibrary/SVString.h"
+
 
 class SVLightReferenceAttributeInfo
 {
 public:
-	SVString strName;       // contains the text "Contrast", "Brightness", etc.
+	std::string strName;       // contains the text "Contrast", "Brightness", etc.
 	int iIDCaption;         // contains the resource ID of "Contrast", etc. at the time the config was saved. Unfortunately, this ID can change.
 	DWORD dwType;			// the Type of the Attribute (corresponds to the Device Parameter (SVDeviceParamEnum))
 	long lValue;
@@ -48,8 +48,8 @@ public:
 	const SVLightReferenceAttributeInfo& Attribute( int iAttributeIndex ) const { return m_aAttributeInfo[iAttributeIndex];}
 	SVLightReferenceAttributeInfo* AttributeByType( DWORD dwAttributeType );
 	const SVLightReferenceAttributeInfo* AttributeByType( DWORD dwAttributeType ) const;
-	SVLightReferenceAttributeInfo* AttributeByName( const SVString& sAttributeName );
-	const SVLightReferenceAttributeInfo* AttributeByName( const SVString& sAttributeName ) const;
+	SVLightReferenceAttributeInfo* AttributeByName( const std::string& sAttributeName );
+	const SVLightReferenceAttributeInfo* AttributeByName( const std::string& sAttributeName ) const;
 	int AddAttribute(SVLightReferenceAttributeInfo& attribute);
 
 	std::vector< SVLightReferenceAttributeInfo > m_aAttributeInfo;

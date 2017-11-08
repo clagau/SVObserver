@@ -102,7 +102,7 @@ size_t DisplayAllRejects(SvSml::SMRingBuffer &Ringbuffer)
 
 int main(int argc, char* argv[])
 {
-	SVString name;
+	std::string name;
 	bool bServer(false);
 	int nRejects(20), nTotal(40),ClientThreads(1);
 	int delay(20);

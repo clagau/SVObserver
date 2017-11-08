@@ -79,7 +79,7 @@ bool SVGigeCameraStruct::HasSerialNumber() const
 	return !m_SerialNum.empty();
 }
 
-SVString SVGigeCameraStruct::GetSerialNumber() const
+std::string SVGigeCameraStruct::GetSerialNumber() const
 {
 	return m_SerialNum;
 }
@@ -89,7 +89,7 @@ bool SVGigeCameraStruct::HasModelName() const
 	return !m_ModelName.empty();
 }
 
-SVString SVGigeCameraStruct::GetModelName() const
+std::string SVGigeCameraStruct::GetModelName() const
 {
 	return m_ModelName;
 }
@@ -99,7 +99,7 @@ bool SVGigeCameraStruct::HasVendorName() const
 	return !m_VendorName.empty();
 }
 
-SVString SVGigeCameraStruct::GetVendorName() const
+std::string SVGigeCameraStruct::GetVendorName() const
 {
 	return m_VendorName;
 }
@@ -109,7 +109,7 @@ bool SVGigeCameraStruct::HasIPAddress() const
 	return !m_IPAddress.empty();
 }
 
-SVString SVGigeCameraStruct::GetIPAddress() const
+std::string SVGigeCameraStruct::GetIPAddress() const
 {
 	return m_IPAddress;
 }

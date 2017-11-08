@@ -10,6 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
+#include "StringHelper.h"
 #include "SVPOINT.h"
 
 SVPOINT::SVPOINT()
@@ -78,9 +79,9 @@ void SVPOINT::GetValue(POINT &Point) const
 	Point = m_Point;
 }
 
-SVString SVPOINT::ToString() const
+std::string SVPOINT::ToString() const
 {
-	return SvUl_SF::Format(_T( "( %ld, %ld )" ), m_Point.x, m_Point.y );
+	return SvUl::Format(_T( "( %ld, %ld )" ), m_Point.x, m_Point.y );
 }
 
 const SVPOINT& SVPOINT::operator=( const SVPOINT& p_rObject )
@@ -107,7 +108,7 @@ const SVPOINT& SVPOINT::operator=( const VARIANT& p_rVariant )
 {
 	POINT l_Point;
 
-	SVString l_String = SvUl_SF::createSVString( p_rVariant );
+	std::string l_String = SvUl::createStdString( p_rVariant );
 
 	if( 2 == _stscanf( l_String.c_str(), _T( "( %ld, %ld )" ), &( l_Point.x ), &( l_Point.y ) ) )
 	{

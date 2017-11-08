@@ -29,8 +29,7 @@
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "Definitions/TextDefineSVDef.h"
-#include "SVUtilityLibrary/SVString.h"
-
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -416,8 +415,8 @@ DWORD SVBlobAnalyzerClass::AllocateResult (SVBlobFeatureEnum aFeatureIndex)
 		resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
 		resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultDoubleObjectType;
 		resultClassInfo.m_ClassId = SVDoubleResultClassGuid;
-		resultClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_RESULT );
-		SVString Title = m_Value[aFeatureIndex].GetName();
+		resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_RESULT );
+		std::string Title = m_Value[aFeatureIndex].GetName();
 		resultClassInfo.m_ClassName += _T(" ") + Title;
 
 		// Construct the result class
@@ -513,8 +512,8 @@ DWORD SVBlobAnalyzerClass::AllocateBlobResult ()
 		resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
 		resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultLongObjectType;
 		resultClassInfo.m_ClassId = SVLongResultClassGuid;
-		resultClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_RESULT );
-		SVString Title = m_lvoNumberOfBlobsFound.GetName();
+		resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_RESULT );
+		std::string Title = m_lvoNumberOfBlobsFound.GetName();
 		resultClassInfo.m_ClassName += _T(" ") + Title;
 		
 		// Construct the result class
@@ -709,7 +708,7 @@ SVLongResultClass* SVBlobAnalyzerClass::GetBlobResultObject()
 //
 bool SVBlobAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
-	SVString            tempString;
+	std::string            tempString;
 	SVBlobFeatureEnum   i(SV_AREA);
 	bool 				bOk = true;
 	
@@ -853,7 +852,7 @@ bool SVBlobAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateS
 		// RDS 2002-03-26
 		// Set currently existing features into the persistence string.
 		// Mainly this should be SV_BOXX_MAX thru SV_BOXY_MIN
-		m_PersistantFeaturesEnabled.SetValue(SVString(m_FeaturesEnabled));
+		m_PersistantFeaturesEnabled.SetValue(std::string(m_FeaturesEnabled));
 
 		long lSortIndex;
 		m_SortFeature.GetValue (lSortIndex);

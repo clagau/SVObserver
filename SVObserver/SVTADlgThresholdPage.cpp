@@ -27,7 +27,7 @@
 #include "SVMFCControls\SVHistogram.h"
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -992,7 +992,7 @@ void SVToolAdjustmentDialogThresholdPageClass::OnUTFormulaButton()
 	SVUpperThresholdEquationClass* pEquation = dynamic_cast<SVUpperThresholdEquationClass*>(m_pCurrentThreshold->getFirstObject(info));
 	if (pEquation)
 	{
-		SVString Caption = pEquation->GetName();
+		std::string Caption = pEquation->GetName();
 		Caption += _T(" Formula");
 
 		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
@@ -1043,7 +1043,7 @@ void SVToolAdjustmentDialogThresholdPageClass::OnATMFormulaButton()
 	SVAutoThresholdEquationClass* pEquation = dynamic_cast<SVAutoThresholdEquationClass*>(m_pCurrentThreshold->getFirstObject(info));
 	if (pEquation)
 	{
-		SVString Caption = pEquation->GetName();
+		std::string Caption = pEquation->GetName();
 		Caption += _T(" Formula");
 
 		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
@@ -1063,7 +1063,7 @@ void SVToolAdjustmentDialogThresholdPageClass::OnLTFormulaButton()
 	SVLowerThresholdEquationClass* pEquation = dynamic_cast<SVLowerThresholdEquationClass*>(m_pCurrentThreshold->getFirstObject(info));
 	if (pEquation)
 	{
-		SVString Caption = pEquation->GetName();
+		std::string Caption = pEquation->GetName();
 		Caption += _T(" Formula");
 
 		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
@@ -1199,7 +1199,7 @@ void SetThreshold( CWnd* pWnd, DWORD Value )
 
 void SetThreshold( HWND hWnd, DWORD Value )
 {
-	SVString Text = SvUl_SF::Format(_T("%lu"), Value);
+	std::string Text = SvUl::Format(_T("%lu"), Value);
 	::SetWindowText( hWnd, Text.c_str() );
 }
 

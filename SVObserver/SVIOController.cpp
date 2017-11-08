@@ -424,7 +424,7 @@ HRESULT SVIOController::ClearRemoteOutputUnUsedData()
 	return l_Status;
 }
 
-HRESULT SVIOController::GetRemoteOutputGroupNames( SVStringVector& rPPQs )
+HRESULT SVIOController::GetRemoteOutputGroupNames( SvDef::StringVector& rPPQs )
 {
 	HRESULT l_Status = S_OK;
 
@@ -442,7 +442,7 @@ HRESULT SVIOController::GetRemoteOutputGroupNames( SVStringVector& rPPQs )
 	return l_Status;
 }
 
-SVRemoteOutputGroup* SVIOController::GetRemoteOutputGroup( const SVString& rRemoteGroupID ) const
+SVRemoteOutputGroup* SVIOController::GetRemoteOutputGroup( const std::string& rRemoteGroupID ) const
 {
 	SVRemoteOutputGroup* l_pObject = nullptr;
 
@@ -454,7 +454,7 @@ SVRemoteOutputGroup* SVIOController::GetRemoteOutputGroup( const SVString& rRemo
 	return l_pObject;
 }
 
-size_t SVIOController::GetRemoteOutputGroupItemCount( const SVString& rRemoteGroupID ) const
+size_t SVIOController::GetRemoteOutputGroupItemCount( const std::string& rRemoteGroupID ) const
 {
 	size_t l_Count = 0;
 
@@ -466,7 +466,7 @@ size_t SVIOController::GetRemoteOutputGroupItemCount( const SVString& rRemoteGro
 	return l_Count;
 }
 
-HRESULT SVIOController::GetRemoteOutputItem( const SVString& rRemoteGroupId, long l_lIndex, SVRemoteOutputObject*& p_rItem ) const
+HRESULT SVIOController::GetRemoteOutputItem( const std::string& rRemoteGroupId, long l_lIndex, SVRemoteOutputObject*& p_rItem ) const
 {
 	HRESULT l_Status = S_OK;
 
@@ -482,7 +482,7 @@ HRESULT SVIOController::GetRemoteOutputItem( const SVString& rRemoteGroupId, lon
 	return l_Status;
 }
 
-SVRemoteOutputObject* SVIOController::GetFirstRemoteOutputObject( const SVString& rRemoteGroupId )
+SVRemoteOutputObject* SVIOController::GetFirstRemoteOutputObject( const std::string& rRemoteGroupId )
 {
 	SVRemoteOutputObject* l_pObject = nullptr;
 
@@ -494,7 +494,7 @@ SVRemoteOutputObject* SVIOController::GetFirstRemoteOutputObject( const SVString
 	return l_pObject;
 }
 
-HRESULT SVIOController::AddRemoteOutputItem( const SVString& rRemoteGroupId, SVRemoteOutputObject*& p_pNewOutput, GUID p_InputObjectID, const SVString& rPPQ )
+HRESULT SVIOController::AddRemoteOutputItem( const std::string& rRemoteGroupId, SVRemoteOutputObject*& p_pNewOutput, GUID p_InputObjectID, const std::string& rPPQ )
 {
 	HRESULT l_Status = S_OK;
 
@@ -510,7 +510,7 @@ HRESULT SVIOController::AddRemoteOutputItem( const SVString& rRemoteGroupId, SVR
 	return l_Status;
 }
 
-HRESULT SVIOController::DeleteRemoteOutput( const SVString& rRemoteGroupId )
+HRESULT SVIOController::DeleteRemoteOutput( const std::string& rRemoteGroupId )
 {
 	HRESULT l_Status = S_OK;
 
@@ -526,7 +526,7 @@ HRESULT SVIOController::DeleteRemoteOutput( const SVString& rRemoteGroupId )
 	return l_Status;
 }
 
-HRESULT SVIOController::DeleteRemoteOutputEntry( const SVString& rRemoteGroupId, SVRemoteOutputObject* p_pOutputObject )
+HRESULT SVIOController::DeleteRemoteOutputEntry( const std::string& rRemoteGroupId, SVRemoteOutputObject* p_pOutputObject )
 {
 	HRESULT l_Status = S_OK;
 
@@ -593,7 +593,7 @@ void SVIOController::ValidateRemoteMonitorList()
 	m_RemoteMonitorListController.ValidateInputs();
 }
 
-HRESULT SVIOController::ActivateRemoteMonitorList(const SVString& listName, bool bActivate)
+HRESULT SVIOController::ActivateRemoteMonitorList(const std::string& listName, bool bActivate)
 {
 	return m_RemoteMonitorListController.ActivateRemoteMonitorList(listName, bActivate);
 }
@@ -613,12 +613,12 @@ void SVIOController::BuildPPQMonitorList(PPQMonitorList& ppqMonitorList) const
 	m_RemoteMonitorListController.BuildPPQMonitorList(ppqMonitorList);
 }
 
-HRESULT SVIOController::SetRemoteMonitorListProductFilter(const SVString& rListName, SvSml::SVProductFilterEnum Filter)
+HRESULT SVIOController::SetRemoteMonitorListProductFilter(const std::string& rListName, SvSml::SVProductFilterEnum Filter)
 {
 	return m_RemoteMonitorListController.SetRemoteMonitorListProductFilter( rListName, Filter );
 }
 
-HRESULT SVIOController::GetRemoteMonitorListProductFilter(const SVString& rListName, SvSml::SVProductFilterEnum& rFilter) const
+HRESULT SVIOController::GetRemoteMonitorListProductFilter(const std::string& rListName, SvSml::SVProductFilterEnum& rFilter) const
 {
 	return m_RemoteMonitorListController.GetRemoteMonitorListProductFilter( rListName, rFilter );
 }

@@ -11,6 +11,8 @@
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "SVOGui/NoSelector.h"
 #include "SVOGui/ToolSetItemSelector.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVOResource\ConstGlobalSvOr.h"
 #pragma endregion Includes
 
@@ -35,7 +37,7 @@ static const int IconGrowBy = 1;
 #pragma endregion Declarations
 
 #pragma region Constructor
-SelectedObjectsPage::SelectedObjectsPage( const SVString& rInspectionName, const SVGUID& rInspectionID, LPCTSTR Caption, const SvOsl::SelectorItemVector& rList, UINT AttributeFilters, int id )
+SelectedObjectsPage::SelectedObjectsPage( const std::string& rInspectionName, const SVGUID& rInspectionID, LPCTSTR Caption, const SvOsl::SelectorItemVector& rList, UINT AttributeFilters, int id )
 : CPropertyPage(id)
 , m_InspectionName( rInspectionName )
 , m_InspectionID ( rInspectionID )
@@ -139,16 +141,16 @@ void SelectedObjectsPage::ReadSelectedObjects()
 {
 	m_ItemsSelected.DeleteAllItems();
 
-	SVString Prefix = m_InspectionName;
+	std::string Prefix = m_InspectionName;
 	Prefix += _T(".Tool Set.");
 
 	int Index = 0;
 	SvOsl::SelectorItemVector::const_iterator Iter;
 	for ( Iter = m_List.begin(); m_List.end() != Iter ; ++Iter )
 	{
-		SVString Name;
+		std::string Name;
 		Name = Iter->getLocation();
-		SvUl_SF::searchAndReplace( Name, Prefix.c_str(), _T("") );
+		SvUl::searchAndReplace( Name, Prefix.c_str(), _T("") );
 
 		m_ItemsSelected.InsertItem(LVIF_STATE | LVIF_TEXT,
 									Index,
@@ -177,27 +179,27 @@ void SelectedObjectsPage::ShowObjectSelector()
 		break;
 	}
 
-	SVString InspectionName( m_InspectionName );
+	std::string InspectionName( m_InspectionName );
 	SVGUID InspectionGuid( m_InspectionID );
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject );
-	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
+	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, std::string( _T("") ) );
 
 	SvOsl::SelectorOptions BuildOptions( InspectionGuid, AttributeFilters );
 	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 
 	SvOsl::SelectorItemVector::const_iterator Iter;
-	SVStringSet CheckItems;
+	SvDef::StringSet CheckItems;
 	for ( Iter = m_List.begin(); m_List.end() != Iter ; ++Iter )
 	{
-		SVString ObjectName;
+		std::string ObjectName;
 		ObjectName = Iter->getLocation();
 		CheckItems.insert( ObjectName );
 	}
 	SvOsl::ObjectTreeGenerator::Instance().setCheckItems( CheckItems );
 
-	SVString Title = SvUl_SF::Format( _T("%s - %s"), m_strCaption, InspectionName.c_str() );
-	SVString Filter = SvUl_SF::LoadSVString( IDS_FILTER );
+	std::string Title = SvUl::Format( _T("%s - %s"), m_strCaption, InspectionName.c_str() );
+	std::string Filter = SvUl::LoadStdString( IDS_FILTER );
 	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), m_strCaption, Filter.c_str(), this );
 
 	if( IDOK == Result )

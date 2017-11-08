@@ -16,10 +16,10 @@
 //Moved to precompiled header: #include <vector>
 #include "SVMessage/SVMessage.h"
 #include "SVMatroxLibrary\SVMatroxEnums.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
-typedef std::map<int, SVStringPair > IntStrPairMap;
+typedef std::map<int, SvDef::StringPair > IntStrPairMap;
 
 class SVObserverApp;
 class SVDataManager;
@@ -221,28 +221,28 @@ double SVGetDataTypeRange( DWORD DataType );
 // -----------------------------------------------------------------------------
 // .Description : Uses SVGetPathInfo enumeration...
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVGetPathInformation( SVString& rOutput, LPCTSTR TStrFileInputPath, DWORD DwMask );
+BOOL SVGetPathInformation( std::string& rOutput, LPCTSTR TStrFileInputPath, DWORD DwMask );
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVGetVersionString
 // -----------------------------------------------------------------------------
 // .Description : Use this function to convert an SVObserver Version to a string.
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVGetVersionString( SVString& rCurrentVersion, DWORD dwVersion );
+BOOL SVGetVersionString( std::string& rCurrentVersion, DWORD dwVersion );
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVConvertToHexString
 // -----------------------------------------------------------------------------
 // .Description : Convert hex binary data to a hex Dump String
 ////////////////////////////////////////////////////////////////////////////////
-void SVConvertToHexString( DWORD len, LPBYTE buff, SVString& rHexString );
+void SVConvertToHexString( DWORD len, LPBYTE buff, std::string& rHexString );
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVConvertFromHexString
 // -----------------------------------------------------------------------------
 // .Description : Convert hex Dump String to hex binary data
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVConvertFromHexString( DWORD &len, LPBYTE *buff, const SVString& rHexString );
+BOOL SVConvertFromHexString( DWORD &len, LPBYTE *buff, const std::string& rHexString );
 
 CMenu* SVFindMenuByCommand( CMenu *pMenu, int nID, BOOL bIncludeSubMenues, int& rMenuPos );
 CMenu* SVFindMenuByName( CMenu *pMenu, LPCTSTR szMenuString, BOOL bIncludeSubMenues, int& rMenuPos );

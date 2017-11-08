@@ -11,6 +11,7 @@
 #include "TableObject.h"
 #include "SVOCore/SVTool.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVInspectionProcess.h"
 #pragma endregion Includes
 
@@ -89,7 +90,7 @@ void TableObject::setSortContainer(const ValueObjectSortContainer& sortMap, SVRu
 
 DoubleSortValueObject* TableObject::updateOrCreateColumn(const GUID& rEmbeddedId, int nameId, int arraysize)
 {
-	SVString newName = SvUl_SF::LoadSVString(nameId);
+	std::string newName = SvUl::LoadStdString(nameId);
 	std::vector<DoubleSortValuePtr>::const_iterator valueIter = std::find_if(m_ValueList.begin(), m_ValueList.end(), [&](const DoubleSortValuePtr& entry)->bool
 	{
 		return (nullptr != entry.get() && entry->GetEmbeddedID() == rEmbeddedId);
@@ -112,7 +113,7 @@ DoubleSortValueObject* TableObject::updateOrCreateColumn(const GUID& rEmbeddedId
 		}
 		if (nullptr != pValueObject)
 		{
-			SVString OldName = pValueObject->GetName();
+			std::string OldName = pValueObject->GetName();
 			if (OldName != newName)
 			{
 				pValueObject->SetName(newName.c_str());
@@ -221,7 +222,7 @@ DoubleSortValueObject* TableObject::createColumnObject(SVGUID embeddedID, LPCTST
 	return pObject;
 }
 
-void TableObject::UpdateColumnValueObject(int pos, SVString objectName, int maxArray)
+void TableObject::UpdateColumnValueObject(int pos, std::string objectName, int maxArray)
 {
 	//value already exist, update the name and size if needed.
 	DoubleSortValueObject* pValueObject = m_ValueList[pos].get();
@@ -229,7 +230,7 @@ void TableObject::UpdateColumnValueObject(int pos, SVString objectName, int maxA
 	{
 		if (pValueObject->GetName() != objectName)
 		{
-			SVString OldName = pValueObject->GetName();
+			std::string OldName = pValueObject->GetName();
 			pValueObject->SetName(objectName.c_str());
 			GetInspection()->OnObjectRenamed(*pValueObject, OldName);
 		}

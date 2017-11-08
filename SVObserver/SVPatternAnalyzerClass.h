@@ -18,6 +18,7 @@
 #include "SVStatusLibrary/MessageTextEnum.h"
 #include "ObjectInterfaces/IPatternAnalyzer.h"
 #include "CameraLibrary/SVTemplate.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 class SVPatternAnalyzerClass : public SVImageAnalyzerClass, public SvOi::IPatternAnalyzer  
@@ -49,8 +50,8 @@ public:
 	virtual	void DisplayAnalyzerResult() override;
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
-	virtual void getSpecialImageList(std::vector<SVString>& rList) const override;
-	virtual bool getSpecialImage(const SVString& rName, SvOi::MatroxImageSmartHandlePtr& rImagePtr) const override;
+	virtual void getSpecialImageList(SvDef::StringVector& rList) const override;
+	virtual bool getSpecialImage(const std::string& rName, SvOi::MatroxImageSmartHandlePtr& rImagePtr) const override;
 	virtual SvStl::MessageContainerVector validateAndSetEmmeddedValues(const SvOi::SetValueObjectPairVector& rValueVector, bool shouldSet) override;
 	
 protected:
@@ -58,7 +59,7 @@ protected:
 	/// \param rImageFile [in] Filename of the model.
 	/// \param pErrorMessages [out] Error messages if error happens.
 	/// \returns bool true means restore was succeeded.
-	bool RestorePattern(const SVString& rImageFile, SvStl::MessageContainerVector *pErrorMessages=nullptr);
+	bool RestorePattern(const std::string& rImageFile, SvStl::MessageContainerVector *pErrorMessages=nullptr);
 
 	/// Reset Pattern model. If filename is not empty, it restore pattern, else it create a new model.
 	/// \param pErrorMessages [in,out] Error messages if error happens.
@@ -141,7 +142,7 @@ private:
 	/// \param bufferHandle [in,out] The handle of the reloaded image.
 	/// \param pErrorMessages [out] A vector of happened error during reloading.
 	/// \returns bool true if reloading was successfully.
-	bool ReloadImage(const SVString& rImageFile, SVLongValueObjectClass& rWidthValueObject, SVLongValueObjectClass& rHeightValueObject, SVSmartHandlePointer& bufferHandle, SvStl::MessageContainerVector * pErrorMessages);
+	bool ReloadImage(const std::string& rImageFile, SVLongValueObjectClass& rWidthValueObject, SVLongValueObjectClass& rHeightValueObject, SVSmartHandlePointer& bufferHandle, SvStl::MessageContainerVector * pErrorMessages);
 
 	HRESULT CreateModelHandle(long modelWidth, long modelHeight);
 private:

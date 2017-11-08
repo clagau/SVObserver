@@ -18,7 +18,7 @@
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVGuiExtentUpdater.h"
 #include "TextDefinesSvO.h"
-#include "SVUtilityLibrary\SVString.h"
+
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -99,7 +99,7 @@ BOOL SVToolAdjustmentDialogSizePage::OnInitDialog()
 		{
 			for( int vType  = ToolSizeAdjustTask::TSPositionX ; vType <  ToolSizeAdjustTask::TSValuesCount; ++vType)
 			{
-				SVString Mode;
+				std::string Mode;
 				SVEnumerateValueObjectClass* pValue = m_pToolSizeAdjustTask->GetInputMode(static_cast<ToolSizeAdjustTask::TSValues>(vType));
 				if (pValue)
 				{

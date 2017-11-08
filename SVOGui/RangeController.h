@@ -13,7 +13,7 @@
 #include "BoundValue.h"
 #include "DataController.h"
 #include "SVStatusLibrary/MessageTextEnum.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 namespace SvOg
@@ -33,8 +33,8 @@ namespace SvOg
 		std::string Get(const std::string& rName) const;
 		void Set(const std::string& rName, const std::string& rValue);
 
-		SVString GetOwnerName() const;
-		void IsFieldValid(SvStl::MessageTextEnum fieldName, const SVString& rValue);
+		std::string GetOwnerName() const;
+		void IsFieldValid(SvStl::MessageTextEnum fieldName, const std::string& rValue);
 		void Validate();
 
 		static const std::string FailHigh;
@@ -48,9 +48,9 @@ namespace SvOg
 		void SetIndirectValue(const std::string& rName, const std::string& rValue);
 		void SetDirectValue(const std::string& rName, const std::string& rValue);
 
-		SVString GetInspectionName() const;
-		SVString GetPPQName() const;
-		SVString GetToolName() const;
+		std::string GetInspectionName() const;
+		std::string GetPPQName() const;
+		std::string GetToolName() const;
 
 		GUID m_InspectionID;
 		GUID m_TaskObjectID;

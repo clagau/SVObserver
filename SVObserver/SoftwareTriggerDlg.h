@@ -17,7 +17,7 @@
 //Moved to precompiled header: #include <boost/bind.hpp>
 #include "SVMFCControls/SVKnobControl.h"
 #include "TriggerInformation/SVTriggerObject.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 // SoftwareTriggerDlg dialog
@@ -38,12 +38,12 @@ public:
 	{
 	}
 	int GetSoftwareTriggerPeriod() { if( !m_paused){m_period = m_pTrigger->GetSoftwareTriggerPeriod();} return m_period; }
-	SVString GetName() const { return SVString( m_pTrigger->GetName() ); }
+	std::string GetName() const { return std::string( m_pTrigger->GetName() ); }
 	void SetSoftwareTriggerPeriod(long period, bool setTimer = false) { m_period = period; if (!m_paused) m_pTrigger->SetSoftwareTriggerPeriod(period, setTimer); }
 	SvTi::SVTriggerObject* GetTrigger() { return m_pTrigger; }
 	void Pause() { m_paused = true; m_period = GetSoftwareTriggerPeriod(); m_pTrigger->SetSoftwareTriggerPeriod(INT_MAX, true); }
 	void Continue() { if (m_paused) { m_paused = false; m_pTrigger->SetSoftwareTriggerPeriod(m_period, true); } }
-	SVString ButtonText() const { return m_paused ? SVString(_T("Continue")) : SVString(_T("Pause")); }
+	std::string ButtonText() const { return m_paused ? std::string(_T("Continue")) : std::string(_T("Pause")); }
 	bool Toggle() { if (m_paused) Continue(); else Pause(); return m_paused; }
 	bool Paused() const { return m_paused;  }
 
@@ -186,7 +186,7 @@ inline bool SVSpinGroup::SetValue(int val)
 	int carry = val/m_limit;
 	m_value = val%m_limit;
 	
-	SVString Text = SvUl_SF::Format(_T("%d"), m_value);
+	std::string Text = SvUl::Format(_T("%d"), m_value);
 	m_spin.SetPos(m_value);
 	m_edit.SetWindowText( Text.c_str() );
 	if (m_value || carry)
@@ -246,7 +246,7 @@ inline bool SVSpinGroup::Increment(int val)
 		m_next->Increment(1);
 	}
 
-	SVString Text = SvUl_SF::Format(_T("%d"), m_value);
+	std::string Text = SvUl::Format(_T("%d"), m_value);
 	m_edit.SetWindowText( Text.c_str() );
 	return true;
 }

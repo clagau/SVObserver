@@ -13,6 +13,7 @@
 #include "InitialInformation.h"
 #include "SVOIniLoader.h"
 #include "SVOIniClass.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -99,13 +100,13 @@ namespace SvLib
 	{
 		SVOINIClass OemIni( oemIniFile );
 	
-		SVString  WinKey = OemIni.GetValueString( OEMSpecificSectionTag, ProductIDTag, EmptyString );
-		SVString ModelNumber = OemIni.GetValueString ( OEMSpecificSectionTag, ModelNoTag, EmptyModelNo );
-		SvUl_SF::TrimLeft( ModelNumber );
-		SvUl_SF::TrimRight( ModelNumber );
-		SvUl_SF::MakeUpper( ModelNumber );
+		std::string  WinKey = OemIni.GetValueString( OEMSpecificSectionTag, ProductIDTag, EmptyString );
+		std::string ModelNumber = OemIni.GetValueString ( OEMSpecificSectionTag, ModelNoTag, EmptyModelNo );
+		SvUl::TrimLeft( ModelNumber );
+		SvUl::TrimRight( ModelNumber );
+		SvUl::MakeUpper( ModelNumber );
 	
-		SVString SerialNumber = OemIni.GetValueString( OEMSpecificSectionTag, SerialNoTag, EmptyString );
+		std::string SerialNumber = OemIni.GetValueString( OEMSpecificSectionTag, SerialNoTag, EmptyString );
 
 		m_hrDecodeModelNumber = DecodeModelNumber(ModelNumber.c_str());
 
@@ -115,8 +116,8 @@ namespace SvLib
 			m_ModelNumber = ModelNumber;
 			m_SerialNumber = SerialNumber;
 
-			SVString SingleCamera = OemIni.GetValueString( OEMSpecificSectionTag, SingleCameraTag, NTag );
-			SvUl_SF::Trim( SingleCamera );
+			std::string SingleCamera = OemIni.GetValueString( OEMSpecificSectionTag, SingleCameraTag, NTag );
+			SvUl::Trim( SingleCamera );
 			if ( SingleCamera == YTag )
 			{
 				m_bSingleCameraModel = true;
@@ -143,20 +144,20 @@ namespace SvLib
 
 		for( int i = 0; i < MaxTriggers; i++ )
 		{
-			SVString TagName;
+			std::string TagName;
 
 			// Get the Trigger Edge type
-			TagName = SvUl_SF::Format( TriggerEdgeCameraTag, i );
+			TagName = SvUl::Format( TriggerEdgeCameraTag, i );
 			m_TriggerEdge[i] = SvimIni.GetValueString( SVIMInfoSectionTag, TagName.c_str(), RTag );
 			SvimIni.SetValueString( SVIMInfoSectionTag, TagName.c_str(), m_TriggerEdge[i].c_str() );
 
 			// Get the Strobe Edge type
-			TagName = SvUl_SF::Format( StrobeEdgeCameraTag, i );
+			TagName = SvUl::Format( StrobeEdgeCameraTag, i );
 			m_StrobeEdge[i] = SvimIni.GetValueString( SVIMInfoSectionTag, TagName.c_str(), RTag );
 			SvimIni.SetValueString( SVIMInfoSectionTag, TagName.c_str(), m_StrobeEdge[i].c_str() );
 		
 			// Use Strobe as Start Frame=Y/N
-			TagName = SvUl_SF::Format( UseStrobeasStartFrameCameraTag, i );
+			TagName = SvUl::Format( UseStrobeasStartFrameCameraTag, i );
 			m_StartFrameType[i] =SvimIni.GetValueString( SVIMInfoSectionTag, TagName.c_str(), NTag );
 			SvimIni.SetValueString( SVIMInfoSectionTag, TagName.c_str(), m_StartFrameType[i].c_str() );
 		}
@@ -205,8 +206,8 @@ namespace SvLib
 			if (m_rInitialInfo.m_ProductName.empty() )
 			{
 				m_rInitialInfo.m_ProductName = HardwareINI.GetValueString(m_rInitialInfo.m_AcquisitionBoardName.c_str(), ProductNameTag, EmptyString );
-				SvUl_SF::TrimLeft(m_rInitialInfo.m_ProductName );
-				SvUl_SF::TrimRight(m_rInitialInfo.m_ProductName );
+				SvUl::TrimLeft(m_rInitialInfo.m_ProductName );
+				SvUl::TrimRight(m_rInitialInfo.m_ProductName );
 				if ( SVIM_X2_GD2A == m_rInitialInfo.m_ProductName || SVIM_X2_GD8A == m_rInitialInfo.m_ProductName  )
 				{
 					if ( m_bSingleCameraModel )
@@ -249,7 +250,7 @@ namespace SvLib
 				}
 			}
 
-			SVString Value;
+			std::string Value;
 			Value = HardwareINI.GetValueString(m_rInitialInfo.m_DigitalBoardName.c_str(), IOBoardModeTag, IOBoardModeDefault );
 			if( 0 < Value.size() )
 			{
@@ -274,7 +275,7 @@ namespace SvLib
 			// e.g. FrameGrabber2A
 			// The value is the product name (could be anything really as only the presence of the entry is required).
 			// If an Entry is found then the product name is not overridden.
-			SVString frameGrabberEntry (FrameGrabberTag + m_rInitialInfo.m_FrameGrabber);
+			std::string frameGrabberEntry (FrameGrabberTag + m_rInitialInfo.m_FrameGrabber);
 			Value = HardwareINI.GetValueString(m_rInitialInfo.m_DigitalBoardName.c_str(), frameGrabberEntry.c_str(), EmptyString );
 			// if the entry is not found, apply the product name Rule
 			if( 0 == Value.size() )
@@ -318,10 +319,10 @@ namespace SvLib
 
 	HRESULT SVOIniLoader::DecodeModelNumber(LPCTSTR modelNumber)
 	{
-		SVString CheckModelNumber( modelNumber );
-		SvUl_SF::TrimLeft( CheckModelNumber );
-		SvUl_SF::TrimRight( CheckModelNumber );
-		SvUl_SF::MakeUpper( CheckModelNumber );
+		std::string CheckModelNumber( modelNumber );
+		SvUl::TrimLeft( CheckModelNumber );
+		SvUl::TrimRight( CheckModelNumber );
+		SvUl::MakeUpper( CheckModelNumber );
 	
 		if (11 != CheckModelNumber.size() || EmptyModelNo == CheckModelNumber)
 		{

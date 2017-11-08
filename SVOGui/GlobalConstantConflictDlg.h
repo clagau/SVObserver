@@ -11,7 +11,6 @@
 #include "SVOResource/resource.h"
 #include "GridCtrlLibrary\GridCtrl.h"
 #include "Definitions/GlobalConstantData.h"
-#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -41,7 +40,7 @@ namespace SvOg
 
 		void LoadGlobalData();
 		void setGridGlobalData(const SvDef::GlobalConstantData& rGlobalData, int RowIndex, int& rColumnIndex );
-		void convertValueToString( const _variant_t& rValue, SVString& rText,  SVString& rType );
+		void convertValueToString( const _variant_t& rValue, std::string& rText,  std::string& rType );
 	#pragma endregion Protected Methods
 
 	#pragma region Member variables

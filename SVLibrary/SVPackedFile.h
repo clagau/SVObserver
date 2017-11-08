@@ -13,7 +13,6 @@
 #define SV_PACKEDFILE_VERSION 1
 
 #pragma region Includes
-#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 class SVPackedFile 
@@ -23,7 +22,7 @@ public:
 
 	virtual ~SVPackedFile();
 
-	const SVString& getConfigFilePath() const { return m_configFilePath; };
+	const std::string& getConfigFilePath() const { return m_configFilePath; };
 	//Adds the file(s) specified by szFile to the packed file 
 	//specified by PackedFileName. The szFile parameter may 
 	//specify one file or may contain wildcard characters to 
@@ -34,6 +33,6 @@ public:
 	bool UnPackFiles( LPCTSTR PackedFileName, LPCTSTR UnPackDir = nullptr );
 
 private:
-	SVString m_configFilePath;
+	std::string m_configFilePath;
 };
 

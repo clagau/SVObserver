@@ -11,15 +11,15 @@
 
 #pragma once
 
-#include "SVUtilityLibrary/SVString.h"
+
 #include "SVHBitmapUtilitiesLibrary/SVImageFormatEnum.h"
 #include "SVFileAcquisitionDevice/SVFileAcquisitionLoadingModeEnum.h"
 
 struct SVFileCameraStruct
 {
 	SVFileAcquisitonLoadingModeEnum mode;
-	SVString directory;
-	SVString fileName;
+	std::string directory;
+	std::string fileName;
 	SIZE imageSize;
 	SVImageFormatEnum imageFormat; // bit depth basically
 

@@ -12,7 +12,7 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <map>
-#include "SVUtilityLibrary/SVString.h"
+
 #include "SVMatroxGigeCameraParamList.h"
 #pragma endregion Includes
 
@@ -21,7 +21,7 @@ class SVMatroxGigeDigitizer;
 class SVMatroxGigeCameraParamTracker
 {
 // List of Camera Parameters by cameraID (serialNo)
-typedef std::map<SVString, SVMatroxGigeCameraParamList> SVMatroxGigeCameraParamCollection;
+typedef std::map<std::string, SVMatroxGigeCameraParamList> SVMatroxGigeCameraParamCollection;
 
 private:
 	SVMatroxGigeCameraParamCollection m_cameraParamCollection;
@@ -29,12 +29,12 @@ private:
 public:
 	void Clear();
 
-	void TrackCameraParams(const SVString& cameraID);
-	void UnTrackCameraParams(const SVString& cameraID);
-	void SetMainListLocked(const SVString& cameraID, bool bLock=true);
+	void TrackCameraParams(const std::string& cameraID);
+	void UnTrackCameraParams(const std::string& cameraID);
+	void SetMainListLocked(const std::string& cameraID, bool bLock=true);
 
-	HRESULT AddCameraParam(const SVString& cameraID, const SVMatroxGigeCameraParam& param);
-	HRESULT ReloadCameraParams(const SVString& cameraID, SVMatroxGigeDigitizer& p_rCamera);
+	HRESULT AddCameraParam(const std::string& cameraID, const SVMatroxGigeCameraParam& param);
+	HRESULT ReloadCameraParams(const std::string& cameraID, SVMatroxGigeDigitizer& p_rCamera);
 	
 private:	
 	HRESULT ReloadCameraParamList(const SVMatroxGigeCameraParamDeque& list, SVMatroxGigeDigitizer& p_rCamera);

@@ -13,7 +13,7 @@
 
 //Moved to precompiled header: #include <stdio.h>
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
-#include "SVUtilityLibrary/SVString.h"
+
 
 /**
 @SVObjectName File
@@ -58,7 +58,7 @@ public:
 	ULONGLONG SeekToEnd();
 
 protected:
-	HRESULT GetAccessMode( SVString& p_rAccessMode, int& p_rShareMode, UINT p_OpenFlags );
+	HRESULT GetAccessMode( std::string& p_rAccessMode, int& p_rShareMode, UINT p_OpenFlags );
 
 private:
 	FILE* m_pFile;

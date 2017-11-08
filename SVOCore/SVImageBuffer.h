@@ -13,7 +13,6 @@
 #pragma region Includes
 #include "SVImageLibrary/SVExtentMultiLineStruct.h"
 #include "SVImageLibrary/SVExtentPointStruct.h"
-#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 struct SVOverlayFigureStruct
@@ -131,7 +130,7 @@ struct SVOverlayStruct
 
 	COLORREF m_TextColor;
 	POINT m_TextPoint;
-	SVString m_Text;
+	std::string m_Text;
 
 	long lFigureSize;
 	SVOverlayFigureStruct *pOverlays;

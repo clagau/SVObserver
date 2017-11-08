@@ -106,7 +106,7 @@ namespace SvOg
 			return SvOi::NameValueList();
 		}
 
-		SVString GetObjectName(const GUID& rInspectionID, const GUID& rObjectID) const
+		std::string GetObjectName(const GUID& rInspectionID, const GUID& rObjectID) const
 		{
 			typedef SvCmd::GetObjectName Command;
 			typedef SVSharedPtr<Command> CommandPtr;
@@ -119,7 +119,7 @@ namespace SvOg
 			{
 				return commandPtr->GetName();
 			}
-			return SVString();
+			return std::string();
 		}
 
 		SvStl::MessageContainerVector getSetFailedMessageList() { return m_setMessageFailList; };

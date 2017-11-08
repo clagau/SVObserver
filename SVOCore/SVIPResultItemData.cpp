@@ -17,12 +17,12 @@ SVIPResultItemData::SVIPResultItemData()
 {
 }
 
-SVIPResultItemData::SVIPResultItemData( const SVString& p_rValue, unsigned long p_Color )
+SVIPResultItemData::SVIPResultItemData( const std::string& p_rValue, unsigned long p_Color )
 : m_Value( p_rValue ), m_Color( p_Color ), m_IOTypePresent( false ), m_IOType( 0 )
 {
 }
 
-SVIPResultItemData::SVIPResultItemData( const SVString& p_rValue, unsigned long p_Color, unsigned long p_IOType )
+SVIPResultItemData::SVIPResultItemData( const std::string& p_rValue, unsigned long p_Color, unsigned long p_IOType )
 : m_Value( p_rValue ), m_Color( p_Color ), m_IOTypePresent( true ), m_IOType( p_IOType )
 {
 }
@@ -32,7 +32,7 @@ SVIPResultItemData::SVIPResultItemData( const SVIPResultItemData& p_rObject )
 {
 }
 
-const SVString& SVIPResultItemData::GetValue() const
+const std::string& SVIPResultItemData::GetValue() const
 {
 	return m_Value;
 }

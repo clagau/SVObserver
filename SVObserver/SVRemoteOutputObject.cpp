@@ -17,6 +17,7 @@
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary\SVGUID.h"
 #include "SVPPQObject.h"
 #pragma endregion Includes
@@ -33,7 +34,7 @@ SVRemoteOutputObject::~SVRemoteOutputObject()
 {
 }
 
-SVString SVRemoteOutputObject::GetInputValueObjectName()
+std::string SVRemoteOutputObject::GetInputValueObjectName()
 {
 	// Use the GUID to get an object.
 	SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObjectA(m_InputObjectId);
@@ -50,7 +51,7 @@ SVObjectClass* SVRemoteOutputObject::GetValueObject()
 	return m_pValueObject;
 }
 
-SVString SVRemoteOutputObject::GetGroupID( ) const
+std::string SVRemoteOutputObject::GetGroupID( ) const
 {
 	return m_strGroupID;
 }
@@ -121,7 +122,7 @@ bool SVRemoteOutputObject::SetParameters( SVTreeType& rTree, SVTreeType::SVBranc
 			bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_REMOTE_GROUP_ID, htiParent, svVariant );
 			if ( bOk )
 			{
-				m_strGroupID = SvUl_SF::createSVString(svVariant);
+				m_strGroupID = SvUl::createStdString(svVariant);
 			}
 		}
 
@@ -130,7 +131,7 @@ bool SVRemoteOutputObject::SetParameters( SVTreeType& rTree, SVTreeType::SVBranc
 			bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_REMOTE_OUTPUT_NAME, htiParent, svVariant );
 			if ( bOk )
 			{
-				m_strObjectName = SvUl_SF::createSVString(svVariant);
+				m_strObjectName = SvUl::createStdString(svVariant);
 			}
 		}
 
@@ -176,7 +177,7 @@ SVGUID SVRemoteOutputObject::GetInputValueObjectGUID() const
 	return m_InputObjectId;
 }
 
-HRESULT SVRemoteOutputObject::SetGroupID( const SVString& p_strGroupID )
+HRESULT SVRemoteOutputObject::SetGroupID( const std::string& p_strGroupID )
 {
 	m_strGroupID = p_strGroupID;
 	return S_OK;

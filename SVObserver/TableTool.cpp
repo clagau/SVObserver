@@ -15,7 +15,8 @@
 #include "Definitions/TextDefineSVDef.h"
 #include "SVOCore/TableColumnEquation.h"
 #include "Definitions/GlobalConst.h"
-#include "SVUtilityLibrary\SVString.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -58,7 +59,7 @@ bool TableTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure 
 		SVEquationClass* pEquation = dynamic_cast<SVEquationClass *>(m_friendList[j].m_pObject);
 		if (nullptr != pEquation)
 		{
-			if (SvDef::TableClearEquationName == SVString(pEquation->GetName()))
+			if (SvDef::TableClearEquationName == std::string(pEquation->GetName()))
 			{
 				m_pClearEquation = pEquation;
 				break;
@@ -146,8 +147,8 @@ bool TableTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 					j--;
 					if (nullptr != pErrorMessages)
 					{
-						SVStringVector msgList;
-						msgList.push_back(SvUl_SF::Format(_T("%d"), c_maxTableColumn));
+						SvDef::StringVector msgList;
+						msgList.push_back(SvUl::Format(_T("%d"), c_maxTableColumn));
 						SvStl::MessageContainer message;
 						message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableColumn_TooManyEquation, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 						pErrorMessages->push_back( message );
@@ -216,10 +217,10 @@ bool TableTool::ValidateLocal( SvStl::MessageContainerVector * pErrorMessages ) 
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SVStringVector messageList;
-			messageList.push_back(SvUl_SF::Format(_T("%d"), SvDef::cTableMaxRowMin));
-			messageList.push_back(SvUl_SF::Format(_T("%d"), SvDef::cTableMaxRowMax));
-			messageList.push_back(SvUl_SF::Format(_T("%d"), maxRow));
+			SvDef::StringVector messageList;
+			messageList.push_back(SvUl::Format(_T("%d"), SvDef::cTableMaxRowMin));
+			messageList.push_back(SvUl::Format(_T("%d"), SvDef::cTableMaxRowMax));
+			messageList.push_back(SvUl::Format(_T("%d"), maxRow));
 			SvStl::MessageContainer message;
 			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_MaxRowWrongValue, messageList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back( message );

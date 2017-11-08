@@ -45,7 +45,7 @@ HRESULT SVObjectManagerClass::ConstructObject( const SVGUID& rClassID, SVObjectT
 }
 
 template< typename SVObjectTypeName >
-HRESULT SVObjectManagerClass::GetObjectByDottedName( const SVString& rFullName, SVObjectTypeName*& rpObject )
+HRESULT SVObjectManagerClass::GetObjectByDottedName( const std::string& rFullName, SVObjectTypeName*& rpObject )
 {
 	HRESULT Result = S_OK;
 
@@ -71,7 +71,7 @@ HRESULT SVObjectManagerClass::GetObjectByDottedName( const SVString& rFullName, 
 }
 
 template< typename SVObjectTypeName >
-HRESULT SVObjectManagerClass::GetRootChildObject( SVObjectTypeName*& rpObject, const SVString& rRootChild )
+HRESULT SVObjectManagerClass::GetRootChildObject( SVObjectTypeName*& rpObject, const std::string& rRootChild )
 {
 	HRESULT Result = E_FAIL;
 
@@ -219,7 +219,7 @@ HRESULT SVObjectManagerClass::UpdateObserver( long Cookie, const SVDataType& rDa
 }
 
 template< typename SVDataType >
-HRESULT SVObjectManagerClass::UpdateObservers( const SVString& rSubjectDataName, const SVGUID& rSubjectID, const SVDataType& rData )
+HRESULT SVObjectManagerClass::UpdateObservers( const std::string& rSubjectDataName, const SVGUID& rSubjectID, const SVDataType& rData )
 {
 	HRESULT Result = S_OK;
 

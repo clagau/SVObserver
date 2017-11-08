@@ -10,8 +10,10 @@
 
 #pragma once
 
-#include "SVUtilityLibrary/SVString.h"
+#pragma region Includes
 #include "Definitions/SVPPQEnums.h"
+#include "Definitions/StringTypeDef.h"
+#pragma endregion Includes
 
 enum SVHardwareErrorEnums
 {
@@ -43,43 +45,43 @@ namespace SvLib
 		void ResetDllInformation();
 		void ResetModelNumberInformation();
 
-		SVStringVector GetModelNumberVector() const;
+		SvDef::StringVector GetModelNumberVector() const;
 
-		SVString GetModelNumberString() const;
+		std::string GetModelNumberString() const;
 
-		SVString InitializationFailureDescription(HRESULT InitializationStatusFlags) const;
+		std::string InitializationFailureDescription(HRESULT InitializationStatusFlags) const;
 #pragma endregion Public Methods
 
 #pragma region Member variables
 	public:
-		SVString m_ProcessorBoardName;
-		SVString m_TriggerBoardName;
-		SVString m_AcquisitionBoardName;
-		SVString m_DigitalBoardName;
-		SVString m_RAIDBoardName;
-		SVString m_FileAcquisitionBoardName;
+		std::string m_ProcessorBoardName;
+		std::string m_TriggerBoardName;
+		std::string m_AcquisitionBoardName;
+		std::string m_DigitalBoardName;
+		std::string m_RAIDBoardName;
+		std::string m_FileAcquisitionBoardName;
 
-		SVString m_DigitizerDLL;
-		SVString m_TriggerDLL;
-		SVString m_DigitalDLL;
-		SVString m_FileAcquisitionDLL;
-		SVString m_SoftwareTriggerDLL;
-		SVString m_AcquisitionTriggerDLL;
+		std::string m_DigitizerDLL;
+		std::string m_TriggerDLL;
+		std::string m_DigitalDLL;
+		std::string m_FileAcquisitionDLL;
+		std::string m_SoftwareTriggerDLL;
+		std::string m_AcquisitionTriggerDLL;
 
-		SVString m_ReloadAcquisitionDLL;
-		SVString m_ReloadTriggerDLL;
-		SVString m_ReloadDigitalDLL;
+		std::string m_ReloadAcquisitionDLL;
+		std::string m_ReloadTriggerDLL;
+		std::string m_ReloadDigitalDLL;
 
-		SVString m_HardwareOptions;
-		SVString m_IOBoardOption;
-		SVString m_Trigger;
+		std::string m_HardwareOptions;
+		std::string m_IOBoardOption;
+		std::string m_Trigger;
 
 		//Elements of SVIM model number:
-		SVString m_Processor;
-		SVString m_FrameGrabber;
-		SVString m_IOBoard;
-		SVString m_Options;
-		SVString m_ProductName;
+		std::string m_Processor;
+		std::string m_FrameGrabber;
+		std::string m_IOBoard;
+		std::string m_Options;
+		std::string m_ProductName;
 		long m_gigePacketSize;
 
 		SvDef::NakGeneration m_NAKMode;

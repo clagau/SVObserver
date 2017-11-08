@@ -18,7 +18,8 @@
 #include "SVGuiExtentUpdater.h"
 #include "ResizeTool.h"
 #include "Definitions/GlobalConst.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Properry Tree Items Enum
@@ -306,7 +307,7 @@ HRESULT SVTADlgTranslationResizePage::AddInterpolationMode(SVRPropertyItem* pGro
 		comboItem->CreateComboBox();
 
 		SVEnumerateValueObjectClass& rInterpolationMode = m_pTool->getInterpolationMode ();
-		SVString enumeratorName;
+		std::string enumeratorName;
 
 		rInterpolationMode.GetEnumeratorName( SVInterpolationModeOptions::InterpolationModeAuto, enumeratorName );
 		long insertedIndex = comboItem->AddString( enumeratorName.c_str() );
@@ -348,7 +349,7 @@ HRESULT SVTADlgTranslationResizePage::AddOverScan(SVRPropertyItem* pGroupItem)
 		comboItem->CreateComboBox();
 
 		SVEnumerateValueObjectClass& rOverscan = m_pTool->getOverscan ();
-		SVString enumeratorName;
+		std::string enumeratorName;
 
 		rOverscan.GetEnumeratorName( SVOverscanOptions::OverscanEnable, enumeratorName );
 		long insertedIndex = comboItem->AddString( enumeratorName.c_str() );
@@ -380,7 +381,7 @@ HRESULT SVTADlgTranslationResizePage::AddPerformance(SVRPropertyItem* pGroupItem
 		comboItem->CreateComboBox();
 
 		SVEnumerateValueObjectClass& rPerformance = m_pTool->getPerformance ();
-		SVString enumeratorName;
+		std::string enumeratorName;
 
 		rPerformance.GetEnumeratorName( SVPerformanceOptions::PerformanceFast, enumeratorName );
 		long insertedIndex = comboItem->AddString( enumeratorName.c_str() );
@@ -539,12 +540,12 @@ void SVTADlgTranslationResizePage::UpdateInputImageInfo(long newInputROIWidth, l
 {
 	SVRPropertyItemStatic* staticItem = static_cast <SVRPropertyItemStatic*> (m_Tree.FindItem(IDC_INPUTLISTTREE_ROIHEIGHT));
 	
-	SVString Value;
+	std::string Value;
 	staticItem->GetItemValue( Value );
 	long oldInputROIHeight = atol( Value.c_str() );
 	if (newInputROIHeight != oldInputROIHeight)
 	{
-		Value = SvUl_SF::Format( _T("%d"), newInputROIHeight);
+		Value = SvUl::Format( _T("%d"), newInputROIHeight);
 		staticItem->SetItemValue( Value.c_str() );
 	}
 
@@ -554,7 +555,7 @@ void SVTADlgTranslationResizePage::UpdateInputImageInfo(long newInputROIWidth, l
 	long oldInputROIWidth = atol ( Value.c_str() );
 	if (newInputROIWidth != oldInputROIWidth)
 	{
-		Value = SvUl_SF::Format( _T("%d"), newInputROIWidth);
+		Value = SvUl::Format( _T("%d"), newInputROIWidth);
 		staticItem->SetItemValue( Value.c_str() );
 	}
 }
@@ -563,12 +564,12 @@ void SVTADlgTranslationResizePage::UpdateOutputImageInfo(long newOutputWidth, lo
 {
 	SVRPropertyItemStatic* staticItem = static_cast <SVRPropertyItemStatic*> (m_Tree.FindItem(IDC_INPUTLISTTREE_OUTPUTHEIGHT));
 
-	SVString Value;
+	std::string Value;
 	staticItem->GetItemValue( Value );
 	long oldOutputHeight = atol( Value.c_str() );
 	if (newOutputHeight != oldOutputHeight)
 	{
-		Value = SvUl_SF::Format( _T("%d"), newOutputHeight );
+		Value = SvUl::Format( _T("%d"), newOutputHeight );
 		staticItem->SetItemValue( Value.c_str() );
 	}
 
@@ -578,7 +579,7 @@ void SVTADlgTranslationResizePage::UpdateOutputImageInfo(long newOutputWidth, lo
 	long oldOutputWidth = atol( Value.c_str() );
 	if (newOutputWidth != oldOutputWidth)
 	{
-		Value = SvUl_SF::Format( _T("%d"), newOutputWidth);
+		Value = SvUl::Format( _T("%d"), newOutputWidth);
 		staticItem->SetItemValue( Value.c_str() );
 	}
 }
@@ -1106,7 +1107,7 @@ HRESULT SVTADlgTranslationResizePage::ValidateCurrentTreeData (SVRPropertyItem* 
 					hr = SVMSG_SVO_5070_IMAGEALLOCATIONFAILED;
 				}
 
-				SVStringVector msgList;
+				SvDef::StringVector msgList;
 				msgList.push_back(item->GetLabelText());
 				message.setMessage( hr, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
 			}

@@ -13,7 +13,6 @@
 #pragma region Includes
 #include "SVRegressionTestStruct.h"
 #include "SVVirtualCamera.h"
-#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 /////////////////////////////////////////////////////////////////////////////
@@ -51,7 +50,7 @@ public:
 	void CreatePages(CList<RegressionTestStruct*,RegressionTestStruct*>*RegessionList,SVVirtualCameraPtrSet CameraList );
 
 private: //methods
-	SVString MakeFileNameMask( const SVString& rFileName );
+	std::string MakeFileNameMask( const std::string& rFileName );
 	/// Validate the regression data and fill the list of files for all structs. If it valid it throw an exception.
 	void ValidateAndFillFileList();
 	void ClearRegressionList();
@@ -70,7 +69,7 @@ private: //methods
 	/// \param rStruct [in,out] The struct which should to be filled
 	/// \param rCurrentPath [in] The current path of this recursive call.
 	/// \returns int Number of images
-	int FillFileListFromDirectory(RegressionTestStruct& rStruct, const SVString& rCurrentPath);
+	int FillFileListFromDirectory(RegressionTestStruct& rStruct, const std::string& rCurrentPath);
 
 private: //data members
 	CList<CString, CString&> m_listMasks;

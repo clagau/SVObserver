@@ -9,7 +9,6 @@
 //* .Check In Date   : $Date:   08 Jul 2014 08:47:10  $
 //******************************************************************************
 #pragma once
-#include "SVUtilityLibrary\SVString.h"
 #include "RemoteMonitorNamedList.h"
 #include "SVSharedMemoryLibrary\MonitorEntry.h"
 #include "SVSharedMemoryLibrary\MonitorListCpy.h"
@@ -22,9 +21,9 @@ public:
 	static SvSml::MonitorListCpyPointer  RemoteMonitorListHelper::CreateMLcopy(const RemoteMonitorNamedList& remoteMonitorNamedlist);
 
 	/// returns a monitorobject for the objectname 
-	static MonitoredObject GetMonitoredObjectFromName(const SVString& name);
+	static MonitoredObject GetMonitoredObjectFromName(const std::string& name);
 	/// GetTHe name of the Monitorobject
-	static SVString GetNameFromMonitoredObject(const MonitoredObject& rMonitoredObject);
+	static std::string GetNameFromMonitoredObject(const MonitoredObject& rMonitoredObject);
 	
 private:	
 	

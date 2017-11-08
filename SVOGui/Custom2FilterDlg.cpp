@@ -17,7 +17,8 @@
 #include "BoundValue.h"
 #include "ObjectInterfaces/ISVOApp_Helper.h"
 #include "SVMFCControls/SVFileDialog.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVObjectLibrary\SVClsids.h"
 #include "GuiValueHelper.h"
 #include "SVStatusLibrary\MessageManager.h"
@@ -143,13 +144,13 @@ namespace SvOg
 
 		initializeFilter();
 
-		SVString Entry;
+		std::string Entry;
 		for( int i=1; i <= SvOi::ICustom2Filter::MaxKernelSize; i++ )
 		{
 			//Check that its an odd value
 			if( 1 == (i % 2) )
 			{
-				Entry = SvUl_SF::Format(_T("%d"), i);
+				Entry = SvUl::Format(_T("%d"), i);
 				m_WidthCtrl.AddString( Entry.c_str() );
 				m_HeightCtrl.AddString( Entry.c_str() );
 			}
@@ -256,7 +257,7 @@ namespace SvOg
 
 	void Custom2FilterDlg::OnEnChangeEditCell()
 	{
-		SVString EditCell( m_EditCell );
+		std::string EditCell( m_EditCell );
 
 		UpdateData( TRUE );
 
@@ -321,7 +322,7 @@ namespace SvOg
 
 		if( IDOK == FileDlg.DoModal() )
 		{
-			SVString pathName = FileDlg.GetPathName();
+			std::string pathName = FileDlg.GetPathName();
 			SvStl::MessageContainer message;
 
 			//Save current values in case of a restore
@@ -344,21 +345,21 @@ namespace SvOg
 				{
 					if (SvOi::E_CUSTOM_IMPORT_FORMAT_INVALID == Result)
 					{
-						SVStringVector msgList;
+						SvDef::StringVector msgList;
 						msgList.push_back(pathName);
 						msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_XmlFormatInvalid));
 						message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ImportFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10226 );
 					}
 					else if (SvOi::E_CUSTOM_IMPORT_VERSION_MISMATCH == Result)
 					{
-						SVStringVector msgList;
+						SvDef::StringVector msgList;
 						msgList.push_back(pathName);
 						msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_VersionMismatch));
 						message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ImportFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10226 );
 					}
 					else
 					{
-						SVStringVector msgList;
+						SvDef::StringVector msgList;
 						msgList.push_back(pathName);
 						msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_Unknown));
 						message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ImportFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10226 );
@@ -371,7 +372,7 @@ namespace SvOg
 			}
 			catch ( ... )
 			{
-				SVStringVector msgList;
+				SvDef::StringVector msgList;
 				msgList.push_back(pathName);
 				msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_Unknown));
 				message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ImportFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10226 );
@@ -412,7 +413,7 @@ namespace SvOg
 		{
 			try
 			{
-				SvOi::exportCustom2Filter( SVString(FileDlg.GetPathName()), m_KernelWidth, m_KernelHeight, m_NormalizationFactor, m_AbsoluteValue, m_ClippingEnabled, m_KernelArray.cbegin(), m_KernelArray.cend() );
+				SvOi::exportCustom2Filter( std::string(FileDlg.GetPathName()), m_KernelWidth, m_KernelHeight, m_NormalizationFactor, m_AbsoluteValue, m_ClippingEnabled, m_KernelArray.cbegin(), m_KernelArray.cend() );
 			}
 			catch( ... )
 			{
@@ -424,7 +425,7 @@ namespace SvOg
 
 	void Custom2FilterDlg::OnBnClickedOk()
 	{
-		SVString DataInvalidMessage;
+		std::string DataInvalidMessage;
 
 		UpdateData( TRUE );
 
@@ -813,7 +814,7 @@ namespace SvOg
 
 	void Custom2FilterDlg::updateEditCellandStatus()
 	{
-		SVString MarkedCellsValue;
+		std::string MarkedCellsValue;
 		int Row = 0;
 		int Col = 0;
 		int CellCount = 0;
@@ -827,7 +828,7 @@ namespace SvOg
 			{
 				if( m_Grid.IsCellSelected( i, j ) )
 				{
-					SVString Value;
+					std::string Value;
 					Value = m_Grid.GetItemText( i, j );
 
 					if( Value != MarkedCellsValue )
@@ -876,7 +877,7 @@ namespace SvOg
 			{
 				for( int j = 1; j <= m_KernelWidth; j++ )
 				{
-					SVString Value;
+					std::string Value;
 					Value = m_Grid.GetItemText( i, j );
 					//Check if during input only a minus was entered (invalid) set it to 0
 					if( _T("-") == Value )
@@ -894,10 +895,10 @@ namespace SvOg
 		//Kernel array and kernel height and width must match
 		if( m_KernelArray.size() != m_KernelWidth*m_KernelHeight )
 		{
-			SVStringVector msgList;
-			msgList.push_back(SvUl_SF::Format(_T("%d"),m_KernelArray.size()));
-			msgList.push_back(SvUl_SF::Format(_T("%d"),m_KernelWidth));
-			msgList.push_back(SvUl_SF::Format(_T("%d"),m_KernelHeight));
+			SvDef::StringVector msgList;
+			msgList.push_back(SvUl::Format(_T("%d"),m_KernelArray.size()));
+			msgList.push_back(SvUl::Format(_T("%d"),m_KernelWidth));
+			msgList.push_back(SvUl::Format(_T("%d"),m_KernelHeight));
 			SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_DataInvalidKernelSize, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10228);
 			throw message;
 		}
@@ -905,17 +906,17 @@ namespace SvOg
 		//Check that the Kernel Width and Height are odd and between 1 and MaxKernelSize
 		if( 1 != m_KernelWidth % 2 || 1 > m_KernelWidth || SvOi::ICustom2Filter::MaxKernelSize < m_KernelWidth )
 		{
-			SVStringVector msgList;
-			msgList.push_back(SvUl_SF::Format(_T("%d"), m_KernelWidth));
-			msgList.push_back(SvUl_SF::Format(_T("%d"), SvOi::ICustom2Filter::MaxKernelSize));
+			SvDef::StringVector msgList;
+			msgList.push_back(SvUl::Format(_T("%d"), m_KernelWidth));
+			msgList.push_back(SvUl::Format(_T("%d"), SvOi::ICustom2Filter::MaxKernelSize));
 			SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_DataInvalidKernelWidth, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10228);
 			throw message;
 		}
 		if( 1 != m_KernelHeight % 2 || 1 > m_KernelHeight || SvOi::ICustom2Filter::MaxKernelSize < m_KernelHeight )
 		{
-			SVStringVector msgList;
-			msgList.push_back(SvUl_SF::Format(_T("%d"), m_KernelHeight));
-			msgList.push_back(SvUl_SF::Format(_T("%d"), SvOi::ICustom2Filter::MaxKernelSize));
+			SvDef::StringVector msgList;
+			msgList.push_back(SvUl::Format(_T("%d"), m_KernelHeight));
+			msgList.push_back(SvUl::Format(_T("%d"), SvOi::ICustom2Filter::MaxKernelSize));
 			SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_DataInvalidKernelHeight, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10228);
 			throw message;
 		}

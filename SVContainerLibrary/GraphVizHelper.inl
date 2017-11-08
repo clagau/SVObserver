@@ -84,9 +84,9 @@ namespace SvCl
 	//! \param rGraph [in] reference to the graph
 	//! \param rName [in] the vertex lookup name method
 	template< typename VertexName, typename EdgeType, typename Graph, typename NameFunction >
-	SVString OutputGraphviz( LPCTSTR Filename, const Graph& rGraph, NameFunction& rName )
+	std::string OutputGraphviz( LPCTSTR Filename, const Graph& rGraph, NameFunction& rName )
 	{
-		SVString Result;
+		std::string Result;
 
 		std::ostringstream OutputString;
 		std::ofstream OutputFile;

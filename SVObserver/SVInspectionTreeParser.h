@@ -13,7 +13,6 @@
 #pragma region Includes
 #include "SVObjectScriptParserBase.h"
 #include "SVObjectLibrary/SVObjectScriptEnums.h"
-#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 class SVObjectClass;
@@ -60,9 +59,9 @@ private:
 	
 	HRESULT ProcessAttributes(const GUID& ownerID, const GUID& objectID, typename SVTreeType::SVBranchHandle hItem);
 
-	bool GetItemValue(const SVString& tag, typename SVTreeType::SVBranchHandle hItem, _variant_t& rValue);
-	bool GetValues(typename SVTreeType::SVBranchHandle hItem, const SVString& tag, SVVariantList& rValueList);
-	bool HasTag(typename SVTreeType::SVBranchHandle hItem, const SVString& tag);
+	bool GetItemValue(const std::string& tag, typename SVTreeType::SVBranchHandle hItem, _variant_t& rValue);
+	bool GetValues(typename SVTreeType::SVBranchHandle hItem, const std::string& tag, SVVariantList& rValueList);
+	bool HasTag(typename SVTreeType::SVBranchHandle hItem, const std::string& tag);
 };
 
 #include "SVInspectionTreeParser.inl"

@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVContainerLibrary\SVList.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #include "SVOTriggerObj.h"
 #pragma endregion Includes
 
@@ -29,11 +29,11 @@ namespace SvTi
 		SVOTriggerList();
 		virtual ~SVOTriggerList();
 
-		bool AddTriggerToList(const SVString& sTriggerName, int iDigNumber);
-		bool RemoveTriggerFromList(const SVString& sTriggerName);
-		bool IsTriggerInList(const SVString& sTiggerName) const;
+		bool AddTriggerToList(const std::string& sTriggerName, int iDigNumber);
+		bool RemoveTriggerFromList(const std::string& sTriggerName);
+		bool IsTriggerInList(const std::string& sTiggerName) const;
 		int GetTriggerListCount() const;
-		SVOTriggerObjPtr GetTriggerObjectByName(const SVString& sTriggerName);
+		SVOTriggerObjPtr GetTriggerObjectByName(const std::string& sTriggerName);
 		SVOTriggerObjPtr GetTriggerObjectByPosition(int iPos);
 
 		void ResetContent();
@@ -42,6 +42,6 @@ namespace SvTi
 
 	private:
 		SVTriggerList m_TriggerList;
-		iterator FindTriggerPosition(const SVString& sTriggerName);
+		iterator FindTriggerPosition(const std::string& sTriggerName);
 	};
 } //namespace SvTi

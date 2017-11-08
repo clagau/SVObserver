@@ -15,7 +15,7 @@
 #include "SVToolLoadImage.h"
 #include "SVOCore/SVAnalyzer.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
-#include "SVUtilityLibrary\SVString.h"
+
 #include "SVOCore/SVImageProcessingClass.h"
 #include "SVInspectionProcess.h"
 #include "SVToolSet.h"
@@ -120,7 +120,7 @@ bool SVLoadImageToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCon
 	if (ValidateLocal(pErrorMessages) && __super::onRun(rRunStatus, pErrorMessages))
 	{
 		BOOL bReload = false;
-		SVString ImagePathName;
+		std::string ImagePathName;
 
 		if (S_OK != m_continuousReload.GetValue(bReload) || S_OK != m_currentPathName.GetValue(ImagePathName))
 		{
@@ -247,7 +247,7 @@ HRESULT SVLoadImageToolClass::SetImageExtentToParent()
 {
 	HRESULT l_hrOk = S_OK;
 	SVImageExtentClass NewExtent;
-	SVString ImagePathName;
+	std::string ImagePathName;
 
 	if (S_OK == l_hrOk)
 	{
@@ -269,7 +269,7 @@ HRESULT SVLoadImageToolClass::SetImageExtentToParent()
 HRESULT SVLoadImageToolClass::GetParentExtent( SVImageExtentClass& rParentExtent ) const
 {
 	HRESULT hr = S_OK;
-	SVString ImagePathName;
+	std::string ImagePathName;
 	if( S_OK == hr )
 	{
 		hr = m_currentPathName.GetValue( ImagePathName );
@@ -283,7 +283,7 @@ HRESULT SVLoadImageToolClass::GetParentExtent( SVImageExtentClass& rParentExtent
 
 bool SVLoadImageToolClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
 {
-	SVString PathName;
+	std::string PathName;
 	m_currentPathName.GetValue( PathName );
 
 	if( ::SVFileExists( PathName.c_str() ) )

@@ -19,7 +19,7 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVSystemLibrary/SVAutoLockAndReleaseTemplate.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #include "SVObjectCommandDataJson.h"
 #pragma endregion Includes
 
@@ -201,7 +201,7 @@ HRESULT SVInputStreamManager::ProcessJsonCommand( const std::string& p_rJsonComm
 
 	Json::Reader l_Reader;
 	Json::Value l_JsonValues;
-	SVString l_StreamName;
+	std::string l_StreamName;
 
 	if( l_Reader.parse( p_rJsonCommand, l_JsonValues, false ) )
 	{
@@ -297,7 +297,7 @@ HRESULT SVInputStreamManager::ProcessStreamManagerJsonCommand( const std::string
 	{
 		Json::Reader l_Reader;
 		Json::Value l_JsonValues;
-		SVString l_Command;
+		std::string l_Command;
 
 		if( l_Reader.parse( p_rJsonCommand, l_JsonValues, false ) )
 		{

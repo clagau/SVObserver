@@ -132,7 +132,7 @@ BOOL SVParserProgressDialog::AddParser( unsigned long parserHandle, SVObjectScri
 		StaticSharedPtr pStaticTextCtrl = nullptr;
 
 		// Get Progress Control name...
-		SVString Temp;
+		std::string Temp;
 		if( pParser->GetOwnerObject() )
 		{
 			Temp = pParser->GetOwnerObject()->GetName();
@@ -384,7 +384,7 @@ void SVParserProgressDialog::SetProgressLocations()
 		SVParserProgressControlStruct& l_rParserControl = it->second;
 
 		// Get Progress Control name...
-		SVString Temp( l_rParserControl.Text );
+		std::string Temp( l_rParserControl.Text );
 		ProgressCtrlSharedPtr pProgressCtrl = nullptr;
 		StaticSharedPtr pStaticTextCtrl = nullptr;
 

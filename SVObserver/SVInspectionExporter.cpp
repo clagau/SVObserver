@@ -26,8 +26,8 @@
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/ZipHelper.h"
-#include "SVUtilityLibrary/SVStringConversions.h"
 #include "SVInspectionProcess.h"
 #include "SVPPQObject.h"
 #include "SVObserver.h"
@@ -35,6 +35,7 @@
 #include "RootObject.h"
 #include "SVToolSet.h"
 #include "SVStatusLibrary/GlobalPath.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -129,7 +130,7 @@ static void WriteGlobalConstants(SvXml::SVObjectXMLWriter& rWriter, SVObjectClas
 				pGlobalConstant->getValue( Value );
 				rWriter.WriteAttribute( SvXml::CTAG_VALUE, Value );
 				Value.Clear();
-				SVString Description( pGlobalConstant->getDescription() );
+				std::string Description( pGlobalConstant->getDescription() );
 				//This is needed to remove any CR LF in the description
 				SvUl::AddEscapeSpecialCharacters( Description, true );
 				Value.SetString( Description.c_str() );
@@ -160,7 +161,7 @@ static bool ShouldExcludeFile(LPCTSTR filename)
 	return bRetVal;
 }
 
-static void WriteDependentFileList(SvXml::SVObjectXMLWriter& rWriter, const SVString& dstZipFile)
+static void WriteDependentFileList(SvXml::SVObjectXMLWriter& rWriter, const std::string& dstZipFile)
 {
 	// remove existing file
 	if (::_access(dstZipFile.c_str(), 0) == 0)
@@ -173,7 +174,7 @@ static void WriteDependentFileList(SvXml::SVObjectXMLWriter& rWriter, const SVSt
 
 	if (hFind != INVALID_HANDLE_VALUE) 
 	{
-		SVStringSet DependencyFileNames;
+		SvDef::StringSet DependencyFileNames;
 
 		rWriter.StartElement(SvXml::CTAG_DEPENDENT_FILES);
 		do
@@ -188,8 +189,8 @@ static void WriteDependentFileList(SvXml::SVObjectXMLWriter& rWriter, const SVSt
 				TCHAR ext[_MAX_EXT];
 				_tsplitpath(findFileData.cFileName, drive, dir, filename, ext);
 				
-				SVString lowercaseExt = ext;
-				SvUl_SF::MakeLower(lowercaseExt);
+				std::string lowercaseExt = ext;
+				SvUl::MakeLower(lowercaseExt);
 
 				if (lowercaseExt != scSVXConfigExt)
 				{
@@ -197,7 +198,7 @@ static void WriteDependentFileList(SvXml::SVObjectXMLWriter& rWriter, const SVSt
 					value.SetString(findFileData.cFileName);
 					rWriter.WriteAttribute(SvXml::CTAG_FILENAME, value);
 
-					SVString srcFile = SvStl::GlobalPath::Inst().GetRunPath().c_str();
+					std::string srcFile = SvStl::GlobalPath::Inst().GetRunPath().c_str();
 					srcFile += "\\";
 					srcFile += findFileData.cFileName;
 					DependencyFileNames.insert( srcFile );
@@ -212,18 +213,18 @@ static void WriteDependentFileList(SvXml::SVObjectXMLWriter& rWriter, const SVSt
 	}
 }
 
-static std::string GetFilenameWithoutExt(const SVString& filename)
+static std::string GetFilenameWithoutExt(const std::string& filename)
 {
 	std::string result;
-	SVString::size_type pos = filename.find_last_of('.');
-	if (pos != SVString::npos)
+	std::string::size_type pos = filename.find_last_of('.');
+	if (pos != std::string::npos)
 	{
 		result = filename.substr(0, pos).c_str();
 	}
 	return result;
 }
 
-static std::string RemovePath(const SVString& fname)
+static std::string RemovePath(const std::string& fname)
 {
 	std::string name;
 
@@ -257,7 +258,7 @@ static void PersistDocument(const SVGUID& inspectionGuid, SVObjectWriter& rWrite
 }
 
 #pragma region Public Methods
-HRESULT SVInspectionExporter::Export(const SVString& filename, const SVString& inspectionName, unsigned long p_version, bool bColor)
+HRESULT SVInspectionExporter::Export(const std::string& filename, const std::string& inspectionName, unsigned long p_version, bool bColor)
 {
 	HRESULT hr = S_OK;
 	try
@@ -267,11 +268,11 @@ HRESULT SVInspectionExporter::Export(const SVString& filename, const SVString& i
 		hr = SVObjectManagerClass::Instance().GetObjectByDottedName(inspectionName.c_str(), pObject);
 		if (S_OK == hr)
 		{
-			SVString dstXmlFile = GetFilenameWithoutExt(filename);
+			std::string dstXmlFile = GetFilenameWithoutExt(filename);
 			dstXmlFile += scXmlExt;
-			SVString dstDependencyZipFile = GetFilenameWithoutExt(filename);
+			std::string dstDependencyZipFile = GetFilenameWithoutExt(filename);
 			dstDependencyZipFile += scDependentsZipExt;
-			SVString dstZipFile = GetFilenameWithoutExt(filename);
+			std::string dstZipFile = GetFilenameWithoutExt(filename);
 			dstZipFile += (bColor) ? scColorExportExt : scExportExt;
 
 			std::ofstream os;
@@ -302,7 +303,7 @@ HRESULT SVInspectionExporter::Export(const SVString& filename, const SVString& i
 				os.close();
 			}
 
-			SVStringSet FileNames;
+			SvDef::StringSet FileNames;
 			FileNames.insert( dstXmlFile );
 			FileNames.insert( dstDependencyZipFile );
 

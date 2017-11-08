@@ -30,6 +30,7 @@
 #include "ObjectInterfaces/IToolSet.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVObjectLibrary/DependencyManager.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -441,7 +442,7 @@ void SVTaskObjectClass::GetConnectedImages(SvUl::InputNameGuidPairList& rList, i
 					SvOi::ISVImage* pImage = dynamic_cast <SvOi::ISVImage*>(pObject);
 					if (nullptr != pImage)
 					{
-						SVString name = pImage->getDisplayedName();
+						std::string name = pImage->getDisplayedName();
 						rList.insert(std::make_pair(psvImageInfo->GetInputName(), std::make_pair(name, pObject->GetUniqueObjectID())));
 					}
 				}
@@ -476,7 +477,7 @@ void SVTaskObjectClass::GetInputs(SvUl::InputNameGuidPairList& rList, const SVOb
 					( SVNotSetSubObjectType == typeInfo.SubType || typeInfo.SubType == pInputInfo->GetInputObjectInfo().m_ObjectTypeInfo.SubType))) )
 		{
 			SvOi::IObjectClass* pObject = pInputInfo->GetInputObjectInfo().m_pObject;
-			SVString name = "";
+			std::string name = "";
 			SVGUID objectGUID = SV_GUID_NULL;
 			if (pInputInfo->IsConnected() && nullptr != pObject)
 			{
@@ -529,7 +530,7 @@ SvStl::MessageContainerVector SVTaskObjectClass::validateAndSetEmmeddedValues(co
 			if (S_OK != Result)
 			{
 				SvStl::MessageMgrStd Msg( SvStl::LogOnly );
-				SVStringVector msgList;
+				SvDef::StringVector msgList;
 				SvOi::IObjectClass* pObject = dynamic_cast<SvOi::IObjectClass*> (it->first);
 				if( nullptr != pObject )
 				{
@@ -693,7 +694,7 @@ SvOi::IObjectClass* SVTaskObjectClass::getFirstObject(const SVObjectTypeInfoStru
 	return Result;
 }
 
-void SVTaskObjectClass::OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName)
+void SVTaskObjectClass::OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName)
 {
 	for (size_t i = 0; i < m_friendList.size(); ++ i)
 	{
@@ -968,12 +969,12 @@ SvStl::MessageContainerVector SVTaskObjectClass::getErrorMessages() const
 
 struct CompareInputName
 {
-	SVString m_Name;
-	CompareInputName(const SVString& rName) : m_Name(rName) {}
+	std::string m_Name;
+	CompareInputName(const std::string& rName) : m_Name(rName) {}
 	bool operator()(const SVInObjectInfoStruct* pInfo) const { return pInfo->GetInputName() == m_Name; }
 };
 
-HRESULT SVTaskObjectClass::ConnectToObject(const SVString& rInputName, const SVGUID& newGUID, SVObjectTypeEnum objectType)
+HRESULT SVTaskObjectClass::ConnectToObject(const std::string& rInputName, const SVGUID& newGUID, SVObjectTypeEnum objectType)
 {
 	HRESULT hr = S_OK;
 
@@ -1025,7 +1026,7 @@ HRESULT SVTaskObjectClass::ConnectToObject( SVInObjectInfoStruct* p_psvInputInfo
 			if( !pNewObject->ConnectObjectInput( p_psvInputInfo) )
 			{
 				// Unable to connect to new input object....
-				SVStringVector msgList;
+				SvDef::StringVector msgList;
 				if( pNewObject )
 				{
 					msgList.push_back(pNewObject->GetName());
@@ -1241,7 +1242,7 @@ void SVTaskObjectClass::addDefaultInputObjects(SVInputInfoListClass* PInputListT
 
 bool SVTaskObjectClass::RegisterEmbeddedObject(SVImageClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, int StringResourceID)
 {
-	SVString Name = SvUl_SF::LoadSVString( StringResourceID );
+	std::string Name = SvUl::LoadStdString( StringResourceID );
 	return RegisterEmbeddedObject( pEmbeddedObject, rGuidEmbeddedID, Name.c_str() );
 }
 
@@ -1263,7 +1264,7 @@ bool SVTaskObjectClass::RegisterEmbeddedObject(SVImageClass* pEmbeddedObject, co
 //
 bool SVTaskObjectClass::RegisterEmbeddedObject( SVObjectClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, int StringResourceID, bool ResetAlways, SvOi::SVResetItemEnum RequiredReset )
 {
-	SVString Name = SvUl_SF::LoadSVString( StringResourceID );
+	std::string Name = SvUl::LoadStdString( StringResourceID );
 	return RegisterEmbeddedObject( pEmbeddedObject, rGuidEmbeddedID, Name.c_str(), ResetAlways, RequiredReset);
 }
 
@@ -1389,7 +1390,7 @@ SVTaskObjectClass::SVObjectPtrDeque SVTaskObjectClass::GetPostProcessObjects() c
 	return ObjectList;
 }
 
-bool SVTaskObjectClass::RegisterInputObject(SVInObjectInfoStruct* PInObjectInfo, const SVString& p_rInputName)
+bool SVTaskObjectClass::RegisterInputObject(SVInObjectInfoStruct* PInObjectInfo, const std::string& p_rInputName)
 {
 	if (PInObjectInfo)
 	{
@@ -1400,7 +1401,7 @@ bool SVTaskObjectClass::RegisterInputObject(SVInObjectInfoStruct* PInObjectInfo,
 			return true;
 		}
 
-		PInObjectInfo->SetInputName( SVString() );
+		PInObjectInfo->SetInputName( std::string() );
 	}
 	return false;
 }

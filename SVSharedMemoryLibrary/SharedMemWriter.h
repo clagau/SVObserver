@@ -16,7 +16,7 @@
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include  "SVMatroxLibrary/MatroxBuffer2D.h"
 #include "SVUtilityLibrary/SVGUID.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #include "SharedDataContainer.h"
 
 #pragma endregion Includes
@@ -60,11 +60,11 @@ namespace SvSml
 		void CalculateStoreIds();
 		void ClearMonitorListCpyVector(); //< clear m_MonitorListCpyVector
 		void Insert(MonitorListCpyPointer& MLCpyPtr);
-		DWORD GetInspectionImageSize(const SVString& InspName );
-		DWORD GetInspectionStoreId(const SVString& InspectionName);
-		const MonitorListCpy*  GetMonitorListCpyPointer(const SVString& Monitorlistname)  const;
-		const MonitorListCpy*  SharedMemWriter::GetMonitorListCpyPointerForPPQ(const SVString& PPQNAME)  const;
-		MonitorEntryPointer GetMonitorEntryPointer(const SVString& rname);
+		DWORD GetInspectionImageSize(const std::string& InspName );
+		DWORD GetInspectionStoreId(const std::string& InspectionName);
+		const MonitorListCpy*  GetMonitorListCpyPointer(const std::string& Monitorlistname)  const;
+		const MonitorListCpy*  SharedMemWriter::GetMonitorListCpyPointerForPPQ(const std::string& PPQNAME)  const;
+		MonitorEntryPointer GetMonitorEntryPointer(const std::string& rname);
 		void WriteMonitorList()  ;
 	private:
 		SharedMemWriter();

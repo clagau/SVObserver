@@ -32,6 +32,7 @@
 #include "SVObjectLibrary\GlobalConst.h"
 #include "SVObjectLibrary\SVObjectLibrary.h"
 #include "Definitions/SVUserMessage.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -53,13 +54,13 @@ SVVisionProcessorHelper& SVVisionProcessorHelper::Instance()
 SVVisionProcessorHelper::SVVisionProcessorHelper()
 {
 
-	m_GetItemsFunctors = (boost::assign::map_list_of< SVString, SVGetItemsFunctor >
+	m_GetItemsFunctors = (boost::assign::map_list_of<std::string, SVGetItemsFunctor>
 		(StandardItems, boost::bind(&SVVisionProcessorHelper::GetStandardItems, this, _1, _2))
 		(SvOl::FqnInspections, boost::bind(&SVVisionProcessorHelper::GetInspectionItems, this, _1, _2))
 		(SvOl::FqnRemoteInputs, boost::bind(&SVVisionProcessorHelper::GetRemoteInputItems, this, _1, _2))
 		).convert_to_container<SVGetItemsFunctorMap>() ;
 
-	m_SetItemsFunctors = (boost::assign::map_list_of< SVString, SVSetItemsFunctor >
+	m_SetItemsFunctors = (boost::assign::map_list_of<std::string, SVSetItemsFunctor>
 		(StandardItems, boost::bind(&SVVisionProcessorHelper::SetStandardItems, this, _1, _2))
 		(SvOl::FqnInspections, boost::bind(&SVVisionProcessorHelper::SetInspectionItems, this, _1, _2))
 		(SvOl::FqnRemoteInputs, boost::bind(&SVVisionProcessorHelper::SetRemoteInputItems, this, _1, _2))
@@ -82,7 +83,7 @@ HRESULT SVVisionProcessorHelper::GetVersion( unsigned long& rVersion ) const
 	return l_Status;
 }
 
-HRESULT SVVisionProcessorHelper::GetVersion( SVString& rVersion ) const
+HRESULT SVVisionProcessorHelper::GetVersion( std::string& rVersion ) const
 {
 	HRESULT l_Status = S_OK;
 
@@ -163,7 +164,7 @@ HRESULT SVVisionProcessorHelper::GetOfflineCount( unsigned long& rCount ) const
 	return l_Status;
 }
 
-HRESULT SVVisionProcessorHelper::LoadConfiguration( const SVString& rPackFileName )
+HRESULT SVVisionProcessorHelper::LoadConfiguration( const std::string& rPackFileName )
 {
 	DWORD notAllowedStates = SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING |
 		SV_STATE_CREATING | SV_STATE_LOADING | SV_STATE_SAVING | SV_STATE_CLOSING;
@@ -184,7 +185,7 @@ HRESULT SVVisionProcessorHelper::LoadConfiguration( const SVString& rPackFileNam
 	return l_Status;
 }
 
-HRESULT SVVisionProcessorHelper::SaveConfiguration( const SVString& rPackFileName ) const
+HRESULT SVVisionProcessorHelper::SaveConfiguration( const std::string& rPackFileName ) const
 {
 	DWORD notAllowedStates = SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING |
 		SV_STATE_CREATING | SV_STATE_LOADING | SV_STATE_SAVING | SV_STATE_CLOSING;
@@ -246,7 +247,7 @@ HRESULT SVVisionProcessorHelper::SetConfigurationMode( unsigned long p_Mode )
 	return l_Status;
 }
 
-HRESULT SVVisionProcessorHelper::GetConfigurationPrintReport( SVString& rReport ) const
+HRESULT SVVisionProcessorHelper::GetConfigurationPrintReport( std::string& rReport ) const
 {
 	HRESULT l_Status = S_OK;
 
@@ -267,7 +268,7 @@ HRESULT SVVisionProcessorHelper::GetConfigurationPrintReport( SVString& rReport 
 	return l_Status;
 }
 
-HRESULT SVVisionProcessorHelper::GetDataDefinitionList( const SVString& rInspectionName, const SVDataDefinitionListType& rListType, SVDataDefinitionStructArray& rDataDefinitionArray) const
+HRESULT SVVisionProcessorHelper::GetDataDefinitionList( const std::string& rInspectionName, const SVDataDefinitionListType& rListType, SVDataDefinitionStructArray& rDataDefinitionArray) const
 {
 	HRESULT l_Status = S_OK;
 	long l_ValueFilter = -1;
@@ -371,7 +372,7 @@ HRESULT SVVisionProcessorHelper::GetItems( const SVNameSet& rNames, SVNameStorag
 {
 	HRESULT l_Status = S_OK;
 
-	typedef std::map< SVString, SVNameSet > SVNameSetMap;
+	typedef std::map<std::string, SVNameSet> SVNameSetMap;
 	SVNameSetMap l_NameSets;
 
 	for( SVNameSet::const_iterator l_Iter = rNames.begin(); l_Iter != rNames.end(); ++l_Iter )
@@ -379,8 +380,8 @@ HRESULT SVVisionProcessorHelper::GetItems( const SVNameSet& rNames, SVNameStorag
 		SVObjectNameInfo l_Info;
 		
 		
-		const SVString* pInputName = &(*l_Iter);
-		SVString InputName;
+		const std::string* pInputName = &(*l_Iter);
+		std::string InputName;
 		
 		HRESULT l_LoopStatus = SVObjectNameInfo::ParseObjectName( l_Info, *pInputName );
 		
@@ -465,7 +466,7 @@ static bool IsRemoteInputRequest(const SVObjectNameInfo& rInfo, bool& bValidRemo
 		if (0 == pos)
 		{
 			bRemoteInput = true;
-			bValidRemoteInputRequest = (SVString(SvOl::FqnRemoteInputs) == rInfo.m_NameArray[0]);
+			bValidRemoteInputRequest = (std::string(SvOl::FqnRemoteInputs) == rInfo.m_NameArray[0]);
 		}
 	}
 	return bRemoteInput;
@@ -483,7 +484,7 @@ HRESULT SVVisionProcessorHelper::SetItems( const SVNameStorageMap& rItems, SVNam
 		
 	HRESULT l_Status = S_OK;
 
-	typedef std::map< SVString, SVNameStorageMap > SVStringNameStorageMap;
+	typedef std::map<std::string, SVNameStorageMap> SVStringNameStorageMap;
 	SVStringNameStorageMap l_NameStorageItems;
 
 	for( SVNameStorageMap::const_iterator l_Iter = rItems.begin(); l_Iter != rItems.end(); ++l_Iter )
@@ -492,7 +493,7 @@ HRESULT SVVisionProcessorHelper::SetItems( const SVNameStorageMap& rItems, SVNam
 
 		HRESULT l_LoopStatus = SVObjectNameInfo::ParseObjectName( l_Info, l_Iter->first );
 
-		const SVString* pInputName = &( l_Iter->first);
+		const std::string* pInputName = &( l_Iter->first);
 
 		if( S_OK == l_LoopStatus )
 		{
@@ -512,11 +513,11 @@ HRESULT SVVisionProcessorHelper::SetItems( const SVNameStorageMap& rItems, SVNam
 
 					if( l_FunctorIter != m_SetItemsFunctors.end() )
 					{
-						l_NameStorageItems[ l_FunctorIter->first ].insert( std::pair<SVString, SVStorage>(*pInputName,l_Iter->second)  );
+						l_NameStorageItems[ l_FunctorIter->first ].insert( std::pair<std::string, SVStorage>(*pInputName,l_Iter->second)  );
 					}
 					else
 					{
-						l_NameStorageItems[ StandardItems ].insert( std::pair<SVString, SVStorage>(*pInputName,l_Iter->second)  );;
+						l_NameStorageItems[ StandardItems ].insert( std::pair<std::string, SVStorage>(*pInputName,l_Iter->second)  );;
 					}
 				}
 			}
@@ -854,7 +855,7 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition( const SVObjectClass& rObje
 	l_bValueIncluded = l_bValueIncluded && ( (rObject.ObjectAttributesAllowed() & SvDef::SV_HIDDEN) == 0 );
 	if( l_bValueIncluded )
 	{
-		SVString Temp;
+		std::string Temp;
 		Temp = _T("Inspections.") + rObject.GetCompleteName();
 		rDataDef.m_Name = Temp;
 		rDataDef.m_Writable = (rObject.ObjectAttributesAllowed() & SvDef::SV_REMOTELY_SETABLE) == SvDef::SV_REMOTELY_SETABLE;
@@ -883,7 +884,7 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition( const SVObjectClass& rObje
 				l_pEnumVO->GetEnumTypes( l_EnumVect );
 				for( l_EnumIter = l_EnumVect.begin(); l_EnumIter != l_EnumVect.end(); l_EnumIter++)
 				{
-					rDataDef.m_AdditionalInfo.push_back( SVString(l_EnumIter->first) );
+					rDataDef.m_AdditionalInfo.push_back( std::string(l_EnumIter->first) );
 				}
 			}
 		}
@@ -893,8 +894,8 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition( const SVObjectClass& rObje
 			const SVBoolValueObjectClass* l_pBoolVO = dynamic_cast<const SVBoolValueObjectClass*> (&rObject);
 			if( nullptr != l_pBoolVO)
 			{
-				SVStringVector Types;
-				SVStringVector::iterator Iter;
+				SvDef::StringVector Types;
+				SvDef::StringVector::iterator Iter;
 				l_pBoolVO->GetValidTypes(Types);
 				for( Iter = Types.begin(); Iter != Types.end(); Iter++)
 				{
@@ -939,7 +940,7 @@ static void BuildNameSetForMonitoredObjectList( const MonitoredObjectList& rList
 {
 	for (MonitoredObjectList::const_iterator it = rList.begin();it != rList.end();++it)
 	{
-		const SVString& name = RemoteMonitorListHelper::GetNameFromMonitoredObject(*it);
+		const std::string& name = RemoteMonitorListHelper::GetNameFromMonitoredObject(*it);
 		if (!name.empty())
 		{
 			rNames.insert(name);
@@ -947,7 +948,7 @@ static void BuildNameSetForMonitoredObjectList( const MonitoredObjectList& rList
 	}
 }
 
-HRESULT SVVisionProcessorHelper::QueryProductList( const SVString& rListName, SVNameSet& rNames ) const
+HRESULT SVVisionProcessorHelper::QueryProductList( const std::string& rListName, SVNameSet& rNames ) const
 {
 	SVConfigurationObject* pConfig( nullptr );
 
@@ -974,7 +975,7 @@ HRESULT SVVisionProcessorHelper::QueryProductList( const SVString& rListName, SV
 	return hr;
 }
 
-HRESULT SVVisionProcessorHelper::QueryRejectCondList( const SVString& rListName, SVNameSet& rNames ) const
+HRESULT SVVisionProcessorHelper::QueryRejectCondList( const std::string& rListName, SVNameSet& rNames ) const
 {
 	SVConfigurationObject* pConfig = nullptr;
 
@@ -1000,7 +1001,7 @@ HRESULT SVVisionProcessorHelper::QueryRejectCondList( const SVString& rListName,
 	return hr;
 }
 
-HRESULT SVVisionProcessorHelper::QueryFailStatusList( const SVString& rListName, SVNameSet& rNames ) const
+HRESULT SVVisionProcessorHelper::QueryFailStatusList( const std::string& rListName, SVNameSet& rNames ) const
 {
 	SVConfigurationObject* pConfig = nullptr;
 
@@ -1027,7 +1028,7 @@ HRESULT SVVisionProcessorHelper::QueryFailStatusList( const SVString& rListName,
 }
 
 
-HRESULT SVVisionProcessorHelper::GetMonitorListProperties(const SVString& rListName, MonitorlistPropeties& properties)
+HRESULT SVVisionProcessorHelper::GetMonitorListProperties(const std::string& rListName, MonitorlistPropeties& properties)
 {
 	SVConfigurationObject* pConfig = nullptr;
 
@@ -1059,7 +1060,7 @@ HRESULT SVVisionProcessorHelper::GetMonitorListProperties(const SVString& rListN
 }
 
 
-HRESULT SVVisionProcessorHelper::ActivateMonitorList( const SVString& rListName, bool bActivate )
+HRESULT SVVisionProcessorHelper::ActivateMonitorList( const std::string& rListName, bool bActivate )
 {
 	HRESULT hr = S_OK;
 	DWORD notAllowedStates = SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | 
@@ -1130,7 +1131,7 @@ HRESULT SVVisionProcessorHelper::QueryMonitorListNames( SVNameSet& rNames ) cons
 	return hr;
 }
 
-HRESULT SVVisionProcessorHelper::SetProductFilter(const SVString& rListName, SvSml::SVProductFilterEnum filter) 
+HRESULT SVVisionProcessorHelper::SetProductFilter(const std::string& rListName, SvSml::SVProductFilterEnum filter) 
 {
 	
 	
@@ -1155,7 +1156,7 @@ HRESULT SVVisionProcessorHelper::SetProductFilter(const SVString& rListName, SvS
 	return  hr;
 }
 
-HRESULT SVVisionProcessorHelper::GetProductFilter(const SVString& rListName, SvSml::SVProductFilterEnum& rFilter) const
+HRESULT SVVisionProcessorHelper::GetProductFilter(const std::string& rListName, SvSml::SVProductFilterEnum& rFilter) const
 {
 	SVConfigurationObject* pConfig = nullptr;
 
@@ -1171,7 +1172,7 @@ HRESULT SVVisionProcessorHelper::GetProductFilter(const SVString& rListName, SvS
 	return  hr;
 }
 
-HRESULT SVVisionProcessorHelper::RegisterMonitorList( const SVString& rListName, const SVString& rPPQName, int rejectDepth, const SVNameSet& rProdList, const SVNameSet& rRejectCondList, const SVNameSet& rFailStatusList, SVNameStatusMap& rStatusOfItemsWithError )
+HRESULT SVVisionProcessorHelper::RegisterMonitorList( const std::string& rListName, const std::string& rPPQName, int rejectDepth, const SVNameSet& rProdList, const SVNameSet& rRejectCondList, const SVNameSet& rFailStatusList, SVNameStatusMap& rStatusOfItemsWithError )
 {
 	HRESULT hr = S_OK;
 	DWORD notAllowedStates = SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | 

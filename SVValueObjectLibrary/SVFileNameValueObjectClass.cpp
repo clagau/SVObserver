@@ -17,7 +17,7 @@
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "SVSystemLibrary/SVFileNameManagerClass.h"
-#include "SVUtilityLibrary/SVStringConversions.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "Definitions/TextDefineSVDef.h"
 #pragma endregion Includes
 
@@ -31,19 +31,19 @@ static char THIS_FILE[] = __FILE__;
 SV_IMPLEMENT_CLASS(SVFileNameValueObjectClass, SVFileNameValueObjectClassGuid);
 
 SVFileNameValueObjectClass::SVFileNameValueObjectClass( LPCTSTR ObjectName )
-: SVValueObjectClass<SVString>( ObjectName )
+: SVValueObjectClass<std::string>( ObjectName )
 {
 	LocalInitialize();
 }
 
 SVFileNameValueObjectClass::SVFileNameValueObjectClass(	SVObjectClass* pOwner, 	int StringResourceID )
-: SVValueObjectClass<SVString>( pOwner, StringResourceID )
+: SVValueObjectClass<std::string>( pOwner, StringResourceID )
 {
 	LocalInitialize();
 }
 
 SVFileNameValueObjectClass::SVFileNameValueObjectClass( const SVFileNameValueObjectClass& rhs)
-: SVValueObjectClass<SVString>()
+: SVValueObjectClass<std::string>()
 {
 	LocalInitialize();
 	*this = rhs;
@@ -125,7 +125,7 @@ HRESULT SVFileNameValueObjectClass::SetObjectValue(SVObjectAttributeClass* pData
 			}
 		}
 		//! Note this is required to set the path correctly as it calls the SetValue version of SVFileNameValueObjectClass
-		SVString  Value;
+		std::string  Value;
 		GetValue(Value);
 		SetValue(Value);
 	}
@@ -151,7 +151,7 @@ HRESULT SVFileNameValueObjectClass::SetObjectValue(SVObjectAttributeClass* pData
 			}
 		}
 		//! Note this is required to set the path correctly as it calls the SetValue version of SVFileNameValueObjectClass
-		SVString  Value;
+		std::string  Value;
 		GetValue(Value);
 		SetValue(Value);
 	}
@@ -204,7 +204,7 @@ HRESULT SVFileNameValueObjectClass::SetObjectValue(SVObjectAttributeClass* pData
 			}
 		}
 		//! Note this is required to set the path correctly as it calls the SetValue version of SVFileNameValueObjectClass
-		SVString  Value;
+		std::string  Value;
 		GetValue(Value);
 		SetValue(Value);
 	}
@@ -218,7 +218,7 @@ HRESULT SVFileNameValueObjectClass::SetObjectValue(SVObjectAttributeClass* pData
 	return Result;
 }
 
-HRESULT SVFileNameValueObjectClass::SetValue( const SVString& rValue, int Index /*= -1*/ )
+HRESULT SVFileNameValueObjectClass::SetValue( const std::string& rValue, int Index /*= -1*/ )
 {
 	HRESULT Result = ValidateIndex(Index);
 
@@ -232,14 +232,14 @@ HRESULT SVFileNameValueObjectClass::SetValue( const SVString& rValue, int Index 
 	return Result;
 }
 
-HRESULT SVFileNameValueObjectClass::SetDefaultValue( const SVString& rValue, bool bResetAll )
+HRESULT SVFileNameValueObjectClass::SetDefaultValue( const std::string& rValue, bool bResetAll )
 {
 	m_FileName.SetDefaultFullFileName( rValue.c_str() );
 	
 	return __super::SetDefaultValue( rValue, bResetAll );
 }
 
-SVString SVFileNameValueObjectClass::ConvertString2Type( const SVString& rValue ) const
+std::string SVFileNameValueObjectClass::ConvertString2Type( const std::string& rValue ) const
 {
 	return rValue;
 }
@@ -250,7 +250,7 @@ HRESULT SVFileNameValueObjectClass::CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD 
 
 	if (S_OK == Result)
 	{
-		SVString Value;
+		std::string Value;
 		SVFileNameValueObjectClass::GetValue(Value, Index);
 		//! For strings the memory hast to first be cleared
 		memset(pMemoryBlock, 0, GetByteSize());
@@ -269,7 +269,7 @@ void SVFileNameValueObjectClass::WriteValues(SVObjectWriter& rWriter)
 	SVVariantList list;
 
 	// Get the Data Values (Member Info, Values)
-	SVString TempValue(_T(""));
+	std::string TempValue(_T(""));
 	_variant_t Value;
 	Value.Clear();
 
@@ -287,7 +287,7 @@ void SVFileNameValueObjectClass::WriteValues(SVObjectWriter& rWriter)
 
 void SVFileNameValueObjectClass::WriteDefaultValues(SVObjectWriter& rWriter)
 {
-	SVString TempValue(GetDefaultValue());
+	std::string TempValue(GetDefaultValue());
 	_variant_t Value;
 	Value.SetString(TempValue.c_str());
 	rWriter.WriteAttribute(scDefaultTag, Value);

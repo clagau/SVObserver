@@ -15,8 +15,8 @@
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <set>
 //Moved to precompiled header: #include <utility>
-#include "SVUtilityLibrary/SVString.h"
 #include "SVAcquisitionClass.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 namespace SvTh
@@ -37,7 +37,7 @@ public:
 
 	HRESULT UpdateDigitizerSubsystem( SvTh::SVDigitizerLoadLibraryClass* pDigitizerSubsystem );
 
-	HRESULT GetAcquisitionDeviceList( SVStringVector& rList ) const;
+	HRESULT GetAcquisitionDeviceList( SvDef::StringVector& rList ) const;
 
 	bool IsValidDigitizerSubsystem( LPCTSTR digitizerName ) const;
 	SvTh::SVDigitizerLoadLibraryClass* GetDigitizerSubsystem( LPCTSTR digitizerName ) const;
@@ -67,14 +67,14 @@ public:
 	//! \param CameraIndex <in> camera index
 	//! \returns the acquisition name as a string
 	//************************************
-	SVString GetReOrderedCamera( int CameraIndex ) const;
+	std::string GetReOrderedCamera( int CameraIndex ) const;
 
 	//************************************
 	//! The method is used to get the acquisition device name from the IP Address
 	//! \param CameraIPAddress <in> the camera IP address
 	//! \returns the acquisition name as a string
 	//************************************
-	SVString GetReOrderedCamera( LPCTSTR CameraIPAddress ) const;
+	std::string GetReOrderedCamera( LPCTSTR CameraIPAddress ) const;
 
 	//************************************
 	//! The method is used to get the digitizer ID name from the camera index
@@ -92,9 +92,9 @@ public:
 private:
 	SVDigitizerProcessingClass();
 
-	typedef std::set< SvTh::SVDigitizerLoadLibraryClass* > SVDigitizerSubsystemSet;
-	typedef std::map< SVString, SVAcquisitionClassPtr > SVNameDigitizerMap;
-	typedef std::map< SVString, SvTh::SVDigitizerLoadLibraryClass* > SVNameDigitizerSubsystemMap;
+	typedef std::set<SvTh::SVDigitizerLoadLibraryClass*> SVDigitizerSubsystemSet;
+	typedef std::map<std::string, SVAcquisitionClassPtr> SVNameDigitizerMap;
+	typedef std::map<std::string, SvTh::SVDigitizerLoadLibraryClass*> SVNameDigitizerSubsystemMap;
 
 	HRESULT AddDigitizer( LPCTSTR Name, LPCTSTR AcquisitionName, SvTh::SVDigitizerLoadLibraryClass* pDigitizerSubsystem, unsigned long p_Handle );
 

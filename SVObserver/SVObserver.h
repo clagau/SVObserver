@@ -25,7 +25,6 @@
 #include "SVIOTabbedView.h"
 #include "SVSystemLibrary/SVObserverEnums.h"
 #include "Definitions/SVPPQEnums.h"
-#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -197,10 +196,10 @@ public:
 
 	HRESULT  LoadConfiguration( unsigned long& ulSVOConfigVersion, BSTR bstrFileName, SVTreeType& p_rTree);
 
-	SVString GetConfigurationName() const;
+	std::string GetConfigurationName() const;
 	
-	HRESULT LoadPackedConfiguration( const SVString& p_rPackedFileName );
-	HRESULT SavePackedConfiguration( const SVString& p_rPackedFileName );
+	HRESULT LoadPackedConfiguration( const std::string& p_rPackedFileName );
+	HRESULT SavePackedConfiguration( const std::string& p_rPackedFileName );
 
 	SVMainFrame* GetMainFrame() const;
 	HRESULT CanCloseMainFrame();
@@ -220,20 +219,20 @@ public:
 	void ValidateMRUList();
 
 	void ResetAllCounts();
-	bool AddMenuItem(HMENU hTargetMenu, const SVString& itemText, UINT itemID);
-	bool RemoveMenu(HMENU hTargetMenu,  const SVString& itemText);
+	bool AddMenuItem(HMENU hTargetMenu, const std::string& itemText, UINT itemID);
+	bool RemoveMenu(HMENU hTargetMenu,  const std::string& itemText);
 	HRESULT SetMode( unsigned long p_lNewMode );
 	HRESULT LoadConfiguration();
 
-	HRESULT OnObjectRenamed( const SVString& p_rOldName, const SVGUID& p_rObjectId );
+	HRESULT OnObjectRenamed( const std::string& p_rOldName, const SVGUID& p_rObjectId );
 	HRESULT RebuildOutputList();
 	bool SetStatusText( LPCTSTR PStrStatusText );
 	void UpdatePPQBar();
 
-	const SVString& getConfigFileNameOnly() const;
-	const SVString& getConfigPathName() const;
-	const SVString& getConfigFileName() const;
-	const SVString& getConfigFullFileName() const;
+	const std::string& getConfigFileNameOnly() const;
+	const std::string& getConfigPathName() const;
+	const std::string& getConfigFileName() const;
+	const std::string& getConfigFullFileName() const;
 	bool setConfigFullFileName(LPCTSTR csFullFileName, DWORD bLoadFile = TRUE);
 
 	SVIPDoc* GetIPDoc( const SVGUID& rInspectionID ) const;
@@ -270,7 +269,7 @@ public:
 
 	HRESULT SetModeEdit( bool p_bState );
 	void SetTestMode(bool p_bNoSecurity = false);
-	HRESULT GetTriggersAndCounts( SVString& rTriggerCounts ) const;
+	HRESULT GetTriggersAndCounts( std::string& rTriggerCounts ) const;
 
 	void RefreshAllIPDocuments();
 	void RunAllIPDocuments();
@@ -285,11 +284,11 @@ public:
 	void ShowIOTab( DWORD p_dwID );
 	void UpdateRemoteInputTabs();
 
-	HRESULT CheckDrive(const SVString& p_strDrive) const;
+	HRESULT CheckDrive(const std::string& p_strDrive) const;
 	//Arvid 150202: made this public because it is needed by ExtrasEngine
 	//Arvid 150206: added parameter resetModifiedState so the main Modify flag is not changed when called during auto save
 	//Arvid 150610: isRegularSave is currently false only for AutoSaves
-	void fileSaveAsSVX( SVString StrSaveAsPathName = _T( "" ) ,bool isAutoSave=false );
+	void fileSaveAsSVX( std::string StrSaveAsPathName = _T( "" ) ,bool isAutoSave=false );
 
 
 #pragma region Encapsulation Methods
@@ -392,12 +391,12 @@ private:
 	// The Standard Configuration Execution Directory
 	// PN -> Path Name
 	LPCTSTR m_ConfigExePNVariableName;
-	SVString m_ConfigExePNVariableValue;
+	std::string m_ConfigExePNVariableValue;
 
 	// The Standard Last Valid Configuration Directory
 	// PN -> Path Name
 	LPCTSTR m_LastValidConfigPNVariableName;
-	SVString m_LastValidConfigPNVariableValue;
+	std::string m_LastValidConfigPNVariableValue;
 
 	long m_lSouceImageDepth;
 	long m_lResultImageDepth;

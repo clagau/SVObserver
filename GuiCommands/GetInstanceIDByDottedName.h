@@ -11,14 +11,14 @@
 //Moved to precompiled header: #include <boost/noncopyable.hpp>
 //Moved to precompiled header: #include <Guiddef.h>
 #include "ObjectInterfaces/IObjectManager.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 namespace SvCmd
 {
 	struct GetInstanceIDFromDottedName : public boost::noncopyable
 	{
-		GetInstanceIDFromDottedName(const SVString& rName) : m_Name(rName), m_InstanceID(GUID_NULL) {}
+		GetInstanceIDFromDottedName(const std::string& rName) : m_Name(rName), m_InstanceID(GUID_NULL) {}
 
 		// This method is where the real separation would occur by using sockets/named pipes/shared memory
 		// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
@@ -42,7 +42,7 @@ namespace SvCmd
 		const GUID& GetInstanceID() const { return m_InstanceID; }
 
 	private:
-		SVString m_Name;
+		std::string m_Name;
 		GUID m_InstanceID;
 	};
 } //namespace SvCmd

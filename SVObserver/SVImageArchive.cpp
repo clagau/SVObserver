@@ -15,6 +15,7 @@
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVObserver.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVOCore/SVImageClass.h"
 #include "SVOCore/SVImageObjectClass.h"
 #pragma endregion Includes
@@ -27,21 +28,21 @@ static char THIS_FILE[]=__FILE__;
 
 SVImageArchiveClass::SVImageArchiveClass()
 {
-	Init( SVString(_T("")) );
+	Init( std::string(_T("")) );
 }
 
-SVImageArchiveClass::SVImageArchiveClass(const SVString& rFileName)
+SVImageArchiveClass::SVImageArchiveClass(const std::string& rFileName)
 {
 	Init( rFileName );
 }
 
-void SVImageArchiveClass::Init( const SVString& rFileName )
+void SVImageArchiveClass::Init( const std::string& rFileName )
 {
 	SetImageArchiveFileTemplate(rFileName);
 	m_CurrentFileName.clear();
-	m_ImageArchivePath = SVString( TheSVObserverApp.getConfigPathName() ) + "\\";
+	m_ImageArchivePath = std::string( TheSVObserverApp.getConfigPathName() ) + "\\";
 	m_ImageArchivePath += TheSVObserverApp.getConfigFileNameOnly();
-	if ( m_ImageArchivePath.empty() || SvUl_SF::Right( m_ImageArchivePath, 1) != _T("\\") )
+	if ( m_ImageArchivePath.empty() || SvUl::Right( m_ImageArchivePath, 1) != _T("\\") )
 	{
 		m_ImageArchivePath += _T('\\');
 	}
@@ -53,16 +54,16 @@ SVImageArchiveClass::~SVImageArchiveClass()
 {
 }
 
-void SVImageArchiveClass::SetImageArchiveFileTemplate( const SVString& rTemplate )
+void SVImageArchiveClass::SetImageArchiveFileTemplate( const std::string& rTemplate )
 {
 	m_ArchiveFileTemplate = rTemplate;
-	SvUl_SF::searchAndReplace( m_ArchiveFileTemplate, _T("."), _T("_") );
+	SvUl::searchAndReplace( m_ArchiveFileTemplate, _T("."), _T("_") );
 }
 
-void SVImageArchiveClass::SetImageArchivePath( const SVString& rPath )
+void SVImageArchiveClass::SetImageArchivePath( const std::string& rPath )
 {
 	m_ImageArchivePath = rPath;
-	if ( m_ImageArchivePath.empty() || SvUl_SF::Right( m_ImageArchivePath, 1) != _T("\\") )
+	if ( m_ImageArchivePath.empty() || SvUl::Right( m_ImageArchivePath, 1) != _T("\\") )
 	{
 		m_ImageArchivePath += _T('\\');
 	}
@@ -80,18 +81,18 @@ DWORD SVImageArchiveClass::ResetFileNumber()
 
 DWORD SVImageArchiveClass::NextFileName()
 {
-	SVString FormatString;
+	std::string FormatString;
 
 	FormatString = m_ArchiveFileTemplate;
 	FormatString += _T("__%06.6d.bmp");
-	m_CurrentFileName = SvUl_SF::Format(FormatString.c_str(), m_FileNumber);
+	m_CurrentFileName = SvUl::Format(FormatString.c_str(), m_FileNumber);
 	return m_FileNumber++;
 }
 
 bool SVImageArchiveClass::LoadImageArchiveFile( SVSmartHandlePointer p_HandlePtr )
 {
 	SVFileNameClass svFileName;
-	SVString FileName;
+	std::string FileName;
 	HCURSOR hCursor;
 	
 	HRESULT MatroxCode(S_OK);
@@ -175,7 +176,7 @@ bool SVImageArchiveClass::LoadImageArchiveFile( SVImageObjectClassPtr p_Acquisit
 	return bRetValue;
 }
 
-bool SVImageArchiveClass::ImageArchiveFileExists( const SVString &rFileName)
+bool SVImageArchiveClass::ImageArchiveFileExists( const std::string &rFileName)
 {
 	return (0 == ::_access( rFileName.c_str(), 0 ) );
 }

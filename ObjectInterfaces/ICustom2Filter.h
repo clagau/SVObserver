@@ -8,7 +8,7 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
-#include "SVUtilityLibrary\SVString.h"
+
 #pragma endregion Includes
 
 namespace SvOi
@@ -39,7 +39,7 @@ namespace SvOi
 	/// \param kernelArray [out]
 	/// \returns HRESULT
 	//************************************
-	HRESULT importCustom2Filter(const SVString &filePath,
+	HRESULT importCustom2Filter(const std::string &filePath,
 		long &kernelWidth, 
 		long &kernelHeight, 
 		long &normalizationFactor, 
@@ -59,7 +59,7 @@ namespace SvOi
 	/// \param kernelIteratorEnd [in]
 	/// \returns void
 	//************************************
-	void exportCustom2Filter(const SVString &filePath, 
+	void exportCustom2Filter(const std::string &filePath, 
 		long kernelWidth, 
 		long kernelHeight, 
 		long normalizationFactor, 

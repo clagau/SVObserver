@@ -26,6 +26,7 @@
 #include "SVImageProcessingClass.h"
 #include "SVPolarTransformationTool.h"
 #include "SVObjectLibrary/SVClsIds.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 double SVImagePolarTransformClass::g_dMaxAngularDistance  = 720.0;
@@ -58,46 +59,46 @@ SVImagePolarTransformClass::SVImagePolarTransformClass( SVObjectClass* POwner, i
 	RegisterEmbeddedObject( &outputImageObject, SVOutputImageObjectGuid, IDS_OBJECTNAME_IMAGE1 );
 	
 	// Prepare known interpolation types...
-	SVString Enable = SvUl_SF::LoadSVString( IDS_ENABLE_STRING );
-	SVString Disable = SvUl_SF::LoadSVString( IDS_DISABLE_STRING );
-	SVString Overscan = SvUl_SF::LoadSVString( IDS_OVERSCAN_STRING );
-	SVString OverscanClear = SvUl_SF::LoadSVString( IDS_OVERSCAN_CLEAR_STRING );
+	std::string Enable = SvUl::LoadStdString( IDS_ENABLE_STRING );
+	std::string Disable = SvUl::LoadStdString( IDS_DISABLE_STRING );
+	std::string Overscan = SvUl::LoadStdString( IDS_OVERSCAN_STRING );
+	std::string OverscanClear = SvUl::LoadStdString( IDS_OVERSCAN_CLEAR_STRING );
 
-	SVString Mode;
-	SVString Text;
-	SVString EnumTypes;
+	std::string Mode;
+	std::string Text;
+	std::string EnumTypes;
 
 	// M_NEAREST_NEIGHBOR + M_OVERSCAN_ENABLE
-	Mode = SvUl_SF::LoadSVString( IDS_NEAREST_NEIGHBOR_STRING );
-	Text = SvUl_SF::Format( _T("%s+%s %s=%d,"), Mode.c_str(), Overscan.c_str(), Enable.c_str(), SVNearestNeighOverScanEnable ); // M_NEAREST_NEIGHBOR + M_OVERSCAN_ENABLE );
+	Mode = SvUl::LoadStdString( IDS_NEAREST_NEIGHBOR_STRING );
+	Text = SvUl::Format( _T("%s+%s %s=%d,"), Mode.c_str(), Overscan.c_str(), Enable.c_str(), SVNearestNeighOverScanEnable ); // M_NEAREST_NEIGHBOR + M_OVERSCAN_ENABLE );
 	EnumTypes += Text;
 	// M_NEAREST_NEIGHBOR + M_OVERSCAN_DISABLE
-	Text = SvUl_SF::Format( _T("%s+%s %s=%d,"), Mode.c_str(), Overscan.c_str(), Disable.c_str(), SVNearestNeighOverScanDisable ); // M_NEAREST_NEIGHBOR + M_OVERSCAN_DISABLE );
+	Text = SvUl::Format( _T("%s+%s %s=%d,"), Mode.c_str(), Overscan.c_str(), Disable.c_str(), SVNearestNeighOverScanDisable ); // M_NEAREST_NEIGHBOR + M_OVERSCAN_DISABLE );
 	EnumTypes += Text;
 	// M_NEAREST_NEIGHBOR + M_OVERSCAN_CLEAR
-	Text = SvUl_SF::Format( _T("%s+%s=%d,"), Mode.c_str(), OverscanClear.c_str(), SVNearestNeighOverScanClear ); // M_NEAREST_NEIGHBOR + M_OVERSCAN_CLEAR );
+	Text = SvUl::Format( _T("%s+%s=%d,"), Mode.c_str(), OverscanClear.c_str(), SVNearestNeighOverScanClear ); // M_NEAREST_NEIGHBOR + M_OVERSCAN_CLEAR );
 	EnumTypes += Text;
 
 	// M_BILINEAR + M_OVERSCAN_ENABLE
-	Mode = SvUl_SF::LoadSVString( IDS_BILINEAR_STRING );
-	Text = SvUl_SF::Format( _T("%s+%s %s=%d,"), Mode.c_str(), Overscan.c_str(), Enable.c_str(), SVBilinearOverScanEnable ); // M_BILINEAR + M_OVERSCAN_ENABLE );
+	Mode = SvUl::LoadStdString( IDS_BILINEAR_STRING );
+	Text = SvUl::Format( _T("%s+%s %s=%d,"), Mode.c_str(), Overscan.c_str(), Enable.c_str(), SVBilinearOverScanEnable ); // M_BILINEAR + M_OVERSCAN_ENABLE );
 	EnumTypes += Text;
 	// M_BILINEAR + M_OVERSCAN_DISABLE
-	Text = SvUl_SF::Format( _T("%s+%s %s=%d,"), Mode.c_str(), Overscan.c_str(), Disable.c_str(), SVBilinearOverScanClear ); // M_BILINEAR + M_OVERSCAN_DISABLE );
+	Text = SvUl::Format( _T("%s+%s %s=%d,"), Mode.c_str(), Overscan.c_str(), Disable.c_str(), SVBilinearOverScanClear ); // M_BILINEAR + M_OVERSCAN_DISABLE );
 	EnumTypes += Text;
 	// M_BILINEAR + M_OVERSCAN_CLEAR
-	Text = SvUl_SF::Format( _T("%s+%s=%d,"), Mode.c_str(), OverscanClear.c_str(), SVBilinearOverScanClear ); // M_BILINEAR + M_OVERSCAN_CLEAR );
+	Text = SvUl::Format( _T("%s+%s=%d,"), Mode.c_str(), OverscanClear.c_str(), SVBilinearOverScanClear ); // M_BILINEAR + M_OVERSCAN_CLEAR );
 	EnumTypes += Text;
 
 	// M_BICUBIC + M_OVERSCAN_ENABLE
-	Mode = SvUl_SF::LoadSVString( IDS_BICUBIC_STRING );
-	Text = SvUl_SF::Format( _T("%s+%s %s=%d,"), Mode.c_str(), Overscan.c_str(), Enable.c_str(), SVBiCubicOverScanEnable ); // M_BICUBIC + M_OVERSCAN_ENABLE );
+	Mode = SvUl::LoadStdString( IDS_BICUBIC_STRING );
+	Text = SvUl::Format( _T("%s+%s %s=%d,"), Mode.c_str(), Overscan.c_str(), Enable.c_str(), SVBiCubicOverScanEnable ); // M_BICUBIC + M_OVERSCAN_ENABLE );
 	EnumTypes += Text;
 	// M_BICUBIC + M_OVERSCAN_DISABLE
-	Text = SvUl_SF::Format( _T("%s+%s %s=%d,"), Mode.c_str(), Overscan.c_str(), Disable.c_str(), SVBiCubicOverScanDisable ); // M_BICUBIC + M_OVERSCAN_DISABLE );
+	Text = SvUl::Format( _T("%s+%s %s=%d,"), Mode.c_str(), Overscan.c_str(), Disable.c_str(), SVBiCubicOverScanDisable ); // M_BICUBIC + M_OVERSCAN_DISABLE );
 	EnumTypes += Text;
 	// M_BICUBIC + M_OVERSCAN_CLEAR
-	Text = SvUl_SF::Format( _T("%s+%s=%d,"), Mode.c_str(), OverscanClear.c_str(), SVBiCubicOverScanClear ); // M_BICUBIC + M_OVERSCAN_CLEAR );
+	Text = SvUl::Format( _T("%s+%s=%d,"), Mode.c_str(), OverscanClear.c_str(), SVBiCubicOverScanClear ); // M_BICUBIC + M_OVERSCAN_CLEAR );
 	EnumTypes += Text;
 
 	// And now set enum types...
@@ -216,7 +217,7 @@ bool SVImagePolarTransformClass::SetDefaultFormulas(SvStl::MessageContainerVecto
 	{
 		// Find equation object...
 		SVEquationClass* pEquation = dynamic_cast<SVEquationClass*>(pEvaluateCenterX->getFirstObject(equationObjectInfo));
-		SVString Name = m_centerX.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
+		std::string Name = m_centerX.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
 		bOk = SetDefaultEquation( pEquation, Name, pErrorMessages );
 	}
 	if( ! bOk )
@@ -232,7 +233,7 @@ bool SVImagePolarTransformClass::SetDefaultFormulas(SvStl::MessageContainerVecto
 	{
 		// Find equation object...
 		SVEquationClass* pEquation = dynamic_cast<SVEquationClass*>(pEvaluateCenterY->getFirstObject(equationObjectInfo));
-		SVString Name = m_centerY.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
+		std::string Name = m_centerY.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
 		bOk = SetDefaultEquation( pEquation, Name, pErrorMessages );
 	}
 	if( ! bOk )
@@ -248,7 +249,7 @@ bool SVImagePolarTransformClass::SetDefaultFormulas(SvStl::MessageContainerVecto
 	{
 		// Find equation object...
 		SVEquationClass* pEquation = dynamic_cast<SVEquationClass*>(pEvaluateStartRadius->getFirstObject(equationObjectInfo));
-		SVString Name = m_startRadius.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
+		std::string Name = m_startRadius.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
 		bOk = SetDefaultEquation( pEquation, Name, pErrorMessages );
 	}
 	if( ! bOk )
@@ -264,7 +265,7 @@ bool SVImagePolarTransformClass::SetDefaultFormulas(SvStl::MessageContainerVecto
 	{
 		// Find equation object...
 		SVEquationClass* pEquation = dynamic_cast<SVEquationClass*>(pEvaluateEndRadius->getFirstObject(equationObjectInfo));
-		SVString Name = m_endRadius.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
+		std::string Name = m_endRadius.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
 		bOk = SetDefaultEquation( pEquation, Name, pErrorMessages );
 	}
 	if( ! bOk )
@@ -280,7 +281,7 @@ bool SVImagePolarTransformClass::SetDefaultFormulas(SvStl::MessageContainerVecto
 	{
 		// Find equation object...
 		SVEquationClass* pEquation = dynamic_cast<SVEquationClass*>(pEvaluateStartAngle->getFirstObject(equationObjectInfo));
-		SVString Name = m_startAngle.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
+		std::string Name = m_startAngle.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
 		bOk = SetDefaultEquation( pEquation, Name, pErrorMessages );
 	}
 	if( ! bOk )
@@ -296,7 +297,7 @@ bool SVImagePolarTransformClass::SetDefaultFormulas(SvStl::MessageContainerVecto
 	{
 		// Find equation object...
 		SVEquationClass* pEquation = dynamic_cast<SVEquationClass*>(pEvaluateEndAngle->getFirstObject(equationObjectInfo));
-		SVString Name = m_endAngle.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
+		std::string Name = m_endAngle.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
 		bOk = SetDefaultEquation( pEquation, Name, pErrorMessages );
 	}
 	if( ! bOk )
@@ -307,7 +308,7 @@ bool SVImagePolarTransformClass::SetDefaultFormulas(SvStl::MessageContainerVecto
 	return bRetVal;
 }
 
-bool SVImagePolarTransformClass::SetDefaultEquation( SVEquationClass* pEquation, const SVString& rName, SvStl::MessageContainerVector *pErrorMessages )
+bool SVImagePolarTransformClass::SetDefaultEquation( SVEquationClass* pEquation, const std::string& rName, SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool Result( false );
 
@@ -317,12 +318,12 @@ bool SVImagePolarTransformClass::SetDefaultEquation( SVEquationClass* pEquation,
 		if( ! rName.empty() )
 		{
 			// Set equation...
-			pEquation->SetEquationText( SvUl_SF::Format( _T( "\"%s\"" ), rName.c_str() ) );
+			pEquation->SetEquationText( SvUl::Format( _T( "\"%s\"" ), rName.c_str() ) );
 			// Update symbol table and test...
 			if( ! ( Result = pEquation->Test(pErrorMessages).bPassed ) )
 			{
 				// something is wrong...
-				pEquation->SetEquationText( SVString() );
+				pEquation->SetEquationText( std::string() );
 			}
 		}
 	}
@@ -815,7 +816,7 @@ HRESULT SVImagePolarTransformClass::CollectInputImageNames()
 	SVPolarTransformationToolClass* pTool = dynamic_cast<SVPolarTransformationToolClass*>(GetTool());
 	if( l_pInputImage && pTool )
 	{
-		SVString Name = l_pInputImage->GetCompleteName();
+		std::string Name = l_pInputImage->GetCompleteName();
 
 		pTool->m_SourceImageNames.SetValue(Name);
 

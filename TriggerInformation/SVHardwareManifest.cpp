@@ -18,6 +18,7 @@
 //Moved to precompiled header: #include <set>
 #include "SVOResource/resource.h"
 #include "SVHardwareManifest.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 static const TCHAR* const SVIM_TRIGGER_SOURCE_IO_BOARD_STRING = _T("IO_Board_1");
@@ -150,19 +151,19 @@ namespace SvTi
 		return SVIMTypeInfoStruct(false, 0, 0);
 	}
 
-	SVString SVHardwareManifest::BuildSoftwareTriggerDeviceName(int iDig)
+	std::string SVHardwareManifest::BuildSoftwareTriggerDeviceName(int iDig)
 	{
-		return SvUl_SF::Format("%s%s%d", SVIM_SOFTWARE_TRIGGER_SOURCE_STRING, SVIM_DIG_NAME_STRING, iDig);
+		return SvUl::Format("%s%s%d", SVIM_SOFTWARE_TRIGGER_SOURCE_STRING, SVIM_DIG_NAME_STRING, iDig);
 	}
 
-	SVString SVHardwareManifest::BuildAcquisitionTriggerDeviceName(int iDig)
+	std::string SVHardwareManifest::BuildAcquisitionTriggerDeviceName(int iDig)
 	{
-		return SvUl_SF::Format("%s%s%d", SVIM_CAMERA_TRIGGER_SOURCE_STRING, SVIM_DIG_NAME_STRING, iDig);
+		return SvUl::Format("%s%s%d", SVIM_CAMERA_TRIGGER_SOURCE_STRING, SVIM_DIG_NAME_STRING, iDig);
 	}
 
-	SVString SVHardwareManifest::BuildIOBoardTriggerDeviceName(int iDig)
+	std::string SVHardwareManifest::BuildIOBoardTriggerDeviceName(int iDig)
 	{
-		return SvUl_SF::Format("%s%s%d", SVIM_TRIGGER_SOURCE_IO_BOARD_STRING, SVIM_DIG_NAME_STRING, iDig);
+		return SvUl::Format("%s%s%d", SVIM_TRIGGER_SOURCE_IO_BOARD_STRING, SVIM_DIG_NAME_STRING, iDig);
 	}
 
 	bool SVHardwareManifest::IsValidProductType(SVIMProductEnum productType )

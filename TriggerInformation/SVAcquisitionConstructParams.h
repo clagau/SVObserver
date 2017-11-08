@@ -14,7 +14,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
 #include "SVImageLibrary/SVLut.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 namespace SvTi
@@ -31,7 +31,7 @@ namespace SvTi
 
 		const SVAcquisitionConstructParams& operator=( const SVAcquisitionConstructParams& p_rObject );
 
-		SVString m_DigitizerName;
+		std::string m_DigitizerName;
 
 		int m_Channel;
 		int m_DigNumber;

@@ -11,6 +11,7 @@
 
 #include "stdafx.h"
 #include "SVMatroxStatusInformation.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVMatroxImagingLibrary.h"
 #include "SVMatroxErrorEnum.h"
 
@@ -116,17 +117,17 @@ const SVMatroxStatusInformation& SVMatroxStatusInformation::operator=( const SVM
 	return *this;
 }
 
-SVString SVMatroxStatusInformation::GetCompleteString() const
+std::string SVMatroxStatusInformation::GetCompleteString() const
 {
-	SVString Result;
-	SVString l_Code;
+	std::string Result;
+	std::string l_Code;
 
 	Result += _T( "Status Code=" );
-	l_Code = SvUl_SF::Format( _T( "%ld" ), m_StatusCode & ~( SVMEE_MATROX_ERROR ) );
+	l_Code = SvUl::Format( _T( "%ld" ), m_StatusCode & ~( SVMEE_MATROX_ERROR ) );
 	Result += l_Code.c_str();
 
 	Result += _T( "-Function Code=" );
-	l_Code = SvUl_SF::Format( _T( "%ld" ), m_FunctionCode );
+	l_Code = SvUl::Format( _T( "%ld" ), m_FunctionCode );
 	Result += l_Code.c_str();
 
 	Result += _T( "-Status String=" );

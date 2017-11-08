@@ -11,20 +11,21 @@
 
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <map>
-#include "SVUtilityLibrary/SVString.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "SVCommandDataFacade.h"
 #include "SVCommandAttributesFacade.h"
 #include "SVCommandResultsFacade.h"
+#pragma endregion Includes
 
 class SVCommandDataHolder
 {
 public:
-	typedef std::map< SVString, unsigned long > SVNameDataTypeMap;
-	typedef std::map< SVString, SVCommandDataFacadePtr > SVNameDataMap;
-	typedef SVCommandAttributesFacade< SVCommandDataHolder > SVCommandAttributes;
-	typedef SVCommandResultsFacade< SVCommandDataHolder > SVCommandResults;
+	typedef std::map<std::string, unsigned long> SVNameDataTypeMap;
+	typedef std::map<std::string, SVCommandDataFacadePtr> SVNameDataMap;
+	typedef SVCommandAttributesFacade<SVCommandDataHolder> SVCommandAttributes;
+	typedef SVCommandResultsFacade<SVCommandDataHolder> SVCommandResults;
 
 	SVCommandDataHolder();
 	SVCommandDataHolder( const SVNameDataMap& p_rData );

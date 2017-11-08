@@ -25,8 +25,7 @@
 #include "SVOGui/DisplayHelper.h"
 #include "SVImageLibrary/MatroxImageData.h"
 #include "SVOGui/SVColor.h"
-#include "SVUtilityLibrary/SVString.h"
-#include "SVUtilityLibrary/SVStringConversions.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -479,7 +478,7 @@ void SVMaskShapeEditorDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult
 		int iPropertyID = pItem->GetCtrlID();
 		GUID guidProperty = GetPropertyGuid( iPropertyID );
 
-		SVString sValue;
+		std::string sValue;
 		long lNewValue;
 		SVRPropertyItemCombo* pCombo = dynamic_cast <SVRPropertyItemCombo*> (pItem);
 		if ( pCombo )
@@ -720,7 +719,7 @@ HRESULT SVMaskShapeEditorDlg::BuildPropertyList()
 		ASSERT( pValueObject );
 		if( nullptr != pValueObject )
 		{
-			SVString Name = pValueObject->GetName();
+			std::string Name = pValueObject->GetName();
 
 			SVRPropertyItem* pItem = nullptr;
 

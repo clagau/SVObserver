@@ -89,7 +89,7 @@ HRESULT SVJsonCommandData::WaitForRequest( DWORD TimeoutInMilliseconds ) const
 	return l_Status;
 }
 
-HRESULT SVJsonCommandData::SetJsonCommand( const SVString& rCommand )
+HRESULT SVJsonCommandData::SetJsonCommand( const std::string& rCommand )
 {
 	HRESULT l_Status = S_OK;
 

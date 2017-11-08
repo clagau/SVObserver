@@ -19,7 +19,6 @@
 #include "SVJsonCommandServerLibrary/SVJsonCommandManager.h"
 #include "SVStorageResult.h"
 #include "SVDataDefinitionStruct.h"
-#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 namespace Json
@@ -49,8 +48,8 @@ protected:
 
 	static HRESULT ConvertJsonValueToFile( const Json::Value& p_rJsonValue, const std::string& p_rSourceFileName, std::string& p_rFileName );
 
-	static HRESULT ConvertStorageResultValueToJsonValue( const SVString& p_rName, const SVStorageResult& p_rStorage, Json::Value& p_rJsonValue );
-	static HRESULT ConvertStorageResultImageFileToJsonValue( const SVString& p_rName, const SVStorageResult& p_rStorage, Json::Value& p_rJsonValue );
+	static HRESULT ConvertStorageResultValueToJsonValue( const std::string& p_rName, const SVStorageResult& p_rStorage, Json::Value& p_rJsonValue );
+	static HRESULT ConvertStorageResultImageFileToJsonValue( const std::string& p_rName, const SVStorageResult& p_rStorage, Json::Value& p_rJsonValue );
 
 	static HRESULT ConvertDataDefinitionToJsonValue( const SVDataDefinitionStruct& p_rDataDefinition , Json::Value& p_rJsonValue );
 

@@ -18,6 +18,8 @@
 #include "SVRange.h"
 #include "svresult.h"
 #include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVStatusLibrary\MessageManager.h"
 #pragma endregion Includes
 
@@ -71,7 +73,7 @@ void RangeXDialogClass::OnBnClickedOk()
 	if(bOK)
 	{
 		SvStl::MessageTextEnum messageId;
-		SVStringVector messageList;
+		SvDef::StringVector messageList;
 		HRESULT hres = m_RangeClassHelper.CheckInternalData(messageId, messageList);
 		if( S_OK != hres)
 		{
@@ -111,7 +113,7 @@ BOOL RangeXDialogClass::OnInitDialog()
 
 	SetDlgData();
 
-	SVString Title = m_RangeClassHelper.GetOwnerName();
+	std::string Title = m_RangeClassHelper.GetOwnerName();
 	SetWindowText( Title.c_str() );
 
 	// Ensure the title is readable
@@ -171,7 +173,7 @@ bool RangeXDialogClass::GetDlgData()
 	return Result;
 }
 
-bool RangeXDialogClass::ShowObjectSelector( SVString& rName)
+bool RangeXDialogClass::ShowObjectSelector( std::string& rName)
 {
 	bool retValue = m_RangeClassHelper.FillObjectSelector();
 
@@ -182,17 +184,17 @@ bool RangeXDialogClass::ShowObjectSelector( SVString& rName)
 
 	if( 0 < rName.size() )
 	{
-		SVStringSet nameSet;
+		SvDef::StringSet nameSet;
 		nameSet.insert( rName );
 		SvOsl::ObjectTreeGenerator::Instance().setCheckItems(nameSet);
 	}
 
-	SVString Title = m_RangeClassHelper.GetOwnerName();
+	std::string Title = m_RangeClassHelper.GetOwnerName();
 	Title += _T(": ");
 	Title += RangeEnum::ERange2String(m_LastSelected).c_str();
 
-	SVString mainTabTitle = SvUl_SF::LoadSVString( IDS_SELECT_TOOLSET_OUTPUT );
-	SVString FilterTab = SvUl_SF::LoadSVString( IDS_FILTER );
+	std::string mainTabTitle = SvUl::LoadStdString( IDS_SELECT_TOOLSET_OUTPUT );
+	std::string FilterTab = SvUl::LoadStdString( IDS_FILTER );
 
 	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), mainTabTitle.c_str(), FilterTab.c_str(), this );
 
@@ -211,7 +213,7 @@ void RangeXDialogClass::OnBnClickedFailHighIndirect()
 	m_LastSelected = RangeEnum::ER_FailHigh;
 	CString Text;
 	m_EditFailHigh.GetWindowText(Text);
-	SVString Name( Text );
+	std::string Name( Text );
 	if (ShowObjectSelector(Name))
 	{
 		m_EditFailHigh.SetWindowText(Name.c_str());
@@ -223,7 +225,7 @@ void RangeXDialogClass::OnBnClickedWarnlHighIndirect()
 	m_LastSelected = RangeEnum::ER_WarnHigh;
 	CString Text;
 	m_EditWarnHigh.GetWindowText(Text);
-	SVString Name( Text );
+	std::string Name( Text );
 	if (ShowObjectSelector(Name))
 	{
 		m_EditWarnHigh.SetWindowText(Name.c_str());
@@ -235,7 +237,7 @@ void RangeXDialogClass::OnBnClickedWarnLowIndirect()
 	m_LastSelected = RangeEnum::ER_WarnLow;
 	CString Text;
 	m_EditWarnLow.GetWindowText(Text);
-	SVString Name( Text );
+	std::string Name( Text );
 	if (ShowObjectSelector(Name))
 	{
 		m_EditWarnLow.SetWindowText(Name.c_str());
@@ -247,7 +249,7 @@ void RangeXDialogClass::OnBnClickedFailedLowIndirect()
 	m_LastSelected = RangeEnum::ER_FailLow;
 	CString Text;
 	m_EditFailLow.GetWindowText(Text);
-	SVString Name( Text );
+	std::string Name( Text );
 	if (ShowObjectSelector(Name))
 	{
 		m_EditFailLow.SetWindowText(Name.c_str());

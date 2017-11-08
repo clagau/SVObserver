@@ -27,7 +27,8 @@
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVOResource/ConstGlobalSvOr.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -81,10 +82,10 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 	CString Text;
 	// Update the file path to the archive file for associated archive tool.
 	m_ArchiveFileName.GetWindowText( Text );
-	SVString ArchiveFileName = Text;
+	std::string ArchiveFileName = Text;
 
 	//check for valid drive for text archive
-	SVString TmpArchiveFileName = ArchiveFileName;
+	std::string TmpArchiveFileName = ArchiveFileName;
 	ArchiveToolHelper athArchivePathAndName;
 	athArchivePathAndName.Init( ArchiveFileName );
 
@@ -108,10 +109,10 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 		//not using Keywords 
 		SVCheckPathDir( ArchiveFileName.c_str(), true );
 	}
-	SVString Drive;
+	std::string Drive;
 	if(!ArchiveToolHelper::ValidateDrive(ArchiveFileName.c_str(), Drive) || ArchiveFileName.empty())
 	{
-		SVStringVector msgList;
+		SvDef::StringVector msgList;
 		msgList.push_back( Drive );
 		SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
 		Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_InvalidDrive, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -150,7 +151,7 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 	HRESULT hr = m_pTool->m_bvoUseHeaders.GetValue( bUseHeaders );
 	if( S_OK == hr && bUseHeaders )
 	{
-		StringPairVector l_HeaderPairs;
+		SvDef::StringPairVector l_HeaderPairs;
 		GetSelectedHeaderNamePairs(l_HeaderPairs); // filters by what is selected.
 		StoreHeaderValuesToTool( l_HeaderPairs );
 	}
@@ -208,7 +209,7 @@ BOOL SVTADlgArchiveResultsPage::OnInitDialog()
 	// from the archive tool.
 	m_pTool->UpdateTaskObjectOutputList();
 
-	SVString ArchiveFileName; 
+	std::string ArchiveFileName; 
 	m_pTool->GetFileArchive( ArchiveFileName );
 	m_ArchiveFileName.SetWindowText( ArchiveFileName.c_str() );
 
@@ -312,15 +313,15 @@ void SVTADlgArchiveResultsPage::ReadSelectedObjects()
 {
 	m_ItemsSelected.DeleteAllItems();
 
-	SVString Prefix = m_pTool->GetInspection()->GetName();
+	std::string Prefix = m_pTool->GetInspection()->GetName();
 	Prefix += _T(".Tool Set.");
 
 	int Index = 0;
 	SvOsl::SelectorItemVector::const_iterator Iter;
 	for ( Iter = m_List.begin(); m_List.end() != Iter ; ++Iter )
 	{
-		SVString Name = Iter->getLocation();
-		SvUl_SF::searchAndReplace( Name, Prefix.c_str(), _T("") );
+		std::string Name = Iter->getLocation();
+		SvUl::searchAndReplace( Name, Prefix.c_str(), _T("") );
 
 		m_ItemsSelected.InsertItem(LVIF_STATE | LVIF_TEXT,
 			Index,
@@ -335,27 +336,27 @@ void SVTADlgArchiveResultsPage::ReadSelectedObjects()
 
 void SVTADlgArchiveResultsPage::ShowObjectSelector()
 {
-	SVString InspectionName( m_pTool->GetInspection()->GetName() );
+	std::string InspectionName( m_pTool->GetInspection()->GetName() );
 	SVGUID InspectionGuid( m_pTool->GetInspection()->GetUniqueObjectID() );
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject );
-	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
+	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, std::string( _T("") ) );
 
 	SvOsl::SelectorOptions BuildOptions( InspectionGuid, SvDef::SV_ARCHIVABLE );
 	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 
 	SvOsl::SelectorItemVector::const_iterator Iter;
-	SVStringSet CheckItems;
+	SvDef::StringSet CheckItems;
 	for ( Iter = m_List.begin(); m_List.end() != Iter ; ++Iter )
 	{
-		SVString ObjectName;
+		std::string ObjectName;
 		ObjectName = Iter->getLocation();
 		CheckItems.insert( ObjectName );
 	}
 	SvOsl::ObjectTreeGenerator::Instance().setCheckItems( CheckItems );
 
-	SVString Title = SvUl_SF::Format( _T("%s - %s"), m_strCaption, InspectionName.c_str() );
-	SVString Filter = SvUl_SF::LoadSVString( IDS_FILTER );
+	std::string Title = SvUl::Format( _T("%s - %s"), m_strCaption, InspectionName.c_str() );
+	std::string Filter = SvUl::LoadStdString( IDS_FILTER );
 	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), m_strCaption, Filter.c_str(), this );
 
 	if( IDOK == Result )
@@ -397,7 +398,7 @@ void SVTADlgArchiveResultsPage::OnBrowse()
 	//get current path
 	CString Text;
 	m_ArchiveFileName.GetWindowText( Text );
-	SVString ArchiveFullName = Text;
+	std::string ArchiveFullName = Text;
 
 	ArchiveToolHelper athArchivePathAndName;
 	athArchivePathAndName.Init( ArchiveFullName ); 
@@ -428,7 +429,7 @@ void SVTADlgArchiveResultsPage::OnBrowse()
 	}
 }
 
-bool SVTADlgArchiveResultsPage::GetSelectedHeaderNamePairs( StringPairVector& HeaderPairs)
+bool SVTADlgArchiveResultsPage::GetSelectedHeaderNamePairs(SvDef::StringPairVector& HeaderPairs)
 {
 	bool bRet = false;
 	if( m_pTool )
@@ -439,35 +440,35 @@ bool SVTADlgArchiveResultsPage::GetSelectedHeaderNamePairs( StringPairVector& He
 		// output a vector of Object Name / Label pairs filtered by the selected objects..
 
 		// Get Lists....
-		SVStringVector HeaderLabelNames;
-		SVStringVector HeaderObjectGUIDs;
+		SvDef::StringVector HeaderLabelNames;
+		SvDef::StringVector HeaderObjectGUIDs;
 		m_pTool->m_HeaderLabelNames.GetArrayValues( HeaderLabelNames );
 		m_pTool->m_HeaderObjectGUIDs.GetArrayValues( HeaderObjectGUIDs );
 
 		// Collect Object and Label into pairs.
-		for( SVStringVector::const_iterator it = HeaderObjectGUIDs.begin(),it1 = HeaderLabelNames.begin() ; it != HeaderObjectGUIDs.end() ;++it1, ++it)
+		for( SvDef::StringVector::const_iterator it = HeaderObjectGUIDs.begin(),it1 = HeaderLabelNames.begin() ; it != HeaderObjectGUIDs.end() ;++it1, ++it)
 		{
-			SVStringPair l_Pair(*it, *it1 );
+			SvDef::StringPair l_Pair(*it, *it1 );
 			HeaderPairs.push_back(l_Pair);
 		}
 
 		// ... Create List from selected...
-		StringPairVector SelectedHeaderPairs;
+		SvDef::StringPairVector SelectedHeaderPairs;
 		SvOsl::SelectorItemVector::const_iterator Iter;
 		for( Iter = m_List.begin(); m_List.end() != Iter ; ++Iter )
 		{
 			SVGUID GuidValue( Iter->getItemKey() );
 
-			SVStringPair NewPair( GuidValue.ToString().c_str(), 
+			SvDef::StringPair NewPair( GuidValue.ToString().c_str(),
 			SVObjectManagerClass::Instance().GetObject(GuidValue)->GetCompleteName() );
 			SelectedHeaderPairs.push_back(NewPair);
 		}
 
 		// copy labels to the selected List...
-		for( StringPairVector::iterator it = SelectedHeaderPairs.begin() ; it != SelectedHeaderPairs.end(); ++it)
+		for(SvDef::StringPairVector::iterator it = SelectedHeaderPairs.begin() ; it != SelectedHeaderPairs.end(); ++it)
 		{
 			bool bFound = false;
-			StringPairVector::const_iterator it2 = HeaderPairs.begin();
+			SvDef::StringPairVector::const_iterator it2 = HeaderPairs.begin();
 			for( ; it2 != HeaderPairs.end() ; ++it2)
 			{
 				if( it->first == it2->first ) // GUIDs match
@@ -490,14 +491,14 @@ bool SVTADlgArchiveResultsPage::GetSelectedHeaderNamePairs( StringPairVector& He
 	return bRet;
 }
 
-bool SVTADlgArchiveResultsPage::StoreHeaderValuesToTool(StringPairVector& HeaderPairs)
+bool SVTADlgArchiveResultsPage::StoreHeaderValuesToTool(SvDef::StringPairVector& HeaderPairs)
 {
 	bool bRet = false;
 	if( m_pTool )
 	{
-		SVStringVector HeaderLabelNames;
-		SVStringVector HeaderObjectGUIDs;
-		for( StringPairVector::iterator it = HeaderPairs.begin(); it != HeaderPairs.end() ;++it)
+		SvDef::StringVector HeaderLabelNames;
+		SvDef::StringVector HeaderObjectGUIDs;
+		for(SvDef::StringPairVector::iterator it = HeaderPairs.begin(); it != HeaderPairs.end() ;++it)
 		{
 			HeaderObjectGUIDs.push_back( it->first );
 			HeaderLabelNames.push_back( it->second );
@@ -514,7 +515,7 @@ bool SVTADlgArchiveResultsPage::StoreHeaderValuesToTool(StringPairVector& Header
 void SVTADlgArchiveResultsPage::OnBnClickedHeaderBtn()
 {
 	// Get a collection of header name/Label pairs from this class and the tool.
-	StringPairVector l_HeaderPairs;
+	SvDef::StringPairVector l_HeaderPairs;
 	GetSelectedHeaderNamePairs(l_HeaderPairs); // filters by what is selected.
 
 	SVArchiveHeaderEditDlg l_dlg;

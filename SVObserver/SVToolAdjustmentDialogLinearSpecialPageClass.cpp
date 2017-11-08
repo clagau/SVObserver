@@ -20,7 +20,7 @@
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -125,7 +125,7 @@ BOOL SVToolAdjustmentDialogLinearSpecialPageClass::OnInitDialog()
 		}
 		else
 		{	
-			SVString Value = pTool->GetProfileOrientation();
+			std::string Value = pTool->GetProfileOrientation();
 			m_ctlProfileOrientation.SelectString( -1, Value.c_str() );
 		}
 

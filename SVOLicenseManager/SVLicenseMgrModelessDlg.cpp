@@ -34,7 +34,7 @@ SVLicenseMgrModelessDlg::SVLicenseMgrModelessDlg(): CDialog(SVLicenseMgrModeless
 {
 }
 
-void SVLicenseMgrModelessDlg::Init(const SVString& rMsg,const SVGuidSet& rList, HANDLE hEvent)
+void SVLicenseMgrModelessDlg::Init(const std::string& rMsg,const SVGuidSet& rList, HANDLE hEvent)
 {
 	m_Msg = rMsg;
 	m_sList = rList;
@@ -42,7 +42,7 @@ void SVLicenseMgrModelessDlg::Init(const SVString& rMsg,const SVGuidSet& rList, 
 	DuplicateHandle( GetCurrentProcess(), hEvent, GetCurrentProcess(), &m_hEvent, 0, FALSE, DUPLICATE_SAME_ACCESS );
 }
 
-void SVLicenseMgrModelessDlg::Show(const SVString& rMsg,const SVGuidSet& rList, HANDLE hEvent)
+void SVLicenseMgrModelessDlg::Show(const std::string& rMsg,const SVGuidSet& rList, HANDLE hEvent)
 {
 	SVLicenseMgrModelessDlg& rDlg = SVLicenseMgrModelessDlg::Instance();
 	rDlg.Init( rMsg, rList, hEvent);

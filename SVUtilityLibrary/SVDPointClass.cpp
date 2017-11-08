@@ -10,6 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
+#include "StringHelper.h"
 #include "SVDPointClass.h"
 
 SVDPointClass::SVDPointClass()
@@ -69,9 +70,9 @@ SVDPointClass::operator _variant_t () const
 	return _variant_t( ToString().c_str());
 }
 
-SVString SVDPointClass::ToString() const
+std::string SVDPointClass::ToString() const
 {
-	return SvUl_SF::Format( _T( "( %lf, %lf )" ), x, y );
+	return SvUl::Format( _T( "( %lf, %lf )" ), x, y );
 }
 
 SVDPointClass& SVDPointClass::operator=( const POINT& Point )
@@ -95,7 +96,7 @@ SVDPointClass& SVDPointClass::operator=( const VARIANT& p_rVariant )
 	double l_x;
 	double l_y;
 
-	SVString l_String = SvUl_SF::createSVString( p_rVariant );
+	std::string l_String = SvUl::createStdString( p_rVariant );
 
 	if( 2 == _stscanf( l_String.c_str(), _T( "( %lf, %lf )" ), &l_x, &l_y ) )
 	{

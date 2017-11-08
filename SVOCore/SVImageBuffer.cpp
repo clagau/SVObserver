@@ -9,8 +9,11 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:49:20  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVImageBuffer.h"
+#include "SVUtilityLibrary/StringHelper.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -134,7 +137,7 @@ void SVImageOverlayClass::GetOverlayFigureAt( long Index, SVOverlayStruct& rOver
 	rOverlay.m_TextColor = IMAGEBUFFER_OVERLAYTEXTCOLOR( pOverlayBytes );
 	rOverlay.m_TextPoint = IMAGEBUFFER_OVERLAYTEXTPOINT( pOverlayBytes );
 	rOverlay.m_Text	= IMAGEBUFFER_OVERLAYTEXT( pOverlayBytes );
-	rOverlay.m_Text	= SvUl_SF::Left( rOverlay.m_Text,  IMAGEBUFFER_OVERLAYTEXTSIZE( pOverlayBytes ) );
+	rOverlay.m_Text	= SvUl::Left( rOverlay.m_Text,  IMAGEBUFFER_OVERLAYTEXTSIZE( pOverlayBytes ) );
 
 	rOverlay.lFigureSize = IMAGEBUFFER_OVERLAYFIGURESCOUNT( pOverlayBytes );
 	rOverlay.pOverlays = nullptr;

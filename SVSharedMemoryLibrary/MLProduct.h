@@ -8,12 +8,12 @@
 #pragma once
 #pragma region Includes
 #include "MonitorEntry.h"
-#include "SVUtilityLibrary\SVString.h"
+
 #pragma endregion Includes
 
 namespace SvSml
 {
-	typedef std::unique_ptr<SVString>  stringpointer;
+	typedef std::unique_ptr<std::string>  stringpointer;
 	/// struct holds result data for getProduct or getReject values 
 	struct MLProduct
 	{

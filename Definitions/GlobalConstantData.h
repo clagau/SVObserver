@@ -10,7 +10,7 @@
 //Moved to precompiled header: #include <set>
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <tuple>
-#include "SVUtilityLibrary\SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary\SVGUID.h"
 #pragma endregion Includes
 
@@ -46,9 +46,9 @@ namespace SvDef
 #pragma region Member variables
 	public:
 		SVGUID		m_Guid;						//The object unique ID or GUID_NULL
-		SVString	m_DottedName;				//The dotted name of the constant
+		std::string	m_DottedName;				//The dotted name of the constant
 		_variant_t	m_Value;					//The value of the constant
-		SVString	m_Description;				//The description of the constant
+		std::string	m_Description;				//The description of the constant
 		bool		m_Selected;					//To determine if this has been selected
 #pragma endregion Member variables
 	};
@@ -57,7 +57,7 @@ namespace SvDef
 	typedef std::pair< GlobalConstantData, GlobalConstantData > GlobalConflictPair;
 	typedef std::vector< GlobalConflictPair > GlobalConflictPairVector;
 
-} //namespace SvOi
+} //namespace SvDef
 
 #pragma region Inline
 #include "GlobalConstantData.inl"

@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVEnumerateCombo.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -39,7 +39,7 @@ bool SVEnumerateComboClass::SetEnumTypes( LPCTSTR szEnumList )
 		ResetContent();
 
 		// Populate Combo box...
-		SVString strEnum;
+		std::string strEnum;
 		long lValue = 0L;
 		int it = enumObject.GetFirstEnumTypePos();
 		while( enumObject.GetNextEnumType( it, strEnum, lValue ) )

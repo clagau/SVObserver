@@ -12,7 +12,7 @@
 //Moved to precompiled header: #include <boost/noncopyable.hpp>
 //Moved to precompiled header: #include <string>
 //Moved to precompiled header: #include <comdef.h>
-#include "SVUtilityLibrary\SVString.h"
+
 #pragma endregion Includes
 
 namespace SvOg
@@ -26,8 +26,8 @@ namespace SvOg
 		IPictureDisp* GetReferenceImage() const;
 		IPictureDisp* GetMaskImage() const;
 		HRESULT SetMask(IPictureDisp* pImage);
-		HRESULT ImportMask(const SVString& filename);
-		HRESULT ExportMask(const SVString& filename);
+		HRESULT ImportMask(const std::string& filename);
+		HRESULT ExportMask(const std::string& filename);
 		HGLOBAL GetMaskData() const;
 		bool SetMaskData(HGLOBAL hGlobal);
 

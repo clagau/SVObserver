@@ -6,6 +6,7 @@
 #pragma region Includes
 #include "StdAfx.h"
 #include "ArchiveToolHelper.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Constructor
@@ -22,7 +23,7 @@ ArchiveToolHelper::~ArchiveToolHelper()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-void ArchiveToolHelper::Init(const SVString& sPath)
+void ArchiveToolHelper::Init(const std::string& sPath)
 {
 	m_IsUsingKeyWords = false;
 	m_ValidTokens = false;
@@ -41,32 +42,32 @@ bool ArchiveToolHelper::isTokensValid()
 	return m_ValidTokens;
 }
 
-SVString ArchiveToolHelper::TranslatePath(const SVString& sPath)
+std::string ArchiveToolHelper::TranslatePath(const std::string& sPath)
 {
-	SVString sReturnPath = sPath;
-	SVString sTmpPath = sPath;
+	std::string sReturnPath = sPath;
+	std::string sTmpPath = sPath;
 	SYSTEMTIME stime;
 	memset( &stime, 0, sizeof( SYSTEMTIME));
 	::GetLocalTime( &stime );
-	SVString sDay = SvUl_SF::Format("%02d", stime.wDay);
-	SVString sMonth = SvUl_SF::Format("%02d", stime.wMonth);
-	SVString sYear = SvUl_SF::Format("%04d", stime.wYear);
-	SVString sHour = SvUl_SF::Format("%02d", stime.wHour);
-	SVString sMin = SvUl_SF::Format("%02d", stime.wMinute);
-	SVString sSec = SvUl_SF::Format("%02d", stime.wSecond);
+	std::string sDay = SvUl::Format("%02d", stime.wDay);
+	std::string sMonth = SvUl::Format("%02d", stime.wMonth);
+	std::string sYear = SvUl::Format("%04d", stime.wYear);
+	std::string sHour = SvUl::Format("%02d", stime.wHour);
+	std::string sMin = SvUl::Format("%02d", stime.wMinute);
+	std::string sSec = SvUl::Format("%02d", stime.wSecond);
 	
 	//replace all Keywords
-	sReturnPath = SvUl_SF::searchAndReplace(sReturnPath, KW_DAY.c_str(),sDay.c_str());
-	sReturnPath = SvUl_SF::searchAndReplace(sReturnPath, KW_MONTH.c_str(), sMonth.c_str());
-	sReturnPath = SvUl_SF::searchAndReplace(sReturnPath, KW_YEAR.c_str(), sYear.c_str());
-	sReturnPath = SvUl_SF::searchAndReplace(sReturnPath, KW_HOUR.c_str(), sHour.c_str());
-	sReturnPath = SvUl_SF::searchAndReplace(sReturnPath, KW_MINUTE.c_str(), sMin.c_str());
-	sReturnPath = SvUl_SF::searchAndReplace(sReturnPath, KW_SECONDS.c_str(), sSec.c_str());
+	sReturnPath = SvUl::searchAndReplace(sReturnPath, KW_DAY.c_str(),sDay.c_str());
+	sReturnPath = SvUl::searchAndReplace(sReturnPath, KW_MONTH.c_str(), sMonth.c_str());
+	sReturnPath = SvUl::searchAndReplace(sReturnPath, KW_YEAR.c_str(), sYear.c_str());
+	sReturnPath = SvUl::searchAndReplace(sReturnPath, KW_HOUR.c_str(), sHour.c_str());
+	sReturnPath = SvUl::searchAndReplace(sReturnPath, KW_MINUTE.c_str(), sMin.c_str());
+	sReturnPath = SvUl::searchAndReplace(sReturnPath, KW_SECONDS.c_str(), sSec.c_str());
 
 	return sReturnPath;
 }
 
- bool ArchiveToolHelper::ValidateDrive(LPCTSTR szFilePath, SVString& rDrive)
+ bool ArchiveToolHelper::ValidateDrive(LPCTSTR szFilePath, std::string& rDrive)
 {
 	TCHAR szDrive[_MAX_DRIVE], szDir[_MAX_DIR], szFName[_MAX_FNAME], szExt[_MAX_EXT];
 
@@ -82,16 +83,16 @@ SVString ArchiveToolHelper::TranslatePath(const SVString& sPath)
 #pragma endregion Public Methods
 
 #pragma region Private Methods
-void ArchiveToolHelper::ParseTokens(const SVString& sPath)
+void ArchiveToolHelper::ParseTokens(const std::string& sPath)
 {
-	SVString::size_type iPos = -1;
+	std::string::size_type iPos = -1;
 	bool bDone = false;
 	
-	SVString::size_type BeginToken = SVString::npos;
+	std::string::size_type BeginToken = std::string::npos;
 
-	SVString::size_type EndToken = -1;
+	std::string::size_type EndToken = -1;
 	
-	SVString sToken;
+	std::string sToken;
 	bool bBeginQuote = false;
 	bool bEndQuote = false;
 
@@ -102,14 +103,14 @@ void ArchiveToolHelper::ParseTokens(const SVString& sPath)
 
 		BeginToken = sPath.find('"',iPos+1);
 
-		if ( BeginToken != SVString::npos )
+		if ( BeginToken != std::string::npos )
 		{
 			//if the path contains a " then keywords are being used
 			m_IsUsingKeyWords = true;
 			bBeginQuote = true;
 
 			EndToken = sPath.find('"',BeginToken+1);
-			if ( EndToken != SVString::npos )
+			if ( EndToken != std::string::npos )
 			{
 				bEndQuote = true;
 				sToken = sPath.substr(BeginToken,(EndToken-BeginToken+1));
@@ -138,9 +139,9 @@ void ArchiveToolHelper::ParseTokens(const SVString& sPath)
 	}
 }
 
-bool ArchiveToolHelper::ValidateToken(const SVString& sToken)
+bool ArchiveToolHelper::ValidateToken(const std::string& sToken)
 {
-	SVString Token = sToken;
+	std::string Token = sToken;
 	m_ValidTokens = false;
 	if (KeywordList.find(Token) != KeywordList.end())
 	{

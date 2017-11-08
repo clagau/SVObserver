@@ -13,7 +13,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <deque>
 #include "SVUtilityLibrary/SVGUID.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #include "SVSharedMemoryLibrary/SVProductFilterEnum.h"
 #pragma endregion Includes
 
@@ -38,15 +38,15 @@ class RemoteMonitorNamedList
 #pragma region PublicMethods
 public:
 	RemoteMonitorNamedList();
-	RemoteMonitorNamedList(const SVString& PPQName, const SVString& name);
-	RemoteMonitorNamedList(const SVString& PPQName, const SVString& name, const MonitoredObjectList& productValuesList, const MonitoredObjectList& productImagesList, const MonitoredObjectList& rejectConditionList, const MonitoredObjectList& failStatusList, int rejectDepth);
+	RemoteMonitorNamedList(const std::string& PPQName, const std::string& name);
+	RemoteMonitorNamedList(const std::string& PPQName, const std::string& name, const MonitoredObjectList& productValuesList, const MonitoredObjectList& productImagesList, const MonitoredObjectList& rejectConditionList, const MonitoredObjectList& failStatusList, int rejectDepth);
 
 	const SVGUID& GetPPQObjectID() const;
-	const SVString& GetPPQName() const;
-	void SetPPQName(const SVString& PPQName); // is a blank name allowed?
+	const std::string& GetPPQName() const;
+	void SetPPQName(const std::string& PPQName); // is a blank name allowed?
 
-	const SVString& GetName() const;
-	void SetName(const SVString& name); // is a blank name allowed?
+	const std::string& GetName() const;
+	void SetName(const std::string& name); // is a blank name allowed?
 	int GetRejectDepthQueue() const;
 	void SetRejectDepthQueue(int depth);
 
@@ -83,8 +83,8 @@ public:
 #pragma endregion PublicData
 #pragma region PrivateData
 private:
-	SVString m_name; // List Name
-	SVString m_PPQName; // PPQ Name
+	std::string m_name; // List Name
+	std::string m_PPQName; // PPQ Name
 	SVGUID m_PPQObjectID; // PPQ instance Guid
 	int m_rejectQueueDepth;
 	MonitoredObjectList m_productValuesList;

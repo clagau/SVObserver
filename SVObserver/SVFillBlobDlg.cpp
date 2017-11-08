@@ -15,7 +15,7 @@
 #include "SVFillBlobDlg.h"
 #include "SVOCore/SVTaskObject.h"
 #include "SVOCore/SVTool.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -123,17 +123,17 @@ BOOL SVFillBlobDlg::OnInitDialog()
 
 void SVFillBlobDlg::FillCombos()
 {
-	SVString BlobType;
-	SVString BlobColor;
+	std::string BlobType;
+	std::string BlobColor;
 
 	m_pvoBlobType->GetEnumTypes( BlobType );
 	m_ctlBlobType.SetEnumTypes( BlobType.c_str() );
 
-	SVString CurrentType;
+	std::string CurrentType;
 	m_pvoBlobType->getValue( CurrentType );
 	m_ctlBlobType.SelectString( -1,CurrentType.c_str() );
 
-	SVString CurrentColor;
+	std::string CurrentColor;
 	m_pvoBlobFillColor->GetEnumTypes( BlobColor );
 	m_ctlBlobColor.SetEnumTypes( BlobColor.c_str() );
 	m_pvoBlobFillColor->getValue( CurrentColor );

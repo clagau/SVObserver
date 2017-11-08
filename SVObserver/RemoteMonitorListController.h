@@ -14,7 +14,7 @@
 #include "RemoteMonitorList.h"
 #include "SVMonitorList.h"
 #include "SVSharedMemoryLibrary/SVProductFilterEnum.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 class SVConfigurationObject;
@@ -48,7 +48,7 @@ public:
 	//! \param listName [in]
 	//! \param bActivate [in]
 	//! \returns S_OK when successfully 
-	HRESULT ActivateRemoteMonitorList(const SVString& listName, bool bActivate);
+	HRESULT ActivateRemoteMonitorList(const std::string& listName, bool bActivate);
 	
 	//! Activate or deactivate the Monitorlist.
 	//!	When the Monitorlist is activated all Other Monitorlist which belong to the same PPQ are deactivated
@@ -56,15 +56,15 @@ public:
 	//! \param listName [in]
 	//! \param bActivate [in]
 	//! \returns S_OK when successfully 
-	static HRESULT ActivateRemoteMonitorList(RemoteMonitorListMap& rRemoteMonitorList , const SVString& listName, bool bActivate); 
+	static HRESULT ActivateRemoteMonitorList(RemoteMonitorListMap& rRemoteMonitorList , const std::string& listName, bool bActivate); 
 
 	void GetActiveRemoteMonitorList(RemoteMonitorListMap& rActiveList) const;
 
 	//Return the number of active Monitorlist
 	int GetActiveMonitorListCount() const;
 	
-	HRESULT SetRemoteMonitorListProductFilter(const SVString& listName, SvSml::SVProductFilterEnum filter);
-	HRESULT GetRemoteMonitorListProductFilter(const SVString& listName, SvSml::SVProductFilterEnum& rFilter) const;
+	HRESULT SetRemoteMonitorListProductFilter(const std::string& listName, SvSml::SVProductFilterEnum filter);
+	HRESULT GetRemoteMonitorListProductFilter(const std::string& listName, SvSml::SVProductFilterEnum& rFilter) const;
 
 	//************************************
 	// Method:    IsValidMonitoredObject

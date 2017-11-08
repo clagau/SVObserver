@@ -14,7 +14,7 @@
 #include "SVMatroxLibrary/SVMatroxEnums.h"
 #include "SVRankingFilterDlg.h"
 #include "SVObjectLibrary/SVClsids.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -174,16 +174,16 @@ namespace SvOg
 	{
 		CDialog::OnInitDialog();
 		
-		SVString Temp;
+		std::string Temp;
 		
 		m_Values.Init();
 		
 		m_lRankingWidth = m_Values.Get<long>(WidthTag);
-		Temp = SvUl_SF::Format( "%d", m_lRankingWidth );
+		Temp = SvUl::Format( "%d", m_lRankingWidth );
 		m_ctlRankingWidth.SelectString( -1, Temp.c_str() );
 
 		m_lRankingHeight = m_Values.Get<long>(HeidghtTag);
-		Temp = SvUl_SF::Format( "%d", m_lRankingHeight );
+		Temp = SvUl::Format( "%d", m_lRankingHeight );
 		m_ctlRankingHeight.SelectString( -1, Temp.c_str() );
 
 		m_lRankingRank = m_Values.Get<long>(RankValueTag);
@@ -253,8 +253,8 @@ namespace SvOg
 					k - ( ( 7 - m_lRankingHeight ) / 2 ) < m_lRankingHeight && k - ( ( 7 - m_lRankingHeight ) / 2 ) >= 0 )
 
 				{
-					SVString Name;
-					Name = SvUl_SF::Format( _T( "Cell %d" ), ( k - ( ( 7 - m_lRankingHeight ) / 2 ) ) * m_lRankingWidth + ( j - ( ( 7 - m_lRankingWidth  ) / 2 ) ) + 1 );
+					std::string Name;
+					Name = SvUl::Format( _T( "Cell %d" ), ( k - ( ( 7 - m_lRankingHeight ) / 2 ) ) * m_lRankingWidth + ( j - ( ( 7 - m_lRankingWidth  ) / 2 ) ) + 1 );
 					GetDlgItem( IDC_STATIC_CELL1 + k * 7 + j )->SetWindowText( Name.c_str() );
 					GetDlgItem( IDC_CELL1 + k * 7 + j )->EnableWindow( TRUE );
 				}// end if
@@ -273,7 +273,7 @@ namespace SvOg
 
 		for(long j = 0; j < m_lRankingWidth * m_lRankingHeight; j++ )
 		{
-			SVString Temp = SvUl_SF::Format( _T("%02d"), j + 1 );
+			std::string Temp = SvUl::Format( _T("%02d"), j + 1 );
 			m_ctlRankingRank.SetItemData( m_ctlRankingRank.AddString( Temp.c_str() ), j + 1 );
 		}
 
@@ -283,7 +283,7 @@ namespace SvOg
 		}// end if
 		else
 		{
-			SVString Temp = SvUl_SF::Format( "%02d", m_lRankingRank );
+			std::string Temp = SvUl::Format( "%02d", m_lRankingRank );
 			m_ctlRankingRank.SelectString( -1, Temp.c_str() );
 		}// end else
 

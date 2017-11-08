@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVDeviceParams.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 class SVStringValueDeviceParam : public SVDeviceParam
@@ -22,37 +22,37 @@ public:
 	SVStringValueDeviceParam();
 	SVStringValueDeviceParam(SVDeviceParamEnum typeEnum);
 	SVStringValueDeviceParam(const SVStringValueDeviceParam& rRhs);
-	SVStringValueDeviceParam(const SVString& rRhs);
+	SVStringValueDeviceParam(const std::string& rRhs);
 	virtual ~SVStringValueDeviceParam();
 	virtual SVClonable* CloneImpl() const override;
 
 	// automatic conversions
 	SVStringValueDeviceParam& operator=(const SVStringValueDeviceParam& rRhs);
-	SVStringValueDeviceParam& operator=(const SVString& rValue);
+	SVStringValueDeviceParam& operator=(const std::string& rValue);
 	virtual HRESULT GetValue(VARIANT& rv) const override;
 	virtual HRESULT SetValue(const VARIANT& rv) override;
 
-	SVString strValue;
+	std::string strValue;
 
-	TDeviceParamInfo<SVString> info;
+	TDeviceParamInfo<std::string> info;
 	
 	virtual HRESULT SetMetadata(const SVDeviceParam* pParam ) override;
 
-	typedef TDeviceParamInfo<SVString>::OptionType  OptionType;
-	typedef TDeviceParamInfo<SVString>::OptionsType OptionsType;
+	typedef TDeviceParamInfo<std::string>::OptionType  OptionType;
+	typedef TDeviceParamInfo<std::string>::OptionsType OptionsType;
 
 	static SVDeviceParam* CreateNew(SVDeviceParamEnum typeEnum) { return new SVStringValueDeviceParam(typeEnum); }
 	DEFINE_VISITABLE()
 };
 
 #if defined(_DEBUG)
-	SVString& StringValue(SVDeviceParamWrapper& w);
-	const SVString& StringValue(const SVDeviceParamWrapper& w);
-	SVDeviceParamWrapper DeviceParam(const SVString& s);
+	std::string& StringValue(SVDeviceParamWrapper& w);
+	const std::string& StringValue(const SVDeviceParamWrapper& w);
+	SVDeviceParamWrapper DeviceParam(const std::string& s);
 #else
-	inline SVString& StringValue(SVDeviceParamWrapper& w) {SVStringValueDeviceParam* p = w.DerivedValue(p); if (nullptr == p) {w = SVStringValueDeviceParam(); p = w.DerivedValue(p);} assert(p); return p->strValue;}
-	inline const SVString& StringValue(const SVDeviceParamWrapper& w) {const SVStringValueDeviceParam* p = w.DerivedValue(p); if (p) return p->strValue; else {assert(false); static SVString s(""); return s;} }
-	inline SVDeviceParamWrapper DeviceParam(const SVString& s) {return SVStringValueDeviceParam(s.c_str());}
+	inline std::string& StringValue(SVDeviceParamWrapper& w) {SVStringValueDeviceParam* p = w.DerivedValue(p); if (nullptr == p) {w = SVStringValueDeviceParam(); p = w.DerivedValue(p);} assert(p); return p->strValue;}
+	inline const std::string& StringValue(const SVDeviceParamWrapper& w) {const SVStringValueDeviceParam* p = w.DerivedValue(p); if (p) return p->strValue; else {assert(false); static std::string s(""); return s;} }
+	inline SVDeviceParamWrapper DeviceParam(const std::string& s) {return SVStringValueDeviceParam(s.c_str());}
 #endif
 
 

@@ -44,7 +44,7 @@ namespace SvUl
 		return Object;
 	}
 
-	HRESULT LoadDll::getDll( const SVString& DllName, HINSTANCE& Instance )
+	HRESULT LoadDll::getDll( const std::string& DllName, HINSTANCE& Instance )
 	{
 		HRESULT Result = S_OK;
 		Instance = nullptr;

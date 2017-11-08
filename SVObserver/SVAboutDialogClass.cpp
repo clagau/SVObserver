@@ -18,7 +18,7 @@
 #include "SVIOLibrary/SVIOParameterEnum.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVStatusLibrary/GlobalPath.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 
@@ -89,7 +89,7 @@ void SVAboutDialogClass::LoadOEMInfo()
 	logoBmp = nullptr;
 	
 
-	SVString logoFileName = SvStl::GlobalPath::Inst().GetBinPath(_T("OEM\\logo.bmp")); 
+	std::string logoFileName = SvStl::GlobalPath::Inst().GetBinPath(_T("OEM\\logo.bmp")); 
 	if( 0 == ::_access( logoFileName.c_str(), 0 ) )
 	{
 		logoBmp = (HBITMAP) ::LoadImage( nullptr, 
@@ -100,7 +100,7 @@ void SVAboutDialogClass::LoadOEMInfo()
 								LR_DEFAULTCOLOR | LR_CREATEDIBSECTION | LR_LOADFROMFILE );
 	}// end if
 
-	SVString TextFileName = SvStl::GlobalPath::Inst().GetBinPath(_T("OEM\\oem.txt")); 
+	std::string TextFileName = SvStl::GlobalPath::Inst().GetBinPath(_T("OEM\\oem.txt")); 
 	
 	FILE* oemFile;
 	oemFile = _tfopen( TextFileName.c_str(),"r" );

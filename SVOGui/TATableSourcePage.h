@@ -11,7 +11,6 @@
 #include "SVOResource\resource.h"
 #include "SVMFCControls\AvailableObjectListComboBox.h"
 #include "SVUtilityLibrary\SVGUID.h"
-#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -60,7 +59,7 @@ namespace SvOg
 		/// \param inputName [in] The name of the input.
 		/// \param name [in] Name of the object from the available list.
 		/// \returns HRESULT
-		HRESULT ConnectToObject(const SVString& inputName, const SVString& name);
+		HRESULT ConnectToObject(const std::string& inputName, const std::string& name);
 #pragma endregion Private Methods
 
 #pragma region Member Variables
@@ -69,7 +68,7 @@ namespace SvOg
 		
 		SVGUID m_InspectionID;
 		SVGUID m_TaskObjectID;
-		SVString m_inputName;
+		std::string m_inputName;
 		SvUl::NameGuidList m_availableList;
 #pragma endregion Member Variables
 	};

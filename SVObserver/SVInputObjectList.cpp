@@ -108,7 +108,7 @@ SVInputObject* SVInputObjectList::GetInput(const SVGUID& rInputID) const
 	return pResult;
 }
 
-SVInputObject* SVInputObjectList::GetInput(const SVString& rInputName) const
+SVInputObject* SVInputObjectList::GetInput(const std::string& rInputName) const
 {
 	SVInputObject* pResult(nullptr);
 
@@ -131,7 +131,7 @@ SVInputObject* SVInputObjectList::GetInput(const SVString& rInputName) const
 	return pResult;
 }
 
-SVInputObject* SVInputObjectList::GetInputFlyweight(const SVString& rInputName, SVObjectSubTypeEnum ObjectSubType, int GuidIndex)
+SVInputObject* SVInputObjectList::GetInputFlyweight(const std::string& rInputName, SVObjectSubTypeEnum ObjectSubType, int GuidIndex)
 {
 	SVInputObject* pResult(nullptr);
 

@@ -12,6 +12,7 @@
 #include "stdafx.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "RemoteMonitorListHelper.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVOCore/SVImageClass.h"
 #include "SVSharedMemoryLibrary/MonitorEntry.h"
 #include "SVSharedMemoryLibrary/MonitorListCpy.h"
@@ -24,9 +25,9 @@
 
 #pragma endregion Includes
 
-SVString RemoteMonitorListHelper::GetNameFromMonitoredObject(const MonitoredObject& rMonitoredObject)
+std::string RemoteMonitorListHelper::GetNameFromMonitoredObject(const MonitoredObject& rMonitoredObject)
 {
-	SVString Result;
+	std::string Result;
 	SVObjectReference ObjectRef( SVObjectManagerClass::Instance().GetObject(rMonitoredObject.guid) );
 	if( nullptr != ObjectRef.getObject() )
 	{
@@ -105,16 +106,16 @@ void RemoteMonitorListHelper::GetPropertiesFromMonitoredObject(const MonitoredOb
 }
 
 
-MonitoredObject RemoteMonitorListHelper::GetMonitoredObjectFromName(const SVString& name)
+MonitoredObject RemoteMonitorListHelper::GetMonitoredObjectFromName(const std::string& name)
 {
 	MonitoredObject Result;
 
-	SVString sObjectName;
+	std::string sObjectName;
 	size_t iLength = name.size();
 	//Check to see if first part of name is Inspections. if so remove it.
 	if ( iLength >= 12 && name.substr(0, 12) == "Inspections." )
 	{
-		sObjectName = SvUl_SF::Right(name, iLength - 12);
+		sObjectName = SvUl::Right(name, iLength - 12);
 	}
 	else
 	{
@@ -144,7 +145,7 @@ void RemoteMonitorListHelper::AddMonitorObject2MonitorListcpy(const MonitoredObj
 
 	for(it = values.begin(); it != values.end() ; ++it)
 	{
-		SVString name = RemoteMonitorListHelper::GetNameFromMonitoredObject(*it);
+		std::string name = RemoteMonitorListHelper::GetNameFromMonitoredObject(*it);
 		SvSml::MonitorEntryPointer MeP = molcpy.AddEntry(listtype, name);
 		RemoteMonitorListHelper::GetPropertiesFromMonitoredObject(*it, MeP->data);
 		MeP->m_Guid = it->guid;

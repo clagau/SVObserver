@@ -14,12 +14,13 @@
 #pragma region Includes
 //Moved to precompiled header: #include <deque>
 //Moved to precompiled header: #include <utility>
-#include "SVUtilityLibrary/SVString.h"
+
 #include "SVImportedInputList.h"
 #include "SVUtilityLibrary\SVSharedPtr.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
-typedef std::pair<SVString, GUID> SVNameGuidPair;
+typedef std::pair<std::string, GUID> SVNameGuidPair;
 typedef std::deque<SVNameGuidPair> SVNameGuidPairList;
 
 class SVOPPQObj  
@@ -31,21 +32,21 @@ public:
 	SVOPPQObj& operator=(const SVOPPQObj &source);
 
 	void SetPPQName(LPCTSTR PPQName);
-	const SVString& GetPPQName();
+	const std::string& GetPPQName();
 
 	void AttachTriggerToPPQ(LPCTSTR TriggerName);
 	void DetachTriggerFromPPQ();
-	const SVString& GetAttachedTriggerName() const;
+	const std::string& GetAttachedTriggerName() const;
 
 	bool AttachCameraToPPQ(LPCTSTR CameraName);
 	bool DetachCameraFromPPQ(LPCTSTR CameraName);
 	int GetAttachedCameraCount() const;
-	SVString GetAttachedCamera(int ipos) const;
+	std::string GetAttachedCamera(int ipos) const;
 
 	bool AttachInspectionToPPQ(LPCTSTR InspectName);
 	bool DetachInspectionFromPPQ(LPCTSTR InspectName);
 	int GetAttachedInspectionCount();
-	SVString GetAttachedInspection(int iPos);
+	std::string GetAttachedInspection(int iPos);
 
 	//also have methods for properties
 	void SetPPQMode(int iMode);
@@ -65,8 +66,8 @@ public:
 	void SetAvailableInputsForConditionalOutput(const SVNameGuidPairList& list);
 	const SVNameGuidPairList& GetAvailableInputsForConditionalOutput() const;
 
-	void SetConditionalOutputName(const SVString& name);
-	const SVString& GetConditionalOutputName() const;
+	void SetConditionalOutputName(const std::string& name);
+	const std::string& GetConditionalOutputName() const;
 	bool IsConditionalOutputCameraInput() const;
 	void RemoveCameraInputConditionalOutput();
 
@@ -75,10 +76,10 @@ public:
 	void ClearImportedInputList();
 
 private:
-	SVString m_PPQName;
-	SVString m_AttachedTrigger;
-	SVStringVector m_AttachedCameraList;
-	SVStringVector m_AttachedInspectList;
+	std::string m_PPQName;
+	std::string m_AttachedTrigger;
+	SvDef::StringVector m_AttachedCameraList;
+	SvDef::StringVector m_AttachedInspectList;
 
 	//properties
 	int m_iPPQMode;
@@ -87,7 +88,7 @@ private:
 	long m_lPPQOutputDelayTime;
 	bool m_bMaintainSrcImg;
 	long m_lInspectionTimeout;
-	SVString m_conditionalOutputName;
+	std::string m_conditionalOutputName;
 	SVNameGuidPairList m_availableInputs;
 	SVImportedInputList m_importedInputList;
 };

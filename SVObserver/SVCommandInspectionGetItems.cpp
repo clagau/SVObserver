@@ -19,6 +19,7 @@
 #include "SVOCore/SVImageProcessingClass.h"
 #include "SVInfoStructs.h"
 #include "SVInspectionProcess.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -113,7 +114,7 @@ const SVNameStorageResultMap& SVCommandInspectionGetItems::GetResultItems() cons
 	return m_ResultItems;
 }
 
-HRESULT SVCommandInspectionGetItems::UpdateResultsWithImageData(const SVString& rItemName, const SVObjectReference& rImageRef, unsigned long TriggerCnt)
+HRESULT SVCommandInspectionGetItems::UpdateResultsWithImageData(const std::string& rItemName, const SVObjectReference& rImageRef, unsigned long TriggerCnt)
 {
 	HRESULT Status = S_OK;
 
@@ -131,7 +132,7 @@ HRESULT SVCommandInspectionGetItems::UpdateResultsWithImageData(const SVString& 
 
 		if (!(ImageHandlePtr.empty()))
 		{
-			SVString FileName = SvUl_SF::Format(_T("V:\\%ld-%s.bmp"), TriggerCount, pImage->GetUniqueObjectID().ToString().c_str());
+			std::string FileName = SvUl::Format(_T("V:\\%ld-%s.bmp"), TriggerCount, pImage->GetUniqueObjectID().ToString().c_str());
 
 			GetStatus = SVImageProcessingClass::SaveImageBuffer(FileName.c_str(),SVMatroxFileTypeEnum::SVFileBitmap , ImageHandlePtr);
 
@@ -163,7 +164,7 @@ HRESULT SVCommandInspectionGetItems::UpdateResultsWithImageData(const SVString& 
 	return Status;
 }
 
-HRESULT SVCommandInspectionGetItems::UpdateResultsWithValueData(const SVString& rItemName, const SVObjectReference& rValueRef, unsigned long TriggerCnt)
+HRESULT SVCommandInspectionGetItems::UpdateResultsWithValueData(const std::string& rItemName, const SVObjectReference& rValueRef, unsigned long TriggerCnt)
 {
 	HRESULT Status = S_OK;
 	HRESULT GetStatus = S_OK;
@@ -215,7 +216,7 @@ HRESULT SVCommandInspectionGetItems::UpdateResultsWithValueData(const SVString& 
 	return Status;
 }
 
-HRESULT SVCommandInspectionGetItems::UpdateResultsWithErrorData(const SVString& rItemName, HRESULT errorStatus, unsigned long triggerCount)
+HRESULT SVCommandInspectionGetItems::UpdateResultsWithErrorData(const std::string& rItemName, HRESULT errorStatus, unsigned long triggerCount)
 {
 	HRESULT Status = S_OK;
 	SVStorage storage;

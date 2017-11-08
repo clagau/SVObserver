@@ -10,7 +10,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <boost/circular_buffer.hpp>
 #include "SVObjectLibrary\SVObjectLibrary.h"
-#include "SVUtilityLibrary\SVString.h"
+
 #include "SVDoubleValueObjectClass.h"
 #pragma endregion Includes
 

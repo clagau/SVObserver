@@ -12,7 +12,7 @@
 
 #pragma region Includes
 #include "SVTaskObjectInterfaceInputRequestStruct.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 class SVTaskObjectClass;
@@ -26,7 +26,7 @@ public:
 
 	void SetTaskObject( SVTaskObjectClass* pTaskObject );
 
-	virtual HRESULT GetObjectValue( const SVGUID& rObjectId, const SVString& rValueName, _variant_t& rValue ) const;
+	virtual HRESULT GetObjectValue( const SVGUID& rObjectId, const std::string& rValueName, _variant_t& rValue ) const;
 
 	virtual HRESULT GetValue( const SVGUID& rTaskId, const SVGUID& rEmbeddedId, _variant_t& rValue ) const;
 

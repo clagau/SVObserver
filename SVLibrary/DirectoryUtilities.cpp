@@ -15,7 +15,7 @@
 //Moved to precompiled header: #include <direct.h>
 //Moved to precompiled header: #include <tchar.h>
 #include "DirectoryUtilities.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 bool CreateDirPath( LPCTSTR Path)
@@ -34,9 +34,9 @@ bool CreateDirPath( LPCTSTR Path)
 		return true;
 	}
 
-	SVString PathToCreate( Path );
+	std::string PathToCreate( Path );
 	//find the number of backslashes
-	while( SVString::npos != (Pos = PathToCreate.find( _T("\\"), Pos )) )
+	while( std::string::npos != (Pos = PathToCreate.find( _T("\\"), Pos )) )
 	{
 		Pos++;
 		nBackCount++;
@@ -54,7 +54,7 @@ bool CreateDirPath( LPCTSTR Path)
 				Pos++;
 				continue;
 			}
-			SVString Temp = SvUl_SF::Left( PathToCreate, Pos );
+			std::string Temp = SvUl::Left( PathToCreate, Pos );
 			if( _tmkdir( Temp.c_str() ) )
 			{
 				if(errno != EEXIST) return false;
@@ -77,7 +77,7 @@ bool CopyFilesInDirectory(LPCTSTR sourceDirectory, LPCTSTR destinationDirectory)
 {
 	CreateDirPath(destinationDirectory);
 
-	SVString SearchPattern = sourceDirectory;
+	std::string SearchPattern = sourceDirectory;
 	SearchPattern += _T("\\*.*");
 
 	CFileFind		Finder;
@@ -90,8 +90,8 @@ bool CopyFilesInDirectory(LPCTSTR sourceDirectory, LPCTSTR destinationDirectory)
 		// copy only files, not directories ...
 		if ( !Finder.IsDirectory ( ) )
 		{
-			SVString SourceFilepath = Finder.GetFilePath();
-			SVString DestinationFilepath = destinationDirectory + SVString( _T("\\") ) + Finder.GetFileName().GetString();
+			std::string SourceFilepath = Finder.GetFilePath();
+			std::string DestinationFilepath = destinationDirectory + std::string( _T("\\") ) + Finder.GetFileName().GetString();
 			if( !CopyFile( SourceFilepath.c_str(),DestinationFilepath.c_str(), true ) )
 			{
 				return false;
@@ -105,8 +105,8 @@ bool CopyFilesInDirectory(LPCTSTR sourceDirectory, LPCTSTR destinationDirectory)
 
 void moveContainedDirectory( LPCTSTR containingDirectoryPath, LPCTSTR sourceDirectory, LPCTSTR destinationDirectory)
 {
-	SVString sourcePath = containingDirectoryPath + SVString( _T("\\") ) + sourceDirectory;
-	SVString destinationPath=containingDirectoryPath + SVString( _T("\\") ) +destinationDirectory;
+	std::string sourcePath = containingDirectoryPath + std::string( _T("\\") ) + sourceDirectory;
+	std::string destinationPath=containingDirectoryPath + std::string( _T("\\") ) +destinationDirectory;
 
 	deleteTree( destinationPath.c_str() );
 
@@ -118,7 +118,7 @@ void deleteTree( LPCTSTR Path )
 {
 	//Arvid: this solution was taken (and modified somewhat) from here: http://www.codeproject.com/Articles/1862/Delete-folders-subfolders-and-files-easily
 	CFileFind ff;
-	SVString searchpath( Path );
+	std::string searchpath( Path );
 
 	if( searchpath[searchpath.size()-1] != '\\' )
 	{

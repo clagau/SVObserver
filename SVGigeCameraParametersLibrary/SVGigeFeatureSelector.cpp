@@ -17,12 +17,12 @@ SVGigeFeatureSelector::SVGigeFeatureSelector()
 {
 }
 
-SVGigeFeatureSelector::SVGigeFeatureSelector(const SVString& featureName)
+SVGigeFeatureSelector::SVGigeFeatureSelector(const std::string& featureName)
 : m_featureName(featureName)
 {
 }
 
-SVGigeFeatureSelector::SVGigeFeatureSelector(const SVString& featureName, const SVString& featureValue)
+SVGigeFeatureSelector::SVGigeFeatureSelector(const std::string& featureName, const std::string& featureValue)
 : m_featureName(featureName), m_featureValue(featureValue)
 {
 }
@@ -42,17 +42,17 @@ SVGigeFeatureSelector& SVGigeFeatureSelector::operator=(const SVGigeFeatureSelec
 	return *this;
 }
 
-void SVGigeFeatureSelector::SetValue(const SVString& featureValue)
+void SVGigeFeatureSelector::SetValue(const std::string& featureValue)
 {
 	m_featureValue = featureValue;
 }
 
-const SVString& SVGigeFeatureSelector::GetValue() const
+const std::string& SVGigeFeatureSelector::GetValue() const
 {
 	return m_featureValue;
 }
 
-const SVString& SVGigeFeatureSelector::GetName() const
+const std::string& SVGigeFeatureSelector::GetName() const
 {
 	return m_featureName;
 }

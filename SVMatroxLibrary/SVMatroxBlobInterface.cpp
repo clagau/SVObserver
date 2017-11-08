@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVMatroxBlobInterface.h"
 #include "SVCommandLibrary/SVCommandDataHolder.h"
 #include "SVMatroxImagingLibrary.h"  // has MIL includes
@@ -1222,9 +1222,9 @@ HRESULT SVMatroxBlobInterface::FillResults( const SVBlobOffsetList& p_rBlobList,
 
 			if( S_OK == l_Status )
 			{
-				SVString l_Name;
+				std::string l_Name;
 
-				l_Name = SvUl_SF::Format( _T( "Blob Result %d" ), i );
+				l_Name = SvUl::Format( _T( "Blob Result %d" ), i );
 
 				l_Status = p_rResults.SetContainer( _bstr_t(l_Name.c_str()), l_Blob, true );
 			}

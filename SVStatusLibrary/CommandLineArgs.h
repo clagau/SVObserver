@@ -7,7 +7,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary\SVString.h"
+
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -52,8 +52,8 @@ namespace SvStl
 
 #pragma region privat member 
 		bool        m_IsParsed;
-		SVString m_iniDirectory;
-		SVString m_startDirectory;
+		std::string m_iniDirectory;
+		std::string m_startDirectory;
 #pragma endregion privat member 
 	};
 

@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVOResource/resource.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #include "ModelessMessageBox.h"
 #pragma endregion Includes
 
@@ -54,12 +54,12 @@ class CModelessMsgBox : public CDialog
 {
 	// Construction
 public:
-	CModelessMsgBox(const SVString& rMsg, HANDLE p_hEvent);   // standard constructor
+	CModelessMsgBox(const std::string& rMsg, HANDLE p_hEvent);   // standard constructor
 	virtual ~CModelessMsgBox();
 
 
 protected:
-	SVString m_Msg;
+	std::string m_Msg;
 	HANDLE m_hEvent;
 
 public:
@@ -99,7 +99,7 @@ BEGIN_MESSAGE_MAP(CModelessMsgBox, CDialog)
 END_MESSAGE_MAP()
 
 
-CModelessMsgBox::CModelessMsgBox(const SVString& rMsg, HANDLE p_hEvent)
+CModelessMsgBox::CModelessMsgBox(const std::string& rMsg, HANDLE p_hEvent)
 	: CDialog(CModelessMsgBox::IDD, nullptr)
 , m_Msg( rMsg )
 {
@@ -200,7 +200,7 @@ void CModelessMsgBox::OnSize(UINT nType, int cx, int cy)
 }
 
 
-void CallModelessMessageBox(SVString &Message, HANDLE hCheckEvent)
+void CallModelessMessageBox(std::string &Message, HANDLE hCheckEvent)
 {
 	ModelessMessageBox(Message, hCheckEvent);
 }

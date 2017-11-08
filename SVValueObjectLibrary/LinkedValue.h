@@ -10,7 +10,6 @@
 #pragma region Includes
 #include "SVObjectLibrary\SVInObjectInfoStruct.h"
 #include "SVObjectLibrary\SVObjectReference.h"
-#include "SVUtilityLibrary\SVString.h"
 #include "SVStringValueObjectClass.h"
 #include "SVVariantValueObjectClass.h"
 #pragma endregion Includes
@@ -54,7 +53,7 @@ public:
 	void setIndirectValueSaveFlag(bool shouldSaveValue);
 
 #pragma region Methods to replace processMessage
-	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName) override { UpdateLinkedName(); };
+	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override { UpdateLinkedName(); };
 #pragma endregion Methods to replace processMessage
 #pragma endregion Public Methods
 
@@ -63,7 +62,7 @@ protected:
 	//! Convert a string in a variant. Throw an exception if the string isn't convertible into a variant
 	//! \param rValue [in] The input string
 	//! \returns the converted value.
-	virtual _variant_t ConvertString2Type( const SVString& rValue ) const override;
+	virtual _variant_t ConvertString2Type( const std::string& rValue ) const override;
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
@@ -85,7 +84,7 @@ private:
 	/// Convert a string (dotted name) to an object.
 	/// \param rValue [in] Input string
 	/// \returns SVObjectReference A reference to the found object. 
-	SVObjectReference ConvertStringInObject( const SVString& rValue ) const;
+	SVObjectReference ConvertStringInObject( const std::string& rValue ) const;
 
 	/// Checks if the linked object is valid.
 	/// \param pLinkedObject [in]  Pointer to the indirect object

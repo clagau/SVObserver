@@ -593,7 +593,7 @@ void SVUserMaskOperatorClass::Persist( SVObjectWriter& rWriter )
 	// get the data
 	maskStorage.Read( pBuff, len );
 
-	SVString hexMaskDataStr;
+	std::string hexMaskDataStr;
 
 	// Convert to hex String
 	::SVConvertToHexString( len, pBuff, hexMaskDataStr );
@@ -606,7 +606,7 @@ void SVUserMaskOperatorClass::Persist( SVObjectWriter& rWriter )
 	value.Clear();
 }
 
-HRESULT SVUserMaskOperatorClass::GetObjectValue( const SVString& rValueName, _variant_t& rValue ) const
+HRESULT SVUserMaskOperatorClass::GetObjectValue( const std::string& rValueName, _variant_t& rValue ) const
 {
 	HRESULT hr = S_OK;
 
@@ -947,7 +947,7 @@ SvOi::MatroxImageSmartHandlePtr SVUserMaskOperatorClass::GetMaskImage() const
 	return data;
 }
 
-HRESULT SVUserMaskOperatorClass::Import(const SVString& filename)
+HRESULT SVUserMaskOperatorClass::Import(const std::string& filename)
 {
 	HRESULT hr(S_OK);
 	CFile maskFile; 
@@ -968,7 +968,7 @@ HRESULT SVUserMaskOperatorClass::Import(const SVString& filename)
 	return hr;
 }
 
-HRESULT SVUserMaskOperatorClass::Export(const SVString& filename)
+HRESULT SVUserMaskOperatorClass::Export(const std::string& filename)
 {
 	HRESULT hr(S_OK);
 	CFile maskFile; 

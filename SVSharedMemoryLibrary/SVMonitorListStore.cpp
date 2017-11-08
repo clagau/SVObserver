@@ -16,7 +16,7 @@
 
 namespace SvSml
 {
-	const SVString g_shName = "MonitorListStore.";
+	const std::string g_shName = "MonitorListStore.";
 
 	SVMonitorListStore::SVMonitorListStore(const void_allocator& rAllocator)
 	: m_allocator(rAllocator)
@@ -30,7 +30,7 @@ namespace SvSml
 		SVSharedConfiguration::Log("SVMonitorListStore::Destructor");
 	}
 
-	SVSharedMonitorList & SVMonitorListStore::operator[](const SVString & listName)
+	SVSharedMonitorList & SVMonitorListStore::operator[](const std::string & listName)
 	{
 		SVSharedConfiguration::Log("SVMonitorListStore::operator[]");
 
@@ -51,10 +51,10 @@ namespace SvSml
 				return it->second;
 			}
 		}
-		throw std::exception((SVString("Monitor list name: ") + listName + " not found.").c_str());
+		throw std::exception((std::string("Monitor list name: ") + listName + " not found.").c_str());
 	}
 
-	const SVSharedMonitorList & SVMonitorListStore::operator[](const SVString & listName) const
+	const SVSharedMonitorList & SVMonitorListStore::operator[](const std::string & listName) const
 	{
 		SVSharedConfiguration::Log("SVMonitorListStore::operator[]");
 		/* // Do not try to allocate a char_string and use find on the map, it will cause an access violation in 32 bit
@@ -73,15 +73,15 @@ namespace SvSml
 				return it->second;
 			}
 		}
-		throw std::exception((SVString("Monitor list name: ") + listName + " not found.").c_str());
+		throw std::exception((std::string("Monitor list name: ") + listName + " not found.").c_str());
 	}
 
-	const SVStringVector SVMonitorListStore::GetListNames() const
+	const SvDef::StringVector SVMonitorListStore::GetListNames() const
 	{
 		SVSharedConfiguration::Log("SVMonitorListStore::GetListNames");
 		if (!m_lists.empty())
 		{
-			SVStringVector tmp;
+			SvDef::StringVector tmp;
 			size_t sz = m_lists.size();
 			tmp.reserve(sz);
 			for (MonitorMap::const_iterator it = m_lists.begin(); it != m_lists.end(); ++it)
@@ -107,7 +107,7 @@ namespace SvSml
 		m_lists.clear();
 	}
 
-	bool SVMonitorListStore::HasList(const SVString & name) const
+	bool SVMonitorListStore::HasList(const std::string & name) const
 	{
 		SVSharedConfiguration::Log("SVMonitorListStore::HasList");
 		// Do Not try to allocate a char_string and use find, it will cause an access violation on 32 bit

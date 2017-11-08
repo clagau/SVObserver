@@ -15,7 +15,6 @@
 #include "SVAccessPointNode.h"
 #include "SVSecurityStorage.h"
 #include "SVStatusLibrary/MessageTextEnum.h"
-#include "SVUtilityLibrary\SVString.h"
 #pragma endregion Includes
 
 class SVAccessClass
@@ -46,14 +45,14 @@ protected:
 	HRESULT Save();
 	HRESULT SetNTGroup( long lID, LPCTSTR NTGroup );
 	HRESULT SetForcedPrompt( long lID, BOOL Force );
-	HRESULT GetNTGroup( long lID, SVString& rNTGroup );
+	HRESULT GetNTGroup( long lID, std::string& rNTGroup );
 	HRESULT GetForcedPrompt( long lID, BOOL& rForce );
 	bool IsChangable( long lID );
 	long GetUserTimeout();
 	HRESULT SetUseLogon(bool bUse);
 	HRESULT SetUserTimeout(long lTime);
-	HRESULT PasswordDialog(SVString& rUser, SVString& strPassword, LPCTSTR Attempt, LPCTSTR p_strStatus);
-	bool IsUserAMember( const SVString& rUser, const SVString& p_strGroups );
+	HRESULT PasswordDialog(std::string& rUser, std::string& strPassword, LPCTSTR Attempt, LPCTSTR p_strStatus);
+	bool IsUserAMember( const std::string& rUser, const std::string& p_strGroups );
 	bool IsCurrentUserValidated(long lId);
 
 	void init();
@@ -62,8 +61,8 @@ protected:
 
 public:
 	bool IsLoggedOn();
-	const SVString& GetCurrentUser();
-	const SVString& GetCurrentPassword();
+	const std::string& GetCurrentUser();
+	const std::string& GetCurrentPassword();
 
 	// **** Construction Destruction
 	SVAccessClass();
@@ -71,7 +70,7 @@ public:
 
 
 protected:
-	SVString Change( const SVString& rSource );
+	std::string Change( const std::string& rSource );
 	bool IsMasterPassword( LPCTSTR User, LPCTSTR PW );
 	// Global settings
 
@@ -79,8 +78,8 @@ protected:
 	time_t m_lTimeStamp;
 
 	// Auto Log
-	SVString m_LogonServer;
-	SVString m_FileName;
+	std::string m_LogonServer;
+	std::string m_FileName;
 
 	// Keep track of current data
 	SVSecurityStorage m_svStorage;

@@ -20,7 +20,7 @@
 #include "SVLibrary/SVFileNameClass.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "SVUtilityLibrary/SVImageCopyUtility.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "Definitions/StringTypeDef.h"
 #include "SVMatroxLibrary/SVMatroxImagingLibrary.h"  // has MIL includes
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
@@ -301,15 +301,15 @@ HRESULT SVImageProcessingClass::CreateImageChildBuffer( const SVImageInfoClass& 
 			{
 				if (nullptr != rParentInfo.GetOwner())
 				{
-					SVStringVector msgList;
-					msgList.push_back(SVString(rChildInfo.GetOwner()->GetCompleteName()));
-					msgList.push_back(SVString(rParentInfo.GetOwner()->GetCompleteName()));
+					SvDef::StringVector msgList;
+					msgList.push_back(std::string(rChildInfo.GetOwner()->GetCompleteName()));
+					msgList.push_back(std::string(rParentInfo.GetOwner()->GetCompleteName()));
 					message.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CreateImageChildBuffer_parent, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10065);
 				}
 				else 
 				{
-					SVStringVector msgList;
-					msgList.push_back(SVString(rChildInfo.GetOwner()->GetCompleteName()));
+					SvDef::StringVector msgList;
+					msgList.push_back(std::string(rChildInfo.GetOwner()->GetCompleteName()));
 					message.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CreateImageChildBuffer_child, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10065);
 				}
 			}
@@ -539,7 +539,7 @@ HRESULT SVImageProcessingClass::InitBuffer( SVSmartHandlePointer rHandle, DWORD 
 HRESULT SVImageProcessingClass::LoadImageBuffer( LPCTSTR tstrImagePathName, SVImageInfoClass& rInfo, SVSmartHandlePointer& rHandle )
 {
 	SVFileNameClass	svfncImageFile(tstrImagePathName);
-	SVString strImagePathName = svfncImageFile.GetFullFileName();
+	std::string strImagePathName = svfncImageFile.GetFullFileName();
 
 	if( !strImagePathName.empty() )
 	{
@@ -555,7 +555,7 @@ HRESULT SVImageProcessingClass::LoadImageBuffer( LPCTSTR tstrImagePathName, SVIm
 		{
 
 			HRESULT l_Code;
-			SVString l_strPath = strImagePathName;
+			std::string l_strPath = strImagePathName;
 
 			if( !rHandle.empty() )
 			{
@@ -788,7 +788,7 @@ HRESULT SVImageProcessingClass::SaveImageBuffer( LPCTSTR tstrImagePathName, SVMa
 
 		if( efileFormat != SVFileUnknown )
 		{
-			SVString l_strPath = tstrImagePathName;
+			std::string l_strPath = tstrImagePathName;
 			Result = SVMatroxBufferInterface::Export( l_MilHandle.GetBuffer(), l_strPath, efileFormat );
 		}
 	}

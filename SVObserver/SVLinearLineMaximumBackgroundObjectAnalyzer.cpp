@@ -17,7 +17,7 @@
 #include "SVLinearEdgeAProcessingClass.h"
 #include "SVLinearEdgeBProcessingClass.h"
 #include "SVOCore/SVTool.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVLinearMaximumBackgroundObjectLineAnalyzerClass, SVLinearMaximumBackgroundObjectLineAnalyzerClassGuid );
@@ -107,8 +107,8 @@ void SVLinearMaximumBackgroundObjectLineAnalyzerClass::init()
 	resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
 	resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultDPointXObjectType;
 	resultClassInfo.m_ClassId = SVDPointXResultClassGuid;
-	resultClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_DPEDGE_A );
-	SVString Title = SvUl_SF::LoadSVString( IDS_CLASSNAME_RESULT_POINT_X );
+	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_DPEDGE_A );
+	std::string Title = SvUl::LoadStdString( IDS_CLASSNAME_RESULT_POINT_X );
 	resultClassInfo.m_ClassName += _T(" ") + Title;
 	m_availableChildren.Add( resultClassInfo );
 
@@ -116,8 +116,8 @@ void SVLinearMaximumBackgroundObjectLineAnalyzerClass::init()
 	resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
 	resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultDPointYObjectType;
 	resultClassInfo.m_ClassId = SVDPointYResultClassGuid;
-	resultClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_DPEDGE_A );
-	Title = SvUl_SF::LoadSVString( IDS_CLASSNAME_RESULT_POINT_Y );
+	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_DPEDGE_A );
+	Title = SvUl::LoadStdString( IDS_CLASSNAME_RESULT_POINT_Y );
 	resultClassInfo.m_ClassName += _T(" ") + Title;
 	m_availableChildren.Add( resultClassInfo );
 
@@ -130,8 +130,8 @@ void SVLinearMaximumBackgroundObjectLineAnalyzerClass::init()
 	resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
 	resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultDPointXObjectType;
 	resultClassInfo.m_ClassId = SVDPointXResultClassGuid;
-	resultClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_DPEDGE_B );
-	Title = SvUl_SF::LoadSVString( IDS_CLASSNAME_RESULT_POINT_X );
+	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_DPEDGE_B );
+	Title = SvUl::LoadStdString( IDS_CLASSNAME_RESULT_POINT_X );
 	resultClassInfo.m_ClassName += _T(" ") + Title;
 	m_availableChildren.Add( resultClassInfo );
 
@@ -139,8 +139,8 @@ void SVLinearMaximumBackgroundObjectLineAnalyzerClass::init()
 	resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
 	resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultDPointYObjectType;
 	resultClassInfo.m_ClassId = SVDPointYResultClassGuid;
-	resultClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_DPEDGE_B );
-	Title = SvUl_SF::LoadSVString( IDS_CLASSNAME_RESULT_POINT_Y );
+	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_DPEDGE_B );
+	Title = SvUl::LoadStdString( IDS_CLASSNAME_RESULT_POINT_Y );
 	resultClassInfo.m_ClassName += _T(" ") + Title;
 	m_availableChildren.Add( resultClassInfo );
 
@@ -153,8 +153,8 @@ void SVLinearMaximumBackgroundObjectLineAnalyzerClass::init()
 	resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
 	resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultDPointXObjectType;
 	resultClassInfo.m_ClassId = SVDPointXResultClassGuid;
-	resultClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_DPCENTER );
-	Title = SvUl_SF::LoadSVString( IDS_CLASSNAME_RESULT_POINT_X );
+	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_DPCENTER );
+	Title = SvUl::LoadStdString( IDS_CLASSNAME_RESULT_POINT_X );
 	resultClassInfo.m_ClassName += _T(" ") + Title;
 	m_availableChildren.Add( resultClassInfo );
 
@@ -162,8 +162,8 @@ void SVLinearMaximumBackgroundObjectLineAnalyzerClass::init()
 	resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
 	resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultDPointYObjectType;
 	resultClassInfo.m_ClassId = SVDPointYResultClassGuid;
-	resultClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_DPCENTER );
-	Title = SvUl_SF::LoadSVString( IDS_CLASSNAME_RESULT_POINT_Y );
+	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_DPCENTER );
+	Title = SvUl::LoadStdString( IDS_CLASSNAME_RESULT_POINT_Y );
 	resultClassInfo.m_ClassName += _T(" ") + Title;
 	m_availableChildren.Add( resultClassInfo );
 
@@ -176,8 +176,8 @@ void SVLinearMaximumBackgroundObjectLineAnalyzerClass::init()
 	resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
 	resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultDoubleObjectType;
 	resultClassInfo.m_ClassId = SVDoubleResultClassGuid;
-	resultClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_DWIDTH );
-	Title = SvUl_SF::LoadSVString( IDS_RESULT_STRING );
+	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_DWIDTH );
+	Title = SvUl::LoadStdString( IDS_RESULT_STRING );
 	resultClassInfo.m_ClassName += _T(" ") + Title;
 	m_availableChildren.Add( resultClassInfo );
 
@@ -189,8 +189,8 @@ void SVLinearMaximumBackgroundObjectLineAnalyzerClass::init()
 	resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
 	resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultDoubleObjectType;
 	resultClassInfo.m_ClassId = SVDoubleResultClassGuid;
-	resultClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_A );
-	Title = SvUl_SF::LoadSVString( IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_A_RESULT );
+	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_A );
+	Title = SvUl::LoadStdString( IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_A_RESULT );
 	resultClassInfo.m_ClassName += _T(" ") + Title;
 	m_availableChildren.Add( resultClassInfo );
 
@@ -202,8 +202,8 @@ void SVLinearMaximumBackgroundObjectLineAnalyzerClass::init()
 	resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
 	resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultDoubleObjectType;
 	resultClassInfo.m_ClassId = SVDoubleResultClassGuid;
-	resultClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_B );
-	Title = SvUl_SF::LoadSVString( IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_B_RESULT );
+	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_B );
+	Title = SvUl::LoadStdString( IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_B_RESULT );
 	resultClassInfo.m_ClassName += _T(" ") + Title;
 	m_availableChildren.Add( resultClassInfo );
 }

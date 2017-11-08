@@ -18,7 +18,7 @@
 //Moved to precompiled header: #include <deque>
 #include "IObjectSelectorItem.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 namespace SvCl
@@ -76,49 +76,49 @@ namespace SvCl
 			The method gets the name of the item
 			\return the name of the item
 		***********/
-		virtual const SVString& getName() const override;
+		virtual const std::string& getName() const override;
 
 		/**********
 			The method sets the name of the item
 			\param rName <in> a reference to the name of the item
 		***********/
-		virtual void setName( const SVString& rName ) override;
+		virtual void setName( const std::string& rName ) override;
 
 		/**********
 			The method gets the location of the item
 			\return the tree path of the item
 		***********/
-		virtual const SVString& getLocation() const override;
+		virtual const std::string& getLocation() const override;
 
 		/**********
 			The method sets the tree path of the item
 			\param rLocation <in> a reference to the location of the item
 		***********/
-		virtual void setLocation( const SVString& rLocation ) override;
+		virtual void setLocation( const std::string& rLocation ) override;
 
 		/**********
 			The method gets the tree display location of the item
 			\return the display location of the item
 		***********/
-		virtual const SVString& getDisplayLocation() const override;
+		virtual const std::string& getDisplayLocation() const override;
 
 		/**********
 			The method sets the tree display location of the item
 			\param rDisplayLocation <in> a reference to the display location of the item
 		***********/
-		virtual void setDisplayLocation( const SVString& rDisplayLocation ) override;
+		virtual void setDisplayLocation( const std::string& rDisplayLocation ) override;
 
 		/**********
 			The method gets the name of the item type
 			\return the type of the item as a string
 		***********/
-		virtual const SVString& getItemTypeName() const override;
+		virtual const std::string& getItemTypeName() const override;
 
 		/**********
 			The method sets the name of the item type
 			\param rItemType <in> a reference to the string indicating the item's type
 		***********/
-		virtual void setItemTypeName( const SVString& ItemTypeName ) override;
+		virtual void setItemTypeName( const std::string& ItemTypeName ) override;
 
 		/**********
 			The method gets the handle to the corresponding tree item
@@ -237,10 +237,10 @@ namespace SvCl
 
 	private:
 	#pragma region Member Variables
-		SVString			m_Name;						//The name of the item
-		SVString			m_Location;					//The location of the item
-		SVString			m_DisplayLocation;			//The display location of the item
-		SVString			m_ItemTypeName;				//The name of the data type of the item
+		std::string			m_Name;						//The name of the item
+		std::string			m_Location;					//The location of the item
+		std::string			m_DisplayLocation;			//The display location of the item
+		std::string			m_ItemTypeName;				//The name of the data type of the item
 		HTREEITEM			m_TreeItem;					//the corresponding tree item handle
 		_variant_t			m_ItemKey;					//The item key
 		AttributeEnum		m_Attribute;				//The item attribute

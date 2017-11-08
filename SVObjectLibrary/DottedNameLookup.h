@@ -8,7 +8,7 @@
 #pragma once
 
 #include "SVContainerLibrary/IGraphNameLookup.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #include "SVObjectManagerClass.h"
 #include "SVObjectClass.h"
 
@@ -43,7 +43,7 @@ namespace SvOl
 
 	#pragma region Member Variables
 	private:
-		mutable SVString m_LabelName;
+		mutable std::string m_LabelName;
 	#pragma endregion Member Variables
 	};
 } //namespace SvOl

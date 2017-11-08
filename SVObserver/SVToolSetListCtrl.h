@@ -14,7 +14,6 @@
 #pragma region Includes
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/NameGuidList.h"
-#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -25,9 +24,9 @@ struct ToolListSelectionInfo
 {
 public:
 	const int m_listIndex;
-	const SVString m_Selection;
+	const std::string m_Selection;
 
-	ToolListSelectionInfo(int listIndex, const SVString& Selection)
+	ToolListSelectionInfo(int listIndex, const std::string& Selection)
 	: m_listIndex( listIndex )
 	, m_Selection( Selection ) {}
 };
@@ -71,8 +70,8 @@ public:
 	void RestoreScrollPos();
 
 	bool AllowedToEdit() const;
-	bool IsEndListDelimiter( const SVString& rName ) const;
-	bool IsEmptyStringPlaceHolder( const SVString& rName ) const;
+	bool IsEndListDelimiter( const std::string& rName ) const;
+	bool IsEmptyStringPlaceHolder( const std::string& rName ) const;
 
 	/// Display an error message box with the first error, if the tool has errors.
 	/// \param rGuid [in] Guid of the tool.
@@ -85,8 +84,8 @@ protected:
 	ToolSetView* GetView();
 	const ToolSetView* GetView() const;
 	void CreateImageLists();
-	int InsertStartGroup(int itemNo, const SVString& rStartName, bool bCollapsed);
-	int InsertEndGroup(int itemNo, const SVString& rEndName, bool bCollapsed);
+	int InsertStartGroup(int itemNo, const std::string& rStartName, bool bCollapsed);
+	int InsertEndGroup(int itemNo, const std::string& rEndName, bool bCollapsed);
 	int InsertTool(int itemNo, int listIndex, bool bCollapsed, int indent);
 	void AddEndDelimiter();
 	void InsertEmptyString(int itemNo);

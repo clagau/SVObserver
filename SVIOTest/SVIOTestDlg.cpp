@@ -21,7 +21,7 @@
 #include "SVLibrary/SVOIniClass.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVStatusLibrary/GlobalPath.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -241,7 +241,7 @@ BOOL CSVIOTESTDlg::OnInitDialog()
 
 	// Read Information from hardware.ini about the board options...
 	SvLib::SVOINIClass HardwareIni( SvStl::GlobalPath::Inst().GetHardwareIniPath() );
-	SVString Value;
+	std::string Value;
 
 	Value = HardwareIni.GetValueString( _T("IO Board"), _T("10"), _T("Entech X1") );
 	Value = _T("10 - ") + Value;

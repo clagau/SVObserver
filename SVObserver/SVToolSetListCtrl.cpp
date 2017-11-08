@@ -22,6 +22,7 @@
 #include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
 #include "SVOResource\ConstGlobalSvOr.h"
 #include "SVStatusLibrary\MessageManager.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -169,7 +170,7 @@ void SVToolSetListCtrl::Rebuild()
 	}
 }
 
-int SVToolSetListCtrl::InsertStartGroup(int itemNo, const SVString& rStartName, bool bCollapsed)
+int SVToolSetListCtrl::InsertStartGroup(int itemNo, const std::string& rStartName, bool bCollapsed)
 {
 	int index = itemNo;
 	int img = (bCollapsed) ? m_expandState : m_collapseState;
@@ -189,7 +190,7 @@ int SVToolSetListCtrl::InsertStartGroup(int itemNo, const SVString& rStartName, 
 	return index;
 }
 
-int SVToolSetListCtrl::InsertEndGroup(int itemNo, const SVString& rEndName, bool bCollapsed)
+int SVToolSetListCtrl::InsertEndGroup(int itemNo, const std::string& rEndName, bool bCollapsed)
 {
 	int index = itemNo;
 	if (!rEndName.empty() && !bCollapsed)
@@ -256,7 +257,7 @@ void SVToolSetListCtrl::AddEndDelimiter()
 
 void SVToolSetListCtrl::InsertEmptyString(int itemNo)
 {
-	SVString Empty = SvUl_SF::LoadSVString(IDS_EMPTY_STRING);
+	std::string Empty = SvUl::LoadStdString(IDS_EMPTY_STRING);
 	LVITEM item;
 	memset(&item, 0, sizeof(item));
 	item.mask = LVIF_IMAGE | LVIF_INDENT | LVIF_PARAM;
@@ -269,14 +270,14 @@ void SVToolSetListCtrl::InsertEmptyString(int itemNo)
 	SetItemText(index, 0, Empty.c_str());
 }
 
-bool SVToolSetListCtrl::IsEndListDelimiter( const SVString& rName ) const
+bool SVToolSetListCtrl::IsEndListDelimiter( const std::string& rName ) const
 {
 	return (rName == SvO::EndListDelimiter);
 }
 
-bool SVToolSetListCtrl::IsEmptyStringPlaceHolder( const SVString& rName ) const
+bool SVToolSetListCtrl::IsEmptyStringPlaceHolder( const std::string& rName ) const
 {
-	SVString EmptyString = SvUl_SF::LoadSVString(IDS_EMPTY_STRING);
+	std::string EmptyString = SvUl::LoadStdString(IDS_EMPTY_STRING);
 	return (rName == EmptyString);
 }
 
@@ -321,7 +322,7 @@ bool SVToolSetListCtrl::IsStartGrouping(int index, bool& bState) const
 	const ToolSetView* pView = GetView();
 	if (pView)
 	{
-		SVString Name = GetItemText(index, 0);
+		std::string Name = GetItemText(index, 0);
 		const SVToolGrouping& groups = pView->GetToolGroupings();
 		bRetVal = groups.IsStartTag(Name.c_str(), bState);
 	}
@@ -502,7 +503,7 @@ bool SVToolSetListCtrl::AllowedToEdit() const
 	int index = GetNextItem(-1, LVNI_SELECTED);
 	if (index != -1)
 	{
-		SVString Text = GetItemText(index, 0);
+		std::string Text = GetItemText(index, 0);
 		if (!IsEndListDelimiter( Text ) && !IsEmptyStringPlaceHolder( Text ))
 		{
 			bRetVal = true;
@@ -541,7 +542,7 @@ void SVToolSetListCtrl::SetSelectedTool(const SVGUID& rGuid)
 
 ToolListSelectionInfo SVToolSetListCtrl::GetToolListSelectionInfo() const
 {
-	SVString itemText; 
+	std::string itemText; 
 	int listIndex = GetNextItem(-1, LVNI_SELECTED);
 	if (-1 != listIndex)
 	{
@@ -656,7 +657,7 @@ void SVToolSetListCtrl::CollapseItem(int item)
 	lvItem.iSubItem = 0;
 
 	GetItem(&lvItem);
-	SVString Name = GetItemText(item, 0);
+	std::string Name = GetItemText(item, 0);
 	// Send to View...
 	ToolSetView* pView = GetView();
 	if (pView)
@@ -673,7 +674,7 @@ void SVToolSetListCtrl::ExpandItem(int item)
 	lvItem.iSubItem = 0;
 
 	GetItem(&lvItem);
-	SVString Name = GetItemText(item, 0);
+	std::string Name = GetItemText(item, 0);
 	// Send to View...
 	ToolSetView* pView = GetView();
 	if (pView)

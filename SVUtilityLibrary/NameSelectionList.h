@@ -12,15 +12,15 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <utility>
 //Moved to precompiled header: #include <deque>
-#include "SVString.h"
+//Moved to precompiled header: #include <string>
+//Moved to precompiled header: #include <utility>
 #pragma endregion Includes
 
 namespace SvUl
 {
 	// first in the pair is the inspection object (image/value) name, second is a boolean for whether it's selected or not
-	typedef std::pair<SVString, bool> NameSelection;
+	typedef std::pair<std::string, bool> NameSelection;
 	typedef std::deque<NameSelection> NameSelectionList;
 } // namespace SvUl
 

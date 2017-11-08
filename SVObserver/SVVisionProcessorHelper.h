@@ -18,7 +18,7 @@
 //Moved to precompiled header: #include <boost/config.hpp>
 //Moved to precompiled header: #include <boost/function.hpp>
 #include "SVSystemLibrary/SVAsyncProcedure.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVSharedMemoryLibrary/SVProductFilterEnum.h"
 #include "SVUtilityLibrary/SVGUID.h"
@@ -54,7 +54,7 @@ struct MonitorlistPropeties
 	{};
 	int RejectQueDepth;
 	bool isActive;
-	SVString ppqName;
+	std::string ppqName;
 };
 
 const TCHAR StandardItems[] = _T( "StandardItems" );
@@ -68,22 +68,22 @@ public:
 	virtual ~SVVisionProcessorHelper();
 
 	HRESULT GetVersion( unsigned long& rVersion ) const;
-	HRESULT GetVersion( SVString& rVersion ) const;
+	HRESULT GetVersion( std::string& rVersion ) const;
 
 	HRESULT GetState( unsigned long& rState ) const;
 
 	HRESULT GetOfflineCount( unsigned long& rCount ) const;
 
-	HRESULT LoadConfiguration( const SVString& rPackFileName );
+	HRESULT LoadConfiguration( const std::string& rPackFileName );
 
-	HRESULT SaveConfiguration( const SVString& rPackFileName ) const;
+	HRESULT SaveConfiguration( const std::string& rPackFileName ) const;
 
 	HRESULT GetConfigurationMode( unsigned long& rMode ) const;
 	HRESULT SetConfigurationMode( unsigned long Mode );
 
-	HRESULT GetConfigurationPrintReport( SVString& rReport ) const;
+	HRESULT GetConfigurationPrintReport( std::string& rReport ) const;
 
-	HRESULT GetDataDefinitionList( const SVString& rInspectionName, const SVDataDefinitionListType& rListType, SVDataDefinitionStructArray& rDataDefinitionArray) const;
+	HRESULT GetDataDefinitionList( const std::string& rInspectionName, const SVDataDefinitionListType& rListType, SVDataDefinitionStructArray& rDataDefinitionArray) const;
 
 	//************************************
 	//! Get Items value for the Item in NameSet to the SVNameStorageResultMap 
@@ -111,15 +111,15 @@ public:
 	//! \returns HRESULT
 	//************************************
 	HRESULT FireMessageNotification( int Type, int MesssageNumber, LPCTSTR MessageText );
-	HRESULT QueryProductList( const SVString& rListName, SVNameSet& rNames ) const;
-	HRESULT QueryRejectCondList( const SVString& rListName, SVNameSet& rNames ) const;
-	HRESULT QueryFailStatusList( const SVString& rListName, SVNameSet& rNames ) const;
-	HRESULT ActivateMonitorList( const SVString& rListName, bool bActivate );
+	HRESULT QueryProductList( const std::string& rListName, SVNameSet& rNames ) const;
+	HRESULT QueryRejectCondList( const std::string& rListName, SVNameSet& rNames ) const;
+	HRESULT QueryFailStatusList( const std::string& rListName, SVNameSet& rNames ) const;
+	HRESULT ActivateMonitorList( const std::string& rListName, bool bActivate );
 	HRESULT QueryMonitorListNames( SVNameSet& rNames ) const;
 	HRESULT GetInspectionNames( SVNameSet& rNames ) const;
-	HRESULT SetProductFilter( const SVString& rListName, SvSml::SVProductFilterEnum filter );
-	HRESULT GetProductFilter( const SVString& rListName, SvSml::SVProductFilterEnum& filter ) const;
-	HRESULT RegisterMonitorList( const SVString& rListName, const SVString& rPPQName, int rejectDepth, const SVNameSet& rProdList, const SVNameSet& rRejectCondList, const SVNameSet& rFailStatusList, SVNameStatusMap& rStatusOfItemsWithError );
+	HRESULT SetProductFilter( const std::string& rListName, SvSml::SVProductFilterEnum filter );
+	HRESULT GetProductFilter( const std::string& rListName, SvSml::SVProductFilterEnum& filter ) const;
+	HRESULT RegisterMonitorList( const std::string& rListName, const std::string& rPPQName, int rejectDepth, const SVNameSet& rProdList, const SVNameSet& rRejectCondList, const SVNameSet& rFailStatusList, SVNameStatusMap& rStatusOfItemsWithError );
 	
 	
 	//! Give the Properties of an existing Monitorlist
@@ -128,7 +128,7 @@ public:
 	//! \param RejectQueDepth [out]
 	//! \param isActive [out]
 	//! \returns HRESULT
-	HRESULT GetMonitorListProperties(const SVString& rListName, MonitorlistPropeties& properties);
+	HRESULT GetMonitorListProperties(const std::string& rListName, MonitorlistPropeties& properties);
 	
 	// These two (2) methods, Startup, Shutdown are only meant to be called by the main application class and no other
 	// They used to be protected and a friend class declaration was used, but that was a bad design as the friend was declares in another project
@@ -139,8 +139,8 @@ public:
 protected:
 	typedef boost::function< HRESULT ( const SVNameSet&, SVNameStorageResultMap& ) > SVGetItemsFunctor;
 	typedef boost::function< HRESULT ( const SVNameStorageMap&, SVNameStatusMap& ) > SVSetItemsFunctor;
-	typedef std::map< SVString, SVGetItemsFunctor > SVGetItemsFunctorMap;
-	typedef std::map< SVString, SVSetItemsFunctor > SVSetItemsFunctorMap;
+	typedef std::map<std::string, SVGetItemsFunctor> SVGetItemsFunctorMap;
+	typedef std::map<std::string, SVSetItemsFunctor> SVSetItemsFunctorMap;
 
 	static void CALLBACK APCThreadProcess( DWORD_PTR dwParam );
 

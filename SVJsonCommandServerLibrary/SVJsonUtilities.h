@@ -14,7 +14,6 @@
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <set>
 #include "JsonLib/include/json.h"
-#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 namespace SVJsonUtilities
@@ -28,9 +27,9 @@ namespace SVJsonUtilities
 
 	HRESULT AddVariantToJsonArray( const _variant_t& rVariant, Json::Value& rJsonArray );
 
-	HRESULT GetTempFileNameUsingPrefixAndExt( SVString& rTempFileName, const SVString& rPrefix, const SVString& rExt );
+	HRESULT GetTempFileNameUsingPrefixAndExt( std::string& rTempFileName, const std::string& rPrefix, const std::string& rExt );
 
-	HRESULT WriteJsonValueToFile( const Json::Value& rJsonValue, const SVString& rFileName );
+	HRESULT WriteJsonValueToFile( const Json::Value& rJsonValue, const std::string& rFileName );
 
 }
 

@@ -16,6 +16,8 @@
 #include "SVToolSet.h"
 #include "SVConfigurationObject.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "RootObject.h"
 #include "TextDefinesSvO.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
@@ -127,8 +129,8 @@ void GlobalConstantView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint 
 		BasicValueObjects::ValueVector::const_iterator Iter( GlobalObjects.begin() );
 		while( GlobalObjects.end() != Iter && !Iter->empty() )
 		{
-			SVString Name( (*Iter)->GetCompleteName() );
-			SvUl_SF::MakeUpper(Name);
+			std::string Name( (*Iter)->GetCompleteName() );
+			SvUl::MakeUpper(Name);
 			m_DataList.push_back( std::make_pair( Name,  *Iter ) );
 			++Iter;
 		}
@@ -171,7 +173,7 @@ bool GlobalConstantView::editItem( int Item )
 	SvDef::GlobalConstantData GlobalData;
 	SvOg::GlobalConstantDlg GlobalDlg( GlobalData, this );
 
-	SVStringVector GlobalConstantList;
+	SvDef::StringVector GlobalConstantList;
 	RootObject::getRootChildNameList( GlobalConstantList, SvOl::FqnGlobal );
 	GlobalDlg.setExistingNames( GlobalConstantList );
 
@@ -262,10 +264,10 @@ int GlobalConstantView::insertItem(const BasicValueObjectPtr& rpObject, int Pos 
 {
 	LVITEM lvItem;
 	_variant_t Value;
-	SVString Type;
+	std::string Type;
 	int InsertPos;
 
-	SVString ValueText;
+	std::string ValueText;
 	lvItem.mask = LVIF_IMAGE | LVIF_TEXT | LVIF_STATE | LVIF_PARAM;
 	lvItem.pszText = _T("");
 	lvItem.iIndent = 0;
@@ -284,13 +286,13 @@ int GlobalConstantView::insertItem(const BasicValueObjectPtr& rpObject, int Pos 
 	case VT_R8:
 		{
 			Type = SvOg::GlobalConstantTypes[SvDef::GlobalConstantData::DecimalType];
-			ValueText = SvUl_SF::Format( _T("%.06f"), Value.dblVal );
+			ValueText = SvUl::Format( _T("%.06f"), Value.dblVal );
 		}
 		break;
 	case VT_BSTR:
 		{
 			Type = SvOg::GlobalConstantTypes[SvDef::GlobalConstantData::TextType];
-			ValueText = SvUl_SF::createSVString( Value );
+			ValueText = SvUl::createStdString( Value );
 		}
 		break;
 	default:
@@ -305,8 +307,8 @@ int GlobalConstantView::insertItem(const BasicValueObjectPtr& rpObject, int Pos 
 	m_rCtrl.SetItemText( InsertPos, ValueCol, ValueText.c_str() );
 
 	//Replace any new line with a space to display it in one line
-	SVString Description( rpObject->getDescription() );
-	SvUl_SF::searchAndReplace( Description, _T("\r\n"), _T(" ") );
+	std::string Description( rpObject->getDescription() );
+	SvUl::searchAndReplace( Description, _T("\r\n"), _T(" ") );
 	m_rCtrl.SetItemText( InsertPos, DescriptionCol, Description.c_str() );
 
 	return InsertPos;
@@ -337,10 +339,10 @@ void GlobalConstantView::editGlobalConstant( const SvDef::GlobalConstantData& rG
 	pGlobalObject = dynamic_cast<BasicValueObject*> ( SVObjectManagerClass::Instance().GetObject( rGlobalData.m_Guid ) );
 	if( nullptr != pGlobalObject )
 	{
-		if( rGlobalData.m_DottedName != SVString( pGlobalObject->GetCompleteName() ) )
+		if( rGlobalData.m_DottedName != std::string( pGlobalObject->GetCompleteName() ) )
 		{
 			SVObjectNameInfo ParseName;
-			SVString OldName( pGlobalObject->GetName() );
+			std::string OldName( pGlobalObject->GetName() );
 			ParseName.ParseObjectName( rGlobalData.m_DottedName );
 			pGlobalObject->SetName( ParseName.m_NameArray[ParseName.m_NameArray.size() - 1].c_str() );
 			SVConfigurationObject* pConfig( nullptr );
@@ -426,11 +428,11 @@ bool GlobalConstantView::checkAllDependencies( BasicValueObject* pObject, bool C
 
 	if( nullptr != pConfig )
 	{
-		SVString DisplayText = SvUl_SF::LoadSVString(IDS_DELETE_CHECK_DEPENDENCIES);
-		SVString Name( pObject->GetName() );
+		std::string DisplayText = SvUl::LoadStdString(IDS_DELETE_CHECK_DEPENDENCIES);
+		std::string Name( pObject->GetName() );
 		SVGuidSet ObjectCheckList;
 
-		DisplayText = SvUl_SF::Format( DisplayText.c_str(), Name.c_str(), Name.c_str(), Name.c_str(), Name.c_str() );
+		DisplayText = SvUl::Format( DisplayText.c_str(), Name.c_str(), Name.c_str(), Name.c_str(), Name.c_str() );
 
 		ObjectCheckList.insert( pObject->GetUniqueObjectID() );
 		

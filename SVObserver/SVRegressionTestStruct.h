@@ -11,7 +11,9 @@
 
 #pragma once
 
-#include "SVUtilityLibrary/SVString.h"
+#pragma region Includes
+#include "Definitions/StringTypeDef.h"
+#pragma endregion Includes
 
 enum RegressionFileEnum
 {
@@ -24,18 +26,18 @@ enum RegressionFileEnum
 
 struct RegressionTestStruct
 {
-	SVString Camera;
-	SVString FirstFile;
+	std::string Camera;
+	std::string FirstFile;
 	RegressionFileEnum iFileMethod; 
-	SVStringVector stdVectorFile;
-	SVStringVector::iterator stdIteratorStart;
-	SVStringVector::iterator stdIteratorCurrent;
+	SvDef::StringVector stdVectorFile;
+	SvDef::StringVector::iterator stdIteratorStart;
+	SvDef::StringVector::iterator stdIteratorCurrent;
 };
 
 struct RegressionRunFileStruct
 {
-	SVString CameraName;
-	SVString FileName;
+	std::string CameraName;
+	std::string FileName;
 };
 
 enum RegressionRunModeEnum

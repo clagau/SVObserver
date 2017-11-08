@@ -30,7 +30,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary/SVString.h"
+
 #include "SVRPropTreeCtrl.h"
 #include "SVRPropTreeInfo.h"
 #include "SVRPropTreeItem.h"

@@ -11,11 +11,11 @@
 
 #pragma once
 
-#include "SVUtilityLibrary/SVString.h"
+
 
 struct SVFileInfo
 {
-	SVString filename;
+	std::string filename;
 	UINT64 fileSize;
 	FILETIME creationDate;
 	FILETIME modifiedDate;

@@ -23,8 +23,8 @@
 #include "SVDllToolLoadLibraryClass.h"
 #include "SVRPropertyTree/SVRPropTreeState.h"
 #include "SVMatroxLibrary/SVMatroxTypedefs.h"
-#include "SVUtilityLibrary/SVString.h"
 #include "SVValueObjectLibrary/LinkedValue.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 class SVToolClass;
@@ -92,8 +92,8 @@ public:
 	virtual HRESULT DisconnectInputsOutputs(SVObjectPtrVector& rListOfObjects) override;
 	virtual HRESULT HideInputsOutputs(SVObjectPtrVector& rListOfObjects) override;
 
-	HRESULT SetPathName( const SVString& rPath );
-	HRESULT SetDependencies( const SVStringVector& rDependencies );
+	HRESULT SetPathName( const std::string& rPath );
+	HRESULT SetDependencies( const SvDef::StringVector& rDependencies );
 	HRESULT GetResultImageDefinitions( SVImageDefinitionStructArray& raResultImageDefinitions );
 	HRESULT GetResultValueDefinitions ( ResultValueDefinitionStructArray& raResultValueDefinitions );
 	HRESULT GetInputValueDefinitions( InputValueDefinitionStructArray& raInputValueDefinitions );

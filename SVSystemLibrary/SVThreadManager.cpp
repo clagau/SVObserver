@@ -16,7 +16,8 @@
 #include "SVMessage\SVMessage.h"
 #include "SVStatusLibrary\GlobalPath.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 SVThreadManager& SVThreadManager::Instance()
@@ -202,10 +203,10 @@ BOOL SVThreadManager::IsThreadManagerInstalled() const
 void SVThreadManager::setThreadError( DWORD MessageCode, LPCTSTR Message, SvStl::SourceFileParams SourceFile )
 {
 	DWORD errorCode = GetLastError();
-	SVStringVector msgList;
-	msgList.push_back( SvUl_SF::Format( _T("%d"), errorCode ));
-	msgList.push_back( SvUl_SF::Format( _T("0X%08X"), errorCode ));
-	msgList.push_back( SVString( Message ) );
+	SvDef::StringVector msgList;
+	msgList.push_back( SvUl::Format( _T("%d"), errorCode ));
+	msgList.push_back( SvUl::Format( _T("0X%08X"), errorCode ));
+	msgList.push_back( std::string( Message ) );
 
 	SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 	Exception.setMessage( MessageCode, SvStl::Tid_OS_Error_Message, msgList, SourceFile, SvStl::Err_25030_Thread );

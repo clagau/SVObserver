@@ -9,7 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:58:30  $
 //******************************************************************************
 
-#include "SVUtilityLibrary/SVString.h"
+
 #include "Definitions/SVUserMessage.h"
 
 template<typename Task>

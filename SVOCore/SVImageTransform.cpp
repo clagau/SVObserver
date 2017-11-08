@@ -18,7 +18,7 @@
 #include "Definitions/GlobalConst.h"
 #include "SVTool.h"
 #include "SVTransformationTool.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVObjectLibrary/SVClsIds.h"
 #pragma endregion Includes
 
@@ -61,20 +61,20 @@ SVImageTransformClass::SVImageTransformClass( SVObjectClass* POwner, int StringR
 
 	// Interpolation mode object
 	// Set Default Interpolation Mode to use Nearest Neighbor
-	SVString Mode;
-	SVString Text;
-	SVString EnumTypes;
+	std::string Mode;
+	std::string Text;
+	std::string EnumTypes;
 	// M_NEAREST_NEIGHBOR 
-	Mode = SvUl_SF::LoadSVString( IDS_NEAREST_NEIGHBOR_STRING );
-	Text = SvUl_SF::Format( _T("%s=%d,"), Mode.c_str(), SVNearestNeighOverScanClear); // M_NEAREST_NEIGHBOR);
+	Mode = SvUl::LoadStdString( IDS_NEAREST_NEIGHBOR_STRING );
+	Text = SvUl::Format( _T("%s=%d,"), Mode.c_str(), SVNearestNeighOverScanClear); // M_NEAREST_NEIGHBOR);
 	EnumTypes += Text;
 	// M_BILINEAR
-	Mode = SvUl_SF::LoadSVString( IDS_BILINEAR_STRING );
-	Text = SvUl_SF::Format( _T("%s=%d,"), Mode.c_str(), SVBilinear);		// M_BILINEAR );
+	Mode = SvUl::LoadStdString( IDS_BILINEAR_STRING );
+	Text = SvUl::Format( _T("%s=%d,"), Mode.c_str(), SVBilinear);		// M_BILINEAR );
 	EnumTypes += Text;
 	// M_BICUBIC
-	Mode = SvUl_SF::LoadSVString( IDS_BICUBIC_STRING );
-	Text = SvUl_SF::Format( _T("%s=%d,"), Mode.c_str(), SVBiCubic);			// M_BICUBIC );
+	Mode = SvUl::LoadStdString( IDS_BICUBIC_STRING );
+	Text = SvUl::Format( _T("%s=%d,"), Mode.c_str(), SVBiCubic);			// M_BICUBIC );
 	EnumTypes += Text;
 	// And now set enum types...
 	m_interpolationMode.SetEnumTypes( EnumTypes.c_str() );
@@ -525,7 +525,7 @@ HRESULT SVImageTransformClass::CollectInputImageNames()
 	SVTransformationToolClass* pTool = dynamic_cast<SVTransformationToolClass*>(GetTool());
 	if( nullptr != pInputImage && nullptr != pTool )
 	{
-		SVString Name = pInputImage->GetCompleteName();
+		std::string Name = pInputImage->GetCompleteName();
 
 		pTool->GetInputImageNames()->SetValue(Name);
 

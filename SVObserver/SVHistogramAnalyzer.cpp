@@ -28,7 +28,7 @@
 #include "SVOCore/SVImageProcessingClass.h"
 #include "SVResultLong.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 const double histogram_width = 512;
@@ -432,7 +432,7 @@ void SVHistogramAnalyzerClass::AddResult(const std::pair<GUID, DWORD> & p)
 	l_resultInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
 	l_resultInfo.m_ObjectTypeInfo.SubType	= SVResultLongObjectType;
 	l_resultInfo.m_ClassId = SVLongResultClassGuid;
-	l_resultInfo.m_ClassName = SvUl_SF::LoadSVString(p.second);
+	l_resultInfo.m_ClassName = SvUl::LoadStdString(p.second);
 
 	pAnalyzerResult = dynamic_cast<SVLongResultClass *>(l_resultInfo.Construct());
 

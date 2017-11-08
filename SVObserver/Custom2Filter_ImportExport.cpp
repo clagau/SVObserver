@@ -14,7 +14,7 @@
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "ObjectInterfaces/ICustom2Filter.h"
 #include "SVXMLLibrary/SaxXMLHandler.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region local helper function
@@ -26,7 +26,7 @@
 //************************************
 void writeElement(SvXml::SVObjectXMLWriter& rXmlWriter, UINT ResourceID, variant_t Value )
 {
-	SVString Label = SvUl_SF::LoadSVString( ResourceID );
+	std::string Label = SvUl::LoadStdString( ResourceID );
 	rXmlWriter.WriteAttribute( Label.c_str(), Value);
 }
 
@@ -41,7 +41,7 @@ variant_t readElement( SvXml::SVXMLMaterialsTree& rTree, const SvXml::SVXMLMater
 {
 	variant_t Value;
 
-	SVString Label = SvUl_SF::LoadSVString( ResourceID );
+	std::string Label = SvUl::LoadStdString( ResourceID );
 	if( !SvXml::SVNavigateTree::GetItem( rTree, Label.c_str(), rBranch, Value ) )
 	{
 		Value.Clear();
@@ -71,7 +71,7 @@ bool readCustom2FilterBranch( SvXml::SVXMLMaterialsTree& rTree,
 	SvXml::SVXMLMaterialsTree::SVBranchHandle Branch;
 	bool Result(false);
 
-	SVString Label = SvUl_SF::LoadSVString( IDS_CLASSNAME_CUSTOM2FILTER );
+	std::string Label = SvUl::LoadStdString( IDS_CLASSNAME_CUSTOM2FILTER );
 	if ( SvXml::SVNavigateTree::GetItemBranch( rTree, Label.c_str(), nullptr, Branch ) )
 	{
 		_variant_t Value;
@@ -82,7 +82,7 @@ bool readCustom2FilterBranch( SvXml::SVXMLMaterialsTree& rTree,
 		absoluteValue = readElement( rTree, Branch, IDS_OBJECTNAME_CUSTOMFILTER_ABSOLUTE );
 		clippingEnabled = readElement( rTree, Branch, IDS_OBJECTNAME_CUSTOMFILTER_CLIPPING );
 
-		Label = SvUl_SF::LoadSVString( IDS_OBJECTNAME_CUSTOMFILTER_KERNELCELL );
+		Label = SvUl::LoadStdString( IDS_OBJECTNAME_CUSTOMFILTER_KERNELCELL );
 		SVTreeType::SVBranchHandle Elements = nullptr;
 		if ( SvXml::SVNavigateTree::GetItemBranch( rTree, Label.c_str(), Branch, Elements ) )
 		{
@@ -106,7 +106,7 @@ bool readCustom2FilterBranch( SvXml::SVXMLMaterialsTree& rTree,
 #pragma endregion local helper function
 
 #pragma region function-implementation of ICustom2Filter
-void SvOi::exportCustom2Filter(const SVString &filePath, 
+void SvOi::exportCustom2Filter(const std::string &filePath, 
 	long kernelWidth, 
 	long kernelHeight, 
 	long normalizationFactor, 
@@ -141,7 +141,7 @@ void SvOi::exportCustom2Filter(const SVString &filePath,
 		XmlWriter.StartElement( SvXml::CTAG_ENVIRONMENT  );
 		XmlWriter.WriteAttribute( SvXml::CTAG_VERSION_NUMBER, Value );
 		XmlWriter.EndElement();
-		SVString Label = SvUl_SF::LoadSVString( IDS_CLASSNAME_CUSTOM2FILTER );
+		std::string Label = SvUl::LoadStdString( IDS_CLASSNAME_CUSTOM2FILTER );
 		XmlWriter.StartElement( Label.c_str() );
 
 		writeElement( XmlWriter, IDS_OBJECTNAME_CUSTOMFILTER_KERNELWIDTH, kernelWidth );
@@ -150,7 +150,7 @@ void SvOi::exportCustom2Filter(const SVString &filePath,
 		writeElement( XmlWriter, IDS_OBJECTNAME_CUSTOMFILTER_ABSOLUTE, absoluteValue );
 		writeElement( XmlWriter, IDS_OBJECTNAME_CUSTOMFILTER_CLIPPING, clippingEnabled );
 
-		Label = SvUl_SF::LoadSVString( IDS_OBJECTNAME_CUSTOMFILTER_KERNELCELL );
+		Label = SvUl::LoadStdString( IDS_OBJECTNAME_CUSTOMFILTER_KERNELCELL );
 		XmlWriter.StartElement( Label.c_str() );
 		SVVariantList KernelArray;
 		ICustom2Filter::LongArray::const_iterator Iter( kernelIteratorBegin );
@@ -171,7 +171,7 @@ void SvOi::exportCustom2Filter(const SVString &filePath,
 	}
 }	
 
-HRESULT SvOi::importCustom2Filter(const SVString& rFileName,
+HRESULT SvOi::importCustom2Filter(const std::string& rFileName,
 	long &kernelWidth, 
 	long &kernelHeight, 
 	long &normalizationFactor, 

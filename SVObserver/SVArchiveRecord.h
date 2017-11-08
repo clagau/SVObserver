@@ -12,7 +12,6 @@
 #include "SVDataManagerLibrary/DataManager.h"
 #include "SVOCore/SVTool.h"
 #include "SVOCore/SVImageObjectClass.h"
-#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 
@@ -34,34 +33,34 @@ public:
 			SVObjectReference refObject    // a reference to an object required
 		);
 
-	HRESULT	BuildArchiveImageFilePath(SVString& rImageFile);  // For images only
+	HRESULT	BuildArchiveImageFilePath(std::string& rImageFile);  // For images only
 	void BuildFileName();                 // For images only
 	void ConnectInputObject();
 	void DisconnectInputObject();
 
 	HRESULT AllocateBuffers( long lBufferSize );
-	HRESULT QueueImage( SVMatroxBuffer& buf, const SVString& rFileName );
+	HRESULT QueueImage( SVMatroxBuffer& buf, const std::string& rFileName );
 	HRESULT WriteImageQueue();
 	HRESULT WriteImage( );
-	static HRESULT WriteImage( SVMatroxBuffer& buf, const SVString& rFileName );
+	static HRESULT WriteImage( SVMatroxBuffer& buf, const std::string& rFileName );
 
 	void Init( SVArchiveTool* pArchiveTool );
 
 	SVImageClass* GetImage();
 
 	long                    GetImageMemorySize() { return m_lImageSize; }
-	const SVString&         GetImageObjectName() { return m_ImageObjectName; }
+	const std::string&         GetImageObjectName() { return m_ImageObjectName; }
 	SVObjectReference&      GetObjectReference() { return m_svObjectReference; }
 #pragma endregion Public Methods
 
 private:
 #pragma region Private Members
-	typedef std::pair< SVString, SVDataManagerHandle > SVFileNameIndexHandlePair;
-	typedef std::deque< SVFileNameIndexHandlePair > SVFileNameIndexHandleDeque;
+	typedef std::pair<std::string, SVDataManagerHandle> SVFileNameIndexHandlePair;
+	typedef std::deque<SVFileNameIndexHandlePair> SVFileNameIndexHandleDeque;
 
 	SVObjectReference   m_svObjectReference;
-	SVString            m_ImageObjectName;           // images only
-	SVString            m_FileNameImage;             // images only
+	std::string            m_ImageObjectName;           // images only
+	std::string            m_FileNameImage;             // images only
 	long                m_lCountImages;                // images only
 	SVImageObjectClassPtr  m_ImageBufferPtr;                 // images only
 	SVImageInfoClass    m_ImageInfo;                   // images only

@@ -21,7 +21,7 @@ SVMatroxImageBuffer::SVMatroxImageBuffer()
 {
 }
 
-SVMatroxImageBuffer::SVMatroxImageBuffer( SVMatroxIdentifier p_Identifier, const SVString& p_rCreatorName )
+SVMatroxImageBuffer::SVMatroxImageBuffer( SVMatroxIdentifier p_Identifier, const std::string& p_rCreatorName )
 : SVMatroxBufferTemplate( p_Identifier, p_rCreatorName )
 {
 	SVMatroxResourceMonitor::InsertIdentifier( SVBufferID, p_Identifier );

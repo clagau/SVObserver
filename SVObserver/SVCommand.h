@@ -16,7 +16,7 @@
 #include "SVRunControlLibrary/SVImageIndexStruct.h"
 #include "SVActiveXLockStruct.h"	// Added by ClassView
 #include "SVInfoStructs.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 class SVInspectionProcess;
@@ -34,7 +34,7 @@ struct StreamDataStruct
 {
     SVObjectClass *pValueObject;
 	SVGUID m_InspectionID;
-    SVString strValueName;
+    std::string strValueName;
 	long arrayIndex;
 
 	StreamDataStruct()
@@ -44,7 +44,7 @@ struct StreamDataStruct
 struct PacketDataStruct
 {
     SVObjectClass *pValueObject;
-	SVString strValue;
+	std::string strValue;
 	long lState;
 
 	PacketDataStruct()
@@ -578,7 +578,7 @@ private:
 	static SVVector<StreamDataStruct*> m_arStreamList;
 	static SVVector<ProductDataStruct*> m_arProductList;
 	static SVVector<SVInspectionProcess*> m_arInspections;
-	static SVStringVector m_InspectionNames;
+	static SvDef::StringVector m_InspectionNames;
 
     static volatile bool m_bRunStreamData;
     static volatile bool m_bRegisteredStream;

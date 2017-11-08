@@ -14,7 +14,7 @@
 #include "SVMonitorListStore.h"
 #include "SVSharedMemorySettings.h"
 #include "SVProductFilterEnum.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 namespace SvSml
@@ -22,7 +22,7 @@ namespace SvSml
 	class SVMonitorListStore;
 	class SVMonitorListWriter
 	{
-		SVString m_ShareName;
+		std::string m_ShareName;
 		SVMonitorListStore* m_lists;
 		void Init();
 	public:
@@ -34,9 +34,9 @@ namespace SvSml
 		// returns S_OK on success
 		/////////////////////////////////////////////////////////////////////////////////
 		HRESULT Create(const SVSharedMemorySettings& settings, size_t requiredSize);
-		void AddList(const SVString& listName, const SVString& ppqName, int rejectDepth, int productDepth, bool isActive);
-		void FillList(const SVString& listName, ListType::typ type, const SvSml::MonitorEntries& list);
-		void SetProductFilter(const SVString& listName, SVProductFilterEnum filter);
+		void AddList(const std::string& listName, const std::string& ppqName, int rejectDepth, int productDepth, bool isActive);
+		void FillList(const std::string& listName, ListType::typ type, const SvSml::MonitorEntries& list);
+		void SetProductFilter(const std::string& listName, SVProductFilterEnum filter);
 		void Release(); //<Destroy sharedMemory
 		std::shared_ptr<bip::managed_shared_memory> m_pManagedSharedMemory;
 	};

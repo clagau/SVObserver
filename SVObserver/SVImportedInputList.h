@@ -15,17 +15,17 @@
 //Moved to precompiled header: #include <boost/any.hpp>
 //Moved to precompiled header: #include <deque>
 
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 typedef std::deque<boost::any> SVImportedInputList;
 
 struct SVImportedInput
 {
-	const SVString name;
+	const std::string name;
 	const long ppqPosition;
 	
-	SVImportedInput(const SVString& rName, long ppqPos)
+	SVImportedInput(const std::string& rName, long ppqPos)
 	: name(rName), ppqPosition(ppqPos) {}
 	virtual ~SVImportedInput() {}
 };
@@ -34,7 +34,7 @@ struct SVImportedRemoteInput : SVImportedInput
 {
 	const _variant_t value;
 	const long index;
-	SVImportedRemoteInput(const SVString& rName, long ppqPos, const _variant_t& rValue, long idx)
+	SVImportedRemoteInput(const std::string& rName, long ppqPos, const _variant_t& rValue, long idx)
 	: SVImportedInput(rName, ppqPos)
 	, index(idx)
 	, value(rValue)

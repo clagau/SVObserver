@@ -26,7 +26,7 @@
 #include "SVImageLibrary/SVImageExtentClass.h"
 #include "SVImageListClass.h"
 #include "SVExtentPropertiesInfoStruct.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 class SVImageClass;
@@ -92,7 +92,7 @@ public:
 	/// \param pToMoveObject [in] This object should moved.
 	/// \param pPosObject [in] The other object will be moved before this object.
 	void MovedEmbeddedObject(SVObjectClass* pToMoveObject, SVObjectClass* pPosObject);
-	bool RegisterInputObject( SVInObjectInfoStruct* PInObjectInfo, const SVString& p_rInputName );
+	bool RegisterInputObject( SVInObjectInfoStruct* PInObjectInfo, const std::string& p_rInputName );
 
 	HRESULT GetOutputListFiltered( SVObjectReferenceVector& rvecObjects, UINT uiAttributes = SvDef::SV_NO_ATTRIBUTES, bool bAND = true ); /* true means AND, false means OR */
 
@@ -124,7 +124,7 @@ public:
 	virtual SvOi::ISelectorItemVectorPtr GetSelectorList(SvOi::IsObjectInfoAllowed func, UINT Attribute, bool WholeArray) const override;
 	virtual void GetConnectedImages(SvUl::InputNameGuidPairList& rList, int maxEntries) override;
 	virtual void GetInputs(SvUl::InputNameGuidPairList& rList, const SVObjectTypeInfoStruct& typeInfo = SVObjectTypeInfoStruct(SVNotSetObjectType), SVObjectTypeEnum objectTypeToInclude = SVNotSetObjectType ) override;
-	virtual HRESULT ConnectToObject(const SVString& rInputName, const SVGUID& rNewID, SVObjectTypeEnum objectType = SVNotSetObjectType) override;
+	virtual HRESULT ConnectToObject(const std::string& rInputName, const SVGUID& rNewID, SVObjectTypeEnum objectType = SVNotSetObjectType) override;
 	virtual bool IsObjectValid() const override;
 	virtual const SvStl::MessageContainerVector& getResetErrorMessages() const override {return m_ResetErrorMessages;};
 	virtual const SvStl::MessageContainerVector& getRunErrorMessages() const override {return m_RunErrorMessages;};
@@ -136,8 +136,8 @@ public:
 	//! \return a const reference to the first task message
 	//************************************
 	virtual SvStl::MessageContainer getFirstTaskMessage() const override;
-	virtual void getSpecialImageList(std::vector<SVString>& rList) const override {};
-	virtual bool getSpecialImage(const SVString& rName, SvOi::MatroxImageSmartHandlePtr& rImagePtr) const override { return false; };
+	virtual void getSpecialImageList(SvDef::StringVector& rList) const override {};
+	virtual bool getSpecialImage(const std::string& rName, SvOi::MatroxImageSmartHandlePtr& rImagePtr) const override { return false; };
 #pragma endregion virtual method (ITaskObject)
 
 #pragma region Methods to replace processMessage
@@ -145,7 +145,7 @@ public:
 	virtual void GetInputInterface(SVInputInfoListClass& rInputList, bool bAlsoFriends) const override;
 	virtual void DestroyFriend(SVObjectClass* pObject) override;
 	virtual SvOi::IObjectClass* getFirstObject(const SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends = true, const SvOi::IObjectClass* pRequestor = nullptr) const override;
-	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName) override;
+	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override;
 #pragma endregion Methods to replace processMessage
 
 protected:

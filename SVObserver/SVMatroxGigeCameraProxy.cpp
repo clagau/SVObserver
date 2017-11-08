@@ -30,6 +30,8 @@
 #include "TriggerHandling/SVDigitizerLoadLibraryClass.h"
 #include "SVMatroxGigeAcquisitionClass.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "TextDefinesSvO.h"
 #pragma warning (pop)
 #pragma region Includes
@@ -146,7 +148,7 @@ HRESULT SVMatroxGigeCameraProxy::InitializeDevice( const SVDeviceParamCollection
 	return hr;
 }
 
-HRESULT SVMatroxGigeCameraProxy::SetGigeFeatureOverrides(const SVString& xmlData, unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer)
+HRESULT SVMatroxGigeCameraProxy::SetGigeFeatureOverrides(const std::string& xmlData, unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer)
 {
 	HRESULT hr = S_OK;
 
@@ -997,8 +999,8 @@ HRESULT SVMatroxGigeCameraProxy::IsValidCameraFileParameters( SVDeviceParamColle
 
 		if( nullptr != pDigitizer && S_OK == pDigitizer->ParameterGetValue( hDigitizer, SVGigeParameterVendorName, 0, &l_oValue ) )
 		{
-			SVString venderNameHardware = SvUl_SF::createSVString( l_oValue.bstrVal );
-			SVString venderName( StringValue( rDeviceParams.Parameter( DeviceParamVendorName ) ) );
+			std::string venderNameHardware = SvUl::createStdString( l_oValue.bstrVal );
+			std::string venderName( StringValue( rDeviceParams.Parameter( DeviceParamVendorName ) ) );
 
 			if( venderNameHardware == venderName )
 			{
@@ -1011,9 +1013,9 @@ HRESULT SVMatroxGigeCameraProxy::IsValidCameraFileParameters( SVDeviceParamColle
 
 					if ( sHardwareModel != _T("") && sModel != _T("") && sHardwareModel.CompareNoCase(sModel) != 0 )
 					{
-						SVStringVector msgList;
-						msgList.push_back(SVString(sModel));
-						msgList.push_back(SVString(sHardwareModel));
+						SvDef::StringVector msgList;
+						msgList.push_back(std::string(sModel));
+						msgList.push_back(std::string(sHardwareModel));
 						SvStl::MessageMgrStd Exception(SvStl::DataOnly);
 						Exception.setMessage( SVMSG_SVO_87_GOONLINE_CAMERA_ERROR, SvStl::Tid_Error_WrongCameraModel, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10026_GoOnline_WrongCameraModel );
 						Exception.Throw();
@@ -1022,7 +1024,7 @@ HRESULT SVMatroxGigeCameraProxy::IsValidCameraFileParameters( SVDeviceParamColle
 			}
 			else
 			{
-				SVStringVector msgList;
+				SvDef::StringVector msgList;
 				msgList.push_back(venderName);
 				msgList.push_back(venderNameHardware);
 				SvStl::MessageMgrStd Exception(SvStl::DataOnly);
@@ -1046,7 +1048,7 @@ bool SVMatroxGigeCameraProxy::CameraMatchesCameraFile(const SVDeviceParamCollect
 		// Check Vendor Name
 		if( S_OK == pDigitizer->ParameterGetValue( hDigitizer, SVGigeParameterVendorName, 0, &l_oValue ) )
 		{
-			SVString l_csVenderName = SvUl_SF::createSVString(l_oValue.bstrVal);
+			std::string l_csVenderName = SvUl::createStdString(l_oValue.bstrVal);
 
 			const SVDeviceParamWrapper param = rCameraFileDeviceParams.Parameter( DeviceParamVendorName );
 			l_bOk = l_csVenderName == StringValue( param );
@@ -1057,7 +1059,7 @@ bool SVMatroxGigeCameraProxy::CameraMatchesCameraFile(const SVDeviceParamCollect
 			// Check Model Name
 			if( S_OK == pDigitizer->ParameterGetValue( hDigitizer, SVGigeParameterModelName, 0, &l_oValue ) )
 			{
-				SVString l_csModelName = SvUl_SF::createSVString(l_oValue.bstrVal);
+				std::string l_csModelName = SvUl::createStdString(l_oValue.bstrVal);
 
 				const SVDeviceParamWrapper param = rCameraFileDeviceParams.Parameter( DeviceParamModelName );
 				l_bOk = l_csModelName == StringValue( param );
@@ -1071,7 +1073,7 @@ HRESULT SVMatroxGigeCameraProxy::GoOnline(unsigned long hDigitizer, SvTh::SVDigi
 {
 	HRESULT hr = S_OK;
 
-	SVString value( _T( "Enable" ) );
+	std::string value( _T( "Enable" ) );
 
 	// Set Trigger and Strobe
 	// trigger first, then strobe
@@ -1093,7 +1095,7 @@ HRESULT SVMatroxGigeCameraProxy::GoOffline(unsigned long hDigitizer, SvTh::SVDig
 {
 	HRESULT hr = S_OK;
 
-	SVString value( _T( "Disable" ) );
+	std::string value( _T( "Disable" ) );
 
 	// Stop Trigger and Strobe 
 	// strobe first, then trigger

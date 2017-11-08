@@ -12,7 +12,7 @@
 #include "MonitorListSelector.h"
 #include "SVConfigurationObject.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
-#include "SVUtilityLibrary\SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "ObjectSelectorLibrary\SelectorItem.h"
 #include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
 #include "SVOGui\TADialogTableParameterPage.h"
@@ -35,7 +35,7 @@ MonitorlistSelector::~MonitorlistSelector()
 {
 }
 
-void MonitorlistSelector::BuildCaption(SVString &rCaption)
+void MonitorlistSelector::BuildCaption(std::string &rCaption)
 {
 	switch (m_eListType)
 	{
@@ -75,7 +75,7 @@ int  MonitorlistSelector::DisplayDialog()
 		return -1;
 	}
 	SVPPQObject* pPPQ(nullptr);
-	SVString ppqName = m_MonitorList.GetPPQName();
+	std::string ppqName = m_MonitorList.GetPPQName();
 	pConfig->GetPPQByName(ppqName.c_str(), &pPPQ);
 	if(!pPPQ)
 	{ 
@@ -114,10 +114,10 @@ int  MonitorlistSelector::DisplayDialog()
 	BuildCheckItems();
 	SvOsl::ObjectTreeGenerator::Instance().setCheckItems(m_CheckItems);
 	
-	SVString Caption;
+	std::string Caption;
 	BuildCaption(Caption);
-	SVString Caption2 = (m_bImage == TRUE && m_eListType == PRODUCT_OBJECT_LIST) ? "Images" : "Value";
-	SVString Filter = SvUl_SF::LoadSVString(IDS_FILTER);
+	std::string Caption2 = (m_bImage == TRUE && m_eListType == PRODUCT_OBJECT_LIST) ? "Images" : "Value";
+	std::string Filter = SvUl::LoadStdString(IDS_FILTER);
 	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog(Caption.c_str(), Caption2.c_str(), Filter.c_str());
 	if (Result == IDOK)
 	{
@@ -198,7 +198,7 @@ void MonitorlistSelector::BuildCheckItems()
 	}
 	for (auto& it : *pMonitorObjectList)
 	{
-		const SVString& name = RemoteMonitorListHelper::GetNameFromMonitoredObject(it);
+		const std::string& name = RemoteMonitorListHelper::GetNameFromMonitoredObject(it);
 		m_CheckItems.insert(name);
 	}
 

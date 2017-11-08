@@ -21,7 +21,7 @@
 #include "SVExternalToolInputSelectPage.h"
 #include "SVExternalToolResultPage.h"
 #include "SVExternalToolDlg.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 #ifdef _DEBUG

@@ -15,7 +15,6 @@
 //Moved to precompiled header: #include <vector>
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVAccessPointNode.h"
-#include "SVUtilityLibrary\SVString.h"
 #pragma endregion Includes
 
 class SVSecurityStorage
@@ -34,8 +33,8 @@ public:
 	bool GetAutoEdit() const;
 	void SetUser( LPCTSTR strUser );
 	void SetPW( LPCTSTR strPW );
-	const SVString& GetCurrentUser() const;
-	const SVString& GetCurrentPassword() const;
+	const std::string& GetCurrentUser() const;
+	const std::string& GetCurrentPassword() const;
 
 	// Use these functions to setup access
 	HRESULT Save(LPCTSTR pFileName);
@@ -77,8 +76,8 @@ protected:
 	// The Tree Stored as an array
 	SVAccessPointNodeVectorArray m_aNodes;
 
-	SVString m_CurrentUser;
-	SVString m_CurrentPW;
+	std::string m_CurrentUser;
+	std::string m_CurrentPW;
 
 };
 

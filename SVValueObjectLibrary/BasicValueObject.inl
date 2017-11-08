@@ -60,7 +60,7 @@ inline bool BasicValueObject::isNode() const
 
 inline void BasicValueObject::setDescription( LPCTSTR Description )
 {
-	m_Description = (nullptr != Description) ? Description : SVString();
+	m_Description = (nullptr != Description) ? Description : std::string();
 }
 
 inline LPCTSTR BasicValueObject::getDescription()

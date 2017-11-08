@@ -16,7 +16,7 @@
 #include "SVObjectLibrary\SVClsids.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
-#include "SVUtilityLibrary/SVStringConversions.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "Definitions/TextDefineSVDef.h"
 #pragma endregion Includes
 
@@ -30,19 +30,19 @@ static char THIS_FILE[] = __FILE__;
 SV_IMPLEMENT_CLASS(SVStringValueObjectClass, SVStringValueObjectClassGuid);
 
 SVStringValueObjectClass::SVStringValueObjectClass( LPCTSTR ObjectName )
-: SVValueObjectClass<SVString>( ObjectName ) 
+: SVValueObjectClass<std::string>( ObjectName )
 {
 	LocalInitialize();
 }
 
 SVStringValueObjectClass::SVStringValueObjectClass(	SVObjectClass* pOwner, 	int StringResourceID )
-: SVValueObjectClass<SVString>( pOwner, StringResourceID ) 
+: SVValueObjectClass<std::string>( pOwner, StringResourceID )
 {
 	LocalInitialize();
 }
 
 SVStringValueObjectClass::SVStringValueObjectClass( const SVStringValueObjectClass& rhs)
-: SVValueObjectClass<SVString>()
+: SVValueObjectClass<std::string>()
 {
 	LocalInitialize();
 	*this = rhs;
@@ -197,7 +197,7 @@ HRESULT  SVStringValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 	return Result;
 }
 
-SVString SVStringValueObjectClass::ConvertString2Type( const SVString& rValue ) const
+std::string SVStringValueObjectClass::ConvertString2Type( const std::string& rValue ) const
 {
 	return rValue;
 }
@@ -208,7 +208,7 @@ HRESULT SVStringValueObjectClass::CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD Me
 
 	if (S_OK == Result)
 	{
-		SVString Value;
+		std::string Value;
 		SVStringValueObjectClass::GetValue(Value, Index);
 		//! For strings the memory hast to first be cleared
 		memset(pMemoryBlock, 0, GetByteSize());
@@ -228,7 +228,7 @@ void SVStringValueObjectClass::WriteValues(SVObjectWriter& rWriter)
 
 	// Get the Data Values (Member Info, Values)
 	// Check for DoubleQuotes in variable
-	SVString TempValue(_T(""));
+	std::string TempValue(_T(""));
 	SvUl::AddEscapeSpecialCharacters(TempValue, true);
 
 	_variant_t Value;
@@ -249,7 +249,7 @@ void SVStringValueObjectClass::WriteValues(SVObjectWriter& rWriter)
 
 void SVStringValueObjectClass::WriteDefaultValues(SVObjectWriter& rWriter)
 {
-	SVString TempValue(GetDefaultValue());
+	std::string TempValue(GetDefaultValue());
 	SvUl::AddEscapeSpecialCharacters(TempValue, true);
 	_variant_t Value;
 	Value.SetString(TempValue.c_str());

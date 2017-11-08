@@ -16,7 +16,6 @@
 #include "SVObjectLibrary/SVObjectWriter.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVTimerLibrary/SVClock.h"
-#include "SVUtilityLibrary/SVString.h"
 #include "SVOCore/ResultViewItemDef.h"
 #include "TableObject.h"
 #pragma endregion Includes
@@ -112,7 +111,7 @@ public:
 	// Parameter:  reference to DottedName of new object
 	// Returns:  true if successful
 	//************************************
-	bool Insert( const SVString& rDottedName );
+	bool Insert( const std::string& rDottedName );
 
 	//************************************
 	// Description:  Gets the value of the member variable m_LastUpdateTimeStamp
@@ -157,7 +156,7 @@ protected:
 #pragma endregion Protected Methods
 
 #pragma region Member Variables
-	SVString m_TagName; // Branch name in the config file
+	std::string m_TagName; // Branch name in the config file
 	SVGUID m_resultTableGuid; //The Guid of the table to display in result table view (if no table should displayed it is set to SV_GUID_NULL)
 	TableObject* m_resultTable;
 	SVObjectReferenceVector m_ReferenceVector;

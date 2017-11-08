@@ -301,5 +301,5 @@
 			// Embedded ID, if any.
 			GUID				EmbeddedID;
 		};
-//} //namespace SvOi
+//} //namespace SvDef
 

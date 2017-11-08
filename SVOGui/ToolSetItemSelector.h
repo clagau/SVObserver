@@ -12,7 +12,7 @@
 //Moved to precompiled header: #include <boost\bind.hpp>
 #include "ObjectInterfaces\ISelectorItemVector.h"
 #include "SVUtilityLibrary\SVSharedPtr.h"
-#include "SVUtilityLibrary\SVString.h"
+
 #include "GuiCommands\GetSelectorList.h"
 #include "ObjectSelectorLibrary\SelectorOptions.h"
 #include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"

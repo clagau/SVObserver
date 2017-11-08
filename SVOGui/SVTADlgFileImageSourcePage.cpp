@@ -14,7 +14,7 @@
 //Moved to precompiled header: #include <boost/assign/list_of.hpp>
 #include "SVTADlgFileImageSourcePage.h"
 #include "SVObjectLibrary/SVClsids.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -128,7 +128,7 @@ namespace SvOg
 		UpdateData(true);
 	
 		// Try to read the current image file path name from registry...
-		SVString Path = AfxGetApp()->GetProfileString(	_T("Settings"),_T( "ImagesFilePath" ), _T("C:\\Images"));
+		std::string Path = AfxGetApp()->GetProfileString(	_T("Settings"),_T( "ImagesFilePath" ), _T("C:\\Images"));
 		
 		m_svfncImageSourceFile.SetPathName(Path.c_str());
 		m_svfncImageSourceFile.SetFileType(SV_IMAGE_SOURCE_FILE_TYPE);

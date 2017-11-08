@@ -12,7 +12,7 @@
 //Moved to precompiled header: #include <boost\assign\list_of.hpp>
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "ObjectInterfaces\IObjectClass.h"
-#include "SVUtilityLibrary\SVString.h"
+
 #pragma endregion Includes
 
 namespace SvCmd
@@ -21,7 +21,7 @@ namespace SvCmd
 	{
 	private:
 		std::set<SVObjectSubTypeEnum> m_filter;
-		SVString m_excludePath;
+		std::string m_excludePath;
 
 		static bool IsExcluded(SVObjectSubTypeEnum type, const std::set<SVObjectSubTypeEnum>& rFilter)
 		{
@@ -33,7 +33,7 @@ namespace SvCmd
 			return attributesMask == (attributes & attributesMask);
 		}
 
-		static bool IsSameLineage(const SVString& name, const SVString& excludedPath)
+		static bool IsSameLineage(const std::string& name, const std::string& excludedPath)
 		{
 			bool bSame = false; 
 			size_t len = excludedPath.size();
@@ -44,13 +44,13 @@ namespace SvCmd
 			return bSame;
 		}
 
-		static bool IsAllowed(SVObjectSubTypeEnum type, UINT attributesFilter, UINT attributesAllowed, const SVString& name, const std::set<SVObjectSubTypeEnum>& filter, const SVString& excludePath)
+		static bool IsAllowed(SVObjectSubTypeEnum type, UINT attributesFilter, UINT attributesAllowed, const std::string& name, const std::set<SVObjectSubTypeEnum>& filter, const std::string& excludePath)
 		{
 			return (HasAttribute(attributesFilter, attributesAllowed) && !IsSameLineage(name, excludePath) && !IsExcluded(type, filter));
 		}
 
 	public:
-		RangeSelectorFilter(const SVString& rExcludePath)
+		RangeSelectorFilter(const std::string& rExcludePath)
 		: m_excludePath(rExcludePath)
 			, m_filter((boost::assign::list_of
 				(SVDWordValueObjectType)
@@ -71,7 +71,7 @@ namespace SvCmd
 			{
 				const SVObjectSubTypeEnum& type = pObject->GetObjectSubType();
 				const UINT attributesAllowed = pObject->ObjectAttributesAllowed();
-				const SVString& name = pObject->GetCompleteName();
+				const std::string& name = pObject->GetCompleteName();
 				bRetVal = IsAllowed(type, attributeMask, attributesAllowed, name, m_filter, m_excludePath);
 			}
 			return bRetVal;

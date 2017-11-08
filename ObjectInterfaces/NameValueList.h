@@ -9,11 +9,11 @@
 #pragma region Includes
 //Moved to precompiled header: #include <deque>
 //Moved to precompiled header: #include <utility>
-#include "SVUtilityLibrary\SVString.h"
+
 #pragma endregion Includes
 
 namespace SvOi
 {
-	typedef std::pair<SVString, long> NameValuePair;
+	typedef std::pair<std::string, long> NameValuePair;
 	typedef std::deque<NameValuePair> NameValueList;
 } //namespace SvOi

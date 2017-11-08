@@ -23,7 +23,7 @@
 #include "SVOGui\DataController.h"
 #include "SVOGui\MaskController.h"
 #include "SVUtilityLibrary\SVGUID.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 class SVToolAdjustmentDialogMaskPageClass : public CPropertyPage
@@ -118,9 +118,9 @@ private:
 	SvOg::ImageController m_ImageController;
 	ValueController m_Values;
 	SvOg::MaskController m_maskController;
-	SVString m_imageInputName;
-	SVString m_imageName;
-	SVString m_resultImageName;
+	std::string m_imageInputName;
+	std::string m_imageName;
+	std::string m_resultImageName;
 	SVGUID m_resultImageID;
 };
 

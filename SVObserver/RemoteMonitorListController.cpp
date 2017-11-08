@@ -58,7 +58,7 @@ PPQNameListNames RemoteMonitorListController::GetPPQMonitorLists(SVConfiguration
 		for (RemoteMonitorListMap::const_iterator it = m_list.begin();it != m_list.end(); ++it)
 		{
 			const RemoteMonitorNamedList& namedList = it->second;
-			const SVString& ppqName = namedList.GetPPQName();
+			const std::string& ppqName = namedList.GetPPQName();
 			NameDepthPair nameDepthPair(namedList.GetName(), namedList.GetRejectDepthQueue());
 			NameDepthPairList& nameDepthList = list[ppqName];
 			if (std::find(nameDepthList.begin(), nameDepthList.end(), nameDepthPair) == nameDepthList.end())
@@ -183,7 +183,7 @@ void RemoteMonitorListController::ValidateInputs()
 	for (RemoteMonitorListMap::iterator it = m_list.begin();it != m_list.end();)
 	{
 		RemoteMonitorNamedList& namedList = it->second;
-		const SVString& ppqName = namedList.GetPPQName();
+		const std::string& ppqName = namedList.GetPPQName();
 		const SVGUID& ppqGuid = namedList.GetPPQObjectID();
 		// Check that the PPQ still exists
 		const SVGUID& guid = SVObjectManagerClass::Instance().GetObjectIdFromCompleteName( ppqName.c_str() );
@@ -302,7 +302,7 @@ HRESULT RemoteMonitorListController::BuildPPQMonitorList(PPQMonitorList& ppqMoni
 				const MonitoredObjectList& images = it->second.GetProductImagesList();
 				const MonitoredObjectList& failStatus = it->second.GetFailStatusList();
 				const MonitoredObjectList& rejectCond = it->second.GetRejectConditionList();
-				const SVString& ppqName = it->second.GetPPQName();
+				const std::string& ppqName = it->second.GetPPQName();
 
 				// Insert the monitorlist copies SvSml::SharedMemWriter Singelton 
 				WriteMonitorListToMLContainer(it->first.c_str(), it->second);
@@ -317,7 +317,7 @@ HRESULT RemoteMonitorListController::BuildPPQMonitorList(PPQMonitorList& ppqMoni
 				std::transform(failStatus.begin(), failStatus.end(), Insertor(remoteValueList, remoteValueList.begin()), RemoteMonitorListHelper::GetNameFromMonitoredObject);
 				for (MonitoredObjectList::const_iterator rejectCondIt = rejectCond.begin();rejectCondIt != rejectCond.end();++rejectCondIt)
 				{
-					const SVString& name = RemoteMonitorListHelper::GetNameFromMonitoredObject(*rejectCondIt);
+					const std::string& name = RemoteMonitorListHelper::GetNameFromMonitoredObject(*rejectCondIt);
 					if (!name.empty())
 					{
 						remoteValueList.insert(name);
@@ -338,7 +338,7 @@ HRESULT RemoteMonitorListController::BuildPPQMonitorList(PPQMonitorList& ppqMoni
 	return hr;
 }
 
-HRESULT  RemoteMonitorListController::ActivateRemoteMonitorList(RemoteMonitorListMap& rRemoteMonitorList , const SVString& listName, bool bActivate) 
+HRESULT  RemoteMonitorListController::ActivateRemoteMonitorList(RemoteMonitorListMap& rRemoteMonitorList , const std::string& listName, bool bActivate) 
 {
 	HRESULT hr = S_OK;
 	RemoteMonitorListMap::iterator it = rRemoteMonitorList.find(listName);
@@ -365,7 +365,7 @@ HRESULT  RemoteMonitorListController::ActivateRemoteMonitorList(RemoteMonitorLis
 	return hr;
 }
 
-HRESULT RemoteMonitorListController::ActivateRemoteMonitorList(const SVString& listName, bool bActivate)
+HRESULT RemoteMonitorListController::ActivateRemoteMonitorList(const std::string& listName, bool bActivate)
 {
 	return ActivateRemoteMonitorList(m_list, listName,bActivate);
 }	
@@ -396,7 +396,7 @@ HRESULT RemoteMonitorListController::ActivateRemoteMonitorList(const SVString& l
 	 return ret;
  }
 
-HRESULT RemoteMonitorListController::SetRemoteMonitorListProductFilter(const SVString& listName, SvSml::SVProductFilterEnum filter)
+HRESULT RemoteMonitorListController::SetRemoteMonitorListProductFilter(const std::string& listName, SvSml::SVProductFilterEnum filter)
 {
 	HRESULT hr = S_OK;
 	RemoteMonitorListMap::iterator it = m_list.find(listName);
@@ -420,7 +420,7 @@ HRESULT RemoteMonitorListController::SetRemoteMonitorListProductFilter(const SVS
 	return hr;
 }
 
-HRESULT RemoteMonitorListController::GetRemoteMonitorListProductFilter(const SVString& listName, SvSml::SVProductFilterEnum& rFilter) const
+HRESULT RemoteMonitorListController::GetRemoteMonitorListProductFilter(const std::string& listName, SvSml::SVProductFilterEnum& rFilter) const
 {
 	HRESULT hr = S_OK;
 	RemoteMonitorListMap::const_iterator it = m_list.find(listName);

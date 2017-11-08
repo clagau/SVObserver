@@ -18,6 +18,7 @@
 #include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
 #include "SVObjectLibrary/SVObjectWriter.h"
 #include "SVTimerLibrary/SVClock.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SVGUID.h"
 
 #include "SVOCore/SVConditional.h"
@@ -101,6 +102,7 @@
 #include "GuiCommands/GetAvailableObjects.h"
 #include "SVOGui/TextDefinesSvOg.h"
 #include "SVStatusLibrary/GlobalPath.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -424,9 +426,9 @@ bool SVIPDoc::InitAfterSystemIsDocked()
 	return l_bOk;
 }
 
-SVString SVIPDoc::CheckName( const SVString& rToolName ) const
+std::string SVIPDoc::CheckName( const std::string& rToolName ) const
 {
-	SVString NewName( rToolName );
+	std::string NewName( rToolName );
 	if (!m_toolGroupings.IsNameUnique( rToolName.c_str() ) )
 	{
 		NewName = m_toolGroupings.MakeNumericUniqueName( rToolName.c_str() ).c_str();
@@ -468,7 +470,7 @@ bool SVIPDoc::AddTool(SVToolClass* pTool)
 				}
 			}
 
-			SVString ToolName( pTool->GetName() );
+			std::string ToolName( pTool->GetName() );
 			ToolName = CheckName( ToolName );
 			pTool->SetName( ToolName.c_str() );
 
@@ -509,7 +511,7 @@ bool SVIPDoc::AddToolGrouping(bool bStartGroup)
 		else
 		{
 			// Get Group Name
-			SVString GroupName = m_toolGroupings.FindGroup( rInfo.m_Selection );
+			std::string GroupName = m_toolGroupings.FindGroup( rInfo.m_Selection );
 			if( !GroupName.empty() )
 			{
 				// check if has end already ?
@@ -826,7 +828,7 @@ void SVIPDoc::OnAdjustLightReference()
 	// Show extreme LUT: black --> blue, white --> green...
 	GetImageView()->ShowExtremeLUT();
 
-	SVLightReferenceDialogPropertySheetClass dlg( SVString( _T( "Light Reference Adjustment - [") + GetTitle() + _T("]") ).c_str() );
+	SVLightReferenceDialogPropertySheetClass dlg( std::string( _T( "Light Reference Adjustment - [") + GetTitle() + _T("]") ).c_str() );
 
 	// obtain copies of the arrays to set if IDOK
 	SVLightReferencePtrVector apLRA;
@@ -916,7 +918,7 @@ void SVIPDoc::OnAdjustLut()
 	// Show extreme LUT: black --> blue, white --> green...
 	GetImageView()->ShowExtremeLUT();
 
-	SVLutDlg dlg( SVString( _T("LUT Adjustment - [") + GetTitle() + _T("]") ).c_str() );
+	SVLutDlg dlg( std::string( _T("LUT Adjustment - [") + GetTitle() + _T("]") ).c_str() );
 
 	// obtain copies of the luts to set if IDOK / IDCANCEL
 	SVLutDlg::SVLutMap aLut;
@@ -1560,10 +1562,10 @@ void SVIPDoc::OnResultsPicker()
 		SVResultListClass* pResultList( GetResultList() );
 		if( nullptr != pInspection && nullptr != pResultList ) 
 		{
-			SVString InspectionName( pInspection->GetName() );
+			std::string InspectionName( pInspection->GetName() );
 
 			SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject);
-			SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
+			SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, std::string( _T("") ) );
 
 			SvOsl::SelectorOptions BuildOptions( GetInspectionID(), SvDef::SV_VIEWABLE, GUID_NULL, true );
 			SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::GlobalSelector, SvOg::PPQSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
@@ -1571,9 +1573,9 @@ void SVIPDoc::OnResultsPicker()
 			const SVObjectReferenceVector& rSelectedObjects( pResultList->GetSelectedObjects() );
 			SvOsl::ObjectTreeGenerator::Instance().setCheckItems( rSelectedObjects, InspectionName );
 
-			SVString ResultPicker = SvUl_SF::LoadSVString( IDS_RESULT_PICKER );
-			SVString Title = SvUl_SF::Format( _T("%s - %s"), ResultPicker.c_str(), InspectionName.c_str() );
-			SVString Filter = SvUl_SF::LoadSVString( IDS_FILTER );
+			std::string ResultPicker = SvUl::LoadStdString( IDS_RESULT_PICKER );
+			std::string Title = SvUl::Format( _T("%s - %s"), ResultPicker.c_str(), InspectionName.c_str() );
+			std::string Filter = SvUl::LoadStdString( IDS_FILTER );
 			INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), ResultPicker.c_str(), Filter.c_str() );
 
 			if( IDOK == Result )
@@ -1620,7 +1622,7 @@ void SVIPDoc::OnResultsTablePicker()
 			typedef SVSharedPtr<Command> CommandPtr;
 
 			SvUl::NameGuidList availableList;
-			SVString selectedItem = SvOg::Table_NoSelected;
+			std::string selectedItem = SvOg::Table_NoSelected;
 			SVGUID selectedGuid = pResultList->getTableGuid();
 			CommandPtr commandPtr = new Command(GetInspectionID(), SVObjectTypeInfoStruct(TableObjectType, SVNotSetSubObjectType), SvCmd::IsValidObject(), SVToolSetObjectType);
 			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
@@ -1661,17 +1663,17 @@ void SVIPDoc::OnPublishedResultsPicker()
 	if( nullptr != pInspection ) 
 	{ 
 		SVSVIMStateClass::AddState(SV_STATE_EDITING);
-		SVString InspectionName( pInspection->GetName() );
+		std::string InspectionName( pInspection->GetName() );
 
 		SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
-		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
+		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, std::string( _T("") ) );
 
 		SvOsl::SelectorOptions BuildOptions( GetInspectionID(), SvDef::SV_PUBLISHABLE );
 		SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 
-		SVString PublishableResults = SvUl_SF::LoadSVString( IDS_PUBLISHABLE_RESULTS );
-		SVString Title = SvUl_SF::Format( _T("%s - %s"), PublishableResults.c_str(), InspectionName.c_str() );
-		SVString Filter = SvUl_SF::LoadSVString( IDS_FILTER );
+		std::string PublishableResults = SvUl::LoadStdString( IDS_PUBLISHABLE_RESULTS );
+		std::string Title = SvUl::Format( _T("%s - %s"), PublishableResults.c_str(), InspectionName.c_str() );
+		std::string Filter = SvUl::LoadStdString( IDS_FILTER );
 		INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), PublishableResults.c_str(), Filter.c_str() );
 
 		if( IDOK == Result )
@@ -1713,19 +1715,19 @@ void SVIPDoc::OnPublishedResultImagesPicker()
 	{
 		SVSVIMStateClass::AddState(SV_STATE_EDITING);
 
-		SVString InspectionName( pInspection->GetName() );
+		std::string InspectionName( pInspection->GetName() );
 
 		SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
 
-		SVString RootName = SvUl_SF::LoadSVString( IDS_CLASSNAME_ROOTOBJECT );
-		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, RootName, SVString( _T("") ) );
+		std::string RootName = SvUl::LoadStdString( IDS_CLASSNAME_ROOTOBJECT );
+		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, RootName, std::string( _T("") ) );
 
 		SvOsl::SelectorOptions BuildOptions( GetInspectionID(), SvDef::SV_PUBLISH_RESULT_IMAGE );
 		SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 
-		SVString PublishableImages = SvUl_SF::LoadSVString( IDS_PUBLISHABLE_RESULT_IMAGES );
-		SVString Title = SvUl_SF::Format( _T("%s - %s"), PublishableImages.c_str(), InspectionName.c_str() );
-		SVString Filter = SvUl_SF::LoadSVString( IDS_FILTER );
+		std::string PublishableImages = SvUl::LoadStdString( IDS_PUBLISHABLE_RESULT_IMAGES );
+		std::string Title = SvUl::Format( _T("%s - %s"), PublishableImages.c_str(), InspectionName.c_str() );
+		std::string Filter = SvUl::LoadStdString( IDS_FILTER );
 		
 		INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), PublishableImages.c_str(), Filter.c_str() );
 
@@ -1935,7 +1937,7 @@ void SVIPDoc::InitMenu()
 				// Populate pop up with enumerations of tool set draw flag...
 				UINT uiCommand = ID_VIEW_TOOLSETDRAW_POP_BASE;
 				int it = pEnum->GetFirstEnumTypePos();
-				SVString strEnum;
+				std::string strEnum;
 				long lEnum = 0L;
 				while( pEnum->GetNextEnumType( it, strEnum, lEnum ) )
 				{
@@ -2038,7 +2040,7 @@ void SVIPDoc::OnChangeToolSetDrawFlag( UINT nId )
 				CString Temp;
 				pMenu->GetMenuString( pos, Temp, MF_BYPOSITION );
 				// Set Flag...
-				pEnum->setValue( SVString(Temp) );
+				pEnum->setValue( std::string(Temp) );
 
 				// Update Menu...
 				pMenu->CheckMenuRadioItem( 0, pMenu->GetMenuItemCount() - 1, pos, MF_BYPOSITION );
@@ -2137,12 +2139,12 @@ BOOL SVIPDoc::OnOpenDocument(LPCTSTR lpszPathName)
 BOOL SVIPDoc::OnSaveDocument(LPCTSTR lpszPathName)
 {
 	msvFileName.SetFullFileName( lpszPathName );
-	if( 0 != SvUl_SF::CompareNoCase( msvFileName.GetPathName(), SVFileNameManagerClass::Instance().GetRunPathName() ) )
+	if( 0 != SvUl::CompareNoCase( msvFileName.GetPathName(), SVFileNameManagerClass::Instance().GetRunPathName() ) )
 	{
 		msvFileName.SetPathName( SVFileNameManagerClass::Instance().GetRunPathName().c_str() );
 	}
 
-	if( 0 != SvUl_SF::CompareNoCase( msvFileName.GetExtension(), SVString( _T(".ipd") ) ) )
+	if( 0 != SvUl::CompareNoCase( msvFileName.GetExtension(), std::string( _T(".ipd") ) ) )
 	{
 		msvFileName.SetExtension( _T(".ipd") );
 	}
@@ -2249,7 +2251,7 @@ void SVIPDoc::LoadRegressionTestVariables(SVTreeType& rTree, SVTreeType::SVBranc
 		bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_PLAY_CONDITION_EQUATION, htiRegression, svVariant);
 		if (bOk)
 		{
-			m_RegressionTestLoadEquationText = SvUl_SF::createSVString(svVariant);
+			m_RegressionTestLoadEquationText = SvUl::createStdString(svVariant);
 		}
 	}
 }
@@ -2329,7 +2331,7 @@ void SVIPDoc::SaveViewPlacements(SVObjectWriter& rWriter)
 			SVIPSplitterFrame* pFrame = dynamic_cast< SVIPSplitterFrame* >( pWndSplitter2->GetParent() );
 
 			CRuntimeClass* pClass = pFrame->GetRuntimeClass();
-			assert( _T("SVIPSplitterFrame") == SVString(pClass->m_lpszClassName)  );
+			assert( _T("SVIPSplitterFrame") == std::string(pClass->m_lpszClassName)  );
 
 			if (pFrame &&pFrame->GetSafeHwnd())
 			{
@@ -2536,7 +2538,7 @@ bool SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 					SVIPSplitterFrame* pFrame = dynamic_cast< SVIPSplitterFrame* >( pWndSplitter2->GetParent() );
 
 					CRuntimeClass* pClass = pFrame->GetRuntimeClass();
-					assert( _T("SVIPSplitterFrame") == SVString(pClass->m_lpszClassName) );
+					assert( _T("SVIPSplitterFrame") == std::string(pClass->m_lpszClassName) );
 
 					if( pFrame && pFrame->GetSafeHwnd() )
 					{
@@ -2558,7 +2560,7 @@ bool SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 			// Serialze View Data...
 			mbInitImagesByName = true;
 			POSITION vPos;
-			SVString Name;
+			std::string Name;
 			_variant_t svVariant;
 
 			long lViewNumber = 0;
@@ -2578,7 +2580,7 @@ bool SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 					Name = rTree.getBranchName(htiItem);
 
 					// The class SVToolSetTabView was changed to ToolSetView when the Tool Set Tree View was removed.
-					SvUl_SF::searchAndReplace(Name, SvXml::CTAG_SVTOOLSET_TAB_VIEW_CLASS, SvXml::CTAG_TOOLSET_VIEW);
+					SvUl::searchAndReplace(Name, SvXml::CTAG_SVTOOLSET_TAB_VIEW_CLASS, SvXml::CTAG_TOOLSET_VIEW);
 
 					bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_VIEW_NUMBER, htiItem, svVariant);
 					if (bOk) { lViewNumber = svVariant; }
@@ -2933,7 +2935,7 @@ void SVIPDoc::OnEditAdjustToolPosition()
 		if( SVImageViewClass* pImageView = GetImageView() )
 		{
 			SVSVIMStateClass::AddState( SV_STATE_EDITING );
-			SVString DlgName = SvUl_SF::Format( _T("Adjust Tool Size and Position - %s"), pTool->GetName() );
+			std::string DlgName = SvUl::Format( _T("Adjust Tool Size and Position - %s"), pTool->GetName() );
 			SVAdjustToolSizePositionDlg dlg( DlgName.c_str(), dynamic_cast< CWnd* >( this->GetMDIChild() ), pTool );
 			dlg.DoModal();
 			SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
@@ -3004,10 +3006,10 @@ void SVIPDoc::OnToolDependencies()
 		CWaitCursor MouseBusy;
 		SVGuidSet ToolIDSet;
 		pToolSet->GetToolIds(std::inserter(ToolIDSet, ToolIDSet.end()));
-		StringPairVector m_dependencyList;
-		SVString FileName;
+		SvDef::StringPairVector m_dependencyList;
+		std::string FileName;
 		//Don't need to check inspection pointer because ToolSet pointer is valid
-		FileName = SvUl_SF::Format(_T("%s\\%s.dot"), SvStl::GlobalPath::Inst().GetTempPath().c_str(), GetInspectionProcess()->GetName());
+		FileName = SvUl::Format(_T("%s\\%s.dot"), SvStl::GlobalPath::Inst().GetTempPath().c_str(), GetInspectionProcess()->GetName());
 		SvOi::getToolDependency(std::back_inserter(m_dependencyList), ToolIDSet, SVToolObjectType, SvOi::ToolDependencyEnum::Client, FileName);
 	}
 }
@@ -3470,9 +3472,9 @@ bool SVIPDoc::IsToolPreviousToSelected( const SVGUID& p_rToolID ) const
 	return l_Status;
 }
 
-SVString SVIPDoc::GetCompleteToolSetName() const
+std::string SVIPDoc::GetCompleteToolSetName() const
 {
-	SVString Result;
+	std::string Result;
 
 	SVToolSetClass* l_pToolSet = GetToolSet();
 
@@ -3534,9 +3536,9 @@ void SVIPDoc::OnEditDataDefinitionLists()
 	if( nullptr != pInspection )
 	{
 		SVSVIMStateClass::AddState(SV_STATE_EDITING);
-		SVString inspectionName = pInspection->GetName();
+		std::string inspectionName = pInspection->GetName();
 		const SVGUID& inspectionID = pInspection->GetUniqueObjectID();
-		SVString Title = _T("Data Definition Lists - ");
+		std::string Title = _T("Data Definition Lists - ");
 		Title += inspectionName;
 		SVDataDefinitionSheet sheet(this, Title.c_str(), inspectionName, inspectionID);
 
@@ -4073,7 +4075,7 @@ bool SVIPDoc::RunOnce( SVToolClass* p_pTool )
 	return l_Status;
 }
 
-int SVIPDoc::GetSelectedToolIndex( const SVString& rToolName ) const
+int SVIPDoc::GetSelectedToolIndex( const std::string& rToolName ) const
 {
 	int toolListIndex = 0;
 	const SVToolSetClass* pToolSet = GetToolSet();
@@ -4095,7 +4097,7 @@ int SVIPDoc::GetSelectedToolIndex( const SVString& rToolName ) const
 	return toolListIndex;
 }
 
-int SVIPDoc::GetToolToInsertBefore(const SVString& rName, int listIndex) const
+int SVIPDoc::GetToolToInsertBefore(const std::string& rName, int listIndex) const
 {
 	int toolListIndex = 0;
 
@@ -4106,7 +4108,7 @@ int SVIPDoc::GetToolToInsertBefore(const SVString& rName, int listIndex) const
 		if( !rName.empty() )
 		{
 			bool bFound = false;
-			SVString ToolName = m_toolGroupings.GetToolToInsertBefore( rName );
+			std::string ToolName = m_toolGroupings.GetToolToInsertBefore( rName );
 			if (!ToolName.empty())
 			{
 				// FindTool by Name in SVTaskObjectList

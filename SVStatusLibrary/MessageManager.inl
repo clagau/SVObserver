@@ -76,7 +76,7 @@ INT_PTR MessageManager<M_Container, M_Data>::Process( UINT MsgBoxType /*= MB_OK*
 template <typename M_Container, typename M_Data>
 INT_PTR MessageManager<M_Container, M_Data>::setMessage( DWORD MessageCode, LPCTSTR AdditionalText, SourceFileParams SourceFile, DWORD ProgramCode /*= 0*/, const GUID& rObjectId /*= SV_GUID_NULL*/, UINT MsgBoxType /*= MB_OK*/ )
 {
-	SVStringVector textList;
+	SvDef::StringVector textList;
 	MessageTextEnum id = SvStl::Tid_Empty;
 	if (nullptr != AdditionalText)
 	{
@@ -90,11 +90,11 @@ INT_PTR MessageManager<M_Container, M_Data>::setMessage( DWORD MessageCode, LPCT
 template <typename M_Container, typename M_Data>
 INT_PTR MessageManager<M_Container, M_Data>::setMessage( DWORD MessageCode, MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, DWORD ProgramCode /*= 0*/, const GUID& rObjectId /*= SV_GUID_NULL*/, UINT MsgBoxType /*= MB_OK*/)
 {
-	return setMessage( MessageCode, AdditionalTextId, SVStringVector(), SourceFile, ProgramCode, rObjectId, MsgBoxType );
+	return setMessage( MessageCode, AdditionalTextId, SvDef::StringVector(), SourceFile, ProgramCode, rObjectId, MsgBoxType );
 }
 
 template <typename M_Container, typename M_Data>
-INT_PTR MessageManager<M_Container, M_Data>::setMessage( DWORD MessageCode, MessageTextEnum AdditionalTextId, const SVStringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode /*= 0*/, const GUID& rObjectId /*= SV_GUID_NULL*/ , UINT MsgBoxType /*= MB_OK*/ )
+INT_PTR MessageManager<M_Container, M_Data>::setMessage( DWORD MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode /*= 0*/, const GUID& rObjectId /*= SV_GUID_NULL*/ , UINT MsgBoxType /*= MB_OK*/ )
 {
 	INT_PTR Result( IDCANCEL );
 
@@ -150,7 +150,7 @@ void MessageManager<M_Container, M_Data>::Log()
 
 			if( MB_ICONWARNING == MsgSeverity || MB_ICONERROR == MsgSeverity )
 			{
-				SVString Msg;
+				std::string Msg;
 				m_MessageHandler.Format( Msg );
 				int MsgCode = (0 != m_MessageHandler.getMessage().m_ProgramCode) ? m_MessageHandler.getMessage().m_ProgramCode : m_MessageHandler.getMessage().m_MessageCode;
 				(*m_pNotify)( SvStl::MsgLog, MsgCode, Msg.c_str() );
@@ -167,8 +167,8 @@ INT_PTR MessageManager<M_Container, M_Data>::Display( const UINT MsgBoxType ) co
 	//If the message has already been displayed do not display again
 	if( nullptr != m_pShowDisplay && !m_pShowDisplay->empty() && LogAndDisplay == m_Type  && !m_MessageHandler.getMessage().m_Displayed )
 	{
-		SVString Msg;
-		SVString MsgDetails;
+		std::string Msg;
+		std::string MsgDetails;
 		UINT Type ( MsgBoxType );
 		int MsgCode( 0 );
 

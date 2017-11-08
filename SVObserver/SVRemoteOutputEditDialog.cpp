@@ -88,7 +88,7 @@ BOOL SVRemoteOutputEditDialog::OnInitDialog()
 			DebugBreak();
 		}
 
-		SVString l_strPPQName( pPPQ->GetName() );
+		std::string l_strPPQName( pPPQ->GetName() );
 		if( l_strPPQName == l_pRemoteGroup->GetPPQName() )
 		{
 			long lSize = 0;
@@ -116,7 +116,7 @@ BOOL SVRemoteOutputEditDialog::OnInitDialog()
 
 				if( !( pIOEntry.empty() ) )
 				{
-					if( nullptr != pIOEntry->getObject() && SVString::npos == pIOEntry->getObject()->GetCompleteName().find( _T( "PPQ" ) ) )
+					if( nullptr != pIOEntry->getObject() && std::string::npos == pIOEntry->getObject()->GetCompleteName().find( _T( "PPQ" ) ) )
 					{
 						iIndex = m_ValueObjectNameCombo.AddString( pIOEntry->getObject()->GetCompleteName().c_str() );
 						m_Items.SetItemData( iIndex, pIOEntry );

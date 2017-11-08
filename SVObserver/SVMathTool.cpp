@@ -16,6 +16,7 @@
 #include "SVOCore/SVMathEquation.h"
 #include "SVResultDouble.h"
 #include "SVInspectionProcess.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -76,7 +77,7 @@ void SVMathToolClass::init(void)
 	resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
 	resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultDoubleObjectType;
 	resultClassInfo.m_ClassId = SVDoubleResultClassGuid;
-	resultClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_RESULT );
+	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_RESULT );
 	strTitle.LoadString( IDS_CLASSNAME_RESULT_DOUBLE );
 	resultClassInfo.m_ClassName += _T(" ") + strTitle;
 

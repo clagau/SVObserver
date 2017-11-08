@@ -24,7 +24,7 @@
 
 */
 
-HRESULT SVMatroxSystemInterface::Allocate(const SVString& SystemDescriptor, SVMatroxInt SystemNum, SVMatroxSystem& p_rSystem)
+HRESULT SVMatroxSystemInterface::Allocate(const std::string& SystemDescriptor, SVMatroxInt SystemNum, SVMatroxSystem& p_rSystem)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -141,7 +141,7 @@ HRESULT SVMatroxSystemInterface::Get(const SVMatroxSystem& SystemId, SVMatroxSys
 
 */
 
-HRESULT SVMatroxSystemInterface::Get(const SVMatroxSystem& SystemId, SVMatroxSystemInquire::SVMatroxSystemInquireEnum InquireType, SVString& value)
+HRESULT SVMatroxSystemInterface::Get(const SVMatroxSystem& SystemId, SVMatroxSystemInquire::SVMatroxSystemInquireEnum InquireType, std::string& value)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS

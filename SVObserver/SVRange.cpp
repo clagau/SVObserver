@@ -19,6 +19,8 @@
 #include "RangeClassHelper.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVValueObjectLibrary/BasicValueObject.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -160,8 +162,8 @@ bool SVRangeClass::InitReferencesAndInputs(SvStl::MessageContainerVector *pError
 {
 	bool Result = true;
 	DisconnectAllInputObjects();
-	SVString ValueIndirect;
-	SVString InspectionName;
+	std::string ValueIndirect;
+	std::string InspectionName;
 
 	if( nullptr != GetInspection() )
 	{
@@ -177,7 +179,7 @@ bool SVRangeClass::InitReferencesAndInputs(SvStl::MessageContainerVector *pError
 		m_ValueIndirect[i].GetValue( ValueIndirect );
 		if( !ValueIndirect.empty() )
 		{
-			SVString dottedName;
+			std::string dottedName;
 			//If the tool set name is at the start then add the inspection name at the beginning
 			if( 0 == ValueIndirect.find(ToolSetName) )
 			{
@@ -193,8 +195,8 @@ bool SVRangeClass::InitReferencesAndInputs(SvStl::MessageContainerVector *pError
 				if (nullptr != pErrorMessages)
 				{
 					SvStl::MessageContainer message;
-					SVStringVector msgList;
-					msgList.push_back(SVString(GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType )));
+					SvDef::StringVector msgList;
+					msgList.push_back(std::string(GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType )));
 					message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_InvalidReference, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16025 ); 
 					pErrorMessages->push_back( message );
 			}
@@ -206,8 +208,8 @@ bool SVRangeClass::InitReferencesAndInputs(SvStl::MessageContainerVector *pError
 				if (nullptr != pErrorMessages)
 				{
 					SvStl::MessageContainer message;
-					SVStringVector msgList;
-					msgList.push_back(SVString(GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType )));
+					SvDef::StringVector msgList;
+					msgList.push_back(std::string(GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType )));
 					message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_InvalidReference, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16026 ); 
 					pErrorMessages->push_back( message );
 			}
@@ -287,10 +289,10 @@ bool SVRangeClass::DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo )
 	return __super::DisconnectObjectInput(pObjectInInfo);
 }
 
-void SVRangeClass::OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName)
+void SVRangeClass::OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName)
 {
-	SVString newPrefix;
-	SVString oldPrefix;
+	std::string newPrefix;
+	std::string oldPrefix;
 	//In this case the inspection name is not part of the saved name so do not rename inspection names
 	if( nullptr != dynamic_cast<const BasicValueObject*> (&rRenamedObject) )
 	{
@@ -305,7 +307,7 @@ void SVRangeClass::OnObjectRenamed(const SVObjectClass& rRenamedObject, const SV
 		newPrefix = rRenamedObject.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType ) + _T( "." );
 	}// end else
 	oldPrefix = newPrefix;
-	SvUl_SF::searchAndReplace( oldPrefix, rRenamedObject.GetName(), rOldName.c_str() );
+	SvUl::searchAndReplace( oldPrefix, rRenamedObject.GetName(), rOldName.c_str() );
 
 	RangeClassHelper rangeHelper(this);
 	rangeHelper.SetRangeTaskObject();
@@ -476,7 +478,7 @@ void SVRangeClass::DisconnectAllInputObjects()
 	}
 }
 
-HRESULT SVRangeClass::GetIndirectValue(RangeEnum::ERange ra, SVString& rValue )
+HRESULT SVRangeClass::GetIndirectValue(RangeEnum::ERange ra, std::string& rValue )
 {
 	return m_ValueIndirect[ra].GetValue( rValue );
 };
@@ -484,7 +486,7 @@ HRESULT SVRangeClass::GetIndirectValue(RangeEnum::ERange ra, SVString& rValue )
 bool SVRangeClass::HasIndirectValue(RangeEnum::ERange ra)
 {
 	bool res = false;
-	SVString Temp;
+	std::string Temp;
 	if(S_OK == GetIndirectValue(ra, Temp))
 	{
 		res = !Temp.empty();

@@ -12,8 +12,8 @@
 //Moved to precompiled header: #include <iterator>
 //Moved to precompiled header: #include <boost\function.hpp>
 #include "MessageData.h"
-#include "SVUtilityLibrary/SVString.h"
 #include "SVUtilityLibrary/SVGUID.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 namespace SvStl
@@ -52,7 +52,7 @@ namespace SvStl
 		//! \param ProgramCode <in> the unique program ID for the code
 		//! \param rObjectId <in> reference to the unique object ID of the message owner
 		//************************************
-		MessageContainer( long MessageCode, MessageTextEnum AdditionalTextId, const SVStringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode = 0, const GUID& rObjectId = SV_GUID_NULL );
+		MessageContainer( long MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode = 0, const GUID& rObjectId = SV_GUID_NULL );
 
 		//************************************
 		//! This is the assignment operator
@@ -73,9 +73,9 @@ namespace SvStl
 
 		//************************************
 		//! This is the method to return the What message
-		//! \returns const reference to the what message as a SVString
+		//! \returns const reference to the what message as a std::string
 		//************************************
-		const SVString What() const { return m_What; };
+		const std::string What() const { return m_What; };
 
 		//************************************
 		//! This is the method to set the data this will delete the m_AdditonalMessages list
@@ -96,7 +96,7 @@ namespace SvStl
 		//! \param ProgramCode <in> the unique program ID for the code
 		//! \param rObjectId <in> reference to the unique object ID of the message owner
 		//************************************
-		void setMessage( long MessageCode, MessageTextEnum AdditionalTextId, const SVStringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode=0, const GUID& rObjectId=SV_GUID_NULL );
+		void setMessage( long MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode=0, const GUID& rObjectId=SV_GUID_NULL );
 
 		//************************************
 		//! This is the method to set the data this will delete the m_AdditonalMessages list
@@ -115,7 +115,7 @@ namespace SvStl
 		//! \param SourceFile <in> the source file standard parameters in which the code set
 		//! \param ProgramCode <in> the unique program ID for the code
 		//************************************
-		void addMessage( long MessageCode, MessageTextEnum AdditionalTextId, SVStringVector AdditionalTextList, SourceFileParams SourceFile, DWORD dwProgramCode = 0 );
+		void addMessage( long MessageCode, MessageTextEnum AdditionalTextId, SvDef::StringVector AdditionalTextList, SourceFileParams SourceFile, DWORD dwProgramCode = 0 );
 
 		//************************************
 		//! This method is the same as the addMessage above with a message structure when the flag is true which is the default
@@ -151,7 +151,7 @@ namespace SvStl
 		//! \param rMessage <out> the reference for the formatted message
 		//! \returns the detailed information to the message code
 		//************************************
-		SVString Format( SVString& rMessage ) const;
+		std::string Format( std::string& rMessage ) const;
 
 		//************************************
 		//! This is the method to get the object id of the message owner
@@ -188,7 +188,7 @@ namespace SvStl
 		//! This gets the facility name of the message code
 		//! \returns the name of the facility
 		//************************************
-		SVString getFacilityName() const;
+		std::string getFacilityName() const;
 
 		//************************************
 		//! This gets the filtered EventID of the message code
@@ -206,13 +206,13 @@ namespace SvStl
 		//! This gets the category name of the message code
 		//! \returns the name of the category
 		//************************************
-		SVString getCategoryName() const;
+		std::string getCategoryName() const;
 
 		//************************************
 		//! The method sets the substitute strings for the event log
 		//! \param rSubstituteStrings <out> the reference for the substitute strings
 		//************************************
-		void setSubstituteStrings( SVStringVector& rSubstituteStrings ) const;
+		void setSubstituteStrings( SvDef::StringVector& rSubstituteStrings ) const;
 
 		//************************************
 		//! Method to set the message dll instance
@@ -226,7 +226,7 @@ namespace SvStl
 		MessageData m_Message;				//! The main message
 		Messages m_AdditionalMessages;		//! List of additional messages
 		SVGUID m_ObjectId;					//! The object GUID 
-		SVString m_What;					//! The what formatted message
+		std::string m_What;					//! The what formatted message
 		static HINSTANCE m_MessageDll;		//! The message dll instance as a static variable
 	#pragma endregion Member variables
 	};

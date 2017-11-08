@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVToolAcquisition.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVAcquisitionToolClass, SVAcquisitionToolClassGuid );

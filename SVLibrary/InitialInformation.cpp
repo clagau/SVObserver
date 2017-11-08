@@ -67,9 +67,9 @@ namespace SvLib
 	}
 
 
-	SVStringVector InitialInformation::GetModelNumberVector() const
+	SvDef::StringVector InitialInformation::GetModelNumberVector() const
 	{
-		SVStringVector	msgList;
+		SvDef::StringVector	msgList;
 		msgList.push_back(m_Processor);
 		msgList.push_back(m_FrameGrabber);
 		msgList.push_back(m_IOBoard);
@@ -77,15 +77,15 @@ namespace SvLib
 		return msgList;
 	}
 
-	SVString InitialInformation::GetModelNumberString() const
+	std::string InitialInformation::GetModelNumberString() const
 	{
 		return boost::algorithm::join(GetModelNumberVector(), " ");
 	}
 
 
-	SVString InitialInformation::InitializationFailureDescription(HRESULT InitializationStatusFlags) const
+	std::string InitialInformation::InitializationFailureDescription(HRESULT InitializationStatusFlags) const
 	{
-		SVStringVector msgDllLoadFailuresList;
+		SvDef::StringVector msgDllLoadFailuresList;
 
 		if ((InitializationStatusFlags & SV_HARDWARE_FAILURE_IO) == SV_HARDWARE_FAILURE_IO)
 		{
@@ -109,7 +109,7 @@ namespace SvLib
 		}
 		if ((InitializationStatusFlags & SV_HARDWARE_FAILURE_ALL) != InitializationStatusFlags)
 		{
-			msgDllLoadFailuresList.push_back(SVString("(unknown Problem) "));
+			msgDllLoadFailuresList.push_back(std::string("(unknown Problem) "));
 		}
 
 		return boost::algorithm::join(msgDllLoadFailuresList, "\n");

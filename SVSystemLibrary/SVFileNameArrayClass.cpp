@@ -9,8 +9,11 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:36:20  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVFileNameArrayClass.h"
+#include "SVUtilityLibrary/StringHelper.h"
+#pragma endregion Includes
 
 SVFileNameArrayClass::SVFileNameArrayClass()
 {
@@ -54,8 +57,8 @@ bool SVFileNameArrayClass::SetFileNameList(LPCTSTR szFileNameList)
 	bool bOk = true;
 	bool bDone = false;
 
-	SVString sTemp;
-	SVString sFileNameList = szFileNameList;
+	std::string sTemp;
+	std::string sFileNameList = szFileNameList;
 
 	RemoveAll();
 
@@ -69,14 +72,14 @@ bool SVFileNameArrayClass::SetFileNameList(LPCTSTR szFileNameList)
 
 			size_t i = sFileNameList.find_first_of( ";," );
 
-			if ( SVString::npos == i )
+			if ( std::string::npos == i )
 			{
 				sTemp = sFileNameList;
 				sFileNameList.clear();
 			}
 			else
 			{
-				sTemp = SvUl_SF::Left(sFileNameList, i );
+				sTemp = SvUl::Left(sFileNameList, i );
 				sFileNameList.erase( 0 , i + 1 );
 			}
 

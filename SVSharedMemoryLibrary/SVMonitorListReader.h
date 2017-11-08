@@ -13,7 +13,7 @@
 #pragma region Includes
 #include "SVMonitorListStore.h"
 #include "SVSharedMemorySettings.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 namespace SvSml
@@ -21,7 +21,7 @@ namespace SvSml
 	class SVMonitorListReader
 	{
 		bool m_isOpen;
-		SVString m_ShareName;
+		std::string m_ShareName;
 		const SVMonitorListStore* m_store;
 		std::shared_ptr<bip::managed_shared_memory> m_pManagedSharedMemory;
 	public:
@@ -31,10 +31,10 @@ namespace SvSml
 		bool Open();
 		void Close();
 		bool IsOpen() const;
-		bool HasList(const SVString& name) const;
+		bool HasList(const std::string& name) const;
 
-		const SVSharedMonitorList& operator[](const SVString& listName) const;
-		const SVStringVector GetListNames() const;
+		const SVSharedMonitorList& operator[](const std::string& listName) const;
+		const SvDef::StringVector GetListNames() const;
 	};
 } //namespace SvSml
 

@@ -85,7 +85,7 @@ HRESULT SVRemoteInputTool::ProcessNotifyData( SVObjectCommandDataJsonPtr& p_rDat
 
 	Json::Reader l_Reader;
 	Json::Value l_JsonValues;
-	SVString l_Command;
+	std::string l_Command;
 
 	if( l_Reader.parse( p_rDataPtr->GetJsonCommand(), l_JsonValues, false ) )
 	{
@@ -187,7 +187,7 @@ HRESULT SVRemoteInputTool::SetInputObject( const SVGUID& p_rObjectId )
 	return l_Status;
 }
 
-void SVRemoteInputTool::OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName)
+void SVRemoteInputTool::OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName)
 {
 	SVInputStreamManager::Instance().EraseInputStream( GetUniqueObjectID() );
 	SVInputStreamManager::Instance().InsertInputStream( GetCompleteName().c_str(), GetUniqueObjectID() );
@@ -210,8 +210,8 @@ bool SVRemoteInputTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageConta
 {
 	bool Result = SVToolClass::onRun( rRunStatus, pErrorMessages );
 
-	SVString MatchString;
-	SVString MatchedString;
+	std::string MatchString;
+	std::string MatchedString;
 	long l_MatchedStringId = 0;
 	long l_Identifier = 0;
 
@@ -311,7 +311,7 @@ HRESULT SVRemoteInputTool::ProcessCommandQueue()
 		{
 			Json::Reader l_Reader;
 			Json::Value l_JsonValues;
-			SVString l_Command;
+			std::string l_Command;
 
 			if( l_Reader.parse( l_CommandElementPtr->GetJsonCommand(), l_JsonValues, false ) )
 			{
@@ -424,7 +424,7 @@ HRESULT SVRemoteInputTool::SVCommandQueueElement::Execute()
 		{
 			Json::Reader l_Reader;
 			Json::Value l_JsonValues;
-			SVString l_Command;
+			std::string l_Command;
 
 			if( l_Reader.parse( m_JsonCommandPtr->GetJsonCommand(), l_JsonValues, false ) )
 			{
@@ -507,13 +507,13 @@ SVRemoteInputTool::SVDataElement::SVDataElement()
 {
 }
 
-SVRemoteInputTool::SVDataElement::SVDataElement( const SVString& p_rElementData, long p_ElementIdentifier )
+SVRemoteInputTool::SVDataElement::SVDataElement( const std::string& p_rElementData, long p_ElementIdentifier )
 : m_ElementData( p_rElementData )
 , m_ElementIdentifier( p_ElementIdentifier )
 {
 }
 
-SVRemoteInputTool::SVDataElement::SVDataElement( const SVString& p_rElementData )
+SVRemoteInputTool::SVDataElement::SVDataElement( const std::string& p_rElementData )
 : m_ElementData( p_rElementData )
 , m_ElementIdentifier( 0 )
 {

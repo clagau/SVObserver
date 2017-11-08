@@ -11,7 +11,6 @@
 
 #pragma once
 #pragma region Includes
-#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 class SVIPDoc;
@@ -66,7 +65,7 @@ protected:
 public:
 	SVClassInfoStructListClass*	m_pAvailableChildrenList;
 	SVTaskObjectListClass*		m_pParentObject;
-	SVString					m_Title;
+	std::string					m_Title;
 	BOOL						m_AllowMultipleChildrenInstances;
 	SVIPDoc*					m_pDocument;
 

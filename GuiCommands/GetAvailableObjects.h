@@ -15,7 +15,7 @@
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "ObjectInterfaces\ISVImage.h"
 #include "ObjectInterfaces\IObjectManager.h"
-#include "SVUtilityLibrary\SVString.h"
+
 #include "SVUtilityLibrary\NameGuidList.h"
 #include "SVObjectLibrary\SVObjectClass.h"
 #include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
@@ -107,7 +107,7 @@ namespace SvCmd
 									SvOi::ISVImage* pImage = dynamic_cast<SvOi::ISVImage*>(pObject);
 									if (pImage)
 									{
-										const SVString& name = pImage->getDisplayedName();
+										const std::string& name = pImage->getDisplayedName();
 										if (!name.empty())
 										{
 											m_list.push_back(std::make_pair(name, pObject->GetUniqueObjectID()));
@@ -117,7 +117,7 @@ namespace SvCmd
 								break;
 							default:
 								{
-									SVString name;
+									std::string name;
 									if (SVNotSetObjectType == m_objectTypeToInclude)
 									{
 										name = pObject->GetName();

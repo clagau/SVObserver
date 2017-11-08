@@ -113,11 +113,11 @@ BOOL SVExternalToolResultPage::OnInitDialog()
 			pEdit->SetCtrlID( iID );
 
 			// display name like: "Result 01 ( )"
-			SVString sLabel = SvUl_SF::Format( _T("%s (%s)"), rValue.GetName(), SvUl_SF::createSVString(rDefinition.m_bDisplayName).c_str());
+			std::string sLabel = SvUl::Format( _T("%s (%s)"), rValue.GetName(), SvUl::createStdString(rDefinition.m_bDisplayName).c_str());
 
 			pEdit->SetLabelText( sLabel.c_str() );
 
-			SVString Type;
+			std::string Type;
 			switch ( rDefinition.m_VT )
 			{
 				case VT_BOOL: Type = _T("Bool");   break;
@@ -127,11 +127,11 @@ BOOL SVExternalToolResultPage::OnInitDialog()
 				default:      Type = _T("???");    break;
 			}
 
-			SVString sDescription = SvUl_SF::Format( _T(" (Type : %s)  %s"), Type.c_str(), SvUl_SF::createSVString( rDefinition.m_bDisplayName ).c_str() );
+			std::string sDescription = SvUl::Format( _T(" (Type : %s)  %s"), Type.c_str(), SvUl::createStdString( rDefinition.m_bDisplayName ).c_str() );
 			pEdit->SetInfoText( sDescription.c_str() ) ;
 			pEdit->SetButtonText( _T("Range"));
 
-			SVString sValue;
+			std::string sValue;
 			rValue.getValue(sValue);
 			pEdit->SetItemValue( sValue.c_str() );
 			if( rDefinition.m_VT == VT_BSTR )

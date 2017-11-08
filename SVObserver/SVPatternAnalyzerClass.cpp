@@ -31,7 +31,7 @@
 #include "SVResultLong.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVOCore/SVTool.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "Definitions/GlobalConst.h"
 #pragma endregion Includes
 
@@ -174,8 +174,8 @@ void SVPatternAnalyzerClass::CreateResult()
 		resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
 		resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultLongObjectType;
 		resultClassInfo.m_ClassId = SVLongResultClassGuid;
-		resultClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_RESULT );
-		SVString Title = SvUl_SF::LoadSVString( IDS_OBJECTNAME_PAT_NBRFOUNDOCCURANCES );
+		resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_RESULT );
+		std::string Title = SvUl::LoadStdString( IDS_OBJECTNAME_PAT_NBRFOUNDOCCURANCES );
 		resultClassInfo.m_ClassName += _T(" ") + Title;
 
 		while (1)
@@ -367,7 +367,7 @@ bool SVPatternAnalyzerClass::UpdateModelFromBuffer()
 	return bOk;
 }
 
-bool SVPatternAnalyzerClass::RestorePattern (const SVString& rImageFile, SvStl::MessageContainerVector *pErrorMessages)
+bool SVPatternAnalyzerClass::RestorePattern (const std::string& rImageFile, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool bOk = ReloadImage(rImageFile, m_lpatModelWidth, m_lpatModelHeight, m_patBufferHandlePtr, pErrorMessages);
 
@@ -858,7 +858,7 @@ bool SVPatternAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 
 			// Check whether there is a valid model file available.
 			// If so, restore the model from the file.
-			SVString FileName;
+			std::string FileName;
 
 			if( S_OK == msv_szModelImageFile.GetValue( FileName ) )
 			{
@@ -921,13 +921,13 @@ bool SVPatternAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 	return Result;
 }
 
-void SVPatternAnalyzerClass::getSpecialImageList(std::vector<SVString>& rList) const
+void SVPatternAnalyzerClass::getSpecialImageList(SvDef::StringVector& rList) const
 {
 	rList.push_back(SvDef::PatternModelImageName);
 	rList.push_back(SvDef::PatternDontCareImageName);
 }
 
-bool SVPatternAnalyzerClass::getSpecialImage(const SVString& rName, SvOi::MatroxImageSmartHandlePtr& rImagePtr) const
+bool SVPatternAnalyzerClass::getSpecialImage(const std::string& rName, SvOi::MatroxImageSmartHandlePtr& rImagePtr) const
 {
 	if (SvDef::PatternModelImageName == rName)
 	{
@@ -1052,7 +1052,7 @@ void SVPatternAnalyzerClass::DisplayAnalyzerResult()
 		return;
 
 	SVPatResultDlgClass	resultDlg;
-	SVString Value;
+	std::string Value;
 	
 	BOOL bValue;
 	msv_bpatSearchAngleMode.GetValue(bValue);
@@ -1061,23 +1061,23 @@ void SVPatternAnalyzerClass::DisplayAnalyzerResult()
 	msv_dpatResultAngle.GetValue( dResultAngle, m_nPatternIndex );
 	if(bValue && dResultAngle > 0.0)
 	{
-		Value= SvUl_SF::Format(_T("%3.1lf"), dResultAngle);
+		Value= SvUl::Format(_T("%3.1lf"), dResultAngle);
 		resultDlg.m_strAngle = Value.c_str();
 	}
 
 	double dMatchScore( 0.0 );
 	msv_dpatResultMatchScore.GetValue( dMatchScore, m_nPatternIndex );
-	Value = SvUl_SF::Format(_T("%3.1lf"), dMatchScore);
+	Value = SvUl::Format(_T("%3.1lf"), dMatchScore);
 	resultDlg.m_strScore = Value.c_str();
 
 	double dResultXPos( 0.0 );
 	msv_dpatResultX.GetValue( dResultXPos, m_nPatternIndex );
-	Value = SvUl_SF::Format(_T("%4.1lf"), dResultXPos);
+	Value = SvUl::Format(_T("%4.1lf"), dResultXPos);
 	resultDlg.m_strXPos = Value.c_str();
 
 	double dResultYPos( 0.0 );
 	msv_dpatResultY.GetValue( dResultYPos, m_nPatternIndex );
-	Value = SvUl_SF::Format(_T("%4.1lf"), dResultYPos);
+	Value = SvUl::Format(_T("%4.1lf"), dResultYPos);
 	resultDlg.m_strYPos = Value.c_str();
 	
 	resultDlg.DoModal();
@@ -1096,7 +1096,7 @@ void SVPatternAnalyzerClass::ResizeResultValues(int nNum)
 
 bool SVPatternAnalyzerClass::ResetPattern(SvStl::MessageContainerVector *pErrorMessages)
 {
-	SVString	FileName;
+	std::string	FileName;
 	
 	bool bOk = ( S_OK == msv_szModelImageFile.GetValue( FileName ) );
 	
@@ -1340,7 +1340,7 @@ bool SVPatternAnalyzerClass::RestoreDontCareImage(SvStl::MessageContainerVector 
 {
 	bool Result = true;
 	m_DontCareBufferHandlePtr.clear();
-	SVString FileName;
+	std::string FileName;
 
 	if( S_OK == m_DontCareImageFile.GetValue( FileName ) )
 	{
@@ -1401,7 +1401,7 @@ bool SVPatternAnalyzerClass::validateNewDontCareFileName(const SvOi::SetValueObj
 	if (rValueVector.end() != iter)
 	{
 		assert(VT_BSTR == iter->second.vt);
-		SVString newFileName = SvUl_SF::createSVString(iter->second.bstrVal);
+		std::string newFileName = SvUl::createStdString(iter->second.bstrVal);
 
 		SVMatroxBuffer importHandle;
 		if (S_OK != SVMatroxBufferInterface::Import(importHandle, newFileName, SVFileBitmap, true) ||
@@ -1436,9 +1436,9 @@ bool SVPatternAnalyzerClass::validateNewModelFileName(const SvOi::SetValueObject
 	if (rValueVector.end() != iter)
 	{
 		assert(VT_BSTR == iter->second.vt);
-		SVString fileName;
+		std::string fileName;
 		msv_szModelImageFile.GetValue(fileName);
-		SVString newFileName = SvUl_SF::createSVString(iter->second.bstrVal);
+		std::string newFileName = SvUl::createStdString(iter->second.bstrVal);
 		if (fileName != newFileName)
 		{
 			SVMatroxBuffer importHandle;
@@ -1558,7 +1558,7 @@ bool SVPatternAnalyzerClass::CreateBuffer(long width, long height, SVSmartHandle
 	return (S_OK == SVImageProcessingClass::CreateImageBuffer(patBuffer, rBufferHandle));
 }
 
-bool SVPatternAnalyzerClass::ReloadImage(const SVString& rImageFile, SVLongValueObjectClass& rWidthValueObject, SVLongValueObjectClass& rHeightValueObject, SVSmartHandlePointer& rBufferHandle, SvStl::MessageContainerVector* pErrorMessages)
+bool SVPatternAnalyzerClass::ReloadImage(const std::string& rImageFile, SVLongValueObjectClass& rWidthValueObject, SVLongValueObjectClass& rHeightValueObject, SVSmartHandlePointer& rBufferHandle, SvStl::MessageContainerVector* pErrorMessages)
 {
 	bool bOk = true;
 	SVMatroxBuffer importHandle;

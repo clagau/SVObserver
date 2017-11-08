@@ -12,7 +12,6 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
-#include "SVUtilityLibrary/SVString.h"
 #include "SVValueObjectClass.h"
 #pragma endregion Includes
 
@@ -36,7 +35,7 @@ public:
 	VARTYPE GetValueType() const { return Value().vt; };
 
 protected:
-	static SVString ToString(const VARIANT& rvt, bool bScript = false );
+	static std::string ToString(const VARIANT& rvt, bool bScript = false );
 
 	virtual double ValueType2Double(const _variant_t& rValue) const override;
 	virtual _variant_t ValueType2Variant( const _variant_t& rValue ) const override { return rValue; };
@@ -45,9 +44,9 @@ protected:
 	//! Convert a string in a variant. Throw an exception if the string isn't convertible into a variant
 	//! \param rValue [in] The input string
 	//! \returns the converted value.
-	virtual _variant_t ConvertString2Type( const SVString& rValue ) const override;
+	virtual _variant_t ConvertString2Type( const std::string& rValue ) const override;
 
-	virtual SVString ConvertType2String( const _variant_t& rValue ) const override;
+	virtual std::string ConvertType2String( const _variant_t& rValue ) const override;
 
 	//! Returns the value object byte size
 	//! \returns the number of bytes for the data

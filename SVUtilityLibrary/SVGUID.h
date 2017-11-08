@@ -14,7 +14,6 @@
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <set>
 //Moved to precompiled header: #include <vector>
-#include "SVString.h"
 #include "SVUtilityGlobals.h"
 #pragma endregion Includes
 
@@ -45,7 +44,7 @@ public:
 
 	_variant_t ToVARIANT() const;
 	_bstr_t ToBSTR() const;
-	SVString ToString() const;
+	std::string ToString() const;
 
 	const SVGUID& operator=( const SVGUID& rObject );
 	const SVGUID& operator=( const GUID& rGuid );

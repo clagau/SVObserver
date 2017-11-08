@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 class SVBlobFeaturePropertiesDlg : public CDialog
@@ -22,7 +22,7 @@ public:
 	SVBlobFeaturePropertiesDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~SVBlobFeaturePropertiesDlg();
 
-	SVString m_FeatureName;
+	std::string m_FeatureName;
 
 // Dialog Data
 	//{{AFX_DATA(SVBlobFeaturePropertiesDlg)

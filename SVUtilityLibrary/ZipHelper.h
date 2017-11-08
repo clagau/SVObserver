@@ -14,7 +14,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVString.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 class ZipHelper
@@ -45,7 +45,7 @@ public:
 	// Parameter: rZipFiles <in> Reference to the set of zip files
 	// Parameter: DeleteSourceFiles <in> If true deletes the source files after zipping file
 	//************************************
-	static void makeZipFile( const SVString& rZipFileName, const SVStringSet& rZipFiles, bool DeleteSourceFiles );
+	static void makeZipFile( const std::string& rZipFileName, const SvDef::StringSet& rZipFiles, bool DeleteSourceFiles );
 
 	//************************************
 	// Description: This method unzips all the files
@@ -53,7 +53,7 @@ public:
 	// Parameter: rDestinationFolder <in> Reference to the zip file name
 	// Parameter: rUnzippedFiles <out> Reference to the files that have been unzipped
 	//************************************
-	static void unzipAll( const SVString& rZipFileName, const SVString& rDestinationFolder, SVStringSet& rUnzippedFiles );
+	static void unzipAll( const std::string& rZipFileName, const std::string& rDestinationFolder, SvDef::StringSet& rUnzippedFiles );
 #pragma endregion Public Methods
 };
 

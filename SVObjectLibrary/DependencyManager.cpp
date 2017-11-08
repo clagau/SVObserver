@@ -10,6 +10,7 @@
 #include "stdafx.h"
 #include "DependencyManager.h"
 #include "SVObjectLibrary/ObjectNameLookup.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -38,7 +39,7 @@ namespace SvOl
 		return DependencyMgr;
 	}
 
-	void DependencyManager::getToolDependency( SvOi::StringPairInserter Inserter, const SVGuidSet& rSourceSet, SVObjectTypeEnum nameToObjectType, SvOi::ToolDependencyEnum ToolDependency /*= SvOi::ToolDependencyEnum::Client*/, const SVString& rFileName /*= SVString()*/) const
+	void DependencyManager::getToolDependency( SvOi::StringPairInserter Inserter, const SVGuidSet& rSourceSet, SVObjectTypeEnum nameToObjectType, SvOi::ToolDependencyEnum ToolDependency /*= SvOi::ToolDependencyEnum::Client*/, const std::string& rFileName /*= std::string()*/) const
 	{
 		//! Note before calling this method the graph index must be updated this is done in the interface!
 		std::vector<Dependency> DependencyVector;
@@ -94,10 +95,10 @@ namespace SvOl
 			SVObjectClass* pClient = SVObjectManagerClass::Instance().GetObject(IterDependency->second);
 			if (nullptr != pSupplier && nullptr != pClient)
 			{
-				SVString SupplierName = pSupplier->GetCompleteObjectNameToObjectType(nullptr, nameToObjectType);
-				SVString ClientName = pClient->GetCompleteObjectNameToObjectType(nullptr, nameToObjectType);
+				std::string SupplierName = pSupplier->GetCompleteObjectNameToObjectType(nullptr, nameToObjectType);
+				std::string ClientName = pClient->GetCompleteObjectNameToObjectType(nullptr, nameToObjectType);
 
-				Inserter = SVStringPair(SupplierName, ClientName);
+				Inserter = SvDef::StringPair(SupplierName, ClientName);
 
 				// If the file name is not empty we want to save a tool dependency graph
 				if (!rFileName.empty())
@@ -125,7 +126,7 @@ namespace SvOl
 } //namespace SvOl
 
 #pragma region IDependencyManager
-void SvOi::getToolDependency( StringPairInserter Inserter, const SVGuidSet& rSourceSet, SVObjectTypeEnum nameToObjectType, SvOi::ToolDependencyEnum ToolDependency /*= SvOi::ToolDependencyEnum::Client*/, const SVString& rFileName /*= SVString()*/)
+void SvOi::getToolDependency( StringPairInserter Inserter, const SVGuidSet& rSourceSet, SVObjectTypeEnum nameToObjectType, SvOi::ToolDependencyEnum ToolDependency /*= SvOi::ToolDependencyEnum::Client*/, const std::string& rFileName /*= std::string()*/)
 {
 	SvOl::DependencyManager::Instance().updateVertexIndex();
 	SvOl::DependencyManager::Instance().getToolDependency(Inserter, rSourceSet, nameToObjectType, ToolDependency, rFileName);

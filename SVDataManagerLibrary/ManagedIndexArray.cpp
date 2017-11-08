@@ -9,10 +9,13 @@
 // * .Check In Date   : $Date:   13 May 2013 10:55:08  $
 // ******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "ManagedIndexArray.h"
 #include "SVMessage\SVMessage.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVSystemLibrary/SVAutoLockAndReleaseTemplate.h"
+#pragma endregion Includes
 
 SVManagedIndex::SVManagedIndex()
 {
@@ -28,9 +31,9 @@ SVManagedIndex::SVManagedIndex()
 	svmlOther = 0;
 }
 
-SVString SVManagedIndex::GetReferenceCounts() const
+std::string SVManagedIndex::GetReferenceCounts() const
 {
-	SVString l_Temp = SvUl_SF::Format( _T("ACQ=%ld-IP=%ld-PPQ=%ld-ARC=%ld-DIS=%ld-LIP=%ld-DCOM=%ld-OTH=%ld"),
+	std::string l_Temp = SvUl::Format( _T("ACQ=%ld-IP=%ld-PPQ=%ld-ARC=%ld-DIS=%ld-LIP=%ld-DCOM=%ld-OTH=%ld"),
 		svmlAcquisition,
 		svmlInspection,
 		svmlPPQ,
@@ -563,9 +566,9 @@ HRESULT SVManagedIndexArray::ReleaseAllIndexes()
 	return l_Status;
 }
 
-SVString SVManagedIndexArray::GetReferenceCounts() const
+std::string SVManagedIndexArray::GetReferenceCounts() const
 {
-	SVString l_Temp = SvUl_SF::Format( _T( "%s-MC=%ld" ), GetName().c_str(), m_MessageCounter );
+	std::string l_Temp = SvUl::Format( _T( "%s-MC=%ld" ), GetName().c_str(), m_MessageCounter );
 
 	SVAutoLockAndReleaseTemplate< SVCriticalSection > l_AutoLock;
 
@@ -577,7 +580,7 @@ SVString SVManagedIndexArray::GetReferenceCounts() const
 
 			if( nullptr != l_pIndex )
 			{
-				SVString l_Element = SvUl_SF::Format( _T( ":Index=%ld-" ), i );
+				std::string l_Element = SvUl::Format( _T( ":Index=%ld-" ), i );
 
 				l_Temp += l_Element;
 				l_Temp += l_pIndex->GetReferenceCounts();
@@ -767,12 +770,12 @@ bool SVManagedIndexArray::LogEventMessage()
 	return l_Status;
 }
 
-const SVString& SVManagedIndexArray::GetName() const
+const std::string& SVManagedIndexArray::GetName() const
 {
 	return m_Name;
 }
 
-void SVManagedIndexArray::SetName( const SVString& p_rName )
+void SVManagedIndexArray::SetName( const std::string& p_rName )
 {
 	m_Name = p_rName;
 }
@@ -782,7 +785,7 @@ long SVManagedIndexArray::GetMessageCounter() const
 	return m_MessageCounter;
 }
 
-void SVManagedIndexArray::Dump( const SVString& p_rSourceName ) const
+void SVManagedIndexArray::Dump( const std::string& p_rSourceName ) const
 {
 	SVAutoLockAndReleaseTemplate< SVCriticalSection > l_AutoLock;
 

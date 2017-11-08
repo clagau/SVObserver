@@ -14,7 +14,6 @@
 #pragma region Includes
 #include "afxwin.h"
 #include "SVRPropertyTree/SVRPropTree.h"
-#include "SVUtilityLibrary/SVString.h"
 #include "RemoteMonitorList.h"
 #pragma endregion Includes
 
@@ -39,7 +38,7 @@ public:
 	MonitorListPropertyDlg(RemoteMonitorListMap& MonitorList, LPCTSTR Name, CWnd* pParent = nullptr);   // standard constructor
 	virtual ~MonitorListPropertyDlg();
 
-	const SVString& GetMonitorListName() const;
+	const std::string& GetMonitorListName() const;
 	int GetMonitorListRejectQueueDepth() const;
 	bool GetIsMonitorListActive() const;
 // Dialog Data
@@ -66,14 +65,14 @@ protected:
 
 #pragma region Private
 	RemoteMonitorListMap& m_MonitorList;
-	SVString m_MonitorListName;	// original Monitor List name
-	SVString m_DisplayName;		// current valid Monitor List name (starts out as original Monitor List name)
+	std::string m_MonitorListName;	// original Monitor List name
+	std::string m_DisplayName;		// current valid Monitor List name (starts out as original Monitor List name)
 	int m_MonitorListRejectQueueDepth;
-	SVString m_sPPQ;
+	std::string m_sPPQ;
 	bool m_IsMonitorListActive;
 	void SetupMonitorListProperties();
-	bool IsValidListName(const SVString& rName, const SVString& rOriginalName) const;
-	SVString ValidateLabelText(const SVString& rNewText) const;
+	bool IsValidListName(const std::string& rName, const std::string& rOriginalName) const;
+	std::string ValidateLabelText(const std::string& rNewText) const;
 
 #pragma endregion Private
 };

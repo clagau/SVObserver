@@ -11,24 +11,24 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 class SVIPResultItemData
 {
 public:
 	SVIPResultItemData();
-	SVIPResultItemData( const SVString& p_rValue, unsigned long p_Color );
-	SVIPResultItemData( const SVString& p_rValue, unsigned long p_Color, unsigned long p_IOType );
+	SVIPResultItemData( const std::string& p_rValue, unsigned long p_Color );
+	SVIPResultItemData( const std::string& p_rValue, unsigned long p_Color, unsigned long p_IOType );
 	SVIPResultItemData( const SVIPResultItemData& p_rObject );
 
-	const SVString& GetValue() const;
+	const std::string& GetValue() const;
 	unsigned long GetColor() const;
 	bool IsIOTypePresent() const;
 	unsigned long GetIOType() const;
 
 protected:
-	SVString m_Value;
+	std::string m_Value;
 	unsigned long m_Color;
 
 	bool m_IOTypePresent;

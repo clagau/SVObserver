@@ -19,7 +19,7 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -60,7 +60,7 @@ bool SVLutDlg::Create( SVVirtualCameraPtrSet& setCameras, SVLutMap& raLut )
 
 			if( !( pAcqDevice.empty() ) && raLut.find( pCamera->GetUniqueObjectID() ) != raLut.end() && 0 < raLut[pCamera->GetUniqueObjectID()].NumBands() )
 			{
-				SVString Caption = SvUl_SF::Format("%s (Dig_%d.Ch_%d)", pCamera->GetName(), pAcqDevice->DigNumber(), pAcqDevice->Channel());
+				std::string Caption = SvUl::Format("%s (Dig_%d.Ch_%d)", pCamera->GetName(), pAcqDevice->DigNumber(), pAcqDevice->Channel());
 
 				SVLutDlgPage* pPage;
 				pPage = new SVLutDlgPage( this, Caption.c_str() );
@@ -434,7 +434,7 @@ void SVLutDlgPage::Refresh()
 		if( true /*pLUTMode*/ )
 		{
 			// refresh lut mode combo settings...
-			SVString Mode;
+			std::string Mode;
 			const SVLutTransformOperation* pOperation = nullptr;
 			if (-1 == m_iCurrentBand)
 			{

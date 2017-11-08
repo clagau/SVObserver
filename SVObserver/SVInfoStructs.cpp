@@ -9,14 +9,16 @@
 //* .Check In Date   : $Date:   16 Dec 2014 06:54:08  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVInfoStructs.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVInspectionProcess.h"
 #include "SVPPQObject.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-
+#pragma endregion Includes
 
 SVIOEntryStruct::SVIOEntryStruct()
 : m_IOEntryPtr()
@@ -744,9 +746,9 @@ bool SVProductInfoStruct::IsAlive() const
 	return l_Status;
 }
 
-void SVProductInfoStruct::DumpIndexInfo( SVString& rData )
+void SVProductInfoStruct::DumpIndexInfo( std::string& rData )
 {
-	rData = SvUl_SF::Format( _T( "TriggerCount=%ld-DataComplete=%s-ResultDataIndex=%ld-PublishedImageIndex=%ld" ),
+	rData = SvUl::Format( _T( "TriggerCount=%ld-DataComplete=%s-ResultDataIndex=%ld-PublishedImageIndex=%ld" ),
 		ProcessCount(),
 		( bDataComplete ) ? _T( "T" ) : _T( "F" ),
 		oPPQInfo.m_ResultDataDMIndexHandle.GetIndex(), 
@@ -758,7 +760,7 @@ void SVProductInfoStruct::DumpIndexInfo( SVString& rData )
 	{
 		if( SV_GUID_NULL != CamIter->first )
 		{
-			SVString CameraName( _T( "(null)" ) );
+			std::string CameraName( _T( "(null)" ) );
 
 			SvOi::IObjectClass* pCamera =  SvOi::getObject( CamIter->first );
 			if( nullptr != pCamera )
@@ -766,7 +768,7 @@ void SVProductInfoStruct::DumpIndexInfo( SVString& rData )
 				CameraName = pCamera->GetName();
 			}
 
-			rData += SvUl_SF::Format( _T( " : %s-Index=%ld" ), CameraName.c_str(), CamIter->second.GetIndex() );
+			rData += SvUl::Format( _T( " : %s-Index=%ld" ), CameraName.c_str(), CamIter->second.GetIndex() );
 		}
 	}
 
@@ -774,7 +776,7 @@ void SVProductInfoStruct::DumpIndexInfo( SVString& rData )
 
 	while( l_InspectIter != m_svInspectionInfos.end() )
 	{
-		SVString l_Temp = SvUl_SF::Format( _T( " : %s-State=0x%x-Index=%ld" ), 
+		std::string l_Temp = SvUl::Format( _T( " : %s-State=0x%x-Index=%ld" ), 
 			( nullptr != l_InspectIter->second.pInspection ) ? l_InspectIter->second.pInspection->GetName() : _T( "(null)" ), 
 			l_InspectIter->second.oInspectedState,
 			l_InspectIter->second.m_ResultImageDMIndexHandle.GetIndex() );
@@ -936,7 +938,7 @@ SVInspectionNameUpdate::SVInspectionNameUpdate()
 {
 }
 
-SVInspectionNameUpdate::SVInspectionNameUpdate( const SVString& p_rName )
+SVInspectionNameUpdate::SVInspectionNameUpdate( const std::string& p_rName )
 : m_InspectionName( p_rName )
 {
 }

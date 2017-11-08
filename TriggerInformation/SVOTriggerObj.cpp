@@ -21,7 +21,7 @@ static char THIS_FILE[]=__FILE__;
 
 namespace SvTi
 {
-	SVOTriggerObj::SVOTriggerObj(const SVString& name, int nDig)
+	SVOTriggerObj::SVOTriggerObj(const std::string& name, int nDig)
 	: m_sTriggerDisplayName(name)
 	, m_iDigNumber(nDig)
 	, m_timerPeriod(SvTi::TimerPeriod)

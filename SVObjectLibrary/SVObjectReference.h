@@ -16,7 +16,6 @@
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "ObjectInterfaces/IObjectClass.h"
 #include "ObjectInterfaces/IValueObject.h"
-#include "SVUtilityLibrary/SVString.h"
 #include "SVObjectNameInfo.h"
 //! Do not include SVObjectClass.h this causes circular includes with SVOutObjectInfoStruct and SVInObjectInfoStruct
 ////@TODO[GRA][7.50][13.02.2017] The circular include dependencies need to be fixed
@@ -39,13 +38,13 @@ class SVObjectReference
 public:
 	SVObjectReference();
 	SVObjectReference( const SVObjectReference& rhs );
-	SVObjectReference( SVObjectClass* pObject, long lArrayIndex, SVString strDefaultValue = SVString() );
+	SVObjectReference( SVObjectClass* pObject, long lArrayIndex, std::string strDefaultValue = std::string() );
 	SVObjectReference( SVObjectClass* pObject, const SVObjectNameInfo& p_rNameInfo );
 	SVObjectReference( SVObjectClass* pObject );
 	SVObjectReference( GUID guid );
 	/// This constructor create an object depending of a GUID and if required an index. 
 	/// \param guidAndIndexString [in] A string with a GUID and if required an index (e.g.{7407F882-3AA5-48E2-B2E9-542538CB1650}[1])
-	SVObjectReference(const SVString& guidAndIndexString);
+	SVObjectReference(const std::string& guidAndIndexString);
 	const SVObjectReference& operator = ( const SVObjectReference& rhs );
 	bool operator == ( const SVObjectReference& rhs ) const;
 
@@ -65,7 +64,7 @@ public:
 	//************************************
 	long getValidArrayIndex() const;
 
-	SVString DefaultValue() const;
+	std::string DefaultValue() const;
 	
 	//************************************
 	//! returns true if value object is an array
@@ -83,16 +82,16 @@ public:
 	void SetEntireArray();
 	void SetArrayIndex( long lArrayIndex );
 
-	SVString GetName() const;
-	SVString GetCompleteName() const;
-	SVString GetCompleteObjectNameToObjectType( LPCTSTR lpszCompleteName = nullptr, SVObjectTypeEnum objectTypeToInclude = SVToolSetObjectType ) const;
+	std::string GetName() const;
+	std::string GetCompleteName() const;
+	std::string GetCompleteObjectNameToObjectType( LPCTSTR lpszCompleteName = nullptr, SVObjectTypeEnum objectTypeToInclude = SVToolSetObjectType ) const;
 
-	SVString GetOneBasedName() const;
-	SVString GetCompleteOneBasedObjectName() const;
+	std::string GetOneBasedName() const;
+	std::string GetCompleteOneBasedObjectName() const;
 
 	/// Get a string first with the GUID and if array and index this attached. (e.g.{7407F882-3AA5-48E2-B2E9-542538CB1650}[1])
-	/// \returns SVString
-	SVString GetGuidAndIndexOneBased() const;
+	/// \returns std::string
+	std::string GetGuidAndIndexOneBased() const;
 
 	const SVObjectNameInfo& GetObjectNameInfo() const;
 
@@ -103,8 +102,8 @@ public:
 
 	bool operator < ( const SVObjectReference& rhs ) const;
 
-	SVString GetOneBasedIndexString() const;
-	SVString GetZeroBasedIndexString() const;
+	std::string GetOneBasedIndexString() const;
+	std::string GetZeroBasedIndexString() const;
 
 	/// Get the value of object depend of the index. If object is not a value object, it will return an error.
 	/// \param rValue [out] The return value.
@@ -121,7 +120,7 @@ public:
 	long IncrementIndex();
 
 protected:	
-	const SVString& GetIndex() const;
+	const std::string& GetIndex() const;
 	
 	void init();
 	SVObjectClass* m_pObject;

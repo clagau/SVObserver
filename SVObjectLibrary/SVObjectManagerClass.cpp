@@ -55,7 +55,7 @@ SVObjectManagerClass::SVObjectManagerClass()
 	m_TranslationMap[SvOl::FqnInspections] = SvOl::FqnConfiguration;
 	m_TranslationMap[SvOl::FqnPPQs] = SvOl::FqnConfiguration;
 	m_TranslationMap[SvOl::FqnCameras] = SvOl::FqnConfiguration;
-	SVString ReplaceName;
+	std::string ReplaceName;
 	ReplaceName = SvOl::FqnConfiguration;
 	ReplaceName += _T(".");
 	ReplaceName += SvOl::FqnRemoteInputs;
@@ -84,7 +84,7 @@ HRESULT SVObjectManagerClass::SetState( SVObjectManagerStateEnum State )
 	return S_OK;
 }
 
-const SVGUID SVObjectManagerClass::GetChildRootObjectID( const SVString& rRootName ) const
+const SVGUID SVObjectManagerClass::GetChildRootObjectID( const std::string& rRootName ) const
 {
 	SVGUID ObjectID;
 
@@ -143,7 +143,7 @@ HRESULT SVObjectManagerClass::DestroyRootObject()
 	return Result;
 }
 
-void SVObjectManagerClass::setRootChildID( const SVString& rRootChild, const SVGUID& rUniqueID )
+void SVObjectManagerClass::setRootChildID( const std::string& rRootChild, const SVGUID& rUniqueID )
 {
 	SVObjectClass* pRootObject( nullptr );
 	GetObjectByIdentifier( rUniqueID, pRootObject);
@@ -153,10 +153,10 @@ void SVObjectManagerClass::setRootChildID( const SVString& rRootChild, const SVG
 	}
 }
 
-void SVObjectManagerClass::TranslateDottedName( SVString& rName ) const
+void SVObjectManagerClass::TranslateDottedName( std::string& rName ) const
 {
 	bool NameReplaced( false );
-	TranslateMap::const_iterator Iter( m_TranslationMap.begin() );
+	SvDef::TranslateMap::const_iterator Iter( m_TranslationMap.begin() );
 	for( ; m_TranslationMap.end() != Iter && !NameReplaced; ++Iter )
 	{
 		size_t Pos = rName.find( Iter->first );
@@ -291,7 +291,7 @@ HRESULT SVObjectManagerClass::GetObjectByIdentifier( const SVGUID& rObjectID, SV
 	return Result;
 }
 
-HRESULT SVObjectManagerClass::GetObjectByDottedName( const SVString& rFullName, GUID& rObjectID ) const
+HRESULT SVObjectManagerClass::GetObjectByDottedName( const std::string& rFullName, GUID& rObjectID ) const
 {
 	HRESULT Status = S_OK;
 	SVObjectReference ObjectRef;
@@ -315,7 +315,7 @@ HRESULT SVObjectManagerClass::GetObjectByDottedName( const SVString& rFullName, 
 	return Status;
 }
 
-HRESULT SVObjectManagerClass::GetObjectByDottedName( const SVString& rFullName, SVObjectClass*& rpObject ) const
+HRESULT SVObjectManagerClass::GetObjectByDottedName( const std::string& rFullName, SVObjectClass*& rpObject ) const
 {
 	HRESULT Result = S_OK;
 
@@ -340,7 +340,7 @@ HRESULT SVObjectManagerClass::GetObjectByDottedName( const SVString& rFullName, 
 	return Result;
 }
 
-HRESULT SVObjectManagerClass::GetObjectByDottedName( const SVString& rFullName, SVObjectReference& rObjectRef ) const
+HRESULT SVObjectManagerClass::GetObjectByDottedName( const std::string& rFullName, SVObjectReference& rObjectRef ) const
 {
 	HRESULT Result = S_OK;
 
@@ -364,7 +364,7 @@ HRESULT SVObjectManagerClass::GetObjectByDottedName( const SVString& rFullName, 
 
 	if( Status )
 	{
-		SVString Name = rFullName;
+		std::string Name = rFullName;
 		Instance().TranslateDottedName( Name );
 		SVObjectClass* pChildRootObject( nullptr );
 		SVObjectNameInfo NameInfo;
@@ -692,9 +692,9 @@ void SVObjectManagerClass::getObjectsOfType(SVObjectPtrVectorInserter Inserter, 
 }
 
 
-SVString SVObjectManagerClass::GetCompleteObjectName( const SVGUID& rGuid )
+std::string SVObjectManagerClass::GetCompleteObjectName( const SVGUID& rGuid )
 {
-	SVString Result;
+	std::string Result;
 
 	SVObjectClass* pObject = GetObject( rGuid );
 
@@ -773,7 +773,7 @@ HRESULT SVObjectManagerClass::EraseObserver( long Cookie )
 	return Result;
 }
 
-HRESULT SVObjectManagerClass::GetObserverSubject( const SVString& rSubjectDataName, const SVGUID& rObserverID, GUID& rSubjectID ) const
+HRESULT SVObjectManagerClass::GetObserverSubject( const std::string& rSubjectDataName, const SVGUID& rObserverID, GUID& rSubjectID ) const
 {
 	HRESULT Result = S_OK;
 
@@ -787,7 +787,7 @@ HRESULT SVObjectManagerClass::GetObserverSubject( const SVString& rSubjectDataNa
 	return Result;
 }
 
-HRESULT SVObjectManagerClass::GetObserverSubject( const SVString& rSubjectDataName, long Cookie, GUID& rSubjectID ) const
+HRESULT SVObjectManagerClass::GetObserverSubject( const std::string& rSubjectDataName, long Cookie, GUID& rSubjectID ) const
 {
 	HRESULT Result = S_OK;
 
@@ -801,7 +801,7 @@ HRESULT SVObjectManagerClass::GetObserverSubject( const SVString& rSubjectDataNa
 	return Result;
 }
 
-HRESULT SVObjectManagerClass::GetObserverIds( const SVString& rSubjectDataName, const SVGUID& rSubjectID, SVGuidSet& rObserverIds )
+HRESULT SVObjectManagerClass::GetObserverIds( const std::string& rSubjectDataName, const SVGUID& rSubjectID, SVGuidSet& rObserverIds )
 {
 	rObserverIds.clear();
 
@@ -825,7 +825,7 @@ HRESULT SVObjectManagerClass::GetObserverIds( const SVString& rSubjectDataName, 
 	return Result;
 }
 
-HRESULT SVObjectManagerClass::AttachObserver( const SVString& rSubjectDataName, const SVGUID& rSubjectID, const SVGUID& rObserverID )
+HRESULT SVObjectManagerClass::AttachObserver( const std::string& rSubjectDataName, const SVGUID& rSubjectID, const SVGUID& rObserverID )
 {
 	HRESULT Result = S_OK;
 
@@ -861,7 +861,7 @@ HRESULT SVObjectManagerClass::AttachObserver( const SVString& rSubjectDataName, 
 	return Result;
 }
 
-HRESULT SVObjectManagerClass::AttachObserver( const SVString& rSubjectDataName, const SVGUID& rSubjectID, long p_Cookie )
+HRESULT SVObjectManagerClass::AttachObserver( const std::string& rSubjectDataName, const SVGUID& rSubjectID, long p_Cookie )
 {
 	HRESULT Result = S_OK;
 
@@ -897,7 +897,7 @@ HRESULT SVObjectManagerClass::AttachObserver( const SVString& rSubjectDataName, 
 	return Result;
 }
 
-HRESULT SVObjectManagerClass::EnableObserver( const SVString& rSubjectDataName, const SVGUID& rSubjectID, const SVGUID& rObserverID )
+HRESULT SVObjectManagerClass::EnableObserver( const std::string& rSubjectDataName, const SVGUID& rSubjectID, const SVGUID& rObserverID )
 {
 	HRESULT Result = S_OK;
 
@@ -928,7 +928,7 @@ HRESULT SVObjectManagerClass::EnableObserver( const SVString& rSubjectDataName, 
 	return Result;
 }
 
-HRESULT SVObjectManagerClass::EnableObserver( const SVString& rSubjectDataName, const SVGUID& rSubjectID, long Cookie )
+HRESULT SVObjectManagerClass::EnableObserver( const std::string& rSubjectDataName, const SVGUID& rSubjectID, long Cookie )
 {
 	HRESULT Result = S_OK;
 
@@ -959,7 +959,7 @@ HRESULT SVObjectManagerClass::EnableObserver( const SVString& rSubjectDataName, 
 	return Result;
 }
 
-HRESULT SVObjectManagerClass::DisableObserver( const SVString& rSubjectDataName, const SVGUID& rSubjectID, const SVGUID& rObserverID )
+HRESULT SVObjectManagerClass::DisableObserver( const std::string& rSubjectDataName, const SVGUID& rSubjectID, const SVGUID& rObserverID )
 {
 	HRESULT Result = S_OK;
 
@@ -990,7 +990,7 @@ HRESULT SVObjectManagerClass::DisableObserver( const SVString& rSubjectDataName,
 	return Result;
 }
 
-HRESULT SVObjectManagerClass::DisableObserver( const SVString& rSubjectDataName, const SVGUID& rSubjectID, long Cookie )
+HRESULT SVObjectManagerClass::DisableObserver( const std::string& rSubjectDataName, const SVGUID& rSubjectID, long Cookie )
 {
 	HRESULT Result = S_OK;
 
@@ -1021,7 +1021,7 @@ HRESULT SVObjectManagerClass::DisableObserver( const SVString& rSubjectDataName,
 	return Result;
 }
 
-HRESULT SVObjectManagerClass::DetachObserver( const SVString& rSubjectDataName, const SVGUID& rSubjectID, const SVGUID& rObserverID )
+HRESULT SVObjectManagerClass::DetachObserver( const std::string& rSubjectDataName, const SVGUID& rSubjectID, const SVGUID& rObserverID )
 {
 	HRESULT Result = S_OK;
 
@@ -1051,7 +1051,7 @@ HRESULT SVObjectManagerClass::DetachObserver( const SVString& rSubjectDataName, 
 	return Result;
 }
 
-HRESULT SVObjectManagerClass::DetachObserver( const SVString& rSubjectDataName, const SVGUID& rSubjectID, long Cookie )
+HRESULT SVObjectManagerClass::DetachObserver( const std::string& rSubjectDataName, const SVGUID& rSubjectID, long Cookie )
 {
 	HRESULT Result = S_OK;
 
@@ -1081,7 +1081,7 @@ HRESULT SVObjectManagerClass::DetachObserver( const SVString& rSubjectDataName, 
 	return Result;
 }
 
-HRESULT SVObjectManagerClass::DetachObservers( const SVString& rSubjectDataName, const SVGUID& rSubjectID )
+HRESULT SVObjectManagerClass::DetachObservers( const std::string& rSubjectDataName, const SVGUID& rSubjectID )
 {
 	HRESULT Result = S_OK;
 
@@ -1359,7 +1359,7 @@ long SVObjectManagerClass::GetFileSequenceNumber() const
 	return m_FileSequenceNumber;
 }
 
-HRESULT SVObjectManagerClass::getTreeList(const SVString& rPath, SVObjectReferenceVector& rObjectList, UINT AttributesAllowedFilter) const
+HRESULT SVObjectManagerClass::getTreeList(const std::string& rPath, SVObjectReferenceVector& rObjectList, UINT AttributesAllowedFilter) const
 {
 	HRESULT Result = S_OK;
 	SVGuidSet GuidObjectList;
@@ -1369,7 +1369,7 @@ HRESULT SVObjectManagerClass::getTreeList(const SVString& rPath, SVObjectReferen
 
 	if( nullptr != pStartObject )
 	{
-		SVString InternalPath = pStartObject->GetCompleteName();
+		std::string InternalPath = pStartObject->GetCompleteName();
 		if( (pStartObject->ObjectAttributesAllowed() & AttributesAllowedFilter) == AttributesAllowedFilter )
 		{
 			GuidObjectList.insert(pStartObject->GetUniqueObjectID());
@@ -1399,9 +1399,9 @@ HRESULT SVObjectManagerClass::getTreeList(const SVString& rPath, SVObjectReferen
 					if( (pUniqueObjectEntry->m_pObject->ObjectAttributesAllowed() & AttributesAllowedFilter) == AttributesAllowedFilter )
 					{
 						//Check if owner is in list
-						SVString ObjectPath = pUniqueObjectEntry->m_pObject->GetCompleteName();
-						SVString::size_type Pos = ObjectPath.find( InternalPath.c_str() );
-						if( SVString::npos != Pos )
+						std::string ObjectPath = pUniqueObjectEntry->m_pObject->GetCompleteName();
+						std::string::size_type Pos = ObjectPath.find( InternalPath.c_str() );
+						if( std::string::npos != Pos )
 						{
 							if( ObjectPath.size() == Pos + InternalPath.size() || ObjectPath[Pos+InternalPath.size()] == '.')
 							{
@@ -1452,7 +1452,7 @@ SVObjectManagerClass::SVCookieEntryStructPtr SVObjectManagerClass::GetCookieEntr
 	return pResult;
 }
 
-SVGUID SVObjectManagerClass::GetSubjectID( const SVString& rSubjectDataName, SVUniqueObjectEntryStructPtr pObjectEntry ) const
+SVGUID SVObjectManagerClass::GetSubjectID( const std::string& rSubjectDataName, SVUniqueObjectEntryStructPtr pObjectEntry ) const
 {
 	SVGUID Result;
 
@@ -1481,7 +1481,7 @@ SVGUID SVObjectManagerClass::GetSubjectID( const SVString& rSubjectDataName, SVU
 	return Result;
 }
 
-SVGUID SVObjectManagerClass::GetSubjectID( const SVString& rSubjectDataName, SVCookieEntryStructPtr pCookieEntry ) const
+SVGUID SVObjectManagerClass::GetSubjectID( const std::string& rSubjectDataName, SVCookieEntryStructPtr pCookieEntry ) const
 {
 	SVGUID Result;
 
@@ -1536,7 +1536,7 @@ SVObjectManagerClass::SVUniqueObjectEntryStructPtr SVObjectManagerClass::getUniq
 	return pUniqueObjectEntry;
 }
 
-SVObjectManagerClass::SVUniqueObjectEntryStructPtr SVObjectManagerClass::getUniqueObjectEntry( const SVString& rName ) const
+SVObjectManagerClass::SVUniqueObjectEntryStructPtr SVObjectManagerClass::getUniqueObjectEntry( const std::string& rName ) const
 {
 	SVUniqueObjectEntryStructPtr pUniqueObjectEntry( nullptr );
 
@@ -1701,7 +1701,7 @@ HRESULT SVObjectManagerClass::GetObserverDataNames( const SVGUID& rObserverID, S
 	return Result;
 }
 
-HRESULT SVObjectManagerClass::GetObservers( const SVString& rSubjectDataName, const SVGUID& rSubjectID, SVSubjectEnabledObserverMap& rObservers )
+HRESULT SVObjectManagerClass::GetObservers( const std::string& rSubjectDataName, const SVGUID& rSubjectID, SVSubjectEnabledObserverMap& rObservers )
 {
 	HRESULT Result = S_OK;
 
@@ -1746,7 +1746,7 @@ HRESULT SVObjectManagerClass::GetObservers( const SVString& rSubjectDataName, co
 	return Result;
 }
 
-HRESULT SVObjectManagerClass::GetObservers( const SVString& rSubjectDataName, const SVGUID& rSubjectID, SVSubjectEnabledObserverMap& rObservers, SVSubjectEnabledCookieMap& rObserverCookies )
+HRESULT SVObjectManagerClass::GetObservers( const std::string& rSubjectDataName, const SVGUID& rSubjectID, SVSubjectEnabledObserverMap& rObservers, SVSubjectEnabledCookieMap& rObserverCookies )
 {
 	HRESULT l_Status = S_OK;
 
@@ -1874,7 +1874,7 @@ bool SVObjectManagerClass::DisconnectObjectInput( const SVGUID& rSourceId, SVInO
 }
 
 #pragma region IObjectManager-function
-SvOi::IObjectClass* SvOi::getObjectByDottedName( const SVString& rFullName )
+SvOi::IObjectClass* SvOi::getObjectByDottedName( const std::string& rFullName )
 {
 	SVObjectClass* pObject( nullptr );
 	//To have the function available without to know the class EvironmentObject

@@ -17,6 +17,7 @@
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -38,7 +39,7 @@ namespace SvOg
 	GlobalConstantDlg::GlobalConstantDlg( SvDef::GlobalConstantData& rData, CWnd* pParent /*nullptr*/ )
 	  : CDialog(GlobalConstantDlg::IDD, pParent)
 	, m_rData( rData )
-	, m_Branch( SVString(SvOl::FqnGlobal) + _T(".") )
+	, m_Branch( std::string(SvOl::FqnGlobal) + _T(".") )
 	{
 
 	}
@@ -49,7 +50,7 @@ namespace SvOg
 	#pragma endregion Constructor
 
 	#pragma region Public Methods
-	void GlobalConstantDlg::setExistingNames( const SVStringVector& rNames )
+	void GlobalConstantDlg::setExistingNames( const SvDef::StringVector& rNames )
 	{
 		m_ExistingNames.clear();
 
@@ -63,7 +64,7 @@ namespace SvOg
 		CDialog::DoDataExchange(pDX);
 		DDX_Text(pDX, IDC_GLOBAL_NAME, m_Name);
 
-		DDV_GlobalName( pDX, SVString(m_Branch + m_Name.GetString()) );
+		DDV_GlobalName( pDX, std::string(m_Branch + m_Name.GetString()) );
 		DDX_Control(pDX, IDC_GLOBAL_TYPE, m_Type);
 		DDX_Text(pDX, IDC_GLOBAL_VALUE, m_Value);
 		int CurrentSelection = m_Type.GetCurSel();
@@ -156,7 +157,7 @@ namespace SvOg
 
 	void GlobalConstantDlg::DDV_GlobalConstantValue( CDataExchange* pDX, SvDef::GlobalConstantData::DataTypeEnum Type  )
 	{
-		SVString NewValue( m_Value );
+		std::string NewValue( m_Value );
 		if( !NewValue.empty() )
 		{
 			switch( Type )
@@ -179,11 +180,11 @@ namespace SvOg
 		}
 	}
 
-	void GlobalConstantDlg::DDV_GlobalName( CDataExchange* pDX, const SVString& rName )
+	void GlobalConstantDlg::DDV_GlobalName( CDataExchange* pDX, const std::string& rName )
 	{
 		if( pDX->m_bSaveAndValidate && rName != m_rData.m_DottedName )
 		{
-			SVStringVector::const_iterator Iter( m_ExistingNames.cbegin() );
+			SvDef::StringVector::const_iterator Iter( m_ExistingNames.cbegin() );
 			bool Failed( false );
 			//Checks to see if the name of the Global Constant already exists
 			while( m_ExistingNames.cend() != Iter )
@@ -198,8 +199,8 @@ namespace SvOg
 				++Iter;
 			}
 
-			SVString NewName( rName );
-			SvUl_SF::searchAndReplace( NewName, m_Branch.c_str(), _T("") );
+			std::string NewName( rName );
+			SvUl::searchAndReplace( NewName, m_Branch.c_str(), _T("") );
 
 			if( !Failed )
 			{

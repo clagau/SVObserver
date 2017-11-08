@@ -19,15 +19,15 @@ namespace SvDef
 	bool GlobalConstantData::operator<( const GlobalConstantData& Rhs ) const
 	{
 		bool Result( false );
-		SVString LhsValue;
-		SVString RhsValue;
+		std::string LhsValue;
+		std::string RhsValue;
 		switch( m_Value.vt )
 		{
 		case VT_R8:
-			LhsValue = SvUl_SF::Format(_T("%.06f"), m_Value.dblVal );
+			LhsValue = SvUl::Format(_T("%.06f"), m_Value.dblVal );
 			break;
 		case VT_BSTR:
-			LhsValue = SvUl_SF::createSVString(m_Value);
+			LhsValue = SvUl::createStdString(m_Value);
 			break;
 		default:
 			break;
@@ -35,10 +35,10 @@ namespace SvDef
 		switch( Rhs.m_Value.vt )
 		{
 		case VT_R8:
-			RhsValue = SvUl_SF::Format(_T("%.06f"), Rhs.m_Value.dblVal );
+			RhsValue = SvUl::Format(_T("%.06f"), Rhs.m_Value.dblVal );
 			break;
 		case VT_BSTR:
-			RhsValue = SvUl_SF::createSVString(Rhs.m_Value);
+			RhsValue = SvUl::createStdString(Rhs.m_Value);
 			break;
 		default:
 			break;
@@ -74,4 +74,4 @@ namespace SvDef
 		return Result;
 	}
 #pragma endregion Public Methods
-} //namespace SvOi
+} //namespace SvDef

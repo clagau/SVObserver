@@ -10,7 +10,7 @@
 #include "Definitions/SVImageEnums.h"
 #include "IMatroxImageData.h"
 #include "SVUtilityLibrary\SVSharedPtr.h"
-#include "SVUtilityLibrary\SVString.h"
+
 #pragma endregion Includes
 
 namespace SvOi
@@ -48,9 +48,9 @@ namespace SvOi
 
 		//************************************
 		/// Return the display name the image.
-		/// \returns SVString
+		/// \returns std::string
 		//************************************
-		virtual SVString getDisplayedName() const = 0;
+		virtual std::string getDisplayedName() const = 0;
 
 		//************************************
 		/// Get the Number of bands in the image.
@@ -68,7 +68,7 @@ namespace SvOi
 		/// Save an Image to a File.
 		/// \returns HRESULT
 		//************************************
-		virtual HRESULT Save(const SVString& rFilename) = 0; 
+		virtual HRESULT Save(const std::string& rFilename) = 0; 
 
 		//************************************
 		/// Return the output rectangle

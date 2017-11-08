@@ -17,7 +17,6 @@
 
 #include "ObjectInterfaces/IObjectClass.h"
 #include "SVUtilityLibrary/SVGUID.h"
-#include "SVUtilityLibrary/SVString.h"
 
 #include "SVObjectInfoStruct.h"
 #include "SVObjectLibrary.h"
@@ -87,7 +86,7 @@ public:
 	virtual bool SetObjectOwner( SVObjectClass* pNewOwner );
 	virtual bool SetObjectOwner( const GUID& rNewOwnerGUID );
 
-	virtual HRESULT GetObjectValue( const SVString& rValueName, _variant_t& rValue ) const;
+	virtual HRESULT GetObjectValue( const std::string& rValueName, _variant_t& rValue ) const;
 	virtual HRESULT SetValuesForAnObject( const GUID& rAimObjectID, SVObjectAttributeClass* pDataObject );
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject );
 	virtual void SetInvalid();
@@ -145,7 +144,7 @@ public:
 	LPCTSTR GetObjectName() const;
 	int GetObjectNameLength() const;
 
-	SVString GetCompleteObjectNameToObjectType( LPCTSTR CompleteName = nullptr, SVObjectTypeEnum objectTypeToInclude = SVToolSetObjectType ) const;
+	std::string GetCompleteObjectNameToObjectType( LPCTSTR CompleteName = nullptr, SVObjectTypeEnum objectTypeToInclude = SVToolSetObjectType ) const;
 	SVObjectClass* GetOwner() const;
 	SVOutObjectInfoStruct& GetObjectOutputInfo();
 	
@@ -158,9 +157,9 @@ public:
 
 #pragma region virtual method (IObjectClass)
 	virtual LPCTSTR GetName() const override;
-	virtual SVString GetCompleteName() const override;
-	virtual HRESULT GetCompleteNameToType(SVObjectTypeEnum objectType, SVString& rName) const override;
-	virtual SVString GetObjectNameToObjectType(LPCSTR CompleteName = nullptr, SVObjectTypeEnum objectTypeToInclude = SVToolSetObjectType) const override;
+	virtual std::string GetCompleteName() const override;
+	virtual HRESULT GetCompleteNameToType(SVObjectTypeEnum objectType, std::string& rName) const override;
+	virtual std::string GetObjectNameToObjectType(LPCSTR CompleteName = nullptr, SVObjectTypeEnum objectTypeToInclude = SVToolSetObjectType) const override;
 	virtual const SVObjectTypeEnum& GetObjectType() const override;
 	virtual SVObjectSubTypeEnum GetObjectSubType() const override;
 	virtual const SVGUID& GetParentID() const override;
@@ -211,7 +210,7 @@ public:
 	/// Will be called, if an object was renamed.
 	/// \param rRenamedObject [in] Reference to the renamed object.
 	/// \param rOldName [in] Old name of the object.
-	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName) {};
+	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) {};
 
 	/// Replace the current object with new guids etc.
 	/// \param pObject [in,out] Object t be removed.
@@ -268,8 +267,8 @@ private:
 	void init();
 
 	int m_resourceID;		//String resource ID, of NOT user changeable name.
-	SVString m_ObjectName;	//NOT user changeable name
-	SVString m_Name;			//user given name
+	std::string m_ObjectName;	//NOT user changeable name
+	std::string m_Name;			//user given name
 };
 
 #pragma region Declarations

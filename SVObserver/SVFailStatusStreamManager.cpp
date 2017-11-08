@@ -79,7 +79,7 @@ HRESULT SVFailStatusStreamManager::ManageFailStatus(const RemoteMonitorListMap& 
 			else
 			{
 				// check if PPQID changed for the list name...
-				const SVString& ppqName = rListIt->second.GetPPQName();
+				const std::string& ppqName = rListIt->second.GetPPQName();
 				SVGUID ppqID;
 				SVObjectManagerClass::Instance().GetObjectByDottedName(ppqName, ppqID);
 				if (ppqID != it->first)
@@ -96,8 +96,8 @@ HRESULT SVFailStatusStreamManager::ManageFailStatus(const RemoteMonitorListMap& 
 
 	for (RemoteMonitorListMap::const_iterator it = rList.begin();it != rList.end();++it)
 	{
-		const SVString& ppqName = it->second.GetPPQName();
-		const SVString& listName = it->second.GetName();
+		const std::string& ppqName = it->second.GetPPQName();
+		const std::string& listName = it->second.GetName();
 		const MonitoredObjectList& rMonitoredObjectList = it->second.GetFailStatusList();
 		// Get Guid for PPQ
 		SVGUID ppqID;
@@ -136,8 +136,8 @@ HRESULT SVFailStatusStreamManager::AttachPPQObservers(const RemoteMonitorListMap
 
 	for (RemoteMonitorListMap::const_iterator it = rList.begin();it != rList.end();++it)
 	{
-		const SVString& ppqName = it->second.GetPPQName();
-		const SVString& listName = it->second.GetName();
+		const std::string& ppqName = it->second.GetPPQName();
+		const std::string& listName = it->second.GetName();
 		const MonitoredObjectList& rMonitoredObjectList = it->second.GetFailStatusList();
 		// Get Guid for PPQ
 		SVGUID ppqID;
@@ -222,8 +222,8 @@ HRESULT SVFailStatusStreamManager::ProcessJsonCommand(const std::string& rJsonCo
 
 	Json::Reader Reader;
 	Json::Value JsonValues;
-	SVString StreamName;
-	SVString CmdName;
+	std::string StreamName;
+	std::string CmdName;
 
 	if (Reader.parse(rJsonCommand, JsonValues, false))
 	{
@@ -255,7 +255,7 @@ HRESULT SVFailStatusStreamManager::ProcessJsonCommand(const std::string& rJsonCo
 	return hr;
 }
 
-HRESULT SVFailStatusStreamManager::ProcessStartStopCommand(const SVString& rName, bool bStart)
+HRESULT SVFailStatusStreamManager::ProcessStartStopCommand(const std::string& rName, bool bStart)
 {
 	HRESULT hr = E_INVALIDARG;
 

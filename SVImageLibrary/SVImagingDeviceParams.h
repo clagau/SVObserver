@@ -18,7 +18,7 @@
 #include "SVCameraFormat.h"
 #include "CameraLibrary/SVDeviceParams.h"
 #include "CameraLibrary/SVStringValueDeviceParam.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 // for now, still need to update the enum in SVDeviceParams.h
@@ -82,7 +82,7 @@ public:
 	bool SupportsColor() const;
 	bool SupportsMono() const;
 
-	typedef std::map<SVString, SVCameraFormat> OptionsType;
+	typedef std::map<std::string, SVCameraFormat> OptionsType;
 	OptionsType options;
 
 	virtual HRESULT SetMetadata(const SVDeviceParam* pParam) override;

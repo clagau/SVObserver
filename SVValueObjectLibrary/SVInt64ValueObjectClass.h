@@ -12,7 +12,6 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
-#include "SVUtilityLibrary/SVString.h"
 #include "SVValueObjectClass.h"
 #pragma endregion Includes
 
@@ -35,9 +34,9 @@ protected:
 	//! Convert a string in a __int64. Throw an exception if the string isn't convertible into a __int64.
 	//! \param rValue [in] The input string
 	//! \returns converted value.
-	virtual __int64 ConvertString2Type( const SVString& rValue ) const override;
+	virtual __int64 ConvertString2Type( const std::string& rValue ) const override;
 
-	virtual SVString ConvertType2String(const __int64& rValue) const override { return FormatOutput(rValue); };
+	virtual std::string ConvertType2String(const __int64& rValue) const override { return FormatOutput(rValue); };
 
 	virtual void WriteValues(SVObjectWriter& rWriter) override;
 	virtual void WriteDefaultValues(SVObjectWriter& rWriter) override;

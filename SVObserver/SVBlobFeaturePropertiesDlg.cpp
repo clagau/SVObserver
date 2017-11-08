@@ -60,7 +60,7 @@ BOOL SVBlobFeaturePropertiesDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	
-	SVString Title = _T("Properties for ");
+	std::string Title = _T("Properties for ");
 	Title += m_FeatureName;
 	SetWindowText( Title.c_str() );
 	

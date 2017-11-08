@@ -12,7 +12,6 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
-#include "SVUtilityLibrary/SVString.h"
 #include "SVValueObjectClass.h"
 #pragma endregion Includes
 
@@ -38,9 +37,9 @@ protected:
 	//! Convert a string in a double. Throw an exception if the string isn't convertible into a double
 	//! \param rValue [in] The input string
 	//! \returns double value.
-	virtual double ConvertString2Type( const SVString& rValue ) const override;
+	virtual double ConvertString2Type( const std::string& rValue ) const override;
 
-	virtual SVString ConvertType2String( const double& rValue ) const override { return FormatOutput(rValue); };
+	virtual std::string ConvertType2String( const double& rValue ) const override { return FormatOutput(rValue); };
 
 	virtual void WriteValues(SVObjectWriter &rWriter) override;
 	virtual void WriteDefaultValues(SVObjectWriter& rWriter) override;

@@ -16,6 +16,8 @@
 #include "SVObjectLibrary\SVClsids.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVStatusLibrary/MessageManager.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -75,15 +77,15 @@ HRESULT SVDWordValueObjectClass::SetOutputFormat(OutputFormat outputFormat)
 	return Result;
 }
 
-DWORD SVDWordValueObjectClass::ConvertString2Type( const SVString& rValue ) const
+DWORD SVDWordValueObjectClass::ConvertString2Type( const std::string& rValue ) const
 {
-	SVString Digits = SvUl_SF::ValidateString( rValue, _T("0123456789 .xXabcdefABCDEF") );
+	std::string Digits = SvUl::ValidateString( rValue, _T("0123456789 .xXabcdefABCDEF") );
 	if ( Digits == rValue )
 	{
-		SvUl_SF::MakeLower( Digits );
+		SvUl::MakeLower( Digits );
 		TCHAR* p = nullptr;
 		DWORD Value( 0 );
-		if ( SVString::npos != Digits.find( 'x' ) )
+		if ( std::string::npos != Digits.find( 'x' ) )
 		{
 			Value = _tcstoul(Digits.c_str(), &p, 16);
 		}
@@ -94,8 +96,8 @@ DWORD SVDWordValueObjectClass::ConvertString2Type( const SVString& rValue ) cons
 
 		return Value;
 	}
-	SVStringVector msgList;
-	msgList.push_back(SVString(rValue));
+	SvDef::StringVector msgList;
+	msgList.push_back(std::string(rValue));
 	msgList.push_back(GetName());
 	SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 	Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValueObject_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );

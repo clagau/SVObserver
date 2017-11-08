@@ -30,7 +30,7 @@ SVJsonCommandManager< SVCommandProcessor >::~SVJsonCommandManager()
 }
 
 template< typename SVCommandProcessor >
-HRESULT SVJsonCommandManager< SVCommandProcessor >::ProcessJsonCommand( const SVString& rJsonCommand, SVString& rJsonResults )
+HRESULT SVJsonCommandManager< SVCommandProcessor >::ProcessJsonCommand( const std::string& rJsonCommand, std::string& rJsonResults )
 {
 	HRESULT l_Status = S_OK;
 
@@ -46,7 +46,7 @@ HRESULT SVJsonCommandManager< SVCommandProcessor >::ProcessJsonCommand( const SV
 }
 
 template< typename SVCommandProcessor >
-HRESULT SVJsonCommandManager< SVCommandProcessor >::ProcessJsonNotification( const SVString& rJsonNotification )
+HRESULT SVJsonCommandManager< SVCommandProcessor >::ProcessJsonNotification( const std::string& rJsonNotification )
 {
 	HRESULT l_Status = S_OK;
 
@@ -76,7 +76,7 @@ void CALLBACK SVJsonCommandManager< SVCommandProcessor >::APCThreadProcess( DWOR
 }
 
 template< typename SVCommandProcessor >
-HRESULT SVJsonCommandManager< SVCommandProcessor >::ProcessAsyncJsonCommand( const SVString& rJsonCommand, SVString& rJsonResults )
+HRESULT SVJsonCommandManager< SVCommandProcessor >::ProcessAsyncJsonCommand( const std::string& rJsonCommand, std::string& rJsonResults )
 {
 	HRESULT l_Status = S_OK;
 

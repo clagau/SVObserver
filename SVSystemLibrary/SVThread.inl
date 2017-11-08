@@ -209,7 +209,7 @@ DWORD WINAPI SVThread<SVThreadSignalHandler>::ThreadProc( LPVOID lpParam )
 	if( lpParam )
 	{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_THREAD)
-		SVString l_Message;
+		std::string l_Message;
 #endif
 
 		SVThread* pThread = static_cast< SVThread* >( lpParam );
@@ -239,7 +239,7 @@ DWORD WINAPI SVThread<SVThreadSignalHandler>::ThreadProc( LPVOID lpParam )
 #if defined (TRACE_THEM_ALL) || defined (TRACE_THREAD)
 				else
 				{
-					l_Message = SvUl_SF::Format( _T( "SVThread(%d) - Shutdown Thread = %s\n" ), pThread->m_ulThreadID, pThread->m_tag.c_str() );
+					l_Message = SvUl::Format( _T( "SVThread(%d) - Shutdown Thread = %s\n" ), pThread->m_ulThreadID, pThread->m_tag.c_str() );
 					::OutputDebugString( l_Message.c_str() );
 				}
 #endif
@@ -247,7 +247,7 @@ DWORD WINAPI SVThread<SVThreadSignalHandler>::ThreadProc( LPVOID lpParam )
 #if defined (TRACE_THEM_ALL) || defined (TRACE_THREAD)
 			else
 			{
-				l_Message = SvUl_SF::Format( _T( "SVThread(%d) - Exit Loop = %s\n" ), pThread->m_ulThreadID, pThread->m_tag.c_str() );
+				l_Message = SvUl::Format( _T( "SVThread(%d) - Exit Loop = %s\n" ), pThread->m_ulThreadID, pThread->m_tag.c_str() );
 				::OutputDebugString( l_Message.c_str() );
 			}
 #endif
@@ -255,7 +255,7 @@ DWORD WINAPI SVThread<SVThreadSignalHandler>::ThreadProc( LPVOID lpParam )
 
 #ifdef DEBUG
 #if defined (TRACE_THEM_ALL) || defined (TRACE_THREAD)
-		l_Message = SvUl_SF::Format( _T( "SVThread(%d) - Exit Thread = %s\n" ), pThread->m_ulThreadID, pThread->m_tag.c_str() );
+		l_Message = SvUl::Format( _T( "SVThread(%d) - Exit Thread = %s\n" ), pThread->m_ulThreadID, pThread->m_tag.c_str() );
 		::OutputDebugString( l_Message.c_str() );
 #endif
 #endif
@@ -264,7 +264,7 @@ DWORD WINAPI SVThread<SVThreadSignalHandler>::ThreadProc( LPVOID lpParam )
 	}
 	else
 	{
-		SVString UnknownThread;
+		std::string UnknownThread;
 		UnknownThread = SvStl::MessageData::convertId2AddtionalText( SvStl::Tid_UnknowThread );
 		SVThreadManager::setThreadError( static_cast<DWORD> (SVMSG_THREAD_EXIT_ERROR), UnknownThread.c_str(), SvStl::SourceFileParams(StdMessageParams) );
 	}

@@ -8,7 +8,7 @@
 #pragma once
 
 #include "SVContainerLibrary/IGraphNameLookup.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #include "SVObjectManagerClass.h"
 #include "SVObjectClass.h"
 

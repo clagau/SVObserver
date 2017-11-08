@@ -15,6 +15,7 @@
 #include "ObjectFilterPpg.h"
 
 #include "TextDefinesSvOsl.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "GridCtrlLibrary\GridCellCheck.h"
 #include "SVOResource\ConstGlobalSvOr.h"
 #pragma endregion Includes
@@ -97,7 +98,7 @@ namespace SvOsl
 		m_checkedControl.AddString( FilterUnchecked );
 		m_checkedControl.SetCurSel(0);
 
-		std::set<SVString> typeSet;
+		std::set<std::string> typeSet;
 		SvCl::ObjectTreeItems::pre_order_iterator Iter = m_rTreeContainer.pre_order_begin();
 		while( m_rTreeContainer.pre_order_end() != Iter )
 		{
@@ -108,7 +109,7 @@ namespace SvOsl
 			++Iter;
 		}
 		m_TypeControl.AddString( FilterAll );
-		for(std::set<SVString>::const_iterator iter=typeSet.cbegin(); iter != typeSet.cend(); ++iter)
+		for(std::set<std::string>::const_iterator iter=typeSet.cbegin(); iter != typeSet.cend(); ++iter)
 		{
 			m_TypeControl.AddString((*iter).c_str());
 		}
@@ -145,7 +146,7 @@ namespace SvOsl
 			SvGcl::CGridCellCheck* cell = dynamic_cast<SvGcl::CGridCellCheck*>(m_Grid.GetCell(pItem->iRow, CheckColumn));
 			if (nullptr != cell)
 			{
-				SVString* pLocation = reinterpret_cast<SVString*> ( m_Grid.GetItemData(pItem->iRow, LocationColumn) );
+				std::string* pLocation = reinterpret_cast<std::string*> ( m_Grid.GetItemData(pItem->iRow, LocationColumn) );
 				if( nullptr != pLocation )
 				{
 					bool isChecked = (TRUE == cell->GetCheck());
@@ -209,7 +210,7 @@ namespace SvOsl
 			SvGcl::CGridCellCheck* cell = dynamic_cast<SvGcl::CGridCellCheck*>(m_Grid.GetCell(i, CheckColumn));
 			if (nullptr != cell)
 			{
-				SVString* pLocation = reinterpret_cast<SVString*> ( m_Grid.GetItemData(i, LocationColumn) );
+				std::string* pLocation = reinterpret_cast<std::string*> ( m_Grid.GetItemData(i, LocationColumn) );
 				if( nullptr != pLocation )
 				{
 					bool isChecked = (TRUE == cell->GetCheck());
@@ -274,10 +275,10 @@ namespace SvOsl
 		//add leaves
 		int i = 1;
 		m_Grid.SetRowCount(i);
-		SVString filterNameUpper(m_FilterNameControl.getEditText());
-		SVString filterLocationUpper(m_FilterLocationControl.getEditText());
-		SvUl_SF::MakeUpper(filterNameUpper);
-		SvUl_SF::MakeUpper(filterLocationUpper);
+		std::string filterNameUpper(m_FilterNameControl.getEditText());
+		std::string filterLocationUpper(m_FilterLocationControl.getEditText());
+		SvUl::MakeUpper(filterNameUpper);
+		SvUl::MakeUpper(filterLocationUpper);
 		SvCl::ObjectTreeItems::pre_order_iterator Iter = m_rTreeContainer.pre_order_begin();
 		while( m_rTreeContainer.pre_order_end() != Iter )
 		{
@@ -289,13 +290,13 @@ namespace SvOsl
 				}
 				int checkSelection = m_checkedControl.GetCurSel();
 				int typeSelection = m_TypeControl.GetCurSel();
-				SVString nameUpper(Iter->second->getName());
-				SVString locationUpper(Iter->second->getLocation());
-				SvUl_SF::MakeUpper(nameUpper);
-				SvUl_SF::MakeUpper(locationUpper);
+				std::string nameUpper(Iter->second->getName());
+				std::string locationUpper(Iter->second->getLocation());
+				SvUl::MakeUpper(nameUpper);
+				SvUl::MakeUpper(locationUpper);
 
-				bool isNameValid = SvUl_SF::isSubmatch(nameUpper, filterNameUpper);
-				bool isLocationValid = SvUl_SF::isSubmatch(locationUpper, filterLocationUpper);
+				bool isNameValid = SvUl::isSubmatch(nameUpper, filterNameUpper);
+				bool isLocationValid = SvUl::isSubmatch(locationUpper, filterLocationUpper);
 				CString typeText = _T("");
 				m_TypeControl.GetLBText(typeSelection, typeText);
 				if ( (isNameValid && isLocationValid) &&
@@ -363,7 +364,7 @@ namespace SvOsl
 		}
 	}
 
-	void ObjectFilterPpg::changeCheckState( const SVString& rLocation, bool isChecked, int rowNumber )
+	void ObjectFilterPpg::changeCheckState( const std::string& rLocation, bool isChecked, int rowNumber )
 	{
 		SvCl::ObjectTreeItems::iterator iter = m_rTreeContainer.findItem(rLocation);
 		if( m_rTreeContainer.end() != iter )

@@ -42,7 +42,7 @@ SVFailStatusStream& SVFailStatusStream::operator=(const SVFailStatusStream& rhs)
 	return *this;
 }
 
-HRESULT SVFailStatusStream::Add(const SVString& rName, const MonitoredObjectList& rList)
+HRESULT SVFailStatusStream::Add(const std::string& rName, const MonitoredObjectList& rList)
 {
 	HRESULT hr = S_OK;
 	m_name = rName;

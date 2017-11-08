@@ -18,14 +18,14 @@
 #include "SVSocketLibrary/SVServerSocket.h"
 #include "SVSystemLibrary/SVCriticalSection.h"
 #include "SVSystemLibrary/SVThread.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 class SVJsonCommandServerSocket
 {
 public:
 	typedef boost::function<void ()> ConnectionAcceptedCallback;
-	typedef boost::function<void ( const SVString& rData )> DataReceivedCallback;
+	typedef boost::function<void ( const std::string& rData )> DataReceivedCallback;
 
 	SVJsonCommandServerSocket();
 	virtual ~SVJsonCommandServerSocket();
@@ -35,19 +35,19 @@ public:
 
 	bool Start(unsigned short portNo);
 	void Stop();
-	bool Write(const SVString& rData);
+	bool Write(const std::string& rData);
 
 	bool CanAccept() const;
 	bool HasClient() const;
 	
 private:
-	typedef std::deque< SVString > SVWriteDeque;
+	typedef std::deque< std::string > SVWriteDeque;
 	typedef boost::function<void ( bool& )> SVThreadProcessHandler;
 
 	static void CALLBACK OnAPCEvent( ULONG_PTR pData );
 
 	void OnAccept();
-	void OnDataReceived(const SVString& rData);
+	void OnDataReceived(const std::string& rData);
 	void ProcessDataRead(const char* p_pBuf);
 
 	void CloseClient();

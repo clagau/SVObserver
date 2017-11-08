@@ -10,7 +10,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <Guiddef.h>
-#include "SVUtilityLibrary\SVString.h"
+
 #include "SVUtilityLibrary\NameGuidList.h"
 #pragma endregion Includes
 
@@ -29,7 +29,7 @@ namespace SvMc
 		/// \param rEmptyListText [in] Text in the combobox if list is empty.
 		/// \param rFirstListText [in] First entry in the combobox for an non selection (e.g. No Analyzer), if "" non selection will added.
 		//************************************
-		void Init(const SvUl::NameGuidList& List, const SVString& rSelectedItem, const SVString& rEmptyListText, const SVString& rFirstListText = _T(""));
+		void Init(const SvUl::NameGuidList& List, const std::string& rSelectedItem, const std::string& rEmptyListText, const std::string& rFirstListText = _T(""));
 
 		//************************************
 		/// Return the guid of the selected item. If no item selected or an error it return SV_GUID_NULL.
@@ -37,7 +37,7 @@ namespace SvMc
 		//************************************
 		SVGUID getSelectedGUID() const;
 
-		void remove(const SVString& rItemName);
+		void remove(const std::string& rItemName);
 
 	protected:
 		//{{AFX_MSG(AvailableObjectListComboBox)

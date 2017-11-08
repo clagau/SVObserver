@@ -8,7 +8,7 @@
 
 #pragma region Includes
 #include "EquationTestResult.h"
-#include "SVUtilityLibrary\SVString.h"
+
 #include "SVStatusLibrary\MessageContainer.h"
 #pragma endregion Includes
 
@@ -18,8 +18,8 @@ namespace SvOi
 	{
 	public:
 		virtual ~IEquation() {}
-		virtual const SVString& GetEquationText() const = 0;
-		virtual void SetEquationText(const SVString& text) = 0;
+		virtual const std::string& GetEquationText() const = 0;
+		virtual void SetEquationText(const std::string& text) = 0;
 		virtual EquationTestResult Test( SvStl::MessageContainerVector *pErrorMessages=nullptr ) = 0;
 		virtual double GetYACCResult() const = 0;
 	};

@@ -13,8 +13,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
 #include "SVTimerLibrary/SVClock.h"
-#include "SVUtilityLibrary/SVString.h"
-#pragma region Includes
+#pragma endregion Includes
 
 struct SVProductInfoStruct;
 
@@ -42,7 +41,7 @@ public:
 	HRESULT GetIndexByTriggerTimeStamp( long& p_rIndex, SvTl::SVTimeStamp p_TimeStamp, SvTl::SVTimeStamp p_LowerThresholdInMilliseconds = 0.0 ) const;
 	HRESULT GetIndexByTriggerTimeStamp( long& p_rIndex, SvTl::SVTimeStamp p_TimeStamp, SvTl::SVTimeStamp p_LowerThresholdInMilliseconds, SvTl::SVTimeStamp p_UpperThresholdInMilliseconds ) const;
 
-	HRESULT GetProductStates( SVString& p_rProductStates ) const;
+	HRESULT GetProductStates( std::string& p_rProductStates ) const;
 
 private:
 	typedef std::vector< SVProductInfoStruct* > SVProductVector;

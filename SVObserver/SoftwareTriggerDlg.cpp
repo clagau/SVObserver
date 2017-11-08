@@ -92,7 +92,7 @@ int SVSoftwareTriggerDlg::SelectTrigger()
 		{
 			int Value = pTrigger->GetSoftwareTriggerPeriod();
 
-			SVString Text = SvUl_SF::Format( _T("%d"), Value );
+			std::string Text = SvUl::Format( _T("%d"), Value );
 			m_intervalEdit.SetWindowText( Text.c_str() );
 			m_pSpins->SetValue( Value );
 			m_knobCtrl.SetValue( Value );
@@ -173,7 +173,7 @@ int SVSoftwareTriggerDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 LRESULT SVSoftwareTriggerDlg::OnTriggerChange(WPARAM wParam, LPARAM lParam)
 {
 	int Value = static_cast< int >( wParam );
-	SVString Text = SvUl_SF::Format( _T("%d"), Value );
+	std::string Text = SvUl::Format( _T("%d"), Value );
 	m_intervalEdit.SetWindowText( Text.c_str() );
 	m_pSpins->SetValue( Value );
 	SetFrequency( Value );
@@ -202,7 +202,7 @@ void SVSoftwareTriggerDlg::OnDeltaposSpin(NMHDR *pNMHDR, LRESULT *pResult)
 				m_pSpins->SetValue(tmp);
 				Value = tmp;
 			}
-			SVString Text = SvUl_SF::Format( _T("%d"), Value );
+			std::string Text = SvUl::Format( _T("%d"), Value );
 			m_intervalEdit.SetWindowText( Text.c_str() );
 			SetFrequency( Value );
 			SetTriggerPeriod( Value );
@@ -296,17 +296,17 @@ void SVSoftwareTriggerDlg::SetTriggerPeriod(int val)
 void SVSoftwareTriggerDlg::SetFrequency( int Value )
 {
 	double Frequency = 1000.0 / Value;
-	SVString Text = SvUl_SF::Format( _T("%.4fHz"), Frequency);
+	std::string Text = SvUl::Format( _T("%.4fHz"), Frequency);
 	m_frequency.SetWindowText( Text.c_str() );
 	Frequency *= 60;
-	Text = SvUl_SF::Format( _T("%.2f/min"), Frequency);
+	Text = SvUl::Format( _T("%.2f/min"), Frequency);
 	m_ppmLabel.SetWindowText( Text.c_str() );
 }
 
 void SVSoftwareTriggerDlg::OnEnKillfocusUsecEdit()
 {
 	int Value = m_knobCtrl.GetValue();
-	SVString Text = SvUl_SF::Format( _T("%d"), Value );
+	std::string Text = SvUl::Format( _T("%d"), Value );
 	m_intervalEdit.SetWindowText( Text.c_str() );
 }
 

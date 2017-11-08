@@ -13,7 +13,7 @@
 #include "ObjectInterfaces/IObjectManager.h"
 #include "ObjectInterfaces/IEquation.h"
 #include "SVUtilityLibrary/SVGUID.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 namespace SvCmd
@@ -41,10 +41,10 @@ namespace SvCmd
 			return hr;
 		}
 		bool empty() const { return false; }
-		const SVString& GetEquationString() const { return m_Equation; }
+		const std::string& GetEquationString() const { return m_Equation; }
 
 	private:
 		SVGUID m_InstanceID;
-		SVString m_Equation;
+		std::string m_Equation;
 	};
 } //namespace SvCmd

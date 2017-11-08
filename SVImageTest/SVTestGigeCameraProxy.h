@@ -14,7 +14,7 @@
 #include "SVGigeCameraFileLibrary/SVGigeCameraFileReader.h"
 #include "SVGigeCameraFileLibrary/SVGigeCameraProxy.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
-#include "SVUtilityLibrary/SVString.h"
+
 
 namespace SvTh
 {
@@ -55,7 +55,7 @@ public:
 	HRESULT IsValidCameraFileParameters( SVDeviceParamCollection& rDeviceParams, unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer);
 	bool CameraMatchesCameraFile(const SVDeviceParamCollection& rCameraFileDeviceParams, unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer);
 
-	HRESULT SetGigeFeatureOverrides(const SVString& rXmlData, unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer);
+	HRESULT SetGigeFeatureOverrides(const std::string& rXmlData, unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer);
 	HRESULT SetDigitizerParameter( const SVDeviceParamWrapper& rw, unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer );
 
 	HRESULT SVLUTToSafeArray(const SVLut& lut, _variant_t& output);

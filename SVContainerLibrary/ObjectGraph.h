@@ -23,7 +23,7 @@
 //Moved to precompiled header: #include <boost/graph/graphviz.hpp>
 //Moved to precompiled header: #include <boost/utility.hpp>
 #include "IGraphNameLookup.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 namespace SvCl
@@ -151,7 +151,7 @@ namespace SvCl
 
 		//! Get the graph dot string
 		//! \returns a reference to the graph dot string
-		const SVString& getDotGraph() const { return m_DotGraph; };
+		const std::string& getDotGraph() const { return m_DotGraph; };
 	#pragma endregion Public Methods
 	
 	#pragma region Private Methods
@@ -185,7 +185,7 @@ namespace SvCl
 	private:
 		VertexNameDataMap m_VertexNameDataMap;
 		DependencyGraph m_Graph;
-		SVString m_DotGraph;
+		std::string m_DotGraph;
 	#pragma endregion Member Variables
 	};
 } //namespace SvCl

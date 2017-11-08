@@ -15,13 +15,12 @@
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <utility>
 #include "SVOResource/resource.h"
-#include "SVUtilityLibrary/SVString.h"
 #include "SVValueObjectClass.h"
 #include "ObjectInterfaces/IEnumerateValueObject.h"
 #include "SVContainerLibrary/SVObjectArrayClassTemplate.h"
 #pragma endregion Includes
 
-typedef std::pair<SVString, long> SVEnumeratePair;
+typedef std::pair<std::string, long> SVEnumeratePair;
 typedef std::vector<SVEnumeratePair> SVEnumerateVector;
 
 class SVEnumerateValueObjectClass : public SVValueObjectClass<long>, public SvOi::IEnumerateValueObject
@@ -34,15 +33,15 @@ public:
 
 	virtual ~SVEnumerateValueObjectClass();
 
-	//virtual HRESULT GetObjectValue( const SVString& rValueName, _variant_t& rValue ) const override;
+	//virtual HRESULT GetObjectValue( const std::string& rValueName, _variant_t& rValue ) const override;
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject ) override;
 
 	bool GetEnumerator( LPCTSTR szEnumerator, long& lValue ) const;
-	bool GetEnumeratorName( long lValue, SVString& rEnumerator ) const;
+	bool GetEnumeratorName( long lValue, std::string& rEnumerator ) const;
 	bool GetEnumTypes( SVEnumerateVector& rVec ) const;
-	bool GetEnumTypes( SVString& rEnumList ) const;
+	bool GetEnumTypes( std::string& rEnumList ) const;
 	int  GetFirstEnumTypePos() const;
-	bool GetNextEnumType( int& rIterator, SVString& rEnum, long& rValue ) const;
+	bool GetNextEnumType( int& rIterator, std::string& rEnum, long& rValue ) const;
 
 	bool SetEnumTypes( const SVEnumerateVector& rVec );
 	bool SetEnumTypes( LPCTSTR szEnumList );
@@ -59,7 +58,7 @@ public:
 	//IMPLEMENT_VALUE_OBJECT_GET_SET()
 
 	// this function should move to a library!
-	static bool ToNumber(const SVString& str, long& rlValue);
+	static bool ToNumber(const std::string& str, long& rlValue);
 
 protected:
 	//This is a specialized version as it is required to return the enum text not value
@@ -73,9 +72,9 @@ protected:
 	//! Convert a string in an enum. Throw an exception if the string isn't convertible into an enum
 	//! \param rValue [in] The input string
 	//! \returns long value.
-	virtual long ConvertString2Type( const SVString& rValue ) const override;
+	virtual long ConvertString2Type( const std::string& rValue ) const override;
 
-	virtual SVString ConvertType2String( const long& rValue ) const override;
+	virtual std::string ConvertType2String( const long& rValue ) const override;
 
 	virtual void WriteValues(SVObjectWriter& rWriter) override;
 	virtual void WriteDefaultValues(SVObjectWriter& rWriter) override;

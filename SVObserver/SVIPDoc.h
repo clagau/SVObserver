@@ -27,7 +27,6 @@
 #include "SVOCore/SVIPResultData.h"
 #include "SVValueObjectLibrary/SVValueObject.h"
 #include "SVToolGrouping.h"
-#include "SVUtilityLibrary/SVString.h"
 #include "ObjectInterfaces/IFormulaController.h"
 #pragma endregion Includes
 
@@ -122,13 +121,13 @@ public:
 
 	bool IsToolPreviousToSelected( const SVGUID& p_rToolID ) const;
 
-	SVString GetCompleteToolSetName() const;
-	SVString CheckName( const SVString& rToolName ) const;
+	std::string GetCompleteToolSetName() const;
+	std::string CheckName( const std::string& rToolName ) const;
 
 	const SVToolGrouping& GetToolGroupings() const;
 	SVToolGrouping& GetToolGroupings();
-	int GetSelectedToolIndex(const SVString& rToolName) const;
-	int GetToolToInsertBefore(const SVString& rName, int listIndex) const;
+	int GetSelectedToolIndex(const std::string& rToolName) const;
+	int GetToolToInsertBefore(const std::string& rName, int listIndex) const;
 
 	CList< RegressionTestStruct*, RegressionTestStruct* > m_listRegCameras; // @WARNING:  bad practice making members public
 
@@ -361,7 +360,7 @@ private:
 	bool m_bRegressionTestStopping;
 	bool m_bRegressionTestUsePlayCondition;
 	SvOi::IFormulaControllerPtr m_pRegressionTestPlayEquationController;
-	SVString m_RegressionTestLoadEquationText;
+	std::string m_RegressionTestLoadEquationText;
 	bool m_bRegressionTestInitEquationText;
 
 	SVFileNameClass msvFileName;

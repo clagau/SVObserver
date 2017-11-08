@@ -15,7 +15,7 @@
 
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVUtilityLibrary/SVGUID.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #include "SVOCore/SVImageClass.h"
 #include "SVOCore/SVImageObjectClass.h"
 #pragma endregion Includes
@@ -41,12 +41,12 @@ public:
 
 	GUID GetDigitizerID();
 	SVVirtualCamera* GetCamera() const;
-	SVString GetCameraName() const;
+	std::string GetCameraName() const;
 
 	HRESULT DisconnectBuffers();
 	HRESULT ReconnectBuffers();
 
-	virtual HRESULT GetObjectValue( const SVString& rValueName, _variant_t& rValue ) const override;
+	virtual HRESULT GetObjectValue( const std::string& rValueName, _variant_t& rValue ) const override;
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject ) override;
 
 	virtual void Persist(SVObjectWriter& rWriter) override;

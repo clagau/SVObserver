@@ -26,7 +26,7 @@ RemoteMonitorNamedList::RemoteMonitorNamedList(): m_bActive(false),m_filter(SvSm
   
 }
 
-RemoteMonitorNamedList::RemoteMonitorNamedList(const SVString& PPQName, const SVString& name)
+RemoteMonitorNamedList::RemoteMonitorNamedList(const std::string& PPQName, const std::string& name)
 : m_PPQName(PPQName)
 , m_name(name)
 , m_bActive(false)
@@ -36,7 +36,7 @@ RemoteMonitorNamedList::RemoteMonitorNamedList(const SVString& PPQName, const SV
 	ResolveGuidForPPQName();
 }
 
-RemoteMonitorNamedList::RemoteMonitorNamedList(const SVString& PPQName, const SVString& name, const MonitoredObjectList& productValuesList, const MonitoredObjectList& productImageList, const MonitoredObjectList& rejectConditionList, const MonitoredObjectList& failStatusList, int rejectDepth)
+RemoteMonitorNamedList::RemoteMonitorNamedList(const std::string& PPQName, const std::string& name, const MonitoredObjectList& productValuesList, const MonitoredObjectList& productImageList, const MonitoredObjectList& rejectConditionList, const MonitoredObjectList& failStatusList, int rejectDepth)
 : m_PPQName(PPQName)
 , m_name(name)
 , m_productValuesList(productValuesList)
@@ -55,23 +55,23 @@ const SVGUID& RemoteMonitorNamedList::GetPPQObjectID() const
 	return m_PPQObjectID;
 }
 
-const SVString& RemoteMonitorNamedList::GetPPQName() const
+const std::string& RemoteMonitorNamedList::GetPPQName() const
 {
 	return m_PPQName;
 }
 
-void RemoteMonitorNamedList::SetPPQName(const SVString& PPQName)
+void RemoteMonitorNamedList::SetPPQName(const std::string& PPQName)
 {
 	m_PPQName = PPQName;
 	ResolveGuidForPPQName();
 }
 
-const SVString& RemoteMonitorNamedList::GetName() const
+const std::string& RemoteMonitorNamedList::GetName() const
 {
 	return m_name;
 }
 
-void RemoteMonitorNamedList::SetName(const SVString& name)
+void RemoteMonitorNamedList::SetName(const std::string& name)
 {
 	m_name = name;
 }

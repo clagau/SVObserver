@@ -18,7 +18,6 @@
 //Moved to precompiled header: #include <vector>
 #include "ObjectInterfaces/IValueObject.h"
 #include "SVObjectLibrary/SVObjectClass.h"
-#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 class SVDeviceParam;
@@ -89,7 +88,7 @@ public:
 	//! \param Index <in> standard value object parameter
 	//! \returns SOK on success
 	//************************************
-	virtual HRESULT setValue(const SVString& rValue, int Index = -1) override;
+	virtual HRESULT setValue(const std::string& rValue, int Index = -1) override;
 
 	//************************************
 	//! The method gets the value object
@@ -98,7 +97,7 @@ public:
 	//! \param Bucket <in> standard value object parameter
 	//! \returns SOK on success
 	//************************************
-	virtual HRESULT getValue(SVString& rValue, int Index = -1, int Bucket = -1) const override;
+	virtual HRESULT getValue(std::string& rValue, int Index = -1, int Bucket = -1) const override;
 
 	//! Set the value object bucketized flag
 	//! \param isBucketized [in] true if bucketized
@@ -190,7 +189,7 @@ public:
 	//! The method gets the type name of the value
 	//! \returns type name
 	//************************************
-	virtual SVString getTypeName() const override;
+	virtual std::string getTypeName() const override;
 
 	//************************************
 	//! The method updates the corresponding device parameter
@@ -268,15 +267,15 @@ private:
 #pragma region Member Variables
 	_variant_t			m_Value;			//The value object container
 	CRITICAL_SECTION	m_CriticalSection;	//The critical section object
-	SVString			m_Description;		//The description text for the object
+	std::string			m_Description;		//The description text for the object
 	bool				m_Created;			//Object is created
 	bool				m_Node;				//Object is only a node in the tree structure
 	#pragma endregion Member Variables
 };
 
-typedef SVSharedPtr< BasicValueObject > BasicValueObjectPtr;
-typedef std::pair< SVString, BasicValueObjectPtr > NameBasicValuePtrPair;
-typedef std::vector< NameBasicValuePtrPair > NameBasicValuePtrVector;
+typedef SVSharedPtr<BasicValueObject> BasicValueObjectPtr;
+typedef std::pair<std::string, BasicValueObjectPtr> NameBasicValuePtrPair;
+typedef std::vector<NameBasicValuePtrPair> NameBasicValuePtrVector;
 
 #pragma region Inline
 #include "BasicValueObject.inl"

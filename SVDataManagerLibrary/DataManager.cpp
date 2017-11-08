@@ -9,13 +9,15 @@
 // * .Check In Date   : $Date:   23 May 2014 07:12:58  $
 // ******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "DataManager.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVTimerLibrary/SVClock.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVDataManagerHandle.h"
+#pragma endregion Includes
 
 /*
 This constructor initializes all of the internal attributes.
@@ -161,7 +163,7 @@ HRESULT SVDataManager::CreateManagedIndexArray (BSTR  aIndexArrayName, long  alI
 		
 			if (nullptr != pNewManagedIndexArray)
 			{
-				pNewManagedIndexArray->SetName( SvUl_SF::createSVString(aIndexArrayName) );
+				pNewManagedIndexArray->SetName( SvUl::createStdString(aIndexArrayName) );
 		
 				Result = pNewManagedIndexArray->SetSize( alIndexArrayDepth );
 
@@ -270,7 +272,7 @@ HRESULT SVDataManager::GetNextAvailableBufferIndex( LONGLONG alIndexArrayHandle,
 						Result = SVDM_1502NO_INDEXESAVAILABLE_ERROR;
 					}
 
-					SVString Message = pManagedIndexArray->GetReferenceCounts();
+					std::string Message = pManagedIndexArray->GetReferenceCounts();
 
 					SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 					Exception.setMessage( SVDM_1502NO_INDEXESAVAILABLE_ERROR, Message.c_str(), SvStl::SourceFileParams(StdMessageParams) );

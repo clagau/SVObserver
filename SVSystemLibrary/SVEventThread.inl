@@ -239,7 +239,7 @@ DWORD WINAPI SVEventThread<SVEventThreadSignalHandler>::ThreadProc( LPVOID lpPar
 	if( lpParam )
 	{
 #ifdef DEBUG
-		SVString l_Message;
+		std::string l_Message;
 #endif
 
 		SVEventThread* pThread = static_cast< SVEventThread* >( lpParam );
@@ -271,7 +271,7 @@ DWORD WINAPI SVEventThread<SVEventThreadSignalHandler>::ThreadProc( LPVOID lpPar
 #if defined (TRACE_THEM_ALL) || defined (TRACE_THREAD)
 				else
 				{
-					l_Message = SvUl_SF::Format( _T( "SVEventThread(%d) - Shutdown Thread = %s\n" ), pThread->m_ulThreadID, pThread->m_tag.c_str() );
+					l_Message = SvUl::Format( _T( "SVEventThread(%d) - Shutdown Thread = %s\n" ), pThread->m_ulThreadID, pThread->m_tag.c_str() );
 					::OutputDebugString( l_Message.c_str() );
 				}
 #endif
@@ -279,14 +279,14 @@ DWORD WINAPI SVEventThread<SVEventThreadSignalHandler>::ThreadProc( LPVOID lpPar
 #if defined (TRACE_THEM_ALL) || defined (TRACE_THREAD)
 			else
 			{
-				l_Message = SvUl_SF::Format( _T( "SVEventThread(%d) - Exit Loop = %s\n" ), pThread->m_ulThreadID, pThread->m_tag.c_str() );
+				l_Message = SvUl::Format( _T( "SVEventThread(%d) - Exit Loop = %s\n" ), pThread->m_ulThreadID, pThread->m_tag.c_str() );
 				::OutputDebugString( l_Message.c_str() );
 			}
 #endif
 		}
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_THREAD)
-		l_Message = SvUl_SF::Format( _T( "SVEventThread(%d) - Exit Thread = %s\n" ), pThread->m_ulThreadID, pThread->m_tag.c_str() );
+		l_Message = SvUl::Format( _T( "SVEventThread(%d) - Exit Thread = %s\n" ), pThread->m_ulThreadID, pThread->m_tag.c_str() );
 		::OutputDebugString( l_Message.c_str() );
 #endif
 
@@ -294,7 +294,7 @@ DWORD WINAPI SVEventThread<SVEventThreadSignalHandler>::ThreadProc( LPVOID lpPar
 	}
 	else
 	{
-		SVString UnknownThread( SvStl::MessageData::convertId2AddtionalText( SvStl::Tid_UnknowThread ) );
+		std::string UnknownThread( SvStl::MessageData::convertId2AddtionalText( SvStl::Tid_UnknowThread ) );
 		SVThreadManager::setThreadError( static_cast<DWORD> (SVMSG_THREAD_EXIT_ERROR), UnknownThread.c_str(), SvStl::SourceFileParams(StdMessageParams) );
 	}
 

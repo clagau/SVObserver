@@ -21,6 +21,7 @@
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 SVFileNameManagerClass& SVFileNameManagerClass::Instance()
@@ -31,7 +32,7 @@ SVFileNameManagerClass& SVFileNameManagerClass::Instance()
 
 SVFileNameManagerClass::SVFileNameManagerClass()
 {
-	SVString csRunPathName = GetRunPathName();
+	std::string csRunPathName = GetRunPathName();
 
 	m_iCurrentItem = 0;
 
@@ -210,7 +211,7 @@ SVFileNameClass * SVFileNameManagerClass::GetItem()
 
 bool SVFileNameManagerClass::CreatePath(LPCTSTR PathName)
 {
-	SVString Path( PathName );
+	std::string Path( PathName );
 
 	bool Result = _access( Path.c_str(), 0 ) == 0;
 
@@ -219,9 +220,9 @@ bool SVFileNameManagerClass::CreatePath(LPCTSTR PathName)
 		bool bDone = false;
 
 		size_t Start=-1;
-		if( SvUl_SF::Left(Path, 2) == _T("\\\\"))	// UNC path
+		if( SvUl::Left(Path, 2) == _T("\\\\"))	// UNC path
 		{
-			Start = SvUl_SF::Mid(Path, 2).find('\\') + 1;
+			Start = SvUl::Mid(Path, 2).find('\\') + 1;
 		}
 		else	// drive letter
 		{
@@ -254,21 +255,21 @@ bool SVFileNameManagerClass::CreatePath(LPCTSTR PathName)
 					size_t NextBS = Path.find( '\\', Start + 1 );
 					size_t NextFS = Path.find( '/', Start + 1 );
 
-					SVString MakePath;
+					std::string MakePath;
 
-					if ( SVString::npos == NextBS && SVString::npos == NextFS )
+					if ( std::string::npos == NextBS && std::string::npos == NextFS )
 					{
 						MakePath = Path;
 					}
 					else
 					{
-						if ( SVString::npos == NextFS || SVString::npos != NextBS && NextBS < NextFS )
+						if ( std::string::npos == NextFS || std::string::npos != NextBS && NextBS < NextFS )
 						{
-							MakePath = SvUl_SF::Left( Path,  NextBS );
+							MakePath = SvUl::Left( Path,  NextBS );
 						}
 						else
 						{
-							MakePath = SvUl_SF::Left( Path, NextFS );
+							MakePath = SvUl::Left( Path, NextFS );
 						}
 					}
 
@@ -293,26 +294,26 @@ bool SVFileNameManagerClass::LoadItem(SVFileNameClass* pFileName)
 {
 	bool Result = true;
 
-	if ( !SVString( pFileName->GetFileName() ).empty() )
+	if ( !std::string( pFileName->GetFileName() ).empty() )
 	{
-		SVString FullName = pFileName->GetFullFileName();
-		SVString ConfigFullName = pFileName->GetFullFileName();
-		SVString RunFullName = SVString( GetRunPathName() ) + _T("\\") + pFileName->GetFileName();
+		std::string FullName = pFileName->GetFullFileName();
+		std::string ConfigFullName = pFileName->GetFullFileName();
+		std::string RunFullName = std::string( GetRunPathName() ) + _T("\\") + pFileName->GetFileName();
 		 
 		if ( !GetConfigurationPathName().empty() )
 		{
 			ConfigFullName = GetConfigurationPathName() + _T("\\") + pFileName->GetFileName();
 		}
 
-		SvUl_SF::searchAndReplace( RunFullName, _T("/"), _T("\\") );
-		SvUl_SF::searchAndReplace( ConfigFullName, _T("/"), _T("\\") );
-		SvUl_SF::searchAndReplace( FullName,  _T("/"), _T("\\") );
+		SvUl::searchAndReplace( RunFullName, _T("/"), _T("\\") );
+		SvUl::searchAndReplace( ConfigFullName, _T("/"), _T("\\") );
+		SvUl::searchAndReplace( FullName,  _T("/"), _T("\\") );
 
-		Result = SvUl_SF::CompareNoCase( RunFullName, FullName ) == 0 && _access( RunFullName.c_str(), 0 ) == 0;
+		Result = SvUl::CompareNoCase( RunFullName, FullName ) == 0 && _access( RunFullName.c_str(), 0 ) == 0;
 
 		if ( !Result )
 		{
-			if ( 0 != SvUl_SF::CompareNoCase( ConfigFullName, FullName ) )
+			if ( 0 != SvUl::CompareNoCase( ConfigFullName, FullName ) )
 			{
 				if ( _access( FullName.c_str(), 0 ) == 0 )
 				{
@@ -349,7 +350,7 @@ bool SVFileNameManagerClass::SaveItem( SVFileNameClass* pFileName )
 {
 	bool Result( true );
 
-	if ( !SVString( pFileName->GetFileName() ).empty() )
+	if ( !std::string( pFileName->GetFileName() ).empty() )
 	{
 		Result = CopyFileToPath( GetRunPathName(), pFileName );
 		if ( Result )
@@ -368,7 +369,7 @@ bool SVFileNameManagerClass::SaveItem( SVFileNameClass* pFileName )
 
 bool SVFileNameManagerClass::RenameItem(SVFileNameClass* pFileName)
 {
-	if ( !SVString( pFileName->GetFileName() ).empty() )
+	if ( !std::string( pFileName->GetFileName() ).empty() )
 	{
 		pFileName->SetPathName( GetRunPathName().c_str() );
 	}
@@ -414,13 +415,13 @@ bool SVFileNameManagerClass::RemoveUnusedFiles(bool bCleanConfigDir)
 	return Result;
 }
 
-bool SVFileNameManagerClass::RemoveUnusedFiles( const SVString& rPath )
+bool SVFileNameManagerClass::RemoveUnusedFiles( const std::string& rPath )
 {
 	bool Result( true );
 
 	if ( !rPath.empty() )
 	{
-		SVString FileMask = rPath + _T( "\\*.*" );
+		std::string FileMask = rPath + _T( "\\*.*" );
 
 		WIN32_FIND_DATA FindFileData;
 		HANDLE hFind;
@@ -433,16 +434,16 @@ bool SVFileNameManagerClass::RemoveUnusedFiles( const SVString& rPath )
 			while ( bRun )
 			{
 				bool bFound = false;
-				SVString FileName = FindFileData.cFileName;
+				std::string FileName = FindFileData.cFileName;
 
 				for ( int i = 0; ! bFound && i < m_svFileNameList.GetSize(); i++ )
 				{
-					bFound = (0 ==SvUl_SF::CompareNoCase( FileName, m_svFileNameList[i]->GetFileName() ));
+					bFound = (0 ==SvUl::CompareNoCase( FileName, m_svFileNameList[i]->GetFileName() ));
 				}
 
 				if ( ! bFound )
 				{
-					SVString FullFileName = rPath;
+					std::string FullFileName = rPath;
 
 					FullFileName += _T( "\\" );
 					FullFileName += FileName;
@@ -461,17 +462,17 @@ bool SVFileNameManagerClass::RemoveUnusedFiles( const SVString& rPath )
 	return Result;
 }
 
-bool SVFileNameManagerClass::CopyFileToPath( const SVString& rPath, SVFileNameClass* pFileName ) const
+bool SVFileNameManagerClass::CopyFileToPath( const std::string& rPath, SVFileNameClass* pFileName ) const
 {
 	bool Result( true );
 	
 	if( !rPath.empty() )
 	{
-		SVString RunFullName = rPath + _T("\\") + pFileName->GetFileName();
+		std::string RunFullName = rPath + _T("\\") + pFileName->GetFileName();
 
-		SvUl_SF::searchAndReplace( RunFullName, _T("/"), _T("\\") );
+		SvUl::searchAndReplace( RunFullName, _T("/"), _T("\\") );
 
-		if ( SvUl_SF::CompareNoCase( RunFullName, pFileName->GetFullFileName() ) )
+		if ( SvUl::CompareNoCase( RunFullName, pFileName->GetFullFileName() ) )
 		{
 			Result = _access( pFileName->GetFullFileName().c_str(), 0 ) != 0;
 

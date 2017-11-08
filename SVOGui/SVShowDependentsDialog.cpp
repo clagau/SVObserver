@@ -15,6 +15,8 @@
 #include "SVColor.h"
 #include "ObjectInterfaces/IDependencyManager.h"
 #include "ObjectInterfaces/IObjectManager.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -39,20 +41,20 @@ namespace SvOg
 	: CDialog(SVShowDependentsDialog::IDD, pParent)
 	, m_rSourceSet( rSourceSet )
 	, m_objectType( objectType )
-	, m_DisplayText( (nullptr != DisplayText) ? DisplayText : SVString() )
+	, m_DisplayText( (nullptr != DisplayText) ? DisplayText : std::string() )
 	, m_DialogType( Type )
 	{
 		RetreiveList();
 	}
 
-	/*static*/ INT_PTR SVShowDependentsDialog::StandardDialog( const SVString& rName, const SVGUID rTaskObjectID )
+	/*static*/ INT_PTR SVShowDependentsDialog::StandardDialog( const std::string& rName, const SVGUID rTaskObjectID )
 	{
 		INT_PTR Result( IDOK );
 
 		if( !rTaskObjectID.empty() )
 		{
-			SVString FormatText = SvUl_SF::LoadSVString(IDS_DELETE_CHECK_DEPENDENCIES);
-			SVString DisplayText = SvUl_SF::Format( FormatText.c_str(), rName.c_str(), rName.c_str(), rName.c_str(), rName.c_str() );
+			std::string FormatText = SvUl::LoadStdString(IDS_DELETE_CHECK_DEPENDENCIES);
+			std::string DisplayText = SvUl::Format( FormatText.c_str(), rName.c_str(), rName.c_str(), rName.c_str(), rName.c_str() );
 
 			SVGuidSet SourceSet;
 			SourceSet.insert( rTaskObjectID );
@@ -186,9 +188,9 @@ namespace SvOg
 			COLORREF TextColor = SVColor::Black;
 			//! Get the client item text
 			CString Text = m_ListCtrl.GetItemText( static_cast<int> (pLVCD->nmcd.dwItemSpec), 0 );
-			SVString ItemText(Text.GetString());
+			std::string ItemText(Text.GetString());
 
-			SVStringSet::const_iterator Iter(m_SourceNames.begin());
+			SvDef::StringSet::const_iterator Iter(m_SourceNames.begin());
 			for (; m_SourceNames.end() != Iter; ++Iter)
 			{
 				//If item has part of source name then this is the client for suppliers First check if tool name identical or add . then is part of name
@@ -223,7 +225,7 @@ namespace SvOg
 			SvOi::IObjectClass* pSourceObject =  SvOi::getObject(*Iter);
 			if (nullptr != pSourceObject)
 			{
-				SVString Name;
+				std::string Name;
 				if( m_objectType == pSourceObject->GetObjectType() )
 				{
 					Name = pSourceObject->GetName();
@@ -258,7 +260,7 @@ namespace SvOg
 	{
 		int index = 0;
 		CListCtrl& rCtrl = m_ListCtrl;
-		std::for_each(m_dependencyList.begin(), m_dependencyList.end(), [&index, &rCtrl](const SVStringPair& rel)->void
+		std::for_each(m_dependencyList.begin(), m_dependencyList.end(), [&index, &rCtrl](const SvDef::StringPair& rel)->void
 		{
 			//! First item is supplier second client
 			rCtrl.InsertItem( index, rel.second.c_str() );

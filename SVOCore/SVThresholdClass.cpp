@@ -22,6 +22,7 @@
 #include "SVTool.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVObjectLibrary\SVClsIds.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 #define SV_OC_ERROR 0xc0000000   //SV Operator Class Error.
@@ -439,7 +440,7 @@ bool SVThresholdClass::onRun( bool First,
 		SetInvalid();
 		rRunStatus.SetInvalid();
 
-		SVStringVector msgList;
+		SvDef::StringVector msgList;
 		msgList.push_back(_T("SVThresholdClass::onRun"));
 		
 		if (nullptr != pErrorMessages)

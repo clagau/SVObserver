@@ -80,11 +80,11 @@ namespace SvOg
 		//}}AFX_DATA
 
 	private:
-		SVString m_firstInputName;
-		SVString m_firstImageName;
-		SVString m_secondInputName;
-		SVString m_secondImageName;
-		SVString m_resultImageName;
+		std::string m_firstInputName;
+		std::string m_firstImageName;
+		std::string m_secondInputName;
+		std::string m_secondImageName;
+		std::string m_resultImageName;
 		SVGUID m_resultImageID;
 
 		SVGUID m_InspectionID;

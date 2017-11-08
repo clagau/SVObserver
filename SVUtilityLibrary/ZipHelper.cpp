@@ -37,14 +37,14 @@ ZipHelper::~ZipHelper()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-void ZipHelper::makeZipFile( const SVString& rZipFileName, const SVStringSet& rZipFiles, bool DeleteSourceFiles )
+void ZipHelper::makeZipFile( const std::string& rZipFileName, const SvDef::StringSet& rZipFiles, bool DeleteSourceFiles )
 {
 	if( 0 != rZipFiles.size() )
 	{
 		HZIP ZipHandle = ::CreateZip( rZipFileName.c_str(), nullptr);
 		if( nullptr != ZipHandle )
 		{
-			SVStringSet::const_iterator Iter( rZipFiles.begin() );
+			SvDef::StringSet::const_iterator Iter( rZipFiles.begin() );
 			while( rZipFiles.end() != Iter )
 			{
 				if( ::_access( Iter->c_str(), 0 ) == 0 )
@@ -71,7 +71,7 @@ void ZipHelper::makeZipFile( const SVString& rZipFileName, const SVStringSet& rZ
 	}
 }
 
-void ZipHelper::unzipAll( const SVString& rZipFileName, const SVString& rDestinationFolder, SVStringSet& rUnzippedFiles )
+void ZipHelper::unzipAll( const std::string& rZipFileName, const std::string& rDestinationFolder, SvDef::StringSet& rUnzippedFiles )
 {
 	if( !rDestinationFolder.empty() )
 	{
@@ -86,7 +86,7 @@ void ZipHelper::unzipAll( const SVString& rZipFileName, const SVString& rDestina
 			{
 				::GetZipItem( ZipHandle, i, &Entry );
 				::UnzipItem( ZipHandle, i, Entry.name );
-				SVString FileName( rDestinationFolder );
+				std::string FileName( rDestinationFolder );
 				FileName += _T("\\");
 				FileName += Entry.name;
 				rUnzippedFiles.insert( FileName );

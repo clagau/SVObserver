@@ -9,7 +9,7 @@
 
 #pragma region Includes
 #include "SVUtilityLibrary\NameGuidList.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 namespace SvMc
@@ -20,7 +20,7 @@ namespace SvMc
 		ObjectsListBox();
 		virtual ~ObjectsListBox();
 
-		void init( const SvUl::NameGuidList& rList, const SVString& rEmptyListText );
+		void init( const SvUl::NameGuidList& rList, const std::string& rEmptyListText );
 
 		//************************************
 		/// Return the guid of an entry. If invalid index of the selected item has on GUID it return SV_GUID_NULL.

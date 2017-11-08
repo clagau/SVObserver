@@ -1,44 +1,30 @@
-//******************************************************************************
-//* COPYRIGHT (c) 2008 by Seidenader Vision Inc., Harrisburg
-//* All Rights Reserved
-//******************************************************************************
-//* .Module Name     : SVString
-//* .File Name       : $Workfile:   SVString.h  $
-//* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   16 Dec 2014 18:20:04  $
+//*****************************************************************************
+/// \copyright (c) 2016,2016 by Seidenader Maschinenbau GmbH
+/// All Rights Reserved 
+/// \file StringHelper.h
+//*****************************************************************************
+// Helper functions for std::string
 //******************************************************************************
 
 #pragma once
 
 #pragma region Includes
 //Moved to precompiled header: #include <string>
-//Moved to precompiled header: #include <vector>
-//Moved to precompiled header: #include <map>
-//Moved to precompiled header: #include <set>
 //Moved to precompiled header: #include <comutil.h>
 //Moved to precompiled header: #include <tchar.h>
-//Moved to precompiled header: #include <utility>
 #pragma endregion Includes
 
-typedef std::basic_string<TCHAR> SVString;
-typedef std::pair<SVString, SVString> SVStringPair;
-typedef std::set<SVString> SVStringSet;
-typedef std::vector<SVString> SVStringVector;
-typedef std::vector<SVStringPair> StringPairVector;
-typedef std::map<SVString, SVString> TranslateMap;
-
-namespace SvUl { namespace StringFunctions
+namespace SvUl
 {
 
 	//************************************
-	/// Function to create a SVString from other objects
+	/// Function to create a std::string from other objects
 	/// \param pString, rString or rVariant [in] The source object
-	/// \returns SVString The created object.
+	/// \returns std::string The created object.
 	//************************************
-	SVString createSVString( const wchar_t* pString );
-	SVString createSVString( const _bstr_t& rString );
-	SVString createSVString( const _variant_t& rVariant );
+	std::string createStdString( const wchar_t* pString );
+	std::string createStdString( const _bstr_t& rString );
+	std::string createStdString( const _variant_t& rVariant );
 
 	//************************************
 	/// Compare to strings like the std::string.compare function, but ignore upper and lower cases.
@@ -46,68 +32,68 @@ namespace SvUl { namespace StringFunctions
 	/// \param rStringValue2 [in]
 	/// \returns int 0 = strings are similar
 	//************************************
-	int CompareNoCase(const SVString& rStringValue, const SVString & rStringValue2);
+	int CompareNoCase(const std::string& rStringValue, const std::string & rStringValue2);
 
 	//************************************
 	/// Make all character to lower case.
 	/// \param rStringValue [in,out] The source string to be changed.
-	/// \returns SVString& Reference to rStringValue
+	/// \returns std::string& Reference to rStringValue
 	//************************************
-	SVString& MakeLower(SVString& rStringValue);
+	std::string& MakeLower(std::string& rStringValue);
 	//************************************
 	/// Make all character to upper case.
 	/// \param rStringValue [in,out] The source string to be changed.
-	/// \returns SVString& Reference to rStringValue
+	/// \returns std::string& Reference to rStringValue
 	//************************************
-	SVString& MakeUpper(SVString& rStringValue);
+	std::string& MakeUpper(std::string& rStringValue);
 
 	//************************************
 	/// Trim defined character until another character is found from the left (TrimLeft), right (TrimRight) or both (Trim)
 	/// \param rStringValue [in,out] The source string to be changed.
 	/// \param pTrimChar [in,out] Character to trim.
-	/// \returns SVString& Reference to rStringValue
+	/// \returns std::string& Reference to rStringValue
 	//************************************
-	SVString& Trim(SVString& rStringValue, LPCTSTR pTrimChar = _T(" \t\n"));
-	SVString& TrimLeft(SVString& rStringValue, LPCTSTR pTrimChar = _T(" \t\n"));
-	SVString& TrimRight(SVString& rStringValue, LPCTSTR pTrimChar = _T(" \t\n"));
+	std::string& Trim(std::string& rStringValue, LPCTSTR pTrimChar = _T(" \t\n"));
+	std::string& TrimLeft(std::string& rStringValue, LPCTSTR pTrimChar = _T(" \t\n"));
+	std::string& TrimRight(std::string& rStringValue, LPCTSTR pTrimChar = _T(" \t\n"));
 
 	//************************************
 	/// Copy a number of character from the Left of the string
 	/// \param rStringValue [in] The source string, will not be changed.
 	/// \param count [in] Count of character to copy. If count > size, it returns an empty String.
-	/// \returns SVString The copied string.
+	/// \returns std::string The copied string.
 	//************************************
-	SVString Left( const SVString& rStringValue, size_t count );
+	std::string Left( const std::string& rStringValue, size_t count );
 
 	//************************************
 	/// Copy a number of character from the mid of the string
 	/// \param rStringValue [in] The source string, will not be changed.
 	/// \param count [in] Count of character to copy. If count > size, it return a copy of rStringValue.
-	/// \returns SVString The copied string.
+	/// \returns std::string The copied string.
 	//************************************
-	SVString Mid( const SVString& rStringValue, size_t count );
+	std::string Mid( const std::string& rStringValue, size_t count );
 
 	//************************************
 	/// Copy a number of character from the right part of the string.
 	/// \param rStringValue [in] The source string, will not be changed.
 	/// \param count [in] Count of character to copy.
-	/// \returns SVString The copied string.
+	/// \returns std::string The copied string.
 	//************************************
-	SVString Right( const SVString& rStringValue, size_t count );
+	std::string Right( const std::string& rStringValue, size_t count );
 
 	//************************************
 	//! Method to remove a list of characters
 	/// \param rStringValue [in][out] The source string can be changed
 	//! \param ExcludeCharacters [in] the characters to remove
 	//************************************
-	void RemoveCharacters(SVString& rStringValue, LPCTSTR ExcludeCharacters);
+	void RemoveCharacters(std::string& rStringValue, LPCTSTR ExcludeCharacters);
 
 	//************************************
 	//! Method to validate the string with a list of characters
 	/// \param rStringValue [in] The source string, will not be changed.
 	//! \param ValidCharacters [in] the characters which are valid
 	//************************************
-	SVString ValidateString(const SVString& rStringValue, LPCTSTR ValidCharacters);
+	std::string ValidateString(const std::string& rStringValue, LPCTSTR ValidCharacters);
 
 	//************************************
 	// Description:  Check if searchString is found in this string. For the searchString wildcard "*" can be used.
@@ -116,25 +102,25 @@ namespace SvUl { namespace StringFunctions
 	// Parameter:  offsetSearch <in>:  offset where from the search string is used.  Default is 0 (the beginning)
 	// Returns:  bool:  true if searchString is found
 	//************************************
-	bool isSubmatch(const SVString& rStringValue, const SVString& rSearchString, size_t offsetSource = 0, size_t offsetSearch = 0 );
+	bool isSubmatch(const std::string& rStringValue, const std::string& rSearchString, size_t offsetSource = 0, size_t offsetSearch = 0 );
 
 	//************************************
 	/// Search in the string an substring and replace all of them with the new substring.
 	/// \param rStringValue [in,out] The source string to be changed.
 	/// \param pFromStr [in] search substring
 	/// \param pToStr [in] replace substring
-	/// \returns SVString& Reference to rStringValue
+	/// \returns std::string& Reference to rStringValue
 	//************************************
-	SVString& searchAndReplace( SVString& rStringValue, const SVString::traits_type::_Elem* pFromStr, const SVString::traits_type::_Elem* pToStr );
+	std::string& searchAndReplace( std::string& rStringValue, const std::string::traits_type::_Elem* pFromStr, const std::string::traits_type::_Elem* pToStr );
 
 	//************************************
 	/// Converts the value of objects to strings based on the formats specified and inserts them into another string. 
 	/// \param pFormat [in] Format 
 	/// \param  [in] A list of objects
-	/// \returns SVString New created object
+	/// \returns std::string New created object
 	//************************************
-	SVString Format( LPCTSTR pFormat, ... );
-	SVString Format( const wchar_t* pFormat, ... );
+	std::string Format( LPCTSTR pFormat, ... );
+	std::string Format( const wchar_t* pFormat, ... );
 
 	//************************************
 	/// Check if string can convert to a number and return this if possible.
@@ -143,17 +129,45 @@ namespace SvUl { namespace StringFunctions
 	/// \returns bool Return if convert was succeeded.
 	//************************************
 	template<typename T>
-	bool Convert2Number(const SVString& rStringValue, T& Value, bool failIfLeftoverChars = false);
+	bool Convert2Number(const std::string& rStringValue, T& Value, bool failIfLeftoverChars = false);
 
-	template bool Convert2Number(const SVString& rStringValue, double&, bool);
-	template bool Convert2Number(const SVString& rStringValue, long&, bool);
+	template bool Convert2Number(const std::string& rStringValue, double&, bool);
+	template bool Convert2Number(const std::string& rStringValue, long&, bool);
 
 	//************************************
 	/// Load the string from the resource dll
 	/// \param ResourceID [in] The resource ID to load from the resource dll
-	/// \returns SVString Created string with the loaded string
+	/// \returns std::string Created string with the loaded string
 	//************************************
-	SVString LoadSVString( UINT ResourceID );
-} /* namespace StringFunctions */ } /* namespace SvUl*/
+	std::string LoadStdString( UINT ResourceID );
 
-namespace SvUl_SF = SvUl::StringFunctions;
+	std::string to_utf8(const _bstr_t& rUtf16);
+	std::string to_utf8(const std::wstring& rUtf16);
+
+	std::wstring to_utf16(const std::string& rUtf8, int cp = CP_UTF8);
+
+	//************************************
+	/// Places escape character before double quotes in a String
+	/// \param rString [in out] String to convert
+	/// \param rString [in] convert control characters
+	/// \returns true on success
+	//************************************
+	bool AddEscapeSpecialCharacters(std::string& rString, bool bConvertCtrl);
+
+	//************************************
+	/// Removes any escape characters before double quotes in a String
+	/// \param rString [in out] String to convert
+	/// \param rString [in] convert control characters
+	/// \returns true on success
+	//************************************
+	bool RemoveEscapedSpecialCharacters(std::string& rString, bool bConvertCtrl);
+
+	inline std::string AsString(short Value) { return Format(_T("%d"), Value); };
+	inline std::string AsString(int Value) { return Format(_T("%d"), Value); };
+	inline std::string AsString(long Value) { return Format(_T("%d"), Value); };
+	inline std::string AsString(unsigned short Value) { return Format(_T("%u"), Value); };
+	inline std::string AsString(unsigned int Value) { return Format(_T("%u"), Value); };
+	inline std::string AsString(unsigned long Value) { return Format(_T("%u"), Value); };
+	inline std::string AsString(double Value) { return Format(_T("%f"), Value); };
+} // namespace SvUl
+

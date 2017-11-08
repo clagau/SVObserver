@@ -7,18 +7,18 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <boost/assign.hpp>
-#include "SVUtilityLibrary/SVString.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 #pragma region Declarations
-	const SVString KW_DAY("\"DD\"");
-	const SVString KW_MONTH("\"MM\"" );
-	const SVString KW_YEAR("\"YYYY\"" );
-	const SVString KW_HOUR("\"HH\"" );
-	const SVString KW_MINUTE("\"mm\"" );
-	const SVString KW_SECONDS( "\"SS\"" );
+	const std::string KW_DAY("\"DD\"");
+	const std::string KW_MONTH("\"MM\"" );
+	const std::string KW_YEAR("\"YYYY\"" );
+	const std::string KW_HOUR("\"HH\"" );
+	const std::string KW_MINUTE("\"mm\"" );
+	const std::string KW_SECONDS( "\"SS\"" );
 
-	typedef std::set<SVString> KeywordSet;
+	typedef SvDef::StringSet KeywordSet;
 	static KeywordSet KeywordList = boost::assign::list_of
 		(KW_DAY)
 		(KW_MONTH)
@@ -41,7 +41,7 @@ public:
 	/// Initializes the path
 	/// \param sPath [in] path to be initialized
 	//************************************
-	void Init(const SVString& sPath);
+	void Init(const std::string& sPath);
 
 	//************************************
 	/// Returns if the path is using keywords
@@ -53,7 +53,7 @@ public:
 	/// \param sToken [in] the token to be validated 
 	/// \returns bool – true if the passed in token is valid
 	//************************************
-	SVString TranslatePath(const SVString& sPath);
+	std::string TranslatePath(const std::string& sPath);
 
 	//************************************
 	/// Returns if the tokens are valid
@@ -65,7 +65,7 @@ public:
 	/// this function will check the existence of the drive
 	/// \returns bool – true if valid
 	//************************************
-	static bool ValidateDrive(LPCTSTR szFilePath, SVString& rDrive);
+	static bool ValidateDrive(LPCTSTR szFilePath, std::string& rDrive);
 #pragma endregion Public Methods
 
 private:
@@ -74,14 +74,14 @@ private:
 	/// Will parse the path and check if keywords are being used
 	/// \param sPath [in] - The string (path) that is to be parsed
 	//************************************
-	void ParseTokens(const SVString& sPath);
+	void ParseTokens(const std::string& sPath);
 
 	//************************************
 	/// It will validate the token
 	/// \param sToken [in] the token to be validated 
 	/// \returns bool – true if the passed in token is valid
 	//************************************
-	bool ValidateToken(const SVString& sToken);
+	bool ValidateToken(const std::string& sToken);
 #pragma endregion Private Methods
 
 #pragma region Member Variables

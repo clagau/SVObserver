@@ -112,7 +112,7 @@ const SVLightReferenceAttributeInfo* SVLightReferenceBand::AttributeByType( DWOR
 	return nullptr;
 }
 
-SVLightReferenceAttributeInfo* SVLightReferenceBand::AttributeByName( const SVString& sAttributeName )
+SVLightReferenceAttributeInfo* SVLightReferenceBand::AttributeByName( const std::string& sAttributeName )
 {
 	for ( int i = 0; i < m_iNumAttributes; i++)
 	{
@@ -123,7 +123,7 @@ SVLightReferenceAttributeInfo* SVLightReferenceBand::AttributeByName( const SVSt
 	return nullptr;
 }
 
-const SVLightReferenceAttributeInfo* SVLightReferenceBand::AttributeByName( const SVString& sAttributeName ) const
+const SVLightReferenceAttributeInfo* SVLightReferenceBand::AttributeByName( const std::string& sAttributeName ) const
 {
 	for ( int i = 0; i < m_iNumAttributes; i++)
 	{

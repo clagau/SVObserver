@@ -14,7 +14,8 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -108,10 +109,10 @@ bool RingBufferTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SVStringVector msgList;
-			msgList.push_back(SvUl_SF::Format("%d", SvDef::cRingBufferDepthMin));
-			msgList.push_back(SvUl_SF::Format("%d", SvDef::cRingBufferDepthMax));
-			msgList.push_back(SvUl_SF::Format("%d", ringBufferDepth));
+			SvDef::StringVector msgList;
+			msgList.push_back(SvUl::Format("%d", SvDef::cRingBufferDepthMin));
+			msgList.push_back(SvUl::Format("%d", SvDef::cRingBufferDepthMax));
+			msgList.push_back(SvUl::Format("%d", ringBufferDepth));
 			SvStl::MessageContainer message( SVMSG_SVO_61_RINGBUFFER_ERROR, SvStl::Tid_RingBuffer_Depth_Invalid_Value, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10013_RingBuffer_DepthValueInvalid, GetUniqueObjectID() );
 			pErrorMessages->push_back(message);
 		}
@@ -305,7 +306,7 @@ void RingBufferTool::BuildEmbeddedObjectList ()
 		vtTemp.lVal = cDefaultIndexValue[i];
 		m_ImageIndexManager[i].SetDefaultValue( vtTemp, true );
 
-		SVString ObjectName = SvUl_SF::LoadSVString( RingbufferIndexNames[i] );
+		std::string ObjectName = SvUl::LoadStdString( RingbufferIndexNames[i] );
 		ObjectName +=  SvO::cLinkName;
 		RegisterEmbeddedObject( &m_ImageIndexManager[i].getLinkedName(), RingBufferLink_IndexGuid[i], ObjectName.c_str(), false, SvOi::SVResetItemNone );
 		m_ImageIndexManager[i].getLinkedName().SetDefaultValue( _T(""), false );

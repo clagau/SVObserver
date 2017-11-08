@@ -20,7 +20,7 @@ SVTaskObjectInterfaceInputRequestStruct::SVTaskObjectInterfaceInputRequestStruct
 	m_Guid = SV_GUID_NULL;
 }
 
-SVTaskObjectInterfaceInputRequestStruct::SVTaskObjectInterfaceInputRequestStruct( const SVObjectReference& rObjectRef, const SVGUID& rGuid, const SVString& rName )
+SVTaskObjectInterfaceInputRequestStruct::SVTaskObjectInterfaceInputRequestStruct( const SVObjectReference& rObjectRef, const SVGUID& rGuid, const std::string& rName )
 {
 	m_ObjectRef = rObjectRef;
 	m_Guid = rGuid;
@@ -60,7 +60,7 @@ SVTaskObjectInterfaceInputRequestStruct::SVTaskObjectInterfaceInputRequestStruct
 	m_Name = m_ObjectRef.GetCompleteName();
 }
 
-SVTaskObjectInterfaceInputRequestStruct::SVTaskObjectInterfaceInputRequestStruct( const SVString& rName )
+SVTaskObjectInterfaceInputRequestStruct::SVTaskObjectInterfaceInputRequestStruct( const std::string& rName )
 {
 	m_Name = rName;
 	m_ObjectRef = SVObjectManagerClass::Instance().GetObjectReference( m_Name.c_str() );

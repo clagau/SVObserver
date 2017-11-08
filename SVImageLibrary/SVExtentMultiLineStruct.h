@@ -14,7 +14,7 @@
 #pragma region Includes
 #include "SVContainerLibrary/SVVector.h"
 #include "SVUtilityLibrary/SVGUID.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #include "SVExtentLineStruct.h"
 #include "SVExtentFigureStruct.h"
 #pragma endregion Includes
@@ -47,7 +47,7 @@ struct SVExtentMultiLineStruct
 	COLORREF m_Color;
 
 	SVExtentPointStruct m_StringPoint;
-	SVString m_csString;
+	std::string m_csString;
 
 	SVExtentLineStructVector m_svLineArray;
 };

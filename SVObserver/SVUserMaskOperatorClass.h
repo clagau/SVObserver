@@ -18,7 +18,7 @@
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVLibrary/SVTaskObjectInterfaceInputRequestStruct.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 class SVShapeMaskHelperClass;
@@ -54,7 +54,7 @@ public:
 
 	virtual void Persist(SVObjectWriter& rWriter) override;
 
-	virtual HRESULT GetObjectValue( const SVString& rValueName, _variant_t& rValue ) const override;
+	virtual HRESULT GetObjectValue( const std::string& rValueName, _variant_t& rValue ) const override;
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject ) override;
 
 	SVShapeMaskHelperClass* GetShapeHelper();
@@ -62,8 +62,8 @@ public:
 #pragma region IMask
 	virtual SvOi::MatroxImageSmartHandlePtr GetReferenceImage() const override;
 	virtual SvOi::MatroxImageSmartHandlePtr GetMaskImage() const override;
-	virtual HRESULT Import(const SVString& filename) override;
-	virtual HRESULT Export(const SVString& filename) override;
+	virtual HRESULT Import(const std::string& filename) override;
+	virtual HRESULT Export(const std::string& filename) override;
 	virtual HGLOBAL GetMaskData() const override;
 	virtual bool SetMaskData(HGLOBAL hGlobal) override;
 #pragma endregion IMask

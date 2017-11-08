@@ -62,7 +62,7 @@ void SVRPropertyItemStatic::DrawAttribute(CDC* pDC, const RECT& rRect)
 }
 
 
-bool SVRPropertyItemStatic::GetItemValue(SVString& rValue)
+bool SVRPropertyItemStatic::GetItemValue(std::string& rValue)
 {
 	rValue = m_Attribute;
 	return true;

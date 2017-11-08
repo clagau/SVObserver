@@ -96,8 +96,7 @@
     <ClCompile Include="SVMetrics.cpp" />
     <ClCompile Include="SVPoint.cpp" />
     <ClCompile Include="SVSafeArray.cpp" />
-    <ClCompile Include="SVString.cpp" />
-    <ClCompile Include="SVStringConversions.cpp" />
+    <ClCompile Include="StringHelper.cpp" />
     <ClCompile Include="SVUtilityGlobals.cpp" />
     <ClCompile Include="Unzip.cpp" />
     <ClCompile Include="Zip.cpp" />
@@ -127,8 +126,7 @@
     <ClInclude Include="SVPoint.h" />
     <ClInclude Include="SVSafeArray.h" />
     <ClInclude Include="SVSharedPtr.h" />
-    <ClInclude Include="SVString.h" />
-    <ClInclude Include="SVStringConversions.h" />
+    <ClInclude Include="StringHelper.h" />
     <ClInclude Include="SVUniqueIDGenerator.h" />
     <ClInclude Include="SVUniqueObjectID.h" />
     <ClInclude Include="SVUtilityGlobals.h" />
@@ -143,7 +141,6 @@
     <None Include="SVHandleManager.inl" />
     <None Include="SVHistogramBase.inl" />
     <None Include="SVSafeArray.inl" />
-    <None Include="SVStringConversions.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

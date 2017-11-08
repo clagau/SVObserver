@@ -15,7 +15,7 @@
 #include "SVCameraTriggerData.h"
 #include "TriggerHandling/TriggerBasics.h"
 #include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 namespace SvTi
@@ -70,7 +70,7 @@ namespace SvTi
 
 
 			#ifdef SV_LOG_STATUS_INFO
-				SVString l_String;
+				std::string l_String;
 				l_String.Format( _T( "FinishProcess %s - HR = 0x%X" ), pDevice->GetDeviceName(), hr );
 				pDevice->m_StatusLog.push_back( l_String );
 			#endif

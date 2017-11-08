@@ -7,14 +7,14 @@
 ///Class to retrieve version string avoid unnecessary calls of BuildVersionString
 //******************************************************************************
 #pragma once
-#include "SVUtilityLibrary/SVString.h"
+
 
 //!Class to retrieve version string avoid unnecessary calls of BuildVersionString
 class RRSVersionString
 {
 public: 
   ///Retrieve the version string 
-	static  SVString Get();
+	static  std::string Get();
 
 private: 
 	//do not implement
@@ -22,7 +22,7 @@ private:
 	//do not implement
 	RRSVersionString(RRSVersionString& ref);
 	//Calculate Version string  from module name 
-	static SVString BuildVersionString();
+	static std::string BuildVersionString();
 };
 
 

@@ -30,6 +30,8 @@
 #include "TextDefinesSvO.h"
 #include "SVOResource\ConstGlobalSvOr.h"
 #include "SVInspectionProcess.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -99,8 +101,8 @@ END_MESSAGE_MAP()
 
 void CSVOInspectionSourceDlg::OnBtnAddIpd() 
 {
-	SVString NewInspection = m_pParent->GetNextInspectionName();
-	SVString NewDisplayName = GetNextInspectionDisplayName(NewInspection);
+	std::string NewInspection = m_pParent->GetNextInspectionName();
+	std::string NewDisplayName = GetNextInspectionDisplayName(NewInspection);
 
 	m_pParent->AddToInspectList( NewDisplayName.c_str(), NewInspection.c_str(), true);
 	
@@ -118,7 +120,7 @@ void CSVOInspectionSourceDlg::OnBtnDeleteVi()
 
 	if (iCursel != LB_ERR)
 	{
-		SVString Label;
+		std::string Label;
 		CString InspectionName;
 		m_ctlIPDlist.GetText(iCursel, InspectionName);
 		SVDataItemManager::const_iterator l_Iter = m_Items.GetItemData(iCursel);
@@ -154,7 +156,7 @@ void CSVOInspectionSourceDlg::EnableDisableExport()
 		int iCurInsp = m_ctlIPDlist.GetCurSel();
 		if ( iCurInsp != LB_ERR )
 		{
-			SVString Name;
+			std::string Name;
 			SVDataItemManager::const_iterator l_Iter = m_Items.GetItemData(iCurInsp);
 			if (l_Iter != m_Items.end() )
 			{
@@ -184,7 +186,7 @@ void CSVOInspectionSourceDlg::OnBtnPropVi()
 
 	if ( iCurSel != LB_ERR )
 	{
-		SVString Label;
+		std::string Label;
 
 		SVDataItemManager::const_iterator l_Iter = m_Items.GetItemData(iCurSel);
 
@@ -262,14 +264,14 @@ void CSVOInspectionSourceDlg::OnBtnImportIpd()
 
 	if (dlg.DoModal() == IDOK)
 	{
-		SVString PathName = dlg.GetPathName();
+		std::string PathName = dlg.GetPathName();
    
 		// Create new IP
 		OnBtnAddIpd();
 		int iCursel = m_ctlIPDlist.GetCurSel();
 		if (iCursel != LB_ERR)
 		{
-			SVString Label;
+			std::string Label;
 			SVDataItemManager::const_iterator l_Iter = m_Items.GetItemData(iCursel);
 
 			if( l_Iter != m_Items.end() )
@@ -298,12 +300,12 @@ void CSVOInspectionSourceDlg::OnBtnImportIpd()
 				}
 				else
 				{
-					SVString File;
-					SVString App;
+					std::string File;
+					std::string App;
 
 					::SVGetVersionString( App, TheSVObserverApp.getCurrentVersion() );
 					::SVGetVersionString( File, l_VersionNumber );
-					SVStringVector msgList;
+					SvDef::StringVector msgList;
 					msgList.push_back(File);
 					msgList.push_back(App);
 					SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
@@ -322,7 +324,7 @@ void CSVOInspectionSourceDlg::OnBtnExportIpd()
 	int iCursel = m_ctlIPDlist.GetCurSel();
 	if (iCursel != LB_ERR)
 	{
-		SVString Label;
+		std::string Label;
 		SVDataItemManager::const_iterator l_Iter = m_Items.GetItemData(iCursel);
 
 		if( l_Iter != m_Items.end() )
@@ -349,7 +351,7 @@ void CSVOInspectionSourceDlg::OnBtnExportIpd()
 				SvMc::SVFileDialog dlg(false, bFullAccess, fileExt, Label.c_str(), dwFlags, fileFilters, this);
 				if (dlg.DoModal() == IDOK)
 				{
-					SVString pathName = dlg.GetPathName();
+					std::string pathName = dlg.GetPathName();
 			   
 					// Create XML file
 					hr = SVInspectionExporter::Export( pathName, Label, TheSVObserverApp.getCurrentVersion(), IsColor );
@@ -424,7 +426,7 @@ void CSVOInspectionSourceDlg::OnSelchangeLstIpdList()
 		pEditor->WaitForDoneEditing();
 		SVDataItemManager::const_iterator l_Iter = m_Items.GetItemData(iCurSel);
 
-		SVString Label;
+		std::string Label;
 		if( l_Iter != m_Items.end() )
 		{
 			Label = l_Iter->second;
@@ -468,15 +470,15 @@ void CSVOInspectionSourceDlg::OnDestroy()
 	CPropertyPage::OnDestroy();
 }
 
-SVString CSVOInspectionSourceDlg::GetNextInspectionDisplayName( const SVString& rLabeName )
+std::string CSVOInspectionSourceDlg::GetNextInspectionDisplayName( const std::string& rLabeName )
 {
 	BOOL bFound = false;
-	SVString Result;
-	int iNum = atoi( SvUl_SF::Mid( rLabeName, 11).c_str() );
+	std::string Result;
+	int iNum = atoi( SvUl::Mid( rLabeName, 11).c_str() );
 
 	while ( !bFound )
 	{
-		Result = SvUl_SF::Format( _T("%s%d"), _T("Inspection_"), iNum );
+		Result = SvUl::Format( _T("%s%d"), _T("Inspection_"), iNum );
 		if( LB_ERR != m_ctlIPDlist.FindStringExact( -1, Result.c_str() ) )
 		{
 			iNum++;

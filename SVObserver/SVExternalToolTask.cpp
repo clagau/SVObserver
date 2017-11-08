@@ -123,7 +123,7 @@ SVExternalToolTask::SVExternalToolTask( SVObjectClass* POwner, int StringResourc
 	m_Data.m_aInputImageInfo.resize(SVExternalToolTaskData::NUM_INPUT_IMAGES);
 	for ( i=0; i < m_Data.m_aInputImageInfo.size(); i++)
 	{
-		SVString l_Name = SvUl_SF::Format( _T( "ExternalToolTaskImage%d" ), i );
+		std::string l_Name = SvUl::Format( _T( "ExternalToolTaskImage%d" ), i );
 
 		// this object will be filled in SVTaskObject::ConnectAllInputs
 		// we supply the base object type (Image) and ConnectAllInputs finds the nearest match (Toolset main image)
@@ -156,7 +156,7 @@ SVExternalToolTask::SVExternalToolTask( SVObjectClass* POwner, int StringResourc
 	{
 		// register objects
 		RegisterEmbeddedObject( &m_Data.m_aInputObjects[i], aInputObjectGUID[i], IDS_OBJECTNAME_INPUT_01 + static_cast<int>(i), false, SvOi::SVResetItemTool);
-		SVString ObjectName = SvUl_SF::LoadSVString(IDS_OBJECTNAME_INPUT_01 + static_cast<int>(i));
+		std::string ObjectName = SvUl::LoadStdString(IDS_OBJECTNAME_INPUT_01 + static_cast<int>(i));
 		ObjectName += SvO::cLinkName;
 		RegisterEmbeddedObject(&m_Data.m_aInputObjects[i].getLinkedName(), aInputObject_LinkedGUID[i], ObjectName.c_str(), false, SvOi::SVResetItemNone);
 
@@ -167,7 +167,7 @@ SVExternalToolTask::SVExternalToolTask( SVObjectClass* POwner, int StringResourc
 		::VariantInit(&vtTemp);
 		vtTemp.vt = VT_EMPTY;
 		m_Data.m_aInputObjects[i].SetDefaultValue(vtTemp, true);
-		m_Data.m_aInputObjectNames[i].SetDefaultValue(SVString(), true);
+		m_Data.m_aInputObjectNames[i].SetDefaultValue(std::string(), true);
 		m_Data.m_aInputObjectNames[i].setSaveValueFlag(false);
 	}
 
@@ -256,7 +256,7 @@ void SVExternalToolTask::SetAllAttributes()
 	{
 		m_Data.m_aDllDependencies[i].SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
 		m_Data.m_aDllDependencies[i].SetObjectAttributesAllowed( SvDef::SV_VIEWABLE, SvOi::SetAttributeType::RemoveAttribute );
-		SVString Temp;
+		std::string Temp;
 		m_Data.m_aDllDependencies[i].GetValue( Temp );
 		SvOi::SetAttributeType AddRemoveType = !Temp.empty() ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
 		m_Data.m_aDllDependencies[i].SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, AddRemoveType );
@@ -323,7 +323,7 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 	m_Data.m_aResultImageDefinitions.clear();
 
 	// try to connect to DLL
-	SVString DllPath;
+	std::string DllPath;
 	m_Data.m_voDllPath.GetValue(DllPath);
 
 	try
@@ -351,7 +351,7 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 				throw hr;
 			}
 
-			SVString Name = SvUl_SF::createSVString( bstrName );
+			std::string Name = SvUl::createStdString( bstrName );
 			m_Data.m_voToolName.SetValue(Name);
 
 			SysFreeString( bstrName );
@@ -491,7 +491,7 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 
 				// get Input object name
 				SVStringValueObjectClass& rvo = m_Data.m_aInputObjectNames[i];
-				rvo.SetDefaultValue(SvUl_SF::createSVString(paInputValueDefs[i].m_bDisplayName), true);	// set to all buckets
+				rvo.SetDefaultValue(SvUl::createStdString(paInputValueDefs[i].m_bDisplayName), true);	// set to all buckets
 			
 			}// end for ( int i = 0 ; i < m_Data.m_lNumInputValues ; i++)
 
@@ -1099,8 +1099,8 @@ bool SVExternalToolTask::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 			l_bOk = false;
 			if (nullptr != pErrorMessages)
 			{
-				SVStringVector msgList;
-				msgList.push_back(SvUl_SF::Format(_T("%X"), hr));
+				SvDef::StringVector msgList;
+				msgList.push_back(SvUl::Format(_T("%X"), hr));
 				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ExternalTask_UnknownException, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 				pErrorMessages->push_back(Msg);
 			}
@@ -1111,7 +1111,7 @@ bool SVExternalToolTask::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 			l_bOk = false;
 			if (nullptr != pErrorMessages)
 			{
-				SVStringVector msgList;
+				SvDef::StringVector msgList;
 				msgList.push_back(_T(""));
 				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ExternalTask_UnknownException, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 				pErrorMessages->push_back(Msg);
@@ -1133,14 +1133,14 @@ bool SVExternalToolTask::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 	return l_bOk;
 }
 
-HRESULT SVExternalToolTask::SetPathName( const SVString& rPath )
+HRESULT SVExternalToolTask::SetPathName( const std::string& rPath )
 {
 	HRESULT hr=S_OK;
 	m_Data.m_voDllPath.SetValue(rPath);
 	return hr;
 }
 
-HRESULT SVExternalToolTask::SetDependencies( const SVStringVector& rDependencies )
+HRESULT SVExternalToolTask::SetDependencies( const SvDef::StringVector& rDependencies )
 {
 	HRESULT hr = S_FALSE;
 	int iSize = static_cast<int> (rDependencies.size());
@@ -1154,7 +1154,7 @@ HRESULT SVExternalToolTask::SetDependencies( const SVStringVector& rDependencies
 		}
 		for( i = iSize ; i < SVExternalToolTaskData::NUM_TOOL_DEPENDENCIES ; i++)
 		{
-			m_Data.m_aDllDependencies[i].SetValue(SVString());
+			m_Data.m_aDllDependencies[i].SetValue(std::string());
 		}
 
 		hr = S_OK;
@@ -1817,7 +1817,7 @@ HRESULT SVExternalToolTask::CollectInputImageNames( )
 				SVImageClass* l_pImage = GetInputImage(i);
 				if( l_pImage )
 				{
-					SVString Name = l_pImage->GetCompleteName();
+					std::string Name = l_pImage->GetCompleteName();
 
 					pImageNames->SetValue( Name, i );
 				}

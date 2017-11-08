@@ -16,7 +16,7 @@
 
 #pragma region Includes
 #include "ObjectTreeCtrl.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 namespace SvOsl
@@ -82,7 +82,7 @@ namespace SvOsl
 
 	private:
 	#pragma region Member Variables
-		SVString m_NodeLocation;						//The current node location
+		std::string m_NodeLocation;						//The current node location
 	#pragma endregion Member Variables
 	};
 } //namespace SvOsl

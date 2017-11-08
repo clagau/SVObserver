@@ -11,15 +11,14 @@
 
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <vector>
 #include "SVSystemLibrary/SVCriticalSection.h"
 #include "SVTimerLibrary/SVClock.h"
-#include "SVUtilityLibrary/SVString.h"
 #include "SVDataManagerGlobals.h"
 #include "SVDataManagerEnums.h"
-/*
-This class is used to manage the reference counts associated with a particular index.
-*/
+#pragma endregion Includes
+
 class SVManagedIndex
 {
 public:
@@ -28,7 +27,7 @@ public:
 	//	A TransactionId of 0 should mean unassigned.
 	long  svmlTransactionId;
 
-	SVString GetReferenceCounts() const;
+	std::string GetReferenceCounts() const;
 
 	long GetReferenceCount() const;
 	long GetReferenceCount( SVDataManagerLockTypeEnum p_eType ) const;
@@ -87,7 +86,7 @@ public:
 	HRESULT ValidateIndex( size_t p_Index, long p_TransactionId ) const;
 	HRESULT ReleaseAllIndexes();
 
-	SVString GetReferenceCounts() const;
+	std::string GetReferenceCounts() const;
 
 	long GetReferenceCount( size_t p_Index ) const;
 	long GetReferenceCount( size_t p_Index, SVDataManagerLockTypeEnum p_eType ) const;
@@ -102,12 +101,12 @@ public:
 
 	bool LogEventMessage();
 
-	const SVString& GetName() const;
-	void SetName( const SVString& p_rName );
+	const std::string& GetName() const;
+	void SetName( const std::string& p_rName );
 
 	long GetMessageCounter() const;
 
-	void Dump( const SVString& p_rSourceName ) const;
+	void Dump( const std::string& p_rSourceName ) const;
 
 protected:
 	typedef std::vector< SVManagedIndex* > SVManagedIndexPtrVector;
@@ -120,7 +119,7 @@ protected:
 	HRESULT ValidateIndexNoLock( size_t p_Index, long p_TransactionId ) const;
 
 	// This is the name of the managed array
-	SVString m_Name;
+	std::string m_Name;
 
 	// svmlTransactionCounter - this will assigned to each index when the index 
 	// is first retrieved.  This value will be increamented for each retrieved 

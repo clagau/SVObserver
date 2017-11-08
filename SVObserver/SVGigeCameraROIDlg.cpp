@@ -19,6 +19,7 @@
 #include "SVOGui/DisplayHelper.h"
 #include "SVImageLibrary/MatroxImageData.h"
 #include "SVOGui/SVColor.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -344,7 +345,7 @@ void SVGigeCameraROIDlg::OnDeltaPosSpinBinningVert(NMHDR* pNMHDR, LRESULT* pResu
 			m_verticalBinning.value = newValue;
 
 			// Update the control
-			SVString Text = SvUl_SF::Format("%d", m_verticalBinning.value);
+			std::string Text = SvUl::Format("%d", m_verticalBinning.value);
 			pEdit->SetWindowText( Text.c_str() );
 
 			double scaleFactor = static_cast<double>(prevValue) / static_cast<double>(m_verticalBinning.value);
@@ -383,7 +384,7 @@ void SVGigeCameraROIDlg::OnDeltaPosSpinBinningHoriz(NMHDR* pNMHDR, LRESULT* pRes
 			m_horizontalBinning.value = newValue;
 
 			// Update the control
-			SVString Text = SvUl_SF::Format( _T("%d"), m_horizontalBinning.value);
+			std::string Text = SvUl::Format( _T("%d"), m_horizontalBinning.value);
 			pEdit->SetWindowText( Text.c_str() );
 
 			double scaleFactor = static_cast<double>(prevValue) / static_cast<double>(m_horizontalBinning.value);
@@ -518,7 +519,7 @@ void SVGigeCameraROIDlg::SetGraphicROI()
 
 void SVGigeCameraROIDlg::SetupVerticalBinning()
 {
-	SVString Value = SvUl_SF::Format( _T("%d"), m_verticalBinning.value );
+	std::string Value = SvUl::Format( _T("%d"), m_verticalBinning.value );
 	m_VerticalBinningEdit.SetWindowText( Value.c_str() );
 
 	m_SpinVerticalBinning.SetRange(static_cast<short>(m_verticalBinning.minValue), static_cast<short>(m_verticalBinning.maxValue));
@@ -533,7 +534,7 @@ void SVGigeCameraROIDlg::SetupVerticalBinning()
 
 void SVGigeCameraROIDlg::SetupHorizontalBinning()
 {
-	SVString Value = SvUl_SF::Format( _T("%d"), m_horizontalBinning.value );
+	std::string Value = SvUl::Format( _T("%d"), m_horizontalBinning.value );
 	m_HorizontalBinningEdit.SetWindowText( Value.c_str() );
 
 	m_SpinHorizontalBinning.SetRange(static_cast<short>(m_horizontalBinning.minValue), static_cast<short>(m_horizontalBinning.maxValue));

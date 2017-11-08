@@ -14,7 +14,7 @@
 #pragma region Includes
 #include "SVMatroxTypedefs.h"
 #include "SVMatroxBuffer.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 /**
@@ -36,7 +36,7 @@ struct SVMatroxOcrCalibrateStruct
 	// Operator=
 
 	SVMatroxBuffer m_ImageBuff;
-	SVString m_strCalString;
+	std::string m_strCalString;
 	double m_TargetCharSizeXMin;
 	double m_TargetCharSizeXMax;
 	double m_TargetCharSizeXStep;

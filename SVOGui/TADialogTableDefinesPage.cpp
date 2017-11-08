@@ -21,6 +21,8 @@
 #include "SVMessage\SVMessage.h"
 #include "GuiCommands\GetErrorMessageList.h"
 #include "GuiCommands\MoveFriendObject.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -119,8 +121,8 @@ namespace SvOg {
 					HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 					if (S_OK != hr)
 					{
-						SVStringVector msgList;
-						msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
+						SvDef::StringVector msgList;
+						msgList.push_back(SvUl::Format(_T("%d"), hr));
 						SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TableColumn_RemovingFailed, msgList, SvStl::SourceFileParams(StdMessageParams) );
 					}
@@ -180,13 +182,13 @@ namespace SvOg {
 			addPreGuid = m_gridList[Selection.GetMinRow()-1].second;
 		}
 		int number = static_cast<int>(m_gridList.size()+1);
-		SVString name = SvUl_SF::Format(_T("%s %d"), cEquationName, number);
+		std::string name = SvUl::Format(_T("%s %d"), cEquationName, number);
 
 		//search for unique name until one is found
 		while ( !isTableNameUnique(name) )
 		{
 			number++;
-			name = SvUl_SF::Format(_T("%s %d"), cEquationName, number);
+			name = SvUl::Format(_T("%s %d"), cEquationName, number);
 		}
 		// Construct and Create the Filter Class Object
 		typedef SvCmd::ConstructAndInsertFriend Command;
@@ -196,8 +198,8 @@ namespace SvOg {
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK != hr)
 		{
-			SVStringVector msgList;
-			msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
+			SvDef::StringVector msgList;
+			msgList.push_back(SvUl::Format(_T("%d"), hr));
 			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TableColumn_AddingFailed, msgList, SvStl::SourceFileParams(StdMessageParams) );
 		}
@@ -212,7 +214,7 @@ namespace SvOg {
 		if (cFormulaColumn == pItem->iColumn && 0 < pItem->iRow && m_gridList.size() >= pItem->iRow)
 		{
 			ValidateData(); //validate the new line (this does a reset and add the column to the tableObject)
-			SVString strCaption = SvUl_SF::Format(_T("%s %s"), m_gridList[pItem->iRow-1].first.c_str(), _T("Formula"));
+			std::string strCaption = SvUl::Format(_T("%s %s"), m_gridList[pItem->iRow-1].first.c_str(), _T("Formula"));
 
 			SvOg::SVFormulaEditorSheetClass dlg(m_InspectionID, m_TaskObjectID, m_gridList[pItem->iRow-1].second.ToGUID(), strCaption.c_str());
 			dlg.DoModal();
@@ -239,7 +241,7 @@ namespace SvOg {
 
 		if (cNameColumn == pItem->iColumn && 0 < pItem->iRow && m_gridList.size() >= pItem->iRow)
 		{
-			SVString newName = m_Grid.GetCell(pItem->iRow, pItem->iColumn)->GetText();
+			std::string newName = m_Grid.GetCell(pItem->iRow, pItem->iColumn)->GetText();
 			if (!newName.empty())
 			{
 				if ( isTableNameUnique(newName) )
@@ -252,8 +254,8 @@ namespace SvOg {
 					if (S_OK != hr)
 					{
 						bAcceptChange = false;
-						SVStringVector msgList;
-						msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
+						SvDef::StringVector msgList;
+						msgList.push_back(SvUl::Format(_T("%d"), hr));
 						SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TableColumn_RenamingFailed, msgList, SvStl::SourceFileParams(StdMessageParams) );
 					}
@@ -265,7 +267,7 @@ namespace SvOg {
 				else
 				{
 					bAcceptChange = false;
-					SVStringVector msgList;
+					SvDef::StringVector msgList;
 					msgList.push_back(newName);
 					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TableColumnName_NotUnique, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -375,7 +377,7 @@ namespace SvOg {
 		UpdateEnableButtons();
 	}
 
-	bool TADialogTableDefinesPage::isTableNameUnique(const SVString& name)
+	bool TADialogTableDefinesPage::isTableNameUnique(const std::string& name)
 	{
 		bool bResult = true;
 		for(int i=0; i<m_gridList.size(); i++)
@@ -412,8 +414,8 @@ namespace SvOg {
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK != hr)
 		{
-			SVStringVector msgList;
-			msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
+			SvDef::StringVector msgList;
+			msgList.push_back(SvUl::Format(_T("%d"), hr));
 			SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
 			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TableColumn_MovingFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 		}

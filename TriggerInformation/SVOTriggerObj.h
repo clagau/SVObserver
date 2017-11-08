@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary\SVString.h"
+
 #include "SVTriggerConstants.h"
 #include "SVUtilityLibrary\SVSharedPtr.h"
 #pragma endregion Includes
@@ -23,7 +23,7 @@ namespace SvTi
 	class SVOTriggerObj  
 	{
 	public:
-		SVOTriggerObj(const SVString& sTriggerName, int iDig);
+		SVOTriggerObj(const std::string& sTriggerName, int iDig);
 		virtual ~SVOTriggerObj();
 
 		LPCTSTR GetTriggerDisplayName() const;
@@ -38,7 +38,7 @@ namespace SvTi
 		bool IsAcquisitionTrigger() const;
 
 	private:  //data members
-		SVString m_sTriggerDisplayName;
+		std::string m_sTriggerDisplayName;
 		int m_iDigNumber;
 
 		bool m_bSoftwareTrigger;

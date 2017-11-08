@@ -29,12 +29,12 @@ namespace SvOsl
 		return m_ContextPoint;
 	}
 
-	inline void ObjectTreeCtrl::setCurrentSelection( const SVString& rCurrentSelection )
+	inline void ObjectTreeCtrl::setCurrentSelection( const std::string& rCurrentSelection )
 	{
 		m_CurrentSelection = rCurrentSelection;
 	}
 
-	inline SVStringSet& ObjectTreeCtrl::getUpdateItems() const
+	inline SvDef::StringSet& ObjectTreeCtrl::getUpdateItems() const
 	{
 		return m_UpdateItems;
 	}

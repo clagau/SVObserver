@@ -24,7 +24,8 @@
 #include "GlobalSelector.h"
 #include "NoSelector.h"
 #include "ToolSetItemSelector.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -98,18 +99,18 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 		m_ButtonImageIndex1.SetBitmap( static_cast<HBITMAP> (m_downArrowBitmap) );
 		m_ButtonImageIndex2.SetBitmap( static_cast<HBITMAP> (m_downArrowBitmap) );
 
-		SVString indexString1( m_Values.Get<CString>(RingBufferLinkIndexTag[0]) );
+		std::string indexString1( m_Values.Get<CString>(RingBufferLinkIndexTag[0]) );
 		if( indexString1.empty() )
 		{
 			indexString1 = m_Values.Get<CString>(RingBufferIndexTag[0]);
 		}
-		SVString indexString2( m_Values.Get<CString>(RingBufferLinkIndexTag[1]) );
+		std::string indexString2( m_Values.Get<CString>(RingBufferLinkIndexTag[1]) );
 		if( indexString2.empty() )
 		{
 			indexString2 = m_Values.Get<CString>(RingBufferIndexTag[1]);
 		}
 		//set edit controls
-		SVString depthString = SvUl_SF::Format( _T("%d"), m_Values.Get<long>(RingDepthTag) );
+		std::string depthString = SvUl::Format( _T("%d"), m_Values.Get<long>(RingDepthTag) );
 		m_EditRingDepth.SetWindowText( depthString.c_str() );
 		m_EditImageIndex[0].SetWindowText( indexString1.c_str() );
 		m_EditImageIndex[1].SetWindowText( indexString2.c_str() );
@@ -136,8 +137,8 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 
 		CString Temp;
 		m_EditImageIndex[ButtonIndex].GetWindowText( Temp );
-		SVString Value = Temp;
-		SVString Title = SvUl_SF::LoadSVString( IDS_OBJECTNAME_RINGBUFFER_INDEX1 + ButtonIndex	 );
+		std::string Value = Temp;
+		std::string Title = SvUl::LoadStdString( IDS_OBJECTNAME_RINGBUFFER_INDEX1 + ButtonIndex	 );
 		if (m_objectSelector.Show<ToolSetItemSelector<>>( Value, Title, this ))
 		{
 			m_EditImageIndex[ButtonIndex].SetWindowText( Value.c_str() );
@@ -184,9 +185,9 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 
 		CString Text;
 		m_EditRingDepth.GetWindowText(Text);
-		SVString Value = Text;
+		std::string Value = Text;
 		long depth = 0;
-		bool isNumber = SvUl_SF::Convert2Number( Value, depth, true );
+		bool isNumber = SvUl::Convert2Number( Value, depth, true );
 		if( isNumber && SvDef::cRingBufferDepthMin <= depth && SvDef::cRingBufferDepthMax >= depth )
 		{
 			m_Values.Set<long>(RingDepthTag, depth);
@@ -194,9 +195,9 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 		else
 		{
 			SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
-			SVStringVector msgList;
-			msgList.push_back( SvUl_SF::Format(_T("%d"), SvDef::cRingBufferDepthMin) );
-			msgList.push_back( SvUl_SF::Format(_T("%d"), SvDef::cRingBufferDepthMax) );
+			SvDef::StringVector msgList;
+			msgList.push_back( SvUl::Format(_T("%d"), SvDef::cRingBufferDepthMin) );
+			msgList.push_back( SvUl::Format(_T("%d"), SvDef::cRingBufferDepthMax) );
 			msgList.push_back( Value );
 			Exception.setMessage( SVMSG_SVO_62_RINGBUFFER_INVALID_VALUE, SvStl::Tid_RingBuffer_Depth_Invalid_ValueString, msgList, SvStl::SourceFileParams(StdMessageParams), Result );
 			Result = E_FAIL;

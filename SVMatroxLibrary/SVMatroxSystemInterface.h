@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary/SVString.h"
+
 #include "SVMatroxStatusInformation.h"
 #include "SVMatroxSystem.h"
 #include "SVMatroxSystemEnums.h"
@@ -22,12 +22,12 @@ class SVMatroxSystemInterface
 {
 public:
 
-	static HRESULT Allocate(const SVString& SystemDescriptor, SVMatroxInt SystemNum, SVMatroxSystem& system);
+	static HRESULT Allocate(const std::string& SystemDescriptor, SVMatroxInt SystemNum, SVMatroxSystem& system);
 	static HRESULT Release(SVMatroxSystem& SystemId);
 
 	static HRESULT Get(const SVMatroxSystem& SystemId, SVMatroxSystemInquire::SVMatroxSystemInquireEnum InquireType, long& value);
 	static HRESULT Get(const SVMatroxSystem& SystemId, SVMatroxSystemInquire::SVMatroxSystemInquireEnum InquireType, double& value);
-	static HRESULT Get(const SVMatroxSystem& SystemId, SVMatroxSystemInquire::SVMatroxSystemInquireEnum InquireType, SVString& value);
+	static HRESULT Get(const SVMatroxSystem& SystemId, SVMatroxSystemInquire::SVMatroxSystemInquireEnum InquireType, std::string& value);
 
 	static HRESULT Set(const SVMatroxSystem& SystemId, SVMatroxSystemControl::SVMatroxSystemControlEnum ControlType, long ControlValue);
 

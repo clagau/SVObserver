@@ -21,7 +21,8 @@
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
-#include "SVUtilityLibrary/SVStringConversions.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -85,8 +86,8 @@ SVToolAdjustmentDialogMaskPageClass::SVToolAdjustmentDialogMaskPageClass(const S
 	m_pThis = this;
 
    // Set SVFileNameClass for Import & Export functions.
-   SVString DefaultExtension(SvUl_SF::LoadSVString(IDS_FULL_MASKFILE_EXTENSION));
-   SVString Filter(SvUl_SF::LoadSVString(IDS_MASKFILE_DIALOG_FILTER));
+   std::string DefaultExtension(SvUl::LoadStdString(IDS_FULL_MASKFILE_EXTENSION));
+   std::string Filter(SvUl::LoadStdString(IDS_MASKFILE_DIALOG_FILTER));
 
    m_svfnFileName.SetDefaultFileExtension(DefaultExtension.c_str());
    m_svfnFileName.SetFileSaveFlags(OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT);
@@ -410,7 +411,7 @@ void SVToolAdjustmentDialogMaskPageClass::OnExportMaskButton()
 	// Use SVFileNameClass for browsing
 	if (m_svfnFileName.SaveFile())
 	{
-		SVString Extension = SvUl_SF::LoadSVString(IDS_FULL_MASKFILE_EXTENSION);
+		std::string Extension = SvUl::LoadStdString(IDS_FULL_MASKFILE_EXTENSION);
 
 		if (m_svfnFileName.GetExtension() != Extension)
 		{
@@ -421,7 +422,7 @@ void SVToolAdjustmentDialogMaskPageClass::OnExportMaskButton()
 		if (!SUCCEEDED(hr))
 		{
 			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-			SVStringVector msgList;
+			SvDef::StringVector msgList;
 			msgList.push_back( m_svfnFileName.GetFullFileName() );
 			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_CannotOpenFile, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10216 );
 		}
@@ -441,8 +442,8 @@ void SVToolAdjustmentDialogMaskPageClass::OnImportMaskButton()
 		if (!SUCCEEDED(hr))
 		{
 			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-			SVStringVector msgList;
-			msgList.push_back( SVString(m_svfnFileName.GetFullFileName()) );
+			SvDef::StringVector msgList;
+			msgList.push_back( std::string(m_svfnFileName.GetFullFileName()) );
 			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_CannotOpenFile, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10217 );
 		}
 	}

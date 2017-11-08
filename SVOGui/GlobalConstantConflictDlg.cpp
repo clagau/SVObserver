@@ -11,6 +11,7 @@
 
 #include "TextDefinesSvOg.h"
 #include "GridCtrlLibrary\GridCellCheck.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -123,8 +124,8 @@ namespace SvOg
 		m_Grid.SetItemText( RowIndex, rColumnIndex, rGlobalData.m_DottedName.c_str() );
 		m_Grid.SetItemState( RowIndex, rColumnIndex, m_Grid.GetItemState( RowIndex, rColumnIndex ) | GVIS_READONLY );
 
-		SVString Text;
-		SVString Type;
+		std::string Text;
+		std::string Type;
 		convertValueToString( rGlobalData.m_Value, Text, Type );
 		rColumnIndex++;
 		m_Grid.SetItemText( RowIndex, rColumnIndex, Type.c_str() );
@@ -135,19 +136,19 @@ namespace SvOg
 		rColumnIndex++;
 	}
 
-	void GlobalConstantConflictDlg::convertValueToString( const _variant_t& rValue, SVString& rText,  SVString& rType )
+	void GlobalConstantConflictDlg::convertValueToString( const _variant_t& rValue, std::string& rText,  std::string& rType )
 	{
 		switch( rValue.vt )
 		{
 		case VT_R8:
 			{
-				rText = SvUl_SF::Format( _T("%.06f"), rValue.dblVal );
+				rText = SvUl::Format( _T("%.06f"), rValue.dblVal );
 				rType = GlobalConstantTypes[ SvDef::GlobalConstantData::DecimalType ];
 			}
 			break;
 		case VT_BSTR:
 			{
-				rText = SvUl_SF::createSVString(rValue);
+				rText = SvUl::createStdString(rValue);
 				rType = GlobalConstantTypes[ SvDef::GlobalConstantData::TextType ];
 			}
 			break;

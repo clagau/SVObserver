@@ -10,8 +10,9 @@
 //******************************************************************************
 #pragma once
 
+#pragma region Includes
 #include "SVLibrary/SVDataItemManagerTemplate.h"
-#include "SVUtilityLibrary\SVString.h"
+#pragma endregion Includes
 
 #define INTERNAL_INSPECTION_NAME "Inspection_"
 
@@ -76,7 +77,7 @@ protected:
 
 private:
 	void ClearList();
-    SVString GetNextInspectionDisplayName( const SVString& rLabeName );
+    std::string GetNextInspectionDisplayName( const std::string& rLabeName );
 
     void LoadInspectionFileNameList(); 
     void LoadVInspectionList();
@@ -89,7 +90,7 @@ private:
     int m_iCursel;
     int m_iEditingSel;
 
-	typedef SVDataItemManagerTemplate<SVString> SVDataItemManager;
+	typedef SVDataItemManagerTemplate<std::string> SVDataItemManager;
 
 	SVDataItemManager m_Items;
 };

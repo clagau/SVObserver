@@ -14,23 +14,23 @@
 //Moved to precompiled header: #include <boost/foreach.hpp>
 //Moved to precompiled header: #include <boost/assign/list_of.hpp>
 #include "SVObjectXMLWriter.h"
-#include "SVUtilityLibrary/SVStringConversions.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
 #include "SVXMLEncryptionClass.h"
 
 
 #define Stringtize(s) (#s)
 
-static SVString scNodeTag(_T("NODE"));
-static SVString scDataTag(_T("DATA"));
-static SVString scNameTag(_T("Name"));
-static SVString scTypeTag(_T("Type"));
+static std::string scNodeTag(_T("NODE"));
+static std::string scDataTag(_T("DATA"));
+static std::string scNameTag(_T("Name"));
+static std::string scTypeTag(_T("Type"));
 
-static SVString scSchemaTag(_T("Schema"));
-static SVString scElementTypeTag(_T("ElementType"));
-static SVString scAttributeTypeTag(_T("AttributeType"));
-static SVString scElementTag(_T("element"));
-static SVString scAttributeTag(_T("attribute"));
+static std::string scSchemaTag(_T("Schema"));
+static std::string scElementTypeTag(_T("ElementType"));
+static std::string scAttributeTypeTag(_T("AttributeType"));
+static std::string scElementTag(_T("element"));
+static std::string scAttributeTag(_T("attribute"));
 
 const TCHAR* const	cRevisionHistory = _T("RevisionHistory");
 const WCHAR* const	cRevision = L"Revision";
@@ -113,7 +113,7 @@ namespace  SvXml
 
 	static std::string VariantToString(_variant_t value)
 	{
-		SVString strValue;
+		std::string strValue;
 
 		switch (value.vt)
 		{
@@ -124,20 +124,20 @@ namespace  SvXml
 			break;
 
 		case VT_I2:
-			strValue = SvUl_SF::Format("%d", value.iVal);
+			strValue = SvUl::Format("%d", value.iVal);
 			break;
 
 		case VT_INT:
 		case VT_I4:
-			strValue = SvUl_SF::Format("%ld", value.lVal);
+			strValue = SvUl::Format("%ld", value.lVal);
 			break;
 
 		case VT_R4:
-			strValue = SvUl_SF::Format("%f", value.fltVal);
+			strValue = SvUl::Format("%f", value.fltVal);
 			break;
 
 		case VT_R8:
-			strValue = SvUl_SF::Format("%lf", value.dblVal);
+			strValue = SvUl::Format("%lf", value.dblVal);
 			break;
 
 		case VT_BSTR:
@@ -145,32 +145,32 @@ namespace  SvXml
 			break;
 
 		case VT_BOOL:
-			strValue = SvUl_SF::Format("%s", (value.boolVal == VARIANT_TRUE) ? "TRUE" : "FALSE");
+			strValue = SvUl::Format("%s", (value.boolVal == VARIANT_TRUE) ? "TRUE" : "FALSE");
 			break;
 
 		case VT_I1:
-			strValue = SvUl_SF::Format("%02X", value.cVal);
+			strValue = SvUl::Format("%02X", value.cVal);
 			break;
 
 		case VT_UI1:
-			strValue = SvUl_SF::Format("%02X", value.bVal);
+			strValue = SvUl::Format("%02X", value.bVal);
 			break;
 
 		case VT_UI2:
-			strValue = SvUl_SF::Format("%u", value.uiVal);
+			strValue = SvUl::Format("%u", value.uiVal);
 			break;
 
 		case VT_UINT:
 		case VT_UI4:
-			strValue = SvUl_SF::Format("%lu", value.ulVal);
+			strValue = SvUl::Format("%lu", value.ulVal);
 			break;
 
 		case VT_I8:
-			strValue = SvUl_SF::Format("%I64d", value.llVal);
+			strValue = SvUl::Format("%I64d", value.llVal);
 			break;
 
 		case VT_UI8:
-			strValue = SvUl_SF::Format("%I64u", value.ullVal);
+			strValue = SvUl::Format("%I64u", value.ullVal);
 			break;
 
 		default:
@@ -179,25 +179,25 @@ namespace  SvXml
 		return std::string(strValue.c_str());
 	}
 
-	static XMLElementPtr Element(const SVString& name, xml::writer& writer)
+	static XMLElementPtr Element(const std::string& name, xml::writer& writer)
 	{
 		XMLElementPtr pNode(new xml::element(name.c_str(), writer));
 		return pNode;
 	}
 
-	static void Attribute(const SVString& name, const SVString& value, XMLElementPtr pNode)
+	static void Attribute(const std::string& name, const std::string& value, XMLElementPtr pNode)
 	{
 		pNode->attr(name.c_str(), value.c_str());
 	}
 
-	static void Attribute(const wchar_t* name, const SVString& value, XMLElementPtr pNode)
+	static void Attribute(const wchar_t* name, const std::string& value, XMLElementPtr pNode)
 	{
-		pNode->attr(SvUl_SF::createSVString(name).c_str(), value.c_str());
+		pNode->attr(SvUl::createStdString(name).c_str(), value.c_str());
 	}
 
 	static void Attribute(const wchar_t* name, const _variant_t& value, XMLElementPtr pNode)
 	{
-		pNode->attr(SvUl_SF::createSVString(name).c_str(), SvUl_SF::createSVString(value).c_str());
+		pNode->attr(SvUl::createStdString(name).c_str(), SvUl::createStdString(value).c_str());
 	}
 
 	SVObjectXMLWriter::SVObjectXMLWriter(std::ostream& os)
@@ -279,7 +279,7 @@ namespace  SvXml
 			SVSAFEARRAY arrayValue = value;
 			for (int i=0; i < arrayValue.size(); ++i)
 			{
-				SVString attName = SvUl_SF::Format("DataIndex_%d", i+1);
+				std::string attName = SvUl::Format("DataIndex_%d", i+1);
 				_variant_t lVal;
 				arrayValue.GetElement( i, lVal );
 				WriteAttribute(attName.c_str(), lVal);
@@ -554,7 +554,7 @@ namespace  SvXml
 			m_pEncryption->GetIsEncrypted(&isEncrypted);
 		}
 		///<Encryption xmlns="x-schema:#SVR00001" IsActive="TRUE">
-		SVString EncryptionString( _T("Encryption"));
+		std::string EncryptionString( _T("Encryption"));
 		XMLElementPtr pEncryptionNode = Element(EncryptionString, *m_pWriter);
 		Attribute("xmlns", "x-schema:#SVR00001", pEncryptionNode);
 		Attribute("IsActive", (isEncrypted == TRUE)?  "TRUE": "FALSE", pEncryptionNode);
@@ -599,13 +599,13 @@ namespace  SvXml
 
 	void SVObjectXMLWriter::WriteRevisionHistory(const _variant_t formatVersionValue, const _variant_t revisionValue)
 	{
-		SVString revisionHistoryString(cRevisionHistory);
+		std::string revisionHistoryString(cRevisionHistory);
 		XMLElementPtr pRevisionHistoryNode = Element(revisionHistoryString, *m_pWriter);
 		Attribute("xmlns", "x-schema:#SVR00001", pRevisionHistoryNode);
 
-		SVString revisionString = SvUl_SF::createSVString(cRevision);
+		std::string revisionString = SvUl::createStdString(cRevision);
 		XMLElementPtr pRevisionNode = Element(revisionString, *m_pWriter);
-		Attribute(cFormat, SVString("SVObserver"), pRevisionNode);
+		Attribute(cFormat, std::string("SVObserver"), pRevisionNode);
 		Attribute(cFormatVersion, formatVersionValue, pRevisionNode);
 		Attribute(cRevision, revisionValue, pRevisionNode);
 		pRevisionNode.reset();

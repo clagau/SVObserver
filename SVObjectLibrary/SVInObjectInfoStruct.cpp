@@ -71,7 +71,7 @@ void SVInObjectInfoStruct::SetInputObjectType( const SVObjectTypeInfoStruct& p_r
 	m_InputObjectInfo.SetObject( p_rTypeInfo );
 }
 
-void SVInObjectInfoStruct::SetInputObject( const SVString& p_rName )
+void SVInObjectInfoStruct::SetInputObject( const std::string& p_rName )
 {
 	if( p_rName != m_InputObjectInfo.GetObjectReference().GetCompleteName() )
 	{
@@ -103,12 +103,12 @@ void SVInObjectInfoStruct::SetInputObject( const SVObjectReference& p_rObject )
 	m_IsConnected = ( nullptr != m_InputObjectInfo.m_pObject );
 }
 
-const SVString& SVInObjectInfoStruct::GetInputName() const
+const std::string& SVInObjectInfoStruct::GetInputName() const
 {
 	return m_InputName;
 }
 
-void SVInObjectInfoStruct::SetInputName( const SVString& p_rInputName )
+void SVInObjectInfoStruct::SetInputName( const std::string& p_rInputName )
 {
 	m_InputName = p_rInputName;
 }

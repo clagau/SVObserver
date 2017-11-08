@@ -16,6 +16,8 @@
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVObjectLibrary\SVClsids.h"
 #include "SVStatusLibrary/MessageManager.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -73,7 +75,7 @@ SVPOINT SVPointValueObjectClass::Variant2ValueType( const _variant_t& rValue ) c
 	{
 		try
 		{
-			SVString Value = SvUl_SF::createSVString( rValue );
+			std::string Value = SvUl::createStdString( rValue );
 			Result = ConvertString2Type( Value );
 		}
 		catch( const SvStl::MessageContainer& )
@@ -84,22 +86,22 @@ SVPOINT SVPointValueObjectClass::Variant2ValueType( const _variant_t& rValue ) c
 	return Result;
 }
 
-SVPOINT SVPointValueObjectClass::ConvertString2Type( const SVString& rValue ) const
+SVPOINT SVPointValueObjectClass::ConvertString2Type( const std::string& rValue ) const
 {
-	SVString LegalChars = SvUl_SF::ValidateString( rValue, _T("0123456789()-, ") );	// only integers
+	std::string LegalChars = SvUl::ValidateString( rValue, _T("0123456789()-, ") );	// only integers
 	if ( LegalChars == rValue )
 	{
-		SvUl_SF::RemoveCharacters( LegalChars, _T("()") );
+		SvUl::RemoveCharacters( LegalChars, _T("()") );
 		size_t Pos = LegalChars.find(_T(','));
-		if ( SVString::npos != Pos )
+		if ( std::string::npos != Pos )
 		{
-			SVString XValue = SvUl_SF::Left( LegalChars, Pos );
-			SVString YValue = SvUl_SF::Mid( LegalChars, Pos + 1 );
+			std::string XValue = SvUl::Left( LegalChars, Pos );
+			std::string YValue = SvUl::Mid( LegalChars, Pos + 1 );
 			return SVPOINT( atol(XValue.c_str()), atol(YValue.c_str()) );
 		}
 	}
-	SVStringVector msgList;
-	msgList.push_back(SVString(rValue));
+	SvDef::StringVector msgList;
+	msgList.push_back(std::string(rValue));
 	msgList.push_back(GetName());
 	SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 	Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValueObject_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
@@ -107,10 +109,10 @@ SVPOINT SVPointValueObjectClass::ConvertString2Type( const SVString& rValue ) co
 	return SVPOINT(); //will never reached, because the exception will throw before. But this line avoid a warning
 }
 
-SVString SVPointValueObjectClass::ConvertType2String( const SVPOINT& rValue ) const
+std::string SVPointValueObjectClass::ConvertType2String( const SVPOINT& rValue ) const
 {
-	SVString Result;
-	//This is faster than SvUl_SF::Format
+	std::string Result;
+	//This is faster than SvUl::Format
 	TCHAR Text[100];
 	sprintf_s(Text, 100, _T("( %d, %d)"), rValue.x(), rValue.y());
 	Result = Text;
@@ -142,7 +144,7 @@ void SVPointValueObjectClass::WriteValues(SVObjectWriter& rWriter)
 	SVVariantList list;
 
 	// Get the Data Values (Member Info, Values)
-	SVString TempValue;
+	std::string TempValue;
 	_variant_t Value;
 	Value.Clear();
 
@@ -152,7 +154,7 @@ void SVPointValueObjectClass::WriteValues(SVObjectWriter& rWriter)
 		SVPOINT PointValue;
 		//Make sure this is not a derived virtual method which is called
 		SVPointValueObjectClass::GetValue(PointValue, i);
-		TempValue = SvUl_SF::Format(_T("%d, %d"), PointValue.x(), PointValue.y());
+		TempValue = SvUl::Format(_T("%d, %d"), PointValue.x(), PointValue.y());
 		Value.SetString(TempValue.c_str());
 		list.push_back(Value);
 		Value.Clear();
@@ -162,8 +164,8 @@ void SVPointValueObjectClass::WriteValues(SVObjectWriter& rWriter)
 
 void SVPointValueObjectClass::WriteDefaultValues(SVObjectWriter& rWriter)
 {
-	SVString TempValue;
-	TempValue = SvUl_SF::Format(_T("%d, %d"), GetDefaultValue().x(), GetDefaultValue().y());
+	std::string TempValue;
+	TempValue = SvUl::Format(_T("%d, %d"), GetDefaultValue().x(), GetDefaultValue().y());
 	_variant_t Value;
 	Value.SetString(TempValue.c_str());
 	rWriter.WriteAttribute(scDefaultTag, Value);

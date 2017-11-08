@@ -95,7 +95,7 @@ HRESULT SVTestAcquisitionClass::UpdateWithCompletedBuffer( const SVImageBufferIn
 	return l_Status;
 }
 
-HRESULT SVTestAcquisitionClass::ReadCameraFile( const SVString& )
+HRESULT SVTestAcquisitionClass::ReadCameraFile( const std::string& )
 {
 	HRESULT hr = E_NOTIMPL;
 	return hr;

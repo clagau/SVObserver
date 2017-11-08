@@ -13,7 +13,7 @@
 #include "SVObjectLibrary\SVClsids.h"
 #include "TableAnalyzerTool.h"
 #include "TextDefinesSvO.h"
-#include "SVUtilityLibrary\SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -172,7 +172,7 @@ void TableExcludeAnalyzer::BuildEmbeddedObjectList()
 	vtTemp.dblVal = cDefaultHighValue;
 	m_excludeHigh.SetDefaultValue( vtTemp, true );
 
-	SVString ObjectName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_TABLEANALYZEREXCLUDE_HIGHVALUE );
+	std::string ObjectName = SvUl::LoadStdString( IDS_OBJECTNAME_TABLEANALYZEREXCLUDE_HIGHVALUE );
 	ObjectName +=  SvO::cLinkName;
 	RegisterEmbeddedObject( &m_excludeHigh.getLinkedName(), TableAnaylzerExcludeHigh_LinkGuid, ObjectName.c_str(), false, SvOi::SVResetItemNone );
 	m_excludeHigh.getLinkedName().SetDefaultValue( _T(""), false );
@@ -183,7 +183,7 @@ void TableExcludeAnalyzer::BuildEmbeddedObjectList()
 	vtTemp.dblVal = cDefaultLowValue;
 	m_excludeLow.SetDefaultValue( vtTemp, true );
 
-	ObjectName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_TABLEANALYZEREXCLUDE_LOWVALUE );
+	ObjectName = SvUl::LoadStdString( IDS_OBJECTNAME_TABLEANALYZEREXCLUDE_LOWVALUE );
 	ObjectName +=  SvO::cLinkName;
 	RegisterEmbeddedObject( &m_excludeLow.getLinkedName(), TableAnaylzerExcludeLow_LinkGuid, ObjectName.c_str(), false, SvOi::SVResetItemNone );
 	m_excludeLow.getLinkedName().SetDefaultValue( _T(""), false );

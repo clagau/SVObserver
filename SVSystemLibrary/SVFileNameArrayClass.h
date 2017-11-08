@@ -14,7 +14,6 @@
 #pragma region Includes
 #include "SVContainerLibrary/SVVector.h"
 #include "SVLibrary/SVFileNameClass.h"
-#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 //This class is inheirated from the CArray class.  This class 
@@ -55,6 +54,6 @@ private:
 
 	//This is a temporary storage container for the string 
 	//defining the list of file names contained in the array.
-	mutable SVString mcsFileList;
+	mutable std::string mcsFileList;
 };
 

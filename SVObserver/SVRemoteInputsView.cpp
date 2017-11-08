@@ -27,7 +27,7 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 IMPLEMENT_DYNCREATE(SVRemoteInputsView, CListView)
@@ -139,7 +139,7 @@ void SVRemoteInputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint 
 		// Find each remote input
 		for( j = 0; j < lSize; j++ )
 		{
-			SVString Item = SvUl_SF::Format(SvO::cRemoteInputNumberLabel, h + 1 );
+			std::string Item = SvUl::Format(SvO::cRemoteInputNumberLabel, h + 1 );
 
 			bool bFound = false;
 
@@ -242,7 +242,7 @@ void SVRemoteInputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 					_variant_t l_Value;
 					SVRemoteIOAdjustDialog dlg;
 
-					SVString Name = GetListCtrl().GetItemText( item, 1 );
+					std::string Name = GetListCtrl().GetItemText( item, 1 );
 
 					pRemoteInput->GetCache( l_Value );
 

@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVContainerLibrary/SVVector.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 enum SVLutTransformOperationEnum	// for legacy conversion
@@ -39,9 +39,9 @@ public:
 	{
 		SVLutTransformOperationEnum m_eType;
 		SVLutTransformOperation* m_pType;
-		SVString m_Type;
+		std::string m_Type;
 		SVLutTransformTypeInfo() {m_eType = LutTransformTypeUnknown; m_pType = nullptr;}
-		SVLutTransformTypeInfo(SVLutTransformOperationEnum eType, SVLutTransformOperation* pType, const SVString& rType) {m_eType = eType; m_pType = pType; m_Type = rType;}
+		SVLutTransformTypeInfo(SVLutTransformOperationEnum eType, SVLutTransformOperation* pType, const std::string& rType) {m_eType = eType; m_pType = pType; m_Type = rType;}
 	};
 	typedef SVVector<SVLutTransformTypeInfo> SVLutTransformTypeInfoVector;
 public:
@@ -51,7 +51,7 @@ public:
 	SVLutTransformOperationEnum GetType(const SVLutTransformOperation* pType);
 	const SVLutTransformTypeInfo* GetInfo(SVLutTransformOperationEnum e);
 	const SVLutTransformTypeInfo* GetInfo(const SVLutTransformOperation* pType);
-	const SVLutTransformTypeInfo* GetInfo(const SVString& rType);
+	const SVLutTransformTypeInfo* GetInfo(const std::string& rType);
 	const SVLutTransformTypeInfoVector& GetTypes() {return maTypeInfo;}
 private:
 	SVLutTransformTypeInfoVector maTypeInfo;

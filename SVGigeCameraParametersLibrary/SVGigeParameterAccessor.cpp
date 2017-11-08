@@ -16,7 +16,7 @@
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerInterface.h"
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizer.h"
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerFeatureEnums.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 // This Method uses the default Setter and getter
@@ -63,17 +63,17 @@ HRESULT SVGigeParameterAccessor::GetFeature(SVMatroxDigitizerRef Digitizer, cons
 		if (rFeature.HasSelector())
 		{
 			const SVGigeFeatureSelector& selector = rFeature.GetSelector();
-			hr = SVMatroxDigitizerInterface::SetFeature( *(Digitizer.get()), SVString(selector.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, _variant_t(selector.GetValue().c_str()));
+			hr = SVMatroxDigitizerInterface::SetFeature( *(Digitizer.get()), std::string(selector.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, _variant_t(selector.GetValue().c_str()));
 		}
 		// Translate Strings
 		if (rFeature.HasTranslation())
 		{
 			variant_t value("");
-			hr = SVMatroxDigitizerInterface::GetFeature(*(Digitizer.get()), SVString(rFeature.GetName().c_str()), rFeature.GetType(), value);
+			hr = SVMatroxDigitizerInterface::GetFeature(*(Digitizer.get()), std::string(rFeature.GetName().c_str()), rFeature.GetType(), value);
 			if (S_OK == hr)
 			{
-				SVString gigeFeatureValue(SvUl_SF::createSVString(value));
-				SVString deviceParamString;
+				std::string gigeFeatureValue(SvUl::createStdString(value));
+				std::string deviceParamString;
 		
 				hr = rFeature.GetDeviceParamString(gigeFeatureValue, deviceParamString);
 				rValue = deviceParamString.c_str();
@@ -81,7 +81,7 @@ HRESULT SVGigeParameterAccessor::GetFeature(SVMatroxDigitizerRef Digitizer, cons
 		}
 		else
 		{
-			hr = SVMatroxDigitizerInterface::GetFeature(*(Digitizer.get()), SVString(rFeature.GetName().c_str()), rFeature.GetType(), rValue);
+			hr = SVMatroxDigitizerInterface::GetFeature(*(Digitizer.get()), std::string(rFeature.GetName().c_str()), rFeature.GetType(), rValue);
 		}
 	}
 	return hr;
@@ -97,25 +97,25 @@ HRESULT SVGigeParameterAccessor::SetFeature(SVMatroxDigitizerRef Digitizer, cons
 		if (rFeature.HasSelector())
 		{
 			const SVGigeFeatureSelector& selector = rFeature.GetSelector();
-			hr = SVMatroxDigitizerInterface::SetFeature( *(Digitizer.get()), SVString(selector.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, _variant_t(selector.GetValue().c_str()));
+			hr = SVMatroxDigitizerInterface::SetFeature( *(Digitizer.get()), std::string(selector.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, _variant_t(selector.GetValue().c_str()));
 		}
 
 		// Translate Strings
 		if (rFeature.HasTranslation())
 		{
-			SVString deviceParamString(SvUl_SF::createSVString(rValue));
-			SVString gigeFeatureValue;
+			std::string deviceParamString(SvUl::createStdString(rValue));
+			std::string gigeFeatureValue;
 			
 			hr = rFeature.GetGigeFeatureString(deviceParamString, gigeFeatureValue);
 			if (S_OK == hr)
 			{
 				variant_t value(gigeFeatureValue.c_str());
-				hr = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVString(rFeature.GetName().c_str()), rFeature.GetType(), value);
+				hr = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string(rFeature.GetName().c_str()), rFeature.GetType(), value);
 			}
 		}
 		else
 		{
-			hr = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVString(rFeature.GetName().c_str()), rFeature.GetType(), rValue);
+			hr = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string(rFeature.GetName().c_str()), rFeature.GetType(), rValue);
 		}
 	}
 	return hr;

@@ -20,7 +20,7 @@
 #include "SVOInspectionObj.h"
 #include "TriggerInformation/SVOTriggerObj.h"
 #include "SVOResource\ConstGlobalSvOr.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -141,8 +141,8 @@ void CSVOProPosQueDlg::OnBtnAddVi()
 		SvMc::CSVOSelectItemListDlg Dlg;
         
 		CString PPQName;
-		SVString InspectName;
-		SVString InspectLabel;
+		std::string InspectName;
+		std::string InspectLabel;
 		m_ctlPPQList.GetText(iPPQ, PPQName);
         pPPQObj = m_pParent->GetPPQObjectByName( PPQName );
 
@@ -202,7 +202,7 @@ void CSVOProPosQueDlg::OnBtnAddVt()
 
         for (int i = 0; i < iTrigCount; i++)
         {
-			SVString TriggerName;
+			std::string TriggerName;
             pTriggerObj = m_pParent->GetTriggerObject(i);
 			if( nullptr != pTriggerObj )
 			{
@@ -219,7 +219,7 @@ void CSVOProPosQueDlg::OnBtnAddVt()
         {
             if (!Dlg.m_sSelectItemListValue.IsEmpty())
             {
-                SVString NewTrigger = Dlg.m_sSelectItemListValue;
+                std::string NewTrigger = Dlg.m_sSelectItemListValue;
                 m_ctlVTEdit.SetWindowText( NewTrigger.c_str() );
                 pPPQObj->DetachTriggerFromPPQ();
                 pPPQObj->AttachTriggerToPPQ( NewTrigger.c_str() );
@@ -255,7 +255,7 @@ void CSVOProPosQueDlg::OnBtnDeletePpq()
 
         for (int i = 0; i < iInsCnt; i++)
         {
-            SVString InspectionName = pPPQObj->GetAttachedInspection(i);
+            std::string InspectionName = pPPQObj->GetAttachedInspection(i);
             m_pParent->ItemChanged(PPQ_DLG, m_pParent->GetInspectionNameFromLabel(InspectionName.c_str()).c_str(), ITEM_PPQ_DEL_INS);
         }
 
@@ -278,7 +278,7 @@ void CSVOProPosQueDlg::OnBtnDeletePpq()
 
 void CSVOProPosQueDlg::OnBtnNewPpq() 
 {
-    SVString NewPPQ = m_pParent->GetNextPPQName();
+    std::string NewPPQ = m_pParent->GetNextPPQName();
     m_pParent->AddToPPQList( NewPPQ.c_str() );
     int iPos = m_ctlPPQList.AddString( NewPPQ.c_str() );
     m_ctlPPQList.SetCurSel(iPos);
@@ -340,7 +340,7 @@ void CSVOProPosQueDlg::OnBtnRemoveVc()
         pPPQObj->DetachCameraFromPPQ( CameraName );
         m_ctlVCList.DeleteString(iCurCam);
 
-		SVString InspectionName;
+		std::string InspectionName;
 		long lSize;
 		long l;
 
@@ -460,7 +460,7 @@ void CSVOProPosQueDlg::OnSelchangeLstPpqList()
 
         for (int iC = 0; iC < iCam; iC++)
         {
-			SVString CameraName( pPPQObj->GetAttachedCamera(iC) );
+			std::string CameraName( pPPQObj->GetAttachedCamera(iC) );
             if (m_pParent->IsCameraInList( CameraName.c_str() ))
             {
                 m_ctlVCList.AddString( CameraName.c_str() );
@@ -474,7 +474,7 @@ void CSVOProPosQueDlg::OnSelchangeLstPpqList()
 
         for (int iI = 0; iI < iIns; iI++)
         {
-			SVString InspectionName( pPPQObj->GetAttachedInspection(iI) );
+			std::string InspectionName( pPPQObj->GetAttachedInspection(iI) );
             if (m_pParent->IsInspectionInList( InspectionName.c_str() ))
             {
                 m_ctlVIPList.AddString(m_pParent->GetInspectionNameFromLabel( InspectionName.c_str() ).c_str());
@@ -486,7 +486,7 @@ void CSVOProPosQueDlg::OnSelchangeLstPpqList()
         }
         m_ctlVIPList.SetCurSel(0);
 
-		const SVString& rTriggerName( pPPQObj->GetAttachedTriggerName() );
+		const std::string& rTriggerName( pPPQObj->GetAttachedTriggerName() );
         if (m_pParent->IsTriggerInList( rTriggerName.c_str() ))
         {
             m_ctlVTEdit.SetWindowText( rTriggerName.c_str() );

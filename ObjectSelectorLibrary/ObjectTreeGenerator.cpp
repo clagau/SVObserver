@@ -16,6 +16,8 @@
 #include "ObjectInterfaces/IObjectManager.h"
 #include "Definitions/ObjectDefines.h"
 #include "SVObjectLibrary/GlobalConst.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVContainerLibrary/ObjectSelectorItem.h"
 #include "SVMFCControls/ResizablePropertySheet.h"
 #include "ObjectSelectorPpg.h"
@@ -156,26 +158,26 @@ namespace SvOsl
 		return Result;
 	}
 
-	bool ObjectTreeGenerator::setCheckItems( const SVStringSet& rItems )
+	bool ObjectTreeGenerator::setCheckItems( const SvDef::StringSet& rItems )
 	{
 		bool Result( false );
 
-		SVStringSet::const_iterator IterName( rItems.begin() );
+		SvDef::StringSet::const_iterator IterName( rItems.begin() );
 
 		for( ; rItems.end() != IterName;  ++IterName )
 		{
 			SvCl::ObjectTreeItems::iterator Iter( m_TreeContainer.begin() );
 			//Need to check if input filters are used
-			SVString Location = getFilteredLocation( m_LocationInputFilters, *IterName );
+			std::string Location = getFilteredLocation( m_LocationInputFilters, *IterName );
 			//If an array we need the extra branch
-			SVString::size_type BracketPos( SVString::npos );
+			std::string::size_type BracketPos( std::string::npos );
 			BracketPos = Location.rfind( _T("[") );
-			if( SVString::npos !=  BracketPos)
+			if( std::string::npos !=  BracketPos)
 			{
 				size_t DotPos = Location.rfind( _T("."), BracketPos );
-				if( SVString::npos !=  DotPos)
+				if( std::string::npos !=  DotPos)
 				{
-					SVString Name = Location.substr(DotPos, BracketPos - DotPos);
+					std::string Name = Location.substr(DotPos, BracketPos - DotPos);
 					Location.insert( DotPos, Name.c_str() );
 				}
 			}
@@ -190,17 +192,17 @@ namespace SvOsl
 		return Result;
 	}
 
-	bool ObjectTreeGenerator::setCheckItems( const SVObjectReferenceVector& rItems, const SVString& rInspectionName )
+	bool ObjectTreeGenerator::setCheckItems( const SVObjectReferenceVector& rItems, const std::string& rInspectionName )
 	{
 		bool Result( true );
 		
-		SVStringSet ObjectNames;
-		TranslateMap TranslateNames;
+		SvDef::StringSet ObjectNames;
+		SvDef::TranslateMap TranslateNames;
 
 		if( !rInspectionName.empty() )
 		{
-			SVString SearchName;
-			SVString ReplaceName;
+			std::string SearchName;
+			std::string ReplaceName;
 			SearchName = rInspectionName + SvOl::FqnRemoteInput;
 			ReplaceName = SvOl::FqnPPQVariables;
 			ReplaceName += SvOl::FqnRemoteInput;
@@ -214,9 +216,9 @@ namespace SvOsl
 		SVObjectReferenceVector::const_iterator Iter( rItems.begin() );
 		for( ; rItems.end() != Iter && Result;  ++Iter )
 		{
-			SVString Name( Iter->GetCompleteOneBasedObjectName() );
+			std::string Name( Iter->GetCompleteOneBasedObjectName() );
 
-			TranslateMap::const_iterator Iter( TranslateNames.begin() );
+			SvDef::TranslateMap::const_iterator Iter( TranslateNames.begin() );
 			for( ; TranslateNames.end() != Iter; ++Iter )
 			{
 				size_t Pos = Name.find( Iter->first );
@@ -236,7 +238,7 @@ namespace SvOsl
 		return Result;
 	}
 
-	void ObjectTreeGenerator::setLocationFilter( const FilterEnum& rType, const SVString& rFilter, const SVString& rReplace )
+	void ObjectTreeGenerator::setLocationFilter( const FilterEnum& rType, const std::string& rFilter, const std::string& rReplace )
 	{
 		switch( rType )
 		{
@@ -257,9 +259,9 @@ namespace SvOsl
 		}
 	}
 
-	SVString ObjectTreeGenerator::convertObjectArrayName( const SvOi::ISelectorItem& rItem ) const
+	std::string ObjectTreeGenerator::convertObjectArrayName( const SvOi::ISelectorItem& rItem ) const
 	{
-		SVString Result( rItem.getDisplayLocation() );
+		std::string Result( rItem.getDisplayLocation() );
 		if( Result.empty() )
 		{
 			Result = rItem.getLocation();
@@ -268,13 +270,13 @@ namespace SvOsl
 		//If location is array then place an additional level with the array group name
 		if( rItem.isArray() )
 		{
-			SVString Name;
+			std::string Name;
 			size_t Pos = 0;
 
 			Name = rItem.getName();
 			Name.insert( Pos, _T(".") );
 			Pos = Result.rfind(_T('.'));
-			if( SVString::npos != Pos )
+			if( std::string::npos != Pos )
 			{
 				Result.insert( Pos, Name.c_str() );
 			}
@@ -296,7 +298,7 @@ namespace SvOsl
 		SelectorItem.setItemTypeName( rItem.getItemTypeName() );
 		SelectorItem.setCheckedState( SvCl::IObjectSelectorItem::UncheckedEnabled );
 
-		SVString Location( rItem.getDisplayLocation() );
+		std::string Location( rItem.getDisplayLocation() );
 		if( Location.empty() )
 		{
 			Location = rItem.getLocation();
@@ -412,14 +414,14 @@ namespace SvOsl
 		}
 	}
 
-	SVString ObjectTreeGenerator::getFilteredLocation( const TranslateMap& rFilters, const SVString& rLocation ) const
+	std::string ObjectTreeGenerator::getFilteredLocation( const SvDef::TranslateMap& rFilters, const std::string& rLocation ) const
 	{
-		SVString rFilterLocation( rLocation.c_str() );
+		std::string rFilterLocation( rLocation.c_str() );
 		bool bFound = false;
 
-		for (TranslateMap::const_iterator Iter = rFilters.begin(); rFilters.end() != Iter && !bFound; ++Iter)
+		for (SvDef::TranslateMap::const_iterator Iter = rFilters.begin(); rFilters.end() != Iter && !bFound; ++Iter)
 		{
-			SVString Filter = Iter->first;
+			std::string Filter = Iter->first;
 
 			// find the filter at the first position of the string
 			size_t pos = rFilterLocation.find( Filter.c_str() );
@@ -431,7 +433,7 @@ namespace SvOsl
 				{
 					Filter += _T(".");
 				}
-				// Do not use SVString::replace as it will replace all occurrences!
+				// Do not use std::string::replace as it will replace all occurrences!
 				// Use std::string to just replace the first occurrence at the found position (position 0 in this case)
 				rFilterLocation.replace( pos, Filter.size(), Iter->second.c_str() );
 			}
@@ -441,26 +443,26 @@ namespace SvOsl
 
 	void ObjectTreeGenerator::convertLocation( SelectorItem& rSelectedItem )
 	{
-		SVString Location = getFilteredLocation( m_LocationOutputFilters, rSelectedItem.getLocation() );
+		std::string Location = getFilteredLocation( m_LocationOutputFilters, rSelectedItem.getLocation() );
 		if( rSelectedItem.getLocation() != Location )
 		{
 			rSelectedItem.setLocation( Location.c_str() );
 		}
 
-		SVString DisplayLocation = getFilteredLocation( m_LocationOutputFilters, rSelectedItem.getDisplayLocation() );
+		std::string DisplayLocation = getFilteredLocation( m_LocationOutputFilters, rSelectedItem.getDisplayLocation() );
 		//The extra group name for arrays must be removed
 		if( rSelectedItem.isArray() )
 		{
-			SVString Name( rSelectedItem.getName() );
+			std::string Name( rSelectedItem.getName() );
 
-			SVString::size_type Pos = 0;
+			std::string::size_type Pos = 0;
 			//Array name will have [ ] 
-			if( SVString::npos != (Pos = Name.rfind("[")) )
+			if( std::string::npos != (Pos = Name.rfind("[")) )
 			{
 				Name = Name.substr( 0, Pos );
 			}
 			Name += _T(".");
-			SvUl_SF::searchAndReplace( DisplayLocation, Name.c_str(), _T("") );
+			SvUl::searchAndReplace( DisplayLocation, Name.c_str(), _T("") );
 		}
 		if( rSelectedItem.getDisplayLocation() != DisplayLocation )
 		{

@@ -15,7 +15,6 @@
 //Moved to precompiled header: #include <set>
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"
-#include "SVUtilityLibrary/SVString.h"
 #include "SVStorageResult.h"
 #include "SVInspectionProcess.h"
 #pragma endregion Includes
@@ -24,7 +23,7 @@ class SVObjectReference;
 
 struct SVCommandInspectionGetItems
 {
-	typedef std::pair<SVString, SVObjectReference> SVFullNameObjectPair;
+	typedef std::pair<std::string, SVObjectReference> SVFullNameObjectPair;
 	typedef std::set<SVFullNameObjectPair> SVNameObjectSet;
 
 	SVCommandInspectionGetItems(const SVInspectionProcess& p_rInspection, const SVNameObjectSet& p_rItemNames);
@@ -39,9 +38,9 @@ struct SVCommandInspectionGetItems
 	const SVNameStorageResultMap& GetResultItems() const;
 
 protected:
-	HRESULT UpdateResultsWithImageData(const SVString& rItemName, const SVObjectReference& rImageRef, unsigned long TriggerCount);
-	HRESULT UpdateResultsWithValueData(const SVString& rItemName, const SVObjectReference& rValueRef, unsigned long TriggerCount);
-	HRESULT UpdateResultsWithErrorData(const SVString& rItemName, HRESULT errorStatus, unsigned long TriggerCount);
+	HRESULT UpdateResultsWithImageData(const std::string& rItemName, const SVObjectReference& rImageRef, unsigned long TriggerCount);
+	HRESULT UpdateResultsWithValueData(const std::string& rItemName, const SVObjectReference& rValueRef, unsigned long TriggerCount);
+	HRESULT UpdateResultsWithErrorData(const std::string& rItemName, HRESULT errorStatus, unsigned long TriggerCount);
 
 private:
 	const SVInspectionProcess* m_Inspection;

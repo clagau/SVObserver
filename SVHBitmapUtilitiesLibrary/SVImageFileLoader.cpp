@@ -14,7 +14,7 @@
 //Moved to precompiled header: #include <set>
 //Moved to precompiled header: #include <iterator>
 #include "SVImageFileLoader.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #include "SVFileSystemLibrary/SVFileInfo.h"
 #include "SVFileSystemLibrary/SVFileInfoComparator.h"
 #include "SVFileSystemLibrary/SVFileSystemScanner.h"
@@ -29,7 +29,7 @@ HRESULT SVImageFileLoader::Load(LPCTSTR FileName, SVImageFile& rImageFile)
 
 HRESULT SVImageFileLoader::LoadFirstFile( LPCTSTR Name, LPCTSTR Ext, SVImageFile& rImageFile )
 {
-	SVString FileName;
+	std::string FileName;
 
 	if( FILE_ATTRIBUTE_DIRECTORY == ( ::GetFileAttributes(Name) & FILE_ATTRIBUTE_DIRECTORY)  )
 	{

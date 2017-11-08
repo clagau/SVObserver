@@ -13,6 +13,7 @@
 #include "stdafx.h"
 #include "ObjectTreeCtrl.h"
 #include "ObjectSelectorPpg.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -23,8 +24,8 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 //ObjectTreeCtrl static variables 
-SVString SvOsl::ObjectTreeCtrl::m_CurrentSelection( _T("") );
-SVStringSet SvOsl::ObjectTreeCtrl::m_UpdateItems;
+std::string SvOsl::ObjectTreeCtrl::m_CurrentSelection( _T("") );
+SvDef::StringSet SvOsl::ObjectTreeCtrl::m_UpdateItems;
 #pragma endregion Declarations
 
 namespace SvOsl
@@ -227,7 +228,7 @@ namespace SvOsl
 				return false;
 			}
 
-			SVString* pLocation = reinterpret_cast<SVString*>( GetItemData( *ParentIter ));
+			std::string* pLocation = reinterpret_cast<std::string*>( GetItemData( *ParentIter ));
 			if( nullptr == pLocation )
 			{
 				return false;
@@ -264,7 +265,7 @@ namespace SvOsl
 				SetItemState( *ParentIter, INDEXTOSTATEIMAGEMASK( CheckedState ), TVIS_STATEIMAGEMASK );
 				m_UpdateItems.insert( Iter->first );
 
-				SVStringSet updateItems = getParentPropPage().getTreeContainer().setParentState( Iter );
+				SvDef::StringSet updateItems = getParentPropPage().getTreeContainer().setParentState( Iter );
 				m_UpdateItems.insert(updateItems.begin(), updateItems.end());
 				if( Iter->second->isNode() )
 				{
@@ -299,12 +300,12 @@ namespace SvOsl
 	{
 		if( isSingleSelect() )
 		{
-			SVString* pLocation = reinterpret_cast<SVString*> ( GetItemData( rItem ) );
+			std::string* pLocation = reinterpret_cast<std::string*> ( GetItemData( rItem ) );
 			if( nullptr != pLocation )
 			{
 				if( m_CurrentSelection != *pLocation )
 				{
-					SVStringSet updateItems = getParentPropPage().getTreeContainer().clearItem (m_CurrentSelection);
+					SvDef::StringSet updateItems = getParentPropPage().getTreeContainer().clearItem (m_CurrentSelection);
 					m_UpdateItems.insert(updateItems.begin(), updateItems.end());
 
 					SvCl::ObjectTreeItems::iterator Iter = getParentPropPage().getTreeContainer().findItem( *pLocation );

@@ -15,7 +15,6 @@
 #include "SVAcquisitionClass.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVMatroxGigeCameraProxy.h"
-#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 
@@ -33,7 +32,7 @@ public:
 
 	virtual HRESULT GetFileNameArraySize( long &rlSize ) const override;
 	virtual HRESULT LoadFiles( SVFileNameArrayClass &rArray ) override;
-	virtual HRESULT ReadCameraFile( const SVString& filename, SVDeviceParamCollection& rParams ) override;
+	virtual HRESULT ReadCameraFile( const std::string& filename, SVDeviceParamCollection& rParams ) override;
 
 	virtual HRESULT CreateLightReference( int iBands ) override;
 
@@ -105,5 +104,5 @@ private:
 
 	SVMatroxGigeCameraProxy m_cameraProxy;
 
-	HRESULT SetGigeFeatureOverrides(const SVString& featureOverrides);
+	HRESULT SetGigeFeatureOverrides(const std::string& featureOverrides);
 };

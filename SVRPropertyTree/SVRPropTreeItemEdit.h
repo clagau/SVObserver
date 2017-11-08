@@ -30,7 +30,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary/SVString.h"
 #include "SVRPropTreeItem.h"
 #include "SVNotifyButton.h"
 #pragma endregion Includes
@@ -65,7 +64,7 @@ public:
 	virtual bool GetItemValue(UINT& rValue) override;
 	virtual bool GetItemValue(float& rValue) override;
 	virtual bool GetItemValue(double& rValue) override;
-	virtual bool GetItemValue(SVString& rValue) override;
+	virtual bool GetItemValue(std::string& rValue) override;
 	virtual bool GetItemValue(_variant_t& rValue) override;
 	virtual bool GetItemValue(bool& rValue) override;
 
@@ -92,7 +91,7 @@ public:
 	virtual bool SetItemValuePtr(UINT& puintVal) override;
 	virtual bool SetItemValuePtr(float& pfltVal) override;
 	virtual bool SetItemValuePtr(double& pdblVal) override;
-	virtual bool SetItemValuePtr(SVString& rVal) override;
+	virtual bool SetItemValuePtr(std::string& rVal) override;
 
 	// @cmember Called when attribute area has changed size.
 	virtual void OnMove() override;
@@ -144,16 +143,16 @@ protected:
 	void ButtonClicked();
 	void DisplayButton();
 
-	SVString Data2String();
+	std::string Data2String();
 	void String2Data( LPCTSTR Text );
 
 	DECLARE_MESSAGE_MAP()
 
 private:
 	_variant_t	m_vtData;
-	SVString*   m_pValue;
-	SVString    m_Previous;
-	SVString    m_ButtonText;
+	std::string*   m_pValue;
+	std::string    m_Previous;
+	std::string    m_ButtonText;
 
 	SVNotifyButton m_btnDots;
 

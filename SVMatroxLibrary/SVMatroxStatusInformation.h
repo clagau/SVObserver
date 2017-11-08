@@ -13,7 +13,6 @@
 
 //Moved to precompiled header: #include <string>
 #include "SVMatroxTypedefs.h"
-#include "SVUtilityLibrary/SVString.h"
 
 
 /**
@@ -40,18 +39,18 @@ public:
 
 	const SVMatroxStatusInformation& operator=( const SVMatroxStatusInformation& p_rObject );
 
-	SVString GetCompleteString() const;
+	std::string GetCompleteString() const;
 
 	HRESULT m_StatusCode;
-	SVString m_StatusString;
+	std::string m_StatusString;
 
 	SVFunctionCode m_FunctionCode;
-	SVString m_FunctionString;
+	std::string m_FunctionString;
 
 	long m_StatusSubCodeCount;
 
 	HRESULT m_StatusSubCode[ 3 ];
-	SVString m_StatusSubString[ 3 ];
+	std::string m_StatusSubString[ 3 ];
 
 };
 

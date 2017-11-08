@@ -30,7 +30,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary/SVString.h"
 #include "SVRPropTreeItem.h"
 #pragma endregion Includes
 
@@ -67,7 +66,7 @@ public:
 	virtual void DrawAttribute(CDC* pDC, const RECT& rc) override;
 
 	// Retrieve the item's attribute value
-	virtual bool GetItemValue(SVString& rValue) override;
+	virtual bool GetItemValue(std::string& rValue) override;
 	virtual bool GetItemValue(_variant_t& rValue) override;
 
 	// Set the item's attribute value
@@ -96,7 +95,7 @@ public:
 
 // Implementation
 public:
-	SVString GetPathName();
+	std::string GetPathName();
 
 	// Generated message map functions
 protected:
@@ -141,7 +140,7 @@ protected:
 
 private:
 	// @cmember Filter for CFileDialog control.
-	SVString	m_Filter;
+	std::string	m_Filter;
 	// @cmember Browse button on left side of control?
 	bool m_bButtonLeft;
 	// @cmember TRUE while control is being created, FALSE otherwise.
@@ -160,10 +159,10 @@ private:
 	CRect m_rcButtonRect;
 
     BOOL m_bInitialDirSet;
-    SVString m_InitialDir;
+    std::string m_InitialDir;
 	bool m_bFullAccess;
 protected:
-	SVString m_Attribute;
+	std::string m_Attribute;
 };
 
 /////////////////////////////////////////////////////////////////////////////

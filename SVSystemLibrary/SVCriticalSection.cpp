@@ -12,7 +12,7 @@
 #include "stdafx.h"
 #include "SVCriticalSection.h"
 #include "SVTimerLibrary/SVClock.h"
-#include "SVUtilityLibrary/SVString.h"
+
 
 SVCriticalSection::SVCriticalSection( DWORD p_SpinCount )
 : m_SpinCount( p_SpinCount ), m_IsLockCreated( false ), m_Lock()

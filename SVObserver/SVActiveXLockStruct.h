@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 const int NUM_ACTIVEX_LOCKS = 20;
@@ -30,7 +30,7 @@ struct SVActiveXLockStruct
 
 	BOOL Valid();
 
-	SVString m_Name;
+	std::string m_Name;
 	long m_ProcessCount;
 
 	SVSmartHandlePointer m_ImageHandlePtr;

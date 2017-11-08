@@ -14,10 +14,10 @@
 #pragma region Includes
 #include "SVOResource/resource.h"
 #include "SVValueObjectClass.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
-class SVStringValueObjectClass : public SVValueObjectClass<SVString>
+class SVStringValueObjectClass : public SVValueObjectClass<std::string>
 {
 	SV_DECLARE_CLASS( SVStringValueObjectClass );
 
@@ -32,19 +32,19 @@ public:
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject ) override;
 
 protected:
-	virtual double ValueType2Double(const SVString& rValue) const override { return E_NOTIMPL; };
-	virtual _variant_t ValueType2Variant( const SVString& rValue ) const override { return _variant_t( rValue.c_str() ); };
-	virtual SVString Variant2ValueType( const _variant_t& rValue ) const override { return SvUl_SF::createSVString( rValue ); };
+	virtual double ValueType2Double(const std::string& rValue) const override { return E_NOTIMPL; };
+	virtual _variant_t ValueType2Variant( const std::string& rValue ) const override { return _variant_t( rValue.c_str() ); };
+	virtual std::string Variant2ValueType( const _variant_t& rValue ) const override { return SvUl::createStdString( rValue ); };
 
 	//! This just returns the input value as no conversion is required
 	//! \param rValue [in] The input string
 	//! \returns converted value.
-	virtual SVString ConvertString2Type( const SVString& rValue ) const override;
+	virtual std::string ConvertString2Type( const std::string& rValue ) const override;
 
-	//! This conversion needs to be overloaded for type SVString
+	//! This conversion needs to be overloaded for type std::string
 	//! \param rValue [in] Type to convert
-	/// \returns the SVString
-	virtual SVString ConvertType2String( const SVString& rValue ) const override { return rValue; };
+	/// \returns the std::string
+	virtual std::string ConvertType2String( const std::string& rValue ) const override { return rValue; };
 
 	//! Copies the value object to the memory block
 	//! \param pMemoryBlock [in] Pointer to the byte address of the memory block

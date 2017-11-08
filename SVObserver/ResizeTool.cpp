@@ -10,7 +10,8 @@
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "ToolSizeAdjustTask.h"
 #include "TextDefinesSvO.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 
@@ -494,8 +495,8 @@ bool ResizeTool::ValidateScaleFactor(const double value, SvStl::MessageContainer
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SVStringVector msgList;
-			msgList.push_back(SvUl_SF::Format(_T("%d"), value));
+			SvDef::StringVector msgList;
+			msgList.push_back(SvUl::Format(_T("%d"), value));
 			SvStl::MessageContainer Msg( SVMSG_SVO_5061_SFOUTSIDERANGE, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}

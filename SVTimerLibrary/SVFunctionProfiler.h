@@ -15,7 +15,7 @@
 //Moved to precompiled header: #include <iostream>
 //Moved to precompiled header: #include <map>
 #include "SVClock.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 /* // this class is meant to be used like this:
@@ -41,7 +41,7 @@ namespace SvTl
 		__int64 m_iCount;
 		SvTl::SVTimeStamp m_TotalTime;
 		SvTl::SVTimeStamp m_BeginTime;
-		SVString m_Name;
+		std::string m_Name;
 
 		friend class SVFunctionProfilerLocal;
 	};
@@ -110,7 +110,7 @@ namespace SvTl
 		void Add(int iSize);
 	private:
 		std::map<int, int> m_mapSizeCounter;
-		SVString m_Name;
+		std::string m_Name;
 	};
 
 	inline SVSizeProfiler::SVSizeProfiler(LPCTSTR Name) :

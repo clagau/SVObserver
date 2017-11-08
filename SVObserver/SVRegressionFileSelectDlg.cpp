@@ -19,6 +19,7 @@
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVMFCControls/SVDlgFolder.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -95,7 +96,7 @@ void CSVRegressionFileSelectDlg::OnBtnRegTestBrowseFiles()
 		CameraNumber = CameraNumber %  MaxNumberCameraEntries; 
 	}
 	//get last regression path for this camera from registry...
-	SVString KeyName = SvUl_SF::Format( _T("LastPath_%i"), CameraNumber);
+	std::string KeyName = SvUl::Format( _T("LastPath_%i"), CameraNumber);
 	m_RegistryPath = AfxGetApp()->GetProfileString(_T("RegressionTest"), KeyName.c_str(), SvStl::GlobalPath::Inst().GetTempPath().c_str());
 	bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
 

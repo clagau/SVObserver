@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "SVUtilityLibrary/SVString.h"
+
 
 class SVUtilityIniClass  
 {
@@ -23,9 +23,9 @@ public:
 
 	const SVUtilityIniClass& operator=( const SVUtilityIniClass& rRhs);
 
-	SVString m_DisplayName;
-	SVString m_Command;
-	SVString m_WorkingDirectory;
-	SVString m_Arguments;
-	SVString m_PromptForArguments;
+	std::string m_DisplayName;
+	std::string m_Command;
+	std::string m_WorkingDirectory;
+	std::string m_Arguments;
+	std::string m_PromptForArguments;
 };

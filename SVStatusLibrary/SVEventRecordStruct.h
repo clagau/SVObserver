@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary\SVString.h"
+
 #pragma endregion Includes
 
 static const unsigned long SV_EVENT_RECORD_STRUCT_RECORD_SIZE = 0x0008000;
@@ -34,7 +34,7 @@ namespace SvStl
 		LPCTSTR GetFirstString();
 		LPCTSTR GetNextString();
 		LPCTSTR GetType();
-		SVString GetDateTime();
+		std::string GetDateTime();
 
 	private:
 		HRESULT LocalInitialize(unsigned long p_ulSize);

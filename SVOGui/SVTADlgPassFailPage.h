@@ -16,7 +16,7 @@
 #include "RangeController.h"
 #include "Definitions/RangeEnum.h"
 #include "ObjectSelectorController.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 namespace SvOg
@@ -61,7 +61,7 @@ namespace SvOg
 	/// \param fieldEnum [in] Enum of the value
 	/// \returns bool true if a new object would selected.
 	//************************************
-		bool ShowObjectSelector(SVString& rName, RangeEnum::ERange fieldEnum);
+		bool ShowObjectSelector(std::string& rName, RangeEnum::ERange fieldEnum);
 #pragma region Privated Methods
 
 #pragma region Member Variables

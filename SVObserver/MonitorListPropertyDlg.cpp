@@ -15,6 +15,7 @@
 #include "MonitorListPropertyDlg.h"
 #include "TextDefinesSvO.h"
 #include "RemoteMonitorListController.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 enum {IDC_MONITOR_PROPERTY_TREE = 100};
@@ -60,7 +61,7 @@ BOOL MonitorListPropertyDlg::OnInitDialog()
 	long lVal = m_Tree.GetColumn();
 	m_Tree.SetColumn(200);
 
-	RemoteMonitorListMap::iterator it = m_MonitorList.find(SVString(m_MonitorListName));
+	RemoteMonitorListMap::iterator it = m_MonitorList.find(std::string(m_MonitorListName));
 	if ( it != m_MonitorList.end() )
 	{
 		m_DisplayName = it->second.GetName().c_str();
@@ -75,11 +76,11 @@ BOOL MonitorListPropertyDlg::OnInitDialog()
 
 /////////////////////////////////////////////////////////////////////////////
 // Validate label text and remove unwanted characters.
-SVString MonitorListPropertyDlg::ValidateLabelText(const SVString& rNewText) const
+std::string MonitorListPropertyDlg::ValidateLabelText(const std::string& rNewText) const
 {
-	SVString Result( rNewText );
+	std::string Result( rNewText );
 
-	SvUl_SF::RemoveCharacters( Result, SvO::SVEXCLUDECHARS_TOOL_IP_NAME );
+	SvUl::RemoveCharacters( Result, SvO::SVEXCLUDECHARS_TOOL_IP_NAME );
 
 	if( Result.empty() )
 	{
@@ -89,13 +90,13 @@ SVString MonitorListPropertyDlg::ValidateLabelText(const SVString& rNewText) con
 	return Result;
 }
 
-bool MonitorListPropertyDlg::IsValidListName(const SVString& rName, const SVString& rOriginalName) const
+bool MonitorListPropertyDlg::IsValidListName(const std::string& rName, const std::string& rOriginalName) const
 {
 	bool bRetVal = true;
 	// check for uniqueness (case insensitive)
 	RemoteMonitorListMap::const_iterator it = std::find_if(m_MonitorList.begin(), m_MonitorList.end(), [&](const RemoteMonitorListMap::value_type& entry)->bool 
 	{ 
-		return (0 == SvUl_SF::CompareNoCase(rName, entry.first) && 0 != SvUl_SF::CompareNoCase(rOriginalName, entry.first)); 
+		return (0 == SvUl::CompareNoCase(rName, entry.first) && 0 != SvUl::CompareNoCase(rOriginalName, entry.first)); 
 	} 
 	);
 	if (it != m_MonitorList.end())
@@ -115,9 +116,9 @@ void MonitorListPropertyDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResu
 
 		if ( PROP_MONITOR_LIST_NAME == pItem->GetCtrlID() )
 		{
-			SVString Name;
+			std::string Name;
 			m_Tree.FindItem(PROP_MONITOR_LIST_NAME)->GetItemValue(Name);
-			SvUl_SF::Trim( Name );
+			SvUl::Trim( Name );
 			
 			ValidateLabelText(Name);
 			if (IsValidListName(Name, m_DisplayName))
@@ -151,19 +152,19 @@ void MonitorListPropertyDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResu
 
 void MonitorListPropertyDlg::OnOK() 
 {
-	RemoteMonitorListMap::iterator it = m_MonitorList.find(SVString(m_MonitorListName));
+	RemoteMonitorListMap::iterator it = m_MonitorList.find(std::string(m_MonitorListName));
 	if ( it != m_MonitorList.end() )
 	{
 		RemoteMonitorNamedList namedList = it->second;
 
-		namedList.SetName(SVString(m_DisplayName));
+		namedList.SetName(std::string(m_DisplayName));
 		namedList.SetRejectDepthQueue(m_MonitorListRejectQueueDepth);
 		m_MonitorList.erase(it);
 		m_MonitorList.insert(std::make_pair(m_DisplayName, namedList));
 	}
 
 	//use ActivateRemoteMonitorList to avoid more then one active monitorlist per PPQ 
-	RemoteMonitorListController::ActivateRemoteMonitorList(m_MonitorList, SVString(m_MonitorListName),m_IsMonitorListActive );
+	RemoteMonitorListController::ActivateRemoteMonitorList(m_MonitorList, std::string(m_MonitorListName),m_IsMonitorListActive );
 	CDialog::OnOK();
 }
 
@@ -211,7 +212,7 @@ void MonitorListPropertyDlg::SetupMonitorListProperties()
 	}
 }
 
-const SVString& MonitorListPropertyDlg::GetMonitorListName() const
+const std::string& MonitorListPropertyDlg::GetMonitorListName() const
 {
 	return m_DisplayName;
 }

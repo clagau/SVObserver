@@ -18,6 +18,8 @@
 #include "SVStatusLibrary/SVEventLogClass.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVStatusLibrary/GlobalPath.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 namespace SvStl
@@ -53,7 +55,7 @@ namespace SvStl
 					{
 						if( ::SetEvent( m_hCheckEvent ) )
 						{
-							SVString Message = SvUl_SF::Format( _T("The RAID system is not reporting a functional status.\n\n"
+							std::string Message = SvUl::Format( _T("The RAID system is not reporting a functional status.\n\n"
 								"STATUS : %s\n\n"
 								"Please contact your support representative for assistance."), m_RaidStatus );
 
@@ -119,10 +121,10 @@ namespace SvStl
 
 					while( S_OK == l_svOk && l_ulItem <= l_ulCount  && m_RaidStatus.empty() )
 					{	// Look for event source "IAANTMon"
-						if( 0 == SvUl_SF::CompareNoCase( SVString(l_svRecord.GetSourceName()), SVString(_T("IAANTMon")) ) )
+						if( 0 == SvUl::CompareNoCase( std::string(l_svRecord.GetSourceName()), std::string(_T("IAANTMon")) ) )
 						{
 							lType = 1;
-							SVStringVector StatusStrings;
+							SvDef::StringVector StatusStrings;
 							CString StatusString = l_svRecord.GetFirstString();
 							int pos = 0;
 							// Parse lines in text string.
@@ -131,7 +133,7 @@ namespace SvStl
 							{	// parse all lines that contain the word status.
 								if( strTmp.Find(_T("Status")) > -1 )
 								{
-									StatusStrings.push_back( SVString(strTmp) );
+									StatusStrings.push_back( std::string(strTmp) );
 								}
 								strTmp = strTmp.Tokenize( _T("\n"), pos );
 							}
@@ -174,7 +176,7 @@ namespace SvStl
 
 		if( S_OK != l_svOk )
 		{
-			m_ErrorStatus = SvUl_SF::Format( _T("Error Reading Event Log (Item = %lu - ErrorCode = %lu)"), l_ulItem, l_svOk );
+			m_ErrorStatus = SvUl::Format( _T("Error Reading Event Log (Item = %lu - ErrorCode = %lu)"), l_ulItem, l_svOk );
 
 			FILE* l_pFile = ::fopen(  GlobalPath::Inst().GetObserverPath(_T("LastEventReadError.txt")).c_str() , _T("w") );
 
@@ -196,7 +198,7 @@ namespace SvStl
 		{
 			if( lType == 1 )
 			{	// If we find Normal then assume good.
-				if( SVString::npos != m_RaidStatus.find( _T("Normal") ) )
+				if( std::string::npos != m_RaidStatus.find( _T("Normal") ) )
 				{
 					m_RaidStatus.clear();
 
@@ -209,8 +211,8 @@ namespace SvStl
 			}
 			if( lType == 2 )
 			{	// If we do not find Degraded or rebuilding... then assume good.
-				if( SVString::npos == m_RaidStatus.find( _T("Degraded") ) &&
-					SVString::npos == m_RaidStatus.find( _T("Rebuilding in progress")) )
+				if( std::string::npos == m_RaidStatus.find( _T("Degraded") ) &&
+					std::string::npos == m_RaidStatus.find( _T("Rebuilding in progress")) )
 				{
 					m_RaidStatus.clear();
 
@@ -226,12 +228,12 @@ namespace SvStl
 		return l_svOk;
 	}
 
-	const SVString& SVOIntelRAIDStatusClass::GetRaidStatus()
+	const std::string& SVOIntelRAIDStatusClass::GetRaidStatus()
 	{
 		return m_RaidStatus;
 	}
 
-	const SVString& SVOIntelRAIDStatusClass::GetErrorStatus()
+	const std::string& SVOIntelRAIDStatusClass::GetErrorStatus()
 	{
 		return m_ErrorStatus;
 	}

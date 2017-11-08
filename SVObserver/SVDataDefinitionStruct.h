@@ -15,17 +15,17 @@
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <string>
-#include "SVUtilityLibrary/SVString.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 #pragma pack (push, 1)
 struct SVDataDefinitionStruct
 {
-	SVString m_Name;
+	std::string m_Name;
 	bool m_Writable;
 	bool m_Published;
-	SVString m_Type;
-	SVStringVector m_AdditionalInfo;
+	std::string m_Type;
+	SvDef::StringVector m_AdditionalInfo;
 public:
 	SVDataDefinitionStruct( );
 	~SVDataDefinitionStruct( );

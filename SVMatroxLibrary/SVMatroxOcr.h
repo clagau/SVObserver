@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVMatroxTypedefs.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 class SVMatroxOcrInterface;
@@ -37,7 +37,7 @@ public:
 	bool operator==( const SVMatroxOcr& p_rhs ) const ;
 
 	bool				m_bVerify;
-	SVString		m_VerifyString;
+	std::string		m_VerifyString;
 
 protected:
 	SVMatroxIdentifier	m_OcrFontID;

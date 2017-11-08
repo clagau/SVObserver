@@ -11,8 +11,8 @@
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <ctime>
 #include "SourceFileParams.h"
-#include "SVUtilityLibrary/SVString.h"
 #include "SVStatusLibrary/MessageTextEnum.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 namespace SvStl
@@ -29,7 +29,7 @@ namespace SvStl
 		//! \param AdditionalTextId <in> Id for the additional text
 		//! \param rAdditionalTextList <in> Reference to list of strings for the additional text
 		//************************************
-		MessageData( DWORD MessageCode, MessageTextEnum AdditionalTextId = SvStl::Tid_Empty, const SVStringVector& rAdditionalTextList = SVStringVector() );
+		MessageData( DWORD MessageCode, MessageTextEnum AdditionalTextId = SvStl::Tid_Empty, const SvDef::StringVector& rAdditionalTextList = SvDef::StringVector() );
 
 		//************************************
 		//! This is the copy constructor
@@ -57,14 +57,14 @@ namespace SvStl
 		/// Create addtionalText and return it
 		/// \returns SVString
 		//************************************
-		SVString getAdditionalText() const;
+		std::string getAdditionalText() const;
 
 		//************************************
 	/// Convert an enum id to a string for setting it to the addtionalTextList.
 	/// \param id [in] the id
 	/// \returns SVString
 	//************************************
-		static SVString convertId2AddtionalText(MessageTextEnum id);
+		static std::string convertId2AddtionalText(MessageTextEnum id);
 	#pragma endregion Public Methods
 
 	#pragma region Member Variables
@@ -73,7 +73,7 @@ namespace SvStl
 		mutable bool m_Displayed;			//Flag indicating if the message has been displayed
 		DWORD m_MessageCode;				//Number identifying the message
 		MessageTextEnum m_AdditionalTextId; //The main additional text id
-		SVStringVector m_AdditionalTextList; //String list to be inserted in the main additional text id
+		SvDef::StringVector m_AdditionalTextList; //String list to be inserted in the main additional text id
 		SourceFileParams m_SourceFile;		//The source file standard parameters
 		DWORD m_ProgramCode;				//Program specific code.
 		std::time_t m_DateTime;				//The date and time when the data is set

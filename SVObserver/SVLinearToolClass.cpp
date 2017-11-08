@@ -19,6 +19,7 @@
 #include "SVUserMaskOperatorClass.h"
 #include "ToolSizeAdjustTask.h"
 #include "Definitions/GlobalConst.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -99,7 +100,7 @@ bool SVLinearToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 		{
 			if( m_svToolExtent.GetTranslation() != SVExtentTranslationProfile )
 			{
-				m_voProfileOrientation.setValue( SVString( _T("Horizontal") ) );
+				m_voProfileOrientation.setValue( std::string( _T("Horizontal") ) );
 
 				hrOk = m_svToolExtent.SetLinearTranslation(SVExtentTranslationProfile);
 			}
@@ -212,9 +213,9 @@ bool SVLinearToolClass::DoesObjectHaveExtents() const
 	return true;
 }
 
-SVString SVLinearToolClass::GetProfileOrientation()
+std::string SVLinearToolClass::GetProfileOrientation()
 {
-	SVString Result;
+	std::string Result;
 
 	m_voProfileOrientation.getValue( Result );
 
@@ -309,49 +310,49 @@ void SVLinearToolClass::init()
 	analyzerClassInfo.m_ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
 	analyzerClassInfo.m_ObjectTypeInfo.SubType	= SVLinearPixelCountingAnalyzerObjectType;
 	analyzerClassInfo.m_ClassId = SVLinearPixelCountingLineAnalyzerClassGuid;
-	analyzerClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_CLASSNAME_SVLINEARPIXELCOUNTINGLINEANALYZER );
+	analyzerClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_SVLINEARPIXELCOUNTINGLINEANALYZER );
 	m_availableChildren.Add( analyzerClassInfo );
 
 	// Add the Line Edge Count Analyzer...
 	analyzerClassInfo.m_ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
 	analyzerClassInfo.m_ObjectTypeInfo.SubType	= SVLinearEdgeCountingAnalyzerObjectType;
 	analyzerClassInfo.m_ClassId = SVLinearEdgeCountingLineAnalyzerClassGuid;
-	analyzerClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_CLASSNAME_SVLINEAREDGECOUNTINGLINEANALYZER );
+	analyzerClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_SVLINEAREDGECOUNTINGLINEANALYZER );
 	m_availableChildren.Add(analyzerClassInfo);
 	
 	// Add the Line Edge Position Analyzer...
 	analyzerClassInfo.m_ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
 	analyzerClassInfo.m_ObjectTypeInfo.SubType	= SVLinearEdgePositionAnalyzerObjectType;
 	analyzerClassInfo.m_ClassId = SVLinearEdgePositionLineAnalyzerClassGuid;
-	analyzerClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_CLASSNAME_SVLINEAREDGEPOSITIONLINEANALYZER );
+	analyzerClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_SVLINEAREDGEPOSITIONLINEANALYZER );
 	m_availableChildren.Add(analyzerClassInfo);
 
 	// Add the Line Linear Measurement Analyzer...
 	analyzerClassInfo.m_ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
 	analyzerClassInfo.m_ObjectTypeInfo.SubType	= SVLinearMeasurementAnalyzerObjectType;
 	analyzerClassInfo.m_ClassId = SVLinearMeasurementAnalyzerClassGuid;
-	analyzerClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_CLASSNAME_SVLINEARMEASUREMENTLINEANALYZER );
+	analyzerClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_SVLINEARMEASUREMENTLINEANALYZER );
 	m_availableChildren.Add(analyzerClassInfo);
 
 	// Add the Line Maximum Foreground Object Analyzer...
 	analyzerClassInfo.m_ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
 	analyzerClassInfo.m_ObjectTypeInfo.SubType	= SVLinearMaximumForegroundObjectAnalyzerObjectType;
 	analyzerClassInfo.m_ClassId = SVLinearMaximumForegroundObjectLineAnalyzerClassGuid;
-	analyzerClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_CLASSNAME_SVLINEARMAXIMUMFOREGROUNDOBJECTLINEANALYZER );
+	analyzerClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_SVLINEARMAXIMUMFOREGROUNDOBJECTLINEANALYZER );
 	m_availableChildren.Add(analyzerClassInfo);
 
 	// Add the Line Maximum Background Object Analyzer...
 	analyzerClassInfo.m_ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
 	analyzerClassInfo.m_ObjectTypeInfo.SubType	= SVLinearMaximumBackgroundObjectAnalyzerObjectType;
 	analyzerClassInfo.m_ClassId = SVLinearMaximumBackgroundObjectLineAnalyzerClassGuid;
-	analyzerClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_CLASSNAME_SVLINEARMAXIMUMBACKGROUNDOBJECTLINEANALYZER );
+	analyzerClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_SVLINEARMAXIMUMBACKGROUNDOBJECTLINEANALYZER );
 	m_availableChildren.Add(analyzerClassInfo);
 
 	// Add the Line Maximum Object Analyzer...
 	analyzerClassInfo.m_ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
 	analyzerClassInfo.m_ObjectTypeInfo.SubType	= SVLinearMaximumObjectAnalyzerObjectType;
 	analyzerClassInfo.m_ClassId = SVLinearMaximumObjectLineAnalyzerClassGuid;
-	analyzerClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_CLASSNAME_SVLINEARMAXIMUMOBJECTLINEANALYZER );
+	analyzerClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_SVLINEARMAXIMUMOBJECTLINEANALYZER );
 	m_availableChildren.Add(analyzerClassInfo);
 
 	// Build an operator list...

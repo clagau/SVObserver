@@ -13,8 +13,8 @@
 #pragma region Includes
 #include "SVOResource/resource.h"
 #include "SVObjectLibrary/SVOutObjectInfoStruct.h"
-#include "SVUtilityLibrary/SVString.h"
 #include "SVMFCControls/DlgItemResizer.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -38,7 +38,7 @@ namespace SvOg
 	#pragma endregion Constructor
 
 	public:
-		static INT_PTR StandardDialog(const SVString& rName, const SVGUID rTaskObjectID);
+		static INT_PTR StandardDialog(const std::string& rName, const SVGUID rTaskObjectID);
 	
 	protected:
 		virtual BOOL OnInitDialog() override;
@@ -65,9 +65,9 @@ namespace SvOg
 		CListCtrl m_ListCtrl;
 		const SVGuidSet& m_rSourceSet;
 		SVObjectTypeEnum m_objectType;
-		StringPairVector m_dependencyList;
-		SVString m_DisplayText;
+		SvDef::StringPairVector m_dependencyList;
+		std::string m_DisplayText;
 		DialogType m_DialogType;
-		SVStringSet m_SourceNames;
+		SvDef::StringSet m_SourceNames;
 	};
 } //namespace SvOg

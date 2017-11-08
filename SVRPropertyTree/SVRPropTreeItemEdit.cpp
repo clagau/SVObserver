@@ -27,9 +27,12 @@
 //	If you use this code, drop me an email.  I'd like to know if you find the code
 //	useful.
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVRPropTree.h"
 #include "SVRPropTreeItemEdit.h"
+#include "SVUtilityLibrary/StringHelper.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -264,7 +267,7 @@ void SVRPropertyItemEdit::OnCommit()
 	String2Data( Text );
 	if( nullptr != m_pValue )
 	{
-		*m_pValue = SVString( Text );
+		*m_pValue = std::string( Text );
 	}
 }
 
@@ -469,7 +472,7 @@ bool SVRPropertyItemEdit::GetItemValue(double& rValue)
 }
 
 
-bool SVRPropertyItemEdit::GetItemValue(SVString& rValue)
+bool SVRPropertyItemEdit::GetItemValue(std::string& rValue)
 {
 	rValue = Data2String();
 
@@ -804,7 +807,7 @@ bool SVRPropertyItemEdit::SetItemValuePtr(double& dblVal)
 }
 
 
-bool SVRPropertyItemEdit::SetItemValuePtr(SVString& rVal)
+bool SVRPropertyItemEdit::SetItemValuePtr(std::string& rVal)
 {
 	try
 	{
@@ -819,9 +822,9 @@ bool SVRPropertyItemEdit::SetItemValuePtr(SVString& rVal)
 	return true;
 }
 
-SVString SVRPropertyItemEdit::Data2String()
+std::string SVRPropertyItemEdit::Data2String()
 {
-	SVString Result;
+	std::string Result;
 
 	switch( m_vtData.vt )
 	{
@@ -832,70 +835,70 @@ SVString SVRPropertyItemEdit::Data2String()
 		Result = *m_vtData.pboolVal ? _T("True") : _T("False");
 		break;
 	case VT_I1:
-		Result = SvUl_SF::Format( _T("%c"), m_vtData.cVal );
+		Result = SvUl::Format( _T("%c"), m_vtData.cVal );
 		break;
 	case VT_I1 | VT_BYREF:
-		Result = SvUl_SF::Format( _T("%c"), *m_vtData.pcVal );
+		Result = SvUl::Format( _T("%c"), *m_vtData.pcVal );
 		break;
 	case VT_UI1:
-		Result = SvUl_SF::Format( _T("%#01.1hx"), m_vtData.bVal );
+		Result = SvUl::Format( _T("%#01.1hx"), m_vtData.bVal );
 		break;
 	case VT_UI1 | VT_BYREF:
-		Result = SvUl_SF::Format( _T("%#01.1hx"), *m_vtData.pbVal );
+		Result = SvUl::Format( _T("%#01.1hx"), *m_vtData.pbVal );
 		break;
 	case VT_I2:
-		Result = SvUl_SF::Format( _T("%hd"), m_vtData.iVal );
+		Result = SvUl::Format( _T("%hd"), m_vtData.iVal );
 		break;
 	case VT_I2 | VT_BYREF:
-		Result = SvUl_SF::Format( _T("%hd"), *m_vtData.piVal );
+		Result = SvUl::Format( _T("%hd"), *m_vtData.piVal );
 		break;
 	case VT_UI2:
-		Result = SvUl_SF::Format( _T("%#02.2hx"), m_vtData.uiVal );
+		Result = SvUl::Format( _T("%#02.2hx"), m_vtData.uiVal );
 		break;
 	case VT_UI2 | VT_BYREF:
-		Result = SvUl_SF::Format( _T("%#02.2hx"), *m_vtData.puiVal );
+		Result = SvUl::Format( _T("%#02.2hx"), *m_vtData.puiVal );
 		break;
 	case VT_I4:
-		Result = SvUl_SF::Format( _T("%ld"), m_vtData.lVal );
+		Result = SvUl::Format( _T("%ld"), m_vtData.lVal );
 		break;
 	case VT_I4 | VT_BYREF:
-		Result = SvUl_SF::Format( _T("%ld"), *m_vtData.plVal );
+		Result = SvUl::Format( _T("%ld"), *m_vtData.plVal );
 		break;
 	case VT_UI4:
-		Result = SvUl_SF::Format( _T("%#04.4lx"), m_vtData.ulVal );
+		Result = SvUl::Format( _T("%#04.4lx"), m_vtData.ulVal );
 		break;
 	case VT_UI4 | VT_BYREF:
-		Result = SvUl_SF::Format( _T("%#04.4lx"), *m_vtData.pulVal );
+		Result = SvUl::Format( _T("%#04.4lx"), *m_vtData.pulVal );
 		break;
 	case VT_INT:
-		Result = SvUl_SF::Format( _T("%d"), m_vtData.intVal );
+		Result = SvUl::Format( _T("%d"), m_vtData.intVal );
 		break;
 	case VT_INT | VT_BYREF:
-		Result = SvUl_SF::Format( _T("%d"), *m_vtData.pintVal );
+		Result = SvUl::Format( _T("%d"), *m_vtData.pintVal );
 		break;
 	case VT_UINT:
-		Result = SvUl_SF::Format( _T("%#04.4x"), m_vtData.uintVal );
+		Result = SvUl::Format( _T("%#04.4x"), m_vtData.uintVal );
 		break;
 	case VT_UINT | VT_BYREF:
-		Result = SvUl_SF::Format( _T("%#04.4x"), *m_vtData.puintVal );
+		Result = SvUl::Format( _T("%#04.4x"), *m_vtData.puintVal );
 		break;
 	case VT_R4:
-		Result = SvUl_SF::Format( _T("%g"), m_vtData.fltVal );
+		Result = SvUl::Format( _T("%g"), m_vtData.fltVal );
 		break;
 	case VT_R4 | VT_BYREF:
-		Result = SvUl_SF::Format( _T("%g"), *m_vtData.pfltVal );
+		Result = SvUl::Format( _T("%g"), *m_vtData.pfltVal );
 		break;
 	case VT_R8:
-		Result = SvUl_SF::Format( _T("%g"), m_vtData.dblVal );
+		Result = SvUl::Format( _T("%g"), m_vtData.dblVal );
 		break;
 	case VT_R8 | VT_BYREF:
-		Result = SvUl_SF::Format( _T("%g"), *m_vtData.pdblVal );
+		Result = SvUl::Format( _T("%g"), *m_vtData.pdblVal );
 		break;
 	case VT_BSTR:
-		Result = SvUl_SF::createSVString( m_vtData.bstrVal );
+		Result = SvUl::createStdString( m_vtData.bstrVal );
 		break;
 	case VT_BSTR | VT_BYREF:
-		Result = SvUl_SF::createSVString( *m_vtData.pbstrVal );
+		Result = SvUl::createStdString( *m_vtData.pbstrVal );
 		break;
 	default:
 		break;

@@ -45,7 +45,7 @@ namespace SvSml
 		return m_MLContainer.GetVersion();
 	}
 
-	bool SharedMemReader::IsActiveMonitorList(const SVString& Monitorlistname ) const
+	bool SharedMemReader::IsActiveMonitorList(const std::string& Monitorlistname ) const
 	{
 		return m_MLContainer.IsActiveMonitorList(Monitorlistname);
 	}
@@ -137,7 +137,7 @@ namespace SvSml
 		const MonitorEntries& ProdEnties = pML->GetMonitorEntries(t);
 		for (MonitorEntryPointer mep : ProdEnties)
 		{
-			SVString value;
+			std::string value;
 			int Offset = mep->data.Store_Offset;
 			int store = mep->data.InspectionStoreId;
 			BYTE* ptr = 	m_DataContainer.GetDataBufferPtr(slot, store, Offset);
@@ -150,7 +150,7 @@ namespace SvSml
 			{
 				mep->GetValue(value, ptr);
 			}
-			pProduct->m_data.push_back(stringpointer(new  SVString(value)));
+			pProduct->m_data.push_back(stringpointer(new  std::string(value)));
 			pProduct->m_dataEntries.push_back(mep);
 		}
 		const MonitorEntries& ProdImageEntries = pML->GetMonitorEntries(ListType::productItemsImage);

@@ -56,7 +56,7 @@
 #include "SVOGui\TADialogTableDefinesPage.h"
 #include "SVOGui\TATableSourcePage.h"
 #include "SVOGui\TATableAnalyzerPage.h"
-#include "SVUtilityLibrary\SVString.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -443,7 +443,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 		{
 			SvStl::MessageContainer message = pTool->getFirstTaskMessage();
 			SvStl::MessageTextEnum textEnum = SvStl::Tid_Empty;
-			SVStringVector textList; 
+			SvDef::StringVector textList; 
 			if (0 != message.getMessage().m_MessageCode)
 			{
 				textEnum = message.getMessage().m_AdditionalTextId;

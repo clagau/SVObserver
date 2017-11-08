@@ -27,6 +27,7 @@
 #include "SVConfigurationObject.h"
 #include "TextDefinesSvO.h"
 #include "Definitions/GlobalConst.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -162,8 +163,8 @@ HRESULT SVDigitizerProcessingClass::UpdateDigitizerSubsystem( SvTh::SVDigitizerL
 
 		for ( unsigned long i = 0; S_OK == Result && i < l_ulSize; i++ )
 		{
-			SVString AcquisitionName;
-			SVString IPAddress;
+			std::string AcquisitionName;
+			std::string IPAddress;
 
 			unsigned long Handle = 0;
 
@@ -177,18 +178,18 @@ HRESULT SVDigitizerProcessingClass::UpdateDigitizerSubsystem( SvTh::SVDigitizerL
 				Result = pDigitizerSubsystem->GetName( Handle, bString.GetAddress() );
 				if( S_OK == Result )
 				{
-					AcquisitionName = SvUl_SF::createSVString( bString );
+					AcquisitionName = SvUl::createStdString( bString );
 				}
 				//Not all DLL's support IP address so do not place in Result value
 				if( S_OK == pDigitizerSubsystem->ParameterGetValue( Handle, SVGigeParameterIPAddress, 0, &Value ) )
 				{
-					IPAddress = SvUl_SF::createSVString( Value );
+					IPAddress = SvUl::createStdString( Value );
 				}
 			}
 
 			if ( S_OK == Result )
 			{
-				SVString CameraName;
+				std::string CameraName;
 				if( 0 == AcquisitionName.find( _T( "Matrox_GIGE" ) ) )
 				{
 					CameraName =  SVGigeCameraManager::Instance().getCameraName( IPAddress );
@@ -208,7 +209,7 @@ HRESULT SVDigitizerProcessingClass::UpdateDigitizerSubsystem( SvTh::SVDigitizerL
 	return Result;
 }
 
-HRESULT SVDigitizerProcessingClass::GetAcquisitionDeviceList( SVStringVector& rList ) const
+HRESULT SVDigitizerProcessingClass::GetAcquisitionDeviceList( SvDef::StringVector& rList ) const
 {
 	HRESULT l_Status = S_OK;
 
@@ -220,7 +221,7 @@ HRESULT SVDigitizerProcessingClass::GetAcquisitionDeviceList( SVStringVector& rL
 
 		if( !( l_AcqDevicePtr.empty() ) && 0 != l_AcqDevicePtr->m_hDigitizer )
 		{
-			rList.push_back( SVString( l_AcqDevicePtr->DeviceName() ) );
+			rList.push_back( std::string( l_AcqDevicePtr->DeviceName() ) );
 		}
 
 		++l_Iter;
@@ -470,8 +471,8 @@ HRESULT SVDigitizerProcessingClass::RestoreLastCameraImage()
 HRESULT SVDigitizerProcessingClass::AddDigitizer( LPCTSTR Name, LPCTSTR AcquisitionName, SvTh::SVDigitizerLoadLibraryClass* pDigitizerSubsystem, unsigned long p_Handle )
 {
 	HRESULT Result( S_OK );
-	SVString DigitizerName( Name );
-	SVString AcqName( AcquisitionName );
+	std::string DigitizerName( Name );
+	std::string AcqName( AcquisitionName );
 
 	SVNameDigitizerMap::iterator l_Iter = m_AcquisitionDevices.find( AcqName );
 
@@ -515,9 +516,9 @@ HRESULT SVDigitizerProcessingClass::SetDigitizerColor( LPCTSTR DigitizerName, bo
 	return Result;
 }
 
-SVString SVDigitizerProcessingClass::GetReOrderedCamera( const int CameraID ) const
+std::string SVDigitizerProcessingClass::GetReOrderedCamera( const int CameraID ) const
 {
-	SVString Result;
+	std::string Result;
 	const SVGigeCameraStructVector& rGigeCameraOrder = SVGigeCameraManager::Instance().GetCameraOrder();
 	SVGigeCameraStructVector::const_iterator Iter( rGigeCameraOrder.begin() );
 	for(; rGigeCameraOrder.end() != Iter && Result.empty(); ++Iter )
@@ -530,21 +531,21 @@ SVString SVDigitizerProcessingClass::GetReOrderedCamera( const int CameraID ) co
 			{
 				DigitizerID = Iter->m_CameraID + SvDef::cMaximumCameras;
 			}
-			Result = SvUl_SF::Format( cMatroxGigeDigitizer, DigitizerID );
+			Result = SvUl::Format( cMatroxGigeDigitizer, DigitizerID );
 		}
 	}
 	return Result;
 }
 
-SVString SVDigitizerProcessingClass::GetReOrderedCamera( LPCTSTR CameraIPAddress ) const
+std::string SVDigitizerProcessingClass::GetReOrderedCamera( LPCTSTR CameraIPAddress ) const
 {
-	SVString Result;
+	std::string Result;
 
-	SVString CameraName = SVGigeCameraManager::Instance().getCameraName( SVString( CameraIPAddress ) );
+	std::string CameraName = SVGigeCameraManager::Instance().getCameraName( std::string( CameraIPAddress ) );
 	if( !CameraName.empty() )
 	{
 		//Zero based camera ID, note camera name is one based!
-		int CameraID = atoi( SvUl_SF::Mid( CameraName, SVString(SvO::cCameraFixedName).length() ).c_str() );
+		int CameraID = atoi( SvUl::Mid( CameraName, std::string(SvO::cCameraFixedName).length() ).c_str() );
 		CameraID--;
 		Result = GetReOrderedCamera( CameraID );
 	}
@@ -580,7 +581,7 @@ HRESULT SVDigitizerProcessingClass::UpdateMatroxDevices()
 
 	SVGigeCameraStructVector Cameras;
 
-	SVString deviceName = _T("Matrox_GIGE.Dig_0"); // just use the first one
+	std::string deviceName = _T("Matrox_GIGE.Dig_0"); // just use the first one
 
 	if( IsValidDigitizerSubsystem( deviceName.c_str() ) )
 	{
@@ -651,7 +652,7 @@ HRESULT SVDigitizerProcessingClass::UpdateMatroxDevices()
 
 		if( 0 != rCamera.m_AcquisitionHandle )
 		{
-			SVString AcquisitionName = SvUl_SF::Format( cMatroxGigeDigitizer, rCamera.m_DigitizerID );
+			std::string AcquisitionName = SvUl::Format( cMatroxGigeDigitizer, rCamera.m_DigitizerID );
 
 			SVAcquisitionClassPtr pAcquisitionDevice = GetAcquisitionDevice( AcquisitionName.c_str() );
 

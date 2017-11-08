@@ -16,7 +16,7 @@
 #include "SVLinearEdgeAProcessingClass.h"
 #include "SVGlobal.h"
 #include "SVOCore/SVTool.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVLinearEdgeCountingLineAnalyzerClass, SVLinearEdgeCountingLineAnalyzerClassGuid );
@@ -65,8 +65,8 @@ void SVLinearEdgeCountingLineAnalyzerClass::init()
 	resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
 	resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultLongObjectType;
 	resultClassInfo.m_ClassId = SVLongResultClassGuid;
-	resultClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_EDGE_COUNT );
-	SVString Title = SvUl_SF::LoadSVString( IDS_RESULT_STRING );
+	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_EDGE_COUNT );
+	std::string Title = SvUl::LoadStdString( IDS_RESULT_STRING );
 	resultClassInfo.m_ClassName += _T(" ");
 	resultClassInfo.m_ClassName += Title.c_str();
 	m_availableChildren.Add( resultClassInfo );

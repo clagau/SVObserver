@@ -20,7 +20,7 @@
 #include "SVUnloadDeviceDialog.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "Definitions/TextDefineSVDef.h"
-
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -33,12 +33,12 @@ CWnd g_ImageTestDesktopWindow;
 
 bool IsGigeDigitizer(LPCTSTR ProductName)
 {
-	SVString Name = ProductName;
-	bool l_bOk = ( 0 == SvUl_SF::CompareNoCase( Name, SVString(SvDef::SVO_PRODUCT_KONTRON_X2_GD1A ) ) ||
-					0 == SvUl_SF::CompareNoCase( Name, SVString(SvDef::SVO_PRODUCT_KONTRON_X2_GD2A ) ) ||
-					0 == SvUl_SF::CompareNoCase( Name, SVString(SvDef::SVO_PRODUCT_KONTRON_X2_GD4A ) ) ||
-					0 == SvUl_SF::CompareNoCase( Name, SVString(SvDef::SVO_PRODUCT_KONTRON_X2_GD8A ) ) ||
-					0 == SvUl_SF::CompareNoCase( Name, SVString(SvDef::SVO_PRODUCT_KONTRON_X2_GD8A_NONIO ) ) ) ? true : false;
+	std::string Name = ProductName;
+	bool l_bOk = ( 0 == SvUl::CompareNoCase( Name, std::string(SvDef::SVO_PRODUCT_KONTRON_X2_GD1A ) ) ||
+					0 == SvUl::CompareNoCase( Name, std::string(SvDef::SVO_PRODUCT_KONTRON_X2_GD2A ) ) ||
+					0 == SvUl::CompareNoCase( Name, std::string(SvDef::SVO_PRODUCT_KONTRON_X2_GD4A ) ) ||
+					0 == SvUl::CompareNoCase( Name, std::string(SvDef::SVO_PRODUCT_KONTRON_X2_GD8A ) ) ||
+					0 == SvUl::CompareNoCase( Name, std::string(SvDef::SVO_PRODUCT_KONTRON_X2_GD8A_NONIO ) ) ) ? true : false;
 
 	return l_bOk;
 }
@@ -71,7 +71,7 @@ CSVImageTestApp::CSVImageTestApp()
 	TCHAR SystemDir[ MAX_PATH + 1 ];
 
 	::GetSystemDirectory( SystemDir, MAX_PATH + 1 );
-	m_oemIniFile = SvUl_SF::Format( _T("%s\\OEMINFO.INI"), SystemDir);
+	m_oemIniFile = SvUl::Format( _T("%s\\OEMINFO.INI"), SystemDir);
 }
 
 CSVImageTestApp::~CSVImageTestApp()

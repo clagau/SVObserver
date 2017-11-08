@@ -11,8 +11,6 @@
 
 #pragma once
 
-#include "SVUtilityLibrary/SVString.h"
-
 enum SVFileTypesEnum
 {
 	SV_DEFAULT_FILE_TYPE               = 0,
@@ -69,11 +67,11 @@ public:
 
 	//This operator exposes the string contained in the 
 	//mcsFileName attribute.
-	const SVString& GetFileNameOnly() const;
+	const std::string& GetFileNameOnly() const;
 
 	//This operator exposed the string contained in the 
 	//mcsExtension attribute.
-	const SVString& GetExtension() const;
+	const std::string& GetExtension() const;
 
 	//This operator exposes the values contained in the 
 	//mdwFileType attribute.
@@ -81,33 +79,33 @@ public:
 
 	//This operator exposes the string contained in the 
 	//mcsPathName attribute.
-	const SVString& GetPathName() const;
+	const std::string& GetPathName() const;
 
 	//This operator exposes the strings contained in the 
 	//mcsFileName and mcsExtension attribute.
-	const SVString& GetFileName() const;
+	const std::string& GetFileName() const;
 
 	//This operator exposed the strings contained in the 
 	//mcsPathName, mcsFileName and mcsExtension attributes.
-	const SVString& GetFullFileName() const;
+	const std::string& GetFullFileName() const;
 
 	//This operator exposes the string contained in the 
 	//mcsFileSelectDialogTitle attribute.
-	const SVString& GetFileSelectDialogTitle() const;
+	const std::string& GetFileSelectDialogTitle() const;
 
 	//This operator exposes the string contained in the 
 	//mcsFileSaveDialogTitle attribute.
-	const SVString& GetFileSaveDialogTitle() const;
+	const std::string& GetFileSaveDialogTitle() const;
 
-	const SVString& GetDefaultPathName() const;
+	const std::string& GetDefaultPathName() const;
 
 	//This operator exposes the string contained in the 
 	//mcsDefaultFileName attribute.
-	const SVString& GetDefaultFileName() const;
+	const std::string& GetDefaultFileName() const;
 
 	//This operator exposes the string contained in the 
 	//mcsFileExtensionFilterList attribute.
-	const SVString& GetFileExtensionFilterList() const;
+	const std::string& GetFileExtensionFilterList() const;
 
 	//This operator exposes the value contained in the 
 	//mdwFileSaveFlags attribute.
@@ -119,7 +117,7 @@ public:
 
 	//This operator exposes the string contained in the 
 	//mcsDefaultFileExtension attribute.
-	const SVString& GetDefaultFileExtension() const;
+	const std::string& GetDefaultFileExtension() const;
 
 	//This operator sets the mdwFileType attribute and also 
 	//sets default values for the mcsFileSelectDialogTitle, 
@@ -166,7 +164,7 @@ public:
 	//This operator changes the string contained in the 
 	//mcsFileExtensionFilterList attribute to the value 
 	//contain in the operator parameter.
-	void SetFileExtensionFilterList(const SVString& rFilter);
+	void SetFileExtensionFilterList(const std::string& rFilter);
 
 	//This operator changes the string contained in the 
 	//mdwFileSaveFlags attribute to the value contain in the 
@@ -180,17 +178,17 @@ public:
 
 	void SetDefaultFullFileName(LPCTSTR FullName);
 
-	void SetDefaultPathName(const SVString& rName);
+	void SetDefaultPathName(const std::string& rName);
 
 	//This operator changes the string contained in the 
 	//mcsDefaultFileName attribute to the value contain in 
 	//the operator parameter.
-	void SetDefaultFileName(const SVString& rName);
+	void SetDefaultFileName(const std::string& rName);
 
 	//This operator changes the string contained in the 
 	//mcsDefaultFileExtension attribute to the value contain 
 	//in the operator parameter.
-	void SetDefaultFileExtension(const SVString& rExtension);
+	void SetDefaultFileExtension(const std::string& rExtension);
 
 	//This operator uses the object's attributes to build a 
 	//file dialog for selecting a path for the object.  A 
@@ -226,7 +224,7 @@ private:
 	//! \param FileName [in] the selected file name
 	//! \returns the valid PathName
 //************************************
-	SVString checkFileName( LPCTSTR PathName, LPCTSTR FileName ) const;
+	std::string checkFileName( LPCTSTR PathName, LPCTSTR FileName ) const;
 
 	//This attribute defines which kind of file is desired to 
 	//be held within this object.
@@ -235,43 +233,43 @@ private:
 	//This is a temporary storage container for the string 
 	//defining the fully qualified file name.  This name 
 	//include the path, name, and the extension.
-	mutable SVString m_FullFileName;
+	mutable std::string m_FullFileName;
 
 	//This attribute defines the path name attached to this 
 	//object.
-	SVString m_PathName;
+	std::string m_PathName;
 
 	//This attribute defines the file name attached to this 
 	//object with the extension.  This variable gets updated 
 	//when the GetFileName operation is called.
-	mutable SVString m_FileName;
+	mutable std::string m_FileName;
 
 	//This is a temporary storage container for the string 
 	//defining the file name without the extension.
-	SVString m_FileNameOnly;
+	std::string m_FileNameOnly;
 
 	//This attribute defines the extension attached to this 
 	//object.
-	SVString m_Extension;
+	std::string m_Extension;
 
 	//This attribute defines the title to be placed on the 
 	//file selection dialog.
-	SVString m_FileSelectDialogTitle;
+	std::string m_FileSelectDialogTitle;
 
 	//This attribute defines the title to be placed on the 
 	//file save dialog for this object.
-	SVString m_FileSaveDialogTitle;
+	std::string m_FileSaveDialogTitle;
 
 	//This attribute define the default file extension to be 
 	//used for both the file selection and file saving dialog.
-	SVString m_DefaultFileExtension;
+	std::string m_DefaultFileExtension;
 
 	//This attribute defines the default file name to be used 
 	//for the file selecting and file saving dialog for this 
 	//object.
-	SVString m_DefaultFileName;
+	std::string m_DefaultFileName;
 
-	SVString m_DefaultPathName;
+	std::string m_DefaultPathName;
 
 	//This attribute defines the flags needed for the file 
 	//selection dialog for this object.
@@ -284,8 +282,8 @@ private:
 	//This attribute defines the file extension filter list 
 	//for both the file selection and the file saving dialog 
 	//for this object.
-	SVString m_FileExtensionFilterList;
+	std::string m_FileExtensionFilterList;
 
-	SVString m_ExcludeChar;			//The array of file name exclude characters
+	std::string m_ExcludeChar;			//The array of file name exclude characters
 };
 

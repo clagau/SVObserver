@@ -22,6 +22,7 @@
 #include "SVXMLLibrary\LoadConfiguration.h"
 
 #include "SVOLibrary/SVOLibrary.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "AutoBuild/AutoBuild.h"
@@ -179,7 +180,7 @@ void SVOFileConfigDlg::OnSelchangedTree1(NMHDR* pNMHDR, LRESULT* pResult)
 	
 	*pResult = 0;
 }
-bool SVOFileConfigDlg::GetDirectoryRemoveLevel( SVString& rFileName, int p_level )
+bool SVOFileConfigDlg::GetDirectoryRemoveLevel( std::string& rFileName, int p_level )
 {
 	bool l_bChanged = false;
 	if( rFileName.rfind( '.' ) > 0 )
@@ -187,10 +188,10 @@ bool SVOFileConfigDlg::GetDirectoryRemoveLevel( SVString& rFileName, int p_level
 		size_t Pos = rFileName.rfind( _T('\\') );
 		int count = 0;
 		//Make sure that it is not a UNC path
-		while( SVString::npos != Pos && 1 < Pos != Pos && count < p_level )
+		while( std::string::npos != Pos && 1 < Pos != Pos && count < p_level )
 		{
 			Pos = rFileName.rfind( _T('\\') );
-			if( SVString::npos != Pos )
+			if( std::string::npos != Pos )
 			{
 				rFileName = rFileName.substr(0 , Pos );
 				count++;
@@ -272,7 +273,7 @@ void SVOFileConfigDlg::OnButtonsaveSvx()
 		{
 			SvXml::SVObjectXMLWriter writer(XMLOutFile);
 			writer.setNewLine( true );
-			SVString RootName( SvOl::FqnRoot );
+			std::string RootName( SvOl::FqnRoot );
 			writer.WriteRootElement( RootName.c_str() );
 			writer.WriteSchema();
 			SvXml::TreeToXMl::CopyTreeNodeToWriter<SvXml::SVXMLCTreeCtrl>(m_XMLCTree,m_XMLCTree.getRoot(),writer );
@@ -297,25 +298,25 @@ void SVOFileConfigDlg::FixConfiguration()
 {
 	for( HTIStringPairs::iterator it = m_IOEntryPairs.begin() ; it != m_IOEntryPairs.end() ; ++it)
 	{
-		SVString Inspection;
+		std::string Inspection;
 		if( ParseInspection( (*it).second, Inspection ) )
 		{
 			if( std::find( m_Inspections.begin(), m_Inspections.end(), Inspection) == m_Inspections.end() )
 			{
 				if( mTree.DeleteItem((*it).first) )
 				{
-					OutputDebugString( SVString(_T("Deleting ")+(*it).second).c_str() );
+					OutputDebugString( std::string(_T("Deleting ")+(*it).second).c_str() );
 				}
 			}
 		}
-		SVString l_strPPQ;
+		std::string l_strPPQ;
 		if( ParsePPQ( (*it).second, l_strPPQ ) )
 		{
 			if( std::find( m_PPQs.begin(), m_PPQs.end(), l_strPPQ) == m_PPQs.end() )
 			{
 				if( mTree.DeleteItem((*it).first) )
 				{
-					OutputDebugString( SVString(_T("Deleting ")+(*it).second).c_str() );
+					OutputDebugString( std::string(_T("Deleting ")+(*it).second).c_str() );
 				}
 			}
 		}
@@ -337,7 +338,7 @@ void SVOFileConfigDlg::FixConfiguration()
 						l_DeletedHTreeItems.insert( it1->first );
 						if( mTree.DeleteItem( it1->first ))
 						{
-							OutputDebugString( SVString(_T("Deleting ") + it->second + "\n").c_str() );
+							OutputDebugString( std::string(_T("Deleting ") + it->second + "\n").c_str() );
 						}
 					}
 				}
@@ -355,7 +356,7 @@ void SVOFileConfigDlg::FixConfiguration()
 
 	while( l_Current != NULL )
 	{
-		SVString l_strName = mTree.GetItemText( l_Current );
+		std::string l_strName = mTree.GetItemText( l_Current );
 
 		if( l_strName == _T("IO"))
 		{
@@ -374,11 +375,11 @@ void SVOFileConfigDlg::ReIndexIOEntries(HTREEITEM p_Item)
 	// Find all IOEntries.
 	while( l_Current != NULL )
 	{
-		SVString Name = mTree.GetItemText( l_Current);
+		std::string Name = mTree.GetItemText( l_Current);
 
-		if( SVString::npos != Name.find( _T("IOEntry") ) )
+		if( std::string::npos != Name.find( _T("IOEntry") ) )
 		{
-			SVString NewName = SvUl_SF::Format( _T("IOEntry%d"), count);
+			std::string NewName = SvUl::Format( _T("IOEntry%d"), count);
 			count++;
 			mTree.SetItemText(l_Current, NewName.c_str() );
 		}
@@ -389,7 +390,7 @@ void SVOFileConfigDlg::ReIndexIOEntries(HTREEITEM p_Item)
 	l_Current = mTree.GetChildItem( p_Item);
 	while( l_Current != NULL )
 	{
-		SVString Name = mTree.GetItemText( l_Current);
+		std::string Name = mTree.GetItemText( l_Current);
 
 		if( Name == _T("NumberOfIOEntries") )
 		{
@@ -412,7 +413,7 @@ void SVOFileConfigDlg::CheckConfiguration()
 
 	while( Current != NULL )
 	{
-		SVString Name = mTree.GetItemText( Current );
+		std::string Name = mTree.GetItemText( Current );
 
 		if( Name == _T("IO"))
 		{
@@ -434,35 +435,35 @@ void SVOFileConfigDlg::CheckConfiguration()
 	}
 
 	// search IOEntries for invalid inspections
-	SVString strMainMessage;
+	std::string strMainMessage;
 	
 	for( HTIStringPairs::iterator it = m_IOEntryPairs.begin() ; it != m_IOEntryPairs.end() ; ++it)
 	{
-		SVString Inspection;
+		std::string Inspection;
 		if( ParseInspection( (*it).second, Inspection ) )
 		{
 			if( std::find( m_Inspections.begin(), m_Inspections.end(), Inspection) == m_Inspections.end() )
 			{
-				SVString strMessage = SvUl_SF::Format( _T("%s\n"), it->second.c_str());
+				std::string strMessage = SvUl::Format( _T("%s\n"), it->second.c_str());
 				strMainMessage+= strMessage;
 
 				if( mTree.DeleteItem((*it).first) )
 				{
-					OutputDebugString( SVString(_T("Deleting ") + it->second).c_str() );
+					OutputDebugString( std::string(_T("Deleting ") + it->second).c_str() );
 				}
 			}
 		}
-		SVString PPQName;
+		std::string PPQName;
 		if( ParsePPQ( (*it).second, PPQName ) )
 		{
 			if( std::find( m_PPQs.begin(), m_PPQs.end(), PPQName) == m_PPQs.end() )
 			{
-				SVString strMessage = SvUl_SF::Format( _T("%s\n"), it->second.c_str());
+				std::string strMessage = SvUl::Format( _T("%s\n"), it->second.c_str());
 				strMainMessage+= strMessage;
 
 				if( mTree.DeleteItem((*it).first) )
 				{
-					OutputDebugString( SVString(_T("Deleting ") + it->second).c_str() );
+					OutputDebugString( std::string(_T("Deleting ") + it->second).c_str() );
 				}
 			}
 		}
@@ -475,15 +476,15 @@ void SVOFileConfigDlg::CheckConfiguration()
 	}
 
 }
-bool SVOFileConfigDlg::ParseInspection( const SVString& rName, SVString& rOut)
+bool SVOFileConfigDlg::ParseInspection( const std::string& rName, std::string& rOut)
 {
 	bool Result( false );
 	size_t Pos = rName.find('.');
-	if( SVString::npos != Pos )
+	if( std::string::npos != Pos )
 	{
-		SVString Temp;
+		std::string Temp;
 		Result = true;
-		Temp = SvUl_SF::Left( rName, Pos );
+		Temp = SvUl::Left( rName, Pos );
 		if( Temp == _T("DIO") || (Temp.find( _T("PPQ")) == 0))
 		{
 			Result = false;
@@ -496,15 +497,15 @@ bool SVOFileConfigDlg::ParseInspection( const SVString& rName, SVString& rOut)
 	return Result;
 }
 
-bool SVOFileConfigDlg::ParsePPQ( const SVString& rName, SVString& rOut)
+bool SVOFileConfigDlg::ParsePPQ( const std::string& rName, std::string& rOut)
 {
 	bool Result( false );
 	size_t Pos = rName.find('.');
-	if( SVString::npos != Pos )
+	if( std::string::npos != Pos )
 	{
-		SVString Temp;
+		std::string Temp;
 
-		Temp = SvUl_SF::Left( rName,  Pos );
+		Temp = SvUl::Left( rName,  Pos );
 		if( Temp.find( _T("PPQ") ) == 0)
 		{
 			Result = true;
@@ -520,9 +521,9 @@ void SVOFileConfigDlg::GetIOChildren(HTREEITEM p_Item)
 	HTREEITEM l_Current = mTree.GetChildItem( p_Item);
 	while( l_Current != NULL )
 	{
-		SVString Name = mTree.GetItemText( l_Current);
+		std::string Name = mTree.GetItemText( l_Current);
 
-		if( SVString::npos != Name.find( _T("IOEntry") ) )
+		if( std::string::npos != Name.find( _T("IOEntry") ) )
 		{
 			HTREEITEM l_InspItem = mTree.GetChildItem( l_Current );
 			while( l_InspItem != NULL )
@@ -533,7 +534,7 @@ void SVOFileConfigDlg::GetIOChildren(HTREEITEM p_Item)
 					VARIANT* l_vt = reinterpret_cast<VARIANT*> (mTree.GetItemData( l_InspItem ));
 					if( l_vt->vt == VT_BSTR )
 					{
-						SVString IOEntryName = SvUl_SF::createSVString( _bstr_t(l_vt->bstrVal) );
+						std::string IOEntryName = SvUl::createStdString( _bstr_t(l_vt->bstrVal) );
 						HTIStringPair l_Pair(l_Current, IOEntryName);
 						m_IOEntryPairs.push_back( l_Pair );
 						break;
@@ -552,7 +553,7 @@ void SVOFileConfigDlg::GetPPQs(HTREEITEM p_Item)
 	HTREEITEM l_Current = mTree.GetChildItem( p_Item);
 	while( l_Current != NULL )
 	{
-		SVString PPQName = mTree.GetItemText( l_Current);
+		std::string PPQName = mTree.GetItemText( l_Current);
 
 		m_PPQs.push_back( PPQName );
 
@@ -566,7 +567,7 @@ void SVOFileConfigDlg::GetInspections(HTREEITEM p_Item)
 	HTREEITEM l_Current = mTree.GetChildItem( p_Item);
 	while( l_Current != NULL )
 	{
-		SVString Name = mTree.GetItemText( l_Current);
+		std::string Name = mTree.GetItemText( l_Current);
 		m_Inspections.push_back( Name );
 
 		l_Current = mTree.GetNextSiblingItem(l_Current);

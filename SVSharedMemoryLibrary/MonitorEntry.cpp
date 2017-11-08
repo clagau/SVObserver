@@ -3,7 +3,7 @@
 #include "MonitorEntry.h"
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "SVMatroxLibrary\MatroxImageProps.h"
-#include "SVUtilityLibrary\SVString.h"
+
 #pragma endregion Includes
 
 namespace SvSml
@@ -39,7 +39,7 @@ namespace SvSml
 
 	};
 
-	MonitorEntry::MonitorEntry(const SVString& na) :data(), m_Guid(GUID_NULL)
+	MonitorEntry::MonitorEntry(const std::string& na) :data(), m_Guid(GUID_NULL)
 	{
 		name = na;
 	};
@@ -79,7 +79,7 @@ namespace SvSml
 		data.BandSize = rImageProps.Bandsize;
 	}
 
-	bool MonitorEntry::GetValue(SVString& string, BYTE* ptr)
+	bool MonitorEntry::GetValue(std::string& string, BYTE* ptr)
 	{
 		TCHAR Text[100];
 		switch (data.variant_type)

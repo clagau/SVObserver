@@ -15,7 +15,7 @@
 #include "SVOCVMatchDlg.h"
 #include "SVOCVAnalyzerResult.h"
 #include "SVStatusLibrary\GlobalPath.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -122,7 +122,7 @@ BOOL SVOCVMatchDlg::OnInitDialog()
 	
 	SetTaskObject( pOCVAnalyzerResult );
 
-	SVString Value;
+	std::string Value;
 	pOCVAnalyzerResult->m_fnvoMatchStringFileName.GetValue( Value );
 	m_MatchFilename = Value.c_str();
 	pOCVAnalyzerResult->m_svoMatchString.GetValue( Value );
@@ -198,7 +198,7 @@ void SVOCVMatchDlg::OnFontBrowseCmd()
 	                                                _T("OCVMatchStringFilePath"),
 	                                                SvStl::GlobalPath::Inst().GetRunPath().c_str());
 
-	svfncFileName.SetDefaultPathName( SVString(Path) );
+	svfncFileName.SetDefaultPathName( std::string(Path) );
 
 	UpdateData( TRUE );
 

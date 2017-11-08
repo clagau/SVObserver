@@ -17,7 +17,7 @@
 #include "SVMFCControls\AvailableObjectListComboBox.h"
 #include "ImageController.h"
 #include "SVUtilityLibrary\SVGUID.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 namespace SvOg
@@ -51,6 +51,6 @@ namespace SvOg
 	
 		SVGUID m_InspectionID;
 		SVGUID m_TaskObjectID;
-		SVString m_inputName;
+		std::string m_inputName;
 	};
 } //namespace SvOg

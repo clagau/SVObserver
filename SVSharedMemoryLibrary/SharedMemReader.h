@@ -25,7 +25,7 @@ namespace SvSml
 		~SharedMemReader(void);
 		
 		///Function call to m_MLContainer
-		bool IsActiveMonitorList(const SVString& Monitorlistname ) const;
+		bool IsActiveMonitorList(const std::string& Monitorlistname ) const;
 		DWORD GetVersion() const; 
 
 		///Reload MonitorMap, PPQReader, Open Imagestores and create the imageBuffer 
@@ -77,7 +77,7 @@ namespace SvSml
 		SharedDataContainer    m_DataContainer;
 		MLCpyContainer m_MLContainer;  //Container holds MonitorlistInformation  
 		/// map contains monitorlist name Slotmanager index 
-		std::map<SVString, int> m_SlotManagerIndexMap; 
+		std::map<std::string, int> m_SlotManagerIndexMap; 
 	private: 
 		//************************************
 		// Method:    _GetProduct

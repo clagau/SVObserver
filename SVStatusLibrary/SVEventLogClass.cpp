@@ -39,7 +39,7 @@ namespace SvStl
 
 			if( nullptr != m_hHandle )
 			{
-				m_csName = (nullptr != p_pszName) ? p_pszName : SVString();
+				m_csName = (nullptr != p_pszName) ? p_pszName : std::string();
 			}
 			else
 			{

@@ -19,6 +19,7 @@
 #include "SVGlobal.h"
 #include "Definitions/SVIMCommand.h"
 #include "SVStatusLibrary/GlobalPath.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion includes
 
 #pragma region Global functions
@@ -112,9 +113,9 @@ HRESULT GlobalRCGetMode( unsigned long* p_plMode )
 }
 
 // Global functions for SVFocusNT Remote Commands
-SVString GlobalRCGetConfigurationName()
+std::string GlobalRCGetConfigurationName()
 {
-	SVString Result;
+	std::string Result;
 
 	SVFileNameClass svFileName;
 
@@ -143,12 +144,12 @@ bool GlobalRCOpenConfiguration( LPCTSTR ConfigName )
 	TCHAR szDir[_MAX_DIR];
 	TCHAR szFile[_MAX_FNAME];
 	TCHAR szExt[_MAX_EXT];
-	SVString Extension;
+	std::string Extension;
 
 	_tsplitpath( ConfigName, szDrive, szDir, szFile, szExt );
 	Extension = szExt;
 
-	if( 0 == SvUl_SF::CompareNoCase( Extension, _T(".svx") ) )
+	if( 0 == SvUl::CompareNoCase( Extension, _T(".svx") ) )
 	{
 		SendMessage (AfxGetApp()->m_pMainWnd->m_hWnd, WM_COMMAND, MAKEWPARAM (ID_RC_OPEN_CURRENT_SVX, 0), 0);
 	}

@@ -18,6 +18,8 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "Definitions/TextDefineSVDef.h"
 #include "SVContainerLibrary/SVObjectArrayClassTemplate.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -89,12 +91,12 @@ HRESULT SVDoubleValueObjectClass::SetObjectValue( SVObjectAttributeClass* pDataO
 	return Result;
 }
 
-double SVDoubleValueObjectClass::ConvertString2Type( const SVString& rValue ) const
+double SVDoubleValueObjectClass::ConvertString2Type( const std::string& rValue ) const
 {
-	SVString Digits = SvUl_SF::ValidateString( rValue, _T("-0123456789. ") );
+	std::string Digits = SvUl::ValidateString( rValue, _T("-0123456789. ") );
 	if ( Digits != rValue )
 	{
-		SVStringVector msgList;
+		SvDef::StringVector msgList;
 		msgList.push_back(GetName());
 		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 		Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValueObject_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );

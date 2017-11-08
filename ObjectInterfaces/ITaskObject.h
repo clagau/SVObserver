@@ -14,9 +14,9 @@
 #include "ISVImage.h"
 #include "SVInterfaceVector.h"
 #include "Definitions/SVObjectTypeInfoStruct.h"
+#include "Definitions/StringTypeDef.h"
 #include "SVStatusLibrary/MessageContainer.h"
 #include "SVUtilityLibrary/NameGuidList.h"
-#include "SVUtilityLibrary/SVString.h"
 #include "SVObjectLibrary/SVOutputInfoListClass.h"
 #pragma endregion Includes
 
@@ -55,7 +55,7 @@ namespace SvOi
 		/// \param rNewID [in] Guid of the new object connected to the input
 		/// \param objectType [in] Type of the new object (this type will be checked if it fit), if not set, it will not check and also tried to connected.
 		/// \returns HRESULT
-		virtual HRESULT ConnectToObject(const SVString& rInputName, const SVGUID& rNewID, SVObjectTypeEnum objectType = SVNotSetObjectType) = 0;
+		virtual HRESULT ConnectToObject(const std::string& rInputName, const SVGUID& rNewID, SVObjectTypeEnum objectType = SVNotSetObjectType) = 0;
 
 		//************************************
 		/// Check if the object if valid.
@@ -90,14 +90,14 @@ namespace SvOi
 		/// Get a list of special images from this task. If this task has no special images this list is empty.
 		/// Special images are images which are not from type SVImageClass and is not in ObjectManager and so it has no GUID. An example for special image is the model in the pattern analyzer.
 		/// \param rList [in,out] A list of names of available special image of this task.
-		virtual void getSpecialImageList(std::vector<SVString>& rList) const = 0;
+		virtual void getSpecialImageList(SvDef::StringVector& rList) const = 0;
 
 		/// Get a special image from this task. A list of available images can be get by getSpecialImageList.
 		/// Special images are images which are not from type SVImageClass and is not in ObjectManager and so it has no GUID. An example for special image is the model in the pattern analyzer.
 		/// \param rName [in] The name of the special image of this task.
 		/// \param rImagePtr [out] Pointer to the image.
 		/// \returns bool return true if setting of this image was succeeded.
-		virtual bool getSpecialImage(const SVString& rName, MatroxImageSmartHandlePtr& rImagePtr) const = 0;
+		virtual bool getSpecialImage(const std::string& rName, MatroxImageSmartHandlePtr& rImagePtr) const = 0;
 
 		virtual HRESULT GetOutputList(SVOutputInfoListClass& p_rOutputInfoList) const = 0;
 	};

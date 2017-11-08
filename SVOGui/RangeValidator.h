@@ -7,7 +7,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary\SVString.h"
 #include "SVStatusLibrary/MessageTextEnum.h"
 #pragma endregion Includes
 
@@ -16,13 +15,13 @@ namespace SvOg
 	class RangeValidator
 	{
 	public:
-		static void IsFieldValid(SvStl::MessageTextEnum fieldName, const SVString& value);
+		static void IsFieldValid(SvStl::MessageTextEnum fieldName, const std::string& value);
 
-		static void Validate( const SVString& InspectionName, 
-						const SVString& FailHighIndirectValue, 
-						const SVString& FailLowIndirectValue, 
-						const SVString& WarnHighIndirectValue, 
-						const SVString& WarnLowIndirectValue, 
+		static void Validate( const std::string& InspectionName, 
+						const std::string& FailHighIndirectValue, 
+						const std::string& FailLowIndirectValue, 
+						const std::string& WarnHighIndirectValue, 
+						const std::string& WarnLowIndirectValue, 
 						double FailHighValue, 
 						double FailLowValue, 
 						double WarnHighValue, 

@@ -25,7 +25,6 @@
 #include "SVImageObjectClass.h"
 #include "SVObjectAppClass.h"
 #include "SVCameraInfoStruct.h"
-#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 class SVImageClass : public SVObjectAppClass, public SvOi::ISVImage
@@ -99,7 +98,7 @@ public:
 	HRESULT LoadImageFullSize( LPCTSTR p_szFileName, SVImageExtentClass& p_rNewExtent );
 	HRESULT LoadImage( LPCTSTR p_szFileName, SVImageIndexStruct p_svToIndex );
 
-	virtual HRESULT GetObjectValue( const SVString& rValueName, _variant_t& rValue ) const override;
+	virtual HRESULT GetObjectValue( const std::string& rValueName, _variant_t& rValue ) const override;
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject ) override;
 
 	virtual void Persist( SVObjectWriter& rWriter ) override;
@@ -118,10 +117,10 @@ public:
 	virtual SvOi::ISVImage* GetParentImageInterface() const override;
 	virtual SvOi::MatroxImageSmartHandlePtr getImageData() override;
 	virtual SvOi::MatroxImageSmartHandlePtr getParentImageData() override;
-	virtual SVString getDisplayedName() const override;
+	virtual std::string getDisplayedName() const override;
 	virtual long getBands() const override;
 	virtual long getPixelDepth() const override;
-	virtual HRESULT Save(const SVString& rFilename) override; 
+	virtual HRESULT Save(const std::string& rFilename) override; 
 	virtual RECT GetOutputRectangle() const override;
 #pragma region virtual method (ISVImage)
 

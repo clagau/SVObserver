@@ -19,6 +19,8 @@
 #include "SVDLLToolDefinitionStructs.h"
 #include "SVMessage\SVMessage.h"
 #include "SVStatusLibrary\MessageManager.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 struct SVImageDefinitionStruct;

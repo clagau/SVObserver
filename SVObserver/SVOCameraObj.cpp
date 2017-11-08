@@ -43,7 +43,7 @@ SVOCameraObj::~SVOCameraObj()
 
 }
 
-const SVString& SVOCameraObj::GetCameraDisplayName() const
+const std::string& SVOCameraObj::GetCameraDisplayName() const
 {
     return m_CameraDisplayName;
 }
@@ -58,7 +58,7 @@ int SVOCameraObj::GetCameraID() const
 	return m_CameraID;
 }
 
-void SVOCameraObj::SetCameraDisplayName(const SVString& rCameraName)
+void SVOCameraObj::SetCameraDisplayName(const std::string& rCameraName)
 {
     m_CameraDisplayName = rCameraName;
 }
@@ -73,7 +73,7 @@ void SVOCameraObj::SetCameraID(int CameraID)
 	m_CameraID = CameraID;
 }
 
-void SVOCameraObj::SetCameraFile(const SVString& rFileName)
+void SVOCameraObj::SetCameraFile(const std::string& rFileName)
 {
     m_CameraFile = rFileName;
     if (!m_CameraFile.empty())
@@ -99,7 +99,7 @@ bool SVOCameraObj::GetCameraFileChanged()
     return m_CameraFileChanged;
 }
 
-const SVString& SVOCameraObj::GetCameraFile() const
+const std::string& SVOCameraObj::GetCameraFile() const
 {
     return m_CameraFile;
 }
@@ -264,22 +264,22 @@ void SVOCameraObj::SetFileImageSize(const SIZE& size)
 	m_fileImageSize = size;
 }
 
-const SVString& SVOCameraObj::GetImageFilename() const
+const std::string& SVOCameraObj::GetImageFilename() const
 {
 	return m_imageFilename;
 }
 
-void SVOCameraObj::SetImageFilename(const SVString& rFilename)
+void SVOCameraObj::SetImageFilename(const std::string& rFilename)
 {
 	m_imageFilename = rFilename;
 }
 
-const SVString& SVOCameraObj::GetImageDirectoryName() const
+const std::string& SVOCameraObj::GetImageDirectoryName() const
 {
 	return m_imageDirectory;
 }
 
-void SVOCameraObj::SetImageDirectoryName(const SVString& rPathName)
+void SVOCameraObj::SetImageDirectoryName(const std::string& rPathName)
 {
 	m_imageDirectory = rPathName;
 }

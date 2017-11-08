@@ -12,9 +12,9 @@
 
 //Moved to precompiled header: #include <set>
 //Moved to precompiled header: #include <map>
-#include "SVutilityLibrary/SVString.h"
 
-typedef std::set<SVString> SVMonitorItemList;
+
+typedef std::set<std::string> SVMonitorItemList;
 
 class SVMonitorList
 {
@@ -43,4 +43,4 @@ struct RejectDepthAndMonitorList
 	SVMonitorList monitorList;
 };
 typedef std::pair<bool, RejectDepthAndMonitorList> ActiveMonitorList;
-typedef std::map<SVString, ActiveMonitorList> PPQMonitorList;
+typedef std::map<std::string, ActiveMonitorList> PPQMonitorList;

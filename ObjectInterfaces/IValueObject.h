@@ -10,7 +10,7 @@
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <utility>
 //Moved to precompiled header: #include <comdef.h>
-#include "SVUtilityLibrary\SVString.h"
+
 #pragma endregion Includes
 
 namespace SvOi
@@ -67,14 +67,14 @@ namespace SvOi
 		//! \param rValue [in] The value to set the Value object to
 		//! \param Index [in] The corresponding array index to write to, if required
 		//! \returns S_OK if succeeded
-		virtual HRESULT setValue(const SVString& rValue, int Index = -1) = 0;
+		virtual HRESULT setValue(const std::string& rValue, int Index = -1) = 0;
 
 		//! Gets the value for Value object
 		//! \param rValue [out] The reference to write the value to
 		//! \param Index [in] The corresponding array index to write to, if required
 		//! \param Bucket [in] The corresponding bucket index to get, if required
 		//! \returns S_OK if succeeded
-		virtual HRESULT getValue(SVString& rValue, int Index = -1, int Bucket = -1) const = 0;
+		virtual HRESULT getValue(std::string& rValue, int Index = -1, int Bucket = -1) const = 0;
 
 		//! Set the value object bucketized flag
 		//! \param isBucketized [in] true if bucketized
@@ -91,7 +91,7 @@ namespace SvOi
 
 		//! Gets the type name for the Value object
 		//! \returns the type name
-		virtual SVString getTypeName() const = 0;
+		virtual std::string getTypeName() const = 0;
 
 		//! Checks if the value object is an array
 		//! \returns true if an array

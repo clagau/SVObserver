@@ -14,7 +14,7 @@
 #include "SVClassRegisterListClass.h"
 #include "SVClassRegisterClass.h"
 #include "SVObjectClass.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVClsids.h"
 #pragma endregion Includes
 
@@ -92,10 +92,10 @@ void SVClassRegisterListClass::Add( SVClassRegisterClass* pClass )
 		#ifdef _DEBUG
 			else
 			{
-				SVString Temp;
+				std::string Temp;
 				SVGUID guid = pClass->GetClassID();
 
-				Temp = SvUl_SF::Format( _T("Duplicate Class encountered\n ClassName: %s\n ClassID: %s"), pClass->GetClassName(), guid.ToString().c_str() );
+				Temp = SvUl::Format( _T("Duplicate Class encountered\n ClassName: %s\n ClassID: %s"), pClass->GetClassName(), guid.ToString().c_str() );
 				::OutputDebugString( Temp.c_str() );
 				assert(false);
 			}

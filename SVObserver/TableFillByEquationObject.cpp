@@ -13,7 +13,7 @@
 #include "SVInspectionProcess.h"
 #include "ObjectInterfaces\IObjectManager.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
-#include "SVUtilityLibrary\SVString.h"
+
 #pragma endregion Includes
 
 #pragma region Declarations

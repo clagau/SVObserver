@@ -12,7 +12,7 @@
 #include "SVObjectLibrary\SVClsids.h"
 #include "TableAnalyzerTool.h"
 #include "TextDefinesSvO.h"
-#include "SVUtilityLibrary\SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -118,7 +118,7 @@ void TableLimitAnalyzer::BuildEmbeddedObjectList()
 	vtTemp.lVal = cDefaultLimitValue;
 	m_LimitValue.SetDefaultValue( vtTemp, true );
 
-	SVString ObjectName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_TABLEANALYZERLIMIT_VALUE );
+	std::string ObjectName = SvUl::LoadStdString( IDS_OBJECTNAME_TABLEANALYZERLIMIT_VALUE );
 	ObjectName +=  SvO::cLinkName;
 	RegisterEmbeddedObject( &m_LimitValue.getLinkedName(), TableAnaylzerLimitValue_LinkGuid, ObjectName.c_str(), false, SvOi::SVResetItemNone );
 	m_LimitValue.getLinkedName().SetDefaultValue( _T(""), false );

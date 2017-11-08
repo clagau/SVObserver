@@ -14,7 +14,7 @@
 #pragma region Includes
 #include "SVContainerLibrary\SVList.h"
 #include "SVOInspectionObj.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 class SVOInspectionList  
@@ -36,8 +36,8 @@ public:
 	BOOL ReNameInspection( LPCTSTR InspectLabel,  LPCTSTR NewInspectName );
 	BOOL RemoveInspectionFromList( LPCTSTR InspectLabel);
 
-	SVString GetInspectionName( LPCTSTR InspectLabel );
-	SVString GetInspectionLabel( LPCTSTR InspectName );
+	std::string GetInspectionName( LPCTSTR InspectLabel );
+	std::string GetInspectionLabel( LPCTSTR InspectName );
 	SVOInspectionObjPtr GetInspectionByName( LPCTSTR InspectLabel );
 	SVOInspectionObjPtr GetInspectionByPosition(int iPos);
 	BOOL IsInspectionInList( LPCTSTR InspectLabel) const;

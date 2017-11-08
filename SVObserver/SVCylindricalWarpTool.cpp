@@ -14,7 +14,7 @@
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVImageLibrary/SVImageExtentClass.h"
 #include "SVOCore/SVImageProcessingClass.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 static const TCHAR* const CYLINDRICAL_WARP_TYPE_HORIZONTAL = _T("Horizontal Warp");
@@ -81,28 +81,28 @@ void SVCylindricalWarpToolClass::LocalInitialize()
 
 	// Set Default Warp Method to Use Horizontal
 	RegisterEmbeddedObject( &m_svWarpType, SVWarpTypeObjectGuid, IDS_OBJECTNAME_WARPTYPE, false, SvOi::SVResetItemTool );
-	SVString EnumTypes = SvUl_SF::Format( _T("%s=%d,%s=%d"), CYLINDRICAL_WARP_TYPE_HORIZONTAL, WarpTypeHorizontal,
+	std::string EnumTypes = SvUl::Format( _T("%s=%d,%s=%d"), CYLINDRICAL_WARP_TYPE_HORIZONTAL, WarpTypeHorizontal,
 	                                   CYLINDRICAL_WARP_TYPE_VERTICAL, WarpTypeVertical);
 	m_svWarpType.SetEnumTypes( EnumTypes.c_str() );
 	m_svWarpType.SetDefaultValue( CYLINDRICAL_WARP_TYPE_HORIZONTAL, true);
 	m_svWarpType.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 
 	// Set Default Interpolation Mode to use Nearest Neighbor
-	SVString Mode;
-	SVString Text;
+	std::string Mode;
+	std::string Text;
 	EnumTypes.clear();
 
 	// M_NEAREST_NEIGHBOR 
-	Mode = SvUl_SF::LoadSVString( IDS_NEAREST_NEIGHBOR_STRING );
-	Text = SvUl_SF::Format( _T( "%s=%d," ), Mode.c_str(), SVNearestNeighbor); // M_NEAREST_NEIGHBOR);
+	Mode = SvUl::LoadStdString( IDS_NEAREST_NEIGHBOR_STRING );
+	Text = SvUl::Format( _T( "%s=%d," ), Mode.c_str(), SVNearestNeighbor); // M_NEAREST_NEIGHBOR);
 	EnumTypes += Text;
 	// M_BILINEAR
-	Mode = SvUl_SF::LoadSVString( IDS_BILINEAR_STRING );
-	Text = SvUl_SF::Format( _T( "%s=%d," ), Mode.c_str(), SVBilinear);		// M_BILINEAR );
+	Mode = SvUl::LoadStdString( IDS_BILINEAR_STRING );
+	Text = SvUl::Format( _T( "%s=%d," ), Mode.c_str(), SVBilinear);		// M_BILINEAR );
 	EnumTypes += Text;
 	// M_BICUBIC
-	Mode = SvUl_SF::LoadSVString( IDS_BICUBIC_STRING );
-	Text = SvUl_SF::Format( _T( "%s=%d," ), Mode.c_str(), SVBiCubic);			// M_BICUBIC );
+	Mode = SvUl::LoadStdString( IDS_BICUBIC_STRING );
+	Text = SvUl::Format( _T( "%s=%d," ), Mode.c_str(), SVBiCubic);			// M_BICUBIC );
 	EnumTypes += Text;
 
 	// And now set enum types...

@@ -8,7 +8,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary/SVString.h"
+
 #include "SVUtilityLibrary/SVGUID.h"
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "IObjectClass.h"
@@ -22,7 +22,7 @@ namespace SvOi
 	//! \param rFullName [in] Name of the object.
 	//! \returns IObjectClass*
 	//************************************
-	IObjectClass* getObjectByDottedName( const SVString& rFullName );
+	IObjectClass* getObjectByDottedName( const std::string& rFullName );
 
 	//************************************
 	//! Construct an object by the guid and return the pointer.

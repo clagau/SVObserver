@@ -24,22 +24,22 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-const BasicValueObjects::DottedNameGuidMap BasicValueObjects::m_StaticUniqueIDMap = boost::assign::map_list_of< SVString, SVGUID >
+const BasicValueObjects::DottedNameGuidMap BasicValueObjects::m_StaticUniqueIDMap = boost::assign::map_list_of<std::string, SVGUID>
 	// Dotted name,												static unique ID
-	( SVString( SvOl::FqnRoot ),								SVGUID( RootUidGuid ) )
-	( SVString( SvOl::FqnGlobal ),								SVGUID( GlobalUidGuid ) )
-	( SVString( SvOl::FqnEnvironment ),							SVGUID( EnvironmentUidGuid ) )
-	( SVString( SvOl::FqnEnvironmentModelNumber ),				SVGUID( EnvironmentModelNumberUidGuid ) )
-	( SVString( SvOl::FqnEnvironmentWinKey ),					SVGUID( EnvironmentWinKeyUidGuid ) )
-	( SVString( SvOl::FqnEnvironmentImageUpdate ),				SVGUID( EnvironmentImageUpdateUidGuid ) )
-	( SVString( SvOl::FqnEnvironmentResultUpdate ),				SVGUID( EnvironmentResultUpdateUidGuid ) )
-	( SVString( SvOl::FqnEnvironmentMode ),						SVGUID( EnvironmentModeUidGuid ) )
-	( SVString( SvOl::FqnEnvironmentModeIsRun ),				SVGUID( EnvironmentModeIsRunUidGuid ) )
-	( SVString( SvOl::FqnEnvironmentModeIsStop ),				SVGUID( EnvironmentModeIsStopUidGuid ) )
-	( SVString( SvOl::FqnEnvironmentModeIsRegressionTest ),		SVGUID( EnvironmentModeIsRegressionTestUidGuid ) )
-	( SVString( SvOl::FqnEnvironmentModeIsTest ),				SVGUID( EnvironmentModeIsTestUidGuid ) )
-	( SVString( SvOl::FqnEnvironmentModeIsEdit ),				SVGUID( EnvironmentModeIsEditUidGuid ) )
-	( SVString( SvOl::FqnEnvironmentModeValue ),				SVGUID( EnvironmentModeValueUidGuid ) )
+	( std::string( SvOl::FqnRoot ),									SVGUID( RootUidGuid ) )
+	( std::string( SvOl::FqnGlobal ),								SVGUID( GlobalUidGuid ) )
+	( std::string( SvOl::FqnEnvironment ),							SVGUID( EnvironmentUidGuid ) )
+	( std::string( SvOl::FqnEnvironmentModelNumber ),				SVGUID( EnvironmentModelNumberUidGuid ) )
+	( std::string( SvOl::FqnEnvironmentWinKey ),					SVGUID( EnvironmentWinKeyUidGuid ) )
+	( std::string( SvOl::FqnEnvironmentImageUpdate ),				SVGUID( EnvironmentImageUpdateUidGuid ) )
+	( std::string( SvOl::FqnEnvironmentResultUpdate ),				SVGUID( EnvironmentResultUpdateUidGuid ) )
+	( std::string( SvOl::FqnEnvironmentMode ),						SVGUID( EnvironmentModeUidGuid ) )
+	( std::string( SvOl::FqnEnvironmentModeIsRun ),					SVGUID( EnvironmentModeIsRunUidGuid ) )
+	( std::string( SvOl::FqnEnvironmentModeIsStop ),				SVGUID( EnvironmentModeIsStopUidGuid ) )
+	( std::string( SvOl::FqnEnvironmentModeIsRegressionTest ),		SVGUID( EnvironmentModeIsRegressionTestUidGuid ) )
+	( std::string( SvOl::FqnEnvironmentModeIsTest ),				SVGUID( EnvironmentModeIsTestUidGuid ) )
+	( std::string( SvOl::FqnEnvironmentModeIsEdit ),				SVGUID( EnvironmentModeIsEditUidGuid ) )
+	( std::string( SvOl::FqnEnvironmentModeValue ),					SVGUID( EnvironmentModeValueUidGuid ) )
 	;
 #pragma endregion Declarations
 
@@ -71,7 +71,7 @@ void BasicValueObjects::getValueList( ValueVector& rObjectList, LPCTSTR DottedBr
 	vt_const_pre_order_iterator BranchStartIter( m_Tree.pre_order_begin() );
 	vt_const_pre_order_iterator BranchEndIter( m_Tree.pre_order_end() );
 
-	if( !SVString(DottedBranch).empty() )
+	if( !std::string(DottedBranch).empty() )
 	{
 		vt_const_iterator ParentIter = findValueObject( DottedBranch );
 		if( m_Tree.end() != ParentIter )
@@ -104,7 +104,7 @@ HRESULT BasicValueObjects::deleteValueObject( LPCTSTR DottedName )
 	vt_iterator Iter( m_Tree.end() );
 
 	SVObjectNameInfo ParsedName;
-	SVString RootChildName;
+	std::string RootChildName;
 
 	ParsedName.ParseObjectName( DottedName );
 	if( 0 < ParsedName.m_NameArray.size() )
@@ -158,9 +158,9 @@ BasicValueObjects::vt_const_iterator BasicValueObjects::findValueObject( const S
 	vt_const_iterator IterStart( m_Tree.begin() );
 	vt_const_iterator IterEnd( m_Tree.end() );
 
-	for( SVString::size_type Index(0); Index < rParsedName.m_NameArray.size(); ++Index )
+	for( std::string::size_type Index(0); Index < rParsedName.m_NameArray.size(); ++Index )
 	{
-		SVString Name = rParsedName.m_NameArray[Index];
+		std::string Name = rParsedName.m_NameArray[Index];
 		Iter = findChildObject( IterStart, IterEnd, Name.c_str() );
 
 		if( IterEnd != Iter &&  !Iter->empty() )
@@ -186,9 +186,9 @@ BasicValueObjects::vt_iterator BasicValueObjects::findValueObject( const SVObjec
 	vt_iterator IterStart( m_Tree.begin() );
 	vt_iterator IterEnd( m_Tree.end() );
 
-	for( SVString::size_type Index(0); Index < rParsedName.m_NameArray.size(); ++Index )
+	for( std::string::size_type Index(0); Index < rParsedName.m_NameArray.size(); ++Index )
 	{
-		SVString Name = rParsedName.m_NameArray[Index];
+		std::string Name = rParsedName.m_NameArray[Index];
 
 		vt_const_iterator IterConst( IterEnd );
 		IterConst = findChildObject( IterStart, IterEnd, Name.c_str() );
@@ -214,7 +214,7 @@ BasicValueObjects::vt_iterator BasicValueObjects::findValueObject( const SVObjec
 BasicValueObjects::vt_const_iterator BasicValueObjects::findChildObject( const vt_const_iterator& rStartIter, const vt_const_iterator& rEndIter, LPCTSTR ChildName ) const
 {
 	vt_const_iterator Iter( rStartIter );
-	SVString SearchName( ChildName );
+	std::string SearchName( ChildName );
 
 	while( rEndIter != Iter )
 	{

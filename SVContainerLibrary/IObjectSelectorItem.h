@@ -13,7 +13,7 @@
 
 #pragma once
 #pragma region Includes
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 namespace SvCl
@@ -57,49 +57,49 @@ namespace SvCl
 			The method gets the name of the item
 			\return the name of the item
 		***********/
-		virtual const SVString& getName() const = 0;
+		virtual const std::string& getName() const = 0;
 
 		/**********
 			The method sets the name of the item
 			\param rName <in> a reference to the name of the item
 		***********/
-		virtual void setName( const SVString& rName ) = 0;
+		virtual void setName( const std::string& rName ) = 0;
 
 		/**********
 			The method gets the location of the item
 			\return the location of the item
 		***********/
-		virtual const SVString& getLocation() const = 0;
+		virtual const std::string& getLocation() const = 0;
 
 		/**********
 			The method sets the location of the item
 			\param rLocation <in> a reference to the location of the item
 		***********/
-		virtual void setLocation( const SVString& rLocation ) = 0;
+		virtual void setLocation( const std::string& rLocation ) = 0;
 
 		/**********
 			The method gets the tree display location of the item
 			\return the display location of the item
 		***********/
-		virtual const SVString& getDisplayLocation() const = 0;
+		virtual const std::string& getDisplayLocation() const = 0;
 
 		/**********
 			The method sets the tree display location of the item
 			\param rDisplayLocation <in> a reference to the display location of the item
 		***********/
-		virtual void setDisplayLocation( const SVString& rDisplayLocation ) = 0;
+		virtual void setDisplayLocation( const std::string& rDisplayLocation ) = 0;
 
 		/**********
 			The method gets the name of the item type
 			\return the type of the item as a string
 		***********/
-		virtual const SVString& getItemTypeName() const = 0;
+		virtual const std::string& getItemTypeName() const = 0;
 
 		/**********
 			The method sets the name of the item type
 			\param rItemType <in> a reference to the string indicating the item's type
 		***********/
-		virtual void setItemTypeName( const SVString& ItemTypeName ) = 0;
+		virtual void setItemTypeName( const std::string& ItemTypeName ) = 0;
 
 		/**********
 			The method gets the handle to the corresponding tree item

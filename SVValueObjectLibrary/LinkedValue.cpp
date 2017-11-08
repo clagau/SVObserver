@@ -15,7 +15,8 @@
 #include "ObjectInterfaces\IObjectClass.h"
 #include "Definitions/TextDefineSVDef.h"
 #include "SVObjectLibrary\GlobalConst.h"
-#include "SVUtilityLibrary\SVString.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVStatusLibrary\MessageManager.h"
 #pragma endregion Includes
 
@@ -99,7 +100,7 @@ void LinkedValue::UpdateLinkedName()
 	}
 	else
 	{
-		SVString Value = m_LinkedName.GetDefaultValue();
+		std::string Value = m_LinkedName.GetDefaultValue();
 		m_LinkedName.SetValue( Value );
 		m_LinkedName.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
 	}
@@ -116,7 +117,7 @@ void LinkedValue::setIndirectValueSaveFlag(bool shouldSaveValue)
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-_variant_t LinkedValue::ConvertString2Type( const SVString& rValue ) const
+_variant_t LinkedValue::ConvertString2Type( const std::string& rValue ) const
 {
 	_variant_t Result;
 
@@ -132,7 +133,7 @@ _variant_t LinkedValue::ConvertString2Type( const SVString& rValue ) const
 		else
 		{
 			//! This means the linked object is invalid
-			SVStringVector msgList;
+			SvDef::StringVector msgList;
 			msgList.push_back( GetName() );
 			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 			Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_LinkedValue_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
@@ -148,7 +149,7 @@ _variant_t LinkedValue::ConvertString2Type( const SVString& rValue ) const
 		{
 			if ( S_OK != ::VariantChangeType(&vtTemp, &vtTemp, 0, GetDefaultValue().vt))
 			{
-				SVStringVector msgList;
+				SvDef::StringVector msgList;
 				msgList.push_back(GetName());
 				SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 				Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_LinkedValue_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
@@ -175,7 +176,7 @@ bool LinkedValue::UpdateConnection(SvStl::MessageContainerVector *pErrorMessages
 	//! Here we need the non linked value (SVGUID as string or constant value)
 	__super::GetValue( Value );
 
-	SVString guidAndIndexString = SvUl_SF::createSVString(Value);
+	std::string guidAndIndexString = SvUl::createStdString(Value);
 	SVObjectReference LinkedObjectRef(guidAndIndexString);
 	
 	//If valid GUID then should be able to get the linked value from the object manager
@@ -190,8 +191,8 @@ bool LinkedValue::UpdateConnection(SvStl::MessageContainerVector *pErrorMessages
 	else
 	{	
 		//Check if current value is a GUID, but not exist anymore. In this case it is probably an deleted object. Set this value to invalid.
-		SVString::size_type Pos = guidAndIndexString.find_first_of(_T("["));
-		SVString guidString = guidAndIndexString.substr(0, Pos);
+		std::string::size_type Pos = guidAndIndexString.find_first_of(_T("["));
+		std::string guidString = guidAndIndexString.substr(0, Pos);
 		if (SV_GUID_NULL != SVGUID(_bstr_t(guidString.c_str())))
 		{
 			Result = false;
@@ -204,13 +205,13 @@ bool LinkedValue::UpdateConnection(SvStl::MessageContainerVector *pErrorMessages
 		else
 		{
 			//this part is only for backward compatibility, because in older version the name was saved and not the GUID.
-			SVString ToolSetName;
-			SVString ObjectName;
+			std::string ToolSetName;
+			std::string ObjectName;
 
-			ToolSetName = SvUl_SF::LoadSVString(IDS_CLASSNAME_SVTOOLSET);
+			ToolSetName = SvUl::LoadStdString(IDS_CLASSNAME_SVTOOLSET);
 
 			//Default name
-			ObjectName = SvUl_SF::createSVString(Value);
+			ObjectName = SvUl::createStdString(Value);
 			//If the tool set name is at the start then add the inspection name at the beginning
 			if (0 == ObjectName.find(ToolSetName))
 			{
@@ -219,7 +220,7 @@ bool LinkedValue::UpdateConnection(SvStl::MessageContainerVector *pErrorMessages
 				{
 					ObjectName = pInspection->GetName();
 					ObjectName += _T(".");
-					ObjectName += SvUl_SF::createSVString(Value);
+					ObjectName += SvUl::createStdString(Value);
 				}
 			}
 			if (S_OK == SVObjectManagerClass::Instance().GetObjectByDottedName(ObjectName, LinkedObjectRef) && nullptr != LinkedObjectRef.getObject())
@@ -318,12 +319,12 @@ bool LinkedValue::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	return Result;
 }
 
-SVObjectReference LinkedValue::ConvertStringInObject( const SVString& rValue ) const
+SVObjectReference LinkedValue::ConvertStringInObject( const std::string& rValue ) const
 {
-	SVString ToolSetName;
-	SVString ObjectName;
+	std::string ToolSetName;
+	std::string ObjectName;
 
-	ToolSetName = SvUl_SF::LoadSVString( IDS_CLASSNAME_SVTOOLSET );
+	ToolSetName = SvUl::LoadStdString( IDS_CLASSNAME_SVTOOLSET );
 
 	//If the tool set name is at the start then add the inspection name at the beginning
 	if( 0 == rValue.find( ToolSetName.c_str() ) )

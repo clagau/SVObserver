@@ -18,7 +18,7 @@
 #include "SVTimerLibrary\SVClock.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage\SVMessage.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 static const int RETRY = 2;
@@ -148,7 +148,7 @@ HRESULT SVLptIOImpl::Initialize(bool bInit)
 				if( 0 == m_lBoardVersion )
 				{
 					SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-					Exception.setMessage( SVMSG_IO_BOARD_VERSION, SvUl_SF::Format( _T("%d"), m_lBoardVersion).c_str() , SvStl::SourceFileParams(StdMessageParams) );
+					Exception.setMessage( SVMSG_IO_BOARD_VERSION, SvUl::Format( _T("%d"), m_lBoardVersion).c_str() , SvStl::SourceFileParams(StdMessageParams) );
 					return SVMSG_IO_BOARD_VERSION;
 				}
 				// Tom says he's not sure what these numbers represent...
@@ -687,7 +687,7 @@ HRESULT SVLptIOImpl::afterStartTrigger(HRESULT hr)
 #ifdef SV_LOG_STATUS_INFO
 	if(S_OK != hr)
 	{
-		SVString String;
+		std::string String;
 		String.Format(_T("StartTrigger - Status = 0x%X"), hr);
 		m_StatusLog.push_back(String);
 	}
@@ -718,7 +718,7 @@ HRESULT SVLptIOImpl::afterStopTrigger(HRESULT hr)
 	}
 
 #ifdef SV_LOG_STATUS_INFO
-	SVString FileName;
+	std::string FileName;
 
 	FileName.Format(_T("C:\\SVObserver\\SVLpt.log"));
 	std::fstream Stream(FileName.ToString(), std::ios_base::trunc | std::ios_base::out);
@@ -726,7 +726,7 @@ HRESULT SVLptIOImpl::afterStopTrigger(HRESULT hr)
 	{
 		for (int i = 0;i < m_StatusLog.GetCount(); ++i)
 		{
-			SVString String;
+			std::string String;
 			m_StatusLog.GetAt(i, &String);
 			Stream << String.ToString() << std::endl;
 		}
@@ -1647,7 +1647,7 @@ void SVLptIOImpl::HandleIRQ()
 	if (S_OK == hr)
 	{
 		#ifdef SV_LOG_STATUS_INFO
-			SVString String;
+			std::string String;
 
 			String.Format(_T("FireLptInterrupt - StatusReg = 0x%X"), StatusReg);
 

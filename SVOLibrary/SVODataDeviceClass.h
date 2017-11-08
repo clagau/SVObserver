@@ -13,7 +13,7 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
-#include "SVUtilityLibrary/SVString.h"
+
 #include "SVSystemLibrary/SVAsyncProcedure.h"
 #include "SVOCallbackClass.h"
 #include "SVODataResponseClass.h"
@@ -86,7 +86,7 @@ protected:
 	SVCallbackClassPtrQueue m_CallbackList;
 
 	//This attribute holds the device name.
-	SVString m_DeviceName;
+	std::string m_DeviceName;
 
 	//This attribute holds the creation state of this object.
 	bool mbIsCreated;

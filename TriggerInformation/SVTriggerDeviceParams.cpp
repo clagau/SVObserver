@@ -25,7 +25,7 @@ namespace SvTi
 	}
 
 	SVTriggerDeviceParams::SVTriggerDeviceParams( LPCTSTR p_szName, int p_Channel )
-		: m_Name( (nullptr != p_szName) ? p_szName : SVString() ), m_Channel( p_Channel )
+		: m_Name( (nullptr != p_szName) ? p_szName : std::string() ), m_Channel( p_Channel )
 	{
 	}
 } //namespace SvTi

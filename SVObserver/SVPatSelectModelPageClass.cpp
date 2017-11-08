@@ -14,8 +14,7 @@
 #include "SVPatSelectModelPageClass.h"
 #include "SVPatAnalyzeSetupDlgSheet.h"
 #include "CameraLibrary\SVGraphix.h"
-#include "SVUtilityLibrary/SVStringConversions.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary\GlobalPath.h"
@@ -256,7 +255,7 @@ void SVPatModelPageClass::OnCreateModel()
 
 	if ( GetModelFile( false, m_strModelName ) ) // false parameter is mode for save file.
 	{
-		SVSharedPtr<SvCmd::CreateModel> commandPtr = new SvCmd::CreateModel(m_rAnalyzerID, m_nXPos, m_nYPos, m_lModelWidth, m_lModelHeight, SVString(m_strModelName));
+		SVSharedPtr<SvCmd::CreateModel> commandPtr = new SvCmd::CreateModel(m_rAnalyzerID, m_nXPos, m_nYPos, m_lModelWidth, m_lModelHeight, std::string(m_strModelName));
 		SVObjectSynchronousCommandTemplate<SVSharedPtr<SvCmd::CreateModel>> cmd(m_rInspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
@@ -347,7 +346,7 @@ void SVPatModelPageClass::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 	{
 		SVRPropertyItem* pItem = pNMPropTree->pItem;
 
-		SVString Value;
+		std::string Value;
 		long lNewValue;
 		pItem->GetItemValue( Value );
 		lNewValue = atol( Value.c_str() );
@@ -750,7 +749,7 @@ bool SVPatModelPageClass::GetModelFile(bool bMode, CString& rFileName)
 	//
 	// Try to read the current image file path name from registry...
 	//
-	SVString Path = AfxGetApp()->GetProfileString(	_T( "Settings" ), 
+	std::string Path = AfxGetApp()->GetProfileString(	_T( "Settings" ), 
 		                                              _T( "SVCFilePath" ), 
 		                                              SvStl::GlobalPath::Inst().GetRunPath().c_str() );   // Default
 
@@ -793,7 +792,7 @@ HRESULT SVPatModelPageClass::BuildPropertyList()
 	pRoot->HideItem();
 	pRoot->SetHeight(2);
 
-	SVString Text;
+	std::string Text;
 	SVRPropertyItemEdit* pItem = dynamic_cast <SVRPropertyItemEdit*> ( m_Tree.InsertItem(new SVRPropertyItemEdit(), pRoot) );
 	long lValue = m_nXPos;
 	pItem->SetItemValue( SvUl::AsString(lValue).c_str() );
@@ -818,7 +817,7 @@ HRESULT SVPatModelPageClass::BuildPropertyList()
 	pItem->SetCtrlID( ModelWidth_Property );
 	pItem->SetBold( false );
 	pItem->SetHeight(16);
-	Text= SvUl_SF::Format(_T("Width (%d - %d)"), SvDef::cMinPatternModelNewSize, m_sourceImageWidth);
+	Text= SvUl::Format(_T("Width (%d - %d)"), SvDef::cMinPatternModelNewSize, m_sourceImageWidth);
 	pItem->SetLabelText( Text.c_str() );
 	pItem->OnRefresh();
 
@@ -828,7 +827,7 @@ HRESULT SVPatModelPageClass::BuildPropertyList()
 	pItem->SetCtrlID( ModelHeight_Property );
 	pItem->SetBold( false );
 	pItem->SetHeight(16);
-	Text= SvUl_SF::Format(_T("Height (%d - %d)"), SvDef::cMinPatternModelNewSize, m_sourceImageHeight);
+	Text= SvUl::Format(_T("Height (%d - %d)"), SvDef::cMinPatternModelNewSize, m_sourceImageHeight);
 	pItem->SetLabelText( Text.c_str() );
 	pItem->OnRefresh();
 

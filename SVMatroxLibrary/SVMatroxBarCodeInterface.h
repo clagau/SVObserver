@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary\SVString.h"
+
 #include "SVMatroxEnums.h"
 #include "SVMatroxBuffer.h"
 #include "SVMatroxApplicationInterface.h"
@@ -45,17 +45,17 @@ public:
 	// Use this instead of McodeControl
 	static HRESULT Set( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, const double& p_dValue );
 	static HRESULT Set( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, const long& p_lValue );
-	static HRESULT Set( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, const SVString& p_dValue );
+	static HRESULT Set( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, const std::string& p_dValue );
 
 	// Use this instead of McodeInquire.
 	static HRESULT Get( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, double& p_dValue ) ;
 	static HRESULT Get( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, long& p_dValue ) ;
-	static HRESULT Get( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, SVString& p_dValue ) ;
+	static HRESULT Get( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, std::string& p_dValue ) ;
 
 	// The following functions call McodeGetResult.
 	static bool GetResult( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, double& p_rdValue, SvStl::MessageContainerVector *pErrorMessages=nullptr);
 	static bool GetResult( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, long& p_rlValue, SvStl::MessageContainerVector *pErrorMessages=nullptr);
-	static bool GetResult( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, SVString& p_rsValue, SvStl::MessageContainerVector *pErrorMessages=nullptr);
+	static bool GetResult( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, std::string& p_rsValue, SvStl::MessageContainerVector *pErrorMessages=nullptr);
 
 	// Does the work of McodeAllocate 
 	static HRESULT Create( SVMatroxBarCode& p_rCodeID, SVBarCodeTypesEnum p_eType );

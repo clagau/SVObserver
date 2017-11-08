@@ -25,5 +25,5 @@ struct SVStorageResult
 	unsigned long m_TriggerCount;
 };
 
-typedef std::set< SVString > SVNameSet;
-typedef std::map< SVString, SVStorageResult > SVNameStorageResultMap;
+typedef std::set<std::string> SVNameSet;
+typedef std::map<std::string, SVStorageResult> SVNameStorageResultMap;

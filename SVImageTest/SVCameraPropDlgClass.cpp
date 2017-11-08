@@ -15,7 +15,7 @@
 #include "SVImageTest.h"
 #include "SVCameraPropDlgClass.h"
 #include "TriggerHandling/SVDigitizerLoadLibraryClass.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -102,41 +102,41 @@ BOOL SVCameraPropDlgClass::OnInitDialog()
 				{
 					m_psvDigitizers->ParameterGetValue( m_triggerchannel, l_iParameterID, &l_iParameterTypeID, &l_varValue );
 
-					SVString Name;
+					std::string Name;
 
-					Name = SvUl_SF::createSVString( _bstr_t(l_bstrName) );
+					Name = SvUl::createStdString( _bstr_t(l_bstrName) );
 
 					l_iIndex = m_svListCtrl.InsertItem( l_iIndex + 1, Name.c_str() );
 					
 					if ( l_iIndex > -1 )
 					{
-						SVString Data;
+						std::string Data;
 
 						switch( l_varValue.vt )
 						{
 							case VT_I4:
 							{
-								Data = SvUl_SF::Format( _T("%d"), l_varValue.lVal );
+								Data = SvUl::Format( _T("%d"), l_varValue.lVal );
 								break;
 							}
 							case VT_UI4:
 							{
-								Data = SvUl_SF::Format( _T("0x%04X"), l_varValue.ulVal );
+								Data = SvUl::Format( _T("0x%04X"), l_varValue.ulVal );
 								break;
 							}
 							case VT_R4:
 							{
-								Data = SvUl_SF::Format( _T("%f"), l_varValue.fltVal );
+								Data = SvUl::Format( _T("%f"), l_varValue.fltVal );
 								break;
 							}
 							case VT_R8:
 							{
-								Data = SvUl_SF::Format( _T("%lf"), l_varValue.dblVal );
+								Data = SvUl::Format( _T("%lf"), l_varValue.dblVal );
 								break;
 							}
 							case VT_BSTR:
 							{
-								Data = SvUl_SF::createSVString( _bstr_t( l_varValue.bstrVal) );
+								Data = SvUl::createStdString( _bstr_t( l_varValue.bstrVal) );
 								break;
 							}
 						}
@@ -175,7 +175,7 @@ void SVCameraPropDlgClass::OnOK()
 
 	for( int i = 0; i < l_iCount; i++ )
 	{
-		SVString Data = m_svListCtrl.GetItemText( i, 1 );
+		std::string Data = m_svListCtrl.GetItemText( i, 1 );
 		long l_lParameterID = static_cast<long>(m_svListCtrl.GetItemData( i ));
 		long l_lParameterTypeID = 0;
 

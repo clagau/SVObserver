@@ -6,14 +6,18 @@
 // Class implements Slot managment  
 /// the class holds two ringbuffer of Bufferelemnt one for rejects  
 //******************************************************************************
+
+#pragma region Includes
 #include "stdafx.h"
-#include "SVUtilityLibrary\SVString.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SMRingbuffer.h"
 #include "SVStatusLibrary\ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary\MessageTextEnum.h"
 #include "SVMessage\SVMessage.h"
 #include "SMParameterStruct.h"
+#pragma endregion Includes
 
 namespace SvSml
 {
@@ -206,7 +210,7 @@ namespace SvSml
 			if (InterlockedCompareExchange(&(m_pRingBufferLast[slot].SyncDWord), newSync, prevSync) == prevSync)
 			{
 #if defined(TRACE_MANAGER) 
-				SVString DebugStr = SvUl_SF::Format("GetReaderSlotLastWritten:(slot,sync): (%i%i)\n", slot, newSync);
+				std::string DebugStr = SvUl::Format("GetReaderSlotLastWritten:(slot,sync): (%i%i)\n", slot, newSync);
 				::OutputDebugString(DebugStr.c_str());
 #endif
 				return slot;
@@ -246,7 +250,7 @@ namespace SvSml
 				if (InterlockedCompareExchange(&(m_pRingBufferLast[slot].SyncDWord), newSync, prevSync) == prevSync)
 				{
 #if defined(TRACE_MANAGER) 
-					SVString DebugStr = SvUl_SF::Format("GetReaderSlotByTrigger:(slot,t,sync): (%i,%i,%i)\n", slot, Triggercount, newSync);
+					std::string DebugStr = SvUl::Format("GetReaderSlotByTrigger:(slot,t,sync): (%i,%i,%i)\n", slot, Triggercount, newSync);
 					::OutputDebugString(DebugStr.c_str());
 #endif
 					return slot;
@@ -261,7 +265,7 @@ namespace SvSml
 			break;
 		}
 #if defined(TRACE_MANAGER) 
-		SVString DebugStr = SvUl_SF::Format("GetReaderSlotByTrigger:(slot,t): (-1,%i)\n", Triggercount);
+		std::string DebugStr = SvUl::Format("GetReaderSlotByTrigger:(slot,t): (-1,%i)\n", Triggercount);
 		::OutputDebugString(DebugStr.c_str());
 #endif
 		return -1;
@@ -277,7 +281,7 @@ namespace SvSml
 
 		long sync = InterlockedDecrement(&(m_pRingBufferLast[readerslot].SyncDWord));
 #if defined(TRACE_MANAGER) 
-		SVString DebugStr = SvUl_SF::Format("Release ReaderSlot: %i to %i \n", readerslot, sync);
+		std::string DebugStr = SvUl::Format("Release ReaderSlot: %i to %i \n", readerslot, sync);
 		::OutputDebugString(DebugStr.c_str());
 #endif
 	}
@@ -307,7 +311,7 @@ namespace SvSml
 			if (InterlockedCompareExchange(&(m_pRingBufferLast[slot].SyncDWord), WRITE_FLAG, 0x0) == 0)
 			{
 #if defined(TRACE_MANAGER) 
-				SVString DebugStr = SvUl_SF::Format("GetNextWriteSlot: %i\n", slot);
+				std::string DebugStr = SvUl::Format("GetNextWriteSlot: %i\n", slot);
 				::OutputDebugString(DebugStr.c_str());
 #endif 
 				return slot;
@@ -327,7 +331,7 @@ namespace SvSml
 		{
 
 #if defined(TRACE_MANAGER)
-			SVString DebugStr = SvUl_SF::Format("Release FAILED Write Slot : %i T%i  \n", slot, triggerNumber);
+			std::string DebugStr = SvUl::Format("Release FAILED Write Slot : %i T%i  \n", slot, triggerNumber);
 			::OutputDebugString(DebugStr.c_str());
 #endif 
 			throw std::exception("No Ringbuffer or invalid slot");
@@ -354,10 +358,10 @@ namespace SvSml
 
 		}
 #if defined(TRACE_MANAGER) 
-		SVString DebugStr = SvUl_SF::Format("Release Write Slot : %i T:%i \n", slot, triggerNumber);
+		std::string DebugStr = SvUl::Format("Release Write Slot : %i T:%i \n", slot, triggerNumber);
 		if (isValid && isReject)
 		{
-			DebugStr = SvUl_SF::Format("Release Write Slot to 0x1: %i T:%i\n", slot, triggerNumber);
+			DebugStr = SvUl::Format("Release Write Slot to 0x1: %i T:%i\n", slot, triggerNumber);
 		}
 		::OutputDebugString(DebugStr.c_str());
 #endif 
@@ -472,8 +476,8 @@ namespace SvSml
 
 	void SMRingBuffer::ThrowCreateFileMappingFailed(SvStl::SourceFileParams& FileParams, DWORD Programmcode)
 	{
-		SVString LastError = SvUl_SF::Format(_T("%s LastError:  %i"), m_FileName.c_str(), GetLastError());
-		SVStringVector msgList;
+		std::string LastError = SvUl::Format(_T("%s LastError:  %i"), m_FileName.c_str(), GetLastError());
+		SvDef::StringVector msgList;
 		msgList.push_back(LastError);
 
 		SvStl::MessageMgrStd MesMan(SvStl::LogOnly);
@@ -483,8 +487,8 @@ namespace SvSml
 
 	void SMRingBuffer::ThrowMapViewOfFileFailedFailed(SvStl::SourceFileParams& FileParams, DWORD Programmcode)
 	{
-		SVString LastError = SvUl_SF::Format(_T("%s LastError:  %i"), m_FileName.c_str(), GetLastError());
-		SVStringVector msgList;
+		std::string LastError = SvUl::Format(_T("%s LastError:  %i"), m_FileName.c_str(), GetLastError());
+		SvDef::StringVector msgList;
 		msgList.push_back(LastError);
 
 		SvStl::MessageMgrStd MesMan(SvStl::LogOnly);

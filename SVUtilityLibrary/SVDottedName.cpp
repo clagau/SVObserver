@@ -24,7 +24,7 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 #pragma region Constructor
-SVDottedName::SVDottedName(const SVString& name)
+SVDottedName::SVDottedName(const std::string& name)
 : m_name(name)
 {
 	boost::algorithm::split(m_nameTokens, name, boost::algorithm::is_any_of("."), boost::algorithm::token_compress_on);
@@ -41,7 +41,7 @@ size_t SVDottedName::size() const
 	return m_nameTokens.size();
 }
 
-const SVString& SVDottedName::operator[](size_t index) const
+const std::string& SVDottedName::operator[](size_t index) const
 {
 	return m_nameTokens[index];
 }

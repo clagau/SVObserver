@@ -13,6 +13,7 @@
 #include "stdafx.h"
 #include "SVObjectAttributeClass.h"
 #include "Definitions/TextDefineSVDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -352,7 +353,7 @@ bool SVObjectAttributeClass::GetData(SvCl::SVObjectSVStringArrayClass& svData)
 		{
 			for ( int i = 0; i < m_BoolArray.GetSize(); i++ )
 			{
-				SVString Temp;
+				std::string Temp;
 				
 				if ( m_BoolArray[i] )
 				{
@@ -374,7 +375,7 @@ bool SVObjectAttributeClass::GetData(SvCl::SVObjectSVStringArrayClass& svData)
 		{
 			for ( int i = 0; i < m_ByteArray.GetSize(); i++ )
 			{
-				SVString Temp = SvUl_SF::Format( "%x", m_ByteArray[i] );
+				std::string Temp = SvUl::Format( "%x", m_ByteArray[i] );
 
 				svData.InsertAt( i, Temp );
 			}
@@ -395,7 +396,7 @@ bool SVObjectAttributeClass::GetData(SvCl::SVObjectSVStringArrayClass& svData)
 		{
 			for ( int i = 0; i < m_DoubleArray.GetSize(); i++ )
 			{
-				SVString Temp = SvUl_SF::Format( "%f", m_DoubleArray[i] );
+				std::string Temp = SvUl::Format( "%f", m_DoubleArray[i] );
 
 				svData.InsertAt( i, Temp );
 			}
@@ -408,7 +409,7 @@ bool SVObjectAttributeClass::GetData(SvCl::SVObjectSVStringArrayClass& svData)
 		{
 			for ( int i = 0; i < m_DWordArray.GetSize(); i++)
 			{
-				SVString Temp = SvUl_SF::Format( _T("%lx"), m_DWordArray[i] );
+				std::string Temp = SvUl::Format( _T("%lx"), m_DWordArray[i] );
 
 				svData.InsertAt( i, Temp );
 			}
@@ -421,7 +422,7 @@ bool SVObjectAttributeClass::GetData(SvCl::SVObjectSVStringArrayClass& svData)
 		{
 			for ( int i = 0; i < m_LongArray.GetSize(); i++)
 			{
-				SVString Temp = SvUl_SF::Format( _T("%ld"), m_LongArray[i] );
+				std::string Temp = SvUl::Format( _T("%ld"), m_LongArray[i] );
 
 				svData.InsertAt( i, Temp );
 			}
@@ -445,7 +446,7 @@ bool SVObjectAttributeClass::GetData(SvCl::SVObjectSVStringArrayClass& svData)
 		{
 			for ( int i = 0; i < m_DPointArray.GetSize(); i++)
 			{
-				SVString Temp = SvUl_SF::Format( _T("(%lf,%lf)"), m_DPointArray[i].x, m_DPointArray[i].y );
+				std::string Temp = SvUl::Format( _T("(%lf,%lf)"), m_DPointArray[i].x, m_DPointArray[i].y );
 
 				svData.InsertAt( i, Temp );
 			}
@@ -458,13 +459,13 @@ bool SVObjectAttributeClass::GetData(SvCl::SVObjectSVStringArrayClass& svData)
 		{
 			for ( int i = 0; i < m_DPointArray.GetSize(); i++)
 			{
-				SVString Temp;
+				std::string Temp;
 
 				VARIANT vtTemp = m_VariantArray[i];
 				HRESULT hr = ::VariantChangeType( &vtTemp, &vtTemp, VARIANT_ALPHABOOL, VT_BSTR);
 				if( S_OK == hr )
 				{
-					Temp = SvUl_SF::createSVString( _bstr_t( vtTemp.bstrVal ) );
+					Temp = SvUl::createStdString( _bstr_t( vtTemp.bstrVal ) );
 				}
 				else
 				{
@@ -481,7 +482,7 @@ bool SVObjectAttributeClass::GetData(SvCl::SVObjectSVStringArrayClass& svData)
 		{
 			for ( int i = 0; i < m_Int64Array.GetSize(); i++)
 			{
-				SVString Temp = SvUl_SF::Format( _T("%I64d"), m_Int64Array[i] );
+				std::string Temp = SvUl::Format( _T("%I64d"), m_Int64Array[i] );
 
 				svData.InsertAt( i, Temp );
 			}
@@ -1228,7 +1229,7 @@ bool SVObjectAttributeClass::AddData(LPCTSTR Value)
 
 	if ( bOk )
 	{
-		m_StringArray.Add( SVString( Value ) );
+		m_StringArray.Add( std::string( Value ) );
 	}
 
 	return bOk;

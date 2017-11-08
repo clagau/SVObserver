@@ -21,6 +21,7 @@
 #include "SVOCore/SVIPResultItemDefinition.h"
 #include "SVToolSet.h"
 #include "SVInspectionProcess.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Constructor
@@ -47,7 +48,7 @@ bool ResultViewReferences::IsViewable(const SVObjectReference& objectRef) const
 bool ResultViewReferences::Load( SVTreeType& rTree, SVTreeType::SVBranchHandle hParent, LPCTSTR TagName )
 {
 
-	SVString BranchName =  (nullptr == TagName) ?  m_TagName: TagName;
+	std::string BranchName =  (nullptr == TagName) ?  m_TagName: TagName;
 	SVTreeType::SVBranchHandle hVariables = nullptr;
 	bool bOK = SvXml::SVNavigateTree::GetItemBranch(rTree, BranchName.c_str(), hParent, hVariables);
 
@@ -69,7 +70,7 @@ bool ResultViewReferences::Load( SVTreeType& rTree, SVTreeType::SVBranchHandle h
 
 bool ResultViewReferences::LoadResultViewItemDef( SVTreeType& rTree, SVTreeType::SVLeafHandle htiLeaf )
 {
-	SVString Name( rTree.getLeafName( htiLeaf ) );
+	std::string Name( rTree.getLeafName( htiLeaf ) );
 
 	_variant_t Value;
 	rTree.getLeafData( htiLeaf, Value );
@@ -79,7 +80,7 @@ bool ResultViewReferences::LoadResultViewItemDef( SVTreeType& rTree, SVTreeType:
 		if (0 == Name.compare(SvXml::CTAG_COMPLETENAME))
 		{
 			SVObjectReference objRef;
-			SVString dottedName = SvUl_SF::createSVString(Value);
+			std::string dottedName = SvUl::createStdString(Value);
 			bOK = (S_OK == SVObjectManagerClass::Instance().GetObjectByDottedName(dottedName, objRef));
 			if (bOK && objRef.getObject())
 			{
@@ -114,7 +115,7 @@ bool ResultViewReferences::LoadResultViewItemDef( SVTreeType& rTree, SVTreeType:
 	return bOK;
 }
 
-bool ResultViewReferences::Insert( const SVString &rDottedName )
+bool ResultViewReferences::Insert( const std::string &rDottedName )
 {
 	SVObjectReference objRef;
 	bool bOK = ( S_OK == SVObjectManagerClass::Instance().GetObjectByDottedName( rDottedName, objRef ) );
@@ -232,13 +233,13 @@ void  ResultViewReferences::GetResultData( SVIPResultData& p_rResultData) const
 		}
 
 
-		SVString Value;
+		std::string Value;
 		if( it->getObject()->GetObjectSubType() == SVStringValueObjectType )
 		{
-			SVString ValueString;
+			std::string ValueString;
 			it->getValueObject()->getValue( ValueString, it->getValidArrayIndex() );
 			// Wrap string in Quotes...
-			Value = SvUl_SF::Format(_T("\042%s\042"), ValueString.c_str());
+			Value = SvUl::Format(_T("\042%s\042"), ValueString.c_str());
 		}
 		else
 		{

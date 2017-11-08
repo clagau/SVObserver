@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "ObjectSelectorPpg.h"
 
-#include "SVUtilityLibrary\SVString.h"
+
 #include "SVOResource\ConstGlobalSvOr.h"
 #pragma endregion Includes
 
@@ -67,7 +67,7 @@ namespace SvOsl
 		CPropertyPage::DoDataExchange(pDX);
 		DDX_Control(pDX, IDC_TREE_NODES, m_NodeTree);
 		DDX_Control(pDX, IDC_TREE_VALUES, m_LeafTree);
-		//This is ok when SVString is only being read, input from the dialog would be lost
+		//This is ok when std::string is only being read, input from the dialog would be lost
 		DDX_Text(pDX, IDC_HIGHLIGHTED_NODE, CString(m_HighlightedNode.c_str()));
 	}
 

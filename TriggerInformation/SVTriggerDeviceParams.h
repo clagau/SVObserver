@@ -12,7 +12,7 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 namespace SvTi
@@ -23,7 +23,7 @@ namespace SvTi
 		SVTriggerDeviceParams( const SVTriggerDeviceParams& p_rObject );
 		SVTriggerDeviceParams( LPCTSTR p_szName, int p_Channel );
 
-		SVString m_Name;
+		std::string m_Name;
 		int m_Channel;
 	};
 

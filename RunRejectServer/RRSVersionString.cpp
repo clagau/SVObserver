@@ -10,16 +10,16 @@
 #include "RRSVersionString.h"
 
 
- SVString RRSVersionString::Get()
+ std::string RRSVersionString::Get()
  {
-	 static SVString versionString = BuildVersionString();
+	 static std::string versionString = BuildVersionString();
 	 return versionString;
  }
  
 
-SVString RRSVersionString::BuildVersionString()
+std::string RRSVersionString::BuildVersionString()
  {
-	 SVString Result;
+	 std::string Result;
 	 TCHAR moduleFilename[512];
 	 ::GetModuleFileName( nullptr, moduleFilename, 512);
 

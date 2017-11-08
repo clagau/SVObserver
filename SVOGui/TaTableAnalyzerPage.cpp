@@ -24,6 +24,8 @@
 #include "SVMessage/SVMessage.h"
 #include "SVObjectLibrary/SVClsids.h"
 #include "ToolSetItemSelector.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -257,7 +259,7 @@ namespace SvOg {
 			hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 			if ( S_OK != hr )
 			{
-				SVStringVector msgList;
+				SvDef::StringVector msgList;
 				msgList.push_back(m_inputName);
 				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ConnectFailed, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -269,8 +271,8 @@ namespace SvOg {
 	{
 		CString Temp;
 		m_EditExcludeHigh.GetWindowText( Temp );
-		SVString Value = Temp;
-		SVString Title = SvUl_SF::LoadSVString( IDS_OBJECTNAME_TABLEANALYZEREXCLUDE_HIGHVALUE );
+		std::string Value = Temp;
+		std::string Title = SvUl::LoadStdString( IDS_OBJECTNAME_TABLEANALYZEREXCLUDE_HIGHVALUE );
 		if (m_objectSelector.Show<ToolSetItemSelector<>>( Value, Title, this))
 		{
 			m_EditExcludeHigh.SetWindowText( Value.c_str() );
@@ -282,8 +284,8 @@ namespace SvOg {
 	{
 		CString Temp;
 		m_EditExcludeLow.GetWindowText( Temp );
-		SVString Value = Temp;
-		SVString Title = SvUl_SF::LoadSVString( IDS_OBJECTNAME_TABLEANALYZEREXCLUDE_LOWVALUE );
+		std::string Value = Temp;
+		std::string Title = SvUl::LoadStdString( IDS_OBJECTNAME_TABLEANALYZEREXCLUDE_LOWVALUE );
 		if (m_objectSelector.Show<ToolSetItemSelector<>>( Value, Title, this ))
 		{
 			m_EditExcludeLow.SetWindowText( Value.c_str() );
@@ -295,8 +297,8 @@ namespace SvOg {
 	{
 		CString Temp;
 		m_EditLimitValue.GetWindowText( Temp );
-		SVString Value = Temp;
-		SVString Title = SvUl_SF::LoadSVString( IDS_OBJECTNAME_TABLEANALYZERLIMIT_VALUE );
+		std::string Value = Temp;
+		std::string Title = SvUl::LoadStdString( IDS_OBJECTNAME_TABLEANALYZERLIMIT_VALUE );
 		if (m_objectSelector.Show<ToolSetItemSelector<>>( Value, Title, this ))
 		{
 			m_EditLimitValue.SetWindowText( Value.c_str() );
@@ -374,8 +376,8 @@ namespace SvOg {
 			else
 			{
 				//display an error if set failed.
-				SVStringVector msgList;
-				msgList.push_back(SvUl_SF::Format(_T("%d"), hrOk));
+				SvDef::StringVector msgList;
+				msgList.push_back(SvUl::Format(_T("%d"), hrOk));
 				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_SetTableAnalyzerData, msgList, SvStl::SourceFileParams(StdMessageParams) );
 			}
@@ -512,13 +514,13 @@ namespace SvOg {
 			m_Values->Init();
 		}
 
-		SVString highString = m_Values->Get<CString>(ExcludeHighLinkTag);
+		std::string highString = m_Values->Get<CString>(ExcludeHighLinkTag);
 		if( highString.empty() )
 		{
 			highString = m_Values->Get<CString>(ExcludeHighTag);
 		}
 		m_EditExcludeHigh.SetWindowText(highString.c_str());
-		SVString lowString = m_Values->Get<CString>(ExcludeLowLinkTag);
+		std::string lowString = m_Values->Get<CString>(ExcludeLowLinkTag);
 		if( lowString.empty() )
 		{
 			lowString = m_Values->Get<CString>(ExcludeLowTag);
@@ -538,7 +540,7 @@ namespace SvOg {
 			m_Values->Init();
 		}
 
-		SVString valueString = m_Values->Get<CString>(LimitValueLinkTag);
+		std::string valueString = m_Values->Get<CString>(LimitValueLinkTag);
 		if( valueString.empty() )
 		{
 			valueString = m_Values->Get<CString>(LimitValueTag);
@@ -548,7 +550,7 @@ namespace SvOg {
 
 	void TaTableAnalyzerPage::setColumnSelectionCB()
 	{
-		SVString selectedTableName;
+		std::string selectedTableName;
 		typedef SvCmd::GetInputs Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 		CommandPtr commandPtr = new Command(m_selectedAnalyzerID, SVObjectTypeInfoStruct(SVValueObjectType, DoubleSortValueObjectType));

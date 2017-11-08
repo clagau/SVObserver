@@ -11,6 +11,8 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SaxExtractPropertiesHandler.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 
@@ -392,11 +394,11 @@ namespace SvXml
 		{
 			return S_OK;
 		}
-		SVStringVector messageList;
-		messageList.push_back(SvUl_SF::Format(_T("%i"), line));
-		messageList.push_back(SvUl_SF::Format(_T("%i"), column));
-		messageList.push_back(SvUl_SF::Format(_T("%i"), errorCode));
-		messageList.push_back(SvUl_SF::createSVString(pwchErrorText));
+		SvDef::StringVector messageList;
+		messageList.push_back(SvUl::Format(_T("%i"), line));
+		messageList.push_back(SvUl::Format(_T("%i"), column));
+		messageList.push_back(SvUl::Format(_T("%i"), errorCode));
+		messageList.push_back(SvUl::createStdString(pwchErrorText));
 		SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 		Exception.setMessage(SVMSG_SVO_83_SAX_PARSER_ERROR, SvStl::Tid_XML_Error, messageList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16063_SAXPARSER );
 		ASSERT(false);

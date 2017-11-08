@@ -12,17 +12,16 @@
 #include "SVToolGrouping.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
-#include "SVUtilityLibrary/SVStringConversions.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVMessage/SVMessage.h"
-
 #pragma endregion Includes
 
-static const SVString scDefaultToolGroupName = _T("Group");
-static const SVString scEndPrefix = _T("End ");
+static const std::string scDefaultToolGroupName = _T("Group");
+static const std::string scEndPrefix = _T("End ");
 
-SVString SVToolGrouping::GetDefaultName() const
+std::string SVToolGrouping::GetDefaultName() const
 {
-	SVString name = scDefaultToolGroupName;
+	std::string name = scDefaultToolGroupName;
 	int cnt = 0;
 	while (!IsNameUnique(name))
 	{
@@ -33,9 +32,9 @@ SVString SVToolGrouping::GetDefaultName() const
 	return name;
 }
 
-bool SVToolGrouping::IsNameUnique(const SVString& rName, LPCTSTR pExclude) const
+bool SVToolGrouping::IsNameUnique(const std::string& rName, LPCTSTR pExclude) const
 {
-	SVString nameLower;
+	std::string nameLower;
 	std::transform(rName.begin(), rName.end(), std::back_inserter(nameLower), ::tolower);
 
 	bool bRetVal = std::none_of(m_list.begin(), m_list.end(), 
@@ -49,7 +48,7 @@ bool SVToolGrouping::IsNameUnique(const SVString& rName, LPCTSTR pExclude) const
 			}
 		}
 		// case insensitive compare
-		SVString itemNameLower;
+		std::string itemNameLower;
 		std::transform(rGroup.first.begin(), rGroup.first.end(), std::back_inserter(itemNameLower), ::tolower);
 		return (itemNameLower == nameLower); 
 	});
@@ -57,15 +56,15 @@ bool SVToolGrouping::IsNameUnique(const SVString& rName, LPCTSTR pExclude) const
 	return bRetVal;
 }
 
-SVString SVToolGrouping::MakeNumericUniqueName(const SVString& rName) const
+std::string SVToolGrouping::MakeNumericUniqueName(const std::string& rName) const
 {
-	SVString newName = rName;
-	SVString nameLower;
+	std::string newName = rName;
+	std::string nameLower;
 	std::transform(rName.begin(), rName.end(), std::back_inserter(nameLower), ::tolower);
 	
 	//This strips any numbers at the end of the name
 	size_t last_char_pos = nameLower.find_last_not_of(_T("0123456789"));
-	if (last_char_pos != SVString::npos)
+	if (last_char_pos != std::string::npos)
 	{
 		nameLower = nameLower.substr(0, last_char_pos + 1);
 	}
@@ -74,7 +73,7 @@ SVString SVToolGrouping::MakeNumericUniqueName(const SVString& rName) const
 	// find all names that start with this name (case insensitive)
 	std::for_each(m_list.begin(), m_list.end(), [&nameLower, &num](const ToolGroup& rGroup)->void
 	{ 
-		SVString itemNameLower;
+		std::string itemNameLower;
 		std::transform(rGroup.first.begin(), rGroup.first.end(),std::back_inserter(itemNameLower), ::tolower);
 	    size_t pos = itemNameLower.find(nameLower);
 		if (0 == pos)
@@ -84,9 +83,9 @@ SVString SVToolGrouping::MakeNumericUniqueName(const SVString& rName) const
 			{
 				// check for trailing digits
 				size_t last_char_pos = itemNameLower.find_last_not_of(_T("0123456789"));
-				if (last_char_pos != SVString::npos)
+				if (last_char_pos != std::string::npos)
 				{
-					SVString val = itemNameLower.substr(last_char_pos + 1);
+					std::string val = itemNameLower.substr(last_char_pos + 1);
 					if (!val.empty())
 					{
 						int lastNum = atoi(val.c_str());
@@ -106,9 +105,9 @@ SVString SVToolGrouping::MakeNumericUniqueName(const SVString& rName) const
 			{
 				// check for trailing digits
 				size_t last_char_pos = itemNameLower.find_last_not_of(_T("0123456789"));
-				if (last_char_pos != SVString::npos)
+				if (last_char_pos != std::string::npos)
 				{
-					SVString val = itemNameLower.substr(last_char_pos + 1);
+					std::string val = itemNameLower.substr(last_char_pos + 1);
 					if (!val.empty())
 					{
 						// convert and set max
@@ -125,9 +124,9 @@ SVString SVToolGrouping::MakeNumericUniqueName(const SVString& rName) const
 	{
 		std::stringstream ss;
 		// Get Base Name (can't end in a number)
-		SVString baseName = rName;
+		std::string baseName = rName;
 		size_t last_char_pos = rName.find_last_not_of(_T("0123456789"));
-		if (last_char_pos != SVString::npos)
+		if (last_char_pos != std::string::npos)
 		{
 			baseName = rName.substr(0, last_char_pos + 1);
 		}
@@ -137,9 +136,9 @@ SVString SVToolGrouping::MakeNumericUniqueName(const SVString& rName) const
 	return newName;
 }
 
-SVString SVToolGrouping::GetToolToInsertBefore(const SVString& rName) const
+std::string SVToolGrouping::GetToolToInsertBefore(const std::string& rName) const
 {
-	SVString toolName;
+	std::string toolName;
 	if (!rName.empty())
 	{
 		ToolGroupList::const_iterator it = std::find_if(m_list.begin(), m_list.end(),
@@ -166,7 +165,7 @@ SVString SVToolGrouping::GetToolToInsertBefore(const SVString& rName) const
 	return toolName;
 }
 
-void SVToolGrouping::AddGroup(const SVString& rName, const SVString& rInsertBefore)
+void SVToolGrouping::AddGroup(const std::string& rName, const std::string& rInsertBefore)
 {
 	ToolGroupList::iterator it = m_list.end();
 	if (!rInsertBefore.empty())
@@ -183,7 +182,7 @@ void SVToolGrouping::AddGroup(const SVString& rName, const SVString& rInsertBefo
 	{
 		if (ToolGroupData::EndOfGroup == it->second.m_type)
 		{
-			SVString endName = it->first;
+			std::string endName = it->first;
 			// find current start group for end group and unassign
 			it = std::find_if(m_list.begin(), m_list.end(),
 				[&endName](const ToolGroup& rGroup)->bool { return endName == rGroup.second.m_endName && ToolGroupData::StartOfGroup == rGroup.second.m_type; });
@@ -197,13 +196,13 @@ void SVToolGrouping::AddGroup(const SVString& rName, const SVString& rInsertBefo
 	}
 }
 
-bool SVToolGrouping::AddEndGroup(const SVString& rGroupName, const SVString& rInsertBefore)
+bool SVToolGrouping::AddEndGroup(const std::string& rGroupName, const std::string& rInsertBefore)
 {
 	bool bRetVal = false;
 	
 	if (!rGroupName.empty())
 	{
-		SVString endName = scEndPrefix + rGroupName;
+		std::string endName = scEndPrefix + rGroupName;
 		if (!IsNameUnique(endName))
 		{
 			endName = MakeNumericUniqueName(endName);
@@ -242,7 +241,7 @@ bool SVToolGrouping::AddEndGroup(const SVString& rGroupName, const SVString& rIn
 	return bRetVal;
 }
 
-void SVToolGrouping::AddTool(const SVString& rName, const SVString& rInsertBefore)
+void SVToolGrouping::AddTool(const std::string& rName, const std::string& rInsertBefore)
 {
 	ToolGroupList::iterator it = m_list.end();
 	if (!rInsertBefore.empty())
@@ -253,7 +252,7 @@ void SVToolGrouping::AddTool(const SVString& rName, const SVString& rInsertBefor
 	m_list.insert(it, std::make_pair(rName, ToolGroupData(ToolGroupData::Tool, rName)));
 }
 
-bool SVToolGrouping::RemoveGroup(const SVString& rName)
+bool SVToolGrouping::RemoveGroup(const std::string& rName)
 {
 	bool bRetVal = false;
 	if (IsEndTag(rName))
@@ -282,7 +281,7 @@ bool SVToolGrouping::RemoveGroup(const SVString& rName)
 		[&rName](const ToolGroup& rGroup)->bool { return (rName == rGroup.first && ToolGroupData::StartOfGroup == rGroup.second.m_type); });
 		if (it != m_list.end())
 		{
-			SVString endName = it->second.m_endName;
+			std::string endName = it->second.m_endName;
 			m_list.erase(it);
 			it = std::find_if(m_list.begin(), m_list.end(),
 			[&endName](const ToolGroup& rGroup)->bool { return (endName == rGroup.first && ToolGroupData::EndOfGroup == rGroup.second.m_type); });
@@ -296,7 +295,7 @@ bool SVToolGrouping::RemoveGroup(const SVString& rName)
 	return bRetVal;
 }
 
-bool SVToolGrouping::RemoveTool(const SVString& rName)
+bool SVToolGrouping::RemoveTool(const std::string& rName)
 {
 	bool bRetVal = false;
 	ToolGroupList::iterator it = std::find_if(m_list.begin(), m_list.end(),
@@ -308,7 +307,7 @@ bool SVToolGrouping::RemoveTool(const SVString& rName)
 	return bRetVal;
 }
 
-bool SVToolGrouping::RenameItem(const SVString& rOldName, const SVString& rNewName)
+bool SVToolGrouping::RenameItem(const std::string& rOldName, const std::string& rNewName)
 {
 	bool bRetVal = false;
 	if (IsEndTag(rOldName))
@@ -333,9 +332,9 @@ bool SVToolGrouping::RenameItem(const SVString& rOldName, const SVString& rNewNa
 	return bRetVal;
 }
 
-SVString SVToolGrouping::FindCandidateStartGroup(const SVString& rName) const
+std::string SVToolGrouping::FindCandidateStartGroup(const std::string& rName) const
 {
-	SVString group;
+	std::string group;
 	ToolGroupList::const_reverse_iterator it = m_list.rbegin();
 	if (!rName.empty())
 	{
@@ -352,9 +351,9 @@ SVString SVToolGrouping::FindCandidateStartGroup(const SVString& rName) const
 	return group;
 }
 
-SVString SVToolGrouping::FindGroup(const SVString& rName) const
+std::string SVToolGrouping::FindGroup(const std::string& rName) const
 {
-	SVString group;
+	std::string group;
 	ToolGroupList::const_reverse_iterator it = m_list.rbegin();
 	if (!rName.empty())
 	{
@@ -371,7 +370,7 @@ SVString SVToolGrouping::FindGroup(const SVString& rName) const
 	return group;
 }
 
-bool SVToolGrouping::IsStartTag(const SVString& rName, bool& bState) const
+bool SVToolGrouping::IsStartTag(const std::string& rName, bool& bState) const
 {
 	bool bRetVal = false;
 	bState = false;
@@ -385,7 +384,7 @@ bool SVToolGrouping::IsStartTag(const SVString& rName, bool& bState) const
 	return bRetVal;
 }
 
-bool SVToolGrouping::IsStartTag(const SVString& rName) const
+bool SVToolGrouping::IsStartTag(const std::string& rName) const
 {
 	bool bRetVal = false;
 	ToolGroupList::const_iterator it = std::find_if(m_list.begin(), m_list.end(),
@@ -397,7 +396,7 @@ bool SVToolGrouping::IsStartTag(const SVString& rName) const
 	return bRetVal;
 }
 
-bool SVToolGrouping::IsEndTag(const SVString& rName) const
+bool SVToolGrouping::IsEndTag(const std::string& rName) const
 {
 	bool bRetVal = false;
 	ToolGroupList::const_iterator it = std::find_if(m_list.begin(), m_list.end(),
@@ -409,7 +408,7 @@ bool SVToolGrouping::IsEndTag(const SVString& rName) const
 	return bRetVal;
 }
 
-bool SVToolGrouping::HasEndTag(const SVString& rName) const
+bool SVToolGrouping::HasEndTag(const std::string& rName) const
 {
 	bool bRetVal = false;
 	ToolGroupList::const_iterator it = std::find_if(m_list.begin(), m_list.end(),
@@ -421,7 +420,7 @@ bool SVToolGrouping::HasEndTag(const SVString& rName) const
 	return bRetVal;
 }
 
-bool SVToolGrouping::IsCollapsed(const SVString& rName) const
+bool SVToolGrouping::IsCollapsed(const std::string& rName) const
 {
 	bool bCollapsed = false;
 	ToolGroupList::const_iterator it = std::find_if(m_list.begin(), m_list.end(),
@@ -433,7 +432,7 @@ bool SVToolGrouping::IsCollapsed(const SVString& rName) const
 	return bCollapsed;
 }
 
-bool SVToolGrouping::Collapse(const SVString& rName, bool bCollapse)
+bool SVToolGrouping::Collapse(const std::string& rName, bool bCollapse)
 {
 	bool bRetVal = false;
 
@@ -458,14 +457,14 @@ HRESULT SVToolGrouping::LoadTools(SVTreeType& rTree, SVTreeType::SVBranchHandle 
 		htiLeaf = rTree.getFirstLeaf( htiTools );
 		while (S_OK == hr && rTree.isValidLeaf( htiTools, htiLeaf ) )
 		{
-			SVString leafName = rTree.getLeafName( htiLeaf );
+			std::string leafName = rTree.getLeafName( htiLeaf );
 			if (SvXml::CTAG_TOOL == leafName)
 			{
 				_variant_t Value;
 				rTree.getLeafData( htiLeaf, Value );
 				if( VT_EMPTY != Value.vt )
 				{
-					SVString toolName = SvUl_SF::createSVString( Value.GetVARIANT() );
+					std::string toolName = SvUl::createStdString( Value.GetVARIANT() );
 					if (!toolName.empty())
 					{
 						rGroupings.m_list.insert(rGroupings.m_list.end(), std::make_pair(toolName, ToolGroupData(ToolGroupData::Tool, toolName)));
@@ -504,16 +503,16 @@ HRESULT SVToolGrouping::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHan
 		while (S_OK == hr && nullptr != htiSubChild)
 		{
 			// Will be either Tools or Group
-			SVString name = rTree.getBranchName( htiSubChild );
+			std::string name = rTree.getBranchName( htiSubChild );
 			if (SvXml::CTAG_GROUP == name)
 			{
 				// Read the Group data
 				if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_STARTGROUP, htiSubChild, svValue))
 				{
-					SVString groupName = SvUl_SF::createSVString( svValue );
-					SVString endGroupName;
-					SVString startGroupComment;
-					SVString endGroupComment;
+					std::string groupName = SvUl::createStdString( svValue );
+					std::string endGroupName;
+					std::string startGroupComment;
+					std::string endGroupComment;
 					bool bCollapsed = false;
 					if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_COLLAPSED, htiSubChild, svValue))
 					{
@@ -521,15 +520,15 @@ HRESULT SVToolGrouping::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHan
 
 						if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_STARTGROUP_COMMENT, htiSubChild, svValue))
 						{
-							startGroupComment = SvUl_SF::createSVString( svValue );
+							startGroupComment = SvUl::createStdString( svValue );
 							SvUl::RemoveEscapedSpecialCharacters(startGroupComment, true);
 						}
 						if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_ENDGROUP, htiSubChild, svValue))
 						{
-							endGroupName = SvUl_SF::createSVString( svValue );
+							endGroupName = SvUl::createStdString( svValue );
 							if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_ENDGROUP_COMMENT, htiSubChild, svValue))
 							{
-								endGroupComment = SvUl_SF::createSVString( svValue );
+								endGroupComment = SvUl::createStdString( svValue );
 								SvUl::RemoveEscapedSpecialCharacters(endGroupComment, true);
 							}
 						}
@@ -646,7 +645,7 @@ bool SVToolGrouping::GetParameters(SVObjectWriter& rWriter)
 				_variant_t value(name);
 				rWriter.WriteAttribute(SvXml::CTAG_STARTGROUP, value);
 
-				SVString tmp( it->second.m_comment );
+				std::string tmp( it->second.m_comment );
 				SvUl::AddEscapeSpecialCharacters(tmp, true);
 				_variant_t commentValue( tmp.c_str() );
 				rWriter.WriteAttribute(SvXml::CTAG_STARTGROUP_COMMENT, commentValue);
@@ -666,7 +665,7 @@ bool SVToolGrouping::GetParameters(SVObjectWriter& rWriter)
 				_variant_t value(name);
 				rWriter.WriteAttribute(SvXml::CTAG_ENDGROUP, value);
 
-				SVString tmp( it->second.m_comment );
+				std::string tmp( it->second.m_comment );
 				SvUl::AddEscapeSpecialCharacters(tmp, true);
 				_variant_t commentValue( tmp.c_str() );
 				rWriter.WriteAttribute(SvXml::CTAG_ENDGROUP_COMMENT, commentValue);
@@ -715,7 +714,7 @@ SVToolGrouping::const_iterator SVToolGrouping::end() const
 	return m_list.end();
 }
 
-SVToolGrouping::const_iterator SVToolGrouping::find(const SVString& rName) const
+SVToolGrouping::const_iterator SVToolGrouping::find(const std::string& rName) const
 {
 	SVToolGrouping::const_iterator it = std::find_if(begin(), end(), 
 		[&rName](const ToolGroup& rGroup)->bool { return rGroup.first == rName; });
@@ -732,9 +731,9 @@ size_t SVToolGrouping::size() const
 	return m_list.size();
 }
 
-SVString SVToolGrouping::GetComment(const SVString& rName) const
+std::string SVToolGrouping::GetComment(const std::string& rName) const
 {
-	SVString comment;
+	std::string comment;
 	if (IsEndTag(rName))
 	{
 		ToolGroupList::const_iterator it = std::find_if(m_list.begin(), m_list.end(),
@@ -757,7 +756,7 @@ SVString SVToolGrouping::GetComment(const SVString& rName) const
 	return comment;
 }
 
-void SVToolGrouping::SetComment(const SVString& rName, const SVString& rComment)
+void SVToolGrouping::SetComment(const std::string& rName, const std::string& rComment)
 {
 	if (IsEndTag(rName))
 	{

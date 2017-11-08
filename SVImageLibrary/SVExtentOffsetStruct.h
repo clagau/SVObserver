@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVExtentPointStruct.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 class SVImageClass;
@@ -69,7 +69,7 @@ struct SVExtentOffsetStruct
 	SVImageClass *m_psvRootImage;
 	SVImageClass *m_psvImage;
 
-	SVString m_csImageName;
+	std::string m_csImageName;
 
 	bool m_bIsLinear;
 	bool m_bAlwaysUpdate;

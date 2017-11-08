@@ -172,7 +172,7 @@ namespace SvStl
 		return l_pString;
 	}
 
-	SVString SVEventRecordStruct::GetDateTime()
+	std::string SVEventRecordStruct::GetDateTime()
 	{
 		CTime l_time((__time64_t)m_poRecord->TimeWritten);
 		return static_cast<LPCTSTR>( l_time.Format(_T("%m/%d/%Y  %I:%M:%S %p")));

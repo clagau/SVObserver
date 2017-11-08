@@ -17,6 +17,7 @@
 #include "SVCameraFilePropertyPageDlg.h"
 #include "SVTestAcquisitionClass.h"
 #include "SVImageTest.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "CameraLibrary/SVDeviceParams.h"
 #include "CameraLibrary/SVBoolValueDeviceParam.h"
 #include "CameraLibrary/SVi64ValueDeviceParam.h"
@@ -144,7 +145,7 @@ BOOL SVCameraFilePropertyPageDlg::OnInitDialog()
 						break;
 					
 					pCombo->SetCtrlID( PROP_CAMERA_FILE_BASE + rCamFileParam->Type() );
-					SVString Label = rCamFileParam->VisualName();
+					std::string Label = rCamFileParam->VisualName();
 					
 					if ( Label.empty() )
 					{
@@ -170,7 +171,7 @@ BOOL SVCameraFilePropertyPageDlg::OnInitDialog()
 							break;
 						
 						pCombo->SetCtrlID( PROP_CAMERA_FILE_BASE + rCamFileParam->Type() );
-						SVString Label = rCamFileParam->VisualName();
+						std::string Label = rCamFileParam->VisualName();
 						if ( Label.empty() )
 						{
 							Label = rCamFileParam->Name();
@@ -201,14 +202,14 @@ BOOL SVCameraFilePropertyPageDlg::OnInitDialog()
 							break;
 						
 						pEdit->SetCtrlID( PROP_CAMERA_FILE_BASE + rCamFileParam->Type() );
-						SVString Label = rCamFileParam->VisualName();
+						std::string Label = rCamFileParam->VisualName();
 						if( Label.empty() )
 						{
 							Label = rCamFileParam->Name();
 						}
-						Label = SvUl_SF::Format( _T("%s (%s)"), Label.c_str(), pCamDeviceParam->info.sUnits.c_str() );
+						Label = SvUl::Format( _T("%s (%s)"), Label.c_str(), pCamDeviceParam->info.sUnits.c_str() );
 						pEdit->SetLabelText( Label.c_str() );
-						SVString Description = SvUl_SF::Format( _T("%s   Min = %d, Max = %d; default = %d"), rCamFileParam->Description(), pCamFileParam->GetScaledMin(), pCamFileParam->GetScaledMax(), static_cast<long> (ceil( pCamFileParam->lValue * pCamFileParam->info.multiplier)) );
+						std::string Description = SvUl::Format( _T("%s   Min = %d, Max = %d; default = %d"), rCamFileParam->Description(), pCamFileParam->GetScaledMin(), pCamFileParam->GetScaledMax(), static_cast<long> (ceil( pCamFileParam->lValue * pCamFileParam->info.multiplier)) );
 
 						pEdit->SetInfoText( Description.c_str() );
 						
@@ -259,7 +260,7 @@ BOOL SVCameraFilePropertyPageDlg::OnInitDialog()
 									break;
 								
 								pCombo->SetCtrlID( PROP_CAMERA_FILE_BASE + rCamFileParam->Type() );
-								SVString Label = rCamFileParam->VisualName();
+								std::string Label = rCamFileParam->VisualName();
 								
 								if ( Label.empty() )
 								{
@@ -309,7 +310,7 @@ BOOL SVCameraFilePropertyPageDlg::OnInitDialog()
 									break;
 								
 								pCombo->SetCtrlID( PROP_CAMERA_FILE_BASE + rCamFileParam->Type() );
-								SVString Label = rCamFileParam->VisualName();
+								std::string Label = rCamFileParam->VisualName();
 								
 								if ( Label.empty() )
 								{
@@ -645,9 +646,9 @@ void SVCameraFilePropertyPageDlg::CameraAdvancedHideItems()
 	} 
 }
 
-void SVCameraFilePropertyPageDlg::SetTitle(SVString Name)
+void SVCameraFilePropertyPageDlg::SetTitle(std::string Name)
 {
-    SVString Tmp = _T("Property Settings  -  ") + Name;
+    std::string Tmp = _T("Property Settings  -  ") + Name;
     SetWindowText(Tmp.c_str());
 }
 

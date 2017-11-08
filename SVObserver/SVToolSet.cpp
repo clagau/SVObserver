@@ -24,6 +24,7 @@
 #include "SVOCore/SVTool.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVColorTool.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVToolSetClass, SVToolSetClassGuid );
@@ -967,7 +968,7 @@ bool SVToolSetClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SVStringVector msgList;
+			SvDef::StringVector msgList;
 			msgList.push_back(GetName());
 			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ConditionalValue_Invalid, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);

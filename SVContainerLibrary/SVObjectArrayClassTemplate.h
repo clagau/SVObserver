@@ -14,7 +14,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
 #include "SVVector.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 namespace SvCl
@@ -77,5 +77,5 @@ namespace SvCl
 	typedef SVObjectArrayClassTemplate<DWORD> SVObjectDWordArrayClass;
 	typedef SVObjectArrayClassTemplate<__int64> SVObjectInt64ArrayClass;
 	typedef SVObjectArrayClassTemplate<_variant_t> SVObjectVariantArrayClass;
-	typedef SVObjectArrayClassTemplate<SVString> SVObjectSVStringArrayClass;
+	typedef SVObjectArrayClassTemplate<std::string> SVObjectSVStringArrayClass;
 } //namespace SvCl

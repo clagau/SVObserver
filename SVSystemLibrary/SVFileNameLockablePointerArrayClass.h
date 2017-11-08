@@ -13,7 +13,7 @@
 
 #include "SVContainerLibrary/SVVector.h"
 #include "SVLockableClass.h"
-#include "SVUtilityLibrary/SVString.h"
+
 
 class SVFileNameClass;
 
@@ -56,5 +56,5 @@ private:
 
 	//This is a temporary storage container for the string 
 	//defining the list of file names contained in the array.
-	mutable SVString mcsFileList;
+	mutable std::string mcsFileList;
 };

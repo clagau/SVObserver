@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVVariantResultClass.h"
 #include "SVRange.h"
-#include "SVUtilityLibrary\SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -64,7 +64,7 @@ SVVariantResultClass::SVVariantResultClass( BOOL BCreateDefaultTaskList , SVObje
 	rangeClassInfo.m_ObjectTypeInfo.ObjectType = SVRangeObjectType;
 	rangeClassInfo.m_ObjectTypeInfo.SubType	= SVNotSetSubObjectType;
 	rangeClassInfo.m_ClassId = SVRangeClassGuid;
-	rangeClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_CLASSNAME_SVRANGE );
+	rangeClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_SVRANGE );
 
 	// Construct it
 	SVRangeClass* pRange = dynamic_cast<SVRangeClass*> (rangeClassInfo.Construct()); 

@@ -59,7 +59,7 @@
 #include "SVVisionProcessorHelper.h"
 #include "RangeClassHelper.h"
 #include "TextDefinesSvO.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVStatusLibrary/GlobalPath.h"
 
 #pragma endregion Includes
@@ -77,7 +77,7 @@ volatile DWORD CSVCommand::m_dwStreamDataProcessId = 0;
 volatile long CSVCommand::m_lLastStreamedProduct = -1;
 volatile HANDLE CSVCommand::m_hStopStreamEvent = nullptr;
 volatile HANDLE CSVCommand::m_hStreamingThread = nullptr;
-SVStringVector CSVCommand::m_InspectionNames;
+SvDef::StringVector CSVCommand::m_InspectionNames;
 
 SVVector< SVActiveXLockStruct > CSVCommand::m_aSVActXLock;
 SVVector< StreamDataStruct* > CSVCommand::m_arStreamList;
@@ -238,8 +238,8 @@ STDMETHODIMP CSVCommand::SVSetSVIMState(unsigned long ulSVIMState)
 
 STDMETHODIMP CSVCommand::SVGetSVIMConfig( long lOffset, long *lBlockSize, BSTR *bstrFileData, BOOL *bLastFlag)
 {
-	SVString PackedFileName;
-	SVString ConfigName;
+	std::string PackedFileName;
+	std::string ConfigName;
 	SVPackedFile PackedFile;
 	CFile binFile;
 	CFileStatus Status;
@@ -315,7 +315,7 @@ STDMETHODIMP CSVCommand::SVGetSVIMConfig( long lOffset, long *lBlockSize, BSTR *
 		TCHAR szCause[255];
 		memEx->GetErrorMessage(szCause, 255);
 #ifdef _DEBUG
-		SVString Formatted = _T("ERROR - ");
+		std::string Formatted = _T("ERROR - ");
 		Formatted += szCause;
 		ASSERT(false);// szFormatted
 #endif
@@ -328,7 +328,7 @@ STDMETHODIMP CSVCommand::SVGetSVIMConfig( long lOffset, long *lBlockSize, BSTR *
 		TCHAR szCause[255];
 		ex->GetErrorMessage(szCause, 255);
 #ifdef _DEBUG
-		SVString Formatted = _T("ERROR - ");
+		std::string Formatted = _T("ERROR - ");
 		Formatted += szCause;
 		ASSERT(false);//szFormatted
 #endif
@@ -353,8 +353,8 @@ STDMETHODIMP CSVCommand::SVGetSVIMConfig( long lOffset, long *lBlockSize, BSTR *
 
 STDMETHODIMP CSVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR *bstrFileData, BOOL bLastFlag)
 {
-	SVString configFileName;
-	SVString PackedFileName;
+	std::string configFileName;
+	std::string PackedFileName;
 	SVPackedFile svPackedFile;
 	HRESULT hrResult = S_OK;
 	CFile binFile;
@@ -458,7 +458,7 @@ STDMETHODIMP CSVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR *bs
 		TCHAR szCause[255];
 		theEx->GetErrorMessage(szCause, 255);
 #ifdef _DEBUG
-		SVString Formatted = _T("Error - ");
+		std::string Formatted = _T("Error - ");
 		Formatted += szCause;
 		ASSERT(false);//sFormatted
 #endif
@@ -542,7 +542,7 @@ STDMETHODIMP CSVCommand::SVGetSVIMFile(BSTR bstrSourceFile, long lOffset, long *
 #ifdef _DEBUG
 				TCHAR   szCause[255];
 				theException->GetErrorMessage(szCause, 255);
-				SVString Formatted = _T("ERROR - ");
+				std::string Formatted = _T("ERROR - ");
 				Formatted += szCause;
 #endif
 
@@ -555,7 +555,7 @@ STDMETHODIMP CSVCommand::SVGetSVIMFile(BSTR bstrSourceFile, long lOffset, long *
 #ifdef _DEBUG
 				TCHAR szCause[255];
 				memEx->GetErrorMessage(szCause,255);
-				SVString Formatted = _T("ERROR - ");
+				std::string Formatted = _T("ERROR - ");
 				Formatted += szCause;
 #endif
 
@@ -591,7 +591,7 @@ STDMETHODIMP CSVCommand::SVPutSVIMFile(BSTR bstrDestFile, long lOffset, long lBl
 {
 	HRESULT hrResult = S_OK;
 
-	SVString Path;
+	std::string Path;
 	TCHAR szDrive[_MAX_DRIVE];
 	TCHAR szDir[_MAX_DIR];
 	TCHAR szFile[_MAX_FNAME];
@@ -642,7 +642,7 @@ STDMETHODIMP CSVCommand::SVPutSVIMFile(BSTR bstrDestFile, long lOffset, long lBl
 #ifdef _DEBUG
 			TCHAR szCause[255];
 			theEx->GetErrorMessage(szCause,255);
-			SVString Formatted = _T("ERROR - ");
+			std::string Formatted = _T("ERROR - ");
 			Formatted += szCause;
 #endif
 
@@ -672,7 +672,7 @@ STDMETHODIMP CSVCommand::SVPutSVIMFile(BSTR bstrDestFile, long lOffset, long lBl
 STDMETHODIMP CSVCommand::SVLoadSVIMConfig(BSTR bstrConfigFilename)
 {
 	SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-	SVString ConfigFile;
+	std::string ConfigFile;
 	TCHAR szDrive[_MAX_DRIVE];
 	TCHAR szDir[_MAX_DIR];
 	TCHAR szFile[_MAX_FNAME];
@@ -694,7 +694,7 @@ STDMETHODIMP CSVCommand::SVLoadSVIMConfig(BSTR bstrConfigFilename)
 
 	try
 	{
-		ConfigFile = SvUl_SF::createSVString(_bstr_t(bstrConfigFilename));
+		ConfigFile = SvUl::createStdString(_bstr_t(bstrConfigFilename));
 
 		//split filename into peices
 		_tsplitpath(ConfigFile.c_str(), szDrive, szDir, szFile, szExt);
@@ -774,7 +774,7 @@ STDMETHODIMP CSVCommand::SVGetSVIMConfigName(BSTR *bstrConfigFilename)
 
 	try
 	{
-		SVString ConfigName = GlobalRCGetConfigurationName();
+		std::string ConfigName = GlobalRCGetConfigurationName();
 
 		Result = ConfigName.empty() ? E_FAIL : S_OK;
 
@@ -849,7 +849,7 @@ STDMETHODIMP CSVCommand::SVGetSVIMVersion(unsigned long *ulVersion)
 
 STDMETHODIMP CSVCommand::SVGetSVIMConfigPrint(long lOffset, long *lBlockSize, BSTR *bstrConfigPrint, BOOL *bLastFlag)
 {
-	SVString ConfigPrint;
+	std::string ConfigPrint;
 	HRESULT hrResult = S_OK;
 	bool bSuccess = false;
 
@@ -953,7 +953,7 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 		{
 			BSTR bstrName = nullptr;
 			SafeArrayGetElementNoCopy( psaNames, &i, &bstrName );
-			SVString l_Name = SvUl_SF::createSVString(bstrName);
+			std::string l_Name = SvUl::createStdString(bstrName);
 
 			if( nullptr != pConfig && pConfig->GetInspectionObject(l_Name.c_str(), &pInspection) && nullptr != pInspection )
 			{
@@ -1154,8 +1154,8 @@ STDMETHODIMP CSVCommand::SVRegisterStream(SAFEARRAY* psaName, VARIANT vtInterfac
 	HRESULT hr = S_OK;
 	HRESULT hrRet = S_OK;
 	BSTR bstrName;
-	SVString sName;
-	SVString sInspectionName;
+	std::string sName;
+	std::string sInspectionName;
 	bool bSamePPQ = true;
 	SVInspectionProcess* pInspection( nullptr );
 	bool bNotAllItemsFound= false;
@@ -1214,9 +1214,9 @@ STDMETHODIMP CSVCommand::SVRegisterStream(SAFEARRAY* psaName, VARIANT vtInterfac
 		for (long lIndex = 0; lIndex < lNumberOfElements; lIndex++)
 		{
 			SafeArrayGetElementNoCopy(psaName, &lIndex, &bstrName);
-			sName = SvUl_SF::createSVString(_bstr_t(bstrName));
-			sInspectionName = SvUl_SF::Left(sName, sName.find('.'));
-			SVStringVector::iterator Iter = std::find(m_InspectionNames.begin(), m_InspectionNames.end(), sInspectionName);
+			sName = SvUl::createStdString(_bstr_t(bstrName));
+			sInspectionName = SvUl::Left(sName, sName.find('.'));
+			SvDef::StringVector::iterator Iter = std::find(m_InspectionNames.begin(), m_InspectionNames.end(), sInspectionName);
 			if (m_InspectionNames.end() == Iter)
 			{
 				// add inspection name to list
@@ -1228,7 +1228,7 @@ STDMETHODIMP CSVCommand::SVRegisterStream(SAFEARRAY* psaName, VARIANT vtInterfac
 
 		SVConfigurationObject* pConfig(nullptr);
 		SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-		SVStringVector::iterator Iter(m_InspectionNames.begin());
+		SvDef::StringVector::iterator Iter(m_InspectionNames.begin());
 		for (; m_InspectionNames.end() != Iter && bSamePPQ; ++Iter)
 		{
 			if (nullptr != pConfig && pConfig->GetInspectionObject(Iter->c_str(), &pInspection) && nullptr != pInspection)
@@ -1271,12 +1271,12 @@ STDMETHODIMP CSVCommand::SVRegisterStream(SAFEARRAY* psaName, VARIANT vtInterfac
 		//create list of value objects
 		for (long x = 0; x < lNumberOfElements; x++)
 		{
-			SVString Temp;
+			std::string Temp;
 
 			SafeArrayGetElementNoCopy(psaName, &x, &bstrName);
-			Temp = SvUl_SF::createSVString(_bstr_t(bstrName));
+			Temp = SvUl::createStdString(_bstr_t(bstrName));
 
-			sInspectionName = SvUl_SF::Left(Temp, Temp.find('.'));
+			sInspectionName = SvUl::Left(Temp, Temp.find('.'));
 			bool bFound = false;
 
 			pstData = new StreamDataStruct;
@@ -1579,7 +1579,7 @@ DWORD WINAPI CSVCommand::SVStreamDataThread(LPVOID lpParam)
 	StreamDataStruct *pStreamData;
 	ProductDataStruct *pProductData;
 	PacketDataStruct oPacketData;
-	SVString strValue;
+	std::string strValue;
 	bool bRunning = true;
 	DWORD dwResult;
 	BSTR bstr;
@@ -1801,7 +1801,7 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 	HRESULT hr = S_OK;
 
 	BSTR bstr;
-	SVStringVector ValueNames;
+	SvDef::StringVector ValueNames;
 	SVInspectionProcessVector aInspections;
 	SVObjectReferenceVector aValueObjects;
 	bool l_bItemNotExist = false;
@@ -1834,7 +1834,7 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 	for ( long lIndex = 0; lIndex < lNumberOfElements; lIndex++ )
 	{
 		SafeArrayGetElementNoCopy(psaNames, &lIndex, &bstr);
-		SVString sName = SvUl_SF::createSVString( _bstr_t(bstr) );
+		std::string sName = SvUl::createStdString( _bstr_t(bstr) );
 		ValueNames.push_back( sName );
 
 		SafeArrayPutElement(*ppsaStatus, &lIndex, &lDefaultStatus);
@@ -1921,7 +1921,7 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 		for (long i=0; i < lNumberOfElements; i++)
 		{
 			SVObjectReference ObjectRef = aValueObjects[i];
-			SVString Value;
+			std::string Value;
 			HRESULT hrStatus = S_OK;
 
 			if ( nullptr != ObjectRef.getObject() )
@@ -1975,7 +1975,7 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 				{
 					// get all results and put them into a parsable string
 					int NumResults = ObjectRef.getValueObject()->getResultSize();
-					SVString ArrayValues;
+					std::string ArrayValues;
 					for ( int iArrayIndex = 0; iArrayIndex < NumResults; iArrayIndex++ )
 					{
 						HRESULT hrGet = ObjectRef.getValueObject()->getValue(Value, iArrayIndex, l_BucketHandle.GetIndex());
@@ -1986,7 +1986,7 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 								ArrayValues += _T(",");
 							}
 
-							ArrayValues += SvUl_SF::Format( _T("`%s`"), Value.c_str() );
+							ArrayValues += SvUl::Format( _T("`%s`"), Value.c_str() );
 						}
 						else
 						{
@@ -2093,7 +2093,7 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 		{
 			BSTR bstrName = nullptr;
 			SafeArrayGetElementNoCopy( psaNames, &l, &bstrName );
-			SVString strName = SvUl_SF::createSVString( _bstr_t(bstrName) );
+			std::string strName = SvUl::createStdString( _bstr_t(bstrName) );
 
 			if (nullptr != pConfig && pConfig->GetInspectionObject(strName.c_str(), &pInspection))
 			{
@@ -2280,7 +2280,7 @@ STDMETHODIMP CSVCommand::SVSetLUT(BSTR bstrCameraName, SAFEARRAY* paulLUTTable)
 {
 	HRESULT hr = S_OK;
 
-	SVString CameraName = SvUl_SF::createSVString( _bstr_t(bstrCameraName) );
+	std::string CameraName = SvUl::createStdString( _bstr_t(bstrCameraName) );
 	SVVirtualCamera* pCamera( nullptr );
 
 	SVConfigurationObject* pConfig( nullptr );
@@ -2326,7 +2326,7 @@ STDMETHODIMP CSVCommand::SVGetLUT(BSTR bstrCameraName, SAFEARRAY** ppaulLUTTable
 {
 	HRESULT hr = S_OK;
 
-	SVString CameraName = SvUl_SF::createSVString( _bstr_t(bstrCameraName) );
+	std::string CameraName = SvUl::createStdString( _bstr_t(bstrCameraName) );
 	SVVirtualCamera* pCamera( nullptr );
 
 	SVConfigurationObject* pConfig( nullptr );
@@ -2632,8 +2632,8 @@ HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, S
 
 	for ( long l = 0; l < Size; l++ )
 	{
-		SVString Name;
-		SVString Value;
+		std::string Name;
+		std::string Value;
 		BSTR bstrName = nullptr;
 		long ProcessCount = -1;
 		SVObjectReference ObjectRef;
@@ -2643,7 +2643,7 @@ HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, S
 
 		// Get name of requested value out of the safearray
 		SafeArrayGetElementNoCopy(psaNames,&l,&bstrName);
-		Name = SvUl_SF::createSVString( bstrName );
+		Name = SvUl::createStdString( bstrName );
 		ProcessCount = -1;
 		if( nullptr != pConfig )
 		{
@@ -2713,7 +2713,7 @@ HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, S
 					{
 						// get all results and put them into a parsable string
 						int NumResults = ObjectRef.getValueObject()->getResultSize();
-						SVString ArrayValues;
+						std::string ArrayValues;
 						for ( int iArrayIndex = 0; iArrayIndex < NumResults; iArrayIndex++ )
 						{
 							HRESULT hrGet = ObjectRef.getValueObject()->getValue( Value, iArrayIndex  );
@@ -2723,7 +2723,7 @@ HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, S
 								{
 									ArrayValues += _T(",");
 								}
-								ArrayValues += SvUl_SF::Format( _T("`%s`"), Value.c_str() );
+								ArrayValues += SvUl::Format( _T("`%s`"), Value.c_str() );
 							}
 							else
 							{
@@ -2845,8 +2845,8 @@ STDMETHODIMP CSVCommand::SVSetInputs(SAFEARRAY* psaNames, SAFEARRAY* psaValues, 
 	SVObjectReference	   ObjectRef;
 	BSTR                   bstrName;
 	BSTR                   bstrValue;
-	SVString               TmpName;
-	SVString			   TmpVal;
+	std::string            TmpName;
+	std::string			   TmpVal;
 	SVVector< SVInspectionProcess* > l_arInspections;
 
 	do
@@ -2870,12 +2870,12 @@ STDMETHODIMP CSVCommand::SVSetInputs(SAFEARRAY* psaNames, SAFEARRAY* psaValues, 
 			hrStatus = SafeArrayGetElementNoCopy(psaNames, &l, &bstrName);
 			if ( FAILED( hrStatus ) ) { break; }
 
-			TmpName = SvUl_SF::createSVString( _bstr_t(bstrName) );
+			TmpName = SvUl::createStdString( _bstr_t(bstrName) );
 
 			hrStatus = SafeArrayGetElementNoCopy(psaValues, &l, &bstrValue);
 			if ( FAILED( hrStatus ) ) { break; }
 
-			TmpVal = SvUl_SF::createSVString( _bstr_t(bstrValue) );
+			TmpVal = SvUl::createStdString( _bstr_t(bstrValue) );
 
 			//GetInspectionObject is only true if the pointer is valid
 			if ( nullptr != pConfig && pConfig->GetInspectionObject(TmpName.c_str(), &pInspection) )
@@ -2963,7 +2963,7 @@ HRESULT CSVCommand::SVSetImageList(SAFEARRAY *psaNames, SAFEARRAY *psaImages, SA
 	SVImageClass* l_pImageObject( nullptr );
 	BSTR bstrName = nullptr;
 	BSTR bstrImage = nullptr;
-	SVString TmpName;
+	std::string TmpName;
 	bool l_bItemNotFound = false;
 
 	do
@@ -2987,7 +2987,7 @@ HRESULT CSVCommand::SVSetImageList(SAFEARRAY *psaNames, SAFEARRAY *psaImages, SA
 			hrStatus = ::SafeArrayGetElement(psaNames, &l, &bstrName);
 			if ( FAILED( hrStatus ) ) { break; }
 
-			TmpName = SvUl_SF::createSVString( _bstr_t(bstrName) );
+			TmpName = SvUl::createStdString( _bstr_t(bstrName) );
 			::SysFreeString(bstrName);
 
 			hrStatus = SafeArrayGetElementNoCopy(psaImages, &l, &bstrImage);
@@ -3071,23 +3071,23 @@ HRESULT CSVCommand::SVSetImageList(SAFEARRAY *psaNames, SAFEARRAY *psaImages, SA
 
 namespace
 {
-	inline SVString StripBrackets(const SVString& rValue)
+	inline std::string StripBrackets(const std::string& rValue)
 	{
-		SVString Result( rValue );
-		Result = SvUl_SF::Trim( Result );
+		std::string Result( rValue );
+		Result = SvUl::Trim( Result );
 		size_t Pos = Result.rfind('[');
-		if( SVString::npos != Pos )
+		if( std::string::npos != Pos )
 		{
-			Result = SvUl_SF::Left(Result, Pos);
+			Result = SvUl::Left(Result, Pos);
 		}
 		return Result;
 	}
 
-	inline SVString StripQuotes(const SVString& rValue)
+	inline std::string StripQuotes(const std::string& rValue)
 	{
-		SVString Result( rValue );
-		Result = SvUl_SF::Trim( Result );
-		Result = SvUl_SF::Trim( Result, _T("`\'") ); // strip single quotes or back-ticks
+		std::string Result( rValue );
+		Result = SvUl::Trim( Result );
+		Result = SvUl::Trim( Result, _T("`\'") ); // strip single quotes or back-ticks
 		return Result;
 	}
 }
@@ -3125,8 +3125,8 @@ HRESULT CSVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVa
 
 	for ( long l = 0; l < NumberOfElements; l++ )
 	{
-		SVString				Name;
-		SVString				Value;
+		std::string				Name;
+		std::string				Value;
 		SVInspectionProcess*	pInspection = nullptr;
 		SVObjectReference		ObjectRef;
 
@@ -3136,13 +3136,13 @@ HRESULT CSVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVa
 		Status = SafeArrayGetElementNoCopy(psaNames, &l, &bstrName);
 		if ( FAILED( Status ) ) { break; }
 
-		Name = SvUl_SF::createSVString( bstrName );
+		Name = SvUl::createStdString( bstrName );
 
 		BSTR bstrValue = nullptr;
 		Status = SafeArrayGetElementNoCopy(psaValues, &l, &bstrValue);
 		if ( FAILED( Status ) ) { break; }
 
-		Value = SvUl_SF::createSVString( bstrValue );
+		Value = SvUl::createStdString( bstrValue );
 		if(nullptr != pConfig)
 		{
 			pConfig->GetInspectionObject( Name.c_str(), &pInspection );
@@ -3167,7 +3167,7 @@ HRESULT CSVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVa
 				if( nullptr != ObjectRef.getObject() )
 				{
 					HRESULT hres = S_OK;
-					SVString strCompleteObjectName( ObjectRef.GetCompleteName() );
+					std::string strCompleteObjectName( ObjectRef.GetCompleteName() );
 					if ( ParameterNames.find( strCompleteObjectName ) != ParameterNames.end() )
 					{
 						// Item is already in the list
@@ -3239,7 +3239,7 @@ HRESULT CSVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVa
 				Values.Add(_variant_t( bstrValue ));
 				Parameter.m_StorageType = SVVisionProcessor::SVStorageValue;
 				Parameter.m_Variant = Values;
-				ParameterObjects[SVString(Name)] = Parameter;
+				ParameterObjects[std::string(Name)] = Parameter;
 			}
 			else
 			{
@@ -3332,7 +3332,7 @@ HRESULT CSVCommand::SVLockImage(long p_lProcessCount, long p_lIndex, BSTR p_bsNa
 
 	SVInspectionProcess* pInspection = nullptr;
 
-	SVString TmpName = SvUl_SF::createSVString( _bstr_t(p_bsName) );
+	std::string TmpName = SvUl::createStdString( _bstr_t(p_bsName) );
 	//GetInspectionObject is only true if the pointer is valid
 	if ( nullptr != pConfig && pConfig->GetInspectionObject( TmpName.c_str(), &pInspection) )
 	{
@@ -3847,9 +3847,9 @@ STDMETHODIMP CSVCommand::SVLoadFont(long lFontIdentifier, BSTR bstrFontFile, BST
 		if( TheSVObserverApp.m_mgrRemoteFonts.IsValidFont( lFontIdentifier, lFontHandle ) &&
 			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime( lFontIdentifier ))
 		{
-			SVString FontFileName		= SvStl::GlobalPath::Inst().GetTempPath(_T("svlffont.mfo"));
-			SVString ControlsFileName		= SvStl::GlobalPath::Inst().GetTempPath(_T("svlfcont.mfo"));
-			SVString ConstraintsFileName	= SvStl::GlobalPath::Inst().GetTempPath(_T("svlfstra.mfo"));
+			std::string FontFileName		= SvStl::GlobalPath::Inst().GetTempPath(_T("svlffont.mfo"));
+			std::string ControlsFileName		= SvStl::GlobalPath::Inst().GetTempPath(_T("svlfcont.mfo"));
+			std::string ConstraintsFileName	= SvStl::GlobalPath::Inst().GetTempPath(_T("svlfstra.mfo"));
 			CFile oFile;
 
 			HRESULT MatroxCode;
@@ -3864,7 +3864,7 @@ STDMETHODIMP CSVCommand::SVLoadFont(long lFontIdentifier, BSTR bstrFontFile, BST
 				{
 					MatroxCode = SVMatroxOcrInterface::Destroy( lFontHandle );
 				}
-				SVString l_strFontFileName = FontFileName;
+				std::string l_strFontFileName = FontFileName;
 
 				MatroxCode = SVMatroxOcrInterface::RestoreFont( lFontHandle, l_strFontFileName, SVOcrRestore );
 
@@ -3874,9 +3874,9 @@ STDMETHODIMP CSVCommand::SVLoadFont(long lFontIdentifier, BSTR bstrFontFile, BST
 				{
 					SVMatroxStatusInformation l_info;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
-					SVStringVector msgList;
+					SvDef::StringVector msgList;
 					msgList.push_back(_T("SVLoadFont"));
-					msgList.push_back(SvUl_SF::Format(_T("%d"), MatroxCode));
+					msgList.push_back(SvUl::Format(_T("%d"), MatroxCode));
 					msgList.push_back(l_info.m_StatusString);
 					hr = SVMSG_46_LOADFONT_ERROR;
 					Exception.setMessage( hr, SvStl::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -3889,15 +3889,15 @@ STDMETHODIMP CSVCommand::SVLoadFont(long lFontIdentifier, BSTR bstrFontFile, BST
 				oFile.Write( bstrFontControls, ::SysStringByteLen( bstrFontControls ) );
 				oFile.Close();
 
-				SVString l_strControlsFileName = ControlsFileName;
+				std::string l_strControlsFileName = ControlsFileName;
 				MatroxCode = SVMatroxOcrInterface::RestoreFont( lFontHandle, l_strControlsFileName, SVOcrLoadControl );
 				if (S_OK != MatroxCode)
 				{
 					SVMatroxStatusInformation l_info;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
-					SVStringVector msgList;
+					SvDef::StringVector msgList;
 					msgList.push_back(_T("SVLoadFont"));
-					msgList.push_back(SvUl_SF::Format(_T("%d"), MatroxCode));
+					msgList.push_back(SvUl::Format(_T("%d"), MatroxCode));
 					msgList.push_back(l_info.m_StatusString);
 					hr = SVMSG_46_LOADFONT_ERROR;
 					Exception.setMessage( hr, SvStl::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -3914,9 +3914,9 @@ STDMETHODIMP CSVCommand::SVLoadFont(long lFontIdentifier, BSTR bstrFontFile, BST
 				{
 					SVMatroxStatusInformation l_info;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
-					SVStringVector msgList;
+					SvDef::StringVector msgList;
 					msgList.push_back(_T("SVLoadFont"));
-					msgList.push_back(SvUl_SF::Format(_T("%d"), MatroxCode));
+					msgList.push_back(SvUl::Format(_T("%d"), MatroxCode));
 					msgList.push_back(l_info.m_StatusString);
 					hr = SVMSG_46_LOADFONT_ERROR;
 					Exception.setMessage( hr, SvStl::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -3926,7 +3926,7 @@ STDMETHODIMP CSVCommand::SVLoadFont(long lFontIdentifier, BSTR bstrFontFile, BST
 			// fill the character's / ID mapping for the font
 			double NbChar;
 			MatroxCode = SVMatroxOcrInterface::Get( lFontHandle, SVCharNumberInFont, NbChar );
-			SVString l_strCharacters;
+			std::string l_strCharacters;
 			MatroxCode = SVMatroxOcrInterface::Get( lFontHandle, SVCharInFont, l_strCharacters );
 
 			TheSVObserverApp.m_mgrRemoteFonts.CreateCharMapping(lFontIdentifier, CString(l_strCharacters.c_str()));
@@ -3955,9 +3955,9 @@ STDMETHODIMP CSVCommand::SVSaveFont(long lFontIdentifier, BSTR* bstrFontFile, BS
 		if( TheSVObserverApp.m_mgrRemoteFonts.IsValidFont( lFontIdentifier, lFontHandle ) &&
 			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime( lFontIdentifier ) )
 		{
-			SVString strFontFileName		= SvStl::GlobalPath::Inst().GetTempPath(_T("svsffont.mfo")).c_str();
-			SVString strControlsFileName		= SvStl::GlobalPath::Inst().GetTempPath(_T("svsfcont.mfo")).c_str();
-			SVString strConstraintsFileName	= SvStl::GlobalPath::Inst().GetTempPath(_T("svsfstra.mfo")).c_str();
+			std::string strFontFileName		= SvStl::GlobalPath::Inst().GetTempPath(_T("svsffont.mfo")).c_str();
+			std::string strControlsFileName		= SvStl::GlobalPath::Inst().GetTempPath(_T("svsfcont.mfo")).c_str();
+			std::string strConstraintsFileName	= SvStl::GlobalPath::Inst().GetTempPath(_T("svsfstra.mfo")).c_str();
 			CFileStatus rStatus;
 			CFile oFile;
 
@@ -3971,9 +3971,9 @@ STDMETHODIMP CSVCommand::SVSaveFont(long lFontIdentifier, BSTR* bstrFontFile, BS
 
 					SVMatroxStatusInformation l_info;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
-					SVStringVector msgList;
+					SvDef::StringVector msgList;
 					msgList.push_back(_T("SVSaveFont"));
-					msgList.push_back(SvUl_SF::Format(_T("%d"), MatroxCode));
+					msgList.push_back(SvUl::Format(_T("%d"), MatroxCode));
 					msgList.push_back(l_info.m_StatusString);
 					hr = SVMSG_47_SAVEFONT_ERROR;
 					Exception.setMessage( hr, SvStl::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -3995,9 +3995,9 @@ STDMETHODIMP CSVCommand::SVSaveFont(long lFontIdentifier, BSTR* bstrFontFile, BS
 				{
 					SVMatroxStatusInformation l_info;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
-					SVStringVector msgList;
+					SvDef::StringVector msgList;
 					msgList.push_back(_T("SVSaveFont"));
-					msgList.push_back(SvUl_SF::Format(_T("%d"), MatroxCode));
+					msgList.push_back(SvUl::Format(_T("%d"), MatroxCode));
 					msgList.push_back(l_info.m_StatusString);
 					hr = SVMSG_47_SAVEFONT_ERROR;
 					Exception.setMessage( hr, SvStl::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -4020,9 +4020,9 @@ STDMETHODIMP CSVCommand::SVSaveFont(long lFontIdentifier, BSTR* bstrFontFile, BS
 				{
 					SVMatroxStatusInformation l_info;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
-					SVStringVector msgList;
+					SvDef::StringVector msgList;
 					msgList.push_back(_T("SVSaveFont"));
-					msgList.push_back(SvUl_SF::Format(_T("%d"), MatroxCode));
+					msgList.push_back(SvUl::Format(_T("%d"), MatroxCode));
 					msgList.push_back(l_info.m_StatusString);
 					hr = SVMSG_47_SAVEFONT_ERROR;
 					Exception.setMessage( hr, SvStl::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -4092,9 +4092,9 @@ STDMETHODIMP CSVCommand::SVCalibrateFont(long lFontIdentifier,
 				{
 					SVMatroxStatusInformation l_info;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
-					SVStringVector msgList;
+					SvDef::StringVector msgList;
 					msgList.push_back(_T("SVCalibrateFont"));
-					msgList.push_back(SvUl_SF::Format(_T("%d"), MatroxCode));
+					msgList.push_back(SvUl::Format(_T("%d"), MatroxCode));
 					msgList.push_back(l_info.m_StatusString);
 					hr = SVMSG_45_CALIBRATEFONT_ERROR;
 					Exception.setMessage( hr, SvStl::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -4140,9 +4140,9 @@ STDMETHODIMP CSVCommand::SVReadString(long lFontIdentifier, BSTR* bstrFoundStrin
 			{
 				SVMatroxStatusInformation l_info;
 				SVMatroxApplicationInterface::GetLastStatus( l_info );
-				SVStringVector msgList;
+				SvDef::StringVector msgList;
 				msgList.push_back(_T("SVReadString"));
-				msgList.push_back(SvUl_SF::Format(_T("%d"), MatroxCode));
+				msgList.push_back(SvUl::Format(_T("%d"), MatroxCode));
 				msgList.push_back(l_info.m_StatusString);
 				hr = SVMSG_48_READSTRING_ERROR;
 				Exception.setMessage( hr, SvStl::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -4157,7 +4157,7 @@ STDMETHODIMP CSVCommand::SVReadString(long lFontIdentifier, BSTR* bstrFoundStrin
 			{
 				MatroxCode = SVMatroxOcrInterface::GetResult(l_milResult, SVOcrStringScore, *dMatchScore );
 				// BRW - This l_Code is never checked.
-				SVString Text;
+				std::string Text;
 				MatroxCode = SVMatroxOcrInterface::GetResult(l_milResult, SVOcrString, Text );
 				*bstrFoundString = _bstr_t(Text.c_str()).Detach();
 			}// end if
@@ -4172,9 +4172,9 @@ STDMETHODIMP CSVCommand::SVReadString(long lFontIdentifier, BSTR* bstrFoundStrin
 			{
 				SVMatroxStatusInformation l_info;
 				SVMatroxApplicationInterface::GetLastStatus( l_info );
-				SVStringVector msgList;
+				SvDef::StringVector msgList;
 				msgList.push_back(_T("SVReadString"));
-				msgList.push_back(SvUl_SF::Format(_T("%d"), MatroxCode));
+				msgList.push_back(SvUl::Format(_T("%d"), MatroxCode));
 				msgList.push_back(l_info.m_StatusString);
 				hr = SVMSG_48_READSTRING_ERROR;
 				Exception.setMessage( hr, SvStl::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -4185,9 +4185,9 @@ STDMETHODIMP CSVCommand::SVReadString(long lFontIdentifier, BSTR* bstrFoundStrin
 			{
 				SVMatroxStatusInformation l_info;
 				SVMatroxApplicationInterface::GetLastStatus( l_info );
-				SVStringVector msgList;
+				SvDef::StringVector msgList;
 				msgList.push_back(_T("SVReadString"));
-				msgList.push_back(SvUl_SF::Format(_T("%d"), MatroxCode));
+				msgList.push_back(SvUl::Format(_T("%d"), MatroxCode));
 				msgList.push_back(l_info.m_StatusString);
 				hr = SVMSG_48_READSTRING_ERROR;
 				Exception.setMessage( hr, SvStl::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -4230,9 +4230,9 @@ STDMETHODIMP CSVCommand::SVVerifyString(long lFontIdentifier, BSTR bstrVerifyStr
 				{
 					SVMatroxStatusInformation l_info;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
-					SVStringVector msgList;
+					SvDef::StringVector msgList;
 					msgList.push_back(_T("SVVerifyString"));
-					msgList.push_back(SvUl_SF::Format(_T("%d"), MatroxCode));
+					msgList.push_back(SvUl::Format(_T("%d"), MatroxCode));
 					msgList.push_back(l_info.m_StatusString);
 					hr = SVMSG_49_VERIFYSTRING_ERROR;
 					Exception.setMessage( hr, SvStl::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -4247,9 +4247,9 @@ STDMETHODIMP CSVCommand::SVVerifyString(long lFontIdentifier, BSTR bstrVerifyStr
 				{
 					SVMatroxStatusInformation l_info;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
-					SVStringVector msgList;
+					SvDef::StringVector msgList;
 					msgList.push_back(_T("SVVerifyString"));
-					msgList.push_back(SvUl_SF::Format(_T("%d"), MatroxCode));
+					msgList.push_back(SvUl::Format(_T("%d"), MatroxCode));
 					msgList.push_back(l_info.m_StatusString);
 					hr = SVMSG_49_VERIFYSTRING_ERROR;
 					Exception.setMessage( hr, SvStl::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -4275,9 +4275,9 @@ STDMETHODIMP CSVCommand::SVVerifyString(long lFontIdentifier, BSTR bstrVerifyStr
 				{
 					SVMatroxStatusInformation l_info;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
-					SVStringVector msgList;
+					SvDef::StringVector msgList;
 					msgList.push_back(_T("SVVerifyString"));
-					msgList.push_back(SvUl_SF::Format(_T("%d"), MatroxCode));
+					msgList.push_back(SvUl::Format(_T("%d"), MatroxCode));
 					msgList.push_back(l_info.m_StatusString);
 					hr = SVMSG_49_VERIFYSTRING_ERROR;
 					Exception.setMessage( hr, SvStl::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -4289,9 +4289,9 @@ STDMETHODIMP CSVCommand::SVVerifyString(long lFontIdentifier, BSTR bstrVerifyStr
 				{
 					SVMatroxStatusInformation l_info;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
-					SVStringVector msgList;
+					SvDef::StringVector msgList;
 					msgList.push_back(_T("SVVerifyString"));
-					msgList.push_back(SvUl_SF::Format(_T("%d"), MatroxCode));
+					msgList.push_back(SvUl::Format(_T("%d"), MatroxCode));
 					msgList.push_back(l_info.m_StatusString);
 					hr = SVMSG_49_VERIFYSTRING_ERROR;
 					Exception.setMessage( hr, SvStl::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -4412,7 +4412,7 @@ STDMETHODIMP CSVCommand::SVAddCharacter(long lFontIdentifier, long lXPosition, l
 						if ( TheSVObserverApp.m_mgrRemoteFonts.CopyFont(lFontHandle,milNewFontID,1) )
 						{
 							long lId;
-							SVString Text = SvUl_SF::createSVString( _bstr_t(bstrLabel) );
+							std::string Text = SvUl::createStdString( _bstr_t(bstrLabel) );
 
 							KeepPrevError( MatroxCode, SVMatroxOcrInterface::CopyFont(milNewFontID, milTmpID, SVOcrCopytoFont, Text));
 							if ( S_OK != MatroxCode )
@@ -4662,7 +4662,7 @@ STDMETHODIMP CSVCommand::SVGetFontCharacterList(long p_lFontIdentifier, BSTR *bs
 		{
 			double NbChar;
 			SVMatroxOcrInterface::Get(lFontHandle, SVCharNumberInFont, NbChar );
-			SVString Characters;
+			std::string Characters;
 			SVMatroxOcrInterface::Get( lFontHandle, SVCharInFont, Characters );
 
 			*bstrCharacterList = _bstr_t( Characters.c_str() ).Detach();
@@ -5000,7 +5000,7 @@ STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionNam
 				SVBoolValueObjectClass* l_pBoolVO = dynamic_cast<SVBoolValueObjectClass*>(SelectedObjects[i]);
 				if( nullptr != l_pBoolVO )
 				{
-					SVStringVector ValidTypes;
+					SvDef::StringVector ValidTypes;
 					l_pBoolVO->GetValidTypes( ValidTypes );
 					SAFEARRAYBOUND l_rgsabound[1];
 					l_rgsabound[0].cElements = static_cast< ULONG >( ValidTypes.size() );
@@ -5135,7 +5135,7 @@ STDMETHODIMP CSVCommand::SVGetTransferImageDefinitionList(BSTR bstrInspectionNam
 					SAFEARRAY *l_psaTemp = SafeArrayCreate( VT_BSTR, 1, l_rgsabound );
 					for( long l_lIndex = 0; l_lIndex < l_lSize ; l_lIndex++ )
 					{
-						SVString strTmp;
+						std::string strTmp;
 						HRESULT l_hr = pSourceNames->getValue( strTmp, l_lIndex );
 						_bstr_t bstTmp = strTmp.c_str();
 						SafeArrayPutElement(l_psaTemp, &l_lIndex, bstTmp.GetBSTR() );

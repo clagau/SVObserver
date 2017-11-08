@@ -15,7 +15,7 @@
 #include "SVArchiveHeaderEditDlg.h"
 #include "afxdialogex.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 // SVArchiveHeaderEditDlg dialog
@@ -39,14 +39,14 @@ SVArchiveHeaderEditDlg::~SVArchiveHeaderEditDlg()
 	}
 }
 
-bool SVArchiveHeaderEditDlg::SetValues( const StringPairVector& p_astrValues)
+bool SVArchiveHeaderEditDlg::SetValues( const SvDef::StringPairVector& p_astrValues)
 {
 	m_Strings.clear();
 	m_Strings = p_astrValues;
 	return true;
 }
 
-bool SVArchiveHeaderEditDlg::GetValues( StringPairVector& p_astrValues) const
+bool SVArchiveHeaderEditDlg::GetValues(SvDef::StringPairVector& p_astrValues) const
 {
 	p_astrValues.clear();
 	p_astrValues = m_Strings;
@@ -120,7 +120,7 @@ BOOL SVArchiveHeaderEditDlg::OnInitDialog()
 	m_HeaderListCtrl.InsertColumn(1, _T("Header Label"));
 
 	int iItem = 0;
-	for(StringPairVector::const_iterator l_it = m_Strings.begin() ; l_it != m_Strings.end() ; ++l_it)
+	for(SvDef::StringPairVector::const_iterator l_it = m_Strings.begin() ; l_it != m_Strings.end() ; ++l_it)
 	{
 		_bstr_t bstGUID( l_it->first.c_str() );
 		SVGUID ObjGUID( bstGUID );
@@ -146,9 +146,9 @@ void SVArchiveHeaderEditDlg::OnOK()
 	if( iCount > 0 )
 	{
 		int index = 0;
-		for( StringPairVector::iterator it = m_Strings.begin() ; it != m_Strings.end(); ++it )
+		for(SvDef::StringPairVector::iterator it = m_Strings.begin() ; it != m_Strings.end(); ++it )
 		{
-			SVString Text = m_HeaderListCtrl.GetItemText(index,1);
+			std::string Text = m_HeaderListCtrl.GetItemText(index,1);
 			it->second = Text;
 			index++;
 		}
@@ -220,7 +220,7 @@ void SVArchiveHeaderEditDlg::DisplaySelectedText(  )
 	}
 	if( m_HeaderListCtrl.GetItemCount() > 0 )
 	{
-		SVString DisplayText = m_HeaderListCtrl.GetItemText(iSel,0);
+		std::string DisplayText = m_HeaderListCtrl.GetItemText(iSel,0);
 		// get position of ok button
 		CRect OkRec;
 		CRect ListRec;
@@ -250,7 +250,7 @@ void SVArchiveHeaderEditDlg::DisplaySelectedText(  )
 		else
 		{	// The string does not fit so we display a part of it.
 			int newLength = static_cast<int>( DisplayText.size() * (double)newWidth /textSize.cx);
-			SVString NewString = SvUl_SF::Format( _T("%s..."), SvUl_SF::Left( DisplayText, newLength-3).c_str() );
+			std::string NewString = SvUl::Format( _T("%s..."), SvUl::Left( DisplayText, newLength-3).c_str() );
 			pText->SetWindowText( NewString.c_str() );
 		}
 	}

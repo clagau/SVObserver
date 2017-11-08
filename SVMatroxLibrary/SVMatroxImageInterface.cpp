@@ -18,7 +18,7 @@
 #include "SVCommandLibrary/SVCommandDataHolder.h"
 #include "SVCommandLibrary/SVCommandDataValue.h"
 #include "SVMessage/SVMessage.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVMatroxBufferInterface.h"
 #include "SVMatroxCommandDataImage.h"
 #include "SVMatroxImagingLibrary.h"  // has MIL includes
@@ -2327,17 +2327,17 @@ SVMatroxFileTypeEnum SVMatroxImageInterface::getFileType( LPCTSTR FileExt )
 {
 	SVMatroxFileTypeEnum Result( SVFileUnknown );
 
-	SVString strExtension( FileExt );
+	std::string strExtension( FileExt );
 
-	if( SvUl_SF::CompareNoCase( strExtension, SVString( _T( ".mim" )) ) == 0 )
+	if( SvUl::CompareNoCase( strExtension, std::string( _T( ".mim" )) ) == 0 )
 	{
 		Result = SVFileMIL;
 	}
-	if( SvUl_SF::CompareNoCase( strExtension, SVString( _T( ".tif" )) ) == 0 )
+	if( SvUl::CompareNoCase( strExtension, std::string( _T( ".tif" )) ) == 0 )
 	{
 		Result = SVFileTiff;
 	}
-	if( SvUl_SF::CompareNoCase( strExtension, SVString( _T( ".bmp" )) ) == 0 )
+	if( SvUl::CompareNoCase( strExtension, std::string( _T( ".bmp" )) ) == 0 )
 	{
 		Result = SVFileBitmap;
 	}

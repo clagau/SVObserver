@@ -12,38 +12,37 @@
 #pragma once
 
 //Moved to precompiled header: #include <iostream>
-#include "SVUtilityLibrary/SVString.h"
 #include "CameraLibrary/SVDeviceParams.h"
 #include "CameraLibrary/SVLongValueDeviceParam.h"
 
 class SVGigeCameraFileReader
 {
 public:
-	SVGigeCameraFileReader(const SVString& rFilename,bool bColorSystem);
+	SVGigeCameraFileReader(const std::string& rFilename,bool bColorSystem);
 
 	HRESULT ReadParams(SVDeviceParamCollection& rParams);
 	HRESULT ReadGigeFeatureOverrides();
 	HRESULT ReadCameraFileImpl( SVDeviceParamCollection& rParams );
 
-	const SVString& GetFeatureOverrides() const {return m_FeatureOverrides;}
+	const std::string& GetFeatureOverrides() const {return m_FeatureOverrides;}
 
 
 private:
-	HRESULT ReadCustomParams(const SVString& filename, SVDeviceParamCollection& rParams);
+	HRESULT ReadCustomParams(const std::string& filename, SVDeviceParamCollection& rParams);
 
-	HRESULT ReadCameraFileStringParam( SVDeviceParamCollection& rParams, SVDeviceParamEnum e, const SVString& sSection );
-	HRESULT ReadCameraFileBoolParam( SVDeviceParamCollection& rParams, SVDeviceParamEnum e, const SVString& sSection );
-	HRESULT ReadCameraFileLongParam( SVDeviceParamCollection& rParams, SVDeviceParamEnum e, const SVString& sSection );
-	HRESULT ReadCameraFileCameraFormatsParam( SVDeviceParamCollection& rParams, SVDeviceParamEnum e, const SVString& sSection );
-	HRESULT ReadCameraFileLutParam( SVDeviceParamCollection& rParams, SVDeviceParamEnum e, const SVString& sSection );
+	HRESULT ReadCameraFileStringParam( SVDeviceParamCollection& rParams, SVDeviceParamEnum e, const std::string& sSection );
+	HRESULT ReadCameraFileBoolParam( SVDeviceParamCollection& rParams, SVDeviceParamEnum e, const std::string& sSection );
+	HRESULT ReadCameraFileLongParam( SVDeviceParamCollection& rParams, SVDeviceParamEnum e, const std::string& sSection );
+	HRESULT ReadCameraFileCameraFormatsParam( SVDeviceParamCollection& rParams, SVDeviceParamEnum e, const std::string& sSection );
+	HRESULT ReadCameraFileLutParam( SVDeviceParamCollection& rParams, SVDeviceParamEnum e, const std::string& sSection );
 
-	HRESULT ReadCameraFileCommonParams(const SVString& sSection, const SVString& sKey, const SVString& sFilename, SVDeviceParam* pParam);
-//	HRESULT ReadCameraFileOptions(const SVString& sSection, const SVString& sKey, const SVString& sFilename, SVDeviceParamOptionInsertor& rInsertor);
-	HRESULT ReadCameraFileLongValueInfo(const SVString& sSection, const SVString& sKey, const SVString& sFilename, SVLongValueDeviceParam* pParam);
+	HRESULT ReadCameraFileCommonParams(const std::string& sSection, const std::string& sKey, const std::string& sFilename, SVDeviceParam* pParam);
+//	HRESULT ReadCameraFileOptions(const std::string& sSection, const std::string& sKey, const std::string& sFilename, SVDeviceParamOptionInsertor& rInsertor);
+	HRESULT ReadCameraFileLongValueInfo(const std::string& sSection, const std::string& sKey, const std::string& sFilename, SVLongValueDeviceParam* pParam);
 
 
-	SVString m_Filename;
+	std::string m_Filename;
 	bool m_isColorSystem;
 
-	SVString m_FeatureOverrides;
+	std::string m_FeatureOverrides;
 };

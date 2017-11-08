@@ -11,6 +11,7 @@
 #include "AllowedImageFunc.h"
 #include "GetAvailableObjects.h"
 #include "ObjectInterfaces\ITaskObject.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 namespace SvCmd
@@ -36,11 +37,11 @@ namespace SvCmd
 		}
 		bool empty() const { return false; }
 		const SvUl::NameGuidList& AvailableObjects() const { return m_command.AvailableObjects(); }
-		const std::vector<SVString>& AvailableSpecialImages() const { return m_specialImageList; }
+		const SvDef::StringVector& AvailableSpecialImages() const { return m_specialImageList; }
 
 	private:
 		GetAvailableObjects m_command;
 		GUID m_TaskObjectID;
-		std::vector<SVString> m_specialImageList;
+		SvDef::StringVector m_specialImageList;
 	};
 } //namespace SvCmd

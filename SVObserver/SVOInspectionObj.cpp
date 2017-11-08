@@ -35,7 +35,7 @@ SVOInspectionObj::~SVOInspectionObj()
 {
 }
 
-const SVString& SVOInspectionObj::GetInspectionLabelName() const
+const std::string& SVOInspectionObj::GetInspectionLabelName() const
 {
     return m_LabelName;
 }
@@ -45,7 +45,7 @@ void SVOInspectionObj::SetInspectionLabelName(LPCTSTR Label)
     m_LabelName = Label;
 }
 
-const SVString& SVOInspectionObj::GetInspectionName() const
+const std::string& SVOInspectionObj::GetInspectionName() const
 {
     return m_InspectionName;
 }
@@ -55,7 +55,7 @@ void SVOInspectionObj::SetInspectionName(LPCTSTR Inspection)
     m_InspectionName = Inspection;
 }
 
-const SVString& SVOInspectionObj::GetToolsetImage() const
+const std::string& SVOInspectionObj::GetToolsetImage() const
 {
     return m_ToolsetImage; 
 }
@@ -65,7 +65,7 @@ void SVOInspectionObj::SetToolsetImage(LPCTSTR Image)
     m_ToolsetImage = Image;
 } 
 
-const SVString& SVOInspectionObj::GetNewDisableMethodString() const
+const std::string& SVOInspectionObj::GetNewDisableMethodString() const
 {
     return m_NewDisableMethod;
 }
@@ -100,7 +100,7 @@ bool SVOInspectionObj::HasInspectionNameChange() const
     return m_NameChanged;
 }
 
-const SVString& SVOInspectionObj::GetOrginalInspectionName() const
+const std::string& SVOInspectionObj::GetOrginalInspectionName() const
 {
     return m_OrginalName;
 }
@@ -126,7 +126,7 @@ void SVOInspectionObj::SetNewInspection()
     m_NewInspection = true;
 }
 
-const SVString& SVOInspectionObj::GetImportFilename() const
+const std::string& SVOInspectionObj::GetImportFilename() const
 {
 	return m_ImportFilename;
 }

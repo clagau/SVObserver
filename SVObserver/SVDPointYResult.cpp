@@ -12,6 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVDPointYResult.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVRange.h"
 #pragma endregion Includes
 
@@ -56,7 +57,7 @@ SVDPointYResultClass::SVDPointYResultClass( SVObjectClass* POwner, int StringRes
 	rangeClassInfo.m_ObjectTypeInfo.ObjectType = SVRangeObjectType;
 	rangeClassInfo.m_ObjectTypeInfo.SubType	= SVNotSetSubObjectType;
 	rangeClassInfo.m_ClassId = SVRangeClassGuid;
-	rangeClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_CLASSNAME_SVRANGE );
+	rangeClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_SVRANGE );
 
 	// Construct it
 	SVRangeClass* pRange = (SVRangeClass* )rangeClassInfo.Construct(); 

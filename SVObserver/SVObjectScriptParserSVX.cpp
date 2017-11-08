@@ -23,6 +23,7 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "TextDefinesSvO.h"
 #include "CameraLibrary/SVDeviceParams.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -59,7 +60,7 @@ void SVObjectScriptAliasListClass::CleanUp()
 	m_mapAlias.clear();
 }
 
-SVObjectScriptParserSVXClass::SVObjectScriptParserSVXClass(unsigned long parserHandle, SVSharedPtr<SVString> pScript, const GUID& OwnerGuid, SVObjectClass* pOwnerObject, CWnd* pWnd)
+SVObjectScriptParserSVXClass::SVObjectScriptParserSVXClass(unsigned long parserHandle, SVSharedPtr<std::string> pScript, const GUID& OwnerGuid, SVObjectClass* pOwnerObject, CWnd* pWnd)
 : SVObjectScriptParserBase(parserHandle, OwnerGuid, pOwnerObject, pWnd)
 , m_pParseString( pScript )
 {
@@ -460,7 +461,7 @@ BOOL SVObjectScriptParserSVXClass::EvaluateOperandExpression( int OperandType, c
 				SVObjectClass* pObject = nullptr;
 				if( SV_GUID_NULL != rOwnerInfo.m_UniqueObjectID )
 				{
-					SVObjectManagerClass::Instance().GetObjectByDottedName( SVString(rExpressionStack.GetAt( riIndex )), pObject);
+					SVObjectManagerClass::Instance().GetObjectByDottedName( std::string(rExpressionStack.GetAt( riIndex )), pObject);
 				}
 				if( nullptr != pObject )
 				{
@@ -1285,7 +1286,7 @@ LPCTSTR SVObjectScriptParserSVXClass::Parse( SVObjectClass* pOwner, LPCTSTR tstr
 								{
 									ASSERT(FALSE);
 									SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-									SVStringVector msgList;
+									SvDef::StringVector msgList;
 									msgList.push_back(pObject->GetName());
 									Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_ScriptParseFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10030 ); 
 									

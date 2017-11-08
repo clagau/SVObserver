@@ -17,6 +17,7 @@
 #include "GuiCommands\ConnectToObject.h"
 #include "GuiCommands\GetInputs.h"
 #include "Definitions/TextDefineSVDef.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -63,7 +64,7 @@ namespace SvOg
 
 		RetrieveAvailableList();
 	
-		SVString selectedTableName;
+		std::string selectedTableName;
 		typedef SvCmd::GetInputs Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 		CommandPtr commandPtr = new Command(m_TaskObjectID, SVObjectTypeInfoStruct(TableObjectType, SVNotSetSubObjectType), SVToolObjectType);
@@ -102,12 +103,12 @@ namespace SvOg
 			m_availableSourceTableCB.GetLBText(index, tableName);
 			if (!tableName.IsEmpty() && tableName != NoTableTag)
 			{
-				HRESULT hr = ConnectToObject(m_inputName, SVString(tableName));
+				HRESULT hr = ConnectToObject(m_inputName, std::string(tableName));
 				if ( S_OK != hr )
 				{
-					SVStringVector msgList;
+					SvDef::StringVector msgList;
 					msgList.push_back(m_inputName);
-					msgList.push_back(SVString(tableName));
+					msgList.push_back(std::string(tableName));
 					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ConnectTableSourceFailed, msgList, SvStl::SourceFileParams(StdMessageParams) );
 				}
@@ -134,13 +135,13 @@ namespace SvOg
 
 	class ByName
 	{
-		SVString m_name;
+		std::string m_name;
 	public:
-		ByName(const SVString& rName) : m_name(rName) {}
+		ByName(const std::string& rName) : m_name(rName) {}
 		bool operator()(const SvUl::NameGuidPair& rVal) const { return rVal.first == m_name; }
 	};
 
-	HRESULT TATableSourcePage::ConnectToObject(const SVString& inputName, const SVString& name)
+	HRESULT TATableSourcePage::ConnectToObject(const std::string& inputName, const std::string& name)
 	{ 
 		HRESULT hr = E_INVALIDARG;
 		typedef SvCmd::ConnectToObject Command;

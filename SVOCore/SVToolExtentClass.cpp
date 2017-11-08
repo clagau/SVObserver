@@ -866,9 +866,9 @@ HRESULT SVToolExtentClass::TranslatePositionPointToSource( SVExtentPointStruct& 
 	return l_svOk;
 }
 
-SVString SVToolExtentClass::GetAuxiliaryDrawTypeString() const
+std::string SVToolExtentClass::GetAuxiliaryDrawTypeString() const
 {
-	SVString Result;
+	std::string Result;
 
 	// SVExtentTranslationEnum
 	switch( m_eTranslation )

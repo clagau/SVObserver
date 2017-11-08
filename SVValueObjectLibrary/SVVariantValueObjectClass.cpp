@@ -14,7 +14,8 @@
 #include "SVObjectLibrary\SVClsids.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
-#include "SVUtilityLibrary/SVStringConversions.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVObjectLibrary/GlobalConst.h"
 #include "Definitions/TextDefineSVDef.h"
 #pragma endregion Includes
@@ -75,7 +76,7 @@ HRESULT SVVariantValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 			_variant_t& rValue = ReadValueArray[i];
 			if( rValue.vt == VT_BSTR )
 			{
-				SVString Temp = SvUl_SF::createSVString( rValue.bstrVal );
+				std::string Temp = SvUl::createStdString( rValue.bstrVal );
 				if ( SvUl::RemoveEscapedSpecialCharacters(Temp, true) )
 				{
 					rValue.SetString( Temp.c_str() );
@@ -110,7 +111,7 @@ HRESULT SVVariantValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 			_variant_t& rValue = BucketArray[i][0];
 			if( rValue.vt == VT_BSTR )
 			{
-				SVString Temp = SvUl_SF::createSVString ( rValue.bstrVal );
+				std::string Temp = SvUl::createStdString( rValue.bstrVal );
 				if ( SvUl::RemoveEscapedSpecialCharacters( Temp, true ) )
 				{
 					rValue.SetString( Temp.c_str() );
@@ -186,9 +187,9 @@ HRESULT SVVariantValueObjectClass::SetValueKeepType(LPCTSTR Value, int Index)
 	return hr;
 }
 
-SVString SVVariantValueObjectClass::ToString(const VARIANT& rValue, bool bScript )
+std::string SVVariantValueObjectClass::ToString(const VARIANT& rValue, bool bScript )
 {
-	SVString Result;
+	std::string Result;
 	_variant_t vt = rValue;
 
 
@@ -198,7 +199,7 @@ SVString SVVariantValueObjectClass::ToString(const VARIANT& rValue, bool bScript
 		{
 			if ( bScript )
 			{
-				Result = SvUl_SF::Format( _T("%d, "), vt.vt );
+				Result = SvUl::Format( _T("%d, "), vt.vt );
 				Result += _T("0");
 			}
 			break;
@@ -208,13 +209,13 @@ SVString SVVariantValueObjectClass::ToString(const VARIANT& rValue, bool bScript
 		{
 			if ( bScript )
 			{
-				SVString Temp = SvUl_SF::createSVString( rValue.bstrVal );
+				std::string Temp = SvUl::createStdString( rValue.bstrVal );
 				SvUl::AddEscapeSpecialCharacters( Temp, true );
-				Result = SvUl_SF::Format(_T("%d, \"%s\""), vt.vt, Temp.c_str());
+				Result = SvUl::Format(_T("%d, \"%s\""), vt.vt, Temp.c_str());
 			}
 			else
 			{
-				Result += SvUl_SF::createSVString( rValue.bstrVal );
+				Result += SvUl::createStdString( rValue.bstrVal );
 			}
 		}
 		break;
@@ -225,7 +226,7 @@ SVString SVVariantValueObjectClass::ToString(const VARIANT& rValue, bool bScript
 			{
 				if( bScript)
 				{
-					Result = SvUl_SF::Format(_T("%d, 0"), VT_EMPTY);
+					Result = SvUl::Format(_T("%d, 0"), VT_EMPTY);
 				}
 			}
 			else
@@ -236,20 +237,20 @@ SVString SVVariantValueObjectClass::ToString(const VARIANT& rValue, bool bScript
 				{
 					if( bScript)
 					{
-						Result = SvUl_SF::Format(_T("%d, "), l_OldType);
+						Result = SvUl::Format(_T("%d, "), l_OldType);
 					}
 
-					Result += SvUl_SF::createSVString( rValue.bstrVal );
+					Result += SvUl::createStdString( rValue.bstrVal );
 					if( VT_BOOL == rValue.vt )
 					{
-						SvUl_SF::MakeUpper( Result );
+						SvUl::MakeUpper( Result );
 					}
 				}
 				else
 				{
 					if( bScript)
 					{
-						Result = SvUl_SF::Format(_T("%d, 0"), VT_EMPTY);
+						Result = SvUl::Format(_T("%d, 0"), VT_EMPTY);
 					}
 				}
 			}
@@ -284,14 +285,14 @@ double SVVariantValueObjectClass::ValueType2Double(const _variant_t& rValue) con
 		Result = rValue.dblVal;
 		break;
 	case VT_BSTR:
-		SVString Value = SvUl_SF::createSVString(rValue);
+		std::string Value = SvUl::createStdString(rValue);
 		Result = atof( Value.c_str() );
 		break;
 	}
 	return Result;
 }
 
-_variant_t SVVariantValueObjectClass::ConvertString2Type( const SVString& rValue ) const
+_variant_t SVVariantValueObjectClass::ConvertString2Type( const std::string& rValue ) const
 {
 	_variant_t Result(rValue.c_str());
 
@@ -299,7 +300,7 @@ _variant_t SVVariantValueObjectClass::ConvertString2Type( const SVString& rValue
 	{
 		if (S_OK != ::VariantChangeType(&Result, &Result, 0, GetDefaultType()))
 		{
-			SVStringVector msgList;
+			SvDef::StringVector msgList;
 			msgList.push_back(GetName());
 			SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 			Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValueObject_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
@@ -310,14 +311,14 @@ _variant_t SVVariantValueObjectClass::ConvertString2Type( const SVString& rValue
 	return Result;
 }
 
-SVString SVVariantValueObjectClass::ConvertType2String( const _variant_t& rValue ) const
+std::string SVVariantValueObjectClass::ConvertType2String( const _variant_t& rValue ) const
 {
-	SVString Result;
+	std::string Result;
 
 	switch ( rValue.vt )
 	{
 	case VT_BSTR:
-		Result = SvUl_SF::createSVString( rValue );
+		Result = SvUl::createStdString( rValue );
 		break;
 
 	default:
@@ -325,10 +326,10 @@ SVString SVVariantValueObjectClass::ConvertType2String( const _variant_t& rValue
 			_variant_t Value;
 			if ( S_OK == ::VariantChangeType(&Value, &rValue, VARIANT_ALPHABOOL, VT_BSTR) )
 			{
-				Result = SvUl_SF::createSVString( Value );
+				Result = SvUl::createStdString( Value );
 				if( VT_BOOL == rValue.vt )
 				{
-					SvUl_SF::MakeUpper( Result );
+					SvUl::MakeUpper( Result );
 				}
 			}
 		}
@@ -443,7 +444,7 @@ HRESULT SVVariantValueObjectClass::CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD M
 			break;
 		case VT_BSTR:
 			{
-				SVString TempString = SvUl_SF::createSVString(Value.bstrVal);
+				std::string TempString = SvUl::createStdString(Value.bstrVal);
 				size_t Size = std::min(static_cast<size_t> (GetByteSize() - 1), TempString.size());
 				pValue = nullptr;
 				memcpy(pMemoryBlock, TempString.c_str(), Size);

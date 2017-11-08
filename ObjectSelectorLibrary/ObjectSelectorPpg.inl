@@ -17,12 +17,12 @@ namespace SvOsl
 		return m_rTreeContainer;
 	}
 
-	SVString ObjectSelectorPpg::getHighlightedNode() const
+	std::string ObjectSelectorPpg::getHighlightedNode() const
 	{
 		return m_HighlightedNode;
 	}
 
-	void ObjectSelectorPpg::setHighlightedNode( const SVString& rHighlightedNode )
+	void ObjectSelectorPpg::setHighlightedNode( const std::string& rHighlightedNode )
 	{
 		m_HighlightedNode = rHighlightedNode;
 		UpdateData( FALSE );

@@ -13,7 +13,7 @@
 //Moved to precompiled header: #include <io.h>
 //Moved to precompiled header: #include <share.h>
 #include "SVFile.h"
-#include "SVUtilityLibrary/SVString.h"
+
 
 SVFile::SVFile()
 : m_pFile( nullptr )
@@ -36,7 +36,7 @@ HRESULT SVFile::Open( const char* p_szFileName, UINT p_OpenFlags )
 
 	Close();
 
-	SVString l_Mode;
+	std::string l_Mode;
 	int l_Share( 0 );
 
 	l_Status = GetAccessMode( l_Mode, l_Share, p_OpenFlags );
@@ -176,7 +176,7 @@ ULONGLONG SVFile::SeekToEnd()
 	return l_Location;
 }
 
-HRESULT SVFile::GetAccessMode( SVString& p_rAccessMode, int& p_rShareMode, UINT p_OpenFlags )
+HRESULT SVFile::GetAccessMode( std::string& p_rAccessMode, int& p_rShareMode, UINT p_OpenFlags )
 {
 	HRESULT l_Status( S_OK );
 

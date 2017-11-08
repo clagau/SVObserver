@@ -16,7 +16,7 @@
 #include "SVOResource\resource.h"
 #include "SVContainerLibrary/ObjectSelectorItem.h"
 #include "SVContainerLibrary/ObjectTreeItems.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #include "SVMFCControls/DlgItemResizer.h"
 #include "NodeTreeCtrl.h"
 #include "LeafTreeCtrl.h"
@@ -59,13 +59,13 @@ namespace SvOsl
 		// Description:  The method gets the display text for the current highlighted node.
 		// Returns:  the display text of the highlighted node
 		//************************************
-		inline SVString getHighlightedNode() const;
+		inline std::string getHighlightedNode() const;
 
 		//************************************
 		// Description:  The method sets the current highlighted node.
 		// Parameter:  rHighlightedNode <in>:  a const reference to the display text of the node to be highlighted
 		//************************************
-		inline void setHighlightedNode( const SVString& rHighlightedNode );
+		inline void setHighlightedNode( const std::string& rHighlightedNode );
 
 		//************************************
 		// Description:  The method sets the Help ID for the dialog.
@@ -105,7 +105,7 @@ namespace SvOsl
 		LeafTreeCtrl m_LeafTree;						//The leaf tree control
 		CImageList m_StateImageList;					//The state image list
 		CImageList m_ImageList;							//The image list
-		SVString m_HighlightedNode;						//The currently highlighted node location
+		std::string m_HighlightedNode;						//The currently highlighted node location
 		int m_HelpID;									//The help id used to identify the property page
 	#pragma endregion Member Variables
 	};

@@ -17,7 +17,7 @@
 #include "SVOLibrary/SVContainableCriticalSection.h"
 #include "CameraLibrary/SVTemplate.h"	// for singleton
 #include "SVMessage/SVMessage.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 // manages multiple virtual pools of memory
@@ -187,7 +187,7 @@ private:
 
 	};// end class SVMemoryPool
 
-	typedef std::map <SVString, SVMemoryPool> SVMemoryPoolMap;
+	typedef std::map <std::string, SVMemoryPool> SVMemoryPoolMap;
 	SVMemoryPoolMap m_mapPools;
 
 };// end class SVMemoryManager

@@ -98,42 +98,42 @@ namespace SvCl
 		return !( *this == rObject );
 	}
 
-	const SVString& ObjectSelectorItem::getName() const
+	const std::string& ObjectSelectorItem::getName() const
 	{
 		return m_Name;
 	}
 
-	void ObjectSelectorItem::setName( const SVString& rName )
+	void ObjectSelectorItem::setName( const std::string& rName )
 	{
 		m_Name = rName;
 	}
 
-	const SVString& ObjectSelectorItem::getLocation() const
+	const std::string& ObjectSelectorItem::getLocation() const
 	{
 		return m_Location;
 	}
 
-	void ObjectSelectorItem::setLocation( const SVString& rLocation )
+	void ObjectSelectorItem::setLocation( const std::string& rLocation )
 	{
 		m_Location = rLocation;
 	}
 
-	const SVString& ObjectSelectorItem::getDisplayLocation() const
+	const std::string& ObjectSelectorItem::getDisplayLocation() const
 	{
 		return m_DisplayLocation;
 	}
 
-	void ObjectSelectorItem::setDisplayLocation( const SVString& rDisplayLocation )
+	void ObjectSelectorItem::setDisplayLocation( const std::string& rDisplayLocation )
 	{
 		m_DisplayLocation = rDisplayLocation;
 	}
 
-	const SVString& ObjectSelectorItem::getItemTypeName() const
+	const std::string& ObjectSelectorItem::getItemTypeName() const
 	{
 		return m_ItemTypeName;
 	}
 
-	void ObjectSelectorItem::setItemTypeName( const SVString& ItemTypeName )
+	void ObjectSelectorItem::setItemTypeName( const std::string& ItemTypeName )
 	{
 		m_ItemTypeName = ItemTypeName;
 	}

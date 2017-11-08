@@ -17,7 +17,7 @@
 #include "SVTriggerObject.h"
 #include "SVTriggerConstants.h"
 #include "SVTriggerEnums.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 namespace SvTi
@@ -144,7 +144,7 @@ namespace SvTi
 	  }
   
 		#ifdef SV_LOG_STATUS_INFO
-			SVString l_FileName;
+			std::string l_FileName;
 
 			l_FileName.Format( _T( "C:\\SVObserver\\%s.log" ), GetName() );
 
@@ -154,7 +154,7 @@ namespace SvTi
 			{
 				for( int i = 0; i < m_StatusLog.GetCount(); ++i )
 				{
-					SVString l_String;
+					std::string l_String;
 
 					m_StatusLog.GetAt( i, &l_String );
 
@@ -216,7 +216,7 @@ namespace SvTi
 		}
 
 		#ifdef SV_LOG_STATUS_INFO
-			SVString l_String;
+			std::string l_String;
 
 			l_String.Format( _T( "FinishProcess %s - TC = %d" ), GetName(), m_lTriggerCount );
 
@@ -279,7 +279,7 @@ namespace SvTi
 		bool bRet = false;
 		if (mpsvDevice)
 		{
-			SVString name = mpsvDevice->GetDeviceName();
+			std::string name = mpsvDevice->GetDeviceName();
 			bRet = (0 == name.find(CameraTriggerName) );
 		}
 		return bRet;

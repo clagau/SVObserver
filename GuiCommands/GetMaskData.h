@@ -12,7 +12,7 @@
 //Moved to precompiled header: #include <Guiddef.h>
 #include "ObjectInterfaces\IObjectManager.h"
 #include "ObjectInterfaces\IMask.h"
-#include "SVUtilityLibrary\SVString.h"
+
 #pragma endregion Includes
 
 namespace SvCmd

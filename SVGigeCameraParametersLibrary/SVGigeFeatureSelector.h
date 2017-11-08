@@ -12,24 +12,24 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 class SVGigeFeatureSelector
 {
 private:
-	SVString m_featureName;
-	SVString m_featureValue;
+	std::string m_featureName;
+	std::string m_featureValue;
 
 public:
 	SVGigeFeatureSelector();
-	SVGigeFeatureSelector(const SVString& featureName);
-	SVGigeFeatureSelector(const SVString& featureName, const SVString& featureValue);
+	SVGigeFeatureSelector(const std::string& featureName);
+	SVGigeFeatureSelector(const std::string& featureName, const std::string& featureValue);
 	SVGigeFeatureSelector(const SVGigeFeatureSelector& rSelector);
 	SVGigeFeatureSelector& operator=(const SVGigeFeatureSelector& rSelector);
 	
-	void SetValue(const SVString& featureValue);
-	const SVString& GetValue() const;
-	const SVString& GetName() const;
+	void SetValue(const std::string& featureValue);
+	const std::string& GetValue() const;
+	const std::string& GetName() const;
 };
 

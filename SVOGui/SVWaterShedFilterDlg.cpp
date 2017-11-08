@@ -154,7 +154,7 @@ namespace SvOg
 		}
 		
 		const SvUl::InputNameGuidPairList& connectedImageList = GetConnectedImageList(m_filterID);
-		SVString currentMarkerImageName; 
+		std::string currentMarkerImageName; 
 		if (0 < connectedImageList.size() && connectedImageList.begin()->first == SvDef::WatershedMarkerImageConnectionName)
 		{
 			currentMarkerImageName = connectedImageList.begin()->second.first;
@@ -204,7 +204,7 @@ namespace SvOg
 
 		if( !currentImageName.IsEmpty() )
 		{
-			ConnectToImage(SvDef::WatershedMarkerImageConnectionName, SVString(currentImageName), m_filterID);
+			ConnectToImage(SvDef::WatershedMarkerImageConnectionName, std::string(currentImageName), m_filterID);
 		}
 	}
 }  //namespace SvOg

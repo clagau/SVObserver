@@ -15,7 +15,6 @@
 #pragma region Includes
 #include "SVOResource\resource.h"
 #include "SVContainerLibrary/ObjectTreeItems.h"
-#include "SVUtilityLibrary/SVString.h"
 #include "GridCtrlLibrary/GridCtrl.h"
 #include "SVMFCControls/SVEditControlWithHelp.h"
 #include "SVMFCControls/DlgItemResizer.h"
@@ -90,7 +89,7 @@ namespace SvOsl
 		\param isChecked <in> new check-state
 		\param rowNumber <in> row-number of this item in the grid control. Only used for SingleSelection, to set the current selection.
 		***********/
-		void changeCheckState( const SVString& rLocation, bool isChecked, int rowNumber );
+		void changeCheckState( const std::string& rLocation, bool isChecked, int rowNumber );
 #pragma endregion Protected Methods
 
 	private:
@@ -109,7 +108,7 @@ namespace SvOsl
 		CImageList m_StateImageList;					//The state image list
 		CImageList m_ImageList;							//The image list
 		bool m_SingleSelect;							//True when the Object Selector is in single selection mode
-		SVString m_CheckedLocation;						//The currently checked location (only used for SingleSelection)
+		std::string m_CheckedLocation;						//The currently checked location (only used for SingleSelection)
 		int m_CheckedRow;								//The currently chacked row (only used for SingleSelection)
 		SvMc::SVEditControlWithHelp m_FilterNameControl; //Control to filter objects based on their names
 		SvMc::SVEditControlWithHelp m_FilterLocationControl; //Control to filter objects based on their locations

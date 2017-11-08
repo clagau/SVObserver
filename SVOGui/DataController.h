@@ -10,7 +10,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <boost/any.hpp>
 //Moved to precompiled header: #include <boost/noncopyable.hpp>
-#include "SVUtilityLibrary\SVString.h"
+
 #include "ObjectInterfaces\NameValueList.h"
 #include "SVStatusLibrary\MessageContainer.h"
 #pragma endregion Includes
@@ -32,24 +32,24 @@ namespace SvOg
 		}
 			
 		template<typename DataType>
-		DataType Get(const SVString& rName) const
+		DataType Get(const std::string& rName) const
 		{
 			return static_cast<DataType>(boost::any_cast<_variant_t>(m_Data.GetValue(rName)));
 		}
 
 		template<typename DataType>
-		void Set(const SVString& rName, const DataType& rValue)
+		void Set(const std::string& rName, const DataType& rValue)
 		{
 			_variant_t v(rValue);
 			m_Data.SetValue(rName, boost::any(v));
 		}
 
-		SvOi::NameValueList GetEnumTypes(const SVString& rName) const
+		SvOi::NameValueList GetEnumTypes(const std::string& rName) const
 		{
 			return GetEnums(m_Data.GetInspectionID(), m_Data.GetObjectID(rName));
 		}
 
-		SVString GetName(const SVString& rName) const
+		std::string GetName(const std::string& rName) const
 		{
 			return GetObjectName(m_Data.GetInspectionID(), m_Data.GetObjectID(rName));
 		}

@@ -21,6 +21,7 @@
 #include "SVTimerLibrary/SVClock.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "ObjectInterfaces/IInspectionProcess.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion
 
 #ifdef _DEBUG
@@ -224,7 +225,7 @@ void SVTaskObjectListClass::InsertAt(int nIndex, SVTaskObjectClass* PTaskObject,
 	}
 	
 	// Check for Unique names
-	const SVString NewName( checkName( PTaskObject->GetName() ) );
+	const std::string NewName( checkName( PTaskObject->GetName() ) );
 	if( NewName != PTaskObject->GetName() )
 	{
 		PTaskObject->SetName( NewName.c_str() );
@@ -244,7 +245,7 @@ void SVTaskObjectListClass::SetAt(int nIndex, SVTaskObjectClass* PTaskObject)
 	if (PTaskObject)
 	{
 		// Check for Unique names
-		const SVString NewName( checkName( PTaskObject->GetName() ) );
+		const std::string NewName( checkName( PTaskObject->GetName() ) );
 		if( NewName != PTaskObject->GetName() )
 		{
 			PTaskObject->SetName( NewName.c_str() );
@@ -278,7 +279,7 @@ int SVTaskObjectListClass::Add(SVTaskObjectClass* pTaskObject, bool atBegin)
 	}
 
 	// Check for Unique names 
-	const SVString NewName( checkName( pTaskObject->GetName() ) );
+	const std::string NewName( checkName( pTaskObject->GetName() ) );
 	if( NewName != pTaskObject->GetName() )
 	{
 		pTaskObject->SetName( NewName.c_str() );
@@ -388,10 +389,10 @@ void SVTaskObjectListClass::SetDisabled()
 	}
 }
 
-const SVString SVTaskObjectListClass::checkName( LPCTSTR ToolName ) const
+const std::string SVTaskObjectListClass::checkName( LPCTSTR ToolName ) const
 {
-	SVString objectName;
-	SVString newName( ToolName );
+	std::string objectName;
+	std::string newName( ToolName );
 
 	int ToolIndex( 0 );
 	for( int i = 0; i < m_aTaskObjects.GetSize(); i++ )
@@ -400,7 +401,7 @@ const SVString SVTaskObjectListClass::checkName( LPCTSTR ToolName ) const
 		if( nullptr != pObject )
 		{
 			objectName = pObject->GetName();
-			if ( SVString::npos != objectName.find( ToolName ))
+			if ( std::string::npos != objectName.find( ToolName ))
 			{
 				// see if the name ends in a number
 				int lastNum;
@@ -418,7 +419,7 @@ const SVString SVTaskObjectListClass::checkName( LPCTSTR ToolName ) const
 						if (digit)
 						{	
 							// convert to a number
-							SVString numStr = SvUl_SF::Right( objectName, (objectName.size() - 1) - i);
+							std::string numStr = SvUl::Right( objectName, (objectName.size() - 1) - i);
 							lastNum = atoi(numStr.c_str());
 						}
 						break;
@@ -439,7 +440,7 @@ const SVString SVTaskObjectListClass::checkName( LPCTSTR ToolName ) const
 	// Set the name
 	if( 0 != ToolIndex )
 	{
-		newName = SvUl_SF::Format( _T("%s%d"), ToolName, ToolIndex );
+		newName = SvUl::Format( _T("%s%d"), ToolName, ToolIndex );
 	}
 
 	return newName;
@@ -695,7 +696,7 @@ SvOi::IObjectClass* SVTaskObjectListClass::getFirstObject(const SVObjectTypeInfo
 	return retObject;
 }
 
-void SVTaskObjectListClass::OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName)
+void SVTaskObjectListClass::OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName)
 {
 	SVTaskObjectClass::OnObjectRenamed(rRenamedObject, rOldName);
 

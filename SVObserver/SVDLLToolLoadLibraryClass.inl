@@ -56,7 +56,7 @@ inline HRESULT SVDLLToolLoadLibraryClass::Open(LPCTSTR p_szLibrary, SVDllLoadLib
 			// Check bitness
 			if( CheckBitness( p_szLibrary ) != ImageFileMachineAMD64 )
 			{
-				SVString Message = SvUl_SF::Format(_T("External Tool %s is not 64Bit"), p_szLibrary);
+				std::string Message = SvUl::Format(_T("External Tool %s is not 64Bit"), p_szLibrary);
 				fnNotifyProgress( Message.c_str() );
 			}
 		}
@@ -228,7 +228,7 @@ inline HRESULT SVDLLToolLoadLibraryClass::Open(LPCTSTR p_szLibrary, SVDllLoadLib
 						}
 						else
 						{
-							fnNotifyProgress( SvUl_SF::createSVString( _bstr_t(bstName) ).c_str() );
+							fnNotifyProgress( SvUl::createStdString( _bstr_t(bstName) ).c_str() );
 						}
 					}
 					catch(...)
@@ -252,7 +252,7 @@ inline HRESULT SVDLLToolLoadLibraryClass::Open(LPCTSTR p_szLibrary, SVDllLoadLib
 						}
 						else
 						{
-							SVString Version = SvUl_SF::Format( _T("Version %d"), lTmp );
+							std::string Version = SvUl::Format( _T("Version %d"), lTmp );
 							fnNotifyProgress( Version.c_str() );
 						}
 					}
@@ -434,8 +434,8 @@ inline HRESULT SVDLLToolLoadLibraryClass::RunTool (GUID tool, long* plStatus)
 		if( S_OK != l_hrOk )
 		{
 			ASSERT (0);
-			SVStringVector msgList;
-			msgList.push_back(SvUl_SF::Format(_T("%d"), l_hrOk));
+			SvDef::StringVector msgList;
+			msgList.push_back(SvUl::Format(_T("%d"), l_hrOk));
 
 			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 			Exception.setMessage( static_cast<DWORD> (l_hrOk), SvStl::Tid_RunTool_Exception, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -501,8 +501,8 @@ inline HRESULT SVDLLToolLoadLibraryClass::InitializeRun ( GUID tool, long lImage
 		if( S_OK != l_hrOk )
 		{
 			ASSERT (0);
-			SVStringVector msgList;
-			msgList.push_back(SvUl_SF::Format(_T("%d"), l_hrOk));
+			SvDef::StringVector msgList;
+			msgList.push_back(SvUl::Format(_T("%d"), l_hrOk));
 			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 			Exception.setMessage( static_cast<DWORD> (l_hrOk), SvStl::Tid_SVInitializeRun_Exception, msgList, SvStl::SourceFileParams(StdMessageParams) );
 		}

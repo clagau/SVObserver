@@ -13,7 +13,6 @@
 #pragma region Includes
 #include "SVSystemLibrary/SVLockableClass.h"
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
-#include "SVUtilityLibrary/SVString.h"
 #include "SVOCVBlobRecord.h"
 #include "SVResult.h"
 #pragma endregion Includes
@@ -38,7 +37,7 @@ public:
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual bool CloseObject() override;
 
-	void GetOCVResultString( SVString& rResult );
+	void GetOCVResultString( std::string& rResult );
 	
 	bool GenerateFontModel();
 	HRESULT LoadMatchString();
@@ -46,7 +45,7 @@ public:
 
 	bool BuildHashTable(char *pBuffer);
 	void InsertValueToTable(short nValue, int index);
-	long CheckStringInTable(const SVString& rMatchString);
+	long CheckStringInTable(const std::string& rMatchString);
 
 	SVImageClass* getInputImage();
 

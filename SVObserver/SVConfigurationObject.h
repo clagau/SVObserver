@@ -32,7 +32,8 @@
 #include "SVStorageResult.h"
 #include "RemoteMonitorList.h"
 #include "SVXMLLibrary\SVObjectXMLWriter.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 
@@ -62,18 +63,18 @@ typedef SvXml::SVXMLMaterialsTree SVTreeType;
 struct SVFindPredicate
 {
 	SVTreeType& m_rTree;
-	SVString m_Name;
+	std::string m_Name;
 
-	SVFindPredicate( SVTreeType& rTree, const SVString& p_rName ) : m_rTree( rTree ), m_Name( p_rName ) {}
+	SVFindPredicate( SVTreeType& rTree, const std::string& p_rName ) : m_rTree( rTree ), m_Name( p_rName ) {}
 	SVFindPredicate( SVTreeType& rTree, int StringResourceID ) : m_rTree( rTree ) 
 	{
-		m_Name = SvUl_SF::LoadSVString(StringResourceID);
+		m_Name = SvUl::LoadStdString(StringResourceID);
 	}
 
 	bool operator()( const SVTreeType::SVBranchHandle& p_rRight ) const
 	{
 		bool Result( false );
-		SVString Name;
+		std::string Name;
 
 		Name = m_rTree.getBranchName( p_rRight);
 		Result = ( m_Name == Name );
@@ -87,7 +88,7 @@ class SVConfigurationObject : public SVObjectClass
 	SV_DECLARE_CLASS( SVConfigurationObject );
 
 public:
-	typedef SVMap<SVString, SVConfigurationAcquisitionDeviceInfoStruct*> SVAcquisitionDeviceMap;
+	typedef SVMap<std::string, SVConfigurationAcquisitionDeviceInfoStruct*> SVAcquisitionDeviceMap;
 
 	SVConfigurationObject( LPCSTR ObjectName );
 	SVConfigurationObject( SVObjectClass* pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVCONFIGURATIONOBJECT );
@@ -131,7 +132,7 @@ public:
 	//! \throw  MessageContainer
 	//! \returns true if AcquisitionDevice section was found 
 	//************************************
-	bool LoadAcquisitionDevice(SVTreeType& rTree, SVString &BoardName, long &lNumBordDig );
+	bool LoadAcquisitionDevice(SVTreeType& rTree, std::string &BoardName, long &lNumBordDig );
 	
 	//************************************
 	//! Load Camera 
@@ -202,8 +203,8 @@ public:
 							   SVDeviceParamCollection*& rpDeviceParams ) const;
 	SVAcquisitionDeviceMap::iterator GetAcquisitionDeviceStartPosition() const;
 	SVAcquisitionDeviceMap::iterator GetAcquisitionDeviceEndPosition();
-	void GetAcquisitionDeviceNextAssoc( SVAcquisitionDeviceMap::iterator& rNextPosition, SVString& rKey ) const;
-	void GetAcquisitionDeviceNextAssoc( SVAcquisitionDeviceMap::iterator& rNextPosition, SVString& rKey, 
+	void GetAcquisitionDeviceNextAssoc( SVAcquisitionDeviceMap::iterator& rNextPosition, std::string& rKey ) const;
+	void GetAcquisitionDeviceNextAssoc( SVAcquisitionDeviceMap::iterator& rNextPosition, std::string& rKey, 
 	                                    SVFileNameArrayClass*& pFiles,
                                         SVLightReference*& pLight,
 										SVLut*& rpLut,
@@ -266,20 +267,20 @@ public:
 	size_t GetRemoteOutputGroupCount() const;
 	void SetupRemoteOutput();
 	HRESULT ClearRemoteOutputUnUsedData();
-	HRESULT GetRemoteOutputGroupNames( SVStringVector& rPPQs ) const;
-	SVRemoteOutputGroup* GetRemoteOutputGroup( const SVString& rRemoteGroupID ) const;
-	size_t GetRemoteOutputGroupItemCount( const SVString& rRemoteGroupID ) const;
-	HRESULT GetRemoteOutputItem( const SVString& rRemoteGroupID, long l_lIndex, SVRemoteOutputObject*& p_rItem ) const;
-	SVRemoteOutputObject* GetFirstRemoteOutputObject( const SVString& rRemoteGroupID ) const;
-	HRESULT AddRemoteOutputItem( const SVString& rRemoteGroupID, SVRemoteOutputObject*& p_pNewOutput, GUID p_InputObjectID, const SVString& rPPQ );
-	HRESULT DeleteRemoteOutput( const SVString& rRemoteGroupID );
-	HRESULT DeleteRemoteOutputEntry( const SVString& rRemoteGroupID, SVRemoteOutputObject* p_pOutputObject);
+	HRESULT GetRemoteOutputGroupNames( SvDef::StringVector& rPPQs ) const;
+	SVRemoteOutputGroup* GetRemoteOutputGroup( const std::string& rRemoteGroupID ) const;
+	size_t GetRemoteOutputGroupItemCount( const std::string& rRemoteGroupID ) const;
+	HRESULT GetRemoteOutputItem( const std::string& rRemoteGroupID, long l_lIndex, SVRemoteOutputObject*& p_rItem ) const;
+	SVRemoteOutputObject* GetFirstRemoteOutputObject( const std::string& rRemoteGroupID ) const;
+	HRESULT AddRemoteOutputItem( const std::string& rRemoteGroupID, SVRemoteOutputObject*& p_pNewOutput, GUID p_InputObjectID, const std::string& rPPQ );
+	HRESULT DeleteRemoteOutput( const std::string& rRemoteGroupID );
+	HRESULT DeleteRemoteOutputEntry( const std::string& rRemoteGroupID, SVRemoteOutputObject* p_pOutputObject);
 	HRESULT RemoteOutputValidateInputs();
 
-	HRESULT AddImportedRemoteInput(SVPPQObject* p_pPPQ, const SVString& name, long ppqPosition, long index, const _variant_t& p_Value);
-	HRESULT AddImportedDigitalInput(SVPPQObject* p_pPPQ, const SVString& name, long ppqPosition);
-	HRESULT AddRemoteInput(SVPPQObject* p_pPPQ, const SVString& name, long ppqPosition, long index, const _variant_t& p_Value);
-	HRESULT AddDigitalInput(SVPPQObject* p_pPPQ, const SVString& name, long ppqPosition);
+	HRESULT AddImportedRemoteInput(SVPPQObject* p_pPPQ, const std::string& name, long ppqPosition, long index, const _variant_t& p_Value);
+	HRESULT AddImportedDigitalInput(SVPPQObject* p_pPPQ, const std::string& name, long ppqPosition);
+	HRESULT AddRemoteInput(SVPPQObject* p_pPPQ, const std::string& name, long ppqPosition, long index, const _variant_t& p_Value);
+	HRESULT AddDigitalInput(SVPPQObject* p_pPPQ, const std::string& name, long ppqPosition);
 	HRESULT AddCameraDataInput(SVPPQObject* pPPQ, SVIOEntryHostStructPtr pIOEntry);
 
 	bool SetupRemoteMonitorList();
@@ -300,7 +301,7 @@ public:
 	//! \param listName [in]
 	//! \param bActivate [in]
 	//! \returns S_OK when unsuccessfully 
-	HRESULT ActivateRemoteMonitorList(const SVString& listName, bool bActivate);
+	HRESULT ActivateRemoteMonitorList(const std::string& listName, bool bActivate);
 	
 	//! Activates the default monitorlists, when no monitorlist is active and default monitorlist exist  
 	//! \returns true if at least one default monitorlist was activated 
@@ -310,8 +311,8 @@ public:
 	//Return the number of active Monitorlist
 	int GetActiveMonitorListCount() const;
 
-	HRESULT GetRemoteMonitorListProductFilter(const SVString& listName, SvSml::SVProductFilterEnum& rFilter) const;
-	HRESULT SetRemoteMonitorListProductFilter(const SVString& listName, SvSml::SVProductFilterEnum filter);
+	HRESULT GetRemoteMonitorListProductFilter(const std::string& listName, SvSml::SVProductFilterEnum& rFilter) const;
+	HRESULT SetRemoteMonitorListProductFilter(const std::string& listName, SvSml::SVProductFilterEnum filter);
 	void BuildPPQMonitorList(PPQMonitorList& ppqMonitorList) const;
 
 	//************************************
@@ -340,7 +341,7 @@ public:
 	static void updateConfTreeToNewestVersion(SVTreeType &rTree, SVTreeType::SVBranchHandle &rToolset);
 
 #pragma region Methods to replace processMessage
-	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName) override;
+	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override;
 #pragma endregion Methods to replace processMessage
 
 protected:
@@ -380,7 +381,7 @@ private:
 	//! \param subList The sublist which should saved.
 	//! \returns true on success
 	//************************************
-	bool SaveMonitoredObjectList(SvXml::SVObjectXMLWriter& rWriter, const SVString& listName, const MonitoredObjectList& subList ) const;
+	bool SaveMonitoredObjectList(SvXml::SVObjectXMLWriter& rWriter, const std::string& listName, const MonitoredObjectList& subList ) const;
 
 	//************************************
 	//! The method saves the Global Constant list
@@ -408,18 +409,18 @@ private:
 	void SetupSoftwareTrigger(SvTi::SVSoftwareTriggerClass* pTriggerDevice, int iDigNum, long triggerPeriod, SVPPQObject* pPPQ);
 	void SetupCameraTrigger(SvTi::SVCameraTriggerClass* pTriggerDevice, int iDigNum, SVPPQObject* pPPQ, bool bSoftwareTrigger, long triggerPeriod);
 
-	void GetRemoteInputInspections( const SVString& p_rRemoteInputName, SVInspectionSet& p_rInspections ) const;
+	void GetRemoteInputInspections( const std::string& p_rRemoteInputName, SVInspectionSet& p_rInspections ) const;
 
 	//************************************
 	// Method:    LoadMonitoredObjectList
 	// Description: Load a sub list and return this value. Sub list are e.g. productValue- and productImage-list
 	// Parameter: SVTreeType & rTree the XML-tree with the config.
 	// Parameter: SVTreeType::SVBranchHandle htiParent The parent branch of the monitor list.
-	// Parameter: const SVString& listName Name of the sublist
+	// Parameter: const std::string& listName Name of the sublist
 	// Parameter: MonitoredObjectList & subList The sublist which is returned.
 	// Returns:   HRESULT S_OK, if loading successful.
 	//************************************
-	HRESULT LoadMonitoredObjectList( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent, const SVString& listName, MonitoredObjectList& rList );
+	HRESULT LoadMonitoredObjectList( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent, const std::string& listName, MonitoredObjectList& rList );
 
 	SvTi::SVTriggerObjectPtrVector        m_arTriggerArray;
 	SVPPQObjectPtrVector            m_arPPQArray;

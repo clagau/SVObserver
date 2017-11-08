@@ -13,7 +13,7 @@
 
 #include "SVcontainerLibrary/SVVector.h" 
 #include "SVUtilityLibrary/SVGUID.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #include "SVObjectInfoStruct.h"
 
 struct SVInObjectInfoStruct : public SVObjectInfoStruct
@@ -32,13 +32,13 @@ struct SVInObjectInfoStruct : public SVObjectInfoStruct
 	void SetInputObjectType( const SVGUID& p_rEmbeddedID, SVObjectTypeEnum p_ObjectType=SVNotSetObjectType, SVObjectSubTypeEnum p_SubType=SVNotSetSubObjectType );
 	void SetInputObjectType( const SVObjectTypeInfoStruct& p_rTypeInfo );
 
-	void SetInputObject( const SVString& p_rName );
+	void SetInputObject( const std::string& p_rName );
 	void SetInputObject( const SVGUID& p_rObjectID );
 	void SetInputObject( SVObjectClass* p_pObject );
 	void SetInputObject( const SVObjectReference& p_rObject );
 
-	const SVString& GetInputName() const;
-	void SetInputName( const SVString& p_rInputName );
+	const std::string& GetInputName() const;
+	void SetInputName( const std::string& p_rInputName );
 
 protected:
 	// Who is my input object...
@@ -49,7 +49,7 @@ protected:
 
 	bool m_IsConnected;
 
-	SVString m_InputName;
+	std::string m_InputName;
 
 };
 

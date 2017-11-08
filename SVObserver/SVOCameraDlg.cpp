@@ -25,7 +25,7 @@
 #include "SVOResource\ConstGlobalSvOr.h"
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -208,7 +208,7 @@ void CSVOCameraDlg::OnBtnDeleteVc()
 
 void CSVOCameraDlg::OnBtnNewVc() 
 {
-	SVString NewCamera = m_pParent->GetNextCameraName();
+	std::string NewCamera = m_pParent->GetNextCameraName();
     int Dig  = m_pParent->GetNextCameraNumber() - 1;
 	int CameraID( Dig );
     
@@ -252,7 +252,7 @@ void CSVOCameraDlg::OnBtnPropVc()
 				*pCameraObj = rTmpObj;
 				m_pParent->SetModified(true);
 				m_pParent->ItemChanged(CAMERA_DLG, pCameraObj->GetCameraDisplayName().c_str(), ITEM_ACTION_PROP);
-				SVString DigName = m_pParent->BuildDigName( *pCameraObj );
+				std::string DigName = m_pParent->BuildDigName( *pCameraObj );
 				SVDigitizerProcessingClass::Instance().SetDigitizerColor( DigName.c_str(), pCameraObj->IsColor() );
 			}
 			else
@@ -284,7 +284,7 @@ void CSVOCameraDlg::OnBtnPropVc()
 						// when the camera file changes, load the camera file parameters into the device (so it's in sync with the Virtual Camera)
 						int Digitizer = SVDigitizerProcessingClass::Instance().getDigitizerID( pCameraObj->GetCameraID() );
 						pCameraObj->SetDigNumber( Digitizer );
-						SVString DigName = m_pParent->BuildDigName( *pCameraObj );
+						std::string DigName = m_pParent->BuildDigName( *pCameraObj );
 						SVDigitizerProcessingClass::Instance().SetDigitizerColor( DigName.c_str(), pCameraObj->IsColor() );
 						SVAcquisitionClassPtr psvDevice( SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( DigName.c_str() ) );
 						if (nullptr != psvDevice)
@@ -296,10 +296,10 @@ void CSVOCameraDlg::OnBtnPropVc()
 							if (S_OK != psvDevice->LoadFiles(svFiles))
 							{
 								SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
-								SVStringVector msgList;
+								SvDef::StringVector msgList;
 								msgList.push_back(pCameraObj->GetCameraFile());
 								Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Config_CameraFileInvalid, msgList, SvStl::SourceFileParams(StdMessageParams));
-								pCameraObj->SetCameraFile(SVString());
+								pCameraObj->SetCameraFile(std::string());
 								m_pParent->ItemChanged(CAMERA_DLG, pCameraObj->GetCameraDisplayName().c_str(), ITEM_ACTION_PROP);
 							}
 						}
@@ -344,7 +344,7 @@ void CSVOCameraDlg::SetCameraPropForAll( LPCTSTR CurrentCamera )
 {
     int iCamCnt = m_pParent->GetCameraListCount();
     SVOCameraObjPtr pObj;
-    SVString FileName;
+    std::string FileName;
 	bool isColorCamera( false );
 
     pObj = m_pParent->GetCameraObjectByName( CurrentCamera );

@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary/SVString.h"
+
 #include "SVUtilityLibrary/SVVariantList.h"
 #include "SVUtilityLibrary/SVNameVariantList.h"
 #pragma endregion Includes

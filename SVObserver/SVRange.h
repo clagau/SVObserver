@@ -15,7 +15,6 @@
 #include "SVOCore/SVTaskObject.h"
 #include "SVLibrary/ISVCancel.h"
 #include "Definitions/RangeEnum.h"
-#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 enum Range_defaults
@@ -82,7 +81,7 @@ public:
 	// Parameter:  ref <out>:  the returned indirect value string
 	// Returns:  HRESULT:  S_OK if successful
 	//************************************
-	HRESULT GetIndirectValue( RangeEnum::ERange ra, SVString& rValue );
+	HRESULT GetIndirectValue( RangeEnum::ERange ra, std::string& rValue );
 
 	//************************************
 	// Description:  True if an indirect value exist.
@@ -140,7 +139,7 @@ public:
 
 #pragma region Methods to replace processMessage
 	virtual bool DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo ) override;
-	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName) override;
+	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override;
 #pragma endregion Methods to replace processMessage
 	
 protected:

@@ -82,7 +82,7 @@ namespace SvOg
 	
 		// This requires that the input name sorts in descending natural order
 		// and that the images we are concerned with are first in the list
-		SVString selectedImageName;
+		std::string selectedImageName;
 		const SvUl::InputNameGuidPairList& rImageList = GetConnectedImageList();
 		if (rImageList.size())
 		{
@@ -113,7 +113,7 @@ namespace SvOg
 			m_availableSourceImageListBox.GetLBText(index, imageName);
 			if (!imageName.IsEmpty() && imageName != NoImageTag)
 			{
-				SVString svImageName(imageName);
+				std::string svImageName(imageName);
 				ConnectToImage(m_inputName, svImageName);
 				IPictureDisp* pImage = GetImage(svImageName);
 				m_dialogImage.setImage(pImage);

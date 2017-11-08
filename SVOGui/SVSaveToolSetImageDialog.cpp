@@ -17,7 +17,7 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "TextDefinesSvOg.h"
 #include "SVMessage/SVMessage.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -97,7 +97,7 @@ namespace SvOg
 			{
 				SVFileNameClass	svfncImageFile;
 			
-				SVString Path = AfxGetApp()->GetProfileString(	_T("Settings"), _T("ImagesFilePath"), _T("C:\\Images"));	// Default
+				std::string Path = AfxGetApp()->GetProfileString(	_T("Settings"), _T("ImagesFilePath"), _T("C:\\Images"));	// Default
 			
 				svfncImageFile.SetFileType(SV_IMAGE_SOURCE_FILE_TYPE);
 				svfncImageFile.SetPathName( Path.c_str() );
@@ -109,8 +109,8 @@ namespace SvOg
 					Path = svfncImageFile.GetPathName();
 					AfxGetApp()->WriteProfileString(_T("Settings"), _T("ImagesFilePath"), Path.c_str());
 				
-					SVString PathFileName = svfncImageFile.GetFullFileName();
-					HRESULT hr = m_ImageController.SaveImage(SVString(imageName), PathFileName);
+					std::string PathFileName = svfncImageFile.GetFullFileName();
+					HRESULT hr = m_ImageController.SaveImage(std::string(imageName), PathFileName);
 					if (S_OK != hr)
 					{
 						if (E_INVALIDARG == hr)
@@ -139,7 +139,7 @@ namespace SvOg
 			CString Name;
 			m_availableImagesComboCtrl.GetLBText(index, Name);
 		
-			IPictureDisp* pImage = m_ImageController.GetImage( SVString(Name) );
+			IPictureDisp* pImage = m_ImageController.GetImage( std::string(Name) );
 			m_currentSelectedImageCtrl.setImage(pImage);
 			m_currentSelectedImageCtrl.Refresh();
 		}

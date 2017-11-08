@@ -8,7 +8,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary\SVString.h"
 #include "SVUtilityLibrary\SVGUID.h"
 #include "SVOResource/resource.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
@@ -16,6 +15,7 @@
 #include "NoSelector.h"
 #include "ToolSetItemSelector.h"
 #include "ObjectSelectorController.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -38,13 +38,13 @@ namespace SvOg
 		/// \param rInstanceId [in] 
 		/// \returns bool True if selector was closed by OK-button.
 		template <typename ToolsetSelector>
-		bool Show( SVString& rName, const SVString& rTitle, CWnd* pParent, const SVGUID& rInstanceId = SV_GUID_NULL );
+		bool Show( std::string& rName, const std::string& rTitle, CWnd* pParent, const SVGUID& rInstanceId = SV_GUID_NULL );
 #pragma endregion Public Methods
 
 #pragma endregion Private Methods
-		SVString GetInspectionName() const;
+		std::string GetInspectionName() const;
 
-		SVString GetPPQName() const;
+		std::string GetPPQName() const;
 
 		GUID GetToolSetGUID() const;
 #pragma endregion Private Methods

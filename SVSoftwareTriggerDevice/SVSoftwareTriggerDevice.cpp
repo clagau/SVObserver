@@ -30,10 +30,10 @@ SVSoftwareTriggerDevice::SVSoftwareTriggerDevice()
 : m_numTriggers(SVMaximumSoftwareTriggers)
 {
 	m_nameHandleList = (boost::assign::list_of<NameHandleList::value_type>
-		(std::make_pair(SVString(_T("SoftwareTrigger_1.Dig_0")), 1ul))
-		(std::make_pair(SVString(_T("SoftwareTrigger_1.Dig_1")), 2ul))
-		(std::make_pair(SVString(_T("SoftwareTrigger_1.Dig_2")), 3ul))
-		(std::make_pair(SVString(_T("SoftwareTrigger_1.Dig_3")), 4ul))
+		(std::make_pair(std::string(_T("SoftwareTrigger_1.Dig_0")), 1ul))
+		(std::make_pair(std::string(_T("SoftwareTrigger_1.Dig_1")), 2ul))
+		(std::make_pair(std::string(_T("SoftwareTrigger_1.Dig_2")), 3ul))
+		(std::make_pair(std::string(_T("SoftwareTrigger_1.Dig_3")), 4ul))
 		).convert_to_container<NameHandleList>();
 }
 
@@ -308,7 +308,7 @@ void SVSoftwareTriggerDevice::DispatchTrigger(const SvTh::TriggerDispatcher& tri
 
 
 
-void SVSoftwareTriggerDevice::OnSoftwareTimer(const SVString& tag)
+void SVSoftwareTriggerDevice::OnSoftwareTimer(const std::string& tag)
 {
 	// find trigger callbacks for this trigger and dispatch
 	NameHandleList::const_iterator it = m_nameHandleList.get<from>().find(tag);

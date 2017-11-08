@@ -11,7 +11,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary/SVString.h"
+
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerFeatureEnums.h"
 #include "SVGigeFeatureSelector.h"
 #include "SVGigeFeatureStringEnumList.h"
@@ -32,15 +32,15 @@ public:
 		ReadWrite
 	};
 
-	SVGigeFeature(const SVString& p_name, SVMatroxDigitizerFeature::SVFeatureTypeEnum p_featureType);
-	SVGigeFeature(const SVString& p_name, SVMatroxDigitizerFeature::SVFeatureTypeEnum p_featureType, FeatureSupportedEnum p_supported, FeatureAccessEnum p_access);
-	SVGigeFeature(const SVString& p_name, SVMatroxDigitizerFeature::SVFeatureTypeEnum p_featureType, FeatureSupportedEnum p_supported, FeatureAccessEnum p_access, const SVGigeFeatureSelector& p_selector);
-	SVGigeFeature(const SVString& p_name, SVMatroxDigitizerFeature::SVFeatureTypeEnum p_featureType, FeatureSupportedEnum p_supported, FeatureAccessEnum p_access, const SVGigeFeatureSelector& p_selector, const SVGigeFeatureStringEnumList& p_stringEnums);
+	SVGigeFeature(const std::string& p_name, SVMatroxDigitizerFeature::SVFeatureTypeEnum p_featureType);
+	SVGigeFeature(const std::string& p_name, SVMatroxDigitizerFeature::SVFeatureTypeEnum p_featureType, FeatureSupportedEnum p_supported, FeatureAccessEnum p_access);
+	SVGigeFeature(const std::string& p_name, SVMatroxDigitizerFeature::SVFeatureTypeEnum p_featureType, FeatureSupportedEnum p_supported, FeatureAccessEnum p_access, const SVGigeFeatureSelector& p_selector);
+	SVGigeFeature(const std::string& p_name, SVMatroxDigitizerFeature::SVFeatureTypeEnum p_featureType, FeatureSupportedEnum p_supported, FeatureAccessEnum p_access, const SVGigeFeatureSelector& p_selector, const SVGigeFeatureStringEnumList& p_stringEnums);
 	SVGigeFeature(const SVGigeFeature& rFeature);
 	
 	SVGigeFeature& operator=(const SVGigeFeature& rFeature);
 	
-	const SVString& GetName() const;
+	const std::string& GetName() const;
 	SVMatroxDigitizerFeature::SVFeatureTypeEnum GetType() const;
 	bool IsSupported() const;
 	bool IsReadOnly() const;
@@ -48,11 +48,11 @@ public:
 	bool HasSelector() const;
 	const SVGigeFeatureSelector& GetSelector() const;
 	bool HasTranslation() const;
-	HRESULT GetGigeFeatureString(const SVString& rDeviceParam, SVString& rGigeFeature) const;
-	HRESULT GetDeviceParamString(const SVString& rGigeFeature, SVString& rDeviceParam) const;
+	HRESULT GetGigeFeatureString(const std::string& rDeviceParam, std::string& rGigeFeature) const;
+	HRESULT GetDeviceParamString(const std::string& rGigeFeature, std::string& rDeviceParam) const;
 
 private:
-	SVString m_name;
+	std::string m_name;
 	SVMatroxDigitizerFeature::SVFeatureTypeEnum m_featureType;
 	FeatureSupportedEnum m_supported;
 	FeatureAccessEnum m_access;

@@ -11,13 +11,13 @@
 //Moved to precompiled header: #include <tchar.h>
 //Moved to precompiled header: #include <boost\assign\std\map.hpp>
 //Moved to precompiled header: #include <boost\assign\list_of.hpp>
-#include "SVUtilityLibrary\SVString.h"
+
 #include "MessageTextEnum.h"
 #pragma endregion Includes
 
 namespace SvStl
 {
-	typedef std::map<MessageTextEnum, SVString> MessageTextMap;
+	typedef std::map<MessageTextEnum, std::string> MessageTextMap;
 
 	MessageTextMap g_MessageTextMap = boost::assign::map_list_of
 	(Tid_Empty, _T(""))

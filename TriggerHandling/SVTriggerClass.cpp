@@ -15,7 +15,7 @@
 
 #include "TriggerBasics.h"
 #include "SVTriggerClass.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 namespace SvTh
@@ -38,7 +38,7 @@ namespace SvTh
 			HRESULT hr = pDevice->Notify( l_Response );
 
 			#ifdef SV_LOG_STATUS_INFO
-				SVString Text.Format( _T( "FinishProcess %s - HR = 0x%X" ), pDevice->GetDeviceName(), hr );
+				std::string Text.Format( _T( "FinishProcess %s - HR = 0x%X" ), pDevice->GetDeviceName(), hr );
 
 				pDevice->m_StatusLog.push_back( Text );
 			#endif
@@ -182,7 +182,7 @@ namespace SvTh
 		}
   
 		#ifdef SV_LOG_STATUS_INFO
-			SVString l_FileName;
+			std::string l_FileName;
 
 			l_FileName.Format( _T( "C:\\SVObserver\\%s.log" ), GetDeviceName() );
 
@@ -192,7 +192,7 @@ namespace SvTh
 			{
 				for( int i = 0; i < m_StatusLog.GetCount(); ++i )
 				{
-					SVString l_String;
+					std::string l_String;
 
 					m_StatusLog.GetAt( i, &l_String );
 

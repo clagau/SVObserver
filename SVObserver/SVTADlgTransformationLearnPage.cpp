@@ -18,7 +18,7 @@
 #include "SVIPDoc.h"
 #include "SVOCore/SVTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -390,7 +390,7 @@ void SVToolAdjustmentDialogTransformationLearnPageClass::OnLearnButton()
 
 void SVToolAdjustmentDialogTransformationLearnPageClass::refreshLearnedValues()
 {
-	SVString Value;
+	std::string Value;
 	// refresh Learned Translation X settings...
 	if( nullptr != pLearnedTranslationX )
 	{

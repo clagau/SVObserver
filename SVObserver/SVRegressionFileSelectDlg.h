@@ -13,7 +13,6 @@
 
 #include "SVRegressionTestStruct.h"
 #include "SVRegressionFileSelectSheet.h"
-#include "SVUtilityLibrary/SVString.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // CSVRegressionFileSelectDlg dialog
@@ -72,8 +71,8 @@ private:
 
 private:
     CSVRegressionFileSelectSheet *m_pParent;
-	SVString m_DialogName;
-	SVString m_RegistryPath;
+	std::string m_DialogName;
+	std::string m_RegistryPath;
 };
 
 //{{AFX_INSERT_LOCATION}}

@@ -16,7 +16,7 @@
 #include "SVOCore/SVTool.h"
 #include "SVPerspectiveTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -138,12 +138,12 @@ BOOL SVPerspectiveWarpDlg::OnInitDialog()
 		if( m_pWarpType )
 		{
 			
-			SVString EnumList;
+			std::string EnumList;
 
 			m_pWarpType->GetEnumTypes( EnumList );
 			m_FunctionCombo.SetEnumTypes( EnumList.c_str() );
 
-			SVString EnumString;
+			std::string EnumString;
 			m_pWarpType->getValue( EnumString );
 			m_FunctionCombo.SelectString( -1, EnumString.c_str() );
 		}
@@ -154,12 +154,12 @@ BOOL SVPerspectiveWarpDlg::OnInitDialog()
 		m_pInterpolationMode = dynamic_cast<SVEnumerateValueObjectClass*>(m_pTool->getFirstObject(objectInfo));
 		if( m_pInterpolationMode )
 		{
-			SVString EnumList;
+			std::string EnumList;
 
 			m_pInterpolationMode->GetEnumTypes( EnumList );
 			m_cbInterpolation.SetEnumTypes( EnumList.c_str() );
 
-			SVString EnumString;
+			std::string EnumString;
 			m_pInterpolationMode->getValue( EnumString );
 			m_cbInterpolation.SelectString( -1, EnumString.c_str() );
 		}

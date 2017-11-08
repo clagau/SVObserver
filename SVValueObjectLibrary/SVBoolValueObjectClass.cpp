@@ -17,6 +17,7 @@
 #include "SVObjectLibrary\SVClsids.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "Definitions/TextDefineSVDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -57,31 +58,31 @@ const SVBoolValueObjectClass& SVBoolValueObjectClass::operator = (const SVBoolVa
 	return *this;
 }
 
-HRESULT SVBoolValueObjectClass::GetValidTypes( SVStringVector& rTypes ) const
+HRESULT SVBoolValueObjectClass::GetValidTypes( SvDef::StringVector& rTypes ) const
 {
 	rTypes.push_back( SvDef::cTrue );
 	rTypes.push_back( SvDef::cFalse );
 	return S_OK;
 }
 
-BOOL SVBoolValueObjectClass::ConvertString2Type( const SVString &rValue ) const
+BOOL SVBoolValueObjectClass::ConvertString2Type( const std::string &rValue ) const
 {
 	bool Result(true);
-	SVString Value = rValue;
+	std::string Value = rValue;
 
-	Value = SvUl_SF::TrimLeft( Value );
-	Value = SvUl_SF::TrimRight( Value );
-	if ( _T("1") == Value  || _T("-1") == Value /*for VB weenies*/ || (SvUl_SF::CompareNoCase( Value, SvDef::cTrue) == 0) )
+	Value = SvUl::TrimLeft( Value );
+	Value = SvUl::TrimRight( Value );
+	if ( _T("1") == Value  || _T("-1") == Value /*for VB weenies*/ || (SvUl::CompareNoCase( Value, SvDef::cTrue) == 0) )
 	{
 		Result = true;
 	}
-	else if ( _T("0") == Value || (SvUl_SF::CompareNoCase( Value, SvDef::cFalse) == 0) )
+	else if ( _T("0") == Value || (SvUl::CompareNoCase( Value, SvDef::cFalse) == 0) )
 	{
 		Result = false;
 	}
 	else
 	{
-		SVStringVector msgList;
+		SvDef::StringVector msgList;
 		msgList.push_back(Value);
 		msgList.push_back(GetName());
 		SvStl::MessageMgrStd Exception( SvStl::LogOnly );

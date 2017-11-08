@@ -11,7 +11,6 @@
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVOCore/SVIPResultData.h"
-#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -43,7 +42,7 @@ private:
 
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 
-	SVString CalcProcessesPerSecond(double p_LastTriggerDistance);
+	std::string CalcProcessesPerSecond(double p_LastTriggerDistance);
 	void addColumnHeadings();
 	void setColumnWidths();
 #pragma endregion Private Methods

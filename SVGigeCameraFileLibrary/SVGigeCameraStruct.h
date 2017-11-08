@@ -12,7 +12,7 @@
 
 #pragma region Includes
 #include "SVContainerLibrary/SVVector.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 /**
@@ -38,18 +38,18 @@ struct SVGigeCameraStruct
 	bool operator > (const SVGigeCameraStruct& rRhs) const;
 
 	bool HasSerialNumber() const;
-	SVString GetSerialNumber() const;
+	std::string GetSerialNumber() const;
 	bool HasModelName() const;
-	SVString GetModelName() const;
+	std::string GetModelName() const;
 	bool HasVendorName() const;
-	SVString GetVendorName() const;
+	std::string GetVendorName() const;
 	bool HasIPAddress() const;
-	SVString GetIPAddress() const;
+	std::string GetIPAddress() const;
 
-	SVString m_SerialNum;
-	SVString m_ModelName;
-	SVString m_VendorName;
-	SVString m_IPAddress;
+	std::string m_SerialNum;
+	std::string m_ModelName;
+	std::string m_VendorName;
+	std::string m_IPAddress;
 	
 	int m_CameraID;
 	int m_DigitizerID;

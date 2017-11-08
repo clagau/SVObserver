@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVOCameraList.h"
 #include "CameraLibrary/SVDeviceParams.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -89,7 +89,7 @@ bool SVOCameraList::AddCameraToList(LPCTSTR CameraName, int Dig, int CameraID)
 	if (!IsCameraInList(CameraName))
 	{
 		SVOCameraObjPtr pObj = new SVOCameraObj();
-		pObj->SetCameraDisplayName( SVString(CameraName) );
+		pObj->SetCameraDisplayName( std::string(CameraName) );
 		pObj->SetDigNumber(Dig);
 		pObj->SetCameraID(CameraID);
 		m_CameraList.AddTail(pObj);
@@ -106,7 +106,7 @@ bool SVOCameraList::AddCameraToList(LPCTSTR CameraName, int Dig, int Bands, int 
 	if (!IsCameraInList(CameraName))
 	{
 		SVOCameraObjPtr pObj = new SVOCameraObj();
-		pObj->SetCameraDisplayName( SVString(CameraName) );
+		pObj->SetCameraDisplayName( std::string(CameraName) );
 		pObj->SetDigNumber(Dig);
 		pObj->SetCameraID(CameraID);
 		pObj->SetBandNumber(Bands);
@@ -147,7 +147,7 @@ bool SVOCameraList::SetCameraFile(LPCTSTR CameraName, LPCTSTR FileName)
 	if (pos != m_CameraList.end())
 	{
 		SVOCameraObjPtr pObj = m_CameraList.GetAt(pos);
-		pObj->SetCameraFile( SVString(FileName) );
+		pObj->SetCameraFile( std::string(FileName) );
 		m_CameraList.SetAt(pos, pObj);
 		bRet = true;
 	}

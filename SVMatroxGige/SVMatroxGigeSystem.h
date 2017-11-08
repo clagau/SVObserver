@@ -12,7 +12,7 @@
 
 #pragma region Includes
 #include "SVMatroxLibrary/SVMatroxSystemRef.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #include "SVMatroxGigeDigitizerList.h"
 #pragma endregion Includes
 
@@ -39,8 +39,8 @@ public:
 	const SVMatroxGigeDigitizerList& GetDigitizerList() const;
 
 	unsigned char m_Handle;
-	SVString m_matroxSystemName;
-	SVString m_Name;
+	std::string m_matroxSystemName;
+	std::string m_Name;
 	SVMatroxSystemRef m_System;
 };
 

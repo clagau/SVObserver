@@ -16,6 +16,7 @@
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "TextDefinesSvO.h"
 #include "SVTimerLibrary/SVClock.h"
 #pragma endregion Includes
@@ -104,10 +105,10 @@ void ResultListCtrl::updateList(class SVIPDoc* pDoc)
 
 	for( i = 0; i < static_cast<int> (m_ResultDefinitions.size()); ++i )
 	{
-		SVString Name;
-		SVString NameToType;
-		SVString ItemIndex;
-		SVString Value;
+		std::string Name;
+		std::string NameToType;
+		std::string ItemIndex;
+		std::string Value;
 
 		SVIPResultItemDefinition& l_rDef = m_ResultDefinitions[ i ];
 
@@ -123,11 +124,11 @@ void ResultListCtrl::updateList(class SVIPDoc* pDoc)
 			{
 				if (0 <= l_rDef.GetIndex())
 				{
-					Name = SvUl_SF::Format( _T("%s[%d]"), l_pObject->GetName(),  l_rDef.GetIndex() +1 );
+					Name = SvUl::Format( _T("%s[%d]"), l_pObject->GetName(),  l_rDef.GetIndex() +1 );
 				}
 				else
 				{
-					Name = SvUl_SF::Format( _T("%s[]"), l_pObject->GetName() );
+					Name = SvUl::Format( _T("%s[]"), l_pObject->GetName() );
 				}
 			}
 			else
@@ -137,7 +138,7 @@ void ResultListCtrl::updateList(class SVIPDoc* pDoc)
 			NameToType = l_pObject->GetCompleteObjectNameToObjectType( nullptr, SVToolObjectType );
 		}
 
-		ItemIndex = SvUl_SF::Format( _T( "%d" ), i );
+		ItemIndex = SvUl::Format( _T( "%d" ), i );
 
 		SVIPResultData::SVResultDataMap::const_iterator l_Iter = m_ResultData.m_ResultData.find( l_rDef );
 
@@ -152,11 +153,11 @@ void ResultListCtrl::updateList(class SVIPDoc* pDoc)
 
 				if( l_Iter->second.GetIOType() == IO_DIGITAL_INPUT )
 				{
-					NameToType = SvUl_SF::LoadSVString( IDS_OBJECTNAME_DIGITAL_INPUT );
+					NameToType = SvUl::LoadStdString( IDS_OBJECTNAME_DIGITAL_INPUT );
 				}
 				else if( l_Iter->second.GetIOType() == IO_REMOTE_INPUT )
 				{
-					NameToType = SvUl_SF::LoadSVString( IDS_OBJECTNAME_REMOTE_INPUT );
+					NameToType = SvUl::LoadStdString( IDS_OBJECTNAME_REMOTE_INPUT );
 				}
 			}
 		}
@@ -171,7 +172,7 @@ void ResultListCtrl::updateList(class SVIPDoc* pDoc)
 			}
 			else
 			{
-				SVString TempName = GetItemText( i, 0 );
+				std::string TempName = GetItemText( i, 0 );
 
 				if( TempName != Name )
 				{
@@ -185,7 +186,7 @@ void ResultListCtrl::updateList(class SVIPDoc* pDoc)
 		SetItemData( i, l_Color );
 	}
 
-	SVString Temp;
+	std::string Temp;
 
 	if( bRedrawDefinitions && (GetItemCount() <= i) )
 	{
@@ -208,10 +209,10 @@ void ResultListCtrl::updateList(class SVIPDoc* pDoc)
 	}
 	else
 	{
-		Temp = SvUl_SF::Format( _T( "%.3f ms ( %.3f ms )" ), m_ResultData.m_ToolSetEndTime * 1000, m_ResultData.m_ToolSetAvgTime * 1000 );
+		Temp = SvUl::Format( _T( "%.3f ms ( %.3f ms )" ), m_ResultData.m_ToolSetEndTime * 1000, m_ResultData.m_ToolSetAvgTime * 1000 );
 	}
 
-	SVString Prev = GetItemText( i, 1 );
+	std::string Prev = GetItemText( i, 1 );
 	if( Prev != Temp )
 	{
 		SetItemText( i, 1, Temp.c_str() );
@@ -277,7 +278,7 @@ void ResultListCtrl::DrawItem( LPDRAWITEMSTRUCT lpDrawItemStruct )
 		GetItemRect( nItem, rcLabel, LVIR_LABEL );
 		GetItemRect( nItem, rcIcon, LVIR_ICON );
 		CRect rcCol( rcBounds );
-		SVString Label = GetItemText( nItem, 0 );
+		std::string Label = GetItemText( nItem, 0 );
 		DWORD_PTR dwColor = GetItemData( nItem );
 
 		// Labels are offset by a certain amount
@@ -413,9 +414,9 @@ void ResultListCtrl::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 	}
 }
 
-SVString ResultListCtrl::CalcProcessesPerSecond(double p_LastTriggerDistance)
+std::string ResultListCtrl::CalcProcessesPerSecond(double p_LastTriggerDistance)
 {
-	SVString Result;
+	std::string Result;
 	double dTime;
 
 	// complete processes per second
@@ -423,7 +424,7 @@ SVString ResultListCtrl::CalcProcessesPerSecond(double p_LastTriggerDistance)
 
 	if (dTime != 0.0)
 	{
-		Result = SvUl_SF::Format(_T("%.3f / sec (%.3f / min)"), 1.0 / dTime, 1.0 / dTime * 60.0);
+		Result = SvUl::Format(_T("%.3f / sec (%.3f / min)"), 1.0 / dTime, 1.0 / dTime * 60.0);
 	}
 
 	return Result;
@@ -435,7 +436,7 @@ void ResultListCtrl::addColumnHeadings()
 	// load the Column names
 	for (int i = 0; i < SV_NUMBER_RESULTVIEW_COLUMNS; i++)
 	{
-		SVString ColumnName = SvUl_SF::LoadSVString(IDS_RESULTVIEW_COLUMN_NAME0 + i);
+		std::string ColumnName = SvUl::LoadStdString(IDS_RESULTVIEW_COLUMN_NAME0 + i);
 		InsertColumn(i, ColumnName.c_str(), LVCFMT_LEFT, LVSCW_AUTOSIZE, i);
 	}
 	setColumnWidths();

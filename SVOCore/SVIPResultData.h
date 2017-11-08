@@ -19,7 +19,7 @@
 
 struct IPResultTableData
 {
-	SVString m_columnName;
+	std::string m_columnName;
 	SvTl::SVTimeStamp m_LastUpdateTimeStamp;
 	std::vector<_variant_t> m_rowData;
 };

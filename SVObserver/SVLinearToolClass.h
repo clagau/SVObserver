@@ -14,7 +14,6 @@
 #pragma region Includes
 #include "SVOCore/SVTool.h"
 #include "SVOCore/SVImageClass.h"
-#include "SVUtilityLibrary/SVString.h"
 #include "SVValueObjectLibrary/SVStringValueObjectClass.h"
 #pragma endregion Includes
 
@@ -41,7 +40,7 @@ public:
 	virtual SVTaskObjectClass *GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint ) override;
 	virtual bool DoesObjectHaveExtents() const override;
 
-	SVString GetProfileOrientation();
+	std::string GetProfileOrientation();
 	bool GetRotation();
 
 	//************************************

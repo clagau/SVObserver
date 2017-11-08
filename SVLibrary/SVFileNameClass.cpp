@@ -14,6 +14,7 @@
 //Moved to precompiled header: #include <io.h>
 #include "SVFileNameClass.h"
 #include "ObjectInterfaces/ISVOApp_Helper.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVMessage/SVMessage.h"
 #include "SVMFCControls/SVDlgFolder.h"
 #include "SVStatusLibrary/GlobalPath.h"
@@ -76,29 +77,29 @@ DWORD SVFileNameClass::GetFileType() const
 	return m_FileType;
 }
 
-const SVString& SVFileNameClass::GetPathName() const
+const std::string& SVFileNameClass::GetPathName() const
 {
 	return m_PathName;
 }
 
-const SVString& SVFileNameClass::GetFileName() const
+const std::string& SVFileNameClass::GetFileName() const
 {
 	m_FileName = m_FileNameOnly + m_Extension;
 
 	return m_FileName;
 }
 
-const SVString& SVFileNameClass::GetFileNameOnly() const
+const std::string& SVFileNameClass::GetFileNameOnly() const
 {
 	return m_FileNameOnly;
 }
 
-const SVString& SVFileNameClass::GetExtension() const
+const std::string& SVFileNameClass::GetExtension() const
 {
 	return m_Extension;
 }
 
-const SVString& SVFileNameClass::GetFullFileName() const
+const std::string& SVFileNameClass::GetFullFileName() const
 {
 	m_FullFileName.clear();
 	
@@ -112,27 +113,27 @@ const SVString& SVFileNameClass::GetFullFileName() const
 	return m_FullFileName;
 }
 
-const SVString& SVFileNameClass::GetFileSelectDialogTitle() const
+const std::string& SVFileNameClass::GetFileSelectDialogTitle() const
 {
 	return m_FileSelectDialogTitle;
 }
 
-const SVString& SVFileNameClass::GetFileSaveDialogTitle() const
+const std::string& SVFileNameClass::GetFileSaveDialogTitle() const
 {
 	return m_FileSaveDialogTitle;
 }
 
-const SVString& SVFileNameClass::GetDefaultPathName() const
+const std::string& SVFileNameClass::GetDefaultPathName() const
 {
 	return m_DefaultPathName;
 }
 
-const SVString& SVFileNameClass::GetDefaultFileName() const
+const std::string& SVFileNameClass::GetDefaultFileName() const
 {
 	return m_DefaultFileName;
 }
 
-const SVString& SVFileNameClass::GetDefaultFileExtension() const
+const std::string& SVFileNameClass::GetDefaultFileExtension() const
 {
 	return m_DefaultFileExtension;
 }
@@ -147,7 +148,7 @@ DWORD SVFileNameClass::GetFileSaveFlags() const
 	return m_FileSaveFlags;
 }
 
-const SVString& SVFileNameClass::GetFileExtensionFilterList() const
+const std::string& SVFileNameClass::GetFileExtensionFilterList() const
 {
 	return m_FileExtensionFilterList;
 }
@@ -311,7 +312,7 @@ bool SVFileNameClass::SetFileType(DWORD dwFileType)
 
 void SVFileNameClass::SetFullFileName(LPCTSTR szFullName)
 {
-	SVString sFullName;
+	std::string sFullName;
 	if (szFullName)
 	{
 		sFullName = szFullName;
@@ -325,7 +326,7 @@ void SVFileNameClass::SetFullFileName(LPCTSTR szFullName)
 	}
 	else
 	{
-		SVString sPathName;
+		std::string sPathName;
 
 		char drive[_MAX_DRIVE];
 		char dir[_MAX_DIR];
@@ -349,8 +350,8 @@ void SVFileNameClass::SetPathName(LPCTSTR szPathName)
 	{
 		m_PathName = szPathName;
 
-		SvUl_SF::searchAndReplace(m_PathName, "/", "\\");
-		SvUl_SF::TrimRight(m_PathName, "\\" );
+		SvUl::searchAndReplace(m_PathName, "/", "\\");
+		SvUl::TrimRight(m_PathName, "\\" );
 	}
 	else
 	{
@@ -360,7 +361,7 @@ void SVFileNameClass::SetPathName(LPCTSTR szPathName)
 
 void SVFileNameClass::SetFileName(LPCTSTR szFileName)
 {
-	SVString sFullFileName = GetPathName();
+	std::string sFullFileName = GetPathName();
 
 	if (szFileName)
 	{
@@ -383,7 +384,7 @@ void SVFileNameClass::SetFileNameOnly(LPCTSTR szFileName)
 	if (szFileName)
 	{
 		m_FileNameOnly = szFileName;
-		SvUl_SF::TrimRight(m_FileNameOnly);
+		SvUl::TrimRight(m_FileNameOnly);
 	}
 	else
 	{
@@ -429,7 +430,7 @@ void SVFileNameClass::SetFileSaveDialogTitle(LPCTSTR szTitle)
 
 void SVFileNameClass::SetDefaultFullFileName(LPCTSTR FullName)
 {
-	SVString sFullName;
+	std::string sFullName;
 
 	if( nullptr != FullName)
 	{
@@ -438,13 +439,13 @@ void SVFileNameClass::SetDefaultFullFileName(LPCTSTR FullName)
 
 	if( sFullName.empty() )
 	{
-		SetDefaultPathName( SVString() );
-		SetDefaultFileName( SVString() );
-		SetDefaultFileExtension( SVString() );
+		SetDefaultPathName( std::string() );
+		SetDefaultFileName( std::string() );
+		SetDefaultFileExtension( std::string() );
 	}
 	else
 	{
-		SVString sPathName;
+		std::string sPathName;
 
 		char drive[_MAX_DRIVE];
 		char dir[_MAX_DIR];
@@ -456,20 +457,20 @@ void SVFileNameClass::SetDefaultFullFileName(LPCTSTR FullName)
 		sPathName = drive;
 		sPathName += dir;
 
-		SetDefaultFileName( SVString(fname) );
-		SetDefaultFileExtension( SVString(ext) );
+		SetDefaultFileName( std::string(fname) );
+		SetDefaultFileExtension( std::string(ext) );
 		SetDefaultPathName( sPathName );
 	}
 }
 
-void SVFileNameClass::SetDefaultPathName(const SVString& rPath)
+void SVFileNameClass::SetDefaultPathName(const std::string& rPath)
 {
 	if( !rPath.empty() )
 	{
 		m_DefaultPathName = rPath;
 
-		SvUl_SF::searchAndReplace(m_DefaultPathName, "/", "\\");
-		SvUl_SF::TrimRight(m_DefaultPathName, "\\" );
+		SvUl::searchAndReplace(m_DefaultPathName, "/", "\\");
+		SvUl::TrimRight(m_DefaultPathName, "\\" );
 	}
 	else
 	{
@@ -477,12 +478,12 @@ void SVFileNameClass::SetDefaultPathName(const SVString& rPath)
 	}
 }
 
-void SVFileNameClass::SetDefaultFileName(const SVString& rName)
+void SVFileNameClass::SetDefaultFileName(const std::string& rName)
 {
 	m_DefaultFileName = rName;
 }
 
-void SVFileNameClass::SetDefaultFileExtension(const SVString& rExtension)
+void SVFileNameClass::SetDefaultFileExtension(const std::string& rExtension)
 {
 	m_DefaultFileExtension = rExtension;
 }
@@ -497,7 +498,7 @@ void SVFileNameClass::SetFileSaveFlags(DWORD dwFlags)
 	m_FileSaveFlags = dwFlags;
 }
 
-void SVFileNameClass::SetFileExtensionFilterList(const SVString& rFilter)
+void SVFileNameClass::SetFileExtensionFilterList(const std::string& rFilter)
 {
 	m_FileExtensionFilterList = rFilter;
 }
@@ -505,9 +506,9 @@ void SVFileNameClass::SetFileExtensionFilterList(const SVString& rFilter)
 bool SVFileNameClass::SelectPath()
 {
 	bool bOk = false;
-	SVString strPath;
+	std::string strPath;
 
-	SVString initialDir = GetPathName();
+	std::string initialDir = GetPathName();
 	if (initialDir.empty())
 	{
 		initialDir = GetDefaultPathName();
@@ -545,7 +546,7 @@ bool SVFileNameClass::SelectFile()
 		SetDefaultFileExtension( GetExtension() );
 	}
 
-	SVString sFileName = GetDefaultFileName();
+	std::string sFileName = GetDefaultFileName();
     if (!sFileName.empty())
 	{
 	    sFileName += GetDefaultFileExtension();
@@ -601,7 +602,7 @@ bool SVFileNameClass::SaveFile()
 		SetDefaultFileExtension( GetExtension() );
 	}
 
-	SVString csFileName = GetDefaultFileName();
+	std::string csFileName = GetDefaultFileName();
 	csFileName += GetDefaultFileExtension();
 
 	bool bFullAccess = SvOi::isUnrestrictedFileAccess();
@@ -632,7 +633,7 @@ bool SVFileNameClass::SaveFile()
 
 		if ( ! bDone )
 		{
-			SVString PathName = checkFileName( dlg.GetPathName(), dlg.GetFileName() );
+			std::string PathName = checkFileName( dlg.GetPathName(), dlg.GetFileName() );
 
 			SetFullFileName( PathName.c_str() );
 			SetDefaultFullFileName( PathName.c_str() );
@@ -641,14 +642,14 @@ bool SVFileNameClass::SaveFile()
 
 			if ( ! bDone )
 			{
-				SVString csNewFullFileName = GetPathName();
+				std::string csNewFullFileName = GetPathName();
 
-				if ( 0 != SvUl_SF::CompareNoCase(GetExtension(), SVString( _T( ".svx" ) ) ) )
+				if ( 0 != SvUl::CompareNoCase(GetExtension(), std::string( _T( ".svx" ) ) ) )
 				{
 					SetExtension( _T( ".svx" ) );
 				}
 
-				bDone = (0 == SvUl_SF::CompareNoCase(csNewFullFileName, SvStl::GlobalPath::Inst().GetRunPath() ) ) ||
+				bDone = (0 == SvUl::CompareNoCase(csNewFullFileName, SvStl::GlobalPath::Inst().GetRunPath() ) ) ||
 				        ( 0 == _access( GetFullFileName().c_str(), 0 ) );
 
 				if ( ! bDone )
@@ -664,7 +665,7 @@ bool SVFileNameClass::SaveFile()
 
 					if ( ! bDone )
 					{
-						SVString csMessage = GetFullFileName();
+						std::string csMessage = GetFullFileName();
 						csMessage += _T( " already exists.\nDo you want to replace it?" );
 
 						bDone = IDYES == dlg.MessageBox( csMessage.c_str(), GetFileSaveDialogTitle().c_str(), MB_ICONWARNING | MB_YESNO );
@@ -695,16 +696,16 @@ void SVFileNameClass::Init()
 	m_FileExtensionFilterList = "All Files (*.*)|*.*||";
 }
 
-SVString SVFileNameClass::checkFileName( LPCTSTR PathName, LPCTSTR FileName ) const
+std::string SVFileNameClass::checkFileName( LPCTSTR PathName, LPCTSTR FileName ) const
 {
-	SVString Result( PathName );
+	std::string Result( PathName );
 
 	if( !m_ExcludeChar.empty() )
 	{
 		bool NameChanged( false );
-		SVString NewFileName( FileName );
+		std::string NewFileName( FileName );
 
-		SvUl_SF::RemoveCharacters(NewFileName, m_ExcludeChar.c_str());
+		SvUl::RemoveCharacters(NewFileName, m_ExcludeChar.c_str());
 		NameChanged = NewFileName == FileName;
 		
 		if( NewFileName.empty() || NewFileName == m_DefaultFileExtension )
@@ -715,7 +716,7 @@ SVString SVFileNameClass::checkFileName( LPCTSTR PathName, LPCTSTR FileName ) co
 
 		if( NameChanged )
 		{
-			SvUl_SF::searchAndReplace( Result, FileName, NewFileName.c_str() );
+			SvUl::searchAndReplace( Result, FileName, NewFileName.c_str() );
 		}
 	}
 

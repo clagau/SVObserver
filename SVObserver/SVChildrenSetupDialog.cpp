@@ -22,6 +22,8 @@
 #include "SVOGui/NoSelector.h"
 #include "SVOGui/ToolSetItemSelector.h"
 #include "SVStatusLibrary/MessageManager.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -88,7 +90,7 @@ void SVChildrenSetupDialogClass::redrawLists()
 		{
 			if( m_pParentObject->GetSize() <= 0 )
 			{
-				SVString Empty = SvUl_SF::LoadSVString( IDS_EMPTY_STRING );
+				std::string Empty = SvUl::LoadStdString( IDS_EMPTY_STRING );
 				m_ChildrenListCtrl.SetItemData( m_ChildrenListCtrl.InsertItem( 0, Empty.c_str() ), 0 );
 			}
 			else
@@ -223,8 +225,8 @@ void SVChildrenSetupDialogClass::OnAddButton()
 					// And finally try to create the child object...
 					if( !m_pParentObject->CreateChildObject(pObject, SvDef::SVMFSetDefaultInputs | SvDef::SVMFResetInspection ) )
 					{
-						SVStringVector msgList;
-						msgList.push_back(SVString(pObject->GetName()));
+						SvDef::StringVector msgList;
+						msgList.push_back(std::string(pObject->GetName()));
 						SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CreationFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10043 ); 
 
@@ -320,14 +322,14 @@ void SVChildrenSetupDialogClass::OnPublishButton()
 	if( nullptr == m_pParentObject || nullptr == m_pParentOwner ) { return; }
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
-	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, SVString(m_pParentOwner->GetCompleteName()), SVString( _T("") ) );
+	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, std::string(m_pParentOwner->GetCompleteName()), std::string( _T("") ) );
 
 	SvOsl::SelectorOptions BuildOptions( m_pDocument->GetInspectionID(), SvDef::SV_PUBLISHABLE, m_pParentObject->GetUniqueObjectID() );
 	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 
-	SVString PublishableResults = SvUl_SF::LoadSVString( IDS_PUBLISHABLE_RESULTS );
-	SVString Title = SvUl_SF::Format( _T("%s - %s"), PublishableResults.c_str(), m_pParentOwner->GetName() );
-	SVString Filter = SvUl_SF::LoadSVString( IDS_FILTER );
+	std::string PublishableResults = SvUl::LoadStdString( IDS_PUBLISHABLE_RESULTS );
+	std::string Title = SvUl::Format( _T("%s - %s"), PublishableResults.c_str(), m_pParentOwner->GetName() );
+	std::string Filter = SvUl::LoadStdString( IDS_FILTER );
 	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), PublishableResults.c_str(), Filter.c_str(), this );
 
 	if( IDOK == Result )
@@ -356,8 +358,8 @@ void SVChildrenSetupDialogClass::OnItemChangedChildrenList(NMHDR* pNMHDR, LRESUL
 		//
 		// Check for 'empty' string as item string.
 		//
-		SVString ItemText = m_ChildrenListCtrl.GetItemText(0,0);
-		SVString Empty = SvUl_SF::LoadSVString( IDS_EMPTY_STRING );
+		std::string ItemText = m_ChildrenListCtrl.GetItemText(0,0);
+		std::string Empty = SvUl::LoadStdString( IDS_EMPTY_STRING );
 		if( ItemText == Empty )
 		{
 			bValidSelection = false;

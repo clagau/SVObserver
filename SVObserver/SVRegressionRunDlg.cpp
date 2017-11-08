@@ -20,7 +20,7 @@
 #include "SVRegressionFileSelectDlg.h"
 #include "SVRegressionFileSelectSheet.h"
 #include "SVRegressionExitDlg.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #include "SVOGui/SVFormulaEditorSheet.h"
 #pragma endregion Includes
 
@@ -420,7 +420,7 @@ LRESULT  CSVRegressionRunDlg::SetNextFiles(WPARAM wParam, LPARAM lParam)
 	int iCount = static_cast<int>(RegressionFileList->GetCount());
 
 	size_t MaxStringSize = 0;
-	SVString Text;
+	std::string Text;
 
 	bool bIsListUsed = false;
 	if ( m_lstCameraImages.GetCount() > 0 )
@@ -435,7 +435,7 @@ LRESULT  CSVRegressionRunDlg::SetNextFiles(WPARAM wParam, LPARAM lParam)
 		{
 			int iVal;
 			RegressionRunFileStruct *pRegressionFile = RegressionFileList->GetAt(pos);
-			SVString Name = pRegressionFile->CameraName + " : "+ pRegressionFile->FileName;
+			std::string Name = pRegressionFile->CameraName + " : "+ pRegressionFile->FileName;
 
 			if ( MaxStringSize == 0 )
 			{

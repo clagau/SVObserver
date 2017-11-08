@@ -60,7 +60,7 @@ namespace SvStl
 
 	void CommandLineArgs::ParseCommandline()
 	{
-		SVString StrCommandline  = GetCommandLine(); 
+		std::string StrCommandline  = GetCommandLine(); 
 		typedef boost::escaped_list_separator<char> Tels; 
 		Tels els("" ," ","\"" ); //escape, separator, quote
 
@@ -69,8 +69,8 @@ namespace SvStl
 		
 		for(boost::tokenizer<Tels>::iterator beg=tok.begin(); beg!=tok.end();beg++)
 		{
-			SVString::size_type size = beg->size();
-			SVString temp = *beg;
+			std::string::size_type size = beg->size();
+			std::string temp = *beg;
 			if(size == 0)
 			{
 				continue;

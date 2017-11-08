@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   18 Apr 2013 18:30:30  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVCommandDataHolder.h"
 #include "SVCommandDataBlock.h"
@@ -16,6 +17,8 @@
 #include "SVCommandDataImage.h"
 #include "SVCommandDataValue.h"
 #include "SVCommandLibraryEnums.h"
+#include "SVUtilityLibrary/StringHelper.h"
+#pragma endregion Includes
 
 SVCommandDataHolder::SVCommandDataHolder()
 : m_Data()
@@ -53,7 +56,7 @@ void SVCommandDataHolder::clear()
 
 	while( l_Iter != m_Data.end() )
 	{
-		SVString l_Data = SvUl_SF::Format( _T( "SVCommandDataHolder::clear() - Erase %s\n" ), l_Iter->first.c_str() );
+		std::string l_Data = SvUl::Format( _T( "SVCommandDataHolder::clear() - Erase %s\n" ), l_Iter->first.c_str() );
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_OTHER)
 		::OutputDebugString( l_Data.c_str() );
@@ -90,7 +93,7 @@ unsigned long SVCommandDataHolder::GetDataType( const _bstr_t& p_rName ) const
 {
 	unsigned long l_Type = SV_COMMAND_DATA_TYPE_UNKNOWN;
 
-	SVNameDataMap::const_iterator l_Iter = m_Data.find( SvUl_SF::createSVString(p_rName) );
+	SVNameDataMap::const_iterator l_Iter = m_Data.find( SvUl::createStdString(p_rName) );
 
 	if( l_Iter != m_Data.end() )
 	{
@@ -109,7 +112,7 @@ HRESULT SVCommandDataHolder::GetData( const _bstr_t& p_rName, SVCommandDataFacad
 
 	p_rData.clear();
 
-	SVNameDataMap::const_iterator l_Iter = m_Data.find( SvUl_SF::createSVString(p_rName) );
+	SVNameDataMap::const_iterator l_Iter = m_Data.find( SvUl::createStdString(p_rName) );
 
 	if( l_Iter != m_Data.end() )
 	{
@@ -276,7 +279,7 @@ HRESULT SVCommandDataHolder::GetImage( const _bstr_t& p_rName, SVByteVector& p_r
 HRESULT SVCommandDataHolder::SetData( const _bstr_t& p_rName, SVCommandDataFacadePtr p_Data )
 {
 	HRESULT l_Status = S_OK;
-	SVString name = SvUl_SF::createSVString(p_rName);
+	std::string name = SvUl::createStdString(p_rName);
 
 	SVNameDataMap::iterator l_Iter = m_Data.find( name );
 

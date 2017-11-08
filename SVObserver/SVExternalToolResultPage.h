@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVRPropertyTree/SVRPropTree.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 class SVExternalTool;
@@ -46,7 +46,7 @@ protected:
 	SVExternalToolTask*				m_pTask;
 	SVGUID m_InspectionID;
 	SVGUID m_TaskObjectID;
-	SVString						m_sTitle;
+	std::string						m_sTitle;
 	
 	enum
 	{

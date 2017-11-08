@@ -38,6 +38,8 @@
 #include "SVPPQConstants.h"
 #include "TriggerInformation/SVHardwareManifest.h"
 #include "SVStatusLibrary/MessageManager.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -56,12 +58,12 @@ const TCHAR* const cGigeCameraFileFilter = _T("Camera Files (*.ogc)|*.ogc||");
 class SVCameraDeviceImageFormatUpdater : public ISVCameraDeviceImageFormatUpdater
 {
 private:
-	SVString m_strName;
+	std::string m_strName;
 	SVDeviceParamWrapper m_wFormats;
 	SVCameraFormatsDeviceParam* m_pFormatsParam; 
 	
 public:
-	SVCameraDeviceImageFormatUpdater(SVDeviceParamWrapper& rw, const SVString& strName, long width, long height) 
+	SVCameraDeviceImageFormatUpdater(SVDeviceParamWrapper& rw, const std::string& strName, long width, long height) 
 	: m_wFormats(rw) 
 	, m_pFormatsParam(nullptr)
 	, m_strName(strName)
@@ -271,7 +273,7 @@ void CSVOPropertyPageDlg::SetupFileCamera(SVRPropertyItem* pRoot)
 		pFile->SetCtrlID(PROP_FILECAMERA_DIRECTORY);
 		pFile->SetLabelText(_T("Image Directory"));
 		pFile->SetInfoText(_T("Select the directory to load the image files from, for the currently selected Camera."));
-		SVString PathName = m_CameraObj.GetImageDirectoryName();
+		std::string PathName = m_CameraObj.GetImageDirectoryName();
 		if( PathName.empty() )
 		{
 			PathName = FileName.GetDefaultPathName();
@@ -412,7 +414,7 @@ void CSVOPropertyPageDlg::SetupAdvancedCamera()
 					pCombo->CreateComboBox();
 
 					int num = m_CameraObj.GetDigNumber();
-					SVString Text = SvUl_SF::Format( _T("%d"), num );
+					std::string Text = SvUl::Format( _T("%d"), num );
 					int iPos = pCombo->AddString( Text.c_str() );
 					pCombo->SetItemData(iPos, num);
 					pCombo->SetItemValue(num);
@@ -440,7 +442,7 @@ void CSVOPropertyPageDlg::SetupCameraDeviceParam(SVRPropertyItem* pRoot, const S
 					if (pCombo)
 					{
 						pCombo->SetCtrlID( PROP_CAMERA_FILE_BASE + pCamFileParam->Type() );
-						SVString Label = pCamFileParam->VisualName();
+						std::string Label = pCamFileParam->VisualName();
 						if( Label.empty() )
 						{
 							Label = pCamFileParam->Name();
@@ -470,14 +472,14 @@ void CSVOPropertyPageDlg::SetupCameraDeviceParam(SVRPropertyItem* pRoot, const S
 					{
 						pEdit->SetCtrlID( PROP_CAMERA_FILE_BASE + pCamFileParam->Type() );
 						
-						SVString Label = pCamFileParam->VisualName();
+						std::string Label = pCamFileParam->VisualName();
 						if( Label.empty() )
 						{
 							Label = pCamFileParam->Name();
 						}
-						Label = SvUl_SF::Format( _T("%s (%s)"), Label.c_str(), pCamDeviceParam->info.sUnits.c_str() );
+						Label = SvUl::Format( _T("%s (%s)"), Label.c_str(), pCamDeviceParam->info.sUnits.c_str() );
 						pEdit->SetLabelText( Label.c_str() );
-						SVString Description = SvUl_SF::Format( _T("%s   Min = %d, Max = %d; default = %d"), pCamFileParam->Description(), pCamFileParam->GetScaledMin(), pCamFileParam->GetScaledMax(), static_cast<long> (ceil( pCamFileParam->lValue * pCamFileParam->info.multiplier)) );
+						std::string Description = SvUl::Format( _T("%s   Min = %d, Max = %d; default = %d"), pCamFileParam->Description(), pCamFileParam->GetScaledMin(), pCamFileParam->GetScaledMax(), static_cast<long> (ceil( pCamFileParam->lValue * pCamFileParam->info.multiplier)) );
 						pEdit->SetInfoText( Description.c_str() );
 
 						pEdit->SetItemValue( pCamDeviceParam->GetScaledValue() );
@@ -494,7 +496,7 @@ void CSVOPropertyPageDlg::SetupCameraDeviceParam(SVRPropertyItem* pRoot, const S
 				if (pCombo)
 				{
 					pCombo->SetCtrlID( PROP_CAMERA_FILE_BASE + pCamFileParam->Type() );
-					SVString Label = pCamFileParam->VisualName();
+					std::string Label = pCamFileParam->VisualName();
 					if( Label.empty() )
 					{
 						Label = pCamFileParam->Name();
@@ -531,7 +533,7 @@ void CSVOPropertyPageDlg::SetupCameraDeviceParam(SVRPropertyItem* pRoot, const S
 							if (pCombo)
 							{
 								pCombo->SetCtrlID( PROP_CAMERA_FILE_BASE + pCamFileParam->Type() );
-								SVString Label = pCamFileParam->VisualName();
+								std::string Label = pCamFileParam->VisualName();
 								if( Label.empty() )
 								{
 									Label = pCamFileParam->Name();
@@ -575,7 +577,7 @@ void CSVOPropertyPageDlg::SetupCameraDeviceParam(SVRPropertyItem* pRoot, const S
 							if (pCombo)
 							{
 								pCombo->SetCtrlID( PROP_CAMERA_FILE_BASE + pCamFileParam->Type() );
-								SVString Label = pCamFileParam->VisualName();
+								std::string Label = pCamFileParam->VisualName();
 								if ( Label.empty() )
 								{
 									Label = pCamFileParam->Name();
@@ -678,7 +680,7 @@ bool CSVOPropertyPageDlg::ScanForImageSize(SIZE& size)
 {
 	bool Result( false );
 	SVImageFile FileImage;
-	SVString Name;
+	std::string Name;
 
 	if ( 0 == m_CameraObj.GetFileLoadingMode() ) // use File
 	{
@@ -740,7 +742,7 @@ void CSVOPropertyPageDlg::SetupInspection()
 				lSize = m_PPQObj.GetAttachedCameraCount();
 				for( l = 0; l < lSize; l++ )
 				{
-					SVString CameraName = m_PPQObj.GetAttachedCamera( l );
+					std::string CameraName = m_PPQObj.GetAttachedCamera( l );
 					iInsIndex = pCombo->AddString( CameraName.c_str() );
 					pCombo->SetItemData( iInsIndex, l );
 				}// end for
@@ -839,7 +841,7 @@ void CSVOPropertyPageDlg::SetupAdvancedTrigger()
 		{
 			pEdit->SetCtrlID(PROP_ADV_TRIGGER_PERIOD);
 			pEdit->SetLabelText(_T("Timer Period"));
-			SVString Text = SvUl_SF::Format( _T("Enter the period for the Software Trigger, in milliseconds (minimum %d milliseconds)."), SvTi::MinTimerPeriod);
+			std::string Text = SvUl::Format( _T("Enter the period for the Software Trigger, in milliseconds (minimum %d milliseconds)."), SvTi::MinTimerPeriod);
 			pEdit->SetInfoText( Text.c_str() );
 			
 			pEdit->SetItemValue(m_TriggerObj.GetTimerPeriod());
@@ -913,7 +915,7 @@ void CSVOPropertyPageDlg::SetupPPQ()
 		//PPQLength
 		SVRPropertyItemEdit* pEdit = (SVRPropertyItemEdit*)m_Tree.InsertItem(new SVRPropertyItemEdit(), pRoot);
 		int iMode = m_PPQObj.GetPPQMode();
-		SVString InfoTxt;
+		std::string InfoTxt;
 		switch (iMode)
 		{
 		case 0: //next trigger
@@ -985,7 +987,7 @@ void CSVOPropertyPageDlg::SetupPPQ()
 		pCombo = (SVRPropertyItemCombo*)m_Tree.InsertItem(new SVRPropertyItemCombo(), pRoot);
 		if ( pCombo )
 		{
-			SVString InfoString = SvUl_SF::Format( _T("Enabling this option will maintain source images and published result images "
+			std::string InfoString = SvUl::Format( _T("Enabling this option will maintain source images and published result images "
 				"throughout the length of the PPQ. Because of this, "
 				"the PPQ Length can not be > %d"),TheSVObserverApp.GetMaxPPQLength()); //GetSourceImageDepth() - 2 );
 			pCombo->SetCtrlID(PROP_PPQ_MAINTAIN_SRC_IMG);
@@ -1011,7 +1013,7 @@ void CSVOPropertyPageDlg::SetupPPQ()
 		pCombo = (SVRPropertyItemCombo*)m_Tree.InsertItem(new SVRPropertyItemCombo(), pRoot);
 		if ( pCombo )
 		{
-			SVString InfoString = _T("Condition to evaluate to determine if Outputs will be written. "
+			std::string InfoString = _T("Condition to evaluate to determine if Outputs will be written. "
 				             "If set to Always, no evaluation is performed and the Outputs are always written.");
 			pCombo->SetCtrlID(PROP_PPQ_CONDITIONAL_OUTPUT);
 			pCombo->SetLabelText(_T("Conditional Output"));
@@ -1021,14 +1023,14 @@ void CSVOPropertyPageDlg::SetupPPQ()
 			pCombo->SetItemData(nIndex, nIndex);
 			int selection = nIndex;
 			
-			const SVString& condition = m_PPQObj.GetConditionalOutputName();
+			const std::string& condition = m_PPQObj.GetConditionalOutputName();
 
 			// iterate thru the inputs....
 			// if the current conditional output value is not in the list, set it to always
 			const SVNameGuidPairList& list = m_PPQObj.GetAvailableInputsForConditionalOutput();
 			for (SVNameGuidPairList::const_iterator it = list.begin();it != list.end();++it)
 			{
-				SVString name = it->first;
+				std::string name = it->first;
 				nIndex = pCombo->AddString(name.c_str());
 				pCombo->SetItemData(nIndex, nIndex);
 				if (name == condition)
@@ -1338,15 +1340,15 @@ void CSVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 			{
 				case PROP_AD_FILE_NAME:
 				{
-					SVString FileName;
+					std::string FileName;
 					m_Tree.FindItem(PROP_AD_FILE_NAME)->GetItemValue( FileName );
-					SvUl_SF::TrimLeft( FileName );
-					SvUl_SF::TrimRight( FileName );
+					SvUl::TrimLeft( FileName );
+					SvUl::TrimRight( FileName );
 					//! Check if file exists
 					if (!FileName.empty() && 0 != _access(FileName.c_str(), 0))
 					{
 						SvStl::MessageMgrStd Exception(SvStl::LogAndDisplay);
-						SVStringVector msgList;
+						SvDef::StringVector msgList;
 						msgList.push_back(FileName);
 						Exception.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Config_CameraFileNameInvalid, msgList, SvStl::SourceFileParams(StdMessageParams));
 						m_Tree.FindItem(PROP_AD_FILE_NAME)->SetItemValue(m_CameraObj.GetCameraFile().c_str());
@@ -1400,7 +1402,7 @@ void CSVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 
 				case PROP_FILECAMERA_FILENAME:
 				{
-					SVString FileName;
+					std::string FileName;
 					m_Tree.FindItem(ctrlID)->GetItemValue( FileName );
 					m_CameraObj.SetImageFilename( FileName );
 					UpdateFileImageSize();
@@ -1410,7 +1412,7 @@ void CSVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 
 				case PROP_FILECAMERA_DIRECTORY:
 				{
-					SVString Path;
+					std::string Path;
 					m_Tree.FindItem(ctrlID)->GetItemValue( Path);
 					m_CameraObj.SetImageDirectoryName( Path );
 					UpdateFileImageSize();
@@ -1710,7 +1712,7 @@ void CSVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 					{
 						CString Value;
 						pCombo->GetLBText(lIndex, Value);
-						m_PPQObj.SetConditionalOutputName(SVString(Value));
+						m_PPQObj.SetConditionalOutputName(std::string(Value));
 					}
 					break;
 				}
@@ -1891,7 +1893,7 @@ HRESULT CSVOPropertyPageDlg::AdjustCameraImageFormat( LPCTSTR sSelectedFormat, S
 	bool bChangedAcqFormat = false;
 	SVImageInfoClass l_ImageInfo;
 
-	SVString DeviceName = m_pAssistant->BuildDigName( m_CameraObj );
+	std::string DeviceName = m_pAssistant->BuildDigName( m_CameraObj );
 	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
@@ -2130,7 +2132,7 @@ void CSVOPropertyPageDlg::SetProductType(SVIMProductEnum eType)
 
 void CSVOPropertyPageDlg::SetTitle( LPCTSTR Name )
 {
-    SVString Label = _T("Property Settings  -  ");
+    std::string Label = _T("Property Settings  -  ");
 	Label += Name;
     SetWindowText( Label.c_str() );
 }

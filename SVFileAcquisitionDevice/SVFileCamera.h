@@ -26,7 +26,7 @@
 #include "SVSystemLibrary/SVSequencer.h"
 #include "SVSystemLibrary/SVAsyncProcedure.h"
 #include "SVTimerLibrary/SVClock.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 class SVAcquisitionBufferInterface;
@@ -48,7 +48,7 @@ public:
 private:
 	unsigned long m_index;
 	SVFileCameraStruct m_fileData;
-	SVString m_name;
+	std::string m_name;
 	SVFileList m_fileList;
 	SVSequencer<FileListIterator> m_loadSequence;
 	SVImageFile m_bitmap;
@@ -60,7 +60,7 @@ private:
 	static void CALLBACK OnAPCEvent( ULONG_PTR data );
 	void OnThreadEvent( bool& p_WaitForEvents );
 
-	SVString GetNextFilename();
+	std::string GetNextFilename();
 	bool ValidImageFormatForCopy() const;
 
 	HRESULT CopySameBitDepthImage(const unsigned char* pSrcBuf, unsigned char* pDstBuf, int bitDepth, const SIZE& imageSize, bool bInvert);
@@ -72,8 +72,8 @@ public:
 
 	SVFileCamera();
 
-	const SVString& GetName() const;
-	void SetName(const SVString& name);
+	const std::string& GetName() const;
+	void SetName(const std::string& name);
 
 	const SIZE& GetImageSize() const;
 	void SetImageSize(const SIZE& imageSize);
@@ -83,9 +83,9 @@ public:
 	
 	// setup
 	LPCTSTR GetDirectory() const;
-	void SetDirectory(const SVString& dir);
+	void SetDirectory(const std::string& dir);
 	LPCTSTR GetFileName() const;
-	void SetFileName(const SVString& fileName);
+	void SetFileName(const std::string& fileName);
 
 	void SetLoadingMode(SVFileAcquisitonLoadingModeEnum mode);
 	SVFileAcquisitonLoadingModeEnum GetLoadingMode() const;

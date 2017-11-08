@@ -15,7 +15,7 @@
 #include "ObjectInterfaces/IObjectClass.h"
 #include "SVSystemLibrary/SVCriticalSection.h"
 #include "SVUtilityLibrary/SVGUID.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "SVObjectReference.h"
 #pragma endregion
@@ -38,7 +38,7 @@ struct SVObjectInfoStruct
 	void ClearObjectInfo();
 
 	HRESULT SetObject( const SVGUID& rObjectID );
-	HRESULT SetObject( const SVString& rName );
+	HRESULT SetObject( const std::string& rName );
 	HRESULT SetObject( const SVObjectTypeInfoStruct& rTypeInfo );
 	HRESULT SetObject( SVObjectClass* pObject );
 	HRESULT SetObject( const SVObjectReference& rObjectRef );

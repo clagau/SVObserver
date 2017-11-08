@@ -53,7 +53,7 @@
 #include "RangeXDialogClass.h"
 #include "SVRange.h"
 #include "SVToolSet.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Inlcudes
 
 SVSetupDialogManager& SVSetupDialogManager::Instance()
@@ -254,11 +254,11 @@ HRESULT SVSetupDialogManager::SVBarCodeAnalyzerClassSetupDialog( const SVGUID& p
 		SVBarCodeProperties dlgProp;
 		int iResult;
 		BOOL bUseSingle;
-		SVString RegExp;
+		std::string RegExp;
 		BOOL bSaveInFile;
-		SVString SingleFile;
+		std::string SingleFile;
 		BOOL bUseMultiple;
-		SVString MultiFile;
+		std::string MultiFile;
 		
 		SVBarCodeResultClass *pResult = dynamic_cast< SVBarCodeResultClass* >( pAnalyzer->GetResultObject() );
 		
@@ -439,7 +439,7 @@ HRESULT SVSetupDialogManager::SVColorToolClassSetupDialog( const SVGUID& p_rObje
 	
 	if( nullptr != l_pTool )
 	{
-		SVString Title = SvUl_SF::LoadSVString( IDS_ADJUSTMENT_STRING );
+		std::string Title = SvUl::LoadStdString( IDS_ADJUSTMENT_STRING );
 
 		// Get Complete Name up to the tool level...
 		Title = l_pTool->GetCompleteObjectNameToObjectType( nullptr, SVToolObjectType ) + _T( " " ) + Title;
@@ -547,7 +547,7 @@ HRESULT SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog( const SVGUID& p_
 
 	if( nullptr != l_pAnalyzer && nullptr != (pInspection = dynamic_cast<SVInspectionProcess*>(l_pAnalyzer->GetInspection())) )
 	{
-		SVString Title = SvUl_SF::LoadSVString( IDS_ADJUSTMENT_STRING );
+		std::string Title = SvUl::LoadStdString( IDS_ADJUSTMENT_STRING );
 		// Get Complete Name up to the tool level...
 		Title = l_pAnalyzer->GetCompleteObjectNameToObjectType( nullptr, SVToolObjectType ) + _T( " " ) + Title;
 

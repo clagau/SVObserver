@@ -48,7 +48,7 @@ void SVOPPQObj::SetPPQName(LPCTSTR PPQName)
 	m_PPQName = PPQName;
 }
 
-const SVString& SVOPPQObj::GetPPQName()
+const std::string& SVOPPQObj::GetPPQName()
 {
 	return m_PPQName;
 }
@@ -63,7 +63,7 @@ void SVOPPQObj::DetachTriggerFromPPQ()
 	m_AttachedTrigger.clear();
 }
 
-const SVString& SVOPPQObj::GetAttachedTriggerName() const
+const std::string& SVOPPQObj::GetAttachedTriggerName() const
 {
 	return m_AttachedTrigger;
 }
@@ -73,8 +73,8 @@ bool SVOPPQObj::AttachCameraToPPQ( LPCTSTR CameraName )
 	bool Result( false );
 	//check to see if it is already in list
 	//if not add camera to list
-	SVString AttachedCamera( CameraName );
-	SVStringVector::const_iterator Iter = std::find( m_AttachedCameraList.begin(), m_AttachedCameraList.end(), AttachedCamera );
+	std::string AttachedCamera( CameraName );
+	SvDef::StringVector::const_iterator Iter = std::find( m_AttachedCameraList.begin(), m_AttachedCameraList.end(), AttachedCamera );
 	if( m_AttachedCameraList.end() == Iter )
 	{ 
 		m_AttachedCameraList.push_back( AttachedCamera );
@@ -89,8 +89,8 @@ bool SVOPPQObj::DetachCameraFromPPQ(LPCTSTR CameraName)
 	
 	if (!m_AttachedCameraList.empty())
 	{
-		SVString AttachedCamera( CameraName );
-		SVStringVector::const_iterator Iter = std::find( m_AttachedCameraList.begin(), m_AttachedCameraList.end(), AttachedCamera );
+		std::string AttachedCamera( CameraName );
+		SvDef::StringVector::const_iterator Iter = std::find( m_AttachedCameraList.begin(), m_AttachedCameraList.end(), AttachedCamera );
 		if( m_AttachedCameraList.end() != Iter)
 		{ //camera is in list.  now delete
 			m_AttachedCameraList.erase(Iter);
@@ -106,24 +106,24 @@ int SVOPPQObj::GetAttachedCameraCount() const
 	return static_cast<int> (m_AttachedCameraList.size());
 }
 
-SVString SVOPPQObj::GetAttachedCamera(int iPos) const
+std::string SVOPPQObj::GetAttachedCamera(int iPos) const
 {
-	SVStringVector::const_iterator Iter = m_AttachedCameraList.begin() + iPos;
+	SvDef::StringVector::const_iterator Iter = m_AttachedCameraList.begin() + iPos;
 	
 	if( m_AttachedCameraList.end() != Iter )
 	{
 		return *Iter;
 	}
 
-	return SVString();
+	return std::string();
 }
 
 bool SVOPPQObj::AttachInspectionToPPQ(LPCTSTR InspectName)
 {
 	bool Result( false );
 	
-	SVString AttachedInspection( InspectName );
-	SVStringVector::const_iterator Iter = std::find( m_AttachedInspectList.begin(), m_AttachedInspectList.end(), AttachedInspection );
+	std::string AttachedInspection( InspectName );
+	SvDef::StringVector::const_iterator Iter = std::find( m_AttachedInspectList.begin(), m_AttachedInspectList.end(), AttachedInspection );
 	if( m_AttachedInspectList.end() == Iter )
 	{ 
 		m_AttachedInspectList.push_back( AttachedInspection );
@@ -138,8 +138,8 @@ bool SVOPPQObj::DetachInspectionFromPPQ(LPCTSTR InspectName)
 	
 	if (!m_AttachedInspectList.empty())
 	{
-		SVString AttachedInspection( InspectName );
-		SVStringVector::const_iterator Iter = std::find( m_AttachedInspectList.begin(), m_AttachedInspectList.end(), AttachedInspection );
+		std::string AttachedInspection( InspectName );
+		SvDef::StringVector::const_iterator Iter = std::find( m_AttachedInspectList.begin(), m_AttachedInspectList.end(), AttachedInspection );
 		if( m_AttachedInspectList.end() != Iter)
 		{ //camera is in list.  now delete
 			m_AttachedInspectList.erase( Iter );
@@ -155,16 +155,16 @@ int SVOPPQObj::GetAttachedInspectionCount()
 	return static_cast<int> (m_AttachedInspectList.size());
 }
 
-SVString SVOPPQObj::GetAttachedInspection(int iPos)
+std::string SVOPPQObj::GetAttachedInspection(int iPos)
 {
-	SVStringVector::const_iterator Iter = m_AttachedInspectList.begin() + iPos;
+	SvDef::StringVector::const_iterator Iter = m_AttachedInspectList.begin() + iPos;
 
 	if( m_AttachedInspectList.end() != Iter )
 	{
 		return *Iter;
 	}
 
-	return SVString();
+	return std::string();
 }
 
 //property methods
@@ -261,12 +261,12 @@ const SVNameGuidPairList& SVOPPQObj::GetAvailableInputsForConditionalOutput() co
 	return m_availableInputs;
 }
 
-void SVOPPQObj::SetConditionalOutputName(const SVString& name)
+void SVOPPQObj::SetConditionalOutputName(const std::string& name)
 {
 	m_conditionalOutputName = name;
 }
 
-const SVString& SVOPPQObj::GetConditionalOutputName() const
+const std::string& SVOPPQObj::GetConditionalOutputName() const
 {
 	return m_conditionalOutputName;
 }

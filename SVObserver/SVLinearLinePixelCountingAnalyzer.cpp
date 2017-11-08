@@ -15,7 +15,7 @@
 #include "SVGlobal.h"
 #include "SVOCore/SVImageClass.h"
 #include "SVLinearEdgeAProcessingClass.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVLinearPixelCountingLineAnalyzerClass, SVLinearPixelCountingLineAnalyzerClassGuid );
@@ -74,7 +74,7 @@ void SVLinearPixelCountingLineAnalyzerClass::init()
 	resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
 	resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultLongObjectType;
 	resultClassInfo.m_ClassId = SVLongResultClassGuid;
-	resultClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_BLACKPIXELCOUNT );
+	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_BLACKPIXELCOUNT );
 	strTitle.LoadString( IDS_RESULT_STRING );
 	resultClassInfo.m_ClassName += _T(" ") + strTitle;
 	m_availableChildren.Add( resultClassInfo );
@@ -88,7 +88,7 @@ void SVLinearPixelCountingLineAnalyzerClass::init()
 	resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
 	resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultLongObjectType;
 	resultClassInfo.m_ClassId = SVLongResultClassGuid;
-	resultClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_WHITEPIXELCOUNT );
+	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_WHITEPIXELCOUNT );
 	strTitle.LoadString( IDS_RESULT_STRING );
 	resultClassInfo.m_ClassName += _T(" ") + strTitle;
 	m_availableChildren.Add( resultClassInfo );

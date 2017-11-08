@@ -17,7 +17,7 @@
 #include "JsonLib/include/json.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectCommandDataJson.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 #pragma region Constants
@@ -268,7 +268,7 @@ HRESULT SVOutputStreamManager::ProcessStreamManagerJsonCommand( const std::strin
 	{
 		Json::Reader Reader;
 		Json::Value JsonValues;
-		SVString Command;
+		std::string Command;
 
 		if( Reader.parse( rJsonCommand, JsonValues, false ) )
 		{

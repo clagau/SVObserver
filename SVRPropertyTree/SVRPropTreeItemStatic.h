@@ -29,7 +29,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary/SVString.h"
+
 #include "SVRPropTreeItem.h"
 #pragma endregion Includes
 
@@ -44,13 +44,13 @@ public:
 	virtual void DrawAttribute(CDC* pDC, const RECT& rc) override;
 
 	// Retrieve the item's attribute value (in this case the SVString)
-	virtual bool GetItemValue(SVString& rValue) override;
+	virtual bool GetItemValue(std::string& rValue) override;
     //virtual bool GetItemValue(VARIANT& vtVal);
 
 	// Set the item's attribute value
 	virtual bool SetItemValue(LPCTSTR pVal) override;
 
 protected:
-	SVString		m_Attribute;
+	std::string		m_Attribute;
 };
 

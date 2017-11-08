@@ -15,7 +15,7 @@
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <typeinfo>
 #include "SVOutputInfoListClass.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVInObjectInfoStruct.h"
 #include "SVObjectClass.h"
@@ -42,8 +42,8 @@ namespace
 
 		void Add( LPCTSTR sLine );
 
-		std::vector< SVString > m_vecLog;
-		SVString m_strFunction;
+		std::vector< std::string > m_vecLog;
+		std::string m_strFunction;
 	};
 
 	void DebugOutput::Add( LPCTSTR sLine )
@@ -52,7 +52,7 @@ namespace
 		::OutputDebugString( _T(".") );
 #endif
 
-		SVString l_Temp = sLine;
+		std::string l_Temp = sLine;
 		l_Temp += _T("\n");
 		m_vecLog.push_back( l_Temp );
 	}
@@ -64,14 +64,14 @@ namespace
 		{
 			::OutputDebugString( _T("\n") );
 			__int64 iTimestamp = static_cast< __int64 >( SvTl::GetTimeStamp() );
-			SVString strBegin;
-			strBegin = SvUl_SF::Format(_T("--> %s  :  %I64u\n"), m_strFunction.c_str(), iTimestamp );
+			std::string strBegin;
+			strBegin = SvUl::Format(_T("--> %s  :  %I64u\n"), m_strFunction.c_str(), iTimestamp );
 			::OutputDebugString( strBegin.c_str() );
 			for ( unsigned long i=0; i < m_vecLog.size(); i++ )
 			{
 				::OutputDebugString( m_vecLog[i].c_str() );
 			}
-			SVString strEnd = SvUl_SF::Format(_T("<-- %s\n"), m_strFunction.c_str() );
+			std::string strEnd = SvUl::Format(_T("<-- %s\n"), m_strFunction.c_str() );
 			::OutputDebugString( strEnd.c_str() );
 		}
 #endif
@@ -193,7 +193,7 @@ SVOutObjectInfoStruct* SVOutputInfoListClass::GetAt( int p_iIndex )
 			}
 			else
 			{
-				SVString Temp = SvUl_SF::Format(_T("BAD OBJECT (VALIDATE_OBJECT pInfoObject->PObject %08X)"), l_psvObjectInfo->m_pObject);
+				std::string Temp = SvUl::Format(_T("BAD OBJECT (VALIDATE_OBJECT pInfoObject->PObject %08X)"), l_psvObjectInfo->m_pObject);
 				debug.Add( Temp.c_str() );
 				l_psvObjectInfo->m_pObject = nullptr;
 			}
@@ -550,7 +550,7 @@ void SVOutputInfoListClass::GetAllowedAttributesList( UINT uAttributeMask, SVOut
 				}
 				else
 				{
-					SVString Temp = SvUl_SF::Format(_T("BAD OBJECT (VALIDATE_OBJECT pInfoObject->PObject %08X)"), pInfoObject->m_pObject);
+					std::string Temp = SvUl::Format(_T("BAD OBJECT (VALIDATE_OBJECT pInfoObject->PObject %08X)"), pInfoObject->m_pObject);
 					debug.Add( Temp.c_str() );
 					pInfoObject->m_pObject = nullptr;
 				}

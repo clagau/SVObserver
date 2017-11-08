@@ -10,17 +10,17 @@
 //******************************************************************************
 #pragma once
 
-#include "SVUtilityLibrary/SVString.h"
+
 
 namespace SvSyl
 {
 	class SVVersionInfo
 	{
 	public:
-		static SVString GetVersion();
+		static std::string GetVersion();
 		static unsigned long GetLongVersion();
-		static SVString GetTitleVersion();
-		static SVString GetShortTitleVersion();
+		static std::string GetTitleVersion();
+		static std::string GetShortTitleVersion();
 
 	private:
 		SVVersionInfo();

@@ -10,6 +10,7 @@
 #include "SVMonitorListReader.h"
 #include "SVMonitorListWriter.h"
 #include "Definitions/SVObjectTypeInfoStruct.h"
+#include "Definitions/StringTypeDef.h"
 
 namespace SvSml
 {
@@ -36,8 +37,8 @@ namespace SvSml
 	{
 		rmlReader.Open();
 		Clear();
-		std::vector<SVString> mlNames = rmlReader.GetListNames();
-		std::vector<SVString>::const_iterator it;
+		SvDef::StringVector mlNames = rmlReader.GetListNames();
+		SvDef::StringVector::const_iterator it;
 		for (it = mlNames.begin(); it != mlNames.end(); it++)
 		{
 			m_MonitorListCpyMap[*it] = MonitorListCpyPointer(new MonitorListCpy(rmlReader[*it]));
@@ -63,7 +64,7 @@ namespace SvSml
 		return res;
 	}
 
-	bool MLCpyContainer::IsActiveMonitorList(const SVString& Monitorlistname) const
+	bool MLCpyContainer::IsActiveMonitorList(const std::string& Monitorlistname) const
 	{
 		MonitorListCpyMap::const_iterator it;
 		it = m_MonitorListCpyMap.find(Monitorlistname);
@@ -73,7 +74,7 @@ namespace SvSml
 			return false;
 	}
 
-	const MonitorListCpy*  MLCpyContainer::GetMonitorListCpyPointer(const SVString& Monitorlistname)  const
+	const MonitorListCpy*  MLCpyContainer::GetMonitorListCpyPointer(const std::string& Monitorlistname)  const
 	{
 		MonitorListCpyMap::const_iterator it = m_MonitorListCpyMap.find(Monitorlistname);
 
@@ -83,7 +84,7 @@ namespace SvSml
 			return nullptr;
 	}
 	
-	const MonitorListCpy*  MLCpyContainer::GetMonitorListCpyPointerForPPQ(const SVString& PPQName)  const
+	const MonitorListCpy*  MLCpyContainer::GetMonitorListCpyPointerForPPQ(const std::string& PPQName)  const
 	{
 		for (auto& element : m_MonitorListCpyMap)
 		{
@@ -93,7 +94,7 @@ namespace SvSml
 		return nullptr;
 	}
 	
-	DWORD MLCpyContainer::GetInspectionStoreId(const SVString& InspectionName)
+	DWORD MLCpyContainer::GetInspectionStoreId(const std::string& InspectionName)
 	{
 		auto& it = m_InspectionInfoMap.find(InspectionName);
 		if (it != m_InspectionInfoMap.end())
@@ -105,12 +106,12 @@ namespace SvSml
 
 	void MLCpyContainer::Insert(MonitorListCpyPointer& MLCpyPtr)
 	{
-		SVString monitorlistName = MLCpyPtr->GetMonitorlistname();
+		std::string monitorlistName = MLCpyPtr->GetMonitorlistname();
 		MLCpyPtr->InsertToMLInspectionInfoMap(m_InspectionInfoMap, m_PPQInfoMap);
 		m_MonitorListCpyMap[monitorlistName] = std::move(MLCpyPtr);
 	}
 
-	DWORD MLCpyContainer::GetInspectionImageSize(const SVString& inspectionName)
+	DWORD MLCpyContainer::GetInspectionImageSize(const std::string& inspectionName)
 	{
 		SvSml::MLInspectionInfoMap::const_iterator it = m_InspectionInfoMap.find(inspectionName);
 		if (it != m_InspectionInfoMap.end() && it->second.get())
@@ -135,7 +136,7 @@ namespace SvSml
 		}
 	}
 
-	MonitorEntryPointer MLCpyContainer::GetMonitorEntryPointer(const SVString& rname)
+	MonitorEntryPointer MLCpyContainer::GetMonitorEntryPointer(const std::string& rname)
 	{
 		MonitorListCpyMap::iterator  it;
 		for (it = m_MonitorListCpyMap.begin(); it != m_MonitorListCpyMap.end(); ++it)
@@ -178,9 +179,9 @@ namespace SvSml
 			for (; MEMIt != MLCPyIt->second->m_EntriesMap.end(); ++MEMIt)
 			{
 				assert(MEMIt->second.get());
-				SVString inspectionName;
+				std::string inspectionName;
 				std::size_t pos = MEMIt->first.find_first_of('.');
-				if (pos != SVString::npos)
+				if (pos != std::string::npos)
 					inspectionName = MEMIt->first.substr(0, pos);
 				else
 					inspectionName = MEMIt->first;

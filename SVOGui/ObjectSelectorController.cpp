@@ -12,6 +12,7 @@
 #include "GuiCommands/GetObjectName.h"
 #include "GuiCommands/GetPPQObjectName.h"
 #include "GuiCommands/GetInstanceIDByTypeInfo.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "ObjectSelectorController.h"
 #pragma endregion Includes
 
@@ -34,9 +35,9 @@ namespace SvOg {
 	#pragma endregion Constructor
 
 #pragma endregion Private Methods
-	SVString ObjectSelectorController::GetInspectionName() const
+	std::string ObjectSelectorController::GetInspectionName() const
 	{
-		SVString inspectionName;
+		std::string inspectionName;
 		typedef SvCmd::GetObjectName Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 
@@ -50,9 +51,9 @@ namespace SvOg {
 		return inspectionName;
 	}
 
-	SVString ObjectSelectorController::GetPPQName() const
+	std::string ObjectSelectorController::GetPPQName() const
 	{
-		SVString PPQName;
+		std::string PPQName;
 		typedef SvCmd::GetPPQObjectName Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 

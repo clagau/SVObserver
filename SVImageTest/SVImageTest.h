@@ -21,7 +21,6 @@
 #include "SVTestAcquisitionSubsystem.h"
 #include "SVLibrary/InitialInformation.h"
 #include "SVLibrary/SVOIniLoader.h"
-#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 class CSVImageTestApp : public CWinApp
@@ -31,9 +30,9 @@ public:
 	virtual ~CSVImageTestApp();
 
 	SvLib::SVOIniLoader m_iniLoader;
-	SVString m_svimIniFile;
-	SVString m_hardwareIniFile;
-	SVString m_oemIniFile;
+	std::string m_svimIniFile;
+	std::string m_hardwareIniFile;
+	std::string m_oemIniFile;
 
 	bool IsGigeSystem() const;
 

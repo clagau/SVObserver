@@ -15,7 +15,6 @@
 #include "SVOResource/resource.h"
 #include "SVMFCControls/SVToolBar.h"
 #include "ObjectInterfaces/IFormulaController.h"
-#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -26,7 +25,7 @@ namespace SvOg
 		SVFormulaEditorPageClass( SvOi::IFormulaControllerPtr controller, bool isDisableCheckboxesVisible = false, UINT captionID = IDS_FORMULA_STRING, UINT disableExtentionID = IDS_TOOL_STRING );   // standard constructor
 		virtual ~SVFormulaEditorPageClass();
 
-		SVString GetOwnerName() const;
+		std::string GetOwnerName() const;
 		void SetDefaultInputs();
 		bool validateAndSetEquation();
 
@@ -55,7 +54,7 @@ namespace SvOg
 		void insertIntoEditor( LPCTSTR tszValue );
 		void advanceInEditor( long Pos );
 		void deleteInEditor( long Pos );
-		SVString getEquationText() const;
+		std::string getEquationText() const;
 		void setEquationText();
 		bool createToolbars();
 

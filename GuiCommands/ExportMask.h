@@ -12,14 +12,14 @@
 //Moved to precompiled header: #include <Guiddef.h>
 #include "ObjectInterfaces\IObjectManager.h"
 #include "ObjectInterfaces\IMask.h"
-#include "SVUtilityLibrary\SVString.h"
+
 #pragma endregion Includes
 
 namespace SvCmd
 {
 	struct ExportMask: public boost::noncopyable
 	{
-		ExportMask(const GUID& rObjectID, const SVString& rFilename) 
+		ExportMask(const GUID& rObjectID, const std::string& rFilename) 
 			: m_InstanceID(rObjectID), m_Filename(rFilename) {}
 
 		// This method is where the real separation would occur by using sockets/named pipes/shared memory
@@ -44,6 +44,6 @@ namespace SvCmd
 
 	private:
 		GUID m_InstanceID;
-		SVString m_Filename;
+		std::string m_Filename;
 	};
 } //namespace SvCmd

@@ -12,7 +12,6 @@
 #include "SVOResource/resource.h"
 #include "GridCtrlLibrary/GridCtrl.h"
 #include "SVUtilityLibrary/NameGuidList.h"
-#include "SVUtilityLibrary/SVString.h"
 #include "ISVPropertyPageDialog.h"
 #pragma endregion Includes
 
@@ -81,7 +80,7 @@ namespace SvOg
 		/// Check if the table name is unique (not used yet)
 		/// \param name [in] Name to check.
 		/// \returns bool True if name not used yet.
-		bool isTableNameUnique(const SVString& name);
+		bool isTableNameUnique(const std::string& name);
 
 		/// Show the context menu for right mouse click
 		/// \param point [in] Mouse position

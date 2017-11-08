@@ -15,7 +15,7 @@
 #include "ObjectInterfaces/IEquation.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #include "SVStatusLibrary/MessageContainer.h"
 #pragma endregion Includes
 
@@ -29,7 +29,7 @@ namespace SvCmd
 	struct ValidateAndSetEquation : public boost::noncopyable
 	{
 		// Guid is the instance id of the object
-		ValidateAndSetEquation(const SVGUID& ownerID, const SVString& equation, bool bSetValue) 
+		ValidateAndSetEquation(const SVGUID& ownerID, const std::string& equation, bool bSetValue) 
 		: m_ownerID(ownerID)
 		, m_equation(equation)
 		, m_bSetValue(bSetValue)
@@ -44,7 +44,7 @@ namespace SvCmd
 			SvOi::IEquation* pEquation = dynamic_cast<SvOi::IEquation *>(SvOi::getObject(m_ownerID));
 			if (pEquation)
 			{
-				SVString oldString;
+				std::string oldString;
 				//save old string
 				oldString = pEquation->GetEquationText();
 				pEquation->SetEquationText(m_equation);
@@ -73,7 +73,7 @@ namespace SvCmd
 
 	private:
 		SVGUID m_ownerID;
-		const SVString& m_equation;
+		const std::string& m_equation;
 		bool m_bSetValue;
 		double m_result;
 		int m_retValue;

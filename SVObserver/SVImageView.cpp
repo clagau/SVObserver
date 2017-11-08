@@ -18,6 +18,7 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/GlobalConst.h"
 #include "SVObjectLibrary/SVObjectWriter.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
@@ -43,7 +44,6 @@
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "Definitions/GlobalConst.h"
-
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -286,7 +286,7 @@ void SVImageViewClass::AttachToImage( LPCTSTR p_imageName )
 	SVGUID l_ImageId;
 	bool Attach( false );
 
-	SVString l_imageName = p_imageName;
+	std::string l_imageName = p_imageName;
 
 	if( l_imageName.empty() )
 	{
@@ -454,7 +454,7 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 
 			//------ Warp tool hands back a SVPolarTransformObjectType. Sub type 1792.
 			//------ Window tool, Luminance hands back a SVImageObjectType. Sub type 0.
-			SVString DlgName; //used for the Adjust Tool Size and Position dialog
+			std::string DlgName; //used for the Adjust Tool Size and Position dialog
 
 			switch( l_svTypeInfo.ObjectType )
 			{
@@ -464,7 +464,7 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 					{
 						case SVImagePolarTransformObjectType: // 1792
 						{
-							DlgName = SvUl_SF::Format( _T("Adjust Tool Size and Position - %s"), l_psvTool->GetName() );
+							DlgName = SvUl::Format( _T("Adjust Tool Size and Position - %s"), l_psvTool->GetName() );
 
 							SVAdjustToolSizePositionDlg dlg(DlgName.c_str(), this, m_psvObject );
 							dlg.DoModal();
@@ -489,7 +489,7 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 						{
 							if( SV_IS_KIND_OF( l_psvTool, SVLoadImageToolClass ) )
 							{
-								DlgName = SvUl_SF::Format( _T("Adjust Tool Size and Position - %s"), l_psvTool->GetName() );
+								DlgName = SvUl::Format( _T("Adjust Tool Size and Position - %s"), l_psvTool->GetName() );
 								SVAdjustToolSizePositionDlg dlg( DlgName.c_str(), this, m_psvObject );
 								dlg.DoModal();
 							}
@@ -518,7 +518,7 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 
 				case SVToolObjectType:
 				{
-					DlgName = SvUl_SF::Format( _T("Adjust Tool Size and Position - %s"), l_psvTool->GetName() );
+					DlgName = SvUl::Format( _T("Adjust Tool Size and Position - %s"), l_psvTool->GetName() );
 					SVAdjustToolSizePositionDlg dlg( DlgName.c_str(), this, m_psvObject );
 					dlg.DoModal();
 					break;
@@ -634,7 +634,7 @@ void SVImageViewClass::SaveViewOrImageToDisk(bool ViewOnly, bool showOverlays)
 
 	m_ViewOrImageFilename.SetFileType(SV_IMAGE_SOURCE_FILE_TYPE);
 	
-	SVString Path = AfxGetApp()->GetProfileString( RegSection, RegKeySaveViewPath, DefaultPath );
+	std::string Path = AfxGetApp()->GetProfileString( RegSection, RegKeySaveViewPath, DefaultPath );
 	m_ViewOrImageFilename.SetPathName( Path.c_str() );
 	
 	bool bResult = m_ViewOrImageFilename.SaveFile(); // Show Save File Dialog
@@ -976,7 +976,7 @@ void SVImageViewClass::OnLButtonDblClk( UINT p_nFlags, CPoint p_point )
 		// Compensate for Scaling of Displayed Image
 		TransformFromViewSpace( l_point );
 
-		SVString Text = SvUl_SF::Format( _T(" X: %d, Y: %d "), l_point.x, l_point.y );
+		std::string Text = SvUl::Format( _T(" X: %d, Y: %d "), l_point.x, l_point.y );
 		TheSVObserverApp.SetStatusText( Text.c_str() );
 
 		if( !( m_ImageId.empty() ) && nullptr != l_psvIPDoc )
@@ -1006,7 +1006,7 @@ void SVImageViewClass::OnRButtonDblClk( UINT p_nFlags, CPoint p_point )
 		// Compensate for Scaling of Displayed Image
 		TransformFromViewSpace( l_point );
 		
-		SVString Text = SvUl_SF::Format( _T(" X: %d, Y: %d "), l_point.x, l_point.y );
+		std::string Text = SvUl::Format( _T(" X: %d, Y: %d "), l_point.x, l_point.y );
 		TheSVObserverApp.SetStatusText( Text.c_str() );
 		
 		if( nullptr != l_psvIPDoc && !( m_ImageId.empty() ) )
@@ -1043,7 +1043,7 @@ void SVImageViewClass::OnLButtonDown( UINT p_nFlags, CPoint p_point )
 	{
 		if( !( m_ImageId.empty() ) )
 		{
-			SVString Text;
+			std::string Text;
 			CPoint l_point = p_point;
 
 			// Compensate for Scaling of Displayed Image
@@ -1065,11 +1065,11 @@ void SVImageViewClass::OnLButtonDown( UINT p_nFlags, CPoint p_point )
 					S_OK == l_svExtents.GetExtentProperty( SVExtentPropertyWidth, l_width ) &&
 					S_OK == l_svExtents.GetExtentProperty( SVExtentPropertyHeight, l_height ) )
 				{
-					Text = SvUl_SF::Format( _T(" X: %d, Y: %d    cX: %d, cY: %d "), l_tempPoint.x, l_tempPoint.y, l_width, l_height );
+					Text = SvUl::Format( _T(" X: %d, Y: %d    cX: %d, cY: %d "), l_tempPoint.x, l_tempPoint.y, l_width, l_height );
 				}
 				else
 				{
-					Text = SvUl_SF::Format( _T(" Col: %d, Row: %d "), p_point.x, p_point.y );
+					Text = SvUl::Format( _T(" Col: %d, Row: %d "), p_point.x, p_point.y );
 				}
 
 				m_lastMouseMovePoint = p_point;
@@ -1078,7 +1078,7 @@ void SVImageViewClass::OnLButtonDown( UINT p_nFlags, CPoint p_point )
 			}
 			else
 			{
-				Text = SvUl_SF::Format( _T(" Col: %d, Row: %d "), p_point.x, p_point.y );
+				Text = SvUl::Format( _T(" Col: %d, Row: %d "), p_point.x, p_point.y );
 			}
 
 			TheSVObserverApp.SetStatusText( Text.c_str() );
@@ -1119,7 +1119,7 @@ void SVImageViewClass::OnMouseMove( UINT nFlags, CPoint point )
 		TransformFromViewSpace( l_point );
 
 		// Status Text: Mouse Pos and Color
-		SVString Text = SvUl_SF::Format( _T(" Col: %d, Row: %d    RGB: %u/%u/%u "), l_point.x, l_point.y, redValue, greenValue, blueValue ); 
+		std::string Text = SvUl::Format( _T(" Col: %d, Row: %d    RGB: %u/%u/%u "), l_point.x, l_point.y, redValue, greenValue, blueValue ); 
 
 		HICON l_hCursor = nullptr;
 
@@ -1165,7 +1165,7 @@ void SVImageViewClass::OnMouseMove( UINT nFlags, CPoint point )
 						l_svExtents.GetExtentProperty( SVExtentPropertyHeight, l_height );
 
 						// Status Text: Mouse Pos and Tool Extent
-						Text = SvUl_SF::Format( _T(" Col: %d, Row: %d    X: %d, Y: %d    cX: %d, cY: %d "), l_point.x, l_point.y, l_left, l_top, l_width, l_height );
+						Text = SvUl::Format( _T(" Col: %d, Row: %d    X: %d, Y: %d    cX: %d, cY: %d "), l_point.x, l_point.y, l_left, l_top, l_width, l_height );
 					}
 				}
 			}
@@ -1208,7 +1208,7 @@ void SVImageViewClass::OnLButtonUp( UINT p_nFlags, CPoint p_point )
 
 	ReleaseCapture();
 
-	SVString Text = SvUl_SF::Format( _T(" Col: %d, Row: %d "), p_point.x, p_point.y );
+	std::string Text = SvUl::Format( _T(" Col: %d, Row: %d "), p_point.x, p_point.y );
 	TheSVObserverApp.SetStatusText( Text.c_str() );
 
 	CWnd::OnLButtonUp( p_nFlags, p_point );
@@ -1586,7 +1586,7 @@ void SVImageViewClass::DrawOverlay( SVDrawContext* PDrawContext, const SVExtentM
 
 		COLORREF color = p_rMultiLine.m_Color;
 		POINT titlePoint = p_rMultiLine.m_StringPoint;
-		SVString Title = p_rMultiLine.m_csString;
+		std::string Title = p_rMultiLine.m_csString;
 
 		SVGUID l_SelectedID;
 

@@ -17,7 +17,7 @@
 
 #include "SVContainerLibrary/SVRingBuffer.h"
 #include "SVSystemLibrary/SVAsyncProcedure.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #include "SVProcessFunctor.h"
 #include "SVOCallbackClass.h"
 #include "SVOResponseClass.h"
@@ -89,7 +89,7 @@ protected:
 	SVCallbackClassPtrQueue m_CallbackList;
 
 	//This attribute holds the device name.
-	SVString m_DeviceName;
+	std::string m_DeviceName;
 
 private:
 	SVODeviceClass();

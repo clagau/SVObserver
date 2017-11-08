@@ -15,7 +15,7 @@
 #include "SVObjectLibrary.h"
 #include "SVObjectClass.h"
 #include "SVObjectManagerClass.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -127,8 +127,8 @@ HRESULT SVOutObjectInfoStruct::GetDependentsList( SVObjectClass* p_psvObject, SV
 		{
 			if( rInInfo.CheckExistence() )
 			{
-				SVString strTempName;
-				SVString strName = p_psvObject->GetCompleteObjectNameToObjectType( nullptr, SVToolObjectType ) + _T( "." );
+				std::string strTempName;
+				std::string strName = p_psvObject->GetCompleteObjectNameToObjectType( nullptr, SVToolObjectType ) + _T( "." );
 
 				// Who is using
 				strTempName = rInInfo.m_pObject->GetCompleteObjectNameToObjectType( nullptr, SVToolObjectType );
@@ -136,7 +136,7 @@ HRESULT SVOutObjectInfoStruct::GetDependentsList( SVObjectClass* p_psvObject, SV
 				// exclude ourself or our children and the document (published)
 				SVObjectInfoStruct objectTypeInfo = rInInfo.m_pObject->GetObjectInfo();
 
-				if( SVString::npos == strTempName.find( strName ) && 
+				if( std::string::npos == strTempName.find( strName ) && 
 					objectTypeInfo.m_ObjectTypeInfo.ObjectType != SVInspectionObjectType )
 				{
 					SVObjectPair pair;

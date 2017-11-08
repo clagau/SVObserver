@@ -19,7 +19,7 @@
 //Moved to precompiled header: #include <sequential_tree.h>
 #include "BasicValueObject.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
@@ -33,7 +33,7 @@ public:
 	typedef ValueTree::pre_order_iterator vt_pre_order_iterator;
 	typedef ValueTree::const_pre_order_iterator vt_const_pre_order_iterator;
 	typedef std::vector<BasicValueObjectPtr> ValueVector;
-	typedef std::map< SVString, SVGUID > DottedNameGuidMap;
+	typedef std::map<std::string, SVGUID > DottedNameGuidMap;
 #pragma endregion Declarations
 
 #pragma region Constructor

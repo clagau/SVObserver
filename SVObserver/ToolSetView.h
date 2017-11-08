@@ -15,7 +15,6 @@
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVToolSetListCtrl.h"
 #include "SVToolGrouping.h"
-#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #define ID_EDIT_LABEL_ENDS 40000
@@ -51,7 +50,7 @@ public:
 	SVGUID GetSelectedTool() const;
 
 	ToolListSelectionInfo GetToolListSelectionInfo() const;
-	void HandleExpandCollapse(const SVString& rName, bool bCollapse);
+	void HandleExpandCollapse(const std::string& rName, bool bCollapse);
 	bool IsEndToolGroupAllowed() const;
 
 	SVToolSetListCtrl& getListCtrl() { return m_toolSetListCtrl; };
@@ -100,8 +99,8 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
 
-	void ValidateLabelText( SVString& rNewText );
-	void RenameItem(int item, const SVString& rOldName, const SVString& rNewName);
+	void ValidateLabelText( std::string& rNewText );
+	void RenameItem(int item, const std::string& rOldName, const std::string& rNewName);
 	void ToggleExpandCollapse(int item);
 	//************************************
 	//! Searches the name in the list of all tool and group names case insensitive 
@@ -109,22 +108,22 @@ protected:
 	//! \param lpExclude [in] if not null and the name is found (case sensitive)  this is ignored 
 	//! \returns bool  bool true if the name is unique 
 	//************************************
-	bool CheckName(const SVString& rName, LPCTSTR lpExclude = nullptr) const;
+	bool CheckName(const std::string& rName, LPCTSTR lpExclude = nullptr) const;
 	bool EditToolGroupingComment();
 
 private:
 #pragma region Private Methods
-	bool ShowDuplicateNameMessage(const SVString& rName) const;
+	bool ShowDuplicateNameMessage(const std::string& rName) const;
 #pragma endregion Private Methods
 
 	SVToolSetListCtrl m_toolSetListCtrl;
 
 	bool m_isLabeling;
 	int m_labelingIndex;
-	SVString m_LabelSaved;    // To restore label if necessary during editing.
-	SVString m_LabelEdited;
+	std::string m_LabelSaved;    // To restore label if necessary during editing.
+	std::string m_LabelEdited;
 
-	SVString m_duplicateName;			//Store Name for DuplicatenameMessage
+	std::string m_duplicateName;			//Store Name for DuplicatenameMessage
 	bool m_showDuplicateNameMessage; //DuplictaNameMessage is shown after edeting the name 
 
 };

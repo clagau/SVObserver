@@ -34,6 +34,8 @@
 #include "SVShiftToolUtility.h"
 #include "TextDefinesSvO.h"
 #include "ObjectInterfaces/ISVOApp_Helper.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -187,10 +189,10 @@ void ToolSetView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 				if (rToolGroupings.empty())
 				{
 					SVToolSetClass* pToolSet = pCurrentDocument->GetToolSet();
-					SVString insertAtEnd;
+					std::string insertAtEnd;
 					for (int i = 0;i < pToolSet->GetSize();i++)
 					{
-						SVString name = pToolSet->GetAt(i)->GetName();
+						std::string name = pToolSet->GetAt(i)->GetName();
 						rToolGroupings.AddTool(name.c_str(), insertAtEnd.c_str());
 					}
 				}
@@ -331,7 +333,7 @@ void ToolSetView::OnRightClickToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 				{
 					l_bMenuLoaded = l_menu.LoadMenu(IDR_TOOL_LIST_CONTEXT_MENU1);
 					// Remove Tool Comment menu item if Group is Not Selected 
-					SVString Name = m_toolSetListCtrl.GetItemText(info.m_listIndex, 0);
+					std::string Name = m_toolSetListCtrl.GetItemText(info.m_listIndex, 0);
 					if (m_toolSetListCtrl.IsEndListDelimiter( Name ) || m_toolSetListCtrl.IsEmptyStringPlaceHolder( Name ))
 					{
 						l_menu.RemoveMenu(ID_SELECTTOOL_TOOLCOMMENT, MF_BYCOMMAND);
@@ -426,12 +428,12 @@ void ToolSetView::OnBeginLabelEditToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 
 /////////////////////////////////////////////////////////////////////////////
 // Validate label text and remove unwanted characters.
-void ToolSetView::ValidateLabelText( SVString& rNewText )
+void ToolSetView::ValidateLabelText( std::string& rNewText )
 {
 	// strip leading and trailing spaces
-	 SvUl_SF::Trim( rNewText );
+	 SvUl::Trim( rNewText );
 
-	SvUl_SF::RemoveCharacters( rNewText, SvO::SVEXCLUDECHARS_TOOL_IP_NAME );
+	SvUl::RemoveCharacters( rNewText, SvO::SVEXCLUDECHARS_TOOL_IP_NAME );
 
 	if( rNewText.empty() )
 	{
@@ -440,12 +442,12 @@ void ToolSetView::ValidateLabelText( SVString& rNewText )
 	}
 }
 
-void ToolSetView::RenameItem(int item, const SVString& rOldName, const SVString& rNewName )
+void ToolSetView::RenameItem(int item, const std::string& rOldName, const std::string& rNewName )
 {
 	// check if it's a group or a tool
 	if (m_labelingIndex >= 0 && m_labelingIndex < m_toolSetListCtrl.GetItemCount())
 	{
-		SVString Name = m_toolSetListCtrl.GetItemText(m_labelingIndex, 0);
+		std::string Name = m_toolSetListCtrl.GetItemText(m_labelingIndex, 0);
 		if ( !m_toolSetListCtrl.IsEndListDelimiter( Name ) && !m_toolSetListCtrl.IsEmptyStringPlaceHolder( Name ) )
 		{
 			SVGUID toolId = m_toolSetListCtrl.getToolGuid(m_labelingIndex);
@@ -554,7 +556,7 @@ void ToolSetView::OnSelectToolComment()
 				if (nullptr != pSelectedTool)
 				{
 					// Get the tool comment...
-					SVString ToolComment;
+					std::string ToolComment;
 					SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*> (pSelectedTool->GetToolComment());
 					// bring up tool comment edit.
 					HRESULT hr = pValueObject->getValue(ToolComment);
@@ -633,9 +635,9 @@ void ToolSetView::OnRunOnce()
 	}
 }
 
-bool ToolSetView::ShowDuplicateNameMessage(const SVString& rName) const
+bool ToolSetView::ShowDuplicateNameMessage(const std::string& rName) const
 {
-	SVStringVector msgList;
+	SvDef::StringVector msgList;
 	msgList.push_back(rName);
 	SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay);
 	INT_PTR res  = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RenameError_DuplicateName, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10221, SV_GUID_NULL,MB_RETRYCANCEL );
@@ -658,7 +660,7 @@ void ToolSetView::OnEndLabelEditToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 		{
 			CString Text;
 			pEdit->GetWindowText(Text);
-			SVString NewText( Text );
+			std::string NewText( Text );
 
 			// Validate the text and remove unwanted characters.
 			ValidateLabelText(NewText);
@@ -870,7 +872,7 @@ void ToolSetView::OnSetFocus(CWnd* pOldWnd)
 	}
 }
 
-void ToolSetView::HandleExpandCollapse(const SVString& rName, bool bCollapse)
+void ToolSetView::HandleExpandCollapse(const std::string& rName, bool bCollapse)
 {
 	SVIPDoc* pDoc = GetIPDoc();
 	if (nullptr != pDoc)
@@ -896,7 +898,7 @@ void ToolSetView::ToggleExpandCollapse(int item)
 		lvItem.iSubItem = 0;
 		SVToolGrouping& rGroupings = pDoc->GetToolGroupings();
 		m_toolSetListCtrl.GetItem(&lvItem);
-		SVString Name = m_toolSetListCtrl.GetItemText(item, 0);
+		std::string Name = m_toolSetListCtrl.GetItemText(item, 0);
 
 		bool bState = rGroupings.IsCollapsed( Name.c_str() );
 		if (rGroupings.Collapse( Name.c_str(), bState ? false : true))
@@ -913,7 +915,7 @@ bool ToolSetView::IsEndToolGroupAllowed() const
 	if (nullptr != pDoc)
 	{
 		int item = -1;
-		SVString itemName;
+		std::string itemName;
 		// If there is a unmatched Start Group before the insertion point, End Group is allowed
 		POSITION pos = m_toolSetListCtrl.GetFirstSelectedItemPosition();
 		if (0 != pos)
@@ -926,7 +928,7 @@ bool ToolSetView::IsEndToolGroupAllowed() const
 			}
 		}
 		const SVToolGrouping& rGroupings = pDoc->GetToolGroupings();
-		const SVString& rName = rGroupings.FindCandidateStartGroup(itemName);
+		const std::string& rName = rGroupings.FindCandidateStartGroup(itemName);
 		if (!rName.empty())
 		{
 			bRetVal = true;
@@ -985,7 +987,7 @@ void ToolSetView::displayFirstCurrentToolError()
 	}
 }
 
-bool ToolSetView::CheckName(const SVString& rName , LPCTSTR pExclude) const
+bool ToolSetView::CheckName(const std::string& rName , LPCTSTR pExclude) const
 {
 	bool bNameOk = true;
 	SVIPDoc* pDoc = GetIPDoc();

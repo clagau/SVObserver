@@ -31,6 +31,8 @@
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVStatusLibrary\GlobalPath.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #define SV_DATA_TO_CONTENTS
@@ -217,7 +219,7 @@ HRESULT SVRemoteCommandFunctions::GetTempFileNameFromFilePath( std::string& p_rT
 	{
 		__int64 l_TimeStamp = static_cast< __int64 >( SvTl::GetTimeStamp() );
 
-		SVString l_TempString = SvUl_SF::Format( "%I64d", l_TimeStamp );
+		std::string l_TempString = SvUl::Format( "%I64d", l_TimeStamp );
 
 		p_rTempFileName += "V:\\";
 		p_rTempFileName += l_TempString.c_str();
@@ -262,7 +264,7 @@ HRESULT SVRemoteCommandFunctions::ConvertJsonValueToFile( const Json::Value& p_r
 	return l_Status;
 }
 
-HRESULT SVRemoteCommandFunctions::ConvertStorageResultValueToJsonValue( const SVString& p_rName, const SVStorageResult& p_rStorage, Json::Value& p_rJsonValue )
+HRESULT SVRemoteCommandFunctions::ConvertStorageResultValueToJsonValue( const std::string& p_rName, const SVStorageResult& p_rStorage, Json::Value& p_rJsonValue )
 {
 	HRESULT l_Status = S_OK;
 
@@ -303,7 +305,7 @@ HRESULT SVRemoteCommandFunctions::ConvertStorageResultValueToJsonValue( const SV
 	return l_Status;
 }
 
-HRESULT SVRemoteCommandFunctions::ConvertStorageResultImageFileToJsonValue( const SVString& p_rName, const SVStorageResult& p_rStorage, Json::Value& p_rJsonValue )
+HRESULT SVRemoteCommandFunctions::ConvertStorageResultImageFileToJsonValue( const std::string& p_rName, const SVStorageResult& p_rStorage, Json::Value& p_rJsonValue )
 {
 	HRESULT l_Status = S_OK;
 
@@ -316,7 +318,7 @@ HRESULT SVRemoteCommandFunctions::ConvertStorageResultImageFileToJsonValue( cons
 
 		if( S_OK == l_ItemStatus )
 		{
-			SVString l_FileName = SvUl_SF::createSVString(p_rStorage.m_Storage.m_Variant);
+			std::string l_FileName = SvUl::createStdString(p_rStorage.m_Storage.m_Variant);
 
 			if( !( l_FileName.empty() ) )
 			{
@@ -389,7 +391,7 @@ HRESULT SVRemoteCommandFunctions::ConvertDataDefinitionToJsonValue( const SVData
 		p_rJsonValue[SVRC::ddlo::type] = p_rDataDefinition.m_Type.c_str();
 
 		Json::Value l_AddInfoArray(Json::arrayValue);
-		for( SVStringVector::const_iterator l_Iter = p_rDataDefinition.m_AdditionalInfo.begin(); l_Iter != p_rDataDefinition.m_AdditionalInfo.end(); ++l_Iter )
+		for( SvDef::StringVector::const_iterator l_Iter = p_rDataDefinition.m_AdditionalInfo.begin(); l_Iter != p_rDataDefinition.m_AdditionalInfo.end(); ++l_Iter )
 		{
 			Json::Value l_Value(Json::objectValue);
 			l_Value = l_Iter->c_str();
@@ -484,7 +486,7 @@ HRESULT SVRemoteCommandFunctions::AddJsonImagesToStorageItems( const Json::Value
 
 						l_Status = SVJsonUtilities::ConvertJsonValueToVariant( l_rFileName, l_Variant.GetVARIANT() );
 
-						SVString l_TempStr = SvUl_SF::createSVString(l_Variant);
+						std::string l_TempStr = SvUl::createStdString(l_Variant);
 
 						if( !( l_TempStr.empty() ) )
 						{
@@ -670,7 +672,7 @@ HRESULT SVRemoteCommandFunctions::GetVersions( const std::string& p_rJsonCommand
 	std::string l_FileName =   SvStl::GlobalPath::Inst().GetTempPath(_T("GetVersions-cmd")).c_str() ;
 	WriteJsonCommandToFile(p_rJsonCommand, l_FileName);
 
-	SVString l_Version;
+	std::string l_Version;
 
 	l_Status = SVVisionProcessorHelper::Instance().GetVersion( l_Version );
 
@@ -909,7 +911,7 @@ HRESULT SVRemoteCommandFunctions::GetItems( const std::string& p_rJsonCommand, s
 
 					if( S_OK != l_LoopStatus )
 					{
-						SVString l_FileName = SvUl_SF::createSVString(l_Iter->second.m_Storage.m_Variant);
+						std::string l_FileName = SvUl::createStdString(l_Iter->second.m_Storage.m_Variant);
 
 						if( !( l_FileName.empty() ) )
 						{
@@ -1080,7 +1082,7 @@ HRESULT SVRemoteCommandFunctions::GetDeviceConfigReport( const std::string& p_rJ
 	std::string l_FileName =  SvStl::GlobalPath::Inst().GetTempPath(_T("GetDeviceConfigReport-cmd"));
 	WriteJsonCommandToFile(p_rJsonCommand, l_FileName);
 
-	SVString l_Report;
+	std::string l_Report;
 
 	l_Status = SVVisionProcessorHelper::Instance().GetConfigurationPrintReport( l_Report );
 
@@ -1161,7 +1163,7 @@ HRESULT SVRemoteCommandFunctions::GetDataDefinitionList( const std::string& p_rJ
 	}
 	
 
-	SVString l_Report;
+	std::string l_Report;
 	SVDataDefinitionStructArray l_DataDefinitionArray;
 
 	if( S_OK == l_Status )

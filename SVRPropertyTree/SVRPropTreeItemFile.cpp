@@ -27,11 +27,14 @@
 //	If you use this code, drop me an email.  I'd like to know if you find the code
 //	useful.
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVRPropTree.h"
 #include "SVRPropTreeItemFile.h"
 #include "SVMFCControls/SVDlgFolder.h"
 #include "SVMFCControls/SVFileDialog.h"
+#include "SVUtilityLibrary/StringHelper.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -305,7 +308,7 @@ bool SVRPropertyItemFile::SVRBrowseForFolder()
 {
 	bool bReturnValue = false;
 	
-	SVString Path = m_Attribute;
+	std::string Path = m_Attribute;
 	// remove the trailing slash if present (SHBrowseForFolder() does not like it)
 	size_t Pos = Path.size() - 1;
 	if (Pos != 2 && Path[Pos] == _T('\\'))
@@ -319,7 +322,7 @@ bool SVRPropertyItemFile::SVRBrowseForFolder()
 	INT_PTR rc = dlg.DoModal();
 	if (IDOK == rc)
 	{
-		SVString Path = dlg.GetPathName();
+		std::string Path = dlg.GetPathName();
 		if (m_bTrailingSlash)				// add a trailing slash if it is not already there
 		{
 			size_t Pos = Path.size();
@@ -360,7 +363,7 @@ bool SVRPropertyItemFile::SVROpenFile()
 
 	if (IDOK == dlg.DoModal())			// Start the FileDialog
 	{									// user clicked OK, enter files selected into edit control
-		SVString Path = dlg.GetPathName();
+		std::string Path = dlg.GetPathName();
 		SetWindowText( Path.c_str() );
 		bReturnValue = true;
 	}
@@ -371,21 +374,21 @@ bool SVRPropertyItemFile::SVROpenFile()
 	return bReturnValue;
 }
 
-SVString SVRPropertyItemFile::GetPathName()
+std::string SVRPropertyItemFile::GetPathName()
 {
 	TCHAR lpstrReturnString[_MAX_PATH];
-	SVString Value = m_Attribute;
+	std::string Value = m_Attribute;
 
 	size_t Pos = Value.rfind(_T('\\'));
-	if( SVString::npos != Pos )
+	if( std::string::npos != Pos )
 	{
 		if(Value.at(Pos-1) == _T(':'))
 		{
-			Value = SvUl_SF::Left( Value, Pos+1 );
+			Value = SvUl::Left( Value, Pos+1 );
 		}
 		else
 		{
-			Value = SvUl_SF::Left( Value, Pos );
+			Value = SvUl::Left( Value, Pos );
 		}
 	}
 	else
@@ -394,7 +397,7 @@ SVString SVRPropertyItemFile::GetPathName()
 	}
 
 	_tfullpath(lpstrReturnString, Value.c_str(), _MAX_PATH);	// get absolute path from any relative paths
-	return SVString( lpstrReturnString );
+	return std::string( lpstrReturnString );
 }
 
 BOOL SVRPropertyItemFile::OnChange() 
@@ -580,7 +583,7 @@ bool SVRPropertyItemFile::SetItemType(DWORD dwFlags, LPCTSTR sFilter /*=nullptr*
 	return true;
 }
 
-bool SVRPropertyItemFile::GetItemValue(SVString& rValue)
+bool SVRPropertyItemFile::GetItemValue(std::string& rValue)
 {
 	rValue = m_Attribute;
 	return true;

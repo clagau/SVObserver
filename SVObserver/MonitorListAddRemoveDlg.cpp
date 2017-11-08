@@ -14,6 +14,7 @@
 //Moved to precompiled header: #include <set>
 #include "MonitorListAddRemoveDlg.h"
 #include "MonitorListPropertyDlg.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 BEGIN_MESSAGE_MAP(MonitorListAddRemoveDlg, CDialog)
@@ -52,7 +53,7 @@ const RemoteMonitorListMap& MonitorListAddRemoveDlg::GetRemoteMonitorList() cons
 	return m_MonitorList;
 }
 
-void MonitorListAddRemoveDlg::ReplaceList( const SVString& rOldName, const SVString& rNewName )
+void MonitorListAddRemoveDlg::ReplaceList( const std::string& rOldName, const std::string& rNewName )
 {
 	RemoteMonitorListMap:: iterator it = m_MonitorList.find(rOldName);
 	if (it != m_MonitorList.end())
@@ -64,34 +65,34 @@ void MonitorListAddRemoveDlg::ReplaceList( const SVString& rOldName, const SVStr
 	}
 }
 
-SVString MonitorListAddRemoveDlg::BuildListDisplayName(LPCTSTR PPQName, LPCTSTR Name) const
+std::string MonitorListAddRemoveDlg::BuildListDisplayName(LPCTSTR PPQName, LPCTSTR Name) const
 {
-	return SvUl_SF::Format(_T("%s(%s)"), Name, PPQName); // Append PPQ name
+	return SvUl::Format(_T("%s(%s)"), Name, PPQName); // Append PPQ name
 }
 
-SVString MonitorListAddRemoveDlg::GetListNameFromDisplayName(LPCTSTR Name) const
+std::string MonitorListAddRemoveDlg::GetListNameFromDisplayName(LPCTSTR Name) const
 {
 	// Get the the PPQname from the end of the Name
-	SVString DisplayName(Name);
+	std::string DisplayName(Name);
 	size_t Pos = DisplayName.rfind(_T('('));
-	if( SVString::npos != Pos )
+	if( std::string::npos != Pos )
 	{
-		return SvUl_SF::Left( DisplayName, Pos);
+		return SvUl::Left( DisplayName, Pos);
 	}
-	return SVString();
+	return std::string();
 }
 
-SVString MonitorListAddRemoveDlg::GetPPQName( LPCTSTR Name ) const
+std::string MonitorListAddRemoveDlg::GetPPQName( LPCTSTR Name ) const
 {
 	// Get the the PPQname from the end of the Name
-	SVString DisplayName(Name);
+	std::string DisplayName(Name);
 	size_t startPos = DisplayName.rfind(_T('('));
 	size_t endPos = DisplayName.rfind(_T(')'));
-	if( SVString::npos != startPos && SVString::npos != endPos )
+	if( std::string::npos != startPos && std::string::npos != endPos )
 	{
 		return DisplayName.substr( startPos+1, (endPos - startPos) - 1);
 	}
-	return SVString();
+	return std::string();
 }
 
 void MonitorListAddRemoveDlg::OnDblClickUsedList()
@@ -110,17 +111,17 @@ void MonitorListAddRemoveDlg::OnBnClickedAddBtn()
 	{
 		CString PPQName;
 		m_AvailableList.GetText(lAddSel, PPQName);
-		SVString Name = NextAvailableListName();
+		std::string Name = NextAvailableListName();
 		if (!Name.empty())
 		{
 			// Add to GUI
-			SVString DisplayName = BuildListDisplayName(PPQName, Name.c_str());
+			std::string DisplayName = BuildListDisplayName(PPQName, Name.c_str());
 			int iInsert = m_UsedList.AddString( DisplayName.c_str() );
 			m_UsedList.SetItemData(iInsert,  RemoteMonitorNamedList::GetDefaultRejectQueueDepth()); 
 			m_UsedList.SetCurSel(iInsert);
 		
 			// Add it to the master list
-			m_MonitorList.insert(std::make_pair(Name, RemoteMonitorNamedList(SVString(PPQName), Name)));
+			m_MonitorList.insert(std::make_pair(Name, RemoteMonitorNamedList(std::string(PPQName), Name)));
 
 			// Update Buttons
 			if (m_UsedList.GetCount() > 0)
@@ -132,7 +133,7 @@ void MonitorListAddRemoveDlg::OnBnClickedAddBtn()
 	}
 }
 
-SVString MonitorListAddRemoveDlg::NextAvailableListName() const
+std::string MonitorListAddRemoveDlg::NextAvailableListName() const
 {
 	typedef std::set<int> IDSet;
 	IDSet ids;
@@ -142,11 +143,11 @@ SVString MonitorListAddRemoveDlg::NextAvailableListName() const
 		CString Temp;
 		m_UsedList.GetText(i, Temp);
 		// parse out PPQ ID (PPQ_N)
-		SVString Name = GetListNameFromDisplayName(Temp);
+		std::string Name = GetListNameFromDisplayName(Temp);
 		size_t Pos = Name.find_first_of(_T("1234567890"));
-		if( SVString::npos != Pos )
+		if( std::string::npos != Pos )
 		{
-			int iTmp = atoi( SvUl_SF::Mid(Name, Pos).c_str() );
+			int iTmp = atoi( SvUl::Mid(Name, Pos).c_str() );
 			ids.insert(iTmp);
 		}
 	}
@@ -159,7 +160,7 @@ SVString MonitorListAddRemoveDlg::NextAvailableListName() const
         num = (*it) + 1;
     }
 	    
-    return SvUl_SF::Format( _T("MonitorList%d"), num );
+    return SvUl::Format( _T("MonitorList%d"), num );
 }
 
 void MonitorListAddRemoveDlg::OnBnClickedRemoveBtn()
@@ -220,7 +221,7 @@ void MonitorListAddRemoveDlg::UpdateUsedList(LPCTSTR PPQName, const NameDepthPai
 {
 	for (NameDepthPairList::const_iterator it = rList.begin();it != rList.end();++it)
 	{
-		SVString DisplayName = BuildListDisplayName(PPQName, it->first.c_str());
+		std::string DisplayName = BuildListDisplayName(PPQName, it->first.c_str());
 		int index = m_UsedList.AddString( DisplayName.c_str() );
 		m_UsedList.SetItemData(index, it->second); // set the reject depth
 	}
@@ -239,13 +240,13 @@ void MonitorListAddRemoveDlg::OnBnClickedBtnProperties()
 		CString Name;
 		m_UsedList.GetText(iPos, Name);
 
-		SVString DisplayName = GetListNameFromDisplayName( Name );
-		SVString PPQName = GetPPQName( Name );
+		std::string DisplayName = GetListNameFromDisplayName( Name );
+		std::string PPQName = GetPPQName( Name );
 	
 		MonitorListPropertyDlg propDlg(m_MonitorList, DisplayName.c_str());
 		if (IDOK == propDlg.DoModal() )
 		{
-			SVString sNewName = propDlg.GetMonitorListName();
+			std::string sNewName = propDlg.GetMonitorListName();
 			int depth = propDlg.GetMonitorListRejectQueueDepth();
 			if (sNewName != DisplayName)
 			{

@@ -14,7 +14,6 @@
 #pragma region Includes
 #include "SVLibrary/SVFileNameClass.h"
 #include "SVInfoStructs.h"
-#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -49,7 +48,7 @@ public:
 #pragma endregion Constructor
 	
     void DoPrintConfig();
-    void printConfigToStringBuffer(SVString& rsBuffer);
+    void printConfigToStringBuffer(std::string& rsBuffer);
 #pragma endregion Public Methods
 	
 	// Overrides
@@ -135,6 +134,6 @@ protected:
 	SVFileNameClass m_svfnFileName;    // SES 11-Jan-2001
 
 	bool m_isPrintToStringBuffer;
-	SVString* m_pBuffer;
+	std::string* m_pBuffer;
 #pragma endregion Member Variables
 };

@@ -15,18 +15,18 @@ HRESULT SVFileSystemScanner<Insertor>::ScanForFiles(LPCTSTR dirName, LPCTSTR fil
 	HRESULT hr = S_FALSE;
 
 	WIN32_FIND_DATA fileData;
-	SVString fileSpec;
-	SVString dirSpec = (nullptr != dirName) ? dirName : SVString();
+	std::string fileSpec;
+	std::string dirSpec = (nullptr != dirName) ? dirName : std::string();
 	
 	// check for trailing slash
 	size_t pos = dirSpec.rfind(_T("\\"));
-	if (pos == SVString::npos || pos != dirSpec.size() - 1)
+	if (pos == std::string::npos || pos != dirSpec.size() - 1)
 	{
 		dirSpec += _T("\\");
 	}
 
 	fileSpec = dirSpec;
-	fileSpec += (nullptr != filter) ? filter : SVString();
+	fileSpec += (nullptr != filter) ? filter : std::string();
 
 	HANDLE fHandle = FindFirstFile(fileSpec.c_str(), &fileData);
 
@@ -68,18 +68,18 @@ HRESULT SVFileSystemScanner<Insertor>::ScanForDirectories(LPCTSTR dirName, LPCTS
 	HRESULT hr = S_FALSE;
 
 	WIN32_FIND_DATA fileData;
-	SVString fileSpec;
+	std::string fileSpec;
 	
-	SVString dirSpec = (nullptr != dirName) ? dirName : SVString();
+	std::string dirSpec = (nullptr != dirName) ? dirName : std::string();
 	// check for trailing slash
 	size_t pos = dirSpec.rfind(_T("\\"));
-	if (pos == SVString::npos || pos != dirSpec.size() - 1)
+	if (pos == std::string::npos || pos != dirSpec.size() - 1)
 	{
 		dirSpec += _T("\\");
 	}
 
 	fileSpec = dirSpec;
-	fileSpec += (nullptr != filter) ? filter : SVString();
+	fileSpec += (nullptr != filter) ? filter : std::string();
 
 	HANDLE fHandle = FindFirstFile(fileSpec, &fileData);
 

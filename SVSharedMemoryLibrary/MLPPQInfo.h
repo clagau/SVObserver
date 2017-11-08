@@ -26,7 +26,7 @@ namespace SvSml
 		static const  int NumRejectSizeDelta = 5;
 	};
 	typedef std::unique_ptr<MLPPQInfo> MLPPQInfoPointer;
-	typedef  std::map<SVString, MLPPQInfoPointer>  MLPPQInfoMap; //< map PPQName  MLPPQInfoPointer
+	typedef  std::map<std::string, MLPPQInfoPointer>  MLPPQInfoMap; //< map PPQName  MLPPQInfoPointer
 
 }
 

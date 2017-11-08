@@ -18,14 +18,14 @@
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
 #include "PictureDisplay.h"
 #include "SVRPropertyTree/SVRPropTree.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 namespace SvOg
 {
 	class SVExternalToolImageSelectPage : public CPropertyPage, protected SvOg::ImageController
 	{
-		typedef std::map<UINT, SVString> ImageInputList; // maps CtrlID to InputName
+		typedef std::map<UINT, std::string> ImageInputList; // maps CtrlID to InputName
 
 	#pragma region Constructor
 	public:

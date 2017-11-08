@@ -11,18 +11,18 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVGigeReadIPAddress.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 HRESULT SVGigeReadIPAddress::operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& rFeature, _variant_t& rValue) const
 { 
 	//SVMatroxString value;
 	__int64 value;
-	SVString sTmp;
+	std::string sTmp;
 	HRESULT l_Code = SVMatroxDigitizerInterface::GetGigeIPAddress(*(Digitizer.get()), value);
 	if (l_Code == S_OK)
 	{
-		sTmp = SvUl_SF::Format("%u.%u.%u.%u", 
+		sTmp = SvUl::Format("%u.%u.%u.%u", 
 					static_cast<unsigned char>(value),
 					static_cast<unsigned char>(value >> 8) & 0xFF,
 					static_cast<unsigned char>(value >> 16) & 0xFF,

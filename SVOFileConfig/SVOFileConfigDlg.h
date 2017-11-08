@@ -14,13 +14,12 @@
 #pragma region Includes
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <vector>
-#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 class SVOFileConfigDlg : public CDialog
 {
 public:
-	bool GetDirectoryRemoveLevel( SVString& rFileName, int p_level );
+	bool GetDirectoryRemoveLevel( std::string& rFileName, int p_level );
 
 	SVOFileConfigDlg(CWnd* pParent = nullptr);	// standard constructor
 
@@ -47,20 +46,20 @@ protected:
 	void GetIOChildren(HTREEITEM p_Item);
 	void GetInspections(HTREEITEM p_Item);
 	void GetPPQs(HTREEITEM p_Item);
-	bool ParseInspection( const SVString& rName, SVString& rOut);
-	bool ParsePPQ( const SVString& rName, SVString& rOut);
+	bool ParseInspection( const std::string& rName, std::string& rOut);
+	bool ParsePPQ( const std::string& rName, std::string& rOut);
 	void FixConfiguration();
 	void ReIndexIOEntries(HTREEITEM p_Item);
 
 	unsigned long m_ulCurrentVersion;
 
-	std::vector<SVString> m_Inspections;
-	typedef std::pair<HTREEITEM, SVString> HTIStringPair;
+	std::vector<std::string> m_Inspections;
+	typedef std::pair<HTREEITEM, std::string> HTIStringPair;
 	typedef std::vector<HTIStringPair> HTIStringPairs;
-	std::vector< SVString > m_PPQs;
+	std::vector< std::string > m_PPQs;
 	HTIStringPairs m_IOEntryPairs;
 	HICON m_hIcon;
-	SVString m_strLastDirectory;
+	std::string m_strLastDirectory;
 
 	// Generated message map functions
 	//{{AFX_MSG(SVOFileConfigDlg)

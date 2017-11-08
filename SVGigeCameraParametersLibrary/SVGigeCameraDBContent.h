@@ -12,7 +12,7 @@
 
 #pragma region Includes
 #include "SVSystemLibrary/SVSAXContentHandlerImpl.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerFeatureEnums.h"
 #include "SVGigeEnums.h"
 #include "SVGigeDeviceParameterStruct.h"
@@ -28,8 +28,8 @@ private:
 	// GigeFeatureSelector Info
 	struct SVGigeFeatureSelectorInfo
 	{
-		SVString m_GigeFeatureSelectorName;
-		SVString m_GigeFeatureSelectorValue;
+		std::string m_GigeFeatureSelectorName;
+		std::string m_GigeFeatureSelectorValue;
 		
 		void clear() 
 		{ 
@@ -41,14 +41,14 @@ private:
 	// GigeFeature Info
 	struct SVGigeFeatureInfo
 	{
-		SVString m_GigeFeatureName;
+		std::string m_GigeFeatureName;
 		SVMatroxDigitizerFeature::SVFeatureTypeEnum m_GigeFeatureType;
 		SVGigeFeature::FeatureSupportedEnum m_FeatureSupported;
 		SVGigeFeature::FeatureAccessEnum m_FeatureAccess;
 
 		SVGigeFeatureSelectorInfo m_GigeSelector;
 
-		SVBidirectionalMap<SVString, SVString>::type m_GigeFeatureStringEnumList;
+		SVBidirectionalMap<std::string, std::string>::type m_GigeFeatureStringEnumList;
 
 		void clear() 
 		{ 
@@ -66,8 +66,8 @@ private:
 	// GigeAccessor Info
 	struct SVGigeAccessorInfo
 	{
-		SVString m_getterName;
-		SVString m_setterName;
+		std::string m_getterName;
+		std::string m_setterName;
 
 		void clear()
 		{
@@ -92,7 +92,7 @@ private:
 	// GigeDeviceParameterStruct Info
 	struct SVGigeDeviceParameterStructInfo
 	{
-		SVString m_GigeDeviceParameterName;
+		std::string m_GigeDeviceParameterName;
 		VARTYPE m_GigeDeviceParameterDataType;
 
 		SVGigeParameterAccessorInfo m_GigeFeatureAccessor;
@@ -109,7 +109,7 @@ private:
 	SVGigeParameterEnum m_GigeParameterEnum; // SVGigeDeviceParameterMap Key
 	SVGigeDeviceParameterMap m_GigeDeviceParameterMap;
 	HRESULT m_errorCode;
-	SVString m_errorText;
+	std::string m_errorText;
 	
 public:
     SVGigeCameraDBContent();

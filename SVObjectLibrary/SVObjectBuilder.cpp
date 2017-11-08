@@ -23,6 +23,8 @@
 #include "SVObjectClass.h"
 #include "SVObjectAttributeClass.h"
 #include "SVInputInfoListClass.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
@@ -30,8 +32,6 @@
 #include "TextDefinesSvOl.h"
 #pragma warning (pop)
 #pragma endregion Includes
-
-typedef std::vector<SVString> split_vector_type;
 
 typedef std::map<SVObjectSubTypeEnum, SVObjectScriptDataObjectTypeEnum> ObjectTypeTable;
 
@@ -52,10 +52,10 @@ static ObjectTypeTable typeTable = boost::assign::map_list_of<>
 ;
 
 template<typename Separator>
-static void SplitString(const SVString& rValue, split_vector_type& rContainer, Separator sep)
+static void SplitString(const std::string& rValue, SvDef::StringVector& rContainer, Separator sep)
 {
 	boost::tokenizer<Separator> tokens(rValue, sep);
-	BOOST_FOREACH (const SVString& rItem, tokens) 
+	BOOST_FOREACH (const std::string& rItem, tokens) 
 	{ 
        rContainer.push_back( rItem );
 	}
@@ -63,10 +63,10 @@ static void SplitString(const SVString& rValue, split_vector_type& rContainer, S
 
 typedef boost::char_separator<char> Separator;
 
-static POINT GetPointFromString(const SVString& rValue)
+static POINT GetPointFromString(const std::string& rValue)
 {
 	POINT pointValue = { 0, 0 };
-	split_vector_type SplitVec;
+	SvDef::StringVector SplitVec;
 	SplitVec.reserve(2);
 	Separator sep(",");
 	SplitString<Separator>(rValue, SplitVec, sep);
@@ -85,10 +85,10 @@ static POINT GetPointFromString(const SVString& rValue)
 	return pointValue;
 }
 
-static SVDPointClass GetDPointFromString(const SVString& rValue)
+static SVDPointClass GetDPointFromString(const std::string& rValue)
 {
 	SVDPointClass pointValue(0.0, 0.0);
-	split_vector_type SplitVec;
+	SvDef::StringVector SplitVec;
 	SplitVec.reserve(2);
 	Separator sep(",");
 	SplitString<Separator>(rValue, SplitVec, sep);
@@ -106,7 +106,7 @@ static SVDPointClass GetDPointFromString(const SVString& rValue)
 	return pointValue;
 }
 
-HRESULT SVObjectBuilder::CreateObject(const GUID& classID, const GUID& uniqueID, const SVString& name, const SVString& objectName, const GUID& ownerUniqueID )
+HRESULT SVObjectBuilder::CreateObject(const GUID& classID, const GUID& uniqueID, const std::string& name, const std::string& objectName, const GUID& ownerUniqueID )
 {
 	HRESULT hr = S_OK;
 
@@ -127,7 +127,7 @@ HRESULT SVObjectBuilder::CreateObject(const GUID& classID, const GUID& uniqueID,
 				{
 					assert(false);
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
-					SVString Temp = SvUl_SF::Format(_T("SVObjectBuilder::CreateObject - ReplaceObject %.80s\n"), name.c_str() );
+					std::string Temp = SvUl::Format(_T("SVObjectBuilder::CreateObject - ReplaceObject %.80s\n"), name.c_str() );
 					::OutputDebugString( Temp.c_str() );
 #endif
 					delete pObject;
@@ -189,7 +189,7 @@ HRESULT SVObjectBuilder::DestroyFriends(const GUID& objectID)
 	return hr;
 }
 
-HRESULT SVObjectBuilder::CreateFriendObject(const GUID& classID, const GUID& uniqueID, const SVString& objectName, const GUID& ownerUniqueID, const GUID& rAddPreGuid)
+HRESULT SVObjectBuilder::CreateFriendObject(const GUID& classID, const GUID& uniqueID, const std::string& objectName, const GUID& ownerUniqueID, const GUID& rAddPreGuid)
 {
 	HRESULT hr = S_OK;
 
@@ -249,7 +249,7 @@ HRESULT SVObjectBuilder::CreateFriendObject(const GUID& classID, const GUID& uni
 	return hr;
 }
 
-HRESULT SVObjectBuilder::OverwriteEmbeddedObject(const GUID& embeddedID, const GUID& uniqueID, const SVString& objectName, const GUID& ownerUniqueID)
+HRESULT SVObjectBuilder::OverwriteEmbeddedObject(const GUID& embeddedID, const GUID& uniqueID, const std::string& objectName, const GUID& ownerUniqueID)
 {
 	HRESULT hr = S_OK;
 
@@ -278,7 +278,7 @@ HRESULT SVObjectBuilder::OverwriteEmbeddedObject(const GUID& embeddedID, const G
 	return hr;
 }
 
-static void BuildDataArray(SVObjectAttributeClass& dataObject, const SVString& itemName, const SVVariantList& ValueList, SVObjectScriptDataObjectTypeEnum dstDataType)
+static void BuildDataArray(SVObjectAttributeClass& dataObject, const std::string& itemName, const SVVariantList& ValueList, SVObjectScriptDataObjectTypeEnum dstDataType)
 {
 	dataObject.SetName(itemName.c_str());
 	// check embedded class type for SVPointValueObject/SVDPointValueObject/SVVariantValueObject
@@ -302,7 +302,7 @@ static void BuildDataArray(SVObjectAttributeClass& dataObject, const SVString& i
 
 				case VT_BSTR:
 					{
-						SVString strVal = SvUl_SF::createSVString(rValue.bstrVal);
+						std::string strVal = SvUl::createStdString(rValue.bstrVal);
 						// check for Point/DPoint ??
 						if (dstDataType == SV_POINT_Type)
 						{
@@ -350,14 +350,14 @@ static void BuildDataArray(SVObjectAttributeClass& dataObject, const SVString& i
 	}
 }
 
-HRESULT SVObjectBuilder::SetObjectValue(const GUID& ownerID, const GUID& objectID, const SVString& itemName, const _variant_t& value, SVObjectScriptDataObjectTypeEnum dstDataType)
+HRESULT SVObjectBuilder::SetObjectValue(const GUID& ownerID, const GUID& objectID, const std::string& itemName, const _variant_t& value, SVObjectScriptDataObjectTypeEnum dstDataType)
 {
 	SVVariantList values;
 	values.push_back(value);
 	return SetObjectValue(ownerID, objectID, itemName, values, dstDataType);
 }
 
-HRESULT SVObjectBuilder::SetObjectValue(const GUID& ownerID, const GUID& objectID, const SVString& itemName, const SVVariantList& values, SVObjectScriptDataObjectTypeEnum dstDataType)
+HRESULT SVObjectBuilder::SetObjectValue(const GUID& ownerID, const GUID& objectID, const std::string& itemName, const SVVariantList& values, SVObjectScriptDataObjectTypeEnum dstDataType)
 {
 	HRESULT hr = S_OK;
 

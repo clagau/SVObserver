@@ -44,15 +44,15 @@ static const TCHAR* const cFailStatusList = _T("FailStatusList");
 static const TCHAR* const cValues = _T("Values");
 static const TCHAR* const cImages = _T("Images");
 
-static SVString GetItemName(CListCtrl& rCtrl, int item)
+static std::string GetItemName(CListCtrl& rCtrl, int item)
 {
-	SVString name = rCtrl.GetItemText(item, 0);
+	std::string name = rCtrl.GetItemText(item, 0);
 	return  name;
 }
 
-static SVString GetListName(CListCtrl& rCtrl, int item)
+static std::string GetListName(CListCtrl& rCtrl, int item)
 {
-	SVString name;
+	std::string name;
 	int index = item;
 
 	// check if we are at the MonitorListNameNode
@@ -112,7 +112,7 @@ static int AddMonitoredItems(CListCtrl& rCtrl, const MonitoredObjectList& items,
 
 	for (MonitoredObjectList::const_iterator it = items.begin(); it != items.end(); ++it)
 	{
-		const SVString& name = RemoteMonitorListHelper::GetNameFromMonitoredObject(*it);
+		const std::string& name = RemoteMonitorListHelper::GetNameFromMonitoredObject(*it);
 		if (!name.empty())
 		{
 			lvItem.iItem = next++;
@@ -413,7 +413,7 @@ void MonitorListView::CollapseItem(int item)
 
 	m_rCtrl.GetItem(&lvItem);
 	MonitorListViewNodeType nodeType = static_cast<MonitorListViewNodeType>(lvItem.lParam);
-	const SVString& name = GetListName(m_rCtrl, item);
+	const std::string& name = GetListName(m_rCtrl, item);
 	CollapseExpandMap::iterator it = m_ExpandCollapseStates.find(name);
 	if (it != m_ExpandCollapseStates.end())
 	{
@@ -433,7 +433,7 @@ void MonitorListView::ExpandItem(int item)
 
 	m_rCtrl.GetItem(&lvItem);
 
-	const SVString& name = GetListName(m_rCtrl, item);
+	const std::string& name = GetListName(m_rCtrl, item);
 	CollapseExpandMap::iterator it = m_ExpandCollapseStates.find(name);
 	if (it != m_ExpandCollapseStates.end())
 	{
@@ -454,7 +454,7 @@ void MonitorListView::ToggleExpandCollapse(int item)
 
 	m_rCtrl.GetItem(&lvItem);
 
-	const SVString& name = GetListName(m_rCtrl, item);
+	const std::string& name = GetListName(m_rCtrl, item);
 	CollapseExpandMap::iterator it = m_ExpandCollapseStates.find(name);
 	if (it != m_ExpandCollapseStates.end())
 	{
@@ -680,7 +680,7 @@ bool MonitorListView::RemoveMonitoredItem(int item)
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 	if (nullptr != pConfig)
 	{
-		const SVString& name = GetListName(m_rCtrl, item);
+		const std::string& name = GetListName(m_rCtrl, item);
 		RemoteMonitorListMap list = pConfig->GetRemoteMonitorList();
 		RemoteMonitorListMap::iterator it = list.find(name);
 
@@ -873,7 +873,7 @@ bool MonitorListView::EditMonitoredItem(int item, bool bEditImage)
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 	if (nullptr != pConfig)
 	{
-		const SVString& listName = GetListName(m_rCtrl, item);
+		const std::string& listName = GetListName(m_rCtrl, item);
 		RemoteMonitorListMap rList = pConfig->GetRemoteMonitorList();
 		RemoteMonitorListMap::iterator it = rList.find(listName);
 
@@ -1137,7 +1137,7 @@ void MonitorListView::OnEditListProperties()
 			SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 			if (nullptr != pConfig)
 			{
-				const SVString& listName = GetListName(m_rCtrl, item);
+				const std::string& listName = GetListName(m_rCtrl, item);
 				RemoteMonitorListMap rList = pConfig->GetRemoteMonitorList();
 				RemoteMonitorListMap::iterator it = rList.find(listName);
 				if (it != rList.end())

@@ -14,7 +14,6 @@
 #pragma region Includes
 #include "SVOCore/SVTaskObjectList.h"
 #include "RangeClassHelper.h"
-#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 class SVRangeClass;
@@ -55,7 +54,7 @@ public:
 	// Parameter:  name<in/out>:  previous and new name of object
 	// Returns:   bool:  true if a new object was selected
 	//************************************
-	bool ShowObjectSelector(SVString& rName);
+	bool ShowObjectSelector(std::string& rName);
 
 	afx_msg void OnBnClickedOk();
 	afx_msg void OnBnClickedCancel();

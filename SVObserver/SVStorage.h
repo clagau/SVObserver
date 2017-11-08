@@ -13,7 +13,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <map>
-#include "SVUtilityLibrary/SVString.h"
+
 #include "SVVisionProcessorConstants.h"
 #pragma endregion Includes
 
@@ -26,6 +26,6 @@ struct SVStorage
 	_variant_t m_Variant;
 };
 
-typedef std::map< SVString, SVStorage > SVNameStorageMap;
-typedef std::map< SVString, HRESULT > SVNameStatusMap;
+typedef std::map<std::string, SVStorage> SVNameStorageMap;
+typedef std::map<std::string, HRESULT> SVNameStatusMap;
 

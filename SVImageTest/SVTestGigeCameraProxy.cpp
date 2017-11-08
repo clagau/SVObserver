@@ -25,7 +25,7 @@
 #include "CameraLibrary/SVBoolValueDeviceParam.h"
 #include "CameraLibrary/SVStringValueDeviceParam.h"
 #include "CameraLibrary/SVCustomDeviceParam.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "TriggerHandling/SVDigitizerLoadLibraryClass.h"
 #include "SVTestAcquisitionClass.h"
 #pragma warning (pop)
@@ -146,7 +146,7 @@ HRESULT SVTestGigeCameraProxy::InitializeDevice( const SVDeviceParamCollection& 
 	return hr;
 }
 
-HRESULT SVTestGigeCameraProxy::SetGigeFeatureOverrides(const SVString& rXmlData, unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer)
+HRESULT SVTestGigeCameraProxy::SetGigeFeatureOverrides(const std::string& rXmlData, unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer)
 {
 	HRESULT hr = S_OK;
 
@@ -992,7 +992,7 @@ HRESULT SVTestGigeCameraProxy::SetCameraFormatParameters(unsigned long hDigitize
 		}
 	}
 
-	typedef std::deque<SVString> split_container_type;
+	typedef std::deque<std::string> split_container_type;
 	split_container_type splitContainer;
 	boost::algorithm::split(splitContainer, rcf.m_strName, boost::algorithm::is_any_of( _T("_X") ), boost::algorithm::token_compress_on);
 	if (splitContainer.size() > 3)
@@ -1039,18 +1039,18 @@ HRESULT SVTestGigeCameraProxy::IsValidCameraFileParameters( SVDeviceParamCollect
 
 		if( nullptr != pDigitizer && S_OK == pDigitizer->ParameterGetValue( hDigitizer, SVGigeParameterVendorName, 0, &l_oValue ) )
 		{
-			SVString l_csVenderName  = SvUl_SF::createSVString(l_oValue.bstrVal);
+			std::string l_csVenderName  = SvUl::createStdString(l_oValue.bstrVal);
 
 			if( l_csVenderName == StringValue( rDeviceParams.Parameter( DeviceParamVendorName ) ) )
 			{
 				if( rDeviceParams.ParameterExists( DeviceParamModelName ) &&
 					S_OK == pDigitizer->ParameterGetValue( hDigitizer, SVGigeParameterModelName, 0, &l_oValue ) )
 				{
-					SVString HardwareModel = SvUl_SF::createSVString( _bstr_t( l_oValue.bstrVal ) );
+					std::string HardwareModel = SvUl::createStdString( _bstr_t( l_oValue.bstrVal ) );
 
-					const SVString& rModel = StringValue( rDeviceParams.Parameter( DeviceParamModelName ) );
+					const std::string& rModel = StringValue( rDeviceParams.Parameter( DeviceParamModelName ) );
 
-					if ( !HardwareModel.empty() && !rModel.empty() && SvUl_SF::CompareNoCase( HardwareModel, rModel) != 0 )
+					if ( !HardwareModel.empty() && !rModel.empty() && SvUl::CompareNoCase( HardwareModel, rModel) != 0 )
 					{
 						l_hrOk = S_FALSE;
 					}
@@ -1077,7 +1077,7 @@ bool SVTestGigeCameraProxy::CameraMatchesCameraFile(const SVDeviceParamCollectio
 		// Check Vendor Name
 		if( S_OK == pDigitizer->ParameterGetValue( hDigitizer, SVGigeParameterVendorName, 0, &l_oValue ) )
 		{
-			SVString l_csVenderName = SvUl_SF::createSVString(l_oValue.bstrVal);
+			std::string l_csVenderName = SvUl::createStdString(l_oValue.bstrVal);
 
 			const SVDeviceParamWrapper param = rCameraFileDeviceParams.Parameter( DeviceParamVendorName );
 			l_bOk = l_csVenderName == StringValue( param );
@@ -1088,7 +1088,7 @@ bool SVTestGigeCameraProxy::CameraMatchesCameraFile(const SVDeviceParamCollectio
 			// Check Model Name
 			if( S_OK == pDigitizer->ParameterGetValue( hDigitizer, SVGigeParameterModelName, 0, &l_oValue ) )
 			{
-				SVString l_csModelName = SvUl_SF::createSVString(l_oValue.bstrVal);
+				std::string l_csModelName = SvUl::createStdString(l_oValue.bstrVal);
 
 				const SVDeviceParamWrapper param = rCameraFileDeviceParams.Parameter( DeviceParamModelName );
 				l_bOk = l_csModelName == StringValue( param );
@@ -1102,7 +1102,7 @@ HRESULT SVTestGigeCameraProxy::GoOnline(unsigned long hDigitizer, SvTh::SVDigiti
 {
 	HRESULT hr = S_OK;
 
-	SVString value( _T( "Enable" ) );
+	std::string value( _T( "Enable" ) );
 
 	// Set Trigger and Strobe
 	// trigger first, then strobe
@@ -1124,7 +1124,7 @@ HRESULT SVTestGigeCameraProxy::GoOffline(unsigned long hDigitizer, SvTh::SVDigit
 {
 	HRESULT hr = S_OK;
 
-	SVString value( _T( "Disable" ) );
+	std::string value( _T( "Disable" ) );
 
 	// Stop Trigger and Strobe 
 	// strobe first, then trigger

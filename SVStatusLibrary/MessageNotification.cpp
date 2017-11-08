@@ -6,6 +6,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "MessageNotification.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 
@@ -31,8 +32,8 @@ namespace SvStl
 		Concurrency::critical_section::scoped_lock   scopedLock( m_Lock );
 		m_Type = Type;
 		m_MessageNumber = MessageNumber;
-		m_MessageText = (nullptr != MessageText) ? MessageText : SVString();
-		SvUl_SF::searchAndReplace( m_MessageText, "\r\n","\n" );
+		m_MessageText = (nullptr != MessageText) ? MessageText : std::string();
+		SvUl::searchAndReplace( m_MessageText, "\r\n","\n" );
 		m_IsProcessed = false; 
 	}
 } //namespace SvStl

@@ -14,7 +14,7 @@
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVMessage\SVMessage.h"
-#include "SVUtilityLibrary\SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 
 template< typename SVEventThreadSignalHandler >
 class SVEventThread
@@ -53,7 +53,7 @@ private:
 	HANDLE m_hThread;
 	HANDLE m_hSignalEvent;
 	unsigned long m_ulThreadID;
-	SVString m_tag;
+	std::string m_tag;
 	SVEventThreadSignalHandler m_threadHandler;
 #pragma endregion Member Variables
 };

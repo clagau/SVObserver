@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVColorTool.h"
 #include "SVTADlgColorThresholdSheet.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -123,7 +123,7 @@ BOOL SVTADlgColorThresholdSheet::OnInitDialog()
 
 	if( m_pTool )
 	{
-		SVString Text = _T("Tool Adjustment: ");
+		std::string Text = _T("Tool Adjustment: ");
 		Text += m_pTool->GetName();
 
 		SetWindowText( Text.c_str() );

@@ -15,7 +15,7 @@
 
 #include "SVOutputObject.h"
 #include "SVInfoStructs.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 class SVOutputObjectList : public SVObjectClass
@@ -31,9 +31,9 @@ public:
 
 	SVOutputObject* GetOutput(const SVGUID& rOutputID) const;
 
-	SVOutputObject* GetOutput(const SVString& rName) const;
+	SVOutputObject* GetOutput(const std::string& rName) const;
 
-	SVOutputObject* GetOutputFlyweight(const SVString& rName, SVObjectSubTypeEnum ObjectSubType, int GuidIndex = -1);
+	SVOutputObject* GetOutputFlyweight(const std::string& rName, SVObjectSubTypeEnum ObjectSubType, int GuidIndex = -1);
 
 	HRESULT AttachOutput( SVOutputObject *pOutput );
 	HRESULT DetachOutput( const SVGUID& rOutputID );
@@ -47,14 +47,14 @@ public:
 	bool WriteOutputValue( SVIOEntryHostStructPtr pIOEntry, const _variant_t& rValue );
 	bool ResetOutput( SVIOEntryHostStructPtr pIOEntry );
 	bool RenameInspection( LPCTSTR OldInspection, LPCTSTR NewInspectionName);
-	HRESULT RemoveUnusedOutputs( const SVStringVector& rInspectionNames, const SVStringVector& rPPQNames );
+	HRESULT RemoveUnusedOutputs( const SvDef::StringVector& rInspectionNames, const SvDef::StringVector& rPPQNames );
 
 	bool FillOutputs( SVIOEntryHostStructPtrVector& rIOEntries );
 
-	bool OutputIsNotValid( SVString p_strName );
+	bool OutputIsNotValid( std::string p_strName );
 
 #pragma region Methods to replace processMessage
-	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName) override;
+	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override;
 #pragma endregion Methods to replace processMessage
 
 private:

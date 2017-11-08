@@ -955,7 +955,7 @@ bool SVRPropertyItem::GetItemValue(double& /*dblVal*/)
 }
 
 
-bool SVRPropertyItem::GetItemValue(SVString& /*strVal*/)
+bool SVRPropertyItem::GetItemValue(std::string& /*strVal*/)
 {
 	ASSERT(0);
 	return false;
@@ -1109,7 +1109,7 @@ bool SVRPropertyItem::SetItemValuePtr(double& /*dblVal*/)
 }
 
 
-bool SVRPropertyItem::SetItemValuePtr(SVString& /*strSrc*/)
+bool SVRPropertyItem::SetItemValuePtr(std::string& /*strSrc*/)
 {
 	ASSERT(0);
 	return false;

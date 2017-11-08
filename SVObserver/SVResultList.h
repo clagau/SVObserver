@@ -17,7 +17,7 @@
 #include "SVObjectLibrary/SVOutputInfoListClass.h"
 #include "SVInfoStructs.h"
 #include "ResultViewReferences.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 
@@ -74,7 +74,7 @@ public:
 	bool LoadViewedVariables(ResultViewReferences::SVTreeType& rTree, ResultViewReferences::SVTreeType::SVBranchHandle htiParent);
 	
 	const SVObjectReferenceVector& GetSelectedObjects() const;
-	bool Insert(const SVString& rDottedName);
+	bool Insert(const std::string& rDottedName);
 	SvTl::SVTimeStamp getUpdateTimeStamp();
 	void Save(SVObjectWriter& rWriter);
 

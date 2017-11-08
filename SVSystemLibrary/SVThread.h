@@ -14,7 +14,7 @@
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVMessage\SVMessage.h"
-#include "SVUtilityLibrary\SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 /*
 SVThreadSignalHandler must have the following prototype:
 
@@ -58,7 +58,7 @@ private:
 	HANDLE m_hThreadComplete;
 	HANDLE m_hThread;
 	unsigned long m_ulThreadID;
-	SVString m_tag;
+	std::string m_tag;
 	SVThreadSignalHandler m_threadHandler;
 	// This const defines how long the destroy should wait at most to complete the shutdown
 	// of the thread, before it will kill it.

@@ -61,7 +61,7 @@ namespace SvSml
 		RingBufferPointer GetSlotManager(int slotmanagerindex);
 		void CloseConnection();
 	private:
-		static void BuildStoreName(LPCTSTR ObjectName, StoreType type, SVString& rStoreName);
+		static void BuildStoreName(LPCTSTR ObjectName, StoreType type, std::string& rStoreName);
 
 		///Every inspection has its own image store 
 		std::vector<DataStorePointer> m_ImageStore;

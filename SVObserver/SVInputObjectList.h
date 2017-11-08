@@ -13,7 +13,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
 
-#include "SVUtilityLibrary/SVString.h"
+
 #include "SVInputObject.h"
 #include "SVInfoStructs.h"
 #pragma endregion Includes
@@ -32,9 +32,9 @@ public:
 
 	SVInputObject* GetInput( const SVGUID& rInputID ) const;
 
-	SVInputObject* GetInput( const SVString& rInputName ) const;
+	SVInputObject* GetInput( const std::string& rInputName ) const;
 
-	SVInputObject* GetInputFlyweight( const SVString& rInputName, SVObjectSubTypeEnum ObjectSubType, int GuidIndex = -1);
+	SVInputObject* GetInputFlyweight( const std::string& rInputName, SVObjectSubTypeEnum ObjectSubType, int GuidIndex = -1);
 
 	HRESULT AttachInput( SVInputObject *pInput );
 	HRESULT DetachInput( const SVGUID& p_rOutputID );

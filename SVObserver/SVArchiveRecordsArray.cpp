@@ -10,6 +10,7 @@
 #include "SVInspectionProcess.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "ObjectInterfaces/IValueObject.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Constructor
@@ -71,17 +72,17 @@ HRESULT SVArchiveRecordsArray::InitializeObjects(SVArchiveTool* pToolArchive, SV
 	int iSize = rObject.getResultSize();
 	for ( int i = 0; i < iSize; i++ )
 	{
-		SVString Name;
+		std::string Name;
 		rObject.GetValue( Name, i );
 		if ( !Name.empty() )
 		{
 			SVArchiveRecord* pArchiveRecord = new SVArchiveRecord;
 			SVObjectReference ObjectRef;
 			size_t Pos = Name.find('.');
-			if( SVString::npos != Pos )	// This assumes that the first part of the dotted name is the inspection.
+			if( std::string::npos != Pos )	// This assumes that the first part of the dotted name is the inspection.
 			{				// Build the object name with the current inspection name.
-				SVString NewName = pToolArchive->GetInspection()->GetName();
-				NewName += SvUl_SF::Mid( Name, Pos );
+				std::string NewName = pToolArchive->GetInspection()->GetName();
+				NewName += SvUl::Mid( Name, Pos );
 				HRESULT hrGetObject = SVObjectManagerClass::Instance().GetObjectByDottedName( NewName.c_str(), ObjectRef );
 				if( S_OK == hrGetObject )
 				{
@@ -120,16 +121,16 @@ void SVArchiveRecordsArray::ConvertStringToGuids( SVArchiveTool * pToolArchive, 
 {
 	ClearArray();
 	
-	SVString Text = Value;
+	std::string Text = Value;
 	
 	bool bDone = false;
 	while (!bDone)
 	{
-		SVString GuidText;
+		std::string GuidText;
 		size_t Pos = Text.find( _T('\n') );
-		if( SVString::npos != Pos )
+		if( std::string::npos != Pos )
 		{
-			GuidText = SvUl_SF::Left( Text, Pos );
+			GuidText = SvUl::Left( Text, Pos );
 		}
 		else
 		{
@@ -139,7 +140,7 @@ void SVArchiveRecordsArray::ConvertStringToGuids( SVArchiveTool * pToolArchive, 
 		//
 		// Adjust for next iteration.
 		//
-		Text = SvUl_SF::Right( Text, Text.size() - Pos -1 );
+		Text = SvUl::Right( Text, Text.size() - Pos -1 );
 		
 		//
 		// Convert string guid to guid structure
@@ -160,9 +161,9 @@ void SVArchiveRecordsArray::ConvertStringToGuids( SVArchiveTool * pToolArchive, 
 	}
 }
 
-SVStringVector SVArchiveRecordsArray::RemoveDisconnectedObject( const SVObjectInfoStruct& p_rInfoObject )
+SvDef::StringVector SVArchiveRecordsArray::RemoveDisconnectedObject( const SVObjectInfoStruct& p_rInfoObject )
 {
-	SVStringVector Result;
+	SvDef::StringVector Result;
 
 	// Effective STL Item 9 p46: forward iteration / erase
 	int nCount = static_cast< int >( m_vecRecords.size() );
@@ -305,9 +306,9 @@ int SVArchiveRecordsArray::ValidateResultsObjects()
 	return static_cast<int> (m_vecRecords.size());
 }
 
-SVString SVArchiveRecordsArray::BuildResultsArchiveString()
+std::string SVArchiveRecordsArray::BuildResultsArchiveString()
 {
-	SVString Result;
+	std::string Result;
 	
 	bool bFirst = true;	
 	int nCount = static_cast< int >( m_vecRecords.size() );
@@ -323,7 +324,7 @@ SVString SVArchiveRecordsArray::BuildResultsArchiveString()
 
 		if ( nullptr != pValueObject )
 		{
-			SVString Temp;
+			std::string Temp;
 			HRESULT hr = pValueObject->getValue( Temp, pResultRecord->m_svObjectReference.ArrayIndex());
 			if ( S_OK == hr || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr )
 			{

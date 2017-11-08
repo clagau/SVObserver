@@ -21,7 +21,7 @@
 #include "SVOLibrary/SVODeviceClass.h"
 #include "CameraLibrary/SVDeviceParamCollection.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #include "TriggerInformation/SVAcquisitionConstructParams.h"
 #include "SVSystemLibrary/SVFileNameArrayClass.h"
 #include "SVOCore/SVImageObjectClass.h"
@@ -64,7 +64,7 @@ public:
 	virtual HRESULT GetFileName( long lIndex, SVFileNameClass &rFileName ) const;
 	virtual HRESULT LoadFiles( SVFileNameArrayClass &rArray );
 	virtual HRESULT UnloadFiles();
-	virtual HRESULT ReadCameraFile( const SVString& filename,  SVDeviceParamCollection& rParams );
+	virtual HRESULT ReadCameraFile( const std::string& filename,  SVDeviceParamCollection& rParams );
 
 	virtual HRESULT CreateLightReference( int iBands );
 	virtual HRESULT LoadLightReference( SVLightReference& rArray );
@@ -92,8 +92,8 @@ public:
 	HRESULT GetNextIndex( SVDataManagerHandle &rDMHandle ) const;
 	HRESULT GetNextIndex( SVDataManagerHandle &rDMHandle, SVDataManagerLockTypeEnum p_LockType ) const;
 
-	inline SVString DeviceName() const { return m_DeviceName; }
-	inline SVString DigName() const { return m_DigName; }
+	inline std::string DeviceName() const { return m_DeviceName; }
+	inline std::string DigName() const { return m_DigName; }
 	inline int Channel() const { return miChannel; }
 	inline int DigNumber() const { return miDigNumber; }
 	inline int BandSize() const { return miBandSize; }
@@ -174,7 +174,7 @@ protected:
 	SVLightReference mLightReference;
 	SVFileNameArrayClass mFiles;
 
-	SVString m_DigName;
+	std::string m_DigName;
 	int miChannel; //&&& Var needs to be set
 	int miDigNumber; // &&& Var needs to be set
 	int miBandSize;

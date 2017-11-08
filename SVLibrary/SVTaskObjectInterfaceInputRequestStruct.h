@@ -12,23 +12,23 @@
 
 #pragma region Includes
 #include "SVObjectLibrary/SVObjectReference.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
 struct SVTaskObjectInterfaceInputRequestStruct
 {
 	SVTaskObjectInterfaceInputRequestStruct();
-	SVTaskObjectInterfaceInputRequestStruct( const SVObjectReference& rObjectRef, const SVGUID& rGuid, const SVString& rName );
+	SVTaskObjectInterfaceInputRequestStruct( const SVObjectReference& rObjectRef, const SVGUID& rGuid, const std::string& rName );
 	SVTaskObjectInterfaceInputRequestStruct( const SVObjectReference& rObjectRef );
 	SVTaskObjectInterfaceInputRequestStruct( const SVGUID& rGuid );
-	SVTaskObjectInterfaceInputRequestStruct( const SVString& rName );
+	SVTaskObjectInterfaceInputRequestStruct( const std::string& rName );
 
 	bool operator < ( const SVTaskObjectInterfaceInputRequestStruct& rRhs ) const;
 
 	SVObjectReference m_ObjectRef;
 	SVGUID m_Guid;
-	SVString m_Name;
+	std::string m_Name;
 };
 
 struct SVInputRequestStructMap : public std::map <SVTaskObjectInterfaceInputRequestStruct, _variant_t>

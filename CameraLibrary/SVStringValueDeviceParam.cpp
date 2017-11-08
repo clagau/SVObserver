@@ -42,7 +42,7 @@ SVClonable* SVStringValueDeviceParam::CloneImpl() const
 	return new SVStringValueDeviceParam( *this );
 }
 
-SVStringValueDeviceParam::SVStringValueDeviceParam( const SVString& rRhs )
+SVStringValueDeviceParam::SVStringValueDeviceParam( const std::string& rRhs )
 {
 	m_eDataType = DeviceDataTypeString;
 	strValue = rRhs;
@@ -58,7 +58,7 @@ SVStringValueDeviceParam& SVStringValueDeviceParam::operator = (const SVStringVa
 	return *this;
 }
 
-SVStringValueDeviceParam& SVStringValueDeviceParam::operator = (const SVString& rValue)
+SVStringValueDeviceParam& SVStringValueDeviceParam::operator = (const std::string& rValue)
 {
 	strValue = rValue;
 	return *this;
@@ -87,7 +87,7 @@ HRESULT SVStringValueDeviceParam::SetMetadata(const SVDeviceParam* pBaseParam )
 
 #if defined(_DEBUG)
 
-SVString& StringValue(SVDeviceParamWrapper& w) 
+std::string& StringValue(SVDeviceParamWrapper& w) 
 {
 	const SVStringValueDeviceParam* p = w.DerivedValue(p); 
 	if (nullptr == p) 
@@ -99,18 +99,18 @@ SVString& StringValue(SVDeviceParamWrapper& w)
 	return const_cast<SVStringValueDeviceParam*>(p)->strValue;
 }
 
-const SVString& StringValue(const SVDeviceParamWrapper& w) 
+const std::string& StringValue(const SVDeviceParamWrapper& w) 
 {
 	const SVStringValueDeviceParam* p = w.DerivedValue(p); 
 	if (p) 
 		return p->strValue; 
 	
 	ASSERT(FALSE); 
-	static SVString s(""); 
+	static std::string s(""); 
 	return s;
 }
 
-SVDeviceParamWrapper DeviceParam(const SVString& s) 
+SVDeviceParamWrapper DeviceParam(const std::string& s) 
 {
 	return SVStringValueDeviceParam(s.c_str());
 }

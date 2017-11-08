@@ -28,7 +28,7 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
-#include "SVStatusLibrary\MessageManager.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 IMPLEMENT_DYNCREATE(SVRemoteOutputsView, CListView )
@@ -165,17 +165,17 @@ void SVRemoteOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 		DWORD maxOutput = 0;
 		// Get the DLL List...
 
-		SVStringVector GroupNames;
+		SvDef::StringVector GroupNames;
 		pConfig->GetRemoteOutputGroupNames( GroupNames );
 
 		// This is a Hack! this should be called from a different area when objects change.
 		pConfig->RemoteOutputValidateInputs();
 
-		SVStringVector::const_iterator Iter;
+		SvDef::StringVector::const_iterator Iter;
 
 		for( Iter = GroupNames.begin() ; Iter != GroupNames.end() ; ++Iter )
 		{
-			const SVString& rGroupName = *Iter;
+			const std::string& rGroupName = *Iter;
 
 			int lSize = static_cast<int>(pConfig->GetRemoteOutputGroupItemCount( rGroupName ));
 			if( lSize == 0 )
@@ -220,7 +220,7 @@ void SVRemoteOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 					}
 
 					// First column: Result I/O
-					SVString Name = l_pOutput->GetInputValueObjectName();
+					std::string Name = l_pOutput->GetInputValueObjectName();
 
 					// Column: Description "Value Object Name"
 					GetListCtrl().InsertItem( LVIF_IMAGE | LVIF_TEXT | LVIF_STATE, 
@@ -309,7 +309,7 @@ BOOL SVRemoteOutputsView::PreTranslateMessage(MSG* pMsg)
 				else
 				if( VK_INSERT == pMsg->wParam )
 				{
-					SVString GroupName;
+					std::string GroupName;
 					if( S_OK == RemoteOutputGroupNameAtItem( GroupName, l_item )  )
 					{
 						// New Entry...
@@ -328,7 +328,7 @@ BOOL SVRemoteOutputsView::PreTranslateMessage(MSG* pMsg)
 				else
 				if( VK_RETURN == pMsg->wParam )
 				{
-					SVString GroupName;
+					std::string GroupName;
 					if( S_OK == RemoteOutputGroupNameAtItem( GroupName, l_item )  )
 					{
 						// New Entry...
@@ -404,7 +404,7 @@ BOOL SVRemoteOutputsView::PreTranslateMessage(MSG* pMsg)
 	return l_bRet;
 }
 
-HRESULT SVRemoteOutputsView::RemoteOutputGroupNameAtItem( SVString& rGroupName, int p_iItem )
+HRESULT SVRemoteOutputsView::RemoteOutputGroupNameAtItem( std::string& rGroupName, int p_iItem )
 {
 	HRESULT l_hr = S_FALSE;
 	for( int i = p_iItem ; i > -1 ; i-- )
@@ -513,7 +513,7 @@ void SVRemoteOutputsView::OnContextMenu(CWnd* /*pWnd*/, CPoint point )
 					l_pPrevOutput=dynamic_cast<SVRemoteOutputObject*>(reinterpret_cast<SVObjectClass*>(GetListCtrl().GetItemData( m_CurrentItem-1 )));
 				}
 				size_t pos = l_pOutput->GetInputValueObjectName().find( _T("Trigger Count") );
-				if( pos != SVString::npos && (nullptr == l_pPrevOutput) ) // If the name is trigger count
+				if( pos != std::string::npos && (nullptr == l_pPrevOutput) ) // If the name is trigger count
 				{
 					pPopup = m_ContextMenuItemNoDelete.GetSubMenu(0);
 				}
@@ -551,11 +551,11 @@ void SVRemoteOutputsView::OnRemoteOutputDelete()
 			SVRemoteOutputObject* pRemoteOutput = dynamic_cast<SVRemoteOutputObject*>( reinterpret_cast<SVObjectClass*>(GetListCtrl().GetItemData( l_item )));
 			if( nullptr != pRemoteOutput && nullptr != pConfig )
 			{
-				SVString RemoteGroup = pRemoteOutput->GetGroupID();
+				std::string RemoteGroup = pRemoteOutput->GetGroupID();
 
 				bool bFirst = (pConfig->GetFirstRemoteOutputObject( RemoteGroup ) == pRemoteOutput); 
 				size_t pos = pRemoteOutput->GetInputValueObjectName().find(_T("Trigger Count") );
-				if( bFirst && pos != SVString::npos )
+				if( bFirst && pos != std::string::npos )
 				{
 					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RemoteOutput_TriggerCountDeleteError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10194 ); 
@@ -586,8 +586,8 @@ void SVRemoteOutputsView::OnRemoteOutputDelete()
 				SVRemoteOutputGroup* pOutputGroup = dynamic_cast<SVRemoteOutputGroup*>( reinterpret_cast<SVObjectClass*>(GetListCtrl().GetItemData( l_item )));;
 				if( pOutputGroup )
 				{
-					SVString strGroup = pOutputGroup->GetGroupName();
-					SVStringVector msgList;
+					std::string strGroup = pOutputGroup->GetGroupName();
+					SvDef::StringVector msgList;
 					msgList.push_back(strGroup);
 					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 					INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_RemoteOutput_DeletingAllOutput, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10196, SV_GUID_NULL, MB_YESNO );
@@ -622,7 +622,7 @@ bool SVRemoteOutputsView::AddOutput(int p_iWhere)
 	bool l_bRet = false;
 
 	// New Entry...
-	SVString RemoteGroup;
+	std::string RemoteGroup;
 	SVRemoteOutputEditDialog dlg;
 
 	if( S_OK == RemoteOutputGroupNameAtItem( RemoteGroup, p_iWhere ) )
@@ -634,7 +634,7 @@ bool SVRemoteOutputsView::AddOutput(int p_iWhere)
 		if( nullptr != pConfig ){ pGroupParameters = pConfig->GetRemoteOutputGroup(RemoteGroup); }
 
 		SVPPQObject* pPPQ( nullptr );
-		SVString PPQName;
+		std::string PPQName;
 		//If pointer is nullptr then PPQName stays empty
 		if( nullptr != pGroupParameters){ PPQName = pGroupParameters->GetPPQName(); }
 		if( !PPQName.empty() )

@@ -199,7 +199,7 @@ const SVObjectReferenceVector& SVResultListClass::GetSelectedObjects() const
 	return m_ResultViewReferences.GetSelectedObjects();
 }
 
-bool SVResultListClass::Insert( const SVString& rDottedName )
+bool SVResultListClass::Insert( const std::string& rDottedName )
 {
 	Concurrency::critical_section::scoped_lock  AutoLock(m_Lock);
 

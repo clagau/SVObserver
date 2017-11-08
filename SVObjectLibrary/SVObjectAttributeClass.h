@@ -17,7 +17,6 @@
 #include "SVObjectScriptEnums.h"
 #include "SVObjectDPointArrayClass.h"
 #include "SVContainerLibrary/SVObjectArrayClassTemplate.h"
-#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 enum SV_OBJECT_TYPE_ENUM
@@ -164,7 +163,7 @@ public:
 private:
 	//This attribute is responsible for maintaining the 
 	//configuration object attribute name.
-	SVString m_Name;
+	std::string m_Name;
 
 	//This attribute is responsible for maintaining the 
 	//configuration object attribute type.

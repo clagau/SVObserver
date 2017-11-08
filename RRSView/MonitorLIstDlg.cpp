@@ -148,7 +148,7 @@ void MonitorListDlg::OnBnClickedButtonProperties()
 		return;
 	}
 	CString objectName = m_ListCtrl.GetItemText(sel,1); 
-	SVString name = objectName.GetString();
+	std::string name = objectName.GetString();
 
 	CRRSViewDlg *pView = dynamic_cast<CRRSViewDlg *>(AfxGetMainWnd());
 	if(!pView)

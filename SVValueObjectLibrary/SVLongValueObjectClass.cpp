@@ -16,6 +16,8 @@
 #include "SVObjectLibrary\SVClsids.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVStatusLibrary/MessageManager.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -55,15 +57,15 @@ SVLongValueObjectClass::~SVLongValueObjectClass()
 {
 }
 
-long SVLongValueObjectClass::ConvertString2Type( const SVString& rValue ) const
+long SVLongValueObjectClass::ConvertString2Type( const std::string& rValue ) const
 {
-	SVString Digits = SvUl_SF::ValidateString( rValue, _T("-0123456789 .xXabcdefABCDEF") );
+	std::string Digits = SvUl::ValidateString( rValue, _T("-0123456789 .xXabcdefABCDEF") );
 	if( Digits == rValue )
 	{
-		SvUl_SF::MakeLower(Digits);
+		SvUl::MakeLower(Digits);
 		TCHAR* p = nullptr;
 		long lValue;
-		if ( SVString::npos != Digits.find( 'x' ) )
+		if ( std::string::npos != Digits.find( 'x' ) )
 		{
 			lValue = _tcstol(Digits.c_str(), &p, 16);
 		}
@@ -74,7 +76,7 @@ long SVLongValueObjectClass::ConvertString2Type( const SVString& rValue ) const
 
 		return lValue;
 	}
-	SVStringVector msgList;
+	SvDef::StringVector msgList;
 	msgList.push_back( rValue );
 	msgList.push_back( GetName() );
 	SvStl::MessageMgrStd Exception( SvStl::LogOnly );

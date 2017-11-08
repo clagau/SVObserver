@@ -1035,7 +1035,7 @@ bool SVRPropTree::SaveState(LPCTSTR ItemName, SVRPropertyItem* pItem, SVRPropTre
 	bool bOK = true;
 	if( pItem )
 	{
-		SVString Value( ItemName );
+		std::string Value( ItemName );
 		Value += pItem->GetLabelText();
 		Value += _T("¬");
 		rState.m_State[Value.c_str()] = pItem->IsExpanded();
@@ -1065,7 +1065,7 @@ bool SVRPropTree::RestoreState(LPCTSTR ItemName, SVRPropertyItem* pItem, const S
 	bool bOK = true;
 	if( nullptr != pItem )
 	{
-		SVString Value( ItemName );
+		std::string Value( ItemName );
 		Value += pItem->GetLabelText();
 		Value += _T("¬");
 

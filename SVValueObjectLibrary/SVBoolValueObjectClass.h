@@ -13,8 +13,8 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
+#include "Definitions/StringTypeDef.h"
 #include "Definitions/TextDefineSVDef.h"
-#include "SVUtilityLibrary/SVString.h"
 #include "SVValueObjectClass.h"
 #pragma endregion Includes
 
@@ -30,7 +30,7 @@ public:
 
 	virtual ~SVBoolValueObjectClass();
 
-	HRESULT GetValidTypes( SVStringVector& rTypes ) const;
+	HRESULT GetValidTypes( SvDef::StringVector& rTypes ) const;
 
 protected:
 	virtual double ValueType2Double(const BOOL& rValue) const override { return static_cast<double> (rValue); };
@@ -40,9 +40,9 @@ protected:
 	/// Convert a string in a bool. Throw an exception if the string isn't convertible into a bool
 	/// \param rValue [in] The input string: "True", 1 or -1 is true, "false" and 0 is false.
 	/// \returns bool Return value.
-	virtual BOOL ConvertString2Type( const SVString& rValue ) const override;
+	virtual BOOL ConvertString2Type( const std::string& rValue ) const override;
 
-	virtual SVString ConvertType2String( const BOOL& rValue ) const override {	return rValue ? SvDef::cTrue : SvDef::cFalse; };
+	virtual std::string ConvertType2String( const BOOL& rValue ) const override {	return rValue ? SvDef::cTrue : SvDef::cFalse; };
 
 	virtual void WriteValues(SVObjectWriter& rWriter) override;
 	virtual void WriteDefaultValues(SVObjectWriter& rWriter) override;

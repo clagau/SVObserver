@@ -2773,7 +2773,7 @@ HRESULT SVMatroxBufferInterface::ClearBuffer(SVMatroxBuffer& p_rBuffer,
 
 }
 
-HRESULT SVMatroxBufferInterface::GetImageSize(const SVString& rFileName, long &rWidth, long &rHeight)
+HRESULT SVMatroxBufferInterface::GetImageSize(const std::string& rFileName, long &rWidth, long &rHeight)
 {
 	MIL_INT  M_Width(0), M_Height(0);
 	HRESULT  Code(S_OK);
@@ -2800,7 +2800,7 @@ HRESULT SVMatroxBufferInterface::GetImageSize(const SVString& rFileName, long &r
 
 */
 HRESULT SVMatroxBufferInterface::Import(SVMatroxBuffer& p_rBuf, 
-																	  const SVString& p_rFileName, 
+																	  const std::string& p_rFileName, 
 																	  SVMatroxFileTypeEnum p_eFileType,
 																	  bool p_bRestore)
 {
@@ -2895,7 +2895,7 @@ HRESULT SVMatroxBufferInterface::Import(SVMatroxBuffer& p_rBuf,
 
 */
 HRESULT SVMatroxBufferInterface::Export(const SVMatroxBuffer& rBuffer, 
-																	  const SVString& rFileName, 
+																	  const std::string& rFileName, 
 																	  SVMatroxFileTypeEnum p_eFileType)
 {
 	long l_lFileFormat = 0;

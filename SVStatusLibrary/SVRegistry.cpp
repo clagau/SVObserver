@@ -9,13 +9,15 @@
 //* .Check In Date   : $Date:   02 Oct 2013 10:08:12  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVRegistry.h"
 
 #include "SVMessage/SVMessage.h"
-
+#include "SVUtilityLibrary/StringHelper.h"
 #include "MessageContainer.h"
 #include "MessageManager.h"
+#pragma endregion Includes
 
 #define SV_HKEY_CLASSES_ROOT _T("HKEY_CLASSES_ROOT")
 #define SV_HKEY_CURRENT_USER _T("HKEY_CURRENT_USER")
@@ -40,14 +42,14 @@
 void SVRegistryClass::InitRegistry(LPCTSTR p_szKey)
 {
 	DWORD dwDisposition = 0L;
-	SVString szKey = p_szKey;
-	SVString szFullKey = p_szKey;
-	SVString szTemp;
+	std::string szKey = p_szKey;
+	std::string szFullKey = p_szKey;
+	std::string szTemp;
 	HKEY hBaseKey = HKEY_LOCAL_MACHINE;
 	LONG lResult;
 	TCHAR szFname[_MAX_FNAME], szPath[_MAX_PATH];
 
-	mszKey = (nullptr != p_szKey) ? p_szKey : SVString();
+	mszKey = (nullptr != p_szKey) ? p_szKey : std::string();
 
 	// check if first node of key is an HKEY Value
 	if (szFullKey.substr(0, 17) == SV_HKEY_CLASSES_ROOT)
@@ -114,7 +116,7 @@ void SVRegistryClass::InitRegistry(LPCTSTR p_szKey)
 
 	mhKey = (HKEY) nullptr;
 
-	if (SvUl_SF::Right(mszKey, 1) == SV_BACKSLASH)
+	if (SvUl::Right(mszKey, 1) == SV_BACKSLASH)
 		mszKey.erase(mszKey.size() - 1);
 
 	lResult = RegOpenKeyEx (hBaseKey,
@@ -193,7 +195,7 @@ SVRegistryClass::~SVRegistryClass()
 		RegCloseKey (mhKey);
 }
 
-bool SVRegistryClass::GetRegistryValue( LPCTSTR szValueName, SVString& szValue)
+bool SVRegistryClass::GetRegistryValue( LPCTSTR szValueName, std::string& szValue)
 {
 	DWORD dwType = 0L, dwSize = 0L;
 
@@ -442,7 +444,7 @@ bool SVRegistryClass::AdjustPrivileges(TCHAR *pszPrivilege)
 
 void SVRegistryClass::EnumKeys(PFKEYENUMPROC pKeyEnumProc, LPVOID pUserData)
 {
-	SVString szKey;
+	std::string szKey;
 	DWORD dwIndex;
 	DWORD dwcbBuffSize;
 	DWORD dwcSubKeys;
@@ -494,8 +496,8 @@ bool SVRegistryClass::CreatedNewKey()
 
 SVRegistryClass * SVRegistryClass::OpenSubKey( LPCTSTR p_szSubKey )
 {
-	SVString szKey;
-	SVString szSubKey = p_szSubKey;
+	std::string szKey;
+	std::string szSubKey = p_szSubKey;
 
 	szKey = mszKey;
 	if (szSubKey.substr(0,1) != _T("\\"))
@@ -516,15 +518,15 @@ bool SVRegistryClass::SetShadowFileName(LPCTSTR szFileName)
 	return SetRegistryValue( SV_SHADOWFILE, szFileName );
 }
 
-bool SVRegistryClass::GetShadowFileName(SVString & szShadowFile)
+bool SVRegistryClass::GetShadowFileName(std::string & szShadowFile)
 {
 	return GetRegistryValue( SV_SHADOWFILE, szShadowFile );
 }
 
-bool SVRegistryClass::GetDefaultShadowFileName(SVString & szShadowFile)
+bool SVRegistryClass::GetDefaultShadowFileName(std::string & szShadowFile)
 {
 	TCHAR szFname[_MAX_FNAME], szPath[_MAX_PATH];
-	SVString szKey;
+	std::string szKey;
 
 	if (GetModuleFileName (nullptr, szPath, _MAX_PATH))
 	{
@@ -536,7 +538,7 @@ bool SVRegistryClass::GetDefaultShadowFileName(SVString & szShadowFile)
 		szShadowFile += szFname;
 		szShadowFile += SV_UNDERLINE;
 		szKey = mszKey;
-		SvUl_SF::searchAndReplace (szKey, SV_BACKSLASH, SV_UNDERLINE);
+		SvUl::searchAndReplace (szKey, SV_BACKSLASH, SV_UNDERLINE);
 		szShadowFile += szKey;
 		szShadowFile += SV_SHADOWFILEEXT;
 		return true;
@@ -547,7 +549,7 @@ bool SVRegistryClass::GetDefaultShadowFileName(SVString & szShadowFile)
 
 bool SVRegistryClass::Import()
 {
-	SVString szShadowFile;
+	std::string szShadowFile;
 
 	if (GetShadowFileName (szShadowFile))
 	{
@@ -600,7 +602,7 @@ bool SVRegistryClass::Import(LPCTSTR szFileName)
 bool SVRegistryClass::ImportKeys(FILE * pFile)
 {
 	bool rc = true;
-	SVString szName;
+	std::string szName;
 	SVByteVector baValue;
 	DWORD dwType;
 	int iResult;
@@ -641,7 +643,7 @@ bool SVRegistryClass::ImportKeys(FILE * pFile)
 	return rc;
 }
 
-int SVRegistryClass::GetImportString(FILE * pFile, SVString& rName, SVByteVector & baValue, DWORD * pdwType)
+int SVRegistryClass::GetImportString(FILE * pFile, std::string& rName, SVByteVector & baValue, DWORD * pdwType)
 {
 	TCHAR tBuffer;
 	int i;
@@ -676,7 +678,7 @@ int SVRegistryClass::GetImportString(FILE * pFile, SVString& rName, SVByteVector
 			Exception.Throw();
 		}
 
-		if( SVString::npos == rName.rfind (_T(']')))
+		if( std::string::npos == rName.rfind (_T(']')))
 		{
 			return SV_ISGARBAGE;
 		}
@@ -793,7 +795,7 @@ int SVRegistryClass::GetImportString(FILE * pFile, SVString& rName, SVByteVector
 
 bool SVRegistryClass::Export()
 {
-	SVString szShadowFile;
+	std::string szShadowFile;
 
 	if (GetShadowFileName (szShadowFile))
 	{
@@ -839,7 +841,7 @@ bool SVRegistryClass::Export(LPCTSTR szFileName)
 bool SVRegistryClass::ExportKeys(FILE * pFile)
 {
 	bool rc = true;
-	SVString szKey;
+	std::string szKey;
 	DWORD dwIndex;
 	DWORD dwcSubKeys;
 	DWORD dwcbMaxSubKeyLen;
@@ -905,7 +907,7 @@ bool SVRegistryClass::ExportValues(FILE * pFile)
 	LONG lResult;
 	LONG lLineLen;
 	int i;
-	SVString szComma;
+	std::string szComma;
 
 	RegQueryInfoKey (mhKey, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, &dwcValues, &dwcbNameMax, &dwcbValueMax, nullptr, nullptr);
 
@@ -1043,7 +1045,7 @@ bool SVRegistryClass::ExportValues(FILE * pFile)
 	return rc;
 }
 
-bool SVRegistryClass::GetRegistryValue(DWORD dwIndex, SVString& szValueName, SVString& szValue, LPDWORD pdwType)
+bool SVRegistryClass::GetRegistryValue(DWORD dwIndex, std::string& szValueName, std::string& szValue, LPDWORD pdwType)
 {
 	bool rc = false;
 	DWORD dwcbNameMax, dwcbValueMax, dwcbName, dwcbValue;

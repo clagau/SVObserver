@@ -13,7 +13,6 @@
 #pragma region Includes
 #include "afxwin.h"
 #include "RemoteMonitorList.h"
-#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 class MonitorListAddRemoveDlg : public CDialog
@@ -57,11 +56,11 @@ private:
 	CButton m_AddButton;
 	CButton m_PropertiesButton;
 
-	void ReplaceList( const SVString& rOldName, const SVString& rNewName );
-	SVString BuildListDisplayName( LPCTSTR PPQName, LPCTSTR Name ) const;
-	SVString GetListNameFromDisplayName( LPCTSTR Name ) const;
-	SVString GetPPQName( LPCTSTR Name ) const;
-	SVString NextAvailableListName() const;
+	void ReplaceList( const std::string& rOldName, const std::string& rNewName );
+	std::string BuildListDisplayName( LPCTSTR PPQName, LPCTSTR Name ) const;
+	std::string GetListNameFromDisplayName( LPCTSTR Name ) const;
+	std::string GetPPQName( LPCTSTR Name ) const;
+	std::string NextAvailableListName() const;
 #pragma region Private Members
 };
 

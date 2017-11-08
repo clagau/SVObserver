@@ -12,7 +12,7 @@
 #include "Definitions/ObjectDefines.h"
 #include "ObjectInterfaces/IObjectClass.h"
 #include "SVUtilityLibrary/SVGUID.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #include "SVObjectLibrary/SVObjectLibrary.h"
 #pragma endregion Includes
 

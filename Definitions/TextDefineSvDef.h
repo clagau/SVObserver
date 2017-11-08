@@ -3,7 +3,7 @@
 // All Rights Reserved
 //*****************************************************************************
 
-// This is the central location for strings used in the SVObjectInterface project and also if this string is used in different projects.
+// This is the central location for strings used in the Definitions project and also if this string is used in different projects.
 //******************************************************************************
 
 #pragma once
@@ -28,4 +28,4 @@ namespace SvDef
 
 	const TCHAR* const cBucketTag = _T("Array");			// for backwards compatibility
 	const TCHAR* const cArrayTag = _T("Array_Elements");	// new style; one bucket, all array values
-} //namespace SvOi
+} //namespace SvDef

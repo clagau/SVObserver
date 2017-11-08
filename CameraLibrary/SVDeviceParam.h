@@ -15,7 +15,7 @@
 
 #include "SVVisitor.h"
 #include "SVTemplate.h"
-#include "SVUtilityLibrary/SVString.h"
+
 
 enum SVDeviceParamDataTypeEnum
 {
@@ -162,7 +162,7 @@ public:
 	SVDeviceParam( SVDeviceParamEnum e );
 	virtual ~SVDeviceParam();
 	static SVDeviceParam* Create(SVDeviceParamEnum eType);
-	static SVString GetParameterName( SVDeviceParamEnum e );
+	static std::string GetParameterName( SVDeviceParamEnum e );
 	SVDeviceParam* Clone() const {return static_cast< SVDeviceParam* >( CloneImpl() );}
 	virtual SVClonable* CloneImpl() const = 0;
 
@@ -171,13 +171,13 @@ public:
 	virtual HRESULT SetMetadata(const SVDeviceParam* pBaseParam );
 
 	LPCTSTR Name() const { return m_strName.c_str(); };
-	HRESULT SetName( const SVString& strName);
+	HRESULT SetName( const std::string& strName);
 
 	LPCTSTR VisualName() const { return m_strVisualName.c_str(); };
-	HRESULT SetVisualName( const SVString& strName);
+	HRESULT SetVisualName( const std::string& strName);
 
 	LPCTSTR Description() const { return m_strDescription.c_str(); };
-	HRESULT SetDescription( const SVString& strDescription );
+	HRESULT SetDescription( const std::string& strDescription );
 
 	long DetailLevel() const { return m_lDetailLevel; };
 	HRESULT SetDetailLevel( long lDetailLevel );
@@ -198,9 +198,9 @@ public:
 protected:
 	SVDeviceParamEnum m_eParam;
 	SVDeviceParamDataTypeEnum m_eDataType;
-	SVString m_strName;
-	SVString m_strVisualName;
-	SVString m_strDescription;
+	std::string m_strName;
+	std::string m_strVisualName;
+	std::string m_strDescription;
 	int m_iOrder;
 	long m_lDetailLevel;
 	bool m_bSupports;

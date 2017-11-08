@@ -14,7 +14,6 @@
 #include "SVOutputObjectList.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVValueObjectLibrary/SVValueObject.h"
-#include "SVUtilityLibrary/SVStringConversions.h"
 #include "SVDigitalOutputObject.h"
 #include "SVRemoteOutputObject.h"
 #include "SVInfoStructs.h"
@@ -24,6 +23,8 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVMessage\SVMessage.h"
 #include "TextDefinesSvO.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 SVOutputObjectList::SVOutputObjectList( LPCSTR ObjectName )
@@ -100,7 +101,7 @@ SVOutputObject* SVOutputObjectList::GetOutput(const SVGUID& rOutputID ) const
 	return pResult;
 }
 
-SVOutputObject* SVOutputObjectList::GetOutput(const SVString& rName) const
+SVOutputObject* SVOutputObjectList::GetOutput(const std::string& rName) const
 {
 	SVOutputObject* pResult(nullptr);
 
@@ -126,7 +127,7 @@ SVOutputObject* SVOutputObjectList::GetOutput(const SVString& rName) const
 	return pResult;
 }
 
-SVOutputObject* SVOutputObjectList::GetOutputFlyweight(const SVString& rName, SVObjectSubTypeEnum ObjectSubType, int GuidIndex)
+SVOutputObject* SVOutputObjectList::GetOutputFlyweight(const std::string& rName, SVObjectSubTypeEnum ObjectSubType, int GuidIndex)
 {
 	SVOutputObject* pResult(nullptr);
 
@@ -588,7 +589,7 @@ bool SVOutputObjectList::ResetOutput( SVIOEntryHostStructPtr pIOEntry )
 				bool l_bEnable = pIOEntry->m_Enabled;
 				if (!l_bEnable)	// Act as if enabled when Module Ready or Raid Error 
 				{
-					SVString Name = Iter->second->GetName();
+					std::string Name = Iter->second->GetName();
 					if (SvO::cModuleReady == Name || SvO::cRaidErrorIndicator == Name)
 					{
 						l_bEnable = true;
@@ -660,14 +661,14 @@ bool SVOutputObjectList::RenameInspection( LPCTSTR OldInspection, LPCTSTR NewIns
 	{
 		SVOutputObject* l_pOutput = l_Iter->second;
 
-		SVString Name = l_pOutput->GetName();
+		std::string Name = l_pOutput->GetName();
 
 		size_t Pos = Name.find('.');
-		SVString InspectionName = SvUl_SF::Left( Name, Pos );
+		std::string InspectionName = SvUl::Left( Name, Pos );
 
 		if( OldInspection == InspectionName )
 		{
-			SVString NewName = NewInspectionName + SvUl_SF::Mid( Name, Pos );
+			std::string NewName = NewInspectionName + SvUl::Mid( Name, Pos );
 			l_pOutput->SetName( NewName.c_str() );
 			l_bRet = true;
 		}
@@ -678,7 +679,7 @@ bool SVOutputObjectList::RenameInspection( LPCTSTR OldInspection, LPCTSTR NewIns
 }
 
 
-HRESULT SVOutputObjectList::RemoveUnusedOutputs( const SVStringVector& rInspectionNames, const SVStringVector& rPPQNames )
+HRESULT SVOutputObjectList::RemoveUnusedOutputs( const SvDef::StringVector& rInspectionNames, const SvDef::StringVector& rPPQNames )
 {
 	typedef std::deque<SVDigitalOutputObject*> SVDigitalOutputPtrList;
 	typedef std::map<long, SVDigitalOutputPtrList> SVDigitalOutputChannelMap;
@@ -690,13 +691,13 @@ HRESULT SVOutputObjectList::RemoveUnusedOutputs( const SVStringVector& rInspecti
 		// if sizes are the same, Loop through inspection names and check for differences.
 		// if there is a difference, then search for the old name in the output object list.
 		// once we find the oldname in the output object list, replace with the new name.
-		SVStringSet ValidObjects;
+		SvDef::StringSet ValidObjects;
 
 		for( size_t l_lIndex = 0 ; l_lIndex < rInspectionNames.size() ; l_lIndex++ )
 		{
 			// for each output object search for the inspection name in the new names.
 			// if found
-			const SVString& rInspection = rInspectionNames[l_lIndex];
+			const std::string& rInspection = rInspectionNames[l_lIndex];
 
 			SVGuidSVOutputObjectPtrMap::const_iterator Iter = m_OutputObjects.begin();
 
@@ -704,13 +705,13 @@ HRESULT SVOutputObjectList::RemoveUnusedOutputs( const SVStringVector& rInspecti
 			{
 				SVOutputObject* pOutput = Iter->second;
 
-				SVString OutputName = pOutput->GetName();
+				std::string OutputName = pOutput->GetName();
 
-				SVString ObjInspectionName;
+				std::string ObjInspectionName;
 				size_t Pos = OutputName.find('.');
-				if( SVString::npos != Pos )
+				if( std::string::npos != Pos )
 				{
-					ObjInspectionName = SvUl_SF::Left( OutputName, Pos );
+					ObjInspectionName = SvUl::Left( OutputName, Pos );
 				}
 
 				if( rInspection == ObjInspectionName )
@@ -733,7 +734,7 @@ HRESULT SVOutputObjectList::RemoveUnusedOutputs( const SVStringVector& rInspecti
 			{
 				SVOutputObject* pOutput = l_Iter->second;
 
-				SVString OutputName;
+				std::string OutputName;
 
 				if( nullptr != pOutput )
 				{
@@ -747,7 +748,7 @@ HRESULT SVOutputObjectList::RemoveUnusedOutputs( const SVStringVector& rInspecti
 					bool l_Skip = false;
 
 					// Check if the name starts with a valid PPQ_X prefix. Skip these outputs.
-					for(SVStringVector::const_iterator it = rPPQNames.begin() ; it != rPPQNames.end() ; ++it)
+					for(SvDef::StringVector::const_iterator it = rPPQNames.begin() ; it != rPPQNames.end() ; ++it)
 					{
 						if( 0 == OutputName.find( *it ) )
 						{
@@ -761,7 +762,7 @@ HRESULT SVOutputObjectList::RemoveUnusedOutputs( const SVStringVector& rInspecti
 
 					if( ! l_Skip )
 					{
-						SVStringSet::const_iterator l_OkIter = ValidObjects.find( OutputName );
+						SvDef::StringSet::const_iterator l_OkIter = ValidObjects.find( OutputName );
 
 						Remove = ( l_OkIter == ValidObjects.end() );
 						Remove = Remove || OutputIsNotValid( pOutput->GetName() );
@@ -809,7 +810,7 @@ HRESULT SVOutputObjectList::RemoveUnusedOutputs( const SVStringVector& rInspecti
 				{
 					SVDigitalOutputObject* l_pOutput = *l_OutputIter;
 
-					if( nullptr != l_pOutput && SVString(SvO::cModuleReady ) == l_pOutput->GetName() )
+					if( nullptr != l_pOutput && std::string(SvO::cModuleReady ) == l_pOutput->GetName() )
 					{
 						l_pOutput->SetChannel( -1 );
 
@@ -845,7 +846,7 @@ HRESULT SVOutputObjectList::RemoveUnusedOutputs( const SVStringVector& rInspecti
 	return l_Status;
 }
 
-bool SVOutputObjectList::OutputIsNotValid( SVString Name )
+bool SVOutputObjectList::OutputIsNotValid( std::string Name )
 {
 	bool l_bRet = true;
 	
@@ -863,7 +864,7 @@ bool SVOutputObjectList::OutputIsNotValid( SVString Name )
 	return l_bRet;
 }
 
-void SVOutputObjectList::OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName)
+void SVOutputObjectList::OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName)
 {
 	if( Lock() )
 	{
@@ -875,14 +876,14 @@ void SVOutputObjectList::OnObjectRenamed(const SVObjectClass& rRenamedObject, co
 		{
 			SVOutputObject* l_pOutput = l_Iter->second;
 
-			SVString CurrentName = l_pOutput->GetName();
+			std::string CurrentName = l_pOutput->GetName();
 			size_t Pos = CurrentName.find( rOldName );
 
-			if( SVString::npos != Pos )
+			if( std::string::npos != Pos )
 			{
-				SVString NewName = SvUl_SF::Left( CurrentName, Pos ) + rRenamedObject.GetName();
-				SVString Root  = NewName;
-				NewName += SvUl_SF::Mid( CurrentName, Pos + rOldName.size() );
+				std::string NewName = SvUl::Left( CurrentName, Pos ) + rRenamedObject.GetName();
+				std::string Root  = NewName;
+				NewName += SvUl::Mid( CurrentName, Pos + rOldName.size() );
 
 				if( Root == rRenamedObject.GetCompleteName() )
 				{
@@ -911,7 +912,7 @@ HRESULT SVOutputObjectList::WriteDigitalOutput( SVIOEntryStruct& pIOEntry, long 
 		{
 			_variant_t Value( false );
 
-			SVString l_String = pOutput->GetName();
+			std::string l_String = pOutput->GetName();
 
 			if( p_ACK || l_String.substr( 0, 3 ).compare( _T( "PPQ" ) ) == 0 )
 			{
@@ -965,7 +966,7 @@ HRESULT SVOutputObjectList::WriteDigitalOutput( SVIOEntryStruct& pIOEntry, long 
 		Result = pOutput->Write( bValue );
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_OUTPUT_VALUES)
-		SVString DebugString = SvUl_SF::Format(_T("%s, %c, %d\r\n"), pOutput->GetName(), bValue ? '1' : '0', lDataIndex);
+		std::string DebugString = SvUl::Format(_T("%s, %c, %d\r\n"), pOutput->GetName(), bValue ? '1' : '0', lDataIndex);
 		::OutputDebugString(DebugString.c_str());
 #endif
 	}

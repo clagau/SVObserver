@@ -18,7 +18,7 @@
 #include "SVTimerLibrary/SVClock.h"
 #include "SVLibrary/SVFileNameClass.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #include "SVImageProcessingClass.h"
 #include "SVTaskObject.h"
 #include "SVMessage/SVMessage.h"
@@ -371,7 +371,7 @@ HRESULT SVImageObjectClass::LoadImage( LPCTSTR p_szFileName, SVDataManagerHandle
 				
 				if( fileformatID != -1 && ::SVFileExists( p_szFileName ) )
 				{
-					SVString l_strFile(p_szFileName);
+					std::string l_strFile(p_szFileName);
 					
 					SVImageBufferHandleImage l_MilHandle;
 					l_svHandle->GetData( l_MilHandle );
@@ -424,7 +424,7 @@ HRESULT SVImageObjectClass::GetImageExtentFromFile( LPCTSTR pFileName, SVImageEx
 		if( fileformatID != SVFileUnknown && ::SVFileExists( pFileName ) )
 		{
 
-			SVString strFile(pFileName);
+			std::string strFile(pFileName);
 
 			Code =  SVMatroxBufferInterface::GetImageSize(strFile,Width,Height);
 		}

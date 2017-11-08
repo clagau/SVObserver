@@ -59,7 +59,7 @@ HRESULT SVRemoteOutputGroup::ProcessNotifyData( SVObjectCommandDataJsonPtr& p_rD
 
 	Json::Reader l_Reader;
 	Json::Value l_JsonValues;
-	SVString l_Command;
+	std::string l_Command;
 
 	if( l_Reader.parse( p_rDataPtr->GetJsonCommand(), l_JsonValues, false ) )
 	{
@@ -130,7 +130,7 @@ HRESULT SVRemoteOutputGroup::ProcessNotifyData( SVObjectCommandDataJsonPtr& p_rD
 
 					for( l_it = m_RemoteOutputs.begin() ; l_it != m_RemoteOutputs.end(); ++l_it )
 					{
-						SVString l_Name = ( *l_it )->GetInputValueObjectName();
+						std::string l_Name = ( *l_it )->GetInputValueObjectName();
 
 						if( !( l_Name.empty() ) )
 						{
@@ -272,7 +272,7 @@ HRESULT SVRemoteOutputGroup::ObserverUpdate( const SVProductInfoStruct& p_rData 
 
 		l_JsonResults = l_Writer.write( l_Object ).c_str();
 
-		l_Status = SVObjectManagerClass::Instance().UpdateObservers( SVString( SvO::cRemoteOutputGroupTag ), GetUniqueObjectID(), l_JsonResults );
+		l_Status = SVObjectManagerClass::Instance().UpdateObservers( std::string( SvO::cRemoteOutputGroupTag ), GetUniqueObjectID(), l_JsonResults );
 	}
 
 	return l_Status;
@@ -331,7 +331,7 @@ BOOL SVRemoteOutputGroup::GetParameters(SvXml::SVObjectXMLWriter& rWriter ) cons
 {
 	BOOL bOk = TRUE;
 
-	SVString l_SubjectName;
+	std::string l_SubjectName;
 	SVGUID l_SubjectID;
 	
 	SVObjectManagerClass::Instance().GetObserverSubject( "SVRemoteOutputGroup", GetUniqueObjectID(), l_SubjectID );
@@ -361,7 +361,7 @@ BOOL SVRemoteOutputGroup::GetParameters(SvXml::SVObjectXMLWriter& rWriter ) cons
 	// Remote Outputs 
 	for( size_t i = 0 ; i < m_RemoteOutputs.size(); i++ )
 	{
-		SVString Branch = SvUl_SF::Format( _T("%s_%d"), SvXml::CTAG_REMOTE_OUTPUT_ENTRY, i + 1 );
+		std::string Branch = SvUl::Format( _T("%s_%d"), SvXml::CTAG_REMOTE_OUTPUT_ENTRY, i + 1 );
 		rWriter.StartElement( Branch.c_str() );
 		m_RemoteOutputs[i]->GetParameters( rWriter );
 		rWriter.EndElement();
@@ -413,7 +413,7 @@ BOOL SVRemoteOutputGroup::SetParameters( SVTreeType& p_rTree, SVTreeType::SVBran
 		while( l_bTmp )
 		{
 			SVTreeType::SVBranchHandle htiBranch = nullptr;
-			SVString Entry = SvUl_SF::Format( _T("%s_%d"), SvXml::CTAG_REMOTE_OUTPUT_ENTRY, ++l_lEntryNum );
+			std::string Entry = SvUl::Format( _T("%s_%d"), SvXml::CTAG_REMOTE_OUTPUT_ENTRY, ++l_lEntryNum );
 			l_bTmp = SvXml::SVNavigateTree::GetItemBranch( p_rTree, Entry.c_str(), htiParent, htiBranch );
 			if ( l_bTmp )
 			{
@@ -500,8 +500,8 @@ public:
 	{
 		bool l_bGreater= false;
 		// Figure which PPQ this is...
-		SVString l_GroupName1 = q->GetGroupID();
-		SVString l_GroupName2 = p->GetGroupID();
+		std::string l_GroupName1 = q->GetGroupID();
+		std::string l_GroupName2 = p->GetGroupID();
 
 		if( l_GroupName2 < l_GroupName1 )
 		{
@@ -510,8 +510,8 @@ public:
 		else
 		if( l_GroupName2 == l_GroupName1 )
 		{
-			SVString l_l1 = p->GetInputValueObjectName();
-			SVString l_l2 = q->GetInputValueObjectName();
+			std::string l_l1 = p->GetInputValueObjectName();
+			std::string l_l2 = q->GetInputValueObjectName();
 			if( l_l2 < l_l1 )
 			{
 				l_bGreater = true;
@@ -568,9 +568,9 @@ HRESULT SVRemoteOutputGroup::Find( SVRemoteOutputObject* p_pObject, long& p_rlIn
 	return l_hr;
 }
 
-SVString SVRemoteOutputGroup::GetGroupName() const
+std::string SVRemoteOutputGroup::GetGroupName() const
 {
-	SVString Result = GetPPQName();
+	std::string Result = GetPPQName();
 
 	SVRemoteOutputObject* pFirst = GetFirstObject();
 
@@ -587,12 +587,12 @@ const SVGUID& SVRemoteOutputGroup::GetPPQObjectId() const
 	return m_PPQObjectId;
 }
 
-SVString SVRemoteOutputGroup::GetPPQName() const
+std::string SVRemoteOutputGroup::GetPPQName() const
 {
-	SVString l_SubjectName;
+	std::string l_SubjectName;
 	SVGUID l_SubjectID;
 	
-	SVObjectManagerClass::Instance().GetObserverSubject( SVString( SvO::cPPQObjectTag ), GetUniqueObjectID(), l_SubjectID );
+	SVObjectManagerClass::Instance().GetObserverSubject( std::string( SvO::cPPQObjectTag ), GetUniqueObjectID(), l_SubjectID );
 
 	if( !( l_SubjectID.empty() ) )
 	{
@@ -610,14 +610,14 @@ SVString SVRemoteOutputGroup::GetPPQName() const
 		if( nullptr != l_pSubject  )
 		{
 			l_SubjectName = l_pSubject->GetCompleteName();
-			HRESULT l_hr = SVObjectManagerClass::Instance().AttachObserver( SVString( SvO::cPPQObjectTag ), m_PPQObjectId, GetUniqueObjectID() );
+			HRESULT l_hr = SVObjectManagerClass::Instance().AttachObserver( std::string( SvO::cPPQObjectTag ), m_PPQObjectId, GetUniqueObjectID() );
 		}
 	}
 
 	return l_SubjectName;
 }
 
-HRESULT SVRemoteOutputGroup::SetPPQName( const SVString& p_rPPQ )
+HRESULT SVRemoteOutputGroup::SetPPQName( const std::string& p_rPPQ )
 {
 	SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObjectCompleteName( p_rPPQ.c_str() );
 
@@ -626,20 +626,20 @@ HRESULT SVRemoteOutputGroup::SetPPQName( const SVString& p_rPPQ )
 		HRESULT l_hr;
 		SVGUID l_tmpGUID;
 		m_PPQObjectId = l_pObject->GetUniqueObjectID();
-		l_hr = SVObjectManagerClass::Instance().GetObserverSubject( SVString( SvO::cPPQObjectTag ), GetUniqueObjectID(), l_tmpGUID );
+		l_hr = SVObjectManagerClass::Instance().GetObserverSubject( std::string( SvO::cPPQObjectTag ), GetUniqueObjectID(), l_tmpGUID );
 
 		if( GUID_NULL == l_tmpGUID )
 		{
 			// Attach Observer No previous attachment...
-			SVObjectManagerClass::Instance().AttachObserver( SVString( SvO::cPPQObjectTag ), m_PPQObjectId, GetUniqueObjectID() );
+			SVObjectManagerClass::Instance().AttachObserver( std::string( SvO::cPPQObjectTag ), m_PPQObjectId, GetUniqueObjectID() );
 		}
 		else
 		{
 			if( l_tmpGUID != m_PPQObjectId )
 			{
 				// Detach Observer then attach new...
-				l_hr = SVObjectManagerClass::Instance().DetachObserver( SVString( SvO::cPPQObjectTag ), l_tmpGUID, GetUniqueObjectID() );
-				l_hr = SVObjectManagerClass::Instance().AttachObserver( SVString( SvO::cPPQObjectTag ), m_PPQObjectId, GetUniqueObjectID() );
+				l_hr = SVObjectManagerClass::Instance().DetachObserver( std::string( SvO::cPPQObjectTag ), l_tmpGUID, GetUniqueObjectID() );
+				l_hr = SVObjectManagerClass::Instance().AttachObserver( std::string( SvO::cPPQObjectTag ), m_PPQObjectId, GetUniqueObjectID() );
 			}
 			else
 			{
@@ -650,7 +650,7 @@ HRESULT SVRemoteOutputGroup::SetPPQName( const SVString& p_rPPQ )
 	return S_OK;
 }
 
-HRESULT SVRemoteOutputGroup::SetGroupName(const SVString& newName)
+HRESULT SVRemoteOutputGroup::SetGroupName(const std::string& newName)
 {
 	for( SVRemoteOutputObjectList::iterator l_it = m_RemoteOutputs.begin() ; l_it != m_RemoteOutputs.end() ; ++l_it)
 	{

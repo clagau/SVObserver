@@ -281,9 +281,9 @@ DWORD SVBarCodeAttributesDialog::SetErrCorrection(DWORD dwErrCorrection)
   return dwErrCorrection;
 }
 
-SVString SVBarCodeAttributesDialog::GetInfoNameByMil(const SVBarCodeEccEncVector& rMilVector, long MilID)
+std::string SVBarCodeAttributesDialog::GetInfoNameByMil(const SVBarCodeEccEncVector& rMilVector, long MilID)
 {
-	SVString Result;
+	std::string Result;
 
 	for( auto& rElement : rMilVector)
 	{

@@ -20,7 +20,6 @@
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "TriggerInformation/SVTriggerRelayClass.h"
 #include "TriggerInformation/SVFileAcquisitionInitiator.h"
-#include "SVUtilityLibrary/SVString.h"
 #include "SVAcquisitionClass.h"
 #include "SVValueObjectLibrary/BasicValueObjects.h"
 #include "CameraLibrary/SVLongValueDeviceParam.h"
@@ -31,7 +30,7 @@ typedef SVVector<SVVirtualCamera*> SVVirtualCameraPtrVector;
 typedef SVSet<SVVirtualCamera*> SVVirtualCameraSet;
 typedef std::set<SVVirtualCamera*> SVVirtualCameraPtrSet;
 typedef SVSet<SVAcquisitionClassPtr> SVAcquisitionClassSet;
-typedef SVMap<SVString, SVVirtualCamera*> SVVirtualCameraMap;
+typedef SVMap<std::string, SVVirtualCamera*> SVVirtualCameraMap;
 
 class SVORequestClass;
 class SVDeviceParamCollection;
@@ -101,10 +100,10 @@ public:
 	void SetFileAcquisitionMode(bool bFileAcquisition);
 
 	LPCTSTR GetImageFilename() const;
-	void SetImageFilename(const SVString& filename);
+	void SetImageFilename(const std::string& filename);
 
 	LPCTSTR GetImageDirectoryName() const;
-	void SetImageDirectoryName(const SVString& directoryName);
+	void SetImageDirectoryName(const std::string& directoryName);
 
 	long GetFileLoadingMode() const;
 	void SetFileLoadingMode(long mode);
@@ -157,8 +156,8 @@ private:
 	BasicValueObjects m_CameraValues;
 	bool m_bFileAcquisition;
 	bool m_IsColor;
-	SVString m_imageFilename;
-	SVString m_imageDirectoryName;
+	std::string m_imageFilename;
+	std::string m_imageDirectoryName;
 	bool m_bImageSizeEditModeFileBased;
 	long m_imageLoadingMode;
 	SIZE m_imageSize;

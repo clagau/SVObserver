@@ -14,7 +14,7 @@
 #include "ObjectInterfaces/IObjectClass.h"
 #include "ObjectInterfaces/IObjectManager.h"
 #include "SVUtilityLibrary/SVGUID.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 namespace SvCmd
@@ -43,10 +43,10 @@ namespace SvCmd
 			return hr;
 		}
 		bool empty() const { return false; }
-		const SVString& GetName() const { return m_Name; }
+		const std::string& GetName() const { return m_Name; }
 
 	private:
 		SVGUID m_InspectionID;
-		SVString m_Name;
+		std::string m_Name;
 	};
 } //namespace SvCmd

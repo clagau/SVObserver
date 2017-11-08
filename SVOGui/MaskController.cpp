@@ -78,7 +78,7 @@ namespace SvOg
 		return nullptr;
 	}
 
-	HRESULT MaskController::ImportMask(const SVString& filename)
+	HRESULT MaskController::ImportMask(const std::string& filename)
 	{
 		typedef SvCmd::ImportMask Command;
 		typedef SVSharedPtr<Command> CommandPtr;
@@ -89,7 +89,7 @@ namespace SvOg
 		return hr;
 	}
 
-	HRESULT MaskController::ExportMask(const SVString& filename)
+	HRESULT MaskController::ExportMask(const std::string& filename)
 	{
 		typedef SvCmd::ExportMask Command;
 		typedef SVSharedPtr<Command> CommandPtr;

@@ -19,7 +19,7 @@
 #include "SVOCore/SVTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "Definitions/SVUserMessage.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -242,7 +242,7 @@ BOOL SVToolAdjustmentDialogLUTPageClass::OnInitDialog()
 			if( m_pLUTMode )
 			{
 				// Populate LUT Mode combo...
-				SVString EnumList;
+				std::string EnumList;
 				m_pLUTMode->GetEnumTypes( EnumList );
 				m_LUTModeCombo.SetEnumTypes( EnumList.c_str() );
 			}
@@ -324,9 +324,9 @@ void SVToolAdjustmentDialogLUTPageClass::OnLUTFormulaButton()
 {
 	if( m_pLUTEquation )
 	{
-		SVString Text = SvUl_SF::LoadSVString( IDS_FORMULA_STRING );
+		std::string Text = SvUl::LoadStdString( IDS_FORMULA_STRING );
 
-		SVString Caption = m_pLUTEquation->GetName();
+		std::string Caption = m_pLUTEquation->GetName();
 		Caption += _T( " " )+ Text;
 
 		const GUID& rObjectID = m_pLUTOperator->GetUniqueObjectID();
@@ -483,7 +483,7 @@ void SVToolAdjustmentDialogLUTPageClass::refresh( bool p_bSave /*= true*/ )
 		if( nullptr != m_pLUTMode )
 		{
 			// refresh lut mode combo settings...
-			SVString EnumString;
+			std::string EnumString;
 			if( S_OK == m_pLUTMode->getValue( EnumString ) )
 			{
 				// Set cur sel in combo box...

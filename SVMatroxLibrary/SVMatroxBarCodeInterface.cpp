@@ -20,6 +20,7 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageTextEnum.h"
 #include "SVMessage\SVMessage.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 /**
@@ -350,7 +351,7 @@ HRESULT SVMatroxBarCodeInterface::Set( const SVMatroxBarCode& p_rCodeID, SVBarCo
 
 @SVOperationDescription Uses McodeControl to set the control type with value.
 
-*/HRESULT SVMatroxBarCodeInterface::Set( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, const SVString& p_dValue )
+*/HRESULT SVMatroxBarCodeInterface::Set( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, const std::string& p_dValue )
 {
 	// Currently there are no strings to set.
 	return SVMEE_INVALID_PARAMETER;
@@ -430,7 +431,7 @@ HRESULT SVMatroxBarCodeInterface::Get( const SVMatroxBarCode& p_rCodeID, SVBarCo
 @SVOperationDescription Get returns the selected control value from the provided SVMatroxBarCode handle.
 
 */
-HRESULT SVMatroxBarCodeInterface::Get( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, SVString& p_rstrValue ) 
+HRESULT SVMatroxBarCodeInterface::Get( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, std::string& p_rstrValue ) 
 {
 	// Currently there are no strings to Get.
 	return SVMEE_INVALID_PARAMETER;
@@ -465,7 +466,7 @@ bool SVMatroxBarCodeInterface::GetResult( const SVMatroxBarCode& p_rCodeID, SVBa
 					{
 						SVMatroxStatusInformation l_info;
 						MatroxCode = SVMatroxApplicationInterface::GetLastStatus(l_info);
-						SVStringVector messageList;
+						SvDef::StringVector messageList;
 						messageList.push_back(l_info.m_StatusString);
 						SvStl::MessageContainer Msg( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_ErrorMcodeGetResult, messageList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10250);//, GetUniqueObjectID() );
 						pErrorMessages->push_back(Msg);
@@ -528,7 +529,7 @@ bool SVMatroxBarCodeInterface::GetResult( const SVMatroxBarCode& p_rCodeID, SVBa
 @SVOperationDescription
 
 */
-bool SVMatroxBarCodeInterface::GetResult( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, SVString& p_rstrValue, SvStl::MessageContainerVector *pErrorMessages)
+bool SVMatroxBarCodeInterface::GetResult( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, std::string& p_rstrValue, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool retValue = true;
 #ifdef USE_TRY_BLOCKS
@@ -563,7 +564,7 @@ bool SVMatroxBarCodeInterface::GetResult( const SVMatroxBarCode& p_rCodeID, SVBa
 							{
 								SVMatroxStatusInformation l_info;
 								MatroxCode = SVMatroxApplicationInterface::GetLastStatus(l_info);
-								SVStringVector messageList;
+								SvDef::StringVector messageList;
 								messageList.push_back(l_info.m_StatusString);
 								SvStl::MessageContainer Msg( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_ErrorMcodeGetResult, messageList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10250);//, GetUniqueObjectID() );
 								pErrorMessages->push_back(Msg);
@@ -650,7 +651,7 @@ bool SVMatroxBarCodeInterface::Execute( const SVMatroxBarCode& p_rCodeID, const 
 				{
 					SVMatroxStatusInformation l_info;
 					MatroxCode = SVMatroxApplicationInterface::GetLastStatus(l_info);
-					SVStringVector messageList;
+					SvDef::StringVector messageList;
 					messageList.push_back(l_info.m_StatusString);
 					SvStl::MessageContainer Msg( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_ErrorMcodeGetResult, messageList, SvStl::SourceFileParams(StdMessageParams));
 					pErrorMessages->push_back(Msg);

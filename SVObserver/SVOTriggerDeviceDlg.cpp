@@ -84,7 +84,7 @@ BOOL CSVOTriggerDeviceDlg::OnInitDialog()
 
 void CSVOTriggerDeviceDlg::SetupList()
 {
-	typedef std::map<long, SVString> SortedTriggerList;
+	typedef std::map<long, std::string> SortedTriggerList;
 	SortedTriggerList sortedList;
 
     m_ctlTriggerList.ResetContent();
@@ -96,7 +96,7 @@ void CSVOTriggerDeviceDlg::SetupList()
         pTriggerObj = m_pParent->GetTriggerObject(i);
 		if( nullptr != pTriggerObj )
 		{
-			sortedList.insert(std::make_pair(pTriggerObj->GetTriggerDigNumber(), SVString( pTriggerObj->GetTriggerDisplayName() ) ) );
+			sortedList.insert(std::make_pair(pTriggerObj->GetTriggerDigNumber(), std::string( pTriggerObj->GetTriggerDisplayName() ) ) );
 		}
     }
 	for (SortedTriggerList::const_iterator it = sortedList.begin();it != sortedList.end();++it)
@@ -127,7 +127,7 @@ void CSVOTriggerDeviceDlg::SetupList()
 // 2. must have a corresponding camera
 void CSVOTriggerDeviceDlg::GetNextAvailableTriggerList(SVTriggerNameIdList& rList) const
 {
-	SVString name;
+	std::string name;
 	int id = m_pParent->GetNextTriggerID();
 	bool bNonIOSVIM = m_pParent->IsNonIOSVIM(m_pParent->GetProductType());
 	
@@ -147,7 +147,7 @@ void CSVOTriggerDeviceDlg::OnBtnNewTrig()
 {
 	SVTriggerNameIdList list;
 	GetNextAvailableTriggerList(list);
-	SVString TriggerName;
+	std::string TriggerName;
 	int iDig = -1;
 	if (list.size() > 1)
 	{

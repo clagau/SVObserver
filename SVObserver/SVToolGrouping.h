@@ -11,7 +11,6 @@
 //Moved to precompiled header: #include <list>
 //Moved to precompiled header: #include <utility>
 #include "SVObjectLibrary/SVObjectWriter.h"
-#include "SVUtilityLibrary/SVString.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #pragma endregion Includes
@@ -25,62 +24,62 @@ public:
 		StartOfGroup = 2,
 		EndOfGroup = 3
 	};
-	SVString m_name;
-	SVString m_endName;
+	std::string m_name;
+	std::string m_endName;
 	Type m_type;
 	bool m_bCollapsed;
-	SVString m_comment;
+	std::string m_comment;
 
-	ToolGroupData(Type rType, const SVString& rName) : m_type(rType), m_name(rName), m_bCollapsed(false) {}
-	ToolGroupData(Type rType, const SVString& rName, const SVString& rEndName, bool bCollapsed) : m_type(rType), m_name(rName), m_endName(rEndName), m_bCollapsed(bCollapsed) {}
+	ToolGroupData(Type rType, const std::string& rName) : m_type(rType), m_name(rName), m_bCollapsed(false) {}
+	ToolGroupData(Type rType, const std::string& rName, const std::string& rEndName, bool bCollapsed) : m_type(rType), m_name(rName), m_endName(rEndName), m_bCollapsed(bCollapsed) {}
 };
 
 class SVToolGrouping
 {
-	typedef std::pair<SVString, ToolGroupData> ToolGroup;
+	typedef std::pair<std::string, ToolGroupData> ToolGroup;
 	typedef std::list<ToolGroup> ToolGroupList;
 	ToolGroupList m_list;
 
 public:
-	SVString GetDefaultName() const;
+	std::string GetDefaultName() const;
 	//************************************
 	//! Searches the name in the list of all tool and group names case insensitive
 	//! \param rName [in]
 	//! \param pExclude [in] if not null and the name is found (case sensitive)  this is ignored 
 	//! \returns bool true if the name is unique 
 	//************************************
-	bool IsNameUnique(const SVString& rName, LPCTSTR pExclude = nullptr) const;
+	bool IsNameUnique(const std::string& rName, LPCTSTR pExclude = nullptr) const;
 
-	SVString MakeNumericUniqueName(const SVString& rName) const;
-	SVString GetToolToInsertBefore(const SVString& rName) const;
+	std::string MakeNumericUniqueName(const std::string& rName) const;
+	std::string GetToolToInsertBefore(const std::string& rName) const;
 
-	void AddGroup(const SVString& rName, const SVString& rInsertBefore = SVString());
-	bool AddEndGroup(const SVString& rGroup, const SVString& rInsertBefore);
-	void AddTool(const SVString& rName, const SVString& rInsertBefore = SVString());
+	void AddGroup(const std::string& rName, const std::string& rInsertBefore = std::string());
+	bool AddEndGroup(const std::string& rGroup, const std::string& rInsertBefore);
+	void AddTool(const std::string& rName, const std::string& rInsertBefore = std::string());
 
-	bool RemoveGroup(const SVString& rName);
-	bool RemoveTool(const SVString& rName);
+	bool RemoveGroup(const std::string& rName);
+	bool RemoveTool(const std::string& rName);
 
-	bool RenameItem(const SVString& rOldName, const SVString& rNewName);
-	SVString FindCandidateStartGroup(const SVString& rName) const;
-	SVString FindGroup(const SVString& rName) const;
+	bool RenameItem(const std::string& rOldName, const std::string& rNewName);
+	std::string FindCandidateStartGroup(const std::string& rName) const;
+	std::string FindGroup(const std::string& rName) const;
 
 	typedef SvXml::SVXMLMaterialsTree SVTreeType;
 	HRESULT SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent); // Load
 	bool GetParameters(SVObjectWriter& rWriter); // Save
 
-	bool IsStartTag(const SVString& rName, bool& bState) const;
-	bool IsStartTag(const SVString& rName) const;
-	bool IsEndTag(const SVString& rName) const;
-	bool HasEndTag(const SVString& rName) const;
-	bool IsCollapsed(const SVString& rName) const;
-	bool Collapse(const SVString& rName, bool bCollapse);
+	bool IsStartTag(const std::string& rName, bool& bState) const;
+	bool IsStartTag(const std::string& rName) const;
+	bool IsEndTag(const std::string& rName) const;
+	bool HasEndTag(const std::string& rName) const;
+	bool IsCollapsed(const std::string& rName) const;
+	bool Collapse(const std::string& rName, bool bCollapse);
 
 	typedef ToolGroupList::const_iterator const_iterator;
 	const_iterator begin() const;
 	const_iterator end() const;
 
-	const_iterator find(const SVString& rName) const;
+	const_iterator find(const std::string& rName) const;
 	bool empty() const;
 	size_t size() const;
 
@@ -89,14 +88,14 @@ public:
 	/// \param rName [in] The name of the start or end group
 	/// \returns String - which is the associated comment
 	//************************************
-	SVString GetComment(const SVString& rName) const;
+	std::string GetComment(const std::string& rName) const;
 
 	//************************************
 	/// Set the Comment for the Start or End Group
 	/// \param rName [in] The name of the start or end group
 	/// \param rComment [in] the comment to associate with the group
 	//************************************
-	void SetComment(const SVString& rName, const SVString& rComment);
+	void SetComment(const std::string& rName, const std::string& rComment);
 
 private:
 	HRESULT LoadTools(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent, SVToolGrouping& rGroupings);

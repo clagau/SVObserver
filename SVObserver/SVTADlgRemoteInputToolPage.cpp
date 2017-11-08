@@ -22,6 +22,7 @@
 #include "SVOGui/GlobalSelector.h"
 #include "SVOGui/NoSelector.h"
 #include "SVOGui/ToolSetItemSelector.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -111,17 +112,17 @@ void SVTADlgRemoteInputToolPage::OnBnClickedSelectInputButton()
 
 	if( nullptr == pToolSet ) { return; }
 
-	SVString InspectionName( pToolSet->GetInspection()->GetName() );
+	std::string InspectionName( pToolSet->GetInspection()->GetName() );
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject );
-	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
+	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, std::string( _T("") ) );
 
 	SvOsl::SelectorOptions BuildOptions( pToolSet->GetInspection()->GetUniqueObjectID(), SvDef::SV_ARCHIVABLE, pToolSet->GetUniqueObjectID() );
 	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::GlobalSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 
 	if( nullptr !=  m_pTool->GetInputObject() )
 	{
-		SVStringSet Items;
+		SvDef::StringSet Items;
 
 		SvOsl::SelectorItem InsertItem;
 		SVObjectReference ObjectRef( m_pTool->GetInputObject() );
@@ -129,14 +130,14 @@ void SVTADlgRemoteInputToolPage::OnBnClickedSelectInputButton()
 		InsertItem.setName( ObjectRef.GetName().c_str() );
 		InsertItem.setLocation( ObjectRef.GetCompleteOneBasedObjectName().c_str() );
 
-		SVString Location = SvOsl::ObjectTreeGenerator::Instance().convertObjectArrayName( InsertItem );
+		std::string Location = SvOsl::ObjectTreeGenerator::Instance().convertObjectArrayName( InsertItem );
 		Items.insert( Location );
 		SvOsl::ObjectTreeGenerator::Instance().setCheckItems( Items );
 	}
 
-	SVString ToolsetOutput = SvUl_SF::LoadSVString( IDS_SELECT_TOOLSET_OUTPUT );
-	SVString Title = SvUl_SF::Format( _T("%s - %s"), ToolsetOutput.c_str(), m_pTool->GetName() );
-	SVString Filter = SvUl_SF::LoadSVString( IDS_FILTER );
+	std::string ToolsetOutput = SvUl::LoadStdString( IDS_SELECT_TOOLSET_OUTPUT );
+	std::string Title = SvUl::Format( _T("%s - %s"), ToolsetOutput.c_str(), m_pTool->GetName() );
+	std::string Filter = SvUl::LoadStdString( IDS_FILTER );
 
 	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), ToolsetOutput.c_str(), Filter.c_str(), this );
 

@@ -7,7 +7,7 @@ public:
 	virtual ~MatroxSharedBuffer(void);
 	friend class SVMatroxBufferInterface;
 protected:
-	MatroxSharedBuffer( SVMatroxIdentifier Identifier, const SVString& rCreatorName );
+	MatroxSharedBuffer( SVMatroxIdentifier Identifier, const std::string& rCreatorName );
 
 };
 

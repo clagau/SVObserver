@@ -17,7 +17,7 @@
 #include "SVMMTimerEventHandler.h"
 #include "SVSystemLibrary/SVAsyncProcedure.h"
 #include "SVSystemLibrary/SVCriticalSection.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 namespace SvTl
@@ -33,9 +33,9 @@ namespace SvTl
 		static void Start();
 		static void Stop();
 
-		static void Subscribe(const SVString& receiverTag, unsigned long interval, SVTimerCallback* pCallback);
-		static void SetInterval(const SVString& receiverTag, unsigned long interval);
-		static void UnSubscribe(const SVString& receiverTag);
+		static void Subscribe(const std::string& receiverTag, unsigned long interval, SVTimerCallback* pCallback);
+		static void SetInterval(const std::string& receiverTag, unsigned long interval);
+		static void UnSubscribe(const std::string& receiverTag);
 
 	private:
 		SVAsyncProcedure<APCSignalHandler, ThreadSignalHandler> m_asyncProcedure;

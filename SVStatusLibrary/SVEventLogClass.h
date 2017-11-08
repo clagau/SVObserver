@@ -12,7 +12,7 @@
 #pragma once
 
 #include "SVEventRecordStruct.h"
-#include "SVUtilityLibrary/SVString.h"
+
 
 namespace SvStl
 {
@@ -35,7 +35,7 @@ namespace SvStl
 		HRESULT LocalInitialize();
 		HRESULT LocalDestroy();
 
-		SVString m_csName; // Should be one of the following: "Application", "Security", or "System"
+		std::string m_csName; // Should be one of the following: "Application", "Security", or "System"
 
 		HANDLE m_hHandle;
 

@@ -17,7 +17,7 @@
 #include "SVUnaryImageOperatorClass.h"
 #include "ObjectInterfaces/ITool.h"
 #include "SVObjectLibrary/SVClsids.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -321,7 +321,7 @@ HRESULT SVStdImageOperatorListClass::CollectInputImageNames()
 	SvOi::ITool* pTool = GetToolInterface();
 	if (nullptr != pInputImage && nullptr != pTool)
 	{
-		SVString Name = pInputImage->GetCompleteName();
+		std::string Name = pInputImage->GetCompleteName();
 
 		if( pTool->SetFirstInputImageName( Name.c_str() ) )
 		{

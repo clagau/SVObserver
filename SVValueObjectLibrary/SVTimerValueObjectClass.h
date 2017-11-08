@@ -12,7 +12,7 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #include "SVTimerLibrary/SVClock.h"
 #include "SVInt64ValueObjectClass.h"
 #pragma endregion Includes

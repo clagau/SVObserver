@@ -38,21 +38,21 @@ namespace SvSml
 		
 		DWORD GetActiveMonitorlistCount() const;
 		///return true if a active monitorlist with the name exist 
-		bool IsActiveMonitorList(const SVString& Monitorlistname ) const;
+		bool IsActiveMonitorList(const std::string& Monitorlistname ) const;
 		///return a pointer to Monitorlistcopy for the Monitorlistname 
-		const MonitorListCpy*  GetMonitorListCpyPointer(const SVString& Monitorlistname )  const;
+		const MonitorListCpy*  GetMonitorListCpyPointer(const std::string& Monitorlistname )  const;
 		
-		const MonitorListCpy*  GetMonitorListCpyPointerForPPQ(const SVString& PPQName)  const;
+		const MonitorListCpy*  GetMonitorListCpyPointerForPPQ(const std::string& PPQName)  const;
 	
-		DWORD GetInspectionStoreId(const SVString& InspectionName);
+		DWORD GetInspectionStoreId(const std::string& InspectionName);
 	
 		void Insert(MonitorListCpyPointer& MLCpyPtr);
 		
 		///Return the total size of the all images for this inspection 
-		DWORD GetInspectionImageSize(const SVString& inspectionName   );
+		DWORD GetInspectionImageSize(const std::string& inspectionName   );
 		
 		///searches all monitorlist for the full dotet nane and return the pointer if it is not found throw an exception 
-		MonitorEntryPointer GetMonitorEntryPointer(const SVString& rname);
+		MonitorEntryPointer GetMonitorEntryPointer(const std::string& rname);
 
 		///Writes all Monitorlist to shared memory 
 		void WriteMonitorList(SVMonitorListWriter& rWriter) ;

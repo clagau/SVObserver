@@ -20,7 +20,7 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 IMPLEMENT_DYNAMIC(SVSquare, CStatic)
@@ -331,7 +331,7 @@ void SVHistogramAnalyzerSetupClass::OnEnKillfocusDistThreshold()
 
 void SVHistogramAnalyzerSetupClass::OnEnKillfocusHeightThreshold()
 {
-	SVString Text = SvUl_SF::Format( _T("%3.2f"), m_histogram.GetMinHeight() );
+	std::string Text = SvUl::Format( _T("%3.2f"), m_histogram.GetMinHeight() );
 	SetDlgItemText( IDC_HEIGHT_THRESHOLD, Text.c_str() );
 }
 
@@ -352,7 +352,7 @@ void SVHistogramAnalyzerSetupClass::OnEnKillfocusDefaultPeak()
 
 void SVHistogramAnalyzerSetupClass::OnEnKillfocusFixededit()
 {
-	SVString Text = SvUl_SF::Format( _T("%3.2f"), m_histogram.GetFixedHeight() );
+	std::string Text = SvUl::Format( _T("%3.2f"), m_histogram.GetFixedHeight() );
 	SetDlgItemText( IDC_FIXEDEDIT, Text.c_str() );
 }
 
@@ -380,24 +380,24 @@ void SVHistogramAnalyzerSetupClass::Refresh()
 {
 	m_histogram.CalcStats();
 	m_histogram.ForceRepaint();
-	SVString Text;
-	Text = SvUl_SF::Format( _T("%3.2f"), m_histogram.mean() );
+	std::string Text;
+	Text = SvUl::Format( _T("%3.2f"), m_histogram.mean() );
 	SetDlgItemText( IDC_MEAN, Text.c_str() );
-	Text = SvUl_SF::Format( _T("%3.2f"), m_histogram.stdDev() );
+	Text = SvUl::Format( _T("%3.2f"), m_histogram.stdDev() );
 	SetDlgItemText( IDC_STDDEV, Text.c_str() );
-	Text = SvUl_SF::Format( _T("%d"), m_histogram.min_pixel() );
+	Text = SvUl::Format( _T("%d"), m_histogram.min_pixel() );
 	SetDlgItemText( IDC_MIN, Text.c_str() );
-	Text = SvUl_SF::Format( _T("%d"), m_histogram.max_pixel() );
+	Text = SvUl::Format( _T("%d"), m_histogram.max_pixel() );
 	SetDlgItemText( IDC_MAX, Text.c_str() );
-	Text = SvUl_SF::Format( _T("%d"), m_histogram.pixel_num() );
+	Text = SvUl::Format( _T("%d"), m_histogram.pixel_num() );
 	SetDlgItemText( IDC_COUNT, Text.c_str() );
-	Text = SvUl_SF::Format( _T("%d"), m_histogram.bin_count() );
+	Text = SvUl::Format( _T("%d"), m_histogram.bin_count() );
 	SetDlgItemText( IDC_GRAYS, Text.c_str() );
-	Text = SvUl_SF::Format( _T("%d"), m_histogram.low_peak() );
+	Text = SvUl::Format( _T("%d"), m_histogram.low_peak() );
 	SetDlgItemText( IDC_LOWPEAK, Text.c_str() );
-	Text = SvUl_SF::Format( _T("%d"), m_histogram.high_peak() );
+	Text = SvUl::Format( _T("%d"), m_histogram.high_peak() );
 	SetDlgItemText( IDC_HIGHPEAK, Text.c_str() );
-	Text = SvUl_SF::Format( _T("%d"), m_histogram.valley() );
+	Text = SvUl::Format( _T("%d"), m_histogram.valley() );
 	SetDlgItemText( IDC_VALLEY, Text.c_str() );
 	Invalidate(0);
 }
@@ -422,11 +422,11 @@ BOOL SVHistogramAnalyzerSetupClass::OnInitDialog()
 	SetDlgItemInt(IDC_HIGH_VALLEY, m_histogram.GetValleyHigh(), FALSE);
 	SetDlgItemInt(IDC_DEFAULT_VALLEY, m_histogram.GetValleyDefault(), FALSE);
 
-	SVString Text = SvUl_SF::Format( _T("%3.2f"), m_histogram.GetMinHeight() );
+	std::string Text = SvUl::Format( _T("%3.2f"), m_histogram.GetMinHeight() );
 	SetDlgItemText( IDC_HEIGHT_THRESHOLD, Text.c_str() );
 	l_chk = (m_histogram.GetHeightOption() == histogram::dynamic)?IDC_RADIODYNAMIC:IDC_RADIOFIXED;
 	CheckRadioButton( IDC_RADIODYNAMIC, IDC_RADIOFIXED, l_chk );
-	Text = SvUl_SF::Format( _T("%3.2f"), m_histogram.GetFixedHeight() );
+	Text = SvUl::Format( _T("%3.2f"), m_histogram.GetFixedHeight() );
 	SetDlgItemText( IDC_FIXEDEDIT, Text.c_str() );
 
 	return TRUE;  // return TRUE unless you set the focus to a control

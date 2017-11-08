@@ -14,6 +14,7 @@
 #include "RRSViewDlg.h"
 #include "SVSharedMemoryLibrary\ShareEvents.h"
 #include "SVSharedMemoryLibrary\MonitorListCpy.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "MonitorLIstDlg.h"
 #include <boost\date_time\c_time.hpp>
 #include "SVSharedMemoryLibrary\MLProduct.h"
@@ -205,24 +206,24 @@ void CRRSViewDlg::UpdateControls(bool isready)
 			
 			m_MonListsCtrl.SetItemText(item, ePPQ, it->second->m_ppqName.c_str());
 
-			SVString text = it->second->GetIsActive() ? _T("true") : _T("false");
+			std::string text = it->second->GetIsActive() ? _T("true") : _T("false");
 			m_MonListsCtrl.SetItemText(item, eIsActive, text.c_str());
 
-			text = SvUl_SF::Format(_T("%i"), it->second->m_rejectDepth);
+			text = SvUl::Format(_T("%i"), it->second->m_rejectDepth);
 			m_MonListsCtrl.SetItemText(item, eRejectDepth, text.c_str());
 
-			text = SvUl_SF::Format(_T("%i"), it->second->m_ProductDepth);
+			text = SvUl::Format(_T("%i"), it->second->m_ProductDepth);
 			m_MonListsCtrl.SetItemText(item, eProductDepth, text.c_str());
 
-			text = SvUl_SF::Format(_T("%i"), it->second->m_ProductFilter);
+			text = SvUl::Format(_T("%i"), it->second->m_ProductFilter);
 			m_MonListsCtrl.SetItemText(item, eProductFilter, text.c_str());
 
 
 			//monitorListCpy.m_MonitorEntries[list]
-			text = SvUl_SF::Format(_T("%i"), it->second->m_MonitorEntries[SvSml::ListType::productItemsImage].size());
+			text = SvUl::Format(_T("%i"), it->second->m_MonitorEntries[SvSml::ListType::productItemsImage].size());
 			m_MonListsCtrl.SetItemText(item, eImageCount, text.c_str());
 
-			text = SvUl_SF::Format(_T("%i"), it->second->m_MonitorEntries[SvSml::ListType::productItemsData].size());
+			text = SvUl::Format(_T("%i"), it->second->m_MonitorEntries[SvSml::ListType::productItemsData].size());
 			m_MonListsCtrl.SetItemText(item, ePcount, text.c_str());
 			item++;
 		}
@@ -240,7 +241,7 @@ LRESULT  CRRSViewDlg::OnRefresh(WPARAM wParam, LPARAM lParam)
 	if (wParam == SvSml::ShareEvents::Ready)
 	{
 		SvSml::MLInspectionInfoMap InspectionInfoMap;
-		SVStringVector PPQVector;
+		SvDef::StringVector PPQVector;
 		int inspectionCount(0);
 		DWORD version(0);
 		try

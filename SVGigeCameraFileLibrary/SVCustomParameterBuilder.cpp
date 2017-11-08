@@ -15,7 +15,7 @@
 //Moved to precompiled header: #include <boost/assign/list_of.hpp>
 #include "SVCustomParameterBuilder.h"
 #include "CameraLibrary/SVDeviceParams.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 
 // For Custom params
 static const TCHAR* const cValue = _T("Value");
@@ -49,8 +49,8 @@ static const double DefaultMultiplier = 1.0;
 static const double DefaultDivisor = 1.0;
 static const TCHAR* const cDEFAULTUNIT = _T("Unit");
 
-typedef std::map<SVString, SVDeviceParamDataTypeEnum> DeviceDataTypeEnumNameMap;
-static const DeviceDataTypeEnumNameMap g_DeviceDataTypeEnumNameMap = boost::assign::map_list_of<SVString, SVDeviceParamDataTypeEnum>
+typedef std::map<std::string, SVDeviceParamDataTypeEnum> DeviceDataTypeEnumNameMap;
+static const DeviceDataTypeEnumNameMap g_DeviceDataTypeEnumNameMap = boost::assign::map_list_of<std::string, SVDeviceParamDataTypeEnum>
 (cLongDataType, DeviceDataTypeLong)
 (cBoolDataType, DeviceDataTypeBool)
 (cStringDataType, DeviceDataTypeString)
@@ -59,8 +59,8 @@ static const DeviceDataTypeEnumNameMap g_DeviceDataTypeEnumNameMap = boost::assi
 (cUnknownDataType, DeviceDataTypeUnknown)
 ;
 
-typedef std::map<SVString, SVDeviceParamEnum> DeviceParamEnumNameMap;
-static const DeviceParamEnumNameMap g_DeviceParamEnumNameMap = boost::assign::map_list_of<SVString, SVDeviceParamEnum>
+typedef std::map<std::string, SVDeviceParamEnum> DeviceParamEnumNameMap;
+static const DeviceParamEnumNameMap g_DeviceParamEnumNameMap = boost::assign::map_list_of<std::string, SVDeviceParamEnum>
 (DeviceParamGigeCustom1_String, DeviceParamGigeCustom1)
 (DeviceParamGigeCustom2_String, DeviceParamGigeCustom2)
 (DeviceParamGigeCustom3_String, DeviceParamGigeCustom3)
@@ -93,7 +93,7 @@ static const DeviceParamEnumNameMap g_DeviceParamEnumNameMap = boost::assign::ma
 (DeviceParamGigeCustom30_String, DeviceParamGigeCustom30)
 ;
 
-SVDeviceParamEnum GetEnumFromCustomID(const SVString& tag)
+SVDeviceParamEnum GetEnumFromCustomID(const std::string& tag)
 {
 	SVDeviceParamEnum paramEnum(DeviceParamInvalid);
 	DeviceParamEnumNameMap::const_iterator it = g_DeviceParamEnumNameMap.find(tag);
@@ -104,7 +104,7 @@ SVDeviceParamEnum GetEnumFromCustomID(const SVString& tag)
 	return paramEnum;
 }
 
-SVDeviceParamDataTypeEnum GetDataTypeEnumFromString(const SVString& tag)
+SVDeviceParamDataTypeEnum GetDataTypeEnumFromString(const std::string& tag)
 {
 	SVDeviceParamDataTypeEnum dataTypeEnum(DeviceDataTypeUnknown);
 	DeviceDataTypeEnumNameMap::const_iterator it = g_DeviceDataTypeEnumNameMap.find(tag);
@@ -126,7 +126,7 @@ SVCustomDeviceParam* SVCustomParameterBuilder::BuildCustomDeviceParam( const SVM
 	if( S_OK == SVMaterialsTree::getData( rOptions, cCustomID, MaterialData ) )
 	{
 		customID = MaterialData;
-		SVDeviceParamEnum paramEnum = GetEnumFromCustomID(SvUl_SF::createSVString(customID.bstrVal));
+		SVDeviceParamEnum paramEnum = GetEnumFromCustomID(SvUl::createStdString(customID.bstrVal));
 		_variant_t dataType;
 		// Get Data Type
 		MaterialData.clear();
@@ -134,13 +134,13 @@ SVCustomDeviceParam* SVCustomParameterBuilder::BuildCustomDeviceParam( const SVM
 		{
 			dataType = MaterialData;
 			
-			SVDeviceParamDataTypeEnum dataTypeEnum = GetDataTypeEnumFromString(SvUl_SF::createSVString(dataType.bstrVal));
+			SVDeviceParamDataTypeEnum dataTypeEnum = GetDataTypeEnumFromString(SvUl::createStdString(dataType.bstrVal));
 			switch (dataTypeEnum)
 			{
 				case DeviceDataTypeLong:
 				{
 					SVLongValueDeviceParam l_Param(paramEnum);
-					l_Param.SetName(SvUl_SF::createSVString(customID));
+					l_Param.SetName(SvUl::createStdString(customID));
 					SVCustomParameterBuilder::BuildLongParam(&l_Param, rOptions);
 					pCustomDeviceParam = new SVCustomDeviceParam(&l_Param);
 				}
@@ -149,7 +149,7 @@ SVCustomDeviceParam* SVCustomParameterBuilder::BuildCustomDeviceParam( const SVM
 				case DeviceDataTypei64:
 				{
 					SVi64ValueDeviceParam l_Param(paramEnum);
-					l_Param.SetName(SvUl_SF::createSVString(customID));
+					l_Param.SetName(SvUl::createStdString(customID));
 					SVCustomParameterBuilder::BuildInt64Param(&l_Param, rOptions);
 					pCustomDeviceParam = new SVCustomDeviceParam(&l_Param);
 				}
@@ -158,7 +158,7 @@ SVCustomDeviceParam* SVCustomParameterBuilder::BuildCustomDeviceParam( const SVM
 				case DeviceDataTypeBool:
 				{
 					SVBoolValueDeviceParam l_Param(paramEnum);
-					l_Param.SetName(SvUl_SF::createSVString(customID));
+					l_Param.SetName(SvUl::createStdString(customID));
 					SVCustomParameterBuilder::BuildBoolParam(&l_Param, rOptions);
 					pCustomDeviceParam = new SVCustomDeviceParam(&l_Param);
 				}
@@ -167,7 +167,7 @@ SVCustomDeviceParam* SVCustomParameterBuilder::BuildCustomDeviceParam( const SVM
 				case DeviceDataTypeString:
 				{
 					SVStringValueDeviceParam l_Param(paramEnum);
-					l_Param.SetName(SvUl_SF::createSVString(customID));
+					l_Param.SetName(SvUl::createStdString(customID));
 					SVCustomParameterBuilder::BuildStringParam(&l_Param, rOptions);
 					pCustomDeviceParam = new SVCustomDeviceParam(&l_Param);
 				}
@@ -184,8 +184,8 @@ SVCustomDeviceParam* SVCustomParameterBuilder::BuildCustomDeviceParam( const SVM
 
 void SVCustomParameterBuilder::BuildOptions( SVDeviceParam* pParam, const SVMaterialsTree::SVTreeContainer& rOptions )
 {
-	SVString Value;
-	SVString Description;
+	std::string Value;
+	std::string Description;
 
 	for (SVMaterialsTree::const_iterator it = rOptions.begin();it!= rOptions.end();++it)
 	{
@@ -198,13 +198,13 @@ void SVCustomParameterBuilder::BuildOptions( SVDeviceParam* pParam, const SVMate
 			// Get Value
 			if( S_OK == SVMaterialsTree::getData( rTree, cValue, MaterialData ) )
 			{
-				Value = SvUl_SF::createSVString(static_cast<const _variant_t> (MaterialData));
+				Value = SvUl::createStdString(static_cast<const _variant_t> (MaterialData));
 			}
 			// Get Description
 			MaterialData.clear();
 			if( S_OK == SVMaterialsTree::getData( rTree, cDESCRIPTION, MaterialData ) )
 			{
-				Description = SvUl_SF::createSVString(static_cast<const _variant_t> (MaterialData));
+				Description = SvUl::createStdString(static_cast<const _variant_t> (MaterialData));
 			}
 
 			switch (pParam->DataType())
@@ -247,21 +247,21 @@ void SVCustomParameterBuilder::BuildCommonAttributes( SVDeviceParam* pParam, con
 	if( S_OK == SVMaterialsTree::getData( rOptions, cVISUALNAME, MaterialData ) )
 	{
 		Value = MaterialData;
-		pParam->SetVisualName(SvUl_SF::createSVString(Value));
+		pParam->SetVisualName(SvUl::createStdString(Value));
 	}
 	// Get Description
 	MaterialData.clear();
 	if( S_OK == SVMaterialsTree::getData( rOptions, cDESCRIPTION, MaterialData ) )
 	{
 		Value = MaterialData;
-		pParam->SetDescription( SvUl_SF::createSVString(Value) );
+		pParam->SetDescription( SvUl::createStdString(Value) );
 	}
 	// Get Order
 	MaterialData.clear();
 	if( S_OK == SVMaterialsTree::getData( rOptions, cORDER, MaterialData ) )
 	{
 		Value = MaterialData;
-		int order = atoi( SvUl_SF::createSVString(Value).c_str());
+		int order = atoi( SvUl::createStdString(Value).c_str());
 		pParam->SetOrder(order);
 	}
 	// Get Detail Level
@@ -269,7 +269,7 @@ void SVCustomParameterBuilder::BuildCommonAttributes( SVDeviceParam* pParam, con
 	if( S_OK == SVMaterialsTree::getData( rOptions, cDETAILLEVEL, MaterialData ) )
 	{
 		Value = MaterialData;
-		long level = atol( SvUl_SF::createSVString(Value).c_str());
+		long level = atol( SvUl::createStdString(Value).c_str());
 		pParam->SetDetailLevel(level);
 	}
 }
@@ -286,21 +286,21 @@ void SVCustomParameterBuilder::BuildLongParam(SVLongValueDeviceParam* pParam, co
 	if( S_OK == SVMaterialsTree::getData( rOptions, cMIN, MaterialData ) )
 	{
 		Value = MaterialData;
-		pParam->info.min = atol( SvUl_SF::createSVString(Value).c_str() );
+		pParam->info.min = atol( SvUl::createStdString(Value).c_str() );
 	}
 	// Get Max
 	MaterialData.clear();
 	if( S_OK == SVMaterialsTree::getData( rOptions, cMAX, MaterialData ) )
 	{
 		Value = MaterialData;
-		pParam->info.max = atol( SvUl_SF::createSVString(Value).c_str() );
+		pParam->info.max = atol( SvUl::createStdString(Value).c_str() );
 	}
 	// Get Offset (optional ?)
 	MaterialData.clear();
 	if( S_OK == SVMaterialsTree::getData( rOptions, cOFFSET, MaterialData ) )
 	{
 		Value = MaterialData;
-		pParam->info.offset = atol( SvUl_SF::createSVString(Value).c_str() );
+		pParam->info.offset = atol( SvUl::createStdString(Value).c_str() );
 	}
 	// Get Multiplier
 	pParam->info.multiplier = DefaultMultiplier;
@@ -308,7 +308,7 @@ void SVCustomParameterBuilder::BuildLongParam(SVLongValueDeviceParam* pParam, co
 	if( S_OK == SVMaterialsTree::getData( rOptions, cMULTIPLIER, MaterialData ) )
 	{
 		Value = MaterialData;
-		pParam->info.multiplier = atof( SvUl_SF::createSVString(Value).c_str() );
+		pParam->info.multiplier = atof( SvUl::createStdString(Value).c_str() );
 		if (pParam->info.multiplier == 0) // don't you mean < epsilon ?
 		{
 			pParam->info.multiplier = DefaultMultiplier;
@@ -320,7 +320,7 @@ void SVCustomParameterBuilder::BuildLongParam(SVLongValueDeviceParam* pParam, co
 	if( S_OK == SVMaterialsTree::getData( rOptions, cUNIT_DIVISOR, MaterialData ) )
 	{
 		Value = MaterialData;
-		pParam->info.unit_divisor = atof( SvUl_SF::createSVString(Value).c_str() );
+		pParam->info.unit_divisor = atof( SvUl::createStdString(Value).c_str() );
 		if (pParam->info.unit_divisor == 0) // don't you mean < epsilon ?
 		{
 			pParam->info.unit_divisor = 1.0;
@@ -331,7 +331,7 @@ void SVCustomParameterBuilder::BuildLongParam(SVLongValueDeviceParam* pParam, co
 	if( S_OK == SVMaterialsTree::getData( rOptions, cValue, MaterialData ) )
 	{
 		Value = MaterialData;
-		pParam->lValue = atol( SvUl_SF::createSVString(Value).c_str() );
+		pParam->lValue = atol( SvUl::createStdString(Value).c_str() );
 	}
 }
 
@@ -375,7 +375,7 @@ void SVCustomParameterBuilder::BuildStringParam(SVStringValueDeviceParam* pParam
 	if( S_OK == SVMaterialsTree::getData( rOptions, cValue, MaterialData ) )
 	{
 		Value = MaterialData;
-		pParam->strValue = SvUl_SF::createSVString(Value).c_str();
+		pParam->strValue = SvUl::createStdString(Value).c_str();
 	}
 }
 
@@ -390,7 +390,7 @@ void SVCustomParameterBuilder::BuildBoolParam(SVBoolValueDeviceParam* pParam, co
 	if( S_OK == SVMaterialsTree::getData( rOptions, cValue, MaterialData ) )
 	{
 		Value = MaterialData;
-		long lVal = atol(SvUl_SF::createSVString(Value).c_str());
+		long lVal = atol(SvUl::createStdString(Value).c_str());
 		pParam->bValue = lVal != 0;
 	}
 }

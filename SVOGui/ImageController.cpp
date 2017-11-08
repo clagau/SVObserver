@@ -62,7 +62,7 @@ namespace SvOg
 		return m_availableList; 
 	}
 
-	const std::vector<SVString>& ImageController::GetSpecialImageList() const
+	const SvDef::StringVector& ImageController::GetSpecialImageList() const
 	{
 		return m_specialImageList;
 	}
@@ -106,20 +106,20 @@ namespace SvOg
 
 	class ByName
 	{
-		SVString m_name;
+		std::string m_name;
 	public:
-		ByName(const SVString& rName) : m_name(rName) {}
+		ByName(const std::string& rName) : m_name(rName) {}
 		bool operator()(const SvUl::NameGuidPair& rVal) const { return rVal.first == m_name; }
-		bool operator()(const SVString& rVal) const { return rVal == m_name; }
+		bool operator()(const std::string& rVal) const { return rVal == m_name; }
 	};
 
-	IPictureDisp* ImageController::GetImage(const SVString& name) const
+	IPictureDisp* ImageController::GetImage(const std::string& name) const
 	{
 		long Width, Height;
 		return GetImage(name, Width, Height);
 	}
 
-	IPictureDisp* ImageController::GetImage(const SVString& name, long& rWidth, long& rHeight) const
+	IPictureDisp* ImageController::GetImage(const std::string& name, long& rWidth, long& rHeight) const
 	{ 
 		SvUl::NameGuidList::const_iterator it = std::find_if(m_availableList.begin(), m_availableList.end(), ByName(name));
 		if (it != m_availableList.end())
@@ -128,7 +128,7 @@ namespace SvOg
 		}
 		else
 		{
-			std::vector<SVString>::const_iterator itVector = std::find_if(m_specialImageList.begin(), m_specialImageList.end(), ByName(name));
+			SvDef::StringVector::const_iterator itVector = std::find_if(m_specialImageList.begin(), m_specialImageList.end(), ByName(name));
 			if (itVector != m_specialImageList.end())
 			{
 				typedef SvCmd::GetImage Command;
@@ -172,7 +172,7 @@ namespace SvOg
 		return m_picture;
 	}
 
-	HRESULT ImageController::ConnectToImage(const SVString& inputName, const SVString& name, const GUID& rInstanceID) const 
+	HRESULT ImageController::ConnectToImage(const std::string& inputName, const std::string& name, const GUID& rInstanceID) const 
 	{ 
 		HRESULT hr = E_INVALIDARG;
 		typedef SvCmd::ConnectToObject Command;
@@ -192,7 +192,7 @@ namespace SvOg
 		return hr; 
 	}
 
-	HRESULT ImageController::SaveImage(const SVString& rImageName, const SVString& rFilename)
+	HRESULT ImageController::SaveImage(const std::string& rImageName, const std::string& rFilename)
 	{
 		HRESULT hr = E_INVALIDARG;
 		typedef SvCmd::SaveImage Command;

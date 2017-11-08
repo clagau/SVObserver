@@ -21,6 +21,8 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/GlobalPath.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -43,10 +45,10 @@ const TCHAR* const cHighestUtilityIndex		= _T("HighestUtilityIndex");
 typedef struct UtilityInfoTag
 {
 	BOOL		m_UtilityFound;
-	SVString	m_UtilityName;
-	SVString	m_Command;
-	SVString	m_Arguments;
-	SVString	m_WorkingDirectory;
+	std::string	m_UtilityName;
+	std::string	m_Command;
+	std::string	m_Arguments;
+	std::string	m_WorkingDirectory;
 	BOOL		m_PromptForArguments;
 	UINT		m_ID;
 } UTILITYINFO, *PUTILITYINFO;
@@ -79,7 +81,7 @@ void SVUtilitiesClass::RunUtility(SVSecurityManager* pAccess, UINT uiUtilityId)
 			SVUtilityIniClass l_Struct;
 			l_Struct = iter->second;
 
-		  if ( 0 == SvUl_SF::CompareNoCase( SvUl_SF::Left( l_Struct.m_PromptForArguments, 1), SVString( _T("Y") )) )
+		  if ( 0 == SvUl::CompareNoCase( SvUl::Left( l_Struct.m_PromptForArguments, 1), std::string( _T("Y") )) )
 		  {
 			  utilInfo.m_PromptForArguments = true;
 		  }
@@ -109,9 +111,9 @@ void SVUtilitiesClass::RunUtility(SVSecurityManager* pAccess, UINT uiUtilityId)
 
 		if( pAccess->SVCreateProcess(utilInfo.m_Command.c_str(), utilInfo.m_WorkingDirectory.c_str(), utilInfo.m_Arguments.c_str() ) )
 		{
-			SVStringVector msgList;
-			msgList.push_back(SVString(utilInfo.m_UtilityName));
-			msgList.push_back(SVString(utilInfo.m_Command));
+			SvDef::StringVector msgList;
+			msgList.push_back(std::string(utilInfo.m_UtilityName));
+			msgList.push_back(std::string(utilInfo.m_Command));
 			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_UnableStart_Utility, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10237 );
 		}
@@ -186,7 +188,7 @@ bool SVUtilitiesClass::LoadMenuFromINI(CMenu *pMenu)
 
 	ClearMenu(pMenu);
 
-	SVString UtilName;
+	std::string UtilName;
 	LPTSTR pKeyName = nullptr;
 	DWORD dwId = 0;
 	SVObserverApp* pApp = static_cast<SVObserverApp*> (AfxGetApp());
@@ -201,7 +203,7 @@ bool SVUtilitiesClass::LoadMenuFromINI(CMenu *pMenu)
 	for ( int i = 0; (i < l_iHighestIndex) && bRet; i++ )
 	{
 		SVUtilityIniClass l_Struct;
-		SVString Text = SvUl_SF::Format( cUtilityNr, i+1 );
+		std::string Text = SvUl::Format( cUtilityNr, i+1 );
 		UtilName = UtilityIni.GetValueString( Text.c_str(), cDisplayName, _T("") );
 		if ( UtilName.empty() )
 		{
@@ -213,7 +215,7 @@ bool SVUtilitiesClass::LoadMenuFromINI(CMenu *pMenu)
 			iId++;
 			l_Struct.m_DisplayName = UtilName.c_str();
 
-			SVString Value;
+			std::string Value;
 			Value = UtilityIni.GetValueString(Text.c_str(), cCommandName, _T(""));
 			l_Struct.m_Command = Value.c_str();
 
@@ -241,7 +243,7 @@ void SVUtilitiesClass::CleanupIni()
 
 	CString Stanza;
 	SVObserverApp* pApp = static_cast<SVObserverApp*> (AfxGetApp());
-	SVString IniFile = SvStl::GlobalPath::Inst().GetSVUtilityIniPath() ;
+	std::string IniFile = SvStl::GlobalPath::Inst().GetSVUtilityIniPath() ;
 	SvLib::SVOINIClass UtilityIni( IniFile.c_str() );
 
 	CStdioFile file;
@@ -272,7 +274,7 @@ void SVUtilitiesClass::CleanupIni()
 
 	bool bDone = false;
 	int iUtilityIndex = 0;
-	SVString Value;
+	std::string Value;
 	int l_iProcessedUtility = 0;
 	int iId = ID_EXTRAS_UTILITIES_BASE;
 
@@ -326,7 +328,7 @@ void SVUtilitiesClass::CleanupIni()
 
 	for( int i = 1; i <= l_iHighestIndex; i++ )
 	{
-		SVString Text = SvUl_SF::Format( cUtilityNr, i );
+		std::string Text = SvUl::Format( cUtilityNr, i );
 
 		Iter = pApp->m_UtilityMenu.find((UINT) (iId + i-1));
 		if( pApp->m_UtilityMenu.end() != Iter )
@@ -355,7 +357,7 @@ void SVUtilitiesClass::UpdateIni()
 	while ( pApp->m_UtilityMenu.end() != Iter  )
 	{
 		iCnt++;
-		SVString Text = SvUl_SF::Format( cUtilityNr, iCnt);
+		std::string Text = SvUl::Format( cUtilityNr, iCnt);
 		const SVUtilityIniClass& rUtilityStruct( Iter->second );
 
 		//update ini entries for each utility

@@ -16,7 +16,6 @@
 #include "SVValueObjectLibrary/SVValueObject.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVXMLLibrary\SVObjectXMLWriter.h"
-#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 class SVRemoteOutputObject : public SVOutputObject
@@ -38,13 +37,13 @@ public:
 	virtual bool GetCombinedValue() const override { return false; };
 
 	// Get Functions
-	SVString GetInputValueObjectName();
+	std::string GetInputValueObjectName();
 	HRESULT GetInputValueObjectGUID( GUID& p_rGUID ) const;
 	SVGUID GetInputValueObjectGUID() const;
 
 	SVObjectClass* GetValueObject();
 
-	SVString GetGroupID( ) const ;
+	std::string GetGroupID( ) const ;
 
 	typedef SvXml::SVXMLMaterialsTree SVTreeType;
 
@@ -53,7 +52,7 @@ public:
 	// Set Functions
 	HRESULT SetInputObject( SVObjectClass* p_pObject );
 	HRESULT SetInputObjectId( GUID p_ObjectId );
-	HRESULT SetGroupID( const SVString& p_strGroupID );
+	HRESULT SetGroupID( const std::string& p_strGroupID );
 
 	bool SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent );
 #pragma endregion Public Methods
@@ -67,7 +66,7 @@ private:
 private:
 	// Member Variables
 	// The Value Objects name.
-	SVString m_strObjectName;
+	std::string m_strObjectName;
 
 	// The value object
 	SVObjectClass* m_pValueObject;
@@ -75,7 +74,7 @@ private:
 	// Guid of the value object used to output
 	SVGUID m_InputObjectId;	
 
-	SVString m_strGroupID;	// Which Output Group this output belongs to.
+	std::string m_strGroupID;	// Which Output Group this output belongs to.
 #pragma endregion Member Variables
 };
 

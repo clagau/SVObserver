@@ -15,15 +15,15 @@
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <deque>
 #include "RemoteMonitorNamedList.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
-typedef std::map<SVString, RemoteMonitorNamedList> RemoteMonitorListMap;
+typedef std::map<std::string, RemoteMonitorNamedList> RemoteMonitorListMap;
 
 // These are for the GUI(s)
 // Listname, reject Depth
-typedef std::pair<SVString, int> NameDepthPair;
+typedef std::pair<std::string, int> NameDepthPair;
 typedef std::deque<NameDepthPair> NameDepthPairList;
 // 1st is PPQ name, 2nd is a list of MonitorListNames and their Reject Depth
-typedef std::map<SVString, NameDepthPairList> PPQNameListNames;
+typedef std::map<std::string, NameDepthPairList> PPQNameListNames;
 

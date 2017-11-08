@@ -12,8 +12,9 @@
 #pragma region Includes
 #include "RemoteMonitorNamedList.h"
 #include "SVUtilityLibrary/NameSelectionList.h"
-#pragma endregion Includes
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
+#include "Definitions/StringTypeDef.h"
+#pragma endregion Includes
 
 
 #pragma region Enum
@@ -37,7 +38,7 @@ public:
 
 private:
 	/// Builds the main caption for the object selector
-	void BuildCaption(SVString &rCaption);
+	void BuildCaption(std::string &rCaption);
 	
 	///fills m_CheckItems with the objects in the monitorobjectlist from m_MonitorList
 	void BuildCheckItems();
@@ -55,6 +56,6 @@ private:
 	MonitorListType m_eListType;
 	RemoteMonitorNamedList m_MonitorList;
 	CWnd*  m_ParentWindow;
-	SVStringSet m_CheckItems; 
+	SvDef::StringSet m_CheckItems; 
 };
 

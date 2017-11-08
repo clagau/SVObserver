@@ -16,7 +16,7 @@
 #include "SVProgressDialog.h"
 #include "SVSystemLibrary/SVLockableClass.h"
 #include "SVUtilityLibrary\SVSharedPtr.h"
-#include "SVUtilityLibrary\SVString.h"
+
 #pragma endregion Includes
 
 class SVObjectScriptParserClass;
@@ -31,7 +31,7 @@ struct SVParserProgressControlStruct
 	SVObjectScriptParserClass* pParser;
 	ProgressCtrlSharedPtr pProgressCtrl;
 	StaticSharedPtr pStaticTextCtrl;
-	SVString Text;
+	std::string Text;
 	int TotalSize;
 
 	SVParserProgressControlStruct()

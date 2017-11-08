@@ -9,13 +9,13 @@
 #pragma region Includes
 //Moved to precompiled header: #include <iterator>
 #include "Definitions/SVObjectTypeInfoStruct.h"
-#include "SVUtilityLibrary\SVString.h"
+#include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary\SVGUID.h"
 #pragma endregion Includes
 
 namespace SvOi
 {
-	typedef std::back_insert_iterator<StringPairVector> StringPairInserter;
+	typedef std::back_insert_iterator<SvDef::StringPairVector> StringPairInserter;
 
 	enum ToolDependencyEnum
 	{
@@ -29,5 +29,5 @@ namespace SvOi
 	//! \param rSourceSet [in] reference to the source set of GUIDs
 	//! \param nameToObjectType [in] Object type to define the dotted name start
 	//! \param rFileName [in] Optional file name to save the graph file 
-	void getToolDependency( StringPairInserter Inserter, const SVGuidSet& rSourceSet, SVObjectTypeEnum nameToObjectType, ToolDependencyEnum ToolDependency = Client, const SVString& rFileName = SVString());
+	void getToolDependency( StringPairInserter Inserter, const SVGuidSet& rSourceSet, SVObjectTypeEnum nameToObjectType, ToolDependencyEnum ToolDependency = Client, const std::string& rFileName = std::string());
 } //namespace SvOi

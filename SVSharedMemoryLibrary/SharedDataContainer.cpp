@@ -7,7 +7,7 @@
 ///Data store and slot management  
 //******************************************************************************
 #include "Stdafx.h"
-#include "SVUtilityLibrary\SVString.h"
+
 #include "SharedDataContainer.h"
 #include "SMRingbuffer.h"
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"
@@ -63,7 +63,7 @@ namespace SvSml
 			DWORD index = Inspectioninfo.second->StoreIndex;
 			DWORD Imagesize = Inspectioninfo.second->TotalImageSize;
 			DWORD Datasize = Inspectioninfo.second->TotalDataSize;
-			SVString StoreNameImage,StoreNameData;
+			std::string StoreNameImage,StoreNameData;
 			BuildStoreName(Inspectioninfo.first.c_str(), Image, StoreNameImage); 
 			BuildStoreName(Inspectioninfo.first.c_str(), Data, StoreNameData);
 			DWORD ppqIndex  = Inspectioninfo.second->PPQIndex;
@@ -87,7 +87,7 @@ namespace SvSml
 			DWORD index = Inspectioninfo.second->StoreIndex;
 			//DWORD Imagesize = Inspectioninfo.second->TotalImageSize;
 			//DWORD Datasize = Inspectioninfo.second->TotalDataSize;
-			SVString StoreNameImage, StoreNameData;
+			std::string StoreNameImage, StoreNameData;
 			BuildStoreName(Inspectioninfo.first.c_str(), Image, StoreNameImage);
 			BuildStoreName(Inspectioninfo.first.c_str(), Data, StoreNameData);
 			DWORD ppqIndex = Inspectioninfo.second->PPQIndex;
@@ -235,7 +235,7 @@ namespace SvSml
 		m_ManagmentStore.clear();
 	}
 
-	void SharedDataContainer::BuildStoreName(LPCTSTR ObjectName, StoreType type, SVString& rStoreName)
+	void SharedDataContainer::BuildStoreName(LPCTSTR ObjectName, StoreType type, std::string& rStoreName)
 	{
 		rStoreName = ObjectName;
 		rStoreName += ShareNames[type];

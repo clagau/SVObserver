@@ -41,7 +41,7 @@ namespace SvSml
 		void Deactivate() { m_active = false; }
 		// for writer's use
 
-		void SetNames(const SVString & list, const SVString & ppq)
+		void SetNames(const std::string & list, const std::string & ppq)
 		{
 			m_name = bip_string(list.c_str(), m_allocator);
 			m_ppq = bip_string(ppq.c_str(), m_allocator);
@@ -50,8 +50,8 @@ namespace SvSml
 		void SetProductDepth(int depth) { m_ProductDepth = depth; }
 		void SetProductFilter(SVProductFilterEnum filter) { m_filter = filter; }
 	
-		static MonitorEntries::const_iterator  FindInMoListVector(SVString const &name, const MonitorEntries &entryVector );
-		static bool IsInMoListVector(SVString const &name, const MonitorEntries &entryVector );
+		static MonitorEntries::const_iterator  FindInMoListVector(std::string const &name, const MonitorEntries &entryVector );
+		static bool IsInMoListVector(std::string const &name, const MonitorEntries &entryVector );
 		
 		void_allocator m_allocator;
 	private:	

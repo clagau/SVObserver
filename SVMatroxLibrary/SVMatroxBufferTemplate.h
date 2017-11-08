@@ -11,7 +11,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary/SVString.h"
+
 #include "SVUtilityLibrary/SVSharedPtr.h"
 #include "SVMatroxTypedefs.h"
 #pragma endregion Includes
@@ -29,7 +29,7 @@ public:
 
 protected:
 	SVMatroxBufferTemplate();
-	SVMatroxBufferTemplate( SVMatroxIdentifier p_Identifier, const SVString& p_rCreatorName );
+	SVMatroxBufferTemplate( SVMatroxIdentifier p_Identifier, const std::string& p_rCreatorName );
 
 	// Do not implement this method
 	SVMatroxBufferTemplate(const SVMatroxBufferTemplate& p_rObject) = delete;
@@ -41,7 +41,7 @@ protected:
 
 private:
 	SVMatroxIdentifier m_Identifier;
-	SVString m_CreatorName;
+	std::string m_CreatorName;
 };
 
 typedef SVSharedPtr< SVMatroxBufferTemplate > SVMatroxBufferPtr;

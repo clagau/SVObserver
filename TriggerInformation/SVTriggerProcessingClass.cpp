@@ -17,6 +17,7 @@
 #include "SVSoftwareTriggerClass.h"
 #include "TriggerInformation/SVCameraTriggerClass.h"
 #include "SVTriggerConstants.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 static int i = 0;
@@ -135,7 +136,7 @@ namespace SvTi
 
 			for ( unsigned long i = 0; S_OK == l_hrOk && i < l_ulSize; i++ )
 			{
-				SVString l_Name;
+				std::string l_Name;
 
 				unsigned long triggerchannel = 0;
 
@@ -149,7 +150,7 @@ namespace SvTi
 
 					if( S_OK == l_hrOk )
 					{
-						l_Name = SvUl_SF::createSVString(l_bstrName);
+						l_Name = SvUl::createStdString(l_bstrName);
 
 						if ( nullptr != l_bstrName )
 						{

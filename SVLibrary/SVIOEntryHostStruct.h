@@ -15,7 +15,7 @@
 #include "ObjectInterfaces/IValueObject.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 class SVObjectClass;

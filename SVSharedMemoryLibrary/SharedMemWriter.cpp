@@ -83,7 +83,7 @@ namespace SvSml
 		{
 			if (SVSharedConfiguration::SharedDriveExists()) // just check that the drive exists
 			{
-				const SVString& sharedMemoryDirectory = SVSharedConfiguration::GetSharedMemoryDirectoryName();
+				const std::string& sharedMemoryDirectory = SVSharedConfiguration::GetSharedMemoryDirectoryName();
 				DWORD res = GetFileAttributes(sharedMemoryDirectory.c_str());
 				if (res == INVALID_FILE_ATTRIBUTES)
 				{
@@ -143,19 +143,19 @@ namespace SvSml
 		return true;
 	}
 
-	DWORD SharedMemWriter::GetInspectionImageSize(const SVString& inspectionName)
+	DWORD SharedMemWriter::GetInspectionImageSize(const std::string& inspectionName)
 	{
 		return m_MLContainer.GetInspectionImageSize(inspectionName);
 	}
-	DWORD SharedMemWriter::GetInspectionStoreId(const SVString& InspectionName)
+	DWORD SharedMemWriter::GetInspectionStoreId(const std::string& InspectionName)
 	{
 		return m_MLContainer.GetInspectionStoreId(InspectionName);
 	}
-	const MonitorListCpy*  SharedMemWriter::GetMonitorListCpyPointer(const SVString& Monitorlistname)  const
+	const MonitorListCpy*  SharedMemWriter::GetMonitorListCpyPointer(const std::string& Monitorlistname)  const
 	{
 		return m_MLContainer.GetMonitorListCpyPointer(Monitorlistname);
 	}
-	const MonitorListCpy*  SharedMemWriter::GetMonitorListCpyPointerForPPQ(const SVString& PPQNAME)  const
+	const MonitorListCpy*  SharedMemWriter::GetMonitorListCpyPointerForPPQ(const std::string& PPQNAME)  const
 	{
 		return m_MLContainer.GetMonitorListCpyPointerForPPQ(PPQNAME);
 	}
@@ -164,7 +164,7 @@ namespace SvSml
 		return m_MLContainer.Insert(MLCpyPtr);
 	}
 
-	MonitorEntryPointer SharedMemWriter::GetMonitorEntryPointer(const SVString& rname)
+	MonitorEntryPointer SharedMemWriter::GetMonitorEntryPointer(const std::string& rname)
 	{
 		return m_MLContainer.GetMonitorEntryPointer(rname);
 	}

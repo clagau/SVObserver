@@ -17,7 +17,7 @@
 #include "SVOCore/SVUtilityIniClass.h"
 #include "SVLibrary/SVOIniClass.h"
 #include "SVStatusLibrary/GlobalPath.h"
-#include "SVUtilityLibrary\SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -119,7 +119,7 @@ void SVUtilitiesCustomizeDialogClass::OnSelEndOkCustomizeMenuText()
 				m_Command = rUtilityStruct.m_Command.c_str();
 				m_Arguments = rUtilityStruct.m_Arguments.c_str();
 				m_WorkingDirectory = rUtilityStruct.m_WorkingDirectory.c_str();
-				if( 0 == SvUl_SF::CompareNoCase( SvUl_SF::Left( rUtilityStruct.m_PromptForArguments, 1 ), SVString( _T("Y") ) ) )
+				if( 0 == SvUl::CompareNoCase( SvUl::Left( rUtilityStruct.m_PromptForArguments, 1 ), std::string( _T("Y") ) ) )
 				{
 					mbPromptForArguments = TRUE;
 				}
@@ -249,7 +249,7 @@ void SVUtilitiesCustomizeDialogClass::OnApply()
 			int iCnt = UtilityIni.GetValueInt(_T("General"), _T("HighestUtilityIndex"), 0);
 			iCnt++;
 			UtilityIni.SetValueInt( _T("General"), _T("HighestUtilityIndex"),iCnt);
-			SVString Text = SvUl_SF::Format(_T("Utility%d"),iCnt);
+			std::string Text = SvUl::Format(_T("Utility%d"),iCnt);
 			UtilityIni.SetValueString( Text.c_str(), _T("DisplayName"), UtilityStruct.m_DisplayName.c_str() );
 			UtilityIni.SetValueString( Text.c_str(), _T("Command"), UtilityStruct.m_Command.c_str() );
 			UtilityIni.SetValueString( Text.c_str(), _T("Arguments"), UtilityStruct.m_Arguments.c_str() );
@@ -296,9 +296,9 @@ void SVUtilitiesCustomizeDialogClass::OnCustomizeDelete()
 
 	while ( !bFound )
 	{
-		SVString Value;
+		std::string Value;
 		iUtlCnt++;
-		SVString Text = SvUl_SF::Format(_T("Utility%d"), iUtlCnt);
+		std::string Text = SvUl::Format(_T("Utility%d"), iUtlCnt);
 		Value = UtilityIni.GetValueString( Text.c_str(), _T("DisplayName"), _T("") );
 
 		if ( Value == m_MenuText.GetString() )

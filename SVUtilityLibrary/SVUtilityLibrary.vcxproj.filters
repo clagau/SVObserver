@@ -33,9 +33,6 @@
     <ClCompile Include="SVSafeArray.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVString.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVUtilityGlobals.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -60,7 +57,7 @@
     <ClCompile Include="SVMetrics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVStringConversions.cpp">
+    <ClCompile Include="StringHelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -105,12 +102,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVSharedPtr.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVString.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVStringConversions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVUniqueIDGenerator.h">
@@ -167,15 +158,15 @@
     <ClInclude Include="SetBits.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="StringHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SVHandleManager.inl">
       <Filter>Header Files</Filter>
     </None>
     <None Include="SVSafeArray.inl">
-      <Filter>Header Files</Filter>
-    </None>
-    <None Include="SVStringConversions.inl">
       <Filter>Header Files</Filter>
     </None>
     <None Include="SVHistogramBase.inl">

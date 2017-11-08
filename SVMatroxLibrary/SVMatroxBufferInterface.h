@@ -14,7 +14,7 @@
 #pragma region Includes
 #include "SVUtilityLibrary/SVPOINT.h"
 #include "SVUtilityLibrary/SVBitmapInfo.h"
-#include "SVUtilityLibrary\SVString.h"
+
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "SVMatroxBuffer.h"
 #include "SVMatroxDisplayBuffer.h"
@@ -160,8 +160,8 @@ public:
 	static HRESULT ClearBuffer( SVMatroxDisplay& p_rBuffer, double p_dColor );
 
 	// ***** Inport / Export *********
-	static HRESULT Import(SVMatroxBuffer& p_rBuf, const SVString& rFileName, SVMatroxFileTypeEnum p_eFileType, bool p_bRestore= false );
-	static HRESULT Export(const SVMatroxBuffer& p_rBuf, const SVString& rFileName, SVMatroxFileTypeEnum p_eFileType );
+	static HRESULT Import(SVMatroxBuffer& p_rBuf, const std::string& rFileName, SVMatroxFileTypeEnum p_eFileType, bool p_bRestore= false );
+	static HRESULT Export(const SVMatroxBuffer& p_rBuf, const std::string& rFileName, SVMatroxFileTypeEnum p_eFileType );
 
 	//************************************
 	//! Get  the Dimension  from the Imagefile 
@@ -170,7 +170,7 @@ public:
 	//! \param Height [out]
 	//! \returns S_OK if no error occur 
 	//************************************
-	static HRESULT GetImageSize(const SVString& rFileName, long &rWidth, long &rHeight);
+	static HRESULT GetImageSize(const std::string& rFileName, long &rWidth, long &rHeight);
 
 	static bool IsChildBuffer(const SVMatroxBuffer& p_rBuffer);
 	static bool IsColorBandBuffer(const SVMatroxBuffer& p_rBuffer);

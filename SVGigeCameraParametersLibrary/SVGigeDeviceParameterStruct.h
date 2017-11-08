@@ -15,18 +15,18 @@
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <boost/config.hpp>
 //Moved to precompiled header: #include <boost/function.hpp>
-#include "SVUtilityLibrary/SVString.h"
+
 #include "SVGigeEnums.h"
 #include "SVGigeParameterAccessor.h"
 #pragma endregion Includes
 
 struct SVGigeDeviceParameterStruct
 {
-	SVString name;
+	std::string name;
 	VARTYPE dataType;
 
 	SVGigeParameterAccessor accessor;
-	SVGigeDeviceParameterStruct(const SVString& p_name, VARTYPE p_dataType, const SVGigeParameterAccessor& accessor);
+	SVGigeDeviceParameterStruct(const std::string& p_name, VARTYPE p_dataType, const SVGigeParameterAccessor& accessor);
 	SVGigeDeviceParameterStruct(const SVGigeDeviceParameterStruct& rParam);
 	SVGigeDeviceParameterStruct& operator=(const SVGigeDeviceParameterStruct& rParam);
 };

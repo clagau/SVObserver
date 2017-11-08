@@ -22,7 +22,7 @@
 #include "SVGigeEmptySetter.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"
 #include "SVUtilityLibrary/StringToEnum.h"
-#include "SVUtilityLibrary/SVStringConversions.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVGigeCameraDBContent.h"
 #pragma endregion Includes
 
@@ -439,8 +439,8 @@ void SVGigeCameraDBContent::GetGigeFeatureSelectorAttributes(MSXML2::ISAXAttribu
 // Get XML Attributes for GetGigeFeatureStringEnumList
 void SVGigeCameraDBContent::GetGigeFeatureStringEnumAttributes(MSXML2::ISAXAttributes* pAttributes)
 {
-	SVString deviceParamString;
-	SVString gigeFeatureString;
+	std::string deviceParamString;
+	std::string gigeFeatureString;
 
 	int numAttributes = 0;
 	pAttributes->getLength(&numAttributes);

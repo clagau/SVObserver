@@ -15,6 +15,7 @@
 #include "SVGlobal.h"
 #include "SVDataManagerLibrary/DataManager.h"
 #include "SVOCore/SVImageProcessingClass.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 TCHAR SVRCCurrentSVCPathName[ _MAX_PATH ];
@@ -154,7 +155,7 @@ double SVGetDataTypeRange( DWORD DataType )
 	// ( long ) pow( 2.0, ( BYTE ) ( DataType ) )
 }
 
-BOOL SVGetPathInformation( SVString& rOutput, LPCTSTR TStrFileInputPath, DWORD DwMask )
+BOOL SVGetPathInformation( std::string& rOutput, LPCTSTR TStrFileInputPath, DWORD DwMask )
 {
 	// Only for MFC-Threads!
 
@@ -197,20 +198,20 @@ BOOL SVGetPathInformation( SVString& rOutput, LPCTSTR TStrFileInputPath, DWORD D
 	return FALSE;
 }
 
-BOOL SVGetVersionString( SVString& rCurrentVersion, DWORD dwVersion )
+BOOL SVGetVersionString( std::string& rCurrentVersion, DWORD dwVersion )
 {
 	int subVersion   = ( int ) LOBYTE( LOWORD( dwVersion ) );
-	SVString Beta;
+	std::string Beta;
 
 	//
 	// 0x000300ff is v3.00 release build.
 	//
 	if( subVersion != 0  && subVersion != 0xff )
 	{
-		Beta = SvUl_SF::Format( _T( " Beta %d" ), subVersion );
+		Beta = SvUl::Format( _T( " Beta %d" ), subVersion );
 	}
 
-	rCurrentVersion = SvUl_SF::Format( _T( "Version %u.%2.2u%s" ), 
+	rCurrentVersion = SvUl::Format( _T( "Version %u.%2.2u%s" ), 
 	                            LOBYTE( HIWORD( dwVersion ) ), 
 	                            HIBYTE( LOWORD( dwVersion ) ), 
 	                            Beta.c_str() );
@@ -223,14 +224,14 @@ BOOL SVGetVersionString( SVString& rCurrentVersion, DWORD dwVersion )
 
 // Convert Hex Data to a Hex Dumop String
 // Len of the data is first in the String
-void SVConvertToHexString( DWORD len, LPBYTE buff, SVString& rHexString )
+void SVConvertToHexString( DWORD len, LPBYTE buff, std::string& rHexString )
 {
 	// put len in string first
-	rHexString = SvUl_SF::Format( _T( "0x%08x" ), len );
+	rHexString = SvUl::Format( _T( "0x%08x" ), len );
 
 	for( DWORD i = 0; i < len; i++ )
 	{
-		SVString Text = SvUl_SF::Format( _T( ",0x%02x" ), buff[i] );
+		std::string Text = SvUl::Format( _T( ",0x%02x" ), buff[i] );
 		rHexString += Text;
 	}
 }
@@ -238,7 +239,7 @@ void SVConvertToHexString( DWORD len, LPBYTE buff, SVString& rHexString )
 // Convert Hex Dump String to hex binary data
 // Sets len of the hex binary data
 // Note: Allocates buffer so caller must delete it
-BOOL SVConvertFromHexString( DWORD &len, LPBYTE *buff, const SVString& rHexString )
+BOOL SVConvertFromHexString( DWORD &len, LPBYTE *buff, const std::string& rHexString )
 {
 	*buff = nullptr;
 	len = 0;
@@ -249,7 +250,7 @@ BOOL SVConvertFromHexString( DWORD &len, LPBYTE *buff, const SVString& rHexStrin
 	// index should be at position 10
 	if( Index == 10 )
 	{
-		SVString Text = SvUl_SF::Left( rHexString, Index );
+		std::string Text = SvUl::Left( rHexString, Index );
 
 		// Convert to hex
 		_stscanf_s( Text.c_str(), _T("%x"), &len );
@@ -263,14 +264,14 @@ BOOL SVConvertFromHexString( DWORD &len, LPBYTE *buff, const SVString& rHexStrin
 
 		for( DWORD i = 0;i < len;i++ )
 		{
-			Index = SVString::npos;
+			Index = std::string::npos;
 			
 			if ( startIndex < HexSize )
 			{
 				Index = rHexString.find( _T(","), startIndex );
 			}
 
-			if( SVString::npos != Index )
+			if( std::string::npos != Index )
 			{
 				// get Hex BYTE String Data
 				Text = rHexString.substr( startIndex, ( Index - startIndex ) );

@@ -14,7 +14,7 @@
 
 #include "SVIOEntryHostStruct.h"
 #include "SVObjectLibrary/SVObjectClass.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 SVIOEntryHostStruct::SVIOEntryHostStruct()
@@ -64,25 +64,25 @@ bool SVIOEntryHostStruct::PtrGreater(SVIOEntryHostStructPtr elem1, SVIOEntryHost
 	{
 		if( ( nullptr != elem1->m_pObject ) && ( nullptr != elem2->m_pObject ) )
 		{
-			SVString Name1 = elem1->m_pObject->GetCompleteName();
-			SVString Name2 = elem2->m_pObject->GetCompleteName();
+			std::string Name1 = elem1->m_pObject->GetCompleteName();
+			std::string Name2 = elem2->m_pObject->GetCompleteName();
 
 			//We assume the name is a dotted name and only the last part of the name may have a number
 
-			SVString::size_type Pos = Name1.rfind(_T("."));
-			if( SVString::npos != Pos )
+			std::string::size_type Pos = Name1.rfind(_T("."));
+			if( std::string::npos != Pos )
 			{
 
 				Pos = Name1.find_first_of( _T("0123456789"), Pos );
-				if( SVString::npos != Pos  && 0 != Pos )
+				if( std::string::npos != Pos  && 0 != Pos )
 				{
 					if( Name2.size() > Pos )
 					{
 						int Compare = Name2.substr(0, Pos).compare( Name1.substr(0, Pos ) );
 						if( 0 == Compare )
 						{
-							long Value1 = atol( SvUl_SF::Mid( Name1, Pos ).c_str() );
-							long Value2 = atol( SvUl_SF::Mid( Name2, Pos ).c_str() );
+							long Value1 = atol( SvUl::Mid( Name1, Pos ).c_str() );
+							long Value2 = atol( SvUl::Mid( Name2, Pos ).c_str() );
 							Greater = Value2 > Value1;
 						}
 						else

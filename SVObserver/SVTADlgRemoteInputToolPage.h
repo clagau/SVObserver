@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVValueObjectLibrary/SVValueObject.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 class SVRemoteInputTool;
@@ -44,7 +44,7 @@ protected:
 	CStatic m_RemoteInputNameCtrl;
 	SVToolAdjustmentDialogSheetClass* m_pParentDialog;
 	SVRemoteInputTool* m_pTool;
-	SVString m_InputName;
+	std::string m_InputName;
 
 };
 

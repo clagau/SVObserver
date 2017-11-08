@@ -19,7 +19,7 @@
 #include "TriggerInformation/IODeviceBase.h"
 #include "SVContainerLibrary/SVBidirectionalMap.h"
 #include "SVSystemLibrary/SVCriticalSection.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 ///////////////////////////////////////////////////////////////////////
@@ -44,7 +44,7 @@ class SVSoftwareTriggerDevice : public SvTi::IODeviceBase
 	};
 
 protected:
-	typedef SVBidirectionalMap<SVString, unsigned long>::type NameHandleList;
+	typedef SVBidirectionalMap<std::string, unsigned long>::type NameHandleList;
 	NameHandleList m_nameHandleList;
 	TimerList m_timerList;
 	int m_numTriggers;
@@ -79,7 +79,7 @@ private:
 
 	HRESULT SetTimerCallback(unsigned long handle);
 	HRESULT RemoveTimerCallback(unsigned long handle);
-	void OnSoftwareTimer(const SVString& tag);
+	void OnSoftwareTimer(const std::string& tag);
 	static void DispatchTrigger(const SvTh::TriggerDispatcher& triggerListenerInfo);
 	SVCriticalSection m_CritSec;
 };

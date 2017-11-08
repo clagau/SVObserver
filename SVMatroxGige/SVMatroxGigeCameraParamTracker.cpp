@@ -19,7 +19,7 @@ void SVMatroxGigeCameraParamTracker::Clear()
 	m_cameraParamCollection.clear();
 }
 
-void SVMatroxGigeCameraParamTracker::TrackCameraParams(const SVString& cameraID)
+void SVMatroxGigeCameraParamTracker::TrackCameraParams(const std::string& cameraID)
 {
 	SVMatroxGigeCameraParamCollection::iterator it = m_cameraParamCollection.find(cameraID);
 	if (it == m_cameraParamCollection.end())
@@ -33,7 +33,7 @@ void SVMatroxGigeCameraParamTracker::TrackCameraParams(const SVString& cameraID)
 	}
 }
 
-void SVMatroxGigeCameraParamTracker::UnTrackCameraParams(const SVString& cameraID)
+void SVMatroxGigeCameraParamTracker::UnTrackCameraParams(const std::string& cameraID)
 {
 	SVMatroxGigeCameraParamCollection::iterator it = m_cameraParamCollection.find(cameraID);
 	if (it != m_cameraParamCollection.end())
@@ -42,7 +42,7 @@ void SVMatroxGigeCameraParamTracker::UnTrackCameraParams(const SVString& cameraI
 	}
 }
 
-void SVMatroxGigeCameraParamTracker::SetMainListLocked(const SVString& cameraID, bool bLock)
+void SVMatroxGigeCameraParamTracker::SetMainListLocked(const std::string& cameraID, bool bLock)
 {
 	SVMatroxGigeCameraParamCollection::iterator it = m_cameraParamCollection.find(cameraID);
 	if (it != m_cameraParamCollection.end())
@@ -52,7 +52,7 @@ void SVMatroxGigeCameraParamTracker::SetMainListLocked(const SVString& cameraID,
 	}
 }
 
-HRESULT SVMatroxGigeCameraParamTracker::AddCameraParam(const SVString& cameraID, const SVMatroxGigeCameraParam& param)
+HRESULT SVMatroxGigeCameraParamTracker::AddCameraParam(const std::string& cameraID, const SVMatroxGigeCameraParam& param)
 {
 	HRESULT hr = S_FALSE;
 
@@ -76,7 +76,7 @@ HRESULT SVMatroxGigeCameraParamTracker::AddCameraParam(const SVString& cameraID,
 	return hr;
 }
 
-HRESULT SVMatroxGigeCameraParamTracker::ReloadCameraParams(const SVString& cameraID, SVMatroxGigeDigitizer& p_rCamera)
+HRESULT SVMatroxGigeCameraParamTracker::ReloadCameraParams(const std::string& cameraID, SVMatroxGigeDigitizer& p_rCamera)
 {
 	HRESULT hr = S_FALSE;
 

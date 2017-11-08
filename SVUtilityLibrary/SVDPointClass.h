@@ -12,7 +12,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVString.h"
 #pragma endregion Includes
 
 /**
@@ -39,7 +38,7 @@ public:
 	operator POINT () const;
 	operator _variant_t () const;
 
-	SVString ToString() const;
+	std::string ToString() const;
 	
 	SVDPointClass& operator=( const POINT &Point );
 	SVDPointClass& operator=( const SVDPointClass &Point );

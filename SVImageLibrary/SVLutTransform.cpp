@@ -86,7 +86,7 @@ const SVLutTransformOperationMap::SVLutTransformTypeInfo* SVLutTransformOperatio
 	return nullptr;
 }
 
-const SVLutTransformOperationMap::SVLutTransformTypeInfo* SVLutTransformOperationMap::GetInfo(const SVString& rType)
+const SVLutTransformOperationMap::SVLutTransformTypeInfo* SVLutTransformOperationMap::GetInfo(const std::string& rType)
 {
 	for (int i=0; i < MAX_LUT_TRANSFORM_TYPE; i++)
 	{

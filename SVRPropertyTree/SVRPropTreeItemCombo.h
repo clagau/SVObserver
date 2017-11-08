@@ -30,7 +30,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary/SVString.h"
+
 #include "SVRPropTreeItem.h"
 #include "SVNotifyButton.h"
 #pragma endregion Includes
@@ -91,7 +91,7 @@ protected:
 //	CVariantObj	m_vtData;
 	LPARAM  m_lComboData;
 	LONG    m_nDropHeight;
-	SVString m_ButtonText;
+	std::string m_ButtonText;
 
 // Operations
 protected:

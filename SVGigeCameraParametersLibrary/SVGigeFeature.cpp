@@ -13,22 +13,22 @@
 #include "SVGigeFeature.h"
 #pragma endregion Includes
 
-SVGigeFeature::SVGigeFeature(const SVString& p_name, SVMatroxDigitizerFeature::SVFeatureTypeEnum p_featureType)
+SVGigeFeature::SVGigeFeature(const std::string& p_name, SVMatroxDigitizerFeature::SVFeatureTypeEnum p_featureType)
 : m_name(p_name), m_featureType(p_featureType), m_supported(SVGigeFeature::Supported), m_access(SVGigeFeature::ReadWrite)
 {
 }
 
-SVGigeFeature::SVGigeFeature(const SVString& p_name, SVMatroxDigitizerFeature::SVFeatureTypeEnum p_featureType, SVGigeFeature::FeatureSupportedEnum p_supported, SVGigeFeature::FeatureAccessEnum p_access)
+SVGigeFeature::SVGigeFeature(const std::string& p_name, SVMatroxDigitizerFeature::SVFeatureTypeEnum p_featureType, SVGigeFeature::FeatureSupportedEnum p_supported, SVGigeFeature::FeatureAccessEnum p_access)
 : m_name(p_name), m_featureType(p_featureType), m_supported(p_supported), m_access(p_access)
 {
 }
 
-SVGigeFeature::SVGigeFeature(const SVString& p_name, SVMatroxDigitizerFeature::SVFeatureTypeEnum p_featureType, SVGigeFeature::FeatureSupportedEnum p_supported, SVGigeFeature::FeatureAccessEnum p_access, const SVGigeFeatureSelector& p_selector)
+SVGigeFeature::SVGigeFeature(const std::string& p_name, SVMatroxDigitizerFeature::SVFeatureTypeEnum p_featureType, SVGigeFeature::FeatureSupportedEnum p_supported, SVGigeFeature::FeatureAccessEnum p_access, const SVGigeFeatureSelector& p_selector)
 : m_name(p_name), m_featureType(p_featureType), m_supported(p_supported), m_access(p_access), m_selector(p_selector)
 {
 }
 
-SVGigeFeature::SVGigeFeature(const SVString& p_name, SVMatroxDigitizerFeature::SVFeatureTypeEnum p_featureType, SVGigeFeature::FeatureSupportedEnum p_supported, SVGigeFeature::FeatureAccessEnum p_access, const SVGigeFeatureSelector& p_selector, const SVGigeFeatureStringEnumList& p_stringEnums)
+SVGigeFeature::SVGigeFeature(const std::string& p_name, SVMatroxDigitizerFeature::SVFeatureTypeEnum p_featureType, SVGigeFeature::FeatureSupportedEnum p_supported, SVGigeFeature::FeatureAccessEnum p_access, const SVGigeFeatureSelector& p_selector, const SVGigeFeatureStringEnumList& p_stringEnums)
 : m_name(p_name), m_featureType(p_featureType), m_supported(p_supported), m_access(p_access), m_selector(p_selector), m_stringEnums(p_stringEnums)
 {
 }
@@ -52,7 +52,7 @@ SVGigeFeature& SVGigeFeature::operator=(const SVGigeFeature& rFeature)
 	return *this;
 }
 
-const SVString& SVGigeFeature::GetName() const
+const std::string& SVGigeFeature::GetName() const
 {
 	return m_name;
 }
@@ -87,14 +87,14 @@ bool SVGigeFeature::HasTranslation() const
 	return m_stringEnums.HasTranslation();
 }
 
-HRESULT SVGigeFeature::GetGigeFeatureString(const SVString& rDeviceParam, SVString& rGigeFeature) const
+HRESULT SVGigeFeature::GetGigeFeatureString(const std::string& rDeviceParam, std::string& rGigeFeature) const
 {
 	HRESULT hr = m_stringEnums.GetGigeFeatureString(rDeviceParam, rGigeFeature);
 	
 	return hr;
 }
 
-HRESULT SVGigeFeature::GetDeviceParamString(const SVString& rGigeFeature, SVString& rDeviceParam) const
+HRESULT SVGigeFeature::GetDeviceParamString(const std::string& rGigeFeature, std::string& rDeviceParam) const
 {
 	HRESULT hr =  m_stringEnums.GetDeviceParamString(rGigeFeature, rDeviceParam);
 

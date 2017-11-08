@@ -59,11 +59,11 @@ BasicValueObjects::vt_const_iterator BasicValueObjects::createValueObject( LPCTS
 
 	if( S_OK == ParsedName.ParseObjectName( DottedName ) )
 	{
-		SVString BranchName;
+		std::string BranchName;
 
 		for( size_t i=0; i < ParsedName.m_NameArray.size(); i++ )
 		{
-			SVString Name( ParsedName.m_NameArray[i] );
+			std::string Name( ParsedName.m_NameArray[i] );
 			if( !BranchName.empty() )
 			{
 				BranchName += _T(".");

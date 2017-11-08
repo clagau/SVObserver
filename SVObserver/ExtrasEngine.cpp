@@ -21,7 +21,8 @@
 #include "SVTimerLibrary/SVClock.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "CameraLibrary/SVDeviceParams.h" //Arvid: added to avoid VS2015 compile Error
-#include "SVUtilityLibrary/SVString.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -96,7 +97,7 @@ void ExtrasEngine::ExecuteAutoSaveIfAppropriate(bool always)
 	SvStl::GlobalPath& rGlobalPath = SvStl::GlobalPath::Inst();
 	//ensure that the autosave directory exists: create it step by step
 	CreateDirectory(rGlobalPath.GetSecondObserverPath().c_str(), nullptr); //this will fail if the directory already exists, but so what?
-	SVString  AutosavePath = rGlobalPath.GetAutoSaveRootPath();
+	std::string  AutosavePath = rGlobalPath.GetAutoSaveRootPath();
 	CreateDirectory(AutosavePath.c_str(), nullptr); //this will fail if the directory already exists, but so what?
 
 	//now move the temporary directories around (if they exist already)
@@ -134,9 +135,9 @@ void ExtrasEngine::ToggleEnableFbwf()
 
 	m_FbwfActiveChanging = (m_FbwfActive != m_IsFbwfSelected);
 
-	SVString RequiredBatchFileName(SvO::NoneString);
+	std::string RequiredBatchFileName(SvO::NoneString);
 	SvStl::MessageTextEnum msgId = SvStl::Tid_Empty;
-	SVStringVector msgList;
+	SvDef::StringVector msgList;
 
 	if(m_IsFbwfSelected)
 	{
@@ -163,7 +164,7 @@ void ExtrasEngine::ToggleEnableFbwf()
 		}
 	}
 
-	SVString BatchfilePath = SvUl_SF::Format( _T("\"%s\\%s\""), SvStl::GlobalPath::Inst().GetBinPath().c_str(), RequiredBatchFileName.c_str());
+	std::string BatchfilePath = SvUl::Format( _T("\"%s\\%s\""), SvStl::GlobalPath::Inst().GetBinPath().c_str(), RequiredBatchFileName.c_str());
 	auto ret = system( BatchfilePath.c_str() );
 	if(ret)
 	{

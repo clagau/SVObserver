@@ -28,7 +28,7 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -175,7 +175,7 @@ void SVDiscreteOutputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHi
 		for( i = 0; i < static_cast<int>(maxOutput); ++i )
 		{
 			// First column: Result I/O
-			SVString Item = SvUl_SF::Format( _T( "Digital Output %d" ), i + 1 );
+			std::string Item = SvUl::Format( _T( "Digital Output %d" ), i + 1 );
 			GetListCtrl().InsertItem( LVIF_IMAGE | LVIF_TEXT | LVIF_STATE, 
 				i, Item.c_str(), 
 				INDEXTOSTATEIMAGEMASK( 2 ),	// state
@@ -199,7 +199,7 @@ void SVDiscreteOutputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHi
 					// Column: Force
 					if( pDigOutput->IsForced() )
 					{
-						Item = SvUl_SF::Format( _T( "%d" ), pDigOutput->GetForcedValue() ? 1 : 0 );
+						Item = SvUl::Format( _T( "%d" ), pDigOutput->GetForcedValue() ? 1 : 0 );
 						GetListCtrl().SetItemText( i, 2, Item.c_str() );
 					}// end if
 
@@ -228,7 +228,7 @@ void SVDiscreteOutputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHi
 					// Column: Force
 					if( pDigOutput->IsForced() )
 					{
-						Item = SvUl_SF::Format( _T( "%d" ), pDigOutput->GetForcedValue() ? 1 : 0 );
+						Item = SvUl::Format( _T( "%d" ), pDigOutput->GetForcedValue() ? 1 : 0 );
 						GetListCtrl().SetItemText( i, 2, Item.c_str() );
 					}// end if
 
@@ -276,7 +276,7 @@ void SVDiscreteOutputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHi
 						// Column: Force
 						if( pDigOutput->IsForced() )
 						{
-							Item = SvUl_SF::Format( _T( "%d" ), pDigOutput->GetForcedValue() ? 1 : 0 );
+							Item = SvUl::Format( _T( "%d" ), pDigOutput->GetForcedValue() ? 1 : 0 );
 							GetListCtrl().SetItemText( i, 2, Item.c_str() );
 						}// end if
 

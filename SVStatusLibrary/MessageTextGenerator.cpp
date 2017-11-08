@@ -9,6 +9,7 @@
 #include "stdafx.h"
 #include "MessageTextGenerator.h"
 #include "MessageTextMap.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -35,9 +36,9 @@ namespace SvStl
 #pragma endregion Constructor
 
 #pragma region Public Methods
-	SVString MessageTextGenerator::getText(MessageTextEnum messageId, const SVStringVector &additionalList) const
+	std::string MessageTextGenerator::getText(MessageTextEnum messageId, const SvDef::StringVector &additionalList) const
 	{
-		SVString retString("");
+		std::string retString("");
 		MessageTextMap::const_iterator it = g_MessageTextMap.find(messageId);
 		if (it != g_MessageTextMap.end())
 		{
@@ -47,9 +48,9 @@ namespace SvStl
 			{
 				size_t pos = retString.find(_T("%s"));
 
-				if (SVString::npos != pos)
+				if (std::string::npos != pos)
 				{
-					SVString addMessage = convertAddtionalListTextToString(additionalList[i]);
+					std::string addMessage = convertAddtionalListTextToString(additionalList[i]);
 					retString.replace(pos, strlen(_T("%s")), addMessage);
 				}
 			}
@@ -57,9 +58,9 @@ namespace SvStl
 		return retString;
 	}
 
-	SVString MessageTextGenerator::convertId2AddtionalText(MessageTextEnum id)
+	std::string MessageTextGenerator::convertId2AddtionalText(MessageTextEnum id)
 	{
-		return SvUl_SF::Format(_T("[***%d***]"), id);
+		return SvUl::Format(_T("[***%d***]"), id);
 	}
 #pragma endregion Public Methods
 
@@ -68,9 +69,9 @@ namespace SvStl
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
-	SVString MessageTextGenerator::convertAddtionalListTextToString(const SVString& text) const
+	std::string MessageTextGenerator::convertAddtionalListTextToString(const std::string& text) const
 	{
-		SVString retString;
+		std::string retString;
 		int number = -1;
 		if (1 == sscanf_s(text.c_str(), _T("[***%d***]"), &number))
 		{

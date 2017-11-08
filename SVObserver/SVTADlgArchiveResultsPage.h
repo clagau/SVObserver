@@ -16,6 +16,7 @@
 #include "ObjectSelectorLibrary\SelectorItemVector.h"
 #include "SVArchiveTool.h"
 #include "SVGlobal.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -55,8 +56,8 @@ protected:
 
 	void ReadSelectedObjects();
 	void ShowObjectSelector();
-	bool GetSelectedHeaderNamePairs( StringPairVector& HeaderPairs );
-	bool StoreHeaderValuesToTool( StringPairVector& HeaderPairs );
+	bool GetSelectedHeaderNamePairs(SvDef::StringPairVector& HeaderPairs );
+	bool StoreHeaderValuesToTool(SvDef::StringPairVector& HeaderPairs );
 #pragma endregion Protected Methods
 
 #pragma region Private Members

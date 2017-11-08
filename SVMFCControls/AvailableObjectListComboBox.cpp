@@ -27,7 +27,7 @@ namespace SvMc
 	{
 	}
 
-	void AvailableObjectListComboBox::Init(const SvUl::NameGuidList& rList, const SVString& rSelectedItem, const SVString& rEmptyListText, const SVString& rFirstListText)
+	void AvailableObjectListComboBox::Init(const SvUl::NameGuidList& rList, const std::string& rSelectedItem, const std::string& rEmptyListText, const std::string& rFirstListText)
 	{
 		// Clear list...
 		ResetContent();
@@ -86,7 +86,7 @@ namespace SvMc
 		return Result;
 	}
 
-	void AvailableObjectListComboBox::remove(const SVString& rItemName)
+	void AvailableObjectListComboBox::remove(const std::string& rItemName)
 	{
 		int iIndex = FindString(0, rItemName.c_str());
 

@@ -14,7 +14,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <comdef.h>
-#include "SVUtilityLibrary/SVString.h"
+
 #include "SVMatroxLibrary/SVMatroxStatusInformation.h"
 #include "SVMatroxLibrary/SVMatroxSystem.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
@@ -27,7 +27,7 @@
 #include "SVMatroxDigitizerGrabEnums.h"
 #pragma endregion Includes
 
-typedef std::map<SVString, long> SVGigeEventList;
+typedef std::map<std::string, long> SVGigeEventList;
 
 class SVMatroxDigitizerInterface
 {
@@ -35,7 +35,7 @@ public:
 	typedef SVMatroxHookFunctionPtr SVGrabProcessFunc;
 
 	static HRESULT Allocate(const SVMatroxSystem& System, long DeviceNum, SVMatroxDigitizer& digitizerID);
-	static HRESULT Allocate(const SVMatroxSystem& System, long DeviceNum, const SVString& DataFormat, SVMatroxDigitizer& digitizerID);
+	static HRESULT Allocate(const SVMatroxSystem& System, long DeviceNum, const std::string& DataFormat, SVMatroxDigitizer& digitizerID);
 	static HRESULT Release(SVMatroxDigitizer& DigitizerID);
 
 	static HRESULT IsCorruptedFrame(SVMatroxIdentifier milEventID, bool& bIsCorrupted);
@@ -64,8 +64,8 @@ public:
 	static HRESULT Get(const SVMatroxDigitizer& DigitizerID, SVMatroxDigitizerInquire::SVBoardEnum InquireType, long& Value);
 
 	// Camera
-	static HRESULT GetVendor(const SVMatroxDigitizer& DigitizerID, SVString& Value);
-	static HRESULT GetModel(const SVMatroxDigitizer& DigitizerID, SVString& Value);
+	static HRESULT GetVendor(const SVMatroxDigitizer& DigitizerID, std::string& Value);
+	static HRESULT GetModel(const SVMatroxDigitizer& DigitizerID, std::string& Value);
 
 	static HRESULT GetColorMode(const SVMatroxDigitizer& DigitizerID, SVMatroxDigitizerInquire::SVColorModeEnum& Value);
 	static HRESULT GetScanMode(const SVMatroxDigitizer& DigitizerID, SVMatroxDigitizerInquire::SVScanModeEnum& Value);
@@ -88,7 +88,7 @@ public:
 	static HRESULT Get(const SVMatroxDigitizer& DigitizerID, SVMatroxDigitizerInquire::SVFrameEnum InquireType, long& Value);
 
 	// Gige
-	static HRESULT GetGigeSerialNumber(const SVMatroxDigitizer& DigitizerID, SVString& Value);
+	static HRESULT GetGigeSerialNumber(const SVMatroxDigitizer& DigitizerID, std::string& Value);
 	static HRESULT GetGigeMACAddress(const SVMatroxDigitizer& DigitizerID, __int64& Value);
 	static HRESULT GetGigeIPAddress(const SVMatroxDigitizer& DigitizerID, __int64& Value);
 	static HRESULT ShowGigeProperties(const SVMatroxDigitizer& DigitizerID);
@@ -101,12 +101,12 @@ public:
 
 	// Gige Feature Getter/Setter
 	static HRESULT GetFeature(const SVMatroxDigitizer& DigitizerID,
-									const SVString& FeatureName,
+									const std::string& FeatureName,
 									SVMatroxDigitizerFeature::SVFeatureTypeEnum FeatureType,
 									variant_t& FeatureValue);
 
 	static HRESULT SetFeature(const SVMatroxDigitizer& DigitizerID,
-                                 const SVString& FeatureName,
+                                 const std::string& FeatureName,
                                  SVMatroxDigitizerFeature::SVFeatureTypeEnum FeatureType,
                                  const variant_t& FeatureValue);
 
@@ -130,7 +130,7 @@ public:
 
 	static HRESULT GetGigeCameraTimestamp(SVMatroxIdentifier milEventID, double& timestamp);
 	static HRESULT GetGigeEventType(SVMatroxIdentifier milEventID, long& p_rEventType);
-	static HRESULT SetGigeEvent(const SVMatroxDigitizer& DigitizerID, const SVString& name, const SVString& value);
+	static HRESULT SetGigeEvent(const SVMatroxDigitizer& DigitizerID, const std::string& name, const std::string& value);
 	static HRESULT GetGigeEventList(const SVMatroxDigitizer& DigitizerID, SVGigeEventList& list);
 };
 

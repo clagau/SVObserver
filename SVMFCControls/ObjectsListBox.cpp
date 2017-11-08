@@ -25,7 +25,7 @@ namespace SvMc
 	{
 	}
 
-	void ObjectsListBox::init(const SvUl::NameGuidList& rList, const SVString& rEmptyListText)
+	void ObjectsListBox::init(const SvUl::NameGuidList& rList, const std::string& rEmptyListText)
 	{
 		int index;
 

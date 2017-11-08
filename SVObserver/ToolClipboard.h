@@ -14,8 +14,8 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary/SVString.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 //Forward declarations
@@ -79,7 +79,7 @@ protected:
 	// Parameter: rToolGuid <in> Reference to the selected tool GUID to write to the clipboard
 	// Return: S_OK on success
 	//************************************
-	HRESULT streamToolToZip( const SVString rFileName, const SVGUID& rToolGuid ) const;
+	HRESULT streamToolToZip( const std::string rFileName, const SVGUID& rToolGuid ) const;
 
 	//************************************
 	// Description: This method writes the Base and Environment nodes
@@ -99,20 +99,20 @@ protected:
 	// Parameter: rToolXmlString <in> Reference to the tool XML string to search
 	// Parameter: rDependencyFiles <out> Reference to the set of dependency files
 	//************************************
-	void findDependencyFiles( const std::string& rToolXmlString, SVStringSet& rDependencyFiles ) const;
+	void findDependencyFiles( const std::string& rToolXmlString, SvDef::StringSet& rDependencyFiles ) const;
 
 	//************************************
 	// Description: This method updates dependency files if required
 	// Parameter: rDependencyFiles <in> Reference to the set of dependency files
 	//************************************
-	void updateDependencyFiles( const SVStringSet& rDependencyFiles ) const;
+	void updateDependencyFiles( const SvDef::StringSet& rDependencyFiles ) const;
 
 	//************************************
 	// Description: This method gets the clipboard data and converts it into a string
 	// Parameter: rClipboardData <out> Reference to the string to hold the clipboard data
 	// Return: S_OK on success
 	//************************************
-	static HRESULT convertClipboardDataToString( SVString& rClipboardData );
+	static HRESULT convertClipboardDataToString( std::string& rClipboardData );
 
 	//************************************
 	// Description: This method writes the string to a file
@@ -120,14 +120,14 @@ protected:
 	// Parameter: rFileData <in> Reference to where the file data is
 	// Parameter: Text <in> data is text format
 	//************************************
-	void writeStringToFile( const SVString& rFileName, const std::string& rFileData, bool Text ) const;
+	void writeStringToFile( const std::string& rFileName, const std::string& rFileData, bool Text ) const;
 
 	//************************************
 	// Description: This method reads the file to a string
 	// Parameter: rFileName <in> Reference to the file name
 	// Parameter: rFileData <out> Reference to where the data is read in to
 	//************************************
-	void readFileToString( const SVString& rFileName, SVString& rFileData ) const;
+	void readFileToString( const std::string& rFileName, std::string& rFileData ) const;
 
 	//************************************
 	// Description: This method converts the XML to tree
@@ -135,7 +135,7 @@ protected:
 	// Parameter: rTree <out> Reference to the tree to store the XML conversion
 	// Return: S_OK on success
 	//************************************
-	HRESULT convertXmlToTree( const SVString& rXmlData, SVTreeType& rTree ) const;
+	HRESULT convertXmlToTree( const std::string& rXmlData, SVTreeType& rTree ) const;
 
 	//************************************
 	// Description: This method checks the clipboard SVObserver version to the current SVObserver version
@@ -150,7 +150,7 @@ protected:
 	// Parameter: rTree <in> Reference to the tree generated from the clipboard
 	// Return: S_OK on success
 	//************************************
-	HRESULT validateGuids( SVString& rXmlData, SVTreeType& rTree, int ToolListindex ) const;
+	HRESULT validateGuids( std::string& rXmlData, SVTreeType& rTree, int ToolListindex ) const;
 
 	//************************************
 	// Description: This method replaces the tool name
@@ -158,7 +158,7 @@ protected:
 	// Parameter: rTree <in> Reference to the tree generated from the clipboard
 	// Return: S_OK on success
 	//************************************
-	HRESULT replaceToolName( SVString& rXmlData, SVTreeType& rTree ) const;
+	HRESULT replaceToolName( std::string& rXmlData, SVTreeType& rTree ) const;
 
 	//************************************
 	// Description: This method replaces all the unique Guids
@@ -166,7 +166,7 @@ protected:
 	// Parameter: rTree <in> Reference to the tree generated from the clipboard
 	// Return: S_OK on success
 	//************************************
-	HRESULT replaceUniqueGuids( SVString& rXmlData, SVTreeType& rTree ) const;
+	HRESULT replaceUniqueGuids( std::string& rXmlData, SVTreeType& rTree ) const;
 
 	//************************************
 	// Description: This method parses the tree and generates the tool

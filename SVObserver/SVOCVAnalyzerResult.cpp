@@ -26,6 +26,8 @@
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -152,7 +154,7 @@ void SVOCVAnalyzeResultClass::clearAll()
 		// Add it to our task object list
 		Add( pResult );
 
-		SVString Name = SvUl_SF::Format( "Character %d Result", l + 1 );
+		std::string Name = SvUl::Format( "Character %d Result", l + 1 );
 		pResult->SetName( Name.c_str() );
 	}// end for
 
@@ -336,7 +338,7 @@ bool SVOCVAnalyzeResultClass::CloseObject()
 // Operation(s) Of Reading Access:
 //******************************************************************************
 
-void SVOCVAnalyzeResultClass::GetOCVResultString( SVString& rResult )
+void SVOCVAnalyzeResultClass::GetOCVResultString( std::string& rResult )
 {
    BOOL bResult = ( S_OK == m_svoFoundString.GetValue( rResult ) );
    ASSERT(bResult);
@@ -367,9 +369,9 @@ bool SVOCVAnalyzeResultClass::GenerateFontModel()
 
 	// Now recreate the MIL font and result buffer
 	CFileStatus rStatus;
-	SVString FontFileName;
-	SVString ConstraintsFileName;
-	SVString ControlsFileName;
+	std::string FontFileName;
+	std::string ConstraintsFileName;
+	std::string ControlsFileName;
 
 	m_fnvoFontFileName.GetValue( FontFileName );
 	bool bOk = (CFile::GetStatus(FontFileName.c_str(), rStatus) ? true : false);
@@ -406,7 +408,7 @@ bool SVOCVAnalyzeResultClass::GenerateFontModel()
 
 	if ( bOk )
 	{
-		SVString Path;
+		std::string Path;
 		Path = FontFileName;
 
 		MatroxCode = SVMatroxOcrInterface::RestoreFont( m_milFontID, Path, SVOcrRestore );
@@ -524,7 +526,7 @@ HRESULT SVOCVAnalyzeResultClass::LoadMatchString()
 			 //
 			 // Check to see if the file exists..
 			 //
-			 SVString MatchStringFileName;
+			 std::string MatchStringFileName;
 			 m_fnvoMatchStringFileName.GetValue( MatchStringFileName  );
 			 if( ! ::SVFileExists( MatchStringFileName.c_str() ) )
 			 {
@@ -574,7 +576,7 @@ HRESULT SVOCVAnalyzeResultClass::LoadMatchString()
 			 
 			 if (0 != LastError)
 			 {
-				 m_svoMatchString.SetValue(SVString());
+				 m_svoMatchString.SetValue(std::string());
 			 }
 			 
 			 if ( dwByteNumber > 0 )
@@ -599,7 +601,7 @@ HRESULT SVOCVAnalyzeResultClass::LoadMatchString()
 		 }// end if
 		 else
 		 {
-			 SVString MatchString;
+			 std::string MatchString;
 			 
 			 m_svoMatchString.GetValue( MatchString );
 			 
@@ -611,7 +613,7 @@ HRESULT SVOCVAnalyzeResultClass::LoadMatchString()
 	
 	if (0 != LastError)
 	{
-	   m_svoMatchString.SetValue(SVString());
+	   m_svoMatchString.SetValue(std::string());
 	}
 
 	return hrRet;
@@ -675,7 +677,7 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 	double dSum( 0.0 );
 	double dValidString( 0.0 );
 	double dNbrString( 0.0 );
-	SVString l_strLabel;
+	std::string l_strLabel;
 	SVMatroxDoubleArray l_adScores;
 	SVMatroxDoubleArray l_adXCoords;
 	SVMatroxDoubleArray l_adYCoords;
@@ -685,8 +687,8 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 	double dCharBoxSizeX( 0.0 );
 	double dCharBoxSizeY( 0.0 );
 
-	SVString FoundString;
-	SVString MatchString;
+	std::string FoundString;
+	std::string MatchString;
 	 
 	HRESULT MatroxCode(S_OK);
   
@@ -746,8 +748,8 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 					{
 						if (nullptr != pErrorMessages)
 						{
-							SVStringVector msgList;
-							msgList.push_back(SvUl_SF::Format(_T("%x"), imageTypeMil));
+							SvDef::StringVector msgList;
+							msgList.push_back(SvUl::Format(_T("%x"), imageTypeMil));
 							SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_MilImageTypeInvalid, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10170, GetUniqueObjectID() );
 							pErrorMessages->push_back(Msg);
 						}
@@ -776,7 +778,7 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 			{
 				long k( 0 );
 				// Reset the 'found' string to nothing.
-				m_svoFoundString.SetValue(SVString());
+				m_svoFoundString.SetValue(std::string());
 				m_lvoMatchLineNumber.SetValue(-1L);
 
 				//
@@ -797,7 +799,7 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 
 				// Reset results
 				
-				SVString strFunctionName;
+				std::string strFunctionName;
 				int iProgramCode=-12382;
 
 				try
@@ -1027,7 +1029,7 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 
 					if (nullptr != pErrorMessages)
 					{
-						SVStringVector msgList;
+						SvDef::StringVector msgList;
 						msgList.push_back(strFunctionName);
 						SvStl::MessageContainer Msg( SVMSG_SVO_30_EXCEPTION_IN_MIL, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams), iProgramCode, GetUniqueObjectID() );
 						pErrorMessages->push_back(Msg);
@@ -1256,7 +1258,7 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 		SetInvalid();
 		rRunStatus.SetInvalid();
 
-		SVStringVector msgList;
+		SvDef::StringVector msgList;
 		msgList.push_back(_T("SVOCVAnalyzeResultClass::onRun"));
 
 		if (nullptr != pErrorMessages)
@@ -1333,7 +1335,7 @@ bool SVOCVAnalyzeResultClass::BuildHashTable( char *pBuffer )
 		// If there is only one entry in the file, make it work the old way.   
 		if(m_nTotalCount == 1)
 		{
-			m_svoMatchString.SetValue(SVString(pBuffer));
+			m_svoMatchString.SetValue(std::string(pBuffer));
 			m_pIndexTable = nullptr;
 			break; // No need to create hash table
 		}
@@ -1423,7 +1425,7 @@ void SVOCVAnalyzeResultClass::InsertValueToTable ( short nValue, int nIndex )
 //  4-25-00    sri			First Implementation
 //	:
 ////////////////////////////////////////////////////////////////////////////////
-long SVOCVAnalyzeResultClass::CheckStringInTable(const SVString& rMatchString)
+long SVOCVAnalyzeResultClass::CheckStringInTable(const std::string& rMatchString)
 {
 	long Result( -1L );
 	

@@ -13,7 +13,7 @@
 //Moved to precompiled header: #include <boost/assign/list_of.hpp> 
 #include "SVCustomFilterDlg.h"
 #include "SVObjectLibrary/SVClsids.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -183,15 +183,15 @@ namespace SvOg
 	{
 		CDialog::OnInitDialog();
 
-		SVString Temp;
+		std::string Temp;
 
 		m_Values.Init();
 		m_lKernelWidth = m_Values.Get<long>(WidthTag);
-		Temp = SvUl_SF::Format( "%d", m_lKernelWidth );
+		Temp = SvUl::Format( "%d", m_lKernelWidth );
 		m_ctlKernelWidth.SelectString( -1, Temp.c_str() );
 
 		m_lKernelHeight = m_Values.Get<long>(HeidghtTag);
-		Temp = SvUl_SF::Format( "%d", m_lKernelHeight );
+		Temp = SvUl::Format( "%d", m_lKernelHeight );
 		m_ctlKernelHeight.SelectString( -1, Temp.c_str() );
 
 		EnableCells();
@@ -251,8 +251,8 @@ namespace SvOg
 					k - ( ( 7 - m_lKernelHeight ) / 2 ) < m_lKernelHeight && k - ( ( 7 - m_lKernelHeight ) / 2 ) >= 0 )
 
 				{
-					SVString Name;
-					Name = SvUl_SF::Format( _T( "Cell %d" ), ( k - ( ( 7 - m_lKernelHeight ) / 2 ) ) * m_lKernelWidth + ( j - ( ( 7 - m_lKernelWidth  ) / 2 ) ) + 1 );
+					std::string Name;
+					Name = SvUl::Format( _T( "Cell %d" ), ( k - ( ( 7 - m_lKernelHeight ) / 2 ) ) * m_lKernelWidth + ( j - ( ( 7 - m_lKernelWidth  ) / 2 ) ) + 1 );
 					GetDlgItem( IDC_STATIC_CELL1 + k * 7 + j )->SetWindowText( Name.c_str() );
 					GetDlgItem( IDC_CELL1 + k * 7 + j )->EnableWindow( TRUE );
 				}// end if

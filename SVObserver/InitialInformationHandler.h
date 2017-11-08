@@ -51,7 +51,7 @@ private:
 
 	HRESULT m_InitializationStatusFlags;
 
-	SVString m_IOBoardOption;			// TRB - Added to have a parameter to send to Rabbit Board. (original name: m_DigitalOption)
+	std::string m_IOBoardOption;			// TRB - Added to have a parameter to send to Rabbit Board. (original name: m_DigitalOption)
 
 	SvTh::SVDigitizerLoadLibraryClass m_svDLLDigitizers;
 	SvTh::SVDigitizerLoadLibraryClass m_svDLLFileAcquisition;

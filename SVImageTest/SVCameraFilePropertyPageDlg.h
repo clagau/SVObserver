@@ -13,7 +13,6 @@
 
 #pragma region Includes
 #include "CameraLibrary/SVDeviceParamCollection.h"
-#include "SVUtilityLibrary/SVString.h"
 #include "SVRPropertyTree/SVRPropTree.h"
 #pragma endregion Includes
 
@@ -68,7 +67,7 @@ protected:
 
 private:
     void CameraAdvancedHideItems();
-    void SetTitle(SVString Name);
+    void SetTitle(std::string Name);
 
 	const SVDeviceParamCollection& GetCameraFileParams();
 	SVDeviceParamCollection& GetCameraFileParamsNonConst();

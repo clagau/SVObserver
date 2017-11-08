@@ -13,6 +13,8 @@
 #include "stdafx.h"
 #include "SVObserver.h"
 #include "SVRemoteOutputGroupAddRemoveDlg.h"
+#include "SVUtilityLibrary/StringHelper.h"
+#include "Definitions/StringTypeDef.h"
 #include "TextDefinesSvO.h"
 #pragma endregion Includes
 
@@ -64,7 +66,7 @@ void SVRemoteOutputGroupAddRemoveDlg::OnBnClickedAddBtn()
 		NewGroup.m_Name = NextAvailableGroupName(); //.Format(_T("Output Group %d"), ++m_lOutputGroupCount );
 		NewGroup.m_PPQName = l_strPPQ;
 		m_SetupGroup.push_back(NewGroup);
-		SVString Text = NewGroup.m_Name + _T("(") + NewGroup.m_PPQName + _T(")");
+		std::string Text = NewGroup.m_Name + _T("(") + NewGroup.m_PPQName + _T(")");
 		int l_iInsert = m_UsedList.AddString( Text.c_str() );
 		m_UsedList.SetItemData( l_iInsert, m_AvailableList.GetItemData( l_lAddSel ) );
 
@@ -81,9 +83,9 @@ void SVRemoteOutputGroupAddRemoveDlg::OnBnClickedAddBtn()
 	}
 }
 
-SVString SVRemoteOutputGroupAddRemoveDlg::NextAvailableGroupName()
+std::string SVRemoteOutputGroupAddRemoveDlg::NextAvailableGroupName()
 {
-	SVString Result;
+	std::string Result;
 	int num = 1;
 	bool bFinished = false;
 	while( !bFinished )
@@ -92,9 +94,9 @@ SVString SVRemoteOutputGroupAddRemoveDlg::NextAvailableGroupName()
 		for( SVGroupDefVect::iterator it = m_SetupGroup.begin() ; it != m_SetupGroup.end() ; ++ it )
 		{
 			size_t Pos = it->m_Name.find_first_of(_T("1234567890"));
-			if( SVString::npos != Pos )
+			if( std::string::npos != Pos )
 			{
-				int iTmp = atoi( SvUl_SF::Mid(it->m_Name, Pos).c_str() );
+				int iTmp = atoi( SvUl::Mid(it->m_Name, Pos).c_str() );
 				if( iTmp == num)
 				{	// if we change num then check the entire list for a match.
 					num++;
@@ -103,7 +105,7 @@ SVString SVRemoteOutputGroupAddRemoveDlg::NextAvailableGroupName()
 			}
 		}
 	}
-	Result = SvUl_SF::Format( _T("Output Group %d"), num );
+	Result = SvUl::Format( _T("Output Group %d"), num );
 	return Result;
 }
 
@@ -126,7 +128,7 @@ void SVRemoteOutputGroupAddRemoveDlg::OnBnClickedRemoveBtn()
 				break;
 			}
 		}
-		for( SVStringPairVector::iterator l_it = m_RenamedGroups.begin() ; l_it != m_RenamedGroups.end() ; ++l_it )
+		for(SvDef::StringPairVector::iterator l_it = m_RenamedGroups.begin() ; l_it != m_RenamedGroups.end() ; ++l_it )
 		{
 			if( Delete.GetString() == l_it->first )
 			{
@@ -167,7 +169,7 @@ BOOL SVRemoteOutputGroupAddRemoveDlg::OnInitDialog()
 	m_OriginalGroups.clear();
 
 	// Item Data is the available list index.
-	for( SVStringVector::iterator Iter = m_AvailablePPQs.begin(); Iter != m_AvailablePPQs.end() ; ++ Iter )
+	for( SvDef::StringVector::iterator Iter = m_AvailablePPQs.begin(); Iter != m_AvailablePPQs.end() ; ++ Iter )
 	{
 		bool l_bFound = false;
 		for( SVGroupDefVect::iterator it = m_SetupGroup.begin(); it != m_SetupGroup.end() ; ++it )
@@ -214,7 +216,7 @@ void SVRemoteOutputGroupAddRemoveDlg::UpdateUsedList()
 {
 	for( SVGroupDefVect::iterator it = m_SetupGroup.begin(); it != m_SetupGroup.end() ; ++it )
 	{
-		SVString Text = it->m_Name + _T("(") + it->m_PPQName + _T(")");
+		std::string Text = it->m_Name + _T("(") + it->m_PPQName + _T(")");
 		int iPos = m_UsedList.AddString( Text.c_str() );
 		m_UsedList.SetSel(iPos, true);
 		++m_lOutputGroupCount;
@@ -223,10 +225,10 @@ void SVRemoteOutputGroupAddRemoveDlg::UpdateUsedList()
 }
 
 
-int SVRemoteOutputGroupAddRemoveDlg::StringPosition( const SVStringVector& rList, const SVString& rValue )
+int SVRemoteOutputGroupAddRemoveDlg::StringPosition( const SvDef::StringVector& rList, const std::string& rValue )
 {
 	int iRet = -1;
-	SVStringVector::const_iterator Iter = std::find( rList.begin(), rList.end(), rValue);
+	SvDef::StringVector::const_iterator Iter = std::find( rList.begin(), rList.end(), rValue);
 	if( rList.end() != Iter )
 	{
 		iRet = static_cast<int> (std::distance( rList.begin(), Iter));
@@ -236,7 +238,7 @@ int SVRemoteOutputGroupAddRemoveDlg::StringPosition( const SVStringVector& rList
 
 // This function finds all items that are in the original list but not in the newlist and puts
 // them in the outputlist.
-HRESULT SVRemoteOutputGroupAddRemoveDlg::GetRemoved( SVStringVector& rOutputList )
+HRESULT SVRemoteOutputGroupAddRemoveDlg::GetRemoved( SvDef::StringVector& rOutputList )
 {
 	rOutputList.clear();
 	for( size_t i = 0 ; i < m_OriginalGroups.size() ; i++)
@@ -252,7 +254,7 @@ HRESULT SVRemoteOutputGroupAddRemoveDlg::GetRemoved( SVStringVector& rOutputList
 		}
 		if( !l_bFound )
 		{
-			for( SVStringPairVector::iterator l_it = this->m_RenamedGroups.begin(); l_it != m_RenamedGroups.end(); ++l_it )
+			for(SvDef::StringPairVector::iterator l_it = this->m_RenamedGroups.begin(); l_it != m_RenamedGroups.end(); ++l_it )
 			{
 				if( l_it->first == m_OriginalGroups[i])
 				{
@@ -271,7 +273,7 @@ HRESULT SVRemoteOutputGroupAddRemoveDlg::GetRemoved( SVStringVector& rOutputList
 
 // This function finds all items that are in the New list but not in the Original and puts
 // them in the outputlist.
-HRESULT SVRemoteOutputGroupAddRemoveDlg::GetNewItems( SVStringVector& rOutputList )
+HRESULT SVRemoteOutputGroupAddRemoveDlg::GetNewItems( SvDef::StringVector& rOutputList )
 {
 	rOutputList.clear();
 	for( size_t i = 0 ; i < m_SetupGroups.size() ; i++)
@@ -289,7 +291,7 @@ HRESULT SVRemoteOutputGroupAddRemoveDlg::GetNewItems( SVStringVector& rOutputLis
 		{
 			if (i < m_OriginalGroups.size())
 			{
-				for( SVStringPairVector::iterator l_it = this->m_RenamedGroups.begin(); l_it != m_RenamedGroups.end(); ++l_it )
+				for(SvDef::StringPairVector::iterator l_it = this->m_RenamedGroups.begin(); l_it != m_RenamedGroups.end(); ++l_it )
 				{
 					if (l_it->first == m_OriginalGroups[i])
 					{
@@ -325,19 +327,19 @@ LRESULT  SVRemoteOutputGroupAddRemoveDlg::OnUsedListEditFinished(WPARAM wPar, LP
 	int index = static_cast<int>(m_UsedList.GetItemData( pos ));
 	if( index >= 0 )
 	{
-		SVString oldName = m_SetupGroup[index].m_Name;
+		std::string oldName = m_SetupGroup[index].m_Name;
 		CString Text;
 		m_UsedList.GetText(sel, Text);
 		//trim white space from left and right of the new name
-		SVString newName = SvUl_SF::Trim( SVString( Text ));
+		std::string newName = SvUl::Trim( std::string( Text ));
 
-		SvUl_SF::RemoveCharacters( newName, SvO::SVEXCLUDECHARS_TOOL_IP_NAME );
+		SvUl::RemoveCharacters( newName, SvO::SVEXCLUDECHARS_TOOL_IP_NAME );
 
 		//don't all blank strings
 		if ( !newName.empty() )
 		{
 			bool l_bFoundInRenameList=false;
-			for( SVStringPairVector::iterator it = m_RenamedGroups.begin(); it != m_RenamedGroups.end(); ++it)
+			for(SvDef::StringPairVector::iterator it = m_RenamedGroups.begin(); it != m_RenamedGroups.end(); ++it)
 			{
 				if( it->second == oldName )
 				{
@@ -350,7 +352,7 @@ LRESULT  SVRemoteOutputGroupAddRemoveDlg::OnUsedListEditFinished(WPARAM wPar, LP
 			{
 				if( oldName != newName )
 				{
-					m_RenamedGroups.push_back( SVStringPair(oldName, newName ));
+					m_RenamedGroups.push_back(SvDef::StringPair(oldName, newName ));
 				}
 			}
 			m_SetupGroup[sel].m_Name = newName;
@@ -361,7 +363,7 @@ LRESULT  SVRemoteOutputGroupAddRemoveDlg::OnUsedListEditFinished(WPARAM wPar, LP
 	return 0;
 }
 
-HRESULT SVRemoteOutputGroupAddRemoveDlg::GetRenamed( SVStringPairVector& rRenamedList)
+HRESULT SVRemoteOutputGroupAddRemoveDlg::GetRenamed(SvDef::StringPairVector& rRenamedList)
 {
 	rRenamedList = m_RenamedGroups;
 	return S_OK;

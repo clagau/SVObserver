@@ -17,7 +17,7 @@
 #include "SVSystemLibrary/SVThreadManager.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVStatusLibrary/GlobalPath.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 // SVThreadInfoDlg dialog
@@ -190,10 +190,10 @@ void SVThreadInfoDlg::AddComboAffinitys( SVRPropertyItemCombo* pCombo, AffinityB
 {
 	for( AffinityBitList::const_iterator it = affinitys.begin() ; it != affinitys.end() ; ++it )
 	{
-		SVString Name;
+		std::string Name;
 		if( *it > 0 )
 		{
-			Name = SvUl_SF::Format( _T("%d"), *it);
+			Name = SvUl::Format( _T("%d"), *it);
 		}
 		else
 		{
@@ -269,7 +269,7 @@ void SVThreadInfoDlg::OnItemButtonClick(NMHDR* pNotifyStruct, LRESULT* plResult)
 		if ( pItem->GetCtrlID() >= PROP_THREADS_BASE )
 		{
 			UINT i = pItem->GetCtrlID() - PROP_THREADS_BASE;
-			SVString Text = pItem->GetLabelText();
+			std::string Text = pItem->GetLabelText();
 			long lValue;
 			pItem->GetItemValue( lValue );
 			if( SVThreadManager::Instance().IsAllowed( Text.c_str(), SVAffinityEditAllowed ) )
@@ -309,7 +309,7 @@ void SVThreadInfoDlg::OnBnClickedSave()
 		file.WriteString("Name,Affinity\n");
 		for( std::list<SVThreadSetup>::const_iterator it = tList.begin() ; it != tList.end() ; ++it)
 		{
-			SVString Text = SvUl_SF::Format( _T("%s,%d\n"),it->m_strName.c_str(), it->m_lAffinity );
+			std::string Text = SvUl::Format( _T("%s,%d\n"),it->m_strName.c_str(), it->m_lAffinity );
 			file.WriteString( Text.c_str() );
 		}
 		file.Close();

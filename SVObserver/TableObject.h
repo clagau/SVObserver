@@ -70,7 +70,7 @@ protected:
 	/// \param pos [in] Position in the m_ValueList.
 	/// \param objectName [in] The new name.
 	/// \param maxArray [in] The new maximum numbers of the array.
-	void UpdateColumnValueObject(int pos, SVString objectName, int maxArray);
+	void UpdateColumnValueObject(int pos, std::string objectName, int maxArray);
 
 	/// Moved an columnValueObject in the m_ValueList and also in the embedded-list (this is necessary to keep the order after reloading)
 	/// \param oldPos [in] The old position in the m_ValueList.

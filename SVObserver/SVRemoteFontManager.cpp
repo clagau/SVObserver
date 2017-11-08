@@ -18,7 +18,7 @@
 #include "SVOCore/SVImageProcessingClass.h"
 #include "SVObserver.h"
 #include "SVSystemLibrary/SVThreadManager.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 DWORD WINAPI SVRemoteFontManager::SVRemoteFontCleanupThread( LPVOID lpParam )
@@ -557,7 +557,7 @@ bool SVRemoteFontManager::CopyFont( SVMatroxOcr& p_CurrentFont, SVMatroxOcr& p_N
 
 
 					//get list of char's that are in current font
-	SVString l_strFontChars;
+	std::string l_strFontChars;
 	l_strFontChars.resize( lCharInCurrFont + 1);
 	SVMatroxOcrInterface::Get( p_CurrentFont, SVCharInFont, l_strFontChars );
 	
@@ -574,7 +574,7 @@ bool SVRemoteFontManager::CopyFont( SVMatroxOcr& p_CurrentFont, SVMatroxOcr& p_N
 		l_Create.m_lSizeY = (long)dCharBoxSizeY;
 
 
-		SVString Str;
+		std::string Str;
 
 		Str = l_strFontChars[i];
 
@@ -638,7 +638,7 @@ bool SVRemoteFontManager::GetFontCharImage( long p_lFontIdentifier, SVMatroxOcr 
 			if( l_charMapIt != l_cMap.end() )
 			{
 				char cLabel = l_cMap[p_lID];
-				SVString Str;
+				std::string Str;
 				Str = cLabel;
 
 

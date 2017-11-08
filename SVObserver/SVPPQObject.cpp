@@ -52,6 +52,8 @@
 #include "SVToolSet.h"
 #include "SVSharedMemoryLibrary\ShareEvents.h"
 #include "SVSharedMemoryLibrary\MLPPQInfo.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -112,25 +114,25 @@ HRESULT CALLBACK SVFinishCameraCallback(void *pOwner, void *pCaller, void *pResp
 
 void logWorkloadInformation(const ProductWorkloadInformation &pwi, LPCSTR heading)
 {
-	SVString infostring;
-	infostring = SvUl_SF::Format(_T("!\t.%7.1lf: %s:\n"), SvTl::GetRelTimeStamp(), heading);
+	std::string infostring;
+	infostring = SvUl::Format(_T("!\t.%7.1lf: %s:\n"), SvTl::GetRelTimeStamp(), heading);
 	::OutputDebugString(infostring.c_str());
-	infostring = SvUl_SF::(_T("!\t\ttt = %7.1lf, pst = %7.1lf, ct = %7.1lf, "),
+	infostring = SvUl::(_T("!\t\ttt = %7.1lf, pst = %7.1lf, ct = %7.1lf, "),
 		pwi.m_TriggerTime - SvTl::getReferenceTime(),
 		pwi.m_ProcessingStartTime - SvTl::getReferenceTime(),
 		pwi.m_CompletionTime - SvTl::getReferenceTime());
 	::OutputDebugString(infostring.c_str());
-	infostring = SvUl_SF::(_T("TtoCo = %7.1lf, TtoSt = %7.1lf\n"),
+	infostring = SvUl::(_T("TtoCo = %7.1lf, TtoSt = %7.1lf\n"),
 		pwi.TriggerToCompletionInMilliseconds(),
 
 		pwi.TriggerToStartInMilliseconds());
 	::OutputDebugString(infostring.c_str());
-	infostring = SvUl_SF::(_T("!\trd\ttt = %.0lf, pst = %.0lf, ct = %.0lf, "),
+	infostring = SvUl::(_T("!\trd\ttt = %.0lf, pst = %.0lf, ct = %.0lf, "),
 		pwi.m_TriggerTime,
 		pwi.m_ProcessingStartTime,
 		pwi.m_CompletionTime);
 	::OutputDebugString(infostring.c_str());
-	infostring = SvUl_SF::(_T("pst-tt = %7.1lf, ct-tt = %7.1lf, ct-pst= %7.1lf\n"),
+	infostring = SvUl::(_T("pst-tt = %7.1lf, ct-tt = %7.1lf, ct-pst= %7.1lf\n"),
 		pwi.m_ProcessingStartTime - pwi.m_TriggerTime,
 		pwi.m_CompletionTime - pwi.m_TriggerTime,
 		pwi.m_CompletionTime - pwi.m_ProcessingStartTime);
@@ -871,7 +873,7 @@ bool SVPPQObject::AttachCamera(SVVirtualCamera* pCamera, long lPosition, bool p_
 	}
 	else
 	{
-		SVString l_Name = SvUl_SF::Format(_T("%s Toggle"), pCamera->GetName());
+		std::string l_Name = SvUl::Format(_T("%s Toggle"), pCamera->GetName());
 
 		m_Cameras[pCamera].m_CameraPPQIndex = lPosition;
 		m_Cameras[pCamera].m_ToggleState = true;
@@ -1151,7 +1153,7 @@ void SVPPQObject::PrepareGoOnline()
 
 	if (!m_pTrigger->CanGoOnline())
 	{
-		SVStringVector msgList;
+		SvDef::StringVector msgList;
 		msgList.push_back(m_pTrigger->GetCompleteName());
 
 		SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CanGoOnlineFailure_Trigger, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10185);
@@ -1162,7 +1164,7 @@ void SVPPQObject::PrepareGoOnline()
 	{
 		if (!(l_svIter->second.m_CameraPPQIndex >= 0 && l_svIter->first->CanGoOnline()))
 		{
-			SVStringVector msgList;
+			SvDef::StringVector msgList;
 			msgList.push_back(l_svIter->first->GetCompleteName());
 
 			SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CanGoOnlineFailure_Acquisition, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10185);
@@ -1203,8 +1205,8 @@ void SVPPQObject::PrepareGoOnline()
 
 			if (S_OK != hRTemp)
 			{
-				SVStringVector msgList;
-				msgList.push_back(SvUl_SF::Format(_T("%X"), hRTemp));
+				SvDef::StringVector msgList;
+				msgList.push_back(SvUl::Format(_T("%X"), hRTemp));
 				SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GoOnlineFailure_RecycleProduct, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10185);
 				throw Msg;
 			}
@@ -1222,7 +1224,7 @@ void SVPPQObject::PrepareGoOnline()
 		if (!m_arInspections[i]->CanGoOnline())
 		{
 			SvStl::MessageTextEnum messageId = SvStl::Tid_Empty;
-			SVStringVector msgList;
+			SvDef::StringVector msgList;
 
 			//@TODO[gra][7.40][25.05.2016]: This should at a later stage show all the tool errors not only the first error
 			SvStl::MessageContainerVector AllToolMessages;
@@ -1231,9 +1233,9 @@ void SVPPQObject::PrepareGoOnline()
 			SvStl::SourceFileParams sourceFileParam(StdMessageParams);
 			if (AllToolMessages.end() != Iter)
 			{
-				SVString sToolName = SVObjectManagerClass::Instance().GetCompleteObjectName(Iter->getObjectId());
+				std::string sToolName = SVObjectManagerClass::Instance().GetCompleteObjectName(Iter->getObjectId());
 				msgList.push_back(sToolName);
-				msgList.push_back(SVString(Iter->what()));
+				msgList.push_back(std::string(Iter->what()));
 				messageId = SvStl::Tid_CanGoOnlineFailure_InspectionTool;
 				sourceFileParam = Iter->getMessage().m_SourceFile;
 			}
@@ -1257,7 +1259,7 @@ void SVPPQObject::PrepareGoOnline()
 
 void SVPPQObject::GoOnline()
 {
-	SVString FailureObjectName;
+	std::string FailureObjectName;
 
 #ifdef EnableTracking
 	m_PPQTracking.clear();
@@ -1337,7 +1339,7 @@ void SVPPQObject::GoOnline()
 			m_arInspections[i]->GoOffline();
 		}// end for
 
-		SVStringVector msgList;
+		SvDef::StringVector msgList;
 		msgList.push_back(FailureObjectName);
 
 		SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GoOnlineFailure_Inspection, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10185);
@@ -1350,8 +1352,8 @@ void SVPPQObject::GoOnline()
 		HRESULT hr = m_pTrigger->EnableInternalTrigger();
 		if (S_OK != hr)
 		{
-			SVStringVector msgList;
-			msgList.push_back(SvUl_SF::Format(_T("%X"), hr));
+			SvDef::StringVector msgList;
+			msgList.push_back(SvUl::Format(_T("%X"), hr));
 
 			SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GoOnlineFailure_InternalTrigger, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10185);
 			throw Msg;
@@ -1384,7 +1386,7 @@ void SVPPQObject::GoOnline()
 			m_arInspections[i]->GoOffline();
 		}// end for
 
-		SVStringVector msgList;
+		SvDef::StringVector msgList;
 		msgList.push_back(FailureObjectName);
 
 		SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GoOnlineFailure_Acquisition, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10185);
@@ -1409,7 +1411,7 @@ void SVPPQObject::GoOnline()
 			m_arInspections[i]->GoOffline();
 		}// end for
 
-		SVStringVector msgList;
+		SvDef::StringVector msgList;
 		msgList.push_back(FailureObjectName);
 
 		SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GoOnlineFailure_Trigger, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10185);
@@ -1489,7 +1491,7 @@ bool SVPPQObject::GoOffline()
 #ifdef EnableTracking
 	if (TheSVObserverApp.UpdateAndGetLogDataManager())
 	{
-		SVString l_FileName;
+		std::string l_FileName;
 
 		l_FileName.Format(_T("C:\\SVObserver\\ProductIndexes_%ld-%s.log"),
 			SVObjectManagerClass::Instance().GetFileSequenceNumber(), GetName());
@@ -1500,7 +1502,7 @@ bool SVPPQObject::GoOffline()
 		{
 			for (size_t i = 0; i < m_ppPPQPositions.size(); ++i)
 			{
-				SVString l_Info;
+				std::string l_Info;
 
 				SVProductInfoStruct* l_pProduct = m_ppPPQPositions.GetProductAt(i);
 
@@ -1517,7 +1519,7 @@ bool SVPPQObject::GoOffline()
 			l_Stream.close();
 		}
 
-		SVString l_Name;
+		std::string l_Name;
 
 		l_Name.Format(_T("%s-%ld"), GetName(), SVObjectManagerClass::Instance().GetFileSequenceNumber());
 
@@ -1681,7 +1683,7 @@ bool SVPPQObject::RemoveInput(SVIOEntryHostStructPtr pInput)
 {
 	bool l_Status = false;
 
-	SVString strName;
+	std::string strName;
 
 	if (nullptr != pInput->getObject())
 	{
@@ -1771,7 +1773,7 @@ HRESULT SVPPQObject::GetInputIOValues(SVVariantBoolVector& rInputValues) const
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_INPUT_VALUES)
 	SVVariantBoolVector::const_iterator Iter = rInputValues.begin();
-	SVString DebugString = _T("Inputs");
+	std::string DebugString = _T("Inputs");
 	for (; rInputValues.end() != Iter; ++Iter)
 	{
 		//Only valid if second is true
@@ -1867,8 +1869,8 @@ static bool CompareTypeWithIOEntry(SVIOEntryHostStructPtr ioEntry, const SVIOObj
 	return bRetVal;
 }
 
-typedef boost::function<bool(SVIOEntryHostStructPtr ioEntry, const SVString& name)> CompareIOEntryNameFunc;
-static bool CompareNameWithIOEntry(SVIOEntryHostStructPtr pIoEntry, const SVString& name)
+typedef boost::function<bool(SVIOEntryHostStructPtr ioEntry, const std::string& name)> CompareIOEntryNameFunc;
+static bool CompareNameWithIOEntry(SVIOEntryHostStructPtr pIoEntry, const std::string& name)
 {
 	bool bRetVal = false;
 	if (nullptr != pIoEntry && nullptr != pIoEntry->getObject())
@@ -1878,7 +1880,7 @@ static bool CompareNameWithIOEntry(SVIOEntryHostStructPtr pIoEntry, const SVStri
 	return bRetVal;
 }
 
-static bool CompareCompleteNameWithIOEntry(SVIOEntryHostStructPtr pIoEntry, const SVString& name)
+static bool CompareCompleteNameWithIOEntry(SVIOEntryHostStructPtr pIoEntry, const std::string& name)
 {
 	bool bRetVal = false;
 	if (nullptr != pIoEntry && nullptr != pIoEntry->getObject())
@@ -1909,21 +1911,21 @@ private:
 void SVPPQObject::AddCameraDataInputs(SVIOEntryHostStructPtrVector& list)
 {
 	// Added the new Camera inputs...
-	SVIOEntryHostStructPtrVector::iterator it = std::find_if(list.begin(), list.end(), FindIOEntry<SVString, CompareIOEntryNameFunc>(m_CameraInputData.GetTimestampName(), CompareNameWithIOEntry));
+	SVIOEntryHostStructPtrVector::iterator it = std::find_if(list.begin(), list.end(), FindIOEntry<std::string, CompareIOEntryNameFunc>(m_CameraInputData.GetTimestampName(), CompareNameWithIOEntry));
 	if (it == list.end())
 	{
 		// Get the Input from the All list
-		SVIOEntryHostStructPtrVector::const_iterator refIt = std::find_if(m_AllInputs.begin(), m_AllInputs.end(), FindIOEntry<SVString, CompareIOEntryNameFunc>(m_CameraInputData.GetTimestampName(), CompareNameWithIOEntry));
+		SVIOEntryHostStructPtrVector::const_iterator refIt = std::find_if(m_AllInputs.begin(), m_AllInputs.end(), FindIOEntry<std::string, CompareIOEntryNameFunc>(m_CameraInputData.GetTimestampName(), CompareNameWithIOEntry));
 		if (refIt != m_AllInputs.end())
 		{
 			list.push_back(*refIt);
 		}
 	}
-	it = std::find_if(list.begin(), list.end(), FindIOEntry<SVString, CompareIOEntryNameFunc>(m_CameraInputData.GetLineStateName(), CompareNameWithIOEntry));
+	it = std::find_if(list.begin(), list.end(), FindIOEntry<std::string, CompareIOEntryNameFunc>(m_CameraInputData.GetLineStateName(), CompareNameWithIOEntry));
 	if (it == list.end())
 	{
 		// Get the Input from the All list
-		SVIOEntryHostStructPtrVector::const_iterator refIt = std::find_if(m_AllInputs.begin(), m_AllInputs.end(), FindIOEntry<SVString, CompareIOEntryNameFunc>(m_CameraInputData.GetLineStateName(), CompareNameWithIOEntry));
+		SVIOEntryHostStructPtrVector::const_iterator refIt = std::find_if(m_AllInputs.begin(), m_AllInputs.end(), FindIOEntry<std::string, CompareIOEntryNameFunc>(m_CameraInputData.GetLineStateName(), CompareNameWithIOEntry));
 		if (refIt != m_AllInputs.end())
 		{
 			list.push_back(*refIt);
@@ -1948,12 +1950,12 @@ void SVPPQObject::SetDefaultConditionalOutput()
 
 bool SVPPQObject::HasCameraDataInputForConditionalOutput() const
 {
-	return (SVString::npos != m_conditionalOutputName.find(_T("Camera")));
+	return (std::string::npos != m_conditionalOutputName.find(_T("Camera")));
 }
 
 bool SVPPQObject::HasDigitalInputForConditionalOutput() const
 {
-	return (SVString::npos != m_conditionalOutputName.find(_T("DIO")));
+	return (std::string::npos != m_conditionalOutputName.find(_T("DIO")));
 }
 
 // AddToAvailableInputs searches the m_AllInputs by name. If it does not exist,
@@ -1961,7 +1963,7 @@ bool SVPPQObject::HasDigitalInputForConditionalOutput() const
 // IO_REMOTE_INPUT and IO_DIGITAL_INPUT.
 // A variant value object is created for the remote input.
 // A Boolean value object is created for the digital input.
-bool SVPPQObject::AddToAvailableInputs(SVIOObjectType eType, const SVString& rName)
+bool SVPPQObject::AddToAvailableInputs(SVIOObjectType eType, const std::string& rName)
 {
 	bool bFound = false;
 
@@ -2025,7 +2027,7 @@ void SVPPQObject::AddDefaultInputs()
 	// Create all the default Digital Inputs
 	for (l = 0; l < ulCount; l++)
 	{
-		SVString Name = SvUl_SF::Format(_T("DIO.Input%d"), l + 1);
+		std::string Name = SvUl::Format(_T("DIO.Input%d"), l + 1);
 		AddToAvailableInputs(IO_DIGITAL_INPUT, Name);
 	}// end for
 
@@ -2040,7 +2042,7 @@ void SVPPQObject::AddDefaultInputs()
 	// Create all the default Remote Inputs
 	for (l = 0; l < static_cast<unsigned long>(lCount); l++)
 	{
-		SVString Name = SvUl_SF::Format(SvO::cRemoteInputNumberLabel, l + 1 );
+		std::string Name = SvUl::Format(SvO::cRemoteInputNumberLabel, l + 1 );
 		AddToAvailableInputs(IO_REMOTE_INPUT, Name);
 	}// end for
 }
@@ -2055,7 +2057,7 @@ void SVPPQObject::GetAllInputs(SVIOEntryHostStructPtrVector& ppIOEntries) const
 	ppIOEntries = m_AllInputs;
 }
 
-SVIOEntryHostStructPtr SVPPQObject::GetInput(const SVString& name) const
+SVIOEntryHostStructPtr SVPPQObject::GetInput(const std::string& name) const
 {
 	for (SVIOEntryHostStructPtrVector::const_iterator it = m_AllInputs.begin(); it != m_AllInputs.end(); ++it)
 	{
@@ -2086,7 +2088,7 @@ bool SVPPQObject::RemoveOutput(SVIOEntryHostStructPtr pOutput)
 		m_voOutputState.SetObjectOwner(this);
 	}
 
-	SVString Name;
+	std::string Name;
 
 	if (nullptr != pOutput->getObject())
 	{
@@ -2103,7 +2105,7 @@ bool SVPPQObject::RemoveOutput(SVIOEntryHostStructPtr pOutput)
 
 	while (l_Iter != m_AllOutputs.end())
 	{
-		SVString PPQName;
+		std::string PPQName;
 		PPQName = (*l_Iter)->getObject()->GetCompleteName();
 
 		l_Status = (Name == PPQName);
@@ -2130,7 +2132,7 @@ bool SVPPQObject::ResolveConditionalOutput()
 	if (!AlwaysWriteOutputs())
 	{
 		// Get Input with this name and assign guid
-		SVIOEntryHostStructPtrVector::const_iterator it = std::find_if(m_UsedInputs.begin(), m_UsedInputs.end(), FindIOEntry<SVString, CompareIOEntryNameFunc>(m_conditionalOutputName, CompareNameWithIOEntry));
+		SVIOEntryHostStructPtrVector::const_iterator it = std::find_if(m_UsedInputs.begin(), m_UsedInputs.end(), FindIOEntry<std::string, CompareIOEntryNameFunc>(m_conditionalOutputName, CompareNameWithIOEntry));
 		if (it != m_UsedInputs.end())
 		{
 			SVIOEntryHostStructPtr pIoEntry = (*it);
@@ -2185,7 +2187,7 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct *pProduct)
 
 #ifdef _DEBUG
 #ifdef SHOW_PPQ_STATE
-	SVString l_ProductState;
+	std::string l_ProductState;
 #endif
 #endif
 
@@ -2354,8 +2356,8 @@ bool SVPPQObject::RebuildOutputList()
 	SVIOEntryHostStructPtrVector ppNewOutputs;
 	SVIOEntryHostStructPtr pOldOutput;
 	SVIOEntryHostStructPtr pNewOutput;
-	SVString OldName;
-	SVString NewName;
+	std::string OldName;
+	std::string NewName;
 	size_t iOld;
 	size_t iNew;
 	size_t lNewSize;
@@ -2412,21 +2414,21 @@ bool SVPPQObject::RebuildOutputList()
 					if (0 == NewName.find(_T("PPQ_")))
 					{
 						// Disable Trigger Toggle since it is not written with the outputs
-						if (SVString::npos != NewName.find(_T("Trigger Toggle")))
+						if (std::string::npos != NewName.find(_T("Trigger Toggle")))
 						{
 							m_pTriggerToggle = pNewOutput;
 							pNewOutput->m_Enabled = false;
 						}// end if
 
 						// Find Output Toggle now to make it quicker later
-						if (SVString::npos != NewName.find(_T("Output Toggle")))
+						if (std::string::npos != NewName.find(_T("Output Toggle")))
 						{
 							m_pOutputToggle = pNewOutput;
 							pNewOutput->m_Enabled = false;
 						}// end if
 
 						// Find Data Valid now to make it quicker later
-						if (SVString::npos != NewName.find(_T("Data Valid")))
+						if (std::string::npos != NewName.find(_T("Data Valid")))
 						{
 							m_pDataValid = pNewOutput;
 							pNewOutput->m_Enabled = false;
@@ -2449,7 +2451,7 @@ void SVPPQObject::AddDefaultOutputs()
 {
 	// Setup PPQ variables that are available as outputs
 	SVIOEntryHostStructPtr pIOEntry;
-	SVString Name;
+	std::string Name;
 	bool	bFound;
 	size_t	l;
 
@@ -2639,7 +2641,7 @@ void SVPPQObject::AddDefaultOutputs()
 
 	BasicValueObjectPtr pPpqLength = m_PpqValues.getValueObject(SvOl::FqnPpqLength);
 	SVGUID PpqLengthUid = PpqBaseLengthUidGuid;
-	SVString PpqName = GetName();
+	std::string PpqName = GetName();
 	long PpqID(0);
 	const size_t PpqFixedNameLength = strlen(SvO::cPpqFixedName);
 	if (PpqFixedNameLength < PpqName.size())
@@ -2678,7 +2680,7 @@ SVProductInfoStruct* SVPPQObject::IndexPPQ(SvTi::SVTriggerInfoStruct& p_rTrigger
 			l_pNewProduct->oTriggerInfo.m_PreviousTrigger = l_pPrevProduct->oTriggerInfo.m_BeginProcess;
 		}
 
-		//This is faster than SvUl_SF::Format
+		//This is faster than SvUl::Format
 		TCHAR TriggerCount[50];
 		sprintf_s(TriggerCount, 50, _T("%ld"), p_rTriggerInfo.lTriggerCount);
 
@@ -2720,7 +2722,7 @@ SVProductInfoStruct* SVPPQObject::IndexPPQ(SvTi::SVTriggerInfoStruct& p_rTrigger
 	if (TheSVObserverApp.GetLogDataManager())
 	{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_IP)
-		SVString l_ProductStates;
+		std::string l_ProductStates;
 
 		l_ProductStates += GetName();
 		l_ProductStates += _T("|SVPPQObject::IndexPPQ\n");
@@ -2819,7 +2821,7 @@ HRESULT SVPPQObject::NotifyInspections(long p_Offset)
 						pTempProduct->m_ProductState += _T("|CP=");
 						pTempProduct->m_ProductState += m_arInspections[i]->GetName();
 #ifdef EnableTracking
-						SVString l_Title = m_arInspections[i]->GetName();
+						std::string l_Title = m_arInspections[i]->GetName();
 
 						l_Title += _T(" CP");
 
@@ -2852,7 +2854,7 @@ HRESULT SVPPQObject::NotifyInspections(long p_Offset)
 HRESULT SVPPQObject::StartInspection(const SVGUID& p_rInspectionID)
 {
 #ifdef _DEBUG_PERFORMANCE_INFO //Arvid 160212 this is helpful for debugging the creation of Performance Information
-	SVString infostring = SvUl_SF::Format(_T("!\t.%7.1lf: SVPPQObject::StartInspection(%s)\n"), SvTl::GetRelTimeStamp(), p_rInspectionID.ToString().c_str());
+	std::string infostring = SvUl::Format(_T("!\t.%7.1lf: SVPPQObject::StartInspection(%s)\n"), SvTl::GetRelTimeStamp(), p_rInspectionID.ToString().c_str());
 	::OutputDebugString(infostring.c_str());
 #endif
 
@@ -2952,14 +2954,14 @@ HRESULT SVPPQObject::StartInspection(const SVGUID& p_rInspectionID)
 		l_pProduct->m_WorkloadInfo.m_ProcessingStartTime = SvTl::GetTimeStamp(); //ProductWorkloadInformation may be incorrect if there are several inspections per product
 #ifdef _DEBUG_PERFORMANCE_INFO //Arvid 160212 this is helpful for debugging the creation of Performance Information
 
-		SVString infostring = SvUl_SF::Format(_T("set m_ProcessingStartTime, trID = %ld"), l_pProduct->ProcessCount());
+		std::string infostring = SvUl::Format(_T("set m_ProcessingStartTime, trID = %ld"), l_pProduct->ProcessCount());
 		logWorkloadInformation(l_pProduct->m_WorkloadInfo, infostring.c_str());
 #endif
 
 		l_Status = l_pProduct->m_svInspectionInfos[p_rInspectionID].pInspection->StartProcess(l_pProduct);
 
 #ifdef EnableTracking
-		SVString l_Title = l_pProduct->m_svInspectionInfos[p_rInspectionID].pInspection->GetName();
+		std::string l_Title = l_pProduct->m_svInspectionInfos[p_rInspectionID].pInspection->GetName();
 		l_Title += _T(" Start");
 		m_PPQTracking.IncrementCount(l_Title, l_ProductIndex);
 #endif
@@ -2967,7 +2969,7 @@ HRESULT SVPPQObject::StartInspection(const SVGUID& p_rInspectionID)
 #ifdef _DEBUG
 		if (TheSVObserverApp.GetLogDataManager())
 		{
-			SVString l_ProductStates;
+			std::string l_ProductStates;
 
 			l_ProductStates += GetName();
 			l_ProductStates += _T("|SVPPQObject::StartInspection\n");
@@ -3204,7 +3206,7 @@ bool SVPPQObject::SetInspectionComplete(long p_PPQIndex)
 		// Currently only used for Remote Outputs and Fail Status Stream.
 		// returns E_FAIL when there are no listeners/observers.  Not having 
 		// Remote Outputs or Fail Status is not an error in this case.
-		SVObjectManagerClass::Instance().UpdateObservers(SVString(SvO::cPPQObjectTag), GetUniqueObjectID(), *pProduct);
+		SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cPPQObjectTag), GetUniqueObjectID(), *pProduct);
 
 	}
 
@@ -3243,7 +3245,7 @@ bool SVPPQObject::SetProductComplete(long p_PPQIndex)
 		pProduct->m_WorkloadInfo.m_TriggerTime = pProduct->oTriggerInfo.m_BeginProcess;
 
 #ifdef _DEBUG_PERFORMANCE_INFO //Arvid 160212 this is helpful for debugging the creation of Performance Information
-		SVString infostring = SvUl_SF::Format(_T("SVPPQObject::SetProductComplete(@ppq: %d) >> m_CompletionTime\n\t\t(oTriggerInfo.m_BeginProcess -> m_TriggerTime)"), p_PPQIndex);
+		std::string infostring = SvUl::Format(_T("SVPPQObject::SetProductComplete(@ppq: %d) >> m_CompletionTime\n\t\t(oTriggerInfo.m_BeginProcess -> m_TriggerTime)"), p_PPQIndex);
 		logWorkloadInformation(pProduct->m_WorkloadInfo, infostring.c_str());
 #endif
 
@@ -3409,7 +3411,7 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& p_rElemen
 				SVObjectManagerClass::Instance().IncrementPendingImageIndicator();
 #ifdef EnableTracking
 
-				SVString l_Title = _T("Pending ");
+				std::string l_Title = _T("Pending ");
 
 				l_Title += p_rElement.m_pCamera->GetName();
 
@@ -3466,7 +3468,7 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& p_rElemen
 						l_pProduct->m_ProductState += _T("=NAK");
 
 #ifdef EnableTracking
-						SVString l_Title = p_rElement.m_pCamera->GetName();
+						std::string l_Title = p_rElement.m_pCamera->GetName();
 
 						l_Title += _T(" Index NAK");
 
@@ -3498,7 +3500,7 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& p_rElemen
 								IterCamera2->second.m_CallbackTimeStamp = SvTl::GetTimeStamp();
 							}
 #ifdef EnableTracking
-							SVString l_Title = p_rElement.m_pCamera->GetName();
+							std::string l_Title = p_rElement.m_pCamera->GetName();
 
 							l_Title += _T(" NAK");
 
@@ -3532,7 +3534,7 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& p_rElemen
 					SVObjectManagerClass::Instance().IncrementPendingImageIndicator();
 
 #ifdef EnableTracking
-					SVString l_Title = _T("Pending ");
+					std::string l_Title = _T("Pending ");
 					l_Title += p_rElement.m_pCamera->GetName();
 					m_PPQTracking.IncrementCount(l_Title);
 #endif
@@ -4062,14 +4064,14 @@ HRESULT SVPPQObject::ProcessTrigger( bool& rProcessed )
 						}
 						catch (const std::exception& e)
 						{
-							SVStringVector msgList;
+							SvDef::StringVector msgList;
 							msgList.push_back(e.what());
 							SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 							Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ProcessTrigger, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15026);
 						}
 						catch (...)
 						{
-							SVStringVector msgList;
+							SvDef::StringVector msgList;
 							msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_Unknown));
 							SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 							Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ProcessTrigger, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15027);
@@ -4587,7 +4589,7 @@ HRESULT SVPPQObject::ProcessCompleteInspections( bool& rProcessed )
 					l_pPPQProduct->m_ProductState += _T("|");
 					l_pPPQProduct->m_ProductState += l_rInspectInfo.pInspection->GetName();
 #ifdef EnableTracking
-					SVString l_Title = l_rInspectInfo.pInspection->GetName();
+					std::string l_Title = l_rInspectInfo.pInspection->GetName();
 
 					l_Title += _T(" Complete");
 
@@ -4732,7 +4734,7 @@ void SVPPQObject::PersistInputs(SVObjectWriter& rWriter)
 {
 	SVIOEntryHostStructPtrVector ppIOEntries;
 	_variant_t l_svValue;
-	SVString l_svName;
+	std::string l_svName;
 
 	rWriter.StartElement(SvXml::CTAG_INPUT);
 
@@ -4746,7 +4748,7 @@ void SVPPQObject::PersistInputs(SVObjectWriter& rWriter)
 		if (!pIOEntry.empty()
 			&& pIOEntry->m_ObjectType != IO_CAMERA_DATA_INPUT)
 		{
-			l_svName = SvUl_SF::Format(SvXml::CTAGF_INPUT_X, lInput);
+			l_svName = SvUl::Format(SvXml::CTAGF_INPUT_X, lInput);
 			rWriter.StartElement(l_svName.c_str());
 
 			switch (pIOEntry->m_ObjectType)
@@ -4829,12 +4831,12 @@ long SVPPQObject::GetExtraBufferSize() const
 	return g_lPPQExtraBufferSize;
 }
 
-static bool CompareInspectionName(const SVString& name, const SVString& dottedName)
+static bool CompareInspectionName(const std::string& name, const std::string& dottedName)
 {
 	SVDottedName parsedName(dottedName.c_str());
 	if (parsedName.size())
 	{
-		SVString inspectionName = parsedName[0];
+		std::string inspectionName = parsedName[0];
 		int cmp = inspectionName.compare(name);
 		return (cmp > 0) ? true : false;
 	}
@@ -4884,12 +4886,12 @@ void SVPPQObject::fillChildObjectList(SVObjectClass::SVObjectPtrDeque& objectLis
 	objectList.insert(objectList.end(), m_childObjectsForFillChildObjectList.begin(), m_childObjectsForFillChildObjectList.end());
 }
 
-const SVString& SVPPQObject::GetConditionalOutputName() const
+const std::string& SVPPQObject::GetConditionalOutputName() const
 {
 	return m_conditionalOutputName;
 }
 
-void SVPPQObject::SetConditionalOutputName(const SVString& conditionalOutputName)
+void SVPPQObject::SetConditionalOutputName(const std::string& conditionalOutputName)
 {
 	m_conditionalOutputName = conditionalOutputName;
 }
@@ -5038,23 +5040,23 @@ void SVPPQObject::SVPPQTracking::clear()
 	}
 }
 
-void SVPPQObject::SVPPQTracking::IncrementCount(const SVString& p_rName)
+void SVPPQObject::SVPPQTracking::IncrementCount(const std::string& p_rName)
 {
 	++(m_Counts[p_rName]);
 }
 
-void SVPPQObject::SVPPQTracking::IncrementCount(const SVString& p_rName, size_t p_Index)
+void SVPPQObject::SVPPQTracking::IncrementCount(const std::string& p_rName, size_t p_Index)
 {
 	m_QueueCounts[p_rName].IncrementCount(p_Index, m_QueueLength);
 }
 
-void SVPPQObject::SVPPQTracking::IncrementTimeCount(const SVString& p_rName, size_t p_Index)
+void SVPPQObject::SVPPQTracking::IncrementTimeCount(const std::string& p_rName, size_t p_Index)
 {
 	m_QueueWriteTimeCounts[p_rName].IncrementCount(p_Index, m_TimeLength);
 }
 #endif //EnableTracking
 
-static SVGUID GetInspectionGuid(const SVString& rName)
+static SVGUID GetInspectionGuid(const std::string& rName)
 {
 	SVGUID guid;
 	SVDottedName dottedName(rName.c_str());
@@ -5110,14 +5112,14 @@ void SVPPQObject::ReleaseSharedMemory( SVProductInfoStruct& rProduct)
 		}
 		catch (const std::exception& e)
 		{
-			SVStringVector msgList;
+			SvDef::StringVector msgList;
 			msgList.push_back(e.what());
 			SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 			Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ReleaseProduct, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15029);
 		}
 		catch (...)
 		{
-			SVStringVector msgList;
+			SvDef::StringVector msgList;
 			msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_Unknown));
 			SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 			Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ReleaseProduct, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15030);
@@ -5142,14 +5144,14 @@ void SVPPQObject::CommitSharedMemory( SVProductInfoStruct& rProduct)
 		}
 		catch (const std::exception& e)
 		{
-			SVStringVector msgList;
+			SvDef::StringVector msgList;
 			msgList.push_back(e.what());
 			SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 			Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_CommitSharedMemory, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15032);
 		}
 		catch (...)
 		{
-			SVStringVector msgList;
+			SvDef::StringVector msgList;
 			msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_Unknown));
 			SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 			Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_CommitSharedMemory, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15033);

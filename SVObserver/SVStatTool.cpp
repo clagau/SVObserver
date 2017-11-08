@@ -14,14 +14,15 @@
 #include "SVStatTool.h"
 
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-
 #include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
 #include "SVGlobal.h"
 #include "SVInspectionProcess.h"
 #include "SVResultDouble.h"
 #include "SVToolSet.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "TextDefinesSvO.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #pragma endregion Includes
 
@@ -184,13 +185,13 @@ bool SVStatisticsToolClass::CreateObject(const SVObjectLevelCreateStruct& rCreat
 	m_svAuxiliarySourceImageName.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
 	m_svAuxiliaryDrawType.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
 
-	SVString Name;
+	std::string Name;
 	m_VariableName.GetValue( Name );
 
 	if ( Name.empty() )
 	{
 		// check for backwards compatibility
-		SVString GuidString;
+		std::string GuidString;
 		m_VariableGUID_OBSOLETE.GetValue( GuidString );
 		if ( !GuidString.empty() )
 		{
@@ -217,7 +218,7 @@ bool SVStatisticsToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMes
 	
 	if ( Result )
 	{
-		SVString Name;
+		std::string Name;
 		m_VariableName.GetValue( Name );
 		SetVariableSelected( Name );
 
@@ -237,16 +238,16 @@ bool SVStatisticsToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMes
 	return Result;
 }
 
-SVString SVStatisticsToolClass::GetFeatureString()
+std::string SVStatisticsToolClass::GetFeatureString()
 {
-	SVString FeatureString;
+	std::string FeatureString;
 	m_PersistantFeaturesEnabled.GetValue( FeatureString );
 	return FeatureString;
 }
 
-SVString SVStatisticsToolClass::GetFeatureName( int aIndex )
+std::string SVStatisticsToolClass::GetFeatureName( int aIndex )
 {
-	return SVString( m_Value[aIndex].GetName() );
+	return std::string( m_Value[aIndex].GetName() );
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -255,7 +256,7 @@ void SVStatisticsToolClass::EnableFeature (SVStatisticsFeatureEnum aIndex)
 {
 	m_Value[aIndex].SetObjectAttributesAllowed( m_DefaultAttributes, SvOi::SetAttributeType::OverwriteAttribute );
 
-	SVString FeatureString;
+	std::string FeatureString;
 	m_PersistantFeaturesEnabled.GetValue(FeatureString);
 
 	if( aIndex < static_cast<int> (FeatureString.size()) )
@@ -274,7 +275,7 @@ void SVStatisticsToolClass::EnableFeature (SVStatisticsFeatureEnum aIndex)
 ////////////////////////////////////////////////////
 void SVStatisticsToolClass::RestoreFeatureAttributes()
 {
-	SVString FeatureString;
+	std::string FeatureString;
 	m_PersistantFeaturesEnabled.GetValue( FeatureString );
 	for( int iFeature = SV_STATS_MIN_VALUE ; iFeature < SV_STATS_TOPOF_LIST ; iFeature++ )
 	{
@@ -299,7 +300,7 @@ DWORD SVStatisticsToolClass::DisableFeature (SVStatisticsFeatureEnum aIndex)
 
 	m_Value[aIndex].SetObjectAttributesSet( 0, SvOi::SetAttributeType::OverwriteAttribute );
 
-	SVString FeatureString;
+	std::string FeatureString;
 	m_PersistantFeaturesEnabled.GetValue( FeatureString );
 	if( aIndex < static_cast<int>  (FeatureString.size()) )
 	{
@@ -329,8 +330,8 @@ void SVStatisticsToolClass::AllocateResult (SVStatisticsFeatureEnum aFeatureInde
 		resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
 		resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultDoubleObjectType;
 		resultClassInfo.m_ClassId = SVDoubleResultClassGuid;
-		resultClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_RESULT );
-		resultClassInfo.m_ClassName += _T(" ") + SVString(m_Value [aFeatureIndex].GetName());
+		resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_RESULT );
+		resultClassInfo.m_ClassName += _T(" ") + std::string(m_Value [aFeatureIndex].GetName());
 
 		// Construct the result class
 		SVDoubleResultClass* pResult = dynamic_cast<SVDoubleResultClass *>(resultClassInfo.Construct());
@@ -456,22 +457,22 @@ SVResultClass* SVStatisticsToolClass::GetResult(SVStatisticsFeatureEnum aFeature
 	return pResult;
 }
 
-SVString SVStatisticsToolClass::GetOccurenceTestValue()
+std::string SVStatisticsToolClass::GetOccurenceTestValue()
 {
-	SVString Value;
+	std::string Value;
 
 	m_OccurenceValue.GetValue( Value );
 	return Value;
 }
 
-void SVStatisticsToolClass::SetOccurenceTestValue( const SVString& rValue )
+void SVStatisticsToolClass::SetOccurenceTestValue( const std::string& rValue )
 {
 	m_OccurenceValue.SetValue( rValue);
 }
 
 SVObjectReference SVStatisticsToolClass::GetVariableSelected() const
 {
-	SVString Name;
+	std::string Name;
 	m_VariableName.GetValue( Name );
 
 	SVObjectReference refObject;
@@ -489,7 +490,7 @@ void SVStatisticsToolClass::SetVariableSelected( SVObjectReference p_refObject )
 	SetVariableSelected( p_refObject.GetCompleteName().c_str() );
 }
 
-void SVStatisticsToolClass::SetVariableSelected( const SVString& rName )
+void SVStatisticsToolClass::SetVariableSelected( const std::string& rName )
 {
 	if( HasVariable() )
 	{
@@ -519,7 +520,7 @@ void SVStatisticsToolClass::SetVariableSelected( const SVString& rName )
 	else
 	{
 		//msvVariableGUID_OBSOLETE.SetValue( guidStr );
-		m_VariableName.SetValue(SVString());
+		m_VariableName.SetValue(std::string());
 
 		// Clear the Object Info
 		m_inputObjectInfo.SetInputObject( nullptr );
@@ -622,7 +623,7 @@ bool SVStatisticsToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCo
 	if (Result)
 	{
 		// check which result to calculate
-		SVString FeatureString;
+		std::string FeatureString;
 		m_PersistantFeaturesEnabled.GetValue(FeatureString);
 
 		// Calculate Average and Number of Occurences always
@@ -653,7 +654,7 @@ bool SVStatisticsToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCo
 		m_Value[SV_STATS_AVERAGEOF_VALUES].SetValue(averageValue);
 
 		// increment number of matched occurences
-		SVString occurenceValueStr;
+		std::string occurenceValueStr;
 		m_OccurenceValue.GetValue(occurenceValueStr);
 		if (!occurenceValueStr.empty())
 		{
@@ -787,8 +788,8 @@ bool SVStatisticsToolClass::Test(SvStl::MessageContainerVector *pErrorMessages)
 			{
 				if (nullptr != pErrorMessages)
 				{
-					SVString CompleteName = ObjectRef.getObject()->GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType );
-					SVStringVector msgList;
+					std::string CompleteName = ObjectRef.getObject()->GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType );
+					SvDef::StringVector msgList;
 					msgList.push_back( CompleteName );
 					SvStl::MessageContainer message;
 					message.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_StatToolInvalidVariable, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10201, GetUniqueObjectID());

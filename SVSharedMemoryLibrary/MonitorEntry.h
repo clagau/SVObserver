@@ -9,7 +9,7 @@
 #pragma once
 #pragma region Includes
 #include "SVShared.h"
-#include "SVUtilityLibrary\SVString.h"
+
 #include "MLInspectionInfo.h"
 #include "SVMatroxLibrary\MatroxImageProps.h"
 //Moved to precompiled header: #include <vector>
@@ -49,23 +49,23 @@ namespace SvSml
 	{	
 	public:
 		MonitorEntry();
-		MonitorEntry(const SVString &name);
+		MonitorEntry(const std::string &name);
 		MonitorEntry(const ShMonitorEntry &rentry );
 		
 		bool GetMatroxImageProps(MatroxImageProps &ImageProps);
 		void SetMatroxImageProps(const MatroxImageProps  &rImageProps);
-		bool GetValue(SVString& string, BYTE* offset);
+		bool GetValue(std::string& string, BYTE* offset);
 		bool GetValue(_variant_t& val , BYTE* offset);
 
 	public:	
 		GUID m_Guid;   //Object Guid 
-		SVString name; //<Full name 
+		std::string name; //<Full name 
 		MonitorEntryData data;
 	};
 	
 	typedef std::shared_ptr<MonitorEntry>  MonitorEntryPointer; //< shared_ptr MonitorEntry 
 	typedef std::vector<MonitorEntryPointer>  MonitorEntries; //< vector MonitorEntryPointer 
-	typedef std::map<SVString, MonitorEntryPointer>  MonitorEntriesMap; //< map objectname MonitorEntryPointer
+	typedef std::map<std::string, MonitorEntryPointer>  MonitorEntriesMap; //< map objectname MonitorEntryPointer
 
 	///struct holds data for one entry in Monitorlist. Uses boost interprocess data type for string. Can be used in managed shared memory
 	struct ShMonitorEntry

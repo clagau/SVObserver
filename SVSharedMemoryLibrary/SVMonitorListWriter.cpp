@@ -16,7 +16,7 @@
 
 namespace SvSml
 {
-	const SVString g_shName = "MonitorListStore.";
+	const std::string g_shName = "MonitorListStore.";
 
 	SVMonitorListWriter::SVMonitorListWriter()
 	: m_lists(nullptr)
@@ -118,7 +118,7 @@ namespace SvSml
 		return l_result;
 	}
 
-	void SVMonitorListWriter::AddList(const SVString & listName, const SVString & ppqName, int rejectDepth, int productDepth,bool isActive )
+	void SVMonitorListWriter::AddList(const std::string & listName, const std::string & ppqName, int rejectDepth, int productDepth,bool isActive )
 	{
 		SVSharedConfiguration::Log("SVMonitorListWriter::AddList");
 		if (!m_lists)
@@ -134,7 +134,7 @@ namespace SvSml
 		m_lists->Add(list);
 	}
 
-	void SVMonitorListWriter::FillList(const SVString & listName, ListType::typ type, const MonitorEntries & monEntries)
+	void SVMonitorListWriter::FillList(const std::string & listName, ListType::typ type, const MonitorEntries & monEntries)
 	{
 		SVSharedConfiguration::Log("SVMonitorListWriter::FillList");
 		if (!m_lists)
@@ -162,7 +162,7 @@ namespace SvSml
 		}
 	}
 
-	void SVMonitorListWriter::SetProductFilter(const SVString & listName, SVProductFilterEnum filter)
+	void SVMonitorListWriter::SetProductFilter(const std::string & listName, SVProductFilterEnum filter)
 	{
 		SVSharedConfiguration::Log("SVMonitorListWriter::SetProductFilter");
 		if (!m_lists)

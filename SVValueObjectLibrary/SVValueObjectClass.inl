@@ -143,14 +143,14 @@ HRESULT SVValueObjectClass<T>::SetArraySize(int iSize)
 
 	if( m_ArraySize <= 1 )
 	{
-		if( SVString::npos != m_TypeName.find( _T(" Array") ) )
+		if( std::string::npos != m_TypeName.find( _T(" Array") ) )
 		{
-			m_TypeName = SvUl_SF::Left( m_TypeName, m_TypeName.size() - 6 );
+			m_TypeName = SvUl::Left( m_TypeName, m_TypeName.size() - 6 );
 		}
 	}
 	else
 	{
-		if( SVString::npos == m_TypeName.find( _T(" Array") ) )
+		if( std::string::npos == m_TypeName.find( _T(" Array") ) )
 		{
 			m_TypeName += _T(" Array") ;
 		}
@@ -312,7 +312,7 @@ __forceinline HRESULT SVValueObjectClass<T>::SetValue( const T& rValue, int Inde
 		}
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_VALUE_OBJECT)
-	SVString DebugString = SvUl_SF::Format(_T("SetValue, %s, %s, %d, %d\r\n"), GetName(), ConvertType2String(rValue).c_str(), Index, Bucket);
+	std::string DebugString = SvUl::Format(_T("SetValue, %s, %s, %d, %d\r\n"), GetName(), ConvertType2String(rValue).c_str(), Index, Bucket);
 	::OutputDebugString(DebugString.c_str());
 #endif
 	return Result;
@@ -386,7 +386,7 @@ __forceinline HRESULT SVValueObjectClass<T>::GetValue(T& rValue, int Index, int 
 		m_isObjectValid = false;
 	}
 #if defined (TRACE_THEM_ALL) || defined (TRACE_VALUE_OBJECT)
-	SVString DebugString = SvUl_SF::Format(_T("GetValue, %s, %s, %d, %d\r\n"), GetName(), ConvertType2String(rValue).c_str(), Index, Bucket);
+	std::string DebugString = SvUl::Format(_T("GetValue, %s, %s, %d, %d\r\n"), GetName(), ConvertType2String(rValue).c_str(), Index, Bucket);
 	::OutputDebugString(DebugString.c_str());
 #endif
 	return Result;
@@ -535,11 +535,11 @@ HRESULT SVValueObjectClass<T>::SetTypeName( LPCTSTR TypeName )
 }
 
 template <typename T>
-bool SVValueObjectClass<T>::CompareWithCurrentValue( const SVString& rCompare ) const
+bool SVValueObjectClass<T>::CompareWithCurrentValue( const std::string& rCompare ) const
 {
 	bool Result( false );
 
-	SVString CurrentValue;
+	std::string CurrentValue;
 	if( S_OK == getValue( CurrentValue ) )
 	{
 		Result = (CurrentValue == rCompare);
@@ -698,7 +698,7 @@ HRESULT SVValueObjectClass<T>::getValues( std::vector<_variant_t>&  rValues, int
 }
 
 template <typename T>
-HRESULT SVValueObjectClass<T>::setValue( const SVString& rValue, int Index /*= -1*/ )
+HRESULT SVValueObjectClass<T>::setValue( const std::string& rValue, int Index /*= -1*/ )
 {
 	HRESULT Result( E_FAIL );
 
@@ -716,7 +716,7 @@ HRESULT SVValueObjectClass<T>::setValue( const SVString& rValue, int Index /*= -
 }
 
 template <typename T>
-HRESULT SVValueObjectClass<T>::getValue(SVString& rValue, int Index /*= -1*/, int Bucket /*= -1*/) const
+HRESULT SVValueObjectClass<T>::getValue(std::string& rValue, int Index /*= -1*/, int Bucket /*= -1*/) const
 {
 	HRESULT Result( E_FAIL );
 
@@ -762,7 +762,7 @@ void SVValueObjectClass<T>::validateValue( const _variant_t& rValue ) const
 {
 	if (!isArray() || 0 == (VT_ARRAY & rValue.vt) || nullptr == rValue.parray)
 	{
-		ConvertString2Type( SvUl_SF::createSVString(rValue) ); 
+		ConvertString2Type( SvUl::createStdString(rValue) ); 
 	}
 	else
 	{
@@ -777,14 +777,14 @@ void SVValueObjectClass<T>::validateValue( const _variant_t& rValue ) const
 				HRESULT tempHr = safeArray.GetElement( i, tmpVar );
 				if (S_OK != tempHr)
 				{
-					SVStringVector msgList;
-					msgList.push_back(SvUl_SF::Format(_T("%d"), tempHr));
+					SvDef::StringVector msgList;
+					msgList.push_back(SvUl::Format(_T("%d"), tempHr));
 					SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 					Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING , SvStl::Tid_ValidateValue_InvalidElementInVariantArray, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 					Exception.Throw();
 				}
 
-				ConvertString2Type( SvUl_SF::createSVString(tmpVar) ); 
+				ConvertString2Type( SvUl::createStdString(tmpVar) ); 
 			}
 		}
 		else
@@ -854,7 +854,7 @@ HRESULT SVValueObjectClass<T>::SetVariantValue( const _variant_t& rValue, int In
 {
 	if (VT_BSTR == rValue.vt)
 	{
-		SVString Value = SvUl_SF::createSVString(rValue);
+		std::string Value = SvUl::createStdString(rValue);
 		return setValue(Value, Index);
 	}
 	//!For type safety check that the VT type is either the default value main value or when not set yet (VT_EMPTY)
@@ -1138,12 +1138,12 @@ typename T* SVValueObjectClass<T>::getValuePointer( int Index, int Bucket)
 }
 
 template <typename T>
-SVString SVValueObjectClass<T>::FormatOutput(const T& rValue) const
+std::string SVValueObjectClass<T>::FormatOutput(const T& rValue) const
 {
-	SVString Result;
+	std::string Result;
 	if(!m_OutFormat.empty())
 	{
-		//This is faster than SvUl_SF::Format
+		//This is faster than SvUl::Format
 		TCHAR Text[100];
 		sprintf_s(Text, 100, m_OutFormat.c_str(), rValue);
 		Result = Text;

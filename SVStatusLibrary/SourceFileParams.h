@@ -9,7 +9,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 namespace SvStl
@@ -58,11 +58,11 @@ namespace SvStl
 
 	#pragma region Member Variables
 	public:
-		SVString m_CompileDate;				//Date the file was compiled.
-		SVString m_CompileTime;				//Time the file was compiled.
-		SVString m_FileName;				//Name of the file where the message was encountered.
+		std::string m_CompileDate;				//Date the file was compiled.
+		std::string m_CompileTime;				//Time the file was compiled.
+		std::string m_FileName;				//Name of the file where the message was encountered.
 		long m_Line;						//Line number within the source file where the message was encountered.
-		SVString m_FileDateTime;			//Last file modification date/time
+		std::string m_FileDateTime;			//Last file modification date/time
 	#pragma endregion Member Variables
 	};
 } //namespace SvStl

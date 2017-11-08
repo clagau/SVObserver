@@ -20,7 +20,6 @@
 #include "SVEquationLibrary/SVEquationYacc.h"
 #include "SVTaskObject.h"
 #include "SVStatusLibrary/MessageContainer.h"
-#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 /**
@@ -50,7 +49,7 @@ struct SVEquationSymbolStruct
 {
 	SVEquationSymbolTypeEnum Type;
 	SVInObjectInfoStruct	InObjectInfo;
-	SVString Name;
+	std::string Name;
 	bool IsValid;
 
 	SVEquationSymbolStruct()
@@ -100,11 +99,11 @@ public:
 
 private:
 	SVInputInfoListClass m_toolsetSymbolTable;		// The symbol table for the ToolSet Variables in the equation
-	SVString m_InspectionName;
+	std::string m_InspectionName;
 
-	SVString  m_ToolSetName;
-	SVString m_DIOInputName;
-	SVString  m_RemoteInputName;
+	std::string  m_ToolSetName;
+	std::string m_DIOInputName;
+	std::string  m_RemoteInputName;
 };
 
 /**
@@ -152,17 +151,17 @@ class SVEquationClass : public SVTaskObjectClass, public SVEquationBase, public 
 			return (*this);
 		};
 
-		const SVString& GetEquationText() const
+		const std::string& GetEquationText() const
 		{
 			return EquationBuffer;
 		};
 
-		void SetEquationText(const SVString& rText)
+		void SetEquationText(const std::string& rText)
 		{
 			EquationBuffer = rText;
 		};
 
-		SVString EquationBuffer;
+		std::string EquationBuffer;
 		int StartPos;
 		int EndPos;
 	};
@@ -176,8 +175,8 @@ public:
 	bool HasCondition();
 
 #pragma region IEquation
-	virtual const SVString& GetEquationText() const override;
-	virtual void SetEquationText(const SVString& text) override;
+	virtual const std::string& GetEquationText() const override;
+	virtual void SetEquationText(const std::string& text) override;
 	virtual SvOi::EquationTestResult Test( SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 	virtual double GetYACCResult() const override;
 #pragma endregion IEquation
@@ -197,13 +196,13 @@ public:
 	bool IsEnabled();
 
 	virtual void Persist(SVObjectWriter& rWriter) override;
-	virtual HRESULT GetObjectValue( const SVString& rValueName, _variant_t& rValue ) const override;
+	virtual HRESULT GetObjectValue( const std::string& rValueName, _variant_t& rValue ) const override;
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject ) override;
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 #pragma region Methods to replace processMessage
-	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName) override;
+	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override;
 #pragma endregion Methods to replace processMessage
 
 	SVBoolValueObjectClass enabled;			// enabled flag TRUE=Enabled

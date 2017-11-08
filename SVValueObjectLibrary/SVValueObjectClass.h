@@ -25,8 +25,9 @@
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
 #include "SVOResource/resource.h"
 #include "SVStatusLibrary/MessageManager.h"
+#include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
 #pragma endregion Includes
 
@@ -78,7 +79,7 @@ public:
 
 	HRESULT SetResultSize(int  ResultSize) { m_ResultSize = (ResultSize <= m_ArraySize) ? ResultSize : 0; return S_OK; };
 	HRESULT SetTypeName( LPCTSTR TypeName );
-	bool CompareWithCurrentValue( const SVString& rCompare ) const;
+	bool CompareWithCurrentValue( const std::string& rCompare ) const;
 	void setStatic( bool isStatic ) { m_isStatic = isStatic; };
 	
 
@@ -125,14 +126,14 @@ public:
 	//! \param rValue [in] The value to set the Value object to
 	//! \param Index [in] The corresponding array index to write to, if required
 	//! \returns S_OK if succeeded
-	virtual HRESULT setValue( const SVString& rValue, int Index = -1 ) override;
+	virtual HRESULT setValue( const std::string& rValue, int Index = -1 ) override;
 
 	//! Gets the value for Value object
 	//! \param rValue [out] The reference to write the value to
 	//! \param Index [in] The corresponding array index to write to, if required
 	//! \param Bucket [in] The corresponding bucket index to get, if required
 	//! \returns S_OK if succeeded
-	virtual HRESULT getValue(SVString& rValue, int Index = -1, int Bucket = -1) const override;
+	virtual HRESULT getValue(std::string& rValue, int Index = -1, int Bucket = -1) const override;
 
 	//! Set the value object bucketized flag
 	//! \param Bucketized [in] true if bucketized (Only set if not a static ValueObject
@@ -149,7 +150,7 @@ public:
 
 	//! Gets the type name for the Value object
 	//! \returns the type name
-	virtual SVString getTypeName() const override { return m_TypeName; };
+	virtual std::string getTypeName() const override { return m_TypeName; };
 	
 	//! Checks if the value object is an array
 	//! \returns true if an array
@@ -225,12 +226,12 @@ protected:
 	//! If value invalid an exception message will be thrown.
 	//! \param rValue [in] String to convert
 	/// \returns the Value converted or throws an exception!
-	virtual T ConvertString2Type( const SVString& rValue ) const = 0;
+	virtual T ConvertString2Type( const std::string& rValue ) const = 0;
 
 	//! Convert template type to String
 	//! \param rValue [in] Type to convert
-	/// \returns the SVString
-	virtual SVString ConvertType2String( const T& rValue ) const = 0;
+	/// \returns the std::string
+	virtual std::string ConvertType2String( const T& rValue ) const = 0;
 
 	HRESULT ValidateIndex(int ArrayIndex) const;
 
@@ -250,7 +251,7 @@ protected:
 	BucketPtr& getBucket() { return m_pBucket; };
 	BucketVectorPtr& getBucketArray() { return m_pBucketArray; };
 
-	SVString FormatOutput(const T& rValue) const;
+	std::string FormatOutput(const T& rValue) const;
 	void setOutputFormat( LPCTSTR OutFormat ) { m_OutFormat = OutFormat; };
 	LPCTSTR getOutputFormat() const { return m_OutFormat.c_str(); };
 	bool isLegacyVectorObjectCompatibility() const { return m_LegacyVectorObjectCompatibility; };
@@ -268,14 +269,14 @@ protected:
 
 #pragma region Member Variables
 private:
-	SVString m_TypeName;					//The data type name
+	std::string m_TypeName;					//The data type name
 	bool m_isBucketized;					//This is set to make the value object bucketized
 	bool m_isStatic;						//If this is set then the value object cannot be bucketized (For values that don't change during run)
 	bool m_shouldSaveValue;					//If true, the value will be saved in configuration file, else it will not be saved and after loading the configuration it is default value.
 	bool m_shouldSaveDefaultValue;			//If true, the default value will be saved in configuration file, else it will not be saved and after loading the configuration it is default of the default value.
 	bool m_ResetAlways;
 	bool m_LegacyVectorObjectCompatibility;
-	SVString m_OutFormat;					//This is used to format the value object to a string
+	std::string m_OutFormat;					//This is used to format the value object to a string
 
 	SvOi::SVResetItemEnum m_eResetItem;
 

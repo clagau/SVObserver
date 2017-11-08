@@ -92,7 +92,7 @@ namespace SvOg
 		return hr;
 	}
 
-	SVString AuxiliaryExtentsController::GetAuxSourceImageName() const
+	std::string AuxiliaryExtentsController::GetAuxSourceImageName() const
 	{
 		SvUl::NameGuidPair source = GetAuxSourceImage();
 		return source.first;
@@ -100,13 +100,13 @@ namespace SvOg
 
 	class ByName
 	{
-		SVString m_name;
+		std::string m_name;
 	public:
-		ByName(const SVString& rName) : m_name(rName) {}
+		ByName(const std::string& rName) : m_name(rName) {}
 		bool operator()(const SvUl::NameGuidPair& rVal) const { return rVal.first == m_name; }
 	};
 
-	HRESULT AuxiliaryExtentsController::SetAuxSourceImage(const SVString& rName)
+	HRESULT AuxiliaryExtentsController::SetAuxSourceImage(const std::string& rName)
 	{
 		HRESULT hr = E_INVALIDARG;
 		SVGUID imageID;

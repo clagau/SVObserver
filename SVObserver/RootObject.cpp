@@ -149,14 +149,14 @@ void RootObject::destroyConfigurationObject()
 	}
 }
 
-/*static*/ void RootObject::getRootChildNameList( SVStringVector& rObjectNameList, LPCTSTR Path, UINT AttributesAllowedFilter )
+/*static*/ void RootObject::getRootChildNameList( SvDef::StringVector& rObjectNameList, LPCTSTR Path, UINT AttributesAllowedFilter )
 {
 	BasicValueObjects::ValueVector ObjectList;
 
 	getRootChildObjectList( ObjectList, Path, AttributesAllowedFilter );
 	for( BasicValueObjects::ValueVector::const_iterator Iter = ObjectList.cbegin(); Iter != ObjectList.cend(); ++Iter )
 	{
-		rObjectNameList.push_back( SVString((*Iter)->GetCompleteName()) );
+		rObjectNameList.push_back( std::string((*Iter)->GetCompleteName()) );
 	}
 }
 
@@ -271,7 +271,7 @@ bool RootObject::createRootChild( LPCTSTR ChildName, SVObjectSubTypeEnum ObjectS
 #pragma endregion Private Methods
 
 #pragma region IRootObject-function
-void SvOi::getRootChildNameList( SVStringVector& rObjectNameList, LPCTSTR Path, UINT AttributesAllowedFilter )
+void SvOi::getRootChildNameList( SvDef::StringVector& rObjectNameList, LPCTSTR Path, UINT AttributesAllowedFilter )
 {
 	//To have the function available without knowing the class RootObject
 	RootObject::getRootChildNameList( rObjectNameList, Path, AttributesAllowedFilter );

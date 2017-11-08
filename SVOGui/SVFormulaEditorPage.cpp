@@ -18,6 +18,8 @@
 #include "SVContainerLibrary/ObjectSelectorItem.h"
 #include "SVFormulaEditorPage.h"
 #include "SVOResource/ConstGlobalSvOr.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/LoadDll.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
@@ -88,7 +90,7 @@ namespace SvOg
 		m_FormulaController->SetDefaultInputs();
 	}
 
-	SVString SVFormulaEditorPageClass::GetOwnerName() const
+	std::string SVFormulaEditorPageClass::GetOwnerName() const
 	{
 		return m_FormulaController->GetOwnerName();
 	}
@@ -121,7 +123,7 @@ namespace SvOg
 		HINSTANCE ScintillaInstance( nullptr );
 
 		
-		SVString scintillaPath = SvStl::GlobalPath::Inst( ).GetBinPath(SvUl::ScintillaDll).c_str();
+		std::string scintillaPath = SvStl::GlobalPath::Inst( ).GetBinPath(SvUl::ScintillaDll).c_str();
 		//Load Scintilla dll explicitly
 		HRESULT hOK = SvUl::LoadDll::Instance().getDll( scintillaPath, ScintillaInstance );
 		if (S_OK != hOK || nullptr == ScintillaInstance)
@@ -140,7 +142,7 @@ namespace SvOg
 
 		createToolbars();
 
-		SVString DisableText = SvUl_SF::LoadSVString( IDS_DISABLE_STRING ) + _T(" ") + SvUl_SF::LoadSVString( m_disableExtentionID );
+		std::string DisableText = SvUl::LoadStdString( IDS_DISABLE_STRING ) + _T(" ") + SvUl::LoadStdString( m_disableExtentionID );
 		GetDlgItem(IDC_DISABLE_TOOL)->SetWindowText( DisableText.c_str() );
 
 		setEquationText();
@@ -344,7 +346,7 @@ namespace SvOg
 		enableUndoButton();
 	}
 
-	SVString SVFormulaEditorPageClass::getEquationText() const
+	std::string SVFormulaEditorPageClass::getEquationText() const
 	{
 		std::vector<TCHAR> equationText;
 		equationText.resize(SV_EQUATION_BUFFER_SIZE, 0);
@@ -352,13 +354,13 @@ namespace SvOg
 		{
 			m_EditWnd.SendMessage( SCI_GETTEXT, SV_EQUATION_BUFFER_SIZE, reinterpret_cast<LPARAM>( &equationText[0] ) );
 		}
-		return SVString(&equationText[0]);
+		return std::string(&equationText[0]);
 	}
 
 	void SVFormulaEditorPageClass::setEquationText()
 	{
 		// Get text from EquationStruct and place into Editor
-		SVString equationText = m_FormulaController->GetEquationText();
+		std::string equationText = m_FormulaController->GetEquationText();
 		if( nullptr != m_EditWnd.GetSafeHwnd() )
 		{
 			m_EditWnd.SendMessage( SCI_SETTEXT, 0, reinterpret_cast<LPARAM>( equationText.c_str() ) );
@@ -382,25 +384,25 @@ namespace SvOg
 	{
 		UpdateData( TRUE );
 
-		SVString InspectionName = m_FormulaController->GetInspectionName();
+		std::string InspectionName = m_FormulaController->GetInspectionName();
 	
-		SVString Filter = SvUl_SF::LoadSVString( IDS_CLASSNAME_ROOTOBJECT );
+		std::string Filter = SvUl::LoadStdString( IDS_CLASSNAME_ROOTOBJECT );
 
 		SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::TypeSingleObject );
-		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
-		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, Filter, SVString( _T("") ) );
-		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterOutput, SvOl::FqnPPQVariables, SVString( _T("") ) );
+		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, std::string( _T("") ) );
+		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, Filter, std::string( _T("") ) );
+		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterOutput, SvOl::FqnPPQVariables, std::string( _T("") ) );
 
 		// Insert the Names of the objects selecteable for an Equation
 		m_FormulaController->BuildSelectableItems();
 
-		SVStringSet Items;
-		Items.insert( SVString(m_ToolsetOutputVariable) );
+		SvDef::StringSet Items;
+		Items.insert( std::string(m_ToolsetOutputVariable) );
 		SvOsl::ObjectTreeGenerator::Instance().setCheckItems( Items );
 
-		SVString ToolsetOutput = SvUl_SF::LoadSVString( IDS_SELECT_TOOLSET_OUTPUT );
-		Filter = SvUl_SF::LoadSVString( IDS_FILTER );
-		SVString Title = SvUl_SF::Format( _T("%s - %s"), ToolsetOutput.c_str(), InspectionName.c_str() );
+		std::string ToolsetOutput = SvUl::LoadStdString( IDS_SELECT_TOOLSET_OUTPUT );
+		Filter = SvUl::LoadStdString( IDS_FILTER );
+		std::string Title = SvUl::Format( _T("%s - %s"), ToolsetOutput.c_str(), InspectionName.c_str() );
 
 		INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), ToolsetOutput.c_str(), Filter.c_str(), this );
 
@@ -422,16 +424,16 @@ namespace SvOg
 			if ( m_ToolsetOutputVariable.Right(1) == _T("]") )	// array
 			{
 				int iArrayIndexPos = m_ToolsetOutputVariable.ReverseFind( _T('[') );
-				SVString RootName = m_ToolsetOutputVariable.Left( iArrayIndexPos );
-				SVString Index = m_ToolsetOutputVariable.Mid( iArrayIndexPos );
+				std::string RootName = m_ToolsetOutputVariable.Left( iArrayIndexPos );
+				std::string Index = m_ToolsetOutputVariable.Mid( iArrayIndexPos );
 				Index = Index.substr( 1, Index.size() - 2 );	// strip off [ ]
-				SVString Name = cQuote + RootName + cQuote + _T("[ ") + Index + _T(" ]");
+				std::string Name = cQuote + RootName + cQuote + _T("[ ") + Index + _T(" ]");
 				insertIntoEditor( Name.c_str() );
 			}
 			else
 			{
 				// Variables are delimited by double qoutes
-				SVString Name = cQuote + m_ToolsetOutputVariable + cQuote;
+				std::string Name = cQuote + m_ToolsetOutputVariable + cQuote;
 				insertIntoEditor( Name.c_str() );
 			}
 		}
@@ -443,7 +445,7 @@ namespace SvOg
 
 		if ( ! m_ConstantValue.IsEmpty () )
 		{
-			SVString TempString = m_ConstantValue;
+			std::string TempString = m_ConstantValue;
 
 			switch ( m_constantType )
 			{
@@ -645,7 +647,7 @@ namespace SvOg
 	{
 		if( GetSafeHwnd() )
 		{
-			SVString equationText = getEquationText();
+			std::string equationText = getEquationText();
 
 			UpdateData( TRUE ); // Update the variables
 
@@ -667,7 +669,7 @@ namespace SvOg
 
 	void SVFormulaEditorPageClass::onValidate() 
 	{
-		SVString equationText = getEquationText();
+		std::string equationText = getEquationText();
 
 		UpdateData( TRUE ); // Update the variables
 		double value = 0;
@@ -681,7 +683,7 @@ namespace SvOg
 		if(SvOi::IFormulaController::validateSuccessful == result || SvOi::IFormulaController::resetFailed == result)
 		{
 			SvStl::MessageTextEnum id = SvStl::Tid_Empty;
-			SVStringVector msgList;
+			SvDef::StringVector msgList;
 			if (m_isConditionalPage)
 			{
 				msgList.push_back(SvStl::MessageData::convertId2AddtionalText(( value ) ? SvStl::Tid_True : SvStl::Tid_False));
@@ -689,7 +691,7 @@ namespace SvOg
 			}
 			else
 			{
-				msgList.push_back(SvUl_SF::Format(_T("%lf"), value));
+				msgList.push_back(SvUl::Format(_T("%lf"), value));
 				id = SvStl::Tid_FormulaValidated;
 			}
 			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );

@@ -20,7 +20,7 @@
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVLibrary/SVFileNameClass.h"
 #include "SVUtilityLibrary/SVGUID.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVStatusLibrary/MessageContainer.h"
 #include "SVMessage/SVMessage.h"
 #pragma endregion Includes
@@ -29,7 +29,7 @@ namespace SvCmd
 {
 	struct CreateModel : public boost::noncopyable
 	{
-		CreateModel(const SVGUID& rInstanceID, int posX, int posY, int modelWidth, int modelHeight, const SVString& rFileName) 
+		CreateModel(const SVGUID& rInstanceID, int posX, int posY, int modelWidth, int modelHeight, const std::string& rFileName) 
 			: m_InstanceID(rInstanceID) 
 			, m_posX(posX)
 			, m_posY(posY)
@@ -58,16 +58,16 @@ namespace SvCmd
 
 					// Now save the Model Image buffer to a file
 					SVMatroxFileTypeEnum FileFormatID = SVFileMIL; // Set as default.
-					if ( 0 == SvUl_SF::CompareNoCase( svFileName.GetExtension(), SVString( _T(".bmp") ) ) )
+					if ( 0 == SvUl::CompareNoCase( svFileName.GetExtension(), std::string( _T(".bmp") ) ) )
 					{
 						FileFormatID = SVFileBitmap;
 					}
-					if ( 0 == SvUl_SF::CompareNoCase( svFileName.GetExtension(), SVString( _T(".tif") ) ) )
+					if ( 0 == SvUl::CompareNoCase( svFileName.GetExtension(), std::string( _T(".tif") ) ) )
 					{
 						FileFormatID = SVFileTiff;
 					}
 
-					SVString strFileName = m_FileName;
+					std::string strFileName = m_FileName;
 
 					SVMatroxBuffer milBuffer;
 					imageHandle->GetBuffer(milBuffer);
@@ -98,7 +98,7 @@ namespace SvCmd
 		int m_posY;
 		int m_modelWidth;
 		int m_modelHeight;
-		SVString m_FileName;
+		std::string m_FileName;
 		SvStl::MessageContainerVector m_messages;
 	};
 } //namespace SvCmd

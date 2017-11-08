@@ -15,7 +15,7 @@
 #include "ObjectInterfaces\ISVImage.h"
 #include "ObjectInterfaces\ITaskObject.h"
 #include "ObjectInterfaces\IObjectManager.h"
-#include "SVUtilityLibrary\SVString.h"
+
 #include "SVUtilityLibrary\NameGuidList.h"
 #include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
 #pragma endregion Includes

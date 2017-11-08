@@ -14,6 +14,8 @@
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVOCore/SVImageProcessingClass.h"
 #include "SVObjectLibrary/SVClsids.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -395,9 +397,9 @@ bool SVCustomFilterClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMes
 		bRetVal = false;
 		if (nullptr != pErrorMessages)
 		{
-			SVStringVector msgList;
-			msgList.push_back(SvUl_SF::Format(_T("%d"), lWidth));
-			msgList.push_back(SvUl_SF::Format(_T("%d"), 7));
+			SvDef::StringVector msgList;
+			msgList.push_back(SvUl::Format(_T("%d"), lWidth));
+			msgList.push_back(SvUl::Format(_T("%d"), 7));
 			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_DataInvalidKernelWidth, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
@@ -410,9 +412,9 @@ bool SVCustomFilterClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMes
 		bRetVal = false;
 		if (nullptr != pErrorMessages)
 		{
-			SVStringVector msgList;
-			msgList.push_back(SvUl_SF::Format(_T("%d"), lHeight));
-			msgList.push_back(SvUl_SF::Format(_T("%d"), 7));
+			SvDef::StringVector msgList;
+			msgList.push_back(SvUl::Format(_T("%d"), lHeight));
+			msgList.push_back(SvUl::Format(_T("%d"), 7));
 			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_DataInvalidKernelHeight, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}

@@ -30,6 +30,7 @@
 #include "SVOGui/GlobalSelector.h"
 #include "SVOGui/NoSelector.h"
 #include "SVOGui/ToolSetItemSelector.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Constructor
@@ -118,7 +119,7 @@ HRESULT RangeClassHelper::GetAllInspectionData()
 
 void RangeClassHelper::SetInternalData(SvStl::MessageTextEnum er, LPCTSTR lp)
 {
-	SVString Text = lp;
+	std::string Text = lp;
 	double val = 0.0;
 	const double s_RangeMax = 17000000;
 	const double s_RangeMin = -17000000;
@@ -127,23 +128,23 @@ void RangeClassHelper::SetInternalData(SvStl::MessageTextEnum er, LPCTSTR lp)
 
 	if( 0 == textLength )
 	{
-		SVStringVector msgList;
+		SvDef::StringVector msgList;
 		msgList.push_back(SvStl::MessageData::convertId2AddtionalText(er));
 		SvStl::MessageMgrStd Exception( SvStl::DataOnly );
 		Exception.setMessage( SVMSG_SVO_68_RANGE_VALUE_SET_FAILED, SvStl::Tid_RangeValue_EmptyString, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16022 );
 		Exception.Throw();
 	}
 
-	bool isNumber = SvUl_SF::Convert2Number<double>( Text, val, true );
+	bool isNumber = SvUl::Convert2Number<double>( Text, val, true );
 	if( isNumber )
 	{
 		Text = _T("");
 		if(val > s_RangeMax || val < s_RangeMin )
 		{
-			SVStringVector msgList;
+			SvDef::StringVector msgList;
 			msgList.push_back(SvStl::MessageData::convertId2AddtionalText(er));
-			msgList.push_back(SvUl_SF::Format("%d", static_cast<int>(s_RangeMin)));
-			msgList.push_back(SvUl_SF::Format("%d", static_cast<int>(s_RangeMax)));
+			msgList.push_back(SvUl::Format("%d", static_cast<int>(s_RangeMin)));
+			msgList.push_back(SvUl::Format("%d", static_cast<int>(s_RangeMax)));
 			SvStl::MessageMgrStd Exception( SvStl::DataOnly );
 			Exception.setMessage( SVMSG_SVO_68_RANGE_VALUE_SET_FAILED, SvStl::Tid_RangeValue_WrongRange, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16023 );
 			Exception.Throw();
@@ -176,9 +177,9 @@ void RangeClassHelper::SetInternalData(SvStl::MessageTextEnum er, LPCTSTR lp)
 	}
 }
 
-HRESULT RangeClassHelper::CheckInternalData(SvStl::MessageTextEnum &messageId, SVStringVector &messageList) const
+HRESULT RangeClassHelper::CheckInternalData(SvStl::MessageTextEnum &messageId, SvDef::StringVector &messageList) const
 {
-	SVString InspectionName;
+	std::string InspectionName;
 	if( nullptr != m_pRange)
 	{
 		SVInspectionProcess* pInspection =  dynamic_cast<SVInspectionProcess*>(m_pRange->GetInspection());
@@ -243,7 +244,7 @@ HRESULT RangeClassHelper::CheckInternalData(SvStl::MessageTextEnum &messageId, S
 		{
 			messageId = SvStl::Tid_IsInvalidRef;
 			messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_FailHigh));
-			messageList.push_back(SVString(m_FailHighIndirect));
+			messageList.push_back(std::string(m_FailHighIndirect));
 			return -SvStl::Err_16018;
 		}
 	}
@@ -254,7 +255,7 @@ HRESULT RangeClassHelper::CheckInternalData(SvStl::MessageTextEnum &messageId, S
 		{
 			messageId = SvStl::Tid_IsInvalidRef;
 			messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_WarnHigh));
-			messageList.push_back(SVString(m_WarnHighIndirect));
+			messageList.push_back(std::string(m_WarnHighIndirect));
 			return -SvStl::Err_16019;
 		}
 	}
@@ -265,7 +266,7 @@ HRESULT RangeClassHelper::CheckInternalData(SvStl::MessageTextEnum &messageId, S
 		{
 			messageId = SvStl::Tid_IsInvalidRef;
 			messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_WarnLow));
-			messageList.push_back(SVString(m_WarnLowIndirect));
+			messageList.push_back(std::string(m_WarnLowIndirect));
 			return -SvStl::Err_16020;
 		}
 	}
@@ -276,7 +277,7 @@ HRESULT RangeClassHelper::CheckInternalData(SvStl::MessageTextEnum &messageId, S
 		{
 			messageId = SvStl::Tid_IsInvalidRef;
 			messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_FailLow));
-			messageList.push_back(SVString(m_FailLowIndirect));
+			messageList.push_back(std::string(m_FailLowIndirect));
 			return -SvStl::Err_16021;
 		}
 	}
@@ -381,9 +382,9 @@ HRESULT RangeClassHelper::SetInspectionData()
 	return hr;
 }
 
-SVString RangeClassHelper::GetStringFromRange(RangeEnum::ERange ra) const
+std::string RangeClassHelper::GetStringFromRange(RangeEnum::ERange ra) const
 {
-	SVString Result;
+	std::string Result;
 	double Value;
 
 	if( nullptr == m_pRange )
@@ -397,7 +398,7 @@ SVString RangeClassHelper::GetStringFromRange(RangeEnum::ERange ra) const
 	{
 		if( S_OK == m_pRange->GetValue( ra, Value ) )
 		{
-			Result = SvUl_SF::Format( _T("%lf"), Value );
+			Result = SvUl::Format( _T("%lf"), Value );
 		}
 	}
 
@@ -419,7 +420,7 @@ bool RangeClassHelper::IsOwnedByRangeObject(const SVObjectClass& rObject)
 	return result;
 }
 
-bool RangeClassHelper::IsAllowedToSet(const SVObjectClass& ObjectRef, const SVString& rValue, bool bOnline, HRESULT& hres)
+bool RangeClassHelper::IsAllowedToSet(const SVObjectClass& ObjectRef, const std::string& rValue, bool bOnline, HRESULT& hres)
 {
 	if(!IsOwnedByRangeObject(ObjectRef))
 	{
@@ -480,22 +481,22 @@ bool RangeClassHelper::RenameIndirectValues(LPCTSTR oldPefix, LPCTSTR newPrefix)
 	return result;
 }
 
-SVString RangeClassHelper::GetFailHighString()
+std::string RangeClassHelper::GetFailHighString()
 {
 	return GetValueString(m_FailHighIndirect, m_FailHigh);
 }
 
-SVString RangeClassHelper::GetWarnHighString()
+std::string RangeClassHelper::GetWarnHighString()
 {
 	return GetValueString(m_WarnHighIndirect, m_WarnHigh);
 }
 
-SVString RangeClassHelper::GetFailLowString()
+std::string RangeClassHelper::GetFailLowString()
 {
 	return GetValueString(m_FailLowIndirect, m_FailLow);
 }
 
-SVString RangeClassHelper::GetWarnLowString()
+std::string RangeClassHelper::GetWarnLowString()
 {
 	return GetValueString(m_WarnLowIndirect, m_WarnLow);
 }
@@ -511,17 +512,17 @@ bool RangeClassHelper::FillObjectSelector()
 			SVTaskObjectListClass* pTaskObjectList = dynamic_cast<SVTaskObjectListClass*>(pInspection->GetToolSet());
 			if (nullptr != pTaskObjectList)
 			{
-				SVString PPQName = SvOl::FqnPPQVariables; 
-				SVString InspectionName = pInspection->GetName();
+				std::string PPQName = SvOl::FqnPPQVariables; 
+				std::string InspectionName = pInspection->GetName();
 				SVPPQObject* pPPQ = pInspection->GetPPQ();
 				if( nullptr != pPPQ )
 				{
 					PPQName = pPPQ->GetName();
 				}
-				SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
-				SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterOutput, InspectionName, SVString( _T("") ) );
+				SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, std::string( _T("") ) );
+				SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterOutput, InspectionName, std::string( _T("") ) );
 
-				SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterOutput, PPQName, SVString( _T("")  ));
+				SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterOutput, PPQName, std::string( _T("")  ));
 				SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject );
 
 				SvOsl::SelectorOptions BuildOptions( pInspection->GetUniqueObjectID(), SvDef::SV_SELECTABLE_FOR_EQUATION, m_pRange->GetUniqueObjectID() );
@@ -536,7 +537,7 @@ bool RangeClassHelper::FillObjectSelector()
 #pragma endregion Public Methods
 
 #pragma region Private Methods
-SVString RangeClassHelper::GetValueString(const SVString& rIndirectString, double directValue)
+std::string RangeClassHelper::GetValueString(const std::string& rIndirectString, double directValue)
 {
 	if( 0 < rIndirectString.size() )
 	{
@@ -544,18 +545,18 @@ SVString RangeClassHelper::GetValueString(const SVString& rIndirectString, doubl
 	}
 	else
 	{
-		SVString Text = SvUl_SF::Format( _T("%lf"), directValue );
+		std::string Text = SvUl::Format( _T("%lf"), directValue );
 		return Text;
 	}
 }
 
-bool RangeClassHelper::isValidReference( const SVString& rInspectionName, const SVString& rIndirectString ) const
+bool RangeClassHelper::isValidReference( const std::string& rInspectionName, const std::string& rIndirectString ) const
 {
 	bool Result( true );
 
-	SVString dottedName;
-	SVString ToolSetName;
-	ToolSetName = SvUl_SF::LoadSVString( IDS_CLASSNAME_SVTOOLSET );
+	std::string dottedName;
+	std::string ToolSetName;
+	ToolSetName = SvUl::LoadStdString( IDS_CLASSNAME_SVTOOLSET );
 	//If the tool set name is at the start then add the inspection name at the beginning
 	if( 0 == rIndirectString.find( ToolSetName ))
 	{
@@ -579,14 +580,14 @@ bool RangeClassHelper::isValidReference( const SVString& rInspectionName, const 
 	return Result;
 }
 
-bool RangeClassHelper::RenameIndirectValue(SVString& rIndirectString, LPCTSTR oldPefix, LPCTSTR newPrefix)
+bool RangeClassHelper::RenameIndirectValue(std::string& rIndirectString, LPCTSTR oldPefix, LPCTSTR newPrefix)
 {
 	bool Result( false );
-	SVString oldString(oldPefix);
+	std::string oldString(oldPefix);
 	if ('.' == oldString[oldString.size()-1])
 	{	//check if part of the name (ends with '.') is to replace
-		SVString NewIndirectString = rIndirectString;
-		SvUl_SF::searchAndReplace( NewIndirectString, oldPefix, newPrefix );
+		std::string NewIndirectString = rIndirectString;
+		SvUl::searchAndReplace( NewIndirectString, oldPefix, newPrefix );
 		if( NewIndirectString != rIndirectString )
 		{
 			rIndirectString = NewIndirectString;
@@ -595,15 +596,15 @@ bool RangeClassHelper::RenameIndirectValue(SVString& rIndirectString, LPCTSTR ol
 	}
 	else
 	{
-		SVString indirectTmp = rIndirectString;
+		std::string indirectTmp = rIndirectString;
 		size_t pos = indirectTmp.find('[');
-		if (SVString::npos != pos)
+		if (std::string::npos != pos)
 		{	//if array ("[x]") in the name, remove it for the check
 			indirectTmp = indirectTmp.substr(0, pos);
 		}
 		//only replace the name if it is the full name. Do NOT replace parts of the name, because then it this a other object with similar name.
-		SVString NewIndirectString = rIndirectString;
-		SvUl_SF::searchAndReplace( NewIndirectString, oldPefix, newPrefix );
+		std::string NewIndirectString = rIndirectString;
+		SvUl::searchAndReplace( NewIndirectString, oldPefix, newPrefix );
 		if( oldString == indirectTmp && NewIndirectString != rIndirectString )
 		{	
 			rIndirectString = NewIndirectString;

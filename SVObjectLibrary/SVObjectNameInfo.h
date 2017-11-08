@@ -14,29 +14,28 @@
 #pragma region Includes
 //Moved to precompiled header: #include <deque>
 //Moved to precompiled header: #include <set>
-#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 struct SVObjectNameInfo
 {
-	typedef std::deque< SVString > SVNameDeque;
+	typedef std::deque< std::string > SVNameDeque;
 
-	static HRESULT ParseObjectName( SVObjectNameInfo& p_rNameInfo, const SVString& p_rObjectName );
+	static HRESULT ParseObjectName( SVObjectNameInfo& p_rNameInfo, const std::string& p_rObjectName );
 
 	SVObjectNameInfo();
 	SVObjectNameInfo( const SVNameDeque& p_rNameArray );
-	SVObjectNameInfo( const SVNameDeque& p_rNameArray, const SVString& p_rIndex );
-	SVObjectNameInfo( const SVNameDeque& p_rNameArray, const SVString& p_rIndex, const SVString& p_rDefaultValue );
+	SVObjectNameInfo( const SVNameDeque& p_rNameArray, const std::string& p_rIndex );
+	SVObjectNameInfo( const SVNameDeque& p_rNameArray, const std::string& p_rIndex, const std::string& p_rDefaultValue );
 	SVObjectNameInfo( const SVObjectNameInfo& p_rObject );
 
 	~SVObjectNameInfo();
 
 	void clear();
 
-	HRESULT ParseObjectName( const SVString& p_rObjectName );
+	HRESULT ParseObjectName( const std::string& p_rObjectName );
 
-	SVString GetObjectName( size_t p_StartIndex = 0 ) const;
-	SVString GetObjectArrayName( size_t p_StartIndex = 0 ) const;
+	std::string GetObjectName( size_t p_StartIndex = 0 ) const;
+	std::string GetObjectArrayName( size_t p_StartIndex = 0 ) const;
 
 	void RemoveTopName();
 	void RemoveBottomName();
@@ -47,13 +46,13 @@ struct SVObjectNameInfo
 	//! \param Index [in]
 	//! \returns void
 	//************************************
-	void SetIndex(const SVString& Index ) {m_Index = Index;}
+	void SetIndex(const std::string& Index ) {m_Index = Index;}
 	
 	//************************************
 	//! Get Funtionn for m_Index 
-	//! \returns const SVString&
+	//! \returns const std::string&
 	//************************************
-	const SVString&      GetIndex() const {return m_Index;} 
+	const std::string&      GetIndex() const {return m_Index;} 
 
 	//************************************
 	//! Get function for m_IndexPresent
@@ -83,17 +82,17 @@ struct SVObjectNameInfo
 	bool IsDefaultValuePresent() const  {return m_DefaultValuePresent; } ;
 	void SetIsDefaultValuePresent(bool ispresent) {m_DefaultValuePresent = ispresent;}
 	
-	const SVString&      GetDefaultValue() const {return m_DefaultValue;} 
-	void SetDefaultValue(const SVString& DefaultValue ) {m_DefaultValue = DefaultValue;}
+	const std::string&      GetDefaultValue() const {return m_DefaultValue;} 
+	void SetDefaultValue(const std::string& DefaultValue ) {m_DefaultValue = DefaultValue;}
 
 	SVNameDeque m_NameArray;
 
 private:
 	bool m_IndexPresent; /// true for arrays 
-	SVString m_Index; /// one based index or empty for non array names or whole arrays 
+	std::string m_Index; /// one based index or empty for non array names or whole arrays 
 
 	bool m_DefaultValuePresent;
-	SVString m_DefaultValue;
+	std::string m_DefaultValue;
 };
 
 typedef std::set< SVObjectNameInfo > SVObjectNameInfoSet;

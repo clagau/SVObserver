@@ -12,6 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVExternalToolImageSelectPage.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -99,8 +100,8 @@ namespace SvOg
 						std::advance(it, dist);
 						if (it != availImages.end())
 						{
-							const SVString& imageName = it->first;
-							SVString inputName = m_imageInputList[ctrlID];
+							const std::string& imageName = it->first;
+							std::string inputName = m_imageInputList[ctrlID];
 							if (!imageName.empty() && !inputName.empty())
 							{
 								HRESULT hr = ConnectToImage(inputName, imageName);
@@ -170,7 +171,7 @@ namespace SvOg
 		int i = 0;
 		for (SvUl::InputNameGuidPairList::const_iterator it = images.begin();it != images.end();++it)
 		{
-			SVString Temp = SvUl_SF::Format( _T("Image %02d"), i + 1);
+			std::string Temp = SvUl::Format( _T("Image %02d"), i + 1);
 
 			SVRPropertyItemCombo* pCombo = static_cast<SVRPropertyItemCombo *>(m_Tree.InsertItem(new SVRPropertyItemCombo(), pRoot));
 

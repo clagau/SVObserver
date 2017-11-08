@@ -17,7 +17,7 @@
 #include "SVAccessClass.h"
 #include "SVSecuritySetupSheet.h"
 #include "SVSecurity.h"
-#include "SVUtilityLibrary\SVString.h"
+
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -118,7 +118,7 @@ void SVSecuritySetupPage::BuildTree( long& p_NodeIndex, HTREEITEM hParent, bool 
 	while( p_NodeIndex < static_cast< long >( svStore.m_aNodes.size() ) )
 	{
 		// Get the name from tree
-		SVString Name( svStore.m_aNodes[ p_NodeIndex ].m_Name );
+		std::string Name( svStore.m_aNodes[ p_NodeIndex ].m_Name );
 		bool HasData( svStore.m_aNodes[ p_NodeIndex ].m_bHasData );
 
 		if( ! p_Root && ! HasData )

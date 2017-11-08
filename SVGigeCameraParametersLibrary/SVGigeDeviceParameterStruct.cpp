@@ -13,7 +13,7 @@
 #include "SVGigeDeviceParameterStruct.h"
 #pragma endregion Includes
 
-SVGigeDeviceParameterStruct::SVGigeDeviceParameterStruct(const SVString& p_name, VARTYPE p_dataType, const SVGigeParameterAccessor& p_accessor)
+SVGigeDeviceParameterStruct::SVGigeDeviceParameterStruct(const std::string& p_name, VARTYPE p_dataType, const SVGigeParameterAccessor& p_accessor)
 : name(p_name), dataType(p_dataType), accessor(p_accessor)
 {
 }

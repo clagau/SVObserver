@@ -14,7 +14,6 @@
 #include "SVGigeCameraFileLibrary/SVGigeCameraFileReader.h"
 #include "SVGigeCameraFileLibrary/SVGigeCameraProxy.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
-#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 namespace SvTh
@@ -58,7 +57,7 @@ public:
 	HRESULT IsValidCameraFileParameters( SVDeviceParamCollection& rDeviceParams, unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer);
 	bool CameraMatchesCameraFile(const SVDeviceParamCollection& rCameraFileDeviceParams, unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer);
 
-	HRESULT SetGigeFeatureOverrides(const SVString& xmlData, unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer);
+	HRESULT SetGigeFeatureOverrides(const std::string& xmlData, unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer);
 	HRESULT SetDigitizerParameter( const SVDeviceParamWrapper& rw, unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer );
 
 	bool CanSoftwareTrigger() const;

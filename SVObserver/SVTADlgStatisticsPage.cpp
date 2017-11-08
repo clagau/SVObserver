@@ -25,7 +25,7 @@
 #include "SVOGui/NoSelector.h"
 #include "SVOGui/ToolSetItemSelector.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -161,7 +161,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::initListBox(CListBox* pListBox, 
 
     while (1)
     {
-		SVString FeatureString;
+		std::string FeatureString;
 		FeatureString = m_pTool->GetFeatureString();
 		
         pListBox->ResetContent();
@@ -220,10 +220,10 @@ void SVToolAdjustmentDialogStatisticsPageClass::UpdateStatisticsParameters()
 	if( m_pTool )
 	{
 		// Get the Occurence Value
-		m_pTool->SetOccurenceTestValue( SVString(m_strTestValue) );
+		m_pTool->SetOccurenceTestValue( std::string(m_strTestValue) );
 
 		// Get selected variable
-		m_pTool->SetVariableSelected( SVString(m_strFullNameOfVariable) );
+		m_pTool->SetVariableSelected( std::string(m_strFullNameOfVariable) );
 	}
 }
 
@@ -289,14 +289,14 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnPublishButton()
 	if( nullptr == pInspection ) { return; }
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
-	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, SVString(pInspection->GetToolSet()->GetCompleteName()), SVString( _T("") ) );
+	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, std::string(pInspection->GetToolSet()->GetCompleteName()), std::string( _T("") ) );
 
 	SvOsl::SelectorOptions BuildOptions( pInspection->GetUniqueObjectID(), SvDef::SV_PUBLISHABLE, m_pTool->GetUniqueObjectID() );
 	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>(BuildOptions);
 
-	SVString PublishableResults = SvUl_SF::LoadSVString( IDS_PUBLISHABLE_RESULTS );
-	SVString Title = SvUl_SF::Format( _T("%s - %s"), PublishableResults.c_str(), m_pTool->GetName() );
-	SVString Filter = SvUl_SF::LoadSVString( IDS_FILTER );
+	std::string PublishableResults = SvUl::LoadStdString( IDS_PUBLISHABLE_RESULTS );
+	std::string Title = SvUl::Format( _T("%s - %s"), PublishableResults.c_str(), m_pTool->GetName() );
+	std::string Filter = SvUl::LoadStdString( IDS_FILTER );
 	
 	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), PublishableResults.c_str(), Filter.c_str(), this );
 
@@ -325,19 +325,19 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnBtnObjectPicker()
 
 	m_pTool->UpdateTaskObjectOutputListAttributes();
 
-	SVString InspectionName( pInspection->GetName() );
+	std::string InspectionName( pInspection->GetName() );
 
 	SvOsl::ObjectTreeGenerator::SelectorTypeEnum SelectorType;
 	SelectorType = static_cast<SvOsl::ObjectTreeGenerator::SelectorTypeEnum>(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes | SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject);
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SelectorType );
-	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
+	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, std::string( _T("") ) );
 
 	SvOsl::SelectorOptions BuildOptions( pInspection->GetUniqueObjectID(), SvDef::SV_SELECTABLE_FOR_STATISTICS, m_pToolSet->GetUniqueObjectID() );
 	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 
-	SVString ToolsetOutput = SvUl_SF::LoadSVString( IDS_SELECT_TOOLSET_OUTPUT );
-	SVString Title = SvUl_SF::Format( _T("%s - %s"), ToolsetOutput.c_str(), m_pTool->GetName() );
-	SVString Filter = SvUl_SF::LoadSVString( IDS_FILTER );
+	std::string ToolsetOutput = SvUl::LoadStdString( IDS_SELECT_TOOLSET_OUTPUT );
+	std::string Title = SvUl::Format( _T("%s - %s"), ToolsetOutput.c_str(), m_pTool->GetName() );
+	std::string Filter = SvUl::LoadStdString( IDS_FILTER );
 
 	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), ToolsetOutput.c_str(), Filter.c_str(), this );
 
@@ -350,7 +350,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnBtnObjectPicker()
 		SVObjectManagerClass::Instance().GetObjectByIdentifier( ResultObjectGuid,  pResultObject);
 		if( nullptr != pResultObject )
 		{
-			m_pTool->SetVariableSelected( SVString(pResultObject->GetCompleteName()) );
+			m_pTool->SetVariableSelected( std::string(pResultObject->GetCompleteName()) );
 			m_strFullNameOfVariable = pResultObject->GetCompleteName().c_str();
 		}
 

@@ -17,7 +17,6 @@
 #include "SVTriggerDeviceParams.h"
 #include "SVIMTypeInfoStruct.h"
 #include "SVSystemLibrary/SVObserverEnums.h"
-#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 namespace SvTi
@@ -53,21 +52,21 @@ namespace SvTi
 		//! \param iDig <in> the index the digitizer
 		//! \returns the string with the name
 		//************************************
-		static SVString BuildSoftwareTriggerDeviceName(int iDig);
+		static std::string BuildSoftwareTriggerDeviceName(int iDig);
 
 		//************************************
 		//! This is a static method to generate the acquisition trigger name
 		//! \param iDig <in> the index the digitizer
 		//! \returns the string with the name
 		//************************************
-		static SVString BuildAcquisitionTriggerDeviceName(int iDig);
+		static std::string BuildAcquisitionTriggerDeviceName(int iDig);
 
 		//************************************
 		//! This is a static method to generate the IO board trigger name
 		//! \param iDig <in> the index the digitizer
 		//! \returns the string with the name
 		//************************************
-		static SVString BuildIOBoardTriggerDeviceName(int iDig);
+		static std::string BuildIOBoardTriggerDeviceName(int iDig);
 
 		//************************************
 		//! This is a static method to check if the product type loaded from a configuration is valid

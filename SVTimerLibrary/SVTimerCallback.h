@@ -11,7 +11,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 namespace SvTl
@@ -20,6 +20,6 @@ namespace SvTl
 	{
 	public:
 		virtual ~SVTimerCallback() {}
-		virtual void Notify(const SVString& listenerTag)=0;
+		virtual void Notify(const std::string& listenerTag)=0;
 	};
 } //namespace SvTl

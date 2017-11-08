@@ -18,6 +18,7 @@
 #include "SVLibrary/SVFileNameClass.h"
 #include "TextDefinesSvO.h"
 #include "ObjectInterfaces/IValueObject.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Constructor
@@ -81,17 +82,17 @@ void SVArchiveRecord::BuildFileName()
 {
 	ASSERT(m_svObjectReference.getObject());
 	m_FileNameImage = m_ImageObjectName = m_svObjectReference.getObject()->GetCompleteName();
-	SvUl_SF::searchAndReplace( m_FileNameImage,  _T("."), _T("_") );
+	SvUl::searchAndReplace( m_FileNameImage,  _T("."), _T("_") );
 }
 
-HRESULT SVArchiveRecord::BuildArchiveImageFilePath(SVString& rImageFile)
+HRESULT SVArchiveRecord::BuildArchiveImageFilePath(std::string& rImageFile)
 {
 	HRESULT	hr;
 
 	DWORD		dwMaxImages;
 	DWORD		dwStopAtMaxCount;
 
-	SVString PathRoot;
+	std::string PathRoot;
 	
 	hr = 0;
 	dwMaxImages = 0;
@@ -123,7 +124,7 @@ HRESULT SVArchiveRecord::BuildArchiveImageFilePath(SVString& rImageFile)
 		//
 		// Insert the image count as part of the image file name.
 		//
-		SVString FileName = SvUl_SF::Format( _T("%s__%06.6ld.bmp"), m_FileNameImage.c_str(), m_lCountImages);
+		std::string FileName = SvUl::Format( _T("%s__%06.6ld.bmp"), m_FileNameImage.c_str(), m_lCountImages);
 
 		m_lLastIndex = m_lCountImages;
 		m_lMaxIndex = std::max( m_lMaxIndex, m_lLastIndex );
@@ -235,7 +236,7 @@ void SVArchiveRecord::DisconnectInputObject()
 	}
 }
 
-HRESULT SVArchiveRecord::QueueImage( SVMatroxBuffer& buf, const SVString& rFileName )
+HRESULT SVArchiveRecord::QueueImage( SVMatroxBuffer& buf, const std::string& rFileName )
 {
 	ASSERT( !buf.empty() );
 	HRESULT Result = S_OK;
@@ -408,7 +409,7 @@ HRESULT SVArchiveRecord::WriteImage( )
 			ImageHandle->GetData( l_MilBuffer );
 
 			SVMatroxBuffer milBuffer = l_MilBuffer.GetBuffer();
-			SVString ImageFile;
+			std::string ImageFile;
 
 			//
 			// Write the MIL image to a file in BMP form.
@@ -455,7 +456,7 @@ HRESULT SVArchiveRecord::WriteImage( )
 
 	return hr;
 }
-/*static*/HRESULT SVArchiveRecord::WriteImage( SVMatroxBuffer& milBuffer, const SVString& rFileName )
+/*static*/HRESULT SVArchiveRecord::WriteImage( SVMatroxBuffer& milBuffer, const std::string& rFileName )
 {
 	HRESULT Result = S_OK;
 	

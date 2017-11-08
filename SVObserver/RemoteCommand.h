@@ -11,7 +11,6 @@
 
 #pragma once
 #pragma region Includes
-#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 extern void GlobalRCGoOnline();
@@ -19,7 +18,7 @@ extern void GlobalRCGoOffline();
 extern bool GlobalRCGetState( DWORD* pdwSVIMState );
 extern HRESULT GlobalRCSetMode( unsigned long lSVIMNewMode );
 extern HRESULT GlobalRCGetMode( unsigned long* p_plMode );
-extern SVString GlobalRCGetConfigurationName();
+extern std::string GlobalRCGetConfigurationName();
 extern void GlobalRCSaveConfiguration();
 extern bool GlobalRCOpenConfiguration( LPCTSTR ConfigName );
 extern void GlobalRCCloseAndCleanConfiguration();

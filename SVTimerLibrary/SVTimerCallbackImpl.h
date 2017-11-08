@@ -21,8 +21,8 @@ namespace SvTl
 	class SVTimerCallbackImpl : public SVTimerCallback
 	{
 	public:
-		typedef boost::function<R (T*, const SVString&)> SVFunc;
-		typedef R (T::* MemFunc)(const SVString&);
+		typedef boost::function<R (T*, const std::string&)> SVFunc;
+		typedef R (T::* MemFunc)(const std::string&);
 
 	private:
 		SVFunc m_func;
@@ -34,6 +34,6 @@ namespace SvTl
 		virtual ~SVTimerCallbackImpl() {}
 	
 		void Bind(T* pObj, MemFunc func) { m_func = func; m_pObj = pObj; }
-		virtual void Notify(const SVString& listenerTag) override { if (m_pObj) m_func(m_pObj, listenerTag); }
+		virtual void Notify(const std::string& listenerTag) override { if (m_pObj) m_func(m_pObj, listenerTag); }
 	};
 } //namespace SvTl

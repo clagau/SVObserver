@@ -41,7 +41,7 @@ namespace SvOl
 	//! \param nameToObjectType [in] Object type to define the dotted name start
 	//! \param ToolDependency [in] The tool dependency types to get
 	//! \param rFileName [in] Optional file name to save the graph file 
-	void getToolDependency( SvOi::StringPairInserter Inserter, const SVGuidSet& rSourceSet, SVObjectTypeEnum nameToObjectType, SvOi::ToolDependencyEnum ToolDependency = SvOi::ToolDependencyEnum::Client, const SVString& rFileName = SVString()) const;
+	void getToolDependency( SvOi::StringPairInserter Inserter, const SVGuidSet& rSourceSet, SVObjectTypeEnum nameToObjectType, SvOi::ToolDependencyEnum ToolDependency = SvOi::ToolDependencyEnum::Client, const std::string& rFileName = std::string()) const;
 
 	#pragma endregion Public Methods
 

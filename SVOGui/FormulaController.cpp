@@ -36,6 +36,8 @@
 #include "ToolSetItemSelector.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -82,9 +84,9 @@ namespace SvOg
 
 	#pragma region Public Methods
 	#pragma region virtual Methods IFormulaController
-	SVString FormulaController::GetEquationText() const
+	std::string FormulaController::GetEquationText() const
 	{
-		SVString equationText;
+		std::string equationText;
 	
 		typedef SvCmd::GetEquation Command;
 		typedef SVSharedPtr<Command> CommandPtr;
@@ -98,8 +100,8 @@ namespace SvOg
 		}
 		else
 		{
-			SVStringVector msgList;
-			msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
+			SvDef::StringVector msgList;
+			msgList.push_back(SvUl::Format(_T("%d"), hr));
 			SvStl::MessageMgrStd e( SvStl::LogOnly );
 			e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams) );
 			ASSERT(false);
@@ -142,7 +144,7 @@ namespace SvOg
 		return hr;
 	}
 
-	int FormulaController::ValidateEquation( const SVString& equationString, double& result, bool bSetValue, SvStl::MessageContainerVector& rErrorMessages ) const
+	int FormulaController::ValidateEquation( const std::string& equationString, double& result, bool bSetValue, SvStl::MessageContainerVector& rErrorMessages ) const
 	{
 		int retValue = validateSuccessful;
 		typedef SvCmd::ValidateAndSetEquation Command;
@@ -173,8 +175,8 @@ namespace SvOg
 		}
 		else
 		{
-			SVStringVector msgList;
-			msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
+			SvDef::StringVector msgList;
+			msgList.push_back(SvUl::Format(_T("%d"), hr));
 			SvStl::MessageMgrStd e( SvStl::LogOnly );
 			e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams) );
 			ASSERT(false);
@@ -195,9 +197,9 @@ namespace SvOg
 
 	#pragma endregion virtual Methods IFormulaController
 
-	SVString FormulaController::GetOwnerName() const
+	std::string FormulaController::GetOwnerName() const
 	{
-		SVString name;
+		std::string name;
 		typedef SvCmd::GetObjectName Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 
@@ -213,9 +215,9 @@ namespace SvOg
 	#pragma endregion Public Methods
 
 	#pragma region Protected Methods
-	SVString FormulaController::GetInspectionName() const
+	std::string FormulaController::GetInspectionName() const
 	{
-		SVString inspectionName;
+		std::string inspectionName;
 		typedef SvCmd::GetObjectName Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 
@@ -229,9 +231,9 @@ namespace SvOg
 		return inspectionName;
 	}
 
-	SVString FormulaController::GetPPQName() const
+	std::string FormulaController::GetPPQName() const
 	{
-		SVString PPQName;
+		std::string PPQName;
 		typedef SvCmd::GetPPQObjectName Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 
@@ -293,8 +295,8 @@ namespace SvOg
 				}
 				else
 				{
-					SVStringVector msgList;
-					msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
+					SvDef::StringVector msgList;
+					msgList.push_back(SvUl::Format(_T("%d"), hr));
 					SvStl::MessageMgrStd e( SvStl::LogOnly );
 					e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams) );
 					ASSERT(false);

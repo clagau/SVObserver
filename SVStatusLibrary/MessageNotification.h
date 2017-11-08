@@ -9,7 +9,6 @@
 #pragma region Includes
 //Moved to precompiled header: #include <concrt.h>
 #include "MessageManager.h"
-#include "SVUtilityLibrary\SVString.h"
 #pragma endregion Includes
 
 namespace SvStl
@@ -41,6 +40,6 @@ namespace SvStl
 		Concurrency::critical_section m_Lock;
 		SvStl::NotificationEnum m_Type;
 		int m_MessageNumber;
-		SVString m_MessageText;
+		std::string m_MessageText;
 	};
 } //namespace SvStl

@@ -13,7 +13,7 @@
 #pragma region Includes
 #include "SVOLicenseManager.h"
 #include "SVOResource\resource.h"
-#include "SVUtilityLibrary\SVString.h"
+
 #pragma endregion Includes
 
 class SVLicenseMgrModelessDlg;
@@ -46,11 +46,11 @@ class SVLicenseMgrModelessDlg : public CDialog
 public:
 	SVLicenseMgrModelessDlg();
 	virtual ~SVLicenseMgrModelessDlg();
-	static void Show(const SVString& sMsg, const SVGuidSet& rList, HANDLE hEvent);
+	static void Show(const std::string& sMsg, const SVGuidSet& rList, HANDLE hEvent);
 	static void Destroy();
 
 private:
-	void Init(const SVString& rMsg, const SVGuidSet& rList, HANDLE hEvent);
+	void Init(const std::string& rMsg, const SVGuidSet& rList, HANDLE hEvent);
 	static SVLicenseMgrModelessDlg& Instance();
 	void CleanUp();
 
@@ -84,7 +84,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	SVString m_Msg;
+	std::string m_Msg;
 	HANDLE m_hEvent;
 	SVGuidSet m_sList;
 

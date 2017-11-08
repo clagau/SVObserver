@@ -198,9 +198,9 @@ namespace SvOg
 		m_directRangeValues.Set<double>(rName, value);
 	}
 
-	SVString RangeController::GetOwnerName() const
+	std::string RangeController::GetOwnerName() const
 	{
-		SVString name;
+		std::string name;
 		typedef SvCmd::GetObjectName Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 
@@ -215,9 +215,9 @@ namespace SvOg
 	}
 
 	#pragma region Protected Methods
-	SVString RangeController::GetInspectionName() const
+	std::string RangeController::GetInspectionName() const
 	{
-		SVString inspectionName;
+		std::string inspectionName;
 		typedef SvCmd::GetObjectName Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 
@@ -231,9 +231,9 @@ namespace SvOg
 		return inspectionName;
 	}
 
-	SVString RangeController::GetPPQName() const
+	std::string RangeController::GetPPQName() const
 	{
-		SVString PPQName;
+		std::string PPQName;
 		typedef SvCmd::GetPPQObjectName Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 
@@ -247,19 +247,19 @@ namespace SvOg
 		return PPQName;
 	}
 
-	void RangeController::IsFieldValid(SvStl::MessageTextEnum fieldName, const SVString& rValue)
+	void RangeController::IsFieldValid(SvStl::MessageTextEnum fieldName, const std::string& rValue)
 	{
 		RangeValidator::IsFieldValid(fieldName, rValue);
 	}
 
 	void RangeController::Validate()
 	{
-		SVString InspectionName = GetInspectionName();
+		std::string InspectionName = GetInspectionName();
 
-		const SVString& FailHighIndirectValue = GetIndirectValue(FailHighIndirect);
-		const SVString& FailLowIndirectValue = GetIndirectValue(FailLowIndirect);
-		const SVString& WarnHighIndirectValue = GetIndirectValue(WarnHighIndirect);
-		const SVString& WarnLowIndirectValue = GetIndirectValue(WarnLowIndirect);
+		const std::string& FailHighIndirectValue = GetIndirectValue(FailHighIndirect);
+		const std::string& FailLowIndirectValue = GetIndirectValue(FailLowIndirect);
+		const std::string& WarnHighIndirectValue = GetIndirectValue(WarnHighIndirect);
+		const std::string& WarnLowIndirectValue = GetIndirectValue(WarnLowIndirect);
 		double FailHighValue = m_directRangeValues.Get<double>(FailHigh);
 		double FailLowValue = m_directRangeValues.Get<double>(FailLow);
 		double WarnHighValue = m_directRangeValues.Get<double>(WarnHigh);

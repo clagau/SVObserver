@@ -12,7 +12,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 class SVInspectionExporter
@@ -22,6 +21,6 @@ private:
 	~SVInspectionExporter();
 
 public:
-	static HRESULT Export(const SVString& filename, const SVString& inspectionName, unsigned long p_version, bool bColor);
+	static HRESULT Export(const std::string& filename, const std::string& inspectionName, unsigned long p_version, bool bColor);
 };
 

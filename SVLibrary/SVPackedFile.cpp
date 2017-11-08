@@ -13,6 +13,7 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <algorithm>
 #include "SVPackedFile.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVMessage\SVMessage.h"
 #include "SVStatusLibrary\MessageManager.h"
 
@@ -42,7 +43,7 @@ bool SVPackedFile::PackFiles( LPCTSTR Files, LPCTSTR PackedFileName )
 	WIN32_FIND_DATAW FindData;
 	DWORD dwPackedFileVersion = SV_PACKEDFILE_VERSION;
 	CFile PackedFile, SourceFile;
-	SVString SourceFileName, WildCard, Path;
+	std::string SourceFileName, WildCard, Path;
 	BYTE Buffer[1024];
 	UINT CountRead, NumFiles = 0, PathLen;
 
@@ -153,7 +154,7 @@ bool SVPackedFile::UnPackFiles( LPCTSTR PackedFileName, LPCTSTR UnPackDir /* = n
 	CFileException FileException;
 	DWORD dwPackedFileVersion;
 	TCHAR szMessage[80];
-	SVString Path;
+	std::string Path;
 	SvStl::MessageMgrStd Exception( SvStl::DataOnly );
 	UINT CountRead, PathLen, BytesRead;
 	BYTE Buffer[_MAX_PATH * sizeof (TCHAR)];
@@ -179,11 +180,11 @@ bool SVPackedFile::UnPackFiles( LPCTSTR PackedFileName, LPCTSTR UnPackDir /* = n
 							PackedFile.Read (Buffer, PathLen);
 							if( nullptr == UnPackDir )
 							{
-								Path = SvUl_SF::Format (_T("%s%s"), W2T(reinterpret_cast<wchar_t*> (Buffer) ), W2T( FindData.cFileName));
+								Path = SvUl::Format (_T("%s%s"), W2T(reinterpret_cast<wchar_t*> (Buffer) ), W2T( FindData.cFileName));
 							}
 							else
 							{
-								Path = SvUl_SF::Format (_T("%s\\%s"), UnPackDir, W2T( FindData.cFileName));
+								Path = SvUl::Format (_T("%s\\%s"), UnPackDir, W2T( FindData.cFileName));
 							}
 
 							_tsplitpath (Path.c_str(), szDrive, szDir, szFName, szExt);

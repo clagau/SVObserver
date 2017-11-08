@@ -12,7 +12,7 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <comdef.h>
 #include "SVXMLCTreeCtrl.h"
-#include "SVUtilityLibrary/SVString.h"
+
 
 namespace SvXml
 {
@@ -115,7 +115,7 @@ namespace SvXml
 
 		while( nullptr == pResult && nullptr != pBranch )
 		{
-			SVString BranchName = m_rTree.GetItemText( pBranch );
+			std::string BranchName = m_rTree.GetItemText( pBranch );
 
 			if( 0 == m_rTree.GetItemData( pBranch ) && Name == BranchName )
 			{
@@ -195,9 +195,9 @@ namespace SvXml
 		return l_Status;
 	}
 
-	SVString SVXMLCTreeCtrl::getBranchName( const SVBranchHandle pBranch ) const
+	std::string SVXMLCTreeCtrl::getBranchName( const SVBranchHandle pBranch ) const
 	{
-		SVString Result;
+		std::string Result;
 
 		if( isRoot( pBranch ) )
 		{
@@ -258,7 +258,7 @@ namespace SvXml
 
 		while( nullptr == pResult && nullptr != pBranch )
 		{
-			SVString BranchName = m_rTree.GetItemText( pBranch );
+			std::string BranchName = m_rTree.GetItemText( pBranch );
 
 			if( m_rTree.GetItemData( pBranch ) && Name == BranchName )
 			{
@@ -370,9 +370,9 @@ namespace SvXml
 		return l_Status;
 	}
 
-	SVString SVXMLCTreeCtrl::getLeafName( const SVLeafHandle pLeaf ) const
+	std::string SVXMLCTreeCtrl::getLeafName( const SVLeafHandle pLeaf ) const
 	{
-		SVString Result;
+		std::string Result;
 
 		Result = m_rTree.GetItemText( pLeaf );
 

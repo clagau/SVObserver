@@ -17,7 +17,7 @@
 #include "SVToolSet.h"
 #include "SVColorThreshold.h"
 #include "SVGlobal.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #include "ToolSizeAdjustTask.h"
 #include "SVImageLibrary\SVImageBufferHandleImage.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
@@ -339,11 +339,11 @@ bool SVColorToolClass::createBandChildLayer(BandEnum Band)
 
 HRESULT SVColorToolClass::CollectInputImageNames()
 {
-	SVString Name;
+	std::string Name;
 
 	if (nullptr != m_pInputImage)
 	{
-		SVString Name = m_pInputImage->GetCompleteName();
+		std::string Name = m_pInputImage->GetCompleteName();
 		m_SourceImageNames.SetDefaultValue(Name, true);
 		return S_OK;
 	}

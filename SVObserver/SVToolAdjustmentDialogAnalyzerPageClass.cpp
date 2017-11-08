@@ -33,7 +33,7 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -140,7 +140,7 @@ BOOL SVToolAdjustmentDialogAnalyzerPageClass::OnInitDialog()
 
 
 		// get index of Current Analyzer
-		SVString analyzerSelection = "";
+		std::string analyzerSelection = "";
 		if (m_pCurrentAnalyzer)
 		{
 			analyzerSelection = m_pCurrentAnalyzer->GetObjectName();
@@ -411,7 +411,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnResultButton()
 		m_pCurrentAnalyzer->getAvailableObjects(&availableResults, &resultTypeInfo);
 
 		// Get Dialog Title...
-		SVString Title = SvUl_SF::LoadSVString( IDS_RESULT_ADJUSTMENT_DIALOG_TITLE );
+		std::string Title = SvUl::LoadStdString( IDS_RESULT_ADJUSTMENT_DIALOG_TITLE );
 		// Get Complete Name up to the tool level...
 		Title = m_pCurrentAnalyzer->GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType ) + _T(" ") + Title;
 
@@ -450,14 +450,14 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnPublishButton()
 	if( nullptr == pInspection ) { return; }
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
-	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, SVString(m_pTool->GetCompleteName()), SVString( _T("") ) );
+	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, std::string(m_pTool->GetCompleteName()), std::string( _T("") ) );
 
 	SvOsl::SelectorOptions BuildOptions( pInspection->GetUniqueObjectID(), SvDef::SV_PUBLISHABLE, m_pCurrentAnalyzer->GetUniqueObjectID() );
 	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 
-	SVString PublishableResults = SvUl_SF::LoadSVString( IDS_PUBLISHABLE_RESULTS );
-	SVString Title = SvUl_SF::Format( _T("%s - %s"), PublishableResults.c_str(), m_pTool->GetName() );
-	SVString Filter = SvUl_SF::LoadSVString( IDS_FILTER );
+	std::string PublishableResults = SvUl::LoadStdString( IDS_PUBLISHABLE_RESULTS );
+	std::string Title = SvUl::Format( _T("%s - %s"), PublishableResults.c_str(), m_pTool->GetName() );
+	std::string Filter = SvUl::LoadStdString( IDS_FILTER );
 
 	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), PublishableResults.c_str(), Filter.c_str(), this );
 

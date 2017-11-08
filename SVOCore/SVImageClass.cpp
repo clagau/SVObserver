@@ -32,6 +32,7 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "ObjectInterfaces\ISVOApp_Helper.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -1011,7 +1012,7 @@ HRESULT SVImageClass::GetChildImageHandle( const GUID& p_rChildID, SVSmartHandle
 			l_hrOk = l_pParentImage->GetChildImageHandle( p_rChildID, p_rsvBufferHandle );
 			if ( S_FALSE == l_hrOk )
 			{
-				SVString MsgStr ( _T("S_FALSE == l_pParentImage->GetChildImageHandle( p_rChildID, p_rsvBufferHandle )") );
+				std::string MsgStr ( _T("S_FALSE == l_pParentImage->GetChildImageHandle( p_rChildID, p_rsvBufferHandle )") );
 
 				SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 				Exception.setMessage( SVMSG_SVO_5053_CHILDIMAGEHANDLESFALSE, MsgStr.c_str(), SvStl::SourceFileParams(StdMessageParams) );
@@ -1019,7 +1020,7 @@ HRESULT SVImageClass::GetChildImageHandle( const GUID& p_rChildID, SVSmartHandle
 		}
 		else // really? there are 2 conditions to the if statement above...
 		{
-			SVString MsgStr( _T("nullptr == l_pParentImage") );
+			std::string MsgStr( _T("nullptr == l_pParentImage") );
 
 			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 			Exception.setMessage( SVMSG_SVO_5054_NULLPARENTIMAGE, MsgStr.c_str(), SvStl::SourceFileParams(StdMessageParams) );
@@ -1041,7 +1042,7 @@ HRESULT SVImageClass::GetChildImageHandle( const GUID& p_rChildID, SVSmartHandle
 				}
 				else
 				{
-					SVString MsgStr( _T("if (l_Iter->second.m_pImageHandles->GetImageHandle( p_rsvBufferHandle )") );
+					std::string MsgStr( _T("if (l_Iter->second.m_pImageHandles->GetImageHandle( p_rsvBufferHandle )") );
 
 					SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 					Exception.setMessage( SVMSG_SVO_5055_NULLCHILDHANDLE, MsgStr.c_str(), SvStl::SourceFileParams(StdMessageParams) );
@@ -1071,7 +1072,7 @@ HRESULT SVImageClass::GetChildImageHandle( const GUID& p_rChildID, SVImageIndexS
 			l_hrOk = l_pParentImage->GetChildImageHandle( p_rChildID, p_svBufferIndex, p_rsvBufferHandle );
 			if ( S_FALSE == l_hrOk )
 			{
-				SVString MsgStr( _T("S_FALSE == l_pParentImage->GetChildImageHandle( m_svChildIndexArray[ p_lChildIndex ], p_rsvBufferHandle )") );
+				std::string MsgStr( _T("S_FALSE == l_pParentImage->GetChildImageHandle( m_svChildIndexArray[ p_lChildIndex ], p_rsvBufferHandle )") );
 
 				SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 				Exception.setMessage( SVMSG_SVO_5056_CHILDIMAGEHANDLESFALSE, MsgStr.c_str(), SvStl::SourceFileParams(StdMessageParams) );
@@ -1080,7 +1081,7 @@ HRESULT SVImageClass::GetChildImageHandle( const GUID& p_rChildID, SVImageIndexS
 		}
 		else  // really? there are 2 conditions to the if statement above...
 		{
-			SVString MsgStr( _T("nullptr == l_pParentImage") );
+			std::string MsgStr( _T("nullptr == l_pParentImage") );
 
 			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 			Exception.setMessage( SVMSG_SVO_5057_NULLPARENTIMAGE, MsgStr.c_str(), SvStl::SourceFileParams(StdMessageParams) );
@@ -1105,7 +1106,7 @@ HRESULT SVImageClass::GetChildImageHandle( const GUID& p_rChildID, SVImageIndexS
 				}
 				else
 				{
-					SVString MsgStr( _T("null ptr == l_Iter->second.m_pImageHandles->GetImageHandle( l_Handle.GetIndex(), p_rsvBufferHandle )") );
+					std::string MsgStr( _T("null ptr == l_Iter->second.m_pImageHandles->GetImageHandle( l_Handle.GetIndex(), p_rsvBufferHandle )") );
 
 					SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 					Exception.setMessage( SVMSG_SVO_5058_NULLCHILDHANDLE, MsgStr.c_str(), SvStl::SourceFileParams(StdMessageParams) );
@@ -1661,7 +1662,7 @@ void SVImageClass::PersistImageAttributes( SVObjectWriter& rWriter )
 	rWriter.WriteAttribute(scBandLinkTag, Value);
 }
 
-HRESULT SVImageClass::GetObjectValue( const SVString& rValueName, _variant_t& rValue ) const
+HRESULT SVImageClass::GetObjectValue( const std::string& rValueName, _variant_t& rValue ) const
 {
 	HRESULT hr = S_OK;
 
@@ -1971,7 +1972,7 @@ HRESULT SVImageClass::UpdateBufferArrays( bool p_ExcludePositionCheck, SvStl::Me
 								SvStl::MessageData messageData = Iter->getMessage();
 								if (SVMSG_SVO_5067_IMAGEALLOCATIONFAILED == messageData.m_MessageCode)
 								{
-									SVStringVector msgList;
+									SvDef::StringVector msgList;
 									msgList.push_back(GetCompleteName());
 									messageData.m_AdditionalTextList = msgList;
 								}
@@ -2182,10 +2183,10 @@ SvOi::MatroxImageSmartHandlePtr SVImageClass::getParentImageData()
 	return dataSmartPointer;
 }
 
-SVString SVImageClass::getDisplayedName() const
+std::string SVImageClass::getDisplayedName() const
 {
 	const SVObjectTypeInfoStruct& rObjectTypeInfo = GetObjectInfo().m_ObjectTypeInfo;
-	SVString strName;
+	std::string strName;
 	switch( rObjectTypeInfo.SubType )
 	{
 	case SVRGBMainImageObjectType:	// RGBMain image - Not selectable
@@ -2226,7 +2227,7 @@ long SVImageClass::getPixelDepth() const
 	return pixelDepth;
 }
 
-HRESULT SVImageClass::Save(const SVString& rFilename)
+HRESULT SVImageClass::Save(const std::string& rFilename)
 {
 	HRESULT hr = S_OK;
 	
@@ -2237,9 +2238,9 @@ HRESULT SVImageClass::Save(const SVString& rFilename)
 		SVImageBufferHandleImage MilHandle;
 		hBuffer->GetData(MilHandle);
 
-		SVString ext;
+		std::string ext;
 		size_t pos = rFilename.find_last_of(".");
-		if (SVString::npos != pos)
+		if (std::string::npos != pos)
 		{
 			ext = rFilename.substr(pos, rFilename.size() - pos);
 		}
@@ -2247,7 +2248,7 @@ HRESULT SVImageClass::Save(const SVString& rFilename)
 	
 		if (efileformat != SVFileUnknown)
 		{
-			SVString strPath = rFilename.c_str();
+			std::string strPath = rFilename.c_str();
 			HRESULT l_Code = SVMatroxBufferInterface::Export(MilHandle.GetBuffer(), strPath, efileformat);
 		}
 		else

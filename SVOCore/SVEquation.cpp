@@ -19,11 +19,11 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
 #include "SVValueObjectLibrary/BasicValueObject.h"
-
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
 #include "SVObjectLibrary/GlobalConst.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
-#include "SVUtilityLibrary/SVStringConversions.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -39,7 +39,7 @@ const TCHAR* const Remote_Input = _T("Remote Input");
 
 SVEquationSymbolTableClass::SVEquationSymbolTableClass()
 {
-	m_ToolSetName = SvUl_SF::LoadSVString( IDS_CLASSNAME_SVTOOLSET );
+	m_ToolSetName = SvUl::LoadStdString( IDS_CLASSNAME_SVTOOLSET );
 	m_ToolSetName +=  "."; 
 	m_DIOInputName = DIOInput;
 	m_RemoteInputName = Remote_Input;
@@ -111,7 +111,7 @@ void SVEquationSymbolTableClass::Init(SVObjectClass* pRequestor)
 int SVEquationSymbolTableClass::AddSymbol(LPCTSTR name, SVObjectClass* pRequestor )
 {
 	// Strip off Double Quotes
-	SVString SymbolName = SvUl_SF::Trim( SVString(name), _T("\"" ) );
+	std::string SymbolName = SvUl::Trim( std::string(name), _T("\"" ) );
 
 	SVEquationSymbolTypeEnum Type = SV_INPUT_SYMBOL_TYPE; 
 	
@@ -122,16 +122,16 @@ int SVEquationSymbolTableClass::AddSymbol(LPCTSTR name, SVObjectClass* pRequesto
 		return symbolIndex;
 	}
 	
-	SVString LookUpName;
+	std::string LookUpName;
 	
-	if( SvUl_SF::Left(SymbolName, m_ToolSetName.size()) == m_ToolSetName )
+	if( SvUl::Left(SymbolName, m_ToolSetName.size()) == m_ToolSetName )
 	{
 		Type = SV_TOOLSET_SYMBOL_TYPE;
 		LookUpName = m_InspectionName;
 		LookUpName += SymbolName;
 	}
-	else if ( SvUl_SF::Left(SymbolName, m_DIOInputName.size()) == m_DIOInputName
-			||  SvUl_SF::Left(SymbolName, m_RemoteInputName.size()) == m_RemoteInputName )
+	else if ( SvUl::Left(SymbolName, m_DIOInputName.size()) == m_DIOInputName
+			||  SvUl::Left(SymbolName, m_RemoteInputName.size()) == m_RemoteInputName )
 	{
 		LookUpName = m_InspectionName;
 		LookUpName += SymbolName;
@@ -312,7 +312,7 @@ bool SVEquationClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStru
 	SVObjectClass *owner = enabled.GetOwner();
 	if (nullptr != owner)
 	{
-		SVString conditionalString = SvUl_SF::LoadSVString( IDS_CLASSNAME_SVCONDITIONAL );
+		std::string conditionalString = SvUl::LoadStdString( IDS_CLASSNAME_SVCONDITIONAL );
 
 		if( owner->GetName() == conditionalString )
 		{
@@ -336,12 +336,12 @@ double SVEquationClass::GetYACCResult() const
 	return m_Yacc.equationResult;
 }
 
-const SVString& SVEquationClass::GetEquationText() const
+const std::string& SVEquationClass::GetEquationText() const
 {
 	return m_equationStruct.GetEquationText();
 }
 
-void SVEquationClass::SetEquationText(const SVString& rText)
+void SVEquationClass::SetEquationText(const std::string& rText)
 {
 	m_equationStruct.SetEquationText( rText );
 	if( rText.empty() )
@@ -351,7 +351,7 @@ void SVEquationClass::SetEquationText(const SVString& rText)
 	}
 }
 
-HRESULT SVEquationClass::GetObjectValue( const SVString& rValueName, _variant_t& rValue ) const
+HRESULT SVEquationClass::GetObjectValue( const std::string& rValueName, _variant_t& rValue ) const
 {
 	HRESULT hr = S_OK;
 
@@ -372,7 +372,7 @@ void SVEquationClass::Persist( SVObjectWriter& rWriter )
 	SVTaskObjectClass::Persist(rWriter);
 	
 	// Get the Data Values (Member Info, Values)
-	SVString Temp = m_equationStruct.EquationBuffer;
+	std::string Temp = m_equationStruct.EquationBuffer;
 	
 	SvUl::AddEscapeSpecialCharacters( Temp, true );
 
@@ -444,7 +444,7 @@ SvOi::EquationTestResult SVEquationClass::Test( SvStl::MessageContainerVector *p
 		m_Symbols.Init(this);
 		
 
-		SVString equationText = GetEquationText();
+		std::string equationText = GetEquationText();
 		equationText += "\n";
 		// Note Buffer must be terminated with a new line
 		// Build Lexical Stack
@@ -455,8 +455,8 @@ SvOi::EquationTestResult SVEquationClass::Test( SvStl::MessageContainerVector *p
 	
 			if (m_Yacc.yacc_err)
 			{
-				SVString fullObjectName = GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType );
-				SVStringVector msgList;
+				std::string fullObjectName = GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType );
+				SvDef::StringVector msgList;
 				msgList.push_back(fullObjectName);
 				if( S_OK != m_Yacc.m_StatusCode )
 				{
@@ -465,7 +465,7 @@ SvOi::EquationTestResult SVEquationClass::Test( SvStl::MessageContainerVector *p
 				else
 				{
 					ret.iPositionFailed = m_Yacc.lex_stack[m_Yacc.sIndex-1].position+1;
-					msgList.push_back(SvUl_SF::Format(_T("%d"), ret.iPositionFailed));
+					msgList.push_back(SvUl::Format(_T("%d"), ret.iPositionFailed));
 					errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_EquationParserError, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10047, GetUniqueObjectID() );
 				}
 				m_isDataValid = false;
@@ -548,12 +548,12 @@ SvOi::EquationTestResult SVEquationClass::lexicalScan(LPCTSTR inBuffer)
 
 	if (m_Lex.lex_err)
 	{
-		SVString fullObjectName = GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType );
+		std::string fullObjectName = GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType );
 		ret.bPassed = false;
 		ret.iPositionFailed = static_cast< int >( m_Lex.position + 1 );
-		SVStringVector msgList;
+		SvDef::StringVector msgList;
 		msgList.push_back(fullObjectName);
-		msgList.push_back(SvUl_SF::Format(_T("%d"), ret.iPositionFailed));
+		msgList.push_back(SvUl::Format(_T("%d"), ret.iPositionFailed));
 		errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_EquationParserError, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10198, GetUniqueObjectID() );
 
 		m_isDataValid = false;
@@ -729,10 +729,10 @@ bool SVEquationClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	return Result;
 }
 
-void SVEquationClass::OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName)
+void SVEquationClass::OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName)
 {
-	SVString newPrefix;
-	SVString oldPrefix;
+	std::string newPrefix;
+	std::string oldPrefix;
 
 	SVObjectTypeEnum type = rRenamedObject.GetObjectType();
 	if (SVInspectionObjectType == type)
@@ -754,12 +754,12 @@ void SVEquationClass::OnObjectRenamed(const SVObjectClass& rRenamedObject, const
 
 
 	oldPrefix = newPrefix;
-	SvUl_SF::searchAndReplace( oldPrefix, rRenamedObject.GetName(), rOldName.c_str() );
+	SvUl::searchAndReplace( oldPrefix, rRenamedObject.GetName(), rOldName.c_str() );
 
-	SVString equationBuff = GetEquationText();
+	std::string equationBuff = GetEquationText();
 
 	// Replace all occurrences
-	if( GetEquationText() != SvUl_SF::searchAndReplace( equationBuff, oldPrefix.c_str(), newPrefix.c_str() ) )
+	if( GetEquationText() != SvUl::searchAndReplace( equationBuff, oldPrefix.c_str(), newPrefix.c_str() ) )
 	{
 		SetEquationText( equationBuff );
 	}

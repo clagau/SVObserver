@@ -12,6 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVCameraFormat.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 SVCameraFormat::SVCameraFormat()
@@ -90,26 +91,26 @@ void SVCameraFormat::AssignConstantValues( const SVCameraFormat& rRhs )
 	m_bColor = rRhs.m_bColor;
 }
 
-HRESULT SVCameraFormat::ParseAndAssignCameraFormat( const SVString& rCameraFormat )
+HRESULT SVCameraFormat::ParseAndAssignCameraFormat( const std::string& rCameraFormat )
 {
-	SVString CameraFormat( rCameraFormat );
+	std::string CameraFormat( rCameraFormat );
 	m_strName = CameraFormat;
 	// GigE is set to variableROI if the camera format string contains FORMAT_7
-	m_bVariableROI = (SVString::npos != CameraFormat.find( _T("FORMAT_7") ));
+	m_bVariableROI = (std::string::npos != CameraFormat.find( _T("FORMAT_7") ));
 
 	// parse the format string M_xXy_type@n[.n]FPS
 	// or M_xXy_type_FORMAT_7_0
 	// where @n[.n]FPS is optional for some camera types
 	// FPS is optional (useless) for GIGE cameras
 
-	CameraFormat = SvUl_SF::Mid( CameraFormat, 2 );	// strip off M_ prefix;
+	CameraFormat = SvUl::Mid( CameraFormat, 2 );	// strip off M_ prefix;
 
 	size_t posV =  CameraFormat.find('X');
 	size_t posType = CameraFormat.find('_');
 
-	SVString sH = SvUl_SF::Left( CameraFormat, posV );
-	SVString sV = CameraFormat.substr( posV + 1, posType - posV - 1 );
-	SVString sType = CameraFormat.substr( posType + 1, CameraFormat.size() - posType - 1 );
+	std::string sH = SvUl::Left( CameraFormat, posV );
+	std::string sV = CameraFormat.substr( posV + 1, posType - posV - 1 );
+	std::string sType = CameraFormat.substr( posType + 1, CameraFormat.size() - posType - 1 );
 	
 	m_lWidth = m_lWidthMax = atoi( sH.c_str() );
 	m_lHeight = m_lHeightMax = atoi( sV.c_str() );
@@ -119,12 +120,12 @@ HRESULT SVCameraFormat::ParseAndAssignCameraFormat( const SVString& rCameraForma
 		m_eImageType = SVImageFormatMono8;
 	}
 	//! Note all Bayer formats will be possible BayerRG8 or 12, BayerGB8 10 or 12
-	else if ( SVString::npos != sType.find(_T("RGB")) || SVString::npos != sType.find(_T("YUV")) || SVString::npos != sType.find(_T("Bayer")) )
+	else if ( std::string::npos != sType.find(_T("RGB")) || std::string::npos != sType.find(_T("YUV")) || std::string::npos != sType.find(_T("Bayer")) )
 	{
 		m_eImageType = SVImageFormatRGB8888;
 		m_bColor = true;
 	}
-	else if ( SVString::npos != sType.find(_T("Y_FORMAT_7"))  )
+	else if ( std::string::npos != sType.find(_T("Y_FORMAT_7"))  )
 	{
 		m_eImageType = SVImageFormatMono8;
 	}

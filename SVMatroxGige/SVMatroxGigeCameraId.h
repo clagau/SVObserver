@@ -11,12 +11,12 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 struct SVMatroxGigeCameraId
 {
-	SVString m_serialNo;
+	std::string m_serialNo;
 	unsigned __int64 m_macAddress;
 	unsigned __int64 m_ipAddress;
 };

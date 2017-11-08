@@ -15,7 +15,7 @@
 
 #include "SVOCore/SVTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 // SVToolAdjustmentDialogCommentPageClass dialog
@@ -57,7 +57,7 @@ BOOL SVToolAdjustmentDialogCommentPageClass::OnInitDialog()
 		SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*> (pTool->GetToolComment());
 		if( nullptr != pValueObject )
 		{
-			SVString Value;
+			std::string Value;
 			pValueObject->getValue( Value );
 			m_strComment = Value.c_str();
 		}

@@ -12,7 +12,7 @@
 #include "stdafx.h"
 #include "SVPPQBar.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVObserver.h"
 #include "SVConfigurationObject.h"
 #include "SVMessage/SVMessage.h"
@@ -368,7 +368,7 @@ BOOL SVPPQWindowClass::BuildButtons( SVPPQObject* pSelectedPPQ )
 		for( int i = 0; i < lPPQLength + 1; ++ i )
 		{
 			CButton* pButton = new CButton();
-			SVString Caption = SvUl_SF::Format( _T("%d"), i + 1 );
+			std::string Caption = SvUl::Format( _T("%d"), i + 1 );
 			DWORD dwStyle = WS_CHILD | WS_VISIBLE | WS_GROUP | WS_TABSTOP;
 			buttonList.Add( pButton );
 			if( i != lPPQLength )
@@ -403,7 +403,7 @@ BOOL SVPPQWindowClass::BuildButtons( SVPPQObject* pSelectedPPQ )
 
 				if( lPosition >= 0 && lPosition < buttonList.GetSize() && buttonList.GetAt( lPosition ) )
 				{
-					SVString Caption = SvUl_SF::Format( _T("*%d*"),lPosition + 1 );
+					std::string Caption = SvUl::Format( _T("*%d*"),lPosition + 1 );
 					buttonList.GetAt( lPosition )->SetWindowText( Caption.c_str() );
 				}// end if
 			}
@@ -417,7 +417,7 @@ BOOL SVPPQWindowClass::BuildButtons( SVPPQObject* pSelectedPPQ )
 			int pos = lPosition;
 			if( pos >= 0 && pos < buttonList.GetSize() && buttonList.GetAt( pos ) )
 			{
-				SVString Caption = SvUl_SF::Format( _T("*%d*"), pos + 1 );
+				std::string Caption = SvUl::Format( _T("*%d*"), pos + 1 );
 				buttonList.GetAt( pos )->SetWindowText( Caption.c_str() );
 			}// end if
 
@@ -495,7 +495,7 @@ BOOL SVPPQWindowClass::OnCmdMsg( UINT nID, int nCode, void* pExtra, AFX_CMDHANDL
 			    {
 				    if( dlg.m_bIsTaken )
 				    {
-						SVString Caption = SvUl_SF::Format( _T("*%d*"), pos + 1 );
+						std::string Caption = SvUl::Format( _T("*%d*"), pos + 1 );
 					    buttonList.GetAt( pos )->SetWindowText( Caption.c_str() );
 
 					    HICON hIc = AfxGetApp()->LoadIcon( IDI_ICON_CAMERA );
@@ -519,7 +519,7 @@ BOOL SVPPQWindowClass::OnCmdMsg( UINT nID, int nCode, void* pExtra, AFX_CMDHANDL
 		else
 		{
 			// Access during Test or Run Mode denied!
-			SVString Msg  = SvUl_SF::LoadSVString( IDS_USER_INFORMATION_NO_ACCESS_DURING_TEST_RUN_MODE );
+			std::string Msg  = SvUl::LoadStdString( IDS_USER_INFORMATION_NO_ACCESS_DURING_TEST_RUN_MODE );
 			TheSVObserverApp.SetStatusText( Msg.c_str() );
 			MessageBeep( 0xffffffff );
 		}

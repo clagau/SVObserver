@@ -90,7 +90,7 @@ void SVRPropertyInfo::OnPaint()
 	dc.SetBkMode(TRANSPARENT);
 	dc.SelectObject(m_pProp->GetBoldFont());
 
-	SVString Text;
+	std::string Text;
 
 	if( nullptr != pItem)
 	{

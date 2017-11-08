@@ -158,18 +158,18 @@ bool SVMatroxGigeDigitizer::HasLineInput() const
 	return !m_lineInputMoniker.empty();
 }
 
-void SVMatroxGigeDigitizer::SetLineInputMoniker(const SVString& moniker)
+void SVMatroxGigeDigitizer::SetLineInputMoniker(const std::string& moniker)
 {
 	m_lineInputMoniker = moniker.c_str();
 	m_lineInputRisingEventName = GetLineInputRisingEventName();
 	m_lineInputFallingEventName = GetLineInputFallingEventName();
 }
 
-SVString SVMatroxGigeDigitizer::GetLineInputRisingEventName() const
+std::string SVMatroxGigeDigitizer::GetLineInputRisingEventName() const
 {
 	const SVGigeDeviceParameterStruct& deviceParamStruct = GetFeature(SVGigeParameterInputEventName);
 	
-	SVString featureName;
+	std::string featureName;
 	if (deviceParamStruct.accessor.feature.HasTranslation())
 	{
 		deviceParamStruct.accessor.feature.GetGigeFeatureString(m_lineInputMoniker + " Rising", featureName);
@@ -177,11 +177,11 @@ SVString SVMatroxGigeDigitizer::GetLineInputRisingEventName() const
 	return featureName.c_str();
 }
 
-SVString SVMatroxGigeDigitizer::GetLineInputFallingEventName() const
+std::string SVMatroxGigeDigitizer::GetLineInputFallingEventName() const
 {
 	const SVGigeDeviceParameterStruct& deviceParamStruct = GetFeature(SVGigeParameterInputEventName);
 	
-	SVString featureName;
+	std::string featureName;
 	if (deviceParamStruct.accessor.feature.HasTranslation())
 	{
 		deviceParamStruct.accessor.feature.GetGigeFeatureString(m_lineInputMoniker + " Falling", featureName);

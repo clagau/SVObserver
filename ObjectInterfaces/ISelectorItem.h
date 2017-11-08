@@ -7,7 +7,7 @@
 
 #pragma once
 #pragma region Includes
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 namespace SvOi
@@ -22,7 +22,7 @@ namespace SvOi
 		//! The method gets the name of the item
 		//! \return the name of the item
 		//************************************
-		virtual const SVString& getName() const = 0;
+		virtual const std::string& getName() const = 0;
 
 		//************************************
 		//! The method sets the name of the item
@@ -34,7 +34,7 @@ namespace SvOi
 		//! The method gets the location of the item
 		//! \return the location of the item
 		//************************************
-		virtual const SVString& getLocation() const = 0;
+		virtual const std::string& getLocation() const = 0;
 
 		//************************************
 		//! The method sets the location of the item
@@ -46,7 +46,7 @@ namespace SvOi
 		//! The method gets the display location of the item
 		//! \return the display location of the item
 		//************************************
-		virtual const SVString& getDisplayLocation() const = 0;
+		virtual const std::string& getDisplayLocation() const = 0;
 
 		//************************************
 		//! The method sets the location of the item
@@ -58,7 +58,7 @@ namespace SvOi
 		//! The method gets the name of the item type
 		//! \return the type of the item as a string
 		//************************************
-		virtual const SVString& getItemTypeName() const = 0;
+		virtual const std::string& getItemTypeName() const = 0;
 
 		//************************************
 		//! The method sets the name of the item type

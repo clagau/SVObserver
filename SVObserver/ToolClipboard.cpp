@@ -35,6 +35,8 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "TextDefinesSvO.h"
 #include "SVXMLLibrary/SaxXMLHandler.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #pragma endregion Includes
@@ -72,7 +74,7 @@ HRESULT ToolClipboard::writeToClipboard( const SVGUID& rToolGuid ) const
 
 			if( ::EmptyClipboard() && 0 != ClipboardFormat )
 			{
-				SVString FileName( SvStl::GlobalPath::Inst().GetTempPath().c_str() );
+				std::string FileName( SvStl::GlobalPath::Inst().GetTempPath().c_str() );
 
 				FileName += _T("\\");
 				FileName += SvO::ClipboardFileName;
@@ -80,7 +82,7 @@ HRESULT ToolClipboard::writeToClipboard( const SVGUID& rToolGuid ) const
 
 				if( S_OK == Result)
 				{
-					SVString FileData;
+					std::string FileData;
 
 					FileName += SvO::ZipExtension;
 					readFileToString( FileName, FileData );
@@ -128,26 +130,26 @@ HRESULT ToolClipboard::readFromClipboard( int ToolListindex, SVGUID& rToolGuid )
 	try
 	{
 		CWaitCursor Wait;
-		SVString ClipboardData;
-		SVString XmlData;
+		std::string ClipboardData;
+		std::string XmlData;
 
 		Result = convertClipboardDataToString( ClipboardData );
 		if( S_OK == Result )
 		{
-			SVString FileName( SvStl::GlobalPath::Inst().GetTempPath().c_str()  );
+			std::string FileName( SvStl::GlobalPath::Inst().GetTempPath().c_str()  );
 
 			FileName += _T("\\");
 			FileName += SvO::ClipboardFileName;
 			FileName += SvO::ZipExtension;
 			writeStringToFile( FileName, ClipboardData, false );
 
-			SVStringSet ZippedFiles;
-			ZipHelper::unzipAll( FileName, SVString( SvStl::GlobalPath::Inst().GetTempPath().c_str()  ), ZippedFiles );
+			SvDef::StringSet ZippedFiles;
+			ZipHelper::unzipAll( FileName, std::string( SvStl::GlobalPath::Inst().GetTempPath().c_str()  ), ZippedFiles );
 			::DeleteFile( FileName.c_str() );
 			updateDependencyFiles( ZippedFiles );
 			
 			//Same file name just different extensions
-			SvUl_SF::searchAndReplace( FileName, SvO::ZipExtension, SvO::XmlExtension );
+			SvUl::searchAndReplace( FileName, SvO::ZipExtension, SvO::XmlExtension );
 			readFileToString( FileName, XmlData );
 			XmlData.append( _T("\0") );
 			::DeleteFile( FileName.c_str() );
@@ -200,7 +202,7 @@ bool ToolClipboard::isClipboardDataValid()
 
 	try
 	{
-		SVString ClipboardData;
+		std::string ClipboardData;
 		convertClipboardDataToString( ClipboardData );
 	}
 	catch(  const SvStl::MessageContainer& )
@@ -215,7 +217,7 @@ bool ToolClipboard::isClipboardDataValid()
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-HRESULT ToolClipboard::streamToolToZip( const SVString rFileName, const SVGUID& rToolGuid ) const
+HRESULT ToolClipboard::streamToolToZip( const std::string rFileName, const SVGUID& rToolGuid ) const
 {
 	HRESULT Result( S_OK );
 
@@ -233,7 +235,7 @@ HRESULT ToolClipboard::streamToolToZip( const SVString rFileName, const SVGUID& 
 		std::ostringstream MemoryStream;
 		SvXml::SVObjectXMLWriter XmlWriter( MemoryStream );
 
-		SVString rootNodeName( SvXml::ToolCopyTag );
+		std::string rootNodeName( SvXml::ToolCopyTag );
 		XmlWriter.WriteRootElement( rootNodeName.c_str() );
 		XmlWriter.WriteSchema();
 		writeBaseAndEnvironmentNodes( XmlWriter );
@@ -244,15 +246,15 @@ HRESULT ToolClipboard::streamToolToZip( const SVString rFileName, const SVGUID& 
 
 		XmlWriter.EndAllElements();
 
-		SVStringSet FileNames;
+		SvDef::StringSet FileNames;
 		findDependencyFiles( MemoryStream.str(), FileNames );
 
-		SVString XmlFileName( rFileName );
+		std::string XmlFileName( rFileName );
 		XmlFileName += SvO::XmlExtension;
 		FileNames.insert( XmlFileName );
 		writeStringToFile( XmlFileName, MemoryStream.str(), true );
 
-		SVString ZipFileName( rFileName );
+		std::string ZipFileName( rFileName );
 		ZipFileName += SvO::ZipExtension;
 		ZipHelper::makeZipFile( ZipFileName, FileNames, false );
 	}
@@ -317,11 +319,11 @@ void ToolClipboard::writeSourceGuids(SvXml::SVObjectXMLWriter& rXmlWriter, SVToo
 	rXmlWriter.WriteAttribute(SvXml::ToolImageTag, Value );
 }
 
-void ToolClipboard::findDependencyFiles( const std::string& rToolXmlString, SVStringSet& rDependencyFiles ) const
+void ToolClipboard::findDependencyFiles( const std::string& rToolXmlString, SvDef::StringSet& rDependencyFiles ) const
 {
 	size_t StartPos( 0 );
 	size_t EndPos( 0 );
-	SVString SearchString( SvStl::GlobalPath::Inst().GetRunPath().c_str() );
+	std::string SearchString( SvStl::GlobalPath::Inst().GetRunPath().c_str() );
 	SearchString += _T("\\");
 
 	StartPos = rToolXmlString.find( SearchString.c_str(), EndPos );
@@ -330,7 +332,7 @@ void ToolClipboard::findDependencyFiles( const std::string& rToolXmlString, SVSt
 		EndPos = rToolXmlString.find(SvXml::DataTag, StartPos );
 		if( std::string::npos != EndPos )
 		{
-			SVString FileName;
+			std::string FileName;
 			FileName = rToolXmlString.substr( StartPos, EndPos-StartPos );
 			rDependencyFiles.insert( FileName );
 
@@ -343,22 +345,22 @@ void ToolClipboard::findDependencyFiles( const std::string& rToolXmlString, SVSt
 	}
 }
 
-void ToolClipboard::updateDependencyFiles( const SVStringSet& rDependencyFiles ) const
+void ToolClipboard::updateDependencyFiles( const SvDef::StringSet& rDependencyFiles ) const
 {
-	SVString XmlFileName( SvO::ClipboardFileName );
+	std::string XmlFileName( SvO::ClipboardFileName );
 	XmlFileName += SvO::XmlExtension;
 
-	SVStringSet::const_iterator Iter( rDependencyFiles.begin() );
+	SvDef::StringSet::const_iterator Iter( rDependencyFiles.begin() );
 	while( rDependencyFiles.end() != Iter )
 	{
 		//We need to ignore the XML file it is not a dependency file
-		if( SVString::npos == Iter->find( XmlFileName.c_str() ) )
+		if( std::string::npos == Iter->find( XmlFileName.c_str() ) )
 		{
 			_TCHAR Name[_MAX_FNAME];
 			_TCHAR Extension[_MAX_EXT];
 			_splitpath( Iter->c_str(), nullptr, nullptr, Name, Extension );
 
-			SVString DestinationFile( SvStl::GlobalPath::Inst().GetRunPath().c_str());
+			std::string DestinationFile( SvStl::GlobalPath::Inst().GetRunPath().c_str());
 			DestinationFile += _T("\\");
 			DestinationFile += Name;
 			DestinationFile += Extension;
@@ -377,7 +379,7 @@ void ToolClipboard::updateDependencyFiles( const SVStringSet& rDependencyFiles )
 	}
 }
 
-HRESULT ToolClipboard::convertClipboardDataToString( SVString& rClipboardData )
+HRESULT ToolClipboard::convertClipboardDataToString( std::string& rClipboardData )
 {
 	HRESULT Result( S_OK );
 
@@ -410,7 +412,7 @@ HRESULT ToolClipboard::convertClipboardDataToString( SVString& rClipboardData )
 	return Result;
 }
 
-void ToolClipboard::writeStringToFile( const SVString& rFileName, const std::string& rFileData, bool Text ) const
+void ToolClipboard::writeStringToFile( const std::string& rFileName, const std::string& rFileData, bool Text ) const
 {
 	std::ofstream FileStream;
 
@@ -429,14 +431,14 @@ void ToolClipboard::writeStringToFile( const SVString& rFileName, const std::str
 	}
 }
 
-void ToolClipboard::readFileToString( const SVString& rFileName, SVString& rFileData ) const
+void ToolClipboard::readFileToString( const std::string& rFileName, std::string& rFileData ) const
 {
 	std::ifstream FileStream;
 
 	FileStream.open( rFileName.c_str(), std::ifstream::in | std::ifstream::binary | std::ifstream::ate );
 	if( FileStream.is_open() )
 	{
-		SVString FileData;
+		std::string FileData;
 		size_t FileSize( 0 );
 		FileSize = static_cast<size_t> (FileStream.tellg());
 		rFileData.resize( FileSize );
@@ -446,7 +448,7 @@ void ToolClipboard::readFileToString( const SVString& rFileName, SVString& rFile
 	}
 }
 
-HRESULT ToolClipboard::convertXmlToTree( const SVString& rXmlData, SVTreeType& rTree ) const
+HRESULT ToolClipboard::convertXmlToTree( const std::string& rXmlData, SVTreeType& rTree ) const
 {
 	SvXml::SaxXMLHandler<SVTreeType>  SaxHandler;
 	HRESULT	Result =SaxHandler.BuildFromXMLString (&rTree, _variant_t(rXmlData.c_str()));
@@ -487,7 +489,7 @@ HRESULT ToolClipboard::checkVersion( SVTreeType& rTree ) const
 	return Result;
 }
 
-HRESULT ToolClipboard::validateGuids( SVString& rXmlData, SVTreeType& rTree, int ToolListindex ) const
+HRESULT ToolClipboard::validateGuids( std::string& rXmlData, SVTreeType& rTree, int ToolListindex ) const
 {
 	HRESULT Result( S_OK );
 
@@ -563,7 +565,7 @@ HRESULT ToolClipboard::validateGuids( SVString& rXmlData, SVTreeType& rTree, int
 								DefaultImageGuid = m_rInspection.GetToolSetMainImage()->GetUniqueObjectID();
 							}
 						}
-						SvUl_SF::searchAndReplace( rXmlData, ToolImageGuid.ToString().c_str(),  DefaultImageGuid.ToString().c_str() );
+						SvUl::searchAndReplace( rXmlData, ToolImageGuid.ToString().c_str(),  DefaultImageGuid.ToString().c_str() );
 					}
 				}
 			}
@@ -580,7 +582,7 @@ HRESULT ToolClipboard::validateGuids( SVString& rXmlData, SVTreeType& rTree, int
 	return Result;
 }
 
-HRESULT ToolClipboard::replaceToolName( SVString& rXmlData, SVTreeType& rTree ) const
+HRESULT ToolClipboard::replaceToolName( std::string& rXmlData, SVTreeType& rTree ) const
 {
 	HRESULT Result( S_FALSE );
 
@@ -597,8 +599,8 @@ HRESULT ToolClipboard::replaceToolName( SVString& rXmlData, SVTreeType& rTree ) 
 			_variant_t ObjectName;
 
 			SvXml::SVNavigateTree::GetItem( rTree, scObjectNameTag, ToolItem, ObjectName);
-			SVString ToolName = SvUl_SF::createSVString( ObjectName.bstrVal );
-			SVString NewName;
+			std::string ToolName = SvUl::createStdString( ObjectName.bstrVal );
+			std::string NewName;
 
 			SVIPDoc* pDoc = TheSVObserverApp.GetIPDoc( m_rInspection.GetUniqueObjectID() );
 			if( nullptr != pDoc )
@@ -608,7 +610,7 @@ HRESULT ToolClipboard::replaceToolName( SVString& rXmlData, SVTreeType& rTree ) 
 			}
 			if( NewName != ToolName )
 			{
-				SvUl_SF::searchAndReplace( rXmlData, ToolName.c_str(), NewName.c_str() );
+				SvUl::searchAndReplace( rXmlData, ToolName.c_str(), NewName.c_str() );
 			}
 			Result = S_OK;
 		}
@@ -624,7 +626,7 @@ HRESULT ToolClipboard::replaceToolName( SVString& rXmlData, SVTreeType& rTree ) 
 	return Result;
 }
 
-HRESULT ToolClipboard::replaceUniqueGuids( SVString& rXmlData, SVTreeType& rTree ) const
+HRESULT ToolClipboard::replaceUniqueGuids( std::string& rXmlData, SVTreeType& rTree ) const
 {
 	HRESULT Result( S_FALSE );
 
@@ -632,17 +634,17 @@ HRESULT ToolClipboard::replaceUniqueGuids( SVString& rXmlData, SVTreeType& rTree
 
 	if( SvXml::SVNavigateTree::GetItemBranch( rTree, SvXml::ToolsTag, nullptr, ToolsItem ) )
 	{
-		SVStringSet UniqueIDList;
+		SvDef::StringSet UniqueIDList;
 
-		rTree.getLeafValues( ToolsItem, SVString( scUniqueReferenceIDTag ), UniqueIDList);
+		rTree.getLeafValues( ToolsItem, std::string( scUniqueReferenceIDTag ), UniqueIDList);
 
-		SVStringSet::iterator Iter( UniqueIDList.begin() );
+		SvDef::StringSet::iterator Iter( UniqueIDList.begin() );
 		//Replace each uniqueID with a new GUID
 		SVGUID newUniqueID( GUID_NULL );
 		while( UniqueIDList.end() != Iter )
 		{
 			CoCreateGuid( &newUniqueID );
-			SvUl_SF::searchAndReplace( rXmlData, Iter->c_str(), newUniqueID.ToString().c_str() );
+			SvUl::searchAndReplace( rXmlData, Iter->c_str(), newUniqueID.ToString().c_str() );
 			++Iter;
 		}
 

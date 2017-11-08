@@ -28,7 +28,7 @@
 #include "TriggerInformation/SVIMTypeInfoStruct.h"
 #include "SVImportedInspectionInfo.h" 
 #include "Definitions/GlobalConstantData.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 // Moved SVIM_FULL_BOARD, etc. to SVObserverEnums.h
@@ -74,7 +74,7 @@ class SVOTriggerList;
 class CSVOConfigAssistantDlg : public CDialog
 {
 public:
-	typedef SVBiUniqueMap< SVIMProductEnum, SVString >::type SVProductStringMap;
+	typedef SVBiUniqueMap< SVIMProductEnum, std::string >::type SVProductStringMap;
 
 	CSVOConfigAssistantDlg(CWnd* pParent = nullptr);   // standard constructor
 
@@ -103,11 +103,11 @@ public:
 	BOOL IsInspectionNameInList(LPCTSTR InspectionName) const;
 	BOOL IsPPQInList(LPCTSTR PPQName) const;
 
-	SVString BuildDigName( const SVOCameraObj& rCameraObj ) const;
-	SVString BuildTrgDig(const SvTi::SVOTriggerObj& rTriggerObj) const;
+	std::string BuildDigName( const SVOCameraObj& rCameraObj ) const;
+	std::string BuildTrgDig(const SvTi::SVOTriggerObj& rTriggerObj) const;
 
-	SVString GetInspectionLabelFromName(LPCTSTR InspectName);
-	SVString GetInspectionNameFromLabel(LPCTSTR InspectLabel);
+	std::string GetInspectionLabelFromName(LPCTSTR InspectName);
+	std::string GetInspectionNameFromLabel(LPCTSTR InspectLabel);
 	BOOL RenameInspection(LPCTSTR InspectLabel, LPCTSTR NewName);
 
 	int GetCameraListCount() const;
@@ -124,18 +124,18 @@ public:
 	SVOPPQObjPtr GetPPQObject(int iPos);
 	SVOPPQObjPtr GetPPQObjectByName(LPCTSTR PPQName);
 
-	SVString GetNextCameraName();
+	std::string GetNextCameraName();
 	int GetNextCameraNumber() const;
-	SVString GetNextInspectionName() const;
-	SVString GetNextInspectionDisplayName() const;
-	SVString GetNextTriggerName(LPCTSTR BaseName) const;
+	std::string GetNextInspectionName() const;
+	std::string GetNextInspectionDisplayName() const;
+	std::string GetNextTriggerName(LPCTSTR BaseName) const;
 	int GetNextTriggerID() const;
-	SVString GetNextPPQName() const;
+	std::string GetNextPPQName() const;
 
-	SVStringVector m_UsedTriggers;
-	SVStringVector m_UsedInspections;
-	SVStringVector m_InspectionNamesUsed;
-	SVStringVector m_InspectionLabelsUsed;
+	SvDef::StringVector m_UsedTriggers;
+	SvDef::StringVector m_UsedInspections;
+	SvDef::StringVector m_InspectionNamesUsed;
+	SvDef::StringVector m_InspectionLabelsUsed;
 
 	BOOL IsTriggerUsed(LPCTSTR TriggerName) const;
 	void AddUsedTrigger(LPCTSTR TriggerName);
@@ -154,7 +154,7 @@ public:
 
 	BOOL ItemChanged(int iItemDlg, LPCTSTR LabelName, int iAction); 
 
-	SVString GetConfigurationName();
+	std::string GetConfigurationName();
 
 	BOOL GetNewConfigFlag();
 
@@ -226,8 +226,8 @@ private:
 	HRESULT ConnectToolsetBuffers();
 	void resolveGlobalConflicts( SvDef::GlobalConflictPairVector& rGlobalConflicts );
 
-	static SVString GetNameFromProductID( SVIMProductEnum p_ID );
-	static SVIMProductEnum GetProductIDFromName( const SVString& rName );
+	static std::string GetNameFromProductID( SVIMProductEnum p_ID );
+	static SVIMProductEnum GetProductIDFromName( const std::string& rName );
 
 	void ClearMessages();
 	//data members
@@ -235,7 +235,7 @@ private:
 	BOOL m_bModified;
 	SVIMProductEnum m_lSystemType;
 	SVIMProductEnum m_lConfigurationType;
-	SVString m_sConfigName;
+	std::string m_sConfigName;
 
 	BOOL m_bCameraGood;
 	BOOL m_bTriggerGood;
@@ -279,7 +279,7 @@ private:
 	void CreateDefaultForSVIMDigital( int Number, LPCTSTR TriggerBaseName );
 
 	void SetCurrentSystemDisplay();
-	SVString BuildDisplayMessage( ConfigMsgTypeEnum iErrorFlag, LPCTSTR ObjectName, LPCTSTR Message );
+	std::string BuildDisplayMessage( ConfigMsgTypeEnum iErrorFlag, LPCTSTR ObjectName, LPCTSTR Message );
 
 	void CameraDeletedCheckAgainstPPQ(LPCTSTR CameraName);
 	void TriggerDeletedCheckAgainstPPQ(LPCTSTR TriggerName);
@@ -306,7 +306,7 @@ private:
 	BOOL IsCameraOnPPQ(LPCTSTR PPQName, LPCTSTR CameraName);
 	BOOL IsTriggerOnPPQ(LPCTSTR PPQName, LPCTSTR TriggerName);
 
-	SVOPPQObjPtr GetPPQObjectByInspectionName(const SVString& inspectionName);
+	SVOPPQObjPtr GetPPQObjectByInspectionName(const std::string& inspectionName);
 
 	void ConvertToDigital(SVIMProductEnum productType);
 

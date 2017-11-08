@@ -11,7 +11,7 @@
 //Moved to precompiled header: #include <boost/noncopyable.hpp>
 #include "ObjectInterfaces\NameValueList.h"
 #include "SVUtilityLibrary\SVGUID.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #include "ImageController.h"
 #include "BoundValue.h"
 #include "ValuesAccessor.h"
@@ -39,8 +39,8 @@ namespace SvOg
 			bool IsUpdateAuxExtentsEnabled() const;
 			void EnableAuxExtents(bool bEnable);
 			const SvUl::NameGuidList& GetAvailableImageList() const;
-			SVString GetAuxSourceImageName() const;
-			HRESULT SetAuxSourceImage(const SVString& rName);
+			std::string GetAuxSourceImageName() const;
+			HRESULT SetAuxSourceImage(const std::string& rName);
 			SvUl::NameGuidPair GetAuxSourceImage() const;
 
 	private:

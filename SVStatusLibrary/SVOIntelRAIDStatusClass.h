@@ -11,8 +11,6 @@
 
 #pragma once
 
-#include "SVUtilityLibrary/SVString.h"
-
 namespace SvStl
 {
 	class SVOIntelRAIDStatusClass
@@ -24,15 +22,15 @@ namespace SvStl
 		HRESULT UpdateStatus();
 		HRESULT CheckStatus();
 
-		const SVString& GetRaidStatus();
-		const SVString& GetErrorStatus();
+		const std::string& GetRaidStatus();
+		const std::string& GetErrorStatus();
 
 		const HANDLE GetCheckEvent();
 
 	protected:
 		HANDLE m_hCheckEvent;
 
-		SVString m_RaidStatus;
-		SVString m_ErrorStatus;
+		std::string m_RaidStatus;
+		std::string m_ErrorStatus;
 	};
 } //namespace SvStl

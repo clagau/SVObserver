@@ -16,7 +16,7 @@
 //Moved to precompiled header: #include <ostream>
 //Moved to precompiled header: #include <boost/function.hpp>
 //Moved to precompiled header: #include <boost/tr1/memory.hpp>
-#include "SVUtilityLibrary/SVString.h"
+
 #include "SVUtilityLibrary/SVVariantList.h"
 #include "SVUtilityLibrary/XMLwriter.h"
 #include "SVObjectLibrary/SVObjectWriter.h"

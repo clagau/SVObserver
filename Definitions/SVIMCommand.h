@@ -24,4 +24,4 @@ namespace SvDef
 	const DWORD SVIM_SAVING_CONFIG =	0x0100;
 	const DWORD SVIM_STOPPING =			0x0200;
 	const DWORD SVIM_RAID_FAILURE =		0x0400;
-} //namespace SvOi
+} //namespace SvDef

@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVLUTEquation.h"
 #include "SVObserver.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVLUTEquationClass, SVLUTEquationClassGuid );
@@ -117,12 +117,12 @@ bool SVLUTEquationClass::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 bool SVLUTEquationClass::SetDefaultFormula(SvStl::MessageContainerVector *pErrorMessages)
 {
 	// Get current complete name of LUT Index...
-	SVString Name = m_lutIndex.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
+	std::string Name = m_lutIndex.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
 
 	if( ! Name.empty() )
 	{
 		// Set equation in quotes...
-		SVString strEquation = SvUl_SF::Format( _T( "\"%s\"" ), Name.c_str() );
+		std::string strEquation = SvUl::Format( _T( "\"%s\"" ), Name.c_str() );
 
 		// Set equation...
 		SetEquationText( strEquation );
@@ -134,7 +134,7 @@ bool SVLUTEquationClass::SetDefaultFormula(SvStl::MessageContainerVector *pError
 		}
 		
 		// something is wrong, flush equation...
-		SetEquationText( SVString() );
+		SetEquationText( std::string() );
 	}
 
 	return false;

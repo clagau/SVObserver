@@ -13,15 +13,14 @@
 
 #pragma region Includes
 #include "SVHBitmapUtilitiesLibrary/SVImageFormatEnum.h"
-#include "SVUtilityLibrary/SVString.h"
 #include "Definitions/SVImageEnums.h"
 #pragma endregion Includes
 
 class SVCameraFormat
 {
 public:
-	SVString m_strName;
-	SVString m_strDescription;
+	std::string m_strName;
+	std::string m_strDescription;
 	SVImageFormatEnum m_eImageType;
 	long m_lWidthMax;
 	long m_lHeightMax;
@@ -43,7 +42,7 @@ public:
 	void AssignUserChangableValues( const SVCameraFormat& rRhs );
 	void AssignConstantValues( const SVCameraFormat& rRhs );
 
-	HRESULT ParseAndAssignCameraFormat( const SVString& rCameraFormat );
+	HRESULT ParseAndAssignCameraFormat( const std::string& rCameraFormat );
 
 private:
 	void init();

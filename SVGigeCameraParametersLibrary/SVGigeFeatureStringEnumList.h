@@ -16,14 +16,14 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary/SVString.h"
+
 #include "SVContainerLibrary/SVBidirectionalMap.h"
 #pragma endregion Includes
 
 
 class SVGigeFeatureStringEnumList
 {
-	SVBidirectionalMap<SVString, SVString>::type m_stringEnums;
+	SVBidirectionalMap<std::string, std::string>::type m_stringEnums;
 
 public:
 	SVGigeFeatureStringEnumList();
@@ -41,13 +41,13 @@ public:
 	//! \param rDeviceParam [in] reference to the device parameter string
 	//! \param rGigeFeature [out] reference to the corresponding Gige Feature string
 	//! \returns S_OK on success
-	HRESULT GetGigeFeatureString(const SVString& rDeviceParam, SVString& rGigeFeature) const;
+	HRESULT GetGigeFeatureString(const std::string& rDeviceParam, std::string& rGigeFeature) const;
 
 	//! Gets the Device Parameter string
 	//! \param rGigeFeature [in] reference to the Gige feature string
 	//! \param rDeviceParam [out] reference to the corresponding Device Parameter string
 	//! \returns S_OK on success
-	HRESULT GetDeviceParamString(const SVString& rGigeFeature, SVString& rDeviceParam) const;
+	HRESULT GetDeviceParamString(const std::string& rGigeFeature, std::string& rDeviceParam) const;
 };
 
 #include "SVGigeFeatureStringEnumList.inl"

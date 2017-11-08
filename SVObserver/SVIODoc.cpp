@@ -38,7 +38,7 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -258,7 +258,7 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 				{
 					pRemoteInput = nullptr;
 
-					SVString RemoteInputName = SvUl_SF::Format(SvO::cRemoteInputNumberLabel, j + 1);
+					std::string RemoteInputName = SvUl::Format(SvO::cRemoteInputNumberLabel, j + 1);
 
 					pRemoteInput = dynamic_cast<SVRemoteInputObject*> (pInputList->GetInputFlyweight( RemoteInputName, SVRemoteInputObjectType, j));
 
@@ -299,7 +299,7 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 				j = oDlg.m_lRemoteInputCount;
 				for( i = 0; i < lSize; i++ )
 				{
-					SVString RemoteInputName = SvUl_SF::Format( SvO::cRemoteInputNumberLabel, j + 1 );
+					std::string RemoteInputName = SvUl::Format( SvO::cRemoteInputNumberLabel, j + 1 );
 
 					bool bFound = false;
 
@@ -433,12 +433,12 @@ BOOL SVIODoc::OnSaveDocument(LPCTSTR lpszPathName)
 
 	msvFileName.SetFullFileName( lpszPathName );
 
-	if ( 0 != SvUl_SF::CompareNoCase( msvFileName.GetPathName(),SVFileNameManagerClass::Instance().GetRunPathName() ) )
+	if ( 0 != SvUl::CompareNoCase( msvFileName.GetPathName(),SVFileNameManagerClass::Instance().GetRunPathName() ) )
 	{
 		msvFileName.SetPathName( SVFileNameManagerClass::Instance().GetRunPathName().c_str() );
 	}
 
-	if ( 0 != SvUl_SF::CompareNoCase( msvFileName.GetExtension(), SVString(_T(".iod") ) ) )
+	if ( 0 != SvUl::CompareNoCase( msvFileName.GetExtension(), std::string(_T(".iod") ) ) )
 	{
 		msvFileName.SetExtension( _T(".iod") );
 	}

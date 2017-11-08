@@ -48,9 +48,9 @@ SVDeviceParam::~SVDeviceParam()
 {
 }
 
-/*static*/SVString SVDeviceParam::GetParameterName(SVDeviceParamEnum e)
+/*static*/std::string SVDeviceParam::GetParameterName(SVDeviceParamEnum e)
 {
-	SVString Result;
+	std::string Result;
 	TheDeviceParamFactory::InstanceType::const_iterator iter = TheDeviceParamFactory::Instance().PrimaryMap().find(e);
 	if (iter != TheDeviceParamFactory::Instance().PrimaryMap().end())
 	{
@@ -80,13 +80,13 @@ SVDeviceParam* SVDeviceParam::Create(SVDeviceParamEnum eType)
 	return pParam;
 }
 
-HRESULT SVDeviceParam::SetName(const SVString& rName)
+HRESULT SVDeviceParam::SetName(const std::string& rName)
 {
 	m_strName = rName;
 	return S_OK;
 }
 
-HRESULT SVDeviceParam::SetVisualName( const SVString& rName)
+HRESULT SVDeviceParam::SetVisualName( const std::string& rName)
 {
 	m_strVisualName = rName;
 	return S_OK;
@@ -98,7 +98,7 @@ HRESULT SVDeviceParam::SetDetailLevel( long lDetailLevel )
 	return S_OK;
 }
 
-HRESULT SVDeviceParam::SetDescription(const SVString& rDescription)
+HRESULT SVDeviceParam::SetDescription(const std::string& rDescription)
 {
 	m_strDescription = rDescription;
 	return S_OK;

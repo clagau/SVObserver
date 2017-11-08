@@ -9,8 +9,8 @@
 #pragma region Includes
 //Moved to precompiled header: #include <comutil.h>
 #include "SVOResource\resource.h"
-#include "SVUtilityLibrary\SVString.h"
 #include "Definitions/GlobalConstantData.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -43,7 +43,7 @@ namespace SvOg
 		//! Method to set a list of existing names already used
 		//! \param rNames [in] reference to list of names
 		//************************************
-		void setExistingNames( const SVStringVector& rNames );
+		void setExistingNames( const SvDef::StringVector& rNames );
 	#pragma endregion Public Methods
 
 	#pragma region Private Methods
@@ -55,14 +55,14 @@ namespace SvOg
 		virtual void OnOK() override;
 		
 		void DDV_GlobalConstantValue( CDataExchange* pDX, SvDef::GlobalConstantData::DataTypeEnum Type );
-		void DDV_GlobalName( CDataExchange* pDX, const SVString& rName );
+		void DDV_GlobalName( CDataExchange* pDX, const std::string& rName );
 	#pragma region Private Methods
 
 	#pragma region Member variables
 	private:
 		SvDef::GlobalConstantData& m_rData;					//Reference to the global constant data
-		SVStringVector			m_ExistingNames;			//List of existing global constant names
-		SVString				m_Branch;					//The branch in which the global resides 
+		SvDef::StringVector		m_ExistingNames;			//List of existing global constant names
+		std::string				m_Branch;					//The branch in which the global resides 
 		CString					m_Name;						//The global constant name
 		CComboBox				m_Type;						//The global constant type
 		CString					m_Description;				//The global constant description

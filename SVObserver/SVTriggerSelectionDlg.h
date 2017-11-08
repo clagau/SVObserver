@@ -13,10 +13,10 @@
 #pragma region Includes
 
 //Moved to precompiled header: #include <map>
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
-typedef std::map<SVString, int> SVTriggerNameIdList;
+typedef std::map<std::string, int> SVTriggerNameIdList;
 
 class SVTriggerSelectionDlg : public CDialog
 {
@@ -29,7 +29,7 @@ public:
 // Dialog Data
 	enum { IDD = IDD_TRIGGER_SELECTION_DLG };
 
-	void GetSelectedTrigger(SVString& rName, int& rID) const;
+	void GetSelectedTrigger(std::string& rName, int& rID) const;
 
 	virtual BOOL OnInitDialog() override;
 	afx_msg void OnBnClickedOk();

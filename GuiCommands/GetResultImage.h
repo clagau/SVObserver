@@ -32,7 +32,7 @@ namespace SvCmd
 			SvOi::ISVImage* pImage = SvOi::FindImageObject(m_InstanceID, imageObjectInfo);
 			if (pImage)
 			{
-				SVString name = pImage->getDisplayedName();
+				std::string name = pImage->getDisplayedName();
 				SvOi::IObjectClass* pObject = dynamic_cast<SvOi::IObjectClass *>(pImage);
 				m_list.push_back(std::make_pair(name, pObject->GetUniqueObjectID()));
 			}

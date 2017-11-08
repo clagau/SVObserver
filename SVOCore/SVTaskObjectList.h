@@ -16,7 +16,6 @@
 #include "SVValueObjectLibrary/SVValueObject.h"
 #include "SVClassInfoStruct.h"
 #include "SVTaskObject.h"
-#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 class SVTaskObjectListClass : public SVTaskObjectClass, public SvOi::ITaskObjectListClass
@@ -69,7 +68,7 @@ public:
 	virtual void SetInvalid() override;
 	virtual void SetDisabled() override;
 
-	const SVString checkName( LPCTSTR ToolName ) const;
+	const std::string checkName( LPCTSTR ToolName ) const;
 
 	virtual HRESULT CollectOverlays( SVImageClass* p_Image, SVExtentMultiLineStructVector &p_MultiLineArray ) override;
 
@@ -93,7 +92,7 @@ public:
 	virtual void ConnectObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual void GetInputInterface(SVInputInfoListClass& rInputList, bool bAlsoFriends) const override;
 	virtual SvOi::IObjectClass* getFirstObject(const SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends = true, const SvOi::IObjectClass* pRequestor = nullptr) const override;
-	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName) override;
+	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override;
 	virtual bool ConnectAllInputs() override;
 	virtual bool replaceObject(SVObjectClass* pObject, const GUID& rNewGuid) override;
 

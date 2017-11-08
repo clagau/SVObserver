@@ -20,7 +20,7 @@ namespace SvSml
 		
 	}
 
-	MonitorEntryPointer  MonitorListCpy::AddEntry(ListType::typ ltype, const SVString& name)
+	MonitorEntryPointer  MonitorListCpy::AddEntry(ListType::typ ltype, const std::string& name)
 	{
 		MonitorEntriesMap::iterator MeMIt =  m_EntriesMap.find(name);
 		if(MeMIt ==  m_EntriesMap.end())
@@ -61,7 +61,7 @@ namespace SvSml
 			ShMoListEntryVector::const_iterator itEnd = sharedMonitorList.GetShMoListEntryVector(ListType::typ(t)).end();
 			for(; it !=  itEnd; ++it)
 			{
-				SVString entryname = it->name.c_str();
+				std::string entryname = it->name.c_str();
 				MonitorEntriesMap::iterator MeMIt =  m_EntriesMap.find(entryname);
 				if(MeMIt ==  m_EntriesMap.end())
 				{
@@ -122,11 +122,11 @@ namespace SvSml
 
 	}
 
-	void MonitorListCpy::SetMonitorlistname(const SVString& listname)
+	void MonitorListCpy::SetMonitorlistname(const std::string& listname)
 	{
 		m_MonitorListName = listname;
 	}
-	void MonitorListCpy::SetPPQname(const SVString& ppqName)
+	void MonitorListCpy::SetPPQname(const std::string& ppqName)
 	{
 		m_ppqName = ppqName;
 	}
@@ -147,11 +147,11 @@ namespace SvSml
 		m_IsActive = isactive;
 	}
 
-	const SVString&  MonitorListCpy::GetMonitorlistname() const
+	const std::string&  MonitorListCpy::GetMonitorlistname() const
 	{
 		return m_MonitorListName;
 	}
-	const SVString&  MonitorListCpy::GetPPQname() const
+	const std::string&  MonitorListCpy::GetPPQname() const
 	{
 		return m_ppqName;
 	}
@@ -194,9 +194,9 @@ namespace SvSml
 			assert(it->second.get());
 			assert(it->first == it->second->name);
 
-			SVString inspectionName;
+			std::string inspectionName;
 			std::size_t pos = it->first.find_first_of('.');
-			if(pos != SVString::npos) 
+			if(pos != std::string::npos) 
 				inspectionName  = it->first.substr(0,pos);
 			else 
 				inspectionName = it->first;

@@ -14,6 +14,7 @@
 #include "BasicValueObject.h"
 
 #include "SVObjectLibrary\SVObjectLevelCreateStruct.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary\SVSafeArray.h"
 #include "CameraLibrary\SVBoolValueDeviceParam.h"
 #include "CameraLibrary\SVLongValueDeviceParam.h"
@@ -87,7 +88,7 @@ HRESULT BasicValueObject::setValue(const _variant_t& rValue, int Index /*= -1*/ 
 			//If it is VT_BSTR then we need to copy the text otherwise we get just a pointer to the string
 			if( VT_BSTR == TempValue.vt )
 			{
-				SVString Temp = SvUl_SF::createSVString( TempValue );
+				std::string Temp = SvUl::createStdString( TempValue );
 				Lock();
 				m_Value.Clear();
 				m_Value.vt = VT_BSTR;
@@ -107,7 +108,7 @@ HRESULT BasicValueObject::setValue(const _variant_t& rValue, int Index /*= -1*/ 
 	return Result;
 }
 
-HRESULT BasicValueObject::setValue( const SVString& rValue, int Index /*= -1*/ )
+HRESULT BasicValueObject::setValue( const std::string& rValue, int Index /*= -1*/ )
 {
 	HRESULT Result( S_FALSE );
 
@@ -129,7 +130,7 @@ HRESULT BasicValueObject::getValue(_variant_t& rValue, int Index /*= -1*/, int B
 	return S_OK;
 }
 
-HRESULT BasicValueObject::getValue(SVString& rValue, int Index /*= -1*/, int Bucket /*= -1*/ ) const
+HRESULT BasicValueObject::getValue(std::string& rValue, int Index /*= -1*/, int Bucket /*= -1*/ ) const
 {
 	HRESULT	Result = S_OK;
 
@@ -140,7 +141,7 @@ HRESULT BasicValueObject::getValue(SVString& rValue, int Index /*= -1*/, int Buc
 	{
 	case VT_BSTR:
 		{
-			rValue = SvUl_SF::createSVString(m_Value.bstrVal);
+			rValue = SvUl::createStdString(m_Value.bstrVal);
 		}
 		break;
 	case VT_BOOL:
@@ -156,22 +157,22 @@ HRESULT BasicValueObject::getValue(SVString& rValue, int Index /*= -1*/, int Buc
 		break;
 	case VT_I4:
 		{
-			rValue = SvUl_SF::Format( _T("%d"), m_Value.lVal );
+			rValue = SvUl::Format( _T("%d"), m_Value.lVal );
 		}
 		break;
 	case VT_I8:
 		{
-			rValue = SvUl_SF::Format( _T("%d"), m_Value.llVal );
+			rValue = SvUl::Format( _T("%d"), m_Value.llVal );
 		}
 		break;
 	case VT_R4:
 		{
-			rValue = SvUl_SF::Format( _T("%f"), m_Value.fltVal );
+			rValue = SvUl::Format( _T("%f"), m_Value.fltVal );
 		}
 		break;
 	case VT_R8:
 		{
-			rValue = SvUl_SF::Format( _T("%f"), m_Value.dblVal );
+			rValue = SvUl::Format( _T("%f"), m_Value.dblVal );
 		}
 		break;
 	default:
@@ -247,7 +248,7 @@ HRESULT BasicValueObject::CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD MemByteSiz
 			break;
 		case VT_BSTR:
 			{
-				SVString TempString = SvUl_SF::createSVString(m_Value.bstrVal);
+				std::string TempString = SvUl::createStdString(m_Value.bstrVal);
 				size_t Size = std::min(static_cast<size_t> (GetByteSize() - 1), TempString.size());
 				pValue = nullptr;
 				memcpy(pMemoryBlock, TempString.c_str(), Size);
@@ -303,9 +304,9 @@ HRESULT BasicValueObject::getValue( bool& rValue ) const
 	return Result;
 }
 
-SVString BasicValueObject::getTypeName() const
+std::string BasicValueObject::getTypeName() const
 {
-	SVString Result = _T("Invalid");
+	std::string Result = _T("Invalid");
 
 	switch (m_Value.vt)
 	{
@@ -523,8 +524,8 @@ HRESULT BasicValueObject::ConvertArrayToVariant( _variant_t& rValue ) const
 		//From SVRC only of type BSTR should be received
 		if(VT_BSTR == rValue.vt)
 		{
-			SVString StringValue;
-			StringValue = SvUl_SF::createSVString(rValue.bstrVal);
+			std::string StringValue;
+			StringValue = SvUl::createStdString(rValue.bstrVal);
 			rValue.Clear();
 			rValue.vt = m_Value.vt;
 			switch(m_Value.vt)
@@ -533,11 +534,11 @@ HRESULT BasicValueObject::ConvertArrayToVariant( _variant_t& rValue ) const
 				rValue.bstrVal = bstr_t(StringValue.c_str());
 				break;
 			case VT_BOOL:
-				if( 0 == SvUl_SF::CompareNoCase( StringValue, _T("True") ))
+				if( 0 == SvUl::CompareNoCase( StringValue, _T("True") ))
 				{
 					rValue.boolVal = TRUE;
 				}
-				else if( 0 == SvUl_SF::CompareNoCase( StringValue, _T("False") ) )
+				else if( 0 == SvUl::CompareNoCase( StringValue, _T("False") ) )
 				{
 					rValue.boolVal = FALSE;
 				}

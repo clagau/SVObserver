@@ -35,7 +35,8 @@
 #include "SVXMLLibrary/SaxXMLHandler.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVXMLLibrary/SaxExtractPropertiesHandler.h"
-#include "SVUtilityLibrary/SVStringConversions.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 static LPCTSTR scImportNewExt = _T(".new.xml");
@@ -46,7 +47,7 @@ static LPCTSTR scColorExportExt = _T(".cxp");
 static LPCTSTR scZipExt = _T(".zip");
 static LPCTSTR scXMLExt = _T(".xml");
 
-static bool isZipFile(const SVString& filename)
+static bool isZipFile(const std::string& filename)
 {
 	bool bRetVal = false;
 	char ext[_MAX_EXT];
@@ -58,7 +59,7 @@ static bool isZipFile(const SVString& filename)
 	return bRetVal;
 }
 
-static bool isXMLFile(const SVString& filename)
+static bool isXMLFile(const std::string& filename)
 {
 	bool bRetVal = false;
 	char ext[_MAX_EXT];
@@ -70,7 +71,7 @@ static bool isXMLFile(const SVString& filename)
 	return bRetVal;
 }
 
-static bool isExportFile(const SVString& filename)
+static bool isExportFile(const std::string& filename)
 {
 	bool bRetVal = false;
 	char ext[_MAX_EXT];
@@ -131,11 +132,11 @@ static int LaunchTransform(const char* inFilename, const char* outFilename, cons
 	return exitCode;
 }
 
-static std::string GetFilenameWithoutExt(const SVString& filename)
+static std::string GetFilenameWithoutExt(const std::string& filename)
 {
 	std::string result;
-	SVString::size_type pos = filename.find_last_of('.');
-	if (pos != SVString::npos)
+	std::string::size_type pos = filename.find_last_of('.');
+	if (pos != std::string::npos)
 	{
 		result = filename.substr(0, pos).c_str();
 	}
@@ -159,22 +160,22 @@ static bool ImportPPQInputs(SVTreeType& rTree, Insertor insertor)
 
 			while (bOk && nullptr != htiDataChild )
 			{
-				SVString DataName( rTree.getBranchName(htiDataChild) );
+				std::string DataName( rTree.getBranchName(htiDataChild) );
 				
 				long l_PPQPosition = -1;
 				_variant_t svValue;
-				SVString Type;
+				std::string Type;
 				long l_Index;
 
 				bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_IO_TYPE, htiDataChild, svValue);
 				if (bOk)
 				{
-					Type = SvUl_SF::createSVString( svValue );
+					Type = SvUl::createStdString( svValue );
 				}
 				bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_ITEM_NAME, htiDataChild, svValue);
 				if (bOk)
 				{
-					DataName = SvUl_SF::createSVString( svValue );
+					DataName = SvUl::createStdString( svValue );
 				}
 				bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_PPQ_POSITION, htiDataChild, svValue);
 				if (bOk)
@@ -241,7 +242,7 @@ static bool importGlobalConstants( SVTreeType& rTree, SvDef::GlobalConstantDataS
 			Result = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_DESCRIPTION, hItemChild, Value );
 			if( Result )
 			{
-				SVString Description = SvUl_SF::createSVString( Value.bstrVal );
+				std::string Description = SvUl::createStdString( Value.bstrVal );
 				//This is needed to insert any CR LF in the description which were replaced while saving
 				SvUl::RemoveEscapedSpecialCharacters( Description, true );
 				GlobalData.m_Description = Description;
@@ -316,7 +317,7 @@ static void checkGlobalConstants( const SvDef::GlobalConstantDataSet& rImportedG
 
 typedef std::insert_iterator<SVImportedInputList> InputListInsertor;
 
-HRESULT LoadInspectionXml(const SVString& filename, const SVString& zipFilename, const SVString& inspectionName, const SVString& cameraName, SVImportedInspectionInfo& inspectionInfo, SvDef::GlobalConflictPairVector& rGlobalConflicts, SVIProgress& rProgress, int& currentOp, int numOperations)
+HRESULT LoadInspectionXml(const std::string& filename, const std::string& zipFilename, const std::string& inspectionName, const std::string& cameraName, SVImportedInspectionInfo& inspectionInfo, SvDef::GlobalConflictPairVector& rGlobalConflicts, SVIProgress& rProgress, int& currentOp, int numOperations)
 {
 	_bstr_t bstrRevisionHistory;
 	_bstr_t bstrChangedNode;
@@ -336,8 +337,8 @@ HRESULT LoadInspectionXml(const SVString& filename, const SVString& zipFilename,
 		rProgress.UpdateText(_T("Importing Dependent Files..."));
 		rProgress.UpdateProgress(++currentOp, numOperations);
 
-		SVStringSet Files;
-		ZipHelper::unzipAll( zipFilename, SVString( SvStl::GlobalPath::Inst().GetRunPath().c_str() ), Files );
+		SvDef::StringSet Files;
+		ZipHelper::unzipAll( zipFilename, std::string( SvStl::GlobalPath::Inst().GetRunPath().c_str() ), Files );
 
 		rProgress.UpdateText(_T("Importing PPQ Inputs..."));
 		rProgress.UpdateProgress(++currentOp, numOperations);
@@ -445,16 +446,16 @@ HRESULT LoadInspectionXml(const SVString& filename, const SVString& zipFilename,
 	return hr;
 }
 
-HRESULT SVInspectionImporter::Import(const SVString& filename, const SVString& inspectionName, const SVString& cameraName, SVImportedInspectionInfo& inspectionInfo, SvDef::GlobalConflictPairVector& rGlobalConflicts, SVIProgress& rProgress)
+HRESULT SVInspectionImporter::Import(const std::string& filename, const std::string& inspectionName, const std::string& cameraName, SVImportedInspectionInfo& inspectionInfo, SvDef::GlobalConflictPairVector& rGlobalConflicts, SVIProgress& rProgress)
 {
 	HRESULT hr = S_OK;
 	::CoInitialize(nullptr);
 
-	SVString inFilename = filename;
-	SVString zipFilename = GetFilenameWithoutExt(inFilename);
+	std::string inFilename = filename;
+	std::string zipFilename = GetFilenameWithoutExt(inFilename);
 	zipFilename += scDependentsZipExt;
 
-	SVString outFilename = SvStl::GlobalPath::Inst().GetRunPath().c_str();
+	std::string outFilename = SvStl::GlobalPath::Inst().GetRunPath().c_str();
 	outFilename +=  _T("\\");
 	outFilename += inspectionName;
 	outFilename +=  scImportNewExt;
@@ -463,13 +464,13 @@ HRESULT SVInspectionImporter::Import(const SVString& filename, const SVString& i
 	int numOperations = 10;
 	rProgress.UpdateProgress(++currentOp, numOperations);
 
-	SVStringSet list;
+	SvDef::StringSet list;
 
 	// Deal with single zip file
 	if (isExportFile(inFilename))
 	{
-		ZipHelper::unzipAll( inFilename, SVString( SvStl::GlobalPath::Inst().GetRunPath().c_str() ), list );
-		for (SVStringSet::const_iterator it = list.begin();it != list.end();++it)
+		ZipHelper::unzipAll( inFilename, std::string( SvStl::GlobalPath::Inst().GetRunPath().c_str() ), list );
+		for (SvDef::StringSet::const_iterator it = list.begin();it != list.end();++it)
 		{
 			if (isXMLFile(*it))
 			{
@@ -503,7 +504,7 @@ HRESULT SVInspectionImporter::Import(const SVString& filename, const SVString& i
 	if (0 != list.size())
 	{
 		// cleanup
-		for (SVStringSet::const_iterator it = list.begin();it != list.end();++it)
+		for (SvDef::StringSet::const_iterator it = list.begin();it != list.end();++it)
 		{
 			::DeleteFile(it->c_str());
 		}
@@ -514,22 +515,22 @@ HRESULT SVInspectionImporter::Import(const SVString& filename, const SVString& i
 
 
 
-HRESULT SVInspectionImporter::GetProperties(const SVString& rFileName, long& rNewDisableMethod, long& rEnableAuxExtents, unsigned long& rVersionNumber)
+HRESULT SVInspectionImporter::GetProperties(const std::string& rFileName, long& rNewDisableMethod, long& rEnableAuxExtents, unsigned long& rVersionNumber)
 {
 	HRESULT hr = S_OK;
 	::CoInitialize(nullptr);
 
-	SVString inFileName = rFileName;
-	SVString zipFilename = GetFilenameWithoutExt(rFileName);
+	std::string inFileName = rFileName;
+	std::string zipFilename = GetFilenameWithoutExt(rFileName);
 	zipFilename += scDependentsZipExt;
 
-	SVStringSet list;
+	SvDef::StringSet list;
 
 	// Deal with single zip file
 	if (isExportFile(inFileName))
 	{
-		ZipHelper::unzipAll( inFileName, SVString( SvStl::GlobalPath::Inst().GetRunPath().c_str() ), list );
-		for (SVStringSet::const_iterator it = list.begin();it != list.end();++it)
+		ZipHelper::unzipAll( inFileName, std::string( SvStl::GlobalPath::Inst().GetRunPath().c_str() ), list );
+		for (SvDef::StringSet::const_iterator it = list.begin();it != list.end();++it)
 		{
 			if (isXMLFile(*it))
 			{
@@ -549,7 +550,7 @@ HRESULT SVInspectionImporter::GetProperties(const SVString& rFileName, long& rNe
 	if( 0 != list.size())
 	{
 		// cleanup
-		for (SVStringSet::const_iterator it = list.begin();it != list.end();++it)
+		for (SvDef::StringSet::const_iterator it = list.begin();it != list.end();++it)
 		{
 			::DeleteFile(it->c_str());
 		}

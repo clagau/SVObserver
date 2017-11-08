@@ -11,7 +11,7 @@
 //Moved to precompiled header: #include <string>
 //Moved to precompiled header: #include <boost\assign\list_of.hpp>
 #include "SVOResource\resource.h"
-#include "SVUtilityLibrary\SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 struct RangeEnum
@@ -22,13 +22,13 @@ struct RangeEnum
 	// Description: Translate enum to string
 	// Returns: string:  name of the range enum
 	//************************************
-	static SVString ERange2String(ERange range)
+	static std::string ERange2String(ERange range)
 	{
-		static std::map<ERange, SVString> enumNames = boost::assign::map_list_of<>
-			(ER_FailHigh, SvUl_SF::LoadSVString(IDS_FAIL_HIGH))
-			(ER_WarnHigh, SvUl_SF::LoadSVString(IDS_WARN_HIGH))
-			(ER_FailLow, SvUl_SF::LoadSVString(IDS_FAIL_LOW))
-			(ER_WarnLow, SvUl_SF::LoadSVString(IDS_WARN_LOW));
+		static std::map<ERange, std::string> enumNames = boost::assign::map_list_of<>
+			(ER_FailHigh, SvUl::LoadStdString(IDS_FAIL_HIGH))
+			(ER_WarnHigh, SvUl::LoadStdString(IDS_WARN_HIGH))
+			(ER_FailLow, SvUl::LoadStdString(IDS_FAIL_LOW))
+			(ER_WarnLow, SvUl::LoadStdString(IDS_WARN_LOW));
 		
 		return enumNames[range];
 	}

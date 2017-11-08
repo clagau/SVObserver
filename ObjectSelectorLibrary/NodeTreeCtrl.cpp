@@ -13,6 +13,7 @@
 #include "stdafx.h"
 #include "NodeTreeCtrl.h"
 #include "ObjectSelectorPpg.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -111,10 +112,10 @@ namespace SvOsl
 
 	void NodeTreeCtrl::updateTree()
 	{
-		SVStringSet& rUpdateItems = getUpdateItems();
+		SvDef::StringSet& rUpdateItems = getUpdateItems();
 		SvCl::ObjectTreeItems& rTreeItems = getParentPropPage().getTreeContainer();
 
-		SVStringSet::const_iterator IterName = rUpdateItems.begin();
+		SvDef::StringSet::const_iterator IterName = rUpdateItems.begin();
 
 		while( rUpdateItems.end() != IterName )
 		{
@@ -260,7 +261,7 @@ namespace SvOsl
 	{
 		if( nullptr != rItem )
 		{
-			SVString* pLocation = reinterpret_cast<SVString*> ( GetItemData( rItem ) );
+			std::string* pLocation = reinterpret_cast<std::string*> ( GetItemData( rItem ) );
 			if( nullptr != pLocation )
 			{
 				getParentPropPage().setHighlightedNode( *pLocation );
@@ -271,7 +272,7 @@ namespace SvOsl
 		else
 		{
 			//Set to no selection
-			SVString Location;
+			std::string Location;
 			getParentPropPage().setHighlightedNode( Location );
 		}
 	}

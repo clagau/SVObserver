@@ -55,7 +55,7 @@ namespace SvOsl
 		//! The method gets the name of the item
 		//! \return the name of the item
 		//************************************
-		virtual const SVString& getName() const override { return m_Name; };
+		virtual const std::string& getName() const override { return m_Name; };
 
 		//************************************
 		//! The method sets the name of the item
@@ -67,7 +67,7 @@ namespace SvOsl
 		//! The method gets the location of the item
 		//! \return the location of the item
 		//************************************
-		virtual const SVString& getLocation() const override { return m_Location; };
+		virtual const std::string& getLocation() const override { return m_Location; };
 
 		//************************************
 		//! The method sets the location of the item
@@ -79,7 +79,7 @@ namespace SvOsl
 		//! The method gets the display location of the item
 		//! \return the display location of the item
 		//************************************
-		virtual const SVString& getDisplayLocation() const override { return m_DisplayLocation; };
+		virtual const std::string& getDisplayLocation() const override { return m_DisplayLocation; };
 
 		//************************************
 		//! The method sets the location of the item
@@ -91,7 +91,7 @@ namespace SvOsl
 		//! The method gets the name of the item type
 		//! \return the type of the item as a string
 		//************************************
-		virtual const SVString& getItemTypeName() const override { return m_ItemTypeName; };
+		virtual const std::string& getItemTypeName() const override { return m_ItemTypeName; };
 
 		//************************************
 		//! The method sets the name of the item type
@@ -151,10 +151,10 @@ namespace SvOsl
 
 	#pragma region Member Variables
 	private:
-		SVString			m_Name;						//The name of the item
-		SVString			m_Location;					//The location of the item
-		SVString			m_DisplayLocation;			//The display location of the item
-		SVString			m_ItemTypeName;				//The name of the data type of the item
+		std::string			m_Name;						//The name of the item
+		std::string			m_Location;					//The location of the item
+		std::string			m_DisplayLocation;			//The display location of the item
+		std::string			m_ItemTypeName;				//The name of the data type of the item
 		_variant_t			m_ItemKey;					//The item key
 		bool				m_Array;					//Is array
 		int					m_ArrayIndex;				//The array index

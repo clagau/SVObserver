@@ -21,7 +21,7 @@
 #include "SVRemoteOutputDataController.h"
 #include "SVRemoteOutputObject.h"
 #include "RemoteMonitorListController.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 class SVIODoc;
@@ -66,14 +66,14 @@ public:
 	size_t GetRemoteOutputGroupCount() const;
 	void SetupRemoteOutput( SVConfigurationObject* p_pConfig );
 	HRESULT ClearRemoteOutputUnUsedData( );
-	HRESULT GetRemoteOutputGroupNames( SVStringVector& rPPQs );
-	SVRemoteOutputGroup* GetRemoteOutputGroup( const SVString& rRemoteGroupId ) const;
-	size_t GetRemoteOutputGroupItemCount( const SVString& rRemoteGroupId ) const;
-	HRESULT GetRemoteOutputItem( const SVString& rRemoteGroupId, long l_lIndex, SVRemoteOutputObject*& p_rItem ) const;
-	SVRemoteOutputObject* GetFirstRemoteOutputObject( const SVString& rRemoteGroupId );
-	HRESULT AddRemoteOutputItem( const SVString& rRemoteGroupId, SVRemoteOutputObject*& p_pNewOutput, GUID p_InputObjectID, const SVString& rPPQ );
-	HRESULT DeleteRemoteOutput( const SVString& rRemoteGroupId );
-	HRESULT DeleteRemoteOutputEntry( const SVString& rRemoteGroupId, SVRemoteOutputObject* p_pOutputObject );
+	HRESULT GetRemoteOutputGroupNames( SvDef::StringVector& rPPQs );
+	SVRemoteOutputGroup* GetRemoteOutputGroup( const std::string& rRemoteGroupId ) const;
+	size_t GetRemoteOutputGroupItemCount( const std::string& rRemoteGroupId ) const;
+	HRESULT GetRemoteOutputItem( const std::string& rRemoteGroupId, long l_lIndex, SVRemoteOutputObject*& p_rItem ) const;
+	SVRemoteOutputObject* GetFirstRemoteOutputObject( const std::string& rRemoteGroupId );
+	HRESULT AddRemoteOutputItem( const std::string& rRemoteGroupId, SVRemoteOutputObject*& p_pNewOutput, GUID p_InputObjectID, const std::string& rPPQ );
+	HRESULT DeleteRemoteOutput( const std::string& rRemoteGroupId );
+	HRESULT DeleteRemoteOutputEntry( const std::string& rRemoteGroupId, SVRemoteOutputObject* p_pOutputObject );
 	HRESULT RemoteOutputValidateInputs();
 
 	bool SetupRemoteMonitorList(SVConfigurationObject* pConfig);
@@ -95,14 +95,14 @@ public:
 	//! \param listName [in]
 	//! \param bActivate [in]
 	//! \returns S_OK when unsuccessfully 
-	HRESULT ActivateRemoteMonitorList(const SVString& rListName, bool bActivate);
+	HRESULT ActivateRemoteMonitorList(const std::string& rListName, bool bActivate);
 	void GetActiveRemoteMonitorList(RemoteMonitorListMap& rActiveList) const;
 	
 	//Return the number of active Monitorlist
 	int GetActiveMonitorListCount() const; 
 
-	HRESULT SetRemoteMonitorListProductFilter(const SVString& rListName, SvSml::SVProductFilterEnum rFilter);
-	HRESULT GetRemoteMonitorListProductFilter(const SVString& rListName, SvSml::SVProductFilterEnum& rFilter) const;
+	HRESULT SetRemoteMonitorListProductFilter(const std::string& rListName, SvSml::SVProductFilterEnum rFilter);
+	HRESULT GetRemoteMonitorListProductFilter(const std::string& rListName, SvSml::SVProductFilterEnum& rFilter) const;
 	void BuildPPQMonitorList(PPQMonitorList& ppqMonitorList) const;
 
 protected:

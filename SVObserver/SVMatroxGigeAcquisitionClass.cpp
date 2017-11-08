@@ -28,6 +28,7 @@
 #include "SVOCore/SVImageProcessingClass.h"
 #include "SVGigeCameraFileLibrary/SVGigeCameraStruct.h"
 #include "SVGigeCameraManager.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -82,7 +83,7 @@ bool SVMatroxGigeAcquisitionClass::IsValidBoard() const
 
 		if( nullptr != l_psvLibrary && S_OK == l_psvLibrary->ParameterGetValue( m_hDigitizer, 100, 0, &l_oValue ) )
 		{
-			SVString l_csVenderId = SvUl_SF::createSVString( l_oValue.bstrVal );
+			std::string l_csVenderId = SvUl::createStdString( l_oValue.bstrVal );
 
 			bOk = l_csVenderId == StringValue( m_DeviceParams.Parameter( DeviceParamVendorId ) );
 		}
@@ -141,7 +142,7 @@ HRESULT SVMatroxGigeAcquisitionClass::LoadFiles(SVFileNameArrayClass& rFiles)
 		ASSERT( mFiles.GetSize() == 1 );	// only one file
 		if ( mFiles.GetSize() == 1 )
 		{
-			SVString sFile (mFiles[0].GetFullFileName());
+			std::string sFile (mFiles[0].GetFullFileName());
 
 			SVGigeCameraFileReader reader(sFile, IsColor());
 
@@ -178,9 +179,9 @@ HRESULT SVMatroxGigeAcquisitionClass::LoadFiles(SVFileNameArrayClass& rFiles)
 // Called from SVCameraPage::LoadSVCameraFiles (SVImageTest)
 // Called from CSVOConfigAssistantDlg::ItemChanged (SVObserver)
 // Called from CSVOConfigAssistantDlg::CheckCamera (SVObserver)
-HRESULT SVMatroxGigeAcquisitionClass::ReadCameraFile( const SVString& rFilename, SVDeviceParamCollection &rParams )
+HRESULT SVMatroxGigeAcquisitionClass::ReadCameraFile( const std::string& rFilename, SVDeviceParamCollection &rParams )
 {
-	SVGigeCameraFileReader reader(SVString(rFilename), IsColor());
+	SVGigeCameraFileReader reader(std::string(rFilename), IsColor());
 
 	HRESULT hr = reader.ReadCameraFileImpl( rParams );
 	
@@ -321,7 +322,7 @@ HRESULT SVMatroxGigeAcquisitionClass::InitializeDevice( const SVDeviceParamColle
 		if ( m_DeviceParams.ParameterExists( DeviceParamGigeTriggerEdge ) )
 		{
 			const SVStringValueDeviceParam* pParam = m_DeviceParams.Parameter( DeviceParamGigeTriggerEdge ).DerivedValue( pParam );
-			l_bRising = SvUl_SF::CompareNoCase( pParam->strValue, SVString(_T("rising")) ) == 0;
+			l_bRising = SvUl::CompareNoCase( pParam->strValue, std::string(_T("rising")) ) == 0;
 		}
 
 		if ( m_DeviceParams.ParameterExists( DeviceParamIOTriggerInvert ) )
@@ -342,7 +343,7 @@ HRESULT SVMatroxGigeAcquisitionClass::InitializeDevice( const SVDeviceParamColle
 		if ( m_DeviceParams.ParameterExists( DeviceParamGigeStrobeEdge ) )
 		{
 			const SVStringValueDeviceParam* pParam = m_DeviceParams.Parameter( DeviceParamGigeStrobeEdge ).DerivedValue( pParam );
-			l_bRising = SvUl_SF::CompareNoCase( pParam->strValue, SVString(_T("rising")) ) == 0;
+			l_bRising = SvUl::CompareNoCase( pParam->strValue, std::string(_T("rising")) ) == 0;
 		}
 
 		if ( m_DeviceParams.ParameterExists( DeviceParamIOStrobeInvert ) )
@@ -769,7 +770,7 @@ HRESULT SVMatroxGigeAcquisitionClass::IsValidCameraFileParameters( SVDeviceParam
 }
 
 
-HRESULT SVMatroxGigeAcquisitionClass::SetGigeFeatureOverrides(const SVString& featureOverrides)
+HRESULT SVMatroxGigeAcquisitionClass::SetGigeFeatureOverrides(const std::string& featureOverrides)
 {
 	HRESULT hr = S_OK;
 	

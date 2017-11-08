@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "CameraLibrary\SVDeviceParamCollection.h"
-#include "SVUtilityLibrary\SVString.h"
+
 #include "SVUtilityLibrary\SVSharedPtr.h"
 #pragma endregion Includes
 
@@ -25,8 +25,8 @@ public:
     SVOCameraObj& operator =(const SVOCameraObj &source);
     SVOCameraObj* operator =(const SVOCameraObj *source);
 
-    const SVString& GetCameraDisplayName() const;
-    const SVString& GetCameraFile() const;
+    const std::string& GetCameraDisplayName() const;
+    const std::string& GetCameraFile() const;
 	int GetDigNumber() const;
 	int GetCameraID() const;
     int GetBandNumber() const;
@@ -35,10 +35,10 @@ public:
 	const SVDeviceParamCollection& GetCameraDeviceParams();
 	SVDeviceParamCollection& GetCameraDeviceParamsNonConst();
 
-    void SetCameraDisplayName(const SVString& rCameraName);
+    void SetCameraDisplayName(const std::string& rCameraName);
 	void SetDigNumber(int DigNumber);
 	void SetCameraID(int CameraID);
-    void SetCameraFile(const SVString& rFileName);
+    void SetCameraFile(const std::string& rFileName);
 	void SetCameraFileChanged();
 	bool GetCameraFileChanged();
     void SetBandNumber(int BandNumber);
@@ -56,10 +56,10 @@ public:
 	void SetFileImageHeight(long height);
 	const SIZE& GetFileImageSize() const;
 	void SetFileImageSize(const SIZE& size);
-	const SVString& GetImageFilename() const;
-	void SetImageFilename(const SVString& rFilename);
-	const SVString& GetImageDirectoryName() const;
-	void SetImageDirectoryName(const SVString& rPathName);
+	const std::string& GetImageFilename() const;
+	void SetImageFilename(const std::string& rFilename);
+	const std::string& GetImageDirectoryName() const;
+	void SetImageDirectoryName(const std::string& rPathName);
 	long GetFileLoadingMode() const;
 	void SetFileLoadingMode(long mode);
 	bool IsSoftwareTriggerSupported() const;
@@ -69,12 +69,12 @@ public:
 	inline bool IsColor() const { return m_IsColor; };
 
 private:  //data members
-    SVString m_CameraDisplayName;
+    std::string m_CameraDisplayName;
 	int m_DigNumber;
 	int m_CameraID;
     int m_BandNumber;
     bool m_IsColor;
-    SVString m_CameraFile;
+    std::string m_CameraFile;
     bool m_CameraFileSet;
 	bool m_CameraFileChanged;
     bool m_CameraObjOk;
@@ -82,8 +82,8 @@ private:  //data members
 	SVDeviceParamCollection m_CameraFileParams;
 
 	bool m_FileAcquisition;
-	SVString m_imageFilename;
-	SVString m_imageDirectory;
+	std::string m_imageFilename;
+	std::string m_imageDirectory;
 	bool m_imageSizeEditModeFileBased;
 	SIZE m_fileImageSize;
 	long m_fileMode;

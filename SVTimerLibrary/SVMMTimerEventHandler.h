@@ -14,7 +14,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <map>
 #include "SVTimerCallback.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 namespace SvTl
@@ -23,7 +23,7 @@ namespace SvTl
 	{
 		class Callback: public SVTimerCallback
 		{
-			void Notify(const SVString&) {}
+			void Notify(const std::string&) {}
 		};
 	}
 	
@@ -43,7 +43,7 @@ namespace SvTl
 		: interval(0), pCallback(0), tickCount(0)//, newInterval(0)
 		{ pCallback = &dummy; }
 
-		void tick(const SVString & str)
+		void tick(const std::string & str)
 		{
 			if (++tickCount >= interval)
 			{
@@ -57,6 +57,6 @@ namespace SvTl
 			interval = intrvl;
 		}
 	};
-	typedef std::map<SVString, SVMMTimerEventHandler> SVTimerEventListeners;
+	typedef std::map<std::string, SVMMTimerEventHandler> SVTimerEventListeners;
 
 } //namespace SvTl

@@ -40,7 +40,7 @@ void SVTriggerSelectionDlg::PopulateSelectionList()
 	}
 }
 
-void SVTriggerSelectionDlg::GetSelectedTrigger(SVString& rName, int& rID) const
+void SVTriggerSelectionDlg::GetSelectedTrigger(std::string& rName, int& rID) const
 {
 	rName = m_selectedTriggerName;
 	rID = m_selectedTriggerID;

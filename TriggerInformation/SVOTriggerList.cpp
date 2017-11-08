@@ -32,7 +32,7 @@ namespace SvTi
 	{
 	}
 
-	bool SVOTriggerList::AddTriggerToList(const SVString& sTriggerName, int iDigNumber)
+	bool SVOTriggerList::AddTriggerToList(const std::string& sTriggerName, int iDigNumber)
 	{
 		bool bRet = false;
 
@@ -46,7 +46,7 @@ namespace SvTi
 	}
 
 
-	bool SVOTriggerList::RemoveTriggerFromList(const SVString& sTriggerName)
+	bool SVOTriggerList::RemoveTriggerFromList(const std::string& sTriggerName)
 	{
 		bool bRet = false;
 		iterator pos = FindTriggerPosition(sTriggerName);
@@ -64,7 +64,7 @@ namespace SvTi
 		return static_cast<int>(m_TriggerList.GetCount());
 	}
 
-	SVOTriggerObjPtr SVOTriggerList::GetTriggerObjectByName(const SVString& sTriggerName)
+	SVOTriggerObjPtr SVOTriggerList::GetTriggerObjectByName(const std::string& sTriggerName)
 	{
 		iterator pos = FindTriggerPosition(sTriggerName);
 
@@ -105,7 +105,7 @@ namespace SvTi
 		return ++prevNo;
 	}
 
-	bool SVOTriggerList::IsTriggerInList(const SVString& sTriggerName) const
+	bool SVOTriggerList::IsTriggerInList(const std::string& sTriggerName) const
 	{
 		bool bFound = false;
 
@@ -113,7 +113,7 @@ namespace SvTi
 		{
 			const SVOTriggerObjPtr pTriggerObj = (*it);
 
-			if ( nullptr != pTriggerObj && SVString( pTriggerObj->GetTriggerDisplayName() ) == sTriggerName )
+			if ( nullptr != pTriggerObj && std::string( pTriggerObj->GetTriggerDisplayName() ) == sTriggerName )
 			{
 				bFound = true;
 			}
@@ -121,7 +121,7 @@ namespace SvTi
 		return bFound;
 	}
 
-	SVOTriggerList::iterator SVOTriggerList::FindTriggerPosition(const SVString& sTriggerName)
+	SVOTriggerList::iterator SVOTriggerList::FindTriggerPosition(const std::string& sTriggerName)
 	{
 		iterator pos( m_TriggerList.begin() );
 		bool Found = false;
@@ -130,7 +130,7 @@ namespace SvTi
 		{
 			SVOTriggerObjPtr pTriggerObj = m_TriggerList.GetAt(pos);
 
-			if( nullptr != pTriggerObj && SVString( pTriggerObj->GetTriggerDisplayName() ) == sTriggerName )
+			if( nullptr != pTriggerObj && std::string( pTriggerObj->GetTriggerDisplayName() ) == sTriggerName )
 			{
 				Found = true;
 			}

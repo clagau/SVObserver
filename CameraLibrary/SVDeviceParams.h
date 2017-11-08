@@ -16,7 +16,6 @@
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <algorithm>
 #include "SVDeviceParamCollection.h"
-#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 class SVDeviceParamStructTestCases
@@ -151,10 +150,10 @@ LPCTSTR const DeviceParamCameraDefaultSettings_String= (_T("DefaultSettings"));
 template<typename TYPE> struct TDeviceOption	// used for discrete selectable values
 {
 	TYPE m_Value;
-	SVString m_Description;
+	std::string m_Description;
 	TDeviceOption() {};
 	TDeviceOption(const TYPE& rValue) { value = rValue; };
-	TDeviceOption(const TYPE& rValue, const SVString& rDescription) { m_Value = rValue; m_Description = rDescription; };
+	TDeviceOption(const TYPE& rValue, const std::string& rDescription) { m_Value = rValue; m_Description = rDescription; };
 	operator TYPE() const { return m_Value; };
 };
 
@@ -162,10 +161,10 @@ template<typename OptionType>
 class OptionDescMatch
 {
 private:
-	const SVString& m_rDescription;
+	const std::string& m_rDescription;
 
 public:
-	OptionDescMatch(const SVString& rDescription)
+	OptionDescMatch(const std::string& rDescription)
 		: m_rDescription(rDescription) {}
 
 	bool operator()(const OptionType& option) const
@@ -202,7 +201,7 @@ template<typename TYPE> struct TDeviceParamInfo
 	TDeviceParamInfo(const TDeviceParamInfo<TYPE>& rhs) { *this = rhs; }
 	const TDeviceParamInfo<TYPE>& operator= (const TDeviceParamInfo<TYPE>& rhs);	// defined below
 
-	bool OptionExists(SVString description) const
+	bool OptionExists(std::string description) const
 	{
 		bool bRet = false;
 		OptionsType::const_iterator it = std::find_if(options.begin(), options.end(), OptionDescMatch<OptionType>(description));
@@ -233,7 +232,7 @@ template<> struct TDeviceParamInfo<long>
 	long offset;
 	double multiplier;
 	double unit_divisor;
-	SVString sUnits;
+	std::string sUnits;
 	typedef TDeviceOption<long>     OptionType;
 	typedef std::vector<OptionType> OptionsType;
 	OptionsType options;
@@ -242,7 +241,7 @@ template<> struct TDeviceParamInfo<long>
 	TDeviceParamInfo(const TDeviceParamInfo& rhs);
 	const TDeviceParamInfo& operator= (const TDeviceParamInfo& rhs);
 
-	bool OptionExists(SVString description) const
+	bool OptionExists(std::string description) const
 	{
 		bool bRet = false;
 		OptionsType::const_iterator it = std::find_if(options.begin(), options.end(), OptionDescMatch<OptionType>(description));
@@ -260,7 +259,7 @@ template<> struct TDeviceParamInfo<__int64>
 	__int64 max;
 	__int64 offset;
 	double multiplier;
-	SVString sUnits;
+	std::string sUnits;
 	typedef TDeviceOption<__int64>     OptionType;
 	typedef std::vector<OptionType> OptionsType;
 	OptionsType options;
@@ -269,7 +268,7 @@ template<> struct TDeviceParamInfo<__int64>
 	TDeviceParamInfo(const TDeviceParamInfo& rhs);
 	const TDeviceParamInfo& operator= (const TDeviceParamInfo& rhs);
 
-	bool OptionExists(SVString description) const
+	bool OptionExists(std::string description) const
 	{
 		bool bRet = false;
 		OptionsType::const_iterator it = std::find_if(options.begin(), options.end(), OptionDescMatch<OptionType>(description));
@@ -285,9 +284,9 @@ template<> struct TDeviceParamInfo<__int64>
 HRESULT ToVariant( long lValue, VARIANT& rv );
 HRESULT ToVariant( __int64 lValue, VARIANT& rv );
 HRESULT ToVariant( bool bValue, VARIANT& rv );
-HRESULT ToVariant( const SVString& sValue, VARIANT& rv );
+HRESULT ToVariant( const std::string& sValue, VARIANT& rv );
 
 HRESULT FromVariant( long& rlValue, const VARIANT& rv );
 HRESULT FromVariant( __int64& riValue, const VARIANT& rv );
 HRESULT FromVariant( bool& rlValue, const VARIANT& rv );
-HRESULT FromVariant( SVString& rlValue, const VARIANT& rv );
+HRESULT FromVariant( std::string& rlValue, const VARIANT& rv );

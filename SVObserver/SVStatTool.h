@@ -12,7 +12,6 @@
 
 #pragma region Includes
 #include "SVOCore/SVTool.h" 
-#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 class SVResultClass;
@@ -50,14 +49,14 @@ public:
 	
 	bool HasVariable() const;
 
-	SVString GetFeatureString();
-	SVString GetFeatureName( int aIndex );
+	std::string GetFeatureString();
+	std::string GetFeatureName( int aIndex );
 
-	SVString GetOccurenceTestValue();
-	void SetOccurenceTestValue( const SVString& rValue );
+	std::string GetOccurenceTestValue();
+	void SetOccurenceTestValue( const std::string& rValue );
 	
 	SVObjectReference GetVariableSelected() const;
-	void SetVariableSelected( const SVString& rName );
+	void SetVariableSelected( const std::string& rName );
 	void SetVariableSelected( SVObjectReference refObject );
 
 	/// Enabled a feature. ATTENTION: In error case this method throw an exception (const SvStl::MessageContainer&)

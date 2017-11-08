@@ -19,6 +19,8 @@
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary/MessageContainer.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -72,10 +74,10 @@ void CSVRegressionFileSelectSheet::CreatePages(CList<RegressionTestStruct*,Regre
 	
 	SVVirtualCameraPtrSet::iterator iter;
 
-	SVString PrevName( _T("Blank") );
+	std::string PrevName( _T("Blank") );
 	for ( iter = CameraList.begin(); iter != CameraList.end(); ++iter )
 	{
-		if ( 0 != SvUl_SF::CompareNoCase( PrevName, SVString((*iter)->GetName()) ) )
+		if ( 0 != SvUl::CompareNoCase( PrevName, std::string((*iter)->GetName()) ) )
 		{
 			CSVRegressionFileSelectDlg *pPage = new CSVRegressionFileSelectDlg((*iter)->GetName());
 			AddPage(pPage);
@@ -171,20 +173,20 @@ void CSVRegressionFileSelectSheet::OnOK()
 	EndDialog(IDOK);
 }
 
-SVString CSVRegressionFileSelectSheet::MakeFileNameMask( const SVString& rFileName )
+std::string CSVRegressionFileSelectSheet::MakeFileNameMask( const std::string& rFileName )
 {
-	SVString Result;
+	std::string Result;
 	size_t FileNameLength = rFileName.size();
 
 	//check to see if last 4 chars = .bmp 
-	if( 0 == SvUl_SF::CompareNoCase( SvUl_SF::Right(rFileName, 4), SVString( _T(".bmp") ) ) )
+	if( 0 == SvUl::CompareNoCase( SvUl::Right(rFileName, 4), std::string( _T(".bmp") ) ) )
 	{
-		Result = SvUl_SF::Left( rFileName, FileNameLength - 4 );
+		Result = SvUl::Left( rFileName, FileNameLength - 4 );
 	
 		size_t Pos = Result.rfind('_');
-		if ( SVString::npos != Pos )
+		if ( std::string::npos != Pos )
 		{
-			Result = SvUl_SF::Left( rFileName, Pos+1 );
+			Result = SvUl::Left( rFileName, Pos+1 );
 			Result = Result + _T("*.bmp");
 		}
 	}
@@ -215,7 +217,7 @@ void CSVRegressionFileSelectSheet::ValidateAndFillFileList()
 				//check to see if a selection has been made...
 				if (pStruct->FirstFile.empty())
 				{
-					SVStringVector msgList;
+					SvDef::StringVector msgList;
 					msgList.push_back(pStruct->Camera);
 					SvStl::MessageContainer Exception( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RegressionTest_NoFileSelected, msgList, SvStl::SourceFileParams(StdMessageParams) );
 					throw Exception;
@@ -225,19 +227,19 @@ void CSVRegressionFileSelectSheet::ValidateAndFillFileList()
 					//check to make sure name is a file that exists
 					if (0 != ::_access(pStruct->FirstFile.c_str(), 0))
 					{
-						SVStringVector msgList;
+						SvDef::StringVector msgList;
 						msgList.push_back(pStruct->Camera);
 						SvStl::MessageContainer Exception(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RegressionTest_FileNotExist, msgList, SvStl::SourceFileParams(StdMessageParams));
 						throw Exception;
 					}
 
-					if (0 != SvUl_SF::CompareNoCase(SvUl_SF::Right(pStruct->FirstFile.c_str(), 4), SVString(_T(".bmp"))))
+					if (0 != SvUl::CompareNoCase(SvUl::Right(pStruct->FirstFile.c_str(), 4), std::string(_T(".bmp"))))
 					{
 						SvStl::MessageContainer Exception(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RegressionTest_NoBmpFileSelected, SvStl::SourceFileParams(StdMessageParams));
 						throw Exception;
 					}
 					pStruct->stdVectorFile.push_back(pStruct->FirstFile);
-					SVStringVector::iterator iter;
+					SvDef::StringVector::iterator iter;
 
 					iter = std::find(pStruct->stdVectorFile.begin(), pStruct->stdVectorFile.end(), pStruct->FirstFile);
 
@@ -271,7 +273,7 @@ void CSVRegressionFileSelectSheet::ValidateAndFillFileList()
 				}
 				else
 				{
-					SVStringVector msgList;
+					SvDef::StringVector msgList;
 					msgList.push_back(pStruct->Camera);
 					SvStl::MessageContainer Exception(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RegressionTest_WrongFormat, msgList, SvStl::SourceFileParams(StdMessageParams));
 					throw Exception;
@@ -308,7 +310,7 @@ void CSVRegressionFileSelectSheet::ValidateAndFillFileList()
 				}
 				else
 				{
-					SVStringVector msgList;
+					SvDef::StringVector msgList;
 					msgList.push_back(pStruct->Camera);
 					SvStl::MessageContainer Exception(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RegressionTest_EmptyDirectory, msgList, SvStl::SourceFileParams(StdMessageParams));
 					throw Exception;
@@ -345,7 +347,7 @@ void CSVRegressionFileSelectSheet::ClearRegressionList()
 int CSVRegressionFileSelectSheet::FillFileList(RegressionTestStruct& rStruct)
 {
 	int count = 0;
-	SVString fileMask = MakeFileNameMask(rStruct.FirstFile);
+	std::string fileMask = MakeFileNameMask(rStruct.FirstFile);
 	if (fileMask.empty())
 	{
 		return 0;
@@ -357,11 +359,11 @@ int CSVRegressionFileSelectSheet::FillFileList(RegressionTestStruct& rStruct)
 	{
 		bFound = fileFinder.FindNextFile();
 		count++;
-		rStruct.stdVectorFile.push_back(SVString(fileFinder.GetFilePath()));
+		rStruct.stdVectorFile.push_back(std::string(fileFinder.GetFilePath()));
 	}
 	std::sort(rStruct.stdVectorFile.begin(), rStruct.stdVectorFile.end());
 	//find the starting position
-	SVStringVector::iterator iter;
+	SvDef::StringVector::iterator iter;
 
 	iter = std::find(rStruct.stdVectorFile.begin(), rStruct.stdVectorFile.end(), rStruct.FirstFile);
 
@@ -373,21 +375,21 @@ int CSVRegressionFileSelectSheet::FillFileList(RegressionTestStruct& rStruct)
 
 int CSVRegressionFileSelectSheet::FillFileListFromDirectory(RegressionTestStruct& rStruct)
 {
-	SVString currentPath = rStruct.FirstFile;
+	std::string currentPath = rStruct.FirstFile;
 	if (RegressionFileEnum::RegSingleDirectory == rStruct.iFileMethod)
 	{
 		//For Single Directory a bmp-File is selected. For this reason the filename has to be removed.
-		if (0 != SvUl_SF::CompareNoCase(SvUl_SF::Right(currentPath.c_str(), 4), SVString(_T(".bmp"))))
+		if (0 != SvUl::CompareNoCase(SvUl::Right(currentPath.c_str(), 4), std::string(_T(".bmp"))))
 		{
 			SvStl::MessageContainer Exception(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RegressionTest_NoBmpFileSelected, SvStl::SourceFileParams(StdMessageParams));
 			throw Exception;
 		}
 	}
 
-	if (0 == SvUl_SF::CompareNoCase(SvUl_SF::Right(currentPath.c_str(), 4), SVString(_T(".bmp"))))
+	if (0 == SvUl::CompareNoCase(SvUl::Right(currentPath.c_str(), 4), std::string(_T(".bmp"))))
 	{
 		size_t Pos = currentPath.rfind('\\');
-		if (SVString::npos != Pos)
+		if (std::string::npos != Pos)
 		{
 			currentPath = currentPath.substr(0, Pos);
 		}
@@ -400,11 +402,11 @@ int CSVRegressionFileSelectSheet::FillFileListFromDirectory(RegressionTestStruct
 	return count;
 }
 
-int CSVRegressionFileSelectSheet::FillFileListFromDirectory(RegressionTestStruct& rStruct, const SVString& rCurrentPath)
+int CSVRegressionFileSelectSheet::FillFileListFromDirectory(RegressionTestStruct& rStruct, const std::string& rCurrentPath)
 {
 	int count = 0;
 
-	SVString fileMask = rCurrentPath + _T("\\*.bmp");
+	std::string fileMask = rCurrentPath + _T("\\*.bmp");
 	CFileFind fileFinder;
 	BOOL bFound = fileFinder.FindFile(fileMask.c_str());
 
@@ -412,7 +414,7 @@ int CSVRegressionFileSelectSheet::FillFileListFromDirectory(RegressionTestStruct
 	{
 		bFound = fileFinder.FindNextFile();
 		count++;
-		rStruct.stdVectorFile.push_back(SVString(fileFinder.GetFilePath()));
+		rStruct.stdVectorFile.push_back(std::string(fileFinder.GetFilePath()));
 	}
 
 	if (RegressionFileEnum::RegSubDirectories == rStruct.iFileMethod)
@@ -426,7 +428,7 @@ int CSVRegressionFileSelectSheet::FillFileListFromDirectory(RegressionTestStruct
 			if (fileFinder.IsDirectory() && !fileFinder.IsDots())
 			{
 				//skip directory which start with underscore (e.g. C:/images/_Name)
-				SVString tmpPathName(fileFinder.GetFilePath());
+				std::string tmpPathName(fileFinder.GetFilePath());
 				if (tmpPathName.size() > rCurrentPath.size()+1 && '_' != tmpPathName[rCurrentPath.size()+1])
 				{
 					char tmp = tmpPathName[rCurrentPath.size()+1];
@@ -461,7 +463,7 @@ BOOL CSVRegressionFileSelectSheet::OnInitDialog()
 			pPage = (CSVRegressionFileSelectDlg*)GetPage(l_iCount);
 			if ( pPage )
 			{
-				SVString TmpName = pPage->GetPageName();
+				std::string TmpName = pPage->GetPageName();
 				
 				bool l_bFound = false;
 				for ( int iPos = 0; iPos <= iRegListCnt && !l_bFound; iPos++ )

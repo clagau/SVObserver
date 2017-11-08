@@ -157,7 +157,7 @@ HRESULT SVTaskObjectValueInterface::GetValue( const SVGUID& rTaskId, const SVGUI
 	return l_hrOk;
 }
 
-HRESULT SVTaskObjectValueInterface::GetObjectValue( const SVGUID& rObjectId, const SVString& rValueName, _variant_t& rValue ) const
+HRESULT SVTaskObjectValueInterface::GetObjectValue( const SVGUID& rObjectId, const std::string& rValueName, _variant_t& rValue ) const
 {
 	HRESULT l_hrOk = S_OK;
 

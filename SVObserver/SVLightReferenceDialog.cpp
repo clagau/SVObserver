@@ -17,7 +17,8 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 IMPLEMENT_DYNAMIC(SVLightReferenceDialogPropertySheetClass, CPropertySheet)
@@ -93,10 +94,10 @@ bool SVLightReferenceDialogPropertySheetClass::CreatePages( SVVirtualCameraPtrSe
 		{
 			if (0 == pLR->NumBands() )
 			{
-				SVStringVector msgList;
+				SvDef::StringVector msgList;
 				if( !( pDevice.empty() ) )
 				{
-					msgList.push_back(SvUl_SF::Format("%s (Dig_%d.Ch_%d)", pCamera->GetName(), pDevice->DigNumber(), pDevice->Channel()));
+					msgList.push_back(SvUl::Format("%s (Dig_%d.Ch_%d)", pCamera->GetName(), pDevice->DigNumber(), pDevice->Channel()));
 				}
 				else
 				{
@@ -116,8 +117,8 @@ bool SVLightReferenceDialogPropertySheetClass::CreatePages( SVVirtualCameraPtrSe
 				for (int iAttribute=0; iAttribute < pLRBand->NumAttributes(); iAttribute++)
 				{
 					// the IDs are no longer valid... use the text instead
-					SVString DigitizerName = SvUl_SF::Format( _T("Dig.%d"), pDevice->DigNumber() );
-					SVString TabText = pCamera->GetName() + SVString(_T(" ")) + DigitizerName + SVString(_T(" ")) + pLRBand->Attribute( iAttribute ).strName;
+					std::string DigitizerName = SvUl::Format( _T("Dig.%d"), pDevice->DigNumber() );
+					std::string TabText = pCamera->GetName() + std::string(_T(" ")) + DigitizerName + std::string(_T(" ")) + pLRBand->Attribute( iAttribute ).strName;
 					SVLightReferenceDialogPropertyPageClass* pPage = new SVLightReferenceDialogPropertyPageClass( TabText.c_str() );
 					pPage->mpCamera = pCamera;
 					pPage->mpDevice = pDevice;
@@ -214,9 +215,9 @@ BOOL SVLightReferenceDialogPropertyPageClass::OnSetActive()
 	mValueSlider.SetPageSize( (max-min)/10 );
 
 	// Set Min and Max Text 
-	SVString Text = SvUl_SF::Format( _T("%ld"), min );
+	std::string Text = SvUl::Format( _T("%ld"), min );
 	GetDlgItem(IDC_MIN)->SetWindowText( Text.c_str() );
-	Text = SvUl_SF::Format( _T("%ld"), max );
+	Text = SvUl::Format( _T("%ld"), max );
 	GetDlgItem(IDC_MAX)->SetWindowText( Text.c_str() );
 
 	// Update step width...
@@ -273,7 +274,7 @@ BOOL SVLightReferenceDialogPropertyPageClass::OnInitDialog()
 			BOOL bEnable =  miNumBands > 1 && (miBandSize > 1 || miCamBand == i);  // if there is only one band, don't enable any of the radio buttons
 			if ( i < mpLR->NumBands() )
 			{
-				if ( nullptr == mpLR->Band(i).AttributeByName(SVString(CurrentName())) )
+				if ( nullptr == mpLR->Band(i).AttributeByName(std::string(CurrentName())) )
 				{
 					bEnable = false;
 				}
@@ -285,7 +286,7 @@ BOOL SVLightReferenceDialogPropertyPageClass::OnInitDialog()
 	if( pWnd = GetDlgItem( IDC_CHANNEL3 ) )
 	{
 		BOOL bEnable = miNumBands > 1 && (miBandSize > 3 || miCamBand == 3);
-		if ( nullptr == mpLR->Band(miCamBand).AttributeByName(SVString(CurrentName())) )
+		if ( nullptr == mpLR->Band(miCamBand).AttributeByName(std::string(CurrentName())) )
 		{
 			bEnable = false;
 		}
@@ -412,7 +413,7 @@ DWORD SVLightReferenceDialogPropertyPageClass::CurrentValue()
 		return pAttribute->lValue;
 	else
 	{
-		pAttribute = mpLR->Band( miCurrentBand ).AttributeByName( SVString(CurrentName()) ); 
+		pAttribute = mpLR->Band( miCurrentBand ).AttributeByName( std::string(CurrentName()) ); 
 		if ( pAttribute )
 			return pAttribute->lValue;
 		else
@@ -430,7 +431,7 @@ void SVLightReferenceDialogPropertyPageClass::SetCurrentValue(DWORD dw)
 		pAttribute->lValue = (long) dw;
 	else
 	{
-		pAttribute = mpLR->Band( miCurrentBand ).AttributeByName( SVString(CurrentName()) );
+		pAttribute = mpLR->Band( miCurrentBand ).AttributeByName( std::string(CurrentName()) );
 		if ( pAttribute )
 			pAttribute->lValue = (long) dw;
 		else

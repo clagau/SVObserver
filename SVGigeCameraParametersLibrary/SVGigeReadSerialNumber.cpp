@@ -11,16 +11,16 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVGigeReadSerialNumber.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 HRESULT SVGigeReadSerialNumber::operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& rFeature, _variant_t& rValue) const
 { 
-	SVString value;
+	std::string value;
 	HRESULT l_Code = SVMatroxDigitizerInterface::GetGigeSerialNumber(*(Digitizer.get()), value);
 	if (l_Code == S_OK)
 	{
-		rValue = _bstr_t(SVString(value).c_str()).Detach();
+		rValue = _bstr_t(std::string(value).c_str()).Detach();
 	}
 	return l_Code;
 }

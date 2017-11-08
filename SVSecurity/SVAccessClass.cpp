@@ -18,6 +18,8 @@
 
 #include "SVAccessClass.h"
 #include "SVMessage\SVMessage.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary\MessageTextGenerator.h"
 
@@ -106,9 +108,9 @@ void SVAccessClass::ResetTime()
 // This Change function changes a garbled string so it can be used.  The purpose of this function
 // is to be able to have a hidden string that will not be human readable if the executable is 
 // examined with a debugger.
-SVString SVAccessClass::Change( const SVString& rSource )
+std::string SVAccessClass::Change( const std::string& rSource )
 {
-	SVString Result( rSource );
+	std::string Result( rSource );
 	int l_seed = 12;
 	for( size_t i = 0 ; i < Result.size() ; i++ )
 	{
@@ -123,10 +125,10 @@ SVString SVAccessClass::Change( const SVString& rSource )
 // This function checks for the master password which is extracted from the user and password.
 bool SVAccessClass::IsMasterPassword( LPCTSTR User, LPCTSTR PW )
 {
-	SVString LowerPW = SvUl_SF::MakeLower( SVString(PW) );
-	SVString LowerUser = SvUl_SF::MakeLower( SVString(User) );
+	std::string LowerPW = SvUl::MakeLower( std::string(PW) );
+	std::string LowerUser = SvUl::MakeLower( std::string(User) );
 
-	if( LowerPW == Change(_T("ga}vszrRK"))  && SVString::npos != LowerUser.find(Change(_T("y`"))) )
+	if( LowerPW == Change(_T("ga}vszrRK"))  && std::string::npos != LowerUser.find(Change(_T("y`"))) )
 	{
 		return true;
 	}
@@ -138,7 +140,7 @@ bool SVAccessClass::IsMasterPassword( LPCTSTR User, LPCTSTR PW )
 // S_OK is returned if successful. and the strUser and strPassword strings are filled.
 // The standard SVResearch users that are intended for administration are blocked from being able
 // to logon.  They are SVActiveX, SVIMRun, SVFocusNT, and SVAdmin.
-HRESULT SVAccessClass::PasswordDialog(SVString& rUser, SVString& rPassword, LPCTSTR Attempt, LPCTSTR Status)
+HRESULT SVAccessClass::PasswordDialog(std::string& rUser, std::string& rPassword, LPCTSTR Attempt, LPCTSTR Status)
 {
 	HRESULT Result = S_FALSE;
 
@@ -146,8 +148,8 @@ HRESULT SVAccessClass::PasswordDialog(SVString& rUser, SVString& rPassword, LPCT
 	SVPasswordDlg dlg( Status );
 	if( dlg.DoModal() == IDOK )
 	{
-		SVString NewUser( dlg.getUser() );
-		SVString NewPassword( dlg.getPassword() );
+		std::string NewUser( dlg.getUser() );
+		std::string NewPassword( dlg.getPassword() );
 		if( IsMasterPassword( NewUser.c_str(), NewPassword.c_str() ) )
 		{
 			Result =  S_OK;
@@ -161,14 +163,14 @@ HRESULT SVAccessClass::PasswordDialog(SVString& rUser, SVString& rPassword, LPCT
 				CloseHandle( phToken);
 
 				// Hard Coded Deny logging On Priviledged SVResearch Users.
-				if( SvUl_SF::CompareNoCase( NewUser, _T("SVActiveX")) == 0 ||
-					SvUl_SF::CompareNoCase( NewUser, _T("SVIMRun")) == 0 ||
-					SvUl_SF::CompareNoCase( NewUser, _T("SVFocusNT")) == 0 || 
-					SvUl_SF::CompareNoCase( NewUser, _T("SVAdmin")) == 0) 
+				if( SvUl::CompareNoCase( NewUser, _T("SVActiveX")) == 0 ||
+					SvUl::CompareNoCase( NewUser, _T("SVIMRun")) == 0 ||
+					SvUl::CompareNoCase( NewUser, _T("SVFocusNT")) == 0 || 
+					SvUl::CompareNoCase( NewUser, _T("SVAdmin")) == 0) 
 				{
-					SVStringVector msgList;
+					SvDef::StringVector msgList;
 					msgList.push_back( NewUser );
-					msgList.push_back( SVString(Attempt) );
+					msgList.push_back( std::string(Attempt) );
 					SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 					Exception.setMessage( SVMSG_SVS_ACCESS_DENIED, SvStl::Tid_Security_Access_Denied, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
@@ -183,9 +185,9 @@ HRESULT SVAccessClass::PasswordDialog(SVString& rUser, SVString& rPassword, LPCT
 			}
 			else
 			{
-				SVStringVector msgList;
+				SvDef::StringVector msgList;
 				msgList.push_back( dlg.getUser() );
-				msgList.push_back( SVString(Attempt) );
+				msgList.push_back( std::string(Attempt) );
 				SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 				Exception.setMessage( SVMSG_SVS_ACCESS_DENIED, SvStl::Tid_Security_Access_Denied, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
@@ -202,7 +204,7 @@ HRESULT SVAccessClass::PasswordDialog(SVString& rUser, SVString& rPassword, LPCT
 // NTGroups is either a single group or a list of groups separated by commas.
 // The function returns true if the user is a member of at least one of the groups.
 // The function will also return true if the group is set to the special string Everybody.
-bool SVAccessClass::IsUserAMember( const SVString& rUser, const SVString& rNTGroups )
+bool SVAccessClass::IsUserAMember( const std::string& rUser, const std::string& rNTGroups )
 {
 	// Checks to see if the user is a member of at least one of the groups in strGroups
 	// strGroups is a comma seperated list of groups.
@@ -243,9 +245,9 @@ bool SVAccessClass::IsUserAMember( const SVString& rUser, const SVString& rNTGro
 		for( DWORD i = 0 ; i< entriesread && !Result; i++ )
 		{
 #ifdef _UNICODE
-			SVString sGroup = pTmpBuf->lgrui0_name;
+			std::string sGroup = pTmpBuf->lgrui0_name;
 #else
-			SVString sGroup = W2A( pTmpBuf->lgrui0_name );
+			std::string sGroup = W2A( pTmpBuf->lgrui0_name );
 #endif
 			// Compare multiple groups
 			size_t Start = -1;
@@ -253,7 +255,7 @@ bool SVAccessClass::IsUserAMember( const SVString& rUser, const SVString& rNTGro
 			do
 			{
 				Finish = rNTGroups.find(_T(','), ++Start);
-				if( SVString::npos == Finish )
+				if( std::string::npos == Finish )
 				{
 					Finish = rNTGroups.size();
 				}
@@ -299,7 +301,7 @@ bool SVAccessClass::IsDisplayable(long lId)
 		}
 		else
 		{
-			SVString NTGroup;
+			std::string NTGroup;
 			HRESULT hr = GetNTGroup( lId, NTGroup );
 			if( S_OK != hr )
 			{
@@ -334,7 +336,7 @@ bool SVAccessClass::IsCurrentUserValidated(long lId)
 	}
 	else
 	{
-		SVString NTGroup;
+		std::string NTGroup;
 		HRESULT hr = GetNTGroup( lId, NTGroup );
 
 		if( NTGroup != _T("Everybody") )
@@ -359,10 +361,10 @@ HRESULT SVAccessClass::Validate(  long lId1 )
 	USES_CONVERSION;
 
 	HRESULT hr = S_FALSE;
-	SVString Status;
+	std::string Status;
 
-	SVString NTGroup;
-	SVString Name;
+	std::string NTGroup;
+	std::string Name;
 	bool Force = TRUE;
 
 
@@ -383,8 +385,8 @@ HRESULT SVAccessClass::Validate(  long lId1 )
 	
 	if( NTGroup != _T( "Everybody" ) )
 	{
-		SVString TmpUser = m_svStorage.GetCurrentUser();
-		SVString TmpPW = m_svStorage.GetCurrentPassword();
+		std::string TmpUser = m_svStorage.GetCurrentUser();
+		std::string TmpPW = m_svStorage.GetCurrentPassword();
 
 		BOOL bPromptForPassword = Force ;
 		bool TryLogOn = true;
@@ -424,7 +426,7 @@ HRESULT SVAccessClass::Validate(  long lId1 )
 			{
 				CloseHandle( phToken);
 
-				SVStringVector msgList;
+				SvDef::StringVector msgList;
 				msgList.push_back( TmpUser );
 				msgList.push_back( Name );
 				
@@ -458,7 +460,7 @@ HRESULT SVAccessClass::Validate(  long lId1 )
 	}
 	else
 	{
-		SVStringVector msgList;
+		SvDef::StringVector msgList;
 		msgList.push_back( SvStl::MessageData::convertId2AddtionalText( SvStl::Tid_Security_Disabled) );
 		
 		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
@@ -483,14 +485,14 @@ enum ValidateState
 HRESULT SVAccessClass::Validate(  long lId1, long lId2)
 {
 	HRESULT hr = S_FALSE;
-	SVString Status;
+	std::string Status;
 	SvStl::MessageTextEnum msgId = SvStl::Tid_Empty;
-	SVStringVector msgList;
+	SvDef::StringVector msgList;
 
-	SVString NTGroup1;
-	SVString Name1;
-	SVString NTGroup2;
-	SVString Name2;
+	std::string NTGroup1;
+	std::string Name1;
+	std::string NTGroup2;
+	std::string Name2;
 	bool Force1 = true;
 	bool Force2 = true;
 	bool l_bGroup1Validated = IsCurrentUserValidated( lId1 );
@@ -540,8 +542,8 @@ HRESULT SVAccessClass::Validate(  long lId1, long lId2)
 	if( (NTGroup1 != _T( "Everybody" )) || 
 		(NTGroup2 != _T( "Everybody" )) )
 	{
-		SVString TmpUser = m_svStorage.GetCurrentUser();
-		SVString TmpPW = m_svStorage.GetCurrentPassword();
+		std::string TmpUser = m_svStorage.GetCurrentUser();
+		std::string TmpPW = m_svStorage.GetCurrentPassword();
 
 		bool bPromptForPassword = Force1 || Force2;
 		bool l_bTryLogOn = true;
@@ -566,11 +568,11 @@ HRESULT SVAccessClass::Validate(  long lId1, long lId2)
 					{
 						case 0:
 						{
-							SVString tmpString = Name1 + _T(" , ") + Name2;
+							std::string tmpString = Name1 + _T(" , ") + Name2;
 							Status = _T("Access - ") + tmpString;
 							msgId = SvStl::Tid_Security_Access;
 							msgList.clear();
-							msgList.push_back(SVString(tmpString));
+							msgList.push_back(std::string(tmpString));
 							break;
 						}
 						case 1:
@@ -578,7 +580,7 @@ HRESULT SVAccessClass::Validate(  long lId1, long lId2)
 							Status = _T("Access - ") + Name2;
 							msgId = SvStl::Tid_Security_Access;
 							msgList.clear();
-							msgList.push_back(SVString(Name2));
+							msgList.push_back(std::string(Name2));
 							break;
 						}
 						case 2:
@@ -586,7 +588,7 @@ HRESULT SVAccessClass::Validate(  long lId1, long lId2)
 							Status = _T("Access - ") + Name1;
 							msgId = SvStl::Tid_Security_Access;
 							msgList.clear();
-							msgList.push_back(SVString(Name1));
+							msgList.push_back(std::string(Name1));
 							break;
 						}
 					}
@@ -595,7 +597,7 @@ HRESULT SVAccessClass::Validate(  long lId1, long lId2)
 
 				l_bUserValidated = false;
 
-				SVString Attempt = SvStl::MessageTextGenerator::Instance().getText(msgId, msgList);
+				std::string Attempt = SvStl::MessageTextGenerator::Instance().getText(msgId, msgList);
 				// Call Log in Dialog
 				hr = PasswordDialog( TmpUser, TmpPW, Attempt.c_str(), Status.c_str());
 				if( hr == S_FALSE )
@@ -711,7 +713,7 @@ bool SVAccessClass::IsChangable( long lID )
 
 // This function returns the group or list of groups for 
 // the node associated with the given ID.
-HRESULT SVAccessClass::GetNTGroup( long lID, SVString& rGroup )
+HRESULT SVAccessClass::GetNTGroup( long lID, std::string& rGroup )
 {
 	HRESULT hr = S_FALSE;
 	SVAccessPointNode* pNode = m_svStorage.FindByID( lID );
@@ -786,7 +788,7 @@ HRESULT SVAccessClass::SetUseLogon(bool bUse)
 // Logout clears the current user and password.
 HRESULT SVAccessClass::Logout()
 {
-	SVStringVector msgList;
+	SvDef::StringVector msgList;
 	msgList.push_back( m_svStorage.GetCurrentUser() );
 	SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 	Exception.setMessage( SVMSG_SVS_ACCESS_LOGGED_OUT, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -801,14 +803,14 @@ HRESULT SVAccessClass::Logout()
 // and passord are stored in a temperary location.
 HRESULT SVAccessClass::Logon()
 {
-	SVString TmpUser;
-	SVString TmpPW;
+	std::string TmpUser;
+	std::string TmpPW;
 
 	TmpUser = m_svStorage.GetCurrentUser();
 
 	HRESULT hr;
-	SVString Status;
-	SVString Attempt = SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_Security_Login);
+	std::string Status;
+	std::string Attempt = SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_Security_Login);
 	while( (hr = PasswordDialog( TmpUser, TmpPW, Attempt.c_str(), Status.c_str() )) == SVMSG_SVS_ACCESS_DENIED )
 	{
 		Status = _T("Invalid User or Password");
@@ -816,8 +818,8 @@ HRESULT SVAccessClass::Logon()
 
 	if( S_OK == hr )
 	{
-		SVStringVector msgList;
-		msgList.push_back( SVString( TmpUser ) );
+		SvDef::StringVector msgList;
+		msgList.push_back( std::string( TmpUser ) );
 		msgList.push_back( Attempt );
 
 		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
@@ -869,13 +871,13 @@ int SVAccessClass::SetupDialog()
 }
 
 // GetCurrentUser returns the current logged on user.
-const SVString& SVAccessClass::GetCurrentUser()
+const std::string& SVAccessClass::GetCurrentUser()
 {
 	return m_svStorage.GetCurrentUser();
 }
 
 // This function returns the current logged on password.
-const SVString& SVAccessClass::GetCurrentPassword()
+const std::string& SVAccessClass::GetCurrentPassword()
 {
 	return m_svStorage.GetCurrentPassword();
 }
@@ -920,7 +922,7 @@ HRESULT SVAccessClass::Add( long lID, LPCTSTR Name, LPCTSTR NTGroup /*=nullptr*/
 HRESULT SVAccessClass::CreateProcess( LPCTSTR AppName, const LPCTSTR Path, LPCTSTR Command )
 {
 	HRESULT Result( S_OK );
-	SVString WorkingDirectory;
+	std::string WorkingDirectory;
 
 	if( 0 != ::_access( AppName, 0) )
 	{
@@ -955,12 +957,12 @@ HRESULT SVAccessClass::CreateProcess( LPCTSTR AppName, const LPCTSTR Path, LPCTS
 	}
 	//Remove the app name from the working directory
 	size_t Pos = WorkingDirectory.rfind( '\\' );
-	if( SVString::npos != Pos )
+	if( std::string::npos != Pos )
 	{
-		WorkingDirectory = SvUl_SF::Left(WorkingDirectory, Pos);
+		WorkingDirectory = SvUl::Left(WorkingDirectory, Pos);
 	}
 
-	SVString NTGroup;
+	std::string NTGroup;
 	Result = GetNTGroup( SECURITY_POINT_EXTRAS_MENU_UTILITIES_RUN, NTGroup );
 	if( S_OK == Result )
 	{
@@ -982,7 +984,7 @@ bool SVAccessClass::SVIsSecured( long lId )
 
 	if( S_OK == GetForcedPrompt( lId, Forced ) && ! Forced )
 	{
-		SVString NTGroup;
+		std::string NTGroup;
 
 		HRESULT hr = GetNTGroup( lId, NTGroup );
 		if( S_OK == hr )

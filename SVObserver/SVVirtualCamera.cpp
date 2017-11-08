@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 
-
 #include "SVVirtualCamera.h"
 #include "SVDigitizerProcessingClass.h"
 #include "CameraLibrary/SVDeviceParams.h"
@@ -20,6 +19,7 @@
 #include "SVObjectLibrary/GlobalConst.h"
 #include "SVObjectLibrary/SVClsids.h"
 #include "SVUtilityLibrary/SVGUID.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -191,7 +191,7 @@ bool SVVirtualCamera::GoOnline()
 		AfxGetApp()->WriteProfileInt(_T("Debug"), _T("LogTSFEF"), bLog );
 		if ( bLog )
 		{
-			SVString Name = SvUl_SF::Format(_T("%s\\TSFEF_%s.log"), SvStl::GlobalPath::Inst().GetTempPath().c_str(), SVString(mpsvDevice->DeviceName() + _T("_vc")).c_str());
+			std::string Name = SvUl::Format(_T("%s\\TSFEF_%s.log"), SvStl::GlobalPath::Inst().GetTempPath().c_str(), std::string(mpsvDevice->DeviceName() + _T("_vc")).c_str());
 			m_LogFile.Open( Name.c_str(), CFile::modeCreate | CFile::modeWrite | CFile::shareDenyWrite );
 		}
 	}
@@ -593,7 +593,7 @@ LPCTSTR SVVirtualCamera::GetImageFilename() const
 	return m_imageFilename.c_str();
 }
 
-void SVVirtualCamera::SetImageFilename(const SVString& filename)
+void SVVirtualCamera::SetImageFilename(const std::string& filename)
 {
 	m_imageFilename = filename;
 }
@@ -603,7 +603,7 @@ LPCTSTR SVVirtualCamera::GetImageDirectoryName() const
 	return m_imageDirectoryName.c_str();
 }
 
-void SVVirtualCamera::SetImageDirectoryName(const SVString& directoryName)
+void SVVirtualCamera::SetImageDirectoryName(const std::string& directoryName)
 {
 	m_imageDirectoryName = directoryName;
 }

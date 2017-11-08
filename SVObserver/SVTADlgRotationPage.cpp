@@ -19,7 +19,7 @@
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVOCore/SVImageTransform.h"
 #include "SVToolSet.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion
 
 #ifdef _DEBUG
@@ -89,7 +89,7 @@ BOOL SVToolAdjustmentDialogRotationPageClass::OnSetActive()
 {
 	if( m_pInterpolationMode )
 	{
-		SVString EnumString;
+		std::string EnumString;
 		m_pInterpolationMode->getValue( EnumString );
 		m_cbInterpolation.SelectString( -1, EnumString.c_str() );
 	}
@@ -168,12 +168,12 @@ BOOL SVToolAdjustmentDialogRotationPageClass::OnInitDialog()
 		m_pInterpolationMode = dynamic_cast<SVEnumerateValueObjectClass*>(m_pTool->getFirstObject(objectInfo));
 		if( nullptr != m_pInterpolationMode )
 		{
-			SVString EnumList;
+			std::string EnumList;
 
 			m_pInterpolationMode->GetEnumTypes( EnumList );
 			m_cbInterpolation.SetEnumTypes( EnumList.c_str() );
 
-			SVString EnumString;
+			std::string EnumString;
 			m_pInterpolationMode->getValue( EnumString );
 			m_cbInterpolation.SelectString( -1, EnumString.c_str() );
 		}
@@ -215,7 +215,7 @@ void SVToolAdjustmentDialogRotationPageClass::OnAngleFormulaButton()
 {
 	if( m_pEvaluateRotationAngle )
 	{
-		SVString Caption = m_pEvaluateRotationAngle->GetName();
+		std::string Caption = m_pEvaluateRotationAngle->GetName();
 		Caption += _T( " Formula" );
 
 		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
@@ -232,7 +232,7 @@ void SVToolAdjustmentDialogRotationPageClass::OnXFormulaButton()
 {
 	if( m_pEvaluateRotationX )
 	{
-		SVString Caption = m_pEvaluateRotationX->GetName();
+		std::string Caption = m_pEvaluateRotationX->GetName();
 		Caption += _T( " Formula" );
 
 		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
@@ -249,7 +249,7 @@ void SVToolAdjustmentDialogRotationPageClass::OnYFormulaButton()
 {
 	if( m_pEvaluateRotationY )
 	{
-		SVString Caption = m_pEvaluateRotationY->GetName();
+		std::string Caption = m_pEvaluateRotationY->GetName();
 		Caption += _T( " Formula" );
 
 		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
@@ -332,7 +332,7 @@ void SVToolAdjustmentDialogRotationPageClass::refresh()
 
 		SetInspectionData();
 
-		SVString Value;
+		std::string Value;
 		// refresh X settings...
 		if( nullptr != m_pRotationXResult )
 		{

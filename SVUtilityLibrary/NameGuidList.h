@@ -7,13 +7,13 @@
 #pragma region Includes
 //Moved to precompiled header: #include <deque>
 //Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <string>
 //Moved to precompiled header: #include <guiddef.h>
-#include "SVString.h"
 #include "SVUtilityLibrary\SVGUID.h"
 #pragma endregion Includes
 namespace SvUl
 {
-	typedef std::pair<SVString, SVGUID> NameGuidPair;
+	typedef std::pair<std::string, SVGUID> NameGuidPair;
 	typedef std::deque<NameGuidPair> NameGuidList;
-	typedef std::map<SVString, NameGuidPair> InputNameGuidPairList;
+	typedef std::map<std::string, NameGuidPair> InputNameGuidPairList;
 } // namespace SvUl

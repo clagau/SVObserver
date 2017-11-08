@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   01 Dec 2014 12:16:02  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVFileCamera.h"
 //Moved to precompiled header: #include <boost/bind.hpp>
@@ -18,6 +19,8 @@
 #include "SVFileSystemLibrary/SVFileSystemScanner.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage/SVMessage.h"
+#include "Definitions/StringTypeDef.h"
+#pragma endregion Includes
 
 SVFileCamera::SVFileCamera()
 : m_lIsStarted(0)
@@ -29,12 +32,12 @@ SVFileCamera::SVFileCamera()
 	m_StartTimeStamp = 0;
 }
 
-const SVString& SVFileCamera::GetName() const
+const std::string& SVFileCamera::GetName() const
 {
 	return m_name;
 }
 
-void SVFileCamera::SetName(const SVString& name)
+void SVFileCamera::SetName(const std::string& name)
 {
 	m_name = name;
 }
@@ -64,7 +67,7 @@ LPCTSTR SVFileCamera::GetDirectory() const
 	return m_fileData.directory.c_str();
 }
 
-void SVFileCamera::SetDirectory(const SVString& dir)
+void SVFileCamera::SetDirectory(const std::string& dir)
 {
 	m_fileData.directory = dir;
 }
@@ -74,7 +77,7 @@ LPCTSTR SVFileCamera::GetFileName() const
 	return m_fileData.fileName.c_str();
 }
 
-void SVFileCamera::SetFileName(const SVString& fileName)
+void SVFileCamera::SetFileName(const std::string& fileName)
 {
 	m_fileData.fileName = fileName;
 }
@@ -148,9 +151,9 @@ bool SVFileCamera::IsRunning() const
 	return m_thread.IsActive();
 }
 
-SVString SVFileCamera::GetNextFilename()
+std::string SVFileCamera::GetNextFilename()
 {
-	SVString fileName;
+	std::string fileName;
 	const SVFileInfo& fileInfo = m_loadSequence.GetNext();
 	return fileInfo.filename;
 }
@@ -351,7 +354,7 @@ bool SVFileCamera::ValidImageFormatForCopy() const
 void SVFileCamera::OnAPCEvent( ULONG_PTR data )
 {
 	SVFileCamera* pCamera = (SVFileCamera *)data;
-	SVString filename = pCamera->GetNextFilename();
+	std::string filename = pCamera->GetNextFilename();
 
 	// Load file
 	if (!filename.empty() && S_OK == SVImageFileLoader::Load(filename.c_str(), pCamera->m_bitmap))
@@ -362,7 +365,7 @@ void SVFileCamera::OnAPCEvent( ULONG_PTR data )
 	else
 	{
 		// add to event log
-		SVStringVector msgList;
+		SvDef::StringVector msgList;
 		SvStl::MessageTextEnum id = SvStl::Tid_Empty;
 		if (filename.empty())
 		{

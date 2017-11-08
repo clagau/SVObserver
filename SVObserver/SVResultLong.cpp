@@ -14,7 +14,7 @@
 #include "SVResultLong.h"
 #include "SVRange.h"
 #include "TextDefinesSvO.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVLongResultClass, SVLongResultClassGuid );
@@ -54,7 +54,7 @@ SVLongResultClass::SVLongResultClass( SVObjectClass* POwner, int StringResourceI
 	rangeClassInfo.m_ObjectTypeInfo.ObjectType = SVRangeObjectType;
 	rangeClassInfo.m_ObjectTypeInfo.SubType	= SVNotSetSubObjectType;
 	rangeClassInfo.m_ClassId = SVRangeClassGuid;
-	rangeClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_CLASSNAME_SVRANGE );
+	rangeClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_SVRANGE );
 
 	// Construct it
 	SVRangeClass* pRange = (SVRangeClass* )rangeClassInfo.Construct(); 

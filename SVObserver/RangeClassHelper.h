@@ -19,7 +19,7 @@
 #include "SVOCore/SVTaskObjectList.h"
 #include "Definitions/RangeEnum.h"
 #include "SVStatusLibrary/MessageTextEnum.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -61,7 +61,7 @@ public:
 	/// \param messageList [out] additionalText to message text
 	/// \returns HRESULT S_OK if successful
 	//************************************
-	HRESULT CheckInternalData(SvStl::MessageTextEnum &messageId, SVStringVector &messageList) const;
+	HRESULT CheckInternalData(SvStl::MessageTextEnum &messageId, SvDef::StringVector &messageList) const;
 
 	//************************************
 	// Description:  Set the data
@@ -80,9 +80,9 @@ public:
 	//************************************
 	// Description: Get the range value string from the RangeObject could be a numeric value or an indirect object
 	// Parameter:  ra <in>:  the enum value of the object
-	// Returns:  SVString   with the value 
+	// Returns:  std::string   with the value 
 	//************************************
-	SVString GetStringFromRange( RangeEnum::ERange ra ) const;
+	std::string GetStringFromRange( RangeEnum::ERange ra ) const;
 
 	//************************************
 	// Description:  get the Owner name of the Range Object 
@@ -99,28 +99,28 @@ public:
 	bool RenameIndirectValues(LPCTSTR oldPefix, LPCTSTR newPrefix);
 
 	//************************************
-	/// \returns SVString the Fail High value as string. 
+	/// \returns std::string the Fail High value as string. 
 	/// If it is a indirect value it return the name of the linked value.
 	//************************************
-	SVString GetFailHighString();
+	std::string GetFailHighString();
 		
 	//************************************
-	/// \returns SVString the Warn High value as string. 
+	/// \returns std::string the Warn High value as string. 
 	/// If it is a indirect value it return the name of the linked value.
 	//************************************
-	SVString GetWarnHighString();
+	std::string GetWarnHighString();
 
 	//************************************
-	/// \returns SVString the Fail Low value as string. 
+	/// \returns std::string the Fail Low value as string. 
 	/// If it is a indirect value it return the name of the linked value.
 	//************************************
-	SVString GetFailLowString();
+	std::string GetFailLowString();
 
 	//************************************
-	/// \returns SVString the Warn Low value as string. 
+	/// \returns std::string the Warn Low value as string. 
 	/// If it is a indirect value it return the name of the linked value.
 	//************************************
-	SVString GetWarnLowString();
+	std::string GetWarnLowString();
 
 	//************************************
 	/// Fill the Object selector with filter and object, 
@@ -146,7 +146,7 @@ public:
 	// Parameter:  status <out>:  the reason why it is not allowed
 	// Returns:  bool:  if true the value can be set
 	//************************************
-	static bool IsAllowedToSet(const SVObjectClass& ObjectRef, const SVString& rValue, bool bOnline, HRESULT& hres);
+	static bool IsAllowedToSet(const SVObjectClass& ObjectRef, const std::string& rValue, bool bOnline, HRESULT& hres);
 #pragma endregion Public Methods
 
 #pragma region Private Methods
@@ -154,9 +154,9 @@ public:
 	/// If indirect value is not empty it will return this, else it will return the direct value
 	/// \param indirectString [in] The indirect string
 	/// \param directValue [in,out] The direct value
-	/// \returns SVString the value as string.
+	/// \returns std::string the value as string.
 	//************************************
-	SVString GetValueString(const SVString& indirectString, double directValue);
+	std::string GetValueString(const std::string& indirectString, double directValue);
 
 	//************************************
 	/// Checks the indirect reference string if it is valid
@@ -164,14 +164,14 @@ public:
 	/// \param rIndirectString [in] reference top the indirect string
 	/// \returns true if valid
 	//************************************
-	bool isValidReference( const SVString& rInspectionName, const SVString& rIndirectString ) const;
+	bool isValidReference( const std::string& rInspectionName, const std::string& rIndirectString ) const;
 
 	/// Change the indirect names, if necessary
 	/// \param rIndirectString [in,out] reference to the indirect name. It will be changed if necessary
 	/// \param oldPefix [in] old  name
 	/// \param newPrefix [in] new name
 	/// \returns bool
-	bool RenameIndirectValue(SVString& rIndirectString, LPCTSTR oldPefix, LPCTSTR newPrefix);
+	bool RenameIndirectValue(std::string& rIndirectString, LPCTSTR oldPefix, LPCTSTR newPrefix);
 #pragma endregion Private Methods
 
 #pragma region Member variables
@@ -181,10 +181,10 @@ private:
 	double m_WarnHigh;
 	double m_WarnLow;
 	double m_FailLow;
-	SVString m_FailHighIndirect;
-	SVString m_WarnHighIndirect;
-	SVString m_WarnLowIndirect;
-	SVString m_FailLowIndirect;
+	std::string m_FailHighIndirect;
+	std::string m_WarnHighIndirect;
+	std::string m_WarnLowIndirect;
+	std::string m_FailLowIndirect;
 #pragma endregion Member variables
 };
 

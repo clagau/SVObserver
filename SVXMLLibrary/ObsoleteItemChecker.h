@@ -11,18 +11,17 @@
 #include "SVConfigurationTags.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVNavigateTree.h"
-#include "SVUtilityLibrary/SVString.h"
-#include "SVUtilityLibrary/SVStringConversions.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 namespace SvXml
 {
 	template<typename TreeType>
-	static HRESULT HasObsoleteItem(TreeType& rTree, SVString& rItemType, int& errorCode);
+	static HRESULT HasObsoleteItem(TreeType& rTree, std::string& rItemType, int& errorCode);
 	
 	
 	template< typename SVTreeType >
-	HRESULT CheckObsoleteItems( SVTreeType& rTree, const unsigned long& ulSVOConfigVersion, SVString& rItemType, int& errorCode );
+	HRESULT CheckObsoleteItems( SVTreeType& rTree, const unsigned long& ulSVOConfigVersion, std::string& rItemType, int& errorCode );
 	
 } //namespace SvXml
 

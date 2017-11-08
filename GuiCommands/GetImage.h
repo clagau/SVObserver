@@ -34,7 +34,7 @@ namespace SvCmd
 		/// Constructor to get an image from a taskObject with a name.
 		/// \param rName [in] Name of the image.
 		/// \param rParentID [in] The GUID of the taskObject which is the parent of the image.
-		GetImage(const SVString& rName, const GUID& rParentID) : m_InstanceID( SV_GUID_NULL )
+		GetImage(const std::string& rName, const GUID& rParentID) : m_InstanceID( SV_GUID_NULL )
 			, m_Name(rName)
 			, m_ParentID( rParentID )
 			, m_Width ( 0 )
@@ -117,7 +117,7 @@ namespace SvCmd
 		CComPtr<IPictureDisp> m_picture;
 		GUID m_InstanceID;
 		GUID m_ParentID;
-		SVString m_Name;
+		std::string m_Name;
 		int m_Width;
 		int m_Height;
 	};

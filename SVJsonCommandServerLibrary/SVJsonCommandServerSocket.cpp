@@ -82,7 +82,7 @@ bool SVJsonCommandServerSocket::HasClient() const
 	return m_client.IsValidSocket();
 }
 
-bool SVJsonCommandServerSocket::Write(const SVString& rData)
+bool SVJsonCommandServerSocket::Write(const std::string& rData)
 {
 	bool bRetVal = false;
 
@@ -113,7 +113,7 @@ void SVJsonCommandServerSocket::OnAccept()
 	}
 }
 
-void SVJsonCommandServerSocket::OnDataReceived(const SVString& rData)
+void SVJsonCommandServerSocket::OnDataReceived(const std::string& rData)
 {
 	if (!m_dataReceivedFunc.empty())
 	{
@@ -227,7 +227,7 @@ void SVJsonCommandServerSocket::ThreadProcessHandler(bool& bWaitEvents)
 
 						if( l_Auto.Assign( &m_WriteQueueLock ) )
 						{
-							SVString Data = m_WriteQueue.front();
+							std::string Data = m_WriteQueue.front();
 
 							m_WriteQueue.pop_front();
 

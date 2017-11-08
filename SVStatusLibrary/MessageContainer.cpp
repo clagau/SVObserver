@@ -13,6 +13,8 @@
 #include "SVMessage\SVMessage.h"
 #include "SVRegistry.h"
 #include "SVObjectLibrary\GlobalConst.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary\LoadDll.h"
 #pragma endregion Includes
 
@@ -100,10 +102,10 @@ namespace SvStl
 
 	MessageContainer::MessageContainer( long MessageCode, MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, DWORD ProgramCode /*=0*/, const GUID& rObjectId /*=SV_GUID_NULL*/ )
 	{
-		setMessage( MessageCode, AdditionalTextId, SVStringVector(), SourceFile, ProgramCode, rObjectId );
+		setMessage( MessageCode, AdditionalTextId, SvDef::StringVector(), SourceFile, ProgramCode, rObjectId );
 	}
 
-	MessageContainer::MessageContainer( long MessageCode, MessageTextEnum AdditionalTextId, const SVStringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode /*=0*/, const GUID& rObjectId /*=SV_GUID_NULL*/  )
+	MessageContainer::MessageContainer( long MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode /*=0*/, const GUID& rObjectId /*=SV_GUID_NULL*/  )
 	{
 		setMessage( MessageCode, AdditionalTextId, rAdditionalTextList, SourceFile, ProgramCode, rObjectId );
 	}
@@ -139,10 +141,10 @@ namespace SvStl
 
 	void MessageContainer::setMessage( long MessageCode, MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, DWORD ProgramCode /*=0*/, const GUID& rObjectId /*=SV_GUID_NULL*/  )
 	{
-		setMessage( MessageCode, AdditionalTextId, SVStringVector(), SourceFile, ProgramCode, rObjectId );
+		setMessage( MessageCode, AdditionalTextId, SvDef::StringVector(), SourceFile, ProgramCode, rObjectId );
 	}
 
-	void MessageContainer::setMessage( long MessageCode, MessageTextEnum AdditionalTextId, const SVStringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode /*=0*/, const GUID& rObjectId /*=SV_GUID_NULL*/  )
+	void MessageContainer::setMessage( long MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode /*=0*/, const GUID& rObjectId /*=SV_GUID_NULL*/  )
 	{
 		clearMessage();
 		m_Message.m_MessageCode = MessageCode;
@@ -173,7 +175,7 @@ namespace SvStl
 		//Set the date time when this is being set
 		m_Message.m_DateTime = std::time( 0 );
 
-		SVString additionalText = m_Message.getAdditionalText();
+		std::string additionalText = m_Message.getAdditionalText();
 		if( !additionalText.empty() )
 		{
 			m_What = additionalText;
@@ -184,7 +186,7 @@ namespace SvStl
 		}
 	}
 
-	void MessageContainer::addMessage( long MessageCode, MessageTextEnum AdditionalTextId, SVStringVector AdditionalTextList, SourceFileParams SourceFile , DWORD ProgramCode )
+	void MessageContainer::addMessage( long MessageCode, MessageTextEnum AdditionalTextId, SvDef::StringVector AdditionalTextList, SourceFileParams SourceFile , DWORD ProgramCode )
 	{
 		//Save the current message to the additional messages
 		m_AdditionalMessages.push_back( m_Message );
@@ -224,11 +226,11 @@ namespace SvStl
 
 	void MessageContainer::logMessage() const
 	{
-		SVStringVector SubstituteStrings;
+		SvDef::StringVector SubstituteStrings;
 		const TCHAR *pSubstituteString[SubstituteStringNr];
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_OTHER)
-		SVString DebugString = SvUl_SF::Format( DebugLogFormat, m_Message.m_MessageCode, m_Message.getAdditionalText().c_str() );
+		std::string DebugString = SvUl::Format( DebugLogFormat, m_Message.m_MessageCode, m_Message.getAdditionalText().c_str() );
 		::OutputDebugString( DebugString.c_str() );
 #endif
 
@@ -314,18 +316,18 @@ namespace SvStl
 		return Icon;
 	}
 
-	SVString MessageContainer::Format( SVString& rMessage ) const
+	std::string MessageContainer::Format( std::string& rMessage ) const
 	{
-		SVString Result;
-		SVString MsgDetails;
+		std::string Result;
+		std::string MsgDetails;
 
 		rMessage.clear();
 		//Default result
-		Result = SvUl_SF::Format( SourceCategoryEventFormat, getFacilityName().c_str(), getCategoryName().c_str(), getEventID() );
+		Result = SvUl::Format( SourceCategoryEventFormat, getFacilityName().c_str(), getCategoryName().c_str(), getEventID() );
 
 		if (nullptr != m_MessageDll )
 		{
-			SVStringVector SubstituteStrings;
+			SvDef::StringVector SubstituteStrings;
 			const TCHAR *pSubstituteString[SubstituteStringNr];
 
 			setSubstituteStrings( SubstituteStrings );
@@ -350,13 +352,13 @@ namespace SvStl
 				SvOl::LCID_USA, (LPTSTR) &pMessage, 11, (va_list *) pSubstituteString))
 			{
 				rMessage = (TCHAR *) pMessage;
-				SvUl_SF::searchAndReplace(rMessage, _T("\r\n\r\n"), _T("\r\n") );
-				SVString SearchString( _T("\r\n") );
+				SvUl::searchAndReplace(rMessage, _T("\r\n\r\n"), _T("\r\n") );
+				std::string SearchString( _T("\r\n") );
 				SearchString += DetailsToken;
 				size_t Index = rMessage.find( SearchString.c_str() );
-				if ( SVString::npos != Index )
+				if ( std::string::npos != Index )
 				{
-					MsgDetails = SvUl_SF::Mid( rMessage, Index +  SearchString.size() );
+					MsgDetails = SvUl::Mid( rMessage, Index +  SearchString.size() );
 					//Remove unnecessary new lines from the details
 					size_t Pos = MsgDetails.find_first_not_of(_T("\r\n"));
 					if ( -1 != Pos )
@@ -371,9 +373,9 @@ namespace SvStl
 
 		if (rMessage.empty())
 		{
-			rMessage = SvUl_SF::Format( ErrorLoadingDll, m_Message.m_MessageCode);
+			rMessage = SvUl::Format( ErrorLoadingDll, m_Message.m_MessageCode);
 
-			MsgDetails = SvUl_SF::Format( DefaultEventFormat,
+			MsgDetails = SvUl::Format( DefaultEventFormat,
 				m_Message.m_SourceFile.m_FileName.c_str(),
 				m_Message.m_SourceFile.m_Line,
 				m_Message.m_SourceFile.m_FileDateTime.c_str(),
@@ -407,9 +409,9 @@ namespace SvStl
 		return (m_Message.m_MessageCode & 0x0fff0000) >> 16;
 	}
 
-	SVString MessageContainer::getFacilityName() const
+	std::string MessageContainer::getFacilityName() const
 	{
-		SVString SourceName;
+		std::string SourceName;
 
 		switch( getFacility() )
 		{
@@ -443,9 +445,9 @@ namespace SvStl
 		return (getFacility() & 0x00ff);
 	}
 
-	SVString MessageContainer::getCategoryName() const
+	std::string MessageContainer::getCategoryName() const
 	{
-		SVString Result( CategoryUnknown );
+		std::string Result( CategoryUnknown );
 
 		switch( getFacility() )
 		{
@@ -479,16 +481,16 @@ namespace SvStl
 		return Result;
 	}
 
-	void MessageContainer::setSubstituteStrings( SVStringVector& rSubstituteStrings ) const
+	void MessageContainer::setSubstituteStrings( SvDef::StringVector& rSubstituteStrings ) const
 	{
 		rSubstituteStrings.clear();
 		rSubstituteStrings.resize( SubstituteStringNr );
 		rSubstituteStrings[0] = _T("\r\n");
 		rSubstituteStrings[1] =  m_Message.m_SourceFile.m_FileName;
-		rSubstituteStrings[2] = SvUl_SF::Format( _T("%d"), m_Message.m_SourceFile.m_Line );
+		rSubstituteStrings[2] = SvUl::Format( _T("%d"), m_Message.m_SourceFile.m_Line );
 		rSubstituteStrings[3] = m_Message.m_SourceFile.m_FileDateTime;
-		rSubstituteStrings[4] = SvUl_SF::Format( _T("%d"), m_Message.m_ProgramCode );
-		rSubstituteStrings[5] = SvUl_SF::Format( _T("0x%08x"), m_Message.m_ProgramCode );
+		rSubstituteStrings[4] = SvUl::Format( _T("%d"), m_Message.m_ProgramCode );
+		rSubstituteStrings[5] = SvUl::Format( _T("0x%08x"), m_Message.m_ProgramCode );
 		rSubstituteStrings[6] = m_Message.m_SourceFile.m_CompileDate;
 		rSubstituteStrings[7] = m_Message.m_SourceFile.m_CompileTime;
 		rSubstituteStrings[8] = m_Message.getAdditionalText();
@@ -501,7 +503,7 @@ namespace SvStl
 		if( nullptr == m_MessageDll )
 		{
 			//! Note all facilities use the same message dll 
-			SVString RegKey( RegPathEventLog );
+			std::string RegKey( RegPathEventLog );
 			RegKey += getFacilityName();
 
 			try
@@ -509,7 +511,7 @@ namespace SvStl
 				SVRegistryClass reg( RegKey.c_str());
 				if (!reg.CreatedNewKey())
 				{
-					SVString MessageDll;
+					std::string MessageDll;
 					if (reg.GetRegistryValue( EventMsgFile, MessageDll))
 					{
 						Result = SvUl::LoadDll::Instance().getDll( MessageDll.c_str(), m_MessageDll );

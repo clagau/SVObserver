@@ -18,7 +18,6 @@
 #include "SVSystemLibrary/SVThreadWait.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVUtilityLibrary/SVWinHandle.h"
-#include "SVUtilityLibrary/SVString.h"
 #include "SVInfoStructs.h"
 #include "SVOGui/ZoomHelper.h"
 #include "SVOGui/ZoomHelperEx.h"
@@ -228,7 +227,7 @@ private:
 	ZoomHelperEx m_ZoomHelper;
 
 	SVGUID m_ImageId;
-	SVString m_imageName;
+	std::string m_imageName;
 
 	IDirectDrawSurface7* m_pDDImageSurface;
 	IDirectDrawSurface7* m_pDDScaledImageSurface;

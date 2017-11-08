@@ -131,7 +131,7 @@ namespace SvSml
 	}
 
 
-	MonitorEntries::const_iterator  SVSharedMonitorList::FindInMoListVector(SVString const &name, const MonitorEntries &entryVector)
+	MonitorEntries::const_iterator  SVSharedMonitorList::FindInMoListVector(std::string const &name, const MonitorEntries &entryVector)
 	{
 		MonitorEntries::const_iterator ret;
 		for (ret = entryVector.begin(); ret != entryVector.end(); ++ret)
@@ -142,7 +142,7 @@ namespace SvSml
 		return ret;
 	}
 
-	bool SVSharedMonitorList::IsInMoListVector(SVString const &name, const MonitorEntries &entryVector)
+	bool SVSharedMonitorList::IsInMoListVector(std::string const &name, const MonitorEntries &entryVector)
 	{
 		return FindInMoListVector(name, entryVector) != entryVector.end();
 	}

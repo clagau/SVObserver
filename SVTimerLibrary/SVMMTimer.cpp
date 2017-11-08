@@ -75,7 +75,7 @@ namespace SvTl
 	}
 
 	// Add Event Handlers
-	void SVMMTimer::Subscribe(const SVString& receiverTag, unsigned long interval, SVTimerCallback* pCallback)
+	void SVMMTimer::Subscribe(const std::string& receiverTag, unsigned long interval, SVTimerCallback* pCallback)
 	{
 		SVMMTimer& timer = SVMMTimer::Instance();
 	
@@ -92,7 +92,7 @@ namespace SvTl
 	}
 
 	// Set Timer Interval
-	void SVMMTimer::SetInterval(const SVString& receiverTag, unsigned long interval)
+	void SVMMTimer::SetInterval(const std::string& receiverTag, unsigned long interval)
 	{
 		SVMMTimer& timer = SVMMTimer::Instance();
 		typedef SVTimerEventListeners::iterator Iter;
@@ -109,7 +109,7 @@ namespace SvTl
 	}
 
 	// Remove Event handlers
-	void SVMMTimer::UnSubscribe(const SVString& receiverTag)
+	void SVMMTimer::UnSubscribe(const std::string& receiverTag)
 	{
 		SVMMTimer& timer = SVMMTimer::Instance();
 

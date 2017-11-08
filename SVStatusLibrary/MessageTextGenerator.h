@@ -6,8 +6,8 @@
 //******************************************************************************
 #pragma once
 #pragma region Includes
-#include "SVUtilityLibrary\SVString.h"
 #include "SVStatusLibrary/MessageTextEnum.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -33,14 +33,14 @@ namespace SvStl
 		/// \param additionalList [in] A list of the additional text parts
 		/// \returns SVString
 		//************************************
-		SVString getText(MessageTextEnum messageId, const SVStringVector &additionalList = SVStringVector()) const;
+		std::string getText(MessageTextEnum messageId, const SvDef::StringVector &additionalList = SvDef::StringVector()) const;
 
 		//************************************
 		/// Convert an enum id to a string for setting it to the addtionalTextList.
 		/// \param id [in] the id
 		/// \returns SVString
 		//************************************
-		static SVString convertId2AddtionalText(MessageTextEnum id);
+		static std::string convertId2AddtionalText(MessageTextEnum id);
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -55,7 +55,7 @@ namespace SvStl
 		/// \param text [in] 
 		/// \returns SVString
 		//************************************
-		SVString convertAddtionalListTextToString(const SVString& text) const;
+		std::string convertAddtionalListTextToString(const std::string& text) const;
 #pragma endregion Private Methods
 
 #pragma region Member Variables

@@ -20,6 +20,7 @@
 #include "SVAnalyzer.h"
 #include "SVConditional.h"
 #include "Definitions/GlobalConst.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVToolClass, SVToolClassGuid );
@@ -365,7 +366,7 @@ void SVToolClass::UpdateAuxiliaryExtents()
 				m_svAuxiliarySourceImageName.SetValue(pAuxSourceImage->GetCompleteName());
 			}
 
-			SVString DrawType = m_svToolExtent.GetAuxiliaryDrawTypeString();
+			std::string DrawType = m_svToolExtent.GetAuxiliaryDrawTypeString();
 			m_svAuxiliaryDrawType.SetValue(DrawType);
 			
 			SVExtentPointStruct pt;
@@ -1353,7 +1354,7 @@ bool SVToolClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) c
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SVStringVector msgList;
+			SvDef::StringVector msgList;
 			msgList.push_back(GetName());
 			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ConditionalValue_Invalid, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);

@@ -12,6 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVXMLMaterialsTree.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 namespace SvXml
@@ -194,7 +195,7 @@ namespace SvXml
 
 		SVBranchHandle pBranch( pParent );
 		SVBranchHandle pNewBranch( nullptr );
-		SVString BranchName( Name );
+		std::string BranchName( Name );
 
 		if( nullptr == pBranch )
 		{
@@ -263,9 +264,9 @@ namespace SvXml
 		return Result;
 	}
 
-	SVString SVXMLMaterialsTree::getBranchName( const SVBranchHandle pBranch ) const
+	std::string SVXMLMaterialsTree::getBranchName( const SVBranchHandle pBranch ) const
 	{
-		SVString Result;
+		std::string Result;
 
 		if( nullptr != pBranch )
 		{
@@ -451,7 +452,7 @@ namespace SvXml
 	{
 		HRESULT Result( S_OK );
 		SVBranchHandle pBranch( pParent );
-		SVString LeafName( Name );
+		std::string LeafName( Name );
 
 		if( nullptr == pBranch )
 		{
@@ -502,9 +503,9 @@ namespace SvXml
 		return Result;
 	}
 
-	SVString SVXMLMaterialsTree::getLeafName( const SVLeafHandle pLeaf ) const
+	std::string SVXMLMaterialsTree::getLeafName( const SVLeafHandle pLeaf ) const
 	{
-		SVString Result;
+		std::string Result;
 
 		if( m_Tree.end() != pLeaf )
 		{
@@ -552,19 +553,19 @@ namespace SvXml
 		return Result;
 	}
 
-	HRESULT SVXMLMaterialsTree::getLeafValues( const SVBranchHandle pParent, const SVString& rSearchName, SVStringSet& rLeafValues )
+	HRESULT SVXMLMaterialsTree::getLeafValues( const SVBranchHandle pParent, const std::string& rSearchName, SvDef::StringSet& rLeafValues )
 	{
 		HRESULT Result( S_OK );
 
 		SVLeafHandle pLeaf( getFirstLeaf( pParent ) );
 		while( isValidLeaf( pParent, pLeaf ) )
 		{
-			SVString LeafName = getLeafName( pLeaf );
+			std::string LeafName = getLeafName( pLeaf );
 			if( rSearchName == LeafName )
 			{
 				_variant_t Value;
 				getLeafData( pLeaf, Value );
-				rLeafValues.insert( SvUl_SF::createSVString( Value.GetVARIANT() ) );
+				rLeafValues.insert( SvUl::createStdString( Value.GetVARIANT() ) );
 			}
 
 			pLeaf = getNextLeaf( pParent, pLeaf);

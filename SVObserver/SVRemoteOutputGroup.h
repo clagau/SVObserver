@@ -22,7 +22,7 @@
 #include "SVObjectCommandDataJson.h"
 #include "SVRemoteOutputObject.h"
 #include "SVXMLLibrary\SVObjectXMLWriter.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 class SVRemoteOutputGroup : 
@@ -61,17 +61,17 @@ public:
 	SVRemoteOutputObject* GetFirstObject( ) const;
 
 	const SVGUID& GetPPQObjectId() const;
-	SVString GetPPQName() const;
-	HRESULT SetPPQName( const SVString& p_rPPQ );
+	std::string GetPPQName() const;
+	HRESULT SetPPQName( const std::string& p_rPPQ );
 
-	SVString GetGroupName() const;
+	std::string GetGroupName() const;
 
 	HRESULT Delete( SVRemoteOutputObject* );
 
 	// This function finds the objects index from the Object list.
 	HRESULT Find( SVRemoteOutputObject* p_pObject, long& p_rlIndex );
 
-	HRESULT SetGroupName( const SVString& p_rPPQ );
+	HRESULT SetGroupName( const std::string& p_rPPQ );
 
 protected:
 	mutable SVCriticalSection m_CriticalSection;
@@ -90,6 +90,6 @@ private:
 	const SVRemoteOutputGroup& operator=(const SVRemoteOutputGroup& p_rControl );
 };
 
-typedef std::map<SVString, SVRemoteOutputGroup* > SVRemoteOutputGroupMap;
+typedef std::map<std::string, SVRemoteOutputGroup* > SVRemoteOutputGroupMap;
 
 

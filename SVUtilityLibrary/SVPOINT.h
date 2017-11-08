@@ -13,7 +13,6 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
-#include "SVString.h"
 #pragma endregion Includes
 
 /**
@@ -40,7 +39,7 @@ public:
 
 	operator _variant_t () const;
 
-	SVString ToString() const;
+	std::string ToString() const;
 	
 	const SVPOINT& operator=( const SVPOINT& p_rObject );
 	const SVPOINT& operator=( const POINT& p_rPoint );

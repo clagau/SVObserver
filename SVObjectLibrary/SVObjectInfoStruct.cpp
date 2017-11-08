@@ -97,7 +97,7 @@ HRESULT SVObjectInfoStruct::SetObject( const SVGUID& rObjectID )
 	return l_hrOk;
 }
 
-HRESULT SVObjectInfoStruct::SetObject( const SVString& rName )
+HRESULT SVObjectInfoStruct::SetObject( const std::string& rName )
 {
 	HRESULT l_hrOk = S_OK;
 

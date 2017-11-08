@@ -21,7 +21,7 @@
 #include "TextDefinesSvO.h"
 #include "SVOCore/EQAdjustSize.h"
 #include "SVRunControlLibrary\SVRunControlLibrary.h"
-#include "SVUtilityLibrary\SVString.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 
@@ -389,7 +389,7 @@ bool ToolSizeAdjustTask::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 		Result = false;
 
 		SvStl::MessageTextEnum messageId = SvStl::Tid_ErrorInReset;
-		SVStringVector msgList;
+		SvDef::StringVector msgList;
 		if(GetTool()->GetName())
 		{
 			messageId = SvStl::Tid_InValidNewExtents;

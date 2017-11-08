@@ -16,6 +16,8 @@
 #include "SVOCore/SVImageProcessingClass.h"
 #include "ObjectInterfaces/ICustom2Filter.h"
 #include "SVObjectLibrary/SVClsids.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -253,9 +255,9 @@ bool Custom2Filter::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages)
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SVStringVector msgList;
-			msgList.push_back(SvUl_SF::Format(_T("%d"), Width));
-			msgList.push_back(SvUl_SF::Format(_T("%d"), SvOi::ICustom2Filter::MaxKernelSize));
+			SvDef::StringVector msgList;
+			msgList.push_back(SvUl::Format(_T("%d"), Width));
+			msgList.push_back(SvUl::Format(_T("%d"), SvOi::ICustom2Filter::MaxKernelSize));
 			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_DataInvalidKernelWidth, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
@@ -268,9 +270,9 @@ bool Custom2Filter::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages)
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SVStringVector msgList;
-			msgList.push_back(SvUl_SF::Format(_T("%d"), Height));
-			msgList.push_back(SvUl_SF::Format(_T("%d"), SvOi::ICustom2Filter::MaxKernelSize));
+			SvDef::StringVector msgList;
+			msgList.push_back(SvUl::Format(_T("%d"), Height));
+			msgList.push_back(SvUl::Format(_T("%d"), SvOi::ICustom2Filter::MaxKernelSize));
 			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_DataInvalidKernelHeight, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}

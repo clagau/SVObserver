@@ -32,8 +32,9 @@
 #include "SVRunControlLibrary/SVImageIndexStruct.h"
 #include "SVRunControlLibrary/SVRunStatus.h"
 #include "SVSystemLibrary/SVCriticalSection.h"
+#include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/SVGUID.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVOCore/SVTaskObject.h" // For SVImageClassPtrSet
 #include "SVOCore/SVImageBuffer.h" //SVImageOverlayClass; used for getting overlay data for the ActiveX
 #include "SVInfoStructs.h"
@@ -47,6 +48,7 @@
 #include "SVSharedMemoryLibrary/MonitorEntry.h"
 #include "SVSharedMemoryLibrary/SMRingbuffer.h"
 #pragma endregion Includes
+
 #pragma region Declarations
 class SVCameraImageTemplate;
 class SVConditionalClass;
@@ -70,7 +72,7 @@ class SVInspectionProcess :
 	SV_DECLARE_CLASS( SVInspectionProcess );
 
 public:
-	typedef SVBiUniqueMap< SVString, SVObjectClass* >::type SVValueObjectMap;
+	typedef SVBiUniqueMap<std::string, SVObjectClass* >::type SVValueObjectMap;
 	typedef SVTQueueObject< SVOutputRequestInfoStruct > SVOutputRequestQueue;
 	typedef SVVector< SVPPQObject* > SVPPQObjectPtrVector;
 	//************************************
@@ -125,7 +127,7 @@ public:
 	virtual bool AddInputRequestMarker() override;
 #pragma endregion virtual method (IInspectionProcess)
 
-	bool IsCameraInInspection( const SVString& rCameraName ) const;
+	bool IsCameraInInspection( const std::string& rCameraName ) const;
 
 	///Checks whether the reset state is set
 	bool IsResetStateSet( unsigned long p_State ) const;
@@ -145,14 +147,14 @@ public:
 
 	bool RebuildInspectionInputList();
 	
-	void RemoveCamera( const SVString& rCameraName );
+	void RemoveCamera( const std::string& rCameraName );
 	
 	bool AddInputRequest( const SVObjectReference& rObjectRef, const _variant_t& rValue );
 
 	HRESULT AddInputImageRequest( SVImageClass* p_psvImage, BSTR& p_rbstrValue );
-	HRESULT AddInputImageFileNameRequest( SVImageClass* p_psvImage, const SVString& p_rFileName );
+	HRESULT AddInputImageFileNameRequest( SVImageClass* p_psvImage, const std::string& p_rFileName );
 	HRESULT AddInputImageRequest( SVInputImageRequestInfoStructPtr p_InRequestPtr );
-	HRESULT AddInputImageRequestByCameraName( const SVString& rCameraName, const SVString& rFileName);
+	HRESULT AddInputImageRequestByCameraName( const std::string& rCameraName, const std::string& rFileName);
 
 	//************************************
 	//! Checks if the configuration has conditional history attributes and resets them as they are deprecated
@@ -202,7 +204,7 @@ public:
 	virtual bool IsColorCamera() const override;
 
 	LPCTSTR GetToolsetImage();
-	void SetToolsetImage( const SVString& rToolsetImage );
+	void SetToolsetImage( const std::string& rToolsetImage );
 
 	SVCameraImageTemplate* GetToolSetMainImage();
 
@@ -215,7 +217,7 @@ public:
 
 	HRESULT AddSharedCamera( SVVirtualCamera* pCamera );
 
-	HRESULT GetMainImages( const SVString& rCameraName, SVCameraImagePtrSet& rMainImages ) const;
+	HRESULT GetMainImages( const std::string& rCameraName, SVCameraImagePtrSet& rMainImages ) const;
 
 	HRESULT RemoveImage(SVImageClass* pImage);
 
@@ -272,7 +274,7 @@ public:
 	virtual void ConnectObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	bool DestroyChildObject(SVObjectClass* pChildcontext);
 	virtual SvOi::IObjectClass* getFirstObject(const SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends = true, const SvOi::IObjectClass* pRequestor = nullptr) const override;
-	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName) override;
+	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override;
 	virtual bool ConnectAllInputs() override;
 	virtual bool replaceObject(SVObjectClass* pObject, const GUID& rNewGuid) override;
 #pragma endregion Methods to replace processMessage
@@ -281,7 +283,7 @@ public:
 
 	bool m_bForceOffsetUpdate; // Force Global Extent data to update
 
-	SVStringVector& getViewedInputNames() { return m_arViewedInputNames; };
+	SvDef::StringVector& getViewedInputNames() { return m_arViewedInputNames; };
 
 	/// Get the controller for the play condition equation
 	/// \returns SvOi::IFormulaControllerPtr
@@ -326,7 +328,7 @@ protected:
 
 	struct SVInspectionTracking
 	{
-		typedef std::map< SVString, SVInspectionTrackingElement > SVEventTrackingMap;
+		typedef std::map<std::string, SVInspectionTrackingElement> SVEventTrackingMap;
 
 		SVInspectionTracking();
 		SVInspectionTracking( const SVInspectionTracking& p_rObject );
@@ -337,8 +339,8 @@ protected:
 
 		void SetStartTime();
 
-		void EventStart( const SVString& p_rName );
-		void EventEnd( const SVString& p_rName );
+		void EventStart( const std::string& p_rName );
+		void EventEnd( const std::string& p_rName );
 
 		SvTl::SVTimeStamp m_StartTime;
 		SVEventTrackingMap m_EventCounts;
@@ -390,7 +392,7 @@ protected:
 	HRESULT RestoreCameraImages();
 
 	template<typename T>
-	HRESULT SetObjectArrayValues(SVObjectReference& rObjectRef, const SVString& rValues, bool & reset);
+	HRESULT SetObjectArrayValues(SVObjectReference& rObjectRef, const std::string& rValues, bool & reset);
 
 	void SingleRunModeLoop( bool p_Refresh = false );
 
@@ -447,8 +449,8 @@ protected:
 	SvOi::IValueObjectPtrSet m_ValueObjectSet;
 	SVImageClassPtrSet m_ImageObjectSet;
 
-	SVString m_ToolSetCameraName;
-	SVString m_DeviceName;
+	std::string m_ToolSetCameraName;
+	std::string m_DeviceName;
 
 #ifdef EnableTracking
 	SVInspectionTracking m_InspectionTracking;
@@ -479,7 +481,7 @@ private:
 	int m_StoreIndex; 
 	SvSml::RingBufferPointer m_SlotManager;
 
-	SVStringVector m_arViewedInputNames;
+	SvDef::StringVector m_arViewedInputNames;
 
 	//For RegressionTest
 	SVEquationClass m_RegressionTestPlayEquation;
@@ -495,15 +497,15 @@ namespace SVDetail
 	{
 		typedef T value_type;
 		typedef SVValueObjectClass<T> object_type;
-		inline static bool validate(const SVString &rString) { return true; }
+		inline static bool validate(const std::string &rString) { return true; }
 	};
 
 	template<>
 	struct ValueObjectTraits<CFile>
 	{
-		typedef SVString value_type;
-		typedef SVValueObjectClass<SVString> object_type;
-		inline static bool validate(const SVString& rString)
+		typedef std::string value_type;
+		typedef SVValueObjectClass<std::string> object_type;
+		inline static bool validate(const std::string& rString)
 		{
 			CFileStatus rStatus;
 			return CFile::GetStatus( rString.c_str(), rStatus ) != 0 && 0L <= rStatus.m_size;
@@ -511,22 +513,22 @@ namespace SVDetail
 	};
 
 	template<typename T>
-	inline T str2int(const SVString& rString)
+	inline T str2int(const std::string& rString)
 	{
 		int base = (rString[0] == '0' && toupper(rString[1]) == 'X')?16:10;
 		return static_cast<T>(_tcstol(rString.c_str(), nullptr, base));
 	}
 
 	template<>
-	inline SVString str2int(const SVString& rString)
+	inline std::string str2int(const std::string& rString)
 	{
 		int base = (rString[0] == '0' && toupper(rString[1]) == 'X')?16:10;
-		SVString Result = SvUl_SF::Format( _T("%d"), _tcstol(rString.c_str(), nullptr, base) );
+		std::string Result = SvUl::Format( _T("%d"), _tcstol(rString.c_str(), nullptr, base) );
 		return Result;
 	}
 
 	template<typename T>
-	inline T str2(const SVString& rString)
+	inline T str2(const std::string& rString)
 	{
 		if (boost::is_integral<T>::value)
 		{
@@ -538,11 +540,11 @@ namespace SVDetail
 		}
 	}
 
-	typedef boost::function<bool (const SVString& rString)> Validator;
+	typedef boost::function<bool (const std::string& rString)> Validator;
 }
 
 template<typename T>
-inline HRESULT Parse(std::vector<T> & vec, const SVString& rValues, SVDetail::Validator validate)
+inline HRESULT Parse(std::vector<T> & vec, const std::string& rValues, SVDetail::Validator validate)
 {
 	const TCHAR * escape = _T("\\");
 	const TCHAR * separator = _T(",");
@@ -552,7 +554,7 @@ inline HRESULT Parse(std::vector<T> & vec, const SVString& rValues, SVDetail::Va
 		return S_FALSE;
 	}
 	typedef boost::escaped_list_separator<TCHAR> Sep;
-	typedef boost::tokenizer<Sep, SVString::const_iterator, SVString> Tokenizer;
+	typedef boost::tokenizer<Sep, std::string::const_iterator, std::string> Tokenizer;
 	Sep sep(escape, separator, quote);
 	Tokenizer tok(rValues, sep);
 	try
@@ -577,7 +579,7 @@ inline HRESULT Parse(std::vector<T> & vec, const SVString& rValues, SVDetail::Va
 }
 
 template<typename T>
-inline HRESULT SVInspectionProcess::SetObjectArrayValues(SVObjectReference& rObjectRef, const SVString& rValues, bool & reset)
+inline HRESULT SVInspectionProcess::SetObjectArrayValues(SVObjectReference& rObjectRef, const std::string& rValues, bool & reset)
 {
 	ASSERT(rObjectRef.getObject()->IsCreated() && rObjectRef.getObject()->IsValid() && rObjectRef.isArray() && rObjectRef.isEntireArray());
 	typedef typename SVDetail::ValueObjectTraits<T> Traits;

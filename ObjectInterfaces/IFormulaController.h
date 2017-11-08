@@ -8,7 +8,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary\SVString.h"
+
 #include "SVUtilityLibrary\SVSharedPtr.h"
 #include "SVStatusLibrary\MessageContainer.h"
 #pragma endregion Includes
@@ -23,13 +23,13 @@ namespace SvOi
 
 		/**********
 		Get the current used equation text.
-		\return SVString equation text.
+		\return std::string equation text.
 		**********/
-		virtual SVString GetEquationText() const = 0;
+		virtual std::string GetEquationText() const = 0;
 
-		virtual SVString GetInspectionName() const = 0;
-		virtual SVString GetPPQName() const = 0;
-		virtual SVString GetOwnerName() const = 0;
+		virtual std::string GetInspectionName() const = 0;
+		virtual std::string GetPPQName() const = 0;
+		virtual std::string GetOwnerName() const = 0;
 
 		//************************************
 		//! Sets the Selectable items for the ObjectSelector.
@@ -58,7 +58,7 @@ namespace SvOi
 		/// \param bSetValue [in] boolean if true, set value and reset object, else the old value will restored.
 		/// \param rErrorMessages [out] Return a list of ErrorMessages.
 		/// \returns int return the position of the failure. If the validation is successful, the value will be "validateSuccessful".
-		virtual int ValidateEquation(const SVString &equationString, double& result, bool bSetValue, SvStl::MessageContainerVector& rErrorMessages) const = 0;
+		virtual int ValidateEquation(const std::string &equationString, double& result, bool bSetValue, SvStl::MessageContainerVector& rErrorMessages) const = 0;
 
 		/**********
 		/// Set the Default Inputs

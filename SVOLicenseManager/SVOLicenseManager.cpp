@@ -133,7 +133,7 @@ void SVOLicenseManager::ShowLicenseManagerErrors()
 				{
 					if( ::SetEvent( m_hCheckEvent ) )
 					{
-						SVString Temp( _T("The following tools are invalid because no Matrox Identification License was found") );
+						std::string Temp( _T("The following tools are invalid because no Matrox Identification License was found") );
 						SVLicenseMgrModelessDlg::Show( Temp, m_svErrorList, m_hCheckEvent );
 					}
 				}

@@ -13,7 +13,7 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <map>
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 class SVIODoc;
@@ -64,7 +64,7 @@ protected:
 		}
 	};
 
-	typedef std::map<SVString, ExpandCollapseState> CollapseExpandMap;
+	typedef std::map<std::string, ExpandCollapseState> CollapseExpandMap;
 
 	MonitorListView();           // protected constructor used by dynamic creation
 	virtual ~MonitorListView();

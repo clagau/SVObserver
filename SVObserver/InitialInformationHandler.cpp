@@ -13,6 +13,7 @@
 //Moved to precompiled header: #include <iostream>
 #include "SVObserver.h"
 
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVLibrary\SVOINIClass.h"
 #include "SVLibrary\SVOINILoader.h"
@@ -78,11 +79,11 @@ void InitialInformationHandler::LoadIniFilesAndDlls()
 		for (int i = 0; i < SvLib::MaxTriggers; i++)
 		{
 			bool Value(false);
-			Value = (0 == SvUl_SF::CompareNoCase(IniLoader.m_TriggerEdge[i], SVString(_T("R"))));
+			Value = (0 == SvUl::CompareNoCase(IniLoader.m_TriggerEdge[i], std::string(_T("R"))));
 			SVIOConfigurationInterfaceClass::Instance().SetSVIMTriggerValue(i, Value);
-			Value = (0 == SvUl_SF::CompareNoCase(IniLoader.m_StrobeEdge[i], SVString(_T("R"))));
+			Value = (0 == SvUl::CompareNoCase(IniLoader.m_StrobeEdge[i], std::string(_T("R"))));
 			SVIOConfigurationInterfaceClass::Instance().SetSVIMStrobeValue(i, Value);
-			Value = (0 == SvUl_SF::CompareNoCase(IniLoader.m_StartFrameType[i], SVString(_T("Y"))));
+			Value = (0 == SvUl::CompareNoCase(IniLoader.m_StartFrameType[i], std::string(_T("Y"))));
 			SVIOConfigurationInterfaceClass::Instance().SetSVIMStrobeStartFrameActive(i, Value);
 		}
 
@@ -339,34 +340,34 @@ HRESULT InitialInformationHandler::INIReset()
 {
 	HRESULT l_hrOk = S_OK;
 
-	if (0 == SvUl_SF::CompareNoCase(m_InitialInfo.m_ReloadAcquisitionDLL, _T("Y")))
+	if (0 == SvUl::CompareNoCase(m_InitialInfo.m_ReloadAcquisitionDLL, _T("Y")))
 	{
 		CloseAcquisitionDLL();
 	}
 
-	if (0 == SvUl_SF::CompareNoCase(m_InitialInfo.m_ReloadTriggerDLL, _T("Y")))
+	if (0 == SvUl::CompareNoCase(m_InitialInfo.m_ReloadTriggerDLL, _T("Y")))
 	{
 		CloseTriggerDLL();
 	}
 
-	if (0 == SvUl_SF::CompareNoCase(m_InitialInfo.m_ReloadDigitalDLL, _T("Y")))
+	if (0 == SvUl::CompareNoCase(m_InitialInfo.m_ReloadDigitalDLL, _T("Y")))
 	{
 		CloseDigitalDLL();
 	}
 
-	if (0 == SvUl_SF::CompareNoCase(m_InitialInfo.m_ReloadDigitalDLL, _T("Y")))
+	if (0 == SvUl::CompareNoCase(m_InitialInfo.m_ReloadDigitalDLL, _T("Y")))
 	{
 		l_hrOk = l_hrOk | LoadDigitalDLL();
 	}
 
-	if (0 == SvUl_SF::CompareNoCase(m_InitialInfo.m_ReloadTriggerDLL, _T("Y")))
+	if (0 == SvUl::CompareNoCase(m_InitialInfo.m_ReloadTriggerDLL, _T("Y")))
 	{
 		l_hrOk = l_hrOk | LoadTriggerDLL();
 		l_hrOk = l_hrOk | LoadSoftwareTriggerDLL();
 		l_hrOk = l_hrOk | LoadAcquisitionTriggerDLL();
 	}
 
-	if (0 == SvUl_SF::CompareNoCase(m_InitialInfo.m_ReloadAcquisitionDLL, _T("Y")))
+	if (0 == SvUl::CompareNoCase(m_InitialInfo.m_ReloadAcquisitionDLL, _T("Y")))
 	{
 		l_hrOk = l_hrOk | LoadAcquisitionDLL();
 		l_hrOk = l_hrOk | LoadFileAcquisitionDLL();

@@ -19,7 +19,7 @@
 #include "SVVisitor.h"
 #include "SVTemplate.h"
 #include "SVDeviceParam.h"
-#include "SVUtilityLibrary/SVString.h"
+
 
 typedef std::map <SVDeviceParamEnum, SVDeviceParamWrapper> SVDeviceParamMap;
 
@@ -83,7 +83,7 @@ public:
 	}
 
 	// For custom parameters - uses visual name
-	bool ParameterExists( const SVString& rVisualName ) const
+	bool ParameterExists( const std::string& rVisualName ) const
 	{
 		bool bRetVal = false;
 
@@ -98,7 +98,7 @@ public:
 	}
 
 	// For custom parameters - uses visual name
-	const SVDeviceParamWrapper& Parameter( const SVString& rVisualName ) const
+	const SVDeviceParamWrapper& Parameter( const std::string& rVisualName ) const
 	{
 		static SVDeviceParamWrapper dummy;
 		for (SVDeviceParamMap::const_iterator iter = mapParameters.begin(); iter != mapParameters.end();++iter)
@@ -110,7 +110,7 @@ public:
 	}
 
 	// For custom parameters - uses visual name
-	SVDeviceParamWrapper& GetParameter( const SVString& rVisualName )
+	SVDeviceParamWrapper& GetParameter( const std::string& rVisualName )
 	{
 		static SVDeviceParamWrapper dummy;
 		for (SVDeviceParamMap::iterator iter = mapParameters.begin(); iter != mapParameters.end();++iter)
@@ -122,7 +122,7 @@ public:
 	}
 
 	// For custom parameters - uses visual name
-	template <typename DERIVED> HRESULT GetParameter( const SVString& rVisualName, DERIVED*& rpParam )
+	template <typename DERIVED> HRESULT GetParameter( const std::string& rVisualName, DERIVED*& rpParam )
 	{
 		for (SVDeviceParamMap::iterator iter = mapParameters.begin(); iter != mapParameters.end();++iter)
 		{
@@ -152,7 +152,7 @@ public:	// needed for iterators
 	SVDeviceParamMap mapParameters;
 };
 
-typedef TDoubleFactorySingleton<SVDeviceParamEnum, SVString, SVDeviceParam>::factory TheDeviceParamFactory;
+typedef TDoubleFactorySingleton<SVDeviceParamEnum, std::string, SVDeviceParam>::factory TheDeviceParamFactory;
 
 class SVDeviceParamIndexer : public std::vector<SVDeviceParamEnum>
 {

@@ -159,9 +159,9 @@ BOOL SVOInspectionList::RemoveInspectionFromList( LPCTSTR InspectLabel )
 	return bRet;
 }
 
-SVString SVOInspectionList::GetInspectionName( LPCTSTR InspectLabel )
+std::string SVOInspectionList::GetInspectionName( LPCTSTR InspectLabel )
 {
-	SVString Result;
+	std::string Result;
 
 	SVOInspectionObjPtr pInspectionObj = GetInspectionByName( InspectLabel );
 	if( nullptr != pInspectionObj )
@@ -186,9 +186,9 @@ SVOInspectionObjPtr SVOInspectionList::GetInspectionByName( LPCTSTR InspectLabel
 	return pResult;
 }
 
-SVString SVOInspectionList::GetInspectionLabel( LPCTSTR InspectName )
+std::string SVOInspectionList::GetInspectionLabel( LPCTSTR InspectName )
 {
-	SVString Result;
+	std::string Result;
 
 	iterator pos = FindInspectionPositionFromName( InspectName );
 	if( pos != m_InspectionList.end() )

@@ -12,7 +12,6 @@
 #include "SVMFCControls\AvailableObjectListComboBox.h"
 #include "SVMFCControls\ObjectsListBox.h"
 #include "SVUtilityLibrary\NameGuidList.h"
-#include "SVUtilityLibrary/SVString.h"
 #include "ValuesAccessor.h"
 #include "DataController.h"
 #include "ObjectSelectorController.h"
@@ -116,7 +115,7 @@ namespace SvOg
 		SVGUID m_selectedAnalyzerID;
 		long m_selectedSubType;
 		SvUl::NameGuidList m_availableColumn;
-		SVString m_inputName; 
+		std::string m_inputName; 
 
 		typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
 		typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;

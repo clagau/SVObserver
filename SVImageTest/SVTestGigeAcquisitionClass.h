@@ -13,20 +13,20 @@
 
 #include "SVTestAcquisitionClass.h"
 #include "SVTestGigeCameraProxy.h"
-#include "SVUtilityLibrary/SVString.h"
+
 
 class SVTestGigeAcquisitionClass : public SVTestAcquisitionClass
 {
 private:
 	SVTestGigeCameraProxy m_gigeCameraProxy;
 
-	HRESULT SetGigeFeatureOverrides(const SVString& rFeatureOverrides);
+	HRESULT SetGigeFeatureOverrides(const std::string& rFeatureOverrides);
 
 public:
 	SVTestGigeAcquisitionClass(SVTestAcquisitionSubsystem& p_rSubsystem, unsigned long p_hDigitizer);
 	virtual ~SVTestGigeAcquisitionClass();
 
-	virtual HRESULT ReadCameraFile( const SVString&) override;
+	virtual HRESULT ReadCameraFile( const std::string&) override;
 
 	virtual HRESULT IsValidCameraFileParameters( SVDeviceParamCollection& rDeviceParams ) override;
 	virtual bool CameraMatchesCameraFile() override;

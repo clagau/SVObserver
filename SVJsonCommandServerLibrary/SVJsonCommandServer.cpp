@@ -52,7 +52,7 @@ void SVJsonCommandServer::DisconnectFromClients()
 	m_ProcessCommandFunction.clear();
 }
 
-HRESULT SVJsonCommandServer::WriteJson(const SVString& rData)
+HRESULT SVJsonCommandServer::WriteJson(const std::string& rData)
 {
 	HRESULT l_Status = S_OK;
 
@@ -83,9 +83,9 @@ void SVJsonCommandServer::OnClientAccepted()
 	}
 }
 
-void SVJsonCommandServer::OnClientJsonReceived(const SVString& rData)
+void SVJsonCommandServer::OnClientJsonReceived(const std::string& rData)
 {
-	SVString Response;
+	std::string Response;
 
 	if( !( m_ProcessCommandFunction.empty() ) )
 	{

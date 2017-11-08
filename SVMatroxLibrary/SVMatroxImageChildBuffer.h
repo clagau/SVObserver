@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary/SVString.h"
+
 #include "SVMatroxBufferTemplate.h"
 #pragma endregion Includes
 
@@ -26,7 +26,7 @@ public:
 	virtual ~SVMatroxImageChildBuffer();
 
 protected:
-	SVMatroxImageChildBuffer( SVMatroxBufferPtr p_ParentPtr, SVMatroxIdentifier p_Identifier, const SVString& p_rCreatorName );
+	SVMatroxImageChildBuffer( SVMatroxBufferPtr p_ParentPtr, SVMatroxIdentifier p_Identifier, const std::string& p_rCreatorName );
 
 	SVMatroxBufferPtr m_ParentPtr;
 

@@ -8,11 +8,13 @@
 /// To create and access the shared memory administrator rights are necessary
 //******************************************************************************
 #pragma once
-#include "SVUtilityLibrary\SVString.h"
-#include "SVStatusLibrary\SourceFileParams.h"
-#include <memory>
-#include "SMParameterStruct.h"
 
+#pragma region Includes
+//Moved to precompiled header: #include <memory>
+#include <memory>
+#include "SVStatusLibrary\SourceFileParams.h"
+#include "SMParameterStruct.h"
+#pragma endregion Includes
 
 namespace  SvSml
 {
@@ -97,7 +99,7 @@ namespace  SvSml
 		DWORD			m_AllocationGranularity;
 		DWORD			m_InfoSize;
 		DWORD			m_MatchedInfoSize;
-		SVString		m_FileName;
+		std::string		m_FileName;
 		int				m_TotalSlotCount;
 		int				m_RejectSlotCount;
 		HANDLE				m_hMapFile;					// Handle to the mapped memory file

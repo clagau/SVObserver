@@ -19,7 +19,6 @@
 #include "SVToolExtentClass.h"
 #include "SVImageClass.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "SVUtilityLibrary/SVString.h"
 #include "SVValueObjectLibrary/SVStringValueObjectClass.h"
 #pragma endregion Includes
 

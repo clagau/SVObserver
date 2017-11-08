@@ -17,14 +17,14 @@
 //Moved to precompiled header: #include <map>
 #include "ObjectSelectorItem.h"
 #include "SVTree.h"
-#include "SVUtilityLibrary\SVString.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 namespace SvCl
 {
-	class ObjectTreeItems : public SVTree<SVString, ObjectSelectorItem>
+	class ObjectTreeItems : public SVTree<std::string, ObjectSelectorItem>
 	{
-		typedef std::map<SVString, iterator> BranchIteratorMap;
+		typedef std::map<std::string, iterator> BranchIteratorMap;
 	public:
 	#pragma region Constructor
 		/**********
@@ -52,7 +52,7 @@ namespace SvCl
 			\param rSelectorItem <in> a reference to the selector item to insert
 			\return the iterator to the inserted item
 		***********/
-		iterator insertLeaf(const SVString& rDisplayLocation, ObjectSelectorItem& rSelectorItem);
+		iterator insertLeaf(const std::string& rDisplayLocation, ObjectSelectorItem& rSelectorItem);
 
 		/**********
 			The method sets the states of all the nodes
@@ -77,21 +77,21 @@ namespace SvCl
 			\param CreateIfNone <in> creates the location if not available
 			\return the iterator to the found item
 		***********/
-		iterator findItem( const SVString& rDisplayLocation, bool CreateIfNone = false );
+		iterator findItem( const std::string& rDisplayLocation, bool CreateIfNone = false );
 
 		/**********
 		The method sets the state of the parent items
 		\param rIter <in> a reference to the parent iterator
 		\return string set (location names) of changed parent
 		***********/
-		SVStringSet setParentState( const ObjectTreeItems::iterator& rIter );
+		SvDef::StringSet setParentState( const ObjectTreeItems::iterator& rIter );
 
 		/**********
 			The method clears (unchecked) a item at the specified location and update also the parents if necessary.
 			\param rLocation <in> a reference to the location of the item
 			\return string set (location names) of changed items.
 		***********/
-		SVStringSet clearItem(const SVString& itemLocation);
+		SvDef::StringSet clearItem(const std::string& itemLocation);
 
 		void clearBranchMap() { m_BranchMap.clear(); };
 #pragma endregion Public Methods
@@ -105,7 +105,7 @@ namespace SvCl
 			\param rNodeName <in> the name of the node
 			\return the iterator that was created
 		***********/
-		iterator createNode( iterator& rParentIter, const SVString& rBranchName, const SVString& rNodeName);
+		iterator createNode( iterator& rParentIter, const std::string& rBranchName, const std::string& rNodeName);
 
 	#pragma endregion Private Methods
 

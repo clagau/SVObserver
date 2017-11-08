@@ -45,7 +45,7 @@
 #include "SVIPChildFrm.h" 
 #include "ExtrasEngine.h"
 #include "SVStatusLibrary/GlobalPath.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -648,7 +648,7 @@ void SVMainFrame::OnUpdateStatusInfo( CCmdUI *pCmdUI )
 		}
 		case ID_INDICATOR_MODE:  // Status Bar Mode
 		{
-			SVString Mode = _T("Mode: ");
+			std::string Mode = _T("Mode: ");
 			unsigned long l_lMode = 0;
 			GlobalRCGetMode( &l_lMode );
 			switch( l_lMode )
@@ -723,7 +723,7 @@ void SVMainFrame::OnUpdateStatusInfo( CCmdUI *pCmdUI )
 		{
 			bool l_bMatroxError = false;
 			bool l_bGigeError = false;
-			SVString Error;
+			std::string Error;
 
 			if ( !TheSVOLicenseManager().HasMatroxLicense() )
 			{
@@ -938,7 +938,7 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 		;
 		while( S_OK == l_Status && nullptr != htiSubChild )
 		{
-			SVSharedPtr<SVString> pToolsetScript = new SVString;
+			SVSharedPtr<std::string> pToolsetScript = new std::string;
 			SVGUID ownerGuid;
 
 			SVInspectionProcess* pInspect( nullptr );
@@ -947,7 +947,7 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 
 			while( nullptr != htiDataChild )
 			{
-				SVString DataName = p_rTree.getBranchName( htiDataChild );
+				std::string DataName = p_rTree.getBranchName( htiDataChild );
 
 				if ( 0 == DataName.compare( SvXml::CTAG_INSPECTION_PROCESS ) )
 				{
@@ -989,21 +989,21 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 				{
 					if( SvXml::SVNavigateTree::GetItem( p_rTree, SvXml::CTAG_TOOLSET_SCRIPT, htiSVIPDoc, svVariant ) )
 					{
-						SVString NewString = SvUl_SF::LoadSVString( IDS_OBJECTNAME_PAT_DELTAPOS );
+						std::string NewString = SvUl::LoadStdString( IDS_OBJECTNAME_PAT_DELTAPOS );
 
-						SVString ToolsetScript = SvUl_SF::createSVString( svVariant );
+						std::string ToolsetScript = SvUl::createStdString( svVariant );
 
 						// Pre-Parse Typo fix.
 						// This peice of code fixes the Angel to Angle typo.
-						SvUl_SF::searchAndReplace( ToolsetScript, _T("Axis Secondary Angel"), _T("Axis Secondary Angle") );
+						SvUl::searchAndReplace( ToolsetScript, _T("Axis Secondary Angel"), _T("Axis Secondary Angle") );
 
 						// Pre-Parse Typo fix number two.
 						// This peice of code fixes the Principle to Principal typo.
-						SvUl_SF::searchAndReplace( ToolsetScript, _T("Axis Principle Angle"), _T("Axis Principal Angle") );
+						SvUl::searchAndReplace( ToolsetScript, _T("Axis Principle Angle"), _T("Axis Principal Angle") );
 
 						// Pre-Parse Type fix number three.
 						// This piece of code changes "Angle delta Positive" to "Angle Delta Positive".
-						SvUl_SF::searchAndReplace( ToolsetScript, _T("Angle delta Positive"), NewString.c_str() );
+						SvUl::searchAndReplace( ToolsetScript, _T("Angle delta Positive"), NewString.c_str() );
 
 						*pToolsetScript = ToolsetScript;
 					}
@@ -1313,7 +1313,7 @@ LRESULT SVMainFrame::OnDisplayChange(WPARAM p_p1, LPARAM p_p2)
 		{
 			if( WAIT_TIMEOUT == WaitForSingleObject( m_hDisplayChangedEvent, 0 ) )
 			{
-				SVString Message = SvUl_SF::Format( _T("\n\n\nThe display color settings on the system have changed.\n"
+				std::string Message = SvUl::Format( _T("\n\n\nThe display color settings on the system have changed.\n"
 					"Images may not display correctly until this configuration is reopened.") );
 				HANDLE hMessage = ::CreateEvent( nullptr, true, false, nullptr );
 				::SetEvent( hMessage );

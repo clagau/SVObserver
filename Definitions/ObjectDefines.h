@@ -84,4 +84,4 @@ namespace SvDef
 		| SV_SELECTABLE_FOR_STATISTICS
 		| SV_ARCHIVABLE_IMAGE
 		);
-} //namespace SvOi
+} //namespace SvDef

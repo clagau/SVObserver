@@ -14,11 +14,11 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <assert.h>
+#include "Definitions/StringTypeDef.h"
 #include "ObjectInterfaces/ISelectorItemVector.h"
 #include "SVObjectLibrary/SVObjectReference.h"
 #include "SVObjectLibrary/SVObjectNameInfo.h"
 #include "SVContainerLibrary/ObjectTreeItems.h"
-#include "SVUtilityLibrary/SVString.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SelectorItem.h"
 #include "SelectorItemVector.h"
@@ -101,7 +101,7 @@ namespace SvOsl
 		//! \param rItems <in> the set of items to check as names
 		//! \return true if successful
 		//************************************
-		bool setCheckItems( const SVStringSet& rItems );
+		bool setCheckItems( const SvDef::StringSet& rItems );
 
 		//************************************
 		//! The method checks the items listed in the tree selector
@@ -109,7 +109,7 @@ namespace SvOsl
 		//! \param rInspectionName <in> the name of the corresponding inspection
 		//! \return true if successful
 		//************************************
-		bool setCheckItems( const SVObjectReferenceVector& rItems, const SVString& rInspectionName = SVString() );
+		bool setCheckItems( const SVObjectReferenceVector& rItems, const std::string& rInspectionName = std::string() );
 
 		//************************************
 		//! The method sets the location filter
@@ -117,14 +117,14 @@ namespace SvOsl
 		//! \param rFilter <in> reference to the filter to set
 		//! \param rReplace <in> the reference to the replace text
 		//************************************
-		void setLocationFilter( const FilterEnum& rType, const SVString& rFilter, const SVString& rReplace );
+		void setLocationFilter( const FilterEnum& rType, const std::string& rFilter, const std::string& rReplace );
 
 		//************************************
 		//! The method converts the location if the object is an array.
 		//! \param rItem <in>:  reference to the item to check
 		//! \return the new location with inserted name
 		//************************************
-		SVString convertObjectArrayName( const SvOi::ISelectorItem& rItem ) const;
+		std::string convertObjectArrayName( const SvOi::ISelectorItem& rItem ) const;
 
 		//************************************
 		//! The method gets the list of selected objects
@@ -177,7 +177,7 @@ namespace SvOsl
 		//! \param rLocation <in> reference to the location before filtering
 		//! \return filtered location
 		//************************************
-		SVString getFilteredLocation( const TranslateMap& rFilters, const SVString& rLocation ) const;
+		std::string getFilteredLocation( const SvDef::TranslateMap& rFilters, const std::string& rLocation ) const;
 
 		//************************************
 		//! The method converts the location to the required format using the location filter and array index
@@ -190,8 +190,8 @@ namespace SvOsl
 		SvCl::ObjectTreeItems	m_TreeContainer;	//The tree container to store all tree items
 		SelectorItemVector m_SelectedObjects;		//The selected objects
 		SelectorItemVector m_ModifiedObjects;		//The modified objects
-		TranslateMap m_LocationInputFilters;		//The location input filters
-		TranslateMap m_LocationOutputFilters;		//The location output filters
+		SvDef::TranslateMap m_LocationInputFilters;	//The location input filters
+		SvDef::TranslateMap m_LocationOutputFilters;//The location output filters
 		SelectorTypeEnum m_SelectorType;			//The selector type
 		UINT m_AttributesFilter;					//The attributes filter
 		long m_LeafCount;							//The number of leafs in the selector (only as debug information)

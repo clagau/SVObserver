@@ -29,7 +29,7 @@ namespace SvStl
 	{
 	}
 
-	MessageData::MessageData( DWORD MessageCode, MessageTextEnum AdditionalTextId, const SVStringVector& rAdditionalTextList ) :
+	MessageData::MessageData( DWORD MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList ) :
 	m_Logged( false )
 	, m_Displayed( false )
 	, m_MessageCode( MessageCode )
@@ -87,12 +87,12 @@ namespace SvStl
 		m_DateTime = 0;
 	}
 
-	SVString MessageData::getAdditionalText() const
+	std::string MessageData::getAdditionalText() const
 	{
 		return MessageTextGenerator::Instance().getText(m_AdditionalTextId, m_AdditionalTextList);
 	}
 
-	SVString MessageData::convertId2AddtionalText(MessageTextEnum id)
+	std::string MessageData::convertId2AddtionalText(MessageTextEnum id)
 	{
 		return MessageTextGenerator::convertId2AddtionalText(id);
 	}

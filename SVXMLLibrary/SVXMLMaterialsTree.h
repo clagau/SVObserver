@@ -13,12 +13,12 @@
 
 #pragma region Includes
 #include "SVXMLTree.h"
-#include "SVUtilityLibrary/SVString.h"
 #include "SVMaterialData.h"
 #include "SVContainerLibrary/SVTree.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
-typedef SvCl::SVTree<SVString, SvXml::SVMaterialData> SVMaterialsTree;
+typedef SvCl::SVTree<std::string, SvXml::SVMaterialData> SVMaterialsTree;
 
 namespace SvXml
 {
@@ -124,7 +124,7 @@ namespace SvXml
 		//! \param pBranch [in] handle to the branch
 		//! \returns the branch name
 		//************************************
-		virtual SVString getBranchName( const SVBranchHandle pBranch ) const override;
+		virtual std::string getBranchName( const SVBranchHandle pBranch ) const override;
 
 		//************************************
 		//! Method to determine if the branch has child leaves
@@ -185,7 +185,7 @@ namespace SvXml
 		//! \param pLeaf [in] handle to the leaf
 		//! \returns the leaf name
 		//************************************
-		virtual SVString getLeafName( const SVLeafHandle pLeaf ) const override;
+		virtual std::string getLeafName( const SVLeafHandle pLeaf ) const override;
 
 		//************************************
 		//! Method to get the leaf data
@@ -219,7 +219,7 @@ namespace SvXml
 		//! \param rLeafValues [out] reference to the list of values
 		//! \returns S_OK on success
 		//************************************
-		HRESULT	getLeafValues( const SVBranchHandle pParent, const SVString& rSearchName, SVStringSet& rLeafValues );
+		HRESULT	getLeafValues( const SVBranchHandle pParent, const std::string& rSearchName, SvDef::StringSet& rLeafValues );
 
 		//************************************
 		//! Method to get the root tree

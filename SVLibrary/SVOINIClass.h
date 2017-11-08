@@ -12,7 +12,7 @@
 #pragma once
 
 //Moved to precompiled header: #include <io.h>
-#include "SVUtilityLibrary/SVString.h"
+
 
 namespace SvLib
 {
@@ -22,7 +22,7 @@ namespace SvLib
 		SVOINIClass( LPCTSTR FileName );
 		virtual ~SVOINIClass();
 
-		SVString GetValueString( LPCTSTR Section, LPCTSTR Key, LPCTSTR Default ) const;
+		std::string GetValueString( LPCTSTR Section, LPCTSTR Key, LPCTSTR Default ) const;
 
 		int GetValueInt( LPCTSTR Section, LPCTSTR Key, int Default ) const;
 
@@ -30,7 +30,7 @@ namespace SvLib
 
 		HRESULT SetValueInt( LPCTSTR Section, LPCTSTR Key, int Value ) const;
 	protected:
-		SVString m_FileName;
+		std::string m_FileName;
 	};
 } //namespace SvLib
 

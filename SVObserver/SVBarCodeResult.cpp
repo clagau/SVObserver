@@ -156,7 +156,7 @@ bool SVBarCodeResultClass::onRun(SVRunStatusClass &rRunStatus, SvStl::MessageCon
     {
 		BOOL bLoad = false;
 
-		SVString InputString;
+		std::string InputString;
 		pValue->GetValue(InputString);
 
 		msv_bUseMatchStringFile.GetValue( bLoad );
@@ -175,7 +175,7 @@ bool SVBarCodeResultClass::onRun(SVRunStatusClass &rRunStatus, SvStl::MessageCon
 		}
 		else
 		{
-			SVString RegExpression;
+			std::string RegExpression;
 			SVStringValueObjectClass* pRegExp = getRegExpression();
 		    pRegExp->GetValue(RegExpression);
 
@@ -234,7 +234,7 @@ HRESULT SVBarCodeResultClass::LoadMatchStringFile()
 	msv_bUseMatchStringFile.GetValue( bLoad );
 	if ( bLoad )
 	{
-		SVString FileName;
+		std::string FileName;
 		CFile matchFile;
 
 		// Check to see if the file exists..
@@ -423,7 +423,7 @@ void SVBarCodeResultClass::InsertValueToTable(short nValue, int nIndex)
    }
 }
 
-int SVBarCodeResultClass::CheckStringInTable( const SVString& rMatchString )
+int SVBarCodeResultClass::CheckStringInTable( const std::string& rMatchString )
 {
    int Result = -1;
 

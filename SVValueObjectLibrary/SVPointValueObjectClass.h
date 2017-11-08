@@ -13,7 +13,6 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
-#include "SVUtilityLibrary/SVString.h"
 #include "SVUtilityLibrary/SVPOINT.h"
 #include "SVValueObjectClass.h"
 #pragma endregion Includes
@@ -38,12 +37,12 @@ protected:
 	/// Convert a string in a SVPOINT. Throw an exception if the string isn't convertible into a SVPOINT
 	/// \param strValue [in] The input string
 	/// \returns the converted.
-	virtual SVPOINT ConvertString2Type(const SVString& rValue ) const override;
+	virtual SVPOINT ConvertString2Type(const std::string& rValue ) const override;
 
-	//! Convert SVDPointClass to SVString 
+	//! Convert SVDPointClass to std::string 
 	//! \param rValue [in] Type to convert
-	/// \returns the SVString
-	virtual SVString ConvertType2String( const SVPOINT& rValue ) const override;
+	/// \returns the std::string
+	virtual std::string ConvertType2String( const SVPOINT& rValue ) const override;
 
 	//! Returns the value object byte size (SVPOINT has x and y value both of type long)
 	//! \returns the number of bytes for the data

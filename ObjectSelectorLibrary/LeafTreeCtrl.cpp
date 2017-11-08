@@ -96,7 +96,7 @@ namespace SvOsl
 
 	void LeafTreeCtrl::updateTree()
 	{
-		SVString Location = getParentPropPage().getHighlightedNode();
+		std::string Location = getParentPropPage().getHighlightedNode();
 
 		if( m_NodeLocation != Location  )
 		{

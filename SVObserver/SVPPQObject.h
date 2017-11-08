@@ -30,7 +30,6 @@
 #include "TriggerInformation/SVCameraTriggerData.h"
 #include "SVValueObjectLibrary/BasicValueObjects.h"
 #include "SVMonitorList.h"
-#include "SVUtilityLibrary/SVString.h"
 #include "SVInspectionProcess.h"
 #pragma endregion Includes
 
@@ -71,7 +70,7 @@ public:
 	void SetPPQLength( long lPPQLength );
 	void SetMaintainSourceImages( bool bMaintainImages );
 	void SetInspectionTimeout( long lTimeoutMillisec );
-	void SetConditionalOutputName( const SVString& conditionName );
+	void SetConditionalOutputName( const std::string& conditionName );
 
 	void GetPPQOutputMode( SvDef::SVPPQOutputModeEnum& rePPQOutputMode ) const;
 	void GetOutputDelay( long& rlDelayTime ) const;
@@ -80,7 +79,7 @@ public:
 	long GetPPQLength() const;
 	void GetMaintainSourceImages( bool& rbMaintainImages ) const;
 	void GetInspectionTimeout( long& rlTimeoutMillisec ) const;
-	const SVString& GetConditionalOutputName() const;
+	const std::string& GetConditionalOutputName() const;
 
 	bool AttachTrigger( SvTi::SVTriggerObject* pTrigger );
 	bool AttachCamera( SVVirtualCamera* pCamera, long lPosition, bool p_AllowMinusOne = false );
@@ -138,8 +137,8 @@ public:
 	void GetAvailableInputs( SVIOEntryHostStructPtrVector& p_IOEntries ) const;
 	void GetAllInputs( SVIOEntryHostStructPtrVector& p_IOEntries ) const;
 	void AddDefaultInputs();
-	bool AddToAvailableInputs(SVIOObjectType eType, const SVString& rName );
-	SVIOEntryHostStructPtr GetInput( const SVString& rName ) const;
+	bool AddToAvailableInputs(SVIOObjectType eType, const std::string& rName );
+	SVIOEntryHostStructPtr GetInput( const std::string& rName ) const;
 
 	void AddCameraDataInputs(SVIOEntryHostStructPtrVector& list);
 	void RemoveCameraDataInputs(SVIOEntryHostStructPtrVector& list);
@@ -252,7 +251,7 @@ protected:
 
 	};
 
-	typedef std::map< SVString, SVObjectReference > SVNameObjectMap;
+	typedef std::map<std::string, SVObjectReference> SVNameObjectMap;
 
 	typedef std::map<SVGUID, SVNameObjectMap> SVInspectionFilterValueMap; // Inspection Guid to FilterValueMap mapping
 	bool m_bActiveMonitorList;
@@ -457,7 +456,7 @@ protected:
 	SVCameraInfoMap m_Cameras;
 
 private:
-	SVString m_conditionalOutputName; // persist this
+	std::string m_conditionalOutputName; // persist this
 	SVGUID m_conditionalOutputValueID; // do not persist this
 
 	ProductWorkloadInformation m_MostRecentWorkLoadInfo; ///< workload information for the most recently completed product
@@ -487,8 +486,8 @@ private:
 
 	struct SVPPQTracking
 	{
-		typedef std::map< SVString, SVPPQTrackingElement > SVQueueTrackingMap;
-		typedef std::map< SVString, long > SVPPQTrackingMap;
+		typedef std::map<std::string, SVPPQTrackingElement> SVQueueTrackingMap;
+		typedef std::map<std::string, long> SVPPQTrackingMap;
 
 		SVPPQTracking();
 		SVPPQTracking( const SVPPQTracking& p_rObject );
@@ -497,9 +496,9 @@ private:
 
 		void clear();
 
-		void IncrementCount( const SVString& p_rName );
-		void IncrementCount( const SVString& p_rName, size_t p_Index );
-		void IncrementTimeCount( const SVString& p_rName, size_t p_Index );
+		void IncrementCount( const std::string& p_rName );
+		void IncrementCount( const std::string& p_rName, size_t p_Index );
+		void IncrementTimeCount( const std::string& p_rName, size_t p_Index );
 
 		size_t m_QueueLength;
 		size_t m_TimeLength;

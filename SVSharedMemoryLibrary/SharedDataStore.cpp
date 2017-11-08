@@ -5,15 +5,16 @@
 //*****************************************************************************
 ///class for holding memory for the dataBufferes in SharedMemory
 //******************************************************************************
+
 #pragma region Includes
 #include "StdAfx.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVMessage\SVMessage.h"
-#include "SVUtilityLibrary\SVString.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SharedDataStore.h"
 #include "SMParameterStruct.h"
-
 #pragma endregion Includes
 
 namespace SvSml
@@ -283,8 +284,8 @@ namespace SvSml
 
 	void SharedDataStore::ThrowCreateFileMappingFailed(SvStl::SourceFileParams& FileParams, DWORD Programmcode)
 	{
-		SVString LastError = SvUl_SF::Format(_T("%s LastError:  %i"), m_MapFileName.c_str(), GetLastError());
-		SVStringVector msgList;
+		std::string LastError = SvUl::Format(_T("%s LastError:  %i"), m_MapFileName.c_str(), GetLastError());
+		SvDef::StringVector msgList;
 		msgList.push_back(LastError);
 
 		SvStl::MessageMgrStd MesMan(SvStl::LogOnly);
@@ -293,8 +294,8 @@ namespace SvSml
 	}
 	void SharedDataStore::ThrowMapViewOfFileFailedFailed(SvStl::SourceFileParams& FileParams, DWORD Programmcode)
 	{
-		SVString LastError = SvUl_SF::Format(_T("%s LastError:  %i"), m_MapFileName.c_str(), GetLastError());
-		SVStringVector msgList;
+		std::string LastError = SvUl::Format(_T("%s LastError:  %i"), m_MapFileName.c_str(), GetLastError());
+		SvDef::StringVector msgList;
 		msgList.push_back(LastError);
 
 		SvStl::MessageMgrStd MesMan(SvStl::LogOnly);
@@ -304,8 +305,8 @@ namespace SvSml
 
 	void SharedDataStore::LogUnMapViewOfFileFailedFailed(SvStl::SourceFileParams& FileParams, DWORD Programmcode)
 	{
-		SVString LastError = SvUl_SF::Format(_T("%s LastError:  %i"), m_MapFileName.c_str(), GetLastError());
-		SVStringVector msgList;
+		std::string LastError = SvUl::Format(_T("%s LastError:  %i"), m_MapFileName.c_str(), GetLastError());
+		SvDef::StringVector msgList;
 		msgList.push_back(LastError);
 		SvStl::MessageMgrStd MesMan(SvStl::LogOnly);
 		MesMan.setMessage(SVMSG_SVO_5082_UNMAPVIEWOFFileFAILED, SvStl::Tid_Default, msgList, FileParams, Programmcode);

@@ -23,28 +23,28 @@ namespace SvSml
 {
 	const double SVSharedConfiguration::SharedDriveMinSize = 0.5; 
 
-	const SVString SVSharedConfiguration::GetShareName()
+	const std::string SVSharedConfiguration::GetShareName()
 	{
 		return "SVSharedMemory";
 	}
 
-	const SVString SVSharedConfiguration::GetMonitorListName()
+	const std::string SVSharedConfiguration::GetMonitorListName()
 	{
 		return "monitor_list";
 	}
 
-	const SVString SVSharedConfiguration::GetSharedMemoryDirectoryName()
+	const std::string SVSharedConfiguration::GetSharedMemoryDirectoryName()
 	{
 		return GetSharedDrive() + "\\boost_interprocess"; //BOOST_INTERPROCESS_SHARED_DIR_PATH;
 	}
 
 	// return only the Drive letter (do not append the root dir "\\")
-	const SVString SVSharedConfiguration::GetSharedDrive()
+	const std::string SVSharedConfiguration::GetSharedDrive()
 	{
 		return "V:";
 	}
 
-	void SVSharedConfiguration::Log(const SVString & msg)
+	void SVSharedConfiguration::Log(const std::string & msg)
 	{
 	#ifdef ENABLE_LOG
 		static std::ofstream os;
@@ -55,7 +55,7 @@ namespace SvSml
 		char buf[10] = {0};
 		_itoa(::GetCurrentThreadId(), buf, 16);
 		std::time_t tt = ::std::time(0);
-		os << SVString(std::asctime(std::localtime(&tt))) + " " + SVString(buf) + ":\t " + msg << std::endl;
+		os << std::string(std::asctime(std::localtime(&tt))) + " " + std::string(buf) + ":\t " + msg << std::endl;
 	#endif
 	}
 
@@ -68,7 +68,7 @@ namespace SvSml
 	{
 		bool bRetVal = false;
 		// Get Drive Size
-		SVString volName = "\\\\.\\";
+		std::string volName = "\\\\.\\";
 		volName += GetSharedDrive();
 		HANDLE hDevice = CreateFileA(volName.c_str(),    // drive to open
 							GENERIC_READ,                // no access to the drive
@@ -161,7 +161,7 @@ namespace SvSml
 	{
 		if (SVSharedConfiguration::SharedDriveExists())
 		{
-			const SVString& sharedMemoryDirectory = SVSharedConfiguration::GetSharedMemoryDirectoryName();
+			const std::string& sharedMemoryDirectory = SVSharedConfiguration::GetSharedMemoryDirectoryName();
 			DWORD res = GetFileAttributes(sharedMemoryDirectory.c_str());
 			if (res == INVALID_FILE_ATTRIBUTES)
 			{

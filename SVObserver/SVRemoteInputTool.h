@@ -18,7 +18,7 @@
 #include "SVObjectCommandDataJson.h"
 #include "SVOCore/SVTool.h"
 #include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 class SVRemoteInputTool : 
@@ -43,7 +43,7 @@ public:
 	HRESULT SetInputObject( const SVGUID& p_rObjectId );
 
 #pragma region Methods to replace processMessage
-	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName) override;
+	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override;
 #pragma endregion Methods to replace processMessage
 
 protected:
@@ -68,8 +68,8 @@ protected:
 	struct SVDataElement
 	{
 		SVDataElement();
-		SVDataElement( const SVString& p_rElementData, long p_ElementIdentifier );
-		SVDataElement( const SVString& p_rElementData );
+		SVDataElement( const std::string& p_rElementData, long p_ElementIdentifier );
+		SVDataElement( const std::string& p_rElementData );
 		SVDataElement( const SVDataElement& p_rObject );
 
 		virtual ~SVDataElement();
@@ -77,7 +77,7 @@ protected:
 		bool operator==( const SVDataElement& p_rObject ) const;
 		bool operator<( const SVDataElement& p_rObject ) const;
 
-		SVString m_ElementData;
+		std::string m_ElementData;
 		long m_ElementIdentifier;
 
 	};

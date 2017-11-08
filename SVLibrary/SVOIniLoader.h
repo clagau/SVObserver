@@ -12,7 +12,6 @@
 
 #pragma region Includes
 #include "Definitions/SVPPQEnums.h"
-#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 namespace SvLib
@@ -38,13 +37,13 @@ namespace SvLib
 
 		//@TODO [Arvid][7.50][09.06.2017] most of the remaining public data members in this class could be made private with moderate effort
 
-		SVString m_ModelNumber;
-		SVString m_WinKey;
-		SVString m_SerialNumber;
+		std::string m_ModelNumber;
+		std::string m_WinKey;
+		std::string m_SerialNumber;
 
-		SVString m_TriggerEdge[MaxTriggers];
-		SVString m_StrobeEdge[MaxTriggers];
-		SVString m_StartFrameType[MaxTriggers];
+		std::string m_TriggerEdge[MaxTriggers];
+		std::string m_StrobeEdge[MaxTriggers];
+		std::string m_StartFrameType[MaxTriggers];
 
 		bool m_bUseCorrectListRecursion;
 
@@ -55,8 +54,8 @@ namespace SvLib
 
 		bool m_bSingleCameraModel;
 
-		SVString m_Opto22InputInvert;
-		SVString m_Opto22OutputInvert;
+		std::string m_Opto22InputInvert;
+		std::string m_Opto22OutputInvert;
 	};
 
 } //namespace SvLib

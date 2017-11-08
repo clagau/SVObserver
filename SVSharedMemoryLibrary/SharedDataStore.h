@@ -6,8 +6,12 @@
 ///class for holding memory for the dataBufferes in SharedMemory
 //******************************************************************************
 #pragma once
+
+#pragma region Includes
 #include "SVStatusLibrary\SourceFileParams.h"
 #include "SMParameterStruct.h"
+#pragma endregion Includes
+
 namespace SvSml
 {
 	///class for holding memory for the dataBufferes in SharedMemory
@@ -59,8 +63,8 @@ namespace SvSml
 		DWORD m_slotCount; //<number of slots 
 		DWORD  m_slotSize; //<size per slot
 		DWORD m_DataStoreHeaderSize;
-		SVString m_MapFileName;
-		SVString m_StoreName;
+		std::string m_MapFileName;
+		std::string m_StoreName;
 		HANDLE m_hMapFileImage;
 
 		void* m_pViewHeader;

@@ -12,7 +12,7 @@
 #include "stdafx.h"
 #include "SVBlobAnalyzerResultDlg.h"
 #include "SVBlobAnalyzer.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 /////////////////////////////////////////////////////////////////////////////
@@ -58,8 +58,8 @@ BOOL SVBlobAnalyzerResultDlg::OnInitDialog()
 		{
 			double* pData = &(m_pBlobAnalyzer->m_vec2dBlobResults[i][0]);
 			
-			SVString Item = SvUl_SF::Format( _T("%s\t%5.1f"), m_pBlobAnalyzer->m_Value[i].GetName(), pData[m_pBlobAnalyzer->m_nBlobIndex]);
-			m_ResultList.AddString( SvUl_SF::Left(Item, 100).c_str() );
+			std::string Item = SvUl::Format( _T("%s\t%5.1f"), m_pBlobAnalyzer->m_Value[i].GetName(), pData[m_pBlobAnalyzer->m_nBlobIndex]);
+			m_ResultList.AddString( SvUl::Left(Item, 100).c_str() );
 		}
 	}
 	return TRUE;  // return TRUE unless you set the focus to a control

@@ -13,7 +13,7 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <map>
-#include "SVString.h"
+//Moved to precompiled header: #include <string>
 #pragma endregion Includes
 
 namespace SvUl
@@ -28,7 +28,7 @@ namespace SvUl
 	{
 	public:
 	#pragma region Declarations
-		typedef std::map<SVString, HINSTANCE> DllMap;
+		typedef std::map<std::string, HINSTANCE> DllMap;
 	#pragma endregion Declarations
 
 	public:
@@ -56,7 +56,7 @@ namespace SvUl
 			The method returns the Dll instance loads it if necessary
 			\return S_OK on success
 		***********/
-		HRESULT getDll( const SVString& DllName, HINSTANCE& Instance );
+		HRESULT getDll( const std::string& DllName, HINSTANCE& Instance );
 
 		/**********
 			The method free all loaded Dlls

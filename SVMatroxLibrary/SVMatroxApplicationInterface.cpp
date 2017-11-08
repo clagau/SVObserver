@@ -17,8 +17,9 @@
 #include "SVMatroxImagingLibrary.h"
 #include "SVMessage\SVMessage.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
-#include "SVStatusLibrary\MessageManager.h"
-#include "SVStatusLibrary\MessageManager.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/StringHelper.h"
+#include "SVStatusLibrary/MessageManager.h"
 #pragma endregion Includes
 
 static const long MATROX_FILTER_EVENT = 2622995;
@@ -130,9 +131,9 @@ void SVMatroxApplicationInterface::Log( SVMatroxStatusInformation &p_rStatusInfo
 			MessageCode = SVMSG_SVMATROXLIBRARY_UNKNOWN_FATAL_ERROR;
 			ProgramCode = SvStl::Err_25021_MatroxLibraryFatal;
 		}
-		SVStringVector msgList;
-		msgList.push_back( SvUl_SF::Format( _T("%d"), OsError ));
-		msgList.push_back( SvUl_SF::Format( _T("0X%08X"), OsError ));
+		SvDef::StringVector msgList;
+		msgList.push_back( SvUl::Format( _T("%d"), OsError ));
+		msgList.push_back( SvUl::Format( _T("0X%08X"), OsError ));
 		msgList.push_back( p_rStatusInfo.GetCompleteString() );
 		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 		Exception.setMessage( MessageCode, SvStl::Tid_OS_Error_Message, msgList, SvStl::SourceFileParams(StdMessageParams), ProgramCode);
@@ -407,7 +408,7 @@ HRESULT SVMatroxApplicationInterface::GetSystemCount( long& p_lCount )
 	return Result;
 }
 
-HRESULT SVMatroxApplicationInterface::GetSystemName( SVMatroxInt p_lSystemNumber, SVString& p_rSystemName )
+HRESULT SVMatroxApplicationInterface::GetSystemName( SVMatroxInt p_lSystemNumber, std::string& p_rSystemName )
 {
 	HRESULT Result(S_OK);
 	SVMatroxInt appID = MappInquire( M_CURRENT_APPLICATION, M_NULL );
@@ -482,9 +483,9 @@ void SVMatroxApplicationInterface::LocalInitialize()
 
 			if ( SV_CURRENT_MIL_VERSION != l_MilVersion )
 			{
-				SVStringVector msgList;
-				msgList.push_back(SvUl_SF::Format(_T("%4.2f"), SV_CURRENT_MIL_VERSION));
-				msgList.push_back(SvUl_SF::Format(_T("%4.2f"), l_MilVersion));
+				SvDef::StringVector msgList;
+				msgList.push_back(SvUl::Format(_T("%4.2f"), SV_CURRENT_MIL_VERSION));
+				msgList.push_back(SvUl::Format(_T("%4.2f"), l_MilVersion));
 				
 				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 				Msg.setMessage( SVMSG_SVMATROXLIBRARY_GERNEAL_ERROR, SvStl::Tid_MilVersion_Error, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10249 );

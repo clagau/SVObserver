@@ -32,6 +32,7 @@
 #include "SVValueObjectLibrary/BasicValueObject.h"
 #include "TextDefinesSvO.h"
 #include "ObjectInterfaces/IValueObject.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -162,7 +163,7 @@ void SVArchiveTool::initializeArchiveTool()
 	FileClass.SetExtension( _T(".txt") );
 	FileClass.SetPathName( _T("D:\\TEMP") );
 		
-	SVString FileName = SvUl_SF::Format( _T("%s__0"), GetName() );
+	std::string FileName = SvUl::Format( _T("%s__0"), GetName() );
 	FileClass.SetFileNameOnly( FileName.c_str() );
 
 	m_stringFileArchivePath.SetDefaultValue( FileClass.GetFullFileName(), true );
@@ -261,7 +262,7 @@ bool SVArchiveTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		}
 	}
 
-	SVString Temp;
+	std::string Temp;
 	m_stringArchiveImageGuids_OBSOLETE.GetValue(Temp);
 	if ( Temp.empty() )
 	{
@@ -341,7 +342,7 @@ bool SVArchiveTool::CreateTextArchiveFile(SvStl::MessageContainerVector *pErrorM
 	//
 	// CFile object.
 	//
-	SVString FileArchivePath;
+	std::string FileArchivePath;
 	GetFileArchive( FileArchivePath );
 
 	if( FileArchivePath.empty() )
@@ -387,7 +388,7 @@ bool SVArchiveTool::CreateTextArchiveFile(SvStl::MessageContainerVector *pErrorM
 			{
 				if (nullptr != pErrorMessages)
 				{
-					SVStringVector msgList;
+					SvDef::StringVector msgList;
 					msgList.push_back( FileArchivePath );
 					SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ArchiveTool_CreateFileFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10036, GetUniqueObjectID() ); 
 					pErrorMessages->push_back(Msg);
@@ -418,7 +419,7 @@ bool SVArchiveTool::CreateTextArchiveFile(SvStl::MessageContainerVector *pErrorM
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SVStringVector msgList;
+			SvDef::StringVector msgList;
 			msgList.push_back( FileArchivePath );
 			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ArchiveTool_CreateFileFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10036, GetUniqueObjectID() ); 
 			pErrorMessages->push_back(Msg);
@@ -434,7 +435,7 @@ bool SVArchiveTool::CreateTextArchiveFile(SvStl::MessageContainerVector *pErrorM
 	//
 	// Format date and time as DD/MM/YYYY HH:MM:SS
 	//
-	SVString TimeStamp = timeCurrent.Format(_T("%d/%m/%Y %H:%M:%S\r\n"));
+	std::string TimeStamp = timeCurrent.Format(_T("%d/%m/%Y %H:%M:%S\r\n"));
 	
 	//
 	// Write the result to the archive file.
@@ -454,10 +455,10 @@ bool SVArchiveTool::CreateTextArchiveFile(SvStl::MessageContainerVector *pErrorM
 		if( S_OK == hr && bUseHeaders )
 		{
 			// Write Header
-			SVStringVector HeaderVector;
+			SvDef::StringVector HeaderVector;
 			m_HeaderLabelNames.GetArrayValues( HeaderVector );
-			SVString strHeader;
-			for( SVStringVector::iterator it = HeaderVector.begin() ; it != HeaderVector.end() ; ++it)
+			std::string strHeader;
+			for( SvDef::StringVector::iterator it = HeaderVector.begin() ; it != HeaderVector.end() ; ++it)
 			{
 				strHeader += *it;
 				if( it+1 != HeaderVector.end())
@@ -494,10 +495,10 @@ bool SVArchiveTool::CreateTextArchiveFile(SvStl::MessageContainerVector *pErrorM
 	return true;
 }
 
-void local_remove_items( SVStringVector& rVec, SVStringValueObjectClass& rvo )
+void local_remove_items( SvDef::StringVector& rVec, SVStringValueObjectClass& rvo )
 {
-	SVStringVector NameVector;
-	SVStringVector::iterator iterRemoved;
+	SvDef::StringVector NameVector;
+	SvDef::StringVector::iterator iterRemoved;
 
 	if ( !rVec.empty() )
 	{
@@ -505,7 +506,7 @@ void local_remove_items( SVStringVector& rVec, SVStringValueObjectClass& rvo )
 
 		for ( iterRemoved = rVec.begin(); iterRemoved != rVec.end(); ++iterRemoved )
 		{
-			SVStringVector::iterator iterName;
+			SvDef::StringVector::iterator iterName;
 			iterName = std::find(NameVector.begin(), NameVector.end(), *iterRemoved );
 			if ( iterName != NameVector.end() )
 			{
@@ -525,7 +526,7 @@ bool SVArchiveTool::initializeOnRun(SvStl::MessageContainerVector *pErrorMessage
 	m_evoArchiveMethod.GetValue( Method );
 	m_eArchiveMethod = static_cast<SVArchiveMethodEnum> (Method);
 
-	SVString Temp;
+	std::string Temp;
 	GetImageArchivePath( Temp );
 	ArchiveToolHelper athImage;
 	athImage.Init( Temp );
@@ -544,7 +545,7 @@ bool SVArchiveTool::initializeOnRun(SvStl::MessageContainerVector *pErrorMessage
 			{
 				if (nullptr != pErrorMessages)
 				{
-					SVStringVector msgList;
+					SvDef::StringVector msgList;
 					msgList.push_back( Temp );
 					SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ArchiveTool_CreatePathFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() ); 
 					pErrorMessages->push_back(Msg);
@@ -628,8 +629,8 @@ bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector *pErrorMe
 		{
 			if (nullptr != pErrorMessages)
 			{
-				SVStringVector msgList;
-				msgList.push_back( SvUl_SF::Format(_T("%x"), hrAllocate) );
+				SvDef::StringVector msgList;
+				msgList.push_back( SvUl::Format(_T("%x"), hrAllocate) );
 				SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ArchiveTool_AllocImageFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() ); 
 				pErrorMessages->push_back(Msg);
 			}
@@ -670,7 +671,7 @@ bool SVArchiveTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainer
 		//
 		// Iterate the array of objects to archive and build a string.
 		//
-		SVString Archive = m_arrayResultsInfoObjectsToArchive.BuildResultsArchiveString();
+		std::string Archive = m_arrayResultsInfoObjectsToArchive.BuildResultsArchiveString();
 
 		if (!Archive.empty())
 		{
@@ -736,7 +737,7 @@ bool SVArchiveTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainer
 	return false;
 }
 
-HRESULT SVArchiveTool::QueueArchiveString( const SVString& rArchiveString )
+HRESULT SVArchiveTool::QueueArchiveString( const std::string& rArchiveString )
 {
 	HRESULT hr = S_OK;
 	m_ArchiveStringBuffer.push_back( rArchiveString );
@@ -830,7 +831,7 @@ void SVArchiveTool::RebuildResultsArchiveList()
 		m_svoArchiveResultNames.SetValue( rObjectRef.GetCompleteName(), i );
 	}
 
-	m_stringArchiveResultGuids_OBSOLETE.SetValue( SVString() );
+	m_stringArchiveResultGuids_OBSOLETE.SetValue( std::string() );
 }
 
 void SVArchiveTool::AddImageToArray( SVImageClass* PImage )
@@ -891,7 +892,7 @@ void SVArchiveTool::RebuildImageArchiveList()
 		m_svoArchiveImageNames.SetValue( rObjectRef.GetCompleteName(), i  );
 	}
 
-	m_stringArchiveImageGuids_OBSOLETE.SetValue( SVString() );
+	m_stringArchiveImageGuids_OBSOLETE.SetValue( std::string() );
 }
 
 // Update the attributes for archivable images from the current list of
@@ -911,7 +912,7 @@ void SVArchiveTool::SetImageAttributesFromArchiveList( SVImageListClass* pImageL
 		SVImageClass* pImage = pImageList->GetAt(i);
 		if (pImage)
 		{
-			SVString ImageName;
+			std::string ImageName;
 			ImageName = pImage->GetCompleteName();
 			
 			int nCount2 = m_arrayImagesInfoObjectsToArchive.GetSize();
@@ -926,10 +927,10 @@ void SVArchiveTool::SetImageAttributesFromArchiveList( SVImageListClass* pImageL
 					// Compare pointers here - we need something more solid like
 					// a GUID compare.
 					//
-					SVString ImageName2;
+					std::string ImageName2;
 					ImageName2 = pImage2->GetCompleteName();
 					
-					if ( 0 == SvUl_SF::CompareNoCase( ImageName, ImageName2) )          // Equal?
+					if ( 0 == SvUl::CompareNoCase( ImageName, ImageName2) )          // Equal?
 					{
 						if (pImage->ObjectAttributesAllowed() & SvDef::SV_ARCHIVABLE_IMAGE)
 						{
@@ -946,25 +947,25 @@ void SVArchiveTool::SetImageAttributesFromArchiveList( SVImageListClass* pImageL
 	}// end for (int i = 0; i < nCount; i++)
 }
 
-bool SVArchiveTool::GetFileArchive( SVString& rName )
+bool SVArchiveTool::GetFileArchive( std::string& rName )
 {
 	bool Result = (S_OK == m_stringFileArchivePath.GetValue( rName ));
 	return Result;
 }
 
-bool SVArchiveTool::GetImageArchivePath( SVString& rName )
+bool SVArchiveTool::GetImageArchivePath( std::string& rName )
 {
 	return S_OK == m_stringImageFileRootPath.GetValue( rName );
 }
 
 bool SVArchiveTool::SetFileArchive( LPCTSTR lpszName )
 {
-	return S_OK == m_stringFileArchivePath.SetValue( SVString( lpszName ) );
+	return S_OK == m_stringFileArchivePath.SetValue( std::string( lpszName ) );
 }
 
 bool SVArchiveTool::SetImageArchivePath( LPCTSTR lpszName )
 {
-	return S_OK == m_stringImageFileRootPath.SetValue( SVString( lpszName ) );
+	return S_OK == m_stringImageFileRootPath.SetValue( std::string( lpszName ) );
 }
 
 
@@ -977,7 +978,7 @@ HRESULT SVArchiveTool::WriteBuffers()
 	{
 		try
 		{
-			SVStringVector::iterator iter;
+			SvDef::StringVector::iterator iter;
 			for ( iter = m_ArchiveStringBuffer.begin(); iter != m_ArchiveStringBuffer.end(); ++iter )
 			{
 				m_fileArchive.Write( iter->c_str(), static_cast<int> (iter->size()) );
@@ -1033,7 +1034,7 @@ bool SVArchiveTool::isImagePathUsingKeywords()
 	return m_ArchiveImagePathUsingKW;
 }
 
-void SVArchiveTool::getTranslatedImagePath(SVString &rImagePath)
+void SVArchiveTool::getTranslatedImagePath(std::string &rImagePath)
 {
 	rImagePath = m_ImageTranslatedPath;
 }
@@ -1042,8 +1043,8 @@ bool SVArchiveTool::DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo )
 {
 	if (nullptr != pObjectInInfo)
 	{
-		SVStringVector vecRemovedImage  = m_arrayImagesInfoObjectsToArchive. RemoveDisconnectedObject( pObjectInInfo->GetInputObjectInfo() );
-		SVStringVector vecRemovedResult = m_arrayResultsInfoObjectsToArchive.RemoveDisconnectedObject( pObjectInInfo->GetInputObjectInfo() );
+		SvDef::StringVector vecRemovedImage  = m_arrayImagesInfoObjectsToArchive. RemoveDisconnectedObject( pObjectInInfo->GetInputObjectInfo() );
+		SvDef::StringVector vecRemovedResult = m_arrayResultsInfoObjectsToArchive.RemoveDisconnectedObject( pObjectInInfo->GetInputObjectInfo() );
 
 		local_remove_items ( vecRemovedImage, m_svoArchiveImageNames );
 		local_remove_items ( vecRemovedResult, m_svoArchiveResultNames );
@@ -1072,10 +1073,10 @@ void SVArchiveTool::goingOffline()
 	}
 }
 
-void SVArchiveTool::OnObjectRenamed( const SVObjectClass& rRenamedObject, const SVString& rOldName )
+void SVArchiveTool::OnObjectRenamed( const SVObjectClass& rRenamedObject, const std::string& rOldName )
 {
-	SVString newPrefix;
-	SVString oldPrefix;
+	std::string newPrefix;
+	std::string oldPrefix;
 
 	if( const SVInspectionProcess* l_pInspection = dynamic_cast<const SVInspectionProcess*> (&rRenamedObject) )
 	{
@@ -1094,31 +1095,31 @@ void SVArchiveTool::OnObjectRenamed( const SVObjectClass& rRenamedObject, const 
 		newPrefix = rRenamedObject.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType ) + _T( "." );
 	}// end else
 	oldPrefix = newPrefix;
-	SvUl_SF::searchAndReplace( oldPrefix, rRenamedObject.GetName(), rOldName.c_str() );
+	SvUl::searchAndReplace( oldPrefix, rRenamedObject.GetName(), rOldName.c_str() );
 
 	int iSize = m_svoArchiveResultNames.getResultSize();
 
 	for (int i = 0; i < iSize; i++ )
 	{
-		SVString Name;
+		std::string Name;
 		m_svoArchiveResultNames.GetValue(Name, i);
 
 		if ('.' == oldPrefix[oldPrefix.size()-1])
 		{	//check if part of the name (ends with '.') is to replace
-			SvUl_SF::searchAndReplace( Name, oldPrefix.c_str(), newPrefix.c_str() );
+			SvUl::searchAndReplace( Name, oldPrefix.c_str(), newPrefix.c_str() );
 		}
 		else
 		{
-			SVString indirectTmp = Name;
+			std::string indirectTmp = Name;
 			size_t pos = indirectTmp.find('[');
-			if (SVString::npos != pos)
+			if (std::string::npos != pos)
 			{	//if array ("[x]") in the name, remove it for the check
 				indirectTmp = indirectTmp.substr(0, pos);
 			}
 			//only replace the name if it is the fully name. Do NOT replace parts of the name, because then it this a other object with similar name.
 			if (oldPrefix == indirectTmp)
 			{
-				SvUl_SF::searchAndReplace( Name, oldPrefix.c_str(), newPrefix.c_str() );
+				SvUl::searchAndReplace( Name, oldPrefix.c_str(), newPrefix.c_str() );
 			}
 		}
 		m_svoArchiveResultNames.SetValue( Name, i );
@@ -1135,7 +1136,7 @@ bool SVArchiveTool::ValidateImageSpace( bool shouldFullCheck, SvStl::MessageCont
 	//run through the checking of disk space.
 	if (iSize > 0)
 	{
-		SVString ImagePath;
+		std::string ImagePath;
 		GetImageArchivePath( ImagePath );
 
 		if ( shouldFullCheck )
@@ -1184,7 +1185,7 @@ bool SVArchiveTool::ValidateImageSpace( bool shouldFullCheck, SvStl::MessageCont
 				DWORD  ErrorCd =  GetLastError();
 				if ( ErrorCd == ERROR_PATH_NOT_FOUND )
 				{ //should not ever get here since the path is validated above
-					SVStringVector msgList;
+					SvDef::StringVector msgList;
 					msgList.push_back( ImagePath );
 					SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_PathFileNotFound, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10037, GetUniqueObjectID() ); 
 					pErrorMessages->push_back(Msg);
@@ -1201,8 +1202,8 @@ bool SVArchiveTool::ValidateImageSpace( bool shouldFullCheck, SvStl::MessageCont
 		{
 			if (nullptr != pErrorMessages)  
 			{
-				SVStringVector msgList;
-				msgList.push_back( SVString( m_ImageTranslatedPath ) );
+				SvDef::StringVector msgList;
+				msgList.push_back( std::string( m_ImageTranslatedPath ) );
 				SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Drive_Full, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 				pErrorMessages->push_back(Msg);
 			}

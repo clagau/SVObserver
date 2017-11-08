@@ -16,6 +16,7 @@
 #include "SVDigitizerProcessingClass.h"
 #include "SVStatusLibrary\GlobalPath.h"
 #include "TextDefinesSvO.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -78,9 +79,9 @@ HRESULT SVGigeCameraManager::UpdateConnectedCameras( const SVGigeCameraStructVec
 	return Result;
 }
 
-SVString SVGigeCameraManager::getCameraName( const SVString& rIPAddress ) const
+std::string SVGigeCameraManager::getCameraName( const std::string& rIPAddress ) const
 {
-	SVString Result;
+	std::string Result;
 
 	CameraIP_NameMap::const_iterator Iter( m_CameraIPtoName.find(rIPAddress) );
 	if( m_CameraIPtoName.end() != Iter )
@@ -96,14 +97,14 @@ void SVGigeCameraManager::ReadCameraMapping()
 
 	for ( int i = 0; i < CameraCount; i++ )
 	{
-		SVString CameraName;
+		std::string CameraName;
 		TCHAR pBuffer[128];
 		memset(pBuffer, 0, 128 );
 
-		CameraName =  SvUl_SF::Format( _T("%s%d"), SvO::cCameraFixedName, i + 1 );
+		CameraName =  SvUl::Format( _T("%s%d"), SvO::cCameraFixedName, i + 1 );
 		GetPrivateProfileString( cCameraMapping, CameraName.c_str(), "", pBuffer, 128, SvStl::GlobalPath::Inst().GetSVIMIniPath() );
 		
-		SVString IPAddress( pBuffer );
+		std::string IPAddress( pBuffer );
 		if( !IPAddress.empty() )
 		{
 			m_CameraIPtoName[IPAddress] = CameraName;

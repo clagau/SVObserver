@@ -12,6 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVObjectClass.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVRunControlLibrary/SVRunControlLibrary.h"
 #include "SVSystemLibrary/SVAutoLockAndReleaseTemplate.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
@@ -23,6 +24,7 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -61,7 +63,7 @@ This constructor initializes the name objects from the provided parameter, sets 
 */
 SVObjectClass::SVObjectClass( SVObjectClass* pOwner /* = nullptr */, int StringResourceID /* = IDS_CLASSNAME_SVOBJECT */ )
 {
-	m_ObjectName = SvUl_SF::LoadSVString( StringResourceID );
+	m_ObjectName = SvUl::LoadStdString( StringResourceID );
 	m_Name = m_ObjectName;
 	m_resourceID = StringResourceID;
 	SetObjectOwner( pOwner );
@@ -296,9 +298,9 @@ LPCTSTR SVObjectClass::GetName() const
 	return m_Name.c_str();
 }
 
-SVString SVObjectClass::GetCompleteName() const
+std::string SVObjectClass::GetCompleteName() const
 {
-	SVString Result;
+	std::string Result;
 
 	if( nullptr != m_ownerObjectInfo.m_pObject && m_ownerObjectInfo.m_pObject != this )
 	{
@@ -315,7 +317,7 @@ SVString SVObjectClass::GetCompleteName() const
 	return Result;
 }
 
-HRESULT SVObjectClass::GetCompleteNameToType(SVObjectTypeEnum objectType, SVString& rName) const
+HRESULT SVObjectClass::GetCompleteNameToType(SVObjectTypeEnum objectType, std::string& rName) const
 {
 	HRESULT hr = S_OK;
 
@@ -507,7 +509,7 @@ void SVObjectClass::SetObjectEmbedded( const GUID& rEmbeddedID, SVObjectClass* p
 	SetObjectOwner( pOwner );	
 }
 
-HRESULT SVObjectClass::GetObjectValue( const SVString& rValueName, _variant_t& rValue ) const
+HRESULT SVObjectClass::GetObjectValue( const std::string& rValueName, _variant_t& rValue ) const
 {
 	HRESULT Result( S_OK );
 
@@ -785,7 +787,7 @@ int SVObjectClass::GetObjectNameLength() const
 /*
 Get the complete object name including selected SVObjectTypeEnum value.
 */
-SVString SVObjectClass::GetObjectNameToObjectType(LPCSTR CompleteName, SVObjectTypeEnum objectTypeToInclude) const
+std::string SVObjectClass::GetObjectNameToObjectType(LPCSTR CompleteName, SVObjectTypeEnum objectTypeToInclude) const
 {
 	return GetCompleteObjectNameToObjectType(CompleteName, objectTypeToInclude);
 }
@@ -793,10 +795,10 @@ SVString SVObjectClass::GetObjectNameToObjectType(LPCSTR CompleteName, SVObjectT
 /*
 Get the complete object name including selected SVObjectTypeEnum value.
 */
-SVString SVObjectClass::GetCompleteObjectNameToObjectType( LPCSTR CompleteName, SVObjectTypeEnum objectTypeToInclude ) const
+std::string SVObjectClass::GetCompleteObjectNameToObjectType( LPCSTR CompleteName, SVObjectTypeEnum objectTypeToInclude ) const
 {
-	SVString Result;
-	const SVString Name = GetName();
+	std::string Result;
+	const std::string Name = GetName();
 
 	if( CompleteName )
 	{
@@ -806,7 +808,7 @@ SVString SVObjectClass::GetCompleteObjectNameToObjectType( LPCSTR CompleteName, 
 		}
 		else
 		{
-			Result = SvUl_SF::Format( _T( "%s.%s" ), Name.c_str(), CompleteName );
+			Result = SvUl::Format( _T( "%s.%s" ), Name.c_str(), CompleteName );
 		}
 	}
 	else
@@ -842,7 +844,7 @@ bool SVObjectClass::createAllObjects(const SVObjectLevelCreateStruct& rCreateStr
 	{
 		assert( false );
 
-		SVStringVector msgList;
+		SvDef::StringVector msgList;
 		msgList.push_back( GetName() );
 		msgList.push_back( GetCompleteName() );
 		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );

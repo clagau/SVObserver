@@ -9,23 +9,24 @@
 //* .Check In Date   : $Date:   23 Apr 2013 14:52:16  $
 //******************************************************************************
 #pragma once
+
+#pragma region Includes
 #include "SVMFCControls/SVEditableListBox.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "Definitions/StringTypeDef.h"
+#pragma endregion Includes
 
 class SVGroupDef
 {
 public:
 	SVGroupDef(){};
-	SVGroupDef(const SVString& rGroupName, const SVString& rPPQName ) :
+	SVGroupDef(const std::string& rGroupName, const std::string& rPPQName ) :
 	  m_Name( rGroupName )
 	, m_PPQName( rPPQName)
 	{};
 		
-	SVString m_PPQName;
-	SVString m_Name;
+	std::string m_PPQName;
+	std::string m_Name;
 };
-
-typedef std::vector<SVStringPair> SVStringPairVector;
 
 typedef std::vector<SVGroupDef> SVGroupDefVect;
 
@@ -43,19 +44,19 @@ public:
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 
-	int StringPosition( const SVStringVector& rList, const SVString& rValue );
+	int StringPosition( const SvDef::StringVector& rList, const std::string& rValue );
 	void UpdateUsedList();
 
 	DECLARE_MESSAGE_MAP()
 public:
-	HRESULT GetNewItems( SVStringVector& rOutputList );
-	HRESULT GetRemoved( SVStringVector& rOutputList );
-	HRESULT GetRenamed( SVStringPairVector& rRenamedList);
+	HRESULT GetNewItems( SvDef::StringVector& rOutputList );
+	HRESULT GetRemoved(SvDef::StringVector& rOutputList );
+	HRESULT GetRenamed(SvDef::StringPairVector& rRenamedList);
 
-	SVStringVector m_AvailablePPQs;
-	SVStringVector m_SetupGroups;
-	SVStringVector m_OriginalGroups;
-	SVStringPairVector m_RenamedGroups;
+	SvDef::StringVector m_AvailablePPQs;
+	SvDef::StringVector m_SetupGroups;
+	SvDef::StringVector m_OriginalGroups;
+	SvDef::StringPairVector m_RenamedGroups;
 	SVGroupDefVect m_SetupGroup;
 
 	CListBox m_AvailableList;
@@ -68,8 +69,8 @@ public:
 	virtual BOOL OnInitDialog() override;
 private:
 	int m_lOutputGroupCount;
-	SVString NextAvailableGroupName();
-	SVString m_GroupNameEdit;
+	std::string NextAvailableGroupName();
+	std::string m_GroupNameEdit;
 	CButton m_AddButton;
 	SvMc::SVEditableListBox m_UsedList;
 	CButton m_RemoveBtn;

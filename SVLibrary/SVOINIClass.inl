@@ -21,9 +21,9 @@ namespace SvLib
 	{
 	}
 
-	inline SVString SVOINIClass::GetValueString( LPCTSTR Section, LPCTSTR Key, LPCTSTR Default ) const
+	inline std::string SVOINIClass::GetValueString( LPCTSTR Section, LPCTSTR Key, LPCTSTR Default ) const
 	{
-		SVString Result;
+		std::string Result;
 
 		TCHAR Value[ SHRT_MAX ];
 

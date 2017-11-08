@@ -13,7 +13,6 @@
 #pragma region Includes
 //Moved to precompiled header: #include <map>
 #include "SVGigeCameraFileLibrary/SVGigeCameraStruct.h"
-#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 class SVGigeCameraManager  
@@ -26,10 +25,10 @@ public:
 	const SVGigeCameraStructVector& GetCameraOrder() const { return m_OrderedCameras; };
 	HRESULT UpdateConnectedCameras( const SVGigeCameraStructVector& rCameraList );
 
-	SVString getCameraName( const SVString& rIPAddress ) const;
+	std::string getCameraName( const std::string& rIPAddress ) const;
 
 protected:
-	typedef std::map< SVString, SVString > CameraIP_NameMap;
+	typedef std::map<std::string, std::string> CameraIP_NameMap;
 
 	SVGigeCameraManager();
 

@@ -6,7 +6,7 @@
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVMessage\SVMessage.h"
-#include "SVUtilityLibrary\SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 namespace SvSml
@@ -33,7 +33,7 @@ namespace SvSml
 		if(NULL == m_hChangeEvent)
 		{
 			errorCode = GetLastError();
-			SVString  text = SvUl_SF::Format(_T("Create Change event  Failed Errorcode: %x"),errorCode); 
+			std::string  text = SvUl::Format(_T("Create Change event  Failed Errorcode: %x"),errorCode); 
 			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 			Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, text.c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16221_FailToCreateEvent );
 			
@@ -42,7 +42,7 @@ namespace SvSml
 		if(NULL == m_hReadyEvent)
 		{
 			errorCode = GetLastError();
-			SVString  text = SvUl_SF::Format(_T("Create Ready event  Failed Errorcode: %x"),errorCode); 
+			std::string  text = SvUl::Format(_T("Create Ready event  Failed Errorcode: %x"),errorCode); 
 			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 			Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, text.c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16222_FailToCreateEvent );
 		}

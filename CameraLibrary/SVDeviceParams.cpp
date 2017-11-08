@@ -19,6 +19,7 @@
 #include "SVStringValueDeviceParam.h"
 #include "SVCustomDeviceParam.h"
 #include "SVParamListDeviceParam.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 namespace	// create unnamed namespace for the variables to live in
@@ -177,7 +178,7 @@ HRESULT ToVariant( bool bValue, VARIANT& rv )
 	return hr;
 }
 
-HRESULT ToVariant( const SVString& sValue, VARIANT& rv )
+HRESULT ToVariant( const std::string& sValue, VARIANT& rv )
 {
 	HRESULT hr = S_OK;
 
@@ -272,7 +273,7 @@ HRESULT FromVariant( bool& rbValue, const VARIANT& rv )
 	return hr;
 }
 
-HRESULT FromVariant( SVString& rsValue, const VARIANT& rv )
+HRESULT FromVariant( std::string& rsValue, const VARIANT& rv )
 {
 	HRESULT hr = S_OK;
 
@@ -280,7 +281,7 @@ HRESULT FromVariant( SVString& rsValue, const VARIANT& rv )
 	{
 		case VT_BSTR:
 			{
-				rsValue = SvUl_SF::createSVString( _bstr_t( rv.bstrVal ) );
+				rsValue = SvUl::createStdString( _bstr_t( rv.bstrVal ) );
 			}
 			break;
 		default:

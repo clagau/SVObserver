@@ -12,7 +12,7 @@
 
 #pragma region Includes
 #include "SVUtilityLibrary/SVGUID.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 class SVIPResultItemDefinition

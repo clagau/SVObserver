@@ -20,7 +20,7 @@
 #include "SVGigeCameraParametersLibrary/SVGigeLUTGetter.h"
 #include "SVGigeCameraParametersLibrary/SVGigeReadSerialNumber.h"
 #include "SVGigeCameraParametersLibrary/SVGigeReadIPAddress.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 struct SVGigeTriggerLineGet
@@ -28,13 +28,13 @@ struct SVGigeTriggerLineGet
 	// iterate thru the Line Selectors (Line0/Line1) and get the first one whose LineMode is Input
 	HRESULT operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& rFeature, _variant_t& rValue) const
 	{ 
-		HRESULT l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVString(rFeature.GetName().c_str()), rFeature.GetType(), rValue);
+		HRESULT l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string(rFeature.GetName().c_str()), rFeature.GetType(), rValue);
 		
 		_variant_t value( _T("Input") );
-		l_Code = SVMatroxDigitizerInterface::GetFeature(*(Digitizer.get()), SVString(rFeature.GetName().c_str()), rFeature.GetType(), value);
+		l_Code = SVMatroxDigitizerInterface::GetFeature(*(Digitizer.get()), std::string(rFeature.GetName().c_str()), rFeature.GetType(), value);
 		if (l_Code == S_OK)
 		{
-			rValue = _bstr_t(SvUl_SF::createSVString(value).c_str()).Detach();
+			rValue = _bstr_t(SvUl::createStdString(value).c_str()).Detach();
 		}
 		return l_Code;
 	}
@@ -46,10 +46,10 @@ struct SVGigeTriggerLineSet
 	HRESULT operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& rFeature, const _variant_t& rValue) const
 	{ 
 		const SVGigeFeatureSelector& selector = rFeature.GetSelector();
-		HRESULT l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVString(selector.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, rValue);
+		HRESULT l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string(selector.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, rValue);
 		if (l_Code == S_OK)
 		{
-			l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVString(rFeature.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, _variant_t("Input"));
+			l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string(rFeature.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, _variant_t("Input"));
 		}
 		return l_Code;
 	}
@@ -63,11 +63,11 @@ struct SVGigeTriggerInvertGetter
 		//
 		// Determine which Line is the Trigger...
 		const SVGigeFeatureSelector& selector = rFeature.GetSelector();
-		HRESULT l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVString(selector.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, rValue);
+		HRESULT l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string(selector.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, rValue);
 		if (l_Code == S_OK)
 		{
 			_variant_t value(false);
-			l_Code = SVMatroxDigitizerInterface::GetFeature(*(Digitizer.get()), SVString(rFeature.GetName().c_str()), rFeature.GetType(), value);
+			l_Code = SVMatroxDigitizerInterface::GetFeature(*(Digitizer.get()), std::string(rFeature.GetName().c_str()), rFeature.GetType(), value);
 			if (l_Code == S_OK)
 			{
 				rValue = value.Detach();
@@ -82,7 +82,7 @@ struct SVGigeTriggerInvertSetter
 	// Setter
 	HRESULT operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& rFeature, const _variant_t& rValue) const
 	{ 
-		HRESULT l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVString(rFeature.GetName().c_str()), rFeature.GetType(), rValue);
+		HRESULT l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string(rFeature.GetName().c_str()), rFeature.GetType(), rValue);
 		return l_Code;
 	}
 };
@@ -93,10 +93,10 @@ struct SVGigeStrobeLineGetter
 	HRESULT operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& feature, _variant_t& rValue) const
 	{ 
 		_variant_t value( _T("Output") );
-		HRESULT l_Code = SVMatroxDigitizerInterface::GetFeature(*(Digitizer.get()), SVString(feature.GetName().c_str()), feature.GetType(), value);
+		HRESULT l_Code = SVMatroxDigitizerInterface::GetFeature(*(Digitizer.get()), std::string(feature.GetName().c_str()), feature.GetType(), value);
 		if (l_Code == S_OK)
 		{
-			rValue = _bstr_t(SvUl_SF::createSVString(value).c_str()).Detach();
+			rValue = _bstr_t(SvUl::createStdString(value).c_str()).Detach();
 		}
 		return l_Code;
 	}
@@ -107,10 +107,10 @@ struct SVGigeStrobeLineSetter
 	HRESULT operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& rFeature, const _variant_t& rValue) const
 	{ 
 		const SVGigeFeatureSelector& selector = rFeature.GetSelector();
-		HRESULT l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVString(selector.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, rValue);
+		HRESULT l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string(selector.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, rValue);
 		if (l_Code == S_OK)
 		{
-			l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVString(rFeature.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, _variant_t("Output"));
+			l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string(rFeature.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, _variant_t("Output"));
 		}
 		return l_Code;
 	}
@@ -121,13 +121,13 @@ struct SVGigeStrobeInvertGetter
 	HRESULT operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& rFeature, _variant_t& rValue) const
 	{ 
 		// Get which line is the Strobe (LineMode = Output)
-		HRESULT l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVString(rFeature.GetName().c_str()), rFeature.GetType(), rValue);
+		HRESULT l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string(rFeature.GetName().c_str()), rFeature.GetType(), rValue);
 		
 		_variant_t value( _T("Output") );
-		l_Code = SVMatroxDigitizerInterface::GetFeature(*(Digitizer.get()), SVString(rFeature.GetName().c_str()), rFeature.GetType(), value);
+		l_Code = SVMatroxDigitizerInterface::GetFeature(*(Digitizer.get()), std::string(rFeature.GetName().c_str()), rFeature.GetType(), value);
 		if (l_Code == S_OK)
 		{
-			rValue = _bstr_t(SvUl_SF::createSVString(value).c_str()).Detach();
+			rValue = _bstr_t(SvUl::createStdString(value).c_str()).Detach();
 		}
 		return l_Code;
 	}
@@ -140,10 +140,10 @@ struct SVGigeStrobeInvertSetter
 	{
 		// Get which line is the Strobe (LineMode = Output)
 		const SVGigeFeatureSelector& selector = rFeature.GetSelector();
-		HRESULT l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVString(selector.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, rValue);
+		HRESULT l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string(selector.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, rValue);
 		if (l_Code == S_OK)
 		{
-			l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVString(rFeature.GetName().c_str()), rFeature.GetType(), rValue);
+			l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string(rFeature.GetName().c_str()), rFeature.GetType(), rValue);
 		}
 		return l_Code;
 	}
@@ -155,10 +155,10 @@ struct SVGigeInputLineGetter
 	HRESULT operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& feature, _variant_t& rValue) const
 	{ 
 		_variant_t value( _T("Input") );
-		HRESULT l_Code = SVMatroxDigitizerInterface::GetFeature(*(Digitizer.get()), SVString(feature.GetName().c_str()), feature.GetType(), value);
+		HRESULT l_Code = SVMatroxDigitizerInterface::GetFeature(*(Digitizer.get()), std::string(feature.GetName().c_str()), feature.GetType(), value);
 		if (l_Code == S_OK)
 		{
-			rValue = _bstr_t(SvUl_SF::createSVString(value).c_str()).Detach();
+			rValue = _bstr_t(SvUl::createStdString(value).c_str()).Detach();
 		}
 		return l_Code;
 	}
@@ -169,10 +169,10 @@ struct SVGigeInputLineSetter
 	HRESULT operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& rFeature, const _variant_t& rValue) const
 	{ 
 		const SVGigeFeatureSelector& selector = rFeature.GetSelector();
-		HRESULT l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVString(selector.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, rValue);
+		HRESULT l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string(selector.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, rValue);
 		if (l_Code == S_OK)
 		{
-			l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVString(rFeature.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, _variant_t("Input"));
+			l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string(rFeature.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, _variant_t("Input"));
 		}
 		return l_Code;
 	}
@@ -182,9 +182,9 @@ struct SVGigeEventSetter
 {
 	HRESULT operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& rFeature, const _variant_t& rValue) const
 	{
-		SVString l_value = SvUl_SF::createSVString(rValue);
-		SVString eventValue = l_value.c_str();
-		HRESULT l_Code = SVMatroxDigitizerInterface::SetGigeEvent(*(Digitizer.get()), SVString(rFeature.GetName().c_str()), eventValue.c_str());
+		std::string l_value = SvUl::createStdString(rValue);
+		std::string eventValue = l_value.c_str();
+		HRESULT l_Code = SVMatroxDigitizerInterface::SetGigeEvent(*(Digitizer.get()), std::string(rFeature.GetName().c_str()), eventValue.c_str());
 		return l_Code;
 	}
 };
@@ -198,7 +198,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	( SVGigeParameterExposureMode,				
 		SVGigeDeviceParameterStruct
 		(
-			SVString( _T("Trigger Mode") ), VT_BSTR,
+			std::string( _T("Trigger Mode") ), VT_BSTR,
 			SVGigeParameterAccessor
 			(
 				SVGigeFeature
@@ -217,7 +217,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	( SVGigeParameterBayerPattern,
 		SVGigeDeviceParameterStruct
 		(
-			SVString( _T("Bayer Pattern") ), VT_I4,
+			std::string( _T("Bayer Pattern") ), VT_I4,
 			SVGigeParameterAccessor
 			(
 				SVGigeFeature
@@ -236,7 +236,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	( SVGigeParameterXOffset,
 		SVGigeDeviceParameterStruct
 		(
-			SVString( _T("X Offset") ), VT_I4,
+			std::string( _T("X Offset") ), VT_I4,
 			SVGigeParameterAccessor
 			(
 				SVGigeFeature( _T("OffsetX"), SVMatroxDigitizerFeature::SVTypeInt32 )
@@ -250,7 +250,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	( SVGigeParameterYOffset,
 		SVGigeDeviceParameterStruct
 		(
-			SVString( _T("Y Offset") ), VT_I4,
+			std::string( _T("Y Offset") ), VT_I4,
 			SVGigeParameterAccessor
 			(
 				SVGigeFeature( _T("OffsetY"), SVMatroxDigitizerFeature::SVTypeInt32 )
@@ -264,7 +264,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	( SVGigeParameterXSize,
 		SVGigeDeviceParameterStruct
 		(
-			SVString( _T("X Size") ), VT_I4,
+			std::string( _T("X Size") ), VT_I4,
 			SVGigeParameterAccessor
 			(
 				SVGigeFeature( _T("Width"), SVMatroxDigitizerFeature::SVTypeInt32 )
@@ -278,7 +278,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	( SVGigeParameterYSize,
 		SVGigeDeviceParameterStruct
 		(
-			SVString( _T("Y Size") ), VT_I4,
+			std::string( _T("Y Size") ), VT_I4,
 			SVGigeParameterAccessor
 			(
 				SVGigeFeature( _T("Height"), SVMatroxDigitizerFeature::SVTypeInt32)
@@ -291,14 +291,14 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	///////////////////////////////////////////////////////////////////////
 	( SVGigeParameterColorFormat,
 		SVGigeDeviceParameterStruct
-		( SVString( _T("Color Format") ),	VT_BSTR,
+		( std::string( _T("Color Format") ),	VT_BSTR,
 			SVGigeParameterAccessor
 			(
 				SVGigeFeature
 				( _T("PixelFormat"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
 					SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
 					SVGigeFeatureSelector( ),
-					(  boost::assign::map_list_of<SVString, SVString>
+					(  boost::assign::map_list_of<std::string, std::string>
 						( _T("Y"), _T("Mono8") )
 						( _T("YUV422"), _T("YUV422Packed") )
 						(_T("BayerRG8"), _T("BayerRG8"))
@@ -318,7 +318,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	( SVGigeParameterFeatureBrightness,
 		SVGigeDeviceParameterStruct
 		(
-			SVString( _T("Brightness") ), VT_I4,
+			std::string( _T("Brightness") ), VT_I4,
 			SVGigeParameterAccessor
 			(
 				SVGigeFeature
@@ -336,7 +336,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	( SVGigeParameterFeatureAutoExposure,
 		SVGigeDeviceParameterStruct
 		(
-			SVString( _T("Auto Exposure") ), VT_I4,
+			std::string( _T("Auto Exposure") ), VT_I4,
 			SVGigeParameterAccessor
 			(
 				SVGigeFeature
@@ -355,7 +355,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	( SVGigeParameterFeatureSharpness,
 		SVGigeDeviceParameterStruct
 		(
-			SVString( _T("Sharpness") ), VT_I4,
+			std::string( _T("Sharpness") ), VT_I4,
 			SVGigeParameterAccessor
 			(
 				SVGigeFeature
@@ -374,7 +374,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	( SVGigeParameterFeatureWhiteBalanceU,	
 		SVGigeDeviceParameterStruct
 		(
-			SVString( _T("White Balance - U") ), VT_I4,
+			std::string( _T("White Balance - U") ), VT_I4,
 			SVGigeParameterAccessor
 			(
 				SVGigeFeature
@@ -393,7 +393,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	( SVGigeParameterFeatureWhiteBalanceV,
 		SVGigeDeviceParameterStruct
 		(
-			SVString( _T("White Balance - V") ), VT_I4,
+			std::string( _T("White Balance - V") ), VT_I4,
 			SVGigeParameterAccessor
 			(
 				SVGigeFeature
@@ -412,7 +412,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	( SVGigeParameterFeatureHue,
 		SVGigeDeviceParameterStruct
 		(
-			SVString( _T("Hue") ), VT_I4,
+			std::string( _T("Hue") ), VT_I4,
 			SVGigeParameterAccessor
 			(
 				SVGigeFeature
@@ -431,7 +431,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	( SVGigeParameterFeatureSaturation,
 		SVGigeDeviceParameterStruct
 		(
-			SVString( _T("Saturation") ), VT_I4,
+			std::string( _T("Saturation") ), VT_I4,
 			SVGigeParameterAccessor
 			(
 				SVGigeFeature
@@ -450,7 +450,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	( SVGigeParameterFeatureGamma,
 		SVGigeDeviceParameterStruct
 		(
-			SVString( _T("Gamma") ), VT_R8,
+			std::string( _T("Gamma") ), VT_R8,
 			SVGigeParameterAccessor
 			(
 				SVGigeFeature( _T("Gamma"), SVMatroxDigitizerFeature::SVTypeDouble )
@@ -464,7 +464,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	( SVGigeParameterFeatureShutter,
 		SVGigeDeviceParameterStruct
 		(
-			SVString( _T("Shutter") ), VT_R8,
+			std::string( _T("Shutter") ), VT_R8,
 			SVGigeParameterAccessor
 			(
 				SVGigeFeature( _T("ExposureTimeAbs"), SVMatroxDigitizerFeature::SVTypeDouble )
@@ -478,7 +478,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	( SVGigeParameterFeatureGain,
 		SVGigeDeviceParameterStruct
 		(
-			SVString( _T("Gain") ), VT_R8,
+			std::string( _T("Gain") ), VT_R8,
 			SVGigeParameterAccessor
 			(
 				SVGigeFeature
@@ -496,14 +496,14 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	( SVGigeParameterTriggerSource,
 		SVGigeDeviceParameterStruct
 		(
-			SVString( _T("Trigger Source") ), VT_BSTR,
+			std::string( _T("Trigger Source") ), VT_BSTR,
 			SVGigeParameterAccessor
 			(
 				SVGigeFeature
 				( _T("TriggerSource"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
 					SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
 					SVGigeFeatureSelector( _T("TriggerSelector"), _T("FrameStart") ),
-					( boost::assign::map_list_of<SVString, SVString>
+					( boost::assign::map_list_of<std::string, std::string>
 						( _T("External Trigger"), _T("Line0") )
 						( _T("Software Trigger"), _T("Software") )
 					)
@@ -518,14 +518,14 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	( SVGigeParameterTriggerEdge,
 		SVGigeDeviceParameterStruct
 		( 
-			SVString( _T("Trigger Edge") ), VT_BSTR,
+			std::string( _T("Trigger Edge") ), VT_BSTR,
 			SVGigeParameterAccessor
 			(
 				SVGigeFeature
 				( _T("TriggerActivation"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
 					SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
 					SVGigeFeatureSelector( _T("TriggerSelector"), _T("FrameStart") ),
-					( boost::assign::map_list_of<SVString, SVString>
+					( boost::assign::map_list_of<std::string, std::string>
 						( _T("Rising"), _T("RisingEdge") )
 						( _T("Falling"), _T("FallingEdge") )
 					)
@@ -540,7 +540,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	( SVGigeParameterTriggerInvert,
 		SVGigeDeviceParameterStruct
 		(
-			SVString( _T("Trigger Invert") ), VT_BOOL,
+			std::string( _T("Trigger Invert") ), VT_BOOL,
 			SVGigeParameterAccessor
 			(
 				SVGigeFeature
@@ -559,7 +559,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	( SVGigeParameterTriggerLine,
 		SVGigeDeviceParameterStruct
 		(
-			SVString( _T("Trigger Line") ), VT_BSTR,
+			std::string( _T("Trigger Line") ), VT_BSTR,
 			SVGigeParameterAccessor
 			(
 				SVGigeFeature
@@ -579,7 +579,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	( SVGigeParameterTriggerDelay,
 		SVGigeDeviceParameterStruct
 		(
-			SVString( _T("Trigger Delay") ), VT_R8,
+			std::string( _T("Trigger Delay") ), VT_R8,
 			SVGigeParameterAccessor
 			(
 				SVGigeFeature( _T("TriggerDelayAbs"), SVMatroxDigitizerFeature::SVTypeDouble )
@@ -593,14 +593,14 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	( SVGigeParameterTriggerEnable,
 		 SVGigeDeviceParameterStruct
 		 (
-			 SVString( _T("Trigger Enable") ), VT_BSTR,
+			 std::string( _T("Trigger Enable") ), VT_BSTR,
 			 SVGigeParameterAccessor
 			 (
 				SVGigeFeature
 				( _T("TriggerMode"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
 					SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
 					SVGigeFeatureSelector( _T("TriggerSelector"), _T("FrameStart") ),
-					( boost::assign::map_list_of<SVString, SVString>
+					( boost::assign::map_list_of<std::string, std::string>
 						( _T("Enable"), _T("On") )
 						( _T("Disable"), _T("Off") )
 					)
@@ -615,7 +615,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	( SVGigeParameterStrobeSource,
 		 SVGigeDeviceParameterStruct
 		 (
-			 SVString( _T("Strobe Source") ), VT_BSTR,
+			 std::string( _T("Strobe Source") ), VT_BSTR,
 			 SVGigeParameterAccessor
 			 (
 				 SVGigeFeature
@@ -634,7 +634,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	( SVGigeParameterStrobeEdge,
 		SVGigeDeviceParameterStruct
 		(
-			SVString( _T("Strobe Edge") ), VT_BSTR,
+			std::string( _T("Strobe Edge") ), VT_BSTR,
 			SVGigeParameterAccessor
 			(
 				SVGigeFeature
@@ -653,7 +653,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	( SVGigeParameterStrobeInvert,
 		SVGigeDeviceParameterStruct
 		(
-			SVString( _T("Strobe Invert") ), VT_BOOL,
+			std::string( _T("Strobe Invert") ), VT_BOOL,
 			SVGigeParameterAccessor
 			(
 				SVGigeFeature
@@ -672,7 +672,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	( SVGigeParameterStrobeDelay,
 		SVGigeDeviceParameterStruct
 		(
-			SVString(_T("Strobe Delay")), VT_R8,
+			std::string(_T("Strobe Delay")), VT_R8,
 			SVGigeParameterAccessor
 			(
 				SVGigeFeature
@@ -691,7 +691,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	( SVGigeParameterStrobeDuration,
 		SVGigeDeviceParameterStruct
 		(
-			SVString( _T("Strobe Duration") ),	VT_R8,
+			std::string( _T("Strobe Duration") ),	VT_R8,
 			SVGigeParameterAccessor
 			(
 				SVGigeFeature
@@ -710,7 +710,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	( SVGigeParameterStrobeLine,
 		SVGigeDeviceParameterStruct
 		(
-			SVString( _T("Strobe Line") ), VT_BSTR,
+			std::string( _T("Strobe Line") ), VT_BSTR,
 			SVGigeParameterAccessor
 			(
 				SVGigeFeature
@@ -730,7 +730,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	( SVGigeParameterStrobeEnable,
 		SVGigeDeviceParameterStruct
 		(
-			SVString( _T("Strobe Enable") ), VT_BSTR,
+			std::string( _T("Strobe Enable") ), VT_BSTR,
 			SVGigeParameterAccessor
 			(
 				SVGigeFeature
@@ -749,7 +749,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	( SVGigeParameterHorizontalBinning,
 		SVGigeDeviceParameterStruct
 		(
-			SVString( _T("Horizontal Binning") ), VT_I4,
+			std::string( _T("Horizontal Binning") ), VT_I4,
 			SVGigeParameterAccessor
 			(
 				SVGigeFeature
@@ -768,7 +768,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	( SVGigeParameterVerticalBinning,
 		SVGigeDeviceParameterStruct
 		(
-			SVString( _T("Vertical Binning") ), VT_I4,
+			std::string( _T("Vertical Binning") ), VT_I4,
 			SVGigeParameterAccessor
 			(
 				SVGigeFeature
@@ -787,7 +787,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	( SVGigeParameterPacketSize,
 		SVGigeDeviceParameterStruct
 		(
-			SVString( _T("Packet Size") ), VT_I4,
+			std::string( _T("Packet Size") ), VT_I4,
 			SVGigeParameterAccessor
 			(
 				SVGigeFeature( _T("GevSCPSPacketSize"), SVMatroxDigitizerFeature::SVTypeInt32 )
@@ -801,7 +801,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	( SVGigeParameterLutEnable,
 		SVGigeDeviceParameterStruct
 		(
-			SVString( _T("LUT Enable") ), VT_BOOL,
+			std::string( _T("LUT Enable") ), VT_BOOL,
 			SVGigeParameterAccessor
 			(
 				SVGigeFeature
@@ -820,7 +820,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	( SVGigeParameterLutArray,
 		SVGigeDeviceParameterStruct
 		(
-			SVString( _T("LUT") ), VT_I4 | VT_ARRAY,
+			std::string( _T("LUT") ), VT_I4 | VT_ARRAY,
 			SVGigeParameterAccessor
 			(
 				SVGigeFeature
@@ -841,7 +841,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	( SVGigeParameterLineInput,
 		SVGigeDeviceParameterStruct
 		(
-			SVString( _T("Input") ), VT_BSTR,
+			std::string( _T("Input") ), VT_BSTR,
 			SVGigeParameterAccessor
 			(
 				SVGigeFeature
@@ -861,14 +861,14 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	( SVGigeParameterInputEvent,
 		SVGigeDeviceParameterStruct
 		(
-			SVString( _T("Input Event") ), VT_BSTR,
+			std::string( _T("Input Event") ), VT_BSTR,
 			SVGigeParameterAccessor
 			(
 				SVGigeFeature
 				( _T("EventNotification"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
 					SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
 					SVGigeFeatureSelector( _T("EventSelector") ),
-					( boost::assign::map_list_of<SVString, SVString>
+					( boost::assign::map_list_of<std::string, std::string>
 						( _T("Enable"), _T("On") )
 						( _T("Disable"), _T("Off") )
 					)
@@ -885,7 +885,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	( SVGigeParameterVendorName,
 		SVGigeDeviceParameterStruct
 		(
-			SVString( _T("Vendor Name") ), VT_BSTR,
+			std::string( _T("Vendor Name") ), VT_BSTR,
 			SVGigeParameterAccessor
 			(
 				SVGigeFeature
@@ -902,7 +902,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	( SVGigeParameterModelName,
 		SVGigeDeviceParameterStruct
 		(
-			SVString( _T("Model Name") ), VT_BSTR,
+			std::string( _T("Model Name") ), VT_BSTR,
 			SVGigeParameterAccessor
 			(
 				SVGigeFeature
@@ -919,7 +919,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	( SVGigeParameterSerialNumber,
 		SVGigeDeviceParameterStruct
 		(
-			SVString( _T("Serial Number") ), VT_BSTR,
+			std::string( _T("Serial Number") ), VT_BSTR,
 			SVGigeParameterAccessor
 			(
 				SVGigeFeature
@@ -937,7 +937,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	( SVGigeParameterIPAddress,
 		SVGigeDeviceParameterStruct
 		(
-			SVString( _T("IP Address") ), VT_BSTR,
+			std::string( _T("IP Address") ), VT_BSTR,
 			SVGigeParameterAccessor
 			(
 				SVGigeFeature
@@ -956,14 +956,14 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	( SVGigeParameterCameraDefaultSettings,
 		SVGigeDeviceParameterStruct
 		(
-			SVString( _T("Default Settings") ), VT_BSTR,
+			std::string( _T("Default Settings") ), VT_BSTR,
 			SVGigeParameterAccessor
 			(
 				SVGigeFeature
 				( _T("UserSetDefaultSelector"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
 					SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
 					SVGigeFeatureSelector( ),
-					(  boost::assign::map_list_of<SVString, SVString>
+					(  boost::assign::map_list_of<std::string, std::string>
 						( _T("Enable"), _T("Default") )
 						( _T("Disable"), _T("UserSet1") )
 					)

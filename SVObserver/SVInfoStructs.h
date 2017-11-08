@@ -26,7 +26,6 @@
 #include "SVRunControlLibrary/SVImageIndexStruct.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"
-#include "SVUtilityLibrary/SVString.h"
 #include "SVLibrary/SVIOEntryHostStruct.h"
 #include "SVRunControlLibrary/ProductWorkloadInformation.h" 
 #include "TriggerInformation/SVTriggerObject.h"
@@ -210,7 +209,7 @@ struct SVProductInfoStruct
 
 	bool IsAlive() const;
 
-	void DumpIndexInfo( SVString& p_rData );
+	void DumpIndexInfo( std::string& p_rData );
 
 	HRESULT GetResultDataIndex( SVDataManagerHandle& p_rHandle ) const;
 	HRESULT GetResultImageIndex( SVImageIndexStruct& p_rIndex, const SVGUID& p_rInspectionID ) const;
@@ -221,7 +220,7 @@ struct SVProductInfoStruct
 
 	ProductWorkloadInformation GetWorkloadInformation(){return m_WorkloadInfo;}
 
-	SVString m_ProductState;
+	std::string m_ProductState;
 	BOOL bTriggered;
 	BOOL bStartAcquisition;
 	BOOL bFinishAcquisition;
@@ -269,12 +268,12 @@ struct SVInspectionCompleteInfoStruct
 struct SVInspectionNameUpdate
 {
 	SVInspectionNameUpdate();
-	SVInspectionNameUpdate( const SVString& p_rName );
+	SVInspectionNameUpdate( const std::string& p_rName );
 	SVInspectionNameUpdate( const SVInspectionNameUpdate& p_rObject );
 
 	virtual ~SVInspectionNameUpdate();
 
-	SVString m_InspectionName;
+	std::string m_InspectionName;
 
 };
 
@@ -365,7 +364,7 @@ struct SVInputImageRequestInfoStruct
 	void Reset();
 	void Init();
 
-	SVString m_ObjectName;
+	std::string m_ObjectName;
 	SVImageInfoClass m_ImageInfo;
 	SVSmartHandlePointer m_ImageHandlePtr;
 	bool m_bUsingCameraName;

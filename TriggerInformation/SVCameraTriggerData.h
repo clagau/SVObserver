@@ -15,7 +15,6 @@
 #include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
 #include "SVLibrary/SVIOEntryHostStruct.h"
-#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 namespace SvTi
@@ -23,7 +22,7 @@ namespace SvTi
 	class SVCameraTriggerData : public SVObjectClass 
 	{
 	public:
-		typedef  std::map<SVString, _variant_t> NameVariantMap;
+		typedef  std::map<std::string, _variant_t> NameVariantMap;
 
 	private:
 		SVDoubleValueObjectClass m_timestamp;
@@ -36,8 +35,8 @@ namespace SvTi
 		SVIOEntryHostStructPtr SetupLineStateInput(long objectDepth);
 		SVIOEntryHostStructPtr SetupTimestampInput(long objectDepth);
 
-		SVString GetTimestampName() const;
-		SVString GetLineStateName() const;
+		std::string GetTimestampName() const;
+		std::string GetLineStateName() const;
 
 		void Set(const NameVariantMap& rSettings);
 

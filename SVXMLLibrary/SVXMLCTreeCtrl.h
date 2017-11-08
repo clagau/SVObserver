@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVXMLTree.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 namespace SvXml
@@ -138,7 +138,7 @@ namespace SvXml
 		//! \param pBranch [in] handle to the branch
 		//! \returns the branch name
 		//************************************
-		virtual SVString getBranchName( const SVBranchHandle pBranch ) const override;
+		virtual std::string getBranchName( const SVBranchHandle pBranch ) const override;
 
 		//************************************
 		//! Method to determine if the branch has child leaves
@@ -199,7 +199,7 @@ namespace SvXml
 		//! \param pLeaf [in] handle to the leaf
 		//! \returns the leaf name
 		//************************************
-		virtual SVString getLeafName( const SVLeafHandle pLeaf ) const override;
+		virtual std::string getLeafName( const SVLeafHandle pLeaf ) const override;
 
 		//************************************
 		//! Method to get the leaf data

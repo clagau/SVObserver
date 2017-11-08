@@ -11,7 +11,7 @@
 //Moved to precompiled header: #include <boost/noncopyable.hpp>
 //Moved to precompiled header: #include <Guiddef.h>
 #include "ObjectInterfaces/IObjectManager.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #include "ObjectInterfaces/IObjectClass.h"
 #include "ObjectInterfaces/ITaskObject.h"
 #include "ObjectInterfaces/IInspectionProcess.h"
@@ -75,7 +75,7 @@ namespace SvCmd
 					{
 					case RangeSelectorFilterType:
 					{
-						SVString name;
+						std::string name;
 						hr = pObject->GetCompleteNameToType(SVToolObjectType, name);
 						if (S_OK == hr)
 						{

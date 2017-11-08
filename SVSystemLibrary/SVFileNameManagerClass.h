@@ -14,7 +14,6 @@
 class SVFileNameClass;
 
 #include "SVFileNameLockablePointerArrayClass.h"
-#include "SVUtilityLibrary\SVString.h"
 
 //This class maintains a list of object global to the 
 //application.  This class is responsible for copying the 
@@ -48,11 +47,11 @@ public:
 
 	//This operator exposes the string contained in the 
 	//gcsConfigurationPathName application attribute.
-	const SVString& GetConfigurationPathName() const { return m_ConfigurationPathName; };
+	const std::string& GetConfigurationPathName() const { return m_ConfigurationPathName; };
 
 	//This operator exposes the string contained in the 
 	//gcsRunPathName application attribute.
-	const SVString& GetRunPathName() const { return m_RunPathName; };
+	const std::string& GetRunPathName() const { return m_RunPathName; };
 
 	//This operator sets the gcsRunPathName application 
 	//attribute with the value passes as a parameter to the 
@@ -96,11 +95,11 @@ public:
 	bool RemoveUnusedFiles(bool bCleanConfigDir = true);
 
 private:
-	bool RemoveUnusedFiles(const SVString& rPath);
-	bool CopyFileToPath(const SVString& rPath ,SVFileNameClass* pFileName) const;
+	bool RemoveUnusedFiles(const std::string& rPath);
+	bool CopyFileToPath(const std::string& rPath ,SVFileNameClass* pFileName) const;
 
-	SVString m_ConfigurationPathName; // Configuration Path Name variable
-	SVString m_RunPathName; // Run Path Name variable
+	std::string m_ConfigurationPathName; // Configuration Path Name variable
+	std::string m_RunPathName; // Run Path Name variable
 	SVFileNameLockablePointerArrayClass m_svFileNameList; // File Name List
 	int m_iCurrentItem; //This attribute contains the value of the current position in the file name list.
 };

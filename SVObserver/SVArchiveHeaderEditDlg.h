@@ -13,6 +13,7 @@
 #pragma region Includes
 #include "afxcmn.h"
 #include "SVMFCControls\SVListCtrl.h"
+#include "Definitions/StringTypeDef.h"
 #include "SVGlobal.h"
 #pragma endregion
 
@@ -26,8 +27,8 @@ public:
 
 // Dialog Data
 	enum { IDD = IDD_HEADER_DIALOG };
-	bool SetValues( const StringPairVector& p_astrValues);
-	bool GetValues( StringPairVector& p_astrValues) const;
+	bool SetValues( const SvDef::StringPairVector& p_astrValues);
+	bool GetValues(SvDef::StringPairVector& p_astrValues) const;
 #pragma endregion
 
 #pragma region Protected
@@ -46,7 +47,7 @@ protected:
 
 #pragma region Private
 private:
-	StringPairVector m_Strings;
+	SvDef::StringPairVector m_Strings;
 	CEdit* m_pEdit;
 	CRect m_PreviousClient;
 	CRect m_OriginalRec;

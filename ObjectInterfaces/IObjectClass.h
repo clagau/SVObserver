@@ -13,7 +13,7 @@
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "SVUtilityLibrary/NameGuidList.h"
 #include "SVStatusLibrary/MessageContainer.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 namespace SvOi
@@ -39,19 +39,19 @@ namespace SvOi
 		/**********
 			This method gets the complete name of this object.
 		***********/
-		virtual SVString GetCompleteName() const = 0;
+		virtual std::string GetCompleteName() const = 0;
 
 		/**********
 			This method gets the complete name of this object, to a certain lineage.
 			Note: this method builds the name by removing the parts of the ancestry younger than the objectType.
 		***********/
-		virtual HRESULT GetCompleteNameToType(SVObjectTypeEnum objectType, SVString& rName) const = 0;
+		virtual HRESULT GetCompleteNameToType(SVObjectTypeEnum objectType, std::string& rName) const = 0;
 
 		/**********
 			This method gets the complete name of this object, to a certain lineage.
 			Note: this method builds the name in reverse by ancestry (meaning that the lineage is traversed by youngest to oldest)
 		***********/
-		virtual SVString GetObjectNameToObjectType(LPCSTR LPSZCompleteName, SVObjectTypeEnum objectTypeToInclude) const = 0;
+		virtual std::string GetObjectNameToObjectType(LPCSTR LPSZCompleteName, SVObjectTypeEnum objectTypeToInclude) const = 0;
 
 		/**********
 			The method gets the type of this object.

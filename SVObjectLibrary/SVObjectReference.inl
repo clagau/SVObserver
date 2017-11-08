@@ -62,7 +62,7 @@ inline long SVObjectReference::getValidArrayIndex() const
 	return ( -1 != ArrayIndex() ) ? ArrayIndex() : 0;
 }
 
-inline SVString SVObjectReference::DefaultValue() const
+inline std::string SVObjectReference::DefaultValue() const
 {
 	return m_NameInfo.GetDefaultValue();
 }

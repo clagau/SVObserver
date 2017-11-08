@@ -14,7 +14,6 @@
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVImageAnalyzerClass.h"
 #include "SVStatusLibrary/MessageTextEnum.h"
-#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 enum 
@@ -31,8 +30,8 @@ class SVBarCodeAnalyzerClass : public SVImageAnalyzerClass
 	SV_DECLARE_CLASS (SVBarCodeAnalyzerClass);
 
 public:
-	SVString m_RegExpressionValue;
-	SVString m_StringFileName;
+	std::string m_RegExpressionValue;
+	std::string m_StringFileName;
 
 	SVBoolValueObjectClass m_bWarnOnFailedRead;
 	SVStringValueObjectClass msv_szBarCodeValue;

@@ -12,7 +12,7 @@
 #include "stdafx.h"
 #include "SVStartWindow.h"
 #include "SVSystemLibrary/SVVersionInfo.h"
-#include "SVUtilityLibrary/SVString.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -31,7 +31,7 @@ SVStartWindowClass::SVStartWindowClass(CWnd* pParent /*=nullptr*/)
 	//}}AFX_DATA_INIT
 	startImage.Init( IDB_START );
 
-	SVString Version = _T("Version ");
+	std::string Version = _T("Version ");
 
 	Version += SvSyl::SVVersionInfo::GetVersion();
 

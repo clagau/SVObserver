@@ -153,7 +153,7 @@ namespace SvOg
 
 	void SVToolAdjustmentDialogPassFailPageClass::OnBnClickedFailHighIndirect()
 	{
-		SVString Value( m_FailHigh );
+		std::string Value( m_FailHigh );
 		if( ShowObjectSelector( Value, RangeEnum::ER_FailHigh) )
 		{
 			m_FailHigh = Value.c_str();
@@ -163,7 +163,7 @@ namespace SvOg
 
 	void SVToolAdjustmentDialogPassFailPageClass::OnBnClickedWarnlHighIndirect()
 	{
-		SVString Value( m_WarnHigh );
+		std::string Value( m_WarnHigh );
 		if( ShowObjectSelector( Value, RangeEnum::ER_WarnHigh) )
 		{
 			m_WarnHigh = Value.c_str();
@@ -173,7 +173,7 @@ namespace SvOg
 
 	void SVToolAdjustmentDialogPassFailPageClass::OnBnClickedWarnLowIndirect()
 	{
-		SVString Value( m_WarnLow );
+		std::string Value( m_WarnLow );
 		if( ShowObjectSelector( Value, RangeEnum::ER_WarnLow) )
 		{
 			m_WarnLow = Value.c_str();
@@ -183,7 +183,7 @@ namespace SvOg
 
 	void SVToolAdjustmentDialogPassFailPageClass::OnBnClickedFailedLowIndirect()
 	{
-		SVString Value( m_FailLow );
+		std::string Value( m_FailLow );
 		if( ShowObjectSelector( Value, RangeEnum::ER_FailLow) )
 		{
 			m_FailLow = Value.c_str();
@@ -197,7 +197,7 @@ namespace SvOg
 	{
 		bool bRetVal = true;
 	
-		SVString errorMsg;
+		std::string errorMsg;
 
 		try
 		{
@@ -215,9 +215,9 @@ namespace SvOg
 		return bRetVal;
 	}
 
-	bool SVToolAdjustmentDialogPassFailPageClass::ShowObjectSelector(SVString& rName, RangeEnum::ERange fieldEnum)
+	bool SVToolAdjustmentDialogPassFailPageClass::ShowObjectSelector(std::string& rName, RangeEnum::ERange fieldEnum)
 	{
-		SVString Title = GetOwnerName();
+		std::string Title = GetOwnerName();
 		Title += _T(": ");
 		Title += RangeEnum::ERange2String(fieldEnum);
 

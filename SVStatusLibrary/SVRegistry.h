@@ -11,7 +11,6 @@
 
 #pragma once
 
-#include "SVUtilityLibrary/SVString.h"
 #include "SVContainerLibrary/SVVector.h"
 
 typedef bool (CALLBACK *PFKEYENUMPROC) (LPCTSTR p_szKey, LPVOID pUserData);
@@ -34,8 +33,8 @@ public:
 	//key.
 	DWORD NumSubKeys();
 
-	//bool GetRegistryValue (int iIndex, SVString 
-	//&szValueName, SVString &szValue, LPDWORD pdwType)
+	//bool GetRegistryValue (int iIndex, std::string 
+	//&szValueName, std::string &szValue, LPDWORD pdwType)
 	//
 	//Return Value:
 	//true if a REG_SZ value was found for szValueName.
@@ -43,18 +42,18 @@ public:
 	//Parameters:
 	//iIndex - zero based index identifying the value to 
 	//retrieve.
-	//szValueName -- Reference to a SVString that will receive 
+	//szValueName -- Reference to a std::string that will receive 
 	//the name 
 	//of the value read from the registry.
-	//szValue -- Reference to a SVString where the value will 
+	//szValue -- Reference to a std::string where the value will 
 	//be stored.
 	//
 	//Remarks:
 	//Use this function to enumerate through the list of 
 	//values for a key.
-	bool GetRegistryValue(DWORD dwIndex, SVString& szValueName, SVString& szValue, LPDWORD pdwType);
+	bool GetRegistryValue(DWORD dwIndex, std::string& szValueName, std::string& szValue, LPDWORD pdwType);
 
-	//bool SetRegistryValue (SVString &szValueName, ByteArray 
+	//bool SetRegistryValue (std::string &szValueName, ByteArray 
 	//&baValue, DWORD dwType, DWORD dwLength)
 	//throws SVException
 	//
@@ -62,7 +61,7 @@ public:
 	//true if the value was set.
 	//
 	//Parameters:
-	//szValueName -- Reference to a SVString containing the 
+	//szValueName -- Reference to a std::string containing the 
 	//name of the value to read from the registry.
 	//baValue -- Value to be set.
 	//dwType -- Type of data to set.  Valid values are:
@@ -76,7 +75,7 @@ public:
 	//by szValueName.
 	bool SetRegistryValue( LPCTSTR szValueName, SVByteVector& baValue, DWORD dwType, DWORD dwLength);
 
-	//bool GetRegistryValue (SVString &szValueName, SVByteArray 
+	//bool GetRegistryValue (std::string &szValueName, SVByteArray 
 	//&baValue)
 	//
 	//Returns:
@@ -88,7 +87,7 @@ public:
 	//it in baValue.
 	bool GetRegistryValue( LPCTSTR szValueName, SVByteVector& baValue );
 
-	//bool SetRegistryValue (SVString &szValueName, SVByteArray 
+	//bool SetRegistryValue (std::string &szValueName, SVByteArray 
 	//&baValue)
 	//
 	//Returns:
@@ -98,7 +97,7 @@ public:
 	//Sets a registry value with the data supplied in baValue.
 	bool SetRegistryValue( LPCTSTR szValueName, SVByteVector& baValue );
 
-	//bool DeleteValue (SVString &szValueName)
+	//bool DeleteValue (std::string &szValueName)
 	//
 	//Returns:
 	//true if the value was deleted, false otherwise.
@@ -176,7 +175,7 @@ public:
 	//appname is determined from the AfxGetAppName function.
 	SVRegistryClass();
 
-	//SVRegistryClass* OpenSubKey (SVString szSubKey)
+	//SVRegistryClass* OpenSubKey (std::string szSubKey)
 	//
 	//Return Value:
 	//Pointer to an SVRegistryClass object representing the 
@@ -254,7 +253,7 @@ public:
 	//children of children are not enumerated).
 	void EnumKeys(PFKEYENUMPROC pKeyEnumProc, LPVOID pUserData);
 
-	//bool ReplaceKey (SVString &szHive);
+	//bool ReplaceKey (std::string &szHive);
 	//
 	//Return Value:
 	//true if the registry was restored.
@@ -268,7 +267,7 @@ public:
 	//previous SaveKey operation.
 	bool ReplaceKey (LPCTSTR p_szHive);
 
-	//bool SaveKey (SVString &szHive);
+	//bool SaveKey (std::string &szHive);
 	//
 	//Return Value:
 	//true if the registry was successfully saved.
@@ -282,7 +281,7 @@ public:
 	//and values to a file specified by szFile.
 	bool SaveKey (LPCTSTR p_szHive);
 
-	//bool SetRegistryValue (SVString &szValueName, DWORD 
+	//bool SetRegistryValue (std::string &szValueName, DWORD 
 	//pdwValue)
 	//throws SVException
 	//
@@ -290,7 +289,7 @@ public:
 	//true if the value was successfully set, false otherwise.
 	//
 	//Parameters:
-	//szValueName -- Reference to a SVString containing the 
+	//szValueName -- Reference to a std::string containing the 
 	//name 
 	//of the value to read from the registry.
 	//dwValue -- DWORD value to set.
@@ -300,14 +299,14 @@ public:
 	//specified by szValueName.
 	bool SetRegistryValue( LPCTSTR szValueName, DWORD dwValue );
 
-	//bool GetRegistryValue (SVString &szValueName, DWORD 
+	//bool GetRegistryValue (std::string &szValueName, DWORD 
 	//*pdwValue)
 	//
 	//Return Value:
 	//true if a DWORD value was found for szValueName.
 	//
 	//Parameters:
-	//szValueName -- Reference to a SvString containing the 
+	//szValueName -- Reference to a std::string containing the 
 	//name 
 	//of the value to read from the registry.
 	//pdwValue -- Pointer to a DWORD where the value will be 
@@ -318,7 +317,7 @@ public:
 	//by szValueName.
 	bool GetRegistryValue( LPCTSTR szValueName, DWORD *pdwValue );
 
-	//bool SetRegistryValue (SVString &szValueName, SVString 
+	//bool SetRegistryValue (std::string &szValueName, std::string 
 	//&szValue)
 	//throws SVException
 	//
@@ -326,33 +325,33 @@ public:
 	//true if the REG_SZ value was set.
 	//
 	//Parameters:
-	//szValueName -- Reference to a SvString containing the 
+	//szValueName -- Reference to a std::string containing the 
 	//name 
 	//of the value to read from the registry.
-	//szValue -- SVString value to be set.
+	//szValue -- std::string value to be set.
 	//
 	//Remarks:
 	//Sets the REG_SZ registry value for the entry specified 
 	//by szValueName.
 	bool SetRegistryValue( LPCTSTR szValueName, LPCTSTR szValue );
 
-	//bool GetRegistryValue (SVString &szValueName, SVString 
+	//bool GetRegistryValue (std::string &szValueName, std::string 
 	//&szValue)
 	//
 	//Return Value:
 	//true if a REG_SZ value was found for szValueName.
 	//
 	//Parameters:
-	//szValueName -- Reference to a SVString containing the 
+	//szValueName -- Reference to a std::string containing the 
 	//name 
 	//of the value to read from the registry.
-	//szValue -- Reference to a SVString where the value will 
+	//szValue -- Reference to a std::string where the value will 
 	//be stored.
 	//
 	//Remarks:
 	//Reads the REG_SZ registry value for the entry specified 
 	//by szValueName.
-	bool GetRegistryValue( LPCTSTR szValueName, SVString& szValue );
+	bool GetRegistryValue( LPCTSTR szValueName, std::string& szValue );
 
 	//SVRegistryClass (LPCTSTR szKey)
 	//throws SVException
@@ -434,7 +433,7 @@ public:
 	virtual ~SVRegistryClass();
 
 private:
-	//int GetImportString (FILE *pFile, SVString &szName, 
+	//int GetImportString (FILE *pFile, std::string &szName, 
 	//SVByteArray &baValue, DWORD *pdwType)
 	//
 	//Reads a registry import file.
@@ -446,7 +445,7 @@ private:
 	//	SV_ISKEY
 	//	SV_ISVALUE
 	//	SV_ISGARBAGE
-	int GetImportString(FILE * pFile, SVString & szName, SVByteVector & baValue, DWORD * pdwType);
+	int GetImportString(FILE * pFile, std::string & szName, SVByteVector & baValue, DWORD * pdwType);
 
 	//This is a supporting function for the Import function.
 	bool ImportKeys(FILE * pFile);
@@ -469,7 +468,7 @@ private:
 	//set for the current key. false otherwise.
 	bool SetShadowFileName(LPCTSTR szFileName);
 
-	//bool GetShadowFileName (SVString &szShadowFile)
+	//bool GetShadowFileName (std::string &szShadowFile)
 	//
 	//Returns:
 	//true if a shadow filename was found for the current key.
@@ -477,9 +476,9 @@ private:
 	//
 	//Remarks:
 	//Gets the shadow filename for a key.
-	bool GetShadowFileName(SVString & szShadowFile);
+	bool GetShadowFileName(std::string & szShadowFile);
 
-	//bool GetDefaultShadowFileName (SVString &szShadowFile)
+	//bool GetDefaultShadowFileName (std::string &szShadowFile)
 	//
 	//Returns:
 	//true if a default shadow filename was successfully 
@@ -488,9 +487,9 @@ private:
 	//Remarks:
 	//Generates a filename to use for an Export or Import 
 	//operation.
-	bool GetDefaultShadowFileName(SVString & szShadowFile);
+	bool GetDefaultShadowFileName(std::string & szShadowFile);
 
-	//void InitRegistry (SVString szKey)
+	//void InitRegistry (std::string szKey)
 	//throws SVException
 	//
 	//Return Value:
@@ -506,7 +505,7 @@ private:
 
 	//The name of the key opened or created during 
 	//construction of the object.
-	SVString mszKey;
+	std::string mszKey;
 
 	//Flag indicating if the key had to be created in the 
 	//constructor or not. The value of this element can be 

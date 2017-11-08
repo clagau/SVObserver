@@ -16,7 +16,6 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
-#include "SVUtilityLibrary/SVString.h"
 #include "SVValueObjectClass.h"
 #pragma endregion Includes
 
@@ -48,9 +47,9 @@ protected:
 	/// Convert a string in a byte. Throw an exception if the string isn't convertible into a byte
 	/// \param strValue [in] The input string
 	/// \returns BYTE Return value.
-	virtual BYTE ConvertString2Type( const SVString& rValue ) const override;
+	virtual BYTE ConvertString2Type( const std::string& rValue ) const override;
 
-	virtual SVString ConvertType2String(const BYTE& rValue) const override { return FormatOutput(rValue); };
+	virtual std::string ConvertType2String(const BYTE& rValue) const override { return FormatOutput(rValue); };
 
 	virtual void WriteValues(SVObjectWriter& rWriter) override;
 	virtual void WriteDefaultValues(SVObjectWriter& rWriter) override;

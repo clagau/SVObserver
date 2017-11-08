@@ -22,7 +22,7 @@
 #include "SVShiftToolUtility.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -103,11 +103,11 @@ BOOL SVTADlgTranslationShiftPageClass::OnInitDialog()
 
 		m_pvoShiftMode = &l_pTool->m_evoShiftMode;
 		
-		SVString EnumTypes;
+		std::string EnumTypes;
 		m_pvoShiftMode->GetEnumTypes( EnumTypes );
 		m_ctlShiftModeCombo.SetEnumTypes( EnumTypes.c_str() );
 
-		SVString ShiftType;
+		std::string ShiftType;
 		m_pvoShiftMode->getValue( ShiftType );
 		m_ctlShiftModeCombo.SelectString( -1, ShiftType.c_str() );
 
@@ -249,7 +249,7 @@ void SVTADlgTranslationShiftPageClass::OnBnClickedTranslationXFormulaButton()
 {
 	if (pEvaluateTranslationX)
 	{
-		SVString Caption = pEvaluateTranslationX->GetName();
+		std::string Caption = pEvaluateTranslationX->GetName();
 		Caption += _T(" Formula");
 
 		const GUID& rInspectionID = pParentDialog->GetInspectionID();
@@ -266,7 +266,7 @@ void SVTADlgTranslationShiftPageClass::OnBnClickedTranslationYFormulaButton()
 {
 	if (pEvaluateTranslationY)
 	{
-		SVString Caption = pEvaluateTranslationY->GetName();
+		std::string Caption = pEvaluateTranslationY->GetName();
 		Caption += _T(" Formula");
 
 		const GUID& rInspectionID = pParentDialog->GetInspectionID();

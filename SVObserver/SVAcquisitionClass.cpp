@@ -29,6 +29,7 @@
 #include "SVOCore/SVImageProcessingClass.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -727,7 +728,7 @@ HRESULT SVAcquisitionClass::GetNextIndex( SVDataManagerHandle &rDMHandle, SVData
 
 	if( S_OK != hrOk )
 	{
-		SVStringVector msgList;
+		SvDef::StringVector msgList;
 		msgList.push_back(GetDeviceName());
 		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 		Exception.setMessage( static_cast<DWORD> (hrOk), SvStl::Tid_SVAcquisitionClass_GetNextIndex, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -785,7 +786,7 @@ SVDeviceParamCollection& SVAcquisitionClass::HardwareCapabilities()
 	return m_DeviceParams;
 }
 
-HRESULT SVAcquisitionClass::ReadCameraFile( const SVString& , SVDeviceParamCollection& rParams )
+HRESULT SVAcquisitionClass::ReadCameraFile( const std::string& , SVDeviceParamCollection& rParams )
 {
 	return E_NOTIMPL;
 }

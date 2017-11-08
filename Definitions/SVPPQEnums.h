@@ -48,7 +48,7 @@ namespace SvDef
 		FixedMaximum =3			//!  Regardless of a nack occurred or not take the inspection from the front part from the PPQbuffer. Front part is determined by NAKPar .
 	};
 
-} //namespace SvOi
+} //namespace SvDef
 
 
 

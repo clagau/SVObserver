@@ -12,7 +12,6 @@
 
 #pragma region Includes
 #include "SVRPropertyTree/SVRPropTree.h"
-#include "SVUtilityLibrary/SVString.h"
 #include "SVOGui/ValuesAccessor.h"
 #include "SVOGui/DataController.h"
 #pragma endregion Includes
@@ -46,7 +45,7 @@ public:
 
 // Implementation
 protected:
-	int SelectObject( SVString& rSelectedName, SVRPropertyItem* pItem );
+	int SelectObject( std::string& rSelectedName, SVRPropertyItem* pItem );
 	SVObjectClass* FindObject(SVRPropertyItem* pItem);
 	HRESULT ValidateItem(SVRPropertyItem* pItem);
 	int GetItemIndex(SVRPropertyItem* pItem);
@@ -68,7 +67,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	SVString GetName(const SVGUID& guid) const;
+	std::string GetName(const SVGUID& guid) const;
 	GUID GetToolSetGUID() const;
 
 private:

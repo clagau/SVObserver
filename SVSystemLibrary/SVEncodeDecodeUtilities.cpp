@@ -96,7 +96,7 @@ HRESULT SVEncodeDecodeUtilities::Base64EncodeToStringFromString( std::string& p_
 	return l_Status;
 }
 
-HRESULT SVEncodeDecodeUtilities::Base64EncodeToStringFromFile( std::string& p_rOutput, const SVString& p_rFileName )
+HRESULT SVEncodeDecodeUtilities::Base64EncodeToStringFromFile( std::string& p_rOutput, const std::string& p_rFileName )
 {
 	HRESULT l_Status = S_OK;
 
@@ -164,7 +164,7 @@ HRESULT SVEncodeDecodeUtilities::Base64DecodeToByteBufferFromString( int& p_rOut
 	return l_Status;
 }
 
-HRESULT SVEncodeDecodeUtilities::Base64DecodeToFileFromString( const SVString& p_rFileName, const std::string& p_rInput )
+HRESULT SVEncodeDecodeUtilities::Base64DecodeToFileFromString( const std::string& p_rFileName, const std::string& p_rInput )
 {
 	HRESULT l_Status = S_OK;
 

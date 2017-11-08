@@ -13,7 +13,6 @@
 #pragma region Includes
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <set>
-#include "SVUtilityLibrary/SVString.h"
 #include "TriggerHandling/SVTriggerClass.h"
 #pragma endregion Includes
 
@@ -48,8 +47,8 @@ namespace SvTi
 	
 	private:
 		typedef std::set< SVIOTriggerLoadLibraryClass* > SVTriggerSubsystemSet;
-		typedef std::map< SVString, SvTh::SVTriggerClass* > SVNameTriggerMap;
-		typedef std::map< SVString, SVIOTriggerLoadLibraryClass* > SVNameTriggerSubsystemMap;
+		typedef std::map<std::string, SvTh::SVTriggerClass*> SVNameTriggerMap;
+		typedef std::map<std::string, SVIOTriggerLoadLibraryClass*> SVNameTriggerSubsystemMap;
 
 		SVTriggerProcessingClass();
 

@@ -25,7 +25,7 @@
 #include "TriggerInformation/SVTriggerCallbackFunc.h"
 #include "TriggerInformation/SVTriggerEnums.h"
 #include "SVTimerLibrary/SVClock.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 static const long MaxFileCameras = 12;
@@ -70,7 +70,7 @@ HRESULT SVFileAcquisitionDevice::Create()
 		m_cameras.resize(MaxFileCameras);
 		for (int i = 0;i < MaxFileCameras;i++)
 		{
-			SVString camName = SvUl_SF::Format("File.Dig_%d", i);
+			std::string camName = SvUl::Format("File.Dig_%d", i);
 			m_cameras[i].SetName(camName);
 		}
 		// Allocate Max Buffers ?
@@ -430,14 +430,14 @@ HRESULT SVFileAcquisitionDevice::CameraSetParameter( unsigned long p_ulIndex, in
 
 			case SVFileAcquisitionParameterFilename:
 			{
-				rCamera.SetFileName(SvUl_SF::createSVString(p_pvarValue->bstrVal));
+				rCamera.SetFileName(SvUl::createStdString(p_pvarValue->bstrVal));
 				l_hrOk = S_OK;
 				break;
 			}
 
 			case SVFileAcquisitionParameterDirectory:
 			{
-				rCamera.SetDirectory(SvUl_SF::createSVString(p_pvarValue->bstrVal));
+				rCamera.SetDirectory(SvUl::createStdString(p_pvarValue->bstrVal));
 				l_hrOk = S_OK;
 				break;
 			}
@@ -740,7 +740,7 @@ HRESULT SVFileAcquisitionDevice::TriggerGetName(unsigned long triggerchannel, BS
 		}
 
 		SVFileCamera& l_rCamera = GetDigitizer(triggerchannel);
-		SVString name = SvUl_SF::Format("CameraTrigger.Dig_%d", triggerchannel);
+		std::string name = SvUl::Format("CameraTrigger.Dig_%d", triggerchannel);
 		p_rbstrName = _bstr_t(name.c_str());
 		l_Result = S_OK;
 	}
@@ -951,7 +951,7 @@ void SVFileAcquisitionDevice::DoAcquisitionTrigger(SVFileCamera& p_rCamera)
 
 	if (dispatcher.hasCallback())
 	{
-		typedef  std::map<SVString, _variant_t> NameVariantMap;
+		typedef  std::map<std::string, _variant_t> NameVariantMap;
 		NameVariantMap Settings;
 		Settings[_T("Timestamp")] = _variant_t(timestamp);
 		Settings[_T("LineState")] = _variant_t((lineState) ? VARIANT_TRUE : VARIANT_FALSE);

@@ -21,6 +21,7 @@
 #include "SVTestAcquisitionSubsystem.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVMessage/SVMessage.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -85,12 +86,12 @@ HRESULT SVCameraPage::GetNextBuffer( SVImageBufferInterface& p_rBuffer )
 
 HRESULT SVCameraPage::UpdateWithCompletedBuffer( const SVImageBufferInterface& p_rBuffer )
 {
-	SVString Count;
+	std::string Count;
 
-	Count = SvUl_SF::Format( _T("%d"), m_lStartCount );
+	Count = SvUl::Format( _T("%d"), m_lStartCount );
 	m_StartFrameCount.SetWindowText( Count.c_str() );
 
-	Count = SvUl_SF::Format( _T("%d"), m_lEndCount );
+	Count = SvUl::Format( _T("%d"), m_lEndCount );
 	m_EndFrameCount.SetWindowText( Count.c_str() );
 
 	m_CameraImage.Invalidate();
@@ -130,8 +131,8 @@ void SVCameraPage::OnAdvancedButtonClick()
 
 void SVCameraPage::OnCameraFileBrowseButtonClick()
 {
-	SVString cameraFileFilter;
-	SVString cameraFileDefaultExt;
+	std::string cameraFileFilter;
+	std::string cameraFileDefaultExt;
 
 	CSVImageTestApp* pApp = (CSVImageTestApp *)AfxGetApp();
 	// check for Gige...
@@ -290,7 +291,7 @@ void SVCameraPage::LoadSVCameraFiles()
 {
 	if (m_pAcquisition)
 	{
-		HRESULT hr = m_pAcquisition->ReadCameraFile(SVString(m_FileName));
+		HRESULT hr = m_pAcquisition->ReadCameraFile(std::string(m_FileName));
 
 		if (S_OK == hr)
 		{

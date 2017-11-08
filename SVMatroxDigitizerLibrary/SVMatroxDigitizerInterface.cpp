@@ -13,7 +13,7 @@
 #include "SVMatroxLibrary/SVMatroxImagingLibrary.h"
 #include "SVMatroxDigitizerInterface.h"
 #include "SVMatroxLibrary/SVMatroxApplicationInterface.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -80,7 +80,7 @@ HRESULT SVMatroxDigitizerInterface::Allocate(const SVMatroxSystem& SystemID,
 */
 HRESULT SVMatroxDigitizerInterface::Allocate(const SVMatroxSystem& SystemID,
 									  long DeviceNum,
-									  const SVString& DataFormat,
+									  const std::string& DataFormat,
 									  SVMatroxDigitizer& digitizerID)
 {
 	HRESULT l_Code( S_OK );
@@ -950,7 +950,7 @@ HRESULT SVMatroxDigitizerInterface::SetOffset(const SVMatroxDigitizer& Digitizer
 
 */
 
-HRESULT SVMatroxDigitizerInterface::GetVendor(const SVMatroxDigitizer& DigitizerID, SVString& Value)
+HRESULT SVMatroxDigitizerInterface::GetVendor(const SVMatroxDigitizer& DigitizerID, std::string& Value)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -990,7 +990,7 @@ HRESULT SVMatroxDigitizerInterface::GetVendor(const SVMatroxDigitizer& Digitizer
 
 */
 
-HRESULT SVMatroxDigitizerInterface::GetModel(const SVMatroxDigitizer& DigitizerID, SVString& Value)
+HRESULT SVMatroxDigitizerInterface::GetModel(const SVMatroxDigitizer& DigitizerID, std::string& Value)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -1094,7 +1094,7 @@ HRESULT SVMatroxDigitizerInterface::Get(const SVMatroxDigitizer& DigitizerID, SV
 
 */
 
-HRESULT SVMatroxDigitizerInterface::GetGigeSerialNumber(const SVMatroxDigitizer& DigitizerID, SVString& Value)
+HRESULT SVMatroxDigitizerInterface::GetGigeSerialNumber(const SVMatroxDigitizer& DigitizerID, std::string& Value)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -1311,7 +1311,7 @@ HRESULT SVMatroxDigitizerInterface::ShowGigeProperties(const SVMatroxDigitizer& 
 
 */
 HRESULT SVMatroxDigitizerInterface::GetFeature(const SVMatroxDigitizer& DigitizerID,
-                                  const SVString& FeatureName,
+                                  const std::string& FeatureName,
                                   SVMatroxDigitizerFeature::SVFeatureTypeEnum FeatureType,
                                   variant_t& FeatureValue)
 {
@@ -1460,7 +1460,7 @@ HRESULT SVMatroxDigitizerInterface::GetFeature(const SVMatroxDigitizer& Digitize
 
 */
 HRESULT SVMatroxDigitizerInterface::SetFeature(const SVMatroxDigitizer& DigitizerID,
-                                 const SVString& FeatureName,
+                                 const std::string& FeatureName,
                                  SVMatroxDigitizerFeature::SVFeatureTypeEnum FeatureType,
                                  const variant_t& FeatureValue)
 {
@@ -1530,7 +1530,7 @@ HRESULT SVMatroxDigitizerInterface::SetFeature(const SVMatroxDigitizer& Digitize
 
 				case VT_BSTR:	// String
 					{
-						SVString strValue = SvUl_SF::createSVString(FeatureValue.bstrVal);
+						std::string strValue = SvUl::createStdString(FeatureValue.bstrVal);
 						size_t len = strValue.size() + 1;
 						char* pValue = new char[len];
 						strcpy_s(pValue, len, strValue.c_str()); 
@@ -1821,7 +1821,7 @@ HRESULT SVMatroxDigitizerInterface::Destroy(SVMatroxDigitizer& p_rDigitizer)
 @SVOperationDescription This method Enables/Disables Event Notification for the Digitizer.
 
 */
-HRESULT SVMatroxDigitizerInterface::SetGigeEvent(const SVMatroxDigitizer& DigitizerID, const SVString& eventName, const SVString& value)
+HRESULT SVMatroxDigitizerInterface::SetGigeEvent(const SVMatroxDigitizer& DigitizerID, const std::string& eventName, const std::string& value)
 {
 	HRESULT l_Code( S_OK );
 
@@ -1879,9 +1879,9 @@ HRESULT SVMatroxDigitizerInterface::GetGigeEventList(const SVMatroxDigitizer& Di
 				
 				if (l_Code == S_OK)
 				{
-					SVString name(pEventName); // MIL_TEXT is null terminated
+					std::string name(pEventName); // MIL_TEXT is null terminated
 					SVMatroxInt eventType = -1;
-					SVString evName = "Event";
+					std::string evName = "Event";
 					evName += name;
 					MdigInquireFeature(DigitizerID.m_DigitizerIdentifier, cFeatureControlType, evName.c_str(), M_TYPE_MIL_INT, &eventType);
 					l_Code = SVMatroxApplicationInterface::GetLastStatus();

@@ -29,7 +29,7 @@
 #include "SVMainFrm.h"
 #include "ToolSizeAdjustTask.h"
 #include "GuiCommands/InspectionRunOnce.h"
-#include "SVUtilityLibrary/SVStringConversions.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -241,7 +241,7 @@ void SVAdjustToolSizePositionDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* p
 
 		// do validation
 		SVExtentPropertyEnum eProperty = static_cast< SVExtentPropertyEnum >( pItem->GetCtrlID() - ID_BASE );
-		SVString Value;
+		std::string Value;
 		pItem->GetItemValue( Value );
 		double dValue = atof( Value.c_str() );
 
@@ -496,7 +496,7 @@ void SVAdjustToolSizePositionDlg::FillTreeFromExtents( SVRPropertyItem* pRoot, b
 
 		if (nullptr != pEdit)
 		{
-			SVString Name = iter->second;
+			std::string Name = iter->second;
 			double dValue = 0.0;
 			m_svExtents.GetExtentProperty( iter->first, dValue);
 
@@ -505,14 +505,14 @@ void SVAdjustToolSizePositionDlg::FillTreeFromExtents( SVRPropertyItem* pRoot, b
 			pEdit->SetBold( false );
 			pEdit->SetHeight(16);
 
-			SVString Value;
+			std::string Value;
 			if ((iter->first&g_SVExtentPropertyNoDecimalPlaces) != 0)
 			{
-				Value = SvUl_SF::Format( _T("%d"), static_cast<int> (dValue) );
+				Value = SvUl::Format( _T("%d"), static_cast<int> (dValue) );
 			}
 			else if ((iter->first&g_SVExtentProperty2DecimalPlaces) != 0)
 			{
-				Value = SvUl_SF::Format( _T("%.2f"), dValue );
+				Value = SvUl::Format( _T("%.2f"), dValue );
 			}
 			else
 			{

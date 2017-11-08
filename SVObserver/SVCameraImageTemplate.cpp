@@ -137,9 +137,9 @@ SVVirtualCamera* SVCameraImageTemplate::GetCamera() const
 	return mpCamera;
 }
 
-SVString SVCameraImageTemplate::GetCameraName() const
+std::string SVCameraImageTemplate::GetCameraName() const
 {
-	SVString l_String;
+	std::string l_String;
 
 	if( nullptr != mpCamera )
 	{
@@ -173,7 +173,7 @@ HRESULT SVCameraImageTemplate::RestoreMainImage( SVInspectionProcess* p_psvInspe
 	return l_svOk;
 }
 
-HRESULT SVCameraImageTemplate::GetObjectValue( const SVString& rValueName, _variant_t& rValue ) const
+HRESULT SVCameraImageTemplate::GetObjectValue( const std::string& rValueName, _variant_t& rValue ) const
 {
 	HRESULT hr = S_OK;
 

@@ -17,9 +17,9 @@
 
 namespace SvSyl
 {
-	SVString SVVersionInfo::GetVersion()
+	std::string SVVersionInfo::GetVersion()
 	{
-		SVString Result;
+		std::string Result;
 
 		TCHAR moduleFilename[512];
 		::GetModuleFileName(nullptr, moduleFilename, sizeof(moduleFilename));
@@ -121,9 +121,9 @@ namespace SvSyl
 		return l_Version;
 	}
 
-	SVString SVVersionInfo::GetTitleVersion()
+	std::string SVVersionInfo::GetTitleVersion()
 	{
-		SVString verStr;
+		std::string verStr;
 
 		TCHAR moduleFilename[512];
 		::GetModuleFileName(nullptr, moduleFilename, sizeof(moduleFilename));
@@ -159,9 +159,9 @@ namespace SvSyl
 		return verStr;
 	}
 
-	SVString SVVersionInfo::GetShortTitleVersion()
+	std::string SVVersionInfo::GetShortTitleVersion()
 	{
-		SVString Result;
+		std::string Result;
 
 		TCHAR moduleFilename[512];
 		::GetModuleFileName(nullptr, moduleFilename, sizeof(moduleFilename));

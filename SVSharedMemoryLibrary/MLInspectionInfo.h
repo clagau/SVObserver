@@ -21,9 +21,9 @@ namespace SvSml
 		DWORD TotalImageSize; //<size of all Images including  an const offset per image 
 		DWORD TotalDataSize; //<size of all datas 
 		DWORD StoreIndex;
-		SVString PPQName;
+		std::string PPQName;
 		DWORD PPQIndex;
 	};
 	typedef std::unique_ptr<MLInspectionInfo> MLInspectionInfoPointer;
-	typedef  std::map<SVString, MLInspectionInfoPointer>  MLInspectionInfoMap; //< map InspectionName  InspectionInfoPtr
+	typedef  std::map<std::string, MLInspectionInfoPointer>  MLInspectionInfoMap; //< map InspectionName  InspectionInfoPtr
 } //namespace SvSml

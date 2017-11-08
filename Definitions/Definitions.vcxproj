@@ -88,6 +88,7 @@
     <ClInclude Include="ImageOperatorEnums.h" />
     <ClInclude Include="ObjectDefines.h" />
     <ClInclude Include="RangeEnum.h" />
+    <ClInclude Include="StringTypeDef.h" />
     <ClInclude Include="SVImageEnums.h" />
     <ClInclude Include="SVIMCommand.h" />
     <ClInclude Include="SVObjectTypeInfoStruct.h" />

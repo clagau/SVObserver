@@ -27,10 +27,10 @@ namespace SvXml
 
 	struct ObsoleteItem
 	{
-		SVString m_tag;
-		SVString m_itemType;
+		std::string m_tag;
+		std::string m_itemType;
 		int m_errorNo;
-		ObsoleteItem(const SVString& rTag, const SVString& rItemType, int errorNo)
+		ObsoleteItem(const std::string& rTag, const std::string& rItemType, int errorNo)
 		: m_tag(rTag), m_itemType(rItemType), m_errorNo(errorNo)
 		{
 		}
@@ -40,7 +40,7 @@ namespace SvXml
 		
 		
 	template< typename SVTreeType >
-	HRESULT CheckObsoleteItems( SVTreeType& rTree, const unsigned long& ulSVOConfigVersion, SVString& rItemType, int& errorCode )
+	HRESULT CheckObsoleteItems( SVTreeType& rTree, const unsigned long& ulSVOConfigVersion, std::string& rItemType, int& errorCode )
 	{
 		HRESULT hr = S_OK;
 		if (0x00072800 > ulSVOConfigVersion) // if 7.40 or greater no need to check
@@ -52,7 +52,7 @@ namespace SvXml
 		
 		
 	template<typename TreeType>
-	static bool HasAcquisitionDevice(TreeType& rTree, const ObsoleteItems& rItems, SVString& rItemType, int& rErrorCode)
+	static bool HasAcquisitionDevice(TreeType& rTree, const ObsoleteItems& rItems, std::string& rItemType, int& rErrorCode)
 	{
 		TreeType::SVBranchHandle hChild( nullptr );
 		TreeType::SVBranchHandle hBoardChild( nullptr );
@@ -63,11 +63,11 @@ namespace SvXml
 
 		while ( !bFound && bOk && nullptr != hBoardChild )
 		{
-			const SVString& rBoardName = rTree.getBranchName( hBoardChild );
+			const std::string& rBoardName = rTree.getBranchName( hBoardChild );
 			for (ObsoleteItems::const_iterator it = rItems.begin();it != rItems.end() && !bFound; ++it)
 			{
 				size_t pos = rBoardName.find(it->m_tag);
-				if (SVString::npos != pos) 
+				if (std::string::npos != pos) 
 				{
 					bFound = true;
 					rErrorCode = it->m_errorNo;
@@ -80,7 +80,7 @@ namespace SvXml
 	}
 		
 	template<typename TreeType>
-	static bool HasTaskObject(TreeType& rTree, const ObsoleteItems& rItems, SVString& rItemType, int& rErrorCode)
+	static bool HasTaskObject(TreeType& rTree, const ObsoleteItems& rItems, std::string& rItemType, int& rErrorCode)
 	{
 		bool bFound = false;
 
@@ -95,7 +95,7 @@ namespace SvXml
 			
 				while( !bFound && nullptr != htiDataChild )
 				{
-					const SVString& rDataName = rTree.getBranchName( htiDataChild );
+					const std::string& rDataName = rTree.getBranchName( htiDataChild );
 
 					if ( 0 == rDataName.compare( CTAG_SVIPDOC ) )
 					{
@@ -146,7 +146,7 @@ namespace SvXml
 	}
 		
 	template<typename TreeType>
-	static bool HasInvalidProductType(TreeType& rTree, SVString& rItemType, int& rErrorCode)
+	static bool HasInvalidProductType(TreeType& rTree, std::string& rItemType, int& rErrorCode)
 	{
 		bool bInvalid = false;
 		TreeType::SVBranchHandle hChild(nullptr);
@@ -170,7 +170,7 @@ namespace SvXml
 	}
 
 	template<typename TreeType>
-	HRESULT HasObsoleteItem(TreeType& rTree, SVString& rItemType, int& rErrorCode)
+	HRESULT HasObsoleteItem(TreeType& rTree, std::string& rItemType, int& rErrorCode)
 	{
 		ObsoleteItems cameraItems = boost::assign::list_of<>
 			( ObsoleteItem(TAG_VIPER, ITEM_ANALOG_CAMERA, SvStl::Err_15038_AnalogCamera) )

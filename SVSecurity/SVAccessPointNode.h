@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes 
-#include "SVUtilityLibrary\SVString.h"
+
 #pragma endregion Includes
 
 
@@ -27,8 +27,8 @@ public:
 	const SVAccessPointNode& CopyData( const SVAccessPointNode& rRhs );
 	bool m_bHasData;
 	long m_lID;
-	SVString m_Name;
-	SVString m_NTGroup;
+	std::string m_Name;
+	std::string m_NTGroup;
 	bool m_bForcePrompt;
 	bool m_bDataCannotChange;
 };

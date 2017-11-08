@@ -27,6 +27,7 @@
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/GlobalPath.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -116,7 +117,7 @@ void SVBarCodeAnalyzerClass::init()
 
 	// To support special DMCs May 2008.
 	// Use ~ to simulate non printable characters...
-	SVString FormatEnum = SvUl_SF::Format(_T("Remove GS1 Control Characters=%d,Translate GS1 Control Characters=%d,Replace GS1 Control Characters=%d"), 
+	std::string FormatEnum = SvUl::Format(_T("Remove GS1 Control Characters=%d,Translate GS1 Control Characters=%d,Replace GS1 Control Characters=%d"), 
 											SVBCStringFormatRemoveCharacters, SVBCStringFormatTranslateCharacters, SVBCStringFormatReplaceCharacters );
 	msv_eStringFormat.SetEnumTypes( FormatEnum.c_str() );
 	msv_eStringFormat.SetDefaultValue( SVBCStringFormatRemoveCharacters, true );
@@ -385,7 +386,7 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::Message
 		return false;
 	}
 	
-	msv_szBarCodeValue.SetValue(SVString());
+	msv_szBarCodeValue.SetValue(std::string());
 	if (SVImageAnalyzerClass::onRun (rRunStatus, pErrorMessages))
 	{
 		SVSmartHandlePointer ImageHandle;
@@ -436,7 +437,7 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::Message
 						pResult->m_bFailedToRead = false;
 						long cbBarCodeValue = 0;
 						Result &= SVMatroxBarCodeInterface::GetResult( m_MilCodeId, SVBCBarcodeStringSize, cbBarCodeValue, pErrorMessages );
-						SVString BarCodeString;
+						std::string BarCodeString;
 						Result &= SVMatroxBarCodeInterface::GetResult( m_MilCodeId, SVBCBarCodeString, BarCodeString, pErrorMessages );
 						double dScore = 0.0;
 						Result &= SVMatroxBarCodeInterface::GetResult( m_MilCodeId, SVBCBarcodeScore, dScore, pErrorMessages );
@@ -479,7 +480,7 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::Message
 							}
 							case SVBCStringFormatRemoveCharacters:
 							{
-								SVString l_strRemoved;
+								std::string l_strRemoved;
 								l_strRemoved.resize( BarCodeString.size() + 1);
 								int j = 0;
 								for( size_t i = 0 ; i < BarCodeString.size(); i++ )
@@ -497,14 +498,14 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::Message
 							}
 							case SVBCStringFormatTranslateCharacters:
 							{
-								SVString l_strTranslated;
+								std::string l_strTranslated;
 								l_strTranslated.resize( BarCodeString.size()+256);
 								int j = 0;
 								for( size_t i = 0 ; i < BarCodeString.size(); i++ )
 								{
 									if( CharIsControl(BarCodeString[i]) )
 									{
-										SVString Temp = SvUl_SF::Format(_T("%03d"),BarCodeString[i]);
+										std::string Temp = SvUl::Format(_T("%03d"),BarCodeString[i]);
 										l_strTranslated[j++] = '\\';
 										l_strTranslated[j++] = Temp[0];
 										l_strTranslated[j++] = Temp[1];
@@ -596,9 +597,9 @@ bool SVBarCodeAnalyzerClass::LoadRegExpression( bool DisplayErrorMessage, SvStl:
 	{
 		TRY
 		{
-			SVString FileName;
+			std::string FileName;
 			DWORD dwFileLen;
-			SVString RegExp;
+			std::string RegExp;
 
 			msv_szStringFileName.GetValue(FileName);
 			CFile fRegExp (FileName.c_str(), CFile::modeRead);
@@ -645,9 +646,9 @@ bool SVBarCodeAnalyzerClass::SaveRegExpression( SvStl::MessageContainerVector *p
 	{
 		TRY
 		{
-			SVString FileName;
+			std::string FileName;
 			DWORD dwFileLen;
-			SVString RegExp;
+			std::string RegExp;
 			
 			msv_szRegExpressionValue.GetValue(RegExp);
 			msv_szStringFileName.GetValue(FileName);
@@ -684,8 +685,8 @@ bool SVBarCodeAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 	{
 		if ( InitMil(pErrorMessages) )
 		{
-			SVString TempRegExpressionValue;
-			SVString TempStringFileName;
+			std::string TempRegExpressionValue;
+			std::string TempStringFileName;
 
 			msv_szRegExpressionValue.GetValue( TempRegExpressionValue );
 			msv_szStringFileName.GetValue( TempStringFileName );

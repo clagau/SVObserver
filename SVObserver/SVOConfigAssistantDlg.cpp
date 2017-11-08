@@ -16,7 +16,6 @@
 //Moved to precompiled header: #include <sys/stat.h>
 //Moved to precompiled header: #include <io.h>
 
-
 #include "SVOConfigAssistantDlg.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
@@ -47,6 +46,7 @@
 #include "SVOGui\GlobalConstantConflictDlg.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -111,18 +111,18 @@ static const TCHAR* const MESSAGE_FILE_ACQUISITION_INVALID_IMAGE_SIZE ( _T("The 
 static const TCHAR* const MESSAGE_FILE_ACQUISITION_COLOR_MISMATCH ( _T("The bitmap file acquisition color does not match the camera color setting") );
 static const TCHAR* const MESSAGE_INSPECTION_CAMERA_COLOR  ( _T("-The toolset camera image color does not match the inspection color") );
 
-const CSVOConfigAssistantDlg::SVProductStringMap CSVOConfigAssistantDlg::m_ProductStringMap = boost::assign::map_list_of< SVIMProductEnum, SVString >
+const CSVOConfigAssistantDlg::SVProductStringMap CSVOConfigAssistantDlg::m_ProductStringMap = boost::assign::map_list_of< SVIMProductEnum, std::string >
 	// SYSTEM ID, DISPLAY NAME
-	( SVIM_PRODUCT_X2_GD1A, SVString( SYSTEM_SVIM_X2_GD1A ) )
-	( SVIM_PRODUCT_X2_GD1A_COLOR, SVString( SYSTEM_SVIM_X2_GD1A_COLOR ) )
-	( SVIM_PRODUCT_X2_GD2A, SVString( SYSTEM_SVIM_X2_GD2A ) )
-	( SVIM_PRODUCT_X2_GD2A_COLOR, SVString( SYSTEM_SVIM_X2_GD2A_COLOR ) )
-	( SVIM_PRODUCT_X2_GD4A, SVString( SYSTEM_SVIM_X2_GD4A ) )
-	( SVIM_PRODUCT_X2_GD4A_COLOR, SVString( SYSTEM_SVIM_X2_GD4A_COLOR ) )
-	( SVIM_PRODUCT_X2_GD8A, SVString( SYSTEM_SVIM_X2_GD8A ) )
-	( SVIM_PRODUCT_X2_GD8A_COLOR, SVString( SYSTEM_SVIM_X2_GD8A_COLOR ) )
-	//( SVIM_PRODUCT_X2_GD8A_NONIO, SVString( SYSTEM_SVIM_X2_GD8A_NONIO ) )
-	//( SVIM_PRODUCT_X2_GD8A_NONIO_COLOR, SVString( SYSTEM_SVIM_X2_GD8A_NONIO_COLOR ) );
+	( SVIM_PRODUCT_X2_GD1A, std::string( SYSTEM_SVIM_X2_GD1A ) )
+	( SVIM_PRODUCT_X2_GD1A_COLOR, std::string( SYSTEM_SVIM_X2_GD1A_COLOR ) )
+	( SVIM_PRODUCT_X2_GD2A, std::string( SYSTEM_SVIM_X2_GD2A ) )
+	( SVIM_PRODUCT_X2_GD2A_COLOR, std::string( SYSTEM_SVIM_X2_GD2A_COLOR ) )
+	( SVIM_PRODUCT_X2_GD4A, std::string( SYSTEM_SVIM_X2_GD4A ) )
+	( SVIM_PRODUCT_X2_GD4A_COLOR, std::string( SYSTEM_SVIM_X2_GD4A_COLOR ) )
+	( SVIM_PRODUCT_X2_GD8A, std::string( SYSTEM_SVIM_X2_GD8A ) )
+	( SVIM_PRODUCT_X2_GD8A_COLOR, std::string( SYSTEM_SVIM_X2_GD8A_COLOR ) )
+	//( SVIM_PRODUCT_X2_GD8A_NONIO, std::string( SYSTEM_SVIM_X2_GD8A_NONIO ) )
+	//( SVIM_PRODUCT_X2_GD8A_NONIO_COLOR, std::string( SYSTEM_SVIM_X2_GD8A_NONIO_COLOR ) );
 	;
 
 /////////////////////////////////////////////////////////////////////////////
@@ -241,7 +241,7 @@ BOOL CSVOConfigAssistantDlg::OnInitDialog()
 	}
 
 	//select correct product on right hand side
-	SVString ProductString = GetNameFromProductID( m_lConfigurationType );
+	std::string ProductString = GetNameFromProductID( m_lConfigurationType );
 	int iExactStringPosition = m_ctlAvailableSys.FindStringExact(-1, ProductString.c_str() );
 	if (CB_ERR != iExactStringPosition)
 	{
@@ -304,7 +304,7 @@ BOOL CSVOConfigAssistantDlg::AddToInspectList(LPCTSTR External, LPCTSTR Internal
 
 BOOL CSVOConfigAssistantDlg::AddToTriggerList(LPCTSTR TriggerName, int iDig)
 {
-	return m_TriggerList.AddTriggerToList( SVString(TriggerName), iDig );
+	return m_TriggerList.AddTriggerToList( std::string(TriggerName), iDig );
 }
 
 BOOL CSVOConfigAssistantDlg::AddToPPQList(LPCTSTR PPQ, LPCTSTR Camera, LPCTSTR Trigger, LPCTSTR Inspection)
@@ -328,9 +328,9 @@ void CSVOConfigAssistantDlg::OnSelchangeComboAvalSys()
 
 	SVIMProductEnum CurrentSvimType = m_lConfigurationType; 
 
-	SVIMProductEnum l_ConfigurationType = GetProductIDFromName( SVString(m_AvailableSystem) );
+	SVIMProductEnum l_ConfigurationType = GetProductIDFromName( std::string(m_AvailableSystem) );
 
-	SVString PrevName = GetNameFromProductID( CurrentSvimType );
+	std::string PrevName = GetNameFromProductID( CurrentSvimType );
 	SVIMProductEnum eType = GetProductIDFromName( PrevName );
 
 	if ( ( !m_bNewConfiguration ) || ( m_bModified ) )
@@ -440,7 +440,7 @@ void CSVOConfigAssistantDlg::UpdateAvailableSystems( SVIMProductEnum p_CurrentCo
 
 	if ( !l_SVIMInfo.m_Supported && p_CurrentConfigurationType != p_SelectedConfigurationType )
 	{
-		SVString SelectedSystemName = GetNameFromProductID( p_CurrentConfigurationType );
+		std::string SelectedSystemName = GetNameFromProductID( p_CurrentConfigurationType );
 		UINT l_Index = m_ctlAvailableSys.FindStringExact( 0, SelectedSystemName.c_str() );
 
 		if ( l_Index != CB_ERR )
@@ -487,7 +487,7 @@ void CSVOConfigAssistantDlg::ReloadForCurrentSystem()
 
 				CreateDefaultForSVIMDigital(4, SvO::cTriggerFixedName);
 
-				SVString ProductName = GetNameFromProductID( m_lConfigurationType );
+				std::string ProductName = GetNameFromProductID( m_lConfigurationType );
 				m_ctlAvailableSys.SelectString( -1, ProductName.c_str() );
 				break;
 			}
@@ -528,22 +528,22 @@ void CSVOConfigAssistantDlg::CreateDefaultForSVIMDigital(int Number, LPCTSTR Tri
 	for ( int i = 0; i < Number; i++ )
 	{
 		//add a camera
-		SVString CameraName = GetNextCameraName();
+		std::string CameraName = GetNextCameraName();
 		m_CameraList.AddCameraToList( CameraName.c_str(), i, i );
 
 		//add a trigger
-		SVString TriggerName = GetNextTriggerName(TriggerBaseName);
+		std::string TriggerName = GetNextTriggerName(TriggerBaseName);
 		m_TriggerList.AddTriggerToList(TriggerName, i);
 
 		//add an inspection...
-		SVString InspectionName = GetNextInspectionName();
+		std::string InspectionName = GetNextInspectionName();
 		m_InspectList.AddInspectionToList( InspectionName.c_str(), InspectionName.c_str(), true );
 		m_InspectList.SetToolsetImage( InspectionName.c_str(), CameraName.c_str() );
 		m_InspectionNamesUsed.push_back(InspectionName);
 		m_InspectionLabelsUsed.push_back(InspectionName);
 
 		//add a ppq, attach trigger, camera and inspection to it.
-		SVString PPQName = GetNextPPQName();
+		std::string PPQName = GetNextPPQName();
 		m_PPQList.AddPPQToList( PPQName.c_str() );
 		m_PPQList.AttachCameraToPPQ( PPQName.c_str(), CameraName.c_str() );
 		m_PPQList.AttachInspectToPPQ( PPQName.c_str(), InspectionName.c_str() );
@@ -553,16 +553,16 @@ void CSVOConfigAssistantDlg::CreateDefaultForSVIMDigital(int Number, LPCTSTR Tri
 	}
 }
 
-SVString CSVOConfigAssistantDlg::GetNextCameraName()
+std::string CSVOConfigAssistantDlg::GetNextCameraName()
 {
 	int iRet = 0;
 	bool bFound = true;
-	SVString Result;
+	std::string Result;
 
 	while ( bFound )
 	{
 		iRet++;
-		Result = SvUl_SF::Format( _T("%s%d"), SvO::cCameraFixedName, iRet );
+		Result = SvUl::Format( _T("%s%d"), SvO::cCameraFixedName, iRet );
 		bFound = m_CameraList.IsCameraInList( Result.c_str() );
 	}
 	m_iNextCameraNumber = iRet;
@@ -574,11 +574,11 @@ int CSVOConfigAssistantDlg::GetNextCameraNumber() const
 	return m_iNextCameraNumber;
 }
 
-SVString CSVOConfigAssistantDlg::GetNextInspectionName() const
+std::string CSVOConfigAssistantDlg::GetNextInspectionName() const
 {
 	int iRet = 0;
 	BOOL bFound = TRUE;
-	SVString Result;
+	std::string Result;
 
 	if ( m_bInspectionDeleted )
 	{
@@ -588,17 +588,17 @@ SVString CSVOConfigAssistantDlg::GetNextInspectionName() const
 	while ( bFound )
 	{
 		iRet++;
-		Result = SvUl_SF::Format( _T("%s%d"), SvO::cInspectionFixedName, iRet );
+		Result = SvUl::Format( _T("%s%d"), SvO::cInspectionFixedName, iRet );
 		bFound = m_InspectList.IsInspectionInList(Result.c_str());
 	}
 	return Result;
 }
 
-SVString CSVOConfigAssistantDlg::GetNextTriggerName(LPCTSTR BaseName) const
+std::string CSVOConfigAssistantDlg::GetNextTriggerName(LPCTSTR BaseName) const
 {
 	int iRet = m_TriggerList.GetNextTriggerID();
 	
-	SVString Result = SvUl_SF::Format(_T("%s%d"), BaseName, iRet + 1 );
+	std::string Result = SvUl::Format(_T("%s%d"), BaseName, iRet + 1 );
 
 	return Result;
 }
@@ -608,27 +608,27 @@ int CSVOConfigAssistantDlg::GetNextTriggerID() const
 	return m_TriggerList.GetNextTriggerID();
 }
 
-SVString CSVOConfigAssistantDlg::GetNextPPQName() const
+std::string CSVOConfigAssistantDlg::GetNextPPQName() const
 {
 	int iRet = 0;
 	bool bFound = true;
-	SVString Result;
+	std::string Result;
 
 	while( bFound )
 	{
 		iRet++;
-		Result = SvUl_SF::Format( _T("%s%d"), SvO::cPpqFixedName, iRet );
+		Result = SvUl::Format( _T("%s%d"), SvO::cPpqFixedName, iRet );
 		bFound = m_PPQList.IsPPQInList( Result.c_str() );
 	}
 	return Result;
 }
 
-SVString CSVOConfigAssistantDlg::GetInspectionNameFromLabel(LPCTSTR InspectLabel)
+std::string CSVOConfigAssistantDlg::GetInspectionNameFromLabel(LPCTSTR InspectLabel)
 {
 	return m_InspectList.GetInspectionName( InspectLabel );
 }
 
-SVString CSVOConfigAssistantDlg::GetInspectionLabelFromName(LPCTSTR InspectionName)
+std::string CSVOConfigAssistantDlg::GetInspectionLabelFromName(LPCTSTR InspectionName)
 {
 	return m_InspectList.GetInspectionLabel( InspectionName );
 }
@@ -636,7 +636,7 @@ SVString CSVOConfigAssistantDlg::GetInspectionLabelFromName(LPCTSTR InspectionNa
 BOOL CSVOConfigAssistantDlg::RenameInspection(LPCTSTR InspectLabel, LPCTSTR NewName)
 {
 	const SVOInspectionObjPtr pInspectionObj( GetInspectionObjectByName(InspectLabel) );
-	SVString OldName;
+	std::string OldName;
 
 	if( nullptr != pInspectionObj )
 	{
@@ -646,7 +646,7 @@ BOOL CSVOConfigAssistantDlg::RenameInspection(LPCTSTR InspectLabel, LPCTSTR NewN
 	//check to see if the old message is in the list.  if it is replace it with the
 	// new inspection name...
 
-	SVString Message = BuildDisplayMessage(MESSAGE_TYPE_ERROR, OldName.c_str(), INSPECTION_ERROR);    
+	std::string Message = BuildDisplayMessage(MESSAGE_TYPE_ERROR, OldName.c_str(), INSPECTION_ERROR);    
 
 	if (RemoveMessageFromList(Message.c_str()))
 	{//add new message
@@ -714,7 +714,7 @@ SvTi::SVOTriggerObjPtr CSVOConfigAssistantDlg::GetTriggerObject(int iPos)
 
 SvTi::SVOTriggerObjPtr CSVOConfigAssistantDlg::GetTriggerObjectByName(LPCTSTR TriggerName)
 {
-	return m_TriggerList.GetTriggerObjectByName(SVString(TriggerName));
+	return m_TriggerList.GetTriggerObjectByName(std::string(TriggerName));
 }
 
 SVOPPQObjPtr CSVOConfigAssistantDlg::GetPPQObject(int iPos)
@@ -748,7 +748,7 @@ BOOL CSVOConfigAssistantDlg::RemoveTriggerFromList(LPCTSTR TriggerName)
 	{
 		RemoveUsedTrigger( TriggerName );
 	}
-	return m_TriggerList.RemoveTriggerFromList(SVString(TriggerName));
+	return m_TriggerList.RemoveTriggerFromList(std::string(TriggerName));
 }
 
 BOOL CSVOConfigAssistantDlg::RemovePPQFromList(LPCTSTR PPQ)
@@ -770,9 +770,9 @@ BOOL CSVOConfigAssistantDlg::RemovePPQFromList(LPCTSTR PPQ)
 	return m_PPQList.RemovePPQFromList(PPQ);
 }
 
-SVString CSVOConfigAssistantDlg::BuildTrgDig( const SvTi::SVOTriggerObj& rTriggerObj) const
+std::string CSVOConfigAssistantDlg::BuildTrgDig( const SvTi::SVOTriggerObj& rTriggerObj) const
 {
-	SVString Result;
+	std::string Result;
 
 	int iDig = rTriggerObj.GetTriggerDigNumber();
 
@@ -811,9 +811,9 @@ SVString CSVOConfigAssistantDlg::BuildTrgDig( const SvTi::SVOTriggerObj& rTrigge
 	return Result;
 }
 
-SVString CSVOConfigAssistantDlg::BuildDigName(const SVOCameraObj& rCameraObj) const
+std::string CSVOConfigAssistantDlg::BuildDigName(const SVOCameraObj& rCameraObj) const
 {
-	SVString Result;
+	std::string Result;
 	int iDigNumber = rCameraObj.GetDigNumber();
 
 	if (rCameraObj.IsFileAcquisition())
@@ -831,7 +831,7 @@ SVString CSVOConfigAssistantDlg::BuildDigName(const SVOCameraObj& rCameraObj) co
 			case SVIM_PRODUCT_X2_GD8A_COLOR:
 			case SVIM_PRODUCT_X2_GD8A_NONIO_COLOR:
 			{
-				Result = SvUl_SF::Format(_T("%s%s%d"), SVIM_BOARD_FILEACQUISITION_STRING, SVIM_DIG_NAME_STRING, iDigNumber);
+				Result = SvUl::Format(_T("%s%s%d"), SVIM_BOARD_FILEACQUISITION_STRING, SVIM_DIG_NAME_STRING, iDigNumber);
 				break;
 			}
 
@@ -854,7 +854,7 @@ SVString CSVOConfigAssistantDlg::BuildDigName(const SVOCameraObj& rCameraObj) co
 			case SVIM_PRODUCT_X2_GD8A_COLOR:
 			case SVIM_PRODUCT_X2_GD8A_NONIO_COLOR:
 			{
-				Result = SvUl_SF::Format(_T("%s%s%d"), SVIM_BOARD_MATROX_GIGE, SVIM_DIG_NAME_STRING, iDigNumber);
+				Result = SvUl::Format(_T("%s%s%d"), SVIM_BOARD_MATROX_GIGE, SVIM_DIG_NAME_STRING, iDigNumber);
 				break;
 			}
 
@@ -868,7 +868,7 @@ SVString CSVOConfigAssistantDlg::BuildDigName(const SVOCameraObj& rCameraObj) co
 BOOL CSVOConfigAssistantDlg::IsDigitizerUsed(LPCTSTR DigString)
 {
 	bool Result( false );
-	SVString CameraDig;
+	std::string CameraDig;
 
 	int iCamCnt = m_CameraList.GetCameraListCount();
 
@@ -904,7 +904,7 @@ BOOL CSVOConfigAssistantDlg::IsInspectionNameInList(LPCTSTR InspectionName) cons
 
 bool CSVOConfigAssistantDlg::IsTriggerInList(LPCTSTR TriggerName) const
 {
-	return m_TriggerList.IsTriggerInList(SVString(TriggerName));
+	return m_TriggerList.IsTriggerInList(std::string(TriggerName));
 }
 
 BOOL CSVOConfigAssistantDlg::IsPPQInList(LPCTSTR PPQName) const
@@ -934,7 +934,7 @@ void CSVOConfigAssistantDlg::SetConfigurationSystem(long lSysValue)
 
 void CSVOConfigAssistantDlg::SetCurrentSystemDisplay()
 {
-	SVString SystemName;
+	std::string SystemName;
 
 	SystemName = GetNameFromProductID( m_lSystemType );
 	if ( SystemName.empty() )
@@ -949,7 +949,7 @@ BOOL CSVOConfigAssistantDlg::IsTriggerUsed(LPCTSTR TriggerName) const
 {
 	bool Result = false;
 
-	SVStringVector::const_iterator Iter = std::find( m_UsedTriggers.begin(), m_UsedTriggers.end(), SVString(TriggerName) );
+	SvDef::StringVector::const_iterator Iter = std::find( m_UsedTriggers.begin(), m_UsedTriggers.end(), std::string(TriggerName) );
 	if( m_UsedTriggers.end() != Iter )
 	{
 		Result = true;
@@ -959,12 +959,12 @@ BOOL CSVOConfigAssistantDlg::IsTriggerUsed(LPCTSTR TriggerName) const
 
 void CSVOConfigAssistantDlg::AddUsedTrigger(LPCTSTR TriggerName)
 {
-	m_UsedTriggers.push_back( SVString(TriggerName) );
+	m_UsedTriggers.push_back( std::string(TriggerName) );
 }
 
 void CSVOConfigAssistantDlg::RemoveUsedTrigger(LPCTSTR TriggerName)
 {
-	SVStringVector::const_iterator Iter = std::find( m_UsedTriggers.begin(), m_UsedTriggers.end(), SVString(TriggerName) );
+	SvDef::StringVector::const_iterator Iter = std::find( m_UsedTriggers.begin(), m_UsedTriggers.end(), std::string(TriggerName) );
 	if( m_UsedTriggers.end() != Iter)
 	{
 		m_UsedTriggers.erase( Iter );
@@ -991,13 +991,13 @@ bool CSVOConfigAssistantDlg::IsSoftwareTriggerAllowed(LPCTSTR TriggerName) const
 			const SVOPPQObjPtr pPPQObj = m_PPQList.GetPPQObjectByPosition(i);
 			if( nullptr != pPPQObj )
 			{
-				SVString attachedTriggerName = pPPQObj->GetAttachedTriggerName();
-				if( 0 == SvUl_SF::CompareNoCase( attachedTriggerName, SVString(TriggerName) ) )
+				std::string attachedTriggerName = pPPQObj->GetAttachedTriggerName();
+				if( 0 == SvUl::CompareNoCase( attachedTriggerName, std::string(TriggerName) ) )
 				{
 					int camCnt = pPPQObj->GetAttachedCameraCount();
 					for (int n = 0;n < camCnt;n++)
 					{
-						SVString CameraName = pPPQObj->GetAttachedCamera(n);
+						std::string CameraName = pPPQObj->GetAttachedCamera(n);
 						// find camera in camera list
 						int iCam = GetCameraListCount();
 						for (int c = 0;c < iCam;c++)
@@ -1039,13 +1039,13 @@ bool CSVOConfigAssistantDlg::IsCameraLineInputAllowed(LPCTSTR TriggerName) const
 			const SVOPPQObjPtr pPPQObj = m_PPQList.GetPPQObjectByPosition(i);
 			if( nullptr != pPPQObj )
 			{
-				SVString attachedTriggerName = pPPQObj->GetAttachedTriggerName();
-				if( 0 == SvUl_SF::CompareNoCase( attachedTriggerName, SVString(TriggerName) ) )
+				std::string attachedTriggerName = pPPQObj->GetAttachedTriggerName();
+				if( 0 == SvUl::CompareNoCase( attachedTriggerName, std::string(TriggerName) ) )
 				{
 					int camCnt = pPPQObj->GetAttachedCameraCount();
 					for (int n = 0;n < camCnt;n++)
 					{
-						SVString CameraName = pPPQObj->GetAttachedCamera(n);
+						std::string CameraName = pPPQObj->GetAttachedCamera(n);
 						// find camera in camera list
 						int iCam = GetCameraListCount();
 						for (int c = 0;c < iCam;c++)
@@ -1075,7 +1075,7 @@ SVIMProductEnum CSVOConfigAssistantDlg::GetProductType() const
 	m_ctlAvailableSys.GetWindowText(AvailableSystem);
 	if ( !AvailableSystem.IsEmpty() )
 	{
-		eProduct = GetProductIDFromName( SVString(AvailableSystem) );
+		eProduct = GetProductIDFromName( std::string(AvailableSystem) );
 		return eProduct;
 	}
 	else
@@ -1088,7 +1088,7 @@ BOOL CSVOConfigAssistantDlg::IsInspectUsed(LPCTSTR Inspection)
 {
 	bool Result = false;
 
-	SVStringVector::const_iterator Iter = std::find( m_UsedInspections.begin(), m_UsedInspections.end(), SVString(Inspection) );
+	SvDef::StringVector::const_iterator Iter = std::find( m_UsedInspections.begin(), m_UsedInspections.end(), std::string(Inspection) );
 	if( m_UsedInspections.end() != Iter )
 	{
 		Result = true;
@@ -1098,12 +1098,12 @@ BOOL CSVOConfigAssistantDlg::IsInspectUsed(LPCTSTR Inspection)
 
 void CSVOConfigAssistantDlg::AddUsedInspect(LPCTSTR Inspection)
 {
-	m_UsedInspections.push_back( SVString(Inspection) );
+	m_UsedInspections.push_back( std::string(Inspection) );
 }
 
 void CSVOConfigAssistantDlg::RemoveUsedInspect(LPCTSTR Inspection)
 {
-	SVStringVector::const_iterator Iter = std::find( m_UsedInspections.begin(), m_UsedInspections.end(), SVString(Inspection) );
+	SvDef::StringVector::const_iterator Iter = std::find( m_UsedInspections.begin(), m_UsedInspections.end(), std::string(Inspection) );
 	if( m_UsedInspections.end() != Iter)
 	{
 		m_UsedInspections.erase( Iter );
@@ -1432,7 +1432,7 @@ BOOL CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 	SVLut* pLut = nullptr;
 	SVDeviceParamCollection* pDeviceParams = nullptr;
 
-	SVString AcquisitionName;
+	std::string AcquisitionName;
 	SVConfigurationObject::SVAcquisitionDeviceMap::iterator aPos = pConfig->GetAcquisitionDeviceStartPosition();
 	while (aPos != pConfig->GetAcquisitionDeviceEndPosition())
 	{
@@ -1458,7 +1458,7 @@ BOOL CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 	SVLut lut;
 	SVDeviceParamCollection svDeviceParams;
 	SVFileNameClass svFile;
-	SVString DigName;
+	std::string DigName;
 
 	int iCamCnt = m_CameraList.GetCameraListCount();
 
@@ -1523,7 +1523,7 @@ BOOL CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 					// save the camera file (for future simulation mode)
 					svFile.SetFullFileName( pCameraObj->GetCameraFile().c_str() );
 			
-					if ( 0 == SvUl_SF::CompareNoCase(SVString(svFile.GetExtension()), SVString(cGigeCameraFileDefExt)) )
+					if ( 0 == SvUl::CompareNoCase(std::string(svFile.GetExtension()), std::string(cGigeCameraFileDefExt)) )
 					{
 						svFiles.Add(svFile);
 					}
@@ -1549,7 +1549,7 @@ BOOL CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 			{
 				svFile.SetFullFileName( pCameraObj->GetCameraFile().c_str() );
 			
-				if ( 0 == SvUl_SF::CompareNoCase( svFile.GetExtension(), SVString(cGigeCameraFileDefExt) ) )
+				if ( 0 == SvUl::CompareNoCase( svFile.GetExtension(), std::string(cGigeCameraFileDefExt) ) )
 				{
 					svFiles.Add(svFile);
 				}
@@ -1712,7 +1712,7 @@ BOOL CSVOConfigAssistantDlg::SendCameraDataToConfiguration()
 	int iCamCnt = m_CameraList.GetCameraListCount();
 	if (iCamCnt > 0)
 	{
-		SVString CameraDisplayName;
+		std::string CameraDisplayName;
 
 		for (int i = 0; i < iCamCnt; i++)
 		{
@@ -1767,7 +1767,7 @@ BOOL CSVOConfigAssistantDlg::SendCameraDataToConfiguration()
 					pCamera->SetFileImageSize(pCameraObj->GetFileImageSize());
 					pCamera->SetIsColor( pCameraObj->IsColor() );
 
-					SVString DeviceName = BuildDigName( *pCameraObj );
+					std::string DeviceName = BuildDigName( *pCameraObj );
 
 					bRet = pCamera->Create( DeviceName.c_str() ) && bRet;
 
@@ -1817,8 +1817,8 @@ BOOL CSVOConfigAssistantDlg::SendTriggerDataToConfiguration()
 	int iTrgCnt = m_TriggerList.GetTriggerListCount();
 	if (iTrgCnt > 0)
 	{
-		SVString TriggerDisplayName;
-		SVString DeviceName;
+		std::string TriggerDisplayName;
+		std::string DeviceName;
 
 		// Check for Triggers changed
 		for (int i = 0; i < iTrgCnt; i++)
@@ -1922,7 +1922,7 @@ BOOL CSVOConfigAssistantDlg::RenameInspectionObjects(LPCTSTR InspectionName, LPC
 	return bRet;
 }
 
-SVOPPQObjPtr CSVOConfigAssistantDlg::GetPPQObjectByInspectionName(const SVString& rInspectionName)
+SVOPPQObjPtr CSVOConfigAssistantDlg::GetPPQObjectByInspectionName(const std::string& rInspectionName)
 {
 	bool bFound = false;
 	SVOPPQObjPtr pPPQObj;
@@ -1937,7 +1937,7 @@ SVOPPQObjPtr CSVOConfigAssistantDlg::GetPPQObjectByInspectionName(const SVString
 			for (int j = 0; !bFound && j < inspectionCount;j++)
 			{
 				// What is this key (label or name)?
-				SVString Name = pPPQObj->GetAttachedInspection(j);
+				std::string Name = pPPQObj->GetAttachedInspection(j);
 				if( Name == rInspectionName.c_str() )
 				{
 					bFound = true;
@@ -1999,10 +1999,10 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 	int iInsCnt = m_InspectList.GetInspectionListCount();
 	if ( iInsCnt > 0 )
 	{
-		SVString Key;
-		SVString FileName;
-		SVString ToolsetImage;
-		SVString NewDisableMethod;
+		std::string Key;
+		std::string FileName;
+		std::string ToolsetImage;
+		std::string NewDisableMethod;
 		long lEnableAuxiliaryExtent;
 
 		for ( int i = 0; i < iInsCnt; i++ )
@@ -2044,11 +2044,11 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 
 				if ( nullptr == pInspection )
 				{
-					const SVString& importFilename = pInspectionObj->GetImportFilename();
+					const std::string& importFilename = pInspectionObj->GetImportFilename();
 					if (!importFilename.empty())
 					{
-						SVInspectionImportHelper importer  = SVInspectionImportHelper(SVString(importFilename), SVString(FileName), SVString(ToolsetImage));
-						SVString title = _T( "Importing Inspection..." );
+						SVInspectionImportHelper importer  = SVInspectionImportHelper(std::string(importFilename), std::string(FileName), std::string(ToolsetImage));
+						std::string title = _T( "Importing Inspection..." );
 						SVImportProgress<SVInspectionImportHelper> progress(importer, title.c_str());
 						progress.DoModal();
 
@@ -2085,8 +2085,8 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 						}
 						else
 						{
-							SVStringVector msgList;
-							msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
+							SvDef::StringVector msgList;
+							msgList.push_back(SvUl::Format(_T("%d"), hr));
 							SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 							INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Config_InspectionImportFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10140);
 						}
@@ -2164,7 +2164,7 @@ BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVec
 	int iPPQCnt = m_PPQList.GetPPQListCount();
 	if ( iPPQCnt > 0) 
 	{
-		SVString Key;
+		std::string Key;
 		SVPPQObject* pPPQ( nullptr );
 
 		for (int i = 0; i < iPPQCnt; i++)
@@ -2206,7 +2206,7 @@ BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVec
 
 			if ( nullptr != pPPQ )
 			{
-				SVString PPQCameraName;
+				std::string PPQCameraName;
 				long lSize = 0;
 
 				pPPQ->SetPPQOutputMode((SvDef::SVPPQOutputModeEnum)pPPQObj->GetPPQMode());
@@ -2285,7 +2285,7 @@ BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVec
 					}
 				}
 
-				SVString PPQTrigger = pPPQObj->GetAttachedTriggerName();
+				std::string PPQTrigger = pPPQObj->GetAttachedTriggerName();
 
 				if ( !PPQTrigger.empty() )
 				{
@@ -2313,7 +2313,7 @@ BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVec
 
 				if ( iAttachedInsCnt > 0 )
 				{
-					SVString PpqInspectionName;
+					std::string PpqInspectionName;
 					long lInsCnt;
 
 					for (int i = 0; i < iAttachedInsCnt; i++)
@@ -2514,13 +2514,13 @@ BOOL CSVOConfigAssistantDlg::SendDataToConfiguration()
 		{
 			if (pTmpObj->HasInspectionNameChange())
 			{
-				pInspection->OnObjectRenamed(*pInspection, SVString(pTmpObj->GetOrginalInspectionName()));
+				pInspection->OnObjectRenamed(*pInspection, std::string(pTmpObj->GetOrginalInspectionName()));
 				SVPPQObject* pPPQ( nullptr );
 				SVOutputObjectList* pOutputObjList = pConfig->GetOutputObjectList();
 
 				if (nullptr != pOutputObjList)
 				{
-					pOutputObjList->OnObjectRenamed(*pInspection, SVString(pTmpObj->GetOrginalInspectionName()));
+					pOutputObjList->OnObjectRenamed(*pInspection, std::string(pTmpObj->GetOrginalInspectionName()));
 				}
 
 				long lCount = pConfig->GetPPQCount();
@@ -2529,7 +2529,7 @@ BOOL CSVOConfigAssistantDlg::SendDataToConfiguration()
 					pPPQ = pConfig->GetPPQ(lPPQcount);
 					if (nullptr != pPPQ)
 					{
-						pPPQ->OnObjectRenamed(*pInspection, SVString(pTmpObj->GetOrginalInspectionName()));
+						pPPQ->OnObjectRenamed(*pInspection, std::string(pTmpObj->GetOrginalInspectionName()));
 					} //if (pPPQ)
 				} //for ppqcount
 			} // if name has changed
@@ -2571,16 +2571,16 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 	long lCfgTriggerCnt;
 	long lCfgInspectCnt;
 	long lCfgPPQCnt;
-	SVString DigName;
-	SVString CameraName;
-	SVString TriggerName;
-	SVString InspectLabel;
-	SVString InspectName;
-	SVString PPQName;
+	std::string DigName;
+	std::string CameraName;
+	std::string TriggerName;
+	std::string InspectLabel;
+	std::string InspectName;
+	std::string PPQName;
 	int iDigNumber;
 	int CameraID;
 	int iChannel;
-	SVString CameraFileName;
+	std::string CameraFileName;
 
 	SVVirtualCamera* pcfgCamera( nullptr );
 	SvTi::SVTriggerObject* pcfgTrigger( nullptr );
@@ -2611,9 +2611,9 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 				for ( long lFile = 0; lFile < lSize && CameraFileName.empty(); lFile++)
 				{
 					pcfgCamera->mpsvDevice->GetFileName( lFile, oCamFile );
-					SVString Extension = oCamFile.GetExtension();				
+					std::string Extension = oCamFile.GetExtension();				
 
-					if ( 0 == SvUl_SF::CompareNoCase( Extension, SVString(cGigeCameraFileDefExt) ) && CameraFileName.empty() )
+					if ( 0 == SvUl::CompareNoCase( Extension, std::string(cGigeCameraFileDefExt) ) && CameraFileName.empty() )
 					{
 						CameraFileName = oCamFile.GetFullFileName();
 					}
@@ -2639,8 +2639,8 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 					// move from configuration (SVVirtualCamera) camera object to editing (CSVOCameraObj) camera object
 					pCameraObj->SetFileAcquisitionMode(pcfgCamera->IsFileAcquisition());
 					pCameraObj->SetFileLoadingMode(pcfgCamera->GetFileLoadingMode());
-					pCameraObj->SetImageFilename( SVString(pcfgCamera->GetImageFilename()) );
-					pCameraObj->SetImageDirectoryName( SVString(pcfgCamera->GetImageDirectoryName()) );
+					pCameraObj->SetImageFilename( std::string(pcfgCamera->GetImageFilename()) );
+					pCameraObj->SetImageDirectoryName( std::string(pcfgCamera->GetImageDirectoryName()) );
 					pCameraObj->SetFileImageSizeEditModeFileBased(pcfgCamera->IsFileImageSizeEditModeFileBased());
 					pCameraObj->SetFileImageSize(pcfgCamera->GetFileImageSize());
 					pCameraObj->SetIsColor( pcfgCamera->IsColor() );
@@ -2669,9 +2669,9 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 				// use the numeric at the end of the name (it's one based and we want zero based)
 				// find the last underscore
 				size_t Pos = TriggerName.rfind(_T('_'));
-				if( SVString::npos != Pos )
+				if( std::string::npos != Pos )
 				{
-					SVString TriggerNumber = SvUl_SF::Right( TriggerName, TriggerName.size() - Pos + 1);
+					std::string TriggerNumber = SvUl::Right( TriggerName, TriggerName.size() - Pos + 1);
 					iDigNumber  = _ttoi(TriggerNumber.c_str());
 
 					// make it zero based
@@ -2681,10 +2681,10 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 					}
 				}
 			}
-			m_TriggerList.AddTriggerToList(SVString(TriggerName), iDigNumber);
+			m_TriggerList.AddTriggerToList(std::string(TriggerName), iDigNumber);
 
 			// Add Software trigger flag and interval here
-			const SvTi::SVOTriggerObjPtr pTriggerObj( m_TriggerList.GetTriggerObjectByName(SVString(TriggerName)) );
+			const SvTi::SVOTriggerObjPtr pTriggerObj( m_TriggerList.GetTriggerObjectByName(std::string(TriggerName)) );
 			if( nullptr != pTriggerObj )
 			{
 				pTriggerObj->SetSoftwareTrigger(pcfgTrigger->IsSoftwareTrigger());
@@ -2710,7 +2710,7 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 			m_InspectionLabelsUsed.push_back( InspectLabel );
 
 			// Determine which image is the main image
-			SVString ToolsetImage;
+			std::string ToolsetImage;
 			ToolsetImage = pcfgInspection->GetToolsetImage();
 			m_InspectList.SetToolsetImage( InspectLabel.c_str(), ToolsetImage.c_str() );
 			
@@ -2880,7 +2880,7 @@ BOOL CSVOConfigAssistantDlg::ItemChanged(int iItemDlg, LPCTSTR LabelName, int iA
 	SVOPPQObjPtr pPPQObj;
 	int iObjCnt = 0;
 
-	SVString Message;
+	std::string Message;
 
 	switch (iItemDlg)
 	{
@@ -3206,7 +3206,7 @@ BOOL CSVOConfigAssistantDlg::ItemChanged(int iItemDlg, LPCTSTR LabelName, int iA
 				}
 				case ITEM_PPQ_DEL_INS:
 				{
-					SVString sInsLabelName = GetInspectionLabelFromName(LabelName);
+					std::string sInsLabelName = GetInspectionLabelFromName(LabelName);
 					pInspectionObj = GetInspectionObjectByName(sInsLabelName.c_str());
 					if( nullptr != pInspectionObj )
 					{
@@ -3243,14 +3243,14 @@ BOOL CSVOConfigAssistantDlg::ItemChanged(int iItemDlg, LPCTSTR LabelName, int iA
 							if ( l_lPpqLength <= l_lImageDepth )
 							{
 								// remove error message if exist
-								SVString Msg = SvUl_SF::Format( _T("%s%d"), PPQ_PROP_SRC_IMG_ERROR, l_lImageDepth);
+								std::string Msg = SvUl::Format( _T("%s%d"), PPQ_PROP_SRC_IMG_ERROR, l_lImageDepth);
 								//create error display message
 								RemoveMessageFromList(BuildDisplayMessage( MESSAGE_TYPE_ERROR, LabelName, Msg.c_str() ).c_str() );
 							}
 							else
 							{
 								// add error message if it does not exist
-								SVString Msg = SvUl_SF::Format( _T("%s%d"), PPQ_PROP_SRC_IMG_ERROR, l_lImageDepth);
+								std::string Msg = SvUl::Format( _T("%s%d"), PPQ_PROP_SRC_IMG_ERROR, l_lImageDepth);
 								//create error display message
 								AddMessageToList( PPQ_DLG, BuildDisplayMessage( MESSAGE_TYPE_ERROR, LabelName, Msg.c_str() ).c_str() );
 							}
@@ -3270,7 +3270,7 @@ BOOL CSVOConfigAssistantDlg::ItemChanged(int iItemDlg, LPCTSTR LabelName, int iA
 							long l_lImageDepth = TheSVObserverApp.GetMaxPPQLength(); //GetSourceImageDepth() - 2;
 							if ( l_lPpqLength > l_lImageDepth )
 							{
-								SVString Msg = SvUl_SF::Format( _T("%s%d"), PPQ_PROP_SRC_IMG_ERROR, l_lImageDepth);
+								std::string Msg = SvUl::Format( _T("%s%d"), PPQ_PROP_SRC_IMG_ERROR, l_lImageDepth);
 								//create error display message
 								AddMessageToList( PPQ_DLG, BuildDisplayMessage( MESSAGE_TYPE_ERROR, LabelName, Msg.c_str() ).c_str() );
 							}
@@ -3280,7 +3280,7 @@ BOOL CSVOConfigAssistantDlg::ItemChanged(int iItemDlg, LPCTSTR LabelName, int iA
 							// see if error conditions exist, if so remove it
 							// maintain source image = false
 							long l_lImageDepth = TheSVObserverApp.GetMaxPPQLength(); //GetSourceImageDepth() - 2;
-							SVString Msg = SvUl_SF::Format( _T("%s%d"),PPQ_PROP_SRC_IMG_ERROR,l_lImageDepth);
+							std::string Msg = SvUl::Format( _T("%s%d"),PPQ_PROP_SRC_IMG_ERROR,l_lImageDepth);
 							//create error display message
 							RemoveMessageFromList(BuildDisplayMessage( MESSAGE_TYPE_ERROR, LabelName, Msg.c_str() ).c_str() );
 						}
@@ -3304,20 +3304,20 @@ BOOL CSVOConfigAssistantDlg::ItemChanged(int iItemDlg, LPCTSTR LabelName, int iA
 	return bRet;
 }
 
-SVString CSVOConfigAssistantDlg::BuildDisplayMessage(ConfigMsgTypeEnum iErrorFlag, LPCTSTR ObjectName, LPCTSTR Message)
+std::string CSVOConfigAssistantDlg::BuildDisplayMessage(ConfigMsgTypeEnum iErrorFlag, LPCTSTR ObjectName, LPCTSTR Message)
 {
-	SVString Result;
+	std::string Result;
 
 	switch (iErrorFlag)
 	{
 		case MESSAGE_TYPE_ERROR:
 		{
-			Result = ERR_STR + SVString(ObjectName) + ' ' + Message;
+			Result = ERR_STR + std::string(ObjectName) + ' ' + Message;
 			break;
 		}
 		case MESSAGE_TYPE_WARNING:
 		{
-			Result = WARNING_STR + SVString(ObjectName) + ' ' + Message;
+			Result = WARNING_STR + std::string(ObjectName) + ' ' + Message;
 			break;
 		}
 		default:
@@ -3342,7 +3342,7 @@ void CSVOConfigAssistantDlg::TriggerDeletedCheckAgainstPPQ(LPCTSTR TriggerName)
 		{
 			pPPQObj->DetachTriggerFromPPQ();
 			pPPQObj->RemoveCameraInputConditionalOutput();
-			SVString Message = BuildDisplayMessage(MESSAGE_TYPE_ERROR, pPPQObj->GetPPQName().c_str(), PPQ_NO_TRIGGER);
+			std::string Message = BuildDisplayMessage(MESSAGE_TYPE_ERROR, pPPQObj->GetPPQName().c_str(), PPQ_NO_TRIGGER);
 			AddMessageToList(PPQ_DLG, Message.c_str());
 		}
 	}
@@ -3391,7 +3391,7 @@ void CSVOConfigAssistantDlg::CameraDeletedCheckAgainstInspection(LPCTSTR CameraN
 		if( nullptr != pInspectionObj && pInspectionObj->GetToolsetImage().empty() )
 		{
 			//Need to remove this message if in the list after Tool Set image has been reseted
-			SVString Message( BuildDisplayMessage(MESSAGE_TYPE_ERROR, pInspectionObj->GetInspectionName().c_str(), MESSAGE_INSPECTION_CAMERA_COLOR) );
+			std::string Message( BuildDisplayMessage(MESSAGE_TYPE_ERROR, pInspectionObj->GetInspectionName().c_str(), MESSAGE_INSPECTION_CAMERA_COLOR) );
 			RemoveMessageFromList( Message.c_str() );
 
 			AddMessageToList( INSPECT_DLG, BuildDisplayMessage( MESSAGE_TYPE_ERROR, pInspectionObj->GetInspectionName().c_str(), TOOLSET_IMAGE_ERROR ).c_str() );
@@ -3412,7 +3412,7 @@ void CSVOConfigAssistantDlg::CameraDetachedCheckAgainstInspection(LPCTSTR Camera
 		if( nullptr != pInspectionObj && pInspectionObj->GetToolsetImage().empty() )
 		{
 			//Need to remove this message if in the list after Tool Set image has been reseted
-			SVString Message( BuildDisplayMessage(MESSAGE_TYPE_ERROR, pInspectionObj->GetInspectionName().c_str(), MESSAGE_INSPECTION_CAMERA_COLOR) );
+			std::string Message( BuildDisplayMessage(MESSAGE_TYPE_ERROR, pInspectionObj->GetInspectionName().c_str(), MESSAGE_INSPECTION_CAMERA_COLOR) );
 			RemoveMessageFromList( Message.c_str() );
 
 			AddMessageToList( INSPECT_DLG, BuildDisplayMessage( MESSAGE_TYPE_ERROR, pInspectionObj->GetInspectionName().c_str(), TOOLSET_IMAGE_ERROR ).c_str() );
@@ -3478,9 +3478,9 @@ void CSVOConfigAssistantDlg::OnDblclkLstErrList()
 	}
 }
 
-SVString CSVOConfigAssistantDlg::GetConfigurationName()
+std::string CSVOConfigAssistantDlg::GetConfigurationName()
 {
-	return SVString(m_ConfigurationName);
+	return std::string(m_ConfigurationName);
 }
 
 void CSVOConfigAssistantDlg::OnChangeEditConfigurationName()
@@ -3629,7 +3629,7 @@ BOOL CSVOConfigAssistantDlg::IsTriggerOnPPQ(LPCTSTR PPQName, LPCTSTR TriggerName
 
 void CSVOConfigAssistantDlg::LastInspectionLabelDeleted(LPCTSTR InspectionLabel)
 {
-	int iNum = atoi( SvUl_SF::Mid( SVString(InspectionLabel), 11 ).c_str() );
+	int iNum = atoi( SvUl::Mid( std::string(InspectionLabel), 11 ).c_str() );
 	if ( iNum > m_iLastInspectionNum )
 	{
 		m_iLastInspectionNum = iNum;
@@ -3640,7 +3640,7 @@ BOOL CSVOConfigAssistantDlg::CanInspectionNameBeUsed(LPCTSTR Name)
 {
 	bool Result( false );
 
-	SVStringVector::const_iterator Iter = std::find( m_InspectionNamesUsed.begin(), m_InspectionNamesUsed.end(), SVString(Name) );
+	SvDef::StringVector::const_iterator Iter = std::find( m_InspectionNamesUsed.begin(), m_InspectionNamesUsed.end(), std::string(Name) );
 	if( m_InspectionNamesUsed.end() == Iter)
 	{
 		Result = true;
@@ -3674,7 +3674,7 @@ BOOL CSVOConfigAssistantDlg::SystemChangeResetCamera( SVIMProductEnum p_lNewSyst
 					iDig = pCameraObj->GetDigNumber();
 					pCameraObj->SetDigNumber(iDig);
 					pCameraObj->SetBandNumber(0);
-					pCameraObj->SetCameraFile( SVString() );
+					pCameraObj->SetCameraFile( std::string() );
 					if (!pCameraObj->IsFileAcquisition())
 					{
 						AddMessageToList(CAMERA_DLG, BuildDisplayMessage(MESSAGE_TYPE_ERROR, pCameraObj->GetCameraDisplayName().c_str(), CAMERA_INVALID_FILES).c_str());
@@ -3698,7 +3698,7 @@ BOOL CSVOConfigAssistantDlg::SystemChangeResetCamera( SVIMProductEnum p_lNewSyst
 					iDig = pCameraObj->GetDigNumber();
 					pCameraObj->SetDigNumber(0);
 					pCameraObj->SetBandNumber(iDig);
-					pCameraObj->SetCameraFile( SVString() );
+					pCameraObj->SetCameraFile( std::string() );
 					if (!pCameraObj->IsFileAcquisition())
 					{
 						AddMessageToList(CAMERA_DLG, BuildDisplayMessage(MESSAGE_TYPE_ERROR, pCameraObj->GetCameraDisplayName().c_str(), CAMERA_INVALID_FILES).c_str());
@@ -3721,7 +3721,7 @@ void CSVOConfigAssistantDlg::ClearMessages()
 
 void CSVOConfigAssistantDlg::ConvertToDigital(SVIMProductEnum eType)
 {
-	typedef std::map<SVString, int> StringIntMap;
+	typedef std::map<std::string, int> StringIntMap;
 	//get trigger count...
 	int iTriggerCount = m_TriggerList.GetTriggerListCount();
 	int iCameraCount = m_CameraList.GetCameraListCount();
@@ -3741,7 +3741,7 @@ void CSVOConfigAssistantDlg::ConvertToDigital(SVIMProductEnum eType)
 
 	for ( StringIntMap::iterator it = l_Triggers.begin(); it != l_Triggers.end(); ++it )
 	{
-		m_TriggerList.AddTriggerToList(SVString(it->first), it->second);
+		m_TriggerList.AddTriggerToList(std::string(it->first), it->second);
 	}
 
 	//delete all cameras and re add them
@@ -3765,13 +3765,13 @@ void CSVOConfigAssistantDlg::ConvertToDigital(SVIMProductEnum eType)
 
 void CSVOConfigAssistantDlg::RemoveFileAcquisitionMessages( LPCTSTR CameraName )
 {
-	SVString FileAcquisitionNotAllowedMessage = BuildDisplayMessage(MESSAGE_TYPE_WARNING, CameraName, MESSAGE_FILE_ACQUISITION_NOT_ALLOWED);
-	SVString EmptyFileNameMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, CameraName, MESSAGE_FILE_ACQUISITION_MISSING_FILENAME);
-	SVString EmptyDirNameMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, CameraName, MESSAGE_FILE_ACQUISITION_MISSING_DIRECTORY);
-	SVString InvalidFileMessage = BuildDisplayMessage(MESSAGE_TYPE_WARNING, CameraName, MESSAGE_FILE_ACQUISITION_INVALID_FILE);
-	SVString InvalidDirMessage = BuildDisplayMessage(MESSAGE_TYPE_WARNING, CameraName, MESSAGE_FILE_ACQUISITION_INVALID_DIRECTORY);
-	SVString InvalidImageSizeMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, CameraName, MESSAGE_FILE_ACQUISITION_INVALID_IMAGE_SIZE);
-	SVString ColorMismatchMessage =  BuildDisplayMessage(MESSAGE_TYPE_ERROR, CameraName, MESSAGE_FILE_ACQUISITION_COLOR_MISMATCH);
+	std::string FileAcquisitionNotAllowedMessage = BuildDisplayMessage(MESSAGE_TYPE_WARNING, CameraName, MESSAGE_FILE_ACQUISITION_NOT_ALLOWED);
+	std::string EmptyFileNameMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, CameraName, MESSAGE_FILE_ACQUISITION_MISSING_FILENAME);
+	std::string EmptyDirNameMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, CameraName, MESSAGE_FILE_ACQUISITION_MISSING_DIRECTORY);
+	std::string InvalidFileMessage = BuildDisplayMessage(MESSAGE_TYPE_WARNING, CameraName, MESSAGE_FILE_ACQUISITION_INVALID_FILE);
+	std::string InvalidDirMessage = BuildDisplayMessage(MESSAGE_TYPE_WARNING, CameraName, MESSAGE_FILE_ACQUISITION_INVALID_DIRECTORY);
+	std::string InvalidImageSizeMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, CameraName, MESSAGE_FILE_ACQUISITION_INVALID_IMAGE_SIZE);
+	std::string ColorMismatchMessage =  BuildDisplayMessage(MESSAGE_TYPE_ERROR, CameraName, MESSAGE_FILE_ACQUISITION_COLOR_MISMATCH);
 
 	RemoveMessageFromList(FileAcquisitionNotAllowedMessage.c_str());
 	RemoveMessageFromList(EmptyFileNameMessage.c_str());
@@ -3784,20 +3784,20 @@ void CSVOConfigAssistantDlg::RemoveFileAcquisitionMessages( LPCTSTR CameraName )
 
 HRESULT CSVOConfigAssistantDlg::CheckCamera( SVOCameraObj& rCameraObj, bool SetFileParameters )
 {
-	SVString CameraName( rCameraObj.GetCameraDisplayName() );
+	std::string CameraName( rCameraObj.GetCameraDisplayName() );
 	RemoveFileAcquisitionMessages( CameraName.c_str() );
 
-	SVString DigName = BuildDigName( rCameraObj );
+	std::string DigName = BuildDigName( rCameraObj );
 	SVDigitizerProcessingClass::Instance().SetDigitizerColor( DigName.c_str(), rCameraObj.IsColor() );
 
 	if( rCameraObj.IsFileAcquisition())
 	{
-		SVString EmptyFileNameMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, CameraName.c_str(), MESSAGE_FILE_ACQUISITION_MISSING_FILENAME);
-		SVString EmptyDirNameMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, CameraName.c_str(), MESSAGE_FILE_ACQUISITION_MISSING_DIRECTORY);
-		SVString InvalidFileMessage = BuildDisplayMessage(MESSAGE_TYPE_WARNING, CameraName.c_str(), MESSAGE_FILE_ACQUISITION_INVALID_FILE);
-		SVString InvalidDirMessage = BuildDisplayMessage(MESSAGE_TYPE_WARNING, CameraName.c_str(), MESSAGE_FILE_ACQUISITION_INVALID_DIRECTORY);
-		SVString InvalidImageSizeMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, CameraName.c_str(), MESSAGE_FILE_ACQUISITION_INVALID_IMAGE_SIZE);
-		SVString ColorMismatchMessage =  BuildDisplayMessage(MESSAGE_TYPE_ERROR, CameraName.c_str(), MESSAGE_FILE_ACQUISITION_COLOR_MISMATCH);
+		std::string EmptyFileNameMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, CameraName.c_str(), MESSAGE_FILE_ACQUISITION_MISSING_FILENAME);
+		std::string EmptyDirNameMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, CameraName.c_str(), MESSAGE_FILE_ACQUISITION_MISSING_DIRECTORY);
+		std::string InvalidFileMessage = BuildDisplayMessage(MESSAGE_TYPE_WARNING, CameraName.c_str(), MESSAGE_FILE_ACQUISITION_INVALID_FILE);
+		std::string InvalidDirMessage = BuildDisplayMessage(MESSAGE_TYPE_WARNING, CameraName.c_str(), MESSAGE_FILE_ACQUISITION_INVALID_DIRECTORY);
+		std::string InvalidImageSizeMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, CameraName.c_str(), MESSAGE_FILE_ACQUISITION_INVALID_IMAGE_SIZE);
+		std::string ColorMismatchMessage =  BuildDisplayMessage(MESSAGE_TYPE_ERROR, CameraName.c_str(), MESSAGE_FILE_ACQUISITION_COLOR_MISMATCH);
 
 		// check that image size is not zero
 		const SIZE& size = rCameraObj.GetFileImageSize();
@@ -3811,11 +3811,11 @@ HRESULT CSVOConfigAssistantDlg::CheckCamera( SVOCameraObj& rCameraObj, bool SetF
 		if (loadingMode == ContinuousMode || loadingMode == SingleIterationMode)
 		{
 			// check that directory exists
-			SVString directoryName = rCameraObj.GetImageDirectoryName();
+			std::string directoryName = rCameraObj.GetImageDirectoryName();
 			if( !directoryName.empty() )
 			{
 				// strip off trailing slash or backslash
-				SVString lastChar = SvUl_SF::Right( directoryName, 1 );
+				std::string lastChar = SvUl::Right( directoryName, 1 );
 				if (lastChar == _T("\\") || lastChar == _T("/"))
 				{
 					directoryName.erase( directoryName.size() - 1);
@@ -3852,7 +3852,7 @@ HRESULT CSVOConfigAssistantDlg::CheckCamera( SVOCameraObj& rCameraObj, bool SetF
 		}
 
 		SVImageFile FileImage;
-		SVString Name;
+		std::string Name;
 
 		if ( 0 == rCameraObj.GetFileLoadingMode() )
 		{
@@ -3892,7 +3892,7 @@ HRESULT CSVOConfigAssistantDlg::CheckCamera( SVOCameraObj& rCameraObj, bool SetF
 			}
 
 			bool bDisplayWarnings = TheSVObserverApp.GetSVIMType() == GetProductType();
-			SVString MessageIncorrectCamFile = BuildDisplayMessage(MESSAGE_TYPE_WARNING, CameraName.c_str(), MESSAGE_INCORRECT_CAM_FILE);
+			std::string MessageIncorrectCamFile = BuildDisplayMessage(MESSAGE_TYPE_WARNING, CameraName.c_str(), MESSAGE_INCORRECT_CAM_FILE);
 			RemoveMessageFromList(MessageIncorrectCamFile.c_str());
 			if( DeviceParams.ParameterExists( DeviceParamVendorId ) || DeviceParams.ParameterExists( DeviceParamModelName ) )
 			{
@@ -3913,9 +3913,9 @@ HRESULT CSVOConfigAssistantDlg::CheckCamera( SVOCameraObj& rCameraObj, bool SetF
 				}// end if ( bDisplayWarnings )
 			}
 
-			SVString MessageNotColorCamFile = BuildDisplayMessage(MESSAGE_TYPE_ERROR, CameraName.c_str(), MESSAGE_NOT_COLOR_CAM_FILE);
-			SVString MessageNotMonoCamFile = BuildDisplayMessage(MESSAGE_TYPE_ERROR, CameraName.c_str(), MESSAGE_NOT_MONO_CAM_FILE);
-			SVString MessageNoColorCam = BuildDisplayMessage(MESSAGE_TYPE_WARNING, CameraName.c_str(), MESSAGE_NOT_COLOR_CAM);
+			std::string MessageNotColorCamFile = BuildDisplayMessage(MESSAGE_TYPE_ERROR, CameraName.c_str(), MESSAGE_NOT_COLOR_CAM_FILE);
+			std::string MessageNotMonoCamFile = BuildDisplayMessage(MESSAGE_TYPE_ERROR, CameraName.c_str(), MESSAGE_NOT_MONO_CAM_FILE);
+			std::string MessageNoColorCam = BuildDisplayMessage(MESSAGE_TYPE_WARNING, CameraName.c_str(), MESSAGE_NOT_COLOR_CAM);
 
 			RemoveMessageFromList(MessageNotColorCamFile.c_str());
 			RemoveMessageFromList(MessageNotMonoCamFile.c_str());
@@ -3981,7 +3981,7 @@ void CSVOConfigAssistantDlg::CheckColor( const SVOCameraObj& rCameraObj )
 		{
 			if( pInspectionObj->GetToolsetImage() == rCameraObj.GetCameraDisplayName() )
 			{
-				SVString Message( BuildDisplayMessage(MESSAGE_TYPE_ERROR, pInspectionObj->GetInspectionLabelName().c_str(), MESSAGE_INSPECTION_CAMERA_COLOR) );
+				std::string Message( BuildDisplayMessage(MESSAGE_TYPE_ERROR, pInspectionObj->GetInspectionLabelName().c_str(), MESSAGE_INSPECTION_CAMERA_COLOR) );
 				RemoveMessageFromList( Message.c_str() );
 
 				if ( !pInspectionObj->GetToolsetImage().empty() )
@@ -4017,8 +4017,8 @@ void CSVOConfigAssistantDlg::CheckTriggers()
 BOOL CSVOConfigAssistantDlg::CheckTrigger( const SvTi::SVOTriggerObj& rTriggerObj)
 {
 	BOOL bRet = true;
-	SVString TriggerName = rTriggerObj.GetTriggerDisplayName();
-	SVString MessageNoSoftwareTriggerAllowed = BuildDisplayMessage(MESSAGE_TYPE_ERROR, TriggerName.c_str(), MESSAGE_SOFTWARE_TRIGGER_NOT_ALLOWED);
+	std::string TriggerName = rTriggerObj.GetTriggerDisplayName();
+	std::string MessageNoSoftwareTriggerAllowed = BuildDisplayMessage(MESSAGE_TYPE_ERROR, TriggerName.c_str(), MESSAGE_SOFTWARE_TRIGGER_NOT_ALLOWED);
 
 	if ( rTriggerObj.IsSoftwareTrigger() )
 	{
@@ -4112,9 +4112,9 @@ void CSVOConfigAssistantDlg::ClearImportedInspectionInfoList()
 	m_ImportedInspectionInfoList.clear();
 }
 
-SVString CSVOConfigAssistantDlg::GetNameFromProductID( SVIMProductEnum p_ID )
+std::string CSVOConfigAssistantDlg::GetNameFromProductID( SVIMProductEnum p_ID )
 {
-	SVString Result( _T("Unknown") );
+	std::string Result( _T("Unknown") );
 
 	SVProductStringMap::index_iterator< from >::type l_Iter = m_ProductStringMap.get< from >().find( p_ID );
 
@@ -4125,7 +4125,7 @@ SVString CSVOConfigAssistantDlg::GetNameFromProductID( SVIMProductEnum p_ID )
 	return Result;
 }
 
-SVIMProductEnum CSVOConfigAssistantDlg::GetProductIDFromName( const SVString& rName )
+SVIMProductEnum CSVOConfigAssistantDlg::GetProductIDFromName( const std::string& rName )
 {
 	SVIMProductEnum l_Retval = SVIM_PRODUCT_INVALID_TYPE;
 
