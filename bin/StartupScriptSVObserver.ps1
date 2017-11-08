@@ -11,12 +11,13 @@ echo $cmdout.IPAddress
 $cmdout = imdisk -d -m V:
 if ($LastExitCode -ne 0) {
   echo "Could not create empty V-Drive via imdisk"
-  write-eventlog -logname Application -source SVException -eventID 13  -entrytype Warning -message "Could not create empty V-Drive via imdisk. $cmdout"  -Category 0
+  write-eventlog -logname Application -source SVException -eventID 13  -entrytype Information -message "Could not create empty V-Drive via imdisk. $cmdout"  -Category 0
 }
 
 c:\SVObserver\bin\SVRemoveKeyboards.exe
 
-dskcache.exe -w -p
+#Endable disk caching for harddrive
+dskcache.exe +w +p
 
 #stop-service $MTXsrvName
 restart-service $MTXsrvName
