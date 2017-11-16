@@ -250,6 +250,11 @@ MatroxType SVMatroxBarCodeInterface::Convert2MatroxType(SVBarCodeTypesEnum p_eTy
 			l_lControlType = M_UPC_E;
 			break;
 		}
+		case SVQRCode:
+		{
+			l_lControlType = M_QRCODE;
+			break;
+		}
 		default:
 		{
 			break;

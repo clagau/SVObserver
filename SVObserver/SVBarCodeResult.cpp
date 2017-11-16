@@ -142,44 +142,29 @@ SVStringValueObjectClass* SVBarCodeResultClass::getRegExpression()
 bool SVBarCodeResultClass::onRun(SVRunStatusClass &rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	//@WARNING[MZA][7.50][17.01.2017] Not sure if we need to check ValidateLocal in Run-mode, maybe it is enough to check it in ResetObject
-	if( __super::onRun( rRunStatus, pErrorMessages ) && ValidateLocal(pErrorMessages) )
-  {
-	  if( this->m_bFailedToRead )
-	  {
-		  rRunStatus.SetWarned();
-		  return true;
-	  }
-
-	SVStringValueObjectClass* pValue = getInputString();
-
-    if (pValue->IsValid())
-    {
-		BOOL bLoad = false;
-
-		std::string InputString;
-		pValue->GetValue(InputString);
-
-		msv_bUseMatchStringFile.GetValue( bLoad );
-		if ( bLoad )
+	if (__super::onRun(rRunStatus, pErrorMessages) && ValidateLocal(pErrorMessages))
+	{
+		if (this->m_bFailedToRead)
 		{
-			long lLine = CheckStringInTable( InputString );
-			msv_lMatchStringLine.SetValue(lLine);
-			if ( 0 < lLine )
-			{
-				rRunStatus.SetPassed();
-			}
-			else
-			{
-				rRunStatus.SetFailed();
-			}
+			rRunStatus.SetWarned();
+			return true;
 		}
-		else
-		{
-			std::string RegExpression;
-			SVStringValueObjectClass* pRegExp = getRegExpression();
-		    pRegExp->GetValue(RegExpression);
 
-				if (RegExpression.empty() || !InputString.compare(RegExpression))
+		SVStringValueObjectClass* pValue = getInputString();
+
+		if (pValue->IsValid())
+		{
+			BOOL bLoad = false;
+
+			std::string InputString;
+			pValue->GetValue(InputString);
+
+			msv_bUseMatchStringFile.GetValue(bLoad);
+			if (bLoad)
+			{
+				long lLine = CheckStringInTable(InputString);
+				msv_lMatchStringLine.SetValue(lLine);
+				if (0 < lLine)
 				{
 					rRunStatus.SetPassed();
 				}
@@ -187,16 +172,31 @@ bool SVBarCodeResultClass::onRun(SVRunStatusClass &rRunStatus, SvStl::MessageCon
 				{
 					rRunStatus.SetFailed();
 				}
-      }
-    }
-    else
-    {
-      rRunStatus.SetFailed();
-    }
+			}
+			else
+			{
+				std::string RegExpression;
+				SVStringValueObjectClass* pRegExp = getRegExpression();
+				pRegExp->GetValue(RegExpression);
+
+				if (RegExpression.empty() || !InputString.compare(RegExpression.c_str()))
+				{
+					rRunStatus.SetPassed();
+				}
+				else
+				{
+					rRunStatus.SetFailed();
+				}
+			}
+		}
+		else
+		{
+			rRunStatus.SetFailed();
+		}
 		return true;
-  }
+	}
 	rRunStatus.SetInvalid();
-  SetInvalid ();
+	SetInvalid();
 	return false;
 }
 

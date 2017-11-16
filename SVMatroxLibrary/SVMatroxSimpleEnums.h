@@ -163,6 +163,8 @@ enum SVMatroxBufferValues
 	SVValueEncMode2						= 6,			// M_ENC_MODE2
 	SVValueEncRss14						= 0x00000400,	// M_ENC_RSS14
 	SVValueEncStandard					= 11,			// M_ENC_STANDARD
+	SVValueEncQRCodeModel1				= 0x00200000,	// M_ENC_QRCODE_MODEL1
+	SVValueEncQRCodeModel2				= 0x00400000,	// M_ENC_QRCODE_MODEL2
 	SVValueEccNone						= 4,			// M_ECC_NONE
 	SVValueEccCheckDigit				= 5,			// M_ECC_CHECK_DIGIT
 	SVValueEccReedSolomon				= 19,			// M_ECC_REED_SOLOMON
@@ -181,6 +183,10 @@ enum SVMatroxBufferValues
 	SVValueEccReedSolomon6				= SVValueEccReedSolomon0 + 6,
 	SVValueEccReedSolomon7				= SVValueEccReedSolomon0 + 7,
 	SVValueEccReedSolomon8				= SVValueEccReedSolomon0 + 8,
+	SVValueEccH = 32,			// M_ECC_H	
+	SVValueEccL = 29,			// M_ECC_L
+	SVValueEccM = 30,			// M_ECC_M	
+	SVValueEccQ = 31,			// M_ECC_Q
 	SVValueENCAlpha						= 1,			// M_ENC_ALPHA
 	SVValueENCAlphaNum					= 3,			// M_ENC_ALPHANUM
 	SVValueENCAlphaNumPunc				= 2,			// M_ENC_ALPHANUM_PUNC
@@ -466,6 +472,7 @@ enum SVBarCodeTypesEnum
 	SVUpcE						= 0x00001000, // M_UPC_E 
 	SVPharmaCode				= 0x00002000, // M_PHARMACODE 
 	SVRssCode					= 0x00004000, // M_RSSCODE 
+	SVQRCode					= 0x04000000, // M_QRCODE
 };
 
 /**

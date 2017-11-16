@@ -65,6 +65,7 @@ SVBarCodeGeneralDialog::SVBarCodeGeneralDialog(CWnd* pParent /*=nullptr*/)
 	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct( SVUpcE, _T("UPC-E"), SVValueEncStandard, SVValueAny ));
 	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct( SVPharmaCode, _T("Pharmacode"), SVValueEncStandard, SVValueAny ));
 	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct( SVRssCode, _T("RSS"), SVValueEncRss14, SVValueAny ));
+	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct( SVQRCode, _T("QR Code"), SVValueAny, SVValueAny)); // 2D
 }
 
 SVBarCodeGeneralDialog::~SVBarCodeGeneralDialog()
@@ -652,7 +653,7 @@ void SVBarCodeGeneralDialog::OnSelChangeBarCodeType()
 	m_UnevenCheck.SetCheck(FALSE);
 
 	//if Barcode type == DataMatrix enable uneven grid step
-	if ( GetBarCodeType() == SVDataMatrix )
+	if ( GetBarCodeType() == SVDataMatrix || SVQRCode == GetBarCodeType()  )
 	{		
 		GetDlgItem(IDC_CHK_UNEVEN_GRID)->EnableWindow(TRUE);
 	}
@@ -784,7 +785,7 @@ void SVBarCodeGeneralDialog::OnBnClickedChkUnevenGrid()
 
 void SVBarCodeGeneralDialog::UpdateUnEvenGrid()
 {
-	if ( GetBarCodeType() == SVDataMatrix )
+	if ( GetBarCodeType() == SVDataMatrix || SVQRCode == GetBarCodeType() )
 	{
 		m_UnevenCheck.SetCheck(m_bUnEvenGrid);
 	}
