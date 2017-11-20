@@ -11,7 +11,7 @@
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <ctime>
 #include "SourceFileParams.h"
-#include "SVStatusLibrary/MessageTextEnum.h"
+#include "MessageTextEnum.h"
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 

@@ -6,7 +6,7 @@
 //******************************************************************************
 #pragma once
 #pragma region Includes
-#include "SVStatusLibrary/MessageTextEnum.h"
+#include "MessageTextEnum.h"
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 

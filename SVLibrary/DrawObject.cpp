@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdAfx.h"
 //Moved to precompiled header: #include <vector>
-#include "SVLibrary/DrawObject.h"
+#include "DrawObject.h"
 #pragma endregion Includes
 
 #pragma region Declarations
