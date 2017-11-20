@@ -506,7 +506,12 @@ HRESULT SVDigitizerProcessingClass::SetDigitizerColor( LPCTSTR DigitizerName, bo
 		{
 			NumberOfBands = 3;
 		}
-		pAcquisitionDevice->SetNumberOfBands( NumberOfBands );
+		SVLightReference LightReference;
+		pAcquisitionDevice->GetLightReference(LightReference);
+		if (NumberOfBands != LightReference.NumBands())
+		{
+			pAcquisitionDevice->SetNumberOfBands(NumberOfBands);
+		}
 	}
 	else
 	{
