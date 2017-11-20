@@ -101,7 +101,6 @@
     <ClInclude Include="SVImageDefinitionStruct.h" />
     <ClInclude Include="SVImageFile.h" />
     <ClInclude Include="SVImageFileLoader.h" />
-    <ClInclude Include="SVImageFormatEnum.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

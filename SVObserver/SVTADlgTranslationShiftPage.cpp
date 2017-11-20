@@ -86,15 +86,15 @@ BOOL SVTADlgTranslationShiftPageClass::OnInitDialog()
 		//   necessary for performing a RunOnce later.
 		SetTaskObject( pTool );
 
-		SVObjectTypeInfoStruct evaluateObjectInfo;
-		evaluateObjectInfo.ObjectType = SVMathContainerObjectType;
+		SvDef::SVObjectTypeInfoStruct evaluateObjectInfo;
+		evaluateObjectInfo.ObjectType = SvDef::SVMathContainerObjectType;
 
 		// Get Evaluate Object for the X coordinate...
-		evaluateObjectInfo.SubType = SVEvaluateTranslationXObjectType;		
+		evaluateObjectInfo.SubType = SvDef::SVEvaluateTranslationXObjectType;		
 		pEvaluateTranslationX = dynamic_cast<SVEvaluateClass*>(pTool->getFirstObject(evaluateObjectInfo));
 		
 		// Get Evaluate Object for the Y coordinate...
-		evaluateObjectInfo.SubType = SVEvaluateTranslationYObjectType;
+		evaluateObjectInfo.SubType = SvDef::SVEvaluateTranslationYObjectType;
 		pEvaluateTranslationY = dynamic_cast<SVEvaluateClass*>(pTool->getFirstObject(evaluateObjectInfo));
 
 		SVShiftTool* l_pTool = nullptr;
@@ -254,7 +254,7 @@ void SVTADlgTranslationShiftPageClass::OnBnClickedTranslationXFormulaButton()
 
 		const GUID& rInspectionID = pParentDialog->GetInspectionID();
 		const GUID& rObjectID = pParentDialog->GetToolID();
-		SVObjectTypeInfoStruct info(SVMathContainerObjectType, SVEvaluateTranslationXObjectType);
+		SvDef::SVObjectTypeInfoStruct info(SvDef::SVMathContainerObjectType, SvDef::SVEvaluateTranslationXObjectType);
 		SvOg::SVFormulaEditorSheetClass dlg(rInspectionID, rObjectID, info, Caption.c_str());
 		dlg.DoModal();
 		
@@ -271,7 +271,7 @@ void SVTADlgTranslationShiftPageClass::OnBnClickedTranslationYFormulaButton()
 
 		const GUID& rInspectionID = pParentDialog->GetInspectionID();
 		const GUID& rObjectID = pParentDialog->GetToolID();
-		SVObjectTypeInfoStruct info(SVMathContainerObjectType, SVEvaluateTranslationYObjectType);
+		SvDef::SVObjectTypeInfoStruct info(SvDef::SVMathContainerObjectType, SvDef::SVEvaluateTranslationYObjectType);
 		SvOg::SVFormulaEditorSheetClass dlg(rInspectionID, rObjectID, info, Caption.c_str());
 		dlg.DoModal();
 		

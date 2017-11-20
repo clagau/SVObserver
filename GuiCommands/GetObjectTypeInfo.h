@@ -31,7 +31,7 @@ namespace SvCmd
 			SvOi::IObjectClass* pObject = SvOi::getObject(m_InstanceID);
 			if (pObject)
 			{
-				m_TypeInfo = SVObjectTypeInfoStruct(pObject->GetObjectType(), pObject->GetObjectSubType());
+				m_TypeInfo = SvDef::SVObjectTypeInfoStruct(pObject->GetObjectType(), pObject->GetObjectSubType());
 			}
 			else
 			{
@@ -40,10 +40,10 @@ namespace SvCmd
 			return hr;
 		}
 		bool empty() const { return false; }
-		const SVObjectTypeInfoStruct& GetTypeInfo() const { return m_TypeInfo; }
+		const SvDef::SVObjectTypeInfoStruct& GetTypeInfo() const { return m_TypeInfo; }
 
 	private:
 		SVGUID m_InstanceID;
-		SVObjectTypeInfoStruct m_TypeInfo;
+		SvDef::SVObjectTypeInfoStruct m_TypeInfo;
 	};
 } //namespace SvCmd

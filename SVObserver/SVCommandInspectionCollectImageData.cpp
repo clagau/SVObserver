@@ -17,9 +17,9 @@
 #include "SVInspectionProcess.h"
 #include "SVResultList.h"
 #include "SVToolSet.h"
-#include "SVObjectLibrary/GlobalConst.h"
+#include "Definitions/GlobalConst.h"
 #include "SVPPQObject.h"
-#include "SVRunControlLibrary/SVRunControlLibrary.h"
+#include "Definitions/Color.h"
 #pragma endregion Includes
 
 #pragma region Constructor

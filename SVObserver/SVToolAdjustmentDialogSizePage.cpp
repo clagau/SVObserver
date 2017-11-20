@@ -91,8 +91,8 @@ BOOL SVToolAdjustmentDialogSizePage::OnInitDialog()
 	{
 		SetTaskObject( m_pTool );
 		// Get ToolSizeAdjustTask 
-		SVObjectTypeInfoStruct ToolSizeAdjustTaskInfo;
-		ToolSizeAdjustTaskInfo.ObjectType = SVToolSizeAdjustTaskType;
+		SvDef::SVObjectTypeInfoStruct ToolSizeAdjustTaskInfo;
+		ToolSizeAdjustTaskInfo.ObjectType = SvDef::SVToolSizeAdjustTaskType;
 		
 		m_pToolSizeAdjustTask = dynamic_cast<ToolSizeAdjustTask*>(m_pTool->getFirstObject(ToolSizeAdjustTaskInfo));
 		if( m_pToolSizeAdjustTask )
@@ -119,19 +119,19 @@ BOOL SVToolAdjustmentDialogSizePage::OnInitDialog()
 		}
 		
 		// Get the Evaluate Objects..
-		SVObjectTypeInfoStruct evaluateObjectInfo;
-		evaluateObjectInfo.ObjectType = SVEquationObjectType;
+		SvDef::SVObjectTypeInfoStruct evaluateObjectInfo;
+		evaluateObjectInfo.ObjectType = SvDef::SVEquationObjectType;
 
-		evaluateObjectInfo.SubType = EQSizePositionXType;		
+		evaluateObjectInfo.SubType = SvDef::EQSizePositionXType;		
 		m_pEQAdjustSize[ToolSizeAdjustTask::TSPositionX] = dynamic_cast<EQAdjustSize*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		
-		evaluateObjectInfo.SubType = EQSizePositionYType;
+		evaluateObjectInfo.SubType = SvDef::EQSizePositionYType;
 		m_pEQAdjustSize[ToolSizeAdjustTask::TSPositionY]  = dynamic_cast<EQAdjustSize*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		
-		evaluateObjectInfo.SubType = EQSizeWidthType;		
+		evaluateObjectInfo.SubType = SvDef::EQSizeWidthType;		
 		m_pEQAdjustSize[ToolSizeAdjustTask::TSWidth] = dynamic_cast<EQAdjustSize*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		
-		evaluateObjectInfo.SubType = EQSizeHeightType;		
+		evaluateObjectInfo.SubType = SvDef::EQSizeHeightType;		
 		m_pEQAdjustSize[ToolSizeAdjustTask::TSHeight] = dynamic_cast<EQAdjustSize*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		
 		Refresh( false );
@@ -334,7 +334,7 @@ void SVToolAdjustmentDialogSizePage::OnBnClickedButtonFormula(ToolSizeAdjustTask
 		CString strCaption = m_pEQAdjustSize[mode]->GetName();
 		strCaption += _T(" Formula");
 
-		SVObjectTypeInfoStruct info(m_pEQAdjustSize[mode]->GetObjectType(), m_pEQAdjustSize[mode]->GetObjectSubType());
+		SvDef::SVObjectTypeInfoStruct info(m_pEQAdjustSize[mode]->GetObjectType(), m_pEQAdjustSize[mode]->GetObjectSubType());
 		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
 		const GUID& rObjectID = m_pEQAdjustSize[mode]->GetUniqueObjectID();
 

@@ -124,7 +124,6 @@
     <ClInclude Include="SVGigeDeviceParameterStruct.h" />
     <ClInclude Include="SVGigeEmptyGetter.h" />
     <ClInclude Include="SVGigeEmptySetter.h" />
-    <ClInclude Include="SVGigeEnums.h" />
     <ClInclude Include="SVGigeFeature.h" />
     <ClInclude Include="SVGigeFeatureSelector.h" />
     <ClInclude Include="SVGigeFeatureStringEnumList.h" />

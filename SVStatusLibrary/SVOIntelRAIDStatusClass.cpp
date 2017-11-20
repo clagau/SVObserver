@@ -14,12 +14,12 @@
 //Moved to precompiled header: #include <memory>
 //Moved to precompiled header: #include <list>
 #include "SVOIntelRAIDStatusClass.h"
-#include "SVMFCControls/ModelessMessageBox.h"
-#include "SVStatusLibrary/SVEventLogClass.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVStatusLibrary/GlobalPath.h"
+#include "SVEventLogClass.h"
+#include "SVSVIMStateClass.h"
+#include "GlobalPath.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "ObjectInterfaces/ISVOApp_Helper.h"
 #pragma endregion Includes
 
 namespace SvStl
@@ -59,7 +59,7 @@ namespace SvStl
 								"STATUS : %s\n\n"
 								"Please contact your support representative for assistance."), m_RaidStatus );
 
-							CallModelessMessageBox( Message, m_hCheckEvent );
+							SvOi::CallModelessMessageBox( Message, m_hCheckEvent );
 						}
 						else
 						{

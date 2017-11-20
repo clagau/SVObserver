@@ -77,9 +77,6 @@
     <ClInclude Include="SVGigeEmptySetter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVGigeEnums.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVGigeFeature.h">
       <Filter>Header Files</Filter>
     </ClInclude>

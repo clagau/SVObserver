@@ -135,7 +135,7 @@ bool SVRemoteFontManager::Shutdown()
 			m_hThread = nullptr;
 		}
 
-		long lSize = m_arRemoteFontTimestamps.GetSize();
+		long lSize = static_cast<long> (m_arRemoteFontTimestamps.size());
 		for( long l = lSize - 1L; l >= 0L; l-- )
 		{
 			long l_lIdentifier = m_arRemoteFontIdentifiers[l];
@@ -147,10 +147,10 @@ bool SVRemoteFontManager::Shutdown()
 				m_mpCharMappings.erase( l_it );
 			}
 
-			m_arRemoteFontIdentifiers.RemoveAt( l );
+			m_arRemoteFontIdentifiers.erase(m_arRemoteFontIdentifiers.begin() + l);
 			SVMatroxOcrInterface::Destroy( m_arRemoteFontHandles[l] );
-			m_arRemoteFontTimestamps.RemoveAt( l );
-			m_arRemoteFontHandles.RemoveAt( l );
+			m_arRemoteFontTimestamps.erase(m_arRemoteFontTimestamps.begin() + l);
+			m_arRemoteFontHandles.erase(m_arRemoteFontHandles.begin() + l);
 
 		}// end for
 
@@ -200,7 +200,7 @@ bool SVRemoteFontManager::AddFont( long &lIdentifier )
 		::EnterCriticalSection( &m_csLock );
 
 		DWORD dwTick = ::GetTickCount();
-		m_arRemoteFontIdentifiers.Add( dwTick );
+		m_arRemoteFontIdentifiers.push_back( dwTick );
 
 		
 		SVMatroxOcr milHandle;
@@ -221,10 +221,9 @@ bool SVRemoteFontManager::AddFont( long &lIdentifier )
 		HRESULT MatroxCode = SVMatroxOcrInterface::Create( milHandle, l_Create );
 		if( S_OK == MatroxCode )
 		{
-			m_arRemoteFontHandles.Add( milHandle );
+			m_arRemoteFontHandles.push_back( milHandle );
 			
-			SvTl::SVTimeStamp tsNow = SvTl::GetTimeStamp();
-			m_arRemoteFontTimestamps.Add( tsNow );
+			m_arRemoteFontTimestamps.push_back( SvTl::GetTimeStamp() );
 			
 			lIdentifier = dwTick;
 			bRet = true;
@@ -244,16 +243,16 @@ bool SVRemoteFontManager::RemoveFont( long lIdentifier )
 	{
 		::EnterCriticalSection( &m_csLock );
 
-		long lSize = m_arRemoteFontTimestamps.GetSize();
+		long lSize = static_cast<long> (m_arRemoteFontTimestamps.size());
 		for( long l = lSize - 1L; l >= 0L; l-- )
 		{
 			if( lIdentifier == m_arRemoteFontIdentifiers[l] )
 			{
 				
-				m_arRemoteFontIdentifiers.RemoveAt( l );
+				m_arRemoteFontIdentifiers.erase(m_arRemoteFontIdentifiers.begin() + l);
 				SVMatroxOcrInterface::Destroy( m_arRemoteFontHandles[l] );
-				m_arRemoteFontTimestamps.RemoveAt( l );
-				m_arRemoteFontHandles.RemoveAt( l );
+				m_arRemoteFontTimestamps.erase(m_arRemoteFontTimestamps.begin() + l);
+				m_arRemoteFontHandles.erase(m_arRemoteFontHandles.begin() + l);
 				
 				bRet = true;
 				break;
@@ -275,7 +274,7 @@ bool SVRemoteFontManager::IsValidFont( long lIdentifier, SVMatroxOcr &lHandle )
 	{
 		::EnterCriticalSection( &m_csLock );
 
-		long lSize = m_arRemoteFontTimestamps.GetSize();
+		long lSize = static_cast<long> (m_arRemoteFontTimestamps.size());
 		for( long l = lSize - 1L; l >= 0L; l-- )
 		{
 			if( lIdentifier == m_arRemoteFontIdentifiers[l] )
@@ -301,13 +300,13 @@ bool SVRemoteFontManager::UpdateFontTime( long lIdentifier )
 	{
 		::EnterCriticalSection( &m_csLock );
 
-		long lSize = m_arRemoteFontTimestamps.GetSize();
+		long lSize = static_cast<long> (m_arRemoteFontTimestamps.size());
 		for( long l = lSize - 1L; l >= 0L; l-- )
 		{
 			if( lIdentifier == m_arRemoteFontIdentifiers[l] )
 			{
 				SvTl::SVTimeStamp tsNow = SvTl::GetTimeStamp();
-				m_arRemoteFontTimestamps.SetAt( l, tsNow );
+				m_arRemoteFontTimestamps[l] = tsNow;
 				
 				bRet = true;
 				break;
@@ -329,12 +328,12 @@ bool SVRemoteFontManager::UpdateFontHandle( long lIdentifier, SVMatroxOcr lHandl
 	{
 		::EnterCriticalSection( &m_csLock );
 
-		long lSize = m_arRemoteFontTimestamps.GetSize();
+		long lSize = static_cast<long> (m_arRemoteFontTimestamps.size());
 		for( long l = lSize - 1L; l >= 0L; l-- )
 		{
 			if( lIdentifier == m_arRemoteFontIdentifiers[l] )
 			{
-				m_arRemoteFontHandles.SetAt( l, lHandle );
+				m_arRemoteFontHandles[l] = lHandle;
 				
 				bRet = true;
 				break;
@@ -390,7 +389,7 @@ bool SVRemoteFontManager::RemoveFontsOlderThan( SvTl::SVTimeStamp p_Age )
 	{
 		SvTl::SVTimeStamp tsNow = SvTl::GetTimeStamp();
 		
-		long lSize = m_arRemoteFontTimestamps.GetSize();
+		long lSize = static_cast<long> (m_arRemoteFontTimestamps.size());
 		for( long l = lSize - 1L; l >= 0L; l-- )
 		{
 			SvTl::SVTimeStamp tsThen = m_arRemoteFontTimestamps[l];
@@ -398,15 +397,15 @@ bool SVRemoteFontManager::RemoveFontsOlderThan( SvTl::SVTimeStamp p_Age )
 			if( tsDiff > p_Age )
 			{
 				long l_lIdentifier = m_arRemoteFontIdentifiers[l];
-				m_arRemoteFontIdentifiers.RemoveAt( l );
+				m_arRemoteFontIdentifiers.erase(m_arRemoteFontIdentifiers.begin() + l);
 				SVMatroxOcrInterface::Destroy( m_arRemoteFontHandles[l] );
-				m_arRemoteFontTimestamps.RemoveAt( l );
-				m_arRemoteFontHandles.RemoveAt( l );
+				m_arRemoteFontTimestamps.erase(m_arRemoteFontTimestamps.begin() + l);
+				m_arRemoteFontHandles.erase(m_arRemoteFontHandles.begin() + l);
 
 				// Remove Font Image Handles
 				if( l < static_cast< long >( m_arRemoteFontImageHandles.size() ) )
 				{
-					m_arRemoteFontImageHandles.RemoveAt( l );
+					m_arRemoteFontImageHandles.erase(m_arRemoteFontImageHandles.begin() + l);
 				}
 
 				// remove unused character map
@@ -432,21 +431,18 @@ bool SVRemoteFontManager::AddFontImage(long lIdentifier, SVMatroxBuffer& lHandle
 	{
 		::EnterCriticalSection( &m_csLock );
 
-		long lSize = m_arRemoteFontTimestamps.GetSize();
+		long lSize = static_cast<long> (m_arRemoteFontTimestamps.size());
 		for( long l = lSize - 1L; l >= 0L; l-- )
 		{
 			if( lIdentifier == m_arRemoteFontIdentifiers[l] )
 			{
-				long lFSize = m_arRemoteFontImageHandles.GetSize();
-				if ( lFSize > l )
+				long lFSize = static_cast<long> (m_arRemoteFontImageHandles.size());
+				if ( lFSize <= l )
 				{
-					m_arRemoteFontImageHandles.SetAt( l, lHandle );
+					m_arRemoteFontImageHandles.resize(l+1);
 				}
-				else
-				{
-					m_arRemoteFontImageHandles.SetAtGrow( l, lHandle );
-				}
-				
+				m_arRemoteFontImageHandles[l] = lHandle;
+
 				bRet = true;
 				break;
 			}// end if
@@ -468,14 +464,14 @@ bool SVRemoteFontManager::GetFontImage( long lIdentifier, SVMatroxBuffer &lHandl
 	{
 		::EnterCriticalSection( &m_csLock );
 
-		long lSize = m_arRemoteFontTimestamps.GetSize();
+		long lSize = static_cast<long> (m_arRemoteFontTimestamps.size());
 		for( long l = lSize - 1L; l >= 0L; l-- )
 		{
 			if( lIdentifier == m_arRemoteFontIdentifiers[l] )
 			{
-				if( l < m_arRemoteFontImageHandles.GetSize() )
+				if( l < static_cast<long> (m_arRemoteFontImageHandles.size()) )
 				{
-					lHandle = m_arRemoteFontImageHandles.GetAt(l);
+					lHandle = m_arRemoteFontImageHandles[l];
 					
 					bRet = true;
 					break;
@@ -698,19 +694,19 @@ bool SVRemoteFontManager::CreateCharMapping(long lCurrentFont, CString p_sChars)
 
 
 	// fill in the CharID Array
-	long l_lSize = m_arRemoteFontTimestamps.GetSize();
-	for ( long l = l_lSize - 1L; l >= 0L; l-- )
+	long lSize = static_cast<long> (m_arRemoteFontTimestamps.size());
+	for ( long l = lSize - 1L; l >= 0L; l-- )
 	{
 		if ( lCurrentFont == m_arRemoteFontIdentifiers[l] )
 		{
-			long l_CSize = m_arLastCharIds.GetSize();
-			if ( l_CSize > l )
+			long CSize = static_cast<long> (m_arLastCharIds.size());
+			if ( CSize > l )
 			{
-				m_arLastCharIds.SetAt(l,l_ulCount);
+				m_arLastCharIds[l] = l_ulCount;
 			}
 			else
 			{
-				m_arLastCharIds.Add(l_ulCount);
+				m_arLastCharIds.push_back(l_ulCount);
 			}
 		}
 	}
@@ -724,21 +720,20 @@ bool SVRemoteFontManager::AddFontChar(long lCurrentFont, char p_cNewChar, long *
 {
 	bool bRet = true;
 
-	unsigned long l_ulLastCharID;
+	unsigned long LastCharID{ 0 };
 
 	if ( nullptr != m_hShutdown && m_bLockCreated )
 	{
 		::EnterCriticalSection( &m_csLock );
 
-		long lSize = m_arRemoteFontTimestamps.GetSize();
+		long lSize = static_cast<long> (m_arRemoteFontTimestamps.size());
 		for( long l = lSize - 1L; l >= 0L; l-- )
 		{
 			if( lCurrentFont == m_arRemoteFontIdentifiers[l] )
 			{
-				int iLCI = m_arLastCharIds.GetSize();
-				l_ulLastCharID = m_arLastCharIds.GetAt(l);
-				l_ulLastCharID++;
-				m_arLastCharIds.SetAt(l, l_ulLastCharID);
+				LastCharID = m_arLastCharIds[l];
+				LastCharID++;
+				m_arLastCharIds[l] = LastCharID;
 
 				CharMap l_Map;
 				CharMappings::iterator CharIterator;
@@ -746,9 +741,9 @@ bool SVRemoteFontManager::AddFontChar(long lCurrentFont, char p_cNewChar, long *
 				if ( CharIterator->first == lCurrentFont )
 				{
 					l_Map = CharIterator->second;
-					l_Map[l_ulLastCharID] = p_cNewChar;
+					l_Map[LastCharID] = p_cNewChar;
 
-					*ulCharId = (long)l_ulLastCharID;
+					*ulCharId = (long)LastCharID;
 
 					CharIterator->second = l_Map;
 				}

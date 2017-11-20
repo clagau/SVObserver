@@ -20,7 +20,8 @@
 #include "SVIPDoc.h"
 #include "SVObjectScriptParser.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVObjectLibrary/GlobalConst.h"
+#include "Definitions/GlobalConst.h"
+#include "Definitions/Color.h"
 #include "SVObserver.h"
 #include "SVParserProgressDialog.h"
 #include "SVToolSet.h"
@@ -41,11 +42,12 @@
 #include "RootObject.h"
 #include "SVImageViewScroll.h"
 #include "SVImageView.h"
-#include "SVOLicenseManager/SVOLicenseManager.h"
+#include "SVOLicenseManager.h"
 #include "SVIPChildFrm.h" 
 #include "ExtrasEngine.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "ObjectInterfaces/ISVOApp_Helper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -225,7 +227,7 @@ BOOL SVMainFrame::CreateClient(LPCREATESTRUCT lpCreateStruct, CMenu* pWindowMenu
 		return FALSE; 
 
 	// Use Körber Grey (RGB( 204, 204, 204 ) for the application's background.
-	m_BackgroundBrush.CreateSolidBrush( RGB( 204, 204, 204 ) );
+	m_BackgroundBrush.CreateSolidBrush( SvDef::KoerberGray );
 	windowClass.hbrBackground = m_BackgroundBrush.operator HBRUSH();
 	windowClass.lpszClassName = _T( "SVObserverMDIClient" );
 
@@ -655,49 +657,49 @@ void SVMainFrame::OnUpdateStatusInfo( CCmdUI *pCmdUI )
 			{
 				case SVIM_MODE_UNKNOWN:
 				{
-					m_wndStatusBar.m_lModeBKColor = RGB( 200, 200, 200 );
-					m_wndStatusBar.m_lModeForeColor = RGB( 0, 0, 0 );
+					m_wndStatusBar.m_lModeBKColor = SvDef::KoerberGray;
+					m_wndStatusBar.m_lModeForeColor = SvDef::Black;
 					break;
 				}
 				case SVIM_MODE_ONLINE:
 				{
 					m_wndStatusBar.m_lModeBKColor = RGB( 100, 255, 100 );
-					m_wndStatusBar.m_lModeForeColor = RGB( 0, 0, 0 );
+					m_wndStatusBar.m_lModeForeColor = SvDef::Black;
 					Mode += _T("Run ");
 					break;
 				}
 				case SVIM_MODE_OFFLINE:
 				{
 					m_wndStatusBar.m_lModeBKColor = RGB( 255, 128, 128 );
-					m_wndStatusBar.m_lModeForeColor = RGB( 0, 0, 0 );
+					m_wndStatusBar.m_lModeForeColor = SvDef::Black;
 					Mode += _T("Stop ");
 					break;
 				}
 				case SVIM_MODE_REGRESSION:
 				{
-					m_wndStatusBar.m_lModeBKColor = RGB( 255, 0, 255 );
-					m_wndStatusBar.m_lModeForeColor = RGB( 0, 0, 0 );
+					m_wndStatusBar.m_lModeBKColor = SvDef::Fuchsia;
+					m_wndStatusBar.m_lModeForeColor = SvDef::Black;
 					Mode += _T("Regression ");
 					break;
 				}
 				case SVIM_MODE_TEST:
 				{
-					m_wndStatusBar.m_lModeBKColor = RGB( 0, 0, 200 );
-					m_wndStatusBar.m_lModeForeColor = RGB( 255, 255, 255 );
+					m_wndStatusBar.m_lModeBKColor = SvDef::DarkBlue;
+					m_wndStatusBar.m_lModeForeColor = SvDef::White;
 					Mode += _T("Test ");
 					break;
 				}
 				case SVIM_MODE_EDIT:
 				{
-					m_wndStatusBar.m_lModeBKColor = RGB( 255, 255, 75 );
-					m_wndStatusBar.m_lModeForeColor = RGB( 0, 0, 0 );
+					m_wndStatusBar.m_lModeBKColor = SvDef::PaleYellow;
+					m_wndStatusBar.m_lModeForeColor = SvDef::Black;
 					Mode += _T("Edit ");
 					break;
 				}
 				case SVIM_MODE_CHANGING:
 				{
-					m_wndStatusBar.m_lModeBKColor = RGB( 255, 255, 255 );
-					m_wndStatusBar.m_lModeForeColor = RGB( 0, 0, 0 );
+					m_wndStatusBar.m_lModeBKColor = SvDef::White;
+					m_wndStatusBar.m_lModeForeColor = SvDef::Black;
 					Mode += _T("Changing ");
 					break;
 				}
@@ -746,13 +748,13 @@ void SVMainFrame::OnUpdateStatusInfo( CCmdUI *pCmdUI )
 
 				if (l_bMatroxError) 
 				{
-					m_wndStatusBar.m_lErrorBKColor = RGB( 255, 0, 0 );
-					m_wndStatusBar.m_lErrorForeColor = RGB( 0, 0, 0 );
+					m_wndStatusBar.m_lErrorBKColor = SvDef::LightRed;
+					m_wndStatusBar.m_lErrorForeColor = SvDef::Black;
 				}
 				else
 				{
-					m_wndStatusBar.m_lErrorBKColor = RGB( 200, 200, 200 );
-					m_wndStatusBar.m_lErrorForeColor = RGB( 0, 0, 0 );
+					m_wndStatusBar.m_lErrorBKColor = SvDef::KoerberGray;
+					m_wndStatusBar.m_lErrorForeColor = SvDef::Black;
 				}
 
 				CClientDC DC(nullptr);
@@ -1317,7 +1319,7 @@ LRESULT SVMainFrame::OnDisplayChange(WPARAM p_p1, LPARAM p_p2)
 					"Images may not display correctly until this configuration is reopened.") );
 				HANDLE hMessage = ::CreateEvent( nullptr, true, false, nullptr );
 				::SetEvent( hMessage );
-				CallModelessMessageBox( Message, hMessage );
+				SvOi::CallModelessMessageBox( Message, hMessage );
 				::CloseHandle(hMessage);
 			}
 			::SetEvent( m_hDisplayChangedEvent );
@@ -1386,8 +1388,8 @@ void SVMainFrame::OnViewImageDisplayUpdate()
 		SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
 
 		bool ImageUpdate = false;
-		RootObject::getRootChildValue( SvOl::FqnEnvironmentImageUpdate, ImageUpdate );
-		RootObject::setRootChildValue( SvOl::FqnEnvironmentImageUpdate, !ImageUpdate );
+		RootObject::getRootChildValue( SvDef::FqnEnvironmentImageUpdate, ImageUpdate );
+		RootObject::setRootChildValue( SvDef::FqnEnvironmentImageUpdate, !ImageUpdate );
 	}
 }
 
@@ -1397,7 +1399,7 @@ void SVMainFrame::OnUpdateViewImageDisplayUpdate( CCmdUI* pCmdUI )
 	bEnable &= !SVSVIMStateClass::CheckState( SV_STATE_REGRESSION );
 	pCmdUI->Enable( bEnable);
 	bool ImageUpdate( false );
-	RootObject::getRootChildValue( SvOl::FqnEnvironmentImageUpdate, ImageUpdate );
+	RootObject::getRootChildValue( SvDef::FqnEnvironmentImageUpdate, ImageUpdate );
 	pCmdUI->SetCheck( ImageUpdate );
 
 	bool bEnableZoom = false;
@@ -1433,8 +1435,8 @@ void SVMainFrame::OnViewResultDisplayUpdate()
 		SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
 
 		bool ResultOnline = false;
-		RootObject::getRootChildValue( SvOl::FqnEnvironmentResultUpdate, ResultOnline );
-		RootObject::setRootChildValue( SvOl::FqnEnvironmentResultUpdate, !ResultOnline );
+		RootObject::getRootChildValue( SvDef::FqnEnvironmentResultUpdate, ResultOnline );
+		RootObject::setRootChildValue( SvDef::FqnEnvironmentResultUpdate, !ResultOnline );
 	}
 }
 
@@ -1445,7 +1447,7 @@ void SVMainFrame::OnUpdateViewResultDisplayUpdate( CCmdUI* pCmdUI )
 	pCmdUI->Enable( bEnable);
 
 	bool ResultOnline( false );
-	RootObject::getRootChildValue( SvOl::FqnEnvironmentResultUpdate, ResultOnline );
+	RootObject::getRootChildValue( SvDef::FqnEnvironmentResultUpdate, ResultOnline );
 	pCmdUI->SetCheck( ResultOnline );
 }
 

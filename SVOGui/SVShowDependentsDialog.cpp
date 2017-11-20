@@ -12,7 +12,7 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <functional>
 #include "SVShowDependentsDialog.h"
-#include "SVColor.h"
+#include "Definitions/Color.h"
 #include "ObjectInterfaces/IDependencyManager.h"
 #include "ObjectInterfaces/IObjectManager.h"
 #include "Definitions/StringTypeDef.h"
@@ -37,7 +37,7 @@ namespace SvOg
 	const int DependentColumnNumber = 2;
 	const TCHAR* const ColumnHeadings[] = { _T("Client"), _T("Supplier") };
 
-	SVShowDependentsDialog::SVShowDependentsDialog(const SVGuidSet& rSourceSet, SVObjectTypeEnum objectType, LPCTSTR DisplayText, DialogType Type /*= DeleteConfirm*/, CWnd* pParent /*=nullptr*/ )
+	SVShowDependentsDialog::SVShowDependentsDialog(const SVGuidSet& rSourceSet, SvDef::SVObjectTypeEnum objectType, LPCTSTR DisplayText, DialogType Type /*= DeleteConfirm*/, CWnd* pParent /*=nullptr*/ )
 	: CDialog(SVShowDependentsDialog::IDD, pParent)
 	, m_rSourceSet( rSourceSet )
 	, m_objectType( objectType )
@@ -58,7 +58,7 @@ namespace SvOg
 
 			SVGuidSet SourceSet;
 			SourceSet.insert( rTaskObjectID );
-			SVShowDependentsDialog Dlg( SourceSet, SVToolObjectType, DisplayText.c_str() );
+			SVShowDependentsDialog Dlg( SourceSet, SvDef::SVToolObjectType, DisplayText.c_str() );
 
 			Result = Dlg.DoModal();
 		}
@@ -185,7 +185,7 @@ namespace SvOg
 			// We'll cycle the colors through red, green, and light blue.
 
 			//! Default text color is black
-			COLORREF TextColor = SVColor::Black;
+			COLORREF TextColor = SvDef::Black;
 			//! Get the client item text
 			CString Text = m_ListCtrl.GetItemText( static_cast<int> (pLVCD->nmcd.dwItemSpec), 0 );
 			std::string ItemText(Text.GetString());
@@ -196,7 +196,7 @@ namespace SvOg
 				//If item has part of source name then this is the client for suppliers First check if tool name identical or add . then is part of name
 				if( ItemText == *Iter || 0 == ItemText.find(*Iter + '.') )
 				{
-					TextColor = SVColor::Blue;
+					TextColor = SvDef::Blue;
 				}
 			}
 

@@ -48,6 +48,9 @@
     <ClCompile Include="SVOIntelRAIDStatusClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SVRunStatus.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="SVSVIMStateClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -98,10 +101,19 @@
     <ClInclude Include="ErrorNumbers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVSVIMStateClass.h">
+    <ClInclude Include="MessageTextEnum.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MessageTextEnum.h">
+    <ClInclude Include="ProductWorkloadInformation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVImageIndexStruct.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVRunStatus.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVSVIMStateClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -12,7 +12,7 @@
 #pragma region includes
 #include "stdafx.h"
 #include "RemoteCommand.h"
-#include "SVLibrary/SVFileNameClass.h"
+#include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "SVObserver.h"
 #include "Definitions/SVUserMessage.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"

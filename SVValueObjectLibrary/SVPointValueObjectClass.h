@@ -17,7 +17,7 @@
 #include "SVValueObjectClass.h"
 #pragma endregion Includes
 
-class SVPointValueObjectClass : public SVValueObjectClass<SVPOINT>
+class SVPointValueObjectClass : public SVValueObjectClass<SVPoint>
 {
 	SV_DECLARE_CLASS( SVPointValueObjectClass );
 
@@ -30,19 +30,19 @@ public:
 	virtual ~SVPointValueObjectClass();
 
 protected:
-	virtual double ValueType2Double(const SVPOINT& rValue) const override { return E_NOTIMPL; };
-	virtual _variant_t ValueType2Variant( const SVPOINT& rValue ) const override;
-	virtual SVPOINT Variant2ValueType( const _variant_t& rValue ) const override;
+	virtual double ValueType2Double(const SVPoint& rValue) const override { return E_NOTIMPL; };
+	virtual _variant_t ValueType2Variant( const SVPoint& rValue ) const override;
+	virtual SVPoint Variant2ValueType( const _variant_t& rValue ) const override;
 
 	/// Convert a string in a SVPOINT. Throw an exception if the string isn't convertible into a SVPOINT
 	/// \param strValue [in] The input string
 	/// \returns the converted.
-	virtual SVPOINT ConvertString2Type(const std::string& rValue ) const override;
+	virtual SVPoint ConvertString2Type(const std::string& rValue ) const override;
 
 	//! Convert SVDPointClass to std::string 
 	//! \param rValue [in] Type to convert
 	/// \returns the std::string
-	virtual std::string ConvertType2String( const SVPOINT& rValue ) const override;
+	virtual std::string ConvertType2String( const SVPoint& rValue ) const override;
 
 	//! Returns the value object byte size (SVPOINT has x and y value both of type long)
 	//! \returns the number of bytes for the data
@@ -50,7 +50,7 @@ protected:
 
 	//! Returns the variant type of the value object (NOTE this is a special SVObserver VT type!!)
 	//! \returns the VT type
-	virtual DWORD GetType() const override { return VT_POINT; };
+	virtual DWORD GetType() const override { return SvDef::VT_POINT; };
 
 	//! Copies the value object to the memory block
 	//! \param pMemoryBlock [in] Pointer to the byte address of the memory block

@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVContainerLibrary\SVList.h"
+//Moved to precompiled header: #include <list>
 #include "SVOInspectionObj.h"
 
 #pragma endregion Includes
@@ -20,7 +20,7 @@
 class SVOInspectionList  
 {
 public:
-	typedef SVList< SVOInspectionObjPtr > SVInspectionList;
+	typedef std::list< SVOInspectionObjPtr > SVInspectionList;
 	typedef SVInspectionList::iterator iterator;
 	typedef SVInspectionList::const_iterator const_iterator;
 

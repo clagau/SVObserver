@@ -39,7 +39,7 @@ SVInputObjectList::~SVInputObjectList()
 
 bool SVInputObjectList::Create()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVInputObjectListType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVInputObjectListType;
 
 	try
 	{
@@ -131,7 +131,7 @@ SVInputObject* SVInputObjectList::GetInput(const std::string& rInputName) const
 	return pResult;
 }
 
-SVInputObject* SVInputObjectList::GetInputFlyweight(const std::string& rInputName, SVObjectSubTypeEnum ObjectSubType, int GuidIndex)
+SVInputObject* SVInputObjectList::GetInputFlyweight(const std::string& rInputName, SvDef::SVObjectSubTypeEnum ObjectSubType, int GuidIndex)
 {
 	SVInputObject* pResult(nullptr);
 
@@ -153,21 +153,21 @@ SVInputObject* SVInputObjectList::GetInputFlyweight(const std::string& rInputNam
 		{
 			switch (ObjectSubType)
 			{
-			case SVDigitalInputObjectType:
+			case SvDef::SVDigitalInputObjectType:
 			{
 				SVDigitalInputObject* pDigInput = new SVDigitalInputObject;
 				pDigInput->updateGuid(GuidIndex);
 				pResult = pDigInput;
 				break;
 			}
-			case SVRemoteInputObjectType:
+			case SvDef::SVRemoteInputObjectType:
 			{
 				SVRemoteInputObject* pInput = new SVRemoteInputObject;
 				pInput->updateGuid(GuidIndex);
 				pResult = pInput;
 				break;
 			}
-			case SVCameraDataInputObjectType:
+			case SvDef::SVCameraDataInputObjectType:
 				pResult = new SVCameraDataInputObject;
 				break;
 			}
@@ -338,13 +338,13 @@ bool SVInputObjectList::FillInputs( SVIOEntryHostStructPtrVector& p_IOEntries )
 
 			switch (pInput->GetObjectSubType())
 			{
-			case SVDigitalInputObjectType:
+			case SvDef::SVDigitalInputObjectType:
 				pIOEntry->m_ObjectType = IO_DIGITAL_INPUT;
 				break;
-			case SVRemoteInputObjectType:
+			case SvDef::SVRemoteInputObjectType:
 				pIOEntry->m_ObjectType = IO_REMOTE_INPUT;
 				break;
-			case SVCameraDataInputObjectType:
+			case SvDef::SVCameraDataInputObjectType:
 				pIOEntry->m_ObjectType = IO_CAMERA_DATA_INPUT;
 				break;
 			default:
@@ -378,7 +378,7 @@ bool SVInputObjectList::GetRemoteInputCount( long &lCount )
 		{
 			SVInputObject *pInput = l_Iter->second;
 
-			if (SVRemoteInputObjectType == pInput->GetObjectSubType())
+			if (SvDef::SVRemoteInputObjectType == pInput->GetObjectSubType())
 			{
 				lTempCount++;
 			}

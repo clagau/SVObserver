@@ -11,7 +11,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVHBitmapUtilitiesLibrary/SVImageFormatEnum.h"
+#include "Definitions/SVImageFormatEnum.h"
 #pragma endregion Includes
 
 namespace SVMatroxGigeTrigger
@@ -42,7 +42,7 @@ struct SVMatroxGigeAcqParams
 	, Height(480)
 	, XOffsetPos(0)
 	, YOffsetPos(0)
-	, Format(SVImageFormatMono8)
+	, Format(SvDef::SVImageFormatMono8)
 	, TriggerMode(0)
 	, BayerPattern(0)
 	, TriggerType(SVMatroxGigeTrigger::HardwareTrigger)

@@ -12,6 +12,7 @@
 #pragma once
 
 #pragma region Includes
+//Moved to precompiled header: #include <vector>
 #include "SVObjectScriptParser.h"
 #include "SVObjectLibrary/SVObjectScriptEnums.h"
 #include "SVObjectLibrary/SVObjectClass.h"
@@ -223,7 +224,7 @@ inline SVObjectScriptOperandStruct::~SVObjectScriptOperandStruct()
 	// don't bother setting to null
 }
 
-typedef SVVector< SVObjectScriptOperandStruct > SVObjectScriptOperandList;
+typedef std::vector< SVObjectScriptOperandStruct > SVObjectScriptOperandList;
 
 struct SVObjectScriptAliasStruct
 {
@@ -274,8 +275,8 @@ public:
 	MapType m_mapAlias;
 };
 
-typedef SVVector< SVObjectScriptKeywordStruct > SVKeywordTable;
-typedef SVVector< SVObjectScriptDataTypeKeywordStruct > SVDataTypeKeywordTable;
+typedef std::vector<SVObjectScriptKeywordStruct> SVKeywordTable;
+typedef std::vector<SVObjectScriptDataTypeKeywordStruct> SVDataTypeKeywordTable;
 
 class SVObjectScriptParserSVXClass : public SVObjectScriptParserBase
 {

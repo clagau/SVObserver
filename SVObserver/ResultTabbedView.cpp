@@ -11,7 +11,7 @@
 #include "ResultTableListCtrl.h"
 #include "SVIPChildFrm.h"
 #include "SVIPDoc.h"
-#include "SVObjectLibrary/GlobalConst.h"
+#include "Definitions/GlobalConst.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #pragma endregion Includes

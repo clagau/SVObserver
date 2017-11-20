@@ -13,69 +13,19 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
-#include "SVVector.h"
-
+//Moved to precompiled header: #include <vector>
 #pragma endregion Includes
 
 namespace SvCl
 {
-	template <class TYPE>
-	class SVObjectArrayClassTemplate : public SVVector<TYPE>
-	{
-	public:
-		SVObjectArrayClassTemplate();
-		SVObjectArrayClassTemplate(SVObjectArrayClassTemplate<TYPE>& orig);
-		virtual ~SVObjectArrayClassTemplate();
-
-		// this allows assigning from an array of one type to an array of another type
-		template <typename T>
-		SVObjectArrayClassTemplate<TYPE>& operator = ( const SVObjectArrayClassTemplate<T>& rhs )
-		{
-			SetSize( static_cast< int >( rhs.GetSize() ) );
-			for ( int i=0; i < rhs.GetSize(); i++ )
-				ElementAt(i) = rhs.GetAt(i);
-			return *this;
-		}
-
-		// native type assignment for faster operation
-		SVObjectArrayClassTemplate<TYPE>& operator = ( const SVObjectArrayClassTemplate<TYPE>& rhs );
-	};
-
-	template <class TYPE>
-	SVObjectArrayClassTemplate<TYPE>::SVObjectArrayClassTemplate()
-	{
-	}
-
-	template <class TYPE>
-	SVObjectArrayClassTemplate<TYPE>::SVObjectArrayClassTemplate(SVObjectArrayClassTemplate<TYPE>& orig)
-	{
-		(*this) = orig;
-	}
-
-	template <class TYPE>
-	SVObjectArrayClassTemplate<TYPE>::~SVObjectArrayClassTemplate()
-	{
-	}
-
-	template <class TYPE>
-	SVObjectArrayClassTemplate<TYPE>& SVObjectArrayClassTemplate<TYPE>::operator = (const SVObjectArrayClassTemplate<TYPE>& rhs)
-	{
-		if ( this != &rhs )
-		{
-			Copy( rhs );
-		}
-
-		return *this;
-	}
-
-
-	typedef SVObjectArrayClassTemplate<POINT> SVObjectPointArrayClass;
-	typedef SVObjectArrayClassTemplate<BOOL> SVObjectBoolArrayClass;
-	typedef SVObjectArrayClassTemplate<BYTE> SVObjectByteArrayClass;
-	typedef SVObjectArrayClassTemplate<long> SVObjectLongArrayClass;
-	typedef SVObjectArrayClassTemplate<double> SVObjectDoubleArrayClass;
-	typedef SVObjectArrayClassTemplate<DWORD> SVObjectDWordArrayClass;
-	typedef SVObjectArrayClassTemplate<__int64> SVObjectInt64ArrayClass;
-	typedef SVObjectArrayClassTemplate<_variant_t> SVObjectVariantArrayClass;
-	typedef SVObjectArrayClassTemplate<std::string> SVObjectSVStringArrayClass;
+	typedef std::vector<POINT> SVObjectPointArrayClass;
+	typedef std::vector<BOOL> SVObjectBoolArrayClass;
+	typedef std::vector<BYTE> SVObjectByteArrayClass;
+	typedef std::vector<char> SVObjectCharArrayClass;
+	typedef std::vector<long> SVObjectLongArrayClass;
+	typedef std::vector<double> SVObjectDoubleArrayClass;
+	typedef std::vector<DWORD> SVObjectDWordArrayClass;
+	typedef std::vector<__int64> SVObjectInt64ArrayClass;
+	typedef std::vector<_variant_t> SVObjectVariantArrayClass;
+	typedef std::vector<std::string> SVObjectStdStringArrayClass;
 } //namespace SvCl

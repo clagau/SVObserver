@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "SVContainerLibrary/SVVector.h"
+//Moved to precompiled header: #include <vector>
 
 struct SVExtentPointStruct  
 {
@@ -41,6 +41,6 @@ struct SVExtentPointStruct
 	double m_dPositionY;
 };
 
-typedef SVVector<SVExtentPointStruct> SVExtentPointStructVector;
+typedef std::vector<SVExtentPointStruct> SVExtentPointStructVector;
 
 

@@ -262,7 +262,7 @@ static void checkGlobalConstants( const SvDef::GlobalConstantDataSet& rImportedG
 
 	BasicValueObjects::ValueVector GlobalObjects;
 
-	RootObject::getRootChildObjectList( GlobalObjects, SvOl::FqnGlobal, 0 );
+	RootObject::getRootChildObjectList( GlobalObjects, SvDef::FqnGlobal, 0 );
 	BasicValueObjects::ValueVector::const_iterator Iter( GlobalObjects.begin() );
 	while( GlobalObjects.end() != Iter && !Iter->empty() )
 	{

@@ -12,14 +12,14 @@
 #pragma once
 
 #pragma region Includes
-#include "SVContainerLibrary/SVMap.h"
+//Moved to precompiled header: #include <map>
 #include "SVImageLibrary/SVLightReference.h"
 #include "SVImageLibrary/SVLut.h"
 #include "SVObjectLibrary/SVObserverTemplate.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVSharedMemoryLibrary/SVProductFilterEnum.h"
 
-#include "SVSystemLibrary/SVFileNameArrayClass.h"
+#include "SVFileSystemLibrary/SVFileNameArrayClass.h"
 #include "SVInfoStructs.h"
 #include "SVInspectionProcess.h"
 #include "SVSystemLibrary/SVObserverEnums.h"
@@ -56,7 +56,6 @@ class SVRemoteOutputObject;
 class SVPPQObject;
 
 struct SVConfigurationAcquisitionDeviceInfoStruct;
-typedef std::vector<SVInspectionProcess*> SVInspectionProcessPtrList;
 typedef SvXml::SVXMLMaterialsTree SVTreeType;
 #pragma endregion Declarations
 
@@ -88,7 +87,7 @@ class SVConfigurationObject : public SVObjectClass
 	SV_DECLARE_CLASS( SVConfigurationObject );
 
 public:
-	typedef SVMap<std::string, SVConfigurationAcquisitionDeviceInfoStruct*> SVAcquisitionDeviceMap;
+	typedef std::map<std::string, SVConfigurationAcquisitionDeviceInfoStruct*> SVAcquisitionDeviceMap;
 
 	SVConfigurationObject( LPCSTR ObjectName );
 	SVConfigurationObject( SVObjectClass* pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVCONFIGURATIONOBJECT );
@@ -201,10 +200,10 @@ public:
                                SVLightReference*& pLight,
 							   SVLut*& rpLut,
 							   SVDeviceParamCollection*& rpDeviceParams ) const;
-	SVAcquisitionDeviceMap::iterator GetAcquisitionDeviceStartPosition() const;
+	SVAcquisitionDeviceMap::iterator GetAcquisitionDeviceStartPosition();
 	SVAcquisitionDeviceMap::iterator GetAcquisitionDeviceEndPosition();
-	void GetAcquisitionDeviceNextAssoc( SVAcquisitionDeviceMap::iterator& rNextPosition, std::string& rKey ) const;
-	void GetAcquisitionDeviceNextAssoc( SVAcquisitionDeviceMap::iterator& rNextPosition, std::string& rKey, 
+	void GetAcquisitionDeviceNextAssoc( SVAcquisitionDeviceMap::const_iterator& rNextPosition, std::string& rKey ) const;
+	void GetAcquisitionDeviceNextAssoc( SVAcquisitionDeviceMap::const_iterator& rNextPosition, std::string& rKey,
 	                                    SVFileNameArrayClass*& pFiles,
                                         SVLightReference*& pLight,
 										SVLut*& rpLut,
@@ -217,7 +216,7 @@ public:
 	bool GetChildObjectByName( LPCTSTR tszName, SvTi::SVTriggerObject** ppTrigger ) const;
 
 	bool AddPPQ( SVPPQObject* pPPQ );
-	bool RemovePPQ( SVPPQObject* pPPQ );
+	bool RemovePPQ( const SVPPQObject* const pPPQ );
 	long GetPPQCount() const;
 	SVPPQObject* GetPPQ( long lIndex ) const;
 	bool GetChildObjectByName( LPCTSTR tszName, SVPPQObject** ppPPQ ) const;
@@ -233,7 +232,7 @@ public:
 	bool RemoveInspection( SVInspectionProcess* pInspection );
 	long GetInspectionCount( ) const;
 	SVInspectionProcess* GetInspection( long lIndex ) const;
-	void GetInspections(SVInspectionProcessPtrList& rvecInspections ) const;
+	const SVInspectionProcessVector& GetInspections() const { return m_arInspectionArray; };
 	bool GetChildObjectByName( LPCTSTR tszName, SVInspectionProcess** ppInspection ) const;
 	bool GetInspectionObject( LPCTSTR tszFullyQualifiedNameOfChild, SVInspectionProcess** ppInspection ) const;
 
@@ -422,7 +421,7 @@ private:
 	//************************************
 	HRESULT LoadMonitoredObjectList( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent, const std::string& listName, MonitoredObjectList& rList );
 
-	SvTi::SVTriggerObjectPtrVector        m_arTriggerArray;
+	SvTi::SVTriggerObjectPtrVector  m_arTriggerArray;
 	SVPPQObjectPtrVector            m_arPPQArray;
 	SVVirtualCameraPtrVector        m_arCameraArray;
 	SVInspectionProcessVector   m_arInspectionArray;
@@ -430,7 +429,7 @@ private:
 	unsigned long				m_ulVersion;
 	volatile bool               m_bConfigurationValid;
 
-	SVAcquisitionDeviceMap mAcquisitionDeviceMap;
+	SVAcquisitionDeviceMap m_AcquisitionDeviceMap;
 };
 
 typedef SVSharedPtr< SVConfigurationObject > SVConfigurationObjectPtr;

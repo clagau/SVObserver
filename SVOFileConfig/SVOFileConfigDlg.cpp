@@ -28,7 +28,7 @@
 #include "AutoBuild/AutoBuild.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVXMLLibrary/SVObjectXMLWriter.h"
-#include "SVObjectLibrary/GlobalConst.h"
+#include "Definitions/GlobalConst.h"
 #include "SVXMLLibrary/TreeToXml.h"
 
 
@@ -273,7 +273,7 @@ void SVOFileConfigDlg::OnButtonsaveSvx()
 		{
 			SvXml::SVObjectXMLWriter writer(XMLOutFile);
 			writer.setNewLine( true );
-			std::string RootName( SvOl::FqnRoot );
+			std::string RootName( SvDef::FqnRoot );
 			writer.WriteRootElement( RootName.c_str() );
 			writer.WriteSchema();
 			SvXml::TreeToXMl::CopyTreeNodeToWriter<SvXml::SVXMLCTreeCtrl>(m_XMLCTree,m_XMLCTree.getRoot(),writer );

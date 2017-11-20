@@ -12,7 +12,7 @@
 
 #pragma region Includes
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
-#include "SVHBitmapUtilitiesLibrary/SVImageFormatEnum.h"
+#include "Definitions/SVImageFormatEnum.h"
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #pragma endregion Includes
 
@@ -56,7 +56,7 @@ public:
 	static HRESULT CreateBarCodeBuffer( SVBarCodeBufferInfoClass* pDataInfo );
 private:
 	static HRESULT GetOutputImageCreateData( const SVImageInfoClass &p_rsvInfo,
-															      SVImageFormatEnum &p_reFormat,
+															      SvDef::SVImageFormatEnum &p_reFormat,
 															      int &p_riPixelDepth,
 															      int &p_riBandNumber,
 															      int &p_riBandLink,
@@ -64,7 +64,7 @@ private:
 															      long &p_rlHeight );
 	
 	static HRESULT GetChildImageCreateData( const SVImageInfoClass &p_rsvInfo,
-															     SVImageFormatEnum &p_reFormat,
+															     SvDef::SVImageFormatEnum &p_reFormat,
 															     int &p_riPixelDepth,
 															     int &p_riBandNumber,
 															     int &p_riBandLink,

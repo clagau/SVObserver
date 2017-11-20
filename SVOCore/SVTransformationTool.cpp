@@ -17,7 +17,7 @@
 #include "SVEvaluateRotationXClass.h"
 #include "SVEvaluateRotationYClass.h"
 #include "SVEvaluateRotationAngleClass.h"
-#include "SVOCore/SVImageTransform.h"
+#include "SVImageTransform.h"
 #include "SVObjectLibrary/SVClsIds.h"
 #pragma endregion Includes
 
@@ -32,8 +32,8 @@ SVTransformationToolClass::SVTransformationToolClass( SVObjectClass* POwner, int
 void SVTransformationToolClass::init()
 {
 	// Set up your type...
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SVTransformationToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvDef::SVTransformationToolObjectType;
 
 	// Identify our input type needs
 

@@ -20,42 +20,35 @@ SVLutTransformOperationMap SVLutTransform::mMapTypes;
 
 SVLutTransformOperationMap::SVLutTransformOperationMap()
 {
-	maTypeInfo.SetAtGrow(LutTransformTypeNormal, SVLutTransformTypeInfo(LutTransformTypeNormal, new SVLutTransformOperationNormal, _T("Normal")) );
-	maTypeInfo.SetAtGrow(LutTransformTypeInversion, SVLutTransformTypeInfo(LutTransformTypeInversion, new SVLutTransformOperationInvert, _T("Invert")) );
-	maTypeInfo.SetAtGrow(LutTransformTypeSign, SVLutTransformTypeInfo(LutTransformTypeSign, new SVLutTransformOperationSign(), _T("Sign")) );
-	maTypeInfo.SetAtGrow(LutTransformTypeClip, SVLutTransformTypeInfo(LutTransformTypeClip, new SVLutTransformOperationClip(), _T("Clip")) );
-	maTypeInfo.SetAtGrow(LutTransformTypeFreeform, SVLutTransformTypeInfo(LutTransformTypeFreeform, new SVLutTransformOperationFreeform(), _T("Freeform")) );
-	maTypeInfo.SetAtGrow(LutTransformTypeTwoKnee, SVLutTransformTypeInfo(LutTransformTypeTwoKnee, new SVLutTransformOperationTwoKnee(), _T("Two Knee")) );
+	m_TypeInfoMap[LutTransformTypeNormal] = SVLutTransformTypeInfo(LutTransformTypeNormal, new SVLutTransformOperationNormal, _T("Normal"));
+	m_TypeInfoMap[LutTransformTypeInversion] = SVLutTransformTypeInfo(LutTransformTypeInversion, new SVLutTransformOperationInvert, _T("Invert"));
+	m_TypeInfoMap[LutTransformTypeSign] = SVLutTransformTypeInfo(LutTransformTypeSign, new SVLutTransformOperationSign(), _T("Sign"));
+	m_TypeInfoMap[LutTransformTypeClip] = SVLutTransformTypeInfo(LutTransformTypeClip, new SVLutTransformOperationClip(), _T("Clip"));
+	m_TypeInfoMap[LutTransformTypeFreeform] = SVLutTransformTypeInfo(LutTransformTypeFreeform, new SVLutTransformOperationFreeform(), _T("Freeform"));
+	m_TypeInfoMap[LutTransformTypeTwoKnee] = SVLutTransformTypeInfo(LutTransformTypeTwoKnee, new SVLutTransformOperationTwoKnee(), _T("Two Knee"));
 };
 
 SVLutTransformOperationMap::~SVLutTransformOperationMap()
 {
-	for (int i=0; i<MAX_LUT_TRANSFORM_TYPE; i++)
+	for (auto& rEntry : m_TypeInfoMap)
 	{
-		if (maTypeInfo[i].m_pType)
-		{
-			delete maTypeInfo[i].m_pType;
-		}
+		delete rEntry.second.m_pType;
 	}
 }
 
 SVLutTransformOperation* SVLutTransformOperationMap::GetType(SVLutTransformOperationEnum e)
 {
-	if (e < MAX_LUT_TRANSFORM_TYPE && (int)e >= 0)
-	{
-		return maTypeInfo[e].m_pType;
-	}
-	return nullptr;
+	return (m_TypeInfoMap.end() != m_TypeInfoMap.find(e)) ? m_TypeInfoMap[e].m_pType : nullptr;
 }
 
 SVLutTransformOperationEnum SVLutTransformOperationMap::GetType(const SVLutTransformOperation* pType)
 {
 	assert( pType );
-	for (int i=0; i < MAX_LUT_TRANSFORM_TYPE; i++)
+	for (auto const& rEntry : m_TypeInfoMap)
 	{
-		if (pType && maTypeInfo[i].m_pType && typeid(*maTypeInfo[i].m_pType) == typeid(*pType))
+		if (pType && rEntry.second.m_pType && typeid(*rEntry.second.m_pType) == typeid(*pType))
 		{
-			return maTypeInfo[i].m_eType;
+			return rEntry.second.m_eType;
 		}
 	}
 	return LutTransformTypeUnknown;
@@ -63,24 +56,17 @@ SVLutTransformOperationEnum SVLutTransformOperationMap::GetType(const SVLutTrans
 
 const SVLutTransformOperationMap::SVLutTransformTypeInfo* SVLutTransformOperationMap::GetInfo(SVLutTransformOperationEnum e)
 {
-	for (int i=0; i < MAX_LUT_TRANSFORM_TYPE; i++)
-	{
-		if (maTypeInfo[i].m_eType == e)
-		{
-			return &maTypeInfo.ElementAt(i);
-		}
-	}
-	return nullptr;
+	return (m_TypeInfoMap.end() != m_TypeInfoMap.find(e)) ? &m_TypeInfoMap[e] : nullptr;
 }
 
 const SVLutTransformOperationMap::SVLutTransformTypeInfo* SVLutTransformOperationMap::GetInfo(const SVLutTransformOperation* pType)
 {
 	assert( pType );
-	for (int i=0; i < MAX_LUT_TRANSFORM_TYPE; i++)
+	for (auto const& rEntry : m_TypeInfoMap)
 	{
-		if (pType && maTypeInfo[i].m_pType && typeid(*maTypeInfo[i].m_pType) == typeid(*pType))
+		if (pType && rEntry.second.m_pType && typeid(*rEntry.second.m_pType) == typeid(*pType))
 		{
-			return &maTypeInfo.ElementAt(i);
+			return &rEntry.second;
 		}
 	}
 	return nullptr;
@@ -88,11 +74,11 @@ const SVLutTransformOperationMap::SVLutTransformTypeInfo* SVLutTransformOperatio
 
 const SVLutTransformOperationMap::SVLutTransformTypeInfo* SVLutTransformOperationMap::GetInfo(const std::string& rType)
 {
-	for (int i=0; i < MAX_LUT_TRANSFORM_TYPE; i++)
+	for (auto const& rEntry : m_TypeInfoMap)
 	{
-		if (maTypeInfo[i].m_Type == rType && !rType.empty())
+		if (rType == rEntry.second.m_Type && !rType.empty())
 		{
-			return &maTypeInfo.ElementAt(i);
+			return &rEntry.second;
 		}
 	}
 	return nullptr;

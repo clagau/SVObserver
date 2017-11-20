@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVHBitmapUtilitiesLibrary/SVImageFormatEnum.h"
+#include "Definitions/SVImageFormatEnum.h"
 #include "Definitions/SVImageEnums.h"
 #pragma endregion Includes
 
@@ -21,7 +21,7 @@ class SVCameraFormat
 public:
 	std::string m_strName;
 	std::string m_strDescription;
-	SVImageFormatEnum m_eImageType;
+	SvDef::SVImageFormatEnum m_eImageType;
 	long m_lWidthMax;
 	long m_lHeightMax;
 	long m_lWidth;

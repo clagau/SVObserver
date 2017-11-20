@@ -21,11 +21,11 @@ SVStringResultClass::SVStringResultClass( SVObjectClass* POwner, int StringResou
 				  :SVResultClass( POwner, StringResourceID )
 {
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVResultStringObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVResultObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVResultStringObjectType;
 
 	// Identify our input type needs
-	m_inputObjectInfo.SetInputObjectType(SVValueObjectType, SVStringValueObjectType );
+	m_inputObjectInfo.SetInputObjectType(SvDef::SVValueObjectType, SvDef::SVStringValueObjectType );
 	m_inputObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputObjectInfo, _T( "StringResultValue" ) );
 

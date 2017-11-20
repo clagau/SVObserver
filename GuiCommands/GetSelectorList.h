@@ -57,7 +57,7 @@ namespace SvCmd
 				// which is needed to get the name for exclusion in filtering, so get the Toolset as well 
 				if (RangeSelectorFilterType == m_filterType)
 				{
-					pTaskObject = dynamic_cast<SvOi::ITaskObject *>(pObject->GetAncestorInterface(SVToolSetObjectType));
+					pTaskObject = dynamic_cast<SvOi::ITaskObject *>(pObject->GetAncestorInterface(SvDef::SVToolSetObjectType));
 				}
 
 				if (nullptr == pTaskObject)
@@ -76,7 +76,7 @@ namespace SvCmd
 					case RangeSelectorFilterType:
 					{
 						std::string name;
-						hr = pObject->GetCompleteNameToType(SVToolObjectType, name);
+						hr = pObject->GetCompleteNameToType(SvDef::SVToolObjectType, name);
 						if (S_OK == hr)
 						{
 							RangeSelectorFilter filter(name);

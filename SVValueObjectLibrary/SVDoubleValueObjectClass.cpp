@@ -65,15 +65,15 @@ HRESULT SVDoubleValueObjectClass::SetObjectValue( SVObjectAttributeClass* pDataO
 {
 	HRESULT Result( E_FAIL );
 	
-	SvCl::SVObjectArrayClassTemplate<ValueType> svArray;	// for default values
+	std::vector<ValueType> svArray;	// for default values
 
 	if ( isLegacyVectorObjectCompatibility() )
 	{
 		if ( pDataObject->GetAttributeData( _T("bDefault"), svArray) )
 		{
-			if ( svArray.GetSize() > 0 )
+			if (0 < svArray.size())
 			{
-				DefaultValue() = svArray[ svArray.GetSize()-1 ];
+				DefaultValue() = svArray[ svArray.size()-1 ];
 			}
 			Result = S_OK;
 			return Result;
@@ -132,7 +132,7 @@ void SVDoubleValueObjectClass::WriteDefaultValues(SVObjectWriter& rWriter)
 
 void SVDoubleValueObjectClass::LocalInitialize()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVDoubleValueObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVDoubleValueObjectType;
 	DefaultValue() = 0.0;
 	SetTypeName( _T("Decimal") );
 	setOutputFormat( _T("%lf") );

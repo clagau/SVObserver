@@ -53,7 +53,7 @@ namespace SvOg
 	static const std::string EnabledTag("Enabled");
 
 	#pragma region Constructor
-	FormulaController::FormulaController(const GUID& rInspectionID, const GUID& rTaskObjectID, const SVObjectTypeInfoStruct& rInfo, bool bEnabledReadOnly)
+	FormulaController::FormulaController(const GUID& rInspectionID, const GUID& rTaskObjectID, const SvDef::SVObjectTypeInfoStruct& rInfo, bool bEnabledReadOnly)
 	: m_InspectionID(rInspectionID)
 	, m_TaskObjectID(rTaskObjectID)
 	, m_info(rInfo)
@@ -67,7 +67,7 @@ namespace SvOg
 	FormulaController::FormulaController(const GUID& rInspectionID, const GUID& rTaskObjectID, const GUID& rEquationID, bool bEnabledReadOnly)
 		: m_InspectionID(rInspectionID)
 		, m_TaskObjectID(rTaskObjectID)
-		, m_info(SVObjectTypeInfoStruct())
+		, m_info(SvDef::SVObjectTypeInfoStruct())
 		, m_EquationID(rEquationID)
 		, m_taskValues(SvOg::BoundValues(rInspectionID, rTaskObjectID, boost::assign::map_list_of(EnabledTag, SvOg::BoundValue(SVToolEnabledObjectGuid, bEnabledReadOnly))))
 		, m_equationValues(SvOg::BoundValues(rInspectionID, rTaskObjectID, boost::assign::map_list_of(EnabledTag, SvOg::BoundValue(SVEquationEnabledObjectGuid, bEnabledReadOnly))))
@@ -117,8 +117,8 @@ namespace SvOg
 
 	HRESULT FormulaController::IsOwnerAndEquationEnabled(bool& ownerEnabled, bool& equationEnabled) const
 	{
-		//Only when the controller is of type SVConditionalObjectType
-		if (SVConditionalObjectType == m_info.SubType)
+		//Only when the controller is of type SvDef::SVConditionalObjectType
+		if (SvDef::SVConditionalObjectType == m_info.SubType)
 		{
 			ownerEnabled = m_taskValues.Get<bool>(EnabledTag);
 			equationEnabled = m_equationValues.Get<bool>(EnabledTag);
@@ -134,7 +134,7 @@ namespace SvOg
 	HRESULT FormulaController::SetOwnerAndEquationEnabled(bool ownerEnabled, bool equationEnabled)
 	{
 		HRESULT hr = S_OK;
-		if (SVConditionalObjectType == m_info.SubType)
+		if (SvDef::SVConditionalObjectType == m_info.SubType)
 		{
 			m_taskValues.Set<bool>(EnabledTag, ownerEnabled);
 			m_equationValues.Set<bool>(EnabledTag, equationEnabled);
@@ -251,8 +251,8 @@ namespace SvOg
 
 	void FormulaController::init()
 	{
-		//Only when the controller is of type SVConditionalObjectType
-		if (SVConditionalObjectType == m_info.SubType)
+		//Only when the controller is of type SvDef::SVConditionalObjectType
+		if (SvDef::SVConditionalObjectType == m_info.SubType)
 		{
 			m_taskValues.Init();
 			m_equationValues.Init();
@@ -263,7 +263,7 @@ namespace SvOg
 			typedef SvCmd::GetInstanceIDByTypeInfo Command;
 			typedef SVSharedPtr<Command> CommandPtr;
 			// check for Math Container...
-			if (SVMathContainerObjectType == m_info.ObjectType)
+			if (SvDef::SVMathContainerObjectType == m_info.ObjectType)
 			{
 				// Get the Math Container
 				CommandPtr commandPtr(new Command(m_TaskObjectID, m_info));
@@ -272,7 +272,7 @@ namespace SvOg
 				if (S_OK == hr)
 				{
 					// Get the Equation
-					SVObjectTypeInfoStruct info(SVEquationObjectType, SVMathEquationObjectType);
+					SvDef::SVObjectTypeInfoStruct info(SvDef::SVEquationObjectType, SvDef::SVMathEquationObjectType);
 					GUID containerID = commandPtr->GetInstanceID(); 
 					commandPtr = CommandPtr(new Command(containerID, info));
 					SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);

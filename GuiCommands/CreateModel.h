@@ -18,7 +18,6 @@
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include "SVMatroxLibrary/SVMatroxSimpleEnums.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
-#include "SVLibrary/SVFileNameClass.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVStatusLibrary/MessageContainer.h"
@@ -54,24 +53,22 @@ namespace SvCmd
 				SvOi::ITaskObject* pTaskObject = dynamic_cast<SvOi::ITaskObject*>(pObject);
 				if ( nullptr != pTaskObject && pTaskObject->getSpecialImage(SvDef::PatternModelImageName, imageHandle)  && !imageHandle->empty() )
 				{
-					SVFileNameClass svFileName( m_FileName.c_str() );
-
+					TCHAR FileExtension[_MAX_EXT];
+					_tsplitpath(m_FileName.c_str(), nullptr, nullptr, nullptr, FileExtension);
 					// Now save the Model Image buffer to a file
 					SVMatroxFileTypeEnum FileFormatID = SVFileMIL; // Set as default.
-					if ( 0 == SvUl::CompareNoCase( svFileName.GetExtension(), std::string( _T(".bmp") ) ) )
+					if ( 0 == SvUl::CompareNoCase( std::string(FileExtension), std::string( _T(".bmp") ) ) )
 					{
 						FileFormatID = SVFileBitmap;
 					}
-					if ( 0 == SvUl::CompareNoCase( svFileName.GetExtension(), std::string( _T(".tif") ) ) )
+					if ( 0 == SvUl::CompareNoCase(std::string(FileExtension), std::string( _T(".tif") ) ) )
 					{
 						FileFormatID = SVFileTiff;
 					}
 
-					std::string strFileName = m_FileName;
-
 					SVMatroxBuffer milBuffer;
 					imageHandle->GetBuffer(milBuffer);
-					HRESULT Code = SVMatroxBufferInterface::Export( milBuffer, strFileName, FileFormatID );
+					HRESULT Code = SVMatroxBufferInterface::Export( milBuffer, m_FileName, FileFormatID );
 				}
 				else
 				{

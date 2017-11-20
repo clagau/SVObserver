@@ -192,7 +192,7 @@ namespace SvSml
 				DWORD storeId = m_InspectionInfoMap[inspectionName]->StoreIndex;
 				switch (MEMIt->second->data.ObjectType)
 				{
-				case SVImageObjectType:
+				case SvDef::SVImageObjectType:
 				{
 					MEMIt->second->data.InspectionStoreId = storeId;
 					MEMIt->second->data.ItemId = ImageItemIndexes[storeId]++;

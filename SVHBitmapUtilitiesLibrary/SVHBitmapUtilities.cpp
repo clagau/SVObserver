@@ -52,9 +52,9 @@ BITMAPINFO* SVIHBitmapUtilities::CreateBitmapInfoStruct( SVImageDefinitionStruct
 	BITMAPINFO* pbmi; 
 	WORD wClrBits = 8;
 	
-	if ( rImageDef.eImageFormat == SVImageFormatRGB888 )
+	if ( rImageDef.eImageFormat == SvDef::SVImageFormatRGB888 )
 		wClrBits = 24;
-	else if ( rImageDef.eImageFormat == SVImageFormatRGB8888 )
+	else if ( rImageDef.eImageFormat == SvDef::SVImageFormatRGB8888 )
 		wClrBits = 32;
 	
 	// Allocate memory for the BITMAPINFO structure. (This structure 
@@ -115,16 +115,16 @@ HRESULT SVIHBitmapUtilities::SVImageInfoToImageDefinitionStruct( const BITMAPINF
 
 	if( rInfo.biBitCount == 8 )
 	{
-		rImageDef.eImageFormat = SVImageFormatMono8;
+		rImageDef.eImageFormat = SvDef::SVImageFormatMono8;
 	}
 	else
 	if( rInfo.biBitCount == 32 )
 	{
-		rImageDef.eImageFormat = SVImageFormatRGB8888;
+		rImageDef.eImageFormat = SvDef::SVImageFormatRGB8888;
 	}
 	else
 	{
-		rImageDef.eImageFormat = SVImageFormatUnknown;
+		rImageDef.eImageFormat = SvDef::SVImageFormatUnknown;
 	}
 	return S_OK;
 }// end SVImageInfoToImageDefinitionStruct
@@ -143,16 +143,16 @@ SVDIBITMAPINFO SVIHBitmapUtilities::SVCreateHBitmap( SVImageDefinitionStruct& rI
 
 	switch( rImageDef.eImageFormat )
 	{
-		case  SVImageFormatMono8:
+		case  SvDef::SVImageFormatMono8:
 		{
 			memcpy(&(pbmInfo->bmiColors[0]), pColorTable, sizeof(RGBQUAD) * 256);
 			break;
 		}
-		case SVImageFormatRGB888:
+		case SvDef::SVImageFormatRGB888:
 			break;
-		case SVImageFormatRGB8888:
+		case SvDef::SVImageFormatRGB8888:
 			break;
-		case SVImageFormatUnknown:
+		case SvDef::SVImageFormatUnknown:
 			break;
 		default:
 			break;
@@ -179,7 +179,7 @@ SVDIBITMAPINFO SVIHBitmapUtilities::SVCreateHBitmap( SVImageDefinitionStruct& rI
 */
 HRESULT SVIHBitmapUtilities::SVImageInfoToNewDIB( const BITMAPINFOHEADER& info, SVDIBITMAPINFO& rsvDIB )
 {
-	static SVColorTable<SVImageFormatMono8> l_MonoColorTable;
+	static SVColorTable<SvDef::SVImageFormatMono8> l_MonoColorTable;
 
 	HRESULT hr = S_OK;
 

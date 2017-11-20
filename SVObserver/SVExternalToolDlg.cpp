@@ -79,7 +79,7 @@ SVExternalToolDlg::SVExternalToolDlg( const SVGUID& rInspectionID, const SVGUID&
 	typedef SvCmd::GetInstanceIDByTypeInfo Command;
 	typedef SVSharedPtr<Command> CommandPtr;
 
-	SVObjectTypeInfoStruct info(SVExternalToolTaskObjectType, SVNotSetSubObjectType);
+	SvDef::SVObjectTypeInfoStruct info(SvDef::SVExternalToolTaskObjectType, SvDef::SVNotSetSubObjectType);
 
 	CommandPtr commandPtr = CommandPtr(new Command(m_ToolObjectID, info));
 	SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
@@ -485,7 +485,7 @@ bool SVExternalToolDlg::ShowDependentsDlg()
 			ObjectCheckList.insert( (*Iter)->GetUniqueObjectID());
 		}
 
-		SvOg::SVShowDependentsDialog Dlg( ObjectCheckList, SVToolObjectType, DisplayText.c_str() );
+		SvOg::SVShowDependentsDialog Dlg( ObjectCheckList, SvDef::SVToolObjectType, DisplayText.c_str() );
 
 		Result = (IDOK == Dlg.DoModal());
 	}

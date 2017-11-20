@@ -12,7 +12,7 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <map>
-#include "SVContainerLibrary/SVVector.h"
+//Moved to precompiled header: #include <vector>
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVTimerLibrary/SVClock.h"
 #pragma endregion Includes
@@ -69,11 +69,11 @@ private:
 	 
 	typedef std::map<unsigned long, char> CharMap;	
 	
-	SVVector<long> m_arRemoteFontIdentifiers;
-	SVVector<SVMatroxOcr> m_arRemoteFontHandles;
-	SVVector<SvTl::SVTimeStamp> m_arRemoteFontTimestamps;
-	SVVector<SVMatroxBuffer> m_arRemoteFontImageHandles;
-	SVVector<long> m_arLastCharIds;
+	std::vector<long> m_arRemoteFontIdentifiers;
+	std::vector<SVMatroxOcr> m_arRemoteFontHandles;
+	std::vector<SvTl::SVTimeStamp> m_arRemoteFontTimestamps;
+	std::vector<SVMatroxBuffer> m_arRemoteFontImageHandles;
+	std::vector<long> m_arLastCharIds;
 
 	typedef std::map< long, CharMap > CharMappings;
 

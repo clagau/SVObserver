@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVContainerLibrary/SVList.h"
+//Moved to precompiled header: #include <list>
 #include "CameraLibrary/SVDeviceParamCollection.h"
 #include "SVOCameraObj.h"
 #pragma endregion Includes
@@ -20,7 +20,7 @@
 class SVOCameraList  
 {
 public:
-	typedef SVList< SVOCameraObjPtr > SVCameraList;
+	typedef std::list< SVOCameraObjPtr > SVCameraList;
 	typedef SVCameraList::iterator iterator;
 	typedef SVCameraList::const_iterator const_iterator;
 

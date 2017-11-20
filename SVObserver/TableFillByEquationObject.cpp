@@ -147,8 +147,8 @@ bool TableFillByEquationObject::onRun( SVRunStatusClass& rRunStatus, SvStl::Mess
 void TableFillByEquationObject::Initialize()
 {
 	// Set up your type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = TableObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType    = TableFillObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::TableObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvDef::TableFillObjectType;
 }
 
 SVGUID TableFillByEquationObject::getNextFreeEmbeddedColumGUID()

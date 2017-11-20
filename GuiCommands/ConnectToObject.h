@@ -20,7 +20,7 @@ namespace SvCmd
 {
 	struct ConnectToObject: public boost::noncopyable
 	{
-		ConnectToObject(const GUID& rObjectID, const std::string& rInputName, const GUID& rNewID, SVObjectTypeEnum objectType) 
+		ConnectToObject(const GUID& rObjectID, const std::string& rInputName, const GUID& rNewID, SvDef::SVObjectTypeEnum objectType) 
 			: m_InstanceID(rObjectID), m_InputName(rInputName), m_NewID(rNewID), m_objectType(objectType) {}
 
 		// This method is where the real separation would occur by using sockets/named pipes/shared memory
@@ -46,6 +46,6 @@ namespace SvCmd
 		GUID m_InstanceID;
 		std::string m_InputName;
 		GUID m_NewID;
-		SVObjectTypeEnum m_objectType;
+		SvDef::SVObjectTypeEnum m_objectType;
 	};
 } //namespace SvCmd

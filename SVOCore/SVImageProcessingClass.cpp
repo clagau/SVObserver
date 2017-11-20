@@ -17,7 +17,7 @@
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVBarCodeBuffer.h"
 #include "SVDataBuffer.h"
-#include "SVLibrary/SVFileNameClass.h"
+#include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "SVUtilityLibrary/SVImageCopyUtility.h"
 #include "Definitions/StringTypeDef.h"
@@ -31,7 +31,7 @@ HRESULT SVImageProcessingClass::CreateImageBuffer( const SVImageInfoClass& rInfo
 {
 	HRESULT Result( S_OK );
 
-	SVImageFormatEnum l_eFormat;
+	SvDef::SVImageFormatEnum l_eFormat;
 	int l_iBandNumber = 0;
 	int l_iBandLink = 0;
 	int l_iPixelDepth = 0;
@@ -47,17 +47,17 @@ HRESULT SVImageProcessingClass::CreateImageBuffer( const SVImageInfoClass& rInfo
 	{
 		switch( l_eFormat )
 		{
-		case SVImageFormatRGB565:
+		case SvDef::SVImageFormatRGB565:
 			{
 				format = SVBuffAttImageProcPackedOffBoardDibPagedRgb16;
 				break;
 			}
-		case SVImageFormatRGB888:
+		case SvDef::SVImageFormatRGB888:
 			{
 				format = SVBuffAttImageProcPackedOffBoardDibPagedBgr24;
 				break;
 			}
-		case SVImageFormatRGB8888:
+		case SvDef::SVImageFormatRGB8888:
 			{
 				format = SVBufAttImageProcPackedOffBoardDibPagedBgr32;
 				break;
@@ -149,8 +149,8 @@ HRESULT SVImageProcessingClass::CreateImageChildBuffer( const SVImageInfoClass& 
 {
 	HRESULT Result( S_FALSE );
 
-	SVImageFormatEnum l_eChildFormat;
-	SVImageFormatEnum l_eParentFormat;
+	SvDef::SVImageFormatEnum l_eChildFormat;
+	SvDef::SVImageFormatEnum l_eParentFormat;
 	int l_iChildBandNumber = 0;
 	int l_iParentBandNumber = 0;
 	int l_iChildBandLink = 0;
@@ -395,7 +395,7 @@ HDC SVImageProcessingClass::CreateBufferDC( const SVImageInfoClass& rInfo, SVSma
 {
 	HDC Result( nullptr );
 
-	SVImageFormatEnum l_eFormat;
+	SvDef::SVImageFormatEnum l_eFormat;
 	int l_iBandNumber = 0;
 	int l_iBandLink = 0;
 	int l_iPixelDepth = 0;
@@ -595,11 +595,11 @@ HRESULT SVImageProcessingClass::LoadImageBuffer( LPCTSTR tstrImagePathName, SVIm
 
 				if( M_EQUIVALENT_INTERNAL_FORMAT( M_BGR24, l_DataFormat ) )
 				{
-					rInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SVImageFormatRGB888 );
+					rInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatRGB888 );
 				}
 				else if( M_EQUIVALENT_INTERNAL_FORMAT( M_BGR32, l_DataFormat ) )
 				{
-					rInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SVImageFormatRGB8888 );
+					rInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatRGB8888 );
 				}
 
 				rInfo.SetExtentProperty( SVExtentPropertyOutputPositionPoint, 0 );
@@ -669,7 +669,7 @@ HRESULT SVImageProcessingClass::LoadImageBuffer( void* pBuffer,
 
 	if( !rBufferHandle.empty() )
 	{
-		SVImageFormatEnum l_eFormat;
+		SvDef::SVImageFormatEnum l_eFormat;
 		int l_iBandNumber = 0;
 		int l_iBandLink = 0;
 		int l_iPixelDepth = 0;
@@ -695,11 +695,11 @@ HRESULT SVImageProcessingClass::LoadImageBuffer( void* pBuffer,
 		// and the pBits will fit.
 		if( pbmInfo->bmiHeader.biBitCount == 32 )
 		{
-			rBufferInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SVImageFormatRGB8888 );
+			rBufferInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatRGB8888 );
 		}
 		if( pbmInfo->bmiHeader.biBitCount == 24 )
 		{
-			rBufferInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SVImageFormatRGB888 );
+			rBufferInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatRGB888 );
 		}
 
 		if( S_OK != CreateImageBuffer( rBufferInfo, rBufferHandle ) )
@@ -1048,7 +1048,7 @@ HRESULT SVImageProcessingClass::CreateBarCodeBuffer( SVBarCodeBufferInfoClass* p
 }
 
 HRESULT SVImageProcessingClass::GetOutputImageCreateData( const SVImageInfoClass &p_rsvInfo,
-	SVImageFormatEnum &p_reFormat,
+	SvDef::SVImageFormatEnum &p_reFormat,
 	int &p_riPixelDepth,
 	int &p_riBandNumber,
 	int &p_riBandLink,
@@ -1064,13 +1064,13 @@ HRESULT SVImageProcessingClass::GetOutputImageCreateData( const SVImageInfoClass
 
 	if ( S_OK == Result )
 	{
-		int l_iFormat = SVImageFormatUnknown;
+		int l_iFormat = SvDef::SVImageFormatUnknown;
 
 		Result = p_rsvInfo.GetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, l_iFormat );
 
 		if ( S_OK == Result )
 		{
-			p_reFormat = (SVImageFormatEnum)l_iFormat;
+			p_reFormat = (SvDef::SVImageFormatEnum)l_iFormat;
 		}
 	}
 
@@ -1093,7 +1093,7 @@ HRESULT SVImageProcessingClass::GetOutputImageCreateData( const SVImageInfoClass
 }
 
 HRESULT SVImageProcessingClass::GetChildImageCreateData( const SVImageInfoClass &p_rsvInfo,
-	SVImageFormatEnum &p_reFormat,
+	SvDef::SVImageFormatEnum &p_reFormat,
 	int &p_riPixelDepth,
 	int &p_riBandNumber,
 	int &p_riBandLink,
@@ -1109,13 +1109,13 @@ HRESULT SVImageProcessingClass::GetChildImageCreateData( const SVImageInfoClass 
 
 	if ( S_OK == Result )
 	{
-		int l_iFormat = SVImageFormatUnknown;
+		int l_iFormat = SvDef::SVImageFormatUnknown;
 
 		Result = p_rsvInfo.GetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, l_iFormat );
 
 		if ( S_OK == Result )
 		{
-			p_reFormat = (SVImageFormatEnum)l_iFormat;
+			p_reFormat = (SvDef::SVImageFormatEnum)l_iFormat;
 		}
 	}
 

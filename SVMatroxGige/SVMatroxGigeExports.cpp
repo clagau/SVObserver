@@ -293,7 +293,7 @@ HRESULT WINAPI SVDigitizerGetBufferFormat( unsigned long triggerchannel, int *p_
 
 	if ( nullptr != p_piFormat )
 	{
-		*p_piFormat = SVImageFormatUnknown;
+		*p_piFormat = SvDef::SVImageFormatUnknown;
 
 		l_hr = g_svTheApp.m_svSystem.CameraGetFormat( triggerchannel, *p_piFormat );
 	}

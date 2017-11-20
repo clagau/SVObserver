@@ -13,9 +13,10 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
+#include "SVImageClass.h"
 #include "ObjectInterfaces/ITaskObject.h"
 #include "ObjectInterfaces/IValueObject.h"
-#include "SVRunControlLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/SVRunStatus.h"
 #include "SVObjectLibrary/SVInputInfoListClass.h"
 #include "SVObjectAppClass.h"
 #include "SVObjectLibrary/SVOutputInfoListClass.h"
@@ -24,14 +25,10 @@
 #include "ObjectSelectorLibrary/SelectorItemVector.h"
 #include "SVStatusLibrary/MessageContainer.h"
 #include "SVImageLibrary/SVImageExtentClass.h"
-#include "SVImageListClass.h"
 #include "SVExtentPropertiesInfoStruct.h"
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
-class SVImageClass;
-
-typedef std::set<SVImageClass *> SVImageClassPtrSet;
 
 class SVTaskObjectClass : public SVObjectAppClass, public SvOi::ITaskObject
 {
@@ -123,14 +120,14 @@ public:
 #pragma region virtual method (ITaskObject)
 	virtual SvOi::ISelectorItemVectorPtr GetSelectorList(SvOi::IsObjectInfoAllowed func, UINT Attribute, bool WholeArray) const override;
 	virtual void GetConnectedImages(SvUl::InputNameGuidPairList& rList, int maxEntries) override;
-	virtual void GetInputs(SvUl::InputNameGuidPairList& rList, const SVObjectTypeInfoStruct& typeInfo = SVObjectTypeInfoStruct(SVNotSetObjectType), SVObjectTypeEnum objectTypeToInclude = SVNotSetObjectType ) override;
-	virtual HRESULT ConnectToObject(const std::string& rInputName, const SVGUID& rNewID, SVObjectTypeEnum objectType = SVNotSetObjectType) override;
+	virtual void GetInputs(SvUl::InputNameGuidPairList& rList, const SvDef::SVObjectTypeInfoStruct& typeInfo = SvDef::SVObjectTypeInfoStruct(SvDef::SVNotSetObjectType), SvDef::SVObjectTypeEnum objectTypeToInclude = SvDef::SVNotSetObjectType ) override;
+	virtual HRESULT ConnectToObject(const std::string& rInputName, const SVGUID& rNewID, SvDef::SVObjectTypeEnum objectType = SvDef::SVNotSetObjectType) override;
 	virtual bool IsObjectValid() const override;
 	virtual const SvStl::MessageContainerVector& getResetErrorMessages() const override {return m_ResetErrorMessages;};
 	virtual const SvStl::MessageContainerVector& getRunErrorMessages() const override {return m_RunErrorMessages;};
 	virtual SvStl::MessageContainerVector getErrorMessages() const override;
 	virtual SvStl::MessageContainerVector validateAndSetEmmeddedValues(const SvOi::SetValueObjectPairVector& rValueVector, bool shouldSet) override;
-	virtual void ResolveDesiredInputs(const SvOi::SVInterfaceVector& rDesiredInputs) override;
+	virtual void ResolveDesiredInputs(const SvDef::SVObjectTypeInfoVector& rDesiredInputs) override;
 	//************************************
 	//! Get the first task message
 	//! \return a const reference to the first task message
@@ -144,7 +141,7 @@ public:
 	virtual SVObjectClass* OverwriteEmbeddedObject(const GUID& uniqueID, const GUID& rEmbeddedID) override;
 	virtual void GetInputInterface(SVInputInfoListClass& rInputList, bool bAlsoFriends) const override;
 	virtual void DestroyFriend(SVObjectClass* pObject) override;
-	virtual SvOi::IObjectClass* getFirstObject(const SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends = true, const SvOi::IObjectClass* pRequestor = nullptr) const override;
+	virtual SvOi::IObjectClass* getFirstObject(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends = true, const SvOi::IObjectClass* pRequestor = nullptr) const override;
 	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override;
 #pragma endregion Methods to replace processMessage
 
@@ -158,7 +155,7 @@ protected:
 	/// \param rInfo [in] input info for the connection.
 	/// \param rPOwner [in,out] The method can change the owner if required.
 	/// \returns bool
-	virtual bool hasToAskFriendForConnection( const SVObjectTypeInfoStruct& rInfo, SVObjectClass*& rPOwner ) const { return true; }
+	virtual bool hasToAskFriendForConnection( const SvDef::SVObjectTypeInfoStruct& rInfo, SVObjectClass*& rPOwner ) const { return true; }
 
 public:
 	// Get the local object color...
@@ -174,7 +171,7 @@ public:
 
 	void GetPrivateInputList( SVInputInfoListClass& RInputInterface ) const;
 
-	HRESULT GetImageList( SVImageListClass& p_rImageList, UINT uiAttributes = SvDef::SV_NO_ATTRIBUTES, bool bAND = true );
+	HRESULT GetImageList( SVImageClassPtrVector& p_rImageList, UINT uiAttributes = SvDef::SV_NO_ATTRIBUTES, bool bAND = true );
 
 	virtual HRESULT RegisterSubObject( SVObjectClass* pObject ) override;
 	virtual HRESULT UnregisterSubObject( SVObjectClass* pObject ) override;

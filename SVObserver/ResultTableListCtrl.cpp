@@ -11,7 +11,7 @@
 #include "ResultTableListCtrl.h"
 #include "SVIPDoc.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVObjectLibrary/GlobalConst.h"
+#include "Definitions/GlobalConst.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVInspectionProcess.h"
 #include "SVXMLLibrary/SVNavigateTree.h"

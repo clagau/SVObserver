@@ -244,7 +244,7 @@ namespace SvOg
 	{
 		SVGuidSet DependencySet;
 		DependencySet.insert(m_TaskObjectID);
-		SVShowDependentsDialog Dlg( DependencySet, SVToolObjectType, nullptr, SVShowDependentsDialog::Show );
+		SVShowDependentsDialog Dlg( DependencySet, SvDef::SVToolObjectType, nullptr, SVShowDependentsDialog::Show );
 		Dlg.DoModal();
 	}
 

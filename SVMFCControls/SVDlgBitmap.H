@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "SVContainerLibrary/SVVector.h"
+//Moved to precompiled header: #include <vector>
 
 namespace SvMc
 {
@@ -19,36 +19,19 @@ namespace SvMc
 	{
 		SVDlgBitmapTextStruct()
 		{
-			BAbsCoord = TRUE;
+			AbsoluteCoord = true;
 			X = 0.0;
 			Y = 0.0;
-			Color = 0;
-			StrText = _T( "" );
+			m_Color = 0;
+			m_Text = _T( "" );
 		};
 
-		BOOL BAbsCoord;
+		bool AbsoluteCoord;
 		double X;
 		double Y;
-		COLORREF Color;
-		CString StrText;
+		COLORREF m_Color;
+		std::string m_Text;
 	};
-
-
-	class SVDlgBitmapTextListClass : public SVVector< SVDlgBitmapTextStruct* >
-	{
-	public:
-		SVDlgBitmapTextListClass() {};
-
-		virtual ~SVDlgBitmapTextListClass() 
-		{ 
-			for( int i = GetSize() - 1; i >= 0; --i )
-				if( GetAt( i ) )
-					delete( GetAt( i ) );
-
-			RemoveAll();
-		}
-	};
-
 
 	class SVDlgBitmapClass : public CStatic
 	{
@@ -83,7 +66,7 @@ namespace SvMc
 
 	protected:
 		mutable CBitmap	bitmap;
-		SVDlgBitmapTextListClass textList;
+		std::vector<SVDlgBitmapTextStruct> m_TextVector;
 
 	};
 } //namespace SvMc

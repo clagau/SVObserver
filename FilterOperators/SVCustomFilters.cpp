@@ -54,7 +54,7 @@ void SVCustomFilterClass::init()
 {
 	long l( 0 );
 
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVCustomFilterObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVCustomFilterObjectType;
 
 	RegisterEmbeddedObject( &m_lvoCell01, SVCustomFilterCell01Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL01, false, SvOi::SVResetItemOwner );
 	RegisterEmbeddedObject( &m_lvoCell02, SVCustomFilterCell02Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL02, false, SvOi::SVResetItemOwner );

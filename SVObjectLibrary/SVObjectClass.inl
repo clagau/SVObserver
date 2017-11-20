@@ -39,7 +39,7 @@ inline const SVGUID& SVObjectClass::GetOwnerID() const
 /*
 This method returns the object's type.
 */
-inline const SVObjectTypeEnum& SVObjectClass::GetObjectType() const
+inline const SvDef::SVObjectTypeEnum& SVObjectClass::GetObjectType() const
 {
 	return m_outObjectInfo.m_ObjectTypeInfo.ObjectType;
 }

@@ -12,14 +12,14 @@
 #pragma once
 
 #pragma region Includes
-#include "SVContainerLibrary/SVVector.h"
+//Moved to precompiled header: #include <vector>
 #include "SVImageLibrary/SVExtentFigureStruct.h"
 #include "SVImageLibrary/SVExtentLineStruct.h"
 #include "SVImageLibrary/SVExtentMultiLineStruct.h"
 #include "SVImageLibrary/SVDrawContext.h"
 #pragma endregion Includes
 
-typedef SVVector<CPoint> CPointVector;
+typedef std::vector<CPoint> CPointVector;
 
 enum 
 {
@@ -46,10 +46,10 @@ public:
 
 	void Transform( SVDrawContext* PDrawContext );
 
-	int AddPoint( const POINT p_oPoint );
-	int AddPoint( const CPoint& RPoint );
-	void SetPointAtGrow( int Index, const CPoint& RPoint );
-	void SetPointAtGrow( int Index, POINT p_oPoint );
+	int AddPoint( const POINT Point );
+	int AddPoint( const CPoint& rPoint );
+	void SetPointAtGrow( int Index, const CPoint& rPoint );
+	void SetPointAtGrow( int Index, POINT Point );
 	void SetListSize( int NewSize );
  
 	CPoint GetPointAt( int Index );
@@ -62,8 +62,8 @@ protected:
 	BOOL beginDraw( SVDrawContext* PDrawContext );
 	void endDraw( HDC DC );
 	
-	CPointVector	 points;
-	CPointVector	 calcPoints;
+	CPointVector	 m_Points;
+	CPointVector	 m_CalcPoints;
 
 	HGDIOBJ drawPen;	// If nullptr the current selected pen of the DC
 						// will be used!
@@ -76,7 +76,7 @@ protected:
 	COLORREF m_PenColor;
 };
 
-typedef SVVector<SVDrawObjectClass> SVDrawObjectClassVector;
+typedef std::vector<SVDrawObjectClass> SVDrawObjectClassVector;
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -89,46 +89,46 @@ public:
 	
 	~SVDrawObjectListClass() {};
 
-	void Add( SVDrawObjectListClass &p_rsvObject )
+	void Add( const SVDrawObjectListClass& rObjectList )
 	{
-		m_svDrawObjectArray.Append( p_rsvObject.m_svDrawObjectArray );
+		m_DrawObjectVector.insert(m_DrawObjectVector.end(), rObjectList.getList().begin(), rObjectList.getList().end());
 	};
 
-	void Add( SVDrawObjectClass &p_rsvObject )
+	void Add( SVDrawObjectClass& rObject )
 	{
-		m_svDrawObjectArray.Add( p_rsvObject );// only adds SVDrawObjectClass data and does not add array data
+		m_DrawObjectVector.push_back( rObject );
 	};
 
 	void AddExtentMultiLineData( SVExtentMultiLineStruct p_svMultiLine, bool p_bDoNotUseLineColor = false )
 	{
-		long l_lCount = static_cast< long >( p_svMultiLine.m_svLineArray.GetSize() );
+		long Count = static_cast<long> (p_svMultiLine.m_svLineArray.size());
 
-		for( long l = 0; l < l_lCount; l++ )
+		for( long l = 0; l < Count; l++ )
 		{
-			SVDrawObjectClass l_svDrawObject;
+			SVDrawObjectClass DrawObject;
 
-			l_svDrawObject.AddExtentLineData( p_svMultiLine.m_svLineArray[ l ] );
+			DrawObject.AddExtentLineData( p_svMultiLine.m_svLineArray[l] );
 
 			if( p_bDoNotUseLineColor )
 			{
-				l_svDrawObject.SetDrawPen( FALSE );
+				DrawObject.SetDrawPen( FALSE );
 			}
 
-			m_svDrawObjectArray.Add( l_svDrawObject );
+			m_DrawObjectVector.push_back(DrawObject);
 		}
 	};
 
 	void AddExtentMultiLineData( SVExtentMultiLineStruct p_svMultiLine, int PenStyle )
 	{
-		long l_lCount = static_cast< long >( p_svMultiLine.m_svLineArray.GetSize() );
+		long l_lCount = static_cast<long> (p_svMultiLine.m_svLineArray.size());
 
 		for( long l = 0; l < l_lCount; l++ )
 		{
-			SVDrawObjectClass l_svDrawObject;
+			SVDrawObjectClass DrawObject;
 
-			l_svDrawObject.AddExtentLineData( p_svMultiLine.m_svLineArray[ l ], PenStyle );
+			DrawObject.AddExtentLineData( p_svMultiLine.m_svLineArray[l], PenStyle );
 
-			m_svDrawObjectArray.Add( l_svDrawObject );
+			m_DrawObjectVector.push_back(DrawObject);
 		}
 	};
 
@@ -140,19 +140,19 @@ public:
 		{
 			long iLastYPointDrawn = InvalidPoint; // force the first line to be drawn.
 			int LastLineY = InvalidPoint;
-			for( int i = 0; i < m_svDrawObjectArray.GetSize(); ++i )
+			for( int i = 0; i < static_cast<int> (m_DrawObjectVector.size()); ++i )
 			{
-				if( PDrawContext->ShouldDrawPoints( iLastYPointDrawn, m_svDrawObjectArray[i].GetPointAt(0).y  ) )
+				if( PDrawContext->ShouldDrawPoints( iLastYPointDrawn, m_DrawObjectVector[i].GetPointAt(0).y  ) )
 				{
-					RetVal = m_svDrawObjectArray[ i ].DrawHatch( PDrawContext, LastLineY ) && RetVal; 
+					RetVal = m_DrawObjectVector[ i ].DrawHatch( PDrawContext, LastLineY ) && RetVal; 
 				}
 			}
 		}
 		else
 		{
-			for( int i = 0; i < m_svDrawObjectArray.GetSize(); ++i )
+			for( int i = 0; i < static_cast<int> (m_DrawObjectVector.size()); ++i )
 			{
-				RetVal = m_svDrawObjectArray[ i ].Draw( PDrawContext ) && RetVal; 
+				RetVal = m_DrawObjectVector[ i ].Draw( PDrawContext ) && RetVal; 
 			}
 		}
 	
@@ -163,20 +163,23 @@ public:
 	// Embed your DrawObjects instead of construct them dynamically!
 	void Flush()
 	{
-		m_svDrawObjectArray.RemoveAll();
+		m_DrawObjectVector.clear();
 	};
 
 	int GetSize() const
 	{
-		return static_cast< int >( m_svDrawObjectArray.GetSize() );
+		return static_cast<int> (m_DrawObjectVector.size());
 	}
 
 	SVDrawObjectClass GetAt( int i ) const
 	{
-		return m_svDrawObjectArray.GetAt( i );
+		return (0 < m_DrawObjectVector.size()) ? m_DrawObjectVector[i] : SVDrawObjectClass();
 	}
+
+	const SVDrawObjectClassVector& getList() const { return m_DrawObjectVector; };
+
 	bool m_bDrawFigureHatched;
 
 protected:
-	SVDrawObjectClassVector m_svDrawObjectArray;
+	SVDrawObjectClassVector m_DrawObjectVector;
 };

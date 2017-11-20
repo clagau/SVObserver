@@ -15,7 +15,6 @@
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "ObjectInterfaces\ISVImage.h"
 #include "ObjectInterfaces\IObjectManager.h"
-
 #include "SVUtilityLibrary\NameGuidList.h"
 #include "SVObjectLibrary\SVObjectClass.h"
 #include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
@@ -26,7 +25,7 @@ namespace SvCmd
 	// This function object return always true if nullptr != object
 	struct IsValidObject 
 	{
-		bool operator()(SvOi::IObjectClass* pObject, bool& bStop) const
+		bool operator()(const SvOi::IObjectClass* pObject, bool& bStop) const
 		{
 			return (nullptr != pObject);
 		}
@@ -40,7 +39,7 @@ namespace SvCmd
 		{
 		}
 
-		bool operator()(SvOi::IObjectClass* pObject, bool& bStop) const
+		bool operator()(const SvOi::IObjectClass* pObject, bool& bStop) const
 		{
 			// Ensure only image sources which are produced by tools above the current tool...
 			bStop = IsObjectCurrentTask(pObject);
@@ -48,12 +47,12 @@ namespace SvCmd
 		}
 
 	private:
-		bool IsObjectCurrentTask(SvOi::IObjectClass* pObject) const
+		bool IsObjectCurrentTask(const SvOi::IObjectClass* pObject) const
 		{
 			bool bRetVal = false;
 			if (nullptr != pObject)
 			{
-				SvOi::IObjectClass* pOwnerTool = pObject->GetAncestorInterface(SVToolObjectType);
+				const SvOi::IObjectClass* pOwnerTool = pObject->GetAncestorInterface(SvDef::SVToolObjectType);
 				if (nullptr != pOwnerTool)
 				{
 					GUID ownerID = pOwnerTool->GetUniqueObjectID();
@@ -70,14 +69,14 @@ namespace SvCmd
 		GUID m_TaskObjectID;
 	};
 
-	typedef boost::function<bool (SvOi::IObjectClass*, bool& bStop)> IsAllowedFunc; 
+	typedef boost::function<bool (const SvOi::IObjectClass*, bool& bStop)> IsAllowedFunc; 
 	struct GetAvailableObjects: public boost::noncopyable
 	{
 		/// \param rObjectID [in] Object Id of the object from which level the available objects will search for.
 		/// \param typeInfo [in] Type of the available objects
-		/// \param objectTypeToInclude [in] Object type until the name of the available object will set. SVNotSetObjectType means only object name and e.g. SVToolSetObjectType means "Tool Set.Window Tool....". This parameter will not used for image objects.
+		/// \param objectTypeToInclude [in] Object type until the name of the available object will set. SvDef::SVNotSetObjectType means only object name and e.g. SvDef::SVToolSetObjectType means "Tool Set.Window Tool....". This parameter will not used for image objects.
 		/// \param func [in]
-		GetAvailableObjects(const GUID& rObjectID, const SVObjectTypeInfoStruct& typeInfo, IsAllowedFunc func = IsValidObject(), SVObjectTypeEnum objectTypeToInclude = SVNotSetObjectType )
+		GetAvailableObjects(const GUID& rObjectID, const SvDef::SVObjectTypeInfoStruct& typeInfo, IsAllowedFunc func = IsValidObject(), SvDef::SVObjectTypeEnum objectTypeToInclude = SvDef::SVNotSetObjectType )
 			: m_InstanceID(rObjectID), m_typeInfo(typeInfo), IsAllowed(func), m_objectTypeToInclude(objectTypeToInclude) {}
 
 		// This method is where the real separation would occur by using sockets/named pipes/shared memory
@@ -93,8 +92,8 @@ namespace SvCmd
 			bool bStop = false;
 			for (SVGetObjectDequeByTypeVisitor::SVObjectPtrDeque::const_iterator it = visitor.GetObjects().begin(); !bStop && it != visitor.GetObjects().end(); ++it)
 			{
-				SvOi::IObjectClass* pObject = dynamic_cast<SvOi::IObjectClass *>(*it);
-				if (pObject)
+				const SvOi::IObjectClass* pObject = dynamic_cast<const SvOi::IObjectClass*> (*it);
+				if (nullptr != pObject)
 				{
 					if (IsAllowed)// required, even if it does nothing...
 					{
@@ -102,9 +101,9 @@ namespace SvCmd
 						{
 							switch (m_typeInfo.ObjectType)
 							{
-							case SVImageObjectType:
+							case SvDef::SVImageObjectType:
 								{
-									SvOi::ISVImage* pImage = dynamic_cast<SvOi::ISVImage*>(pObject);
+									const SvOi::ISVImage* pImage = dynamic_cast<const SvOi::ISVImage*>(pObject);
 									if (pImage)
 									{
 										const std::string& name = pImage->getDisplayedName();
@@ -118,7 +117,7 @@ namespace SvCmd
 							default:
 								{
 									std::string name;
-									if (SVNotSetObjectType == m_objectTypeToInclude)
+									if (SvDef::SVNotSetObjectType == m_objectTypeToInclude)
 									{
 										name = pObject->GetName();
 									}
@@ -148,10 +147,10 @@ namespace SvCmd
 		const SvUl::NameGuidList& AvailableObjects() const { return m_list; }
 
 	private:
-		SVObjectTypeInfoStruct m_typeInfo;
+		SvDef::SVObjectTypeInfoStruct m_typeInfo;
 		SvUl::NameGuidList m_list;
 		GUID m_InstanceID;
-		SVObjectTypeEnum m_objectTypeToInclude;
+		SvDef::SVObjectTypeEnum m_objectTypeToInclude;
 		IsAllowedFunc IsAllowed;
 	};
 } //namespace SvCmd

@@ -45,32 +45,32 @@ SVDrawObjectClass::~SVDrawObjectClass()
 	}
 }
 
-const SVDrawObjectClass &SVDrawObjectClass::operator=( const SVDrawObjectClass &p_rsvObject )
+const SVDrawObjectClass &SVDrawObjectClass::operator=( const SVDrawObjectClass& rObject )
 {
 	oldPen  = nullptr;
 	drawPen = nullptr;
 
-	points.RemoveAll();
-	calcPoints.RemoveAll();
+	m_Points.clear();
+	m_CalcPoints.clear();
 
-	SetDrawPen( p_rsvObject.m_BUseThisPen, 
-		          p_rsvObject.m_PenStyle, 
-							p_rsvObject.m_PenWidth, 
-							p_rsvObject.m_PenColor );
+	SetDrawPen( rObject.m_BUseThisPen, 
+		          rObject.m_PenStyle, 
+							rObject.m_PenWidth, 
+							rObject.m_PenColor );
 
-	points.Copy( p_rsvObject.points );
-	calcPoints.Copy( p_rsvObject.calcPoints );
+	m_Points =  rObject.m_Points;
+	m_CalcPoints = rObject.m_CalcPoints;
 
 	return *this;
 }
 
 void SVDrawObjectClass::AddExtentLineData( SVExtentLineStruct p_svLine, int PenStyle )
 {
-	long l_lCount = p_svLine.m_svPointArray.GetSize();
+	long l_lCount = static_cast<long> (p_svLine.m_svPointArray.size());
 
 	for( long l = 0; l < l_lCount; l++ )
 	{
-		AddPoint( p_svLine.m_svPointArray[ l ] );
+		AddPoint( p_svLine.m_svPointArray[l] );
 	}
 
 	SetDrawPen( TRUE, PenStyle, 1, p_svLine.m_dwColor );
@@ -83,19 +83,16 @@ BOOL SVDrawObjectClass::Draw( SVDrawContext* PDrawContext )
 
 	if( beginDraw( PDrawContext ) )
 	{
-		int l_iSize = calcPoints.GetSize();
+		int Size = static_cast<int> (m_CalcPoints.size());
 		
 		// Draw...
-		if( l_iSize == 1  )
+		if( 1 == Size )
 		{
-			::SetPixel( DC, calcPoints[0].x, calcPoints[0].y, m_PenColor );
+			::SetPixel( DC, m_CalcPoints[0].x, m_CalcPoints[0].y, m_PenColor );
 		}
-		else
+		else if( 1 < Size )
 		{
-			if( l_iSize > 1 )
-			{
-				BRetVal = ::Polyline( DC, calcPoints.GetData(), calcPoints.GetSize() );
-			}
+			BRetVal = ::Polyline( DC, m_CalcPoints.data(), Size);
 		}
 	}
 	endDraw( DC );
@@ -110,12 +107,12 @@ BOOL SVDrawObjectClass::DrawHatch( SVDrawContext* PDrawContext, int& LastY )
 	static int LastRowY=InvalidPoint;
 	if( beginDraw( PDrawContext ) )
 	{
-		int l_iSize = calcPoints.GetSize();
-		if( l_iSize > 1 )
+		int Size = static_cast<int> (m_CalcPoints.size());
+		if( 1 < Size )
 		{
 			// Logic to reset the lastY point 
 			// if we are drawing a second line in the same row.
-			if( calcPoints[0].y <= LastY)
+			if( m_CalcPoints[0].y <= LastY)
 			{
 				LastY = LastRowY;
 			}
@@ -126,16 +123,16 @@ BOOL SVDrawObjectClass::DrawHatch( SVDrawContext* PDrawContext, int& LastY )
 			// Draw the first line.
 			if(  LastY == InvalidPoint )
 			{
-				BRetVal = ::Polyline( DC, calcPoints.GetData(), calcPoints.GetSize() );
-				LastY = calcPoints[0].y;
+				BRetVal = ::Polyline( DC, m_CalcPoints.data(), Size );
+				LastY = m_CalcPoints[0].y;
 			}
 			else
 			{
 				// Draw the second line and fill in every other line
 				// up to the current line.
-				if( l_iSize > 1 && LastY != InvalidPoint )
+				if( 1 < Size && LastY != InvalidPoint )
 				{
-					long distance = calcPoints[0].y - LastY;
+					long distance = m_CalcPoints[0].y - LastY;
 					if( distance >= 0 )
 					{
 						POINT Points[2];
@@ -143,8 +140,8 @@ BOOL SVDrawObjectClass::DrawHatch( SVDrawContext* PDrawContext, int& LastY )
 						{
 							Points[0].y = LastY + y;
 							Points[1].y = Points[0].y;
-							Points[0].x = calcPoints[0].x;
-							Points[1].x = calcPoints[1].x;
+							Points[0].x = m_CalcPoints[0].x;
+							Points[1].x = m_CalcPoints[1].x;
 							BRetVal = ::Polyline( DC, Points, 2 );  
 						}
 						// Remember the last point as a starting point 
@@ -175,39 +172,44 @@ BOOL SVDrawObjectClass::SetDrawPen( BOOL BUseThisPen, int PenStyle, int PenWidth
 	return true;
 }
 
-int SVDrawObjectClass::AddPoint( const POINT p_oPoint )
+int SVDrawObjectClass::AddPoint( const POINT Point )
 {
-	return static_cast< int >( points.Add( p_oPoint ) );
+	return AddPoint(CPoint(Point));
 }
 
-int SVDrawObjectClass::AddPoint( const CPoint& RPoint )
+int SVDrawObjectClass::AddPoint( const CPoint& rPoint )
 {
-	return static_cast< int >( points.Add( RPoint ) );
+	m_Points.push_back(rPoint);
+	return static_cast< int >(m_Points.size() - 1);
 }
 
-void SVDrawObjectClass::SetPointAtGrow( int Index, const CPoint& RPoint )
+void SVDrawObjectClass::SetPointAtGrow( int Index, const CPoint& rPoint )
 {
-	points.SetAtGrow( Index, RPoint );
+	if (Index >= static_cast<int> (m_Points.size()))
+	{
+		m_Points.resize(Index + 1);
+	}
+	m_Points[Index] = rPoint;
 }
 
-void SVDrawObjectClass::SetPointAtGrow( int Index, POINT p_oPoint )
+void SVDrawObjectClass::SetPointAtGrow( int Index, POINT Point )
 {
-	points.SetAtGrow( Index, p_oPoint );
+	SetPointAtGrow(Index, CPoint(Point));
 }
 
 void SVDrawObjectClass::SetListSize( int NewSize )
 {
-	points.SetSize( NewSize );
+	m_Points.resize( NewSize );
 }
 
 CPoint SVDrawObjectClass::GetPointAt( int Index )
 {
-	return points.GetAt(Index);
+	return (Index < static_cast<int> (m_Points.size())) ? m_Points[Index] : CPoint();
 }
 
 const CPointVector& SVDrawObjectClass::GetPointArray()
 {
-	return points;
+	return m_Points;
 }
 	
 HGDIOBJ SVDrawObjectClass::GetDrawPen()
@@ -220,7 +222,7 @@ HGDIOBJ SVDrawObjectClass::GetDrawPen()
 	return drawPen;
 }
 
-BOOL SVDrawObjectClass::beginDraw( SVDrawContext* PDrawContext )
+BOOL SVDrawObjectClass::beginDraw( SVDrawContext* pDrawContext )
 {
 	// Set Pen...
 	if( m_BUseThisPen && nullptr == drawPen )
@@ -230,12 +232,12 @@ BOOL SVDrawObjectClass::beginDraw( SVDrawContext* PDrawContext )
 
 	if( drawPen )
 	{
-		oldPen = ::SelectObject( PDrawContext->DC, drawPen );
+		oldPen = ::SelectObject( pDrawContext->DC, drawPen );
 	}
-	calcPoints.SetSize( points.GetSize() );
+	m_CalcPoints.resize(m_Points.size());
 
 	// Transform Input points to Output points
-	PDrawContext->Transform( points.GetData(), calcPoints.GetData(), points.GetSize() );
+	pDrawContext->Transform(m_Points.data(), m_CalcPoints.data(), static_cast<int> (m_Points.size()));
 	
 	return true;
 }
@@ -254,10 +256,10 @@ void SVDrawObjectClass::endDraw( HDC DC )
 	}
 }
 
-void SVDrawObjectClass::Transform( SVDrawContext* PDrawContext )
+void SVDrawObjectClass::Transform( SVDrawContext* pDrawContext )
 {
-	calcPoints.SetSize( points.GetSize() );
+	m_CalcPoints.resize( m_Points.size() );
 
 	// Transform Input points to Output points
-	PDrawContext->Transform( points.GetData(), calcPoints.GetData(), points.GetSize() );
+	pDrawContext->Transform( m_Points.data(), m_CalcPoints.data(), static_cast<int> (m_Points.size()) );
 }

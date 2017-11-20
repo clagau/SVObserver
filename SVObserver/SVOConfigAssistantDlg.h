@@ -291,12 +291,12 @@ private:
 	//methods for writing out to the config object
 	//will be called ONLY from OnOk()
 	BOOL SendDataToConfiguration();
-	BOOL SendPPQDataToConfiguration(SVPPQObjectPtrVector& aPPQsToDelete);
+	BOOL SendPPQDataToConfiguration(SVPPQObjectPtrVector& rPPQsToDelete);
 	BOOL SendAcquisitionDataToConfiguration();
 	BOOL SendCameraDataToConfiguration();
 	BOOL SendTriggerDataToConfiguration();
 	BOOL SendInspectionDataToConfiguration();
-	BOOL SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVector& aPPQsToDelete);
+	BOOL SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVector& rPPQsToDelete);
 
 	BOOL GetConfigurationForExisting();
 

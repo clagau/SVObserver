@@ -12,7 +12,7 @@
 #include "MessageContainer.h"
 #include "SVMessage\SVMessage.h"
 #include "SVRegistry.h"
-#include "SVObjectLibrary\GlobalConst.h"
+#include "Definitions/GlobalConst.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary\LoadDll.h"
@@ -349,7 +349,7 @@ namespace SvStl
 			if (FormatMessage (FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_ARGUMENT_ARRAY |
 				FORMAT_MESSAGE_FROM_HMODULE,
 				(LPCVOID) m_MessageDll, m_Message.m_MessageCode,
-				SvOl::LCID_USA, (LPTSTR) &pMessage, 11, (va_list *) pSubstituteString))
+				SvDef::LCID_USA, (LPTSTR) &pMessage, 11, (va_list *) pSubstituteString))
 			{
 				rMessage = (TCHAR *) pMessage;
 				SvUl::searchAndReplace(rMessage, _T("\r\n\r\n"), _T("\r\n") );

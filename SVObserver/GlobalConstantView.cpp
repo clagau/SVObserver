@@ -21,7 +21,7 @@
 #include "RootObject.h"
 #include "TextDefinesSvO.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVObjectLibrary/GlobalConst.h"
+#include "Definitions/GlobalConst.h"
 #include "SVOResource/ConstGlobalSvOr.h"
 #include "SVOGui/TextDefinesSvOg.h"
 #include "SVOGui/GlobalConstantDlg.h"
@@ -125,7 +125,7 @@ void GlobalConstantView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint 
 
 		BasicValueObjects::ValueVector GlobalObjects;
 
-		RootObject::getRootChildObjectList( GlobalObjects, SvOl::FqnGlobal, 0 );
+		RootObject::getRootChildObjectList( GlobalObjects, SvDef::FqnGlobal, 0 );
 		BasicValueObjects::ValueVector::const_iterator Iter( GlobalObjects.begin() );
 		while( GlobalObjects.end() != Iter && !Iter->empty() )
 		{
@@ -174,7 +174,7 @@ bool GlobalConstantView::editItem( int Item )
 	SvOg::GlobalConstantDlg GlobalDlg( GlobalData, this );
 
 	SvDef::StringVector GlobalConstantList;
-	RootObject::getRootChildNameList( GlobalConstantList, SvOl::FqnGlobal );
+	RootObject::getRootChildNameList( GlobalConstantList, SvDef::FqnGlobal );
 	GlobalDlg.setExistingNames( GlobalConstantList );
 
 	if( -1 != Item )
@@ -349,14 +349,12 @@ void GlobalConstantView::editGlobalConstant( const SvDef::GlobalConstantData& rG
 			SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 			if( nullptr != pConfig )
 			{
-				SVInspectionProcessPtrList Inspections;
-				pConfig->GetInspections( Inspections );
-				SVInspectionProcessPtrList::iterator Iter( Inspections.begin() );
-				for( ; Inspections.end() != Iter; ++Iter )
+				const SVInspectionProcessVector& rInspections = pConfig->GetInspections();
+				for (auto pInspection : rInspections)
 				{
-					if (nullptr != (*Iter) && nullptr != pGlobalObject)
+					if (nullptr != pInspection && nullptr != pGlobalObject)
 					{
-						(*Iter)->OnObjectRenamed(*pGlobalObject, OldName);
+						pInspection->OnObjectRenamed(*pGlobalObject, OldName);
 					}
 				}
 			}
@@ -382,17 +380,15 @@ void GlobalConstantView::updateAllIPDocs( bool RunOnce ) const
 
 	if( nullptr != pConfig )
 	{
-		SVInspectionProcessPtrList Inspections;
-		pConfig->GetInspections( Inspections );
-		SVInspectionProcessPtrList::iterator Iter( Inspections.begin() );
-		while( Inspections.end() != Iter )
+		const SVInspectionProcessVector& rInspections = pConfig->GetInspections();
+		for (auto pInspection : rInspections)
 		{
-			SVIPDoc* pDoc =  TheSVObserverApp.GetIPDoc( (*Iter)->GetUniqueObjectID() );
+			SVIPDoc* pDoc =  TheSVObserverApp.GetIPDoc( pInspection->GetUniqueObjectID() );
 			if( nullptr != pDoc )
 			{
 				if (RunOnce)
 				{
-					(*Iter)->resetAllObjects();
+					pInspection->resetAllObjects();
 				}
 				pDoc->RebuildResultsList();
 				pDoc->UpdateWithLastProduct();
@@ -401,7 +397,6 @@ void GlobalConstantView::updateAllIPDocs( bool RunOnce ) const
 					pDoc->RunOnce();
 				}
 			}
-			++Iter;
 		}
 	}	
 }
@@ -442,7 +437,7 @@ bool GlobalConstantView::checkAllDependencies( BasicValueObject* pObject, bool C
 			Type =  SvOg::SVShowDependentsDialog::DeleteConfirm;
 		}
 
-		SvOg::SVShowDependentsDialog DependentsDialog( ObjectCheckList, SVInspectionObjectType, DisplayText.c_str(), Type );
+		SvOg::SVShowDependentsDialog DependentsDialog( ObjectCheckList, SvDef::SVInspectionObjectType, DisplayText.c_str(), Type );
 
 		if( IDCANCEL == DependentsDialog.DoModal() )
 		{

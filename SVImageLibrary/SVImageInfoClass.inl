@@ -19,7 +19,7 @@ HRESULT SVImageInfoClass::GetOwnerImage( SV_OBJECT_TYPE*& p_rpObject ) const
 
 	if( nullptr != l_pObject )
 	{
-		p_rpObject = dynamic_cast< SV_OBJECT_TYPE* >( l_pObject );
+		p_rpObject = dynamic_cast<SV_OBJECT_TYPE*> ( l_pObject );
 	}
 	else
 	{

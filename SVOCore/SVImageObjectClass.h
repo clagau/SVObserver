@@ -14,11 +14,9 @@
 //Moved to precompiled header: #include <set>
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <vector>
-#include "SVContainerLibrary/SVVector.h"
 #include "SVDataManagerLibrary/SVDataManagerHandle.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
-#include "SVOLibrary/SVQueueObject.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"
 #include "SVStatusLibrary/MessageContainer.h"
@@ -27,7 +25,7 @@
 class SVImageObjectClass
 {
 public:
-	typedef SVSharedPtr< SVImageObjectClass > SVImageObjectClassPtr;
+	typedef SVSharedPtr<SVImageObjectClass> SVImageObjectClassPtr;
 
 	SVImageObjectClass();
 	virtual ~SVImageObjectClass();
@@ -156,6 +154,5 @@ private:
 	SVImageHandlePtrVector m_ImageHandleArray;
 };
 
-typedef SVSharedPtr< SVImageObjectClass > SVImageObjectClassPtr;
-typedef SVVector< SVImageObjectClassPtr > SVImageObjectClassPtrVector;
+typedef SVSharedPtr<SVImageObjectClass> SVImageObjectClassPtr;
 

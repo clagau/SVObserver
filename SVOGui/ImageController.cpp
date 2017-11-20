@@ -28,7 +28,7 @@
 
 namespace SvOg
 {
-	ImageController::ImageController(const GUID& rInspectionID, const GUID& rTaskObjectID, SVObjectSubTypeEnum subType, bool bAllowColor)
+	ImageController::ImageController(const GUID& rInspectionID, const GUID& rTaskObjectID, SvDef::SVObjectSubTypeEnum subType, bool bAllowColor)
 	: m_InspectionID(rInspectionID)
 	, m_TaskObjectID(rTaskObjectID)
 	, m_subType(subType)
@@ -46,7 +46,7 @@ namespace SvOg
 		typedef SvCmd::GetAllowedImageList Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 
-		CommandPtr commandPtr = new Command(m_InspectionID, SVObjectTypeInfoStruct(SVImageObjectType, SVNotSetSubObjectType), m_TaskObjectID, m_subType, m_bAllowColor);
+		CommandPtr commandPtr = new Command(m_InspectionID, SvDef::SVObjectTypeInfoStruct(SvDef::SVImageObjectType, SvDef::SVNotSetSubObjectType), m_TaskObjectID, m_subType, m_bAllowColor);
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
@@ -94,7 +94,7 @@ namespace SvOg
 		{
 			objectID = rInstanceID;
 		}
-		CommandPtr commandPtr = new Command(objectID, SVObjectTypeInfoStruct(SVImageObjectType, SVNotSetSubObjectType), maxImages);
+		CommandPtr commandPtr = new Command(objectID, SvDef::SVObjectTypeInfoStruct(SvDef::SVImageObjectType, SvDef::SVNotSetSubObjectType), maxImages);
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
@@ -185,7 +185,7 @@ namespace SvOg
 			{
 				objectID = rInstanceID;
 			}
-			CommandPtr commandPtr = new Command(objectID, inputName, it->second, SVImageObjectType);
+			CommandPtr commandPtr = new Command(objectID, inputName, it->second, SvDef::SVImageObjectType);
 			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 			hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		}	
@@ -247,7 +247,7 @@ namespace SvOg
 		return hr;
 	}
 
-	SVObjectTypeInfoStruct ImageController::GetImageTypeInfo(const GUID& imageID) const
+	SvDef::SVObjectTypeInfoStruct ImageController::GetImageTypeInfo(const GUID& imageID) const
 	{
 		typedef SvCmd::GetObjectTypeInfo Command;
 		typedef SVSharedPtr<Command> CommandPtr;
@@ -258,6 +258,6 @@ namespace SvOg
 		{
 			return commandPtr->GetTypeInfo();
 		}
-		return SVObjectTypeInfoStruct();
+		return SvDef::SVObjectTypeInfoStruct();
 	}
 } //namespace SvOg

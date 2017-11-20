@@ -295,13 +295,13 @@ BOOL SVLutDlgPage::OnInitDialog()
 		m_UpperSlider.SetPos(-m_lMaxLutValue);	// default pos
 
 		// fill Mode combo box
-		for (int i = 0; i  < m_mapOperations.GetTypes().GetSize(); i++)
+		for (auto const& rEntry : m_mapOperations.GetTypes())
 		{
-			const SVLutTransformOperationMap::SVLutTransformTypeInfo& rType = m_mapOperations.GetTypes()[i];
+			const SVLutTransformOperationMap::SVLutTransformTypeInfo& rType = rEntry.second;
 			if (rType.m_pType)
 			{
 				int iPos = m_LutModeCombo.AddString( rType.m_Type.c_str() );
-				m_LutModeCombo.SetItemData( iPos, i );
+				m_LutModeCombo.SetItemData( iPos, rType.m_eType );
 				if (m_Lut.Info().GetTransformOperation())
 				{
 					if (typeid(*rType.m_pType) == typeid(*m_Lut.Info().GetTransformOperation()))
@@ -414,7 +414,7 @@ void SVLutDlgPage::Refresh()
 		// Refresh LUT Graph...
 		m_pCamera->GetLut(m_Lut);
 		int iBandSize = m_Lut.Info().BandSize();
-		m_alBandData.SetSize(iBandSize);
+		m_alBandData.resize(iBandSize);
 
 		int iSourceBand = m_iCurrentBand;
 		if (-1 == m_iCurrentBand)
@@ -425,7 +425,7 @@ void SVLutDlgPage::Refresh()
 		{
 			long lVal = 0;
 			lVal = m_Lut(iSourceBand, j);
-			m_alBandData.SetAt( j, lVal );
+			m_alBandData[j] = lVal;
 		}// end for
 
 		m_LUTGraph.SetColor(m_rgbLineColor, FALSE);
@@ -684,17 +684,20 @@ void SVLutDlgPage::OnSelchangeLutModeCombo()
 	int sel = m_LutModeCombo.GetCurSel();
 	if( CB_ERR != sel )
 	{
-		long lValue = ( long ) m_LutModeCombo.GetItemData( sel );
-		const SVLutTransformOperationMap::SVLutTransformTypeInfo& rType = m_mapOperations.GetTypes()[lValue];
-		if (-1 == m_iCurrentBand)
+		SVLutTransformOperationEnum LutTransformOperation = static_cast<SVLutTransformOperationEnum> (m_LutModeCombo.GetItemData(sel));
+		const SVLutTransformOperationMap::SVLutTransformTypeInfo* pTypeInfo = m_mapOperations.GetInfo(LutTransformOperation);
+		if (nullptr != pTypeInfo)
 		{
-			m_Lut.SetTransformOperation(*rType.m_pType);
+			if (-1 == m_iCurrentBand)
+			{
+				m_Lut.SetTransformOperation(*pTypeInfo->m_pType);
+			}
+			else
+			{
+				m_Lut(m_iCurrentBand).SetTransformOperation(*pTypeInfo->m_pType);
+			}
+			m_eLutMode = pTypeInfo->m_eType;
 		}
-		else
-		{
-			m_Lut(m_iCurrentBand).SetTransformOperation(*rType.m_pType);
-		}
-		m_eLutMode = rType.m_eType;
 
 		m_ptLastMousePos = m_ptNoLastMousePos;
 

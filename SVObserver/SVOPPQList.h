@@ -12,14 +12,14 @@
 #pragma once
 
 #pragma region Includes
-#include "SVContainerLibrary\SVList.h"
+//Moved to precompiled header: #include <list>
 #include "SVOPPQObj.h"
 #pragma endregion Includes
 
 class SVOPPQList  
 {
 public:
-	typedef SVList< SVOPPQObjPtr > SVPPQList;
+	typedef std::list<SVOPPQObjPtr> SVPPQList;
 	typedef SVPPQList::iterator iterator;
 	typedef SVPPQList::const_iterator	const_iterator;
 

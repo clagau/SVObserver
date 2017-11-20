@@ -20,7 +20,7 @@
 #include "SVImageLibrary/SVImageBufferInterface.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage/SVMessage.h"
-#include "SVHBitmapUtilitiesLibrary/SVImageFormatEnum.h"
+#include "Definitions/SVImageFormatEnum.h"
 #include "TriggerInformation/SVTriggerActivatorFunc.h"
 #include "TriggerInformation/SVTriggerCallbackFunc.h"
 #include "TriggerInformation/SVTriggerEnums.h"
@@ -184,15 +184,15 @@ HRESULT SVFileAcquisitionDevice::CameraGetFormat( unsigned long p_ulIndex, int &
 	{
 		switch( m_cameras[p_ulIndex].GetImageFormat() )
 		{
-			case SVImageFormatMono16:
-			case SVImageFormatRGB888:
-			case SVImageFormatRGB8888:
-			case SVImageFormatRGB161616:
-			case SVImageFormatY411:
-			case SVImageFormatY422:
-			case SVImageFormatY444:
+			case SvDef::SVImageFormatMono16:
+			case SvDef::SVImageFormatRGB888:
+			case SvDef::SVImageFormatRGB8888:
+			case SvDef::SVImageFormatRGB161616:
+			case SvDef::SVImageFormatY411:
+			case SvDef::SVImageFormatY422:
+			case SvDef::SVImageFormatY444:
 			{
-				p_riFormat = SVImageFormatRGB8888;
+				p_riFormat = SvDef::SVImageFormatRGB8888;
 
 				break;
 			}
@@ -405,7 +405,7 @@ HRESULT SVFileAcquisitionDevice::CameraSetParameter( unsigned long p_ulIndex, in
 		{
 			case SVFileAcquisitionParameterImageFormat:
 			{
-				rCamera.SetImageFormat(static_cast<SVImageFormatEnum>(p_pvarValue->ulVal));
+				rCamera.SetImageFormat(static_cast<SvDef::SVImageFormatEnum>(p_pvarValue->ulVal));
 				l_hrOk = S_OK;
 				break;
 			}

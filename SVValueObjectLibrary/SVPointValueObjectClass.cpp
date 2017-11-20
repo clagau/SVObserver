@@ -29,20 +29,20 @@ static char THIS_FILE[] = __FILE__;
 SV_IMPLEMENT_CLASS(SVPointValueObjectClass, SVPointValueObjectClassGuid);
 
 SVPointValueObjectClass::SVPointValueObjectClass( LPCTSTR ObjectName )
-: SVValueObjectClass<SVPOINT>( ObjectName )
+: SVValueObjectClass<SVPoint>( ObjectName )
 {
 	LocalInitialize();
 }
 
 
 SVPointValueObjectClass::SVPointValueObjectClass( SVObjectClass* pOwner, int StringResourceID )
-: SVValueObjectClass<SVPOINT>( pOwner, StringResourceID )
+: SVValueObjectClass<SVPoint>( pOwner, StringResourceID )
 {
 	LocalInitialize();
 }
 
 SVPointValueObjectClass::SVPointValueObjectClass( const SVPointValueObjectClass& rhs )
-: SVValueObjectClass<SVPOINT>()
+: SVValueObjectClass<SVPoint>()
 {
 	LocalInitialize();
 	*this = rhs;
@@ -58,7 +58,7 @@ SVPointValueObjectClass::~SVPointValueObjectClass()
 {
 }
 
-_variant_t SVPointValueObjectClass::ValueType2Variant( const SVPOINT& rValue ) const
+_variant_t SVPointValueObjectClass::ValueType2Variant( const SVPoint& rValue ) const
 {
 	_variant_t Result;
 
@@ -67,9 +67,9 @@ _variant_t SVPointValueObjectClass::ValueType2Variant( const SVPOINT& rValue ) c
 	return Result;
 }
 
-SVPOINT SVPointValueObjectClass::Variant2ValueType( const _variant_t& rValue ) const
+SVPoint SVPointValueObjectClass::Variant2ValueType( const _variant_t& rValue ) const
 {
-	SVPOINT Result;
+	SVPoint Result;
 
 	if( VT_BSTR == rValue.vt )
 	{
@@ -86,7 +86,7 @@ SVPOINT SVPointValueObjectClass::Variant2ValueType( const _variant_t& rValue ) c
 	return Result;
 }
 
-SVPOINT SVPointValueObjectClass::ConvertString2Type( const std::string& rValue ) const
+SVPoint SVPointValueObjectClass::ConvertString2Type( const std::string& rValue ) const
 {
 	std::string LegalChars = SvUl::ValidateString( rValue, _T("0123456789()-, ") );	// only integers
 	if ( LegalChars == rValue )
@@ -97,7 +97,7 @@ SVPOINT SVPointValueObjectClass::ConvertString2Type( const std::string& rValue )
 		{
 			std::string XValue = SvUl::Left( LegalChars, Pos );
 			std::string YValue = SvUl::Mid( LegalChars, Pos + 1 );
-			return SVPOINT( atol(XValue.c_str()), atol(YValue.c_str()) );
+			return SVPoint( atol(XValue.c_str()), atol(YValue.c_str()) );
 		}
 	}
 	SvDef::StringVector msgList;
@@ -106,10 +106,10 @@ SVPOINT SVPointValueObjectClass::ConvertString2Type( const std::string& rValue )
 	SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 	Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValueObject_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 	Exception.Throw();
-	return SVPOINT(); //will never reached, because the exception will throw before. But this line avoid a warning
+	return SVPoint(); //will never reached, because the exception will throw before. But this line avoid a warning
 }
 
-std::string SVPointValueObjectClass::ConvertType2String( const SVPOINT& rValue ) const
+std::string SVPointValueObjectClass::ConvertType2String( const SVPoint& rValue ) const
 {
 	std::string Result;
 	//This is faster than SvUl::Format
@@ -125,7 +125,7 @@ HRESULT SVPointValueObjectClass::CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD Mem
 
 	if (S_OK == Result)
 	{
-		SVPOINT Value;
+		SVPoint Value;
 		SVPointValueObjectClass::GetValue(Value, Index);
 		long PointX = Value.x();
 		long PointY = Value.y();
@@ -151,7 +151,7 @@ void SVPointValueObjectClass::WriteValues(SVObjectWriter& rWriter)
 	// for all elements in the array
 	for (int i = 0; i < getArraySize(); i++)
 	{
-		SVPOINT PointValue;
+		SVPoint PointValue;
 		//Make sure this is not a derived virtual method which is called
 		SVPointValueObjectClass::GetValue(PointValue, i);
 		TempValue = SvUl::Format(_T("%d, %d"), PointValue.x(), PointValue.y());
@@ -173,7 +173,7 @@ void SVPointValueObjectClass::WriteDefaultValues(SVObjectWriter& rWriter)
 
 void SVPointValueObjectClass::LocalInitialize()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVPointValueObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVPointValueObjectType;
 	SetObjectAttributesAllowed( SvDef::SV_VIEWABLE | SvDef::SV_ARCHIVABLE | SvDef::SV_EMBEDABLE | SvDef::SV_PRINTABLE | SvDef::SV_DD_VALUE, SvOi::SetAttributeType::OverwriteAttribute );
 
 	SetTypeName( _T("Point") );

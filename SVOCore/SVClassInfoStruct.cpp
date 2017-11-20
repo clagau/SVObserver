@@ -35,7 +35,7 @@ SVClassInfoStruct::SVClassInfoStruct( const SVClassInfoStruct& rRhs )
 	m_ClassId					= rRhs.m_ClassId;
 	m_ClassName				= rRhs.m_ClassName;
 	m_ObjectTypeInfo			= rRhs.m_ObjectTypeInfo;
-	m_DesiredInputInterface	= rRhs.m_DesiredInputInterface;
+	m_DesiredInputVector	= rRhs.m_DesiredInputVector;
 }
 
 SVClassInfoStruct::~SVClassInfoStruct()
@@ -47,7 +47,7 @@ SVClassInfoStruct SVClassInfoStruct::operator=( const SVClassInfoStruct& rRhs )
 	m_ClassId					= rRhs.m_ClassId;
 	m_ClassName				= rRhs.m_ClassName;
 	m_ObjectTypeInfo			= rRhs.m_ObjectTypeInfo;
-	m_DesiredInputInterface	= rRhs.m_DesiredInputInterface;
+	m_DesiredInputVector	= rRhs.m_DesiredInputVector;
 	return( *this );
 }
 
@@ -63,30 +63,9 @@ SVObjectClass* SVClassInfoStruct::Construct()
 
 		if( SvOi::ITaskObject* pTaskObject = dynamic_cast<SvOi::ITaskObject*>(pObject) )
 		{
-			pTaskObject->ResolveDesiredInputs(m_DesiredInputInterface);
+			pTaskObject->ResolveDesiredInputs(m_DesiredInputVector);
 		}
 	}
 	return pObject;
-}
-
-SVClassInfoStructListClass::SVClassInfoStructListClass()
-{
-}
-
-SVClassInfoStructListClass::~SVClassInfoStructListClass() 
-{
-	RemoveAll();
-}
-
-int SVClassInfoStructListClass::Find( const SVGUID& rGuid ) 
-{ 
-	for( int i = 0; i < GetSize(); i++ )
-	{
-		if( rGuid == GetAt( i ).m_ClassId )
-		{
-			return i;
-		}
-	}
-	return -1;
 }
 

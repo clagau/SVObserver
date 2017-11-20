@@ -66,7 +66,7 @@ SVObjectClass* SVClassRegisterListClass::ConstructNewObject( const SVGUID& rUniq
 		ClassID = rUniqueClassID;
 	}
 
-	SVRegisterClasses::const_iterator Iter = m_Registers.find( ClassID );
+	SVClassRegisterMap::const_iterator Iter = m_Registers.find( ClassID );
 
 	if( m_Registers.end() != Iter )
 	{
@@ -83,7 +83,7 @@ void SVClassRegisterListClass::Add( SVClassRegisterClass* pClass )
 {
 	if( nullptr != pClass )
 	{
-		SVRegisterClasses::const_iterator l_Iter = m_Registers.find( pClass->GetClassID() );
+		SVClassRegisterMap::const_iterator l_Iter = m_Registers.find( pClass->GetClassID() );
 
 		if( l_Iter == m_Registers.end() )
 		{

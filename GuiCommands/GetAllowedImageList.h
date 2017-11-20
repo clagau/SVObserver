@@ -18,7 +18,7 @@ namespace SvCmd
 {
 	struct GetAllowedImageList : public boost::noncopyable
 	{
-		GetAllowedImageList(const GUID& rObjectID, const SVObjectTypeInfoStruct& typeInfo, const GUID& rTaskObjectID, SVObjectSubTypeEnum subType, bool bAllowColor = false )
+		GetAllowedImageList(const GUID& rObjectID, const SvDef::SVObjectTypeInfoStruct& typeInfo, const GUID& rTaskObjectID, SvDef::SVObjectSubTypeEnum subType, bool bAllowColor = false )
 		: m_command(rObjectID, typeInfo, AllowedImageFunc(rTaskObjectID, subType, bAllowColor)) 
 		, m_TaskObjectID(rTaskObjectID) {}
 
@@ -28,7 +28,7 @@ namespace SvCmd
 		HRESULT Execute()
 		{
 			HRESULT hr = m_command.Execute();
-			SvOi::ITaskObject* pObject = dynamic_cast<SvOi::ITaskObject*>(SvOi::getObject(m_TaskObjectID));
+			const SvOi::ITaskObject* pObject = dynamic_cast<const SvOi::ITaskObject*>(SvOi::getObject(m_TaskObjectID));
 			if (nullptr != pObject)
 			{
 				pObject->getSpecialImageList(m_specialImageList);

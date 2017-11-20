@@ -9,7 +9,7 @@
 #pragma region Includes
 #include "afxwin.h"
 #include "SVEnumerateCombo.h"
-#include "SVLibrary/SVTaskObjectValueInterface.h"
+#include "SVOCore/SVTaskObjectValueInterface.h"
 #include "SVOGui\ISVPropertyPageDialog.h"
 #include "ToolSizeAdjustTask.h"
 #pragma endregion Includes

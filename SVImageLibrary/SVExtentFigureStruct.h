@@ -11,10 +11,12 @@
 
 #pragma once
 
-#include "SVContainerLibrary/SVVector.h"
+#pragma region Includes
+//Moved to precompiled header: #include <vector>
 #include "SVExtentEnums.h"
 #include "SVExtentPointStruct.h"
 #include "SVExtentSizeStruct.h"
+#pragma endregion Includes
 
 struct SVExtentFigureStruct  
 {

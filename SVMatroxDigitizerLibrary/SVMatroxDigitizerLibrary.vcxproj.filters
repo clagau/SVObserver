@@ -65,8 +65,5 @@
     <ClInclude Include="SVMatroxDigitizerInterface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVMatroxDigitizerRef.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

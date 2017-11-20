@@ -30,7 +30,7 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-	SVFormulaEditorSheetClass::SVFormulaEditorSheetClass(const GUID& rInspectionID, const GUID& rTaskObjectID, const SVObjectTypeInfoStruct& rInfo, LPCTSTR pCaption, CWnd* pParentWnd, UINT iSelectPage)
+	SVFormulaEditorSheetClass::SVFormulaEditorSheetClass(const GUID& rInspectionID, const GUID& rTaskObjectID, const SvDef::SVObjectTypeInfoStruct& rInfo, LPCTSTR pCaption, CWnd* pParentWnd, UINT iSelectPage)
 	: CPropertySheet(pCaption, pParentWnd, iSelectPage)
 	{
 		init(rInspectionID, rTaskObjectID, rInfo);
@@ -52,7 +52,7 @@ namespace SvOg
 	{
 	}
 
-	void SVFormulaEditorSheetClass::init(const GUID& rInspectionID, const GUID& rTaskObjectID, const SVObjectTypeInfoStruct& rInfo)
+	void SVFormulaEditorSheetClass::init(const GUID& rInspectionID, const GUID& rTaskObjectID, const SvDef::SVObjectTypeInfoStruct& rInfo)
 	{
 		init(new FormulaController(rInspectionID, rTaskObjectID, rInfo));
 	}

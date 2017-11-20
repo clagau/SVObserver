@@ -55,8 +55,8 @@ SVMathToolClass::SVMathToolClass( SVObjectClass* POwner, int StringResourceID )
 void SVMathToolClass::init(void)
 {
 	// Set up your type...
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SVMathToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvDef::SVMathToolObjectType;
 
 	// Hide and Remove Embedded Extents
 	removeEmbeddedExtents();
@@ -68,14 +68,14 @@ void SVMathToolClass::init(void)
 	// Setup the result
 	SVClassInfoStruct resultClassInfo;
 	CString strTitle;
-	SVObjectTypeInfoStruct interfaceInfo;
+	SvDef::SVObjectTypeInfoStruct interfaceInfo;
 
 	// Declare Input Interface of Math Equation Result...
 	interfaceInfo.EmbeddedID = SVMathEquationResultObjectGuid;
-	resultClassInfo.m_DesiredInputInterface.Add( interfaceInfo );
+	resultClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
 
-	resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
-	resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultDoubleObjectType;
+	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVResultObjectType;
+	resultClassInfo.m_ObjectTypeInfo.SubType	= SvDef::SVResultDoubleObjectType;
 	resultClassInfo.m_ClassId = SVDoubleResultClassGuid;
 	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_RESULT );
 	strTitle.LoadString( IDS_CLASSNAME_RESULT_DOUBLE );

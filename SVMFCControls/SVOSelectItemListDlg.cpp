@@ -54,15 +54,7 @@ namespace SvMc
 
 	void CSVOSelectItemListDlg::AddListBoxItem(CString sItem)
 	{
-		if (m_DisplayList.IsEmpty())
-		{
-			m_DisplayList.AddHead((CString)sItem);
-		}
-		else
-		{
-			m_DisplayList.AddTail((CString)sItem);
-		}
-		//m_ctlSelectItemList.InsertString(-1,sItem);
+		m_DisplayList.insert(m_DisplayList.end(), sItem);
 	}
 
 	BOOL CSVOSelectItemListDlg::OnInitDialog() 
@@ -71,14 +63,9 @@ namespace SvMc
 		SVDisplayList::iterator pos;
 		CString sTxt;
 
-		int iNum = static_cast<int>(m_DisplayList.GetCount());
-		if (iNum > 0)
+		for(auto const& rItem : m_DisplayList)
 		{
-			for (int x = 0; x < iNum; x++)
-			{
-				pos = m_DisplayList.FindIndex(x);
-				m_ctlSelectItemList.InsertString(-1,m_DisplayList.GetAt(pos));
-			}
+			m_ctlSelectItemList.InsertString(-1, rItem);
 		}
 		m_ctlSelectItemList.SetCurSel(0);
 

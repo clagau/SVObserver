@@ -13,7 +13,7 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <boost/assign/list_of.hpp>
 #include "Definitions/ObjectDefines.h"
-#include "SVObjectLibrary/GlobalConst.h"
+#include "Definitions/GlobalConst.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "SVContainerLibrary/ObjectSelectorItem.h"
 #include "SVFormulaEditorPage.h"
@@ -391,7 +391,7 @@ namespace SvOg
 		SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::TypeSingleObject );
 		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, std::string( _T("") ) );
 		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, Filter, std::string( _T("") ) );
-		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterOutput, SvOl::FqnPPQVariables, std::string( _T("") ) );
+		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterOutput, SvDef::FqnPPQVariables, std::string( _T("") ) );
 
 		// Insert the Names of the objects selecteable for an Equation
 		m_FormulaController->BuildSelectableItems();

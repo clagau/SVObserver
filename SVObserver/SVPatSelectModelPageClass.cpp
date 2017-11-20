@@ -13,20 +13,21 @@
 #include "stdafx.h"
 #include "SVPatSelectModelPageClass.h"
 #include "SVPatAnalyzeSetupDlgSheet.h"
-#include "CameraLibrary\SVGraphix.h"
+#include "SVLibrary\SVGraphix.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary\GlobalPath.h"
 #include "SVOGui/DisplayHelper.h"
 #include "SVOGui/GuiValueHelper.h"
-#include "SVOGui\SVColor.h"
+#include "Definitions/Color.h"
 #include "GuiCommands/CreateModel.h"
 #include "SVMessage/SVMessage.h"
 #include "SVMatroxLibrary/SVMatroxPatternInterface.h"
 #include "SVImageLibrary/SVExtentPointStruct.h"
 #include "SVImageLibrary/SVImageExtentClass.h"
 #include "Definitions/GlobalConst.h"
+#include "SVFileSystemLibrary/SVFileNameClass.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -908,8 +909,8 @@ void SVPatModelPageClass::setOverlay()
 	Parmap[CDSVPictureDisplay::P_Y1] = m_nYPos;
 	Parmap[CDSVPictureDisplay::P_X2] = m_nXPos + m_lModelWidth;
 	Parmap[CDSVPictureDisplay::P_Y2] = m_nYPos + m_lModelHeight;
-	Parmap[CDSVPictureDisplay::P_Color] = SVColor::Green;
-	Parmap[CDSVPictureDisplay::P_SelectedColor] = SVColor::Green;
+	Parmap[CDSVPictureDisplay::P_Color] = SvDef::Green;
+	Parmap[CDSVPictureDisplay::P_SelectedColor] = SvDef::Green;
 	Parmap[CDSVPictureDisplay::P_AllowEdit] = CDSVPictureDisplay::AllowResizeAndMove;
 
 	if ( -1 < m_handleToModelOverlayObject )
@@ -957,8 +958,8 @@ void SVPatModelPageClass::setOverlay()
 void SVPatModelPageClass::setCircularToolOverlay()
 {
 	LongParamMap Parmap;
-	Parmap[CDSVPictureDisplay::P_Color] = SVColor::Green;
-	Parmap[CDSVPictureDisplay::P_SelectedColor] = SVColor::Green;
+	Parmap[CDSVPictureDisplay::P_Color] = SvDef::Green;
+	Parmap[CDSVPictureDisplay::P_SelectedColor] = SvDef::Green;
 	Parmap[CDSVPictureDisplay::P_AllowEdit] = CDSVPictureDisplay::AllowNone;
 	CRect innerRect = SVMatroxPatternInterface::CalculateOverscanInnerRect(CPoint(m_nXPos, m_nYPos), CSize(m_lModelWidth, m_lModelHeight));
 	CRect outerRect = SVMatroxPatternInterface::CalculateOverscanOuterRect(CPoint(innerRect.left, innerRect.top), innerRect.Size() );
@@ -1004,8 +1005,8 @@ void SVPatModelPageClass::setCircularModelOverlay()
 		CRect innerRect = SVMatroxPatternInterface::CalculateOverscanInnerRect(CPoint(0, 0), CSize(modelWidth, modelHeight));
 		CRect outerRect = SVMatroxPatternInterface::CalculateOverscanOuterRect(CPoint(innerRect.left, innerRect.top), innerRect.Size() );
 		LongParamMap Parmap;
-		Parmap[CDSVPictureDisplay::P_Color] = SVColor::Green;
-		Parmap[CDSVPictureDisplay::P_SelectedColor] = SVColor::Green;
+		Parmap[CDSVPictureDisplay::P_Color] = SvDef::Green;
+		Parmap[CDSVPictureDisplay::P_SelectedColor] = SvDef::Green;
 		Parmap[CDSVPictureDisplay::P_AllowEdit] = CDSVPictureDisplay::AllowNone;
 		//Circle overlay
 		Parmap[CDSVPictureDisplay::P_Type] = CDSVPictureDisplay::EllipseROI;
@@ -1062,8 +1063,8 @@ void SVPatModelPageClass::setModelCenterOverlay()
 	ParMap[CDSVPictureDisplay::P_Type ] = static_cast<long>(CDSVPictureDisplay::GraphROI);
 	ParMap[CDSVPictureDisplay::P_SubType_X ] = static_cast<long>(CDSVPictureDisplay::ImageArea_NoScale);
 	ParMap[CDSVPictureDisplay::P_SubType_Y ] = static_cast<long>(CDSVPictureDisplay::ImageArea_NoScale);
-	ParMap[CDSVPictureDisplay::P_Color] = SVColor::LightMagenta;
-	ParMap[CDSVPictureDisplay::P_SelectedColor] = SVColor::LightMagenta;
+	ParMap[CDSVPictureDisplay::P_Color] = SvDef::LightMagenta;
+	ParMap[CDSVPictureDisplay::P_SelectedColor] = SvDef::LightMagenta;
 	ParMap[CDSVPictureDisplay::P_AllowEdit] = CDSVPictureDisplay::AllowMove;
 	ParMap[CDSVPictureDisplay::P_ARRAY_XY] = arraySafe;
 

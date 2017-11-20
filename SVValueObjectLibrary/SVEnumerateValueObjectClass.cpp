@@ -54,11 +54,11 @@ HRESULT SVEnumerateValueObjectClass::SetObjectValue( SVObjectAttributeClass* pDa
 	HRESULT Result( E_FAIL );
 	bool bOk( false );
 	
-	SvCl::SVObjectSVStringArrayClass SVStringArray;
+	SvCl::SVObjectStdStringArrayClass SVStringArray;
 
 	if ( bOk = pDataObject->GetAttributeData( _T("Enumeration"), SVStringArray ) )
 	{
-		for( int i = 0; i < SVStringArray.GetSize(); i++ )
+		for( int i = 0; i < static_cast<int> (SVStringArray.size()); i++ )
 		{
 			SetEnumTypes( SVStringArray[i].c_str() );
 		}
@@ -94,6 +94,7 @@ bool SVEnumerateValueObjectClass::SetEnumTypes( LPCTSTR szEnumList )
 	bool bRetVal = false;
 	if( szEnumList )
 	{
+		m_enumVector.clear();
 		TCHAR* szList = _tcsdup( szEnumList );
 		if( szList )
 		{
@@ -127,20 +128,8 @@ bool SVEnumerateValueObjectClass::SetEnumTypes( LPCTSTR szEnumList )
 				long lDummy = 0L;
 				if ( !EnumString.empty() && !GetEnumerator( EnumString.c_str(), lDummy ) )	// If this fails enumerator was unknown!
 				{
-					int i = 0;
-					// Get position in tables ( sorted by value )
-					for(; i < m_enumValueTable.GetSize(); ++i )
-					{
-						long lValue = m_enumValueTable[ i ];
-						if( lValue > enumValue )
-							break;
-					}
-					// Insert enumeration at found position...
-					m_enumStringTable.InsertAt( i, EnumString );
-					m_enumValueTable.InsertAt( i, enumValue );
-
-					// Prepare next enumeration value...
-					++enumValue;
+					m_enumVector.push_back(SVEnumeratePair(EnumString, enumValue));
+					enumValue++;
 				}
 				else
 				{
@@ -153,30 +142,19 @@ bool SVEnumerateValueObjectClass::SetEnumTypes( LPCTSTR szEnumList )
 			// Free allocated resources...
 			free( szList );
 		}
+
+		std::sort(m_enumVector.begin(), m_enumVector.end(), [](const SVEnumeratePair& rLhs, const SVEnumeratePair& rRhs) -> bool
+		{
+			return rLhs.second < rRhs.second;
+		});
 	}
 	return bRetVal;
 }
 
 bool SVEnumerateValueObjectClass::SetEnumTypes( const SVEnumerateVector& rVec )
 {
-	for ( size_t i=0; i < rVec.size(); i++ )
-	{
-		std::string sFirst = rVec[i].first;
-		long lSecond = rVec[i].second;
-		m_enumStringTable.Add( sFirst );
-		m_enumValueTable.Add( lSecond );
-	}
-	return true;
-}
-
-bool SVEnumerateValueObjectClass::GetEnumTypes( SVEnumerateVector& rVec ) const
-{
-	rVec.clear();
-
-	for ( int i=0; i < m_enumStringTable.GetSize(); i++ )
-	{
-		rVec.push_back( SVEnumeratePair( m_enumStringTable.GetAt(i), m_enumValueTable.GetAt(i) ) );
-	}
+	//! Note the enums are not sorted
+	m_enumVector = rVec;
 	return true;
 }
 
@@ -196,19 +174,20 @@ bool SVEnumerateValueObjectClass::SetEnumTypes( int StringResourceID )
 //				: If Enumerator is not defined, the function fails and returns
 //				: false.
 ////////////////////////////////////////////////////////////////////////////////
-bool SVEnumerateValueObjectClass::GetEnumerator( LPCTSTR szEnumerator, long& lValue ) const
+bool SVEnumerateValueObjectClass::GetEnumerator( LPCTSTR szEnumerator, long& rValue ) const
 {
 	bool bRetVal = false;
 	if( szEnumerator )
 	{
 		// Check if enumerator is defined...
-		for( int i = 0; i < m_enumStringTable.GetSize(); ++ i )
+		for( auto const& rEntry : m_enumVector)
 		{
-			if( 0 == SvUl::CompareNoCase( m_enumStringTable.GetAt( i ), szEnumerator ) )
+			if( 0 == SvUl::CompareNoCase(rEntry.first, szEnumerator) )
 			{
 				// Found it...
-				lValue = m_enumValueTable[ i ];
+				rValue = rEntry.second;
 				bRetVal = true;
+				break;
 			}
 		}
 
@@ -217,12 +196,12 @@ bool SVEnumerateValueObjectClass::GetEnumerator( LPCTSTR szEnumerator, long& lVa
 			long lEnumeratorValue = -98765432;
 			if ( ToNumber( szEnumerator, lEnumeratorValue ) )
 			{
-				for( int i = 0; i < m_enumValueTable.GetSize(); ++i )
+				for (auto const& rEntry : m_enumVector)
 				{
-					if ( m_enumValueTable.GetAt( i ) == lEnumeratorValue )
+					if ( rEntry.second == lEnumeratorValue )
 					{
 						// Found it...
-						lValue = lEnumeratorValue;
+						rValue = lEnumeratorValue;
 						bRetVal = true;
 						break;
 					}
@@ -238,9 +217,9 @@ bool SVEnumerateValueObjectClass::GetEnumerator( LPCTSTR szEnumerator, long& lVa
 SvOi::NameValueList SVEnumerateValueObjectClass::GetEnumList() const
 {
 	SvOi::NameValueList list;
-	for (int i = 0;i < m_enumStringTable.GetSize(); i++)
+	for (auto const& rEntry : m_enumVector)
 	{
-		list.push_back(std::make_pair(m_enumStringTable.GetAt(i).c_str(), m_enumValueTable.GetAt(i)));
+		list.push_back(std::make_pair(rEntry.first.c_str(), rEntry.second));
 	}
 	return list;
 }
@@ -286,25 +265,24 @@ SvOi::NameValueList SVEnumerateValueObjectClass::GetEnumList() const
 ////////////////////////////////////////////////////////////////////////////////
 bool SVEnumerateValueObjectClass::GetEnumeratorName( long lValue, std::string& rEnumerator ) const
 {
-	bool bRetVal = false;
+	bool Result = false;
 	// Check if enumerator is defined...
-	for( int i = 0; i < m_enumValueTable.GetSize(); ++ i )
+	for( auto const& rEntry : m_enumVector)
 	{
-		long lEnumVal = m_enumValueTable[ i ];
-		if( lEnumVal == lValue )
+		if( rEntry.second == lValue )
 		{
 			// Found it...
-			rEnumerator = m_enumStringTable.GetAt( i );
-			bRetVal = true;
-		}
-
-		if( ! bRetVal )
-		{
-			// Return undefined value as string...
-			rEnumerator = SvUl::Format( _T( "%d" ), lValue );
+			rEnumerator = rEntry.first;
+			Result = true;
+			break;
 		}
 	}
-	return bRetVal;
+	if (!Result)
+	{
+		// Return undefined value as string...
+		rEnumerator = SvUl::Format(_T("%d"), lValue);
+	}
+	return Result;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -316,63 +294,16 @@ bool SVEnumerateValueObjectClass::GetEnumTypes( std::string& rEnumList ) const
 {
 	bool bRetVal = true;
 	// Get Enumeration types...
-	for( int i = 0; i < m_enumStringTable.GetSize(); ++ i )
+	rEnumList.clear();
+	for (auto const& rEntry : m_enumVector)
 	{
-		long lEnumValue = m_enumValueTable[ i ];
-		std::string tmp = SvUl::Format( "=%d", lEnumValue );
-
-		if( i )
+		if(!rEnumList.empty())
 		{
 			// Add comma, but after first element...
-			rEnumList += _T( "," );
+			rEnumList += _T(",");
 		}
 
-		rEnumList += m_enumStringTable.GetAt( i ) + tmp;
-	}
-	return bRetVal;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : GetFirstEnumType
-// -----------------------------------------------------------------------------
-// .Description : Returns Iterator which can be used by GetNextEnumType(...)
-//				: to iterate through all defined enumerators.
-//				:
-//				: The return value is -1, if there is nothing defined or the 
-//				: func. failed.
-////////////////////////////////////////////////////////////////////////////////
-int SVEnumerateValueObjectClass::GetFirstEnumTypePos() const
-{
-	int iRetVal = -1;
-	if( m_enumStringTable.GetSize() > 0 )
-	{
-		iRetVal = 0;
-	}
-	return iRetVal;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : GetNextEnumType
-// -----------------------------------------------------------------------------
-// .Description : Returns in RStrEnum the next defined enumeration identifier
-//				: and in REnumValue its value.
-//				:
-//				: If there is no next enumerator it fails and returns false.
-//				:
-//				: Use Iterator which is returned by GetFirstEnumType(...),
-//				:	to iterate through list of enum types.
-////////////////////////////////////////////////////////////////////////////////
-bool SVEnumerateValueObjectClass::GetNextEnumType( int& RIterator, std::string& RStrEnum, long& REnumValue ) const
-{
-	bool bRetVal = false;
-	if( RIterator >= 0 && RIterator < m_enumStringTable.GetSize() )
-	{
-		RStrEnum	= m_enumStringTable.GetAt( RIterator );
-		REnumValue	= m_enumValueTable.GetAt( RIterator );
-
-		// Prepare next iterator...
-		++RIterator;
-		bRetVal = true;
+		rEnumList += rEntry.first + SvUl::Format( "=%d", rEntry.second );
 	}
 	return bRetVal;
 }
@@ -444,7 +375,7 @@ void SVEnumerateValueObjectClass::WriteDefaultValues(SVObjectWriter& rWriter)
 
 void SVEnumerateValueObjectClass::LocalInitialize()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVEnumValueObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVEnumValueObjectType;
 
 	SetTypeName( _T("Enumeration") );
 

@@ -11,11 +11,11 @@
 
 #pragma once
 #pragma region Includes
+#include "SVOCore/SVClassInfoStruct.h"
 #pragma endregion Includes
 
 class SVIPDoc;
 class SVTaskObjectClass;
-class SVClassInfoStructListClass;
 class SVTaskObjectListClass;
 class SVObjectClass;
 
@@ -63,7 +63,7 @@ protected:
 // Data Element(s):
 //******************************************************************************
 public:
-	SVClassInfoStructListClass*	m_pAvailableChildrenList;
+	SVClassInfoStructVector*	m_pAvailableChildrenList;
 	SVTaskObjectListClass*		m_pParentObject;
 	std::string					m_Title;
 	BOOL						m_AllowMultipleChildrenInstances;

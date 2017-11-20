@@ -54,7 +54,7 @@ SVGigeParameterAccessor& SVGigeParameterAccessor::operator=(const SVGigeParamete
 }
 
 // This Method is just a call through for getting the feature
-HRESULT SVGigeParameterAccessor::GetFeature(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& rFeature, _variant_t& rValue)
+HRESULT SVGigeParameterAccessor::GetFeature(SVMatroxDigitizerPtr Digitizer, const SVGigeFeature& rFeature, _variant_t& rValue)
 {
 	HRESULT hr = S_OK;
 	if (rFeature.IsSupported())
@@ -88,7 +88,7 @@ HRESULT SVGigeParameterAccessor::GetFeature(SVMatroxDigitizerRef Digitizer, cons
 }
 
 // This Method is just a call through for setting the feature
-HRESULT SVGigeParameterAccessor::SetFeature(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& rFeature, const _variant_t& rValue)
+HRESULT SVGigeParameterAccessor::SetFeature(SVMatroxDigitizerPtr Digitizer, const SVGigeFeature& rFeature, const _variant_t& rValue)
 {
 	HRESULT hr = S_OK;
 	if (rFeature.IsSupported() && !rFeature.IsReadOnly())

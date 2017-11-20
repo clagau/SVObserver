@@ -27,7 +27,7 @@ SV_IMPLEMENT_CLASS(SVSkeletonFilterClass, SVSkeletonFilterClassGuid)
 SVSkeletonFilterClass::SVSkeletonFilterClass( SVObjectClass* POwner, int StringResourceID )
 					: SVFilterClass( POwner, StringResourceID )
 {
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVSkeletonFilterObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVSkeletonFilterObjectType;
 }
 
 SVSkeletonFilterClass::~SVSkeletonFilterClass()

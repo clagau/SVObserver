@@ -20,7 +20,6 @@
 #include "SVOCore/SVTaskObject.h"
 #include "SVInspectionProcess.h"
 #include "SVGuiExtentUpdater.h"
-#include "SVOCore/SVImageListClass.h"
 #include "SVOCore/SVTool.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVOResource/ConstGlobalSvOr.h"

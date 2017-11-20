@@ -18,7 +18,7 @@ SVEvaluateEndRadiusClass::SVEvaluateEndRadiusClass( SVObjectClass* pOwner, int S
 : SVEvaluateClass( pOwner, StringResourceID )
 {
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVEvaluateEndRadiusObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVEvaluateEndRadiusObjectType;
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &m_outputMathResult, SVOutputEvaluateEndRadiusResultObjectGuid, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone );

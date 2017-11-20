@@ -93,28 +93,28 @@ SVToolAdjustmentDialogThresholdPageClass::SVToolAdjustmentDialogThresholdPageCla
 
 		if (m_pTool)
 		{
-			SVObjectTypeInfoStruct info(SVUnaryImageOperatorObjectType, SVThresholdObjectType);
+			SvDef::SVObjectTypeInfoStruct info(SvDef::SVUnaryImageOperatorObjectType, SvDef::SVThresholdObjectType);
 			m_pCurrentThreshold = dynamic_cast<SVThresholdClass *>(m_pTool->getFirstObject(info));
 
 			if( m_pCurrentThreshold )
 			{
 				// Try to get Threshold Embeddeds...
 
-				SVObjectTypeInfoStruct infoATM;
-				infoATM.ObjectType = SVValueObjectType;
-				infoATM.SubType = SVBoolValueObjectType;
+				SvDef::SVObjectTypeInfoStruct infoATM;
+				infoATM.ObjectType = SvDef::SVValueObjectType;
+				infoATM.SubType = SvDef::SVBoolValueObjectType;
 				infoATM.EmbeddedID = SVUseExternalATMObjectGuid;
 				m_pUseExternATM = dynamic_cast<SVBoolValueObjectClass*>(m_pCurrentThreshold->getFirstObject(infoATM));
 
-				SVObjectTypeInfoStruct infoLT;
-				infoLT.ObjectType = SVValueObjectType;
-				infoLT.SubType = SVBoolValueObjectType;
+				SvDef::SVObjectTypeInfoStruct infoLT;
+				infoLT.ObjectType = SvDef::SVValueObjectType;
+				infoLT.SubType = SvDef::SVBoolValueObjectType;
 				infoLT.EmbeddedID = SVUseExternalLTObjectGuid;
 				m_pUseExternLT = dynamic_cast<SVBoolValueObjectClass*>(m_pCurrentThreshold->getFirstObject(infoLT));
 
-				SVObjectTypeInfoStruct infoUT;
-				infoUT.ObjectType = SVValueObjectType;
-				infoUT.SubType = SVBoolValueObjectType;
+				SvDef::SVObjectTypeInfoStruct infoUT;
+				infoUT.ObjectType = SvDef::SVValueObjectType;
+				infoUT.SubType = SvDef::SVBoolValueObjectType;
 				infoUT.EmbeddedID = SVUseExternalUTObjectGuid;
 				m_pUseExternUT = dynamic_cast<SVBoolValueObjectClass*>(m_pCurrentThreshold->getFirstObject(infoUT));
 			}
@@ -988,7 +988,7 @@ void SVToolAdjustmentDialogThresholdPageClass::OnUTFormulaButton()
 {
 	UpdateData(true); // get data of dialog
 
-	SVObjectTypeInfoStruct info(SVEquationObjectType, SVUpperThresholdEquationObjectType);
+	SvDef::SVObjectTypeInfoStruct info(SvDef::SVEquationObjectType, SvDef::SVUpperThresholdEquationObjectType);
 	SVUpperThresholdEquationClass* pEquation = dynamic_cast<SVUpperThresholdEquationClass*>(m_pCurrentThreshold->getFirstObject(info));
 	if (pEquation)
 	{
@@ -1011,9 +1011,9 @@ void SVToolAdjustmentDialogThresholdPageClass::OnUTFormulaButton()
 
 void SVToolAdjustmentDialogThresholdPageClass::UpdateLowerThresholdFromFormula()
 {
-	SVObjectTypeInfoStruct info;
-	info.ObjectType = SVEquationObjectType;
-	info.SubType    = SVLowerThresholdEquationObjectType;
+	SvDef::SVObjectTypeInfoStruct info;
+	info.ObjectType = SvDef::SVEquationObjectType;
+	info.SubType    = SvDef::SVLowerThresholdEquationObjectType;
 	SVLowerThresholdEquationClass* pEquation = dynamic_cast<SVLowerThresholdEquationClass*>(m_pCurrentThreshold->getFirstObject(info));
 	if (pEquation)
 	{
@@ -1024,9 +1024,9 @@ void SVToolAdjustmentDialogThresholdPageClass::UpdateLowerThresholdFromFormula()
 
 void SVToolAdjustmentDialogThresholdPageClass::UpdateUpperThresholdFromFoumula()
 {
-	SVObjectTypeInfoStruct info;
-	info.ObjectType = SVEquationObjectType;
-	info.SubType    = SVUpperThresholdEquationObjectType;
+	SvDef::SVObjectTypeInfoStruct info;
+	info.ObjectType = SvDef::SVEquationObjectType;
+	info.SubType    = SvDef::SVUpperThresholdEquationObjectType;
 	SVUpperThresholdEquationClass* pEquation = dynamic_cast<SVUpperThresholdEquationClass*>(m_pCurrentThreshold->getFirstObject(info));
 	if (pEquation)
 	{
@@ -1039,7 +1039,7 @@ void SVToolAdjustmentDialogThresholdPageClass::OnATMFormulaButton()
 {
 	UpdateData(true); // get data of dialog
 
-	SVObjectTypeInfoStruct info(SVEquationObjectType, SVAutoThresholdEquationObjectType);
+	SvDef::SVObjectTypeInfoStruct info(SvDef::SVEquationObjectType, SvDef::SVAutoThresholdEquationObjectType);
 	SVAutoThresholdEquationClass* pEquation = dynamic_cast<SVAutoThresholdEquationClass*>(m_pCurrentThreshold->getFirstObject(info));
 	if (pEquation)
 	{
@@ -1059,7 +1059,7 @@ void SVToolAdjustmentDialogThresholdPageClass::OnLTFormulaButton()
 {
 	UpdateData(true); // get data of dialog
 
-	SVObjectTypeInfoStruct info(SVEquationObjectType, SVLowerThresholdEquationObjectType);
+	SvDef::SVObjectTypeInfoStruct info(SvDef::SVEquationObjectType, SvDef::SVLowerThresholdEquationObjectType);
 	SVLowerThresholdEquationClass* pEquation = dynamic_cast<SVLowerThresholdEquationClass*>(m_pCurrentThreshold->getFirstObject(info));
 	if (pEquation)
 	{

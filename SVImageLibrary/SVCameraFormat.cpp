@@ -22,7 +22,7 @@ SVCameraFormat::SVCameraFormat()
 
 void SVCameraFormat::init()
 {
-	m_eImageType = SVImageFormatUnknown;
+	m_eImageType = SvDef::SVImageFormatUnknown;
 	m_lWidthMax = 0;
 	m_lHeightMax = 0;
 	m_lWidth = 0;
@@ -117,21 +117,21 @@ HRESULT SVCameraFormat::ParseAndAssignCameraFormat( const std::string& rCameraFo
 
 	if ( sType == _T("Y") )
 	{
-		m_eImageType = SVImageFormatMono8;
+		m_eImageType = SvDef::SVImageFormatMono8;
 	}
 	//! Note all Bayer formats will be possible BayerRG8 or 12, BayerGB8 10 or 12
 	else if ( std::string::npos != sType.find(_T("RGB")) || std::string::npos != sType.find(_T("YUV")) || std::string::npos != sType.find(_T("Bayer")) )
 	{
-		m_eImageType = SVImageFormatRGB8888;
+		m_eImageType = SvDef::SVImageFormatRGB8888;
 		m_bColor = true;
 	}
 	else if ( std::string::npos != sType.find(_T("Y_FORMAT_7"))  )
 	{
-		m_eImageType = SVImageFormatMono8;
+		m_eImageType = SvDef::SVImageFormatMono8;
 	}
 	else	// default
 	{
-		m_eImageType = SVImageFormatMono8;
+		m_eImageType = SvDef::SVImageFormatMono8;
 	}
 	return S_OK;
 }

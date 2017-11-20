@@ -22,10 +22,10 @@ namespace SvCmd
 	struct GetInputs: public boost::noncopyable
 	{
 		/// \param rObjectID [in] Object Id to the task object.
-		/// \param typeInfo [in] Type of the requested inputs. SVNotSetObjectType return all inputs
-		/// \param objectTypeToInclude [in] Object type until the name of the connected object will set. SVNotSetObjectType means only object name and e.g. SVToolSetObjectType means "Tool Set.Window Tool....". This parameter will not used for image objects.
+		/// \param typeInfo [in] Type of the requested inputs. SvDef::SVNotSetObjectType return all inputs
+		/// \param objectTypeToInclude [in] Object type until the name of the connected object will set. SvDef::SVNotSetObjectType means only object name and e.g. SvDef::SVToolSetObjectType means "Tool Set.Window Tool....". This parameter will not used for image objects.
 		/// \param func [in]
-		GetInputs(const GUID& rObjectID, const SVObjectTypeInfoStruct& typeInfo = SVObjectTypeInfoStruct(SVNotSetObjectType), SVObjectTypeEnum objectTypeToInclude = SVNotSetObjectType) 
+		GetInputs(const GUID& rObjectID, const SvDef::SVObjectTypeInfoStruct& typeInfo = SvDef::SVObjectTypeInfoStruct(SvDef::SVNotSetObjectType), SvDef::SVObjectTypeEnum objectTypeToInclude = SvDef::SVNotSetObjectType) 
 			: m_InstanceID(rObjectID), m_typeInfo(typeInfo), m_objectTypeToInclude(objectTypeToInclude) {}
 
 		// This method is where the real separation would occur by using sockets/named pipes/shared memory
@@ -50,9 +50,9 @@ namespace SvCmd
 		const SvUl::InputNameGuidPairList& ConnectedObjects() const { return m_list; }
 
 	private:
-		SVObjectTypeInfoStruct m_typeInfo;
+		SvDef::SVObjectTypeInfoStruct m_typeInfo;
 		SvUl::InputNameGuidPairList m_list;
-		SVObjectTypeEnum m_objectTypeToInclude;
+		SvDef::SVObjectTypeEnum m_objectTypeToInclude;
 		GUID m_InstanceID;
 	};
 } //namespace SvCmd

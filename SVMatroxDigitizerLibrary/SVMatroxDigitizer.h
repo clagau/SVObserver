@@ -13,6 +13,7 @@
 
 //Moved to precompiled header: #include <boost/utility.hpp>
 #include "SVMatroxLibrary/SVMatroxTypedefs.h"
+#include "SVUtilityLibrary/SVSharedPtr.h"
 
 class SVMatroxDigitizerInterface;
 
@@ -44,3 +45,4 @@ private:
 	void LocalClear();
 };
 
+typedef SVSharedPtr<SVMatroxDigitizer> SVMatroxDigitizerPtr;

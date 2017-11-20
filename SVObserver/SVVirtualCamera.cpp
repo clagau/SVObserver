@@ -16,7 +16,7 @@
 #include "SVDigitizerProcessingClass.h"
 #include "CameraLibrary/SVDeviceParams.h"
 #include "SVStatusLibrary/GlobalPath.h"
-#include "SVObjectLibrary/GlobalConst.h"
+#include "Definitions/GlobalConst.h"
 #include "SVObjectLibrary/SVClsids.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -133,7 +133,7 @@ bool SVVirtualCamera::Create( LPCTSTR DeviceName )
 	{
 		SetBandLink( mpsvDevice->Channel() );
 
-		m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVVirtualCameraType;
+		m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVVirtualCameraType;
 
 		bOk = m_CallbackList.Create() && bOk;
 
@@ -693,17 +693,17 @@ void SVVirtualCamera::createCameraParameters()
 	BasicValueObjectPtr pValue;
 	SVGUID ParameterUID( SV_GUID_NULL );
 	//Initialize the parameters and set their unique GUID
-	pValue = m_CameraValues.setValueObject( SvOl::FqnCameraSerialNumber, _T(""), this, SVCameraObjectType );
+	pValue = m_CameraValues.setValueObject( SvDef::FqnCameraSerialNumber, _T(""), this, SvDef::SVCameraObjectType );
 	ParameterUID = CameraBaseSerialNumberUidGuid;
 	ParameterUID.ToGUID().Data1 += m_CameraID;
 	SVObjectManagerClass::Instance().ChangeUniqueObjectID( pValue.get(), ParameterUID );
 
-	pValue = m_CameraValues.setValueObject( SvOl::FqnCameraGain, 0L, this, SVCameraObjectType );
+	pValue = m_CameraValues.setValueObject( SvDef::FqnCameraGain, 0L, this, SvDef::SVCameraObjectType );
 	ParameterUID = CameraBaseGainUidGuid;
 	ParameterUID.ToGUID().Data1 += m_CameraID;
 	SVObjectManagerClass::Instance().ChangeUniqueObjectID( pValue.get(), ParameterUID );
 
-	pValue = m_CameraValues.setValueObject( SvOl::FqnCameraShutter, 0L, this, SVCameraObjectType );
+	pValue = m_CameraValues.setValueObject( SvDef::FqnCameraShutter, 0L, this, SvDef::SVCameraObjectType );
 	ParameterUID = CameraBaseShutterUidGuid;
 	ParameterUID.ToGUID().Data1 += m_CameraID;
 	SVObjectManagerClass::Instance().ChangeUniqueObjectID( pValue.get(), ParameterUID );
@@ -732,13 +732,13 @@ HRESULT SVVirtualCamera::updateCameraParameters()
 			variant_t SerialNumberValue;
 			pDeviceParam->GetValue(SerialNumberValue.GetVARIANT());
 			pDeviceParam = nullptr;
-			m_CameraValues.setValueObject( SvOl::FqnCameraSerialNumber, SerialNumberValue, this, SVCameraObjectType );
+			m_CameraValues.setValueObject( SvDef::FqnCameraSerialNumber, SerialNumberValue, this, SvDef::SVCameraObjectType );
 		}
 		pDeviceParam = CameraParameters.GetParameter( DeviceParamGain );
-		Result = updateCameraLongParameter( SvOl::FqnCameraGain, dynamic_cast< SVLongValueDeviceParam* >( pDeviceParam ) );
+		Result = updateCameraLongParameter( SvDef::FqnCameraGain, dynamic_cast< SVLongValueDeviceParam* >( pDeviceParam ) );
 
 		pDeviceParam = CameraParameters.GetParameter( DeviceParamShutter );
-		Result = updateCameraLongParameter( SvOl::FqnCameraShutter, dynamic_cast< SVLongValueDeviceParam* >( pDeviceParam ) );
+		Result = updateCameraLongParameter( SvDef::FqnCameraShutter, dynamic_cast< SVLongValueDeviceParam* >( pDeviceParam ) );
 	}
 	return Result;
 }
@@ -751,7 +751,7 @@ HRESULT SVVirtualCamera::updateCameraLongParameter( LPCTSTR Name, const SVLongVa
 	{
 		variant_t Value;
 		Value = pLongValueDeviceParam->GetScaledValue();
-		BasicValueObjectPtr pValueObject = m_CameraValues.setValueObject( Name, Value, this, SVCameraObjectType );
+		BasicValueObjectPtr pValueObject = m_CameraValues.setValueObject( Name, Value, this, SvDef::SVCameraObjectType );
 		if( !pValueObject.empty() )
 		{
 			pValueObject->SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute );
@@ -777,7 +777,7 @@ HRESULT SVVirtualCamera::updateDeviceParameters(SVDeviceParamCollection& rCamera
 		SVDeviceParam* pDeviceParam = nullptr;
 		pDeviceParam = rCameraParameters.GetParameter( DeviceParamGain );
 		BasicValueObjectPtr pValueObject;
-		pValueObject = m_CameraValues.getValueObject( SvOl::FqnCameraGain );
+		pValueObject = m_CameraValues.getValueObject( SvDef::FqnCameraGain );
 
 		if( !pValueObject.empty() )
 		{
@@ -789,7 +789,7 @@ HRESULT SVVirtualCamera::updateDeviceParameters(SVDeviceParamCollection& rCamera
 		if( S_OK == Result )
 		{
 			pDeviceParam = rCameraParameters.GetParameter( DeviceParamShutter );
-			pValueObject = m_CameraValues.getValueObject( SvOl::FqnCameraShutter );
+			pValueObject = m_CameraValues.getValueObject( SvDef::FqnCameraShutter );
 			if( !pValueObject.empty() )
 			{
 				Result = pValueObject->updateDeviceParameter( pDeviceParam );

@@ -42,7 +42,7 @@ SVPixelAnalyzerClass::SVPixelAnalyzerClass(SVObjectClass* POwner, int StringReso
 void SVPixelAnalyzerClass::init()
 {
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVPixelAnalyzerObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVPixelAnalyzerObjectType;
 
 	// Identify our input type needs
 

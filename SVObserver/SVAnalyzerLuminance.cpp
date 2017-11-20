@@ -58,7 +58,7 @@ void SVLuminanceAnalyzerClass::init()
 
 
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVLuminanceAnalyzerObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVLuminanceAnalyzerObjectType;
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( 

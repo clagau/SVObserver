@@ -41,10 +41,10 @@ SVUserMaskOperatorClass::~SVUserMaskOperatorClass()
 void SVUserMaskOperatorClass::init()
 {
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVUnaryImageOperatorObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVUserMaskOperatorObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVUnaryImageOperatorObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVUserMaskOperatorObjectType;
 
-	m_inObjectInfo.SetInputObjectType( SVImageObjectType );
+	m_inObjectInfo.SetInputObjectType( SvDef::SVImageObjectType );
 	m_inObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inObjectInfo, _T( "UserMaskImage" ) );
 
@@ -317,7 +317,7 @@ HRESULT SVUserMaskOperatorClass::onCollectOverlays(SVImageClass *p_Image, SVExte
 		BuildMaskLines( l_MultiLine );
 		l_MultiLine.m_Color = RGB( 0, 255, 255 );
 		l_MultiLine.m_ObjectID = SVUserMaskOperatorClassGuid;
-		p_MultiLineArray.Add( l_MultiLine );
+		p_MultiLineArray.push_back( l_MultiLine );
 		l_hr = S_OK;
 	}
 	return l_hr;
@@ -372,8 +372,8 @@ HRESULT SVUserMaskOperatorClass::BuildMaskLines( SVExtentMultiLineStruct& p_Mult
 		
 			SVExtentPointStruct l_svPoint;
 			SVExtentLineStruct l_Line;
-			l_Line.m_svPointArray.Add( l_svPoint );
-			l_Line.m_svPointArray.Add( l_svPoint );
+			l_Line.m_svPointArray.push_back( l_svPoint );
+			l_Line.m_svPointArray.push_back( l_svPoint );
 
 			l_Line.m_dwColor = RGB( 0, 255, 255 );
 
@@ -447,17 +447,17 @@ HRESULT SVUserMaskOperatorClass::BuildMaskLines( SVExtentMultiLineStruct& p_Mult
 	return l_hr;
 }
 
-HRESULT SVUserMaskOperatorClass::AddLine(int p_iCol, int p_iRow, SVExtentPointStruct& p_svStartPoint, SVImageExtentClass& p_svExtent, SVExtentLineStruct& p_Line, SVExtentMultiLineStruct& p_MultiLine  )
+HRESULT SVUserMaskOperatorClass::AddLine(int iCol, int iRow, SVExtentPointStruct& rStartPoint, SVImageExtentClass& rExtent, SVExtentLineStruct& rLine, SVExtentMultiLineStruct& rMultiLine  )
 {
 	HRESULT l_hr = S_OK;
 
 	SVExtentPointStruct l_svEndPoint;
-	l_svEndPoint.m_dPositionX = p_iCol;
-	l_svEndPoint.m_dPositionY = p_iRow;
-	p_svExtent.TranslateFromOutputSpace( l_svEndPoint, l_svEndPoint);
-	p_Line.m_svPointArray[0] = p_svStartPoint ;
-	p_Line.m_svPointArray[1] = l_svEndPoint ;
-	p_MultiLine.m_svLineArray.Add( p_Line );
+	l_svEndPoint.m_dPositionX = iCol;
+	l_svEndPoint.m_dPositionY = iRow;
+	rExtent.TranslateFromOutputSpace( l_svEndPoint, l_svEndPoint);
+	rLine.m_svPointArray[0] = rStartPoint ;
+	rLine.m_svPointArray[1] = l_svEndPoint ;
+	rMultiLine.m_svLineArray.push_back( rLine );
 	return l_hr;
 }
 	
@@ -659,12 +659,12 @@ HRESULT SVUserMaskOperatorClass::SetObjectValue( SVObjectAttributeClass* pDataOb
 	HRESULT hr = S_FALSE;
 	bool bOk = false;
 	
-	SvCl::SVObjectSVStringArrayClass StringArray;
+	SvCl::SVObjectStdStringArrayClass StringArray;
 	SvCl::SVObjectLongArrayClass svLongArray;
 
 	if ( ( bOk = pDataObject->GetAttributeData( _T("MaskOperator"), svLongArray ) ) )
 	{
-		for( int i = 0; i < svLongArray.GetSize(); i++ )
+		for( int i = 0; i < static_cast<int> (svLongArray.size()); i++ )
 		{
 			m_Data.evoCurrentMaskOperator.SetValue(svLongArray[i]);
 		}
@@ -673,7 +673,7 @@ HRESULT SVUserMaskOperatorClass::SetObjectValue( SVObjectAttributeClass* pDataOb
 	{
 		DWORD len;
 		LPBYTE pBuff;
-		for( int i = 0; i < StringArray.GetSize(); i++ )
+		for( int i = 0; i < static_cast<int> (StringArray.size()); i++ )
 		{
 			// Get the data back to binary
 			if( ::SVConvertFromHexString( len, &pBuff, StringArray[i] ) )
@@ -911,10 +911,10 @@ SVImageClass* SVUserMaskOperatorClass::getMaskInputImage() const
 	return nullptr;
 }
 
-bool SVUserMaskOperatorClass::hasToAskFriendForConnection( const SVObjectTypeInfoStruct& rInfo, SVObjectClass*& rPOwner ) const
+bool SVUserMaskOperatorClass::hasToAskFriendForConnection( const SvDef::SVObjectTypeInfoStruct& rInfo, SVObjectClass*& rPOwner ) const
 {
 	bool Result(true);
-	if ( SVImageObjectType == rInfo.ObjectType )
+	if ( SvDef::SVImageObjectType == rInfo.ObjectType )
 	{
 		rPOwner = GetInspection();
 		Result = false;

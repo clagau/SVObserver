@@ -125,7 +125,7 @@ void SVBoolValueObjectClass::WriteDefaultValues(SVObjectWriter& rWriter)
 
 void SVBoolValueObjectClass::LocalInitialize()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVBoolValueObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVBoolValueObjectType;
 	DefaultValue() = false;
 	SetTypeName( _T("Bool") );
 

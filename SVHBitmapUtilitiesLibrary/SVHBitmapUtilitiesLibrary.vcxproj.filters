@@ -47,8 +47,5 @@
     <ClInclude Include="SVImageFileLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVImageFormatEnum.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

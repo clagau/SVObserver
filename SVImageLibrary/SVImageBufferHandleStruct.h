@@ -25,7 +25,7 @@ struct SVImageBufferHandleStruct : public SVImageBufferHandleInterface
 	virtual bool empty() const override;
 	virtual void clear() override;
 
-	virtual SVPOINT GetPositionPoint() const override;
+	virtual SVPoint GetPositionPoint() const override;
 	virtual SVBitmapInfo GetBitmapInfo() const override;
 	virtual unsigned char* GetBufferAddress() const override;
 

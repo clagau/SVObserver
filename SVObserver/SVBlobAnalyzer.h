@@ -11,13 +11,14 @@
 
 #pragma once
 #pragma region Includes
+//Moved to precompiled header: #include <vector>
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVImageAnalyzerClass.h"
 #include "SVBlobAnalyzerResultDlg.h"
 #include "TableObject.h"
 #include "ObjectInterfaces/IBlobAnalyzer.h"
 #include "SVValueObjectLibrary/DoubleSortValueObject.h"
-#include "CameraLibrary/SVTemplate.h"
+#include "SVLibrary/SVTemplate.h"
 #pragma endregion Includes
 
 class SVLongResultClass;
@@ -229,7 +230,7 @@ public:
 /*- the blob sort order as determined by SortBlobs ().  All features can then  */
 /*- be extracted based on the sort without needing to move large quantities of */
 /*- data. ---------------------------------------------------------------------*/
-	SVVector< long > msvlSortMap;
+	std::vector<long> m_SortVector;
 
 	DWORD                        m_DefaultAttributes; 
 

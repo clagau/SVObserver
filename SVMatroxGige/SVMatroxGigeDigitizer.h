@@ -17,7 +17,6 @@
 #include "SVGigeCameraParametersLibrary/SVGigeDeviceParameterStruct.h"
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerInterface.h"
 #include "SVTimerLibrary/SVClock.h"
-
 #include "SVMatroxGigeCameraId.h"
 #include "SVMatroxGigeAcqParams.h"
 #include "SVMatroxGigeBufferCreator.h"
@@ -69,7 +68,7 @@ public:
 	HRESULT StopGrabArray(SVMatroxDigitizerInterface::SVGrabProcessFunc func);
 
 	HRESULT BuildGigeFeaturesMap(BSTR xmlData);
-	const SVGigeDeviceParameterStruct& GetFeature(SVGigeParameterEnum paramEnum) const;
+	const SVGigeDeviceParameterStruct& GetFeature(SvDef::SVGigeParameterEnum paramEnum) const;
 
 	unsigned long GetDeviceNumber() const;
 
@@ -108,7 +107,7 @@ public:
 	long m_lLastUsedIndex;
 
 	SVConditionVariable m_frameStack;
-	SVMatroxDigitizerRef m_Digitizer;
+	SVMatroxDigitizerPtr m_Digitizer;
 	SVMatroxGigeCameraId m_svCameraId;
 
 	SvTl::SVTimeStamp m_StartFrameTimeStamp;
@@ -121,4 +120,3 @@ private:
 	SvTh::TriggerDispatcher m_dispatcher;
 #pragma endregion Member Variables
 };
-

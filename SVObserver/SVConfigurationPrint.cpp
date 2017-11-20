@@ -44,7 +44,7 @@
 #include "SVStatTool.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVAcquisitionClass.h"
-#include "SVSystemLibrary/SVFileNameArrayClass.h"
+#include "SVFileSystemLibrary/SVFileNameArrayClass.h"
 #include "SVImageLibrary\SVLightReference.h"
 #include "SVIODoc.h"
 #include "TriggerHandling/SVTriggerClass.h"
@@ -2509,7 +2509,7 @@ void SVConfigurationPrint::PrintGlobalConstants( CDC* pDC, CPoint& ptCurPos, int
 	int Index (0);
 
 	BasicValueObjects::ValueVector GlobalConstantObjects;
-	RootObject::getRootChildObjectList( GlobalConstantObjects, SvOl::FqnGlobal );
+	RootObject::getRootChildObjectList( GlobalConstantObjects, SvDef::FqnGlobal );
 
 	Label = _T( "Global Constants" );
 	Value = SvUl::Format( _T("%d"),  GlobalConstantObjects.size() );

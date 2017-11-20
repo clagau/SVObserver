@@ -56,51 +56,51 @@ namespace SvMc
 		//}}AFX_MSG_MAP
 	END_MESSAGE_MAP()
 
-	BOOL SVDlgGraphClass::SetPoints( const SvCl::SVObjectByteArrayClass& RByteVec ) 
+	BOOL SVDlgGraphClass::SetPoints( const SvCl::SVObjectByteArrayClass& rByteVec ) 
 	{
-		int size = RByteVec.GetSize();
-		pointVec.SetSize( size );
+		int size = static_cast<int> (rByteVec.size());
+		m_PointVec.resize( size );
 		for( int i = 0; i < size; ++ i )
 		{
-			POINT& rPoint = pointVec[ i ];
-			rPoint.y = RByteVec[ i ];
+			POINT& rPoint = m_PointVec[i];
 			rPoint.x = i;
+			rPoint.y = rByteVec[i];
 		}
 
 		return( Normalize() && RedrawWindow() );
 	}
 
-	BOOL SVDlgGraphClass::SetPoints( const SvCl::SVObjectLongArrayClass& RLongVec ) 
+	BOOL SVDlgGraphClass::SetPoints( const SvCl::SVObjectLongArrayClass& rLongVec ) 
 	{
-		int size = RLongVec.GetSize();
-		pointVec.SetSize( size );
+		int size = static_cast<int> (rLongVec.size());
+		m_PointVec.resize( size );
 		for( int i = 0; i < size; ++ i )
 		{
-			POINT& rPoint = pointVec[ i ];
+			POINT& rPoint = m_PointVec[i];
 			rPoint.x = i;
-			rPoint.y = RLongVec[ i ];
+			rPoint.y = rLongVec[i];
 		}
 
 		return( Normalize() && RedrawWindow() );
 	}
 
-	BOOL SVDlgGraphClass::SetPoints( const SvCl::SVObjectDoubleArrayClass& RDoubleVec ) 
+	BOOL SVDlgGraphClass::SetPoints( const SvCl::SVObjectDoubleArrayClass& rDoubleVec ) 
 	{
-		int size = RDoubleVec.GetSize();
-		pointVec.SetSize( size );
+		int size = static_cast<int> (rDoubleVec.size());
+		m_PointVec.resize( size );
 		for( int i = 0; i < size; ++ i )
 		{
-			POINT& rPoint = pointVec[ i ];
+			POINT& rPoint = m_PointVec[i];
 			rPoint.x = i;
-			rPoint.y = (long)(RDoubleVec[ i ]);
+			rPoint.y = static_cast<long> (rDoubleVec[i]);
 		}
 
 		return( Normalize() && RedrawWindow() );
 	}
 
-	BOOL SVDlgGraphClass::SetPoints( const SvCl::SVObjectPointArrayClass& RPointVec ) 
+	BOOL SVDlgGraphClass::SetPoints( const SvCl::SVObjectPointArrayClass& rPointVec ) 
 	{
-		pointVec.Copy( RPointVec );
+		m_PointVec = rPointVec;
 
 		return( Normalize() && RedrawWindow() );
 	}
@@ -128,7 +128,7 @@ namespace SvMc
 			long xMin = 0;
 			long yMax = 0;
 			long yMin = 0;
-			int size = pointVec.GetSize();
+			int size = static_cast<int> (m_PointVec.size());
 
 			int i;
 
@@ -144,7 +144,7 @@ namespace SvMc
 				// Get extremes...
 				for(i = 0; i < size; ++ i )
 				{
-					POINT& rPoint = pointVec[ i ];
+					POINT& rPoint = m_PointVec[ i ];
 					xMax = __max( xMax, rPoint.x );
 					xMin = __min( xMin, rPoint.x );
 					yMax = __max( yMax, rPoint.y );
@@ -183,7 +183,7 @@ namespace SvMc
 			// Normalize...
 			for( i = 0; i < size; ++ i )
 			{
-				POINT& rPoint = pointVec[ i ];
+				POINT& rPoint = m_PointVec[ i ];
 				rPoint.x = ( long ) ( ( double ) ( rPoint.x + xDisp ) * xMult );
 				rPoint.y = yClient - ( long ) ( ( double ) ( rPoint.y + yDisp ) * yMult );
 			}
@@ -267,13 +267,13 @@ namespace SvMc
 			);
 
 		// Draw black graph...
-		if( pointVec.GetSize() > 0 )
+		if( 0 < m_PointVec.size() )
 		{
 			CPen pen;
 			pen.CreatePen( PS_SOLID, 1, mrgbGraphColor );
 			CPen* pOldPen = dc.SelectObject( &pen );
 
-			dc.Polyline( pointVec.GetData(), pointVec.GetSize() );
+			dc.Polyline( m_PointVec.data(), static_cast<int> (m_PointVec.size()) );
 
 			if( dc.SelectObject( pOldPen ) )
 			{

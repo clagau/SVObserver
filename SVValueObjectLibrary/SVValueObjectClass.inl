@@ -212,16 +212,16 @@ HRESULT SVValueObjectClass<T>::SetObjectValue(SVObjectAttributeClass* pDataObjec
 {
 	HRESULT Result( E_FAIL );
 
-	SvCl::SVObjectArrayClassTemplate<T> ObjectArray;	// for default values
+	std::vector<T> ObjectArray;	// for default values
 	SvCl::SVObjectLongArrayClass LongArray;
 	BucketVector BucketArray;
 	ValueVector ValueArray;
 
 	if (pDataObject->GetAttributeData(scDefaultTag, ObjectArray))
 	{
-		if (0 < ObjectArray.GetSize())
+		if (0 < ObjectArray.size())
 		{
-			DefaultValue() = ObjectArray[ObjectArray.GetSize() - 1];
+			DefaultValue() = ObjectArray[ObjectArray.size() - 1];
 		}
 	}
 	//  BUCKET_TAG_LOAD; get buckets, not array; for backward compatibility;
@@ -844,7 +844,7 @@ void SVValueObjectClass<T>::Initialize()
 	m_isBucketized = false;
 	m_isStatic = false;
 	m_ResultSize = 1;
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVValueObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVValueObjectType;
 
 	SetObjectAttributesAllowed( SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute );
 }
@@ -959,7 +959,7 @@ DWORD SVValueObjectClass<T>::GetByteSize() const
 
 	if (VT_BSTR == ValueType2Variant(m_Value).vt)
 	{
-		Result = cMaxStringSize;
+		Result = SvDef::cMaxStringSize;
 	}
 	else
 	{

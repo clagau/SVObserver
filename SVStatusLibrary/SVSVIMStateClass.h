@@ -11,8 +11,6 @@
 
 #pragma once
 
-#include "SVSystemLibrary/SVAsyncProcedure.h"
-
 enum svModeEnum
 {
 	SVIM_MODE_UNKNOWN = 0,
@@ -58,6 +56,8 @@ enum svModeEnum
 #define SV_STATE_MODIFIED		0x00000001
 #define SV_STATE_REMOTE_CMD		0x00000002
 
+typedef boost::function<HRESULT(int, int, LPCTSTR)> NotifyFunctor;
+
 //This class manages the state variable and uses a lock to 
 //
 //This class supports the following states:
@@ -69,6 +69,7 @@ enum svModeEnum
 class SVSVIMStateClass
 {
 public:
+
 	//This operation adds a sub-state to the existing state 
 	//value.  The value passed in as a parameter is ORed to 
 	//the existing value.
@@ -92,17 +93,14 @@ public:
 	//************************************
 	static svModeEnum GetMode();
 
-	static HRESULT SetLastModifiedTime();
-	static HRESULT FireModeChanged(svModeEnum mode);
+	//************************************
+	//! Sets the notification function
+	//! \param  [in] pointer to the notification function
+	//************************************
+	static void setNotificationFunction(NotifyFunctor Notify);
 
 	static bool IsAutoSaveRequired() { return m_AutoSaveRequired; }
 	static void SetAutoSaveRequired(bool required) { m_AutoSaveRequired = required; }
-
-
-	typedef void (CALLBACK * SVAPCSignalHandler)(DWORD_PTR);
-	typedef boost::function<void(bool&)> SVThreadProcessHandler;
-
-	static SVAsyncProcedure< SVAPCSignalHandler, SVThreadProcessHandler > m_AsyncProcedure;
 
 	static __time32_t m_LastModifiedTime;
 	static __time32_t m_PrevModifiedTime;
@@ -126,17 +124,20 @@ private:
 	//************************************
 	static void setEnvironmentParameters(svModeEnum mode);
 
+	static HRESULT SetLastModifiedTime();
+	static HRESULT FireModeChanged(svModeEnum mode);
+
 	//This constructor does nothing.
 	SVSVIMStateClass();
 
 	//This destructor does nothing.
 	virtual ~SVSVIMStateClass();
 
+	static NotifyFunctor m_Notify;	//! Notify functor when state changes
+
 	//This attribute contain the SVIM state value.
 	static long m_SVIMState;
 
 	static bool m_AutoSaveRequired; ///< should an autosave be performed at the next appropriate time?
-
-
 };
 

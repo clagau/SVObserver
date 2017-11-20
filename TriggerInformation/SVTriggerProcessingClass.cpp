@@ -15,7 +15,7 @@
 #include "SVHardwareManifest.h"
 #include "TriggerHandling/SVTriggerClass.h"
 #include "SVSoftwareTriggerClass.h"
-#include "TriggerInformation/SVCameraTriggerClass.h"
+#include "SVCameraTriggerClass.h"
 #include "SVTriggerConstants.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes

@@ -16,8 +16,8 @@
 #include "SVObserverTemplate.h"
 #include "SVObjectClass.h"
 #include "SVObjectNotifyTemplate.h"
-#include "GlobalConst.h"
-#include "ObjectInterfaces\IObjectManager.h"
+#include "Definitions/GlobalConst.h"
+#include "ObjectInterfaces/IObjectManager.h"
 #pragma endregion Includes
 
 template< typename SVObjectTypeName >
@@ -89,7 +89,7 @@ HRESULT SVObjectManagerClass::GetRootChildObject( SVObjectTypeName*& rpObject, c
 template< typename SVObjectTypeName >
 HRESULT SVObjectManagerClass::GetConfigurationObject( SVObjectTypeName*& rpObject )
 {
-	return GetRootChildObject( rpObject, SvOl::FqnConfiguration );
+	return GetRootChildObject( rpObject, SvDef::FqnConfiguration );
 }
 
 template< typename SVNotifyData >
@@ -121,7 +121,7 @@ HRESULT SVObjectManagerClass::VisitElements( ObjectVisitor& rVisitor, const SVGU
 	if( GUID_NULL == StartingObjectID )
 	{
 		//Set to configuration as this used to be the start.
-		StartingObjectID = GetChildRootObjectID( SvOl::FqnConfiguration );
+		StartingObjectID = GetChildRootObjectID( SvDef::FqnConfiguration );
 	}
 	SVObjectClass* pObject = GetObject( StartingObjectID );
 

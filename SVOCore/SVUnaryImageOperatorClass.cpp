@@ -32,7 +32,7 @@ SVUnaryImageOperatorClass::~SVUnaryImageOperatorClass()
 void SVUnaryImageOperatorClass::init()
 {
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVUnaryImageOperatorObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVUnaryImageOperatorObjectType;
 
 	// Identify our input type needs
 

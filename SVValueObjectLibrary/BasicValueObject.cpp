@@ -19,7 +19,8 @@
 #include "CameraLibrary\SVBoolValueDeviceParam.h"
 #include "CameraLibrary\SVLongValueDeviceParam.h"
 #include "CameraLibrary\SVStringValueDeviceParam.h"
-#include "SVRunControlLibrary/SVRunControlLibrary.h"
+#include "Definitions/Color.h"
+#include "Definitions/GlobalConst.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -30,13 +31,13 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 #pragma region Constructor
-BasicValueObject::BasicValueObject( LPCTSTR ObjectName,  SVObjectClass* pOwner, bool Node, SVObjectSubTypeEnum ObjectSubType )
+BasicValueObject::BasicValueObject( LPCTSTR ObjectName,  SVObjectClass* pOwner, bool Node, SvDef::SVObjectSubTypeEnum ObjectSubType )
 : SVObjectClass(ObjectName)
 	, m_Created(false)
 	, m_Node(Node)
 
 {
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVBasicValueObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVBasicValueObjectType;
 	m_outObjectInfo.m_ObjectTypeInfo.SubType =  ObjectSubType;
 	Create( pOwner );
 }
@@ -210,7 +211,7 @@ DWORD BasicValueObject::GetByteSize() const
 		Result = sizeof(VARIANT::dblVal);
 		break;
 	case VT_BSTR:
-		Result = cMaxStringSize;
+		Result = SvDef::cMaxStringSize;
 		break;
 	default:
 		break;
@@ -437,7 +438,7 @@ HRESULT BasicValueObject::updateDeviceParameter(SVDeviceParam* pDeviceParam)
 
 DWORD BasicValueObject::GetObjectColor() const
 {
-	return SV_DEFAULT_WHITE_COLOR;
+	return SvDef::DefaultWhiteColor;
 }
 #pragma endregion Public Methods
 

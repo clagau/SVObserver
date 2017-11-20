@@ -119,7 +119,7 @@ public:
 	static HRESULT IsParent( const SVMatroxBuffer& p_rParentBuffer, const SVMatroxBuffer& p_rChildBuffer );
 
 	static HRESULT GetPositionPoint( POINT& p_rPoint, const SVMatroxBuffer& p_rBuffer );
-	static HRESULT GetPositionPoint( SVPOINT& p_rPoint, const SVMatroxBuffer& p_rBuffer );
+	static HRESULT GetPositionPoint( SVPoint& p_rPoint, const SVMatroxBuffer& p_rBuffer );
 
 	static HRESULT GetBitmapInfo( LPBITMAPINFO& p_rpBitmapInfo, const SVMatroxBuffer& p_rBuffer );
 	static HRESULT GetBitmapInfo( LPBITMAPINFO& p_rpBitmapInfo, SVMatroxIdentifier p_Identifier);

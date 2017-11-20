@@ -75,7 +75,7 @@ void SVObjectInfoStruct::clear()
 {
 	m_pObject = nullptr;
 	m_UniqueObjectID.clear();
-	m_ObjectTypeInfo = SVObjectTypeInfoStruct();
+	m_ObjectTypeInfo = SvDef::SVObjectTypeInfoStruct();
 	m_ObjectNameInfo.clear();
 }
 
@@ -109,7 +109,7 @@ HRESULT SVObjectInfoStruct::SetObject( const std::string& rName )
 	return l_hrOk;
 }
 
-HRESULT SVObjectInfoStruct::SetObject( const SVObjectTypeInfoStruct& rTypeInfo )
+HRESULT SVObjectInfoStruct::SetObject( const SvDef::SVObjectTypeInfoStruct& rTypeInfo )
 {
 	HRESULT l_hrOk = S_OK;
 	clear();

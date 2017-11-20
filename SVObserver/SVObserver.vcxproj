@@ -82,7 +82,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ShowIncludes>false</ShowIncludes>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalOptions>/Zm200 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/Zm300 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -93,7 +93,7 @@
       <Command>copy ..\XmlLite\$(Platform)\xmllite.lib "$(OutDir)"</Command>
     </PreLinkEvent>
     <Link>
-      <AdditionalDependencies>CameraLibrary.lib;FilterOperators.lib;SVOCore.lib;SVValueObjectLibrary.lib;GridCtrlLibrary.lib;JsonLib.lib;ObjectSelectorLibrary.lib;SVCommandLibrary.lib;SVContainerLibrary.lib;SVDataManagerLibrary.lib;SVEquationLibrary.lib;SVFileSystemLibrary.lib;SVGigeCameraFileLibrary.lib;SVHBitmapUtilitiesLibrary.lib;SVImageLibrary.lib;SVIOLibrary.lib;SVJsonCommandServerLibrary.lib;SVLibrary.lib;SVMatroxLibrary.lib;SVMFCControls.lib;SVObjectLibrary.lib;SVOGui.lib;SVOLibrary.lib;SVOLicenseManager.lib;SVRPropertyTree.lib;SVRunControlLibrary.lib;SVSecurity.lib;SVSharedMemoryLibrary.lib;SVSocketLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;SVXMLLibrary.lib;TriggerHandling.lib;TriggerInformation.lib;ddraw.lib;dxguid.lib;Rpcrt4.lib;Winmm.lib;xmllite.lib</AdditionalDependencies>
+      <AdditionalDependencies>CameraLibrary.lib;FilterOperators.lib;SVOCore.lib;SVValueObjectLibrary.lib;GridCtrlLibrary.lib;JsonLib.lib;ObjectSelectorLibrary.lib;SVCommandLibrary.lib;SVContainerLibrary.lib;SVDataManagerLibrary.lib;SVEquationLibrary.lib;SVFileSystemLibrary.lib;SVGigeCameraFileLibrary.lib;SVHBitmapUtilitiesLibrary.lib;SVImageLibrary.lib;SVIOLibrary.lib;SVJsonCommandServerLibrary.lib;SVLibrary.lib;SVMatroxLibrary.lib;SVMFCControls.lib;SVObjectLibrary.lib;SVOGui.lib;SVOLibrary.lib;SVRPropertyTree.lib;SVSecurity.lib;SVSharedMemoryLibrary.lib;SVSocketLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;SVXMLLibrary.lib;TriggerHandling.lib;TriggerInformation.lib;ddraw.lib;dxguid.lib;Rpcrt4.lib;Winmm.lib;xmllite.lib</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(OutDir);$(ProgramFiles)\Microsoft DirectX 9.0 SDK (April 2005)\Lib\x64;$(ProgramFiles)\Microsoft SDKs\Windows\v7.0A\Lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -142,7 +142,7 @@ echo %time%
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <DisableSpecificWarnings>4101;</DisableSpecificWarnings>
-      <AdditionalOptions>/Zm200 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/Zm300 %(AdditionalOptions)</AdditionalOptions>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
     </ClCompile>
     <ResourceCompile>
@@ -154,7 +154,7 @@ echo %time%
       <Command>copy ..\XmlLite\$(Platform)\xmllite.lib "$(OutDir)"</Command>
     </PreLinkEvent>
     <Link>
-      <AdditionalDependencies>CameraLibrary.lib;FilterOperators.lib;SVOCore.lib;SVValueObjectLibrary.lib;GridCtrlLibrary.lib;JsonLib.lib;ObjectSelectorLibrary.lib;SVCommandLibrary.lib;SVContainerLibrary.lib;SVDataManagerLibrary.lib;SVEquationLibrary.lib;SVFileSystemLibrary.lib;SVGigeCameraFileLibrary.lib;SVHBitmapUtilitiesLibrary.lib;SVImageLibrary.lib;SVIOLibrary.lib;SVJsonCommandServerLibrary.lib;SVLibrary.lib;SVMatroxLibrary.lib;SVMFCControls.lib;SVObjectLibrary.lib;SVOGui.lib;SVOLibrary.lib;SVOLicenseManager.lib;SVRPropertyTree.lib;SVRunControlLibrary.lib;SVSecurity.lib;SVSharedMemoryLibrary.lib;SVSocketLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;SVXMLLibrary.lib;TriggerHandling.lib;TriggerInformation.lib;ddraw.lib;dxguid.lib;Rpcrt4.lib;Winmm.lib;xmllite.lib</AdditionalDependencies>
+      <AdditionalDependencies>CameraLibrary.lib;FilterOperators.lib;SVOCore.lib;SVValueObjectLibrary.lib;GridCtrlLibrary.lib;JsonLib.lib;ObjectSelectorLibrary.lib;SVCommandLibrary.lib;SVContainerLibrary.lib;SVDataManagerLibrary.lib;SVEquationLibrary.lib;SVFileSystemLibrary.lib;SVGigeCameraFileLibrary.lib;SVHBitmapUtilitiesLibrary.lib;SVImageLibrary.lib;SVIOLibrary.lib;SVJsonCommandServerLibrary.lib;SVLibrary.lib;SVMatroxLibrary.lib;SVMFCControls.lib;SVObjectLibrary.lib;SVOGui.lib;SVOLibrary.lib;SVRPropertyTree.lib;SVSecurity.lib;SVSharedMemoryLibrary.lib;SVSocketLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;SVXMLLibrary.lib;TriggerHandling.lib;TriggerInformation.lib;ddraw.lib;dxguid.lib;Rpcrt4.lib;Winmm.lib;xmllite.lib</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(OutDir);$(ProgramFiles)\Microsoft DirectX 9.0 SDK (April 2005)\Lib\x64;$(ProgramFiles)\Microsoft SDKs\Windows\v7.0A\Lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -235,6 +235,7 @@ echo %time%
     <ClCompile Include="MonitorListView.cpp" />
     <ClCompile Include="SVOApp_Helper.cpp" />
     <ClCompile Include="SVObjectScriptParserBase.cpp" />
+    <ClCompile Include="SVOLicenseManager.cpp" />
     <ClCompile Include="SVShapeMaskHelperClass.cpp" />
     <ClCompile Include="SVSocketRemoteCommandManager.cpp" />
     <ClCompile Include="SVStorage.cpp" />
@@ -550,6 +551,7 @@ echo %time%
     <ClInclude Include="SVIPDocInfoImporter.h" />
     <ClInclude Include="SVMonitorList.h" />
     <ClInclude Include="MonitorListView.h" />
+    <ClInclude Include="SVOLicenseManager.h" />
     <ClInclude Include="SVPPQConstants.h" />
     <ClInclude Include="SVRemoteControlConstants.h" />
     <ClInclude Include="SVShapeMaskHelperClass.h" />

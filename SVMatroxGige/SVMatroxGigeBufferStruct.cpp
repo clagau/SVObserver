@@ -11,13 +11,13 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVMatroxGigeBufferStruct.h"
-#include "SVHBitmapUtilitiesLibrary/SVImageFormatEnum.h"
+#include "Definitions/SVImageFormatEnum.h"
 #pragma endregion Includes
 
 SVMatroxGigeBufferStruct::SVMatroxGigeBufferStruct()
 : m_ulWidth(640)
 , m_ulHeight(480)
-, m_ulFormat(SVImageFormatMono8)
+, m_ulFormat(SvDef::SVImageFormatMono8)
 , m_ulAddress(0)
 , m_bIsLocked(false)
 {

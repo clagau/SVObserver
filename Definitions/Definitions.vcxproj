@@ -83,13 +83,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Color.h" />
     <ClInclude Include="GlobalConst.h" />
     <ClInclude Include="GlobalConstantData.h" />
     <ClInclude Include="ImageOperatorEnums.h" />
     <ClInclude Include="ObjectDefines.h" />
     <ClInclude Include="RangeEnum.h" />
     <ClInclude Include="StringTypeDef.h" />
+    <ClInclude Include="SVGigeEnums.h" />
     <ClInclude Include="SVImageEnums.h" />
+    <ClInclude Include="SVImageFormatEnum.h" />
     <ClInclude Include="SVIMCommand.h" />
     <ClInclude Include="SVObjectTypeInfoStruct.h" />
     <ClInclude Include="SVPPQEnums.h" />

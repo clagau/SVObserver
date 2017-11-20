@@ -9,7 +9,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "DependencyManager.h"
-#include "SVObjectLibrary/ObjectNameLookup.h"
+#include "ObjectNameLookup.h"
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
@@ -39,7 +39,7 @@ namespace SvOl
 		return DependencyMgr;
 	}
 
-	void DependencyManager::getToolDependency( SvOi::StringPairInserter Inserter, const SVGuidSet& rSourceSet, SVObjectTypeEnum nameToObjectType, SvOi::ToolDependencyEnum ToolDependency /*= SvOi::ToolDependencyEnum::Client*/, const std::string& rFileName /*= std::string()*/) const
+	void DependencyManager::getToolDependency( SvOi::StringPairInserter Inserter, const SVGuidSet& rSourceSet, SvDef::SVObjectTypeEnum nameToObjectType, SvOi::ToolDependencyEnum ToolDependency /*= SvOi::ToolDependencyEnum::Client*/, const std::string& rFileName /*= std::string()*/) const
 	{
 		//! Note before calling this method the graph index must be updated this is done in the interface!
 		std::vector<Dependency> DependencyVector;
@@ -71,10 +71,10 @@ namespace SvOl
 			if (nullptr != pSupplier && nullptr != pClient)
 			{
 				//Global constant objects don't have tools then use the Global constant object and check if main object is of type ToolObjectType
-				bool isSupplier = pSupplier->GetObjectSubType() == SVGlobalConstantObjectType || pSupplier->GetObjectType() == SVToolObjectType;
-				bool isClient = pClient->GetObjectType() == SVToolObjectType;
-				SVObjectClass* pToolSupplier = isSupplier ? pSupplier : pSupplier->GetAncestor(SVToolObjectType);
-				SVObjectClass* pToolClient = isClient ? pClient : pClient->GetAncestor(SVToolObjectType);
+				bool isSupplier = pSupplier->GetObjectSubType() == SvDef::SVGlobalConstantObjectType || pSupplier->GetObjectType() == SvDef::SVToolObjectType;
+				bool isClient = pClient->GetObjectType() == SvDef::SVToolObjectType;
+				SVObjectClass* pToolSupplier = isSupplier ? pSupplier : pSupplier->GetAncestor(SvDef::SVToolObjectType);
+				SVObjectClass* pToolClient = isClient ? pClient : pClient->GetAncestor(SvDef::SVToolObjectType);
 				if (nullptr != pToolSupplier && nullptr != pToolClient && pToolSupplier != pToolClient)
 				{
 					CopyItem = true;
@@ -104,10 +104,10 @@ namespace SvOl
 				if (!rFileName.empty())
 				{
 					//Global constant objects don't have tools then use the Global constant object and check if main object is of type ToolObjectType
-					bool isSupplier = pSupplier->GetObjectSubType() == SVGlobalConstantObjectType || pSupplier->GetObjectType() == SVToolObjectType;
-					bool isClient = pClient->GetObjectType() == SVToolObjectType;
-					SVObjectClass* pToolSupplier = isSupplier ? pSupplier : pSupplier->GetAncestor(SVToolObjectType);
-					SVObjectClass* pToolClient = isClient ? pClient : pClient->GetAncestor(SVToolObjectType);
+					bool isSupplier = pSupplier->GetObjectSubType() == SvDef::SVGlobalConstantObjectType || pSupplier->GetObjectType() == SvDef::SVToolObjectType;
+					bool isClient = pClient->GetObjectType() == SvDef::SVToolObjectType;
+					SVObjectClass* pToolSupplier = isSupplier ? pSupplier : pSupplier->GetAncestor(SvDef::SVToolObjectType);
+					SVObjectClass* pToolClient = isClient ? pClient : pClient->GetAncestor(SvDef::SVToolObjectType);
 					if (nullptr != pToolSupplier && nullptr != pToolClient && pToolSupplier != pToolClient)
 					{
 						ObjectDependencies.insert(Dependency(pToolSupplier->GetUniqueObjectID(), pToolClient->GetUniqueObjectID()));
@@ -126,7 +126,7 @@ namespace SvOl
 } //namespace SvOl
 
 #pragma region IDependencyManager
-void SvOi::getToolDependency( StringPairInserter Inserter, const SVGuidSet& rSourceSet, SVObjectTypeEnum nameToObjectType, SvOi::ToolDependencyEnum ToolDependency /*= SvOi::ToolDependencyEnum::Client*/, const std::string& rFileName /*= std::string()*/)
+void SvOi::getToolDependency( StringPairInserter Inserter, const SVGuidSet& rSourceSet, SvDef::SVObjectTypeEnum nameToObjectType, SvOi::ToolDependencyEnum ToolDependency /*= SvOi::ToolDependencyEnum::Client*/, const std::string& rFileName /*= std::string()*/)
 {
 	SvOl::DependencyManager::Instance().updateVertexIndex();
 	SvOl::DependencyManager::Instance().getToolDependency(Inserter, rSourceSet, nameToObjectType, ToolDependency, rFileName);

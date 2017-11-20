@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVHBitmapUtilitiesLibrary/SVImageFormatEnum.h"
+#include "Definitions/SVImageFormatEnum.h"
 #include "SVColorTool.h"
 #include "SVInspectionProcess.h"
 #include "SVToolSet.h"
@@ -81,9 +81,9 @@ bool SVColorToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStr
 					//! Converting configuration without ROI has to set the image to the full parent extents
 					SetImageExtentToParent();
 					// Converting configuration without ROI has to set all the thresholds to enabled
-					SVObjectTypeInfoStruct objectInfo;
-					objectInfo.ObjectType = SVOperatorObjectType;
-					objectInfo.SubType = SVColorThresholdObjectType;
+					SvDef::SVObjectTypeInfoStruct objectInfo;
+					objectInfo.ObjectType = SvDef::SVOperatorObjectType;
+					objectInfo.SubType = SvDef::SVColorThresholdObjectType;
 					SVColorThresholdClass* pColorThreshold = dynamic_cast<SVColorThresholdClass*> (getFirstObject(objectInfo));
 					if (nullptr != pColorThreshold)
 					{
@@ -275,8 +275,8 @@ void SVColorToolClass::LocalInitialize()
 	m_canResizeToParent = true;
 	m_ConvertTool = false;
 	// Set up your type...
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVColorToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVColorToolObjectType;
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject(&m_OutputImage, SVOutputImageObjectGuid, IDS_OBJECTNAME_IMAGE1);
@@ -296,7 +296,7 @@ void SVColorToolClass::LocalInitialize()
 	SVImageInfoClass ImageInfo = m_OutputImage.GetImageInfo();
 	//! Set Output image to color
 	ImageInfo.SetOwner(GetUniqueObjectID());
-	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SVImageFormatRGB8888);
+	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatRGB8888);
 	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 3L);
 	ImageInfo.SetTranslation(SVExtentTranslationNone);
 	m_LogicalROIImage.UpdateImage(ImageInfo);
@@ -328,7 +328,7 @@ bool SVColorToolClass::createBandChildLayer(BandEnum Band)
 
 	// Setup...
 	ImageInfo.SetOwner(GetUniqueObjectID());
-	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SVImageFormatMono8);
+	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatMono8);
 	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1L);
 	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, static_cast<long> (Band));
 

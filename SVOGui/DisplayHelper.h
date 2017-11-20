@@ -15,7 +15,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <comutil.h>
-#include "SVPictureDisplay\DrawObject.h" // for ParamMap typedefs
+#include "SVLibrary\\DrawObject.h"
 #pragma endregion Includes
 
 namespace SvOg

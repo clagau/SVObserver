@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVResultList.h"
 
-#include "SVObjectLibrary/GlobalConst.h"
+#include "Definitions/GlobalConst.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
@@ -42,7 +42,7 @@ SVResultListClass::SVResultListClass()
 SVResultListClass::~SVResultListClass()
 {
 	Destroy();
-	m_results.RemoveAll();
+	m_results.clear();
 }
 #pragma endregion Constructor
 
@@ -60,12 +60,12 @@ void SVResultListClass::Refresh(SVTaskObjectClass* pRootObject)
 {
 	Concurrency::critical_section::scoped_lock  AutoLock(m_Lock);
 
-	m_results.RemoveAll();
+	m_results.clear();
 
 	// find all result classes
 	// pRootObject is a pointer to SVToolSetClass at this time
-	SVObjectTypeInfoStruct info;
-	info.ObjectType = SVResultObjectType;
+	SvDef::SVObjectTypeInfoStruct info;
+	info.ObjectType = SvDef::SVResultObjectType;
 
 	SVGetObjectDequeByTypeVisitor l_Visitor( info );
 
@@ -77,7 +77,7 @@ void SVResultListClass::Refresh(SVTaskObjectClass* pRootObject)
 	{
 		SVResultClass* pResult = dynamic_cast< SVResultClass* >( const_cast< SVObjectClass* >( *l_Iter ) );
 
-		m_results.Add( pResult );
+		m_results.push_back( pResult );
 	}
 	
 	m_ResultViewReferences.RebuildReferenceVector(dynamic_cast<SVInspectionProcess*>(m_pToolSet->GetInspection()));
@@ -168,10 +168,10 @@ SVProductInspectedState SVResultListClass::GetInspectionState()
 	bool masterFailed = false;
 	bool masterWarned = false;
 
-	for( int i = 0; i < m_results.GetSize(); ++i )
+	for( auto pResult : m_results)
 	{
-		masterFailed |= m_results.GetAt( i )->IsFailed();
-		masterWarned |= m_results.GetAt( i )->IsWarned();
+		masterFailed |= pResult->IsFailed();
+		masterWarned |= pResult->IsWarned();
 	}
 
 	if (masterFailed)

@@ -11,8 +11,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVContainerLibrary/SVVector.h"
-
+//Moved to precompiled header: #include <vector>
 #pragma endregion Includes
 
 /**
@@ -56,6 +55,6 @@ struct SVGigeCameraStruct
 	unsigned long m_AcquisitionHandle;
 };
 
-typedef SVVector<SVGigeCameraStruct> SVGigeCameraStructVector;
+typedef std::vector<SVGigeCameraStruct> SVGigeCameraStructVector;
 
 

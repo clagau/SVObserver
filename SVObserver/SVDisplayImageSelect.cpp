@@ -82,10 +82,10 @@ BOOL SVDisplayImageSelect::OnInitDialog()
 		int index = m_ImageSelectList.AddString( _T("[None]") );
 		m_ImageSelectList.SetItemData( index, static_cast<DWORD_PTR>(0) );
 
-		SVObjectTypeInfoStruct info;
+		SvDef::SVObjectTypeInfoStruct info;
 
-		info.ObjectType = SVImageObjectType;
-		info.SubType = SVNotSetSubObjectType;
+		info.ObjectType = SvDef::SVImageObjectType;
+		info.SubType = SvDef::SVNotSetSubObjectType;
 
 		SVGetObjectDequeByTypeVisitor l_Visitor( info );
 

@@ -26,7 +26,7 @@ namespace SvOg
 	{
 	#pragma region Constructor
 	public:
-		FormulaController(const GUID& rInspectionID, const GUID& rTaskObjectId, const SVObjectTypeInfoStruct& rInfo, bool bEnabledReadOnly=true);
+		FormulaController(const GUID& rInspectionID, const GUID& rTaskObjectId, const SvDef::SVObjectTypeInfoStruct& rInfo, bool bEnabledReadOnly=true);
 
 		FormulaController(const GUID& rInspectionID, const GUID& rTaskObjectId, const GUID& rEquationObjectId, bool bEnabledReadOnly=true);
 	#pragma endregion Constructor
@@ -64,7 +64,7 @@ namespace SvOg
 	protected:
 		GUID m_InspectionID; // Instance ID of the Inspection
 		GUID m_TaskObjectID; // Instance ID of the Owner (Toolset or Tool or other TaskObject)
-		SVObjectTypeInfoStruct m_info;
+		SvDef::SVObjectTypeInfoStruct m_info;
 		GUID m_EquationID; // Instance ID of the Equation
 
 		typedef SvOg::ValuesAccessor<SvOg::BoundValues> FormulaCommand;

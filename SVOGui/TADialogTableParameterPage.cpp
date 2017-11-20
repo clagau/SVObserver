@@ -79,7 +79,7 @@ namespace SvOg {
 		typedef SvCmd::GetAvailableObjects Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 		SvUl::NameGuidList availableList;
-		CommandPtr commandPtr = new Command(m_TaskObjectID, SVObjectTypeInfoStruct(SVEquationObjectType));
+		CommandPtr commandPtr = new Command(m_TaskObjectID, SvDef::SVObjectTypeInfoStruct(SvDef::SVEquationObjectType));
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)

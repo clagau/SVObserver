@@ -292,7 +292,7 @@ void CSVOCameraDlg::OnBtnPropVc()
 							SVFileNameArrayClass svFiles;
 							SVFileNameClass svFile;
 							svFile.SetFullFileName(pCameraObj->GetCameraFile().c_str());
-							svFiles.Add(svFile);
+							svFiles.push_back(svFile);
 							if (S_OK != psvDevice->LoadFiles(svFiles))
 							{
 								SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);

@@ -68,6 +68,9 @@
     <ClCompile Include="DependencyManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SVIOEntryHostStruct.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdAfx.h">
@@ -98,9 +101,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVObjectCommandWrapperTemplate.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVObjectDPointArrayClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVObjectInfoStruct.h">
@@ -157,9 +157,6 @@
     <ClInclude Include="SVToolsetScriptTags.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GlobalConst.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVObjectInfoArrayClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -182,6 +179,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DottedNameLookup.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVIOEntryHostStruct.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

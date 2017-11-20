@@ -122,7 +122,7 @@ HRESULT SVMatroxGigeDigitizer::BuildGigeFeaturesMap(BSTR xmlData)
 	return hr;
 }
 
-const SVGigeDeviceParameterStruct& SVMatroxGigeDigitizer::GetFeature(SVGigeParameterEnum paramEnum) const
+const SVGigeDeviceParameterStruct& SVMatroxGigeDigitizer::GetFeature(SvDef::SVGigeParameterEnum paramEnum) const
 {
 	SVGigeDeviceParameterMap::const_iterator featureIt = m_featuresMap.find(paramEnum);
 	if (featureIt != m_featuresMap.end())
@@ -167,7 +167,7 @@ void SVMatroxGigeDigitizer::SetLineInputMoniker(const std::string& moniker)
 
 std::string SVMatroxGigeDigitizer::GetLineInputRisingEventName() const
 {
-	const SVGigeDeviceParameterStruct& deviceParamStruct = GetFeature(SVGigeParameterInputEventName);
+	const SVGigeDeviceParameterStruct& deviceParamStruct = GetFeature(SvDef::SVGigeParameterInputEventName);
 	
 	std::string featureName;
 	if (deviceParamStruct.accessor.feature.HasTranslation())
@@ -179,7 +179,7 @@ std::string SVMatroxGigeDigitizer::GetLineInputRisingEventName() const
 
 std::string SVMatroxGigeDigitizer::GetLineInputFallingEventName() const
 {
-	const SVGigeDeviceParameterStruct& deviceParamStruct = GetFeature(SVGigeParameterInputEventName);
+	const SVGigeDeviceParameterStruct& deviceParamStruct = GetFeature(SvDef::SVGigeParameterInputEventName);
 	
 	std::string featureName;
 	if (deviceParamStruct.accessor.feature.HasTranslation())

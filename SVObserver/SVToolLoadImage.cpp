@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVHBitmapUtilitiesLibrary\SVImageFormatEnum.h"
+#include "Definitions/SVImageFormatEnum.h"
 #include "SVToolLoadImage.h"
 #include "SVOCore/SVAnalyzer.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
@@ -40,8 +40,8 @@ void SVLoadImageToolClass::init()
 {
 	m_canResizeToParent = true;
 	// Set up your type...
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SVToolLoadImageObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvDef::SVToolLoadImageObjectType;
 
 	// Identify our input type needs
 	
@@ -82,7 +82,7 @@ bool SVLoadImageToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreat
 
 		// Setup...
 		l_svImageInfo.SetOwner( GetUniqueObjectID() );
-		l_svImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SVImageFormatMono8 );
+		l_svImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatMono8 );
 		l_svImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
 		l_svImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
 		l_svImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth,8);

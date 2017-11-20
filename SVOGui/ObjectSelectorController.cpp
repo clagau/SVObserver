@@ -74,7 +74,7 @@ namespace SvOg {
 		typedef SvCmd::GetInstanceIDByTypeInfo Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 
-		SVObjectTypeInfoStruct info(SVToolSetObjectType);
+		SvDef::SVObjectTypeInfoStruct info(SvDef::SVToolSetObjectType);
 		CommandPtr commandPtr = CommandPtr(new Command(m_InspectionID, info));
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);

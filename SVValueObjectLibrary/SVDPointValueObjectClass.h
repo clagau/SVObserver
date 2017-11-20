@@ -48,7 +48,7 @@ protected:
 
 	//! Returns the variant type of the value object (NOTE this is a special SVObserver VT type!!)
 	//! \returns the VT type
-	virtual DWORD GetType() const override { return  VT_DPOINT; };
+	virtual DWORD GetType() const override { return  SvDef::VT_DPOINT; };
 
 	//! Copies the value object to the memory block
 	//! \param pMemoryBlock [in] Pointer to the byte address of the memory block

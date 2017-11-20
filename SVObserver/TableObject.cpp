@@ -261,7 +261,7 @@ void TableObject::MoveValueColumn(int oldPos, int newPos)
 void TableObject::Initialize()
 {
 	// Set up your type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = TableObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::TableObjectType;
 
 	BuildEmbeddedObjectList();
 }

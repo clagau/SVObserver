@@ -95,10 +95,10 @@ bool SVUnaryImageOperatorListClass::isInputImage(const SVGUID& rImageGuid) const
 void SVUnaryImageOperatorListClass::init()
 {
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVUnaryImageOperatorListObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVUnaryImageOperatorListObjectType;
 
 	// Identify our input type needs
-	inputImageObjectInfo.SetInputObjectType(SVImageObjectType);
+	inputImageObjectInfo.SetInputObjectType(SvDef::SVImageObjectType);
 	inputImageObjectInfo.SetObject(GetObjectInfo());
 	RegisterInputObject(&inputImageObjectInfo, _T("UnaryImageOperatorListImage"));
 
@@ -116,150 +116,150 @@ void SVUnaryImageOperatorListClass::init()
 	SVClassInfoStruct filterClassInfo;
 
 	// Add the Skeleton Filter
-	filterClassInfo.m_ObjectTypeInfo.ObjectType = SVFilterObjectType;
-	filterClassInfo.m_ObjectTypeInfo.SubType = SVSkeletonFilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVFilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.SubType = SvDef::SVSkeletonFilterObjectType;
 	filterClassInfo.m_ClassId = SVSkeletonFilterClassGuid;
 	filterClassInfo.m_ClassName = SvUl::LoadStdString(IDS_CLASSNAME_SVSKELETONFILTER);
-	m_availableChildren.Add(filterClassInfo);
+	m_availableChildren.push_back(filterClassInfo);
 
 	// Add the Thinning Filter
-	filterClassInfo.m_ObjectTypeInfo.ObjectType = SVFilterObjectType;
-	filterClassInfo.m_ObjectTypeInfo.SubType = SVThinningFilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVFilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.SubType = SvDef::SVThinningFilterObjectType;
 	filterClassInfo.m_ClassId = SVThinningFilterClassGuid;
 	filterClassInfo.m_ClassName = SvUl::LoadStdString(IDS_CLASSNAME_SVTHINNINGFILTER);
-	m_availableChildren.Add(filterClassInfo);
+	m_availableChildren.push_back(filterClassInfo);
 
 	// Add the Thickening Filter
-	filterClassInfo.m_ObjectTypeInfo.ObjectType = SVFilterObjectType;
-	filterClassInfo.m_ObjectTypeInfo.SubType = SVThickeningFilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVFilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.SubType = SvDef::SVThickeningFilterObjectType;
 	filterClassInfo.m_ClassId = SVThickeningFilterClassGuid;
 	filterClassInfo.m_ClassName = SvUl::LoadStdString(IDS_CLASSNAME_SVTHICKENINGFILTER);
-	m_availableChildren.Add(filterClassInfo);
+	m_availableChildren.push_back(filterClassInfo);
 
 	// Add the Watershed Filter
-	filterClassInfo.m_ObjectTypeInfo.ObjectType = SVFilterObjectType;
-	filterClassInfo.m_ObjectTypeInfo.SubType = SVWatershedFilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVFilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.SubType = SvDef::SVWatershedFilterObjectType;
 	filterClassInfo.m_ClassId = SVWatershedFilterClassGuid;
 	filterClassInfo.m_ClassName = SvUl::LoadStdString(IDS_CLASSNAME_SVWATERSHEDFILTER);
-	m_availableChildren.Add(filterClassInfo);
+	m_availableChildren.push_back(filterClassInfo);
 
 	// Add the Custom Filter
-	filterClassInfo.m_ObjectTypeInfo.ObjectType = SVFilterObjectType;
-	filterClassInfo.m_ObjectTypeInfo.SubType = SVCustomFilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVFilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.SubType = SvDef::SVCustomFilterObjectType;
 	filterClassInfo.m_ClassId = SVCustomFilterClassGuid;
 	filterClassInfo.m_ClassName = SvUl::LoadStdString(IDS_CLASSNAME_SVCUSTOMFILTER);
-	m_availableChildren.Add(filterClassInfo);
+	m_availableChildren.push_back(filterClassInfo);
 
 	// Add the Custom2 Filter
-	filterClassInfo.m_ObjectTypeInfo.ObjectType = SVFilterObjectType;
-	filterClassInfo.m_ObjectTypeInfo.SubType = SVCustom2FilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVFilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.SubType = SvDef::SVCustom2FilterObjectType;
 	filterClassInfo.m_ClassId = Custom2FilterClassGuid;
 	filterClassInfo.m_ClassName = SvUl::LoadStdString(IDS_CLASSNAME_CUSTOM2FILTER);
-	m_availableChildren.Add(filterClassInfo);
+	m_availableChildren.push_back(filterClassInfo);
 
 	// Add the Ranking Filter
-	filterClassInfo.m_ObjectTypeInfo.ObjectType = SVFilterObjectType;
-	filterClassInfo.m_ObjectTypeInfo.SubType = SVRankingFilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVFilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.SubType = SvDef::SVRankingFilterObjectType;
 	filterClassInfo.m_ClassId = SVRankingFilterClassGuid;
 	filterClassInfo.m_ClassName = SvUl::LoadStdString(IDS_CLASSNAME_SVRANKINGFILTER);
-	m_availableChildren.Add(filterClassInfo);
+	m_availableChildren.push_back(filterClassInfo);
 
 	// Add the Smooth Filter
-	filterClassInfo.m_ObjectTypeInfo.ObjectType = SVFilterObjectType;
-	filterClassInfo.m_ObjectTypeInfo.SubType = SVSmoothFilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVFilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.SubType = SvDef::SVSmoothFilterObjectType;
 	filterClassInfo.m_ClassId = SVSmoothFilterClassGuid;
 	filterClassInfo.m_ClassName = SvUl::LoadStdString(IDS_CLASSNAME_SVSMOOTHFILTER);
-	m_availableChildren.Add(filterClassInfo);
+	m_availableChildren.push_back(filterClassInfo);
 
 	// Add the Sharpen Filter
-	filterClassInfo.m_ObjectTypeInfo.ObjectType = SVFilterObjectType;
-	filterClassInfo.m_ObjectTypeInfo.SubType = SVSharpenFilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVFilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.SubType = SvDef::SVSharpenFilterObjectType;
 	filterClassInfo.m_ClassId = SVSharpenFilterClassGuid;
 	filterClassInfo.m_ClassName = SvUl::LoadStdString(IDS_CLASSNAME_SVSHARPENFILTER);
-	m_availableChildren.Add(filterClassInfo);
+	m_availableChildren.push_back(filterClassInfo);
 
 	// Add the Sharpen2 Filter
-	filterClassInfo.m_ObjectTypeInfo.ObjectType = SVFilterObjectType;
-	filterClassInfo.m_ObjectTypeInfo.SubType = SVSharpen2FilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVFilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.SubType = SvDef::SVSharpen2FilterObjectType;
 	filterClassInfo.m_ClassId = SVSharpen2FilterClassGuid;
 	filterClassInfo.m_ClassName = SvUl::LoadStdString(IDS_CLASSNAME_SVSHARPEN2FILTER);
-	m_availableChildren.Add(filterClassInfo);
+	m_availableChildren.push_back(filterClassInfo);
 
 	// Add the Opening Filter
-	filterClassInfo.m_ObjectTypeInfo.ObjectType = SVFilterObjectType;
-	filterClassInfo.m_ObjectTypeInfo.SubType = SVOpeningFilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVFilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.SubType = SvDef::SVOpeningFilterObjectType;
 	filterClassInfo.m_ClassId = SVOpeningFilterClassGuid;
 	filterClassInfo.m_ClassName = SvUl::LoadStdString(IDS_CLASSNAME_SVOPENINGFILTER);
-	m_availableChildren.Add(filterClassInfo);
+	m_availableChildren.push_back(filterClassInfo);
 
 	// Add the Closing Filter
-	filterClassInfo.m_ObjectTypeInfo.ObjectType = SVFilterObjectType;
-	filterClassInfo.m_ObjectTypeInfo.SubType = SVClosingFilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVFilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.SubType = SvDef::SVClosingFilterObjectType;
 	filterClassInfo.m_ClassId = SVClosingFilterClassGuid;
 	filterClassInfo.m_ClassName = SvUl::LoadStdString(IDS_CLASSNAME_SVCLOSINGFILTER);
-	m_availableChildren.Add(filterClassInfo);
+	m_availableChildren.push_back(filterClassInfo);
 
 	// Add the Dilation Filter
-	filterClassInfo.m_ObjectTypeInfo.ObjectType = SVFilterObjectType;
-	filterClassInfo.m_ObjectTypeInfo.SubType = SVDilationFilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVFilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.SubType = SvDef::SVDilationFilterObjectType;
 	filterClassInfo.m_ClassId = SVDilationFilterClassGuid;
 	filterClassInfo.m_ClassName = SvUl::LoadStdString(IDS_CLASSNAME_SVDILATIONFILTER);
-	m_availableChildren.Add(filterClassInfo);
+	m_availableChildren.push_back(filterClassInfo);
 
 	// Add the Erosion Filter
-	filterClassInfo.m_ObjectTypeInfo.ObjectType = SVFilterObjectType;
-	filterClassInfo.m_ObjectTypeInfo.SubType = SVErosionFilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVFilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.SubType = SvDef::SVErosionFilterObjectType;
 	filterClassInfo.m_ClassId = SVErosionFilterClassGuid;
 	filterClassInfo.m_ClassName = SvUl::LoadStdString(IDS_CLASSNAME_SVEROSIONFILTER);
-	m_availableChildren.Add(filterClassInfo);
+	m_availableChildren.push_back(filterClassInfo);
 
 	// Add the Edge Detect Filter
-	filterClassInfo.m_ObjectTypeInfo.ObjectType = SVFilterObjectType;
-	filterClassInfo.m_ObjectTypeInfo.SubType = SVEdgeDetectFilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVFilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.SubType = SvDef::SVEdgeDetectFilterObjectType;
 	filterClassInfo.m_ClassId = SVEdgeDetectFilterClassGuid;
 	filterClassInfo.m_ClassName = SvUl::LoadStdString(IDS_CLASSNAME_SVEDGEDETECTFILTER);
-	m_availableChildren.Add(filterClassInfo);
+	m_availableChildren.push_back(filterClassInfo);
 
 	// Add the Edge Detect2 Filter
-	filterClassInfo.m_ObjectTypeInfo.ObjectType = SVFilterObjectType;
-	filterClassInfo.m_ObjectTypeInfo.SubType = SVEdgeDetect2FilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVFilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.SubType = SvDef::SVEdgeDetect2FilterObjectType;
 	filterClassInfo.m_ClassId = SVEdgeDetect2FilterClassGuid;
 	filterClassInfo.m_ClassName = SvUl::LoadStdString(IDS_CLASSNAME_SVEDGEDETECT2FILTER);
-	m_availableChildren.Add(filterClassInfo);
+	m_availableChildren.push_back(filterClassInfo);
 
 	// Add the Vert Edge Detect Filter
-	filterClassInfo.m_ObjectTypeInfo.ObjectType = SVFilterObjectType;
-	filterClassInfo.m_ObjectTypeInfo.SubType = SVVertEdgeFilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVFilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.SubType = SvDef::SVVertEdgeFilterObjectType;
 	filterClassInfo.m_ClassId = SVVertEdgeFilterClassGuid;
 	filterClassInfo.m_ClassName = SvUl::LoadStdString(IDS_CLASSNAME_SVVERTEDGEFILTER);
-	m_availableChildren.Add(filterClassInfo);
+	m_availableChildren.push_back(filterClassInfo);
 
 	// Add the Horiz Edge Detect Filter
-	filterClassInfo.m_ObjectTypeInfo.ObjectType = SVFilterObjectType;
-	filterClassInfo.m_ObjectTypeInfo.SubType = SVHorzEdgeFilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVFilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.SubType = SvDef::SVHorzEdgeFilterObjectType;
 	filterClassInfo.m_ClassId = SVHorizEdgeFilterClassGuid;
 	filterClassInfo.m_ClassName = SvUl::LoadStdString(IDS_CLASSNAME_SVHORIZEDGEFILTER);
-	m_availableChildren.Add(filterClassInfo);
+	m_availableChildren.push_back(filterClassInfo);
 
 	// Add the Laplacian Edge Detect Filter
-	filterClassInfo.m_ObjectTypeInfo.ObjectType = SVFilterObjectType;
-	filterClassInfo.m_ObjectTypeInfo.SubType = SVLaplacianEdgeFilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVFilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.SubType = SvDef::SVLaplacianEdgeFilterObjectType;
 	filterClassInfo.m_ClassId = SVLaplacianEdgeFilterClassGuid;
 	filterClassInfo.m_ClassName = SvUl::LoadStdString(IDS_CLASSNAME_SVLAPLACIANEDGEFILTER);
-	m_availableChildren.Add(filterClassInfo);
+	m_availableChildren.push_back(filterClassInfo);
 
 	// Add the Laplacian 2 Edge Detect Filter
-	filterClassInfo.m_ObjectTypeInfo.ObjectType = SVFilterObjectType;
-	filterClassInfo.m_ObjectTypeInfo.SubType = SVLaplacianEdge2FilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVFilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.SubType = SvDef::SVLaplacianEdge2FilterObjectType;
 	filterClassInfo.m_ClassId = SVLaplacianEdge2FilterClassGuid;
 	filterClassInfo.m_ClassName = SvUl::LoadStdString(IDS_CLASSNAME_SVLAPLACIANEDGE2FILTER);
-	m_availableChildren.Add(filterClassInfo);
+	m_availableChildren.push_back(filterClassInfo);
 
 	// Add the Max Minus Min Filter
-	filterClassInfo.m_ObjectTypeInfo.ObjectType = SVFilterObjectType;
-	filterClassInfo.m_ObjectTypeInfo.SubType = SVMaxMinusMinFilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVFilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.SubType = SvDef::SVMaxMinusMinFilterObjectType;
 	filterClassInfo.m_ClassId = SVMaxMinusMinFilterClassGuid;
 	filterClassInfo.m_ClassName = SvUl::LoadStdString(IDS_CLASSNAME_SVMAXMINUSMINFILTER);
-	m_availableChildren.Add(filterClassInfo);
+	m_availableChildren.push_back(filterClassInfo);
 }
 #pragma endregion Private Methods

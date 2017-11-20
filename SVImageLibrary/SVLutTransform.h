@@ -12,8 +12,8 @@
 #pragma once
 
 #pragma region Includes
-#include "SVContainerLibrary/SVVector.h"
-
+//Moved to precompiled header: #include <vector>
+//Moved to precompiled header: #include <map>
 #pragma endregion Includes
 
 enum SVLutTransformOperationEnum	// for legacy conversion
@@ -43,7 +43,7 @@ public:
 		SVLutTransformTypeInfo() {m_eType = LutTransformTypeUnknown; m_pType = nullptr;}
 		SVLutTransformTypeInfo(SVLutTransformOperationEnum eType, SVLutTransformOperation* pType, const std::string& rType) {m_eType = eType; m_pType = pType; m_Type = rType;}
 	};
-	typedef SVVector<SVLutTransformTypeInfo> SVLutTransformTypeInfoVector;
+	typedef std::map<SVLutTransformOperationEnum, SVLutTransformTypeInfo> SVLutTransformTypeInfoMap;
 public:
 	SVLutTransformOperationMap();
 	~SVLutTransformOperationMap();
@@ -52,9 +52,9 @@ public:
 	const SVLutTransformTypeInfo* GetInfo(SVLutTransformOperationEnum e);
 	const SVLutTransformTypeInfo* GetInfo(const SVLutTransformOperation* pType);
 	const SVLutTransformTypeInfo* GetInfo(const std::string& rType);
-	const SVLutTransformTypeInfoVector& GetTypes() {return maTypeInfo;}
+	const SVLutTransformTypeInfoMap& GetTypes() {return m_TypeInfoMap;}
 private:
-	SVLutTransformTypeInfoVector maTypeInfo;
+	SVLutTransformTypeInfoMap m_TypeInfoMap;
 };
 
 typedef std::vector<DWORD> SVLutTransformParameters;

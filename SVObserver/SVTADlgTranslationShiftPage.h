@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVEnumerateCombo.h"
-#include "SVLibrary/SVTaskObjectValueInterface.h"
+#include "SVOCore/SVTaskObjectValueInterface.h"
 #include "SVRPropertyTree/SVRPropTree.h"
 #pragma endregion Includes
 

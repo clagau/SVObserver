@@ -130,7 +130,6 @@
   <ItemGroup>
     <ClCompile Include="ArrowObject.cpp" />
     <ClCompile Include="Doughnut.cpp" />
-    <ClCompile Include="DrawObject.cpp" />
     <ClCompile Include="EllipseObject.cpp" />
     <ClCompile Include="GraphObject.cpp" />
     <ClCompile Include="LineObject.cpp" />
@@ -172,7 +171,6 @@
     <ClInclude Include="..\AutoBuild\AutoBuild.h" />
     <ClInclude Include="ArrowObject.h" />
     <ClInclude Include="Doughnut.h" />
-    <ClInclude Include="DrawObject.h" />
     <ClInclude Include="EllipseObject.h" />
     <ClInclude Include="GraphObject.h" />
     <ClInclude Include="LineObject.h" />

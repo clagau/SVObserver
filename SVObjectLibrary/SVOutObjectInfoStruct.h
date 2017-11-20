@@ -14,6 +14,7 @@
 #pragma warning( disable : 4786 )
 
 //Moved to precompiled header: #include <set>
+//Moved to precompiled header: #include <vector>
 #include "SVSystemLibrary/SVCriticalSection.h"
 #include "SVInObjectInfoStruct.h"
 
@@ -37,8 +38,8 @@ struct SVOutObjectInfoStruct : public SVObjectInfoStruct
 	HRESULT DisconnectAllInputs();
 	HRESULT GetDependentsList( SVObjectClass* p_psvObject, SVObjectPairVector& rListOfDependents );
 
-	INT_PTR GetInputSize() { return UserInfoList.GetSize(); }
-	SVInObjectInfoStruct& GetInputAt( long p_lIndex ) { return UserInfoList[ p_lIndex ]; }
+	INT_PTR GetInputSize() { return static_cast<INT_PTR> (m_UserInfoList.size()); }
+	SVInObjectInfoStruct& GetInputAt( long lIndex ) { return m_UserInfoList[lIndex]; }
 
 	bool Lock( DWORD p_TimeOutMilliseconds = INFINITE ) const;
 	bool Unlock() const;
@@ -48,12 +49,12 @@ private:
 	//	If you have to send messages to the user objects ( especially in SETUP MODE ),
 	//  you should use their object GUID! In RUN MODE you should normally not send 
 	//  messages, but you can use the validated object pointer!
-	SVInObjectInfoStructVector UserInfoList;
+	SVInObjectInfoStructVector m_UserInfoList;
 
 	mutable SVCriticalSectionPtr m_CriticalSectionPtr;
 
 };
 
 typedef std::set<SVOutObjectInfoStruct*> SVStdSetSVOutObjectInfoStructPtr;
-typedef SVVector<SVOutObjectInfoStruct*> SVOutObjectInfoStructPtrVector;
+typedef std::vector<SVOutObjectInfoStruct*> SVOutObjectInfoStructPtrVector;
 

@@ -56,7 +56,7 @@
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVStorageResult.h"
 #include "SVVirtualCamera.h"
-#include "SVObjectLibrary\GlobalConst.h"
+#include "Definitions/GlobalConst.h"
 #include "RemoteMonitorNamedList.h"
 #include "RemoteMonitorListHelper.h"
 #include "RootObject.h"
@@ -96,10 +96,10 @@ SVConfigurationObject::SVConfigurationObject( LPCSTR ObjectName )
 
 	SetProductType( SVIM_PRODUCT_TYPE_UNKNOWN );
 
-	m_arTriggerArray.RemoveAll();
-	m_arPPQArray.RemoveAll();
-	m_arCameraArray.RemoveAll();
-	m_arInspectionArray.RemoveAll();
+	m_arTriggerArray.clear();
+	m_arPPQArray.clear();
+	m_arCameraArray.clear();
+	m_arInspectionArray.clear();
 }
 
 SVConfigurationObject::SVConfigurationObject( SVObjectClass* POwner, int StringResourceID )
@@ -112,10 +112,10 @@ SVConfigurationObject::SVConfigurationObject( SVObjectClass* POwner, int StringR
 
 	SetProductType( SVIM_PRODUCT_TYPE_UNKNOWN );
 
-	m_arTriggerArray.RemoveAll();
-	m_arPPQArray.RemoveAll();
-	m_arCameraArray.RemoveAll();
-	m_arInspectionArray.RemoveAll();
+	m_arTriggerArray.clear();
+	m_arPPQArray.clear();
+	m_arCameraArray.clear();
+	m_arInspectionArray.clear();
 }
 
 SVConfigurationObject::~SVConfigurationObject()
@@ -180,7 +180,7 @@ bool SVConfigurationObject::AddTrigger( SvTi::SVTriggerObject* pTrigger )
 
 	if( nullptr != pTrigger )
 	{
-		m_arTriggerArray.Add( pTrigger );
+		m_arTriggerArray.push_back( pTrigger );
 		Result = true;
 	}
 
@@ -191,14 +191,12 @@ bool SVConfigurationObject::RemoveTrigger( SvTi::SVTriggerObject* pTrigger )
 {
 	if( nullptr == pTrigger ) { return false; }
 
-	int iSize;
-
-	iSize = m_arTriggerArray.GetSize();
+	int iSize = static_cast<int> (m_arTriggerArray.size());
 	for(int i = 0; i < iSize; i++ )
 	{
-		if( pTrigger == m_arTriggerArray.GetAt( i ) )
+		if( pTrigger == m_arTriggerArray[i] )
 		{
-			m_arTriggerArray.RemoveAt( i );
+			m_arTriggerArray.erase(m_arTriggerArray.begin() + i);
 			break;
 		}
 	}
@@ -208,7 +206,7 @@ bool SVConfigurationObject::RemoveTrigger( SvTi::SVTriggerObject* pTrigger )
 
 long SVConfigurationObject::GetTriggerCount( ) const
 {
-	return m_arTriggerArray.GetSize();
+	return static_cast<long> (m_arTriggerArray.size());
 }// end GetTriggerCount
 
 bool SVConfigurationObject::GetChildObjectByName( LPCTSTR tszName, SvTi::SVTriggerObject** ppTrigger ) const
@@ -240,11 +238,11 @@ SvTi::SVTriggerObject* SVConfigurationObject::GetTrigger( long lIndex ) const
 {
 	SvTi::SVTriggerObject* retValue = nullptr;
 
-	ASSERT( 0 <= lIndex && static_cast<long>(m_arTriggerArray.size()) > lIndex );
+	ASSERT( 0 <= lIndex && static_cast<long> (m_arTriggerArray.size()) > lIndex );
 
-	if (0 <= lIndex && static_cast<long>(m_arTriggerArray.size()) > lIndex)
+	if (0 <= lIndex && static_cast<long> (m_arTriggerArray.size()) > lIndex)
 	{
-		retValue = m_arTriggerArray.GetAt( lIndex );
+		retValue = m_arTriggerArray[lIndex];
 	}
 
 	return retValue;
@@ -259,7 +257,8 @@ bool SVConfigurationObject::AddAcquisitionDevice( LPCTSTR szName,
 	bool bOk( false );
 	SVConfigurationAcquisitionDeviceInfoStruct* pDevice( nullptr );
 
-	mAcquisitionDeviceMap.Lookup( szName, pDevice);
+	SVAcquisitionDeviceMap::iterator Iter = m_AcquisitionDeviceMap.find(szName);
+	pDevice = (m_AcquisitionDeviceMap.end() != Iter) ? Iter->second : nullptr;
 
 	if( nullptr == pDevice )
 	{
@@ -276,7 +275,7 @@ bool SVConfigurationObject::AddAcquisitionDevice( LPCTSTR szName,
 		{
 			pDevice->mDeviceParams = *pDeviceParams;
 		}
-		mAcquisitionDeviceMap.SetAt( szName, pDevice );
+		m_AcquisitionDeviceMap[szName] = pDevice;
 	}
 
 	return bOk;
@@ -287,7 +286,8 @@ bool SVConfigurationObject::ModifyAcquisitionDevice( LPCTSTR szName, SVLightRefe
 	bool bOk = false;
 	SVConfigurationAcquisitionDeviceInfoStruct* pDevice = nullptr;
 
-	mAcquisitionDeviceMap.Lookup( szName, pDevice);
+	SVAcquisitionDeviceMap::iterator Iter = m_AcquisitionDeviceMap.find(szName);
+	pDevice = (m_AcquisitionDeviceMap.end() != Iter) ? Iter->second : nullptr;
 
 	bOk = nullptr != pDevice;
 	if ( bOk )
@@ -303,7 +303,8 @@ bool SVConfigurationObject::ModifyAcquisitionDevice( LPCTSTR szName, const SVLut
 	bool bOk = false;
 	SVConfigurationAcquisitionDeviceInfoStruct* pDevice = nullptr;
 
-	mAcquisitionDeviceMap.Lookup( szName, pDevice);
+	SVAcquisitionDeviceMap::iterator Iter = m_AcquisitionDeviceMap.find(szName);
+	pDevice = (m_AcquisitionDeviceMap.end() != Iter) ? Iter->second : nullptr;
 
 	bOk = nullptr != pDevice;
 	if ( bOk )
@@ -321,7 +322,8 @@ bool SVConfigurationObject::ModifyAcquisitionDevice( LPCTSTR szName, const SVDev
 	{
 		SVConfigurationAcquisitionDeviceInfoStruct* pDevice = nullptr;
 
-		mAcquisitionDeviceMap.Lookup( szName, pDevice);
+		SVAcquisitionDeviceMap::iterator Iter = m_AcquisitionDeviceMap.find(szName);
+		pDevice = (m_AcquisitionDeviceMap.end() != Iter) ? Iter->second : nullptr;
 
 		bOk = nullptr != pDevice;
 		if ( bOk )
@@ -346,14 +348,16 @@ bool SVConfigurationObject::ModifyAcquisitionDevice( LPCTSTR szName, const SVDev
 
 bool SVConfigurationObject::RemoveAcquisitionDevice( LPCTSTR szName )
 {
-	bool bOk = false;
+	bool Result = false;
 
 	SVConfigurationAcquisitionDeviceInfoStruct *pDevice = nullptr;
 
-	bOk = mAcquisitionDeviceMap.Lookup( szName, pDevice );
-	if ( bOk )
+	SVAcquisitionDeviceMap::iterator Iter = m_AcquisitionDeviceMap.find(szName);
+	pDevice = (m_AcquisitionDeviceMap.end() != Iter) ? Iter->second : nullptr;
+	Result = m_AcquisitionDeviceMap.end() != Iter;
+	if ( Result )
 	{
-		mAcquisitionDeviceMap.RemoveKey( szName );
+		m_AcquisitionDeviceMap.erase(Iter);
 
 		if ( nullptr != pDevice )
 		{
@@ -361,7 +365,7 @@ bool SVConfigurationObject::RemoveAcquisitionDevice( LPCTSTR szName )
 		}
 	}
 
-	return bOk;
+	return Result;
 }
 
 bool SVConfigurationObject::GetAcquisitionDevice( LPCTSTR szName,
@@ -370,48 +374,48 @@ bool SVConfigurationObject::GetAcquisitionDevice( LPCTSTR szName,
 	SVLut*& rpLut,
 	SVDeviceParamCollection*& rpDeviceParams ) const
 {
-	bool bOk = false;
-
-	SVConfigurationAcquisitionDeviceInfoStruct* pDevice = nullptr;
+	bool Result = false;
 
 	rpFiles = nullptr;
 	rpLight = nullptr;
 	rpLut   = nullptr;
 	rpDeviceParams = nullptr;
 
-	bOk = mAcquisitionDeviceMap.Lookup( szName, pDevice );
-	if ( bOk )
+	SVAcquisitionDeviceMap::const_iterator Iter = m_AcquisitionDeviceMap.find(szName);
+	SVConfigurationAcquisitionDeviceInfoStruct* pDevice = (m_AcquisitionDeviceMap.end() != Iter) ? Iter->second : nullptr;
+
+	Result = nullptr != pDevice;
+	if ( Result )
 	{
-		bOk = nullptr != pDevice;
-		if ( bOk )
-		{
-			rpFiles = &(pDevice->msvFiles);
-			rpLight = &(pDevice->msvLightArray);
-			rpLut   = &(pDevice->mLut);
-			rpDeviceParams = &(pDevice->mDeviceParams);
-		}
+		rpFiles = &(pDevice->msvFiles);
+		rpLight = &(pDevice->msvLightArray);
+		rpLut   = &(pDevice->mLut);
+		rpDeviceParams = &(pDevice->mDeviceParams);
 	}
 
-	return bOk;
+	return Result;
 }
 
-SVConfigurationObject::SVAcquisitionDeviceMap::iterator SVConfigurationObject::GetAcquisitionDeviceStartPosition() const
+SVConfigurationObject::SVAcquisitionDeviceMap::iterator SVConfigurationObject::GetAcquisitionDeviceStartPosition()
 {
-	return mAcquisitionDeviceMap.GetStartPosition();
+	return m_AcquisitionDeviceMap.begin();
 }
 
 SVConfigurationObject::SVAcquisitionDeviceMap::iterator SVConfigurationObject::GetAcquisitionDeviceEndPosition()
 {
-	return mAcquisitionDeviceMap.end();
+	return m_AcquisitionDeviceMap.end();
 }
 
-void SVConfigurationObject::GetAcquisitionDeviceNextAssoc( SVAcquisitionDeviceMap::iterator& rNextPosition, std::string& rKey ) const
+void SVConfigurationObject::GetAcquisitionDeviceNextAssoc( SVAcquisitionDeviceMap::const_iterator& rNextPosition, std::string& rKey ) const
 {
-	SVConfigurationAcquisitionDeviceInfoStruct* pDevice = nullptr;
-	mAcquisitionDeviceMap.GetNextAssoc( rNextPosition, rKey, pDevice );
+	if (rNextPosition != m_AcquisitionDeviceMap.end())
+	{
+		rKey = rNextPosition->first;
+		++rNextPosition;
+	}
 }
 
-void SVConfigurationObject::GetAcquisitionDeviceNextAssoc( SVAcquisitionDeviceMap::iterator& rNextPosition, 
+void SVConfigurationObject::GetAcquisitionDeviceNextAssoc( SVAcquisitionDeviceMap::const_iterator& rNextPosition,
 	std::string& rKey, 
 	SVFileNameArrayClass*& rpFiles,
 	SVLightReference*& rpLight,
@@ -425,7 +429,12 @@ void SVConfigurationObject::GetAcquisitionDeviceNextAssoc( SVAcquisitionDeviceMa
 	rpLut   = nullptr;
 	rpDeviceParams = nullptr;
 
-	mAcquisitionDeviceMap.GetNextAssoc( rNextPosition, rKey, pDevice );
+	if (rNextPosition != m_AcquisitionDeviceMap.end())
+	{
+		rKey = rNextPosition->first;
+		pDevice = rNextPosition->second;
+		++rNextPosition;
+	}
 
 	if ( nullptr != pDevice)
 	{
@@ -436,31 +445,29 @@ void SVConfigurationObject::GetAcquisitionDeviceNextAssoc( SVAcquisitionDeviceMa
 	}
 }
 
-bool SVConfigurationObject::AddPPQ( SVPPQObject* pPPQ )
+bool SVConfigurationObject::AddPPQ(SVPPQObject* pPPQ)
 {
 	bool Result( false );
 
 	if( nullptr != pPPQ )
 	{
-		m_arPPQArray.Add( pPPQ );
+		m_arPPQArray.push_back(pPPQ);
 		Result = true;
 	}
 
 	return Result;
 }
 
-bool SVConfigurationObject::RemovePPQ( SVPPQObject* pPPQ )
+bool SVConfigurationObject::RemovePPQ(const SVPPQObject* const pPPQ )
 {
 	if( nullptr == pPPQ ) { return false; }
 
-	int iSize;
-
-	iSize = m_arPPQArray.GetSize();
-	for( int i = 0; i < iSize; i++ )
+	int Size = static_cast<int> (m_arPPQArray.size());
+	for( int i = 0; i < Size; i++ )
 	{
-		if(  pPPQ == m_arPPQArray.GetAt( i ) )
+		if(  pPPQ == m_arPPQArray[i] )
 		{
-			m_arPPQArray.RemoveAt( i );
+			m_arPPQArray.erase(m_arPPQArray.begin() + i);
 			break;
 		}
 	}
@@ -470,7 +477,7 @@ bool SVConfigurationObject::RemovePPQ( SVPPQObject* pPPQ )
 
 long SVConfigurationObject::GetPPQCount( ) const
 {
-	return m_arPPQArray.GetSize();
+	return static_cast<long> (m_arPPQArray.size());
 }// end GetPPQCount
 
 bool SVConfigurationObject::GetChildObjectByName( LPCTSTR tszName, SVPPQObject** ppPPQ ) const
@@ -501,11 +508,11 @@ bool SVConfigurationObject::GetChildObjectByName( LPCTSTR tszName, SVPPQObject**
 SVPPQObject* SVConfigurationObject::GetPPQ( long lIndex ) const
 {
 	SVPPQObject* retValue = nullptr;
-	ASSERT( 0 <= lIndex && static_cast<long>(m_arPPQArray.size()) > lIndex );
+	ASSERT( 0 <= lIndex && static_cast<long> (m_arPPQArray.size()) > lIndex );
 
 	if (0 <= lIndex && static_cast<long>(m_arPPQArray.size()) > lIndex)
 	{
-		retValue = m_arPPQArray.GetAt( lIndex );
+		retValue = m_arPPQArray[lIndex];
 	}
 
 	return retValue;
@@ -518,10 +525,10 @@ bool SVConfigurationObject::GetPPQByName( LPCTSTR name, SVPPQObject** ppPPQ ) co
 	//Only do an assert check so that in release mode no check is made
 	ASSERT( nullptr != ppPPQ );
 
-	int iSize = m_arPPQArray.GetSize();
-	for (int i = 0;i < iSize && !bReturn;i++)
+	int Size = static_cast<int> (m_arPPQArray.size());
+	for (int i = 0;i < Size && !bReturn;i++)
 	{
-		SVPPQObject* pPPQ = m_arPPQArray.GetAt(i);
+		SVPPQObject* pPPQ = m_arPPQArray[i];
 		if ( nullptr != pPPQ)
 		{
 			std::string ppqName = pPPQ->GetName();
@@ -541,7 +548,7 @@ bool SVConfigurationObject::AddCamera( SVVirtualCamera* pCamera )
 
 	if( nullptr != pCamera )
 	{
-		m_arCameraArray.Add( pCamera );
+		m_arCameraArray.push_back(pCamera);
 		Result = true;
 	}
 	return Result;
@@ -551,14 +558,12 @@ bool SVConfigurationObject::RemoveCamera( SVVirtualCamera* pCamera )
 {
 	if( nullptr == pCamera ) { return false; }
 
-	int iSize;
-
-	iSize = m_arCameraArray.GetSize();
+	int iSize = static_cast<int> (m_arCameraArray.size());
 	for( int i = 0; i < iSize; i++ )
 	{
-		if(  pCamera == m_arCameraArray.GetAt( i ) )
+		if(  pCamera == m_arCameraArray[i] )
 		{
-			m_arCameraArray.RemoveAt( i );
+			m_arCameraArray.erase(m_arCameraArray.begin() +  i);
 			break;
 		}
 	}
@@ -568,7 +573,7 @@ bool SVConfigurationObject::RemoveCamera( SVVirtualCamera* pCamera )
 
 long SVConfigurationObject::GetCameraCount( ) const
 {
-	return m_arCameraArray.GetSize();
+	return static_cast<long> (m_arCameraArray.size());
 }
 
 bool SVConfigurationObject::GetChildObjectByName( LPCTSTR tszName, SVVirtualCamera** ppCamera ) const
@@ -603,7 +608,7 @@ SVVirtualCamera* SVConfigurationObject::GetCamera( long lIndex ) const
 
 	if (0 <= lIndex && static_cast<long>(m_arCameraArray.size()) > lIndex)
 	{
-		retValue = m_arCameraArray.GetAt( lIndex );
+		retValue = m_arCameraArray[lIndex];
 	}
 
 	return retValue;
@@ -615,7 +620,7 @@ bool SVConfigurationObject::AddInspection( SVInspectionProcess* pInspection )
 
 	if( nullptr != pInspection )
 	{
-		m_arInspectionArray.Add( pInspection );
+		m_arInspectionArray.push_back(pInspection);
 		Result = true;
 	}
 
@@ -629,12 +634,12 @@ bool SVConfigurationObject::RemoveInspection( SVInspectionProcess* pInspection )
 	int i;
 	int iSize;
 
-	iSize = m_arInspectionArray.GetSize();
+	iSize = static_cast<int>  (m_arInspectionArray.size());
 	for( i = 0; i < iSize; i++ )
 	{
-		if(  pInspection == m_arInspectionArray.GetAt( i ) )
+		if( pInspection == m_arInspectionArray[i] )
 		{
-			m_arInspectionArray.RemoveAt( i );
+			m_arInspectionArray.erase( m_arInspectionArray.begin() + i );
 			break;
 		}
 	}
@@ -644,7 +649,7 @@ bool SVConfigurationObject::RemoveInspection( SVInspectionProcess* pInspection )
 
 long SVConfigurationObject::GetInspectionCount( ) const
 {
-	return m_arInspectionArray.GetSize();
+	return static_cast<long> (m_arInspectionArray.size());
 }// end GetInspectionCount
 
 bool SVConfigurationObject::GetInspectionObject( LPCTSTR Name, SVInspectionProcess** ppInspection ) const
@@ -695,21 +700,16 @@ bool SVConfigurationObject::GetChildObjectByName( LPCTSTR tszName, SVInspectionP
 
 SVInspectionProcess* SVConfigurationObject::GetInspection( long lIndex ) const
 {
-	SVInspectionProcess* retValue = nullptr;
+	SVInspectionProcess* pResult = nullptr;
 	ASSERT( 0 <= lIndex && static_cast<long>(m_arInspectionArray.size()) > lIndex );
 
 	if (0 <= lIndex && static_cast<long>(m_arInspectionArray.size()) > lIndex)
 	{
-		retValue = m_arInspectionArray.GetAt( lIndex );
+		pResult = m_arInspectionArray[lIndex];
 	}
 
-	return retValue;
+	return pResult;
 }// end GetInspection
-
-void SVConfigurationObject::GetInspections( SVInspectionProcessPtrList& rvecInspections ) const
-{
-	std::copy( m_arInspectionArray.begin(), m_arInspectionArray.end(), std::inserter( rvecInspections, rvecInspections.begin() ) );
-}
 
 // Add the (Imported) Input if it doesn't exists
 // Do not adjust the ppqPosition if the position is greater than the PPQ length
@@ -736,7 +736,7 @@ HRESULT SVConfigurationObject::AddImportedRemoteInput(SVPPQObject* pPPQ, const s
 			SVRemoteInputObject* pRemoteInput = nullptr;
 			int number = -1;
 			sscanf_s(name.c_str(), SvO::cRemoteInputNumberLabel, &number);
-			pRemoteInput = dynamic_cast<SVRemoteInputObject*> (m_pInputObjectList->GetInputFlyweight( name, SVRemoteInputObjectType, number - 1));
+			pRemoteInput = dynamic_cast<SVRemoteInputObject*> (m_pInputObjectList->GetInputFlyweight( name, SvDef::SVRemoteInputObjectType, number - 1));
 			if (nullptr != pRemoteInput)
 			{
 				pRemoteInput->m_lIndex = index;
@@ -767,7 +767,7 @@ HRESULT SVConfigurationObject::AddImportedDigitalInput(SVPPQObject* pPPQ, const 
 		if (!pIOEntry->m_Enabled)
 		{
 			SVDigitalInputObject* pDigitalInput = nullptr;
-			pDigitalInput = dynamic_cast<SVDigitalInputObject*> (m_pInputObjectList->GetInputFlyweight( name, SVDigitalInputObjectType));
+			pDigitalInput = dynamic_cast<SVDigitalInputObject*> (m_pInputObjectList->GetInputFlyweight( name, SvDef::SVDigitalInputObjectType));
 
 			pIOEntry->m_ObjectType = IO_DIGITAL_INPUT;
 			pIOEntry->m_PPQIndex = ppqPosition;
@@ -790,7 +790,7 @@ HRESULT SVConfigurationObject::AddRemoteInput(SVPPQObject* pPPQ, const std::stri
 	SVRemoteInputObject* pRemoteInput = nullptr;
 	int number = -1;
 	sscanf_s(name.c_str(), SvO::cRemoteInputNumberLabel, &number);
-	pRemoteInput = dynamic_cast<SVRemoteInputObject*> (m_pInputObjectList->GetInputFlyweight(name, SVRemoteInputObjectType, number-1));
+	pRemoteInput = dynamic_cast<SVRemoteInputObject*> (m_pInputObjectList->GetInputFlyweight(name, SvDef::SVRemoteInputObjectType, number-1));
 
 	// Add Remote Input to the PPQ
 	SVVariantValueObjectClass* pValueObject = new SVVariantValueObjectClass();
@@ -831,7 +831,7 @@ HRESULT SVConfigurationObject::AddDigitalInput(SVPPQObject* pPPQ, const std::str
 
 	SVDigitalInputObject* pDigitalInput = nullptr;
 
-	pDigitalInput = dynamic_cast<SVDigitalInputObject*> (m_pInputObjectList->GetInputFlyweight( name, SVDigitalInputObjectType));
+	pDigitalInput = dynamic_cast<SVDigitalInputObject*> (m_pInputObjectList->GetInputFlyweight( name, SvDef::SVDigitalInputObjectType));
 
 	// Add Digital Input to the PPQ
 	SVBoolValueObjectClass* pValueObject = new SVBoolValueObjectClass();
@@ -868,7 +868,7 @@ HRESULT SVConfigurationObject::AddCameraDataInput(SVPPQObject* pPPQ, SVIOEntryHo
 
 	SVCameraDataInputObject* pInput = nullptr;
 	std::string name = pIOEntry->getObject()->GetName();
-	pInput = dynamic_cast<SVCameraDataInputObject*> (m_pInputObjectList->GetInputFlyweight(name, SVCameraDataInputObjectType));
+	pInput = dynamic_cast<SVCameraDataInputObject*> (m_pInputObjectList->GetInputFlyweight(name, SvDef::SVCameraDataInputObjectType));
 
 	// Add Input to the PPQ
 	if( nullptr != pInput )
@@ -928,13 +928,13 @@ void SVConfigurationObject::LoadEnviroment(SVTreeType& rTree , bool &Configurati
 	{
 		UpdateFlag = Value;
 	}
-	RootObject::setRootChildValue( SvOl::FqnEnvironmentImageUpdate, UpdateFlag );
+	RootObject::setRootChildValue( SvDef::FqnEnvironmentImageUpdate, UpdateFlag );
 
 	if (SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_RESULT_DISPLAY_UPDATE, hChild, Value ) )
 	{
 		UpdateFlag = Value;
 	}
-	RootObject::setRootChildValue( SvOl::FqnEnvironmentResultUpdate, UpdateFlag );
+	RootObject::setRootChildValue( SvDef::FqnEnvironmentResultUpdate, UpdateFlag );
 
 	// Thread Affinity Setup
 	SVTreeType::SVBranchHandle hThreadSetup( nullptr );
@@ -1116,7 +1116,7 @@ bool SVConfigurationObject::LoadIO( SVTreeType& rTree )
 			if( bOutput )
 			{
 				SVDigitalOutputObject* pOutput(nullptr);
-				pOutput = dynamic_cast<SVDigitalOutputObject*> (pOutputsList->GetOutputFlyweight(IOName.c_str(), SVDigitalOutputObjectType, dwChannel));
+				pOutput = dynamic_cast<SVDigitalOutputObject*> (pOutputsList->GetOutputFlyweight(IOName.c_str(), SvDef::SVDigitalOutputObjectType, dwChannel));
 
 				if( nullptr != pOutput )
 				{
@@ -1138,7 +1138,7 @@ bool SVConfigurationObject::LoadIO( SVTreeType& rTree )
 			else
 			{
 				SVDigitalInputObject* pInput = nullptr;
-				pInput = dynamic_cast<SVDigitalInputObject*> (pInputsList->GetInputFlyweight( IOName, SVDigitalInputObjectType, dwChannel));
+				pInput = dynamic_cast<SVDigitalInputObject*> (pInputsList->GetInputFlyweight( IOName, SvDef::SVDigitalInputObjectType, dwChannel));
 
 				if( nullptr != pInput )
 				{
@@ -1186,7 +1186,7 @@ bool SVConfigurationObject::LoadIO( SVTreeType& rTree )
 	if(  l_ModuleReadyId.empty() )
 	{
 		SVDigitalOutputObject* pOutput(nullptr);
-		pOutput = dynamic_cast<SVDigitalOutputObject*> (m_pOutputObjectList->GetOutputFlyweight(SvO::cModuleReady, SVDigitalOutputObjectType));
+		pOutput = dynamic_cast<SVDigitalOutputObject*> (m_pOutputObjectList->GetOutputFlyweight(SvO::cModuleReady, SvDef::SVDigitalOutputObjectType));
 
 		if( nullptr != pOutput )
 		{
@@ -1295,7 +1295,7 @@ bool SVConfigurationObject::LoadAcquisitionDevice( SVTreeType& rTree, std::strin
 													//Legacy: changed name from Contrast to Gain
 													if (SvO::cCameraContrast == svLight.Band(i).Attribute(j).strName)
 													{
-														svLight.Band(i).Attribute(j).strName = SvOl::FqnCameraGain;
+														svLight.Band(i).Attribute(j).strName = SvDef::FqnCameraGain;
 													}
 												}
 												if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_RESOURCE_ID, hLight, Value))
@@ -1455,7 +1455,7 @@ bool SVConfigurationObject::LoadAcquisitionDevice( SVTreeType& rTree, std::strin
 						// Band number depends on video type...
 						switch( cf.m_eImageType )
 						{
-						case SVImageFormatRGB8888:  // RGB
+						case SvDef::SVImageFormatRGB8888:  // RGB
 							{
 								l_BandCount = 3;
 								break;
@@ -2422,7 +2422,7 @@ void SVConfigurationObject::UpgradeConfiguration()
 	bool ConfigChanged(false);
 
 	SVObjectPtrVector ColorTools;
-	SVObjectManagerClass::Instance().getObjectsOfType(std::back_inserter(ColorTools), SVToolObjectType, SVColorToolObjectType);
+	SVObjectManagerClass::Instance().getObjectsOfType(std::back_inserter(ColorTools), SvDef::SVToolObjectType, SvDef::SVColorToolObjectType);
 	SVObjectPtrVector::iterator Iter = ColorTools.begin();
 	for (; ColorTools.end() != Iter; ++Iter)
 	{
@@ -2627,42 +2627,26 @@ bool SVConfigurationObject::DestroyConfiguration()
 
 	m_bConfigurationValid = false;
 
-	long l = 0;
-	long lSize = 0;
-
 	//destroy inspections...
-	lSize = m_arInspectionArray.GetSize();
-	for ( l = lSize - 1; -1 < l; l-- )
+	for (auto pEntry : m_arInspectionArray)
 	{
-		if ( nullptr != m_arInspectionArray[l] )
-		{
-			delete m_arInspectionArray[l];
-			m_arInspectionArray[l] = nullptr;
-		}
+		delete pEntry;
 	}
-	m_arInspectionArray.RemoveAll();
+	m_arInspectionArray.clear();
 
 	//destroy camera's
-	lSize = m_arCameraArray.GetSize();
-	for ( l = lSize - 1; -1 < l; l-- )
+	for (auto pEntry : m_arCameraArray)
 	{
-		if ( nullptr != m_arCameraArray[l] )
-		{
-			delete m_arCameraArray[l];
-			m_arCameraArray[l] = nullptr;
-		}
+		delete pEntry;
 	}
-	m_arCameraArray.RemoveAll();
+	m_arCameraArray.clear();
 
 	SVConfigurationAcquisitionDeviceInfoStruct *pDevice = nullptr;
 
-	SVAcquisitionDeviceMap::iterator pos = mAcquisitionDeviceMap.GetStartPosition();
-	while ( pos != mAcquisitionDeviceMap.end() )
+	for (auto& rItem : m_AcquisitionDeviceMap)
 	{
-		std::string DeviceName = pos->first;
-		pDevice = pos->second;
-
-		pos = mAcquisitionDeviceMap.erase( pos );
+		std::string DeviceName = rItem.first;
+		pDevice = rItem.second;
 
 		if ( nullptr != pDevice )
 		{
@@ -2681,31 +2665,24 @@ bool SVConfigurationObject::DestroyConfiguration()
 		}
 	}
 
-	mAcquisitionDeviceMap.RemoveAll();
+	m_AcquisitionDeviceMap.clear();
 
 	//destroy trigger's
-	lSize = m_arTriggerArray.GetSize();
-	for ( l = lSize - 1; -1 < l; l-- )
+	for (auto pEntry : m_arTriggerArray)
 	{
-		if ( nullptr != m_arTriggerArray[l] )
-		{
-			delete m_arTriggerArray[l];
-			m_arTriggerArray[l] = nullptr;
-		}
+		delete pEntry;
 	}
-	m_arTriggerArray.RemoveAll();
+	m_arTriggerArray.clear();
 
 	//destroy PPQ's
-	lSize = m_arPPQArray.GetSize();
-	for ( l = lSize - 1; -1 < l; l-- )
+	for ( auto& rPPQ : m_arPPQArray )
 	{
-		if ( nullptr != m_arPPQArray[l] )
+		if(nullptr != rPPQ)
 		{
-			delete m_arPPQArray[l];
-			m_arPPQArray[l] = nullptr;
+			delete rPPQ;
 		}
 	}
-	m_arPPQArray.RemoveAll();
+	m_arPPQArray.clear();
 
 	//destroy Input Object List
 	if ( nullptr != m_pInputObjectList )
@@ -2729,7 +2706,7 @@ bool SVConfigurationObject::DestroyConfiguration()
 	}
 
 	//Delete all Global Constants
-	RootObject::resetRootChildValue( SvOl::FqnGlobal );
+	RootObject::resetRootChildValue( SvDef::FqnGlobal );
 
 	SetProductType( SVIM_PRODUCT_TYPE_UNKNOWN );
 
@@ -2783,11 +2760,11 @@ HRESULT SVConfigurationObject::GetChildObject( SVObjectClass*& rpObject, const S
 		{
 			if( rNameInfo.m_NameArray[ 0 ].substr( 0, 3 ) == _T( "PPQ" ) )
 			{
-				SVPPQObjectPtrVector::const_iterator l_PPQIter;
+				SVPPQObjectPtrVector::const_iterator PPQIter;
 
-				for( l_PPQIter = m_arPPQArray.begin(); nullptr == rpObject && l_PPQIter != m_arPPQArray.end(); ++l_PPQIter )
+				for( PPQIter = m_arPPQArray.begin(); nullptr == rpObject && PPQIter != m_arPPQArray.end(); ++PPQIter )
 				{
-					SVPPQObject* pPPQ = ( *l_PPQIter );
+					SVPPQObject* pPPQ = ( *PPQIter );
 
 					if( nullptr != pPPQ )
 					{
@@ -2846,9 +2823,9 @@ void SVConfigurationObject::SaveEnvironment(SvXml::SVObjectXMLWriter& rWriter) c
 	svValue = GetProductType();
 	rWriter.WriteAttribute( SvXml::CTAG_CONFIGURATION_TYPE, svValue );
 
-	RootObject::getRootChildValue( SvOl::FqnEnvironmentImageUpdate, svValue );
+	RootObject::getRootChildValue( SvDef::FqnEnvironmentImageUpdate, svValue );
 	rWriter.WriteAttribute( SvXml::CTAG_IMAGE_DISPLAY_UPDATE, svValue );
-	RootObject::getRootChildValue( SvOl::FqnEnvironmentResultUpdate, svValue );
+	RootObject::getRootChildValue( SvDef::FqnEnvironmentResultUpdate, svValue );
 	rWriter.WriteAttribute( SvXml::CTAG_RESULT_DISPLAY_UPDATE, svValue );
 
 	// Thread Manager Enable.
@@ -3018,8 +2995,8 @@ void SVConfigurationObject::SaveAcquisitionDevice(SvXml::SVObjectXMLWriter& rWri
 	SVLut* pLut = nullptr;
 	SVDeviceParamCollection* pDeviceParams = nullptr;
 
-	SVAcquisitionDeviceMap::iterator pos = mAcquisitionDeviceMap.GetStartPosition();
-	while ( pos != mAcquisitionDeviceMap.end() )
+	SVAcquisitionDeviceMap::const_iterator pos = m_AcquisitionDeviceMap.begin();
+	while ( pos != m_AcquisitionDeviceMap.end() )
 	{
 		GetAcquisitionDeviceNextAssoc( pos, Name, pFiles, pLight, pLut, pDeviceParams );
 		std::string Board;
@@ -3540,7 +3517,7 @@ void SVConfigurationObject::SaveGlobalConstants(SvXml::SVObjectXMLWriter &rWrite
 	rWriter.StartElement( SvXml::CTAG_GLOBAL_CONSTANTS );
 
 	BasicValueObjects::ValueVector GlobalConstantObjects;
-	RootObject::getRootChildObjectList( GlobalConstantObjects, SvOl::FqnGlobal, 0 );
+	RootObject::getRootChildObjectList( GlobalConstantObjects, SvDef::FqnGlobal, 0 );
 	BasicValueObjects::ValueVector::const_iterator Iter( GlobalConstantObjects.cbegin() );
 	while ( GlobalConstantObjects.cend() != Iter  && !Iter->empty() )
 	{
@@ -3588,7 +3565,7 @@ void SVConfigurationObject::ConvertColorToStandardProductType( bool& rConfigColo
 
 void SVConfigurationObject::SaveConfiguration(SvXml::SVObjectXMLWriter& rWriter) const
 {
-	std::string RootName( SvOl::FqnRoot );
+	std::string RootName( SvDef::FqnRoot );
 	rWriter.WriteRootElement( RootName.c_str() );
 	rWriter.WriteSchema();
 
@@ -3757,7 +3734,7 @@ bool SVConfigurationObject::Activate()
 {
 	bool bOk = true;
 
-	long lSize = m_arInspectionArray.GetSize();
+	long lSize = static_cast<long> (m_arInspectionArray.size());
 
 	for ( long l = lSize - 1; -1 < l; l-- )
 	{
@@ -3779,12 +3756,8 @@ bool SVConfigurationObject::RebuildInputOutputLists()
 
 	long l( 0 );
 
-	long lSize = m_arInspectionArray.GetSize();
-
-	for ( l = 0; l < lSize; l++ )
+	for ( auto pInspection : m_arInspectionArray)
 	{
-		SVInspectionProcess* pInspection = m_arInspectionArray[l];
-
 		if ( nullptr != pInspection )
 		{
 			bOk = FinishIPDoc( pInspection ) && bOk;
@@ -4327,7 +4300,7 @@ HRESULT SVConfigurationObject::GetInspectionItems( const SVNameSet& p_rNames, SV
 
 			SVObjectNameInfo::ParseObjectName( l_Info, *l_Iter );
 
-			if( std::string( SvOl::FqnInspections ) == l_Info.m_NameArray[ 0 ] )
+			if( std::string( SvDef::FqnInspections ) == l_Info.m_NameArray[ 0 ] )
 			{
 				SVObjectReference ObjectRef;
 				SVObjectManagerClass::Instance().GetObjectByDottedName( l_Info.GetObjectArrayName( 0 ), ObjectRef );
@@ -4485,7 +4458,7 @@ HRESULT SVConfigurationObject::GetRemoteInputItems( const SVNameSet& p_rNames, S
 
 			SVObjectNameInfo::ParseObjectName( l_Info, *l_Iter );
 
-			if( std::string( SvOl::FqnRemoteInputs ) == l_Info.m_NameArray[ 0 ] )
+			if( std::string( SvDef::FqnRemoteInputs ) == l_Info.m_NameArray[ 0 ] )
 			{
 				SVRemoteInputObject* l_pInput = nullptr;
 
@@ -4561,7 +4534,7 @@ HRESULT SVConfigurationObject::SetInspectionItems( const SVNameStorageMap& p_rIt
 
 			SVObjectNameInfo::ParseObjectName( l_Info, l_Iter->first );
 
-			if( l_Info.m_NameArray.size() >0 &&  std::string( SvOl::FqnInspections ) == l_Info.m_NameArray[ 0 ] )
+			if( l_Info.m_NameArray.size() >0 &&  std::string( SvDef::FqnInspections ) == l_Info.m_NameArray[ 0 ] )
 			{
 				SVObjectReference ObjectRef;
 				SVObjectManagerClass::Instance().GetObjectByDottedName( l_Info.GetObjectArrayName( 0 ), ObjectRef );
@@ -4760,7 +4733,7 @@ HRESULT SVConfigurationObject::SetRemoteInputItems( const SVNameStorageMap& p_rI
 
 			SVObjectNameInfo::ParseObjectName( l_Info, l_Iter->first );
 
-			if( std::string( SvOl::FqnRemoteInputs ) == l_Info.m_NameArray[ 0 ] )
+			if( std::string( SvDef::FqnRemoteInputs ) == l_Info.m_NameArray[ 0 ] )
 			{
 				SVRemoteInputObject* l_pInput = nullptr;
 
@@ -4895,7 +4868,7 @@ HRESULT SVConfigurationObject::SetCameraItems( const SVNameStorageMap& rItems, S
 
 			SVObjectNameInfo::ParseObjectName( Info, Iter->first );
 
-			if( std::string( SvOl::FqnCameras ) == Info.m_NameArray[ 0 ] )
+			if( std::string( SvDef::FqnCameras ) == Info.m_NameArray[ 0 ] )
 			{
 				BasicValueObject* pValueObject = nullptr;
 

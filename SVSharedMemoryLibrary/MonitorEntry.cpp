@@ -11,7 +11,7 @@ namespace SvSml
 
 	MonitorEntryData::MonitorEntryData()
 	{
-		ObjectType = 0;		//<SVObjectTypeEnum
+		ObjectType = 0;		//<SvDef::SVObjectTypeEnum
 		InspectionStoreId = -1;
 		ItemId = -1;	//<Index in the Inspection Store
 		Store_Offset = 0;  ///offset in Inspection Store
@@ -52,7 +52,7 @@ namespace SvSml
 
 	bool MonitorEntry::GetMatroxImageProps(MatroxImageProps &ImageProps)
 	{
-		if (data.ObjectType != SVImageObjectType)
+		if (data.ObjectType != SvDef::SVImageObjectType)
 			return false;
 
 		ImageProps.Pitch = data.Pitch;
@@ -68,7 +68,7 @@ namespace SvSml
 
 	void MonitorEntry::SetMatroxImageProps(const MatroxImageProps  &rImageProps)
 	{
-		data.ObjectType = SVImageObjectType;
+		data.ObjectType = SvDef::SVImageObjectType;
 		data.Pitch = rImageProps.Pitch;
 		data.sizeX = rImageProps.sizeX;
 		data.sizeY = rImageProps.sizeY;
@@ -201,7 +201,7 @@ namespace SvSml
 				string = "FALSE";
 			break;
 		}
-		case  VT_DPOINT:
+		case SvDef::VT_DPOINT:
 		{
 			assert(data.ByteSize == 16);
 			double* px = (double*)(ptr);
@@ -210,7 +210,7 @@ namespace SvSml
 			string = Text;
 			break;
 		}
-		case VT_POINT:
+		case SvDef::VT_POINT:
 		{
 			assert(data.ByteSize == 8);
 			int* px = (int*)(ptr);

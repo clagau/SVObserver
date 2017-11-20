@@ -25,7 +25,7 @@ static char THIS_FILE[] = __FILE__;
 
 SVObjectAttributeClass::SVObjectAttributeClass()
 {
-	miType = SV_OBJECT_TYPE_UNKNOWN;
+	m_Type = SV_UNKNOWN_Type;
 }
 
 SVObjectAttributeClass::SVObjectAttributeClass( const SVObjectAttributeClass& rRhs )
@@ -63,85 +63,10 @@ LPCTSTR SVObjectAttributeClass::GetName() const
 	return m_Name.c_str();
 }
 
-int SVObjectAttributeClass::GetType() const
+SVObjectScriptDataObjectTypeEnum SVObjectAttributeClass::GetType() const
 {
-	return miType;
+	return m_Type;
 }
-
-SVObjectScriptDataObjectTypeEnum SVObjectAttributeClass::GetSVObjectScriptDataObjectTypeEnum()
-{
-	SVObjectScriptDataObjectTypeEnum eType = SV_UNKNOWN_Type;
-
-	switch ( GetType() )
-	{
-		case SV_OBJECT_TYPE_BOOL:
-		{
-			eType = SV_BOOL_Type;
-
-			break;
-		}
-		case SV_OBJECT_TYPE_BYTE:
-		{
-			eType = SV_BYTE_Type;
-
-			break;
-		}
-		case SV_OBJECT_TYPE_STRING:
-		{
-			eType = SV_STRING_Type;
-
-			break;
-		}
-		case SV_OBJECT_TYPE_DOUBLE:
-		{
-			eType = SV_DOUBLE_Type;
-
-			break;
-		}
-		case SV_OBJECT_TYPE_DWORD:
-		{
-			eType = SV_DWORD_Type;
-
-			break;
-		}
-		case SV_OBJECT_TYPE_LONG:
-		{
-			eType = SV_LONG_Type;
-
-			break;
-		}
-		case SV_OBJECT_TYPE_POINT:
-		{
-			eType = SV_POINT_Type;
-
-			break;
-		}
-		case SV_OBJECT_TYPE_DPOINT:
-		{
-			eType = SV_DPOINT_Type;
-
-			break;
-		}
-		case SV_OBJECT_TYPE_VARIANT:
-		{
-			eType = SV_VARIANT_Type;
-
-			break;
-		}
-		case SV_OBJECT_TYPE_INT64:
-		{
-			eType = SV_INT64_Type;
-
-			break;
-		}
-		default:
-		{
-			break;
-		}
-	}
-
-	return eType;
-}// end GetSVObjectScriptDataObjectTypeEnum()
 
 bool SVObjectAttributeClass::GetData(SvCl::SVObjectBoolArrayClass& svData)
 {
@@ -149,7 +74,7 @@ bool SVObjectAttributeClass::GetData(SvCl::SVObjectBoolArrayClass& svData)
 
 	switch ( GetType() )
 	{
-		case SV_OBJECT_TYPE_BOOL:
+		case SV_BOOL_Type:
 		{
 			svData = m_BoolArray;
 
@@ -157,39 +82,39 @@ bool SVObjectAttributeClass::GetData(SvCl::SVObjectBoolArrayClass& svData)
 
 			break;
 		}
-		case SV_OBJECT_TYPE_BYTE:
+		case SV_BYTE_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_STRING:
+		case SV_STRING_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_DOUBLE:
+		case SV_DOUBLE_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_DWORD:
+		case SV_DWORD_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_LONG:
+		case SV_LONG_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_POINT:
+		case SV_POINT_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_DPOINT:
+		case SV_DPOINT_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_VARIANT:
+		case SV_VARIANT_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_INT64:
+		case SV_INT64_Type:
 		{
 			break;
 		}
@@ -202,62 +127,60 @@ bool SVObjectAttributeClass::GetData(SvCl::SVObjectBoolArrayClass& svData)
 	return bOk;
 }// end GetData(SVObjectBoolArrayClass& svData)
 
-bool SVObjectAttributeClass::GetData(SvCl::SVObjectByteArrayClass& svData)
+bool SVObjectAttributeClass::GetData(SvCl::SVObjectByteArrayClass& rData)
 {
 	bool bOk = false;
 
+	rData.clear();
 	switch ( GetType() )
 	{
-		case SV_OBJECT_TYPE_BOOL:
+		case SV_BOOL_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_BYTE:
+		case SV_BYTE_Type:
 		{
-			svData = m_ByteArray;
+			rData = m_ByteArray;
 
 			bOk = true;
-
 			break;
 		}
-		case SV_OBJECT_TYPE_STRING:
+		case SV_STRING_Type:
 		{
-			for ( int i = 0; i < m_StringArray.GetSize(); i++ )
+			for ( int i = 0; i < static_cast<int> (m_StringArray.size()); i++ )
 			{
 				BYTE bTemp = (BYTE)atoi( m_StringArray[i].c_str() );
-
-				svData.InsertAt( i, bTemp );
+				rData.push_back( bTemp );
 			}
 
 			bOk = true;
-
 			break;
 		}
-		case SV_OBJECT_TYPE_DOUBLE:
+		case SV_DOUBLE_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_DWORD:
+		case SV_DWORD_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_LONG:
+		case SV_LONG_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_POINT:
+		case SV_POINT_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_DPOINT:
+		case SV_DPOINT_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_VARIANT:
+		case SV_VARIANT_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_INT64:
+		case SV_INT64_Type:
 		{
 			break;
 		}
@@ -270,67 +193,65 @@ bool SVObjectAttributeClass::GetData(SvCl::SVObjectByteArrayClass& svData)
 	return bOk;
 }
 
-bool SVObjectAttributeClass::GetData(SvCl::SVObjectArrayClassTemplate<char>& svData)
+bool SVObjectAttributeClass::GetData(SvCl::SVObjectCharArrayClass& rData)
 {
 	bool bOk = false;
 
+	rData.clear();
 	switch ( GetType() )
 	{
-		case SV_OBJECT_TYPE_BOOL:
+		case SV_BOOL_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_BYTE:
+		case SV_BYTE_Type:
 		{
-			svData.RemoveAll();
-			for (int i=0; i < m_ByteArray.GetSize(); i++)
+			for (int i=0; i < static_cast<int> (m_ByteArray.size()); i++)
 			{
-				char c = (char)m_ByteArray[i];
-				svData.Add(c);
+				rData.push_back(static_cast<char> (m_ByteArray[i]));
+			}
+
+			bOk = true;
+			break;
+		}
+		case SV_STRING_Type:
+		{
+			for ( int i = 0; i < static_cast<int> (m_StringArray.size()); i++ )
+			{
+				char cTemp = static_cast<char> (atoi(m_StringArray[i].c_str()));
+
+				rData.push_back(cTemp);
 			}
 
 			bOk = true;
 
 			break;
 		}
-		case SV_OBJECT_TYPE_STRING:
-		{
-			for ( int i = 0; i < m_StringArray.GetSize(); i++ )
-			{
-				char cTemp = (char) atoi( m_StringArray[i].c_str() );
-
-				svData.InsertAt( i, cTemp );
-			}
-
-			bOk = true;
-
-			break;
-		}
-		case SV_OBJECT_TYPE_DOUBLE:
+		case SV_DOUBLE_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_DWORD:
+		case SV_DWORD_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_LONG:
+		case SV_LONG_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_POINT:
+		case SV_POINT_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_DPOINT:
+		case SV_DPOINT_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_VARIANT:
+		case SV_VARIANT_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_INT64:
+		case SV_INT64_Type:
 		{
 			break;
 		}
@@ -343,121 +264,102 @@ bool SVObjectAttributeClass::GetData(SvCl::SVObjectArrayClassTemplate<char>& svD
 	return bOk;
 }
 
-bool SVObjectAttributeClass::GetData(SvCl::SVObjectSVStringArrayClass& svData)
+bool SVObjectAttributeClass::GetData(SvCl::SVObjectStdStringArrayClass& rData)
 {
 	bool bOk = false;
 
+	rData.clear();
 	switch ( GetType() )
 	{
-		case SV_OBJECT_TYPE_BOOL:
+		case SV_BOOL_Type:
 		{
-			for ( int i = 0; i < m_BoolArray.GetSize(); i++ )
+			for ( int i = 0; i < static_cast<int> (m_BoolArray.size()); i++ )
 			{
-				std::string Temp;
-				
-				if ( m_BoolArray[i] )
-				{
-					Temp = SvDef::cTrue;
-				}
-				else
-				{
-					Temp = SvDef::cFalse;
-				}
-
-				svData.InsertAt( i, Temp );
+				rData.push_back(std::string(m_BoolArray[i] ? SvDef::cTrue : SvDef::cFalse));
 			}
 
 			bOk = true;
-
 			break;
 		}
-		case SV_OBJECT_TYPE_BYTE:
+		case SV_BYTE_Type:
 		{
-			for ( int i = 0; i < m_ByteArray.GetSize(); i++ )
+			for ( int i = 0; i < static_cast<int> (m_ByteArray.size()); i++ )
 			{
 				std::string Temp = SvUl::Format( "%x", m_ByteArray[i] );
-
-				svData.InsertAt( i, Temp );
+				rData.push_back( Temp );
 			}
 
 			bOk = true;
 
 			break;
 		}
-		case SV_OBJECT_TYPE_STRING:
+		case SV_STRING_Type:
 		{
-			svData = m_StringArray;
+			rData = m_StringArray;
 
 			bOk = true;
-
 			break;
 		}
-		case SV_OBJECT_TYPE_DOUBLE:
+		case SV_DOUBLE_Type:
 		{
-			for ( int i = 0; i < m_DoubleArray.GetSize(); i++ )
+			for ( int i = 0; i < static_cast<int> (m_DoubleArray.size()); i++ )
 			{
 				std::string Temp = SvUl::Format( "%f", m_DoubleArray[i] );
-
-				svData.InsertAt( i, Temp );
+				rData.push_back(Temp);
 			}
 
 			bOk = true;
 
 			break;
 		}
-		case SV_OBJECT_TYPE_DWORD:
+		case SV_DWORD_Type:
 		{
-			for ( int i = 0; i < m_DWordArray.GetSize(); i++)
+			for ( int i = 0; i < static_cast<int> (m_DWordArray.size()); i++)
 			{
 				std::string Temp = SvUl::Format( _T("%lx"), m_DWordArray[i] );
-
-				svData.InsertAt( i, Temp );
+				rData.push_back(Temp);
 			}
 
 			bOk = true;
-
 			break;
 		}
-		case SV_OBJECT_TYPE_LONG:
+		case SV_LONG_Type:
 		{
-			for ( int i = 0; i < m_LongArray.GetSize(); i++)
+			for ( int i = 0; i < static_cast<int> (m_LongArray.size()); i++)
 			{
 				std::string Temp = SvUl::Format( _T("%ld"), m_LongArray[i] );
-
-				svData.InsertAt( i, Temp );
+				rData.push_back(Temp);
 			}
 
 			bOk = true;
 
 			break;
 		}
-		case SV_OBJECT_TYPE_POINT:
+		case SV_POINT_Type:
 		{
-			for ( int i = 0; i < m_PointArray.GetSize(); i++)
+			for ( int i = 0; i < static_cast<int> (m_PointArray.size()); i++)
 			{
-				svData.InsertAt( i, m_PointArray[i].ToString() );
+				rData.push_back(m_PointArray[i].ToString());
 			}
 
 			bOk = true;
 
 			break;
 		}
-		case SV_OBJECT_TYPE_DPOINT:
+		case SV_DPOINT_Type:
 		{
-			for ( int i = 0; i < m_DPointArray.GetSize(); i++)
+			for ( int i = 0; i < static_cast<int> (m_DPointArray.size()); i++)
 			{
-				std::string Temp = SvUl::Format( _T("(%lf,%lf)"), m_DPointArray[i].x, m_DPointArray[i].y );
-
-				svData.InsertAt( i, Temp );
+				rData.push_back(  m_DPointArray[i].ToString() );
 			}
 
 			bOk = true;
 
 			break;
 		}
-		case SV_OBJECT_TYPE_VARIANT:
+		case SV_VARIANT_Type:
 		{
-			for ( int i = 0; i < m_DPointArray.GetSize(); i++)
+			for ( int i = 0; i < static_cast<int> (m_DPointArray.size()); i++)
 			{
 				std::string Temp;
 
@@ -471,20 +373,20 @@ bool SVObjectAttributeClass::GetData(SvCl::SVObjectSVStringArrayClass& svData)
 				{
 					Temp = _T("");
 				}
-				svData.InsertAt( i, Temp );
+				rData.push_back(Temp);
 			}
 
 			bOk = true;
 
 			break;
 		}
-		case SV_OBJECT_TYPE_INT64:
+		case SV_INT64_Type:
 		{
-			for ( int i = 0; i < m_Int64Array.GetSize(); i++)
+			for ( int i = 0; i < static_cast<int> (m_Int64Array.size()); i++)
 			{
 				std::string Temp = SvUl::Format( _T("%I64d"), m_Int64Array[i] );
 
-				svData.InsertAt( i, Temp );
+				rData.push_back( Temp );
 			}
 
 			bOk = true;
@@ -500,98 +402,89 @@ bool SVObjectAttributeClass::GetData(SvCl::SVObjectSVStringArrayClass& svData)
 	return bOk;
 }
 
-bool SVObjectAttributeClass::GetData(SvCl::SVObjectDoubleArrayClass& svData)
+bool SVObjectAttributeClass::GetData(SvCl::SVObjectDoubleArrayClass& rData)
 {
-	bool bOk = false;
+	bool Result = false;
 
+	rData.clear();
 	switch ( GetType() )
 	{
-		case SV_OBJECT_TYPE_BOOL:
+		case SV_BOOL_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_BYTE:
+		case SV_BYTE_Type:
 		{
-			for ( int i = 0; i < m_ByteArray.GetSize(); i++ )
+			for ( int i = 0; i < static_cast<int> (m_ByteArray.size()); i++ )
 			{
-				double dTemp = (double)m_ByteArray[i];
-
-				svData.InsertAt( i, dTemp );
+				rData.push_back(static_cast<double> (m_ByteArray[i]));
 			}
 
-			bOk = true;
-
+			Result = true;
 			break;
 		}
-		case SV_OBJECT_TYPE_STRING:
+		case SV_STRING_Type:
 		{
-			for ( int i = 0; i < m_StringArray.GetSize(); i++ )
+			for ( int i = 0; i < static_cast<int> (m_StringArray.size()); i++ )
 			{
 				double dTemp = atof( m_StringArray[i].c_str() );
-
-				svData.InsertAt( i, dTemp );
+				rData.push_back(dTemp);
 			}
 
-			bOk = true;
+			Result = true;
+			break;
+		}
+		case SV_DOUBLE_Type:
+		{
+			rData = m_DoubleArray;
+
+			Result = true;
 
 			break;
 		}
-		case SV_OBJECT_TYPE_DOUBLE:
+		case SV_DWORD_Type:
 		{
-			svData = m_DoubleArray;
-
-			bOk = true;
-
-			break;
-		}
-		case SV_OBJECT_TYPE_DWORD:
-		{
-			for ( int i = 0; i < m_DWordArray.GetSize(); i++)
+			for ( int i = 0; i < static_cast<int> (m_DWordArray.size()); i++)
 			{
-				double dTemp = (double)m_DWordArray[i];
-
-				svData.InsertAt( i, dTemp );
+				rData.push_back(static_cast<double> (m_DWordArray[i]));
 			}
 
-			bOk = true;
+			Result = true;
 
 			break;
 		}
-		case SV_OBJECT_TYPE_LONG:
+		case SV_LONG_Type:
 		{
-			for ( int i = 0; i < m_LongArray.GetSize(); i++)
+			for ( int i = 0; i < static_cast<int> (m_LongArray.size()); i++)
 			{
-				double dTemp = (double)m_LongArray[i];
-
-				svData.InsertAt( i, dTemp );
+				rData.push_back(static_cast<double> (m_LongArray[i]));
 			}
 
-			bOk = true;
+			Result = true;
 
 			break;
 		}
-		case SV_OBJECT_TYPE_POINT:
+		case SV_POINT_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_DPOINT:
+		case SV_DPOINT_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_VARIANT:
+		case SV_VARIANT_Type:
 		{
 
-			for ( int i = 0; i < m_VariantArray.GetSize(); i++)
+			for ( int i = 0; i < static_cast<int> (m_VariantArray.size()); i++)
 			{
-				VARIANT vtTemp = m_VariantArray[i];
-				if(vtTemp.vt == VT_R8)
+				if(m_VariantArray[i].vt == VT_R8)
 				{
-					svData.InsertAt(i, vtTemp.dblVal);
+					rData.push_back(m_VariantArray[i].dblVal);
 				}
 			}
 			break;
 		}
-		case SV_OBJECT_TYPE_INT64:
+		case SV_INT64_Type:
 		{
 			break;
 		}
@@ -601,101 +494,90 @@ bool SVObjectAttributeClass::GetData(SvCl::SVObjectDoubleArrayClass& svData)
 		}
 	}
 
-	return bOk;
+	return Result;
 }// end GetData(SVObjectDoubleArrayClass& svData)
 
-bool SVObjectAttributeClass::GetData(SvCl::SVObjectDWordArrayClass& svData)
+bool SVObjectAttributeClass::GetData(SvCl::SVObjectDWordArrayClass& rData)
 {
 	bool bOk = false;
 
+	rData.clear();
 	switch ( GetType() )
 	{
-		case SV_OBJECT_TYPE_BOOL:
+		case SV_BOOL_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_BYTE:
+		case SV_BYTE_Type:
 		{
-			for ( int i = 0; i < m_ByteArray.GetSize(); i++ )
+			for ( int i = 0; i < static_cast<int> (m_ByteArray.size()); i++ )
 			{
-				DWORD dwTemp = (DWORD)m_ByteArray[i];
+				rData.push_back(static_cast<DWORD> (m_ByteArray[i]));
+			}
 
-				svData.InsertAt( i, dwTemp );
+			bOk = true;
+			break;
+		}
+		case SV_STRING_Type:
+		{
+			for ( int i = 0; i < static_cast<int> (m_StringArray.size()); i++ )
+			{
+				DWORD dwTemp = static_cast<DWORD> (atol(m_StringArray[i].c_str()));
+				rData.push_back(dwTemp);
+			}
+
+			bOk = true;
+			break;
+		}
+		case SV_DOUBLE_Type:
+		{
+			for ( int i = 0; i < static_cast<int> (m_DoubleArray.size()); i++)
+			{
+				rData.push_back(static_cast<DWORD> (m_DoubleArray[i]));
+			}
+
+			bOk = true;
+			break;
+		}
+		case SV_DWORD_Type:
+		{
+			rData = m_DWordArray;
+
+			bOk = true;
+			break;
+		}
+		case SV_LONG_Type:
+		{
+			for ( int i = 0; i < static_cast<int> (m_LongArray.size()); i++)
+			{
+				rData.push_back(static_cast<DWORD> (m_LongArray[i]));
 			}
 
 			bOk = true;
 
 			break;
 		}
-		case SV_OBJECT_TYPE_STRING:
+		case SV_POINT_Type:
 		{
-			for ( int i = 0; i < m_StringArray.GetSize(); i++ )
+			break;
+		}
+		case SV_DPOINT_Type:
+		{
+			break;
+		}
+		case SV_VARIANT_Type:
+		{
+
+			for ( int i = 0; i < static_cast<int> (m_VariantArray.size()); i++)
 			{
-				DWORD dwTemp = (DWORD)atol( m_StringArray[i].c_str() );
-
-				svData.InsertAt( i, dwTemp );
-			}
-
-			bOk = true;
-
-			break;
-		}
-		case SV_OBJECT_TYPE_DOUBLE:
-		{
-			for ( int i = 0; i < m_DoubleArray.GetSize(); i++)
-			{
-				DWORD dwTemp = (DWORD)m_DoubleArray[i];
-
-				svData.InsertAt( i, dwTemp );
-			}
-
-			bOk = true;
-
-			break;
-		}
-		case SV_OBJECT_TYPE_DWORD:
-		{
-			svData = m_DWordArray;
-
-			bOk = true;
-
-			break;
-		}
-		case SV_OBJECT_TYPE_LONG:
-		{
-			for ( int i = 0; i < m_LongArray.GetSize(); i++)
-			{
-				DWORD dwTemp = (DWORD)m_LongArray[i];
-
-				svData.InsertAt( i, dwTemp );
-			}
-
-			bOk = true;
-
-			break;
-		}
-		case SV_OBJECT_TYPE_POINT:
-		{
-			break;
-		}
-		case SV_OBJECT_TYPE_DPOINT:
-		{
-			break;
-		}
-		case SV_OBJECT_TYPE_VARIANT:
-		{
-
-			for ( int i = 0; i < m_VariantArray.GetSize(); i++)
-			{
-				VARIANT vtTemp = m_VariantArray[i];
-				if(vtTemp.vt == VT_UI4)
+				if(m_VariantArray[i].vt == VT_UI4)
 				{
-					svData.InsertAt(i, vtTemp.ulVal);
+					rData.push_back(static_cast<DWORD> (m_VariantArray[i].ulVal));
 				}
 			}
 			break;
 		}
-		case SV_OBJECT_TYPE_INT64:
+		case SV_INT64_Type:
 		{
 			break;
 		}
@@ -708,98 +590,90 @@ bool SVObjectAttributeClass::GetData(SvCl::SVObjectDWordArrayClass& svData)
 	return bOk;
 }// end GetData(SVObjectDWordArrayClass& svData)
 
-bool SVObjectAttributeClass::GetData(SvCl::SVObjectLongArrayClass& svData)
+bool SVObjectAttributeClass::GetData(SvCl::SVObjectLongArrayClass& rData)
 {
 	bool bOk = false;
 
+	rData.clear();
 	switch ( GetType() )
 	{
-		case SV_OBJECT_TYPE_BOOL:
+		case SV_BOOL_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_BYTE:
+		case SV_BYTE_Type:
 		{
-			for ( int i = 0; i < m_ByteArray.GetSize(); i++ )
+			for ( int i = 0; i < static_cast<int> (m_ByteArray.size()); i++ )
 			{
-				long lTemp = (long)m_ByteArray[i];
-
-				svData.InsertAt( i, lTemp );
+				rData.push_back(static_cast<long> (m_ByteArray[i]));
 			}
 
 			bOk = true;
-
 			break;
 		}
-		case SV_OBJECT_TYPE_STRING:
+		case SV_STRING_Type:
 		{
-			for ( int i = 0; i < m_StringArray.GetSize(); i++ )
+			for ( int i = 0; i < static_cast<int> (m_StringArray.size()); i++ )
 			{
 				long lTemp = atol( m_StringArray[i].c_str() );
-
-				svData.InsertAt( i, lTemp );
+				rData.push_back(lTemp);
 			}
 
 			bOk = true;
 
 			break;
 		}
-		case SV_OBJECT_TYPE_DOUBLE:
+		case SV_DOUBLE_Type:
 		{
-			for ( int i = 0; i < m_DoubleArray.GetSize(); i++)
+			for ( int i = 0; i < static_cast<int> (m_DoubleArray.size()); i++)
 			{
-				long lTemp = (long)m_DoubleArray[i];
-
-				svData.InsertAt( i, lTemp );
+				rData.push_back(static_cast<long> (m_DoubleArray[i]));
 			}
 
 			bOk = true;
 
 			break;
 		}
-		case SV_OBJECT_TYPE_DWORD:
+		case SV_DWORD_Type:
 		{
-			for ( int i = 0; i < m_DWordArray.GetSize(); i++)
+			for ( int i = 0; i < static_cast<int> (m_DWordArray.size()); i++)
 			{
-				long lTemp = (long)m_DWordArray[i];
-
-				svData.InsertAt( i, lTemp );
+				rData.push_back(static_cast<long> (m_DWordArray[i]));
 			}
 
 			bOk = true;
 
 			break;
 		}
-		case SV_OBJECT_TYPE_LONG:
+		case SV_LONG_Type:
 		{
-			svData = m_LongArray;
+			rData = m_LongArray;
 
 			bOk = true;
 
 			break;
 		}
-		case SV_OBJECT_TYPE_POINT:
+		case SV_POINT_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_DPOINT:
+		case SV_DPOINT_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_VARIANT:
+		case SV_VARIANT_Type:
 		{
 
-			for ( int i = 0; i < m_VariantArray.GetSize(); i++)
+			for ( int i = 0; i < static_cast<int> (m_VariantArray.size()); i++)
 			{
-				VARIANT vtTemp = m_VariantArray[i];
-				if(vtTemp.vt == VT_I4)
+				if(m_VariantArray[i].vt == VT_I4)
 				{
-					svData.InsertAt(i, vtTemp.lVal);
+					rData.push_back(m_VariantArray[i].lVal);
 				}
 			}
 			break;
 		}
-		case SV_OBJECT_TYPE_INT64:
+		case SV_INT64_Type:
 		{
 			break;
 		}
@@ -812,141 +686,129 @@ bool SVObjectAttributeClass::GetData(SvCl::SVObjectLongArrayClass& svData)
 	return bOk;
 }// end GetData(SVObjectLongArrayClass& svData)
 
-bool SVObjectAttributeClass::GetData(SVObjectSVPointArrayClass& svData)
+bool SVObjectAttributeClass::GetData(SVObjectSVPointArrayClass& rData)
 {
 	bool bOk = false;
 
-	switch ( GetType() )
+	rData.clear();
+	switch (GetType())
 	{
-		case SV_OBJECT_TYPE_BOOL:
+	case SV_BOOL_Type:
+	{
+		break;
+	}
+	case SV_BYTE_Type:
+	{
+		break;
+	}
+	case SV_STRING_Type:
+	{
+		break;
+	}
+	case SV_DOUBLE_Type:
+	{
+		break;
+	}
+	case SV_DWORD_Type:
+	{
+		break;
+	}
+	case SV_LONG_Type:
+	{
+		break;
+	}
+	case SV_POINT_Type:
+	{
+		rData = m_PointArray;
+		bOk = true;
+		break;
+	}
+	case SV_DPOINT_Type:
+	{
+		for (int i = 0; bOk && i < static_cast<int> (m_DPointArray.size()); i++)
 		{
-			break;
-		}
-		case SV_OBJECT_TYPE_BYTE:
-		{
-			break;
-		}
-		case SV_OBJECT_TYPE_STRING:
-		{
-			break;
-		}
-		case SV_OBJECT_TYPE_DOUBLE:
-		{
-			break;
-		}
-		case SV_OBJECT_TYPE_DWORD:
-		{
-			break;
-		}
-		case SV_OBJECT_TYPE_LONG:
-		{
-			break;
-		}
-		case SV_OBJECT_TYPE_POINT:
-		{
-			bOk = true;
+			POINT Point;
+			m_DPointArray[i].GetValue(Point);
 
-			for ( int i = 0; bOk && i < m_PointArray.GetSize(); i++)
-			{
-				POINT Point;
-				
-				m_PointArray[i].GetValue( Point );
-
-				svData.InsertAt( i, SVPOINT( Point ) );
-			}
-
-			break;
+			rData.push_back(SVPoint(Point));
 		}
-		case SV_OBJECT_TYPE_DPOINT:
-		{
-			bOk = true;
-
-			for ( int i = 0; bOk && i < m_DPointArray.GetSize(); i++)
-			{
-				POINT Point;
-				
-				m_DPointArray[i].GetValue( Point );
-
-				svData.InsertAt( i, SVPOINT( Point ) );
-			}
-
-			break;
-		}
-		case SV_OBJECT_TYPE_VARIANT:
-		{
-			break;
-		}
-		case SV_OBJECT_TYPE_INT64:
-		{
-			break;
-		}
-		default:
-		{
-			break;
-		}
+		bOk = true;
+		break;
+	}
+	case SV_VARIANT_Type:
+	{
+		break;
+	}
+	case SV_INT64_Type:
+	{
+		break;
+	}
+	default:
+	{
+		break;
+	}
 	}
 
 	return bOk;
 }// end GetData(SVObjectSVPointArrayClass& svData)
 
-bool SVObjectAttributeClass::GetData(SVObjectDPointArrayClass& svData)
+bool SVObjectAttributeClass::GetData(SVObjectDPointArrayClass& rData)
 {
 	bool bOk = false;
 
+	rData.clear();
 	switch ( GetType() )
 	{
-		case SV_OBJECT_TYPE_BOOL:
+		case SV_BOOL_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_BYTE:
+		case SV_BYTE_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_STRING:
+		case SV_STRING_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_DOUBLE:
+		case SV_DOUBLE_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_DWORD:
+		case SV_DWORD_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_LONG:
+		case SV_LONG_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_POINT:
+		case SV_POINT_Type:
 		{
 			bOk = true;
 
-			for ( int i = 0; bOk && i < m_PointArray.GetSize(); i++)
+			for ( int i = 0; bOk && i < static_cast<int> (m_PointArray.size()); i++)
 			{
-				SVDPointClass Point;
+				SVDPointClass DPoint;
 				
-				Point = m_PointArray[i];
-
-				svData.InsertAt( i, Point );
+				DPoint = m_PointArray[i];
+				rData.push_back(DPoint);
 			}
 
 			break;
 		}
-		case SV_OBJECT_TYPE_DPOINT:
+		case SV_DPOINT_Type:
 		{
-			svData = m_DPointArray;
-
+			rData = m_DPointArray;
 			bOk = true;
 
 			break;
 		}
-		case SV_OBJECT_TYPE_VARIANT:
+		case SV_VARIANT_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_INT64:
+		case SV_INT64_Type:
 		{
 			break;
 		}
@@ -959,133 +821,123 @@ bool SVObjectAttributeClass::GetData(SVObjectDPointArrayClass& svData)
 	return bOk;
 }// end GetData(SVObjectDPointArrayClass& svData)
 
-bool SVObjectAttributeClass::GetData(SvCl::SVObjectVariantArrayClass& svData)
+bool SVObjectAttributeClass::GetData(SvCl::SVObjectVariantArrayClass& rData)
 {
 	bool bOk = false;
 
+	rData.clear();
 	switch ( GetType() )
 	{
-		case SV_OBJECT_TYPE_BOOL:
+		case SV_BOOL_Type:
 		{
-			for ( int i = 0; i < m_ByteArray.GetSize(); i++ )
+			for ( int i = 0; i < static_cast<int> (m_BoolArray.size()); i++ )
 			{
 				_variant_t vt;
 				vt.vt = VT_BOOL;
 				vt.boolVal = m_BoolArray[i];
-
-				svData.InsertAt( i, vt );
+				rData.push_back(vt);
 			}
 
 			bOk = true;
 
 			break;
 		}
-		case SV_OBJECT_TYPE_BYTE:
+		case SV_BYTE_Type:
 		{
-			for ( int i = 0; i < m_ByteArray.GetSize(); i++ )
+			for ( int i = 0; i < static_cast<int> (m_ByteArray.size()); i++ )
 			{
 				_variant_t vt;
 				vt.vt = VT_UI1;
 				vt.bVal = m_ByteArray[i];
-
-				svData.InsertAt( i, vt );
+				rData.push_back(vt);
 			}
 
 			bOk = true;
 
 			break;
 		}
-		case SV_OBJECT_TYPE_STRING:
+		case SV_STRING_Type:
 		{
-			for ( int i = 0; i < m_ByteArray.GetSize(); i++ )
+			for ( int i = 0; i < static_cast<int> (m_StringArray.size()); i++ )
 			{
 				_variant_t vt;
 				vt.SetString( m_StringArray[i].c_str() );
-
-				svData.InsertAt( i, vt );
+				rData.push_back(vt);
 			}
 
 			bOk = true;
 
 			break;
 		}
-		case SV_OBJECT_TYPE_DOUBLE:
+		case SV_DOUBLE_Type:
 		{
-			for ( int i = 0; i < m_ByteArray.GetSize(); i++ )
+			for ( int i = 0; i < static_cast<int> (m_DoubleArray.size()); i++ )
 			{
 				_variant_t vt;
 				vt.vt = VT_R8;
 				vt.dblVal = m_DoubleArray[i];
-
-				svData.InsertAt( i, vt );
+				rData.push_back(vt);
 			}
 
 			bOk = true;
 
 			break;
 		}
-		case SV_OBJECT_TYPE_DWORD:
+		case SV_DWORD_Type:
 		{
-			for ( int i = 0; i < m_ByteArray.GetSize(); i++ )
+			for ( int i = 0; i < static_cast<int> (m_DWordArray.size()); i++ )
 			{
 				_variant_t vt;
 				vt.vt = VT_UI4;
-				//vt.bVal = msvDWordArray[i];
 				vt.ulVal = m_DWordArray[i];
-
-				svData.InsertAt( i, vt );
+				rData.push_back(vt);
 			}
 
 			bOk = true;
 
 			break;
 		}
-		case SV_OBJECT_TYPE_LONG:
+		case SV_LONG_Type:
 		{
-			for ( int i = 0; i < m_ByteArray.GetSize(); i++ )
+			for ( int i = 0; i < static_cast<int> (m_LongArray.size()); i++ )
 			{
 				_variant_t vt;
 				vt.vt = VT_I4;
-				//vt.bVal = msvLongArray[i];
 				vt.lVal = m_LongArray[i];
-
-				svData.InsertAt( i, vt );
+				rData.push_back(vt);
 			}
 
 			bOk = true;
 
 			break;
 		}
-		case SV_OBJECT_TYPE_POINT:
+		case SV_POINT_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_DPOINT:
+		case SV_DPOINT_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_VARIANT:
+		case SV_VARIANT_Type:
 		{
 
-			for ( int i = 0; i < m_VariantArray.GetSize(); i++)
+			for ( int i = 0; i < static_cast<int> (m_VariantArray.size()); i++)
 			{
-				_variant_t vtTemp;
-				HRESULT hr = ::VariantCopy(&vtTemp, &m_VariantArray[i]);
-				svData.InsertAt(i, vtTemp);
+				rData.push_back(m_VariantArray[i]);
 			}
 
 			bOk = true;
 			break;
 		}
-		case SV_OBJECT_TYPE_INT64:
+		case SV_INT64_Type:
 		{
-			for ( int i = 0; i < m_Int64Array.GetSize(); i++ )
+			for ( int i = 0; i < static_cast<int>(m_Int64Array.size()); i++ )
 			{
 				_variant_t vt;
 				vt.vt = VT_I8;
 				vt.llVal = m_Int64Array[i];
-
-				svData.InsertAt( i, vt );
+				rData.push_back(vt);
 			}
 
 			bOk = true;
@@ -1102,51 +954,52 @@ bool SVObjectAttributeClass::GetData(SvCl::SVObjectVariantArrayClass& svData)
 	return bOk;
 }// end GetData(SVObjectVariantArrayClass& svData)
 
-bool SVObjectAttributeClass::GetData(SvCl::SVObjectInt64ArrayClass& svData)
+bool SVObjectAttributeClass::GetData(SvCl::SVObjectInt64ArrayClass& rData)
 {
 	bool bOk = false;
 
+	rData.clear();
 	switch ( GetType() )
 	{
-		case SV_OBJECT_TYPE_BOOL:
+		case SV_BOOL_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_BYTE:
+		case SV_BYTE_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_STRING:
+		case SV_STRING_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_DOUBLE:
+		case SV_DOUBLE_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_DWORD:
+		case SV_DWORD_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_LONG:
+		case SV_LONG_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_POINT:
+		case SV_POINT_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_DPOINT:
+		case SV_DPOINT_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_VARIANT:
+		case SV_VARIANT_Type:
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_INT64:
+		case SV_INT64_Type:
 		{
-			svData = m_Int64Array;
+			rData = m_Int64Array;
 			bOk = true;
 			break;
 		}
@@ -1162,21 +1015,21 @@ void SVObjectAttributeClass::SetName(LPCTSTR szName)
 {
 	m_Name = szName;
 
-	SetType( SV_OBJECT_TYPE_UNKNOWN );
+	SetType( SV_UNKNOWN_Type );
 }
 
 bool SVObjectAttributeClass::AddData(BOOL Value)
 {
 	bool bOk = true;
 
-	if ( GetType() != SV_OBJECT_TYPE_BOOL )
+	if ( GetType() != SV_BOOL_Type )
 	{
-		bOk = SetType( SV_OBJECT_TYPE_BOOL );
+		bOk = SetType( SV_BOOL_Type );
 	}
 
 	if ( bOk )
 	{
-		m_BoolArray.Add( Value );
+		m_BoolArray.push_back( Value );
 	}
 
 	return bOk;
@@ -1186,16 +1039,16 @@ bool SVObjectAttributeClass::AddData(VARIANT Value)
 {
 	bool bOk = true;
 
-	if ( GetType() != SV_OBJECT_TYPE_VARIANT )
+	if ( GetType() != SV_VARIANT_Type )
 	{
-		bOk = SetType( SV_OBJECT_TYPE_VARIANT );
+		bOk = SetType( SV_VARIANT_Type );
 	}
 
 	if ( bOk )
 	{
-		_variant_t l_Variant( Value );
+		_variant_t vt( Value );
 
-		m_VariantArray.Add( l_Variant );
+		m_VariantArray.push_back( vt );
 	}
 
 	return bOk;
@@ -1205,14 +1058,14 @@ bool SVObjectAttributeClass::AddData(BYTE Value)
 {
 	bool bOk = true;
 
-	if ( GetType() != SV_OBJECT_TYPE_BYTE )
+	if ( GetType() != SV_BYTE_Type )
 	{
-		bOk = SetType( SV_OBJECT_TYPE_BYTE );
+		bOk = SetType( SV_BYTE_Type );
 	}
 
 	if ( bOk )
 	{
-		m_ByteArray.Add( Value );
+		m_ByteArray.push_back( Value );
 	}
 
 	return bOk;
@@ -1222,14 +1075,14 @@ bool SVObjectAttributeClass::AddData(LPCTSTR Value)
 {
 	bool bOk = true;
 
-	if ( GetType() != SV_OBJECT_TYPE_STRING )
+	if ( GetType() != SV_STRING_Type )
 	{
-		bOk = SetType( SV_OBJECT_TYPE_STRING );
+		bOk = SetType( SV_STRING_Type );
 	}
 
 	if ( bOk )
 	{
-		m_StringArray.Add( std::string( Value ) );
+		m_StringArray.push_back( std::string( Value ) );
 	}
 
 	return bOk;
@@ -1239,14 +1092,14 @@ bool SVObjectAttributeClass::AddData(double Value)
 {
 	bool bOk = true;
 
-	if ( GetType() != SV_OBJECT_TYPE_DOUBLE )
+	if ( GetType() != SV_DOUBLE_Type )
 	{
-		bOk = SetType( SV_OBJECT_TYPE_DOUBLE );
+		bOk = SetType( SV_DOUBLE_Type );
 	}
 
 	if ( bOk )
 	{
-		m_DoubleArray.Add( Value );
+		m_DoubleArray.push_back( Value );
 	}
 
 	return bOk;
@@ -1256,14 +1109,14 @@ bool SVObjectAttributeClass::AddData(DWORD Value)
 {
 	bool bOk = true;
 
-	if ( GetType() != SV_OBJECT_TYPE_DWORD )
+	if ( GetType() != SV_DWORD_Type )
 	{
-		bOk = SetType( SV_OBJECT_TYPE_DWORD );
+		bOk = SetType( SV_DWORD_Type );
 	}
 
 	if ( bOk )
 	{
-		m_DWordArray.Add( Value );
+		m_DWordArray.push_back( Value );
 	}
 
 	return bOk;
@@ -1273,14 +1126,14 @@ bool SVObjectAttributeClass::AddData(long Value)
 {
 	bool bOk = true;
 
-	if ( GetType() != SV_OBJECT_TYPE_LONG )
+	if ( GetType() != SV_LONG_Type )
 	{
-		bOk = SetType( SV_OBJECT_TYPE_LONG );
+		bOk = SetType( SV_LONG_Type );
 	}
 
 	if ( bOk )
 	{
-		m_LongArray.Add( Value );
+		m_LongArray.push_back( Value );
 	}
 
 	return bOk;
@@ -1290,14 +1143,14 @@ bool SVObjectAttributeClass::AddData(POINT Value)
 {
 	bool bOk = true;
 
-	if ( GetType() != SV_OBJECT_TYPE_POINT )
+	if ( GetType() != SV_POINT_Type )
 	{
-		bOk = SetType( SV_OBJECT_TYPE_POINT );
+		bOk = SetType( SV_POINT_Type );
 	}
 
 	if ( bOk )
 	{
-		m_PointArray.Add( Value );
+		m_PointArray.push_back( Value );
 	}
 
 	return bOk;
@@ -1307,14 +1160,14 @@ bool SVObjectAttributeClass::AddData(SVDPointClass Value)
 {
 	bool bOk = true;
 
-	if ( GetType() != SV_OBJECT_TYPE_DPOINT )
+	if ( GetType() != SV_DPOINT_Type )
 	{
-		bOk = SetType( SV_OBJECT_TYPE_DPOINT );
+		bOk = SetType( SV_DPOINT_Type );
 	}
 
 	if ( bOk )
 	{
-		m_DPointArray.Add( Value );
+		m_DPointArray.push_back( Value );
 	}
 
 	return bOk;
@@ -1324,108 +1177,32 @@ bool SVObjectAttributeClass::AddData(__int64 Value)
 {
 	bool bOk = true;
 
-	if ( GetType() != SV_OBJECT_TYPE_INT64 )
+	if ( GetType() != SV_INT64_Type )
 	{
-		bOk = SetType( SV_OBJECT_TYPE_INT64 );
+		bOk = SetType( SV_INT64_Type );
 	}
 
 	if ( bOk )
 	{
-		m_Int64Array.Add( Value );
+		m_Int64Array.push_back( Value );
 	}
 
 	return bOk;
 }
 
-
-// ***** Private Operators *****
-
-
-
-bool SVObjectAttributeClass::SetType(int iType)
-{
-	miType = iType;
-
-	m_BoolArray.RemoveAll();
-	m_ByteArray.RemoveAll();
-	m_StringArray.RemoveAll();
-	m_DoubleArray.RemoveAll();
-	m_DWordArray.RemoveAll();
-	m_LongArray.RemoveAll();
-	m_PointArray.RemoveAll();
-	m_DPointArray.RemoveAll();
-	m_Int64Array.RemoveAll();
-
-	return true;
-}
 
 bool SVObjectAttributeClass::SetType(SVObjectScriptDataObjectTypeEnum eType)
 {
-	bool bOk = false;
-
-	switch ( eType )
-	{
-		case SV_UNKNOWN_Type:
-		{
-			bOk = SetType( SV_OBJECT_TYPE_UNKNOWN );
-			break;
-		}
-		case SV_BOOL_Type:
-		{
-			bOk = SetType( SV_OBJECT_TYPE_BOOL );
-			break;
-		}
-		case SV_BYTE_Type:
-		{
-			bOk = SetType( SV_OBJECT_TYPE_BYTE );
-			break;
-		}
-		case SV_DWORD_Type:
-		{
-			bOk = SetType( SV_OBJECT_TYPE_DWORD );
-			break;
-		}
-		case SV_LONG_Type:
-		{
-			bOk = SetType( SV_OBJECT_TYPE_LONG );
-			break;
-		}
-		case SV_DOUBLE_Type:
-		{
-			bOk = SetType( SV_OBJECT_TYPE_DOUBLE );
-			break;
-		}
-		case SV_POINT_Type:
-		{
-			bOk = SetType( SV_OBJECT_TYPE_POINT );
-			break;
-		}
-		case SV_STRING_Type:
-		{
-			bOk = SetType( SV_OBJECT_TYPE_STRING );
-			break;
-		}
-		case SV_DPOINT_Type:
-		{
-			bOk = SetType( SV_OBJECT_TYPE_DPOINT );
-			break;
-		}
-		case SV_VARIANT_Type:
-		{
-			bOk = SetType( SV_OBJECT_TYPE_VARIANT );
-			break;
-		}
-		case SV_INT64_Type:
-		{
-			bOk = SetType( SV_OBJECT_TYPE_INT64 );
-			break;
-		}
-		default:
-		{
-			break;
-		}
-	}
-
-	return bOk;
+	m_BoolArray.clear();
+	m_ByteArray.clear();
+	m_StringArray.clear();
+	m_DoubleArray.clear();
+	m_DWordArray.clear();
+	m_LongArray.clear();
+	m_PointArray.clear();
+	m_DPointArray.clear();
+	m_Int64Array.clear();
+	m_Type = eType;
+	return true;
 }
 

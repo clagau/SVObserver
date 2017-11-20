@@ -19,7 +19,7 @@
 #include "Definitions/SVUserMessage.h"
 #include "SVBarCodeAnalyzerClass.h"
 #include "SVTimerLibrary/SVFunctionProfiler.h"
-#include "SVObjectLibrary/GlobalConst.h"
+#include "Definitions/GlobalConst.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "TextDefinesSvO.h"
 #include "CameraLibrary/SVDeviceParams.h"
@@ -64,26 +64,26 @@ SVObjectScriptParserSVXClass::SVObjectScriptParserSVXClass(unsigned long parserH
 : SVObjectScriptParserBase(parserHandle, OwnerGuid, pOwnerObject, pWnd)
 , m_pParseString( pScript )
 {
-	m_KeywordTable.Add( SVObjectScriptKeywordStruct( _T( "alias" ), ALIAS ) );
-	m_KeywordTable.Add( SVObjectScriptKeywordStruct( _T( "class$" ), CLASS ) );
-	m_KeywordTable.Add( SVObjectScriptKeywordStruct( _T( "object$" ), OBJECT ) );
-	m_KeywordTable.Add( SVObjectScriptKeywordStruct( _T( "embedded$" ), EMBEDDED ) );
+	m_KeywordTable.push_back( SVObjectScriptKeywordStruct( _T( "alias" ), ALIAS ) );
+	m_KeywordTable.push_back( SVObjectScriptKeywordStruct( _T( "class$" ), CLASS ) );
+	m_KeywordTable.push_back( SVObjectScriptKeywordStruct( _T( "object$" ), OBJECT ) );
+	m_KeywordTable.push_back( SVObjectScriptKeywordStruct( _T( "embedded$" ), EMBEDDED ) );
 
-	m_DataTypeKeywordTable.Add( SVObjectScriptDataTypeKeywordStruct( _T( "BOOL" ), SV_BOOL_Type ) );
-	m_DataTypeKeywordTable.Add( SVObjectScriptDataTypeKeywordStruct( _T( "BYTE" ), SV_BYTE_Type ) );
-	m_DataTypeKeywordTable.Add( SVObjectScriptDataTypeKeywordStruct( _T( "DOUBLE" ), SV_DOUBLE_Type ) );
-	m_DataTypeKeywordTable.Add( SVObjectScriptDataTypeKeywordStruct( _T( "DWORD" ), SV_DWORD_Type ) );
-	m_DataTypeKeywordTable.Add( SVObjectScriptDataTypeKeywordStruct( _T( "LONG" ), SV_LONG_Type ) );
-	m_DataTypeKeywordTable.Add( SVObjectScriptDataTypeKeywordStruct( _T( "POINT" ), SV_POINT_Type ) );
-	m_DataTypeKeywordTable.Add( SVObjectScriptDataTypeKeywordStruct( _T( "STRING" ), SV_STRING_Type ) );
-	m_DataTypeKeywordTable.Add( SVObjectScriptDataTypeKeywordStruct( _T( "DPOINT" ), SV_DPOINT_Type ) );
-	m_DataTypeKeywordTable.Add( SVObjectScriptDataTypeKeywordStruct( _T( "VARIANT" ), SV_VARIANT_Type ) );
+	m_DataTypeKeywordTable.push_back( SVObjectScriptDataTypeKeywordStruct( _T( "BOOL" ), SV_BOOL_Type ) );
+	m_DataTypeKeywordTable.push_back( SVObjectScriptDataTypeKeywordStruct( _T( "BYTE" ), SV_BYTE_Type ) );
+	m_DataTypeKeywordTable.push_back( SVObjectScriptDataTypeKeywordStruct( _T( "DOUBLE" ), SV_DOUBLE_Type ) );
+	m_DataTypeKeywordTable.push_back( SVObjectScriptDataTypeKeywordStruct( _T( "DWORD" ), SV_DWORD_Type ) );
+	m_DataTypeKeywordTable.push_back( SVObjectScriptDataTypeKeywordStruct( _T( "LONG" ), SV_LONG_Type ) );
+	m_DataTypeKeywordTable.push_back( SVObjectScriptDataTypeKeywordStruct( _T( "POINT" ), SV_POINT_Type ) );
+	m_DataTypeKeywordTable.push_back( SVObjectScriptDataTypeKeywordStruct( _T( "STRING" ), SV_STRING_Type ) );
+	m_DataTypeKeywordTable.push_back( SVObjectScriptDataTypeKeywordStruct( _T( "DPOINT" ), SV_DPOINT_Type ) );
+	m_DataTypeKeywordTable.push_back( SVObjectScriptDataTypeKeywordStruct( _T( "VARIANT" ), SV_VARIANT_Type ) );
 }
 
 SVObjectScriptParserSVXClass::~SVObjectScriptParserSVXClass()
 {
-	m_KeywordTable.RemoveAll();
-	m_DataTypeKeywordTable.RemoveAll();
+	m_KeywordTable.clear();
+	m_DataTypeKeywordTable.clear();
 
 	// Cleanup
 	if ( !m_pParseString.empty() )
@@ -148,12 +148,11 @@ ParserOperandTypeEnum SVObjectScriptParserSVXClass::CheckKeywordTable( LPCTSTR t
 	if( tstrExpression )
 	{
 		// Check keyword table...
-		for( int i = 0; i < m_KeywordTable.GetSize(); ++ i )
+		for( auto& rKeywordEntry : m_KeywordTable)
 		{
-			SVObjectScriptKeywordStruct& keywordEntry = m_KeywordTable.GetAt( i );
-			if( ! _tcscmp( tstrExpression, keywordEntry.tstrKeyword ) )
+			if( ! _tcscmp( tstrExpression, rKeywordEntry.tstrKeyword ) )
 			{
-				return keywordEntry.eKeyIndex;
+				return rKeywordEntry.eKeyIndex;
 			}
 		}
 	}
@@ -674,7 +673,7 @@ BOOL SVObjectScriptParserSVXClass::ReadOperandList( const SVObjectInfoStruct& rL
 					// check for guid
 					if( ReadGUIDExpression( rExpressionStack, *( ( GUID* )operand.Value() ), riIndex ) )
 					{
-						rOperandList.Add( operand );
+						rOperandList.push_back( operand );
 						bOperandNext = FALSE;
 					}
 				}
@@ -709,12 +708,16 @@ BOOL SVObjectScriptParserSVXClass::ReadValues( SVObjectAttributeClass& dataObjec
 	// Check for value(s) begin...
 	dataObject.SetType( CheckDataTypeKeywordTable( rExpressionStack.GetAt( riIndex ) ) );
 	// Should we have specified a type
-	if( dataObject.GetSVObjectScriptDataObjectTypeEnum() == SV_UNKNOWN_Type )
+	if (dataObject.GetType() == SV_UNKNOWN_Type)
+	{
 		return rc;
+	}
 
 	// Check current index...
-	if( ++riIndex >= rExpressionStack.GetSize() )
+	if (++riIndex >= rExpressionStack.GetSize())
+	{
 		return rc;
+	}
 
 	// Read value(s)...
 	
@@ -725,8 +728,7 @@ BOOL SVObjectScriptParserSVXClass::ReadValues( SVObjectAttributeClass& dataObjec
 
 		for( ; riIndex < rExpressionStack.GetSize() && _tcscmp( rExpressionStack.GetAt( riIndex ), _T( ";" ) ); ++ riIndex )
 		{
-			if (   dataObject.GetSVObjectScriptDataObjectTypeEnum() == SV_STRING_Type
-				|| dataObject.GetSVObjectScriptDataObjectTypeEnum() == SV_VARIANT_Type)	//????
+			if (   dataObject.GetType() == SV_STRING_Type || dataObject.GetType() == SV_VARIANT_Type)	//????
 			{
 				if( _tcscmp( rExpressionStack.GetAt( riIndex ), _T( "," ) ) &&
 					  _tcscmp( rExpressionStack.GetAt( riIndex ), _T( "]" ) ) )
@@ -796,7 +798,7 @@ BOOL SVObjectScriptParserSVXClass::ExtractValue( SVObjectAttributeClass& dataObj
 	BOOL bOk = FALSE;
 
 	// convert String to Number
-	switch ( dataObject.GetSVObjectScriptDataObjectTypeEnum() )
+	switch ( dataObject.GetType() )
 	{
 		case SV_BOOL_Type:
 		{
@@ -968,7 +970,7 @@ BOOL SVObjectScriptParserSVXClass::ExtractValue( SVObjectAttributeClass& dataObj
 				strValue = rExpressionStack.GetAt( riIndex );
 				_variant_t vStringValue;
 				vStringValue.SetString( strValue );
-				HRESULT hr = ::VariantChangeTypeEx(&v, &vStringValue, SvOl::LCID_USA, VARIANT_ALPHABOOL, l_VarType);		// use United States locale
+				HRESULT hr = ::VariantChangeTypeEx(&v, &vStringValue, SvDef::LCID_USA, VARIANT_ALPHABOOL, l_VarType);		// use United States locale
 				ASSERT( S_OK == hr );
 			}
 
@@ -985,13 +987,14 @@ BOOL SVObjectScriptParserSVXClass::ExtractValue( SVObjectAttributeClass& dataObj
 	return bOk;
 }
 
-BOOL SVObjectScriptParserSVXClass::CheckValue( SVObjectAttributeClass& dataObject, LPCTSTR tstrToken )
+BOOL SVObjectScriptParserSVXClass::CheckValue(SVObjectAttributeClass& dataObject, LPCTSTR tstrToken)
 {
-	BOOL rc = (    dataObject.GetSVObjectScriptDataObjectTypeEnum() == SV_STRING_Type
-				|| dataObject.GetSVObjectScriptDataObjectTypeEnum() == SV_VARIANT_Type );
+	BOOL rc = (dataObject.GetType() == SV_STRING_Type || dataObject.GetType() == SV_VARIANT_Type);
 
-	if( !rc )
-	 return CheckNumber( tstrToken );
+	if (!rc)
+	{
+		return CheckNumber(tstrToken);
+	}
 		
 	return rc;
 }
@@ -1061,12 +1064,11 @@ SVObjectScriptDataObjectTypeEnum SVObjectScriptParserSVXClass::CheckDataTypeKeyw
 	// Check keyword table...
 	if( tstrExpression )
 	{
-		for( int i = 0; i < m_DataTypeKeywordTable.GetSize(); ++ i )
+		for( auto& rDataTypeKeywordEntry : m_DataTypeKeywordTable)
 		{
-			SVObjectScriptDataTypeKeywordStruct& dataTypeKeywordEntry = m_DataTypeKeywordTable.GetAt( i );
-			if( ! _tcscmp( tstrExpression, dataTypeKeywordEntry.tstrKeyword ) )
+			if( ! _tcscmp( tstrExpression, rDataTypeKeywordEntry.tstrKeyword ) )
 			{
-				return dataTypeKeywordEntry.eKeyType;
+				return rDataTypeKeywordEntry.eKeyType;
 			}
 		}
 	}
@@ -1413,7 +1415,7 @@ bool SVObjectScriptParserSVXClass::FindCharacters(LPCTSTR tStr, int tStrLen, int
 	return found;
 }
 
-bool SVObjectScriptParserSVXClass::ReattachInputs( SVObjectClass* pObject, SVObjectScriptOperandList& RInputOperandList )
+bool SVObjectScriptParserSVXClass::ReattachInputs( SVObjectClass* pObject, SVObjectScriptOperandList& rInputOperandList )
 {
 	bool l_bOk = true;
 
@@ -1426,8 +1428,8 @@ bool SVObjectScriptParserSVXClass::ReattachInputs( SVObjectClass* pObject, SVObj
 
 	// Input List and requiredInputList must be the same size
 	// and In the same Order !!!
-	long l_lOperandSize = RInputOperandList.GetSize();
-	long l_lInfoSize = inputInfoList.GetSize();
+	long l_lOperandSize = static_cast<long> (rInputOperandList.size());
+	long l_lInfoSize = static_cast<long> (inputInfoList.size());
 
 	long l_lOffset = 0;
 
@@ -1438,18 +1440,18 @@ bool SVObjectScriptParserSVXClass::ReattachInputs( SVObjectClass* pObject, SVObj
 	// reattach inputs
 	for( int i = 0; l_bOk && i < l_lOperandSize; i++ )
 	{
-		SVObjectScriptOperandStruct& operand = RInputOperandList.GetAt( i );
+		SVObjectScriptOperandStruct& rOperand = rInputOperandList[i];
 
 		// Check if valid GUID type
-		if( operand.ValueSize() == sizeof( GUID ) && SV_GUID_NULL != *( ( GUID* ) operand.Value() ) )
+		if( rOperand.ValueSize() == sizeof( GUID ) && SV_GUID_NULL != *( ( GUID* ) rOperand.Value() ) )
 		{
-			SVGUID inputGuid = *( ( GUID* ) operand.Value() );
+			SVGUID inputGuid = *( ( GUID* ) rOperand.Value() );
 
 			SVInObjectInfoStruct* pInInfo = nullptr;
 
 			if( l_lOperandSize == l_lInfoSize )
 			{
-				pInInfo = inputInfoList.GetAt( i );
+				pInInfo = inputInfoList[i];
 			}
 			else
 			{
@@ -1457,7 +1459,7 @@ bool SVObjectScriptParserSVXClass::ReattachInputs( SVObjectClass* pObject, SVObj
 				{
 					do
 					{
-						pInInfo = inputInfoList.GetAt( i + l_lOffset );
+						pInInfo = inputInfoList[i + l_lOffset];
 
 						if( TheSVObserverApp.getLoadingVersion() < 0x00044B00 && pInInfo == l_pAuxInfo )
 						{

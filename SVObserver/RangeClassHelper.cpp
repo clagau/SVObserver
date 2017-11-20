@@ -21,7 +21,7 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVOCore/SVTaskObjectList.h"
 #include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
-#include "SVObjectLibrary\GlobalConst.h"
+#include "Definitions/GlobalConst.h"
 #include "SVToolSet.h"
 #include "SVOCore/SVTool.h"
 #include "SVPPQObject.h"
@@ -411,7 +411,7 @@ bool RangeClassHelper::IsOwnedByRangeObject(const SVObjectClass& rObject)
 
 	if(rObject.GetOwner())
 	{
-		if(SVRangeObjectType == rObject.GetOwner()->GetObjectType())
+		if(SvDef::SVRangeObjectType == rObject.GetOwner()->GetObjectType())
 		{
 			result = true;
 		}
@@ -512,7 +512,7 @@ bool RangeClassHelper::FillObjectSelector()
 			SVTaskObjectListClass* pTaskObjectList = dynamic_cast<SVTaskObjectListClass*>(pInspection->GetToolSet());
 			if (nullptr != pTaskObjectList)
 			{
-				std::string PPQName = SvOl::FqnPPQVariables; 
+				std::string PPQName = SvDef::FqnPPQVariables; 
 				std::string InspectionName = pInspection->GetName();
 				SVPPQObject* pPPQ = pInspection->GetPPQ();
 				if( nullptr != pPPQ )

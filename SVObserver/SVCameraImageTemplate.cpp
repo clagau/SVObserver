@@ -27,8 +27,8 @@ SVCameraImageTemplate::SVCameraImageTemplate( LPCSTR ObjectName )
 , digitizerObjectID()
 , m_CurrentIndex()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVImageObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVCameraImageTemplateObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVImageObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVCameraImageTemplateObjectType;
 
 	// SVMainImageClass is not a result image.
 	// We need to remove the PUBLISH attribute.
@@ -41,8 +41,8 @@ SVCameraImageTemplate::SVCameraImageTemplate( SVObjectClass* POwner, int StringR
 , digitizerObjectID()
 , m_CurrentIndex()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVImageObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVCameraImageTemplateObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVImageObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVCameraImageTemplateObjectType;
 
 	// SVMainImageClass is not a result image.
 	// We need to remove the PUBLISH attribute.
@@ -197,11 +197,11 @@ HRESULT SVCameraImageTemplate::SetObjectValue( SVObjectAttributeClass* PDataObje
 	HRESULT hr = S_FALSE;
 	bool bOk = false;
 
-	SvCl::SVObjectSVStringArrayClass ClassIDList;
+	SvCl::SVObjectStdStringArrayClass ClassIDList;
 
 	if ( ( bOk = PDataObject->GetAttributeData( scDigitizerIDTag, ClassIDList ) ) )
 	{
-		for( int i = 0; i < ClassIDList.GetSize(); i++ )
+		for( int i = 0; i < static_cast<int> (ClassIDList.size()); i++ )
 		{
 			// convert the guidStr to a Guid
 			AfxGetClassIDFromString( ClassIDList[i].c_str(), &( digitizerObjectID.ToGUID() ) );
@@ -332,7 +332,7 @@ HRESULT SVCameraImageTemplate::RebuildCameraImage()
 		pCamera = dynamic_cast< SVVirtualCamera* >( SVObjectManagerClass::Instance().GetObject( digitizerObjectID.ToGUID() ) );
 	}
 
-	if( ( nullptr == pCamera ) || ( nullptr != pOwner && pOwner->GetObjectType() == SVToolSetObjectType ) )
+	if( ( nullptr == pCamera ) || ( nullptr != pOwner && pOwner->GetObjectType() == SvDef::SVToolSetObjectType ) )
 	{
 		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(GetInspection());
 

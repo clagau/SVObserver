@@ -33,7 +33,7 @@ SVMainImageClass::SVMainImageClass( SVObjectClass* POwner, int StringResourceID 
 
 void SVMainImageClass::init()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVMainImageObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVMainImageObjectType;
 
 	m_ImageType = SvDef::SVImageTypeEnum::SVImageTypeMain;
 }

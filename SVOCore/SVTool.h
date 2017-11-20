@@ -98,7 +98,7 @@ public:
 	void UpdateTaskObjectOutputListAttributes( SVObjectReference refTarget, UINT uAttributes );
 
 	// Auxiliary Source Image functions
-	HRESULT GetSourceImages( SVImageListClass* p_psvImageList ) const;
+	HRESULT GetSourceImages( SVImageClassPtrVector* p_psvImageList ) const;
 	SVImageClass* GetAuxSourceImage() const;
 	HRESULT SetAuxSourceImage( SVImageClass* p_psvImage );
 

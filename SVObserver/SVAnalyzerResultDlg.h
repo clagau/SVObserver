@@ -21,7 +21,7 @@ public:
 	SVAnalyzerResultDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~SVAnalyzerResultDlg();
 
-	SVOCVCharacterResultPtrVector *psvocvResultArray;
+	SVOCVCharacterResultPtrVector *m_pOcvCharaterResults{ nullptr };
 
 // Dialog Data
 	//{{AFX_DATA(SVAnalyzerResultDlg)

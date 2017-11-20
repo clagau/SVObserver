@@ -11,6 +11,7 @@
 #pragma once
 
 #pragma region Includes
+//Moved to precompiled header: #include <vector>
 #include "SVOCore/SVTaskObject.h"
 #pragma endregion Includes
 
@@ -44,6 +45,6 @@ public:
 	SVDoubleValueObjectClass m_dvoMatchScore;
 };
 
-typedef SVVector< SVOCVCharacterResultClass* > SVOCVCharacterResultPtrVector;
+typedef std::vector<SVOCVCharacterResultClass*> SVOCVCharacterResultPtrVector;
 
 

@@ -12,9 +12,16 @@
 //Moved to precompiled header: #include <vector>
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "SVUtilityLibrary/NameGuidList.h"
-#include "SVStatusLibrary/MessageContainer.h"
-
 #pragma endregion Includes
+
+#pragma region Declarations
+//! Declaration is in SVStatusLibrary\MessageContainer.h
+namespace SvStl
+{
+	class MessageContainer;
+	typedef std::vector<MessageContainer> MessageContainerVector;
+}
+#pragma endregion Declarations
 
 namespace SvOi
 {
@@ -45,23 +52,23 @@ namespace SvOi
 			This method gets the complete name of this object, to a certain lineage.
 			Note: this method builds the name by removing the parts of the ancestry younger than the objectType.
 		***********/
-		virtual HRESULT GetCompleteNameToType(SVObjectTypeEnum objectType, std::string& rName) const = 0;
+		virtual HRESULT GetCompleteNameToType(SvDef::SVObjectTypeEnum objectType, std::string& rName) const = 0;
 
 		/**********
 			This method gets the complete name of this object, to a certain lineage.
 			Note: this method builds the name in reverse by ancestry (meaning that the lineage is traversed by youngest to oldest)
 		***********/
-		virtual std::string GetObjectNameToObjectType(LPCSTR LPSZCompleteName, SVObjectTypeEnum objectTypeToInclude) const = 0;
+		virtual std::string GetObjectNameToObjectType(LPCSTR LPSZCompleteName, SvDef::SVObjectTypeEnum objectTypeToInclude) const = 0;
 
 		/**********
 			The method gets the type of this object.
 		***********/
-		virtual const SVObjectTypeEnum& GetObjectType() const = 0;
+		virtual const SvDef::SVObjectTypeEnum& GetObjectType() const = 0;
 
 		/**********
 			The method gets the subtype of this object.
 		***********/
-		virtual SVObjectSubTypeEnum GetObjectSubType() const = 0;
+		virtual SvDef::SVObjectSubTypeEnum GetObjectSubType() const = 0;
 
 		/**********
 			The method gets the parent or nullptr if no parent.
@@ -72,8 +79,8 @@ namespace SvOi
 			The method gets the ancestor with a special type or nullptr if not found.
 			/param ancestorObjectType <in> 
 		***********/
-		virtual IObjectClass* GetAncestorInterface(SVObjectTypeEnum ancestorObjectType) = 0;
-		virtual const IObjectClass* GetAncestorInterface(SVObjectTypeEnum ancestorObjectType) const = 0;
+		virtual IObjectClass* GetAncestorInterface(SvDef::SVObjectTypeEnum ancestorObjectType) = 0;
+		virtual const IObjectClass* GetAncestorInterface(SvDef::SVObjectTypeEnum ancestorObjectType) const = 0;
 
 		/**********
 		This method gets the attributes allowed for the object.
@@ -102,7 +109,7 @@ namespace SvOi
 		/// \param pObjectTypeInfo [in] A object type info to filter the result list.
 		/// \returns SvUl::NameGuidList A list of Name and ClassID pairs
 		//************************************
-		virtual SvUl::NameGuidList GetCreatableObjects(const SVObjectTypeInfoStruct& pObjectTypeInfo) const = 0;
+		virtual SvUl::NameGuidList GetCreatableObjects(const SvDef::SVObjectTypeInfoStruct& pObjectTypeInfo) const = 0;
 
 		/*
 		Set user changeable name.
@@ -114,7 +121,7 @@ namespace SvOi
 		/// \param useFriends [in] Search also in the friend list for this object. Default is true.
 		/// \param pRequestor [in]
 		/// \returns IObjectClass* Pointer to the object, if not found nullptr.
-		virtual IObjectClass* getFirstObject(const SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends = true, const IObjectClass* pRequestor = nullptr) const = 0;
+		virtual IObjectClass* getFirstObject(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends = true, const IObjectClass* pRequestor = nullptr) const = 0;
 
 		/// Move an object in the friend-list to a position in front of another object.
 		/// \param objectToMoveId [in] GUID of the object to move.

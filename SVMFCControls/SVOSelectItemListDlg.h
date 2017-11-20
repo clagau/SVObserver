@@ -11,8 +11,8 @@
 #pragma once
 
 #pragma region Includes
+//Moved to precompiled header: #include <list>
 #include "SVOResource\resource.h"
-#include "SVContainerLibrary/SVList.h"
 #pragma endregion Includes
 
 namespace SvMc
@@ -53,7 +53,7 @@ namespace SvMc
 		DECLARE_MESSAGE_MAP()
 
 	private:
-		typedef SVList< CString > SVDisplayList;
+		typedef std::list<CString> SVDisplayList;
 
 		SVDisplayList m_DisplayList;
 

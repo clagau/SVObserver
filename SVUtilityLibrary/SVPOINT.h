@@ -23,16 +23,16 @@
 @SVObjectOperations
 
 */
-class SVPOINT
+class SVPoint
 {
 public:
-	SVPOINT();
-	SVPOINT( const SVPOINT& p_rObject );
-	SVPOINT( const POINT& p_rPoint );
-	SVPOINT( const VARIANT& p_rVariant );
-	SVPOINT( long x, long y );
+	SVPoint();
+	SVPoint( const SVPoint& p_rObject );
+	SVPoint( const POINT& p_rPoint );
+	SVPoint( const VARIANT& p_rVariant );
+	SVPoint( long x, long y );
 
-	virtual ~SVPOINT();
+	virtual ~SVPoint();
 
 	operator const POINT & () const;
 	operator POINT & ();
@@ -41,9 +41,9 @@ public:
 
 	std::string ToString() const;
 	
-	const SVPOINT& operator=( const SVPOINT& p_rObject );
-	const SVPOINT& operator=( const POINT& p_rPoint );
-	const SVPOINT& operator=( const VARIANT& p_rVariant );
+	const SVPoint& operator=( const SVPoint& p_rObject );
+	const SVPoint& operator=( const POINT& p_rPoint );
+	const SVPoint& operator=( const VARIANT& p_rVariant );
 
 	void GetValue( POINT &Point ) const;
 

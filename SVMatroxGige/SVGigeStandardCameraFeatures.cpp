@@ -26,7 +26,7 @@
 struct SVGigeTriggerLineGet
 {
 	// iterate thru the Line Selectors (Line0/Line1) and get the first one whose LineMode is Input
-	HRESULT operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& rFeature, _variant_t& rValue) const
+	HRESULT operator()(SVMatroxDigitizerPtr Digitizer, const SVGigeFeature& rFeature, _variant_t& rValue) const
 	{ 
 		HRESULT l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string(rFeature.GetName().c_str()), rFeature.GetType(), rValue);
 		
@@ -43,7 +43,7 @@ struct SVGigeTriggerLineGet
 struct SVGigeTriggerLineSet
 {
 	// Setter - the value passed in is for the Feature Selector 
-	HRESULT operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& rFeature, const _variant_t& rValue) const
+	HRESULT operator()(SVMatroxDigitizerPtr Digitizer, const SVGigeFeature& rFeature, const _variant_t& rValue) const
 	{ 
 		const SVGigeFeatureSelector& selector = rFeature.GetSelector();
 		HRESULT l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string(selector.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, rValue);
@@ -58,7 +58,7 @@ struct SVGigeTriggerLineSet
 struct SVGigeTriggerInvertGetter
 {
 	// Get the Trigger Line number
-	HRESULT operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& rFeature, _variant_t& rValue) const
+	HRESULT operator()(SVMatroxDigitizerPtr Digitizer, const SVGigeFeature& rFeature, _variant_t& rValue) const
 	{ 
 		//
 		// Determine which Line is the Trigger...
@@ -80,7 +80,7 @@ struct SVGigeTriggerInvertGetter
 struct SVGigeTriggerInvertSetter
 {
 	// Setter
-	HRESULT operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& rFeature, const _variant_t& rValue) const
+	HRESULT operator()(SVMatroxDigitizerPtr Digitizer, const SVGigeFeature& rFeature, const _variant_t& rValue) const
 	{ 
 		HRESULT l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string(rFeature.GetName().c_str()), rFeature.GetType(), rValue);
 		return l_Code;
@@ -90,7 +90,7 @@ struct SVGigeTriggerInvertSetter
 struct SVGigeStrobeLineGetter
 {
 	// iterate thru the Line Selectors (Line0/Line1) and get the first one whose LineMode is Output
-	HRESULT operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& feature, _variant_t& rValue) const
+	HRESULT operator()(SVMatroxDigitizerPtr Digitizer, const SVGigeFeature& feature, _variant_t& rValue) const
 	{ 
 		_variant_t value( _T("Output") );
 		HRESULT l_Code = SVMatroxDigitizerInterface::GetFeature(*(Digitizer.get()), std::string(feature.GetName().c_str()), feature.GetType(), value);
@@ -104,7 +104,7 @@ struct SVGigeStrobeLineGetter
 
 struct SVGigeStrobeLineSetter
 {
-	HRESULT operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& rFeature, const _variant_t& rValue) const
+	HRESULT operator()(SVMatroxDigitizerPtr Digitizer, const SVGigeFeature& rFeature, const _variant_t& rValue) const
 	{ 
 		const SVGigeFeatureSelector& selector = rFeature.GetSelector();
 		HRESULT l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string(selector.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, rValue);
@@ -118,7 +118,7 @@ struct SVGigeStrobeLineSetter
 
 struct SVGigeStrobeInvertGetter
 {
-	HRESULT operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& rFeature, _variant_t& rValue) const
+	HRESULT operator()(SVMatroxDigitizerPtr Digitizer, const SVGigeFeature& rFeature, _variant_t& rValue) const
 	{ 
 		// Get which line is the Strobe (LineMode = Output)
 		HRESULT l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string(rFeature.GetName().c_str()), rFeature.GetType(), rValue);
@@ -136,7 +136,7 @@ struct SVGigeStrobeInvertGetter
 struct SVGigeStrobeInvertSetter
 {
 	// Setter
-	HRESULT operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& rFeature, const _variant_t& rValue) const
+	HRESULT operator()(SVMatroxDigitizerPtr Digitizer, const SVGigeFeature& rFeature, const _variant_t& rValue) const
 	{
 		// Get which line is the Strobe (LineMode = Output)
 		const SVGigeFeatureSelector& selector = rFeature.GetSelector();
@@ -152,7 +152,7 @@ struct SVGigeStrobeInvertSetter
 struct SVGigeInputLineGetter
 {
 	// iterate thru the Line Selectors (Line0/Line1) and get the first one whose LineMode is Input ?
-	HRESULT operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& feature, _variant_t& rValue) const
+	HRESULT operator()(SVMatroxDigitizerPtr Digitizer, const SVGigeFeature& feature, _variant_t& rValue) const
 	{ 
 		_variant_t value( _T("Input") );
 		HRESULT l_Code = SVMatroxDigitizerInterface::GetFeature(*(Digitizer.get()), std::string(feature.GetName().c_str()), feature.GetType(), value);
@@ -166,7 +166,7 @@ struct SVGigeInputLineGetter
 
 struct SVGigeInputLineSetter
 {
-	HRESULT operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& rFeature, const _variant_t& rValue) const
+	HRESULT operator()(SVMatroxDigitizerPtr Digitizer, const SVGigeFeature& rFeature, const _variant_t& rValue) const
 	{ 
 		const SVGigeFeatureSelector& selector = rFeature.GetSelector();
 		HRESULT l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), std::string(selector.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, rValue);
@@ -180,7 +180,7 @@ struct SVGigeInputLineSetter
 
 struct SVGigeEventSetter
 {
-	HRESULT operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& rFeature, const _variant_t& rValue) const
+	HRESULT operator()(SVMatroxDigitizerPtr Digitizer, const SVGigeFeature& rFeature, const _variant_t& rValue) const
 	{
 		std::string l_value = SvUl::createStdString(rValue);
 		std::string eventValue = l_value.c_str();
@@ -191,11 +191,11 @@ struct SVGigeEventSetter
 
 const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeatures()
 {
-	static const SVGigeDeviceParameterMap features = boost::assign::map_list_of<SVGigeParameterEnum, SVGigeDeviceParameterStruct>
+	static const SVGigeDeviceParameterMap features = boost::assign::map_list_of<SvDef::SVGigeParameterEnum, SVGigeDeviceParameterStruct>
 	///////////////////////////////////////////////////////////////////////
 	// Exposure Mode - not supported yet
 	///////////////////////////////////////////////////////////////////////
-	( SVGigeParameterExposureMode,				
+	( SvDef::SVGigeParameterExposureMode,				
 		SVGigeDeviceParameterStruct
 		(
 			std::string( _T("Trigger Mode") ), VT_BSTR,
@@ -214,7 +214,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	///////////////////////////////////////////////////////////////////////
 	// Bayer Pattern - not supported yet
 	///////////////////////////////////////////////////////////////////////
-	( SVGigeParameterBayerPattern,
+	( SvDef::SVGigeParameterBayerPattern,
 		SVGigeDeviceParameterStruct
 		(
 			std::string( _T("Bayer Pattern") ), VT_I4,
@@ -233,7 +233,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	///////////////////////////////////////////////////////////////////////
 	// X Offset
 	///////////////////////////////////////////////////////////////////////
-	( SVGigeParameterXOffset,
+	( SvDef::SVGigeParameterXOffset,
 		SVGigeDeviceParameterStruct
 		(
 			std::string( _T("X Offset") ), VT_I4,
@@ -247,7 +247,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	///////////////////////////////////////////////////////////////////////
 	// Y Offset
 	///////////////////////////////////////////////////////////////////////
-	( SVGigeParameterYOffset,
+	( SvDef::SVGigeParameterYOffset,
 		SVGigeDeviceParameterStruct
 		(
 			std::string( _T("Y Offset") ), VT_I4,
@@ -261,7 +261,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	///////////////////////////////////////////////////////////////////////
 	// Width
 	///////////////////////////////////////////////////////////////////////
-	( SVGigeParameterXSize,
+	( SvDef::SVGigeParameterXSize,
 		SVGigeDeviceParameterStruct
 		(
 			std::string( _T("X Size") ), VT_I4,
@@ -275,7 +275,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	///////////////////////////////////////////////////////////////////////
 	// Height
 	///////////////////////////////////////////////////////////////////////
-	( SVGigeParameterYSize,
+	( SvDef::SVGigeParameterYSize,
 		SVGigeDeviceParameterStruct
 		(
 			std::string( _T("Y Size") ), VT_I4,
@@ -289,7 +289,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	///////////////////////////////////////////////////////////////////////
 	// Color Format
 	///////////////////////////////////////////////////////////////////////
-	( SVGigeParameterColorFormat,
+	( SvDef::SVGigeParameterColorFormat,
 		SVGigeDeviceParameterStruct
 		( std::string( _T("Color Format") ),	VT_BSTR,
 			SVGigeParameterAccessor
@@ -315,7 +315,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	///////////////////////////////////////////////////////////////////////
 	// Brightness
 	///////////////////////////////////////////////////////////////////////
-	( SVGigeParameterFeatureBrightness,
+	( SvDef::SVGigeParameterFeatureBrightness,
 		SVGigeDeviceParameterStruct
 		(
 			std::string( _T("Brightness") ), VT_I4,
@@ -333,7 +333,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	///////////////////////////////////////////////////////////////////////
 	// Auto Exposure - not supported yet
 	///////////////////////////////////////////////////////////////////////
-	( SVGigeParameterFeatureAutoExposure,
+	( SvDef::SVGigeParameterFeatureAutoExposure,
 		SVGigeDeviceParameterStruct
 		(
 			std::string( _T("Auto Exposure") ), VT_I4,
@@ -352,7 +352,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	///////////////////////////////////////////////////////////////////////
 	// Sharpness - not supported yet
 	///////////////////////////////////////////////////////////////////////
-	( SVGigeParameterFeatureSharpness,
+	( SvDef::SVGigeParameterFeatureSharpness,
 		SVGigeDeviceParameterStruct
 		(
 			std::string( _T("Sharpness") ), VT_I4,
@@ -371,7 +371,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	///////////////////////////////////////////////////////////////////////
 	// WhiteBalanceU - not supported yet
 	///////////////////////////////////////////////////////////////////////
-	( SVGigeParameterFeatureWhiteBalanceU,	
+	( SvDef::SVGigeParameterFeatureWhiteBalanceU,	
 		SVGigeDeviceParameterStruct
 		(
 			std::string( _T("White Balance - U") ), VT_I4,
@@ -390,7 +390,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	///////////////////////////////////////////////////////////////////////
 	// WhiteBalanceV - not supported yet
 	///////////////////////////////////////////////////////////////////////
-	( SVGigeParameterFeatureWhiteBalanceV,
+	( SvDef::SVGigeParameterFeatureWhiteBalanceV,
 		SVGigeDeviceParameterStruct
 		(
 			std::string( _T("White Balance - V") ), VT_I4,
@@ -409,7 +409,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	///////////////////////////////////////////////////////////////////////
 	// Hue - not supported yet
 	///////////////////////////////////////////////////////////////////////
-	( SVGigeParameterFeatureHue,
+	( SvDef::SVGigeParameterFeatureHue,
 		SVGigeDeviceParameterStruct
 		(
 			std::string( _T("Hue") ), VT_I4,
@@ -428,7 +428,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	///////////////////////////////////////////////////////////////////////
 	// Saturation - not supported yet
 	///////////////////////////////////////////////////////////////////////
-	( SVGigeParameterFeatureSaturation,
+	( SvDef::SVGigeParameterFeatureSaturation,
 		SVGigeDeviceParameterStruct
 		(
 			std::string( _T("Saturation") ), VT_I4,
@@ -447,7 +447,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	///////////////////////////////////////////////////////////////////////
 	// Gamma
 	///////////////////////////////////////////////////////////////////////
-	( SVGigeParameterFeatureGamma,
+	( SvDef::SVGigeParameterFeatureGamma,
 		SVGigeDeviceParameterStruct
 		(
 			std::string( _T("Gamma") ), VT_R8,
@@ -461,7 +461,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	///////////////////////////////////////////////////////////////////////
 	// Shutter
 	///////////////////////////////////////////////////////////////////////
-	( SVGigeParameterFeatureShutter,
+	( SvDef::SVGigeParameterFeatureShutter,
 		SVGigeDeviceParameterStruct
 		(
 			std::string( _T("Shutter") ), VT_R8,
@@ -475,7 +475,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	///////////////////////////////////////////////////////////////////////
 	// Gain
 	///////////////////////////////////////////////////////////////////////
-	( SVGigeParameterFeatureGain,
+	( SvDef::SVGigeParameterFeatureGain,
 		SVGigeDeviceParameterStruct
 		(
 			std::string( _T("Gain") ), VT_R8,
@@ -493,7 +493,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	///////////////////////////////////////////////////////////////////////
 	// Trigger Source
 	///////////////////////////////////////////////////////////////////////
-	( SVGigeParameterTriggerSource,
+	( SvDef::SVGigeParameterTriggerSource,
 		SVGigeDeviceParameterStruct
 		(
 			std::string( _T("Trigger Source") ), VT_BSTR,
@@ -515,7 +515,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	///////////////////////////////////////////////////////////////////////
 	// Trigger Edge
 	///////////////////////////////////////////////////////////////////////
-	( SVGigeParameterTriggerEdge,
+	( SvDef::SVGigeParameterTriggerEdge,
 		SVGigeDeviceParameterStruct
 		( 
 			std::string( _T("Trigger Edge") ), VT_BSTR,
@@ -537,7 +537,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	///////////////////////////////////////////////////////////////////////
 	// Trigger Invert
 	///////////////////////////////////////////////////////////////////////
-	( SVGigeParameterTriggerInvert,
+	( SvDef::SVGigeParameterTriggerInvert,
 		SVGigeDeviceParameterStruct
 		(
 			std::string( _T("Trigger Invert") ), VT_BOOL,
@@ -556,7 +556,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	///////////////////////////////////////////////////////////////////////
 	// Trigger Line
 	///////////////////////////////////////////////////////////////////////
-	( SVGigeParameterTriggerLine,
+	( SvDef::SVGigeParameterTriggerLine,
 		SVGigeDeviceParameterStruct
 		(
 			std::string( _T("Trigger Line") ), VT_BSTR,
@@ -576,7 +576,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	///////////////////////////////////////////////////////////////////////
 	// Trigger Delay
 	///////////////////////////////////////////////////////////////////////
-	( SVGigeParameterTriggerDelay,
+	( SvDef::SVGigeParameterTriggerDelay,
 		SVGigeDeviceParameterStruct
 		(
 			std::string( _T("Trigger Delay") ), VT_R8,
@@ -590,7 +590,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	///////////////////////////////////////////////////////////////////////
 	// Trigger Enable
 	///////////////////////////////////////////////////////////////////////
-	( SVGigeParameterTriggerEnable,
+	( SvDef::SVGigeParameterTriggerEnable,
 		 SVGigeDeviceParameterStruct
 		 (
 			 std::string( _T("Trigger Enable") ), VT_BSTR,
@@ -612,7 +612,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	///////////////////////////////////////////////////////////////////////
 	// Strobe Source - Non Standard
 	///////////////////////////////////////////////////////////////////////
-	( SVGigeParameterStrobeSource,
+	( SvDef::SVGigeParameterStrobeSource,
 		 SVGigeDeviceParameterStruct
 		 (
 			 std::string( _T("Strobe Source") ), VT_BSTR,
@@ -631,7 +631,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	///////////////////////////////////////////////////////////////////////
 	// Strobe Edge - Non Standard
 	///////////////////////////////////////////////////////////////////////
-	( SVGigeParameterStrobeEdge,
+	( SvDef::SVGigeParameterStrobeEdge,
 		SVGigeDeviceParameterStruct
 		(
 			std::string( _T("Strobe Edge") ), VT_BSTR,
@@ -650,7 +650,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	///////////////////////////////////////////////////////////////////////
 	// Strobe Invert
 	///////////////////////////////////////////////////////////////////////
-	( SVGigeParameterStrobeInvert,
+	( SvDef::SVGigeParameterStrobeInvert,
 		SVGigeDeviceParameterStruct
 		(
 			std::string( _T("Strobe Invert") ), VT_BOOL,
@@ -669,7 +669,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	///////////////////////////////////////////////////////////////////////
 	// Strobe Delay - Non Standard
 	///////////////////////////////////////////////////////////////////////
-	( SVGigeParameterStrobeDelay,
+	( SvDef::SVGigeParameterStrobeDelay,
 		SVGigeDeviceParameterStruct
 		(
 			std::string(_T("Strobe Delay")), VT_R8,
@@ -688,7 +688,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	///////////////////////////////////////////////////////////////////////
 	// Strobe Duration - Non Standard
 	///////////////////////////////////////////////////////////////////////
-	( SVGigeParameterStrobeDuration,
+	( SvDef::SVGigeParameterStrobeDuration,
 		SVGigeDeviceParameterStruct
 		(
 			std::string( _T("Strobe Duration") ),	VT_R8,
@@ -707,7 +707,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	///////////////////////////////////////////////////////////////////////
 	// Strobe Line
 	///////////////////////////////////////////////////////////////////////
-	( SVGigeParameterStrobeLine,
+	( SvDef::SVGigeParameterStrobeLine,
 		SVGigeDeviceParameterStruct
 		(
 			std::string( _T("Strobe Line") ), VT_BSTR,
@@ -727,7 +727,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	///////////////////////////////////////////////////////////////////////
 	// Strobe Enable - Non Standard
 	///////////////////////////////////////////////////////////////////////
-	( SVGigeParameterStrobeEnable,
+	( SvDef::SVGigeParameterStrobeEnable,
 		SVGigeDeviceParameterStruct
 		(
 			std::string( _T("Strobe Enable") ), VT_BSTR,
@@ -746,7 +746,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	///////////////////////////////////////////////////////////////////////
 	// Horizontal Binning
 	///////////////////////////////////////////////////////////////////////
-	( SVGigeParameterHorizontalBinning,
+	( SvDef::SVGigeParameterHorizontalBinning,
 		SVGigeDeviceParameterStruct
 		(
 			std::string( _T("Horizontal Binning") ), VT_I4,
@@ -765,7 +765,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	///////////////////////////////////////////////////////////////////////
 	// Vertical Binning
 	///////////////////////////////////////////////////////////////////////
-	( SVGigeParameterVerticalBinning,
+	( SvDef::SVGigeParameterVerticalBinning,
 		SVGigeDeviceParameterStruct
 		(
 			std::string( _T("Vertical Binning") ), VT_I4,
@@ -784,7 +784,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	///////////////////////////////////////////////////////////////////////
 	// Packet Size
 	///////////////////////////////////////////////////////////////////////
-	( SVGigeParameterPacketSize,
+	( SvDef::SVGigeParameterPacketSize,
 		SVGigeDeviceParameterStruct
 		(
 			std::string( _T("Packet Size") ), VT_I4,
@@ -798,7 +798,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	///////////////////////////////////////////////////////////////////////
 	// LUT Enable
 	///////////////////////////////////////////////////////////////////////
-	( SVGigeParameterLutEnable,
+	( SvDef::SVGigeParameterLutEnable,
 		SVGigeDeviceParameterStruct
 		(
 			std::string( _T("LUT Enable") ), VT_BOOL,
@@ -817,7 +817,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	///////////////////////////////////////////////////////////////////////
 	// LUT Value Array
 	///////////////////////////////////////////////////////////////////////
-	( SVGigeParameterLutArray,
+	( SvDef::SVGigeParameterLutArray,
 		SVGigeDeviceParameterStruct
 		(
 			std::string( _T("LUT") ), VT_I4 | VT_ARRAY,
@@ -838,7 +838,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	///////////////////////////////////////////////////////////////////////
 	// Input
 	///////////////////////////////////////////////////////////////////////
-	( SVGigeParameterLineInput,
+	( SvDef::SVGigeParameterLineInput,
 		SVGigeDeviceParameterStruct
 		(
 			std::string( _T("Input") ), VT_BSTR,
@@ -858,7 +858,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	///////////////////////////////////////////////////////////////////////
 	// Input Event
 	///////////////////////////////////////////////////////////////////////
-	( SVGigeParameterInputEvent,
+	( SvDef::SVGigeParameterInputEvent,
 		SVGigeDeviceParameterStruct
 		(
 			std::string( _T("Input Event") ), VT_BSTR,
@@ -882,7 +882,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	///////////////////////////////////////////////////////////////////////
 	// Vendor Name
 	///////////////////////////////////////////////////////////////////////
-	( SVGigeParameterVendorName,
+	( SvDef::SVGigeParameterVendorName,
 		SVGigeDeviceParameterStruct
 		(
 			std::string( _T("Vendor Name") ), VT_BSTR,
@@ -899,7 +899,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	///////////////////////////////////////////////////////////////////////
 	// Model Name
 	///////////////////////////////////////////////////////////////////////
-	( SVGigeParameterModelName,
+	( SvDef::SVGigeParameterModelName,
 		SVGigeDeviceParameterStruct
 		(
 			std::string( _T("Model Name") ), VT_BSTR,
@@ -916,7 +916,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	///////////////////////////////////////////////////////////////////////
 	// Serial Number
 	///////////////////////////////////////////////////////////////////////
-	( SVGigeParameterSerialNumber,
+	( SvDef::SVGigeParameterSerialNumber,
 		SVGigeDeviceParameterStruct
 		(
 			std::string( _T("Serial Number") ), VT_BSTR,
@@ -934,7 +934,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	///////////////////////////////////////////////////////////////////////
 	// IP Address
 	///////////////////////////////////////////////////////////////////////
-	( SVGigeParameterIPAddress,
+	( SvDef::SVGigeParameterIPAddress,
 		SVGigeDeviceParameterStruct
 		(
 			std::string( _T("IP Address") ), VT_BSTR,
@@ -953,7 +953,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 	///////////////////////////////////////////////////////////////////////
 	// Camera Default Settings
 	///////////////////////////////////////////////////////////////////////
-	( SVGigeParameterCameraDefaultSettings,
+	( SvDef::SVGigeParameterCameraDefaultSettings,
 		SVGigeDeviceParameterStruct
 		(
 			std::string( _T("Default Settings") ), VT_BSTR,

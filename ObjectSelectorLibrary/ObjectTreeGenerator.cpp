@@ -15,7 +15,7 @@
 #include "ObjectTreeGenerator.h"
 #include "ObjectInterfaces/IObjectManager.h"
 #include "Definitions/ObjectDefines.h"
-#include "SVObjectLibrary/GlobalConst.h"
+#include "Definitions/GlobalConst.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVContainerLibrary/ObjectSelectorItem.h"
@@ -189,52 +189,6 @@ namespace SvOsl
 			}
 		}
 
-		return Result;
-	}
-
-	bool ObjectTreeGenerator::setCheckItems( const SVObjectReferenceVector& rItems, const std::string& rInspectionName )
-	{
-		bool Result( true );
-		
-		SvDef::StringSet ObjectNames;
-		SvDef::TranslateMap TranslateNames;
-
-		if( !rInspectionName.empty() )
-		{
-			std::string SearchName;
-			std::string ReplaceName;
-			SearchName = rInspectionName + SvOl::FqnRemoteInput;
-			ReplaceName = SvOl::FqnPPQVariables;
-			ReplaceName += SvOl::FqnRemoteInput;
-			TranslateNames[ SearchName ] = ReplaceName;
-			SearchName = rInspectionName + SvOl::FqnDioInput;
-			ReplaceName = SvOl::FqnPPQVariables;
-			ReplaceName += SvOl::FqnDioInput;
-			TranslateNames[ SearchName ] = ReplaceName;
-		}
-
-		SVObjectReferenceVector::const_iterator Iter( rItems.begin() );
-		for( ; rItems.end() != Iter && Result;  ++Iter )
-		{
-			std::string Name( Iter->GetCompleteOneBasedObjectName() );
-
-			SvDef::TranslateMap::const_iterator Iter( TranslateNames.begin() );
-			for( ; TranslateNames.end() != Iter; ++Iter )
-			{
-				size_t Pos = Name.find( Iter->first );
-				//Check only that the start of the dotted name is found
-				if( 0 == Pos )
-				{
-					Name.replace( Pos, Iter->first.size(), Iter->second.c_str() );
-					break;
-				}
-			}
-			ObjectNames.insert( Name );
-		}
-		if( Result )
-		{
-			Result = setCheckItems( ObjectNames );
-		}
 		return Result;
 	}
 

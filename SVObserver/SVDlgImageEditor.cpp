@@ -312,20 +312,9 @@ HRESULT SVDlgImageEditor::AddOverlayPoints( SVDrawObjectClass& rsvDrawObject, SV
 	return hr;
 }
 
-void SVDlgImageEditor::CopyOverlayPoints( const CPointVector& rsvaPoints, std::vector<CPoint>& rvecPoints )
-{
-	rvecPoints.resize( rsvaPoints.GetSize() );
-	for ( size_t i=0; i < rvecPoints.size(); ++i )
-	{
-		rvecPoints[i] = rsvaPoints.GetAt(static_cast<int>(i));
-	}
-
-}
-
 void SVDlgImageEditor::Normalize( OverlayStruct& rOverlay )
 {
-	const CPointVector& rPointArray = rOverlay.svDrawObject.GetPointArray();
-	CopyOverlayPoints( rPointArray, rOverlay.vecPoints );
+	rOverlay.vecPoints = rOverlay.svDrawObject.GetPointArray();
 
 	CSize sizeFigure = rOverlay.options.sizeROI;
 

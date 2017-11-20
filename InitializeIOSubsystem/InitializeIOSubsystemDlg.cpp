@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "InitializeIOSubsystem.h"
 #include "InitializeIOSubsystemDlg.h"
-#include "SVIOLibrary\svioparameterenum.h"
+#include "SVIOLibrary\SVIOParameterEnum.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

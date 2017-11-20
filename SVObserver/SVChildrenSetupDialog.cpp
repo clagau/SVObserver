@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVChildrenSetupDialog.h"
-#include "SVOCore/SVClassInfoStruct.h"
 #include "SVOCore/SVTaskObjectList.h"
 #include "SVInspectionProcess.h"
 #include "SVIPDoc.h"
@@ -110,9 +109,9 @@ void SVChildrenSetupDialogClass::redrawLists()
 		}
 
 		m_AvailableChildrenListCtrl.DeleteAllItems();
-		for( int i = 0; i < m_pAvailableChildrenList->GetSize(); ++i )
+		for( int i = 0; i < static_cast<int> (m_pAvailableChildrenList->size()); ++i )
 		{
-			SVClassInfoStruct& rChildrenInfo = m_pAvailableChildrenList->ElementAt( i );
+			SVClassInfoStruct& rChildrenInfo = m_pAvailableChildrenList->at(i);
 
 			// Make simple name comparison...
 			LVFINDINFO findInfo;
@@ -207,11 +206,11 @@ void SVChildrenSetupDialogClass::OnAddButton()
 		while( ( item = m_AvailableChildrenListCtrl.GetNextItem( item, LVNI_ALL | LVNI_SELECTED ) ) >= 0 )
 		{
 			listIndex = static_cast< int >( m_AvailableChildrenListCtrl.GetItemData( item ) );
-			if( listIndex >= 0 && listIndex < m_pAvailableChildrenList->GetSize() )
+			if( listIndex >= 0 && listIndex < static_cast<int> (m_pAvailableChildrenList->size()) )
 			{
 				// It´s a valid index ...
 
-				SVClassInfoStruct& rChildrenInfo = m_pAvailableChildrenList->ElementAt( listIndex );
+				SVClassInfoStruct& rChildrenInfo = m_pAvailableChildrenList->at( listIndex );
 				// Construct Children...
 				SVTaskObjectClass* pObject = dynamic_cast< SVTaskObjectClass* >( rChildrenInfo.Construct() );
 				if( nullptr != pObject )

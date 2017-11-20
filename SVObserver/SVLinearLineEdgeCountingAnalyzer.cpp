@@ -36,7 +36,7 @@ SVLinearEdgeCountingLineAnalyzerClass::SVLinearEdgeCountingLineAnalyzerClass( SV
 void SVLinearEdgeCountingLineAnalyzerClass::init()
 {
 	// Identify our type
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVLinearEdgeCountingAnalyzerObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVLinearEdgeCountingAnalyzerObjectType;
 
 	SVLinearEdgeProcessingClass *l_pEdge = new SVLinearEdgeAProcessingClass( this );
 
@@ -55,21 +55,21 @@ void SVLinearEdgeCountingLineAnalyzerClass::init()
 
 	// Populate the available result list
 	SVClassInfoStruct resultClassInfo;
-	SVObjectTypeInfoStruct interfaceInfo;
+	SvDef::SVObjectTypeInfoStruct interfaceInfo;
 
 	// Declare Input Interface of Edge Count Result...
 	interfaceInfo.EmbeddedID = SVEdgeCountObjectGuid;
-	resultClassInfo.m_DesiredInputInterface.Add( interfaceInfo );
+	resultClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
 
 	// Add the Edge Count Result...
-	resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
-	resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultLongObjectType;
+	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVResultObjectType;
+	resultClassInfo.m_ObjectTypeInfo.SubType	= SvDef::SVResultLongObjectType;
 	resultClassInfo.m_ClassId = SVLongResultClassGuid;
 	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_EDGE_COUNT );
 	std::string Title = SvUl::LoadStdString( IDS_RESULT_STRING );
 	resultClassInfo.m_ClassName += _T(" ");
 	resultClassInfo.m_ClassName += Title.c_str();
-	m_availableChildren.Add( resultClassInfo );
+	m_availableChildren.push_back( resultClassInfo );
 }
 
 SVLinearEdgeCountingLineAnalyzerClass::~SVLinearEdgeCountingLineAnalyzerClass()

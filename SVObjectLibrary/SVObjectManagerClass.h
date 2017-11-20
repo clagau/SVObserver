@@ -94,7 +94,7 @@ public:
 
 	SVGUID GetObjectIdFromCompleteName( LPCTSTR Name );
 
-	void getObjectsOfType(SVObjectPtrVectorInserter Inserter, SVObjectTypeEnum ObjectType, SVObjectSubTypeEnum ObjectSubType=SVNotSetSubObjectType) const;
+	void getObjectsOfType(SVObjectPtrVectorInserter Inserter, SvDef::SVObjectTypeEnum ObjectType, SvDef::SVObjectSubTypeEnum ObjectSubType=SvDef::SVNotSetSubObjectType) const;
 
 	std::string GetCompleteObjectName( const SVGUID& rGuid );
 
@@ -202,7 +202,7 @@ public:
 	//! \param rSourceId [in] reference to the source object ID
 	/// \param rObjectTypeInfo [in] The required object type.
 	/// \returns IObjectClass* Pointer to the object, if not found nullptr.
-	SvOi::IObjectClass* getFirstObject(const SVGUID& rSourceId, const SVObjectTypeInfoStruct& rObjectTypeInfo) const;
+	SvOi::IObjectClass* getFirstObject(const SVGUID& rSourceId, const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo) const;
 
 	/// Connect inputs to a object
 	/// \param rSourceId [in] reference to the source object ID

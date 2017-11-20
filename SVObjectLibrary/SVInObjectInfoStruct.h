@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "SVcontainerLibrary/SVVector.h" 
+//Moved to precompiled header: #include <vector>
 #include "SVUtilityLibrary/SVGUID.h"
 
 #include "SVObjectInfoStruct.h"
@@ -28,9 +28,9 @@ struct SVInObjectInfoStruct : public SVObjectInfoStruct
 
 	const SVObjectInfoStruct& GetInputObjectInfo() const;
 
-	void SetInputObjectType( SVObjectTypeEnum p_ObjectType=SVNotSetObjectType, SVObjectSubTypeEnum p_SubType=SVNotSetSubObjectType );
-	void SetInputObjectType( const SVGUID& p_rEmbeddedID, SVObjectTypeEnum p_ObjectType=SVNotSetObjectType, SVObjectSubTypeEnum p_SubType=SVNotSetSubObjectType );
-	void SetInputObjectType( const SVObjectTypeInfoStruct& p_rTypeInfo );
+	void SetInputObjectType( SvDef::SVObjectTypeEnum p_ObjectType=SvDef::SVNotSetObjectType, SvDef::SVObjectSubTypeEnum p_SubType=SvDef::SVNotSetSubObjectType );
+	void SetInputObjectType( const SVGUID& p_rEmbeddedID, SvDef::SVObjectTypeEnum p_ObjectType=SvDef::SVNotSetObjectType, SvDef::SVObjectSubTypeEnum p_SubType=SvDef::SVNotSetSubObjectType );
+	void SetInputObjectType( const SvDef::SVObjectTypeInfoStruct& p_rTypeInfo );
 
 	void SetInputObject( const std::string& p_rName );
 	void SetInputObject( const SVGUID& p_rObjectID );
@@ -53,5 +53,6 @@ protected:
 
 };
 
-typedef SVVector<SVInObjectInfoStruct> SVInObjectInfoStructVector; 
+typedef std::vector<SVInObjectInfoStruct> SVInObjectInfoStructVector;
+typedef std::vector<SVInObjectInfoStruct*> SVInObjectInfoStructPtrVector;
 

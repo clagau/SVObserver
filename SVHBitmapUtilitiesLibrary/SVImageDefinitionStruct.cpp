@@ -49,7 +49,7 @@ void SVImageDefinitionStruct::Clear( )
 {
 	lHeight = 0;
 	lWidth = 0;
-	eImageFormat = SVImageFormatUnknown;
+	eImageFormat = SvDef::SVImageFormatUnknown;
 	if(bstrDisplayName)
 		::SysFreeString(bstrDisplayName);
 
@@ -59,7 +59,7 @@ void SVImageDefinitionStruct::Init( )
 {
 	lHeight = 0;
 	lWidth = 0;
-	eImageFormat = SVImageFormatUnknown;
+	eImageFormat = SvDef::SVImageFormatUnknown;
 	bstrDisplayName = nullptr;
 }
 

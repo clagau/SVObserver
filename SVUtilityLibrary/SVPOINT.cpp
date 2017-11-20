@@ -13,14 +13,14 @@
 #include "StringHelper.h"
 #include "SVPOINT.h"
 
-SVPOINT::SVPOINT()
+SVPoint::SVPoint()
 : m_Point()
 {
 	m_Point.x = 0;
 	m_Point.y = 0;
 }
 
-SVPOINT::SVPOINT( const SVPOINT& p_rObject )
+SVPoint::SVPoint( const SVPoint& p_rObject )
 : m_Point()
 {
 	m_Point.x = 0;
@@ -29,7 +29,7 @@ SVPOINT::SVPOINT( const SVPOINT& p_rObject )
 	*this = p_rObject;
 }
 
-SVPOINT::SVPOINT( const POINT& p_rPoint )
+SVPoint::SVPoint( const POINT& p_rPoint )
 : m_Point()
 {
 	m_Point.x = 0;
@@ -38,7 +38,7 @@ SVPOINT::SVPOINT( const POINT& p_rPoint )
 	*this = p_rPoint;
 }
 
-SVPOINT::SVPOINT( const VARIANT& p_rVariant )
+SVPoint::SVPoint( const VARIANT& p_rVariant )
 : m_Point()
 {
 	m_Point.x = 0;
@@ -47,44 +47,44 @@ SVPOINT::SVPOINT( const VARIANT& p_rVariant )
 	*this = p_rVariant;
 }
 
-SVPOINT::SVPOINT( long x, long y )
+SVPoint::SVPoint( long x, long y )
 {
 	m_Point.x = x;
 	m_Point.y = y;
 }
 
-SVPOINT::~SVPOINT()
+SVPoint::~SVPoint()
 {
 	m_Point.x = 0;
 	m_Point.y = 0;
 }
 
-SVPOINT::operator const POINT & () const
+SVPoint::operator const POINT & () const
 {
 	return m_Point;
 }
 
-SVPOINT::operator POINT & ()
+SVPoint::operator POINT & ()
 {
 	return m_Point;
 }
 
-SVPOINT::operator _variant_t () const
+SVPoint::operator _variant_t () const
 {
 	return _variant_t( ToString().c_str());
 }
 
-void SVPOINT::GetValue(POINT &Point) const
+void SVPoint::GetValue(POINT &Point) const
 {
 	Point = m_Point;
 }
 
-std::string SVPOINT::ToString() const
+std::string SVPoint::ToString() const
 {
 	return SvUl::Format(_T( "( %ld, %ld )" ), m_Point.x, m_Point.y );
 }
 
-const SVPOINT& SVPOINT::operator=( const SVPOINT& p_rObject )
+const SVPoint& SVPoint::operator=( const SVPoint& p_rObject )
 {
 	if( this != &p_rObject )
 	{
@@ -94,7 +94,7 @@ const SVPOINT& SVPOINT::operator=( const SVPOINT& p_rObject )
 	return *this;
 }
 
-const SVPOINT& SVPOINT::operator=( const POINT& p_rPoint )
+const SVPoint& SVPoint::operator=( const POINT& p_rPoint )
 {
 	if( &m_Point != &p_rPoint )
 	{
@@ -104,7 +104,7 @@ const SVPOINT& SVPOINT::operator=( const POINT& p_rPoint )
 	return *this;
 }
 
-const SVPOINT& SVPOINT::operator=( const VARIANT& p_rVariant )
+const SVPoint& SVPoint::operator=( const VARIANT& p_rVariant )
 {
 	POINT l_Point;
 
@@ -123,12 +123,12 @@ const SVPOINT& SVPOINT::operator=( const VARIANT& p_rVariant )
 	return *this;
 }
 
-long SVPOINT::x() const
+long SVPoint::x() const
 {
 	return m_Point.x;
 }
 
-long SVPOINT::y() const
+long SVPoint::y() const
 {
 	return m_Point.y;
 }

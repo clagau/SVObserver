@@ -17,7 +17,7 @@
 //Moved to precompiled header: #include <boost/bind.hpp>
 #include "SVHistogramAnalyzer.h"
 
-#include "SVHBitmapUtilitiesLibrary\SVImageFormatEnum.h"
+#include "Definitions/SVImageFormatEnum.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
@@ -211,7 +211,7 @@ void SVHistogramAnalyzerClass::init()
 
 	
 		// Identify our output type
-		m_outObjectInfo.m_ObjectTypeInfo.SubType = SVHistogramAnalyzerObjectType;
+		m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVHistogramAnalyzerObjectType;
 
 		// Register Embedded Objects
 		RegisterEmbeddedObject( 
@@ -424,13 +424,13 @@ void SVHistogramAnalyzerClass::init()
 void SVHistogramAnalyzerClass::AddResult(const std::pair<GUID, DWORD> & p)
 {
 	SVClassInfoStruct l_resultInfo;
-	SVObjectTypeInfoStruct l_ifceInfo;
+	SvDef::SVObjectTypeInfoStruct l_ifceInfo;
 	SVLongResultClass * pAnalyzerResult;
 
 	l_ifceInfo.EmbeddedID = p.first;
-	l_resultInfo.m_DesiredInputInterface.Add( l_ifceInfo );
-	l_resultInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
-	l_resultInfo.m_ObjectTypeInfo.SubType	= SVResultLongObjectType;
+	l_resultInfo.m_DesiredInputVector.push_back( l_ifceInfo );
+	l_resultInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVResultObjectType;
+	l_resultInfo.m_ObjectTypeInfo.SubType	= SvDef::SVResultLongObjectType;
 	l_resultInfo.m_ClassId = SVLongResultClassGuid;
 	l_resultInfo.m_ClassName = SvUl::LoadStdString(p.second);
 
@@ -1151,7 +1151,7 @@ HRESULT SVHistogramAnalyzerClass::createHistogramImage()
 
 	ImageInfo.SetOwnerImage( m_histogramImage.GetUniqueObjectID() );
 
-	ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SVImageFormatMono8 );
+	ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatMono8 );
 	ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
 	ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
 

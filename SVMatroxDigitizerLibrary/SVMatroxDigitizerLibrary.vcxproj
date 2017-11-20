@@ -105,7 +105,6 @@
     <ClInclude Include="SVMatroxDigitizerHookEnums.h" />
     <ClInclude Include="SVMatroxDigitizerInquireEnums.h" />
     <ClInclude Include="SVMatroxDigitizerInterface.h" />
-    <ClInclude Include="SVMatroxDigitizerRef.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

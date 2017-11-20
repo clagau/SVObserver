@@ -15,7 +15,7 @@
 //Moved to precompiled header: #include <boost/bind.hpp>
 
 #include "SVHBitmapUtilitiesLibrary/SVImageFileLoader.h"
-#include "SVHBitmapUtilitiesLibrary/SVImageFormatEnum.h"
+#include "Definitions/SVImageFormatEnum.h"
 #include "SVFileSystemLibrary/SVFileSystemScanner.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage/SVMessage.h"
@@ -52,12 +52,12 @@ void SVFileCamera::SetImageSize(const SIZE& size)
 	m_fileData.imageSize = size;
 }
 
-SVImageFormatEnum SVFileCamera::GetImageFormat() const
+SvDef::SVImageFormatEnum SVFileCamera::GetImageFormat() const
 {
 	return m_fileData.imageFormat;
 }
 
-void SVFileCamera::SetImageFormat(SVImageFormatEnum format)
+void SVFileCamera::SetImageFormat(SvDef::SVImageFormatEnum format)
 {
 	m_fileData.imageFormat = format;
 }
@@ -186,15 +186,15 @@ HRESULT SVFileCamera::CopyImage(unsigned char* pBuffer)
 
 			int srcBitDepth = m_bitmap.GetBitDepth();
 			int dstBitDepth = 0;
-			if (m_fileData.imageFormat == SVImageFormatRGB8888)
+			if (m_fileData.imageFormat == SvDef::SVImageFormatRGB8888)
 			{
 				dstBitDepth = 32;
 			}
-			else if (m_fileData.imageFormat == SVImageFormatRGB888)
+			else if (m_fileData.imageFormat == SvDef::SVImageFormatRGB888)
 			{
 				dstBitDepth = 24;
 			}
-			else //if (m_fileData.imageFormat == SVImageFormatMono8)
+			else //if (m_fileData.imageFormat == SvDef::SVImageFormatMono8)
 			{
 				dstBitDepth = 8;
 			}
@@ -326,24 +326,24 @@ bool SVFileCamera::ValidImageFormatForCopy() const
 {
 	bool bRetVal = false;
 	// check image formats
-	// check for SVImageFormatRGB8888 (32 bit color)
-	// check for SVImageFormatRGB888 (24 bit color)
-	// check for SVImageFormatMono8 (8 bit grayscale)
+	// check for SvDef::SVImageFormatRGB8888 (32 bit color)
+	// check for SvDef::SVImageFormatRGB888 (24 bit color)
+	// check for SvDef::SVImageFormatMono8 (8 bit grayscale)
 	int bitDepth = m_bitmap.GetBitDepth();
-	if (bitDepth == 32 && m_fileData.imageFormat == SVImageFormatRGB8888)
+	if (bitDepth == 32 && m_fileData.imageFormat == SvDef::SVImageFormatRGB8888)
 	{
 		bRetVal = true;
 	}
-	else if (bitDepth == 24 && m_fileData.imageFormat == SVImageFormatRGB888)
+	else if (bitDepth == 24 && m_fileData.imageFormat == SvDef::SVImageFormatRGB888)
 	{
 		bRetVal = true;
 	}
 	// allow 24 to 32 bit conversion
-	else if (bitDepth == 24 && m_fileData.imageFormat == SVImageFormatRGB8888)
+	else if (bitDepth == 24 && m_fileData.imageFormat == SvDef::SVImageFormatRGB8888)
 	{
 		bRetVal = true;
 	}
-	else if (bitDepth == 8 && m_fileData.imageFormat == SVImageFormatMono8)
+	else if (bitDepth == 8 && m_fileData.imageFormat == SvDef::SVImageFormatMono8)
 	{
 		// check for gray scale palette?
 		bRetVal = true;

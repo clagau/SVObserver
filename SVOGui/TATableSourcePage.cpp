@@ -67,7 +67,7 @@ namespace SvOg
 		std::string selectedTableName;
 		typedef SvCmd::GetInputs Command;
 		typedef SVSharedPtr<Command> CommandPtr;
-		CommandPtr commandPtr = new Command(m_TaskObjectID, SVObjectTypeInfoStruct(TableObjectType, SVNotSetSubObjectType), SVToolObjectType);
+		CommandPtr commandPtr = new Command(m_TaskObjectID, SvDef::SVObjectTypeInfoStruct(SvDef::TableObjectType, SvDef::SVNotSetSubObjectType), SvDef::SVToolObjectType);
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
@@ -123,7 +123,7 @@ namespace SvOg
 		typedef SvCmd::GetAvailableObjects Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 
-		CommandPtr commandPtr = new Command(m_InspectionID, SVObjectTypeInfoStruct(TableObjectType, SVNotSetSubObjectType), SvCmd::IsObjectFromPriorTool(m_TaskObjectID), SVToolObjectType);
+		CommandPtr commandPtr = new Command(m_InspectionID, SvDef::SVObjectTypeInfoStruct(SvDef::TableObjectType, SvDef::SVNotSetSubObjectType), SvCmd::IsObjectFromPriorTool(m_TaskObjectID), SvDef::SVToolObjectType);
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
@@ -149,7 +149,7 @@ namespace SvOg
 		SvUl::NameGuidList::const_iterator it = std::find_if(m_availableList.begin(), m_availableList.end(), ByName(name));
 		if (it != m_availableList.end())
 		{
-			CommandPtr commandPtr = new Command(m_TaskObjectID, inputName, it->second, TableObjectType);
+			CommandPtr commandPtr = new Command(m_TaskObjectID, inputName, it->second, SvDef::TableObjectType);
 			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 			hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		}	

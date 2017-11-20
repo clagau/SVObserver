@@ -65,7 +65,7 @@ namespace SvOg {
 		, m_TaskObjectID(rTaskObjectID)
 		, m_selectedAnalyzerID(SV_GUID_NULL)
 		, m_SortDirection(-1)
-		, m_selectedSubType(SVNotSetSubObjectType)
+		, m_selectedSubType(SvDef::SVNotSetSubObjectType)
 		, m_inputName(_T(""))
 		, m_objectSelector(rInspectionID)
 	{
@@ -114,7 +114,7 @@ namespace SvOg {
 		typedef SVSharedPtr<Command> CommandPtr;
 
 		SvUl::NameGuidList availableList;
-		CommandPtr commandPtr = new Command(m_TaskObjectID, SVObjectTypeInfoStruct(TableAnalyzerType, SVNotSetSubObjectType));
+		CommandPtr commandPtr = new Command(m_TaskObjectID, SvDef::SVObjectTypeInfoStruct(SvDef::TableAnalyzerType, SvDef::SVNotSetSubObjectType));
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
@@ -146,7 +146,7 @@ namespace SvOg {
 		typedef SvCmd::GetAvailableObjects Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 		SvUl::NameGuidList availableList;
-		CommandPtr commandPtr = new Command(m_TaskObjectID, SVObjectTypeInfoStruct(TableAnalyzerType, SVNotSetSubObjectType));
+		CommandPtr commandPtr = new Command(m_TaskObjectID, SvDef::SVObjectTypeInfoStruct(SvDef::TableAnalyzerType, SvDef::SVNotSetSubObjectType));
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
@@ -188,7 +188,7 @@ namespace SvOg {
 			SVObjectSynchronousCommandTemplate<DestroyCommandPtr> destroyCmd(m_InspectionID, destroyCommandPtr);
 			destroyCmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 			m_selectedAnalyzerID = SV_GUID_NULL;
-			m_selectedSubType = SVNotSetSubObjectType;
+			m_selectedSubType = SvDef::SVNotSetSubObjectType;
 
 			// Refresh Dialog...
 			refresh();
@@ -254,7 +254,7 @@ namespace SvOg {
 			HRESULT hr = E_INVALIDARG;
 			typedef SvCmd::ConnectToObject Command;
 			typedef SVSharedPtr<Command> CommandPtr;
-			CommandPtr commandPtr = new Command(m_selectedAnalyzerID, m_inputName, columnGuid, SVValueObjectType);
+			CommandPtr commandPtr = new Command(m_selectedAnalyzerID, m_inputName, columnGuid, SvDef::SVValueObjectType);
 			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 			hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 			if ( S_OK != hr )
@@ -334,12 +334,12 @@ namespace SvOg {
 		{
 			switch (m_selectedSubType)
 			{
-			case TableAnalyzerSortType:
+			case SvDef::TableAnalyzerSortType:
 				m_Values->Set<bool>(IsAscTag, 0 == m_SortDirection);
 				hrOk = m_Values->Commit();
 				errorMessageList = m_Values->getCommitErrorList();
 				break;
-			case TableAnalyzerExcludeType:
+			case SvDef::TableAnalyzerExcludeType:
 				{
 					CString Value;
 					m_EditExcludeHigh.GetWindowText( Value );
@@ -350,7 +350,7 @@ namespace SvOg {
 					errorMessageList = m_Values->getCommitErrorList();
 				}
 				break;
-			case TableAnalyzerLimitType:
+			case SvDef::TableAnalyzerLimitType:
 				{
 					CString Value;
 					m_EditLimitValue.GetWindowText( Value );
@@ -394,7 +394,7 @@ namespace SvOg {
 		typedef SVSharedPtr<Command> CommandPtr;
 
 		SvUl::NameGuidList availableList;
-		CommandPtr commandPtr = new Command(m_TaskObjectID, SVObjectTypeInfoStruct(TableAnalyzerType, SVNotSetSubObjectType));
+		CommandPtr commandPtr = new Command(m_TaskObjectID, SvDef::SVObjectTypeInfoStruct(SvDef::TableAnalyzerType, SvDef::SVNotSetSubObjectType));
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
@@ -412,7 +412,7 @@ namespace SvOg {
 
 	void TaTableAnalyzerPage::SetPropertyControls( )
 	{
-		m_selectedSubType = SVNotSetSubObjectType;
+		m_selectedSubType = SvDef::SVNotSetSubObjectType;
 		if( SV_GUID_NULL != m_selectedAnalyzerID ) 
 		{
 			typedef SvCmd::GetObjectTypeInfo Command;
@@ -422,7 +422,7 @@ namespace SvOg {
 			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 			if (S_OK == hr)
 			{
-				SVObjectTypeInfoStruct info = commandPtr->GetTypeInfo();
+				SvDef::SVObjectTypeInfoStruct info = commandPtr->GetTypeInfo();
 				m_selectedSubType = info.SubType;
 			}
 		}// end if
@@ -430,13 +430,13 @@ namespace SvOg {
 		ShowControls(m_selectedSubType);
 		switch (m_selectedSubType)
 		{
-		case TableAnalyzerSortType:
+		case SvDef::TableAnalyzerSortType:
 			setSortProperties();
 			break;
-		case TableAnalyzerExcludeType:
+		case SvDef::TableAnalyzerExcludeType:
 			setExcludeProperties();
 			break;
-		case TableAnalyzerLimitType:
+		case SvDef::TableAnalyzerLimitType:
 			setLimitProperties();
 			break;
 		default:
@@ -449,7 +449,7 @@ namespace SvOg {
 		typedef SvCmd::GetAvailableObjects Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 
-		CommandPtr commandPtr = new Command(m_TaskObjectID, SVObjectTypeInfoStruct(SVValueObjectType, DoubleSortValueObjectType));
+		CommandPtr commandPtr = new Command(m_TaskObjectID, SvDef::SVObjectTypeInfoStruct(SvDef::SVValueObjectType, SvDef::DoubleSortValueObjectType));
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
@@ -461,24 +461,24 @@ namespace SvOg {
 
 	void TaTableAnalyzerPage::ShowControls( long SubType )
 	{
-		GetDlgItem( IDC_COLUMN_SELECT_CBOX )->ShowWindow( (TableAnalyzerSortType==SubType || TableAnalyzerExcludeType==SubType) ? SW_SHOW : SW_HIDE );
+		GetDlgItem( IDC_COLUMN_SELECT_CBOX )->ShowWindow( (SvDef::TableAnalyzerSortType==SubType || SvDef::TableAnalyzerExcludeType==SubType) ? SW_SHOW : SW_HIDE );
 
-		GetDlgItem( IDC_SORT_LABEL )->ShowWindow( (TableAnalyzerSortType==SubType) ? SW_SHOW : SW_HIDE );
-		GetDlgItem( IDC_ASC_RADIO )->ShowWindow ( (TableAnalyzerSortType==SubType) ? SW_SHOW : SW_HIDE );
-		GetDlgItem( IDC_DESC_RADIO )->ShowWindow( (TableAnalyzerSortType==SubType) ? SW_SHOW : SW_HIDE );
-		GetDlgItem( IDC_STATIC_ASC )->ShowWindow( (TableAnalyzerSortType==SubType) ? SW_SHOW : SW_HIDE);
+		GetDlgItem( IDC_SORT_LABEL )->ShowWindow( (SvDef::TableAnalyzerSortType==SubType) ? SW_SHOW : SW_HIDE );
+		GetDlgItem( IDC_ASC_RADIO )->ShowWindow ( (SvDef::TableAnalyzerSortType==SubType) ? SW_SHOW : SW_HIDE );
+		GetDlgItem( IDC_DESC_RADIO )->ShowWindow( (SvDef::TableAnalyzerSortType==SubType) ? SW_SHOW : SW_HIDE );
+		GetDlgItem( IDC_STATIC_ASC )->ShowWindow( (SvDef::TableAnalyzerSortType==SubType) ? SW_SHOW : SW_HIDE);
 
-		GetDlgItem( IDC_EXCLUDE_LABEL )->ShowWindow(( TableAnalyzerExcludeType==SubType) ? SW_SHOW : SW_HIDE );
-		GetDlgItem( IDC_EXCLUDE_LABEL2 )->ShowWindow( (TableAnalyzerExcludeType==SubType) ? SW_SHOW : SW_HIDE );
-		GetDlgItem( IDC_EXCLUDE_LABEL3 )->ShowWindow( (TableAnalyzerExcludeType==SubType) ? SW_SHOW : SW_HIDE );
-		m_EditExcludeHigh.ShowWindow( (TableAnalyzerExcludeType==SubType) ? SW_SHOW : SW_HIDE );
-		m_EditExcludeLow.ShowWindow( (TableAnalyzerExcludeType==SubType) ? SW_SHOW : SW_HIDE );
-		GetDlgItem( IDC_BUTTON_EXCLUDE_HIGH )->ShowWindow( (TableAnalyzerExcludeType==SubType) ? SW_SHOW : SW_HIDE );
-		GetDlgItem( IDC_BUTTON_EXCLUDE_LOW )->ShowWindow( (TableAnalyzerExcludeType==SubType) ? SW_SHOW : SW_HIDE );
+		GetDlgItem( IDC_EXCLUDE_LABEL )->ShowWindow(( SvDef::TableAnalyzerExcludeType==SubType) ? SW_SHOW : SW_HIDE );
+		GetDlgItem( IDC_EXCLUDE_LABEL2 )->ShowWindow( (SvDef::TableAnalyzerExcludeType==SubType) ? SW_SHOW : SW_HIDE );
+		GetDlgItem( IDC_EXCLUDE_LABEL3 )->ShowWindow( (SvDef::TableAnalyzerExcludeType==SubType) ? SW_SHOW : SW_HIDE );
+		m_EditExcludeHigh.ShowWindow( (SvDef::TableAnalyzerExcludeType==SubType) ? SW_SHOW : SW_HIDE );
+		m_EditExcludeLow.ShowWindow( (SvDef::TableAnalyzerExcludeType==SubType) ? SW_SHOW : SW_HIDE );
+		GetDlgItem( IDC_BUTTON_EXCLUDE_HIGH )->ShowWindow( (SvDef::TableAnalyzerExcludeType==SubType) ? SW_SHOW : SW_HIDE );
+		GetDlgItem( IDC_BUTTON_EXCLUDE_LOW )->ShowWindow( (SvDef::TableAnalyzerExcludeType==SubType) ? SW_SHOW : SW_HIDE );
 
-		GetDlgItem( IDC_LIMIT_LABEL )->ShowWindow( (TableAnalyzerLimitType==SubType) ? SW_SHOW : SW_HIDE );
-		m_EditLimitValue.ShowWindow( (TableAnalyzerLimitType==SubType) ? SW_SHOW : SW_HIDE );
-		GetDlgItem( IDC_BUTTON_LIMIT_VALUE )->ShowWindow( (TableAnalyzerLimitType==SubType) ? SW_SHOW : SW_HIDE );
+		GetDlgItem( IDC_LIMIT_LABEL )->ShowWindow( (SvDef::TableAnalyzerLimitType==SubType) ? SW_SHOW : SW_HIDE );
+		m_EditLimitValue.ShowWindow( (SvDef::TableAnalyzerLimitType==SubType) ? SW_SHOW : SW_HIDE );
+		GetDlgItem( IDC_BUTTON_LIMIT_VALUE )->ShowWindow( (SvDef::TableAnalyzerLimitType==SubType) ? SW_SHOW : SW_HIDE );
 
 		RedrawWindow();
 	}
@@ -553,7 +553,7 @@ namespace SvOg {
 		std::string selectedTableName;
 		typedef SvCmd::GetInputs Command;
 		typedef SVSharedPtr<Command> CommandPtr;
-		CommandPtr commandPtr = new Command(m_selectedAnalyzerID, SVObjectTypeInfoStruct(SVValueObjectType, DoubleSortValueObjectType));
+		CommandPtr commandPtr = new Command(m_selectedAnalyzerID, SvDef::SVObjectTypeInfoStruct(SvDef::SVValueObjectType, SvDef::DoubleSortValueObjectType));
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)

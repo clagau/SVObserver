@@ -103,27 +103,17 @@
     <ClInclude Include="SVBimapDeclarations.h" />
     <ClInclude Include="SVBiUniqueMap.h" />
     <ClInclude Include="SVCompareKeys.h" />
-    <ClInclude Include="SVDeque.h" />
-    <ClInclude Include="SVList.h" />
     <ClInclude Include="SVObjectArrayClassTemplate.h" />
     <ClInclude Include="SVThreadSafeList.h" />
-    <ClInclude Include="SVMap.h" />
     <ClInclude Include="SVRingBuffer.h" />
-    <ClInclude Include="SVSet.h" />
     <ClInclude Include="SVTree.h" />
-    <ClInclude Include="SVVector.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="BGLVisitorFilterEdges.inl" />
     <None Include="GraphVizHelper.inl" />
     <None Include="ObjectGraph.inl" />
-    <None Include="SVDeque.inl" />
-    <None Include="SVList.inl" />
-    <None Include="SVMap.inl" />
     <None Include="SVRingBuffer.inl" />
-    <None Include="SVSet.inl" />
     <None Include="SVTree.inl" />
-    <None Include="SVVector.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

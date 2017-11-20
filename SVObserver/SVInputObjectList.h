@@ -34,7 +34,7 @@ public:
 
 	SVInputObject* GetInput( const std::string& rInputName ) const;
 
-	SVInputObject* GetInputFlyweight( const std::string& rInputName, SVObjectSubTypeEnum ObjectSubType, int GuidIndex = -1);
+	SVInputObject* GetInputFlyweight( const std::string& rInputName, SvDef::SVObjectSubTypeEnum ObjectSubType, int GuidIndex = -1);
 
 	HRESULT AttachInput( SVInputObject *pInput );
 	HRESULT DetachInput( const SVGUID& p_rOutputID );

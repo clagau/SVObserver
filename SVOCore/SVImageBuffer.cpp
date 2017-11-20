@@ -82,7 +82,7 @@ const SVImageOverlayClass& SVImageOverlayClass::operator = (const SVExtentMultiL
 	Clear();
 
 	long l_Size = 131072;	// WHY THIS MAGIC NUMBER???
-	long l_BufferCount = rMultiLineArrayStruct.GetSize();
+	long l_BufferCount = static_cast<long> (rMultiLineArrayStruct.size());
 	SetBufferSize(l_Size);
 	SetOverlayCount(l_BufferCount);
 	// fill in the overlaystruct
@@ -90,7 +90,7 @@ const SVImageOverlayClass& SVImageOverlayClass::operator = (const SVExtentMultiL
 
 	for ( long l = 0; l < l_BufferCount; l++ )
 	{
-		SVOverlayStruct OverlayStruct( rMultiLineArrayStruct.GetAt( static_cast<int> (l) ) );
+		SVOverlayStruct OverlayStruct( rMultiLineArrayStruct[l] );
 		SetOverlayFigureAt(l, OverlayStruct);
 	}
 	return *this;

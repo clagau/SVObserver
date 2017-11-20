@@ -24,7 +24,7 @@ namespace SvCmd
 {
 	struct GetConnectedObjects: public boost::noncopyable
 	{
-		GetConnectedObjects(const GUID& rObjectID, const SVObjectTypeInfoStruct& typeInfo, int maxRequested) : m_InstanceID(rObjectID), m_typeInfo(typeInfo), m_maxRequested(maxRequested) {}
+		GetConnectedObjects(const GUID& rObjectID, const SvDef::SVObjectTypeInfoStruct& typeInfo, int maxRequested) : m_InstanceID(rObjectID), m_typeInfo(typeInfo), m_maxRequested(maxRequested) {}
 
 		// This method is where the real separation would occur by using sockets/named pipes/shared memory
 		// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
@@ -36,7 +36,7 @@ namespace SvCmd
 			SvOi::IObjectClass* pObject = SvOi::getObject(m_InstanceID);
 			if (nullptr != pObject)
 			{
-				if (SVImageObjectType == m_typeInfo.ObjectType)
+				if (SvDef::SVImageObjectType == m_typeInfo.ObjectType)
 				{
 					SvOi::ITaskObject* pTaskObject  = dynamic_cast<SvOi::ITaskObject *>(pObject);
 					if (nullptr != pTaskObject)
@@ -63,7 +63,7 @@ namespace SvCmd
 		const SvUl::InputNameGuidPairList& ConnectedObjects() const { return m_list; }
 
 	private:
-		SVObjectTypeInfoStruct m_typeInfo;
+		SvDef::SVObjectTypeInfoStruct m_typeInfo;
 		SvUl::InputNameGuidPairList m_list;
 		GUID m_InstanceID;
 		int m_maxRequested;

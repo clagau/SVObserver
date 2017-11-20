@@ -63,7 +63,7 @@ private:
 //******************************************************************************
 public:
 	// Results
-	SVOCVCharacterResultPtrVector arrayOCVCharacterResults;
+	SVOCVCharacterResultPtrVector m_OCVCharacterResults;
 
 protected:
 

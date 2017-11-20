@@ -89,11 +89,11 @@ HRESULT SVGigeCameraManagerDlg::Refresh()
 	
 	int iCnt = m_ctlCameraList.GetItemCount();
 	
-	long l_Size = std::max< long >( m_ctlCameraList.GetItemCount(), m_CamList.GetSize() );
+	int Size = std::max<int> (m_ctlCameraList.GetItemCount(), static_cast<int> (m_CamList.size()));
 
-	for( int x = 0 ; x < l_Size ; x ++)
+	for( int x = 0 ; x < Size ; x ++)
 	{
-		if( x < m_CamList.GetSize() )
+		if( x < static_cast<int> (m_CamList.size()))
 		{
 			std::string CameraNumber = SvUl::Format("%d",x+1);
 			m_ctlCameraList.InsertItem( x, CameraNumber.c_str() );

@@ -47,7 +47,7 @@ BOOL SVOInspectionList::AddInspectionToList( LPCTSTR InspectLabel,  LPCTSTR Insp
 		{
 			pObj->SetNewInspection();
 		}
-		m_InspectionList.AddTail(pObj);
+		m_InspectionList.insert(m_InspectionList.end(), pObj);
 	}
 	return bRet;
 }
@@ -55,11 +55,11 @@ BOOL SVOInspectionList::AddInspectionToList( LPCTSTR InspectLabel,  LPCTSTR Insp
 BOOL SVOInspectionList::SetToolsetImage( LPCTSTR InspectLabel,  LPCTSTR Image)
 {
 	BOOL bRet = FALSE;
-	iterator pos = FindInspectionPosition( InspectLabel );
+	iterator Iter = FindInspectionPosition( InspectLabel );
 
-	if (pos != m_InspectionList.end())
+	if (Iter != m_InspectionList.end())
 	{
-		SVOInspectionObjPtr pObj = m_InspectionList.GetAt(pos);
+		SVOInspectionObjPtr pObj = *Iter;
 		pObj->SetToolsetImage( Image );
 		bRet = TRUE;
 	}
@@ -70,11 +70,11 @@ BOOL SVOInspectionList::SetToolsetImage( LPCTSTR InspectLabel,  LPCTSTR Image)
 BOOL SVOInspectionList::SetColor( LPCTSTR InspectLabel, bool Color)
 {
 	BOOL bRet = FALSE;
-	iterator pos = FindInspectionPosition( InspectLabel );
+	iterator Iter = FindInspectionPosition( InspectLabel );
 
-	if (pos != m_InspectionList.end())
+	if (Iter != m_InspectionList.end())
 	{
-		SVOInspectionObjPtr pObj = m_InspectionList.GetAt(pos);
+		SVOInspectionObjPtr pObj = *Iter;
 		pObj->SetColor( Color );
 		bRet = TRUE;
 	}
@@ -85,11 +85,11 @@ BOOL SVOInspectionList::SetColor( LPCTSTR InspectLabel, bool Color)
 BOOL SVOInspectionList::SetNewDisableMethod( LPCTSTR InspectLabel,  LPCTSTR Disable)
 {
 	BOOL bRet = FALSE;
-	iterator pos = FindInspectionPosition( InspectLabel );
+	iterator Iter = FindInspectionPosition( InspectLabel );
 
-	if (pos != m_InspectionList.end())
+	if (Iter != m_InspectionList.end())
 	{
-		SVOInspectionObjPtr pObj = m_InspectionList.GetAt(pos);
+		SVOInspectionObjPtr pObj = *Iter;
 		pObj->SetNewDisableMethod( Disable );
 		bRet = TRUE;
 	}
@@ -100,11 +100,11 @@ BOOL SVOInspectionList::SetNewDisableMethod( LPCTSTR InspectLabel,  LPCTSTR Disa
 BOOL SVOInspectionList::SetShowAuxExtent( LPCTSTR InspectLabel, bool p_bShow)
 {
 	BOOL bRet = FALSE;
-	iterator pos = FindInspectionPosition( InspectLabel );
+	iterator Iter = FindInspectionPosition( InspectLabel );
 
-	if (pos != m_InspectionList.end())
+	if (Iter != m_InspectionList.end())
 	{
-		SVOInspectionObjPtr pObj = m_InspectionList.GetAt(pos);
+		SVOInspectionObjPtr pObj = *Iter;
 		pObj->SetShowAuxExtent( p_bShow );
 		bRet = TRUE;
 	}
@@ -115,11 +115,11 @@ BOOL SVOInspectionList::SetShowAuxExtent( LPCTSTR InspectLabel, bool p_bShow)
 BOOL SVOInspectionList::SetEnableAuxiliaryExtent( LPCTSTR InspectLabel, long lEnable)
 {
 	BOOL bRet = FALSE;
-	iterator pos = FindInspectionPosition( InspectLabel );
+	iterator Iter = FindInspectionPosition( InspectLabel );
 
-	if (pos != m_InspectionList.end())
+	if (Iter != m_InspectionList.end())
 	{
-		SVOInspectionObjPtr pObj = m_InspectionList.GetAt(pos);
+		SVOInspectionObjPtr pObj = *Iter;
 		pObj->SetEnableAuxiliaryExtent( lEnable );
 		bRet = TRUE;
 	}
@@ -131,13 +131,13 @@ BOOL SVOInspectionList::SetEnableAuxiliaryExtent( LPCTSTR InspectLabel, long lEn
 BOOL SVOInspectionList::ReNameInspection( LPCTSTR InspectLabel,  LPCTSTR NewInspectName)
 {
 	BOOL bRet = FALSE;
-	iterator pos = FindInspectionPosition( InspectLabel );
+	iterator Iter = FindInspectionPosition( InspectLabel );
 
-	if (pos != m_InspectionList.end())
+	if (Iter != m_InspectionList.end())
 	{
-		SVOInspectionObjPtr pObj = m_InspectionList.GetAt(pos);
+		SVOInspectionObjPtr pObj = *Iter;
 		pObj->RenameInspection( NewInspectName );
-		m_InspectionList.SetAt(pos,pObj);
+		*Iter = pObj;
 		bRet = TRUE;
 	}
 
@@ -148,11 +148,11 @@ BOOL SVOInspectionList::ReNameInspection( LPCTSTR InspectLabel,  LPCTSTR NewInsp
 BOOL SVOInspectionList::RemoveInspectionFromList( LPCTSTR InspectLabel )
 {
 	BOOL bRet = FALSE;
-	iterator pos = FindInspectionPosition( InspectLabel );
+	iterator Iter = FindInspectionPosition( InspectLabel );
 
-	if( pos != m_InspectionList.end() )
+	if( Iter != m_InspectionList.end() )
 	{
-		m_InspectionList.RemoveAt(pos);
+		m_InspectionList.erase(Iter);
 		bRet = TRUE;
 	}
 
@@ -176,11 +176,11 @@ SVOInspectionObjPtr SVOInspectionList::GetInspectionByName( LPCTSTR InspectLabel
 {
 	SVOInspectionObjPtr pResult( nullptr );
 
-	iterator pos = FindInspectionPosition( InspectLabel );
+	iterator Iter = FindInspectionPosition( InspectLabel );
 
-	if( pos != m_InspectionList.end() )
+	if( Iter != m_InspectionList.end() )
 	{
-		pResult =  m_InspectionList.GetAt(pos);
+		pResult =  *Iter;
 	}
 
 	return pResult;
@@ -190,10 +190,10 @@ std::string SVOInspectionList::GetInspectionLabel( LPCTSTR InspectName )
 {
 	std::string Result;
 
-	iterator pos = FindInspectionPositionFromName( InspectName );
-	if( pos != m_InspectionList.end() )
+	iterator Iter = FindInspectionPositionFromName( InspectName );
+	if( Iter != m_InspectionList.end() )
 	{
-		SVOInspectionObjPtr pObj = m_InspectionList.GetAt(pos);
+		SVOInspectionObjPtr pObj = *Iter;
 		Result = pObj->GetInspectionLabelName();
 	}
 
@@ -204,11 +204,11 @@ SVOInspectionObjPtr SVOInspectionList::GetInspectionByPosition( int iPos )
 {
 	SVOInspectionObjPtr pResult( nullptr );
 
-	iterator pos = m_InspectionList.FindIndex(iPos);
-
-	if (pos != m_InspectionList.end())
+	if (0 <= iPos && iPos < static_cast<int>(m_InspectionList.size()))
 	{
-		pResult =  m_InspectionList.GetAt(pos);
+		iterator Iter(m_InspectionList.begin());
+		std::advance(Iter, iPos);
+		pResult = *Iter;
 	}
 
 	return pResult;
@@ -216,12 +216,12 @@ SVOInspectionObjPtr SVOInspectionList::GetInspectionByPosition( int iPos )
 
 BOOL SVOInspectionList::IsInspectionInList( LPCTSTR InspectLabel ) const
 {
-	const_iterator pos( m_InspectionList.begin() );
+	const_iterator Iter( m_InspectionList.begin() );
 	bool Found = false;
 
-	while( pos != m_InspectionList.end() && !Found )
+	while( Iter != m_InspectionList.end() && !Found )
 	{
-		const SVOInspectionObjPtr pInspectionObj = m_InspectionList.GetAt(pos);
+		const SVOInspectionObjPtr pInspectionObj = *Iter;
 		if( nullptr != pInspectionObj )
 		{
 			//Check both InspectionLabelName & InspectionName - Can be different if an inspeciton has been renamed.
@@ -231,19 +231,19 @@ BOOL SVOInspectionList::IsInspectionInList( LPCTSTR InspectLabel ) const
 			}
 		}
 
-		++pos;
+		++Iter;
 	}
 	return Found;
 }
 
 BOOL SVOInspectionList::IsInspectionNameInList( LPCTSTR InspectName) const
 {
-	const_iterator pos = m_InspectionList.begin();
+	const_iterator Iter = m_InspectionList.begin();
 	BOOL bFound = false;
 
-	while( pos != m_InspectionList.end() && !bFound )
+	while( Iter != m_InspectionList.end() && !bFound )
 	{
-		const SVOInspectionObjPtr pObj = m_InspectionList.GetAt(pos);
+		const SVOInspectionObjPtr pObj = *Iter;
 
 		if (InspectName == pObj->GetInspectionName())
 		{
@@ -251,19 +251,19 @@ BOOL SVOInspectionList::IsInspectionNameInList( LPCTSTR InspectName) const
 		}
 		else
 		{
-			++pos;
+			++Iter;
 		}
 	}
 	return bFound;    
 }
 BOOL SVOInspectionList::IsInspectionInList( LPCTSTR InspectLabel, LPCTSTR InspectName) const
 {
-	const_iterator pos = m_InspectionList.begin();
+	const_iterator Iter = m_InspectionList.begin();
 	BOOL bFound = FALSE;
 
-	while( pos != m_InspectionList.end() && !bFound )
+	while( Iter != m_InspectionList.end() && !bFound )
 	{
-		const SVOInspectionObjPtr pInspectionObj = m_InspectionList.GetAt(pos);
+		const SVOInspectionObjPtr pInspectionObj = *Iter;
 
 		if( nullptr != pInspectionObj && InspectLabel == pInspectionObj->GetInspectionLabelName())
 		{
@@ -274,7 +274,7 @@ BOOL SVOInspectionList::IsInspectionInList( LPCTSTR InspectLabel, LPCTSTR Inspec
 		}
 		else
 		{
-			++pos;
+			++Iter;
 		}
 	}
 	return bFound;
@@ -282,12 +282,12 @@ BOOL SVOInspectionList::IsInspectionInList( LPCTSTR InspectLabel, LPCTSTR Inspec
 
 SVOInspectionList::iterator SVOInspectionList::FindInspectionPosition( LPCTSTR InspectLabel)
 {
-	iterator pos = m_InspectionList.begin();
+	iterator Iter = m_InspectionList.begin();
 	bool Found = false;
 
-	while( pos != m_InspectionList.end() && !Found )
+	while( Iter != m_InspectionList.end() && !Found )
 	{
-		SVOInspectionObjPtr pInspectionObj = m_InspectionList.GetAt(pos);
+		SVOInspectionObjPtr pInspectionObj = *Iter;
 
 		if ( nullptr != pInspectionObj && InspectLabel == pInspectionObj->GetInspectionLabelName() )
 		{
@@ -295,21 +295,21 @@ SVOInspectionList::iterator SVOInspectionList::FindInspectionPosition( LPCTSTR I
 		}
 		else
 		{
-			++pos;
+			++Iter;
 		}
 	}
 
-	return pos;
+	return Iter;
 }
 
 SVOInspectionList::iterator SVOInspectionList::FindInspectionPositionFromName( LPCTSTR InspectName)
 {
-	iterator pos = m_InspectionList.begin();
+	iterator Iter = m_InspectionList.begin();
 	bool Found = false;
 
-	while( pos != m_InspectionList.end() && !Found )
+	while( Iter != m_InspectionList.end() && !Found )
 	{
-		SVOInspectionObjPtr pInspectionObj = m_InspectionList.GetAt(pos);
+		SVOInspectionObjPtr pInspectionObj = *Iter;
 
 		if( nullptr != pInspectionObj && InspectName == pInspectionObj->GetInspectionName())
 		{
@@ -317,21 +317,21 @@ SVOInspectionList::iterator SVOInspectionList::FindInspectionPositionFromName( L
 		}
 		else
 		{
-			++pos;
+			++Iter;
 		}
 	}
 
-	return pos;
+	return Iter;
 }
 
 int SVOInspectionList::GetInspectionListCount() const
 {
-    return static_cast<int>(m_InspectionList.GetCount());
+    return static_cast<int>(m_InspectionList.size());
 }
 
 void SVOInspectionList::ResetContent()
 {
-	m_InspectionList.RemoveAll();
+	m_InspectionList.clear();
 }
 
 

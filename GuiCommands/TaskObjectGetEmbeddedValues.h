@@ -32,7 +32,7 @@ namespace SvCmd
 			HRESULT hr = S_OK;
 			for (Items::iterator it = m_Items.begin();S_OK == hr && it != m_Items.end();++it)
 			{
-				SVObjectTypeInfoStruct objectInfo;
+				SvDef::SVObjectTypeInfoStruct objectInfo;
 				objectInfo.EmbeddedID = it->second.GetEmbeddedID();
 
 				bool bFound = false;
@@ -41,7 +41,7 @@ namespace SvCmd
 				GUID parentID = m_ownerID;
 				while (!bFound && GUID_NULL != parentID)
 				{
-					const SVObjectTypeInfoStruct& ownerInfo = it->second.GetOwnerInfo();
+					const SvDef::SVObjectTypeInfoStruct& ownerInfo = it->second.GetOwnerInfo();
 					SvOi::IObjectClass* pObject = SvOi::FindObject(parentID, objectInfo);
 					SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*> (pObject);
 					if( nullptr != pValueObject )

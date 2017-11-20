@@ -35,22 +35,7 @@
     <ClInclude Include="SVBiUniqueMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVDeque.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVList.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVMap.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVRingBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVSet.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVVector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVThreadSafeList.h">
@@ -85,22 +70,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="SVDeque.inl">
-      <Filter>Header Files</Filter>
-    </None>
-    <None Include="SVList.inl">
-      <Filter>Header Files</Filter>
-    </None>
-    <None Include="SVMap.inl">
-      <Filter>Header Files</Filter>
-    </None>
     <None Include="SVRingBuffer.inl">
-      <Filter>Header Files</Filter>
-    </None>
-    <None Include="SVSet.inl">
-      <Filter>Header Files</Filter>
-    </None>
-    <None Include="SVVector.inl">
       <Filter>Header Files</Filter>
     </None>
     <None Include="SVTree.inl">

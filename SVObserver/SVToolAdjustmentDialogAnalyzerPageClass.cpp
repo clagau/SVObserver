@@ -67,8 +67,8 @@ SVToolAdjustmentDialogAnalyzerPageClass::SVToolAdjustmentDialogAnalyzerPageClass
 
 		if (m_pTool)
 		{
-			SVObjectTypeInfoStruct info;
-			info.ObjectType = SVAnalyzerObjectType;
+			SvDef::SVObjectTypeInfoStruct info;
+			info.ObjectType = SvDef::SVAnalyzerObjectType;
 
 			m_pCurrentAnalyzer = dynamic_cast<SVAnalyzerClass *>(m_pTool->getFirstObject(info));
 		}
@@ -102,12 +102,12 @@ BOOL SVToolAdjustmentDialogAnalyzerPageClass::OnInitDialog()
 	ASSERT( m_pTool );
 	if( m_pTool )
 	{
-		const SVObjectTypeInfoStruct& rToolType = m_pTool->GetObjectInfo().m_ObjectTypeInfo;
+		const SvDef::SVObjectTypeInfoStruct& rToolType = m_pTool->GetObjectInfo().m_ObjectTypeInfo;
 		CWnd* pWnd;
 		// Set Result/Publish button...
 		switch( rToolType.SubType )
 		{
-			case SVLinearToolObjectType:
+			case SvDef::SVLinearToolObjectType:
 				if( pWnd = GetDlgItem( IDC_PUBLISH_BUTTON ) )
 				{
 					pWnd->EnableWindow( FALSE );
@@ -115,7 +115,7 @@ BOOL SVToolAdjustmentDialogAnalyzerPageClass::OnInitDialog()
 				}
 				break;
 
-		case SVWindowToolObjectType:  // fall through...
+		case SvDef::SVWindowToolObjectType:  // fall through...
 			default:
 				if( pWnd = GetDlgItem( IDC_RESULT_BUTTON ) )
 				{
@@ -151,7 +151,7 @@ BOOL SVToolAdjustmentDialogAnalyzerPageClass::OnInitDialog()
 		typedef SVSharedPtr<Command> CommandPtr;
 
 		SvUl::NameGuidList availableList;
-		CommandPtr commandPtr = new Command(m_TaskObjectID, SVObjectTypeInfoStruct(SVAnalyzerObjectType, SVNotSetSubObjectType));
+		CommandPtr commandPtr = new Command(m_TaskObjectID, SvDef::SVObjectTypeInfoStruct(SvDef::SVAnalyzerObjectType, SvDef::SVNotSetSubObjectType));
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
@@ -404,16 +404,16 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnResultButton()
 	if( m_pCurrentAnalyzer )
 	{
 		// Get Available Results...
-		SVClassInfoStructListClass	availableResults;
-		SVObjectTypeInfoStruct		resultTypeInfo;
-		resultTypeInfo.ObjectType = SVResultObjectType;
+		SVClassInfoStructVector	availableResults;
+		SvDef::SVObjectTypeInfoStruct		resultTypeInfo;
+		resultTypeInfo.ObjectType = SvDef::SVResultObjectType;
 		//@TODO[MZA][7.40][14.10.2016] The getAvailableObject method should be replaced by the SvCmd::GetAvailableObjects
 		m_pCurrentAnalyzer->getAvailableObjects(&availableResults, &resultTypeInfo);
 
 		// Get Dialog Title...
 		std::string Title = SvUl::LoadStdString( IDS_RESULT_ADJUSTMENT_DIALOG_TITLE );
 		// Get Complete Name up to the tool level...
-		Title = m_pCurrentAnalyzer->GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType ) + _T(" ") + Title;
+		Title = m_pCurrentAnalyzer->GetCompleteObjectNameToObjectType( nullptr, SvDef::SVToolSetObjectType ) + _T(" ") + Title;
 
 		SVIPDoc* l_pIPDoc = nullptr;
 

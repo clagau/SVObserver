@@ -15,7 +15,7 @@
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerInterface.h"
 #pragma endregion Includes
 
-HRESULT SVGigeLUTGetter::operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& rFeature, _variant_t& rValue) const
+HRESULT SVGigeLUTGetter::operator()(SVMatroxDigitizerPtr Digitizer, const SVGigeFeature& rFeature, _variant_t& rValue) const
 { 
 	HRESULT hr = S_OK;
 	if (rValue.vt & VT_ARRAY)

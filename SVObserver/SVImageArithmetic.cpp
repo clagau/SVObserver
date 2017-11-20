@@ -28,40 +28,40 @@ SVImageArithmeticClass::SVImageArithmeticClass( SVObjectClass* POwner, int Strin
 {
 
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVImageArithmeticObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVImageArithmeticObjectType;
 
 	// Identify our input type needs...
 
 	// Input A...
 	// Image
-	m_InputImageAInfo.SetInputObjectType( SVImageObjectType );
+	m_InputImageAInfo.SetInputObjectType( SvDef::SVImageObjectType );
 	m_InputImageAInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_InputImageAInfo, _T( "ImageArithmeticAImage" ) );
 	// Enable Offset
-	m_InputEnableOffsetAInfo.SetInputObjectType(SVEnableOffsetAObjectGuid, SVValueObjectType, SVBoolValueObjectType);
+	m_InputEnableOffsetAInfo.SetInputObjectType(SVEnableOffsetAObjectGuid, SvDef::SVValueObjectType, SvDef::SVBoolValueObjectType);
 	m_InputEnableOffsetAInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_InputEnableOffsetAInfo, _T( "ImageArithmeticAEnableOffset" ) );
 	// Offset Point
-	m_InputOffsetAPointInfo.SetInputObjectType(SVOffsetAPointObjectGuid, SVValueObjectType, SVPointValueObjectType);
+	m_InputOffsetAPointInfo.SetInputObjectType(SVOffsetAPointObjectGuid, SvDef::SVValueObjectType, SvDef::SVPointValueObjectType);
 	m_InputOffsetAPointInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_InputOffsetAPointInfo, _T( "ImageArithmeticAOffsetPoint" ) );
 
 	// Input B...
 	// Image
-	m_InputImageBInfo.SetInputObjectType( SVImageObjectType );
+	m_InputImageBInfo.SetInputObjectType( SvDef::SVImageObjectType );
 	m_InputImageBInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_InputImageBInfo, _T( "ImageArithmeticBImage" ) );
 	// Enable Offset
-	m_InputEnableOffsetBInfo.SetInputObjectType( SVEnableOffsetBObjectGuid, SVValueObjectType, SVBoolValueObjectType );
+	m_InputEnableOffsetBInfo.SetInputObjectType( SVEnableOffsetBObjectGuid, SvDef::SVValueObjectType, SvDef::SVBoolValueObjectType );
 	m_InputEnableOffsetBInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_InputEnableOffsetBInfo, _T( "ImageArithmeticBEnableOffset" ) );
 	// Offset Point
-	m_InputOffsetBPointInfo.SetInputObjectType( SVOffsetBPointObjectGuid, SVValueObjectType, SVPointValueObjectType );
+	m_InputOffsetBPointInfo.SetInputObjectType( SVOffsetBPointObjectGuid, SvDef::SVValueObjectType, SvDef::SVPointValueObjectType );
 	m_InputOffsetBPointInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_InputOffsetBPointInfo, _T( "ImageArithmeticBOffsetPoint" ) );
 
 	// Operator Input...
-	m_InputArithmaticOperatorInfo.SetInputObjectType( SVArithmeticOperatorObjectGuid, SVValueObjectType, SVLongValueObjectType );
+	m_InputArithmaticOperatorInfo.SetInputObjectType( SVArithmeticOperatorObjectGuid, SvDef::SVValueObjectType, SvDef::SVLongValueObjectType );
 	m_InputArithmaticOperatorInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_InputArithmaticOperatorInfo, _T( "ImageArithmeticOperator" ) );
 
@@ -74,7 +74,7 @@ SVImageArithmeticClass::SVImageArithmeticClass( SVObjectClass* POwner, int Strin
 	m_OutputImage.InitializeImage( SvDef::SVImageTypeEnum::SVImageTypePhysical );
 
 	// Set up draw objects...
-//	graphFigure.SetDrawPen( TRUE, PS_SOLID, 1, SV_DEFAULT_SUB_FUNCTION_COLOR_1 );
+//	graphFigure.SetDrawPen( TRUE, PS_SOLID, 1, SvDef::DefaultSubFunctionColor1 );
 
 	// Add Default Inputs and Outputs
 	addDefaultInputObjects();
@@ -280,7 +280,7 @@ bool SVImageArithmeticClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Message
 			return false;
 		}
 
-		SVPOINT offsetA;
+		SVPoint offsetA;
 		if( S_OK != pOffsetAPoint->GetValue( offsetA ) )
 		{
 			if (nullptr != pErrorMessages)
@@ -306,7 +306,7 @@ bool SVImageArithmeticClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Message
 			return false;
 		}
 
-		SVPOINT offsetB;
+		SVPoint offsetB;
 		if( S_OK != pOffsetBPoint->GetValue( offsetB ) )
 		{
 			if (nullptr != pErrorMessages)

@@ -84,7 +84,7 @@ public:
 
 	std::string GetName() const;
 	std::string GetCompleteName() const;
-	std::string GetCompleteObjectNameToObjectType( LPCTSTR lpszCompleteName = nullptr, SVObjectTypeEnum objectTypeToInclude = SVToolSetObjectType ) const;
+	std::string GetCompleteObjectNameToObjectType( LPCTSTR lpszCompleteName = nullptr, SvDef::SVObjectTypeEnum objectTypeToInclude = SvDef::SVToolSetObjectType ) const;
 
 	std::string GetOneBasedName() const;
 	std::string GetCompleteOneBasedObjectName() const;

@@ -16,7 +16,7 @@
 //Moved to precompiled header: #include <boost/config.hpp>
 //Moved to precompiled header: #include <boost/function.hpp>
 
-#include "SVGigeEnums.h"
+#include "Definitions/SVGigeEnums.h"
 #include "SVGigeParameterAccessor.h"
 #pragma endregion Includes
 
@@ -31,6 +31,6 @@ struct SVGigeDeviceParameterStruct
 	SVGigeDeviceParameterStruct& operator=(const SVGigeDeviceParameterStruct& rParam);
 };
 
-typedef std::map<SVGigeParameterEnum, SVGigeDeviceParameterStruct> SVGigeDeviceParameterMap;
+typedef std::map<SvDef::SVGigeParameterEnum, SVGigeDeviceParameterStruct> SVGigeDeviceParameterMap;
 
 

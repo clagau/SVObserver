@@ -14,7 +14,7 @@
 //Moved to precompiled header: #include <boost/assign/list_of.hpp>
 #include "BasicValueObjects.h"
 #include "SVObjectLibrary/SVObjectNameInfo.h"
-#include "SVObjectLibrary/GlobalConst.h"
+#include "Definitions/GlobalConst.h"
 #include "SVObjectLibrary/SVClsids.h"
 #pragma endregion Includes
 
@@ -26,20 +26,20 @@ static char THIS_FILE[] = __FILE__;
 
 const BasicValueObjects::DottedNameGuidMap BasicValueObjects::m_StaticUniqueIDMap = boost::assign::map_list_of<std::string, SVGUID>
 	// Dotted name,												static unique ID
-	( std::string( SvOl::FqnRoot ),									SVGUID( RootUidGuid ) )
-	( std::string( SvOl::FqnGlobal ),								SVGUID( GlobalUidGuid ) )
-	( std::string( SvOl::FqnEnvironment ),							SVGUID( EnvironmentUidGuid ) )
-	( std::string( SvOl::FqnEnvironmentModelNumber ),				SVGUID( EnvironmentModelNumberUidGuid ) )
-	( std::string( SvOl::FqnEnvironmentWinKey ),					SVGUID( EnvironmentWinKeyUidGuid ) )
-	( std::string( SvOl::FqnEnvironmentImageUpdate ),				SVGUID( EnvironmentImageUpdateUidGuid ) )
-	( std::string( SvOl::FqnEnvironmentResultUpdate ),				SVGUID( EnvironmentResultUpdateUidGuid ) )
-	( std::string( SvOl::FqnEnvironmentMode ),						SVGUID( EnvironmentModeUidGuid ) )
-	( std::string( SvOl::FqnEnvironmentModeIsRun ),					SVGUID( EnvironmentModeIsRunUidGuid ) )
-	( std::string( SvOl::FqnEnvironmentModeIsStop ),				SVGUID( EnvironmentModeIsStopUidGuid ) )
-	( std::string( SvOl::FqnEnvironmentModeIsRegressionTest ),		SVGUID( EnvironmentModeIsRegressionTestUidGuid ) )
-	( std::string( SvOl::FqnEnvironmentModeIsTest ),				SVGUID( EnvironmentModeIsTestUidGuid ) )
-	( std::string( SvOl::FqnEnvironmentModeIsEdit ),				SVGUID( EnvironmentModeIsEditUidGuid ) )
-	( std::string( SvOl::FqnEnvironmentModeValue ),					SVGUID( EnvironmentModeValueUidGuid ) )
+	( std::string( SvDef::FqnRoot ),									SVGUID( RootUidGuid ) )
+	( std::string( SvDef::FqnGlobal ),								SVGUID( GlobalUidGuid ) )
+	( std::string( SvDef::FqnEnvironment ),							SVGUID( EnvironmentUidGuid ) )
+	( std::string( SvDef::FqnEnvironmentModelNumber ),				SVGUID( EnvironmentModelNumberUidGuid ) )
+	( std::string( SvDef::FqnEnvironmentWinKey ),					SVGUID( EnvironmentWinKeyUidGuid ) )
+	( std::string( SvDef::FqnEnvironmentImageUpdate ),				SVGUID( EnvironmentImageUpdateUidGuid ) )
+	( std::string( SvDef::FqnEnvironmentResultUpdate ),				SVGUID( EnvironmentResultUpdateUidGuid ) )
+	( std::string( SvDef::FqnEnvironmentMode ),						SVGUID( EnvironmentModeUidGuid ) )
+	( std::string( SvDef::FqnEnvironmentModeIsRun ),					SVGUID( EnvironmentModeIsRunUidGuid ) )
+	( std::string( SvDef::FqnEnvironmentModeIsStop ),				SVGUID( EnvironmentModeIsStopUidGuid ) )
+	( std::string( SvDef::FqnEnvironmentModeIsRegressionTest ),		SVGUID( EnvironmentModeIsRegressionTestUidGuid ) )
+	( std::string( SvDef::FqnEnvironmentModeIsTest ),				SVGUID( EnvironmentModeIsTestUidGuid ) )
+	( std::string( SvDef::FqnEnvironmentModeIsEdit ),				SVGUID( EnvironmentModeIsEditUidGuid ) )
+	( std::string( SvDef::FqnEnvironmentModeValue ),					SVGUID( EnvironmentModeValueUidGuid ) )
 	;
 #pragma endregion Declarations
 

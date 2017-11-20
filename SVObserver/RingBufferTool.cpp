@@ -267,8 +267,8 @@ void RingBufferTool::LocalInitialize ()
 
 	// Set up your type... in this case this will reference that this tool is a 
 	// Resize Tool.
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SVRingBufferToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvDef::SVRingBufferToolObjectType;
 
 	m_ringBuffer.clear();
 }
@@ -276,7 +276,7 @@ void RingBufferTool::LocalInitialize ()
 void RingBufferTool::BuildInputObjectList ()
 {
 	// Source Image
-	m_InputImageObjectInfo.SetInputObjectType( SVImageObjectType );
+	m_InputImageObjectInfo.SetInputObjectType( SvDef::SVImageObjectType );
 	m_InputImageObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_InputImageObjectInfo, _T( "InputImage" ) );
 

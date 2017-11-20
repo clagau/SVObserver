@@ -22,11 +22,11 @@ SVPointXResultClass::SVPointXResultClass( SVObjectClass* POwner, int StringResou
 					:SVResultClass( POwner, StringResourceID )
 {
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVResultPointXObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVResultObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVResultPointXObjectType;
 
 	// Identify our input type needs
-	m_inputObjectInfo.SetInputObjectType(SVValueObjectType, SVPointValueObjectType );
+	m_inputObjectInfo.SetInputObjectType(SvDef::SVValueObjectType, SvDef::SVPointValueObjectType );
 	m_inputObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputObjectInfo, _T( "PointXResultValue" ) );
 
@@ -42,17 +42,17 @@ SVPointXResultClass::SVPointXResultClass( SVObjectClass* POwner, int StringResou
 
 	// Construct the SVRangeClass via the ClassInfoStruct
 	SVClassInfoStruct rangeClassInfo;
-	SVObjectTypeInfoStruct interfaceInfo;
+	SvDef::SVObjectTypeInfoStruct interfaceInfo;
 
 	// Declare Input Interface of the SVRangeClass...
-	interfaceInfo.ObjectType = SVValueObjectType;
-	interfaceInfo.SubType = SVLongValueObjectType;
+	interfaceInfo.ObjectType = SvDef::SVValueObjectType;
+	interfaceInfo.SubType = SvDef::SVLongValueObjectType;
 	interfaceInfo.EmbeddedID = SVXObjectGuid;
-	rangeClassInfo.m_DesiredInputInterface.Add( interfaceInfo );
+	rangeClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
 
 	// Describe the SVRangeClass ...
-	rangeClassInfo.m_ObjectTypeInfo.ObjectType = SVRangeObjectType;
-	rangeClassInfo.m_ObjectTypeInfo.SubType	= SVNotSetSubObjectType;
+	rangeClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVRangeObjectType;
+	rangeClassInfo.m_ObjectTypeInfo.SubType	= SvDef::SVNotSetSubObjectType;
 	rangeClassInfo.m_ClassId = SVRangeClassGuid;
 	rangeClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_SVRANGE );
 
@@ -99,7 +99,7 @@ bool SVPointXResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 
 		if( nullptr != pValueObject )
 		{
-			SVPOINT Value;
+			SVPoint Value;
 			pValueObject->GetValue(Value);
 			m_X.SetValue(Value.x());
 			return true;

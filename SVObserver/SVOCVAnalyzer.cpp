@@ -17,7 +17,7 @@
 #include "SVInspectionProcess.h"
 #include "SVToolSet.h"
 #include "SVOCore/SVTool.h"
-#include "SVOLicenseManager/SVOLicenseManager.h"
+#include "SVOLicenseManager.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -48,8 +48,8 @@ SVOCVAnalyzerClass::SVOCVAnalyzerClass( SVObjectClass* POwner, int StringResourc
 ////////////////////////////////////////////////////////////////////////////////
 void SVOCVAnalyzerClass::init()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVOCVAnalyzerObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVAnalyzerObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVOCVAnalyzerObjectType;
 
 	SVOCVAnalyzeResultClass* pAnalyzerResult = new SVOCVAnalyzeResultClass( this );
 
@@ -154,6 +154,6 @@ void SVOCVAnalyzerClass::DisplayAnalyzerResult()
 	SVOCVAnalyzeResultClass* pOCVResult = ( SVOCVAnalyzeResultClass* ) GetResultObject();
 
 	SVAnalyzerResultDlg dlg;
-	dlg.psvocvResultArray = &pOCVResult->arrayOCVCharacterResults;
+	dlg.m_pOcvCharaterResults = &pOCVResult->m_OCVCharacterResults;
 	dlg.DoModal();
 }

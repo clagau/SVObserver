@@ -72,7 +72,7 @@ void SVLightReferenceDialogPropertySheetClass::OnClose()
 
 
 
-bool SVLightReferenceDialogPropertySheetClass::CreatePages( SVVirtualCameraPtrSet& setCameras, SVLightReferencePtrVector& apLRA)
+bool SVLightReferenceDialogPropertySheetClass::CreatePages( SVVirtualCameraPtrSet& setCameras, SVLightReferencePtrVector& rLRA)
 {
 	miNumPages=0;
 	int i;
@@ -84,7 +84,7 @@ bool SVLightReferenceDialogPropertySheetClass::CreatePages( SVVirtualCameraPtrSe
 		//If pointer is nullptr then do next camera
 		if( nullptr == pCamera ){ continue; }
 		SVAcquisitionClassPtr pDevice = pCamera->GetAcquisitionDevice();
-		SVLightReference* pLR = apLRA.GetAt(i);
+		SVLightReference* pLR = rLRA[i];
 		int iNumBands=pLR->NumBands();
 		int iBandSize = 1;
 		int iCamBand = 0;

@@ -11,7 +11,7 @@
 #pragma once
 
 #pragma region Includes
-#include "DrawObject.h"
+#include "SVLibrary/DrawObject.h"
 #include "SVPictureDisplayidl.h"
 #pragma endregion Includes
 

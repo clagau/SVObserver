@@ -40,8 +40,8 @@ SVLUTOperatorClass::SVLUTOperatorClass( SVObjectClass* POwner, int StringResourc
 void SVLUTOperatorClass::init()
 {
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVUnaryImageOperatorObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVLUTOperatorObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVUnaryImageOperatorObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVLUTOperatorObjectType;
 
 	// Register Embedded Object(s)
 	RegisterEmbeddedObject( &m_lutVector, SVOutputLUTVectorObjectGuid, IDS_OBJECTNAME_LUTVECTOR, false, SvOi::SVResetItemNone );
@@ -90,7 +90,7 @@ void SVLUTOperatorClass::init()
 	// Identify our input type needs...
 
 	// input of lut equation...
-	m_inputLUTVectorResult.SetInputObjectType(SVLUTEquationResultObjectGuid, SVValueObjectType, SVByteValueObjectType);
+	m_inputLUTVectorResult.SetInputObjectType(SVLUTEquationResultObjectGuid, SvDef::SVValueObjectType, SvDef::SVByteValueObjectType);
 	m_inputLUTVectorResult.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputLUTVectorResult, _T( "LUTOperator" ) );
 

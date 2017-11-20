@@ -111,7 +111,7 @@ const SVExternalToolTaskData& SVExternalToolTaskData::operator = (const SVExtern
 SVExternalToolTask::SVExternalToolTask( SVObjectClass* POwner, int StringResourceID )
 				 :SVTaskObjectListClass(POwner, StringResourceID ), ISVCancel() 
 {
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVExternalToolTaskObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVExternalToolTaskObjectType;
 
 	size_t i;
 
@@ -127,7 +127,7 @@ SVExternalToolTask::SVExternalToolTask( SVObjectClass* POwner, int StringResourc
 
 		// this object will be filled in SVTaskObject::ConnectAllInputs
 		// we supply the base object type (Image) and ConnectAllInputs finds the nearest match (Toolset main image)
-		m_Data.m_aInputImageInfo[i].SetInputObjectType( SVImageObjectType );
+		m_Data.m_aInputImageInfo[i].SetInputObjectType( SvDef::SVImageObjectType );
 		m_Data.m_aInputImageInfo[i].SetObject( GetObjectInfo() );
 		RegisterInputObject( &m_Data.m_aInputImageInfo[i], l_Name );
 	}
@@ -186,7 +186,7 @@ SVExternalToolTask::SVExternalToolTask( SVObjectClass* POwner, int StringResourc
 		}
 
 		imageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, 8 );
-		imageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SVImageFormatMono8 ); 
+		imageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatMono8 ); 
 
 		imageInfo.SetExtentProperty( SVExtentPropertyOutputPositionPoint, 0 );
 		imageInfo.SetExtentProperty( SVExtentPropertyWidth, 100 );
@@ -626,7 +626,7 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 					imageInfo.SetOwner( GetTool()->GetUniqueObjectID() );
 				}
 				imageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, 8 );
-				imageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SVImageFormatMono8 ); 
+				imageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatMono8 ); 
 
 				imageInfo.SetExtentProperty( SVExtentPropertyOutputPositionPoint, 0 );
 				imageInfo.SetExtentProperty( SVExtentPropertyWidth, 100 );
@@ -1250,7 +1250,7 @@ HRESULT SVExternalToolTask::SetCancelData(SVCancelData* pCancelData)
 			SVObjectManagerClass::Instance().ConnectObjectInput(pImageInfo->GetInputObjectInfo().m_UniqueObjectID, pImageInfo);
 		}
 
-		SVToolClass* pTool = dynamic_cast <SVToolClass*> (GetAncestor( SVToolObjectType ));
+		SVToolClass* pTool = dynamic_cast <SVToolClass*> (GetAncestor( SvDef::SVToolObjectType ));
 		// Reset all objects again...
 		if (nullptr != pTool)
 		{
@@ -1339,8 +1339,8 @@ HRESULT SVExternalToolTask::GetImageInfo(const SVImageDefinitionStruct* pDefinit
 
 	switch (pDefinitionStruct->eImageFormat)
 	{
-		case SVImageFormatRGB888:
-		case SVImageFormatRGB8888:
+		case SvDef::SVImageFormatRGB888:
+		case SvDef::SVImageFormatRGB8888:
 			rInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 3 ); 
 			break;
 		default:
@@ -1354,7 +1354,7 @@ HRESULT SVExternalToolTask::GetImageInfo(const SVImageDefinitionStruct* pDefinit
 HRESULT SVExternalToolTask::GetImageDefinitionStruct( SVImageDefinitionStruct& rImageDef, const SVImageInfoClass& rInfo)
 {
 	long l_lBandNumber = 1;
-	long l_lFormat = SVImageFormatUnknown;
+	long l_lFormat = SvDef::SVImageFormatUnknown;
 
 	rInfo.GetExtentProperty( SVExtentPropertyWidth, rImageDef.lWidth );
 	rInfo.GetExtentProperty( SVExtentPropertyHeight, rImageDef.lHeight );
@@ -1362,15 +1362,15 @@ HRESULT SVExternalToolTask::GetImageDefinitionStruct( SVImageDefinitionStruct& r
 	rInfo.GetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, l_lFormat ); 
 	rInfo.GetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, l_lBandNumber ); 
 
-	if( ( rImageDef.eImageFormat == SVImageFormatRGB888 ||
-		rImageDef.eImageFormat == SVImageFormatRGB8888 ) &&
+	if( ( rImageDef.eImageFormat == SvDef::SVImageFormatRGB888 ||
+		rImageDef.eImageFormat == SvDef::SVImageFormatRGB8888 ) &&
 		l_lBandNumber == 1 )
 	{
-		rImageDef.eImageFormat = SVImageFormatMono8;
+		rImageDef.eImageFormat = SvDef::SVImageFormatMono8;
 	}
 	else
 	{
-		rImageDef.eImageFormat = (SVImageFormatEnum)l_lFormat;
+		rImageDef.eImageFormat = (SvDef::SVImageFormatEnum)l_lFormat;
 	}
 
 	return S_OK;
@@ -1380,7 +1380,7 @@ HRESULT SVExternalToolTask::AllocateResult (int iIndex)
 {
 	SVClassInfoStruct       resultClassInfo;
 	CString                 strTitle;
-	SVObjectTypeInfoStruct  interfaceInfo;
+	SvDef::SVObjectTypeInfoStruct  interfaceInfo;
 	
 	SVVariantResultClass*    pResult;
 	
@@ -1392,10 +1392,10 @@ HRESULT SVExternalToolTask::AllocateResult (int iIndex)
 		
 		// Declare Input Interface of Result...
 		interfaceInfo.EmbeddedID = m_Data.m_aResultObjects[iIndex].GetEmbeddedID();
-		resultClassInfo.m_DesiredInputInterface.Add( interfaceInfo );
+		resultClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
 		
-		resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
-		resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultVariantObjectType;
+		resultClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVResultObjectType;
+		resultClassInfo.m_ObjectTypeInfo.SubType	= SvDef::SVResultVariantObjectType;
 		resultClassInfo.m_ClassId = SVVariantResultClassGuid;
 		resultClassInfo.m_ClassName = _T("Range");
 		strTitle = m_Data.m_aResultObjects [iIndex].GetName(); 
@@ -1411,9 +1411,9 @@ HRESULT SVExternalToolTask::AllocateResult (int iIndex)
 		
 		Add( pResult );
 		
-		SVObjectTypeInfoStruct info;
-		info.ObjectType = SVValueObjectType;
-		info.SubType = SVVariantValueObjectType;
+		SvDef::SVObjectTypeInfoStruct info;
+		info.ObjectType = SvDef::SVValueObjectType;
+		info.SubType = SvDef::SVVariantValueObjectType;
 		info.EmbeddedID = SVValueObjectGuid;
 		
 		SVVariantValueObjectClass* pValue = dynamic_cast<SVVariantValueObjectClass*>(pResult->getFirstObject(info));
@@ -1471,7 +1471,7 @@ SVResultClass* SVExternalToolTask::GetResultRangeObject(int iIndex)
 	
 	SVInObjectInfoStruct*	pResultInputInfo;
 	
-	SVObjectTypeInfoStruct  info;
+	SvDef::SVObjectTypeInfoStruct  info;
 	SVVariantResultClass*   pResult = nullptr;
 	SVObjectClass*          pSVObject;
 	
@@ -1479,8 +1479,8 @@ SVResultClass* SVExternalToolTask::GetResultRangeObject(int iIndex)
 	
 	lDone = FALSE;
 	
-	info.ObjectType = SVResultObjectType;
-	info.SubType = SVResultVariantObjectType;
+	info.ObjectType = SvDef::SVResultObjectType;
+	info.SubType = SvDef::SVResultVariantObjectType;
 	
 	SVGetObjectDequeByTypeVisitor l_Visitor( info );
 
@@ -1494,7 +1494,7 @@ SVResultClass* SVExternalToolTask::GetResultRangeObject(int iIndex)
 
 		pResult->GetPrivateInputList( resultInputList );
 		
-		pResultInputInfo = resultInputList.GetAt( 0 );
+		pResultInputInfo = resultInputList[0];
 		
 		pSVObject = pResultInputInfo->GetInputObjectInfo().m_pObject;
 		
@@ -1515,11 +1515,11 @@ std::vector<SVResultClass*> SVExternalToolTask::GetResultRangeObjects()
 {
 	std::vector<SVResultClass*> aObjects;
 	
-	SVObjectTypeInfoStruct  info;
+	SvDef::SVObjectTypeInfoStruct  info;
 	SVVariantResultClass*   pResult;
 	
-	info.ObjectType = SVResultObjectType;
-	info.SubType = SVResultVariantObjectType;
+	info.ObjectType = SvDef::SVResultObjectType;
+	info.SubType = SvDef::SVResultVariantObjectType;
 	
 	SVGetObjectDequeByTypeVisitor l_Visitor( info );
 
@@ -1695,8 +1695,8 @@ bool SVExternalToolTask::DisconnectObjectInput( SVInObjectInfoStruct* pObjectInI
 					// replace with tool set image
 					SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*> (GetInspection());
 					SVToolSetClass* pToolSet = (nullptr != pInspection) ? pInspection->GetToolSet() : nullptr;
-					SVObjectTypeInfoStruct imageObjectInfo;
-					imageObjectInfo.ObjectType = SVImageObjectType;
+					SvDef::SVObjectTypeInfoStruct imageObjectInfo;
+					imageObjectInfo.ObjectType = SvDef::SVImageObjectType;
 					SVImageClass* pToolSetImage = (nullptr != pToolSet) ? dynamic_cast <SVImageClass*> (pToolSet->getFirstObject(imageObjectInfo)) : nullptr;
 
 					rInfo.SetInputObject( pToolSetImage );

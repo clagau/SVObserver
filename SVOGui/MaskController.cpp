@@ -31,7 +31,7 @@ namespace SvOg
 		typedef SvCmd::GetInstanceIDByTypeInfo Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 	
-		SVObjectTypeInfoStruct info(SVUnaryImageOperatorObjectType, SVUserMaskOperatorObjectType);
+		SvDef::SVObjectTypeInfoStruct info(SvDef::SVUnaryImageOperatorObjectType, SvDef::SVUserMaskOperatorObjectType);
 	
 		CommandPtr commandPtr = CommandPtr(new Command(m_TaskObjectID, info));
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);

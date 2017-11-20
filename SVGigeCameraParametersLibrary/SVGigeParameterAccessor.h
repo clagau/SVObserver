@@ -14,13 +14,13 @@
 //Moved to precompiled header: #include <boost/config.hpp>
 //Moved to precompiled header: #include <boost/function.hpp>
 #include "SVGigeFeature.h"
-#include "SVMatroxDigitizerLibrary/SVMatroxDigitizerRef.h"
+#include "SVMatroxDigitizerLibrary/SVMatroxDigitizer.h"
 #pragma endregion Includes
 
 struct SVGigeParameterAccessor
 {
-	typedef boost::function<HRESULT(SVMatroxDigitizerRef, const SVGigeFeature& rFeature, _variant_t&)> ParamGetter;
-	typedef boost::function<HRESULT(SVMatroxDigitizerRef, const SVGigeFeature& rFeature, const _variant_t&)> ParamSetter;
+	typedef boost::function<HRESULT(SVMatroxDigitizerPtr, const SVGigeFeature& rFeature, _variant_t&)> ParamGetter;
+	typedef boost::function<HRESULT(SVMatroxDigitizerPtr, const SVGigeFeature& rFeature, const _variant_t&)> ParamSetter;
 
 	ParamGetter GetParam;
 	ParamSetter SetParam;
@@ -37,7 +37,7 @@ struct SVGigeParameterAccessor
 	SVGigeParameterAccessor& operator=(const SVGigeParameterAccessor& rAccessor);
 
 	// default Getter/Setter
-	static HRESULT GetFeature(SVMatroxDigitizerRef digitizer, const SVGigeFeature& feature, _variant_t& value);
-	static HRESULT SetFeature(SVMatroxDigitizerRef digitizer, const SVGigeFeature& feature, const _variant_t& value);
+	static HRESULT GetFeature(SVMatroxDigitizerPtr digitizer, const SVGigeFeature& feature, _variant_t& value);
+	static HRESULT SetFeature(SVMatroxDigitizerPtr digitizer, const SVGigeFeature& feature, const _variant_t& value);
 };
 

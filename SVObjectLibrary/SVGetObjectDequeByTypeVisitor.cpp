@@ -11,7 +11,7 @@
 
 #include "stdafx.h"
 #include "SVGetObjectDequeByTypeVisitor.h"
-#include "SVObjectLibrary/SVObjectClass.h"
+#include "SVObjectClass.h"
 
 #pragma region Declarations
 #ifdef _DEBUG
@@ -20,7 +20,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SVGetObjectDequeByTypeVisitor::SVGetObjectDequeByTypeVisitor( const SVObjectTypeInfoStruct& p_rObjectInfo )
+SVGetObjectDequeByTypeVisitor::SVGetObjectDequeByTypeVisitor( const SvDef::SVObjectTypeInfoStruct& p_rObjectInfo )
 : m_ObjectInfo( p_rObjectInfo ), m_Objects()
 {
 }
@@ -35,13 +35,13 @@ HRESULT SVGetObjectDequeByTypeVisitor::VisitElement( SVObjectClass& p_rElement )
 
 	// Find best match....EmbeddedID, Type, SubType...
 	if( ( SV_GUID_NULL          == m_ObjectInfo.EmbeddedID || m_ObjectInfo.EmbeddedID == p_rElement.GetEmbeddedID() ) &&
-		( SVNotSetObjectType    == m_ObjectInfo.ObjectType || m_ObjectInfo.ObjectType == p_rElement.GetObjectType() ) &&
-		( SVNotSetSubObjectType == m_ObjectInfo.SubType    || m_ObjectInfo.SubType    == p_rElement.GetObjectSubType() )
+		( SvDef::SVNotSetObjectType    == m_ObjectInfo.ObjectType || m_ObjectInfo.ObjectType == p_rElement.GetObjectType() ) &&
+		( SvDef::SVNotSetSubObjectType == m_ObjectInfo.SubType    || m_ObjectInfo.SubType    == p_rElement.GetObjectSubType() )
 	  )
 	{
 		if( SV_GUID_NULL          != m_ObjectInfo.EmbeddedID ||
-			SVNotSetObjectType    != m_ObjectInfo.ObjectType ||
-			SVNotSetSubObjectType != m_ObjectInfo.SubType 
+			SvDef::SVNotSetObjectType    != m_ObjectInfo.ObjectType ||
+			SvDef::SVNotSetSubObjectType != m_ObjectInfo.SubType 
 		  )
 		{
 			m_Objects.push_back( &p_rElement );

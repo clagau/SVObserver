@@ -41,7 +41,7 @@ bool SVOPPQList::AddPPQToList(LPCTSTR PPQName)
 	{
 		SVOPPQObjPtr pPPQObj = new SVOPPQObj();
 		pPPQObj->SetPPQName( PPQName );
-		m_PPQList.AddTail(pPPQObj);
+		m_PPQList.insert(m_PPQList.end(), pPPQObj);
 		bRet = true;
 	}
 
@@ -51,12 +51,12 @@ bool SVOPPQList::AddPPQToList(LPCTSTR PPQName)
 bool SVOPPQList::RemovePPQFromList(LPCTSTR PPQName)
 {
 	bool bRet = false;
-	iterator pos = FindPPQPosition( PPQName );
+	iterator Iter = FindPPQPosition( PPQName );
 
-	if (pos != m_PPQList.end())
+	if (Iter != m_PPQList.end())
 	{
 		bRet = true;
-		m_PPQList.RemoveAt(pos);
+		m_PPQList.erase(Iter);
 	}
 
 	return bRet;
@@ -103,12 +103,12 @@ void SVOPPQList::AttachTriggerToPPQ(LPCTSTR PPQName, LPCTSTR Trigger)
 
 bool SVOPPQList::IsPPQInList(LPCTSTR PPQName) const
 {
-	const_iterator pos( m_PPQList.begin() );
+	const_iterator Iter( m_PPQList.begin() );
 	bool bFound = false;
 
-	while( pos != m_PPQList.end() && (!bFound) )
+	while( Iter != m_PPQList.end() && (!bFound) )
 	{
-		const SVOPPQObjPtr pPPQObj = m_PPQList.GetAt(pos);
+		const SVOPPQObjPtr pPPQObj = *Iter;
 
 		if( nullptr != pPPQObj && PPQName == pPPQObj->GetPPQName() )
 		{
@@ -116,7 +116,7 @@ bool SVOPPQList::IsPPQInList(LPCTSTR PPQName) const
 		}
 		else
 		{
-			++pos;
+			++Iter;
 		}
 	}
 
@@ -126,12 +126,12 @@ bool SVOPPQList::IsPPQInList(LPCTSTR PPQName) const
 
 SVOPPQList::iterator SVOPPQList::FindPPQPosition(LPCTSTR PPQName)
 {
-	iterator pos( m_PPQList.begin() );
+	iterator Iter( m_PPQList.begin() );
 	bool Found = false;
 
-	while( pos != m_PPQList.end() && (!Found) )
+	while( Iter != m_PPQList.end() && (!Found) )
 	{
-		SVOPPQObjPtr pPPQObj = m_PPQList.GetAt(pos);
+		SVOPPQObjPtr pPPQObj = *Iter;
 
 		if( nullptr != pPPQObj && PPQName == pPPQObj->GetPPQName() )
 		{
@@ -139,22 +139,22 @@ SVOPPQList::iterator SVOPPQList::FindPPQPosition(LPCTSTR PPQName)
 		}
 		else
 		{
-			++pos;
+			++Iter;
 		}
 	}
 
-	return pos;
+	return Iter;
 }
 
 SVOPPQObjPtr SVOPPQList::GetPPQObjectByName(LPCTSTR PPQName)
 {
 	SVOPPQObjPtr pReturnObj( nullptr );
 
-	iterator pos = FindPPQPosition( PPQName );
+	iterator Iter = FindPPQPosition( PPQName );
 
-	if (pos != m_PPQList.end())
+	if (Iter != m_PPQList.end())
 	{
-		pReturnObj =  m_PPQList.GetAt(pos);
+		pReturnObj = *Iter;
 	}
 	return pReturnObj;
 }
@@ -163,35 +163,37 @@ SVOPPQObjPtr SVOPPQList::GetPPQObjectByPosition(int iPos)
 {
 	SVOPPQObjPtr pResult( nullptr );
 
-	iterator pos = m_PPQList.FindIndex(iPos);
-
-	if (pos != m_PPQList.end())
+	if (0 <= iPos && iPos < static_cast<int>(m_PPQList.size()))
 	{
-		pResult =  m_PPQList.GetAt(pos);
+		iterator Iter(m_PPQList.begin());
+		std::advance(Iter, iPos);
+		pResult = *Iter;
 	}
+
 	return pResult;
 }
 
 const SVOPPQObjPtr SVOPPQList::GetPPQObjectByPosition(int iPos) const
 {
-	SVOPPQObjPtr pResult( nullptr );
+	SVOPPQObjPtr pResult(nullptr);
 
-	const_iterator pos = m_PPQList.FindIndex(iPos);
-
-	if (pos != m_PPQList.end())
+	if (0 <= iPos && iPos < static_cast<int>(m_PPQList.size()))
 	{
-		pResult =  m_PPQList.GetAt(pos);
+		const_iterator Iter(m_PPQList.begin());
+		std::advance(Iter, iPos);
+		pResult = *Iter;
 	}
+
 	return pResult;
 }
 
 int SVOPPQList::GetPPQListCount() const
 {
-	return static_cast<int>(m_PPQList.GetCount());
+	return static_cast<int>(m_PPQList.size());
 }
 
 void SVOPPQList::ResetContent()
 {
-	m_PPQList.RemoveAll();
+	m_PPQList.clear();
 }
 

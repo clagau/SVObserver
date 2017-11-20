@@ -165,7 +165,7 @@ bool TableCopyObject::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContain
 void TableCopyObject::Initialize()
 {
 	// Set up your type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = TableObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType    = TableCopyObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::TableObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvDef::TableCopyObjectType;
 }
 #pragma endregion Private Methods

@@ -12,8 +12,6 @@
 #include "Definitions/ObjectDefines.h"
 #include "ObjectInterfaces/IObjectClass.h"
 #include "SVUtilityLibrary/SVGUID.h"
-
-#include "SVObjectLibrary/SVObjectLibrary.h"
 #pragma endregion Includes
 
 namespace SvCmd

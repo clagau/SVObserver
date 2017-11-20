@@ -12,12 +12,11 @@
 #pragma once
 
 #pragma region Includes
-#include "SVContainerLibrary/SVList.h"
 #include "SVContainerLibrary/SVRingBuffer.h"
-#include "SVRunControlLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/SVRunStatus.h"
 #include "SVSystemLibrary/SVCriticalSection.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
-#include "SVLibrary/SVFileNameClass.h"
+#include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "SVDisplayObject.h"
 #include "SVPublishList.h"
 #include "SVVirtualCamera.h"
@@ -350,6 +349,13 @@ private:
 	/// Save Regression Test variables.
 	/// \param rWriter [in,out]
 	void SaveRegressionTestVariables(SVObjectWriter& rWriter);
+
+	//! Translates the selected objects to a set of object names for the result picker
+	//! \param rSelectedObjects [in] const reference to the selected objects
+	//! \param rInspectionName [in] the inspection name
+	//! \returns the selected string set of object names
+	SvDef::StringSet TranslateSelectedObjects(const SVObjectReferenceVector& rSelectedObjects, const std::string& rInspectionName) const;
+
 #pragma endregion Private Methods
 
 	RegressionRunModeEnum m_regtestRunMode;

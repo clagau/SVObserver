@@ -13,7 +13,7 @@
 #include "SVGigeEmptyGetter.h"
 #pragma endregion Includes
 
-HRESULT SVGigeEmptyGetter::operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& rFeature, _variant_t& rValue) const
+HRESULT SVGigeEmptyGetter::operator()(SVMatroxDigitizerPtr Digitizer, const SVGigeFeature& rFeature, _variant_t& rValue) const
 {
 	return S_OK;
 }

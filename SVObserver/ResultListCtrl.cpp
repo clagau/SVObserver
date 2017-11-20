@@ -135,7 +135,7 @@ void ResultListCtrl::updateList(class SVIPDoc* pDoc)
 			{
 				Name = l_pObject->GetName();
 			}
-			NameToType = l_pObject->GetCompleteObjectNameToObjectType( nullptr, SVToolObjectType );
+			NameToType = l_pObject->GetCompleteObjectNameToObjectType( nullptr, SvDef::SVToolObjectType );
 		}
 
 		ItemIndex = SvUl::Format( _T( "%d" ), i );

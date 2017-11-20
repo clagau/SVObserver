@@ -13,7 +13,7 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
-#include "drawobject.h"
+#include "SVLibrary/DrawObject.h"
 #pragma endregion Includes
 
 class TextObject : public DrawObject

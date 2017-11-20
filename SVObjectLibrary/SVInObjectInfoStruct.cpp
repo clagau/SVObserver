@@ -55,17 +55,17 @@ bool SVInObjectInfoStruct::IsConnected() const
 {
 	return m_IsConnected;
 }
-void SVInObjectInfoStruct::SetInputObjectType(SVObjectTypeEnum p_ObjectType, SVObjectSubTypeEnum p_SubType)
+void SVInObjectInfoStruct::SetInputObjectType(SvDef::SVObjectTypeEnum p_ObjectType, SvDef::SVObjectSubTypeEnum p_SubType)
 {
-	SetInputObjectType( SVObjectTypeInfoStruct( p_ObjectType, p_SubType ) );
+	SetInputObjectType( SvDef::SVObjectTypeInfoStruct( p_ObjectType, p_SubType ) );
 }
 
-void SVInObjectInfoStruct::SetInputObjectType( const SVGUID& p_rEmbeddedID, SVObjectTypeEnum p_ObjectType, SVObjectSubTypeEnum p_SubType )
+void SVInObjectInfoStruct::SetInputObjectType( const SVGUID& p_rEmbeddedID, SvDef::SVObjectTypeEnum p_ObjectType, SvDef::SVObjectSubTypeEnum p_SubType )
 {
-	SetInputObjectType( SVObjectTypeInfoStruct( p_rEmbeddedID, p_ObjectType, p_SubType ) );
+	SetInputObjectType( SvDef::SVObjectTypeInfoStruct( p_rEmbeddedID, p_ObjectType, p_SubType ) );
 }
 
-void SVInObjectInfoStruct::SetInputObjectType( const SVObjectTypeInfoStruct& p_rTypeInfo )
+void SVInObjectInfoStruct::SetInputObjectType( const SvDef::SVObjectTypeInfoStruct& p_rTypeInfo )
 {
 	m_IsConnected = false;
 	m_InputObjectInfo.SetObject( p_rTypeInfo );

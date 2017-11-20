@@ -10,8 +10,16 @@
 #pragma region Includes
 
 #include "SVUtilityLibrary\SVSharedPtr.h"
-#include "SVStatusLibrary\MessageContainer.h"
 #pragma endregion Includes
+
+#pragma region Declarations
+//! Declaration is in SVStatusLibrary\MessageContainer.h
+namespace SvStl
+{
+	class MessageContainer;
+	typedef std::vector<MessageContainer> MessageContainerVector;
+}
+#pragma endregion Declarations
 
 namespace SvOi
 {

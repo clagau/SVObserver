@@ -41,7 +41,7 @@ namespace SvOl
 	//! \param nameToObjectType [in] Object type to define the dotted name start
 	//! \param ToolDependency [in] The tool dependency types to get
 	//! \param rFileName [in] Optional file name to save the graph file 
-	void getToolDependency( SvOi::StringPairInserter Inserter, const SVGuidSet& rSourceSet, SVObjectTypeEnum nameToObjectType, SvOi::ToolDependencyEnum ToolDependency = SvOi::ToolDependencyEnum::Client, const std::string& rFileName = std::string()) const;
+	void getToolDependency( SvOi::StringPairInserter Inserter, const SVGuidSet& rSourceSet, SvDef::SVObjectTypeEnum nameToObjectType, SvOi::ToolDependencyEnum ToolDependency = SvOi::ToolDependencyEnum::Client, const std::string& rFileName = std::string()) const;
 
 	#pragma endregion Public Methods
 
@@ -60,10 +60,10 @@ namespace SvOl
 			SVObjectClass* pRhs = SVObjectManagerClass::Instance().GetObject(GuidRhs);
 			if (nullptr != pLhs && nullptr != pRhs)
 			{
-				bool isSupplier = pLhs->GetObjectType() == SVToolObjectType;
-				SvOi::ITool* pToolLhs = dynamic_cast<SvOi::ITool*> (isSupplier ? pLhs : pLhs->GetAncestor(SVToolObjectType));
-				isSupplier = pRhs->GetObjectType() == SVToolObjectType;
-				SvOi::ITool* pToolRhs = dynamic_cast<SvOi::ITool*> (isSupplier ? pRhs : pRhs->GetAncestor(SVToolObjectType));
+				bool isSupplier = pLhs->GetObjectType() == SvDef::SVToolObjectType;
+				SvOi::ITool* pToolLhs = dynamic_cast<SvOi::ITool*> (isSupplier ? pLhs : pLhs->GetAncestor(SvDef::SVToolObjectType));
+				isSupplier = pRhs->GetObjectType() == SvDef::SVToolObjectType;
+				SvOi::ITool* pToolRhs = dynamic_cast<SvOi::ITool*> (isSupplier ? pRhs : pRhs->GetAncestor(SvDef::SVToolObjectType));
 				if (nullptr != pToolLhs && nullptr != pToolRhs)
 				{
 					long LhsPosition = pToolLhs->getToolPosition();

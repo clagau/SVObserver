@@ -15,7 +15,7 @@
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <map>
 #include "SVPictureDisplayIdl.h"
-#include "DrawObject.h" // for ParamMap typedefs
+#include "SVLibrary/DrawObject.h" // for ParamMap typedefs
 #pragma endregion Includes
 
 #pragma region Declarations

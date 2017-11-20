@@ -37,12 +37,12 @@ struct SVOverlayFigureStruct
 
 		oFigureColor = p_ExtentLineStruct.m_dwColor;
 
-		lFigureSize = static_cast< long >( p_ExtentLineStruct.m_svPointArray.GetSize() );
+		lFigureSize = static_cast<long> (p_ExtentLineStruct.m_svPointArray.size());
 
 		pFigurePoints = new POINT[lFigureSize];
 		for ( int i = 0; i < lFigureSize; i++ )
 		{
-			SVExtentPointStruct svExtentPtStruct = p_ExtentLineStruct.m_svPointArray.GetAt(i);
+			SVExtentPointStruct svExtentPtStruct = p_ExtentLineStruct.m_svPointArray[i];
 			pFigurePoints[i] = svExtentPtStruct.operator POINT();
 		}
 		
@@ -115,13 +115,13 @@ struct SVOverlayStruct
 		m_TextPoint = p_rStruct.m_StringPoint.operator POINT();
 		m_Text = p_rStruct.m_csString;
 		
-		lFigureSize = static_cast< long >( p_rStruct.m_svLineArray.GetSize() );
+		lFigureSize = static_cast<long> (p_rStruct.m_svLineArray.size());
 
 		pOverlays = new SVOverlayFigureStruct[lFigureSize];
 
 		for ( int i = 0; i < lFigureSize; i++ )
 		{
-			pOverlays[i] = p_rStruct.m_svLineArray.GetAt(i);
+			pOverlays[i] = p_rStruct.m_svLineArray[i];
 			pOverlays[i].oFigureColor = p_rStruct.m_Color;
 		}
 

@@ -45,8 +45,8 @@ SVDigitalInputObject::~SVDigitalInputObject()
 
 bool SVDigitalInputObject::Create()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVIoObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVDigitalInputObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVIoObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVDigitalInputObjectType;
 
 	m_isCreated = true;
 
@@ -149,6 +149,6 @@ void SVDigitalInputObject::updateGuid(int position)
 void SVDigitalInputObject::LocalInitialize()
 {
 	m_isCreated = false;
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVIoObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVDigitalInputObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVIoObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVDigitalInputObjectType;
 }

@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVSaveToolSetImageDialog.h"
-#include "SVLibrary/SVFileNameClass.h"
+#include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "TextDefinesSvOg.h"
@@ -30,7 +30,7 @@ namespace SvOg
 {
 	SVSaveToolSetImageDialogClass::SVSaveToolSetImageDialogClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, CWnd* pParent /*=nullptr*/)
 	: CDialog(SVSaveToolSetImageDialogClass::IDD, pParent)
-	, m_ImageController(rInspectionID, rTaskObjectID, SVNotSetSubObjectType, true)
+	, m_ImageController(rInspectionID, rTaskObjectID, SvDef::SVNotSetSubObjectType, true)
 	{
 		//{{AFX_DATA_INIT(SVSaveToolSetImageDialogClass)
 			// NOTE: the ClassWizard will add member initialization here

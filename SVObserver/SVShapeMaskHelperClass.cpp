@@ -30,8 +30,8 @@ void SVShapeMaskHelperClass::init()
 	m_pShape = nullptr;
 	m_bUseOverlays = false;
 
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVUnaryImageOperatorObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SVShapeMaskHelperObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVUnaryImageOperatorObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvDef::SVShapeMaskHelperObjectType;
 
 	// do these eventually be changed to ResetItemOwner?
 	RegisterEmbeddedObject( &m_Data.bvoAutoResize, SVShapeMaskAutoResizeGuid, IDS_OBJECTNAME_SHAPE_MASK_AUTO_RESIZE, false, SvOi::SVResetItemTool );

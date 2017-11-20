@@ -18,9 +18,6 @@
     <ClCompile Include="ArrowObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DrawObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="EllipseObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -109,9 +106,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ArrowObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DrawObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="EllipseObject.h">

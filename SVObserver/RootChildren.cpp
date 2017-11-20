@@ -16,7 +16,7 @@
 #include "SVConfigurationObject.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVObjectLibrary\SVObjectLibrary.h"
-#include "SVObjectLibrary\GlobalConst.h"
+#include "Definitions/GlobalConst.h"
 #pragma endregion Includes
 
 #pragma region Declarations

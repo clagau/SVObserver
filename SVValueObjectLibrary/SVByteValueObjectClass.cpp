@@ -66,7 +66,7 @@ HRESULT SVByteValueObjectClass::SetObjectValue( SVObjectAttributeClass* pDataObj
 	
 	if ( isLegacyVectorObjectCompatibility() )
 	{
-		SvCl::SVObjectArrayClassTemplate<ValueType> svArray;	// for default values
+		std::vector<ValueType> svArray;	// for default values
 
 		if (   pDataObject->GetAttributeData( _T("pArray"), svArray )
 			|| pDataObject->GetAttributeData( SvDef::cBucketTag, svArray ) )
@@ -156,7 +156,7 @@ void SVByteValueObjectClass::WriteDefaultValues(SVObjectWriter& rWriter)
 
 void SVByteValueObjectClass::LocalInitialize()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVByteValueObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVByteValueObjectType;
 	DefaultValue() = 0;
 	SetTypeName( _T("Integer8") );
 	InitializeBuckets();

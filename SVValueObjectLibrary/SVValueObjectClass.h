@@ -29,6 +29,7 @@
 #include "SVUtilityLibrary/SVSharedPtr.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
+#include "Definitions/GlobalConst.h"
 #pragma endregion Includes
 
 #pragma region Declarations

@@ -12,7 +12,6 @@
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
-#include "SVOResource\resource.h"
 #include "DisplayMessageBox.h"
 #include "SVUtilityLibrary\LoadDll.h"
 #pragma endregion Includes

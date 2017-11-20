@@ -13,7 +13,7 @@
 //Moved to precompiled header: #include <intrin.h>
 //Moved to precompiled header: #include <list>
 #include "SVSVIMStateClass.h"
-#include "SVObjectLibrary/GlobalConst.h"
+#include "Definitions/GlobalConst.h"
 #include "ObjectInterfaces/IRootObject.h"
 
 #pragma intrinsic(_InterlockedAnd)
@@ -26,7 +26,7 @@ __time32_t SVSVIMStateClass::m_LastModifiedTime = 0;
 __time32_t SVSVIMStateClass::m_PrevModifiedTime = 0;
 svModeEnum SVSVIMStateClass::m_prevMode = SVIM_MODE_UNKNOWN;
 svModeEnum SVSVIMStateClass::m_lastMode = SVIM_MODE_UNKNOWN;
-SVAsyncProcedure< SVSVIMStateClass::SVAPCSignalHandler, SVSVIMStateClass::SVThreadProcessHandler > SVSVIMStateClass::m_AsyncProcedure;
+NotifyFunctor SVSVIMStateClass::m_Notify;
 
 SVSVIMStateClass::SVSVIMStateClass()
 {
@@ -114,6 +114,11 @@ svModeEnum SVSVIMStateClass::GetMode()
 	return retVal;
 }
 
+void SVSVIMStateClass::setNotificationFunction(NotifyFunctor Notify)
+{
+	m_Notify = Notify;
+}
+
 void SVSVIMStateClass::CheckModeNotify(svModeEnum mode)
 {
 	static svModeEnum currentMode = SVIM_MODE_UNKNOWN;
@@ -128,36 +133,44 @@ void SVSVIMStateClass::setEnvironmentParameters(svModeEnum mode)
 {
 	long modeValue = static_cast<long>(mode);
 
-	SvOi::setRootChildValue( SvOl::FqnEnvironmentModeValue, modeValue );
-	SvOi::setRootChildValue( SvOl::FqnEnvironmentModeIsRun, ( SVIM_MODE_ONLINE == mode ) );
-	SvOi::setRootChildValue( SvOl::FqnEnvironmentModeIsStop, ( SVIM_MODE_OFFLINE == mode ) );
-	SvOi::setRootChildValue( SvOl::FqnEnvironmentModeIsRegressionTest, ( SVIM_MODE_REGRESSION == mode ) );
-	SvOi::setRootChildValue( SvOl::FqnEnvironmentModeIsTest, ( SVIM_MODE_TEST == mode ) );
-	SvOi::setRootChildValue( SvOl::FqnEnvironmentModeIsEdit, ( SVIM_MODE_EDIT == mode ) );
+	SvOi::setRootChildValue( SvDef::FqnEnvironmentModeValue, modeValue );
+	SvOi::setRootChildValue( SvDef::FqnEnvironmentModeIsRun, ( SVIM_MODE_ONLINE == mode ) );
+	SvOi::setRootChildValue( SvDef::FqnEnvironmentModeIsStop, ( SVIM_MODE_OFFLINE == mode ) );
+	SvOi::setRootChildValue( SvDef::FqnEnvironmentModeIsRegressionTest, ( SVIM_MODE_REGRESSION == mode ) );
+	SvOi::setRootChildValue( SvDef::FqnEnvironmentModeIsTest, ( SVIM_MODE_TEST == mode ) );
+	SvOi::setRootChildValue( SvDef::FqnEnvironmentModeIsEdit, ( SVIM_MODE_EDIT == mode ) );
 }
 
 
 HRESULT SVSVIMStateClass::SetLastModifiedTime()
 {
-	HRESULT l_Status = S_OK;
-
+	HRESULT Result( S_OK );
 	__time32_t l_LastModifiedTime = SVSVIMStateClass::m_LastModifiedTime;
 
 	::InterlockedExchange(&SVSVIMStateClass::m_LastModifiedTime, ::_time32(nullptr));
 
 	if (l_LastModifiedTime != SVSVIMStateClass::m_LastModifiedTime)
 	{
-		l_Status = SVSVIMStateClass::m_AsyncProcedure.Signal(nullptr);
+		if (!m_Notify.empty())
+		{
+			//! Notify shall only signal the notify thread with Type=0
+			Result = (m_Notify)(0, 0, nullptr);
+		}
 	}
-
-	return l_Status;
+	return Result;
 }
 
 
 HRESULT SVSVIMStateClass::FireModeChanged(svModeEnum mode)
 {
+	HRESULT Result(S_OK);
+
 	::InterlockedExchange((long *)&m_lastMode, mode);
 
-	HRESULT status = SVSVIMStateClass::m_AsyncProcedure.Signal(nullptr);
-	return status;
+	if (!m_Notify.empty())
+	{
+		//! Notify shall only signal the notify thread with Type=0
+		Result = (m_Notify)(0, 0, nullptr);
+	}
+	return Result;
 }

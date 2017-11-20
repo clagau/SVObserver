@@ -29,7 +29,7 @@
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVValueObjectLibrary/BasicValueObject.h"
 #include "RemoteMonitorListHelper.h"
-#include "SVObjectLibrary\GlobalConst.h"
+#include "Definitions/GlobalConst.h"
 #include "SVObjectLibrary\SVObjectLibrary.h"
 #include "Definitions/SVUserMessage.h"
 #include "Definitions/StringTypeDef.h"
@@ -56,15 +56,15 @@ SVVisionProcessorHelper::SVVisionProcessorHelper()
 
 	m_GetItemsFunctors = (boost::assign::map_list_of<std::string, SVGetItemsFunctor>
 		(StandardItems, boost::bind(&SVVisionProcessorHelper::GetStandardItems, this, _1, _2))
-		(SvOl::FqnInspections, boost::bind(&SVVisionProcessorHelper::GetInspectionItems, this, _1, _2))
-		(SvOl::FqnRemoteInputs, boost::bind(&SVVisionProcessorHelper::GetRemoteInputItems, this, _1, _2))
+		(SvDef::FqnInspections, boost::bind(&SVVisionProcessorHelper::GetInspectionItems, this, _1, _2))
+		(SvDef::FqnRemoteInputs, boost::bind(&SVVisionProcessorHelper::GetRemoteInputItems, this, _1, _2))
 		).convert_to_container<SVGetItemsFunctorMap>() ;
 
 	m_SetItemsFunctors = (boost::assign::map_list_of<std::string, SVSetItemsFunctor>
 		(StandardItems, boost::bind(&SVVisionProcessorHelper::SetStandardItems, this, _1, _2))
-		(SvOl::FqnInspections, boost::bind(&SVVisionProcessorHelper::SetInspectionItems, this, _1, _2))
-		(SvOl::FqnRemoteInputs, boost::bind(&SVVisionProcessorHelper::SetRemoteInputItems, this, _1, _2))
-		(SvOl::FqnCameras, boost::bind(&SVVisionProcessorHelper::SetCameraItems, this, _1, _2))
+		(SvDef::FqnInspections, boost::bind(&SVVisionProcessorHelper::SetInspectionItems, this, _1, _2))
+		(SvDef::FqnRemoteInputs, boost::bind(&SVVisionProcessorHelper::SetRemoteInputItems, this, _1, _2))
+		(SvDef::FqnCameras, boost::bind(&SVVisionProcessorHelper::SetCameraItems, this, _1, _2))
 		).convert_to_container<SVSetItemsFunctorMap>();
 }
 
@@ -345,18 +345,18 @@ HRESULT SVVisionProcessorHelper::GetDataDefinitionList( const std::string& rInsp
 		if( l_ImageFilter != -1 )
 		{
 			//Add image definition list
-			SVImageListClass l_ImageList;
-			pToolSet->GetImageList( l_ImageList );
+			SVImageClassPtrVector ImageList;
+			pToolSet->GetImageList( ImageList );
 
-			int nCount = l_ImageList.GetSize();
+			int nCount = static_cast<int> (ImageList.size());
 			for( int i = 0; i < nCount; i++ )
 			{
-				SVImageClass* l_pImage = l_ImageList.GetAt( i );
+				SVImageClass* pImage = ImageList[i];
 
-				if ( l_pImage )
+				if ( nullptr != pImage )
 				{
 					SVDataDefinitionStruct l_DataDefinition;
-					if(S_OK == GetObjectDefinition(*l_pImage, l_ImageFilter, l_DataDefinition))
+					if(S_OK == GetObjectDefinition(*pImage, l_ImageFilter, l_DataDefinition))
 					{
 						rDataDefinitionArray.push_back(l_DataDefinition);
 					}
@@ -466,7 +466,7 @@ static bool IsRemoteInputRequest(const SVObjectNameInfo& rInfo, bool& bValidRemo
 		if (0 == pos)
 		{
 			bRemoteInput = true;
-			bValidRemoteInputRequest = (std::string(SvOl::FqnRemoteInputs) == rInfo.m_NameArray[0]);
+			bValidRemoteInputRequest = (std::string(SvDef::FqnRemoteInputs) == rInfo.m_NameArray[0]);
 		}
 	}
 	return bRemoteInput;
@@ -872,23 +872,19 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition( const SVObjectClass& rObje
 			rDataDef.m_Type = _T("Image");
 		}
 		//This part fills the additional info section
-		if( SVEnumValueObjectType == rObject.GetObjectSubType() )
+		if( SvDef::SVEnumValueObjectType == rObject.GetObjectSubType() )
 		{
 			// Get the strings from the enumeration value object class.
-			const SVEnumerateValueObjectClass* l_pEnumVO = dynamic_cast<const SVEnumerateValueObjectClass*> (&rObject);
-			if( nullptr != l_pEnumVO )
+			const SVEnumerateValueObjectClass* pEnumVO = dynamic_cast<const SVEnumerateValueObjectClass*> (&rObject);
+			if( nullptr != pEnumVO )
 			{
-				SVEnumerateVector l_EnumVect;
-				SVEnumerateVector::iterator l_EnumIter;
-
-				l_pEnumVO->GetEnumTypes( l_EnumVect );
-				for( l_EnumIter = l_EnumVect.begin(); l_EnumIter != l_EnumVect.end(); l_EnumIter++)
+				for (auto const& rEntry : pEnumVO->GetEnumVector())
 				{
-					rDataDef.m_AdditionalInfo.push_back( std::string(l_EnumIter->first) );
+					rDataDef.m_AdditionalInfo.push_back( rEntry.first );
 				}
 			}
 		}
-		else if( SVBoolValueObjectType == rObject.GetObjectSubType() )
+		else if( SvDef::SVBoolValueObjectType == rObject.GetObjectSubType() )
 		{
 			// Get the strings from the enumeration value object class.
 			const SVBoolValueObjectClass* l_pBoolVO = dynamic_cast<const SVBoolValueObjectClass*> (&rObject);
@@ -1095,12 +1091,11 @@ HRESULT SVVisionProcessorHelper::GetInspectionNames( SVNameSet& rNames ) const
 	HRESULT hr = SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 	if ( nullptr != pConfig )
 	{
-		SVInspectionProcessPtrList Inspections;
-		pConfig->GetInspections(Inspections);
+		const SVInspectionProcessVector& rInspections = pConfig->GetInspections();
 
-		for (SVInspectionProcessPtrList::iterator it = Inspections.begin();it != Inspections.end();++it)
+		for (auto pInspection : rInspections)
 		{
-			rNames.insert((*it)->GetName());
+			rNames.insert(pInspection->GetName());
 		}
 	}
 	else
@@ -1220,25 +1215,28 @@ HRESULT SVVisionProcessorHelper::RegisterMonitorList( const std::string& rListNa
 
 void SVVisionProcessorHelper::Startup()
 {
-	SVSVIMStateClass::m_AsyncProcedure.Create( &SVVisionProcessorHelper::APCThreadProcess, boost::bind(&SVVisionProcessorHelper::ThreadProcess, this, _1), "SVVisionProcessorHelper", SVNone );
+	m_AsyncProcedure.Create( &SVVisionProcessorHelper::APCThreadProcess, boost::bind(&SVVisionProcessorHelper::ThreadProcess, this, _1), "SVVisionProcessorHelper", SVNone );
 
-	SvStl::MessageMgrStd::setNotificationFunction( boost::bind( &SVVisionProcessorHelper::FireMessageNotification, this, _1, _2, _3 ) );
+	SvStl::MessageMgrStd::setNotificationFunction(boost::bind(&SVVisionProcessorHelper::FireNotification, this, _1, _2, _3));
+	SVSVIMStateClass::setNotificationFunction(boost::bind(&SVVisionProcessorHelper::FireNotification, this, _1, _2, _3));
 }
 
 void SVVisionProcessorHelper::Shutdown()
 {
 	SvStl::MessageMgrStd::setNotificationFunction( SvStl::NotifyFunctor() );
 
-	SVSVIMStateClass::m_AsyncProcedure.Destroy();
+	m_AsyncProcedure.Destroy();
 }
 
-HRESULT SVVisionProcessorHelper::FireMessageNotification( int Type, int MessageNumber, LPCTSTR MessageText )
+HRESULT SVVisionProcessorHelper::FireNotification( int Type, int MessageNumber, LPCTSTR MessageText )
 {
 	SvStl::NotificationEnum NotificationType( SvStl::NotificationEnum::MsgUknown );
 	NotificationType = static_cast<SvStl::NotificationEnum> (Type);
-	m_MessageNotification.SetNotification( NotificationType, MessageNumber, MessageText );
-	HRESULT status = SVSVIMStateClass::m_AsyncProcedure.Signal(nullptr);
-	return status;
+	if (SvStl::NotificationEnum::MsgUknown != NotificationType)
+	{
+		m_MessageNotification.SetNotification(NotificationType, MessageNumber, MessageText);
+	}
+	return m_AsyncProcedure.Signal(nullptr);
 }
 
 void CALLBACK SVVisionProcessorHelper::APCThreadProcess( DWORD_PTR dwParam )

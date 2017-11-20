@@ -20,7 +20,7 @@
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
 #include "SVOCore/EQAdjustSize.h"
-#include "SVRunControlLibrary\SVRunControlLibrary.h"
+#include "Definitions/Color.h"
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
@@ -48,8 +48,8 @@ ToolSizeAdjustTask::ToolSizeAdjustTask(bool AllowFullsize , bool AllowAdjustSize
 , m_AllowAdjustPosition(AllowAdjustPosition)
 {
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVToolSizeAdjustTaskType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVNotSetSubObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVToolSizeAdjustTaskType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVNotSetSubObjectType;
 
 	RegisterEmbeddedObject( &m_InputModes[TSWidth], ToolSizeAdjustSizeWidthModeGuid, IDS_OBJECTNAME_TOOLSIZEADJUSTSIZEWIDTH, false, SvOi::SVResetItemNone );
 	RegisterEmbeddedObject( &m_InputModes[TSHeight], ToolSizeAdjustSizeHeightModeGuid, IDS_OBJECTNAME_TOOLSIZEADJUSTSIZEHEIGHT, false, SvOi::SVResetItemNone );
@@ -110,7 +110,7 @@ bool ToolSizeAdjustTask::AddEvaluationObject(SVInObjectInfoStruct* pInfo, GUID c
 		return false;
 	}
 
-	pInfo->SetInputObjectType(pAdjustSize->GetResultGuid(), SVValueObjectType, SVDoubleValueObjectType);
+	pInfo->SetInputObjectType(pAdjustSize->GetResultGuid(), SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType);
 	pInfo->SetObject( GetObjectInfo() );
 	return RegisterInputObject( pInfo, Name );
 }
@@ -644,9 +644,9 @@ ToolSizeAdjustTask* ToolSizeAdjustTask::GetToolSizeAdjustTask(SVObjectClass *pOb
 	ToolSizeAdjustTask* pToolSizeAdjustTask = nullptr;
 	if (nullptr != pObject)
 	{
-		SVObjectTypeInfoStruct ToolSizeAdjustTaskInfo;
-		ToolSizeAdjustTaskInfo.ObjectType = SVToolSizeAdjustTaskType;
-		ToolSizeAdjustTaskInfo.SubType = SVNotSetSubObjectType;
+		SvDef::SVObjectTypeInfoStruct ToolSizeAdjustTaskInfo;
+		ToolSizeAdjustTaskInfo.ObjectType = SvDef::SVToolSizeAdjustTaskType;
+		ToolSizeAdjustTaskInfo.SubType = SvDef::SVNotSetSubObjectType;
 		pToolSizeAdjustTask = dynamic_cast<ToolSizeAdjustTask*>(pObject->GetFriend(ToolSizeAdjustTaskInfo));
 	}
 	return pToolSizeAdjustTask;
@@ -679,5 +679,5 @@ bool ToolSizeAdjustTask::UseAutoMode() const
 
 DWORD ToolSizeAdjustTask::GetObjectColor() const
 {
-	return SV_DEFAULT_WHITE_COLOR;
+	return SvDef::DefaultWhiteColor;
 }

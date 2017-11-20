@@ -92,6 +92,7 @@
     <ClCompile Include="SVCommandDataHolder.cpp" />
     <ClCompile Include="SVCommandFactoryTemplate.cpp" />
     <ClCompile Include="SVCommandTemplate.cpp" />
+    <ClCompile Include="SVFileSystemCommandFactory.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -114,6 +115,7 @@
     <ClInclude Include="SVCommandResultsFacade.h" />
     <ClInclude Include="SVCommandResultsTemplate.h" />
     <ClInclude Include="SVCommandTemplate.h" />
+    <ClInclude Include="SVFileSystemCommandFactory.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SVCommandAbstractFactorySingleton.inl" />

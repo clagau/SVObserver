@@ -12,9 +12,8 @@
 #pragma once
 
 #pragma region Includes
-#include "SVContainerLibrary/SVVector.h"
-#include "ObjectInterfaces/SVInterfaceVector.h"
-
+//Moved to precompiled header: #include <vector>
+#include "Definitions/SVObjectTypeInfoStruct.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
@@ -30,24 +29,13 @@ struct SVClassInfoStruct
 	// Construct Object and set given ClassName...
 	SVObjectClass* Construct();
 
-	SVObjectTypeInfoStruct m_ObjectTypeInfo;
+	SvDef::SVObjectTypeInfoStruct m_ObjectTypeInfo;
 	std::string m_ClassName;
 	SVGUID m_ClassId;
 
 	// Must be in the same order, like the class defines its input interface!!!
-	SvOi::SVInterfaceVector m_DesiredInputInterface;
+	SvDef::SVObjectTypeInfoVector m_DesiredInputVector;
 };
 
-class SVClassInfoStructListClass : public SVVector< SVClassInfoStruct >
-{
-public:
-	SVClassInfoStructListClass();
-	virtual ~SVClassInfoStructListClass();
-
-#pragma region public methods
-public:
-	int Find( const SVGUID& rGuid );
-
-#pragma endregion public methods
-};
+typedef std::vector<SVClassInfoStruct> SVClassInfoStructVector;
 

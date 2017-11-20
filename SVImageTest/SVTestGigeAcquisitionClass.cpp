@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVTestGigeAcquisitionClass.h"
 #include "SVTestAcquisitionSubsystem.h"
-#include "SVGigeCameraParametersLibrary/SVGigeEnums.h"
+#include "Definitions/SVGigeEnums.h"
 #pragma endregion Includes
 
 SVTestGigeAcquisitionClass::SVTestGigeAcquisitionClass(SVTestAcquisitionSubsystem& p_rSubsystem, unsigned long p_hDigitizer)
@@ -58,7 +58,7 @@ HRESULT SVTestGigeAcquisitionClass::SetDeviceParameters( const SVDeviceParamColl
 {
 	// Send notification to start tracking main camera parameters
 	_variant_t dummy;
-	HRESULT hr = m_rSubsystem.m_svDigitizers.ParameterSetValue(m_hDigitizer, SVGigeBeginTrackParameters, 0, &dummy);
+	HRESULT hr = m_rSubsystem.m_svDigitizers.ParameterSetValue(m_hDigitizer, SvDef::SVGigeBeginTrackParameters, 0, &dummy);
 
 	if ( S_OK == hr )
 	{
@@ -89,7 +89,7 @@ bool SVTestGigeAcquisitionClass::StartAcquire(SVCameraPage& p_rDisplay)
 
 	// Send notification to end tracking main camera parameters
 	_variant_t dummy;
-	HRESULT hr = m_rSubsystem.m_svDigitizers.ParameterSetValue(m_hDigitizer, SVGigeEndTrackParameters, 0, &dummy);
+	HRESULT hr = m_rSubsystem.m_svDigitizers.ParameterSetValue(m_hDigitizer, SvDef::SVGigeEndTrackParameters, 0, &dummy);
 	if (S_OK == hr)
 	{
 		// Send Strobe & trigger

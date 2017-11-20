@@ -1265,7 +1265,7 @@ HRESULT SVMatroxBufferInterface::GetPositionPoint(POINT& p_rPoint, const SVMatro
 {
 	HRESULT l_Status(S_OK);
 
-	SVPOINT l_Point;
+	SVPoint l_Point;
 
 	l_Status = GetPositionPoint(l_Point, p_rBuffer);
 
@@ -1274,11 +1274,11 @@ HRESULT SVMatroxBufferInterface::GetPositionPoint(POINT& p_rPoint, const SVMatro
 	return l_Status;
 }
 
-HRESULT SVMatroxBufferInterface::GetPositionPoint(SVPOINT& p_rPoint, const SVMatroxBuffer& p_rBuffer)
+HRESULT SVMatroxBufferInterface::GetPositionPoint(SVPoint& p_rPoint, const SVMatroxBuffer& p_rBuffer)
 {
 	HRESULT l_Status(S_OK);
 
-	p_rPoint = SVPOINT(0, 0);
+	p_rPoint = SVPoint(0, 0);
 
 	if (!(p_rBuffer.empty()))
 	{
@@ -1304,7 +1304,7 @@ HRESULT SVMatroxBufferInterface::GetPositionPoint(SVPOINT& p_rPoint, const SVMat
 
 					if (S_OK == l_Status)
 					{
-						p_rPoint = SVPOINT(static_cast< long >(l_OffsetX), static_cast< long >(l_OffsetY));
+						p_rPoint = SVPoint(static_cast< long >(l_OffsetX), static_cast< long >(l_OffsetY));
 					}
 				}
 				else

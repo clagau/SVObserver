@@ -24,6 +24,13 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvMc
 {
+	BEGIN_MESSAGE_MAP(SVDlgBitmapClass, CStatic)
+		//{{AFX_MSG_MAP(SVDlgBitmapClass)
+		ON_WM_PAINT()
+		ON_WM_PALETTEISCHANGING()
+		//}}AFX_MSG_MAP
+	END_MESSAGE_MAP()
+
 	SVDlgBitmapClass::SVDlgBitmapClass()
 	{
 		OEMMode = FALSE;
@@ -93,43 +100,34 @@ namespace SvMc
 
 	BOOL SVDlgBitmapClass::TextOut( int X, int Y, COLORREF Color, LPCTSTR StrText )
 	{
-		SVDlgBitmapTextStruct* pTxt = new SVDlgBitmapTextStruct();
-		if( pTxt )
-		{
-			pTxt->BAbsCoord = TRUE;
-			pTxt->X			= ( double ) X;
-			pTxt->Y			= ( double ) Y;
-			pTxt->Color		= Color;
-			pTxt->StrText	= StrText;
-			textList.Add( pTxt );
+		SVDlgBitmapTextStruct BitmapText;
+		BitmapText.AbsoluteCoord = true;
+		BitmapText.X = static_cast<double> (X);
+		BitmapText.Y = static_cast<double> (Y);
+		BitmapText.m_Color = Color;
+		BitmapText.m_Text = StrText;
+		m_TextVector.push_back(BitmapText);
 
-			return TRUE;
-		}
-		return FALSE;
+		return true;
 	}
 
 	BOOL SVDlgBitmapClass::TextOut( double X, double Y, COLORREF Color, LPCTSTR StrText )
 	{
 		if( X >= 0 && X <= 1 && Y >= 0 && Y <= 1 )
 		{
-			SVDlgBitmapTextStruct* pTxt = new SVDlgBitmapTextStruct();
-			if( pTxt )
-			{
-				pTxt->BAbsCoord = FALSE;
-
-				// If BAbsCoord is FALSE, the X and Y values will be interpreted 
-				// as weights of the client area to generate the origin of the text !!!
-
-				pTxt->X			= X;
-				pTxt->Y			= Y;
-				pTxt->Color		= Color;
-				pTxt->StrText	= StrText;
-				textList.Add( pTxt );
-
-				return TRUE;
-			}
+			SVDlgBitmapTextStruct BitmapText;
+			BitmapText.AbsoluteCoord = false;
+			// If BAbsCoord is false, the X and Y values will be interpreted 
+			// as weights of the client area to generate the origin of the text !!!
+			BitmapText.X = X;
+			BitmapText.Y = Y;
+			BitmapText.m_Color = Color;
+			BitmapText.m_Text = StrText;
+			m_TextVector.push_back(BitmapText);
+			
+			return true;
 		}
-		return FALSE;
+		return false;
 	}
 
 	CSize SVDlgBitmapClass::GetDimensions() const
@@ -144,87 +142,6 @@ namespace SvMc
 
 		return size;
 	}
-
-	BEGIN_MESSAGE_MAP(SVDlgBitmapClass, CStatic)
-		//{{AFX_MSG_MAP(SVDlgBitmapClass)
-		ON_WM_PAINT()
-		ON_WM_PALETTEISCHANGING()
-		//}}AFX_MSG_MAP
-	END_MESSAGE_MAP()
-
-	/////////////////////////////////////////////////////////////////////////////
-	// Behandlungsroutinen für Nachrichten SVDlgBitmapClass 
-
-	static RGBQUAD rgbStd256[] =
-	{
-		// Start Sky Colors: Begin
-		{ 123,173,214, 0 },	{ 132,181,222, 0 },	{ 115,173,214, 0 },	{ 123,173,222, 0 },
-		{ 148,189,222, 0 },	{ 123,181,222, 0 },	{ 140,181,222, 0 },	{ 140,189,222, 0 },
-		{ 156,198,222, 0 },	{ 206,222,239, 0 },	{ 222,231,239, 0 },	{ 165,198,231, 0 },
-		{ 189,214,231, 0 },	{ 173,206,231, 0 },	{ 165,206,231, 0 },	{ 231,239,247, 0 },
-		{ 231,231,239, 0 },	{ 156,189,222, 0 },	{ 123,181,214, 0 },	{ 115,173,222, 0 },
-		{ 198,222,239, 0 },	{ 247,247,247, 0 },	{ 239,239,247, 0 },	{ 132,189,222, 0 },
-		{ 239,247,247, 0 },	{ 181,214,231, 0 },	{ 214,231,239, 0 },	{ 198,214,231, 0 },
-		{ 156,198,231, 0 },	{ 206,231,239, 0 },	{ 189,214,239, 0 },	{ 222,239,239, 0 },
-		{ 222,231,247, 0 },	{ 222,239,247, 0 },	{ 231,247,247, 0 },	{ 115,181,222, 0 },
-		{ 181,214,239, 0 },	{ 156,189,231, 0 },	{ 214,231,247, 0 },	{ 214,222,239, 0 },
-		{ 189,222,239, 0 },	{ 198,214,239, 0 },	{ 247,247,255, 0 },	{ 148,189,231, 0 },
-		{ 148,198,222, 0 },	{ 181,206,239, 0 },	{ 173,198,231, 0 },	{ 247,255,255, 0 },
-		{ 255,247,247, 0 },	{ 247,255,247, 0 },	{ 206,222,247, 0 },	{ 206,231,247, 0 },
-		{ 255,255,255, 0 },	{ 173,214,231, 0 },	{ 148,198,231, 0 },	{ 255,247,255, 0 },
-		{ 173,206,239, 0 },	{ 156,206,231, 0 },	{ 140,189,231, 0 },	{ 255,255,247, 0 },
-		{ 173,214,239, 0 },	{ 140,181,231, 0 },	{ 132,181,231, 0 },	{ 165,206,239, 0 },
-		// Start Sky Colors: End
-		{ 102,204,204, 0 },	{  51,204,204, 0 },	{   0,204,204, 0 },	{ 255,153,204, 0 },
-		{ 204,153,204, 0 },	{ 153,153,204, 0 },	{ 102,153,204, 0 },	{  51,153,204, 0 },
-		{   0,153,204, 0 },	{ 255,102,204, 0 },	{ 204,102,204, 0 },	{ 153,102,204, 0 },
-		{ 102,102,204, 0 },	{  51,102,204, 0 },	{   0,102,204, 0 },	{ 255, 51,204, 0 },
-		{ 204, 51,204, 0 },	{ 153, 51,204, 0 },	{ 102, 51,204, 0 },	{  51, 51,204, 0 },
-		{   0, 51,204, 0 },	{ 255,  0,204, 0 },	{ 204,  0,204, 0 },	{ 153,  0,204, 0 },
-		{ 102,  0,204, 0 },	{  51,  0,204, 0 },	{ 255,255,153, 0 },	{ 204,255,153, 0 },
-		{ 153,255,153, 0 },	{ 102,255,153, 0 },	{  51,255,153, 0 },	{   0,255,153, 0 },
-		{ 255,204,153, 0 },	{ 204,204,153, 0 },	{ 153,204,153, 0 },	{ 102,204,153, 0 },
-		{  51,204,153, 0 },	{   0,204,153, 0 },	{ 255,153,153, 0 },	{ 204,153,153, 0 },
-		{ 102,153,153, 0 },	{  51,153,153, 0 },	{   0,153,153, 0 },	{ 255,102,153, 0 },
-		{ 204,102,153, 0 },	{ 153,102,153, 0 },	{ 102,102,153, 0 },	{  51,102,153, 0 },
-		{   0,102,153, 0 },	{ 255, 51,153, 0 },	{ 204, 51,153, 0 },	{ 153, 51,153, 0 },
-		{ 102, 51,153, 0 },	{  51, 51,153, 0 },	{   0, 51,153, 0 },	{ 255,  0,153, 0 },
-		{ 204,  0,153, 0 },	{ 153,  0,153, 0 },	{ 102,  0,153, 0 },	{  51,  0,153, 0 },
-		{ 255,255,102, 0 },	{ 204,255,102, 0 },	{ 153,255,102, 0 },	{ 102,255,102, 0 },
-		{  51,255,102, 0 },	{   0,255,102, 0 },	{ 255,204,102, 0 },	{ 204,204,102, 0 },
-		{ 153,204,102, 0 },	{ 102,204,102, 0 },	{  51,204,102, 0 },	{   0,204,102, 0 },
-		{ 255,153,102, 0 },	{ 204,153,102, 0 },	{ 153,153,102, 0 },	{ 102,153,102, 0 },
-		{  51,153,102, 0 },	{   0,153,102, 0 },	{ 255,102,102, 0 },	{ 204,102,102, 0 },
-		{ 153,102,102, 0 },	{  51,102,102, 0 },	{   0,102,102, 0 },	{ 255, 51,102, 0 },
-		{ 204, 51,102, 0 },	{ 153, 51,102, 0 },	{ 102, 51,102, 0 },	{  51, 51,102, 0 },
-		{   0, 51,102, 0 },	{ 255,  0,102, 0 },	{ 204,  0,102, 0 },	{ 153,  0,102, 0 },
-		{ 102,  0,102, 0 },	{  51,  0,102, 0 },	{ 255,255, 51, 0 },	{ 204,255, 51, 0 },
-		{ 153,255, 51, 0 },	{ 102,255, 51, 0 },	{  51,255, 51, 0 },	{   0,255, 51, 0 },
-		{ 255,204, 51, 0 },	{ 204,204, 51, 0 },	{ 153,204, 51, 0 },	{ 102,204, 51, 0 },
-		{  51,204, 51, 0 },	{   0,204, 51, 0 },	{ 255,153, 51, 0 },	{ 204,153, 51, 0 },
-		{ 153,153, 51, 0 },	{ 102,153, 51, 0 },	{  51,153, 51, 0 },	{   0,153, 51, 0 },
-		{ 255,102, 51, 0 },	{ 204,102, 51, 0 },	{ 153,102, 51, 0 },	{ 102,102, 51, 0 },
-		{  51,102, 51, 0 },	{   0,102, 51, 0 },	{ 255, 51, 51, 0 },	{ 204, 51, 51, 0 },
-		{ 153, 51, 51, 0 },	{ 102, 51, 51, 0 },	{   0, 51, 51, 0 },	{ 255,  0, 51, 0 },
-		{ 204,  0, 51, 0 },	{ 153,  0, 51, 0 },	{ 102,  0, 51, 0 },	{  51,  0, 51, 0 },
-		{ 204,255,  0, 0 },	{ 153,255,  0, 0 },	{ 102,255,  0, 0 },	{  51,255,  0, 0 },
-		{ 255,204,  0, 0 },	{ 204,204,  0, 0 },	{ 153,204,  0, 0 },	{ 102,204,  0, 0 },
-		{  51,204,  0, 0 },	{ 255,153,  0, 0 },	{ 204,153,  0, 0 },	{ 153,153,  0, 0 },
-		{ 102,153,  0, 0 },	{   0,  0,238, 0 },	{   0,  0,221, 0 },	{   0,  0,204, 0 },
-		{   0,  0,187, 0 },	{   0,  0,170, 0 },	{   0,  0,153, 0 },	{   0,  0,136, 0 },
-		{   0,  0,119, 0 },	{   0,  0,102, 0 },	{   0,  0, 85, 0 },	{   0,  0, 68, 0 },
-		{   0,  0, 51, 0 },	{   0,  0, 34, 0 },	{   0,  0, 17, 0 },	{   0,238,  0, 0 },
-		{   0,221,  0, 0 },	{   0,204,  0, 0 },	{   0,187,  0, 0 },	{   0,170,  0, 0 },
-		{   0,153,  0, 0 },	{   0,136,  0, 0 },	{   0,119,  0, 0 },	{   0,102,  0, 0 },
-		{   0, 85,  0, 0 },	{   0, 68,  0, 0 },	{   0, 51,  0, 0 },	{   0, 34,  0, 0 },
-		{   0, 17,  0, 0 },	{ 238,  0,  0, 0 },	{ 221,  0,  0, 0 },	{ 204,  0,  0, 0 },
-		{ 187,  0,  0, 0 },	{ 170,  0,  0, 0 },	{ 153,  0,  0, 0 },	{ 136,  0,  0, 0 },
-		{ 119,  0,  0, 0 },	{ 102,  0,  0, 0 },	{  85,  0,  0, 0 },	{  68,  0,  0, 0 },
-		{  51,  0,  0, 0 },	{  34,  0,  0, 0 },	{ 240,251,255, 0 },	{ 164,160,160, 0 },
-		{ 128,128,128, 0 },	{   0,  0,255, 0 },	{   0,255,  0, 0 },	{   0,255,255, 0 },
-		{ 255,  0,  0, 0 },	{ 255,  0,255, 0 },	{ 255,255,  0, 0 },	{ 255,255,255, 0 }
-	};					   
-
 
 	void SVDlgBitmapClass::OnPaint() 
 	{
@@ -275,19 +192,24 @@ namespace SvMc
 
 			memDC.DeleteDC();
 
-			for( int u = textList.GetSize() - 1; u >= 0; --u )
-				if( ! textList.GetAt( u )->StrText.IsEmpty() )
+			for (auto const& rText : m_TextVector)
+			{
+				if (!rText.m_Text.empty())
 				{
-					dc.SetBkMode( TRANSPARENT );
-					dc.SetTextColor( textList.GetAt( u )->Color );
-					if( textList.GetAt( u )->BAbsCoord )
-						dc.TextOut( ( int ) textList.GetAt( u )->X, ( int ) textList.GetAt( u )->Y, textList.GetAt( u )->StrText );
+					dc.SetBkMode(TRANSPARENT);
+					dc.SetTextColor(rText.m_Color);
+					if (rText.AbsoluteCoord)
+					{
+						dc.TextOut((int)rText.X, (int)rText.Y, rText.m_Text.c_str());
+					}
 					else
-						dc.TextOut( ( int ) ( textList.GetAt( u )->X * rect.Width() ), ( int ) ( textList.GetAt( u )->Y * rect.Height() ), textList.GetAt( u )->StrText );
+					{
+						dc.TextOut((int)(rText.X * rect.Width()), (int)(rText.Y * rect.Height()), rText.m_Text.c_str());
+					}
 				}
-
-				ReleaseDC( &dc );
-				delete pPal;
+			}
+			ReleaseDC( &dc );
+			delete pPal;
 		}
 		else
 		{

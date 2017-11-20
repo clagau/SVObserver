@@ -12,7 +12,7 @@
 #include "stdafx.h"
 #pragma inline_recursion (on)
 #include "SVHistogram.h"
-
+#include "Definitions/Color.h"
 // SVHistogram
 
 namespace SvMc
@@ -59,14 +59,14 @@ namespace SvMc
 		SVHistogram::SVHistogram(): 
 	CStatic(),
 		SVHistogramBase(),
-		m_lowColor(color::Crimson),
-		m_highColor(color::Green),
-		m_backColor(color::Slate),
-		m_lowWarn(color::Gold),
-		m_trackWarn(color::Aqua),
+		m_lowColor(SvDef::Crimson),
+		m_highColor(SvDef::DarkGreen),
+		m_backColor(SvDef::Slate),
+		m_lowWarn(SvDef::Gold),
+		m_trackWarn(SvDef::Aqua),
 		m_boundState(0),
 		m_dragging(0),
-		m_trackColor(color::Plum)
+		m_trackColor(SvDef::Plum)
 	{
 		std::vector<int>::iterator it = m_values.begin();
 		m_max = m_total = 0;
@@ -273,7 +273,7 @@ namespace SvMc
 	{
 		GetClientRect(m_client);
 		UpdateAnchors(m_client, m_func);
-		GDICanvas canvas(this, m_client, &m_bmp, m_colors?m_backColor:color::White);
+		GDICanvas canvas(this, m_client, &m_bmp, m_colors ? m_backColor : SvDef::White);
 		DrawHistogram(canvas);
 
 		SetLabelText(m_factor*100.0/scale, label::leftTop);
@@ -428,7 +428,7 @@ namespace SvMc
 
 	void SVHistogram::DrawGrid(CPaintDC & dc)
 	{
-		CPen l_pen(PS_DASHDOT, 1, color::Gray);
+		CPen l_pen(PS_DASHDOT, 1, SvDef::DarkGray);
 		int tmp_mode = dc.SetBkMode(TRANSPARENT);
 		CPen * tmp_pen = dc.SelectObject(&l_pen);
 		CPoint pt = TheAnchor<label::leftUpper>::m_anchor;

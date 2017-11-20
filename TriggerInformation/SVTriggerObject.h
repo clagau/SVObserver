@@ -11,6 +11,7 @@
 #pragma once
 
 #pragma region Includes
+//Moved to precompiled header: #include <vector>
 #include "SVOResource/resource.h"
 #include "SVOLibrary/SVQueueObject.h"
 #include "SVObjectLibrary/SVObjectClass.h"
@@ -74,6 +75,6 @@ namespace SvTi
 			SVStatusDeque m_StatusLog;
 		#endif
 	};
-	typedef SVVector<SVTriggerObject*> SVTriggerObjectPtrVector;
+	typedef std::vector<SVTriggerObject*> SVTriggerObjectPtrVector;
 
 } //namespace SvTi

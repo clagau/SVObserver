@@ -20,10 +20,10 @@ namespace SvCmd
 	class RangeSelectorFilter
 	{
 	private:
-		std::set<SVObjectSubTypeEnum> m_filter;
+		std::set<SvDef::SVObjectSubTypeEnum> m_filter;
 		std::string m_excludePath;
 
-		static bool IsExcluded(SVObjectSubTypeEnum type, const std::set<SVObjectSubTypeEnum>& rFilter)
+		static bool IsExcluded(SvDef::SVObjectSubTypeEnum type, const std::set<SvDef::SVObjectSubTypeEnum>& rFilter)
 		{
 			return (rFilter.size() > 0 && rFilter.end() == rFilter.find(type));
 		}
@@ -44,7 +44,7 @@ namespace SvCmd
 			return bSame;
 		}
 
-		static bool IsAllowed(SVObjectSubTypeEnum type, UINT attributesFilter, UINT attributesAllowed, const std::string& name, const std::set<SVObjectSubTypeEnum>& filter, const std::string& excludePath)
+		static bool IsAllowed(SvDef::SVObjectSubTypeEnum type, UINT attributesFilter, UINT attributesAllowed, const std::string& name, const std::set<SvDef::SVObjectSubTypeEnum>& filter, const std::string& excludePath)
 		{
 			return (HasAttribute(attributesFilter, attributesAllowed) && !IsSameLineage(name, excludePath) && !IsExcluded(type, filter));
 		}
@@ -53,13 +53,13 @@ namespace SvCmd
 		RangeSelectorFilter(const std::string& rExcludePath)
 		: m_excludePath(rExcludePath)
 			, m_filter((boost::assign::list_of
-				(SVDWordValueObjectType)
-				(SVLongValueObjectType)
-				(SVDoubleValueObjectType)
-				(DoubleSortValueObjectType)
-				(SVBoolValueObjectType)
-				(SVPointValueObjectType)
-				(SVByteValueObjectType)).convert_to_container<std::set<SVObjectSubTypeEnum>>())
+				(SvDef::SVDWordValueObjectType)
+				(SvDef::SVLongValueObjectType)
+				(SvDef::SVDoubleValueObjectType)
+				(SvDef::DoubleSortValueObjectType)
+				(SvDef::SVBoolValueObjectType)
+				(SvDef::SVPointValueObjectType)
+				(SvDef::SVByteValueObjectType)).convert_to_container<std::set<SvDef::SVObjectSubTypeEnum>>())
 
 		{
 		}
@@ -69,7 +69,7 @@ namespace SvCmd
 			bool bRetVal = false;
 			if (pObject)
 			{
-				const SVObjectSubTypeEnum& type = pObject->GetObjectSubType();
+				const SvDef::SVObjectSubTypeEnum& type = pObject->GetObjectSubType();
 				const UINT attributesAllowed = pObject->ObjectAttributesAllowed();
 				const std::string& name = pObject->GetCompleteName();
 				bRetVal = IsAllowed(type, attributeMask, attributesAllowed, name, m_filter, m_excludePath);

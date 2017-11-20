@@ -177,13 +177,13 @@ BOOL SVToolAdjustmentDialogAcquisitionSourcePageClass::OnInitDialog()
 	if( pSheet && ( pTool = pSheet->GetTool() ) && SV_IS_KIND_OF( pTool, SVAcquisitionToolClass ) )
 	{
 		// Try to get main image of the current acquisition tool...
-		SVObjectTypeInfoStruct info;
-		info.ObjectType = SVImageObjectType;
-		info.SubType    = SVMainImageObjectType;
+		SvDef::SVObjectTypeInfoStruct info;
+		info.ObjectType = SvDef::SVImageObjectType;
+		info.SubType    = SvDef::SVMainImageObjectType;
 		pMainImage = dynamic_cast<SVCameraImageTemplate*>(pTool->getFirstObject(info));
 		if( pMainImage )
 		{
-			SVInspectionProcess* pInspection = dynamic_cast< SVInspectionProcess* >( pTool->GetAncestor( SVInspectionObjectType ) );
+			SVInspectionProcess* pInspection = dynamic_cast< SVInspectionProcess* >( pTool->GetAncestor( SvDef::SVInspectionObjectType ) );
 
 			if( nullptr != pInspection )
 			{

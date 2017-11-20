@@ -15,7 +15,7 @@
 
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVRunControlLibrary/SVRunControlLibrary.h"
+#include "Definitions/Color.h"
 
 #include "SVInspectionProcess.h"
 #include "SVBlobAnalyzerDialog.h"
@@ -219,7 +219,7 @@ void SVBlobAnalyzerClass::init()
 	m_pResultBlob = nullptr;
 
 	//Indentify our output type.
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVBlobAnalyzerObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVBlobAnalyzerObjectType;
 
 	//Register embedded objects.
 	RegisterEmbeddedObject(
@@ -394,7 +394,7 @@ bool SVBlobAnalyzerClass::CloseObject()
 DWORD SVBlobAnalyzerClass::AllocateResult (SVBlobFeatureEnum aFeatureIndex)
 {
 	SVClassInfoStruct       resultClassInfo;
-	SVObjectTypeInfoStruct  interfaceInfo;
+	SvDef::SVObjectTypeInfoStruct  interfaceInfo;
 
 	SVDoubleResultClass*    pResult(nullptr);
 	DWORD LastError(0);
@@ -410,10 +410,10 @@ DWORD SVBlobAnalyzerClass::AllocateResult (SVBlobFeatureEnum aFeatureIndex)
 
 		// Declare Input Interface of Result...
 		interfaceInfo.EmbeddedID = m_Value[aFeatureIndex].GetEmbeddedID();
-		resultClassInfo.m_DesiredInputInterface.Add( interfaceInfo );
+		resultClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
 
-		resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
-		resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultDoubleObjectType;
+		resultClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVResultObjectType;
+		resultClassInfo.m_ObjectTypeInfo.SubType	= SvDef::SVResultDoubleObjectType;
 		resultClassInfo.m_ClassId = SVDoubleResultClassGuid;
 		resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_RESULT );
 		std::string Title = m_Value[aFeatureIndex].GetName();
@@ -433,9 +433,9 @@ DWORD SVBlobAnalyzerClass::AllocateResult (SVBlobFeatureEnum aFeatureIndex)
 
 		Add( pResult );
 
-		SVObjectTypeInfoStruct info;
-		info.ObjectType = SVValueObjectType;
-		info.SubType = SVDoubleValueObjectType;
+		SvDef::SVObjectTypeInfoStruct info;
+		info.ObjectType = SvDef::SVValueObjectType;
+		info.SubType = SvDef::SVDoubleValueObjectType;
 		info.EmbeddedID = SVValueObjectGuid;
 
 		SVDoubleValueObjectClass* pValue = dynamic_cast<SVDoubleValueObjectClass*>( getFirstObject( info ) );
@@ -495,7 +495,7 @@ DWORD SVBlobAnalyzerClass::AllocateResult (SVBlobFeatureEnum aFeatureIndex)
 DWORD SVBlobAnalyzerClass::AllocateBlobResult ()
 {
 	SVClassInfoStruct       resultClassInfo;
-	SVObjectTypeInfoStruct  interfaceInfo;
+	SvDef::SVObjectTypeInfoStruct  interfaceInfo;
 
 //    SVDoubleResultClass*    pResult;
 
@@ -507,10 +507,10 @@ DWORD SVBlobAnalyzerClass::AllocateBlobResult ()
 		
 		// Declare Input Interface of Result...
 		interfaceInfo.EmbeddedID = m_lvoNumberOfBlobsFound.GetEmbeddedID();
-		resultClassInfo.m_DesiredInputInterface.Add( interfaceInfo );
+		resultClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
 		
-		resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
-		resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultLongObjectType;
+		resultClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVResultObjectType;
+		resultClassInfo.m_ObjectTypeInfo.SubType	= SvDef::SVResultLongObjectType;
 		resultClassInfo.m_ClassId = SVLongResultClassGuid;
 		resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_RESULT );
 		std::string Title = m_lvoNumberOfBlobsFound.GetName();
@@ -529,8 +529,8 @@ DWORD SVBlobAnalyzerClass::AllocateBlobResult ()
 		
 		Add( m_pResultBlob );
 		
-		SVObjectTypeInfoStruct info;
-		info.SubType = SVLongValueObjectType;
+		SvDef::SVObjectTypeInfoStruct info;
+		info.SubType = SvDef::SVLongValueObjectType;
 		info.EmbeddedID = SVValueObjectGuid;
 		
 		SVLongValueObjectClass* pValue = dynamic_cast<SVLongValueObjectClass*>( getFirstObject( info ) );
@@ -620,10 +620,10 @@ void SVBlobAnalyzerClass::RebuildResultObjectArray()
 	SVDoubleResultClass*    pResult;
 	SVObjectClass*          pSVObject;
 	
-	SVObjectTypeInfoStruct info;
+	SvDef::SVObjectTypeInfoStruct info;
 
-	info.ObjectType = SVResultObjectType;
-	info.SubType = SVResultDoubleObjectType;
+	info.ObjectType = SvDef::SVResultObjectType;
+	info.SubType = SvDef::SVResultDoubleObjectType;
 
 	SVGetObjectDequeByTypeVisitor l_Visitor( info );
 
@@ -637,7 +637,7 @@ void SVBlobAnalyzerClass::RebuildResultObjectArray()
 
 		pResult->GetPrivateInputList( resultInputList );
 
-		pResultInputInfo = resultInputList.GetAt( 0 );
+		pResultInputInfo = resultInputList[0];
 
 		pSVObject = pResultInputInfo->GetInputObjectInfo().m_pObject;
 
@@ -673,10 +673,10 @@ SVLongResultClass* SVBlobAnalyzerClass::GetBlobResultObject()
 	SVLongResultClass*    pResult = nullptr;
 	SVObjectClass*          pSVObject;
 
-	SVObjectTypeInfoStruct info;
+	SvDef::SVObjectTypeInfoStruct info;
 
-	info.ObjectType = SVResultObjectType;
-	info.SubType = SVResultLongObjectType;
+	info.ObjectType = SvDef::SVResultObjectType;
+	info.SubType = SvDef::SVResultLongObjectType;
 
 	SVGetObjectDequeByTypeVisitor l_Visitor( info );
 
@@ -690,7 +690,7 @@ SVLongResultClass* SVBlobAnalyzerClass::GetBlobResultObject()
 
 		pResult->GetPrivateInputList( resultInputList );
 
-		pResultInputInfo = resultInputList.GetAt( 0 );
+		pResultInputInfo = resultInputList[0];
 
 		pSVObject = pResultInputInfo->GetInputObjectInfo().m_pObject;
 
@@ -726,7 +726,7 @@ bool SVBlobAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateS
 			break;
 		}
 
-		m_pResultTable = dynamic_cast<TableObject*>(SvOi::FindObject(GetUniqueObjectID(), SVObjectTypeInfoStruct(TableObjectType, SVNotSetSubObjectType)));
+		m_pResultTable = dynamic_cast<TableObject*>(SvOi::FindObject(GetUniqueObjectID(), SvDef::SVObjectTypeInfoStruct(SvDef::TableObjectType, SvDef::SVNotSetSubObjectType)));
 		if (nullptr == m_pResultTable)
 		{
 			m_pResultTable = new TableObject(this);
@@ -1387,14 +1387,14 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 		}//if the feature SV_CENTER_X(Y)_SOURCE is set
 
 		m_SortFeature.GetValue( lSortFeature );
-		msvlSortMap.SetSize( m_lNumberOfBlobsFound );
+		m_SortVector.resize( m_lNumberOfBlobsFound );
 		// Check for Sort Feature
 		// Note Sort Feature will be -1 if no features have been selected
 		// otherwise if at least one feature has been selected
 		// lSortFeature will be a valid feature index
 		if( lSortFeature >= SV_AREA && lSortFeature < SV_TOPOF_LIST )
 		{
-			SortBlobs( lSortFeature, msvlSortMap.GetData(), static_cast< long >( msvlSortMap.GetSize() ) );
+			SortBlobs( lSortFeature, m_SortVector.data(), static_cast<long> (m_SortVector.size()));
 		}
 
 		//create a sort Container with the size of founded blobs and from 0 to n
@@ -1422,8 +1422,8 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 					// add array capability to blob results
 					for ( int iBlob = 0; iBlob < m_lNumberOfBlobsToProcess; iBlob++ )
 					{
-						m_ResultTableColumnValueObjects[eFeature]->SetValue(m_vec2dBlobResults[eFeature][msvlSortMap[iBlob]], iBlob);
-						m_Value[eFeature].SetValue(m_vec2dBlobResults[eFeature][msvlSortMap[iBlob]], iBlob );
+						m_ResultTableColumnValueObjects[eFeature]->SetValue(m_vec2dBlobResults[eFeature][m_SortVector[iBlob]], iBlob);
+						m_Value[eFeature].SetValue(m_vec2dBlobResults[eFeature][m_SortVector[iBlob]], iBlob );
 					}
 				}
 				else
@@ -1659,13 +1659,13 @@ bool SVBlobAnalyzerClass::IsPtOverResult( const POINT& rPoint )
 				double* pyMax = &(m_vec2dBlobResults[SV_BOXY_MAX][0]);
 				double* pyMin = &(m_vec2dBlobResults[SV_BOXY_MIN][0]);
 
-				int iMapSize = static_cast< int >( msvlSortMap.GetSize() );
+				int iMapSize = static_cast<int> (m_SortVector.size());
 			
 				for (int i = 0; i < (int)l_lCurrentNbrOfBlobs && i < iMapSize ; i++)
 				{
 					RECT l_oRect;
 
-					long l = msvlSortMap.GetAt(i);
+					long l = m_SortVector[i];
 
 					l_oRect.top = static_cast<long>(pyMin[l]);
 					l_oRect.left = static_cast<long>(pxMin[l]);
@@ -1677,7 +1677,7 @@ bool SVBlobAnalyzerClass::IsPtOverResult( const POINT& rPoint )
 
 				if( S_OK == l_svFigure.IsPointOverFigure( rPoint ) )
 					{
-						m_nBlobIndex = msvlSortMap.GetAt(i); 
+						m_nBlobIndex = m_SortVector[i]; 
 
 						break;
 					}
@@ -1702,7 +1702,7 @@ bool SVBlobAnalyzerClass::IsPtOverResult( const POINT& rPoint )
 ////////////////////////////////////////////////////////////////////////////////
 void SVBlobAnalyzerClass::DisplayAnalyzerResult()
 {
-	if(m_nBlobIndex < 0 || 	m_nBlobIndex >= msvlSortMap.GetSize())
+	if(m_nBlobIndex < 0 || 	m_nBlobIndex >= static_cast<int> (m_SortVector.size()))
 		return;
 
 	SVBlobAnalyzerResultDlg	dlg;
@@ -1715,7 +1715,7 @@ void SVBlobAnalyzerClass::CreateArray()
 	m_lvoBlobSampleSize.GetValue(m_lBlobSampleSize);
 	m_lvoMaxBlobDataArraySize.GetValue(m_lMaxBlobDataArraySize);
 
-	msvlSortMap.SetSize(m_lBlobSampleSize);// = new long[m_lBlobSampleSize]; 
+	m_SortVector.resize(m_lBlobSampleSize);
 
 	m_vec2dBlobResults.resize( SV_NUMBER_OF_BLOB_FEATURES, m_lBlobSampleSize );
 
@@ -1809,13 +1809,13 @@ HRESULT SVBlobAnalyzerClass::onCollectOverlays(SVImageClass* p_pImage, SVExtentM
 
 					SVExtentMultiLineStruct l_multiLine;
 
-					l_multiLine.m_Color = SV_DEFAULT_SUB_FUNCTION_COLOR_1;
+					l_multiLine.m_Color = SvDef::DefaultSubFunctionColor1;
 					
-					l_multiLine.AssignExtentFigure( l_svFigure, SV_DEFAULT_SUB_FUNCTION_COLOR_1 );
+					l_multiLine.AssignExtentFigure( l_svFigure, SvDef::DefaultSubFunctionColor1 );
 
 					UpdateOverlayIDs( l_multiLine );
 
-					p_rMultiLineArray.Add( l_multiLine );
+					p_rMultiLineArray.push_back( l_multiLine );
 				}
 			}
 			else // if not running show all
@@ -1827,7 +1827,7 @@ HRESULT SVBlobAnalyzerClass::onCollectOverlays(SVImageClass* p_pImage, SVExtentM
 				
 				for (int i = 0; i < (int)l_lCurrentNbrOfBlobs; i++)
 				{
-					long l = msvlSortMap.GetAt(i);
+					long l = m_SortVector[i];
 					RECT l_oRect;
 
 					l_oRect.top = static_cast<long> (pyMin[l]);
@@ -1839,13 +1839,13 @@ HRESULT SVBlobAnalyzerClass::onCollectOverlays(SVImageClass* p_pImage, SVExtentM
 					l_svExtents.TranslateFromOutputSpace( l_svFigure, l_svFigure );
 
 					SVExtentMultiLineStruct l_multiLine;
-					l_multiLine.m_Color = SV_DEFAULT_SUB_FUNCTION_COLOR_1;
+					l_multiLine.m_Color = SvDef::DefaultSubFunctionColor1;
 
-					l_multiLine.AssignExtentFigure( l_svFigure, SV_DEFAULT_SUB_FUNCTION_COLOR_1 );
+					l_multiLine.AssignExtentFigure( l_svFigure, SvDef::DefaultSubFunctionColor1 );
 
 					UpdateOverlayIDs( l_multiLine );
 
-					p_rMultiLineArray.Add( l_multiLine );
+					p_rMultiLineArray.push_back( l_multiLine );
 				}
 			}
 		}

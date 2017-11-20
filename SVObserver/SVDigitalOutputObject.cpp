@@ -161,7 +161,7 @@ void SVDigitalOutputObject::updateGuid(int position)
 void SVDigitalOutputObject::LocalInitialize()
 {
 	m_isCreated = false;
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVIoObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVDigitalOutputObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVIoObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVDigitalOutputObjectType;
 }
 

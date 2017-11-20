@@ -51,7 +51,7 @@ namespace SvOg
 	#pragma region Constructor
 	SVToolAdjustmentDialogTwoImagePageClass::SVToolAdjustmentDialogTwoImagePageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID) 
 	: CPropertyPage(SVToolAdjustmentDialogTwoImagePageClass::IDD)
-	, SvOg::ImageController(rInspectionID, rTaskObjectID, SVToolImageObjectType)
+	, SvOg::ImageController(rInspectionID, rTaskObjectID, SvDef::SVToolImageObjectType)
 	, m_InspectionID(rInspectionID)
 	, m_TaskObjectID(rTaskObjectID)
 	, m_Values(SvOg::BoundValues(rInspectionID, rTaskObjectID, boost::assign::map_list_of(ArithmeticOperatorTag, SVArithmeticOperatorObjectGuid)))

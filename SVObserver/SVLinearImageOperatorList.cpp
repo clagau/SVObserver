@@ -397,14 +397,14 @@ HRESULT SVLinearImageOperatorListClass::getInputProfileOrientation(long& rProfil
 void SVLinearImageOperatorListClass::init()
 {
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVUnaryImageOperatorListObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType	= SVLinearImageOperatorListObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVUnaryImageOperatorListObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType	= SvDef::SVLinearImageOperatorListObjectType;
 
-	inputProfileOrientation.SetInputObjectType( SVProfileOrientationGuid, SVValueObjectType, SVEnumValueObjectType );
+	inputProfileOrientation.SetInputObjectType( SVProfileOrientationGuid, SvDef::SVValueObjectType, SvDef::SVEnumValueObjectType );
 	inputProfileOrientation.SetObject( GetObjectInfo() );
 	RegisterInputObject( &inputProfileOrientation, _T( "LinearImageOperatorListProfileOrientation" ) );
 
-	inputUseRotationAngle.SetInputObjectType( SVLinearToolUseRotationGuid, SVValueObjectType, SVBoolValueObjectType );
+	inputUseRotationAngle.SetInputObjectType( SVLinearToolUseRotationGuid, SvDef::SVValueObjectType, SvDef::SVBoolValueObjectType );
 	inputUseRotationAngle.SetObject( GetObjectInfo() );
 	RegisterInputObject( &inputUseRotationAngle, _T( "LinearImageOperatorListUseRotationAngle" ) );
 

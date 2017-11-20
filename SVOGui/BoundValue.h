@@ -24,7 +24,7 @@ namespace SvOg
 	private:
 		GUID m_embeddedID; // maybe use SVObjectTypeInfo instead ?
 		GUID m_instanceID;
-		SVObjectTypeInfoStruct m_ownerInfo; // to access an object within the hierarchy owned at a certain level
+		SvDef::SVObjectTypeInfoStruct m_ownerInfo; // to access an object within the hierarchy owned at a certain level
 		mutable boost::any m_value;
 		bool m_bReadOnly;
 		mutable bool m_bModified;
@@ -35,10 +35,10 @@ namespace SvOg
 		BoundValue(const GUID& rEmbeddedID, bool bReadOnly = false) 
 		: m_embeddedID(rEmbeddedID), m_instanceID(GUID_NULL), m_bReadOnly(bReadOnly), m_bModified(false) {}
 
-		BoundValue(const GUID& rEmbeddedID, const SVObjectTypeInfoStruct& ownerInfo, bool bReadOnly = false) 
+		BoundValue(const GUID& rEmbeddedID, const SvDef::SVObjectTypeInfoStruct& ownerInfo, bool bReadOnly = false) 
 		: m_embeddedID(rEmbeddedID), m_instanceID(GUID_NULL), m_ownerInfo(ownerInfo), m_bReadOnly(bReadOnly), m_bModified(false) {}
 
-		BoundValue(const GUID& rEmbeddedID, const GUID& rInstanceID, const boost::any& value, const SVObjectTypeInfoStruct& ownerInfo, bool bReadOnly = false) 
+		BoundValue(const GUID& rEmbeddedID, const GUID& rInstanceID, const boost::any& value, const SvDef::SVObjectTypeInfoStruct& ownerInfo, bool bReadOnly = false) 
 		: m_embeddedID(rEmbeddedID), m_instanceID(rInstanceID),  m_value(value), m_ownerInfo(ownerInfo), m_bReadOnly(bReadOnly), m_bModified(false) {}
 			
 		~BoundValue() { m_value.clear(); }
@@ -48,7 +48,7 @@ namespace SvOg
 
 		const GUID& GetEmbeddedID() const { return m_embeddedID; }
 		const GUID& GetObjectID() const { return m_instanceID; }
-		const SVObjectTypeInfoStruct& GetOwnerInfo() const { return m_ownerInfo; }
+		const SvDef::SVObjectTypeInfoStruct& GetOwnerInfo() const { return m_ownerInfo; }
 
 		bool isReadOnly() const { return m_bReadOnly; }
 		bool isModified() const { return m_bModified; }

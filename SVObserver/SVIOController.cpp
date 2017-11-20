@@ -54,7 +54,7 @@ SVIOController::SVIOController( SVObjectClass *pOwner, int StringResourceID )
 void SVIOController::LocalIntialize()
 {
 	// Set up your type...
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVIOControllerType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVIOControllerType;
 
 	m_pModuleReady = new SVIOEntryHostStruct;
 	m_pModuleReady->m_ObjectType = IO_DIGITAL_OUTPUT;
@@ -115,8 +115,6 @@ SVIODoc* SVIOController::GetIODoc() const
 
 bool SVIOController::RebuildOutputList()
 {
-	SVOutputObjectPtrVector ppNewOutputs;
-
 	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 

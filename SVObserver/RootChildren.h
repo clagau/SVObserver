@@ -83,7 +83,7 @@ public:
 	//! \returns reference to the value object
 	//************************************
 	template <typename ELEMENT_TYPE>
-	BasicValueObjectPtr setValue(LPCTSTR DottedName, const ELEMENT_TYPE Value, SVObjectClass* pOwner = nullptr, SVObjectSubTypeEnum ObjectType = SVNotSetSubObjectType);
+	BasicValueObjectPtr setValue(LPCTSTR DottedName, const ELEMENT_TYPE Value, SVObjectClass* pOwner = nullptr, SvDef::SVObjectSubTypeEnum ObjectType = SvDef::SVNotSetSubObjectType);
 #pragma endregion Public Methods
 
 #pragma region Member Variables

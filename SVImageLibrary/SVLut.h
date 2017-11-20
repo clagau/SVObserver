@@ -12,7 +12,6 @@
 #pragma once
 
 //Moved to precompiled header: #include <vector>
-#include "SVContainerLibrary/SVVector.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "SVLutTransform.h"
 

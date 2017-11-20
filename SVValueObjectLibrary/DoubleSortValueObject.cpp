@@ -188,7 +188,7 @@ HRESULT DoubleSortValueObject::GetArrayValues( std::vector<double>& rValues, int
 #pragma region Private Methods
 void DoubleSortValueObject::LocalInitialize()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = DoubleSortValueObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::DoubleSortValueObjectType;
 	SetTypeName( _T("Decimal") );
 }
 #pragma endregion Private Methods

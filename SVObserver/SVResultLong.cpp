@@ -23,11 +23,11 @@ SVLongResultClass::SVLongResultClass( SVObjectClass* POwner, int StringResourceI
 				  :SVResultClass( POwner, StringResourceID )
 {
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVResultLongObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVResultObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVResultLongObjectType;
 
 	// Identify our input type needs
-	m_inputObjectInfo.SetInputObjectType(SVValueObjectType, SVLongValueObjectType );
+	m_inputObjectInfo.SetInputObjectType(SvDef::SVValueObjectType, SvDef::SVLongValueObjectType );
 	m_inputObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputObjectInfo, SvO::cInputTag_LongResultValue );
 
@@ -42,17 +42,17 @@ SVLongResultClass::SVLongResultClass( SVObjectClass* POwner, int StringResourceI
 
 	// Construct the SVRangeClass via the ClassInfoStruct
 	SVClassInfoStruct rangeClassInfo;
-	SVObjectTypeInfoStruct interfaceInfo;
+	SvDef::SVObjectTypeInfoStruct interfaceInfo;
 
 	// Declare Input Interface of the SVRangeClass...
-	interfaceInfo.ObjectType = SVValueObjectType;
-	interfaceInfo.SubType = SVLongValueObjectType;
+	interfaceInfo.ObjectType = SvDef::SVValueObjectType;
+	interfaceInfo.SubType = SvDef::SVLongValueObjectType;
 	interfaceInfo.EmbeddedID = SVValueObjectGuid;
-	rangeClassInfo.m_DesiredInputInterface.Add( interfaceInfo );
+	rangeClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
 
 	// Describe the SVRangeClass ...
-	rangeClassInfo.m_ObjectTypeInfo.ObjectType = SVRangeObjectType;
-	rangeClassInfo.m_ObjectTypeInfo.SubType	= SVNotSetSubObjectType;
+	rangeClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVRangeObjectType;
+	rangeClassInfo.m_ObjectTypeInfo.SubType	= SvDef::SVNotSetSubObjectType;
 	rangeClassInfo.m_ClassId = SVRangeClassGuid;
 	rangeClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_SVRANGE );
 
@@ -83,7 +83,7 @@ bool SVLongResultClass::CreateObject( const SVObjectLevelCreateStruct& rCreateSt
 
 const GUID & SVLongResultClass::GetInputEmbeddedID() const
 {
-	if (nullptr != getInput() && SVLongValueObjectType == getInput()->GetObjectSubType())
+	if (nullptr != getInput() && SvDef::SVLongValueObjectType == getInput()->GetObjectSubType())
 	{
 		return getInput()->GetEmbeddedID();
 	}

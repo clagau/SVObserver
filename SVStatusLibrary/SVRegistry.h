@@ -11,7 +11,9 @@
 
 #pragma once
 
-#include "SVContainerLibrary/SVVector.h"
+#pragma region Includes
+//Moved to precompiled header: #include <vector>
+#pragma endregion Includes
 
 typedef bool (CALLBACK *PFKEYENUMPROC) (LPCTSTR p_szKey, LPVOID pUserData);
 
@@ -20,7 +22,7 @@ typedef bool (CALLBACK *PFKEYENUMPROC) (LPCTSTR p_szKey, LPVOID pUserData);
 
 class SVRegistryClass
 {
-	typedef SVVector<unsigned char> SVByteVector;
+	typedef std::vector<unsigned char> SVByteVector;
 
 private:
 	//Handle to opened registry key.
@@ -73,7 +75,7 @@ public:
 	//Remarks:
 	//Sets the  registry value for the entry specified 
 	//by szValueName.
-	bool SetRegistryValue( LPCTSTR szValueName, SVByteVector& baValue, DWORD dwType, DWORD dwLength);
+	bool SetRegistryValue( LPCTSTR szValueName, SVByteVector& rValueVector, DWORD dwType, DWORD dwLength);
 
 	//bool GetRegistryValue (std::string &szValueName, SVByteArray 
 	//&baValue)
@@ -85,7 +87,7 @@ public:
 	//Remarks:
 	//Retrieves the value specified by szValueName and stores 
 	//it in baValue.
-	bool GetRegistryValue( LPCTSTR szValueName, SVByteVector& baValue );
+	bool GetRegistryValue( LPCTSTR szValueName, SVByteVector& rValueVector );
 
 	//bool SetRegistryValue (std::string &szValueName, SVByteArray 
 	//&baValue)
@@ -95,7 +97,7 @@ public:
 	//
 	//Remarks:
 	//Sets a registry value with the data supplied in baValue.
-	bool SetRegistryValue( LPCTSTR szValueName, SVByteVector& baValue );
+	bool SetRegistryValue( LPCTSTR szValueName, SVByteVector& rValueVector );
 
 	//bool DeleteValue (std::string &szValueName)
 	//
@@ -445,7 +447,7 @@ private:
 	//	SV_ISKEY
 	//	SV_ISVALUE
 	//	SV_ISGARBAGE
-	int GetImportString(FILE * pFile, std::string & szName, SVByteVector & baValue, DWORD * pdwType);
+	int GetImportString(FILE * pFile, std::string & szName, SVByteVector& rValueVector, DWORD * pdwType);
 
 	//This is a supporting function for the Import function.
 	bool ImportKeys(FILE * pFile);

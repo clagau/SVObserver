@@ -15,7 +15,7 @@
 #include "SVMaskShape.h"
 #include "SVLibrary/Intersect.h"
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add SVColor declaration.
-#include "SVOGui/SVColor.h"
+#include "Definitions/Color.h"
 #pragma endregion Includes
 
 #pragma warning ( disable : 4503 )
@@ -102,8 +102,8 @@ HRESULT SVMaskShape::Refresh()
 		HBITMAP hbmOld = (HBITMAP) ::SelectObject(m_RenderDC.GetSafeHdc(), m_dib.hbm);
 
 		// compute fore & back colors
-		COLORREF rgbShape = SVColor::White;
-		COLORREF rgbBackground = SVColor::Black;
+		COLORREF rgbShape = SvDef::White;
+		COLORREF rgbBackground = SvDef::Black;
 
 		ComputeColors(rgbShape, rgbBackground);
 
@@ -237,11 +237,11 @@ void SVMaskShape::ComputeColors(COLORREF& rgbShape, COLORREF& rgbBackground)
 		if ( m_svFillStruct.bFillMaskArea )
 		{
 			rgbShape = m_svFillStruct.rgbFillColor;
-			rgbBackground = SVColor::White;
+			rgbBackground = SvDef::White;
 		}
 		else
 		{
-			rgbShape = SVColor::Black;
+			rgbShape = SvDef::Black;
 			rgbBackground = m_svFillStruct.rgbFillColor;
 		}
 	}
@@ -249,13 +249,13 @@ void SVMaskShape::ComputeColors(COLORREF& rgbShape, COLORREF& rgbBackground)
 	{
 		if ( m_svFillStruct.bFillMaskArea )
 		{
-			rgbShape = SVColor::White;
+			rgbShape = SvDef::White;
 			rgbBackground = m_svFillStruct.rgbFillColor;
 		}
 		else
 		{
 			rgbShape = m_svFillStruct.rgbFillColor;
-			rgbBackground = SVColor::Black;
+			rgbBackground = SvDef::Black;
 		}
 	}
 }// SVMaskShape::ComputeColors

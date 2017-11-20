@@ -33,7 +33,7 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
-#include "SVRunControlLibrary\SVRunControlLibrary.h"
+#include "Definitions/Color.h"
 #ifdef _DEBUG_PERFORMANCE_INFO //Arvid 160212 this is helpful for debugging the creation of Performance Information
 #include "SVTimerLibrary\SVProfiler.h"
 #endif
@@ -234,7 +234,7 @@ void SVInspectionProcess::BuildWatchlist()
 			SVObjectReference ObjectRef;
 			if (S_OK == GetInspectionObject(it.first.c_str(), ObjectRef))
 			{
-				if (it.second->data.ObjectType == SVImageObjectType)
+				if (it.second->data.ObjectType == SvDef::SVImageObjectType)
 				{
 					m_WatchListImages.push_back(WatchlistelementPtr(new WatchListElement(ObjectRef, it.second)));
 				}
@@ -434,7 +434,7 @@ SVInspectionProcess::SVInspectionProcess(SVObjectClass* POwner, int StringResour
 void SVInspectionProcess::Init()
 {
 	// Set up your type...
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVInspectionObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVInspectionObjectType;
 	m_LastRunLockPtr = new SVCriticalSection;
 	m_LastRunProductNULL = false;
 	m_pCurrentToolset = nullptr;
@@ -1442,17 +1442,17 @@ HRESULT SVInspectionProcess::RebuildInspection()
 	// Color SVIM
 	if (IsColorCamera())
 	{
-		SVVirtualCameraMap l_Cameras;
+		SVVirtualCameraMap CameraMap;
 
 		if (nullptr != pPPQ)
 		{
-			pPPQ->GetVirtualCameras(l_Cameras);
+			pPPQ->GetVirtualCameras(CameraMap);
 		}
 
 		bool bColorSourceImage = false;
 		bool bCameraSupportsColor = false;
-		SVVirtualCameraMap::iterator pos = l_Cameras.begin();
-		while (pos != l_Cameras.end())
+		SVVirtualCameraMap::iterator pos = CameraMap.begin();
+		while (pos != CameraMap.end())
 		{
 			SVAcquisitionClassPtr pCamDevice = nullptr;
 
@@ -2185,7 +2185,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 
 				if (SvOi::SVResetItemIP != rResetItem && bResetObject && SvOi::SVResetItemNone > ObjectRef.getValueObject()->getResetItem())
 				{
-					SVToolClass* l_psvTool = dynamic_cast<SVToolClass*>(ObjectRef.getObject()->GetAncestor(SVToolObjectType));
+					SVToolClass* l_psvTool = dynamic_cast<SVToolClass*>(ObjectRef.getObject()->GetAncestor(SvDef::SVToolObjectType));
 
 					if (nullptr != l_psvTool)
 					{
@@ -2754,14 +2754,14 @@ bool SVInspectionProcess::CheckAndResetConditionalHistory()
 			Result = true;
 		}
 
-		SVImageListClass listImages;
+		SVImageClassPtrVector listImages;
 		pToolSet->GetImageList(listImages, SvDef::SV_CH_IMAGE);
-		int NumberOfImages = listImages.GetSize();
+		int NumberOfImages = static_cast<int> (listImages.size());
 		if (0 < NumberOfImages)
 		{
 			for (int i = 0; i < NumberOfImages; i++)
 			{
-				SVObjectReference refImage(listImages.GetAt(i));
+				SVObjectReference refImage(listImages[i]);
 				refImage.getObject()->SetObjectAttributesSet(SvDef::SV_CH_IMAGE, SvOi::SetAttributeType::RemoveAttribute);
 			}
 			Result = true;
@@ -2809,13 +2809,13 @@ SVVirtualCamera* SVInspectionProcess::GetFirstPPQCamera() const
 
 	if (nullptr != pPPQ)
 	{
-		SVVirtualCameraMap l_Cameras;
+		SVVirtualCameraMap CameraMap;
 
-		pPPQ->GetVirtualCameras(l_Cameras);
+		pPPQ->GetVirtualCameras(CameraMap);
 
-		SVVirtualCameraMap::const_iterator l_Iter = l_Cameras.begin();
+		SVVirtualCameraMap::const_iterator l_Iter = CameraMap.begin();
 
-		if (l_Iter != l_Cameras.end())
+		if (l_Iter != CameraMap.end())
 		{
 			pCamera = l_Iter->second;
 		}
@@ -2834,13 +2834,13 @@ HRESULT SVInspectionProcess::GetPPQCameras(SVVirtualCameraPtrSet& p_rCameras) co
 
 	if (nullptr != pPPQ)
 	{
-		SVVirtualCameraMap l_Cameras;
+		SVVirtualCameraMap CameraMap;
 
-		pPPQ->GetVirtualCameras(l_Cameras);
+		pPPQ->GetVirtualCameras(CameraMap);
 
-		SVVirtualCameraMap::const_iterator l_Iter = l_Cameras.begin();
+		SVVirtualCameraMap::const_iterator l_Iter = CameraMap.begin();
 
-		while (l_Iter != l_Cameras.end())
+		while (l_Iter != CameraMap.end())
 		{
 			if (nullptr != l_Iter->second)
 			{
@@ -3440,7 +3440,7 @@ HRESULT SVInspectionProcess::RegisterSubObject(SVObjectClass* pObject)
 	SvOi::IValueObject* pValueObject(nullptr);
 
 	//! Object is an Image
-	if (SVImageObjectType == pObject->GetObjectInfo().m_ObjectTypeInfo.ObjectType)
+	if (SvDef::SVImageObjectType == pObject->GetObjectInfo().m_ObjectTypeInfo.ObjectType)
 	{
 		SVCameraImageTemplate* pCameraImage = dynamic_cast<SVCameraImageTemplate*> (pObject);
 		SVImageClass* pImage = dynamic_cast<SVImageClass*>(pObject);
@@ -3472,7 +3472,7 @@ HRESULT SVInspectionProcess::UnregisterSubObject(SVObjectClass* pObject)
 	SvOi::IValueObject* pValueObject(nullptr);
 
 	//! Object is an Image
-	if (SVImageObjectType == pObject->GetObjectInfo().m_ObjectTypeInfo.ObjectType)
+	if (SvDef::SVImageObjectType == pObject->GetObjectInfo().m_ObjectTypeInfo.ObjectType)
 	{
 		SVCameraImageTemplate* pCameraImage = dynamic_cast<SVCameraImageTemplate*>(pObject);
 		SVImageClass* pImage = dynamic_cast<SVImageClass*>(pObject);
@@ -3538,8 +3538,8 @@ HRESULT SVInspectionProcess::GetInspectionImage(LPCTSTR Name, SVImageClass*& p_r
 	p_rRefObject = nullptr;
 
 	// Specify that we are looking only for images
-	SVObjectTypeInfoStruct imageObjectInfo;
-	imageObjectInfo.ObjectType = SVImageObjectType;
+	SvDef::SVObjectTypeInfoStruct imageObjectInfo;
+	imageObjectInfo.ObjectType = SvDef::SVImageObjectType;
 
 	SVGetObjectDequeByTypeVisitor l_Visitor(imageObjectInfo);
 
@@ -3754,7 +3754,7 @@ SvOi::ISelectorItemVectorPtr SVInspectionProcess::GetPPQSelectorList(const UINT 
 				InsertItem.setLocation(Location.c_str());
 				//Need to replace the inspection name with the PPQ Variables name
 				// Only DIO and Remote Input, but is all that is in this list?
-				SvUl::searchAndReplace(Location, InspectionName.c_str(), SvOl::FqnPPQVariables);
+				SvUl::searchAndReplace(Location, InspectionName.c_str(), SvDef::FqnPPQVariables);
 				InsertItem.setDisplayLocation(Location.c_str());
 				InsertItem.setItemKey(ObjectRef.getObject()->GetUniqueObjectID().ToVARIANT());
 				if (nullptr != ObjectRef.getValueObject())
@@ -3881,7 +3881,7 @@ SVObjectPtrVector SVInspectionProcess::getPPQVariables() const
 
 DWORD SVInspectionProcess::GetObjectColor() const
 {
-	return SV_DEFAULT_WHITE_COLOR;
+	return SvDef::DefaultWhiteColor;
 }
 
 
@@ -4048,7 +4048,7 @@ bool SVInspectionProcess::DestroyChildObject(SVObjectClass* pChild)
 	return false;
 }
 
-SvOi::IObjectClass* SVInspectionProcess::getFirstObject(const SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends, const SvOi::IObjectClass* pRequestor) const
+SvOi::IObjectClass* SVInspectionProcess::getFirstObject(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends, const SvOi::IObjectClass* pRequestor) const
 {
 	SvOi::IObjectClass* retValue = SVObjectClass::getFirstObject(rObjectTypeInfo, useFriends, pRequestor);
 

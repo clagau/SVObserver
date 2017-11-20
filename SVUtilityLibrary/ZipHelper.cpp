@@ -37,14 +37,14 @@ ZipHelper::~ZipHelper()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-void ZipHelper::makeZipFile( const std::string& rZipFileName, const SvDef::StringSet& rZipFiles, bool DeleteSourceFiles )
+void ZipHelper::makeZipFile( const std::string& rZipFileName, const StringSet& rZipFiles, bool DeleteSourceFiles )
 {
 	if( 0 != rZipFiles.size() )
 	{
 		HZIP ZipHandle = ::CreateZip( rZipFileName.c_str(), nullptr);
 		if( nullptr != ZipHandle )
 		{
-			SvDef::StringSet::const_iterator Iter( rZipFiles.begin() );
+			StringSet::const_iterator Iter( rZipFiles.begin() );
 			while( rZipFiles.end() != Iter )
 			{
 				if( ::_access( Iter->c_str(), 0 ) == 0 )
@@ -71,7 +71,7 @@ void ZipHelper::makeZipFile( const std::string& rZipFileName, const SvDef::Strin
 	}
 }
 
-void ZipHelper::unzipAll( const std::string& rZipFileName, const std::string& rDestinationFolder, SvDef::StringSet& rUnzippedFiles )
+void ZipHelper::unzipAll( const std::string& rZipFileName, const std::string& rDestinationFolder, StringSet& rUnzippedFiles )
 {
 	if( !rDestinationFolder.empty() )
 	{

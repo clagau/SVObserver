@@ -39,7 +39,7 @@ namespace SvTi
 		if (!IsTriggerInList(sTriggerName))
 		{
 			SVOTriggerObjPtr pTriggerObj = new SVOTriggerObj(sTriggerName, iDigNumber);
-			m_TriggerList.AddTail(pTriggerObj);
+			m_TriggerList.insert(m_TriggerList.end(), pTriggerObj);
 			bRet = true;
 		}
 		return bRet;
@@ -49,10 +49,10 @@ namespace SvTi
 	bool SVOTriggerList::RemoveTriggerFromList(const std::string& sTriggerName)
 	{
 		bool bRet = false;
-		iterator pos = FindTriggerPosition(sTriggerName);
-		if (pos != m_TriggerList.end())
+		iterator Iter = FindTriggerPosition(sTriggerName);
+		if (Iter != m_TriggerList.end())
 		{
-			m_TriggerList.RemoveAt(pos);
+			m_TriggerList.erase(Iter);
 			bRet = true;
 		}
 
@@ -61,21 +61,28 @@ namespace SvTi
 
 	int SVOTriggerList::GetTriggerListCount() const
 	{
-		return static_cast<int>(m_TriggerList.GetCount());
+		return static_cast<int>(m_TriggerList.size());
 	}
 
 	SVOTriggerObjPtr SVOTriggerList::GetTriggerObjectByName(const std::string& sTriggerName)
 	{
-		iterator pos = FindTriggerPosition(sTriggerName);
+		iterator Iter = FindTriggerPosition(sTriggerName);
 
-		return m_TriggerList.GetAt(pos);
+		return *Iter;
 	}
 
 	SVOTriggerObjPtr SVOTriggerList::GetTriggerObjectByPosition(int iPos)
 	{
-		iterator pos = m_TriggerList.FindIndex(iPos);
+		SVOTriggerObjPtr pResult;
 
-		return m_TriggerList.GetAt(pos);
+		if (0 <= iPos && iPos < static_cast<int>(m_TriggerList.size()))
+		{
+			iterator Iter(m_TriggerList.begin());
+			std::advance(Iter, iPos);
+			pResult = *Iter;
+		}
+
+		return pResult;
 	}
 
 	int SVOTriggerList::GetNextTriggerID() const
@@ -123,12 +130,12 @@ namespace SvTi
 
 	SVOTriggerList::iterator SVOTriggerList::FindTriggerPosition(const std::string& sTriggerName)
 	{
-		iterator pos( m_TriggerList.begin() );
+		iterator Iter( m_TriggerList.begin() );
 		bool Found = false;
 
-		while( pos != m_TriggerList.end() && !Found )
+		while( Iter != m_TriggerList.end() && !Found )
 		{
-			SVOTriggerObjPtr pTriggerObj = m_TriggerList.GetAt(pos);
+			SVOTriggerObjPtr pTriggerObj =*Iter;
 
 			if( nullptr != pTriggerObj && std::string( pTriggerObj->GetTriggerDisplayName() ) == sTriggerName )
 			{
@@ -136,15 +143,15 @@ namespace SvTi
 			}
 			else
 			{
-				++pos;
+				++Iter;
 			}
 		}
 
-		return pos;
+		return Iter;
 	}
 
 	void SVOTriggerList::ResetContent()
 	{
-		m_TriggerList.RemoveAll();
+		m_TriggerList.clear();
 	}
 } //namespace SvTi

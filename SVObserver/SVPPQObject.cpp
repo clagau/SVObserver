@@ -21,7 +21,7 @@
 #include "SVDataManagerLibrary/DataManager.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVObjectLibrary/GlobalConst.h"
+#include "Definitions/GlobalConst.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVUtilityLibrary/SVDottedName.h"
@@ -43,7 +43,7 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
-#include "SVRunControlLibrary\SVRunControlLibrary.h"
+#include "Definitions/Color.h"
 #ifdef _DEBUG_PERFORMANCE_INFO //Arvid 160212 this is helpful for debugging the creation of Performance Information
 #include "SVTimerLibrary\SVProfiler.h"
 #endif
@@ -387,7 +387,7 @@ void SVPPQObject::init()
 	m_voDataValid.SetObjectAttributesAllowed(SvDef::SV_EMBEDABLE | SvDef::SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute);
 	m_voOutputState.SetObjectAttributesAllowed(SvDef::SV_EMBEDABLE | SvDef::SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute);
 
-	BasicValueObjectPtr pPpqLength = m_PpqValues.setValueObject(SvOl::FqnPpqLength, StandardPpqLength, this);
+	BasicValueObjectPtr pPpqLength = m_PpqValues.setValueObject(SvDef::FqnPpqLength, StandardPpqLength, this);
 	SVObjectManagerClass::Instance().IncrementShortPPQIndicator();
 
 	//fill up the child object list
@@ -461,8 +461,7 @@ bool SVPPQObject::Create()
 	_bstr_t bName;
 	HRESULT hr;
 	int i;
-	int iSize;
-
+	
 	// Return if already created
 	if (m_isCreated) { return false; }
 
@@ -502,14 +501,13 @@ bool SVPPQObject::Create()
 		m_pMasterProductInfos[j].m_svCameraInfos = l_CameraInfos;
 		m_pMasterProductInfos[j].m_svInspectionInfos.clear();
 
-		iSize = m_arInspections.GetSize();
-		for (i = 0; i < iSize; i++)
+		for (auto pInspection : m_arInspections)
 		{
 			SVInspectionInfoStruct l_svInspectionStruct;
 
-			l_svInspectionStruct.pInspection = m_arInspections[i];
+			l_svInspectionStruct.pInspection = pInspection;
 
-			m_pMasterProductInfos[j].m_svInspectionInfos[m_arInspections[i]->GetUniqueObjectID()] = l_svInspectionStruct;
+			m_pMasterProductInfos[j].m_svInspectionInfos[pInspection->GetUniqueObjectID()] = l_svInspectionStruct;
 		}// end for
 
 		m_qAvailableProductInfos.AddTail(&m_pMasterProductInfos[j]);
@@ -524,9 +522,9 @@ bool SVPPQObject::Create()
 			l_pProduct->InitProductInfo();
 			l_pProduct->GetNextAvailableIndexes(SV_PPQ);
 
-			for (i = 0; i < m_arInspections.GetSize(); i++)
+			for (auto pInspection : m_arInspections)
 			{
-				m_arInspections[i]->LastProductUpdate(l_pProduct);
+				pInspection->LastProductUpdate(l_pProduct);
 			}
 		}
 		else
@@ -552,10 +550,9 @@ bool SVPPQObject::Create()
 	if (m_isCreated)
 	{
 		// Force the Inspections to rebuild
-		iSize = m_arInspections.GetSize();
-		for (i = 0; i < iSize; i++)
+		for (auto pInspection : m_arInspections)
 		{
-			m_arInspections[i]->RebuildInspection();
+			pInspection->RebuildInspection();
 		}// end for
 	}
 
@@ -580,8 +577,6 @@ bool SVPPQObject::Rebuild()
 	int j;
 	_bstr_t bName;
 	HRESULT hr;
-	int i;
-	int iSize;
 
 	// Return if not created
 	if (!m_isCreated) { return false; }
@@ -623,14 +618,12 @@ bool SVPPQObject::Rebuild()
 		m_pMasterProductInfos[j].m_svCameraInfos = l_CameraInfos;
 		m_pMasterProductInfos[j].m_svInspectionInfos.clear();
 
-		iSize = m_arInspections.GetSize();
-		for (i = 0; i < iSize; i++)
+		for (auto pInspection : m_arInspections)
 		{
 			SVInspectionInfoStruct l_svInspectionStruct;
+			l_svInspectionStruct.pInspection = pInspection;
 
-			l_svInspectionStruct.pInspection = m_arInspections[i];
-
-			m_pMasterProductInfos[j].m_svInspectionInfos[m_arInspections[i]->GetUniqueObjectID()] = l_svInspectionStruct;
+			m_pMasterProductInfos[j].m_svInspectionInfos[pInspection->GetUniqueObjectID()] = l_svInspectionStruct;
 		}// end for
 
 		m_qAvailableProductInfos.AddTail(&m_pMasterProductInfos[j]);
@@ -645,9 +638,9 @@ bool SVPPQObject::Rebuild()
 			l_pProduct->InitProductInfo();
 			l_pProduct->GetNextAvailableIndexes(SV_PPQ);
 
-			for (i = 0; i < m_arInspections.GetSize(); i++)
+			for (auto pInspection : m_arInspections)
 			{
-				m_arInspections[i]->LastProductUpdate(l_pProduct);
+				pInspection->LastProductUpdate(l_pProduct);
 			}
 		}
 		else
@@ -657,10 +650,9 @@ bool SVPPQObject::Rebuild()
 	}
 
 	// Force the Inspections to rebuild as well
-	iSize = m_arInspections.GetSize();
-	for (i = 0; i < iSize; i++)
+	for (auto pInspection : m_arInspections)
 	{
-		m_arInspections[i]->RebuildInspection();
+		pInspection->RebuildInspection();
 	}// end for
 
 	return true;
@@ -751,10 +743,10 @@ void SVPPQObject::DetachAll()
 		++l_Iter;
 	}
 
-	int iSize = m_arInspections.GetSize();
+	int iSize = static_cast<int> (m_arInspections.size());
 	for (int i = iSize - 1; i >= 0; i--)
 	{
-		DetachInspection(m_arInspections.GetAt(i));
+		DetachInspection(m_arInspections[i]);
 	}
 }
 
@@ -788,7 +780,7 @@ void SVPPQObject::SetPPQLength(long lPPQLength)
 		}
 	}
 
-	m_PpqValues.setValueObject(SvOl::FqnPpqLength, lPPQLength);
+	m_PpqValues.setValueObject(SvDef::FqnPpqLength, lPPQLength);
 
 	if (GetPPQLength() != m_ppPPQPositions.size())
 	{
@@ -829,7 +821,7 @@ void SVPPQObject::GetPPQLength(long &lPPQLength) const
 long SVPPQObject::GetPPQLength() const
 {
 	long length = 0;
-	BasicValueObjectPtr pValue = m_PpqValues.getValueObject(SvOl::FqnPpqLength);
+	BasicValueObjectPtr pValue = m_PpqValues.getValueObject(SvDef::FqnPpqLength);
 	if (!pValue.empty())
 	{
 		pValue->getValue(length);
@@ -890,7 +882,7 @@ bool SVPPQObject::AttachInspection(SVInspectionProcess* pInspection)
 {
 	if (nullptr == pInspection) { return false; }
 
-	m_arInspections.Add(pInspection);
+	m_arInspections.push_back(pInspection);
 
 	pInspection->SetPPQIdentifier(GetUniqueObjectID());
 
@@ -929,13 +921,8 @@ bool SVPPQObject::DetachCamera(SVVirtualCamera* pCamera, bool bRemoveDepends/*=f
 	//check inspections and remove camera from them also...
 	if (bRemoveDepends)
 	{
-		SVInspectionProcess* pInspection(nullptr);
-		int iCnt;
-		int iInsSize = m_arInspections.GetSize();
-
-		for (iCnt = 0; iCnt < iInsSize; iCnt++)
+		for (auto pInspection : m_arInspections)
 		{
-			pInspection = m_arInspections.GetAt(iCnt);
 			if (nullptr != pInspection) { pInspection->RemoveCamera(pCamera->GetName()); }
 		}
 	}
@@ -950,10 +937,9 @@ bool SVPPQObject::DetachInspection(SVInspectionProcess* pInspection)
 	if (nullptr == pInspection) { return false; }
 
 	int i;
-	int iSize;
 	bool bFound = false;
-	iSize = m_arInspections.GetSize();
-	for (i = 0; i < iSize; i++)
+	int iSize = static_cast<int> (m_arInspections.size());
+	for (i=0; i < iSize; i++)
 	{
 		if (pInspection == m_arInspections[i])
 		{
@@ -970,7 +956,7 @@ bool SVPPQObject::DetachInspection(SVInspectionProcess* pInspection)
 
 	m_arInspections[i]->LastProductUpdate(&l_svProduct);
 
-	m_arInspections.RemoveAt(i);
+	m_arInspections.erase(m_arInspections.begin() + i);
 
 	return true;
 }// end DetachInspection
@@ -1003,8 +989,8 @@ bool SVPPQObject::AddSharedCamera(SVVirtualCamera* pCamera)
 
 void SVPPQObject::GetInspectionCount(long &lSize) const
 {
-	lSize = m_arInspections.GetSize();
-}// end GetInspectionCount	
+	lSize = static_cast<long> (m_arInspections.size());
+}
 
 size_t SVPPQObject::GetCameraCount() const
 {
@@ -1059,9 +1045,9 @@ void SVPPQObject::GetTrigger(SvTi::SVTriggerObject*& ppTrigger)
 
 bool SVPPQObject::GetInspection(long lIndex, SVInspectionProcess*& ppInspection) const
 {
-	if (lIndex < 0 || lIndex >= m_arInspections.GetSize()) { return false; }
+	if (lIndex < 0 || lIndex >= static_cast<long> (m_arInspections.size())) { return false; }
 
-	ppInspection = m_arInspections.GetAt(lIndex);
+	ppInspection = m_arInspections[lIndex];
 
 	return true;
 }// end GetInspection
@@ -1218,7 +1204,7 @@ void SVPPQObject::PrepareGoOnline()
 		}
 	}// end for
 
-	size_t iSize = m_arInspections.GetSize();
+	size_t iSize = m_arInspections.size();
 	for (size_t i = 0; i < iSize; i++)
 	{
 		if (!m_arInspections[i]->CanGoOnline())
@@ -1319,7 +1305,7 @@ void SVPPQObject::GoOnline()
 		m_pOutputToggle->m_Enabled = false;
 	}
 
-	size_t lSize = m_arInspections.GetSize();
+	size_t lSize = m_arInspections.size();
 	bool bInspGoOnline = true;
 	for (size_t i = 0; i < lSize; i++)
 	{
@@ -1333,7 +1319,7 @@ void SVPPQObject::GoOnline()
 
 	if (!bInspGoOnline)
 	{
-		lSize = m_arInspections.GetSize();
+		lSize = m_arInspections.size();
 		for (size_t i = 0; i < lSize; i++)
 		{
 			m_arInspections[i]->GoOffline();
@@ -1380,7 +1366,7 @@ void SVPPQObject::GoOnline()
 			l_svIter->first->GoOffline();
 		}// end for
 
-		lSize = m_arInspections.GetSize();
+		lSize = m_arInspections.size();
 		for (size_t i = 0; i < lSize; i++)
 		{
 			m_arInspections[i]->GoOffline();
@@ -1405,7 +1391,7 @@ void SVPPQObject::GoOnline()
 			l_svIter->first->GoOffline();
 		}// end for
 
-		lSize = m_arInspections.GetSize();
+		lSize = m_arInspections.size();
 		for (size_t i = 0; i < lSize; i++)
 		{
 			m_arInspections[i]->GoOffline();
@@ -1483,9 +1469,6 @@ void SVPPQObject::GoOnline()
 
 bool SVPPQObject::GoOffline()
 {
-	long i;
-	long lSize;
-
 	if (!m_bOnline) { return false; }
 
 #ifdef EnableTracking
@@ -1620,10 +1603,9 @@ bool SVPPQObject::GoOffline()
 
 
 
-	lSize = m_arInspections.GetSize();
-	for (i = 0; i < lSize; i++)
+	for (auto pInspection : m_arInspections)
 	{
-		m_arInspections[i]->GoOffline();
+		pInspection->GoOffline();
 	}// end for
 
 	// Stop the multimedia timer thread for the output and reset time delays
@@ -1645,7 +1627,7 @@ bool SVPPQObject::GoOffline()
 
 	unsigned long l_ClearCount = 0;
 
-	for (i = static_cast<long>(m_ppPPQPositions.size()) - 1; l_ClearCount < 5 && 0 < i; --i)
+	for (long i = static_cast<long>(m_ppPPQPositions.size()) - 1; l_ClearCount < 5 && 0 < i; --i)
 	{
 		SVProductInfoStruct* l_pProduct = m_ppPPQPositions.GetProductAt(i);
 
@@ -2389,7 +2371,7 @@ bool SVPPQObject::RebuildOutputList()
 
 				if (pNewOutput->m_ObjectType == pOldOutput->m_ObjectType && NewName == OldName)
 				{
-					if (SVIoObjectType == pObject->GetObjectType())
+					if (SvDef::SVIoObjectType == pObject->GetObjectType())
 					{
 						//IO object types require the complete name
 						pObject->SetName(pOldOutput->getObject()->GetCompleteName().c_str());
@@ -2639,7 +2621,7 @@ void SVPPQObject::AddDefaultOutputs()
 	m_voTriggerCount.SetValue(0L);
 	m_voTriggerCount.CopyValue(cPpqDefaultIndex);
 
-	BasicValueObjectPtr pPpqLength = m_PpqValues.getValueObject(SvOl::FqnPpqLength);
+	BasicValueObjectPtr pPpqLength = m_PpqValues.getValueObject(SvDef::FqnPpqLength);
 	SVGUID PpqLengthUid = PpqBaseLengthUidGuid;
 	std::string PpqName = GetName();
 	long PpqID(0);
@@ -2792,7 +2774,7 @@ HRESULT SVPPQObject::NotifyInspections(long p_Offset)
 		SVProductInfoStruct* pTempProduct = m_ppPPQPositions.GetProductAt(p_Offset);
 
 		// See if the Inspection Processes can inspect this product
-		int iSize = m_arInspections.GetSize();
+		int iSize = static_cast<int> (m_arInspections.size());
 
 		bool l_Start = true;
 
@@ -3743,15 +3725,14 @@ bool SVPPQObject::ReserveNextRunOnceProductInfoStruct(SVProductInfoStruct& p_rsv
 
 	l_svProduct.m_svInspectionInfos.clear();
 
-	int iSize = m_arInspections.GetSize();
-	for (int i = 0; i < iSize; i++)
+	for (auto pInspection : m_arInspections)
 	{
 		SVInspectionInfoStruct l_svInspectionStruct;
 
-		l_svInspectionStruct.pInspection = m_arInspections[i];
+		l_svInspectionStruct.pInspection = pInspection;
 
-		l_svProduct.m_svInspectionInfos[m_arInspections[i]->GetUniqueObjectID()] = l_svInspectionStruct;
-	}// end for
+		l_svProduct.m_svInspectionInfos[pInspection->GetUniqueObjectID()] = l_svInspectionStruct;
+	}
 
 	l_bOk = (S_OK == l_svProduct.GetNextAvailableIndexes(p_LockType));
 
@@ -3763,17 +3744,10 @@ bool SVPPQObject::ReserveNextRunOnceProductInfoStruct(SVProductInfoStruct& p_rsv
 	return l_bOk;
 }
 
-HRESULT SVPPQObject::GetInspections(std::vector< SVInspectionProcess* >& rvecInspections) const
-{
-	std::copy(m_arInspections.begin(), m_arInspections.end(), std::inserter(rvecInspections, rvecInspections.begin()));
-
-	return S_OK;
-}
-
 bool SVPPQObject::IsObjectInPPQ(const SVObjectClass& object) const
 {
 	bool retValue = false;
-	const SVObjectClass *inspectObject = object.GetAncestor(SVInspectionObjectType);
+	const SVObjectClass *inspectObject = object.GetAncestor(SvDef::SVInspectionObjectType);
 
 	if (nullptr != inspectObject)
 	{
@@ -3827,9 +3801,9 @@ void SVPPQObject::DumpDMInfo(LPCTSTR p_szName) const
 		m_pResultImagePublishedCircleBuffer->Dump(p_szName);
 	}
 
-	for (long i = 0; i < m_arInspections.GetSize(); ++i)
+	for (auto pInspection : m_arInspections)
 	{
-		m_arInspections[i]->DumpDMInfo(p_szName);
+		pInspection->DumpDMInfo(p_szName);
 	}
 }
 
@@ -3852,12 +3826,8 @@ HRESULT SVPPQObject::MarkProductInspectionsMissingAcquisiton(SVProductInfoStruct
 
 	if (nullptr != pCamera)
 	{
-		int iSize = m_arInspections.GetSize();
-
-		for (int i = 0; i < iSize; i++)
+		for (auto pInspection : m_arInspections)
 		{
-			SVInspectionProcess* pInspection = m_arInspections[i];
-
 			if (nullptr != pInspection && pInspection->IsCameraInInspection(pCamera->GetName()))
 			{
 				SVInspectionInfoStruct l_InspectInfo = p_rProduct.m_svInspectionInfos[pInspection->GetUniqueObjectID()];
@@ -3871,7 +3841,7 @@ HRESULT SVPPQObject::MarkProductInspectionsMissingAcquisiton(SVProductInfoStruct
 				SVInspectionInfoPair l_Info(p_rProduct.ProcessCount(), l_InspectInfo);
 
 				p_rProduct.m_ProductState += _T("|MC=");
-				p_rProduct.m_ProductState += m_arInspections[i]->GetName();
+				p_rProduct.m_ProductState += pInspection->GetName();
 				p_rProduct.m_ProductState += _T("-");
 				p_rProduct.m_ProductState += pCamera->GetName();
 
@@ -5164,7 +5134,7 @@ void SVPPQObject::CommitSharedMemory( SVProductInfoStruct& rProduct)
 
 DWORD SVPPQObject::GetObjectColor() const
 {
-	return SV_DEFAULT_WHITE_COLOR;
+	return SvDef::DefaultWhiteColor;
 }
 void SVPPQObject::SetNAKMode(SvDef::NakGeneration nakMode, int NAKPar)
 {

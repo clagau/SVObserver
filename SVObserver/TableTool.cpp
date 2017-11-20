@@ -67,7 +67,7 @@ bool TableTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure 
 		}
 	}
 
-	m_pTable = dynamic_cast<TableFillByEquationObject*>(SvOi::FindObject(GetUniqueObjectID(), SVObjectTypeInfoStruct(TableObjectType,TableFillObjectType)));
+	m_pTable = dynamic_cast<TableFillByEquationObject*>(SvOi::FindObject(GetUniqueObjectID(), SvDef::SVObjectTypeInfoStruct(SvDef::TableObjectType,SvDef::TableFillObjectType)));
 	if (nullptr == m_pTable)
 	{
 		m_pTable = new TableFillByEquationObject(this);
@@ -245,8 +245,8 @@ void TableTool::LocalInitialize ()
 	}
 
 	// Set up your type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SVTableToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvDef::SVTableToolObjectType;
 
 	// Hide and Remove Embedded Extents
 	removeEmbeddedExtents();

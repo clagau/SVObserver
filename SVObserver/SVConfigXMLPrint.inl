@@ -1401,7 +1401,7 @@ inline void SVConfigXMLPrint::WriteGlobalConstants(Writer writer) const
 	int Index (0);
 
 	BasicValueObjects::ValueVector GlobalConstantObjects;
-	RootObject::getRootChildObjectList( GlobalConstantObjects, SvOl::FqnGlobal );
+	RootObject::getRootChildObjectList( GlobalConstantObjects, SvDef::FqnGlobal );
 
 	writer->WriteStartElement(nullptr, L"GlobalConstants", nullptr);
 

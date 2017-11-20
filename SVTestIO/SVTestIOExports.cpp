@@ -12,7 +12,6 @@
 #include "StdAfx.h"
 #include "SVTestIO.h"
 #include "SVTestIOExports.h"
-#include "CameraLibrary/SVDeviceParams.h"
 extern CSVTestIOApp theApp;
 
 HRESULT WINAPI SVCreate()

@@ -33,7 +33,7 @@
 #include "SVAboutDialogClass.h"
 #include "SVConfigurationPrint.h"
 #include "SVEnvironmentSettingsDialog.h"
-#include "SVSystemLibrary/SVFileNameManagerClass.h"
+#include "SVFileSystemLibrary/SVFileNameManagerClass.h"
 #include "SVImageViewScroll.h"
 #include "SVIPChildFrm.h"
 #include "SVMainFrm.h"
@@ -91,7 +91,7 @@
 #include "SVSystemLibrary\SVVersionInfo.h"
 #include "GuiCommands/InspectionRunOnce.h"
 #include "SVConfigurationTreeWriter.h"
-#include "SVOLicenseManager\SVOLicenseManager.h"
+#include "SVOLicenseManager.h"
 #include "SVSocketRemoteCommandManager.h"
 #include "SVImportedInspectionInfo.h"
 #include "SVIPDocInfoImporter.h"
@@ -113,7 +113,7 @@
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVStatusLibrary\GlobalPath.h"
 #include "SVXMLLibrary\ObsoleteItemChecker.h"
-#include "SVObjectLibrary\GlobalConst.h"
+#include "Definitions/GlobalConst.h"
 #include "SVMatroxLibrary\SVMatroxSystemInterface.h"
 #include "SVSharedMemoryLibrary\ShareEvents.h"
 #include "SVSharedMemoryLibrary\MLPPQInfo.h"
@@ -988,13 +988,12 @@ void SVObserverApp::OnUpdateEditRemoteInputs( CCmdUI* PCmdUI )
 		// but we are only displaying up to 100 menu items for inspections on the IO page.
 		// If there are more than 100, then the user will have to go to the inspection to edit published results
 		// If more are to be supported, then these resources for the ID_EDIT_PUBLISHEDRESULTS_LIMIT will need changed. 
-		SVInspectionProcessPtrList l_Inspections; // Get Inspections
-		pConfig->GetInspections( l_Inspections );
+		const SVInspectionProcessVector& rInspections = pConfig->GetInspections();
 		RemoveMenu(hmen, _T("&Edit\\Published Results") ); // start empty.
-		for( UINT i = 0; i < static_cast< UINT >( l_Inspections.size() ) && i < (ID_EDIT_PUBLISHEDRESULTS_LIMIT - ID_EDIT_PUBLISHEDRESULTS_BASE + 1); i++ )
+		for( UINT i = 0; i < static_cast< UINT >( rInspections.size() ) && i < (ID_EDIT_PUBLISHEDRESULTS_LIMIT - ID_EDIT_PUBLISHEDRESULTS_BASE + 1); i++ )
 		{
 			// Add a menu for each inspection.
-			std::string Name = SvUl::Format(_T("&Edit\\Published Results\\%s"), l_Inspections[i]->GetName());
+			std::string Name = SvUl::Format(_T("&Edit\\Published Results\\%s"), rInspections[i]->GetName());
 			AddMenuItem(hmen, Name, static_cast< UINT >( ID_EDIT_PUBLISHEDRESULTS_BASE + i ) );
 		}
 	}
@@ -1937,11 +1936,10 @@ void SVObserverApp::OnEditPublishedResults( UINT nID )
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 	if( nullptr != pConfig )
 	{
-		SVInspectionProcessPtrList l_Inspections;
-		pConfig->GetInspections( l_Inspections );
-		if( uiInspection < l_Inspections.size())
+		const SVInspectionProcessVector& rInspections = pConfig->GetInspections();
+		if( uiInspection < rInspections.size())
 		{
-			SVIPDoc* pDoc =  GetIPDoc( l_Inspections[uiInspection]->GetUniqueObjectID() );
+			SVIPDoc* pDoc =  GetIPDoc( rInspections[uiInspection]->GetUniqueObjectID() );
 			if( nullptr != pDoc )
 			{
 				pDoc->OnPublishedResultsPicker();
@@ -2629,7 +2627,7 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 				{
 					RootObject *pRoot = nullptr;
 
-					SVObjectManagerClass::Instance().GetRootChildObject( pRoot, SvOl::FqnRoot );
+					SVObjectManagerClass::Instance().GetRootChildObject( pRoot, SvDef::FqnRoot );
 					if(nullptr != pRoot)
 					{
 						pRoot->createConfigurationObject();
@@ -3088,7 +3086,7 @@ HRESULT SVObserverApp::DestroyConfig( bool AskForSavingOrClosing /* = true */,
 				if( nullptr != pConfig )
 				{
 					RootObject *pRoot = nullptr;
-					SVObjectManagerClass::Instance().GetRootChildObject( pRoot, SvOl::FqnRoot );
+					SVObjectManagerClass::Instance().GetRootChildObject( pRoot, SvDef::FqnRoot );
 					if(nullptr != pRoot)
 					{
 						pRoot->destroyConfigurationObject();
@@ -3132,7 +3130,7 @@ HRESULT SVObserverApp::DestroyConfig( bool AskForSavingOrClosing /* = true */,
 		if( nullptr != pConfig )
 		{
 			RootObject *pRoot = nullptr;
-			SVObjectManagerClass::Instance().GetRootChildObject( pRoot, SvOl::FqnRoot );
+			SVObjectManagerClass::Instance().GetRootChildObject( pRoot, SvDef::FqnRoot );
 			if(nullptr != pRoot)
 			{
 				pRoot->destroyConfigurationObject();
@@ -4141,7 +4139,7 @@ bool SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 		{
 			RootObject *pRoot = nullptr;
 
-			SVObjectManagerClass::Instance().GetRootChildObject( pRoot, SvOl::FqnRoot );
+			SVObjectManagerClass::Instance().GetRootChildObject( pRoot, SvDef::FqnRoot );
 			if(nullptr != pRoot)
 			{
 				pRoot->createConfigurationObject();
@@ -4285,7 +4283,7 @@ bool SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 
 						std::string Name = SvUl::Format( _T("DIO.Input%d"), l+1 );
 
-						pInput = dynamic_cast<SVDigitalInputObject*> (pInputObjectList->GetInputFlyweight(Name, SVDigitalInputObjectType, l));
+						pInput = dynamic_cast<SVDigitalInputObject*> (pInputObjectList->GetInputFlyweight(Name, SvDef::SVDigitalInputObjectType, l));
 
 						if( nullptr != pInput )
 						{
@@ -4310,7 +4308,7 @@ bool SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 				{
 					SVDigitalOutputObject* pOutput(nullptr);
 					const int moduleReadyChannel = 15;
-					pOutput = dynamic_cast<SVDigitalOutputObject*> (pOutputObjectList->GetOutputFlyweight(SvO::cModuleReady, SVDigitalOutputObjectType, moduleReadyChannel));
+					pOutput = dynamic_cast<SVDigitalOutputObject*> (pOutputObjectList->GetOutputFlyweight(SvO::cModuleReady, SvDef::SVDigitalOutputObjectType, moduleReadyChannel));
 
 					// @HACK:  JAB082212 HACK!!!!!
 					if( nullptr != pOutput )
@@ -4425,10 +4423,10 @@ bool SVObserverApp::IsMonochromeImageAvailable()
 
 		if ( !Monochrome )
 		{
-			SVObjectTypeInfoStruct info;
+			SvDef::SVObjectTypeInfoStruct info;
 
-			info.ObjectType = SVImageObjectType;
-			info.SubType = SVNotSetSubObjectType;
+			info.ObjectType = SvDef::SVImageObjectType;
+			info.SubType = SvDef::SVNotSetSubObjectType;
 
 			SVGetObjectDequeByTypeVisitor l_Visitor( info );
 
@@ -5764,6 +5762,12 @@ void SVObserverApp::fileSaveAsSVX( std::string SaveAsPathName, bool isAutoSave)
 		if(SaveAsPathName.empty() )
 		{
 			bOk = DetermineConfigurationSaveName();
+			if (!bOk)
+			{
+				//! Return here to avoid error being displayed because bOk is false (when IDCANCEL returned)
+				SVSVIMStateClass::RemoveState(SV_STATE_SAVING);
+				return;
+			}
 		}
 		else
 		{
@@ -6223,13 +6227,11 @@ HRESULT SVObserverApp::ConstructMissingDocuments()
 			l_Status = E_FAIL;
 		}
 
-		SVInspectionProcessPtrList l_Inspections;
+		const SVInspectionProcessVector& rInspections = pConfig->GetInspections();
 
-		pConfig->GetInspections( l_Inspections );
+		SVInspectionProcessVector::const_iterator l_Iter(rInspections.begin());
 
-		SVInspectionProcessPtrList::iterator l_Iter( l_Inspections.begin() );
-
-		while( S_OK == l_Status && l_Iter != l_Inspections.end() )
+		while( S_OK == l_Status && l_Iter != rInspections.end() )
 		{
 			SVInspectionProcess* pInspection( *l_Iter );
 

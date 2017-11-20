@@ -16,7 +16,7 @@
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVImageLibrary/MatroxImageData.h"
 #include "SVMessage/SVMessage.h"
-#include "SVRunControlLibrary/SVRunControlLibrary.h"
+#include "Definitions/Color.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVGlobal.h"
 #include "SVOCore/SVImageClass.h"
@@ -84,7 +84,7 @@ SVPatternAnalyzerClass::SVPatternAnalyzerClass(SVObjectClass* POwner, int String
   : SVImageAnalyzerClass(POwner, StringResourceID)
   , m_bReloadModelFromFile(false)
 {
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVPatternAnalyzerObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVPatternAnalyzerObjectType;
 	m_nPatternIndex = -1;
 
 	// Register Embedded Objects
@@ -166,13 +166,13 @@ void SVPatternAnalyzerClass::CreateResult()
 	{
 		// Declare Input Interface of Result...
 		SVClassInfoStruct resultClassInfo;
-		SVObjectTypeInfoStruct interfaceInfo;
+		SvDef::SVObjectTypeInfoStruct interfaceInfo;
 
 		interfaceInfo.EmbeddedID = SVpatResultNumFoundOccurancesObjectGuid;
-		resultClassInfo.m_DesiredInputInterface.Add( interfaceInfo );
+		resultClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
 
-		resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
-		resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultLongObjectType;
+		resultClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVResultObjectType;
+		resultClassInfo.m_ObjectTypeInfo.SubType	= SvDef::SVResultLongObjectType;
 		resultClassInfo.m_ClassId = SVLongResultClassGuid;
 		resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_RESULT );
 		std::string Title = SvUl::LoadStdString( IDS_OBJECTNAME_PAT_NBRFOUNDOCCURANCES );
@@ -991,10 +991,10 @@ HRESULT SVPatternAnalyzerClass::onCollectOverlays(SVImageClass* p_pImage, SVExte
 		for (int i=0; i < figureList.size(); i++)
 		{
 			SVExtentMultiLineStruct l_multiLine;
-			l_multiLine.m_Color = SV_DEFAULT_SUB_FUNCTION_COLOR_1;
-			l_multiLine.AssignExtentFigure( figureList[i], SV_DEFAULT_SUB_FUNCTION_COLOR_1 );
+			l_multiLine.m_Color = SvDef::DefaultSubFunctionColor1;
+			l_multiLine.AssignExtentFigure( figureList[i], SvDef::DefaultSubFunctionColor1 );
 			UpdateOverlayIDs( l_multiLine );
-			p_rMultiLineArray.Add( l_multiLine );
+			p_rMultiLineArray.push_back( l_multiLine );
 		}
 	}
 	return S_OK;

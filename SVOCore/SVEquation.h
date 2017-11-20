@@ -12,6 +12,7 @@
 #pragma once
 
 #pragma region Includes
+//Moved to precompiled header: #include <vector>
 #include "ObjectInterfaces/EquationTestResult.h"
 #include "ObjectInterfaces/IEquation.h"
 #include "ObjectInterfaces/IValueObject.h"
@@ -67,10 +68,10 @@ struct SVEquationSymbolStruct
 @SVObjectOperations This object maintains operators to handle container management, data insertion, data extraction, and symbol management.
 
 */
-class SVEquationSymbolTableClass : 
-	public SVVector< SVEquationSymbolStruct* >
+class SVEquationSymbolTableClass
 {
 public:
+	typedef std::vector<SVEquationSymbolStruct*> SVEquationSymbolPtrVector;
 	SVEquationSymbolTableClass();
 	~SVEquationSymbolTableClass();
 
@@ -78,7 +79,7 @@ public:
 	
 	//************************************
 	//! This adds a symbol into the list of used symbol
-	//! \param name [in] symbolname 
+	//! \param name [in] name 
 	//! \param pRequestor [in]  who wants to use the variable
 	//! \returns int the index of the used symbols list
 	//************************************
@@ -98,6 +99,7 @@ public:
 	void Init(SVObjectClass* pRequestor);
 
 private:
+	SVEquationSymbolPtrVector m_SVEquationSymbolPtrVector;
 	SVInputInfoListClass m_toolsetSymbolTable;		// The symbol table for the ToolSet Variables in the equation
 	std::string m_InspectionName;
 

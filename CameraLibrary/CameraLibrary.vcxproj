@@ -92,7 +92,6 @@
     <ClCompile Include="SVDeviceParam.cpp" />
     <ClCompile Include="SVDeviceParamCollection.cpp" />
     <ClCompile Include="SVDeviceParams.cpp" />
-    <ClCompile Include="SVGraphix.cpp" />
     <ClCompile Include="SVi64ValueDeviceParam.cpp" />
     <ClCompile Include="SVLongValueDeviceParam.cpp" />
     <ClCompile Include="SVNullDeviceParam.cpp" />
@@ -106,13 +105,11 @@
     <ClInclude Include="SVDeviceParam.h" />
     <ClInclude Include="SVDeviceParamCollection.h" />
     <ClInclude Include="SVDeviceParams.h" />
-    <ClInclude Include="SVGraphix.h" />
     <ClInclude Include="SVi64ValueDeviceParam.h" />
     <ClInclude Include="SVLongValueDeviceParam.h" />
     <ClInclude Include="SVNullDeviceParam.h" />
     <ClInclude Include="SVParamListDeviceParam.h" />
     <ClInclude Include="SVStringValueDeviceParam.h" />
-    <ClInclude Include="SVTemplate.h" />
     <ClInclude Include="SVVisitor.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

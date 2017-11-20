@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
-#include "SVRunControlLibrary/SVImageIndexStruct.h"
+#include "SVStatusLibrary/SVImageIndexStruct.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVSystemLibrary/SVThreadWait.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
@@ -21,7 +21,7 @@
 #include "SVInfoStructs.h"
 #include "SVOGui/ZoomHelper.h"
 #include "SVOGui/ZoomHelperEx.h"
-#include "SVLibrary/SVFileNameClass.h"
+#include "SVFileSystemLibrary/SVFileNameClass.h"
 #pragma endregion Includes
 
 struct IDirectDrawSurface7;

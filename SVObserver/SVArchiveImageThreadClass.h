@@ -9,7 +9,6 @@
 //Moved to precompiled header: #include <deque>
 //Moved to precompiled header: #include <vector>
 #include "SVOCore/SVImageClass.h"
-#include "SVOCore/SVImageListClass.h"
 #include "SVMatroxLibrary\SVMatroxBuffer.h"
 #include "SVMemoryManager.h"
 

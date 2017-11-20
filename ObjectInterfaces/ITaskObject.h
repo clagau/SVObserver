@@ -12,13 +12,21 @@
 #include "IValueObject.h"
 #include "ISelectorItemVector.h"
 #include "ISVImage.h"
-#include "SVInterfaceVector.h"
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "Definitions/StringTypeDef.h"
-#include "SVStatusLibrary/MessageContainer.h"
 #include "SVUtilityLibrary/NameGuidList.h"
-#include "SVObjectLibrary/SVOutputInfoListClass.h"
 #pragma endregion Includes
+
+#pragma region Declarations
+//! Declaration is in SVStatusLibrary\MessageContainer.h
+namespace SvStl
+{
+	class MessageContainer;
+	typedef std::vector<MessageContainer> MessageContainerVector;
+}
+//! Declaration is in #include SVObjectLibrary/SVOutputInfoListClass.h
+class SVOutputInfoListClass;
+#pragma endregion Declarations
 
 namespace SvOi
 {
@@ -46,16 +54,16 @@ namespace SvOi
 
 		/// Get the List of inputs (and connected object) to this Task Object.
 		/// \param rList [in,out] The List to be populated.
-		/// \param typeInfo [in] Type of the requested inputs. SVNotSetObjectType return all inputs.
-		/// \param objectTypeToInclude [in] Object type until the name of the connected object will set. SVNotSetObjectType means only object name and e.g. SVToolSetObjectType means "Tool Set.Window Tool....". This parameter will not used for image objects.
-		virtual void GetInputs(SvUl::InputNameGuidPairList& rList, const SVObjectTypeInfoStruct& typeInfo = SVObjectTypeInfoStruct(SVNotSetObjectType), SVObjectTypeEnum objectTypeToInclude = SVNotSetObjectType) = 0;
+		/// \param typeInfo [in] Type of the requested inputs. SvDef::SVNotSetObjectType return all inputs.
+		/// \param objectTypeToInclude [in] Object type until the name of the connected object will set. SvDef::SVNotSetObjectType means only object name and e.g. SvDef::SVToolSetObjectType means "Tool Set.Window Tool....". This parameter will not used for image objects.
+		virtual void GetInputs(SvUl::InputNameGuidPairList& rList, const SvDef::SVObjectTypeInfoStruct& typeInfo = SvDef::SVObjectTypeInfoStruct(SvDef::SVNotSetObjectType), SvDef::SVObjectTypeEnum objectTypeToInclude = SvDef::SVNotSetObjectType) = 0;
 
 		/// Connects an input to an object.
 		/// \param rInputName [in] Name of the input.
 		/// \param rNewID [in] Guid of the new object connected to the input
 		/// \param objectType [in] Type of the new object (this type will be checked if it fit), if not set, it will not check and also tried to connected.
 		/// \returns HRESULT
-		virtual HRESULT ConnectToObject(const std::string& rInputName, const SVGUID& rNewID, SVObjectTypeEnum objectType = SVNotSetObjectType) = 0;
+		virtual HRESULT ConnectToObject(const std::string& rInputName, const SVGUID& rNewID, SvDef::SVObjectTypeEnum objectType = SvDef::SVNotSetObjectType) = 0;
 
 		//************************************
 		/// Check if the object if valid.
@@ -81,7 +89,7 @@ namespace SvOi
 
 		// Resolve desired inputs, called on Construction from Class Factory
 		/// \param rDesiredInputs [in] List of desired inputs.
-		virtual void ResolveDesiredInputs(const SvOi::SVInterfaceVector& rDesiredInputs) = 0;
+		virtual void ResolveDesiredInputs(const SvDef::SVObjectTypeInfoVector& rDesiredInputs) = 0;
 
 		// get the first task error message (usually from validation or run once)
 		// This is temporary, in the future all the TaskObject error messages will be retrieved

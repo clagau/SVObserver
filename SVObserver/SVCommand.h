@@ -12,8 +12,8 @@
 #pragma once
 
 #pragma region Includes
-#include "SVContainerLibrary/SVVector.h"
-#include "SVRunControlLibrary/SVImageIndexStruct.h"
+//Moved to precompiled header: #include <vector>
+#include "SVStatusLibrary/SVImageIndexStruct.h"
 #include "SVActiveXLockStruct.h"	// Added by ClassView
 #include "SVInfoStructs.h"
 #include "Definitions/StringTypeDef.h"
@@ -59,13 +59,13 @@ struct ProductDataStruct
 {
     long lProductCount;
 	long lCallbackCount;
-	SVVector< PacketDataStruct > arPacketData;
+	std::vector<PacketDataStruct> m_PacketDataVector;
 
 	ProductDataStruct()
 	{
 		lProductCount	= -1;
 		lCallbackCount	= 0;
-		arPacketData.RemoveAll();
+		m_PacketDataVector.clear();
 	}// end ctor
 };
 
@@ -574,10 +574,9 @@ protected:
     IStream *m_pStream;
 
 private:
-	static SVVector<SVActiveXLockStruct> m_aSVActXLock;
-	static SVVector<StreamDataStruct*> m_arStreamList;
-	static SVVector<ProductDataStruct*> m_arProductList;
-	static SVVector<SVInspectionProcess*> m_arInspections;
+	static std::vector<SVActiveXLockStruct> m_aSVActXLock;
+	static std::vector<StreamDataStruct*> m_arStreamList;
+	static std::vector<ProductDataStruct*> m_arProductList;
 	static SvDef::StringVector m_InspectionNames;
 
     static volatile bool m_bRunStreamData;

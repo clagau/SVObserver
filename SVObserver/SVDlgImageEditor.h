@@ -74,7 +74,6 @@ protected:
 	CPoint TranslateClientCoordinatesToImageCoordinates(CPoint point);
 
 	void Normalize( OverlayStruct& rOverlay );
-	void CopyOverlayPoints( const CPointVector& rsvaPoints, std::vector<CPoint>& rvecPoints );
 
 	void DrawOverlay(CPaintDC& dc);
 

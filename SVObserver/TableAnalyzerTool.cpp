@@ -50,7 +50,7 @@ bool TableAnalyzerTool::CreateObject( const SVObjectLevelCreateStruct& rCreateSt
 	bOk &= (nullptr != GetTool());
 	bOk &= (nullptr != GetInspection());
 
-	m_pResultTable = dynamic_cast<TableCopyObject*>(SvOi::FindObject(GetUniqueObjectID(), SVObjectTypeInfoStruct(TableObjectType, TableCopyObjectType)));
+	m_pResultTable = dynamic_cast<TableCopyObject*>(SvOi::FindObject(GetUniqueObjectID(), SvDef::SVObjectTypeInfoStruct(SvDef::TableObjectType, SvDef::TableCopyObjectType)));
 	if (nullptr == m_pResultTable)
 	{
 		m_pResultTable = new TableCopyObject(this);
@@ -67,7 +67,7 @@ bool TableAnalyzerTool::CreateObject( const SVObjectLevelCreateStruct& rCreateSt
 	}
 
 	// add input of result
-	SVLongResultClass* pResult = dynamic_cast<SVLongResultClass*>(SvOi::FindObject(GetUniqueObjectID(), SVObjectTypeInfoStruct(SVResultObjectType, SVResultLongObjectType)));
+	SVLongResultClass* pResult = dynamic_cast<SVLongResultClass*>(SvOi::FindObject(GetUniqueObjectID(), SvDef::SVObjectTypeInfoStruct(SvDef::SVResultObjectType, SvDef::SVResultLongObjectType)));
 	if (nullptr != pResult)
 	{
 		SVInputInfoListClass inputInterface;
@@ -140,7 +140,7 @@ bool TableAnalyzerTool::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 			pErrorMessages->push_back( message );
 		}
 	}
-	else if( pObject->GetAncestorInterface(SVInspectionObjectType) != GetAncestorInterface(SVInspectionObjectType) )
+	else if( pObject->GetAncestorInterface(SvDef::SVInspectionObjectType) != GetAncestorInterface(SvDef::SVInspectionObjectType) )
 	{
 		pObject->DisconnectObjectInput( &m_sourceTableObjectInfo );
 		m_sourceTableObjectInfo.SetInputObject(nullptr);
@@ -200,8 +200,8 @@ void TableAnalyzerTool::LocalInitialize ()
 	BuildInputObjectList ();
 
 	// Set up your type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SVTableAnalyzerToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvDef::SVTableAnalyzerToolObjectType;
 
 	// Hide and Remove Embedded Extents
 	removeEmbeddedExtents();
@@ -209,33 +209,33 @@ void TableAnalyzerTool::LocalInitialize ()
 	SVClassInfoStruct analyzerClassInfo;
 
 	// Add the Sort Analyzer
-	analyzerClassInfo.m_ObjectTypeInfo.ObjectType = TableAnalyzerType;
-	analyzerClassInfo.m_ObjectTypeInfo.SubType = TableAnalyzerSortType;
+	analyzerClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::TableAnalyzerType;
+	analyzerClassInfo.m_ObjectTypeInfo.SubType = SvDef::TableAnalyzerSortType;
 	analyzerClassInfo.m_ClassId = TableAnaylzerSortGuid;
 	analyzerClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_TABLEANALYZER_SORT );
-	m_availableChildren.Add( analyzerClassInfo );
+	m_availableChildren.push_back( analyzerClassInfo );
 
 	// Add the Exclude Analyzer
-	analyzerClassInfo.m_ObjectTypeInfo.ObjectType = TableAnalyzerType;
-	analyzerClassInfo.m_ObjectTypeInfo.SubType = TableAnalyzerExcludeType;
+	analyzerClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::TableAnalyzerType;
+	analyzerClassInfo.m_ObjectTypeInfo.SubType = SvDef::TableAnalyzerExcludeType;
 	analyzerClassInfo.m_ClassId = TableAnaylzerExcludeGuid;
 	analyzerClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_TABLEANALYZER_EXCLUDE );
-	m_availableChildren.Add( analyzerClassInfo );
+	m_availableChildren.push_back( analyzerClassInfo );
 
 	// Add the Limit Analyzer
-	analyzerClassInfo.m_ObjectTypeInfo.ObjectType = TableAnalyzerType;
-	analyzerClassInfo.m_ObjectTypeInfo.SubType = TableAnalyzerLimitType;
+	analyzerClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::TableAnalyzerType;
+	analyzerClassInfo.m_ObjectTypeInfo.SubType = SvDef::TableAnalyzerLimitType;
 	analyzerClassInfo.m_ClassId = TableAnaylzerLimitGuid;
 	analyzerClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_TABLEANALYZER_LIMIT );
-	m_availableChildren.Add( analyzerClassInfo );
+	m_availableChildren.push_back( analyzerClassInfo );
 
 	// Setup the result
 	SVClassInfoStruct resultClassInfo;
-	SVObjectTypeInfoStruct interfaceInfo;
+	SvDef::SVObjectTypeInfoStruct interfaceInfo;
 	// Declare Input Interface
 	interfaceInfo.EmbeddedID = TableObject_NumberOfRowsGuid;
-	resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
-	resultClassInfo.m_ObjectTypeInfo.SubType = SVResultLongObjectType;
+	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVResultObjectType;
+	resultClassInfo.m_ObjectTypeInfo.SubType = SvDef::SVResultLongObjectType;
 	resultClassInfo.m_ClassId = SVLongResultClassGuid;
 	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_TABLEOBJECT_NUMBEROFROWS );
 	std::string Title = SvUl::LoadStdString( IDS_OBJECTNAME_RESULT );
@@ -248,7 +248,7 @@ void TableAnalyzerTool::LocalInitialize ()
 void TableAnalyzerTool::BuildInputObjectList ()
 {
 	// Source Table.
-	m_sourceTableObjectInfo.SetInputObjectType( TableObjectType );
+	m_sourceTableObjectInfo.SetInputObjectType( SvDef::TableObjectType );
 	m_sourceTableObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_sourceTableObjectInfo, SvDef::cInputTag_SourceTable );
 

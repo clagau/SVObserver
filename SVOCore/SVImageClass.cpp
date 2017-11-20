@@ -158,7 +158,7 @@ void SVImageClass::init()
 
 	m_BufferArrayPtr = new SVImageObjectClass;
 	
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVImageObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVImageObjectType;
 	
 	// derived classes that are not result images (i.e. SVMainImageClass)
 	// need to remove the PUBLISH attribute.
@@ -1703,27 +1703,25 @@ HRESULT SVImageClass::SetObjectValue( SVObjectAttributeClass* PDataObject )
 	HRESULT hr = S_FALSE;
 	bool bOk = false;
 	
-	SvCl::SVObjectDoubleArrayClass svDoubleArray;
 	SvCl::SVObjectLongArrayClass svLongArray;
-	SVObjectSVPointArrayClass svPointArray;
 
-	if ( ( bOk = PDataObject->GetAttributeData( "PixelDepth", svLongArray	) ) )
+	if ( ( bOk = PDataObject->GetAttributeData(_T("PixelDepth"), svLongArray)) )
 	{
-		for ( int i = 0; i < svLongArray.GetSize(); i++ )
+		for ( int i = 0; i < static_cast<int> (svLongArray.size()); i++ )
 		{
 			m_ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, svLongArray[i] );
 		}
 	}
-	else if ( ( bOk = PDataObject->GetAttributeData( "BandNumber", svLongArray	) ) )
+	else if ( ( bOk = PDataObject->GetAttributeData(_T("BandNumber"), svLongArray) ) )
 	{
-		for ( int i = 0; i < svLongArray.GetSize(); i++ )
+		for ( int i = 0; i < static_cast<int> (svLongArray.size()); i++ )
 		{
 			m_ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, svLongArray[i] );
 		}
 	}
-	else if ( ( bOk = PDataObject->GetAttributeData( "BandLink", svLongArray	) ) )
+	else if ( ( bOk = PDataObject->GetAttributeData(_T("BandLink"), svLongArray) ) )
 	{
-		for ( int i = 0; i < svLongArray.GetSize(); i++ )
+		for ( int i = 0; i < static_cast<int> (svLongArray.size()); i++ )
 		{
 			m_ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, svLongArray[i] );
 		}
@@ -2185,14 +2183,14 @@ SvOi::MatroxImageSmartHandlePtr SVImageClass::getParentImageData()
 
 std::string SVImageClass::getDisplayedName() const
 {
-	const SVObjectTypeInfoStruct& rObjectTypeInfo = GetObjectInfo().m_ObjectTypeInfo;
+	const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo = GetObjectInfo().m_ObjectTypeInfo;
 	std::string strName;
 	switch( rObjectTypeInfo.SubType )
 	{
-	case SVRGBMainImageObjectType:	// RGBMain image - Not selectable
+	case SvDef::SVRGBMainImageObjectType:	// RGBMain image - Not selectable
 		break;
 
-	case SVMainImageObjectType:	// Main image
+	case SvDef::SVMainImageObjectType:	// Main image
 		if( GetOwner() )
 		{
 			strName = GetOwner()->GetName();
@@ -2205,7 +2203,7 @@ std::string SVImageClass::getDisplayedName() const
 			SVImageInfoClass imageInfo = GetImageInfo();
 			if( imageInfo.GetOwner() )
 			{
-				strName = GetCompleteObjectNameToObjectType( nullptr, SVToolObjectType );
+				strName = GetCompleteObjectNameToObjectType( nullptr, SvDef::SVToolObjectType );
 			}
 			break;
 		}// end default:

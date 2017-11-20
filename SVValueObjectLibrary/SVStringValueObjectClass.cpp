@@ -63,15 +63,15 @@ HRESULT  SVStringValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 	HRESULT Result( E_FAIL );
 	bool	bOk( false );
 
-	SvCl::SVObjectArrayClassTemplate<ValueType> ObjectArray;	// for default values
+	std::vector<ValueType> ObjectArray;	// for default values
 	BucketVector BucketArray;
 	ValueVector ReadValueArray;
 
 	if (bOk = pDataObject->GetAttributeData(scDefaultTag, ObjectArray))
 	{
-		if (0 < ObjectArray.GetSize())
+		if (0 < ObjectArray.size())
 		{
-			DefaultValue() = ObjectArray[ObjectArray.GetSize() - 1];
+			DefaultValue() = ObjectArray[ObjectArray.size() - 1];
 			SvUl::RemoveEscapedSpecialCharacters(DefaultValue(), true);
 		}
 
@@ -140,9 +140,9 @@ HRESULT  SVStringValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 	}
 	else if ( bOk = pDataObject->GetAttributeData(_T("StrDefault"), ObjectArray) )
 	{
-		if ( 0 < ObjectArray.GetSize() )
+		if ( 0 < ObjectArray.size() )
 		{
-			DefaultValue() = ObjectArray[ ObjectArray.GetSize()-1 ];
+			DefaultValue() = ObjectArray[ ObjectArray.size()-1 ];
 			SvUl::RemoveEscapedSpecialCharacters( DefaultValue(), true );
 		}
 
@@ -258,7 +258,7 @@ void SVStringValueObjectClass::WriteDefaultValues(SVObjectWriter& rWriter)
 
 void SVStringValueObjectClass::LocalInitialize()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVStringValueObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVStringValueObjectType;
 	
 	SetObjectAttributesAllowed( SvDef::SV_VIEWABLE | SvDef::SV_PUBLISHABLE | SvDef::SV_ARCHIVABLE | SvDef::SV_EMBEDABLE | SvDef::SV_PRINTABLE | SvDef::SV_DD_VALUE, SvOi::SetAttributeType::OverwriteAttribute );
 	SetTypeName( _T("Text") );

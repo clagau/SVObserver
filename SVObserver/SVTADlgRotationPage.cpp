@@ -117,16 +117,16 @@ BOOL SVToolAdjustmentDialogRotationPageClass::OnInitDialog()
 		SetTaskObject( m_pTool );
 
 		// Get Evaluate Object for the X coordinate...
-		SVObjectTypeInfoStruct evaluateObjectInfo;
-		evaluateObjectInfo.ObjectType = SVMathContainerObjectType;
+		SvDef::SVObjectTypeInfoStruct evaluateObjectInfo;
+		evaluateObjectInfo.ObjectType = SvDef::SVMathContainerObjectType;
 	
 		// Set up the requestor for the evaluate result object
-		SVObjectTypeInfoStruct resultObjectInfo;
-		resultObjectInfo.ObjectType = SVValueObjectType;
-		resultObjectInfo.SubType = SVDoubleValueObjectType;
+		SvDef::SVObjectTypeInfoStruct resultObjectInfo;
+		resultObjectInfo.ObjectType = SvDef::SVValueObjectType;
+		resultObjectInfo.SubType = SvDef::SVDoubleValueObjectType;
 		
 		// Get Evaluate Object for the X coordinate...
-		evaluateObjectInfo.SubType = SVEvaluateRotationXObjectType;
+		evaluateObjectInfo.SubType = SvDef::SVEvaluateRotationXObjectType;
 		m_pEvaluateRotationX = dynamic_cast<SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateRotationX )
 		{
@@ -136,7 +136,7 @@ BOOL SVToolAdjustmentDialogRotationPageClass::OnInitDialog()
 		}
 
 		// Get Evaluate Object for the Y coordinate...
-		evaluateObjectInfo.SubType = SVEvaluateRotationYObjectType;
+		evaluateObjectInfo.SubType = SvDef::SVEvaluateRotationYObjectType;
 		m_pEvaluateRotationY = dynamic_cast<SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateRotationY )
 		{
@@ -146,7 +146,7 @@ BOOL SVToolAdjustmentDialogRotationPageClass::OnInitDialog()
 		}
 
 		// Get Evaluate Object for the Angle...
-		evaluateObjectInfo.SubType	   = SVEvaluateRotationAngleObjectType;
+		evaluateObjectInfo.SubType	   = SvDef::SVEvaluateRotationAngleObjectType;
 		m_pEvaluateRotationAngle = dynamic_cast<SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateRotationAngle )
 		{
@@ -156,14 +156,14 @@ BOOL SVToolAdjustmentDialogRotationPageClass::OnInitDialog()
 		}
 		
 		// Get Rotation enabled...
-		SVObjectTypeInfoStruct objectInfo;
-		objectInfo.ObjectType = SVValueObjectType;
-		objectInfo.SubType = SVBoolValueObjectType;
+		SvDef::SVObjectTypeInfoStruct objectInfo;
+		objectInfo.ObjectType = SvDef::SVValueObjectType;
+		objectInfo.SubType = SvDef::SVBoolValueObjectType;
 		objectInfo.EmbeddedID = SVPerformRotationObjectGuid;
 		m_pPerformRotation = dynamic_cast<SVBoolValueObjectClass*>(m_pTool->getFirstObject(objectInfo));
 
 		// Interpolation Mode
-		objectInfo.SubType = SVEnumValueObjectType;
+		objectInfo.SubType = SvDef::SVEnumValueObjectType;
 		objectInfo.EmbeddedID = SVOutputInterpolationModeObjectGuid;
 		m_pInterpolationMode = dynamic_cast<SVEnumerateValueObjectClass*>(m_pTool->getFirstObject(objectInfo));
 		if( nullptr != m_pInterpolationMode )
@@ -220,7 +220,7 @@ void SVToolAdjustmentDialogRotationPageClass::OnAngleFormulaButton()
 
 		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
 		const GUID& rObjectID = m_pParentDialog->GetToolID();
-		SVObjectTypeInfoStruct info(SVMathContainerObjectType, SVEvaluateRotationAngleObjectType);
+		SvDef::SVObjectTypeInfoStruct info(SvDef::SVMathContainerObjectType, SvDef::SVEvaluateRotationAngleObjectType);
 		SvOg::SVFormulaEditorSheetClass dlg( rInspectionID, rObjectID, info, Caption.c_str() );
 		dlg.DoModal();
 
@@ -237,7 +237,7 @@ void SVToolAdjustmentDialogRotationPageClass::OnXFormulaButton()
 
 		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
 		const GUID& rObjectID = m_pParentDialog->GetToolID();
-		SVObjectTypeInfoStruct info(SVMathContainerObjectType, SVEvaluateRotationXObjectType);
+		SvDef::SVObjectTypeInfoStruct info(SvDef::SVMathContainerObjectType, SvDef::SVEvaluateRotationXObjectType);
 		SvOg::SVFormulaEditorSheetClass dlg( rInspectionID, rObjectID, info, Caption.c_str() );
 		dlg.DoModal();
 
@@ -254,7 +254,7 @@ void SVToolAdjustmentDialogRotationPageClass::OnYFormulaButton()
 
 		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
 		const GUID& rObjectID = m_pParentDialog->GetToolID();
-		SVObjectTypeInfoStruct info(SVMathContainerObjectType, SVEvaluateRotationYObjectType);
+		SvDef::SVObjectTypeInfoStruct info(SvDef::SVMathContainerObjectType, SvDef::SVEvaluateRotationYObjectType);
 		SvOg::SVFormulaEditorSheetClass dlg( rInspectionID, rObjectID, info, Caption.c_str() );
 		dlg.DoModal();
 

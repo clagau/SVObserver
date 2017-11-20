@@ -36,12 +36,11 @@ public:
 	//virtual HRESULT GetObjectValue( const std::string& rValueName, _variant_t& rValue ) const override;
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject ) override;
 
+	const SVEnumerateVector& GetEnumVector() const {return m_enumVector; };
+
 	bool GetEnumerator( LPCTSTR szEnumerator, long& lValue ) const;
 	bool GetEnumeratorName( long lValue, std::string& rEnumerator ) const;
-	bool GetEnumTypes( SVEnumerateVector& rVec ) const;
 	bool GetEnumTypes( std::string& rEnumList ) const;
-	int  GetFirstEnumTypePos() const;
-	bool GetNextEnumType( int& rIterator, std::string& rEnum, long& rValue ) const;
 
 	bool SetEnumTypes( const SVEnumerateVector& rVec );
 	bool SetEnumTypes( LPCTSTR szEnumList );
@@ -83,9 +82,6 @@ private:
 	
 #pragma region Member Variables
 private:
-	// Sorted Table of all defined enumeration values.
-	SvCl::SVObjectLongArrayClass m_enumValueTable;
-	// String table of defined enumerations, 1 by 1 to value table
-	SvCl::SVObjectSVStringArrayClass m_enumStringTable;
+	SVEnumerateVector m_enumVector;
 #pragma endregion Member Variables
 };

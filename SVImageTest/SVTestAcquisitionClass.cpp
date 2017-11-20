@@ -15,7 +15,7 @@
 #include "resource.h"
 #include "SVTestAcquisitionClass.h"
 #include "SVTestAcquisitionSubsystem.h"
-#include "SVHBitmapUtilitiesLibrary/SVImageFormatEnum.h"
+#include "Definitions/SVImageFormatEnum.h"
 #include "SVCameraPage.h"
 #pragma endregion Includes
 
@@ -54,7 +54,7 @@ unsigned long SVTestAcquisitionClass::GetBufferHeight() const
 
 int SVTestAcquisitionClass::GetBufferFormat() const
 {
-	int l_Format = SVImageFormatUnknown;
+	int l_Format = SvDef::SVImageFormatUnknown;
 
 	m_rSubsystem.m_svDigitizers.GetBufferFormat( m_hDigitizer, &l_Format );
 

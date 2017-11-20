@@ -16,7 +16,7 @@
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVTimerLibrary/SVClock.h"
-#include "SVLibrary/SVFileNameClass.h"
+#include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
 
 #include "SVImageProcessingClass.h"

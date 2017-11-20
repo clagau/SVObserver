@@ -140,7 +140,7 @@ BOOL SVCylindricalWarpDlg::OnInitDialog()
 	{
 		SetTaskObject( m_pTool );
 
-		SVObjectTypeInfoStruct objectInfo;
+		SvDef::SVObjectTypeInfoStruct objectInfo;
 		// Warp Type
 		objectInfo.EmbeddedID = SVWarpTypeObjectGuid;
 		m_pWarpType = dynamic_cast<SVEnumerateValueObjectClass*>( m_pTool->getFirstObject( objectInfo ) );

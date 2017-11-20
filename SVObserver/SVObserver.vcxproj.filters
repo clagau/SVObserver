@@ -887,6 +887,9 @@
     <ClCompile Include="MonitorListSelector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SVOLicenseManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="SVObserver.odl">
@@ -1804,6 +1807,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MonitorListSelector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVOLicenseManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

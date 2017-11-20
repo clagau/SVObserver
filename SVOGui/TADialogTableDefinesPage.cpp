@@ -348,7 +348,7 @@ namespace SvOg {
 		typedef SvCmd::GetAvailableObjects Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 		m_gridList.clear();
-		CommandPtr commandPtr = new Command(m_TaskObjectID, SVObjectTypeInfoStruct(SVEquationObjectType, TableColumnEquationObjectType));
+		CommandPtr commandPtr = new Command(m_TaskObjectID, SvDef::SVObjectTypeInfoStruct(SvDef::SVEquationObjectType, SvDef::TableColumnEquationObjectType));
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)

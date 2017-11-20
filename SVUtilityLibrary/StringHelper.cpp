@@ -14,7 +14,6 @@
 //Moved to precompiled header: #include <boost\algorithm\string\case_conv.hpp>
 #include "StringHelper.h"
 #include "LoadDll.h"
-#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -303,7 +302,8 @@ namespace SvUl
 		return std::wstring(&buff.at(0));
 	}
 
-	typedef std::map<int, SvDef::StringPair > IntStringPairMap;
+	typedef std::pair<std::string, std::string> StringPair;
+	typedef std::map<int, StringPair > IntStringPairMap;
 
 	bool AddEscapeSpecialCharacters(std::string& rString, bool bConvertCtrl)
 	{
@@ -318,12 +318,12 @@ namespace SvUl
 			TBYTE l_ch = rString[index];
 			if (l_ch == _T('\\'))
 			{
-				FoundStrings[index] = SvDef::StringPair(_T("\\\\"), _T("\\"));
+				FoundStrings[index] = StringPair(_T("\\\\"), _T("\\"));
 				bAdded = true;
 			}
 			else if (l_ch == _T('"'))
 			{
-				FoundStrings[index] = SvDef::StringPair(_T("\\\""), _T("\""));
+				FoundStrings[index] = StringPair(_T("\\\""), _T("\""));
 				bAdded = true;
 			}
 			else if (bConvertCtrl && iscntrl(l_ch))
@@ -332,7 +332,7 @@ namespace SvUl
 				std::string second;
 				first = SvUl::Format(_T("\\%03o"), l_ch);
 				second = SvUl::Format(_T("%c"), l_ch);
-				FoundStrings[index] = SvDef::StringPair(first, second);
+				FoundStrings[index] = StringPair(first, second);
 				bAdded = true;
 			}
 		}
@@ -379,12 +379,12 @@ namespace SvUl
 		{
 			if (rString[index + 1] == _T('\\'))
 			{
-				FoundStrings[static_cast<int> (index)] = SvDef::StringPair(_T("\\\\"), _T("\\"));
+				FoundStrings[static_cast<int> (index)] = StringPair(_T("\\\\"), _T("\\"));
 				index++;
 			}
 			else if (rString[index + 1] == _T('"'))
 			{
-				FoundStrings[static_cast<int> (index)] = SvDef::StringPair(_T("\\\""), _T("\""));
+				FoundStrings[static_cast<int> (index)] = StringPair(_T("\\\""), _T("\""));
 				index++;
 			}
 			else if (bConvertCtrl && index < len - 2 &&
@@ -397,7 +397,7 @@ namespace SvUl
 				int ctrlValue = (rString[index + 1] - _T('0')) * 64 + (rString[index + 2] - _T('0')) * 8 + (rString[index + 3] - _T('0'));
 				first = SvUl::Format(_T("\\%03o"), ctrlValue);
 				second = SvUl::Format(_T("%c"), ctrlValue);
-				FoundStrings[static_cast<int> (index)] = SvDef::StringPair(first, second);
+				FoundStrings[static_cast<int> (index)] = StringPair(first, second);
 				index += 3;
 			}
 			index++;

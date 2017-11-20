@@ -43,7 +43,7 @@ void SVAnalyzerClass::init()
 	pAnalyzerResult	= nullptr;
 
 	// Indentify our type in the Output List
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVAnalyzerObjectType;
 
 	// Set up the Defualt Inputs/Outputs
 	addDefaultInputObjects();
@@ -63,8 +63,8 @@ bool SVAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStru
 
 SvOi::IObjectClass* SVAnalyzerClass::GetResultObject()
 {
-	SVObjectTypeInfoStruct info;
-	info.ObjectType = SVResultObjectType;
+	SvDef::SVObjectTypeInfoStruct info;
+	info.ObjectType = SvDef::SVResultObjectType;
 	SvOi::IObjectClass* pResult = getFirstObject( info );
 	return pResult;
 }

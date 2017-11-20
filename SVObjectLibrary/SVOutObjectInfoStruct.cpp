@@ -26,13 +26,13 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 SVOutObjectInfoStruct::SVOutObjectInfoStruct()
-: SVObjectInfoStruct(), UserInfoList(), m_CriticalSectionPtr()
+: SVObjectInfoStruct(), m_UserInfoList(), m_CriticalSectionPtr()
 {
 	m_CriticalSectionPtr = new SVCriticalSection;
 }
 
 SVOutObjectInfoStruct::SVOutObjectInfoStruct( const SVOutObjectInfoStruct& p_rsvValue )
-: SVObjectInfoStruct( p_rsvValue ), UserInfoList( p_rsvValue.UserInfoList ), m_CriticalSectionPtr()
+: SVObjectInfoStruct( p_rsvValue ), m_UserInfoList( p_rsvValue.m_UserInfoList ), m_CriticalSectionPtr()
 {
 	m_CriticalSectionPtr = new SVCriticalSection;
 }
@@ -48,7 +48,7 @@ const SVOutObjectInfoStruct& SVOutObjectInfoStruct::operator=( const SVOutObject
 	{
 		SVObjectInfoStruct::operator =( p_rsvValue );
 
-		UserInfoList.Copy( p_rsvValue.UserInfoList );
+		m_UserInfoList =  p_rsvValue.m_UserInfoList;
 	}
 
 	return *this;
@@ -59,7 +59,7 @@ HRESULT SVOutObjectInfoStruct::AddInput( SVInObjectInfoStruct& p_rsvInput )
 	// Update Pointer...
 	p_rsvInput.SetInputObject( SVObjectManagerClass::Instance().GetObject( p_rsvInput.GetInputObjectInfo().m_UniqueObjectID ) );
 
-	UserInfoList.Add( p_rsvInput );	
+	m_UserInfoList.push_back( p_rsvInput );	
 
 	return S_OK;
 }
@@ -68,17 +68,17 @@ HRESULT SVOutObjectInfoStruct::RemoveInput( SVInObjectInfoStruct& p_rsvInput )
 {
 	bool l_bFound = false;
 
-	long l_lCount = UserInfoList.GetSize();
+	long l_lCount = static_cast<long> (m_UserInfoList.size());
 
 	for( long l = l_lCount - 1; 0 <= l; l-- )
 	{
-		SVInObjectInfoStruct& inObjectInfo = UserInfoList[ l ];
+		SVInObjectInfoStruct& inObjectInfo = m_UserInfoList[ l ];
 
 		l_bFound = inObjectInfo.m_UniqueObjectID == p_rsvInput.m_UniqueObjectID;
 
 		if ( l_bFound )
 		{
-			UserInfoList.RemoveAt( l );
+			m_UserInfoList.erase(m_UserInfoList.begin() + l);
 
 			// Update Pointer...
 			p_rsvInput.SetInputObject( nullptr );
@@ -95,11 +95,11 @@ HRESULT SVOutObjectInfoStruct::RemoveInput( SVInObjectInfoStruct& p_rsvInput )
 
 HRESULT SVOutObjectInfoStruct::DisconnectAllInputs()
 {
-	long l_lCount = UserInfoList.GetSize();
+	long l_lCount = static_cast<long> (m_UserInfoList.size());
 
 	for( long l = l_lCount - 1; 0 <= l; l-- )
 	{
-		SVInObjectInfoStruct& inObjectInfo = UserInfoList[ l ];
+		SVInObjectInfoStruct& inObjectInfo = m_UserInfoList[l];
 
 		inObjectInfo.SetInputObject( m_UniqueObjectID );
 
@@ -110,34 +110,34 @@ HRESULT SVOutObjectInfoStruct::DisconnectAllInputs()
 		}
 	}
 
-	UserInfoList.RemoveAll();
+	m_UserInfoList.clear();
 
 	return S_OK;
 }
 
 HRESULT SVOutObjectInfoStruct::GetDependentsList( SVObjectClass* p_psvObject, SVObjectPairVector& rListOfDependents )
 {
-	long l_lCount = UserInfoList.GetSize();
+	long l_lCount = static_cast<long> (m_UserInfoList.size());
 
 	for( long l = l_lCount - 1; 0 <= l; l-- )
 	{
-		SVInObjectInfoStruct& rInInfo = UserInfoList[ l ];
+		SVInObjectInfoStruct& rInInfo = m_UserInfoList[l];
 
 		if( rInInfo.m_pObject && rInInfo.m_pObject != p_psvObject )
 		{
 			if( rInInfo.CheckExistence() )
 			{
 				std::string strTempName;
-				std::string strName = p_psvObject->GetCompleteObjectNameToObjectType( nullptr, SVToolObjectType ) + _T( "." );
+				std::string strName = p_psvObject->GetCompleteObjectNameToObjectType( nullptr, SvDef::SVToolObjectType ) + _T( "." );
 
 				// Who is using
-				strTempName = rInInfo.m_pObject->GetCompleteObjectNameToObjectType( nullptr, SVToolObjectType );
+				strTempName = rInInfo.m_pObject->GetCompleteObjectNameToObjectType( nullptr, SvDef::SVToolObjectType );
 				
 				// exclude ourself or our children and the document (published)
 				SVObjectInfoStruct objectTypeInfo = rInInfo.m_pObject->GetObjectInfo();
 
 				if( std::string::npos == strTempName.find( strName ) && 
-					objectTypeInfo.m_ObjectTypeInfo.ObjectType != SVInspectionObjectType )
+					objectTypeInfo.m_ObjectTypeInfo.ObjectType != SvDef::SVInspectionObjectType )
 				{
 					SVObjectPair pair;
 					

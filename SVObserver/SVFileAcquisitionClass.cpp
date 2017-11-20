@@ -209,7 +209,7 @@ HRESULT SVFileAcquisitionClass::GetCameraImageInfo(SVImageInfoClass *pImageInfo)
 	unsigned long bufWidth = 640;
 	unsigned long bufHeight = 480;
 	unsigned long uiBandNumber = 1;
-	int iFormat = SVImageFormatUnknown;
+	int iFormat = SvDef::SVImageFormatUnknown;
 
 	if ( IsValidBoard() && IsDigitizerSubsystemValid() )
 	{
@@ -232,12 +232,12 @@ HRESULT SVFileAcquisitionClass::GetCameraImageInfo(SVImageInfoClass *pImageInfo)
 	// Band number depends on video type...
 	switch( iFormat )
 	{
-		case SVImageFormatMono8:  // Mono
+		case SvDef::SVImageFormatMono8:  // Mono
 		{
 			uiBandNumber = 1;
 			break;
 		}
-		case SVImageFormatRGB8888:  // RGB
+		case SvDef::SVImageFormatRGB8888:  // RGB
 		{
 			uiBandNumber = 3;
 			break;

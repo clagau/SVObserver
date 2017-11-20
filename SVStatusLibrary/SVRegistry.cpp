@@ -313,7 +313,7 @@ bool SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, DWORD dwValue )
 	return false;
 }
 
-bool SVRegistryClass::GetRegistryValue( LPCTSTR szValueName, SVByteVector& baValue)
+bool SVRegistryClass::GetRegistryValue( LPCTSTR szValueName, SVByteVector& rValueVector)
 {
 	DWORD dwType = 0L, dwSize = 0L;
 
@@ -326,14 +326,14 @@ bool SVRegistryClass::GetRegistryValue( LPCTSTR szValueName, SVByteVector& baVal
 		&dwSize))
 	{
 		// set byte array size
-		baValue.SetSize( (int) dwSize);
+		rValueVector.resize(dwSize);
 
 		// get the data
 		if (ERROR_SUCCESS == RegQueryValueEx (mhKey,
 			szValueName,
 			(DWORD *) nullptr,
 			&dwType,
-			(LPBYTE) baValue.GetData(),
+			(LPBYTE) rValueVector.data(),
 			&dwSize))
 		{
 			return true;
@@ -342,7 +342,7 @@ bool SVRegistryClass::GetRegistryValue( LPCTSTR szValueName, SVByteVector& baVal
 	return false;
 }
 
-bool SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, SVByteVector& baValue )
+bool SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, SVByteVector& rValueVector )
 {
 	DWORD dwType = 0L;
 	DWORD dwSize = 0L;
@@ -352,8 +352,8 @@ bool SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, SVByteVector& baVal
 		szValueName,
 		0,
 		REG_BINARY,
-		baValue.GetData(),
-		static_cast< DWORD >( baValue.GetSize() ) );
+		rValueVector.data(),
+		static_cast< DWORD >( rValueVector.size() ) );
 
 	if( lResult == ERROR_SUCCESS )
 	{
@@ -369,7 +369,7 @@ bool SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, SVByteVector& baVal
 	return false;
 }
 
-bool SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, SVByteVector& baValue, DWORD dwType, DWORD dwLength )
+bool SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, SVByteVector& rValueVector, DWORD dwType, DWORD dwLength )
 {
 	LONG lResult;
 
@@ -377,7 +377,7 @@ bool SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, SVByteVector& baVal
 		szValueName,
 		0,
 		dwType,
-		baValue.GetData(),
+		rValueVector.data(),
 		dwLength );
 
 	if( lResult == ERROR_SUCCESS )
@@ -603,13 +603,13 @@ bool SVRegistryClass::ImportKeys(FILE * pFile)
 {
 	bool rc = true;
 	std::string szName;
-	SVByteVector baValue;
+	SVByteVector ValueVector;
 	DWORD dwType;
 	int iResult;
 
-	for (iResult = GetImportString (pFile, szName, baValue, &dwType);
+	for (iResult = GetImportString (pFile, szName, ValueVector, &dwType);
 		(iResult != SV_ISEOF) && (iResult != SV_ISERROR);
-		iResult = GetImportString (pFile, szName, baValue, &dwType))
+		iResult = GetImportString (pFile, szName, ValueVector, &dwType))
 	{
 		switch (iResult)
 		{
@@ -622,9 +622,9 @@ bool SVRegistryClass::ImportKeys(FILE * pFile)
 
 		case SV_ISVALUE :
 			SetRegistryValue( szName.c_str(),
-				baValue,
+				ValueVector,
 				dwType,
-				static_cast< DWORD >( baValue.GetSize() ) );
+				static_cast< DWORD >( ValueVector.size() ) );
 			break;
 
 		case SV_ISGARBAGE :
@@ -643,7 +643,7 @@ bool SVRegistryClass::ImportKeys(FILE * pFile)
 	return rc;
 }
 
-int SVRegistryClass::GetImportString(FILE * pFile, std::string& rName, SVByteVector & baValue, DWORD * pdwType)
+int SVRegistryClass::GetImportString(FILE * pFile, std::string& rName, SVByteVector& rValueVector, DWORD * pdwType)
 {
 	TCHAR tBuffer;
 	int i;
@@ -719,10 +719,10 @@ int SVRegistryClass::GetImportString(FILE * pFile, std::string& rName, SVByteVec
 				}
 			}
 			// get the binary data
-			baValue.RemoveAll();
+			rValueVector.clear();
 			for (i = 0; _ftscanf (pFile, _T(" %hhx"), &tBuffer); i++)
 			{
-				baValue.Add((BYTE) tBuffer);
+				rValueVector.push_back((BYTE) tBuffer);
 				_ftscanf (pFile, _T("%c"), &tBuffer);
 				if (tBuffer == _T(','))
 				{
@@ -737,12 +737,12 @@ int SVRegistryClass::GetImportString(FILE * pFile, std::string& rName, SVByteVec
 		else
 		{
 			// try to read dword data
-			baValue.RemoveAll();
+			rValueVector.clear();
 			if (_ftscanf (pFile, _T(" dword:%x"), pdwType))
 			{
 				for( i = 0; i < sizeof( DWORD ); i++ )
 				{
-					baValue.Add( ( ( BYTE* ) pdwType )[ i ] );
+					rValueVector.push_back( ( ( BYTE* ) pdwType )[ i ] );
 				}
 				*pdwType = REG_DWORD;
 			}
@@ -755,7 +755,7 @@ int SVRegistryClass::GetImportString(FILE * pFile, std::string& rName, SVByteVec
 					{
 						*pdwType = REG_SZ;
 						// get the string data
-						baValue.RemoveAll();
+						rValueVector.clear();
 							
 						for (i = 0; _ftscanf (pFile, _T(" %c"), &tBuffer); i++)
 						{
@@ -770,7 +770,7 @@ int SVRegistryClass::GetImportString(FILE * pFile, std::string& rName, SVByteVec
 									break;
 								}
 							}
-							baValue.Add((BYTE) tBuffer);
+							rValueVector.push_back((BYTE) tBuffer);
 						}
 					}
 					else

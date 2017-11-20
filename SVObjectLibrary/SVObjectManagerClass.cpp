@@ -52,14 +52,14 @@ SVObjectManagerClass::SVObjectManagerClass()
 , m_ObserverCookie( 1 )
 , m_FileSequenceNumber( 0 )
 {
-	m_TranslationMap[SvOl::FqnInspections] = SvOl::FqnConfiguration;
-	m_TranslationMap[SvOl::FqnPPQs] = SvOl::FqnConfiguration;
-	m_TranslationMap[SvOl::FqnCameras] = SvOl::FqnConfiguration;
+	m_TranslationMap[SvDef::FqnInspections] = SvDef::FqnConfiguration;
+	m_TranslationMap[SvDef::FqnPPQs] = SvDef::FqnConfiguration;
+	m_TranslationMap[SvDef::FqnCameras] = SvDef::FqnConfiguration;
 	std::string ReplaceName;
-	ReplaceName = SvOl::FqnConfiguration;
+	ReplaceName = SvDef::FqnConfiguration;
 	ReplaceName += _T(".");
-	ReplaceName += SvOl::FqnRemoteInputs;
-	m_TranslationMap[SvOl::FqnRemoteInputs] = ReplaceName;
+	ReplaceName += SvDef::FqnRemoteInputs;
+	m_TranslationMap[SvDef::FqnRemoteInputs] = ReplaceName;
 }
 
 SVObjectManagerClass::~SVObjectManagerClass()
@@ -93,9 +93,9 @@ const SVGUID SVObjectManagerClass::GetChildRootObjectID( const std::string& rRoo
 		ObjectID = m_RootNameChildren.at( rRootName );
 	}
 	//If the root node is not found then return the configuration for backward compatibility
-	else if( m_RootNameChildren.end() != m_RootNameChildren.find( SvOl::FqnConfiguration ) )
+	else if( m_RootNameChildren.end() != m_RootNameChildren.find( SvDef::FqnConfiguration ) )
 	{
-		ObjectID = m_RootNameChildren.at( SvOl::FqnConfiguration );
+		ObjectID = m_RootNameChildren.at( SvDef::FqnConfiguration );
 	}
 	return ObjectID;
 }
@@ -104,7 +104,7 @@ HRESULT SVObjectManagerClass::ConstructRootObject( const SVGUID& rClassID )
 {
 	HRESULT Status = S_OK;
 
-	if( m_RootNameChildren.end() != m_RootNameChildren.find( SvOl::FqnRoot ) && !m_RootNameChildren[SvOl::FqnRoot].empty() )
+	if( m_RootNameChildren.end() != m_RootNameChildren.find( SvDef::FqnRoot ) && !m_RootNameChildren[SvDef::FqnRoot].empty() )
 	{
 		DestroyRootObject();
 	}
@@ -118,7 +118,7 @@ HRESULT SVObjectManagerClass::ConstructRootObject( const SVGUID& rClassID )
 		GetObjectByIdentifier(ObjectID, pRootObject);
 		if(nullptr != pRootObject)
 		{
-			m_RootNameChildren[SvOl::FqnRoot] = ObjectID;
+			m_RootNameChildren[SvDef::FqnRoot] = ObjectID;
 		}
 	}
 	
@@ -129,7 +129,7 @@ HRESULT SVObjectManagerClass::DestroyRootObject()
 {
 	HRESULT Result = S_OK;
 
-	SVGUID RootID = GetChildRootObjectID( SvOl::FqnRoot );
+	SVGUID RootID = GetChildRootObjectID( SvDef::FqnRoot );
 	if( !RootID.empty() )
 	{
 		SVObjectClass* pObject = GetObject( RootID );
@@ -372,7 +372,7 @@ HRESULT SVObjectManagerClass::GetObjectByDottedName( const std::string& rFullNam
 		NameInfo.ParseObjectName( Name );
 
 		SVGUID ChildRootID = GetChildRootObjectID( NameInfo.m_NameArray[ 0 ] );
-		SVGUID ConfigID = GetChildRootObjectID( SvOl::FqnConfiguration );
+		SVGUID ConfigID = GetChildRootObjectID( SvDef::FqnConfiguration );
 		Result = GetObjectByIdentifier( ChildRootID, pChildRootObject );
 
 		if( nullptr != pChildRootObject )
@@ -400,7 +400,7 @@ HRESULT SVObjectManagerClass::GetObjectByDottedName( const std::string& rFullNam
 				}
 				else
 				{
-					SVGUID RootObjetctID = GetChildRootObjectID( SvOl::FqnRoot );
+					SVGUID RootObjetctID = GetChildRootObjectID( SvDef::FqnRoot );
 					Result = GetObjectByIdentifier( RootObjetctID, pParent );
 				}
 				if( nullptr != pParent )
@@ -604,7 +604,7 @@ SVObjectClass* SVObjectManagerClass::GetObjectCompleteName( LPCTSTR Name )
 	if( Status )
 	{
 		SVObjectClass* pConfig;
-		GetRootChildObject( pConfig, SvOl::FqnConfiguration );
+		GetRootChildObject( pConfig, SvDef::FqnConfiguration );
 
 		if( nullptr != pConfig )
 		{
@@ -650,7 +650,7 @@ SVGUID SVObjectManagerClass::GetObjectIdFromCompleteName( LPCTSTR Name )
 
 	return Result;
 }
-void SVObjectManagerClass::getObjectsOfType(SVObjectPtrVectorInserter Inserter, SVObjectTypeEnum ObjectType, SVObjectSubTypeEnum ObjectSubType) const
+void SVObjectManagerClass::getObjectsOfType(SVObjectPtrVectorInserter Inserter, SvDef::SVObjectTypeEnum ObjectType, SvDef::SVObjectSubTypeEnum ObjectSubType) const
 {
 	SVAutoLockAndReleaseTemplate< SVCriticalSection > AutoLock;
 
@@ -672,7 +672,7 @@ void SVObjectManagerClass::getObjectsOfType(SVObjectPtrVectorInserter Inserter, 
 			if (nullptr != pObject)
 			{
 				//Check only 
-				if (SVNotSetSubObjectType != ObjectSubType)
+				if (SvDef::SVNotSetSubObjectType != ObjectSubType)
 				{
 					if(pObject->GetObjectType() == ObjectType && pObject->GetObjectSubType() == ObjectSubType )
 					{
@@ -1800,13 +1800,13 @@ HRESULT SVObjectManagerClass::RegisterSubObject( const SVGUID& rSubObjectID )
 	SVObjectClass* pObject = GetObject(rSubObjectID);
 	if (pObject)
 	{
-		SVObjectClass* pTool = pObject->GetAncestor(SVToolObjectType);
+		SVObjectClass* pTool = pObject->GetAncestor(SvDef::SVToolObjectType);
 		if (pTool)
 		{
 			pTool->RegisterSubObject(pObject);
 			hr = S_OK;
 		}
-		SVObjectClass* pInspection = pObject->GetAncestor(SVInspectionObjectType);
+		SVObjectClass* pInspection = pObject->GetAncestor(SvDef::SVInspectionObjectType);
 		if (pInspection)
 		{
 			pInspection->RegisterSubObject(pObject);
@@ -1824,13 +1824,13 @@ HRESULT SVObjectManagerClass::UnregisterSubObject( const SVGUID& rSubObjectID )
 	SVObjectClass* pObject = GetObject(rSubObjectID);
 	if (pObject)
 	{
-		SVObjectClass* pTool = pObject->GetAncestor(SVToolObjectType);
+		SVObjectClass* pTool = pObject->GetAncestor(SvDef::SVToolObjectType);
 		if (pTool)
 		{
 			pTool->UnregisterSubObject(pObject);
 			hr = S_OK;
 		}
-		SVObjectClass* pInspection = pObject->GetAncestor(SVInspectionObjectType);
+		SVObjectClass* pInspection = pObject->GetAncestor(SvDef::SVInspectionObjectType);
 		if (pInspection)
 		{
 			pInspection->UnregisterSubObject(pObject);
@@ -1840,7 +1840,7 @@ HRESULT SVObjectManagerClass::UnregisterSubObject( const SVGUID& rSubObjectID )
 	return hr;
 }
 
-SvOi::IObjectClass* SVObjectManagerClass::getFirstObject(const SVGUID& rSourceId, const SVObjectTypeInfoStruct& rObjectTypeInfo) const
+SvOi::IObjectClass* SVObjectManagerClass::getFirstObject(const SVGUID& rSourceId, const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo) const
 {
 	SvOi::IObjectClass* pRetObject = nullptr;
 	SvOi::IObjectClass* pSource = SVObjectManagerClass::Instance().GetObject( rSourceId );
@@ -1896,12 +1896,12 @@ SvOi::IObjectClass* SvOi::getObject( const SVGUID& rObjectID )
 	return pObject;
 }
 
-SvOi::IObjectClass* SvOi::FindObject(const SVGUID& rParentID, const SVObjectTypeInfoStruct& rInfo)
+SvOi::IObjectClass* SvOi::FindObject(const SVGUID& rParentID, const SvDef::SVObjectTypeInfoStruct& rInfo)
 {
 	return SVObjectManagerClass::Instance().getFirstObject(rParentID, rInfo);
 }
 
-SvOi::ISVImage* SvOi::FindImageObject(const SVGUID& rParentID, const SVObjectTypeInfoStruct& rInfo)
+SvOi::ISVImage* SvOi::FindImageObject(const SVGUID& rParentID, const SvDef::SVObjectTypeInfoStruct& rInfo)
 {
 	SvOi::IObjectClass* pObject = SvOi::FindObject(rParentID, rInfo);
 	

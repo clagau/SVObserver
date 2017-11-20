@@ -12,8 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVInputInfoListClass.h"
-
-#include "SVInObjectInfoStruct.h"
 #include "SVObjectLibrary.h"
 #include "SVObjectManagerClass.h"
 #pragma endregion Includes
@@ -33,78 +31,73 @@ SVInputInfoListClass::~SVInputInfoListClass()
 {
 }
 
+const SVInputInfoListClass& SVInputInfoListClass::operator=(const SVInputInfoListClass& rRhs)
+{
+	m_InObjectInfoVector = rRhs.getInObjectInfoVector();
+	return *this;
+}
+
 bool SVInputInfoListClass::CheckExistence( int Index /*= -1*/ )
 {
-	bool BRetVal = false;
-	if( Index < GetSize() && Index >= -1 )
+	bool Result{ false };
+
+	if( Index < static_cast<int> (m_InObjectInfoVector.size()) && Index >= -1 )
 	{
 		if( Index > -1 )
 		{
 			// Check only this entry...
-			if( GetAt( Index ) )
+			SVInObjectInfoStruct* pInfoObject = m_InObjectInfoVector[Index];
+			if( nullptr != pInfoObject)
 			{
-				BRetVal = ( nullptr != ( GetAt( Index )->m_pObject = SVObjectManagerClass::Instance().GetObject( GetAt( Index )->m_UniqueObjectID ) ) ) ? true : false;
+				Result = ( nullptr != (pInfoObject->m_pObject = SVObjectManagerClass::Instance().GetObject(pInfoObject->m_UniqueObjectID ) ) ) ? true : false;
 			}
 		}
 		else
 		{
 			// Check all entries...
-			BRetVal = true;
-			for( int i = 0; i < GetSize(); ++i )
+			Result = true;
+			for( int i = 0; i < static_cast<int> (m_InObjectInfoVector.size()); ++i )
 			{
-				if( GetAt( i ) )
+				SVInObjectInfoStruct* pInfoObject = m_InObjectInfoVector[i];
+				if(nullptr != pInfoObject)
 				{
-					BRetVal = ( ( nullptr != ( GetAt( i )->m_pObject = SVObjectManagerClass::Instance().GetObject( GetAt( i )->m_UniqueObjectID ) ) ) ? true : false ) && BRetVal;
+					Result = ( nullptr != (pInfoObject->m_pObject = SVObjectManagerClass::Instance().GetObject(pInfoObject->m_UniqueObjectID) ) ? true : false ) && Result;
 				}
 				else
 				{
-					BRetVal = false;
+					Result = false;
 				}
 			}
 		}
 	}
-	return BRetVal;
+	return Result;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Override for Add - Do not allow duplicates
 ////////////////////////////////////////////////////////////////////////////////
-int SVInputInfoListClass::Add( SVInObjectInfoStruct* PInObjectInfo )
+int SVInputInfoListClass::push_back( SVInObjectInfoStruct* pInObjectInfo )
 {
-	if( !checkDuplicates( PInObjectInfo ) )
-		return SVVector< SVInObjectInfoStruct* >::Add( PInObjectInfo );
+	if (!checkDuplicates(pInObjectInfo))
+	{
+		m_InObjectInfoVector.push_back(pInObjectInfo);
+	}
 
-	return GetSize();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// Override for InsertAt - Do not allow duplicates,
-// never more than one item inserted
-////////////////////////////////////////////////////////////////////////////////
-void SVInputInfoListClass::InsertAt( int nIndex, SVInObjectInfoStruct* PInObjectInfo )
-{
-	if( !checkDuplicates( PInObjectInfo ) )
-		SVVector< SVInObjectInfoStruct* >::InsertAt( nIndex, PInObjectInfo );
+	return static_cast<int> (m_InObjectInfoVector.size());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // check for duplicates
 ////////////////////////////////////////////////////////////////////////////////
-bool SVInputInfoListClass::checkDuplicates( SVInObjectInfoStruct* PInObjectInfo )
+bool SVInputInfoListClass::checkDuplicates( SVInObjectInfoStruct* pInObjectInfo )
 {
-	bool duplicateFound = false;
-
-	SVInObjectInfoStruct* pInObjectInfo;
-
-	for( int i = 0;i < GetSize() && !duplicateFound;i++ )
+	for(auto const rInObjectInfo : m_InObjectInfoVector)
 	{
-		pInObjectInfo = GetAt( i );
-		if( pInObjectInfo )
+		if( rInObjectInfo == pInObjectInfo )
 		{
-			if( pInObjectInfo == PInObjectInfo )
-				duplicateFound = true;
+			return true;
 		}
 	}
-	return duplicateFound;
+	return false;
 }
 

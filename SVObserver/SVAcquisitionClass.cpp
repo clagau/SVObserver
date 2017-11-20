@@ -23,7 +23,7 @@
 #include "SVTimerLibrary/SVClock.h"
 #include "TriggerInformation/SVAcquisitionConstructParams.h"
 #include "SVDigitizerProcessingClass.h"
-#include "SVSystemLibrary/SVFileNameManagerClass.h"
+#include "SVFileSystemLibrary/SVFileNameManagerClass.h"
 #include "SVDataManagerLibrary/DataManager.h"
 #include "SVOCore/SVImageObjectClass.h"
 #include "SVOCore/SVImageProcessingClass.h"
@@ -109,7 +109,7 @@ void SVAcquisitionClass::ClearDevice()
 
 	mLightReference.Reset();
 
-	for ( long l = mFiles.GetSize() - 1; -1 < l; l-- )
+	for ( long l = static_cast<long> (mFiles.size() - 1); -1 < l; l-- )
 	{
 		SVFileNameManagerClass::Instance().RemoveItem( &(mFiles[l]) );
 	}
@@ -148,7 +148,7 @@ HRESULT SVAcquisitionClass::Destroy()
 		hrOk = l_Status;
 	}
 
-	for ( long l = mFiles.GetSize() - 1; -1 < l; l-- )
+	for ( long l = static_cast<long> (mFiles.size() - 1); -1 < l; l-- )
 	{
 		SVFileNameManagerClass::Instance().RemoveItem( &(mFiles[l]) );
 	}
@@ -345,7 +345,7 @@ HRESULT SVAcquisitionClass::LoadFiles(SVFileNameArrayClass &rArray)
 
 	long l( 0 );
 
-	for ( l = mFiles.GetSize() - 1; -1 < l; l-- )
+	for ( l = static_cast<long> (mFiles.size() - 1); -1 < l; l-- )
 	{
 		SVFileNameManagerClass::Instance().RemoveItem( &(mFiles[l]) );
 	}
@@ -353,7 +353,7 @@ HRESULT SVAcquisitionClass::LoadFiles(SVFileNameArrayClass &rArray)
 	mFiles = rArray;
 	m_CameraFileDeviceParams.Clear();
 
-	for ( l = 0; S_OK == Result  && l < mFiles.GetSize(); l++ )
+	for ( l = 0; S_OK == Result  && l < static_cast<long> (mFiles.size()); l++ )
 	{
 		if ( ! SVFileNameManagerClass::Instance().AddItem( &(mFiles[l]) ) )
 		{
@@ -529,12 +529,12 @@ HRESULT SVAcquisitionClass::UnloadFiles()
 {
 	HRESULT hrOk = S_OK;
 
-	for ( long l = mFiles.GetSize() - 1; -1 < l; l-- )
+	for ( long l = static_cast<long> (mFiles.size() - 1); -1 < l; l-- )
 	{
 		SVFileNameManagerClass::Instance().RemoveItem( &(mFiles[l]) );
 	}
 
-	mFiles.RemoveAll();
+	mFiles.clear();
 
 	return hrOk;
 }
@@ -550,7 +550,7 @@ HRESULT SVAcquisitionClass::GetFileNameArraySize( long &rlSize ) const
 {
 	HRESULT hrOk = S_OK;
 
-	rlSize = mFiles.GetSize();
+	rlSize = static_cast<long> (mFiles.size());
 
 	return hrOk;
 }
@@ -559,7 +559,7 @@ HRESULT SVAcquisitionClass::GetFileName( long lIndex, SVFileNameClass &rFileName
 {
 	HRESULT hrOk = S_FALSE;
 
-	if ( 0 <= lIndex && lIndex < mFiles.GetSize() )
+	if ( 0 <= lIndex && lIndex < static_cast<long> (mFiles.size()))
 	{
 		hrOk = S_OK;
 
@@ -893,7 +893,7 @@ unsigned long SVAcquisitionClass::GetBufferHeight() const
 
 int SVAcquisitionClass::GetBufferFormat() const
 {
-	int l_Format = SVImageFormatUnknown;
+	int l_Format = SvDef::SVImageFormatUnknown;
 
 	msvImageInfo.GetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, l_Format );
 

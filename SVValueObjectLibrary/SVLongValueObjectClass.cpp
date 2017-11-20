@@ -111,7 +111,7 @@ void SVLongValueObjectClass::WriteDefaultValues(SVObjectWriter& rWriter)
 
 void SVLongValueObjectClass::LocalInitialize()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVLongValueObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVLongValueObjectType;
 	DefaultValue() = 0;
 	SetTypeName( _T("Integer32") );
 

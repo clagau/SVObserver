@@ -21,7 +21,19 @@
     <ClCompile Include="SVFileInfoComparator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVFileSystemCommandFactory.cpp">
+    <ClCompile Include="SVFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVFileNameArrayClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVFileNameClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVFileNameLockablePointerArrayClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVFileNameManagerClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -35,10 +47,22 @@
     <ClInclude Include="SVFileInfoComparator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVFileSystemCommandFactory.h">
+    <ClInclude Include="SVFileSystemScanner.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVFileSystemScanner.h">
+    <ClInclude Include="SVFile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVFileNameArrayClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVFileNameClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVFileNameLockablePointerArrayClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVFileNameManagerClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -37,11 +37,11 @@ SVImagePolarTransformClass::SVImagePolarTransformClass( SVObjectClass* POwner, i
 						   :SVPolarTransformClass( POwner, StringResourceID ) 
 {
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVImagePolarTransformObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVImagePolarTransformObjectType;
 
 	// Identify our input type needs...
 	// Image
-	m_inputImageObjectInfo.SetInputObjectType( SVImageObjectType );
+	m_inputImageObjectInfo.SetInputObjectType( SvDef::SVImageObjectType );
 	m_inputImageObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputImageObjectInfo, _T( "ImagePolarTransformImage" ) );
 
@@ -204,20 +204,20 @@ bool SVImagePolarTransformClass::SetDefaultFormulas(SvStl::MessageContainerVecto
 {
 	bool bRetVal = true;
 	bool bOk;
-	SVObjectTypeInfoStruct objectInfo;
-	SVObjectTypeInfoStruct equationObjectInfo;
-	equationObjectInfo.ObjectType = SVEquationObjectType;
-	equationObjectInfo.SubType    = SVMathEquationObjectType;
+	SvDef::SVObjectTypeInfoStruct objectInfo;
+	SvDef::SVObjectTypeInfoStruct equationObjectInfo;
+	equationObjectInfo.ObjectType = SvDef::SVEquationObjectType;
+	equationObjectInfo.SubType    = SvDef::SVMathEquationObjectType;
 	
 	// Find the evaluation center x object...
 	bOk = false;
-	objectInfo.SubType = SVEvaluateCenterXObjectType;
+	objectInfo.SubType = SvDef::SVEvaluateCenterXObjectType;
 	SVEvaluateCenterXClass* pEvaluateCenterX = dynamic_cast<SVEvaluateCenterXClass*>( GetTool()->getFirstObject(objectInfo) );
 	if( pEvaluateCenterX )
 	{
 		// Find equation object...
 		SVEquationClass* pEquation = dynamic_cast<SVEquationClass*>(pEvaluateCenterX->getFirstObject(equationObjectInfo));
-		std::string Name = m_centerX.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
+		std::string Name = m_centerX.GetCompleteObjectNameToObjectType( nullptr, SvDef::SVToolSetObjectType );
 		bOk = SetDefaultEquation( pEquation, Name, pErrorMessages );
 	}
 	if( ! bOk )
@@ -227,13 +227,13 @@ bool SVImagePolarTransformClass::SetDefaultFormulas(SvStl::MessageContainerVecto
 
 	// Find the evaluation center y object...
 	bOk = false;
-	objectInfo.SubType = SVEvaluateCenterYObjectType;
+	objectInfo.SubType = SvDef::SVEvaluateCenterYObjectType;
 	SVEvaluateCenterYClass* pEvaluateCenterY = dynamic_cast<SVEvaluateCenterYClass*>(GetTool()->getFirstObject(objectInfo));
 	if( pEvaluateCenterY )
 	{
 		// Find equation object...
 		SVEquationClass* pEquation = dynamic_cast<SVEquationClass*>(pEvaluateCenterY->getFirstObject(equationObjectInfo));
-		std::string Name = m_centerY.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
+		std::string Name = m_centerY.GetCompleteObjectNameToObjectType( nullptr, SvDef::SVToolSetObjectType );
 		bOk = SetDefaultEquation( pEquation, Name, pErrorMessages );
 	}
 	if( ! bOk )
@@ -243,13 +243,13 @@ bool SVImagePolarTransformClass::SetDefaultFormulas(SvStl::MessageContainerVecto
 
 	// Find the evaluation start radius object...
 	bOk = false;
-	objectInfo.SubType = SVEvaluateStartRadiusObjectType;
+	objectInfo.SubType = SvDef::SVEvaluateStartRadiusObjectType;
 	SVEvaluateStartRadiusClass* pEvaluateStartRadius = dynamic_cast<SVEvaluateStartRadiusClass*>(GetTool()->getFirstObject(objectInfo));
 	if( pEvaluateStartRadius )
 	{
 		// Find equation object...
 		SVEquationClass* pEquation = dynamic_cast<SVEquationClass*>(pEvaluateStartRadius->getFirstObject(equationObjectInfo));
-		std::string Name = m_startRadius.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
+		std::string Name = m_startRadius.GetCompleteObjectNameToObjectType( nullptr, SvDef::SVToolSetObjectType );
 		bOk = SetDefaultEquation( pEquation, Name, pErrorMessages );
 	}
 	if( ! bOk )
@@ -259,13 +259,13 @@ bool SVImagePolarTransformClass::SetDefaultFormulas(SvStl::MessageContainerVecto
 
 	// Find the evaluation end radius object...
 	bOk = false;
-	objectInfo.SubType = SVEvaluateEndRadiusObjectType;
+	objectInfo.SubType = SvDef::SVEvaluateEndRadiusObjectType;
 	SVEvaluateEndRadiusClass* pEvaluateEndRadius = dynamic_cast<SVEvaluateEndRadiusClass*>(GetTool()->getFirstObject(objectInfo));
 	if( pEvaluateEndRadius )
 	{
 		// Find equation object...
 		SVEquationClass* pEquation = dynamic_cast<SVEquationClass*>(pEvaluateEndRadius->getFirstObject(equationObjectInfo));
-		std::string Name = m_endRadius.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
+		std::string Name = m_endRadius.GetCompleteObjectNameToObjectType( nullptr, SvDef::SVToolSetObjectType );
 		bOk = SetDefaultEquation( pEquation, Name, pErrorMessages );
 	}
 	if( ! bOk )
@@ -275,13 +275,13 @@ bool SVImagePolarTransformClass::SetDefaultFormulas(SvStl::MessageContainerVecto
 
 	// Find the evaluation start angle object...
 	bOk = false;
-	objectInfo.SubType = SVEvaluateStartAngleObjectType;
+	objectInfo.SubType = SvDef::SVEvaluateStartAngleObjectType;
 	SVEvaluateStartAngleClass* pEvaluateStartAngle = dynamic_cast<SVEvaluateStartAngleClass*>(GetTool()->getFirstObject(objectInfo));
 	if( pEvaluateStartAngle )
 	{
 		// Find equation object...
 		SVEquationClass* pEquation = dynamic_cast<SVEquationClass*>(pEvaluateStartAngle->getFirstObject(equationObjectInfo));
-		std::string Name = m_startAngle.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
+		std::string Name = m_startAngle.GetCompleteObjectNameToObjectType( nullptr, SvDef::SVToolSetObjectType );
 		bOk = SetDefaultEquation( pEquation, Name, pErrorMessages );
 	}
 	if( ! bOk )
@@ -291,13 +291,13 @@ bool SVImagePolarTransformClass::SetDefaultFormulas(SvStl::MessageContainerVecto
 
 	// Find the evaluation end angle object...
 	bOk = false;
-	objectInfo.SubType = SVEvaluateEndAngleObjectType;
+	objectInfo.SubType = SvDef::SVEvaluateEndAngleObjectType;
 	SVEvaluateEndAngleClass* pEvaluateEndAngle = dynamic_cast<SVEvaluateEndAngleClass*>(GetTool()->getFirstObject(objectInfo));
 	if( pEvaluateEndAngle )
 	{
 		// Find equation object...
 		SVEquationClass* pEquation = dynamic_cast<SVEquationClass*>(pEvaluateEndAngle->getFirstObject(equationObjectInfo));
-		std::string Name = m_endAngle.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
+		std::string Name = m_endAngle.GetCompleteObjectNameToObjectType( nullptr, SvDef::SVToolSetObjectType );
 		bOk = SetDefaultEquation( pEquation, Name, pErrorMessages );
 	}
 	if( ! bOk )

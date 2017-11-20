@@ -22,7 +22,7 @@
 #include "SVUtilityLibrary/SVGUID.h"
 
 #include "SVOCore/SVConditional.h"
-#include "SVSystemLibrary/SVFileNameManagerClass.h"
+#include "SVFileSystemLibrary/SVFileNameManagerClass.h"
 #include "SVGlobal.h"
 #include "SVImageArchive.h"
 #include "SVImageViewScroll.h"
@@ -84,7 +84,7 @@
 #include "SVShiftTool.h"
 #include "ResizeTool.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
-#include "SVObjectLibrary/GlobalConst.h"
+#include "Definitions/GlobalConst.h"
 #include "SVContainerLibrary/ObjectSelectorItem.h"
 #include "ToolClipboard.h"
 #include "ExtrasEngine.h"
@@ -846,12 +846,12 @@ void SVIPDoc::OnAdjustLightReference()
 		{
 			SVLightReference* pLRA = new SVLightReference();
 			( *l_Iter )->GetAcquisitionDevice()->GetLightReference(*pLRA);
-			apLRA.Add(pLRA);
+			apLRA.push_back(pLRA);
 
 			// make another copy for cancel... this should move into the propsheet
 			SVLightReference* pLRAorig = new SVLightReference();
 			( *l_Iter )->GetAcquisitionDevice()->GetLightReference(*pLRAorig);
-			apLRAorig.Add(pLRAorig);
+			apLRAorig.push_back(pLRAorig);
 		}
 
 		++l_Iter;
@@ -874,24 +874,24 @@ void SVIPDoc::OnAdjustLightReference()
 
 			for (i=0, l_Iter = setCameras.begin(); l_Iter != setCameras.end(); ++i, ++l_Iter )
 			{
-				( *l_Iter )->SetLightReference(*(apLRA.GetAt(i)));
+				( *l_Iter )->SetLightReference(*(apLRA[i]));
 				SVLightReference lra; // get new device lra; camera Set only modifies its band(s)
 				( *l_Iter )->GetAcquisitionDevice()->GetLightReference(lra);
 				pConfig->ModifyAcquisitionDevice( ( *l_Iter )->GetAcquisitionDevice()->DeviceName().c_str(), lra );
-				delete apLRA.GetAt(i);
-				delete apLRAorig.GetAt(i);
+				delete apLRA[i];
+				delete apLRAorig[i];
 			}
 		}
 		else    // if cancel
 		{
 			for (i=0, l_Iter = setCameras.begin(); l_Iter != setCameras.end(); ++i, ++l_Iter )
 			{
-				( *l_Iter )->SetLightReference(*(apLRAorig.GetAt(i)));
+				( *l_Iter )->SetLightReference(*(apLRAorig[i]));
 				SVLightReference lra; // get new device lra; camera Set only modifies its band(s)
 				( *l_Iter )->GetAcquisitionDevice()->GetLightReference(lra);
 				pConfig->ModifyAcquisitionDevice( ( *l_Iter )->GetAcquisitionDevice()->DeviceName().c_str(), lra );
-				delete apLRA.GetAt(i);
-				delete apLRAorig.GetAt(i);
+				delete apLRA[i];
+				delete apLRAorig[i];
 			}
 		}
 		SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
@@ -1480,7 +1480,7 @@ void SVIPDoc::OpenToolAdjustmentDialog(int tab)
 		SVToolClass* l_pTool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject( GetSelectedToolID() ) );
 		if( nullptr != l_pTool )
 		{
-			const SVObjectTypeInfoStruct& rToolType = l_pTool->GetObjectInfo().m_ObjectTypeInfo;
+			const SvDef::SVObjectTypeInfoStruct& rToolType = l_pTool->GetObjectInfo().m_ObjectTypeInfo;
 
 			SVSVIMStateClass::AddState( SV_STATE_EDITING );
 			SVToolAdjustmentDialogSheetClass toolAdjustmentDialog(this, GetInspectionID(), GetSelectedToolID(), _T("Tool Adjustment"), nullptr, tab);
@@ -1571,7 +1571,8 @@ void SVIPDoc::OnResultsPicker()
 			SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::GlobalSelector, SvOg::PPQSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 			
 			const SVObjectReferenceVector& rSelectedObjects( pResultList->GetSelectedObjects() );
-			SvOsl::ObjectTreeGenerator::Instance().setCheckItems( rSelectedObjects, InspectionName );
+
+			SvOsl::ObjectTreeGenerator::Instance().setCheckItems(TranslateSelectedObjects(rSelectedObjects, InspectionName));
 
 			std::string ResultPicker = SvUl::LoadStdString( IDS_RESULT_PICKER );
 			std::string Title = SvUl::Format( _T("%s - %s"), ResultPicker.c_str(), InspectionName.c_str() );
@@ -1624,7 +1625,7 @@ void SVIPDoc::OnResultsTablePicker()
 			SvUl::NameGuidList availableList;
 			std::string selectedItem = SvOg::Table_NoSelected;
 			SVGUID selectedGuid = pResultList->getTableGuid();
-			CommandPtr commandPtr = new Command(GetInspectionID(), SVObjectTypeInfoStruct(TableObjectType, SVNotSetSubObjectType), SvCmd::IsValidObject(), SVToolSetObjectType);
+			CommandPtr commandPtr = new Command(GetInspectionID(), SvDef::SVObjectTypeInfoStruct(SvDef::TableObjectType, SvDef::SVNotSetSubObjectType), SvCmd::IsValidObject(), SvDef::SVToolSetObjectType);
 			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 			if (S_OK == hr)
@@ -1932,16 +1933,13 @@ void SVIPDoc::InitMenu()
 		{
 			SVEnumerateValueObjectClass* pEnum = pSet->GetDrawFlagObject();
 			CMenu myPopUp;
-			if( pEnum && myPopUp.CreatePopupMenu() )
+			if( nullptr != pEnum && myPopUp.CreatePopupMenu() )
 			{
 				// Populate pop up with enumerations of tool set draw flag...
 				UINT uiCommand = ID_VIEW_TOOLSETDRAW_POP_BASE;
-				int it = pEnum->GetFirstEnumTypePos();
-				std::string strEnum;
-				long lEnum = 0L;
-				while( pEnum->GetNextEnumType( it, strEnum, lEnum ) )
+				for(auto const& rEntry: pEnum->GetEnumVector() )
 				{
-					myPopUp.AppendMenu( MF_STRING, uiCommand++, strEnum.c_str() );
+					myPopUp.AppendMenu( MF_STRING, uiCommand++, rEntry.first.c_str() );
 				}
 
 				// Get current name of ID_VIEW_TOOLSETDRAW menu...
@@ -2232,6 +2230,43 @@ void SVIPDoc::SaveRegressionTestVariables(SVObjectWriter& rWriter)
 	Value = m_pRegressionTestPlayEquationController->GetEquationText().c_str();
 	rWriter.WriteAttribute(SvXml::CTAG_PLAY_CONDITION_EQUATION, Value);
 	rWriter.EndElement();
+}
+
+SvDef::StringSet SVIPDoc::TranslateSelectedObjects(const SVObjectReferenceVector& rSelectedObjects, const std::string& rInspectionName) const
+{
+	SvDef::TranslateMap TranslateNames;
+	if (!rInspectionName.empty())
+	{
+		std::string SearchName;
+		std::string ReplaceName;
+		SearchName = rInspectionName + SvDef::FqnRemoteInput;
+		ReplaceName = SvDef::FqnPPQVariables;
+		ReplaceName += SvDef::FqnRemoteInput;
+		TranslateNames[SearchName] = ReplaceName;
+		SearchName = rInspectionName + SvDef::FqnDioInput;
+		ReplaceName = SvDef::FqnPPQVariables;
+		ReplaceName += SvDef::FqnDioInput;
+		TranslateNames[SearchName] = ReplaceName;
+	}
+
+	SvDef::StringSet SelectedObjectNames;
+	for (auto const& rItem : rSelectedObjects)
+	{
+		std::string Name{ rItem.GetCompleteOneBasedObjectName() };
+
+		for (auto const& rTranslateName : TranslateNames)
+		{
+			size_t Pos = Name.find(rTranslateName.first);
+			//Check only that the start of the dotted name is found
+			if (0 == Pos)
+			{
+				Name.replace(Pos, rTranslateName.first.size(), rTranslateName.second.c_str());
+				break;
+			}
+		}
+		SelectedObjectNames.insert(Name);
+	}
+	return SelectedObjectNames;
 }
 
 void SVIPDoc::LoadRegressionTestVariables(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent)
@@ -2929,9 +2964,9 @@ void SVIPDoc::OnEditAdjustToolPosition()
 	if( nullptr != pTool )
 	{
 		SVObjectInfoStruct info = pTool->GetObjectInfo();
-		SVObjectTypeInfoStruct typeInfo = info.m_ObjectTypeInfo;
-		//------ Warp tool hands back a SVPolarTransformObjectType. Sub type 1792.
-		//------ Window tool, Luminance hands back a SVImageObjectType. Sub type 0.
+		SvDef::SVObjectTypeInfoStruct typeInfo = info.m_ObjectTypeInfo;
+		//------ Warp tool hands back a SvDef::SVPolarTransformObjectType. Sub type 1792.
+		//------ Window tool, Luminance hands back a SvDef::SVImageObjectType. Sub type 0.
 		if( SVImageViewClass* pImageView = GetImageView() )
 		{
 			SVSVIMStateClass::AddState( SV_STATE_EDITING );
@@ -2984,7 +3019,7 @@ void SVIPDoc::OnShowToolRelations()
 	{
 		SVGuidSet DependencySet;
 		DependencySet.insert(selectedToolID);
-		SvOg::SVShowDependentsDialog Dlg( DependencySet, SVToolObjectType, nullptr, SvOg::SVShowDependentsDialog::Show );
+		SvOg::SVShowDependentsDialog Dlg( DependencySet, SvDef::SVToolObjectType, nullptr, SvOg::SVShowDependentsDialog::Show );
 		Dlg.DoModal();
 	}
 }
@@ -3010,7 +3045,7 @@ void SVIPDoc::OnToolDependencies()
 		std::string FileName;
 		//Don't need to check inspection pointer because ToolSet pointer is valid
 		FileName = SvUl::Format(_T("%s\\%s.dot"), SvStl::GlobalPath::Inst().GetTempPath().c_str(), GetInspectionProcess()->GetName());
-		SvOi::getToolDependency(std::back_inserter(m_dependencyList), ToolIDSet, SVToolObjectType, SvOi::ToolDependencyEnum::Client, FileName);
+		SvOi::getToolDependency(std::back_inserter(m_dependencyList), ToolIDSet, SvDef::SVToolObjectType, SvOi::ToolDependencyEnum::Client, FileName);
 	}
 }
 
@@ -3480,7 +3515,7 @@ std::string SVIPDoc::GetCompleteToolSetName() const
 
 	if( nullptr != l_pToolSet )
 	{
-		Result = l_pToolSet->GetCompleteObjectNameToObjectType( nullptr, SVToolObjectType );
+		Result = l_pToolSet->GetCompleteObjectNameToObjectType( nullptr, SvDef::SVToolObjectType );
 	}
 
 	return Result;

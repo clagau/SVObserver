@@ -39,7 +39,7 @@ struct SVObjectInfoStruct
 
 	HRESULT SetObject( const SVGUID& rObjectID );
 	HRESULT SetObject( const std::string& rName );
-	HRESULT SetObject( const SVObjectTypeInfoStruct& rTypeInfo );
+	HRESULT SetObject( const SvDef::SVObjectTypeInfoStruct& rTypeInfo );
 	HRESULT SetObject( SVObjectClass* pObject );
 	HRESULT SetObject( const SVObjectReference& rObjectRef );
 	HRESULT SetObject( const SVObjectInfoStruct& rObjectInfo );
@@ -52,7 +52,7 @@ struct SVObjectInfoStruct
 
 	SVObjectClass* m_pObject;					// Where I am
 	SVGUID m_UniqueObjectID;					// Who I am
-	SVObjectTypeInfoStruct m_ObjectTypeInfo;  // What I am
+	SvDef::SVObjectTypeInfoStruct m_ObjectTypeInfo;  // What I am
 	SVObjectNameInfo m_ObjectNameInfo;
 };
 

@@ -18,12 +18,12 @@
 #include "SVLibrary/SVOIniClass.h"
 
 #include "SVBarCodeResult.h"   
-#include "SVLibrary/SVBarCodeProperties.h"
+#include "SVOGui/SVBarCodeProperties.h"
 #include "SVOCore/SVBarCodeBuffer.h"
 #include "SVOCore/SVImageProcessingClass.h"
 #include "SVOCore/SVImageClass.h"
 #include "SVInspectionProcess.h"
-#include "SVOLicenseManager/SVOLicenseManager.h"
+#include "SVOLicenseManager.h"
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/GlobalPath.h"
@@ -60,7 +60,7 @@ SVBarCodeAnalyzerClass::SVBarCodeAnalyzerClass (SVObjectClass* POwner, int Strin
 void SVBarCodeAnalyzerClass::init()
 {
 	
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVBarCodeAnalyzerObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVBarCodeAnalyzerObjectType;
 	
 	// Register Embedded Objects
 	RegisterEmbeddedObject (&msv_szBarCodeValue, SVBarCodeObjectGuid, IDS_OBJECTNAME_BARCODEVALUE, false, SvOi::SVResetItemNone);

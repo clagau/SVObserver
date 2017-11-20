@@ -14,10 +14,10 @@
 #pragma region Includes
 #include "ObjectInterfaces\IMask.h"
 #include "SVOCore/SVUnaryImageOperatorClass.h"
-#include "CameraLibrary\SVGraphix.h"
+#include "SVLibrary\SVGraphix.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
-#include "SVLibrary/SVTaskObjectInterfaceInputRequestStruct.h"
+#include "SVOCore/SVTaskObjectInterfaceInputRequestStruct.h"
 
 #pragma endregion Includes
 
@@ -80,7 +80,7 @@ public:
 protected:
 	virtual bool isInputImage(const SVGUID& rImageGuid) const override;
 	virtual bool onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
-	virtual bool hasToAskFriendForConnection( const SVObjectTypeInfoStruct& rInfo, SVObjectClass*& rPOwner ) const override;
+	virtual bool hasToAskFriendForConnection( const SvDef::SVObjectTypeInfoStruct& rInfo, SVObjectClass*& rPOwner ) const override;
 	
 	SVImageInfoClass      m_MaskBufferInfo;
 	SVSmartHandlePointer  m_MaskBufferHandlePtr;

@@ -24,7 +24,7 @@
 #include "SVUserMaskOperatorClass.h"
 #include "SVOGui/DisplayHelper.h"
 #include "SVImageLibrary/MatroxImageData.h"
-#include "SVOGui/SVColor.h"
+#include "Definitions/Color.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
@@ -731,13 +731,10 @@ HRESULT SVMaskShapeEditorDlg::BuildPropertyList()
 				pCombo->EnableButton( false );
 				pCombo->CreateComboBox( WS_CHILD | WS_VSCROLL | CBS_DROPDOWNLIST );
 
-				SVEnumerateVector vecEnums;
-				pEnum->GetEnumTypes( vecEnums );
-				SVEnumerateVector::const_iterator iter;
-				for ( iter = vecEnums.begin(); iter != vecEnums.end(); ++iter )
+				for (auto const& rEntry : pEnum->GetEnumVector())
 				{
-					int iPos = pCombo->AddString( iter->first.c_str() );
-					pCombo->SetItemData( iPos, iter->second );
+					int iPos = pCombo->AddString( rEntry.first.c_str() );
+					pCombo->SetItemData(iPos, static_cast<DWORD_PTR> (rEntry.second));
 				}
 				pCombo->SetItemValue( data.value );
 			}
@@ -801,14 +798,14 @@ HRESULT SVMaskShapeEditorDlg::RefreshProperties()
 			pChild->SetItemValue( CString(_T("---")) );
 			// grey out property
 			pChild->SetCanHighlight( false );
-			pChild->SetForeColor( SVColor::LightGray );
+			pChild->SetForeColor( SvDef::LightGray );
 			pChild->ReadOnly( true );
 		}
 		else
 		{
 			// enable property
 			pChild->SetCanHighlight( true );
-			pChild->SetForeColor( SVColor::Black );
+			pChild->SetForeColor( SvDef::Black );
 			pChild->ReadOnly( false );
 		}
 
@@ -831,29 +828,26 @@ HRESULT SVMaskShapeEditorDlg::UpdateMask(bool bResetObject)
 	return S_OK;
 }
 
-void SVMaskShapeEditorDlg::FillComboBox(SVEnumerateValueObjectClass& p_rValueObject, CComboBox* p_pCombo)
+void SVMaskShapeEditorDlg::FillComboBox(SVEnumerateValueObjectClass& rValueObject, CComboBox* pCombo)
 {
-	ASSERT( nullptr != p_pCombo );
+	ASSERT( nullptr != pCombo );
 
-	if ( p_pCombo )
+	if ( pCombo )
 	{
-		int i;
-		SVEnumerateVector vec;
-		p_rValueObject.GetEnumTypes( vec );
-		for ( i = 0; i < static_cast<int>(vec.size()); i++ )
+		for (auto const& rEntry : rValueObject.GetEnumVector())
 		{
-			p_pCombo->SetItemData( p_pCombo->AddString(vec[i].first.c_str()), vec[i].second );
+			pCombo->SetItemData( pCombo->AddString(rEntry.first.c_str()), static_cast<DWORD_PTR> (rEntry.second) );
 		}
 
 		// Set Current Value...
 		long lCurrent;
-		p_rValueObject.GetValue(lCurrent);
+		rValueObject.GetValue(lCurrent);
 
-		for( i = 0; i < p_pCombo->GetCount(); ++i )
+		for(int i=0; i < pCombo->GetCount(); ++i )
 		{
-			if( lCurrent == static_cast<long>( p_pCombo->GetItemData( i )) )
+			if( lCurrent == static_cast<long> (pCombo->GetItemData(i)) )
 			{
-				p_pCombo->SetCurSel( i );
+				pCombo->SetCurSel(i);
 				break;
 			}
 		}
@@ -913,8 +907,8 @@ void SVMaskShapeEditorDlg::setShapeType(SVShapeMaskHelperClass::ShapeTypeEnum sh
 		ParMap[ CDSVPictureDisplay::P_Y1 ] = rect.top;
 		ParMap[ CDSVPictureDisplay::P_X2 ] = rect.right;
 		ParMap[ CDSVPictureDisplay::P_Y2 ] = rect.bottom;
-		ParMap[ CDSVPictureDisplay::P_Color ] = SVColor::Green;
-		ParMap[ CDSVPictureDisplay::P_SelectedColor ] = SVColor::Green;
+		ParMap[ CDSVPictureDisplay::P_Color ] = SvDef::Green;
+		ParMap[ CDSVPictureDisplay::P_SelectedColor ] = SvDef::Green;
 		ParMap[ CDSVPictureDisplay::P_AllowEdit ] = m_bAutoResize ? CDSVPictureDisplay::AllowNone : CDSVPictureDisplay::AllowAll;
 
 		//add new shape types
@@ -975,8 +969,8 @@ void SVMaskShapeEditorDlg::resetShapeOverlay()
 	ParMap[ CDSVPictureDisplay::P_Y1 ] = rect.top;
 	ParMap[ CDSVPictureDisplay::P_X2 ] = rect.right;
 	ParMap[ CDSVPictureDisplay::P_Y2 ] = rect.bottom;
-	ParMap[ CDSVPictureDisplay::P_Color ] = SVColor::Green;
-	ParMap[ CDSVPictureDisplay::P_SelectedColor ] = SVColor::Green;
+	ParMap[ CDSVPictureDisplay::P_Color ] = SvDef::Green;
+	ParMap[ CDSVPictureDisplay::P_SelectedColor ] = SvDef::Green;
 	ParMap[ CDSVPictureDisplay::P_AllowEdit ] = m_bAutoResize ? CDSVPictureDisplay::AllowNone : CDSVPictureDisplay::AllowAll;
 
 	//add new shape types

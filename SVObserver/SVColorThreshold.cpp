@@ -13,10 +13,10 @@
 #include "stdafx.h"
 #include "SVColorThreshold.h"
 
-#include "SVHBitmapUtilitiesLibrary/SVImageFormatEnum.h"
+#include "Definitions/SVImageFormatEnum.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
-#include "SVRunControlLibrary/SVRunControlLibrary.h"
+#include "Definitions/Color.h"
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 
 #include "SVOCore/SVDataBuffer.h"
@@ -424,13 +424,13 @@ void SVColorThresholdClass::LocalInitialize()
 	m_ShowHistogram = false;
 
 	// Set up draw objects...
-	m_GraphFigures[0].SetDrawPen(TRUE, PS_SOLID, 1, SV_DEFAULT_SUB_FUNCTION_COLOR_1);
-	m_GraphFigures[1].SetDrawPen(TRUE, PS_SOLID, 1, SV_DEFAULT_SUB_FUNCTION_COLOR_1);
-	m_GraphFigures[2].SetDrawPen(TRUE, PS_SOLID, 1, SV_DEFAULT_SUB_FUNCTION_COLOR_1);
+	m_GraphFigures[0].SetDrawPen(TRUE, PS_SOLID, 1, SvDef::DefaultSubFunctionColor1);
+	m_GraphFigures[1].SetDrawPen(TRUE, PS_SOLID, 1, SvDef::DefaultSubFunctionColor1);
+	m_GraphFigures[2].SetDrawPen(TRUE, PS_SOLID, 1, SvDef::DefaultSubFunctionColor1);
 
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVOperatorObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVColorThresholdObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVOperatorObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVColorThresholdObjectType;
 
 	// Register Embedded Object(s)
 	RegisterEmbeddedObject(&m_OutputThresholdEnabled, SVColorThresholdEnabledObjectGuid, IDS_OBJECTNAME_OUTPUT_THRESHOLDENABLED, false, SvOi::SVResetItemNone);
@@ -500,15 +500,15 @@ void SVColorThresholdClass::LocalInitialize()
 	m_OutputImage.InitializeImage(SvDef::SVImageTypeEnum::SVImageTypeIndependent);
 
 	// Identify our input type needs...
-	m_BandThreshold[BandEnum::Band0].m_InputImage.SetInputObjectType(SVBand0ImageObjectGuid, SVImageObjectType);
+	m_BandThreshold[BandEnum::Band0].m_InputImage.SetInputObjectType(SVBand0ImageObjectGuid, SvDef::SVImageObjectType);
 	m_BandThreshold[BandEnum::Band0].m_InputImage.SetObject(GetObjectInfo());
 	RegisterInputObject(&m_BandThreshold[BandEnum::Band0].m_InputImage, _T("ColorThresholdBand0Image"));
 
-	m_BandThreshold[BandEnum::Band1].m_InputImage.SetInputObjectType(SVBand1ImageObjectGuid, SVImageObjectType);
+	m_BandThreshold[BandEnum::Band1].m_InputImage.SetInputObjectType(SVBand1ImageObjectGuid, SvDef::SVImageObjectType);
 	m_BandThreshold[BandEnum::Band1].m_InputImage.SetObject(GetObjectInfo());
 	RegisterInputObject(&m_BandThreshold[BandEnum::Band1].m_InputImage, _T("ColorThresholdBand1Image"));
 
-	m_BandThreshold[BandEnum::Band2].m_InputImage.SetInputObjectType(SVBand2ImageObjectGuid, SVImageObjectType);
+	m_BandThreshold[BandEnum::Band2].m_InputImage.SetInputObjectType(SVBand2ImageObjectGuid, SvDef::SVImageObjectType);
 	m_BandThreshold[BandEnum::Band2].m_InputImage.SetObject(GetObjectInfo());
 	RegisterInputObject(&m_BandThreshold[BandEnum::Band2].m_InputImage, _T("ColorThresholdBand2Image"));
 
@@ -549,7 +549,7 @@ bool SVColorThresholdClass::createOutputImage( SVImageClass* pInputImage, SVImag
 	// Setup...
 	ImageInfo.SetOwner( GetOwnerID() );
 
-	ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SVImageFormatMono8 );
+	ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatMono8 );
 	ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
 	ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
 
@@ -589,7 +589,7 @@ bool SVColorThresholdClass::createHistogramImage( SVImageClass* pInputImage, SVI
 	ImageInfo.SetOwner( GetOwnerID() );
 	ImageInfo.SetOwnerImage( pOutputImage->GetUniqueObjectID() );
 
-	ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SVImageFormatMono8 );
+	ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatMono8 );
 	ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
 	ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
 
@@ -717,7 +717,7 @@ bool SVColorThresholdClass::updateThresholdBars( long lMinThresholdValue, long l
     
 		SVDrawObjectClass DrawObject;
 
-		DrawObject.SetDrawPen( TRUE, PS_DOT, 1, SV_DEFAULT_GOOD_COLOR );
+		DrawObject.SetDrawPen( TRUE, PS_DOT, 1, SvDef::DefaultGoodColor );
 
 		POINT l_oPoint;
 		CPoint graphPoint;

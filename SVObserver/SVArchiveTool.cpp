@@ -19,10 +19,9 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
 #include "SVTimerLibrary/SVClock.h"
-#include "SVSystemLibrary/SVFileNameManagerClass.h"
+#include "SVFileSystemLibrary/SVFileNameManagerClass.h"
 #include "SVGlobal.h"
 #include "SVOCore/SVImageClass.h"
-#include "SVOCore/SVImageListClass.h"
 #include "SVInspectionProcess.h"
 #include "SVMemoryManager.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
@@ -62,8 +61,8 @@ void SVArchiveTool::initializeArchiveTool()
 	m_arrayImagesInfoObjectsToArchive.SetArchiveTool( this );
 
 	// Set up your type...
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SVToolArchiveObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvDef::SVToolArchiveObjectType;
 	
 	// Hide and Remove Embedded Extents
 	removeEmbeddedExtents();
@@ -856,10 +855,10 @@ void SVArchiveTool::RebuildImageArchiveList()
 	//
 
 	
-	SVObjectTypeInfoStruct  info;
+	SvDef::SVObjectTypeInfoStruct  info;
 
-	info.ObjectType = SVImageObjectType;
-	info.SubType = SVNotSetSubObjectType;
+	info.ObjectType = SvDef::SVImageObjectType;
+	info.SubType = SvDef::SVNotSetSubObjectType;
 
 	SVGetObjectDequeByTypeVisitor l_Visitor( info );
 
@@ -900,17 +899,17 @@ void SVArchiveTool::RebuildImageArchiveList()
 // be used by the Archive Tool Property Page to display a 'tree' in a
 // tree list control.
 //
-void SVArchiveTool::SetImageAttributesFromArchiveList( SVImageListClass* pImageList )
+void SVArchiveTool::SetImageAttributesFromArchiveList( SVImageClassPtrVector* pImageList )
 {
 	if (!pImageList)
 	{
 		return;
 	}
-	int nCount = static_cast< int >( pImageList->GetSize() );
+	int nCount = static_cast<int> (pImageList->size());
 	for (int i = 0; i < nCount; i++)
 	{
-		SVImageClass* pImage = pImageList->GetAt(i);
-		if (pImage)
+		SVImageClass* pImage = pImageList->at(i);
+		if (nullptr != pImage)
 		{
 			std::string ImageName;
 			ImageName = pImage->GetCompleteName();
@@ -1080,19 +1079,19 @@ void SVArchiveTool::OnObjectRenamed( const SVObjectClass& rRenamedObject, const 
 
 	if( const SVInspectionProcess* l_pInspection = dynamic_cast<const SVInspectionProcess*> (&rRenamedObject) )
 	{
-		newPrefix = l_pInspection->GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType ) + _T( "." );
+		newPrefix = l_pInspection->GetCompleteObjectNameToObjectType( nullptr, SvDef::SVInspectionObjectType ) + _T( "." );
 	}
 	else if( nullptr != dynamic_cast<const BasicValueObject*> (&rRenamedObject) )
 	{
-		newPrefix = rRenamedObject.GetCompleteObjectNameToObjectType( nullptr, SVRootObjectType );
+		newPrefix = rRenamedObject.GetCompleteObjectNameToObjectType( nullptr, SvDef::SVRootObjectType );
 	}
 	else if( nullptr != dynamic_cast<const SvOi::IValueObject*> (&rRenamedObject) )
 	{
-		newPrefix = rRenamedObject.GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType );
+		newPrefix = rRenamedObject.GetCompleteObjectNameToObjectType( nullptr, SvDef::SVInspectionObjectType );
 	}
 	else
 	{
-		newPrefix = rRenamedObject.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType ) + _T( "." );
+		newPrefix = rRenamedObject.GetCompleteObjectNameToObjectType( nullptr, SvDef::SVToolSetObjectType ) + _T( "." );
 	}// end else
 	oldPrefix = newPrefix;
 	SvUl::searchAndReplace( oldPrefix, rRenamedObject.GetName(), rOldName.c_str() );

@@ -21,7 +21,7 @@ namespace SvCmd
 {
 	struct GetInstanceIDByTypeInfo: public boost::noncopyable
 	{
-		GetInstanceIDByTypeInfo(const SVGUID& ownerID, const SVObjectTypeInfoStruct& info) : m_ownerID(ownerID), m_info(info), m_instanceID(GUID_NULL) {}
+		GetInstanceIDByTypeInfo(const SVGUID& ownerID, const SvDef::SVObjectTypeInfoStruct& info) : m_ownerID(ownerID), m_info(info), m_instanceID(GUID_NULL) {}
 
 		// This method is where the real separation would occur by using sockets/named pipes/shared memory
 		// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
@@ -46,7 +46,7 @@ namespace SvCmd
 
 	private:
 		GUID m_ownerID;
-		SVObjectTypeInfoStruct m_info;
+		SvDef::SVObjectTypeInfoStruct m_info;
 		GUID m_instanceID;
 	};
 } //namespace SvCmd

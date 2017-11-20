@@ -18,7 +18,7 @@
 #pragma region Includes
 #include "resource.h"       // main symbols
 
-#include "CameraLibrary\SVGraphix.h"   // Loacted in SVObserver Source Code!
+#include "SVLibrary\SVGraphix.h"
 #include "SVMatroxLibrary\SVMatroxLibrary.h"
 #pragma endregion Includes
 

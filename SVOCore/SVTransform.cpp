@@ -20,31 +20,31 @@ SVTransformClass::SVTransformClass( SVObjectClass* POwner, int StringResourceID 
 				 :SVTaskObjectClass( POwner, StringResourceID ) 
 {
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVTransformObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVTransformObjectType;
 
 	// Identify our input type needs...
 	// Translation X
-	inputTranslationXResult.SetInputObjectType( SVOutputEvaluateTranslationXResultObjectGuid, SVValueObjectType, SVDoubleValueObjectType );
+	inputTranslationXResult.SetInputObjectType( SVOutputEvaluateTranslationXResultObjectGuid, SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType );
 	inputTranslationXResult.SetObject( GetObjectInfo() );
 	RegisterInputObject( &inputTranslationXResult, _T( "TransformTranslationXResult" ) );
 
 	// Translation Y
-	inputTranslationYResult.SetInputObjectType( SVOutputEvaluateTranslationYResultObjectGuid, SVValueObjectType, SVDoubleValueObjectType );
+	inputTranslationYResult.SetInputObjectType( SVOutputEvaluateTranslationYResultObjectGuid, SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType );
 	inputTranslationYResult.SetObject( GetObjectInfo() );
 	RegisterInputObject( &inputTranslationYResult, _T( "TransformTranslationYResult" ) );
 
 	// Rotation X
-	inputRotationXResult.SetInputObjectType( SVOutputEvaluateRotationXResultObjectGuid, SVValueObjectType, SVDoubleValueObjectType );
+	inputRotationXResult.SetInputObjectType( SVOutputEvaluateRotationXResultObjectGuid, SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType );
 	inputRotationXResult.SetObject( GetObjectInfo() );
 	RegisterInputObject( &inputRotationXResult, _T( "TransformRotationXResult" ) );
 
 	// Rotation Y
-	inputRotationYResult.SetInputObjectType( SVOutputEvaluateRotationYResultObjectGuid, SVValueObjectType, SVDoubleValueObjectType );
+	inputRotationYResult.SetInputObjectType( SVOutputEvaluateRotationYResultObjectGuid, SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType );
 	inputRotationYResult.SetObject( GetObjectInfo() );
 	RegisterInputObject( &inputRotationYResult, _T( "TransformRotationYResult" ) );
 
 	// Rotation Angle
-	inputRotationAngleResult.SetInputObjectType( SVOutputEvaluateRotationAngleResultObjectGuid, SVValueObjectType, SVDoubleValueObjectType );
+	inputRotationAngleResult.SetInputObjectType( SVOutputEvaluateRotationAngleResultObjectGuid, SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType );
 	inputRotationAngleResult.SetObject( GetObjectInfo() );
 	RegisterInputObject( &inputRotationAngleResult, _T( "TransformRotationAngleResult" ) );
 

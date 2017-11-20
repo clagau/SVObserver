@@ -105,47 +105,34 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="DisplayMessageBox.cpp" />
+    <ClCompile Include="DrawObject.cpp" />
     <ClCompile Include="InitialInformation.cpp" />
     <ClCompile Include="Intersect.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="SVBarCodeAttributesDialog.cpp" />
-    <ClCompile Include="SVBarCodeDataMatrixDialog.cpp" />
-    <ClCompile Include="svbarcodegeneraldialog.cpp" />
-    <ClCompile Include="SVBarCodeProperties.cpp" />
-    <ClCompile Include="svbarcodestringmatchdialog.cpp" />
     <ClCompile Include="SVBStr.cpp" />
-    <ClCompile Include="SVFileNameClass.cpp" />
-    <ClCompile Include="SVIOEntryHostStruct.cpp" />
+    <ClCompile Include="SVGraphix.cpp" />
     <ClCompile Include="SVOIniLoader.cpp" />
     <ClCompile Include="SVPackedFile.cpp" />
-    <ClCompile Include="SVTaskObjectInterfaceInputRequestStruct.cpp" />
-    <ClCompile Include="SVTaskObjectValueInterface.cpp" />
     <ClCompile Include="SVWinUtility.cpp" />
     <ClCompile Include="DirectoryUtilities.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DisplayMessageBox.h" />
+    <ClInclude Include="DrawObject.h" />
     <ClInclude Include="InitialInformation.h" />
     <ClInclude Include="Intersect.h" />
     <ClInclude Include="ISVCancel.h" />
     <ClInclude Include="StdAfx.h" />
-    <ClInclude Include="SVBarCodeAttributesDialog.h" />
-    <ClInclude Include="SVBarCodeDataMatrixDialog.h" />
-    <ClInclude Include="svbarcodegeneraldialog.h" />
-    <ClInclude Include="SVBarCodeProperties.h" />
-    <ClInclude Include="svbarcodestringmatchdialog.h" />
     <ClInclude Include="SVBStr.h" />
     <ClInclude Include="SVDataItemManagerTemplate.h" />
-    <ClInclude Include="SVFileNameClass.h" />
-    <ClInclude Include="SVIOEntryHostStruct.h" />
+    <ClInclude Include="SVGraphix.h" />
     <ClInclude Include="SVOINIClass.h" />
     <ClInclude Include="SVOIniLoader.h" />
     <ClInclude Include="SVPackedFile.h" />
-    <ClInclude Include="SVTaskObjectInterfaceInputRequestStruct.h" />
-    <ClInclude Include="SVTaskObjectValueInterface.h" />
+    <ClInclude Include="SVTemplate.h" />
     <ClInclude Include="SVWinUtility.h" />
     <ClInclude Include="DirectoryUtilities.h" />
   </ItemGroup>

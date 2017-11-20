@@ -13,13 +13,13 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <set>
+//Moved to precompiled header: #include <vector>
 #include "ObjectInterfaces/ISVImage.h"
-#include "SVContainerLibrary/SVVector.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVMatroxLibrary/SVMatroxEnums.h"
 #include "SVObjectLibrary/SVObjectClass.h"
-#include "SVRunControlLibrary/SVImageIndexStruct.h"
+#include "SVStatusLibrary/SVImageIndexStruct.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVImageChildStruct.h"
 #include "SVImageObjectClass.h"
@@ -185,5 +185,6 @@ private:
 	mutable CRITICAL_SECTION m_hCriticalSection;
 };
 
-typedef SVVector<SVImageClass*> SVImageClassPtrVector;
+typedef std::set<SVImageClass*> SVImageClassPtrSet;
+typedef std::vector<SVImageClass*> SVImageClassPtrVector;
 

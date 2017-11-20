@@ -16,7 +16,7 @@
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVImageLibrary/ImageFileUtilities.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVObjectLibrary/GlobalConst.h"
+#include "Definitions/GlobalConst.h"
 #include "SVObjectLibrary/SVObjectWriter.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVStatusLibrary/MessageManager.h"
@@ -391,8 +391,8 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 				SVToolClass* l_psvTool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject( l_psvIPDoc->GetSelectedToolID() ) );
 				if( l_psvTool )
 				{
-					SVObjectTypeInfoStruct l_svInfo;
-					l_svInfo.ObjectType = SVAnalyzerObjectType;
+					SvDef::SVObjectTypeInfoStruct l_svInfo;
+					l_svInfo.ObjectType = SvDef::SVAnalyzerObjectType;
 
 					SVAnalyzerClass* l_psvAnalyzer = dynamic_cast<SVAnalyzerClass*>(l_psvTool->getFirstObject(l_svInfo));
 					if( l_psvAnalyzer )
@@ -427,7 +427,7 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 			CPoint l_mousePoint;
 
 			SVObjectInfoStruct l_svInfo;
-			SVObjectTypeInfoStruct l_svTypeInfo;
+			SvDef::SVObjectTypeInfoStruct l_svTypeInfo;
 
 			l_mousePoint = m_mousePoint;
 
@@ -452,17 +452,17 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 			l_svInfo = m_psvObject->GetObjectInfo();
 			l_svTypeInfo = l_svInfo.m_ObjectTypeInfo;
 
-			//------ Warp tool hands back a SVPolarTransformObjectType. Sub type 1792.
-			//------ Window tool, Luminance hands back a SVImageObjectType. Sub type 0.
+			//------ Warp tool hands back a SvDef::SVPolarTransformObjectType. Sub type 1792.
+			//------ Window tool, Luminance hands back a SvDef::SVImageObjectType. Sub type 0.
 			std::string DlgName; //used for the Adjust Tool Size and Position dialog
 
 			switch( l_svTypeInfo.ObjectType )
 			{
-				case SVPolarTransformObjectType:
+				case SvDef::SVPolarTransformObjectType:
 				{
 					switch( l_svTypeInfo.SubType )
 					{
-						case SVImagePolarTransformObjectType: // 1792
+						case SvDef::SVImagePolarTransformObjectType: // 1792
 						{
 							DlgName = SvUl::Format( _T("Adjust Tool Size and Position - %s"), l_psvTool->GetName() );
 
@@ -481,11 +481,11 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 					break;
 				}
 
-				case SVImageObjectType:
+				case SvDef::SVImageObjectType:
 				{
 					switch( l_svTypeInfo.SubType )
 					{
-						case SVNotSetSubObjectType:
+						case SvDef::SVNotSetSubObjectType:
 						{
 							if( SV_IS_KIND_OF( l_psvTool, SVLoadImageToolClass ) )
 							{
@@ -510,13 +510,13 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 					break;
 				}
 
-				case SVAnalyzerObjectType:
+				case SvDef::SVAnalyzerObjectType:
 				{
 					l_err = -1283;
 					break;
 				}
 
-				case SVToolObjectType:
+				case SvDef::SVToolObjectType:
 				{
 					DlgName = SvUl::Format( _T("Adjust Tool Size and Position - %s"), l_psvTool->GetName() );
 					SVAdjustToolSizePositionDlg dlg( DlgName.c_str(), this, m_psvObject );
@@ -730,8 +730,8 @@ void SVImageViewClass::OnContextMenu( CWnd* p_pWnd, CPoint p_point )
 
 							if( nullptr == l_psvAnalyzer )
 							{
-								SVObjectTypeInfoStruct l_svInfo;
-								l_svInfo.ObjectType = SVAnalyzerObjectType;
+								SvDef::SVObjectTypeInfoStruct l_svInfo;
+								l_svInfo.ObjectType = SvDef::SVAnalyzerObjectType;
 
 								l_psvAnalyzer = dynamic_cast<SVAnalyzerClass*>(l_psvTool->getFirstObject(l_svInfo));
 								if( l_psvAnalyzer )
@@ -1015,8 +1015,8 @@ void SVImageViewClass::OnRButtonDblClk( UINT p_nFlags, CPoint p_point )
 			if( l_psvTool )
 			{
 				// Try to call SetupDialog for first found Analyzer...
-				SVObjectTypeInfoStruct l_svInfo;
-				l_svInfo.ObjectType = SVAnalyzerObjectType;
+				SvDef::SVObjectTypeInfoStruct l_svInfo;
+				l_svInfo.ObjectType = SvDef::SVAnalyzerObjectType;
 
 				SVAnalyzerClass* l_psvAnalyzer = dynamic_cast<SVAnalyzerClass*>(l_psvTool->getFirstObject(l_svInfo));
 				if( l_psvAnalyzer )
@@ -1864,7 +1864,7 @@ void SVImageViewClass::GetParameters(SVObjectWriter& rWriter)
 
 	if( nullptr != l_pImage )
 	{
-		l_svVariant.SetString( l_pImage->GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType ).c_str() );
+		l_svVariant.SetString( l_pImage->GetCompleteObjectNameToObjectType( nullptr, SvDef::SVInspectionObjectType ).c_str() );
 		rWriter.WriteAttribute(SvXml::CTAG_IMAGE_NAME, l_svVariant);
 		l_svVariant.Clear();
 	}

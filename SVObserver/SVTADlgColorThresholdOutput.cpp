@@ -67,9 +67,9 @@ BOOL SVTADlgColorThresholdOutput::OnInitDialog()
 	SetTaskObject(m_pTool);
 
 	// Get the color threshold object
-	SVObjectTypeInfoStruct objectInfo;
-	objectInfo.ObjectType = SVOperatorObjectType;
-	objectInfo.SubType = SVColorThresholdObjectType;
+	SvDef::SVObjectTypeInfoStruct objectInfo;
+	objectInfo.ObjectType = SvDef::SVOperatorObjectType;
+	objectInfo.SubType = SvDef::SVColorThresholdObjectType;
 
 	m_pThreshold = dynamic_cast<SVColorThresholdClass*> (m_pTool->getFirstObject(objectInfo));
 

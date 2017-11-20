@@ -36,7 +36,7 @@ SVThinningFilterClass::~SVThinningFilterClass()
 
 void SVThinningFilterClass::init()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVThinningFilterObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVThinningFilterObjectType;
 
 	RegisterEmbeddedObject( &m_lvoItterations, SVThinningFilterItterationsGuid, IDS_OBJECTNAME_THINNINGFILTER_ITTERATIONS, false, SvOi::SVResetItemNone );
 	RegisterEmbeddedObject( &m_bvoGrayOn, SVThinningFilterGrayOnGuid, IDS_OBJECTNAME_THINNINGFILTER_GRAYON, false, SvOi::SVResetItemNone );

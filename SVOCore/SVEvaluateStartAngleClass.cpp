@@ -18,7 +18,7 @@ SVEvaluateStartAngleClass::SVEvaluateStartAngleClass( SVObjectClass* pOwner, int
 : SVEvaluateClass( pOwner, StringResourceID )
 {
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVEvaluateStartAngleObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVEvaluateStartAngleObjectType;
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &m_outputMathResult, SVOutputEvaluateStartAngleResultObjectGuid, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone );

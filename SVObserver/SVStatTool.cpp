@@ -43,8 +43,8 @@ SVStatisticsToolClass::SVStatisticsToolClass( SVObjectClass* POwner, int StringR
 
 void SVStatisticsToolClass::init(void)
 {
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SVStatisticsToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvDef::SVStatisticsToolObjectType;
 	
 	// Register an empty input object
 	m_inputObjectInfo.SetObject( GetObjectInfo() );
@@ -321,14 +321,14 @@ DWORD SVStatisticsToolClass::DisableFeature (SVStatisticsFeatureEnum aIndex)
 void SVStatisticsToolClass::AllocateResult (SVStatisticsFeatureEnum aFeatureIndex)
 {
 	SVClassInfoStruct       resultClassInfo;
-	SVObjectTypeInfoStruct  interfaceInfo;
+	SvDef::SVObjectTypeInfoStruct  interfaceInfo;
 
 		// Declare Input Interface of Result...
 		interfaceInfo.EmbeddedID = m_Value [aFeatureIndex].GetEmbeddedID();
-		resultClassInfo.m_DesiredInputInterface.Add( interfaceInfo );
+		resultClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
 
-		resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
-		resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultDoubleObjectType;
+		resultClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVResultObjectType;
+		resultClassInfo.m_ObjectTypeInfo.SubType	= SvDef::SVResultDoubleObjectType;
 		resultClassInfo.m_ClassId = SVDoubleResultClassGuid;
 		resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_RESULT );
 		resultClassInfo.m_ClassName += _T(" ") + std::string(m_Value [aFeatureIndex].GetName());
@@ -344,9 +344,9 @@ void SVStatisticsToolClass::AllocateResult (SVStatisticsFeatureEnum aFeatureInde
 
 		Add( pResult );
 
-		SVObjectTypeInfoStruct info;
-		info.ObjectType = SVValueObjectType;
-		info.SubType = SVDoubleValueObjectType;
+		SvDef::SVObjectTypeInfoStruct info;
+		info.ObjectType = SvDef::SVValueObjectType;
+		info.SubType = SvDef::SVDoubleValueObjectType;
 		info.EmbeddedID = SVValueObjectGuid;
 
 		// Get the output of the result
@@ -420,14 +420,14 @@ SVResultClass* SVStatisticsToolClass::GetResult(SVStatisticsFeatureEnum aFeature
 	
 	SVInObjectInfoStruct*	pResultInputInfo;
 	
-	SVObjectTypeInfoStruct  info;
+	SvDef::SVObjectTypeInfoStruct  info;
 	SVDoubleResultClass*    pResult;
 	SVObjectClass*          pSVObject;
 	
 	bool                    bDone = false;
 	
-	info.ObjectType = SVResultObjectType;
-	info.SubType = SVResultDoubleObjectType;
+	info.ObjectType = SvDef::SVResultObjectType;
+	info.SubType = SvDef::SVResultDoubleObjectType;
 	
 	SVGetObjectDequeByTypeVisitor l_Visitor( info );
 
@@ -443,7 +443,7 @@ SVResultClass* SVStatisticsToolClass::GetResult(SVStatisticsFeatureEnum aFeature
 		{
 			pResult->GetPrivateInputList( resultInputList );
 			
-			pResultInputInfo = resultInputList.GetAt( 0 );
+			pResultInputInfo = resultInputList[0];
 			
 			pSVObject = pResultInputInfo->GetInputObjectInfo().m_pObject;
 			
@@ -788,7 +788,7 @@ bool SVStatisticsToolClass::Test(SvStl::MessageContainerVector *pErrorMessages)
 			{
 				if (nullptr != pErrorMessages)
 				{
-					std::string CompleteName = ObjectRef.getObject()->GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType );
+					std::string CompleteName = ObjectRef.getObject()->GetCompleteObjectNameToObjectType( nullptr, SvDef::SVInspectionObjectType );
 					SvDef::StringVector msgList;
 					msgList.push_back( CompleteName );
 					SvStl::MessageContainer message;

@@ -33,9 +33,6 @@
     <ClCompile Include="SVDeviceParams.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVGraphix.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVi64ValueDeviceParam.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -71,9 +68,6 @@
     <ClInclude Include="SVDeviceParams.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVGraphix.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVi64ValueDeviceParam.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -87,9 +81,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVStringValueDeviceParam.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTemplate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVVisitor.h">

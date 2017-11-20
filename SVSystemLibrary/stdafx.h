@@ -53,6 +53,7 @@
 #include <comdef.h>
 #include <comutil.h>		//Used by static library
 #include <ctime>			//Used by static library
+#include <deque>
 #include <direct.h>
 #include <exception>
 #include <io.h>

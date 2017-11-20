@@ -52,7 +52,7 @@ HRESULT SVImagePropertiesClass::Initialize()
 
 	m_ulProperties = 0;
 
-	m_iFormat = SVImageFormatUnknown;
+	m_iFormat = SvDef::SVImageFormatUnknown;
 	m_iPixelDepth = 0;
 	m_iBandNumber = 0;
 	m_iBandLink = 0;
@@ -122,16 +122,16 @@ HRESULT SVImagePropertiesClass::GetImageProperty( SvDef::SVImagePropertyEnum p_e
 		{
 			switch( p_rlValue )
 			{
-				case SVImageFormatUnknown:
-				case SVImageFormatMono8:
-				case SVImageFormatMono16:
-				case SVImageFormatMono32:
-				case SVImageFormatRGB5551:
-				case SVImageFormatRGB565:
-				case SVImageFormatRGB888:
-				case SVImageFormatRGB8888:
-				case SVImageFormatRGB101010:
-				case SVImageFormatRGB161616:
+				case SvDef::SVImageFormatUnknown:
+				case SvDef::SVImageFormatMono8:
+				case SvDef::SVImageFormatMono16:
+				case SvDef::SVImageFormatMono32:
+				case SvDef::SVImageFormatRGB5551:
+				case SvDef::SVImageFormatRGB565:
+				case SvDef::SVImageFormatRGB888:
+				case SvDef::SVImageFormatRGB8888:
+				case SvDef::SVImageFormatRGB101010:
+				case SvDef::SVImageFormatRGB161616:
 				{
 					p_rlValue = m_iFormat;
 
@@ -186,16 +186,16 @@ HRESULT SVImagePropertiesClass::SetImageProperty( SvDef::SVImagePropertyEnum p_e
 		{
 			switch( p_lValue )
 			{
-				case SVImageFormatUnknown:
-				case SVImageFormatMono8:
-				case SVImageFormatMono16:
-				case SVImageFormatMono32:
-				case SVImageFormatRGB5551:
-				case SVImageFormatRGB565:
-				case SVImageFormatRGB888:
-				case SVImageFormatRGB8888:
-				case SVImageFormatRGB101010:
-				case SVImageFormatRGB161616:
+				case SvDef::SVImageFormatUnknown:
+				case SvDef::SVImageFormatMono8:
+				case SvDef::SVImageFormatMono16:
+				case SvDef::SVImageFormatMono32:
+				case SvDef::SVImageFormatRGB5551:
+				case SvDef::SVImageFormatRGB565:
+				case SvDef::SVImageFormatRGB888:
+				case SvDef::SVImageFormatRGB8888:
+				case SvDef::SVImageFormatRGB101010:
+				case SvDef::SVImageFormatRGB161616:
 				{
 					m_iFormat = (int)p_lValue;
 

@@ -12,8 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVContainerLibrary\SVList.h"
-
+//Moved to precompiled header: #include <list>
 #include "SVOTriggerObj.h"
 #pragma endregion Includes
 
@@ -22,7 +21,7 @@ namespace SvTi
 	class SVOTriggerList  
 	{
 	public:
-		typedef SVList< SVOTriggerObjPtr > SVTriggerList;
+		typedef std::list<SVOTriggerObjPtr> SVTriggerList;
 		typedef SVTriggerList::iterator iterator;
 		typedef SVTriggerList::const_iterator const_iterator;
 

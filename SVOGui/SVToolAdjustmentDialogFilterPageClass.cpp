@@ -64,7 +64,7 @@ namespace SvOg
 		typedef SvCmd::GetInstanceIDByTypeInfo Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 
-		SVObjectTypeInfoStruct info(SVUnaryImageOperatorListObjectType/*SVUnaryImageOperatorObjectType*/, SVNotSetSubObjectType);
+		SvDef::SVObjectTypeInfoStruct info(SvDef::SVUnaryImageOperatorListObjectType/*SvDef::SVUnaryImageOperatorObjectType*/, SvDef::SVNotSetSubObjectType);
 
 		CommandPtr commandPtr = CommandPtr(new Command(m_TaskObjectID, info));
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
@@ -116,7 +116,7 @@ namespace SvOg
 		typedef SVSharedPtr<Command> CommandPtr;
 
 		SvUl::NameGuidList availableList;
-		CommandPtr commandPtr = new Command(m_UnaryImageOperatorID, SVObjectTypeInfoStruct(SVFilterObjectType, SVNotSetSubObjectType));
+		CommandPtr commandPtr = new Command(m_UnaryImageOperatorID, SvDef::SVObjectTypeInfoStruct(SvDef::SVFilterObjectType, SvDef::SVNotSetSubObjectType));
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
@@ -146,14 +146,14 @@ namespace SvOg
 			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 			if (S_OK == hr)
 			{
-				SVObjectTypeInfoStruct info = commandPtr->GetTypeInfo();
+				SvDef::SVObjectTypeInfoStruct info = commandPtr->GetTypeInfo();
 				
-				m_btnProperties.EnableWindow( SVCustomFilterObjectType == info.SubType 
-				|| SVCustom2FilterObjectType == info.SubType
-				|| SVRankingFilterObjectType == info.SubType
-				|| SVThinningFilterObjectType == info.SubType
-				|| SVThickeningFilterObjectType == info.SubType
-				|| SVWatershedFilterObjectType == info.SubType );
+				m_btnProperties.EnableWindow( SvDef::SVCustomFilterObjectType == info.SubType 
+				|| SvDef::SVCustom2FilterObjectType == info.SubType
+				|| SvDef::SVRankingFilterObjectType == info.SubType
+				|| SvDef::SVThinningFilterObjectType == info.SubType
+				|| SvDef::SVThickeningFilterObjectType == info.SubType
+				|| SvDef::SVWatershedFilterObjectType == info.SubType );
 			}
 		}// end if
 	}// end OnSelchangeList1
@@ -192,7 +192,7 @@ namespace SvOg
 			typedef SVSharedPtr<Command> CommandPtr;
 
 			SvUl::NameGuidList availableList;
-			CommandPtr commandPtr = new Command(m_UnaryImageOperatorID, SVObjectTypeInfoStruct(SVFilterObjectType, SVNotSetSubObjectType));
+			CommandPtr commandPtr = new Command(m_UnaryImageOperatorID, SvDef::SVObjectTypeInfoStruct(SvDef::SVFilterObjectType, SvDef::SVNotSetSubObjectType));
 			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 			if (S_OK == hr)
@@ -265,7 +265,7 @@ namespace SvOg
 		typedef SvCmd::GetAvailableObjects Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 		SvUl::NameGuidList availableList;
-		CommandPtr commandPtr = new Command(m_UnaryImageOperatorID, SVObjectTypeInfoStruct(SVFilterObjectType, SVNotSetSubObjectType));
+		CommandPtr commandPtr = new Command(m_UnaryImageOperatorID, SvDef::SVObjectTypeInfoStruct(SvDef::SVFilterObjectType, SvDef::SVNotSetSubObjectType));
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
@@ -368,41 +368,41 @@ namespace SvOg
 			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 			if (S_OK == hr)
 			{
-				SVObjectTypeInfoStruct info = commandPtr->GetTypeInfo();
+				SvDef::SVObjectTypeInfoStruct info = commandPtr->GetTypeInfo();
 
 				switch (info.SubType)
 				{
-				case SVCustomFilterObjectType:
+				case SvDef::SVCustomFilterObjectType:
 					{
 						SVCustomFilterDlg l_svDlg( m_InspectionID, filterGUID, this );
 						l_svDlg.DoModal();
 					}
 					break;
-				case SVCustom2FilterObjectType:
+				case SvDef::SVCustom2FilterObjectType:
 					{
 						Custom2FilterDlg l_svDlg( m_InspectionID, filterGUID, this );
 						l_svDlg.DoModal();
 					}
 					break;
-				case SVRankingFilterObjectType:
+				case SvDef::SVRankingFilterObjectType:
 					{
 						SVRankingFilterDlg l_svDlg( m_InspectionID, filterGUID, this );
 						l_svDlg.DoModal();
 					}
 					break;
-				case SVThinningFilterObjectType:
+				case SvDef::SVThinningFilterObjectType:
 					{
 						SVThinningFilterDlg l_svDlg( m_InspectionID, filterGUID, this );
 						l_svDlg.DoModal();
 					}
 					break;
-				case SVThickeningFilterObjectType:
+				case SvDef::SVThickeningFilterObjectType:
 					{
 						SVThickeningFilterDlg l_svDlg( m_InspectionID, filterGUID, this );
 						l_svDlg.DoModal();
 					}
 					break;
-				case SVWatershedFilterObjectType:
+				case SvDef::SVWatershedFilterObjectType:
 					{
 						SVWatershedFilterDlg l_svDlg( m_InspectionID, m_TaskObjectID, filterGUID, this );
 						l_svDlg.DoModal();

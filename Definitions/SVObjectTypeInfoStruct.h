@@ -11,12 +11,8 @@
 #include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
-//TODO (MZA:2015/01/09): Add namespace to fit to the code rules. 
-//								Not edit yet to avoid to change to much code in this prototype.
-//namespace SvOi
-//{
-		const DWORD cMaxStringSize = 512;
-
+namespace SvDef
+{
 		//! These are special SVObserver variant VT types for SVPointValueObjectClass and SVDPointValueObjectClass
 		const DWORD VT_POINT = 80;
 		const DWORD VT_DPOINT = 81;
@@ -278,9 +274,7 @@
 			SVCharValueObjectType					= 0x0000500A,
 			SVVariantValueObjectType				= 0x0000500B,
 			DoubleSortValueObjectType				= 0x0000500C,
-				
-				// unknown
-			SVRegressionTestModeObjectType			= 0x00011010,
+			
 		};
 
 		struct SVObjectTypeInfoStruct
@@ -301,5 +295,7 @@
 			// Embedded ID, if any.
 			GUID				EmbeddedID;
 		};
-//} //namespace SvDef
+
+		typedef std::vector<SVObjectTypeInfoStruct> SVObjectTypeInfoVector;
+} //namespace SvDef
 

@@ -174,7 +174,7 @@ void SVRemoteOutputEditDialog::OnCbnSelchangeValueObjectNameCombo()
 
 	if( !( l_pIOEntry.empty() ) )
 	{
-		SVObjectTypeEnum l_PCDataType = l_pIOEntry->getObject()->GetObjectType();
+		SvDef::SVObjectTypeEnum l_PCDataType = l_pIOEntry->getObject()->GetObjectType();
 		UpdateData(FALSE);
 	}
 }

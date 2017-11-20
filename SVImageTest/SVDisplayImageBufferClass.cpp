@@ -11,7 +11,7 @@
 
 #include "stdafx.h"
 #include "SVDisplayImageBufferClass.h"
-#include "SVHBitmapUtilitiesLibrary\SVImageFormatEnum.h"
+#include "Definitions/SVImageFormatEnum.h"
 
 SVDisplayImageBufferClass::SVDisplayImageBufferClass()
 {
@@ -33,9 +33,9 @@ void SVDisplayImageBufferClass::clear()
 	DestroyDisplayBuffer();
 }
 
-SVPOINT SVDisplayImageBufferClass::GetPositionPoint() const
+SVPoint SVDisplayImageBufferClass::GetPositionPoint() const
 {
-	return SVPOINT();
+	return SVPoint();
 }
 
 SVBitmapInfo SVDisplayImageBufferClass::GetBitmapInfo() const
@@ -61,9 +61,9 @@ bool SVDisplayImageBufferClass::UpdateDisplayBufferInfo( long bufWidth, long buf
 	{
 		WORD wClrBits = 8;
 		
-		if ( iFormat == SVImageFormatRGB888 )
+		if ( iFormat == SvDef::SVImageFormatRGB888 )
 			wClrBits = 24;
-		else if ( iFormat == SVImageFormatRGB8888 )
+		else if ( iFormat == SvDef::SVImageFormatRGB8888 )
 			wClrBits = 32;
 	
 		m_BitmapInfo.Assign( bufWidth, bufHeight, wClrBits, SVBitmapInfo::GetDefaultColorTable( wClrBits ) );
@@ -81,7 +81,7 @@ bool SVDisplayImageBufferClass::UpdateDisplayBufferInfo( long bufWidth, long buf
 		{
 			switch( iFormat )
 			{
-				case  SVImageFormatMono8:
+				case  SvDef::SVImageFormatMono8:
 				{
 					UINT32 i,j,Width,Height;
 					UINT8  Value,*pMem;
@@ -99,7 +99,7 @@ bool SVDisplayImageBufferClass::UpdateDisplayBufferInfo( long bufWidth, long buf
 
 					break;
 				}
-				case SVImageFormatRGB888 :
+				case SvDef::SVImageFormatRGB888 :
 				{
 					UINT32  i,j,Width,Height;
 					UINT32  Pattern,Offset;
@@ -133,7 +133,7 @@ bool SVDisplayImageBufferClass::UpdateDisplayBufferInfo( long bufWidth, long buf
 
 					break;
 				}
-				case SVImageFormatRGB8888 :
+				case SvDef::SVImageFormatRGB8888 :
 				{
 					UINT32  i,j,Width,Height;
 					UINT32  Pattern,Offset;
@@ -167,7 +167,7 @@ bool SVDisplayImageBufferClass::UpdateDisplayBufferInfo( long bufWidth, long buf
 
 					break;
 				}
-				case SVImageFormatUnknown :
+				case SvDef::SVImageFormatUnknown :
 				{
 					break;
 				}

@@ -11,8 +11,10 @@
 
 #pragma once
 
-#include "SVContainerLibrary/SVVector.h"
+#pragma region Includes
+//Moved to precompiled header: #include <vector>
 #include "SVExtentPointStruct.h"
+#pragma endregion Includes
 
 struct SVExtentLineStruct  
 {
@@ -31,6 +33,6 @@ struct SVExtentLineStruct
 	double m_dAngle;
 };
 
-typedef SVVector<SVExtentLineStruct > SVExtentLineStructVector;
+typedef std::vector<SVExtentLineStruct > SVExtentLineStructVector;
 
 

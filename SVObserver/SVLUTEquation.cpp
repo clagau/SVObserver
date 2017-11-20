@@ -32,8 +32,8 @@ SVLUTEquationClass::SVLUTEquationClass( SVObjectClass* POwner, int StringResourc
 void SVLUTEquationClass::init()
 {
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVEquationObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVLUTEquationObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVEquationObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVLUTEquationObjectType;
 
 	// Identify our input type needs - this is a bit different here
 	// Since out inputs are dynamic via the script specified
@@ -117,7 +117,7 @@ bool SVLUTEquationClass::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 bool SVLUTEquationClass::SetDefaultFormula(SvStl::MessageContainerVector *pErrorMessages)
 {
 	// Get current complete name of LUT Index...
-	std::string Name = m_lutIndex.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
+	std::string Name = m_lutIndex.GetCompleteObjectNameToObjectType( nullptr, SvDef::SVToolSetObjectType );
 
 	if( ! Name.empty() )
 	{

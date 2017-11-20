@@ -54,14 +54,13 @@
 #include <ctime>			//Used by static library
 #include <functional>
 #include <io.h>
+#include <iterator>			//Used by static library
 #include <map>				//Used by static library
 #include <set>				//Used by static library
 #include <string>			//Used by static library
 #include <tchar.h>
 #include <vector>			//Used by static library
 
-#include <boost/assign/list_of.hpp>
-#include <boost/bind.hpp>
 #include <boost/config.hpp>
 #include <boost/function.hpp>					//Used by static library
 #pragma endregion Precompiled Headers

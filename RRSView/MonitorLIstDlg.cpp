@@ -53,11 +53,11 @@ CString  Type2String(DWORD type)
 		ret = _T("enum");
 		break;
 		/*
-		SVDPointValueObjectType					= 0x00000108,
-		SVInt64ValueObjectType					= 0x00000109,
-		SVCharValueObjectType					= 0x0000010A,
-		SVVariantValueObjectType				= 0x0000010B,
-		DoubleSortValueObjectType				= 0x0000010C,*/
+		SvDef::SVDPointValueObjectType					= 0x00000108,
+		SvDef::SVInt64ValueObjectType					= 0x00000109,
+		SvDef::SVCharValueObjectType					= 0x0000010A,
+		SvDef::SVVariantValueObjectType				= 0x0000010B,
+		SvDef::DoubleSortValueObjectType				= 0x0000010C,*/
 	default:
 		ret.Format(_T("%X"), type);
 		break;

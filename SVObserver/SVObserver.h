@@ -18,7 +18,7 @@
 #include "SVSecurity/SVSecurityManager.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
-#include "SVLibrary/SVFileNameClass.h"
+#include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "SVRemoteFontManager.h"
 #include "SVStatusLibrary/SVOIntelRAIDStatusClass.h"
 #include "SVOCore/SVUtilityIniClass.h"
@@ -403,10 +403,6 @@ private:
 	long m_LogDataManager;
 
 	SVMessageWindowClass* m_pMessageWindow;
-
-	typedef SVVector< SVFileNameClass* > SVFileNamePtrVector;
-
-	SVFileNamePtrVector m_svFileNames;
 
 	bool m_ATLInited;
 

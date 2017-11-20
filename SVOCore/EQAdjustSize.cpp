@@ -10,7 +10,7 @@
 #include "EQAdjustSize.h"
 #include "SVTaskObject.h"
 #include "SVEquationLibrary\SVEquationLex.h"
-#include "SVRunControlLibrary\SVRunControlLibrary.h"
+#include "Definitions/Color.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -21,7 +21,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-EQAdjustSize::EQAdjustSize(SVObjectSubTypeEnum subType, GUID resultGuid, SVObjectClass* POwner, int StringResourceID)
+EQAdjustSize::EQAdjustSize(SvDef::SVObjectSubTypeEnum subType, GUID resultGuid, SVObjectClass* POwner, int StringResourceID)
 : SVEquationClass( POwner, StringResourceID )
 {
 	m_ResultGuid = resultGuid;
@@ -40,7 +40,7 @@ GUID& EQAdjustSize::GetResultGuid()
 
 DWORD EQAdjustSize::GetObjectColor() const
 {
-	return SV_DEFAULT_WHITE_COLOR;
+	return SvDef::DefaultWhiteColor;
 }
 
 void EQAdjustSize::Init()
@@ -48,7 +48,7 @@ void EQAdjustSize::Init()
 	enabled.SetDefaultValue( BOOL(false) );
 	m_bUseOverlays = false;
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVEquationObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVEquationObjectType;
 	m_outObjectInfo.m_ObjectTypeInfo.SubType = m_SubType;
 	RegisterEmbeddedObject( &m_result, m_ResultGuid, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone );
 	// Set Embedded defaults

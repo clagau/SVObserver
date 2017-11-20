@@ -536,7 +536,7 @@ HRESULT ToolClipboard::validateGuids( std::string& rXmlData, SVTreeType& rTree, 
 					SVObjectClass* pImage = SVObjectManagerClass::Instance().GetObject( ToolImageGuid );
 					if( nullptr !=  pImage  )
 					{
-						SVToolClass* pTool = dynamic_cast<SVToolClass*> (pImage->GetAncestor( SVToolObjectType ));
+						SVToolClass* pTool = dynamic_cast<SVToolClass*> (pImage->GetAncestor( SvDef::SVToolObjectType ));
 						if( nullptr != pTool && nullptr != m_rInspection.GetToolSet() )
 						{
 							int ImageToolsetIndex = m_rInspection.GetToolSet()->GetIndex( pTool );

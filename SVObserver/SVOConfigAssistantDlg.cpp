@@ -1303,7 +1303,7 @@ void CSVOConfigAssistantDlg::SetupMessages()
 	}
 }
 
-BOOL CSVOConfigAssistantDlg::SendPPQDataToConfiguration(SVPPQObjectPtrVector& aPPQsToDelete)
+BOOL CSVOConfigAssistantDlg::SendPPQDataToConfiguration(SVPPQObjectPtrVector& rPPQsToDelete)
 {
 	BOOL bRet = true;
 
@@ -1325,7 +1325,7 @@ BOOL CSVOConfigAssistantDlg::SendPPQDataToConfiguration(SVPPQObjectPtrVector& aP
 		{
 			if (!IsPPQInList(pPPQ->GetName()))
 			{ //not there.  flag to delete it...
-				aPPQsToDelete.Add(pPPQ);
+				rPPQsToDelete.push_back(pPPQ);
 				
 				//PPQ is no longer there.  Detach everything from it.
 				pPPQ->DetachAll();
@@ -1464,7 +1464,7 @@ BOOL CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 
 	for (int iAcq = 0; iAcq < iCamCnt; iAcq++)
 	{
-		svFiles.RemoveAll();
+		svFiles.clear();
 		int CameraIndex(iAcq);
 		bool IsAcqDevice( false );
 		SVAcquisitionClassPtr psvDevice;
@@ -1499,7 +1499,7 @@ BOOL CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 					_variant_t heightVar = pCameraObj->GetFileImageHeight();
 
 					// Only 2 formats supported 32Bit color and 8Bit grayscale
-					long format = (pCameraObj->IsColor()) ? SVImageFormatRGB8888 : SVImageFormatMono8;
+					long format = (pCameraObj->IsColor()) ? SvDef::SVImageFormatRGB8888 : SvDef::SVImageFormatMono8;
 					_variant_t formatVar = format;
 
 					deviceParams.CreateParameter(DeviceParamFileAcqImageFileName, fileNameVar);
@@ -1510,7 +1510,7 @@ BOOL CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 						// File is supposed to be managed in Single File Mode
 						SVFileNameClass svFile;
 						svFile.SetFullFileName( pCameraObj->GetImageFilename().c_str() );
-						svFiles.Add(svFile);
+						svFiles.push_back(svFile);
 					}
 					deviceParams.CreateParameter(DeviceParamFileAcqLoadingMode, fileLoadingModeVar);
 				
@@ -1525,7 +1525,7 @@ BOOL CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 			
 					if ( 0 == SvUl::CompareNoCase(std::string(svFile.GetExtension()), std::string(cGigeCameraFileDefExt)) )
 					{
-						svFiles.Add(svFile);
+						svFiles.push_back(svFile);
 					}
 
 					// cause the image size to be set
@@ -1551,7 +1551,7 @@ BOOL CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 			
 				if ( 0 == SvUl::CompareNoCase( svFile.GetExtension(), std::string(cGigeCameraFileDefExt) ) )
 				{
-					svFiles.Add(svFile);
+					svFiles.push_back(svFile);
 				}
 
 				psvLight = nullptr;
@@ -2135,7 +2135,7 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 	return bRet;
 }
 
-BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVector& aPPQsToDelete)
+BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVector& rPPQsToDelete)
 {
 	BOOL bRet = true;
 	SVConfigurationObject* pConfig( nullptr );
@@ -2152,12 +2152,11 @@ BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVec
 	SVInspectionProcess* pInspection( nullptr );
 
 	// delete old PPQs
-	for (int i = 0; i < aPPQsToDelete.GetSize(); i++)
+	for ( auto pPPQ : rPPQsToDelete)
 	{
-		SVPPQObject* pPPQ = aPPQsToDelete.GetAt(i);
 		delete pPPQ;
 	}
-	aPPQsToDelete.RemoveAll();
+	rPPQsToDelete.clear();
 
 	long lCPPQCnt = pConfig->GetPPQCount();
 
@@ -4215,7 +4214,7 @@ void CSVOConfigAssistantDlg::OnBnClickedCancel()
 				if( nullptr != psvDevice )
 				{
 					svFile.SetFullFileName( pCameraObj->GetCameraFile().c_str() );
-					svFiles.Add(svFile);
+					svFiles.push_back(svFile);
 					psvDevice->LoadFiles(svFiles);
 					
 					psvDevice->SetDeviceParameters(pCameraObj->GetCameraDeviceParams());

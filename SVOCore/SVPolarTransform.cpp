@@ -20,37 +20,37 @@ SVPolarTransformClass::SVPolarTransformClass( SVObjectClass* POwner, int StringR
 				 :SVTaskObjectClass( POwner, StringResourceID ) 
 {
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVPolarTransformObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVPolarTransformObjectType;
 
 	// Identify our input type needs...
 
 	// Center X
-	inputCenterXResult.SetInputObjectType( SVOutputEvaluateCenterXResultObjectGuid, SVValueObjectType, SVDoubleValueObjectType );
+	inputCenterXResult.SetInputObjectType( SVOutputEvaluateCenterXResultObjectGuid, SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType );
 	inputCenterXResult.SetObject( GetObjectInfo() );
 	RegisterInputObject( &inputCenterXResult, _T( "PolarTransformCenterXResult" ) );
 
 	// Center Y
-	inputCenterYResult.SetInputObjectType( SVOutputEvaluateCenterYResultObjectGuid, SVValueObjectType, SVDoubleValueObjectType );
+	inputCenterYResult.SetInputObjectType( SVOutputEvaluateCenterYResultObjectGuid, SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType );
 	inputCenterYResult.SetObject( GetObjectInfo() );
 	RegisterInputObject( &inputCenterYResult, _T( "PolarTransformCenterYResult" ) );
 
 	// Start Radius
-	inputStartRadiusResult.SetInputObjectType( SVOutputEvaluateStartRadiusResultObjectGuid, SVValueObjectType, SVDoubleValueObjectType );
+	inputStartRadiusResult.SetInputObjectType( SVOutputEvaluateStartRadiusResultObjectGuid, SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType );
 	inputStartRadiusResult.SetObject( GetObjectInfo() );
 	RegisterInputObject( &inputStartRadiusResult, _T( "PolarTransformStartRadiusResult" ) );
 
 	// End Radius
-	inputEndRadiusResult.SetInputObjectType( SVOutputEvaluateEndRadiusResultObjectGuid, SVValueObjectType, SVDoubleValueObjectType );
+	inputEndRadiusResult.SetInputObjectType( SVOutputEvaluateEndRadiusResultObjectGuid, SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType );
 	inputEndRadiusResult.SetObject( GetObjectInfo() );
 	RegisterInputObject( &inputEndRadiusResult, _T( "PolarTransformEndRadiusResult" ) );
 	
 	// Start Angle
-	inputStartAngleResult.SetInputObjectType( SVOutputEvaluateStartAngleResultObjectGuid, SVValueObjectType, SVDoubleValueObjectType );
+	inputStartAngleResult.SetInputObjectType( SVOutputEvaluateStartAngleResultObjectGuid, SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType );
 	inputStartAngleResult.SetObject( GetObjectInfo() );
 	RegisterInputObject( &inputStartAngleResult, _T( "PolarTransformStartAngleResult" ) );
 
 	// End Angle
-	inputEndAngleResult.SetInputObjectType( SVOutputEvaluateEndAngleResultObjectGuid, SVValueObjectType, SVDoubleValueObjectType );
+	inputEndAngleResult.SetInputObjectType( SVOutputEvaluateEndAngleResultObjectGuid, SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType );
 	inputEndAngleResult.SetObject( GetObjectInfo() );
 	RegisterInputObject( &inputEndAngleResult, _T( "PolarTransformEndAngleResult" ) );
 

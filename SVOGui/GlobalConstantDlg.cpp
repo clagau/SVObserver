@@ -13,7 +13,7 @@
 #include "TextDefinesSvOg.h"
 #include "SVTextEditDialog.h"
 #include "SVObjectLibrary/SVObjectNameInfo.h"
-#include "SVObjectLibrary/GlobalConst.h"
+#include "Definitions/GlobalConst.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
@@ -39,7 +39,7 @@ namespace SvOg
 	GlobalConstantDlg::GlobalConstantDlg( SvDef::GlobalConstantData& rData, CWnd* pParent /*nullptr*/ )
 	  : CDialog(GlobalConstantDlg::IDD, pParent)
 	, m_rData( rData )
-	, m_Branch( std::string(SvOl::FqnGlobal) + _T(".") )
+	, m_Branch( std::string(SvDef::FqnGlobal) + _T(".") )
 	{
 
 	}

@@ -16,7 +16,7 @@
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVObjectLibrary/GlobalConst.h"
+#include "Definitions/GlobalConst.h"
 #include "Definitions/TextDefineSVDef.h"
 #pragma endregion Includes
 
@@ -64,7 +64,7 @@ HRESULT SVVariantValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 	HRESULT Result( E_FAIL );
 	bool	bOk( false );
 
-	SvCl::SVObjectArrayClassTemplate<ValueType> ObjectArray;	// for default values
+	std::vector<ValueType> ObjectArray;	// for default values
 	BucketVector BucketArray;
 	ValueVector ReadValueArray;
 	
@@ -99,9 +99,9 @@ HRESULT SVVariantValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 	}
 	else if ( bOk = pDataObject->GetAttributeData(_T("m_vtDefault"), ObjectArray) )
 	{
-		if ( 0 < ObjectArray.GetSize() )
+		if ( 0 < ObjectArray.size() )
 		{
-			DefaultValue() = ObjectArray[ObjectArray.GetSize()-1];
+			DefaultValue() = ObjectArray[ObjectArray.size()-1];
 		}
 	}
 	else if ( bOk = pDataObject->GetAttributeData(_T("m_pavtArray"), BucketArray, DefaultValue() ) )
@@ -232,7 +232,7 @@ std::string SVVariantValueObjectClass::ToString(const VARIANT& rValue, bool bScr
 			else
 			{
 				VARTYPE l_OldType = vt.vt;
-				HRESULT hr = ::VariantChangeTypeEx(&vt, &vt, SvOl::LCID_USA, VARIANT_ALPHABOOL, VT_BSTR);	// use United States locale
+				HRESULT hr = ::VariantChangeTypeEx(&vt, &vt, SvDef::LCID_USA, VARIANT_ALPHABOOL, VT_BSTR);	// use United States locale
 				if ( S_OK == hr )
 				{
 					if( bScript)
@@ -383,7 +383,7 @@ DWORD SVVariantValueObjectClass::GetByteSize() const
 		Result = sizeof(VARIANT::dblVal);
 		break;
 	case VT_BSTR:
-		Result = cMaxStringSize;
+		Result = SvDef::cMaxStringSize;
 		break;
 	default:
 		break;
@@ -514,7 +514,7 @@ void SVVariantValueObjectClass::WriteDefaultValues(SVObjectWriter& rWriter)
 
 void SVVariantValueObjectClass::LocalInitialize()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVVariantValueObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVVariantValueObjectType;
 	DefaultValue().Clear();
 
 	SetTypeName( _T("Variant") );

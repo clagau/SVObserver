@@ -20,7 +20,7 @@ namespace SvCmd
 {
 	struct GetCreatableObjects: public boost::noncopyable
 	{
-		GetCreatableObjects(const GUID& rObjectID, const SVObjectTypeInfoStruct& typeInfo) : m_InstanceID(rObjectID), m_typeInfo(typeInfo) {}
+		GetCreatableObjects(const GUID& rObjectID, const SvDef::SVObjectTypeInfoStruct& typeInfo) : m_InstanceID(rObjectID), m_typeInfo(typeInfo) {}
 
 		// This method is where the real separation would occur by using sockets/named pipes/shared memory
 		// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
@@ -45,7 +45,7 @@ namespace SvCmd
 		const SvUl::NameGuidList& AvailableObjects() const { return m_list; }
 
 	private:
-		SVObjectTypeInfoStruct m_typeInfo;
+		SvDef::SVObjectTypeInfoStruct m_typeInfo;
 		SvUl::NameGuidList m_list;
 		GUID m_InstanceID;
 	};

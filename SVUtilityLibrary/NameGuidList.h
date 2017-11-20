@@ -9,7 +9,7 @@
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <string>
 //Moved to precompiled header: #include <guiddef.h>
-#include "SVUtilityLibrary\SVGUID.h"
+#include "SVGUID.h"
 #pragma endregion Includes
 namespace SvUl
 {

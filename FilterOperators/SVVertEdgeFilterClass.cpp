@@ -21,7 +21,7 @@ SV_IMPLEMENT_CLASS(SVVertEdgeFilterClass, SVVertEdgeFilterClassGuid)
 SVVertEdgeFilterClass::SVVertEdgeFilterClass( SVObjectClass* POwner, int StringResourceID )
 					  :SVFilterClass( POwner, StringResourceID ) 
 {
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVVertEdgeFilterObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVVertEdgeFilterObjectType;
 }
 
 SVVertEdgeFilterClass::~SVVertEdgeFilterClass()

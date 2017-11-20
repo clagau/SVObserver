@@ -267,7 +267,7 @@ void SVCameraPage::CreateCameraImage()
 
 		unsigned long bufWidth = 640;
 		unsigned long bufHeight = 480;
-		int iFormat = SVImageFormatUnknown;
+		int iFormat = SvDef::SVImageFormatUnknown;
 
 		m_pAcquisition->m_rSubsystem.m_svDigitizers.GetBufferHeight( triggerchannel, &bufHeight );
 		m_pAcquisition->m_rSubsystem.m_svDigitizers.GetBufferWidth( triggerchannel, &bufWidth );

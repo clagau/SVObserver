@@ -22,8 +22,11 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-class CModelessMsgBox;
-#define ModelessMessageBox(s,e)	{CModelessMsgBox* pBox = new CModelessMsgBox((s),(e)); pBox->Create(CModelessMsgBox::IDD, nullptr);}
+BEGIN_MESSAGE_MAP(CModelessMsgBox, CDialog)
+	//{{AFX_MSG_MAP(CModelessMsgBox)
+	ON_WM_SIZE()
+	//}}AFX_MSG_MAP
+END_MESSAGE_MAP()
 
 // the following is from Windows Developer's Journal Feb 1998 p 54
 // code by James M. Curran; JamesCurram@CompuServe.com
@@ -46,58 +49,6 @@ private:
 	WORD m_duXx4;	// dialog units on the X axis times 4
 	WORD m_duYx8;	// dialog units on the Y axis times 8
 };
-
-/////////////////////////////////////////////////////////////////////////////
-// CModelessMsgBox dialog
-
-class CModelessMsgBox : public CDialog
-{
-	// Construction
-public:
-	CModelessMsgBox(const std::string& rMsg, HANDLE p_hEvent);   // standard constructor
-	virtual ~CModelessMsgBox();
-
-
-protected:
-	std::string m_Msg;
-	HANDLE m_hEvent;
-
-public:
-	// Dialog Data
-	//{{AFX_DATA(CModelessMsgBox)
-	enum { IDD = IDD_MODELESS_MESSAGE_BOX };
-	// NOTE: the ClassWizard will add data members here
-	//}}AFX_DATA
-protected:
-
-	// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CModelessMsgBox)
-public:
-protected:
-	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
-	virtual void PostNcDestroy() override;
-	//}}AFX_VIRTUAL
-
-	// Implementation
-protected:
-
-	// Generated message map functions
-	//{{AFX_MSG(CModelessMsgBox)
-	virtual BOOL OnInitDialog() override;
-	virtual void OnOK() override;
-	virtual void OnCancel() override;
-	afx_msg void OnSize(UINT nType, int cx, int cy);
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
-};
-
-BEGIN_MESSAGE_MAP(CModelessMsgBox, CDialog)
-	//{{AFX_MSG_MAP(CModelessMsgBox)
-	ON_WM_SIZE()
-	//}}AFX_MSG_MAP
-END_MESSAGE_MAP()
-
 
 CModelessMsgBox::CModelessMsgBox(const std::string& rMsg, HANDLE p_hEvent)
 	: CDialog(CModelessMsgBox::IDD, nullptr)
@@ -197,12 +148,6 @@ void CModelessMsgBox::OnSize(UINT nType, int cx, int cy)
 	
 	CDialog::OnSize(nType, cx, cy);
 	Invalidate();
-}
-
-
-void CallModelessMessageBox(std::string &Message, HANDLE hCheckEvent)
-{
-	ModelessMessageBox(Message, hCheckEvent);
 }
 
 

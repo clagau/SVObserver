@@ -12,6 +12,7 @@
 #pragma once
 
 #pragma region Includes
+//Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <boost/function.hpp>
 //Moved to precompiled header: #include <boost/tokenizer.hpp>
 //Moved to precompiled header: #include <boost/lexical_cast.hpp>
@@ -29,8 +30,8 @@
 #include "SVObjectLibrary/SVObjectSubmitCommandFacade.h"
 #include "SVObjectLibrary/SVObserverTemplate.h"
 #include "SVOLibrary/SVQueueObject.h"
-#include "SVRunControlLibrary/SVImageIndexStruct.h"
-#include "SVRunControlLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/SVImageIndexStruct.h"
+#include "SVStatusLibrary/SVRunStatus.h"
 #include "SVSystemLibrary/SVCriticalSection.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/SVGUID.h"
@@ -74,7 +75,6 @@ class SVInspectionProcess :
 public:
 	typedef SVBiUniqueMap<std::string, SVObjectClass* >::type SVValueObjectMap;
 	typedef SVTQueueObject< SVOutputRequestInfoStruct > SVOutputRequestQueue;
-	typedef SVVector< SVPPQObject* > SVPPQObjectPtrVector;
 	//************************************
 	//! FunctionPointer as Argument for LoopOverTool
 	//! negative return values indicate an error 
@@ -273,7 +273,7 @@ public:
 	virtual bool CreateChildObject( SVObjectClass* pChildObject, DWORD context = 0 ) override;
 	virtual void ConnectObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	bool DestroyChildObject(SVObjectClass* pChildcontext);
-	virtual SvOi::IObjectClass* getFirstObject(const SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends = true, const SvOi::IObjectClass* pRequestor = nullptr) const override;
+	virtual SvOi::IObjectClass* getFirstObject(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends = true, const SvOi::IObjectClass* pRequestor = nullptr) const override;
 	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override;
 	virtual bool ConnectAllInputs() override;
 	virtual bool replaceObject(SVObjectClass* pObject, const GUID& rNewGuid) override;
@@ -488,7 +488,7 @@ private:
 	SvOi::IFormulaControllerPtr m_pRegressionTestPlayEquationController;
 };
 
-typedef SVVector<SVInspectionProcess*> SVInspectionProcessVector;
+typedef std::vector<SVInspectionProcess*> SVInspectionProcessVector;
 
 namespace SVDetail
 {

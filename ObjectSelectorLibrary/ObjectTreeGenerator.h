@@ -16,8 +16,6 @@
 //Moved to precompiled header: #include <assert.h>
 #include "Definitions/StringTypeDef.h"
 #include "ObjectInterfaces/ISelectorItemVector.h"
-#include "SVObjectLibrary/SVObjectReference.h"
-#include "SVObjectLibrary/SVObjectNameInfo.h"
 #include "SVContainerLibrary/ObjectTreeItems.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SelectorItem.h"
@@ -102,14 +100,6 @@ namespace SvOsl
 		//! \return true if successful
 		//************************************
 		bool setCheckItems( const SvDef::StringSet& rItems );
-
-		//************************************
-		//! The method checks the items listed in the tree selector
-		//! \param rItems <in> the list of items to check in the tree as object references
-		//! \param rInspectionName <in> the name of the corresponding inspection
-		//! \return true if successful
-		//************************************
-		bool setCheckItems( const SVObjectReferenceVector& rItems, const std::string& rInspectionName = std::string() );
 
 		//************************************
 		//! The method sets the location filter

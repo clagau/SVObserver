@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVRunControlLibrary/SVRunControlLibrary.h"
+#include "Definitions/Color.h"
 #include "SVProfileEdgeMarkerAdjustmentPage.h"
 #include "SVLinearAnalyzerClass.h"
 #include "SVLinearEdgeProcessingClass.h"
@@ -989,8 +989,8 @@ void SVProfileEdgeMarkerAdjustmentPageClass::setGraphOverlayToPicture( SVLinearE
 	ParMap[CDSVPictureDisplay::P_Type ] = static_cast<long>(CDSVPictureDisplay::GraphROI);
 	ParMap[CDSVPictureDisplay::P_SubType_X ] = static_cast<long>(CDSVPictureDisplay::ImageArea_ScalePerParameter);
 	ParMap[CDSVPictureDisplay::P_SubType_Y ] = static_cast<long>(CDSVPictureDisplay::ViewArea_ScalePerParameter);
-	ParMap[CDSVPictureDisplay::P_Color] = static_cast<long>(SV_DEFAULT_SUB_FUNCTION_COLOR_1);
-	ParMap[CDSVPictureDisplay::P_SelectedColor] = static_cast<long>(SV_DEFAULT_SUB_FUNCTION_COLOR_1);
+	ParMap[CDSVPictureDisplay::P_Color] = static_cast<long>(SvDef::DefaultSubFunctionColor1);
+	ParMap[CDSVPictureDisplay::P_SelectedColor] = static_cast<long>(SvDef::DefaultSubFunctionColor1);
 	ParMap[CDSVPictureDisplay::P_AllowEdit] = static_cast<long>(0);
 	ParMap[CDSVPictureDisplay::P_ARRAY_XY] = arraySafe;
 	ParMap[CDSVPictureDisplay::P_Is_Flip_Vertical] = true;
@@ -1004,8 +1004,8 @@ void SVProfileEdgeMarkerAdjustmentPageClass::setGraphOverlayToPicture( SVLinearE
 	//set linear Edge lines
 	std::vector<double> LinearEdges;
 	pEdge->m_svLinearEdges.GetArrayValues( LinearEdges );
-	ParMap[CDSVPictureDisplay::P_Color] = static_cast<long>(SV_DEFAULT_SUB_FUNCTION_COLOR_2);
-	ParMap[CDSVPictureDisplay::P_SelectedColor] = static_cast<long>(SV_DEFAULT_SUB_FUNCTION_COLOR_2);
+	ParMap[CDSVPictureDisplay::P_Color] = static_cast<long> (SvDef::DefaultSubFunctionColor2);
+	ParMap[CDSVPictureDisplay::P_SelectedColor] = static_cast<long> (SvDef::DefaultSubFunctionColor2);
 	ParMap[CDSVPictureDisplay::P_Is_Flip_Vertical] = false;
 	ParMap[CDSVPictureDisplay::P_Y_Max] = m_egdeLinesGraphMaxY;
 	points[1] = m_egdeLinesStartPos; // y of first point
@@ -1040,8 +1040,8 @@ void SVProfileEdgeMarkerAdjustmentPageClass::setMarkerOverlayToPicture( unsigned
 	std::map<long,_variant_t> ParMap;
 	ParMap[CDSVPictureDisplay::P_Type ] = static_cast<long>(CDSVPictureDisplay::MarkerROI);
 	ParMap[CDSVPictureDisplay::P_SubType ] = static_cast<long>(CDSVPictureDisplay::HorizontalMarker);
-	ParMap[CDSVPictureDisplay::P_Color] = static_cast<long>(SV_DEFAULT_SUB_FUNCTION_COLOR_1);
-	ParMap[CDSVPictureDisplay::P_SelectedColor] = static_cast<long>(SV_DEFAULT_SUB_FUNCTION_COLOR_1);
+	ParMap[CDSVPictureDisplay::P_Color] = static_cast<long>(SvDef::DefaultSubFunctionColor1);
+	ParMap[CDSVPictureDisplay::P_SelectedColor] = static_cast<long>(SvDef::DefaultSubFunctionColor1);
 	ParMap[CDSVPictureDisplay::P_AllowEdit] = static_cast<long>(allowType);
 	ParMap[CDSVPictureDisplay::P_Min] = static_cast<long>(0);
 	ParMap[CDSVPictureDisplay::P_Max] = static_cast<long>(255);

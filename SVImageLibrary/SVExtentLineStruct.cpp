@@ -33,18 +33,18 @@ SVExtentLineStruct::~SVExtentLineStruct()
 	Initialize();
 }
 
-const SVExtentLineStruct &SVExtentLineStruct::operator=( const SVExtentLineStruct &p_rsvValue )
+const SVExtentLineStruct &SVExtentLineStruct::operator=( const SVExtentLineStruct &rValue )
 {
-	if ( this != &p_rsvValue )
+	if ( this != &rValue )
 	{
 		Initialize();
 
-		m_svPointArray.Copy(p_rsvValue.m_svPointArray);
+		m_svPointArray = rValue.m_svPointArray;
 
-		m_dwColor = p_rsvValue.m_dwColor;
+		m_dwColor = rValue.m_dwColor;
 		
-		m_bIsAngleValid = p_rsvValue.m_bIsAngleValid;
-		m_dAngle = p_rsvValue.m_dAngle;
+		m_bIsAngleValid = rValue.m_bIsAngleValid;
+		m_dAngle = rValue.m_dAngle;
 	}
 	return *this;
 }
@@ -54,7 +54,7 @@ HRESULT SVExtentLineStruct::Initialize()
 {
 	HRESULT l_hrOk = S_OK;
 
-	m_svPointArray.RemoveAll();
+	m_svPointArray.clear();
 
 	m_dwColor = 0;
 

@@ -75,7 +75,7 @@ public:
 	template<typename SvGuidInserter>
 	void GetToolIds(SvGuidInserter Inserter) const
 	{
-		for (SVTaskObjectPtrVector::const_iterator Iter = m_aTaskObjects.begin(); Iter != m_aTaskObjects.end(); ++Iter)
+		for (SVTaskObjectPtrVector::const_iterator Iter = m_TaskObjectVector.begin(); Iter != m_TaskObjectVector.end(); ++Iter)
 		{
 			SVTaskObjectClass* pTask = (*Iter);
 

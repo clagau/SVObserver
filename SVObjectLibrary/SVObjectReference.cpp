@@ -132,7 +132,7 @@ std::string SVObjectReference::GetCompleteName() const
 	return Result;
 }
 
-std::string SVObjectReference::GetCompleteObjectNameToObjectType( LPCTSTR lpszCompleteName, SVObjectTypeEnum objectTypeToInclude ) const
+std::string SVObjectReference::GetCompleteObjectNameToObjectType( LPCTSTR lpszCompleteName, SvDef::SVObjectTypeEnum objectTypeToInclude ) const
 {
 	std::string Result;
 

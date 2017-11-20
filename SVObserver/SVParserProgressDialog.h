@@ -12,7 +12,6 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <map>
-#include "SVContainerLibrary/SVVector.h"
 #include "SVProgressDialog.h"
 #include "SVSystemLibrary/SVLockableClass.h"
 #include "SVUtilityLibrary\SVSharedPtr.h"

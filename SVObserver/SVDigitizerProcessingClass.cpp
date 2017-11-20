@@ -13,7 +13,7 @@
 #include "stdafx.h"
 
 #include "SVDigitizerProcessingClass.h"
-#include "SVGigeCameraParametersLibrary/SVGigeEnums.h"
+#include "Definitions/SVGigeEnums.h"
 #include "TriggerHandling/SVDigitizerLoadLibraryClass.h"
 #include "SVImageLibrary/SVLut.h"
 #include "CameraLibrary/SVi64ValueDeviceParam.h"
@@ -181,7 +181,7 @@ HRESULT SVDigitizerProcessingClass::UpdateDigitizerSubsystem( SvTh::SVDigitizerL
 					AcquisitionName = SvUl::createStdString( bString );
 				}
 				//Not all DLL's support IP address so do not place in Result value
-				if( S_OK == pDigitizerSubsystem->ParameterGetValue( Handle, SVGigeParameterIPAddress, 0, &Value ) )
+				if( S_OK == pDigitizerSubsystem->ParameterGetValue( Handle, SvDef::SVGigeParameterIPAddress, 0, &Value ) )
 				{
 					IPAddress = SvUl::createStdString( Value );
 				}
@@ -603,32 +603,32 @@ HRESULT SVDigitizerProcessingClass::UpdateMatroxDevices()
 
 					Camera.m_AcquisitionHandle = Handle;
 
-					if( S_OK == pLibrary->ParameterGetValue( Handle, SVGigeParameterVendorName, 0, &Value ) )
+					if( S_OK == pLibrary->ParameterGetValue( Handle, SvDef::SVGigeParameterVendorName, 0, &Value ) )
 					{
 						_bstr_t StringValue( Value.bstrVal );
 						Camera.m_VendorName = static_cast< LPCTSTR >( StringValue );
 					}
 
-					if( S_OK == pLibrary->ParameterGetValue( Handle, SVGigeParameterModelName, 0, &Value ) )
+					if( S_OK == pLibrary->ParameterGetValue( Handle, SvDef::SVGigeParameterModelName, 0, &Value ) )
 					{
 						_bstr_t StringValue( Value.bstrVal );
 						Camera.m_ModelName = static_cast< LPCTSTR >( StringValue );
 					}
 
-					if( S_OK == pLibrary->ParameterGetValue( Handle, SVGigeParameterSerialNumber, 0, &Value ) )
+					if( S_OK == pLibrary->ParameterGetValue( Handle, SvDef::SVGigeParameterSerialNumber, 0, &Value ) )
 					{
 						_bstr_t StringValue( Value.bstrVal );
 						Camera.m_SerialNum = static_cast< LPCTSTR >( StringValue );
 					}
 
-					if( S_OK == pLibrary->ParameterGetValue( Handle, SVGigeParameterIPAddress, 0, &Value ) )
+					if( S_OK == pLibrary->ParameterGetValue( Handle, SvDef::SVGigeParameterIPAddress, 0, &Value ) )
 					{
 						_bstr_t StringValue( Value.bstrVal );
 						Camera.m_IPAddress = static_cast< LPCTSTR >( StringValue );
 					}
 				}
 
-				Cameras.Add( Camera );
+				Cameras.push_back( Camera );
 			}
 		}
 	}
@@ -644,11 +644,11 @@ HRESULT SVDigitizerProcessingClass::UpdateMatroxDevices()
 	SVGigeCameraManager::Instance().UpdateConnectedCameras( Cameras );
 	Cameras = SVGigeCameraManager::Instance().GetCameraOrder();
 
-	int Count = Cameras.GetSize();
+	int Count = static_cast<int> (Cameras.size());
 
 	for( int j = 0; j < Count; j++ )
 	{
-		SVGigeCameraStruct& rCamera = Cameras.ElementAt( j );
+		SVGigeCameraStruct& rCamera = Cameras[j];
 
 		if( 0 != rCamera.m_AcquisitionHandle )
 		{

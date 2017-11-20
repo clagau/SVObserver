@@ -59,21 +59,19 @@ HRESULT SVGigeCameraManager::UpdateConnectedCameras( const SVGigeCameraStructVec
 	HRESULT Result( S_OK );
 	m_OrderedCameras.clear();
 
-	SVGigeCameraStructVector::const_iterator IterIni( m_iniCameras.begin() );
-	for( ; m_iniCameras.end() != IterIni; ++IterIni )
+	for(auto const& rIniCamera :  m_iniCameras)
 	{
-		SVGigeCameraStruct GigeCamera( *IterIni );
-		SVGigeCameraStructVector::const_iterator Iter( rCameraList.begin() );
-		for( ; rCameraList.end() != Iter; ++Iter )
+		SVGigeCameraStruct GigeCamera(rIniCamera);
+		for(auto const& rCamera : rCameraList)
 		{
-			if( IterIni->GetIPAddress() == Iter->GetIPAddress() )
+			if(rIniCamera.GetIPAddress() == rCamera.GetIPAddress() )
 			{
-				GigeCamera = *Iter;
-				GigeCamera.m_CameraID = IterIni->m_CameraID;
+				GigeCamera = rCamera;
+				GigeCamera.m_CameraID = rIniCamera.m_CameraID;
 				break;
 			}
 		}
-		m_OrderedCameras.Add( GigeCamera );
+		m_OrderedCameras.push_back(GigeCamera);
 	}
 
 	return Result;
@@ -113,7 +111,7 @@ void SVGigeCameraManager::ReadCameraMapping()
 		SVGigeCameraStruct GigeCamera;
 		GigeCamera.m_IPAddress = IPAddress;
 		GigeCamera.m_CameraID = i;
-		m_iniCameras.Add( GigeCamera );
+		m_iniCameras.push_back( GigeCamera );
 	}
 	//! After initializing set the ordered cameras to the ini settings
 	m_OrderedCameras.clear();

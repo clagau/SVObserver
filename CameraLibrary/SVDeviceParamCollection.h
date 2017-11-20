@@ -17,7 +17,7 @@
 //Moved to precompiled header: #include <vector>
 
 #include "SVVisitor.h"
-#include "SVTemplate.h"
+#include "SVLibrary/SVTemplate.h"
 #include "SVDeviceParam.h"
 
 

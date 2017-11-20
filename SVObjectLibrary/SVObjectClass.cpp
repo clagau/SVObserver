@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVObjectClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVRunControlLibrary/SVRunControlLibrary.h"
+#include "Definitions/Color.h"
 #include "SVSystemLibrary/SVAutoLockAndReleaseTemplate.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
 #include "SVObjectAttributeClass.h"
@@ -317,7 +317,7 @@ std::string SVObjectClass::GetCompleteName() const
 	return Result;
 }
 
-HRESULT SVObjectClass::GetCompleteNameToType(SVObjectTypeEnum objectType, std::string& rName) const
+HRESULT SVObjectClass::GetCompleteNameToType(SvDef::SVObjectTypeEnum objectType, std::string& rName) const
 {
 	HRESULT hr = S_OK;
 
@@ -345,7 +345,7 @@ const SVGUID& SVObjectClass::GetParentID() const
 	return GetOwnerID();
 }
 
-SvOi::IObjectClass* SVObjectClass::GetAncestorInterface(SVObjectTypeEnum ancestorObjectType)
+SvOi::IObjectClass* SVObjectClass::GetAncestorInterface(SvDef::SVObjectTypeEnum ancestorObjectType)
 {
 	if (ancestorObjectType == GetObjectType())
 	{
@@ -354,7 +354,7 @@ SvOi::IObjectClass* SVObjectClass::GetAncestorInterface(SVObjectTypeEnum ancesto
 	return GetAncestor(ancestorObjectType);
 }
 
-const SvOi::IObjectClass* SVObjectClass::GetAncestorInterface(SVObjectTypeEnum ancestorObjectType) const
+const SvOi::IObjectClass* SVObjectClass::GetAncestorInterface(SvDef::SVObjectTypeEnum ancestorObjectType) const
 {
 	if (GetObjectType() == ancestorObjectType)
 	{
@@ -363,9 +363,9 @@ const SvOi::IObjectClass* SVObjectClass::GetAncestorInterface(SVObjectTypeEnum a
 	return GetAncestor(ancestorObjectType);
 }
 
-SVObjectSubTypeEnum SVObjectClass::GetObjectSubType() const
+SvDef::SVObjectSubTypeEnum SVObjectClass::GetObjectSubType() const
 {
-	return static_cast<SVObjectSubTypeEnum>(m_outObjectInfo.m_ObjectTypeInfo.SubType);
+	return static_cast<SvDef::SVObjectSubTypeEnum>(m_outObjectInfo.m_ObjectTypeInfo.SubType);
 }
 
 bool SVObjectClass::is_Created() const 
@@ -373,7 +373,7 @@ bool SVObjectClass::is_Created() const
 	return IsCreated(); 
 }
 
-SvUl::NameGuidList SVObjectClass::GetCreatableObjects(const SVObjectTypeInfoStruct& rObjectTypeInfo) const
+SvUl::NameGuidList SVObjectClass::GetCreatableObjects(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo) const
 {
 	SvUl::NameGuidList list;
 
@@ -385,7 +385,7 @@ void SVObjectClass::SetName( LPCTSTR Name )
 	m_Name = Name;
 }
 
-SvOi::IObjectClass* SVObjectClass::getFirstObject(const SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends, const SvOi::IObjectClass* pRequestor) const
+SvOi::IObjectClass* SVObjectClass::getFirstObject(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends, const SvOi::IObjectClass* pRequestor) const
 {
 	// check the owner of this class
 	if( nullptr != pRequestor && (pRequestor == this || pRequestor == GetOwner()) )
@@ -396,13 +396,13 @@ SvOi::IObjectClass* SVObjectClass::getFirstObject(const SVObjectTypeInfoStruct& 
 
 	// Find best match....EmbeddedID, Type, SubType...
 	if(( SV_GUID_NULL       == rObjectTypeInfo.EmbeddedID || rObjectTypeInfo.EmbeddedID == GetEmbeddedID() ) &&
-		( SVNotSetObjectType == rObjectTypeInfo.ObjectType || rObjectTypeInfo.ObjectType == GetObjectType() ) &&
-		( SVNotSetSubObjectType == rObjectTypeInfo.SubType || rObjectTypeInfo.SubType    == GetObjectSubType() )
+		( SvDef::SVNotSetObjectType == rObjectTypeInfo.ObjectType || rObjectTypeInfo.ObjectType == GetObjectType() ) &&
+		( SvDef::SVNotSetSubObjectType == rObjectTypeInfo.SubType || rObjectTypeInfo.SubType    == GetObjectSubType() )
 		)
 	{
 		if( SV_GUID_NULL         != rObjectTypeInfo.EmbeddedID ||
-			SVNotSetObjectType    != rObjectTypeInfo.ObjectType ||
-			SVNotSetSubObjectType != rObjectTypeInfo.SubType
+			SvDef::SVNotSetObjectType    != rObjectTypeInfo.ObjectType ||
+			SvDef::SVNotSetSubObjectType != rObjectTypeInfo.SubType
 			)
 		{
 			// But object must be specified!
@@ -561,11 +561,11 @@ HRESULT SVObjectClass::SetObjectValue( SVObjectAttributeClass* pDataObject )
 	if( nullptr != pDataObject )
 	{
 		SvCl::SVObjectDWordArrayClass svDWordArray;
-		SvCl::SVObjectSVStringArrayClass StringArray;
+		SvCl::SVObjectStdStringArrayClass StringArray;
 
 		if ( ( bOk = pDataObject->GetAttributeData( _T("AttributesSet"), svDWordArray ) ) )
 		{
-			int iSize = svDWordArray.GetSize();
+			int iSize = static_cast<int> (svDWordArray.size());
 			{
 				m_ObjectAttributesSet.resize( iSize );
 				for( int i = 0; i < iSize; i++ )
@@ -665,12 +665,12 @@ bool SVObjectClass::AddFriend( const GUID& rFriendGUID, const GUID& rAddPreGuid 
 	return ( m_friendList.Insert( position, newFriendInfo ) >= 0  );
 }
 
-SVObjectClass*  SVObjectClass::GetFriend( const SVObjectTypeInfoStruct& rObjectType ) const 
+SVObjectClass*  SVObjectClass::GetFriend( const SvDef::SVObjectTypeInfoStruct& rObjectType ) const 
 {
 	// Check if friend is already applied...
 	for(int i =0; i < static_cast<int>(m_friendList.size()); i++ ) 
 	{
-		const SVObjectTypeInfoStruct* pInfoStruct =  &(m_friendList[ i ].m_ObjectTypeInfo); 
+		const SvDef::SVObjectTypeInfoStruct* pInfoStruct =  &(m_friendList[ i ].m_ObjectTypeInfo); 
 		if( pInfoStruct->ObjectType   == rObjectType.ObjectType && 
 			pInfoStruct->SubType   == rObjectType.SubType
 			)
@@ -740,7 +740,7 @@ bool SVObjectClass::SetImageDepth( long lDepth )
 /*
 This method returns Ancestor Object of specified Object Type of this Object, if any.  Otherwise it returns NULL.
 */
-SVObjectClass* SVObjectClass::GetAncestor( SVObjectTypeEnum AncestorObjectType ) const
+SVObjectClass* SVObjectClass::GetAncestor( SvDef::SVObjectTypeEnum AncestorObjectType ) const
 {
 	SVObjectClass* pOwner = this->GetOwner();
 	
@@ -759,7 +759,7 @@ SVObjectClass* SVObjectClass::GetAncestor( SVObjectTypeEnum AncestorObjectType )
 DWORD SVObjectClass::GetObjectColor() const
 {
 	// Not defined here!
-	return SV_DEFAULT_INACTIVE_COLOR;
+	return SvDef::DefaultInactiveColor;
 }
 
 // Get the local object state...
@@ -785,17 +785,17 @@ int SVObjectClass::GetObjectNameLength() const
 }
 
 /*
-Get the complete object name including selected SVObjectTypeEnum value.
+Get the complete object name including selected SvDef::SVObjectTypeEnum value.
 */
-std::string SVObjectClass::GetObjectNameToObjectType(LPCSTR CompleteName, SVObjectTypeEnum objectTypeToInclude) const
+std::string SVObjectClass::GetObjectNameToObjectType(LPCSTR CompleteName, SvDef::SVObjectTypeEnum objectTypeToInclude) const
 {
 	return GetCompleteObjectNameToObjectType(CompleteName, objectTypeToInclude);
 }
 
 /*
-Get the complete object name including selected SVObjectTypeEnum value.
+Get the complete object name including selected SvDef::SVObjectTypeEnum value.
 */
-std::string SVObjectClass::GetCompleteObjectNameToObjectType( LPCSTR CompleteName, SVObjectTypeEnum objectTypeToInclude ) const
+std::string SVObjectClass::GetCompleteObjectNameToObjectType( LPCSTR CompleteName, SvDef::SVObjectTypeEnum objectTypeToInclude ) const
 {
 	std::string Result;
 	const std::string Name = GetName();
@@ -819,7 +819,7 @@ std::string SVObjectClass::GetCompleteObjectNameToObjectType( LPCSTR CompleteNam
 	//
 	// Look for Tool Set type object.
 	//
-	SVObjectTypeEnum objectType = GetObjectType();
+	SvDef::SVObjectTypeEnum objectType = GetObjectType();
 	if(objectType != objectTypeToInclude)
 	{
 		if( nullptr != m_ownerObjectInfo.m_pObject && m_ownerObjectInfo.m_pObject != this )

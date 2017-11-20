@@ -84,9 +84,6 @@
     <ClInclude Include="IBlobAnalyzer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVInterfaceVector.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="IValueObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>

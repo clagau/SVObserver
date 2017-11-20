@@ -17,7 +17,7 @@
 // Note: SafeArray must be allocated to the proper dimension for the camera
 // LUTEnable must be set prior to setting the Lut values
 // @TODO - Try to speed this up, performance is horrible...
-HRESULT SVGigeLUTSetter::operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& rFeature, const _variant_t& rValue) const
+HRESULT SVGigeLUTSetter::operator()(SVMatroxDigitizerPtr Digitizer, const SVGigeFeature& rFeature, const _variant_t& rValue) const
 {
 	HRESULT hr = S_OK;
 	if (rValue.vt & VT_ARRAY)

@@ -52,23 +52,22 @@ BOOL SVAnalyzerResultDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	char cValue;
-	double dValue;
-	
 	mclbResultList.SetTabStops(80);
 
-	if( psvocvResultArray && psvocvResultArray->GetSize() )
+	if( nullptr != m_pOcvCharaterResults )
 	{
-		CString	strItem;
-		for( int i = 0; i < psvocvResultArray->GetSize(); i++ )
+		for( auto pResult : *m_pOcvCharaterResults )
 		{
-			if( psvocvResultArray->GetAt(i) )
+			if( nullptr != pResult )
 			{
-				psvocvResultArray->GetAt(i)->m_cvoLabelValue.GetValue( cValue );
-				psvocvResultArray->GetAt(i)->m_dvoMatchScore.GetValue( dValue );
+				char cValue;
+				double dValue;
+				pResult->m_cvoLabelValue.GetValue( cValue );
+				pResult->m_dvoMatchScore.GetValue( dValue );
 				
 				if( dValue  > -1.0f )
 				{
+					CString	strItem;
 					strItem.Format( "%c\t%f", cValue, dValue );
 					mclbResultList.AddString( strItem );
 				}// end if

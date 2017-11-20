@@ -139,9 +139,9 @@ int SVHistogramAnalyzerSetupClass::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		m_histogram.SetPixelCounts(l_arr.begin(), l_arr.end());
 	}
 
-	m_firstSquare.SetColor(SvMc::color::Green);
-	m_secondSquare.SetColor(SvMc::color::Crimson);
-	m_valleySquare.SetColor(SvMc::color::Plum);
+	m_firstSquare.SetColor(SvDef::DarkGreen);
+	m_secondSquare.SetColor(SvDef::Crimson);
+	m_valleySquare.SetColor(SvDef::Plum);
 
 	return 0;
 }

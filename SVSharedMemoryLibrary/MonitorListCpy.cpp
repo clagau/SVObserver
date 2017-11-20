@@ -213,7 +213,7 @@ namespace SvSml
 			
 			switch(it->second->data.ObjectType)
 			{
-			case  SVImageObjectType:
+			case  SvDef::SVImageObjectType:
 				newEntry->TotalImageSize += (DWORD)it->second->data.ByteSize;
 				newEntry->TotalImageSize +=  ImageBufferHeaderSize;
 				newEntry->TotalImageCount++;

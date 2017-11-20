@@ -22,12 +22,12 @@ SVMathContainerClass::SVMathContainerClass( SVObjectClass* POwner, int StringRes
 					 :SVTaskObjectClass( POwner, StringResourceID ) 
 {
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVMathContainerObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVMathContainerObjectType;
 
 	// Identify our input type needs...
 
 	// Input Math Result...
-	inputMathResult.SetInputObjectType(SVMathEquationResultObjectGuid, SVValueObjectType, SVDoubleValueObjectType);
+	inputMathResult.SetInputObjectType(SVMathEquationResultObjectGuid, SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType);
 	inputMathResult.SetObject( GetObjectInfo() );
 	RegisterInputObject( &inputMathResult, _T( "MathResult" ) );
 

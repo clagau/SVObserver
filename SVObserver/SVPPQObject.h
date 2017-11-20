@@ -99,8 +99,6 @@ public:
 	void GetTrigger( SvTi::SVTriggerObject*& ppTrigger );
 	bool GetInspection( long lIndex, SVInspectionProcess*& ppInspection ) const;
 
-	HRESULT GetInspections( std::vector< SVInspectionProcess* >& rvecInspections ) const;
-
 	//************************************
 	// Method:    IsObjectInPPQ
 	// Description:  Check if the object is part of this PPQ.
@@ -541,5 +539,5 @@ private:
 	mutable UINT m_AttributesAllowedFilterForFillChildObjectList; //<This filter flag was used in the last run of the method fillChildObjectList.
 };
 
-typedef SVVector<SVPPQObject*> SVPPQObjectPtrVector;
+typedef std::vector<SVPPQObject*> SVPPQObjectPtrVector;
 

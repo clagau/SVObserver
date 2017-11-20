@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVContainerLibrary/SVMap.h"
+//Moved to precompiled header: #include <map>
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVClassRegisterClass.h"
 #pragma endregion Includes
@@ -36,13 +36,13 @@ public:
 	void Shutdown();	// This method is only meant to be called by the main application class
 
 protected:
-	typedef SVMap< SVGUID, SVClassRegisterClass* > SVRegisterClasses;
+	typedef std::map< SVGUID, SVClassRegisterClass* > SVClassRegisterMap;
 	typedef std::map<SVGUID, SVGUID>  ExchangeClassMap;
 
 	SVClassRegisterListClass();
 
 	ExchangeClassMap m_ExchangeClassID;			//This map is used to exchange a class ID with another, can construct another object when read from a confguration
-	SVRegisterClasses m_Registers;
+	SVClassRegisterMap m_Registers;
 
 private:
 	// Do not Implement

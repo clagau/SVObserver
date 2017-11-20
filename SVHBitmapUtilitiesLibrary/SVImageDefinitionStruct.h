@@ -13,7 +13,7 @@
 
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <comdef.h>
-#include "SVImageFormatEnum.h"
+#include "Definitions/SVImageFormatEnum.h"
 
 #pragma pack (push, 1)
 struct SVImageDefinitionStruct
@@ -21,7 +21,7 @@ struct SVImageDefinitionStruct
 	BSTR bstrDisplayName;
 	long lHeight;
 	long lWidth;
-	SVImageFormatEnum eImageFormat;
+	SvDef::SVImageFormatEnum eImageFormat;
 public:
 	SVImageDefinitionStruct( );
 	~SVImageDefinitionStruct( );

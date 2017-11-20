@@ -15,13 +15,13 @@
 #include "SVMessage/SVMessage.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
-#include "SVRunControlLibrary/SVRunControlLibrary.h"
+#include "Definitions/Color.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "SVOCore/SVImageClass.h"
 #include "SVOCVAnalyzer.h"
 #include "SVOCVAnalyzerResult.h"
 #include "SVOCore/SVTool.h"
-#include "SVOLicenseManager/SVOLicenseManager.h"
+#include "SVOLicenseManager.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
@@ -65,11 +65,11 @@ SVOCVAnalyzeResultClass::SVOCVAnalyzeResultClass( SVObjectClass* POwner, int Str
 void SVOCVAnalyzeResultClass::clearAll()
 {	
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVResultOCVObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVResultObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVResultOCVObjectType;
 
 	// Identify our input type needs
-	m_inputObjectInfo.SetInputObjectType( SVImageObjectType );
+	m_inputObjectInfo.SetInputObjectType( SvDef::SVImageObjectType );
 	m_inputObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputObjectInfo, _T( "OCVAnalyzerResultImage" ) );
 
@@ -284,7 +284,7 @@ void SVOCVAnalyzeResultClass::HideResults()
 	if ( !m_bHasLicenseError )
 	{
 		// Clear our results array
-		arrayOCVCharacterResults.RemoveAll();
+		m_OCVCharacterResults.clear();
 
 		for( long l = 0; l < OCV_MAX_RESULTS; l++ )
 		{
@@ -301,7 +301,7 @@ void SVOCVAnalyzeResultClass::HideResults()
 			}// end else
 
 			// Add it to our results array
-			arrayOCVCharacterResults.Add( pResult );
+			m_OCVCharacterResults.push_back(pResult);
 		}// end for
 	}// end for
 }
@@ -1043,7 +1043,7 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 					                             // the length must be 0 at 
 												 // this point.
 				{
-					SVOCVCharacterResultClass *pResult = arrayOCVCharacterResults.GetAt( k );
+					SVOCVCharacterResultClass *pResult = m_OCVCharacterResults[k];
 
 					pResult->m_cvoLabelValue.SetValue(l_strLabel[k]);
 
@@ -1071,7 +1071,7 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 //-				Set unused indexes.
 				for( long l = l_lLength; l < OCV_MAX_RESULTS; l++ )
 				{
-					SVOCVCharacterResultClass *pResult = arrayOCVCharacterResults.GetAt( l );
+					SVOCVCharacterResultClass *pResult = m_OCVCharacterResults[l];
 
 					pResult->m_cvoLabelValue.SetValue(0L);
 
@@ -1483,7 +1483,7 @@ HRESULT SVOCVAnalyzeResultClass::onCollectOverlays(SVImageClass* p_pImage, SVExt
 			{
 				SVExtentFigureStruct l_svFigure;
 
-				SVOCVCharacterResultClass *pResult = arrayOCVCharacterResults.GetAt( i );
+				SVOCVCharacterResultClass *pResult = m_OCVCharacterResults[i];
 
 				double Value;
 				pResult->m_dvoOverlayLeft.GetValue( Value );
@@ -1503,13 +1503,13 @@ HRESULT SVOCVAnalyzeResultClass::onCollectOverlays(SVImageClass* p_pImage, SVExt
 
 				SVExtentMultiLineStruct l_multiLine;
 
-				l_multiLine.m_Color = SV_DEFAULT_SUB_FUNCTION_COLOR_1;
+				l_multiLine.m_Color = SvDef::DefaultSubFunctionColor1;
 					
-				l_multiLine.AssignExtentFigure( l_svFigure, SV_DEFAULT_SUB_FUNCTION_COLOR_1 );
+				l_multiLine.AssignExtentFigure( l_svFigure, SvDef::DefaultSubFunctionColor1 );
 
 				UpdateOverlayIDs( l_multiLine );
 
-				p_rMultiLineArray.Add( l_multiLine );
+				p_rMultiLineArray.push_back( l_multiLine );
 
 			}// end for
 		}

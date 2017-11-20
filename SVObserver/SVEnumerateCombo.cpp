@@ -32,29 +32,28 @@ SVEnumerateComboClass::~SVEnumerateComboClass()
 
 bool SVEnumerateComboClass::SetEnumTypes( LPCTSTR szEnumList )
 {
-	bool bRetVal = enumObject.SetEnumTypes( szEnumList );
-	if( bRetVal )
+	bool Result = enumObject.SetEnumTypes( szEnumList );
+	if( Result )
 	{
 		// Flush combo...
 		ResetContent();
 
 		// Populate Combo box...
-		std::string strEnum;
-		long lValue = 0L;
-		int it = enumObject.GetFirstEnumTypePos();
-		while( enumObject.GetNextEnumType( it, strEnum, lValue ) )
+		for (auto const&rEntry : enumObject.GetEnumVector())
 		{
 			// Add enumerator to combo list...
-			int index = AddString( strEnum.c_str() );
+			int index = AddString( rEntry.first.c_str() );
 			if( index >= 0 )
 			{
-				SetItemData( index, ( DWORD ) lValue );
+				SetItemData( index, static_cast<DWORD_PTR> (rEntry.second) );
 			}
 			else
-				bRetVal = false;
+			{
+				Result = false;
+			}
 		}
 	}
-	return bRetVal;
+	return Result;
 }
 
 int  SVEnumerateComboClass::SetCurSelItemData( DWORD_PTR ItemData )

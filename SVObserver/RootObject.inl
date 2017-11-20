@@ -12,7 +12,7 @@ static HRESULT RootObject::getRootChildValue( LPCSTR DottedName, ELEMENT_TYPE& r
 	HRESULT Result( S_FALSE );
 	RootObject *pRoot( nullptr );
 
-	SVObjectManagerClass::Instance().GetRootChildObject( pRoot, SvOl::FqnRoot );
+	SVObjectManagerClass::Instance().GetRootChildObject( pRoot, SvDef::FqnRoot );
 
 	if( nullptr != pRoot )
 	{
@@ -28,7 +28,7 @@ static BasicValueObjectPtr RootObject::setRootChildValue( LPCSTR DottedName, con
 	RootObject *pRoot( nullptr );
 	BasicValueObjectPtr pValue( nullptr );
 
-	SVObjectManagerClass::Instance().GetRootChildObject( pRoot, SvOl::FqnRoot );
+	SVObjectManagerClass::Instance().GetRootChildObject( pRoot, SvDef::FqnRoot );
 
 	if( nullptr != pRoot )
 	{

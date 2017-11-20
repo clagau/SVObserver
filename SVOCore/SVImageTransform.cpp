@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVOCore/SVImageTransform.h"
+#include "SVImageTransform.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
@@ -30,11 +30,11 @@ SVImageTransformClass::SVImageTransformClass( SVObjectClass* POwner, int StringR
 {
 
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVImageTransformObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVImageTransformObjectType;
 
 	// Identify our input type needs...
 	// Image
-	m_inputImageObjectInfo.SetInputObjectType( SVImageObjectType );
+	m_inputImageObjectInfo.SetInputObjectType( SvDef::SVImageObjectType );
 	m_inputImageObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputImageObjectInfo, _T("ImageTransformImage") );
 

@@ -14,7 +14,7 @@
 #include "SVSystemLibrary/SVSAXContentHandlerImpl.h"
 
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerFeatureEnums.h"
-#include "SVGigeEnums.h"
+#include "Definitions/SVGigeEnums.h"
 #include "SVGigeDeviceParameterStruct.h"
 #include "SVGigeFeatureStringEnumList.h"
 #include "SVGigeFeature.h"
@@ -106,7 +106,7 @@ private:
 	};
 
 	SVGigeDeviceParameterStructInfo m_GigeDeviceParameterInfo;
-	SVGigeParameterEnum m_GigeParameterEnum; // SVGigeDeviceParameterMap Key
+	SvDef::SVGigeParameterEnum m_GigeParameterEnum; // SVGigeDeviceParameterMap Key
 	SVGigeDeviceParameterMap m_GigeDeviceParameterMap;
 	HRESULT m_errorCode;
 	std::string m_errorText;

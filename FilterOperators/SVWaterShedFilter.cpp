@@ -18,7 +18,6 @@
 #include "SVOCore/SVImageClass.h"
 #include "SVWaterShedFilter.h"
 #include "Definitions/TextDefineSVDef.h"
-#include "CameraLibrary/SVDeviceParams.h"
 #include "SVObjectLibrary/SVClsIds.h"
 
 #pragma endregion Includes
@@ -43,7 +42,7 @@ SVWatershedFilterClass::~SVWatershedFilterClass()
 
 void SVWatershedFilterClass::init()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVWatershedFilterObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVWatershedFilterObjectType;
 
 	RegisterEmbeddedObject( &m_lvoMinVariation,		SVWatershedFilterMinVariationGuid, IDS_OBJECTNAME_WATERSHEDFILTER_MINVARIATION, false, SvOi::SVResetItemNone );
 	RegisterEmbeddedObject( &m_lvoControlFlag,		SVWatershedFilterControlFlagGuid, IDS_OBJECTNAME_WATERSHEDFILTER_CONTROLFLAG, false, SvOi::SVResetItemNone );
@@ -61,7 +60,7 @@ void SVWatershedFilterClass::init()
 	m_lvoMinVariation.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	m_lvoControlFlag.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 
-	m_MarkerImageInfo.SetInputObjectType( SVImageObjectType );
+	m_MarkerImageInfo.SetInputObjectType( SvDef::SVImageObjectType );
 	m_MarkerImageInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_MarkerImageInfo, SvDef::WatershedMarkerImageConnectionName );
 

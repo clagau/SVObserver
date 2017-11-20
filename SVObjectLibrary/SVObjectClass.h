@@ -131,20 +131,20 @@ public:
 	//! \param rObjectType [in]
 	//! \returns SVObjectClass*
 	//************************************
-	SVObjectClass* GetFriend( const SVObjectTypeInfoStruct& rObjectType ) const; 
+	SVObjectClass* GetFriend( const SvDef::SVObjectTypeInfoStruct& rObjectType ) const; 
 
 	//************************************
 	// Method:    GetAncestor
 	// Description: This method returns Ancestor Object of specified Object Type of this Object, if any.  Otherwise it returns nullptr.
-	// Parameter: SVObjectTypeEnum AncestorObjectType 
+	// Parameter: SvDef::SVObjectTypeEnum AncestorObjectType 
 	// Returns:   SVObjectClass*
 	//************************************
-	SVObjectClass* GetAncestor( SVObjectTypeEnum AncestorObjectType ) const;
+	SVObjectClass* GetAncestor( SvDef::SVObjectTypeEnum AncestorObjectType ) const;
 	int GetNameLength() const;
 	LPCTSTR GetObjectName() const;
 	int GetObjectNameLength() const;
 
-	std::string GetCompleteObjectNameToObjectType( LPCTSTR CompleteName = nullptr, SVObjectTypeEnum objectTypeToInclude = SVToolSetObjectType ) const;
+	std::string GetCompleteObjectNameToObjectType( LPCTSTR CompleteName = nullptr, SvDef::SVObjectTypeEnum objectTypeToInclude = SvDef::SVToolSetObjectType ) const;
 	SVObjectClass* GetOwner() const;
 	SVOutObjectInfoStruct& GetObjectOutputInfo();
 	
@@ -158,22 +158,22 @@ public:
 #pragma region virtual method (IObjectClass)
 	virtual LPCTSTR GetName() const override;
 	virtual std::string GetCompleteName() const override;
-	virtual HRESULT GetCompleteNameToType(SVObjectTypeEnum objectType, std::string& rName) const override;
-	virtual std::string GetObjectNameToObjectType(LPCSTR CompleteName = nullptr, SVObjectTypeEnum objectTypeToInclude = SVToolSetObjectType) const override;
-	virtual const SVObjectTypeEnum& GetObjectType() const override;
-	virtual SVObjectSubTypeEnum GetObjectSubType() const override;
+	virtual HRESULT GetCompleteNameToType(SvDef::SVObjectTypeEnum objectType, std::string& rName) const override;
+	virtual std::string GetObjectNameToObjectType(LPCSTR CompleteName = nullptr, SvDef::SVObjectTypeEnum objectTypeToInclude = SvDef::SVToolSetObjectType) const override;
+	virtual const SvDef::SVObjectTypeEnum& GetObjectType() const override;
+	virtual SvDef::SVObjectSubTypeEnum GetObjectSubType() const override;
 	virtual const SVGUID& GetParentID() const override;
-	virtual SvOi::IObjectClass* GetAncestorInterface(SVObjectTypeEnum ancestorObjectType) override;
-	virtual const SvOi::IObjectClass* GetAncestorInterface(SVObjectTypeEnum ancestorObjectType) const override;
+	virtual SvOi::IObjectClass* GetAncestorInterface(SvDef::SVObjectTypeEnum ancestorObjectType) override;
+	virtual const SvOi::IObjectClass* GetAncestorInterface(SvDef::SVObjectTypeEnum ancestorObjectType) const override;
 	virtual UINT ObjectAttributesAllowed() const override;
 	virtual UINT SetObjectAttributesAllowed( UINT Attributes, SvOi::SetAttributeType Type ) override;
 	virtual UINT ObjectAttributesSet(int iIndex=0) const override;
 	virtual UINT SetObjectAttributesSet( UINT Attributes, SvOi::SetAttributeType Type, int iIndex=0 ) override;
 	virtual const SVGUID& GetUniqueObjectID() const override;
 	virtual bool is_Created() const override;
-	virtual SvUl::NameGuidList GetCreatableObjects(const SVObjectTypeInfoStruct& rObjectTypeInfo) const override;
+	virtual SvUl::NameGuidList GetCreatableObjects(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo) const override;
 	virtual void SetName( LPCTSTR Name ) override;
-	virtual SvOi::IObjectClass* getFirstObject(const SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends = true, const SvOi::IObjectClass* pRequestor = nullptr) const override;
+	virtual SvOi::IObjectClass* getFirstObject(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends = true, const SvOi::IObjectClass* pRequestor = nullptr) const override;
 	virtual void moveFriendObject(const SVGUID& objectToMoveId, const SVGUID& preObjectId = SV_GUID_NULL) override;
 	virtual bool resetAllObjects( SvStl::MessageContainerVector *pErrorMessages=nullptr ) override { return ResetObject(pErrorMessages); };
 	virtual HRESULT getValue(double& rValue, int Index = -1, int Bucket = -1) const override { return E_NOTIMPL; };

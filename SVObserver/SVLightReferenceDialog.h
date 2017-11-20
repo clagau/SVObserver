@@ -11,13 +11,14 @@
 #pragma once
 
 #pragma region Includes
+//Moved to precompiled header: #include <vector>
 #include "SVVirtualCamera.h"
 #include "SVAcquisitionClass.h"
 #pragma endregion Includes
 
 class SVLightReference;
 
-typedef SVVector<SVLightReference*> SVLightReferencePtrVector;
+typedef std::vector<SVLightReference*> SVLightReferencePtrVector;
 
 class SVLightReferenceDialogPropertySheetClass : public CPropertySheet
 {
@@ -27,7 +28,7 @@ public:
 
 	virtual ~SVLightReferenceDialogPropertySheetClass();
 
-	bool CreatePages( SVVirtualCameraPtrSet& setCameras, SVLightReferencePtrVector& apLRA );
+	bool CreatePages( SVVirtualCameraPtrSet& setCameras, SVLightReferencePtrVector& rLRA );
 	void DestroyAllPages();
 
 	// Vom Klassen-Assistenten generierte virtuelle Funktionsüberschreibungen
@@ -37,7 +38,6 @@ public:
 
 protected:
 	int miNumPages;
-	SVLightReferencePtrVector mapLRA;
 
 protected:
 	DECLARE_DYNAMIC(SVLightReferenceDialogPropertySheetClass)

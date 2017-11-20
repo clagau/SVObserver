@@ -33,22 +33,22 @@
 #pragma warning (pop)
 #pragma endregion Includes
 
-typedef std::map<SVObjectSubTypeEnum, SVObjectScriptDataObjectTypeEnum> ObjectTypeTable;
+typedef std::map<SvDef::SVObjectSubTypeEnum, SVObjectScriptDataObjectTypeEnum> ObjectTypeTable;
 
 static ObjectTypeTable typeTable = boost::assign::map_list_of<>
-(SVBoolValueObjectType, SV_BOOL_Type)
-(SVByteValueObjectType, SV_BYTE_Type)
-(SVDWordValueObjectType, SV_DWORD_Type)
-(SVLongValueObjectType, SV_LONG_Type)
-(SVEnumValueObjectType, SV_LONG_Type)
-(SVDoubleValueObjectType, SV_DOUBLE_Type)
-(DoubleSortValueObjectType, SV_DOUBLE_Type)
-(SVPointValueObjectType, SV_POINT_Type)
-(SVStringValueObjectType, SV_STRING_Type)
-(SVDPointValueObjectType, SV_DPOINT_Type)
-(SVCharValueObjectType, SV_BYTE_Type)
-(SVVariantValueObjectType, SV_VARIANT_Type)
-(SVInt64ValueObjectType, SV_INT64_Type)
+(SvDef::SVBoolValueObjectType, SV_BOOL_Type)
+(SvDef::SVByteValueObjectType, SV_BYTE_Type)
+(SvDef::SVDWordValueObjectType, SV_DWORD_Type)
+(SvDef::SVLongValueObjectType, SV_LONG_Type)
+(SvDef::SVEnumValueObjectType, SV_LONG_Type)
+(SvDef::SVDoubleValueObjectType, SV_DOUBLE_Type)
+(SvDef::DoubleSortValueObjectType, SV_DOUBLE_Type)
+(SvDef::SVPointValueObjectType, SV_POINT_Type)
+(SvDef::SVStringValueObjectType, SV_STRING_Type)
+(SvDef::SVDPointValueObjectType, SV_DPOINT_Type)
+(SvDef::SVCharValueObjectType, SV_BYTE_Type)
+(SvDef::SVVariantValueObjectType, SV_VARIANT_Type)
+(SvDef::SVInt64ValueObjectType, SV_INT64_Type)
 ;
 
 template<typename Separator>
@@ -400,9 +400,9 @@ HRESULT SVObjectBuilder::SetInputs(const GUID& objectID, const SVNameGuidList& g
 		pObject->GetInputInterface(inputInfoList, false );
 		
 		// reattach inputs
-		for( int i = 0; S_OK == hr && i < inputInfoList.GetSize(); i++ )
+		for( int i = 0; S_OK == hr && i < static_cast<int> (inputInfoList.size()); i++ )
 		{
-			SVInObjectInfoStruct* pInInfo = inputInfoList.GetAt(i);
+			SVInObjectInfoStruct* pInInfo = inputInfoList[i];
 			if (pInInfo)
 			{
 				SVNameGuidList::const_iterator it = guidList.find(pInInfo->GetInputName().c_str());
@@ -447,7 +447,7 @@ HRESULT SVObjectBuilder::GetObjectDataType(const GUID& ownerID, const GUID& obje
 	/////////////////////////////////////////////////////////////////////
 	if (pOwnerObject && pObject)
 	{
-		SVObjectSubTypeEnum type = pObject->GetObjectSubType();
+		SvDef::SVObjectSubTypeEnum type = pObject->GetObjectSubType();
 		dataType = SV_UNKNOWN_Type;
 		ObjectTypeTable::const_iterator it = typeTable.find(type);
 		if (it != typeTable.end())

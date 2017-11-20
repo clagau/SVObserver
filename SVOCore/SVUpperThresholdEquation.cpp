@@ -35,8 +35,8 @@ SVUpperThresholdEquationClass::SVUpperThresholdEquationClass( SVObjectClass* POw
 void SVUpperThresholdEquationClass::init()
 {
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVEquationObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType	= SVUpperThresholdEquationObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVEquationObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType	= SvDef::SVUpperThresholdEquationObjectType;
 
 	// Identify our input type needs - this is a bit different here
 	// Since out inputs are dynamic via the script specified

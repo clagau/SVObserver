@@ -23,7 +23,7 @@
 #include "TriggerInformation/SVTriggerProcessingClass.h"
 #include "InitialInformationHandler.h"
 #include "SVStatusLibrary/GlobalPath.h"
-#include "SVObjectLibrary/GlobalConst.h"
+#include "Definitions/GlobalConst.h"
 #include "RootObject.h"
 
 #pragma endregion Includes
@@ -72,9 +72,9 @@ void InitialInformationHandler::LoadIniFilesAndDlls()
 	{
 		g_bUseCorrectListRecursion = IniLoader.m_bUseCorrectListRecursion;
 
-		RootObject::setRootChildValue(SvOl::FqnEnvironmentModelNumber, IniLoader.m_ModelNumber.c_str());
-		RootObject::setRootChildValue(SvOl::FqnEnvironmentSerialNumber, IniLoader.m_SerialNumber.c_str());
-		RootObject::setRootChildValue(SvOl::FqnEnvironmentWinKey, IniLoader.m_WinKey.c_str());
+		RootObject::setRootChildValue(SvDef::FqnEnvironmentModelNumber, IniLoader.m_ModelNumber.c_str());
+		RootObject::setRootChildValue(SvDef::FqnEnvironmentSerialNumber, IniLoader.m_SerialNumber.c_str());
+		RootObject::setRootChildValue(SvDef::FqnEnvironmentWinKey, IniLoader.m_WinKey.c_str());
 
 		for (int i = 0; i < SvLib::MaxTriggers; i++)
 		{

@@ -19,7 +19,7 @@
 #include "SVValueObjectClass.h"
 #pragma endregion Includes
 
-class SVCharValueObjectClass : public SVValueObjectClass<TCHAR>
+class SVCharValueObjectClass : public SVValueObjectClass<char>
 {
 	SV_DECLARE_CLASS( SVCharValueObjectClass );
 

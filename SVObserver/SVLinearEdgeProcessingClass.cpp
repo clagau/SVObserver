@@ -11,7 +11,7 @@
 
 #include "stdafx.h"
 #include "SVLinearEdgeProcessingClass.h"
-#include "SVRunControlLibrary/SVRunControlLibrary.h"
+#include "Definitions/Color.h"
 #include "Definitions/GlobalConst.h"
 #include "SVOCore/SVImageClass.h"
 #include "SVOCore/SVTool.h"
@@ -34,21 +34,21 @@ SV_IMPLEMENT_CLASS( SVLinearEdgeProcessingClass, SVLinearEdgeProcessingClassGuid
 SVLinearEdgeProcessingClass::SVLinearEdgeProcessingClass( SVObjectClass* POwner, int StringResourceID )
 					                  :SVTaskObjectClass( POwner, StringResourceID )
 {
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVLinearEdgeProcessingObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVLinearEdgeProcessingObjectType;
 
-	m_svInputImageObjectInfo.SetInputObjectType( SVImageObjectType );
+	m_svInputImageObjectInfo.SetInputObjectType( SvDef::SVImageObjectType );
 	m_svInputImageObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_svInputImageObjectInfo, _T( "LinearEdgeProcessingImage" ) );
 
-	m_svInputMinThreshold.SetInputObjectType( SVLinearThresholdMinObjectGuid, SVValueObjectType, SVDoubleValueObjectType );
+	m_svInputMinThreshold.SetInputObjectType( SVLinearThresholdMinObjectGuid, SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType );
 	m_svInputMinThreshold.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_svInputMinThreshold, _T( "LinearEdgeProcessingMinThreshold" ) );
 
-	m_svInputMaxThreshold.SetInputObjectType( SVLinearThresholdMaxObjectGuid, SVValueObjectType, SVDoubleValueObjectType );
+	m_svInputMaxThreshold.SetInputObjectType( SVLinearThresholdMaxObjectGuid, SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType );
 	m_svInputMaxThreshold.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_svInputMaxThreshold, _T( "LinearEdgeProcessingMaxThreshold" ) );
 
-	m_svInputLinearData.SetInputObjectType( SVLinearDataClassGuid, SVValueObjectType, SVDoubleValueObjectType );
+	m_svInputLinearData.SetInputObjectType( SVLinearDataClassGuid, SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType );
 	m_svInputLinearData.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_svInputLinearData, _T( "LinearEdgeProcessingInputLinearData" ) );
 
@@ -89,9 +89,9 @@ SVLinearEdgeProcessingClass::SVLinearEdgeProcessingClass( SVObjectClass* POwner,
 	m_svUpperMaxMinusOffsetValue.SetDefaultValue(0);
 	m_svUpperMinPlusOffsetValue.SetDefaultValue(0);
 
-	m_cfThresholds = SV_DEFAULT_SUB_FUNCTION_COLOR_1;
-	m_cfHistogram = SV_DEFAULT_SUB_FUNCTION_COLOR_1;
-	m_cfEdges = SV_DEFAULT_SUB_FUNCTION_COLOR_2;
+	m_cfThresholds = SvDef::DefaultSubFunctionColor1;
+	m_cfHistogram = SvDef::DefaultSubFunctionColor1;
+	m_cfEdges = SvDef::DefaultSubFunctionColor2;
 
 	m_svLinearEdges.SetLegacyVectorObjectCompatibility();
 	m_svLinearEdges.setSaveValueFlag(false);
@@ -492,7 +492,7 @@ HRESULT SVLinearEdgeProcessingClass::GetPointFromDistance( double p_dDistance, S
 	return l_hrOk;
 }
 
-HRESULT SVLinearEdgeProcessingClass::GetEdgeOverlayFromDistance( double p_dDistance, SVExtentLineStruct &p_rsvLine )
+HRESULT SVLinearEdgeProcessingClass::GetEdgeOverlayFromDistance( double p_dDistance, SVExtentLineStruct &rLine )
 {
 	RECT l_oRect;
 
@@ -500,7 +500,7 @@ HRESULT SVLinearEdgeProcessingClass::GetEdgeOverlayFromDistance( double p_dDista
 
 	long l_lBottom = 0;
 
-	HRESULT l_hrOk = p_rsvLine.Initialize();
+	HRESULT l_hrOk = rLine.Initialize();
 
 	SVAnalyzerClass* pAnalyzer = dynamic_cast<SVAnalyzerClass*>(GetAnalyzer());
 	if( nullptr == pAnalyzer ||
@@ -514,20 +514,20 @@ HRESULT SVLinearEdgeProcessingClass::GetEdgeOverlayFromDistance( double p_dDista
 	{
 		SVExtentPointStruct l_oGraphPoint;
 
-		p_rsvLine.m_bIsAngleValid = true;
-		p_rsvLine.m_dAngle = 90.0;
+		rLine.m_bIsAngleValid = true;
+		rLine.m_dAngle = 90.0;
 
 		l_oGraphPoint.m_dPositionX = p_dDistance;
 		l_oGraphPoint.m_dPositionY = l_oRect.bottom / 2 - 10;
 		
-		p_rsvLine.m_svPointArray.SetAtGrow( 0, l_oGraphPoint );
+		rLine.m_svPointArray.push_back( l_oGraphPoint );
 
 		l_oGraphPoint.m_dPositionX = p_dDistance;
 		l_oGraphPoint.m_dPositionY = l_oRect.bottom / 2 + 10;
 		
-		p_rsvLine.m_svPointArray.SetAtGrow( 1, l_oGraphPoint );
+		rLine.m_svPointArray.push_back( l_oGraphPoint );
 
-		p_rsvLine.m_dwColor = GetObjectColor();
+		rLine.m_dwColor = GetObjectColor();
 	}
 
 	return l_hrOk;
@@ -619,25 +619,25 @@ HRESULT SVLinearEdgeProcessingClass::GetThresholdBarsOverlay( SVExtentMultiLineS
 		l_oGraphPoint.m_dPositionX = 0;
 		l_oGraphPoint.m_dPositionY = l_oRect.bottom - lMaxThresholdValue;
 		
-		l_svUpperLine.m_svPointArray.SetAtGrow( 0, l_oGraphPoint );
+		l_svUpperLine.m_svPointArray.push_back( l_oGraphPoint );
 
 		l_oGraphPoint.m_dPositionX = l_oRect.right;
 
-		l_svUpperLine.m_svPointArray.SetAtGrow( 1, l_oGraphPoint );
+		l_svUpperLine.m_svPointArray.push_back( l_oGraphPoint );
 
 		// MinThresholdBar
 		// Min left...
 		l_oGraphPoint.m_dPositionX = 0;
 		l_oGraphPoint.m_dPositionY = l_oRect.bottom - lMinThresholdValue;
 		
-		l_svLowerLine.m_svPointArray.SetAtGrow( 0, l_oGraphPoint );
+		l_svLowerLine.m_svPointArray.push_back( l_oGraphPoint );
 
 		l_oGraphPoint.m_dPositionX = l_oRect.right;
 
-		l_svLowerLine.m_svPointArray.SetAtGrow( 1, l_oGraphPoint );
+		l_svLowerLine.m_svPointArray.push_back( l_oGraphPoint );
 
-		p_rsvMiltiLine.m_svLineArray.Add( l_svUpperLine );
-		p_rsvMiltiLine.m_svLineArray.Add( l_svLowerLine );
+		p_rsvMiltiLine.m_svLineArray.push_back( l_svUpperLine );
+		p_rsvMiltiLine.m_svLineArray.push_back( l_svLowerLine );
 	}
 
 	return l_hrOk;
@@ -678,7 +678,7 @@ HRESULT SVLinearEdgeProcessingClass::GetHistogramOverlay( SVExtentLineStruct &rL
 			l_oGraphPoint.m_dPositionX = static_cast<double>(l);
 			l_oGraphPoint.m_dPositionY = l_oRect.bottom - l_lPixel;
 
-			rLine.m_svPointArray.SetAtGrow( static_cast<int>(l), l_oGraphPoint );
+			rLine.m_svPointArray.push_back( l_oGraphPoint );
 		}
 	}
 
@@ -726,38 +726,38 @@ HRESULT SVLinearEdgeProcessingClass::GetEdgesOverlay( SVExtentMultiLineStruct &r
 
 				if( Edges[ l ] == 0 )
 				{
-					EdgeLine.m_dwColor = SV_DEFAULT_BLACK_COLOR;
+					EdgeLine.m_dwColor = SvDef::DefaultBlackColor;
 				}
 				else if( Edges[ l ] == m_dwColorNumber - 1 )
 				{
-					EdgeLine.m_dwColor = SV_DEFAULT_WHITE_COLOR;
+					EdgeLine.m_dwColor = SvDef::DefaultWhiteColor;
 				}
 				else
 				{
 					EdgeLine.m_dwColor = m_cfEdges;
 				}
 			}
-
+			EdgeLine.m_svPointArray.clear();
 			SVExtentPointStruct l_oGraphPoint;
 
 			l_oGraphPoint.m_dPositionX = l_dX;
 			l_oGraphPoint.m_dPositionY = l_oRect.bottom / 2 - 5;
 			
-			EdgeLine.m_svPointArray.SetAtGrow( 0, l_oGraphPoint );
+			EdgeLine.m_svPointArray.push_back( l_oGraphPoint );
 
 			l_oGraphPoint.m_dPositionX = l_dX;
 			l_oGraphPoint.m_dPositionY = l_oRect.bottom / 2 + 5;
 			
-			EdgeLine.m_svPointArray.SetAtGrow( 1, l_oGraphPoint );
+			EdgeLine.m_svPointArray.push_back( l_oGraphPoint );
 
-			rMultiLine.m_svLineArray.Add( EdgeLine );
+			rMultiLine.m_svLineArray.push_back( EdgeLine );
 		}
 	}
 
 	return l_hrOk;
 }
 
-HRESULT SVLinearEdgeProcessingClass::GetSelectedEdgeOverlay( SVExtentLineStruct &p_rsvLine )
+HRESULT SVLinearEdgeProcessingClass::GetSelectedEdgeOverlay( SVExtentLineStruct &rLine )
 {
 	RECT l_oRect;
 
@@ -766,7 +766,7 @@ HRESULT SVLinearEdgeProcessingClass::GetSelectedEdgeOverlay( SVExtentLineStruct 
 	long l_lBottom = 0;
 	double l_dDistance = 0.0;
 
-	HRESULT l_hrOk = p_rsvLine.Initialize();
+	HRESULT l_hrOk = rLine.Initialize();
 
 	SVAnalyzerClass* pAnalyzer = dynamic_cast<SVAnalyzerClass*>(GetAnalyzer());
 	if( nullptr == pAnalyzer ||
@@ -781,20 +781,20 @@ HRESULT SVLinearEdgeProcessingClass::GetSelectedEdgeOverlay( SVExtentLineStruct 
 	{
 		SVExtentPointStruct l_oGraphPoint;
 
-		p_rsvLine.m_bIsAngleValid = true;
-		p_rsvLine.m_dAngle = 90.0;
+		rLine.m_bIsAngleValid = true;
+		rLine.m_dAngle = 90.0;
 
 		l_oGraphPoint.m_dPositionX = l_dDistance;
 		l_oGraphPoint.m_dPositionY = l_oRect.bottom / 2 - 10;
 		
-		p_rsvLine.m_svPointArray.SetAtGrow( 0, l_oGraphPoint );
+		rLine.m_svPointArray.push_back( l_oGraphPoint );
 
 		l_oGraphPoint.m_dPositionX = l_dDistance;
 		l_oGraphPoint.m_dPositionY = l_oRect.bottom / 2 + 10;
 		
-		p_rsvLine.m_svPointArray.SetAtGrow( 1, l_oGraphPoint );
+		rLine.m_svPointArray.push_back( l_oGraphPoint );
 
-		p_rsvLine.m_dwColor = GetObjectColor();
+		rLine.m_dwColor = GetObjectColor();
 	}
 
 	return l_hrOk;

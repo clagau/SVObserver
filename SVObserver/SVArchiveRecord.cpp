@@ -15,7 +15,7 @@
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVArchiveImageThreadClass.h"
 #include "SVOCore/SVImageObjectClass.h"
-#include "SVLibrary/SVFileNameClass.h"
+#include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "TextDefinesSvO.h"
 #include "ObjectInterfaces/IValueObject.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -214,7 +214,7 @@ void SVArchiveRecord::ConnectInputObject()
 
 		InObjectInfo.m_pObject                    = m_pArchiveTool;
 		InObjectInfo.m_UniqueObjectID             = m_pArchiveTool->GetUniqueObjectID();
-		InObjectInfo.m_ObjectTypeInfo.ObjectType  = SVToolObjectType;
+		InObjectInfo.m_ObjectTypeInfo.ObjectType  = SvDef::SVToolObjectType;
 		
 		bool rc = SVObjectManagerClass::Instance().ConnectObjectInput( m_svObjectReference.Guid(), &InObjectInfo );
 
@@ -230,7 +230,7 @@ void SVArchiveRecord::DisconnectInputObject()
 		
 		InObjectInfo.m_pObject                   = m_pArchiveTool;
 		InObjectInfo.m_UniqueObjectID            = m_pArchiveTool->GetUniqueObjectID();
-		InObjectInfo.m_ObjectTypeInfo.ObjectType = SVToolObjectType;
+		InObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVToolObjectType;
 		
 		SVObjectManagerClass::Instance().DisconnectObjectInput(m_svObjectReference.Guid(), &InObjectInfo);
 	}

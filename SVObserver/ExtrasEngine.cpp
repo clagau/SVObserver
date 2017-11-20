@@ -17,10 +17,10 @@
 #include "SVLibrary/DirectoryUtilities.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "ExtrasEngine.h"
+#include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVStatusLibrary/GlobalPath.h"
-#include "CameraLibrary/SVDeviceParams.h" //Arvid: added to avoid VS2015 compile Error
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes

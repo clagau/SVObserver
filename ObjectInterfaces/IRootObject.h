@@ -11,8 +11,11 @@
 #pragma region Includes
 #include "ISelectorItemVector.h"
 #include "Definitions/StringTypeDef.h"
-#include "SVObjectLibrary/SVOutputInfoListClass.h"
 #pragma endregion Includes
+
+#pragma region Declarations
+class SVOutputInfoListClass;
+#pragma endregion Declarations
 
 namespace SvOi
 {

@@ -156,7 +156,7 @@ private:
 	//! \param Object <in> the object type of the root child
 	//! \return true on success
 	//************************************
-	bool createRootChild( LPCTSTR ChildName, SVObjectSubTypeEnum ObjectSubType );
+	bool createRootChild( LPCTSTR ChildName, SvDef::SVObjectSubTypeEnum ObjectSubType );
 #pragma endregion Private Methods
 
 private:

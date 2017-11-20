@@ -155,8 +155,8 @@ bool TableExcludeAnalyzer::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCo
 void TableExcludeAnalyzer::Initialize()
 {
 	// Set up your type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = TableAnalyzerType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType    = TableAnalyzerExcludeType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::TableAnalyzerType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvDef::TableAnalyzerExcludeType;
 
 	BuildInputObjectList();
 	BuildEmbeddedObjectList();
@@ -192,7 +192,7 @@ void TableExcludeAnalyzer::BuildEmbeddedObjectList()
 void TableExcludeAnalyzer::BuildInputObjectList()
 {
 	// Source Table.
-	m_excludeColumnObjectInfo.SetInputObjectType(SVValueObjectType, DoubleSortValueObjectType);
+	m_excludeColumnObjectInfo.SetInputObjectType(SvDef::SVValueObjectType, SvDef::DoubleSortValueObjectType);
 	m_excludeColumnObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_excludeColumnObjectInfo, SvO::cInputTag_ExcludeColumn );
 

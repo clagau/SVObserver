@@ -14,7 +14,7 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "ObjectInterfaces\IObjectClass.h"
 #include "Definitions/TextDefineSVDef.h"
-#include "SVObjectLibrary\GlobalConst.h"
+#include "Definitions/GlobalConst.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVStatusLibrary\MessageManager.h"
@@ -215,7 +215,7 @@ bool LinkedValue::UpdateConnection(SvStl::MessageContainerVector *pErrorMessages
 			//If the tool set name is at the start then add the inspection name at the beginning
 			if (0 == ObjectName.find(ToolSetName))
 			{
-				SvOi::IObjectClass* pInspection = GetAncestorInterface(SVInspectionObjectType);
+				SvOi::IObjectClass* pInspection = GetAncestorInterface(SvDef::SVInspectionObjectType);
 				if (nullptr != pInspection)
 				{
 					ObjectName = pInspection->GetName();
@@ -329,7 +329,7 @@ SVObjectReference LinkedValue::ConvertStringInObject( const std::string& rValue 
 	//If the tool set name is at the start then add the inspection name at the beginning
 	if( 0 == rValue.find( ToolSetName.c_str() ) )
 	{
-		const SvOi::IObjectClass* pInspection = GetAncestorInterface( SVInspectionObjectType );
+		const SvOi::IObjectClass* pInspection = GetAncestorInterface( SvDef::SVInspectionObjectType );
 		if( nullptr != pInspection )
 		{
 			ObjectName = pInspection->GetName();
@@ -365,8 +365,8 @@ bool LinkedValue::CheckLinkedObject( const SVObjectClass* const pLinkedObject, S
 	{
 		//! This is important when copying tools that the value of another inspection is not used due to the GUID being valid
 		//! That is why check that the linked value of an object is in the same inspection
-		const IObjectClass* pLinkedObjectInspection =  pLinkedObject->GetAncestorInterface( SVInspectionObjectType );
-		bool isSameInpection = GetAncestorInterface( SVInspectionObjectType ) == pLinkedObjectInspection;
+		const IObjectClass* pLinkedObjectInspection =  pLinkedObject->GetAncestorInterface( SvDef::SVInspectionObjectType );
+		bool isSameInpection = GetAncestorInterface( SvDef::SVInspectionObjectType ) == pLinkedObjectInspection;
 		//! If linked object has no inspection (e.g. Global Constants) then we don't need to check that the inspections are the same
 		if( nullptr != pLinkedObjectInspection && !isSameInpection )
 		{

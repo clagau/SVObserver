@@ -5,12 +5,16 @@
 /// Interface class for task object list class
 //******************************************************************************
 
+
 #pragma once
 #pragma region Includes
 #include "ITaskObject.h"
 #pragma endregion Includes
 
+#pragma region Declarations
+//! Declaration is in #include SVObjectLibrary/SVOutObjectInfoStruct.h
 struct SVOutObjectInfoStruct;
+#pragma endregion Declarations
 
 namespace SvOi
 {

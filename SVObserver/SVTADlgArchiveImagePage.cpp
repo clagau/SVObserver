@@ -96,7 +96,7 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 	{
 		//check to see if any items are selected in the image tree
 		
-		int iSize = m_List.GetSize();
+		int iSize = static_cast<int> (m_List.size());
 		if( 0 < iSize )
 		{
 			//if memory usage < 0 do not all them to exit
@@ -259,12 +259,11 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 	CDWordArray dwaIndex;
 	int iIndex=0;
 	
-	SVEnumerateVector vec;
-	m_pTool->m_evoArchiveMethod.GetEnumTypes(vec);
-	for ( size_t i=0; i < vec.size(); i++ )
+	for (auto const& rEntry : m_pTool->m_evoArchiveMethod.GetEnumVector())
 	{
-		m_Mode.SetItemData( iIndex = m_Mode.AddString(vec[i].first.c_str()), vec[i].second );
-		dwaIndex.SetAtGrow( vec[i].second, iIndex );
+		iIndex = m_Mode.AddString(rEntry.first.c_str());
+		m_Mode.SetItemData( iIndex, static_cast<DWORD_PTR> (rEntry.second) );
+		dwaIndex.SetAtGrow( rEntry.second, iIndex );
 	}
 
 	long lMode;
@@ -394,20 +393,20 @@ void SVTADlgArchiveImagePage::OnRemoveItem()
 
 void SVTADlgArchiveImagePage::BuildImageList()
 {
-	SVObjectTypeInfoStruct  info;
+	SvDef::SVObjectTypeInfoStruct  info;
 
 	SVToolSetClass* pToolSet = dynamic_cast<SVInspectionProcess*>(m_pTool->GetInspection())->GetToolSet();
 
 	BOOL lDone = FALSE;
 
-	info.ObjectType = SVImageObjectType;
-	info.SubType = SVNotSetSubObjectType;
+	info.ObjectType = SvDef::SVImageObjectType;
+	info.SubType = SvDef::SVNotSetSubObjectType;
 
 	SVGetObjectDequeByTypeVisitor l_Visitor( info );
 
 	SVObjectManagerClass::Instance().VisitElements( l_Visitor, pToolSet->GetUniqueObjectID() );
 
-	SVImageListClass ImageList;
+	SVImageClassPtrVector ImageList;
 	SVGetObjectDequeByTypeVisitor::SVObjectPtrDeque::const_iterator l_Iter;
 	for( l_Iter = l_Visitor.GetObjects().begin(); l_Iter != l_Visitor.GetObjects().end(); ++l_Iter )
 	{
@@ -415,7 +414,7 @@ void SVTADlgArchiveImagePage::BuildImageList()
 
 		if( nullptr != pImage )
 		{
-			ImageList.Add(pImage);
+			ImageList.push_back(pImage);
 		}
 	}
 

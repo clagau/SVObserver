@@ -71,21 +71,21 @@ BOOL SVToolAdjustmentDialogTranslationPageClass::OnInitDialog()
 		SetTaskObject( m_pTool );
 
 		// Get Evaluate Object...
-		SVObjectTypeInfoStruct evaluateObjectInfo;
-		evaluateObjectInfo.ObjectType = SVMathContainerObjectType;
+		SvDef::SVObjectTypeInfoStruct evaluateObjectInfo;
+		evaluateObjectInfo.ObjectType = SvDef::SVMathContainerObjectType;
 		
 		// Get Evaluate Object for the X coordinate...
-		evaluateObjectInfo.SubType = SVEvaluateTranslationXObjectType;		
+		evaluateObjectInfo.SubType = SvDef::SVEvaluateTranslationXObjectType;		
 		m_pEvaluateTranslationX = dynamic_cast<SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		
 		// Get Evaluate Object for the Y coordinate...
-		evaluateObjectInfo.SubType = SVEvaluateTranslationYObjectType;
+		evaluateObjectInfo.SubType = SvDef::SVEvaluateTranslationYObjectType;
 		m_pEvaluateTranslationY = dynamic_cast<SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
 
 		// Interpolation Mode
-		SVObjectTypeInfoStruct objectInfo;
-		objectInfo.ObjectType = SVValueObjectType;
-		objectInfo.SubType = SVEnumValueObjectType;
+		SvDef::SVObjectTypeInfoStruct objectInfo;
+		objectInfo.ObjectType = SvDef::SVValueObjectType;
+		objectInfo.SubType = SvDef::SVEnumValueObjectType;
 		objectInfo.EmbeddedID = SVOutputInterpolationModeObjectGuid;
 		m_pInterpolationMode = dynamic_cast<SVEnumerateValueObjectClass*>(m_pTool->getFirstObject(objectInfo));
 		if( m_pInterpolationMode )
@@ -166,7 +166,7 @@ void SVToolAdjustmentDialogTranslationPageClass::OnXFormulaButton()
 
 		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
 		const GUID& rObjectID = m_pParentDialog->GetToolID();
-		SVObjectTypeInfoStruct info(SVMathContainerObjectType, SVEvaluateTranslationXObjectType);
+		SvDef::SVObjectTypeInfoStruct info(SvDef::SVMathContainerObjectType, SvDef::SVEvaluateTranslationXObjectType);
 		SvOg::SVFormulaEditorSheetClass dlg(rInspectionID, rObjectID, info, Caption.c_str());
 		dlg.DoModal();
 		
@@ -183,7 +183,7 @@ void SVToolAdjustmentDialogTranslationPageClass::OnYFormulaButton()
 
 		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
 		const GUID& rObjectID = m_pParentDialog->GetToolID();
-		SVObjectTypeInfoStruct info(SVMathContainerObjectType, SVEvaluateTranslationYObjectType);
+		SvDef::SVObjectTypeInfoStruct info(SvDef::SVMathContainerObjectType, SvDef::SVEvaluateTranslationYObjectType);
 		SvOg::SVFormulaEditorSheetClass dlg(rInspectionID, rObjectID, info, Caption.c_str());
 		dlg.DoModal();
 		

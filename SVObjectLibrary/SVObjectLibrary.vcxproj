@@ -121,6 +121,7 @@
     <ClCompile Include="SVGetObjectDequeByTypeVisitor.cpp" />
     <ClCompile Include="SVInObjectInfoStruct.cpp" />
     <ClCompile Include="SVInputInfoListClass.cpp" />
+    <ClCompile Include="SVIOEntryHostStruct.cpp" />
     <ClCompile Include="SVObjectAttributeClass.cpp" />
     <ClCompile Include="SVObjectBuilder.cpp" />
     <ClCompile Include="SVObjectClass.cpp" />
@@ -137,7 +138,6 @@
     <ClInclude Include="DependencyManager.h" />
     <ClInclude Include="DottedNameLookup.h" />
     <ClInclude Include="JoinType.h" />
-    <ClInclude Include="GlobalConst.h" />
     <ClInclude Include="ObjectNameLookup.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="SVClassRegisterClass.h" />
@@ -147,12 +147,12 @@
     <ClInclude Include="SVGetObjectListVisitor.h" />
     <ClInclude Include="SVInObjectInfoStruct.h" />
     <ClInclude Include="SVInputInfoListClass.h" />
+    <ClInclude Include="SVIOEntryHostStruct.h" />
     <ClInclude Include="SVObjectAsynchronousCommandTemplate.h" />
     <ClInclude Include="SVObjectAttributeClass.h" />
     <ClInclude Include="SVObjectBuilder.h" />
     <ClInclude Include="SVObjectClass.h" />
     <ClInclude Include="SVObjectCommandWrapperTemplate.h" />
-    <ClInclude Include="SVObjectDPointArrayClass.h" />
     <ClInclude Include="SVObjectInfoArrayClass.h" />
     <ClInclude Include="SVObjectInfoStruct.h" />
     <ClInclude Include="SVObjectLevelCreateStruct.h" />

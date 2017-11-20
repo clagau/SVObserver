@@ -15,7 +15,7 @@
 #include "SVOCore/SVTaskObject.h"
 #include "SVMaskShape.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
-#include "SVLibrary/SVTaskObjectInterfaceInputRequestStruct.h"
+#include "SVOCore/SVTaskObjectInterfaceInputRequestStruct.h"
 #pragma endregion Includes
 
 struct SVMaskShapeCancelData

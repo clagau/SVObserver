@@ -25,7 +25,7 @@ public:
 	virtual bool empty() const = 0;
 	virtual void clear() = 0;
 
-	virtual SVPOINT GetPositionPoint() const = 0;
+	virtual SVPoint GetPositionPoint() const = 0;
 	virtual SVBitmapInfo GetBitmapInfo() const = 0;
 	virtual unsigned char* GetBufferAddress() const = 0;
 

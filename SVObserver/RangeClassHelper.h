@@ -15,7 +15,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVLibrary/SVTaskObjectValueInterface.h"
+#include "SVOCore/SVTaskObjectValueInterface.h"
 #include "SVOCore/SVTaskObjectList.h"
 #include "Definitions/RangeEnum.h"
 #include "SVStatusLibrary/MessageTextEnum.h"
@@ -131,7 +131,7 @@ public:
 
 
 	//************************************
-	// Description:  Checks if the owner of ref is a SVRangeObjectType
+	// Description:  Checks if the owner of ref is a SvDef::SVRangeObjectType
 	// Parameter:  ref:  const reference to the object to check
 	// Returns:  bool:  true if the object is owned by a range object else false
 	//************************************

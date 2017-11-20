@@ -36,7 +36,7 @@ SVThickeningFilterClass::~SVThickeningFilterClass()
 
 void SVThickeningFilterClass::init()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVThickeningFilterObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVThickeningFilterObjectType;
 
 	RegisterEmbeddedObject( &m_lvoItterations, SVThickeningFilterItterationsGuid, IDS_OBJECTNAME_THICKENINGFILTER_ITTERATIONS, false, SvOi::SVResetItemNone );
 	RegisterEmbeddedObject( &m_bvoGrayOn, SVThickeningFilterGrayOnGuid, IDS_OBJECTNAME_THICKENINGFILTER_GRAYON, false, SvOi::SVResetItemNone );

@@ -37,10 +37,10 @@ namespace SvMc
 
 		BOOL SetColor(COLORREF rgb, BOOL bRedraw = TRUE);
 
-		BOOL SetPoints(const SvCl::SVObjectByteArrayClass& RByteVec);
-		BOOL SetPoints(const SvCl::SVObjectLongArrayClass& RLongVec);
-		BOOL SetPoints(const SvCl::SVObjectDoubleArrayClass& RDoubleVec);
-		BOOL SetPoints(const SvCl::SVObjectPointArrayClass& RPointVec);
+		BOOL SetPoints(const SvCl::SVObjectByteArrayClass& rByteVec);
+		BOOL SetPoints(const SvCl::SVObjectLongArrayClass& rLongVec);
+		BOOL SetPoints(const SvCl::SVObjectDoubleArrayClass& rDoubleVec);
+		BOOL SetPoints(const SvCl::SVObjectPointArrayClass& rPointVec);
 
 		BOOL SetMousePointProcFunc(SVProcMousePointFunc PFunc, LPVOID PUserData);
 		void SetNormalizeMode(SVNormalizeModeEnum NormalizeMode);
@@ -65,7 +65,7 @@ namespace SvMc
 
 	protected:
 
-		SvCl::SVObjectPointArrayClass pointVec;
+		SvCl::SVObjectPointArrayClass m_PointVec;
 		SVProcMousePointFunc pProcFunc;
 		LPVOID pUserData;
 

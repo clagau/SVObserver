@@ -12,7 +12,7 @@
 
 #pragma region Includes
 #include "SVLibrary/SVDataItemManagerTemplate.h"
-#include "SVLibrary/SVIOEntryHostStruct.h"
+#include "SVObjectLibrary/SVIOEntryHostStruct.h"
 #pragma endregion Includes
 
 class SVDigitalInputObject;

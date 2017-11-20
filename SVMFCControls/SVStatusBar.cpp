@@ -11,11 +11,12 @@
 
 #include "stdafx.h"
 #include "SVStatusBar.h"
+#include "Definitions/Color.h"
 
 SVStatusBar::SVStatusBar()
 {
-	m_lModeBKColor = RGB( 192, 192, 192 );
-	m_lModeForeColor = RGB( 0, 0, 0 );
+	m_lModeBKColor =SvDef::LightGray;
+	m_lModeForeColor = SvDef::Black;
 }
 
 SVStatusBar::~SVStatusBar()
@@ -81,14 +82,14 @@ void SVStatusBar::SetFbwfInfo(UINT PaneIndex,bool FbwfAvailable, bool FbwfActive
 		if(FbwfChanging)
 		{
 			m_lFbwfBKColor = FbwfActive ? RGB( 255, 200, 255) : RGB( 100, 100, 255);
-			m_lFbwfForeColor = RGB( 0, 0, 0 );
+			m_lFbwfForeColor = SvDef::Black;
 
 			m_strFbwfText = FbwfActive ? "Disk protection will be inactive after reboot" : "Disk protection will be active after reboot";
 		}
 		else
 		{
-			m_lFbwfBKColor = FbwfActive ? RGB( 100, 255, 100) : RGB( 128, 128, 128); //Arvid temporarily displayed in grey as per SVO-1084. Color was: RGB( 255, 100, 100);
-			m_lFbwfForeColor = RGB( 0, 0, 0 );
+			m_lFbwfBKColor = FbwfActive ? RGB( 100, 255, 100) : SvDef::DarkGray; //Arvid temporarily displayed in grey as per SVO-1084. Color was: RGB( 255, 100, 100);
+			m_lFbwfForeColor = SvDef::Black;
 
 			m_strFbwfText = FbwfActive ? "Disk protection active" : "Disk protection inactive";
 		}
@@ -96,7 +97,7 @@ void SVStatusBar::SetFbwfInfo(UINT PaneIndex,bool FbwfAvailable, bool FbwfActive
 	else
 	{
 		m_lFbwfBKColor = RGB( 192, 128, 128 );
-		m_lFbwfForeColor = RGB( 255, 255, 255);
+		m_lFbwfForeColor = SvDef::White;
 		m_strFbwfText = "Disk protection not available!";
 	}
 

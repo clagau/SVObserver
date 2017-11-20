@@ -12,7 +12,7 @@
 #pragma once
 
 
-#include "SVHBitmapUtilitiesLibrary/SVImageFormatEnum.h"
+#include "Definitions/SVImageFormatEnum.h"
 #include "SVFileAcquisitionDevice/SVFileAcquisitionLoadingModeEnum.h"
 
 struct SVFileCameraStruct
@@ -21,10 +21,10 @@ struct SVFileCameraStruct
 	std::string directory;
 	std::string fileName;
 	SIZE imageSize;
-	SVImageFormatEnum imageFormat; // bit depth basically
+	SvDef::SVImageFormatEnum imageFormat; // bit depth basically
 
 	SVFileCameraStruct()
-	: mode(ContinuousMode), imageFormat(SVImageFormatMono8)
+	: mode(ContinuousMode), imageFormat(SvDef::SVImageFormatMono8)
 	{
 		imageSize.cx = 640;
 		imageSize.cy = 480;

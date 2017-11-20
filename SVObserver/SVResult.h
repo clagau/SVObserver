@@ -12,7 +12,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVContainerLibrary/SVVector.h"
 #include "SVLibrary/ISVCancel.h"
 #include "SVOCore/SVTaskObjectList.h"
 #pragma endregion Includes

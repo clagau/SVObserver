@@ -52,8 +52,8 @@ void ResizeTool::LocalInitialize()
 
 	// Set up your type... in this case this will reference that this tool is a 
 	// Resize Tool.
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SVResizeToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvDef::SVResizeToolObjectType;
 }
 
 HRESULT	ResizeTool::InitializeInterpolationModeMember()
@@ -105,7 +105,7 @@ HRESULT	ResizeTool::InitializePerformanceMember()
 void ResizeTool::BuildInputObjectList()
 {
 	// Source Image
-	m_InputImageObjectInfo.SetInputObjectType( SVImageObjectType );
+	m_InputImageObjectInfo.SetInputObjectType( SvDef::SVImageObjectType );
 	m_InputImageObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_InputImageObjectInfo, SvO::ResizeImage );
 

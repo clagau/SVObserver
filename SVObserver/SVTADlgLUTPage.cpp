@@ -206,14 +206,14 @@ BOOL SVToolAdjustmentDialogLUTPageClass::OnInitDialog()
 		m_lowerSlider.SetRange( 0, 255 );
 
 		// Get LUT Operator...
-		SVObjectTypeInfoStruct lutObjectInfo;
-		lutObjectInfo.ObjectType = SVUnaryImageOperatorObjectType;
-		lutObjectInfo.SubType	 = SVLUTOperatorObjectType;
+		SvDef::SVObjectTypeInfoStruct lutObjectInfo;
+		lutObjectInfo.ObjectType = SvDef::SVUnaryImageOperatorObjectType;
+		lutObjectInfo.SubType	 = SvDef::SVLUTOperatorObjectType;
 		m_pLUTOperator = dynamic_cast<SVLUTOperatorClass*>(m_pTool->getFirstObject(lutObjectInfo));
 		if( m_pLUTOperator )
 		{
 			// Get Use Lut Flag...
-			SVObjectTypeInfoStruct useLUTObjectInfo;
+			SvDef::SVObjectTypeInfoStruct useLUTObjectInfo;
 			useLUTObjectInfo.EmbeddedID = SVUseLUTObjectGuid;
 			m_pUseLUT = dynamic_cast<SVBoolValueObjectClass*>(m_pLUTOperator->getFirstObject(useLUTObjectInfo));
 			if( m_pUseLUT )
@@ -222,7 +222,7 @@ BOOL SVToolAdjustmentDialogLUTPageClass::OnInitDialog()
 			}
 
 			// Get Continuous Recalc Lut Flag...
-			SVObjectTypeInfoStruct continuousRecalcLUTObjectInfo;
+			SvDef::SVObjectTypeInfoStruct continuousRecalcLUTObjectInfo;
 			continuousRecalcLUTObjectInfo.EmbeddedID = SVContinuousRecalcLUTObjectGuid;
 			m_pContinuousRecalcLUT = dynamic_cast<SVBoolValueObjectClass*>(m_pLUTOperator->getFirstObject(continuousRecalcLUTObjectInfo));
 			if( m_pContinuousRecalcLUT )
@@ -231,12 +231,12 @@ BOOL SVToolAdjustmentDialogLUTPageClass::OnInitDialog()
 			}
 
 			// Get Lut Equation...
-			SVObjectTypeInfoStruct lutEquationObjectInfo;
-			lutEquationObjectInfo.ObjectType = SVEquationObjectType;
-			lutEquationObjectInfo.SubType	 = SVLUTEquationObjectType;
+			SvDef::SVObjectTypeInfoStruct lutEquationObjectInfo;
+			lutEquationObjectInfo.ObjectType = SvDef::SVEquationObjectType;
+			lutEquationObjectInfo.SubType	 = SvDef::SVLUTEquationObjectType;
 			m_pLUTEquation = dynamic_cast<SVLUTEquationClass*>(m_pLUTOperator->getFirstObject(lutEquationObjectInfo));
 			// Get Lut Mode...
-			SVObjectTypeInfoStruct lutModeObjectInfo;
+			SvDef::SVObjectTypeInfoStruct lutModeObjectInfo;
 			lutModeObjectInfo.EmbeddedID = SVLUTModeObjectGuid;
 			m_pLUTMode = dynamic_cast<SVEnumerateValueObjectClass*>(m_pLUTOperator->getFirstObject(lutModeObjectInfo));
 			if( m_pLUTMode )
@@ -248,25 +248,25 @@ BOOL SVToolAdjustmentDialogLUTPageClass::OnInitDialog()
 			}
 
 			// Get Lut Vector...
-			SVObjectTypeInfoStruct lutVectorObjectInfo;
+			SvDef::SVObjectTypeInfoStruct lutVectorObjectInfo;
 			lutVectorObjectInfo.EmbeddedID = SVOutputLUTVectorObjectGuid;
 			m_pLUTVector = dynamic_cast <SVByteValueObjectClass*>(m_pLUTOperator->getFirstObject(lutVectorObjectInfo));
 			ASSERT( m_pLUTVector );
 
 			// Get LUT Upper Clip...
-			SVObjectTypeInfoStruct lutUpperClipObjectInfo;
+			SvDef::SVObjectTypeInfoStruct lutUpperClipObjectInfo;
 			lutUpperClipObjectInfo.EmbeddedID = SVLUTUpperClipObjectGuid;
 			m_pLUTUpperClip = dynamic_cast <SVLongValueObjectClass*>(m_pLUTOperator->getFirstObject(lutUpperClipObjectInfo));
 			ASSERT( m_pLUTUpperClip );
 
 			// Get LUT Lower Clip...
-			SVObjectTypeInfoStruct lutLowerClipObjectInfo;
+			SvDef::SVObjectTypeInfoStruct lutLowerClipObjectInfo;
 			lutLowerClipObjectInfo.EmbeddedID = SVLUTLowerClipObjectGuid;
 			m_pLUTLowerClip = dynamic_cast <SVLongValueObjectClass*>(m_pLUTOperator->getFirstObject(lutLowerClipObjectInfo));
 			ASSERT( m_pLUTLowerClip );
 
 			// Get Formula Clip Flag...
-			SVObjectTypeInfoStruct formulaClipFlagObjectInfo;
+			SvDef::SVObjectTypeInfoStruct formulaClipFlagObjectInfo;
 			formulaClipFlagObjectInfo.EmbeddedID = SVLUTEquationClipFlagObjectGuid;
 			m_pIsLUTFormulaClipped = dynamic_cast<SVBoolValueObjectClass*>(m_pLUTOperator->getFirstObject(formulaClipFlagObjectInfo));
 			if( nullptr != m_pIsLUTFormulaClipped )
@@ -330,7 +330,7 @@ void SVToolAdjustmentDialogLUTPageClass::OnLUTFormulaButton()
 		Caption += _T( " " )+ Text;
 
 		const GUID& rObjectID = m_pLUTOperator->GetUniqueObjectID();
-		SVObjectTypeInfoStruct info(SVEquationObjectType, SVLUTEquationObjectType);
+		SvDef::SVObjectTypeInfoStruct info(SvDef::SVEquationObjectType, SvDef::SVLUTEquationObjectType);
 		SvOg::SVFormulaEditorSheetClass dlg( m_InspectionID, rObjectID, info, Caption.c_str() );
 
 		dlg.DoModal();
@@ -573,16 +573,8 @@ void SVToolAdjustmentDialogLUTPageClass::refreshLUTGraph()
 	if( nullptr != m_pLUTVector )
 	{
 		std::vector<BYTE> byteVector;
-		SvCl::SVObjectByteArrayClass byteArray;
-		m_pLUTVector->GetArrayValues( byteVector );
-		int nSize = static_cast<int>(byteVector.size());
-		for( int j = 0; j < nSize; j++ )
-		{
-			BYTE byte;
-			byte = byteVector[ j ];
-			byteArray.SetAtGrow( j, byte );
-		}// end for
-		m_LUTGraph.SetPoints( byteArray );
+		m_pLUTVector->GetArrayValues(byteVector);
+		m_LUTGraph.SetPoints( byteVector );
 	}// end if
 }
 

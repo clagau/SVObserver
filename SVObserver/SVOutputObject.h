@@ -12,6 +12,7 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <vector>
 #include "SVObjectLibrary/SVObjectClass.h"
 #pragma endregion Includes
 
@@ -32,6 +33,5 @@ public:
 	virtual bool GetCombinedValue() const = 0;
 };
 
-typedef SVVector< SVOutputObject* > SVOutputObjectPtrVector;
 typedef std::map< SVGUID, SVOutputObject* > SVGuidSVOutputObjectPtrMap;
 

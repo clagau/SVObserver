@@ -16,7 +16,7 @@
 #include "StdAfx.h"
 //Moved to precompiled header: #include <afxctl.h>
 #include "PictureDisplay.h"
-#include "SVColor.h"
+#include "Definitions/Color.h"
 //for image copy
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"
 #include "DisplayHelper.h"
@@ -110,7 +110,7 @@ namespace SvOg
 	{
 		CComPtr<IPictureDisp> pic(pImage);
 		//color is ignored when dynamic adjustment of size is active
-		COLORREF color = SVColor::WhiteSmoke;
+		COLORREF color = SvDef::WhiteSmoke;
 		SetPicture(tabNumber, pic, color);
 	}
 

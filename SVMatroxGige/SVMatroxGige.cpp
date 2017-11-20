@@ -613,13 +613,13 @@ HRESULT SVMatroxGige::CameraGetParameterList( unsigned long p_Handle, VARIANT *p
 		{
 			SAFEARRAYBOUND l_psabData[1];
 			long l_plIndex[1];
-			l_psabData[0].cElements = SVGigeParameterSize;
+			l_psabData[0].cElements = SvDef::SVGigeParameterSize;
 			l_psabData[0].lLbound = 0;
 
 			p_pvarValue->vt = VT_ARRAY | VT_I4;
 			p_pvarValue->parray = ::SafeArrayCreate( VT_I4, 1, l_psabData );
 
-			for( long i = 0; i < SVGigeParameterSize; i++ )
+			for( long i = 0; i <  SvDef::SVGigeParameterSize; i++ )
 			{
 				//Parameters
 				l_plIndex[0] = i;
@@ -683,35 +683,35 @@ HRESULT SVMatroxGige::CameraSetParameter( unsigned long p_Handle, int p_iParamet
 
 			switch (p_iParameterID)
 			{
-				case SVGigeParameterFeatureOverrides:
+				case  SvDef::SVGigeParameterFeatureOverrides:
 				{
 					_bstr_t xmlData = *p_pvarValue;
 					hr = l_rCamera.BuildGigeFeaturesMap(xmlData);
 				}
 				break;
 
-				case SVGigeBeginTrackParameters:
+				case  SvDef::SVGigeBeginTrackParameters:
 				{
 					TrackCameraParams(l_rCamera);
 					hr = S_OK;
 				}
 				break;
 
-				case SVGigeEndTrackParameters:
+				case  SvDef::SVGigeEndTrackParameters:
 				{
 					LockMainCameraParamList(l_rCamera);
 					hr = S_OK;
 				}
 				break;
 
-				case SVGigeParameterLineInput:
+				case  SvDef::SVGigeParameterLineInput:
 				{
 					l_rCamera.SetLineInputMoniker(SvUl::createStdString(p_pvarValue->bstrVal));
 				}
 				break;
 
-				case SVGigeParameterInputEvent: // Internal use only, not settable via normal logic
-				case SVGigeParameterInputEventName: // Internal use only, not settable via normal logic
+				case  SvDef::SVGigeParameterInputEvent: // Internal use only, not settable via normal logic
+				case  SvDef::SVGigeParameterInputEventName: // Internal use only, not settable via normal logic
 				{
 				}
 				break;
@@ -740,15 +740,15 @@ HRESULT SVMatroxGige::CameraGetFormat( unsigned long p_Handle, int &p_riFormat )
 
 		switch( l_rCamera.m_params.Format )
 		{
-			case SVImageFormatMono16:
-			case SVImageFormatRGB888:
-			case SVImageFormatRGB8888:
-			case SVImageFormatRGB161616:
-			case SVImageFormatY411:
-			case SVImageFormatY422:
-			case SVImageFormatY444:
+			case SvDef::SVImageFormatMono16:
+			case SvDef::SVImageFormatRGB888:
+			case SvDef::SVImageFormatRGB8888:
+			case SvDef::SVImageFormatRGB161616:
+			case SvDef::SVImageFormatY411:
+			case SvDef::SVImageFormatY422:
+			case SvDef::SVImageFormatY444:
 			{
-				p_riFormat = SVImageFormatRGB8888;
+				p_riFormat = SvDef::SVImageFormatRGB8888;
 				break;
 			}
 			default:
@@ -922,11 +922,11 @@ HRESULT SVMatroxGige::CameraStop( unsigned long p_Handle )
 			// reset to Hardware Trigger
 			l_rCamera.m_params.TriggerType = SVMatroxGigeTrigger::HardwareTrigger;
 
-			if( S_OK == SVMatroxGigeDeviceParameterManager::IsParameterSupported(l_rCamera, SVGigeParameterStrobeEnable) )
+			if( S_OK == SVMatroxGigeDeviceParameterManager::IsParameterSupported(l_rCamera, SvDef::SVGigeParameterStrobeEnable) )
 			{
 				_variant_t value("Disable");
 
-				hr = SVMatroxGigeDeviceParameterManager::SetParameter(l_rCamera, SVGigeParameterTriggerEnable, 0, &value);
+				hr = SVMatroxGigeDeviceParameterManager::SetParameter(l_rCamera, SvDef::SVGigeParameterTriggerEnable, 0, &value);
 			}
 		}
 	}
@@ -1156,11 +1156,11 @@ HRESULT SVMatroxGige::ReadCameraFormat(SVMatroxGigeDigitizer& p_rCamera)
 		switch (format.bitDepth)
 		{
 			case 8:
-				p_rCamera.m_params.Format = SVImageFormatMono8;
+				p_rCamera.m_params.Format = SvDef::SVImageFormatMono8;
 				break;
 
 			case 32:
-				p_rCamera.m_params.Format = SVImageFormatRGB8888;
+				p_rCamera.m_params.Format = SvDef::SVImageFormatRGB8888;
 				break;
 		}
 		hr = S_OK;
@@ -1344,7 +1344,7 @@ HRESULT SVMatroxGige::EnableGigeEvents(const SVMatroxGigeDigitizer& p_rCamera)
 
 	if (!risingName.empty() && !fallingName.empty())
 	{
-		const SVGigeDeviceParameterStruct& param = p_rCamera.GetFeature(SVGigeParameterInputEvent);
+		const SVGigeDeviceParameterStruct& param = p_rCamera.GetFeature(SvDef::SVGigeParameterInputEvent);
 		std::string featureValue;
 		param.accessor.feature.GetGigeFeatureString("Enable", featureValue);
 
@@ -1369,7 +1369,7 @@ HRESULT SVMatroxGige::DisableGigeEvents(const SVMatroxGigeDigitizer& p_rCamera)
 	const std::string& fallingName = p_rCamera.GetLineInputFallingEventName();
 	if (!risingName.empty() && !fallingName.empty())
 	{
-		const SVGigeDeviceParameterStruct& param = p_rCamera.GetFeature(SVGigeParameterInputEvent);
+		const SVGigeDeviceParameterStruct& param = p_rCamera.GetFeature(SvDef::SVGigeParameterInputEvent);
 		std::string featureValue;
 		param.accessor.feature.GetGigeFeatureString("Disable", featureValue);
 		l_Code = SVMatroxDigitizerInterface::SetGigeEvent(*(p_rCamera.m_Digitizer.get()), risingName.c_str(), featureValue.c_str());
@@ -1406,18 +1406,18 @@ HRESULT SVMatroxGige::EnableTriggering(const SVMatroxGigeDigitizer& p_rCamera)
 	if (p_rCamera.m_params.TriggerType != SVMatroxGigeTrigger::SoftwareTrigger)
 	{
 		_variant_t value("External Trigger");
-		hr = SVMatroxGigeDeviceParameterManager::SetParameter(p_rCamera, SVGigeParameterTriggerSource, 0, &value);
+		hr = SVMatroxGigeDeviceParameterManager::SetParameter(p_rCamera, SvDef::SVGigeParameterTriggerSource, 0, &value);
 	}
 	else
 	{
 		_variant_t value("Software Trigger");
-		hr = SVMatroxGigeDeviceParameterManager::SetParameter(p_rCamera, SVGigeParameterTriggerSource, 0, &value);
+		hr = SVMatroxGigeDeviceParameterManager::SetParameter(p_rCamera, SvDef::SVGigeParameterTriggerSource, 0, &value);
 	}
 
 	if (S_OK == hr)
 	{
 		_variant_t value("Enable");
-		hr = SVMatroxGigeDeviceParameterManager::SetParameter(p_rCamera, SVGigeParameterTriggerEnable, 0, &value);
+		hr = SVMatroxGigeDeviceParameterManager::SetParameter(p_rCamera, SvDef::SVGigeParameterTriggerEnable, 0, &value);
 	}
 	return hr;
 }

@@ -18,7 +18,7 @@
 #include "CameraLibrary/SVStringValueDeviceParam.h"
 #include "SVOGui/DisplayHelper.h"
 #include "SVImageLibrary/MatroxImageData.h"
-#include "SVOGui/SVColor.h"
+#include "Definitions/Color.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
@@ -503,8 +503,8 @@ void SVGigeCameraROIDlg::SetGraphicROI()
 	ParMap[ CDSVPictureDisplay::P_Y1 ] = m_iTop;
 	ParMap[ CDSVPictureDisplay::P_X2 ] = m_iLeft + m_iWidth;
 	ParMap[ CDSVPictureDisplay::P_Y2 ] = m_iTop + m_iHeight;
-	ParMap[ CDSVPictureDisplay::P_Color ] = SVColor::Green;
-	ParMap[ CDSVPictureDisplay::P_SelectedColor ] = SVColor::Green;
+	ParMap[ CDSVPictureDisplay::P_Color ] = SvDef::Green;
+	ParMap[ CDSVPictureDisplay::P_SelectedColor ] = SvDef::Green;
 	ParMap[ CDSVPictureDisplay::P_AllowEdit ] = CDSVPictureDisplay::AllowAll;
 
 	if (m_invalidHandle == m_handleToOverlay )

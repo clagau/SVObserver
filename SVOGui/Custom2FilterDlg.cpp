@@ -316,13 +316,15 @@ namespace SvOg
 
 	void Custom2FilterDlg::OnBnClickedImportFilter()
 	{
-		bool FullAccess = SvOi::isUnrestrictedFileAccess();
 		DWORD dwFlags = OFN_DONTADDTORECENT | OFN_ENABLESIZING | OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR | OFN_HIDEREADONLY;
-		SvMc::SVFileDialog FileDlg( TRUE, FullAccess, CustomFilterExportFileExt, _T(""), dwFlags, CustomFilterExportFileFilters, this );
 
-		if( IDOK == FileDlg.DoModal() )
+		std::string FileName;
+		std::string pathName;
+
+		INT_PTR Result = SvOi::OpenSVFileDialog(true, CustomFilterExportFileExt, FileName, dwFlags, CustomFilterExportFileFilters, pathName, _T(""));
+		
+		if(IDOK == Result)
 		{
-			std::string pathName = FileDlg.GetPathName();
 			SvStl::MessageContainer message;
 
 			//Save current values in case of a restore
@@ -406,14 +408,16 @@ namespace SvOg
 	{
 		UpdateData( TRUE );
 
-		bool FullAccess = SvOi::isUnrestrictedFileAccess();
 		DWORD dwFlags = OFN_DONTADDTORECENT | OFN_ENABLESIZING | OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR | OFN_HIDEREADONLY;
-		SvMc::SVFileDialog FileDlg(FALSE, FullAccess, CustomFilterExportFileExt, _T(""), dwFlags, CustomFilterExportFileFilters, this );
-		if( IDOK == FileDlg.DoModal() )
+		std::string FileName;
+		std::string pathName;
+
+		INT_PTR Result = SvOi::OpenSVFileDialog(false, CustomFilterExportFileExt, FileName, dwFlags, CustomFilterExportFileFilters, pathName, _T(""));
+		if (IDOK == Result)
 		{
 			try
 			{
-				SvOi::exportCustom2Filter( std::string(FileDlg.GetPathName()), m_KernelWidth, m_KernelHeight, m_NormalizationFactor, m_AbsoluteValue, m_ClippingEnabled, m_KernelArray.cbegin(), m_KernelArray.cend() );
+				SvOi::exportCustom2Filter(pathName, m_KernelWidth, m_KernelHeight, m_NormalizationFactor, m_AbsoluteValue, m_ClippingEnabled, m_KernelArray.cbegin(), m_KernelArray.cend());
 			}
 			catch( ... )
 			{

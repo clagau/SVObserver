@@ -36,7 +36,7 @@ void SVToolClass::init()
 {
 	m_canResizeToParent = false;
 	// Indentify our type in the Output List
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVToolObjectType;
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &enabled, SVToolEnabledObjectGuid, IDS_OBJECTNAME_ENABLED, false, SvOi::SVResetItemNone );
@@ -160,7 +160,7 @@ void SVToolClass::init()
 	m_pCurrentToolSet = nullptr;
 
 	// Auxiliary Source Image.
-	m_AuxSourceImageObjectInfo.SetInputObjectType( SVImageObjectType );
+	m_AuxSourceImageObjectInfo.SetInputObjectType( SvDef::SVImageObjectType );
 	m_AuxSourceImageObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_AuxSourceImageObjectInfo, _T( "ToolAuxSourceImage" ) );
 
@@ -169,7 +169,7 @@ void SVToolClass::init()
 	AddFriend( pCondition->GetUniqueObjectID() );
 
 	// Identify our input type needs
-	inputConditionBoolObjectInfo.SetInputObjectType(SVConditionalResultObjectGuid, SVValueObjectType, SVBoolValueObjectType);
+	inputConditionBoolObjectInfo.SetInputObjectType(SVConditionalResultObjectGuid, SvDef::SVValueObjectType, SvDef::SVBoolValueObjectType);
 	inputConditionBoolObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &inputConditionBoolObjectInfo, _T( "ToolConditionalValue" ) );
 
@@ -1035,7 +1035,7 @@ void SVToolClass::UpdateTaskObjectOutputListAttributes( SVObjectReference refTar
 }
 
 // Source Image Functions
-HRESULT SVToolClass::GetSourceImages( SVImageListClass* pImageList ) const
+HRESULT SVToolClass::GetSourceImages( SVImageClassPtrVector* pImageList ) const
 {
 	HRESULT l_hr = S_OK;
 
@@ -1052,7 +1052,7 @@ HRESULT SVToolClass::GetSourceImages( SVImageListClass* pImageList ) const
 			 {
 				 pTool->GetSourceImages( pImageList );
 			 }
-			 pImageList->Add( pImageParent );
+			 pImageList->push_back( pImageParent );
 		}
 	}
 	else
@@ -1072,34 +1072,34 @@ SVImageClass* SVToolClass::GetAuxSourceImage() const
 	return l_pImage;
 }
 
-HRESULT SVToolClass::SetAuxSourceImage( SVImageClass* p_psvImage )
+HRESULT SVToolClass::SetAuxSourceImage( SVImageClass* pImage )
 {
 	HRESULT l_hr = S_FALSE;
 
-	SVImageListClass l_svImageList;
+	SVImageClassPtrVector svImageList;
 
-	if( S_OK == GetSourceImages( &l_svImageList ) )
+	if( S_OK == GetSourceImages( &svImageList ) )
 	{
-		SVImageClass* l_psvImage = nullptr;
+		SVImageClass* pConnectImage = nullptr;
 
-		long l_lCount = l_svImageList.GetSize();
+		long l_lCount = static_cast<long> (svImageList.size());
 
 		if( 0 < l_lCount )
 		{
-			l_psvImage = l_svImageList.GetAt( 0 );
+			pConnectImage = svImageList[0];
 
 			for( int i = l_lCount - 1; S_OK != l_hr && i > 0; i-- )
 			{
-				if( l_svImageList.GetAt( i ) == p_psvImage )
+				if( svImageList[i] == pImage )
 				{
-					l_psvImage = l_svImageList.GetAt( i );
+					pConnectImage = svImageList[i];
 
 					l_hr = S_OK;
 				}
 			}
 		}
 
-		::KeepPrevError( l_hr, ConnectToObject( &m_AuxSourceImageObjectInfo, l_psvImage ) );
+		::KeepPrevError( l_hr, ConnectToObject( &m_AuxSourceImageObjectInfo, pConnectImage ) );
 
 		m_svToolExtent.SetSelectedImage( GetAuxSourceImage() );
 
@@ -1130,7 +1130,7 @@ HRESULT SVToolClass::IsAuxInputImage( const SVInObjectInfoStruct* p_psvInfo )
 const SVImageInfoClass* SVToolClass::getFirstImageInfo() const
 {
 	const SVImageInfoClass* pRetVal = nullptr;
-	SVObjectTypeInfoStruct objectInfo(SVImageObjectType);
+	SvDef::SVObjectTypeInfoStruct objectInfo(SvDef::SVImageObjectType);
 	SVImageClass* pImage = dynamic_cast<SVImageClass*>(getFirstObject(objectInfo, false)); 
 	if (nullptr != pImage)
 	{
@@ -1156,11 +1156,11 @@ bool SVToolClass::areAuxExtentsAvailable() const
 SvUl::NameGuidList SVToolClass::getAvailableAuxSourceImages() const
 {
 	SvUl::NameGuidList list;
-	SVImageListClass ImageList;
+	SVImageClassPtrVector ImageList;
 	HRESULT hr = GetSourceImages(&ImageList);
 	if (S_OK == hr)
 	{
-		for (SVImageListClass::const_iterator it = ImageList.begin();it != ImageList.end();++it)
+		for (SVImageClassPtrVector::const_iterator it = ImageList.begin();it != ImageList.end();++it)
 		{
 			list.push_back(std::make_pair((*it)->getDisplayedName(), (*it)->GetUniqueObjectID()));
 		}

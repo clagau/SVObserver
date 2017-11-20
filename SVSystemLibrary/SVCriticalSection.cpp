@@ -11,7 +11,6 @@
 
 #include "stdafx.h"
 #include "SVCriticalSection.h"
-#include "SVTimerLibrary/SVClock.h"
 
 
 SVCriticalSection::SVCriticalSection( DWORD p_SpinCount )
@@ -40,7 +39,7 @@ bool SVCriticalSection::Lock( DWORD p_TimeOutMilliseconds ) const
 	}
 	else
 	{
-		SvTl::SVTimeStamp l_Start = SvTl::GetTimeStamp();
+		DWORD Start = GetTickCount();
 
 		do
 		{
@@ -48,11 +47,9 @@ bool SVCriticalSection::Lock( DWORD p_TimeOutMilliseconds ) const
 
 			if( !l_Status )
 			{
-				SvTl::SVTimeStamp l_Current = SvTl::GetTimeStamp(); 
+				DWORD Diff = GetTickCount() - Start;
 
-				DWORD l_Diff = static_cast< DWORD >( SvTl::ConvertTo( SvTl::Milliseconds, ( l_Current - l_Start ) ) );
-
-				if( l_Diff < p_TimeOutMilliseconds )
+				if( Diff < p_TimeOutMilliseconds )
 				{
 					::Sleep( 1 );
 				}

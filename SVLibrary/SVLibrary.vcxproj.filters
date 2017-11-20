@@ -26,43 +26,22 @@
     <ClCompile Include="SVWinUtility.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVIOEntryHostStruct.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVBarCodeAttributesDialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVBarCodeDataMatrixDialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="svbarcodegeneraldialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVBarCodeProperties.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="svbarcodestringmatchdialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVOIniLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DisplayMessageBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVFileNameClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="DirectoryUtilities.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVTaskObjectInterfaceInputRequestStruct.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVTaskObjectValueInterface.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="InitialInformation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVGraphix.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -82,24 +61,6 @@
     <ClInclude Include="SVWinUtility.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVIOEntryHostStruct.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVBarCodeAttributesDialog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVBarCodeDataMatrixDialog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="svbarcodegeneraldialog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVBarCodeProperties.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="svbarcodestringmatchdialog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVOINIClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -112,22 +73,22 @@
     <ClInclude Include="DisplayMessageBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVFileNameClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="DirectoryUtilities.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ISVCancel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVTaskObjectInterfaceInputRequestStruct.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTaskObjectValueInterface.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="InitialInformation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVGraphix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVTemplate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

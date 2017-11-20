@@ -132,7 +132,7 @@ BOOL SVPerspectiveWarpDlg::OnInitDialog()
 	{
 		SetTaskObject( m_pTool );
 
-		SVObjectTypeInfoStruct objectInfo;
+		SvDef::SVObjectTypeInfoStruct objectInfo;
 		objectInfo.EmbeddedID = SVWarpTypeObjectGuid;
 		m_pWarpType = dynamic_cast<SVEnumerateValueObjectClass*>(m_pTool->getFirstObject(objectInfo));
 		if( m_pWarpType )

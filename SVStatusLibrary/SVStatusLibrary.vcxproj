@@ -97,6 +97,7 @@
     <ClCompile Include="MessageContainer.cpp" />
     <ClCompile Include="SVOIntelRAIDStatusClass.cpp" />
     <ClCompile Include="SVRegistry.cpp" />
+    <ClCompile Include="SVRunStatus.cpp" />
     <ClCompile Include="SVSVIMStateClass.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -109,13 +110,16 @@
     <ClInclude Include="MessageTextEnum.h" />
     <ClInclude Include="MessageTextGenerator.h" />
     <ClInclude Include="MessageTextMap.h" />
+    <ClInclude Include="ProductWorkloadInformation.h" />
     <ClInclude Include="SourceFileParams.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVEventLogClass.h" />
     <ClInclude Include="SVEventRecordStruct.h" />
     <ClInclude Include="MessageContainer.h" />
+    <ClInclude Include="SVImageIndexStruct.h" />
     <ClInclude Include="SVOIntelRAIDStatusClass.h" />
     <ClInclude Include="SVRegistry.h" />
+    <ClInclude Include="SVRunStatus.h" />
     <ClInclude Include="SVSVIMStateClass.h" />
   </ItemGroup>
   <ItemGroup>

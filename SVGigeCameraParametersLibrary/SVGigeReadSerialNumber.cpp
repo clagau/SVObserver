@@ -14,7 +14,7 @@
 
 #pragma endregion Includes
 
-HRESULT SVGigeReadSerialNumber::operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& rFeature, _variant_t& rValue) const
+HRESULT SVGigeReadSerialNumber::operator()(SVMatroxDigitizerPtr Digitizer, const SVGigeFeature& rFeature, _variant_t& rValue) const
 { 
 	std::string value;
 	HRESULT l_Code = SVMatroxDigitizerInterface::GetGigeSerialNumber(*(Digitizer.get()), value);

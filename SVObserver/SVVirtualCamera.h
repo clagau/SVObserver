@@ -12,9 +12,9 @@
 #pragma once
 
 #pragma region Includes
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <vector>
 #include "SVInfoStructs.h"
-#include "SVContainerLibrary/SVMap.h"
-#include "SVContainerLibrary/SVSet.h"
 #include "SVImageLibrary/SVLightReference.h"
 #include "SVImageLibrary/SVLut.h"
 #include "SVObjectLibrary/SVObjectClass.h"
@@ -26,11 +26,9 @@
 #pragma endregion Includes
 
 #pragma region Declarations
-typedef SVVector<SVVirtualCamera*> SVVirtualCameraPtrVector;
-typedef SVSet<SVVirtualCamera*> SVVirtualCameraSet;
+typedef std::vector<SVVirtualCamera*> SVVirtualCameraPtrVector;
 typedef std::set<SVVirtualCamera*> SVVirtualCameraPtrSet;
-typedef SVSet<SVAcquisitionClassPtr> SVAcquisitionClassSet;
-typedef SVMap<std::string, SVVirtualCamera*> SVVirtualCameraMap;
+typedef std::map<std::string, SVVirtualCamera*> SVVirtualCameraMap;
 
 class SVORequestClass;
 class SVDeviceParamCollection;

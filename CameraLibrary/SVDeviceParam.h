@@ -14,7 +14,7 @@
 #pragma warning( disable: 4786 )	// identifier truncation 255 chars
 
 #include "SVVisitor.h"
-#include "SVTemplate.h"
+#include "SVLibrary/SVTemplate.h"
 
 
 enum SVDeviceParamDataTypeEnum

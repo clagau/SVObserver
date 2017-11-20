@@ -13,8 +13,7 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
-#include "SVLibrary/SVFileNameClass.h"
-//TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
+#include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "PictureDisplay.h"
 #include "ImageController.h"
 #include "DataController.h"

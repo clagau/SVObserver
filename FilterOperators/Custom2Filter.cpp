@@ -186,7 +186,7 @@ bool Custom2Filter::onRun( bool First, SVSmartHandlePointer RInputImageHandle, S
 #pragma region Private Methods
 void Custom2Filter::init()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVCustom2FilterObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVCustom2FilterObjectType;
 
 	RegisterEmbeddedObject( &m_KernelArray, Custom2FilterKernelGuid, IDS_OBJECTNAME_CUSTOMFILTER_KERNELCELL, false, SvOi::SVResetItemOwner );
 

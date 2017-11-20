@@ -130,11 +130,17 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="SVBarCodeAttributesDialog.cpp" />
+    <ClCompile Include="SVBarCodeDataMatrixDialog.cpp" />
+    <ClCompile Include="SVBarCodeGeneralDialog.cpp" />
+    <ClCompile Include="SVBarCodeProperties.cpp" />
+    <ClCompile Include="SVBarCodeStringMatchDialog.cpp" />
     <ClCompile Include="SVCustomFilterDlg.cpp" />
     <ClCompile Include="SVDlgImage.cpp" />
     <ClCompile Include="SVExternalToolImageSelectPage.cpp" />
     <ClCompile Include="SVFormulaEditorPage.cpp" />
     <ClCompile Include="SVFormulaEditorSheet.cpp" />
+    <ClCompile Include="SVLicenseMgrModelessDlg.cpp" />
     <ClCompile Include="SVRankingFilterDlg.cpp" />
     <ClCompile Include="SVSaveToolSetImageDialog.cpp" />
     <ClCompile Include="SVShowDependentsDialog.cpp" />
@@ -183,12 +189,17 @@
     <ClInclude Include="Scintilla.h" />
     <ClInclude Include="Sci_Position.h" />
     <ClInclude Include="StdAfx.h" />
-    <ClInclude Include="SVColor.h" />
+    <ClInclude Include="SVBarCodeAttributesDialog.h" />
+    <ClInclude Include="SVBarCodeDataMatrixDialog.h" />
+    <ClInclude Include="SVBarCodeGeneralDialog.h" />
+    <ClInclude Include="SVBarCodeProperties.h" />
+    <ClInclude Include="SVBarCodeStringMatchDialog.h" />
     <ClInclude Include="SVCustomFilterDlg.h" />
     <ClInclude Include="SVDlgImage.h" />
     <ClInclude Include="SVExternalToolImageSelectPage.h" />
     <ClInclude Include="SVFormulaEditorPage.h" />
     <ClInclude Include="SVFormulaEditorSheet.h" />
+    <ClInclude Include="SVLicenseMgrModelessDlg.h" />
     <ClInclude Include="SVRankingFilterDlg.h" />
     <ClInclude Include="SVSaveToolSetImageDialog.h" />
     <ClInclude Include="SVShowDependentsDialog.h" />

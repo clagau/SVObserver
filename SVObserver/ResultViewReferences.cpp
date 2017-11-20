@@ -13,7 +13,7 @@
 #include "StdAfx.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVRunControlLibrary/SVRunControlLibrary.h"
+#include "Definitions/Color.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVValueObjectLibrary/BasicValueObject.h"
 #include "ResultViewReferences.h"
@@ -225,7 +225,7 @@ void  ResultViewReferences::GetResultData( SVIPResultData& p_rResultData) const
 			itemDef = SVIPResultItemDefinition( it->Guid() );
 		}
 
-		unsigned long Color = SV_DEFAULT_WHITE_COLOR;
+		unsigned long Color = SvDef::DefaultWhiteColor;
 
 		if( it->getObject()->GetOwner() )
 		{
@@ -234,7 +234,7 @@ void  ResultViewReferences::GetResultData( SVIPResultData& p_rResultData) const
 
 
 		std::string Value;
-		if( it->getObject()->GetObjectSubType() == SVStringValueObjectType )
+		if( it->getObject()->GetObjectSubType() == SvDef::SVStringValueObjectType )
 		{
 			std::string ValueString;
 			it->getValueObject()->getValue( ValueString, it->getValidArrayIndex() );

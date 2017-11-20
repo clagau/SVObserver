@@ -12,7 +12,7 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
-#include "SVMatroxDigitizerLibrary/SVMatroxDigitizerRef.h"
+#include "SVMatroxDigitizerLibrary/SVMatroxDigitizer.h"
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerInterface.h"
 #include "SVGigeFeature.h"
 #pragma endregion Includes
@@ -20,6 +20,6 @@
 struct SVGigeReadSerialNumber
 {
 	// Getter
-	HRESULT operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& rFeature, _variant_t& rValue) const;
+	HRESULT operator()(SVMatroxDigitizerPtr Digitizer, const SVGigeFeature& rFeature, _variant_t& rValue) const;
 };
 

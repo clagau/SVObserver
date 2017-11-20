@@ -27,7 +27,7 @@
 #include "SVUtilities.h"
 #include "SVRemoteInputObject.h"
 #include "SVMessage\SVMessage.h"
-#include "SVSystemLibrary/SVFileNameManagerClass.h"
+#include "SVFileSystemLibrary/SVFileNameManagerClass.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVXMLLibrary\SVNavigateTree.h"
 #include "SVXMLLibrary\SVConfigurationTags.h"
@@ -260,7 +260,7 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 
 					std::string RemoteInputName = SvUl::Format(SvO::cRemoteInputNumberLabel, j + 1);
 
-					pRemoteInput = dynamic_cast<SVRemoteInputObject*> (pInputList->GetInputFlyweight( RemoteInputName, SVRemoteInputObjectType, j));
+					pRemoteInput = dynamic_cast<SVRemoteInputObject*> (pInputList->GetInputFlyweight( RemoteInputName, SvDef::SVRemoteInputObjectType, j));
 
 					if( nullptr != pRemoteInput )
 					{

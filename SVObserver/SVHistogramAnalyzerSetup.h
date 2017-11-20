@@ -12,10 +12,9 @@
 #pragma once
 
 #pragma region Includes
-#include "SVLibrary/SVTaskObjectValueInterface.h"
-#include "SVMFCControls\SVHistogram.h"
-#include "afxwin.h"
-#include "afxcmn.h"
+#include "SVOCore/SVTaskObjectValueInterface.h"
+#include "SVMFCControls/SVHistogram.h"
+#include "Definitions/Color.h"
 #pragma region Includes
 
 class SVHistogramAnalyzerClass;
@@ -24,7 +23,7 @@ class SVSquare: public CStatic
 {
 	DECLARE_DYNAMIC(SVSquare)
 public:
-	SVSquare():CStatic(), m_color(SvMc::color::Aqua)
+	SVSquare():CStatic(), m_color(SvDef::Aqua)
 	{
 		RegisterWindowClass();
 	}

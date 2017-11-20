@@ -134,6 +134,24 @@
     <ClCompile Include="ResultTableSelectionDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SVBarCodeAttributesDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVBarCodeDataMatrixDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVBarCodeGeneralDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVBarCodeProperties.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVBarCodeStringMatchDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVLicenseMgrModelessDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdAfx.h">
@@ -185,9 +203,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GlobalConstantConflictDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVColor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ImageController.h">
@@ -302,6 +317,24 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DataController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVBarCodeAttributesDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVBarCodeDataMatrixDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVBarCodeGeneralDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVBarCodeProperties.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVBarCodeStringMatchDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVLicenseMgrModelessDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

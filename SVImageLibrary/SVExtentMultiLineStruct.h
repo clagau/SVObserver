@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVContainerLibrary/SVVector.h"
+//Moved to precompiled header: #include <vector>
 #include "SVUtilityLibrary/SVGUID.h"
 
 #include "SVExtentLineStruct.h"
@@ -52,5 +52,5 @@ struct SVExtentMultiLineStruct
 	SVExtentLineStructVector m_svLineArray;
 };
 
-typedef SVVector<SVExtentMultiLineStruct> SVExtentMultiLineStructVector;
+typedef std::vector<SVExtentMultiLineStruct> SVExtentMultiLineStructVector;
 

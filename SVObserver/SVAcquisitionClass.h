@@ -23,7 +23,7 @@
 #include "SVUtilityLibrary/SVSharedPtr.h"
 
 #include "TriggerInformation/SVAcquisitionConstructParams.h"
-#include "SVSystemLibrary/SVFileNameArrayClass.h"
+#include "SVFileSystemLibrary/SVFileNameArrayClass.h"
 #include "SVOCore/SVImageObjectClass.h"
 #pragma endregion Includes
 

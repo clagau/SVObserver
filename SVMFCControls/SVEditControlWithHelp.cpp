@@ -14,14 +14,12 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVEditControlWithHelp.h"
+#include  "Definitions/Color.h"
 #pragma endregion Includes
 
 namespace SvMc
 {
 #pragma region Declarations
-	const COLORREF Black        = RGB(   0,   0,   0); //0x00000000;	//        0
-	const COLORREF White        = RGB( 255, 255, 255); //0x00FFFFFF;	// 16777215
-	const COLORREF MiddleGray   = RGB( 150, 150, 150); //0x00C00000;	// 12582912
 
 	BEGIN_MESSAGE_MAP(SVEditControlWithHelp, CEdit)
 		//{{AFX_MSG_MAP(SVEditControlWithHelp)
@@ -39,7 +37,7 @@ namespace SvMc
 		, m_helpString( _T("") )
 		, m_currentString( _T("") )
 	{
-		m_brush.CreateSolidBrush( White );
+		m_brush.CreateSolidBrush( SvDef::White );
 	}
 
 	SVEditControlWithHelp::~SVEditControlWithHelp()
@@ -76,11 +74,11 @@ namespace SvMc
 	{
 		if (m_isCurrentStringActive || !m_currentString.IsEmpty())
 		{
-			pDC->SetTextColor( Black );
+			pDC->SetTextColor(SvDef::Black );
 		}
 		else
 		{
-			pDC->SetTextColor( MiddleGray );
+			pDC->SetTextColor(SvDef::MiddleGray );
 		}
 
 		return m_brush;

@@ -72,7 +72,7 @@ HRESULT SVPixelAnalyzerSetupClass::SetInspectionData()
 
 unsigned long SVPixelAnalyzerSetupClass::init (SVPixelAnalyzerClass *apAnalyzer, CWnd* apParent)
 {
-    SVObjectTypeInfoStruct  pixelAnalyzerToolInfo;
+    SvDef::SVObjectTypeInfoStruct  pixelAnalyzerToolInfo;
 	unsigned long ret(0);
 	m_pParent = apParent;
 	m_pAnalyzer = apAnalyzer;

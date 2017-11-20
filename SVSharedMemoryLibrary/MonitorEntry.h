@@ -25,7 +25,7 @@ namespace SvSml
 		MonitorEntryData();
 		DWORD InspectionStoreId; //<Inspection Store Index  
 		DWORD ItemId;	//<Index in the Inspection Store
-		DWORD ObjectType;		//<SVObjectTypeEnum 
+		DWORD ObjectType;		//<SvDef::SVObjectTypeEnum 
 		DWORD variant_type; ///vt value from variant
 		DWORD Store_Offset;  ///offset in Inspection Store
 

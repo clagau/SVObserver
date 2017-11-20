@@ -3146,7 +3146,7 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace( SVExtentLineStruct p_svVal
 		case SVExtentTranslationFlipHorizontal:
 		case SVExtentTranslationFigureShift:
 		{
-			long l_lCount = p_svValue.m_svPointArray.GetSize();
+			long l_lCount = static_cast<long> (p_svValue.m_svPointArray.size());
 
 			l_hrOk = p_rsvResult.Initialize();
 
@@ -3163,11 +3163,11 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace( SVExtentLineStruct p_svVal
 				{
 					for( long i = 0; S_OK == l_hrOk && i < l_lCount; i++ )
 					{
-						SVExtentPointStruct l_svPoint = p_svValue.m_svPointArray[ i ];
+						SVExtentPointStruct svPoint = p_svValue.m_svPointArray[ i ];
 
-						if( S_OK == TranslateFromOutputSpace( l_svPoint, l_svPoint ) )
+						if( S_OK == TranslateFromOutputSpace( svPoint, svPoint ) )
 						{
-							p_rsvResult.m_svPointArray.SetAtGrow( i, l_svPoint );
+							p_rsvResult.m_svPointArray.push_back( svPoint );
 						}
 						else
 						{
@@ -3203,7 +3203,7 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace( SVExtentLineStruct p_svVal
 					{
 						if( l_lStart == 1 )
 						{
-							p_rsvResult.m_svPointArray.SetAtGrow( 0, l_svRotatePoint );
+							p_rsvResult.m_svPointArray.push_back( l_svRotatePoint );
 						}
 					}
 					else
@@ -3213,7 +3213,7 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace( SVExtentLineStruct p_svVal
 
 					for( long i = l_lStart; S_OK == l_hrOk && i < l_lCount; i++ )
 					{
-						SVExtentPointStruct l_svPoint = p_svValue.m_svPointArray[ i ];
+						SVExtentPointStruct l_svPoint = p_svValue.m_svPointArray[i];
 
 						double l_dNewAngle = p_svValue.m_dAngle;
 
@@ -3234,7 +3234,7 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace( SVExtentLineStruct p_svVal
 
 						if( S_OK == TranslateLineFromOutputSpace( l_svRadiusPoint, l_svRotatePoint, l_dNewAngle, l_svPoint, l_svPoint ) )
 						{
-							p_rsvResult.m_svPointArray.SetAtGrow( i, l_svPoint );
+							p_rsvResult.m_svPointArray.push_back( l_svPoint );
 						}
 						else
 						{
@@ -3286,7 +3286,7 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace( SVExtentMultiLineStruct p_
 		case SVExtentTranslationFlipHorizontal:
 		case SVExtentTranslationFigureShift:
 		{
-			long l_lCount = p_svValue.m_svLineArray.GetSize();
+			long l_lCount = static_cast<long> (p_svValue.m_svLineArray.size());
 
 			l_hrOk = p_rsvResult.Initialize();
 
@@ -3297,11 +3297,11 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace( SVExtentMultiLineStruct p_
 
 			for( long i = 0; S_OK == l_hrOk && i < l_lCount; i++ )
 			{
-				SVExtentLineStruct l_svLine = p_svValue.m_svLineArray[ i ];
+				SVExtentLineStruct svLine = p_svValue.m_svLineArray[i];
 
-				if( S_OK == TranslateFromOutputSpace( l_svLine, l_svLine ) )
+				if( S_OK == TranslateFromOutputSpace( svLine, svLine ) )
 				{
-					p_rsvResult.m_svLineArray.SetAtGrow( i, l_svLine );
+					p_rsvResult.m_svLineArray.push_back( svLine );
 				}
 				else
 				{

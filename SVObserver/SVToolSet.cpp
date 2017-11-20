@@ -15,10 +15,8 @@
 #include "SVMessage/SVMessage.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-
 #include "SVOCore/SVAnalyzer.h"
 #include "SVOCore/SVConditional.h"
-#include "SVOCore/SVImageListClass.h"
 #include "SVInspectionProcess.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVOCore/SVTool.h"
@@ -38,7 +36,7 @@ SVToolSetClass::SVToolSetClass( SVObjectClass* POwner, int StringResourceID )
 void SVToolSetClass::init()
 {
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVToolSetObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVToolSetObjectType;
 
 	// Identify our input type needs
 
@@ -142,7 +140,7 @@ void SVToolSetClass::init()
 	AddFriend( l_pConditional->GetUniqueObjectID() );
 
 	// Identify our input type needs
-	inputConditionBoolObjectInfo.SetInputObjectType(SVConditionalResultObjectGuid, SVValueObjectType, SVBoolValueObjectType);
+	inputConditionBoolObjectInfo.SetInputObjectType(SVConditionalResultObjectGuid, SvDef::SVValueObjectType, SvDef::SVBoolValueObjectType);
 	inputConditionBoolObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &inputConditionBoolObjectInfo, _T( "ToolSetConditionalValue" ) );
 
@@ -253,8 +251,14 @@ void SVToolSetClass::moveTool( int NewIndex, SVToolClass* pTool )
 	if( -1 != Index && NewIndex != Index )
 	{
 		//Remove first because inserting causes list to change!
-		m_aTaskObjects.RemoveAt(Index);
-		m_aTaskObjects.InsertAt( NewIndex, ( SVTaskObjectClass* ) pTool );
+		m_TaskObjectVector.erase(m_TaskObjectVector.begin() + Index);
+		SVTaskObjectPtrVector::iterator Iter(m_TaskObjectVector.begin());
+		if (0 < NewIndex )
+		{
+			std::advance(Iter, NewIndex);
+		}
+
+		m_TaskObjectVector.insert(Iter, 1, pTool);
 		m_LastListUpdateTimestamp = SvTl::GetTimeStamp();
 	}
 }
@@ -373,7 +377,7 @@ HRESULT SVToolSetClass::getResetCounts( bool& rResetCounts )  const
 
 void SVToolSetClass::goingOffline()
 {
-	for( SVTaskObjectPtrVector::const_iterator l_Iter = m_aTaskObjects.begin(); l_Iter != m_aTaskObjects.end(); ++l_Iter )
+	for( SVTaskObjectPtrVector::const_iterator l_Iter = m_TaskObjectVector.begin(); l_Iter != m_TaskObjectVector.end(); ++l_Iter )
 	{
 		(*l_Iter)->goingOffline();
 	}
@@ -399,7 +403,7 @@ SvOi::IObjectClass* SVToolSetClass::getBand0Image() const
 {
 	SvOi::IObjectClass* pResult( nullptr );
 
-	for( SVTaskObjectPtrVector::const_iterator Iter( m_aTaskObjects.begin() ); Iter != m_aTaskObjects.end(); ++Iter )
+	for( SVTaskObjectPtrVector::const_iterator Iter( m_TaskObjectVector.begin() ); Iter != m_TaskObjectVector.end(); ++Iter )
 	{
 		SVColorToolClass* pColorTool = dynamic_cast<SVColorToolClass*>( *Iter );
 		if (nullptr != pColorTool)

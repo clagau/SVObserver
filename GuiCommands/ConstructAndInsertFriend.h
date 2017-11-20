@@ -10,7 +10,6 @@
 #pragma region Includes
 //Moved to precompiled header: #include <boost/noncopyable.hpp>
 //Moved to precompiled header: #include <Guiddef.h>
-#include "SVObjectLibrary\SVObjectReference.h"
 #include "SVObjectLibrary\SVObjectBuilder.h"
 #pragma endregion Includes
 

@@ -22,7 +22,7 @@ SVEvaluateClass::SVEvaluateClass( SVObjectClass* POwner, int StringResourceID )
 : SVMathContainerClass( POwner, StringResourceID ) 
 {
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVEvaluateObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVEvaluateObjectType;
 
 	// Identify our input type needs...
 

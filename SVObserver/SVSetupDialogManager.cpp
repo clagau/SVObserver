@@ -21,7 +21,7 @@
 #include "SVAnalyzerLuminance.h"
 #include "SVAnalyzerLuminanceSetup.h"
 #include "SVBarCodeAnalyzerClass.h"
-#include "SVLibrary/SVBarCodeProperties.h"
+#include "SVOGui/SVBarCodeProperties.h"
 #include "SVBarCodeResult.h"
 #include "SVBlobAnalyzer.h"
 #include "SVBlobAnalyzerDialog.h"
@@ -49,7 +49,7 @@
 #include "SVResult.h"
 #include "SVTADlgColorThresholdSheet.h"
 #include "SVOCore/SVTool.h"
-#include "SVOLicenseManager/SVOLicenseManager.h"
+#include "SVOLicenseManager.h"
 #include "RangeXDialogClass.h"
 #include "SVRange.h"
 #include "SVToolSet.h"
@@ -442,7 +442,7 @@ HRESULT SVSetupDialogManager::SVColorToolClassSetupDialog( const SVGUID& p_rObje
 		std::string Title = SvUl::LoadStdString( IDS_ADJUSTMENT_STRING );
 
 		// Get Complete Name up to the tool level...
-		Title = l_pTool->GetCompleteObjectNameToObjectType( nullptr, SVToolObjectType ) + _T( " " ) + Title;
+		Title = l_pTool->GetCompleteObjectNameToObjectType( nullptr, SvDef::SVToolObjectType ) + _T( " " ) + Title;
 
 		SVObjectClass* pInspection( l_pTool->GetInspection() );
 		
@@ -549,7 +549,7 @@ HRESULT SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog( const SVGUID& p_
 	{
 		std::string Title = SvUl::LoadStdString( IDS_ADJUSTMENT_STRING );
 		// Get Complete Name up to the tool level...
-		Title = l_pAnalyzer->GetCompleteObjectNameToObjectType( nullptr, SVToolObjectType ) + _T( " " ) + Title;
+		Title = l_pAnalyzer->GetCompleteObjectNameToObjectType( nullptr, SvDef::SVToolObjectType ) + _T( " " ) + Title;
 
 		SVIPDoc* pIPDoc = TheSVObserverApp.GetIPDoc( pInspection->GetUniqueObjectID() );
 

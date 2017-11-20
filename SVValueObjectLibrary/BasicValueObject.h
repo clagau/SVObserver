@@ -33,7 +33,7 @@ public:
 	//! \param ObjectType <in> the object type
 	//! \param Node <in> flag which determines if this is a node in the tree, default is false
 	//************************************
-	BasicValueObject( LPCTSTR ObjectName, SVObjectClass* pOwner=nullptr, bool Node=false, SVObjectSubTypeEnum ObjectSubType = SVNotSetSubObjectType);
+	BasicValueObject( LPCTSTR ObjectName, SVObjectClass* pOwner=nullptr, bool Node=false, SvDef::SVObjectSubTypeEnum ObjectSubType = SvDef::SVNotSetSubObjectType);
 
 	virtual ~BasicValueObject();
 #pragma endregion Constructor

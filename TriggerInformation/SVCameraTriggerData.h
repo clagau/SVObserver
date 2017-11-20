@@ -14,7 +14,7 @@
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
-#include "SVLibrary/SVIOEntryHostStruct.h"
+#include "SVObjectLibrary/SVIOEntryHostStruct.h"
 #pragma endregion Includes
 
 namespace SvTi

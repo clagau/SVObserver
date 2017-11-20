@@ -19,7 +19,7 @@
 //Moved to precompiled header: #include <map>
 #include "CDSVPictureDisplay.h"
 #include "SVMFCControls\SVBitmap.h"
-#include "SVPictureDisplay\DrawObject.h" // for ParamMap typedefs
+#include "SVLibrary\DrawObject.h" // for ParamMap typedefs
 #include "ObjectInterfaces\ISVImage.h"
 #include "ObjectInterfaces\IMatroxImageData.h"
 #pragma endregion Includes

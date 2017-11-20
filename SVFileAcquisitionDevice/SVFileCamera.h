@@ -78,8 +78,8 @@ public:
 	const SIZE& GetImageSize() const;
 	void SetImageSize(const SIZE& imageSize);
 
-	SVImageFormatEnum GetImageFormat() const;
-	void SetImageFormat(SVImageFormatEnum imageFormat);
+	SvDef::SVImageFormatEnum GetImageFormat() const;
+	void SetImageFormat(SvDef::SVImageFormatEnum imageFormat);
 	
 	// setup
 	LPCTSTR GetDirectory() const;

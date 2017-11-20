@@ -23,6 +23,7 @@
 #include "SVSharedMemoryLibrary/SVProductFilterEnum.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVStatusLibrary/MessageNotification.h"
+#include "SVSystemLibrary/SVAsyncProcedure.h"
 #include "SVStorage.h"
 #include "SVStorageResult.h"
 #include "SVVisionProcessorConstants.h"
@@ -110,7 +111,7 @@ public:
 	//! \param errormessage 
 	//! \returns HRESULT
 	//************************************
-	HRESULT FireMessageNotification( int Type, int MesssageNumber, LPCTSTR MessageText );
+	HRESULT FireNotification( int Type, int MesssageNumber, LPCTSTR MessageText );
 	HRESULT QueryProductList( const std::string& rListName, SVNameSet& rNames ) const;
 	HRESULT QueryRejectCondList( const std::string& rListName, SVNameSet& rNames ) const;
 	HRESULT QueryFailStatusList( const std::string& rListName, SVNameSet& rNames ) const;
@@ -186,6 +187,11 @@ private:
 
 #pragma region Private Members
 private:   //Data
+	typedef void (CALLBACK * SVAPCSignalHandler)(DWORD_PTR);
+	typedef boost::function<void(bool&)> SVThreadProcessHandler;
+
+	SVAsyncProcedure< SVAPCSignalHandler, SVThreadProcessHandler > m_AsyncProcedure;
+
 	SvStl::MessageNotification m_MessageNotification;
 #pragma endregion Private Members
 };

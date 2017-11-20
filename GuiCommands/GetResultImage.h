@@ -28,7 +28,7 @@ namespace SvCmd
 		{
 			HRESULT hr = S_OK;
 
-			SVObjectTypeInfoStruct imageObjectInfo(SVImageObjectType);
+			SvDef::SVObjectTypeInfoStruct imageObjectInfo(SvDef::SVImageObjectType);
 			SvOi::ISVImage* pImage = SvOi::FindImageObject(m_InstanceID, imageObjectInfo);
 			if (pImage)
 			{

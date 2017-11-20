@@ -19,7 +19,7 @@
 #include "CameraLibrary/SVDeviceParams.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVDataManagerLibrary/DataManager.h"
-#include "SVGigeCameraParametersLibrary/SVGigeEnums.h"
+#include "Definitions/SVGigeEnums.h"
 #include "SVMatroxGigeCameraProxy.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVOCore/SVImageObjectClass.h"
@@ -139,8 +139,8 @@ HRESULT SVMatroxGigeAcquisitionClass::LoadFiles(SVFileNameArrayClass& rFiles)
 	HRESULT hr = SVAcquisitionClass::LoadFiles( rFiles );
 	if ( S_OK == hr )
 	{
-		ASSERT( mFiles.GetSize() == 1 );	// only one file
-		if ( mFiles.GetSize() == 1 )
+		ASSERT( 1 == mFiles.size() );	// only one file
+		if ( 1 == mFiles.size() )
 		{
 			std::string sFile (mFiles[0].GetFullFileName());
 
@@ -628,7 +628,7 @@ HRESULT SVMatroxGigeAcquisitionClass::GetCameraImageInfo( SVImageInfoClass &pIma
 {
 	unsigned long bufWidth = 640;
 	unsigned long bufHeight = 480;
-	int iFormat = SVImageFormatUnknown;
+	int iFormat = SvDef::SVImageFormatUnknown;
 
 	//check if valid board, subsystem and if connected camera matches chosen camera file
 	SvTh::SVDigitizerLoadLibraryClass *digSub = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str());
@@ -653,7 +653,7 @@ HRESULT SVMatroxGigeAcquisitionClass::GetCameraImageInfo( SVImageInfoClass &pIma
 
 	// Band number depends on video type...
 	unsigned long uiBandNumber = 1;
-	if ( iFormat == SVImageFormatRGB888 || iFormat == SVImageFormatRGB8888 )
+	if ( iFormat == SvDef::SVImageFormatRGB888 || iFormat == SvDef::SVImageFormatRGB8888 )
 	{
 		uiBandNumber = 3; // Only RGB uses more than 1 band.
 	}
@@ -678,7 +678,7 @@ HRESULT SVMatroxGigeAcquisitionClass::SetDeviceParameters( const SVDeviceParamCo
 	if ( IsDigitizerSubsystemValid() && CameraMatchesCameraFile())
 	{
 		_variant_t dummy;
-		hr = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str())->ParameterSetValue(m_hDigitizer, SVGigeBeginTrackParameters, 0, &dummy);
+		hr = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str())->ParameterSetValue(m_hDigitizer, SvDef::SVGigeBeginTrackParameters, 0, &dummy);
 	}
 	if ( S_OK == hr )
 	{
@@ -796,7 +796,7 @@ HRESULT SVMatroxGigeAcquisitionClass::StartDigitizer()
 	SvTh::SVDigitizerLoadLibraryClass* pDigitizer = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str());
 	if (pDigitizer)
 	{
-		hr = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str())->ParameterSetValue(m_hDigitizer, SVGigeEndTrackParameters, 0, &dummy);
+		hr = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str())->ParameterSetValue(m_hDigitizer, SvDef::SVGigeEndTrackParameters, 0, &dummy);
 
 		if( S_OK == hr )
 		{

@@ -16,7 +16,7 @@
 #include "SVObjectLibrary/SVClsids.h"
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
-#include "SVSystemLibrary/SVFileNameManagerClass.h"
+#include "SVFileSystemLibrary/SVFileNameManagerClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "Definitions/TextDefineSVDef.h"
 #pragma endregion Includes
@@ -72,15 +72,15 @@ HRESULT SVFileNameValueObjectClass::SetObjectValue(SVObjectAttributeClass* pData
 	HRESULT Result( E_FAIL );
 	bool	bOk( false );
 	
-	SvCl::SVObjectArrayClassTemplate<ValueType> ObjectArray;	// for default values
+	std::vector<ValueType> ObjectArray;	// for default values
 	BucketVector BucketArray;
 	ValueVector ReadValueArray;
 	
 	if (bOk = pDataObject->GetAttributeData(scDefaultTag, ObjectArray))
 	{
-		if (0 < ObjectArray.GetSize())
+		if (0 < ObjectArray.size())
 		{
-			DefaultValue() = ObjectArray[ObjectArray.GetSize() - 1];
+			DefaultValue() = ObjectArray[ObjectArray.size() - 1];
 			SvUl::RemoveEscapedSpecialCharacters(DefaultValue(), false);
 		}
 
@@ -157,9 +157,9 @@ HRESULT SVFileNameValueObjectClass::SetObjectValue(SVObjectAttributeClass* pData
 	}
 	else if ( bOk = pDataObject->GetAttributeData(_T("StrDefault"), ObjectArray) )
 	{
-		if ( 0 < ObjectArray.GetSize() )
+		if ( 0 < ObjectArray.size() )
 		{
-			DefaultValue() = ObjectArray[ ObjectArray.GetSize()-1 ];
+			DefaultValue() = ObjectArray[ ObjectArray.size()-1 ];
 			SvUl::RemoveEscapedSpecialCharacters( DefaultValue(), false );
 		}
 
@@ -295,7 +295,7 @@ void SVFileNameValueObjectClass::WriteDefaultValues(SVObjectWriter& rWriter)
 
 void SVFileNameValueObjectClass::LocalInitialize()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVStringValueObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVStringValueObjectType;
 	
 	SetObjectAttributesAllowed( SvDef::SV_VIEWABLE | SvDef::SV_PUBLISHABLE | SvDef::SV_ARCHIVABLE | SvDef::SV_EMBEDABLE | SvDef::SV_PRINTABLE | SvDef::SV_DD_VALUE, SvOi::SetAttributeType::OverwriteAttribute );
 

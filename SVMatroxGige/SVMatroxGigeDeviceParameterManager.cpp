@@ -26,7 +26,7 @@ HRESULT SVMatroxGigeDeviceParameterManager::GetParameterName(const SVMatroxGigeD
 {
 	HRESULT l_hr = S_FALSE;
 	const SVGigeDeviceParameterMap& gigeParameters = SVMatroxGigeDeviceParameterManager::GetParameterMap();
-	SVGigeDeviceParameterMap::const_iterator it = gigeParameters.find(static_cast<SVGigeParameterEnum>(p_iParameterID));
+	SVGigeDeviceParameterMap::const_iterator it = gigeParameters.find(static_cast<SvDef::SVGigeParameterEnum>(p_iParameterID));
 	if (it != gigeParameters.end())
 	{
 		*p_pBstrName = _bstr_t(it->second.name.c_str()).Detach();
@@ -34,7 +34,7 @@ HRESULT SVMatroxGigeDeviceParameterManager::GetParameterName(const SVMatroxGigeD
 	}
 	else // could be custom - look in overrides
 	{
-		const SVGigeDeviceParameterStruct& gigeParam = p_rCamera.GetFeature(static_cast<SVGigeParameterEnum>(p_iParameterID));
+		const SVGigeDeviceParameterStruct& gigeParam = p_rCamera.GetFeature(static_cast<SvDef::SVGigeParameterEnum>(p_iParameterID));
 		if (!gigeParam.name.empty())
 		{
 			*p_pBstrName = _bstr_t(gigeParam.name.c_str()).Detach();
@@ -48,7 +48,7 @@ HRESULT SVMatroxGigeDeviceParameterManager::GetParameter(const SVMatroxGigeDigit
 {
 	HRESULT l_hr = S_FALSE;
 	const SVGigeDeviceParameterMap& gigeParameters = SVMatroxGigeDeviceParameterManager::GetParameterMap();
-	SVGigeDeviceParameterMap::const_iterator it = gigeParameters.find(static_cast<SVGigeParameterEnum>(p_iParameterID));
+	SVGigeDeviceParameterMap::const_iterator it = gigeParameters.find(static_cast<SvDef::SVGigeParameterEnum>(p_iParameterID));
 	if (it != gigeParameters.end())
 	{
 		// what should go in p_piParameterTypeID ???
@@ -57,7 +57,7 @@ HRESULT SVMatroxGigeDeviceParameterManager::GetParameter(const SVMatroxGigeDigit
 		_variant_t value(0);
 		
 		// Look for any exception in the Gige Feature Overrides
-		const SVGigeDeviceParameterStruct& gigeParam = p_rCamera.GetFeature(static_cast<SVGigeParameterEnum>(p_iParameterID));
+		const SVGigeDeviceParameterStruct& gigeParam = p_rCamera.GetFeature(static_cast<SvDef::SVGigeParameterEnum>(p_iParameterID));
 		const std::string& featureName = gigeParam.accessor.feature.GetName();
 		if (!featureName.empty())
 		{
@@ -83,7 +83,7 @@ HRESULT SVMatroxGigeDeviceParameterManager::GetParameter(const SVMatroxGigeDigit
 		_variant_t value(0);
 		
 		// Look for any exception in the Gige Feature Overrides
-		const SVGigeDeviceParameterStruct& gigeParam = p_rCamera.GetFeature(static_cast<SVGigeParameterEnum>(p_iParameterID));
+		const SVGigeDeviceParameterStruct& gigeParam = p_rCamera.GetFeature(static_cast<SvDef::SVGigeParameterEnum>(p_iParameterID));
 		const std::string& featureName = gigeParam.accessor.feature.GetName();
 		if (!featureName.empty())
 		{
@@ -106,11 +106,11 @@ HRESULT SVMatroxGigeDeviceParameterManager::SetParameter(const SVMatroxGigeDigit
 
 	// what types are in p_iParameterTypeID ???
 	const SVGigeDeviceParameterMap& gigeParameters = SVMatroxGigeDeviceParameterManager::GetParameterMap();
-	SVGigeDeviceParameterMap::const_iterator it = gigeParameters.find(static_cast<SVGigeParameterEnum>(p_iParameterID));
+	SVGigeDeviceParameterMap::const_iterator it = gigeParameters.find(static_cast<SvDef::SVGigeParameterEnum>(p_iParameterID));
 	if (it != gigeParameters.end())
 	{
 		// Look for any exception in the Gige Feature Overrides
-		const SVGigeDeviceParameterStruct& gigeParam = p_rCamera.GetFeature(static_cast<SVGigeParameterEnum>(p_iParameterID));
+		const SVGigeDeviceParameterStruct& gigeParam = p_rCamera.GetFeature(static_cast<SvDef::SVGigeParameterEnum>(p_iParameterID));
 		const std::string& featureName = gigeParam.accessor.feature.GetName();
 		if (!featureName.empty())
 		{
@@ -132,7 +132,7 @@ HRESULT SVMatroxGigeDeviceParameterManager::SetParameter(const SVMatroxGigeDigit
 	else // could be custom - look in overrides
 	{
 		// Look for any exception in the Gige Feature Overrides
-		const SVGigeDeviceParameterStruct& gigeParam = p_rCamera.GetFeature(static_cast<SVGigeParameterEnum>(p_iParameterID));
+		const SVGigeDeviceParameterStruct& gigeParam = p_rCamera.GetFeature(static_cast<SvDef::SVGigeParameterEnum>(p_iParameterID));
 		const std::string& featureName = gigeParam.accessor.feature.GetName();
 		if (!featureName.empty())
 		{
@@ -151,11 +151,11 @@ HRESULT SVMatroxGigeDeviceParameterManager::IsParameterSupported(const SVMatroxG
 	HRESULT l_hr = S_FALSE;
 	
 	const SVGigeDeviceParameterMap& gigeParameters = SVMatroxGigeDeviceParameterManager::GetParameterMap();
-	SVGigeDeviceParameterMap::const_iterator it = gigeParameters.find(static_cast<SVGigeParameterEnum>(p_iParameterID));
+	SVGigeDeviceParameterMap::const_iterator it = gigeParameters.find(static_cast<SvDef::SVGigeParameterEnum>(p_iParameterID));
 	if (it != gigeParameters.end())
 	{
 		// Look for any exception in the Gige Feature Overrides
-		const SVGigeDeviceParameterStruct& gigeParam = p_rCamera.GetFeature(static_cast<SVGigeParameterEnum>(p_iParameterID));
+		const SVGigeDeviceParameterStruct& gigeParam = p_rCamera.GetFeature(static_cast<SvDef::SVGigeParameterEnum>(p_iParameterID));
 		if( gigeParam.accessor.feature.IsSupported() )
 		{
 			l_hr = S_OK;
@@ -164,7 +164,7 @@ HRESULT SVMatroxGigeDeviceParameterManager::IsParameterSupported(const SVMatroxG
 	else // could be custom - look in overrides
 	{
 		// Look for any exception in the Gige Feature Overrides
-		const SVGigeDeviceParameterStruct& gigeParam = p_rCamera.GetFeature(static_cast<SVGigeParameterEnum>(p_iParameterID));
+		const SVGigeDeviceParameterStruct& gigeParam = p_rCamera.GetFeature(static_cast<SvDef::SVGigeParameterEnum>(p_iParameterID));
 		if( gigeParam.accessor.feature.IsSupported() )
 		{
 			l_hr = S_OK;

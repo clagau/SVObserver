@@ -21,7 +21,7 @@ namespace SvOg
 	{
 		GUID m_InspectionID;
 		GUID m_TaskObjectID;
-		SVObjectSubTypeEnum m_subType;
+		SvDef::SVObjectSubTypeEnum m_subType;
 		bool m_bAllowColor;
 
 		mutable SvUl::NameGuidList m_availableList;
@@ -30,7 +30,7 @@ namespace SvOg
 		mutable CComPtr<IPictureDisp> m_picture;
 
 	public:
-		ImageController(const GUID& rInspectionID, const GUID& rTaskObjectID, SVObjectSubTypeEnum subType = SVNotSetSubObjectType, bool bAllowColor = false);
+		ImageController(const GUID& rInspectionID, const GUID& rTaskObjectID, SvDef::SVObjectSubTypeEnum subType = SvDef::SVNotSetSubObjectType, bool bAllowColor = false);
 	
 		HRESULT Init();
 
@@ -50,7 +50,7 @@ namespace SvOg
 		HRESULT ResetTask(SvStl::MessageContainerVector& messages) const;
 		HRESULT ToolRunOnce();
 			
-		SVObjectTypeInfoStruct GetImageTypeInfo(const GUID& imageID) const;
+		SvDef::SVObjectTypeInfoStruct GetImageTypeInfo(const GUID& imageID) const;
 
 	private:
 		HRESULT RetrieveAvailableImageList();

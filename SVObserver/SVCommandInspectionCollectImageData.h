@@ -14,7 +14,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <set>
 #include "SVImageLibrary/SVExtentMultiLineStruct.h"
-#include "SVRunControlLibrary/SVImageIndexStruct.h"
+#include "SVStatusLibrary/SVImageIndexStruct.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "SVIPProductStruct.h"

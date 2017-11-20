@@ -61,7 +61,7 @@ void SVRangeClass::init()
 	m_bUseOverlays = false;
 
 	// Identify our type in the Output List
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVRangeObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVRangeObjectType;
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &FailHigh, SVRangeClassFailHighObjectGuid, IDS_OBJECTNAME_FAIL_HIGH, false, SvOi::SVResetItemNone );
@@ -196,7 +196,7 @@ bool SVRangeClass::InitReferencesAndInputs(SvStl::MessageContainerVector *pError
 				{
 					SvStl::MessageContainer message;
 					SvDef::StringVector msgList;
-					msgList.push_back(std::string(GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType )));
+					msgList.push_back(std::string(GetCompleteObjectNameToObjectType( nullptr, SvDef::SVInspectionObjectType )));
 					message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_InvalidReference, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16025 ); 
 					pErrorMessages->push_back( message );
 			}
@@ -209,7 +209,7 @@ bool SVRangeClass::InitReferencesAndInputs(SvStl::MessageContainerVector *pError
 				{
 					SvStl::MessageContainer message;
 					SvDef::StringVector msgList;
-					msgList.push_back(std::string(GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType )));
+					msgList.push_back(std::string(GetCompleteObjectNameToObjectType( nullptr, SvDef::SVInspectionObjectType )));
 					message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_InvalidReference, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16026 ); 
 					pErrorMessages->push_back( message );
 			}
@@ -296,15 +296,15 @@ void SVRangeClass::OnObjectRenamed(const SVObjectClass& rRenamedObject, const st
 	//In this case the inspection name is not part of the saved name so do not rename inspection names
 	if( nullptr != dynamic_cast<const BasicValueObject*> (&rRenamedObject) )
 	{
-		newPrefix = rRenamedObject.GetCompleteObjectNameToObjectType( nullptr, SVRootObjectType );
+		newPrefix = rRenamedObject.GetCompleteObjectNameToObjectType( nullptr, SvDef::SVRootObjectType );
 	}
 	else if( nullptr != dynamic_cast<const SvOi::IValueObject*> (&rRenamedObject) )
 	{
-		newPrefix = rRenamedObject.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
+		newPrefix = rRenamedObject.GetCompleteObjectNameToObjectType( nullptr, SvDef::SVToolSetObjectType );
 	}
 	else
 	{
-		newPrefix = rRenamedObject.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType ) + _T( "." );
+		newPrefix = rRenamedObject.GetCompleteObjectNameToObjectType( nullptr, SvDef::SVToolSetObjectType ) + _T( "." );
 	}// end else
 	oldPrefix = newPrefix;
 	SvUl::searchAndReplace( oldPrefix, rRenamedObject.GetName(), rOldName.c_str() );
@@ -450,7 +450,7 @@ void SVRangeClass::ConnectAllInputObjects()
 				SVInObjectInfoStruct InObjectInfo;
 				InObjectInfo.m_pObject                    = this;
 				InObjectInfo.m_UniqueObjectID             = GetUniqueObjectID();
-				InObjectInfo.m_ObjectTypeInfo.ObjectType  = SVRangeObjectType;
+				InObjectInfo.m_ObjectTypeInfo.ObjectType  = SvDef::SVRangeObjectType;
 				m_IsConnectedInput[i] = SVObjectManagerClass::Instance().ConnectObjectInput( m_ValueObjectReferences[i].Guid(), &InObjectInfo );
 			}
 		}
@@ -469,7 +469,7 @@ void SVRangeClass::DisconnectAllInputObjects()
 
 				InObjectInfo.m_pObject                    =this;
 				InObjectInfo.m_UniqueObjectID             = GetUniqueObjectID();
-				InObjectInfo.m_ObjectTypeInfo.ObjectType  = SVRangeObjectType;
+				InObjectInfo.m_ObjectTypeInfo.ObjectType  = SvDef::SVRangeObjectType;
 
 				SVObjectManagerClass::Instance().DisconnectObjectInput(m_ValueObjectReferences[i].Guid(), &InObjectInfo);
 				m_IsConnectedInput[i] = false;

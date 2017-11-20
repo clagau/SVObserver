@@ -57,75 +57,75 @@ static ElementMap Elements = boost::assign::map_list_of<>
 ;
 
 // GigeParameterEnum Map
-typedef std::map<WString, SVGigeParameterEnum> GigeParameterEnumMap;
+typedef std::map<WString, SvDef::SVGigeParameterEnum> GigeParameterEnumMap;
 static GigeParameterEnumMap GigeParameterEnums = boost::assign::map_list_of<>
-(L"SVGigeParameterExposureMode", SVGigeParameterExposureMode)
-(L"SVGigeParameterXOffset", SVGigeParameterXOffset)
-(L"SVGigeParameterYOffset", SVGigeParameterYOffset)
-(L"SVGigeParameterXSize", SVGigeParameterXSize)
-(L"SVGigeParameterYSize", SVGigeParameterYSize)
-(L"SVGigeParameterColorFormat", SVGigeParameterColorFormat)
-(L"SVGigeParameterBayerPattern", SVGigeParameterBayerPattern)
-(L"SVGigeParameterFeatureBrightness", SVGigeParameterFeatureBrightness)
-(L"SVGigeParameterFeatureAutoExposure", SVGigeParameterFeatureAutoExposure)
-(L"SVGigeParameterFeatureSharpness", SVGigeParameterFeatureSharpness)
-(L"SVGigeParameterFeatureWhiteBalanceU", SVGigeParameterFeatureWhiteBalanceU)
-(L"SVGigeParameterFeatureWhiteBalanceV", SVGigeParameterFeatureWhiteBalanceV)
-(L"SVGigeParameterFeatureHue", SVGigeParameterFeatureHue)
-(L"SVGigeParameterFeatureSaturation", SVGigeParameterFeatureSaturation)
-(L"SVGigeParameterFeatureGamma", SVGigeParameterFeatureGamma)
-(L"SVGigeParameterFeatureShutter", SVGigeParameterFeatureShutter)
-(L"SVGigeParameterFeatureGain", SVGigeParameterFeatureGain)
-(L"SVGigeParameterTriggerSource", SVGigeParameterTriggerSource)
-(L"SVGigeParameterTriggerEdge", SVGigeParameterTriggerEdge)
-(L"SVGigeParameterTriggerInvert", SVGigeParameterTriggerInvert)
-(L"SVGigeParameterTriggerLine", SVGigeParameterTriggerLine)
-(L"SVGigeParameterTriggerDelay", SVGigeParameterTriggerDelay)
-(L"SVGigeParameterTriggerEnable", SVGigeParameterTriggerEnable)
-(L"SVGigeParameterStrobeSource", SVGigeParameterStrobeSource)
-(L"SVGigeParameterStrobeEdge", SVGigeParameterStrobeEdge)
-(L"SVGigeParameterStrobeInvert", SVGigeParameterStrobeInvert)
-(L"SVGigeParameterStrobeDelay", SVGigeParameterStrobeDelay)
-(L"SVGigeParameterStrobeDuration", SVGigeParameterStrobeDuration)
-(L"SVGigeParameterStrobeLine", SVGigeParameterStrobeLine)
-(L"SVGigeParameterStrobeEnable", SVGigeParameterStrobeEnable)
-(L"SVGigeParameterLutEnable", SVGigeParameterLutEnable)
-(L"SVGigeParameterLutArray", SVGigeParameterLutArray)
-(L"SVGigeParameterHorizontalBinning", SVGigeParameterHorizontalBinning)
-(L"SVGigeParameterVerticalBinning", SVGigeParameterVerticalBinning)
-(L"SVGigeParameterLineInput", SVGigeParameterLineInput)
-(L"SVGigeParameterInputEvent", SVGigeParameterInputEvent)
-(L"SVGigeParameterInputEventName", SVGigeParameterInputEventName)
-(L"SVGigeParameterCustom1", SVGigeParameterCustom1)
-(L"SVGigeParameterCustom2", SVGigeParameterCustom2)
-(L"SVGigeParameterCustom3", SVGigeParameterCustom3)
-(L"SVGigeParameterCustom4", SVGigeParameterCustom4)
-(L"SVGigeParameterCustom5", SVGigeParameterCustom5)
-(L"SVGigeParameterCustom6", SVGigeParameterCustom6)
-(L"SVGigeParameterCustom7", SVGigeParameterCustom7)
-(L"SVGigeParameterCustom8", SVGigeParameterCustom8)
-(L"SVGigeParameterCustom9", SVGigeParameterCustom9)
-(L"SVGigeParameterCustom10", SVGigeParameterCustom10)
-(L"SVGigeParameterCustom11", SVGigeParameterCustom11)
-(L"SVGigeParameterCustom12", SVGigeParameterCustom12)
-(L"SVGigeParameterCustom13", SVGigeParameterCustom13)
-(L"SVGigeParameterCustom14", SVGigeParameterCustom14)
-(L"SVGigeParameterCustom15", SVGigeParameterCustom15)
-(L"SVGigeParameterCustom16", SVGigeParameterCustom16)
-(L"SVGigeParameterCustom17", SVGigeParameterCustom17)
-(L"SVGigeParameterCustom18", SVGigeParameterCustom18)
-(L"SVGigeParameterCustom19", SVGigeParameterCustom19)
-(L"SVGigeParameterCustom20", SVGigeParameterCustom20)
-(L"SVGigeParameterCustom21", SVGigeParameterCustom21)
-(L"SVGigeParameterCustom22", SVGigeParameterCustom22)
-(L"SVGigeParameterCustom23", SVGigeParameterCustom23)
-(L"SVGigeParameterCustom24", SVGigeParameterCustom24)
-(L"SVGigeParameterCustom25", SVGigeParameterCustom25)
-(L"SVGigeParameterCustom26", SVGigeParameterCustom26)
-(L"SVGigeParameterCustom27", SVGigeParameterCustom27)
-(L"SVGigeParameterCustom28", SVGigeParameterCustom28)
-(L"SVGigeParameterCustom29", SVGigeParameterCustom29)
-(L"SVGigeParameterCustom30", SVGigeParameterCustom30)
+(L"SVGigeParameterExposureMode", SvDef::SVGigeParameterExposureMode)
+(L"SVGigeParameterXOffset", SvDef::SVGigeParameterXOffset)
+(L"SVGigeParameterYOffset", SvDef::SVGigeParameterYOffset)
+(L"SVGigeParameterXSize", SvDef::SVGigeParameterXSize)
+(L"SVGigeParameterYSize", SvDef::SVGigeParameterYSize)
+(L"SVGigeParameterColorFormat", SvDef::SVGigeParameterColorFormat)
+(L"SVGigeParameterBayerPattern", SvDef::SVGigeParameterBayerPattern)
+(L"SVGigeParameterFeatureBrightness", SvDef::SVGigeParameterFeatureBrightness)
+(L"SVGigeParameterFeatureAutoExposure", SvDef::SVGigeParameterFeatureAutoExposure)
+(L"SVGigeParameterFeatureSharpness", SvDef::SVGigeParameterFeatureSharpness)
+(L"SVGigeParameterFeatureWhiteBalanceU", SvDef::SVGigeParameterFeatureWhiteBalanceU)
+(L"SVGigeParameterFeatureWhiteBalanceV", SvDef::SVGigeParameterFeatureWhiteBalanceV)
+(L"SVGigeParameterFeatureHue", SvDef::SVGigeParameterFeatureHue)
+(L"SVGigeParameterFeatureSaturation", SvDef::SVGigeParameterFeatureSaturation)
+(L"SVGigeParameterFeatureGamma", SvDef::SVGigeParameterFeatureGamma)
+(L"SVGigeParameterFeatureShutter", SvDef::SVGigeParameterFeatureShutter)
+(L"SVGigeParameterFeatureGain", SvDef::SVGigeParameterFeatureGain)
+(L"SVGigeParameterTriggerSource", SvDef::SVGigeParameterTriggerSource)
+(L"SVGigeParameterTriggerEdge", SvDef::SVGigeParameterTriggerEdge)
+(L"SVGigeParameterTriggerInvert", SvDef::SVGigeParameterTriggerInvert)
+(L"SVGigeParameterTriggerLine", SvDef::SVGigeParameterTriggerLine)
+(L"SVGigeParameterTriggerDelay", SvDef::SVGigeParameterTriggerDelay)
+(L"SVGigeParameterTriggerEnable", SvDef::SVGigeParameterTriggerEnable)
+(L"SVGigeParameterStrobeSource", SvDef::SVGigeParameterStrobeSource)
+(L"SVGigeParameterStrobeEdge", SvDef::SVGigeParameterStrobeEdge)
+(L"SVGigeParameterStrobeInvert", SvDef::SVGigeParameterStrobeInvert)
+(L"SVGigeParameterStrobeDelay", SvDef::SVGigeParameterStrobeDelay)
+(L"SVGigeParameterStrobeDuration", SvDef::SVGigeParameterStrobeDuration)
+(L"SVGigeParameterStrobeLine", SvDef::SVGigeParameterStrobeLine)
+(L"SVGigeParameterStrobeEnable", SvDef::SVGigeParameterStrobeEnable)
+(L"SVGigeParameterLutEnable", SvDef::SVGigeParameterLutEnable)
+(L"SVGigeParameterLutArray", SvDef::SVGigeParameterLutArray)
+(L"SVGigeParameterHorizontalBinning", SvDef::SVGigeParameterHorizontalBinning)
+(L"SVGigeParameterVerticalBinning", SvDef::SVGigeParameterVerticalBinning)
+(L"SVGigeParameterLineInput", SvDef::SVGigeParameterLineInput)
+(L"SVGigeParameterInputEvent", SvDef::SVGigeParameterInputEvent)
+(L"SVGigeParameterInputEventName", SvDef::SVGigeParameterInputEventName)
+(L"SVGigeParameterCustom1", SvDef::SVGigeParameterCustom1)
+(L"SVGigeParameterCustom2", SvDef::SVGigeParameterCustom2)
+(L"SVGigeParameterCustom3", SvDef::SVGigeParameterCustom3)
+(L"SVGigeParameterCustom4", SvDef::SVGigeParameterCustom4)
+(L"SVGigeParameterCustom5", SvDef::SVGigeParameterCustom5)
+(L"SVGigeParameterCustom6", SvDef::SVGigeParameterCustom6)
+(L"SVGigeParameterCustom7", SvDef::SVGigeParameterCustom7)
+(L"SVGigeParameterCustom8", SvDef::SVGigeParameterCustom8)
+(L"SVGigeParameterCustom9", SvDef::SVGigeParameterCustom9)
+(L"SVGigeParameterCustom10", SvDef::SVGigeParameterCustom10)
+(L"SVGigeParameterCustom11", SvDef::SVGigeParameterCustom11)
+(L"SVGigeParameterCustom12", SvDef::SVGigeParameterCustom12)
+(L"SVGigeParameterCustom13", SvDef::SVGigeParameterCustom13)
+(L"SVGigeParameterCustom14", SvDef::SVGigeParameterCustom14)
+(L"SVGigeParameterCustom15", SvDef::SVGigeParameterCustom15)
+(L"SVGigeParameterCustom16", SvDef::SVGigeParameterCustom16)
+(L"SVGigeParameterCustom17", SvDef::SVGigeParameterCustom17)
+(L"SVGigeParameterCustom18", SvDef::SVGigeParameterCustom18)
+(L"SVGigeParameterCustom19", SvDef::SVGigeParameterCustom19)
+(L"SVGigeParameterCustom20", SvDef::SVGigeParameterCustom20)
+(L"SVGigeParameterCustom21", SvDef::SVGigeParameterCustom21)
+(L"SVGigeParameterCustom22", SvDef::SVGigeParameterCustom22)
+(L"SVGigeParameterCustom23", SvDef::SVGigeParameterCustom23)
+(L"SVGigeParameterCustom24", SvDef::SVGigeParameterCustom24)
+(L"SVGigeParameterCustom25", SvDef::SVGigeParameterCustom25)
+(L"SVGigeParameterCustom26", SvDef::SVGigeParameterCustom26)
+(L"SVGigeParameterCustom27", SvDef::SVGigeParameterCustom27)
+(L"SVGigeParameterCustom28", SvDef::SVGigeParameterCustom28)
+(L"SVGigeParameterCustom29", SvDef::SVGigeParameterCustom29)
+(L"SVGigeParameterCustom30", SvDef::SVGigeParameterCustom30)
 ;
 
 
@@ -170,7 +170,7 @@ static FeatureAccessStringEnumMap FeatureAccessStringEnums = boost::assign::map_
 ;
 
 SVGigeCameraDBContent::SVGigeCameraDBContent()
-: m_errorCode(S_OK), m_GigeParameterEnum(SVGigeParameterFeatureOverrides)
+: m_errorCode(S_OK), m_GigeParameterEnum(SvDef::SVGigeParameterFeatureOverrides)
 {
 }
 
@@ -252,7 +252,7 @@ HRESULT SVGigeCameraDBContent::endElement(unsigned short* pwchNamespaceUri, int 
 
 					// Clear
 					m_GigeDeviceParameterInfo.clear();
-					m_GigeParameterEnum = SVGigeParameterFeatureOverrides;
+					m_GigeParameterEnum = SvDef::SVGigeParameterFeatureOverrides;
 				}
 				break;
 
@@ -297,8 +297,8 @@ void SVGigeCameraDBContent::GetGigeParameterAttributes(MSXML2::ISAXAttributes* p
 
 		if (wcsncmp(name, L"SVGigeParameterEnum", nameSize) == 0)
 		{
-			SVGigeParameterEnum enumValue;
-			bool bRetVal = StringToEnum<SVGigeParameterEnum, GigeParameterEnumMap, LPCWSTR>::GetEnum(GigeParameterEnums, value, enumValue); 
+			SvDef::SVGigeParameterEnum enumValue;
+			bool bRetVal = StringToEnum<SvDef::SVGigeParameterEnum, GigeParameterEnumMap, LPCWSTR>::GetEnum(GigeParameterEnums, value, enumValue); 
 			if (bRetVal)
 			{
 				m_GigeParameterEnum = enumValue;

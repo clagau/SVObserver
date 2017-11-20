@@ -7,8 +7,12 @@
 #pragma once
 #pragma region Includes
 #include "SVUtilityLibrary\SVBitmapInfo.h"
-#include "SVMatroxLibrary\SVMatroxBuffer.h"
 #pragma endregion Includes
+
+#pragma region Declarations
+//! Declaration is in SVStatusLibrary\MessageContainer.h
+class SVMatroxBuffer;
+#pragma endregion Declarations
 
 namespace SvOi
 {

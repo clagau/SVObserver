@@ -26,7 +26,6 @@
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
-class SVImageListClass;
 class SVArchiveRecord;
 
 class SVArchiveTool : public SVToolClass
@@ -41,7 +40,7 @@ public:
 	void RebuildResultsArchiveList();
 	void AddImageToArray(SVImageClass* pImage);
 	void RebuildImageArchiveList();
-	void SetImageAttributesFromArchiveList(SVImageListClass* pImageList);
+	void SetImageAttributesFromArchiveList(SVImageClassPtrVector* pImageList);
 
 	bool GetFileArchive( std::string& rName );
 	bool GetImageArchivePath( std::string& rName );

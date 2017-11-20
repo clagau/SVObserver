@@ -20,30 +20,30 @@ namespace SvCmd
 	{
 	private:
 		GUID m_TaskObjectID;
-		SVObjectSubTypeEnum m_subType;
+		SvDef::SVObjectSubTypeEnum m_subType;
 		bool m_bAllowColor;
 
-		bool IsHidden(SvOi::IObjectClass* pObject) const
+		bool IsHidden(const SvOi::IObjectClass* pObject) const
 		{
 			return (pObject->ObjectAttributesAllowed() & SvDef::SV_HIDDEN) ? true : false;
 		}
 
-		bool HasOneBand(SvOi::ISVImage* pImage) const
+		bool HasOneBand(const SvOi::ISVImage* pImage) const
 		{
 			long bandNumber = pImage->getBands();
 			return (1 == bandNumber);
 		}
 
-		bool IsObjectCurrentTask(SvOi::IObjectClass* pObject) const
+		bool IsObjectCurrentTask(const SvOi::IObjectClass* pObject) const
 		{
 			bool bRetVal = true;
-			SvOi::IObjectClass* pImageOwnerTool = pObject->GetAncestorInterface(SVToolObjectType);
+			const SvOi::IObjectClass* pImageOwnerTool = pObject->GetAncestorInterface(SvDef::SVToolObjectType);
 
 			if (nullptr != pImageOwnerTool)
 			{
 				GUID ownerID = pImageOwnerTool->GetUniqueObjectID();
-				SvOi::IToolSet* pToolSet = dynamic_cast<SvOi::IToolSet *>(pImageOwnerTool->GetAncestorInterface(SVToolSetObjectType));
-				if (pToolSet)
+				const SvOi::IToolSet* pToolSet = dynamic_cast<const SvOi::IToolSet*> (pImageOwnerTool->GetAncestorInterface(SvDef::SVToolSetObjectType));
+				if (nullptr != pToolSet)
 				{
 					if (ownerID == m_TaskObjectID) // stop at this tool...
 					{
@@ -55,21 +55,21 @@ namespace SvCmd
 		}
 
 	public:
-		AllowedImageFunc(const GUID& rTaskObjectID, SVObjectSubTypeEnum subType, bool bAllowColor)
+		AllowedImageFunc(const GUID& rTaskObjectID, SvDef::SVObjectSubTypeEnum subType, bool bAllowColor)
 		: m_TaskObjectID(rTaskObjectID)
 		, m_subType(subType)
 		, m_bAllowColor(bAllowColor)
 		{
 		}
 
-		bool operator()(SvOi::IObjectClass* pObject, bool& bStop) const
+		bool operator()(const SvOi::IObjectClass* pObject, bool& bStop) const
 		{
 			bool bUseImage = false;
-			SvOi::ISVImage* pImage = dynamic_cast<SvOi::ISVImage *>(pObject);
+			const SvOi::ISVImage* pImage = dynamic_cast<const SvOi::ISVImage*> (pObject);
 
-			if (pImage)
+			if (nullptr != pImage)
 			{
-				if (SVToolImageObjectType != m_subType)
+				if (SvDef::SVToolImageObjectType != m_subType)
 				{
 					// Ensure only image sources which are produced by tools above the current tool...
 					bStop = !IsObjectCurrentTask(pObject);

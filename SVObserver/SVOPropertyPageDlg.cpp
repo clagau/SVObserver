@@ -27,7 +27,7 @@
 #include "CameraLibrary/SVCustomDeviceParam.h"
 #include "SVFileAcquisitionDevice/SVFileAcquisitionLoadingModeEnum.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
-#include "SVLibrary/SVFileNameClass.h"
+#include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "SVOConfigAssistantDlg.h"
 #include "SVGigeCameraROIDlg.h"
 #include "SVAcquisitionClass.h"
@@ -1913,7 +1913,7 @@ HRESULT CSVOPropertyPageDlg::AdjustCameraImageFormat( LPCTSTR sSelectedFormat, S
 
 			svFile.SetFullFileName( m_CameraObj.GetCameraFile().c_str() );
 
-			svFiles.Add(svFile);
+			svFiles.push_back(svFile);
 
 			pDevice->LoadFiles( svFiles );
 		}
@@ -1968,7 +1968,7 @@ HRESULT CSVOPropertyPageDlg::AdjustCameraImageFormat( LPCTSTR sSelectedFormat, S
 				if ( bFoundCamera )
 				{
 					pInspection->DisconnectToolSetMainImage();
-					aInspections.Add( pInspection );
+					aInspections.push_back( pInspection );
 				}
 			}
 		}
@@ -2042,9 +2042,9 @@ HRESULT CSVOPropertyPageDlg::AdjustCameraImageFormat( LPCTSTR sSelectedFormat, S
 	if ( bChangedAcqFormat )
 	{
 		// reconnect buffers
-		for ( long lInspection = 0; lInspection < aInspections.GetSize(); lInspection++ )
+		for (auto pInspection : aInspections)
 		{
-			aInspections.GetAt(lInspection)->ConnectToolSetMainImage();
+			pInspection->ConnectToolSetMainImage();
 		}
 	}
 	return hr;

@@ -12,13 +12,13 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
-#include "SVMatroxDigitizerLibrary/SVMatroxDigitizerRef.h"
+#include "SVMatroxDigitizerLibrary/SVMatroxDigitizer.h"
 #include "SVGigeFeature.h"
 #pragma endregion Includes
 
 struct SVGigeEmptySetter
 {
 	// Setter
-	HRESULT operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& rFeature, const _variant_t& rValue);
+	HRESULT operator()(SVMatroxDigitizerPtr Digitizer, const SVGigeFeature& rFeature, const _variant_t& rValue);
 };
 

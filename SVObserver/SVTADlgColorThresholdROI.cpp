@@ -78,9 +78,9 @@ BOOL SVTADlgColorThresholdROI::OnInitDialog()
 
 	SetTaskObject( m_pTool );
 
-	SVObjectTypeInfoStruct objectInfo;
-	objectInfo.ObjectType = SVOperatorObjectType;
-	objectInfo.SubType = SVColorThresholdObjectType;
+	SvDef::SVObjectTypeInfoStruct objectInfo;
+	objectInfo.ObjectType = SvDef::SVOperatorObjectType;
+	objectInfo.SubType = SvDef::SVColorThresholdObjectType;
 
 	// Get the color threshold object
 	m_pThreshold = dynamic_cast<SVColorThresholdClass*> (m_pTool->getFirstObject(objectInfo));
@@ -88,9 +88,9 @@ BOOL SVTADlgColorThresholdROI::OnInitDialog()
 	if( m_pThreshold )
 	{
 		// Get Train Color Extent Variables
-		SVObjectTypeInfoStruct extentObjectInfo;
-		extentObjectInfo.ObjectType = SVValueObjectType;
-		extentObjectInfo.SubType = SVDoubleValueObjectType;
+		SvDef::SVObjectTypeInfoStruct extentObjectInfo;
+		extentObjectInfo.ObjectType = SvDef::SVValueObjectType;
+		extentObjectInfo.SubType = SvDef::SVDoubleValueObjectType;
 
 		// Get Train Color ROI Extent Left Object...
 		extentObjectInfo.EmbeddedID = SVExtentRelativeLeftPositionObjectGuid;

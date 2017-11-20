@@ -38,9 +38,9 @@ void SVImageBufferHandleStruct::clear()
 	LocalClear();
 }
 
-SVPOINT SVImageBufferHandleStruct::GetPositionPoint() const
+SVPoint SVImageBufferHandleStruct::GetPositionPoint() const
 {
-	SVPOINT l_Point;
+	SVPoint l_Point;
 
 	if( !( milImage.empty() ) )
 	{

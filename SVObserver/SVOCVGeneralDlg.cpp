@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVOCVDialog.h"
 #include "SVOCVGeneralDlg.h"
-#include "SVLibrary/SVFileNameClass.h"
+#include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "SVOCVAnalyzerResult.h"
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary/MessageManager.h"

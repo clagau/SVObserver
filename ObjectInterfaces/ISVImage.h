@@ -10,7 +10,6 @@
 #include "Definitions/SVImageEnums.h"
 #include "IMatroxImageData.h"
 #include "SVUtilityLibrary\SVSharedPtr.h"
-
 #pragma endregion Includes
 
 namespace SvOi

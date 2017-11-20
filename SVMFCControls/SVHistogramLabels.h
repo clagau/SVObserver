@@ -12,62 +12,6 @@
 
 namespace SvMc
 {
-	namespace color
-	{
-		const COLORREF
-			Red = RGB(255, 0, 0),
-			Green = RGB(0, 128, 0),
-			Blue = RGB(0, 0, 255),
-			Black = RGB(0, 0, 0),
-			Aqua = RGB(0, 255, 255),
-			Aquamarine = RGB(127, 255, 212),
-			Azure = RGB(240, 255, 255),
-			Beige = RGB(245, 245, 220),
-			Bisque = RGB(255, 228, 196),
-			Brown = RGB(165, 42, 42),
-			Charcoal = RGB(64, 64, 64),
-			Chartreuse = RGB(127, 255, 0),
-			Chocolate = RGB(210, 105, 30),
-			Coral = RGB(255, 127, 80),
-			Cornsilk = RGB(255, 248, 220),
-			Crimson = RGB(237, 24, 61),
-			Gray = RGB(128, 128, 128),
-			Fuchsia = RGB(255, 0, 255),
-			Gainsboro = RGB(220, 220, 220),
-			Gold = RGB(255, 215, 0),
-			Silver = RGB(192, 192, 192),
-			White = RGB(255, 255, 255),
-			Yellow = RGB(255, 255, 0),
-			Magenta = RGB(255, 0, 255),
-			Indigo = RGB(75, 0, 130),
-			Ivory = RGB(255, 255, 240),
-			Khaki = RGB(240, 230, 140),
-			Lavender = RGB(230, 230, 250),
-			Lime = RGB(0, 255, 0),
-			Linen = RGB(250, 240, 230),
-			Maroon = RGB(128, 0, 0),
-			Moccasin = RGB(255, 228, 181),
-			Navy = RGB(0, 0, 128),
-			Olive = RGB(128, 128, 0),
-			Orchid = RGB(218, 112, 214),
-			Orange = RGB(255, 165, 0),
-			Peru = RGB(205, 133, 63),
-			Pink = RGB(255, 192, 203),
-			Plum = RGB(221, 160, 221),
-			Purple = RGB(128, 0, 128),
-			Salmon = RGB(250, 128, 114),
-			Sienna = RGB(160, 82, 45),
-			Slate = RGB(106, 90, 205),
-			Tan = RGB(210, 180, 140),
-			Teal = RGB(0, 128, 128),
-			Thistle = RGB(216, 191, 216),
-			Tomato = RGB(255, 99, 71),
-			Turquoise = RGB(64, 224, 208),
-			Violet = RGB(238, 130, 238),
-			Wheat = RGB(245, 222, 179),
-			Cyan = RGB(0, 255, 255);
-	}
-
 	namespace label
 	{
 		enum position

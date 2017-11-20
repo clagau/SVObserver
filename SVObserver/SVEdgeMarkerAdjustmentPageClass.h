@@ -14,7 +14,7 @@
 #pragma region Includes
 #include "SVMFCControls\SVEditNumbers.h"
 #include "SVValueBaseNormalizerClass.h"
-#include "SVLibrary/SVTaskObjectValueInterface.h"
+#include "SVOCore/SVTaskObjectValueInterface.h"
 #pragma endregion Includes
 
 class SVIPDoc;
