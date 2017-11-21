@@ -82,5 +82,4 @@
 #include <boost/function.hpp>
 #include <boost/scoped_array.hpp>
 #include <boost/static_assert.hpp>
-#include <boost/tr1/memory.hpp>
 #pragma endregion Precompiled Headers

@@ -12,7 +12,6 @@
 #pragma once
 
 //Moved to precompiled header: #include <boost/config.hpp>
-//Moved to precompiled header: #include <boost/tr1/memory.hpp>
 //Moved to precompiled header: #include <memory>
 #include "SVNullDeleter.h"
 ///////////////////////////////////////////////////////////////////////

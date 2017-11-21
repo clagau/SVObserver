@@ -78,6 +78,5 @@
 #include <boost/graph/graphviz.hpp>						//Used by static library
 #include <boost/scoped_array.hpp>						//Used by static library
 #include <boost/tokenizer.hpp>
-#include <boost/tr1/memory.hpp>
 #include <boost/utility.hpp>
 #pragma endregion Precompiled Headers
