@@ -10,6 +10,8 @@
 #include "stdafx.h"
 #include "TADialogTableDefinesPage.h"
 #include "SVObjectLibrary\SVClsids.h"
+#include "Definitions/GlobalConst.h"
+#include "Definitions/StringTypeDef.h"
 #include "Definitions/TextDefineSVDef.h"
 #include "SVFormulaEditorSheet.h"
 #include "FormulaController.h"
@@ -21,7 +23,6 @@
 #include "SVMessage\SVMessage.h"
 #include "GuiCommands\GetErrorMessageList.h"
 #include "GuiCommands\MoveFriendObject.h"
-#include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
@@ -241,7 +242,14 @@ namespace SvOg {
 
 		if (cNameColumn == pItem->iColumn && 0 < pItem->iRow && m_gridList.size() >= pItem->iRow)
 		{
-			std::string newName = m_Grid.GetCell(pItem->iRow, pItem->iColumn)->GetText();
+			std::string CellText = m_Grid.GetCell(pItem->iRow, pItem->iColumn)->GetText();
+			std::string newName = CellText;
+			SvUl::RemoveCharacters(newName, SvDef::cGeneralExcludeChars);
+			if (newName != CellText)
+			{
+				m_Grid.SetItemText(pItem->iRow, pItem->iColumn, newName.c_str());
+			}
+
 			if (!newName.empty())
 			{
 				if ( isTableNameUnique(newName) )

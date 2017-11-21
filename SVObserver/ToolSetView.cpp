@@ -32,7 +32,7 @@
 #include "SVOGui/SVTextEditDialog.h"
 #include "SVShiftTool.h"
 #include "SVShiftToolUtility.h"
-#include "TextDefinesSvO.h"
+#include "Definitions/GlobalConst.h"
 #include "ObjectInterfaces/ISVOApp_Helper.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -433,7 +433,7 @@ void ToolSetView::ValidateLabelText( std::string& rNewText )
 	// strip leading and trailing spaces
 	 SvUl::Trim( rNewText );
 
-	SvUl::RemoveCharacters( rNewText, SvO::SVEXCLUDECHARS_TOOL_IP_NAME );
+	SvUl::RemoveCharacters( rNewText, SvDef::cExcludeCharsToolIpName );
 
 	if( rNewText.empty() )
 	{

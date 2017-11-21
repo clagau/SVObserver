@@ -27,7 +27,7 @@
 #include "SVGlobal.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
-#include "TextDefinesSvO.h"
+#include "Definitions/GlobalConst.h"
 #include "SVOResource\ConstGlobalSvOr.h"
 #include "SVInspectionProcess.h"
 #include "Definitions/StringTypeDef.h"
@@ -421,7 +421,7 @@ void CSVOInspectionSourceDlg::OnSelchangeLstIpdList()
 		CString sCurrentTxt;
 		m_iEditingSel = iCurSel;
 		m_ctlIPDlist.GetText(iCurSel, sCurrentTxt);
-		SvMc::CSVOEditorWnd *pEditor = new SvMc::CSVOEditorWnd( m_ctlIPDlist, SvO::SVEXCLUDECHARS_TOOL_IP_NAME );
+		SvMc::CSVOEditorWnd *pEditor = new SvMc::CSVOEditorWnd( m_ctlIPDlist, SvDef::cExcludeCharsToolIpName );
 		pEditor->Edit(iCurSel);
 		pEditor->WaitForDoneEditing();
 		SVDataItemManager::const_iterator l_Iter = m_Items.GetItemData(iCurSel);

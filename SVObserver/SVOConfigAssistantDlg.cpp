@@ -47,6 +47,7 @@
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "Definitions/GlobalConst.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -130,7 +131,7 @@ const CSVOConfigAssistantDlg::SVProductStringMap CSVOConfigAssistantDlg::m_Produ
 
 CSVOConfigAssistantDlg::CSVOConfigAssistantDlg(CWnd* pParent /*=nullptr*/)
 	: CDialog(CSVOConfigAssistantDlg::IDD, pParent)
-	, m_ctlConfigurationName(SvO::SVEXCLUDECHARS_CONFIG_NAME)
+	, m_ctlConfigurationName(SvDef::cExcludeCharsConfigName)
 {
 	//{{AFX_DATA_INIT(CSVOConfigAssistantDlg)
 	m_AvailableSystem = _T("");

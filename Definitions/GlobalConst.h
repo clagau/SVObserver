@@ -62,6 +62,11 @@ namespace SvDef
 	const int			cMinPatternModelNewSize = 8;
 	const int			cMinPatternModelLoadSize = 4;
 
+	const TCHAR* const cGeneralExcludeChars = _T("\\/:*\"<>|;&$@'[]{}()^~!%?=§€`´°²³µ#,.+-\xd7\xf7");
+	const TCHAR* const cExcludeCharsToolIpName = cGeneralExcludeChars;
+	const TCHAR* const cExcludeCharsConfigName = _T("\\/:*\"<>|;&$@'[]{}()^~!%?=§€`´°²³µ#");
+
+
 	//! Fully qualified names
 	const TCHAR* const FqnRoot = _T("Root");
 	const TCHAR* const FqnGlobal = _T("Global");

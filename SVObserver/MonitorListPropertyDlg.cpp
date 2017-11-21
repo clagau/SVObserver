@@ -13,7 +13,7 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <algorithm>
 #include "MonitorListPropertyDlg.h"
-#include "TextDefinesSvO.h"
+#include "Definitions/GlobalConst.h"
 #include "RemoteMonitorListController.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
@@ -80,7 +80,7 @@ std::string MonitorListPropertyDlg::ValidateLabelText(const std::string& rNewTex
 {
 	std::string Result( rNewText );
 
-	SvUl::RemoveCharacters( Result, SvO::SVEXCLUDECHARS_TOOL_IP_NAME );
+	SvUl::RemoveCharacters( Result, SvDef::cGeneralExcludeChars );
 
 	if( Result.empty() )
 	{

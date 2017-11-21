@@ -15,7 +15,7 @@
 #include "SVRemoteOutputGroupAddRemoveDlg.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "Definitions/StringTypeDef.h"
-#include "TextDefinesSvO.h"
+#include "Definitions/GlobalConst.h"
 #pragma endregion Includes
 
 // SVRemoteOutputGroupAddRemoveDlg dialog
@@ -333,7 +333,7 @@ LRESULT  SVRemoteOutputGroupAddRemoveDlg::OnUsedListEditFinished(WPARAM wPar, LP
 		//trim white space from left and right of the new name
 		std::string newName = SvUl::Trim( std::string( Text ));
 
-		SvUl::RemoveCharacters( newName, SvO::SVEXCLUDECHARS_TOOL_IP_NAME );
+		SvUl::RemoveCharacters( newName, SvDef::cGeneralExcludeChars );
 
 		//don't all blank strings
 		if ( !newName.empty() )

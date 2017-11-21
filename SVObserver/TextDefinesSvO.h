@@ -22,8 +22,6 @@ namespace SvO
 
 	const TCHAR* const EndListDelimiter = _T( "-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------" );
 	const TCHAR* const SVTOOLPARAMETERLIST_MARKER = _T( "** SVSetToolParameterList MARKER **" );
-	const TCHAR* const SVEXCLUDECHARS_CONFIG_NAME =  _T( "\\/:*\"<>|;&$@'[]{}()^~!%?=§€`´°²³µ#" );
-	const TCHAR* const SVEXCLUDECHARS_TOOL_IP_NAME = _T( "\\/:*\"<>|;&$@'[]{}()^~!%?=§€`´°²³µ#,.+-\xd7\xf7" );
 	const TCHAR* const SizeAdjustTextNone = _T( "Manual" );
 	const TCHAR* const SizeAdjustTextFormula = _T( "Formula" );
 	const TCHAR* const SizeAdjustTextFullSize = _T( "Auto Fit" );

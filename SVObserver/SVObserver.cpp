@@ -369,7 +369,7 @@ SVObserverApp::SVObserverApp()
 	m_pMessageWindow = nullptr;
 
 	m_ConfigFileName.SetFileType( SV_SVX_CONFIGURATION_FILE_TYPE );
-	m_ConfigFileName.setExcludeCharacters( SvO::SVEXCLUDECHARS_CONFIG_NAME );
+	m_ConfigFileName.setExcludeCharacters( SvDef::cExcludeCharsConfigName );
 
 	SVFileNameManagerClass::Instance().AddItem(&m_ConfigFileName);
 
