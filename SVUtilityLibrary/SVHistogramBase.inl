@@ -67,7 +67,7 @@ inline bool SVHistogramBase::Clip(int left, int right)
 		left = m_start;
 	if (right == no_clip)
 		right = m_end - 1;
-	if (0 > left || left > right || right > 255 || (m_start == left && m_end == right + 1))
+	if (0 > left || left > right || right > MaxIndex || (m_start == left && m_end == right + 1))
 		return false;
 	m_start = left;
 	m_end = right + 1;
@@ -92,7 +92,7 @@ inline void SVHistogramBase::CalcStats()
 template<typename Iter>
 inline void SVHistogramBase::SetPixelCounts(Iter first, Iter last)
 {
-	assert(last - first == 256);
+	assert(last - first == VectorCount);
 	std::vector<int>::iterator dest = m_values.begin(), dest2 = m_accumulated.begin();
 	m_max = m_total = 0;
 	for (Iter it = first; it != last; ++it, ++dest, ++dest2)

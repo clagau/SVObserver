@@ -20,7 +20,12 @@
 
 
 namespace SvUl {
-	enum {no_clip = 257};
+	enum
+	{
+		MaxIndex=255,
+		VectorCount=256,
+		no_clip = 257
+	};
 
 	class SVHistogramBase
 	{
@@ -80,52 +85,57 @@ namespace SvUl {
 		int valley()		const;
 		int value_at(int i)	const { return m_values[i]; }
 
+		std::string ToolName;
+
 	protected:
 		std::vector<int> m_values;
 		std::vector<int> m_accumulated;
-		int m_lowBound, m_highBound;
-		int m_start, m_end, m_clipCount;
-		int m_max;
-		int m_total;
-		int m_lowPeak;
-		int m_highPeak;
-		int m_valley;
-		double scale;
-		double m_ratio;
-		double m_factor;
-		histogram::scale m_scale;
-		histogram::v_axis m_axis;
-		histogram::colors m_colors;
-		histogram::clip_options m_clip;
-		histogram::disp_options m_disp;
-		histogram::height_options m_height;
-		histogram::placement m_placement;
-		unsigned m_disabled;
-		double m_variance;
-		double m_std_dev;
+		int m_lowBound{ 0 };
+		int m_highBound{ 0 };
+		int m_start{ 0 };
+		int m_end{ VectorCount };
+		int m_clipCount{ VectorCount };
+		int m_max{ 0 };
+		int m_total{ 0 };
+		int m_lowPeak{ 0 };
+		int m_highPeak{ 0 };
+		int m_valley{ 0 };
+		double scale{ 1.0 };
+		double m_ratio{ 0.0 };
+		double m_factor{ 0.0 };
+		histogram::scale m_scale{ histogram::linear };
+		histogram::v_axis m_axis{ histogram::percent_all };
+		histogram::colors m_colors{ histogram::config };
+		histogram::clip_options m_clip{ histogram::no_clip };
+		histogram::disp_options m_disp{ histogram::normal };
+		histogram::height_options m_height{ histogram::dynamic };
+		histogram::placement m_placement{ histogram::elsewhere };
+		unsigned m_disabled{ 0 };
+		double m_variance{ 0. };
+		double m_std_dev{ 0. };
 		CRect m_client;
 
-		int min_px;
-		int max_px;
-		int peak_default;
-		int peak_threshold;
-		double peak_min_height;
-		double fixed_height;
-		int valley_low;
-		int valley_high;
-		int valley_default;
+		int min_px{ 0 };
+		int max_px{ 0 };
+		int peak_default{ 0 };
+		int peak_threshold{ 0 };
+		double peak_min_height{ 0.0 };
+		double fixed_height{ 0.0 };
+		int valley_low{ 0 };
+		int valley_high{ MaxIndex };
+		int valley_default{ 0 };
 
 		histogram::Func m_func;
 
 		SVHistogramStats m_stats;
 
-		bool needs_repaint;
+		bool needs_repaint{ true };
 		// convert position of the bar into its screen rectangle
 		CRect Pos2Screen(int pos);
 		// convert screen x-coordinate into bar position
 		int Screen2Pos(int x);
 		template<typename T>
-		bool SetProperty(T & prop, T val, T low = 0, T high = 255); 
+		bool SetProperty(T & prop, T val, T low = 0, T high = MaxIndex);
 		bool SetProperty(histogram::height_options & prop, histogram::height_options opt);
 	};
 
