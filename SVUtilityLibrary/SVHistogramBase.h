@@ -85,8 +85,6 @@ namespace SvUl {
 		int valley()		const;
 		int value_at(int i)	const { return m_values[i]; }
 
-		std::string ToolName;
-
 	protected:
 		std::vector<int> m_values;
 		std::vector<int> m_accumulated;
