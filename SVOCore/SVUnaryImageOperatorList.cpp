@@ -98,7 +98,7 @@ void SVUnaryImageOperatorListClass::init()
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVUnaryImageOperatorListObjectType;
 
 	// Identify our input type needs
-	inputImageObjectInfo.SetInputObjectType(SvDef::SVImageObjectType);
+	inputImageObjectInfo.SetInputObjectType(SvDef::SVImageObjectType, SvDef::SVImageMonoType);
 	inputImageObjectInfo.SetObject(GetObjectInfo());
 	RegisterInputObject(&inputImageObjectInfo, _T("UnaryImageOperatorListImage"));
 

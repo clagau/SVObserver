@@ -164,7 +164,7 @@ HRESULT SVToolExtentClass::UpdateImageWithExtent( SVToolExtentTypeEnum p_ToolExt
 					m_psvToolImage->UpdateImage( l_Type );
 				}
 
-				if( SvDef::SVImageTypeEnum::SVImageTypeDependent == l_Type || SvDef::SVImageTypeEnum::SVImageTypeVirtual == l_Type )
+				if( SvDef::SVImageTypeEnum::SVImageTypeDependent == l_Type )
 				{
 					l_Extent = l_pParent->GetImageExtents();
 

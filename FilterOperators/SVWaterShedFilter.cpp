@@ -60,7 +60,7 @@ void SVWatershedFilterClass::init()
 	m_lvoMinVariation.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	m_lvoControlFlag.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 
-	m_MarkerImageInfo.SetInputObjectType( SvDef::SVImageObjectType );
+	m_MarkerImageInfo.SetInputObjectType(SvDef::SVImageObjectType, SvDef::SVImageMonoType);
 	m_MarkerImageInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_MarkerImageInfo, SvDef::WatershedMarkerImageConnectionName );
 

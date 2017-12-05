@@ -44,7 +44,7 @@ void SVUserMaskOperatorClass::init()
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVUnaryImageOperatorObjectType;
 	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVUserMaskOperatorObjectType;
 
-	m_inObjectInfo.SetInputObjectType( SvDef::SVImageObjectType );
+	m_inObjectInfo.SetInputObjectType(SvDef::SVImageObjectType, SvDef::SVImageMonoType);
 	m_inObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inObjectInfo, _T( "UserMaskImage" ) );
 

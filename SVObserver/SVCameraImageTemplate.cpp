@@ -28,7 +28,6 @@ SVCameraImageTemplate::SVCameraImageTemplate( LPCSTR ObjectName )
 , m_CurrentIndex()
 {
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVImageObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVCameraImageTemplateObjectType;
 
 	// SVMainImageClass is not a result image.
 	// We need to remove the PUBLISH attribute.
@@ -42,7 +41,6 @@ SVCameraImageTemplate::SVCameraImageTemplate( SVObjectClass* POwner, int StringR
 , m_CurrentIndex()
 {
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVImageObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVCameraImageTemplateObjectType;
 
 	// SVMainImageClass is not a result image.
 	// We need to remove the PUBLISH attribute.

@@ -36,8 +36,6 @@ public:
 	virtual const SvTl::SVTimeStamp& GetLastResetTimeStamp() const override;
 	
 protected:
-	virtual bool ValidateImage() override;
-
 	virtual bool CreateBuffers( const SVImageInfoClass& p_rImageInfo, SVImageObjectClassPtr p_ImageArrayPtr ) override;
 
 	virtual SVImageObjectClassPtr GetBufferArrayPtr() const override;

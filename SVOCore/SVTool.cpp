@@ -160,7 +160,7 @@ void SVToolClass::init()
 	m_pCurrentToolSet = nullptr;
 
 	// Auxiliary Source Image.
-	m_AuxSourceImageObjectInfo.SetInputObjectType( SvDef::SVImageObjectType );
+	m_AuxSourceImageObjectInfo.SetInputObjectType(SvDef::SVImageObjectType, SvDef::SVImageMonoType);
 	m_AuxSourceImageObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_AuxSourceImageObjectInfo, _T( "ToolAuxSourceImage" ) );
 
@@ -399,11 +399,6 @@ bool SVToolClass::Run( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVect
 		{
 			SVImageClassPtrSet::iterator l_oImageIter;
 
-			for( l_oImageIter = m_ImageObjectSet.begin(); l_oImageIter != m_ImageObjectSet.end(); ++l_oImageIter )
-			{
-				(*l_oImageIter)->CopyImageTo( rRunStatus.Images );
-			}
-
 			if( rRunStatus.m_UpdateCounters )
 			{
 				// Set Processed Count...
@@ -529,12 +524,6 @@ bool SVToolClass::RunWithNewDisable( SVRunStatusClass& rRunStatus, SvStl::Messag
 		for( ; m_ValueObjectSet.end() != ValueIter; ++ValueIter )
 		{
 			(*ValueIter)->CopyValue( rRunStatus.m_lResultDataIndex );
-		}
-
-		SVImageClassPtrSet::iterator ImageIter( m_ImageObjectSet.begin() );
-		for( ; m_ImageObjectSet.end() != ImageIter ; ++ImageIter )
-		{
-			(*ImageIter)->CopyImageTo( rRunStatus.Images );
 		}
 
 		if( m_pToolConditional )

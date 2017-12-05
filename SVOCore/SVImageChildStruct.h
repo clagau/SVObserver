@@ -29,5 +29,5 @@ struct SVImageChildStruct
 	SVImageObjectClassPtr m_pImageHandles;
 };
 
-typedef std::map< GUID, SVImageChildStruct > SVGuidImageChildMap;
+typedef std::map< SVGUID, SVImageChildStruct > SVGuidImageChildMap;
 

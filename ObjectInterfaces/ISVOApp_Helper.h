@@ -5,6 +5,9 @@
 /// This file defines function to get access to data from SVObserverApp
 //******************************************************************************
 #pragma once
+#pragma region Includes
+#include "SVUtilityLibrary/SVGUID.h"
+#pragma endregion Includes
 
 namespace SvOi
 {
@@ -36,4 +39,11 @@ namespace SvOi
 	//! \param rMessage [in] the message to display
 	//! \param hCheckEvent [in] Handle to event which will close the dialog
 	void CallModelessMessageBox(std::string &rMessage, HANDLE hCheckEvent);
+
+	//! Calls the setup dialog manager
+	//! \param rClassID [in] The class ID to the corresponding dialog
+	//! \param rObjectId [in] The object id as parameter
+	//! \param pParentWnd [in] Pointer to the parent window
+	/// \returns result
+	HRESULT SetupDialogManager(const SVGUID& rClassId, const SVGUID& rObjectId, HWND hWnd);
 } //namespace SvOi

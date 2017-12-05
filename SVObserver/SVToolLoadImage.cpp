@@ -75,19 +75,17 @@ bool SVLoadImageToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreat
 
 	if( bOk )
 	{
-		SVImageClass* pImage = nullptr;
-
 		// Create Image...
-		SVImageInfoClass l_svImageInfo = m_fileImage.GetImageInfo();
+		SVImageInfoClass ImageInfo = m_fileImage.GetImageInfo();
 
 		// Setup...
-		l_svImageInfo.SetOwner( GetUniqueObjectID() );
-		l_svImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatMono8 );
-		l_svImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
-		l_svImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
-		l_svImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth,8);
+		ImageInfo.SetOwner( GetUniqueObjectID() );
+		ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatMono8 );
+		ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
+		ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
+		ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth,8);
 
-		bOk = ( S_OK == m_fileImage.UpdateImage( l_svImageInfo ) );
+		bOk = ( S_OK == m_fileImage.UpdateImage(SV_GUID_NULL, ImageInfo) );
 	}
 
 	// Set / Reset Printable Flags

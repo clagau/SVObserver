@@ -45,8 +45,8 @@ bool RingBufferTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStruc
 {
 	bool bOk = SVToolClass::CreateObject( rCreateStructure );
 
-	SVImageClass* inputImage = getInputImage ();
-	bOk &= (nullptr != inputImage);
+	SVImageClass* pInputImage = getInputImage ();
+	bOk &= (nullptr != pInputImage);
 
 	bOk &= (S_OK == m_svToolExtent.SetTranslation( SVExtentTranslationNone ));
 	SetToolROIExtentToFullInputImage ();
@@ -56,7 +56,7 @@ bool RingBufferTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStruc
 	{
 		for (int i=0; i < SvDef::cRingBufferNumberOutputImages; i++)
 		{
-			bOk &= (S_OK == m_OutputImages[i].InitializeImage( inputImage ));
+			bOk &= (S_OK == m_OutputImages[i].InitializeImage( pInputImage ));
 			m_ImageIndexManager[i].SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
 		}
 	}
@@ -276,7 +276,7 @@ void RingBufferTool::LocalInitialize ()
 void RingBufferTool::BuildInputObjectList ()
 {
 	// Source Image
-	m_InputImageObjectInfo.SetInputObjectType( SvDef::SVImageObjectType );
+	m_InputImageObjectInfo.SetInputObjectType( SvDef::SVImageObjectType, SvDef::SVImageMonoType);
 	m_InputImageObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_InputImageObjectInfo, _T( "InputImage" ) );
 

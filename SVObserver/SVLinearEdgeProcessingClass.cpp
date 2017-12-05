@@ -36,7 +36,7 @@ SVLinearEdgeProcessingClass::SVLinearEdgeProcessingClass( SVObjectClass* POwner,
 {
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVLinearEdgeProcessingObjectType;
 
-	m_svInputImageObjectInfo.SetInputObjectType( SvDef::SVImageObjectType );
+	m_svInputImageObjectInfo.SetInputObjectType( SvDef::SVImageObjectType, SvDef::SVImageMonoType);
 	m_svInputImageObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_svInputImageObjectInfo, _T( "LinearEdgeProcessingImage" ) );
 

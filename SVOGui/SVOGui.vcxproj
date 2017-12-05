@@ -144,6 +144,7 @@
     <ClCompile Include="SVRankingFilterDlg.cpp" />
     <ClCompile Include="SVSaveToolSetImageDialog.cpp" />
     <ClCompile Include="SVShowDependentsDialog.cpp" />
+    <ClCompile Include="SVTADlgColorToolPage.cpp" />
     <ClCompile Include="SVTADlgFileImageSourcePage.cpp" />
     <ClCompile Include="SVTADlgGeneralPage.cpp" />
     <ClCompile Include="SVTADlgPassFailPage.cpp" />
@@ -203,6 +204,7 @@
     <ClInclude Include="SVRankingFilterDlg.h" />
     <ClInclude Include="SVSaveToolSetImageDialog.h" />
     <ClInclude Include="SVShowDependentsDialog.h" />
+    <ClInclude Include="SVTADlgColorToolPage.h" />
     <ClInclude Include="SVTADlgFileImageSourcePage.h" />
     <ClInclude Include="SVTADlgGeneralPage.h" />
     <ClInclude Include="SVTADlgPassFailPage.h" />

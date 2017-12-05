@@ -572,9 +572,6 @@
     <ClCompile Include="SVTADlgColorThresholdSheet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVTADlgColorToolPage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVTADlgLUTPage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1471,9 +1468,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVTADlgColorThresholdSheet.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTADlgColorToolPage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVTADlgLUTPage.h">

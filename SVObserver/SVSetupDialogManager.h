@@ -26,7 +26,7 @@ public:
 
 	virtual ~SVSetupDialogManager();
 
-	HRESULT SetupDialog( const SVGUID& p_rClassId, const SVGUID& p_rObjectId, CWnd* PParentWnd );
+	HRESULT SetupDialog( const SVGUID& rClassId, const SVGUID& rObjectId, CWnd* pParentWnd );
 
 protected:
 	typedef boost::function<HRESULT (const SVGUID&, CWnd*)> SVSetupDialogFunction;

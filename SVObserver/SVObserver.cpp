@@ -283,27 +283,7 @@ BEGIN_MESSAGE_MAP(SVObserverApp, CWinApp)
 	ON_UPDATE_COMMAND_UI(ID_WINDOW_NEW, OnUpdateWindowNew)
 	ON_UPDATE_COMMAND_UI(ID_WINDOW_TILE_HORZ, OnUpdateWindowTileHorz)
 	ON_UPDATE_COMMAND_UI(ID_WINDOW_TILE_VERT, OnUpdateWindowTileVert)
-	ON_UPDATE_COMMAND_UI(ID_ADD_SHIFTTOOL, OnUpdateAddGeneralTool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_WINDOWTOOL, OnUpdateAddGeneralTool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_CYLINDRICALWARPTOOL, OnUpdateAddCylindricalWarpTool)
 	ON_UPDATE_COMMAND_UI(ID_APP_ABOUT, OnUpdateAppAbout)
-	ON_UPDATE_COMMAND_UI(ID_ADD_LOADIMAGETOOL, OnUpdateAddGeneralTool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_IMAGETOOL, OnUpdateAddGeneralTool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_ARCHIVETOOL,OnUpdateAddGeneralTool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_MATHTOOL, OnUpdateAddGeneralTool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_STATISTICSTOOL, OnUpdateAddGeneralTool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_TRANSFORMATIONTOOL, OnUpdateAddTransformationTool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_EXTERNAL_TOOL, OnUpdateAddGeneralTool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_POLARUNWRAPTOOL, OnUpdateAddGeneralTool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_ACQUISITIONTOOL, OnUpdateAddGeneralTool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_COLORTOOL, OnUpdateAddColorTool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_LINEARTOOL, OnUpdateAddGeneralTool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_REMOTEINPUTTOOL, OnUpdateAddGeneralTool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_RESIZETOOL, OnUpdateAddGeneralTool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_RINGBUFFERTOOL, OnUpdateAddGeneralTool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_TABLETOOL, OnUpdateAddGeneralTool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_TABLEANALYZERTOOL, OnUpdateAddGeneralTool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_PERSPECTIVEWARPTOOL, OnUpdateAddGeneralTool)
 	ON_UPDATE_COMMAND_UI(ID_EXTRAS_LOGIN, OnUpdateExtrasLogin)
 	ON_UPDATE_COMMAND_UI(ID_EXTRAS_ENVIRONMENTSETTINGS, OnUpdateExtrasAdditionalEnvironmentSettings)
 	ON_UPDATE_COMMAND_UI(ID_EXTRAS_LOGOUT, OnUpdateExtrasLogout)
@@ -1146,12 +1126,6 @@ void SVObserverApp::OnUpdateWindowTileVert( CCmdUI* PCmdUI )
 	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_REGRESSION ) );
 }
 
-void SVObserverApp::OnUpdateAddGeneralTool( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
-		OkToEdit() &&
-		IsMonochromeImageAvailable() );
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : OnUpdateAppExit
@@ -1236,12 +1210,6 @@ void SVObserverApp::OnUpdateExtrasLogin( CCmdUI* PCmdUI )
 	}
 }
 
-void SVObserverApp::OnUpdateAddTransformationTool( CCmdUI* PCmdUI )
-{
-	PCmdUI->Enable( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
-		OkToEdit() &&
-		IsMonochromeImageAvailable() );
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : OnGoOffline
@@ -1602,29 +1570,6 @@ void SVObserverApp::OnExtrasUtilitiesEdit()
 	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 }
 
-void SVObserverApp::OnUpdateAddColorTool( CCmdUI* PCmdUI ) 
-{
-	bool Enabled = ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST );
-	// Check current user access...
-	Enabled = Enabled && TheSVObserverApp.OkToEdit();
-
-	if( Enabled )
-	{
-		Enabled = FALSE;
-		CMDIChildWnd* pMDIChild;
-		if( m_pMainWnd && ( pMDIChild = ( ( CMDIFrameWnd* ) m_pMainWnd )->MDIGetActive() ) )
-		{
-			SVIPDoc* pCurrentDocument = dynamic_cast< SVIPDoc* > ( pMDIChild->GetActiveDocument() );
-			if( nullptr != pCurrentDocument && pCurrentDocument->IsColorInspectionDocument() )
-			{
-				Enabled = true;
-			}
-		}
-	}
-
-	PCmdUI->Enable( Enabled );
-}
-
 void SVObserverApp::OnUpdateRegressionTest(CCmdUI *pCmdUI)
 {
 	pCmdUI->SetCheck( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) );
@@ -1887,23 +1832,6 @@ void SVObserverApp::OnUpdateExtrasUtilitiesEdit(CCmdUI* pCmdUI)
 	{
 		pCmdUI->Enable( m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_EXTRAS_MENU_UTILITIES_SETUP ) && 
 			!SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) );
-	}
-}
-
-void SVObserverApp::OnUpdateAddCylindricalWarpTool( CCmdUI* pCmdUI )
-{
-	bool l_bEnable = ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
-		OkToEdit() &&
-		IsMonochromeImageAvailable() ;
-
-	if( pCmdUI->m_pSubMenu )
-	{
-		unsigned int l_uiGray = l_bEnable ? 0 : MF_GRAYED;
-		pCmdUI->m_pMenu->EnableMenuItem( pCmdUI->m_nIndex, MF_BYPOSITION | l_uiGray);
-	}
-	else
-	{
-		pCmdUI->Enable( l_bEnable );
 	}
 }
 
@@ -4397,66 +4325,15 @@ bool SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 
 bool SVObserverApp::OkToEdit()
 {
-	bool l_bOk = false;
-	if( SVSVIMStateClass::CheckState( SV_STATE_EDIT ))
+	bool Result{ false };
+	if( SVSVIMStateClass::CheckState( SV_STATE_EDIT) && SVSVIMStateClass::CheckState(SV_STATE_READY))
 	{
 		if( m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_EDIT_TOOLSET ))
 		{
-			l_bOk = true;
+			Result = true;
 		}
 	}
-	return l_bOk;
-}
-
-bool SVObserverApp::IsMonochromeImageAvailable()
-{
-	bool Monochrome(false);
-
-	CMDIChildWnd* pMDIChild( nullptr );
-	if( m_pMainWnd && ( pMDIChild = ( ( CMDIFrameWnd* ) m_pMainWnd )->MDIGetActive() ) )
-	{
-		m_pCurrentDocument = dynamic_cast< SVIPDoc* >( pMDIChild->GetActiveDocument() );
-	}
-	if( nullptr != m_pCurrentDocument )
-	{
-		Monochrome = !m_pCurrentDocument->IsColorInspectionDocument();
-
-		if ( !Monochrome )
-		{
-			SvDef::SVObjectTypeInfoStruct info;
-
-			info.ObjectType = SvDef::SVImageObjectType;
-			info.SubType = SvDef::SVNotSetSubObjectType;
-
-			SVGetObjectDequeByTypeVisitor l_Visitor( info );
-
-			SVObjectManagerClass::Instance().VisitElements( l_Visitor, m_pCurrentDocument->GetInspectionID() );
-
-			SVGetObjectDequeByTypeVisitor::SVObjectPtrDeque::const_iterator l_Iter;
-
-			for( l_Iter = l_Visitor.GetObjects().begin(); !Monochrome && l_Iter != l_Visitor.GetObjects().end(); ++l_Iter )
-			{
-				SVImageClass* pImage = dynamic_cast< SVImageClass* >( const_cast< SVObjectClass* >( *l_Iter ) );
-
-				if( nullptr != pImage && nullptr != pImage->GetTool() )
-				{
-					if( m_pCurrentDocument->GetSelectedToolID() != pImage->GetTool()->GetUniqueObjectID() )
-					{
-						SVImageInfoClass ImageInfo = pImage->GetImageInfo();
-
-						long l_lBandNumber = 1;
-
-						Monochrome = S_OK == ImageInfo.GetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, l_lBandNumber ) && 1 == l_lBandNumber;
-					}
-					else
-					{
-						break;
-					}
-				}
-			}
-		}
-	}
-	return Monochrome;
+	return Result;
 }
 
 void SVObserverApp::OnRCOpenCurrentSVX()

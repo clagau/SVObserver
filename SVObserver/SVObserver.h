@@ -116,15 +116,12 @@ public:
 	afx_msg void OnUpdateWindowNew(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateWindowTileHorz(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateWindowTileVert(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateAddGeneralTool(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateAppExit(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateAppAbout(CCmdUI* PCmdUI);
 	afx_msg void OnFilePrintConfig();
 	afx_msg void OnSVOFilePrintSetup();
 	afx_msg void OnExtrasLogin();
 	afx_msg void OnUpdateExtrasLogin(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateExtrasUserManager(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateAddTransformationTool(CCmdUI* PCmdUI);
 	afx_msg void OnGoOffline();
 	afx_msg void OnUpdateGoOffline(CCmdUI* PCmdUI);
 	afx_msg void OnGoOnline();
@@ -143,7 +140,6 @@ public:
 	afx_msg void OnUpdatePublishedImagesPicker(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateResultsPicker(CCmdUI* pCmdUI);
 	afx_msg void OnExtrasUtilitiesEdit();
-	afx_msg void OnUpdateAddColorTool(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateRegressionTest(CCmdUI* pCmdUI);
     afx_msg void OnEditMonitorList();
     afx_msg void OnUpdateEditAddMonitorList(CCmdUI* pCmdUT);
@@ -163,7 +159,6 @@ public:
 	afx_msg void OnTriggerSettings();
 	afx_msg void OnUpdateTriggerSettings(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateExtrasUtilitiesEdit(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateAddCylindricalWarpTool( CCmdUI* PCmdUI );
 	afx_msg void OnUpdateExtrasSecuritySetup(CCmdUI* pCmdUI);
 	afx_msg void OnEditRemoteOutputs();
 	afx_msg void OnEditPublishedResults( UINT nID );
@@ -242,7 +237,6 @@ public:
 	bool ShowConfigurationAssistant( int Page = 3, bool bFileNewConfiguration = false );
 
 	bool OkToEdit();
-	bool IsMonochromeImageAvailable();
 	void OnRCOpenCurrentSVX();
 	void UpdateAllMenuExtrasUtilities();
 

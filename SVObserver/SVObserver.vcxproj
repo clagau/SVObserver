@@ -445,7 +445,6 @@ echo %time%
     <ClCompile Include="SVTADlgColorThresholdOutput.cpp" />
     <ClCompile Include="SVTADlgColorThresholdROI.cpp" />
     <ClCompile Include="SVTADlgColorThresholdSheet.cpp" />
-    <ClCompile Include="SVTADlgColorToolPage.cpp" />
     <ClCompile Include="SVTADlgLUTPage.cpp" />
     <ClCompile Include="SVTADlgPolarTransformPage.cpp" />
     <ClCompile Include="SVTADlgRemoteInputToolPage.cpp" />
@@ -771,7 +770,6 @@ echo %time%
     <ClInclude Include="SVTADlgColorThresholdOutput.h" />
     <ClInclude Include="SVTADlgColorThresholdROI.h" />
     <ClInclude Include="SVTADlgColorThresholdSheet.h" />
-    <ClInclude Include="SVTADlgColorToolPage.h" />
     <ClInclude Include="SVTADlgLUTPage.h" />
     <ClInclude Include="SVTADlgPolarTransformPage.h" />
     <ClInclude Include="SVTADlgRemoteInputToolPage.h" />

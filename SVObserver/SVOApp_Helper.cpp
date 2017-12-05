@@ -8,6 +8,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVObserver.h"
+#include "SVSetupDialogManager.h"
 #include "SVMessage\SVMessage.h"
 #include "ObjectInterfaces\ISVOApp_Helper.h"
 #include "SVMFCControls/SVDlgFolder.h"
@@ -68,9 +69,12 @@ INT_PTR SvOi::OpenSVFolderDialog(std::string& Path, LPCTSTR Title)
 void SvOi::CallModelessMessageBox(std::string &rMessage, HANDLE hCheckEvent)
 {
 	CModelessMsgBox* pBox = new CModelessMsgBox(rMessage, hCheckEvent);
-	
+
 	pBox->Create(CModelessMsgBox::IDD, nullptr);
 }
 
-
+HRESULT SvOi::SetupDialogManager(const SVGUID& rClassId, const SVGUID& rObjectId, HWND hWnd)
+{
+	return SVSetupDialogManager::Instance().SetupDialog(rClassId, rObjectId, CWnd::FromHandle(hWnd));
+}
 #pragma endregion implementation of methods from ISVOApp_Helper

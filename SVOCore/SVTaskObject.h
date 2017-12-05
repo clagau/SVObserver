@@ -219,7 +219,6 @@ private:
 
 protected:
 	SvOi::IValueObjectPtrSet m_ValueObjectSet;
-	SVImageClassPtrSet		m_ImageObjectSet;
 	SVInputInfoListClass	m_InputObjectList;
 
 	// Embedded Object:

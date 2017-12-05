@@ -1471,16 +1471,8 @@
 #define IDC_CUSTOMIZE_COMMAND_SELECT    15291
 #define IDC_CUSTOMIZE_DIRECTORY_SELECT  15292
 #define IDC_OUTPUT_TREE                 15293
-#define IDC_AVAILABLE_DIGITIZERS_TREE   15294
+#define IDC_COMBO_CAMERAS               15294
 #define IDC_SELECT_BUTTON               15295
-#define IDC_SELECTED_EDIT               15296
-#define IDC_CHANNEL0_CHECK              15297
-#define IDC_CHANNEL1_CHECK              15298
-#define IDC_CHANNEL2_CHECK              15299
-#define IDC_CHANNEL3_CHECK              15300
-#define IDC_SINGLEBAND_RADIO            15301
-#define IDC_MULTIBAND_RADIO             15302
-#define IDC_BAND_RADIO_GROUP            15303
 #define IDC_CALC_STDDEV                 15304
 #define IDC_UPPER_MIN_OFFSET            15305
 #define IDC_UPPER_USER_SELECTABLE       15306

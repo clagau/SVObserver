@@ -52,12 +52,6 @@ namespace SvOi
 		virtual std::string getDisplayedName() const = 0;
 
 		//************************************
-		/// Get the Number of bands in the image.
-		/// \returns long
-		//************************************
-		virtual long getBands() const = 0;
-
-		//************************************
 		/// Get the pixel depth of the image.
 		/// \returns long
 		//************************************

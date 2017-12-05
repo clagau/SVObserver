@@ -127,7 +127,7 @@ SVExternalToolTask::SVExternalToolTask( SVObjectClass* POwner, int StringResourc
 
 		// this object will be filled in SVTaskObject::ConnectAllInputs
 		// we supply the base object type (Image) and ConnectAllInputs finds the nearest match (Toolset main image)
-		m_Data.m_aInputImageInfo[i].SetInputObjectType( SvDef::SVImageObjectType );
+		m_Data.m_aInputImageInfo[i].SetInputObjectType( SvDef::SVImageObjectType, SvDef::SVImageMonoType);
 		m_Data.m_aInputImageInfo[i].SetObject( GetObjectInfo() );
 		RegisterInputObject( &m_Data.m_aInputImageInfo[i], l_Name );
 	}
@@ -193,8 +193,8 @@ SVExternalToolTask::SVExternalToolTask( SVObjectClass* POwner, int StringResourc
 		imageInfo.SetExtentProperty( SVExtentPropertyHeight, 100 );
 
 		SVImageClass* pImage = &(m_aResultImages[i]);
-
-		pImage->UpdateImage( SvDef::SVImageTypeEnum::SVImageTypePhysical, SV_GUID_NULL, imageInfo );
+		pImage->InitializeImage(SvDef::SVImageTypeEnum::SVImageTypePhysical);
+		pImage->UpdateImage(SV_GUID_NULL, imageInfo );
 	}
 
 	// Result Objects
@@ -436,9 +436,10 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 								}
 
 								// create buffer
-								SVImageClass* pImageCopy = &(m_aInputImagesCopy[i]);
-								pImageCopy->UpdateImage( SvDef::SVImageTypeEnum::SVImageTypePhysical, SV_GUID_NULL, imageInfoCopy );
-								pImageCopy->SetImageDepth( 1 );
+								SVImageClass* pImage = &(m_aInputImagesCopy[i]);
+								pImage->InitializeImage(SvDef::SVImageTypeEnum::SVImageTypePhysical);
+								pImage->UpdateImage( SV_GUID_NULL, imageInfoCopy );
+								pImage->SetImageDepth( 1 );
 							}
 						}
 					}
@@ -592,8 +593,8 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 
 					// create buffer
 					SVImageClass* pImage = &(m_aResultImages[i]);
-
-					pImage->UpdateImage( SvDef::SVImageTypeEnum::SVImageTypePhysical, SV_GUID_NULL, imageInfo );
+					pImage->InitializeImage(SvDef::SVImageTypeEnum::SVImageTypePhysical);
+					pImage->UpdateImage( SV_GUID_NULL, imageInfo );
 				}// end block
 				if ( m_bUseImageCopies )
 				{
@@ -610,8 +611,8 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 
 					// create buffer
 					SVImageClass* pImage = &(m_aResultImagesCopy[i]);
-
-					pImage->UpdateImage( SvDef::SVImageTypeEnum::SVImageTypePhysical, SV_GUID_NULL, imageInfo );
+					pImage->InitializeImage(SvDef::SVImageTypeEnum::SVImageTypePhysical);
+					pImage->UpdateImage( SV_GUID_NULL, imageInfo );
 					pImage->SetImageDepth( 1 );
 				}// end if ( m_bUseImageCopies )
 
@@ -634,8 +635,8 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 
 				// create buffer
 				SVImageClass* pImage = &(m_aResultImages[i]);
-
-				pImage->UpdateImage( SvDef::SVImageTypeEnum::SVImageTypePhysical, SV_GUID_NULL, imageInfo );
+				pImage->InitializeImage(SvDef::SVImageTypeEnum::SVImageTypePhysical);
+				pImage->UpdateImage( SV_GUID_NULL, imageInfo );
 			}
 
 			hr = m_dll.DestroyImageDefinitionStructure(paResultImageDefs);

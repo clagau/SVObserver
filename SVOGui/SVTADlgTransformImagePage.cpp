@@ -77,8 +77,8 @@ namespace SvOg
 		if (images.size())
 		{
 			// Check if Main Image Type
-			const SvDef::SVObjectTypeInfoStruct& typeInfo = GetImageTypeInfo(images.begin()->second.second.ToGUID());
-			if (typeInfo.SubType == SvDef::SVMainImageObjectType)
+			const SvDef::SVImageTypeEnum& rImageType = GetImageType(images.begin()->second.second.ToGUID());
+			if (SvDef::SVImageTypeMain == rImageType)
 			{
 				m_useExtentsOnly = false;
 				// use Extents Only does not Apply

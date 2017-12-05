@@ -38,7 +38,6 @@ SV_IMPLEMENT_CLASS( SVColorToolClass, SVColorToolClassGuid );
 #pragma region Constructor
 SVColorToolClass::SVColorToolClass( SVObjectClass* POwner, int StringResourceID )
 : SVToolClass( POwner, StringResourceID )
-, m_pInputImage(nullptr)
 {
 	LocalInitialize();
 }
@@ -58,13 +57,13 @@ bool SVColorToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStr
 		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*> (GetInspection());
 		if (nullptr != pInspection && nullptr != pInspection->GetToolSet())
 		{
-			m_pInputImage = pInspection->GetToolSet()->getCurrentImage();
-			if (nullptr != m_pInputImage)
+			SVImageClass* pInputImage = getInputImage();
+			if (nullptr != pInputImage)
 			{
 				//! We do not want the Logical ROI image showing up as an output image.
-				m_LogicalROIImage.InitializeImage(m_pInputImage);
+				m_LogicalROIImage.InitializeImage(pInputImage);
 				m_LogicalROIImage.SetObjectAttributesAllowed(SvDef::SV_HIDDEN, SvOi::SetAttributeType::AddAttribute);
-				m_OutputImage.InitializeImage(m_pInputImage);
+				m_OutputImage.InitializeImage(pInputImage);
 
 				BOOL hasROI(false);
 				m_hasROI.GetValue(hasROI);
@@ -77,7 +76,7 @@ bool SVColorToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStr
 				if (m_ConvertTool)
 				{
 					//! This is required to receive the correct extents when the camera image has an ROI set
-					m_pInputImage->ResetObject();
+					pInputImage->ResetObject();
 					//! Converting configuration without ROI has to set the image to the full parent extents
 					SetImageExtentToParent();
 					// Converting configuration without ROI has to set all the thresholds to enabled
@@ -102,9 +101,9 @@ bool SVColorToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStr
 						}
 					}
 				}
-				//! Now set the value to ROI so no further conversion takes place
-				m_hasROI.SetValue(BOOL(true));
 			}
+			//! Now set the value to ROI so no further conversion takes place
+			m_hasROI.SetValue(BOOL(true));
 		}
 
 		// Create 3 output images, one for each band...
@@ -131,14 +130,44 @@ bool SVColorToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStr
 
 bool SVColorToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
+	bool Result{ true };
 
 	for (BandEnum Band : BandList)
 	{
 		createBandChildLayer(Band);
 		m_bandImage[Band].ResetObject();
 	}
+	
+	if (m_LogicalROIImage.InitializeImage(getInputImage()))
+	{
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InitImageFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			pErrorMessages->push_back(Msg);
+		}
+	}
+	if (m_OutputImage.InitializeImage(getInputImage()))
+	{
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InitImageFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			pErrorMessages->push_back(Msg);
+		}
+	}
 
-	bool Result = SVToolClass::ResetObject(pErrorMessages);
+	Result = SVToolClass::ResetObject(pErrorMessages) && Result;
+
+	if (!m_InputImageObjectInfo.IsConnected() || nullptr == m_InputImageObjectInfo.GetInputObjectInfo().m_pObject)
+	{
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NoSourceImage, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			pErrorMessages->push_back(Msg);
+		}
+	}
 
 	CollectInputImageNames();
 
@@ -278,6 +307,10 @@ void SVColorToolClass::LocalInitialize()
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVToolObjectType;
 	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVColorToolObjectType;
 
+	m_InputImageObjectInfo.SetInputObjectType(SvDef::SVImageObjectType, SvDef::SVImageColorType);
+	m_InputImageObjectInfo.SetObject(GetObjectInfo());
+	RegisterInputObject(&m_InputImageObjectInfo, _T("ColorToolInputImage"));
+
 	// Register Embedded Objects
 	RegisterEmbeddedObject(&m_OutputImage, SVOutputImageObjectGuid, IDS_OBJECTNAME_IMAGE1);
 	RegisterEmbeddedObject(&m_LogicalROIImage, SVLogicalROIImageGuid, IDS_OBJECTNAME_IMAGE2);
@@ -299,9 +332,9 @@ void SVColorToolClass::LocalInitialize()
 	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatRGB8888);
 	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 3L);
 	ImageInfo.SetTranslation(SVExtentTranslationNone);
-	m_LogicalROIImage.UpdateImage(ImageInfo);
+	m_LogicalROIImage.UpdateImage(SV_GUID_NULL, ImageInfo);
 	m_LogicalROIImage.InitializeImage(SvDef::SVImageTypeEnum::SVImageTypeLogical);
-	m_OutputImage.UpdateImage(ImageInfo);
+	m_OutputImage.UpdateImage(SV_GUID_NULL, ImageInfo);
 	m_OutputImage.InitializeImage(SvDef::SVImageTypeEnum::SVImageTypePhysical);
 
 	for (BandEnum Band : BandList)
@@ -319,6 +352,18 @@ void SVColorToolClass::LocalInitialize()
 	}
 }
 
+SVImageClass* SVColorToolClass::getInputImage() const
+{
+	if (m_InputImageObjectInfo.IsConnected() && nullptr != m_InputImageObjectInfo.GetInputObjectInfo().m_pObject)
+	{
+		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
+		//! We are sure that when m_pObject is not nullptr then it is a SVImageClass
+		return static_cast<SVImageClass*> (m_InputImageObjectInfo.GetInputObjectInfo().m_pObject);
+	}
+
+	return nullptr;
+}
+
 bool SVColorToolClass::createBandChildLayer(BandEnum Band)
 {
 	bool l_bOk = false;
@@ -332,7 +377,7 @@ bool SVColorToolClass::createBandChildLayer(BandEnum Band)
 	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1L);
 	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, static_cast<long> (Band));
 
-	l_bOk = (S_OK == m_bandImage[Band].InitializeImage(InputID, ImageInfo));
+	l_bOk = (S_OK == m_bandImage[Band].UpdateImage(InputID, ImageInfo));
 
 	return l_bOk;
 }
@@ -341,9 +386,9 @@ HRESULT SVColorToolClass::CollectInputImageNames()
 {
 	std::string Name;
 
-	if (nullptr != m_pInputImage)
+	if (nullptr != getInputImage())
 	{
-		std::string Name = m_pInputImage->GetCompleteName();
+		std::string Name = getInputImage()->GetCompleteName();
 		m_SourceImageNames.SetDefaultValue(Name, true);
 		return S_OK;
 	}

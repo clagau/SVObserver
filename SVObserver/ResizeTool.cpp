@@ -105,7 +105,7 @@ HRESULT	ResizeTool::InitializePerformanceMember()
 void ResizeTool::BuildInputObjectList()
 {
 	// Source Image
-	m_InputImageObjectInfo.SetInputObjectType( SvDef::SVImageObjectType );
+	m_InputImageObjectInfo.SetInputObjectType( SvDef::SVImageObjectType, SvDef::SVImageMonoType);
 	m_InputImageObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_InputImageObjectInfo, SvO::ResizeImage );
 
@@ -191,17 +191,17 @@ bool ResizeTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure
 	m_ExtentWidthScaleFactor.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::OverwriteAttribute );
 	m_ExtentHeightScaleFactor.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::OverwriteAttribute );
 
-	SVImageClass* inputImage = getInputImage();
-	bOk &= (nullptr != inputImage);
+	SVImageClass* pInputImage = getInputImage();
+	bOk &= (nullptr != pInputImage);
 
-	bOk &= (S_OK == m_LogicalROIImage.InitializeImage(inputImage));
+	bOk &= (S_OK == m_LogicalROIImage.InitializeImage(pInputImage));
 
 	// We do not want the ROI image showing up as an output image.
 	m_LogicalROIImage.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::AddAttribute);
 
 	bOk &= (S_OK == m_svToolExtent.SetTranslation( SVExtentTranslationResize ));
 
-	bOk &= (S_OK == m_OutputImage.InitializeImage( inputImage ) );
+	bOk &= (S_OK == m_OutputImage.InitializeImage( pInputImage ) );
 
 	bOk &= (nullptr != GetTool());
 
@@ -320,7 +320,7 @@ bool ResizeTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	{
 		// required within ResetObject in order to correctly reallocate
 		// buffers when source image is changed within GUI.
-		if (S_FALSE == m_LogicalROIImage.InitializeImage( inputImage ))
+		if (E_FAIL == m_LogicalROIImage.InitializeImage( inputImage ))
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)
@@ -335,7 +335,7 @@ bool ResizeTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	{
 		// required within ResetObject in order to correctly reallocate
 		// buffers when source image is changed within GUI.
-		if (S_FALSE == m_OutputImage.InitializeImage( inputImage ))
+		if (E_FAIL == m_OutputImage.InitializeImage( inputImage ))
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)

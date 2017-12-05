@@ -390,6 +390,7 @@ void SVHistogramAnalyzerClass::init()
 		msvDynamicHeight.SetDefaultValue( BOOL(false), true);
 		msvAccumulateCounts.SetDefaultValue( BOOL(false), true);
 
+		m_histogramImage.InitializeImage(SvDef::SVImageTypeEnum::SVImageTypeFixed);
 		// Set default inputs and outputs
 		addDefaultInputObjects();
 
@@ -1161,7 +1162,7 @@ HRESULT SVHistogramAnalyzerClass::createHistogramImage()
 	ImageInfo.SetTranslation( SVExtentTranslationNone );
 
 	// Try to create image object...
-	if( S_OK != m_histogramImage.UpdateImage( SvDef::SVImageTypeEnum::SVImageTypeFixed, ImageInfo ) )
+	if( S_OK != m_histogramImage.UpdateImage( SV_GUID_NULL, ImageInfo ) )
 	{
 		return Err_SetImageInfo;
 	}

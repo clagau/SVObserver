@@ -86,10 +86,9 @@ namespace SvDef
 		{
 			SVNotSetSubObjectType						= 0x00000000,
 
-			// Image Subtypes:		
-			SVMainImageObjectType						= 0x00000001,
-			SVRGBMainImageObjectType					= 0x00000002,
-			SVCameraImageTemplateObjectType				= 0x00000003,
+			// Image Subtypes:
+			SVImageMonoType								= 0x00000001,
+			SVImageColorType							= 0x00000002,
 
 			// System Subtypes:
 			SVMatroxSystemObjectType					= 0x00000005,

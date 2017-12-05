@@ -866,24 +866,23 @@ bool SVTaskObjectClass::ConnectAllInputs()
 	}
 
 	// find our inputs
-	for (int i = 0; i <  static_cast<int> (inputList.size()); ++ i)
+	for (auto pInputInfo : inputList)
 	{
-		SVInObjectInfoStruct* pInInfo = inputList[i];
-		if (pInInfo)
+		if (nullptr != pInputInfo)
 		{
 			// Is not yet connected...
-			if (!pInInfo->IsConnected())
+			if (!pInputInfo->IsConnected())
 			{
 				// if Connect to Default
-				if ( SV_GUID_NULL == pInInfo->GetInputObjectInfo().m_UniqueObjectID )
+				if ( SV_GUID_NULL == pInputInfo->GetInputObjectInfo().m_UniqueObjectID )
 				{
 					// Input Object is not set...Try to get one...
-					SvDef::SVObjectTypeInfoStruct info = pInInfo->GetInputObjectInfo().m_ObjectTypeInfo;
+					SvDef::SVObjectTypeInfoStruct info = pInputInfo->GetInputObjectInfo().m_ObjectTypeInfo;
 					// At least one item from the SvDef::SVObjectTypeInfoStruct is required, but not all
 					if ( SV_GUID_NULL != info.EmbeddedID || SvDef::SVNotSetObjectType != info.ObjectType || SvDef::SVNotSetSubObjectType != info.SubType )
 					{
 						SVObjectClass* pOwner = GetOwner();
-						SVObjectClass* pRequestor = pInInfo->m_pObject;
+						SVObjectClass* pRequestor = pInputInfo->m_pObject;
 						const SvOi::IObjectClass* pObject( nullptr );
 						bool bSuccess = false;
 						
@@ -896,7 +895,7 @@ bool SVTaskObjectClass::ConnectAllInputs()
 								if (pObject)
 								{
 									// Connect input ...
-									pInInfo->SetInputObject( pObject->GetUniqueObjectID() );
+									pInputInfo->SetInputObject( pObject->GetUniqueObjectID() );
 									bSuccess = true;
 									break;
 								}
@@ -911,10 +910,11 @@ bool SVTaskObjectClass::ConnectAllInputs()
 							SvOi::IInspectionProcess* pInspection =  dynamic_cast< SvOi::IInspectionProcess* > (GetAncestor( SvDef::SVInspectionObjectType ));
 							while (pOwner)
 							{
+								bool isColorInspection = (nullptr != pInspection) ? pInspection->IsColorCamera() : false;
 								pObject = nullptr;
 								// if color system & pOwner == SVToolSetClass
 								const SVObjectInfoStruct& ownerInfo = pOwner->GetObjectInfo();
-								if (nullptr != pInspection && pInspection->IsColorCamera() && SvDef::SVToolSetObjectType == ownerInfo.m_ObjectTypeInfo.ObjectType && SvDef::SVImageObjectType == info.ObjectType )
+								if (isColorInspection && SvDef::SVToolSetObjectType == ownerInfo.m_ObjectTypeInfo.ObjectType && SvDef::SVImageObjectType == info.ObjectType && SvDef::SVImageMonoType == info.SubType )
 								{
 									SvOi::IToolSet* pToolSet( dynamic_cast<SvOi::IToolSet*> (pOwner) );
 									if( nullptr != pToolSet)
@@ -929,7 +929,7 @@ bool SVTaskObjectClass::ConnectAllInputs()
 								if (pObject)
 								{
 									// Connect input ...
-									pInInfo->SetInputObject( pObject->GetUniqueObjectID() );
+									pInputInfo->SetInputObject( pObject->GetUniqueObjectID() );
 									break;
 								}
 								else
@@ -943,9 +943,9 @@ bool SVTaskObjectClass::ConnectAllInputs()
 				}// end if (SV_GUID_NULL == pInInfo->InputObjectInfo.UniqueObjectID )
 				
 				// Finally try to connect...
-				if ( SV_GUID_NULL != pInInfo->GetInputObjectInfo().m_UniqueObjectID )
+				if ( SV_GUID_NULL != pInputInfo->GetInputObjectInfo().m_UniqueObjectID )
 				{
-					Result = SVObjectManagerClass::Instance().ConnectObjectInput(pInInfo->GetInputObjectInfo().m_UniqueObjectID, pInInfo);
+					Result = SVObjectManagerClass::Instance().ConnectObjectInput(pInputInfo->GetInputObjectInfo().m_UniqueObjectID, pInputInfo);
 				}
 			}
 		}
@@ -1214,6 +1214,7 @@ void SVTaskObjectClass::addDefaultInputObjects(SVInputInfoListClass* PInputListT
 {
 	int l_iCount = static_cast<int> (m_inputInterfaceList.size());
 	int i( 0 );
+
 
 	for (i = 0; i < l_iCount; i++)
 	{
@@ -1751,7 +1752,7 @@ bool SVTaskObjectClass::DisconnectObjectInput(SVInObjectInfoStruct* pInObjectInf
 			{
 				if( pInObjectInfo->GetInputObjectInfo().m_UniqueObjectID == pImage->GetUniqueObjectID() )
 				{
-					pImage->UpdateImage( SV_GUID_NULL );
+					pImage->UpdateImage( SV_GUID_NULL, pImage->GetImageInfo() );
 				}
 			}
 		}
@@ -1899,19 +1900,7 @@ HRESULT SVTaskObjectClass::RegisterSubObject( SVObjectClass* pObject )
 	HRESULT Result( E_FAIL );
 	SvOi::IValueObject* pValueObject(nullptr);
 
-	if (SvDef::SVImageObjectType == pObject->GetObjectInfo().m_ObjectTypeInfo.ObjectType)
-	{
-		SVImageClass* pImage = dynamic_cast<SVImageClass*> (pObject);
-		if( nullptr != pImage)
-		{
-			if( SvDef::SVCameraImageTemplateObjectType == pImage->GetObjectInfo().m_ObjectTypeInfo.SubType )
-			{
-				m_ImageObjectSet.insert( pImage );
-				Result = S_OK;
-			}
-		}
-	}
-	else if( nullptr != (pValueObject = dynamic_cast<SvOi::IValueObject*> (pObject)) )
+	if( nullptr != (pValueObject = dynamic_cast<SvOi::IValueObject*> (pObject)) )
 	{
 		m_ValueObjectSet.insert(pValueObject);
 		Result = S_OK;
@@ -1925,16 +1914,7 @@ HRESULT SVTaskObjectClass::UnregisterSubObject( SVObjectClass* pObject )
 	HRESULT Result( E_FAIL );
 	SvOi::IValueObject* pValueObject(nullptr);
 
-	if (SvDef::SVImageObjectType == pObject->GetObjectInfo().m_ObjectTypeInfo.ObjectType)
-	{
-		SVImageClass* pImage = dynamic_cast<SVImageClass*>(pObject);
-		if( nullptr != pImage)
-		{
-			m_ImageObjectSet.erase( pImage );
-			Result = S_OK;
-		}
-	}
-	else if( nullptr != (pValueObject = dynamic_cast<SvOi::IValueObject*> (pObject)) )
+	if( nullptr != (pValueObject = dynamic_cast<SvOi::IValueObject*> (pObject)) )
 	{
 		m_ValueObjectSet.erase( pValueObject );
 		Result = S_OK;

@@ -100,6 +100,7 @@
 #include "TableAnalyzerTool.h"
 #include "SVOGui/ResultTableSelectionDlg.h"
 #include "GuiCommands/GetAvailableObjects.h"
+#include "GuiCommands/GetAllowedImageList.h"
 #include "SVOGui/TextDefinesSvOg.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "Definitions/StringTypeDef.h"
@@ -196,6 +197,26 @@ BEGIN_MESSAGE_MAP(SVIPDoc, CDocument)
 	ON_COMMAND(ID_ADD_STARTTOOLGROUPING, OnAddStartToolGrouping)
 	ON_COMMAND(ID_ADD_ENDTOOLGROUPING, OnAddEndToolGrouping)
 	ON_COMMAND(ID_TOOL_DEPENDENCIES, OnToolDependencies)
+	ON_UPDATE_COMMAND_UI(ID_ADD_LOADIMAGETOOL, OnUpdateAddGeneralTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_IMAGETOOL, OnUpdateAddGeneralTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_ARCHIVETOOL, OnUpdateAddGeneralTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_MATHTOOL, OnUpdateAddGeneralTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_STATISTICSTOOL, OnUpdateAddGeneralTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_EXTERNAL_TOOL, OnUpdateAddGeneralTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_POLARUNWRAPTOOL, OnUpdateAddGeneralTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_ACQUISITIONTOOL, OnUpdateAddGeneralTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_LINEARTOOL, OnUpdateAddGeneralTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_REMOTEINPUTTOOL, OnUpdateAddGeneralTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_RESIZETOOL, OnUpdateAddGeneralTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_RINGBUFFERTOOL, OnUpdateAddGeneralTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_TABLETOOL, OnUpdateAddGeneralTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_TABLEANALYZERTOOL, OnUpdateAddGeneralTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_PERSPECTIVEWARPTOOL, OnUpdateAddGeneralTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_SHIFTTOOL, OnUpdateAddGeneralTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_WINDOWTOOL, OnUpdateAddGeneralTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_CYLINDRICALWARPTOOL, OnUpdateAddCylindricalWarpTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_TRANSFORMATIONTOOL, OnUpdateAddTransformationTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_COLORTOOL, OnUpdateAddColorTool)
 END_MESSAGE_MAP()
 #pragma endregion Declarations
 
@@ -1329,13 +1350,12 @@ void SVIPDoc::OnEditCopy()
 
 void SVIPDoc::OnUpdateEditCopy( CCmdUI* pCmdUI )
 {
-	BOOL Enabled = SVSVIMStateClass::CheckState( SV_STATE_READY ) && SVSVIMStateClass::CheckState( SV_STATE_EDIT );
 	// Check current user access...
-	Enabled = Enabled && TheSVObserverApp.OkToEdit();
+	bool Enabled = TheSVObserverApp.OkToEdit();
 
 	if( Enabled )
 	{
-		Enabled = FALSE;
+		Enabled = false;
 		ToolSetView* pToolSetView = GetToolSetView();
 		SVToolSetClass* pToolSet = GetToolSet();
 		if( nullptr != pToolSet && nullptr != pToolSetView && !pToolSetView->IsLabelEditing())
@@ -1346,7 +1366,7 @@ void SVIPDoc::OnUpdateEditCopy( CCmdUI* pCmdUI )
 			//Tool list active and valid tool
 			if( !rGuid.empty() && -1 != ToolListInfo.m_listIndex )
 			{
-				Enabled = TRUE;
+				Enabled = true;
 			}
 		}
 	}
@@ -1415,13 +1435,12 @@ void SVIPDoc::OnEditPaste()
 
 void SVIPDoc::OnUpdateEditPaste( CCmdUI* pCmdUI )
 {
-	BOOL Enabled = SVSVIMStateClass::CheckState( SV_STATE_READY ) && SVSVIMStateClass::CheckState( SV_STATE_EDIT );
 	// Check current user access...
-	Enabled = Enabled && TheSVObserverApp.OkToEdit();
+	bool Enabled = TheSVObserverApp.OkToEdit();
 
 	if( Enabled )
 	{
-		Enabled = FALSE;
+		Enabled = false;
 		ToolSetView* pToolSetView = GetToolSetView();
 		SVToolSetClass* pToolSet = GetToolSet();
 		if( nullptr != pToolSet && nullptr != pToolSetView && !pToolSetView->IsLabelEditing() )
@@ -1430,7 +1449,7 @@ void SVIPDoc::OnUpdateEditPaste( CCmdUI* pCmdUI )
 			//Only if tool list active and a selected index is valid
 			if ( -1 != info.m_listIndex && ToolClipboard::isClipboardDataValid() )
 			{
-				Enabled = TRUE;
+				Enabled = true;
 			}
 		}
 	}
@@ -2980,9 +2999,8 @@ void SVIPDoc::OnEditAdjustToolPosition()
 
 void SVIPDoc::OnUpdateEditAdjustToolPosition(CCmdUI* pCmdUI)
 {
-	bool Enabled = SVSVIMStateClass::CheckState( SV_STATE_READY ) && SVSVIMStateClass::CheckState( SV_STATE_EDIT );
 	// Check current user access...
-	Enabled = Enabled && TheSVObserverApp.OkToEdit();
+	bool Enabled = TheSVObserverApp.OkToEdit();
 
 	if( Enabled )
 	{
@@ -3026,9 +3044,8 @@ void SVIPDoc::OnShowToolRelations()
 
 void SVIPDoc::OnUpdateShowToolRelations(CCmdUI* pCmdUI)
 {
-	bool Enabled = SVSVIMStateClass::CheckState( SV_STATE_READY ) && SVSVIMStateClass::CheckState( SV_STATE_EDIT );
 	// Check current user access...
-	Enabled = Enabled && TheSVObserverApp.OkToEdit();
+	bool Enabled = TheSVObserverApp.OkToEdit();
 
 	pCmdUI->Enable( Enabled );
 }
@@ -3051,12 +3068,50 @@ void SVIPDoc::OnToolDependencies()
 
 void SVIPDoc::OnUpdateToolDependencies(CCmdUI* pCmdUI)
 {
-	bool Enabled = SVSVIMStateClass::CheckState(SV_STATE_READY) && SVSVIMStateClass::CheckState(SV_STATE_EDIT);
-	// Check current user access...
-	Enabled = Enabled && TheSVObserverApp.OkToEdit();
+	pCmdUI->Enable(TheSVObserverApp.OkToEdit());
+}
+
+void SVIPDoc::OnUpdateAddGeneralTool(CCmdUI* PCmdUI)
+{
+	bool Enabled = TheSVObserverApp.OkToEdit() && isImageAvailable(SvDef::SVImageMonoType);
+	
+	PCmdUI->Enable( Enabled);
+}
+
+void SVIPDoc::OnUpdateAddCylindricalWarpTool(CCmdUI* pCmdUI)
+{
+	bool Enabled = !SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST);
+
+	Enabled = Enabled && TheSVObserverApp.OkToEdit() && isImageAvailable(SvDef::SVImageMonoType);
+
+	if (pCmdUI->m_pSubMenu)
+	{
+		unsigned int l_uiGray = Enabled ? 0 : MF_GRAYED;
+		pCmdUI->m_pMenu->EnableMenuItem(pCmdUI->m_nIndex, MF_BYPOSITION | l_uiGray);
+	}
+	else
+	{
+		pCmdUI->Enable(Enabled);
+	}
+}
+
+void SVIPDoc::OnUpdateAddTransformationTool(CCmdUI* pCmdUI)
+{
+	bool Enabled = !SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST);
+	Enabled = Enabled && TheSVObserverApp.OkToEdit() && isImageAvailable(SvDef::SVImageMonoType);
 
 	pCmdUI->Enable(Enabled);
 }
+
+void SVIPDoc::OnUpdateAddColorTool(CCmdUI* PCmdUI)
+{
+	bool Enabled = !SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST);
+	// Check current user access...
+	Enabled = Enabled && TheSVObserverApp.OkToEdit() && isImageAvailable(SvDef::SVImageColorType);
+
+	PCmdUI->Enable(Enabled);
+}
+
 
 void SVIPDoc::OnViewResetAllCounts()
 {
@@ -4166,3 +4221,20 @@ int SVIPDoc::GetToolToInsertBefore(const std::string& rName, int listIndex) cons
 	return toolListIndex;
 }
 
+bool SVIPDoc::isImageAvailable(SvDef::SVObjectSubTypeEnum ImageSubType) const
+{
+	bool Result{ false };
+
+	typedef SvCmd::GetAllowedImageList Command;
+	typedef SVSharedPtr<Command> CommandPtr;
+	SvDef::SVObjectTypeInfoStruct ObjectInfo{ SvDef::SVImageObjectType, ImageSubType };
+	CommandPtr commandPtr = new Command(m_InspectionID, ObjectInfo, GetSelectedToolID());
+	SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+	HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+	if (S_OK == hr)
+	{
+		Result = (0 < commandPtr->AvailableObjects().size()) ? true : false;
+	}
+
+	return Result;
+}

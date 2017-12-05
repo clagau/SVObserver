@@ -33,8 +33,6 @@ SVMainImageClass::SVMainImageClass( SVObjectClass* POwner, int StringResourceID 
 
 void SVMainImageClass::init()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVMainImageObjectType;
-
 	m_ImageType = SvDef::SVImageTypeEnum::SVImageTypeMain;
 }
 
@@ -90,16 +88,6 @@ bool SVMainImageClass::GetImageHandle( SVImageIndexStruct svIndex, SVSmartHandle
 	}
 	
 	return bOk;
-}
-
-bool SVMainImageClass::ValidateImage()
-{
-	if( IsCreated() )
-	{
-		m_isObjectValid = !( GetCameraBufferArrayPtr().empty() );
-	}
-
-	return m_isObjectValid;
 }
 
 const SvTl::SVTimeStamp& SVMainImageClass::GetLastResetTimeStamp() const

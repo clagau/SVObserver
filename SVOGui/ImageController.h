@@ -11,7 +11,8 @@
 //Moved to precompiled header: #include <boost/noncopyable.hpp>
 #include "SVUtilityLibrary\NameGuidList.h"
 #include "Definitions/StringTypeDef.h"
-#include "Definitions/SVObjectTypeInfoStruct.h"
+#include "Definitions/SVImageEnums.h"
+#include "GuiCommands\GetAllowedImageList.h"
 #include "SVStatusLibrary\MessageContainer.h"
 #pragma endregion Includes
 
@@ -21,8 +22,8 @@ namespace SvOg
 	{
 		GUID m_InspectionID;
 		GUID m_TaskObjectID;
-		SvDef::SVObjectSubTypeEnum m_subType;
-		bool m_bAllowColor;
+		SvDef::SVObjectSubTypeEnum m_ImageSubType;
+		bool m_OnlyAboveImages; //When true only returns images which are above the m_TaskObjectID
 
 		mutable SvUl::NameGuidList m_availableList;
 		mutable SvDef::StringVector m_specialImageList;;
@@ -30,7 +31,7 @@ namespace SvOg
 		mutable CComPtr<IPictureDisp> m_picture;
 
 	public:
-		ImageController(const GUID& rInspectionID, const GUID& rTaskObjectID, SvDef::SVObjectSubTypeEnum subType = SvDef::SVNotSetSubObjectType, bool bAllowColor = false);
+		ImageController(const GUID& rInspectionID, const GUID& rTaskObjectID, SvDef::SVObjectSubTypeEnum ImageSubType = SvDef::SVImageMonoType, bool OnlyAboveImages = true);
 	
 		HRESULT Init();
 
@@ -50,7 +51,7 @@ namespace SvOg
 		HRESULT ResetTask(SvStl::MessageContainerVector& messages) const;
 		HRESULT ToolRunOnce();
 			
-		SvDef::SVObjectTypeInfoStruct GetImageTypeInfo(const GUID& imageID) const;
+		SvDef::SVImageTypeEnum GetImageType(const GUID& rImageID) const;
 
 	private:
 		HRESULT RetrieveAvailableImageList();

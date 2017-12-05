@@ -67,7 +67,7 @@ void SVCylindricalWarpToolClass::LocalInitialize()
 	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvDef::SVToolCylindricalObjectType;
 
 	// Identify our input image...
-	m_InputImageObjectInfo.SetInputObjectType( SvDef::SVImageObjectType );
+	m_InputImageObjectInfo.SetInputObjectType(SvDef::SVImageObjectType, SvDef::SVImageMonoType);
 	m_InputImageObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_InputImageObjectInfo, _T( "CylindricalWarpImage" ) );
 
@@ -194,7 +194,7 @@ HRESULT SVCylindricalWarpToolClass::LocalCreate()
 
 		m_OutputImage.SetObjectOwner( this );
 
-		l_hrOk = m_OutputImage.UpdateImage( SvDef::SVImageTypeEnum::SVImageTypePhysical, l_InputID, l_ImageInfo );
+		l_hrOk = m_OutputImage.UpdateImage( l_InputID, l_ImageInfo );
 
 		if( S_OK != l_hrOk )
 		{

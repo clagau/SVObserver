@@ -78,7 +78,7 @@ private:
 	//! Initialize the class
 	void LocalInitialize();
 
-	SVImageClass* getInputImage() const { return m_pInputImage; };
+	SVImageClass* getInputImage() const;
 	bool createBandChildLayer(BandEnum Band);
 	HRESULT CollectInputImageNames();
 #pragma endregion Private Methods
@@ -95,7 +95,7 @@ private:
 	// String value object for Source Image Names
 	SVStringValueObjectClass m_SourceImageNames;
 
-	SVImageClass* m_pInputImage;
+	SVInObjectInfoStruct m_InputImageObjectInfo;
 
 	bool m_ConvertTool;
 #pragma endregion Member Variables

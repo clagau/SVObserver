@@ -19,7 +19,6 @@
 #include "SVExternalToolDlg.h"
 #include "SVPerspectiveWarpDlg.h"
 #include "SVTADlgAcquisitionSourcePage.h"
-#include "SVTADlgColorToolPage.h"
 #include "SVTADlgLUTPage.h"
 #include "SVTADlgPolarTransformPage.h"
 #include "SVTADlgRemoteInputToolPage.h"
@@ -47,6 +46,7 @@
 #include "SVOGui\SVToolAdjustmentDialogTwoImagePage.h"
 #include "SVOGui\SVTADlgTransformImagePage.h"
 #include "SVOGui\SVTADlgFileImageSourcePage.h"
+#include "SVOGui\SVTADlgColorToolPage.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
@@ -276,7 +276,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 			break;
 
 		case SvDef::SVColorToolObjectType:
-			AddPage( new SVTADlgColorToolPageClass( m_InspectionID, m_TaskObjectID ) );
+			AddPage( new SvOg::SVTADlgColorToolPage( m_InspectionID, m_TaskObjectID ) );
 			if (bHasSize)
 			{
 				AddPage(new SVToolAdjustmentDialogSizePage(m_InspectionID, m_TaskObjectID, this));

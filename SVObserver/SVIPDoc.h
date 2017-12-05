@@ -205,6 +205,10 @@ public:
 	afx_msg void OnUpdateShowToolRelations(CCmdUI* pCmdUI);
 	afx_msg void OnToolDependencies();
 	afx_msg void OnUpdateToolDependencies(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateAddGeneralTool(CCmdUI* PCmdUI);
+	afx_msg void OnUpdateAddCylindricalWarpTool(CCmdUI* PCmdUI);
+	afx_msg void OnUpdateAddTransformationTool(CCmdUI* PCmdUI);
+	afx_msg void OnUpdateAddColorTool(CCmdUI* PCmdUI);
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP() // Contains "protected:"
@@ -355,6 +359,8 @@ private:
 	//! \param rInspectionName [in] the inspection name
 	//! \returns the selected string set of object names
 	SvDef::StringSet TranslateSelectedObjects(const SVObjectReferenceVector& rSelectedObjects, const std::string& rInspectionName) const;
+
+	bool isImageAvailable(SvDef::SVObjectSubTypeEnum ImageType) const;
 
 #pragma endregion Private Methods
 

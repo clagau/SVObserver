@@ -37,7 +37,7 @@ void SVImageAnalyzerClass::init()
 	// Set sub type only in derived classes!
 
 	// Set Input requirement
-	inputImageObjectInfo.SetInputObjectType( SvDef::SVImageObjectType );
+	inputImageObjectInfo.SetInputObjectType(SvDef::SVImageObjectType, SvDef::SVImageMonoType);
 	inputImageObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &inputImageObjectInfo, SvDef::ImageAnalyzerImageName );
 

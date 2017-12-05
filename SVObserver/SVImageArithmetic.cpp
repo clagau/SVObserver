@@ -34,7 +34,7 @@ SVImageArithmeticClass::SVImageArithmeticClass( SVObjectClass* POwner, int Strin
 
 	// Input A...
 	// Image
-	m_InputImageAInfo.SetInputObjectType( SvDef::SVImageObjectType );
+	m_InputImageAInfo.SetInputObjectType(SvDef::SVImageObjectType, SvDef::SVImageMonoType);
 	m_InputImageAInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_InputImageAInfo, _T( "ImageArithmeticAImage" ) );
 	// Enable Offset
@@ -48,7 +48,7 @@ SVImageArithmeticClass::SVImageArithmeticClass( SVObjectClass* POwner, int Strin
 
 	// Input B...
 	// Image
-	m_InputImageBInfo.SetInputObjectType( SvDef::SVImageObjectType );
+	m_InputImageBInfo.SetInputObjectType( SvDef::SVImageObjectType, SvDef::SVImageMonoType);
 	m_InputImageBInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_InputImageBInfo, _T( "ImageArithmeticBImage" ) );
 	// Enable Offset

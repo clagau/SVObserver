@@ -100,7 +100,7 @@ bool SVShiftTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		m_SourceImageName.SetValue( l_pInputImage->GetCompleteName() );
 	}
 
-	m_OutputImage.UpdateImage( l_ParentGuid );
+	m_OutputImage.UpdateImage( l_ParentGuid, m_OutputImage.GetImageInfo() );
 	
 	return SVToolClass::ResetObject(pErrorMessages) && ValidateLocal(pErrorMessages);
 }
@@ -427,7 +427,7 @@ void SVShiftTool::LocalInitialize()
 	ToolSizeAdjustTask::AddToFriendlist(this, false, true, true);
 
 	// Identify our input type needs...
-	m_ImageInput.SetInputObjectType( SvDef::SVImageObjectType );
+	m_ImageInput.SetInputObjectType(SvDef::SVImageObjectType, SvDef::SVImageMonoType);
 	m_ImageInput.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_ImageInput, _T( "ShiftToolImage" ) );
 

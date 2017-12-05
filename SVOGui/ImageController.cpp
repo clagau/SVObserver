@@ -12,27 +12,26 @@
 //Moved to precompiled header: #include <boost/assign/list_of.hpp>
 #include "ImageController.h"
 #include "GuiCommands\GetImage.h"
-#include "GuiCommands\GetAllowedImageList.h"
 #include "GuiCommands\GetConnectedObjects.h"
 #include "GuiCommands\ConnectToObject.h"
 #include "GuiCommands\GetResultImage.h"
 #include "GuiCommands\IsValid.h"
 #include "GuiCommands\InspectionRunOnce.h"
-#include "GuiCommands\GetObjectTypeInfo.h"
+#include "GuiCommands\ResetObject.h"
 #include "GuiCommands\SaveImage.h"
 #include "Definitions/SVObjectTypeInfoStruct.h"
-#include "ObjectInterfaces\IToolSet.h"
 #include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
-#include "GuiCommands\ResetObject.h"
+#include "ObjectInterfaces\IObjectManager.h"
+#include "ObjectInterfaces\ISVImage.h"
 #pragma endregion Includes
 
 namespace SvOg
 {
-	ImageController::ImageController(const GUID& rInspectionID, const GUID& rTaskObjectID, SvDef::SVObjectSubTypeEnum subType, bool bAllowColor)
+	ImageController::ImageController(const GUID& rInspectionID, const GUID& rTaskObjectID, SvDef::SVObjectSubTypeEnum ImageSubType, bool OnlyAboveImages)
 	: m_InspectionID(rInspectionID)
 	, m_TaskObjectID(rTaskObjectID)
-	, m_subType(subType)
-	, m_bAllowColor(bAllowColor)
+	, m_ImageSubType(ImageSubType)
+	, m_OnlyAboveImages(OnlyAboveImages)
 	{
 	}
 
@@ -46,7 +45,7 @@ namespace SvOg
 		typedef SvCmd::GetAllowedImageList Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 
-		CommandPtr commandPtr = new Command(m_InspectionID, SvDef::SVObjectTypeInfoStruct(SvDef::SVImageObjectType, SvDef::SVNotSetSubObjectType), m_TaskObjectID, m_subType, m_bAllowColor);
+		CommandPtr commandPtr = new Command(m_InspectionID, SvDef::SVObjectTypeInfoStruct(SvDef::SVImageObjectType, m_ImageSubType), m_TaskObjectID, m_OnlyAboveImages);
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
@@ -247,17 +246,14 @@ namespace SvOg
 		return hr;
 	}
 
-	SvDef::SVObjectTypeInfoStruct ImageController::GetImageTypeInfo(const GUID& imageID) const
+	SvDef::SVImageTypeEnum ImageController::GetImageType(const GUID& rImageID) const
 	{
-		typedef SvCmd::GetObjectTypeInfo Command;
-		typedef SVSharedPtr<Command> CommandPtr;
-		CommandPtr commandPtr = new Command(imageID);
-		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-		if (S_OK == hr)
+		SvDef::SVImageTypeEnum Result{ SvDef::SVImageTypeEnum::SVImageTypeUnknown };
+		SvOi::ISVImage* pImage = dynamic_cast<SvOi::ISVImage*> (SvOi::getObject(rImageID));
+		if (nullptr != pImage)
 		{
-			return commandPtr->GetTypeInfo();
+			Result = pImage->GetImageType();
 		}
-		return SvDef::SVObjectTypeInfoStruct();
+		return Result;
 	}
 } //namespace SvOg

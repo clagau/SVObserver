@@ -8,7 +8,6 @@
 #pragma once
 
 #pragma region Includes
-
 #include "SVUtilityLibrary/SVGUID.h"
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "IObjectClass.h"

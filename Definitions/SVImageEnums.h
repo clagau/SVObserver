@@ -91,15 +91,14 @@ namespace SvDef
 //---------   treated differently are: 
 //---------     SVImageClass::UpdateFromToolInformation()
 //---------     SVImageClass::ValidateAgainstChildrenExtents()
-		SVImageTypeVirtual     = 6,
+//		SVImageTypeVirtual     = 6,
 
-//--------- SVImageTypeMain - only used for the gray scale MainImage.  Set by 
+//--------- SVImageTypeMain - only used for the MainImage.  Set by 
 //---------   SVMainImageClass constructor. 
 		SVImageTypeMain        = 7,
 
-//--------- SVImageTypeRGBMain - only used for the color MainImage.  Set by 
-//---------   SVRGBMainImageClass constructor. 
-		SVImageTypeRGBMain     = 8,
+//--------- SVImageTypeRGBMain - deprecated
+//		SVImageTypeRGBMain     = 8,
 
 //--------- SVImageTypeLogical -
 //---------   SVImageTypeLogicalAndPhysical and SVImageTypeLogical are the 

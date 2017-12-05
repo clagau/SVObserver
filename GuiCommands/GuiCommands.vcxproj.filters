@@ -132,9 +132,6 @@
     <ClInclude Include="GetAllowedImageList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AllowedImageFunc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="AttributesAllowedFilter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
