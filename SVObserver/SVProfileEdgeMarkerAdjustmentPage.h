@@ -78,22 +78,16 @@ private:
 	void updateControls();
 	void updateGraphDisplay();
 
-	//************************************
-	// Method:    setGraphOverlayToPicture
-	// Description: Set the histogram and the edge lines as overlay to the display control. 
-	// Parameter: SVLinearEdgeProcessingClass* pEdge The linear edge class from where to get the graph points.
-	// Returns:   void
-	//************************************
-	void setGraphOverlayToPicture( SVLinearEdgeProcessingClass* pEdge );
+	/// Set the histogram and the edge lines as overlay to the display control. 
+	/// \param pEdge [in] The linear edge class from where to get the graph points.
+	/// \param bVertical [in] If true it spin the graph to vertical.
+	void setGraphOverlayToPicture( SVLinearEdgeProcessingClass* pEdge, bool bVertical);
 
-	//************************************
-	// Method:    setMarkerOverlayToPicture
-	// Description: Set a marker overlay to the display control.
-	// Parameter: unsigned long value The position of the marker.
-	// Parameter: long allowType Set the allowType to the control. Default is none change allowed.
-	// Returns:   void
-	//************************************
-	void setMarkerOverlayToPicture( unsigned long value, long allowType = CDSVPictureDisplay::AllowNone );
+	/// Set a marker overlay to the display control.
+	/// \param value [in] The position of the marker.
+	/// \param bVertical [in] If true it spin the graph to vertical.
+	/// \param allowType [in] Set the allowType to the control. Default is none change allowed.
+	void setMarkerOverlayToPicture( unsigned long value, bool bVertical, long allowType = CDSVPictureDisplay::AllowNone );
 #pragma endregion Private Methods
 
 #pragma region Member variables

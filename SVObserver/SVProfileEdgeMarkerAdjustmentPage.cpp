@@ -927,21 +927,21 @@ void SVProfileEdgeMarkerAdjustmentPageClass::updateControls()
 void SVProfileEdgeMarkerAdjustmentPageClass::updateGraphDisplay()
 {
 	BOOL l_bOk = TRUE;
-	SVLinearAnalyzerClass* l_psvLinear = dynamic_cast<SVLinearAnalyzerClass *>(m_pCurrentAnalyzer);
+	SVLinearAnalyzerClass* psvLinear = dynamic_cast<SVLinearAnalyzerClass *>(m_pCurrentAnalyzer);
 
 	// Remove old points
 	m_dialogImage.RemoveAllOverlays(0);
 
-	if( nullptr != l_psvLinear )
+	if( nullptr != psvLinear )
 	{
 		SVLinearEdgeProcessingClass* pEdge = nullptr;
 		if( m_bEdgeA )
 		{
-			pEdge = l_psvLinear->GetEdgeA();
+			pEdge = psvLinear->GetEdgeA();
 		}
 		else
 		{
-			pEdge = l_psvLinear->GetEdgeB();
+			pEdge = psvLinear->GetEdgeB();
 		}
 
 		if( nullptr == pEdge )
@@ -949,20 +949,26 @@ void SVProfileEdgeMarkerAdjustmentPageClass::updateGraphDisplay()
 			return;
 		}
 
+		//check if graphic vertical
+		SVImageExtentClass svAnalyzerExtents;
+		psvLinear->GetImageExtent(svAnalyzerExtents);
+		double rotationAngle = 0;
+		svAnalyzerExtents.GetPosition().GetExtentProperty(SVExtentPropertyRotationAngle, rotationAngle);
+		bool bVertical = (90 == rotationAngle);
 
 		//set HistogramOverlay and edges
-		setGraphOverlayToPicture(pEdge);
+		setGraphOverlayToPicture(pEdge, bVertical);
 
 		//set Threshold Bars
 		long thresholdValue = pEdge->getLowerThresholdValue();
 		if ( 0 <= thresholdValue )
 		{
-			setMarkerOverlayToPicture(thresholdValue);
+			setMarkerOverlayToPicture(thresholdValue, bVertical);
 		}
 		thresholdValue = pEdge->getUpperThresholdValue();
 		if ( 0 <= thresholdValue )
 		{
-			setMarkerOverlayToPicture(thresholdValue);
+			setMarkerOverlayToPicture(thresholdValue, bVertical);
 		}
 	}
 
@@ -970,84 +976,86 @@ void SVProfileEdgeMarkerAdjustmentPageClass::updateGraphDisplay()
 	m_dialogImage.Refresh();
 }
 
-void SVProfileEdgeMarkerAdjustmentPageClass::setGraphOverlayToPicture( SVLinearEdgeProcessingClass* pEdge )
+void SVProfileEdgeMarkerAdjustmentPageClass::setGraphOverlayToPicture(SVLinearEdgeProcessingClass* pEdge, bool bVertical)
 {
 	std::vector<double> HistogramData;
-	pEdge->GetInputLinearData( HistogramData );
+	pEdge->GetInputLinearData(HistogramData);
 	long handle = -1;
 	size_t sizePointsArray = HistogramData.size();
 	double* points = new double[sizePointsArray * 2];
 	for (size_t i = 0; i < sizePointsArray; i++)
 	{
-		points[i*2] = static_cast<double>(i);
-		points[i*2+1] = static_cast<double>(HistogramData[i]);
+		points[i * 2] = bVertical ? static_cast<double>(HistogramData[i]) : static_cast<double>(i);
+		points[i * 2 + 1] = (!bVertical) ? static_cast<double>(HistogramData[i]) : static_cast<double>(i);
 	}
 
 	COleSafeArray arraySafe;
-	arraySafe.CreateOneDim(VT_R8, static_cast< DWORD >( sizePointsArray * 2 ), points);
-	std::map<long,_variant_t> ParMap;
-	ParMap[CDSVPictureDisplay::P_Type ] = static_cast<long>(CDSVPictureDisplay::GraphROI);
-	ParMap[CDSVPictureDisplay::P_SubType_X ] = static_cast<long>(CDSVPictureDisplay::ImageArea_ScalePerParameter);
-	ParMap[CDSVPictureDisplay::P_SubType_Y ] = static_cast<long>(CDSVPictureDisplay::ViewArea_ScalePerParameter);
+	arraySafe.CreateOneDim(VT_R8, static_cast<DWORD>(sizePointsArray * 2), points);
+	std::map<long, _variant_t> ParMap;
+	ParMap[CDSVPictureDisplay::P_Type] = static_cast<long>(CDSVPictureDisplay::GraphROI);
+	ParMap[CDSVPictureDisplay::P_SubType_X] = static_cast<long>(bVertical ? CDSVPictureDisplay::ViewArea_ScalePerParameter : CDSVPictureDisplay::ImageArea_ScalePerParameter);
+	ParMap[CDSVPictureDisplay::P_SubType_Y] = static_cast<long>(bVertical ? CDSVPictureDisplay::ImageArea_ScalePerParameter : CDSVPictureDisplay::ViewArea_ScalePerParameter);
 	ParMap[CDSVPictureDisplay::P_Color] = static_cast<long>(SvDef::DefaultSubFunctionColor1);
 	ParMap[CDSVPictureDisplay::P_SelectedColor] = static_cast<long>(SvDef::DefaultSubFunctionColor1);
 	ParMap[CDSVPictureDisplay::P_AllowEdit] = static_cast<long>(0);
 	ParMap[CDSVPictureDisplay::P_ARRAY_XY] = arraySafe;
-	ParMap[CDSVPictureDisplay::P_Is_Flip_Vertical] = true;
+	if (!bVertical)
+	{
+		ParMap[CDSVPictureDisplay::P_Is_Flip_Vertical] = true;
+	}
 	ParMap[CDSVPictureDisplay::P_X_Min] = 0;
-	ParMap[CDSVPictureDisplay::P_X_Max] = sizePointsArray;
+	ParMap[bVertical ? CDSVPictureDisplay::P_Y_Max : CDSVPictureDisplay::P_X_Max] = sizePointsArray;
 	ParMap[CDSVPictureDisplay::P_Y_Min] = 0;
-	ParMap[CDSVPictureDisplay::P_Y_Max] = pEdge->m_dwColorNumber-1;
-
-	m_dialogImage.AddOverlay( 0, ParMap, &handle );
+	ParMap[bVertical ? CDSVPictureDisplay::P_X_Max : CDSVPictureDisplay::P_Y_Max] = pEdge->m_dwColorNumber - 1;
+	m_dialogImage.AddOverlay(0, ParMap, &handle);
 
 	//set linear Edge lines
 	std::vector<double> LinearEdges;
-	pEdge->m_svLinearEdges.GetArrayValues( LinearEdges );
+	pEdge->m_svLinearEdges.GetArrayValues(LinearEdges);
 	ParMap[CDSVPictureDisplay::P_Color] = static_cast<long> (SvDef::DefaultSubFunctionColor2);
 	ParMap[CDSVPictureDisplay::P_SelectedColor] = static_cast<long> (SvDef::DefaultSubFunctionColor2);
 	ParMap[CDSVPictureDisplay::P_Is_Flip_Vertical] = false;
-	ParMap[CDSVPictureDisplay::P_Y_Max] = m_egdeLinesGraphMaxY;
-	points[1] = m_egdeLinesStartPos; // y of first point
-	points[3] = m_egdeLinesStopPos; // y of second point
+	ParMap[bVertical ? CDSVPictureDisplay::P_X_Max : CDSVPictureDisplay::P_Y_Max] = m_egdeLinesGraphMaxY;
+	points[bVertical ? 0 : 1] = m_egdeLinesStartPos; // first point
+	points[bVertical ? 2 : 3] = m_egdeLinesStopPos; // second point
 	for (size_t i = 0; i < LinearEdges.size(); i++)
 	{
-		points[0] = LinearEdges[i]; // x of first point
-		points[2] = LinearEdges[i]; // x of second point
+		points[bVertical ? 1 : 0] = LinearEdges[i]; // first point
+		points[bVertical ? 3 : 2] = LinearEdges[i]; // second point
 		arraySafe.CreateOneDim(VT_R8, 4, points); // two points are four values
 		ParMap[CDSVPictureDisplay::P_ARRAY_XY] = arraySafe;
-		m_dialogImage.AddOverlay(0, ParMap, &handle );
+		m_dialogImage.AddOverlay(0, ParMap, &handle);
 	}
 
 	//set selected Edge line
 	double distance;
-	pEdge->GetOutputEdgeDistance( distance );
-	points[0] = distance; // x of first point
-	points[2] = distance; // x of second point
+	pEdge->GetOutputEdgeDistance(distance);
+	points[bVertical ? 0 : 1] = distance; // first point
+	points[bVertical ? 2 : 3] = distance; // x of second point
 	arraySafe.CreateOneDim(VT_R8, 4, points); // two points are four values
 	ParMap[CDSVPictureDisplay::P_Color] = static_cast<long>(pEdge->GetObjectColor());
 	ParMap[CDSVPictureDisplay::P_SelectedColor] = static_cast<long>(pEdge->GetObjectColor());
 	ParMap[CDSVPictureDisplay::P_ARRAY_XY] = arraySafe;
-	m_dialogImage.AddOverlay(0, ParMap, &handle );
+	m_dialogImage.AddOverlay(0, ParMap, &handle);
 
 	delete[] points;
 }
 
-void SVProfileEdgeMarkerAdjustmentPageClass::setMarkerOverlayToPicture( unsigned long value, long allowType /*= CDSVPictureDisplay::AllowNone */ )
+void SVProfileEdgeMarkerAdjustmentPageClass::setMarkerOverlayToPicture(unsigned long value, bool bVertical, long allowType /*= CDSVPictureDisplay::AllowNone */)
 {
 	long handle = -1;
 
-	std::map<long,_variant_t> ParMap;
-	ParMap[CDSVPictureDisplay::P_Type ] = static_cast<long>(CDSVPictureDisplay::MarkerROI);
-	ParMap[CDSVPictureDisplay::P_SubType ] = static_cast<long>(CDSVPictureDisplay::HorizontalMarker);
+	std::map<long, _variant_t> ParMap;
+	ParMap[CDSVPictureDisplay::P_Type] = static_cast<long>(CDSVPictureDisplay::MarkerROI);
+	ParMap[CDSVPictureDisplay::P_SubType] = static_cast<long>(bVertical ? CDSVPictureDisplay::VerticalMarker : CDSVPictureDisplay::HorizontalMarker);
 	ParMap[CDSVPictureDisplay::P_Color] = static_cast<long>(SvDef::DefaultSubFunctionColor1);
 	ParMap[CDSVPictureDisplay::P_SelectedColor] = static_cast<long>(SvDef::DefaultSubFunctionColor1);
 	ParMap[CDSVPictureDisplay::P_AllowEdit] = static_cast<long>(allowType);
 	ParMap[CDSVPictureDisplay::P_Min] = static_cast<long>(0);
 	ParMap[CDSVPictureDisplay::P_Max] = static_cast<long>(255);
-	ParMap[CDSVPictureDisplay::P_VALUE] = static_cast<long>(255 - value);
+	ParMap[CDSVPictureDisplay::P_VALUE] = static_cast<long>(bVertical ? value : 255 - value);
 
-	m_dialogImage.AddOverlay(0, ParMap, &handle );
+	m_dialogImage.AddOverlay(0, ParMap, &handle);
 }
 #pragma endregion Private Methods
 
