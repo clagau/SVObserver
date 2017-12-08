@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVOCore/SVAnalyzer.h"
+#include "InspectionEngine/SVAnalyzer.h"
 #include "SVValueBaseNormalizerClass.h"
 #pragma endregion Includes
 

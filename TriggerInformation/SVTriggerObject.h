@@ -72,7 +72,7 @@ namespace SvTi
 		long m_timerPeriod;
 
 		#ifdef SV_LOG_STATUS_INFO
-			SVStatusDeque m_StatusLog;
+			std::vector<std::string> m_StatusLog;
 		#endif
 	};
 	typedef std::vector<SVTriggerObject*> SVTriggerObjectPtrVector;

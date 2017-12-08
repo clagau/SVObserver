@@ -349,7 +349,7 @@ std::string SVEnumerateValueObjectClass::ConvertType2String( const long& rValue 
 	return Result;
 }
 
-void SVEnumerateValueObjectClass::WriteValues(SVObjectWriter& rWriter)
+void SVEnumerateValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)
 {
 	// Where does Object Depth Get put into the Script ??? (maybe at the SVObjectClass)
 	// Object Depth is implicit (it's the count of the values)
@@ -367,7 +367,7 @@ void SVEnumerateValueObjectClass::WriteValues(SVObjectWriter& rWriter)
 	rWriter.WriteAttribute(scElementTag, list);
 }
 
-void SVEnumerateValueObjectClass::WriteDefaultValues(SVObjectWriter& rWriter)
+void SVEnumerateValueObjectClass::WriteDefaultValues(SvOi::IObjectWriter& rWriter)
 {
 	_variant_t Value(GetDefaultValue());
 	rWriter.WriteAttribute(scDefaultTag, Value);

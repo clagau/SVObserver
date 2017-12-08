@@ -36,8 +36,8 @@
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVOCore/SVTaskObject.h" // For SVImageClassPtrSet
-#include "SVOCore/SVImageBuffer.h" //SVImageOverlayClass; used for getting overlay data for the ActiveX
+#include "InspectionEngine/SVTaskObject.h" // For SVImageClassPtrSet
+#include "InspectionEngine/SVImageBuffer.h" //SVImageOverlayClass; used for getting overlay data for the ActiveX
 #include "SVInfoStructs.h"
 #include "SVInspectionProcessResetStruct.h"
 #include "SVPublishList.h"
@@ -45,7 +45,7 @@
 #include "SVVirtualCamera.h"
 #include "SVMonitorList.h"
 #include "SVValueObjectLibrary/SVValueObjectClass.h"
-#include "SVOCore/SVEquation.h"
+#include "InspectionEngine/SVEquation.h"
 #include "SVSharedMemoryLibrary/MonitorEntry.h"
 #include "SVSharedMemoryLibrary/SMRingbuffer.h"
 #pragma endregion Includes
@@ -119,7 +119,7 @@ public:
 #pragma region virtual method (IInspectionProcess)
 	virtual SvOi::IObjectClass* GetPPQInterface() const override;
 	virtual void SetDefaultInputs() override;
-	virtual SvOi::ISelectorItemVectorPtr GetPPQSelectorList( const UINT Attribute ) const override;
+	virtual SvCl::SelectorItemVectorPtr GetPPQSelectorList( const UINT Attribute ) const override;
 	virtual SvOi::ITaskObject* GetToolSetInterface() const override;
 	virtual HRESULT RunOnce(SvOi::ITaskObject* pTask) override;
 	virtual long GetLastIndex() const  override;
@@ -221,7 +221,7 @@ public:
 
 	HRESULT RemoveImage(SVImageClass* pImage);
 
-	virtual void Persist(SVObjectWriter& rWriter) override;
+	virtual void Persist(SvOi::IObjectWriter& rWriter) override;
 
 	long GetResultDataIndex() const;
 

@@ -13,7 +13,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{39C20A29-7025-4180-AC95-05C32A4C106F}</ProjectGuid>
     <RootNamespace>SVContainerLibrary</RootNamespace>
-    <Keyword>Win32Proj</Keyword>
+    <Keyword>Win64Proj</Keyword>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -87,6 +87,7 @@
   <ItemGroup>
     <ClCompile Include="ObjectSelectorItem.cpp" />
     <ClCompile Include="ObjectTreeItems.cpp" />
+    <ClCompile Include="SelectorItem.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -94,10 +95,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="IGraphNameLookup.h" />
-    <ClInclude Include="IObjectSelectorItem.h" />
     <ClInclude Include="ObjectGraph.h" />
     <ClInclude Include="ObjectSelectorItem.h" />
     <ClInclude Include="ObjectTreeItems.h" />
+    <ClInclude Include="SelectorItem.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVBidirectionalMap.h" />
     <ClInclude Include="SVBimapDeclarations.h" />

@@ -12,7 +12,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{9B0560C0-FEE5-4806-9594-CFED40E28A18}</ProjectGuid>
-    <Keyword>Win32Proj</Keyword>
+    <Keyword>Win64Proj</Keyword>
     <RootNamespace>RunRejectServer</RootNamespace>
     <ProjectName>RunRejectServer</ProjectName>
   </PropertyGroup>

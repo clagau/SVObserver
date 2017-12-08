@@ -21,7 +21,7 @@
 #include "SVOGui/DisplayHelper.h"
 #include "SVOGui/GuiValueHelper.h"
 #include "Definitions/Color.h"
-#include "GuiCommands/CreateModel.h"
+#include "InspectionCommands/CreateModel.h"
 #include "SVMessage/SVMessage.h"
 #include "SVMatroxLibrary/SVMatroxPatternInterface.h"
 #include "SVImageLibrary/SVExtentPointStruct.h"

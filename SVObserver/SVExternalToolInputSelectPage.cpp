@@ -29,8 +29,8 @@
 #include "SVOGui/ToolSetItemSelector.h"
 #include "SVOGui/NoSelector.h"
 #include "TextDefinesSvO.h"
-#include "GuiCommands/GetObjectName.h"
-#include "GuiCommands/GetInstanceIDByTypeInfo.h"
+#include "InspectionCommands/GetObjectName.h"
+#include "InspectionCommands/GetInstanceIDByTypeInfo.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -317,7 +317,7 @@ int SVExternalToolInputSelectPage::SelectObject( std::string& rObjectName, SVRPr
 
 	if( IDOK == Result )
 	{
-		rObjectName = SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().getDisplayLocation().c_str();
+		rObjectName = SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().m_DisplayLocation;
 	}
 
 	return static_cast<int>( Result );

@@ -12,7 +12,7 @@
 #include "stdafx.h"
 #include "SVThinningFilter.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "SVOCore/SVImageProcessingClass.h"
+#include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVObjectLibrary/SVClsids.h"
 #pragma endregion Includes
 

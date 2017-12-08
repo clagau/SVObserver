@@ -22,10 +22,10 @@
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 
-#include "SVOCore/SVDataBuffer.h"
-#include "SVOCore/SVImageClass.h"
+#include "InspectionEngine/SVDataBuffer.h"
+#include "InspectionEngine/SVImageClass.h"
 #include "SVInspectionProcess.h"
-#include "SVOCore/SVImageProcessingClass.h"
+#include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVResultLong.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"

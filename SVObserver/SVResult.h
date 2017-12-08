@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVLibrary/ISVCancel.h"
-#include "SVOCore/SVTaskObjectList.h"
+#include "InspectionEngine/SVTaskObjectList.h"
 #pragma endregion Includes
 
 class SVRangeClass;

@@ -10,7 +10,7 @@
 //Moved to precompiled header: #include <boost\function.hpp>
 #include "IObjectClass.h"
 #include "IValueObject.h"
-#include "ISelectorItemVector.h"
+#include "SVContainerLibrary/SelectorItem.h"
 #include "ISVImage.h"
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "Definitions/StringTypeDef.h"
@@ -43,9 +43,9 @@ namespace SvOi
 		/// /param func <in> functor to check the attribute
 		/// /param Attribute <in> attribute
 		/// /param WholeArray <in> flag determines if whole arrays are used
-		/// \returns Seidenader::ObjectInterfaces::ISelectorItemVectorPtr
+		/// \returns SelectorItemVectorPtr
 		//************************************
-		virtual ISelectorItemVectorPtr GetSelectorList(IsObjectInfoAllowed func, UINT Attribute, bool WholeArray) const = 0;
+		virtual SvCl::SelectorItemVectorPtr GetSelectorList(IsObjectInfoAllowed func, UINT Attribute, bool WholeArray) const = 0;
 
 		/// Get the List of Images connected to this Task Object.
 		/// /param rList <in> The List to be populated.

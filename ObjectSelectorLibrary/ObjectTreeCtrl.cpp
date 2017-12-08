@@ -217,7 +217,7 @@ namespace SvOsl
 		return Result;
 	}
 
-	bool ObjectTreeCtrl::setCheckState( const TreeItemSet& rParentItems, SvCl::IObjectSelectorItem::CheckedStateEnum CheckedState )
+	bool ObjectTreeCtrl::setCheckState( const TreeItemSet& rParentItems, SvCl::ObjectSelectorItem::CheckedStateEnum CheckedState )
 	{
 		TreeItemSet::iterator ParentIter = rParentItems.begin();
 
@@ -238,30 +238,30 @@ namespace SvOsl
 			if( m_rParent.getTreeContainer().end() != Iter )
 			{
 				//If no defined state then we want to toggle the state
-				if( SvCl::IObjectSelectorItem::EmptyEnabled == CheckedState )
+				if( SvCl::ObjectSelectorItem::EmptyEnabled == CheckedState )
 				{
-					switch( Iter->second->getCheckedState() )
+					switch(Iter->second->m_CheckedState)
 					{
-					case SvCl::IObjectSelectorItem::UncheckedEnabled:
-						CheckedState =  SvCl::IObjectSelectorItem::CheckedEnabled;
+					case SvCl::ObjectSelectorItem::UncheckedEnabled:
+						CheckedState =  SvCl::ObjectSelectorItem::CheckedEnabled;
 						break;
-					case SvCl::IObjectSelectorItem::CheckedEnabled:
-					case SvCl::IObjectSelectorItem::TriStateEnabled: // fall through...
-						CheckedState = SvCl::IObjectSelectorItem::UncheckedEnabled;
+					case SvCl::ObjectSelectorItem::CheckedEnabled:
+					case SvCl::ObjectSelectorItem::TriStateEnabled: // fall through...
+						CheckedState = SvCl::ObjectSelectorItem::UncheckedEnabled;
 						break;
-					case SvCl::IObjectSelectorItem::UncheckedDisabled:
-						CheckedState = SvCl::IObjectSelectorItem::CheckedDisabled;
+					case SvCl::ObjectSelectorItem::UncheckedDisabled:
+						CheckedState = SvCl::ObjectSelectorItem::CheckedDisabled;
 						break;
-					case SvCl::IObjectSelectorItem::CheckedDisabled:
-					case SvCl::IObjectSelectorItem::TriStateDisabled: // fall through...
-						CheckedState = SvCl::IObjectSelectorItem::UncheckedDisabled;
+					case SvCl::ObjectSelectorItem::CheckedDisabled:
+					case SvCl::ObjectSelectorItem::TriStateDisabled: // fall through...
+						CheckedState = SvCl::ObjectSelectorItem::UncheckedDisabled;
 						break;
 					default:
 						break;
 					}
 				}
 
-				Iter->second->setCheckedState( CheckedState );
+				Iter->second->m_CheckedState =  CheckedState;
 				SetItemState( *ParentIter, INDEXTOSTATEIMAGEMASK( CheckedState ), TVIS_STATEIMAGEMASK );
 				m_UpdateItems.insert( Iter->first );
 
@@ -280,15 +280,15 @@ namespace SvOsl
 		return true;
 	}
 
-	void ObjectTreeCtrl::setChildrenState( SvCl::ObjectTreeItems::iterator& rIter, SvCl::IObjectSelectorItem::CheckedStateEnum& rCheckedState )
+	void ObjectTreeCtrl::setChildrenState( SvCl::ObjectTreeItems::iterator& rIter, SvCl::ObjectSelectorItem::CheckedStateEnum& rCheckedState )
 	{
 		SvCl::ObjectTreeItems::iterator ChildIter = rIter.node()->begin();
 		while( rIter.node()->end() != ChildIter )
 		{
-			bool TriState = SvCl::IObjectSelectorItem::TriStateEnabled == rCheckedState || SvCl::IObjectSelectorItem::TriStateDisabled == rCheckedState;
+			bool TriState = SvCl::ObjectSelectorItem::TriStateEnabled == rCheckedState || SvCl::ObjectSelectorItem::TriStateDisabled == rCheckedState;
 			if( !TriState || ChildIter->second->isNode() )
 			{
-				ChildIter->second->setCheckedState( rCheckedState );
+				ChildIter->second->m_CheckedState =  rCheckedState;
 				m_UpdateItems.insert( ChildIter->first );
 				setChildrenState(ChildIter, rCheckedState);
 			}
@@ -313,7 +313,7 @@ namespace SvOsl
 					if( getParentPropPage().getTreeContainer().end() != Iter )
 					{
 						//If it is unchecked then it will be checked after this method
-						if( SvCl::IObjectSelectorItem::UncheckedEnabled == Iter->second->getCheckedState() )
+						if( SvCl::ObjectSelectorItem::UncheckedEnabled == Iter->second->m_CheckedState )
 						{
 							m_CurrentSelection = *pLocation;
 						}

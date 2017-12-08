@@ -15,11 +15,10 @@
 #pragma region Includes
 //Moved to precompiled header: #include <assert.h>
 #include "Definitions/StringTypeDef.h"
-#include "ObjectInterfaces/ISelectorItemVector.h"
 #include "SVContainerLibrary/ObjectTreeItems.h"
 #include "SVUtilityLibrary/SVGUID.h"
-#include "SelectorItem.h"
-#include "SelectorItemVector.h"
+#include "SVContainerLibrary/SelectorItem.h"
+#include "SVContainerLibrary/SelectorItem.h"
 #include "SelectorOptions.h"
 #pragma endregion Includes
 
@@ -75,7 +74,7 @@ namespace SvOsl
 		//! The method inserts tree items
 		//! \param rSelectedItems <in> const reference to a list of selector items
 		//************************************
-		void insertTreeObjects( const SelectorItemVector& rSelectorItems );
+		void insertTreeObjects( const SvCl::SelectorItemVectorPtr pSelectorItems );
 
 		//************************************
 		//! This method builds the selectable items to insert into the tree
@@ -114,25 +113,25 @@ namespace SvOsl
 		//! \param rItem <in>:  reference to the item to check
 		//! \return the new location with inserted name
 		//************************************
-		std::string convertObjectArrayName( const SvOi::ISelectorItem& rItem ) const;
+		std::string convertObjectArrayName( const SvCl::SelectorItem& rItem ) const;
 
 		//************************************
 		//! The method gets the list of selected objects
 		//! \return the reference to the results
 		//************************************
-		inline const SelectorItemVector& getSelectedObjects() const;
+		inline const SvCl::SelectorItemVector& getSelectedObjects() const;
 
 		//************************************
 		//! The method gets the list of modified objects
 		//! \return the reference to the modified objects
 		//************************************
-		inline const SelectorItemVector& getModifiedObjects() const;
+		inline const SvCl::SelectorItemVector& getModifiedObjects() const;
 
 		//************************************
 		//! The method gets the single object selection result
 		//! \return the single selected object
 		//************************************
-		inline SelectorItem getSingleObjectResult() const;
+		inline SvCl::SelectorItem getSingleObjectResult() const;
 
 		//************************************
 		//! The method sets the selector type
@@ -148,7 +147,7 @@ namespace SvOsl
 		//! The method inserts an object into the tree list
 		//! \param rObjectRef <in> reference to the object
 		//************************************
-		void insertTreeObject( const SvOi::ISelectorItem& rItem );
+		void insertTreeObject( const SvCl::SelectorItem& rItem );
 
 		//************************************
 		//! The method checks if the tree has been modified
@@ -172,14 +171,14 @@ namespace SvOsl
 		//************************************
 		//! The method converts the location to the required format using the location filter and array index
 		//************************************
-		void convertLocation( SelectorItem& rSelectedItem );
+		void convertLocation(SvCl::SelectorItem& rSelectedItem );
 	#pragma endregion Private Methods
 
 	private:
 	#pragma region Member Variables
 		SvCl::ObjectTreeItems	m_TreeContainer;	//The tree container to store all tree items
-		SelectorItemVector m_SelectedObjects;		//The selected objects
-		SelectorItemVector m_ModifiedObjects;		//The modified objects
+		SvCl::SelectorItemVector m_SelectedObjects;//The selected objects
+		SvCl::SelectorItemVector m_ModifiedObjects;//The modified objects
 		SvDef::TranslateMap m_LocationInputFilters;	//The location input filters
 		SvDef::TranslateMap m_LocationOutputFilters;//The location output filters
 		SelectorTypeEnum m_SelectorType;			//The selector type

@@ -15,7 +15,6 @@
 #include "Definitions/ObjectDefines.h"
 #include "Definitions/GlobalConst.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
-#include "SVContainerLibrary/ObjectSelectorItem.h"
 #include "SVFormulaEditorPage.h"
 #include "SVOResource/ConstGlobalSvOr.h"
 #include "Definitions/StringTypeDef.h"
@@ -408,7 +407,7 @@ namespace SvOg
 
 		if( IDOK == Result )
 		{
-			m_ToolsetOutputVariable = SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().getDisplayLocation().c_str();
+			m_ToolsetOutputVariable = SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().m_DisplayLocation.c_str();
 			UpdateData( false );
 		}
 	}

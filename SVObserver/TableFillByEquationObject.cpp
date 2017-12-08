@@ -9,7 +9,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "TableFillByEquationObject.h"
-#include "SVOCore/SVTool.h"
+#include "InspectionEngine/SVTool.h"
 #include "SVInspectionProcess.h"
 #include "ObjectInterfaces\IObjectManager.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"

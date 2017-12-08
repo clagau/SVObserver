@@ -39,18 +39,18 @@
 #include "SVRemoteCommand.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVToolSet.h"
-#include "SVOCore/SVImageBuffer.h"	//SVImageOverlayClass
+#include "InspectionEngine/SVImageBuffer.h"	//SVImageOverlayClass
 #include "SVConfigurationPrint.h"
 #include "SVConfigurationObject.h"
 #include "SVInspectionProcess.h"
-#include "SVOCore/SVImageProcessingClass.h"
+#include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVInputObjectList.h"
 #include "SVStreamCommandFactory.h"
 #include "SVInputStreamManager.h"
-#include "SVOCore/SVTool.h"
+#include "InspectionEngine/SVTool.h"
 #include "SVCommandStreamManager.h"
 #include "SVCommandInspectionCollectImageData.h"
-#include "GuiCommands/InspectionRunOnce.h"
+#include "InspectionCommands/InspectionRunOnce.h"
 
 #include "SVOLicenseManager.h"
 #include "RemoteCommand.h"

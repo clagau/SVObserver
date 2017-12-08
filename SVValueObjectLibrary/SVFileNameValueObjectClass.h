@@ -32,7 +32,7 @@ public:
 
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject ) override;
 
-	virtual void Persist(SVObjectWriter& rWriter) override;
+	virtual void Persist(SvOi::IObjectWriter& rWriter) override;
 
 	virtual HRESULT SetValue( const std::string& rValue, int Index = -1 ) override;
 	HRESULT SetDefaultValue( const std::string& rValue, bool bResetAll = true ) override;
@@ -59,8 +59,8 @@ protected:
 	//! \returns S_OK if successful
 	virtual HRESULT CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD MemByteSize, int Index = -1) const override;
 
-	virtual void WriteValues(SVObjectWriter& rWriter) override;
-	virtual void WriteDefaultValues(SVObjectWriter& rWriter) override;
+	virtual void WriteValues(SvOi::IObjectWriter& rWriter) override;
+	virtual void WriteDefaultValues(SvOi::IObjectWriter& rWriter) override;
 
 private:
 	void LocalInitialize();

@@ -89,7 +89,7 @@
 #include "SVFailStatusStreamManager.h"
 #include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
 #include "SVSystemLibrary\SVVersionInfo.h"
-#include "GuiCommands/InspectionRunOnce.h"
+#include "InspectionCommands/InspectionRunOnce.h"
 #include "SVConfigurationTreeWriter.h"
 #include "SVOLicenseManager.h"
 #include "SVSocketRemoteCommandManager.h"

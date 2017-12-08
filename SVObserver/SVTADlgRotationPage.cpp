@@ -13,11 +13,11 @@
 #include "stdafx.h"
 #include "SVTADlgRotationPage.h"
 #include "SvOGui/SVFormulaEditorSheet.h"
-#include "SVOCore/SVEvaluate.h"
+#include "InspectionEngine/SVEvaluate.h"
 #include "SVIPDoc.h"
-#include "SVOCore/SVTool.h"
+#include "InspectionEngine/SVTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
-#include "SVOCore/SVImageTransform.h"
+#include "InspectionEngine/SVImageTransform.h"
 #include "SVToolSet.h"
 
 #pragma endregion

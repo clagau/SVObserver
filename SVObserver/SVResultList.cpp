@@ -90,7 +90,7 @@ SvTl::SVTimeStamp SVResultListClass::getUpdateTimeStamp()
 	return m_ResultViewReferences.getUpdateTimeStamp();
 }
 
-void SVResultListClass::Save(SVObjectWriter& rWriter)
+void SVResultListClass::Save(SvOi::IObjectWriter& rWriter)
 {
 	Concurrency::critical_section::scoped_lock  AutoLock(m_Lock);
 

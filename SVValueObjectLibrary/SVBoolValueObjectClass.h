@@ -44,8 +44,8 @@ protected:
 
 	virtual std::string ConvertType2String( const BOOL& rValue ) const override {	return rValue ? SvDef::cTrue : SvDef::cFalse; };
 
-	virtual void WriteValues(SVObjectWriter& rWriter) override;
-	virtual void WriteDefaultValues(SVObjectWriter& rWriter) override;
+	virtual void WriteValues(SvOi::IObjectWriter& rWriter) override;
+	virtual void WriteDefaultValues(SvOi::IObjectWriter& rWriter) override;
 private:
 	void LocalInitialize();
 };

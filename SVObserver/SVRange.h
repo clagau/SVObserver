@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVOCore/SVTaskObject.h"
+#include "InspectionEngine/SVTaskObject.h"
 #include "SVLibrary/ISVCancel.h"
 #include "Definitions/RangeEnum.h"
 #pragma endregion Includes

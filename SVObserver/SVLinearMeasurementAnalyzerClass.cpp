@@ -15,10 +15,10 @@
 #include "SVProfileEdgeMarkerAdjustmentPage.h"
 #include "SVMessage/SVMessage.h"
 #include "SVGlobal.h"
-#include "SVOCore/SVImageClass.h"
+#include "InspectionEngine/SVImageClass.h"
 #include "SVLinearEdgeAProcessingClass.h"
 #include "SVLinearEdgeBProcessingClass.h"
-#include "SVOCore/SVTool.h"
+#include "InspectionEngine/SVTool.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 

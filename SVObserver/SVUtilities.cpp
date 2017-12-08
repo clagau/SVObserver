@@ -15,7 +15,7 @@
 #include "SVUtilitiesCustomizeDialog.h"
 #include "SVMFCControls/SVUtilityArgumentDialog.h"
 #include "SVLibrary/SVOIniClass.h"
-#include "SVOCore/SVUtilityIniClass.h"
+#include "InspectionEngine/SVUtilityIniClass.h"
 #include "SVObserver.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"

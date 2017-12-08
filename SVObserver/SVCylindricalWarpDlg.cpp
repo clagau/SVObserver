@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "svobserver.h"
-#include "SVOCore/SVTool.h"
+#include "InspectionEngine/SVTool.h"
 #include "SVCylindricalWarpDlg.h"
 #include "SVCylindricalWarpTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"

@@ -16,7 +16,7 @@
 #include "SVOCVDialog.h"
 #include "SVInspectionProcess.h"
 #include "SVToolSet.h"
-#include "SVOCore/SVTool.h"
+#include "InspectionEngine/SVTool.h"
 #include "SVOLicenseManager.h"
 
 #ifdef _DEBUG

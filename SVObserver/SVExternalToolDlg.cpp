@@ -25,7 +25,7 @@
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVStatusLibrary\GlobalPath.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "GuiCommands/GetInstanceIDByTypeInfo.h"
+#include "InspectionCommands/GetInstanceIDByTypeInfo.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

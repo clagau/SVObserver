@@ -10,8 +10,12 @@
 //Moved to precompiled header: #include <iterator>
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "Definitions/StringTypeDef.h"
-#include "SVUtilityLibrary\SVGUID.h"
 #pragma endregion Includes
+
+#pragma region Declarations
+//! Declaration is in #include "SVUtilityLibrary\SVGUID.h"
+class SVGUID;
+#pragma endregion Declarations
 
 namespace SvOi
 {

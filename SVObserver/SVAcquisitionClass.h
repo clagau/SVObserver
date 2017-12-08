@@ -24,7 +24,7 @@
 
 #include "TriggerInformation/SVAcquisitionConstructParams.h"
 #include "SVFileSystemLibrary/SVFileNameArrayClass.h"
-#include "SVOCore/SVImageObjectClass.h"
+#include "InspectionEngine/SVImageObjectClass.h"
 #pragma endregion Includes
 
 /**

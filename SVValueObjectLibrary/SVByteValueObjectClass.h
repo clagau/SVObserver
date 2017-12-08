@@ -51,8 +51,8 @@ protected:
 
 	virtual std::string ConvertType2String(const BYTE& rValue) const override { return FormatOutput(rValue); };
 
-	virtual void WriteValues(SVObjectWriter& rWriter) override;
-	virtual void WriteDefaultValues(SVObjectWriter& rWriter) override;
+	virtual void WriteValues(SvOi::IObjectWriter& rWriter) override;
+	virtual void WriteDefaultValues(SvOi::IObjectWriter& rWriter) override;
 private:
 	void LocalInitialize();
 };

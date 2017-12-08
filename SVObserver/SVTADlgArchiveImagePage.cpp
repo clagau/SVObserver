@@ -20,7 +20,7 @@
 #include "SVOGui/NoSelector.h"
 #include "SVOGui/ToolSetItemSelector.h"
 #include "SVIPDoc.h"
-#include "SVOCore/SVImageClass.h"
+#include "InspectionEngine/SVImageClass.h"
 #include "SVInspectionProcess.h"
 #include "SVMemoryManager.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
@@ -188,19 +188,18 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 
 	m_pTool->m_dwArchiveMaxImagesCount.SetValue(dwTemp);
 
-	SvOsl::SelectorItemVector::const_iterator Iter;
-	for ( Iter = m_List.begin(); m_List.end() != Iter ; ++Iter )
+	for (auto const& rEntry : m_List)
 	{
 		//The tree item key is the object GUID
-		SVGUID ObjectGuid( Iter->getItemKey() );
+		SVGUID ObjectGuid( rEntry.m_ItemKey );
 
 		SVObjectClass* pObject( nullptr );
 		SVObjectManagerClass::Instance().GetObjectByIdentifier( ObjectGuid, pObject );
 
 		SVObjectReference ObjectRef( pObject );
-		if( Iter->isArray() )
+		if( rEntry.m_Array )
 		{
-			ObjectRef.SetArrayIndex( Iter->getArrayIndex() );
+			ObjectRef.SetArrayIndex( rEntry.m_ArrayIndex );
 		}
 		ObjectRef.SetObjectAttributesSet( SvDef::SV_ARCHIVABLE_IMAGE, SvOi::SetAttributeType::AddAttribute );
 	}
@@ -331,10 +330,9 @@ void SVTADlgArchiveImagePage::OnSelectObjects()
 
 void SVTADlgArchiveImagePage::OnRemoveAllItems()
 {
-	SvOsl::SelectorItemVector::const_iterator Iter;
-	for ( Iter = m_List.begin(); m_List.end() != Iter ; ++Iter )
+	for (auto const& rEntry : m_List)
 	{
-		SVGUID ObjectGuid( Iter->getItemKey() );
+		SVGUID ObjectGuid(rEntry.m_ItemKey);
 
 		SVObjectClass* pObject( nullptr );
 		SVObjectManagerClass::Instance().GetObjectByIdentifier( ObjectGuid, pObject );
@@ -342,9 +340,9 @@ void SVTADlgArchiveImagePage::OnRemoveAllItems()
 		if( nullptr != pObject )
 		{
 			SVObjectReference ObjectRef( pObject );
-			if( Iter->isArray() )
+			if (rEntry.m_Array)
 			{
-				ObjectRef.SetArrayIndex( Iter->getArrayIndex() );
+				ObjectRef.SetArrayIndex(rEntry.m_ArrayIndex);
 			}
 			ObjectRef.SetObjectAttributesSet( SvDef::SV_ARCHIVABLE_IMAGE, SvOi::SetAttributeType::RemoveAttribute );
 		}
@@ -369,18 +367,18 @@ void SVTADlgArchiveImagePage::OnRemoveItem()
 	std::vector<int>::const_reverse_iterator Iter;
 	for( Iter = SelectedVector.crbegin(); SelectedVector.crend() != Iter; ++Iter )
 	{
-		SvOsl::SelectorItemVector::const_iterator SelectedIter( m_List.begin() + *Iter );
+		SvCl::SelectorItemVector::const_iterator SelectedIter( m_List.begin() + *Iter );
 
-		SVGUID ObjectGuid( SelectedIter->getItemKey() );
+		SVGUID ObjectGuid{ SelectedIter->m_ItemKey };
 		SVObjectClass* pObject( nullptr );
 		SVObjectManagerClass::Instance().GetObjectByIdentifier( ObjectGuid, pObject );
 
 		if( nullptr != pObject )
 		{
 			SVObjectReference ObjectRef( pObject );
-			if( SelectedIter->isArray() )
+			if( SelectedIter->m_Array )
 			{
-				ObjectRef.SetArrayIndex( SelectedIter->getArrayIndex() );
+				ObjectRef.SetArrayIndex(SelectedIter->m_ArrayIndex);
 			}
 			ObjectRef.SetObjectAttributesSet( SvDef::SV_ARCHIVABLE_IMAGE, SvOi::SetAttributeType::RemoveAttribute );
 		}
@@ -423,15 +421,11 @@ void SVTADlgArchiveImagePage::BuildImageList()
 
 	SvOsl::SelectorOptions BuildOptions( m_pTool->GetInspection()->GetUniqueObjectID(), SvDef::SV_ARCHIVABLE_IMAGE );
 	SvOg::ToolSetItemSelector<SvCmd::AttributesSetFilterType> toolsetItemSelector;
-	SvOi::ISelectorItemVectorPtr pToolsetList = toolsetItemSelector( BuildOptions );
+	SvCl::SelectorItemVectorPtr pToolsetList = toolsetItemSelector( BuildOptions );
 	//Copy list to member variable for easier use
-	if( !pToolsetList.empty() )
+	if (nullptr != pToolsetList)
 	{
-		SvOsl::SelectorItemVector* pSelectorList = dynamic_cast<SvOsl::SelectorItemVector*> (pToolsetList.get());
-		if( nullptr != pSelectorList )
-		{
-			m_List.swap(*pSelectorList);
-		}
+		m_List.swap(*pToolsetList);
 	}
 }
 
@@ -439,10 +433,9 @@ void SVTADlgArchiveImagePage::MemoryUsage()
 {
 	m_mapSelectedImageMemUsage.clear();
 
-	SvOsl::SelectorItemVector::const_iterator Iter;
-	for ( Iter = m_List.begin(); m_List.end() != Iter ; ++Iter )
+	for (auto const& rEntry : m_List )
 	{
-		SVGUID ObjectGuid( Iter->getItemKey() );
+		SVGUID ObjectGuid{rEntry.m_ItemKey};
 
 		SVObjectClass* pObject( nullptr );
 		SVObjectManagerClass::Instance().GetObjectByIdentifier( ObjectGuid, pObject );
@@ -473,11 +466,9 @@ void SVTADlgArchiveImagePage::ReadSelectedObjects()
 	std::string Prefix = SvUl::Format( _T("%s.%s."), m_pTool->GetInspection()->GetName(), ToolName.c_str() );
 
 	int Index = 0;
-	SvOsl::SelectorItemVector::const_iterator Iter;
-	for ( Iter = m_List.begin(); m_List.end() != Iter ; ++Iter )
+	for (auto const& rEntry : m_List)
 	{
-		std::string Name;
-		Name = Iter->getLocation();
+		std::string Name{ rEntry.m_Location };
 		SvUl::searchAndReplace( Name, Prefix.c_str(), _T("") );
 
 		m_ItemsSelected.InsertItem(LVIF_STATE | LVIF_TEXT,
@@ -502,13 +493,10 @@ void SVTADlgArchiveImagePage::ShowObjectSelector()
 	SvOsl::SelectorOptions BuildOptions( InspectionGuid, SvDef::SV_ARCHIVABLE_IMAGE );
 	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 
-	SvOsl::SelectorItemVector::const_iterator Iter;
 	SvDef::StringSet CheckItems;
-	for ( Iter = m_List.begin(); m_List.end() != Iter ; ++Iter )
+	for (auto const& rEntry : m_List)
 	{
-		std::string ObjectName;
-		ObjectName = Iter->getLocation();
-		CheckItems.insert( ObjectName );
+		CheckItems.insert( rEntry.m_Location );
 	}
 	SvOsl::ObjectTreeGenerator::Instance().setCheckItems( CheckItems );
 
@@ -519,12 +507,11 @@ void SVTADlgArchiveImagePage::ShowObjectSelector()
 	if( IDOK == Result )
 	{
 		//We need to check the memory requirements for the images
-		const SvOsl::SelectorItemVector& rModifiedObjects = SvOsl::ObjectTreeGenerator::Instance().getModifiedObjects();
-		SvOsl::SelectorItemVector::const_iterator Iter;
-		for(Iter = rModifiedObjects.begin(); rModifiedObjects.end() != Iter; ++Iter )
+		const SvCl::SelectorItemVector& rModifiedObjects = SvOsl::ObjectTreeGenerator::Instance().getModifiedObjects();
+		for(auto const& rEntry : rModifiedObjects)
 		{
-			SVGUID ImageGuid( Iter->getItemKey() );
-			if( !checkImageMemory( ImageGuid, Iter->isSelected() ) )
+			SVGUID ImageGuid(rEntry.m_ItemKey);
+			if( !checkImageMemory( ImageGuid, rEntry.m_Selected ) )
 			{
 				//If memory check failed then the original image selection remains
 				return;
@@ -536,11 +523,11 @@ void SVTADlgArchiveImagePage::ShowObjectSelector()
 		ReadSelectedObjects();
 
 		//We need to remove unselected objects attributes
-		for(Iter = rModifiedObjects.begin(); rModifiedObjects.end() != Iter; ++Iter )
+		for(auto const& rEntry : rModifiedObjects)
 		{
-			if( !Iter->isSelected() )
+			if( !rEntry.m_Selected )
 			{
-				SVGUID ObjectGuid( Iter->getItemKey() );
+				SVGUID ObjectGuid{ rEntry.m_ItemKey };
 
 				SVObjectClass* pObject( nullptr );
 				SVObjectManagerClass::Instance().GetObjectByIdentifier( ObjectGuid, pObject );
@@ -548,9 +535,9 @@ void SVTADlgArchiveImagePage::ShowObjectSelector()
 				if( nullptr != pObject )
 				{
 					SVObjectReference ObjectRef( pObject );
-					if( Iter->isArray() )
+					if( rEntry.m_Array )
 					{
-						ObjectRef.SetArrayIndex( Iter->getArrayIndex() );
+						ObjectRef.SetArrayIndex(rEntry.m_ArrayIndex);
 					}
 					ObjectRef.SetObjectAttributesSet( SvDef::SV_ARCHIVABLE_IMAGE, SvOi::SetAttributeType::RemoveAttribute );
 				}

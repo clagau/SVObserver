@@ -10,7 +10,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVOCore/SVTaskObjectValueInterface.h"
+#include "InspectionEngine/SVTaskObjectValueInterface.h"
 #include "SVRPropertyTree/SVRPropTree.h"
 #include "SVOGui/PictureDisplay.h"
 #include "SVOGui\ISVPropertyPageDialog.h"  // for QueryAllowExit()

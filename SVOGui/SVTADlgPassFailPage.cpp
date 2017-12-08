@@ -19,7 +19,7 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVMessage\SVMessage.h"
 #include "SVStatusLibrary/MessageTextEnum.h"
-#include "GuiCommands\GetSelectorList.h"
+#include "InspectionCommands\GetSelectorList.h"
 #include "ToolSetItemSelector.h"
 #pragma endregion Includes
 

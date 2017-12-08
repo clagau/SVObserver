@@ -12,8 +12,8 @@
 #pragma once
 
 #pragma region Includes
-#include "SVOCore/SVTool.h"
-#include "SVOCore/SVImageClass.h"
+#include "InspectionEngine/SVTool.h"
+#include "InspectionEngine/SVImageClass.h"
 #include "SVValueObjectLibrary/SVStringValueObjectClass.h"
 #pragma endregion Includes
 

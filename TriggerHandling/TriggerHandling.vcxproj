@@ -13,7 +13,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{12178FE8-6FBA-45F2-A311-0B1659D6C1BE}</ProjectGuid>
     <RootNamespace>TriggerHandling</RootNamespace>
-    <Keyword>Win32Proj</Keyword>
+    <Keyword>Win64Proj</Keyword>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">

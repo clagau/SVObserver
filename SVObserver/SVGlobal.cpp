@@ -14,7 +14,7 @@
 //Moved to precompiled header: #include <direct.h>
 #include "SVGlobal.h"
 #include "SVDataManagerLibrary/DataManager.h"
-#include "SVOCore/SVImageProcessingClass.h"
+#include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 

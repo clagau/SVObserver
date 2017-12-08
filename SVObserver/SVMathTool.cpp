@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVMathTool.h"
 #include "SVGlobal.h"
-#include "SVOCore/SVMathEquation.h"
+#include "InspectionEngine/SVMathEquation.h"
 #include "SVResultDouble.h"
 #include "SVInspectionProcess.h"
 #include "SVUtilityLibrary/StringHelper.h"

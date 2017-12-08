@@ -76,14 +76,16 @@ namespace SvOsl
 		m_AttributesFilter = SvDef::SV_NO_ATTRIBUTES;
 	}
 		
-	void ObjectTreeGenerator::insertTreeObjects( const SelectorItemVector& rSelectorItems )
+	void ObjectTreeGenerator::insertTreeObjects( const SvCl::SelectorItemVectorPtr pSelectorItems )
 	{
-		std::for_each(rSelectorItems.begin(), rSelectorItems.end(), [this](const SelectorItem& rItem)->void
+		if (nullptr != pSelectorItems)
 		{
-			insertTreeObject( rItem );
-		});
-		m_TreeContainer.clearBranchMap();
-
+			for (auto const& rEntry : *pSelectorItems)
+			{
+				insertTreeObject(rEntry);
+			}
+			m_TreeContainer.clearBranchMap();
+		}
 	}
 
 	INT_PTR ObjectTreeGenerator::showDialog( LPCTSTR title, LPCTSTR mainTabTitle, LPCTSTR filterTabTitle, CWnd* pParent )
@@ -184,7 +186,7 @@ namespace SvOsl
 			Iter = m_TreeContainer.findItem( Location );
 			if( m_TreeContainer.end() != Iter )
 			{
-				Iter->second->setCheckedState( SvCl::IObjectSelectorItem::CheckedEnabled );
+				Iter->second->m_CheckedState = SvCl::ObjectSelectorItem::CheckedEnabled;
 				Result = true;
 			}
 		}
@@ -213,21 +215,21 @@ namespace SvOsl
 		}
 	}
 
-	std::string ObjectTreeGenerator::convertObjectArrayName( const SvOi::ISelectorItem& rItem ) const
+	std::string ObjectTreeGenerator::convertObjectArrayName(const SvCl::SelectorItem& rItem) const
 	{
-		std::string Result( rItem.getDisplayLocation() );
+		std::string Result{ rItem.m_DisplayLocation };
 		if( Result.empty() )
 		{
-			Result = rItem.getLocation();
+			Result = rItem.m_Location;
 		}
 
 		//If location is array then place an additional level with the array group name
-		if( rItem.isArray() )
+		if( rItem.m_Array )
 		{
 			std::string Name;
 			size_t Pos = 0;
 
-			Name = rItem.getName();
+			Name = rItem.m_Name;
 			Name.insert( Pos, _T(".") );
 			Pos = Result.rfind(_T('.'));
 			if( std::string::npos != Pos )
@@ -242,43 +244,31 @@ namespace SvOsl
 	#pragma endregion Public Methods
 
 	#pragma region Private Methods
-	void ObjectTreeGenerator::insertTreeObject( const SvOi::ISelectorItem& rItem )
+	void ObjectTreeGenerator::insertTreeObject( const SvCl::SelectorItem& rItem )
 	{
 		SvCl::ObjectSelectorItem SelectorItem;
-		SvCl::IObjectSelectorItem::AttributeEnum Attribute( static_cast<SvCl::IObjectSelectorItem::AttributeEnum> (SvCl::IObjectSelectorItem::Leaf | SvCl::IObjectSelectorItem::Checkable) );
-		SelectorItem.setName( rItem.getName() );
-		SelectorItem.setLocation( rItem.getLocation() );
-		SelectorItem.setItemKey( rItem.getItemKey() );
-		SelectorItem.setItemTypeName( rItem.getItemTypeName() );
-		SelectorItem.setCheckedState( SvCl::IObjectSelectorItem::UncheckedEnabled );
+		SelectorItem = rItem;
+		SelectorItem.m_Attribute = static_cast<SvCl::ObjectSelectorItem::AttributeEnum> (SvCl::ObjectSelectorItem::Leaf | SvCl::ObjectSelectorItem::Checkable);
+		SelectorItem. m_CheckedState = SvCl::ObjectSelectorItem::UncheckedEnabled;
 
-		std::string Location( rItem.getDisplayLocation() );
+		std::string Location( rItem.m_DisplayLocation );
 		if( Location.empty() )
 		{
-			Location = rItem.getLocation();
+			Location = rItem.m_Location;
 		}
-		if( rItem.isArray() )
+		if( rItem.m_Array )
 		{
 			Location = convertObjectArrayName( rItem );
-			SelectorItem.setArrayIndex( rItem.getArrayIndex() );
-			Attribute = static_cast<SvCl::IObjectSelectorItem::AttributeEnum> (SvCl::IObjectSelectorItem::Leaf | SvCl::IObjectSelectorItem::Checkable | SvCl::IObjectSelectorItem::Array);
 		}
 
 		if( TypeSetAttributes == (m_SelectorType & TypeSetAttributes) )
 		{
-			if( rItem.isSelected() )
+			if (rItem.m_Selected)
 			{
-				SelectorItem.setCheckedState( SvCl::IObjectSelectorItem::CheckedEnabled );
+				SelectorItem.m_CheckedState =  SvCl::ObjectSelectorItem::CheckedEnabled;
 			}
 		}
 
-		if( rItem.isArray() )
-		{
-			SelectorItem.setArrayIndex( rItem.getArrayIndex() );
-			Attribute = static_cast<SvCl::IObjectSelectorItem::AttributeEnum> (SvCl::IObjectSelectorItem::Leaf | SvCl::IObjectSelectorItem::Checkable | SvCl::IObjectSelectorItem::Array);
-		}
-
-		SelectorItem.setAttibute( Attribute );
 		Location = getFilteredLocation( m_LocationInputFilters, Location );
 		m_TreeContainer.insertLeaf( Location, SelectorItem );
 		m_LeafCount++;
@@ -292,28 +282,20 @@ namespace SvOsl
 		m_ModifiedObjects.clear();
 		SvCl::ObjectTreeItems::pre_order_iterator Iter;
 
-		for( Iter = m_TreeContainer.pre_order_begin(); m_TreeContainer.pre_order_end() != Iter; ++Iter )
+		for (Iter = m_TreeContainer.pre_order_begin(); m_TreeContainer.pre_order_end() != Iter; ++Iter)
 		{
-			bool isSelected( SvCl::IObjectSelectorItem::CheckedEnabled == Iter->second->getCheckedState() );
-			bool isModified( Iter->second->getCheckedState() != Iter->second->getOrgCheckedState() );
+			bool isSelected{ SvCl::ObjectSelectorItem::CheckedEnabled == Iter->second->m_CheckedState };
+			bool isModified{ Iter->second->m_CheckedState != Iter->second->m_OrgCheckedState };
 
 			if( isModified || isSelected )
 			{
-				SelectorItem SelectedItem;
+				SvCl::SelectorItem SelectedItem{ *Iter->second };
 
-				SelectedItem.setName( Iter->second->getName().c_str() );
-				SelectedItem.setLocation( Iter->second->getLocation().c_str() );
-				SelectedItem.setDisplayLocation( Iter->second->getDisplayLocation().c_str() );
-				SelectedItem.setItemTypeName( Iter->second->getItemTypeName().c_str() );
-				SelectedItem.setItemKey( Iter->second->getItemKey() );
-				SelectedItem.setArray( Iter->second->isArray() );
-				SelectedItem.setArrayIndex( Iter->second->getArrayIndex() );
-				SelectedItem.setSelected( isSelected );
 				convertLocation( SelectedItem );
 
 				if( isModified )
 				{
-					Iter->second->setModified( isModified );
+					Iter->second->m_Modified = isModified;
 					Result = true;
 					if( Iter->second->isLeaf() )
 					{
@@ -343,20 +325,18 @@ namespace SvOsl
 
 	void ObjectTreeGenerator::setItemAttributes()
 	{
-		SelectorItemVector::const_iterator Iter( m_ModifiedObjects.begin() );
-
 		//Modified objects are only leafs from the tree
-		for( ;m_ModifiedObjects.end() != Iter; ++Iter )
+		for(auto const& rEntry : m_ModifiedObjects)
 		{
-			SVGUID ObjectID( Iter->getItemKey() );
+			SVGUID ObjectID{ rEntry.m_ItemKey };
 
 			SvOi::IObjectClass* pObject( SvOi::getObject( ObjectID ) );
 
-			if ( nullptr != pObject )
+			if ( nullptr != pObject)
 			{
-				int ObjectIndex = Iter->isArray() ? Iter->getArrayIndex() : 0;
+				int ObjectIndex = rEntry.m_Array ? rEntry.m_ArrayIndex : 0;
 
-				if ( Iter->isSelected() )
+				if (rEntry.m_Selected)
 				{
 					pObject->SetObjectAttributesSet( m_AttributesFilter, SvOi::SetAttributeType::AddAttribute, ObjectIndex );
 				}
@@ -395,19 +375,19 @@ namespace SvOsl
 		return rFilterLocation.c_str();
 	}
 
-	void ObjectTreeGenerator::convertLocation( SelectorItem& rSelectedItem )
+	void ObjectTreeGenerator::convertLocation(SvCl::SelectorItem& rSelectedItem )
 	{
-		std::string Location = getFilteredLocation( m_LocationOutputFilters, rSelectedItem.getLocation() );
-		if( rSelectedItem.getLocation() != Location )
+		std::string Location = getFilteredLocation( m_LocationOutputFilters, rSelectedItem.m_Location );
+		if( rSelectedItem.m_Location != Location )
 		{
-			rSelectedItem.setLocation( Location.c_str() );
+			rSelectedItem.m_Location = Location;
 		}
 
-		std::string DisplayLocation = getFilteredLocation( m_LocationOutputFilters, rSelectedItem.getDisplayLocation() );
+		std::string DisplayLocation = getFilteredLocation( m_LocationOutputFilters, rSelectedItem.m_DisplayLocation);
 		//The extra group name for arrays must be removed
-		if( rSelectedItem.isArray() )
+		if (rSelectedItem.m_Array)
 		{
-			std::string Name( rSelectedItem.getName() );
+			std::string Name( rSelectedItem.m_Name );
 
 			std::string::size_type Pos = 0;
 			//Array name will have [ ] 
@@ -418,9 +398,9 @@ namespace SvOsl
 			Name += _T(".");
 			SvUl::searchAndReplace( DisplayLocation, Name.c_str(), _T("") );
 		}
-		if( rSelectedItem.getDisplayLocation() != DisplayLocation )
+		if( rSelectedItem.m_DisplayLocation != DisplayLocation )
 		{
-			rSelectedItem.setDisplayLocation( DisplayLocation.c_str() );
+			rSelectedItem.m_DisplayLocation = DisplayLocation;
 		}
 	}
 	#pragma endregion Private Methods

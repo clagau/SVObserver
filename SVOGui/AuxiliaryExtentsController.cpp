@@ -9,11 +9,11 @@
 #include "Stdafx.h"
 //Moved to precompiled header: #include <boost/assign/list_of.hpp>
 #include "AuxiliaryExtentsController.h"
-#include "GuiCommands\AreAuxiliaryExtentsAvailable.h"
-#include "GuiCommands\GetAvailableAuxSourceImages.h"
-#include "GuiCommands\GetAuxSourceImage.h"
-#include "GuiCommands\SetAuxSourceImage.h"
-#include "GuiCommands\InspectionRunOnce.h"
+#include "InspectionCommands\AreAuxiliaryExtentsAvailable.h"
+#include "InspectionCommands\GetAvailableAuxSourceImages.h"
+#include "InspectionCommands\GetAuxSourceImage.h"
+#include "InspectionCommands\SetAuxSourceImage.h"
+#include "InspectionCommands\InspectionRunOnce.h"
 #include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
 #include "SVObjectLibrary\SVClsids.h"
 #pragma endregion Includes

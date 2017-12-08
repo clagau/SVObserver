@@ -10,7 +10,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <list>
 //Moved to precompiled header: #include <utility>
-#include "SVObjectLibrary/SVObjectWriter.h"
+#include "ObjectInterfaces/IObjectWriter.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #pragma endregion Includes
@@ -66,7 +66,7 @@ public:
 
 	typedef SvXml::SVXMLMaterialsTree SVTreeType;
 	HRESULT SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent); // Load
-	bool GetParameters(SVObjectWriter& rWriter); // Save
+	bool GetParameters(SvOi::IObjectWriter& rWriter); // Save
 
 	bool IsStartTag(const std::string& rName, bool& bState) const;
 	bool IsStartTag(const std::string& rName) const;

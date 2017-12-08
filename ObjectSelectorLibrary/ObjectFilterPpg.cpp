@@ -104,7 +104,7 @@ namespace SvOsl
 		{
 			if( Iter->second->isLeaf() )
 			{
-				typeSet.insert(Iter->second->getItemTypeName());
+				typeSet.insert(Iter->second->m_ItemTypeName);
 			}
 			++Iter;
 		}
@@ -284,14 +284,14 @@ namespace SvOsl
 		{
 			if( Iter->second->isLeaf() )
 			{
-				if (m_SingleSelect && SvCl::IObjectSelectorItem::CheckedEnabled == Iter->second->getCheckedState() )
+				if (m_SingleSelect && SvCl::ObjectSelectorItem::CheckedEnabled == Iter->second->m_CheckedState )
 				{
 					m_CheckedLocation = Iter->first;
 				}
 				int checkSelection = m_checkedControl.GetCurSel();
 				int typeSelection = m_TypeControl.GetCurSel();
-				std::string nameUpper(Iter->second->getName());
-				std::string locationUpper(Iter->second->getLocation());
+				std::string nameUpper(Iter->second->m_Name);
+				std::string locationUpper(Iter->second->m_Location);
 				SvUl::MakeUpper(nameUpper);
 				SvUl::MakeUpper(locationUpper);
 
@@ -301,14 +301,14 @@ namespace SvOsl
 				m_TypeControl.GetLBText(typeSelection, typeText);
 				if ( (isNameValid && isLocationValid) &&
 					 (0 == checkSelection || 
-						( 1 == checkSelection && SvCl::IObjectSelectorItem::CheckedEnabled == Iter->second->getCheckedState()) || 
-						( 2 == checkSelection && SvCl::IObjectSelectorItem::CheckedEnabled != Iter->second->getCheckedState()) ) &&
-					 (0 == typeSelection || Iter->second->getItemTypeName().c_str() == typeText ))
+						( 1 == checkSelection && SvCl::ObjectSelectorItem::CheckedEnabled == Iter->second->m_CheckedState) || 
+						( 2 == checkSelection && SvCl::ObjectSelectorItem::CheckedEnabled != Iter->second->m_CheckedState) ) &&
+					 (0 == typeSelection || Iter->second->m_ItemTypeName.c_str() == typeText ))
 				{
 					m_Grid.SetRowCount(i + 1);
-					m_Grid.SetItemText(i, NameColumn, Iter->second->getName().c_str());
+					m_Grid.SetItemText(i, NameColumn, Iter->second->m_Name.c_str());
 					m_Grid.SetItemState(i, NameColumn, m_Grid.GetItemState(i, 0) | GVIS_READONLY);
-					m_Grid.SetItemText(i, LocationColumn, Iter->second->getLocation().c_str());
+					m_Grid.SetItemText(i, LocationColumn, Iter->second->m_Location.c_str());
 					m_Grid.SetItemState(i, LocationColumn, m_Grid.GetItemState(i, LocationColumn) | GVIS_READONLY);
 					m_Grid.SetItemData(i, LocationColumn, reinterpret_cast<LPARAM> (&Iter->first) );
 					//We need to use the using here because the macro RUNTIME_CLASS cannot handle namespaces
@@ -317,7 +317,7 @@ namespace SvOsl
 					SvGcl::CGridCellCheck* cell = dynamic_cast<SvGcl::CGridCellCheck*>(m_Grid.GetCell(i, CheckColumn));
 					if (nullptr != cell)
 					{
-						if (SvCl::IObjectSelectorItem::CheckedEnabled == Iter->second->getCheckedState())
+						if (SvCl::ObjectSelectorItem::CheckedEnabled == Iter->second->m_CheckedState)
 						{
 							cell->SetCheck( TRUE );
 							if (m_SingleSelect)
@@ -331,7 +331,7 @@ namespace SvOsl
 						}
 					}
 
-					m_Grid.SetItemText(i, TypeColumn, Iter->second->getItemTypeName().c_str());
+					m_Grid.SetItemText(i, TypeColumn, Iter->second->m_ItemTypeName.c_str());
 					m_Grid.SetItemState(i, TypeColumn, m_Grid.GetItemState(i, TypeColumn) | GVIS_READONLY);
 					i++;
 				}
@@ -370,7 +370,7 @@ namespace SvOsl
 		if( m_rTreeContainer.end() != iter )
 		{
 			if (iter->second->isLeaf() && 
-				(iter->second->getCheckedState() == SvCl::IObjectSelectorItem::CheckedEnabled) != isChecked)
+				(iter->second->m_CheckedState == SvCl::ObjectSelectorItem::CheckedEnabled) != isChecked)
 			{
 				if (m_SingleSelect)
 				{
@@ -395,7 +395,7 @@ namespace SvOsl
 					}
 				}
 
-				iter->second->setCheckedState(isChecked?SvCl::IObjectSelectorItem::CheckedEnabled:SvCl::IObjectSelectorItem::UncheckedEnabled);
+				iter->second->m_CheckedState = isChecked ? SvCl::ObjectSelectorItem::CheckedEnabled : SvCl::ObjectSelectorItem::UncheckedEnabled;
 				m_rTreeContainer.setParentState(iter);
 			}
 		}

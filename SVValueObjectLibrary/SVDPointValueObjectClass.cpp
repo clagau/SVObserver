@@ -129,7 +129,7 @@ HRESULT SVDPointValueObjectClass::CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD Me
 	return Result;
 }
 
-void SVDPointValueObjectClass::WriteValues(SVObjectWriter& rWriter)
+void SVDPointValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)
 {
 	// Get the Data Values (Member Info, Values)
 	std::string tmp;
@@ -154,7 +154,7 @@ void SVDPointValueObjectClass::WriteValues(SVObjectWriter& rWriter)
 	rWriter.WriteAttribute(scElementTag, list);
 }
 
-void SVDPointValueObjectClass::WriteDefaultValues(SVObjectWriter& rWriter)
+void SVDPointValueObjectClass::WriteDefaultValues(SvOi::IObjectWriter& rWriter)
 {
 	std::string tmp;
 	tmp = SvUl::Format(_T("%lf, %lf"), GetDefaultValue().x, GetDefaultValue().y);

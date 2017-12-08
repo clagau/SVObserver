@@ -49,6 +49,7 @@
 #include <iostream>
 #include <iterator>
 #include <list>
+#include <memory>
 #include <map>
 #include <ppl.h>
 #include <sequential_tree.h>

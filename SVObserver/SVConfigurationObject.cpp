@@ -16,7 +16,7 @@
 
 #include "SVConfigurationObject.h"
 
-#include "GuiCommands/InspectionRunOnce.h"
+#include "InspectionCommands/InspectionRunOnce.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVObjectLibrary/SVObjectAsynchronousCommandTemplate.h"
 #include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"

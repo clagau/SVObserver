@@ -12,8 +12,8 @@
 #include "stdafx.h"
 #include "SVOCVDialog.h"
 #include "SVIPDoc.h"
-#include "SVOCore/SVTool.h"
-#include "SVOCore/SVUnaryImageOperatorList.h"
+#include "InspectionEngine/SVTool.h"
+#include "InspectionEngine/SVUnaryImageOperatorList.h"
 #include "SVOCVAnalyzerResult.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #pragma endregion Includes

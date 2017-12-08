@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2012 by Seidenader Vision, Inc.
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVObjectWriter
+//* .Module Name     : SVConfigurationTreeWriter
 //* .File Name       : $Workfile:   SVConfigurationTreeWriter.inl  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $

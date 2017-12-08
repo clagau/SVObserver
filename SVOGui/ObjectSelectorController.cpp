@@ -9,9 +9,9 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "ToolSetItemSelector.h"
-#include "GuiCommands/GetObjectName.h"
-#include "GuiCommands/GetPPQObjectName.h"
-#include "GuiCommands/GetInstanceIDByTypeInfo.h"
+#include "InspectionCommands/GetObjectName.h"
+#include "InspectionCommands/GetPPQObjectName.h"
+#include "InspectionCommands/GetInstanceIDByTypeInfo.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "ObjectSelectorController.h"
 #pragma endregion Includes

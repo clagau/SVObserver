@@ -44,7 +44,7 @@ namespace SvOg
 
 		if( IDOK == Result )
 		{
-			rName = SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().getLocation().c_str();
+			rName = SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().m_Location.c_str();
 			result = true;
 		}
 

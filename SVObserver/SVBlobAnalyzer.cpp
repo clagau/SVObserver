@@ -24,7 +24,7 @@
 #include "SVResultLong.h"
 #include "SVRange.h"
 #include "SVGlobal.h"
-#include "SVOCore/SVTool.h"
+#include "InspectionEngine/SVTool.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary/ErrorNumbers.h"

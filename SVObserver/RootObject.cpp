@@ -22,7 +22,7 @@
 #include "SVStatusLibrary\MessageManager.h"
 #include "ObjectInterfaces\IRootObject.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
-#include "ObjectSelectorLibrary/SelectorItemVector.h"
+#include "SVContainerLibrary/SelectorItem.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -277,10 +277,9 @@ void SvOi::getRootChildNameList( SvDef::StringVector& rObjectNameList, LPCTSTR P
 	RootObject::getRootChildNameList( rObjectNameList, Path, AttributesAllowedFilter );
 }
 
-SvOi::ISelectorItemVectorPtr SvOi::getRootChildSelectorList( LPCTSTR Path, UINT AttributesAllowedFilter )
+SvCl::SelectorItemVectorPtr SvOi::getRootChildSelectorList( LPCTSTR Path, UINT AttributesAllowedFilter )
 {
-	SvOsl::SelectorItemVector *pSelectorList = new SvOsl::SelectorItemVector();
-	SvOi::ISelectorItemVectorPtr Result = static_cast<SvOi::ISelectorItemVector*> (pSelectorList);
+	SvCl::SelectorItemVectorPtr pResult{ new SvCl::SelectorItemVector() };
 	BasicValueObjects::ValueVector ObjectList;
 	
 	//To have the function available without knowing the class RootObject
@@ -288,18 +287,18 @@ SvOi::ISelectorItemVectorPtr SvOi::getRootChildSelectorList( LPCTSTR Path, UINT 
 	BasicValueObjects::ValueVector::const_iterator Iter;
 	for( Iter = ObjectList.begin(); ObjectList.end() != Iter; ++Iter )
 	{
-		SvOsl::SelectorItem InsertItem;
+		SvCl::SelectorItem InsertItem;
 
-		InsertItem.setName( (*Iter)->GetName() );
-		InsertItem.setLocation( (*Iter)->GetCompleteName().c_str() );
-		InsertItem.setItemKey( (*Iter)->GetUniqueObjectID().ToVARIANT() );
-		InsertItem.setItemTypeName( (*Iter)->getTypeName().c_str() );
+		InsertItem.m_Name = (*Iter)->GetName();
+		InsertItem.m_Location = (*Iter)->GetCompleteName();
+		InsertItem.m_ItemKey = (*Iter)->GetUniqueObjectID().ToVARIANT();
+		InsertItem.m_ItemTypeName = (*Iter)->getTypeName().c_str();
 
-		pSelectorList->push_back( InsertItem );
+		pResult->push_back( InsertItem );
 
 	}
 
-	return Result;
+	return pResult;
 }
 
 void SvOi::addRootChildObjects(SVOutputInfoListClass& rList)

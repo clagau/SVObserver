@@ -22,7 +22,7 @@
 #include "DisplayHelper.h"
 #include "ObjectInterfaces\ISVImage.h"
 #include "ObjectInterfaces\IMatroxImageData.h"
-
+#include "SVUtilityLibrary/BitmapHelper.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -85,14 +85,12 @@ namespace SvOg
 				
 				if (nullptr != pMilBuffer && !dibInfo.empty())
 				{
-					SVBitmap bitmap;
-					HRESULT hr = bitmap.LoadDIBitmap(dibInfo.GetBitmapInfo(), pMilBuffer);
-					
-					if (S_OK == hr)
+					HBITMAP hBitmap = SvUl::CreateDIBitmap(*dibInfo.GetBitmapInfo(), pMilBuffer);
+					if (nullptr != hBitmap)
 					{
 						//convert the hbitmap to an IPictureDisp for the activeX-control.
 						CPictureHolder pic;
-						BOOL bRet = pic.CreateFromBitmap(static_cast<HBITMAP>(bitmap.Detach()));
+						BOOL bRet = pic.CreateFromBitmap(hBitmap);
 						if (bRet)
 						{
 							LPPICTUREDISP pDispatch = pic.GetPictureDispatch();

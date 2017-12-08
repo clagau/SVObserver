@@ -7,9 +7,13 @@
 
 #pragma once
 #pragma region Includes
-#include "SVUtilityLibrary\SVGuid.h"
 #include "SVUtilityLibrary\NameGuidList.h"
 #pragma endregion Includes
+
+#pragma region Declarations
+//! Declaration is in #include "SVUtilityLibrary\SVGUID.h"
+class SVGUID;
+#pragma endregion Declarations
 
 namespace SvOi
 {

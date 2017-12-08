@@ -30,8 +30,11 @@ class SVToolClass;
 class SVImageViewScroll;
 class SVIPDoc;
 class SVTaskObjectClass;
-class SVObjectWriter;
 class SVDrawContext;
+namespace SvOi
+{
+	class IObjectWriter;
+}
 
 // enums are parameter for function SetZoom
 enum EZoom {
@@ -60,7 +63,7 @@ public:
 	SVImageClass* GetImage();
 	void GetImageRect( CRect &p_rect );
 
-	void GetParameters(SVObjectWriter& rWriter);
+	void GetParameters(SvOi::IObjectWriter& rWriter);
 
 	typedef SvXml::SVXMLMaterialsTree SVTreeType;
 

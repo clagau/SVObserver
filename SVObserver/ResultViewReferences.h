@@ -13,10 +13,10 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <list>
-#include "SVObjectLibrary/SVObjectWriter.h"
+#include "ObjectInterfaces/IObjectWriter.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVTimerLibrary/SVClock.h"
-#include "SVOCore/ResultViewItemDef.h"
+#include "InspectionEngine/ResultViewItemDef.h"
 #include "TableObject.h"
 #pragma endregion Includes
 
@@ -55,7 +55,7 @@ public:
 	// Parameter:  rWriter:  
 	// Returns:  bool:  
 	//************************************
-	bool Save(SVObjectWriter& rWriter);
+	bool Save(SvOi::IObjectWriter& rWriter);
 
 	//************************************
 	// Description:  Load GUIDs and references from the configuration file.

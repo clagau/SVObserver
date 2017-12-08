@@ -11,7 +11,7 @@
 #include "SVCommandInspectionExtentUpdater.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVInspectionProcess.h"
-#include "SVOCore/SVTool.h"
+#include "InspectionEngine/SVTool.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVToolSet.h"
 #include "ToolSizeAdjustTask.h"

@@ -137,7 +137,7 @@ HRESULT SVPointValueObjectClass::CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD Mem
 	return Result;
 }
 
-void SVPointValueObjectClass::WriteValues(SVObjectWriter& rWriter)
+void SVPointValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)
 {
 	// Where does Object Depth Get put into the Script ??? (maybe at the SVObjectClass)
 	// Object Depth is implicit (it's the count of the values)
@@ -162,7 +162,7 @@ void SVPointValueObjectClass::WriteValues(SVObjectWriter& rWriter)
 	rWriter.WriteAttribute(scElementTag, list);
 }
 
-void SVPointValueObjectClass::WriteDefaultValues(SVObjectWriter& rWriter)
+void SVPointValueObjectClass::WriteDefaultValues(SvOi::IObjectWriter& rWriter)
 {
 	std::string TempValue;
 	TempValue = SvUl::Format(_T("%d, %d"), GetDefaultValue().x(), GetDefaultValue().y());

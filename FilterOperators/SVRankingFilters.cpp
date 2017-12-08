@@ -12,7 +12,7 @@
 #include "stdafx.h"
 #include "SVRankingFilters.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "SVOCore/SVImageProcessingClass.h"
+#include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVObjectLibrary/SVClsids.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"

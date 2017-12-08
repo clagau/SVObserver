@@ -14,6 +14,7 @@
 #pragma region Declarations
 //! Declaration is in #include SVObjectLibrary/SVOutObjectInfoStruct.h
 struct SVOutObjectInfoStruct;
+class SVGUID;
 #pragma endregion Declarations
 
 namespace SvOi
@@ -31,9 +32,9 @@ namespace SvOi
 
 		/**********
 			The method deletes one object from the this task object list object.
-			/param objectID <in> GUID of the object to deleted.
+			/param objectID <in> SVGUID of the object to deleted.
 		***********/
-		virtual void Delete(GUID& objectID) = 0;
+		virtual void Delete(const SVGUID& rObjectID) = 0;
 
 		/**********
 			The method inserts a task object to this task object list.

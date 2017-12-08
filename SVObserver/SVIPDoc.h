@@ -23,7 +23,7 @@
 #include "SVRegressionTestStruct.h"
 #include "SVIPImageDataElement.h"
 #include "SVIPProductStruct.h"
-#include "SVOCore/SVIPResultData.h"
+#include "InspectionEngine/SVIPResultData.h"
 #include "SVValueObjectLibrary/SVValueObject.h"
 #include "SVToolGrouping.h"
 #include "ObjectInterfaces/IFormulaController.h"
@@ -41,7 +41,10 @@ class CSVRegressionFileSelectSheet;
 class SVImageViewClass;
 class ToolSetView;
 class ResultTabbedView;
-class SVObjectWriter;
+namespace SvOi
+{
+	class IObjectWriter;
+}
 #pragma endregion Declarations
 
 class SVIPDoc : public CDocument
@@ -82,12 +85,12 @@ public:
 
 	void RecreateImageSurfaces();
 
-	void SaveViews(SVObjectWriter& rWriter);
-	void SaveViewPlacements(SVObjectWriter& rWriter);
-	void SaveToolGroupings(SVObjectWriter& rWriter);
-	void SaveViewedVariables(SVObjectWriter& rWriter);
+	void SaveViews(SvOi::IObjectWriter& rWriter);
+	void SaveViewPlacements(SvOi::IObjectWriter& rWriter);
+	void SaveToolGroupings(SvOi::IObjectWriter& rWriter);
+	void SaveViewedVariables(SvOi::IObjectWriter& rWriter);
 	
-	bool GetParameters(SVObjectWriter& rWriter);
+	bool GetParameters(SvOi::IObjectWriter& rWriter);
 
 	typedef SvXml::SVXMLMaterialsTree SVTreeType;
 
@@ -352,7 +355,7 @@ private:
 
 	/// Save Regression Test variables.
 	/// \param rWriter [in,out]
-	void SaveRegressionTestVariables(SVObjectWriter& rWriter);
+	void SaveRegressionTestVariables(SvOi::IObjectWriter& rWriter);
 
 	//! Translates the selected objects to a set of object names for the result picker
 	//! \param rSelectedObjects [in] const reference to the selected objects

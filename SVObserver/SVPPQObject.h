@@ -17,7 +17,7 @@
 #include "SVContainerLibrary/SVRingBuffer.h"
 #include "SVDataManagerLibrary/SVDataManagerIndexArrayHandle.h"
 #include "SVObjectLibrary/SVObserverTemplate.h"
-#include "SVObjectLibrary/SVObjectWriter.h"
+#include "ObjectInterfaces/IObjectWriter.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVOLibrary/SVQueueObject.h"
 #include "SVSharedMemoryLibrary/SMRingbuffer.h"
@@ -181,7 +181,7 @@ public:
 	SVDWordValueObjectClass m_voOutputState;
 	SVLongValueObjectClass m_voTriggerCount;
 
-	void PersistInputs(SVObjectWriter& rWriter);
+	void PersistInputs(SvOi::IObjectWriter& rWriter);
 
 	SvTi::SVCameraTriggerData& GetCameraInputData();
 	long GetExtraBufferSize() const;

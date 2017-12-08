@@ -18,7 +18,6 @@
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <map>
 #include "CDSVPictureDisplay.h"
-#include "SVMFCControls\SVBitmap.h"
 #include "SVLibrary\DrawObject.h" // for ParamMap typedefs
 #include "ObjectInterfaces\ISVImage.h"
 #include "ObjectInterfaces\IMatroxImageData.h"

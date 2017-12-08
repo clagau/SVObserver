@@ -11,13 +11,13 @@
 #include "TADialogTableParameterPage.h"
 #include "SVObjectLibrary\SVClsids.h"
 #include "SVFormulaEditorSheet.h"
-#include "GuiCommands\GetAvailableObjects.h"
+#include "InspectionCommands\GetAvailableObjects.h"
 #include "Definitions/TextDefineSVDef.h"
 #include "FormulaController.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage\SVMessage.h"
 #include "Definitions/GlobalConst.h"
-#include "GuiCommands\GetErrorMessageList.h"
+#include "InspectionCommands\GetErrorMessageList.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

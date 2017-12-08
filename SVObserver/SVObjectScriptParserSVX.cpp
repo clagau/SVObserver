@@ -13,7 +13,7 @@
 #include "SVObjectScriptParserSVX.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVGlobal.h"
-#include "SVOCore/SVTool.h"
+#include "InspectionEngine/SVTool.h"
 #include "SVObserver.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "Definitions/SVUserMessage.h"

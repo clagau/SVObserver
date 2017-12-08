@@ -11,7 +11,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVOCore/SVTool.h"
+#include "InspectionEngine/SVTool.h"
 #pragma endregion Includes
 
 class SVMathEquationClass;

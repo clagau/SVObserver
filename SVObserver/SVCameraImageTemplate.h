@@ -16,8 +16,8 @@
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVUtilityLibrary/SVGUID.h"
 
-#include "SVOCore/SVImageClass.h"
-#include "SVOCore/SVImageObjectClass.h"
+#include "InspectionEngine/SVImageClass.h"
+#include "InspectionEngine/SVImageObjectClass.h"
 #pragma endregion Includes
 
 class SVInspectionProcess;
@@ -49,7 +49,7 @@ public:
 	virtual HRESULT GetObjectValue( const std::string& rValueName, _variant_t& rValue ) const override;
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject ) override;
 
-	virtual void Persist(SVObjectWriter& rWriter) override;
+	virtual void Persist(SvOi::IObjectWriter& rWriter) override;
 
 	void ResetImageIndex();
 

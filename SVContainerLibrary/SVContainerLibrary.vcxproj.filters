@@ -24,6 +24,9 @@
     <ClCompile Include="ObjectTreeItems.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SelectorItem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -47,9 +50,6 @@
     <ClInclude Include="SVBimapDeclarations.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IObjectSelectorItem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ObjectSelectorItem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -66,6 +66,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ObjectGraph.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SelectorItem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

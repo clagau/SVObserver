@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVOCore/SVImageClass.h"
+#include "InspectionEngine/SVImageClass.h"
 #pragma endregion Includes
 
 class SVIPDoc;

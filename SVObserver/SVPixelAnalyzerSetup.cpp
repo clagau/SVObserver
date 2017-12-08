@@ -16,7 +16,7 @@
 #include "SVIPDoc.h"
 #include "SVInspectionProcess.h"
 #include "SVPixelAnalyzer.h"        // Required for SVPixelAnalyzerClass
-#include "SVOCore/SVTool.h"
+#include "InspectionEngine/SVTool.h"
 #include "SVToolSet.h"              // Required for scripting
 #include "SVResult.h"
 #include "SVSetupDialogManager.h"

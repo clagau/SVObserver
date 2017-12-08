@@ -9,8 +9,7 @@
 #pragma region Includes
 #include "IObjectClass.h"
 #include "ITaskObject.h"
-#include "ISelectorItemVector.h"
-
+#include "SVContainerLibrary/SelectorItem.h"
 #pragma endregion Includes
 
 namespace SvOi
@@ -32,7 +31,7 @@ namespace SvOi
 		/***********
 		This method gets the PPQ Variables selector list
 		***********/
-		virtual ISelectorItemVectorPtr GetPPQSelectorList( const UINT Attribute ) const = 0;
+		virtual SvCl::SelectorItemVectorPtr GetPPQSelectorList( const UINT Attribute ) const = 0;
 
 		/***********
 		This method gets the Interface to the Tool Set

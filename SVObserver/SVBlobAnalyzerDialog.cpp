@@ -17,7 +17,7 @@
 #include "SVInspectionProcess.h"
 #include "SVIPDoc.h"
 #include "SVResultLong.h"
-#include "SVOCore/SVTool.h"
+#include "InspectionEngine/SVTool.h"
 #include "SVResult.h"
 #include "SVFillBlobDlg.h"
 #include "SVBlobFeaturePropertiesDlg.h"

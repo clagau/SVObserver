@@ -17,7 +17,7 @@
 
 #pragma region Includes
 #include "SVEnumerateCombo.h"
-#include "SVOCore/SVTaskObjectValueInterface.h"
+#include "InspectionEngine/SVTaskObjectValueInterface.h"
 #pragma endregion Includes
 
 class SVToolAdjustmentDialogSheetClass;

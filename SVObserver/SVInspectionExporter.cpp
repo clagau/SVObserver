@@ -237,7 +237,7 @@ static std::string RemovePath(const std::string& fname)
 	return  name;
 }
 
-static void PersistDocument(const SVGUID& inspectionGuid, SVObjectWriter& rWriter)
+static void PersistDocument(const SVGUID& inspectionGuid, SvOi::IObjectWriter& rWriter)
 {
 	SVIPDoc* pDoc =  TheSVObserverApp.GetIPDoc(inspectionGuid);
 	if (pDoc)

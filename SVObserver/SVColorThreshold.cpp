@@ -19,10 +19,10 @@
 #include "Definitions/Color.h"
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 
-#include "SVOCore/SVDataBuffer.h"
+#include "InspectionEngine/SVDataBuffer.h"
 #include "Definitions/GlobalConst.h"
-#include "SVOCore/SVImageProcessingClass.h"
-#include "SVOCore/SVTool.h"
+#include "InspectionEngine/SVImageProcessingClass.h"
+#include "InspectionEngine/SVTool.h"
 #pragma endregion Includes
 
 #pragma region Declarations

@@ -10,10 +10,10 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <boost\bind.hpp>
-#include "ObjectInterfaces\ISelectorItemVector.h"
+#include "SVContainerLibrary/SelectorItem.h"
 #include "SVUtilityLibrary\SVSharedPtr.h"
 
-#include "GuiCommands\GetSelectorList.h"
+#include "InspectionCommands\GetSelectorList.h"
 #include "ObjectSelectorLibrary\SelectorOptions.h"
 #include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
 #pragma endregion Includes
@@ -25,9 +25,9 @@ namespace SvOg
 	class ToolSetItemSelector
 	{
 	public:
-		SvOi::ISelectorItemVectorPtr operator()(const SvOsl::SelectorOptions& rOptions)
+		SvCl::SelectorItemVectorPtr operator()(const SvOsl::SelectorOptions& rOptions)
 		{
-			SvOi::ISelectorItemVectorPtr SelectorList;
+			SvCl::SelectorItemVectorPtr SelectorList;
 			
 			typedef SVSharedPtr<SvCmd::GetSelectorList> CommandPtr;
 		

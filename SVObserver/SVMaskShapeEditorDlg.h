@@ -17,7 +17,7 @@
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
 #include "SVOGui/PictureDisplay.h"
 #include "SVRPropertyTree/SVRPropTree.h"
-#include "SVOCore/SVTaskObjectValueInterface.h"
+#include "InspectionEngine/SVTaskObjectValueInterface.h"
 #include "SVUtilityLibrary\SVGUID.h"
 #pragma endregion Includes
 

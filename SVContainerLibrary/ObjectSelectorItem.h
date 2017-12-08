@@ -15,237 +15,79 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
-//Moved to precompiled header: #include <deque>
-#include "IObjectSelectorItem.h"
+#include "SelectorItem.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"
-
 #pragma endregion Includes
 
 namespace SvCl
 {
-	class ObjectSelectorItem : public IObjectSelectorItem
+	struct ObjectSelectorItem : public SelectorItem
 	{
 	public:
-	#pragma region Constructor
+	#pragma region Declarations
 		/**********
-			The class constructor
+		The selector item state enumerations
 		***********/
+		enum AttributeEnum
+		{
+			AttributeNone = 0,
+			Node = 1 << 1,
+			Leaf = 1 << 2,
+			Checkable = 1 << 3,
+			NameEditable = 1 << 4
+		};
+
+		/**********
+		The selector item checked state enumerations
+		***********/
+		enum CheckedStateEnum
+		{
+			EmptyEnabled,
+			UncheckedEnabled,
+			CheckedEnabled,
+			TriStateEnabled,
+			EmptyDisabled,
+			UncheckedDisabled,
+			CheckedDisabled,
+			TriStateDisabled
+		};
+	#pragma endregion Declarations
+	public:
+	#pragma region Constructor
 		ObjectSelectorItem();
 
-		/**********
-			The class copy constructor
-			\param rObject <in> a reference to the object selector item
-		***********/
-		ObjectSelectorItem( const ObjectSelectorItem& rObject );
+		ObjectSelectorItem( const ObjectSelectorItem& rObject ) = default;
 
-		/**********
-			The class destructor
-		***********/
 		virtual ~ObjectSelectorItem();
 	#pragma endregion Constructor
 
 	public:
 	#pragma region Public Methods
-		/**********
-			The method clears all values stored in the object
-		***********/
 		void Clear();
 
-		/**********
-			The assignment operator
-			\param rObject <in> a reference to another object
-			\return a reference to itself
-		***********/
-		const ObjectSelectorItem& operator=( const ObjectSelectorItem& rObject );
-
-		/**********
-			The method checks if the objects are the same
-			\param rObject <in> a reference to another object
-			\return True if the same
-		***********/
-		bool operator==( const ObjectSelectorItem& rObject ) const;
-
-		/**********
-			The method checks if the objects are different
-			\param rObject <in> a reference to another object
-			\return True if different
-		***********/
-		bool operator!=( const ObjectSelectorItem& rObject ) const;
-
-		/**********
-			The method gets the name of the item
-			\return the name of the item
-		***********/
-		virtual const std::string& getName() const override;
-
-		/**********
-			The method sets the name of the item
-			\param rName <in> a reference to the name of the item
-		***********/
-		virtual void setName( const std::string& rName ) override;
-
-		/**********
-			The method gets the location of the item
-			\return the tree path of the item
-		***********/
-		virtual const std::string& getLocation() const override;
-
-		/**********
-			The method sets the tree path of the item
-			\param rLocation <in> a reference to the location of the item
-		***********/
-		virtual void setLocation( const std::string& rLocation ) override;
-
-		/**********
-			The method gets the tree display location of the item
-			\return the display location of the item
-		***********/
-		virtual const std::string& getDisplayLocation() const override;
-
-		/**********
-			The method sets the tree display location of the item
-			\param rDisplayLocation <in> a reference to the display location of the item
-		***********/
-		virtual void setDisplayLocation( const std::string& rDisplayLocation ) override;
-
-		/**********
-			The method gets the name of the item type
-			\return the type of the item as a string
-		***********/
-		virtual const std::string& getItemTypeName() const override;
-
-		/**********
-			The method sets the name of the item type
-			\param rItemType <in> a reference to the string indicating the item's type
-		***********/
-		virtual void setItemTypeName( const std::string& ItemTypeName ) override;
-
-		/**********
-			The method gets the handle to the corresponding tree item
-			\return the handle of the tree item
-		***********/
-		virtual const HTREEITEM& getTreeItem() const override;
-
-		/**********
-			The method sets the handle of the tree item
-			\param rItem <in> a reference to the handle of the item
-		***********/
-		virtual void setTreeItem( const HTREEITEM& rItem ) override;
-
-		/**********
-			The method gets the item key (unique identifier)
-			\return the item key as a variant
-		***********/
-		virtual const _variant_t& getItemKey() const override;
-
-		/**********
-			The method sets the item key (unique identifier) 
-			\param rItemKey <in> a reference to the key for the item
-		***********/
-		virtual void setItemKey( const _variant_t& rItemKey ) override;
-
-		/**********
-			The method gets the attributes of the item
-			\return the item attribute
-		***********/
-		virtual const AttributeEnum& getAttribute() const override;
-
-		/**********
-			The method sets the item attribute
-			\param rAttribute <in> the attribute to set the item to
-		***********/
-		virtual void setAttibute( const AttributeEnum& rAttribute ) override;
-
-		/**********
-			The method gets the corresponding item icon number (icon for tree)
-			\return the item icon number
-		***********/
-		virtual int getIconNumber() const override;
-
-		/**********
-			The method sets the item icon number
-			\param IconNumber <in> the icon number to set the item to
-		***********/
-		virtual void setIconNumber( const int IconNumber ) override;
-
-		/**********
-			The method gets the checked state
-			\param Checked <in> the checked state to set the item to
-		***********/
-		virtual const CheckedStateEnum& getCheckedState() const override;
-
-		/**********
-			The method sets the state of the checked flag
-			\param Checked <in> the state to set the flag to
-		***********/
-		virtual void setCheckedState( const CheckedStateEnum& rCheckedState ) override;
-
-		/**********
-			The method gets the original checked state
-			\return the original checked state
-		***********/
-		virtual const CheckedStateEnum& getOrgCheckedState() const override;
-
-		/**********
-			The method sets the original checked state
-			\param rCheckedState <in> the checked state to set the item to
-		***********/
-		virtual void setOrgCheckedState( const CheckedStateEnum& rCheckedState ) override;
-
-		/**********
-			The method gets the array index
-			\return the array index
-		***********/
-		virtual const int& getArrayIndex() const override;
-
-		/**********
-			The method sets the array index
-			\param rIndex <in> 
-		***********/
-		virtual void setArrayIndex( const int& rIndex ) override;
-
-		/**********
-			The method sets that the state of the modified flag
-			\param Modified <in> the state to set the flag to
-		***********/
-		virtual void setModified( const bool Modified ) override;
+		const ObjectSelectorItem& operator=(const ObjectSelectorItem& rRhs);
+		const ObjectSelectorItem& operator=(const SelectorItem& rRhs);
+		bool operator==( const ObjectSelectorItem& rRhs ) const;
+		bool operator!=( const ObjectSelectorItem& rRhs ) const;
 
 		/**********
 			The method checks if the item is a node
 			\return True if the item is a node
 		***********/
-		virtual bool isNode() const override;
+		bool isNode() const;
 
 		/**********
 			The method checks if the item is a leaf
 			\return True if the item is a leaf
 		***********/
-		virtual bool isLeaf() const override;
-
-		/**********
-			The method checks if the item is an array
-			\return True if the item is an array
-		***********/
-		virtual bool isArray() const override;
-
-		/**********
-			The method checks if the item has been modified
-			\return True if the item has been modified
-		***********/
-		virtual bool isModified() const override;
+		bool isLeaf() const;
 	#pragma endregion Public Methods
 
-	private:
 	#pragma region Member Variables
-		std::string			m_Name;						//The name of the item
-		std::string			m_Location;					//The location of the item
-		std::string			m_DisplayLocation;			//The display location of the item
-		std::string			m_ItemTypeName;				//The name of the data type of the item
+	public:
 		HTREEITEM			m_TreeItem;					//the corresponding tree item handle
-		_variant_t			m_ItemKey;					//The item key
 		AttributeEnum		m_Attribute;				//The item attribute
 		int					m_IconNumber;				//The corresponding item image number
-		int					m_ArrayIndex;				//The array index
 		bool				m_Modified;					//Modified flag
 		CheckedStateEnum	m_CheckedState;				//The item checked state
 		CheckedStateEnum	m_OrgCheckedState;			//The item original checked state

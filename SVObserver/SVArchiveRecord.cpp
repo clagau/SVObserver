@@ -14,7 +14,7 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVArchiveImageThreadClass.h"
-#include "SVOCore/SVImageObjectClass.h"
+#include "InspectionEngine/SVImageObjectClass.h"
 #include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "TextDefinesSvO.h"
 #include "ObjectInterfaces/IValueObject.h"

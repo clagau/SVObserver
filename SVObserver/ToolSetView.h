@@ -23,7 +23,10 @@
 #pragma region Declarations
 class SVIPDoc;
 class SVToolClass;
-class SVObjectWriter;
+namespace SvOi
+{
+	class IObjectWriter;
+}
 #pragma endregion Declarations
 
 class ToolSetView : public CFormView
@@ -35,7 +38,7 @@ class ToolSetView : public CFormView
 
 public:
 	SVIPDoc* GetIPDoc() const;
-	void GetParameters(SVObjectWriter& rWriter);
+	void GetParameters(SvOi::IObjectWriter& rWriter);
 	const SVToolGrouping& GetToolGroupings() const;
 
 	typedef SvXml::SVXMLMaterialsTree SVTreeType;

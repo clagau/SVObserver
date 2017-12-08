@@ -13,10 +13,10 @@
 #include "stdafx.h"
 #include "Definitions/SVImageFormatEnum.h"
 #include "SVToolLoadImage.h"
-#include "SVOCore/SVAnalyzer.h"
+#include "InspectionEngine/SVAnalyzer.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
 
-#include "SVOCore/SVImageProcessingClass.h"
+#include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVInspectionProcess.h"
 #include "SVToolSet.h"
 #include "ToolSizeAdjustTask.h"

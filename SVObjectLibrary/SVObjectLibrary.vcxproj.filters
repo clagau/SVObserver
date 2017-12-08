@@ -136,9 +136,6 @@
     <ClInclude Include="SVObjectThreadCommandTemplate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVObjectWriter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVObserverNotificationFunctor.h">
       <Filter>Header Files</Filter>
     </ClInclude>

@@ -13,13 +13,13 @@
 #include "SVConfigurationObject.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "ObjectSelectorLibrary\SelectorItem.h"
+#include "SVContainerLibrary/SelectorItem.h"
 #include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
 #include "SVOGui\TADialogTableParameterPage.h"
 #include "SVOGui\NoSelector.h"
 #include "SVOGui\ToolSetItemSelector.h"
 #include "RemoteMonitorListHelper.h"
-#include "GuiCommands\GetSelectorList.h"
+#include "InspectionCommands\GetSelectorList.h"
 
 
 
@@ -205,12 +205,12 @@ void MonitorlistSelector::BuildCheckItems()
 
 }
 
-MonitoredObjectList MonitorlistSelector::GetMonitoredObjectList(const SvOsl::SelectorItemVector& rList)
+MonitoredObjectList MonitorlistSelector::GetMonitoredObjectList(const SvCl::SelectorItemVector& rList)
 {
 	MonitoredObjectList monitoredObjectList;
-	for (SvOsl::SelectorItemVector::const_iterator it = rList.begin(); it != rList.end(); ++it)
+	for (auto const& rEntry : rList)
 	{
-			const MonitoredObject& monitoredObj = RemoteMonitorListHelper::GetMonitoredObjectFromName(it->getLocation());
+			const MonitoredObject& monitoredObj = RemoteMonitorListHelper::GetMonitoredObjectFromName(rEntry.m_Location);
 			if (!monitoredObj.guid.empty())
 			{
 				monitoredObjectList.push_back(monitoredObj);

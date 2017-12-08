@@ -616,7 +616,7 @@ HRESULT SVToolGrouping::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHan
 </NODE>
 
 */
-bool SVToolGrouping::GetParameters(SVObjectWriter& rWriter)
+bool SVToolGrouping::GetParameters(SvOi::IObjectWriter& rWriter)
 {
 	bool bRetVal = true;
 	if (m_list.size())

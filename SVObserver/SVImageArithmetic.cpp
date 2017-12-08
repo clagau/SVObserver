@@ -16,8 +16,8 @@
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 
-#include "SVOCore/SVImageClass.h"
-#include "SVOCore/SVTool.h"
+#include "InspectionEngine/SVImageClass.h"
+#include "InspectionEngine/SVTool.h"
 #include "SVToolImage.h"
 #pragma endregion Includes
 

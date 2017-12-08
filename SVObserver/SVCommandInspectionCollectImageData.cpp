@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVCommandInspectionCollectImageData.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVOCore/SVImageProcessingClass.h"
+#include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVInspectionProcess.h"
 #include "SVResultList.h"
 #include "SVToolSet.h"

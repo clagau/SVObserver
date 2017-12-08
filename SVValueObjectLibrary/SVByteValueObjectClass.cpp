@@ -130,7 +130,7 @@ BYTE SVByteValueObjectClass::ConvertString2Type(const std::string& rValue ) cons
 	return 0; //will never be reached, because the exception will throw before. But this line avoids a warning
 }
 
-void SVByteValueObjectClass::WriteValues(SVObjectWriter& rWriter)
+void SVByteValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)
 {
 	// Where does Object Depth Get put into the Script ??? (maybe at the SVObjectClass)
 	// Object Depth is implicit (it's the count of the values)
@@ -148,7 +148,7 @@ void SVByteValueObjectClass::WriteValues(SVObjectWriter& rWriter)
 	rWriter.WriteAttribute(scElementTag, list);
 }
 
-void SVByteValueObjectClass::WriteDefaultValues(SVObjectWriter& rWriter)
+void SVByteValueObjectClass::WriteDefaultValues(SvOi::IObjectWriter& rWriter)
 {
 	_variant_t Value(GetDefaultValue());
 	rWriter.WriteAttribute(scDefaultTag, Value);

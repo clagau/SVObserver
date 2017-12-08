@@ -871,7 +871,7 @@ HRESULT SVObjectClass::RemoveObjectConnection( const GUID& rObjectID )
 	return S_OK;
 }
 
-void SVObjectClass::Persist( SVObjectWriter& rWriter )
+void SVObjectClass::Persist( SvOi::IObjectWriter& rWriter )
 {
 	_variant_t value; 
 	value.SetString(GetName()); // use user editable name for Data Element ObjectName attribute
@@ -896,7 +896,7 @@ void SVObjectClass::Persist( SVObjectWriter& rWriter )
 	PersistAttributes(rWriter);
 }
 
-void SVObjectClass::PersistAttributes( SVObjectWriter& rWriter )
+void SVObjectClass::PersistAttributes( SvOi::IObjectWriter& rWriter )
 {
 	// Get the Data Values (Member Info, Values)
 

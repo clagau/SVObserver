@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVChildrenSetupDialog.h"
-#include "SVOCore/SVTaskObjectList.h"
+#include "InspectionEngine/SVTaskObjectList.h"
 #include "SVInspectionProcess.h"
 #include "SVIPDoc.h"
 #include "SVOGui/SVShowDependentsDialog.h"

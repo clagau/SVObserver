@@ -13,8 +13,8 @@
 #include "stdafx.h"
 #include "svobserver.h"
 #include "SVFillBlobDlg.h"
-#include "SVOCore/SVTaskObject.h"
-#include "SVOCore/SVTool.h"
+#include "InspectionEngine/SVTaskObject.h"
+#include "InspectionEngine/SVTool.h"
 
 #pragma endregion Includes
 

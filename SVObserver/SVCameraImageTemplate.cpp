@@ -220,7 +220,7 @@ HRESULT SVCameraImageTemplate::SetObjectValue( SVObjectAttributeClass* PDataObje
 	return hr;
 }
 
-void SVCameraImageTemplate::Persist( SVObjectWriter& rWriter )
+void SVCameraImageTemplate::Persist( SvOi::IObjectWriter& rWriter )
 {
 	rWriter.StartElement(GetObjectName()); // use internal name for node name
 

@@ -12,8 +12,8 @@
 //Moved to precompiled header: #include <boost/assign/list_of.hpp>
 //Moved to precompiled header: #include <boost/lexical_cast.hpp>
 #include "RangeController.h"
-#include "GuiCommands\GetObjectName.h"
-#include "GuiCommands\GetPPQObjectName.h"
+#include "InspectionCommands\GetObjectName.h"
+#include "InspectionCommands\GetPPQObjectName.h"
 #include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
 #include "SVObjectLibrary\SVClsIds.h"
 #include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"

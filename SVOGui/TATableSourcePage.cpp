@@ -13,9 +13,9 @@
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage\SVMessage.h"
 #include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
-#include "GuiCommands\GetAvailableObjects.h"
-#include "GuiCommands\ConnectToObject.h"
-#include "GuiCommands\GetInputs.h"
+#include "InspectionCommands\GetAvailableObjects.h"
+#include "InspectionCommands\ConnectToObject.h"
+#include "InspectionCommands\GetInputs.h"
 #include "Definitions/TextDefineSVDef.h"
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes

@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVOCore/SVTaskObjectValueInterface.h"
+#include "InspectionEngine/SVTaskObjectValueInterface.h"
 #include "SVEnumerateCombo.h"
 #pragma endregion
 

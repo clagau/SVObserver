@@ -8,7 +8,6 @@
 #pragma once
 
 #pragma region Includes
-
 #include "SVUtilityLibrary\SVSharedPtr.h"
 #pragma endregion Includes
 

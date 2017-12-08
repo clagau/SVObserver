@@ -16,9 +16,9 @@
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 
-#include "SVOCore/SVDataBuffer.h"
-#include "SVOCore/SVImageClass.h"
-#include "SVOCore/SVImageProcessingClass.h"
+#include "InspectionEngine/SVDataBuffer.h"
+#include "InspectionEngine/SVImageClass.h"
+#include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVPixelAnalyzerSetup.h" // Required by SVPixelAnalyzerSetupClass
 #include "SVResultLong.h"   // Required by SVLongResultClass
 #include "SVStatusLibrary/ErrorNumbers.h"

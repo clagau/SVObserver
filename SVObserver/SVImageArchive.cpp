@@ -16,8 +16,8 @@
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVObserver.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVOCore/SVImageClass.h"
-#include "SVOCore/SVImageObjectClass.h"
+#include "InspectionEngine/SVImageClass.h"
+#include "InspectionEngine/SVImageObjectClass.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

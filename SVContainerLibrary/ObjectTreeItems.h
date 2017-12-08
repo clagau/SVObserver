@@ -64,7 +64,7 @@ namespace SvCl
 			\param rIter <in> a reference to the item to get the state for
 			\return the checked state for the item
 		***********/
-		IObjectSelectorItem::CheckedStateEnum getNodeCheckedState( const iterator& rIter ) const;
+		ObjectSelectorItem::CheckedStateEnum getNodeCheckedState( const iterator& rIter ) const;
 
 		/**********
 			The method synchronizes the checked states

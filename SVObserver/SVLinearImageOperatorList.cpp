@@ -14,8 +14,8 @@
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVLinearToolClass.h"
-#include "SVOCore/SVUnaryImageOperatorClass.h"
-#include "SVOCore/SVTool.h"
+#include "InspectionEngine/SVUnaryImageOperatorClass.h"
+#include "InspectionEngine/SVTool.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

@@ -15,7 +15,7 @@
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVTimerLibrary/SVClock.h"
-#include "SVOCore/SVImageProcessingClass.h"
+#include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVObserver.h"
 #include "SVSystemLibrary/SVThreadManager.h"
 

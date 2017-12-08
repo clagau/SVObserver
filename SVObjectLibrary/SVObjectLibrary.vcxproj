@@ -165,7 +165,6 @@
     <ClInclude Include="SVObjectSubmitCommandFacade.h" />
     <ClInclude Include="SVObjectSynchronousCommandTemplate.h" />
     <ClInclude Include="SVObjectThreadCommandTemplate.h" />
-    <ClInclude Include="SVObjectWriter.h" />
     <ClInclude Include="SVObserverNotificationFunctor.h" />
     <ClInclude Include="SVObserverTemplate.h" />
     <ClInclude Include="SVOutObjectInfoStruct.h" />

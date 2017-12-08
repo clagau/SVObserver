@@ -77,7 +77,7 @@ public:
 	const SVObjectReferenceVector& GetSelectedObjects() const;
 	bool Insert(const std::string& rDottedName);
 	SvTl::SVTimeStamp getUpdateTimeStamp();
-	void Save(SVObjectWriter& rWriter);
+	void Save(SvOi::IObjectWriter& rWriter);
 
 #pragma endregion Public Methods
 

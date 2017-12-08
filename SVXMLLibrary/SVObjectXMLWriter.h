@@ -18,7 +18,7 @@
 
 #include "SVUtilityLibrary/SVVariantList.h"
 #include "SVUtilityLibrary/XMLwriter.h"
-#include "SVObjectLibrary/SVObjectWriter.h"
+#include "ObjectInterfaces/IObjectWriter.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -31,7 +31,7 @@ namespace  SvXml
 {
 	class SVXMLEncryptionClass;
 	
-	class SVObjectXMLWriter : public SVObjectWriter
+	class SVObjectXMLWriter : public SvOi::IObjectWriter
 	{
 	public:
 		SVObjectXMLWriter(std::ostream& os);

@@ -8,7 +8,7 @@
 #pragma once
 
 #pragma region Includes
-#include "ObjectInterfaces\ISelectorItemVector.h"
+#include "SVContainerLibrary/SelectorItem.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -16,13 +16,13 @@ namespace SvOg
 	class NoSelector
 	{
 	public:
-		SvOi::ISelectorItemVectorPtr operator()(const GUID& rGuid, UINT attribute)
+		SvCl::SelectorItemVectorPtr operator()(const GUID& rGuid, UINT attribute)
 		{
-			return SvOi::ISelectorItemVectorPtr();
+			return SvCl::SelectorItemVectorPtr();
 		}
-		SvOi::ISelectorItemVectorPtr operator()(UINT attribute)
+		SvCl::SelectorItemVectorPtr operator()(UINT attribute)
 		{
-			return SvOi::ISelectorItemVectorPtr();
+			return SvCl::SelectorItemVectorPtr();
 		}
 	};
 } //namespace SvOg

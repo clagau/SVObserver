@@ -797,7 +797,7 @@ void SVValueObjectClass<T>::validateValue( const _variant_t& rValue ) const
 }
 
 template <typename T>
-void SVValueObjectClass<T>::Persist(SVObjectWriter& rWriter)
+void SVValueObjectClass<T>::Persist(SvOi::IObjectWriter& rWriter)
 {
 	rWriter.StartElement(GetObjectName()); // use internal name for node name
 

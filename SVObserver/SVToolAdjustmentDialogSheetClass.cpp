@@ -14,7 +14,7 @@
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVIPDoc.h"
 #include "SVInspectionProcess.h"
-#include "SVOCore/SVTool.h"
+#include "InspectionEngine/SVTool.h"
 #include "SVCylindricalWarpDlg.h"
 #include "SVExternalToolDlg.h"
 #include "SVPerspectiveWarpDlg.h"

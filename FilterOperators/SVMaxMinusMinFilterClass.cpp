@@ -12,9 +12,9 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVMaxMinusMinFilterClass.h"
-#include "SVOCore/SVImageProcessingClass.h"
+#include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "SVOCore/SVImageClass.h"
+#include "InspectionEngine/SVImageClass.h"
 #include "SVObjectLibrary/SVClsids.h"
 #pragma endregion Includes
 

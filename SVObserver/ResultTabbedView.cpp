@@ -44,7 +44,7 @@ ResultTabbedView::~ResultTabbedView()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-void ResultTabbedView::GetParameters(SVObjectWriter& rWriter)
+void ResultTabbedView::GetParameters(SvOi::IObjectWriter& rWriter)
 {
 	CRect Rect;
 	GetWindowRect(Rect);

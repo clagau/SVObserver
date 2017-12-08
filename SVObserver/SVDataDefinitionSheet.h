@@ -14,7 +14,7 @@
 #pragma region Includes
 #include "SVUtilityLibrary\SVGUID.h"
 
-#include "ObjectSelectorLibrary\SelectorItemVector.h"
+#include "SVContainerLibrary/SelectorItem.h"
 #pragma endregion Includes
 
 class SelectedObjectsPage;
@@ -42,9 +42,9 @@ private:
 	void DestroyPages();
 	void OnOK();
 
-	void initSelectedList( SvOsl::SelectorItemVector* pList, UINT Attribute );
+	void initSelectedList( SvCl::SelectorItemVector* pList, UINT Attribute );
 	bool setChangedData( SelectedObjectsPage* const pPage );
-	void setAttributes( const SvOsl::SelectorItemVector& rList, UINT Attribute, bool Clear ) const;
+	void setAttributes( const SvCl::SelectorItemVector& rList, UINT Attribute, bool Clear ) const;
 #pragma endregion Private Methods
 
 #pragma region Member variables
@@ -52,8 +52,8 @@ private:
 	SVIPDoc* m_pDoc;
 	std::string m_InspectionName;				//Name of the Inspection
 	SVGUID m_InspectionID;					//UniqueID of the Inspection
-	SvOsl::SelectorItemVector m_ValueList;	//The selected value list 
-	SvOsl::SelectorItemVector m_ImageList;	//The selected image list
+	SvCl::SelectorItemVector m_ValueList;	//The selected value list 
+	SvCl::SelectorItemVector m_ImageList;	//The selected image list
 #pragma endregion Member variables
 };
 

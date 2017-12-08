@@ -60,7 +60,7 @@ SVFileNameValueObjectClass::~SVFileNameValueObjectClass()
 	SVFileNameManagerClass::Instance().RemoveItem(&m_FileName);
 }
 
-void SVFileNameValueObjectClass::Persist(SVObjectWriter& rWriter)
+void SVFileNameValueObjectClass::Persist(SvOi::IObjectWriter& rWriter)
 {
 	SVFileNameManagerClass::Instance().SaveItem(&m_FileName);
 	
@@ -262,7 +262,7 @@ HRESULT SVFileNameValueObjectClass::CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD 
 	return Result;
 }
 
-void SVFileNameValueObjectClass::WriteValues(SVObjectWriter& rWriter)
+void SVFileNameValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)
 {
 	// Where does Object Depth Get put into the Script ??? (maybe at the SVObjectClass)
 	// Object Depth is implicit (it's the count of the values)
@@ -285,7 +285,7 @@ void SVFileNameValueObjectClass::WriteValues(SVObjectWriter& rWriter)
 	rWriter.WriteAttribute(scElementTag, list);
 }
 
-void SVFileNameValueObjectClass::WriteDefaultValues(SVObjectWriter& rWriter)
+void SVFileNameValueObjectClass::WriteDefaultValues(SvOi::IObjectWriter& rWriter)
 {
 	std::string TempValue(GetDefaultValue());
 	_variant_t Value;

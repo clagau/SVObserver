@@ -13,11 +13,11 @@
 
 #pragma region Includes
 #include "ObjectInterfaces\IMask.h"
-#include "SVOCore/SVUnaryImageOperatorClass.h"
+#include "InspectionEngine/SVUnaryImageOperatorClass.h"
 #include "SVLibrary\SVGraphix.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
-#include "SVOCore/SVTaskObjectInterfaceInputRequestStruct.h"
+#include "InspectionEngine/SVTaskObjectInterfaceInputRequestStruct.h"
 
 #pragma endregion Includes
 
@@ -52,7 +52,7 @@ public:
 
 	SVImageClass* getMaskInputImage() const;
 
-	virtual void Persist(SVObjectWriter& rWriter) override;
+	virtual void Persist(SvOi::IObjectWriter& rWriter) override;
 
 	virtual HRESULT GetObjectValue( const std::string& rValueName, _variant_t& rValue ) const override;
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject ) override;

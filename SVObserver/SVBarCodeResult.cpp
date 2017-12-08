@@ -16,7 +16,7 @@
 #include "stdafx.h"
 #include "SVBarCodeResult.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
-#include "SVOCore/SVTool.h"
+#include "InspectionEngine/SVTool.h"
 
 SV_IMPLEMENT_CLASS (SVBarCodeResultClass, SVBarCodeResultClassGuid);
 

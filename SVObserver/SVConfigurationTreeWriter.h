@@ -18,11 +18,11 @@
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVConfigurationTreeWriter.h"
-#include "SVObjectLibrary/SVObjectWriter.h"
+#include "ObjectInterfaces/IObjectWriter.h"
 #pragma endregion Includes
 
 template< typename SVTreeType >
-class SVConfigurationTreeWriter : public SVObjectWriter
+class SVConfigurationTreeWriter : public SvOi::IObjectWriter
 {
 private:
 	typedef std::deque<typename SVTreeType::SVBranchHandle> TreeNodes;

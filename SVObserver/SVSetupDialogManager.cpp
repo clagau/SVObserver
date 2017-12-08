@@ -16,7 +16,7 @@
 #include "SVObserver.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
-#include "GuiCommands/InspectionRunOnce.h"
+#include "InspectionCommands/InspectionRunOnce.h"
 
 #include "SVAnalyzerLuminance.h"
 #include "SVAnalyzerLuminanceSetup.h"
@@ -48,7 +48,7 @@
 #include "SVProfileEdgeMarkerAdjustmentPage.h"
 #include "SVResult.h"
 #include "SVTADlgColorThresholdSheet.h"
-#include "SVOCore/SVTool.h"
+#include "InspectionEngine/SVTool.h"
 #include "SVOLicenseManager.h"
 #include "RangeXDialogClass.h"
 #include "SVRange.h"

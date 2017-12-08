@@ -16,8 +16,8 @@
 #include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
 #include "SVValueObjectLibrary/SVEnumerateValueObjectClass.h"
 #include "SVValueObjectLibrary/SVStringValueObjectClass.h"
-#include "SVOCore/SVImageClass.h"
-#include "SVOCore/SVTool.h"
+#include "InspectionEngine/SVImageClass.h"
+#include "InspectionEngine/SVTool.h"
 #pragma endregion Includes
 
 #pragma region Declarations

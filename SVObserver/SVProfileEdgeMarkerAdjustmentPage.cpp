@@ -18,7 +18,7 @@
 #include "SVIPDoc.h"
 #include "SVInspectionProcess.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVOCore/SVTool.h"
+#include "InspectionEngine/SVTool.h"
 #include "SVOGui/DisplayHelper.h"
 #pragma endregion Includes
 

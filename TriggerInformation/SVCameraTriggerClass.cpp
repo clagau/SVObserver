@@ -70,9 +70,9 @@ namespace SvTi
 
 
 			#ifdef SV_LOG_STATUS_INFO
-				std::string l_String;
-				l_String.Format( _T( "FinishProcess %s - HR = 0x%X" ), pDevice->GetDeviceName(), hr );
-				pDevice->m_StatusLog.push_back( l_String );
+				std::string LogEntry;
+				LogEntry = SvUl::Format( _T( "FinishProcess %s - HR = 0x%X" ), pDevice->GetDeviceName(), hr );
+				pDevice->m_StatusLog.push_back(LogEntry);
 			#endif
 		}
 		return hr;

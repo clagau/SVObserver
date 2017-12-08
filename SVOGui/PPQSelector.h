@@ -9,8 +9,7 @@
 #pragma once
 
 #pragma region Includes
-
-#include "GuiCommands\GetPPQSelectorList.h"
+#include "InspectionCommands\GetPPQSelectorList.h"
 #include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
 #pragma endregion Includes
 
@@ -19,9 +18,9 @@ namespace SvOg
 	class PPQSelector
 	{
 	public:
-		SvOi::ISelectorItemVectorPtr operator()(const GUID& rInspectionID, UINT Attribute )
+		SvCl::SelectorItemVectorPtr operator()(const GUID& rInspectionID, UINT Attribute )
 		{
-			SvOi::ISelectorItemVectorPtr SelectorList;
+			SvCl::SelectorItemVectorPtr SelectorList;
 
 			typedef SvCmd::GetPPQSelectorList Command;
 			typedef SVSharedPtr<Command> CommandPtr;

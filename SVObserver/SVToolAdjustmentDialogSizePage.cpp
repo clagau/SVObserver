@@ -14,7 +14,7 @@
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SvOGui/SVFormulaEditorSheet.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
-#include "SVOCore/EQAdjustSize.h"
+#include "InspectionEngine/EQAdjustSize.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVGuiExtentUpdater.h"
 #include "TextDefinesSvO.h"

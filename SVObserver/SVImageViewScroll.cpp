@@ -14,7 +14,7 @@
 //Moved to precompiled header: #include <comdef.h>
 #include "SVImageViewScroll.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
-#include "SVObjectLibrary/SVObjectWriter.h"
+#include "ObjectInterfaces/IObjectWriter.h"
 #include "Definitions/GlobalConst.h"
 #include "SVImageView.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
@@ -311,7 +311,7 @@ void SVImageViewScroll::SetImageSize( SIZE p_oSize )
 	ScrollToPosition( l_oPoint );
 }
 
-void SVImageViewScroll::GetParameters(SVObjectWriter& rWriter)
+void SVImageViewScroll::GetParameters(SvOi::IObjectWriter& rWriter)
 {
 	CRect l_WindowRect;
 	CSize l_ScrollSize = GetTotalSize();

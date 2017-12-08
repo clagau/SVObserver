@@ -6,13 +6,13 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "MaskController.h"
-#include "GuiCommands\GetInstanceIDByTypeInfo.h"
-#include "GuiCommands\GetReferenceImage.h"
-#include "GuiCommands\GetMaskImage.h"
-#include "GuiCommands\ImportMask.h"
-#include "GuiCommands\ExportMask.h"
-#include "GuiCommands\GetMaskData.h"
-#include "GuiCommands\SetMaskData.h"
+#include "InspectionCommands\GetInstanceIDByTypeInfo.h"
+#include "InspectionCommands\GetReferenceImage.h"
+#include "InspectionCommands\GetMaskImage.h"
+#include "InspectionCommands\ImportMask.h"
+#include "InspectionCommands\ExportMask.h"
+#include "InspectionCommands\GetMaskData.h"
+#include "InspectionCommands\SetMaskData.h"
 #include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
 #pragma endregion Includes
 

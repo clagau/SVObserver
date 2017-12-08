@@ -22,12 +22,6 @@ namespace SvCl
 		Clear();
 	}
 
-	ObjectSelectorItem::ObjectSelectorItem( const ObjectSelectorItem& rObject )
-	{
-		Clear();
-		*this = rObject;
-	}
-
 	ObjectSelectorItem::~ObjectSelectorItem()
 	{
 	}
@@ -50,42 +44,58 @@ namespace SvCl
 		m_OrgCheckedState = EmptyEnabled;
 	}
 
-	const ObjectSelectorItem& ObjectSelectorItem::operator=( const ObjectSelectorItem& rObject )
+	const ObjectSelectorItem& ObjectSelectorItem::operator=( const ObjectSelectorItem& rRhs )
 	{
-		if( this != &rObject )
+		if( this != &rRhs )
 		{
-			m_Name = rObject.m_Name;
-			m_Location = rObject.m_Location;
-			m_DisplayLocation = rObject.m_DisplayLocation;
-			m_ItemTypeName = rObject.m_ItemTypeName;
-			m_TreeItem = rObject.m_TreeItem;
-			m_ItemKey = rObject.m_ItemKey;
-			m_Attribute = rObject.m_Attribute;
-			m_IconNumber = rObject.m_IconNumber;
-			m_ArrayIndex = rObject.m_ArrayIndex;
-			m_Modified = rObject.m_Modified;
-			m_CheckedState = rObject.m_CheckedState;
-			m_OrgCheckedState = rObject.m_OrgCheckedState;
+			m_Name = rRhs.m_Name;
+			m_Location = rRhs.m_Location;
+			m_DisplayLocation = rRhs.m_DisplayLocation;
+			m_ItemTypeName = rRhs.m_ItemTypeName;
+			m_TreeItem = rRhs.m_TreeItem;
+			m_ItemKey = rRhs.m_ItemKey;
+			m_Attribute = rRhs.m_Attribute;
+			m_IconNumber = rRhs.m_IconNumber;
+			m_ArrayIndex = rRhs.m_ArrayIndex;
+			m_Modified = rRhs.m_Modified;
+			m_CheckedState = rRhs.m_CheckedState;
+			m_OrgCheckedState = rRhs.m_OrgCheckedState;
 		}
 		return *this;
 	}
 
-	bool ObjectSelectorItem::operator==( const ObjectSelectorItem& rObject ) const
+	const ObjectSelectorItem& ObjectSelectorItem::operator=(const SelectorItem& rRhs)
+	{
+		if (this != &rRhs)
+		{
+			m_Name = rRhs.m_Name;
+			m_Location = rRhs.m_Location;
+			m_DisplayLocation = rRhs.m_DisplayLocation;
+			m_ItemTypeName = rRhs.m_ItemTypeName;
+			m_ItemKey = rRhs.m_ItemKey;
+			m_Array = rRhs.m_Array;
+			m_ArrayIndex = rRhs.m_ArrayIndex;
+			m_Selected = rRhs.m_Selected;
+		}
+		return *this;
+	}
+
+	bool ObjectSelectorItem::operator==( const ObjectSelectorItem& rRhs ) const
 	{
 		bool Result = false;
 
-		if( (m_Name == rObject.m_Name) &&
-			(m_Location == rObject.m_Location) &&
-			(m_DisplayLocation == rObject.m_DisplayLocation) &&
-			(m_ItemTypeName == rObject.m_ItemTypeName) &&
-			(m_TreeItem == rObject.m_TreeItem) &&
-			(m_ItemKey == rObject.m_ItemKey) &&
-			(m_Attribute == rObject.m_Attribute) &&
-			(m_IconNumber == rObject.m_IconNumber) &&
-			(m_ArrayIndex == rObject.m_ArrayIndex) &&
-			(m_Modified == rObject.m_Modified) &&
-			(m_CheckedState == rObject.m_CheckedState) &&
-			(m_OrgCheckedState == rObject.m_OrgCheckedState))
+		if( (m_Name == rRhs.m_Name) &&
+			(m_Location == rRhs.m_Location) &&
+			(m_DisplayLocation == rRhs.m_DisplayLocation) &&
+			(m_ItemTypeName == rRhs.m_ItemTypeName) &&
+			(m_TreeItem == rRhs.m_TreeItem) &&
+			(m_ItemKey == rRhs.m_ItemKey) &&
+			(m_Attribute == rRhs.m_Attribute) &&
+			(m_IconNumber == rRhs.m_IconNumber) &&
+			(m_ArrayIndex == rRhs.m_ArrayIndex) &&
+			(m_Modified == rRhs.m_Modified) &&
+			(m_CheckedState == rRhs.m_CheckedState) &&
+			(m_OrgCheckedState == rRhs.m_OrgCheckedState))
 		{
 			Result = true;
 		}
@@ -93,124 +103,9 @@ namespace SvCl
 		return Result;
 	}
 
-	bool ObjectSelectorItem::operator!=( const ObjectSelectorItem& rObject ) const
+	bool ObjectSelectorItem::operator!=( const ObjectSelectorItem& rRhs ) const
 	{
-		return !( *this == rObject );
-	}
-
-	const std::string& ObjectSelectorItem::getName() const
-	{
-		return m_Name;
-	}
-
-	void ObjectSelectorItem::setName( const std::string& rName )
-	{
-		m_Name = rName;
-	}
-
-	const std::string& ObjectSelectorItem::getLocation() const
-	{
-		return m_Location;
-	}
-
-	void ObjectSelectorItem::setLocation( const std::string& rLocation )
-	{
-		m_Location = rLocation;
-	}
-
-	const std::string& ObjectSelectorItem::getDisplayLocation() const
-	{
-		return m_DisplayLocation;
-	}
-
-	void ObjectSelectorItem::setDisplayLocation( const std::string& rDisplayLocation )
-	{
-		m_DisplayLocation = rDisplayLocation;
-	}
-
-	const std::string& ObjectSelectorItem::getItemTypeName() const
-	{
-		return m_ItemTypeName;
-	}
-
-	void ObjectSelectorItem::setItemTypeName( const std::string& ItemTypeName )
-	{
-		m_ItemTypeName = ItemTypeName;
-	}
-
-	const HTREEITEM& ObjectSelectorItem::getTreeItem() const
-	{
-		return m_TreeItem;
-	}
-
-	void ObjectSelectorItem::setTreeItem( const HTREEITEM& rTreeItem )
-	{
-		m_TreeItem = rTreeItem;
-	}
-
-	const _variant_t& ObjectSelectorItem::getItemKey() const
-	{
-		return m_ItemKey;
-	}
-
-	void ObjectSelectorItem::setItemKey( const _variant_t& rItemKey )
-	{
-		m_ItemKey = rItemKey;
-	}
-
-	const ObjectSelectorItem::AttributeEnum& ObjectSelectorItem::getAttribute() const
-	{
-		return m_Attribute;
-	}
-
-	void ObjectSelectorItem::setAttibute( const AttributeEnum& rAttribute )
-	{
-		m_Attribute = rAttribute;
-	}
-
-	int ObjectSelectorItem::getIconNumber() const
-	{
-		return m_IconNumber;
-	}
-
-	void ObjectSelectorItem::setIconNumber( const int IconNumber )
-	{
-		m_IconNumber = IconNumber;
-	}
-
-	const ObjectSelectorItem::CheckedStateEnum& ObjectSelectorItem::getCheckedState() const
-	{
-		return m_CheckedState;
-	}
-
-	void ObjectSelectorItem::setCheckedState( const CheckedStateEnum& rCheckedState )
-	{
-		m_CheckedState = rCheckedState;
-	}
-
-	const ObjectSelectorItem::CheckedStateEnum& ObjectSelectorItem::getOrgCheckedState() const
-	{
-		return m_OrgCheckedState;
-	}
-
-	void ObjectSelectorItem::setOrgCheckedState( const CheckedStateEnum& rCheckedState )
-	{
-		m_OrgCheckedState = rCheckedState;
-	}
-
-	const int& ObjectSelectorItem::getArrayIndex() const
-	{
-		return m_ArrayIndex;
-	}
-
-	void ObjectSelectorItem::setArrayIndex( const int& rIndex )
-	{
-		m_ArrayIndex = rIndex;
-	}
-
-	void ObjectSelectorItem::setModified( const bool Modified )
-	{
-		m_Modified = Modified;
+		return !( *this == rRhs );
 	}
 
 	bool ObjectSelectorItem::isNode() const
@@ -221,16 +116,6 @@ namespace SvCl
 	bool ObjectSelectorItem::isLeaf() const
 	{
 		return ( m_Attribute & Leaf ) == Leaf;
-	}
-
-	bool ObjectSelectorItem::isArray() const
-	{
-		return ( m_Attribute & Array ) == Array;
-	}
-
-	bool ObjectSelectorItem::isModified() const
-	{
-		return m_Modified;
 	}
 	#pragma endregion Public Methods
 

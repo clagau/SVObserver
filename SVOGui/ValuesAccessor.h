@@ -12,12 +12,12 @@
 #include "BoundValue.h"
 #include "ObjectInterfaces/NameValueList.h"
 #include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
-#include "GuiCommands/TaskObjectGetEmbeddedValues.h"
-#include "GuiCommands/TaskObjectSetEmbeddedValues.h"
-#include "GuiCommands/ValueObjectGetEnums.h"
-#include "GuiCommands/InspectionRunOnce.h"
-#include "GuiCommands/ResetObject.h"
-#include "GuiCommands/GetObjectName.h"
+#include "InspectionCommands/TaskObjectGetEmbeddedValues.h"
+#include "InspectionCommands/TaskObjectSetEmbeddedValues.h"
+#include "InspectionCommands/ValueObjectGetEnums.h"
+#include "InspectionCommands/InspectionRunOnce.h"
+#include "InspectionCommands/ResetObject.h"
+#include "InspectionCommands/GetObjectName.h"
 #pragma endregion Includes
 
 namespace SvOg

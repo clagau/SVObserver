@@ -17,7 +17,7 @@
 #include "SVTriggerObject.h"
 #include "SVTriggerConstants.h"
 #include "SVTriggerEnums.h"
-
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 namespace SvTi
@@ -46,9 +46,6 @@ namespace SvTi
 	, m_bSoftwareTrigger(false)
 	, m_timerPeriod(TimerPeriod) 
 	{
-		#ifdef SV_LOG_STATUS_INFO
-			m_StatusLog.Create();
-		#endif
 	}
 
 	SVTriggerObject::SVTriggerObject( SVObjectClass* POwner, int StringResourceID )
@@ -60,9 +57,6 @@ namespace SvTi
 	, m_bSoftwareTrigger(false)
 	, m_timerPeriod(TimerPeriod) 
 	{
-		#ifdef SV_LOG_STATUS_INFO
-			m_StatusLog.Create();
-		#endif
 	}
 
 	SVTriggerObject::~SVTriggerObject()
@@ -144,21 +138,15 @@ namespace SvTi
 	  }
   
 		#ifdef SV_LOG_STATUS_INFO
-			std::string l_FileName;
+			std::string FileName = SvUl::Format( _T( "C:\\SVObserver\\%s.log" ), GetName() );
 
-			l_FileName.Format( _T( "C:\\SVObserver\\%s.log" ), GetName() );
-
-			std::fstream l_Stream( l_FileName.ToString(), std::ios_base::trunc | std::ios_base::out );
+			std::fstream l_Stream( FileName.c_str(), std::ios_base::trunc | std::ios_base::out );
 
 			if( l_Stream.is_open() )
 			{
-				for( int i = 0; i < m_StatusLog.GetCount(); ++i )
+				for( auto const & rEntry : m_StatusLog )
 				{
-					std::string l_String;
-
-					m_StatusLog.GetAt( i, &l_String );
-
-					l_Stream << l_String.ToString() << std::endl;
+					l_Stream << rEntry.c_str() << std::endl;
 				}
 
 				l_Stream.close();
@@ -216,11 +204,9 @@ namespace SvTi
 		}
 
 		#ifdef SV_LOG_STATUS_INFO
-			std::string l_String;
+			std::string LogEntry = SvUl::Format( _T( "FinishProcess %s - TC = %d" ), GetName(), m_lTriggerCount );
 
-			l_String.Format( _T( "FinishProcess %s - TC = %d" ), GetName(), m_lTriggerCount );
-
-			m_StatusLog.push_back( l_String );
+			m_StatusLog.push_back(LogEntry);
 		#endif
 	}
 

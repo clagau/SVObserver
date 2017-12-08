@@ -98,9 +98,6 @@
     <ClCompile Include="ObjectsListBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVBitmap.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVHistogram.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -212,9 +209,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ObjectsListBox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVBitmap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVHistogram.h">

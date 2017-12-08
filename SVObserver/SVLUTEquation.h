@@ -11,7 +11,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVOCore/SVEquation.h"
+#include "InspectionEngine/SVEquation.h"
 #pragma endregion Includes
 
 class SVLUTEquationClass : public SVEquationClass

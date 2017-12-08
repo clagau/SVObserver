@@ -85,7 +85,7 @@ long SVLongValueObjectClass::ConvertString2Type( const std::string& rValue ) con
 	return 0; //will never reached, because the exception will throw before. But this line avoid a warning
 }
 
-void SVLongValueObjectClass::WriteValues(SVObjectWriter& rWriter)
+void SVLongValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)
 {
 	// Where does Object Depth Get put into the Script ??? (maybe at the SVObjectClass)
 	// Object Depth is implicit (it's the count of the values)
@@ -103,7 +103,7 @@ void SVLongValueObjectClass::WriteValues(SVObjectWriter& rWriter)
 	rWriter.WriteAttribute(scElementTag, list);
 }
 
-void SVLongValueObjectClass::WriteDefaultValues(SVObjectWriter& rWriter)
+void SVLongValueObjectClass::WriteDefaultValues(SvOi::IObjectWriter& rWriter)
 {
 	_variant_t Value(GetDefaultValue());
 	rWriter.WriteAttribute(scDefaultTag, Value);

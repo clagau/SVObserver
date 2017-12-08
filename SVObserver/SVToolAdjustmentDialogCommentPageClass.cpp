@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVToolAdjustmentDialogCommentPageClass.h"
 
-#include "SVOCore/SVTool.h"
+#include "InspectionEngine/SVTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 
 #pragma endregion Includes

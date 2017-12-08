@@ -70,8 +70,8 @@ namespace SvCl
 			Iter = createNode(ParentIter, Branch, LeafName);
 			if (end() != Iter)
 			{
-				rSelectorItem.setName(Iter->second->getName());
-				rSelectorItem.setDisplayLocation(Iter->second->getDisplayLocation());
+				rSelectorItem.m_Name = Iter->second->m_Name;
+				rSelectorItem.m_DisplayLocation = Iter->second->m_DisplayLocation;
 				*Iter->second = rSelectorItem;
 			}
 		}
@@ -87,19 +87,19 @@ namespace SvCl
 		{
 			if( Iter->second->isNode() )
 			{
-				IObjectSelectorItem::CheckedStateEnum CheckedState = getNodeCheckedState( Iter.base() );
-				if( Iter->second->getCheckedState() != CheckedState )
+				ObjectSelectorItem::CheckedStateEnum CheckedState = getNodeCheckedState(Iter.base());
+				if( Iter->second->m_CheckedState != CheckedState )
 				{
-					Iter->second->setCheckedState( CheckedState );
+					Iter->second->m_CheckedState = CheckedState;
 				}
 			}
 			Iter++;
 		}
 	}
 
-	IObjectSelectorItem::CheckedStateEnum ObjectTreeItems::getNodeCheckedState( const iterator& rIter ) const
+	ObjectSelectorItem::CheckedStateEnum ObjectTreeItems::getNodeCheckedState( const iterator& rIter ) const
 	{
-		IObjectSelectorItem::CheckedStateEnum CheckedState = IObjectSelectorItem::EmptyEnabled;
+		ObjectSelectorItem::CheckedStateEnum CheckedState = ObjectSelectorItem::EmptyEnabled;
 
 		if( rIter->second->isNode() )
 		{
@@ -109,28 +109,28 @@ namespace SvCl
 
 			if( m_SingleSelect )
 			{
-				CheckedState = IObjectSelectorItem::EmptyEnabled;
+				CheckedState = ObjectSelectorItem::EmptyEnabled;
 			}
 			else
 			{
-				CheckedState = IObjectSelectorItem::UncheckedEnabled;
+				CheckedState = ObjectSelectorItem::UncheckedEnabled;
 			}
 
 			const_iterator IterChild( rIter.node()->begin() );
 			while( rIter.node()->end() != IterChild && LoopChildren )
 			{
-				switch( IterChild->second->getCheckedState() )
+				switch( IterChild->second->m_CheckedState )
 				{
-				case IObjectSelectorItem::UncheckedEnabled:
-				case IObjectSelectorItem::UncheckedDisabled:
+				case ObjectSelectorItem::UncheckedEnabled:
+				case ObjectSelectorItem::UncheckedDisabled:
 					AllChecked = false;
 					break;
-				case IObjectSelectorItem::CheckedEnabled:
-				case IObjectSelectorItem::CheckedDisabled:
+				case ObjectSelectorItem::CheckedEnabled:
+				case ObjectSelectorItem::CheckedDisabled:
 					SomeChecked = true;
 					break;
-				case IObjectSelectorItem::TriStateEnabled:
-				case IObjectSelectorItem::TriStateDisabled:
+				case ObjectSelectorItem::TriStateEnabled:
+				case ObjectSelectorItem::TriStateDisabled:
 					AllChecked = false;
 					SomeChecked = true;
 					break;
@@ -152,16 +152,16 @@ namespace SvCl
 				if( m_SingleSelect )
 				{
 					//For single select only use the tristate symbol
-					CheckedState = IObjectSelectorItem::TriStateEnabled;
+					CheckedState = ObjectSelectorItem::TriStateEnabled;
 				}
 				else
 				{
-					CheckedState = IObjectSelectorItem::CheckedEnabled;
+					CheckedState = ObjectSelectorItem::CheckedEnabled;
 				}
 			}
 			else if( SomeChecked )
 			{
-				CheckedState = IObjectSelectorItem::TriStateEnabled;
+				CheckedState = ObjectSelectorItem::TriStateEnabled;
 			}
 		}
 
@@ -174,7 +174,7 @@ namespace SvCl
 
 		while( pre_order_end() != Iter )
 		{
-			Iter->second->setOrgCheckedState( Iter->second->getCheckedState() );
+			Iter->second->m_OrgCheckedState = Iter->second->m_CheckedState;
 			Iter++;
 		}
 	}
@@ -262,10 +262,10 @@ namespace SvCl
 
 			if( end() != ParentIter )
 			{
-				IObjectSelectorItem::CheckedStateEnum CheckedState = getNodeCheckedState( ParentIter );
-				if( ParentIter->second->getCheckedState() != CheckedState )
+				ObjectSelectorItem::CheckedStateEnum CheckedState = getNodeCheckedState( ParentIter );
+				if( ParentIter->second->m_CheckedState != CheckedState )
 				{
-					ParentIter->second->setCheckedState( CheckedState );
+					ParentIter->second->m_CheckedState = CheckedState;
 					retValue.insert( ParentIter->first );
 					SvDef::StringSet tmpValue = setParentState( ParentIter );
 					retValue.insert( tmpValue.begin(), tmpValue.end() );
@@ -281,7 +281,7 @@ namespace SvCl
 		iterator Iter = findItem( itemLocation );
 		if( end() != Iter )
 		{
-			Iter->second->setCheckedState( IObjectSelectorItem::UncheckedEnabled );
+			Iter->second->m_CheckedState = ObjectSelectorItem::UncheckedEnabled;
 
 			updateItems = setParentState( Iter );
 			updateItems.insert( Iter->first );
@@ -296,23 +296,23 @@ namespace SvCl
 		iterator Iter( end() );
 		ObjectSelectorItemPtr pSelectorItem =  new ObjectSelectorItem;
 
-		IObjectSelectorItem::CheckedStateEnum CheckedState;
+		ObjectSelectorItem::CheckedStateEnum CheckedState;
 
 		if( m_SingleSelect )
 		{
-			CheckedState = IObjectSelectorItem::EmptyEnabled;
+			CheckedState = ObjectSelectorItem::EmptyEnabled;
 		}
 		else
 		{
-			CheckedState = IObjectSelectorItem::UncheckedEnabled;
+			CheckedState = ObjectSelectorItem::UncheckedEnabled;
 		}
 		std::string DisplayLocation(rBranchName);
 		DisplayLocation += rNodeName;
-		pSelectorItem->setName( rNodeName );
-		pSelectorItem->setDisplayLocation(DisplayLocation);
-		pSelectorItem->setAttibute( IObjectSelectorItem::Node );
-		pSelectorItem->setCheckedState( CheckedState );
-		pSelectorItem->setOrgCheckedState( CheckedState );
+		pSelectorItem->m_Name =  rNodeName;
+		pSelectorItem->m_DisplayLocation = DisplayLocation;
+		pSelectorItem->m_Attribute = ObjectSelectorItem::Node;
+		pSelectorItem->m_CheckedState = CheckedState;
+		pSelectorItem->m_OrgCheckedState = CheckedState;
 		try
 		{
 			if( end() == rParentIter )

@@ -19,9 +19,9 @@
 
 #include "SVBarCodeResult.h"   
 #include "SVOGui/SVBarCodeProperties.h"
-#include "SVOCore/SVBarCodeBuffer.h"
-#include "SVOCore/SVImageProcessingClass.h"
-#include "SVOCore/SVImageClass.h"
+#include "InspectionEngine/SVBarCodeBuffer.h"
+#include "InspectionEngine/SVImageProcessingClass.h"
+#include "InspectionEngine/SVImageClass.h"
 #include "SVInspectionProcess.h"
 #include "SVOLicenseManager.h"
 #include "TextDefinesSvO.h"

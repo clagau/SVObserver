@@ -25,9 +25,9 @@
 #include "SVToolSet.h"
 #include "SVPPQObject.h"
 #include "SVGlobal.h"
-#include "SVOCore/SVTool.h"
-#include "SVOCore/SVImageProcessingClass.h"
-#include "SVOCore/SVConditional.h"
+#include "InspectionEngine/SVTool.h"
+#include "InspectionEngine/SVImageProcessingClass.h"
+#include "InspectionEngine/SVConditional.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVCommandStreamManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
@@ -40,6 +40,7 @@
 #include "SVSharedMemoryLibrary\SVSharedConfiguration.h"
 #include "SVSharedMemoryLibrary\SharedMemWriter.h"
 #include "SVOGui\FormulaController.h"
+#include "SVContainerLibrary/SelectorItem.h"
 #pragma endregion Includes
 
 SV_IMPLEMENT_CLASS(SVInspectionProcess, SVInspectionProcessGuid);
@@ -3647,7 +3648,7 @@ void SVInspectionProcess::SVInspectionTracking::EventEnd(const std::string& p_rN
 }
 #endif
 
-void SVInspectionProcess::Persist(SVObjectWriter& rWriter)
+void SVInspectionProcess::Persist(SvOi::IObjectWriter& rWriter)
 {
 	// until it becomes a task object list...
 	rWriter.StartElement(GetObjectName()); // use internal name for node name
@@ -3689,10 +3690,9 @@ long  SVInspectionProcess::GetResultDataIndex() const
 }
 
 #pragma region IInspectionProcess methods
-SvOi::ISelectorItemVectorPtr SVInspectionProcess::GetPPQSelectorList(const UINT Attribute) const
+SvCl::SelectorItemVectorPtr SVInspectionProcess::GetPPQSelectorList(const UINT Attribute) const
 {
-	SvOsl::SelectorItemVector *pSelectorList = new SvOsl::SelectorItemVector();
-	SvOi::ISelectorItemVectorPtr Result = static_cast<SvOi::ISelectorItemVector*> (pSelectorList);
+	SvCl::SelectorItemVectorPtr pResult{ new SvCl::SelectorItemVector() };
 
 	SVPPQObject *pPPQ = GetPPQ();
 	if (nullptr != pPPQ)
@@ -3702,15 +3702,15 @@ SvOi::ISelectorItemVectorPtr SVInspectionProcess::GetPPQSelectorList(const UINT 
 		SVObjectReferenceVector ObjectList;
 		SVObjectManagerClass::Instance().getTreeList(PpqName, ObjectList, Attribute);
 
-		std::for_each(ObjectList.begin(), ObjectList.end(), [&pSelectorList](const SVObjectReference& rObjectRef)->void
+		std::for_each(ObjectList.begin(), ObjectList.end(), [&pResult](const SVObjectReference& rObjectRef)->void
 		{
-			SvOsl::SelectorItem InsertItem;
+			SvCl::SelectorItem InsertItem;
 
-			InsertItem.setName(rObjectRef.GetName().c_str());
-			InsertItem.setItemKey(rObjectRef.getObject()->GetUniqueObjectID().ToVARIANT());
+			InsertItem.m_Name = rObjectRef.GetName().c_str();
+			InsertItem.m_ItemKey = rObjectRef.getObject()->GetUniqueObjectID().ToVARIANT();
 			if (nullptr != rObjectRef.getValueObject())
 			{
-				InsertItem.setItemTypeName(rObjectRef.getValueObject()->getTypeName().c_str());
+				InsertItem.m_ItemTypeName = rObjectRef.getValueObject()->getTypeName();
 			}
 			if (rObjectRef.isArray())
 			{
@@ -3721,15 +3721,16 @@ SvOi::ISelectorItemVectorPtr SVInspectionProcess::GetPPQSelectorList(const UINT 
 					//We make a copy to be able to set the index rObjectRef is const
 					SVObjectReference ArrayObjectRef(rObjectRef);
 					ArrayObjectRef.SetArrayIndex(i);
-					InsertItem.setLocation(ArrayObjectRef.GetCompleteOneBasedObjectName().c_str());
-					InsertItem.setArrayIndex(i);
-					pSelectorList->push_back(InsertItem);
+					InsertItem.m_Location = ArrayObjectRef.GetCompleteOneBasedObjectName();
+					InsertItem.m_ArrayIndex = i;
+					InsertItem.m_Array = true;
+					pResult->push_back(InsertItem);
 				}
 			}
 			else
 			{
-				InsertItem.setLocation(rObjectRef.GetCompleteOneBasedObjectName().c_str());
-				pSelectorList->push_back(InsertItem);
+				InsertItem.m_Location = rObjectRef.GetCompleteOneBasedObjectName();
+				pResult->push_back(InsertItem);
 			}
 		});
 	}
@@ -3739,7 +3740,7 @@ SvOi::ISelectorItemVectorPtr SVInspectionProcess::GetPPQSelectorList(const UINT 
 
 	SVObjectPtrVector PpqVariables;
 	PpqVariables = getPPQVariables();
-	std::for_each(PpqVariables.begin(), PpqVariables.end(), [&pSelectorList, &InspectionName, &Attribute](SVObjectClass* pObject)->void
+	std::for_each(PpqVariables.begin(), PpqVariables.end(), [&pResult, &InspectionName, &Attribute](SVObjectClass* pObject)->void
 	{
 		if (nullptr != pObject)
 		{
@@ -3747,27 +3748,27 @@ SvOi::ISelectorItemVectorPtr SVInspectionProcess::GetPPQSelectorList(const UINT 
 			if (0 != (Attribute & pObject->ObjectAttributesAllowed()))
 			{
 				SVObjectReference ObjectRef(pObject);
-				SvOsl::SelectorItem InsertItem;
+				SvCl::SelectorItem InsertItem;
 
 				std::string Location(ObjectRef.GetCompleteOneBasedObjectName());
-				InsertItem.setName(ObjectRef.GetName().c_str());
-				InsertItem.setLocation(Location.c_str());
+				InsertItem.m_Name = ObjectRef.GetName();
+				InsertItem.m_Location = Location;
 				//Need to replace the inspection name with the PPQ Variables name
 				// Only DIO and Remote Input, but is all that is in this list?
 				SvUl::searchAndReplace(Location, InspectionName.c_str(), SvDef::FqnPPQVariables);
-				InsertItem.setDisplayLocation(Location.c_str());
-				InsertItem.setItemKey(ObjectRef.getObject()->GetUniqueObjectID().ToVARIANT());
+				InsertItem.m_DisplayLocation = Location;
+				InsertItem.m_ItemKey = ObjectRef.getObject()->GetUniqueObjectID().ToVARIANT();
 				if (nullptr != ObjectRef.getValueObject())
 				{
-					InsertItem.setItemTypeName(ObjectRef.getValueObject()->getTypeName().c_str());
+					InsertItem.m_ItemTypeName = ObjectRef.getValueObject()->getTypeName();
 				}
 
-				pSelectorList->push_back(InsertItem);
+				pResult->push_back(InsertItem);
 			}
 		}
 	});
 
-	return Result;
+	return pResult;
 }
 
 SvOi::ITaskObject* SVInspectionProcess::GetToolSetInterface() const

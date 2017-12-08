@@ -12,8 +12,8 @@
 #pragma once
 
 #pragma region Includes
-#include "SVOCore/SVStdImageOperatorListClass.h"
-#include "SVOCore/SVDataBuffer.h"
+#include "InspectionEngine/SVStdImageOperatorListClass.h"
+#include "InspectionEngine/SVDataBuffer.h"
 #pragma endregion Includes
 
 class SVLinearImageOperatorListClass : public SVStdImageOperatorListClass 

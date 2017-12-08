@@ -343,9 +343,9 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnBtnObjectPicker()
 
 	if( IDOK == Result )
 	{
-		m_strVariableToMonitor = SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().getDisplayLocation().c_str();
+		m_strVariableToMonitor = SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().m_DisplayLocation.c_str();
 
-		SVGUID ResultObjectGuid( SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().getItemKey() );
+		SVGUID ResultObjectGuid( SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().m_ItemKey);
 		SVObjectClass* pResultObject = nullptr;
 		SVObjectManagerClass::Instance().GetObjectByIdentifier( ResultObjectGuid,  pResultObject);
 		if( nullptr != pResultObject )

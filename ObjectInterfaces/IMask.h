@@ -9,7 +9,6 @@
 #pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
 #include "ISVImage.h"
-
 #pragma endregion Includes
 
 namespace SvOi

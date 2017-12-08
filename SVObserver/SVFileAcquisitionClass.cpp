@@ -20,8 +20,8 @@
 #include "CameraLibrary/SVDeviceParams.h"
 
 #include "SVDigitizerProcessingClass.h"
-#include "SVOCore/SVImageObjectClass.h"
-#include "SVOCore/SVImageProcessingClass.h"
+#include "InspectionEngine/SVImageObjectClass.h"
+#include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "TextDefinesSvO.h"

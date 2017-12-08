@@ -12,7 +12,6 @@
 
 #pragma region Includes
 #include "SVOLibrary/SVODeviceClass.h"
-#include "SVOLibrary/SVQueueObject.h"
 #include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
 #pragma endregion Includes
 
@@ -40,9 +39,8 @@ namespace SvTh
 		SVIOTriggerLoadLibraryClass *m_pDLLTrigger;
 		unsigned long m_triggerchannel;
 
-	protected:
 		#ifdef SV_LOG_STATUS_INFO
-			SVStatusDeque m_StatusLog;
+			std::vector<std::string> m_StatusLog;
 		#endif
 	};
 } //namespace SvTh

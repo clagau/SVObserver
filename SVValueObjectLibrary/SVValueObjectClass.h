@@ -192,7 +192,7 @@ public:
 	//! \returns S_OK if successful
 	virtual HRESULT CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD MemByteSize, int Index = -1) const override;
 
-	virtual void Persist(SVObjectWriter& rWriter) override;
+	virtual void Persist(SvOi::IObjectWriter& rWriter) override;
 
 	virtual void setSaveValueFlag(bool shouldSaveValue) override { m_shouldSaveValue = shouldSaveValue; } ;
 #pragma endregion virtual method
@@ -259,13 +259,13 @@ protected:
 
 	void swap( SVValueObjectClass& rRhs );
 
-	/// Write the Values of this object to the SVObjectWriter
-	/// \param rWriter [in,out] The SVObjectWriter
-	virtual void WriteValues(SVObjectWriter &rWriter) = 0;
+	/// Write the Values of this object to the IObjectWriter
+	/// \param rWriter [in,out] The IObjectWriter
+	virtual void WriteValues(SvOi::IObjectWriter& rWriter) = 0;
 
-	/// Write the Default-Values of this object to the SVObjectWriter
-	/// \param rWriter [in,out] The SVObjectWriter
-	virtual void WriteDefaultValues(SVObjectWriter &rWriter) = 0;
+	/// Write the Default-Values of this object to the IObjectWriter
+	/// \param rWriter [in,out] The IObjectWriter
+	virtual void WriteDefaultValues(SvOi::IObjectWriter& rWriter) = 0;
 #pragma endregion Protected Methods
 
 #pragma region Member Variables

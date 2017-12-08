@@ -463,7 +463,7 @@ HRESULT SVVariantValueObjectClass::CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD M
 	return Result;
 }
 
-void SVVariantValueObjectClass::WriteValues(SVObjectWriter& rWriter)
+void SVVariantValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)
 {
 	// Object Depth is implicit (it's the count of the values)
 	SVVariantList list;
@@ -506,7 +506,7 @@ void SVVariantValueObjectClass::WriteValues(SVObjectWriter& rWriter)
 	rWriter.WriteAttribute(scElementTag, list);
 }
 
-void SVVariantValueObjectClass::WriteDefaultValues(SVObjectWriter& rWriter)
+void SVVariantValueObjectClass::WriteDefaultValues(SvOi::IObjectWriter& rWriter)
 {
 	_variant_t Value(GetDefaultValue());
 	rWriter.WriteAttribute(scDefaultTag, Value);

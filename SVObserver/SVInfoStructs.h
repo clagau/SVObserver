@@ -22,7 +22,7 @@
 #include "SVDataManagerLibrary/SVDataManagerHandle.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
-#include "SVOCore/SVCameraInfoStruct.h"
+#include "InspectionEngine/SVCameraInfoStruct.h"
 #include "SVStatusLibrary/SVImageIndexStruct.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"

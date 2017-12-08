@@ -18,7 +18,7 @@
 #include "SVUtilityLibrary/SVSharedPtr.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "SVIPProductStruct.h"
-#include "SVOCore/SVCameraInfoStruct.h"
+#include "InspectionEngine/SVCameraInfoStruct.h"
 #pragma endregion Includes
 
 class SVInspectionProcess;

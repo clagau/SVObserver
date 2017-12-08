@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVOCore/SVOperator.h"
+#include "InspectionEngine/SVOperator.h"
 #pragma endregion Includes
 
 class SVBinaryOperatorClass : public SVOperatorClass

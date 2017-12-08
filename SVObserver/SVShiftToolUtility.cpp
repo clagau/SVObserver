@@ -11,7 +11,7 @@
 #include "StdAfx.h"
 #include "SVShiftToolUtility.h"
 #include "SVShiftTool.h"
-#include "SVOCore/SVTaskObjectValueInterface.h"
+#include "InspectionEngine/SVTaskObjectValueInterface.h"
 
 void SVShiftToolUtility::SetToolNormalize(SVShiftTool* pShiftTool)
 {

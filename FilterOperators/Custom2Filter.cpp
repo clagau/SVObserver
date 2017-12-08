@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "Custom2Filter.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "SVOCore/SVImageProcessingClass.h"
+#include "InspectionEngine/SVImageProcessingClass.h"
 #include "ObjectInterfaces/ICustom2Filter.h"
 #include "SVObjectLibrary/SVClsids.h"
 #include "Definitions/StringTypeDef.h"

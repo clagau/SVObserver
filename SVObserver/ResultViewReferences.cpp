@@ -17,8 +17,8 @@
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVValueObjectLibrary/BasicValueObject.h"
 #include "ResultViewReferences.h"
-#include "SVOCore/SVIPResultData.h"
-#include "SVOCore/SVIPResultItemDefinition.h"
+#include "InspectionEngine/SVIPResultData.h"
+#include "InspectionEngine/SVIPResultItemDefinition.h"
 #include "SVToolSet.h"
 #include "SVInspectionProcess.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -130,7 +130,7 @@ bool ResultViewReferences::Insert( const std::string &rDottedName )
 	return bOK;
 }
 
-bool ResultViewReferences::Save(SVObjectWriter& rWriter)
+bool ResultViewReferences::Save(SvOi::IObjectWriter& rWriter)
 {
 	rWriter.StartElement( m_TagName.c_str() );
 	std::vector<SVObjectReference>::const_iterator it = m_ReferenceVector.begin();

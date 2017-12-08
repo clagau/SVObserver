@@ -11,7 +11,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVOCore/SVUnaryImageOperatorClass.h"
+#include "InspectionEngine/SVUnaryImageOperatorClass.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #pragma endregion Includes

@@ -8,7 +8,6 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
-
 #pragma endregion Includes
 
 namespace SvOi

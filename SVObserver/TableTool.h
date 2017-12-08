@@ -7,7 +7,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVOCore/SVTool.h"
+#include "InspectionEngine/SVTool.h"
 #include "TableFillByEquationObject.h"
 #pragma endregion Includes
 

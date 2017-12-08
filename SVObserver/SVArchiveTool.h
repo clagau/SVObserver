@@ -16,8 +16,8 @@
 //Moved to precompiled header: #include <vector>
 
 #include "SVMatroxLibrary\SVMatroxBuffer.h"
-#include "SVOCore/SVTool.h"
-#include "SVOCore/SVImageObjectClass.h"
+#include "InspectionEngine/SVTool.h"
+#include "InspectionEngine/SVImageObjectClass.h"
 #include "ArchiveMethodEnum.h"
 #include "ArchiveToolHelper.h"
 #include "SVArchiveRecord.h"

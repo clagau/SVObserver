@@ -16,18 +16,18 @@
 #include "SVIPDoc.h"
 
 #include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
-#include "SVObjectLibrary/SVObjectWriter.h"
+#include "ObjectInterfaces/IObjectWriter.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SVGUID.h"
 
-#include "SVOCore/SVConditional.h"
+#include "InspectionEngine/SVConditional.h"
 #include "SVFileSystemLibrary/SVFileNameManagerClass.h"
 #include "SVGlobal.h"
 #include "SVImageArchive.h"
 #include "SVImageViewScroll.h"
 #include "SVImageView.h"
-#include "SVOCore/SVImageProcessingClass.h"
+#include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVIPChildFrm.h"
 #include "SVLightReferenceDialog.h"
 #include "SVLutDlg.h"
@@ -41,7 +41,7 @@
 #include "SVToolSetAdjustmentDialogSheet.h"
 #include "ToolSetView.h"
 #include "ResultTabbedView.h"
-#include "SVOCore/SVTool.h"
+#include "InspectionEngine/SVTool.h"
 #include "SVOGui\SVSaveToolSetImageDialog.h"
 #include "SVOGui\SVShowDependentsDialog.h"
 #include "SVUtilities.h"
@@ -65,13 +65,13 @@
 #include "SVHBitmapUtilitiesLibrary\SVHBitmapUtilities.h"
 #include "SVDirectX.h"
 #include "SVCommandInspectionCollectImageData.h"
-#include "GuiCommands/InspectionRunOnce.h"
+#include "InspectionCommands/InspectionRunOnce.h"
 #include "SVGuiExtentUpdater.h"
 #include "SVArchiveTool.h"
 #include "SVColorTool.h"
 #include "SVMathTool.h"
-#include "SVOCore/SVPolarTransformationTool.h"
-#include "SVOCore/SVTransformationTool.h"
+#include "InspectionEngine/SVPolarTransformationTool.h"
+#include "InspectionEngine/SVTransformationTool.h"
 #include "SVToolAcquisition.h"
 #include "SVToolLoadImage.h"
 #include "SVToolImage.h"
@@ -85,7 +85,7 @@
 #include "ResizeTool.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "Definitions/GlobalConst.h"
-#include "SVContainerLibrary/ObjectSelectorItem.h"
+#include "SVContainerLibrary/SelectorItem.h"
 #include "ToolClipboard.h"
 #include "ExtrasEngine.h"
 #include "TextDefinesSvO.h"
@@ -99,8 +99,8 @@
 #include "TableTool.h"
 #include "TableAnalyzerTool.h"
 #include "SVOGui/ResultTableSelectionDlg.h"
-#include "GuiCommands/GetAvailableObjects.h"
-#include "GuiCommands/GetAllowedImageList.h"
+#include "InspectionCommands/GetAvailableObjects.h"
+#include "InspectionCommands/GetAllowedImageList.h"
 #include "SVOGui/TextDefinesSvOg.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "Definitions/StringTypeDef.h"
@@ -1600,13 +1600,12 @@ void SVIPDoc::OnResultsPicker()
 
 			if( IDOK == Result )
 			{
-				const SvOsl::SelectorItemVector& SelectedItems = SvOsl::ObjectTreeGenerator::Instance().getSelectedObjects();
-				SvOsl::SelectorItemVector::const_iterator Iter;
+				const SvCl::SelectorItemVector& SelectedItems = SvOsl::ObjectTreeGenerator::Instance().getSelectedObjects();
 				pResultList->Clear();
 
-				for( Iter = SelectedItems.begin(); Iter != SelectedItems.end(); ++Iter )
+				for( auto const& rEntry : SelectedItems)
 				{
-					pResultList->Insert( Iter->getLocation() );
+					pResultList->Insert(rEntry.m_Location);
 				}
 				// Set the Document as modified
 				SetModifiedFlag();
@@ -1755,12 +1754,11 @@ void SVIPDoc::OnPublishedResultImagesPicker()
 		{
 			SetModifiedFlag();
 
-			const SvOsl::SelectorItemVector& SelectedItems = SvOsl::ObjectTreeGenerator::Instance().getSelectedObjects();
-			SvOsl::SelectorItemVector::const_iterator Iter;
+			const SvCl::SelectorItemVector& rSelectedItems = SvOsl::ObjectTreeGenerator::Instance().getSelectedObjects();
 
-			for ( Iter = SelectedItems.begin(); Iter != SelectedItems.end(); ++Iter )
+			for (auto const& rEntry : rSelectedItems)
 			{
-				SVGUID ObjectGuid( Iter->getItemKey() );
+				SVGUID ObjectGuid{ rEntry.m_ItemKey };
 				SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( ObjectGuid );
 				if ( nullptr != pObject )
 				{
@@ -2194,7 +2192,7 @@ bool SVIPDoc::IsColorInspectionDocument() const
 	return bRetVal;
 }
 
-bool SVIPDoc::GetParameters(SVObjectWriter& rWriter)
+bool SVIPDoc::GetParameters(SvOi::IObjectWriter& rWriter)
 {
 	_variant_t svVariant;
 
@@ -2216,7 +2214,7 @@ bool SVIPDoc::GetParameters(SVObjectWriter& rWriter)
 	return true;
 }
 
-void SVIPDoc::SaveViewedVariables(SVObjectWriter& rWriter)
+void SVIPDoc::SaveViewedVariables(SvOi::IObjectWriter& rWriter)
 {
 	SVResultListClass* pResultList = GetResultList();
 
@@ -2241,7 +2239,7 @@ bool SVIPDoc::LoadViewedVariables(SVTreeType& rTree, SVTreeType::SVBranchHandle 
 
 }
 
-void SVIPDoc::SaveRegressionTestVariables(SVObjectWriter& rWriter)
+void SVIPDoc::SaveRegressionTestVariables(SvOi::IObjectWriter& rWriter)
 {
 	rWriter.StartElement(SvXml::CTAG_REGRESSIONTEST);
 	_variant_t Value(m_bRegressionTestUsePlayCondition);
@@ -2310,7 +2308,7 @@ void SVIPDoc::LoadRegressionTestVariables(SVTreeType& rTree, SVTreeType::SVBranc
 	}
 }
 
-void SVIPDoc::SaveViews(SVObjectWriter& rWriter)
+void SVIPDoc::SaveViews(SvOi::IObjectWriter& rWriter)
 {
 	SVViewUnion View;
 	_variant_t svVariant;
@@ -2364,7 +2362,7 @@ void SVIPDoc::SaveViews(SVObjectWriter& rWriter)
 	svVariant.Clear();
 }
 
-void SVIPDoc::SaveViewPlacements(SVObjectWriter& rWriter)
+void SVIPDoc::SaveViewPlacements(SvOi::IObjectWriter& rWriter)
 {
 	_variant_t svVariant;
 	SVViewUnion View;
@@ -2453,7 +2451,7 @@ void SVIPDoc::SaveViewPlacements(SVObjectWriter& rWriter)
 	rWriter.EndElement();
 }
 
-void SVIPDoc::SaveToolGroupings(SVObjectWriter& rWriter)
+void SVIPDoc::SaveToolGroupings(SvOi::IObjectWriter& rWriter)
 {
 	m_toolGroupings.GetParameters(rWriter);
 }

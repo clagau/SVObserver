@@ -16,7 +16,7 @@
 #include "SVObjectLibrary/SVObjectNotifyTemplate.h"
 #include "SVOLibrary/SVQueueObject.h"
 #include "SVObjectCommandDataJson.h"
-#include "SVOCore/SVTool.h"
+#include "InspectionEngine/SVTool.h"
 #include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
 
 #pragma endregion Includes

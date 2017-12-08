@@ -16,14 +16,14 @@
 #include "SVUtilityLibrary/SetBits.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
-#include "SVOCore/SVTool.h"
-#include "SVOCore/SVImageProcessingClass.h"
+#include "InspectionEngine/SVTool.h"
+#include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVGlobal.h" // For ConvertToHex
 #include "SVInspectionProcess.h"
 #include "SVObserver.h"
 #include "SVToolSet.h"
 #include "SVShapeMaskHelperClass.h"
-#include "SVOCore/SVUnaryImageOperatorList.h"
+#include "InspectionEngine/SVUnaryImageOperatorList.h"
 
 SV_IMPLEMENT_CLASS( SVUserMaskOperatorClass, SVUserMaskOperatorClassGuid )
 
@@ -567,7 +567,7 @@ bool SVUserMaskOperatorClass::Refresh()
 	return false;
 }
 
-void SVUserMaskOperatorClass::Persist( SVObjectWriter& rWriter )
+void SVUserMaskOperatorClass::Persist( SvOi::IObjectWriter& rWriter )
 {
 	SVTaskObjectClass::Persist(rWriter);
 	

@@ -200,7 +200,7 @@ bool RangeXDialogClass::ShowObjectSelector( std::string& rName)
 
 	if( IDOK == Result )
 	{
-		rName = SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().getLocation();
+		rName = SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().m_Location;
 		return true;
 	}
 

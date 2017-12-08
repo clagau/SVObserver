@@ -73,28 +73,28 @@ namespace SvOsl
 			}
 			if(nullptr != Iter.node()->parent())
 			{
-				ParentItem = Iter.node()->parent()->get()->second->getTreeItem();
+				ParentItem = Iter.node()->parent()->get()->second->m_TreeItem;
 			}
 			if( Iter->second->isNode() )
 			{
 				HTREEITEM Item = nullptr;
 				Item = InsertItem( TVIF_TEXT | TVIF_STATE | TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_PARAM, 
-					Iter->second->getName().c_str(),
-					Iter->second->getIconNumber(),
-					Iter->second->getIconNumber(),
+					Iter->second->m_Name.c_str(),
+					Iter->second->m_IconNumber,
+					Iter->second->m_IconNumber,
 					0,
 					0,
 					reinterpret_cast<LPARAM> (&Iter->first),
 					ParentItem,
 					TVI_LAST );
 
-				SetItemState( Item, INDEXTOSTATEIMAGEMASK( Iter->second->getCheckedState() ), TVIS_STATEIMAGEMASK );
-				Iter->second->setTreeItem( Item );
+				SetItemState( Item, INDEXTOSTATEIMAGEMASK( Iter->second->m_CheckedState ), TVIS_STATEIMAGEMASK );
+				Iter->second->m_TreeItem =  Item;
 			}
 			//On initial load check if leaf value selected when in single object selection mode
-			if( isSingleSelect() && Iter->second->isLeaf() && SvCl::IObjectSelectorItem::CheckedEnabled == Iter->second->getCheckedState() )
+			if( isSingleSelect() && Iter->second->isLeaf() && SvCl::ObjectSelectorItem::CheckedEnabled == Iter->second->m_CheckedState)
 			{
-				setCurrentSelection( Iter->second->getDisplayLocation() );
+				setCurrentSelection( Iter->second->m_DisplayLocation );
 				CurrentItems.insert( ParentItem );
 			}
 			++Iter;
@@ -145,9 +145,9 @@ namespace SvOsl
 
 			UpdateNode(*Iter->second);
 
-			if( isSingleSelect() && Iter->second->isLeaf() && SvCl::IObjectSelectorItem::CheckedEnabled == Iter->second->getCheckedState() )
+			if( isSingleSelect() && Iter->second->isLeaf() && SvCl::ObjectSelectorItem::CheckedEnabled == Iter->second->m_CheckedState )
 			{
-				setCurrentSelection( Iter->second->getDisplayLocation() );
+				setCurrentSelection( Iter->second->m_DisplayLocation );
 			}
 			++Iter;
 		}
@@ -235,7 +235,7 @@ namespace SvOsl
 			getRootItems( Items );
 		}
 
-		setCheckState( Items, SvCl::IObjectSelectorItem::CheckedEnabled );
+		setCheckState( Items, SvCl::ObjectSelectorItem::CheckedEnabled );
 	}
 
 	void NodeTreeCtrl::OnUncheckAll()
@@ -254,7 +254,7 @@ namespace SvOsl
 			getRootItems( Items );
 		}
 
-		setCheckState( Items, SvCl::IObjectSelectorItem::UncheckedEnabled );
+		setCheckState( Items, SvCl::ObjectSelectorItem::UncheckedEnabled );
 	}
 
 	void NodeTreeCtrl::changeSelectedItem( const HTREEITEM& rItem )
@@ -343,12 +343,12 @@ namespace SvOsl
 		{
 			if( Iter->second->isNode() )
 			{
-				SvCl::IObjectSelectorItem::CheckedStateEnum CheckedState = Iter->second->getCheckedState();
-				bool Checked =  SvCl::IObjectSelectorItem::CheckedEnabled == CheckedState || SvCl::IObjectSelectorItem::CheckedDisabled == CheckedState;
-				bool Tristate = SvCl::IObjectSelectorItem::TriStateEnabled == CheckedState || SvCl::IObjectSelectorItem::TriStateDisabled == CheckedState;
+				SvCl::ObjectSelectorItem::CheckedStateEnum CheckedState = Iter->second->m_CheckedState;
+				bool Checked =  SvCl::ObjectSelectorItem::CheckedEnabled == CheckedState || SvCl::ObjectSelectorItem::CheckedDisabled == CheckedState;
+				bool Tristate = SvCl::ObjectSelectorItem::TriStateEnabled == CheckedState || SvCl::ObjectSelectorItem::TriStateDisabled == CheckedState;
 				if( Checked || Tristate )
 				{
-					Expand( Iter->second->getTreeItem(), TVE_EXPAND );
+					Expand( Iter->second->m_TreeItem, TVE_EXPAND );
 					Result = true;
 				}
 			}
@@ -364,12 +364,12 @@ namespace SvOsl
 	void NodeTreeCtrl::UpdateNode( SvCl::ObjectSelectorItem& rItem )
 	{
 		bool isNode = rItem.isNode();
-		const HTREEITEM treeItem = rItem.getTreeItem();
+		const HTREEITEM treeItem = rItem.m_TreeItem;
 
 		if( isNode && ( nullptr != treeItem ) )
 		{
-			SvCl::IObjectSelectorItem::CheckedStateEnum CheckedState = static_cast<SvCl::IObjectSelectorItem::CheckedStateEnum>(GetItemState(treeItem, TVIS_STATEIMAGEMASK)>>12);
-			SvCl::IObjectSelectorItem::CheckedStateEnum itemCheckedState = rItem.getCheckedState();
+			SvCl::ObjectSelectorItem::CheckedStateEnum CheckedState = static_cast<SvCl::ObjectSelectorItem::CheckedStateEnum>(GetItemState(treeItem, TVIS_STATEIMAGEMASK)>>12);
+			SvCl::ObjectSelectorItem::CheckedStateEnum itemCheckedState = rItem.m_CheckedState;
 			//Check if state has changed
 			if( itemCheckedState != CheckedState )
 			{

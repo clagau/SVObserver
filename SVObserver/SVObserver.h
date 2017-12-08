@@ -21,7 +21,7 @@
 #include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "SVRemoteFontManager.h"
 #include "SVStatusLibrary/SVOIntelRAIDStatusClass.h"
-#include "SVOCore/SVUtilityIniClass.h"
+#include "InspectionEngine/SVUtilityIniClass.h"
 #include "SVIOTabbedView.h"
 #include "SVSystemLibrary/SVObserverEnums.h"
 #include "Definitions/SVPPQEnums.h"
@@ -35,9 +35,11 @@ class SVIODoc;
 class SVIPDoc;
 class SVMainFrame;
 class SVMessageWindowClass;
-
 class SVUserObjectListClass;
-class SVObjectWriter;
+namespace SvOi
+{
+	class IObjectWriter;
+}
 
 enum SVConfigFileActionsEnums
 {

@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "ObjectInterfaces/ISVFilter.h"
-#include "SVOCore/SVUnaryImageOperatorClass.h"
+#include "InspectionEngine/SVUnaryImageOperatorClass.h"
 
 
 #pragma endregion Includes

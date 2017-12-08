@@ -92,10 +92,9 @@
     <ClInclude Include="IMask.h" />
     <ClInclude Include="IMatroxImageData.h" />
     <ClInclude Include="IObjectManager.h" />
+    <ClInclude Include="IObjectWriter.h" />
     <ClInclude Include="IPatternAnalyzer.h" />
-    <ClInclude Include="ISelectorItemVector.h" />
     <ClInclude Include="IRootObject.h" />
-    <ClInclude Include="ISelectorItem.h" />
     <ClInclude Include="ISVFilter.h" />
     <ClInclude Include="IFormulaController.h" />
     <ClInclude Include="ISVImage.h" />

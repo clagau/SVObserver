@@ -13,9 +13,9 @@
 #include "SVLinearEdgeProcessingClass.h"
 #include "Definitions/Color.h"
 #include "Definitions/GlobalConst.h"
-#include "SVOCore/SVImageClass.h"
-#include "SVOCore/SVTool.h"
-#include "SVOCore/SVAnalyzer.h"
+#include "InspectionEngine/SVImageClass.h"
+#include "InspectionEngine/SVTool.h"
+#include "InspectionEngine/SVAnalyzer.h"
 #include "SVGlobal.h"
 
 #ifdef _DEBUG

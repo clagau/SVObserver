@@ -11,7 +11,7 @@
 
 #pragma once
 #pragma region Includes
-#include "SVOCore/SVClassInfoStruct.h"
+#include "InspectionEngine/SVClassInfoStruct.h"
 #pragma endregion Includes
 
 class SVIPDoc;

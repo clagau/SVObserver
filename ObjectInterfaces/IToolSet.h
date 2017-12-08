@@ -10,10 +10,14 @@
 #pragma region Includes
 #include "IObjectClass.h"
 #include "IEnumerateValueObject.h"
-#include "SVUtilityLibrary\SVGUID.h"
 #include "ISVImage.h"
 #include "IValueObject.h"
 #pragma endregion Includes
+
+#pragma region Declarations
+//! Declaration is in #include "SVUtilityLibrary\SVGUID.h"
+class SVGUID;
+#pragma endregion Declarations
 
 
 namespace SvOi

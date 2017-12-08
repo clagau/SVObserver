@@ -31,9 +31,9 @@
 #include "SVObjectLibrary/SVObjectClass.h"
 
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVOCore/SVEquation.h"
-#include "SVOCore/SVImageClass.h"
-#include "SVOCore/SVTool.h"
+#include "InspectionEngine/SVEquation.h"
+#include "InspectionEngine/SVImageClass.h"
+#include "InspectionEngine/SVTool.h"
 #include "SVToolSet.h"
 #include "SVInputObjectList.h"
 #include "SVDigitalInputObject.h"

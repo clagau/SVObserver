@@ -75,12 +75,6 @@
     <ClInclude Include="ITool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ISelectorItem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ISelectorItemVector.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="IBlobAnalyzer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -91,6 +85,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IDependencyManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IObjectWriter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

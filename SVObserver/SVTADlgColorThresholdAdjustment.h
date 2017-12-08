@@ -14,7 +14,7 @@
 #pragma region Includes
 #include "SVTADlgColorThresholdBasePage.h"
 #include "SVValueBaseNormalizerClass.h"
-#include "SVOCore/SVTaskObjectValueInterface.h"
+#include "InspectionEngine/SVTaskObjectValueInterface.h"
 #pragma endregion Includes
 
 class SVIPDoc;

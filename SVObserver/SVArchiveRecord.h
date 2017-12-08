@@ -10,8 +10,8 @@
 #include "SVMatroxLibrary\SVMatroxBuffer.h"
 #include "ArchiveMethodEnum.h"
 #include "SVDataManagerLibrary/DataManager.h"
-#include "SVOCore/SVTool.h"
-#include "SVOCore/SVImageObjectClass.h"
+#include "InspectionEngine/SVTool.h"
+#include "InspectionEngine/SVImageObjectClass.h"
 #pragma endregion Includes
 
 

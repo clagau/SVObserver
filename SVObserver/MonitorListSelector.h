@@ -44,14 +44,14 @@ private:
 	void BuildCheckItems();
 	
 	///Gets a Monitorobjectlist for the selected items 
-	MonitoredObjectList  GetMonitoredObjectList(const SvOsl::SelectorItemVector& rList);
+	MonitoredObjectList  GetMonitoredObjectList(const SvCl::SelectorItemVector& rList);
 
 	/// insert the selected Item to the monitorlist
 	void InsertSelectedListToMoniterList();
 	
 
 private:	
-	SvOsl::SelectorItemVector m_List;			//The selected list
+	SvCl::SelectorItemVector m_List;			//The selected list
 	bool m_bImage;
 	MonitorListType m_eListType;
 	RemoteMonitorNamedList m_MonitorList;

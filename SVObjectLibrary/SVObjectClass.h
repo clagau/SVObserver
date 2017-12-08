@@ -16,12 +16,12 @@
 //Moved to precompiled header: #include <iterator>
 
 #include "ObjectInterfaces/IObjectClass.h"
+#include "ObjectInterfaces/IObjectWriter.h"
 #include "SVUtilityLibrary/SVGUID.h"
 
 #include "SVObjectInfoStruct.h"
 #include "SVObjectLibrary.h"
 #include "SVOutObjectInfoStruct.h"
-#include "SVObjectWriter.h"
 #include "SVObjectInfoArrayClass.h"
 #include "SVUtilityLibrary/NameGuidList.h"
 #include "SVInputInfoListClass.h"
@@ -95,8 +95,8 @@ public:
 	virtual DWORD GetObjectColor() const;
 	virtual DWORD GetObjectState() const;
 
-	virtual void Persist( SVObjectWriter& rWriter );
-	virtual void PersistAttributes( SVObjectWriter& rWriter );
+	virtual void Persist( SvOi::IObjectWriter& rWriter );
+	virtual void PersistAttributes( SvOi::IObjectWriter& rWriter );
 
 	virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0 ) const;
 

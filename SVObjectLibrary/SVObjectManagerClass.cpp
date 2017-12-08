@@ -18,7 +18,6 @@
 #include "ObjectInterfaces/ISVImage.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVSystemLibrary/SVAutoLockAndReleaseTemplate.h"
-#include "SVImageLibrary\SVImageInfoClass.h"
 #include "SVClassRegisterListClass.h"
 #include "SVObjectLibrary.h"
 #include "SVObjectSubmitCommandFacade.h"

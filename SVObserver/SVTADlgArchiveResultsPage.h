@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVOGui\ISVPropertyPageDialog.h"
-#include "ObjectSelectorLibrary\SelectorItemVector.h"
+#include "SVContainerLibrary/SelectorItem.h"
 #include "SVArchiveTool.h"
 #include "SVGlobal.h"
 #include "Definitions/StringTypeDef.h"
@@ -64,7 +64,7 @@ protected:
 private:
 	SVToolAdjustmentDialogSheetClass* m_pParent; //Pointer to the Tool Adjust sheet
 	CListCtrl   m_ItemsSelected;				//The selected list control
-	SvOsl::SelectorItemVector m_List;			//The selected list
+	SvCl::SelectorItemVector m_List;			//The selected list
 	SVArchiveTool* m_pTool;						//Pointer to the Archive Tool
 	CImageList m_StateImageList;				//The state image list
 	CButton m_Select;							//The tree select button

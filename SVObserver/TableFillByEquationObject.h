@@ -10,7 +10,7 @@
 #pragma region Includes
 #include "SVObjectLibrary\SVObjectLibrary.h"
 #include "TableObject.h"
-#include "SVOCore/TableColumnEquation.h"
+#include "InspectionEngine/TableColumnEquation.h"
 #pragma endregion Includes
 
 #pragma region Declarations

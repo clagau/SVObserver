@@ -13,7 +13,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{565D8B90-E295-4003-9267-8A79660FFCA6}</ProjectGuid>
     <RootNamespace>SVJsonCommandServerLibrary</RootNamespace>
-    <Keyword>Win32Proj</Keyword>
+    <Keyword>Win64Proj</Keyword>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">

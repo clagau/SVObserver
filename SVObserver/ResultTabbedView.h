@@ -26,7 +26,7 @@ protected:
 public:
 	typedef SvXml::SVXMLMaterialsTree SVTreeType;
 
-	void GetParameters(SVObjectWriter& rWriter);
+	void GetParameters(SvOi::IObjectWriter& rWriter);
 	bool SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle hParent);
 	bool CheckParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle hParent);
 	void SetViewSize(CSize &Size);

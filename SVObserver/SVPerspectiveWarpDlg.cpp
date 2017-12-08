@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVPerspectiveWarpDlg.h"
 #include "svobserver.h"
-#include "SVOCore/SVTool.h"
+#include "InspectionEngine/SVTool.h"
 #include "SVPerspectiveTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 

@@ -8,11 +8,16 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary/SVGUID.h"
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "IObjectClass.h"
 #include "ISVImage.h"
 #pragma endregion Includes
+
+#pragma region Declarations
+//! Declaration is in #include "SVUtilityLibrary\SVGUID.h"
+class SVGUID;
+#pragma endregion Declarations
+
 
 namespace SvOi
 {

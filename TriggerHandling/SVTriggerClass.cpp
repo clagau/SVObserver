@@ -12,10 +12,9 @@
 #pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <fstream>
-
 #include "TriggerBasics.h"
 #include "SVTriggerClass.h"
-
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 namespace SvTh
@@ -38,9 +37,9 @@ namespace SvTh
 			HRESULT hr = pDevice->Notify( l_Response );
 
 			#ifdef SV_LOG_STATUS_INFO
-				std::string Text.Format( _T( "FinishProcess %s - HR = 0x%X" ), pDevice->GetDeviceName(), hr );
+				std::string LogEntry = SvUl::Format( _T( "FinishProcess %s - HR = 0x%X" ), pDevice->GetDeviceName(), hr );
 
-				pDevice->m_StatusLog.push_back( Text );
+				pDevice->m_StatusLog.push_back( LogEntry );
 			#endif
 		}
 
@@ -53,9 +52,6 @@ namespace SvTh
 	, m_triggerchannel(0)
 	, miChannelNumber(-1)
 	{
-		#ifdef SV_LOG_STATUS_INFO
-			m_StatusLog.Create();
-		#endif
 	}
 
 	SVTriggerClass::~SVTriggerClass()
@@ -182,24 +178,18 @@ namespace SvTh
 		}
   
 		#ifdef SV_LOG_STATUS_INFO
-			std::string l_FileName;
+		std::string FileName = SvUl::Format(_T("C:\\SVObserver\\%s.log"), GetDeviceName());
 
-			l_FileName.Format( _T( "C:\\SVObserver\\%s.log" ), GetDeviceName() );
+			std::fstream FileStream( FileName.c_str(), std::ios_base::trunc | std::ios_base::out );
 
-			std::fstream l_Stream( l_FileName.ToString(), std::ios_base::trunc | std::ios_base::out );
-
-			if( l_Stream.is_open() )
+			if( FileStream.is_open() )
 			{
-				for( int i = 0; i < m_StatusLog.GetCount(); ++i )
+				for( auto const& rEntry : m_StatusLog )
 				{
-					std::string l_String;
-
-					m_StatusLog.GetAt( i, &l_String );
-
-					l_Stream << l_String.ToString() << std::endl;
+					FileStream << rEntry.c_str() << std::endl;
 				}
 
-				l_Stream.close();
+				FileStream.close();
 
 				m_StatusLog.clear();
 			}

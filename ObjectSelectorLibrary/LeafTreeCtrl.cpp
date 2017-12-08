@@ -75,17 +75,17 @@ namespace SvOsl
 					HTREEITEM Item;
 
 					Item = InsertItem(TVIF_TEXT | TVIF_IMAGE | TVIF_STATE | TVIF_PARAM, 
-						IterChild->second->getName().c_str(),
-						IterChild->second->getIconNumber(),
-						IterChild->second->getIconNumber(),
+						IterChild->second->m_Name.c_str(),
+						IterChild->second->m_IconNumber,
+						IterChild->second->m_IconNumber,
 						0,
 						0,
 						reinterpret_cast<LPARAM> (&IterChild->first),
 						nullptr,
 						TVI_LAST);
 
-					SetItemState( Item, INDEXTOSTATEIMAGEMASK( IterChild->second->getCheckedState() ),  TVIS_STATEIMAGEMASK );
-					IterChild->second->setTreeItem( Item );
+					SetItemState( Item, INDEXTOSTATEIMAGEMASK( IterChild->second->m_CheckedState ),  TVIS_STATEIMAGEMASK );
+					IterChild->second->m_TreeItem =  Item;
 				}
 				++IterChild;
 			}
@@ -110,7 +110,7 @@ namespace SvOsl
 				{
 					if( IterChild->second->isLeaf() )
 					{
-						IterChild->second->setTreeItem( nullptr );
+						IterChild->second->m_TreeItem =  nullptr;
 					}
 
 					++IterChild;
@@ -133,15 +133,15 @@ namespace SvOsl
 			SvCl::ObjectTreeItems::iterator IterChild = Iter.node()->begin();
 			while( Iter.node()->end() != IterChild )
 			{
-				if( IterChild->second->isLeaf() && (nullptr != IterChild->second->getTreeItem()) )
+				if( IterChild->second->isLeaf() && (nullptr != IterChild->second->m_TreeItem) )
 				{
-					SvCl::IObjectSelectorItem::CheckedStateEnum CheckedState( SvCl::IObjectSelectorItem::EmptyEnabled );
+					SvCl::ObjectSelectorItem::CheckedStateEnum CheckedState( SvCl::ObjectSelectorItem::EmptyEnabled );
 					//The checked state is saved in the upper nibble of the item state (Filtered with 0xF000) and must be shifted by 12 to get the required value
-					CheckedState = static_cast<SvCl::IObjectSelectorItem::CheckedStateEnum> (GetItemState(IterChild->second->getTreeItem(), TVIS_STATEIMAGEMASK)>>12);
+					CheckedState = static_cast<SvCl::ObjectSelectorItem::CheckedStateEnum> (GetItemState(IterChild->second->m_TreeItem, TVIS_STATEIMAGEMASK)>>12);
 					//Check if state has changed
-					if( IterChild->second->getCheckedState() != CheckedState )
+					if( IterChild->second->m_CheckedState != CheckedState )
 					{
-						SetItemState( IterChild->second->getTreeItem(), INDEXTOSTATEIMAGEMASK( IterChild->second->getCheckedState() ),  TVIS_STATEIMAGEMASK );
+						SetItemState( IterChild->second->m_TreeItem, INDEXTOSTATEIMAGEMASK( IterChild->second->m_CheckedState ),  TVIS_STATEIMAGEMASK );
 					}
 				}
 				++IterChild;
@@ -191,7 +191,7 @@ namespace SvOsl
 
 		getRootItems( Items );
 
-		setCheckState( Items, SvCl::IObjectSelectorItem::CheckedEnabled );
+		setCheckState( Items, SvCl::ObjectSelectorItem::CheckedEnabled );
 	}
 
 	void LeafTreeCtrl::OnUncheckAll()
@@ -200,7 +200,7 @@ namespace SvOsl
 
 		getRootItems( Items );
 
-		setCheckState( Items, SvCl::IObjectSelectorItem::UncheckedEnabled );
+		setCheckState( Items, SvCl::ObjectSelectorItem::UncheckedEnabled );
 	}
 	#pragma endregion Protected Methods
 

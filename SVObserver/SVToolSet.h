@@ -14,9 +14,9 @@
 #include "ObjectInterfaces/IToolSet.h"
 #include "SVStatusLibrary/MessageContainer.h"
 #include "SVMainImageClass.h"
-#include "SVOCore/SVTool.h"
+#include "InspectionEngine/SVTool.h"
 #include "SVResultList.h"
-#include "SVOCore/SVTaskObjectList.h"
+#include "InspectionEngine/SVTaskObjectList.h"
 #pragma region Includes
 
 class SVConditionalClass;

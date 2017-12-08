@@ -17,7 +17,10 @@
 
 #pragma region Declarations
 class SVImageViewClass;
-class SVObjectWriter;
+namespace SvOi
+{
+	class IObjectWriter;
+}
 #pragma endregion Declarations
 
 class SVImageViewScroll : public CScrollView
@@ -38,7 +41,7 @@ public:
 	SVImageViewScroll();
 	virtual ~SVImageViewScroll();
 
-	void GetParameters(SVObjectWriter& rWriter);
+	void GetParameters(SvOi::IObjectWriter& rWriter);
 
 	typedef SvXml::SVXMLMaterialsTree SVTreeType;
 

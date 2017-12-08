@@ -12,8 +12,8 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <algorithm>
 #include "SVDlgImage.h"
-#include "GuiCommands/GetImage.h"
-#include "GuiCommands/GetOutputRectangle.h"
+#include "InspectionCommands/GetImage.h"
+#include "InspectionCommands/GetOutputRectangle.h"
 #include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
 
 #ifdef _DEBUG

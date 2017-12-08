@@ -12,24 +12,24 @@
 namespace SvOsl
 {
 	#pragma region Public Methods
-	inline const  SelectorItemVector& ObjectTreeGenerator::getSelectedObjects() const
+	inline const  SvCl::SelectorItemVector& ObjectTreeGenerator::getSelectedObjects() const
 	{
 		return m_SelectedObjects;
 	}
 
-	inline const  SelectorItemVector& ObjectTreeGenerator::getModifiedObjects() const
+	inline const  SvCl::SelectorItemVector& ObjectTreeGenerator::getModifiedObjects() const
 	{
 		return m_ModifiedObjects;
 	}
 
-	inline SelectorItem ObjectTreeGenerator::getSingleObjectResult() const
+	inline SvCl::SelectorItem ObjectTreeGenerator::getSingleObjectResult() const
 	{
 		//If Single select then it is the first result
 		if( 0 < m_SelectedObjects.size() )
 		{
 			return m_SelectedObjects[0];
 		}
-		return SelectorItem();
+		return SvCl::SelectorItem();
 	}
 
 	inline void ObjectTreeGenerator::setSelectorType( const SelectorTypeEnum& rSelectorType )
@@ -47,30 +47,14 @@ namespace SvOsl
 		ToolsetItemSelector toolsetItemSelector;
 
 		m_AttributesFilter = rOptions.getAttributesFilter();
-		SvOi::ISelectorItemVectorPtr GlobalList = globalSelector( m_AttributesFilter );
-		const SelectorItemVector* pGlobalList = static_cast<const SelectorItemVector*>(GlobalList.get());
-		if (nullptr != pGlobalList)
-		{
-			insertTreeObjects( *pGlobalList );
-		}
+		SvCl::SelectorItemVectorPtr pGlobalList = globalSelector( m_AttributesFilter );
+		insertTreeObjects(pGlobalList);
 
-		SvOi::ISelectorItemVectorPtr PpqList = ppqSelector( rOptions.getInspectionID(), m_AttributesFilter );
-		const SelectorItemVector* pPPQList = static_cast<const SelectorItemVector*>(PpqList.get());
-		if (nullptr != pPPQList)
-		{
-			insertTreeObjects( *pPPQList );
-		}
+		SvCl::SelectorItemVectorPtr pPpqList = ppqSelector( rOptions.getInspectionID(), m_AttributesFilter );
+		insertTreeObjects(pPpqList);
 
-		SvOi::ISelectorItemVectorPtr ToolsetList = toolsetItemSelector( rOptions );
-		const SelectorItemVector* pToolsetList = static_cast<const SelectorItemVector*>(ToolsetList.get());
-		if (nullptr != pToolsetList)
-		{
-			insertTreeObjects( *pToolsetList );
-		}
-		else
-		{
-			assert(false); // Shouldn't happen...
-		}
+		SvCl::SelectorItemVectorPtr pToolsetList = toolsetItemSelector( rOptions );
+		insertTreeObjects(pToolsetList);
 	}
 	#pragma endregion Public Methods
 } //namespace SvOsl

@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVGigeCameraROIDlg.h"
 #include "SVAcquisitionClass.h"
-#include "SVOCore/SVImageProcessingClass.h"
+#include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "CameraLibrary/SVStringValueDeviceParam.h"
 #include "SVOGui/DisplayHelper.h"

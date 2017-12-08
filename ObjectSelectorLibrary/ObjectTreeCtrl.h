@@ -134,14 +134,14 @@ namespace SvOsl
 		\param CheckedState <in> the state to change it to
 		\return True if state has changed
 		***********/
-		bool setCheckState( const TreeItemSet& rParentItems, SvCl::IObjectSelectorItem::CheckedStateEnum CheckedState = SvCl::IObjectSelectorItem::EmptyEnabled );
+		bool setCheckState( const TreeItemSet& rParentItems, SvCl::ObjectSelectorItem::CheckedStateEnum CheckedState = SvCl::ObjectSelectorItem::EmptyEnabled );
 
 		/**********
 		The method sets the state of the children items
 		\param rIter <in> a reference to the parent iterator
 		\param rCheckedState <in> a reference to the checked state
 		***********/
-		void setChildrenState( SvCl::ObjectTreeItems::iterator& rIter, SvCl::IObjectSelectorItem::CheckedStateEnum& rCheckedState );
+		void setChildrenState( SvCl::ObjectTreeItems::iterator& rIter, SvCl::ObjectSelectorItem::CheckedStateEnum& rCheckedState );
 
 		/**********
 		The method clears the last checked item for single select mode

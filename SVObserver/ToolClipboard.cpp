@@ -28,7 +28,7 @@
 #include "SVInspectionProcess.h"
 #include "SVObjectScriptParser.h"
 #include "SVToolSet.h"
-#include "SVOCore/SVTool.h"
+#include "InspectionEngine/SVTool.h"
 #include "SVParserProgressDialog.h"
 #include "SVInspectionTreeParser.h"
 #include "SVIPDoc.h"

@@ -15,7 +15,7 @@
 
 #include "SVInspectionProcess.h"
 #include "SVRemoteInputTool.h"
-#include "SVOCore/SVTool.h"
+#include "InspectionEngine/SVTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVToolset.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
@@ -124,11 +124,11 @@ void SVTADlgRemoteInputToolPage::OnBnClickedSelectInputButton()
 	{
 		SvDef::StringSet Items;
 
-		SvOsl::SelectorItem InsertItem;
+		SvCl::SelectorItem InsertItem;
 		SVObjectReference ObjectRef( m_pTool->GetInputObject() );
 
-		InsertItem.setName( ObjectRef.GetName().c_str() );
-		InsertItem.setLocation( ObjectRef.GetCompleteOneBasedObjectName().c_str() );
+		InsertItem.m_Name =  ObjectRef.GetName();
+		InsertItem.m_Location = ObjectRef.GetCompleteOneBasedObjectName();
 
 		std::string Location = SvOsl::ObjectTreeGenerator::Instance().convertObjectArrayName( InsertItem );
 		Items.insert( Location );
@@ -143,9 +143,9 @@ void SVTADlgRemoteInputToolPage::OnBnClickedSelectInputButton()
 
 	if( IDOK == Result )
 	{
-		m_InputName = SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().getLocation();
+		m_InputName = SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().m_Location;
 
-		SVGUID ObjectGuid(SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().getItemKey());
+		SVGUID ObjectGuid(SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().m_ItemKey);
 		m_pTool->SetInputObject( ObjectGuid );
 	}
 

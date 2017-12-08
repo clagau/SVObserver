@@ -14,7 +14,7 @@
 #pragma region Includes
 #include "SVUtilityLibrary/SVSharedPtr.h"
 #include "SvOGui/SVFormulaEditorPage.h"
-#include "SVOCore/SVConditional.h"
+#include "InspectionEngine/SVConditional.h"
 #pragma endregion Includes
 
 class SVToolSetAdjustmentDialogSheetClass : public CPropertySheet

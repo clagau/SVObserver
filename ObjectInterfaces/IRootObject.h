@@ -9,8 +9,8 @@
 #pragma once
 
 #pragma region Includes
-#include "ISelectorItemVector.h"
 #include "Definitions/StringTypeDef.h"
+#include "SVContainerLibrary/SelectorItem.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -33,7 +33,7 @@ namespace SvOi
 	/// \param AttributesAllowedFilter [in] Filter of the environment which are wanted. Default = 0, this means all objects.
 	/// \return rObjectNameList [out] The returned object name list.
 	//************************************
-	ISelectorItemVectorPtr getRootChildSelectorList(LPCTSTR Path = _T(""), UINT AttributesAllowedFilter = 0);
+	SvCl::SelectorItemVectorPtr getRootChildSelectorList(LPCTSTR Path = _T(""), UINT AttributesAllowedFilter = 0);
 
 	//************************************
 	/// Add the Root child objects

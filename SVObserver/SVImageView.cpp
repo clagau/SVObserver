@@ -17,18 +17,18 @@
 #include "SVImageLibrary/ImageFileUtilities.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "Definitions/GlobalConst.h"
-#include "SVObjectLibrary/SVObjectWriter.h"
+#include "ObjectInterfaces/IObjectWriter.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVAdjustToolSizePositionDlg.h"
-#include "SVOCore/SVAnalyzer.h"
+#include "InspectionEngine/SVAnalyzer.h"
 #include "SVDirectX.h"
 #include "SVDisplayImageSelect.h"
 #include "SVDrawObject.h"
-#include "SVOCore/SVImageProcessingClass.h"
+#include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVImageViewScroll.h"
 #include "SVIPDoc.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
@@ -1847,7 +1847,7 @@ BOOL SVImageViewClass::GetObjectAtPoint( POINT p_point )
 	return l_bOk;
 }
 
-void SVImageViewClass::GetParameters(SVObjectWriter& rWriter)
+void SVImageViewClass::GetParameters(SvOi::IObjectWriter& rWriter)
 {
 	_variant_t l_svVariant;
 

@@ -13,10 +13,10 @@
 #include "stdafx.h"
 #include "SVTADlgTransformationLearnPage.h"
 
-#include "SVOCore/SVEvaluate.h"
-#include "SVOCore/SVImageTransform.h"
+#include "InspectionEngine/SVEvaluate.h"
+#include "InspectionEngine/SVImageTransform.h"
 #include "SVIPDoc.h"
-#include "SVOCore/SVTool.h"
+#include "InspectionEngine/SVTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 
 #pragma endregion Includes

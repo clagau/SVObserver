@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVLinearLinePixelCountingAnalyzer.h"
 #include "SVGlobal.h"
-#include "SVOCore/SVImageClass.h"
+#include "InspectionEngine/SVImageClass.h"
 #include "SVLinearEdgeAProcessingClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes

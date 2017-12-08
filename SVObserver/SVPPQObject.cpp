@@ -4700,7 +4700,7 @@ HRESULT SVPPQObject::GetProduct(SVProductInfoStruct& p_rProduct, long lProcessCo
 	return l_Status;
 }
 
-void SVPPQObject::PersistInputs(SVObjectWriter& rWriter)
+void SVPPQObject::PersistInputs(SvOi::IObjectWriter& rWriter)
 {
 	SVIOEntryHostStructPtrVector ppIOEntries;
 	_variant_t l_svValue;

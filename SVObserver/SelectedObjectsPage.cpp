@@ -37,7 +37,7 @@ static const int IconGrowBy = 1;
 #pragma endregion Declarations
 
 #pragma region Constructor
-SelectedObjectsPage::SelectedObjectsPage( const std::string& rInspectionName, const SVGUID& rInspectionID, LPCTSTR Caption, const SvOsl::SelectorItemVector& rList, UINT AttributeFilters, int id )
+SelectedObjectsPage::SelectedObjectsPage( const std::string& rInspectionName, const SVGUID& rInspectionID, LPCTSTR Caption, const SvCl::SelectorItemVector& rList, UINT AttributeFilters, int id )
 : CPropertyPage(id)
 , m_InspectionName( rInspectionName )
 , m_InspectionID ( rInspectionID )
@@ -145,11 +145,10 @@ void SelectedObjectsPage::ReadSelectedObjects()
 	Prefix += _T(".Tool Set.");
 
 	int Index = 0;
-	SvOsl::SelectorItemVector::const_iterator Iter;
-	for ( Iter = m_List.begin(); m_List.end() != Iter ; ++Iter )
+	for (auto const& rEntry : m_List)
 	{
 		std::string Name;
-		Name = Iter->getLocation();
+		Name = rEntry.m_Location;
 		SvUl::searchAndReplace( Name, Prefix.c_str(), _T("") );
 
 		m_ItemsSelected.InsertItem(LVIF_STATE | LVIF_TEXT,
@@ -188,13 +187,10 @@ void SelectedObjectsPage::ShowObjectSelector()
 	SvOsl::SelectorOptions BuildOptions( InspectionGuid, AttributeFilters );
 	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 
-	SvOsl::SelectorItemVector::const_iterator Iter;
 	SvDef::StringSet CheckItems;
-	for ( Iter = m_List.begin(); m_List.end() != Iter ; ++Iter )
+	for (auto const rEntry : m_List)
 	{
-		std::string ObjectName;
-		ObjectName = Iter->getLocation();
-		CheckItems.insert( ObjectName );
+		CheckItems.insert(rEntry.m_Location);
 	}
 	SvOsl::ObjectTreeGenerator::Instance().setCheckItems( CheckItems );
 

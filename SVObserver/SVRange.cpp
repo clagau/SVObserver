@@ -14,7 +14,7 @@
 #include "SVRange.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVOCore/SVTool.h"
+#include "InspectionEngine/SVTool.h"
 #include "SVInspectionProcess.h"
 #include "RangeClassHelper.h"
 #include "SVStatusLibrary/ErrorNumbers.h"

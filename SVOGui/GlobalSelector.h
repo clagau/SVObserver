@@ -9,8 +9,8 @@
 #pragma once
 
 #pragma region Includes
-#include "ObjectInterfaces\ISelectorItemVector.h"
-#include "ObjectInterfaces\IRootObject.h"
+#include "SVContainerLibrary/SelectorItem.h"
+#include "ObjectInterfaces/IRootObject.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -18,7 +18,7 @@ namespace SvOg
 	class GlobalSelector
 	{
 	public:
-		SvOi::ISelectorItemVectorPtr operator()(UINT attribute)
+		SvCl::SelectorItemVectorPtr operator()(UINT attribute)
 		{
 			return SvOi::getRootChildSelectorList(_T(""), attribute);
 		}

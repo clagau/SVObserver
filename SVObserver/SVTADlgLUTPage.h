@@ -14,7 +14,7 @@
 #pragma region Includes
 #include "SVEnumerateCombo.h"
 #include "SVMFCControls/SVDlgGraph.h"
-#include "SVOCore/SVTaskObjectValueInterface.h"
+#include "InspectionEngine/SVTaskObjectValueInterface.h"
 #include "SVMFCControls/CLabel.h"
 #pragma endregion Includes
 

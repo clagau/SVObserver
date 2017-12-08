@@ -21,7 +21,7 @@
 #include "SVTimerLibrary/SVClock.h"
 #include "SVFileSystemLibrary/SVFileNameManagerClass.h"
 #include "SVGlobal.h"
-#include "SVOCore/SVImageClass.h"
+#include "InspectionEngine/SVImageClass.h"
 #include "SVInspectionProcess.h"
 #include "SVMemoryManager.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"

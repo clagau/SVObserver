@@ -12,7 +12,7 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
-#include "SVOCore/SVTaskObject.h"
+#include "InspectionEngine/SVTaskObject.h"
 #pragma endregion Includes
 
 class SVOCVCharacterResultClass : public SVTaskObjectClass

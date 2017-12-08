@@ -16,12 +16,12 @@
 #include "SVObserver.h"
 #include "SVIPDoc.h"
 #include "SVToolSet.h"
-#include "SVOCore/SVTool.h"
+#include "InspectionEngine/SVTool.h"
 #include "SVIODoc.h"
 #include "SVMainFrm.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVObjectLibrary/SVObjectWriter.h"
+#include "ObjectInterfaces/IObjectWriter.h"
 #include "SVConfigurationObject.h"
 #include "Definitions/SVUserMessage.h"
 #include "SVMessage/SVMessage.h"
@@ -832,7 +832,7 @@ SVIPDoc* ToolSetView::GetIPDoc() const
 	return dynamic_cast<SVIPDoc*>(GetDocument());
 }
 
-void ToolSetView::GetParameters(SVObjectWriter& rWriter)
+void ToolSetView::GetParameters(SvOi::IObjectWriter& rWriter)
 {
 	CRect l_cRect;
 

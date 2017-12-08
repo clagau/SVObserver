@@ -13,7 +13,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{EFFD70CB-3879-4A2F-99FE-B9A96BE8E55A}</ProjectGuid>
     <RootNamespace>CameraLibrary</RootNamespace>
-    <Keyword>Win32Proj</Keyword>
+    <Keyword>Win64Proj</Keyword>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">

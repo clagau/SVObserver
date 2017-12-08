@@ -113,21 +113,17 @@ void SVDataDefinitionSheet::OnOK()
 	EndDialog(IDOK);
 }
 
-void SVDataDefinitionSheet::initSelectedList( SvOsl::SelectorItemVector* pList, UINT Attribute )
+void SVDataDefinitionSheet::initSelectedList( SvCl::SelectorItemVector* pList, UINT Attribute )
 {
 	if( nullptr != pList )
 	{
 		SvOsl::SelectorOptions BuildOptions( m_InspectionID, Attribute );
 		SvOg::ToolSetItemSelector<SvCmd::AttributesSetFilterType> toolsetItemSelector;
-		SvOi::ISelectorItemVectorPtr pToolsetList =  toolsetItemSelector( BuildOptions );
+		SvCl::SelectorItemVectorPtr pToolsetList =  toolsetItemSelector( BuildOptions );
 		//Copy list to member variable for easier use
-		if( !pToolsetList.empty() )
+		if( nullptr != pToolsetList )
 		{
-			SvOsl::SelectorItemVector* pSelectorList = dynamic_cast<SvOsl::SelectorItemVector*> (pToolsetList.get());
-			if( nullptr != pSelectorList )
-			{
-				pList->swap(*pSelectorList);
-			}
+			pList->swap(*pToolsetList);
 		}
 	}
 }
@@ -135,7 +131,7 @@ void SVDataDefinitionSheet::initSelectedList( SvOsl::SelectorItemVector* pList, 
 bool SVDataDefinitionSheet::setChangedData( SelectedObjectsPage* const pPage )
 {
 	bool Result( false );
-	SvOsl::SelectorItemVector* pList( nullptr);
+	SvCl::SelectorItemVector* pList( nullptr);
 
 	if( nullptr != pPage && nullptr != pPage->GetSafeHwnd() )
 	{
@@ -159,7 +155,7 @@ bool SVDataDefinitionSheet::setChangedData( SelectedObjectsPage* const pPage )
 
 		if( nullptr != pList )
 		{
-			const SvOsl::SelectorItemVector& rCurrentList( pPage->getList() );
+			const SvCl::SelectorItemVector& rCurrentList( pPage->getList() );
 
 			if( rCurrentList != *pList )
 			{
@@ -176,15 +172,14 @@ bool SVDataDefinitionSheet::setChangedData( SelectedObjectsPage* const pPage )
 	return Result;
 }
 
-void SVDataDefinitionSheet::setAttributes( const SvOsl::SelectorItemVector& rList, UINT Attribute, bool Clear ) const
+void SVDataDefinitionSheet::setAttributes( const SvCl::SelectorItemVector& rList, UINT Attribute, bool Clear ) const
 {
-	SvOsl::SelectorItemVector::const_iterator Iter;
-	for( Iter = rList.begin(); rList.end() != Iter ; ++Iter )
+	for(auto const& rEntry : rList)
 	{
-		if( Iter->isSelected() )
+		if (rEntry.m_Selected)
 		{
 			//The item key is the object GUID
-			SVGUID ObjectGuid( Iter->getItemKey() );
+			SVGUID ObjectGuid{ rEntry.m_ItemKey };
 
 			SVObjectClass* pObject( nullptr );
 			SVObjectManagerClass::Instance().GetObjectByIdentifier( ObjectGuid, pObject );
@@ -193,9 +188,9 @@ void SVDataDefinitionSheet::setAttributes( const SvOsl::SelectorItemVector& rLis
 			{
 				SVObjectReference ObjectRef = pObject;
 				//If an array must set the index
-				if( Iter->isArray() )
+				if(rEntry.m_Array)
 				{
-					ObjectRef.SetArrayIndex( Iter->getArrayIndex() );
+					ObjectRef.SetArrayIndex(rEntry.m_ArrayIndex);
 				}
 				//Reset the attribute 
 				SvOi::SetAttributeType AddRemoveType = !Clear ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;

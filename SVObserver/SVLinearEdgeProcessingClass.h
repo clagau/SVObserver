@@ -11,7 +11,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVOCore/SVTaskObject.h"
+#include "InspectionEngine/SVTaskObject.h"
 #pragma region Includes
 
 class SVLinearEdgeProcessingClass : public SVTaskObjectClass  

@@ -17,9 +17,9 @@
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 
 #include "SVAnalyzerLuminanceSetup.h"
-#include "SVOCore/SVDataBuffer.h"
-#include "SVOCore/SVImageClass.h"
-#include "SVOCore/SVImageProcessingClass.h"
+#include "InspectionEngine/SVDataBuffer.h"
+#include "InspectionEngine/SVImageClass.h"
+#include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVResultLong.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"

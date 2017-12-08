@@ -13,8 +13,8 @@
 #include "stdafx.h"
 #include "SVLUTOperator.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "SVOCore/SVImageClass.h"
-#include "SVOCore/SVImageProcessingClass.h"
+#include "InspectionEngine/SVImageClass.h"
+#include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVLUTEquation.h"
 #pragma endregion Includes
 
