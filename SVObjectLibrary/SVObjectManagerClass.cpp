@@ -268,7 +268,7 @@ HRESULT SVObjectManagerClass::GetObjectByIdentifier( const SVGUID& rObjectID, SV
 	{
 		SVUniqueObjectEntryStructPtr pUniqueObject = getUniqueObjectEntry( rObjectID );
 
-		if( !( pUniqueObject.empty() ) )
+		if(nullptr != pUniqueObject)
 		{
 			rpObject = pUniqueObject->m_pObject;
 		}
@@ -448,9 +448,9 @@ bool SVObjectManagerClass::CreateUniqueObjectID( SVObjectClass* pObject )
 
 		if( Result )
 		{
-			SVUniqueObjectEntryStructPtr pUniqueObject = new SVUniqueObjectEntryStruct;
+			SVUniqueObjectEntryStructPtr pUniqueObject{ new SVUniqueObjectEntryStruct };
 
-			Result = !( pUniqueObject.empty() );
+			Result = (nullptr != pUniqueObject );
 
 			if( Result )
 			{
@@ -491,13 +491,13 @@ bool SVObjectManagerClass::OpenUniqueObjectID( SVObjectClass* pObject )
 		{
 			SVUniqueObjectEntryStructPtr pUniqueObject = getUniqueObjectEntry( pObject->m_outObjectInfo.m_UniqueObjectID );
 
-			Result = ( pUniqueObject.empty() );
+			Result = ( nullptr == pUniqueObject);
 
 			if( Result )
 			{
-				pUniqueObject = new SVUniqueObjectEntryStruct;
+				pUniqueObject = SVUniqueObjectEntryStructPtr{ new SVUniqueObjectEntryStruct };
 
-				Result = !( pUniqueObject.empty() );
+				Result = (nullptr != pUniqueObject);
 
 				if( Result )
 				{
@@ -580,7 +580,7 @@ SVObjectClass* SVObjectManagerClass::GetObject( const SVGUID& rGuid ) const
 	{
 		SVUniqueObjectEntryStructPtr pUniqueObject = getUniqueObjectEntry( rGuid );
 
-		if( !( pUniqueObject.empty() ) )
+		if(nullptr != pUniqueObject )
 		{
 			pObject = pUniqueObject->m_pObject;
 		}
@@ -835,7 +835,7 @@ HRESULT SVObjectManagerClass::AttachObserver( const std::string& rSubjectDataNam
 		SVUniqueObjectEntryStructPtr pSubjectObject = getUniqueObjectEntry( rSubjectID );
 		SVUniqueObjectEntryStructPtr pObserverObject = getUniqueObjectEntry( rObserverID );
 		
-		if( !( pSubjectObject.empty() ) && !( pObserverObject.empty() ) )
+		if(nullptr != pSubjectObject && nullptr != pObserverObject )
 		{
 			SVGUID SubjectID = GetSubjectID( rSubjectDataName, pObserverObject );
 
@@ -871,7 +871,7 @@ HRESULT SVObjectManagerClass::AttachObserver( const std::string& rSubjectDataNam
 		SVUniqueObjectEntryStructPtr pSubjectObject = getUniqueObjectEntry( rSubjectID );
 		SVCookieEntryStructPtr pObserverObject = GetCookieEntry( p_Cookie );
 		
-		if( !( pSubjectObject.empty() ) && !( pObserverObject.empty() ) )
+		if( nullptr != pSubjectObject && nullptr != pObserverObject )
 		{
 			SVGUID l_SubjectID = GetSubjectID( rSubjectDataName, pObserverObject );
 
@@ -914,7 +914,7 @@ HRESULT SVObjectManagerClass::EnableObserver( const std::string& rSubjectDataNam
 	{
 		SVUniqueObjectEntryStructPtr pSubjectObject = getUniqueObjectEntry( rSubjectID );
 		
-		if( !pSubjectObject.empty() )
+		if( nullptr != pSubjectObject)
 		{
 			pSubjectObject->m_DataNameSubjectObservers[ rSubjectDataName ].m_SubjectObservers[ rObserverID ] = 1;
 		}
@@ -945,7 +945,7 @@ HRESULT SVObjectManagerClass::EnableObserver( const std::string& rSubjectDataNam
 	{
 		SVUniqueObjectEntryStructPtr pSubjectObject = getUniqueObjectEntry( rSubjectID );
 		
-		if( !( pSubjectObject.empty() ) )
+		if(nullptr != pSubjectObject)
 		{
 			pSubjectObject->m_DataNameSubjectObservers[ rSubjectDataName ].m_SubjectCookies[ Cookie ] = 1;
 		}
@@ -976,7 +976,7 @@ HRESULT SVObjectManagerClass::DisableObserver( const std::string& rSubjectDataNa
 	{
 		SVUniqueObjectEntryStructPtr pSubjectObject = getUniqueObjectEntry( rSubjectID );
 		
-		if( !( pSubjectObject.empty() ) )
+		if(nullptr != pSubjectObject)
 		{
 			pSubjectObject->m_DataNameSubjectObservers[ rSubjectDataName ].m_SubjectObservers[ rObserverID ] = 0;
 		}
@@ -1007,7 +1007,7 @@ HRESULT SVObjectManagerClass::DisableObserver( const std::string& rSubjectDataNa
 	{
 		SVUniqueObjectEntryStructPtr pSubjectObject = getUniqueObjectEntry( rSubjectID );
 		
-		if( !( pSubjectObject.empty() ) )
+		if( nullptr != pSubjectObject)
 		{
 			pSubjectObject->m_DataNameSubjectObservers[ rSubjectDataName ].m_SubjectCookies[ Cookie ] = 0;
 		}
@@ -1030,14 +1030,14 @@ HRESULT SVObjectManagerClass::DetachObserver( const std::string& rSubjectDataNam
 	{
 		SVUniqueObjectEntryStructPtr pObserverObject = getUniqueObjectEntry( rObserverID );
 		
-		if( !( pObserverObject.empty() ) )
+		if(nullptr != pObserverObject)
 		{
 			pObserverObject->m_SubjectIDs.erase( rSubjectDataName );
 		}
 
 		SVUniqueObjectEntryStructPtr pSubjectObject = getUniqueObjectEntry( rSubjectID );
 		
-		if( !( pSubjectObject.empty() ) )
+		if(nullptr != pSubjectObject)
 		{
 			pSubjectObject->m_DataNameSubjectObservers[ rSubjectDataName ].m_SubjectObservers.erase( rObserverID );
 		}
@@ -1060,14 +1060,14 @@ HRESULT SVObjectManagerClass::DetachObserver( const std::string& rSubjectDataNam
 	{
 		SVCookieEntryStructPtr pObserverObject = GetCookieEntry( Cookie );
 		
-		if( !pObserverObject.empty() )
+		if(nullptr != pObserverObject)
 		{
 			pObserverObject->m_SubjectIDs.erase( rSubjectDataName );
 		}
 
 		SVUniqueObjectEntryStructPtr pSubjectObject = getUniqueObjectEntry( rSubjectID );
 		
-		if( !( pSubjectObject.empty() ) )
+		if(nullptr != pSubjectObject)
 		{
 			pSubjectObject->m_DataNameSubjectObservers[ rSubjectDataName ].m_SubjectCookies.erase( Cookie );
 		}
@@ -1393,7 +1393,7 @@ HRESULT SVObjectManagerClass::getTreeList(const std::string& rPath, SVObjectRefe
 			{
 				pUniqueObjectEntry = Iter->second;
 
-				if( !pUniqueObjectEntry.empty() && nullptr != pUniqueObjectEntry->m_pObject )
+				if( nullptr != pUniqueObjectEntry && nullptr != pUniqueObjectEntry->m_pObject )
 				{
 					if( (pUniqueObjectEntry->m_pObject->ObjectAttributesAllowed() & AttributesAllowedFilter) == AttributesAllowedFilter )
 					{
@@ -1455,7 +1455,7 @@ SVGUID SVObjectManagerClass::GetSubjectID( const std::string& rSubjectDataName, 
 {
 	SVGUID Result;
 
-	if( !( pObjectEntry.empty() ) )
+	if(nullptr != pObjectEntry)
 	{
 		SVAutoLockAndReleaseTemplate< SVCriticalSection > AutoLock;
 
@@ -1484,7 +1484,7 @@ SVGUID SVObjectManagerClass::GetSubjectID( const std::string& rSubjectDataName, 
 {
 	SVGUID Result;
 
-	if( !pCookieEntry.empty() )
+	if(nullptr != pCookieEntry)
 	{
 		SVAutoLockAndReleaseTemplate< SVCriticalSection > AutoLock;
 
@@ -1554,19 +1554,19 @@ SVObjectManagerClass::SVUniqueObjectEntryStructPtr SVObjectManagerClass::getUniq
 		{
 			SVUniqueObjectEntryMap::const_iterator Iter( m_UniqueObjectEntries.begin() );
 
-			while( pUniqueObjectEntry.empty() && Iter != m_UniqueObjectEntries.end() )
+			while( nullptr == pUniqueObjectEntry && Iter != m_UniqueObjectEntries.end() )
 			{
 				pUniqueObjectEntry = Iter->second ;
 
-				if( !pUniqueObjectEntry.empty() )
+				if(nullptr != pUniqueObjectEntry )
 				{
 					if( nullptr == pUniqueObjectEntry->m_pObject || pUniqueObjectEntry->m_pObject->GetName() != rName )
 					{
-						pUniqueObjectEntry.clear();
+						pUniqueObjectEntry.reset();
 					}
 				}
 
-				if( pUniqueObjectEntry.empty() )
+				if(nullptr == pUniqueObjectEntry)
 				{
 					++Iter;
 				}
@@ -1585,7 +1585,7 @@ HRESULT SVObjectManagerClass::GetSubjectDataNames( const SVGUID& rSubjectID, SVS
 
 	SVUniqueObjectEntryStructPtr pUniqueObject = getUniqueObjectEntry( rSubjectID );
 
-	if( !( pUniqueObject.empty() ) )
+	if(nullptr != pUniqueObject )
 	{
 		SVAutoLockAndReleaseTemplate< SVCriticalSection > AutoLock;
 
@@ -1626,7 +1626,7 @@ HRESULT SVObjectManagerClass::GetObserverDataNames( long Cookie, SVSubjectDataNa
 
 	SVCookieEntryStructPtr pCookie = GetCookieEntry( Cookie );
 
-	if( !pCookie.empty() )
+	if(nullptr != pCookie)
 	{
 		SVAutoLockAndReleaseTemplate< SVCriticalSection > AutoLock;
 
@@ -1667,7 +1667,7 @@ HRESULT SVObjectManagerClass::GetObserverDataNames( const SVGUID& rObserverID, S
 
 	SVUniqueObjectEntryStructPtr pUniqueObject = getUniqueObjectEntry( rObserverID );
 
-	if( !pUniqueObject.empty() )
+	if(nullptr != pUniqueObject)
 	{
 		SVAutoLockAndReleaseTemplate< SVCriticalSection > AutoLock;
 
@@ -1708,7 +1708,7 @@ HRESULT SVObjectManagerClass::GetObservers( const std::string& rSubjectDataName,
 
 	SVUniqueObjectEntryStructPtr pUniqueObject = getUniqueObjectEntry( rSubjectID );
 
-	if( !pUniqueObject.empty() )
+	if(nullptr != pUniqueObject)
 	{
 		SVAutoLockAndReleaseTemplate< SVCriticalSection > AutoLock;
 
@@ -1753,7 +1753,7 @@ HRESULT SVObjectManagerClass::GetObservers( const std::string& rSubjectDataName,
 
 	SVUniqueObjectEntryStructPtr pUniqueObject = getUniqueObjectEntry( rSubjectID );
 
-	if( !( pUniqueObject.empty() ) )
+	if(nullptr != pUniqueObject)
 	{
 		SVAutoLockAndReleaseTemplate< SVCriticalSection > AutoLock;
 

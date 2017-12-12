@@ -133,7 +133,7 @@ HRESULT SVRemoteInputTool::ProcessNotifyData( SVObjectCommandDataJsonPtr& p_rDat
 
 			if( nullptr != pInspection )
 			{
-				SVCommandTemplatePtr l_CommandPtr = new SVCommandQueueElement( GetUniqueObjectID(), p_rDataPtr );
+				SVCommandTemplatePtr l_CommandPtr{ new SVCommandQueueElement(GetUniqueObjectID(), p_rDataPtr) };
 
 				l_Status = SVObjectManagerClass::Instance().SubmitCommand( *pInspection, l_CommandPtr );
 
@@ -307,7 +307,7 @@ HRESULT SVRemoteInputTool::ProcessCommandQueue()
 
 		SVObjectCommandDataJsonPtr l_CommandElementPtr;
 
-		if( m_Commands.RemoveHead( &l_CommandElementPtr ) && !( l_CommandElementPtr.empty() ) )
+		if( m_Commands.RemoveHead( &l_CommandElementPtr ) && nullptr != l_CommandElementPtr )
 		{
 			Json::Reader l_Reader;
 			Json::Value l_JsonValues;
@@ -415,7 +415,7 @@ HRESULT SVRemoteInputTool::SVCommandQueueElement::Execute()
 {
 	HRESULT l_Status = S_OK;
 
-	if( !( m_JsonCommandPtr.empty() ) )
+	if(nullptr != m_JsonCommandPtr)
 	{
 		SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( m_ObjectId );
 		SVRemoteInputTool* l_pTool = dynamic_cast< SVRemoteInputTool* >( l_pObject );

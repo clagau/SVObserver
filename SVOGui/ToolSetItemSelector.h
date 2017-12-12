@@ -9,10 +9,9 @@
 #pragma once
 
 #pragma region Includes
+//Moved to precompiled header: #include <memory>
 //Moved to precompiled header: #include <boost\bind.hpp>
 #include "SVContainerLibrary/SelectorItem.h"
-#include "SVUtilityLibrary\SVSharedPtr.h"
-
 #include "InspectionCommands\GetSelectorList.h"
 #include "ObjectSelectorLibrary\SelectorOptions.h"
 #include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
@@ -29,7 +28,7 @@ namespace SvOg
 		{
 			SvCl::SelectorItemVectorPtr SelectorList;
 			
-			typedef SVSharedPtr<SvCmd::GetSelectorList> CommandPtr;
+			typedef std::shared_ptr<SvCmd::GetSelectorList> CommandPtr;
 		
 			const SVGUID& rGuid = (GUID_NULL != rOptions.getInstanceID() ) ? rOptions.getInstanceID() : rOptions.getInspectionID();
 			CommandPtr commandPtr(new SvCmd::GetSelectorList(rGuid, FilterType, rOptions.getAttributesFilter(), rOptions.getWholeArray()));

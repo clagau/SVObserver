@@ -273,7 +273,7 @@ private:
 	#pragma endregion Member Variables
 };
 
-typedef SVSharedPtr<BasicValueObject> BasicValueObjectPtr;
+typedef std::shared_ptr<BasicValueObject> BasicValueObjectPtr;
 typedef std::pair<std::string, BasicValueObjectPtr> NameBasicValuePtrPair;
 typedef std::vector<NameBasicValuePtrPair> NameBasicValuePtrVector;
 

@@ -13,7 +13,7 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <comutil.h>
-#include "SVUtilityLibrary/SVSharedPtr.h"
+//Moved to precompiled header: #include <memory>
 #pragma endregion Includes
 
 namespace  SvXml
@@ -47,7 +47,7 @@ namespace  SvXml
 
 	};
 
-	typedef SVSharedPtr< SVMaterialData > SVMaterialDataPtr;
+	typedef std::shared_ptr< SVMaterialData > SVMaterialDataPtr;
 } //namespace SvXml
 
 

@@ -272,10 +272,10 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 							pPPQ = pConfig->GetPPQ( k );
 							if( nullptr != pPPQ )
 							{
-								pIOEntry = new SVIOEntryHostStruct;
+								pIOEntry = SVIOEntryHostStructPtr{ new SVIOEntryHostStruct };
 								SVVariantValueObjectClass* pValueObject = new SVVariantValueObjectClass;
 
-								if( !( pIOEntry.empty() ) && pValueObject )
+								if(nullptr != pIOEntry && nullptr != pValueObject )
 								{
 									pValueObject->SetName( RemoteInputName.c_str() );
 									pValueObject->SetObjectOwner(GetIOController());
@@ -334,7 +334,7 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 								if( nullptr != pPPQ ) { pPPQ->RemoveInput( pIOEntry ); }
 							}// end for
 
-							pIOEntry.clear();
+							pIOEntry.reset();
 
 							delete pRemoteInput;
 							j++;

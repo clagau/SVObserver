@@ -46,12 +46,12 @@ bool SVIOEntryStruct::operator<( const SVIOEntryStruct& p_rsvObject ) const
 
 bool SVIOEntryStruct::empty() const
 {
-	return m_IOEntryPtr.empty();
+	return (nullptr == m_IOEntryPtr);
 }
 
 void SVIOEntryStruct::clear()
 {
-	m_IOEntryPtr.clear();
+	m_IOEntryPtr.reset();
 
 	m_EntryValid = false;
 	m_CombinedValue = false;

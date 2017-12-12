@@ -38,7 +38,7 @@ public:
 	HRESULT GetNextBuffer( SVImageBufferInterface& p_rBuffer );
 
 	long m_BufferInUse;
-	SVSmartHandlePointer m_pImage;
+	SVImageBufferHandlePtr m_pImage;
 
 	int m_ScrollY;
 	int m_ScrollX;

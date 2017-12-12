@@ -13,7 +13,6 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
-#include "SVUtilityLibrary/SVSharedPtr.h"
 #pragma endregion Includes
 
 class SVCommandDataFacade
@@ -33,5 +32,5 @@ private:
 
 };
 
-typedef SVSharedPtr< SVCommandDataFacade > SVCommandDataFacadePtr;
+typedef std::shared_ptr< SVCommandDataFacade > SVCommandDataFacadePtr;
 

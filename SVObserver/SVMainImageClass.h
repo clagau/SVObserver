@@ -30,8 +30,8 @@ public:
 
 	virtual bool CopyImageTo( SVImageIndexStruct lIndex ) override;
 
-	virtual bool GetImageHandle( SVSmartHandlePointer& p_rHandlePtr ) override;
-	virtual bool GetImageHandle( SVImageIndexStruct svIndex, SVSmartHandlePointer& rHandle ) override;
+	virtual bool GetImageHandle( SVImageBufferHandlePtr& p_rHandlePtr ) override;
+	virtual bool GetImageHandle( SVImageIndexStruct svIndex, SVImageBufferHandlePtr& rHandle ) override;
 
 	virtual const SvTl::SVTimeStamp& GetLastResetTimeStamp() const override;
 	

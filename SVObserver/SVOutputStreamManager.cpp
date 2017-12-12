@@ -38,9 +38,9 @@ SVOutputStreamManager::~SVOutputStreamManager()
 
 void SVOutputStreamManager::Startup(unsigned short PortNumber)
 {
-	m_SocketNotifyPtr = new SVOutputSocketObserver( boost::bind( &SVJsonCommandServer::WriteJson, &m_SocketServer, _1 ) );
+	m_SocketNotifyPtr = SVObserverNotificationFunctorPtr{ new SVOutputSocketObserver(boost::bind(&SVJsonCommandServer::WriteJson, &m_SocketServer, _1)) };
 
-	if( !( m_SocketNotifyPtr.empty() ) )
+	if(nullptr != m_SocketNotifyPtr)
 	{
 		long l_NewCookie = 0;
 
@@ -85,7 +85,7 @@ void SVOutputStreamManager::Shutdown()
 	m_OutputStream.second.clear();
 	m_OutputStream.first.clear();
 	m_OutputSocketCookie = 0;
-	m_SocketNotifyPtr.clear();
+	m_SocketNotifyPtr.reset();
 }
 
 HRESULT SVOutputStreamManager::InsertOutputController( const SVGUID& rObjectId )
@@ -235,9 +235,9 @@ HRESULT SVOutputStreamManager::SendCommandToOutputStream( const std::string& rCm
 
 	if( !( rName.empty() ) && ( rName == m_OutputStream.first ) )
 	{
-		SVObjectCommandDataJsonPtr CommandDataPtr = new SVObjectCommandDataJson();
+		SVObjectCommandDataJsonPtr CommandDataPtr{ new SVObjectCommandDataJson() };
 
-		if( !( CommandDataPtr.empty() ) )
+		if(nullptr != CommandDataPtr)
 		{
 			hr = CommandDataPtr->SetJsonCommand( rJsonCommand );
 

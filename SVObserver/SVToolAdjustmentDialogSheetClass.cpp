@@ -119,7 +119,8 @@ SVToolAdjustmentDialogSheetClass::~SVToolAdjustmentDialogSheetClass()
 
 void SVToolAdjustmentDialogSheetClass::addPages()
 {
-	SvOg::SVFormulaEditorPageClass* pConditionalDlg = new SvOg::SVFormulaEditorPageClass( new SvOg::FormulaController(m_InspectionID, m_TaskObjectID, SvDef::SVObjectTypeInfoStruct(SvDef::SVEquationObjectType, SvDef::SVConditionalObjectType), false), true, IDS_CONDITIONAL_STRING, IDS_TOOL_STRING );
+	SvOi::IFormulaControllerPtr pFormularController{ new SvOg::FormulaController(m_InspectionID, m_TaskObjectID, SvDef::SVObjectTypeInfoStruct(SvDef::SVEquationObjectType, SvDef::SVConditionalObjectType), false) };
+	SvOg::SVFormulaEditorPageClass* pConditionalDlg{ new SvOg::SVFormulaEditorPageClass(pFormularController, true, IDS_CONDITIONAL_STRING, IDS_TOOL_STRING) };
 
 	// Get LUT Operator...RO_22Mar2000
 	BOOL bHasLUT = FALSE;
@@ -226,7 +227,8 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 		case SvDef::SVMathToolObjectType:
 			{
 				SvDef::SVObjectTypeInfoStruct info(SvDef::SVEquationObjectType, SvDef::SVMathEquationObjectType);
-				AddPage( new SvOg::SVFormulaEditorPageClass( new SvOg::FormulaController(m_InspectionID, m_TaskObjectID, info), false ) );
+				SvOi::IFormulaControllerPtr pFormularController{ new SvOg::FormulaController(m_InspectionID, m_TaskObjectID, info) };
+				AddPage( new SvOg::SVFormulaEditorPageClass(pFormularController, false) );
 				AddPage( new SvOg::SVToolAdjustmentDialogPassFailPageClass( m_InspectionID, m_TaskObjectID) );
 				AddPage( pConditionalDlg );
 			}

@@ -9,7 +9,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary/SVSharedPtr.h"
 #include "ObjectInterfaces\IObjectManager.h"
 #include "ObjectInterfaces\ITaskObject.h"
 #include "ObjectInterfaces\IInspectionProcess.h"
@@ -65,6 +64,6 @@ namespace SvCmd
 		SVGUID m_InspectionID;
 		SVGUID m_ToolID;
 	};
-	typedef SVSharedPtr<InspectionRunOnce> InspectionRunOncePtr;
+	typedef std::shared_ptr<InspectionRunOnce> InspectionRunOncePtr;
 
 } //namespace SvCmd

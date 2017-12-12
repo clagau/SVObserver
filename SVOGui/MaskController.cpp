@@ -29,11 +29,11 @@ namespace SvOg
 	{
 		// Get Instance GUID for the Mask Operator...
 		typedef SvCmd::GetInstanceIDByTypeInfo Command;
-		typedef SVSharedPtr<Command> CommandPtr;
+		typedef std::shared_ptr<Command> CommandPtr;
 	
 		SvDef::SVObjectTypeInfoStruct info(SvDef::SVUnaryImageOperatorObjectType, SvDef::SVUserMaskOperatorObjectType);
 	
-		CommandPtr commandPtr = CommandPtr(new Command(m_TaskObjectID, info));
+		CommandPtr commandPtr = CommandPtr{ new Command(m_TaskObjectID, info) };
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
@@ -51,9 +51,9 @@ namespace SvOg
 	IPictureDisp* MaskController::GetReferenceImage() const
 	{
 		typedef SvCmd::GetReferenceImage Command;
-		typedef SVSharedPtr<Command> CommandPtr;
+		typedef std::shared_ptr<Command> CommandPtr;
 
-		CommandPtr commandPtr = new Command(m_maskOperatorID);
+		CommandPtr commandPtr{ new Command(m_maskOperatorID) };
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
@@ -66,9 +66,9 @@ namespace SvOg
 	IPictureDisp* MaskController::GetMaskImage() const
 	{
 		typedef SvCmd::GetMaskImage Command;
-		typedef SVSharedPtr<Command> CommandPtr;
+		typedef std::shared_ptr<Command> CommandPtr;
 
-		CommandPtr commandPtr = new Command(m_maskOperatorID);
+		CommandPtr commandPtr{ new Command(m_maskOperatorID) };
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
@@ -81,9 +81,9 @@ namespace SvOg
 	HRESULT MaskController::ImportMask(const std::string& filename)
 	{
 		typedef SvCmd::ImportMask Command;
-		typedef SVSharedPtr<Command> CommandPtr;
+		typedef std::shared_ptr<Command> CommandPtr;
 
-		CommandPtr commandPtr = new Command(m_maskOperatorID, filename);
+		CommandPtr commandPtr{ new Command(m_maskOperatorID, filename) };
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		return hr;
@@ -92,9 +92,9 @@ namespace SvOg
 	HRESULT MaskController::ExportMask(const std::string& filename)
 	{
 		typedef SvCmd::ExportMask Command;
-		typedef SVSharedPtr<Command> CommandPtr;
+		typedef std::shared_ptr<Command> CommandPtr;
 
-		CommandPtr commandPtr = new Command(m_maskOperatorID, filename);
+		CommandPtr commandPtr{ new Command(m_maskOperatorID, filename) };
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		return hr;
@@ -103,9 +103,9 @@ namespace SvOg
 	HGLOBAL MaskController::GetMaskData() const
 	{
 		typedef SvCmd::GetMaskData Command;
-		typedef SVSharedPtr<Command> CommandPtr;
+		typedef std::shared_ptr<Command> CommandPtr;
 
-		CommandPtr commandPtr = new Command(m_maskOperatorID);
+		CommandPtr commandPtr{ new Command(m_maskOperatorID) };
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
@@ -118,9 +118,9 @@ namespace SvOg
 	bool MaskController::SetMaskData(HGLOBAL hGlobal)
 	{
 		typedef SvCmd::SetMaskData Command;
-		typedef SVSharedPtr<Command> CommandPtr;
+		typedef std::shared_ptr<Command> CommandPtr;
 
-		CommandPtr commandPtr = new Command(m_maskOperatorID, hGlobal);
+		CommandPtr commandPtr{ new Command(m_maskOperatorID, hGlobal) };
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		return (S_OK == hr) ? true : false;

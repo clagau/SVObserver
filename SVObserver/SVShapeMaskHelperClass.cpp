@@ -186,7 +186,7 @@ bool SVShapeMaskHelperClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 	return __super::ResetObject(pErrorMessages);
 }
 
-bool SVShapeMaskHelperClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVShapeMaskHelperClass::onRun( bool First, SVImageBufferHandlePtr RInputImageHandle, SVImageBufferHandlePtr ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	return TRUE;	// what do we want to do here for the status?
 }
@@ -357,7 +357,7 @@ HRESULT SVShapeMaskHelperClass::Refresh()
 		
 		SVUserMaskOperatorClass* pMaskOperator = dynamic_cast<SVUserMaskOperatorClass*> ( GetOwner() );
 		ASSERT( pMaskOperator );
-		if ( pMaskOperator && !( pMaskOperator->m_MaskBufferHandlePtr.empty() ) )
+		if ( pMaskOperator && nullptr != pMaskOperator->m_MaskBufferHandlePtr )
 		{
 			////////////////////
 			// FILL PROPERTIES

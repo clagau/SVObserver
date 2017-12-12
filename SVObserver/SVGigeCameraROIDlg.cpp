@@ -72,7 +72,6 @@ SVGigeCameraROIDlg::SVGigeCameraROIDlg(ISVCameraDeviceImageFormatUpdater& rUpdat
 
 SVGigeCameraROIDlg::~SVGigeCameraROIDlg()
 {
-	m_pImageHandle.clear();
 }
 #pragma endregion Constructor
 
@@ -188,7 +187,7 @@ BOOL SVGigeCameraROIDlg::OnInitDialog()
 	SetupVerticalBinning();
 	SetupHorizontalBinning();
 
-	if( m_pImageHandle.empty() )
+	if(nullptr == m_pImageHandle)
 	{
 		SVImageProcessingClass::CreateImageBuffer( m_ImageInfo, m_pImageHandle );
 	}

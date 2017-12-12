@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary/SVSharedPtr.h"
+//Moved to precompiled header: #include <memory>
 #include "SvOGui/SVFormulaEditorPage.h"
 #include "InspectionEngine/SVConditional.h"
 #pragma endregion Includes
@@ -65,7 +65,7 @@ private:
 	GUID m_InspectionID;
 	GUID m_TaskObjectID;
 
-	typedef SVSharedPtr<SvOg::SVFormulaEditorPageClass> FormulaEditorPagePtr;
+	typedef std::shared_ptr<SvOg::SVFormulaEditorPageClass> FormulaEditorPagePtr;
 	FormulaEditorPagePtr m_formulaPage;
 };
 

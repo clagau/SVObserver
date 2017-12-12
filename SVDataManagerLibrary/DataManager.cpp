@@ -76,11 +76,11 @@ HRESULT SVDataManager::CreateManagedIndexArray( SVSmartIndexArrayHandlePtr& rArr
 	
 	if( S_OK == Result )
 	{
-		rArrayHandle = new SVDataManagerIndexArrayHandle( *this, Handle );
+		rArrayHandle = SVSmartIndexArrayHandlePtr{ new SVDataManagerIndexArrayHandle(*this, Handle) };
 	}
 	else
 	{
-		rArrayHandle.clear();
+		rArrayHandle.reset();
 	}
 	
 	return Result;
@@ -92,7 +92,7 @@ HRESULT SVDataManager::GetNextAvailableBufferIndex( const SVSmartIndexArrayHandl
 	
 	rHandle.clear();
 	
-	if( !rArrayHandle.empty() )
+	if(nullptr != rArrayHandle)
 	{
 		long l_Index = -1;
 		long l_TransactionId = -1;
@@ -121,7 +121,7 @@ HRESULT SVDataManager::GetNextAvailableBufferIndexNoWait( const SVSmartIndexArra
 	
 	rHandle.clear();
 	
-	if( !rArrayHandle.empty() )
+	if(nullptr != rArrayHandle)
 	{
 		long l_Index = -1;
 		long l_TransactionId = -1;

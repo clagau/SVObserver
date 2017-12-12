@@ -194,7 +194,7 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 
 					if(SvDef::SVBoolValueObjectType == pObject->GetObjectSubType())
 					{
-						pIOEntry = new SVIOEntryHostStruct;
+						pIOEntry = SVIOEntryHostStructPtr{ new SVIOEntryHostStruct };
 						pIOEntry->m_DeleteValueObject = false;
 						pIOEntry->setObject(pObject);
 						pIOEntry->getObject()->SetObjectOwner(pObject->GetOwner());
@@ -211,7 +211,7 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 					}
 					else
 					{
-						pIOEntry = new SVIOEntryHostStruct;
+						pIOEntry = SVIOEntryHostStructPtr{ new SVIOEntryHostStruct };
 						pIOEntry->m_DeleteValueObject = false;
 						pIOEntry->setObject(pObject);
 						pIOEntry->getObject()->SetObjectOwner(pObject->GetOwner());

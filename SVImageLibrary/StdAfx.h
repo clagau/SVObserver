@@ -59,6 +59,7 @@
 #include <fstream>
 #include <math.h>
 #include <map>
+#include <memory>
 #include <set>				//Used by static library
 #include <stdint.h>
 #include <string>			//Used by static library

@@ -37,7 +37,7 @@ HRESULT SVObjectCommandWrapperTemplate< SVCommandPtr >::Execute()
 {
 	HRESULT l_Status = S_OK;
 
-	if( !( m_CommandPtr.empty() ) )
+	if(nullptr != m_CommandPtr)
 	{
 		m_Status = m_CommandPtr->Execute();
 

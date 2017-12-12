@@ -1657,7 +1657,7 @@ void SVConfigurationPrint::PrintCameraSummary(CDC* pDC, CPoint& ptCurPos, int nI
 			SVLut* plutDummy = nullptr;
 			SVDeviceParamCollection* pDeviceParams = nullptr;
 			SVAcquisitionClassPtr pAcqDevice = pCamera->GetAcquisitionDevice();
-			ASSERT( !( pAcqDevice.empty() ) );
+			ASSERT( nullptr != pAcqDevice);
 			bool bOk = pConfig->GetAcquisitionDevice( pAcqDevice->DeviceName().c_str(), pfnac, plrcDummy, plutDummy, pDeviceParams );
 			ASSERT( bOk );
 			ASSERT( pfnac );
@@ -2519,7 +2519,7 @@ void SVConfigurationPrint::PrintGlobalConstants( CDC* pDC, CPoint& ptCurPos, int
 	{
 		const BasicValueObjectPtr& pGlobalConstant = *Iter;
 
-		if( !pGlobalConstant.empty() )
+		if(nullptr != pGlobalConstant)
 		{
 			//Print Global Constant name
 			Label = SvUl::Format( _T("Global Constant %d"), ++Index );

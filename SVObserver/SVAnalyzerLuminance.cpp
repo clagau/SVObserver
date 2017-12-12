@@ -282,9 +282,9 @@ bool SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 			break;
 		}
 
-		SVSmartHandlePointer ImageHandle;
+		SVImageBufferHandlePtr ImageHandle;
 
-		if( ! pInputImage->GetImageHandle( ImageHandle ) || ImageHandle.empty() )
+		if( ! pInputImage->GetImageHandle( ImageHandle ) || nullptr == ImageHandle )
 		{
 			LastError = true;
 			if (nullptr != pErrorMessages)

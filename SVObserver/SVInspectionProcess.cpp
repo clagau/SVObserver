@@ -312,10 +312,10 @@ bool   SVInspectionProcess::CopyToWatchlist(SVProductInfoStruct& rLastProduct)
 			int offset = element->MonEntryPtr->data.Store_Offset;
 			int Bytesyze = static_cast<int>(element->MonEntryPtr->data.ByteSize);
 			int imageIndex = element->MonEntryPtr->data.ItemId;
-			SVSmartHandlePointer imageHandlePtr;
+			SVImageBufferHandlePtr imageHandlePtr;
 			pImage->GetImageHandle(imageHandlePtr);
 
-			if (!imageHandlePtr.empty())
+			if (nullptr != imageHandlePtr)
 			{
 
 				HRESULT hr(S_FALSE);
@@ -404,7 +404,7 @@ HRESULT SVInspectionProcess::ProcessCommandQueue(bool& p_rProcessed)
 
 		if (m_CommandQueue.RemoveHead(&l_CommandPtr))
 		{
-			if (!(l_CommandPtr.empty()))
+			if (nullptr != l_CommandPtr)
 			{
 				l_Status = l_CommandPtr->Execute();
 			}
@@ -436,7 +436,7 @@ void SVInspectionProcess::Init()
 {
 	// Set up your type...
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVInspectionObjectType;
-	m_LastRunLockPtr = new SVCriticalSection;
+	m_LastRunLockPtr = SVCriticalSectionPtr{ new SVCriticalSection };
 	m_LastRunProductNULL = false;
 	m_pCurrentToolset = nullptr;
 	m_PPQId.clear();
@@ -608,7 +608,7 @@ void SVInspectionProcess::DestroyInspection()
 	m_qInspectionsQueue.Destroy();
 	m_PPQInputs.clear();
 	m_PPQId.clear();
-	m_pResultImageCircleBuffer.clear();
+	m_pResultImageCircleBuffer.reset();
 	SVResultListClass* pResultlist = GetResultList();
 	if (pResultlist)
 	{
@@ -1143,7 +1143,7 @@ bool SVInspectionProcess::RebuildInspectionInputList()
 
 			CreateChildObject(pObject);
 
-			pIOEntry.m_IOEntryPtr = new SVIOEntryHostStruct;
+			pIOEntry.m_IOEntryPtr = SVIOEntryHostStructPtr{ new SVIOEntryHostStruct };
 			pIOEntry.m_IOEntryPtr->setObject(pObject);
 			pIOEntry.m_IOEntryPtr->m_ObjectType = pNewEntry->m_ObjectType;
 			pIOEntry.m_IOEntryPtr->m_IOId = pNewEntry->m_IOId;
@@ -1192,7 +1192,7 @@ bool SVInspectionProcess::AddInputRequest(const SVObjectReference& rObjectRef, c
 
 	try
 	{
-		SVInputRequestInfoStructPtr pInRequest = new SVInputRequestInfoStruct(rObjectRef, rValue);
+		SVInputRequestInfoStructPtr pInRequest{ new SVInputRequestInfoStruct(rObjectRef, rValue) };
 
 		//add request to inspection process
 		Result = AddInputRequest(pInRequest);
@@ -1265,7 +1265,7 @@ HRESULT SVInspectionProcess::AddInputImageRequest(SVImageClass* p_psvImage, BSTR
 
 		try
 		{
-			SVInputImageRequestInfoStructPtr l_pInRequest = new SVInputImageRequestInfoStruct;
+			SVInputImageRequestInfoStructPtr l_pInRequest{ new SVInputImageRequestInfoStruct };
 
 			try
 			{
@@ -1321,7 +1321,7 @@ HRESULT SVInspectionProcess::AddInputImageFileNameRequest(SVImageClass* p_psvIma
 
 		try
 		{
-			SVInputImageRequestInfoStructPtr l_pInRequest = new SVInputImageRequestInfoStruct;
+			SVInputImageRequestInfoStructPtr l_pInRequest{ new SVInputImageRequestInfoStruct };
 
 			SVCameraImageTemplate* l_psvMainImage = dynamic_cast<SVCameraImageTemplate*> (p_psvImage);
 
@@ -2362,9 +2362,9 @@ bool SVInspectionProcess::ProcessInputImageRequests(SVProductInfoStruct *p_psvPr
 
 						if (l_bOk)
 						{
-							SVSmartHandlePointer l_ImageHandle;
+							SVImageBufferHandlePtr l_ImageHandle;
 
-							if (pImage->GetImageHandle(l_ImageHandle) && !(l_ImageHandle.empty()) && !(l_pInRequest->m_ImageHandlePtr.empty()))
+							if (pImage->GetImageHandle(l_ImageHandle) && nullptr != l_ImageHandle && nullptr != l_pInRequest->m_ImageHandlePtr)
 							{
 								HRESULT l_Code;
 
@@ -2384,7 +2384,7 @@ bool SVInspectionProcess::ProcessInputImageRequests(SVProductInfoStruct *p_psvPr
 					}
 				}
 
-				l_pInRequest->m_ImageHandlePtr.clear();
+				l_pInRequest->m_ImageHandlePtr.reset();
 			}
 			else
 			{
@@ -2546,11 +2546,11 @@ HRESULT SVInspectionProcess::AddInputImageRequestByCameraName(const std::string&
 	HRESULT hrOk = S_OK;
 
 	SVImageInfoClass svInfo;
-	SVSmartHandlePointer svHandleStruct;
+	SVImageBufferHandlePtr svHandleStruct;
 	SVInputImageRequestInfoStructPtr l_pInRequest;
 	try
 	{
-		l_pInRequest = new SVInputImageRequestInfoStruct;
+		l_pInRequest = SVInputImageRequestInfoStructPtr{ new SVInputImageRequestInfoStruct };
 	}
 	catch (...)
 	{
@@ -2708,7 +2708,7 @@ HRESULT SVInspectionProcess::GetNextAvailableIndexes(SVInspectionInfoStruct& p_r
 {
 	HRESULT l_Status = S_OK;
 
-	if (m_pResultImageCircleBuffer.empty())
+	if (nullptr == m_pResultImageCircleBuffer)
 	{
 		l_Status = CreateResultImageIndexManager();
 	}
@@ -2730,7 +2730,7 @@ HRESULT SVInspectionProcess::GetNextAvailableIndexes(SVInspectionInfoStruct& p_r
 
 void SVInspectionProcess::DumpDMInfo(LPCTSTR p_szName) const
 {
-	if (!(m_pResultImageCircleBuffer.empty()))
+	if (nullptr != m_pResultImageCircleBuffer)
 	{
 		m_pResultImageCircleBuffer->Dump(p_szName);
 	}
@@ -3383,7 +3383,7 @@ SVInspectionProcess::SVObjectPtrDeque SVInspectionProcess::GetPostProcessObjects
 	{
 		const SVIOEntryStruct& l_rIOEntry = *l_Iter;
 
-		if (!(l_rIOEntry.m_IOEntryPtr.empty()))
+		if (nullptr != l_rIOEntry.m_IOEntryPtr)
 		{
 			if (nullptr != l_rIOEntry.m_IOEntryPtr->getObject())
 			{
@@ -4176,9 +4176,9 @@ bool SVInspectionProcess::replaceObject(SVObjectClass* pObject, const GUID& rNew
 
 SvOi::IFormulaControllerPtr SVInspectionProcess::getRegressionTestPlayConditionController()
 {
-	if (m_pRegressionTestPlayEquationController.empty())
+	if (nullptr == m_pRegressionTestPlayEquationController)
 	{
-		m_pRegressionTestPlayEquationController = new SvOg::FormulaController(GetUniqueObjectID(), GetUniqueObjectID(), static_cast<GUID>(m_RegressionTestPlayEquation.GetUniqueObjectID()));
+		m_pRegressionTestPlayEquationController = SvOi::IFormulaControllerPtr{ new SvOg::FormulaController(GetUniqueObjectID(), GetUniqueObjectID(), static_cast<GUID>(m_RegressionTestPlayEquation.GetUniqueObjectID())) };
 	}
 	return m_pRegressionTestPlayEquationController;
 }

@@ -198,11 +198,11 @@ HRESULT SVCommandInspectionCollectImageData::UpdateBuffer(const SVGUID& rImageId
 
 		svResultImageIndex.m_CameraDMIndexHandle.Assign( l_SourceImageDMIndexHandle, SV_DISPLAY );
 
-		SVSmartHandlePointer ImageBuffer;
+		SVImageBufferHandlePtr ImageBuffer;
 
 		pImage->GetImageHandle( svResultImageIndex, ImageBuffer );
 
-		if( !( ImageBuffer.empty() ) )
+		if(nullptr != ImageBuffer)
 		{
 			SVBitmapInfo BitmapInfo;
 

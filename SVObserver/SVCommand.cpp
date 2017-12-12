@@ -1001,7 +1001,7 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 		{
 			if( nullptr != l_InspectionIter->first )
 			{
-				SVCommandInspectionCollectImageDataPtr l_DataPtr = new SVCommandInspectionCollectImageData( l_InspectionIter->first->GetUniqueObjectID(), l_InspectionIter->second );
+				SVCommandInspectionCollectImageDataPtr l_DataPtr{ new SVCommandInspectionCollectImageData(l_InspectionIter->first->GetUniqueObjectID(), l_InspectionIter->second) };
 				SVObjectSynchronousCommandTemplate< SVCommandInspectionCollectImageDataPtr > l_Command( l_InspectionIter->first->GetUniqueObjectID(), l_DataPtr );
 
 				if( S_OK == l_Command.Execute( 120000 ) )
@@ -1033,7 +1033,7 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 				l_DataPtr = l_Iter->second;
 			}
 
-			if( !( l_DataPtr.empty() ) )
+			if(nullptr != l_DataPtr)
 			{
 				SVIPImageDataElementMap::const_iterator l_ImageIter = l_DataPtr->GetProduct().m_ImageData.find( l_ImageNameIds[ l ].m_ImageId );
 
@@ -2182,7 +2182,7 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 						if (nullptr != pImage)
 						{
 							SVImageInfoClass svImageInfo;
-							SVSmartHandlePointer svImageHandle;
+							SVImageBufferHandlePtr svImageHandle;
 							BSTR bstrImage = nullptr;
 
 							// this works for Source Images (SVMainImageClass) and Published Result images
@@ -2338,12 +2338,12 @@ STDMETHODIMP CSVCommand::SVGetLUT(BSTR bstrCameraName, SAFEARRAY** ppaulLUTTable
 	return hr;
 }
 
-HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo, SVSmartHandlePointer rImageHandle, BSTR* pbstr)
+HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo, SVImageBufferHandlePtr rImageHandle, BSTR* pbstr)
 {
 	HRESULT hr = S_OK;
 
 	SVImageBufferHandleImage l_MilBuffer;
-	if ( !( rImageHandle.empty() ) )
+	if (nullptr != rImageHandle)
 	{
 		rImageHandle->GetData( l_MilBuffer );
 	}
@@ -2358,7 +2358,7 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo, SVSmartHandlePoin
 		HRESULT l_Code;
 
 		SVImageInfoClass oChildInfo;
-		SVSmartHandlePointer oChildHandle;
+		SVImageBufferHandlePtr oChildHandle;
 		BITMAPINFOHEADER* pbmhInfo = nullptr;
 		SVBitmapInfo l_BitmapInfo;
 		long lNumColor;
@@ -2405,7 +2405,7 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo, SVSmartHandlePoin
 
 			SVImageBufferHandleImage l_ChildMilBuffer;
 
-			if( !( oChildHandle.empty() ) )
+			if(nullptr != oChildHandle)
 			{
 				oChildHandle->GetData( l_ChildMilBuffer );
 			}
@@ -2423,7 +2423,7 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo, SVSmartHandlePoin
 
 			SVImageBufferHandleImage l_ChildMilBuffer;
 
-			if( !( oChildHandle.empty() ) )
+			if(nullptr != oChildHandle)
 			{
 				oChildHandle->GetData( l_ChildMilBuffer );
 			}
@@ -2438,7 +2438,7 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo, SVSmartHandlePoin
 		{
 			SVImageBufferHandleImage l_ChildMilBuffer;
 
-			if( !( oChildHandle.empty() ) )
+			if(nullptr != oChildHandle)
 			{
 				oChildHandle->GetData( l_ChildMilBuffer );
 			}
@@ -2489,7 +2489,7 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo, SVSmartHandlePoin
 			pDIB = (char *) (*pbstr);    
 		}
 
-		if( oChildHandle.empty() )
+		if(nullptr == oChildHandle)
 		{
 			hr = E_FAIL;
 		}
@@ -2522,7 +2522,7 @@ HRESULT CSVCommand::SafeImageToBSTR( SVImageClass *p_pImage, SVImageIndexStruct 
 	{
 		SVImageInfoClass oChildInfo = p_pImage->GetImageInfo();
 
-		SVSmartHandlePointer oChildHandle;
+		SVImageBufferHandlePtr oChildHandle;
 
 		SVImageProcessingClass::CreateImageBuffer( oChildInfo, oChildHandle );
 
@@ -2773,7 +2773,7 @@ STDMETHODIMP CSVCommand::SVRunOnce(BSTR bstrName)
 	{
 		if( SVConfigurationObject::GetInspection( W2T(bstrName), pInspection) )
 		{
-			SvCmd::InspectionRunOncePtr l_CommandPtr = new SvCmd::InspectionRunOnce( pInspection->GetUniqueObjectID() );
+			SvCmd::InspectionRunOncePtr l_CommandPtr{ new SvCmd::InspectionRunOnce(pInspection->GetUniqueObjectID()) };
 			SVObjectSynchronousCommandTemplate< SvCmd::InspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
 
 			hrResult = l_Command.Execute( TWO_MINUTE_CMD_TIMEOUT );
@@ -3037,7 +3037,7 @@ HRESULT CSVCommand::SVSetImageList(SAFEARRAY *psaNames, SAFEARRAY *psaImages, SA
 					l_ImageInfo ) )
 				{
 					//add request to inspection process
-					pInspection->AddInputImageRequest(pInRequest);
+					pInspection->AddInputImageRequest(SVInputImageRequestInfoStructPtr{ pInRequest });
 				}
 				else
 				{
@@ -3377,16 +3377,16 @@ HRESULT CSVCommand::SVLockImage(long ProcessCount, long Index, BSTR bName)
 		if ( nullptr != pImage && !l_svImageIndex.IsNull() )
 		{
 			SVImageInfoClass l_svImageInfo = pImage->GetImageInfo();
-			SVSmartHandlePointer l_svImageHandle;
+			SVImageBufferHandlePtr l_svImageHandle;
 
-			if( pImage->GetImageHandle( l_svImageIndex, l_svImageHandle ) && !( l_svImageHandle.empty() ) )
+			if( pImage->GetImageHandle( l_svImageIndex, l_svImageHandle ) && nullptr != l_svImageHandle)
 			{
 				SVImageBufferHandleImage l_MilBuffer;
 				l_svImageHandle->GetData( l_MilBuffer );
 
 				SVImageInfoClass l_ImageInfo = l_svImageInfo;
 
-				if ( S_OK == SVImageProcessingClass::CreateImageBuffer( l_ImageInfo, SVaxls.m_ImageHandlePtr ) && !( SVaxls.m_ImageHandlePtr.empty() ) )
+				if ( S_OK == SVImageProcessingClass::CreateImageBuffer( l_ImageInfo, SVaxls.m_ImageHandlePtr ) && nullptr != SVaxls.m_ImageHandlePtr)
 				{
 					SVImageBufferHandleImage l_AxlsMilBuffer;
 					SVaxls.m_ImageHandlePtr->GetData( l_AxlsMilBuffer );
@@ -3603,7 +3603,7 @@ SVMatroxBuffer CSVCommand::CreateImageFromBSTR( BSTR bstrImage )
 	}// end if
 
 	SVImageInfoClass oTempInfo;
-	SVSmartHandlePointer oTempHandle;
+	SVImageBufferHandlePtr oTempHandle;
 
 	oTempInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, pbmhInfo->biBitCount );
 	oTempInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
@@ -3618,13 +3618,13 @@ SVMatroxBuffer CSVCommand::CreateImageFromBSTR( BSTR bstrImage )
 		oTempInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 3 );
 	}// end if
 
-	if( S_OK != SVImageProcessingClass::CreateImageBuffer( oTempInfo, oTempHandle ) || oTempHandle.empty() )
+	if( S_OK != SVImageProcessingClass::CreateImageBuffer( oTempInfo, oTempHandle ) || nullptr == oTempHandle)
 	{
 		return l_ImageBuf;
 	}
 
 	// Copy the bits into the image object
-	if( nullptr != pBits && !oTempHandle.empty() )
+	if( nullptr != pBits && nullptr != oTempHandle)
 	{
 		// Set buffer data...
 		memcpy( oTempHandle->GetBufferAddress(), pBits, pbmhInfo->biSizeImage );
@@ -4554,7 +4554,7 @@ STDMETHODIMP CSVCommand::SVGetFontCharacter(long lFontIdentifier, long  lCharID,
 				l_Code = SVMatroxBufferInterface::Get(lCharHandle, SVType, l_lValue );
 				ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, l_lValue );
 
-				SVSmartHandlePointer ImageBufferHandle = new SVImageBufferHandleStruct( lCharHandle );
+				SVImageBufferHandlePtr ImageBufferHandle{ new SVImageBufferHandleStruct(lCharHandle) };
 
 				ImageToBSTR( ImageInfo, ImageBufferHandle, pbstrLabelImage);
 				lCharHandle.clear();
@@ -5153,17 +5153,17 @@ STDMETHODIMP CSVCommand::SVConstructCommand( long p_CommandType, ISVRemoteComman
 
 		SVCommandTemplatePtr l_CommandPtr = SVMatroxCommandFactorySingleton::Instance().CreateCommand( p_CommandType );
 
-		if( l_CommandPtr.empty() )
+		if(nullptr == l_CommandPtr)
 		{
 			l_CommandPtr = SVFileSystemCommandFactorySingleton::Instance().CreateCommand( p_CommandType );
 		}
 
-		if( l_CommandPtr.empty() )
+		if(nullptr == l_CommandPtr)
 		{
 			l_CommandPtr = SVStreamCommandFactorySingleton::Instance().CreateCommand( p_CommandType );
 		}
 
-		if( ! l_CommandPtr.empty() )
+		if(nullptr != l_CommandPtr )
 		{
 			CComPtr< ISVRemoteCommand > l_RemoteCommandPtr;
 

@@ -940,7 +940,7 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 		;
 		while( S_OK == l_Status && nullptr != htiSubChild )
 		{
-			SVSharedPtr<std::string> pToolsetScript = new std::string;
+			std::shared_ptr<std::string> pToolsetScript{ new std::string };
 			SVGUID ownerGuid;
 
 			SVInspectionProcess* pInspect( nullptr );

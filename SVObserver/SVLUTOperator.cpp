@@ -373,13 +373,13 @@ SVByteValueObjectClass* SVLUTOperatorClass::getInputLUTVectorResult()
 // .Description : Runs this operator.
 //              : Returns false, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVLUTOperatorClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVLUTOperatorClass::onRun( bool First, SVImageBufferHandlePtr rInputImageHandle, SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
 	// Is doing special friend routing !!!
 	// Don't call base class onRun(...).
 
 	// Since we do special routing here, we have to validate by ourself...
-	if( RInputImageHandle.empty() || ROutputImageHandle.empty() )
+	if(nullptr == rInputImageHandle || nullptr == rOutputImageHandle )
 	{
 		if (nullptr != pErrorMessages)
 		{
@@ -395,8 +395,8 @@ bool SVLUTOperatorClass::onRun( bool First, SVSmartHandlePointer RInputImageHand
 	SVImageBufferHandleImage l_InMilHandle;
 	SVImageBufferHandleImage l_OutMilHandle;
 
-	RInputImageHandle->GetData( l_InMilHandle );
-	ROutputImageHandle->GetData( l_OutMilHandle );
+	rInputImageHandle->GetData( l_InMilHandle );
+	rOutputImageHandle->GetData( l_OutMilHandle );
 
 	BOOL bUseLUT  = false;
 	BOOL bContinuousRecalcLUT = false;

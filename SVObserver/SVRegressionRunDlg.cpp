@@ -639,7 +639,7 @@ void CSVRegressionRunDlg::setEquationText()
 {
 	// Get text from EquationStruct and place into Editor
 	m_equationString = _T("");
-	if (!m_pFormulaController.empty())
+	if (nullptr != m_pFormulaController)
 	{
 		m_equationString = m_pFormulaController->GetEquationText().c_str();
 	}

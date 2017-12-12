@@ -598,7 +598,7 @@ bool SVRemoteFontManager::GetFontCharImage( long p_lFontIdentifier, SVMatroxOcr 
 	
 
 	SVImageInfoClass ImageInfo;
-	SVSmartHandlePointer ImageBufferHandle;
+	SVImageBufferHandlePtr ImageBufferHandle;
 
 	SVMatroxOcrInterface::Get( p_FontHandle, SVCharCellSizeX, dCharBoxSizeX);
 
@@ -614,7 +614,7 @@ bool SVRemoteFontManager::GetFontCharImage( long p_lFontIdentifier, SVMatroxOcr 
 
 	hrRet = SVImageProcessingClass::CreateImageBuffer( ImageInfo, ImageBufferHandle );
 
-	if( !( ImageBufferHandle.empty() ) )
+	if(nullptr != ImageBufferHandle)
 	{
 		SVImageBufferHandleImage l_MilHandle;
 		ImageBufferHandle->GetData( l_MilHandle );

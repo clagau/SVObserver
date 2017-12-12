@@ -24,9 +24,9 @@ namespace SvCl
 		, m_SingleSelect( false )
 	{
 		SVTreeElement* pElement( get() );
-		if( nullptr != pElement && pElement->second.empty() )
+		if( nullptr != pElement && nullptr == pElement->second )
 		{
-			pElement->second = new ObjectSelectorItem;
+			pElement->second = ObjectSelectorItemPtr{ new ObjectSelectorItem };
 		}
 	}
 
@@ -223,7 +223,7 @@ namespace SvCl
 				Branch = rDisplayLocation.substr(0, StartPos);
 			}
 			std::string Item = Branch + NodeName;
-			Iter = std::find_if(IterStart, IterEnd, SVCompareKeys<std::string, SVSharedPtr<ObjectSelectorItem>>(Item));;
+			Iter = std::find_if(IterStart, IterEnd, SVCompareKeys<std::string, std::shared_ptr<ObjectSelectorItem>>(Item));;
 			//Branch not found so create or exit
 			if (IterEnd == Iter)
 			{
@@ -294,7 +294,7 @@ namespace SvCl
 	ObjectTreeItems::iterator ObjectTreeItems::createNode(iterator& rParentIter, const std::string& rBranchName, const std::string& rNodeName)
 	{
 		iterator Iter( end() );
-		ObjectSelectorItemPtr pSelectorItem =  new ObjectSelectorItem;
+		ObjectSelectorItemPtr pSelectorItem{ new ObjectSelectorItem };
 
 		ObjectSelectorItem::CheckedStateEnum CheckedState;
 

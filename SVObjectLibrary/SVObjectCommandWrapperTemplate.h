@@ -10,14 +10,15 @@
 //******************************************************************************
 
 #pragma once
-
-#include "SVUtilityLibrary/SVSharedPtr.h"
+#pragma region Includes
+//Moved to precompiled header: #include <memory>
+#pragma endregion Includes
 
 template< typename SVCommandPtr >
 class SVObjectCommandWrapperTemplate
 {
 public:
-	typedef SVSharedPtr< SVObjectCommandWrapperTemplate > SVObjectCommandWrapperPtr;
+	typedef std::shared_ptr< SVObjectCommandWrapperTemplate > SVObjectCommandWrapperPtr;
 
 	SVObjectCommandWrapperTemplate( const SVCommandPtr& p_rCommandPtr );
 

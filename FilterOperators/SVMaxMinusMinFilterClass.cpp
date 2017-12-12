@@ -55,7 +55,7 @@ bool SVMaxMinusMinFilterClass::CreateObject( const SVObjectLevelCreateStruct& rC
 
 bool SVMaxMinusMinFilterClass::CloseObject()
 {
-	m_ProcBufferHandlePtr.clear();
+	m_ProcBufferHandlePtr.reset();
 	
 	return SVFilterClass::CloseObject();
 }
@@ -64,7 +64,7 @@ bool SVMaxMinusMinFilterClass::ResetObject(SvStl::MessageContainerVector *pError
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
-	m_ProcBufferHandlePtr.clear();
+	m_ProcBufferHandlePtr.reset();
 
 	if( Result && nullptr != getReferenceImage() )
 	{
@@ -95,9 +95,9 @@ bool SVMaxMinusMinFilterClass::ResetObject(SvStl::MessageContainerVector *pError
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVMaxMinusMinFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVMaxMinusMinFilterClass::onRun( bool First, SVImageBufferHandlePtr RInputImageHandle, SVImageBufferHandlePtr ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
-	if( m_pCurrentUIOPL && !m_ProcBufferHandlePtr.empty() && !( RInputImageHandle.empty() ) && !( ROutputImageHandle.empty() ) )
+	if( m_pCurrentUIOPL && nullptr != m_ProcBufferHandlePtr && nullptr != RInputImageHandle && nullptr != ROutputImageHandle )
 	{
 		SVImageBufferHandleImage l_ProcMilHandle;
 		SVImageBufferHandleImage l_InMilHandle;

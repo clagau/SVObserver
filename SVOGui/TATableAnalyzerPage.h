@@ -119,7 +119,7 @@ namespace SvOg
 
 		typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
 		typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
-		SVSharedPtr<Controller> m_Values;
+		std::shared_ptr<Controller> m_Values;
 #pragma endregion Member Variables
 	};
 } //namespace SvOg

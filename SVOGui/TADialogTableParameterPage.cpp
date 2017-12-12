@@ -77,9 +77,9 @@ namespace SvOg {
 		m_Values.Init();
 
 		typedef SvCmd::GetAvailableObjects Command;
-		typedef SVSharedPtr<Command> CommandPtr;
+		typedef std::shared_ptr<Command> CommandPtr;
 		SvUl::NameGuidList availableList;
-		CommandPtr commandPtr = new Command(m_TaskObjectID, SvDef::SVObjectTypeInfoStruct(SvDef::SVEquationObjectType));
+		CommandPtr commandPtr{ new Command(m_TaskObjectID, SvDef::SVObjectTypeInfoStruct(SvDef::SVEquationObjectType)) };
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
@@ -90,7 +90,7 @@ namespace SvOg {
 				if (SvDef::TableClearEquationName == availableList[i].first)
 				{
 					m_ClearEquationID = availableList[i].second;
-					m_pFormulaController = new FormulaController(m_InspectionID, m_TaskObjectID, m_ClearEquationID);
+					m_pFormulaController= SvOi::IFormulaControllerPtr{ new FormulaController(m_InspectionID, m_TaskObjectID, m_ClearEquationID) };
 					break;
 				}
 			}
@@ -168,7 +168,7 @@ namespace SvOg {
 	{
 		// Get text from EquationStruct and place into Editor
 		m_clearString = _T("");
-		if (!m_pFormulaController.empty())
+		if (nullptr != m_pFormulaController)
 		{
 			m_clearString = m_pFormulaController->GetEquationText().c_str();
 		}
@@ -178,14 +178,14 @@ namespace SvOg {
 
 	void TADialogTableParameterPage::resetInspection()
 	{
-		typedef SVSharedPtr<SvCmd::ResetObject> ResetObjectCommandPtr;
+		typedef std::shared_ptr<SvCmd::ResetObject> ResetObjectCommandPtr;
 		ResetObjectCommandPtr commandPtr(new SvCmd::ResetObject(m_InspectionID));
 		SVObjectSynchronousCommandTemplate<ResetObjectCommandPtr> cmd(m_InspectionID, commandPtr);
 
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK != hr)
 		{
-			typedef SVSharedPtr<SvCmd::GetErrorMessageList> GetErrorMessageListCommandPtr;
+			typedef std::shared_ptr<SvCmd::GetErrorMessageList> GetErrorMessageListCommandPtr;
 			GetErrorMessageListCommandPtr errorCommandPtr(new SvCmd::GetErrorMessageList(m_TaskObjectID));
 			SVObjectSynchronousCommandTemplate<GetErrorMessageListCommandPtr> errorCmd(m_InspectionID, errorCommandPtr);
 			errorCmd.Execute(TWO_MINUTE_CMD_TIMEOUT);

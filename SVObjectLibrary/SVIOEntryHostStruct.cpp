@@ -60,7 +60,7 @@ bool SVIOEntryHostStruct::PtrGreater(SVIOEntryHostStructPtr elem1, SVIOEntryHost
 {
 	bool Greater = false;
 
-	if( !( elem1.empty() ) && !( elem2.empty() ) )
+	if(nullptr != elem1 && nullptr != elem2 )
 	{
 		if( ( nullptr != elem1->m_pObject ) && ( nullptr != elem2->m_pObject ) )
 		{

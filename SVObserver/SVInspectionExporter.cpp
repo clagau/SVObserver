@@ -99,7 +99,7 @@ static void WriteGlobalConstants(SvXml::SVObjectXMLWriter& rWriter, SVObjectClas
 		BasicValueObjects::ValueVector::const_iterator Iter( GlobalConstantObjects.cbegin() );
 		for( ; GlobalConstantObjects.end() != Iter; ++Iter )
 		{
-			if (!Iter->empty())
+			if (nullptr != *Iter)
 			{
 				SVObjectClass* pGlobalConstantObject = dynamic_cast<SVObjectClass*> ((*Iter).get());
 				if (nullptr != pGlobalConstantObject)

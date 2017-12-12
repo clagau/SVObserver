@@ -43,9 +43,9 @@ namespace SvOg
 	HRESULT ImageController::RetrieveAvailableImageList()
 	{ 
 		typedef SvCmd::GetAllowedImageList Command;
-		typedef SVSharedPtr<Command> CommandPtr;
+		typedef std::shared_ptr<Command> CommandPtr;
 
-		CommandPtr commandPtr = new Command(m_InspectionID, SvDef::SVObjectTypeInfoStruct(SvDef::SVImageObjectType, m_ImageSubType), m_TaskObjectID, m_OnlyAboveImages);
+		CommandPtr commandPtr{ new Command(m_InspectionID, SvDef::SVObjectTypeInfoStruct(SvDef::SVImageObjectType, m_ImageSubType), m_TaskObjectID, m_OnlyAboveImages) };
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
@@ -71,9 +71,9 @@ namespace SvOg
 		SvUl::NameGuidList list;
 
 		typedef SvCmd::GetResultImage Command;
-		typedef SVSharedPtr<Command> CommandPtr;
+		typedef std::shared_ptr<Command> CommandPtr;
 	
-		CommandPtr commandPtr = new Command(m_TaskObjectID);
+		CommandPtr commandPtr{ new Command(m_TaskObjectID) };
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
@@ -86,14 +86,14 @@ namespace SvOg
 	const SvUl::InputNameGuidPairList& ImageController::GetConnectedImageList(const GUID& rInstanceID, int maxImages) const
 	{
 		typedef SvCmd::GetConnectedObjects Command;
-		typedef SVSharedPtr<Command> CommandPtr;
+		typedef std::shared_ptr<Command> CommandPtr;
 
 		GUID objectID = m_TaskObjectID;
 		if (GUID_NULL != rInstanceID)
 		{
 			objectID = rInstanceID;
 		}
-		CommandPtr commandPtr = new Command(objectID, SvDef::SVObjectTypeInfoStruct(SvDef::SVImageObjectType, SvDef::SVNotSetSubObjectType), maxImages);
+		CommandPtr commandPtr{ new Command(objectID, SvDef::SVObjectTypeInfoStruct(SvDef::SVImageObjectType, SvDef::SVNotSetSubObjectType), maxImages) };
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
@@ -131,9 +131,9 @@ namespace SvOg
 			if (itVector != m_specialImageList.end())
 			{
 				typedef SvCmd::GetImage Command;
-				typedef SVSharedPtr<Command> CommandPtr;
+				typedef std::shared_ptr<Command> CommandPtr;
 
-				CommandPtr commandPtr = new Command(*itVector, m_TaskObjectID);
+				CommandPtr commandPtr{ new Command(*itVector, m_TaskObjectID) };
 				SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 				HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 				if (S_OK == hr)
@@ -157,9 +157,9 @@ namespace SvOg
 	IPictureDisp* ImageController::GetImage(const GUID& rImageID, long& rWidth, long& rHeight) const 
 	{
 		typedef SvCmd::GetImage Command;
-		typedef SVSharedPtr<Command> CommandPtr;
+		typedef std::shared_ptr<Command> CommandPtr;
 	
-		CommandPtr commandPtr = new Command(rImageID);
+		CommandPtr commandPtr{ new Command(rImageID) };
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
@@ -175,7 +175,7 @@ namespace SvOg
 	{ 
 		HRESULT hr = E_INVALIDARG;
 		typedef SvCmd::ConnectToObject Command;
-		typedef SVSharedPtr<Command> CommandPtr;
+		typedef std::shared_ptr<Command> CommandPtr;
 		SvUl::NameGuidList::const_iterator it = std::find_if(m_availableList.begin(), m_availableList.end(), ByName(name));
 		if (it != m_availableList.end())
 		{
@@ -184,7 +184,7 @@ namespace SvOg
 			{
 				objectID = rInstanceID;
 			}
-			CommandPtr commandPtr = new Command(objectID, inputName, it->second, SvDef::SVImageObjectType);
+			CommandPtr commandPtr{ new Command(objectID, inputName, it->second, SvDef::SVImageObjectType) };
 			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 			hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		}	
@@ -195,11 +195,11 @@ namespace SvOg
 	{
 		HRESULT hr = E_INVALIDARG;
 		typedef SvCmd::SaveImage Command;
-		typedef SVSharedPtr<Command> CommandPtr;
+		typedef std::shared_ptr<Command> CommandPtr;
 		SvUl::NameGuidList::const_iterator it = std::find_if(m_availableList.begin(), m_availableList.end(), ByName(rImageName));
 		if (it != m_availableList.end())
 		{
-			CommandPtr commandPtr = new Command(it->second, rFilename);
+			CommandPtr commandPtr{ new Command(it->second, rFilename) };
 			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 			hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		}	
@@ -210,8 +210,8 @@ namespace SvOg
 	{
 		bool bIsValid = false;
 		typedef SvCmd::IsValid Command;
-		typedef SVSharedPtr<Command> CommandPtr;
-		CommandPtr commandPtr = new Command(m_TaskObjectID);
+		typedef std::shared_ptr<Command> CommandPtr;
+		CommandPtr commandPtr{ new Command(m_TaskObjectID) };
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
@@ -225,8 +225,8 @@ namespace SvOg
 	{
 		bool bIsValid = false;
 		typedef SvCmd::ResetObject Command;
-		typedef SVSharedPtr<Command> CommandPtr;
-		CommandPtr commandPtr = new Command(m_TaskObjectID);
+		typedef std::shared_ptr<Command> CommandPtr;
+		CommandPtr commandPtr{ new Command(m_TaskObjectID) };
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK != hr)
@@ -239,8 +239,8 @@ namespace SvOg
 	HRESULT ImageController::ToolRunOnce()
 	{
 		typedef SvCmd::InspectionRunOnce Command;
-		typedef SVSharedPtr<Command> CommandPtr;
-		CommandPtr commandPtr = new Command(m_InspectionID, m_TaskObjectID);
+		typedef std::shared_ptr<Command> CommandPtr;
+		CommandPtr commandPtr{ new Command(m_InspectionID, m_TaskObjectID) };
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		return hr;

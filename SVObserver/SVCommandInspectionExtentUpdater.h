@@ -7,8 +7,8 @@
 #pragma once
 
 #pragma region Includes
+//Moved to precompiled header: #include <memory>
 #include "SVUtilityLibrary/SVGUID.h"
-#include "SVUtilityLibrary/SVSharedPtr.h"
 #include "SVImageLibrary/SVImageExtentClass.h"
 #pragma endregion Includes
 
@@ -89,4 +89,4 @@ private:
 #pragma endregion Member Variables
 };
 
-typedef SVSharedPtr< SVCommandInspectionExtentUpdater > SVCommandInspectionSetImageExtentPtr;
+typedef std::shared_ptr< SVCommandInspectionExtentUpdater > SVCommandInspectionSetImageExtentPtr;

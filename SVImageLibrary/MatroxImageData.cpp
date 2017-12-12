@@ -20,7 +20,7 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 #pragma region Constructor
-MatroxImageData::MatroxImageData(SVSmartHandlePointer imageHandle) : m_ImageHandle( imageHandle )
+MatroxImageData::MatroxImageData(SVImageBufferHandlePtr imageHandle) : m_ImageHandle( imageHandle )
 {
 }
 
@@ -34,7 +34,7 @@ MatroxImageData::~MatroxImageData()
 #pragma region virtual method (IMatroxImageData)
 bool MatroxImageData::empty() const
 {
-	return m_ImageHandle.empty();
+	return (nullptr == m_ImageHandle);
 }
 
 SVBitmapInfo MatroxImageData::getBitmapInfo() const

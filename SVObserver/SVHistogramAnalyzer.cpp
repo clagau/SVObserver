@@ -675,9 +675,9 @@ bool SVHistogramAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 			break;
 		}
 
-		SVSmartHandlePointer ImageHandle;
+		SVImageBufferHandlePtr ImageHandle;
 
-		if( ! pInputImage->GetImageHandle( ImageHandle ) || ImageHandle.empty() )
+		if( ! pInputImage->GetImageHandle( ImageHandle ) || nullptr == ImageHandle)
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)
@@ -1085,10 +1085,10 @@ bool SVHistogramAnalyzerClass::calcHistogram()
 		LastError = true;
 	}
 
-	SVSmartHandlePointer ImageHandle;
+	SVImageBufferHandlePtr ImageHandle;
 	if(!LastError)
 	{
-		if( ! pInputImage->GetImageHandle( ImageHandle ) || ImageHandle.empty() )
+		if( ! pInputImage->GetImageHandle( ImageHandle ) || nullptr == ImageHandle)
 		{
 			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16201);
@@ -1170,8 +1170,8 @@ HRESULT SVHistogramAnalyzerClass::createHistogramImage()
 HRESULT SVHistogramAnalyzerClass::paintHistogramImage()
 {
 	HRESULT hr = S_OK;
-	SVSmartHandlePointer l_handle;
-	if (!m_histogramImage.GetImageHandle(l_handle) || l_handle.empty())
+	SVImageBufferHandlePtr l_handle;
+	if (!m_histogramImage.GetImageHandle(l_handle) || nullptr == l_handle)
 	{
 		return Err_GetImageHandle;
 	}

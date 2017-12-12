@@ -36,7 +36,7 @@ SVCommandTemplatePtr SVCommandAbstractFactoryTemplate::CreateCommand( unsigned l
 
 	if( l_Iter != m_Factories.end() )
 	{
-		if( ! l_Iter->second.empty() )
+		if( nullptr != l_Iter->second )
 		{
 			l_pCommand = l_Iter->second->CreateCommand();
 		}

@@ -150,7 +150,7 @@ private:
 	SVAcquisitionClassPtr m_pDevice;
 	SVCameraFormat* m_pFormat;
 	SVImageInfoClass m_ImageInfo;
-	SVSmartHandlePointer m_pImageHandle;
+	SVImageBufferHandlePtr m_pImageHandle;
 
 	Binning m_verticalBinning;
 	Binning m_horizontalBinning;

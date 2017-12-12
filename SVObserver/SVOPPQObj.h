@@ -13,10 +13,9 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <deque>
+//Moved to precompiled header: #include <memory>
 //Moved to precompiled header: #include <utility>
-
 #include "SVImportedInputList.h"
-#include "SVUtilityLibrary\SVSharedPtr.h"
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
@@ -93,6 +92,6 @@ private:
 	SVImportedInputList m_importedInputList;
 };
 
-typedef SVSharedPtr< SVOPPQObj > SVOPPQObjPtr;
+typedef std::shared_ptr< SVOPPQObj > SVOPPQObjPtr;
 
 

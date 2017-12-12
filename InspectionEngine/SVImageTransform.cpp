@@ -273,10 +273,10 @@ bool SVImageTransformClass::onRun( SVRunStatusClass& runStatus, SvStl::MessageCo
 
 	if( bRetVal )
 	{
-		SVSmartHandlePointer InImageHandle;
-		SVSmartHandlePointer OutImageHandle;
+		SVImageBufferHandlePtr InImageHandle;
+		SVImageBufferHandlePtr OutImageHandle;
 
-		if ( !l_psvInputImage->GetImageHandle( InImageHandle ) || InImageHandle.empty() )
+		if ( !l_psvInputImage->GetImageHandle( InImageHandle ) || nullptr == InImageHandle )
 		{
 			bRetVal = false;
 			if (nullptr != pErrorMessages)
@@ -307,7 +307,7 @@ bool SVImageTransformClass::onRun( SVRunStatusClass& runStatus, SvStl::MessageCo
 			}
 		}
 
-		if (bRetVal && (!m_outputImageObject.SetImageHandleIndex( runStatus.Images ) || !m_outputImageObject.GetImageHandle( OutImageHandle ) || OutImageHandle.empty() ))
+		if (bRetVal && (!m_outputImageObject.SetImageHandleIndex( runStatus.Images ) || !m_outputImageObject.GetImageHandle( OutImageHandle ) || nullptr == OutImageHandle ))
 		{
 			bRetVal = false;
 			if (nullptr != pErrorMessages)

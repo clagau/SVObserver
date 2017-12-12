@@ -55,6 +55,7 @@
 #include <fstream>
 #include <list>				//Used by static library
 #include <map>				//Used by static library
+#include <memory>
 #include <sequential_tree.h>
 #include <set>				//Used by static library
 #include <sstream>			//Used by static library

@@ -17,6 +17,7 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <memory>
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <boost/any.hpp>
 #include "SVDataManagerLibrary/SVDataManagerHandle.h"
@@ -25,7 +26,6 @@
 #include "InspectionEngine/SVCameraInfoStruct.h"
 #include "SVStatusLibrary/SVImageIndexStruct.h"
 #include "SVUtilityLibrary/SVGUID.h"
-#include "SVUtilityLibrary/SVSharedPtr.h"
 #include "SVObjectLibrary/SVIOEntryHostStruct.h"
 #include "SVStatusLibrary/ProductWorkloadInformation.h" 
 #include "TriggerInformation/SVTriggerObject.h"
@@ -353,7 +353,7 @@ private:
 
 };
 
-typedef SVSharedPtr< SVInputRequestInfoStruct > SVInputRequestInfoStructPtr;
+typedef std::shared_ptr< SVInputRequestInfoStruct > SVInputRequestInfoStructPtr;
 typedef std::vector< SVInputRequestInfoStructPtr > SVInputRequestInfoStructPtrVector;
 
 struct SVInputImageRequestInfoStruct
@@ -366,7 +366,7 @@ struct SVInputImageRequestInfoStruct
 
 	std::string m_ObjectName;
 	SVImageInfoClass m_ImageInfo;
-	SVSmartHandlePointer m_ImageHandlePtr;
+	SVImageBufferHandlePtr m_ImageHandlePtr;
 	bool m_bUsingCameraName;
 
 private:
@@ -376,7 +376,7 @@ private:
 
 };
 
-typedef SVSharedPtr< SVInputImageRequestInfoStruct > SVInputImageRequestInfoStructPtr;
+typedef std::shared_ptr< SVInputImageRequestInfoStruct > SVInputImageRequestInfoStructPtr;
 typedef std::vector< SVInputImageRequestInfoStructPtr > SVInputImageRequestInfoStructPtrVector;
 
 struct SVOutputRequestInfoStruct

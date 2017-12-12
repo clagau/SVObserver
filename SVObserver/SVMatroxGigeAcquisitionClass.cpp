@@ -698,7 +698,7 @@ void SVMatroxGigeAcquisitionClass::ClearDeviceIdentifier()
 	m_DeviceParams.SetParameter( DeviceParamSerialNumberString, SVStringValueDeviceParam( "" ) );
 }
 
-HRESULT SVMatroxGigeAcquisitionClass::SingleGrab( SVSmartHandlePointer p_SingleGrabHandle )
+HRESULT SVMatroxGigeAcquisitionClass::SingleGrab( SVImageBufferHandlePtr p_SingleGrabHandle )
 {
 	HRESULT hr = SVAcquisitionClass::SingleGrab( p_SingleGrabHandle );
 

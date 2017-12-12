@@ -1638,12 +1638,12 @@ void SVIPDoc::OnResultsTablePicker()
 		if (nullptr != pResultList)
 		{
 			typedef SvCmd::GetAvailableObjects Command;
-			typedef SVSharedPtr<Command> CommandPtr;
+			typedef std::shared_ptr<Command> CommandPtr;
 
 			SvUl::NameGuidList availableList;
 			std::string selectedItem = SvOg::Table_NoSelected;
 			SVGUID selectedGuid = pResultList->getTableGuid();
-			CommandPtr commandPtr = new Command(GetInspectionID(), SvDef::SVObjectTypeInfoStruct(SvDef::TableObjectType, SvDef::SVNotSetSubObjectType), SvCmd::IsValidObject(), SvDef::SVToolSetObjectType);
+			CommandPtr commandPtr{ new Command(GetInspectionID(), SvDef::SVObjectTypeInfoStruct(SvDef::TableObjectType, SvDef::SVNotSetSubObjectType), SvCmd::IsValidObject(), SvDef::SVToolSetObjectType) };
 			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 			if (S_OK == hr)
@@ -2085,7 +2085,7 @@ void SVIPDoc::RefreshDocument()
 			}
 		}
 	}
-	SVCommandInspectionCollectImageDataPtr l_DataPtr = new SVCommandInspectionCollectImageData( m_InspectionID, l_ImageIds );
+	SVCommandInspectionCollectImageDataPtr l_DataPtr{ new SVCommandInspectionCollectImageData(m_InspectionID, l_ImageIds) };
 	SVObjectSynchronousCommandTemplate< SVCommandInspectionCollectImageDataPtr > l_Command( m_InspectionID, l_DataPtr );
 
 	if( S_OK == l_Command.Execute( 120000 ) )
@@ -4154,7 +4154,7 @@ bool SVIPDoc::RunOnce( SVToolClass* p_pTool )
 
 		if( nullptr != p_pTool ) { l_ToolId = p_pTool->GetUniqueObjectID(); }
 
-		SvCmd::InspectionRunOncePtr l_CommandPtr = new SvCmd::InspectionRunOnce( pInspection->GetUniqueObjectID(), l_ToolId );
+		SvCmd::InspectionRunOncePtr l_CommandPtr{ new SvCmd::InspectionRunOnce(pInspection->GetUniqueObjectID(), l_ToolId) };
 		SVObjectSynchronousCommandTemplate< SvCmd::InspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
 
 		l_Status = ( S_OK == l_Command.Execute( TWO_MINUTE_CMD_TIMEOUT ) );
@@ -4224,9 +4224,9 @@ bool SVIPDoc::isImageAvailable(SvDef::SVObjectSubTypeEnum ImageSubType) const
 	bool Result{ false };
 
 	typedef SvCmd::GetAllowedImageList Command;
-	typedef SVSharedPtr<Command> CommandPtr;
+	typedef std::shared_ptr<Command> CommandPtr;
 	SvDef::SVObjectTypeInfoStruct ObjectInfo{ SvDef::SVImageObjectType, ImageSubType };
-	CommandPtr commandPtr = new Command(m_InspectionID, ObjectInfo, GetSelectedToolID());
+	CommandPtr commandPtr{ new Command(m_InspectionID, ObjectInfo, GetSelectedToolID()) };
 	SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 	HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 	if (S_OK == hr)

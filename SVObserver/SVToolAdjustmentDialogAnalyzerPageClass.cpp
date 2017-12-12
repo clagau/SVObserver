@@ -148,10 +148,10 @@ BOOL SVToolAdjustmentDialogAnalyzerPageClass::OnInitDialog()
 
 		
 		typedef SvCmd::GetCreatableObjects Command;
-		typedef SVSharedPtr<Command> CommandPtr;
+		typedef std::shared_ptr<Command> CommandPtr;
 
 		SvUl::NameGuidList availableList;
-		CommandPtr commandPtr = new Command(m_TaskObjectID, SvDef::SVObjectTypeInfoStruct(SvDef::SVAnalyzerObjectType, SvDef::SVNotSetSubObjectType));
+		CommandPtr commandPtr{ new Command(m_TaskObjectID, SvDef::SVObjectTypeInfoStruct(SvDef::SVAnalyzerObjectType, SvDef::SVNotSetSubObjectType)) };
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
@@ -220,7 +220,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnButtonDetails()
 					l_ToolId = m_pTool->GetUniqueObjectID();
 				}
 
-				SvCmd::InspectionRunOncePtr l_CommandPtr = new SvCmd::InspectionRunOnce( pInspection->GetUniqueObjectID(), l_ToolId );
+				SvCmd::InspectionRunOncePtr l_CommandPtr{ new SvCmd::InspectionRunOnce(pInspection->GetUniqueObjectID(), l_ToolId) };
 				SVObjectSynchronousCommandTemplate< SvCmd::InspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
 
 				l_Command.Execute( TWO_MINUTE_CMD_TIMEOUT );
@@ -322,7 +322,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 				l_ToolId = m_pTool->GetUniqueObjectID();
 			}
 
-			SvCmd::InspectionRunOncePtr l_CommandPtr = new SvCmd::InspectionRunOnce( pInspection->GetUniqueObjectID(), l_ToolId );
+			SvCmd::InspectionRunOncePtr l_CommandPtr{ new SvCmd::InspectionRunOnce(pInspection->GetUniqueObjectID(), l_ToolId) };
 			SVObjectSynchronousCommandTemplate< SvCmd::InspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
 
 			l_Command.Execute( TWO_MINUTE_CMD_TIMEOUT );

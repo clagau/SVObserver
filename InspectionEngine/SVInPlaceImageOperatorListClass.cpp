@@ -105,8 +105,8 @@ bool SVInPlaceImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::
 
 	if( bRetVal )
 	{
-		SVSmartHandlePointer input;
-		SVSmartHandlePointer output;
+		SVImageBufferHandlePtr input;
+		SVImageBufferHandlePtr output;
 		// Use input image for in- and output.
 		// Image must be a Physical type!!! ( Is already checked in ResetObject() )
 		getInputImage()->GetImageHandle( input );

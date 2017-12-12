@@ -55,6 +55,7 @@
 #include <cmath>
 #include <comdef.h>
 #include <deque>
+#include <memory>
 #include <map>				//Used by static library
 #include <set>
 #include <string>

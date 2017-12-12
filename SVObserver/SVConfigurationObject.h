@@ -432,5 +432,5 @@ private:
 	SVAcquisitionDeviceMap m_AcquisitionDeviceMap;
 };
 
-typedef SVSharedPtr< SVConfigurationObject > SVConfigurationObjectPtr;
+typedef std::shared_ptr< SVConfigurationObject > SVConfigurationObjectPtr;
 

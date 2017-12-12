@@ -16,7 +16,6 @@
 #pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
 #include "SelectorItem.h"
-#include "SVUtilityLibrary/SVSharedPtr.h"
 #pragma endregion Includes
 
 namespace SvCl
@@ -94,6 +93,6 @@ namespace SvCl
 	#pragma endregion Member Variables
 	};
 
-	typedef SVSharedPtr< ObjectSelectorItem > ObjectSelectorItemPtr;
+	typedef std::shared_ptr< ObjectSelectorItem > ObjectSelectorItemPtr;
 } //namespace SvCl
 

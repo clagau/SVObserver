@@ -95,7 +95,7 @@ bool SVLightReferenceDialogPropertySheetClass::CreatePages( SVVirtualCameraPtrSe
 			if (0 == pLR->NumBands() )
 			{
 				SvDef::StringVector msgList;
-				if( !( pDevice.empty() ) )
+				if(nullptr != pDevice)
 				{
 					msgList.push_back(SvUl::Format("%s (Dig_%d.Ch_%d)", pCamera->GetName(), pDevice->DigNumber(), pDevice->Channel()));
 				}

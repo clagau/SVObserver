@@ -329,11 +329,11 @@ bool SVPerspectiveToolClass::onRun( SVRunStatusClass &p_rRunStatus, SvStl::Messa
 
 		if ( nullptr != l_pInputImage && m_OutputImage.SetImageHandleIndex( p_rRunStatus.Images ) )
 		{
-			SVSmartHandlePointer l_InputHandle;
-			SVSmartHandlePointer l_OutputHandle;
+			SVImageBufferHandlePtr l_InputHandle;
+			SVImageBufferHandlePtr l_OutputHandle;
 
-			if ( l_pInputImage->GetImageHandle( l_InputHandle ) && !( l_InputHandle.empty() ) &&
-				   m_OutputImage.GetImageHandle( l_OutputHandle ) && !( l_OutputHandle.empty() ) )
+			if ( l_pInputImage->GetImageHandle( l_InputHandle ) && nullptr != l_InputHandle &&
+				   m_OutputImage.GetImageHandle( l_OutputHandle ) && nullptr != l_OutputHandle)
 			{
 				SVImageBufferHandleImage l_InMilHandle;
 				SVImageBufferHandleImage l_OutMilHandle;

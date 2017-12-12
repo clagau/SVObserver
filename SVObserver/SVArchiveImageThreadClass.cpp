@@ -96,10 +96,10 @@ HRESULT SVArchiveImageThreadClass::QueueImage( BufferInfo p_BufferInfo )
 			BufferInfo& rBufferInfo = *iter;
 			// must do the copy with the queue locked
 			// ** COPY BUFFER **
-			SVSmartHandlePointer l_DestHandle;
+			SVImageBufferHandlePtr l_DestHandle;
 			rBufferInfo.pImageObject->GetImageHandle( 0, l_DestHandle );
 
-			if( !( l_DestHandle.empty() ) )
+			if(nullptr != l_DestHandle)
 			{
 				SVImageBufferHandleImage l_MilBuffer;
 				l_DestHandle->GetData( l_MilBuffer );
@@ -125,8 +125,8 @@ HRESULT SVArchiveImageThreadClass::QueueImage( BufferInfo p_BufferInfo )
 				lock.Unlock();	// do the least possible amount of work with this locked
 
 				// ** CREATE BUFFER **
-				SVImageObjectClassPtr pImageObject = new SVImageObjectClass;
-				if( !( pImageObject.empty() ) )
+				SVImageObjectClassPtr pImageObject{ new SVImageObjectClass };
+				if(nullptr != pImageObject)
 				{
 					pImageObject->SetImageInfo( p_BufferInfo.info );
 					pImageObject->resize( 1 );
@@ -148,10 +148,10 @@ HRESULT SVArchiveImageThreadClass::QueueImage( BufferInfo p_BufferInfo )
 					p_BufferInfo.pImageObject = pImageObject;
 
 					// ** COPY BUFFER **
-					SVSmartHandlePointer l_DestHandle;
+					SVImageBufferHandlePtr l_DestHandle;
 					pImageObject->GetImageHandle( 0, l_DestHandle );
 
-					if( !( l_DestHandle.empty() ) )
+					if(nullptr != l_DestHandle)
 					{
 						SVImageBufferHandleImage l_MilBuffer;
 						l_DestHandle->GetData( l_MilBuffer );
@@ -194,10 +194,10 @@ HRESULT SVArchiveImageThreadClass::QueueImage( BufferInfo p_BufferInfo )
 					BufferInfo& rBufferInfo = *iterOldest;
 
 					// must do the copy with the queue locked
-					SVSmartHandlePointer l_DestHandle;
+					SVImageBufferHandlePtr l_DestHandle;
 					iterOldest->pImageObject->GetImageHandle( 0, l_DestHandle );
 
-					if( !( l_DestHandle.empty() ) )
+					if(nullptr != l_DestHandle)
 					{
 						SVImageBufferHandleImage l_MilBuffer;
 						l_DestHandle->GetData( l_MilBuffer );
@@ -280,7 +280,7 @@ HRESULT SVArchiveImageThreadClass::PopAndWrite()
 			lock.Unlock();
 			SVArchiveRecord::WriteImage( info.id, info.m_FileName );
 
-			info.pImageObject.clear();
+			info.pImageObject.reset();
 			//TheSVDataManager.ReleaseBufferIndex( info.lDMBuffer, info.lDMIndex, SV_ARCHIVE );
 		}
 	}// end lock scope block

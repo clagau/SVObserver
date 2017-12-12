@@ -58,7 +58,7 @@ bool SVLutDlg::Create( SVVirtualCameraPtrSet& setCameras, SVLutMap& raLut )
 		{
 			SVAcquisitionClassPtr pAcqDevice = pCamera->GetAcquisitionDevice();
 
-			if( !( pAcqDevice.empty() ) && raLut.find( pCamera->GetUniqueObjectID() ) != raLut.end() && 0 < raLut[pCamera->GetUniqueObjectID()].NumBands() )
+			if(nullptr != pAcqDevice && raLut.find( pCamera->GetUniqueObjectID() ) != raLut.end() && 0 < raLut[pCamera->GetUniqueObjectID()].NumBands() )
 			{
 				std::string Caption = SvUl::Format("%s (Dig_%d.Ch_%d)", pCamera->GetName(), pAcqDevice->DigNumber(), pAcqDevice->Channel());
 

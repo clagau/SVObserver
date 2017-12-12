@@ -256,7 +256,7 @@ bool SVInputObjectList::ReadInputs( const SVIOEntryHostStructPtrVector& p_rInput
 			SVIOEntryHostStructPtr pIOEntry = p_rInputs[i];
 
 			// Check if output is enabled for this call
-			if( !( pIOEntry.empty() ) && pIOEntry->m_Enabled )
+			if(nullptr != pIOEntry && pIOEntry->m_Enabled )
 			{
 				SVInputObject *pInput = nullptr;
 
@@ -330,9 +330,7 @@ bool SVInputObjectList::FillInputs( SVIOEntryHostStructPtrVector& p_IOEntries )
 		{
 			SVInputObject *pInput = l_Iter->second;
 
-			SVIOEntryHostStructPtr pIOEntry;
-
-			pIOEntry = new SVIOEntryHostStruct;
+			SVIOEntryHostStructPtr pIOEntry{ new SVIOEntryHostStruct };
 
 			pIOEntry->m_IOId = pInput->GetUniqueObjectID();
 

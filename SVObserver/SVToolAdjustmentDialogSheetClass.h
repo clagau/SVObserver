@@ -70,7 +70,7 @@ private:
 	GUID m_InspectionID;
 	GUID m_TaskObjectID;
 
-	typedef SVSharedPtr<SvOg::FormulaController> ControllerPtr;
+	typedef std::shared_ptr<SvOg::FormulaController> ControllerPtr;
 	ControllerPtr m_conditionalController;
 };
 

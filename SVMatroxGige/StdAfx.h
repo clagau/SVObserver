@@ -58,6 +58,7 @@
 #include <deque>
 #include <list>				//Used by static library
 #include <map>
+#include <memory>
 #include <set>				//Used by static library
 #include <stack>
 #include <string>			//Used by static library

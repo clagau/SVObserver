@@ -12,10 +12,10 @@
 #pragma once
 
 #pragma region Includes
+//Moved to precompiled header: #include <memory>
 //Moved to precompiled header: #include <set>
 #include "SVImageLibrary/SVExtentMultiLineStruct.h"
 #include "SVStatusLibrary/SVImageIndexStruct.h"
-#include "SVUtilityLibrary/SVSharedPtr.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "SVIPProductStruct.h"
 #include "InspectionEngine/SVCameraInfoStruct.h"
@@ -54,5 +54,5 @@ private:
 	SVIPProductStruct m_Product;
 };
 
-typedef SVSharedPtr< SVCommandInspectionCollectImageData > SVCommandInspectionCollectImageDataPtr;
+typedef std::shared_ptr< SVCommandInspectionCollectImageData > SVCommandInspectionCollectImageDataPtr;
 

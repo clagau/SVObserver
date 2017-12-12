@@ -787,9 +787,9 @@ HRESULT SVMatroxImageInterface::AdaptiveThreshold( const SVCommandDataHolder& p_
 
 			if( S_OK == l_Status )
 			{
-				SVCommandDataFacadePtr l_DestPtr = new SVMatroxCommandDataImage( dstBuffer, true ); 
+				SVCommandDataFacadePtr l_DestPtr{ new SVMatroxCommandDataImage(dstBuffer, true) };
 
-				if( ! l_DestPtr.empty() )
+				if( nullptr != l_DestPtr )
 				{
 					l_Status = p_rResults.SetData( _T( "Result Image" ), l_DestPtr );
 				}
@@ -953,9 +953,9 @@ HRESULT SVMatroxImageInterface::AutoThreshold( const SVCommandDataHolder& p_rAtt
 
 			if( S_OK == l_Status )
 			{
-				SVCommandDataFacadePtr l_DestPtr = new SVMatroxCommandDataImage( dstBuffer, true );
+				SVCommandDataFacadePtr l_DestPtr{ new SVMatroxCommandDataImage(dstBuffer, true) };
 
-				if( ! l_DestPtr.empty() )
+				if(nullptr != l_DestPtr)
 				{
 					l_Status = p_rResults.SetData( _T( "Result Image" ), l_DestPtr );
 				}
@@ -1057,9 +1057,9 @@ HRESULT SVMatroxImageInterface::FixedThreshold( const SVCommandDataHolder& p_rAt
 
 			if( S_OK == l_Status )
 			{
-				SVCommandDataFacadePtr l_DestPtr = new SVMatroxCommandDataImage( dstBuffer, true );
+				SVCommandDataFacadePtr l_DestPtr{ new SVMatroxCommandDataImage(dstBuffer, true) };
 
-				if( ! l_DestPtr.empty() )
+				if( nullptr != l_DestPtr )
 				{
 					l_Status = p_rResults.SetData( _T( "Result Image" ), l_DestPtr );
 				}

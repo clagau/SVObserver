@@ -11,15 +11,16 @@
 
 #pragma region Includes
 #include "Stdafx.h"
+//Moved to precompiled header: #include <memory>
 //Moved to precompiled header: #include <boost/bind.hpp>
 #include "SVFailStatusStreamManager.h"
 #include "SVRemoteControlConstants.h"
 #include "JsonLib/include/json.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVUtilityLibrary/SVSharedPtr.h"
 #include "SVObjectCommandDataJson.h"
 #include "SVPPQObject.h"
 #include "RemoteMonitorList.h"
+#include "SVUtilityLibrary/SVNullDeleter.h"
 #pragma endregion
 
 #pragma region Constants
@@ -42,7 +43,7 @@ void SVFailStatusStreamManager::Startup(unsigned short p_PortNumber)
 {
 	m_SocketServer.ListenForClients(p_PortNumber, boost::bind(&SVFailStatusStreamManager::ProcessJsonCommand, this, _1, _2));
 	m_cookie = 0;
-	SVObserverNotificationFunctorPtr ptr(SVSharedPtr<SVObserverNotificationFunctor>(this, SVNullDeleter()));
+	SVObserverNotificationFunctorPtr ptr(std::shared_ptr<SVObserverNotificationFunctor>(this, SVNullDeleter()));
 	SVObjectManagerClass::Instance().InsertObserver(ptr, m_cookie);
 }
 

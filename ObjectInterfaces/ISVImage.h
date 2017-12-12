@@ -9,12 +9,11 @@
 #pragma region Includes
 #include "Definitions/SVImageEnums.h"
 #include "IMatroxImageData.h"
-#include "SVUtilityLibrary\SVSharedPtr.h"
 #pragma endregion Includes
 
 namespace SvOi
 {
-	typedef SVSharedPtr< IMatroxImageData > MatroxImageSmartHandlePtr;
+	typedef std::shared_ptr< IMatroxImageData > MatroxImageSmartHandlePtr;
 	//this class is a interface. It should only have pure virtual public method and no member variables
 	class ISVImage
 	{

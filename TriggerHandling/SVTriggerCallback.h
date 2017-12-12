@@ -11,15 +11,17 @@
 
 #pragma once
 
-#include "SVUtilityLibrary/SVSharedPtr.h"
+#pragma region Includes
+//Moved to precompiled header: #include <memory>
 #include "SVTriggerCallbackFuncInterface.h"
+#pragma endregion Includes
 
 namespace SvTh
 {
 	class SVTriggerCallback
 	{
 	private:
-		SVSharedPtr<SVTriggerCallbackFuncInterface> m_pFunc;
+		std::shared_ptr<SVTriggerCallbackFuncInterface> m_pFunc;
 
 	public:
 		SVTriggerCallback(SVTriggerCallbackFuncInterface* pFunc);

@@ -293,8 +293,8 @@ bool SVColorThresholdClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCo
 
 	if (Result)
 	{
-		SVSmartHandlePointer BandHandle[BandEnum::BandNumber];
-		SVSmartHandlePointer OutputHandle;
+		SVImageBufferHandlePtr BandHandle[BandEnum::BandNumber];
+		SVImageBufferHandlePtr OutputHandle;
 
 		SVImageBufferHandleImage BandMilBuffer[BandEnum::BandNumber];
 		SVImageBufferHandleImage l_OutputMilBuffer;
@@ -302,7 +302,7 @@ bool SVColorThresholdClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCo
 		for (BandEnum Band : BandList)
 		{
 			Result = Result && GetBandOutputImage(Band).GetImageHandle(BandHandle[Band]);
-			Result &= !BandHandle[Band].empty();
+			Result &= (nullptr != BandHandle[Band]);
 			if (Result)
 			{
 				BandHandle[Band]->GetData(BandMilBuffer[Band]);
@@ -311,7 +311,7 @@ bool SVColorThresholdClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCo
 		}
 
 		Result = Result && m_OutputImage.GetImageHandle(OutputHandle);
-		Result &= !OutputHandle.empty();
+		Result &= (nullptr != OutputHandle);
 
 		if (Result)
 		{
@@ -365,8 +365,8 @@ bool SVColorThresholdClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCo
 				m_ExtentLeft.GetValue(Value);
 				lLeft = static_cast<long> (Value);
 
-				SVSmartHandlePointer ImageHandle;
-				SVSmartHandlePointer InputImageHandle;
+				SVImageBufferHandlePtr ImageHandle;
+				SVImageBufferHandlePtr InputImageHandle;
 
 				for (BandEnum Band : BandList)
 				{
@@ -375,7 +375,7 @@ bool SVColorThresholdClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCo
 						GetBandHistogramImage(Band).SetImageHandleIndex(rRunStatus.Images);
 
 						if (nullptr != GetBandInputImage(Band) && GetBandInputImage(Band)->GetImageHandle(InputImageHandle) &&
-							!(InputImageHandle.empty()) && GetBandHistogramImage(Band).GetImageHandle(ImageHandle) && !(ImageHandle.empty()))
+							nullptr !=InputImageHandle && GetBandHistogramImage(Band).GetImageHandle(ImageHandle) && nullptr != ImageHandle)
 						{
 							SVImageBufferHandleImage FromMilBuffer;
 							SVImageBufferHandleImage ToMilBuffer;
@@ -612,14 +612,14 @@ bool SVColorThresholdClass::Binarize( long lower, long upper, BOOL bExclude, Ban
 	SVImageClass& rOutputImage = GetBandOutputImage(Band);
 	if(nullptr != pInputImage)
 	{
-		SVSmartHandlePointer InputImageHandle;
-		SVSmartHandlePointer OutputImageHandle;
+		SVImageBufferHandlePtr InputImageHandle;
+		SVImageBufferHandlePtr OutputImageHandle;
 
 	    SVImageBufferHandleImage InputMilBuffer;
 		SVImageBufferHandleImage OutputMilBuffer;
 
-		if ( pInputImage->GetImageHandle( InputImageHandle ) && !( InputImageHandle.empty() ) &&
-			 rOutputImage.GetImageHandle( OutputImageHandle ) && !( OutputImageHandle.empty() ) )
+		if ( pInputImage->GetImageHandle( InputImageHandle ) && nullptr != InputImageHandle &&
+			 rOutputImage.GetImageHandle( OutputImageHandle ) && nullptr != OutputImageHandle )
 		{
 			InputImageHandle->GetData( InputMilBuffer );
 			OutputImageHandle->GetData( OutputMilBuffer );
@@ -656,9 +656,9 @@ bool SVColorThresholdClass::getHistogram( BandEnum Band )
 	bool Result(false);
 
 	SVImageBufferHandleImage l_MilBuffer;
-	SVSmartHandlePointer ImageHandle;
+	SVImageBufferHandlePtr ImageHandle;
 
-	if (GetBandHistogramImage(Band).GetImageHandle( ImageHandle ) && !( ImageHandle.empty() ) )
+	if (GetBandHistogramImage(Band).GetImageHandle( ImageHandle ) && nullptr != ImageHandle)
 	{
 		ImageHandle->GetData( l_MilBuffer );
 	}

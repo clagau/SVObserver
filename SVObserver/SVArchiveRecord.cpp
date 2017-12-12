@@ -24,12 +24,12 @@
 #pragma region Constructor
 SVArchiveRecord::SVArchiveRecord()
 {
-	m_ImageBufferPtr = new SVImageObjectClass;
+	m_ImageBufferPtr = SVImageObjectClassPtr{ new SVImageObjectClass };
 
 	m_lCountImages = 1L;
 	m_pArchiveTool = nullptr;
 
-	m_pImageCircleBuffer.clear();
+	m_pImageCircleBuffer.reset();
 	m_LastIndexHandle.clear();
 
 	m_lLastIndex = m_lCountImages;
@@ -58,7 +58,7 @@ SVArchiveRecord::~SVArchiveRecord()
 
 	m_aFileNames.clear();
 	m_LastIndexHandle.clear();
-	m_pImageCircleBuffer.clear();
+	m_pImageCircleBuffer.reset();
 }
 #pragma endregion Constructor
 
@@ -249,13 +249,13 @@ HRESULT SVArchiveRecord::QueueImage( SVMatroxBuffer& buf, const std::string& rFi
 	}
 	else
 	{
-		if( !( m_ImageBufferPtr.empty() ) )
+		if(nullptr != m_ImageBufferPtr)
 		{
 			m_ImageBufferPtr->SetCurrentIndex( m_LastIndexHandle );
-			SVSmartHandlePointer handle;
+			SVImageBufferHandlePtr handle;
 			m_ImageBufferPtr->GetImageHandle( m_LastIndexHandle.GetIndex(), handle );
 
-			if( !( handle.empty() ) )
+			if(nullptr != handle)
 			{
 				SVImageBufferHandleImage l_MilBuffer;
 				handle->GetData( l_MilBuffer );
@@ -324,7 +324,7 @@ HRESULT SVArchiveRecord::AllocateBuffers( long lBufferSize )
 		// now ceate buffer if reserve OK
 		if ( S_OK == hr && SVArchiveAsynchronous != m_eArchiveMethod )
 		{
-			if( !( m_ImageBufferPtr.empty() ) )
+			if(nullptr != m_ImageBufferPtr)
 			{
 				m_ImageBufferPtr->SetImageInfo( info );
 				m_ImageBufferPtr->resize( lBufferSize+1 );
@@ -350,15 +350,15 @@ HRESULT SVArchiveRecord::WriteImageQueue()
 {
 	HRESULT hr = S_OK;
 
-	if( !( m_ImageBufferPtr.empty() ) )
+	if( nullptr != m_ImageBufferPtr)
 	{
 		long lCount = m_lMaxIndex;
 		for ( long l = 1; l <= lCount; l++ )
 		{
-			SVSmartHandlePointer handle;
+			SVImageBufferHandlePtr handle;
 			m_ImageBufferPtr->GetImageHandle( m_aFileNames[l].second.GetIndex(), handle );
 
-			if( !( handle.empty() ) )
+			if( nullptr != handle)
 			{
 				SVImageBufferHandleImage l_MilBuffer;
 				handle->GetData( l_MilBuffer );
@@ -399,8 +399,8 @@ HRESULT SVArchiveRecord::WriteImage( )
 		// Create a file and convert the image to a .bmp type 
 		// file.
 		//
-		SVSmartHandlePointer ImageHandle;
-		bOk = pImage->GetImageHandle( ImageHandle ) && !( ImageHandle.empty() );
+		SVImageBufferHandlePtr ImageHandle;
+		bOk = pImage->GetImageHandle( ImageHandle ) && (nullptr != ImageHandle);
 		if ( bOk )
 		{
 			HRESULT l_Code;

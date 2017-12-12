@@ -231,7 +231,7 @@ inline void SVConfigXMLPrint::WriteHardwareAcq(Writer writer, SVVirtualCamera* p
 	SVDeviceParamCollection* pDeviceParams = nullptr;
 	SVAcquisitionClassPtr pAcqDevice;
 	if( nullptr != pCamera ){ pAcqDevice = pCamera->GetAcquisitionDevice(); }
-	if( !( pAcqDevice.empty() ) && nullptr != m_cfo && m_cfo->GetAcquisitionDevice( pAcqDevice->DeviceName().c_str(), pfnac, plrcDummy, plutDummy, pDeviceParams ))
+	if( nullptr != pAcqDevice && nullptr != m_cfo && m_cfo->GetAcquisitionDevice( pAcqDevice->DeviceName().c_str(), pfnac, plrcDummy, plutDummy, pDeviceParams ))
 	{
 		writer->WriteStartElement(nullptr, L"CameraFiles", nullptr);
 		writer->WriteString(SvUl::to_utf16(pfnac->GetFileNameList(), cp_dflt).c_str());
@@ -1410,7 +1410,7 @@ inline void SVConfigXMLPrint::WriteGlobalConstants(Writer writer) const
 	{
 		const BasicValueObjectPtr& pGlobalConstant = *Iter;
 
-		if( !pGlobalConstant.empty() )
+		if(nullptr != pGlobalConstant)
 		{
 			Value = SvUl::Format( L"GlobalConstant%d", ++Index );
 			writer->WriteStartElement(nullptr, SvUl::to_utf16( Value.c_str(), cp_dflt).c_str(), nullptr);

@@ -573,7 +573,7 @@ bool ResizeTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVec
 		}
 	}
 
-	SVSmartHandlePointer	roiImageHandle;
+	SVImageBufferHandlePtr	roiImageHandle;
 	if (Result)
 	{
 		// The following logic was extrapolated from the StdImageOperatorList Run method.
@@ -596,7 +596,7 @@ bool ResizeTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVec
 	if (Result)
 	{
 		m_LogicalROIImage.GetImageHandle(roiImageHandle);
-		if (roiImageHandle.empty())
+		if (nullptr == roiImageHandle)
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)
@@ -636,12 +636,12 @@ bool ResizeTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVec
 			}
 		}
 
-		SVSmartHandlePointer outputImageHandle;
+		SVImageBufferHandlePtr outputImageHandle;
 
 		if (Result)
 		{
 			m_OutputImage.GetImageHandle(outputImageHandle);
-			if (outputImageHandle.empty())
+			if (nullptr == outputImageHandle)
 			{
 				Result = false;
 				if (nullptr != pErrorMessages)

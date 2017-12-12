@@ -397,12 +397,12 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 					m_aPreviousInputImageRect.push_back( rect );
 
 					// remember MIL handle
-					SVSmartHandlePointer l_ImageBuffer;
+					SVImageBufferHandlePtr l_ImageBuffer;
 					pImage->GetImageHandle(l_ImageBuffer);
 
 					SVImageBufferHandleImage l_MilHandle;
 
-					if( !( l_ImageBuffer.empty() ) )
+					if(nullptr != l_ImageBuffer)
 					{
 						l_ImageBuffer->GetData( l_MilHandle );
 
@@ -824,7 +824,7 @@ bool SVExternalToolTask::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 			// collect input images
 			for ( i=0; i < m_Data.m_lNumInputImages; i++)
 			{
-				SVSmartHandlePointer l_ImageBuffer;
+				SVImageBufferHandlePtr l_ImageBuffer;
 				SVImageClass* pInputImage = GetInputImage(i);
 				if ( pInputImage )
 				{
@@ -832,7 +832,7 @@ bool SVExternalToolTask::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 
 					SVImageBufferHandleImage l_MilHandle;
 
-					if( !( l_ImageBuffer.empty() ) )
+					if(nullptr != l_ImageBuffer)
 					{
 						l_ImageBuffer->GetData( l_MilHandle );
 
@@ -849,11 +849,11 @@ bool SVExternalToolTask::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 							}
 							else
 							{
-								SVSmartHandlePointer l_ImageBufferCopy;
+								SVImageBufferHandlePtr l_ImageBufferCopy;
 								m_aInputImagesCopy[i].GetImageHandle(l_ImageBufferCopy);
 								
 								SVImageBufferHandleImage l_CopyMilHandle;
-								if( !( l_ImageBufferCopy.empty() ) )
+								if (nullptr != l_ImageBufferCopy)
 								{
 									l_ImageBufferCopy->GetData( l_CopyMilHandle );
 								}
@@ -913,12 +913,12 @@ bool SVExternalToolTask::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 					{
 						GetResultImage(i)->SetImageHandleIndex( rRunStatus.Images );
 
-						SVSmartHandlePointer l_ImageBuffer;
+						SVImageBufferHandlePtr l_ImageBuffer;
 						GetResultImage(i)->GetImageHandle(l_ImageBuffer);
 
 						SVImageBufferHandleImage l_MilHandle;
 
-						if( !( l_ImageBuffer.empty() ) )
+						if(nullptr != l_ImageBuffer)
 						{
 							l_ImageBuffer->GetData( l_MilHandle );
 						}
@@ -937,12 +937,12 @@ bool SVExternalToolTask::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 					for ( i=0; i < m_Data.m_lNumResultImages; i++)
 					{
 						// Always use bucket 0 for copy
-						SVSmartHandlePointer l_ImageBuffer;
+						SVImageBufferHandlePtr l_ImageBuffer;
 						m_aResultImagesCopy[i].GetImageHandle(l_ImageBuffer);
 
 						SVImageBufferHandleImage l_MilHandle;
 
-						if( !( l_ImageBuffer.empty() ) )
+						if(nullptr != l_ImageBuffer)
 						{
 							l_ImageBuffer->GetData( l_MilHandle );
 						}
@@ -1013,16 +1013,16 @@ bool SVExternalToolTask::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 						{
 							GetResultImage(i)->SetImageHandleIndex( rRunStatus.Images );
 
-							SVSmartHandlePointer l_ImageBuffer;
+							SVImageBufferHandlePtr l_ImageBuffer;
 							GetResultImage(i)->GetImageHandle(l_ImageBuffer);
 
-							SVSmartHandlePointer l_ImageBufferCopy;
+							SVImageBufferHandlePtr l_ImageBufferCopy;
 							m_aResultImagesCopy[i].GetImageHandle(l_ImageBufferCopy);
 
 							SVImageBufferHandleImage l_MilHandle;
 							SVImageBufferHandleImage l_CopyMilHandle;
 
-							if( ! l_ImageBuffer.empty() && ! l_ImageBufferCopy.empty() )
+							if(nullptr != l_ImageBuffer && nullptr != l_ImageBufferCopy )
 							{
 								l_ImageBuffer->GetData( l_MilHandle );
 								l_ImageBufferCopy->GetData( l_CopyMilHandle );
@@ -1042,12 +1042,12 @@ bool SVExternalToolTask::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 					for( int i = 0 ; i < m_Data.m_lNumResultImages ; i++ )
 					{
 						// Create new Mil handle from HBitmap
-						SVSmartHandlePointer l_ImageBuffer;
+						SVImageBufferHandlePtr l_ImageBuffer;
 						GetResultImage(i)->GetImageHandle(l_ImageBuffer);
 
 						SVImageBufferHandleImage l_MilHandle;
 
-						if( !( l_ImageBuffer.empty() ) )
+						if(nullptr != l_ImageBuffer )
 						{
 							l_ImageBuffer->GetData( l_MilHandle );
 						}
@@ -1764,12 +1764,12 @@ HRESULT SVExternalToolTask::ConnectInputImages()
 			GetImageDefinitionStruct( aInputImages[i] , imageInfo );
 
 			// remember MIL handle
-			SVSmartHandlePointer l_ImageBuffer;
+			SVImageBufferHandlePtr l_ImageBuffer;
 			pImage->GetImageHandle(l_ImageBuffer);
 
 			SVImageBufferHandleImage l_MilHandle;
 
-			if( !( l_ImageBuffer.empty() ) )
+			if(nullptr != l_ImageBuffer)
 			{
 				l_ImageBuffer->GetData( l_MilHandle );
 			}

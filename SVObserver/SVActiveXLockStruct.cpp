@@ -43,12 +43,12 @@ void SVActiveXLockStruct::clear()
 {
 	m_Name.clear();
 	m_ProcessCount = -1;
-	m_ImageHandlePtr.clear();
+	m_ImageHandlePtr.reset();
 }
 
 BOOL SVActiveXLockStruct::Valid()
 {
-	if ( m_Name.empty() || m_ImageHandlePtr.empty() || m_ImageHandlePtr->empty() )
+	if (m_Name.empty() || nullptr == m_ImageHandlePtr || m_ImageHandlePtr->empty())
 	{
 		return false;
 	}

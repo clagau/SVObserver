@@ -232,7 +232,7 @@ void SVRemoteInputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 				pIOEntry = l_Iter->second;
 			}
 
-			if( !( pIOEntry.empty() ) )
+			if(nullptr != pIOEntry)
 			{
 				SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( pIOEntry->m_IOId );
 

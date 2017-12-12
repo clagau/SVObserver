@@ -87,7 +87,7 @@ void BasicValueObjects::getValueList( ValueVector& rObjectList, LPCTSTR DottedBr
 		BasicValueObjectPtr ObjPtr = *Iter;
 
 		//Only leafs are of interest no nodes
-		if( !Iter->empty() && !(*Iter)->isNode() )
+		if(nullptr != *Iter && !(*Iter)->isNode() )
 		{
 			if( ((*Iter)->ObjectAttributesAllowed() & AttributesAllowedFilter) == AttributesAllowedFilter )
 			{
@@ -113,7 +113,7 @@ HRESULT BasicValueObjects::deleteValueObject( LPCTSTR DottedName )
 	}
 
 	Iter = findValueObject( ParsedName );
-	if( m_Tree.end() != Iter && !Iter->empty() )
+	if( m_Tree.end() != Iter && nullptr != *Iter )
 	{
 		Result = S_OK;
 		Iter.node()->parent()->erase( Iter );
@@ -121,7 +121,7 @@ HRESULT BasicValueObjects::deleteValueObject( LPCTSTR DottedName )
 		//If the branch is a node and no other children then delete the node
 		ParsedName.RemoveBottomName();
 		Iter = findValueObject( ParsedName );
-		while( m_Tree.end() != Iter && !Iter->empty()  )
+		while( m_Tree.end() != Iter && nullptr != *Iter)
 		{
 			bool isDeleteableEmptyNode = (*Iter)->isNode() && 0 == Iter.node()->size() && RootChildName != ParsedName.GetObjectName();
 			if( isDeleteableEmptyNode )
@@ -163,7 +163,7 @@ BasicValueObjects::vt_const_iterator BasicValueObjects::findValueObject( const S
 		std::string Name = rParsedName.m_NameArray[Index];
 		Iter = findChildObject( IterStart, IterEnd, Name.c_str() );
 
-		if( IterEnd != Iter &&  !Iter->empty() )
+		if( IterEnd != Iter &&   nullptr != *Iter)
 		{
 			IterParent = Iter;
 			IterStart = Iter.node()->begin();
@@ -193,7 +193,7 @@ BasicValueObjects::vt_iterator BasicValueObjects::findValueObject( const SVObjec
 		vt_const_iterator IterConst( IterEnd );
 		IterConst = findChildObject( IterStart, IterEnd, Name.c_str() );
 
-		if( IterEnd != IterConst && !IterConst->empty() )
+		if( IterEnd != IterConst && nullptr != *IterConst )
 		{
 			Iter = IterStart;
 			std::advance ( Iter, std::distance<vt_const_iterator>( IterStart, IterConst ) );
@@ -218,7 +218,7 @@ BasicValueObjects::vt_const_iterator BasicValueObjects::findChildObject( const v
 
 	while( rEndIter != Iter )
 	{
-		if( !Iter->empty() && SearchName  == (*Iter)->GetName() )
+		if( nullptr != *Iter && SearchName  == (*Iter)->GetName() )
 		{
 			break;
 		}

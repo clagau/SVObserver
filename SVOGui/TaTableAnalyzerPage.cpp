@@ -111,10 +111,10 @@ namespace SvOg {
 		CPropertyPage::OnInitDialog();
 
 		typedef SvCmd::GetCreatableObjects Command;
-		typedef SVSharedPtr<Command> CommandPtr;
+		typedef std::shared_ptr<Command> CommandPtr;
 
 		SvUl::NameGuidList availableList;
-		CommandPtr commandPtr = new Command(m_TaskObjectID, SvDef::SVObjectTypeInfoStruct(SvDef::TableAnalyzerType, SvDef::SVNotSetSubObjectType));
+		CommandPtr commandPtr{ new Command(m_TaskObjectID, SvDef::SVObjectTypeInfoStruct(SvDef::TableAnalyzerType, SvDef::SVNotSetSubObjectType)) };
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
@@ -144,9 +144,9 @@ namespace SvOg {
 	{
 		// For all Items in the Selected (Instantiated) Analyzer list
 		typedef SvCmd::GetAvailableObjects Command;
-		typedef SVSharedPtr<Command> CommandPtr;
+		typedef std::shared_ptr<Command> CommandPtr;
 		SvUl::NameGuidList availableList;
-		CommandPtr commandPtr = new Command(m_TaskObjectID, SvDef::SVObjectTypeInfoStruct(SvDef::TableAnalyzerType, SvDef::SVNotSetSubObjectType));
+		CommandPtr commandPtr{ new Command(m_TaskObjectID, SvDef::SVObjectTypeInfoStruct(SvDef::TableAnalyzerType, SvDef::SVNotSetSubObjectType)) };
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
@@ -164,8 +164,8 @@ namespace SvOg {
 				SvCmd::DestroyChildObject::FlagEnum flag = SvCmd::DestroyChildObject::Flag_None;
 				// Close, Disconnect and Delete it
 				typedef SvCmd::DestroyChildObject DestroyCommand;
-				typedef SVSharedPtr<DestroyCommand> DestroyCommandPtr;
-				DestroyCommandPtr destroyCommandPtr = new DestroyCommand(m_TaskObjectID, analyzerGUID, flag);
+				typedef std::shared_ptr<DestroyCommand> DestroyCommandPtr;
+				DestroyCommandPtr destroyCommandPtr{ new DestroyCommand(m_TaskObjectID, analyzerGUID, flag) };
 				SVObjectSynchronousCommandTemplate<DestroyCommandPtr> destroyCmd(m_InspectionID, destroyCommandPtr);
 				destroyCmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 			}
@@ -183,8 +183,8 @@ namespace SvOg {
 		{
 			// Close, Disconnect and Delete it
 			typedef SvCmd::DestroyChildObject DestroyCommand;
-			typedef SVSharedPtr<DestroyCommand> DestroyCommandPtr;
-			DestroyCommandPtr destroyCommandPtr = new DestroyCommand(m_TaskObjectID, m_selectedAnalyzerID);
+			typedef std::shared_ptr<DestroyCommand> DestroyCommandPtr;
+			DestroyCommandPtr destroyCommandPtr{ new DestroyCommand(m_TaskObjectID, m_selectedAnalyzerID) };
 			SVObjectSynchronousCommandTemplate<DestroyCommandPtr> destroyCmd(m_InspectionID, destroyCommandPtr);
 			destroyCmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 			m_selectedAnalyzerID = SV_GUID_NULL;
@@ -215,8 +215,8 @@ namespace SvOg {
 
 			// Construct and Create the Analyzer Class Object
 			typedef SvCmd::ConstructAndInsertTaskObject Command;
-			typedef SVSharedPtr<Command> CommandPtr;
-			CommandPtr commandPtr = new Command(m_TaskObjectID, classID, destinyIndex);
+			typedef std::shared_ptr<Command> CommandPtr;
+			CommandPtr commandPtr{ new Command(m_TaskObjectID, classID, destinyIndex) };
 			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 			if (S_OK != hr)
@@ -253,8 +253,8 @@ namespace SvOg {
 		{
 			HRESULT hr = E_INVALIDARG;
 			typedef SvCmd::ConnectToObject Command;
-			typedef SVSharedPtr<Command> CommandPtr;
-			CommandPtr commandPtr = new Command(m_selectedAnalyzerID, m_inputName, columnGuid, SvDef::SVValueObjectType);
+			typedef std::shared_ptr<Command> CommandPtr;
+			CommandPtr commandPtr{ new Command(m_selectedAnalyzerID, m_inputName, columnGuid, SvDef::SVValueObjectType) };
 			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 			hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 			if ( S_OK != hr )
@@ -330,7 +330,7 @@ namespace SvOg {
 		SvStl::MessageContainerVector errorMessageList;
 		HRESULT hrOk = S_OK;
 
-		if (!m_Values.empty())
+		if (nullptr != m_Values)
 		{
 			switch (m_selectedSubType)
 			{
@@ -391,10 +391,10 @@ namespace SvOg {
 	void TaTableAnalyzerPage::refresh()
 	{
 		typedef SvCmd::GetAvailableObjects Command;
-		typedef SVSharedPtr<Command> CommandPtr;
+		typedef std::shared_ptr<Command> CommandPtr;
 
 		SvUl::NameGuidList availableList;
-		CommandPtr commandPtr = new Command(m_TaskObjectID, SvDef::SVObjectTypeInfoStruct(SvDef::TableAnalyzerType, SvDef::SVNotSetSubObjectType));
+		CommandPtr commandPtr{ new Command(m_TaskObjectID, SvDef::SVObjectTypeInfoStruct(SvDef::TableAnalyzerType, SvDef::SVNotSetSubObjectType)) };
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
@@ -416,8 +416,8 @@ namespace SvOg {
 		if( SV_GUID_NULL != m_selectedAnalyzerID ) 
 		{
 			typedef SvCmd::GetObjectTypeInfo Command;
-			typedef SVSharedPtr<Command> CommandPtr;
-			CommandPtr commandPtr = new Command(m_selectedAnalyzerID);
+			typedef std::shared_ptr<Command> CommandPtr;
+			CommandPtr commandPtr{ new Command(m_selectedAnalyzerID) };
 			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 			if (S_OK == hr)
@@ -447,9 +447,9 @@ namespace SvOg {
 	HRESULT TaTableAnalyzerPage::RetrieveAvailableColumnList()
 	{ 
 		typedef SvCmd::GetAvailableObjects Command;
-		typedef SVSharedPtr<Command> CommandPtr;
+		typedef std::shared_ptr<Command> CommandPtr;
 
-		CommandPtr commandPtr = new Command(m_TaskObjectID, SvDef::SVObjectTypeInfoStruct(SvDef::SVValueObjectType, SvDef::DoubleSortValueObjectType));
+		CommandPtr commandPtr{ new Command(m_TaskObjectID, SvDef::SVObjectTypeInfoStruct(SvDef::SVValueObjectType, SvDef::DoubleSortValueObjectType)) };
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
@@ -487,10 +487,10 @@ namespace SvOg {
 	{
 		setColumnSelectionCB();
 
-		if (m_Values.empty() || m_selectedAnalyzerID != m_Values->GetOwnerID())
+		if (nullptr == m_Values || m_selectedAnalyzerID != m_Values->GetOwnerID())
 		{
-			m_Values.clear();
-			m_Values = new Controller(SvOg::BoundValues(m_InspectionID, m_selectedAnalyzerID, boost::assign::map_list_of(IsAscTag, TableAnaylzerSortIsASCGuid)));
+			m_Values.reset();
+			m_Values = std::shared_ptr<Controller>{ new Controller(SvOg::BoundValues(m_InspectionID, m_selectedAnalyzerID, boost::assign::map_list_of(IsAscTag, TableAnaylzerSortIsASCGuid))) };
 			m_Values->Init();
 		}
 		
@@ -502,15 +502,15 @@ namespace SvOg {
 	{
 		setColumnSelectionCB();
 
-		if (m_Values.empty() || m_selectedAnalyzerID != m_Values->GetOwnerID())
+		if (nullptr == m_Values || m_selectedAnalyzerID != m_Values->GetOwnerID())
 		{
-			m_Values.clear();
-			m_Values = new Controller(SvOg::BoundValues(m_InspectionID, m_selectedAnalyzerID, boost::assign::map_list_of
+			m_Values.reset();
+			m_Values = std::shared_ptr<Controller>{ new Controller(SvOg::BoundValues(m_InspectionID, m_selectedAnalyzerID, boost::assign::map_list_of
 				(ExcludeHighTag, TableAnaylzerExcludeHighGuid)
 				(ExcludeHighLinkTag, TableAnaylzerExcludeHigh_LinkGuid)
 				(ExcludeLowTag, TableAnaylzerExcludeLowGuid)
 				(ExcludeLowLinkTag, TableAnaylzerExcludeLow_LinkGuid)
-				));
+				)) };
 			m_Values->Init();
 		}
 
@@ -530,13 +530,13 @@ namespace SvOg {
 
 	void TaTableAnalyzerPage::setLimitProperties()
 	{
-		if (m_Values.empty() || m_selectedAnalyzerID != m_Values->GetOwnerID())
+		if (nullptr == m_Values || m_selectedAnalyzerID != m_Values->GetOwnerID())
 		{
-			m_Values.clear();
-			m_Values = new Controller(SvOg::BoundValues(m_InspectionID, m_selectedAnalyzerID, boost::assign::map_list_of
+			m_Values.reset();
+			m_Values = std::shared_ptr<Controller>{ new Controller(SvOg::BoundValues(m_InspectionID, m_selectedAnalyzerID, boost::assign::map_list_of
 				(LimitValueTag, TableAnaylzerLimitValueGuid)
 				(LimitValueLinkTag, TableAnaylzerLimitValue_LinkGuid)
-				));
+				)) };
 			m_Values->Init();
 		}
 
@@ -552,8 +552,8 @@ namespace SvOg {
 	{
 		std::string selectedTableName;
 		typedef SvCmd::GetInputs Command;
-		typedef SVSharedPtr<Command> CommandPtr;
-		CommandPtr commandPtr = new Command(m_selectedAnalyzerID, SvDef::SVObjectTypeInfoStruct(SvDef::SVValueObjectType, SvDef::DoubleSortValueObjectType));
+		typedef std::shared_ptr<Command> CommandPtr;
+		CommandPtr commandPtr{ new Command(m_selectedAnalyzerID, SvDef::SVObjectTypeInfoStruct(SvDef::SVValueObjectType, SvDef::DoubleSortValueObjectType)) };
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
@@ -599,7 +599,7 @@ namespace SvOg {
 			if ( SV_GUID_NULL != analyzerGUID && analyzerGUID != m_selectedAnalyzerID)
 			{
 				// Do a reset of the analyzer
-				typedef SVSharedPtr<SvCmd::ResetObject> ResetObjectCommandPtr;
+				typedef std::shared_ptr<SvCmd::ResetObject> ResetObjectCommandPtr;
 				ResetObjectCommandPtr commandPtr(new SvCmd::ResetObject(analyzerGUID));
 				SVObjectSynchronousCommandTemplate<ResetObjectCommandPtr> cmd(m_InspectionID, commandPtr);
 

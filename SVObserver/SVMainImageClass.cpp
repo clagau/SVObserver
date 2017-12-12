@@ -66,7 +66,7 @@ bool SVMainImageClass::CopyImageTo( SVImageIndexStruct svIndex )
 	return false;
 }
 
-bool SVMainImageClass::GetImageHandle( SVSmartHandlePointer& p_rHandlePtr )
+bool SVMainImageClass::GetImageHandle( SVImageBufferHandlePtr& p_rHandlePtr )
 {
 	bool bOk = nullptr != GetCameraBufferArrayPtr();
 	
@@ -78,7 +78,7 @@ bool SVMainImageClass::GetImageHandle( SVSmartHandlePointer& p_rHandlePtr )
 	return bOk;
 }
 
-bool SVMainImageClass::GetImageHandle( SVImageIndexStruct svIndex, SVSmartHandlePointer& rHandle )
+bool SVMainImageClass::GetImageHandle( SVImageIndexStruct svIndex, SVImageBufferHandlePtr& rHandle )
 {
 	bool bOk = nullptr != GetCameraBufferArrayPtr();
 	
@@ -102,7 +102,7 @@ const SvTl::SVTimeStamp& SVMainImageClass::GetLastResetTimeStamp() const
 	
 bool SVMainImageClass::CreateBuffers( const SVImageInfoClass& p_rImageInfo, SVImageObjectClassPtr p_ImageArrayPtr )
 {
-	bool bOk = !( p_ImageArrayPtr.empty() );
+	bool bOk = (nullptr != p_ImageArrayPtr);
 
 	if ( bOk )
 	{

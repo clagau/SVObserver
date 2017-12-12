@@ -721,7 +721,7 @@ HRESULT SVConfigurationObject::AddImportedRemoteInput(SVPPQObject* pPPQ, const s
 	ASSERT( nullptr != pPPQ );
 
 	SVIOEntryHostStructPtr pIOEntry = pPPQ->GetInput(name);
-	if (pIOEntry.empty())
+	if (nullptr == pIOEntry)
 	{
 		hr = AddRemoteInput(pPPQ, name, ppqPosition, index, p_Value);
 	}
@@ -758,7 +758,7 @@ HRESULT SVConfigurationObject::AddImportedDigitalInput(SVPPQObject* pPPQ, const 
 	ASSERT( nullptr != pPPQ );
 
 	SVIOEntryHostStructPtr pIOEntry = pPPQ->GetInput(name);
-	if (pIOEntry.empty())
+	if (nullptr == pIOEntry)
 	{
 		hr = AddDigitalInput(pPPQ, name, ppqPosition);
 	}
@@ -802,7 +802,7 @@ HRESULT SVConfigurationObject::AddRemoteInput(SVPPQObject* pPPQ, const std::stri
 	pValueObject->SetObjectAttributesAllowed(SvDef::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute);
 	pValueObject->ResetObject();
 
-	SVIOEntryHostStructPtr pIOEntry = new SVIOEntryHostStruct;
+	SVIOEntryHostStructPtr pIOEntry{ new SVIOEntryHostStruct };
 	pIOEntry->setObject( dynamic_cast<SVObjectClass*> (pValueObject) );
 	pIOEntry->m_ObjectType		= IO_REMOTE_INPUT;
 	pIOEntry->m_PPQIndex		= ppqPosition;
@@ -843,7 +843,7 @@ HRESULT SVConfigurationObject::AddDigitalInput(SVPPQObject* pPPQ, const std::str
 	pValueObject->SetObjectAttributesAllowed(SvDef::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute);
 	pValueObject->ResetObject();
 
-	SVIOEntryHostStructPtr pIOEntry = new SVIOEntryHostStruct;
+	SVIOEntryHostStructPtr pIOEntry{ new SVIOEntryHostStruct };
 	pIOEntry->setObject(dynamic_cast<SVObjectClass*> (pValueObject));
 	pIOEntry->m_ObjectType		= IO_DIGITAL_INPUT;
 	pIOEntry->m_PPQIndex		= ppqPosition;
@@ -3144,7 +3144,7 @@ void SVConfigurationObject::SaveCamera(SvXml::SVObjectXMLWriter& rWriter) const
 		{
 			rWriter.StartElement( pCamera->GetName() );
 
-			if ( !pCamera->mpsvDevice.empty() )
+			if (nullptr != pCamera->mpsvDevice)
 			{
 				_variant_t svVariant;
 				svVariant = pCamera->getCameraID();
@@ -3519,7 +3519,7 @@ void SVConfigurationObject::SaveGlobalConstants(SvXml::SVObjectXMLWriter &rWrite
 	BasicValueObjects::ValueVector GlobalConstantObjects;
 	RootObject::getRootChildObjectList( GlobalConstantObjects, SvDef::FqnGlobal, 0 );
 	BasicValueObjects::ValueVector::const_iterator Iter( GlobalConstantObjects.cbegin() );
-	while ( GlobalConstantObjects.cend() != Iter  && !Iter->empty() )
+	while ( GlobalConstantObjects.cend() != Iter  && nullptr != *Iter )
 	{
 		std::string Name( (*Iter)->GetCompleteName() );
 		rWriter.StartElement( Name.c_str() );
@@ -3740,7 +3740,7 @@ bool SVConfigurationObject::Activate()
 	{
 		SVInspectionProcess* l_pInspection = m_arInspectionArray[l];
 
-		SvCmd::InspectionRunOncePtr l_CommandPtr = new SvCmd::InspectionRunOnce( l_pInspection->GetUniqueObjectID() );
+		SvCmd::InspectionRunOncePtr l_CommandPtr{ new SvCmd::InspectionRunOnce(l_pInspection->GetUniqueObjectID()) };
 		SVObjectSynchronousCommandTemplate< SvCmd::InspectionRunOncePtr > l_Command( l_pInspection->GetUniqueObjectID(), l_CommandPtr );
 
 		l_Command.Execute( TWO_MINUTE_CMD_TIMEOUT );
@@ -3867,7 +3867,7 @@ void SVConfigurationObject::SetupSoftwareTrigger(SvTi::SVSoftwareTriggerClass* p
 				pCamera->UnregisterTriggerRelay();
 
 				SVAcquisitionClassPtr pAcq = pCamera->GetAcquisitionDevice();
-				if( !( pAcq.empty() ) )
+				if(nullptr != pAcq)
 				{
 					// need the digitizer name here ...
 					SvTh::SVDigitizerLoadLibraryClass* pAcqDLL = SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(pAcq->DigName().c_str());
@@ -3915,7 +3915,7 @@ void SVConfigurationObject::SetupCameraTrigger(SvTi::SVCameraTriggerClass* pTrig
 				SVVirtualCamera* pCamera = GetCamera(i);
 				if ( nullptr != pCamera)
 				{
-					if (!pCamera->mpsvDevice.empty())
+					if (nullptr != pCamera->mpsvDevice)
 					{
 						if (iDigNum == pCamera->mpsvDevice->DigNumber())
 						{
@@ -4356,7 +4356,7 @@ HRESULT SVConfigurationObject::GetInspectionItems( const SVNameSet& p_rNames, SV
 
 			if( l_ProcessIter != l_Inspections.end() && nullptr != l_ProcessIter->second )
 			{
-				SVCommandInspectionGetItemsPtr l_DataPtr = new SVCommandInspectionGetItems( *l_ProcessIter->second, l_InspectionIter->second );
+				SVCommandInspectionGetItemsPtr l_DataPtr{ new SVCommandInspectionGetItems(*l_ProcessIter->second, l_InspectionIter->second) };
 				SVObjectAsynchronousCommandTemplate< SVCommandInspectionGetItemsPtr > l_Command( *l_ProcessIter->second, l_DataPtr );
 
 				HRESULT l_CommandStatus = l_Command.SubmitCommand();
@@ -4699,7 +4699,7 @@ HRESULT SVConfigurationObject::SetInspectionItems( const SVNameStorageMap& p_rIt
 
 				if( nullptr != pInspection )
 				{
-					SvCmd::InspectionRunOncePtr l_CommandPtr = new SvCmd::InspectionRunOnce( pInspection->GetUniqueObjectID() );
+					SvCmd::InspectionRunOncePtr l_CommandPtr{ new SvCmd::InspectionRunOnce(pInspection->GetUniqueObjectID()) };
 					SVObjectSynchronousCommandTemplate< SvCmd::InspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
 
 					l_Command.Execute( TWO_MINUTE_CMD_TIMEOUT );
@@ -4833,7 +4833,7 @@ HRESULT SVConfigurationObject::SetRemoteInputItems( const SVNameStorageMap& p_rI
 
 				if( nullptr != pInspection )
 				{
-					SvCmd::InspectionRunOncePtr l_CommandPtr = new SvCmd::InspectionRunOnce( pInspection->GetUniqueObjectID() );
+					SvCmd::InspectionRunOncePtr l_CommandPtr{ new SvCmd::InspectionRunOnce(pInspection->GetUniqueObjectID()) };
 					SVObjectSynchronousCommandTemplate< SvCmd::InspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
 
 					l_Command.Execute( TWO_MINUTE_CMD_TIMEOUT );
@@ -5371,7 +5371,7 @@ HRESULT SVConfigurationObject::LoadGlobalConstants( SVTreeType& rTree )
 				{
 					BasicValueObjectPtr pValue( nullptr );
 					pValue = RootObject::setRootChildValue( GlobalConstantName.c_str(), Value );
-					if( pValue.empty() )
+					if(nullptr == pValue)
 					{
 						Result = SVMSG_SVO_63_LOAD_GLOBAL_CONSTANTS;
 					}

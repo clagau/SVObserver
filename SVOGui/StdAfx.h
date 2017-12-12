@@ -65,6 +65,7 @@
 #include <guiddef.h>
 #include <limits.h>
 #include <map>
+#include <memory>
 #include <oleauto.h>
 #include <regex>
 #include <sequential_tree.h> //Used by static library

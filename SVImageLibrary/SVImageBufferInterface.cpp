@@ -26,7 +26,7 @@ SVImageBufferInterface::SVImageBufferInterface( const SVImageBufferInterface& p_
 	m_IndexHandle.Assign( p_rObject.m_IndexHandle, p_rObject.m_IndexHandle.GetLockType() );
 }
 
-SVImageBufferInterface::SVImageBufferInterface( SVSmartHandlePointer p_ImageHandle, const SVDataManagerHandle& p_rIndexHandle )
+SVImageBufferInterface::SVImageBufferInterface( SVImageBufferHandlePtr p_ImageHandle, const SVDataManagerHandle& p_rIndexHandle )
 :	m_ImageHandle( p_ImageHandle ),
 	m_StartTimeStamp( 0 ),
 	m_EndTimeStamp( 0 )
@@ -53,13 +53,13 @@ const SVImageBufferInterface& SVImageBufferInterface::operator=( const SVImageBu
 
 void SVImageBufferInterface::clear()
 {
-	m_ImageHandle.clear();
+	m_ImageHandle.reset();
 	m_IndexHandle.clear();
 	m_StartTimeStamp = 0;
 	m_EndTimeStamp = 0;
 }
 
-HRESULT SVImageBufferInterface::Assign( SVSmartHandlePointer p_ImageHandle, const SVDataManagerHandle& p_rIndexHandle )
+HRESULT SVImageBufferInterface::Assign( SVImageBufferHandlePtr p_ImageHandle, const SVDataManagerHandle& p_rIndexHandle )
 {
 	HRESULT l_Status = S_OK;
 
@@ -77,7 +77,7 @@ unsigned char* SVImageBufferInterface::GetBufferAddress() const
 {
 	unsigned char* l_pBuffer = nullptr;
 
-	if( ! m_ImageHandle.empty() )
+	if(nullptr != m_ImageHandle)
 	{
 		l_pBuffer = reinterpret_cast< unsigned char* >( m_ImageHandle->GetBufferAddress() );
 	}

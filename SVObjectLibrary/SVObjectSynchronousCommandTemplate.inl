@@ -34,17 +34,17 @@ HRESULT SVObjectSynchronousCommandTemplate< SVCommandPtr >::Execute( DWORD p_Tim
 {
 	HRESULT l_Status = S_OK;
 
-	if( !( m_ObjectID.empty() ) && !( m_CommandPtr.empty() ) )
+	if( !m_ObjectID.empty() && nullptr != m_CommandPtr )
 	{
 		typedef SVObjectCommandWrapperTemplate< SVCommandPtr >::SVObjectCommandWrapperPtr SVObjectCommandWrapperPtr;
 
-		SVObjectCommandWrapperPtr l_WrapperPtr = new SVObjectCommandWrapperTemplate< SVCommandPtr >( m_CommandPtr );
+		SVObjectCommandWrapperPtr l_WrapperPtr{ new SVObjectCommandWrapperTemplate< SVCommandPtr >(m_CommandPtr) };
 
-		if( !( l_WrapperPtr.empty() ) )
+		if( nullptr != l_WrapperPtr)
 		{
-			SVCommandTemplatePtr l_CommandPtr = new SVObjectThreadCommandTemplate< SVObjectCommandWrapperPtr >( l_WrapperPtr );
+			SVCommandTemplatePtr l_CommandPtr{ new SVObjectThreadCommandTemplate< SVObjectCommandWrapperPtr >(l_WrapperPtr) };
 
-			if( !( l_CommandPtr.empty() ) )
+			if( nullptr != l_CommandPtr )
 			{
 				l_Status = SVObjectManagerClass::Instance().SubmitCommand( m_ObjectID, l_CommandPtr );
 

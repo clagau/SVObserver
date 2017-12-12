@@ -31,13 +31,13 @@ bool SVMatroxBuffer::operator<(const SVMatroxBuffer& p_rBuf) const
 {
 	bool l_Status = true;
 
-	if( m_BufferPtr.empty() )
+	if( nullptr == m_BufferPtr )
 	{
-		l_Status = !( p_rBuf.m_BufferPtr.empty() );
+		l_Status = nullptr != p_rBuf.m_BufferPtr;
 	}
 	else
 	{
-		l_Status = ( p_rBuf.m_BufferPtr.empty() );
+		l_Status = nullptr == p_rBuf.m_BufferPtr;
 
 		if( !l_Status )
 		{
@@ -50,12 +50,12 @@ bool SVMatroxBuffer::operator<(const SVMatroxBuffer& p_rBuf) const
 
 bool SVMatroxBuffer::empty() const
 {
-	return ( m_BufferPtr.empty() || m_BufferPtr->empty() );
+	return (nullptr == m_BufferPtr || m_BufferPtr->empty());
 }
 
 void SVMatroxBuffer::clear()
 {
-	m_BufferPtr.clear();
+	m_BufferPtr.reset();
 }
 
 void SVMatroxBuffer::swap( SVMatroxBuffer& p_rBuf )
@@ -79,7 +79,7 @@ SVMatroxIdentifier SVMatroxBuffer::GetIdentifier() const
 {
 	SVMatroxIdentifier l_Identifier = 0;
 
-	if( !( m_BufferPtr.empty() ) )
+	if(nullptr != m_BufferPtr)
 	{
 		l_Identifier = m_BufferPtr->GetIdentifier();
 	}

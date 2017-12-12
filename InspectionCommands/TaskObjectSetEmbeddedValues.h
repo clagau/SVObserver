@@ -11,7 +11,6 @@
 #pragma region Includes
 #include "ObjectInterfaces/IObjectManager.h"
 #include "ObjectInterfaces/ITaskObject.h"
-#include "SVUtilityLibrary/SVSharedPtr.h"
 #pragma endregion Includes
 
 #pragma region Declarations

@@ -83,10 +83,10 @@ void RemoteMonitorListHelper::GetPropertiesFromMonitoredObject(const MonitoredOb
 	
 	if (nullptr != pImageObject)
 	{
-		SVSmartHandlePointer imageHandlePtr;
+		SVImageBufferHandlePtr imageHandlePtr;
 		// Special check for Color Tool's RGBMainImage which is HSI ???
 		pImageObject->GetImageHandle(imageHandlePtr);
-		if (!imageHandlePtr.empty())
+		if (nullptr != imageHandlePtr)
 		{
 			SVImageBufferHandleImage MilHandle;
 			imageHandlePtr->GetData(MilHandle);

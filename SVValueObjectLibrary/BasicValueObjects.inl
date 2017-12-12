@@ -16,7 +16,7 @@ HRESULT BasicValueObjects::getValue( LPCTSTR DottedName, ELEMENT_TYPE& rValue ) 
 	HRESULT Result = S_FALSE;
 
 	BasicValueObjectPtr pValue = getValueObject( DottedName );
-	if( !pValue.empty() )
+	if(nullptr != pValue)
 	{
 		Result = pValue->getValue( rValue );
 	}
@@ -86,7 +86,7 @@ BasicValueObjects::vt_const_iterator BasicValueObjects::createValueObject( LPCTS
 					//Generate node and node becomes the new parent object
 					Node = true;
 				}
-				pValue = new BasicValueObject( Name.c_str(), pParent, Node, ObjectSubType );
+				pValue = BasicValueObjectPtr{ new BasicValueObject(Name.c_str(), pParent, Node, ObjectSubType) };
 				//Check if this is a dotted name with static unique GUID
 				DottedNameGuidMap::const_iterator StaticUidIter( m_StaticUniqueIDMap.find( BranchName ) );
 				if( m_StaticUniqueIDMap.end() != StaticUidIter )

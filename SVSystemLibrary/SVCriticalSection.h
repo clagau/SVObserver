@@ -10,8 +10,9 @@
 //******************************************************************************
 
 #pragma once
-
-#include "SVUtilityLibrary/SVSharedPtr.h"
+#pragma region Includes
+//Moved to precompiled header: #include <memory>
+#pragma endregion Includes
 
 class SVCriticalSection
 {
@@ -44,5 +45,5 @@ private:
 
 };
 
-typedef SVSharedPtr< SVCriticalSection > SVCriticalSectionPtr;
+typedef std::shared_ptr< SVCriticalSection > SVCriticalSectionPtr;
 

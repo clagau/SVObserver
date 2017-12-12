@@ -66,8 +66,8 @@ namespace SvOg
 	
 		std::string selectedTableName;
 		typedef SvCmd::GetInputs Command;
-		typedef SVSharedPtr<Command> CommandPtr;
-		CommandPtr commandPtr = new Command(m_TaskObjectID, SvDef::SVObjectTypeInfoStruct(SvDef::TableObjectType, SvDef::SVNotSetSubObjectType), SvDef::SVToolObjectType);
+		typedef std::shared_ptr<Command> CommandPtr;
+		CommandPtr commandPtr{ new Command(m_TaskObjectID, SvDef::SVObjectTypeInfoStruct(SvDef::TableObjectType, SvDef::SVNotSetSubObjectType), SvDef::SVToolObjectType) };
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
@@ -121,9 +121,9 @@ namespace SvOg
 	HRESULT TATableSourcePage::RetrieveAvailableList()
 	{ 
 		typedef SvCmd::GetAvailableObjects Command;
-		typedef SVSharedPtr<Command> CommandPtr;
+		typedef std::shared_ptr<Command> CommandPtr;
 
-		CommandPtr commandPtr = new Command(m_InspectionID, SvDef::SVObjectTypeInfoStruct(SvDef::TableObjectType, SvDef::SVNotSetSubObjectType), SvCmd::IsObjectFromPriorTool(m_TaskObjectID), SvDef::SVToolObjectType);
+		CommandPtr commandPtr{ new Command(m_InspectionID, SvDef::SVObjectTypeInfoStruct(SvDef::TableObjectType, SvDef::SVNotSetSubObjectType), SvCmd::IsObjectFromPriorTool(m_TaskObjectID), SvDef::SVToolObjectType) };
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
@@ -145,11 +145,11 @@ namespace SvOg
 	{ 
 		HRESULT hr = E_INVALIDARG;
 		typedef SvCmd::ConnectToObject Command;
-		typedef SVSharedPtr<Command> CommandPtr;
+		typedef std::shared_ptr<Command> CommandPtr;
 		SvUl::NameGuidList::const_iterator it = std::find_if(m_availableList.begin(), m_availableList.end(), ByName(name));
 		if (it != m_availableList.end())
 		{
-			CommandPtr commandPtr = new Command(m_TaskObjectID, inputName, it->second, SvDef::TableObjectType);
+			CommandPtr commandPtr{ new Command(m_TaskObjectID, inputName, it->second, SvDef::TableObjectType) };
 			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 			hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		}	

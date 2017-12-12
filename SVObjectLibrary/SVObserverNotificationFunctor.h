@@ -10,8 +10,9 @@
 //******************************************************************************
 
 #pragma once
-
-#include "SVUtilityLibrary/SVSharedPtr.h"
+#pragma region Includes
+//Moved to precompiled header: #include <memory>
+#pragma endregion Includes
 
 class SVObserverNotificationFunctor
 {
@@ -23,5 +24,5 @@ protected:
 
 };
 
-typedef SVSharedPtr< SVObserverNotificationFunctor > SVObserverNotificationFunctorPtr;
+typedef std::shared_ptr< SVObserverNotificationFunctor > SVObserverNotificationFunctorPtr;
 

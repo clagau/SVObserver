@@ -24,7 +24,6 @@ SVRemoteCommand::SVRemoteCommand()
 
 SVRemoteCommand::~SVRemoteCommand()
 {
-	m_Command.clear();
 }
 
 void SVRemoteCommand::SetCommand( SVCommandTemplatePtr p_Command )
@@ -38,7 +37,7 @@ STDMETHODIMP SVRemoteCommand::GetCommandType(long* p_CommandType)
 
 	if( nullptr != p_CommandType )
 	{
-		if( ! m_Command.empty() )
+		if(nullptr != m_Command)
 		{
 			*p_CommandType = m_Command->GetCommandType();
 		}
@@ -108,7 +107,7 @@ STDMETHODIMP SVRemoteCommand::GetAttributes(ISVRemoteCommandData** p_ppAttribute
 			*p_ppAttributes = nullptr;
 		}
 
-		if( ! m_Command.empty() )
+		if(nullptr != m_Command)
 		{
 			SVCommandDataHolder::SVCommandAttributes* l_Attr = dynamic_cast< SVCommandDataHolder::SVCommandAttributes* >( m_Command.get() );
 
@@ -170,7 +169,7 @@ STDMETHODIMP SVRemoteCommand::SetAttributes(ISVRemoteCommandData* p_pAttributes)
 
 	if( nullptr != p_pAttributes )
 	{
-		if( ! m_Command.empty() )
+		if(nullptr != m_Command)
 		{
 			SVCommandDataHolder::SVCommandAttributes* l_Attr = dynamic_cast< SVCommandDataHolder::SVCommandAttributes* >( m_Command.get() );
 
@@ -210,7 +209,7 @@ STDMETHODIMP SVRemoteCommand::Execute()
 {
 	HRESULT l_Status = S_OK;
 
-	if( ! m_Command.empty() )
+	if(nullptr != m_Command)
 	{
 		l_Status = m_Command->Execute();
 	}
@@ -235,7 +234,7 @@ STDMETHODIMP SVRemoteCommand::GetResults(ISVRemoteCommandData** p_ppResults)
 			*p_ppResults = nullptr;
 		}
 
-		if( ! m_Command.empty() )
+		if(nullptr != m_Command)
 		{
 			SVCommandDataHolder::SVCommandResults* l_Results = dynamic_cast< SVCommandDataHolder::SVCommandResults* >( m_Command.get() );
 

@@ -63,6 +63,7 @@
 #include <comdef.h>
 #include <concrt.h>
 #include <cstdlib>
+#include <memory>
 #include <tchar.h>				//Used by static library
 
 #include <boost/any.hpp>

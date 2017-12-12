@@ -24,30 +24,30 @@ class SVImageCopyUtility;
 class SVImageProcessingClass
 {
 public:
-	static HRESULT CreateImageBuffer( const SVImageInfoClass& rInfo, SVSmartHandlePointer& rHandle, SvStl::MessageContainerVector* pErrorContainer = nullptr);
-	static HRESULT CreateImageBuffer( const SVSmartHandlePointer& rFromHandle, SVImageOperationTypeEnum p_lConversionType, SVSmartHandlePointer& rToHandle );
+	static HRESULT CreateImageBuffer( const SVImageInfoClass& rInfo, SVImageBufferHandlePtr& rHandle, SvStl::MessageContainerVector* pErrorContainer = nullptr);
+	static HRESULT CreateImageBuffer( const SVImageBufferHandlePtr& rFromHandle, SVImageOperationTypeEnum p_lConversionType, SVImageBufferHandlePtr& rToHandle );
 
-	static HRESULT CreateImageChildBuffer( const SVImageInfoClass& rParentInfo, SVSmartHandlePointer rParentHandle,
-	                                SVImageInfoClass& rChildInfo, SVSmartHandlePointer& rChildHandle );
+	static HRESULT CreateImageChildBuffer( const SVImageInfoClass& rParentInfo, SVImageBufferHandlePtr rParentHandle,
+	                                SVImageInfoClass& rChildInfo, SVImageBufferHandlePtr& rChildHandle );
 	
-	static HDC CreateBufferDC( const SVImageInfoClass& rInfo, SVSmartHandlePointer rHandle );
-	static HRESULT DestroyBufferDC( SVSmartHandlePointer rHandle, HDC hDC );
+	static HDC CreateBufferDC( const SVImageInfoClass& rInfo, SVImageBufferHandlePtr rHandle );
+	static HRESULT DestroyBufferDC( SVImageBufferHandlePtr rHandle, HDC hDC );
 
-	static HRESULT InitBuffer( SVSmartHandlePointer rHandle, DWORD dwValue = 0 );
+	static HRESULT InitBuffer( SVImageBufferHandlePtr rHandle, DWORD dwValue = 0 );
 
-	static HRESULT LoadImageBuffer( LPCTSTR tstrImagePathName, SVImageInfoClass& rInfo, SVSmartHandlePointer& rHandle );
-	static HRESULT LoadImageBuffer( void* pBuffer, SVImageInfoClass& rBufferInfo, SVSmartHandlePointer& rBufferHandle, SVImageInfoClass& rCameraInfo );
+	static HRESULT LoadImageBuffer( LPCTSTR tstrImagePathName, SVImageInfoClass& rInfo, SVImageBufferHandlePtr& rHandle );
+	static HRESULT LoadImageBuffer( void* pBuffer, SVImageInfoClass& rBufferInfo, SVImageBufferHandlePtr& rBufferHandle, SVImageInfoClass& rCameraInfo );
 
-	static HRESULT SaveImageBuffer( LPCTSTR tstrImagePathName, SVMatroxFileTypeEnum efileFormat,const SVSmartHandlePointer& rHandle );
+	static HRESULT SaveImageBuffer( LPCTSTR tstrImagePathName, SVMatroxFileTypeEnum efileFormat,const SVImageBufferHandlePtr& rHandle );
 
-	static HRESULT ConvertImageBuffer( SVByteVector& p_rToDIB, const SVSmartHandlePointer& rFromHandle, SVImageOperationTypeEnum p_lConversionType );
+	static HRESULT ConvertImageBuffer( SVByteVector& p_rToDIB, const SVImageBufferHandlePtr& rFromHandle, SVImageOperationTypeEnum p_lConversionType );
 
-	static HRESULT CopyImageBuffer( SVSmartHandlePointer& rToHandle, const SVSmartHandlePointer& rFromHandle );
-	static HRESULT CopyImageBuffer( SVByteVector& p_rToDIB, const SVSmartHandlePointer& rFromHandle );
-	static HRESULT CopyImageBuffer( SVByteVector& p_rToDIB, const SVBitmapInfo& p_rToBitmapInfo, const SVSmartHandlePointer& rFromHandle );
+	static HRESULT CopyImageBuffer( SVImageBufferHandlePtr& rToHandle, const SVImageBufferHandlePtr& rFromHandle );
+	static HRESULT CopyImageBuffer( SVByteVector& p_rToDIB, const SVImageBufferHandlePtr& rFromHandle );
+	static HRESULT CopyImageBuffer( SVByteVector& p_rToDIB, const SVBitmapInfo& p_rToBitmapInfo, const SVImageBufferHandlePtr& rFromHandle );
 
-	static HRESULT CopyImageBufferToFileDIB( SVByteVector& p_rToDIB, const SVSmartHandlePointer& rFromHandle );
-	static HRESULT CopyImageBuffer( SVImageCopyUtility& copier, const SVSmartHandlePointer& rFromHandle );
+	static HRESULT CopyImageBufferToFileDIB( SVByteVector& p_rToDIB, const SVImageBufferHandlePtr& rFromHandle );
+	static HRESULT CopyImageBuffer( SVImageCopyUtility& copier, const SVImageBufferHandlePtr& rFromHandle );
 
 	static HRESULT CreateDataBuffer( SVDataBufferInfoClass* pDataInfo );
 	static HRESULT DestroyDataBuffer( SVDataBufferInfoClass* pDataInfo );
@@ -82,6 +82,6 @@ private:
 	//! \param rHandle [out] handle to the new image buffer
 	//! \returns HRESULT
 	//************************************
-	static HRESULT CreateImageBuffer( int pixelDepth, int bandNumber, long width, long height, SVMatroxBufferAttributeEnum format, SVSmartHandlePointer &rHandle );
+	static HRESULT CreateImageBuffer( int pixelDepth, int bandNumber, long width, long height, SVMatroxBufferAttributeEnum format, SVImageBufferHandlePtr &rHandle );
 };
 

@@ -110,7 +110,7 @@ HRESULT SVTaskObjectValueInterface::RunOnce( const SVGUID& rToolID)
 	try
 	{
 		const SVGUID& rInspectionID = m_pTaskObject->GetInspection()->GetUniqueObjectID();
-		SvCmd::InspectionRunOncePtr l_CommandPtr = new SvCmd::InspectionRunOnce( rInspectionID, rToolID );
+		SvCmd::InspectionRunOncePtr l_CommandPtr{ new SvCmd::InspectionRunOnce(rInspectionID, rToolID) };
 		SVObjectSynchronousCommandTemplate< SvCmd::InspectionRunOncePtr > l_Command( rInspectionID, l_CommandPtr );
 
 		l_hrOk = l_Command.Execute( TWO_MINUTE_CMD_TIMEOUT );

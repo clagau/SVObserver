@@ -2859,9 +2859,9 @@ HRESULT SVMatroxOcrInterface::UpdateCharacterListFromFontId( const SVMatroxOcr& 
 
 			if( S_OK == l_Status )
 			{
-				SVCommandDataFacadePtr l_DestPtr = new SVMatroxCommandDataImage( l_CharHandle, true );
+				SVCommandDataFacadePtr l_DestPtr{ new SVMatroxCommandDataImage(l_CharHandle, true) };
 
-				if( ! l_DestPtr.empty() )
+				if( nullptr != l_DestPtr )
 				{
 					l_Status = l_Character.SetData( _T( "Image" ), l_DestPtr );
 				}

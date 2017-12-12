@@ -68,4 +68,4 @@ private:
 #pragma endregion Member Variables
 };
 
-typedef SVSharedPtr<DoubleSortValueObject> DoubleSortValuePtr;
+typedef std::shared_ptr<DoubleSortValueObject> DoubleSortValuePtr;

@@ -242,8 +242,8 @@ namespace SvOg
 			CComPtr<IPicture> picture;
 
 			typedef SvCmd::GetImage Command;
-			typedef SVSharedPtr<Command> CommandPtr;
-			CommandPtr commandPtr = new Command(m_imageId);
+			typedef std::shared_ptr<Command> CommandPtr;
+			CommandPtr commandPtr{ new Command(m_imageId) };
 			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_inspectionId, commandPtr);
 			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 			if (S_OK == hr)
@@ -392,8 +392,8 @@ namespace SvOg
 	{
 		CRect rect;
 		typedef SvCmd::GetOutputRectangle Command;
-		typedef SVSharedPtr<Command> CommandPtr;
-		CommandPtr commandPtr = new Command(m_imageId);
+		typedef std::shared_ptr<Command> CommandPtr;
+		CommandPtr commandPtr{ new Command(m_imageId) };
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_inspectionId, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)

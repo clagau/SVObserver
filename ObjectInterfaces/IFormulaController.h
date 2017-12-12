@@ -8,7 +8,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary\SVSharedPtr.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -81,6 +80,6 @@ namespace SvOi
 		static const int resetFailed = -2;
 #pragma endregion Constants
 	};
-	typedef SVSharedPtr<IFormulaController> IFormulaControllerPtr;
+	typedef std::shared_ptr<IFormulaController> IFormulaControllerPtr;
 
 } //namespace SvOi

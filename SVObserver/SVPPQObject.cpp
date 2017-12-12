@@ -348,9 +348,9 @@ SVPPQObject::~SVPPQObject()
 		Destroy();
 	}
 
-	m_pTriggerToggle.clear();
-	m_pOutputToggle.clear();
-	m_pDataValid.clear();
+	m_pTriggerToggle.reset();
+	m_pOutputToggle.reset();
+	m_pDataValid.reset();
 	m_SlotManager.reset();
 }
 
@@ -718,8 +718,8 @@ void SVPPQObject::Destroy()
 	m_UsedOutputs.clear();
 
 	// Destroy the managed index for the input circle buffer
-	m_pResultDataCircleBuffer.clear();
-	m_pResultImagePublishedCircleBuffer.clear();
+	m_pResultDataCircleBuffer.reset();
+	m_pResultImagePublishedCircleBuffer.reset();
 
 	m_isCreated = false;
 }// end Destroy
@@ -822,7 +822,7 @@ long SVPPQObject::GetPPQLength() const
 {
 	long length = 0;
 	BasicValueObjectPtr pValue = m_PpqValues.getValueObject(SvDef::FqnPpqLength);
-	if (!pValue.empty())
+	if (nullptr != pValue)
 	{
 		pValue->getValue(length);
 	}
@@ -1122,7 +1122,7 @@ void SVPPQObject::AssignCameraToAcquisitionTrigger()
 			if (nullptr != pCamera)
 			{
 				SVAcquisitionClassPtr acquisitionPtr = pCamera->GetAcquisitionDevice();
-				if (!acquisitionPtr.empty() && acquisitionPtr->DigNumber() == iDigNum)
+				if (nullptr != acquisitionPtr && acquisitionPtr->DigNumber() == iDigNum)
 				{
 					m_pTrigger->mpsvDevice->m_triggerchannel = acquisitionPtr->m_hDigitizer;
 					break;
@@ -1256,7 +1256,7 @@ void SVPPQObject::GoOnline()
 
 	// First, make sure the trigger toggle output is set to the right default
 	SvOi::IValueObject* pValueObject(nullptr);
-	if (!m_pTriggerToggle.empty())
+	if (nullptr != m_pTriggerToggle)
 	{
 		pValueObject = m_pTriggerToggle->getValueObject();
 	}
@@ -1269,7 +1269,7 @@ void SVPPQObject::GoOnline()
 	}// end if
 
 	pValueObject = nullptr;
-	if (!m_pOutputToggle.empty())
+	if (nullptr != m_pOutputToggle)
 	{
 		pValueObject = m_pOutputToggle->getValueObject();
 	}
@@ -1283,24 +1283,24 @@ void SVPPQObject::GoOnline()
 	}// end if
 
 	// Reset the Outputs
-	if (!(m_pTriggerToggle.empty()))
+	if (nullptr != m_pTriggerToggle)
 	{
 		m_pTriggerToggle->m_Enabled = true;
 	}
 
-	if (!(m_pOutputToggle.empty()))
+	if (nullptr != m_pOutputToggle)
 	{
 		m_pOutputToggle->m_Enabled = true;
 	}
 
 	ResetOutputs();
 
-	if (!(m_pTriggerToggle.empty()))
+	if (nullptr != m_pTriggerToggle)
 	{
 		m_pTriggerToggle->m_Enabled = false;
 	}
 
-	if (!(m_pOutputToggle.empty()))
+	if (nullptr != m_pOutputToggle)
 	{
 		m_pOutputToggle->m_Enabled = false;
 	}
@@ -1707,7 +1707,7 @@ bool SVPPQObject::AssignInputs(const SVVariantBoolVector& rInputValues)
 	{
 		SVIOEntryHostStructPtr pIOEntry = m_UsedInputs[i];
 
-		if (!(pIOEntry.empty()) && pIOEntry->m_Enabled)
+		if (nullptr != pIOEntry && pIOEntry->m_Enabled)
 		{
 			if (0 <= pIOEntry->m_PPQIndex && pIOEntry->m_PPQIndex < static_cast<long>(m_ppPPQPositions.size()))
 			{
@@ -1984,7 +1984,7 @@ bool SVPPQObject::AddToAvailableInputs(SVIOObjectType eType, const std::string& 
 		pObject->SetObjectAttributesAllowed(SvDef::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute);
 		pObject->ResetObject();
 
-		SVIOEntryHostStructPtr pIOEntry = new SVIOEntryHostStruct;
+		SVIOEntryHostStructPtr pIOEntry{ new SVIOEntryHostStruct };
 		pIOEntry->setObject(pObject);
 		pIOEntry->m_ObjectType = eType;
 		pIOEntry->m_PPQIndex = -1;
@@ -2043,12 +2043,12 @@ SVIOEntryHostStructPtr SVPPQObject::GetInput(const std::string& name) const
 {
 	for (SVIOEntryHostStructPtrVector::const_iterator it = m_AllInputs.begin(); it != m_AllInputs.end(); ++it)
 	{
-		if (!it->empty())
+		SVIOEntryHostStructPtr pIoEntry = (*it);
+		if (nullptr != pIoEntry)
 		{
-			SVIOEntryHostStructPtr ptr = (*it);
-			if (name == ptr->getObject()->GetName())
+			if (name == pIoEntry->getObject()->GetName())
 			{
-				return ptr;
+				return pIoEntry;
 			}
 		}
 	}
@@ -2118,7 +2118,7 @@ bool SVPPQObject::ResolveConditionalOutput()
 		if (it != m_UsedInputs.end())
 		{
 			SVIOEntryHostStructPtr pIoEntry = (*it);
-			if (!pIoEntry.empty() && nullptr != pIoEntry->getObject())
+			if (nullptr != pIoEntry && nullptr != pIoEntry->getObject())
 			{
 				m_conditionalOutputValueID = pIoEntry->getObject()->GetUniqueObjectID();
 				bRetVal = true;
@@ -2210,14 +2210,14 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct *pProduct)
 		m_voNAK.GetValue(bNAK, -1, DataIndex);
 
 		// First, write the trigger toggle output if it is okay
-		if (!(m_pTriggerToggle.empty()) && nullptr != m_pTriggerToggle->getValueObject())
+		if (nullptr != m_pTriggerToggle && nullptr != m_pTriggerToggle->getValueObject())
 		{
 			m_pTriggerToggle->getValueObject()->setValue(_variant_t(bTriggerToggle));
 			m_pTriggerToggle->getValueObject()->CopyValue(DataIndex);
 		}
 
 		// Toggle the Output Toggle if it is okay
-		if (!(m_pOutputToggle.empty()) && nullptr != m_pOutputToggle->getValueObject())
+		if (nullptr != m_pOutputToggle && nullptr != m_pOutputToggle->getValueObject())
 		{
 			m_pOutputToggle->getValueObject()->setValue(_variant_t(m_OutputToggle));
 			m_pOutputToggle->getValueObject()->CopyValue(DataIndex);
@@ -2252,11 +2252,11 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct *pProduct)
 			m_voDataValid.GetValue(bValue, -1, DataIndex);
 			if (0 == m_DataValidDelay)
 			{
-				if (!m_pDataValid.empty())
+				if (nullptr != m_pDataValid)
 				{
 					m_pOutputList->WriteOutputValue(m_pDataValid, bValue);
 				}
-				if (!m_pOutputToggle.empty())
+				if (nullptr != m_pOutputToggle)
 				{
 					m_pOutputList->WriteOutputValue(m_pOutputToggle, m_OutputToggle);
 				}
@@ -2315,7 +2315,7 @@ bool SVPPQObject::ResetOutputs()
 {
 	bool l_bRet = false;
 
-	if (!(m_pDataValid.empty()))
+	if (nullptr != m_pDataValid)
 	{
 		m_pDataValid->m_Enabled = true;
 	}
@@ -2325,7 +2325,7 @@ bool SVPPQObject::ResetOutputs()
 		l_bRet = m_pOutputList->ResetOutputs(m_UsedOutputs);
 	}
 
-	if (!(m_pDataValid.empty()))
+	if (nullptr != m_pDataValid)
 	{
 		m_pDataValid->m_Enabled = false;
 	}
@@ -2351,9 +2351,9 @@ bool SVPPQObject::RebuildOutputList()
 	{
 		lNewSize = ppNewOutputs.size();
 
-		m_pTriggerToggle.clear();
-		m_pOutputToggle.clear();
-		m_pDataValid.clear();
+		m_pTriggerToggle.reset();
+		m_pOutputToggle.reset();
+		m_pDataValid.reset();
 
 		for (iOld = 0; iOld < m_AllOutputs.size(); iOld++)
 		{
@@ -2460,7 +2460,7 @@ void SVPPQObject::AddDefaultOutputs()
 
 	if (!bFound)
 	{
-		pIOEntry = new SVIOEntryHostStruct;
+		pIOEntry = SVIOEntryHostStructPtr{ new SVIOEntryHostStruct };
 		pIOEntry->m_DeleteValueObject = false;
 		pIOEntry->setObject(dynamic_cast<SVObjectClass*> (&m_voNotInspected));
 		pIOEntry->m_ObjectType = IO_DIGITAL_OUTPUT;
@@ -2480,7 +2480,7 @@ void SVPPQObject::AddDefaultOutputs()
 
 	if (!bFound)
 	{
-		pIOEntry = new SVIOEntryHostStruct;
+		pIOEntry = SVIOEntryHostStructPtr{ new SVIOEntryHostStruct };
 		pIOEntry->m_DeleteValueObject = false;
 		pIOEntry->setObject(dynamic_cast<SVObjectClass*> (&m_voNAK));
 		pIOEntry->m_ObjectType = IO_DIGITAL_OUTPUT;
@@ -2500,7 +2500,7 @@ void SVPPQObject::AddDefaultOutputs()
 
 	if (!bFound)
 	{
-		pIOEntry = new SVIOEntryHostStruct;
+		pIOEntry = SVIOEntryHostStructPtr{ new SVIOEntryHostStruct };
 		pIOEntry->m_DeleteValueObject = false;
 		pIOEntry->setObject(dynamic_cast<SVObjectClass*> (&m_voMasterWarning));
 		pIOEntry->m_ObjectType = IO_DIGITAL_OUTPUT;
@@ -2520,7 +2520,7 @@ void SVPPQObject::AddDefaultOutputs()
 
 	if (!bFound)
 	{
-		pIOEntry = new SVIOEntryHostStruct;
+		pIOEntry = SVIOEntryHostStructPtr{ new SVIOEntryHostStruct };
 		pIOEntry->m_DeleteValueObject = false;
 		pIOEntry->setObject(dynamic_cast<SVObjectClass*> (&m_voMasterFault));
 		pIOEntry->m_ObjectType = IO_DIGITAL_OUTPUT;
@@ -2540,7 +2540,7 @@ void SVPPQObject::AddDefaultOutputs()
 
 	if (!bFound)
 	{
-		pIOEntry = new SVIOEntryHostStruct;
+		pIOEntry = SVIOEntryHostStructPtr{ new SVIOEntryHostStruct };
 		pIOEntry->m_DeleteValueObject = false;
 		pIOEntry->setObject(dynamic_cast<SVObjectClass*> (&m_voDataValid));
 		pIOEntry->m_ObjectType = IO_DIGITAL_OUTPUT;
@@ -2560,7 +2560,7 @@ void SVPPQObject::AddDefaultOutputs()
 
 	if (!bFound)
 	{
-		pIOEntry = new SVIOEntryHostStruct;
+		pIOEntry = SVIOEntryHostStructPtr{ new SVIOEntryHostStruct };
 		pIOEntry->m_DeleteValueObject = false;
 		pIOEntry->setObject(dynamic_cast<SVObjectClass*> (&m_voACK));
 		pIOEntry->m_ObjectType = IO_DIGITAL_OUTPUT;
@@ -2581,7 +2581,7 @@ void SVPPQObject::AddDefaultOutputs()
 
 	if (!bFound)
 	{
-		pIOEntry = new SVIOEntryHostStruct;
+		pIOEntry = SVIOEntryHostStructPtr{ new SVIOEntryHostStruct };
 		pIOEntry->m_DeleteValueObject = false;
 		pIOEntry->setObject(dynamic_cast<SVObjectClass*> (&m_voTriggerToggle));
 		pIOEntry->m_ObjectType = IO_DIGITAL_OUTPUT;
@@ -2602,7 +2602,7 @@ void SVPPQObject::AddDefaultOutputs()
 
 	if (!bFound)
 	{
-		pIOEntry = new SVIOEntryHostStruct;
+		pIOEntry = SVIOEntryHostStructPtr{ new SVIOEntryHostStruct };
 		pIOEntry->m_DeleteValueObject = false;
 		pIOEntry->setObject(dynamic_cast<SVObjectClass*> (&m_voOutputToggle));
 		pIOEntry->m_ObjectType = IO_DIGITAL_OUTPUT;
@@ -3599,7 +3599,7 @@ bool SVPPQObject::FinishTrigger(void *pCaller, SvTi::SVTriggerInfoStruct& p_rTri
 
 		m_TriggerToggle = !m_TriggerToggle;
 
-		if (!(m_pTriggerToggle.empty()) && nullptr != m_pTriggerToggle->getObject())
+		if (nullptr != m_pTriggerToggle && nullptr != m_pTriggerToggle->getObject())
 		{
 			m_pOutputList->WriteOutputValue(m_pTriggerToggle, m_TriggerToggle);
 		}
@@ -3791,12 +3791,12 @@ void SVPPQObject::DumpDMInfo(LPCTSTR p_szName) const
 		++l_Iter;
 	}
 
-	if (!m_pResultDataCircleBuffer.empty())
+	if (nullptr != m_pResultDataCircleBuffer)
 	{
 		m_pResultDataCircleBuffer->Dump(p_szName);
 	}
 
-	if (!m_pResultImagePublishedCircleBuffer.empty())
+	if (nullptr != m_pResultImagePublishedCircleBuffer)
 	{
 		m_pResultImagePublishedCircleBuffer->Dump(p_szName);
 	}
@@ -4318,11 +4318,11 @@ HRESULT SVPPQObject::ProcessDataValidDelay(bool& rProcessed)
 
 			if (rProcessed)
 			{
-				if (!m_pDataValid.empty())
+				if (nullptr != m_pDataValid)
 				{
 					m_pOutputList->WriteOutputValue(m_pDataValid, pProduct->oOutputsInfo.DataValidResult);
 				}
-				if (!m_pOutputToggle.empty())
+				if (nullptr != m_pOutputToggle)
 				{
 					m_pOutputList->WriteOutputValue(m_pOutputToggle, pProduct->oOutputsInfo.OutputToggleResult);
 				}
@@ -4715,8 +4715,7 @@ void SVPPQObject::PersistInputs(SvOi::IObjectWriter& rWriter)
 	for (long lInput = 0; lInput < lCount; lInput++)
 	{
 		SVIOEntryHostStructPtr pIOEntry = ppIOEntries[lInput];
-		if (!pIOEntry.empty()
-			&& pIOEntry->m_ObjectType != IO_CAMERA_DATA_INPUT)
+		if (nullptr != pIOEntry	&& pIOEntry->m_ObjectType != IO_CAMERA_DATA_INPUT)
 		{
 			l_svName = SvUl::Format(SvXml::CTAGF_INPUT_X, lInput);
 			rWriter.StartElement(l_svName.c_str());

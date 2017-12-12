@@ -8,21 +8,21 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <algorithm>
+//Moved to precompiled header: #include <memory>
 //Moved to precompiled header: #include <utility>
 //Moved to precompiled header: #include <sequential_tree.h>
 #include "SVCompareKeys.h"
-#include "SVUtilityLibrary/SVSharedPtr.h"
 #pragma endregion Includes
 
 namespace SvCl
 {
 	template <typename Key, typename Data>
-	class SVTree: public tcl::sequential_tree< std::pair<Key, SVSharedPtr<Data> > >
+	class SVTree: public tcl::sequential_tree< std::pair<Key, std::shared_ptr<Data> > >
 	{
 	#pragma region Declarations
 	public:
 		typedef Data ElementData;
-		typedef SVSharedPtr< Data > DataPtr;
+		typedef std::shared_ptr< Data > DataPtr;
 		typedef std::pair<Key, DataPtr > SVTreeElement;
 		typedef tcl::sequential_tree< SVTreeElement > SVTreeContainer;
 	#pragma endregion Declarations

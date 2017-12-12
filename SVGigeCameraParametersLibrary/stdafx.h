@@ -39,6 +39,7 @@
 
 #include <comdef.h>
 #include <map>
+#include <memory>
 #include <string>
 #include <tchar.h>
 #include <vector>

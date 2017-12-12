@@ -43,6 +43,7 @@
 #include <limits>
 #include <list>
 #include <map>
+#include <memory>
 #include <ppl.h>
 #include <sequential_tree.h>
 #include <set>

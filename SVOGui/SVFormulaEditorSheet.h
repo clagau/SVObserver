@@ -12,8 +12,8 @@
 #pragma once
 
 #pragma region Includes
+//Moved to precompiled header: #include <memory>
 #include "SVFormulaEditorPage.h"
-#include "SVUtilityLibrary/SVSharedPtr.h"
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #pragma endregion Includes
 
@@ -52,7 +52,7 @@ namespace SvOg
 	protected:
 		afx_msg void OnOK();
 
-		typedef SVSharedPtr<SVFormulaEditorPageClass> FormulaEditorPagePtr;
+		typedef std::shared_ptr<SVFormulaEditorPageClass> FormulaEditorPagePtr;
 		FormulaEditorPagePtr m_formulaPage;
 	};
 } //namespace SvOg

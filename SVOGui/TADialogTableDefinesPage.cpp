@@ -116,8 +116,8 @@ namespace SvOg {
 				if(m_Grid.IsCellSelected( i, j ) )
 				{
 					typedef SvCmd::DestroyFriend Command;
-					typedef SVSharedPtr<Command> CommandPtr;
-					CommandPtr commandPtr = new Command(m_TaskObjectID, m_gridList[i-1].second, SvCmd::DestroyFriend::Flag_ResetInspection);
+					typedef std::shared_ptr<Command> CommandPtr;
+					CommandPtr commandPtr{ new Command(m_TaskObjectID, m_gridList[i - 1].second, SvCmd::DestroyFriend::Flag_ResetInspection) };
 					SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 					HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 					if (S_OK != hr)
@@ -193,8 +193,8 @@ namespace SvOg {
 		}
 		// Construct and Create the Filter Class Object
 		typedef SvCmd::ConstructAndInsertFriend Command;
-		typedef SVSharedPtr<Command> CommandPtr;
-		CommandPtr commandPtr = new Command(m_TaskObjectID, TableColumnEquationGuid, name.c_str(), addPreGuid);
+		typedef std::shared_ptr<Command> CommandPtr;
+		CommandPtr commandPtr{ new Command(m_TaskObjectID, TableColumnEquationGuid, name.c_str(), addPreGuid) };
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK != hr)
@@ -255,8 +255,8 @@ namespace SvOg {
 				if ( isTableNameUnique(newName) )
 				{
 					typedef SvCmd::SetObjectName Command;
-					typedef SVSharedPtr<Command> CommandPtr;
-					CommandPtr commandPtr = new Command(m_gridList[pItem->iRow-1].second.ToGUID(), newName.c_str());
+					typedef std::shared_ptr<Command> CommandPtr;
+					CommandPtr commandPtr{ new Command(m_gridList[pItem->iRow - 1].second.ToGUID(), newName.c_str()) };
 					SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 					HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 					if (S_OK != hr)
@@ -304,14 +304,14 @@ namespace SvOg {
 		UpdateData(TRUE);
 		HRESULT hResult = S_OK;
 		// Do a reset of the Tool
-		typedef SVSharedPtr<SvCmd::ResetObject> ResetObjectCommandPtr;
+		typedef std::shared_ptr<SvCmd::ResetObject> ResetObjectCommandPtr;
 		ResetObjectCommandPtr commandPtr(new SvCmd::ResetObject(m_InspectionID));
 		SVObjectSynchronousCommandTemplate<ResetObjectCommandPtr> cmd(m_InspectionID, commandPtr);
 
 		hResult = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK != hResult)
 		{
-			typedef SVSharedPtr<SvCmd::GetErrorMessageList> GetErrorMessageListCommandPtr;
+			typedef std::shared_ptr<SvCmd::GetErrorMessageList> GetErrorMessageListCommandPtr;
 			GetErrorMessageListCommandPtr errorCommandPtr(new SvCmd::GetErrorMessageList(m_TaskObjectID));
 			SVObjectSynchronousCommandTemplate<GetErrorMessageListCommandPtr> errorCmd(m_InspectionID, errorCommandPtr);
 			errorCmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
@@ -354,9 +354,9 @@ namespace SvOg {
 	void TADialogTableDefinesPage::FillGridControl()
 	{
 		typedef SvCmd::GetAvailableObjects Command;
-		typedef SVSharedPtr<Command> CommandPtr;
+		typedef std::shared_ptr<Command> CommandPtr;
 		m_gridList.clear();
-		CommandPtr commandPtr = new Command(m_TaskObjectID, SvDef::SVObjectTypeInfoStruct(SvDef::SVEquationObjectType, SvDef::TableColumnEquationObjectType));
+		CommandPtr commandPtr{ new Command(m_TaskObjectID, SvDef::SVObjectTypeInfoStruct(SvDef::SVEquationObjectType, SvDef::TableColumnEquationObjectType)) };
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
@@ -416,8 +416,8 @@ namespace SvOg {
 	void TADialogTableDefinesPage::MoveColumn(SVGUID moveGuid, SVGUID preGuid)
 	{
 		typedef SvCmd::MoveFriendObject Command;
-		typedef SVSharedPtr<Command> CommandPtr;
-		CommandPtr commandPtr = new Command(m_TaskObjectID, moveGuid, preGuid);
+		typedef std::shared_ptr<Command> CommandPtr;
+		CommandPtr commandPtr{ new Command(m_TaskObjectID, moveGuid, preGuid) };
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK != hr)

@@ -60,7 +60,7 @@ void SVObjectScriptAliasListClass::CleanUp()
 	m_mapAlias.clear();
 }
 
-SVObjectScriptParserSVXClass::SVObjectScriptParserSVXClass(unsigned long parserHandle, SVSharedPtr<std::string> pScript, const GUID& OwnerGuid, SVObjectClass* pOwnerObject, CWnd* pWnd)
+SVObjectScriptParserSVXClass::SVObjectScriptParserSVXClass(unsigned long parserHandle, std::shared_ptr<std::string> pScript, const GUID& OwnerGuid, SVObjectClass* pOwnerObject, CWnd* pWnd)
 : SVObjectScriptParserBase(parserHandle, OwnerGuid, pOwnerObject, pWnd)
 , m_pParseString( pScript )
 {
@@ -86,9 +86,9 @@ SVObjectScriptParserSVXClass::~SVObjectScriptParserSVXClass()
 	m_DataTypeKeywordTable.clear();
 
 	// Cleanup
-	if ( !m_pParseString.empty() )
+	if (nullptr != m_pParseString)
 	{
-		m_pParseString.clear();
+		m_pParseString.reset();
 	}
 }
 

@@ -12,9 +12,8 @@
 #pragma once
 
 #pragma region Includes
+//Moved to precompiled header: #include <memory>
 #include "CameraLibrary\SVDeviceParamCollection.h"
-
-#include "SVUtilityLibrary\SVSharedPtr.h"
 #pragma endregion Includes
 
 class SVOCameraObj  
@@ -89,6 +88,6 @@ private:  //data members
 	long m_fileMode;
 };
 
-typedef SVSharedPtr< SVOCameraObj > SVOCameraObjPtr;
+typedef std::shared_ptr< SVOCameraObj > SVOCameraObjPtr;
 
 

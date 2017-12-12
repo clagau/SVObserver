@@ -23,9 +23,9 @@ namespace SvOg
 			SvCl::SelectorItemVectorPtr SelectorList;
 
 			typedef SvCmd::GetPPQSelectorList Command;
-			typedef SVSharedPtr<Command> CommandPtr;
+			typedef std::shared_ptr<Command> CommandPtr;
 
-			CommandPtr commandPtr = new Command(rInspectionID, Attribute);
+			CommandPtr commandPtr{ new Command(rInspectionID, Attribute) };
 			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(rInspectionID, commandPtr);
 			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 			if (S_OK == hr)

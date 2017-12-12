@@ -15,19 +15,19 @@ namespace SvCl
 	SVTree<Key, Data>::SVTree( )
 	{
 		SVTreeElement* pElement( get() );
-		if( nullptr != pElement && pElement->second.empty() )
+		if( nullptr != pElement && nullptr == pElement->second)
 		{
-			pElement->second = new Data;
+			pElement->second = std::shared_ptr<Data>{ new Data };
 		}
 	}
 
 	template<typename Key, typename Data>
-	SVTree<Key, Data>::SVTree( const SVTreeContainer& rTree ) : tcl::sequential_tree< std::pair< Key, SVSharedPtr<Data> > >( rTree)
+	SVTree<Key, Data>::SVTree( const SVTreeContainer& rTree ) : tcl::sequential_tree< std::pair< Key, std::shared_ptr<Data> > >( rTree)
 	{
 		SVTreeElement* pElement( get() );
-		if( nullptr != pElement && pElement->second.empty() )
+		if( nullptr != pElement && nullptr == pElement->second )
 		{
-			pElement->second = new Data;
+			pElement->second = std::shared_ptr<Data>{ new Data };
 		}
 	}
 
@@ -61,7 +61,7 @@ namespace SvCl
 
 		const_iterator Iter( find( rTree, rKey ) );
 
-		if( rTree.end() != Iter && !Iter->second.empty() )
+		if( rTree.end() != Iter && nullptr != Iter->second )
 		{
 			rData = *Iter->second;
 			Result = S_OK;
@@ -75,7 +75,7 @@ namespace SvCl
 	{
 		iterator Result;
 
-		Result = std::find_if( rTree.begin(), rTree.end(), SVCompareKeys<Key, SVSharedPtr<Data>>(rKey) );
+		Result = std::find_if( rTree.begin(), rTree.end(), SVCompareKeys<Key, std::shared_ptr<Data>>(rKey) );
 
 		return Result;
 	}
@@ -85,7 +85,7 @@ namespace SvCl
 	{
 		const_iterator Result;
 
-		Result = std::find_if( rTree.begin(), rTree.end(), SVCompareKeys<Key, SVSharedPtr<Data>>(rKey) );
+		Result = std::find_if( rTree.begin(), rTree.end(), SVCompareKeys<Key, std::shared_ptr<Data>>(rKey) );
 
 		return Result;
 	}

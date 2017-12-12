@@ -54,12 +54,12 @@ namespace SvOg
 
 	void SVFormulaEditorSheetClass::init(const GUID& rInspectionID, const GUID& rTaskObjectID, const SvDef::SVObjectTypeInfoStruct& rInfo)
 	{
-		init(new FormulaController(rInspectionID, rTaskObjectID, rInfo));
+		init(SvOi::IFormulaControllerPtr{ new FormulaController(rInspectionID, rTaskObjectID, rInfo) });
 	}
 
 	void SVFormulaEditorSheetClass::init(const GUID& rInspectionID, const GUID& rTaskObjectID, const GUID& rEquationId)
 	{
-		init(new FormulaController(rInspectionID, rTaskObjectID, rEquationId));
+		init(SvOi::IFormulaControllerPtr{ new FormulaController(rInspectionID, rTaskObjectID, rEquationId) });
 	}
 
 	void SVFormulaEditorSheetClass::init(SvOi::IFormulaControllerPtr formulaController)

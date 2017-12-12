@@ -12,7 +12,6 @@
 //Moved to precompiled header: #include <string>
 #include "ObjectInterfaces/IObjectManager.h"
 #include "ObjectInterfaces/IEquation.h"
-#include "SVUtilityLibrary/SVSharedPtr.h"
 #include "SVStatusLibrary/MessageContainer.h"
 #pragma endregion Includes
 

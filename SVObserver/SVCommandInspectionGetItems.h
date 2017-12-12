@@ -12,9 +12,9 @@
 #pragma once
 
 #pragma region Includes
+//Moved to precompiled header: #include <memory>
 //Moved to precompiled header: #include <set>
 #include "SVUtilityLibrary/SVGUID.h"
-#include "SVUtilityLibrary/SVSharedPtr.h"
 #include "SVStorageResult.h"
 #include "SVInspectionProcess.h"
 #pragma endregion Includes
@@ -48,5 +48,5 @@ private:
 	SVNameStorageResultMap m_ResultItems;
 };
 
-typedef SVSharedPtr<SVCommandInspectionGetItems> SVCommandInspectionGetItemsPtr;
+typedef std::shared_ptr<SVCommandInspectionGetItems> SVCommandInspectionGetItemsPtr;
 

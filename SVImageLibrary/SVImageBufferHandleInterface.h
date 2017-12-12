@@ -11,9 +11,11 @@
 
 #pragma once
 
+#pragma region Includes
+//Moved to precompiled header: #include <memory>
 #include "SVUtilityLibrary/SVBitmapInfo.h"
 #include "SVUtilityLibrary/SVPOINT.h"
-#include "SVUtilityLibrary/SVSharedPtr.h"
+#pragma endregion Includes
 
 class SVImageBufferHandleData;
 
@@ -43,5 +45,5 @@ private:
 
 };
 
-typedef SVSharedPtr< SVImageBufferHandleInterface > SVSmartHandlePointer;
+typedef std::shared_ptr< SVImageBufferHandleInterface > SVImageBufferHandlePtr;
 

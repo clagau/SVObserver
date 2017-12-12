@@ -11,9 +11,11 @@
 
 #pragma once
 
+#pragma region Includes
+//Moved to precompiled header: #include <memory>
 //Moved to precompiled header: #include <boost/utility.hpp>
 #include "SVMatroxLibrary/SVMatroxTypedefs.h"
-#include "SVUtilityLibrary/SVSharedPtr.h"
+#pragma endregion Includes
 
 class SVMatroxDigitizerInterface;
 
@@ -45,4 +47,4 @@ private:
 	void LocalClear();
 };
 
-typedef SVSharedPtr<SVMatroxDigitizer> SVMatroxDigitizerPtr;
+typedef std::shared_ptr<SVMatroxDigitizer> SVMatroxDigitizerPtr;

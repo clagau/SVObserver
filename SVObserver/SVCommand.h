@@ -552,7 +552,7 @@ public:
 public:
 	static void ResetStreamingDataAndLockedImages();
 
-	static HRESULT ImageToBSTR( SVImageInfoClass &rImageInfo, SVSmartHandlePointer ImageHandle, BSTR *pbstr);
+	static HRESULT ImageToBSTR( SVImageInfoClass &rImageInfo, SVImageBufferHandlePtr ImageHandle, BSTR *pbstr);
 	static HRESULT SafeImageToBSTR( SVImageClass *p_pImage, SVImageIndexStruct p_svIndex, BSTR *pbstr);
 
 	static SVMatroxBuffer CreateImageFromBSTR( BSTR bstrImage );

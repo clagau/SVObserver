@@ -11,11 +11,10 @@
 #pragma once
 
 #pragma region Includes
+//Moved to precompiled header: #include <memory>
 //Moved to precompiled header: #include <vector>
 #include "ObjectInterfaces/IValueObject.h"
 #include "SVUtilityLibrary/SVGUID.h"
-#include "SVUtilityLibrary/SVSharedPtr.h"
-
 #pragma endregion Includes
 
 class SVObjectClass;
@@ -50,7 +49,7 @@ struct SVIOEntryHostStruct
 
 	bool m_DeleteValueObject;
 
-	static bool PtrGreater( SVSharedPtr< SVIOEntryHostStruct > elem1, SVSharedPtr< SVIOEntryHostStruct > elem2 );
+	static bool PtrGreater( std::shared_ptr< SVIOEntryHostStruct > elem1, std::shared_ptr< SVIOEntryHostStruct > elem2 );
 
 private:
 	SVIOEntryHostStruct( const SVIOEntryHostStruct& p_rsvObject );
@@ -61,6 +60,6 @@ private:
 	SvOi::IValueObject* m_pValueObject;
 };
 
-typedef SVSharedPtr< SVIOEntryHostStruct > SVIOEntryHostStructPtr;
+typedef std::shared_ptr< SVIOEntryHostStruct > SVIOEntryHostStructPtr;
 typedef std::vector< SVIOEntryHostStructPtr > SVIOEntryHostStructPtrVector;
 

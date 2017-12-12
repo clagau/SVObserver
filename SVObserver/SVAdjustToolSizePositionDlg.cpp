@@ -275,7 +275,7 @@ void SVAdjustToolSizePositionDlg::OnOK()
 		if (nullptr != m_pToolTask && nullptr != m_pToolTask->GetInspection())
 		{
 			const SVGUID& inspectionId = m_pToolTask->GetInspection()->GetUniqueObjectID();
-			SvCmd::InspectionRunOncePtr commandPtr = new SvCmd::InspectionRunOnce( inspectionId );
+			SvCmd::InspectionRunOncePtr commandPtr{ new SvCmd::InspectionRunOnce(inspectionId) };
 			SVObjectSynchronousCommandTemplate< SvCmd::InspectionRunOncePtr > command( inspectionId, commandPtr );
 
 			command.Execute( TWO_MINUTE_CMD_TIMEOUT );

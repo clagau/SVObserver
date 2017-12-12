@@ -23,7 +23,7 @@ static char THIS_FILE[] = __FILE__;
 CDisplayPicture::CDisplayPicture()
 {
 	m_BufferInUse = 0;
-	m_pImage = new SVDisplayImageBufferClass;
+	m_pImage = SVImageBufferHandlePtr{ new SVDisplayImageBufferClass };
 }
 
 CDisplayPicture::~CDisplayPicture()

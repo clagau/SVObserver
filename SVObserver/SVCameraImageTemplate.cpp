@@ -105,7 +105,7 @@ bool SVCameraImageTemplate::SetImageDepth( long lDepth )
 {
 	long l_lNewDepth = lDepth;
 
-	if ( !( GetCameraBufferArrayPtr().empty() ) )
+	if (nullptr != GetCameraBufferArrayPtr())
 	{
 		l_lNewDepth = static_cast< long >( GetCameraBufferArrayPtr()->size() );
 	}
@@ -122,7 +122,7 @@ bool SVCameraImageTemplate::ResetObject(SvStl::MessageContainerVector *pErrorMes
 {
 	RebuildCameraImage();
 
-	if( !( GetCameraBufferArrayPtr().empty() ) )
+	if(nullptr != GetCameraBufferArrayPtr())
 	{
 		m_LastUpdate = std::max( m_LastUpdate, GetCameraBufferArrayPtr()->GetLastResetTimeStamp() );
 	}
@@ -351,12 +351,12 @@ HRESULT SVCameraImageTemplate::RebuildCameraImage()
 		{
 			SVImageObjectClassPtr l_ArrayPtr;
 
-			if( !pCamera->mpsvDevice.empty() )
+			if(nullptr != pCamera->mpsvDevice )
 			{
 				l_ArrayPtr = pCamera->mpsvDevice->GetCircleBuffer();
 			}
 
-			if( !( l_ArrayPtr.empty() ) && ( 0 < l_ArrayPtr->size() ) )
+			if(nullptr != l_ArrayPtr && ( 0 < l_ArrayPtr->size() ) )
 			{
 				SVImageInfoClass CameraImageInfo;
 

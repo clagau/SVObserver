@@ -281,7 +281,7 @@ typedef std::vector<SVObjectScriptDataTypeKeywordStruct> SVDataTypeKeywordTable;
 class SVObjectScriptParserSVXClass : public SVObjectScriptParserBase
 {
 public:
-	SVObjectScriptParserSVXClass(unsigned long parserHandle,SVSharedPtr<std::string> pScript, const GUID& OwnerGuid, SVObjectClass* pOwnerObject, CWnd* pWnd);
+	SVObjectScriptParserSVXClass(unsigned long parserHandle,std::shared_ptr<std::string> pScript, const GUID& OwnerGuid, SVObjectClass* pOwnerObject, CWnd* pWnd);
 	virtual ~SVObjectScriptParserSVXClass();
 
 	virtual size_t GetTotal() const override;
@@ -330,7 +330,7 @@ protected:
 	SVKeywordTable			m_KeywordTable;
 	SVDataTypeKeywordTable	m_DataTypeKeywordTable;
 
-	SVSharedPtr<std::string> m_pParseString; // 
+	std::shared_ptr<std::string> m_pParseString; // 
 };	// end SVObjectScriptParserSVXClass
 
 struct SVObjectScriptInputObjectTokenStruct

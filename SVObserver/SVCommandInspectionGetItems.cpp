@@ -125,12 +125,12 @@ HRESULT SVCommandInspectionGetItems::UpdateResultsWithImageData(const std::strin
 		HRESULT GetStatus = S_OK;
 
 		SVStorage Storage;
-		SVSmartHandlePointer ImageHandlePtr;
+		SVImageBufferHandlePtr ImageHandlePtr;
 		unsigned long TriggerCount = TriggerCnt;
 
 		pImage->GetImageHandle(ImageHandlePtr);
 
-		if (!(ImageHandlePtr.empty()))
+		if (nullptr != ImageHandlePtr)
 		{
 			std::string FileName = SvUl::Format(_T("V:\\%ld-%s.bmp"), TriggerCount, pImage->GetUniqueObjectID().ToString().c_str());
 

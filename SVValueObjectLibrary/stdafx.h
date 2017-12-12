@@ -43,6 +43,7 @@
 #include <ctime>
 #include <deque>
 #include <map>
+#include <memory>
 #include <ppl.h>
 #include <set>
 #include <string>

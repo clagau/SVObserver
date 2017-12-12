@@ -59,6 +59,6 @@ private:
 
 protected:
 	SVInObjectInfoStruct		inputImageObjectInfo;
-	SVSmartHandlePointer		m_milTmpImageObjectInfo1;
-	SVSmartHandlePointer		m_milTmpImageObjectInfo2;
+	SVImageBufferHandlePtr		m_milTmpImageObjectInfo1;
+	SVImageBufferHandlePtr		m_milTmpImageObjectInfo2;
 };

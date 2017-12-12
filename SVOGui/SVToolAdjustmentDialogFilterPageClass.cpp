@@ -62,7 +62,7 @@ namespace SvOg
 	{
 		// Get Instance GUID for the Mask Operator...
 		typedef SvCmd::GetInstanceIDByTypeInfo Command;
-		typedef SVSharedPtr<Command> CommandPtr;
+		typedef std::shared_ptr<Command> CommandPtr;
 
 		SvDef::SVObjectTypeInfoStruct info(SvDef::SVUnaryImageOperatorListObjectType/*SvDef::SVUnaryImageOperatorObjectType*/, SvDef::SVNotSetSubObjectType);
 
@@ -83,7 +83,7 @@ namespace SvOg
 	{
 		UpdateData( TRUE ); // get data from dialog
 
-		SvCmd::InspectionRunOncePtr commandPtr = new SvCmd::InspectionRunOnce( m_InspectionID, m_TaskObjectID );
+		SvCmd::InspectionRunOncePtr commandPtr{ new SvCmd::InspectionRunOnce(m_InspectionID, m_TaskObjectID) } ;
 		SVObjectSynchronousCommandTemplate< SvCmd::InspectionRunOncePtr > command( m_InspectionID, commandPtr );
 
 		HRESULT hrOk = command.Execute( TWO_MINUTE_CMD_TIMEOUT );
@@ -113,10 +113,10 @@ namespace SvOg
 	void SVToolAdjustmentDialogFilterPageClass::refresh()
 	{
 		typedef SvCmd::GetAvailableObjects Command;
-		typedef SVSharedPtr<Command> CommandPtr;
+		typedef std::shared_ptr<Command> CommandPtr;
 
 		SvUl::NameGuidList availableList;
-		CommandPtr commandPtr = new Command(m_UnaryImageOperatorID, SvDef::SVObjectTypeInfoStruct(SvDef::SVFilterObjectType, SvDef::SVNotSetSubObjectType));
+		CommandPtr commandPtr{ new Command(m_UnaryImageOperatorID, SvDef::SVObjectTypeInfoStruct(SvDef::SVFilterObjectType, SvDef::SVNotSetSubObjectType)) };
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
@@ -137,11 +137,11 @@ namespace SvOg
 	{
 		int index = m_filterListBox.GetCurSel();
 		SVGUID filterGUID	= m_filterListBox.getGUID(index);
-		if( SV_GUID_NULL != filterGUID ) 
+		if (SV_GUID_NULL != filterGUID)
 		{
 			typedef SvCmd::GetObjectTypeInfo Command;
-			typedef SVSharedPtr<Command> CommandPtr;
-			CommandPtr commandPtr = new Command(filterGUID);
+			typedef std::shared_ptr<Command> CommandPtr;
+			CommandPtr commandPtr{ new Command(filterGUID) };
 			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 			if (S_OK == hr)
@@ -189,10 +189,10 @@ namespace SvOg
 		if(res)
 		{
 			typedef SvCmd::GetCreatableObjects Command;
-			typedef SVSharedPtr<Command> CommandPtr;
+			typedef std::shared_ptr<Command> CommandPtr;
 
 			SvUl::NameGuidList availableList;
-			CommandPtr commandPtr = new Command(m_UnaryImageOperatorID, SvDef::SVObjectTypeInfoStruct(SvDef::SVFilterObjectType, SvDef::SVNotSetSubObjectType));
+			CommandPtr commandPtr{ new Command(m_UnaryImageOperatorID, SvDef::SVObjectTypeInfoStruct(SvDef::SVFilterObjectType, SvDef::SVNotSetSubObjectType)) };
 			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 			if (S_OK == hr)
@@ -239,8 +239,8 @@ namespace SvOg
 
 			// Construct and Create the Filter Class Object
 			typedef SvCmd::ConstructAndInsertTaskObject Command;
-			typedef SVSharedPtr<Command> CommandPtr;
-			CommandPtr commandPtr = new Command(m_UnaryImageOperatorID, classID, destinyIndex);
+			typedef std::shared_ptr<Command> CommandPtr;
+			CommandPtr commandPtr{ new Command(m_UnaryImageOperatorID, classID, destinyIndex) };
 			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 			if (S_OK != hr)
@@ -263,9 +263,9 @@ namespace SvOg
 	{
 		// For all Items in the Selected (Instantiated) Filter list
 		typedef SvCmd::GetAvailableObjects Command;
-		typedef SVSharedPtr<Command> CommandPtr;
+		typedef std::shared_ptr<Command> CommandPtr;
 		SvUl::NameGuidList availableList;
-		CommandPtr commandPtr = new Command(m_UnaryImageOperatorID, SvDef::SVObjectTypeInfoStruct(SvDef::SVFilterObjectType, SvDef::SVNotSetSubObjectType));
+		CommandPtr commandPtr{ new Command(m_UnaryImageOperatorID, SvDef::SVObjectTypeInfoStruct(SvDef::SVFilterObjectType, SvDef::SVNotSetSubObjectType)) };
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
@@ -284,8 +284,8 @@ namespace SvOg
 			if( SV_GUID_NULL != filterGUID )
 			{
 				typedef SvCmd::ShouldInspectionReset ResetCommand;
-				typedef SVSharedPtr<ResetCommand> ResetCommandPtr;
-				ResetCommandPtr resetCommandPtr = new ResetCommand(filterGUID);
+				typedef std::shared_ptr<ResetCommand> ResetCommandPtr;
+				ResetCommandPtr resetCommandPtr{ new ResetCommand(filterGUID) };
 				SVObjectSynchronousCommandTemplate<ResetCommandPtr> resetCmd(m_InspectionID, resetCommandPtr);
 				HRESULT hr = resetCmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 				bReset |= resetCommandPtr->shouldResetInspection();
@@ -298,8 +298,8 @@ namespace SvOg
 				}
 				// Close, Disconnect and Delete it
 				typedef SvCmd::DestroyChildObject DestroyCommand;
-				typedef SVSharedPtr<DestroyCommand> DestroyCommandPtr;
-				DestroyCommandPtr destroyCommandPtr = new DestroyCommand(m_UnaryImageOperatorID, filterGUID, flag);
+				typedef std::shared_ptr<DestroyCommand> DestroyCommandPtr;
+				DestroyCommandPtr destroyCommandPtr{ new DestroyCommand(m_UnaryImageOperatorID, filterGUID, flag) };
 				SVObjectSynchronousCommandTemplate<DestroyCommandPtr> destroyCmd(m_InspectionID, destroyCommandPtr);
 				destroyCmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 			}
@@ -323,8 +323,8 @@ namespace SvOg
 		if( SV_GUID_NULL != filterGUID ) 
 		{
 			typedef SvCmd::ShouldInspectionReset ResetCommand;
-			typedef SVSharedPtr<ResetCommand> ResetCommandPtr;
-			ResetCommandPtr resetCommandPtr = new ResetCommand(filterGUID);
+			typedef std::shared_ptr<ResetCommand> ResetCommandPtr;
+			ResetCommandPtr resetCommandPtr{ new ResetCommand(filterGUID) };
 			SVObjectSynchronousCommandTemplate<ResetCommandPtr> resetCmd(m_InspectionID, resetCommandPtr);
 			HRESULT hr = resetCmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 
@@ -339,8 +339,8 @@ namespace SvOg
 
 				// Close, Disconnect and Delete it
 				typedef SvCmd::DestroyChildObject DestroyCommand;
-				typedef SVSharedPtr<DestroyCommand> DestroyCommandPtr;
-				DestroyCommandPtr destroyCommandPtr = new DestroyCommand(m_UnaryImageOperatorID, filterGUID, flag);
+				typedef std::shared_ptr<DestroyCommand> DestroyCommandPtr;
+				DestroyCommandPtr destroyCommandPtr{ new DestroyCommand(m_UnaryImageOperatorID, filterGUID, flag) };
 				SVObjectSynchronousCommandTemplate<DestroyCommandPtr> destroyCmd(m_InspectionID, destroyCommandPtr);
 				destroyCmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 			}
@@ -362,8 +362,8 @@ namespace SvOg
 		if( SV_GUID_NULL != filterGUID ) 
 		{
 			typedef SvCmd::GetObjectTypeInfo Command;
-			typedef SVSharedPtr<Command> CommandPtr;
-			CommandPtr commandPtr = new Command(filterGUID);
+			typedef std::shared_ptr<Command> CommandPtr;
+			CommandPtr commandPtr{ new Command(filterGUID) };
 			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 			if (S_OK == hr)

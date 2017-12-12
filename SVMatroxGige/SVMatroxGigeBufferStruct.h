@@ -12,11 +12,11 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <deque>
+//Moved to precompiled header: #include <memory>
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
-#include "SVUtilityLibrary/SVSharedPtr.h"
 #pragma endregion Includes
 
-typedef SVSharedPtr<SVMatroxBuffer> SVMatroxBufferRef;
+typedef std::shared_ptr<SVMatroxBuffer> SVMatroxBufferRef;
 
 class SVMatroxGigeBufferStruct
 {

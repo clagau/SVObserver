@@ -255,9 +255,9 @@ HRESULT SVInputStreamManager::SendCommandToInputStream( const std::string& p_rNa
 
 	if( !( l_SubjectID.empty() ) )
 	{
-		SVObjectCommandDataJsonPtr l_CommandDataPtr = new SVObjectCommandDataJson();
+		SVObjectCommandDataJsonPtr l_CommandDataPtr{ new SVObjectCommandDataJson() };
 
-		if( !( l_CommandDataPtr.empty() ) )
+		if(nullptr != l_CommandDataPtr)
 		{
 			l_Status = l_CommandDataPtr->SetJsonCommand( p_rJsonCommand );
 

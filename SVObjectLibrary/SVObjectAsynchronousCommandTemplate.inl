@@ -45,15 +45,15 @@ HRESULT SVObjectAsynchronousCommandTemplate< SVCommandPtr >::SubmitCommand()
 {
 	HRESULT l_Status = S_OK;
 
-	if( nullptr != m_Object && !( m_CommandPtr.empty() ) )
+	if( nullptr != m_Object && nullptr != m_CommandPtr )
 	{
-		m_WrapperPtr = new SVObjectCommandWrapperTemplate< SVCommandPtr >( m_CommandPtr );
+		m_WrapperPtr = SVObjectCommandWrapperPtr{ new SVObjectCommandWrapperTemplate< SVCommandPtr >(m_CommandPtr) };
 
-		if( !( m_WrapperPtr.empty() ) )
+		if(nullptr != m_WrapperPtr)
 		{
-			SVCommandTemplatePtr l_CommandPtr = new SVObjectThreadCommandTemplate< SVObjectCommandWrapperPtr >( m_WrapperPtr );
+			SVCommandTemplatePtr l_CommandPtr{ new SVObjectThreadCommandTemplate< SVObjectCommandWrapperPtr >(m_WrapperPtr) };
 
-			if( !( l_CommandPtr.empty() ) )
+			if(nullptr != l_CommandPtr)
 			{
 				l_Status = SVObjectManagerClass::Instance().SubmitCommand( *m_Object, l_CommandPtr );
 			}
@@ -80,7 +80,7 @@ HRESULT SVObjectAsynchronousCommandTemplate< SVCommandPtr >::IsCommandComplete()
 {
 	HRESULT l_Status = S_OK;
 
-	if( !( m_WrapperPtr.empty() ) )
+	if(nullptr != m_WrapperPtr)
 	{
 		l_Status = m_WrapperPtr->IsRequestComplete();
 	}

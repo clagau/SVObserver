@@ -79,11 +79,11 @@ public:
 
 protected:
 	virtual bool isInputImage(const SVGUID& rImageGuid) const override;
-	virtual bool onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( bool First, SVImageBufferHandlePtr RInputImageHandle, SVImageBufferHandlePtr ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 	virtual bool hasToAskFriendForConnection( const SvDef::SVObjectTypeInfoStruct& rInfo, SVObjectClass*& rPOwner ) const override;
 	
 	SVImageInfoClass      m_MaskBufferInfo;
-	SVSmartHandlePointer  m_MaskBufferHandlePtr;
+	SVImageBufferHandlePtr  m_MaskBufferHandlePtr;
 
 	mutable SVGraphixClass m_graphixObject;
 

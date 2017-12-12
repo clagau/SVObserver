@@ -12,8 +12,7 @@
 #pragma once
 
 #pragma region Includes
-
-#include "SVUtilityLibrary\SVSharedPtr.h"
+//Moved to precompiled header: #include <memory>
 #pragma endregion Includes
 
 class SVOInspectionObj  
@@ -69,5 +68,5 @@ private:
 	bool m_Color;
 };
 
-typedef SVSharedPtr< SVOInspectionObj > SVOInspectionObjPtr;
+typedef std::shared_ptr< SVOInspectionObj > SVOInspectionObjPtr;
 

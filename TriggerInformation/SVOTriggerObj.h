@@ -12,9 +12,8 @@
 #pragma once
 
 #pragma region Includes
-
+//Moved to precompiled header: #include <memory>
 #include "SVTriggerConstants.h"
-#include "SVUtilityLibrary\SVSharedPtr.h"
 #pragma endregion Includes
 
 
@@ -45,6 +44,6 @@ namespace SvTi
 		long m_timerPeriod;
 	};
 
-	typedef SVSharedPtr< SVOTriggerObj > SVOTriggerObjPtr;
+	typedef std::shared_ptr< SVOTriggerObj > SVOTriggerObjPtr;
 
 } //namespace SvTi

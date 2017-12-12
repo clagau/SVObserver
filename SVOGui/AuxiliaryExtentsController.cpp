@@ -46,7 +46,7 @@ namespace SvOg
 		bool bRetVal = false;
 
 		typedef SvCmd::AreAuxiliaryExtentsAvailable Command;
-		typedef SVSharedPtr<Command> CommandPtr;
+		typedef std::shared_ptr<Command> CommandPtr;
 		CommandPtr commandPtr(new Command(m_TaskObjectID));
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
@@ -81,7 +81,7 @@ namespace SvOg
 	{
 		// Need to do pTool->GetSourceImages
 		typedef SvCmd::GetAvailableAuxSourceImages Command;
-		typedef SVSharedPtr<Command> CommandPtr;
+		typedef std::shared_ptr<Command> CommandPtr;
 		CommandPtr commandPtr(new Command(m_TaskObjectID));
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
@@ -118,7 +118,7 @@ namespace SvOg
 		if (!imageID.empty())
 		{
 			typedef SvCmd::SetAuxSourceImage Command;
-			typedef SVSharedPtr<Command> CommandPtr;
+			typedef std::shared_ptr<Command> CommandPtr;
 			CommandPtr commandPtr(new Command(m_TaskObjectID, imageID));
 			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 			hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
@@ -133,7 +133,7 @@ namespace SvOg
 	SvUl::NameGuidPair AuxiliaryExtentsController::GetAuxSourceImage() const
 	{
 		typedef SvCmd::GetAuxSourceImage Command;
-		typedef SVSharedPtr<Command> CommandPtr;
+		typedef std::shared_ptr<Command> CommandPtr;
 		CommandPtr commandPtr(new Command(m_TaskObjectID));
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
@@ -147,8 +147,8 @@ namespace SvOg
 	HRESULT AuxiliaryExtentsController::RunOnce()
 	{
 		typedef SvCmd::InspectionRunOnce Command;
-		typedef SVSharedPtr<Command> CommandPtr;
-		CommandPtr commandPtr = new Command(m_InspectionID, m_TaskObjectID);
+		typedef std::shared_ptr<Command> CommandPtr;
+		CommandPtr commandPtr{ new Command(m_InspectionID, m_TaskObjectID) };
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		return hr;

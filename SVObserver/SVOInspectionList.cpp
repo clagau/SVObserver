@@ -37,7 +37,7 @@ BOOL SVOInspectionList::AddInspectionToList( LPCTSTR InspectLabel,  LPCTSTR Insp
 	BOOL bRet = FALSE;
 	if (!IsInspectionInList( InspectLabel,InspectName ))
 	{
-		SVOInspectionObjPtr pObj = new SVOInspectionObj();
+		SVOInspectionObjPtr pObj{ new SVOInspectionObj() };
 		pObj->SetInspectionLabelName(InspectLabel );
 		pObj->SetInspectionName( InspectName );
 		pObj->SetToolsetImage( _T("") );

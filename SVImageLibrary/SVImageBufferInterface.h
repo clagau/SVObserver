@@ -11,23 +11,24 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVDataManagerLibrary/SVDataManagerHandle.h"
 #include "SVTimerLibrary/SVClock.h"
-#include "SVUtilityLibrary/SVSharedPtr.h"
 #include "SVImageBufferHandleInterface.h"
+#pragma endregion Includes
 
 struct SVImageBufferInterface  
 {
 	SVImageBufferInterface();
 	SVImageBufferInterface( const SVImageBufferInterface& p_rObject );
-	SVImageBufferInterface( SVSmartHandlePointer p_ImageHandle, const SVDataManagerHandle& p_rIndexHandle );
+	SVImageBufferInterface( SVImageBufferHandlePtr p_ImageHandle, const SVDataManagerHandle& p_rIndexHandle );
 	~SVImageBufferInterface();
 
 	const SVImageBufferInterface& operator=( const SVImageBufferInterface& p_rObject );
 
 	void clear();
 
-	HRESULT Assign( SVSmartHandlePointer p_ImageHandle, const SVDataManagerHandle& p_rIndexHandle );
+	HRESULT Assign( SVImageBufferHandlePtr p_ImageHandle, const SVDataManagerHandle& p_rIndexHandle );
 
 	unsigned char* GetBufferAddress() const;
 
@@ -39,7 +40,7 @@ struct SVImageBufferInterface
 	void SetEndFrameTimeStamp();
 	void SetEndFrameTimeStamp( const SvTl::SVTimeStamp& p_rTimeStamp );
 
-	SVSmartHandlePointer m_ImageHandle;
+	SVImageBufferHandlePtr m_ImageHandle;
 	SVDataManagerHandle m_IndexHandle;
 
 	SvTl::SVTimeStamp m_StartTimeStamp;
@@ -47,5 +48,5 @@ struct SVImageBufferInterface
 
 };
 
-typedef SVSharedPtr< SVImageBufferInterface > SVImageBufferPointer;
+typedef std::shared_ptr< SVImageBufferInterface > SVImageBufferPointer;
 

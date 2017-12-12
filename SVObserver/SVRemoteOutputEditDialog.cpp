@@ -30,7 +30,7 @@ SVRemoteOutputEditDialog::SVRemoteOutputEditDialog(CWnd* pParent /*=nullptr*/)
 , m_ValueObjectSourceName(_T("Invalid"))
 , m_Items( boost::bind( &( CComboBox::GetItemData ), &m_ValueObjectNameCombo, _1 ) , boost::bind( &( CComboBox::SetItemData ), &m_ValueObjectNameCombo, _1, _2 ) )
 {
-	m_TriggerCount = new SVIOEntryHostStruct;
+	m_TriggerCount = SVIOEntryHostStructPtr{ new SVIOEntryHostStruct };
 }
 
 SVRemoteOutputEditDialog::~SVRemoteOutputEditDialog()
@@ -114,7 +114,7 @@ BOOL SVRemoteOutputEditDialog::OnInitDialog()
 				
 				int iIndex=0;
 
-				if( !( pIOEntry.empty() ) )
+				if(nullptr != pIOEntry)
 				{
 					if( nullptr != pIOEntry->getObject() && std::string::npos == pIOEntry->getObject()->GetCompleteName().find( _T( "PPQ" ) ) )
 					{
@@ -172,7 +172,7 @@ void SVRemoteOutputEditDialog::OnCbnSelchangeValueObjectNameCombo()
 		l_pIOEntry = l_Iter->second;
 	}
 
-	if( !( l_pIOEntry.empty() ) )
+	if(nullptr != l_pIOEntry)
 	{
 		SvDef::SVObjectTypeEnum l_PCDataType = l_pIOEntry->getObject()->GetObjectType();
 		UpdateData(FALSE);
@@ -192,7 +192,7 @@ void SVRemoteOutputEditDialog::UpdateValueObjectFromCombo()
 			l_pIOEntry = l_Iter->second;
 		}
 
-		if( !( l_pIOEntry.empty() ) && ( nullptr != l_pIOEntry->getObject() ) )
+		if(nullptr != l_pIOEntry && ( nullptr != l_pIOEntry->getObject() ) )
 		{
 			CString Name;
 			m_ValueObjectNameCombo.GetLBText( l_iSel, Name  );

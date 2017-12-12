@@ -113,9 +113,9 @@ void SVToolSetListCtrl::Rebuild()
 		DeleteAllItems();
 
 		typedef SvCmd::GetTaskObjects Command;
-		typedef SVSharedPtr<Command> CommandPtr;
+		typedef std::shared_ptr<Command> CommandPtr;
 
-		CommandPtr commandPtr = new Command(m_ToolSetId);
+		CommandPtr commandPtr{ new Command(m_ToolSetId) };
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionId, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
@@ -284,8 +284,8 @@ bool SVToolSetListCtrl::IsEmptyStringPlaceHolder( const std::string& rName ) con
 bool SVToolSetListCtrl::displayErrorBox(const SVGUID& rGuid) const
 {
 	typedef SvCmd::GetErrorMessageList Command;
-	typedef SVSharedPtr<Command> CommandPtr;
-	CommandPtr commandPtr = new Command(rGuid);
+	typedef std::shared_ptr<Command> CommandPtr;
+	CommandPtr commandPtr{ new Command(rGuid) };
 	SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionId, commandPtr);
 	HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 	if (S_OK == hr)
@@ -305,8 +305,8 @@ bool SVToolSetListCtrl::isToolValid(const SVGUID& tool) const
 {
 	bool isToolValid = false;
 	typedef SvCmd::IsValid Command;
-	typedef SVSharedPtr<Command> CommandPtr;
-	CommandPtr commandPtr = new Command(tool);
+	typedef std::shared_ptr<Command> CommandPtr;
+	CommandPtr commandPtr{ new Command(tool) };
 	SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionId, commandPtr);
 	HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 	if (S_OK == hr)

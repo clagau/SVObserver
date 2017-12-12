@@ -55,7 +55,7 @@ SVCommandTemplatePtr SVCommandAbstractFactorySingleton< SVAbstractFactory >::Cre
 {
 	SVCommandTemplatePtr l_Command;
 
-	if( ! m_pAbstractFactory.empty() )
+	if(nullptr != m_pAbstractFactory)
 	{
 		l_Command = m_pAbstractFactory->CreateCommand( p_CommandType );
 	}
@@ -67,7 +67,7 @@ template< typename SVAbstractFactory >
 SVCommandAbstractFactorySingleton< SVAbstractFactory >::SVCommandAbstractFactorySingleton()
 : m_pAbstractFactory()
 {
-	m_pAbstractFactory = new SVAbstractFactory;
+	m_pAbstractFactory = SVCommandAbstractFactoryTemplatePtr{ new SVAbstractFactory };
 }
 
 #endif

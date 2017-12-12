@@ -244,7 +244,7 @@ bool SVColorToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContain
 
 	m_convertToHSI.GetValue(convertToHSI);
 
-	SVSmartHandlePointer OutputImageHandle;
+	SVImageBufferHandlePtr OutputImageHandle;
 	if (m_OutputImage.SetImageHandleIndex(rRunStatus.Images) && m_OutputImage.GetImageHandle(OutputImageHandle))
 	{
 		SVImageBufferHandleImage milHandleTo;
@@ -256,9 +256,9 @@ bool SVColorToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContain
 		{
 			UpdateImageWithExtent();
 		}
-		SVSmartHandlePointer inputImageHandle;
+		SVImageBufferHandlePtr inputImageHandle;
 		m_LogicalROIImage.GetParentImageHandle(inputImageHandle);
-		if (!(inputImageHandle.empty()))
+		if (nullptr != inputImageHandle)
 		{
 			inputImageHandle->GetData(milHandleFrom);
 		}

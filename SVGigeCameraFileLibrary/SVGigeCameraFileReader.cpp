@@ -264,7 +264,7 @@ HRESULT SVGigeCameraFileReader::ReadCustomParams(const std::string& filename, SV
 						SVMaterialsTree::iterator it = GetBaseNode(customParams, splitContainer[0]);
 						if( customParams.end() != it )
 						{
-							SvXml::SVMaterialDataPtr pMaterial = new SvXml::SVMaterialData( _variant_t( splitContainer[1].c_str() ) );
+							SvXml::SVMaterialDataPtr pMaterial{ new SvXml::SVMaterialData(_variant_t(splitContainer[1].c_str())) };
 							it.node()->insert( SVMaterialsTree::SVTreeElement( std::string(cValue), pMaterial ));
 						}
 					}
@@ -275,7 +275,7 @@ HRESULT SVGigeCameraFileReader::ReadCustomParams(const std::string& filename, SV
 						SVMaterialsTree::iterator it = GetBaseNode(customParams, splitContainer[0]);
 						if( customParams.end() != it )
 						{
-							SvXml::SVMaterialDataPtr pMaterial = new SvXml::SVMaterialData( _variant_t( splitContainer[2].c_str() ) );
+							SvXml::SVMaterialDataPtr pMaterial{ new SvXml::SVMaterialData(_variant_t(splitContainer[2].c_str())) };
 							it.node()->insert(SVMaterialsTree::SVTreeElement( std::string(splitContainer[1].c_str()), pMaterial ));
 						}
 					}
@@ -286,7 +286,7 @@ HRESULT SVGigeCameraFileReader::ReadCustomParams(const std::string& filename, SV
 						SVMaterialsTree::iterator it = GetOptionNode(customParams, splitContainer[0], splitContainer[1] + "_" + splitContainer[2]);
 						if( customParams.end() != it )
 						{
-							SvXml::SVMaterialDataPtr pMaterial = new SvXml::SVMaterialData( _variant_t( splitContainer[3].c_str() ) );
+							SvXml::SVMaterialDataPtr pMaterial{ new SvXml::SVMaterialData(_variant_t(splitContainer[3].c_str())) };
 							it.node()->insert( SVMaterialsTree::SVTreeElement( std::string(cValue), pMaterial ));
 						}
 					}
@@ -297,7 +297,7 @@ HRESULT SVGigeCameraFileReader::ReadCustomParams(const std::string& filename, SV
 						SVMaterialsTree::iterator it = GetOptionNode(customParams, splitContainer[0], splitContainer[1] + "_" + splitContainer[2]);
 						if( customParams.end() != it )
 						{
-							SvXml::SVMaterialDataPtr pMaterial = new SvXml::SVMaterialData( _variant_t( splitContainer[4].c_str() ) );
+							SvXml::SVMaterialDataPtr pMaterial{ new SvXml::SVMaterialData(_variant_t(splitContainer[4].c_str())) };
 							it.node()->insert( SVMaterialsTree::SVTreeElement( std::string(splitContainer[3].c_str()), pMaterial ));
 						}
 					}

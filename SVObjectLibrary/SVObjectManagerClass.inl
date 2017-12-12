@@ -205,7 +205,7 @@ HRESULT SVObjectManagerClass::UpdateObserver( long Cookie, const SVDataType& rDa
 
 	SVCookieEntryStructPtr pCookie = GetCookieEntry( Cookie );
 
-	if( !( pCookie.empty() ) )
+	if(nullptr != pCookie)
 	{
 		SVObserverTemplate<SVDataType>* pObserver = dynamic_cast< SVObserverTemplate<SVDataType>* > ( pCookie->m_pFunctor.get() );
 

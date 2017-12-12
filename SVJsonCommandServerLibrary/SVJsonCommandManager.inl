@@ -65,7 +65,7 @@ void SVJsonCommandManager< SVCommandProcessor >::Startup(unsigned short p_PortNu
 template< typename SVCommandProcessor >
 void SVJsonCommandManager< SVCommandProcessor >::Shutdown()
 {
-	m_JsonCommandDataPtr.clear();
+	m_JsonCommandDataPtr.reset();
 	m_SocketServer.DisconnectFromClients();
 	m_AsyncProcedure.Destroy();
 }
@@ -84,9 +84,9 @@ HRESULT SVJsonCommandManager< SVCommandProcessor >::ProcessAsyncJsonCommand( con
 	{
 		if( !( rJsonCommand.empty() ) )
 		{
-			m_JsonCommandDataPtr = new SVJsonCommandData();
+			m_JsonCommandDataPtr = SVJsonCommandDataPtr{ new SVJsonCommandData() };
 
-			if( !( m_JsonCommandDataPtr.empty() ) )
+			if( nullptr != m_JsonCommandDataPtr)
 			{
 				l_Status = m_JsonCommandDataPtr->SetJsonCommand( rJsonCommand );
 
@@ -115,7 +115,7 @@ HRESULT SVJsonCommandManager< SVCommandProcessor >::ProcessAsyncJsonCommand( con
 			l_Status = E_INVALIDARG;
 		}
 
-		m_JsonCommandDataPtr.clear();
+		m_JsonCommandDataPtr.reset();
 		::InterlockedExchange( &m_ProcessingAsyncCommand, 0 );
 	}
 	else
@@ -134,7 +134,7 @@ void SVJsonCommandManager< SVCommandProcessor >::ThreadProcess( bool& p_WaitForE
 {
 	SVJsonCommandDataPtr l_CommandDataPtr = m_JsonCommandDataPtr;
 
-	if( ( m_ProcessingAsyncCommand == 1 ) && !( l_CommandDataPtr.empty() ) )
+	if( ( m_ProcessingAsyncCommand == 1 ) && nullptr != l_CommandDataPtr)
 	{
 		SVCommandProcessor::ProcessAsyncCommand( l_CommandDataPtr->GetJsonCommand(), l_CommandDataPtr->GetJsonResultsObject() );
 

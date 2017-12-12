@@ -51,7 +51,7 @@ public:
 
 	virtual HRESULT IsValidCameraFileParameters( SVDeviceParamCollection& rDeviceParams ) override;
 	virtual void ClearDeviceIdentifier() override;
-	virtual HRESULT SingleGrab( SVSmartHandlePointer p_SingleGrabHandle ) override;
+	virtual HRESULT SingleGrab( SVImageBufferHandlePtr p_SingleGrabHandle ) override;
 	virtual bool IsOnline() const override;
 
 protected:

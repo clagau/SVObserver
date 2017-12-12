@@ -290,6 +290,7 @@ namespace SvOsl
 			if( isModified || isSelected )
 			{
 				SvCl::SelectorItem SelectedItem{ *Iter->second };
+				SelectedItem.m_Selected = isSelected;
 
 				convertLocation( SelectedItem );
 

@@ -104,9 +104,6 @@
     <ClInclude Include="SVSafeArray.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVSharedPtr.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVUniqueIDGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>

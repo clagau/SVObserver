@@ -96,7 +96,7 @@ private:
 	SVLongValueObjectClass m_FlagOfOutputImage;
 
 	//ringbuffer
-	std::vector<SVSmartHandlePointer> m_ringBuffer;
+	std::vector<SVImageBufferHandlePtr> m_ringBuffer;
 	bool m_isBufferFull;
 	int m_nextBufferPos;
 #pragma endregion Member Variables

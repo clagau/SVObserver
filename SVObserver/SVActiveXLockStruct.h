@@ -33,6 +33,6 @@ struct SVActiveXLockStruct
 	std::string m_Name;
 	long m_ProcessCount;
 
-	SVSmartHandlePointer m_ImageHandlePtr;
+	SVImageBufferHandlePtr m_ImageHandlePtr;
 };
 

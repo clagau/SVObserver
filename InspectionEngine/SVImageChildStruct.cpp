@@ -27,7 +27,7 @@ SVImageChildStruct::SVImageChildStruct( const SVImageChildStruct &p_rsvValue )
 SVImageChildStruct::~SVImageChildStruct()
 {
 	m_ImageInfo.Initialize();
-	m_pImageHandles.clear();
+	m_pImageHandles.reset();
 }
 
 const SVImageChildStruct &SVImageChildStruct::operator=( const SVImageChildStruct &p_rsvValue )

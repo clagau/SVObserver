@@ -320,7 +320,7 @@ bool SVOutputObjectList::WriteOutputs( SVIOEntryHostStructPtrVector& rIOEntries,
 			SVIOEntryHostStructPtr pIOEntry = rIOEntries[i];
 
 			// Check if output is enabled for this call
-			if( !( pIOEntry.empty() ) && pIOEntry->m_Enabled )
+			if(nullptr != pIOEntry && pIOEntry->m_Enabled )
 			{
 				if( pIOEntry->m_ObjectType == IO_DIGITAL_OUTPUT )
 				{
@@ -418,7 +418,7 @@ bool SVOutputObjectList::ResetOutputs( SVIOEntryHostStructPtrVector& rIOEntries 
 			SVIOEntryHostStructPtr pIOEntry = rIOEntries[i];
 
 			// Check if output is enabled for this call
-			if( !( pIOEntry.empty() ) && pIOEntry->m_Enabled )
+			if(nullptr != pIOEntry && pIOEntry->m_Enabled )
 			{
 				SVOutputObject* pOutput = nullptr;
 
@@ -500,7 +500,7 @@ bool SVOutputObjectList::WriteOutput( SVIOEntryHostStructPtr pIOEntry, long lDat
 	{
 
 		// We are only writing one output, don't worry if it is marked enabled for this call
-		if( !( pIOEntry.empty() ) )
+		if(nullptr != pIOEntry)
 		{
 			if( pIOEntry->m_ObjectType == IO_DIGITAL_OUTPUT )
 			{
@@ -553,7 +553,7 @@ bool SVOutputObjectList::WriteOutputValue( SVIOEntryHostStructPtr pIOEntry, cons
 	if( Lock() )
 	{
 		// We are only writing one output, don't worry if it is marked enabled for this call
-		if( !( pIOEntry.empty() ) )
+		if(nullptr != pIOEntry)
 		{
 			SVGuidSVOutputObjectPtrMap::const_iterator l_Iter = m_OutputObjects.find( pIOEntry->m_IOId );
 
@@ -581,7 +581,7 @@ bool SVOutputObjectList::ResetOutput( SVIOEntryHostStructPtr pIOEntry )
 	if( Lock() )
 	{
 		// Check if output is enabled for this call
-		if( !( pIOEntry.empty() ))
+		if(nullptr != pIOEntry)
 		{
 			SVGuidSVOutputObjectPtrMap::const_iterator Iter = m_OutputObjects.find(pIOEntry->m_IOId);
 			if (m_OutputObjects.end() != Iter && nullptr != Iter->second)
@@ -625,7 +625,7 @@ bool SVOutputObjectList::FillOutputs( SVIOEntryHostStructPtrVector& rIOEntries )
 		{
 			if (nullptr != Iter->second)
 			{
-				SVIOEntryHostStructPtr pIOEntry = new SVIOEntryHostStruct;
+				SVIOEntryHostStructPtr pIOEntry{ new SVIOEntryHostStruct };
 
 				pIOEntry->m_IOId = Iter->second->GetUniqueObjectID();
 

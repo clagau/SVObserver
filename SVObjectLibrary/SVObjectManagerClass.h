@@ -18,8 +18,6 @@
 #include "SVCommandLibrary/SVCommandTemplate.h"
 #include "SVSystemLibrary/SVCriticalSection.h"
 #include "SVUtilityLibrary/SVGUID.h"
-#include "SVUtilityLibrary/SVSharedPtr.h"
-
 #include "SVObjectReference.h"
 #include "SVObserverNotificationFunctor.h"
 #include "SVObjectClass.h"
@@ -241,7 +239,7 @@ protected:
 		: m_Cookie( Cookie ), m_pFunctor( pFunctor ), m_SubjectIDs() {}
 	};
 
-	typedef SVSharedPtr< SVCookieEntryStruct > SVCookieEntryStructPtr;
+	typedef std::shared_ptr< SVCookieEntryStruct > SVCookieEntryStructPtr;
 	typedef std::map< long, SVCookieEntryStructPtr > SVCookieEntryMap;
 
 	typedef std::set< long > SVSubjectCookieSet;
@@ -272,7 +270,7 @@ protected:
 		: m_ObjectUID(), m_pObject( nullptr ), m_SubjectIDs(), m_DataNameSubjectObservers() {}
 	};
 
-	typedef SVSharedPtr< SVUniqueObjectEntryStruct > SVUniqueObjectEntryStructPtr;
+	typedef std::shared_ptr< SVUniqueObjectEntryStruct > SVUniqueObjectEntryStructPtr;
 	typedef std::map< GUID, SVUniqueObjectEntryStructPtr > SVUniqueObjectEntryMap;
 
 	SVObjectManagerClass();

@@ -11,8 +11,7 @@
 #pragma once
 
 #pragma region Includes
-
-#include "SVUtilityLibrary/SVSharedPtr.h"
+//Moved to precompiled header: #include <memory>
 #include "SVMatroxTypedefs.h"
 #pragma endregion Includes
 
@@ -43,5 +42,5 @@ private:
 	std::string m_CreatorName;
 };
 
-typedef SVSharedPtr< SVMatroxBufferTemplate > SVMatroxBufferPtr;
+typedef std::shared_ptr< SVMatroxBufferTemplate > SVMatroxBufferPtr;
 

@@ -12,6 +12,7 @@
 #pragma once
 
 #pragma region Includes
+//Moved to precompiled header: #include <memory>
 #include "SVDataManagerLibrary/SVDataManagerHandle.h"
 #include "SVDataManagerLibrary/SVDataManagerIndexArrayHandle.h"
 #include "SVImageLibrary/SVAcquisitionBufferInterface.h"
@@ -20,8 +21,6 @@
 #include "SVOLibrary/SVODataDeviceClass.h"
 #include "SVOLibrary/SVODeviceClass.h"
 #include "CameraLibrary/SVDeviceParamCollection.h"
-#include "SVUtilityLibrary/SVSharedPtr.h"
-
 #include "TriggerInformation/SVAcquisitionConstructParams.h"
 #include "SVFileSystemLibrary/SVFileNameArrayClass.h"
 #include "InspectionEngine/SVImageObjectClass.h"
@@ -124,7 +123,7 @@ public:
 
 	bool IsDigitizerSubsystemValid() const;
 
-	virtual HRESULT SingleGrab( SVSmartHandlePointer p_SingleGrabHandle );
+	virtual HRESULT SingleGrab( SVImageBufferHandlePtr p_SingleGrabHandle );
 
 	virtual bool SetCurrentIndex( const SVDataManagerHandle& rDMIndexHandle );
 	virtual bool SetCurrentIndex( const SVDataManagerHandle& rDMIndexHandle, SVDataManagerLockTypeEnum p_LockType );
@@ -185,7 +184,7 @@ protected:
 
 	bool mbIsBufferCreated;
 	bool mbTempOnline;
-	SVSmartHandlePointer m_SingleGrabHandle;
+	SVImageBufferHandlePtr m_SingleGrabHandle;
 	SVDigitizerProcessingClass& m_rDigitizerProc;
 
 private:
@@ -196,5 +195,5 @@ private:
 	bool m_LUTAndLRSet;
 };
 
-typedef SVSharedPtr< SVAcquisitionClass > SVAcquisitionClassPtr;
+typedef std::shared_ptr< SVAcquisitionClass > SVAcquisitionClassPtr;
 

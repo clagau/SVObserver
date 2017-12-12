@@ -127,7 +127,7 @@ void GlobalConstantView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint 
 
 		RootObject::getRootChildObjectList( GlobalObjects, SvDef::FqnGlobal, 0 );
 		BasicValueObjects::ValueVector::const_iterator Iter( GlobalObjects.begin() );
-		while( GlobalObjects.end() != Iter && !Iter->empty() )
+		while(GlobalObjects.end() != Iter && nullptr != *Iter)
 		{
 			std::string Name( (*Iter)->GetCompleteName() );
 			SvUl::MakeUpper(Name);
@@ -319,7 +319,7 @@ void GlobalConstantView::insertGlobalConstant( const SvDef::GlobalConstantData& 
 	BasicValueObjectPtr pGlobalObject;
 
 	pGlobalObject = RootObject::setRootChildValue( rGlobalData.m_DottedName.c_str(),  rGlobalData.m_Value );
-	if( !pGlobalObject.empty() )
+	if(nullptr != pGlobalObject)
 	{
 		pGlobalObject->setDescription( rGlobalData.m_Description.c_str() );
 		//All Global constants can be remotely settable

@@ -84,7 +84,7 @@ bool SVWatershedFilterClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVWatershedFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVWatershedFilterClass::onRun( bool First, SVImageBufferHandlePtr rInputImageHandle, SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	long lMinVariation;
 	long lControlFlag;
@@ -93,15 +93,15 @@ bool SVWatershedFilterClass::onRun( bool First, SVSmartHandlePointer RInputImage
 	m_lvoMinVariation.GetValue(lMinVariation);
 	m_lvoControlFlag.GetValue(lControlFlag);
 
-	SVSmartHandlePointer ImageHandle;
+	SVImageBufferHandlePtr ImageHandle;
 
-	if( m_pCurrentUIOPL && !( RInputImageHandle.empty() ) && !( ROutputImageHandle.empty() ) )
+	if( m_pCurrentUIOPL && nullptr != rInputImageHandle && nullptr != rOutputImageHandle)
 	{
 		SVImageBufferHandleImage l_InMilHandle;
 		SVImageBufferHandleImage l_OutMilHandle;
 
-		RInputImageHandle->GetData( l_InMilHandle );
-		ROutputImageHandle->GetData( l_OutMilHandle );
+		rInputImageHandle->GetData( l_InMilHandle );
+		rOutputImageHandle->GetData( l_OutMilHandle );
 		
 		HRESULT l_Code;
 		if( bUseMarker && m_MarkerImageInfo.IsConnected() )
@@ -112,7 +112,7 @@ bool SVWatershedFilterClass::onRun( bool First, SVSmartHandlePointer RInputImage
 				pInputImage->GetImageHandle( ImageHandle );
 				
 				SVImageBufferHandleImage l_MilHandle;
-				if( !( ImageHandle.empty() ) )
+				if( nullptr != ImageHandle )
 				{
 					ImageHandle->GetData( l_MilHandle );
 				}
@@ -128,7 +128,7 @@ bool SVWatershedFilterClass::onRun( bool First, SVSmartHandlePointer RInputImage
 		else
 		{
 			SVImageBufferHandleImage l_MilHandle;
-			if( !( ImageHandle.empty() ) )
+			if (nullptr != ImageHandle)
 			{
 				ImageHandle->GetData( l_MilHandle );
 			}

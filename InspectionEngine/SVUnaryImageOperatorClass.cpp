@@ -59,7 +59,7 @@ bool SVUnaryImageOperatorClass::CreateObject( const SVObjectLevelCreateStruct& r
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVUnaryImageOperatorClass::Run( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVUnaryImageOperatorClass::Run( bool First, SVImageBufferHandlePtr RInputImageHandle, SVImageBufferHandlePtr ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	// Should call Base Class Run() here but we have different parameters!!!
 
@@ -90,7 +90,7 @@ bool SVUnaryImageOperatorClass::Run( bool First, SVSmartHandlePointer RInputImag
 // .Description : Runs this operator. MUST BE OVERRIDDEN !!!
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVUnaryImageOperatorClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVUnaryImageOperatorClass::onRun( bool First, SVImageBufferHandlePtr RInputImageHandle, SVImageBufferHandlePtr ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	assert(0);
 	return false;

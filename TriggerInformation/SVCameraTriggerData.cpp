@@ -81,7 +81,7 @@ namespace SvTi
 		m_lineInState.SetValue(BOOL(false));
 		m_lineInState.ResetObject();
 
-		SVIOEntryHostStructPtr pIOEntry = new SVIOEntryHostStruct;
+		SVIOEntryHostStructPtr pIOEntry{ new SVIOEntryHostStruct };
 		pIOEntry->m_DeleteValueObject = false;
 		pIOEntry->setObject(dynamic_cast<SVObjectClass*> (&m_lineInState));
 		pIOEntry->m_ObjectType	= IO_CAMERA_DATA_INPUT;
@@ -99,7 +99,7 @@ namespace SvTi
 		m_timestamp.SetValue(0.0);
 		m_timestamp.ResetObject();
 
-		SVIOEntryHostStructPtr pIOEntry = new SVIOEntryHostStruct;
+		SVIOEntryHostStructPtr pIOEntry{ new SVIOEntryHostStruct };
 		pIOEntry->m_DeleteValueObject = false;
 		pIOEntry->setObject(dynamic_cast<SVObjectClass*> (&m_timestamp));
 		pIOEntry->m_ObjectType	= IO_CAMERA_DATA_INPUT;

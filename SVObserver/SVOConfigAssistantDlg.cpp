@@ -3876,7 +3876,7 @@ HRESULT CSVOConfigAssistantDlg::CheckCamera( SVOCameraObj& rCameraObj, bool SetF
 	else
 	{
 		SVAcquisitionClassPtr pDevice = SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( DigName.c_str() );
-		if( !( pDevice.empty() ) )
+		if(nullptr != pDevice)
 		{
 			SVDeviceParamCollection DeviceParams;
 

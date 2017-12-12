@@ -113,8 +113,8 @@ bool SVLinearImageOperatorListClass::ResetObject(SvStl::MessageContainerVector *
 
 bool SVLinearImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	SVSmartHandlePointer output;
-	SVSmartHandlePointer input;
+	SVImageBufferHandlePtr output;
+	SVImageBufferHandlePtr input;
 	SVImageExtentClass l_svImageExtent;
 
 	BOOL UseRotation = true;
@@ -164,7 +164,7 @@ bool SVLinearImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::M
 				outputImageObject.GetImageHandle( output );
 				l_psvInputImage->GetImageHandle( input );
 				
-				if( !( input.empty() ) && !( output.empty() ) )
+				if(nullptr != input && nullptr != output )
 				{
 					input->GetData( l_InMilHandle );
 					output->GetData( l_OutMilHandle );
@@ -265,7 +265,7 @@ bool SVLinearImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::M
 
 		outputImageObject.GetImageHandle( output );
 
-		if( !( output.empty() ) )
+		if(nullptr != output)
 		{
 			output->GetData( l_OutMilHandle );
 		}

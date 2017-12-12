@@ -28,18 +28,18 @@ static char THIS_FILE[] = __FILE__;
 SVOutObjectInfoStruct::SVOutObjectInfoStruct()
 : SVObjectInfoStruct(), m_UserInfoList(), m_CriticalSectionPtr()
 {
-	m_CriticalSectionPtr = new SVCriticalSection;
+	m_CriticalSectionPtr = SVCriticalSectionPtr{ new SVCriticalSection };
 }
 
 SVOutObjectInfoStruct::SVOutObjectInfoStruct( const SVOutObjectInfoStruct& p_rsvValue )
 : SVObjectInfoStruct( p_rsvValue ), m_UserInfoList( p_rsvValue.m_UserInfoList ), m_CriticalSectionPtr()
 {
-	m_CriticalSectionPtr = new SVCriticalSection;
+	m_CriticalSectionPtr = SVCriticalSectionPtr{ new SVCriticalSection };
 }
 
 SVOutObjectInfoStruct::~SVOutObjectInfoStruct()
 {
-	m_CriticalSectionPtr.clear();
+	m_CriticalSectionPtr.reset();
 }
 
 const SVOutObjectInfoStruct& SVOutObjectInfoStruct::operator=( const SVOutObjectInfoStruct& p_rsvValue )
@@ -157,12 +157,12 @@ bool SVOutObjectInfoStruct::Lock( DWORD p_TimeOutMilliseconds ) const
 {
 	bool l_Status = true;
 
-	if( m_CriticalSectionPtr.empty() )
+	if(nullptr == m_CriticalSectionPtr )
 	{
-		m_CriticalSectionPtr = new SVCriticalSection;
+		m_CriticalSectionPtr = SVCriticalSectionPtr{ new SVCriticalSection };
 	}
 
-	l_Status = !( m_CriticalSectionPtr.empty() );
+	l_Status = (nullptr != m_CriticalSectionPtr);
 
 	if( l_Status )
 	{
@@ -174,7 +174,7 @@ bool SVOutObjectInfoStruct::Lock( DWORD p_TimeOutMilliseconds ) const
 
 bool SVOutObjectInfoStruct::Unlock() const
 {
-	bool l_Status = !( m_CriticalSectionPtr.empty() );
+	bool l_Status = (nullptr != m_CriticalSectionPtr);
 
 	if( l_Status )
 	{

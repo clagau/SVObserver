@@ -12,16 +12,15 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <memory>
 #include "SVProgressDialog.h"
 #include "SVSystemLibrary/SVLockableClass.h"
-#include "SVUtilityLibrary\SVSharedPtr.h"
-
 #pragma endregion Includes
 
 class SVObjectScriptParserClass;
 
-typedef SVSharedPtr<CProgressCtrl> ProgressCtrlSharedPtr;
-typedef SVSharedPtr<CStatic> StaticSharedPtr;
+typedef std::shared_ptr<CProgressCtrl> ProgressCtrlSharedPtr;
+typedef std::shared_ptr<CStatic> StaticSharedPtr;
 
 struct SVParserProgressControlStruct
 {

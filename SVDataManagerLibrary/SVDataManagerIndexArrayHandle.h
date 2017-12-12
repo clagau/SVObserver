@@ -11,8 +11,9 @@
 
 #pragma once
 
-#include "SVUtilityLibrary/SVSharedPtr.h"
+#pragma region Includes
 #include "SVDataManagerEnums.h"
+#pragma endregion Includes
 
 class SVDataManagerIndexArrayHandle  
 {
@@ -50,6 +51,6 @@ private:
 
 };
 
-typedef SVSharedPtr< SVDataManagerIndexArrayHandle > SVSmartIndexArrayHandlePtr;
+typedef std::shared_ptr< SVDataManagerIndexArrayHandle > SVSmartIndexArrayHandlePtr;
 
 

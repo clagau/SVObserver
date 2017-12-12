@@ -127,7 +127,6 @@
     <ClInclude Include="SVObjectID.h" />
     <ClInclude Include="SVPoint.h" />
     <ClInclude Include="SVSafeArray.h" />
-    <ClInclude Include="SVSharedPtr.h" />
     <ClInclude Include="StringHelper.h" />
     <ClInclude Include="SVUniqueIDGenerator.h" />
     <ClInclude Include="SVUniqueObjectID.h" />

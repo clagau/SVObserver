@@ -84,7 +84,7 @@ bool SVOCameraList::AddCameraToList(LPCTSTR CameraName, int Dig, int CameraID)
 
 	if (!IsCameraInList(CameraName))
 	{
-		SVOCameraObjPtr pObj = new SVOCameraObj();
+		SVOCameraObjPtr pObj{ new SVOCameraObj() };
 		pObj->SetCameraDisplayName( std::string(CameraName) );
 		pObj->SetDigNumber(Dig);
 		pObj->SetCameraID(CameraID);
@@ -101,7 +101,7 @@ bool SVOCameraList::AddCameraToList(LPCTSTR CameraName, int Dig, int Bands, int 
 
 	if (!IsCameraInList(CameraName))
 	{
-		SVOCameraObjPtr pObj = new SVOCameraObj();
+		SVOCameraObjPtr pObj{ new SVOCameraObj() };
 		pObj->SetCameraDisplayName( std::string(CameraName) );
 		pObj->SetDigNumber(Dig);
 		pObj->SetCameraID(CameraID);

@@ -87,8 +87,8 @@ HRESULT RootObject::RefreshObject( const SVObjectClass* const pSender, RefreshOb
 
 bool RootObject::createConfigurationObject()
 {
-	m_pConfigurationObject.clear();
-	m_pConfigurationObject = new SVConfigurationObject;
+	m_pConfigurationObject.reset();
+	m_pConfigurationObject = SVConfigurationObjectPtr{ new SVConfigurationObject };
 	m_pConfigurationObject->SetObjectOwner(this);
 	SVObjectManagerClass::Instance().setRootChildID( SvDef::FqnConfiguration, m_pConfigurationObject->GetUniqueObjectID() );
 
@@ -96,7 +96,7 @@ bool RootObject::createConfigurationObject()
 	//Default update views is true
 	bool Update( true );
 	pValueObject = m_RootChildren.setValue( SvDef::FqnEnvironmentImageUpdate, Update );
-	if( !pValueObject.empty() )
+	if(nullptr != pValueObject)
 	{
 		//Need to set the attributes to settable remotely and online for the Image Update object but should not be selectable
 		pValueObject->SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute );
@@ -104,7 +104,7 @@ bool RootObject::createConfigurationObject()
 	}
 
 	pValueObject = m_RootChildren.setValue( SvDef::FqnEnvironmentResultUpdate, Update );
-	if( !pValueObject.empty() )
+	if(nullptr != pValueObject)
 	{
 		//Need to set the attributes to settable remotely and online for the Result Update object but should not be selectable
 		pValueObject->SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute );
@@ -116,9 +116,9 @@ bool RootObject::createConfigurationObject()
 
 void RootObject::destroyConfigurationObject()
 {
-	if( !m_pConfigurationObject.empty() )
+	if(nullptr != m_pConfigurationObject)
 	{
-		m_pConfigurationObject.clear();
+		m_pConfigurationObject.reset();
 	}
 }
 
@@ -226,17 +226,17 @@ bool RootObject::createRootChildren()
 		//When Environment created then create the following variables to set their attributes
 		BasicValueObjectPtr pValueObject( nullptr );
 		pValueObject = m_RootChildren.setValue( SvDef::FqnEnvironmentModelNumber, _T("") );
-		if( !pValueObject.empty() )
+		if(nullptr != pValueObject)
 		{
 			pValueObject->SetObjectAttributesAllowed( SvDef::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
 		}
 		pValueObject = m_RootChildren.setValue( SvDef::FqnEnvironmentSerialNumber , _T("") );
-		if( !pValueObject.empty() )
+		if (nullptr != pValueObject)
 		{
 			pValueObject->SetObjectAttributesAllowed( SvDef::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
 		}
 		pValueObject = m_RootChildren.setValue( SvDef::FqnEnvironmentWinKey, _T("") );
-		if( !pValueObject.empty() )
+		if (nullptr != pValueObject)
 		{
 			pValueObject->SetObjectAttributesAllowed( SvDef::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
 		}
@@ -255,7 +255,7 @@ bool RootObject::createRootChild( LPCTSTR ChildName, SvDef::SVObjectSubTypeEnum 
 	Node.Clear();
 	BasicValueObjectPtr pRootChild( nullptr);
 	pRootChild = m_RootChildren.setValue( ChildName, Node, this, ObjectSubType );
-	if( !pRootChild.empty() )
+	if(nullptr != pRootChild)
 	{
 		SVObjectManagerClass::Instance().setRootChildID( pRootChild->GetName(), pRootChild->GetUniqueObjectID() );
 		Result = true;

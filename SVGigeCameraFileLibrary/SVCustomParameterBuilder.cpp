@@ -190,7 +190,7 @@ void SVCustomParameterBuilder::BuildOptions( SVDeviceParam* pParam, const SVMate
 	for (SVMaterialsTree::const_iterator it = rOptions.begin();it!= rOptions.end();++it)
 	{
 		//If this is a branch generate parameters
-		if( it->second.empty() )
+		if(nullptr == it->second)
 		{
 			const SVMaterialsTree::SVTreeContainer& rTree( *it.node() );
 			SVMaterialsTree::ElementData MaterialData;

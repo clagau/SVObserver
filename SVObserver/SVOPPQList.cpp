@@ -39,7 +39,7 @@ bool SVOPPQList::AddPPQToList(LPCTSTR PPQName)
 
 	if (!IsPPQInList( PPQName ))
 	{
-		SVOPPQObjPtr pPPQObj = new SVOPPQObj();
+		SVOPPQObjPtr pPPQObj{ new SVOPPQObj() };
 		pPPQObj->SetPPQName( PPQName );
 		m_PPQList.insert(m_PPQList.end(), pPPQObj);
 		bRet = true;

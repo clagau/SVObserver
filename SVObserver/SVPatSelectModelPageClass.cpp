@@ -256,8 +256,8 @@ void SVPatModelPageClass::OnCreateModel()
 
 	if ( GetModelFile( false, m_strModelName ) ) // false parameter is mode for save file.
 	{
-		SVSharedPtr<SvCmd::CreateModel> commandPtr = new SvCmd::CreateModel(m_rAnalyzerID, m_nXPos, m_nYPos, m_lModelWidth, m_lModelHeight, std::string(m_strModelName));
-		SVObjectSynchronousCommandTemplate<SVSharedPtr<SvCmd::CreateModel>> cmd(m_rInspectionID, commandPtr);
+		std::shared_ptr<SvCmd::CreateModel> commandPtr{ new SvCmd::CreateModel(m_rAnalyzerID, m_nXPos, m_nYPos, m_lModelWidth, m_lModelHeight, std::string(m_strModelName)) };
+		SVObjectSynchronousCommandTemplate<std::shared_ptr<SvCmd::CreateModel>> cmd(m_rInspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
 		{

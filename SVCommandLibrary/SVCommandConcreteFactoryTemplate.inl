@@ -34,7 +34,7 @@ SVCommandConcreteFactoryTemplate< SVCommandObject >::~SVCommandConcreteFactoryTe
 template< typename SVCommandObject >
 SVCommandTemplatePtr SVCommandConcreteFactoryTemplate< SVCommandObject >::CreateCommand() const
 {
-	return new SVCommandObject( m_ExecuteFunctor );
+	return SVCommandTemplatePtr{ new SVCommandObject(m_ExecuteFunctor) };
 }
 
 #endif

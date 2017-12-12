@@ -12,8 +12,8 @@
 #pragma once
 
 #pragma region Includes
+//Moved to precompiled header: #include <memory>
 //Moved to precompiled header: #include <string>
-#include "SVUtilityLibrary/SVSharedPtr.h"
 #pragma endregion Includes
 
 struct SVObjectCommandDataJson
@@ -42,4 +42,4 @@ private:
 	HANDLE m_WaitHandle;
 };
 
-typedef SVSharedPtr< SVObjectCommandDataJson > SVObjectCommandDataJsonPtr;
+typedef std::shared_ptr< SVObjectCommandDataJson > SVObjectCommandDataJsonPtr;

@@ -58,7 +58,7 @@ private:
 protected:
 	SVInObjectInfoStruct m_sortColumnObjectInfo;
 	SVBoolValueObjectClass m_isASC;
-	SVSharedPtr<double> m_tmpValues;
+	std::shared_ptr<double> m_tmpValues;
 	size_t m_tmpArraySize;
 #pragma endregion Member Variables
 };

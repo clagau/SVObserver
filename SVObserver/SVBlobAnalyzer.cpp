@@ -978,7 +978,7 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 
 	do
 	{
-		SVSmartHandlePointer ImageHandle;
+		SVImageBufferHandlePtr ImageHandle;
 
 		if(!__super::onRun(rRunStatus, pErrorMessages))
 		{
@@ -1002,7 +1002,7 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 			break;
 		}
 
-		if ( ! pImage->GetImageHandle( ImageHandle ) || ImageHandle.empty() )
+		if ( ! pImage->GetImageHandle( ImageHandle ) || nullptr == ImageHandle )
 		{
 			ASSERT( false );
 			Result = false;

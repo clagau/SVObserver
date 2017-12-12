@@ -9,12 +9,15 @@
 //* .Check In Date   : $Date:   25 Jun 2014 11:57:24  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVParserProgressDialog.h"
 #include "SVInspectionProcess.h"
 #include "SVObjectScriptParser.h"
 #include "SVParserProgressStruct.h"
 #include "Definitions/SVUserMessage.h"
+#include "SVUtilityLibrary/SVNullDeleter.h"
+#pragma endregion
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -448,7 +451,7 @@ void SVParserProgressDialog::SetProgressLocations()
 		resizeAndMoveDialog( rect, static_cast<int>(i) );
 
 		// Create a new progress bar control
-		pProgressCtrl = new CProgressCtrl();
+		pProgressCtrl = ProgressCtrlSharedPtr{ new CProgressCtrl() };
 		pProgressCtrl->Create( WS_VISIBLE | WS_CHILD, rect, this, static_cast<int>(i) );
 
 		// Init the progress bar control
@@ -470,7 +473,7 @@ void SVParserProgressDialog::SetProgressLocations()
 		}
 
 		// Create a new static text control
-		pStaticTextCtrl = new CStatic();
+		pStaticTextCtrl = StaticSharedPtr{ new CStatic() };
 		pStaticTextCtrl->Create( Temp.c_str(), WS_VISIBLE | WS_CHILD, textRect, this );
 
 		// Set the Font

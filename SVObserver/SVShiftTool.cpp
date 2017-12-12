@@ -175,11 +175,11 @@ bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 
 	if (Result)
 	{
-		SVSmartHandlePointer OutImageHandle;
+		SVImageBufferHandlePtr OutImageHandle;
 		SVImageBufferHandleImage l_OutMilHandle;
 
 		if (m_OutputImage.SetImageHandleIndex(rRunStatus.Images) && m_OutputImage.GetImageHandle(OutImageHandle) &&
-			!OutImageHandle.empty() && (S_OK == OutImageHandle->GetData(l_OutMilHandle)) && !l_OutMilHandle.empty())
+			nullptr != OutImageHandle && (S_OK == OutImageHandle->GetData(l_OutMilHandle)) && !l_OutMilHandle.empty())
 		{
 			SVMatroxBufferInterface::ClearBuffer(l_OutMilHandle.GetBuffer(), 0);
 		}
@@ -300,7 +300,7 @@ bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 
 		if (Result)
 		{
-			SVSmartHandlePointer InImageHandle;
+			SVImageBufferHandlePtr InImageHandle;
 			SVImageBufferHandleImage l_InMilHandle;
 
 			SVImageClass* l_pImageInput = getInputImage();
@@ -312,7 +312,7 @@ bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 			Result = Result && (S_OK == m_TopResult.GetValue(l_OffsetY));
 			Result = Result && (nullptr != l_pImageInput);
 			Result = Result && (l_pImageInput->GetImageHandle(InImageHandle));
-			Result = Result && !(InImageHandle.empty());
+			Result = Result && (nullptr != InImageHandle);
 			Result = Result && (S_OK == InImageHandle->GetData(l_InMilHandle));
 			Result = Result && !(l_InMilHandle.empty());
 

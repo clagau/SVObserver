@@ -278,7 +278,7 @@ BOOL SVMaskShapeEditorDlg::OnInitDialog()
 
 	////////////////////////////////////////////////////////
 
-	if( !( m_pMask->m_MaskBufferHandlePtr.empty() ) )
+	if(nullptr != m_pMask->m_MaskBufferHandlePtr)
 	{
 		SVImageBufferHandleImage l_MilHandle;
 		m_pMask->m_MaskBufferHandlePtr->GetData( l_MilHandle );

@@ -558,8 +558,8 @@ bool SVImagePolarTransformClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Mes
 	{
 		SVImageExtentClass l_svExtents;
 
-		SVSmartHandlePointer l_svInputHandle;
-		SVSmartHandlePointer l_svOutputHandle;
+		SVImageBufferHandlePtr l_svInputHandle;
+		SVImageBufferHandlePtr l_svOutputHandle;
 
 		SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
 		l_bOk = l_bOk && (nullptr != pTool) && (S_OK == pTool->GetImageExtent( l_svExtents ));
@@ -571,9 +571,9 @@ bool SVImagePolarTransformClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Mes
 
 		l_svExtents = outputImageObject.GetImageExtents( );
 
-		l_bOk = l_bOk && outputImageObject.GetImageHandle( l_svOutputHandle ) && !( l_svOutputHandle.empty() );
+		l_bOk = l_bOk && outputImageObject.GetImageHandle( l_svOutputHandle ) && (nullptr != l_svOutputHandle);
 
-		l_bOk = l_bOk && getInputImage()->GetImageHandle( l_svInputHandle ) && !( l_svInputHandle.empty() );
+		l_bOk = l_bOk && getInputImage()->GetImageHandle( l_svInputHandle ) && (nullptr != l_svInputHandle);
 
 		SVImageBufferHandleImage l_InMilHandle;
 		l_bOk = l_bOk && ( S_OK == l_svInputHandle->GetData( l_InMilHandle ) );

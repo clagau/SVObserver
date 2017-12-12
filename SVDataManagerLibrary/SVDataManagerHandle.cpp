@@ -42,7 +42,7 @@ HRESULT SVDataManagerHandle::Assign( const SVDataManagerHandle& p_rObject, SVDat
 	{
 		clear();
 
-		if( ! p_rObject.m_pArrayHandle.empty() && 0 <= p_rObject.m_Index )
+		if( nullptr != p_rObject.m_pArrayHandle && 0 <= p_rObject.m_Index )
 		{
 			l_Status = p_rObject.m_pArrayHandle->LockBufferIndex( p_rObject.m_Index, p_rObject.m_TransactionId, p_LockType );
 
@@ -68,12 +68,12 @@ bool SVDataManagerHandle::empty() const
 
 void SVDataManagerHandle::clear()
 {
-	if( ! m_pArrayHandle.empty() )
+	if(nullptr != m_pArrayHandle)
 	{
 		m_pArrayHandle->ReleaseBufferIndex( *this );
 	}
 
-	m_pArrayHandle.clear();
+	m_pArrayHandle.reset();
 	m_LockType = SV_INVALID_TYPE;
 	m_Index = -1;
 	m_TransactionId = 0;
@@ -83,7 +83,7 @@ long SVDataManagerHandle::GetIndex() const
 {
 	long l_Index( -1 );
 
-	if( ! m_pArrayHandle.empty() )
+	if(nullptr != m_pArrayHandle)
 	{
 		if( S_OK == m_pArrayHandle->ValidateBufferIndex( *this ) )
 		{
@@ -103,7 +103,7 @@ long SVDataManagerHandle::GetIndexLockCountByType( SVDataManagerLockTypeEnum p_L
 {
 	long l_Count = 0;
 
-	if( ! m_pArrayHandle.empty() )
+	if(nullptr != m_pArrayHandle)
 	{
 		l_Count = m_pArrayHandle->GetIndexLockCountByType( *this ); 
 	}
@@ -115,7 +115,7 @@ long SVDataManagerHandle::GetNbrOfAvailableIndexes() const
 {
 	long l_Count = 0;
 
-	if( ! m_pArrayHandle.empty() )
+	if(nullptr != m_pArrayHandle)
 	{
 		l_Count = m_pArrayHandle->GetNbrOfAvailableIndexes();
 	}

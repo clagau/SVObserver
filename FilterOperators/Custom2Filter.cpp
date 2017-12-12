@@ -134,18 +134,18 @@ void Custom2Filter::RebuildKernel()
 	delete [] pKernelData;
 }
 
-bool Custom2Filter::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool Custom2Filter::onRun( bool First, SVImageBufferHandlePtr rInputImageHandle, SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool Result( false );
 	HRESULT StatusCode;
 
-	if( m_pCurrentUIOPL && !( ROutputImageHandle.empty() ) && !( RInputImageHandle.empty() ) )
+	if (m_pCurrentUIOPL && nullptr != rInputImageHandle && nullptr != rOutputImageHandle)
 	{
 		SVImageBufferHandleImage MilHandle;
-		ROutputImageHandle->GetData( MilHandle );
+		rOutputImageHandle->GetData( MilHandle );
 
 		SVImageBufferHandleImage InMilHandle;
-		RInputImageHandle->GetData( InMilHandle );
+		rInputImageHandle->GetData( InMilHandle );
 
 		StatusCode = SVMatroxImageInterface::Convolve(MilHandle.GetBuffer(), 
 			First ? InMilHandle.GetBuffer() : MilHandle.GetBuffer(), 

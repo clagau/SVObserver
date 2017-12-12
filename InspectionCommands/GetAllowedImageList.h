@@ -38,7 +38,7 @@ namespace SvCmd
 		// and replaced with the building and sending of the command
 		HRESULT Execute()
 		{
-			HRESULT hr = !m_pCommand.empty() ? m_pCommand->Execute() : E_FAIL;
+			HRESULT hr = (nullptr != m_pCommand) ? m_pCommand->Execute() : E_FAIL;
 			const SvOi::ITaskObject* pObject = dynamic_cast<const SvOi::ITaskObject*>(SvOi::getObject(m_TaskObjectID));
 			if (nullptr != pObject)
 			{
@@ -51,7 +51,7 @@ namespace SvCmd
 		const SvDef::StringVector& AvailableSpecialImages() const { return m_specialImageList; }
 
 	private:
-		typedef SVSharedPtr<GetAvailableObjects> CommandPtr;
+		typedef std::shared_ptr<GetAvailableObjects> CommandPtr;
 		CommandPtr m_pCommand;
 		SVGUID m_TaskObjectID;
 		SvDef::StringVector m_specialImageList;

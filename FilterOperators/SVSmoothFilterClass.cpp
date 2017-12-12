@@ -34,13 +34,13 @@ SVSmoothFilterClass::~SVSmoothFilterClass()
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVSmoothFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVSmoothFilterClass::onRun( bool First, SVImageBufferHandlePtr rInputImageHandle, SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	SVImageBufferHandleImage l_InMilHandle;
 	SVImageBufferHandleImage l_OutMilHandle;
-	if( nullptr != m_pCurrentUIOPL && !( RInputImageHandle.empty() ) && !( ROutputImageHandle.empty() ) &&
-		S_OK == RInputImageHandle->GetData( l_InMilHandle ) && !( l_InMilHandle.empty() ) &&
-		S_OK == ROutputImageHandle->GetData( l_OutMilHandle ) && !( l_OutMilHandle.empty() )	)
+	if( nullptr != m_pCurrentUIOPL && nullptr != rInputImageHandle && nullptr != rOutputImageHandle &&
+		S_OK == rInputImageHandle->GetData( l_InMilHandle ) && !( l_InMilHandle.empty() ) &&
+		S_OK == rOutputImageHandle->GetData( l_OutMilHandle ) && !( l_OutMilHandle.empty() )	)
 	{
 		HRESULT l_Code;
 

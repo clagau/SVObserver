@@ -162,11 +162,11 @@ HRESULT SVMatroxResourceMonitor::ValidateCriticalSection() const
 {
 	HRESULT l_Status = S_OK;
 
-	if( m_CriticalSectionPtr.empty() )
+	if( nullptr == m_CriticalSectionPtr )
 	{
-		m_CriticalSectionPtr = new SVCriticalSection;
+		m_CriticalSectionPtr = SVCriticalSectionPtr{ new SVCriticalSection };
 
-		if( m_CriticalSectionPtr.empty() )
+		if(nullptr == m_CriticalSectionPtr)
 		{
 			l_Status = SVMEE_INVALID_LOCK;
 		}

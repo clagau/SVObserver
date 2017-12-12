@@ -133,7 +133,7 @@ HRESULT SVODataDeviceClass::RegisterCallback(SVOCallbackPtr pCallback, void *pvO
 				SVOCallbackClassPtr pData;
 
 				m_CallbackList.GetAt( l, &pData );
-				if ( !( pData.empty() ) )
+				if(nullptr != pData )
 				{
 					if ( pData->mpCallback == pCallback &&
 					     pData->mpvOwner == pvOwner &&
@@ -159,8 +159,8 @@ HRESULT SVODataDeviceClass::RegisterCallback(SVOCallbackPtr pCallback, void *pvO
 
 			if ( lSize <= l )
 			{
-				SVOCallbackClassPtr pData = new SVOCallbackClass;
-				if ( !( pData.empty() ) )
+				SVOCallbackClassPtr pData{ new  SVOCallbackClass };
+				if(nullptr != pData)
 				{
 					pData->mpCallback = pCallback;
 					pData->mpvOwner = pvOwner;
@@ -222,7 +222,7 @@ HRESULT SVODataDeviceClass::UnregisterCallback(SVOCallbackPtr pCallback, void *p
 				
 				m_CallbackList.GetAt( l, &pData );
 
-				if ( !( pData.empty() ) )
+				if(nullptr != pData)
 				{
 					if ( pData->mpCallback == pCallback &&
 					     pData->mpvOwner == pvOwner &&
@@ -551,7 +551,7 @@ HRESULT SVODataDeviceClass::ExecuteCallback( SVCallbackClassPtrQueue &rCallbackL
 			SVOCallbackClassPtr pData;
 
 			m_CallbackList.GetAt( l, &pData );
-			if ( !( pData.empty() ) )
+			if(nullptr != pData)
 			{
 				if ( S_OK != (pData->mpCallback)( pData->mpvOwner, pData->mpvCaller, &p_rResponse ) )
 				{

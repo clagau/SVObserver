@@ -201,8 +201,8 @@ SVDoubleValueObjectClass* SVThresholdClass::getExternalATM()
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
 bool SVThresholdClass::onRun( bool First, 
-							  SVSmartHandlePointer RInputImageHandle, 
-							  SVSmartHandlePointer ROutputImageHandle, 
+							  SVImageBufferHandlePtr rInputImageHandle, 
+							  SVImageBufferHandlePtr rOutputImageHandle, 
 							  SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
 	// Binarizing: lowerThresh <= x <= m_upperThresh		--> 255 
@@ -220,14 +220,14 @@ bool SVThresholdClass::onRun( bool First,
 
 	while (1)
 	{
-		if (!m_pCurrentUIOPL || RInputImageHandle.empty() || ROutputImageHandle.empty() )
+		if (!m_pCurrentUIOPL || nullptr == rInputImageHandle || nullptr == rOutputImageHandle )
 		{
 			l_Code = -15401;
 			break;
 		}
 
-		RInputImageHandle->GetData( l_InMilHandle );
-		ROutputImageHandle->GetData( l_OutMilHandle );
+		rInputImageHandle->GetData( l_InMilHandle );
+		rOutputImageHandle->GetData( l_OutMilHandle );
 
 		BOOL bThreshActive	    = false;
 		BOOL bAutoThreshold     = false;

@@ -38,7 +38,7 @@ namespace SvTi
 
 		if (!IsTriggerInList(sTriggerName))
 		{
-			SVOTriggerObjPtr pTriggerObj = new SVOTriggerObj(sTriggerName, iDigNumber);
+			SVOTriggerObjPtr pTriggerObj{ new SVOTriggerObj(sTriggerName, iDigNumber) };
 			m_TriggerList.insert(m_TriggerList.end(), pTriggerObj);
 			bRet = true;
 		}

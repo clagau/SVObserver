@@ -144,7 +144,7 @@ void SVPPQEntryDialogDigInPageClass::OnAddButton()
 		m_AvailableItems.ClearItemData( index );
 		m_AvailableInputCtrl.DeleteString( index );
 
-		if( !( pIOEntry.empty() ) )
+		if(nullptr != pIOEntry)
 		{
 			SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( pIOEntry->m_IOId );
 
@@ -175,7 +175,7 @@ void SVPPQEntryDialogDigInPageClass::OnRemoveButton()
 		m_SelectedItems.ClearItemData( index );
 		m_SelectedInputCtrl.DeleteString( index );
 
-		if( !( pIOEntry.empty() ) )
+		if(nullptr != pIOEntry)
 		{
 			SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( pIOEntry->m_IOId );
 
@@ -208,7 +208,7 @@ void SVPPQEntryDialogDigInPageClass::OnOK()
 		m_SelectedItems.ClearItemData( k );
 		m_SelectedInputCtrl.DeleteString( k );
 
-		if( !( pIOEntry.empty() ) )
+		if(nullptr != pIOEntry)
 		{
 			pIOEntry->m_Enabled = TRUE;
 			pIOEntry->m_PPQIndex = m_pSheet->m_lCurrentPosition;
@@ -229,7 +229,7 @@ void SVPPQEntryDialogDigInPageClass::OnOK()
 		m_AvailableItems.ClearItemData( i );
 		m_AvailableInputCtrl.DeleteString( i );
 
-		if( !( pIOEntry.empty() ) )
+		if(nullptr != pIOEntry)
 		{
 			pIOEntry->m_Enabled = FALSE;
 			pIOEntry->m_PPQIndex = -1;

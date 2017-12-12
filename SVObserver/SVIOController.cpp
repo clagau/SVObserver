@@ -56,7 +56,7 @@ void SVIOController::LocalIntialize()
 	// Set up your type...
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVIOControllerType;
 
-	m_pModuleReady = new SVIOEntryHostStruct;
+	m_pModuleReady = SVIOEntryHostStructPtr{ new SVIOEntryHostStruct };
 	m_pModuleReady->m_ObjectType = IO_DIGITAL_OUTPUT;
 	SVBoolValueObjectClass* pValueObject = new SVBoolValueObjectClass;
 	m_pModuleReady->setObject(dynamic_cast<SVObjectClass*> (pValueObject));
@@ -66,7 +66,7 @@ void SVIOController::LocalIntialize()
 	pValueObject->ResetObject();
 	pValueObject->setValue( _variant_t(true) );
 
-	m_pRaidErrorBit = new SVIOEntryHostStruct;
+	m_pRaidErrorBit = SVIOEntryHostStructPtr{ new SVIOEntryHostStruct };
 	m_pRaidErrorBit->m_ObjectType = IO_DIGITAL_OUTPUT;
 	pValueObject = new SVBoolValueObjectClass;
 	m_pRaidErrorBit->setObject(dynamic_cast<SVObjectClass*> (pValueObject));
@@ -99,8 +99,8 @@ void SVIOController::LocalDestroy()
 
 	m_RemoteMonitorListController.Clear();
 
-	m_pModuleReady.clear();
-	m_pRaidErrorBit.clear();
+	m_pModuleReady.reset();
+	m_pRaidErrorBit.reset();
 }
 
 void SVIOController::SetIODoc(SVIODoc* pDoc)
@@ -208,11 +208,11 @@ void SVIOController::SetObjectDepth( int NewObjectDepth )
 {
 	SVObjectClass::SetObjectDepth( NewObjectDepth );
 
-	if (!m_pModuleReady.empty())
+	if (nullptr != m_pModuleReady)
 	{
 		m_pModuleReady->getObject()->SetObjectDepth(NewObjectDepth);
 	}
-	if (!m_pRaidErrorBit.empty())
+	if (nullptr != m_pRaidErrorBit)
 	{
 		m_pRaidErrorBit->getObject()->SetObjectDepth(NewObjectDepth);
 	}
@@ -222,11 +222,11 @@ void SVIOController::SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSet
 {
 	SVObjectClass::SetObjectDepthWithIndex( NewObjectDepth, NewLastSetIndex );
 
-	if (!m_pModuleReady.empty())
+	if (nullptr != m_pModuleReady)
 	{
 		m_pModuleReady->getObject()->SetObjectDepthWithIndex(NewObjectDepth, NewLastSetIndex);
 	}
-	if (!m_pRaidErrorBit.empty())
+	if (nullptr != m_pRaidErrorBit)
 	{
 		m_pRaidErrorBit->getObject()->SetObjectDepthWithIndex(NewObjectDepth, NewLastSetIndex);
 	}
@@ -236,8 +236,8 @@ bool SVIOController::SetImageDepth( long lDepth )
 {
 	bool l_bOk = SVObjectClass::SetImageDepth( lDepth );
 
-	l_bOk &= !( m_pModuleReady.empty() ) && m_pModuleReady->getObject()->SetImageDepth( lDepth );
-	l_bOk &= !( m_pRaidErrorBit.empty() ) && m_pRaidErrorBit->getObject()->SetImageDepth( lDepth );
+	l_bOk &= nullptr != m_pModuleReady && m_pModuleReady->getObject()->SetImageDepth( lDepth );
+	l_bOk &= nullptr != m_pRaidErrorBit && m_pRaidErrorBit->getObject()->SetImageDepth( lDepth );
 
 	return l_bOk;
 }

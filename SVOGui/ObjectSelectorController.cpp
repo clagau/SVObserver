@@ -39,7 +39,7 @@ namespace SvOg {
 	{
 		std::string inspectionName;
 		typedef SvCmd::GetObjectName Command;
-		typedef SVSharedPtr<Command> CommandPtr;
+		typedef std::shared_ptr<Command> CommandPtr;
 
 		CommandPtr commandPtr(new Command(m_InspectionID));
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
@@ -55,7 +55,7 @@ namespace SvOg {
 	{
 		std::string PPQName;
 		typedef SvCmd::GetPPQObjectName Command;
-		typedef SVSharedPtr<Command> CommandPtr;
+		typedef std::shared_ptr<Command> CommandPtr;
 
 		CommandPtr commandPtr(new Command(m_InspectionID));
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
@@ -72,7 +72,7 @@ namespace SvOg {
 		GUID toolsetGUID = GUID_NULL;
 
 		typedef SvCmd::GetInstanceIDByTypeInfo Command;
-		typedef SVSharedPtr<Command> CommandPtr;
+		typedef std::shared_ptr<Command> CommandPtr;
 
 		SvDef::SVObjectTypeInfoStruct info(SvDef::SVToolSetObjectType);
 		CommandPtr commandPtr = CommandPtr(new Command(m_InspectionID, info));

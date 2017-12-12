@@ -74,7 +74,7 @@ SVCommandDataHolder::SVNameDataTypeMap SVCommandDataHolder::GetDataInformation()
 
 	while( l_Iter != m_Data.end() )
 	{
-		if( l_Iter->second.empty() )
+		if( nullptr == l_Iter->second )
 		{
 			l_Info[ l_Iter->first ] = SV_COMMAND_DATA_TYPE_UNKNOWN;
 		}
@@ -97,7 +97,7 @@ unsigned long SVCommandDataHolder::GetDataType( const _bstr_t& p_rName ) const
 
 	if( l_Iter != m_Data.end() )
 	{
-		if( ! l_Iter->second.empty() )
+		if( nullptr != l_Iter->second )
 		{
 			l_Type = l_Iter->second->GetDataType();
 		}
@@ -110,13 +110,13 @@ HRESULT SVCommandDataHolder::GetData( const _bstr_t& p_rName, SVCommandDataFacad
 {
 	HRESULT l_Status = S_OK;
 
-	p_rData.clear();
+	p_rData.reset();
 
 	SVNameDataMap::const_iterator l_Iter = m_Data.find( SvUl::createStdString(p_rName) );
 
 	if( l_Iter != m_Data.end() )
 	{
-		if( ! l_Iter->second.empty() )
+		if(nullptr != l_Iter->second)
 		{
 			p_rData = l_Iter->second;
 		}
@@ -143,7 +143,7 @@ HRESULT SVCommandDataHolder::GetContainer( const _bstr_t& p_rName, SVCommandData
 
 	l_Status = GetData( p_rName, l_ContainerPtr );
 
-	if( ! l_ContainerPtr.empty() )
+	if( nullptr != l_ContainerPtr )
 	{
 		SVCommandDataContainer::SVCommandDataInterface* l_pContainer = dynamic_cast< SVCommandDataContainer::SVCommandDataInterface* >( l_ContainerPtr.get() );
 
@@ -177,7 +177,7 @@ HRESULT SVCommandDataHolder::GetValue( const _bstr_t& p_rName, VARIANT& p_rData 
 
 	l_Status = GetData( p_rName, l_ValuePtr );
 
-	if( ! l_ValuePtr.empty() )
+	if(nullptr != l_ValuePtr)
 	{
 		SVCommandDataValue::SVCommandDataInterface* l_pValue = dynamic_cast< SVCommandDataValue::SVCommandDataInterface* >( l_ValuePtr.get() );
 
@@ -218,7 +218,7 @@ HRESULT SVCommandDataHolder::GetBlock( const _bstr_t& p_rName, SVByteVector& p_r
 
 	l_Status = GetData( p_rName, l_ValuePtr );
 
-	if( ! l_ValuePtr.empty() )
+	if(nullptr != l_ValuePtr)
 	{
 		SVCommandDataBlock::SVCommandDataInterface* l_pValue = dynamic_cast< SVCommandDataBlock::SVCommandDataInterface* >( l_ValuePtr.get() );
 
@@ -252,7 +252,7 @@ HRESULT SVCommandDataHolder::GetImage( const _bstr_t& p_rName, SVByteVector& p_r
 
 	l_Status = GetData( p_rName, l_DataPtr );
 
-	if( ! l_DataPtr.empty() )
+	if(nullptr != l_DataPtr)
 	{
 		SVCommandDataImage::SVCommandDataInterface* l_pData = dynamic_cast< SVCommandDataImage::SVCommandDataInterface* >( l_DataPtr.get() );
 
@@ -299,9 +299,9 @@ HRESULT SVCommandDataHolder::SetContainer( const _bstr_t& p_rName, const SVComma
 {
 	HRESULT l_Status = S_OK;
 
-	SVCommandDataFacadePtr l_ContainerPtr = new SVCommandDataContainer( p_rData, p_ReadOnly );
+	SVCommandDataFacadePtr l_ContainerPtr{ new SVCommandDataContainer(p_rData, p_ReadOnly) };
 
-	if( ! l_ContainerPtr.empty() )
+	if(nullptr != l_ContainerPtr)
 	{
 		l_Status = SetData( p_rName, l_ContainerPtr );
 	}
@@ -317,9 +317,9 @@ HRESULT SVCommandDataHolder::SetValue( const _bstr_t& p_rName, const _variant_t&
 {
 	HRESULT l_Status = S_OK;
 
-	SVCommandDataFacadePtr l_DataPtr = new SVCommandDataValue( p_rData, p_ReadOnly );
+	SVCommandDataFacadePtr l_DataPtr{ new SVCommandDataValue(p_rData, p_ReadOnly) };
 
-	if( ! l_DataPtr.empty() )
+	if(nullptr != l_DataPtr)
 	{
 		l_Status = SetData( p_rName, l_DataPtr );
 	}
@@ -335,9 +335,9 @@ HRESULT SVCommandDataHolder::SetBlock( const _bstr_t& p_rName, const SVByteVecto
 {
 	HRESULT l_Status = S_OK;
 
-	SVCommandDataFacadePtr l_DataPtr = new SVCommandDataBlock( p_rData, p_ReadOnly );
+	SVCommandDataFacadePtr l_DataPtr{ new SVCommandDataBlock(p_rData, p_ReadOnly) };
 
-	if( ! l_DataPtr.empty() )
+	if(nullptr != l_DataPtr)
 	{
 		l_Status = SetData( p_rName, l_DataPtr );
 	}
@@ -353,9 +353,9 @@ HRESULT SVCommandDataHolder::SetImage( const _bstr_t& p_rName, const SVByteVecto
 {
 	HRESULT l_Status = S_OK;
 
-	SVCommandDataFacadePtr l_DataPtr = new SVCommandDataImage( p_rData, p_ReadOnly );
+	SVCommandDataFacadePtr l_DataPtr{ new SVCommandDataImage(p_rData, p_ReadOnly) };
 
-	if( ! l_DataPtr.empty() )
+	if(nullptr != l_DataPtr)
 	{
 		l_Status = SetData( p_rName, l_DataPtr );
 	}

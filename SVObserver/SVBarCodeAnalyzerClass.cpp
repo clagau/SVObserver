@@ -386,7 +386,7 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::Message
 	msv_szBarCodeValue.SetValue(std::string());
 	if (SVImageAnalyzerClass::onRun (rRunStatus, pErrorMessages))
 	{
-		SVSmartHandlePointer ImageHandle;
+		SVImageBufferHandlePtr ImageHandle;
 		
 		// Used in Result Class to know whether to Fail or Warn.
 		SVBarCodeResultClass* pResult = static_cast<SVBarCodeResultClass*>(GetResultObject());
@@ -396,7 +396,7 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::Message
 		pResult->m_bFailedToRead = bWarnOnFailedRead != FALSE;// Preset flag to failed condition..
 
 		SVImageClass* pInputImage = getInputImage ();		
-		if ( pInputImage->GetImageHandle( ImageHandle ) && !( ImageHandle.empty() ) )
+		if (pInputImage->GetImageHandle( ImageHandle ) && nullptr != ImageHandle)
 		{
 			try
 			{

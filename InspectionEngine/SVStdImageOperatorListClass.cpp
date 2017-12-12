@@ -161,8 +161,8 @@ bool SVStdImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::Mess
 	{
 		if ( pOutputImage->SetImageHandleIndex( rRunStatus.Images ) )
 		{
-			SVSmartHandlePointer input;
-			SVSmartHandlePointer output;
+			SVImageBufferHandlePtr input;
+			SVImageBufferHandlePtr output;
 
 			// Check for new image type...
 			if( nullptr == pOutputImage->GetParentImage() )
@@ -190,12 +190,12 @@ bool SVStdImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::Mess
 
 			pOutputImage->GetImageHandle( output );
 
-			if ( input.empty() || output.empty() )
+			if ( nullptr == input || nullptr == output )
 			{
 				bRetVal = false;
 				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 				m_RunErrorMessages.push_back(Msg);
-				if( input.empty() )
+				if(nullptr == input )
 				{
 					SVImageProcessingClass::InitBuffer( output );
 
@@ -204,8 +204,8 @@ bool SVStdImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::Mess
 			}
 
 			//set tmp variable
-			SVSmartHandlePointer sourceImage = m_milTmpImageObjectInfo1;
-			SVSmartHandlePointer destinationImage = m_milTmpImageObjectInfo2;
+			SVImageBufferHandlePtr sourceImage = m_milTmpImageObjectInfo1;
+			SVImageBufferHandlePtr destinationImage = m_milTmpImageObjectInfo2;
 			if ( sourceImage->empty() || destinationImage->empty() || !copyBuffer( input, sourceImage ) )
 			{
 				bRetVal = false;
@@ -226,7 +226,7 @@ bool SVStdImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::Mess
 						if( pOperator->Run( true, sourceImage, destinationImage, ChildRunStatus ) )
 						{
 							//switch image buffer for next run
-							SVSmartHandlePointer tmpImage = sourceImage;
+							SVImageBufferHandlePtr tmpImage = sourceImage;
 							sourceImage = destinationImage;
 							destinationImage = tmpImage;
 						}
@@ -331,7 +331,7 @@ HRESULT SVStdImageOperatorListClass::CollectInputImageNames()
 	return hr;
 }
 
-bool SVStdImageOperatorListClass::copyBuffer( const SVSmartHandlePointer input, SVSmartHandlePointer output )
+bool SVStdImageOperatorListClass::copyBuffer( const SVImageBufferHandlePtr input, SVImageBufferHandlePtr output )
 {
 	bool bRetVal = true;
 	SVImageBufferHandleImage sourceMilHandle;

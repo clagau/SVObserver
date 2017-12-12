@@ -115,7 +115,7 @@ void SVIOAdjustDialogClass::OnOK()
 	}
 	else
 	{
-		m_pIOEntry.clear();
+		m_pIOEntry.reset();
 	}
 }
 
@@ -133,7 +133,7 @@ BOOL SVIOAdjustDialogClass::OnInitDialog()
 	int k;
 
 	// Add an empty item...
-	if( !( m_pIOEntry.empty() ) )
+	if(nullptr != m_pIOEntry)
 	{
 		IOCombo.SetItemData( IOCombo.AddString( _T( "" ) ), 0 );
 	}
@@ -267,7 +267,7 @@ void SVIOAdjustDialogClass::OnSelChangeIOCombo()
 			pIOEntry = l_Iter->second;
 		}
 
-		if( !( pIOEntry.empty() ) )
+		if(nullptr != pIOEntry)
 		{
 			if( m_bInputMode )
 			{

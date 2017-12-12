@@ -45,7 +45,7 @@ SVMatroxImageChildBuffer::~SVMatroxImageChildBuffer()
 		freeBuffer();
 	}
 
-	m_ParentPtr.clear();
+	m_ParentPtr.reset();
 }
 
 SVMatroxImageChildBuffer::SVMatroxImageChildBuffer( SVMatroxBufferPtr p_ParentPtr, SVMatroxIdentifier p_Identifier, const std::string& p_rCreatorName )

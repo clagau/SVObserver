@@ -360,7 +360,7 @@ HRESULT SVSetupDialogManager::SVBarCodeAnalyzerClassSetupDialog( const SVGUID& p
 					l_ToolId = pTool->GetUniqueObjectID();
 				}
 
-				SvCmd::InspectionRunOncePtr l_CommandPtr = new SvCmd::InspectionRunOnce( pInspection->GetUniqueObjectID(), l_ToolId );
+				SvCmd::InspectionRunOncePtr l_CommandPtr{ new SvCmd::InspectionRunOnce(pInspection->GetUniqueObjectID(), l_ToolId) };
 				SVObjectSynchronousCommandTemplate< SvCmd::InspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
 
 				l_Status = l_Command.Execute( TWO_MINUTE_CMD_TIMEOUT );
@@ -692,7 +692,7 @@ HRESULT SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog( const SVGUID& p_
 					l_ToolId = pTool->GetUniqueObjectID();
 				}
 
-				SvCmd::InspectionRunOncePtr l_CommandPtr = new SvCmd::InspectionRunOnce( pInspection->GetUniqueObjectID(), l_ToolId );
+				SvCmd::InspectionRunOncePtr l_CommandPtr{ new SvCmd::InspectionRunOnce(pInspection->GetUniqueObjectID(), l_ToolId) };
 				SVObjectSynchronousCommandTemplate< SvCmd::InspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
 
 				l_Status = l_Command.Execute( TWO_MINUTE_CMD_TIMEOUT );
@@ -787,7 +787,7 @@ HRESULT SVSetupDialogManager::SVOCVAnalyzerClassSetupDialog( const SVGUID& p_rOb
 						bool bOk = pInspection->GetToolSet()->resetAllObjects();
 						if( bOk )
 						{
-							SvCmd::InspectionRunOncePtr l_CommandPtr = new SvCmd::InspectionRunOnce( pInspection->GetUniqueObjectID() );
+							SvCmd::InspectionRunOncePtr l_CommandPtr{ new SvCmd::InspectionRunOnce(pInspection->GetUniqueObjectID()) };
 							SVObjectSynchronousCommandTemplate< SvCmd::InspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
 
 							l_Status = l_Command.Execute( TWO_MINUTE_CMD_TIMEOUT );
@@ -983,7 +983,7 @@ HRESULT SVSetupDialogManager::SVPatternAnalyzerClassSetupDialog( const SVGUID& p
 					l_ToolId = pTool->GetUniqueObjectID();
 				}
 
-				SvCmd::InspectionRunOncePtr l_CommandPtr = new SvCmd::InspectionRunOnce( pInspection->GetUniqueObjectID(), l_ToolId );
+				SvCmd::InspectionRunOncePtr l_CommandPtr{ new SvCmd::InspectionRunOnce(pInspection->GetUniqueObjectID(), l_ToolId) };
 				SVObjectSynchronousCommandTemplate< SvCmd::InspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
 
 				l_Status = l_Command.Execute( TWO_MINUTE_CMD_TIMEOUT );

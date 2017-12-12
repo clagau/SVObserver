@@ -55,7 +55,7 @@ SVAcquisitionClass::SVAcquisitionClass( const SvTi::SVAcquisitionConstructParams
 
 	m_hDigitizer = 0;
 
-	m_AcquisitionBuffersPtr = new SVImageObjectClass;
+	m_AcquisitionBuffersPtr= SVImageObjectClassPtr{ new SVImageObjectClass };
 
 	msvImageInfo.SetExtentProperty( SVExtentPropertyPositionPoint, 0 );
 
@@ -102,8 +102,8 @@ void SVAcquisitionClass::ClearDevice()
 		m_LastImage = nullptr;
 	}
 
-	m_pDataManagerHandle.clear();
-	m_AcquisitionBuffersPtr.clear();
+	m_pDataManagerHandle.reset();
+	m_AcquisitionBuffersPtr.reset();
 	m_DeviceParams.Clear();
 	m_CameraFileDeviceParams.Clear();
 
@@ -114,7 +114,7 @@ void SVAcquisitionClass::ClearDevice()
 		SVFileNameManagerClass::Instance().RemoveItem( &(mFiles[l]) );
 	}
 
-	m_SingleGrabHandle.clear();
+	m_SingleGrabHandle.reset();
 
 	SVODataDeviceClass::ClearDevice();
 }
@@ -165,7 +165,7 @@ HRESULT SVAcquisitionClass::Start()
 	
 	if ( S_OK == hrOk  )
 	{
-		if( !( m_AcquisitionBuffersPtr.empty() ) )
+		if(nullptr != m_AcquisitionBuffersPtr)
 		{
 			SvStl::MessageContainerVector errorMessages;
 			m_AcquisitionBuffersPtr->ResetObject(&errorMessages);
@@ -265,12 +265,12 @@ HRESULT SVAcquisitionClass::CreateBuffers( SVImageInfoClass IInfo, unsigned long
 
 			SVDataManagerHandle l_Handle;
 
-			if( m_AcquisitionBuffersPtr.empty() )
+			if(nullptr == m_AcquisitionBuffersPtr )
 			{
-				m_AcquisitionBuffersPtr = new SVImageObjectClass;
+				m_AcquisitionBuffersPtr = SVImageObjectClassPtr{ new SVImageObjectClass };
 			}
 
-			l_Status = l_Status && !( m_AcquisitionBuffersPtr.empty() );
+			l_Status = l_Status && (nullptr != m_AcquisitionBuffersPtr);
 
 			if( l_Status )
 			{
@@ -318,7 +318,7 @@ HRESULT SVAcquisitionClass::DestroyBuffers()
 		
 	mlStartFrameIndex = -1;
 	
-	if( !( m_AcquisitionBuffersPtr.empty() ) )
+	if(nullptr != m_AcquisitionBuffersPtr)
 	{
 		m_AcquisitionBuffersPtr->clear();
 	}
@@ -331,7 +331,7 @@ HRESULT SVAcquisitionClass::DestroyBuffers()
 		}
 	}
 
-	m_pDataManagerHandle.clear();
+	m_pDataManagerHandle.reset();
 
 	mbIsBufferCreated = false;
 
@@ -393,7 +393,7 @@ long SVAcquisitionClass::GetCircleBufferSize() const
 {
 	long l_Size = 0;
 
-	if( !( m_AcquisitionBuffersPtr.empty() ) )
+	if(nullptr != m_AcquisitionBuffersPtr)
 	{
 		l_Size = m_AcquisitionBuffersPtr->size();
 	}
@@ -806,7 +806,7 @@ DWORD WINAPI SVAcquisitionClass::SingleGrabHelperFn(LPVOID lpParameter)
 	return 0;
 }
 
-HRESULT SVAcquisitionClass::SingleGrab( SVSmartHandlePointer p_SingleGrabHandle )
+HRESULT SVAcquisitionClass::SingleGrab( SVImageBufferHandlePtr p_SingleGrabHandle )
 {
 	HRESULT l_Status = S_OK;
 
@@ -829,7 +829,7 @@ void SVAcquisitionClass::ClearDeviceIdentifier()
 
 bool SVAcquisitionClass::SetCurrentIndex( const SVDataManagerHandle& rDMIndexHandle )
 {
-	bool l_Status = !( m_AcquisitionBuffersPtr.empty() );
+	bool l_Status = (nullptr != m_AcquisitionBuffersPtr);
 
 	if( l_Status )
 	{
@@ -841,7 +841,7 @@ bool SVAcquisitionClass::SetCurrentIndex( const SVDataManagerHandle& rDMIndexHan
 
 bool SVAcquisitionClass::SetCurrentIndex( const SVDataManagerHandle& rDMIndexHandle, SVDataManagerLockTypeEnum p_LockType )
 {
-	bool l_Status = !( m_AcquisitionBuffersPtr.empty() );
+	bool l_Status = (nullptr != m_AcquisitionBuffersPtr);
 
 	if( l_Status )
 	{
@@ -853,7 +853,7 @@ bool SVAcquisitionClass::SetCurrentIndex( const SVDataManagerHandle& rDMIndexHan
 	
 void SVAcquisitionClass::DumpDMInfo( LPCTSTR p_szName ) const
 {
-	if( ! m_pDataManagerHandle.empty() )
+	if( nullptr != m_pDataManagerHandle)
 	{
 		m_pDataManagerHandle->Dump( p_szName );
 	}
@@ -908,11 +908,11 @@ HRESULT SVAcquisitionClass::GetNextBuffer( SVImageBufferInterface& p_rBuffer )
 
 	if( S_OK == l_Status )
 	{
-		if( !( m_AcquisitionBuffersPtr.empty() ) && SetCurrentIndex( l_Handle ) )
+		if( nullptr != m_AcquisitionBuffersPtr && SetCurrentIndex( l_Handle ) )
 		{
-			SVSmartHandlePointer l_ImageHandle;
+			SVImageBufferHandlePtr l_ImageHandle;
 
-			if( m_AcquisitionBuffersPtr->GetImageHandle( l_Handle.GetIndex(), l_ImageHandle ) && ! l_ImageHandle.empty() )
+			if( m_AcquisitionBuffersPtr->GetImageHandle( l_Handle.GetIndex(), l_ImageHandle ) && nullptr != l_ImageHandle)
 			{
 				l_Status = p_rBuffer.Assign( l_ImageHandle, l_Handle );
 			}
@@ -942,12 +942,12 @@ HRESULT SVAcquisitionClass::UpdateWithCompletedBuffer( const SVImageBufferInterf
 {
 	HRESULT l_Status = S_OK;
 
-	if( ! m_SingleGrabHandle.empty() )
+	if( nullptr != m_SingleGrabHandle)
 	{
 		SVImageBufferHandleImage l_From;
 		SVImageBufferHandleImage l_To;
 
-		if( !( p_rBuffer.m_ImageHandle.empty() ) )
+		if(nullptr != p_rBuffer.m_ImageHandle)
 		{
 			p_rBuffer.m_ImageHandle->GetData( l_From );
 			m_SingleGrabHandle->GetData( l_To );
@@ -958,7 +958,7 @@ HRESULT SVAcquisitionClass::UpdateWithCompletedBuffer( const SVImageBufferInterf
 			SVMatroxBufferInterface::CopyBuffer( l_To.GetBuffer(), l_From.GetBuffer() );
 		}
 
-		m_SingleGrabHandle.clear();
+		m_SingleGrabHandle.reset();
 
 		this->mbTempOnline = false;
 	}
@@ -1002,7 +1002,7 @@ HRESULT SVAcquisitionClass::StoreLastImage()
 {
 	HRESULT l_Status = S_OK;
 		
-	if( m_ImageAquired && !( m_AcquisitionBuffersPtr.empty() ) )
+	if(m_ImageAquired && nullptr != m_AcquisitionBuffersPtr)
 	{
 		l_Status = m_AcquisitionBuffersPtr->CopyToBSTR( m_LastImage );
 	}
@@ -1014,7 +1014,7 @@ HRESULT SVAcquisitionClass::RestoreLastImage()
 {
 	HRESULT l_Status = S_OK;
 
-	if( ! m_ImageAquired && nullptr != m_LastImage && !( m_AcquisitionBuffersPtr.empty() ) )
+	if( ! m_ImageAquired && nullptr != m_LastImage && nullptr != m_AcquisitionBuffersPtr )
 	{
 		l_Status = m_AcquisitionBuffersPtr->CopyFromBSTR( m_LastImage );
 	}

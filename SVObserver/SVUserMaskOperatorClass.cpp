@@ -344,7 +344,7 @@ HRESULT SVUserMaskOperatorClass::BuildMaskLines( SVExtentMultiLineStruct& p_Mult
 
 	SVImageClass* pInputImage = getMaskInputImage();
 	SVImageExtentClass l_svExtents;
-	if( l_eCriteria != SVNone && Activated && !m_MaskBufferHandlePtr.empty() &&
+	if( l_eCriteria != SVNone && Activated && nullptr != m_MaskBufferHandlePtr &&
 		( MASK_TYPE_IMAGE != dwMaskType || nullptr != pInputImage ) )
 	{
 		SVImageBufferHandleImage l_MilHandle;
@@ -495,7 +495,7 @@ HRESULT SVUserMaskOperatorClass::DestroyLocalImageBuffer()
 {
 	HRESULT l_hrOk = S_OK;
 
-	m_MaskBufferHandlePtr.clear();
+	m_MaskBufferHandlePtr.reset();
 
 	return l_hrOk;
 }
@@ -711,20 +711,20 @@ HRESULT SVUserMaskOperatorClass::SetObjectValue( SVObjectAttributeClass* pDataOb
 // .Description : Runs this operator.
 //              : Returns false, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVUserMaskOperatorClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVUserMaskOperatorClass::onRun( bool First, SVImageBufferHandlePtr rInputImageHandle, SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
 	BOOL bActive;
 	m_Data.bvoActivated.GetValue( bActive );
 
-	if( bActive && !( RInputImageHandle.empty() ) && !( ROutputImageHandle.empty() ) )
+	if( bActive && nullptr != rInputImageHandle && nullptr != rOutputImageHandle )
 	{
 		SVImageBufferHandleImage l_InMilHandle;
 		SVImageBufferHandleImage l_OutMilHandle;
 
-		RInputImageHandle->GetData( l_InMilHandle );
-		ROutputImageHandle->GetData( l_OutMilHandle );
+		rInputImageHandle->GetData( l_InMilHandle );
+		rOutputImageHandle->GetData( l_OutMilHandle );
 
-		if( !m_MaskBufferHandlePtr.empty() )
+		if( nullptr != m_MaskBufferHandlePtr )
 		{
 			SVImageBufferHandleImage l_MaskMilHandle;
 			m_MaskBufferHandlePtr->GetData( l_MaskMilHandle );
@@ -744,12 +744,12 @@ bool SVUserMaskOperatorClass::onRun( bool First, SVSmartHandlePointer RInputImag
 				{
 					SVExtentPointStruct l_svPoint;
 
-					SVSmartHandlePointer l_MaskInputBuffer;
+					SVImageBufferHandlePtr l_MaskInputBuffer;
 
 					SVImageExtentClass l_svExtents = l_pRefImage->GetImageExtents();
 
 					if ( S_OK == l_svExtents.GetExtentProperty( SVExtentPropertyPositionPoint, l_svPoint ) &&
-						l_pMaskInputImage->GetImageHandle( l_MaskInputBuffer ) && !( l_MaskInputBuffer.empty() ) )
+						l_pMaskInputImage->GetImageHandle( l_MaskInputBuffer ) && nullptr != l_MaskInputBuffer )
 					{
 						if ( S_OK != l_pMaskInputImage->ValidateAgainstOutputExtents( l_svExtents ) )
 						{
@@ -805,7 +805,7 @@ bool SVUserMaskOperatorClass::onRun( bool First, SVSmartHandlePointer RInputImag
 			else if ( dwMaskType == MASK_TYPE_SHAPE )
 			{
 				SVShapeMaskHelperClass* pShapeHelper = GetShapeHelper();
-				pShapeHelper->onRun(First, RInputImageHandle, ROutputImageHandle, rRunStatus);
+				pShapeHelper->onRun(First, rInputImageHandle, rOutputImageHandle, rRunStatus);
 			}
 
 			long lMaskOperator = SVImageAnd;
@@ -839,12 +839,12 @@ bool SVUserMaskOperatorClass::onRun( bool First, SVSmartHandlePointer RInputImag
 						SVFileBitmap );
 
 
-					MatroxCode = SVMatroxBufferInterface::Export( RInputImageHandle.milImage,
+					MatroxCode = SVMatroxBufferInterface::Export( rInputImageHandle.milImage,
 						_T("C:\\Temp\\Input.bmp"),
 						SVFileBitmap);
 
 
-					MatroxCode = SVMatroxBufferInterface::Export( ROutputImageHandle.milImage,
+					MatroxCode = SVMatroxBufferInterface::Export( rOutputImageHandle.milImage,
 						_T("C:\\Temp\\Output.bmp"),
 						SVFileBitmap);
 

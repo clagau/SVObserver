@@ -10,9 +10,8 @@
 //******************************************************************************
 
 #pragma once
-
-#include "SVUtilityLibrary/SVSharedPtr.h"
+//Moved to precompiled header: #include <memory>
 #include "SVMatroxSystem.h"
 
-typedef SVSharedPtr<SVMatroxSystem> SVMatroxSystemRef;
+typedef std::shared_ptr<SVMatroxSystem> SVMatroxSystemRef;
 

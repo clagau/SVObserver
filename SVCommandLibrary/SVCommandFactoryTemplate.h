@@ -12,7 +12,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary/SVSharedPtr.h"
 #include "SVCommandTemplate.h"
 #pragma endregion Includes
 
@@ -38,5 +37,5 @@ private:
 
 };
 
-typedef SVSharedPtr< SVCommandFactoryTemplate > SVCommandFactoryTemplatePtr;
+typedef std::shared_ptr< SVCommandFactoryTemplate > SVCommandFactoryTemplatePtr;
 

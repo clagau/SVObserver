@@ -298,17 +298,17 @@ void SVRankingFilterClass::RebuildRanking()
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVRankingFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVRankingFilterClass::onRun( bool First, SVImageBufferHandlePtr rInputImageHandle, SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
 	long lRank;
 
-	if( m_pCurrentUIOPL && !( RInputImageHandle.empty() ) && !( ROutputImageHandle.empty() ) )
+	if (m_pCurrentUIOPL && nullptr != rInputImageHandle && nullptr != rOutputImageHandle)
 	{
 		SVImageBufferHandleImage l_InMilHandle;
 		SVImageBufferHandleImage l_OutMilHandle;
 
-		RInputImageHandle->GetData( l_InMilHandle );
-		ROutputImageHandle->GetData( l_OutMilHandle );
+		rInputImageHandle->GetData( l_InMilHandle );
+		rOutputImageHandle->GetData( l_OutMilHandle );
 		
 		HRESULT l_Code;
 

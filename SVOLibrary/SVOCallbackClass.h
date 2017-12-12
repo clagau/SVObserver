@@ -11,9 +11,12 @@
 
 #pragma once
 
-#include "SVUtilityLibrary/SVSharedPtr.h"
+#pragma region Includes
+//Moved to precompiled header: #include <memory>
 #include "SVORequestClass.h"
 #include "SVQueueObject.h"
+#pragma endregion Includes
+
 
 typedef HRESULT ( CALLBACK *SVOCallbackPtr )( void *,   /* Owner */
                                               void *,   /* Caller */ 
@@ -51,6 +54,6 @@ public:
 	
 };
 
-typedef SVSharedPtr< SVOCallbackClass > SVOCallbackClassPtr;
+typedef std::shared_ptr< SVOCallbackClass > SVOCallbackClassPtr;
 typedef SVTQueueObject< SVOCallbackClassPtr > SVCallbackClassPtrQueue;
 

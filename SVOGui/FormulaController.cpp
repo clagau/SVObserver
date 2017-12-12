@@ -89,9 +89,9 @@ namespace SvOg
 		std::string equationText;
 	
 		typedef SvCmd::GetEquation Command;
-		typedef SVSharedPtr<Command> CommandPtr;
+		typedef std::shared_ptr<Command> CommandPtr;
 
-		CommandPtr commandPtr = new Command(m_EquationID);
+		CommandPtr commandPtr{ new Command(m_EquationID) };
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
@@ -148,7 +148,7 @@ namespace SvOg
 	{
 		int retValue = validateSuccessful;
 		typedef SvCmd::ValidateAndSetEquation Command;
-		typedef SVSharedPtr<Command> CommandPtr;
+		typedef std::shared_ptr<Command> CommandPtr;
 
 		CommandPtr commandPtr(new Command(m_EquationID, equationString, bSetValue));
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
@@ -162,7 +162,7 @@ namespace SvOg
 			if (validateSuccessful == retValue && bSetValue)
 			{
 				typedef SvCmd::ResetObject ResetCommand;
-				typedef SVSharedPtr<ResetCommand> ResetCommandPtr;
+				typedef std::shared_ptr<ResetCommand> ResetCommandPtr;
 
 				ResetCommandPtr commandPtr(new ResetCommand(m_TaskObjectID));
 				SVObjectSynchronousCommandTemplate<ResetCommandPtr> cmd(m_InspectionID, commandPtr);
@@ -187,7 +187,7 @@ namespace SvOg
 	HRESULT FormulaController::SetDefaultInputs()
 	{
 		typedef SvCmd::SetDefaultInputs<SvOi::IInspectionProcess> Command;
-		typedef SVSharedPtr<Command> CommandPtr;
+		typedef std::shared_ptr<Command> CommandPtr;
 
 		CommandPtr commandPtr(new Command(m_InspectionID));
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
@@ -201,7 +201,7 @@ namespace SvOg
 	{
 		std::string name;
 		typedef SvCmd::GetObjectName Command;
-		typedef SVSharedPtr<Command> CommandPtr;
+		typedef std::shared_ptr<Command> CommandPtr;
 
 		CommandPtr commandPtr(new Command(m_TaskObjectID));
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
@@ -219,7 +219,7 @@ namespace SvOg
 	{
 		std::string inspectionName;
 		typedef SvCmd::GetObjectName Command;
-		typedef SVSharedPtr<Command> CommandPtr;
+		typedef std::shared_ptr<Command> CommandPtr;
 
 		CommandPtr commandPtr(new Command(m_InspectionID));
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
@@ -235,7 +235,7 @@ namespace SvOg
 	{
 		std::string PPQName;
 		typedef SvCmd::GetPPQObjectName Command;
-		typedef SVSharedPtr<Command> CommandPtr;
+		typedef std::shared_ptr<Command> CommandPtr;
 
 		CommandPtr commandPtr(new Command(m_InspectionID));
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
@@ -261,7 +261,7 @@ namespace SvOg
 		if (SV_GUID_NULL == m_EquationID)
 		{
 			typedef SvCmd::GetInstanceIDByTypeInfo Command;
-			typedef SVSharedPtr<Command> CommandPtr;
+			typedef std::shared_ptr<Command> CommandPtr;
 			// check for Math Container...
 			if (SvDef::SVMathContainerObjectType == m_info.ObjectType)
 			{

@@ -700,9 +700,9 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 		}
 		else
 		{
-			SVSmartHandlePointer ImageHandle;
+			SVImageBufferHandlePtr ImageHandle;
 
-			if( pImage->GetImageHandle( ImageHandle ) && !( ImageHandle.empty() ) )
+			if( pImage->GetImageHandle( ImageHandle ) && nullptr != ImageHandle)
 			{
 				SVImageBufferHandleImage l_MilHandle;
 				ImageHandle->GetData( l_MilHandle );

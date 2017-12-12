@@ -34,15 +34,15 @@ SVSkeletonFilterClass::~SVSkeletonFilterClass()
 {
 }
 
-bool SVSkeletonFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVSkeletonFilterClass::onRun( bool First, SVImageBufferHandlePtr rInputImageHandle, SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	if( m_pCurrentUIOPL && !( RInputImageHandle.empty() ) && !( ROutputImageHandle.empty() ) )
+	if( m_pCurrentUIOPL && nullptr != rInputImageHandle && nullptr != rOutputImageHandle )
 	{
 		SVImageBufferHandleImage l_InMilHandle;
 		SVImageBufferHandleImage l_OutMilHandle;
 
-		RInputImageHandle->GetData( l_InMilHandle );
-		ROutputImageHandle->GetData( l_OutMilHandle );
+		rInputImageHandle->GetData( l_InMilHandle );
+		rOutputImageHandle->GetData( l_OutMilHandle );
 
 		HRESULT l_Code;
 		l_Code = SVMatroxImageInterface::Thin( l_OutMilHandle.GetBuffer(),

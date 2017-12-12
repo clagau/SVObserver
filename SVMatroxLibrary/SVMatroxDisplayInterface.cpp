@@ -71,9 +71,9 @@ HRESULT SVMatroxDisplayInterface::CreateDisplay(SVMatroxIdentifier& p_rDispId)
 				SVMatroxResourceMonitor::InsertIdentifier( SVDisplayID, l_NewId );
 				l_Code = DestroyDisplay(p_rDispId);
 				p_rDispId = l_NewId;				
+				}
+				}
 			}
-		}
-	}
 #ifdef USE_TRY_BLOCKS
 	catch(...)
 	{
@@ -135,7 +135,7 @@ HRESULT SVMatroxDisplayInterface::Create( SVMatroxBuffer& p_rDispBufId, SVMatrox
 				{
 					SVMatroxResourceMonitor::InsertIdentifier( SVDisplayBufferID, l_NewBuf );
 
-					p_rDispBufId.m_BufferPtr = new SVMatroxImageBuffer( l_NewBuf, "SVMatroxDisplayInterface::Create-BufferCreate" );
+					p_rDispBufId.m_BufferPtr = SVMatroxBufferPtr{ new SVMatroxImageBuffer(l_NewBuf, "SVMatroxDisplayInterface::Create-BufferCreate") };
 				}
 			}
 		}
@@ -446,7 +446,7 @@ HRESULT SVMatroxDisplayInterface::Get( const SVMatroxIdentifier& p_rDispId, SVDi
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
 				if( l_Code == S_OK )
 				{
-					p_rBuffer.m_BufferPtr = new SVMatroxBufferTemplate( l_lValue, "SVMatroxDisplayInterface::Get" );
+					p_rBuffer.m_BufferPtr = SVMatroxBufferPtr{ new SVMatroxBufferTemplate(l_lValue, "SVMatroxDisplayInterface::Get") };
 				}
 			}
 			else

@@ -21,7 +21,7 @@ class MatroxImageData : public SvOi::IMatroxImageData
 {
 #pragma region Constructor
 public:
-    MatroxImageData(SVSmartHandlePointer imageHandle);
+    MatroxImageData(SVImageBufferHandlePtr imageHandle);
 	virtual ~MatroxImageData();
 
 #pragma endregion Constructor
@@ -40,7 +40,7 @@ public:
 	virtual HBITMAP GetHBitmap() const override;
 #pragma endregion virtual method (IMatroxImageData)
 
-	void setImageHandle(SVSmartHandlePointer imageHandle) { m_ImageHandle = imageHandle; };
+	void setImageHandle(SVImageBufferHandlePtr imageHandle) { m_ImageHandle = imageHandle; };
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -55,6 +55,6 @@ private:
 
 #pragma region Member Variables
 private:
-	SVSmartHandlePointer m_ImageHandle;
+	SVImageBufferHandlePtr m_ImageHandle;
 #pragma endregion Member Variables
 };

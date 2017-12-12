@@ -425,7 +425,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rBuffer, const SVMatro
 
 				if (S_OK == l_Code)
 				{
-					p_rBuffer.m_BufferPtr = new SVMatroxImageBuffer(l_NewBuf, "SVMatroxBufferInterface::Create-CreateLine");
+					p_rBuffer.m_BufferPtr = SVMatroxBufferPtr{ new SVMatroxImageBuffer(l_NewBuf, "SVMatroxBufferInterface::Create-CreateLine") };
 				}
 			}
 		}
@@ -506,7 +506,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rBuffer, const LPBITMA
 
 				if (S_OK == l_Code)
 				{
-					p_rBuffer.m_BufferPtr = new SVMatroxImageBuffer(l_NewID, "SVMatroxBufferInterface::Create-LPBITMAPINFO");
+					p_rBuffer.m_BufferPtr = SVMatroxBufferPtr{ new SVMatroxImageBuffer(l_NewID, "SVMatroxBufferInterface::Create-LPBITMAPINFO") };
 				}
 			}
 		}// end if (nullptr != p_pBitmapInfo)
@@ -591,7 +591,7 @@ HRESULT SVMatroxBufferInterface::Create(const SVMatroxSystem& p_rSystem, SVMatro
 
 				if (S_OK == l_Code)
 				{
-					p_rBuffer.m_BufferPtr = new SVMatroxImageBuffer(l_NewBuf, "SVMatroxBufferInterface::Create-SystemID,BufferCreate");
+					p_rBuffer.m_BufferPtr = SVMatroxBufferPtr{ new SVMatroxImageBuffer(l_NewBuf, "SVMatroxBufferInterface::Create-SystemID,BufferCreate") };
 				}
 			}
 		}
@@ -665,7 +665,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rBuffer, const SVMatro
 
 				if (S_OK == l_Code)
 				{
-					p_rBuffer.m_BufferPtr = new SVMatroxImageBuffer(l_NewBuf, "SVMatroxBufferInterface::Create-BufferCreate");
+					p_rBuffer.m_BufferPtr = SVMatroxBufferPtr{ new SVMatroxImageBuffer(l_NewBuf, "SVMatroxBufferInterface::Create-BufferCreate") };
 				}
 			}
 		}
@@ -739,7 +739,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rNewBuffer, const SVMa
 
 				if (S_OK == l_Code)
 				{
-					p_rNewBuffer.m_BufferPtr = new SVMatroxImageChildBuffer(p_CreateChildStruct.m_ParentBufId.m_BufferPtr, childBufID, "SVMatroxBufferInterface::Create-CreateChildBuffer");
+					p_rNewBuffer.m_BufferPtr = SVMatroxBufferPtr{ new SVMatroxImageChildBuffer(p_CreateChildStruct.m_ParentBufId.m_BufferPtr, childBufID, "SVMatroxBufferInterface::Create-CreateChildBuffer") };
 				}
 			}
 		}
@@ -821,7 +821,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rBuffer, SVMatroxBuffe
 
 				if (S_OK == l_Code)
 				{
-					p_rBuffer.m_BufferPtr = new SVMatroxImageBuffer(l_NewBuf, "SVMatroxBufferInterface::Create-BufferCreateExt");
+					p_rBuffer.m_BufferPtr = SVMatroxBufferPtr{ new SVMatroxImageBuffer(l_NewBuf, "SVMatroxBufferInterface::Create-BufferCreateExt") };
 				}
 			}
 		}
@@ -909,7 +909,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rNewBuffer, const SVMa
 
 				if (S_OK == l_Code)
 				{
-					p_rNewBuffer.m_BufferPtr = new SVMatroxImageBuffer(l_NewBuf, "SVMatroxBufferInterface::Create-MatroxBuffer");
+					p_rNewBuffer.m_BufferPtr = SVMatroxBufferPtr{ new SVMatroxImageBuffer(l_NewBuf, "SVMatroxBufferInterface::Create-MatroxBuffer") };
 				}
 			}
 		}
@@ -1024,7 +1024,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rNewMilId, HBITMAP& p_
 					LPVOID pHostBuffer = nullptr;
 					pHostBuffer = (LPVOID) MbufInquire(l_NewBuf, M_HOST_ADDRESS, M_NULL);
 
-					p_rNewMilId.m_BufferPtr = new SVMatroxImageBuffer(l_NewBuf, "SVMatroxBufferInterface::Create-HBITMAP");
+					p_rNewMilId.m_BufferPtr = SVMatroxBufferPtr{ new SVMatroxImageBuffer(l_NewBuf, "SVMatroxBufferInterface::Create-HBITMAP") };
 
 					// Set the bits of our new bitmap
 					if (dib.dsBm.bmBits)
@@ -1682,7 +1682,7 @@ HRESULT SVMatroxBufferInterface::CreateBuffer(SVMatroxBuffer& p_rBuffer, MatroxI
 
 	if (S_OK == Code)
 	{
-		p_rBuffer.m_BufferPtr = new MatroxSharedBuffer(NewBuf, "SVMatroxBufferInterface::CreateBuffer");
+		p_rBuffer.m_BufferPtr = SVMatroxBufferPtr{ new MatroxSharedBuffer(NewBuf, "SVMatroxBufferInterface::CreateBuffer") };
 	}
 	else
 	{
@@ -2781,7 +2781,7 @@ HRESULT SVMatroxBufferInterface::Import(SVMatroxBuffer& p_rBuf,
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
 				if (S_OK == l_Code)
 				{
-					p_rBuf.m_BufferPtr = new SVMatroxImageBuffer(l_NewId, "SVMatroxBufferInterface::Import");
+					p_rBuf.m_BufferPtr = SVMatroxBufferPtr{ new SVMatroxImageBuffer(l_NewId, "SVMatroxBufferInterface::Import") };
 				}
 			}
 			else

@@ -332,17 +332,17 @@ bool SVImageArithmeticClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Message
 			return false;
 		}
 
-		SVSmartHandlePointer HandleA;
-		SVSmartHandlePointer HandleB;
-		SVSmartHandlePointer Output;
+		SVImageBufferHandlePtr HandleA;
+		SVImageBufferHandlePtr HandleB;
+		SVImageBufferHandlePtr Output;
 
 		SVImageBufferHandleImage l_MilAHandle;
 		SVImageBufferHandleImage l_MilBHandle;
 		SVImageBufferHandleImage l_MilOutHandle;
 
-		if ( pImageA->GetImageHandle( HandleA ) && !( HandleA.empty() ) &&
-			pImageB->GetImageHandle( HandleB ) && !( HandleB.empty() ) &&
-			pOutputImage->GetImageHandle( Output ) && !( Output.empty() ) )
+		if ( pImageA->GetImageHandle( HandleA ) && nullptr != HandleA &&
+			pImageB->GetImageHandle( HandleB ) && nullptr != HandleB &&
+			pOutputImage->GetImageHandle( Output ) && nullptr != Output )
 		{
 			HandleA->GetData( l_MilAHandle );
 			HandleB->GetData( l_MilBHandle );
@@ -433,8 +433,8 @@ void SVImageArithmeticClass::ScaleWithAveraging( SVImageClass* pInputImage, SVIm
 		SVImageInfoClass InputImageInfo = pInputImage->GetImageInfo();
 		SVImageInfoClass OutputImageInfo = pOutputImage->GetImageInfo();
 
-		SVSmartHandlePointer InputImageBufferHandle;
-		SVSmartHandlePointer OutputImageBufferHandle;
+		SVImageBufferHandlePtr InputImageBufferHandle;
+		SVImageBufferHandlePtr OutputImageBufferHandle;
 
 		SVImageBufferHandleImage l_InMilHandle;
 		SVImageBufferHandleImage l_OutMilHandle;
@@ -442,8 +442,8 @@ void SVImageArithmeticClass::ScaleWithAveraging( SVImageClass* pInputImage, SVIm
 		RECT l_oInputRect;
 		RECT l_oOutputRect;
 		
-		if( pInputImage->GetImageHandle( InputImageBufferHandle ) && !( InputImageBufferHandle.empty() ) &&
-			pOutputImage->GetImageHandle( OutputImageBufferHandle ) && !( OutputImageBufferHandle.empty() ) &&
+		if( pInputImage->GetImageHandle( InputImageBufferHandle ) && nullptr != InputImageBufferHandle &&
+			pOutputImage->GetImageHandle( OutputImageBufferHandle ) && nullptr != OutputImageBufferHandle &&
 			S_OK == InputImageInfo.GetOutputRectangle( l_oInputRect ) &&
 			S_OK == OutputImageInfo.GetOutputRectangle( l_oOutputRect ) )
 		{

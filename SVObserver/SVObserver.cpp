@@ -3330,7 +3330,7 @@ void SVObserverApp::ResetAllCounts()
 
 			if( nullptr != pInspection )
 			{
-				SvCmd::InspectionRunOncePtr l_CommandPtr = new SvCmd::InspectionRunOnce( pInspection->GetUniqueObjectID() );
+				SvCmd::InspectionRunOncePtr l_CommandPtr{ new SvCmd::InspectionRunOnce(pInspection->GetUniqueObjectID()) };
 				SVObjectSynchronousCommandTemplate< SvCmd::InspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
 
 				l_Command.Execute( TWO_MINUTE_CMD_TIMEOUT );

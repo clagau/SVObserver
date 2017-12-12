@@ -279,9 +279,9 @@ void SVToolAdjustmentDialogThresholdPageClass::initThreshold()
 				histResultID = svData.HBuffer.milResult;
 			}
 
-			SVSmartHandlePointer ImageHandle;
+			SVImageBufferHandlePtr ImageHandle;
 
-			if ( m_pCurrentThreshold->getReferenceImage()->GetImageHandle( ImageHandle ) && !( ImageHandle.empty() ) )
+			if ( m_pCurrentThreshold->getReferenceImage()->GetImageHandle( ImageHandle ) && nullptr != ImageHandle)
 			{
 				SVImageBufferHandleImage l_MilHandle;
 				ImageHandle->GetData( l_MilHandle );

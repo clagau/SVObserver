@@ -69,14 +69,14 @@ void SVDigitizerProcessingClass::Startup()
 
 		if( 0 == l_Iter->m_DigitizerName.find( _T( "Matrox_GIGE" ) ) )
 		{
-			l_AcqPtr = new SVMatroxGigeAcquisitionClass( *l_Iter );
+			l_AcqPtr = SVAcquisitionClassPtr{ new SVMatroxGigeAcquisitionClass(*l_Iter) };
 		}
 		else if( 0 == l_Iter->m_DigitizerName.find( _T( "File" ) ) )
 		{
-			l_AcqPtr = new SVFileAcquisitionClass( *l_Iter );
+			l_AcqPtr = SVAcquisitionClassPtr{ new SVFileAcquisitionClass(*l_Iter) };
 		}
 
-		if( !( l_AcqPtr.empty() ) )
+		if(nullptr != l_AcqPtr)
 		{
 			if( S_OK == l_AcqPtr->Create() )
 			{
@@ -103,7 +103,7 @@ void SVDigitizerProcessingClass::Shutdown()
 
 		while( l_Iter != m_AcquisitionDevices.end() )
 		{
-			l_Iter->second.clear();
+			l_Iter->second.reset();
 
 			l_Iter = m_AcquisitionDevices.erase( l_Iter );
 		}
@@ -135,7 +135,7 @@ void SVDigitizerProcessingClass::ClearDevices()
 
 		while( l_Iter != m_AcquisitionDevices.end() )
 		{
-			if( l_Iter->second.empty() )
+			if(nullptr == l_Iter->second)
 			{
 				l_Iter = m_AcquisitionDevices.erase( l_Iter );
 			}
@@ -219,7 +219,7 @@ HRESULT SVDigitizerProcessingClass::GetAcquisitionDeviceList( SvDef::StringVecto
 	{
 		SVAcquisitionClassPtr l_AcqDevicePtr = l_Iter->second;
 
-		if( !( l_AcqDevicePtr.empty() ) && 0 != l_AcqDevicePtr->m_hDigitizer )
+		if( nullptr != l_AcqDevicePtr && 0 != l_AcqDevicePtr->m_hDigitizer )
 		{
 			rList.push_back( std::string( l_AcqDevicePtr->DeviceName() ) );
 		}
@@ -289,7 +289,7 @@ HRESULT SVDigitizerProcessingClass::DestroyBuffers()
 
 		SVAcquisitionClassPtr l_AcqDevicePtr = l_Iter->second;
 
-		if( !( l_AcqDevicePtr.empty() ) && 0 != l_AcqDevicePtr->m_hDigitizer )
+		if(nullptr != l_AcqDevicePtr && 0 != l_AcqDevicePtr->m_hDigitizer )
 		{
 			l_Temp = l_AcqDevicePtr->DestroyBuffers();
 		}
@@ -360,7 +360,7 @@ HRESULT SVDigitizerProcessingClass::DisconnectDevices()
 
 			SVAcquisitionClassPtr l_AcqDevicePtr = l_Iter->second;
 
-			if( !( l_AcqDevicePtr.empty() ) )
+			if(nullptr != l_AcqDevicePtr)
 			{
 				l_AcqDevicePtr->m_hDigitizer = 0;
 				l_AcqDevicePtr->ClearDeviceIdentifier();
@@ -424,7 +424,7 @@ HRESULT SVDigitizerProcessingClass::StoreLastCameraImage()
 
 		SVAcquisitionClassPtr l_AcqDevicePtr = l_Iter->second;
 
-		if( !( l_AcqDevicePtr.empty() ) && 0 < l_AcqDevicePtr->m_hDigitizer )
+		if(nullptr != l_AcqDevicePtr && 0 < l_AcqDevicePtr->m_hDigitizer )
 		{
 			l_Temp = l_AcqDevicePtr->StoreLastImage();
 		}
@@ -452,7 +452,7 @@ HRESULT SVDigitizerProcessingClass::RestoreLastCameraImage()
 
 		SVAcquisitionClassPtr l_AcqDevicePtr = l_Iter->second;
 
-		if( !( l_AcqDevicePtr.empty() ) && 0 != l_AcqDevicePtr->m_hDigitizer )
+		if(nullptr != l_AcqDevicePtr && 0 != l_AcqDevicePtr->m_hDigitizer )
 		{
 			l_Temp = l_AcqDevicePtr->RestoreLastImage();
 		}
@@ -499,7 +499,7 @@ HRESULT SVDigitizerProcessingClass::SetDigitizerColor( LPCTSTR DigitizerName, bo
 
 	pAcquisitionDevice = GetAcquisitionDevice( DigitizerName );
 
-	if( !pAcquisitionDevice.empty() )
+	if(nullptr != pAcquisitionDevice)
 	{
 		int NumberOfBands( 1 );
 		if( isColor )
@@ -661,7 +661,7 @@ HRESULT SVDigitizerProcessingClass::UpdateMatroxDevices()
 
 			SVAcquisitionClassPtr pAcquisitionDevice = GetAcquisitionDevice( AcquisitionName.c_str() );
 
-			if( !( pAcquisitionDevice.empty() ) )
+			if(nullptr != pAcquisitionDevice)
 			{
 				SVDeviceParamCollection DeviceParams;
 

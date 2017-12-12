@@ -462,7 +462,7 @@ namespace SvXml
 		if( nullptr != pBranch )
 		{
 			SVLeafHandle pNewLeaf;
-			SVMaterialDataPtr pMaterial = new SVMaterialData( rData );
+			SVMaterialDataPtr pMaterial{ new SVMaterialData(rData) };
 			pNewLeaf = pBranch->insert( SVMaterialsTree::SVTreeElement( LeafName, pMaterial ) );
 
 			if( pBranch->end() != pNewLeaf )
@@ -542,7 +542,7 @@ namespace SvXml
 		if( m_Tree.end() != pLeaf )
 		{
 			SVLeafHandle pSetData( pLeaf );
-			if( !pSetData->second.empty() )
+			if(nullptr != pSetData->second)
 			{
 				(*pSetData->second).clear();
 				*pSetData->second = rData;
@@ -601,7 +601,7 @@ namespace SvXml
 				for( SVMaterialsTree::iterator Iter( pParent->begin() ); pParent->end() != Iter; ++Iter )
 				{
 					//If smart pointer empty then it is a branch
-					if( Iter->second.empty() )
+					if( nullptr == Iter->second )
 					{
 						m_ChildBranches.push_back( Iter.node() );
 					}

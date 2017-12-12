@@ -177,7 +177,7 @@ bool SVPixelAnalyzerClass::onRun(SVRunStatusClass &rRunStatus, SvStl::MessageCon
 
 	while (1)
 	{
-		SVSmartHandlePointer ImageHandle;
+		SVImageBufferHandlePtr ImageHandle;
 
 		pInputImage = getInputImage ();
 
@@ -192,7 +192,7 @@ bool SVPixelAnalyzerClass::onRun(SVRunStatusClass &rRunStatus, SvStl::MessageCon
 			break;
 		}
 
-		if ( ! pInputImage->GetImageHandle( ImageHandle ) || ImageHandle.empty() )
+		if ( ! pInputImage->GetImageHandle( ImageHandle ) || nullptr == ImageHandle )
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)

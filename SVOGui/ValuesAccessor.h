@@ -37,7 +37,7 @@ namespace SvOg
 			const GUID& ownerID = rValues.GetOwnerID();
 	
 			typedef SvCmd::TaskObjectGetEmbeddedValues<Values> Command;
-			typedef SVSharedPtr<Command> CommandPtr;
+			typedef std::shared_ptr<Command> CommandPtr;
 
 			CommandPtr commandPtr(new Command(ownerID, rValues));
 			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(inspectionID, commandPtr);
@@ -56,7 +56,7 @@ namespace SvOg
 			const GUID& inspectionID = rValues.GetInspectionID();
 	
 			typedef SvCmd::TaskObjectSetEmbeddedValues<Values> Command;
-			typedef SVSharedPtr<Command> CommandPtr;
+			typedef std::shared_ptr<Command> CommandPtr;
 
 			CommandPtr commandPtr(new Command(rValues));
 			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(inspectionID, commandPtr);
@@ -68,7 +68,7 @@ namespace SvOg
 				if (bReset)
 				{
 					// Do a reset of the Tool
-					typedef SVSharedPtr<SvCmd::ResetObject> ResetObjectCommandPtr;
+					typedef std::shared_ptr<SvCmd::ResetObject> ResetObjectCommandPtr;
 					ResetObjectCommandPtr commandPtr(new SvCmd::ResetObject(ownerID));
 					SVObjectSynchronousCommandTemplate<ResetObjectCommandPtr> cmd(inspectionID, commandPtr);
 
@@ -93,7 +93,7 @@ namespace SvOg
 		SvOi::NameValueList GetEnums(const GUID& rInspectionID, const GUID& rObjectID) const
 		{
 			typedef SvCmd::ValueObjectGetEnums Command;
-			typedef SVSharedPtr<Command> CommandPtr;
+			typedef std::shared_ptr<Command> CommandPtr;
 
 			CommandPtr commandPtr(new Command(rObjectID));
 			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(rInspectionID, commandPtr);
@@ -109,7 +109,7 @@ namespace SvOg
 		std::string GetObjectName(const GUID& rInspectionID, const GUID& rObjectID) const
 		{
 			typedef SvCmd::GetObjectName Command;
-			typedef SVSharedPtr<Command> CommandPtr;
+			typedef std::shared_ptr<Command> CommandPtr;
 
 			CommandPtr commandPtr(new Command(rObjectID));
 			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(rInspectionID, commandPtr);

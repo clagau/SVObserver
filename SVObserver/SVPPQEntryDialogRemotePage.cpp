@@ -141,7 +141,7 @@ void SVPPQEntryDialogRemotePageClass::OnAddButton()
 		m_AvailableItems.ClearItemData( index );
 		availableInputListCtrl.DeleteString( index );
 
-		if( !( pIOEntry.empty() ) )
+		if(nullptr != pIOEntry)
 		{
 			SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( pIOEntry->m_IOId );
 
@@ -172,7 +172,7 @@ void SVPPQEntryDialogRemotePageClass::OnRemoveButton()
 		m_SelectedItems.ClearItemData( index );
 		selectedInputListCtrl.DeleteString( index );
 
-		if( !( pIOEntry.empty() ) )
+		if(nullptr != pIOEntry)
 		{
 			SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( pIOEntry->m_IOId );
 
@@ -205,7 +205,7 @@ void SVPPQEntryDialogRemotePageClass::OnOK()
 		m_SelectedItems.ClearItemData( k );
 		selectedInputListCtrl.DeleteString( k );
 
-		if( !( pIOEntry.empty() ) )
+		if(nullptr != pIOEntry)
 		{
 			pIOEntry->m_Enabled = TRUE;
 			pIOEntry->m_PPQIndex = m_pSheet->m_lCurrentPosition;
@@ -226,7 +226,7 @@ void SVPPQEntryDialogRemotePageClass::OnOK()
 		m_AvailableItems.ClearItemData( i );
 		availableInputListCtrl.DeleteString( i );
 
-		if( !( pIOEntry.empty() ) )
+		if(nullptr != pIOEntry)
 		{
 			pIOEntry->m_Enabled = FALSE;
 			pIOEntry->m_PPQIndex = -1;

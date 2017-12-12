@@ -26,7 +26,6 @@
 #include "SVOResource/resource.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "Definitions/StringTypeDef.h"
-#include "SVUtilityLibrary/SVSharedPtr.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
 #include "Definitions/GlobalConst.h"

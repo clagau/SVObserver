@@ -11,9 +11,10 @@
 
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <map>
-#include "SVUtilityLibrary/SVSharedPtr.h"
 #include "SVCommandFactoryTemplate.h"
+#pragma endregion Includes
 
 class SVCommandAbstractFactoryTemplate
 {
@@ -39,5 +40,5 @@ private:
 
 };
 
-typedef SVSharedPtr< SVCommandAbstractFactoryTemplate > SVCommandAbstractFactoryTemplatePtr;
+typedef std::shared_ptr< SVCommandAbstractFactoryTemplate > SVCommandAbstractFactoryTemplatePtr;
 

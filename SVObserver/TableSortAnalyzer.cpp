@@ -176,10 +176,10 @@ void TableSortAnalyzer::BuildInputObjectList()
 
 void TableSortAnalyzer::CheckAndResizeTmpArray( size_t sizeTmp )
 {
-	if (sizeTmp > m_tmpArraySize || (0 < sizeTmp && m_tmpValues.empty()))
+	if (sizeTmp > m_tmpArraySize || (0 < sizeTmp && nullptr == m_tmpValues))
 	{
-		m_tmpValues.clear();
-		m_tmpValues = SVSharedPtr<double>(new double[sizeTmp], [](double* p){delete[] p;});
+		m_tmpValues.reset();
+		m_tmpValues = std::shared_ptr<double>(new double[sizeTmp], [](double* p){delete[] p;});
 		m_tmpArraySize = sizeTmp;
 	}
 }

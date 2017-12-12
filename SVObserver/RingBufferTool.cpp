@@ -137,7 +137,7 @@ bool RingBufferTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 			imageInfo.setDibBufferFlag(false);
 			for (int i=0; i<ringBufferDepth; i++)
 			{
-				SVSmartHandlePointer imageHandle;
+				SVImageBufferHandlePtr imageHandle;
 				SVImageProcessingClass::CreateImageBuffer(imageInfo, imageHandle);
 				m_ringBuffer[i] = imageHandle;
 			}
@@ -218,16 +218,16 @@ bool RingBufferTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContaine
 		//copy input image to ring buffer
 		SVImageBufferHandleImage milHandleTo;
 		SVImageBufferHandleImage milHandleFrom;
-		if( static_cast<int>(m_ringBuffer.size()) > m_nextBufferPos && !( m_ringBuffer[m_nextBufferPos].empty() ) )
+		if( static_cast<int>(m_ringBuffer.size()) > m_nextBufferPos && nullptr != m_ringBuffer[m_nextBufferPos] )
 		{
 			m_ringBuffer[m_nextBufferPos]->GetData( milHandleTo );
 		}
 		SVImageClass* inputImage = getInputImage ();
 		if (nullptr != inputImage)
 		{
-			SVSmartHandlePointer inputImageBuffer;
+			SVImageBufferHandlePtr inputImageBuffer;
 			inputImage->GetImageHandle(inputImageBuffer);
-			if( !( inputImageBuffer.empty() ) )
+			if( nullptr != inputImageBuffer)
 			{
 				inputImageBuffer->GetData( milHandleFrom );
 			}
@@ -324,13 +324,13 @@ int RingBufferTool::SetOutputImage( int outputIndex, int imageIndex, int maxInde
 	{
 		SVImageBufferHandleImage handleToIndex;
 		SVImageBufferHandleImage handleToOutputImage;
-		if( static_cast<int>(m_ringBuffer.size()) > pos && !( m_ringBuffer[pos].empty() ) )
+		if( static_cast<int>(m_ringBuffer.size()) > pos && nullptr != m_ringBuffer[pos] )
 		{
 			m_ringBuffer[pos]->GetData( handleToIndex );
 		}
-		SVSmartHandlePointer outputImageBuffer;
+		SVImageBufferHandlePtr outputImageBuffer;
 		m_OutputImages[outputIndex].GetImageHandle(outputImageBuffer);
-		if( !( outputImageBuffer.empty() ) )
+		if( nullptr != outputImageBuffer )
 		{
 			outputImageBuffer->GetData( handleToOutputImage );
 		}

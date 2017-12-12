@@ -89,7 +89,7 @@ DWORD SVImageArchiveClass::NextFileName()
 	return m_FileNumber++;
 }
 
-bool SVImageArchiveClass::LoadImageArchiveFile( SVSmartHandlePointer p_HandlePtr )
+bool SVImageArchiveClass::LoadImageArchiveFile( SVImageBufferHandlePtr p_HandlePtr )
 {
 	SVFileNameClass svFileName;
 	std::string FileName;
@@ -104,7 +104,7 @@ bool SVImageArchiveClass::LoadImageArchiveFile( SVSmartHandlePointer p_HandlePtr
 	
 	FileName = svFileName.GetFullFileName();
 	
-	if( ImageArchiveFileExists(FileName) && !p_HandlePtr.empty() )
+	if( ImageArchiveFileExists(FileName) && nullptr != p_HandlePtr)
 	{
 		hCursor = SetCursor (LoadCursor(nullptr, IDC_WAIT));
 
@@ -126,7 +126,7 @@ bool SVImageArchiveClass::LoadImageArchiveFile(SVImageClass *pImage)
 {
 	bool bOk = false;
 
-	SVSmartHandlePointer l_ImageHandlePtr;
+	SVImageBufferHandlePtr l_ImageHandlePtr;
 
 	if( pImage->GetImageHandle( l_ImageHandlePtr ) )
 	{
@@ -139,18 +139,18 @@ bool SVImageArchiveClass::LoadImageArchiveFile(SVImageClass *pImage)
 
 bool SVImageArchiveClass::LoadImageArchiveFile( SVImageObjectClassPtr p_AcquisitionCircleBufferPtr )
 {
-	SVSmartHandlePointer l_ImageHandlePtr;
+	SVImageBufferHandlePtr l_ImageHandlePtr;
 	
 	bool bRetValue = false;
 	
 	int i;
 	
-	if( !( p_AcquisitionCircleBufferPtr.empty() ) )
+	if(nullptr != p_AcquisitionCircleBufferPtr)
 	{
 		p_AcquisitionCircleBufferPtr->GetImageHandle( 0, l_ImageHandlePtr );
 	}
 	
-	if ( !( l_ImageHandlePtr.empty() ) )
+	if (nullptr != l_ImageHandlePtr)
 	{
 		
 		HRESULT l_Code;

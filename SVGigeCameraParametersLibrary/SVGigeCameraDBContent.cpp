@@ -8,19 +8,20 @@
 //* .Current Version : $Revision:   1.2  $
 //* .Check In Date   : $Date:   15 May 2013 19:36:48  $
 //******************************************************************************
+
 #pragma region Includes
 #include "StdAfx.h"
 #import <msxml6.dll> raw_interfaces_only 
 //Moved to precompiled header: #include <string>
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <memory>
 //Moved to precompiled header: #include <utility>
 //Moved to precompiled header: #include <boost/config.hpp>
 //Moved to precompiled header: #include <boost/assign.hpp>
 #include "SVGigeDeviceParameterStruct.h"
 #include "SVGigeEmptyGetter.h"
 #include "SVGigeEmptySetter.h"
-#include "SVUtilityLibrary/SVSharedPtr.h"
 #include "SVUtilityLibrary/StringToEnum.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVGigeCameraDBContent.h"
@@ -472,7 +473,7 @@ void SVGigeCameraDBContent::GetGigeFeatureStringEnumAttributes(MSXML2::ISAXAttri
 SVGigeParameterAccessor SVGigeCameraDBContent::ConstructGigeParameterAccessor()
 {
 	// Construct SVGigeParameterAccessor
-	SVSharedPtr<SVGigeParameterAccessor> gigeParameterAccessorHolder;
+	std::shared_ptr<SVGigeParameterAccessor> gigeParameterAccessorHolder;
 
 	// Check for Selector
 	if (!m_GigeDeviceParameterInfo.m_GigeFeatureAccessor.m_feature.m_GigeSelector.m_GigeFeatureSelectorName.empty())
@@ -491,11 +492,11 @@ SVGigeParameterAccessor SVGigeCameraDBContent::ConstructGigeParameterAccessor()
 			// check for Accessor(Getter/Setter) 
 			if (!m_GigeDeviceParameterInfo.m_GigeFeatureAccessor.m_accessor.m_getterName.empty())
 			{
-				gigeParameterAccessorHolder = new SVGigeParameterAccessor(feature, GetGetterFunc(), GetSetterFunc());
+				gigeParameterAccessorHolder = std::shared_ptr<SVGigeParameterAccessor>{ new SVGigeParameterAccessor(feature, GetGetterFunc(), GetSetterFunc()) };
 			}
 			else
 			{
-				gigeParameterAccessorHolder = new SVGigeParameterAccessor(feature);
+				gigeParameterAccessorHolder = std::shared_ptr<SVGigeParameterAccessor>{ new SVGigeParameterAccessor(feature) };
 			}
 		}
 		else
@@ -510,11 +511,11 @@ SVGigeParameterAccessor SVGigeCameraDBContent::ConstructGigeParameterAccessor()
 			// check for Accessor(Getter/Setter) 
 			if (!m_GigeDeviceParameterInfo.m_GigeFeatureAccessor.m_accessor.m_getterName.empty())
 			{
-				gigeParameterAccessorHolder = new SVGigeParameterAccessor(feature, GetGetterFunc(), GetSetterFunc());
+				gigeParameterAccessorHolder = std::shared_ptr<SVGigeParameterAccessor>{ new SVGigeParameterAccessor(feature, GetGetterFunc(), GetSetterFunc()) };
 			}
 			else
 			{
-				gigeParameterAccessorHolder = new SVGigeParameterAccessor(feature);
+				gigeParameterAccessorHolder = std::shared_ptr<SVGigeParameterAccessor>{ new SVGigeParameterAccessor(feature) };
 			}
 		}
 	}
@@ -535,11 +536,11 @@ SVGigeParameterAccessor SVGigeCameraDBContent::ConstructGigeParameterAccessor()
 			// check for Accessor(Getter/Setter) 
 			if (!m_GigeDeviceParameterInfo.m_GigeFeatureAccessor.m_accessor.m_getterName.empty())
 			{
-				gigeParameterAccessorHolder = new SVGigeParameterAccessor(feature, GetGetterFunc(), GetSetterFunc());
+				gigeParameterAccessorHolder = std::shared_ptr<SVGigeParameterAccessor>{ new SVGigeParameterAccessor(feature, GetGetterFunc(), GetSetterFunc()) };
 			}
 			else
 			{
-				gigeParameterAccessorHolder = new SVGigeParameterAccessor(feature);
+				gigeParameterAccessorHolder = std::shared_ptr<SVGigeParameterAccessor>{ new SVGigeParameterAccessor(feature) };
 			}
 		}
 		else
@@ -553,11 +554,11 @@ SVGigeParameterAccessor SVGigeCameraDBContent::ConstructGigeParameterAccessor()
 			// check for Accessor(Getter/Setter) 
 			if (!m_GigeDeviceParameterInfo.m_GigeFeatureAccessor.m_accessor.m_getterName.empty())
 			{
-				gigeParameterAccessorHolder = new SVGigeParameterAccessor(feature, GetGetterFunc(), GetSetterFunc());
+				gigeParameterAccessorHolder = std::shared_ptr<SVGigeParameterAccessor>{ new SVGigeParameterAccessor(feature, GetGetterFunc(), GetSetterFunc()) };
 			}
 			else
 			{
-				gigeParameterAccessorHolder = new SVGigeParameterAccessor(feature);
+				gigeParameterAccessorHolder = std::shared_ptr<SVGigeParameterAccessor>{ new SVGigeParameterAccessor(feature) };
 			}
 		}
 	}

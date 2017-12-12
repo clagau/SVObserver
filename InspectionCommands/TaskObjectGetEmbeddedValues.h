@@ -12,7 +12,6 @@
 #include "ObjectInterfaces\IObjectManager.h"
 #include "ObjectInterfaces\IObjectClass.h"
 #include "SVUtilityLibrary\SVGUID.h"
-#include "SVUtilityLibrary\SVSharedPtr.h"
 #pragma endregion Includes
 
 namespace SvCmd

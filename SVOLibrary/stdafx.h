@@ -56,7 +56,7 @@
 #include <iterator>			//Used by static library
 #include <list>				//Used by static library
 #include <map>				//Used by static library
-#include <memory>			//Used by static library
+#include <memory>
 #include <set>				//Used by static library
 #include <string>
 #include <tchar.h>			//Used by static library

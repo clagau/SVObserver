@@ -28,7 +28,7 @@ public:
 	bool LoadImageArchiveFile( SVImageObjectClassPtr p_AcquisitionCircleBufferPtr );
 	bool ImageArchiveFileExists( const std::string& rFileName );
 	bool LoadImageArchiveFile( SVImageClass *pImage );
-	bool LoadImageArchiveFile( SVSmartHandlePointer p_HandlePtr );
+	bool LoadImageArchiveFile( SVImageBufferHandlePtr p_HandlePtr );
 	DWORD NextFileName ();
 	DWORD ResetFileNumber ();
 	void SetImageArchivePath( const std::string& rPath );

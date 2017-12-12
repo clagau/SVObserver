@@ -190,7 +190,7 @@ SVObjectClass* TableObject::OverwriteEmbeddedObject(const GUID& rUniqueID, const
 		// Construct new object...
 		SVObjectManagerClass::Instance().ConstructObject(DoubleSortValueObjectGuid, pObject);
 		RegisterEmbeddedObject( pObject, rEmbeddedID, _T(""), true, SvOi::SVResetItemTool );
-		m_ValueList.push_back(pObject);
+		m_ValueList.push_back(DoubleSortValuePtr{ pObject });
 	}
 
 	return __super::OverwriteEmbeddedObject(rUniqueID, rEmbeddedID);
@@ -208,7 +208,7 @@ DoubleSortValueObject* TableObject::createColumnObject(SVGUID embeddedID, LPCTST
 	{
 		RegisterEmbeddedObject( pObject, embeddedID, name, true, SvOi::SVResetItemTool );
 		pObject->SetArraySize(arraySize);
-		m_ValueList.push_back(pObject);
+		m_ValueList.push_back(DoubleSortValuePtr{ pObject });
 	}
 	else
 	{

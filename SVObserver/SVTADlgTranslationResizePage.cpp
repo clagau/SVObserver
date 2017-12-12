@@ -1024,7 +1024,7 @@ HRESULT SVTADlgTranslationResizePage::UpdateImages()
 {
 	HRESULT hr = S_OK;
 
-	SVSmartHandlePointer inputImageHandle;
+	SVImageBufferHandlePtr inputImageHandle;
 
 	SVImageClass* inputImage = m_pTool->getInputImage();
 	if (nullptr == inputImage)
