@@ -146,8 +146,8 @@ private:
 
 	HRESULT CreateModelHandle(long modelWidth, long modelHeight);
 private:
-	SVMatroxPatternModel m_patModelHandle;		// Model Identifer Handle
-	SVMatroxPatResult m_patResultHandle;	// Pattern matching result buffer identifier handle
+	SVMatroxIdentifier m_patContextHandle = M_NULL;		// Model Identifer Handle
+	SVMatroxIdentifier m_patResultHandle = M_NULL;	// Pattern matching result buffer identifier handle
 
 	bool m_bAngleAccuracy;
 

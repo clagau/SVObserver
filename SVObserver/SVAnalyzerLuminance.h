@@ -61,7 +61,7 @@ protected:
 /*- These values are only used by the Run () function, and   */
 /*- are maintained here to avoid time loss in allocating and */
 /*- freeing these buffers for each function call. -----------*/
-    SVMatroxImageResult        msvHistResultID;
+	SVMatroxIdentifier        m_HistResultID = M_NULL;
 	SVMatroxLongArray          msvplHistValues;
 /*- End of USED BY Run (). ----------------------------------*/
 };

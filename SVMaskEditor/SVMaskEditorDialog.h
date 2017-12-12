@@ -95,8 +95,8 @@ public:
 
 protected:
 
-    SVMatroxDisplay     milDisplay;
-    SVMatroxDisplayBuffer      milDisplayBuffer;
+	SVMatroxIdentifier     milDisplay = M_NULL;
+	SVMatroxBuffer      milDisplayBuffer;
     SVMatroxBuffer      milMaskBuffer;
     SVMatroxBuffer      milImageBuffer;
 

@@ -43,6 +43,7 @@
 #include "RRSVersionString.h"
 #include "SVSharedMemoryLibrary\MLCpyContainer.h"
 #include "SVSharedMemoryLibrary\SharedMemReader.h"
+#define M_MIL_USE_SAFE_TYPE 0
 #include <mil.h>
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"
 #include "SVSharedMemoryLibrary\MLProduct.h"
@@ -960,7 +961,7 @@ void StartThreads(DWORD argc, LPTSTR  *argv)
 
 
 	/// Allocate MilSystem
-	MIL_ID AppId = MappAlloc(M_DEFAULT, M_NULL);
+	SVMatroxInt AppId = MappAlloc(M_DEFAULT, M_NULL);
 	if (AppId == M_NULL)
 	{
 		std::cout << "MapAlloc failed";

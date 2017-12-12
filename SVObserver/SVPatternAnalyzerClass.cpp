@@ -362,7 +362,7 @@ bool SVPatternAnalyzerClass::UpdateModelFromBuffer()
 
 		}
 
-		bOk = (!m_patModelHandle.empty() && S_OK == MatroxCode);
+		bOk = ( M_NULL != m_patContextHandle && S_OK == MatroxCode);
 	}
 	return bOk;
 }
@@ -450,20 +450,17 @@ bool SVPatternAnalyzerClass::SetSearchParameters ()
 			m_lpatModelHeight.GetValue(modelHeight);
 			CreateModelHandle(modelWidth, modelHeight);
 		
-			HRESULT MatroxCode = SVMatroxPatternInterface::SetNumber( m_patModelHandle, lParam );
+			HRESULT MatroxCode = SVMatroxPatternInterface::SetNumber( m_patContextHandle, lParam );
 
 			if (S_OK == MatroxCode)
 			{
 				ResizeResultValues((int)lParam);
 				
-				if(!m_patResultHandle.empty() )
-				{
-					MatroxCode = SVMatroxPatternInterface::Destroy( m_patResultHandle );
-				}
+				MatroxCode = SVMatroxPatternInterface::DestroyResult( m_patResultHandle );
 
 				if (S_OK == MatroxCode)
 				{
-					MatroxCode = SVMatroxPatternInterface::Create( m_patResultHandle, lParam );
+					MatroxCode = SVMatroxPatternInterface::CreateResult( m_patResultHandle, lParam );
 				}
 
 				if (S_OK == MatroxCode)
@@ -472,42 +469,42 @@ bool SVPatternAnalyzerClass::SetSearchParameters ()
 					long centerY = 0;
 					m_lpatModelCenterX.GetValue(centerX);
 					m_lpatModelCenterY.GetValue(centerY);
-					MatroxCode = SVMatroxPatternInterface::SetCenter( m_patModelHandle, centerX, centerY );
+					MatroxCode = SVMatroxPatternInterface::SetCenter( m_patContextHandle, centerX, centerY );
 
 					if (S_OK == MatroxCode)
 					{
-						MatroxCode = SVMatroxPatternInterface::SetPosition( m_patModelHandle, SVValueAll, SVValueAll,
+						MatroxCode = SVMatroxPatternInterface::SetPosition( m_patContextHandle, SVValueAll, SVValueAll,
 										SVValueAll, SVValueAll);
 					}
 
 					if (S_OK == MatroxCode)
 					{
 						msv_dpatAcceptanceThreshold.GetValue(dParam);
-						MatroxCode = SVMatroxPatternInterface::SetAcceptance( m_patModelHandle, dParam);
+						MatroxCode = SVMatroxPatternInterface::SetAcceptance( m_patContextHandle, dParam);
 					}
 
 					if (S_OK == MatroxCode)
 					{
 						msv_dpatCertaintyThreshold.GetValue(dParam); 
-						MatroxCode = SVMatroxPatternInterface::SetCertainty(m_patModelHandle, dParam);
+						MatroxCode = SVMatroxPatternInterface::SetCertainty(m_patContextHandle, dParam);
 					}
 					
 					if (S_OK == MatroxCode)
 					{
 						msv_lpatAccuracy.GetValue(lParam);
-						MatroxCode = SVMatroxPatternInterface::SetAccuracy(m_patModelHandle, lParam);
+						MatroxCode = SVMatroxPatternInterface::SetAccuracy(m_patContextHandle, lParam);
 					}
 					
 					if (S_OK == MatroxCode)
 					{
 						msv_lpatSpeed.GetValue(lParam);
-						MatroxCode = SVMatroxPatternInterface::SetSpeed( m_patModelHandle, lParam );
+						MatroxCode = SVMatroxPatternInterface::SetSpeed( m_patContextHandle, lParam );
 					}
 					
 					if (S_OK == MatroxCode)
 					{
 						msv_bpatSearchAngleMode.GetValue( bParam ); 
-						MatroxCode = SVMatroxPatternInterface::SetAngle( m_patModelHandle, bParam ? true : false );
+						MatroxCode = SVMatroxPatternInterface::SetAngle( m_patContextHandle, bParam ? true : false );
 					}
 					
 					if (S_OK == MatroxCode)
@@ -515,24 +512,24 @@ bool SVPatternAnalyzerClass::SetSearchParameters ()
 						if(bParam)
 						{
 							msv_dpatSearchAngle.GetValue(dParam);
-							MatroxCode = SVMatroxPatternInterface::SetAngle( m_patModelHandle, SVPatSearchAngle, dParam );
+							MatroxCode = SVMatroxPatternInterface::SetAngle( m_patContextHandle, SVPatSearchAngle, dParam );
 					
 							if (S_OK == MatroxCode)
 							{
 								msv_dpatAngleDeltaNeg.GetValue(dParam);
-								MatroxCode = SVMatroxPatternInterface::SetAngle( m_patModelHandle, SVPatSearchAngleDeltaNeg, dParam );
+								MatroxCode = SVMatroxPatternInterface::SetAngle( m_patContextHandle, SVPatSearchAngleDeltaNeg, dParam );
 							}
 					
 							if (S_OK == MatroxCode)
 							{
 								msv_dpatAngleDeltaPos.GetValue(dParam);
-								MatroxCode = SVMatroxPatternInterface::SetAngle( m_patModelHandle, SVPatSearchAngleDeltaPos, dParam );
+								MatroxCode = SVMatroxPatternInterface::SetAngle( m_patContextHandle, SVPatSearchAngleDeltaPos, dParam );
 							}
 
 							if (S_OK == MatroxCode)
 							{
 								msv_dpatAngleTolerance.GetValue(dParam);
-								MatroxCode = SVMatroxPatternInterface::SetAngle( m_patModelHandle, SVPatSearchAngleTolerance, dParam );
+								MatroxCode = SVMatroxPatternInterface::SetAngle( m_patContextHandle, SVPatSearchAngleTolerance, dParam );
 							}
 
 							if (S_OK == MatroxCode)
@@ -545,7 +542,7 @@ bool SVPatternAnalyzerClass::SetSearchParameters ()
 								}
 								else
 								{
-									MatroxCode = SVMatroxPatternInterface::SetAngle( m_patModelHandle, SVPatSearchAngleDeltaNeg, dParam );
+									MatroxCode = SVMatroxPatternInterface::SetAngle( m_patContextHandle, SVPatSearchAngleDeltaNeg, dParam );
 									m_bAngleAccuracy = true;
 								}
 							}
@@ -553,7 +550,7 @@ bool SVPatternAnalyzerClass::SetSearchParameters ()
 							if (S_OK == MatroxCode)
 							{
 								msv_dpatAngleInterpolation.GetValue(dParam);
-								MatroxCode = SVMatroxPatternInterface::SetAngle( m_patModelHandle, SVPatSearchAngleInterpMode, dParam );
+								MatroxCode = SVMatroxPatternInterface::SetAngle( m_patContextHandle, SVPatSearchAngleInterpMode, dParam );
 							}
 						}
 					}
@@ -562,49 +559,49 @@ bool SVPatternAnalyzerClass::SetSearchParameters ()
 					if (S_OK == MatroxCode)
 					{
 						msv_dpatPreliminaryAcceptanceThreshold.GetValue(dParam);
-						MatroxCode = SVMatroxPatternInterface::Set(m_patModelHandle, SVPatCoarseSearchAcceptance, dParam);
+						MatroxCode = SVMatroxPatternInterface::Set(m_patContextHandle, SVPatCoarseSearchAcceptance, dParam);
 					}
 
 					if (S_OK == MatroxCode)
 					{
 						msv_lpatFastFind.GetValue(lParam);
-						MatroxCode = SVMatroxPatternInterface::Set(m_patModelHandle, SVPatFastFind, lParam);
+						MatroxCode = SVMatroxPatternInterface::Set(m_patContextHandle, SVPatFastFind, lParam);
 					}
 
 					if (S_OK == MatroxCode)
 					{
 						msv_lpatModelStep.GetValue(lParam);
-						MatroxCode = SVMatroxPatternInterface::Set(m_patModelHandle, SVPatModelStep, lParam);
+						MatroxCode = SVMatroxPatternInterface::Set(m_patContextHandle, SVPatModelStep, lParam);
 					}
 
 					if (S_OK == MatroxCode)
 					{
 						msv_lpatBeginningResolutionLevel.GetValue(lParam);
-						MatroxCode = SVMatroxPatternInterface::Set(m_patModelHandle, SVPatFirstLevel, lParam);
+						MatroxCode = SVMatroxPatternInterface::Set(m_patContextHandle, SVPatFirstLevel, lParam);
 					}
 
 					if (S_OK == MatroxCode)
 					{
 						msv_lpatFinalResolutionLevel.GetValue(lParam);
-						MatroxCode = SVMatroxPatternInterface::Set(m_patModelHandle, SVPatLastLevel, lParam);
+						MatroxCode = SVMatroxPatternInterface::Set(m_patContextHandle, SVPatLastLevel, lParam);
 					}
 
 					if (S_OK == MatroxCode)
 					{
 						msv_lpatAdditionalCandidates.GetValue(lParam);
-						MatroxCode = SVMatroxPatternInterface::Set(m_patModelHandle, SVPatExtraCandidates, lParam);
+						MatroxCode = SVMatroxPatternInterface::Set(m_patContextHandle, SVPatExtraCandidates, lParam);
 					}
 
 					if (S_OK == MatroxCode)
 					{
 						msv_dpatCandidateSpacingXMin.GetValue(dParam);
-						MatroxCode = SVMatroxPatternInterface::Set(m_patModelHandle, SVPatMinSpacingX, dParam);
+						MatroxCode = SVMatroxPatternInterface::Set(m_patContextHandle, SVPatMinSpacingX, dParam);
 					}
 
 					if (S_OK == MatroxCode)
 					{
 						msv_dpatCandidateSpacingYMin.GetValue(dParam);
-						MatroxCode = SVMatroxPatternInterface::Set(m_patModelHandle, SVPatMinSpacingY, dParam); 
+						MatroxCode = SVMatroxPatternInterface::Set(m_patContextHandle, SVPatMinSpacingY, dParam); 
 					}
 
 					if (S_OK == MatroxCode)
@@ -619,7 +616,7 @@ bool SVPatternAnalyzerClass::SetSearchParameters ()
 								m_DontCareBufferHandlePtr->GetData(patMilHandle);
 								if (!patMilHandle.empty())
 								{
-									MatroxCode = SVMatroxPatternInterface::SetDontCare(patMilHandle.GetBuffer(), m_patModelHandle);
+									MatroxCode = SVMatroxPatternInterface::SetDontCare(patMilHandle.GetBuffer(), m_patContextHandle);
 								}
 								else
 								{
@@ -633,7 +630,7 @@ bool SVPatternAnalyzerClass::SetSearchParameters ()
 					{
 						if( !ImageBufId.empty() )
 						{
-							MatroxCode = SVMatroxPatternInterface::PreProcModel( m_patModelHandle, ImageBufId );
+							MatroxCode = SVMatroxPatternInterface::PreProcModel( m_patContextHandle, ImageBufId );
 							if (S_OK == MatroxCode)
 							{
 								MatroxCode = executePatternAndSetResults( ImageBufId );
@@ -665,16 +662,8 @@ bool SVPatternAnalyzerClass::SetSearchParameters ()
 
 void SVPatternAnalyzerClass::CloseMIL ()
 {
-	HRESULT l_Code;
-	if ( !m_patModelHandle.empty())
-	{
-		l_Code = SVMatroxPatternInterface::Destroy( m_patModelHandle );
-	}
-
-	if ( !m_patResultHandle.empty() )
-	{
-		l_Code = SVMatroxPatternInterface::Destroy( m_patResultHandle );
-	}
+	SVMatroxPatternInterface::DestroyContext( m_patContextHandle );
+	SVMatroxPatternInterface::DestroyResult( m_patResultHandle );
 	m_patBufferHandlePtr.clear();
 	m_DontCareBufferHandlePtr.clear();
 }
@@ -852,7 +841,7 @@ bool SVPatternAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 			ResetPattern();
 		}
 
-		if( m_patModelHandle.empty() || m_bReloadModelFromFile ) // if the model exists, update the search area according to the 
+		if( M_NULL == m_patContextHandle || m_bReloadModelFromFile ) // if the model exists, update the search area according to the 
 		{
 			m_bReloadModelFromFile = false;
 
@@ -1217,7 +1206,7 @@ std::vector<SVExtentFigureStruct> SVPatternAnalyzerClass::GetResultExtentFigureL
 
 HRESULT SVPatternAnalyzerClass::executePatternAndSetResults( SVMatroxBuffer ImageBufId)
 {
-	HRESULT MatroxCode = SVMatroxPatternInterface::Execute( m_patResultHandle, ImageBufId, m_patModelHandle );
+	HRESULT MatroxCode = SVMatroxPatternInterface::Execute( m_patResultHandle, ImageBufId, m_patContextHandle );
 	if (S_OK == MatroxCode)
 	{
 		long lOccurances = 0; 
@@ -1323,7 +1312,7 @@ bool SVPatternAnalyzerClass::ValidateLocal(SvStl::MessageContainerVector *pError
 {
 	bool Result = IsValidSize(pErrorMessages);
 
-	if ( Result && (m_patModelHandle.empty() || m_patResultHandle.empty()) )
+	if ( Result && (M_NULL == m_patContextHandle || M_NULL == m_patResultHandle) )
 	{
 		if (nullptr != pErrorMessages)
 		{
@@ -1640,10 +1629,7 @@ HRESULT SVPatternAnalyzerClass::CreateModelHandle(long modelWidth, long modelHei
 	HRESULT MatroxCode = S_OK; 
 
 	// Destroy the pattern
-	if (!m_patModelHandle.empty())
-	{
-		SVMatroxPatternInterface::Destroy(m_patModelHandle);
-	}
+	SVMatroxPatternInterface::DestroyContext(m_patContextHandle);
 
 	SVImageBufferHandleImage imageHandle;
 	m_patBufferHandlePtr->GetData(imageHandle);
@@ -1658,7 +1644,7 @@ HRESULT SVPatternAnalyzerClass::CreateModelHandle(long modelWidth, long modelHei
 		SIZE size = { modelWidth, modelHeight };
 		RECT innerRect = SVMatroxPatternInterface::CalculateOverscanInnerRect(pos, size);
 
-		MatroxCode = SVMatroxPatternInterface::Create(m_patModelHandle,
+		MatroxCode = SVMatroxPatternInterface::CreateContext(m_patContextHandle,
 			imageHandle.GetBuffer(),
 			innerRect.left,
 			innerRect.top,
@@ -1676,7 +1662,7 @@ HRESULT SVPatternAnalyzerClass::CreateModelHandle(long modelWidth, long modelHei
 	}
 	else
 	{
-		MatroxCode = SVMatroxPatternInterface::Create(m_patModelHandle,
+		MatroxCode = SVMatroxPatternInterface::CreateContext(m_patContextHandle,
 			imageHandle.GetBuffer(),
 			0, 0,
 			modelWidth, modelHeight);

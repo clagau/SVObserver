@@ -12,7 +12,6 @@
 #include "stdafx.h"
 #include "SVMatroxBuffer.h"
 #include "SVMatroxBufferInterface.h"
-#include "SVMatroxDisplayBuffer.h"
 
 SVMatroxBuffer::SVMatroxBuffer()
 : m_BufferPtr()
@@ -22,11 +21,6 @@ SVMatroxBuffer::SVMatroxBuffer()
 SVMatroxBuffer::SVMatroxBuffer(const SVMatroxBuffer& p_rBuf)
 {
 	m_BufferPtr = p_rBuf.m_BufferPtr;
-}
-
-SVMatroxBuffer::SVMatroxBuffer(const SVMatroxDisplayBuffer& p_rBuf)
-{
-	m_BufferPtr = p_rBuf.m_DisplayBufferPtr;
 }
 
 SVMatroxBuffer::~SVMatroxBuffer()

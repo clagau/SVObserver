@@ -15,7 +15,6 @@
 #include "SVMatroxEnums.h"
 #include "SVMatroxApplicationInterface.h"
 #include "SVMatroxBuffer.h"
-#include "SVMatroxImageResult.h"
 #include "SVMatroxPolarTransformStruct.h"
 #include "SVMatroxImageRotateStruct.h"
 
@@ -28,7 +27,7 @@ class SVCommandDataHolder;
 
 @SVObjectOperations 
 The Create function uses the Matrox MimAllocResult. This function allocates a result buffer with the specified number of entries, for use with the image processing module's statistical functions
-The Destroy function uses the Matrox MimFree. This function deallocates a SVMatroxImageResult previously allocated with Create.
+The Destroy function uses the Matrox MimFree. This function deallocates a SVMatroxIdentifier previously allocated with Create.
 The Arithmatic function uses the Matrox MimArith or the MimArithMultiple. This function performs the specified point-to-point operation on two images, storing results in the specified destination image buffer. 
 The Binarize function uses the Matrox MimBinarize.  This function performs binary thresholding on the specified image. Each pixel that meets the specified condition is set to the highest unsigned destination buffer value, while other pixels are set to 0.
 The Close function uses the Matrox MimClose. This function performs a binary or grayscale closing operation on the given source image for the specified number of iterations. A closing is a dilation followed by an erosion  
@@ -57,9 +56,9 @@ public:
 	virtual ~SVMatroxImageInterface();
 
 	// This function replaces MimAllocResult.
-	static HRESULT Create( SVMatroxImageResult& p_rResultId, const long NbEntries, SVImageOperationTypeEnum ResultType);
+	static HRESULT Create( SVMatroxIdentifier& rResultId, const long NbEntries, SVImageOperationTypeEnum ResultType);
 	// This function replaces MimFree.
-	static HRESULT Destroy( SVMatroxImageResult& p_rResultId );
+	static HRESULT Destroy( SVMatroxIdentifier& rResultId);
 	
 	// This function Replaces MimArith and MimArithMultiple( image tool )
 	static HRESULT Arithmetic( const SVMatroxBuffer& p_rDestId, const SVMatroxBuffer& p_dSource1, const SVMatroxBuffer& p_dSource2, SVImageOperationTypeEnum p_lOperation);
@@ -84,13 +83,13 @@ public:
 	static HRESULT Flip( const SVMatroxBuffer& p_rDest, const SVMatroxBuffer& p_rSource, SVImageFlipEnum p_lOperation);
 
 	// This function replaces MimGetResult
-	static HRESULT GetResult( const SVMatroxImageResult& p_rResultID, SVMatroxDoubleArray& p_adArray);
-	static HRESULT GetResult( const SVMatroxImageResult& p_rResultID, SVMatroxLongArray& p_alArray);
-	static HRESULT GetResult( const SVMatroxImageResult& p_rResultID, SVMatroxByteArray& p_acArray);
-	static HRESULT GetResult( const SVMatroxImageResult& p_rResultID, void * p_pArray);
+	static HRESULT GetResult( const SVMatroxIdentifier& rResultId, SVMatroxDoubleArray& p_adArray);
+	static HRESULT GetResult( const SVMatroxIdentifier& rResultId, SVMatroxLongArray& p_alArray);
+	static HRESULT GetResult( const SVMatroxIdentifier& rResultId, SVMatroxByteArray& p_acArray);
+	static HRESULT GetResult( const SVMatroxIdentifier& rResultId, void * p_pArray);
 
 	// This function replaces MimHistogram
-	static HRESULT Histogram( const SVMatroxImageResult& p_rHistResult, const SVMatroxBuffer& p_rSource);
+	static HRESULT Histogram( const SVMatroxIdentifier& rResultId, const SVMatroxBuffer& p_rSource);
 	// This function replaces MimLutMap
 	static HRESULT LutMap( const SVMatroxBuffer& p_rDest, const SVMatroxBuffer& p_rSource, const SVMatroxBuffer& p_rLut);
 	// This function replaces MimOpen
@@ -98,7 +97,7 @@ public:
 	// This function replaces MimPolarTransform
 	static HRESULT PolarTransform( const SVMatroxBuffer& p_rDest, SVMatroxPolarTransformStruct& p_rTransformStruct);
 	// This function replaces MimProject (Linear tool)
-	static HRESULT Project( const SVMatroxImageResult& p_rProjDest, const SVMatroxBuffer& p_rSource, double p_dAngle);
+	static HRESULT Project( const SVMatroxIdentifier& rResultId, const SVMatroxBuffer& p_rSource, double p_dAngle);
 	// This function replaces MimRank
 	static HRESULT Rank( const SVMatroxBuffer& p_rDest, const SVMatroxBuffer& p_rSource, const SVMatroxBuffer& p_rStructElem, long p_lRank);
 	// This function replaces MimRotate

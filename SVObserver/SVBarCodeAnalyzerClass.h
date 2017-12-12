@@ -61,7 +61,7 @@ public:
 	//for MIL 9.0 - New only for DataMatrix Codes
 	SVBoolValueObjectClass msv_bUnEvenGrid;
 	
-	SVMatroxBarCode m_MilCodeId;
+	SVMatroxIdentifier m_MilCodeId = M_NULL;
 
 	SVBarCodeAnalyzerClass(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVBARCODEANALYZER);
 	virtual ~SVBarCodeAnalyzerClass();

@@ -140,11 +140,7 @@ bool SVThresholdClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStr
 
 bool SVThresholdClass::CloseObject()
 {
-	if( !m_histResultID.empty() )
-	{
-		
-		SVMatroxImageInterface::Destroy( m_histResultID );
-	}
+	SVMatroxImageInterface::Destroy( m_histResultID );
 
 	m_HistValueArray.clear();
 	m_histValueArraySize = 0;
@@ -484,11 +480,7 @@ bool SVThresholdClass::Rebuild()
 		svData.Type = SVDataBufferInfoClass::SVHistResult;
 		svData.HBuffer.milResult = m_histResultID;
 
-		if( !m_histResultID.empty() )
-		{
-			Result = (S_OK == SVImageProcessingClass::DestroyDataBuffer( &svData ));
-		}
-
+		Result = (S_OK == SVImageProcessingClass::DestroyDataBuffer( &svData ));
 		Result = Result && (S_OK == SVImageProcessingClass::CreateDataBuffer( &svData ));
 
 		if ( Result )
@@ -496,7 +488,7 @@ bool SVThresholdClass::Rebuild()
 			m_histResultID = svData.HBuffer.milResult;
 		}
 
-		if( !m_histResultID.empty() )
+		if( M_NULL != m_histResultID )
 		{
 				m_HistValueArray.clear();
 				m_histValueArraySize = 0;

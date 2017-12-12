@@ -60,8 +60,6 @@ namespace
 				SVMatroxGraphicsInterface::Destroy( m_handle );
 			}
 
-			operator SVMatroxGraphics() const { return m_handle; }
-
 			void Clear( SVMatroxBuffer& p_rBuffer )
 			{
 				SVMatroxGraphicsInterface::Clear( m_handle, p_rBuffer );
@@ -83,7 +81,7 @@ namespace
 			}
 
 		protected:
-			SVMatroxGraphics m_handle;
+			SVMatroxIdentifier m_handle = M_NULL;
 		};
 	}
 
@@ -449,7 +447,7 @@ bool SVHistogramAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pError
 {
 	bool Valid = __super::ResetObject(pErrorMessages);
 
-	if (msvHistResultID.empty())
+	if (M_NULL == m_HistResultID)
 	{
 		if (nullptr != pErrorMessages)
 		{
@@ -519,13 +517,13 @@ bool SVHistogramAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rC
 
 		svData.Length = msvlHistValueArraySize;
 		svData.Type = SVDataBufferInfoClass::SVHistResult;
-		svData.HBuffer.milResult = msvHistResultID;
+		svData.HBuffer.milResult = m_HistResultID;
 		if ( S_OK == SVImageProcessingClass::CreateDataBuffer( &svData )  )
 		{
-			msvHistResultID = svData.HBuffer.milResult;
+			m_HistResultID = svData.HBuffer.milResult;
 		}
 
-		if (msvHistResultID.empty())
+		if (M_NULL == m_HistResultID)
 		{
 			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16156);
@@ -605,7 +603,7 @@ bool SVHistogramAnalyzerClass::CloseObject()
 	m_histogramImage.CloseObject();
 	msvplHistValues.clear();
 	SVMatroxImageInterface l_lIntf;
-	l_lIntf.Destroy( msvHistResultID );
+	l_lIntf.Destroy( m_HistResultID );
 	SVImageAnalyzerClass::CloseObject();
 
 
@@ -706,7 +704,7 @@ bool SVHistogramAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 			break;
 		}
 
-		MatroxCode = l_lImageIntf.Histogram(msvHistResultID, l_MilHandle.GetBuffer() );
+		MatroxCode = l_lImageIntf.Histogram(m_HistResultID, l_MilHandle.GetBuffer() );
 		if (S_OK != MatroxCode)
 		{
 			Result = false;
@@ -718,7 +716,7 @@ bool SVHistogramAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 			break;
 		}
 
-		MatroxCode = l_lImageIntf.GetResult(msvHistResultID,  msvplHistValues );
+		MatroxCode = l_lImageIntf.GetResult(m_HistResultID,  msvplHistValues );
 
 		if (S_OK != MatroxCode)
 		{
@@ -1114,7 +1112,7 @@ bool SVHistogramAnalyzerClass::calcHistogram()
 
 	if(!LastError)
 	{
-		MatroxCode = l_lImageIntf.Histogram(msvHistResultID, l_MilHandle.GetBuffer() );
+		MatroxCode = l_lImageIntf.Histogram(m_HistResultID, l_MilHandle.GetBuffer() );
 		if (S_OK != MatroxCode)
 		{
 			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
@@ -1125,7 +1123,7 @@ bool SVHistogramAnalyzerClass::calcHistogram()
 
 	if(!LastError)
 	{
-		MatroxCode = l_lImageIntf.GetResult(msvHistResultID,  msvplHistValues );
+		MatroxCode = l_lImageIntf.GetResult(m_HistResultID,  msvplHistValues );
 		if (S_OK != MatroxCode)
 		{
 			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );

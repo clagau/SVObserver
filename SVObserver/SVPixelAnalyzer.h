@@ -49,7 +49,7 @@ public:
 protected:
 	virtual bool onRun(SVRunStatusClass &rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	SVMatroxImageResult		m_histResultID;
+	SVMatroxIdentifier		m_histResultID = M_NULL;
 	SVMatroxLongArray		m_alHistValues;
 };
 

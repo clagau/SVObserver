@@ -16,7 +16,6 @@
 #include "SVMatroxImageBuffer.h"
 #include "SVMatroxImageChildBuffer.h"
 #include "SVSystemLibrary/SVImageConvertorGDI.h"
-#include "SVMatroxDisplay.h"
 #include "SVMatroxImagingLibrary.h"  // has MIL includes
 #include "SVMatroxResourceMonitor.h"
 #include "MatroxSharedBuffer.h"
@@ -1757,42 +1756,6 @@ HRESULT SVMatroxBufferInterface::CopyBuffer(SVMatroxIdentifier p_To, const SVMat
 }
 
 /**
-@SVOperationName CopyBuffer (SVMatroxBuffer to SVMatroxDisplayBuffer)
-
-@SVOperationDescription This function copies the data from a SVMatroxDisplayBuffer to a SVMatroxBuffer.
-
-*/
-HRESULT SVMatroxBufferInterface::CopyBuffer(SVMatroxDisplayBuffer& p_rTo, const SVMatroxBuffer& p_rFrom)
-{
-	HRESULT l_Code(S_OK);
-#ifdef USE_TRY_BLOCKS
-	try
-#endif
-	{
-		if (!p_rTo.empty() && !p_rFrom.empty())
-		{
-			MbufCopy(p_rFrom.GetIdentifier(),
-				p_rTo.GetIdentifier());
-
-			l_Code = SVMatroxApplicationInterface::GetLastStatus();
-		}
-		else
-		{
-			l_Code = SVMEE_INVALID_HANDLE;
-		}
-	}
-#ifdef USE_TRY_BLOCKS
-	catch(...)
-	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
-		SVMatroxApplicationInterface::LogMatroxException();
-	}
-#endif
-	assert(S_OK == l_Code);
-	return l_Code;
-}
-
-/**
 @SVOperationName CopyBuffer (SVMatroxBuffer and offsets to SVMatroxBuffer)
 
 @SVOperationDescription This function copies the data from a SVMatroxBuffer to a SVMatroxBuffer with x and y offsets.  If the destination is not large enough to put the source with its offsets then it is clipped.
@@ -2697,43 +2660,6 @@ HRESULT SVMatroxBufferInterface::ControlNeighborhood(SVMatroxBuffer& p_rBuf,
 #endif
 	assert(S_OK == l_Code);
 	return l_Code;
-}
-
-/**
-@SVOperationName ClearBuffer - SVMatroxDisplay
-
-@SVOperationDescription This function clears the entire specified buffer to the specified color.
-
-*/
-HRESULT SVMatroxBufferInterface::ClearBuffer(SVMatroxDisplay& p_rBuffer, 
-																		   double p_dColor)
-{
-	HRESULT l_Code;
-#ifdef USE_TRY_BLOCKS
-	try
-#endif
-	{
-		if (!p_rBuffer.empty())
-		{
-			MbufClear(p_rBuffer.m_DisplayIdentifier, p_dColor);
-
-			l_Code = SVMatroxApplicationInterface::GetLastStatus();
-		}
-		else
-		{
-			l_Code = SVMEE_INVALID_HANDLE;
-		}
-	}
-#ifdef USE_TRY_BLOCKS
-	catch(...)
-	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
-		SVMatroxApplicationInterface::LogMatroxException();
-	}
-#endif
-	assert(S_OK == l_Code);
-	return l_Code;
-
 }
 
 /**

@@ -119,7 +119,7 @@ bool SVLuminanceAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pError
 {
 	bool Valid = __super::ResetObject(pErrorMessages);
 
-	if (msvHistResultID.empty())
+	if (M_NULL == m_HistResultID)
 	{
 		if (nullptr != pErrorMessages)
 		{
@@ -189,13 +189,13 @@ bool SVLuminanceAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rC
 		SVDataBufferInfoClass svData;
 		svData.Length = msvlHistValueArraySize;
 		svData.Type = SVDataBufferInfoClass::SVHistResult;
-		svData.HBuffer.milResult = msvHistResultID;
+		svData.HBuffer.milResult = m_HistResultID;
 		if ( S_OK == SVImageProcessingClass::CreateDataBuffer( &svData ) )
 		{
-			msvHistResultID = svData.HBuffer.milResult;
+			m_HistResultID = svData.HBuffer.milResult;
 		}
 
-		if (msvHistResultID.empty())
+		if (M_NULL == m_HistResultID)
 		{
 			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16098);
@@ -226,7 +226,7 @@ bool SVLuminanceAnalyzerClass::CloseObject()
 
 	msvplHistValues.clear();
 	SVMatroxImageInterface l_lIntf;
-	l_lIntf.Destroy( msvHistResultID );
+	l_lIntf.Destroy( m_HistResultID );
 	SVImageAnalyzerClass::CloseObject ();
 
 	return true;
@@ -312,7 +312,7 @@ bool SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 
 		SVMatroxImageInterface l_lImageIntf;
 
-		MatroxResult = l_lImageIntf.Histogram(msvHistResultID, l_MilBuffer.GetBuffer() );
+		MatroxResult = l_lImageIntf.Histogram(m_HistResultID, l_MilBuffer.GetBuffer() );
 		if( S_OK != MatroxResult )
 		{
 			//          35 = Invalid MIL ID, for others see milerr.h
@@ -325,7 +325,7 @@ bool SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 			break;
 		}
 
-		MatroxResult = l_lImageIntf.GetResult(msvHistResultID,  msvplHistValues );
+		MatroxResult = l_lImageIntf.GetResult(m_HistResultID,  msvplHistValues );
 
 
 		if( S_OK != MatroxResult )

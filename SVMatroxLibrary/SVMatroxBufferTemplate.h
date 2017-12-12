@@ -19,7 +19,6 @@
 class SVMatroxBufferTemplate
 {
 public:
-	friend class SVMatroxDisplayBuffer;
 	friend class SVMatroxDisplayInterface;
 
 	virtual ~SVMatroxBufferTemplate();

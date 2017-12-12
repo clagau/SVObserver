@@ -18,7 +18,6 @@
 #include "SVMatroxStatusInformation.h"
 #include "SVMatroxBuffer.h"
 #include "SVMatroxOcr.h"
-#include "SVMatroxOcrResult.h"
 #include "SVMatroxApplicationInterface.h"
 #include "SVMatroxOcrCreateStruct.h"
 #include "SVMatroxOcrCalibrateStruct.h"
@@ -55,17 +54,17 @@ public:
 	// This function replaces MocrAllocFont
 	static HRESULT Create( SVMatroxOcr& p_rFontId, const SVMatroxOcrCreateStruct& p_rCreateStruct );
 	// This function replaces MocrAllocResult
-	static HRESULT Create( SVMatroxOcrResult& p_rFontResult);
+	static HRESULT CreateResult(SVMatroxIdentifier& p_rFontResult);
 	// This function replaces MocrAllocFont
 	static HRESULT Destroy( SVMatroxOcr& p_rId );
-	static HRESULT Destroy( SVMatroxOcrResult& p_rId );
+	static HRESULT DestroyResult(SVMatroxIdentifier& p_rId );
 
 	// This function replaces MocrCalibrateFont
 	static HRESULT CalibrateFont( const SVMatroxOcr& p_rFontId, const SVMatroxOcrCalibrateStruct& p_rCalStruct );
 	static HRESULT CalibrateFontCommand( const SVCommandDataHolder& p_rAttributes, SVCommandDataHolder& p_rResults );
 
 	// This function replaces MocrVerifyString and MocrReadString
-	static HRESULT Execute( const SVMatroxOcrResult& p_rResultId, const SVMatroxOcr& p_rFontId, const SVMatroxBuffer& p_rImage );
+	static HRESULT Execute( const SVMatroxIdentifier& rResultId, const SVMatroxOcr& p_rFontId, const SVMatroxBuffer& p_rImage );
 	static HRESULT ReadString( const SVCommandDataHolder& p_rAttributes, SVCommandDataHolder& p_rResults );
 	static HRESULT VerifyString( const SVCommandDataHolder& p_rAttributes, SVCommandDataHolder& p_rResults );
 	
@@ -88,14 +87,14 @@ public:
 	static HRESULT Get( const SVMatroxOcr& p_rFontId, SVOcrControlEnum InquireType, std::string& p_rStrValue) ;
 
 	// These functions use MocrControl
-	static HRESULT SetResult( const SVMatroxOcrResult& p_rFontId, SVOcrControlEnum, const double& p_dValue );
-	static HRESULT SetResult( const SVMatroxOcrResult& p_rFontId, SVOcrControlEnum, const long& p_lValue );
+	static HRESULT SetResult( const SVMatroxIdentifier& rResultId, SVOcrControlEnum, const double& p_dValue );
+	static HRESULT SetResult( const SVMatroxIdentifier& rResultId, SVOcrControlEnum, const long& p_lValue );
 
 	// This function replaces MocrInquire
-	static HRESULT GetResult( const SVMatroxOcrResult& p_rFontId, SVOcrResultEnum InquireType, double& p_rdValue) ;
-	static HRESULT GetResult( const SVMatroxOcrResult& p_rFontId, SVOcrResultEnum InquireType, long& p_rlValue) ;
-	static HRESULT GetResult( const SVMatroxOcrResult& p_rFontId, SVOcrResultEnum InquireType, std::string& p_rStrValue) ;
-	static HRESULT GetResult( const SVMatroxOcrResult& p_rFontId, SVOcrResultEnum InquireType, SVMatroxDoubleArray& p_adValues ) ;
+	static HRESULT GetResult( const SVMatroxIdentifier& rResultId, SVOcrResultEnum InquireType, double& p_rdValue) ;
+	static HRESULT GetResult( const SVMatroxIdentifier& rResultId, SVOcrResultEnum InquireType, long& p_rlValue) ;
+	static HRESULT GetResult( const SVMatroxIdentifier& rResultId, SVOcrResultEnum InquireType, std::string& p_rStrValue) ;
+	static HRESULT GetResult( const SVMatroxIdentifier& rResultId, SVOcrResultEnum InquireType, SVMatroxDoubleArray& p_adValues ) ;
 
 	// This function replaces MocrRestoreFont
 	static HRESULT RestoreFont( SVMatroxOcr& p_rFontId, const std::string& p_sFileName, SVOcrOperationEnum p_eOperation);

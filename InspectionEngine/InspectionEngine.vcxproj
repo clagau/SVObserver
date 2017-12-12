@@ -113,6 +113,7 @@
     <ClInclude Include="SVEvaluateTranslationXClass.h" />
     <ClInclude Include="SVEvaluateTranslationYClass.h" />
     <ClInclude Include="SVExtentPropertiesInfoStruct.h" />
+    <ClInclude Include="SVGlobalHandles.h" />
     <ClInclude Include="SVImageBuffer.h" />
     <ClInclude Include="SVImageChildStruct.h" />
     <ClInclude Include="SVImageClass.h" />

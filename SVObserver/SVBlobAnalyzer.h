@@ -234,8 +234,8 @@ public:
 
 	DWORD                        m_DefaultAttributes; 
 
-	SVMatroxBlobFeatureList      m_FeatureListID;
-	SVMatroxBlobResult           m_ResultBufferID;
+	SVMatroxIdentifier			m_BlobContextID = M_NULL;
+	SVMatroxIdentifier			m_ResultBufferID = M_NULL;
 
 	SVEnumerateValueObjectClass  m_colorBlobEnumValue;
 

@@ -204,6 +204,9 @@
     <ClInclude Include="SVTaskObjectValueInterface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SVGlobalHandles.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

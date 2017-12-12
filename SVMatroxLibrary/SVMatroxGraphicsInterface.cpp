@@ -14,6 +14,7 @@
 #include "SVMatroxEnums.h"
 #include "SVMatroxImagingLibrary.h"
 #include "SVMatroxResourceMonitor.h"
+#include "SVMatroxHelper.h"
 
 SVMatroxGraphicsInterface::SVMatroxGraphicsInterface()
 {
@@ -28,16 +29,16 @@ double SVMatroxGraphicsInterface::CreateRGB888( unsigned char p_Red, unsigned ch
 	return M_RGB888( p_Red, p_Green, p_Blue );
 }
 
-HRESULT SVMatroxGraphicsInterface::Clear( SVMatroxGraphics& p_rGraphicsID, SVMatroxBuffer& p_rBuffer )
+HRESULT SVMatroxGraphicsInterface::Clear(SVMatroxIdentifier& p_rGraphicsID, SVMatroxBuffer& p_rBuffer )
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
 	{
-		if( !p_rGraphicsID.empty() && !p_rBuffer.empty() )
+		if( M_NULL !=p_rGraphicsID && !p_rBuffer.empty() )
 		{
-			MgraClear( p_rGraphicsID.m_GraphicsId, p_rBuffer.GetIdentifier() );
+			MgraClear( p_rGraphicsID, p_rBuffer.GetIdentifier() );
 
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
@@ -57,16 +58,16 @@ HRESULT SVMatroxGraphicsInterface::Clear( SVMatroxGraphics& p_rGraphicsID, SVMat
 	return l_Code;
 }
 
-HRESULT SVMatroxGraphicsInterface::RectangleFill( SVMatroxGraphics& p_rGraphicsID, SVMatroxBuffer& p_rBuffer, const RECT& p_rRectangle )
+HRESULT SVMatroxGraphicsInterface::RectangleFill(SVMatroxIdentifier& p_rGraphicsID, SVMatroxBuffer& p_rBuffer, const RECT& p_rRectangle )
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
 	{
-		if( !p_rGraphicsID.empty() && !p_rBuffer.empty() )
+		if( M_NULL != p_rGraphicsID && !p_rBuffer.empty() )
 		{
-			MgraRectFill( p_rGraphicsID.m_GraphicsId, p_rBuffer.GetIdentifier(),
+			MgraRectFill( p_rGraphicsID, p_rBuffer.GetIdentifier(),
 				p_rRectangle.left, p_rRectangle.top, 
 				p_rRectangle.right, p_rRectangle.bottom );
 
@@ -88,16 +89,16 @@ HRESULT SVMatroxGraphicsInterface::RectangleFill( SVMatroxGraphics& p_rGraphicsI
 	return l_Code;
 }
 
-HRESULT SVMatroxGraphicsInterface::Color( SVMatroxGraphics& p_rGraphicsID, double p_Color )
+HRESULT SVMatroxGraphicsInterface::Color(SVMatroxIdentifier& p_rGraphicsID, double p_Color )
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
 	{
-		if( !p_rGraphicsID.empty() )
+		if( M_NULL != p_rGraphicsID )
 		{
-			MgraColor( p_rGraphicsID.m_GraphicsId, p_Color );
+			MgraColor( p_rGraphicsID, p_Color );
 
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
@@ -117,16 +118,16 @@ HRESULT SVMatroxGraphicsInterface::Color( SVMatroxGraphics& p_rGraphicsID, doubl
 	return l_Code;
 }
 
-HRESULT SVMatroxGraphicsInterface::BackColor( SVMatroxGraphics& p_rGraphicsID, double p_Color )
+HRESULT SVMatroxGraphicsInterface::BackColor(SVMatroxIdentifier& p_rGraphicsID, double p_Color )
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
 	{
-		if( !p_rGraphicsID.empty() )
+		if( M_NULL != p_rGraphicsID )
 		{
-			MgraBackColor( p_rGraphicsID.m_GraphicsId, p_Color );
+			MgraBackColor( p_rGraphicsID, p_Color );
 
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
@@ -146,7 +147,7 @@ HRESULT SVMatroxGraphicsInterface::BackColor( SVMatroxGraphics& p_rGraphicsID, d
 	return l_Code;
 }
 
-HRESULT SVMatroxGraphicsInterface::Create( SVMatroxGraphics& p_rGraphicsID )
+HRESULT SVMatroxGraphicsInterface::Create(SVMatroxIdentifier& p_rGraphicsID )
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -170,12 +171,9 @@ HRESULT SVMatroxGraphicsInterface::Create( SVMatroxGraphics& p_rGraphicsID )
 			{// Free handle if already filled.
 				SVMatroxResourceMonitor::InsertIdentifier( SVGraphicsID, l_NewID );
 
-				if( !p_rGraphicsID.empty() )	
-				{
-					Destroy( p_rGraphicsID );
-				}
+				Destroy( p_rGraphicsID );
 				// Set new handle
-				p_rGraphicsID.m_GraphicsId = l_NewID;
+				p_rGraphicsID = l_NewID;
 			}
 		}
 	}
@@ -190,41 +188,8 @@ HRESULT SVMatroxGraphicsInterface::Create( SVMatroxGraphics& p_rGraphicsID )
 	return l_Code;
 }
 
-HRESULT SVMatroxGraphicsInterface::Destroy( SVMatroxGraphics& p_rGraphicsID )
+HRESULT SVMatroxGraphicsInterface::Destroy(SVMatroxIdentifier& rGraphicsID )
 {
-	HRESULT l_Code( S_OK );
-#ifdef USE_TRY_BLOCKS
-	try
-#endif
-	{
-		if( !p_rGraphicsID.empty() )
-		{
-			SVMatroxResourceMonitor::SVAutoLock l_AutoLock;
-
-			l_Code = SVMatroxResourceMonitor::GetAutoLock( l_AutoLock );
-
-			if( l_Code == S_OK )
-			{
-				MgraFree( p_rGraphicsID.m_GraphicsId );
-
-				l_Code = SVMatroxApplicationInterface::GetLastStatus();
-				if( l_Code == S_OK )
-				{
-					SVMatroxResourceMonitor::EraseIdentifier( SVGraphicsID, p_rGraphicsID.m_GraphicsId );
-
-					p_rGraphicsID.m_GraphicsId = M_NULL;
-				}
-			}
-		}
-	}
-#ifdef USE_TRY_BLOCKS
-	catch(...)
-	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
-		SVMatroxApplicationInterface::LogMatroxException();
-	}
-#endif
-	assert(l_Code == S_OK );
-	return l_Code;
+	return DestroyMatroxId(rGraphicsID, MgraFree, SVGraphicsID);
 }
 

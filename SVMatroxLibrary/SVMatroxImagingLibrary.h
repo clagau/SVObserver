@@ -11,10 +11,6 @@
 
 #pragma once
 
-#define M_MIL_USE_SAFE_TYPE 0
-
-#include <mil.h>
-
 #pragma comment( lib, "mil" )
 #pragma comment( lib, "milblob" )
 #pragma comment( lib, "milcode" )

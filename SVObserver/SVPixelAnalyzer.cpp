@@ -85,11 +85,8 @@ bool SVPixelAnalyzerClass::CloseObject()
 {
     m_alHistValues.clear();
 
-	if ( !m_histResultID.empty() )
-	{
-		HRESULT l_Code;
-		l_Code = SVMatroxImageInterface::Destroy( m_histResultID );
-	}
+	SVMatroxImageInterface::Destroy( m_histResultID );
+
 	return SVImageAnalyzerClass::CloseObject();
 }
 
@@ -145,7 +142,7 @@ bool SVPixelAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCreat
 			m_histResultID = svData.HBuffer.milResult;
 		}
 		
-		if( m_histResultID.empty() )
+		if( M_NULL == m_histResultID )
 		{
 			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16124);
@@ -253,7 +250,7 @@ bool SVPixelAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMess
 {
 	bool Valid = __super::ResetObject(pErrorMessages);
 
-	if (m_histResultID.empty())
+	if (M_NULL == m_histResultID)
 	{
 		if (nullptr != pErrorMessages)
 		{

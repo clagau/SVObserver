@@ -78,7 +78,7 @@ bool SVColorThresholdClass::CreateObject( const SVObjectLevelCreateStruct& rCrea
 				m_HistogramResultID = svData.HBuffer.milResult;
 			}
 
-			if( !m_HistogramResultID.empty() )
+			if( M_NULL != m_HistogramResultID )
 			{
 				// Create 3 Histograms
 				try
@@ -133,7 +133,7 @@ bool SVColorThresholdClass::CloseObject()
 		GetBandHistogramImage(Band).CloseObject();
 	}
 
-	if (!m_HistogramResultID.empty())
+	if ( M_NULL != m_HistogramResultID)
 	{
 
 		SVMatroxImageInterface::Destroy(m_HistogramResultID);

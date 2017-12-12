@@ -266,7 +266,7 @@ void SVToolAdjustmentDialogThresholdPageClass::initThreshold()
 		{
 			// Calculate And Show White Pixels...
 			// &&&
-			SVMatroxImageResult histResultID;
+			SVMatroxIdentifier histResultID = M_NULL;
 			SVMatroxLongArray l_alHistValues;
 			SVDataBufferInfoClass svData;
 

@@ -959,7 +959,7 @@ HRESULT SVImageProcessingClass::CreateDataBuffer( SVDataBufferInfoClass* pDataIn
 	HRESULT Result = S_OK;
 
 	if( nullptr != pDataInfo && pDataInfo->Length > 0 &&
-		pDataInfo->HBuffer.milResult.empty() )
+		M_NULL == pDataInfo->HBuffer.milResult )
 	{
 		SVImageOperationTypeEnum l_eType;
 
@@ -998,7 +998,7 @@ HRESULT SVImageProcessingClass::CreateDataBuffer( SVDataBufferInfoClass* pDataIn
 		l_Code = SVMatroxImageInterface::Create(pDataInfo->HBuffer.milResult, pDataInfo->Length, l_eType);
 
 
-		Result = !pDataInfo->HBuffer.milResult.empty() ? S_OK : S_FALSE;
+		Result = (M_NULL != pDataInfo->HBuffer.milResult) ? S_OK : S_FALSE;
 	}
 
 	return Result;
@@ -1010,10 +1010,7 @@ HRESULT SVImageProcessingClass::DestroyDataBuffer( SVDataBufferInfoClass* pDataI
 
 	if ( nullptr != pDataInfo )
 	{
-		if( !pDataInfo->HBuffer.milResult.empty() )
-		{
-			SVMatroxImageInterface::Destroy( pDataInfo->HBuffer.milResult );
-		}
+		SVMatroxImageInterface::Destroy( pDataInfo->HBuffer.milResult );
 	}
 
 	return Result;
@@ -1038,11 +1035,11 @@ HRESULT SVImageProcessingClass::CreateBarCodeBuffer( SVBarCodeBufferInfoClass* p
 {
 	HRESULT Result = S_OK;
 
-	if( nullptr != pDataInfo && pDataInfo->HBuffer.milBarCode.empty() )
+	if( nullptr != pDataInfo && M_NULL == pDataInfo->HBuffer.milBarCode )
 	{
 		// Allocate Bar Code buffer...
 		SVMatroxBarCodeInterface::Create(pDataInfo->HBuffer.milBarCode, pDataInfo->m_lCodeType );
-		Result = (!pDataInfo->HBuffer.milBarCode.empty()) ? S_OK : S_FALSE;
+		Result = (M_NULL != pDataInfo->HBuffer.milBarCode) ? S_OK : S_FALSE;
 	}
 	return Result;
 }

@@ -16,8 +16,6 @@
 //Moved to precompiled header: #include <comdef.h>
 #include "SVMatroxEnums.h"
 #include "SVMatroxBuffer.h"
-#include "SVMatroxBlobFeatureList.h"
-#include "SVMatroxBlobResult.h"
 #include "SVMatroxApplicationInterface.h"
 
 class SVCommandDataHolder;
@@ -28,15 +26,15 @@ class SVCommandDataHolder;
 
 @SVObjectOverview This class contains interface functions for using the Matrox blob analyzer.
 
-@SVObjectOperations The create function creates a blob feature list. The only parameter is a SVMatroxBlobFeatureList&.
-The CreateResult function creates a blob result object. The only parameter is a SVMatroxBlobResult&.
-There are two Destroy functions The destroy( SVMatroxBlobResult& )frees the handle from the createResult function. The second Destroy( SVMatroxBlobFeatureList& ) destroys the handle from the create function.
-These Set functions select the feature(s) to be calculated by MblobCalculate() when using the specified feature list. These functions include double&, long& and SVMatroxString& types.  Each of these functions take a SVMatroxBlobFeatureList reference, a SVBlobEnum and one of the three value references.
-The Get functions include double&, long&, and SVMatroxString& types. Each of these functions take a SVMatroxBlobFeatureList reference, a SVBlobEnum and a value reference;
-The GetResult functions retrieve the results for a specified feature for all included blobs, from the blob analysis result buffer. The GetResult functions include double&, long&, and SVMatroxString& types. Each of these functions take a SVMatroxBlobResult& reference, a SVBlobEnum and a value reference;
-The BlobFill function draws, in an image, those blobs that meet a specified fill criterion with the specified fill value. It takes the following parameters: const SVMatroxBlobResult&, const SVMatroxBuffer&, SVBlobEnum, const long& color.
-The Select function selects blobs that meet a specified criterion. These blobs will be included in or excluded from future operations (calculations or result retrieval), or deleted entirely from the result buffer. Selection criterion can be based on a calculated feature or on the current status of the blobs. Execute() must have been called at least once to call this function. The parameters are const the SVMatroxBlobResult object, a SVBlobEnum, and two double range values.
-The BlobSelectFeature function selects the feature(s) to be calculated by Execute function when using the specified feature list.  It takes the following parameters: const SVMatroxBlobResult& p_rResult, SVBlobEnum p_eOperation, const double& p_dCondLow, const double& p_dCondHigh.
+@SVObjectOperations The create function creates a blob feature list. The only parameter is a SVMatroxIdentifier&.
+The CreateResult function creates a blob result object. The only parameter is a SVMatroxIdentifier&.
+There are two Destroy functions The destroy( SVMatroxIdentifier& )frees the handle from the createResult function. The second Destroy( SVMatroxIdentifier& ) destroys the handle from the create function.
+These Set functions select the feature(s) to be calculated by MblobCalculate() when using the specified feature list. These functions include double&, long& and SVMatroxString& types.  Each of these functions take a SVMatroxIdentifier reference, a SVBlobEnum and one of the three value references.
+The Get functions include double&, long&, and SVMatroxString& types. Each of these functions take a SVMatroxIdentifier reference, a SVBlobEnum and a value reference;
+The GetResult functions retrieve the results for a specified feature for all included blobs, from the blob analysis result buffer. The GetResult functions include double&, long&, and SVMatroxString& types. Each of these functions take a SVMatroxIdentifier& reference, a SVBlobEnum and a value reference;
+The BlobFill function draws, in an image, those blobs that meet a specified fill criterion with the specified fill value. It takes the following parameters: const SVMatroxIdentifier&, const SVMatroxBuffer&, SVBlobEnum, const long& color.
+The Select function selects blobs that meet a specified criterion. These blobs will be included in or excluded from future operations (calculations or result retrieval), or deleted entirely from the result buffer. Selection criterion can be based on a calculated feature or on the current status of the blobs. Execute() must have been called at least once to call this function. The parameters are const the SVMatroxIdentifier object, a SVBlobEnum, and two double range values.
+The BlobSelectFeature function selects the feature(s) to be calculated by Execute function when using the specified feature list.  It takes the following parameters: const SVMatroxIdentifier& rResult, SVBlobEnum eOperation, const double& dCondLow, const double& dCondHigh.
 */
 class SVMatroxBlobInterface
 {
@@ -70,48 +68,48 @@ public:
 	virtual ~SVMatroxBlobInterface();
 
 	// This function replaces MblobAllocFeatureList
-	static HRESULT Create( SVMatroxBlobFeatureList& p_rFeatureListId );
+	static HRESULT CreateContext(SVMatroxIdentifier& rContextId );
 	// This function replaces MblobAllocResult
-	static HRESULT Create( SVMatroxBlobResult& p_rResultId );
+	static HRESULT CreateResult( SVMatroxIdentifier& rResultId );
 
 	// This function replaces MblobFree
-	static HRESULT Destroy( SVMatroxBlobFeatureList& p_rResultId );
-	static HRESULT Destroy( SVMatroxBlobResult& p_rResultId );
+	static HRESULT DestroyContext(SVMatroxIdentifier& rContextId );
+	static HRESULT DestroyResult( SVMatroxIdentifier& rResultId );
 
 
 	// This function replaces MblobCalculate( 
-	static HRESULT Execute( const SVMatroxBlobResult& p_rResult, const SVMatroxBuffer& p_rIdentId,  const SVMatroxBlobFeatureList& p_rFeatureListId );
+	static HRESULT Execute( const SVMatroxIdentifier& rResultId, const SVMatroxBuffer& rIdentId,  const SVMatroxIdentifier& rContextId );
 
-	static HRESULT Get( const SVMatroxBlobResult& p_rResultId, SVBlobControlEnum p_lControlType, long& p_lControlValue) ;
-	static HRESULT Get( const SVMatroxBlobResult& p_rResultId, SVBlobControlEnum p_lControlType, double& p_lControlValue) ;
-	static HRESULT GetNumber( const SVMatroxBlobResult& p_rResultId, long& p_rNumber ) ;
-	static HRESULT GetResult( const SVMatroxBlobResult& p_rResultId, SVBlobSelectionEnum p_lControlType, double* p_pdResultsArray ) ;
-	static HRESULT GetResult( const SVMatroxBlobResult& p_rResultId, SVBlobSelectionEnum p_lControlType, long* p_plResultsArray );
+	static HRESULT Get( const SVMatroxIdentifier& rResultId, SVBlobControlEnum lControlType, long& lControlValue) ;
+	static HRESULT Get( const SVMatroxIdentifier& rResultId, SVBlobControlEnum lControlType, double& lControlValue) ;
+	static HRESULT GetNumber( const SVMatroxIdentifier& rResultId, long& rNumber ) ;
+	static HRESULT GetResult( const SVMatroxIdentifier& rResultId, SVBlobSelectionEnum lControlType, double* pdResultsArray ) ;
+	static HRESULT GetResult( const SVMatroxIdentifier& rResultId, SVBlobSelectionEnum lControlType, long* plResultsArray );
 
 
 	// These functions replace MblobControl
-	static HRESULT Set( const SVMatroxBlobResult& p_rResultId, SVBlobControlEnum p_lControlType, const long p_lControlValue);
-	static HRESULT Set( const SVMatroxBlobResult& p_rResultId, SVBlobControlEnum p_lControlType, const double p_lControlValue);
+	static HRESULT Set( const SVMatroxIdentifier& rResultId, SVBlobControlEnum lControlType, const long lControlValue);
+	static HRESULT Set( const SVMatroxIdentifier& rResultId, SVBlobControlEnum lControlType, const double lControlValue);
 
 	//
-	static HRESULT GetForeground( const SVMatroxBlobResult& p_rResultId, bool& rIsDarkForeground);
-	static HRESULT SetForeground( const SVMatroxBlobResult& p_rResultId, bool isDarkForeground);
-	static HRESULT GetIdentifier( const SVMatroxBlobResult& p_rResultId, bool& p_bBinary);
-	static HRESULT SetIdentifier( const SVMatroxBlobResult& p_rResultId, bool p_bBinary);
+	static HRESULT GetForeground( const SVMatroxIdentifier& rResultId, bool& rIsDarkForeground);
+	static HRESULT SetForeground( const SVMatroxIdentifier& rResultId, bool isDarkForeground);
+	static HRESULT GetIdentifier( const SVMatroxIdentifier& rResultId, bool& bBinary);
+	static HRESULT SetIdentifier( const SVMatroxIdentifier& rResultId, bool bBinary);
 
 	// This function replaces MblobFill
-	static HRESULT BlobFill( const SVMatroxBlobResult& p_rResult, const SVMatroxBuffer& p_rImageID, SVBlobControlEnum p_eCriterion, const long& p_lColor);
+	static HRESULT BlobFill( const SVMatroxIdentifier& rResultId, const SVMatroxBuffer& rImageID, SVBlobControlEnum eCriterion, const long& lColor);
 	// This function replaces MblobSelect
-	static HRESULT BlobSelect( const SVMatroxBlobResult& p_rResult, SVBlobOperationEnum p_eOperation, SVBlobSelectionEnum p_eSelection, SVConditionEnum p_eCondition, const double& p_dCondLow, const double& p_dCondHigh);
+	static HRESULT BlobSelect( const SVMatroxIdentifier& rResultId, SVBlobOperationEnum eOperation, SVBlobSelectionEnum eSelection, SVConditionEnum eCondition, const double& dCondLow, const double& dCondHigh);
 	// This function replaces MblobSelectFeature
-	static HRESULT BlobSelectFeature( const SVMatroxBlobFeatureList& p_rFeatureList, SVBlobSelectionEnum p_eFeature);
+	static HRESULT BlobSelectFeature( const SVMatroxIdentifier& rContextID, std::set<SVBlobSelectionEnum> featureSet);
 
 	static bool Compare(int criteria, const SVBlob& lBlob, const SVBlob& rBlob);
 
-	static HRESULT FindSizedBlobs( SVMatroxBuffer& p_rThresholdImage, bool p_LightBackground, SVBlobList& rList ); 
-	static HRESULT NumBlobs( SVMatroxBuffer& p_rThresholdImage, BYTE p_Background, long& p_rBlobCount );
+	static HRESULT FindSizedBlobs( SVMatroxBuffer& rThresholdImage, bool LightBackground, SVBlobList& rList ); 
+	static HRESULT NumBlobs( SVMatroxBuffer& rThresholdImage, BYTE Background, long& rBlobCount );
 
-	static HRESULT FillResults( const SVBlobOffsetList& p_rBlobList, SVCommandDataHolder& p_rResults );
+	static HRESULT FillResults( const SVBlobOffsetList& rBlobList, SVCommandDataHolder& rResults );
 
 	static long CalculateOptimalWidth(const SVBlobList& rBlobList, unsigned short padding);
 	static long CalculateOptimalHeight(const SVBlobList& rBlobList, unsigned short padding);
@@ -126,11 +124,6 @@ private:
 	};
 
 	typedef std::vector<long> SVBlobResultCollection;
-
-	static long Convert2MatroxControlType(SVBlobSelectionEnum p_lControlType) ;
-	static long Convert2MatroxControlType(SVBlobControlEnum p_lControlType) ;
-	static long Convert2MatroxControlType(SVBlobOperationEnum p_lControlType) ;
-	static long Convert2MatroxControlType(SVConditionEnum p_lControlType) ;
 
 	enum SortType
 	{

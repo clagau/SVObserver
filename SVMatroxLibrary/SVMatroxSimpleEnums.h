@@ -6,6 +6,7 @@
 //******************************************************************************
 #pragma once
 
+#include <mil.h>
 
 /**
 @SVObjectName Matrox Buffer Type Enum
@@ -294,57 +295,62 @@ enum SVMatroxFileTypeEnum
 enum SVBlobSelectionEnum
 {
 
-	SVEBlobArea					= 2L,			// M_AREA
-	SVEBlobBoxXMax				= 8L,			// M_BOX_X_MAX 
-	SVEBlobBoxXMin				= 6L,			// M_BOX_X_MIN 
-	SVEBlobBoxYMax				= 9L,			// M_BOX_Y_MAX
-	SVEBlobBoxYMin				= 7L,			// M_BOX_Y_MIN
-	SVEBlobBreadth				= 49L,			// M_BREADTH
-	SVEBlobCompactness			= 25L,			// M_COMPACTNESS 
-	SVEBlobConvexParameter		= 20L,			// M_CONVEX_PERIMETER
-	SVEBlobElongation			= 50L,			// M_ELONGATION
-	SVEBlobEulerNumber			= 47L,			// M_EULER_NUMBER
-	SVEBlobFeretElongation		= 27L,			// M_FERET_ELONGATION
-	SVEBlobFeretMaxAngle		= 17L,			// M_FERET_MAX_ANGLE
-	SVEBlobFeretMaxDia			= 16L,			// M_FERET_MAX_DIAMETER
-	SVEBlobFeretMeanDia			= 18L,			// M_FERET_MEAN_DIAMETER
-	SVEBlobFeretMinAngle		= 15L, // M_FERET_MIN_ANGLE
-	SVEBlobFeretMinDia			= 14L, // M_FERET_MIN_DIAMETER
-	SVEBlobFeretX				= 72L, // M_FERET_X
-	SVEBlobFeritY				= 5L, // M_FERET_Y
-	SVEBlobFirstPointX			= 75L, // M_FIRST_POINT_X
-	SVEBlobFirstPointY			= 132L, // M_FIRST_POINT_Y
-	SVEBlobGeneralFeret			= 0x400L, // M_GENERAL_FERET
-	SVEBlobGeneralMoment		= 0x800L, // M_GENERAL_MOMENT
-	SVEBlobIntercept			= 51L, // M_INTERCEPT_0
-	SVEBlobIntercept45			= 52L, // M_INTERCEPT_45
-	SVEBlobIntercept90			= 53L, // M_INTERCEPT_90
-	SVEBlobIntercept135			= 54L, // M_INTERCEPT_135
-	SVEBlobLabelValue			= 1L, // M_LABEL_VALUE
-	SVEBlobLength				= 0x00002000L, // M_LENGTH
-	SVEBlobNumberOfChainedPixels= 56L, // M_NUMBER_OF_CHAINED_PIXELS
-	SVEBlobNumberOfHoles		= 26L, // M_NUMBER_OF_HOLES
-	SVEBlobNumberOfRuns			= 55L, // M_NUMBER_OF_RUNS
-	SVEBlobPerimeter			= 3L, // M_PERIMETER
-	SVEBlobRoughness			= 28L, // M_ROUGHNESS
-	SVEBlobXMaxAtYMax			= 22L, // M_X_MAX_AT_Y_MAX
-	SVEBlobXMinAtYMin			= 21L, // M_X_MIN_AT_Y_MIN 
-	SVEBlobYMaxAtXMin			= 24L, // M_Y_MAX_AT_X_MIN
-	SVEBlobYMinAtXMax			= 23L, // M_Y_MIN_AT_X_MAX
-	SVEBlobSumPixel				= 29L, // M_SUM_PIXEL
-	SVEBlobAxisPrincipalAngle	= 44L, // M_AXIS_PRINCIPAL_ANGLE
-	SVEBlobAxisSecondaryAngle	= 45L, // M_AXIS_SECONDARY_ANGLE
-	SVEBlobCenterOfGravityX		= 34L, // M_CENTER_OF_GRAVITY_X
-	SVEBlobCenterOfGravityY		= 35L, // M_CENTER_OF_GRAVITY_Y
+	SVEBlobArea					= M_AREA,
+	SVEBlobBoxXMax				= M_BOX_X_MAX,
+	SVEBlobBoxXMin				= M_BOX_X_MIN,
+	SVEBlobBoxYMax				= M_BOX_Y_MAX,
+	SVEBlobBoxYMin				= M_BOX_Y_MIN,
+	SVEBlobBreadth				= M_BREADTH,
+	SVEBlobCompactness			= M_COMPACTNESS,
+	SVEBlobConvexParameter		= M_CONVEX_PERIMETER,
+	SVEBlobElongation			= M_ELONGATION,
+	SVEBlobEulerNumber			= M_EULER_NUMBER,
+	SVEBlobFeretElongation		= M_FERET_ELONGATION,
+	SVEBlobFeretMaxAngle		= M_FERET_MAX_ANGLE,
+	SVEBlobFeretMaxDia			= M_FERET_MAX_DIAMETER,
+	SVEBlobFeretMeanDia			= M_FERET_MEAN_DIAMETER,
+	SVEBlobFeretMinAngle		= M_FERET_MIN_ANGLE,
+	SVEBlobFeretMinDia			= M_FERET_MIN_DIAMETER,
+	SVEBlobFeretX				= M_FERET_X,
+	SVEBlobFeretY				= M_FERET_Y,
+	SVEBlobFirstPointX			= M_FIRST_POINT_X,
+	SVEBlobFirstPointY			= M_FIRST_POINT_Y,
+#if SV_DESIRED_MIL_VERSION == 0x0900
+	SVEBlobGeneralFeret = M_GENERAL_FERET,
+	SVEBlobGeneralMoment = M_GENERAL_MOMENT,
+#else
+	SVEBlobGeneralFeret = M_FERET_GENERAL,
+	SVEBlobGeneralMoment = M_MOMENT_GENERAL,
+#endif
+	SVEBlobIntercept			= M_INTERCEPT_0,
+	SVEBlobIntercept45			= M_INTERCEPT_45,
+	SVEBlobIntercept90			= M_INTERCEPT_90,
+	SVEBlobIntercept135			= M_INTERCEPT_135,
+	SVEBlobLabelValue			= M_LABEL_VALUE,
+	SVEBlobLength				= M_LENGTH,
+	SVEBlobNumberOfChainedPixels= M_NUMBER_OF_CHAINED_PIXELS,
+	SVEBlobNumberOfHoles		= M_NUMBER_OF_HOLES,
+	SVEBlobNumberOfRuns			= M_NUMBER_OF_RUNS,
+	SVEBlobPerimeter			= M_PERIMETER,
+	SVEBlobRoughness			= M_ROUGHNESS,
+	SVEBlobXMaxAtYMax			= M_X_MAX_AT_Y_MAX,
+	SVEBlobXMinAtYMin			= M_X_MIN_AT_Y_MIN,
+	SVEBlobYMaxAtXMin			= M_Y_MAX_AT_X_MIN,
+	SVEBlobYMinAtXMax			= M_Y_MIN_AT_X_MAX,
+	SVEBlobSumPixel				= M_SUM_PIXEL,
+	SVEBlobAxisPrincipalAngle	= M_AXIS_PRINCIPAL_ANGLE,
+	SVEBlobAxisSecondaryAngle	= M_AXIS_SECONDARY_ANGLE,
+	SVEBlobCenterOfGravityX		= M_CENTER_OF_GRAVITY_X,
+	SVEBlobCenterOfGravityY		= M_CENTER_OF_GRAVITY_Y,
 
-	SVEBlobMomentX0Y1			= 36L, // M_MOMENT_X0_Y1
-	SVEBlobMomentX1Y0			= 37L, // M_MOMENT_X1_Y0
-	SVEBlobMomentX1Y1			= 38L, // M_MOMENT_X1_Y1
-	SVEBlobMomentX0Y2			= 39L, // M_MOMENT_X0_Y2
-	SVEBlobMomentX2Y0			= 40L, // M_MOMENT_X2_Y0
-	SVEBlobMomentCentralX0Y2	= 42L, // M_MOMENT_CENTRAL_X0_Y2
-	SVEBlobMomentCentralX2Y0	= 43L, // M_MOMENT_CENTRAL_X2_Y0
-	SVEBlobMomentCentralX1Y1	= 41L, // M_MOMENT_CENTRAL_X1_Y1
+	SVEBlobMomentX0Y1			= M_MOMENT_X0_Y1,
+	SVEBlobMomentX1Y0			= M_MOMENT_X1_Y0,
+	SVEBlobMomentX1Y1			= M_MOMENT_X1_Y1,
+	SVEBlobMomentX0Y2			= M_MOMENT_X0_Y2,
+	SVEBlobMomentX2Y0			= M_MOMENT_X2_Y0,
+	SVEBlobMomentCentralX0Y2	= M_MOMENT_CENTRAL_X0_Y2,
+	SVEBlobMomentCentralX2Y0	= M_MOMENT_CENTRAL_X2_Y0,
+	SVEBlobMomentCentralX1Y1	= M_MOMENT_CENTRAL_X1_Y1,
 	SV_M_CENTER_BOUNDING_BOX_X = 116,
 	SV_M_CENTER_BOUNDING_BOX_Y = 117,
 
@@ -361,14 +367,14 @@ enum SVBlobSelectionEnum
 enum SVConditionEnum
 {
 	// Condition
-	SVECondInRange				= 1L, // M_IN_RANGE 
-	SVECondOutRange				= 2L, // M_OUT_RANGE 
-	SVECondEqual				= 3L, // M_EQUAL 
-	SVECondNotEqual				= 4L, // M_NOT_EQUAL 
-	SVECondGreater				= 5L, // M_GREATER 
-	SVECondLess					= 6L, // M_LESS
-	SVECondGreaterOrEqual		= 7L, // M_GREATER_OR_EQUAL 
-	SVECondLessOrEqual			= 8L, // M_LESS_OR_EQUAL
+	SVECondInRange				= M_IN_RANGE,
+	SVECondOutRange				= M_OUT_RANGE,
+	SVECondEqual				= M_EQUAL,
+	SVECondNotEqual				= M_NOT_EQUAL,
+	SVECondGreater				= M_GREATER,
+	SVECondLess					= M_LESS,
+	SVECondGreaterOrEqual		= M_GREATER_OR_EQUAL,
+	SVECondLessOrEqual			= M_LESS_OR_EQUAL,
 };
 
 /**
@@ -382,12 +388,11 @@ enum SVConditionEnum
 enum SVBlobControlEnum
 {
 	// Selection 
-	SVEBlobAll					= 0x40000000L,	// M_ALL_BLOBS 
-	SVEBlobExcludeBlobs			= 0x20000000L,	// M_EXCLUDED_BLOBS 
-	SVEBlobIncludeBlobs			= 0x80000000L,	// M_INCLUDED_BLOBS 
-	SVEBlobForeground			= 4L,			// M_FOREGROUND_VALUE 
-	SVEBlobSaveRuns				= 14L,			// M_SAVE_RUNS 
-	SVEBlobIdentifier			= 15L,			// M_IDENTIFIER_TYPE 
+	SVEBlobAll					= M_ALL_BLOBS,
+	SVEBlobExcludeBlobs			= M_EXCLUDED_BLOBS,
+	SVEBlobIncludeBlobs			= M_INCLUDED_BLOBS,
+	SVEBlobSaveRuns				= M_SAVE_RUNS,
+	SVEBlobIdentifier			= M_IDENTIFIER_TYPE,
 };
 
 /**
@@ -402,9 +407,9 @@ enum SVBlobOperationEnum
 {
 
 	// Operation
-	SVEBlobExclude				= 2L,			// M_EXCLUDE
-	SVEBlobExcludeOnly			= 0x102L,		// M_EXCLUDE_ONLY
-	SVEBlobInclude				= 1L,			// M_INCLUDE
+	SVEBlobExclude				= M_EXCLUDE,
+	SVEBlobExcludeOnly			= M_EXCLUDE_ONLY,
+	SVEBlobInclude				= M_INCLUDE,
 };
 
 /**
@@ -704,13 +709,13 @@ enum SVPatternTypeEnum
 	SVPatBaseType				= 0x0000ffff,
 	SVPatResultType				= 0x01000000,
 	// Model Parameter
-	SVPatSearchAngle			= 0x00000100L, // M_SEARCH_ANGLE
-	SVPatSearchAngleDeltaNeg	= 0x00000200L, // M_SEARCH_ANGLE_DELTA_NEG
-	SVPatSearchAngleDeltaPos	= 0x00000400L, // M_SEARCH_ANGLE_DELTA_POS
-	SVPatSearchAngleMode		= 0x00000080L, // M_SEARCH_ANGLE_MODE
-	SVPatSearchAngleAccuracy	= 0x00001000L, // M_SEARCH_ANGLE_ACCURACY
-	SVPatSearchAngleInterpMode	= 0x00008000L, // M_SEARCH_ANGLE_INTERPOLATION_MODE
-	SVPatSearchAngleTolerance	= 0x00000800L, // M_SEARCH_ANGLE_TOLERANCE  
+	SVPatSearchAngle			= M_SEARCH_ANGLE,
+	SVPatSearchAngleDeltaNeg	= M_SEARCH_ANGLE_DELTA_NEG,
+	SVPatSearchAngleDeltaPos	= M_SEARCH_ANGLE_DELTA_POS,
+	SVPatSearchAngleMode		= M_SEARCH_ANGLE_MODE,
+	SVPatSearchAngleAccuracy	= M_SEARCH_ANGLE_ACCURACY,
+	SVPatSearchAngleInterpMode	= M_SEARCH_ANGLE_INTERPOLATION_MODE,
+	SVPatSearchAngleTolerance	= M_SEARCH_ANGLE_TOLERANCE,
 }; 
 
 /**

@@ -103,7 +103,7 @@ public:
 
 	//	MIL object ids used in the OCR/OCV operation
 	SVMatroxOcr m_milFontID;
-	SVMatroxOcrResult m_milResultID;
+	SVMatroxIdentifier m_milResultID = M_NULL;
 	long m_lFontStringLength;
 	long m_lFontStringLengthMax;
 	long m_lMatchStringLength;

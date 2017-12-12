@@ -4119,12 +4119,12 @@ STDMETHODIMP CSVCommand::SVReadString(long lFontIdentifier, BSTR* bstrFoundStrin
 		{
 			HRESULT MatroxCode;
 			SVMatroxBuffer l_milImage = CreateImageFromBSTR( bstrReadImage );
-			SVMatroxOcrResult l_milResult;
-			MatroxCode = SVMatroxOcrInterface::Create( l_milResult );
+			SVMatroxIdentifier milResult = M_NULL;
+			MatroxCode = SVMatroxOcrInterface::CreateResult( milResult );
 			// BRW - This l_Code is never checked.
 
 			lFontHandle.m_bVerify = false;
-			MatroxCode = SVMatroxOcrInterface::Execute( l_milResult, lFontHandle, l_milImage );
+			MatroxCode = SVMatroxOcrInterface::Execute( milResult, lFontHandle, l_milImage );
 
 			if (S_OK != MatroxCode)
 			{
@@ -4141,14 +4141,14 @@ STDMETHODIMP CSVCommand::SVReadString(long lFontIdentifier, BSTR* bstrFoundStrin
 			// Process the OCR chars returned from MocrReadString();
 			long l_lLength = 0L;
 
-			MatroxCode = SVMatroxOcrInterface::GetResult( l_milResult, SVOcrResultStringSize, l_lLength );
+			MatroxCode = SVMatroxOcrInterface::GetResult( milResult, SVOcrResultStringSize, l_lLength );
 
 			if( l_lLength != 0 )
 			{
-				MatroxCode = SVMatroxOcrInterface::GetResult(l_milResult, SVOcrStringScore, *dMatchScore );
+				MatroxCode = SVMatroxOcrInterface::GetResult(milResult, SVOcrStringScore, *dMatchScore );
 				// BRW - This l_Code is never checked.
 				std::string Text;
-				MatroxCode = SVMatroxOcrInterface::GetResult(l_milResult, SVOcrString, Text );
+				MatroxCode = SVMatroxOcrInterface::GetResult(milResult, SVOcrString, Text );
 				*bstrFoundString = _bstr_t(Text.c_str()).Detach();
 			}// end if
 			else
@@ -4170,7 +4170,7 @@ STDMETHODIMP CSVCommand::SVReadString(long lFontIdentifier, BSTR* bstrFoundStrin
 				Exception.setMessage( hr, SvStl::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams) );
 			}
 
-			MatroxCode = SVMatroxOcrInterface::Destroy( l_milResult );
+			MatroxCode = SVMatroxOcrInterface::DestroyResult( milResult );
 			if (S_OK !=  MatroxCode)
 			{
 				SVMatroxStatusInformation l_info;
@@ -4213,8 +4213,8 @@ STDMETHODIMP CSVCommand::SVVerifyString(long lFontIdentifier, BSTR bstrVerifyStr
 			{
 				HRESULT MatroxCode(S_OK);
 				SVMatroxBuffer l_milImage = CreateImageFromBSTR( bstrVerifyImage );
-				SVMatroxOcrResult l_milResult;
-				MatroxCode = SVMatroxOcrInterface::Create( l_milResult );
+				SVMatroxIdentifier milResult = M_NULL;
+				MatroxCode = SVMatroxOcrInterface::CreateResult( milResult );
 
 				if (S_OK !=  MatroxCode)
 				{
@@ -4231,7 +4231,7 @@ STDMETHODIMP CSVCommand::SVVerifyString(long lFontIdentifier, BSTR bstrVerifyStr
 				lFontHandle.m_bVerify = true;
 				lFontHandle.m_VerifyString = strVerify;
 
-				SVMatroxOcrInterface::Execute( l_milResult, lFontHandle, l_milImage );
+				SVMatroxOcrInterface::Execute( milResult, lFontHandle, l_milImage );
 
 				if (S_OK != MatroxCode )
 				{
@@ -4248,11 +4248,11 @@ STDMETHODIMP CSVCommand::SVVerifyString(long lFontIdentifier, BSTR bstrVerifyStr
 				// Process the OCV chars returned from MocrVerifyString();
 				long l_lLength = 0L;
 
-				MatroxCode = SVMatroxOcrInterface::GetResult( l_milResult, SVOcrResultStringSize, l_lLength);
+				MatroxCode = SVMatroxOcrInterface::GetResult( milResult, SVOcrResultStringSize, l_lLength);
 
 				if( l_lLength != 0L )
 				{
-					MatroxCode = SVMatroxOcrInterface::GetResult( l_milResult, SVOcrStringScore, *dMatchScore );
+					MatroxCode = SVMatroxOcrInterface::GetResult( milResult, SVOcrStringScore, *dMatchScore );
 				}// end if
 				else
 				{
@@ -4273,7 +4273,7 @@ STDMETHODIMP CSVCommand::SVVerifyString(long lFontIdentifier, BSTR bstrVerifyStr
 					Exception.setMessage( hr, SvStl::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams) );
 				}
 
-				MatroxCode = SVMatroxOcrInterface::Destroy( l_milResult );
+				MatroxCode = SVMatroxOcrInterface::DestroyResult( milResult );
 
 				if( S_OK != MatroxCode )
 				{

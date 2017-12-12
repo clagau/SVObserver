@@ -463,10 +463,10 @@ long SVMatroxImageInterface::Convert2MatroxType( SVImageWaterShedEnum p_eType)
 /**
 @SVOperationName Create
 
-@SVOperationDescription This function creates a SVMatroxImageResult.
+@SVOperationDescription This function creates a Result object and return the of it SVMatroxIdentifier.
 
 */
-HRESULT SVMatroxImageInterface::Create( SVMatroxImageResult& p_rResultId, const long p_lNbEntries, SVImageOperationTypeEnum p_eResultType)
+HRESULT SVMatroxImageInterface::Create(SVMatroxIdentifier& rResultId, const long p_lNbEntries, SVImageOperationTypeEnum p_eResultType)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -492,16 +492,8 @@ HRESULT SVMatroxImageInterface::Create( SVMatroxImageResult& p_rResultId, const 
 			if( l_Code == S_OK )
 			{
 				SVMatroxResourceMonitor::InsertIdentifier( SVImageID, l_NewId );
-
-				if( p_rResultId.empty() )
-				{
-					p_rResultId.m_ImageResultID = l_NewId;
-				}
-				else
-				{
-					l_Code = Destroy( p_rResultId );
-					p_rResultId.m_ImageResultID = l_NewId;
-				}
+				l_Code = Destroy(rResultId);
+				rResultId = l_NewId;				
 			}
 		}
 
@@ -520,10 +512,10 @@ HRESULT SVMatroxImageInterface::Create( SVMatroxImageResult& p_rResultId, const 
 /**
 @SVOperationName Destroy
 
-@SVOperationDescription This function destroys a SVMatroxImageResult.
+@SVOperationDescription This function destroys a Result object.
 
 */
-HRESULT SVMatroxImageInterface::Destroy( SVMatroxImageResult& p_rResultId )
+HRESULT SVMatroxImageInterface::Destroy(SVMatroxIdentifier& rResultId)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -531,7 +523,7 @@ HRESULT SVMatroxImageInterface::Destroy( SVMatroxImageResult& p_rResultId )
 #endif
 
 	{
-		if( !p_rResultId.empty() )
+		if( M_NULL != rResultId )
 		{
 			SVMatroxResourceMonitor::SVAutoLock l_AutoLock;
 
@@ -545,13 +537,13 @@ HRESULT SVMatroxImageInterface::Destroy( SVMatroxImageResult& p_rResultId )
 
 				if( l_Code == S_OK )
 				{
-					MimFree( p_rResultId.m_ImageResultID );
+					MimFree( rResultId );
 					l_Code = SVMatroxApplicationInterface::GetLastStatus();
 					if( l_Code == S_OK )
 					{
-						SVMatroxResourceMonitor::EraseIdentifier( SVImageID, p_rResultId.m_ImageResultID );
+						SVMatroxResourceMonitor::EraseIdentifier( SVImageID, rResultId );
 
-						p_rResultId.m_ImageResultID = M_NULL;
+						rResultId = M_NULL;
 					}
 				}
 			}
@@ -871,7 +863,7 @@ HRESULT SVMatroxImageInterface::AutoThreshold( const SVCommandDataHolder& p_rAtt
 		if( S_OK == l_Status )
 		{
 			// Read histogram...
-			SVMatroxImageResult histResult;
+			SVMatroxIdentifier histResult;
 				
 			HRESULT l_RetCode = SVMatroxImageInterface::Create(histResult, 256, SVImageHistList);
 
@@ -1427,7 +1419,7 @@ HRESULT SVMatroxImageInterface::Flip( const SVMatroxBuffer& p_rDest,
 @SVOperationDescription This function retrieves all the results of the specified type from the specified result buffer and stores them in the specified one-dimensional destination user array.
 
 */
-HRESULT SVMatroxImageInterface::GetResult( const SVMatroxImageResult& p_rResultID, 
+HRESULT SVMatroxImageInterface::GetResult( const SVMatroxIdentifier& rResultID,
 																	   SVMatroxDoubleArray& p_adArray)
 {
 	HRESULT l_Code( S_OK );
@@ -1437,20 +1429,16 @@ HRESULT SVMatroxImageInterface::GetResult( const SVMatroxImageResult& p_rResultI
 
 	{
 		MIL_INT l_lSize = 0;
-		if( !p_rResultID.empty() )
+		if( M_NULL != rResultID )
 		{
-			MimInquire( p_rResultID.m_ImageResultID,
-				M_RESULT_SIZE,
-				&l_lSize);
+			MimInquire( rResultID, M_RESULT_SIZE, &l_lSize);
 
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 
 			if( l_Code == S_OK && l_lSize > 0)
 			{
 				p_adArray.resize( l_lSize );
-				MimGetResult( p_rResultID.m_ImageResultID,
-					M_VALUE | M_TYPE_DOUBLE  ,
-					&p_adArray[0]);
+				MimGetResult( rResultID,	M_VALUE | M_TYPE_DOUBLE, &p_adArray[0]);
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
 			}
 		}
@@ -1476,8 +1464,7 @@ HRESULT SVMatroxImageInterface::GetResult( const SVMatroxImageResult& p_rResultI
 @SVOperationDescription This function retrieves all the results of the specified type from the specified result buffer and stores them in the specified one-dimensional destination user array.
 
 */
-HRESULT SVMatroxImageInterface::GetResult( const SVMatroxImageResult& p_rResultID, 
-																	   SVMatroxLongArray& p_alArray)
+HRESULT SVMatroxImageInterface::GetResult( const SVMatroxIdentifier& rResultID,  SVMatroxLongArray& p_alArray)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -1486,20 +1473,16 @@ HRESULT SVMatroxImageInterface::GetResult( const SVMatroxImageResult& p_rResultI
 
 	{
 		MIL_INT l_lSize = 0;
-		if( !p_rResultID.empty() )
+		if( M_NULL != rResultID )
 		{
-			MimInquire( p_rResultID.m_ImageResultID,
-				M_RESULT_SIZE,
-				&l_lSize);
+			MimInquire( rResultID, M_RESULT_SIZE, &l_lSize);
 
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 
 			if( l_Code == S_OK && l_lSize > 0)
 			{
 				p_alArray.resize( l_lSize );
-				MimGetResult( p_rResultID.m_ImageResultID,
-					M_VALUE | M_TYPE_LONG,
-					&p_alArray[0]);
+				MimGetResult( rResultID, M_VALUE | M_TYPE_LONG,	&p_alArray[0]);
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
 			}
 		}
@@ -1524,8 +1507,7 @@ HRESULT SVMatroxImageInterface::GetResult( const SVMatroxImageResult& p_rResultI
 @SVOperationDescription This function retrieves all the results of the specified type from the specified result buffer and stores them in the specified one-dimensional destination user array.
 
 */
-HRESULT SVMatroxImageInterface::GetResult( const SVMatroxImageResult& p_rResultID, 
-																	   SVMatroxByteArray& p_acArray)
+HRESULT SVMatroxImageInterface::GetResult( const SVMatroxIdentifier& rResultID, SVMatroxByteArray& p_acArray)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -1534,20 +1516,16 @@ HRESULT SVMatroxImageInterface::GetResult( const SVMatroxImageResult& p_rResultI
 
 	{
 		MIL_INT l_lSize = 0;
-		if( !p_rResultID.empty() )
+		if( M_NULL != rResultID )
 		{
-			MimInquire( p_rResultID.m_ImageResultID,
-				M_RESULT_SIZE,
-				&l_lSize);
+			MimInquire( rResultID, M_RESULT_SIZE,	&l_lSize);
 
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 
 			if( l_Code == S_OK && l_lSize > 0)
 			{
 				p_acArray.resize( l_lSize );
-				MimGetResult( p_rResultID.m_ImageResultID,
-					M_VALUE + M_TYPE_CHAR,
-					&p_acArray[0]);
+				MimGetResult( rResultID, M_VALUE + M_TYPE_CHAR,	&p_acArray[0]);
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
 			}
 		}
@@ -1573,7 +1551,7 @@ HRESULT SVMatroxImageInterface::GetResult( const SVMatroxImageResult& p_rResultI
 @SVOperationDescription This function retrieves all the results of the specified type from the specified result buffer and stores them in the specified one-dimensional destination user array.
 
 */
-HRESULT SVMatroxImageInterface::GetResult( const SVMatroxImageResult& p_rResultID, void * p_pArray)
+HRESULT SVMatroxImageInterface::GetResult( const SVMatroxIdentifier& rResultID, void * p_pArray)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -1582,11 +1560,9 @@ HRESULT SVMatroxImageInterface::GetResult( const SVMatroxImageResult& p_rResultI
 
 	{
 		long l_lSize = 0;
-		if( !p_rResultID.empty() )
+		if( M_NULL != rResultID )
 		{
-			MimGetResult( p_rResultID.m_ImageResultID,
-				M_VALUE,
-				p_pArray);
+			MimGetResult( rResultID, M_VALUE, p_pArray);
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
 		else
@@ -1612,8 +1588,7 @@ HRESULT SVMatroxImageInterface::GetResult( const SVMatroxImageResult& p_rResultI
 @SVOperationDescription This function calculates the histogram (or pixel intensity distribution) of the specified source buffer and stores results in the specified histogram result buffer.
 
 */
-HRESULT SVMatroxImageInterface::Histogram( const SVMatroxImageResult& p_rHistResult, 
-																	   const SVMatroxBuffer& p_rSource)
+HRESULT SVMatroxImageInterface::Histogram( const SVMatroxIdentifier& rHistResult, const SVMatroxBuffer& p_rSource)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -1621,9 +1596,9 @@ HRESULT SVMatroxImageInterface::Histogram( const SVMatroxImageResult& p_rHistRes
 #endif
 
 	{
-		if( !p_rSource.empty() && !p_rHistResult.empty())
+		if( !p_rSource.empty() && M_NULL != rHistResult)
 		{
-			MimHistogram(p_rSource.GetIdentifier(), p_rHistResult.m_ImageResultID);
+			MimHistogram(p_rSource.GetIdentifier(), rHistResult);
 
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
@@ -1802,7 +1777,7 @@ HRESULT SVMatroxImageInterface::PolarTransform( const SVMatroxBuffer& p_rDest,
 @SVOperationDescription This function projects a two-dimensional buffer into a one-dimensional buffer from the specified angle, and writes results to the specified projection result buffer.
 
 */
-HRESULT SVMatroxImageInterface::Project( const SVMatroxImageResult& p_rProjDest, 
+HRESULT SVMatroxImageInterface::Project( const SVMatroxIdentifier& rResultId,
 																	 const SVMatroxBuffer& p_rSource, 
 																	 double p_dAngle)
 {
@@ -1812,11 +1787,9 @@ HRESULT SVMatroxImageInterface::Project( const SVMatroxImageResult& p_rProjDest,
 #endif
 
 	{
-		if( !p_rSource.empty() && !p_rProjDest.empty())
+		if( !p_rSource.empty() && M_NULL != rResultId)
 		{
-			MimProject(p_rSource.GetIdentifier(), 
-				p_rProjDest.m_ImageResultID,
-				p_dAngle);
+			MimProject(p_rSource.GetIdentifier(), rResultId, p_dAngle);
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
 		else

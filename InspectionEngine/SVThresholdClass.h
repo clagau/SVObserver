@@ -14,7 +14,6 @@
 #pragma region Incudes
 #include "SVUnaryImageOperatorClass.h"
 #include "SVMatroxLibrary/SVMatroxTypedefs.h"
-#include "SVMatroxLibrary/SVMatroxImageResult.h"
 #pragma endregion Incudes
 
 class SVThresholdClass : public SVUnaryImageOperatorClass
@@ -46,7 +45,7 @@ protected:
 	SVDoubleValueObjectClass* getExternalLT();
 	SVDoubleValueObjectClass* getExternalATM();
 
-	SVMatroxImageResult m_histResultID;
+	SVMatroxIdentifier m_histResultID = M_NULL;
 	SVMatroxLongArray  m_HistValueArray;
 	int    m_histValueArraySize;
 	__int64 m_pixelNumber;

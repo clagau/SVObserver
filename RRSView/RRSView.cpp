@@ -13,6 +13,7 @@
 #include "stdafx.h"
 #include "RRSView.h"
 #include "RRSViewDlg.h"
+#define M_MIL_USE_SAFE_TYPE 0
 #include <mil.h>
 
 #ifdef _DEBUG
@@ -56,7 +57,7 @@ BOOL CRRSViewApp::InitInstance()
 	InitCommonControlsEx(&InitCtrls);
 
 	/// Allocate MilSystem
-	MIL_ID AppId = MappAlloc(M_DEFAULT, M_NULL);
+	SVMatroxInt AppId = MappAlloc(M_DEFAULT, M_NULL);
 	if (AppId == M_NULL)
 	{
 		AfxMessageBox(_T("Mil System could not be allocated. RRSView will be closed"));

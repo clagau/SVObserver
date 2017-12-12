@@ -84,7 +84,7 @@ struct SVBlobFeatureConstants BlobFeatureConstants[]=
    SVEBlobFeretX, //M_FERET_X,
       &SVBlobFeretXObjectGuid,
       IDS_OBJECTNAME_FERETX,
-   SVEBlobFeritY, //M_FERET_Y,
+   SVEBlobFeretY, //M_FERET_Y,
       &SVBlobFeretYObjectGuid,
       IDS_OBJECTNAME_FERETY,
    SVEBlobFirstPointX, //M_FIRST_POINT_X,
@@ -379,15 +379,9 @@ bool SVBlobAnalyzerClass::CloseObject()
 {
     SVImageAnalyzerClass::CloseObject ();
 	
-    if ( !m_ResultBufferID.empty() )
-    {
-		SVMatroxBlobInterface::Destroy(m_ResultBufferID);
-    }
+	SVMatroxBlobInterface::DestroyResult(m_ResultBufferID);
+	SVMatroxBlobInterface::DestroyContext(m_BlobContextID);
 
-    if ( !m_FeatureListID.empty() )
-    {
-		SVMatroxBlobInterface::Destroy(m_FeatureListID);
-    }
     return true;
 }
 
@@ -779,9 +773,9 @@ bool SVBlobAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateS
 		
 		dynamic_cast<SVInspectionProcess*>(GetInspection())->SetDefaultInputs();
 
-		MatroxCode = SVMatroxBlobInterface::Create( m_ResultBufferID );
+		MatroxCode = SVMatroxBlobInterface::CreateResult( m_ResultBufferID );
 		
-		if ( m_ResultBufferID.empty() )
+		if ( M_NULL == m_ResultBufferID )
 		{
 			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16117, GetUniqueObjectID());
@@ -1038,7 +1032,7 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 		//
 		// Analyze the image for blobs and features of blobs.
 		//
-		MatroxCode = SVMatroxBlobInterface::Execute( m_ResultBufferID, l_MilBuffer.GetBuffer(), m_FeatureListID );
+		MatroxCode = SVMatroxBlobInterface::Execute( m_ResultBufferID, l_MilBuffer.GetBuffer(), m_BlobContextID );
 
 		if( S_OK != MatroxCode )
 		{
@@ -1573,25 +1567,20 @@ void SVBlobAnalyzerClass::MapQuickSort(double* aSortArray, long* alSortMap,	long
 DWORD SVBlobAnalyzerClass::BuildFeatureListID ()
 {
 	DWORD LastError(0);
-	HRESULT MatroxCode(S_OK);
+	HRESULT MatroxCode = SVMatroxBlobInterface::DestroyContext(m_BlobContextID);
 
-	if ( !m_FeatureListID.empty() )
+	if (S_OK != MatroxCode)
 	{
-		MatroxCode = SVMatroxBlobInterface::Destroy( m_FeatureListID );
+		SvStl::MessageMgrStd MesMan(SvStl::LogOnly);
+		MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16148);
+		LastError = -SvStl::Err_16148;
+		return LastError;
 
-		if (S_OK != MatroxCode)
-		{
-			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16148);
-			LastError = - SvStl::Err_16148;
-			return LastError;
-
-		}
 	}
 
-	MatroxCode = SVMatroxBlobInterface::Create(m_FeatureListID );
+	MatroxCode = SVMatroxBlobInterface::CreateContext(m_BlobContextID);
 
-	if ( m_FeatureListID.empty() )
+	if (M_NULL == m_BlobContextID)
 	{
 		SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16149);
@@ -1599,29 +1588,29 @@ DWORD SVBlobAnalyzerClass::BuildFeatureListID ()
 		return LastError;
 	}
 
-	for (SVBlobFeatureEnum i = SV_AREA; i < SV_TOPOF_LIST; i = (SVBlobFeatureEnum) (i + 1))
+	std::set<SVBlobSelectionEnum> featureSet;
+
+	for (SVBlobFeatureEnum i = SV_AREA; i < SV_TOPOF_LIST; i = (SVBlobFeatureEnum)(i + 1))
 	{
-		if (m_FeaturesEnabled [i] == _T('1'))
+		if (m_FeaturesEnabled[i] == _T('1'))
 		{
-			if ( (i == SV_CENTER_X_SOURCE) || (i == SV_CENTER_Y_SOURCE) )
+			if ((i == SV_CENTER_X_SOURCE) || (i == SV_CENTER_Y_SOURCE))
 			{
 				continue;
 			}
 
-			MatroxCode = SVMatroxBlobInterface::BlobSelectFeature( m_FeatureListID, BlobFeatureConstants [i].MILFeatureDef);
-
-
-			if (S_OK != MatroxCode)
-			{
-				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16150);
-				LastError = - SvStl::Err_16150;
-				return LastError;
-			}
+			featureSet.insert(BlobFeatureConstants[i].MILFeatureDef);
 		}
 	}
 
-
+	MatroxCode = SVMatroxBlobInterface::BlobSelectFeature(m_BlobContextID, featureSet);
+	if (S_OK != MatroxCode)
+	{
+		SvStl::MessageMgrStd MesMan(SvStl::LogOnly);
+		MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16150);
+		LastError = -SvStl::Err_16150;
+		return LastError;
+	}	
 
 	return LastError;
 }

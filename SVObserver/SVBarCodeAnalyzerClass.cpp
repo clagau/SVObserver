@@ -148,10 +148,7 @@ bool SVBarCodeAnalyzerClass::InitMil (SvStl::MessageContainerVector *pErrorMessa
 	SVImageClass *pSVImage;
 	double dParm;
 
-	if ( !m_MilCodeId.empty() )
-	{
-		CloseMil();
-	}
+	CloseMil();
 	
 	if (pSVImage = getInputImage ())
 	{

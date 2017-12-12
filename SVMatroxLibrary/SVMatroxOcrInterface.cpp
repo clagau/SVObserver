@@ -25,6 +25,7 @@
 #include "SVMatroxImageInterface.h"
 #include "SVMatroxImagingLibrary.h"  // has MIL includes
 #include "SVMatroxResourceMonitor.h"
+#include "SVMatroxHelper.h"
 #pragma endregion Includes
 
 /**
@@ -537,10 +538,10 @@ HRESULT SVMatroxOcrInterface::Create( SVMatroxOcr& p_rFontId, const SVMatroxOcrC
 /**
 @SVOperationName Create - Result
 
-@SVOperationDescription Creates a SVMatroxOcrResult.
+@SVOperationDescription Creates a SVMatroxIdentifier.
 
 */
-HRESULT SVMatroxOcrInterface::Create( SVMatroxOcrResult& p_rFontResult )
+HRESULT SVMatroxOcrInterface::CreateResult(SVMatroxIdentifier& p_rFontResult )
 {
 	// This function replaces MocrAllocResult
 	HRESULT l_Code;
@@ -562,11 +563,8 @@ HRESULT SVMatroxOcrInterface::Create( SVMatroxOcrResult& p_rFontResult )
 			{
 				SVMatroxResourceMonitor::InsertIdentifier( SVOCRResultID, l_NewID );
 
-				if( !p_rFontResult.empty() )
-				{
-					Destroy( p_rFontResult );
-				}
-				p_rFontResult.m_OcrResultID = l_NewID;
+				DestroyResult( p_rFontResult );
+				p_rFontResult = l_NewID;
 			}
 		}
 	}
@@ -631,46 +629,14 @@ HRESULT SVMatroxOcrInterface::Destroy( SVMatroxOcr& p_rId )
 }
 
 /**
-@SVOperationName Destroy - SVMatroxOcrResult
+@SVOperationName DestroyResult
 
-@SVOperationDescription Destroys a SVMatroxOcrResult.
+@SVOperationDescription Destroys a MatroxOcrResult.
 
 */
-HRESULT SVMatroxOcrInterface::Destroy( SVMatroxOcrResult& p_rId )
+HRESULT SVMatroxOcrInterface::DestroyResult(SVMatroxIdentifier& rId )
 {
-	HRESULT l_Code = S_OK;
-#ifdef USE_TRY_BLOCKS
-	try
-#endif
-
-	{
-		if( !p_rId.empty() )
-		{
-			SVMatroxResourceMonitor::SVAutoLock l_AutoLock;
-
-			l_Code = SVMatroxResourceMonitor::GetAutoLock( l_AutoLock );
-
-			if( l_Code == S_OK )
-			{
-				MocrFree( p_rId.m_OcrResultID);
-				l_Code = SVMatroxApplicationInterface::GetLastStatus();
-				if( l_Code == S_OK )
-				{
-					SVMatroxResourceMonitor::EraseIdentifier( SVOCRResultID, p_rId.m_OcrResultID );
-
-					p_rId.m_OcrResultID = M_NULL;
-				}
-			}
-		}
-	}
-#ifdef USE_TRY_BLOCKS
-	catch(...)
-	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
-		SVMatroxApplicationInterface::LogMatroxException();
-	}
-#endif
-	return l_Code;
+	return DestroyMatroxId(rId, MocrFree, SVOCRResultID);
 }
 
 
@@ -1636,7 +1602,7 @@ HRESULT SVMatroxOcrInterface::Get( const SVMatroxOcr& p_rFontId, SVOcrControlEnu
 @SVOperationDescription This function sets various OCR controls for a read/verify operation.
 
 */
-HRESULT SVMatroxOcrInterface::SetResult( const SVMatroxOcrResult& p_rFontId, SVOcrControlEnum p_eControlType, const double& p_dValue )
+HRESULT SVMatroxOcrInterface::SetResult( const SVMatroxIdentifier& rResultId, SVOcrControlEnum p_eControlType, const double& p_dValue )
 {
 	HRESULT l_Code;
 #ifdef USE_TRY_BLOCKS
@@ -1647,9 +1613,9 @@ HRESULT SVMatroxOcrInterface::SetResult( const SVMatroxOcrResult& p_rFontId, SVO
 		MatroxType l_lControlType = Convert2MatroxControlType( p_eControlType );
 		if( l_lControlType != 0 )
 		{
-			if(!p_rFontId.empty())
+			if(M_NULL != rResultId)
 			{
-				MocrControl(p_rFontId.m_OcrResultID, l_lControlType, p_dValue);
+				MocrControl(rResultId, l_lControlType, p_dValue);
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
 			}
 			else
@@ -1678,9 +1644,9 @@ HRESULT SVMatroxOcrInterface::SetResult( const SVMatroxOcrResult& p_rFontId, SVO
 @SVOperationDescription This function sets various OCR controls for a read/verify operation.
 
 */
-HRESULT SVMatroxOcrInterface::SetResult( const SVMatroxOcrResult& p_rFontId, SVOcrControlEnum p_eControlType, const long& p_lValue )
+HRESULT SVMatroxOcrInterface::SetResult( const SVMatroxIdentifier& rResultId, SVOcrControlEnum p_eControlType, const long& p_lValue )
 {
-	return SetResult(p_rFontId, p_eControlType, static_cast<double>(p_lValue));
+	return SetResult(rResultId, p_eControlType, static_cast<double>(p_lValue));
 }
 
 
@@ -1691,7 +1657,7 @@ HRESULT SVMatroxOcrInterface::SetResult( const SVMatroxOcrResult& p_rFontId, SVO
 @SVOperationDescription This function retrieves the result(s) of the specified type from an OCR
 
 */
-HRESULT SVMatroxOcrInterface::GetResult( const SVMatroxOcrResult& p_rFontId, SVOcrResultEnum  p_eControlType, double& p_rdValue) 
+HRESULT SVMatroxOcrInterface::GetResult( const SVMatroxIdentifier& rResultId, SVOcrResultEnum  p_eControlType, double& p_rdValue)
 {
 	HRESULT l_Code;
 #ifdef USE_TRY_BLOCKS
@@ -1702,9 +1668,9 @@ HRESULT SVMatroxOcrInterface::GetResult( const SVMatroxOcrResult& p_rFontId, SVO
 		MatroxType l_lControlType = Convert2MatroxResultType( p_eControlType );
 		if( l_lControlType != 0 )
 		{
-			if(!p_rFontId.empty())
+			if(M_NULL != rResultId)
 			{
-				MocrGetResult(p_rFontId.m_OcrResultID, l_lControlType, &p_rdValue);
+				MocrGetResult(rResultId, l_lControlType, &p_rdValue);
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
 			}
 			else
@@ -1733,10 +1699,10 @@ HRESULT SVMatroxOcrInterface::GetResult( const SVMatroxOcrResult& p_rFontId, SVO
 @SVOperationDescription This function retrieves the result(s) of the specified type from an OCR
 
 */
-HRESULT SVMatroxOcrInterface::GetResult( const SVMatroxOcrResult& p_rFontId, SVOcrResultEnum  p_eControlType, long& p_rlValue) 
+HRESULT SVMatroxOcrInterface::GetResult( const SVMatroxIdentifier& rResultId, SVOcrResultEnum  p_eControlType, long& p_rlValue)
 {
 	double l_dValue;
-	HRESULT l_Code = GetResult( p_rFontId, p_eControlType, l_dValue);
+	HRESULT l_Code = GetResult(rResultId, p_eControlType, l_dValue);
 	if( l_Code == S_OK )
 	{
 		p_rlValue = static_cast<long>(l_dValue);
@@ -1750,7 +1716,7 @@ HRESULT SVMatroxOcrInterface::GetResult( const SVMatroxOcrResult& p_rFontId, SVO
 @SVOperationDescription This function retrieves the result(s) of the specified type from an OCR
 
 */
-HRESULT SVMatroxOcrInterface::GetResult( const SVMatroxOcrResult& p_rFontId, SVOcrResultEnum  p_eControlType, std::string& p_rStrValue) 
+HRESULT SVMatroxOcrInterface::GetResult( const SVMatroxIdentifier& rResultId, SVOcrResultEnum  p_eControlType, std::string& p_rStrValue)
 {
 	HRESULT l_Code;
 #ifdef USE_TRY_BLOCKS
@@ -1761,10 +1727,10 @@ HRESULT SVMatroxOcrInterface::GetResult( const SVMatroxOcrResult& p_rFontId, SVO
 		MatroxType l_lControlType = Convert2MatroxResultType( p_eControlType );
 		if( l_lControlType != 0 )
 		{
-			if(!p_rFontId.empty())
+			if( M_NULL != rResultId)
 			{
 				MIL_TEXT_CHAR l_cBuf[256];
-				MocrGetResult(p_rFontId.m_OcrResultID, l_lControlType, &l_cBuf);
+				MocrGetResult(rResultId, l_lControlType, &l_cBuf);
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
 				if( l_Code == S_OK )
 				{
@@ -1797,7 +1763,7 @@ HRESULT SVMatroxOcrInterface::GetResult( const SVMatroxOcrResult& p_rFontId, SVO
 @SVOperationDescription This function retrieves the result(s) of the specified type from an OCR
 
 */
-HRESULT SVMatroxOcrInterface::GetResult( const SVMatroxOcrResult& p_rFontId, SVOcrResultEnum InquireType, SVMatroxDoubleArray& p_adValues ) 
+HRESULT SVMatroxOcrInterface::GetResult( const SVMatroxIdentifier& rResultId, SVOcrResultEnum InquireType, SVMatroxDoubleArray& p_adValues )
 {
 	HRESULT l_Code;
 #ifdef USE_TRY_BLOCKS
@@ -1808,9 +1774,9 @@ HRESULT SVMatroxOcrInterface::GetResult( const SVMatroxOcrResult& p_rFontId, SVO
 		MatroxType l_lControlType = Convert2MatroxResultType( InquireType );
 		if( l_lControlType != 0 )
 		{
-			if(!p_rFontId.empty())
+			if( M_NULL != rResultId)
 			{
-				MocrGetResult(p_rFontId.m_OcrResultID, l_lControlType, &p_adValues[0] );
+				MocrGetResult(rResultId, l_lControlType, &p_adValues[0] );
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
 			}
 			else
@@ -1840,7 +1806,7 @@ HRESULT SVMatroxOcrInterface::GetResult( const SVMatroxOcrResult& p_rFontId, SVO
 @SVOperationDescription If the verify flag is off this function reads an unknown string from the specified target image using the specified OCR font context. If the verify flag is on this function determines whether a known string is present in the target image, and evaluates the quality of the string. 
 
 */
-HRESULT SVMatroxOcrInterface::Execute( const SVMatroxOcrResult& p_rResultId, const SVMatroxOcr& p_rFontId, const SVMatroxBuffer& p_rImage )
+HRESULT SVMatroxOcrInterface::Execute( const SVMatroxIdentifier& rResultId, const SVMatroxOcr& p_rFontId, const SVMatroxBuffer& p_rImage )
 {
 	HRESULT l_Code;
 #ifdef USE_TRY_BLOCKS
@@ -1848,7 +1814,7 @@ HRESULT SVMatroxOcrInterface::Execute( const SVMatroxOcrResult& p_rResultId, con
 #endif
 
 	{
-		if( !p_rResultId.empty() && !p_rFontId.empty() && !p_rImage.empty() )
+		if( M_NULL != rResultId && !p_rFontId.empty() && !p_rImage.empty() )
 		{
 			if( p_rFontId.m_bVerify )
 			{
@@ -1856,15 +1822,13 @@ HRESULT SVMatroxOcrInterface::Execute( const SVMatroxOcrResult& p_rResultId, con
 				MocrVerifyString(p_rImage.GetIdentifier(), 
 					p_rFontId.m_OcrFontID, 
 					const_cast<MIL_TEXT_CHAR*>(p_rFontId.m_VerifyString.c_str()), 
-					p_rResultId.m_OcrResultID );
+					rResultId);
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
 			}
 			else
 			{
 				// MocrRead
-				MocrReadString( p_rImage.GetIdentifier(),
-					p_rFontId.m_OcrFontID,
-					p_rResultId.m_OcrResultID );
+				MocrReadString( p_rImage.GetIdentifier(), p_rFontId.m_OcrFontID, rResultId);
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
 			}
 		}
@@ -1896,7 +1860,7 @@ HRESULT SVMatroxOcrInterface::ReadString( const SVCommandDataHolder& p_rAttribut
 	if( S_OK == l_Status )
 	{
 		SVMatroxCommandDataImage l_Image;
-		SVMatroxOcrResult l_milResult;
+		SVMatroxIdentifier milResult = M_NULL;
 
 		l_Font.m_bVerify = false;
 
@@ -1914,12 +1878,12 @@ HRESULT SVMatroxOcrInterface::ReadString( const SVCommandDataHolder& p_rAttribut
 
 		if( S_OK == l_Status )
 		{
-			l_Status = SVMatroxOcrInterface::Create( l_milResult );
+			l_Status = SVMatroxOcrInterface::CreateResult( milResult );
 		}
 
 		if( S_OK == l_Status )
 		{
-			l_Status = SVMatroxOcrInterface::Execute( l_milResult, l_Font, l_Image.m_Buffer );
+			l_Status = SVMatroxOcrInterface::Execute( milResult, l_Font, l_Image.m_Buffer );
 		}
 
 		if( S_OK == l_Status )
@@ -1929,18 +1893,18 @@ HRESULT SVMatroxOcrInterface::ReadString( const SVCommandDataHolder& p_rAttribut
 			double l_MatchScore = 0.0;
 			std::string l_ReadString;
 
-			l_Status = SVMatroxOcrInterface::GetResult( l_milResult, SVOcrResultStringSize, l_Length );
+			l_Status = SVMatroxOcrInterface::GetResult( milResult, SVOcrResultStringSize, l_Length );
 
 			if( l_Length != 0 )
 			{
 				if( S_OK == l_Status )
 				{
-					l_Status = SVMatroxOcrInterface::GetResult(l_milResult, SVOcrStringScore, l_MatchScore );
+					l_Status = SVMatroxOcrInterface::GetResult(milResult, SVOcrStringScore, l_MatchScore );
 				}
 
 				if( S_OK == l_Status )
 				{
-					l_Status = SVMatroxOcrInterface::GetResult(l_milResult, SVOcrString, l_ReadString );
+					l_Status = SVMatroxOcrInterface::GetResult(milResult, SVOcrString, l_ReadString );
 				}
 			}
 
@@ -1955,7 +1919,7 @@ HRESULT SVMatroxOcrInterface::ReadString( const SVCommandDataHolder& p_rAttribut
 			}
 		}
 
-		Destroy( l_milResult );
+		DestroyResult( milResult );
 	}
 
 	Destroy( l_Font );
@@ -1978,7 +1942,7 @@ HRESULT SVMatroxOcrInterface::VerifyString( const SVCommandDataHolder& p_rAttrib
 		_variant_t l_Temp;
 
 		SVMatroxCommandDataImage l_Image;
-		SVMatroxOcrResult l_milResult;
+		SVMatroxIdentifier milResult = M_NULL;
 
 		l_Font.m_bVerify = true;
 
@@ -2011,12 +1975,12 @@ HRESULT SVMatroxOcrInterface::VerifyString( const SVCommandDataHolder& p_rAttrib
 
 		if( S_OK == l_Status )
 		{
-			l_Status = SVMatroxOcrInterface::Create( l_milResult );
+			l_Status = SVMatroxOcrInterface::CreateResult(milResult);
 		}
 
 		if( S_OK == l_Status )
 		{
-			l_Status = SVMatroxOcrInterface::Execute( l_milResult, l_Font, l_Image.m_Buffer );
+			l_Status = SVMatroxOcrInterface::Execute( milResult, l_Font, l_Image.m_Buffer );
 		}
 
 		if( S_OK == l_Status )
@@ -2026,13 +1990,13 @@ HRESULT SVMatroxOcrInterface::VerifyString( const SVCommandDataHolder& p_rAttrib
 			double l_MatchScore = 0.0;
 			std::string l_ReadString;
 
-			l_Status = SVMatroxOcrInterface::GetResult( l_milResult, SVOcrResultStringSize, l_Length );
+			l_Status = SVMatroxOcrInterface::GetResult( milResult, SVOcrResultStringSize, l_Length );
 
 			if( l_Length != 0 )
 			{
 				if( S_OK == l_Status )
 				{
-					l_Status = SVMatroxOcrInterface::GetResult(l_milResult, SVOcrStringScore, l_MatchScore );
+					l_Status = SVMatroxOcrInterface::GetResult(milResult, SVOcrStringScore, l_MatchScore );
 				}
 			}
 
@@ -2042,7 +2006,7 @@ HRESULT SVMatroxOcrInterface::VerifyString( const SVCommandDataHolder& p_rAttrib
 			}
 		}
 
-		Destroy( l_milResult );
+		DestroyResult( milResult );
 	}
 
 	Destroy( l_Font );

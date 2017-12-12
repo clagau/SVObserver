@@ -73,7 +73,7 @@
     </ResourceCompile>
     <Lib>
       <OutputFile>$(OutDir)$(ProjectName).lib</OutputFile>
-      <AdditionalLibraryDirectories>$(OutDir);C:\Program Files\Matrox Imaging\mil\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Lib>
     <Bscmake>
@@ -110,7 +110,7 @@
     </ResourceCompile>
     <Lib>
       <OutputFile>$(OutDir)$(ProjectName).lib</OutputFile>
-      <AdditionalLibraryDirectories>$(OutDir);C:\Program Files\Matrox Imaging\mil\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Lib>
     <Bscmake>
@@ -128,15 +128,9 @@
     <ClCompile Include="SVBufferResource.cpp" />
     <ClCompile Include="SVMatroxApplicationInterface.cpp">
     </ClCompile>
-    <ClCompile Include="SVMatroxBarCode.cpp">
-    </ClCompile>
     <ClCompile Include="SVMatroxBarCodeInterface.cpp">
     </ClCompile>
-    <ClCompile Include="SVMatroxBlobFeatureList.cpp">
-    </ClCompile>
     <ClCompile Include="SVMatroxBlobInterface.cpp">
-    </ClCompile>
-    <ClCompile Include="SVMatroxBlobResult.cpp">
     </ClCompile>
     <ClCompile Include="SVMatroxBuffer.cpp">
     </ClCompile>
@@ -153,25 +147,19 @@
     <ClCompile Include="SVMatroxBufferTemplate.cpp" />
     <ClCompile Include="SVMatroxCommandDataImage.cpp" />
     <ClCompile Include="SVMatroxCommandFactory.cpp" />
-    <ClCompile Include="SVMatroxDisplay.cpp" />
-    <ClCompile Include="SVMatroxDisplayBuffer.cpp" />
     <ClCompile Include="SVMatroxDisplayInterface.cpp" />
-    <ClCompile Include="SVMatroxGraphics.cpp" />
     <ClCompile Include="SVMatroxGraphicsInterface.cpp" />
+    <ClCompile Include="SVMatroxHelper.cpp" />
     <ClCompile Include="SVMatroxImageBuffer.cpp" />
     <ClCompile Include="SVMatroxImageChildBuffer.cpp" />
     <ClCompile Include="SVMatroxImageInterface.cpp" />
-    <ClCompile Include="SVMatroxImageResult.cpp" />
     <ClCompile Include="SVMatroxImageRotateStruct.cpp" />
     <ClCompile Include="SVMatroxLicenseInterface.cpp" />
     <ClCompile Include="SVMatroxOcr.cpp" />
     <ClCompile Include="SVMatroxOcrCalibrateStruct.cpp" />
     <ClCompile Include="SVMatroxOcrCreateStruct.cpp" />
     <ClCompile Include="SVMatroxOcrInterface.cpp" />
-    <ClCompile Include="SVMatroxOcrResult.cpp" />
-    <ClCompile Include="SVMatroxPatResult.cpp" />
     <ClCompile Include="SVMatroxPatternInterface.cpp" />
-    <ClCompile Include="SVMatroxPatternModel.cpp" />
     <ClCompile Include="SVMatroxPolarTransformStruct.cpp" />
     <ClCompile Include="SVMatroxResourceMonitor.cpp" />
     <ClCompile Include="SVMatroxStatusInformation.cpp" />
@@ -186,11 +174,8 @@
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="SVBufferResource.h" />
     <ClInclude Include="SVMatroxApplicationInterface.h" />
-    <ClInclude Include="SVMatroxBarCode.h" />
     <ClInclude Include="SVMatroxBarCodeInterface.h" />
-    <ClInclude Include="SVMatroxBlobFeatureList.h" />
     <ClInclude Include="SVMatroxBlobInterface.h" />
-    <ClInclude Include="SVMatroxBlobResult.h" />
     <ClInclude Include="SVMatroxBuffer.h" />
     <ClInclude Include="SVMatroxBufferArray.h" />
     <ClInclude Include="SVMatroxBufferCreateChildStruct.h" />
@@ -201,19 +186,16 @@
     <ClInclude Include="SVMatroxBufferTemplate.h" />
     <ClInclude Include="SVMatroxCommandDataImage.h" />
     <ClInclude Include="SVMatroxCommandFactory.h" />
-    <ClInclude Include="SVMatroxDisplay.h" />
-    <ClInclude Include="SVMatroxDisplayBuffer.h" />
     <ClInclude Include="SVMatroxDisplayInterface.h" />
     <ClInclude Include="SVMatroxEnumConvertor.h" />
     <ClInclude Include="SVMatroxEnums.h" />
     <ClInclude Include="SVMatroxErrorEnum.h" />
-    <ClInclude Include="SVMatroxGraphics.h" />
     <ClInclude Include="SVMatroxGraphicsInterface.h" />
+    <ClInclude Include="SVMatroxHelper.h" />
     <ClInclude Include="SVMatroxIdentifierEnum.h" />
     <ClInclude Include="SVMatroxImageBuffer.h" />
     <ClInclude Include="SVMatroxImageChildBuffer.h" />
     <ClInclude Include="SVMatroxImageInterface.h" />
-    <ClInclude Include="SVMatroxImageResult.h" />
     <ClInclude Include="SVMatroxImageRotateStruct.h" />
     <ClInclude Include="SVMatroxImagingLibrary.h" />
     <ClInclude Include="SVMatroxLibrary.h" />
@@ -222,10 +204,7 @@
     <ClInclude Include="SVMatroxOcrCalibrateStruct.h" />
     <ClInclude Include="SVMatroxOcrCreateStruct.h" />
     <ClInclude Include="SVMatroxOcrInterface.h" />
-    <ClInclude Include="SVMatroxOcrResult.h" />
-    <ClInclude Include="SVMatroxPatResult.h" />
     <ClInclude Include="SVMatroxPatternInterface.h" />
-    <ClInclude Include="SVMatroxPatternModel.h" />
     <ClInclude Include="SVMatroxPolarTransformStruct.h" />
     <ClInclude Include="SVMatroxResourceMonitor.h" />
     <ClInclude Include="SVMatroxSimpleEnums.h" />

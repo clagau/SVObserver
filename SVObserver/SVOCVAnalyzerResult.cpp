@@ -210,10 +210,7 @@ SVOCVAnalyzeResultClass::~SVOCVAnalyzeResultClass()
 			l_Code = SVMatroxOcrInterface::Destroy( m_milFontID );
 		}// end if
 
-		if( !m_milResultID.empty() )
-		{
-			l_Code = SVMatroxOcrInterface::Destroy( m_milResultID );
-		}// end if
+		l_Code = SVMatroxOcrInterface::DestroyResult( m_milResultID );
 
 		if( m_pBuffer )
 		{
@@ -325,10 +322,7 @@ bool SVOCVAnalyzeResultClass::CloseObject()
 			l_Code = SVMatroxOcrInterface::Destroy( m_milFontID );
 		}// end if
 
-		if( !m_milResultID.empty() )
-		{
-			l_Code = SVMatroxOcrInterface::Destroy( m_milResultID );
-		}// end if
+		l_Code = SVMatroxOcrInterface::DestroyResult( m_milResultID );
 	}
 
 	return bOk;
@@ -362,10 +356,7 @@ bool SVOCVAnalyzeResultClass::GenerateFontModel()
 		MatroxCode = SVMatroxOcrInterface::Destroy( m_milFontID );
 	}// end if
 
-	if( !m_milResultID.empty() )
-	{
-		MatroxCode = SVMatroxOcrInterface::Destroy( m_milResultID );
-	}// end if
+	MatroxCode = SVMatroxOcrInterface::DestroyResult( m_milResultID );
 
 	// Now recreate the MIL font and result buffer
 	CFileStatus rStatus;
@@ -460,8 +451,8 @@ bool SVOCVAnalyzeResultClass::GenerateFontModel()
 			}
 		}
 
-		MatroxCode = SVMatroxOcrInterface::Create( m_milResultID );
-		if( m_milResultID.empty() )
+		MatroxCode = SVMatroxOcrInterface::CreateResult( m_milResultID );
+		if( M_NULL == m_milResultID )
 		{
 			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16131, GetUniqueObjectID());

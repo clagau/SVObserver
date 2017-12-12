@@ -13,7 +13,6 @@
 
 #include "SVMatroxApplicationInterface.h"
 #include "SVMatroxBuffer.h"
-#include "SVMatroxGraphics.h"
 
 class SVMatroxGraphicsInterface
 {
@@ -24,16 +23,16 @@ public:
 
 	static double CreateRGB888( unsigned char p_Red, unsigned char p_Green, unsigned char p_Blue );
 
-	static HRESULT Clear( SVMatroxGraphics& p_rGraphicsID, SVMatroxBuffer& p_rBuffer );
+	static HRESULT Clear(SVMatroxIdentifier& p_rGraphicsID, SVMatroxBuffer& p_rBuffer );
 
-	static HRESULT RectangleFill( SVMatroxGraphics& p_rGraphicsID, SVMatroxBuffer& p_rBuffer, const RECT& p_rRectangle );
+	static HRESULT RectangleFill(SVMatroxIdentifier& p_rGraphicsID, SVMatroxBuffer& p_rBuffer, const RECT& p_rRectangle );
 
-	static HRESULT Color( SVMatroxGraphics& p_rGraphicsID, double p_Color );
-	static HRESULT BackColor( SVMatroxGraphics& p_rGraphicsID, double p_Color );
+	static HRESULT Color(SVMatroxIdentifier& p_rGraphicsID, double p_Color );
+	static HRESULT BackColor(SVMatroxIdentifier& p_rGraphicsID, double p_Color );
 
-	static HRESULT Create( SVMatroxGraphics& p_rGraphicsID );
+	static HRESULT Create(SVMatroxIdentifier& p_rGraphicsID );
 
-	static HRESULT Destroy( SVMatroxGraphics& p_rGraphicsID );
+	static HRESULT Destroy(SVMatroxIdentifier& p_rGraphicsID );
 
 };
 

@@ -121,7 +121,6 @@ BOOL SVMaskEditorDialogClass::OnInitDialog()
 	CDialog::OnInitDialog();
 
 	SVMatroxBufferInterface l_BufIntf;
-	SVMatroxDisplayInterface l_DispIntf;
 	HRESULT MatroxCode;
 
     if( HImageBitmap )
@@ -132,7 +131,7 @@ BOOL SVMaskEditorDialogClass::OnInitDialog()
             if( ( milImageBuffer = SVBitmapToMilBuffer( HImageBitmap )).empty() )
                 break;
             // Try to get a mil display handle...
-			MatroxCode = l_DispIntf.Create( milDisplay );
+			MatroxCode = SVMatroxDisplayInterface::CreateDisplay( milDisplay );
 			if (S_OK != MatroxCode)
 			{
 				break;
@@ -145,7 +144,7 @@ BOOL SVMaskEditorDialogClass::OnInitDialog()
 			MatroxCode = l_BufIntf.Get( milImageBuffer, SVSizeX, width );
 			MatroxCode = l_BufIntf.Get( milImageBuffer, SVSizeY, height );
 			 
-			MatroxCode = l_DispIntf.Create( milDisplayBuffer, milImageBuffer );
+			MatroxCode = SVMatroxDisplayInterface::Create( milDisplayBuffer, milImageBuffer );
 			if (S_OK != MatroxCode)
 			{
 				break;
@@ -159,11 +158,11 @@ BOOL SVMaskEditorDialogClass::OnInitDialog()
 			}
 
 			// Set mil display features...
-			MatroxCode = l_DispIntf.Set( milDisplay, SVDispWindowScrollbar,(long) SVValueEnable);
-			MatroxCode = l_DispIntf.Set( milDisplay, SVDispWindowZoom,(long) SVValueEnable);
-			MatroxCode = l_DispIntf.Set( milDisplay, SVDispUpdate,(long) SVValueEnable);
-			MatroxCode = l_DispIntf.Set( milDisplay, SVDispWindowMove,(long) SVValueEnable);
-			MatroxCode = l_DispIntf.Set( milDisplay, SVDispWindowResize,(long) SVValueEnable);
+			MatroxCode = SVMatroxDisplayInterface::Set( milDisplay, SVDispWindowScrollbar,(long) SVValueEnable);
+			MatroxCode = SVMatroxDisplayInterface::Set( milDisplay, SVDispWindowZoom,(long) SVValueEnable);
+			MatroxCode = SVMatroxDisplayInterface::Set( milDisplay, SVDispUpdate,(long) SVValueEnable);
+			MatroxCode = SVMatroxDisplayInterface::Set( milDisplay, SVDispWindowMove,(long) SVValueEnable);
+			MatroxCode = SVMatroxDisplayInterface::Set( milDisplay, SVDispWindowResize,(long) SVValueEnable);
             
             // Create Image Window...
             CRect rect;
@@ -190,7 +189,7 @@ BOOL SVMaskEditorDialogClass::OnInitDialog()
 
 
             // Select Display...
-			MatroxCode = l_DispIntf.SelectWindow(milDisplay, milDisplayBuffer, DisplayWndCtl.m_hWnd );
+			MatroxCode = SVMatroxDisplayInterface::SelectWindow(milDisplay, milDisplayBuffer, DisplayWndCtl.m_hWnd );
 
             // Update zoom factors and string...
             zoom( 0 );
@@ -353,15 +352,13 @@ void SVMaskEditorDialogClass::OnOK()
 
 void SVMaskEditorDialogClass::freeMilResources()
 {
-	SVMatroxDisplayInterface l_DispIntf;
-
 	SVMatroxBuffer l_CurrentSelected;
 	SVMatroxBufferInterface l_BufIntf;
 
-	l_DispIntf.Get( milDisplay, SVDispSelected, l_CurrentSelected );
+	SVMatroxDisplayInterface::Get( milDisplay, SVDispSelected, l_CurrentSelected );
 	if( !l_CurrentSelected.empty() )
 	{
-		l_DispIntf.Deselect( milDisplay );
+		SVMatroxDisplayInterface::Deselect( milDisplay );
 	}
 
     // Deselect Display...
@@ -372,18 +369,14 @@ void SVMaskEditorDialogClass::freeMilResources()
     // Free mil display buffer...
     if( !milDisplayBuffer.empty() )
     {
-		l_DispIntf.Destroy( milDisplayBuffer );
+		SVMatroxDisplayInterface::Destroy( milDisplayBuffer );
     }
 
     // Free mil image buffer...
-		milImageBuffer.clear();
+	milImageBuffer.clear();
 
     // Free mil display...
-    if( !milDisplay.empty() )
-    {
-		l_DispIntf.Destroy( milDisplay );
-    }
-
+	SVMatroxDisplayInterface::DestroyDisplay( milDisplay );
 }
 
 
@@ -417,19 +410,16 @@ void SVMaskEditorDialogClass::prepareMaskBuffer()
 // prepared Mask Buffer defined by Input:Mask
 void SVMaskEditorDialogClass::evaluateMask()
 {
-	SVMatroxImageInterface l_ImageIntf;
-
-	l_ImageIntf.Arithmetic( milDisplayBuffer, milImageBuffer, milMaskBuffer, static_cast<SVImageOperationTypeEnum>(m_lMilArithmeticOperation) );
+	SVMatroxImageInterface::Arithmetic( milDisplayBuffer, milImageBuffer, milMaskBuffer, static_cast<SVImageOperationTypeEnum>(m_lMilArithmeticOperation) );
 }
 
 void SVMaskEditorDialogClass::zoom( int ZoomOperand )
 {
-	SVMatroxDisplayInterface l_DispIntf;
     // Update zoom factors...
 	double l_dZoomX = 0.0;
 	double l_dZoomY = 0.0;
-	l_DispIntf.Get( milDisplay, SVDispZoomFactorX, l_dZoomX );
-	l_DispIntf.Get( milDisplay, SVDispZoomFactorY, l_dZoomY );
+	SVMatroxDisplayInterface::Get( milDisplay, SVDispZoomFactorX, l_dZoomX );
+	SVMatroxDisplayInterface::Get( milDisplay, SVDispZoomFactorY, l_dZoomY );
 
 	currentZoomX = static_cast<long>(l_dZoomX);
 	currentZoomY = static_cast<long>(l_dZoomY);
@@ -460,7 +450,7 @@ void SVMaskEditorDialogClass::zoom( int ZoomOperand )
     DisplayWndCtl.Invalidate();
 
 	SVMatroxBuffer curDisplayBuf;
-	l_DispIntf.Get(milDisplay, SVDispSelected, curDisplayBuf );
+	SVMatroxDisplayInterface::Get(milDisplay, SVDispSelected, curDisplayBuf );
     if( !curDisplayBuf.empty() )
     {
         // Check/Calculate for scroll bars...
@@ -476,7 +466,7 @@ void SVMaskEditorDialogClass::zoom( int ZoomOperand )
         BOOL bVert = ( currentZoomY >= 0 ) ? ( ( bufHeight * currentZoomY ) > rect.Height() ) : ( ( bufHeight / ( - currentZoomY ) ) > rect.Height() );
 
         // Zoom...
-		l_DispIntf.Zoom( milDisplay, currentZoomX, currentZoomY );
+		SVMatroxDisplayInterface::Zoom( milDisplay, currentZoomX, currentZoomY );
 
 		// Invalidate complete display area...
 		evaluateMask();
@@ -530,16 +520,14 @@ void SVMaskEditorDialogClass::zoom( int ZoomOperand )
 
 void SVMaskEditorDialogClass::PanY( int OffsetY )
 {
-	SVMatroxDisplayInterface l_DispIntf;
-
-	l_DispIntf.Get( milDisplay, SVDispPanX, currentPanX );
+	SVMatroxDisplayInterface::Get( milDisplay, SVDispPanX, currentPanX );
     // Update pan values...
     currentPanY = OffsetY;
     
     DisplayWndCtl.SetScrollPos( SB_VERT, currentPanY );
 
     // Pan...
-	l_DispIntf.Pan( milDisplay, currentPanX, currentPanY );
+	SVMatroxDisplayInterface::Pan( milDisplay, currentPanX, currentPanY );
 
 	// Invalidate complete display area...
 	evaluateMask();
@@ -557,16 +545,14 @@ void SVMaskEditorDialogClass::PanY( int OffsetY )
 
 void SVMaskEditorDialogClass::PanX( int OffsetX )
 {
-	SVMatroxDisplayInterface l_DispIntf;
-
-	l_DispIntf.Get( milDisplay, SVDispPanY, currentPanY );
+	SVMatroxDisplayInterface::Get( milDisplay, SVDispPanY, currentPanY );
     // Update pan values...
     currentPanX = OffsetX;
 
 	DisplayWndCtl.SetScrollPos( SB_HORZ, currentPanX );
 
     // Pan...
-	l_DispIntf.Pan( milDisplay, currentPanX, currentPanY );
+	SVMatroxDisplayInterface::Pan( milDisplay, currentPanX, currentPanY );
     
 	// Invalidate complete display area...
 	evaluateMask();

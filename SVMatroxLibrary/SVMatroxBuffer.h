@@ -29,7 +29,6 @@ public:
 
 	SVMatroxBuffer();
 	SVMatroxBuffer(const SVMatroxBuffer& p_rBuf);
-	SVMatroxBuffer(const SVMatroxDisplayBuffer& p_rBuf);
 
 	virtual ~SVMatroxBuffer();
 

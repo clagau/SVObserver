@@ -92,7 +92,7 @@ private:
 protected:
 	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
-	SVMatroxImageResult msvHistResultID;
+	SVMatroxIdentifier m_HistResultID = M_NULL;
 	SVMatroxLongArray   msvplHistValues;
 	SVImageClass		m_histogramImage;
 

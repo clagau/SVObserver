@@ -17,7 +17,6 @@
 
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "SVMatroxBuffer.h"
-#include "SVMatroxDisplayBuffer.h"
 #include "SVMatroxEnums.h"
 #include "SVMatroxApplicationInterface.h"
 #include "SVMatroxBufferCreateChildStruct.h"
@@ -58,8 +57,6 @@ The ClearBuffer function uses the Matrox function MbufClear.  This function clea
 The Import function uses the Matrox function MbufImport. This function imports data from a file into an existing or automatically allocated MIL data buffer. The function assumes that the data in the file is in the specified format.
 The Export function uses the Matrox function MbufExport. This function exports a data buffer to a file, in the specified output file format.
 */
-class SVMatroxDisplay;
-
 class SVMatroxBufferInterface
 {
 public:
@@ -94,7 +91,6 @@ public:
 	// ****** Copy Buffer  **********
 	// MbufCopy
 	static HRESULT CopyBuffer( SVMatroxBuffer& p_rTo, const SVMatroxBuffer& p_rFrom );
-	static HRESULT CopyBuffer( SVMatroxDisplayBuffer& p_rTo, const SVMatroxBuffer& p_rFrom );
 	// MbufCopyClip
 	static HRESULT CopyBuffer( SVMatroxBuffer& p_rTo, const SVMatroxBuffer& p_rFrom, long p_lXOffset, long p_lYOffset);
 	// MbufCopyColor
@@ -157,7 +153,6 @@ public:
 	static HRESULT ControlNeighborhood( SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, const long p_lValue);
 
 	static HRESULT ClearBuffer( SVMatroxBuffer& p_rBuffer, double p_dColor );
-	static HRESULT ClearBuffer( SVMatroxDisplay& p_rBuffer, double p_dColor );
 
 	// ***** Inport / Export *********
 	static HRESULT Import(SVMatroxBuffer& p_rBuf, const std::string& rFileName, SVMatroxFileTypeEnum p_eFileType, bool p_bRestore= false );

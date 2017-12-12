@@ -20,19 +20,10 @@
     <ClCompile Include="SVMatroxApplicationInterface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVMatroxBarCode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVMatroxBarCodeInterface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVMatroxBlobFeatureList.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVMatroxBlobInterface.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVMatroxBlobResult.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVMatroxBuffer.cpp">
@@ -65,16 +56,7 @@
     <ClCompile Include="SVMatroxCommandFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVMatroxDisplay.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVMatroxDisplayBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVMatroxDisplayInterface.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVMatroxGraphics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVMatroxGraphicsInterface.cpp">
@@ -87,9 +69,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVMatroxImageInterface.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVMatroxImageResult.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVMatroxImageRotateStruct.cpp">
@@ -107,16 +86,7 @@
     <ClCompile Include="SVMatroxOcrInterface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVMatroxOcrResult.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVMatroxPatResult.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVMatroxPatternInterface.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVMatroxPatternModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVMatroxPolarTransformStruct.cpp">
@@ -146,6 +116,9 @@
     <ClCompile Include="MatroxBuffer2D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SVMatroxHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdAfx.h">
@@ -157,19 +130,10 @@
     <ClInclude Include="SVMatroxApplicationInterface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVMatroxBarCode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVMatroxBarCodeInterface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVMatroxBlobFeatureList.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVMatroxBlobInterface.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVMatroxBlobResult.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxBuffer.h">
@@ -202,12 +166,6 @@
     <ClInclude Include="SVMatroxCommandFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVMatroxDisplay.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVMatroxDisplayBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVMatroxDisplayInterface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -218,9 +176,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxErrorEnum.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVMatroxGraphics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxGraphicsInterface.h">
@@ -236,9 +191,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxImageInterface.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVMatroxImageResult.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxImageRotateStruct.h">
@@ -262,16 +214,7 @@
     <ClInclude Include="SVMatroxOcrInterface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVMatroxOcrResult.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVMatroxPatResult.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVMatroxPatternInterface.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVMatroxPatternModel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxPolarTransformStruct.h">
@@ -311,6 +254,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MatroxBuffer2D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVMatroxHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

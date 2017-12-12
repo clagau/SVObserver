@@ -16,7 +16,6 @@
 #include "InspectionEngine/SVImageClass.h"
 #include "InspectionEngine/SVOperator.h"
 #include "SVMatroxLibrary/SVMatroxTypedefs.h"
-#include "SVMatroxLibrary/SVMatroxImageResult.h"
 #pragma endregion Includes
 
 
@@ -89,7 +88,7 @@ private:
 
 #pragma region Member Variables
 private:
-	SVMatroxImageResult m_HistogramResultID;
+	SVMatroxIdentifier m_HistogramResultID = M_NULL;
 	SVMatroxLongArray  m_HistogramValueArray[BandEnum::BandNumber];
 	int m_HistogramValueArraySize;
 

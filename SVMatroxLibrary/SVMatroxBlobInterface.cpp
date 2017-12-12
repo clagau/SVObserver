@@ -16,6 +16,7 @@
 #include "SVCommandLibrary/SVCommandDataHolder.h"
 #include "SVMatroxImagingLibrary.h"  // has MIL includes
 #include "SVMatroxResourceMonitor.h"
+#include "SVMatroxHelper.h"
 #pragma endregion Includes
 
 /**
@@ -39,415 +40,12 @@ SVMatroxBlobInterface::~SVMatroxBlobInterface()
 }
 
 /**
-@SVOperationName Convert2MatroxControlType - SVBlobSelectionEnum
-
-@SVOperationDescription This function converts a SVresearch contol type to a Matrox control type.
-
-*/
-long SVMatroxBlobInterface::Convert2MatroxControlType(SVBlobSelectionEnum p_lControlType) 
-{
-	long l_lMatroxType = M_UNINITIALIZED;
-	switch( p_lControlType )
-	{
-		
-		case SVEBlobArea:
-		{
-			l_lMatroxType = M_AREA;
-			break;
-		}
-		case SVEBlobBoxXMax:
-		{
-			l_lMatroxType = M_BOX_X_MAX;
-			break;
-		}
-		case SVEBlobBoxXMin:
-		{
-			l_lMatroxType = M_BOX_X_MIN;
-			break;
-		}
-		case SVEBlobBoxYMax:
-		{
-			l_lMatroxType = M_BOX_Y_MAX;
-			break;
-		}
-		case SVEBlobBoxYMin:
-		{
-			l_lMatroxType = M_BOX_Y_MIN;
-			break;
-		}
-		case SVEBlobBreadth:
-		{
-			l_lMatroxType = M_BREADTH;
-			break;
-		}
-		case SVEBlobCompactness:
-		{
-			l_lMatroxType = M_COMPACTNESS;
-			break;
-		}
-		case SVEBlobConvexParameter:
-		{
-			l_lMatroxType = M_CONVEX_PERIMETER;
-			break;
-		}
-		case SVEBlobElongation:
-		{
-			l_lMatroxType = M_ELONGATION;
-			break;
-		}
-		case SVEBlobEulerNumber:
-		{
-			l_lMatroxType = M_EULER_NUMBER;
-			break;
-		}
-		case SVEBlobFeretElongation:
-		{
-			l_lMatroxType = M_FERET_ELONGATION;
-			break;
-		}
-		case SVEBlobFeretMaxAngle:
-		{
-			l_lMatroxType = M_FERET_MAX_ANGLE;
-			break;
-		}
-		case SVEBlobFeretMaxDia:
-		{
-			l_lMatroxType = M_FERET_MAX_DIAMETER;
-			break;
-		}
-		case SVEBlobFeretMeanDia:
-		{
-			l_lMatroxType = M_FERET_MEAN_DIAMETER;
-			break;
-		}
-		case SVEBlobFeretMinAngle:
-		{
-			l_lMatroxType = M_FERET_MIN_ANGLE;
-			break;
-		}
-		case SVEBlobFeretMinDia:
-		{
-			l_lMatroxType = M_FERET_MIN_DIAMETER;
-			break;
-		}
-		case SVEBlobFeretX:
-		{
-			l_lMatroxType = M_FERET_X;
-			break;
-		}
-		case SVEBlobFeritY:
-		{
-			l_lMatroxType = M_FERET_Y;
-			break;
-		}
-		case SVEBlobFirstPointX:
-		{
-			l_lMatroxType = M_FIRST_POINT_X;
-			break;
-		}
-		case SVEBlobFirstPointY:
-		{
-			l_lMatroxType = M_FIRST_POINT_Y;
-			break;
-		}
-		case SVEBlobGeneralFeret:
-		{
-			l_lMatroxType = M_GENERAL_FERET;
-			break;
-		}
-		case SVEBlobGeneralMoment:
-		{
-			l_lMatroxType = M_GENERAL_MOMENT;
-			break;
-		}
-		case SVEBlobIntercept:
-		{
-			l_lMatroxType = M_INTERCEPT_0;
-			break;
-		}
-		case SVEBlobIntercept45:
-		{
-			l_lMatroxType = M_INTERCEPT_45;
-			break;
-		}
-		case SVEBlobIntercept90:
-		{
-			l_lMatroxType = M_INTERCEPT_90;
-			break;
-		}
-		case SVEBlobIntercept135:
-		{
-			l_lMatroxType = M_INTERCEPT_135;
-			break;
-		}
-		case SVEBlobLabelValue:
-		{
-			l_lMatroxType = M_LABEL_VALUE;
-			break;
-		}
-		case SVEBlobLength:
-		{
-			l_lMatroxType = M_LENGTH;
-			break;
-		}
-		case SVEBlobNumberOfChainedPixels:
-		{
-			l_lMatroxType = M_NUMBER_OF_CHAINED_PIXELS;
-			break;
-		}
-		case SVEBlobNumberOfHoles:
-		{
-			l_lMatroxType = M_NUMBER_OF_HOLES;
-			break;
-		}
-		case SVEBlobNumberOfRuns:
-		{
-			l_lMatroxType = M_NUMBER_OF_RUNS;
-			break;
-		}
-		case SVEBlobPerimeter:
-		{
-			l_lMatroxType = M_PERIMETER;
-			break;
-		}
-		case SVEBlobRoughness:
-		{
-			l_lMatroxType = M_ROUGHNESS;
-			break;
-		}
-		case SVEBlobXMaxAtYMax:
-		{
-			l_lMatroxType = M_X_MAX_AT_Y_MAX;
-			break;
-		}
-		case SVEBlobXMinAtYMin:
-		{
-			l_lMatroxType = M_X_MIN_AT_Y_MIN;
-			break;
-		}
-		case SVEBlobYMaxAtXMin:
-		{
-			l_lMatroxType = M_Y_MAX_AT_X_MIN;
-			break;
-		}
-		case SVEBlobYMinAtXMax:
-		{
-			l_lMatroxType = M_Y_MIN_AT_X_MAX;
-			break;
-		}
-		case SVEBlobSumPixel:
-		{
-			l_lMatroxType = M_SUM_PIXEL;
-			break;
-		}
-		case SVEBlobAxisPrincipalAngle:
-		{
-			l_lMatroxType = M_AXIS_PRINCIPAL_ANGLE;
-			break;
-		}
-		case SVEBlobAxisSecondaryAngle:
-		{
-			l_lMatroxType = M_AXIS_SECONDARY_ANGLE;
-			break;
-		}
-		case SVEBlobCenterOfGravityX:
-		{
-			l_lMatroxType = M_CENTER_OF_GRAVITY_X;
-			break;
-		}
-		case SVEBlobCenterOfGravityY:
-		{
-			l_lMatroxType = M_CENTER_OF_GRAVITY_Y;
-			break;
-		}
-		case SVEBlobMomentX0Y1:
-		{
-			l_lMatroxType = M_MOMENT_X0_Y1;
-			break;
-		}
-		case SVEBlobMomentX1Y0:
-		{
-			l_lMatroxType = M_MOMENT_X1_Y0;
-			break;
-		}
-		case SVEBlobMomentX1Y1:
-		{
-			l_lMatroxType = M_MOMENT_X1_Y1;
-			break;
-		}
-		case SVEBlobMomentX0Y2:
-		{
-			l_lMatroxType = M_MOMENT_X0_Y2;
-			break;
-		}
-		case SVEBlobMomentX2Y0:
-		{
-			l_lMatroxType = M_MOMENT_X2_Y0;
-			break;
-		}
-		case SVEBlobMomentCentralX0Y2:
-		{
-			l_lMatroxType = M_MOMENT_CENTRAL_X0_Y2;
-			break;
-		}
-		case SVEBlobMomentCentralX2Y0:
-		{
-			l_lMatroxType = M_MOMENT_CENTRAL_X2_Y0;
-			break;
-		}
-		case SVEBlobMomentCentralX1Y1:
-		{
-			l_lMatroxType = M_MOMENT_CENTRAL_X1_Y1;
-			break;
-		}
-
-	}
-	return l_lMatroxType;
-}
-
-
-/**
-@SVOperationName Convert2MatroxControlType - SVBlobControlEnum
-
-@SVOperationDescription This function converts a SVresearch contol type to a Matrox control type.
-
-*/
-long SVMatroxBlobInterface::Convert2MatroxControlType(SVBlobControlEnum p_lControlType) 
-{
-	long l_lMatroxType = M_UNINITIALIZED;
-	switch( p_lControlType )
-	{
-		case SVEBlobForeground:
-		{
-			l_lMatroxType = M_FOREGROUND_VALUE;
-			break;
-		}
-		case SVEBlobIdentifier:
-		{
-			l_lMatroxType = M_IDENTIFIER_TYPE;
-			break;
-		}
-		case SVEBlobSaveRuns:
-		{
-			l_lMatroxType = M_SAVE_RUNS;
-			break;
-		}
-
-		case SVEBlobAll:
-		{
-			l_lMatroxType = M_ALL_BLOBS;
-			break;
-		}
-		case SVEBlobExcludeBlobs:
-		{
-			l_lMatroxType = M_EXCLUDED_BLOBS;
-			break;
-		}
-		case SVEBlobIncludeBlobs:
-		{
-			l_lMatroxType = M_INCLUDED_BLOBS;
-			break;
-		}
-	}
-	return l_lMatroxType;
-}
-
-/**
-@SVOperationName Convert2MatroxControlType - SVBlobOperationEnum
-
-@SVOperationDescription This function converts a SVresearch contol type to a Matrox control type.
-
-*/
-long SVMatroxBlobInterface::Convert2MatroxControlType(SVBlobOperationEnum p_lControlType) 
-{
-	long l_lMatroxType = M_UNINITIALIZED;
-	switch( p_lControlType )
-	{
-		// Operation
-		case SVEBlobExclude:
-		{
-			l_lMatroxType = M_EXCLUDE;
-			break;
-		}
-		case SVEBlobExcludeOnly:
-		{
-			l_lMatroxType = M_EXCLUDE_ONLY;
-			break;
-		}
-		case SVEBlobInclude:
-		{
-			l_lMatroxType = M_INCLUDE;
-			break;
-		}
-	}
-	return l_lMatroxType;
-}
-
-
-/**
-@SVOperationName Convert2MatroxControlType - SVConditionEnum
-
-@SVOperationDescription This function converts a SVresearch contol type to a Matrox control type.
-
-*/
-long SVMatroxBlobInterface::Convert2MatroxControlType(SVConditionEnum p_lControlType) 
-{
-	long l_lMatroxType = M_UNINITIALIZED;
-	switch( p_lControlType )
-	{
-		// Condition
-		case SVECondInRange:
-		{
-			l_lMatroxType = M_IN_RANGE;
-			break;
-		}
-		case SVECondOutRange:
-		{
-			l_lMatroxType = M_OUT_RANGE;
-			break;
-		}
-		case SVECondEqual:
-		{
-			l_lMatroxType = M_EQUAL;
-			break;
-		}
-		case SVECondGreater:
-		{
-			l_lMatroxType = M_GREATER;
-			break;
-		}
-		case SVECondGreaterOrEqual:
-		{
-			l_lMatroxType = M_GREATER_OR_EQUAL;
-			break;
-		}
-		case SVECondLess:
-		{
-			l_lMatroxType = M_LESS;
-			break;
-		}
-		case SVECondLessOrEqual:
-		{
-			l_lMatroxType = M_LESS_OR_EQUAL;
-			break;
-		}
-		case SVECondNotEqual:
-		{
-			l_lMatroxType = M_NOT_EQUAL;
-			break;
-		}
-	}
-	return l_lMatroxType;
-}
-
-
-/**
 @SVOperationName Create - Blob Feature List
 
 @SVOperationDescription This function creates a Blob Feature List.
 
 */
-HRESULT SVMatroxBlobInterface::Create( SVMatroxBlobFeatureList& p_rFeatureListId )
+HRESULT SVMatroxBlobInterface::CreateContext( SVMatroxIdentifier& rContextId )
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -461,21 +59,21 @@ HRESULT SVMatroxBlobInterface::Create( SVMatroxBlobFeatureList& p_rFeatureListId
 
 		if( l_Code == S_OK )
 		{
+#if SV_DESIRED_MIL_VERSION == 0x0900
 			SVMatroxIdentifier l_NewId = MblobAllocFeatureList(M_DEFAULT_HOST, M_NULL );
+#else
+			SVMatroxIdentifier l_NewId = MblobAlloc(M_DEFAULT_HOST, M_DEFAULT, M_DEFAULT, M_NULL);
+#endif
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 			if( l_Code == S_OK )
 			{
 				SVMatroxResourceMonitor::InsertIdentifier( SVBlobFeatureListID, l_NewId );
 
-				if( p_rFeatureListId.empty() )
+				if ( M_NULL != rContextId)
 				{
-					p_rFeatureListId.m_BlobFeatureListID = l_NewId;
+					l_Code = DestroyContext(rContextId);
 				}
-				else
-				{
-					l_Code = Destroy(p_rFeatureListId );
-					p_rFeatureListId.m_BlobFeatureListID = l_NewId;
-				}
+				rContextId = l_NewId;
 			}
 		}
 	}
@@ -495,7 +93,7 @@ HRESULT SVMatroxBlobInterface::Create( SVMatroxBlobFeatureList& p_rFeatureListId
 @SVOperationDescription This function creates a blob result object.
 
 */
-HRESULT SVMatroxBlobInterface::Create( SVMatroxBlobResult& p_rResultId )
+HRESULT SVMatroxBlobInterface::CreateResult(SVMatroxIdentifier& rResultId)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -514,15 +112,11 @@ HRESULT SVMatroxBlobInterface::Create( SVMatroxBlobResult& p_rResultId )
 			{
 				SVMatroxResourceMonitor::InsertIdentifier( SVBlobResultID, l_NewId );
 
-				if( p_rResultId.empty() )
+				if( M_NULL != rResultId )
 				{
-					p_rResultId.m_BlobResultId = l_NewId;
+					l_Code = DestroyResult(rResultId);
 				}
-				else
-				{
-					l_Code = Destroy(p_rResultId );
-					p_rResultId.m_BlobResultId = l_NewId;
-				}
+				rResultId = l_NewId;
 			}
 		}
 	}
@@ -542,40 +136,9 @@ HRESULT SVMatroxBlobInterface::Create( SVMatroxBlobResult& p_rResultId )
 @SVOperationDescription This function frees the blob feature list.
 
 */
-HRESULT SVMatroxBlobInterface::Destroy( SVMatroxBlobFeatureList& p_rBlobId )
+HRESULT SVMatroxBlobInterface::DestroyContext( SVMatroxIdentifier& rBlobId )
 {
-	HRESULT l_Code( S_OK );
-#ifdef USE_TRY_BLOCKS
-	try
-#endif
-	{
-		if( !p_rBlobId.empty() )
-		{
-			SVMatroxResourceMonitor::SVAutoLock l_AutoLock;
-
-			l_Code = SVMatroxResourceMonitor::GetAutoLock( l_AutoLock );
-
-			if( l_Code == S_OK )
-			{
-				MblobFree( p_rBlobId.m_BlobFeatureListID );
-				l_Code = SVMatroxApplicationInterface::GetLastStatus();
-				if( l_Code == S_OK )
-				{
-					SVMatroxResourceMonitor::EraseIdentifier( SVBlobFeatureListID, p_rBlobId.m_BlobFeatureListID );
-
-					p_rBlobId.m_BlobFeatureListID = M_NULL;
-				}
-			}
-		}
-	}
-#ifdef USE_TRY_BLOCKS
-	catch(...)
-	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
-		SVMatroxApplicationInterface::LogMatroxException();
-	}
-#endif
-	return l_Code;
+	return DestroyMatroxId(rBlobId, MblobFree, SVMatroxIdentifierEnum::SVBlobFeatureListID);
 }
 
 /**
@@ -584,41 +147,9 @@ HRESULT SVMatroxBlobInterface::Destroy( SVMatroxBlobFeatureList& p_rBlobId )
 @SVOperationDescription This function frees the blob result resource.
 
 */
-HRESULT SVMatroxBlobInterface::Destroy( SVMatroxBlobResult& p_rResultId )
+HRESULT SVMatroxBlobInterface::DestroyResult(SVMatroxIdentifier& rResultId)
 {
-	HRESULT l_Code( S_OK );
-#ifdef USE_TRY_BLOCKS
-	try
-#endif
-	{
-		if( !p_rResultId.empty() )
-		{
-			SVMatroxResourceMonitor::SVAutoLock l_AutoLock;
-
-			l_Code = SVMatroxResourceMonitor::GetAutoLock( l_AutoLock );
-
-			if( l_Code == S_OK )
-			{
-				MblobFree( p_rResultId.m_BlobResultId );
-				l_Code = SVMatroxApplicationInterface::GetLastStatus();
-				if( l_Code == S_OK )
-				{
-					SVMatroxResourceMonitor::EraseIdentifier( SVBlobResultID, p_rResultId.m_BlobResultId );
-
-					p_rResultId.m_BlobResultId = M_NULL;
-				}
-			}
-		}
-	}
-#ifdef USE_TRY_BLOCKS
-	catch(...)
-	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
-		SVMatroxApplicationInterface::LogMatroxException();
-	}
-#endif
-
-	return l_Code;
+	return DestroyMatroxId(rResultId, MblobFree, SVMatroxIdentifierEnum::SVBlobResultID);
 }
 
 
@@ -628,16 +159,20 @@ HRESULT SVMatroxBlobInterface::Destroy( SVMatroxBlobResult& p_rResultId )
 @SVOperationDescription This function does the work of finding blobs in the "Blob Identifier Image".
 
 */
-HRESULT SVMatroxBlobInterface::Execute( const SVMatroxBlobResult& p_rResult, const SVMatroxBuffer& p_rIdentId,  const SVMatroxBlobFeatureList& p_rFeatureListId )
+HRESULT SVMatroxBlobInterface::Execute( const SVMatroxIdentifier& rResultId, const SVMatroxBuffer& rIdentId,  const SVMatroxIdentifier& rBlobId )
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
 	{
-		if( !p_rIdentId.empty() && !p_rFeatureListId.empty() && !p_rFeatureListId.empty() )
+		if( !rIdentId.empty() && M_NULL != rBlobId && M_NULL != rResultId )
 		{
-			MblobCalculate( p_rIdentId.GetIdentifier(), M_NULL, p_rFeatureListId.m_BlobFeatureListID, p_rResult.m_BlobResultId);
+#if SV_DESIRED_MIL_VERSION == 0x0900
+			MblobCalculate( rIdentId.GetIdentifier(), M_NULL, rBlobId, rResultId);
+#else
+			MblobCalculate(rBlobId, rIdentId.GetIdentifier(), M_NULL, rResultId);
+#endif
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
 		else
@@ -661,29 +196,21 @@ HRESULT SVMatroxBlobInterface::Execute( const SVMatroxBlobResult& p_rResult, con
 @SVOperationDescription This function gets the selected control type in the form of a long.
 
 */
-HRESULT SVMatroxBlobInterface::Get( const SVMatroxBlobResult& p_rResultId, SVBlobControlEnum p_lControlType, double& p_dControlValue) 
+HRESULT SVMatroxBlobInterface::Get( const SVMatroxIdentifier& rResultId, SVBlobControlEnum lControlType, double& dControlValue)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
 	{
-		if( !p_rResultId.empty() )
+		if( M_NULL != rResultId )
 		{
-			long l_lMatroxType = Convert2MatroxControlType( p_lControlType );
-			if( l_lMatroxType != M_UNINITIALIZED )
+			double l_dValue;
+			MblobInquire(rResultId, lControlType, &l_dValue);
+			l_Code = SVMatroxApplicationInterface::GetLastStatus();
+			if (l_Code == S_OK)
 			{
-				double l_dValue;
-				MblobInquire( p_rResultId.m_BlobResultId, l_lMatroxType, &l_dValue );
-				l_Code = SVMatroxApplicationInterface::GetLastStatus();
-				if( l_Code == S_OK )
-				{
-					p_dControlValue = l_dValue;
-				}
-			}
-			else
-			{
-				l_Code = SVMEE_INVALID_PARAMETER;
+				dControlValue = l_dValue;
 			}
 		}
 		else
@@ -707,28 +234,21 @@ HRESULT SVMatroxBlobInterface::Get( const SVMatroxBlobResult& p_rResultId, SVBlo
 @SVOperationDescription This function gets an array of doubles for the results.  The number of positions in the array will be the same as the value returned by GetNumber.
 
 */
-HRESULT SVMatroxBlobInterface::GetResult( const SVMatroxBlobResult& p_rResultId, SVBlobSelectionEnum p_lControlType, double* p_pdResultsArray ) 
+HRESULT SVMatroxBlobInterface::GetResult( const SVMatroxIdentifier& rResultId, SVBlobSelectionEnum lControlType, double* pdResultsArray )
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
 	{
-		if( !p_rResultId.empty() )
+		if( M_NULL != rResultId )
 		{
-			long l_lMatroxType = Convert2MatroxControlType( p_lControlType );
-			if( l_lMatroxType != M_UNINITIALIZED )
-			{
-				MblobGetResult( p_rResultId.m_BlobResultId, 
-					l_lMatroxType | M_BINARY,
-					p_pdResultsArray );
-
-				l_Code = SVMatroxApplicationInterface::GetLastStatus();
-			}
-			else
-			{
-				l_Code = SVMEE_INVALID_PARAMETER;
-			}
+#if SV_DESIRED_MIL_VERSION == 0x0900
+			MblobGetResult(rResultId, lControlType | M_BINARY, pdResultsArray);
+#else
+			MblobGetResult(rResultId, M_DEFAULT, lControlType | M_BINARY, pdResultsArray);
+#endif
+			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
 		else
 		{
@@ -751,28 +271,18 @@ HRESULT SVMatroxBlobInterface::GetResult( const SVMatroxBlobResult& p_rResultId,
 @SVOperationDescription This function gets an array of longs for the results.  The number of positions in the array will be the same as the value returned by GetNumber.
 
 */
-HRESULT SVMatroxBlobInterface::GetResult( const SVMatroxBlobResult& p_rResultId, SVBlobSelectionEnum p_lControlType, long* p_plResultsArray ) 
+HRESULT SVMatroxBlobInterface::GetResult( const SVMatroxIdentifier& rResultId, SVBlobSelectionEnum lControlType, long* plResultsArray )
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
 	{
-		if( !p_rResultId.empty() )
+		if( M_NULL != rResultId )
 		{
-			long l_lMatroxType = Convert2MatroxControlType( p_lControlType );
-			if( l_lMatroxType != M_UNINITIALIZED )
-			{
-				MblobGetResult( p_rResultId.m_BlobResultId, 
-					l_lMatroxType + M_TYPE_LONG,
-					p_plResultsArray );
+			MblobGetResult(rResultId, lControlType + M_TYPE_LONG, plResultsArray);
 
-				l_Code = SVMatroxApplicationInterface::GetLastStatus();
-			}
-			else
-			{
-				l_Code = SVMEE_INVALID_PARAMETER;
-			}
+			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
 		else
 		{
@@ -796,25 +306,34 @@ HRESULT SVMatroxBlobInterface::GetResult( const SVMatroxBlobResult& p_rResultId,
 @SVOperationDescription This function gets the number of currently included blobs.
 
 */
-HRESULT SVMatroxBlobInterface::GetNumber( const SVMatroxBlobResult& p_rResultId, long& p_rNumber ) 
+HRESULT SVMatroxBlobInterface::GetNumber( const SVMatroxIdentifier& rResultId, long& rNumber )
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
 	{
-		if( !p_rResultId.empty() )
+		if( M_NULL != rResultId )
 		{
+#if SV_DESIRED_MIL_VERSION == 0x0900
 			SVMatroxInt l_Number = 0;
 			long l_lValue;
-			//MblobGetNumber( p_rResultId.m_BlobResultId, &l_lValue );
-			MblobGetNumber( p_rResultId.m_BlobResultId, &l_Number );
+			MblobGetNumber( rResultId, &l_Number );
 			l_lValue = SVMatroxApplicationInterface::SVMatroxIntToHRESULT( l_Number );
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 			if( l_Code == S_OK )
 			{
-				p_rNumber = l_lValue;
+				rNumber = l_lValue;
 			}
+#else
+			MIL_INT lValue;
+			MblobGetResult(rResultId, M_DEFAULT, M_NUMBER + M_TYPE_MIL_INT, &lValue);
+			l_Code = SVMatroxApplicationInterface::GetLastStatus();
+			if (l_Code == S_OK)
+			{
+				rNumber = static_cast<long>(lValue);
+			}
+#endif
 		}
 		else
 		{
@@ -838,7 +357,7 @@ HRESULT SVMatroxBlobInterface::GetNumber( const SVMatroxBlobResult& p_rResultId,
 @SVOperationDescription This function gets the selected control type in the form of a double.
 
 */
-HRESULT SVMatroxBlobInterface::Get( const SVMatroxBlobResult& p_rResultId, SVBlobControlEnum p_lControlType, long& p_lControlValue) 
+HRESULT SVMatroxBlobInterface::Get( const SVMatroxIdentifier& rResultId, SVBlobControlEnum lControlType, long& lControlValue)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -846,12 +365,12 @@ HRESULT SVMatroxBlobInterface::Get( const SVMatroxBlobResult& p_rResultId, SVBlo
 #endif
 	{
 		double l_dValue;
-		if( !p_rResultId.empty() )
+		if( M_NULL != rResultId )
 		{
-			l_Code = Get(p_rResultId, p_lControlType, l_dValue);
+			l_Code = Get(rResultId, lControlType, l_dValue);
 			if( l_Code == S_OK )
 			{
-				p_lControlValue = static_cast<long>( l_dValue );
+				lControlValue = static_cast<long>( l_dValue );
 			}
 		}
 		else
@@ -876,25 +395,17 @@ HRESULT SVMatroxBlobInterface::Get( const SVMatroxBlobResult& p_rResultId, SVBlo
 @SVOperationDescription This function sets the selected control type with the supplied double value
 
 */
-HRESULT SVMatroxBlobInterface::Set( const SVMatroxBlobResult& p_rResultId, SVBlobControlEnum p_lControlType, const double p_lControlValue)
+HRESULT SVMatroxBlobInterface::Set( const SVMatroxIdentifier& rResultId, SVBlobControlEnum lControlType, const double lControlValue)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
 	{
-		if( !p_rResultId.empty() )
+		if( M_NULL != rResultId )
 		{
-			long l_lMatroxType = Convert2MatroxControlType( p_lControlType );
-			if( l_lMatroxType != M_UNINITIALIZED )
-			{
-				MblobControl( p_rResultId.m_BlobResultId, l_lMatroxType, p_lControlValue );
-				l_Code = SVMatroxApplicationInterface::GetLastStatus();
-			}
-			else
-			{
-				l_Code = SVMEE_INVALID_PARAMETER;
-			}
+			MblobControl(rResultId, lControlType, lControlValue);
+			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
 		else
 		{
@@ -918,9 +429,9 @@ HRESULT SVMatroxBlobInterface::Set( const SVMatroxBlobResult& p_rResultId, SVBlo
 @SVOperationDescription This function sets the selected control type with the supplied long value
 
 */
-HRESULT SVMatroxBlobInterface::Set( const SVMatroxBlobResult& p_rResultId, SVBlobControlEnum p_lControlType, const long p_lControlValue)
+HRESULT SVMatroxBlobInterface::Set( const SVMatroxIdentifier& rResultId, SVBlobControlEnum lControlType, const long lControlValue)
 {
-	return Set( p_rResultId, p_lControlType, static_cast<double>( p_lControlValue ));
+	return Set( rResultId, lControlType, static_cast<double>( lControlValue ));
 }
 
 /**
@@ -929,17 +440,17 @@ HRESULT SVMatroxBlobInterface::Set( const SVMatroxBlobResult& p_rResultId, SVBlo
 @SVOperationDescription This function gets the Foreground control value
 
 */
-HRESULT SVMatroxBlobInterface::GetForeground( const SVMatroxBlobResult& p_rResultId, bool& rIsDarkForeground)
+HRESULT SVMatroxBlobInterface::GetForeground( const SVMatroxIdentifier& rResultId, bool& rIsDarkForeground)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
 	{
-		if( !p_rResultId.empty() )
+		if( M_NULL != rResultId )
 		{
 			long value;
-			MblobInquire( p_rResultId.m_BlobResultId, M_FOREGROUND_VALUE, &value);
+			MblobInquire( rResultId, M_FOREGROUND_VALUE, &value);
 			rIsDarkForeground = (value) ? true : false;
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
@@ -964,16 +475,16 @@ HRESULT SVMatroxBlobInterface::GetForeground( const SVMatroxBlobResult& p_rResul
 @SVOperationDescription This function sets the Foreground control value
 
 */
-HRESULT SVMatroxBlobInterface::SetForeground( const SVMatroxBlobResult& p_rResultId, bool isDarkForeground)
+HRESULT SVMatroxBlobInterface::SetForeground( const SVMatroxIdentifier& rResultId, bool isDarkForeground)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
 	{
-		if( !p_rResultId.empty() )
+		if( M_NULL != rResultId )
 		{
-			MblobControl( p_rResultId.m_BlobResultId, M_FOREGROUND_VALUE, (isDarkForeground) ? M_ZERO: M_NONZERO );
+			MblobControl( rResultId, M_FOREGROUND_VALUE, (isDarkForeground) ? M_ZERO: M_NONZERO );
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
 		else
@@ -997,18 +508,18 @@ HRESULT SVMatroxBlobInterface::SetForeground( const SVMatroxBlobResult& p_rResul
 @SVOperationDescription This function gets the Blob Identifier Type control value
 
 */
-HRESULT SVMatroxBlobInterface::GetIdentifier( const SVMatroxBlobResult& p_rResultId, bool& p_bBinary)
+HRESULT SVMatroxBlobInterface::GetIdentifier( const SVMatroxIdentifier& rResultId, bool& bBinary)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
 	{
-		if( !p_rResultId.empty() )
+		if( M_NULL != rResultId )
 		{
 			long value;
-			MblobInquire( p_rResultId.m_BlobResultId, M_IDENTIFIER_TYPE, &value);
-			p_bBinary = (value) ? true : false;
+			MblobInquire( rResultId, M_IDENTIFIER_TYPE, &value);
+			bBinary = (value) ? true : false;
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
 		else
@@ -1032,16 +543,16 @@ HRESULT SVMatroxBlobInterface::GetIdentifier( const SVMatroxBlobResult& p_rResul
 @SVOperationDescription This function sets the Blob Identifier Type control value
 
 */
-HRESULT SVMatroxBlobInterface::SetIdentifier( const SVMatroxBlobResult& p_rResultId, bool p_bBinary)
+HRESULT SVMatroxBlobInterface::SetIdentifier( const SVMatroxIdentifier& rResultId, bool bBinary)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
 	{
-		if( !p_rResultId.empty() )
+		if( M_NULL != rResultId )
 		{
-			MblobControl( p_rResultId.m_BlobResultId, M_IDENTIFIER_TYPE, (p_bBinary) ? M_BINARY : M_GRAYSCALE );
+			MblobControl( rResultId, M_IDENTIFIER_TYPE, (bBinary) ? M_BINARY : M_GRAYSCALE );
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
 		else
@@ -1065,7 +576,7 @@ HRESULT SVMatroxBlobInterface::SetIdentifier( const SVMatroxBlobResult& p_rResul
 @SVOperationDescription This function draws the found blobs in an image that meet certian criteria with a specific color.
 
 */
-HRESULT SVMatroxBlobInterface::BlobFill( const SVMatroxBlobResult& p_rResult, const SVMatroxBuffer& p_rImageID, SVBlobControlEnum p_eCriterion, const long& p_lColor)
+HRESULT SVMatroxBlobInterface::BlobFill( const SVMatroxIdentifier& rResultId, const SVMatroxBuffer& rImageID, SVBlobControlEnum eCriterion, const long& lColor)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -1073,21 +584,15 @@ HRESULT SVMatroxBlobInterface::BlobFill( const SVMatroxBlobResult& p_rResult, co
 #endif
 	{
 		// This function replaces MblobFill
-		if( !p_rResult.empty() )
+		if( M_NULL != rResultId )
 		{
-			long l_lMatroxType = Convert2MatroxControlType( p_eCriterion );
-			if( l_lMatroxType != M_UNINITIALIZED )
-			{
-				MblobFill( p_rResult.m_BlobResultId, 
-					p_rImageID.GetIdentifier(), 
-					l_lMatroxType, 
-					p_lColor );
-				l_Code = SVMatroxApplicationInterface::GetLastStatus();
-			}
-			else
-			{
-				l_Code = SVMEE_INVALID_PARAMETER;
-			}
+#if SV_DESIRED_MIL_VERSION == 0x0900
+			MblobFill(rResultId, rImageID.GetIdentifier(), l_lMatroxType, lColor);
+#else
+			MgraColor(M_DEFAULT, lColor);
+			MblobDraw(M_DEFAULT, rResultId, rImageID.GetIdentifier(), M_DRAW_BLOBS, eCriterion, M_DEFAULT);
+#endif
+			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
 		else
 		{
@@ -1111,33 +616,22 @@ HRESULT SVMatroxBlobInterface::BlobFill( const SVMatroxBlobResult& p_rResult, co
 @SVOperationDescription This function selects blobs that meet a specified criterion. These blobs will be included in or excluded from future operations (calculations or result retrieval), or deleted entirely from the result buffer. 
 
 */
-HRESULT SVMatroxBlobInterface::BlobSelect( const SVMatroxBlobResult& p_rResult, SVBlobOperationEnum p_eOperation, SVBlobSelectionEnum p_eSelection, SVConditionEnum p_eCondition, const double& p_dCondLow, const double& p_dCondHigh)
+HRESULT SVMatroxBlobInterface::BlobSelect( const SVMatroxIdentifier& rResultId, SVBlobOperationEnum eOperation, SVBlobSelectionEnum eSelection, SVConditionEnum eCondition, const double& dCondLow, const double& dCondHigh)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
 	{
-		if( !p_rResult.empty() )
+		if( M_NULL != rResultId )
 		{
-			long l_lOperation = Convert2MatroxControlType( p_eOperation );
-			long l_lSelect = Convert2MatroxControlType( p_eSelection );
-			long l_lCondition = Convert2MatroxControlType( p_eCondition );
-
-			if( l_lSelect != M_UNINITIALIZED && l_lOperation != M_UNINITIALIZED && l_lCondition != M_UNINITIALIZED )
-			{
-				MblobSelect( p_rResult.m_BlobResultId,
-					l_lOperation,
-					l_lSelect,
-					l_lCondition,
-					p_dCondLow,
-					p_dCondHigh );
-				l_Code = SVMatroxApplicationInterface::GetLastStatus();
-			}
-			else
-			{
-				l_Code = SVMEE_INVALID_PARAMETER;
-			}
+			MblobSelect(rResultId,
+				eOperation,
+				eSelection,
+				eCondition,
+				dCondLow,
+				dCondHigh);
+			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
 		else
 		{
@@ -1160,7 +654,7 @@ HRESULT SVMatroxBlobInterface::BlobSelect( const SVMatroxBlobResult& p_rResult, 
 @SVOperationDescription This function selects the feature(s) to be calculated by Execute() when using the specified feature list. 
 
 */
-HRESULT SVMatroxBlobInterface::BlobSelectFeature( const SVMatroxBlobFeatureList& p_rFeatureList, SVBlobSelectionEnum p_eFeature)
+HRESULT SVMatroxBlobInterface::BlobSelectFeature( const SVMatroxIdentifier& rBlobId, std::set<SVBlobSelectionEnum> featureSet)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -1168,20 +662,74 @@ HRESULT SVMatroxBlobInterface::BlobSelectFeature( const SVMatroxBlobFeatureList&
 #endif
 	{
 		// This function replaces MblobSelectFeature
-		if( !p_rFeatureList.empty() )
+		if( M_NULL != rBlobId )
 		{
-			long l_lFeature = Convert2MatroxControlType( p_eFeature );
-			if( l_lFeature != M_UNINITIALIZED )
+#if SV_DESIRED_MIL_VERSION == 0x0900
+			for (auto feature : featureSet)
 			{
-				MblobSelectFeature( p_rFeatureList.m_BlobFeatureListID,
-					l_lFeature);
-
+				MblobSelectFeature(rBlobId, feature);
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
+				if (S_OK != l_Code)
+				{
+					break;
+				}
 			}
-			else
-			{
-				l_Code = SVMEE_INVALID_PARAMETER;
-			}
+#else
+			auto endIter = featureSet.end();
+			MIL_DOUBLE controlValue = (featureSet.find(SVEBlobBoxXMin) != endIter || featureSet.find(SVEBlobBoxYMin) != endIter ||
+				featureSet.find(SVEBlobBoxXMax) != endIter || featureSet.find(SVEBlobBoxYMax) != endIter ||
+				featureSet.find(SVEBlobFeretX) != endIter || featureSet.find(SVEBlobFeretY) != endIter ||
+				featureSet.find(SVEBlobFirstPointX) != endIter || featureSet.find(SVEBlobFirstPointY) != endIter) ? M_ENABLE : M_DISABLE;
+			MblobControl(rBlobId, M_BOX, controlValue);
+			controlValue = (featureSet.find(SVEBlobBreadth) != endIter)  ? M_ENABLE : M_DISABLE;
+			MblobControl(rBlobId, M_BREADTH, controlValue);
+			controlValue = (featureSet.find(SVEBlobNumberOfChainedPixels) != endIter) ? M_ENABLE : M_DISABLE;
+			MblobControl(rBlobId, M_CHAINS, controlValue);
+			controlValue = (featureSet.find(SVEBlobCompactness) != endIter) ? M_ENABLE : M_DISABLE;
+			MblobControl(rBlobId, M_COMPACTNESS, controlValue);
+			controlValue = (featureSet.find(SVEBlobXMaxAtYMax) != endIter || featureSet.find(SVEBlobXMinAtYMin) != endIter ||
+				featureSet.find(SVEBlobYMaxAtXMin) != endIter || featureSet.find(SVEBlobYMinAtXMax) != endIter ) ? M_ENABLE : M_DISABLE;
+			MblobControl(rBlobId, M_CONTACT_POINTS, controlValue);
+			controlValue = (featureSet.find(SVEBlobConvexParameter) != endIter) ? M_ENABLE : M_DISABLE;
+			MblobControl(rBlobId, M_CONVEX_PERIMETER, controlValue);
+			controlValue = (featureSet.find(SVEBlobElongation) != endIter) ? M_ENABLE : M_DISABLE;
+			MblobControl(rBlobId, M_ELONGATION, controlValue);
+			controlValue = (featureSet.find(SVEBlobEulerNumber) != endIter) ? M_ENABLE : M_DISABLE;
+			MblobControl(rBlobId, M_EULER_NUMBER, controlValue);
+			controlValue = (featureSet.find(SVEBlobGeneralFeret) != endIter) ? M_ENABLE : M_DISABLE;
+			MblobControl(rBlobId, M_FERET_GENERAL, controlValue);
+			controlValue = (featureSet.find(SVEBlobFeretElongation) != endIter || featureSet.find(SVEBlobFeretMaxAngle) != endIter ||
+				featureSet.find(SVEBlobFeretMaxDia) != endIter || featureSet.find(SVEBlobFeretMeanDia) != endIter ||
+				featureSet.find(SVEBlobFeretMinAngle) != endIter || featureSet.find(SVEBlobFeretMinDia) != endIter ) ? M_ENABLE : M_DISABLE;
+			MblobControl(rBlobId, M_FERETS, controlValue);
+			controlValue = (featureSet.find(SVEBlobIntercept) != endIter || featureSet.find(SVEBlobIntercept45) != endIter ||
+				featureSet.find(SVEBlobIntercept90) != endIter || featureSet.find(SVEBlobIntercept135) != endIter) ? M_ENABLE : M_DISABLE;
+			MblobControl(rBlobId, M_INTERCEPT, controlValue);
+			controlValue = (featureSet.find(SVEBlobLength) != endIter) ? M_ENABLE : M_DISABLE;
+			MblobControl(rBlobId, M_LENGTH, controlValue);
+			controlValue = (featureSet.find(SVEBlobNumberOfHoles) != endIter) ? M_ENABLE : M_DISABLE;
+			MblobControl(rBlobId, M_NUMBER_OF_HOLES, controlValue);
+			controlValue = (featureSet.find(SVEBlobPerimeter) != endIter) ? M_ENABLE : M_DISABLE;
+			MblobControl(rBlobId, M_PERIMETER, controlValue);
+			controlValue = (featureSet.find(SVEBlobRoughness) != endIter) ? M_ENABLE : M_DISABLE;
+			MblobControl(rBlobId, M_ROUGHNESS, controlValue);
+			controlValue = (featureSet.find(SVEBlobNumberOfRuns) != endIter) ? M_ENABLE : M_DISABLE;
+			MblobControl(rBlobId, M_RUNS, controlValue);
+			controlValue = (featureSet.find(SVEBlobSumPixel) != endIter) ? M_ENABLE : M_DISABLE;
+			MblobControl(rBlobId, M_SUM_PIXEL, controlValue);
+			controlValue = (featureSet.find(SVEBlobCenterOfGravityX) != endIter || featureSet.find(SVEBlobCenterOfGravityY) != endIter ) ? M_ENABLE : M_DISABLE;
+			MblobControl(rBlobId, M_CENTER_OF_GRAVITY, controlValue);
+			controlValue = (featureSet.find(SVEBlobGeneralMoment) != endIter) ? M_ENABLE : M_DISABLE;
+			MblobControl(rBlobId, M_MOMENT_GENERAL, controlValue);
+			controlValue = (featureSet.find(SVEBlobMomentX0Y1) != endIter || featureSet.find(SVEBlobMomentX1Y0) != endIter) ? M_ENABLE : M_DISABLE;
+			MblobControl(rBlobId, M_MOMENT_FIRST_ORDER, controlValue);
+			controlValue = (featureSet.find(SVEBlobMomentX1Y1) != endIter || featureSet.find(SVEBlobMomentX0Y2) != endIter ||
+				featureSet.find(SVEBlobMomentX2Y0) != endIter || featureSet.find(SVEBlobMomentCentralX0Y2) != endIter ||
+				featureSet.find(SVEBlobMomentCentralX2Y0) != endIter || featureSet.find(SVEBlobMomentCentralX1Y1) != endIter ||
+				featureSet.find(SVEBlobAxisPrincipalAngle) != endIter || featureSet.find(SVEBlobAxisSecondaryAngle) != endIter) ? M_ENABLE : M_DISABLE;
+			MblobControl(rBlobId, M_MOMENT_SECOND_ORDER, controlValue);
+			l_Code = SVMatroxApplicationInterface::GetLastStatus();
+#endif
 		}
 		else
 		{
@@ -1198,20 +746,20 @@ HRESULT SVMatroxBlobInterface::BlobSelectFeature( const SVMatroxBlobFeatureList&
 	return l_Code;
 }
 
-HRESULT SVMatroxBlobInterface::FillResults( const SVBlobOffsetList& p_rBlobList, SVCommandDataHolder& p_rResults )
+HRESULT SVMatroxBlobInterface::FillResults( const SVBlobOffsetList& rBlobList, SVCommandDataHolder& rResults )
 {
 	HRESULT l_Status = S_OK;
 
-	long l_lNumberBlobs = static_cast< long >( p_rBlobList.size() );
+	long l_lNumberBlobs = static_cast< long >( rBlobList.size() );
 
-	l_Status = p_rResults.SetValue( _T( "Number of Blobs" ), l_lNumberBlobs, true );
+	l_Status = rResults.SetValue( _T( "Number of Blobs" ), l_lNumberBlobs, true );
 
 	if( S_OK == l_Status )
 	{
 		for( int i = 0; i < l_lNumberBlobs; ++i)
 		{
 			SVCommandDataHolder l_Blob;
-			const POINT& l_rPoint = p_rBlobList[ i ];
+			const POINT& l_rPoint = rBlobList[ i ];
 
 			l_Status = l_Blob.SetValue( _T( "Offset X" ), l_rPoint.x, true );
 
@@ -1226,7 +774,7 @@ HRESULT SVMatroxBlobInterface::FillResults( const SVBlobOffsetList& p_rBlobList,
 
 				l_Name = SvUl::Format( _T( "Blob Result %d" ), i );
 
-				l_Status = p_rResults.SetContainer( _bstr_t(l_Name.c_str()), l_Blob, true );
+				l_Status = rResults.SetContainer( _bstr_t(l_Name.c_str()), l_Blob, true );
 			}
 		}
 	}
@@ -1363,67 +911,51 @@ long SVMatroxBlobInterface::CalculateOptimalWidth(const SVBlobList& rList, unsig
 	return avgWidth; 
 }
 
-HRESULT SVMatroxBlobInterface::FindSizedBlobs( SVMatroxBuffer& p_rThresholdImage, bool p_LightBackground, SVBlobList& rList )
+HRESULT SVMatroxBlobInterface::FindSizedBlobs( SVMatroxBuffer& rThresholdImage, bool LightBackground, SVBlobList& rList )
 {
 	HRESULT l_Status = S_OK;
 
-	SVMatroxBlobResult blobResult;
+	SVMatroxIdentifier blobResultId = M_NULL;
 	// Note: Special Condition if Max Width and Height is 0
 	// We must try and suggest the width and height
 	// Create feature list
-	SVMatroxBlobFeatureList blobFeatureList;
+	SVMatroxIdentifier blobId = M_NULL;
 
-	l_Status = SVMatroxBlobInterface::Create(blobFeatureList);
+	l_Status = SVMatroxBlobInterface::CreateContext(blobId);
 	
 	if (l_Status == S_OK)
 	{
-		l_Status = SVMatroxBlobInterface::Create(blobResult);
+		l_Status = SVMatroxBlobInterface::CreateResult(blobResultId);
 	}
 
 	// Set Control Values
 	if (l_Status == S_OK)
 	{
-		l_Status = SVMatroxBlobInterface::SetForeground(blobResult, p_LightBackground );
+		l_Status = SVMatroxBlobInterface::SetForeground(blobResultId, LightBackground );
 	}
 
 	if (l_Status == S_OK)
 	{
-		l_Status = SVMatroxBlobInterface::Set(blobResult, SVEBlobIdentifier, 0x00001000L);
+		l_Status = SVMatroxBlobInterface::Set(blobResultId, SVEBlobIdentifier, 0x00001000L);
 	}
 
-	// Set features
 	if (l_Status == S_OK)
 	{
-		l_Status = SVMatroxBlobInterface::BlobSelectFeature(blobFeatureList, SVEBlobArea);
-	}
-	if (l_Status == S_OK)
-	{
-		l_Status = SVMatroxBlobInterface::BlobSelectFeature(blobFeatureList, SVEBlobBoxXMin);
-	}
-	if (l_Status == S_OK)
-	{
-		l_Status = SVMatroxBlobInterface::BlobSelectFeature(blobFeatureList, SVEBlobBoxXMax);
-	}
-	if (l_Status == S_OK)
-	{
-		l_Status = SVMatroxBlobInterface::BlobSelectFeature(blobFeatureList, SVEBlobBoxYMin);
-	}
-	if (l_Status == S_OK)
-	{
-		l_Status = SVMatroxBlobInterface::BlobSelectFeature(blobFeatureList, SVEBlobBoxYMax);
-	}
-	if (l_Status == S_OK)
-	{
-		l_Status = SVMatroxBlobInterface::BlobSelectFeature(blobFeatureList, SVEBlobCenterOfGravityX);
-	}
-	if (l_Status == S_OK)
-	{
-		l_Status = SVMatroxBlobInterface::BlobSelectFeature(blobFeatureList, SVEBlobCenterOfGravityY);
+		// Set features
+		std::set<SVBlobSelectionEnum> featureSet;
+		featureSet.insert(SVEBlobArea);
+		featureSet.insert(SVEBlobBoxXMin);
+		featureSet.insert(SVEBlobBoxXMax);
+		featureSet.insert(SVEBlobBoxYMin);
+		featureSet.insert(SVEBlobBoxYMax);
+		featureSet.insert(SVEBlobCenterOfGravityX);
+		featureSet.insert(SVEBlobCenterOfGravityY);
+		l_Status = SVMatroxBlobInterface::BlobSelectFeature(blobId, featureSet);
 	}
 	if (l_Status == S_OK)
 	{   
 		// Find Blobs
-		l_Status = SVMatroxBlobInterface::Execute(blobResult, p_rThresholdImage, blobFeatureList);
+		l_Status = SVMatroxBlobInterface::Execute(blobResultId, rThresholdImage, blobId);
 	}
 
 	if (l_Status == S_OK)
@@ -1432,7 +964,7 @@ HRESULT SVMatroxBlobInterface::FindSizedBlobs( SVMatroxBuffer& p_rThresholdImage
 
 		if (l_Status == S_OK)
 		{
-			l_Status = SVMatroxBlobInterface::GetNumber( blobResult, l_lNumberBlobs );
+			l_Status = SVMatroxBlobInterface::GetNumber(blobResultId, l_lNumberBlobs );
 		}
 
 		if (S_OK == l_Status && l_lNumberBlobs > 0)
@@ -1454,30 +986,30 @@ HRESULT SVMatroxBlobInterface::FindSizedBlobs( SVMatroxBuffer& p_rThresholdImage
 			l_lArea.resize(l_lNumberBlobs);
 			
 			// Get all Blobs Found
-			l_Status = SVMatroxBlobInterface::GetResult(blobResult, SVEBlobBoxXMin, &l_lBoxXMin[0]);
+			l_Status = SVMatroxBlobInterface::GetResult(blobResultId, SVEBlobBoxXMin, &l_lBoxXMin[0]);
 			if (l_Status == S_OK)
 			{
-				l_Status = SVMatroxBlobInterface::GetResult(blobResult, SVEBlobBoxXMax, &l_lBoxXMax[0]);
+				l_Status = SVMatroxBlobInterface::GetResult(blobResultId, SVEBlobBoxXMax, &l_lBoxXMax[0]);
 			}
 			if (l_Status == S_OK)
 			{
-				l_Status = SVMatroxBlobInterface::GetResult(blobResult, SVEBlobBoxYMin, &l_lBoxYMin[0]);
+				l_Status = SVMatroxBlobInterface::GetResult(blobResultId, SVEBlobBoxYMin, &l_lBoxYMin[0]);
 			}
 			if (l_Status == S_OK)
 			{
-				l_Status = SVMatroxBlobInterface::GetResult(blobResult, SVEBlobBoxYMax, &l_lBoxYMax[0]);
+				l_Status = SVMatroxBlobInterface::GetResult(blobResultId, SVEBlobBoxYMax, &l_lBoxYMax[0]);
 			}
 			if (l_Status == S_OK)
 			{
-				l_Status = SVMatroxBlobInterface::GetResult(blobResult, SVEBlobCenterOfGravityX, &l_lCenterX[0]);
+				l_Status = SVMatroxBlobInterface::GetResult(blobResultId, SVEBlobCenterOfGravityX, &l_lCenterX[0]);
 			}
 			if (l_Status == S_OK)
 			{
-				l_Status = SVMatroxBlobInterface::GetResult(blobResult, SVEBlobCenterOfGravityY, &l_lCenterY[0]);
+				l_Status = SVMatroxBlobInterface::GetResult(blobResultId, SVEBlobCenterOfGravityY, &l_lCenterY[0]);
 			}
 			if (l_Status == S_OK)
 			{
-				l_Status = SVMatroxBlobInterface::GetResult(blobResult, SVEBlobArea, &l_lArea[0]);
+				l_Status = SVMatroxBlobInterface::GetResult(blobResultId, SVEBlobArea, &l_lArea[0]);
 			}
 			
 			if (l_Status == S_OK)
@@ -1504,64 +1036,66 @@ HRESULT SVMatroxBlobInterface::FindSizedBlobs( SVMatroxBuffer& p_rThresholdImage
 	}
 
 	// Cleanup
-	SVMatroxBlobInterface::Destroy(blobFeatureList);
-	SVMatroxBlobInterface::Destroy(blobResult);
+	SVMatroxBlobInterface::DestroyContext(blobId);
+	SVMatroxBlobInterface::DestroyResult(blobResultId);
 
 	return l_Status;
 }
 
-HRESULT SVMatroxBlobInterface::NumBlobs( SVMatroxBuffer& p_rThresholdImage, BYTE p_Background, long& p_rBlobCount )
+HRESULT SVMatroxBlobInterface::NumBlobs( SVMatroxBuffer& rThresholdImage, BYTE Background, long& rBlobCount )
 {
 	HRESULT l_Status = S_OK;
 
-	SVMatroxBlobFeatureList blobFeatureList;
-	SVMatroxBlobResult blobResult;
+	SVMatroxIdentifier blobId = M_NULL;
+	SVMatroxIdentifier blobResultId = M_NULL;
 
-	l_Status = SVMatroxBlobInterface::Create(blobFeatureList);
+	l_Status = SVMatroxBlobInterface::CreateContext(blobId);
 
 	if (S_OK == l_Status)
 	{
-		l_Status = SVMatroxBlobInterface::Create(blobResult);
+		l_Status = SVMatroxBlobInterface::CreateResult(blobResultId);
 	}
 
 	// Set Control Values
 	if (S_OK == l_Status)
 	{
-		bool bLightGround = ( p_Background == DARK );
-		l_Status = SVMatroxBlobInterface::SetForeground(blobResult, bLightGround);
+		bool bLightGround = ( Background == DARK );
+		l_Status = SVMatroxBlobInterface::SetForeground(blobResultId, bLightGround);
 	}
 
 	if (S_OK == l_Status)
 	{
-		l_Status = SVMatroxBlobInterface::Set(blobResult, SVEBlobIdentifier, 0x00001000L);
+		l_Status = SVMatroxBlobInterface::Set(blobResultId, SVEBlobIdentifier, 0x00001000L);
 	}
 
 	// Set features
 	if (S_OK == l_Status)
 	{
-		l_Status = SVMatroxBlobInterface::BlobSelectFeature(blobFeatureList, SVEBlobArea);
+		std::set<SVBlobSelectionEnum> featureSet;
+		featureSet.insert(SVEBlobArea);
+		l_Status = SVMatroxBlobInterface::BlobSelectFeature(blobId, featureSet);
 	}
 
 	if (S_OK == l_Status)
 	{   
 		// Find Blobs
-		l_Status = SVMatroxBlobInterface::Execute(blobResult, p_rThresholdImage, blobFeatureList);
+		l_Status = SVMatroxBlobInterface::Execute(blobResultId, rThresholdImage, blobId);
 	}
 
 	if (S_OK == l_Status)
 	{
 		long l_lNumberBlobs = 0;
-		l_Status = SVMatroxBlobInterface::GetNumber(blobResult, l_lNumberBlobs);
+		l_Status = SVMatroxBlobInterface::GetNumber(blobResultId, l_lNumberBlobs);
 
 		if (S_OK == l_Status)
 		{
-			p_rBlobCount = l_lNumberBlobs;
+			rBlobCount = l_lNumberBlobs;
 		}
 	}
 
 	// Cleanup
-	SVMatroxBlobInterface::Destroy(blobFeatureList);
-	SVMatroxBlobInterface::Destroy(blobResult);
+	SVMatroxBlobInterface::DestroyContext(blobId);
+	SVMatroxBlobInterface::DestroyResult(blobResultId);
 
 	return l_Status;
 }
@@ -1687,4 +1221,3 @@ HRESULT SVMatroxBlobInterface::CreateBlobOffsetResultList(const SVBlobList& resu
 	}
 	return hr;
 }
-
