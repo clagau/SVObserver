@@ -53,6 +53,22 @@ namespace SvSml
 		return m_Version;
 	}
 
+	int MLCpyContainer::GetAllActiveMonitorlistName(SvDef::StringVector& monotorlistnames) const
+	{
+			
+			for (auto& mlc : m_MonitorListCpyMap)
+			{
+				if (mlc.second->GetIsActive())
+				{ 
+					monotorlistnames.push_back(mlc.first);
+					
+				}
+					
+			}
+			return monotorlistnames.size();
+		
+	}
+	
 	DWORD MLCpyContainer::GetActiveMonitorlistCount() const
 	{
 		DWORD res(0);

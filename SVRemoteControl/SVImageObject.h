@@ -12,7 +12,11 @@
 #include "SVRemoteControl.h"
 #include "SVSocketLibrary/SVClientSocket.h"
 #include <boost/shared_array.hpp>
+#include "RunReApi/format.pb.h"
+#include "RunReApi/ClientFrontEndApi.h"
 #pragma endregion Includes
+
+
 
 #if defined(_WIN32_WCE) && !defined(_CE_DCOM) && !defined(_CE_ALLOW_SINGLE_THREADED_OBJECTS_IN_MTA)
 #error "Single-threaded COM objects are not properly supported on Windows CE platform, such as the Windows Mobile platforms that do not include full DCOM support. Define _CE_ALLOW_SINGLE_THREADED_OBJECTS_IN_MTA to force ATL to support creating single-thread COM object's and allow use of it's single-threaded COM object implementations. The threading model in your rgs file was set to 'Free' as that is the only threading model supported in non DCOM Windows CE platforms."
@@ -79,6 +83,8 @@ public:
 	STDMETHOD(GetImage)(VARIANT_BOOL overlays, DOUBLE zoom, SVImageFormatsEnum format, VARIANT* result);
 	STDMETHOD(SetImage)(VARIANT image);
 
+	
+
 	void SetOverlays(VARIANT bsOverlays );
 	void SetDIB(bytes dib) { DIB.swap(dib); }
 	void SetLen(ULONG l) { len = l; }
@@ -86,6 +92,11 @@ public:
 	const std::string & GetUrl() const { return url; }
 	void SetUrl(const std::string & u) { url = u; }
 	void SetImageSok(SvSol::SVClientSocket<SvSol::UdpApi>*  sok) {m_pImageSok = sok;}
+	void SetClientFrontEndApi(RRApi::ClientFrontEndApi* pFrontEndApi) { m_pFrontEndApi = pFrontEndApi; }
+	void SetImageId(const RRApi::CurImageId& CurImageId) 
+	{
+		m_CurImId = CurImageId;
+	}
 private:
 	STDMETHOD(get_Image)(IPictureDisp** pVal);
 	STDMETHOD(put_Image)(IPictureDisp * newVal);
@@ -100,12 +111,15 @@ private:
 	CComBSTR name;
 	std::string url;
 	bytes DIB;
-	LONG status;
-	LONG trigger;
-	ULONG len;
-	SVImageFormatsEnum format;
-	
-	SvSol::SVClientSocket<SvSol::UdpApi>*  m_pImageSok;
+	LONG status =0;
+	LONG trigger =0;
+	ULONG len =0;
+	SVImageFormatsEnum format = BMP;
+	SvSol::SVClientSocket<SvSol::UdpApi>*  m_pImageSok = nullptr;
+	RRApi::CurImageId m_CurImId;
+	RRApi::ClientFrontEndApi* m_pFrontEndApi = nullptr;
+
+
 };
 
 #pragma warning(pop)

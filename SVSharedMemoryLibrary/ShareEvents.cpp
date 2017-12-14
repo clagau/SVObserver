@@ -188,7 +188,23 @@ namespace SvSml
 		m_hWatchThread = CreateThread(NULL,0,WatchFunction,this,0, &m_ThreadId);
 		return (m_hWatchThread != NULL);
 	}
-	
+	void ShareEvents::StopWatch()
+	{
+		if (m_StopEvent && m_hWatchThread)
+		{
+			SetEvent(m_StopEvent);
+			if (::WaitForSingleObject(m_hWatchThread, 2000) != WAIT_OBJECT_0)
+			{
+				::TerminateThread(m_hWatchThread, E_FAIL);
+			}
+			CloseHandle(m_StopEvent);
+			CloseHandle(m_hWatchThread);
+			m_StopEvent = nullptr;
+			m_hWatchThread = nullptr;
+		}
+	}
+
+
 	ShareEvents::~ShareEvents()
 	{
 		if(m_StopEvent && m_hWatchThread)

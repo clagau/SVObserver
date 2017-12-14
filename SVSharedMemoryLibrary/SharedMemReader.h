@@ -25,8 +25,22 @@ namespace SvSml
 		~SharedMemReader(void);
 		
 		///Function call to m_MLContainer
-		bool IsActiveMonitorList(const std::string& Monitorlistname ) const;
-		DWORD GetVersion() const; 
+		
+		
+		int GetAllActiveMonitorlistName(SvDef::StringVector& monotorlistnames) const
+		{
+			return m_MLContainer.GetAllActiveMonitorlistName(monotorlistnames);
+		}
+		bool IsActiveMonitorList(const std::string& Monitorlistname) const
+		{
+			return m_MLContainer.IsActiveMonitorList(Monitorlistname);
+		}
+
+		
+		DWORD GetVersion() const
+		{
+			return m_MLContainer.GetVersion();
+		}
 
 		///Reload MonitorMap, PPQReader, Open Imagestores and create the imageBuffer 
 		///the version number is saved in MLCpyContainer

@@ -20,6 +20,9 @@
 #include "SVJsonCommandHelper.h"
 #include "SVRCClientSocket.h"
 #include "SVRemoteCtrl.h"
+#include <Thread>
+#include <boost/asio/io_service.hpp>
+#include "RunReApi/ClientFrontEndApi.h"
 #pragma endregion Includes
 
 typedef CComPtr<ISVRemoteCtrl> RemoteCtrlPtr;
@@ -62,6 +65,7 @@ public:
 		const CComVariant & rejectCondList, const CComVariant & failStatusList, ISVErrorObjectList ** errors, SVCommandStatus& p_rStatus);
 	HRESULT QueryProductList(const _bstr_t & listName, const std::string & cmd, CComVariant & itemNames, SVCommandStatus& p_rStatus);
 	
+	HRESULT GetProduct(bool bGetReject, const _bstr_t & listName, long triggerCount, long imageScale, ISVProductItems ** currentViewItems, SVCommandStatus& p_rStatus);
 	HRESULT GetProduct(const _bstr_t & listName, long triggerCount, long imageScale, ISVProductItems ** currentViewItems, SVCommandStatus& p_rStatus);
 	HRESULT GetRejects(const _bstr_t & listName, long triggerCount, long imageScale, ISVProductItems ** currentViewItems, SVCommandStatus& p_rStatus);
 	HRESULT ActivateMonitorList(const _bstr_t & listName, bool activ, SVCommandStatus& p_rStatus);
@@ -78,7 +82,6 @@ public:
 
 	SVControlCommands( NotifyFunctor p_Func );
 
-	SvSol::SVClientSocket<SvSol::UdpApi>*  GetImageSok() {return &m_imageSok;}
 
 
 protected:
@@ -110,13 +113,16 @@ protected:
 	bool m_RRSConnected;
 
 	SVRCClientSocket m_ClientSocket; // TCP socket to SVObserver
-	
-	SvSol::SVClientSocket<SvSol::TcpApi> m_RejectSocket; // TCP socket to run/reject server 
-	SvSol::SVClientSocket<SvSol::UdpApi> m_RunpageSocket; // UDP socket to run/reject server 
-	SvSol::SVClientSocket<SvSol::UdpApi> m_imageSok;
 
 	SVJsonCommandHelper m_Command;
 	NotifyFunctor m_Notifier;
+
+	std::vector<std::shared_ptr<std::thread>> m_Threads;
+	boost::asio::io_service m_io_service;
+	std::unique_ptr<boost::asio::io_service::work> m_pioServiceWork;
+	std::unique_ptr<RRApi::ClientFrontEndApi> m_pFrontEndApi;
+
+
 };
 
 template<typename API>

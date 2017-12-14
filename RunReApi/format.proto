@@ -1,0 +1,161 @@
+syntax = "proto2";
+package RRApi;
+
+enum MessageType 
+{
+	GetVersion = 1;
+	GetProduct = 2;
+	GetReject = 3;
+	GetFailStatus=4;
+	GetImageFromCurId=5;
+	GetItems =6;
+	QueryListName=7;
+	QueryListItem=8;
+}
+
+enum ListType
+{
+	ProductItem = 1;
+	RejectCondition =2;
+	FailStatus =3;
+}
+
+enum State
+{
+	IsValid = 0;
+	NotImplemented =1;
+	NotFound =2;
+	InvalidMonitorName =3;
+	InternalError =5;
+	SharedMemoryBlocked =6;
+} 
+
+message Variant 
+{
+	optional bool bool_value = 1;
+	optional int32 int32_value = 2;
+	optional int64 int64_value = 3;
+	optional uint32 uint32_value = 4;
+	optional uint64 uint64_value = 5;
+	optional string string_value = 6;
+	optional double double_value = 7;
+	optional float float_value = 8;
+	optional State Status = 9;
+}
+
+message MessageEnvelope 
+{
+	optional int32 id = 1;
+	optional MessageType type = 2;
+    optional bytes payload = 3;
+}
+
+message GetVersionRequest 
+{
+}
+
+message GetVersionResponse 
+{
+	optional string version = 1;
+}
+
+message QueryListNameRequest
+{
+}
+message QueryListNameResponse
+{
+	repeated  string   ListName =1;
+}
+
+message ListItemDefinition
+{
+	optional string name =1;
+	optional int32 type =2;
+	optional int32 size =3;
+	optional uint32 uid=4;
+}
+
+message QueryListItemRequest
+{
+	optional string name =1;
+	required ListType type =2;
+}
+
+message QueryListItemResponse
+{
+	repeated ListItemDefinition  ValueDefinition = 1;
+	repeated ListItemDefinition  ImageDefinition = 2;
+}
+
+
+message CurImageId
+{
+	required int32 ImageStore =1;
+	required int32 ImageIndex =2;
+	optional int32	SlotIndex =3 ;
+}
+
+message GetProductRequest
+{
+	optional int32 TriggerCount = 1;
+	required string Name =2;
+	optional bool NameInResponse = 3;
+}
+
+message GetProductResponse
+{
+	optional State Status =1;
+	optional uint32 TiggerCount=2;
+	repeated Variant Values =3;
+	repeated CurImageId Images =4;
+	repeated string ImageNames = 5;
+	repeated string ValueNames =6; 
+} 
+
+message Image
+{
+	optional bytes rgb = 1;	
+	optional uint32 w = 2;    
+	optional uint32 h = 3;
+} 
+
+message GetImageFromCurIdRequest
+{
+	required CurImageId Id =1;
+}
+message GetImageStreamFromCurIdRequest
+{
+	optional uint32 count = 1;
+	optional CurImageId Id = 2;
+}
+message GetImageFromCurIdResponse
+{
+	optional State Status =1;
+	optional Image ImageData=2;
+}
+
+message GetFailStatusRequest
+{
+	required string name =1;
+	optional bool NameInResponse = 2;
+}
+message GetFailStatusResponse
+{
+	optional State Status =1;
+	repeated  GetProductResponse productResponse=2;
+}
+
+message GetItemsRequest
+{
+	optional uint32 triggercount = 1;
+	repeated ListItemDefinition  valueDefs=2;
+	repeated ListItemDefinition  imageDefs= 3;
+}
+
+message GetItemsResponse
+{
+	optional uint32 triggercount = 1;
+	repeated	Variant Values=2;
+	repeated   Image Images = 3;
+	optional State Status =4; 
+}

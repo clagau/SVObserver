@@ -158,7 +158,8 @@ namespace SVRemoteTest
 						imageObj.TriggerCount = img.TriggerCount;
 						imageObj.Status = img.Status;
 						imageObj.Name = img.Name;
-						object o = img.GetImage(false, 1.0, SVRemoteControlLib.SVImageFormatsEnum.PNG);
+		///@Todo[mec] check with bmp				
+		object o = img.GetImage(false, 1.0, SVRemoteControlLib.SVImageFormatsEnum.PNG);
 						if (null != o)
 						{
 							byte[] b = o as byte[];

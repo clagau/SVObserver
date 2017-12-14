@@ -12,6 +12,7 @@
 #include "RRSViewDlg.h"
 #include "SVSharedMemoryLibrary\MonitorListCpy.h"
 #include "MonEntryDlg.h"
+#include "Definitions\SVObjectTypeInfoStruct.h"
 
 IMPLEMENT_DYNAMIC(MonitorListDlg, CDialog)
 
@@ -23,41 +24,10 @@ CString  Type2String(DWORD type)
 	CString ret;
 	switch (type)
 	{
-	case 0x11:
+	case SvDef::SVImageObjectType:
 		ret = _T("Image");
 		break;
-	case 0x100:
-		ret = _T("DWORD");
-		break;
-	case 0x101:
-		ret = _T("long");
-		break;
-
-	case 0x102:
-		ret = _T("double");
-		break;
-	case 0x103:
-		ret = _T("bool");
-		break;
-
-	case 0x104:
-		ret = _T("point");
-		break;
-	case 0x105:
-		ret = _T("Byte");
-		break;
-	case 0x106:
-		ret = _T("String");
-		break;
-	case 0x107:
-		ret = _T("enum");
-		break;
-		/*
-		SvDef::SVDPointValueObjectType					= 0x00000108,
-		SvDef::SVInt64ValueObjectType					= 0x00000109,
-		SvDef::SVCharValueObjectType					= 0x0000010A,
-		SvDef::SVVariantValueObjectType				= 0x0000010B,
-		SvDef::DoubleSortValueObjectType				= 0x0000010C,*/
+	
 	default:
 		ret.Format(_T("%X"), type);
 		break;

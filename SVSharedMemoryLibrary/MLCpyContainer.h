@@ -14,7 +14,10 @@
 #include "SVSharedMonitorList.h"
 #include "MLInspectionInfo.h"
 #include "MonitorListCpy.h"
+#include "Definitions\SVIMCommand.h"
+#include "Definitions\StringTypeDef.h"
 #pragma endregion Includes
+
 
 namespace SvSml
 {
@@ -36,6 +39,9 @@ namespace SvSml
 		
 		DWORD GetVersion() const; 
 		
+		//! Get the names of all active Monitorlist 
+		int GetAllActiveMonitorlistName(SvDef::StringVector& monotorlistnames) const;
+
 		DWORD GetActiveMonitorlistCount() const;
 		///return true if a active monitorlist with the name exist 
 		bool IsActiveMonitorList(const std::string& Monitorlistname ) const;

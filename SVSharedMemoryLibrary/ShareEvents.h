@@ -42,6 +42,9 @@ namespace SvSml
 		
 		//! Starts a thread which monitor readyflag 
 		bool StartWatch();
+		
+		//!Stops the Watchthread
+		void StopWatch();
 		//!callbackfunction for watch thread 
 		void SetCallbackFunction(boost::function<bool(DWORD )>cbFct);  
 

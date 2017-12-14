@@ -26,7 +26,11 @@ using namespace  SvSol;
 
 STDMETHODIMP SVImageObject::get_Image(IPictureDisp** pVal)
 {
-	HRESULT hr = FetchImage();
+	HRESULT hr = S_OK;
+	if (len == 0)
+	{
+		hr = FetchImage();
+	}
 	if ( SUCCEEDED( hr ) )
 	{
 		HGLOBAL hg =::GlobalAlloc(GHND, len);
@@ -368,50 +372,38 @@ STDMETHODIMP SVImageObject::SetImage(VARIANT image)
 
 HRESULT SVImageObject::FetchImage()
 {
-	HRESULT hr = S_OK;
-	static u_int id = SvSol::end;
-	len = static_cast<ULONG>(url.size());
-
-	if ( m_pImageSok == nullptr )
-	{
-		len = 0;
-		hr = INET_E_NO_IMAGE_SOCKET;
-	}
-	else if (  !m_pImageSok->IsValidSocket())
-	{
-		len = 0;
-		hr = INET_E_NO_SESSION;
-	}
+	HRESULT hr = INET_E_DOWNLOAD_FAILURE;;
+	SetLen(0);
 	try
 	{
-		if (SUCCEEDED(hr) && m_pImageSok->m_buff_sz >= len + sizeof(SvSol::header) && len > 0)
+		if (nullptr != m_pFrontEndApi  && m_pFrontEndApi->IsConnected())
 		{
-			bytes buf;
-			SVSocketError::ErrorEnum err;
-			err = m_pImageSok->Write(url, true);
-			if (SVSocketError::Success != err || SVSocketError::Success != (err = m_pImageSok->ReadAll(buf, len, true)))
+			RRApi::GetImageFromCurIdRequest request;
+			request.mutable_id()->set_imagestore(m_CurImId.imagestore());
+			request.mutable_id()->set_imageindex(m_CurImId.imageindex());
+			request.mutable_id()->set_slotindex(m_CurImId.slotindex());
+			RRApi::GetImageFromCurIdResponse resp = m_pFrontEndApi->GetImageFromCurId(request).get();
+			if (resp.has_status() && resp.status() == RRApi::IsValid && resp.imagedata().has_rgb())
 			{
-				len = 0;
-				hr = INET_E_DOWNLOAD_FAILURE;
-			}
-			if (SUCCEEDED(hr))
-			{
-				DIB.swap(buf);
-				if ( 0 == len )
-				{
-					hr = INET_E_DATA_NOT_AVAILABLE;
-				}
+				BYTE *buff = new BYTE[resp.imagedata().rgb().length()];
+				memcpy(buff, resp.imagedata().rgb().c_str(), resp.imagedata().rgb().length());
+				boost::shared_array<BYTE> b(buff);
+				SetLen((ULONG)resp.imagedata().rgb().length());
+				SetDIB(b);
+				hr = S_OK;
 			}
 		}
-		else
+		else if (m_pFrontEndApi == nullptr)
 		{
-			DIB.swap(bytes());
-			len = 0;
-			hr = INET_E_INVALID_REQUEST;
+				hr = INET_E_NO_IMAGE_SOCKET;
 		}
-		SVLOG(hr);
+		else 
+		{
+				hr = INET_E_NO_SESSION;
+		}
+
 	}
-	catch(std::exception & /*ex*/)
+	catch (std::exception & /*ex*/)
 	{
 		DIB.swap(bytes());
 		len = 0;
@@ -421,7 +413,7 @@ HRESULT SVImageObject::FetchImage()
 	return hr;
 }
 
-void SVImageObject::SetOverlays( VARIANT bsOverlays )
+void SVImageObject::SetOverlays(VARIANT bsOverlays)
 {
 
 }

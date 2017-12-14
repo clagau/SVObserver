@@ -104,9 +104,11 @@ public:
 	static HRESULT CopyBuffer( SVByteVector& p_rToDIB, const SVMatroxBuffer& p_rFromId );
 	static HRESULT CopyBuffer( SVByteVector& p_rToDIB, const SVBitmapInfo& p_rToBitmapInfo, const SVMatroxBuffer& p_rFromId );
 	
-	///copies ImageBuffer to rToDIB starting with rToDIB[offset], ensures positive height if normalize_y = true   
+	///copies ImageBuffer to ByteVector rToDIB starting with rToDIB[offset], ensures positive height if normalize_y = true   
 	static  HRESULT CopyBufferToFileDIB(SVByteVector& rToDIB, const SVMatroxBuffer& rFromId, DWORD  offset =0, bool normalize_y = true);
 	
+	///copies ImageBuffer to  string rToDIB starting with rToDIB[offset], ensures positive height if normalize_y = true   
+	static HRESULT CopyBufferToFileDIB(std::string& rToDib,  SVBitmapInfo& rBitMapInfo, const SVMatroxBuffer& rFromId, const  DWORD  offset, bool normalize_y);
 	
 
 	static HRESULT CopyDIBBufferToMemory( SVImageCopyUtility& p_rImageCopier, const SVMatroxBuffer& p_rFromId );

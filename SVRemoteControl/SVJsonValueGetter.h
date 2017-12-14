@@ -63,7 +63,16 @@ type SVJsonValueGetter<type>::operator ()(const Json::Value &val) const\
 	throw std::invalid_argument("Cannot convert " #jsonValue " to " #type ".");\
 }\
 
-SPECIALIZE_GETTER_FOR(int, Json::intValue, asInt)
+//SPECIALIZE_GETTER_FOR(int, Json::intValue, asInt)
+template <> 
+int SVJsonValueGetter<int>::operator()(const Json::Value &val) const
+{
+	if (val.isConvertibleTo(Json::intValue))
+	{
+		return val.asInt(); 
+	}
+	throw std::invalid_argument("Cannot convert  Json::intValue  to int."); 
+}
 
 SPECIALIZE_GETTER_FOR(bool, Json::booleanValue, asBool)
 
@@ -272,7 +281,8 @@ ImageObjectPtr  SVJsonValueGetter<ImageObjectPtr>::operator ()(const Json::Value
 		ImageObject::CreateInstance(&io);
 		ImageObjectPtr pio(io);
 		
-		io->SetImageSok(m_pControlCommands->GetImageSok());
+		//io->SetImageSok(m_pControlCommands->GetImageSok());
+		io->SetImageSok(NULL);
 		io->put_Name(bstrGetter(val[SVRC::io::name]));
 		io->put_Status(static_cast<LONG>(intGetter(val[SVRC::io::status])));
 		io->put_TriggerCount(static_cast<LONG>(intGetter(val[SVRC::io::count])));

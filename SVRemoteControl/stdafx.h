@@ -71,6 +71,8 @@
 #include <boost/property_tree/xml_parser.hpp>
 #pragma endregion Precompiled Headers
 
+///AVOIDING warnings in Protobuf generated header
+#pragma warning( disable:  4800)
 
 class SVControlCommands;
 typedef std::shared_ptr<SVControlCommands> CommandDispatcher;

@@ -92,6 +92,7 @@ namespace SVRemoteTest
                 imageObj.TriggerCount = img.TriggerCount;
                 imageObj.Status = img.Status;
 
+                //@Todo[MEC]  This is faster with BMP
                 object o = img.GetImage(false, 1.0, SVRemoteControlLib.SVImageFormatsEnum.PNG);
 				if (null != o)
 				{

@@ -40,15 +40,7 @@ namespace SvSml
 		}
 
 	}
-	DWORD SharedMemReader::GetVersion() const
-	{
-		return m_MLContainer.GetVersion();
-	}
-
-	bool SharedMemReader::IsActiveMonitorList(const std::string& Monitorlistname ) const
-	{
-		return m_MLContainer.IsActiveMonitorList(Monitorlistname);
-	}
+	
 
 	RingBufferPointer SharedMemReader::GetSlotManager(int index)
 	{
@@ -126,7 +118,6 @@ namespace SvSml
 			}
 
 		}
-
 
 		pProduct->m_slot = slot;
 		pProduct->m_SlotManagerIndex = SlotManagerIndex;

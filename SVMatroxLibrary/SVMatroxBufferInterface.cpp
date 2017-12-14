@@ -2202,6 +2202,77 @@ HRESULT SVMatroxBufferInterface::CopyBufferToFileDIB(SVByteVector& rToDIB, const
 	return l_Code;
 }
 
+
+HRESULT SVMatroxBufferInterface::CopyBufferToFileDIB(std::string& rTo,  SVBitmapInfo& rBitMapInfo,  const SVMatroxBuffer& rFromId,const  DWORD  offset, bool normalize_y)
+{
+	HRESULT Hres(S_OK);
+	MIL_ID MilId = rFromId.GetIdentifier();
+	if (IsColorBuffer(rFromId))
+	{
+		//This assumes we have attribute M_PACKED 
+		MbufChildColor(rFromId.GetIdentifier(), 0, &MilId);
+	}
+	
+	rTo.clear();
+	Hres = GetBitmapInfo(rBitMapInfo, rFromId);
+	if (S_OK == Hres)
+	{
+		void* l_pHostBuffer = reinterpret_cast<void*>(MbufInquire(MilId, M_HOST_ADDRESS, M_NULL));
+		if (nullptr != l_pHostBuffer)
+		{
+			size_t l_InfoSize = rBitMapInfo.GetBitmapInfoSizeInBytes();
+			size_t l_ImageSize = rBitMapInfo.GetBitmapImageSizeInBytes();
+
+			BITMAPFILEHEADER hdr;
+
+			hdr.bfType = 0x4d42;        // 0x42 = "B" 0x4d = "M"  
+			hdr.bfSize = static_cast<DWORD>(sizeof(BITMAPFILEHEADER) + l_InfoSize + l_ImageSize);
+			hdr.bfReserved1 = 0;
+			hdr.bfReserved2 = 0;
+			hdr.bfOffBits = static_cast<DWORD>(sizeof(BITMAPFILEHEADER) + l_InfoSize);
+
+			rTo.resize(hdr.bfSize + offset);
+
+			::memcpy(&(rTo[offset]), &hdr, sizeof(BITMAPFILEHEADER));
+			::memcpy(&(rTo[offset + sizeof(BITMAPFILEHEADER)]), rBitMapInfo.GetBitmapInfo(), l_InfoSize);
+
+			BITMAPINFO* l_pBitmapInfo = reinterpret_cast<BITMAPINFO*>(&(rTo[offset + sizeof(BITMAPFILEHEADER)]));
+
+			if (normalize_y && l_pBitmapInfo->bmiHeader.biHeight < 0)
+			{
+				size_t l_Stride = rBitMapInfo.GetBitmapImageStrideInBytes();
+
+				unsigned char* l_pFrom = reinterpret_cast<unsigned char*>(l_pHostBuffer);
+				unsigned char* l_pTo = reinterpret_cast<unsigned char*>(&(rTo[offset + sizeof(BITMAPFILEHEADER) + l_InfoSize]));
+
+				l_pBitmapInfo->bmiHeader.biHeight = ::labs(l_pBitmapInfo->bmiHeader.biHeight);
+				l_pBitmapInfo->bmiHeader.biXPelsPerMeter = 0;
+				l_pBitmapInfo->bmiHeader.biYPelsPerMeter = 0;
+				l_pBitmapInfo->bmiHeader.biClrImportant = 0;
+
+				for (size_t i = 0; i < static_cast<size_t>(l_pBitmapInfo->bmiHeader.biHeight); ++i)
+				{
+					unsigned char* l_pToRow = l_pTo + (i * l_Stride);
+					unsigned char* l_pFromRow = l_pFrom + ((l_pBitmapInfo->bmiHeader.biHeight - 1 - i) * l_Stride);
+
+					::memcpy(l_pToRow, l_pFromRow, l_Stride);
+				}
+			}
+			else
+			{
+				::memcpy(&(rTo[offset + sizeof(BITMAPFILEHEADER) + l_InfoSize]), l_pHostBuffer, l_ImageSize);
+			}
+		}
+		else
+		{
+			Hres = SVMEE_INVALID_HANDLE;
+		}
+	}
+
+	return Hres;
+}
+
+
 HRESULT SVMatroxBufferInterface::CopyDIBBufferToMemory(SVImageCopyUtility& p_rImageCopier, const SVMatroxBuffer& p_rFromId)
 {
 	SVBitmapInfo l_Info;
