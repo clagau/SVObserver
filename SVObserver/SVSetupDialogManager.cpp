@@ -401,15 +401,11 @@ HRESULT SVSetupDialogManager::SVBlobAnalyzerClassSetupDialog( const SVGUID& p_rO
 				{
 					BOOL l_bIsFillBlob;
 					l_pAnalyzer->m_bvoFillBlobs.GetValue( l_bIsFillBlob );
-
-					if ( l_bIsFillBlob )
-					{
-						SVMatroxBlobInterface::Set( l_pAnalyzer->m_ResultBufferID, SVEBlobSaveRuns, static_cast<long>(SVValueEnable) );
-					}
-					else
-					{
-						SVMatroxBlobInterface::Set( l_pAnalyzer->m_ResultBufferID, SVEBlobSaveRuns, static_cast<long>(SVValueDisable) );
-					}
+#if SV_DESIRED_MIL_VERSION == 0x0900
+					SVMatroxBlobInterface::Set( l_pAnalyzer->m_ResultBufferID, SVEBlobSaveRuns, static_cast<long>(l_bIsFillBlob?SVValueEnable: SVValueDisable) );
+#else
+					SVMatroxBlobInterface::Set(l_pAnalyzer->m_BlobContextID, SVEBlobSaveRuns, static_cast<long>(l_bIsFillBlob ? SVValueEnable : SVValueDisable));
+#endif
 
 					l_pAnalyzer->CreateArray();
 				}

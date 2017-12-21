@@ -80,24 +80,21 @@ public:
 	// This function replaces MblobCalculate( 
 	static HRESULT Execute( const SVMatroxIdentifier& rResultId, const SVMatroxBuffer& rIdentId,  const SVMatroxIdentifier& rContextId );
 
-	static HRESULT Get( const SVMatroxIdentifier& rResultId, SVBlobControlEnum lControlType, long& lControlValue) ;
-	static HRESULT Get( const SVMatroxIdentifier& rResultId, SVBlobControlEnum lControlType, double& lControlValue) ;
 	static HRESULT GetNumber( const SVMatroxIdentifier& rResultId, long& rNumber ) ;
 	static HRESULT GetResult( const SVMatroxIdentifier& rResultId, SVBlobSelectionEnum lControlType, double* pdResultsArray ) ;
 	static HRESULT GetResult( const SVMatroxIdentifier& rResultId, SVBlobSelectionEnum lControlType, long* plResultsArray );
 
 
 	// These functions replace MblobControl
-	static HRESULT Set( const SVMatroxIdentifier& rResultId, SVBlobControlEnum lControlType, const long lControlValue);
-	static HRESULT Set( const SVMatroxIdentifier& rResultId, SVBlobControlEnum lControlType, const double lControlValue);
+	static HRESULT Set( const SVMatroxIdentifier& rContextId, SVBlobControlEnum lControlType, const long lControlValue);
+	static HRESULT Set( const SVMatroxIdentifier& rContextId, SVBlobControlEnum lControlType, const double lControlValue);
 
 	//
-	static HRESULT GetForeground( const SVMatroxIdentifier& rResultId, bool& rIsDarkForeground);
-	static HRESULT SetForeground( const SVMatroxIdentifier& rResultId, bool isDarkForeground);
-	static HRESULT GetIdentifier( const SVMatroxIdentifier& rResultId, bool& bBinary);
-	static HRESULT SetIdentifier( const SVMatroxIdentifier& rResultId, bool bBinary);
+	static HRESULT GetForeground( const SVMatroxIdentifier& rContextId, bool& rIsDarkForeground);
+	static HRESULT SetForeground( const SVMatroxIdentifier& rContextId, bool isDarkForeground);
+	static HRESULT GetIdentifier( const SVMatroxIdentifier& rContextId, bool& bBinary);
+	static HRESULT SetIdentifier( const SVMatroxIdentifier& rContextId, bool bBinary);
 
-	// This function replaces MblobFill
 	static HRESULT BlobFill( const SVMatroxIdentifier& rResultId, const SVMatroxBuffer& rImageID, SVBlobControlEnum eCriterion, const long& lColor);
 	// This function replaces MblobSelect
 	static HRESULT BlobSelect( const SVMatroxIdentifier& rResultId, SVBlobOperationEnum eOperation, SVBlobSelectionEnum eSelection, SVConditionEnum eCondition, const double& dCondLow, const double& dCondHigh);
