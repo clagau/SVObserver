@@ -48,15 +48,18 @@ namespace SvCl
 	{
 		if( this != &rRhs )
 		{
+			//SelectorItem values
 			m_Name = rRhs.m_Name;
 			m_Location = rRhs.m_Location;
 			m_DisplayLocation = rRhs.m_DisplayLocation;
 			m_ItemTypeName = rRhs.m_ItemTypeName;
-			m_TreeItem = rRhs.m_TreeItem;
 			m_ItemKey = rRhs.m_ItemKey;
+			m_Array = rRhs.m_Array;
+			m_ArrayIndex = rRhs.m_ArrayIndex;
+			//ObjectSelectorItem values
+			m_TreeItem = rRhs.m_TreeItem;
 			m_Attribute = rRhs.m_Attribute;
 			m_IconNumber = rRhs.m_IconNumber;
-			m_ArrayIndex = rRhs.m_ArrayIndex;
 			m_Modified = rRhs.m_Modified;
 			m_CheckedState = rRhs.m_CheckedState;
 			m_OrgCheckedState = rRhs.m_OrgCheckedState;

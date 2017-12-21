@@ -1160,7 +1160,7 @@ bool SVInspectionProcess::RebuildInspectionInputList()
 			if (nullptr != m_PPQInputs[iList].m_IOEntryPtr->getObject() &&
 				m_PPQInputs[iList].m_IOEntryPtr->getObject()->GetCompleteName() == m_arViewedInputNames[l])
 			{
-				m_PPQInputs[iList].m_IOEntryPtr->getObject()->SetObjectAttributesSet(SvDef::SV_VIEWABLE, SvOi::SetAttributeType::AddAttribute);
+				m_PPQInputs[iList].m_IOEntryPtr->getObject()->SetObjectAttributesAllowed(SvDef::SV_VIEWABLE, SvOi::SetAttributeType::AddAttribute);
 				bFound = true;
 				break;
 			}// end if
@@ -1168,7 +1168,7 @@ bool SVInspectionProcess::RebuildInspectionInputList()
 
 		if (!bFound || !m_PPQInputs[iList].m_IOEntryPtr->m_Enabled)
 		{
-			m_PPQInputs[iList].m_IOEntryPtr->getObject()->SetObjectAttributesSet(SvDef::SV_VIEWABLE, SvOi::SetAttributeType::RemoveAttribute);
+			m_PPQInputs[iList].m_IOEntryPtr->getObject()->SetObjectAttributesAllowed(SvDef::SV_VIEWABLE, SvOi::SetAttributeType::RemoveAttribute);
 		}// end if
 
 		SvOi::SetAttributeType AddRemoveType = m_PPQInputs[iList].m_IOEntryPtr->m_Enabled ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
@@ -3018,7 +3018,7 @@ bool SVInspectionProcess::CreateObject(const SVObjectLevelCreateStruct& rCreateS
 
 	SVObjectLevelCreateStruct createStruct;
 
-	createStruct.OwnerObjectInfo = this;
+	createStruct.OwnerObjectInfo.SetObject(this);
 	createStruct.m_pInspection = this;
 
 	l_bOk = l_bOk && m_pCurrentToolset->createAllObjects(createStruct);
@@ -3721,7 +3721,7 @@ SvCl::SelectorItemVectorPtr SVInspectionProcess::GetPPQSelectorList(const UINT A
 					//We make a copy to be able to set the index rObjectRef is const
 					SVObjectReference ArrayObjectRef(rObjectRef);
 					ArrayObjectRef.SetArrayIndex(i);
-					InsertItem.m_Location = ArrayObjectRef.GetCompleteOneBasedObjectName();
+					InsertItem.m_Location = ArrayObjectRef.GetCompleteName(true);
 					InsertItem.m_ArrayIndex = i;
 					InsertItem.m_Array = true;
 					pResult->push_back(InsertItem);
@@ -3729,7 +3729,7 @@ SvCl::SelectorItemVectorPtr SVInspectionProcess::GetPPQSelectorList(const UINT A
 			}
 			else
 			{
-				InsertItem.m_Location = rObjectRef.GetCompleteOneBasedObjectName();
+				InsertItem.m_Location = rObjectRef.GetCompleteName(true);
 				pResult->push_back(InsertItem);
 			}
 		});
@@ -3750,7 +3750,7 @@ SvCl::SelectorItemVectorPtr SVInspectionProcess::GetPPQSelectorList(const UINT A
 				SVObjectReference ObjectRef(pObject);
 				SvCl::SelectorItem InsertItem;
 
-				std::string Location(ObjectRef.GetCompleteOneBasedObjectName());
+				std::string Location(ObjectRef.GetCompleteName(true));
 				InsertItem.m_Name = ObjectRef.GetName();
 				InsertItem.m_Location = Location;
 				//Need to replace the inspection name with the PPQ Variables name
@@ -3938,7 +3938,7 @@ void SVInspectionProcess::getToolMessages(SvStl::MessageContainerInserter& rInse
 
 bool SVInspectionProcess::DisconnectObjectInput(SVInObjectInfoStruct* pObjectInInfo)
 {
-	bool Result = m_publishList.RemovePublishedEntry(pObjectInInfo->GetInputObjectInfo().m_UniqueObjectID);
+	bool Result = m_publishList.RemovePublishedEntry(pObjectInInfo->GetInputObjectInfo().getUniqueObjectID());
 
 	if (nullptr != GetToolSet())
 	{
@@ -3979,7 +3979,7 @@ bool SVInspectionProcess::CreateChildObject(SVObjectClass* pChildObject, DWORD c
 		pChildObject->SetImageDepth(m_lImageDepth);
 
 		SVObjectLevelCreateStruct createStruct;
-		createStruct.OwnerObjectInfo = this;
+		createStruct.OwnerObjectInfo.SetObject(this);
 		createStruct.m_pInspection = this;
 
 		bool Return = pChildObject->createAllObjects(createStruct);
@@ -4097,7 +4097,7 @@ bool SVInspectionProcess::replaceObject(SVObjectClass* pObject, const GUID& rNew
 			// Get the Owner
 			SVObjectInfoStruct ownerInfo = pDuplicateObject->GetOwnerInfo();
 
-			SVObjectClass* pOwner = SVObjectManagerClass::Instance().GetObject(ownerInfo.m_UniqueObjectID);
+			SVObjectClass* pOwner = SVObjectManagerClass::Instance().GetObject(ownerInfo.getUniqueObjectID());
 			if (pOwner)
 			{
 				// Ask the owner to kill the imposter!

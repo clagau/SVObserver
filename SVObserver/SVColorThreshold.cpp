@@ -500,15 +500,15 @@ void SVColorThresholdClass::LocalInitialize()
 	m_OutputImage.InitializeImage(SvDef::SVImageTypeEnum::SVImageTypeIndependent);
 
 	// Identify our input type needs...
-	m_BandThreshold[BandEnum::Band0].m_InputImage.SetInputObjectType(SVBand0ImageObjectGuid, SvDef::SVImageObjectType);
+	m_BandThreshold[BandEnum::Band0].m_InputImage.SetInputObjectType(SvDef::SVImageObjectType, SvDef::SVImageMonoType, SVBand0ImageObjectGuid);
 	m_BandThreshold[BandEnum::Band0].m_InputImage.SetObject(GetObjectInfo());
 	RegisterInputObject(&m_BandThreshold[BandEnum::Band0].m_InputImage, _T("ColorThresholdBand0Image"));
 
-	m_BandThreshold[BandEnum::Band1].m_InputImage.SetInputObjectType(SVBand1ImageObjectGuid, SvDef::SVImageObjectType);
+	m_BandThreshold[BandEnum::Band1].m_InputImage.SetInputObjectType(SvDef::SVImageObjectType, SvDef::SVImageMonoType, SVBand1ImageObjectGuid);
 	m_BandThreshold[BandEnum::Band1].m_InputImage.SetObject(GetObjectInfo());
 	RegisterInputObject(&m_BandThreshold[BandEnum::Band1].m_InputImage, _T("ColorThresholdBand1Image"));
 
-	m_BandThreshold[BandEnum::Band2].m_InputImage.SetInputObjectType(SVBand2ImageObjectGuid, SvDef::SVImageObjectType);
+	m_BandThreshold[BandEnum::Band2].m_InputImage.SetInputObjectType(SvDef::SVImageObjectType, SvDef::SVImageMonoType, SVBand2ImageObjectGuid);
 	m_BandThreshold[BandEnum::Band2].m_InputImage.SetObject(GetObjectInfo());
 	RegisterInputObject(&m_BandThreshold[BandEnum::Band2].m_InputImage, _T("ColorThresholdBand2Image"));
 
@@ -768,8 +768,8 @@ bool SVColorThresholdClass::ValidateLocal() const
 	for (BandEnum Band : BandList)
 	{
 		Result &= m_BandThreshold[Band].m_InputImage.IsConnected();
-		Result &= nullptr != m_BandThreshold[Band].m_InputImage.GetInputObjectInfo().m_pObject;
-		Result &= Result ? m_BandThreshold[Band].m_InputImage.GetInputObjectInfo().m_pObject->IsValid() : false;
+		Result &= nullptr != m_BandThreshold[Band].m_InputImage.GetInputObjectInfo().getObject();
+		Result &= Result ? m_BandThreshold[Band].m_InputImage.GetInputObjectInfo().getObject()->IsValid() : false;
 		Result &= m_BandThreshold[Band].m_OutputImage.IsCreated();
 		Result &= m_BandThreshold[Band].m_OutputImage.IsValid();
 		if (!Result)
@@ -786,9 +786,11 @@ bool SVColorThresholdClass::ValidateLocal() const
 
 SVImageClass* SVColorThresholdClass::GetBandInputImage(BandEnum Band)
 {
-	if (m_BandThreshold[Band].m_InputImage.IsConnected() && m_BandThreshold[Band].m_InputImage.GetInputObjectInfo().m_pObject)
+	if (m_BandThreshold[Band].m_InputImage.IsConnected() && m_BandThreshold[Band].m_InputImage.GetInputObjectInfo().getObject())
 	{
-		return dynamic_cast<SVImageClass*> (m_BandThreshold[Band].m_InputImage.GetInputObjectInfo().m_pObject);
+		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
+		//! We are sure that when getObject() is not nullptr that it is the correct type
+		return static_cast<SVImageClass*> (m_BandThreshold[Band].m_InputImage.GetInputObjectInfo().getObject());
 	}
 
 	return nullptr;

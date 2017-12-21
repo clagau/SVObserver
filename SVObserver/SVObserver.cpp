@@ -2596,19 +2596,19 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 					{
 						break;
 					}
-				}
 
-				if (nullptr != pConfig)
-				{
 					hr = pConfig->LoadGlobalConstants(XMLTree);
 					if (hr & SV_ERROR_CONDITION)
 					{
 						break;
 					}
-				}
 
-				if( nullptr != pConfig )
-				{
+					hr = pConfig->LoadObjectAttributesSet(XMLTree);
+					if (hr & SV_ERROR_CONDITION)
+					{
+						break;
+					}
+
 					pConfig->RebuildInputOutputLists();
 
 					if (pConfig->IsConfigurationLoaded())

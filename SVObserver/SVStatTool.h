@@ -57,7 +57,6 @@ public:
 	
 	SVObjectReference GetVariableSelected() const;
 	void SetVariableSelected( const std::string& rName );
-	void SetVariableSelected( SVObjectReference refObject );
 
 	/// Enabled a feature. ATTENTION: In error case this method throw an exception (const SvStl::MessageContainer&)
 	/// \param aIndex [in] The index of the feature.
@@ -70,7 +69,6 @@ public:
 	DWORD FreeResult( SVStatisticsFeatureEnum aFeatureIndex );
 	SVResultClass* GetResult( SVStatisticsFeatureEnum aFeatureIndex );
 
-	void UpdateTaskObjectOutputListAttributes();
 	virtual bool DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo ) override;
 
 protected:

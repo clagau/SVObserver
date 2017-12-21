@@ -79,7 +79,7 @@ inline bool SVObjectReference::isEntireArray() const
 
 }
 
-inline GUID SVObjectReference::Guid() const
+inline const SVGUID& SVObjectReference::Guid() const
 {
 	return m_Guid;
 }

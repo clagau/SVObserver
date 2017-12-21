@@ -349,7 +349,7 @@ BOOL SVRemoteOutputGroup::GetParameters(SvXml::SVObjectXMLWriter& rWriter ) cons
 	_variant_t svVariant;
 
 	// Unique Id
-	svVariant = SVGUID( m_outObjectInfo.m_UniqueObjectID ).ToVARIANT();
+	svVariant = m_outObjectInfo.getUniqueObjectID().ToVARIANT();
 	rWriter.WriteAttribute( SvXml::CTAG_UNIQUE_REFERENCE_ID, svVariant );
 	svVariant.Clear();
 
@@ -378,13 +378,13 @@ BOOL SVRemoteOutputGroup::SetParameters( SVTreeType& p_rTree, SVTreeType::SVBran
 	bOk = SvXml::SVNavigateTree::GetItem( p_rTree, SvXml::CTAG_UNIQUE_REFERENCE_ID, htiParent, svVariant );
 	if ( bOk )
 	{
-		SVGUID ObjectID = svVariant;
+		SVGUID UniqueID = svVariant;
 
 		bOk = SVObjectManagerClass::Instance().CloseUniqueObjectID( this );
 
 		if( bOk )
 		{
-			m_outObjectInfo.m_UniqueObjectID = ObjectID;
+			m_outObjectInfo.GetObjectReference().setGuid(UniqueID);
 
 			bOk = SVObjectManagerClass::Instance().OpenUniqueObjectID( this );
 		}

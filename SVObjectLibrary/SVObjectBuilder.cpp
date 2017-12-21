@@ -387,7 +387,7 @@ HRESULT SVObjectBuilder::SetObjectValue(const GUID& ownerID, const GUID& objectI
 	return hr;
 }
 
-HRESULT SVObjectBuilder::SetInputs(const GUID& objectID, const SVNameGuidList& guidList)
+HRESULT SVObjectBuilder::SetInputs(const GUID& objectID, const SvDef::StringPairVector& rInputPairVector)
 {
 	HRESULT hr = S_OK;
 
@@ -405,12 +405,16 @@ HRESULT SVObjectBuilder::SetInputs(const GUID& objectID, const SVNameGuidList& g
 			SVInObjectInfoStruct* pInInfo = inputInfoList[i];
 			if (pInInfo)
 			{
-				SVNameGuidList::const_iterator it = guidList.find(pInInfo->GetInputName().c_str());
-				if (it != guidList.end())
+				auto Iter = std::find_if(rInputPairVector.begin(), rInputPairVector.end(), 
+					[&pInInfo](const SvDef::StringPair& rEntry) 
+				{ 
+					return rEntry.first == pInInfo->GetInputName(); 
+				});
+				if (Iter != rInputPairVector.end())
 				{
-					SVGUID inputGuid = it->second;
+					SVObjectReference ObjectRef{ Iter->second };
 
-					pInInfo->SetInputObject(inputGuid);
+					pInInfo->SetInputObject(ObjectRef);
 				}
 			}
 			else

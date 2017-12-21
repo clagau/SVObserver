@@ -64,7 +64,7 @@ protected:
 private:
 	SVToolAdjustmentDialogSheetClass* m_pParent; //Pointer to the Tool Adjust sheet
 	CListCtrl   m_ItemsSelected;				//The selected list control
-	SvCl::SelectorItemVector m_List;			//The selected list
+	SVObjectReferenceVector m_List;				//The selected list
 	SVArchiveTool* m_pTool;						//Pointer to the Archive Tool
 	CImageList m_StateImageList;				//The state image list
 	CButton m_Select;							//The tree select button

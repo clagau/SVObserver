@@ -42,14 +42,14 @@ protected:
 //******************************************************************************
 protected:
 	// Inputs
-	SVInObjectInfoStruct inputCenterXResult;
-	SVInObjectInfoStruct inputCenterYResult;
+	SVInObjectInfoStruct m_inputCenterXResult;
+	SVInObjectInfoStruct m_inputCenterYResult;
 	
-	SVInObjectInfoStruct inputStartRadiusResult;
-	SVInObjectInfoStruct inputEndRadiusResult;
+	SVInObjectInfoStruct m_inputStartRadiusResult;
+	SVInObjectInfoStruct m_inputEndRadiusResult;
 
-	SVInObjectInfoStruct inputStartAngleResult;
-	SVInObjectInfoStruct inputEndAngleResult;
+	SVInObjectInfoStruct m_inputStartAngleResult;
+	SVInObjectInfoStruct m_inputEndAngleResult;
 };
 
 

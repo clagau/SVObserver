@@ -91,15 +91,15 @@ void SVThresholdClass::init()
 
 	// Identify our input type needs...
 
-	m_inputUT.SetInputObjectType( SVUpperThresholdEquationResultObjectGuid, SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType );
+	m_inputUT.SetInputObjectType(SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType, SVUpperThresholdEquationResultObjectGuid);
 	m_inputUT.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputUT, _T( "UpperThreshold" ) );
 
-	m_inputLT.SetInputObjectType( SVLowerThresholdEquationResultObjectGuid, SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType );
+	m_inputLT.SetInputObjectType(SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType, SVLowerThresholdEquationResultObjectGuid);
 	m_inputLT.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputLT, _T( "LowerThreshold" ) );
 
-	m_inputATM.SetInputObjectType( SVAutoThresholdEquationResultObjectGuid, SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType );
+	m_inputATM.SetInputObjectType(SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType, SVAutoThresholdEquationResultObjectGuid);
 	m_inputATM.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputATM, _T( "AutoThreshold" ) );
 
@@ -172,24 +172,36 @@ SVBoolValueObjectClass& SVThresholdClass::GetThresholdActivateAttribute()
 
 SVDoubleValueObjectClass* SVThresholdClass::getExternalUT()
 {
-	if( m_inputUT.IsConnected() && m_inputUT.GetInputObjectInfo().m_pObject )
-		return ( SVDoubleValueObjectClass* ) m_inputUT.GetInputObjectInfo().m_pObject;
+	if (m_inputUT.IsConnected() && m_inputUT.GetInputObjectInfo().getObject())
+	{
+		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
+		//! We are sure that when getObject() is not nullptr that it is the correct type
+		return static_cast<SVDoubleValueObjectClass*> (m_inputUT.GetInputObjectInfo().getObject());
+	}
 
 	return nullptr;
 }
 
 SVDoubleValueObjectClass* SVThresholdClass::getExternalLT()
 {
-	if( m_inputLT.IsConnected() && m_inputLT.GetInputObjectInfo().m_pObject )
-		return ( SVDoubleValueObjectClass* ) m_inputLT.GetInputObjectInfo().m_pObject;
+	if (m_inputLT.IsConnected() && m_inputLT.GetInputObjectInfo().getObject())
+	{
+		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
+		//! We are sure that when getObject() is not nullptr that it is the correct type
+		return static_cast<SVDoubleValueObjectClass*> (m_inputLT.GetInputObjectInfo().getObject());
+	}
 
 	return nullptr;
 }
 
 SVDoubleValueObjectClass* SVThresholdClass::getExternalATM()
 {
-	if( m_inputATM.IsConnected() && m_inputATM.GetInputObjectInfo().m_pObject )
-		return ( SVDoubleValueObjectClass* ) m_inputATM.GetInputObjectInfo().m_pObject;
+	if (m_inputATM.IsConnected() && m_inputATM.GetInputObjectInfo().getObject())
+	{
+		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
+		//! We are sure that when getObject() is not nullptr that it is the correct type
+		return static_cast<SVDoubleValueObjectClass*> (m_inputATM.GetInputObjectInfo().getObject());
+	}
 
 	return nullptr;
 }

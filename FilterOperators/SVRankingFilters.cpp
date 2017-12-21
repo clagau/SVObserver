@@ -288,7 +288,6 @@ void SVRankingFilterClass::RebuildRanking()
 	for( l = lWidth * lHeight; l < 49; l++ )
 	{
 		m_plvoRankingCells[l]->SetObjectAttributesAllowed( SvDef::SV_EMBEDABLE, SvOi::SetAttributeType::OverwriteAttribute );
-		m_plvoRankingCells[l]->SetObjectAttributesSet( SvDef::SV_EMBEDABLE, SvOi::SetAttributeType::OverwriteAttribute );
 	}// end for
 }
 

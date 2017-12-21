@@ -151,7 +151,6 @@ void TableObject::removeColumn(const GUID& rEmbeddedId)
 		m_ValueList.erase(valueIter);
 		if (nullptr != pValueObject.get())
 		{
-			hideEmbeddedObject(*pValueObject.get());
 			RemoveEmbeddedObject(pValueObject.get());
 		}
 

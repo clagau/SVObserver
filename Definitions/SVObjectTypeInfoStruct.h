@@ -278,11 +278,8 @@ namespace SvDef
 
 		struct SVObjectTypeInfoStruct
 		{
-			SVObjectTypeInfoStruct( SVObjectTypeEnum p_ObjectType=SVNotSetObjectType, SVObjectSubTypeEnum p_SubType=SVNotSetSubObjectType )
-				: ObjectType( p_ObjectType ), SubType( p_SubType ), EmbeddedID( SV_GUID_NULL ) {};
-
-			SVObjectTypeInfoStruct( const SVGUID& p_rEmbeddedID, SVObjectTypeEnum p_ObjectType=SVNotSetObjectType, SVObjectSubTypeEnum p_SubType=SVNotSetSubObjectType )
-				: ObjectType( p_ObjectType ), SubType( p_SubType ), EmbeddedID( p_rEmbeddedID ){};
+			SVObjectTypeInfoStruct( SVObjectTypeEnum ObjectType=SVNotSetObjectType, SVObjectSubTypeEnum SubType=SVNotSetSubObjectType, const SVGUID& rEmbeddedID=SV_GUID_NULL)
+				: ObjectType(ObjectType ), SubType(SubType ), EmbeddedID( rEmbeddedID ) {};
 
 			//******************************************************************************
 			// Data Element(s):

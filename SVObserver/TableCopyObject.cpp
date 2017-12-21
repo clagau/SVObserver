@@ -87,7 +87,6 @@ bool TableCopyObject::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 			m_ValueList.pop_back();
 			if (nullptr != pValueObject.get())
 			{
-				hideEmbeddedObject(*pValueObject.get());
 				RemoveEmbeddedObject(pValueObject.get());
 			}
 		}

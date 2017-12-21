@@ -26,7 +26,6 @@ static char THIS_FILE[] = __FILE__;
 
 const BasicValueObjects::DottedNameGuidMap BasicValueObjects::m_StaticUniqueIDMap = boost::assign::map_list_of<std::string, SVGUID>
 	// Dotted name,												static unique ID
-	( std::string( SvDef::FqnRoot ),									SVGUID( RootUidGuid ) )
 	( std::string( SvDef::FqnGlobal ),								SVGUID( GlobalUidGuid ) )
 	( std::string( SvDef::FqnEnvironment ),							SVGUID( EnvironmentUidGuid ) )
 	( std::string( SvDef::FqnEnvironmentModelNumber ),				SVGUID( EnvironmentModelNumberUidGuid ) )
@@ -34,12 +33,12 @@ const BasicValueObjects::DottedNameGuidMap BasicValueObjects::m_StaticUniqueIDMa
 	( std::string( SvDef::FqnEnvironmentImageUpdate ),				SVGUID( EnvironmentImageUpdateUidGuid ) )
 	( std::string( SvDef::FqnEnvironmentResultUpdate ),				SVGUID( EnvironmentResultUpdateUidGuid ) )
 	( std::string( SvDef::FqnEnvironmentMode ),						SVGUID( EnvironmentModeUidGuid ) )
-	( std::string( SvDef::FqnEnvironmentModeIsRun ),					SVGUID( EnvironmentModeIsRunUidGuid ) )
+	( std::string( SvDef::FqnEnvironmentModeIsRun ),				SVGUID( EnvironmentModeIsRunUidGuid ) )
 	( std::string( SvDef::FqnEnvironmentModeIsStop ),				SVGUID( EnvironmentModeIsStopUidGuid ) )
 	( std::string( SvDef::FqnEnvironmentModeIsRegressionTest ),		SVGUID( EnvironmentModeIsRegressionTestUidGuid ) )
 	( std::string( SvDef::FqnEnvironmentModeIsTest ),				SVGUID( EnvironmentModeIsTestUidGuid ) )
 	( std::string( SvDef::FqnEnvironmentModeIsEdit ),				SVGUID( EnvironmentModeIsEditUidGuid ) )
-	( std::string( SvDef::FqnEnvironmentModeValue ),					SVGUID( EnvironmentModeValueUidGuid ) )
+	( std::string( SvDef::FqnEnvironmentModeValue ),				SVGUID( EnvironmentModeValueUidGuid ) )
 	;
 #pragma endregion Declarations
 

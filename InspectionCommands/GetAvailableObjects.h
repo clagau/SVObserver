@@ -152,7 +152,7 @@ namespace SvCmd
 									}
 									else
 									{
-										name = pObject->GetObjectNameToObjectType(nullptr, m_objectTypeToInclude);
+										name = pObject->GetObjectNameToObjectType(m_objectTypeToInclude);
 									}
 									if (!name.empty())
 									{

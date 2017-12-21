@@ -36,7 +36,6 @@ struct SVOutObjectInfoStruct : public SVObjectInfoStruct
 	HRESULT RemoveInput( SVInObjectInfoStruct& p_rsvInput );
 
 	HRESULT DisconnectAllInputs();
-	HRESULT GetDependentsList( SVObjectClass* p_psvObject, SVObjectPairVector& rListOfDependents );
 
 	INT_PTR GetInputSize() { return static_cast<INT_PTR> (m_UserInfoList.size()); }
 	SVInObjectInfoStruct& GetInputAt( long lIndex ) { return m_UserInfoList[lIndex]; }

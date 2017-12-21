@@ -90,7 +90,7 @@ SVDPointValueObjectClass* SVDPointYResultClass::getInputPoint()
 {
 	if( m_inputObjectInfo.IsConnected() )
 	{
-		return dynamic_cast<SVDPointValueObjectClass*> (m_inputObjectInfo.GetInputObjectInfo().m_pObject);
+		return dynamic_cast<SVDPointValueObjectClass*> (m_inputObjectInfo.GetInputObjectInfo().getObject());
 	}
 	
 	return nullptr;

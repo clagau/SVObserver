@@ -37,9 +37,9 @@ void SVImageAnalyzerClass::init()
 	// Set sub type only in derived classes!
 
 	// Set Input requirement
-	inputImageObjectInfo.SetInputObjectType(SvDef::SVImageObjectType, SvDef::SVImageMonoType);
-	inputImageObjectInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &inputImageObjectInfo, SvDef::ImageAnalyzerImageName );
+	m_inputImageObjectInfo.SetInputObjectType(SvDef::SVImageObjectType, SvDef::SVImageMonoType);
+	m_inputImageObjectInfo.SetObject( GetObjectInfo() );
+	RegisterInputObject( &m_inputImageObjectInfo, SvDef::ImageAnalyzerImageName );
 
 	addDefaultInputObjects();
 }
@@ -59,9 +59,11 @@ bool SVImageAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCo
 
 SVImageClass* SVImageAnalyzerClass::getInputImage()
 {
-	if( inputImageObjectInfo.IsConnected() && inputImageObjectInfo.GetInputObjectInfo().m_pObject )
+	if( m_inputImageObjectInfo.IsConnected() && m_inputImageObjectInfo.GetInputObjectInfo().getObject() )
 	{
-		return ( SVImageClass* ) inputImageObjectInfo.GetInputObjectInfo().m_pObject;
+		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
+		//! We are sure that when getObject() is not nullptr that it is the correct type
+		return static_cast<SVImageClass*> (m_inputImageObjectInfo.GetInputObjectInfo().getObject());
 	}
 	return nullptr;
 }
@@ -86,7 +88,8 @@ unsigned long SVImageAnalyzerClass::GetInputPixelDepth()
 
 bool SVImageAnalyzerClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
 {
-	if( !inputImageObjectInfo.IsConnected() || nullptr == inputImageObjectInfo.GetInputObjectInfo().m_pObject || !inputImageObjectInfo.GetInputObjectInfo().m_pObject->IsValid() ) 
+	SVObjectClass* pObject = m_inputImageObjectInfo.GetInputObjectInfo().getObject();
+	if( !m_inputImageObjectInfo.IsConnected() || nullptr == pObject || !pObject->IsValid() ) 
 	{
 		if (nullptr != pErrorMessages)
 		{

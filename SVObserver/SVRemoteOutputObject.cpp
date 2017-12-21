@@ -62,11 +62,11 @@ bool SVRemoteOutputObject::GetParameters(SvXml::SVObjectXMLWriter& rWriter ) con
 {
 	_variant_t svVariant;
 
-	svVariant = SVGUID( m_outObjectInfo.m_UniqueObjectID ).ToVARIANT();
+	svVariant = m_outObjectInfo.getUniqueObjectID().ToVARIANT();
 	rWriter.WriteAttribute( SvXml::CTAG_UNIQUE_REFERENCE_ID, svVariant );
 	svVariant.Clear();
 
-	svVariant = SVGUID( m_InputObjectId ).ToVARIANT();
+	svVariant = m_InputObjectId.ToVARIANT();
 	rWriter.WriteAttribute( SvXml::CTAG_REMOTE_OUTPUT_INPUT_OBJECT_GUID, svVariant );
 	svVariant.Clear();
 
@@ -90,13 +90,13 @@ bool SVRemoteOutputObject::SetParameters( SVTreeType& rTree, SVTreeType::SVBranc
 	bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_UNIQUE_REFERENCE_ID, htiParent, svVariant );
 	if ( bOk )
 	{
-		SVGUID ObjectID = svVariant;
+		SVGUID UniqueID{ svVariant };
 
 		bOk = SVObjectManagerClass::Instance().CloseUniqueObjectID( this );
 
 		if( bOk )
 		{
-			m_outObjectInfo.m_UniqueObjectID = ObjectID;
+			m_outObjectInfo.GetObjectReference().setGuid(UniqueID);
 
 			bOk = SVObjectManagerClass::Instance().OpenUniqueObjectID( this );
 		}

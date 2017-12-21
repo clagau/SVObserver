@@ -26,7 +26,6 @@ struct SVObjectInfoStruct
 {
 	SVObjectInfoStruct();
 	SVObjectInfoStruct( const SVObjectInfoStruct& rObjectInfo );
-	SVObjectInfoStruct( SVObjectClass* pObject );
 	SVObjectInfoStruct( const SVObjectReference& rObjectRef );
 
 	virtual ~SVObjectInfoStruct();
@@ -35,24 +34,27 @@ struct SVObjectInfoStruct
 
 	void clear();
 
-	void ClearObjectInfo();
-
-	HRESULT SetObject( const SVGUID& rObjectID );
-	HRESULT SetObject( const std::string& rName );
-	HRESULT SetObject( const SvDef::SVObjectTypeInfoStruct& rTypeInfo );
-	HRESULT SetObject( SVObjectClass* pObject );
-	HRESULT SetObject( const SVObjectReference& rObjectRef );
-	HRESULT SetObject( const SVObjectInfoStruct& rObjectInfo );
+	HRESULT SetObject(const SVGUID& rObjectID);
+	HRESULT SetObject(SVObjectClass* pObject);
+	HRESULT SetObject(const SvDef::SVObjectTypeInfoStruct& rTypeInfo);
+	HRESULT SetObject(const SVObjectReference& rObjectRef);
+	HRESULT SetObject(const SVObjectInfoStruct& rObjectInfo);
 
 	bool operator == ( const SVObjectInfoStruct& rRhs ) const;
 	bool operator == ( const SVObjectReference& rRhs ) const;
 
-	SVObjectReference GetObjectReference() const;
+	SVObjectClass* getObject() { return m_ObjectRef.getObject(); };
+	//The method is const however the returned pointer not, because of other const methods returning a non const pointer!
+	SVObjectClass* getObject() const { return m_ObjectRef.getObject(); };
+	const SVGUID&  getUniqueObjectID() const { return m_ObjectRef.Guid(); };
+
+	SVObjectReference& GetObjectReference() { return m_ObjectRef; };
+	const SVObjectReference& GetObjectReference() const { return m_ObjectRef; };
 	bool CheckExistence();
 
-	SVObjectClass* m_pObject;					// Where I am
-	SVGUID m_UniqueObjectID;					// Who I am
+
 	SvDef::SVObjectTypeInfoStruct m_ObjectTypeInfo;  // What I am
-	SVObjectNameInfo m_ObjectNameInfo;
+	
+	SVObjectReference m_ObjectRef;
 };
 

@@ -370,10 +370,10 @@ HRESULT SVLinearImageOperatorListClass::getUseRotationAngle(BOOL& rUseRotationAn
 {
 	HRESULT Result(E_FAIL);
 
-	if( inputUseRotationAngle.IsConnected() && nullptr != inputUseRotationAngle.GetInputObjectInfo().m_pObject )
+	if( inputUseRotationAngle.IsConnected() && nullptr != inputUseRotationAngle.GetInputObjectInfo().getObject() )
 	{
 		double Value(0.0);
-		Result = inputUseRotationAngle.GetInputObjectInfo().m_pObject->getValue(Value);
+		Result = inputUseRotationAngle.GetInputObjectInfo().getObject()->getValue(Value);
 		rUseRotationAngle = 0.0 < Value ? true : false;
 	}
 
@@ -384,10 +384,10 @@ HRESULT SVLinearImageOperatorListClass::getInputProfileOrientation(long& rProfil
 {
 	HRESULT Result(E_FAIL);
 
-	if( inputProfileOrientation.IsConnected() && nullptr != inputProfileOrientation.GetInputObjectInfo().m_pObject )
+	if( inputProfileOrientation.IsConnected() && nullptr != inputProfileOrientation.GetInputObjectInfo().getObject() )
 	{
 		double Value(0.0);
-		Result = inputProfileOrientation.GetInputObjectInfo().m_pObject->getValue(Value);
+		Result = inputProfileOrientation.GetInputObjectInfo().getObject()->getValue(Value);
 		rProfileOrientation = static_cast<long> (Value);
 	}
 
@@ -400,11 +400,11 @@ void SVLinearImageOperatorListClass::init()
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVUnaryImageOperatorListObjectType;
 	m_outObjectInfo.m_ObjectTypeInfo.SubType	= SvDef::SVLinearImageOperatorListObjectType;
 
-	inputProfileOrientation.SetInputObjectType( SVProfileOrientationGuid, SvDef::SVValueObjectType, SvDef::SVEnumValueObjectType );
+	inputProfileOrientation.SetInputObjectType(SvDef::SVValueObjectType, SvDef::SVEnumValueObjectType, SVProfileOrientationGuid);
 	inputProfileOrientation.SetObject( GetObjectInfo() );
 	RegisterInputObject( &inputProfileOrientation, _T( "LinearImageOperatorListProfileOrientation" ) );
 
-	inputUseRotationAngle.SetInputObjectType( SVLinearToolUseRotationGuid, SvDef::SVValueObjectType, SvDef::SVBoolValueObjectType );
+	inputUseRotationAngle.SetInputObjectType(SvDef::SVValueObjectType, SvDef::SVBoolValueObjectType, SVLinearToolUseRotationGuid);
 	inputUseRotationAngle.SetObject( GetObjectInfo() );
 	RegisterInputObject( &inputUseRotationAngle, _T( "LinearImageOperatorListUseRotationAngle" ) );
 

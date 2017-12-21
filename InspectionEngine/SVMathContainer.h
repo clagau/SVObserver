@@ -33,6 +33,6 @@ protected:
 	SVDoubleValueObjectClass*	getInputMathResult();
 
 protected:
-	SVInObjectInfoStruct		inputMathResult;
+	SVInObjectInfoStruct		m_inputMathResult;
 };
 

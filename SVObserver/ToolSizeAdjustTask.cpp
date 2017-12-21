@@ -110,7 +110,7 @@ bool ToolSizeAdjustTask::AddEvaluationObject(SVInObjectInfoStruct* pInfo, GUID c
 		return false;
 	}
 
-	pInfo->SetInputObjectType(pAdjustSize->GetResultGuid(), SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType);
+	pInfo->SetInputObjectType(SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType, pAdjustSize->GetResultGuid());
 	pInfo->SetObject( GetObjectInfo() );
 	return RegisterInputObject( pInfo, Name );
 }
@@ -443,7 +443,7 @@ SVDoubleValueObjectClass* ToolSizeAdjustTask::GetDResultObjects(ToolSizeAdjustTa
 
 	if( m_InObjectInfoDResult[val].IsConnected() )
 	{
-		pValue = dynamic_cast< SVDoubleValueObjectClass* >( m_InObjectInfoDResult[val].GetInputObjectInfo().m_pObject );
+		pValue = dynamic_cast< SVDoubleValueObjectClass* >( m_InObjectInfoDResult[val].GetInputObjectInfo().getObject() );
 	}
 	return pValue;
 }

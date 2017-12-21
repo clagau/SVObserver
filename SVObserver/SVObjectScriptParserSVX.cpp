@@ -370,11 +370,13 @@ BOOL SVObjectScriptParserSVXClass::EvaluateOperandExpression( int OperandType, c
 				SVObjectInfoStruct ownerInfo;
 				if( rOperand.Value() && ( rOperand.Type() == OBJECT || rOperand.Type() == OBJECT_OWNER || rOperand.Type() == EMBEDDED_OBJECT || rOperand.Type() == OBJECT_INPUT ) )
 				{
-					ownerInfo.m_UniqueObjectID	= *( ( GUID* ) rOperand.Value() );
-					ownerInfo.m_pObject			= SVObjectManagerClass::Instance().GetObject( ownerInfo.m_UniqueObjectID );
+					SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(*(reinterpret_cast<GUID*>(rOperand.Value())));
+					ownerInfo.SetObject(pObject);
 					// Complete info, if object available...
-					if( ownerInfo.m_pObject )
-						ownerInfo = ownerInfo.m_pObject->GetObjectInfo();
+					if (ownerInfo.getObject())
+					{
+						ownerInfo = ownerInfo.getObject()->GetObjectInfo();
+					}
 					else
 					{
 						SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
@@ -458,7 +460,7 @@ BOOL SVObjectScriptParserSVXClass::EvaluateOperandExpression( int OperandType, c
 			{
 				// ...using owner info...
 				SVObjectClass* pObject = nullptr;
-				if( SV_GUID_NULL != rOwnerInfo.m_UniqueObjectID )
+				if( SV_GUID_NULL != rOwnerInfo.getUniqueObjectID() )
 				{
 					SVObjectManagerClass::Instance().GetObjectByDottedName( std::string(rExpressionStack.GetAt( riIndex )), pObject);
 				}
@@ -540,8 +542,7 @@ BOOL SVObjectScriptParserSVXClass::EvaluateOperandExpression( int OperandType, c
 
 				bAlreadyChecked = FALSE;
 				strName.LoadString( IDS_CLASSNAME_RESULT_LONG );
-				if( rExpressionStack.GetAt( riIndex ) == strName &&
-					SV_IS_KIND_OF( rOwnerInfo.m_pObject, SVBarCodeAnalyzerClass )  )
+				if( rExpressionStack.GetAt( riIndex ) == strName && SV_IS_KIND_OF( rOwnerInfo.getObject(), SVBarCodeAnalyzerClass )  )
 				{
 					strName.LoadString( IDS_CLASSNAME_SVBARCODEANALYZERESULT );
 					strAlias = _tcsdup( strName );
@@ -1127,7 +1128,7 @@ LPCTSTR SVObjectScriptParserSVXClass::Parse( SVObjectClass* pOwner, LPCTSTR tstr
 		SVExpressionStack	expressionStack;
 
 		SVObjectInfoStruct localOwnerInfo;
-		localOwnerInfo = pOwner;
+		localOwnerInfo.SetObject(pOwner);
 		SVObjectScriptAliasListClass localAliasTable;
 
 		int parseLength = static_cast<int>(_tcslen( tStrParse ));
@@ -2130,7 +2131,7 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 		if( objectOwnerOperand.Value() )
 		{
 			// substitute operand...
-			memcpy( objectOwnerOperand.Value(), &rLocalOwnerInfo.m_UniqueObjectID, sizeof( GUID ) );
+			memcpy( objectOwnerOperand.Value(), &rLocalOwnerInfo.getUniqueObjectID().ToGUID(), sizeof( GUID ) );
 			objectOwnerOperand.Type() = OBJECT_OWNER;
 		}
 		else
@@ -2188,10 +2189,10 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 
 	// Process command...
 	SVObjectInfoStruct ownerObjectInfo;
-	ownerObjectInfo.m_UniqueObjectID = *( ( GUID* ) objectOwnerOperand.Value() );
-	ownerObjectInfo.m_pObject = SVObjectManagerClass::Instance().GetObject( ownerObjectInfo.m_UniqueObjectID );
+	SVObjectClass* pOwnerObject = SVObjectManagerClass::Instance().GetObject(*(reinterpret_cast<GUID*>(objectOwnerOperand.Value())));
+	ownerObjectInfo.SetObject(pOwnerObject);
 
-	if( ! ownerObjectInfo.m_pObject )
+	if( nullptr == ownerObjectInfo.getObject() )
 	{
 		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ParseError_NoValidObjectOwner, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10109 );
@@ -2205,7 +2206,7 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 		{
 			// Send to Owner of Embedded Object
 			// Try to overwrite object...
-			pObject = ownerObjectInfo.m_pObject->OverwriteEmbeddedObject(*reinterpret_cast<GUID*>(objectOperand.Value()), *reinterpret_cast<GUID*>(embeddedOperand.Value()));
+			pObject = ownerObjectInfo.getObject()->OverwriteEmbeddedObject(*reinterpret_cast<GUID*>(objectOperand.Value()), *reinterpret_cast<GUID*>(embeddedOperand.Value()));
 			ASSERT( nullptr != pObject );
 		}
 		else
@@ -2224,7 +2225,7 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 		{
 			GUID guid = (*reinterpret_cast<GUID*>(objectOperand.Value()));
 			// Try to replace or add object...
-			if( nullptr == ownerObjectInfo.m_pObject || !ownerObjectInfo.m_pObject->replaceObject(pObject, guid) )
+			if( nullptr == ownerObjectInfo.getObject() || !ownerObjectInfo.getObject()->replaceObject(pObject, guid) )
 			{
 				ASSERT( FALSE );
 #if defined (TRACE_THEM_ALL) || defined (TRACE_SVXPARSER)
@@ -2293,7 +2294,7 @@ bool SVObjectScriptParserSVXClass::ProcessMemberAssignment( SVExpressionStack& r
 	if( objectOwnerOperand.Value() )
 	{
 		// substitute operand...
-		memcpy( objectOwnerOperand.Value(), &rLocalOwnerInfo.m_UniqueObjectID, sizeof( GUID ) );
+		memcpy( objectOwnerOperand.Value(), &rLocalOwnerInfo.getUniqueObjectID(), sizeof( GUID ) );
 		objectOwnerOperand.Type() = OBJECT_OWNER;
 	}
 
@@ -2357,20 +2358,20 @@ bool SVObjectScriptParserSVXClass::ProcessMemberAssignment( SVExpressionStack& r
 	// Process command...
 	SVObjectInfoStruct objectInfo, ownerObjectInfo;
 
-	objectInfo.m_UniqueObjectID = *( ( GUID* ) objectOperand.Value() );
-	objectInfo.m_pObject = SVObjectManagerClass::Instance().GetObject( objectInfo.m_UniqueObjectID );
+	SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(*(reinterpret_cast<GUID*> (objectOperand.Value())));
+	objectInfo.SetObject(pObject);
 
-	if( ! objectInfo.m_pObject )
+	if(nullptr == objectInfo.getObject())
 	{
 		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ParseError_NoValidObject, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10118 );
 		return rc;
 	}
 	
-	ownerObjectInfo.m_UniqueObjectID = *( ( GUID* ) objectOwnerOperand.Value() );
-	ownerObjectInfo.m_pObject = SVObjectManagerClass::Instance().GetObject( ownerObjectInfo.m_UniqueObjectID );
+	pObject = SVObjectManagerClass::Instance().GetObject(*(reinterpret_cast<GUID*> (objectOwnerOperand.Value())));
+	ownerObjectInfo.SetObject(pObject);
 
-	if( ! ownerObjectInfo.m_pObject )
+	if(nullptr == ownerObjectInfo.getObject())
 	{
 		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ParseError_NoValidObjectOwner, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10119 );
@@ -2380,11 +2381,11 @@ bool SVObjectScriptParserSVXClass::ProcessMemberAssignment( SVExpressionStack& r
 	/////////////////////////////////////////////////////////////////////
 	// If an Object and it's Owner were Found
 	/////////////////////////////////////////////////////////////////////
-	if( ownerObjectInfo.m_pObject && objectInfo.m_pObject )
+	if( ownerObjectInfo.getObject() && objectInfo.getObject() )
 	{
 		// try to set the object's member value...
 		// Note:: Send this message to the Object's Owner
-		if( S_OK != ownerObjectInfo.m_pObject->SetValuesForAnObject(objectInfo.m_UniqueObjectID, &dataObject) )
+		if( S_OK != ownerObjectInfo.getObject()->SetValuesForAnObject(objectInfo.getUniqueObjectID(), &dataObject) )
 		{
 			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ParseError_SetObjectMemberFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10120 );

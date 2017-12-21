@@ -166,7 +166,7 @@ bool SVRemoteOutputDataController::GetParameters(SvXml::SVObjectXMLWriter& rWrit
 	{
 		rWriter.StartElement( SvXml::CTAG_REMOTE_OUTPUT_PARAMETERS );
 		
-		svVariant = SVGUID( m_outObjectInfo.m_UniqueObjectID ).ToVARIANT();
+		svVariant = m_outObjectInfo.getUniqueObjectID().ToVARIANT();
 		rWriter.WriteAttribute(  SvXml::CTAG_UNIQUE_REFERENCE_ID, svVariant );
 
 		// Remote Output Parameters
@@ -205,11 +205,11 @@ BOOL SVRemoteOutputDataController::SetParameters( SVTreeType& p_rTree, SVTreeTyp
 		{
 			SVOutputStreamManager::Instance().EraseOutputController();
 
-			SVGUID ObjectID( svVariant );
+			SVGUID UniqueID( svVariant );
 
 			SVObjectManagerClass::Instance().CloseUniqueObjectID( this );
 
-			m_outObjectInfo.m_UniqueObjectID = ObjectID;
+			m_outObjectInfo.GetObjectReference().setGuid(UniqueID);
 
 			SVObjectManagerClass::Instance().OpenUniqueObjectID( this );
 

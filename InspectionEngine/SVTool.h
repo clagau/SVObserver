@@ -95,8 +95,6 @@ public:
 
 	virtual HRESULT CollectOverlays( SVImageClass *p_Image, SVExtentMultiLineStructVector &p_MultiLineArray ) override;
 
-	void UpdateTaskObjectOutputListAttributes( SVObjectReference refTarget, UINT uAttributes );
-
 	// Auxiliary Source Image functions
 	HRESULT GetSourceImages( SVImageClassPtrVector* p_psvImageList ) const;
 	SVImageClass* GetAuxSourceImage() const;
@@ -180,7 +178,7 @@ private:
 protected:
 	SvOi::IToolSet* m_pCurrentToolSet;
 	// Conditional input
-	SVInObjectInfoStruct inputConditionBoolObjectInfo;
+	SVInObjectInfoStruct m_inputConditionBoolObjectInfo;
 
 	// Conditional tool set drawing flag.
 	SVEnumerateValueObjectClass	drawToolFlag;

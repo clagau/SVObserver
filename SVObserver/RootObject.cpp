@@ -207,7 +207,7 @@ bool RootObject::Initialize()
 	bool Result(true);
 
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType =  SvDef::SVRootObjectType;
-
+	SVObjectManagerClass::Instance().ChangeUniqueObjectID(this, RootUidGuid);
 	//The Root object should have an empty name
 	SetName(_T(""));
 

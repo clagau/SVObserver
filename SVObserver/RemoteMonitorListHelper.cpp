@@ -44,7 +44,7 @@ std::string RemoteMonitorListHelper::GetNameFromMonitoredObject(const MonitoredO
 					ObjectRef.SetArrayIndex(rMonitoredObject.arrayIndex);
 				}
 			}
-			Result = ObjectRef.GetCompleteOneBasedObjectName();
+			Result = ObjectRef.GetCompleteName(true);
 		}
 		else
 		{

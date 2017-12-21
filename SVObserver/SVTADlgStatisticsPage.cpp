@@ -87,9 +87,9 @@ BOOL SVToolAdjustmentDialogStatisticsPageClass::OnInitDialog()
 	{
 		getParameters();
 
-		SVObjectReference refObject = m_pTool->GetVariableSelected();
-		m_strVariableToMonitor = refObject.GetCompleteObjectNameToObjectType( nullptr, m_pToolSet->GetObjectType() ).c_str();
-		m_strFullNameOfVariable = refObject.GetCompleteName().c_str();
+		SVObjectReference ObjectRef = m_pTool->GetVariableSelected();
+		m_strVariableToMonitor = ObjectRef.GetObjectNameToObjectType(SvDef::SVToolSetObjectType, true).c_str();
+		m_strFullNameOfVariable = ObjectRef.GetCompleteName(true).c_str();
 	}
 
 	UpdateData( FALSE ); // set data to dialog
@@ -323,17 +323,26 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnBtnObjectPicker()
 	SVObjectClass* pInspection( m_pTool->GetInspection() );
 	if( nullptr == pInspection ) { return; }
 
-	m_pTool->UpdateTaskObjectOutputListAttributes();
-
 	std::string InspectionName( pInspection->GetName() );
 
-	SvOsl::ObjectTreeGenerator::SelectorTypeEnum SelectorType;
-	SelectorType = static_cast<SvOsl::ObjectTreeGenerator::SelectorTypeEnum>(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes | SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject);
-	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SelectorType );
+	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject);
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, std::string( _T("") ) );
 
 	SvOsl::SelectorOptions BuildOptions( pInspection->GetUniqueObjectID(), SvDef::SV_SELECTABLE_FOR_STATISTICS, m_pToolSet->GetUniqueObjectID() );
 	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
+
+	SVObjectReference ObjectRef(m_pTool->GetVariableSelected());
+	if (nullptr != ObjectRef.getObject())
+	{
+		SvDef::StringSet Items;
+		SvCl::SelectorItem InsertItem;
+		InsertItem.m_Name = ObjectRef.GetName();
+		InsertItem.m_Location = ObjectRef.GetCompleteName(true);
+
+		std::string Location = SvOsl::ObjectTreeGenerator::Instance().convertObjectArrayName(InsertItem);
+		Items.insert(Location);
+		SvOsl::ObjectTreeGenerator::Instance().setCheckItems(Items);
+	}
 
 	std::string ToolsetOutput = SvUl::LoadStdString( IDS_SELECT_TOOLSET_OUTPUT );
 	std::string Title = SvUl::Format( _T("%s - %s"), ToolsetOutput.c_str(), m_pTool->GetName() );
@@ -343,16 +352,15 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnBtnObjectPicker()
 
 	if( IDOK == Result )
 	{
-		m_strVariableToMonitor = SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().m_DisplayLocation.c_str();
-
-		SVGUID ResultObjectGuid( SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().m_ItemKey);
-		SVObjectClass* pResultObject = nullptr;
-		SVObjectManagerClass::Instance().GetObjectByIdentifier( ResultObjectGuid,  pResultObject);
-		if( nullptr != pResultObject )
+		SVGUID ResultObjectGuid(SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().m_ItemKey);
+		SVObjectReference ObjectRef{ SVObjectManagerClass::Instance().GetObject(ResultObjectGuid) };
+		if (SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().m_Array)
 		{
-			m_pTool->SetVariableSelected( std::string(pResultObject->GetCompleteName()) );
-			m_strFullNameOfVariable = pResultObject->GetCompleteName().c_str();
+			ObjectRef.SetArrayIndex(SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().m_ArrayIndex);
 		}
+		m_strVariableToMonitor = ObjectRef.GetObjectNameToObjectType(SvDef::SVToolSetObjectType, true).c_str();
+		m_pTool->SetVariableSelected(ObjectRef.GetCompleteName(true));
+		m_strFullNameOfVariable = ObjectRef.GetCompleteName(true).c_str();
 
 		UpdateData( FALSE );
 	}

@@ -22,10 +22,10 @@ SVGUID::SVGUID()
 {
 }
 
-SVGUID::SVGUID( const SVGUID& rObject )
+SVGUID::SVGUID( const SVGUID& rGuid )
 : m_Guid( SV_GUID_NULL )
 {
-	*this = rObject;
+	*this = rGuid;
 }
 
 SVGUID::SVGUID( const GUID& rGuid )
@@ -34,8 +34,14 @@ SVGUID::SVGUID( const GUID& rGuid )
 	*this = rGuid;
 }
 
-SVGUID::SVGUID( const _bstr_t& rString )
-: m_Guid( SV_GUID_NULL )
+SVGUID::SVGUID(const _bstr_t& rString)
+	: m_Guid(SV_GUID_NULL)
+{
+	*this = rString;
+}
+
+SVGUID::SVGUID(const std::string& rString)
+	: m_Guid(SV_GUID_NULL)
 {
 	*this = rString;
 }
@@ -51,7 +57,6 @@ SVGUID::SVGUID( const _variant_t& rVariant )
 
 SVGUID::~SVGUID()
 {
-	m_Guid = SV_GUID_NULL;
 }
 
 bool SVGUID::empty() const
@@ -109,11 +114,11 @@ std::string SVGUID::ToString() const
 		);
 }
 
-const SVGUID& SVGUID::operator=( const SVGUID& rObject )
+const SVGUID& SVGUID::operator=( const SVGUID& rGuid )
 {
-	if( this != &rObject )
+	if( this != &rGuid )
 	{
-		m_Guid = rObject.m_Guid;
+		m_Guid = rGuid.m_Guid;
 	}
 
 	return *this;
@@ -131,13 +136,20 @@ const SVGUID& SVGUID::operator=( const GUID& rGuid )
 
 const SVGUID& SVGUID::operator=( const _bstr_t& rString )
 {
-	GUID Guid( SV_GUID_NULL );
+	*this = SvUl::createStdString( rString );
 
-	std::string GuidString = SvUl::createStdString( rString );
-	SvUl::RemoveCharacters(GuidString, _T("{}") );
+	return *this;
+}
 
-	RPC_CSTR RpcString( reinterpret_cast<unsigned char*> ( const_cast<char*> ( GuidString.c_str() )  ) );
-	if( RPC_S_OK == ::UuidFromString( RpcString , &Guid ) )
+const SVGUID& SVGUID::operator=(const std::string& rString)
+{
+	GUID Guid(SV_GUID_NULL);
+
+	std::string GuidString = rString;
+	SvUl::RemoveCharacters(GuidString, _T("{}"));
+
+	RPC_CSTR RpcString(reinterpret_cast<unsigned char*> (const_cast<char*> (GuidString.c_str())));
+	if (RPC_S_OK == ::UuidFromString(RpcString, &Guid))
 	{
 		m_Guid = Guid;
 	}

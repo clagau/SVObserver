@@ -56,7 +56,7 @@ bool TableTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure 
 	//set equation for table tool
 	for( size_t j = 0; j < m_friendList.size(); j++ )
 	{
-		SVEquationClass* pEquation = dynamic_cast<SVEquationClass *>(m_friendList[j].m_pObject);
+		SVEquationClass* pEquation = dynamic_cast<SVEquationClass *>(m_friendList[j].getObject());
 		if (nullptr != pEquation)
 		{
 			if (SvDef::TableClearEquationName == std::string(pEquation->GetName()))
@@ -133,7 +133,7 @@ bool TableTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		m_ColumnEquationList.clear();
 		for( size_t j = 0; j < m_friendList.size(); j++ )
 		{
-			TableColumnEquation* equation = dynamic_cast<TableColumnEquation*>(m_friendList[j].m_pObject);
+			TableColumnEquation* equation = dynamic_cast<TableColumnEquation*>(m_friendList[j].getObject());
 			if (nullptr != equation)
 			{
 				if (c_maxTableColumn > m_ColumnEquationList.size())

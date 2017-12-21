@@ -227,9 +227,11 @@ SVOCVAnalyzeResultClass::~SVOCVAnalyzeResultClass()
 
 SVImageClass* SVOCVAnalyzeResultClass::getInputImage()
 {
-	if( m_inputObjectInfo.IsConnected() )
+	if( m_inputObjectInfo.IsConnected() && nullptr != m_inputObjectInfo.GetInputObjectInfo().getObject())
 	{
-		return dynamic_cast<SVImageClass*> (m_inputObjectInfo.GetInputObjectInfo().m_pObject);
+		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
+		//! We are sure that when getObject() is not nullptr that it is the correct type
+		return static_cast<SVImageClass*> (m_inputObjectInfo.GetInputObjectInfo().getObject());
 	}
 	return nullptr;
 }

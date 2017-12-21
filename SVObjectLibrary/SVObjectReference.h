@@ -48,6 +48,9 @@ public:
 	const SVObjectReference& operator = ( const SVObjectReference& rhs );
 	bool operator == ( const SVObjectReference& rhs ) const;
 
+	void setGuid(const SVGUID& rGuid) { m_Guid = rGuid; };
+	void clear();
+
 	SVObjectClass* getObject() const;
 
 	SvOi::IValueObject* getValueObject() const;
@@ -77,17 +80,14 @@ public:
 	//! \returns bool
 	//************************************
 	bool isEntireArray() const;
-	GUID Guid() const;
+	const SVGUID& Guid() const;
 
 	void SetEntireArray();
 	void SetArrayIndex( long lArrayIndex );
 
-	std::string GetName() const;
-	std::string GetCompleteName() const;
-	std::string GetCompleteObjectNameToObjectType( LPCTSTR lpszCompleteName = nullptr, SvDef::SVObjectTypeEnum objectTypeToInclude = SvDef::SVToolSetObjectType ) const;
-
-	std::string GetOneBasedName() const;
-	std::string GetCompleteOneBasedObjectName() const;
+	std::string GetName(bool OneBased=false) const;
+	std::string GetCompleteName(bool OneBased = false) const;
+	std::string GetObjectNameToObjectType(SvDef::SVObjectTypeEnum objectTypeToInclude = SvDef::SVToolSetObjectType, bool OneBased = false) const;
 
 	/// Get a string first with the GUID and if array and index this attached. (e.g.{7407F882-3AA5-48E2-B2E9-542538CB1650}[1])
 	/// \returns std::string
@@ -102,8 +102,7 @@ public:
 
 	bool operator < ( const SVObjectReference& rhs ) const;
 
-	std::string GetOneBasedIndexString() const;
-	std::string GetZeroBasedIndexString() const;
+	std::string GetIndexString(bool OneBased = false) const;
 
 	/// Get the value of object depend of the index. If object is not a value object, it will return an error.
 	/// \param rValue [out] The return value.
@@ -125,7 +124,7 @@ protected:
 	void init();
 	SVObjectClass* m_pObject;
 	mutable SvOi::IValueObject* m_pValueObject;
-	GUID m_Guid;
+	SVGUID m_Guid;
 	SVObjectNameInfo m_NameInfo;
 	long m_ArrayIndex; // zero based Array index.   -1 and true for isArray indicates reference to whole array
 };

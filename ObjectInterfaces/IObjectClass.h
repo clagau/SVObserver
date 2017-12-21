@@ -58,7 +58,7 @@ namespace SvOi
 			This method gets the complete name of this object, to a certain lineage.
 			Note: this method builds the name in reverse by ancestry (meaning that the lineage is traversed by youngest to oldest)
 		***********/
-		virtual std::string GetObjectNameToObjectType(LPCSTR LPSZCompleteName, SvDef::SVObjectTypeEnum objectTypeToInclude) const = 0;
+		virtual std::string GetObjectNameToObjectType(SvDef::SVObjectTypeEnum objectTypeToInclude) const = 0;
 
 		/**********
 			The method gets the type of this object.

@@ -108,16 +108,13 @@ HRESULT SVObjectManagerClass::ConstructRootObject( const SVGUID& rClassID )
 		DestroyRootObject();
 	}
 	
-	SVGUID ObjectID;
-
-	Status = ConstructObject( rClassID, ObjectID);
+	SVObjectClass* pRootObject;
+	Status = ConstructObject( rClassID, pRootObject);
 	if(S_OK == Status)
 	{
-		SVObjectClass* pRootObject;
-		GetObjectByIdentifier(ObjectID, pRootObject);
 		if(nullptr != pRootObject)
 		{
-			m_RootNameChildren[SvDef::FqnRoot] = ObjectID;
+			m_RootNameChildren[SvDef::FqnRoot] = pRootObject->GetUniqueObjectID();
 		}
 	}
 	
@@ -459,7 +456,7 @@ bool SVObjectManagerClass::CreateUniqueObjectID( SVObjectClass* pObject )
 				if( Result )
 				{
 					pUniqueObject->m_pObject = pObject;
-					pObject->m_outObjectInfo.m_UniqueObjectID = pUniqueObject->m_ObjectUID; 
+					pObject->m_outObjectInfo.GetObjectReference().setGuid(pUniqueObject->m_ObjectUID);
 					m_UniqueObjectEntries[ pUniqueObject->m_ObjectUID ] = pUniqueObject;
 
 					SvOl::DependencyManager::Instance().Add( pUniqueObject->m_ObjectUID );
@@ -489,7 +486,7 @@ bool SVObjectManagerClass::OpenUniqueObjectID( SVObjectClass* pObject )
 
 		if( Result )
 		{
-			SVUniqueObjectEntryStructPtr pUniqueObject = getUniqueObjectEntry( pObject->m_outObjectInfo.m_UniqueObjectID );
+			SVUniqueObjectEntryStructPtr pUniqueObject = getUniqueObjectEntry( pObject->m_outObjectInfo.getUniqueObjectID() );
 
 			Result = ( nullptr == pUniqueObject);
 
@@ -502,7 +499,7 @@ bool SVObjectManagerClass::OpenUniqueObjectID( SVObjectClass* pObject )
 				if( Result )
 				{
 					pUniqueObject->m_pObject = pObject;
-					pUniqueObject->m_ObjectUID = pObject->m_outObjectInfo.m_UniqueObjectID; 
+					pUniqueObject->m_ObjectUID = pObject->m_outObjectInfo.getUniqueObjectID(); 
 					m_UniqueObjectEntries[ pUniqueObject->m_ObjectUID ] = pUniqueObject;
 
 					SvOl::DependencyManager::Instance().Add( pUniqueObject->m_ObjectUID );
@@ -554,7 +551,7 @@ bool SVObjectManagerClass::ChangeUniqueObjectID( SVObjectClass* pObject, const S
 {
 	if(	SV_GUID_NULL != rNewGuid && CloseUniqueObjectID( pObject ) )
 	{
-		pObject->m_outObjectInfo.m_UniqueObjectID = rNewGuid;
+		pObject->m_outObjectInfo.GetObjectReference().setGuid(rNewGuid);
 		bool bRetVal = OpenUniqueObjectID( pObject );
 
 		// Change ObjectID setting in private input interface...

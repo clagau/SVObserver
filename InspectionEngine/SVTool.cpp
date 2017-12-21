@@ -169,9 +169,9 @@ void SVToolClass::init()
 	AddFriend( pCondition->GetUniqueObjectID() );
 
 	// Identify our input type needs
-	inputConditionBoolObjectInfo.SetInputObjectType(SVConditionalResultObjectGuid, SvDef::SVValueObjectType, SvDef::SVBoolValueObjectType);
-	inputConditionBoolObjectInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &inputConditionBoolObjectInfo, _T( "ToolConditionalValue" ) );
+	m_inputConditionBoolObjectInfo.SetInputObjectType(SvDef::SVValueObjectType, SvDef::SVBoolValueObjectType, SVConditionalResultObjectGuid);
+	m_inputConditionBoolObjectInfo.SetObject( GetObjectInfo() );
+	RegisterInputObject( &m_inputConditionBoolObjectInfo, _T( "ToolConditionalValue" ) );
 
 	// 
 	addDefaultInputObjects();
@@ -202,7 +202,7 @@ bool SVToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructur
 	{
 		//conditional must be the first friend because it will be blocked in runFriends if tool
 		assert(0 == j);
-		m_pToolConditional = dynamic_cast<SVConditionalClass *>(m_friendList[j].m_pObject);
+		m_pToolConditional = dynamic_cast<SVConditionalClass *>(m_friendList[j].getObject());
 		setSkipFirstFriendFromRun();
 	}
 
@@ -229,7 +229,6 @@ bool SVToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructur
 	m_ExtentHeight.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE | SvDef::SV_REMOTELY_SETABLE | SvDef::SV_EXTENT_OBJECT | SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute );
 	
 	// Defaults for the Scale Factors should be hidden (but NOT removed at this time, so 
-	// don't use hideEmbeddedObject() here).
 	m_ExtentWidthScaleFactor.SetObjectAttributesAllowed( SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
 	m_ExtentHeightScaleFactor.SetObjectAttributesAllowed( SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
 
@@ -262,12 +261,12 @@ bool SVToolClass::DisconnectObjectInput( SVInObjectInfoStruct* pInObjectInfo )
 
 	if( nullptr != pInObjectInfo )
 	{
-		if( pInObjectInfo->GetInputObjectInfo().m_pObject == m_svToolExtent.GetToolImage() )
+		if( pInObjectInfo->GetInputObjectInfo().getObject() == m_svToolExtent.GetToolImage() )
 		{
 			m_svToolExtent.SetToolImage( nullptr );
 		}
 
-		if( pInObjectInfo->GetInputObjectInfo().m_pObject == m_svToolExtent.GetSelectedImage() )
+		if( pInObjectInfo->GetInputObjectInfo().getObject() == m_svToolExtent.GetSelectedImage() )
 		{
 			m_svToolExtent.SetSelectedImage( nullptr );
 		}
@@ -675,10 +674,11 @@ bool SVToolClass::getConditionalResult() const
 	BOOL Value( false );
 	SVBoolValueObjectClass* pBoolObject;
 
-	if( inputConditionBoolObjectInfo.IsConnected() &&
-		inputConditionBoolObjectInfo.GetInputObjectInfo().m_pObject )
+	if( m_inputConditionBoolObjectInfo.IsConnected() && m_inputConditionBoolObjectInfo.GetInputObjectInfo().getObject())
 	{
-		pBoolObject = ( SVBoolValueObjectClass* )inputConditionBoolObjectInfo.GetInputObjectInfo().m_pObject;
+		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
+		//! We are sure that when getObject() is not nullptr that it is the correct type
+		pBoolObject = static_cast<SVBoolValueObjectClass*> (m_inputConditionBoolObjectInfo.GetInputObjectInfo().getObject());
 		pBoolObject->GetValue( Value );
 	}
 	return Value ? true : false;
@@ -689,10 +689,11 @@ bool SVToolClass::getConditionalResult(long Index) const
 	BOOL Value( false );
 	SVBoolValueObjectClass* pBoolObject;
 
-	if( inputConditionBoolObjectInfo.IsConnected() &&
-		inputConditionBoolObjectInfo.GetInputObjectInfo().m_pObject )
+	if( m_inputConditionBoolObjectInfo.IsConnected() && m_inputConditionBoolObjectInfo.GetInputObjectInfo().getObject())
 	{
-		pBoolObject = ( SVBoolValueObjectClass* )inputConditionBoolObjectInfo.GetInputObjectInfo().m_pObject;
+		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
+		//! We are sure that when getObject() is not nullptr that it is the correct type
+		pBoolObject = static_cast<SVBoolValueObjectClass*> (m_inputConditionBoolObjectInfo.GetInputObjectInfo().getObject());
 		pBoolObject->GetValue( Value, -1, Index );
 	}
 	return Value ? true : false;
@@ -728,40 +729,20 @@ HRESULT SVToolClass::EnableAuxiliaryExtents( bool p_bEnable )
 {
 	const UINT cAttributes = SvDef::SV_VIEWABLE | SvDef::SV_ARCHIVABLE | SvDef::SV_SELECTABLE_FOR_EQUATION | SvDef::SV_SELECTABLE_FOR_STATISTICS | SvDef::SV_PUBLISHABLE;
 
-	if( p_bEnable )
-	{
-		m_svAuxiliarySourceX.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
-		m_svAuxiliarySourceY.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
-		m_svAuxiliarySourceAngle.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
-		m_svAuxiliaryDrawType.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
-		m_svAuxiliarySourceImageName.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
+	SvOi::SetAttributeType AllowedAttribute = p_bEnable ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
+	m_svAuxiliarySourceX.SetObjectAttributesAllowed(cAttributes, AllowedAttribute);
+	m_svAuxiliarySourceY.SetObjectAttributesAllowed(cAttributes, AllowedAttribute);
+	m_svAuxiliarySourceAngle.SetObjectAttributesAllowed(cAttributes, AllowedAttribute);
+	m_svAuxiliaryDrawType.SetObjectAttributesAllowed(cAttributes, AllowedAttribute);
+	m_svAuxiliarySourceImageName.SetObjectAttributesAllowed(cAttributes, AllowedAttribute);
 
-		m_svAuxiliarySourceX.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::RemoveAttribute );
-		m_svAuxiliarySourceY.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::RemoveAttribute );
-		m_svAuxiliarySourceAngle.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::RemoveAttribute );
-		m_svAuxiliaryDrawType.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::RemoveAttribute );
-		m_svAuxiliarySourceImageName.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::RemoveAttribute );
-	}
-	else
-	{
-		m_svAuxiliarySourceX.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
-		m_svAuxiliarySourceY.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
-		m_svAuxiliarySourceAngle.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
-		m_svAuxiliaryDrawType.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
-		m_svAuxiliarySourceImageName.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
+	AllowedAttribute = p_bEnable ? SvOi::SetAttributeType::RemoveAttribute : SvOi::SetAttributeType::AddAttribute;
+	m_svAuxiliarySourceX.SetObjectAttributesAllowed(SvDef::SV_HIDDEN, AllowedAttribute);
+	m_svAuxiliarySourceY.SetObjectAttributesAllowed(SvDef::SV_HIDDEN, AllowedAttribute);
+	m_svAuxiliarySourceAngle.SetObjectAttributesAllowed(SvDef::SV_HIDDEN, AllowedAttribute);
+	m_svAuxiliaryDrawType.SetObjectAttributesAllowed(SvDef::SV_HIDDEN, AllowedAttribute);
+	m_svAuxiliarySourceImageName.SetObjectAttributesAllowed(SvDef::SV_HIDDEN, AllowedAttribute);
 
-		m_svAuxiliarySourceX.SetObjectAttributesSet( cAttributes, SvOi::SetAttributeType::RemoveAttribute );;
-		m_svAuxiliarySourceY.SetObjectAttributesSet( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
-		m_svAuxiliarySourceAngle.SetObjectAttributesSet( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
-		m_svAuxiliaryDrawType.SetObjectAttributesSet( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
-		m_svAuxiliarySourceImageName.SetObjectAttributesSet( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
-
-		m_svAuxiliarySourceX.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::AddAttribute );
-		m_svAuxiliarySourceY.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::AddAttribute );
-		m_svAuxiliarySourceAngle.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::AddAttribute );
-		m_svAuxiliaryDrawType.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::AddAttribute );
-		m_svAuxiliarySourceImageName.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::AddAttribute );
-	}
 	return S_OK;
 }
 
@@ -918,28 +899,13 @@ void SVToolClass::removeEmbeddedExtents( bool p_DisconnectExtents )
 		m_svToolExtent.SetExtentObject( SVExtentPropertyHeightScaleFactor, nullptr );
 	}
 
-	hideEmbeddedObject( m_ExtentLeft );	 // Make it Un-Selectable for anything
 	RemoveEmbeddedObject( &m_ExtentLeft ); // Remove it from the Embedded List so it is not scripted
-
-	hideEmbeddedObject( m_ExtentTop );
 	RemoveEmbeddedObject( &m_ExtentTop );
-
-	hideEmbeddedObject( m_ExtentRight );
 	RemoveEmbeddedObject( &m_ExtentRight );
-
-	hideEmbeddedObject( m_ExtentBottom );
 	RemoveEmbeddedObject( &m_ExtentBottom );
-
-	hideEmbeddedObject( m_ExtentWidth );
 	RemoveEmbeddedObject( &m_ExtentWidth );
-
-	hideEmbeddedObject( m_ExtentHeight );
 	RemoveEmbeddedObject( &m_ExtentHeight );
-
-	hideEmbeddedObject( m_ExtentWidthScaleFactor );
 	RemoveEmbeddedObject( &m_ExtentWidthScaleFactor );
-
-	hideEmbeddedObject( m_ExtentHeightScaleFactor );
 	RemoveEmbeddedObject( &m_ExtentHeightScaleFactor );
 }
 
@@ -991,38 +957,6 @@ HRESULT SVToolClass::CollectOverlays( SVImageClass *pImage, SVExtentMultiLineStr
 	return l_Status;
 }
 
-void SVToolClass::UpdateTaskObjectOutputListAttributes( SVObjectReference refTarget, UINT uAttributes )
-{
-	SvOi::ITaskObject* pToolSet = GetInspectionInterface()->GetToolSetInterface();
-	SVOutputInfoListClass l_ToolSetOutputList;
-	SVObjectReferenceVector vecObjects;
-	
-	pToolSet->GetOutputList( l_ToolSetOutputList );
-	
-	l_ToolSetOutputList.GetObjectReferenceList( vecObjects );
-
-	//
-	// Iterate the toolset output list and reset the attribute
-	//
-	int nCount = static_cast<int>(vecObjects.size());
-	for (int i = 0; i < nCount; i++)
-	{
-		SVObjectReference ObjectRef = vecObjects.at(i);
-		
-		// Clear the existing bit
-		ObjectRef.SetObjectAttributesSet( uAttributes, SvOi::SetAttributeType::RemoveAttribute );
-		
-		// Compare and set the attribute set if a match.
-		if ( ObjectRef == refTarget )
-		{
-			if ( ObjectRef.ObjectAttributesAllowed() & uAttributes )
-			{
-				ObjectRef.SetObjectAttributesSet( uAttributes, SvOi::SetAttributeType::AddAttribute);
-			}
-		}
-	}
-}
-
 // Source Image Functions
 HRESULT SVToolClass::GetSourceImages( SVImageClassPtrVector* pImageList ) const
 {
@@ -1054,9 +988,9 @@ HRESULT SVToolClass::GetSourceImages( SVImageClassPtrVector* pImageList ) const
 SVImageClass* SVToolClass::GetAuxSourceImage() const
 {
 	SVImageClass* l_pImage = nullptr;
-	if( m_AuxSourceImageObjectInfo.IsConnected() && m_AuxSourceImageObjectInfo.GetInputObjectInfo().m_pObject )
+	if( m_AuxSourceImageObjectInfo.IsConnected() && m_AuxSourceImageObjectInfo.GetInputObjectInfo().getObject() )
 	{
-		l_pImage = static_cast<SVImageClass*>(m_AuxSourceImageObjectInfo.GetInputObjectInfo().m_pObject);
+		l_pImage = static_cast<SVImageClass*> (m_AuxSourceImageObjectInfo.GetInputObjectInfo().getObject());
 	}
 	return l_pImage;
 }
@@ -1221,7 +1155,7 @@ SVObjectClass* SVToolClass::GetToolComment()
 bool SVToolClass::createAllObjectsFromChild( SVObjectClass& rChildObject )
 {
 	SVObjectLevelCreateStruct createStruct;
-	createStruct.OwnerObjectInfo = this;
+	createStruct.OwnerObjectInfo.SetObject(this);
 	createStruct.m_pInspection = dynamic_cast<SVObjectClass*>(GetInspectionInterface());
 	createStruct.m_pTool = this;
 
@@ -1231,7 +1165,7 @@ bool SVToolClass::createAllObjectsFromChild( SVObjectClass& rChildObject )
 void SVToolClass::connectChildObject( SVTaskObjectClass& rChildObject )
 {
 	SVObjectLevelCreateStruct createStruct;
-	createStruct.OwnerObjectInfo = this;
+	createStruct.OwnerObjectInfo.SetObject(this);
 	createStruct.m_pInspection = dynamic_cast<SVObjectClass*>(GetInspectionInterface());
 	createStruct.m_pTool = this;
 
@@ -1335,7 +1269,7 @@ bool SVToolClass::IsAllowedLocation(const SVExtentLocationPropertyEnum Location 
 
 bool SVToolClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
 {
-	if( inputConditionBoolObjectInfo.IsConnected() && inputConditionBoolObjectInfo.GetInputObjectInfo().m_pObject )
+	if( m_inputConditionBoolObjectInfo.IsConnected() && m_inputConditionBoolObjectInfo.GetInputObjectInfo().getObject() )
 	{
 		return true;
 	}

@@ -386,7 +386,7 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 			m_aPreviousInputImageRect.clear();
 			for( i = 0 ; i < m_Data.m_lNumInputImages ; i++ )
 			{
-				SVImageClass* pImage = dynamic_cast <SVImageClass*> (m_Data.m_aInputImageInfo[i].GetInputObjectInfo().m_pObject);
+				SVImageClass* pImage = dynamic_cast <SVImageClass*> (m_Data.m_aInputImageInfo[i].GetInputObjectInfo().getObject());
 				if( pImage )
 				{
 					SVImageInfoClass imageInfo = pImage->GetImageInfo();
@@ -1225,7 +1225,7 @@ HRESULT SVExternalToolTask::SetCancelData(SVCancelData* pCancelData)
 			if( pImageInfo->IsConnected() )
 			{
 				// Send to the Object we are using
-				SVObjectManagerClass::Instance().DisconnectObjectInput(pImageInfo->GetInputObjectInfo().m_UniqueObjectID, pImageInfo );
+				SVObjectManagerClass::Instance().DisconnectObjectInput(pImageInfo->GetInputObjectInfo().getUniqueObjectID(), pImageInfo );
 			}
 
 		}
@@ -1248,7 +1248,7 @@ HRESULT SVExternalToolTask::SetCancelData(SVCancelData* pCancelData)
 			SVInObjectInfoStruct* pImageInfo = &m_Data.m_aInputImageInfo[i];
 			// reconnect changed objects
 			// Connect input info to new input object...
-			SVObjectManagerClass::Instance().ConnectObjectInput(pImageInfo->GetInputObjectInfo().m_UniqueObjectID, pImageInfo);
+			SVObjectManagerClass::Instance().ConnectObjectInput(pImageInfo->GetInputObjectInfo().getUniqueObjectID(), pImageInfo);
 		}
 
 		SVToolClass* pTool = dynamic_cast <SVToolClass*> (GetAncestor( SvDef::SVToolObjectType ));
@@ -1302,7 +1302,7 @@ SVImageClass* SVExternalToolTask::GetInputImage(int iIndex)
 	if ( iIndex >= 0 && iIndex < m_Data.m_lNumInputImages )
 	{
 		SVInObjectInfoStruct& rInfo = m_Data.m_aInputImageInfo[iIndex];
-		return static_cast <SVImageClass*> (rInfo.GetInputObjectInfo().m_pObject);
+		return static_cast <SVImageClass*> (rInfo.GetInputObjectInfo().getObject());
 	}
 	return nullptr;
 }
@@ -1497,7 +1497,7 @@ SVResultClass* SVExternalToolTask::GetResultRangeObject(int iIndex)
 		
 		pResultInputInfo = resultInputList[0];
 		
-		pSVObject = pResultInputInfo->GetInputObjectInfo().m_pObject;
+		pSVObject = pResultInputInfo->GetInputObjectInfo().getObject();
 		
 		if( &m_Data.m_aResultObjects[iIndex] == pSVObject )
 		{
@@ -1657,7 +1657,7 @@ HRESULT SVExternalToolTask::FindInvalidatedObjects(SVObjectPtrVector& rList, con
 			for ( int i = pNewData->m_lNumInputImages ; i < pOriginalData->m_lNumInputImages; i++ )
 			{
 				const SVInObjectInfoStruct* pStruct = &(pOriginalData->m_aInputImageInfo[i]);
-				rList.push_back( pStruct->GetInputObjectInfo().m_pObject );
+				rList.push_back( pStruct->GetInputObjectInfo().getObject());
 			}
 		}
 
@@ -1684,14 +1684,14 @@ bool SVExternalToolTask::DisconnectObjectInput( SVInObjectInfoStruct* pObjectInI
 	bool Result(false);
 	if (nullptr != pObjectInInfo)
 	{
-		SVObjectClass* pObject = pObjectInInfo->GetInputObjectInfo().m_pObject;
+		SVObjectClass* pObject = pObjectInInfo->GetInputObjectInfo().getObject();
 		if ( SVImageClass* pImage = dynamic_cast <SVImageClass*> (pObject) )
 		{
 			// find object
 			for ( int i=0; i < SVExternalToolTaskData::NUM_INPUT_IMAGES; i++ )
 			{
 				SVInObjectInfoStruct& rInfo = m_Data.m_aInputImageInfo[i];
-				if ( rInfo.GetInputObjectInfo().m_pObject == pImage )
+				if ( rInfo.GetInputObjectInfo().getObject() == pImage )
 				{
 					// replace with tool set image
 					SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*> (GetInspection());
@@ -1701,7 +1701,7 @@ bool SVExternalToolTask::DisconnectObjectInput( SVInObjectInfoStruct* pObjectInI
 					SVImageClass* pToolSetImage = (nullptr != pToolSet) ? dynamic_cast <SVImageClass*> (pToolSet->getFirstObject(imageObjectInfo)) : nullptr;
 
 					rInfo.SetInputObject( pToolSetImage );
-					rInfo.GetInputObjectInfo().m_pObject->ConnectObjectInput(&rInfo);
+					rInfo.GetInputObjectInfo().getObject()->ConnectObjectInput(&rInfo);
 					break;
 				}
 			}
@@ -1732,7 +1732,7 @@ bool SVExternalToolTask::ConnectAllInputs()
 	{
 		l_bRunConnect = false;
 		SVInObjectInfoStruct& rInfo = m_Data.m_aInputImageInfo[i];
-		if( SV_GUID_NULL != rInfo.GetInputObjectInfo().m_UniqueObjectID )
+		if( SV_GUID_NULL != rInfo.GetInputObjectInfo().getUniqueObjectID() )
 		{
 			l_bRunConnect = true;
 			break;
@@ -1756,7 +1756,7 @@ HRESULT SVExternalToolTask::ConnectInputImages()
 	// Check Image Handles...
 	for ( int i = 0 ; i < m_Data.m_lNumInputImages ; i++)
 	{
-		SVImageClass* pImage = dynamic_cast <SVImageClass*> (m_Data.m_aInputImageInfo[i].GetInputObjectInfo().m_pObject);
+		SVImageClass* pImage = dynamic_cast <SVImageClass*> (m_Data.m_aInputImageInfo[i].GetInputObjectInfo().getObject());
 		if( pImage )
 		{
 			SVImageInfoClass imageInfo = pImage->GetImageInfo();

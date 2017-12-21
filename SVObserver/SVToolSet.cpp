@@ -140,9 +140,9 @@ void SVToolSetClass::init()
 	AddFriend( l_pConditional->GetUniqueObjectID() );
 
 	// Identify our input type needs
-	inputConditionBoolObjectInfo.SetInputObjectType(SVConditionalResultObjectGuid, SvDef::SVValueObjectType, SvDef::SVBoolValueObjectType);
-	inputConditionBoolObjectInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &inputConditionBoolObjectInfo, _T( "ToolSetConditionalValue" ) );
+	m_inputConditionBoolObjectInfo.SetInputObjectType(SvDef::SVValueObjectType, SvDef::SVBoolValueObjectType, SVConditionalResultObjectGuid);
+	m_inputConditionBoolObjectInfo.SetObject( GetObjectInfo() );
+	RegisterInputObject( &m_inputConditionBoolObjectInfo, _T( "ToolSetConditionalValue" ) );
 
 	// Set default inputs and outputs
 	// Note:: Call the Derived Class (this) here
@@ -336,9 +336,11 @@ bool SVToolSetClass::getConditionalResult() const
 {
 	BOOL Value( false );
 
-	if( inputConditionBoolObjectInfo.IsConnected() && inputConditionBoolObjectInfo.GetInputObjectInfo().m_pObject )
+	if( m_inputConditionBoolObjectInfo.IsConnected() && m_inputConditionBoolObjectInfo.GetInputObjectInfo().getObject() )
 	{
-		SVBoolValueObjectClass* pBoolObject = ( SVBoolValueObjectClass* )inputConditionBoolObjectInfo.GetInputObjectInfo().m_pObject;
+		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
+		//! We are sure that when getObject() is not nullptr that it is the correct type
+		SVBoolValueObjectClass* pBoolObject = static_cast<SVBoolValueObjectClass*> (m_inputConditionBoolObjectInfo.GetInputObjectInfo().getObject());
 		pBoolObject->GetValue( Value );
 	}
 	return Value ? true : false;
@@ -361,7 +363,7 @@ SVConditionalClass* SVToolSetClass::GetToolSetConditional() const
 
 	for( size_t j = 0; nullptr == l_pConditional && j < m_friendList.size(); j++ )
 	{
-		l_pConditional = dynamic_cast<SVConditionalClass *>(m_friendList[j].m_pObject);
+		l_pConditional = dynamic_cast<SVConditionalClass*> (m_friendList[j].getObject());
 	}// end for
 
 	return l_pConditional; 
@@ -927,7 +929,7 @@ bool SVToolSetClass::createAllObjectsFromChild( SVObjectClass& rChildObject )
 	SetDefaultInputs();
 
 	SVObjectLevelCreateStruct createStruct;
-	createStruct.OwnerObjectInfo  = this;
+	createStruct.OwnerObjectInfo.SetObject(this);
 	createStruct.m_pInspection	= GetInspection();
 
 	return rChildObject.createAllObjects(createStruct);
@@ -936,7 +938,7 @@ bool SVToolSetClass::createAllObjectsFromChild( SVObjectClass& rChildObject )
 void SVToolSetClass::connectChildObject( SVTaskObjectClass& rChildObject )
 {
 	SVObjectLevelCreateStruct createStruct;
-	createStruct.OwnerObjectInfo = this;
+	createStruct.OwnerObjectInfo.SetObject(this);
 	createStruct.m_pInspection = GetInspection();
 
 	rChildObject.ConnectObject(createStruct);
@@ -964,7 +966,7 @@ void SVToolSetClass::UpdateRunStatus(SVRunStatusClass& rRunStatus, const SVRunSt
 
 bool SVToolSetClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
 {
-	if( inputConditionBoolObjectInfo.IsConnected() && inputConditionBoolObjectInfo.GetInputObjectInfo().m_pObject )
+	if( m_inputConditionBoolObjectInfo.IsConnected() && m_inputConditionBoolObjectInfo.GetInputObjectInfo().getObject() )
 	{
 		return true;
 	}

@@ -633,7 +633,7 @@ void SVBlobAnalyzerClass::RebuildResultObjectArray()
 
 		pResultInputInfo = resultInputList[0];
 
-		pSVObject = pResultInputInfo->GetInputObjectInfo().m_pObject;
+		pSVObject = pResultInputInfo->GetInputObjectInfo().getObject();
 
 		for ( int iFeature = SV_AREA; iFeature < SV_NUMBER_OF_BLOB_FEATURES; iFeature++ )
 		{
@@ -686,7 +686,7 @@ SVLongResultClass* SVBlobAnalyzerClass::GetBlobResultObject()
 
 		pResultInputInfo = resultInputList[0];
 
-		pSVObject = pResultInputInfo->GetInputObjectInfo().m_pObject;
+		pSVObject = pResultInputInfo->GetInputObjectInfo().getObject();
 
 		if (&m_lvoNumberOfBlobsFound == pSVObject)
 		{
@@ -759,7 +759,6 @@ bool SVBlobAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateS
 		{
 			if (m_FeaturesEnabled [i] == _T('0'))
 			{
-				hideEmbeddedObject (m_Value[i]);
 				RemoveEmbeddedObject (&m_Value[i]);
 			}
 		}
@@ -978,7 +977,6 @@ DWORD SVBlobAnalyzerClass::DisableFeature(SVBlobFeatureEnum aIndex)
 	{
 		FreeResult (aIndex);
 	}
-	hideEmbeddedObject (m_Value[aIndex]);
 	RemoveEmbeddedObject (&m_Value[aIndex]);
 	dynamic_cast<SVInspectionProcess*>(GetInspection())->SetDefaultInputs();
 

@@ -28,11 +28,9 @@ struct SVInObjectInfoStruct : public SVObjectInfoStruct
 
 	const SVObjectInfoStruct& GetInputObjectInfo() const;
 
-	void SetInputObjectType( SvDef::SVObjectTypeEnum p_ObjectType=SvDef::SVNotSetObjectType, SvDef::SVObjectSubTypeEnum p_SubType=SvDef::SVNotSetSubObjectType );
-	void SetInputObjectType( const SVGUID& p_rEmbeddedID, SvDef::SVObjectTypeEnum p_ObjectType=SvDef::SVNotSetObjectType, SvDef::SVObjectSubTypeEnum p_SubType=SvDef::SVNotSetSubObjectType );
-	void SetInputObjectType( const SvDef::SVObjectTypeInfoStruct& p_rTypeInfo );
+	void SetInputObjectType( SvDef::SVObjectTypeEnum ObjectType = SvDef::SVNotSetObjectType, SvDef::SVObjectSubTypeEnum SubType = SvDef::SVNotSetSubObjectType, const SVGUID& rEmbeddedID = SV_GUID_NULL);
+	void SetInputObjectType( const SvDef::SVObjectTypeInfoStruct& rTypeInfo );
 
-	void SetInputObject( const std::string& p_rName );
 	void SetInputObject( const SVGUID& p_rObjectID );
 	void SetInputObject( SVObjectClass* p_pObject );
 	void SetInputObject( const SVObjectReference& p_rObject );

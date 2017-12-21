@@ -16,6 +16,7 @@
 #include "SVUtilityLibrary/SVGuidList.h"
 #include "SVObjectScriptEnums.h"
 #include "SVUtilityLibrary/SVGUID.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 class SVObjectBuilder
@@ -41,7 +42,7 @@ public:
 	static HRESULT SetObjectValue(const GUID& ownerID, const GUID& objectID, const std::string& itemName, const _variant_t& value, SVObjectScriptDataObjectTypeEnum dstDataType);
 	static HRESULT SetObjectValue(const GUID& ownerID, const GUID& objectID, const std::string& itemName, const SVVariantList& values, SVObjectScriptDataObjectTypeEnum dstDataType);
 	static HRESULT SetInputs(const GUID& objectID, const SVGuidList& list);
-	static HRESULT SetInputs(const GUID& objectID, const SVNameGuidList& list);
+	static HRESULT SetInputs(const GUID& objectID, const SvDef::StringPairVector& rInputPairVector);
 
 	static HRESULT GetObjectDataType(const GUID& ownerID, const GUID& objectID, SVObjectScriptDataObjectTypeEnum& dataType);
 };

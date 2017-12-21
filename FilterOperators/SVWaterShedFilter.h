@@ -29,6 +29,9 @@ public:
 #pragma region virtual method (IFilter)
 	virtual bool shouldResetInspection() const override { return true; }
 #pragma region virtual method (IFilter)
+
+	SVImageClass* getInputImage() const;
+
 protected:
 	virtual bool onRun( bool First, SVImageBufferHandlePtr RInputImageHandle, SVImageBufferHandlePtr ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 

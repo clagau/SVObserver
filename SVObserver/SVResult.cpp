@@ -176,7 +176,7 @@ const SVObjectClass* SVResultClass::getInput() const
 {
 	if( m_inputObjectInfo.IsConnected() )
 	{
-		return m_inputObjectInfo.GetInputObjectInfo().m_pObject;
+		return m_inputObjectInfo.GetInputObjectInfo().getObject();
 	}
 
 	return nullptr;
@@ -236,7 +236,7 @@ HRESULT SVResultClass::SetCancelData(SVCancelData* pCancelData)
 
 bool SVResultClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
 {
-	if( !m_inputObjectInfo.IsConnected() || nullptr == m_inputObjectInfo.GetInputObjectInfo().m_pObject ) 
+	if( !m_inputObjectInfo.IsConnected() || nullptr == m_inputObjectInfo.GetInputObjectInfo().getObject() ) 
 	{
 		if (nullptr != pErrorMessages)
 		{

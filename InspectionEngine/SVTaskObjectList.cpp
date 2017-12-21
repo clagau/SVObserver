@@ -629,7 +629,7 @@ bool SVTaskObjectListClass::createAllObjects( const SVObjectLevelCreateStruct& r
 	bool Result = __super::createAllObjects( rCreateStructure );
 
 	SVObjectLevelCreateStruct createStruct;
-	createStruct.OwnerObjectInfo = this;
+	createStruct.OwnerObjectInfo.SetObject(this);
 	createStruct.m_pInspection = GetInspection();
 	createStruct.m_pTool	= GetTool();
 	createStruct.m_pAnalyzer = GetAnalyzer();
@@ -649,7 +649,7 @@ void SVTaskObjectListClass::ConnectObject( const SVObjectLevelCreateStruct& rCre
 	__super::ConnectObject( rCreateStructure );
 
 	SVObjectLevelCreateStruct createStruct;
-	createStruct.OwnerObjectInfo = this;
+	createStruct.OwnerObjectInfo.SetObject(this);
 	createStruct.m_pInspection = GetInspection();
 	createStruct.m_pTool = GetTool();
 	createStruct.m_pAnalyzer = GetAnalyzer();
@@ -774,7 +774,7 @@ bool SVTaskObjectListClass::replaceObject(SVObjectClass* pObject, const GUID& rN
 		{
 			// Get the Owner
 			SVObjectInfoStruct ownerInfo = pObject->GetOwnerInfo();
-			SVObjectClass* pOwner = SVObjectManagerClass::Instance().GetObject(ownerInfo.m_UniqueObjectID);
+			SVObjectClass* pOwner = SVObjectManagerClass::Instance().GetObject(ownerInfo.getUniqueObjectID());
 			if (pOwner)
 			{
 				SVTaskObjectListClass* pTaskListOwner = dynamic_cast<SVTaskObjectListClass*>(pOwner);
@@ -1067,7 +1067,7 @@ void SVTaskObjectListClass::connectChildObject( SVTaskObjectClass& rChildObject 
 {
 	SVObjectLevelCreateStruct createStruct;
 
-	createStruct.OwnerObjectInfo = this;
+	createStruct.OwnerObjectInfo.SetObject(this);
 	createStruct.m_pInspection = GetInspection();
 	createStruct.m_pTool	= GetTool();
 	createStruct.m_pAnalyzer = GetAnalyzer();
@@ -1129,11 +1129,11 @@ SvOi::IObjectClass* SVTaskObjectListClass::getFirstObjectWithRequestor( const Sv
 
 		if (pOutputInfo)
 		{
-			pObject = pOutputInfo->m_pObject;
+			pObject = pOutputInfo->getObject();
 
 			if (nullptr == pObject)
 			{
-				pObject = SVObjectManagerClass::Instance().GetObject(pOutputInfo->m_UniqueObjectID);
+				pObject = SVObjectManagerClass::Instance().GetObject(pOutputInfo->getUniqueObjectID());
 			}
 
 			if (nullptr != pObject && pObject->GetOwner() != pRequestor && pObject != pRequestor)

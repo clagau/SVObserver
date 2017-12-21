@@ -100,7 +100,7 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 
 		if( !found ) // not found - have to remove it
 		{
-			bOk = ( nullptr != SVObjectManagerClass::Instance().GetObject( pPublishedOutObjectInfo->m_UniqueObjectID ) );
+			bOk = ( nullptr != SVObjectManagerClass::Instance().GetObject( pPublishedOutObjectInfo->getUniqueObjectID() ) );
 			if( !bOk )
 			{
 				RemoveAt( i );
@@ -110,10 +110,10 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 			SVInObjectInfoStruct InObjectInfo;
 
 			InObjectInfo.SetObject( m_pInspection );
-			InObjectInfo.SetInputObject( pPublishedOutObjectInfo->m_UniqueObjectID );
+			InObjectInfo.SetInputObject( pPublishedOutObjectInfo->getUniqueObjectID() );
 
 			// Disconnect
-			SVObjectManagerClass::Instance().DisconnectObjectInput(pPublishedOutObjectInfo->m_UniqueObjectID, &InObjectInfo);
+			SVObjectManagerClass::Instance().DisconnectObjectInput(pPublishedOutObjectInfo->getUniqueObjectID(), &InObjectInfo);
 
 			// remove from the list
 			RemoveAt(i);
@@ -131,7 +131,7 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 				{
 					pIOEntry = ppPPQEntries[lPPQ];
 					//@WARNING [gra][7.50][09.08.2017] Not this does not work for objects with index!
-					if( pIOEntry->getObject()->GetUniqueObjectID() == pPublishedOutObjectInfo->m_pObject->GetUniqueObjectID() )
+					if( pIOEntry->getObject()->GetUniqueObjectID() == pPublishedOutObjectInfo->getUniqueObjectID() )
 					{
 						pPPQ->RemoveOutput( pIOEntry );
 						found = true;
@@ -170,12 +170,12 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 			SVInObjectInfoStruct InObjectInfo;
 
 			InObjectInfo.SetObject( m_pInspection );
-			InObjectInfo.SetInputObject( pOutObjectInfo->m_UniqueObjectID );
+			InObjectInfo.SetInputObject( pOutObjectInfo->getUniqueObjectID() );
 
 			// connect to the object
-			if( pOutObjectInfo->m_pObject->ConnectObjectInput(&InObjectInfo) )
+			if( pOutObjectInfo->getObject()->ConnectObjectInput(&InObjectInfo) )
 			{
-				SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( pOutObjectInfo->m_UniqueObjectID );
+				SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( pOutObjectInfo->getUniqueObjectID() );
 				if( nullptr != dynamic_cast<SvOi::IValueObject*> (pObject) )
 				{
 					SVDigitalOutputObject* pDigital( nullptr );
@@ -254,10 +254,10 @@ void SVPublishListClass::Release(SVTaskObjectClass * pRootObject)
 		SVInObjectInfoStruct InObjectInfo;
 
 		InObjectInfo.SetObject( m_pInspection );
-		InObjectInfo.SetInputObject( pPublishedOutObjectInfo->m_UniqueObjectID );
+		InObjectInfo.SetInputObject( pPublishedOutObjectInfo->getUniqueObjectID() );
 
 		// Disconnect
-		SVObjectManagerClass::Instance().DisconnectObjectInput(pPublishedOutObjectInfo->m_UniqueObjectID, &InObjectInfo);
+		SVObjectManagerClass::Instance().DisconnectObjectInput(pPublishedOutObjectInfo->getUniqueObjectID(), &InObjectInfo);
 		
 		// remove from the list
 		RemoveAt(i);
@@ -275,7 +275,7 @@ void SVPublishListClass::Release(SVTaskObjectClass * pRootObject)
 			{
 				pIOEntry = ppPPQEntries[lPPQ];
 				//@WARNING [gra][7.50][09.08.2017] Not this does not work for objects with index!
-				if( pIOEntry->getObject()->GetUniqueObjectID() == pPublishedOutObjectInfo->m_pObject->GetUniqueObjectID() )
+				if( pIOEntry->getObject()->GetUniqueObjectID() == pPublishedOutObjectInfo->getUniqueObjectID() )
 				{
 					pPPQ->RemoveOutput( pIOEntry );
 					found = true;
@@ -299,7 +299,7 @@ bool SVPublishListClass::RemovePublishedEntry( const SVGUID& RGuid )
 	for( int i = GetSize() - 1; i >= 0; i-- )
 	{
 		SVOutObjectInfoStruct* pPublishedOutObjectInfo = GetAt( i );
-		if( pPublishedOutObjectInfo && pPublishedOutObjectInfo->m_UniqueObjectID == RGuid )
+		if( pPublishedOutObjectInfo && pPublishedOutObjectInfo->getUniqueObjectID() == RGuid )
 		{
 			// remove from the list
 			RemoveAt(i);
@@ -318,7 +318,7 @@ bool SVPublishListClass::RemovePublishedEntry( const SVGUID& RGuid )
 			{
 				pIOEntry = ppPPQEntries[lPPQ];
 				//@WARNING [gra][7.50][09.08.2017] Not this does not work for objects with index!
-				if( pIOEntry->getObject()->GetUniqueObjectID() == pPublishedOutObjectInfo->m_pObject->GetUniqueObjectID() )
+				if( pIOEntry->getObject()->GetUniqueObjectID() == pPublishedOutObjectInfo->getUniqueObjectID() )
 				{
 					pPPQ->RemoveOutput( pIOEntry );
 					found = true;

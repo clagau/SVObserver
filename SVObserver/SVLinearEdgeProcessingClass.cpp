@@ -36,19 +36,19 @@ SVLinearEdgeProcessingClass::SVLinearEdgeProcessingClass( SVObjectClass* POwner,
 {
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVLinearEdgeProcessingObjectType;
 
-	m_svInputImageObjectInfo.SetInputObjectType( SvDef::SVImageObjectType, SvDef::SVImageMonoType);
+	m_svInputImageObjectInfo.SetInputObjectType(SvDef::SVImageObjectType, SvDef::SVImageMonoType);
 	m_svInputImageObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_svInputImageObjectInfo, _T( "LinearEdgeProcessingImage" ) );
 
-	m_svInputMinThreshold.SetInputObjectType( SVLinearThresholdMinObjectGuid, SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType );
+	m_svInputMinThreshold.SetInputObjectType(SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType, SVLinearThresholdMinObjectGuid);
 	m_svInputMinThreshold.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_svInputMinThreshold, _T( "LinearEdgeProcessingMinThreshold" ) );
 
-	m_svInputMaxThreshold.SetInputObjectType( SVLinearThresholdMaxObjectGuid, SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType );
+	m_svInputMaxThreshold.SetInputObjectType(SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType, SVLinearThresholdMaxObjectGuid);
 	m_svInputMaxThreshold.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_svInputMaxThreshold, _T( "LinearEdgeProcessingMaxThreshold" ) );
 
-	m_svInputLinearData.SetInputObjectType( SVLinearDataClassGuid, SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType );
+	m_svInputLinearData.SetInputObjectType(SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType, SVLinearDataClassGuid);
 	m_svInputLinearData.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_svInputLinearData, _T( "LinearEdgeProcessingInputLinearData" ) );
 
@@ -216,24 +216,25 @@ bool SVLinearEdgeProcessingClass::onRun( SVRunStatusClass &p_rsvRunStatus, SvStl
 
 SVImageClass *SVLinearEdgeProcessingClass::GetInputImage()
 {
-	SVImageClass *l_psvImage = nullptr;
-
-	if( m_svInputImageObjectInfo.IsConnected() && 
-		  nullptr != m_svInputImageObjectInfo.GetInputObjectInfo().m_pObject )
+	if( m_svInputImageObjectInfo.IsConnected() && nullptr != m_svInputImageObjectInfo.GetInputObjectInfo().getObject())
 	{
-		l_psvImage = dynamic_cast<SVImageClass *>(m_svInputImageObjectInfo.GetInputObjectInfo().m_pObject);
+		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
+		//! We are sure that when getObject() is not nullptr that it is the correct type
+		return static_cast<SVImageClass*> (m_svInputImageObjectInfo.GetInputObjectInfo().getObject());
 	}
 
-	return l_psvImage;
+	return nullptr;
 }
 
 SVDoubleValueObjectClass* SVLinearEdgeProcessingClass::GetInputLinearData()
 {
 	SVDoubleValueObjectClass* pData = nullptr;
 
-	if (m_svInputLinearData.IsConnected() && m_svInputLinearData.GetInputObjectInfo().m_pObject)
+	if (m_svInputLinearData.IsConnected() && nullptr != m_svInputLinearData.GetInputObjectInfo().getObject())
 	{
-		pData = dynamic_cast <SVDoubleValueObjectClass*> (m_svInputLinearData.GetInputObjectInfo().m_pObject);
+		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
+		//! We are sure that when getObject() is not nullptr that it is the correct type
+		pData = static_cast<SVDoubleValueObjectClass*> (m_svInputLinearData.GetInputObjectInfo().getObject());
 	}
 
 	return pData;
@@ -243,9 +244,9 @@ HRESULT SVLinearEdgeProcessingClass::GetInputMinThreshold(double& rMinThreshold)
 {
 	HRESULT Result(E_FAIL);
 
-	if( m_svInputMinThreshold.IsConnected() && nullptr != m_svInputMinThreshold.GetInputObjectInfo().m_pObject )
+	if( m_svInputMinThreshold.IsConnected() && nullptr != m_svInputMinThreshold.GetInputObjectInfo().getObject() )
 	{
-		Result = m_svInputMinThreshold.GetInputObjectInfo().m_pObject->getValue(rMinThreshold);
+		Result = m_svInputMinThreshold.GetInputObjectInfo().getObject()->getValue(rMinThreshold);
 	}
 
 	return Result;
@@ -255,9 +256,9 @@ HRESULT SVLinearEdgeProcessingClass::GetInputMaxThreshold(double& rMaxThreshold)
 {
 	HRESULT Result(E_FAIL);
 
-	if( m_svInputMaxThreshold.IsConnected() && nullptr != m_svInputMaxThreshold.GetInputObjectInfo().m_pObject )
+	if( m_svInputMaxThreshold.IsConnected() && nullptr != m_svInputMaxThreshold.GetInputObjectInfo().getObject() )
 	{
-		Result = m_svInputMaxThreshold.GetInputObjectInfo().m_pObject->getValue(rMaxThreshold);
+		Result = m_svInputMaxThreshold.GetInputObjectInfo().getObject()->getValue(rMaxThreshold);
 	}
 
 	return Result;
@@ -267,9 +268,9 @@ HRESULT SVLinearEdgeProcessingClass::GetInputLinearData(std::vector<double>& rDa
 {
 	HRESULT Result(E_FAIL);
 
-	if( m_svInputLinearData.IsConnected() && nullptr != m_svInputLinearData.GetInputObjectInfo().m_pObject )
+	if( m_svInputLinearData.IsConnected() && nullptr != m_svInputLinearData.GetInputObjectInfo().getObject() )
 	{
-		Result = m_svInputLinearData.GetInputObjectInfo().m_pObject->getValues(rData);
+		Result = m_svInputLinearData.GetInputObjectInfo().getObject()->getValues(rData);
 	}
 
 	return Result;

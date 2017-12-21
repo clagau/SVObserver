@@ -769,9 +769,9 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 
 						if( l_psvImageInfo->IsConnected() )
 						{
-							pCurrentSourceImage = dynamic_cast <SVImageClass*> (l_psvImageInfo->GetInputObjectInfo().m_pObject);
+							pCurrentSourceImage = dynamic_cast <SVImageClass*> (l_psvImageInfo->GetInputObjectInfo().getObject());
 
-							PrintValueObject( pDC, ptCurPos, SvUl::LoadStdString(IDS_IMAGE_SOURCE_STRING).c_str(), pCurrentSourceImage->GetCompleteObjectNameToObjectType().c_str() );
+							PrintValueObject( pDC, ptCurPos, SvUl::LoadStdString(IDS_IMAGE_SOURCE_STRING).c_str(), pCurrentSourceImage->GetObjectNameToObjectType().c_str() );
 						}
 					}
 					else
@@ -1050,9 +1050,9 @@ void SVConfigurationPrint::PrintFriends( CDC* pDC, SVObjectClass* pObj, CPoint& 
 	{
 		const SVObjectInfoStruct& rObjInfo = rFriendList[nCnt];
 		
-		if (rObjInfo.m_pObject)
+		if (rObjInfo.getObject())
 		{
-			PrintObject(pDC, rObjInfo.m_pObject, ptCurPos, nIndentLevel);
+			PrintObject(pDC, rObjInfo.getObject(), ptCurPos, nIndentLevel);
 		}  // end if( rObjInfo )
 	}  // end for( size_t nCnt = 0; nCnt < rFriendList.GetSize (); nCnt++ )
 }  // end function void SVConfigurationPrint:::PrintFriends( ... )
@@ -1089,9 +1089,9 @@ void SVConfigurationPrint::PrintInputOutputList( CDC* pDC, SVObjectClass* pObj, 
 	{
 		SVOutObjectInfoStruct* pOutput = l_OutputList.GetAt(nCnt);
 		
-		if (pOutput->m_pObject->GetOwner() == pObj)
+		if (pOutput->getObject()->GetOwner() == pObj)
 		{
-			PrintDetails(pDC, pOutput->m_pObject, ptCurPos, nIndentLevel);
+			PrintDetails(pDC, pOutput->getObject(), ptCurPos, nIndentLevel);
 		}  // end if( pOutput->PObject->GetOwner () == pObj )
 	}  // end for( int nCnt = 0; nCnt < pOutputInfoList->GetSize(); nCnt++ )
 }  // end function void SVConfigurationPrint:::PrintInputOutputList( ... )

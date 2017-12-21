@@ -117,7 +117,7 @@ bool SVLUTEquationClass::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 bool SVLUTEquationClass::SetDefaultFormula(SvStl::MessageContainerVector *pErrorMessages)
 {
 	// Get current complete name of LUT Index...
-	std::string Name = m_lutIndex.GetCompleteObjectNameToObjectType( nullptr, SvDef::SVToolSetObjectType );
+	std::string Name = m_lutIndex.GetObjectNameToObjectType();
 
 	if( ! Name.empty() )
 	{

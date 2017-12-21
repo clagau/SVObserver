@@ -90,7 +90,7 @@ void SVLUTOperatorClass::init()
 	// Identify our input type needs...
 
 	// input of lut equation...
-	m_inputLUTVectorResult.SetInputObjectType(SVLUTEquationResultObjectGuid, SvDef::SVValueObjectType, SvDef::SVByteValueObjectType);
+	m_inputLUTVectorResult.SetInputObjectType(SvDef::SVValueObjectType, SvDef::SVByteValueObjectType, SVLUTEquationResultObjectGuid);
 	m_inputLUTVectorResult.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputLUTVectorResult, _T( "LUTOperator" ) );
 
@@ -361,8 +361,12 @@ bool SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& rRunStatus )
 ////////////////////////////////////////////////////////////////////////////////
 SVByteValueObjectClass* SVLUTOperatorClass::getInputLUTVectorResult()
 {
-	if( m_inputLUTVectorResult.IsConnected() && m_inputLUTVectorResult.GetInputObjectInfo().m_pObject )
-		return dynamic_cast <SVByteValueObjectClass*> (m_inputLUTVectorResult.GetInputObjectInfo().m_pObject);
+	if (m_inputLUTVectorResult.IsConnected() && m_inputLUTVectorResult.GetInputObjectInfo().getObject())
+	{
+		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
+		//! We are sure that when getObject() is not nullptr that it is the correct type
+		return static_cast <SVByteValueObjectClass*> (m_inputLUTVectorResult.GetInputObjectInfo().getObject());
+	}
 
 	return nullptr;
 }

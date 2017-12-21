@@ -173,7 +173,7 @@ SvDef::StringVector SVArchiveRecordsArray::RemoveDisconnectedObject( const SVObj
 		SVArchiveRecord* pImageRecord = *iter;
 		if ( pImageRecord )
 		{
-			if( p_rInfoObject.m_UniqueObjectID == pImageRecord->m_svObjectReference.Guid() )
+			if( p_rInfoObject.getUniqueObjectID() == pImageRecord->m_svObjectReference.Guid() )
 			{
 				Result.push_back( pImageRecord->m_svObjectReference.GetCompleteName() );
 				delete pImageRecord;

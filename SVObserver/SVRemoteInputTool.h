@@ -38,9 +38,9 @@ public:
 
 	virtual HRESULT ProcessNotifyData( SVObjectCommandDataJsonPtr& p_rDataPtr ) override;
 
-	SVObjectClass* GetInputObject() const;
+	SVObjectReference GetInputObject() const;
 	HRESULT ClearInputObject();
-	HRESULT SetInputObject( const SVGUID& p_rObjectId );
+	HRESULT SetInputObject(const std::string& rGuidName);
 
 #pragma region Methods to replace processMessage
 	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override;

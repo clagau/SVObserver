@@ -77,10 +77,10 @@ SVBarCodeResultClass::SVBarCodeResultClass(SVObjectClass* POwner, int StringReso
 	m_dReadScore.SetDefaultValue( -1.0, true);
 	m_dReadScore.setSaveValueFlag(false);
   // Specify which string SVResultString should require
-	m_inputObjectInfo.SetInputObjectType( SVBarCodeObjectGuid );
+	m_inputObjectInfo.SetInputObjectType(SvDef::SVNotSetObjectType, SvDef::SVNotSetSubObjectType, SVBarCodeObjectGuid);
 
 	// Identify our input type needs
-	m_SVRegExpressionObjectInfo.SetInputObjectType(SVRegExpressionObjectGuid, SvDef::SVValueObjectType, SvDef::SVStringValueObjectType);
+	m_SVRegExpressionObjectInfo.SetInputObjectType(SvDef::SVValueObjectType, SvDef::SVStringValueObjectType, SVRegExpressionObjectGuid);
 	m_SVRegExpressionObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_SVRegExpressionObjectInfo, _T( "BarCodeResultString" ) );
 }
@@ -121,9 +121,11 @@ bool SVBarCodeResultClass::CreateObject(const SVObjectLevelCreateStruct& rCreate
 
 SVStringValueObjectClass* SVBarCodeResultClass::getInputString()
 {
-	if( m_inputObjectInfo.IsConnected() )
+	if( m_inputObjectInfo.IsConnected() && nullptr != m_inputObjectInfo.GetInputObjectInfo().getObject())
 	{
-		return dynamic_cast<SVStringValueObjectClass*> (m_inputObjectInfo.GetInputObjectInfo().m_pObject);
+		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
+		//! We are sure that when getObject() is not nullptr that it is the correct type
+		return static_cast<SVStringValueObjectClass*> (m_inputObjectInfo.GetInputObjectInfo().getObject());
 	}
 
 	return nullptr;
@@ -131,9 +133,11 @@ SVStringValueObjectClass* SVBarCodeResultClass::getInputString()
 
 SVStringValueObjectClass* SVBarCodeResultClass::getRegExpression()
 {
-	if( m_SVRegExpressionObjectInfo.IsConnected() )
+	if(m_SVRegExpressionObjectInfo.IsConnected() && nullptr != m_SVRegExpressionObjectInfo.GetInputObjectInfo().getObject())
 	{
-		return dynamic_cast<SVStringValueObjectClass*>  (m_SVRegExpressionObjectInfo.GetInputObjectInfo().m_pObject);
+		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
+		//! We are sure that when getObject() is not nullptr that it is the correct type
+		return static_cast<SVStringValueObjectClass*>  (m_SVRegExpressionObjectInfo.GetInputObjectInfo().getObject());
 	}
 
 	return nullptr;
@@ -471,7 +475,7 @@ int SVBarCodeResultClass::CheckStringInTable( const std::string& rMatchString )
 
 bool SVBarCodeResultClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
 {
-	if ( !m_SVRegExpressionObjectInfo.IsConnected() || nullptr == m_SVRegExpressionObjectInfo.GetInputObjectInfo().m_pObject )
+	if ( !m_SVRegExpressionObjectInfo.IsConnected() || nullptr == m_SVRegExpressionObjectInfo.GetInputObjectInfo().getObject() )
 	{
 		if (nullptr != pErrorMessages)
 		{

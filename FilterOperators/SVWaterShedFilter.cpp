@@ -106,7 +106,7 @@ bool SVWatershedFilterClass::onRun( bool First, SVImageBufferHandlePtr rInputIma
 		HRESULT l_Code;
 		if( bUseMarker && m_MarkerImageInfo.IsConnected() )
 		{
-			SVImageClass* pInputImage = ( SVImageClass* )m_MarkerImageInfo.GetInputObjectInfo().m_pObject;
+			SVImageClass* pInputImage = getInputImage();
 			if( pInputImage )
 			{
 				pInputImage->GetImageHandle( ImageHandle );
@@ -171,6 +171,19 @@ bool SVWatershedFilterClass::onRun( bool First, SVImageBufferHandlePtr rInputIma
 	return false;
 }
 
+SVImageClass* SVWatershedFilterClass::getInputImage() const
+{
+	if (m_MarkerImageInfo.IsConnected() && nullptr != m_MarkerImageInfo.GetInputObjectInfo().getObject())
+	{
+		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
+		//! We are sure that when getObject() is not nullptr that it is the correct type
+		return static_cast<SVImageClass*> (m_MarkerImageInfo.GetInputObjectInfo().getObject());
+	}
+
+	return nullptr;
+}
+
+
 bool SVWatershedFilterClass::ValidateLocal( SvStl::MessageContainerVector * pErrorMessages ) const
 {
 	bool Result = true;
@@ -179,7 +192,7 @@ bool SVWatershedFilterClass::ValidateLocal( SvStl::MessageContainerVector * pErr
 	{
 		if( bUseMarker )
 		{
-			if (!m_MarkerImageInfo.IsConnected() || nullptr == m_MarkerImageInfo.GetInputObjectInfo().m_pObject)
+			if (nullptr == getInputImage())
 			{
 				Result = false;
 				if (nullptr != pErrorMessages)

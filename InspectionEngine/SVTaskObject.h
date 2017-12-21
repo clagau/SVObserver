@@ -178,8 +178,8 @@ public:
 
 	virtual HRESULT CollectOverlays( SVImageClass* p_Image, SVExtentMultiLineStructVector &p_MultiLineArray );
 
-	void AddEmbeddedObject( SVObjectClass* PObject );
-	void RemoveEmbeddedObject( SVObjectClass* pObjectToRemove);
+	void AddEmbeddedObject(SVObjectClass* pObject);
+	void RemoveEmbeddedObject(SVObjectClass* pObjectToRemove);
 	SVObjectClass* GetEmbeddedValueObject( GUID classguid );
 
 	virtual HRESULT ResetObjectInputs() override;
@@ -202,8 +202,6 @@ protected:
 	virtual SVObjectPtrDeque GetPostProcessObjects() const override;
 
 	virtual void addDefaultInputObjects( SVInputInfoListClass* PInputListToFill = nullptr );
-
-	void hideEmbeddedObject( SVObjectClass& RObjectToHide );
 
 	// Called by Run()
 	// NOTE:

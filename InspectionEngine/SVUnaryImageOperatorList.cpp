@@ -48,11 +48,11 @@ bool SVUnaryImageOperatorListClass::CreateObject( const SVObjectLevelCreateStruc
 
 SVImageClass* SVUnaryImageOperatorListClass::getInputImage() const
 {
-	if (inputImageObjectInfo.IsConnected() && nullptr != inputImageObjectInfo.GetInputObjectInfo().m_pObject)
+	if (inputImageObjectInfo.IsConnected() && nullptr != inputImageObjectInfo.GetInputObjectInfo().getObject())
 	{
 		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when m_pObject is not nullptr then it is a SVImageClass
-		return static_cast<SVImageClass*> (inputImageObjectInfo.GetInputObjectInfo().m_pObject);
+		//! We are sure that when getObject() is not nullptr that it is the correct type
+		return static_cast<SVImageClass*> (inputImageObjectInfo.GetInputObjectInfo().getObject());
 	}
 
 	return nullptr;
@@ -62,7 +62,7 @@ bool SVUnaryImageOperatorListClass::ResetObject(SvStl::MessageContainerVector *p
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
-	if (!inputImageObjectInfo.IsConnected() || nullptr == inputImageObjectInfo.GetInputObjectInfo().m_pObject)
+	if (nullptr == getInputImage())
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)

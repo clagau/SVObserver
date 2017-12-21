@@ -156,7 +156,7 @@ protected:
 	SVLongValueObjectClass m_ProcessedCount;
 
 	// Conditional input
-	SVInObjectInfoStruct inputConditionBoolObjectInfo;
+	SVInObjectInfoStruct m_inputConditionBoolObjectInfo;
 
 	// Conditional tool set drawing flag.
 	SVEnumerateValueObjectClass	m_DrawFlag;

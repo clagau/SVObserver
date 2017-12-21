@@ -1864,7 +1864,7 @@ void SVImageViewClass::GetParameters(SvOi::IObjectWriter& rWriter)
 
 	if( nullptr != l_pImage )
 	{
-		l_svVariant.SetString( l_pImage->GetCompleteObjectNameToObjectType( nullptr, SvDef::SVInspectionObjectType ).c_str() );
+		l_svVariant.SetString( l_pImage->GetObjectNameToObjectType(SvDef::SVInspectionObjectType).c_str() );
 		rWriter.WriteAttribute(SvXml::CTAG_IMAGE_NAME, l_svVariant);
 		l_svVariant.Clear();
 	}

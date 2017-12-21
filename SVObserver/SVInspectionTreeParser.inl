@@ -538,7 +538,7 @@ template< typename SVTreeType >
 HRESULT SVInspectionTreeParser< SVTreeType >::ProcessInputs(typename SVTreeType::SVBranchHandle hInputs, const GUID& objectID)
 {
 	HRESULT hr = S_OK;
-	SVNameGuidList inputList;
+	SvDef::StringPairVector InputPairVector;
 	SVTreeType::SVBranchHandle hInput( nullptr );
 	hInput = m_rTree.getFirstBranch(hInputs);
 	do
@@ -554,16 +554,16 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessInputs(typename SVTreeType:
 
 			if (name.vt == VT_BSTR && value.vt == VT_BSTR)
 			{
-				GUID inputID = SVGUID(value);
-				inputList.insert(std::make_pair(_bstr_t(name.bstrVal), inputID));
+				SvDef::StringPair InputPair{ SvUl::createStdString(name), SvUl::createStdString(value) };
+				InputPairVector.push_back(InputPair);
 			}
 			hInput = m_rTree.getNextBranch(hInputs, hInput);
 		}
 	} while (hInput);
 
-	if (inputList.size())
+	if (InputPairVector.size())
 	{
-		hr = SVObjectBuilder::SetInputs(objectID, inputList);
+		hr = SVObjectBuilder::SetInputs(objectID, InputPairVector);
 	}
 	return hr;
 }

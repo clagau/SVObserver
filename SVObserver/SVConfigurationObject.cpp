@@ -1684,11 +1684,11 @@ bool  SVConfigurationObject::LoadCameras( SVTreeType&  rTree, long& lNumCameras,
 
 			if( SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_UNIQUE_REFERENCE_ID, hSubChild, Value ) )
 			{
-				SVGUID l_Guid( Value );
+				SVGUID UniqueID( Value );
 
 				SVObjectManagerClass::Instance().CloseUniqueObjectID( pCamera );
 
-				pCamera->m_outObjectInfo.m_UniqueObjectID = l_Guid;
+				pCamera->m_outObjectInfo.GetObjectReference().setGuid(UniqueID);
 
 				SVObjectManagerClass::Instance().OpenUniqueObjectID( pCamera );
 			}
@@ -1921,11 +1921,11 @@ bool SVConfigurationObject::LoadInspection( SVTreeType& rTree )
 			bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_UNIQUE_REFERENCE_ID, hTempIPObjectItem, Value );
 			if ( bOk )
 			{
-				SVGUID ObjectID( Value );
+				SVGUID UniqueID( Value );
 
 				SVObjectManagerClass::Instance().CloseUniqueObjectID( pInspection );
 
-				pInspection->m_outObjectInfo.m_UniqueObjectID = ObjectID;
+				pInspection->m_outObjectInfo.GetObjectReference().setGuid(UniqueID);
 
 				SVObjectManagerClass::Instance().OpenUniqueObjectID( pInspection );
 			}
@@ -2027,11 +2027,11 @@ bool SVConfigurationObject::LoadPPQ( SVTreeType& rTree )
 
 		if( bOk )
 		{
-			SVGUID ObjectID( Value );
+			SVGUID UniqueID( Value );
 
 			SVObjectManagerClass::Instance().CloseUniqueObjectID( pPPQ );
 
-			pPPQ->m_outObjectInfo.m_UniqueObjectID = ObjectID;
+			pPPQ->m_outObjectInfo.GetObjectReference().setGuid(UniqueID);
 
 			SVObjectManagerClass::Instance().OpenUniqueObjectID( pPPQ );
 		}// end if
@@ -2106,11 +2106,11 @@ bool SVConfigurationObject::LoadPPQ( SVTreeType& rTree )
 
 		if( bTmp )
 		{
-			SVGUID ObjectID( Value );
+			SVGUID UniqueID( Value );
 
 			SVObjectManagerClass::Instance().CloseUniqueObjectID( &pPPQ->m_voOutputState );
 
-			pPPQ->m_voOutputState.m_outObjectInfo.m_UniqueObjectID = ObjectID;
+			pPPQ->m_voOutputState.m_outObjectInfo.GetObjectReference().setGuid(UniqueID);
 
 			SVObjectManagerClass::Instance().OpenUniqueObjectID( &pPPQ->m_voOutputState );
 		}// end if
@@ -2118,11 +2118,11 @@ bool SVConfigurationObject::LoadPPQ( SVTreeType& rTree )
 		bTmp = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_PPQ_TRIGGER_COUNT_ID, hSubChild, Value );
 		if ( bTmp )
 		{
-			SVGUID l_TriggercountId( Value );
+			SVGUID UniqueID( Value );
 
 			SVObjectManagerClass::Instance().CloseUniqueObjectID( &pPPQ->m_voTriggerCount );
 
-			pPPQ->m_voTriggerCount.m_outObjectInfo.m_UniqueObjectID = l_TriggercountId;
+			pPPQ->m_voTriggerCount.m_outObjectInfo.GetObjectReference().setGuid(UniqueID);
 
 			SVObjectManagerClass::Instance().OpenUniqueObjectID( &pPPQ->m_voTriggerCount );
 		}
@@ -3252,7 +3252,7 @@ void SVConfigurationObject::SaveTrigger(SvXml::SVObjectXMLWriter& rWriter) const
 	rWriter.EndElement();  // SvXml::CTAG_TRIGGER
 }
 
-void SVConfigurationObject::SaveInspection(SvXml::SVObjectXMLWriter& rWriter) const
+void SVConfigurationObject::SaveInspection(SvXml::SVObjectXMLWriter& rWriter, AttributesSetMap& rAttributeSetPairVector) const
 {
 	rWriter.StartElement( SvXml::CTAG_INSPECTION );
 
@@ -3263,6 +3263,7 @@ void SVConfigurationObject::SaveInspection(SvXml::SVObjectXMLWriter& rWriter) co
 
 		if ( nullptr != pInspection )
 		{
+			getInspectionObjectAttributesSet(pInspection, rAttributeSetPairVector);
 			rWriter.StartElement( pInspection->GetName() );
 
 			_variant_t svVariant;
@@ -3288,6 +3289,7 @@ void SVConfigurationObject::SaveInspection(SvXml::SVObjectXMLWriter& rWriter) co
 
 			rWriter.EndElement(); //pInspection->GetName()
 		}
+
 	}
 
 	rWriter.EndElement(); //SvXml::CTAG_INSPECTION
@@ -3548,6 +3550,104 @@ void SVConfigurationObject::SaveGlobalConstants(SvXml::SVObjectXMLWriter &rWrite
 	rWriter.EndElement(); //SvXml::CTAG_GLOBAL_CONSTANTS
 }
 
+void SVConfigurationObject::SaveObjectAttributesSet(SvXml::SVObjectXMLWriter &rWriter, const AttributesSetMap& rAttributesSetMap) const
+{
+	const std::map<UINT, std::string> AttributeSetTypes
+	{ 
+		{ SvDef::SV_PUBLISHABLE, std::string(_T("Publishable Value")) },
+		{ SvDef::SV_PUBLISH_RESULT_IMAGE, std::string(_T("Publishable Image")) },
+		{ SvDef::SV_DD_VALUE, std::string(_T("Data Definition Value")) },
+		{ SvDef::SV_DD_IMAGE, std::string(_T("Data Definition Image")) } 
+	};
+
+	rWriter.StartElement(SvXml::CTAG_OBJECT_ATTRIBUTES_SET);
+	for (auto const& rEntry : rAttributesSetMap)
+	{
+		std::map<UINT, std::string>::const_iterator Iter = AttributeSetTypes.find(rEntry.first);
+		if (AttributeSetTypes.end() != Iter)
+		{
+			rWriter.StartElement(Iter->second.c_str());
+			SVGUID ArrayGuid{ SV_GUID_NULL };
+			std::string ArrayIndexList;
+			int StartIndex{ -1 };
+			int EndIndex{ -1 };
+			for (auto const& rObjectRef : rEntry.second)
+			{
+				//!If previous object is an array and new object is different then we need to save the array values
+				if (SV_GUID_NULL != ArrayGuid && rObjectRef.Guid() != ArrayGuid)
+				{
+					ArrayIndexList += (StartIndex == EndIndex) ? SvUl::Format(_T("%d,"), StartIndex) : SvUl::Format(_T("%d-%d,"), StartIndex, EndIndex);
+					_variant_t Value{ ArrayIndexList.c_str() };
+					rWriter.WriteAttribute(scUniqueReferenceIDTag, Value);
+
+					ArrayGuid = SV_GUID_NULL;
+					StartIndex = -1;
+					EndIndex = -1;
+					ArrayIndexList.clear();
+				}
+				if (!rObjectRef.isArray())
+				{
+					//Not an array element is saved directly
+					_variant_t Value{ rObjectRef.GetGuidAndIndexOneBased().c_str() };
+					rWriter.WriteAttribute(scUniqueReferenceIDTag, Value);
+				}
+				else
+				{
+					//If an array element then bundle the zero based indexes in the format 2-15,20,25-30 etc..
+					if (SV_GUID_NULL == ArrayGuid)
+					{
+						ArrayGuid = rObjectRef.Guid();
+						ArrayIndexList = ArrayGuid.ToString();
+						StartIndex = rObjectRef.ArrayIndex();
+						EndIndex = rObjectRef.ArrayIndex();
+					}
+					else if( ArrayGuid == rObjectRef.Guid())
+					{
+						if (EndIndex + 1 == rObjectRef.ArrayIndex())
+						{
+							EndIndex = rObjectRef.ArrayIndex();
+						}
+						else
+						{
+							ArrayIndexList += (StartIndex == EndIndex) ? SvUl::Format(_T("%d,"), StartIndex) : SvUl::Format(_T("%d-%d,"), StartIndex, EndIndex);
+							StartIndex = rObjectRef.ArrayIndex();
+							EndIndex = rObjectRef.ArrayIndex();
+						}
+					}
+				}
+			}
+			//! Last object is of array then we need to save the object
+			if (SV_GUID_NULL != ArrayGuid)
+			{
+				ArrayIndexList += (StartIndex == EndIndex) ? SvUl::Format(_T("%d,"), StartIndex) : SvUl::Format(_T("%d-%d,"), StartIndex, EndIndex);
+				_variant_t Value{ ArrayIndexList.c_str() };
+				rWriter.WriteAttribute(scUniqueReferenceIDTag, Value);
+			}
+			rWriter.EndElement();
+		}
+	}
+	rWriter.EndElement(); //SvXml::CTAG_OBJECT_ATTRIBUTES_SET
+}
+
+void SVConfigurationObject::getInspectionObjectAttributesSet(const SVInspectionProcess* pInspection, AttributesSetMap& rAttributesSetMap) const
+{
+	if (nullptr != pInspection)
+	{
+		SVToolSetClass* pToolSet = pInspection->GetToolSet();
+		if (nullptr != pToolSet)
+		{
+			SVOutputInfoListClass ToolSetOutputList;
+			pToolSet->GetOutputList(ToolSetOutputList);
+
+			ToolSetOutputList.GetSetAttributesList(SvDef::SV_PUBLISHABLE, rAttributesSetMap[SvDef::SV_PUBLISHABLE]);
+			ToolSetOutputList.GetSetAttributesList(SvDef::SV_PUBLISH_RESULT_IMAGE, rAttributesSetMap[SvDef::SV_PUBLISH_RESULT_IMAGE]);
+			ToolSetOutputList.GetSetAttributesList(SvDef::SV_DD_VALUE, rAttributesSetMap[SvDef::SV_DD_VALUE]);
+			ToolSetOutputList.GetSetAttributesList(SvDef::SV_DD_IMAGE, rAttributesSetMap[SvDef::SV_DD_IMAGE]);
+		}
+	}
+}
+	
+
 void SVConfigurationObject::ConvertColorToStandardProductType( bool& rConfigColor )
 {
 	SVIMProductEnum CurrentType( TheSVObserverApp.GetSVIMType() );
@@ -3573,16 +3673,18 @@ void SVConfigurationObject::SaveConfiguration(SvXml::SVObjectXMLWriter& rWriter)
 	std::string versionString = SvUl::Format("%d.%d", versionNumber >> 16, (versionNumber >> 8) & 0x000000ff);
 	rWriter.WriteRevisionHistory(versionString.c_str(), 1);
 	rWriter.WriteStartOfBase();
+	AttributesSetMap AttributeSetPairVector;
 
 	SaveEnvironment(rWriter);
 	SaveIO(rWriter);
 	SaveAcquisitionDevice(rWriter);
 	SaveCamera(rWriter);
 	SaveTrigger(rWriter);
-	SaveInspection(rWriter);
+	SaveInspection(rWriter, AttributeSetPairVector);
 	SavePPQ(rWriter);
 	SaveRemoteMonitorList(rWriter);
 	SaveGlobalConstants(rWriter);
+	SaveObjectAttributesSet(rWriter, AttributeSetPairVector);
 
 	rWriter.EndElement(); // end of BaseNode
 	rWriter.EndElement(); // end of Root Element
@@ -5391,6 +5493,103 @@ HRESULT SVConfigurationObject::LoadGlobalConstants( SVTreeType& rTree )
 				}
 			}
 			hChild = rTree.getNextBranch( hBranch, hChild );
+		}
+	}
+	return Result;
+}
+
+HRESULT SVConfigurationObject::LoadObjectAttributesSet(SVTreeType& rTree)
+{
+	HRESULT Result{ S_OK };
+
+	const std::map<std::string, UINT> AttributeSetTypes
+	{
+		{  std::string(_T("Publishable Value")), SvDef::SV_PUBLISHABLE },
+		{  std::string(_T("Publishable Image")), SvDef::SV_PUBLISH_RESULT_IMAGE },
+		{ std::string(_T("Data Definition Value")), SvDef::SV_DD_VALUE },
+		{ std::string(_T("Data Definition Image")), SvDef::SV_DD_IMAGE }
+	};
+
+	SVTreeType::SVBranchHandle hBranch(nullptr);
+	if (SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::CTAG_OBJECT_ATTRIBUTES_SET, nullptr, hBranch))
+	{
+		SVTreeType::SVBranchHandle hChild(nullptr);
+		hChild = rTree.getFirstBranch(hBranch);
+
+		while (S_OK == Result && nullptr != hChild)
+		{
+			auto const Iter = AttributeSetTypes.find(rTree.getBranchName(hChild));
+			if (AttributeSetTypes.end() != Iter)
+			{
+				UINT Attribute = Iter->second;
+
+				SVTreeType::SVLeafHandle hLeaf(rTree.getFirstLeaf(hChild));
+
+				while (S_OK == Result && rTree.isValidLeaf(hChild, hLeaf))
+				{
+					if (scUniqueReferenceIDTag == rTree.getLeafName(hLeaf))
+					{
+						_variant_t Value;
+						if (S_OK == rTree.getLeafData(hLeaf, Value))
+						{
+							std::string ValueText{ SvUl::createStdString(Value.bstrVal) };
+							std::string GuidString;
+							auto Pos = ValueText.find('}');
+							if (std::string::npos != Pos)
+							{
+								Pos++;
+								GuidString = SvUl::Left(ValueText, Pos);
+								ValueText = SvUl::Mid(ValueText, Pos);
+							}
+
+							SVGUID UniqueID{GuidString};
+							SVObjectReference ObjectRef{ SVObjectManagerClass::Instance().GetObject(UniqueID) };
+							if (nullptr != ObjectRef.getObject())
+							{
+								if (ValueText.empty())
+								{
+									ObjectRef.SetObjectAttributesSet(Attribute, SvOi::AddAttribute);
+								}
+								else
+								{
+									std::vector<int> AttributeIndexes;
+									auto StartPos = 0LL;
+									auto EndPos = ValueText.find(',');
+									while (std::string::npos != EndPos)
+									{
+										std::string Range = ValueText.substr(StartPos, EndPos - StartPos);
+										auto RangePos = Range.find('-');
+										if (std::string::npos != RangePos)
+										{
+											int IndexStart = atoi(SvUl::Left(Range, RangePos).c_str());
+											int IndexEnd = atoi(SvUl::Mid(Range, RangePos + 1).c_str());
+											for (int i = IndexStart; i <= IndexEnd; i++)
+											{
+												AttributeIndexes.push_back(i);
+											}
+										}
+										else
+										{
+											AttributeIndexes.push_back(atoi(Range.c_str()));
+										}
+										StartPos = EndPos + 1;
+										EndPos = ValueText.find(',', StartPos);
+									}
+									for (auto const& rEntry : AttributeIndexes)
+									{
+										ObjectRef.SetArrayIndex(rEntry);
+										ObjectRef.SetObjectAttributesSet(Attribute, SvOi::AddAttribute);
+
+									}
+								}
+							}
+						}
+					}
+					hLeaf = rTree.getNextLeaf(hChild, hLeaf);
+				}
+			}
+
+			hChild = rTree.getNextBranch(hBranch, hChild);
 		}
 	}
 	return Result;

@@ -114,41 +114,45 @@ SVOutputInfoListClass::iterator SVOutputInfoListClass::erase( iterator p_Where )
 
 bool SVOutputInfoListClass::CheckExistence( int Index /*= -1*/ )
 {
-	bool BRetVal = false;
+	bool Result{ false };
 	long l_lSize = static_cast<int> (m_svObjectArray.size());
 
 	if( Index < l_lSize && Index >= -1 )
 	{
 		if( Index > -1 )
 		{
-			SVOutObjectInfoStruct *l_psvObject = m_svObjectArray[Index];
+			SVOutObjectInfoStruct *pObjectInfo = m_svObjectArray[Index];
 			// Check only this entry...
-			if( nullptr != l_psvObject )
+			if( nullptr != pObjectInfo )
 			{
-				BRetVal = ( nullptr != ( l_psvObject->m_pObject = SVObjectManagerClass::Instance().GetObject( l_psvObject->m_UniqueObjectID ) ) ) ? true : false;
+				SVObjectClass* pObject = pObjectInfo->getObject();
+				pObject = SVObjectManagerClass::Instance().GetObject(pObjectInfo->getUniqueObjectID());
+				Result = ( nullptr != pObject ) ? true : false;
 			}
 		}
 		else
 		{
 			// Check all entries...
-			BRetVal = true;
+			Result = true;
 
-			for( int i = 0; BRetVal && i < l_lSize; ++i )
+			for( int i = 0; Result && i < l_lSize; ++i )
 			{
-				SVOutObjectInfoStruct *l_psvObject = m_svObjectArray[i];
+				SVOutObjectInfoStruct *pObjectInfo = m_svObjectArray[i];
 
-				if( nullptr != l_psvObject )
+				if( nullptr != pObjectInfo )
 				{
-					BRetVal = ( ( nullptr != ( l_psvObject->m_pObject = SVObjectManagerClass::Instance().GetObject( l_psvObject->m_UniqueObjectID ) ) ) ? true : false ) && BRetVal;
+					SVObjectClass* pObject = pObjectInfo->getObject();
+					pObject = SVObjectManagerClass::Instance().GetObject(pObjectInfo->getUniqueObjectID());
+					Result = ( ( nullptr != pObject) ? true : false ) && Result;
 				}
 				else
 				{
-					BRetVal = false;
+					Result = false;
 				}
 			}
 		}
 	}
-	return BRetVal;
+	return Result;
 }
 
 int SVOutputInfoListClass::GetSize() const
@@ -165,11 +169,11 @@ SVOutObjectInfoStruct* SVOutputInfoListClass::GetAt( int Index )
 	{
 		if ( nullptr != l_psvObjectInfo )
 		{
-			if ( nullptr != l_psvObjectInfo->m_pObject )
+			if ( nullptr != l_psvObjectInfo->getObject() )
 			{
 				try
 				{
-					SVObjectClass* l_psvObject = dynamic_cast<SVObjectClass*>( l_psvObjectInfo->m_pObject );
+					SVObjectClass* l_psvObject = dynamic_cast<SVObjectClass*>( l_psvObjectInfo->getObject() );
 
 					if( nullptr == l_psvObject )
 					{
@@ -182,20 +186,20 @@ SVOutObjectInfoStruct* SVOutputInfoListClass::GetAt( int Index )
 				catch (std::bad_cast& e)
 				{
 					e;
-					l_psvObjectInfo->m_pObject = nullptr;
+					l_psvObjectInfo->GetObjectReference().clear();
 					debug.Add(_T("BAD OBJECT (bad_cast)"));
 				}
 				catch( ... )
 				{
-					l_psvObjectInfo->m_pObject = nullptr;
+					l_psvObjectInfo->GetObjectReference().clear();
 					debug.Add(_T("BAD OBJECT (...)"));
 				}
 			}
 			else
 			{
-				std::string Temp = SvUl::Format(_T("BAD OBJECT (VALIDATE_OBJECT pInfoObject->PObject %08X)"), l_psvObjectInfo->m_pObject);
+				std::string Temp = SvUl::Format(_T("BAD OBJECT (VALIDATE_OBJECT pInfoObject->PObject %08X)"), l_psvObjectInfo->getObject());
 				debug.Add( Temp.c_str() );
-				l_psvObjectInfo->m_pObject = nullptr;
+				l_psvObjectInfo->GetObjectReference().clear();
 			}
 		}
 		else
@@ -295,14 +299,14 @@ void SVOutputInfoListClass::GetSetAttributesList( UINT uAttributeMask, SVOutputI
 		{
 			if ( nullptr != pInfoObject )
 			{
-				if ( nullptr != pInfoObject->m_pObject )
+				if ( nullptr != pInfoObject->getObject() )
 				{
 
 					SVObjectClass* pObject = nullptr;
 
 					try
 					{
-						pObject = dynamic_cast<SVObjectClass*>( pInfoObject->m_pObject );
+						pObject = dynamic_cast<SVObjectClass*>( pInfoObject->getObject() );
 					}
 					catch ( std::bad_cast& e )
 					{
@@ -331,7 +335,7 @@ void SVOutputInfoListClass::GetSetAttributesList( UINT uAttributeMask, SVOutputI
 				else
 				{
 					debug.Add(_T("BAD OBJECT (VALIDATE_OBJECT pInfoObject->PObject)"));
-					pInfoObject->m_pObject = nullptr;
+					pInfoObject->GetObjectReference().clear();
 				}
 			}// if validate pInfoObject
 			else
@@ -360,56 +364,33 @@ void SVOutputInfoListClass::GetObjectReferenceList( SVObjectReferenceVector& rve
 
 			if ( nullptr != pInfoObject )
 			{	
-				if ( nullptr != pInfoObject->m_pObject )
+				if ( nullptr != pInfoObject->getObject() )
 				{
-					SVObjectClass* pObject = nullptr;
-
-					try
+					SVObjectReference ObjectRef = pInfoObject->GetObjectReference();
+					SvOi::IValueObject* pValueObject = ObjectRef.getValueObject();
+					if( nullptr != pValueObject )
 					{
-						pObject = dynamic_cast<SVObjectClass*>( pInfoObject->m_pObject );
-					}
-					catch ( std::bad_cast& e )
-					{
-						e;
-						pObject = nullptr;
-						m_svObjectSet.erase( pInfoObject ); m_svObjectArray[i] = nullptr;
-						debug.Add(_T("BAD OBJECT (bad_cast)"));
-					}
-					catch( ... )
-					{
-						pObject = nullptr;
-						m_svObjectSet.erase( pInfoObject ); m_svObjectArray[i] = nullptr;
-						debug.Add(_T("BAD OBJECT (...)"));
-					}
-
-					if( pObject )
-					{
-						SVObjectReference ObjectRef = pInfoObject->GetObjectReference();
-						SvOi::IValueObject* pValueObject = ObjectRef.getValueObject();
-						if( nullptr != pValueObject )
+						if ( pValueObject->isArray() )
 						{
-							if ( pValueObject->isArray() )
-							{
-								ObjectRef.SetEntireArray();
-								rvecObjects.push_back( ObjectRef );
+							ObjectRef.SetEntireArray();
+							rvecObjects.push_back( ObjectRef );
 
-								for ( int i=0; i < pValueObject->getArraySize(); i++ )
-								{
-									ObjectRef.SetArrayIndex(i);
-									rvecObjects.push_back( ObjectRef );
-								}
-							}
-							else
+							for ( int i=0; i < pValueObject->getArraySize(); i++ )
 							{
+								ObjectRef.SetArrayIndex(i);
 								rvecObjects.push_back( ObjectRef );
 							}
+						}
+						else
+						{
+							rvecObjects.push_back( ObjectRef );
 						}
 					}
 				}
 				else
 				{
 					debug.Add(_T("BAD OBJECT (VALIDATE_OBJECT pInfoObject->PObject)"));
-					pInfoObject->m_pObject = nullptr;
+					pInfoObject->GetObjectReference().clear();
 				}
 			}
 			else
@@ -438,61 +419,36 @@ void SVOutputInfoListClass::GetSetAttributesList( UINT uAttributeMask, SVObjectR
 		{
 			if ( nullptr != pInfoObject )
 			{
-				if ( nullptr != pInfoObject->m_pObject )
+				if ( nullptr != pInfoObject->getObject() )
 				{
-					SVObjectClass* pObject = nullptr;
-
-					try
+					SVObjectReference ObjectRef = pInfoObject->GetObjectReference();
+					SvOi::IValueObject* pValueObject = ObjectRef.getValueObject();
+					//! When Value object check if it is an array
+					if( nullptr != pValueObject && pValueObject->isArray())
 					{
-						pObject = dynamic_cast<SVObjectClass*>( pInfoObject->m_pObject );
-					}
-					catch ( std::bad_cast& e )
-					{
-						e;
-						pObject = nullptr;
-						m_svObjectSet.erase( pInfoObject ); m_svObjectArray[i] = nullptr;
-						debug.Add(_T("BAD OBJECT (bad_cast)"));
-					}
-					catch( ... )
-					{
-						pObject = nullptr;
-						m_svObjectSet.erase( pInfoObject ); m_svObjectArray[i] =nullptr;
-						debug.Add(_T("BAD OBJECT (...)"));
-					}
-
-					if( pObject )
-					{
-						SVObjectReference ObjectRef = pInfoObject->GetObjectReference();
-						SvOi::IValueObject* pValueObject = ObjectRef.getValueObject();
-						if( nullptr != pValueObject )
+						for ( int j = 0; j < pValueObject->getArraySize(); j++ )
 						{
-							if ( pValueObject->isArray() )
+							ObjectRef.SetArrayIndex( j );
+							if( ( ObjectRef.ObjectAttributesSet() & uAttributeMask ) == uAttributeMask )
 							{
-								for ( int j = 0; j < pValueObject->getArraySize(); j++ )
-								{
-									ObjectRef.SetArrayIndex( j );
-									if( ( ObjectRef.ObjectAttributesSet() & uAttributeMask ) == uAttributeMask )
-									{
-										rvecObjects.push_back( ObjectRef );
-									}
-								}
+								rvecObjects.push_back( ObjectRef );
 							}
-							else
-							{
-								UINT uAttributes = ObjectRef.ObjectAttributesSet();
-
-								if( ( uAttributes & uAttributeMask ) == uAttributeMask )
-								{
-									rvecObjects.push_back( ObjectRef );
-								}
-							}
-						}// end if( ref.Object() )
+						}
 					}
-				}// end if validate pObject
+					else
+					{
+						UINT uAttributes = ObjectRef.ObjectAttributesSet();
+
+						if( ( uAttributes & uAttributeMask ) == uAttributeMask )
+						{
+							rvecObjects.push_back( ObjectRef );
+						}
+					}
+				}
 				else
 				{
 					debug.Add(_T("BAD OBJECT (VALIDATE_OBJECT pInfoObject->PObject)"));
-					pInfoObject->m_pObject = nullptr;
+					pInfoObject->GetObjectReference().clear();
 				}
 			}// end if validate (pInfoObject)
 			else
@@ -523,44 +479,21 @@ void SVOutputInfoListClass::GetAllowedAttributesList( UINT uAttributeMask, SVOut
 		{
 			if ( nullptr != pInfoObject )
 			{
-				if ( nullptr != pInfoObject->m_pObject )
+				if ( nullptr != pInfoObject->getObject())
 				{
 
-					SVObjectClass* pObject = nullptr;
+					UINT uAttributes = pInfoObject->getObject()->ObjectAttributesAllowed();
 
-					try
+					if(( uAttributes & uAttributeMask ) == uAttributeMask)
 					{
-						pObject = dynamic_cast<SVObjectClass*>( pInfoObject->m_pObject );
-					}
-					catch ( std::bad_cast& e )
-					{
-						e;
-						pObject = nullptr;
-						m_svObjectSet.erase( pInfoObject ); m_svObjectArray[i] = nullptr;
-						debug.Add(_T("BAD OBJECT (bad_cast)"));
-					}
-					catch( ... )
-					{
-						pObject = nullptr;
-						m_svObjectSet.erase( pInfoObject ); m_svObjectArray[i] = nullptr;
-						debug.Add(_T("BAD OBJECT (...)"));
-					}
-
-					if( pObject )
-					{
-						UINT uAttributes = pObject->ObjectAttributesAllowed();
-
-						if(( uAttributes & uAttributeMask ) == uAttributeMask)
-						{
-							pFillList->Add(pInfoObject);
-						}
+						pFillList->Add(pInfoObject);
 					}
 				}
 				else
 				{
-					std::string Temp = SvUl::Format(_T("BAD OBJECT (VALIDATE_OBJECT pInfoObject->PObject %08X)"), pInfoObject->m_pObject);
+					std::string Temp = SvUl::Format(_T("BAD OBJECT (VALIDATE_OBJECT pInfoObject->PObject %08X)"), pInfoObject->getObject());
 					debug.Add( Temp.c_str() );
-					pInfoObject->m_pObject = nullptr;
+					pInfoObject->GetObjectReference().clear();
 				}
 			}
 			else

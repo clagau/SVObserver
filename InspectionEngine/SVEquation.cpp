@@ -60,7 +60,7 @@ void SVEquationSymbolTableClass::ClearAll()
 	for( int i = static_cast<int> (m_toolsetSymbolTable.size() - 1); i >= 0; i-- )
 	{
 		SVInObjectInfoStruct* pInObjectInfo = m_toolsetSymbolTable[i];
-		SVObjectManagerClass::Instance().DisconnectObjectInput(pInObjectInfo->GetInputObjectInfo().m_UniqueObjectID, pInObjectInfo);
+		SVObjectManagerClass::Instance().DisconnectObjectInput(pInObjectInfo->GetInputObjectInfo().getUniqueObjectID(), pInObjectInfo);
 	}
 	// Empty the ToolSet Symbol table 
 	m_toolsetSymbolTable.clear();
@@ -161,9 +161,9 @@ int SVEquationSymbolTableClass::AddSymbol(LPCTSTR name, SVObjectClass* pRequesto
 	pSymbolStruct->InObjectInfo.SetObject( pRequestor->GetObjectInfo() );
 	// Set the variable to be used
 	pSymbolStruct->InObjectInfo.SetInputObjectType( ObjectReference.getObject()->GetObjectOutputInfo().m_ObjectTypeInfo);
-	pSymbolStruct->InObjectInfo.SetInputObject( ObjectReference.getObject()->GetObjectOutputInfo().m_UniqueObjectID );
+	pSymbolStruct->InObjectInfo.SetInputObject( ObjectReference.getObject()->GetObjectOutputInfo().getUniqueObjectID() );
 	// Try to Connect at this point
-	bool rc = SVObjectManagerClass::Instance().ConnectObjectInput(ObjectReference.getObject()->GetObjectOutputInfo().m_UniqueObjectID, &pSymbolStruct->InObjectInfo);
+	bool rc = SVObjectManagerClass::Instance().ConnectObjectInput(ObjectReference.getObject()->GetObjectOutputInfo().getUniqueObjectID(), &pSymbolStruct->InObjectInfo);
 	assert(rc);
 	if( rc )
 	{
@@ -197,13 +197,13 @@ HRESULT SVEquationSymbolTableClass::GetData( int SymbolIndex, double& rValue, in
 
 		if( SV_TOOLSET_SYMBOL_TYPE == pSymbolStruct->Type )
 		{
-			isValidObject = pSymbolStruct->InObjectInfo.IsConnected() && nullptr != pSymbolStruct->InObjectInfo.GetInputObjectInfo().m_pObject;
-			}
+			isValidObject = pSymbolStruct->InObjectInfo.IsConnected() && nullptr != pSymbolStruct->InObjectInfo.GetInputObjectInfo().getObject();
+		}
 		else	
 		{
-			if(nullptr != pSymbolStruct->InObjectInfo.GetInputObjectInfo().m_pObject)
+			if(nullptr != pSymbolStruct->InObjectInfo.GetInputObjectInfo().getObject())
 			{
-				isValidObject = (nullptr != pSymbolStruct->InObjectInfo.GetInputObjectInfo().m_pObject);
+				isValidObject = (nullptr != pSymbolStruct->InObjectInfo.GetInputObjectInfo().getObject());
 			}
 			else
 			{
@@ -212,7 +212,7 @@ HRESULT SVEquationSymbolTableClass::GetData( int SymbolIndex, double& rValue, in
 		}
 		if( isValidObject )
 		{
-			HRESULT hr = pSymbolStruct->InObjectInfo.GetInputObjectInfo().m_pObject->getValue( rValue, Index );
+			HRESULT hr = pSymbolStruct->InObjectInfo.GetInputObjectInfo().getObject()->getValue( rValue, Index );
 			return hr;
 		}
 		}
@@ -230,16 +230,16 @@ HRESULT SVEquationSymbolTableClass::GetData(int SymbolIndex, std::vector<double>
 
 		if( SV_TOOLSET_SYMBOL_TYPE == pSymbolStruct->Type )
 		{
-			isValidObject = pSymbolStruct->InObjectInfo.IsConnected() && nullptr != pSymbolStruct->InObjectInfo.GetInputObjectInfo().m_pObject;
+			isValidObject = pSymbolStruct->InObjectInfo.IsConnected() && nullptr != pSymbolStruct->InObjectInfo.GetInputObjectInfo().getObject();
 		}
 		else if( SV_INPUT_SYMBOL_TYPE == pSymbolStruct->Type )
 		{
-			isValidObject = nullptr != pSymbolStruct->InObjectInfo.GetInputObjectInfo().m_pObject;
+			isValidObject = (nullptr != pSymbolStruct->InObjectInfo.GetInputObjectInfo().getObject());
 		}
 
 		if( isValidObject )
 		{
-			Result = pSymbolStruct->InObjectInfo.GetInputObjectInfo().m_pObject->getValues( rValues );
+			Result = pSymbolStruct->InObjectInfo.GetInputObjectInfo().getObject()->getValues( rValues );
 		}
 	}
 
@@ -453,7 +453,7 @@ SvOi::EquationTestResult SVEquationClass::Test( SvStl::MessageContainerVector *p
 	
 			if (m_Yacc.yacc_err)
 			{
-				std::string fullObjectName = GetCompleteObjectNameToObjectType( nullptr, SvDef::SVInspectionObjectType );
+				std::string fullObjectName = GetObjectNameToObjectType(SvDef::SVInspectionObjectType);
 				SvDef::StringVector msgList;
 				msgList.push_back(fullObjectName);
 				if( S_OK != m_Yacc.m_StatusCode )
@@ -546,7 +546,7 @@ SvOi::EquationTestResult SVEquationClass::lexicalScan(LPCTSTR inBuffer)
 
 	if (m_Lex.lex_err)
 	{
-		std::string fullObjectName = GetCompleteObjectNameToObjectType( nullptr, SvDef::SVInspectionObjectType );
+		std::string fullObjectName = GetObjectNameToObjectType(SvDef::SVInspectionObjectType);
 		ret.bPassed = false;
 		ret.iPositionFailed = static_cast< int >( m_Lex.position + 1 );
 		SvDef::StringVector msgList;
@@ -603,7 +603,7 @@ bool SVEquationClass::DisconnectObjectInput( SVInObjectInfoStruct* pInObjectInfo
 
 			if( pSymbolInputObjectInfo )
 			{
-				if( pInObjectInfo->GetInputObjectInfo().m_UniqueObjectID == pSymbolInputObjectInfo->GetInputObjectInfo().m_UniqueObjectID )
+				if( pInObjectInfo->GetInputObjectInfo().getUniqueObjectID() == pSymbolInputObjectInfo->GetInputObjectInfo().getUniqueObjectID() )
 				{
 					pSymbolInputObjectInfo->SetInputObject( nullptr );
 					break;
@@ -735,19 +735,19 @@ void SVEquationClass::OnObjectRenamed(const SVObjectClass& rRenamedObject, const
 	SvDef::SVObjectTypeEnum type = rRenamedObject.GetObjectType();
 	if (SvDef::SVInspectionObjectType == type)
 	{
-		newPrefix = _T(".") + rRenamedObject.GetCompleteObjectNameToObjectType(nullptr, SvDef::SVInspectionObjectType) + _T(".");
+		newPrefix = _T(".") + rRenamedObject.GetObjectNameToObjectType(SvDef::SVInspectionObjectType) + _T(".");
 	}
 	else if (SvDef::SVBasicValueObjectType == type)
 	{
-		newPrefix = _T("\"") + rRenamedObject.GetCompleteObjectNameToObjectType(nullptr, SvDef::SVRootObjectType) + _T("\"");
+		newPrefix = _T("\"") + rRenamedObject.GetObjectNameToObjectType(SvDef::SVRootObjectType) + _T("\"");
 	}
-	else if (nullptr != dynamic_cast<const SvOi::IValueObject*> (&rRenamedObject))
+	else if (SvDef::SVValueObjectType == type)
 	{
-		newPrefix = _T("\"") + rRenamedObject.GetCompleteObjectNameToObjectType(nullptr, SvDef::SVToolSetObjectType) + _T("\"");
+		newPrefix = _T("\"") + rRenamedObject.GetObjectNameToObjectType() + _T("\"");
 	}
 	else
 	{
-		newPrefix = _T("\"") + rRenamedObject.GetCompleteObjectNameToObjectType(nullptr, SvDef::SVToolSetObjectType) + _T(".");
+		newPrefix = _T("\"") + rRenamedObject.GetObjectNameToObjectType() + _T(".");
 	}
 
 

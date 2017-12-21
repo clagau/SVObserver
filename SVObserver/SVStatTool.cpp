@@ -445,7 +445,7 @@ SVResultClass* SVStatisticsToolClass::GetResult(SVStatisticsFeatureEnum aFeature
 			
 			pResultInputInfo = resultInputList[0];
 			
-			pSVObject = pResultInputInfo->GetInputObjectInfo().m_pObject;
+			pSVObject = pResultInputInfo->GetInputObjectInfo().getObject();
 			
 			if (&m_Value [aFeatureIndex] == pSVObject)
 			{
@@ -485,18 +485,13 @@ SVObjectReference SVStatisticsToolClass::GetVariableSelected() const
 	return refObject;
 }
 
-void SVStatisticsToolClass::SetVariableSelected( SVObjectReference p_refObject )
-{
-	SetVariableSelected( p_refObject.GetCompleteName().c_str() );
-}
-
 void SVStatisticsToolClass::SetVariableSelected( const std::string& rName )
 {
 	if( HasVariable() )
 	{
-		if( m_inputObjectInfo.IsConnected() && m_inputObjectInfo.GetInputObjectInfo().m_pObject )
+		if( m_inputObjectInfo.IsConnected() && m_inputObjectInfo.GetInputObjectInfo().getObject() )
 		{
-			m_inputObjectInfo.GetInputObjectInfo().m_pObject->DisconnectObjectInput(&m_inputObjectInfo);
+			m_inputObjectInfo.GetInputObjectInfo().getObject()->DisconnectObjectInput(&m_inputObjectInfo);
 		}
 	}
 
@@ -527,14 +522,9 @@ void SVStatisticsToolClass::SetVariableSelected( const std::string& rName )
 	}
 }
 
-void SVStatisticsToolClass::UpdateTaskObjectOutputListAttributes()
-{
-	SVToolClass::UpdateTaskObjectOutputListAttributes( m_inputObjectInfo.GetInputObjectInfo().GetObjectReference(), SvDef::SV_SELECTABLE_FOR_STATISTICS );
-}
-
 bool SVStatisticsToolClass::DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo )
 {
-	if( pObjectInInfo && pObjectInInfo->GetInputObjectInfo().m_UniqueObjectID == m_inputObjectInfo.GetInputObjectInfo().m_UniqueObjectID )
+	if( pObjectInInfo && pObjectInInfo->GetInputObjectInfo().getUniqueObjectID() == m_inputObjectInfo.GetInputObjectInfo().getUniqueObjectID() )
 	{
 		m_inputObjectInfo.SetInputObject( nullptr );
 
@@ -552,10 +542,10 @@ bool SVStatisticsToolClass::DisconnectObjectInput( SVInObjectInfoStruct* pObject
 double SVStatisticsToolClass::getInputValue()
 {
 	double Result( 0.0 );
-	if(m_inputObjectInfo.IsConnected() && nullptr != m_inputObjectInfo.GetInputObjectInfo().m_pObject)
+	if(m_inputObjectInfo.IsConnected() && nullptr != m_inputObjectInfo.GetInputObjectInfo().getObject())
 	{
 		const SVObjectReference& rObjectRef = m_inputObjectInfo.GetInputObjectInfo().GetObjectReference();
-		m_inputObjectInfo.GetInputObjectInfo().m_pObject->getValue( Result, rObjectRef.getValidArrayIndex() );
+		m_inputObjectInfo.GetInputObjectInfo().getObject()->getValue( Result, rObjectRef.getValidArrayIndex() );
 	}
 	return Result;
 }
@@ -598,18 +588,13 @@ bool SVStatisticsToolClass::HasVariable() const
 	bool bRetVal = false;
 	SVObjectReference refObject = GetVariableSelected();
 
-	if( refObject.getObject() )
+	if( nullptr != refObject.getObject() )
 	{
-		// Double-check if variable still exists
-		// verify that the object is really valid
-		if ( refObject.getObject() )
+		// Special Check for BlobAnalyzer/StatTool Features
+		// which don't really go away they just change attributes
+		if ( refObject.ObjectAttributesAllowed() & SvDef::SV_SELECTABLE_FOR_STATISTICS )
 		{
-			// Special Check for BlobAnalyzer/StatTool Features
-			// which don't really go away they just change attributes
-			if ( refObject.ObjectAttributesAllowed() & SvDef::SV_SELECTABLE_FOR_STATISTICS )
-			{
-				bRetVal = true;
-			}
+			bRetVal = true;
 		}
 	}
 
@@ -772,7 +757,7 @@ bool SVStatisticsToolClass::Test(SvStl::MessageContainerVector *pErrorMessages)
 	}
 
 	// verify that the object is really valid
-	SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( m_inputObjectInfo.GetInputObjectInfo().m_UniqueObjectID );
+	SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( m_inputObjectInfo.GetInputObjectInfo().getUniqueObjectID() );
 	if ( nullptr != pObject )
 	{
 		SVObjectReference ObjectRef = m_inputObjectInfo.GetInputObjectInfo().GetObjectReference();
@@ -788,7 +773,7 @@ bool SVStatisticsToolClass::Test(SvStl::MessageContainerVector *pErrorMessages)
 			{
 				if (nullptr != pErrorMessages)
 				{
-					std::string CompleteName = ObjectRef.getObject()->GetCompleteObjectNameToObjectType( nullptr, SvDef::SVInspectionObjectType );
+					std::string CompleteName = ObjectRef.getObject()->GetObjectNameToObjectType(SvDef::SVInspectionObjectType);
 					SvDef::StringVector msgList;
 					msgList.push_back( CompleteName );
 					SvStl::MessageContainer message;
@@ -814,7 +799,7 @@ bool SVStatisticsToolClass::ValidateLocal(SvStl::MessageContainerVector *pErrorM
 {
 	if( HasVariable() )
 	{
-		if ( !m_inputObjectInfo.IsConnected() || nullptr == m_inputObjectInfo.GetInputObjectInfo().m_pObject )
+		if ( !m_inputObjectInfo.IsConnected() || nullptr == m_inputObjectInfo.GetInputObjectInfo().getObject() )
 		{
 			if (nullptr != pErrorMessages)
 			{

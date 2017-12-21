@@ -160,21 +160,10 @@ bool SVUserMaskOperatorClass::ResetObject(SvStl::MessageContainerVector *pErrorM
 
 		SvOi::SetAttributeType AddRemoveType = (dwMaskType == MASK_TYPE_SHAPE) ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
 		pShapeHelper->SetObjectAttributesAllowed( SvDef::SV_PRINTABLE | SvDef::SV_VIEWABLE, AddRemoveType );
-		pShapeHelper->SetObjectAttributesSet( SvDef::SV_PRINTABLE, AddRemoveType );
 		pShapeHelper->SetObjectAttributesAllowed( SvDef::SV_SETABLE_ONLINE | SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
-		pShapeHelper->SetObjectAttributesSet( SvDef::SV_SETABLE_ONLINE | SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
 		AddRemoveType = (dwMaskType == MASK_TYPE_SHAPE) && bActive ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
 		m_Data.evoFillArea.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE | SvDef::SV_VIEWABLE, AddRemoveType  );
-		m_Data.evoFillArea.SetObjectAttributesSet( SvDef::SV_PRINTABLE, AddRemoveType );
 		m_Data.lvoFillColor.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE | SvDef::SV_VIEWABLE, AddRemoveType  );
-		m_Data.lvoFillColor.SetObjectAttributesSet( SvDef::SV_PRINTABLE, AddRemoveType  );
-
-		if ( !bActive )
-		{
-			//turn off items.
-			m_Data.evoFillArea.SetObjectAttributesSet( SvDef::SV_PRINTABLE| SvDef::SV_VIEWABLE, SvOi::SetAttributeType::RemoveAttribute );
-			m_Data.lvoFillColor.SetObjectAttributesSet( SvDef::SV_PRINTABLE| SvDef::SV_VIEWABLE, SvOi::SetAttributeType::RemoveAttribute );
-		}
 	}
 	else
 	{
@@ -231,7 +220,7 @@ SVShapeMaskHelperClass* SVUserMaskOperatorClass::GetShapeHelper()
 	for( size_t i = 0; i < m_friendList.size(); i++ )
 	{
 		const SVObjectInfoStruct& friendObjectInfo = m_friendList[i];
-		if( pMaskHelper = dynamic_cast<SVShapeMaskHelperClass*> (friendObjectInfo.m_pObject) )
+		if( pMaskHelper = dynamic_cast<SVShapeMaskHelperClass*> (friendObjectInfo.getObject()) )
 		{
 			m_guidShapeHelper = pMaskHelper->GetUniqueObjectID();
 			break;
@@ -902,11 +891,11 @@ bool SVUserMaskOperatorClass::onRun( bool First, SVImageBufferHandlePtr rInputIm
 
 SVImageClass* SVUserMaskOperatorClass::getMaskInputImage() const
 {
-	if( m_inObjectInfo.IsConnected() && nullptr != m_inObjectInfo.GetInputObjectInfo().m_pObject )
+	if( m_inObjectInfo.IsConnected() && nullptr != m_inObjectInfo.GetInputObjectInfo().getObject() )
 	{
 		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when m_pObject is not nullptr then it is a SVImageClass
-		return static_cast<SVImageClass*> (m_inObjectInfo.GetInputObjectInfo().m_pObject);
+		//! We are sure that when getObject() is not nullptr that it is the correct type
+		return static_cast<SVImageClass*> (m_inObjectInfo.GetInputObjectInfo().getObject());
 	}
 	return nullptr;
 }

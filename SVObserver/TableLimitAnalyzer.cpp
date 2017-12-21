@@ -69,7 +69,7 @@ bool TableLimitAnalyzer::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 		m_LimitValue.getValue( Value );
 		long LimitCount = static_cast<long> (Value);
 		
-		TableAnalyzerTool* pTool = dynamic_cast<TableAnalyzerTool*>(m_ownerObjectInfo.m_pObject);
+		TableAnalyzerTool* pTool = dynamic_cast<TableAnalyzerTool*>(m_ownerObjectInfo.getObject());
 		
 		if (nullptr != pTool)
 		{

@@ -55,52 +55,39 @@ bool SVInObjectInfoStruct::IsConnected() const
 {
 	return m_IsConnected;
 }
-void SVInObjectInfoStruct::SetInputObjectType(SvDef::SVObjectTypeEnum p_ObjectType, SvDef::SVObjectSubTypeEnum p_SubType)
+
+void SVInObjectInfoStruct::SetInputObjectType(SvDef::SVObjectTypeEnum ObjectType, SvDef::SVObjectSubTypeEnum SubType, const SVGUID& rEmbeddedID)
 {
-	SetInputObjectType( SvDef::SVObjectTypeInfoStruct( p_ObjectType, p_SubType ) );
+	SetInputObjectType( SvDef::SVObjectTypeInfoStruct( ObjectType, SubType, rEmbeddedID) );
 }
 
-void SVInObjectInfoStruct::SetInputObjectType( const SVGUID& p_rEmbeddedID, SvDef::SVObjectTypeEnum p_ObjectType, SvDef::SVObjectSubTypeEnum p_SubType )
-{
-	SetInputObjectType( SvDef::SVObjectTypeInfoStruct( p_rEmbeddedID, p_ObjectType, p_SubType ) );
-}
-
-void SVInObjectInfoStruct::SetInputObjectType( const SvDef::SVObjectTypeInfoStruct& p_rTypeInfo )
+void SVInObjectInfoStruct::SetInputObjectType( const SvDef::SVObjectTypeInfoStruct& rTypeInfo )
 {
 	m_IsConnected = false;
-	m_InputObjectInfo.SetObject( p_rTypeInfo );
+	m_InputObjectInfo.SetObject( rTypeInfo );
 }
 
-void SVInObjectInfoStruct::SetInputObject( const std::string& p_rName )
+void SVInObjectInfoStruct::SetInputObject( const SVGUID& rObjectID )
 {
-	if( p_rName != m_InputObjectInfo.GetObjectReference().GetCompleteName() )
+	if( rObjectID != m_InputObjectInfo.getUniqueObjectID() )
 	{
 		m_IsConnected = false;
-		m_InputObjectInfo.SetObject( p_rName );
+		m_InputObjectInfo.SetObject( rObjectID );
 	}
 }
 
-void SVInObjectInfoStruct::SetInputObject( const SVGUID& p_rObjectID )
+void SVInObjectInfoStruct::SetInputObject( SVObjectClass* pObject )
 {
-	if( p_rObjectID != m_InputObjectInfo.m_UniqueObjectID )
-	{
-		m_IsConnected = false;
-		m_InputObjectInfo.SetObject( p_rObjectID );
-	}
+	m_InputObjectInfo.SetObject( pObject );
+
+	m_IsConnected = ( nullptr != m_InputObjectInfo.getObject() );
 }
 
-void SVInObjectInfoStruct::SetInputObject( SVObjectClass* p_pObject )
+void SVInObjectInfoStruct::SetInputObject( const SVObjectReference& rObject )
 {
-	m_InputObjectInfo.SetObject( p_pObject );
+	m_InputObjectInfo.SetObject(rObject);
 
-	m_IsConnected = ( nullptr != m_InputObjectInfo.m_pObject );
-}
-
-void SVInObjectInfoStruct::SetInputObject( const SVObjectReference& p_rObject )
-{
-	m_InputObjectInfo.SetObject( p_rObject );
-
-	m_IsConnected = ( nullptr != m_InputObjectInfo.m_pObject );
+	m_IsConnected = (nullptr != m_InputObjectInfo.getObject());
 }
 
 const std::string& SVInObjectInfoStruct::GetInputName() const
@@ -108,8 +95,8 @@ const std::string& SVInObjectInfoStruct::GetInputName() const
 	return m_InputName;
 }
 
-void SVInObjectInfoStruct::SetInputName( const std::string& p_rInputName )
+void SVInObjectInfoStruct::SetInputName( const std::string& rInputName )
 {
-	m_InputName = p_rInputName;
+	m_InputName = rInputName;
 }
 

@@ -67,21 +67,14 @@ BOOL SVTADlgRemoteInputToolPage::OnInitDialog()
 
 	if( l_Status )
 	{
-		m_pTool = dynamic_cast< SVRemoteInputTool* >( m_pParentDialog->GetTool() );
+		m_pTool = dynamic_cast<SVRemoteInputTool*> (m_pParentDialog->GetTool());
 	}
 
 	l_Status = l_Status && ( nullptr != m_pTool );
 
 	if( l_Status )
 	{
-		SVObjectClass* l_pObject = m_pTool->GetInputObject();
-
-		l_Status = ( nullptr != l_pObject );
-
-		if( l_Status )
-		{
-			m_InputName = l_pObject->GetCompleteName();
-		}
+		m_InputName = m_pTool->GetInputObject().GetCompleteName(true);
 	}
 
 	RefreshSelectedInputName();
@@ -120,15 +113,16 @@ void SVTADlgRemoteInputToolPage::OnBnClickedSelectInputButton()
 	SvOsl::SelectorOptions BuildOptions( pToolSet->GetInspection()->GetUniqueObjectID(), SvDef::SV_ARCHIVABLE, pToolSet->GetUniqueObjectID() );
 	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::GlobalSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 
-	if( nullptr !=  m_pTool->GetInputObject() )
+	SVObjectReference ObjectRef(m_pTool->GetInputObject());
+
+	if(nullptr != ObjectRef.getObject())
 	{
 		SvDef::StringSet Items;
 
 		SvCl::SelectorItem InsertItem;
-		SVObjectReference ObjectRef( m_pTool->GetInputObject() );
 
 		InsertItem.m_Name =  ObjectRef.GetName();
-		InsertItem.m_Location = ObjectRef.GetCompleteOneBasedObjectName();
+		InsertItem.m_Location = ObjectRef.GetCompleteName(true);
 
 		std::string Location = SvOsl::ObjectTreeGenerator::Instance().convertObjectArrayName( InsertItem );
 		Items.insert( Location );
@@ -143,10 +137,15 @@ void SVTADlgRemoteInputToolPage::OnBnClickedSelectInputButton()
 
 	if( IDOK == Result )
 	{
-		m_InputName = SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().m_Location;
+		const SvCl::SelectorItem& rSelectedObject = SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult();
+		m_InputName = rSelectedObject.m_Location;
 
-		SVGUID ObjectGuid(SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().m_ItemKey);
-		m_pTool->SetInputObject( ObjectGuid );
+		SVGUID ObjectGuid(rSelectedObject.m_ItemKey);
+
+		std::string InputGuidName{ ObjectGuid.ToString() };
+		
+		InputGuidName += rSelectedObject.m_Array ? SvUl::Format(_T("[%d]"), rSelectedObject.m_ArrayIndex + 1) : std::string();
+		m_pTool->SetInputObject(InputGuidName);
 	}
 
 	RefreshSelectedInputName();

@@ -2013,7 +2013,7 @@ std::string SVImageClass::getDisplayedName() const
 		SVImageInfoClass imageInfo = GetImageInfo();
 		if( imageInfo.GetOwner() )
 		{
-			strName = GetCompleteObjectNameToObjectType( nullptr, SvDef::SVToolObjectType );
+			strName = GetObjectNameToObjectType(SvDef::SVToolObjectType);
 		}
 	}
 	return strName;

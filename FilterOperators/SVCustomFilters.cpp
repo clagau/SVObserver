@@ -328,7 +328,6 @@ void SVCustomFilterClass::RebuildKernel()
 	for( l = lWidth * lHeight; l < 49; l++ )
 	{
 		m_plvoKernelCells[l]->SetObjectAttributesAllowed( SvDef::SV_EMBEDABLE, SvOi::SetAttributeType::OverwriteAttribute );
-		m_plvoKernelCells[l]->SetObjectAttributesSet( SvDef::SV_EMBEDABLE, SvOi::SetAttributeType::OverwriteAttribute );
 	}// end for
 }
 

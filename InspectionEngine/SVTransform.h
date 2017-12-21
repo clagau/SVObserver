@@ -39,21 +39,21 @@ protected:
 //******************************************************************************
 protected:
 	// Inputs
-	SVInObjectInfoStruct inputTranslationXResult;
-	SVInObjectInfoStruct inputTranslationYResult;
+	SVInObjectInfoStruct m_inputTranslationXResult;
+	SVInObjectInfoStruct m_inputTranslationYResult;
 	
-	SVInObjectInfoStruct inputRotationXResult;
-	SVInObjectInfoStruct inputRotationYResult;
-	SVInObjectInfoStruct inputRotationAngleResult;
+	SVInObjectInfoStruct m_inputRotationXResult;
+	SVInObjectInfoStruct m_inputRotationYResult;
+	SVInObjectInfoStruct m_inputRotationAngleResult;
 
 	// Embedded Objects (outputs)
-	SVBoolValueObjectClass performTranslation;
-	SVBoolValueObjectClass performRotation;
+	SVBoolValueObjectClass m_performTranslation;
+	SVBoolValueObjectClass m_performRotation;
 
-	SVDoubleValueObjectClass    learnedTranslationX;
-	SVDoubleValueObjectClass    learnedTranslationY;
-	SVDoubleValueObjectClass    learnedRotationX;
-	SVDoubleValueObjectClass    learnedRotationY;
-	SVDoubleValueObjectClass    learnedRotationAngle;
+	SVDoubleValueObjectClass    m_learnedTranslationX;
+	SVDoubleValueObjectClass    m_learnedTranslationY;
+	SVDoubleValueObjectClass    m_learnedRotationX;
+	SVDoubleValueObjectClass    m_learnedRotationY;
+	SVDoubleValueObjectClass    m_learnedRotationAngle;
 };
 

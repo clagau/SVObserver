@@ -303,9 +303,9 @@ void ToolClipboard::writeSourceGuids(SvXml::SVObjectXMLWriter& rXmlWriter, SVToo
 	{
 		if( nullptr != pImageInfo )
 		{
-			if( pImageInfo->IsConnected() && nullptr != pImageInfo->GetInputObjectInfo().m_pObject )
+			if( pImageInfo->IsConnected() && nullptr != pImageInfo->GetInputObjectInfo().getObject() )
 			{
-				ToolImageGuid = pImageInfo->GetInputObjectInfo().m_pObject->GetUniqueObjectID();
+				ToolImageGuid = pImageInfo->GetInputObjectInfo().getUniqueObjectID();
 			}
 		}
 		else

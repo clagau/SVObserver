@@ -96,7 +96,6 @@ public:
 	virtual DWORD GetObjectState() const;
 
 	virtual void Persist( SvOi::IObjectWriter& rWriter );
-	virtual void PersistAttributes( SvOi::IObjectWriter& rWriter );
 
 	virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0 ) const;
 
@@ -144,7 +143,6 @@ public:
 	LPCTSTR GetObjectName() const;
 	int GetObjectNameLength() const;
 
-	std::string GetCompleteObjectNameToObjectType( LPCTSTR CompleteName = nullptr, SvDef::SVObjectTypeEnum objectTypeToInclude = SvDef::SVToolSetObjectType ) const;
 	SVObjectClass* GetOwner() const;
 	SVOutObjectInfoStruct& GetObjectOutputInfo();
 	
@@ -159,7 +157,7 @@ public:
 	virtual LPCTSTR GetName() const override;
 	virtual std::string GetCompleteName() const override;
 	virtual HRESULT GetCompleteNameToType(SvDef::SVObjectTypeEnum objectType, std::string& rName) const override;
-	virtual std::string GetObjectNameToObjectType(LPCSTR CompleteName = nullptr, SvDef::SVObjectTypeEnum objectTypeToInclude = SvDef::SVToolSetObjectType) const override;
+	virtual std::string GetObjectNameToObjectType(SvDef::SVObjectTypeEnum objectTypeToInclude = SvDef::SVToolSetObjectType) const override;
 	virtual const SvDef::SVObjectTypeEnum& GetObjectType() const override;
 	virtual SvDef::SVObjectSubTypeEnum GetObjectSubType() const override;
 	virtual const SVGUID& GetParentID() const override;

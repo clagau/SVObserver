@@ -173,11 +173,12 @@ HRESULT SVRemoteInputTool::ClearInputObject()
 	return l_Status;
 }
 
-HRESULT SVRemoteInputTool::SetInputObject( const SVGUID& p_rObjectId )
+HRESULT SVRemoteInputTool::SetInputObject(const std::string& rGuidName)
 {
 	HRESULT l_Status = S_OK;
 
-	m_InputObjectInfo.SetInputObject( SVObjectManagerClass::Instance().GetObject( p_rObjectId ) );
+	SVObjectReference ObjectRef{ rGuidName };
+	m_InputObjectInfo.SetInputObject(ObjectRef);
 
 	if( !( m_InputObjectInfo.IsConnected() ) )
 	{
@@ -194,16 +195,13 @@ void SVRemoteInputTool::OnObjectRenamed(const SVObjectClass& rRenamedObject, con
 	__super::OnObjectRenamed(rRenamedObject, rOldName);
 }
 
-SVObjectClass* SVRemoteInputTool::GetInputObject() const
+SVObjectReference SVRemoteInputTool::GetInputObject() const
 {
-	SVObjectClass* l_pObject = nullptr;
-
-	if( m_InputObjectInfo.IsConnected() )
+	if( m_InputObjectInfo.IsConnected() && nullptr != m_InputObjectInfo.GetInputObjectInfo().getObject())
 	{
-		l_pObject = m_InputObjectInfo.GetInputObjectInfo().m_pObject;
+		return m_InputObjectInfo.GetInputObjectInfo().GetObjectReference();
 	}
-
-	return l_pObject;
+	return SVObjectReference();
 }
 
 bool SVRemoteInputTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
@@ -230,11 +228,11 @@ bool SVRemoteInputTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageConta
 	if( Result )
 	{
 
-		SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*> (m_InputObjectInfo.GetInputObjectInfo().m_pObject);
+		SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*> (m_InputObjectInfo.GetInputObjectInfo().getObject());
 		if( nullptr !=  pValueObject )
 		{
 				Result = ( S_OK == pValueObject->getValue( MatchString ) );
-			}
+		}
 		else
 		{
 			Result = false;
@@ -541,7 +539,7 @@ bool SVRemoteInputTool::SVDataElement::operator<( const SVDataElement& p_rObject
 
 bool SVRemoteInputTool::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
 {
-	if ( !m_InputObjectInfo.IsConnected() || nullptr == m_InputObjectInfo.GetInputObjectInfo().m_pObject )
+	if ( !m_InputObjectInfo.IsConnected() || nullptr == m_InputObjectInfo.GetInputObjectInfo().getObject() )
 	{
 		if (nullptr != pErrorMessages)
 		{

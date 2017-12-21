@@ -139,7 +139,7 @@ bool ResultViewReferences::Save(SvOi::IObjectWriter& rWriter)
 		if( nullptr != it->getObject() )
 		{
 			_variant_t Value;
-			Value.SetString( it->GetCompleteOneBasedObjectName().c_str() );
+			Value.SetString( it->GetCompleteName(true).c_str() );
 			rWriter.WriteAttribute(SvXml::CTAG_COMPLETENAME, Value);
 		}
 	}

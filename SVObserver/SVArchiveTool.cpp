@@ -745,37 +745,11 @@ HRESULT SVArchiveTool::QueueArchiveString( const std::string& rArchiveString )
 
 // Called by SVToolAdjustmentArchivePage::OnInitDialog().
 //
-void SVArchiveTool::UpdateTaskObjectOutputList()
+SVObjectReferenceVector SVArchiveTool::getResultArchiveList()
 {
-	SVToolSetClass* pToolSet = dynamic_cast<SVInspectionProcess*>(GetInspection())->GetToolSet();
-	ASSERT( pToolSet );
-	SVOutputInfoListClass l_ToolSetOutputList;
-	SVObjectReferenceVector vecObjects;
+	SVObjectReferenceVector Result;
 
-	pToolSet->GetOutputList( l_ToolSetOutputList );
-
-	l_ToolSetOutputList.GetObjectReferenceList( vecObjects );
-
-	//
-	// Iterate the tool set output list and reset the archivable attribute
-	// bits.
-	//
-	int nCount = static_cast< int >( vecObjects.size() );
-	for (int i = 0; i < nCount; i++)
-	{
-		SVObjectReference ObjectRef = vecObjects.at(i);
-		
-		//
-		// Clear the existing archivable bits that might be set.
-		//
-		ObjectRef.SetObjectAttributesSet( SvDef::SV_ARCHIVABLE, SvOi::SetAttributeType::RemoveAttribute );
-		
-	}
-	//
-	// Iterate the current list of results to archive.
-	//
-	int nCountResults = m_arrayResultsInfoObjectsToArchive.GetSize();
-	for (int i = 0; i < nCountResults; i++)
+	for (int i = 0; i < m_arrayResultsInfoObjectsToArchive.GetSize(); i++)
 	{
 		// SVObjectInfoStruct InfoItemArchive = 
 		//	arrayResultsInfoObjectsToArchive.GetAt(k);
@@ -783,42 +757,24 @@ void SVArchiveTool::UpdateTaskObjectOutputList()
 
 		if (ObjectRef.ObjectAttributesAllowed() & SvDef::SV_ARCHIVABLE)
 		{
-			ObjectRef.SetObjectAttributesSet( SvDef::SV_ARCHIVABLE, SvOi::SetAttributeType::AddAttribute );
+			Result.push_back(ObjectRef);
 		}
 	}
+	return Result;
 }
 
 //  Called by SVToolAdjustmentArchivePage::OnOK().
 //
-void SVArchiveTool::RebuildResultsArchiveList()
+void SVArchiveTool::setResultArchiveList(const SVObjectReferenceVector& rObjectRefVector)
 {
-	//
-	// Now iterate the output list and build a list for the archive tool.
-	// Get a pointer to the toolset
-	//
-	SVToolSetClass* pToolSet = dynamic_cast<SVInspectionProcess*>(GetInspection())->GetToolSet();
-
-	SVOutputInfoListClass l_ToolSetOutputList;
-
-	pToolSet->GetOutputList( l_ToolSetOutputList );
-
-	//
-	// Find all outputs marked as selected for archivable
-	// Note:: both Lists must be from the same root object
-	// which at this point is SVToolSetClass
-	//
 	m_arrayResultsInfoObjectsToArchive.DisconnectAllResultObjects();
 	m_arrayResultsInfoObjectsToArchive.ClearArray();
 
-	SVObjectReferenceVector vecObjects;
+	m_svoArchiveResultNames.SetArraySize( static_cast<int> (rObjectRefVector.size()) );
 
-	l_ToolSetOutputList.GetSetAttributesList( SvDef::SV_ARCHIVABLE, vecObjects );
-	
-	m_svoArchiveResultNames.SetArraySize( static_cast<int> (vecObjects.size()) );
-
-	for ( int i = 0; i < static_cast<int> (vecObjects.size()); i++ )
+	for ( int i = 0; i < static_cast<int> (rObjectRefVector.size()); i++ )
 	{
-		const SVObjectReference& rObjectRef = vecObjects[i];
+		const SVObjectReference& rObjectRef = rObjectRefVector[i];
 
 		SVArchiveRecord* pArchiveRecord = new SVArchiveRecord;
 		pArchiveRecord->Init( this );
@@ -841,52 +797,16 @@ void SVArchiveTool::AddImageToArray( SVImageClass* PImage )
 	m_arrayImagesInfoObjectsToArchive.Add(pImageRecord);
 }
 
-// Called by SVToolAdjustmentArchivePage::OnOK();
-//
-// Builds a new list of images to archive based on the Attributes set as
-// selected to be archived.
-//
-void SVArchiveTool::RebuildImageArchiveList()
+void SVArchiveTool::setImageArchiveList(const SVObjectReferenceVector& rObjectRefVector)
 {
 	m_arrayImagesInfoObjectsToArchive.ClearArray();
 	
-	//
-	// Get a pointer to the toolset
-	//
-
 	
-	SvDef::SVObjectTypeInfoStruct  info;
+	m_svoArchiveImageNames.SetArraySize( static_cast< int >(rObjectRefVector.size() ) );
 
-	info.ObjectType = SvDef::SVImageObjectType;
-	info.SubType = SvDef::SVNotSetSubObjectType;
-
-	SVGetObjectDequeByTypeVisitor l_Visitor( info );
-
-	SVObjectManagerClass::Instance().VisitElements( l_Visitor, GetInspection()->GetUniqueObjectID() );
-
-	SVObjectReferenceVector vecImages;
-
-	SVGetObjectDequeByTypeVisitor::SVObjectPtrDeque::const_iterator l_Iter;
-
-	for( l_Iter = l_Visitor.GetObjects().begin(); l_Iter != l_Visitor.GetObjects().end(); ++l_Iter )
+	for ( int i = 0; i < static_cast< int >(rObjectRefVector.size() ); i++ )
 	{
-		SVImageClass* pImage = dynamic_cast< SVImageClass* >( const_cast< SVObjectClass* >( *l_Iter ) );
-
-		if( ( nullptr != pImage ) && ( pImage->ObjectAttributesSet() & SvDef::SV_ARCHIVABLE_IMAGE ) )
-		{
-			AddImageToArray( pImage );
-			pImage->SetObjectAttributesSet( SvDef::SV_ARCHIVABLE_IMAGE, SvOi::SetAttributeType::RemoveAttribute );
-
-			vecImages.push_back( pImage );
-		}
-	}
-	
-	
-	m_svoArchiveImageNames.SetArraySize( static_cast< int >( vecImages.size() ) );
-
-	for ( int i = 0; i < static_cast< int >( vecImages.size() ); i++ )
-	{
-		const SVObjectReference& rObjectRef = vecImages[i];
+		const SVObjectReference& rObjectRef = rObjectRefVector[i];
 
 		m_svoArchiveImageNames.SetValue( rObjectRef.GetCompleteName(), i  );
 	}
@@ -894,56 +814,25 @@ void SVArchiveTool::RebuildImageArchiveList()
 	m_stringArchiveImageGuids_OBSOLETE.SetValue( std::string() );
 }
 
-// Update the attributes for archivable images from the current list of
-// images to archive. The pImageList is a collection of images that will
-// be used by the Archive Tool Property Page to display a 'tree' in a
-// tree list control.
-//
-void SVArchiveTool::SetImageAttributesFromArchiveList( SVImageClassPtrVector* pImageList )
+SVObjectReferenceVector SVArchiveTool::getImageArchiveList()
 {
-	if (!pImageList)
+	SVObjectReferenceVector Result;
+
+	for (int i = 0; i < m_arrayImagesInfoObjectsToArchive.GetSize(); i++)
 	{
-		return;
-	}
-	int nCount = static_cast<int> (pImageList->size());
-	for (int i = 0; i < nCount; i++)
-	{
-		SVImageClass* pImage = pImageList->at(i);
+		SVArchiveRecord* pRecordImage = m_arrayImagesInfoObjectsToArchive.GetAt(i);
+		assert(pRecordImage);
+		SVImageClass* pImage = dynamic_cast <SVImageClass*> ( pRecordImage->GetObjectReference().getObject() );
 		if (nullptr != pImage)
 		{
-			std::string ImageName;
-			ImageName = pImage->GetCompleteName();
-			
-			int nCount2 = m_arrayImagesInfoObjectsToArchive.GetSize();
-			for (int k = 0; k < nCount2; k++)
+			if (SvDef::SV_ARCHIVABLE_IMAGE == (pImage->ObjectAttributesAllowed() & SvDef::SV_ARCHIVABLE_IMAGE))
 			{
-				SVArchiveRecord* pRecordImage = m_arrayImagesInfoObjectsToArchive.GetAt(k);
-				ASSERT(pRecordImage);
-				SVImageClass* pImage2 = dynamic_cast <SVImageClass*> ( pRecordImage->GetObjectReference().getObject() );
-				if (pImage2)
-				{
-					//
-					// Compare pointers here - we need something more solid like
-					// a GUID compare.
-					//
-					std::string ImageName2;
-					ImageName2 = pImage2->GetCompleteName();
-					
-					if ( 0 == SvUl::CompareNoCase( ImageName, ImageName2) )          // Equal?
-					{
-						if (pImage->ObjectAttributesAllowed() & SvDef::SV_ARCHIVABLE_IMAGE)
-						{
-							pImage->SetObjectAttributesSet( SvDef::SV_ARCHIVABLE_IMAGE, SvOi::SetAttributeType::AddAttribute );
-							//
-							// Update the pointer to the image..incase..
-							//
-							pRecordImage->GetObjectReference() = pImage->GetObjectInfo().GetObjectReference();
-						}
-					}
-				}// end if (pImage2)
-			}// end for (int k = 0; k < nCount2; k++)
-		}// end if (pImage)
-	}// end for (int i = 0; i < nCount; i++)
+				Result.push_back(pImage->GetObjectInfo().GetObjectReference());
+			}
+		}
+	}
+
+	return Result;
 }
 
 bool SVArchiveTool::GetFileArchive( std::string& rName )
@@ -1077,21 +966,22 @@ void SVArchiveTool::OnObjectRenamed( const SVObjectClass& rRenamedObject, const 
 	std::string newPrefix;
 	std::string oldPrefix;
 
-	if( const SVInspectionProcess* l_pInspection = dynamic_cast<const SVInspectionProcess*> (&rRenamedObject) )
+	SvDef::SVObjectTypeEnum type = rRenamedObject.GetObjectType();
+	if(SvDef::SVInspectionObjectType == type)
 	{
-		newPrefix = l_pInspection->GetCompleteObjectNameToObjectType( nullptr, SvDef::SVInspectionObjectType ) + _T( "." );
+		newPrefix = rRenamedObject.GetObjectNameToObjectType(SvDef::SVInspectionObjectType) + _T( "." );
 	}
-	else if( nullptr != dynamic_cast<const BasicValueObject*> (&rRenamedObject) )
+	else if(SvDef::SVBasicValueObjectType == type)
 	{
-		newPrefix = rRenamedObject.GetCompleteObjectNameToObjectType( nullptr, SvDef::SVRootObjectType );
+		newPrefix = rRenamedObject.GetObjectNameToObjectType(SvDef::SVRootObjectType);
 	}
-	else if( nullptr != dynamic_cast<const SvOi::IValueObject*> (&rRenamedObject) )
+	else if(SvDef::SVValueObjectType == type)
 	{
-		newPrefix = rRenamedObject.GetCompleteObjectNameToObjectType( nullptr, SvDef::SVInspectionObjectType );
+		newPrefix = rRenamedObject.GetObjectNameToObjectType(SvDef::SVInspectionObjectType);
 	}
 	else
 	{
-		newPrefix = rRenamedObject.GetCompleteObjectNameToObjectType( nullptr, SvDef::SVToolSetObjectType ) + _T( "." );
+		newPrefix = rRenamedObject.GetObjectNameToObjectType() + _T( "." );
 	}// end else
 	oldPrefix = newPrefix;
 	SvUl::searchAndReplace( oldPrefix, rRenamedObject.GetName(), rOldName.c_str() );

@@ -161,11 +161,11 @@ bool SVImageTransformClass::ResetObject( SvStl::MessageContainerVector *pErrorMe
 
 SVImageClass* SVImageTransformClass::getInputImage() const
 {
-	if (m_inputImageObjectInfo.IsConnected() && nullptr != m_inputImageObjectInfo.GetInputObjectInfo().m_pObject)
+	if (m_inputImageObjectInfo.IsConnected() && nullptr != m_inputImageObjectInfo.GetInputObjectInfo().getObject())
 	{
 		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when m_pObject is not nullptr then it is a SVImageClass
-		return static_cast<SVImageClass*> (m_inputImageObjectInfo.GetInputObjectInfo().m_pObject);
+		//! We are sure that when getObject() is not nullptr that it is the correct type
+		return static_cast<SVImageClass*> (m_inputImageObjectInfo.GetInputObjectInfo().getObject());
 	}
 
 	return nullptr;
@@ -232,7 +232,7 @@ bool SVImageTransformClass::onRun( SVRunStatusClass& runStatus, SvStl::MessageCo
 	}
 
 	if (bRetVal && 
-		(S_OK != m_useExtentsOnly.GetValue( bUseExtentsOnly ) || S_OK != performTranslation.GetValue( bTranslationEnabled ) || S_OK != performRotation.GetValue( bRotationEnabled )))
+		(S_OK != m_useExtentsOnly.GetValue( bUseExtentsOnly ) || S_OK != m_performTranslation.GetValue( bTranslationEnabled ) || S_OK != m_performRotation.GetValue( bRotationEnabled )))
 	{
 		bRetVal = false;
 		if (nullptr != pErrorMessages)
@@ -416,8 +416,8 @@ HRESULT SVImageTransformClass::UpdateTransformData( )
 		double dWidth = 0.0;
 		double dHeight = 0.0;
 
-		::KeepPrevError( l_hrOk, performTranslation.GetValue( bTranslationEnabled ) );
-		::KeepPrevError( l_hrOk, performRotation.GetValue( bRotationEnabled ) );
+		::KeepPrevError( l_hrOk, m_performTranslation.GetValue( bTranslationEnabled ) );
+		::KeepPrevError( l_hrOk, m_performRotation.GetValue( bRotationEnabled ) );
 		::KeepPrevError( l_hrOk, m_useExtentsOnly.GetValue( bUseExtentsOnly ) );
 
 		::KeepPrevError( l_hrOk, Extents.GetExtentProperty( SVExtentPropertyWidth, dWidth ) );
@@ -432,8 +432,8 @@ HRESULT SVImageTransformClass::UpdateTransformData( )
 			::KeepPrevError( l_hrOk, l_pTranslationXResult->GetValue( dTranslationXResult ) );
 			::KeepPrevError( l_hrOk, l_pTranslationYResult->GetValue( dTranslationYResult ) );
 
-			::KeepPrevError( l_hrOk, learnedTranslationX.GetValue( dLearnedTranslationXValue ) );
-			::KeepPrevError( l_hrOk, learnedTranslationY.GetValue( dLearnedTranslationYValue ) );
+			::KeepPrevError( l_hrOk, m_learnedTranslationX.GetValue( dLearnedTranslationXValue ) );
+			::KeepPrevError( l_hrOk, m_learnedTranslationY.GetValue( dLearnedTranslationYValue ) );
 		}
 
 		if( S_OK == l_hrOk && bRotationEnabled )
@@ -444,9 +444,9 @@ HRESULT SVImageTransformClass::UpdateTransformData( )
 			::KeepPrevError( l_hrOk, l_pRotationYResult->GetValue( dRotationYResult ) );
 			::KeepPrevError( l_hrOk, l_pRotationAngleResult->GetValue( dRotationAngleResult ) );
 
-			::KeepPrevError( l_hrOk, learnedRotationX.GetValue( dLearnedRotationXValue ) );
-			::KeepPrevError( l_hrOk, learnedRotationY.GetValue( dLearnedRotationYValue ) );
-			::KeepPrevError( l_hrOk, learnedRotationAngle.GetValue( dLearnedRotationAngleValue ) );
+			::KeepPrevError( l_hrOk, m_learnedRotationX.GetValue( dLearnedRotationXValue ) );
+			::KeepPrevError( l_hrOk, m_learnedRotationY.GetValue( dLearnedRotationYValue ) );
+			::KeepPrevError( l_hrOk, m_learnedRotationAngle.GetValue( dLearnedRotationAngleValue ) );
 		}
 
 		pTool->SetAlwaysUpdate( l_bAlwaysUpdate );

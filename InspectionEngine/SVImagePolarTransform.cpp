@@ -176,11 +176,11 @@ bool SVImagePolarTransformClass::isInputImage(const SVGUID& rImageGuid) const
 
 SVImageClass* SVImagePolarTransformClass::getInputImage() const
 {
-	if (m_inputImageObjectInfo.IsConnected() && nullptr != m_inputImageObjectInfo.GetInputObjectInfo().m_pObject)
+	if (m_inputImageObjectInfo.IsConnected() && nullptr != m_inputImageObjectInfo.GetInputObjectInfo().getObject())
 	{
 		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when m_pObject is not nullptr then it is a SVImageClass
-		return static_cast<SVImageClass*> (m_inputImageObjectInfo.GetInputObjectInfo().m_pObject);
+		//! We are sure that when getObject() is not nullptr that it is the correct type
+		return static_cast<SVImageClass*> (m_inputImageObjectInfo.GetInputObjectInfo().getObject());
 	}
 
 	return nullptr;
@@ -217,7 +217,7 @@ bool SVImagePolarTransformClass::SetDefaultFormulas(SvStl::MessageContainerVecto
 	{
 		// Find equation object...
 		SVEquationClass* pEquation = dynamic_cast<SVEquationClass*>(pEvaluateCenterX->getFirstObject(equationObjectInfo));
-		std::string Name = m_centerX.GetCompleteObjectNameToObjectType( nullptr, SvDef::SVToolSetObjectType );
+		std::string Name = m_centerX.GetObjectNameToObjectType();
 		bOk = SetDefaultEquation( pEquation, Name, pErrorMessages );
 	}
 	if( ! bOk )
@@ -233,7 +233,7 @@ bool SVImagePolarTransformClass::SetDefaultFormulas(SvStl::MessageContainerVecto
 	{
 		// Find equation object...
 		SVEquationClass* pEquation = dynamic_cast<SVEquationClass*>(pEvaluateCenterY->getFirstObject(equationObjectInfo));
-		std::string Name = m_centerY.GetCompleteObjectNameToObjectType( nullptr, SvDef::SVToolSetObjectType );
+		std::string Name = m_centerY.GetObjectNameToObjectType();
 		bOk = SetDefaultEquation( pEquation, Name, pErrorMessages );
 	}
 	if( ! bOk )
@@ -249,7 +249,7 @@ bool SVImagePolarTransformClass::SetDefaultFormulas(SvStl::MessageContainerVecto
 	{
 		// Find equation object...
 		SVEquationClass* pEquation = dynamic_cast<SVEquationClass*>(pEvaluateStartRadius->getFirstObject(equationObjectInfo));
-		std::string Name = m_startRadius.GetCompleteObjectNameToObjectType( nullptr, SvDef::SVToolSetObjectType );
+		std::string Name = m_startRadius.GetObjectNameToObjectType();
 		bOk = SetDefaultEquation( pEquation, Name, pErrorMessages );
 	}
 	if( ! bOk )
@@ -265,7 +265,7 @@ bool SVImagePolarTransformClass::SetDefaultFormulas(SvStl::MessageContainerVecto
 	{
 		// Find equation object...
 		SVEquationClass* pEquation = dynamic_cast<SVEquationClass*>(pEvaluateEndRadius->getFirstObject(equationObjectInfo));
-		std::string Name = m_endRadius.GetCompleteObjectNameToObjectType( nullptr, SvDef::SVToolSetObjectType );
+		std::string Name = m_endRadius.GetObjectNameToObjectType();
 		bOk = SetDefaultEquation( pEquation, Name, pErrorMessages );
 	}
 	if( ! bOk )
@@ -281,7 +281,7 @@ bool SVImagePolarTransformClass::SetDefaultFormulas(SvStl::MessageContainerVecto
 	{
 		// Find equation object...
 		SVEquationClass* pEquation = dynamic_cast<SVEquationClass*>(pEvaluateStartAngle->getFirstObject(equationObjectInfo));
-		std::string Name = m_startAngle.GetCompleteObjectNameToObjectType( nullptr, SvDef::SVToolSetObjectType );
+		std::string Name = m_startAngle.GetObjectNameToObjectType();
 		bOk = SetDefaultEquation( pEquation, Name, pErrorMessages );
 	}
 	if( ! bOk )
@@ -297,7 +297,7 @@ bool SVImagePolarTransformClass::SetDefaultFormulas(SvStl::MessageContainerVecto
 	{
 		// Find equation object...
 		SVEquationClass* pEquation = dynamic_cast<SVEquationClass*>(pEvaluateEndAngle->getFirstObject(equationObjectInfo));
-		std::string Name = m_endAngle.GetCompleteObjectNameToObjectType( nullptr, SvDef::SVToolSetObjectType );
+		std::string Name = m_endAngle.GetObjectNameToObjectType();
 		bOk = SetDefaultEquation( pEquation, Name, pErrorMessages );
 	}
 	if( ! bOk )
@@ -725,29 +725,16 @@ void SVImagePolarTransformClass::SetCalculatedPrintableFlags()
 {
 	const UINT cAttributes = SvDef::SV_PRINTABLE | SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE;
 	BOOL bSetValue( false );
+	m_useFormulaInput.GetValue(bSetValue);
 
-	if ( ( S_OK == m_useFormulaInput.GetValue( bSetValue ) ) && bSetValue )
-	{
-		//turn off the print flags
-		//turn off setable remotely/online
-		m_centerX.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
-		m_centerY.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
-		m_startRadius.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
-		m_endRadius.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
-		m_startAngle.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
-		m_endAngle.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
-	}
-	else
-	{
-		//turn print flag ons
-		//turn on setable remotely/online flags
-		m_centerX.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
-		m_centerY.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
-		m_startRadius.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
-		m_endRadius.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
-		m_startAngle.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
-		m_endAngle.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
-	}
+	SvOi::SetAttributeType AllowedAttribute = bSetValue ? SvOi::SetAttributeType::RemoveAttribute : SvOi::SetAttributeType::AddAttribute;
+
+	m_centerX.SetObjectAttributesAllowed(cAttributes, AllowedAttribute);
+	m_centerY.SetObjectAttributesAllowed(cAttributes, AllowedAttribute);
+	m_startRadius.SetObjectAttributesAllowed(cAttributes, AllowedAttribute);
+	m_endRadius.SetObjectAttributesAllowed(cAttributes, AllowedAttribute);
+	m_startAngle.SetObjectAttributesAllowed(cAttributes, AllowedAttribute);
+	m_endAngle.SetObjectAttributesAllowed(cAttributes, AllowedAttribute);
 
 }
 

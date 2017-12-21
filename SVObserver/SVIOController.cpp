@@ -160,7 +160,7 @@ BOOL SVIOController::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandl
 
 			SVObjectManagerClass::Instance().CloseUniqueObjectID( this );
 
-			m_outObjectInfo.m_UniqueObjectID = ObjectID;
+			m_outObjectInfo.GetObjectReference().setGuid(ObjectID);
 
 			SVObjectManagerClass::Instance().OpenUniqueObjectID( this );
 		}
@@ -193,7 +193,7 @@ bool SVIOController::GetParameters( SvXml::SVObjectXMLWriter& rWriter ) const
 
 	_variant_t svVariant;
 
-	svVariant = SVGUID( m_outObjectInfo.m_UniqueObjectID ).ToVARIANT();
+	svVariant = m_outObjectInfo.getUniqueObjectID().ToVARIANT();
 	rWriter.WriteAttribute( SvXml::CTAG_UNIQUE_REFERENCE_ID, svVariant );
 
 	if( nullptr != m_pRemoteOutputController )

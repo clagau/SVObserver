@@ -156,31 +156,20 @@ bool SVShapeMaskHelperClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 
 		SvOi::SetAttributeType AddRemoveType = bIsShape ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
 		m_Data.bvoAutoResize.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, AddRemoveType );
-		m_Data.bvoAutoResize.SetObjectAttributesSet( SvDef::SV_PRINTABLE, AddRemoveType );
 		m_Data.evoShapeType.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, AddRemoveType );
-		m_Data.evoShapeType.SetObjectAttributesSet( SvDef::SV_PRINTABLE, AddRemoveType );
 		m_Data.evoMaskArea.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, AddRemoveType );
-		m_Data.evoMaskArea.SetObjectAttributesSet( SvDef::SV_PRINTABLE, AddRemoveType );
 		m_Data.lvoCenterX.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, AddRemoveType );
-		m_Data.lvoCenterX.SetObjectAttributesSet( SvDef::SV_PRINTABLE, AddRemoveType );
 		m_Data.lvoCenterY.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, AddRemoveType );
-		m_Data.lvoCenterY.SetObjectAttributesSet( SvDef::SV_PRINTABLE, AddRemoveType );
 		m_Data.lvoWidth.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, AddRemoveType );
-		m_Data.lvoWidth.SetObjectAttributesSet( SvDef::SV_PRINTABLE, AddRemoveType );
 		m_Data.lvoHeight.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, AddRemoveType );
-		m_Data.lvoHeight.SetObjectAttributesSet( SvDef::SV_PRINTABLE, AddRemoveType );
 
 		AddRemoveType = bIsShape && bIsDoughnut ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
 		m_Data.lvoSideThickness.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, AddRemoveType );
-		m_Data.lvoSideThickness.SetObjectAttributesSet( SvDef::SV_PRINTABLE, AddRemoveType );
 		m_Data.lvoTopBottomThickness.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, AddRemoveType );
-		m_Data.lvoTopBottomThickness.SetObjectAttributesSet( SvDef::SV_PRINTABLE, AddRemoveType );
 
 		AddRemoveType = bIsShape && bIsTrapezoid ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
 		m_Data.lvoOffset.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, AddRemoveType );
-		m_Data.lvoOffset.SetObjectAttributesSet( SvDef::SV_PRINTABLE, AddRemoveType );
 		m_Data.evoXYSymmetry.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, AddRemoveType );
-		m_Data.evoXYSymmetry.SetObjectAttributesSet( SvDef::SV_PRINTABLE, AddRemoveType );
 	}	
 
 	return __super::ResetObject(pErrorMessages);

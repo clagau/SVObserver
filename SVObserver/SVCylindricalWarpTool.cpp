@@ -317,15 +317,14 @@ bool SVCylindricalWarpToolClass::ResetObject(SvStl::MessageContainerVector *pErr
 
 SVImageClass* SVCylindricalWarpToolClass::GetInputImage()
 {
-	SVImageClass* l_pImage = nullptr;
-
-	if( m_InputImageObjectInfo.IsConnected() && 
-		nullptr != m_InputImageObjectInfo.GetInputObjectInfo().m_pObject )
+	if( m_InputImageObjectInfo.IsConnected() && nullptr != m_InputImageObjectInfo.GetInputObjectInfo().getObject() )
 	{
-		l_pImage = dynamic_cast<SVImageClass*> (m_InputImageObjectInfo.GetInputObjectInfo().m_pObject);
+		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
+		//! We are sure that when getObject() is not nullptr that it is the correct type
+		return static_cast<SVImageClass*> (m_InputImageObjectInfo.GetInputObjectInfo().getObject());
 	}
 
-	return l_pImage;
+	return nullptr;
 }
 
 bool SVCylindricalWarpToolClass::DoesObjectHaveExtents() const

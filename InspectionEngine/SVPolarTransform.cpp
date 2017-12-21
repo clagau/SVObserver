@@ -25,34 +25,34 @@ SVPolarTransformClass::SVPolarTransformClass( SVObjectClass* POwner, int StringR
 	// Identify our input type needs...
 
 	// Center X
-	inputCenterXResult.SetInputObjectType( SVOutputEvaluateCenterXResultObjectGuid, SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType );
-	inputCenterXResult.SetObject( GetObjectInfo() );
-	RegisterInputObject( &inputCenterXResult, _T( "PolarTransformCenterXResult" ) );
+	m_inputCenterXResult.SetInputObjectType(SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType, SVOutputEvaluateCenterXResultObjectGuid);
+	m_inputCenterXResult.SetObject( GetObjectInfo() );
+	RegisterInputObject( &m_inputCenterXResult, _T( "PolarTransformCenterXResult" ) );
 
 	// Center Y
-	inputCenterYResult.SetInputObjectType( SVOutputEvaluateCenterYResultObjectGuid, SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType );
-	inputCenterYResult.SetObject( GetObjectInfo() );
-	RegisterInputObject( &inputCenterYResult, _T( "PolarTransformCenterYResult" ) );
+	m_inputCenterYResult.SetInputObjectType(SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType, SVOutputEvaluateCenterYResultObjectGuid);
+	m_inputCenterYResult.SetObject( GetObjectInfo() );
+	RegisterInputObject( &m_inputCenterYResult, _T( "PolarTransformCenterYResult" ) );
 
 	// Start Radius
-	inputStartRadiusResult.SetInputObjectType( SVOutputEvaluateStartRadiusResultObjectGuid, SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType );
-	inputStartRadiusResult.SetObject( GetObjectInfo() );
-	RegisterInputObject( &inputStartRadiusResult, _T( "PolarTransformStartRadiusResult" ) );
+	m_inputStartRadiusResult.SetInputObjectType(SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType, SVOutputEvaluateStartRadiusResultObjectGuid);
+	m_inputStartRadiusResult.SetObject( GetObjectInfo() );
+	RegisterInputObject( &m_inputStartRadiusResult, _T( "PolarTransformStartRadiusResult" ) );
 
 	// End Radius
-	inputEndRadiusResult.SetInputObjectType( SVOutputEvaluateEndRadiusResultObjectGuid, SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType );
-	inputEndRadiusResult.SetObject( GetObjectInfo() );
-	RegisterInputObject( &inputEndRadiusResult, _T( "PolarTransformEndRadiusResult" ) );
+	m_inputEndRadiusResult.SetInputObjectType(SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType, SVOutputEvaluateEndRadiusResultObjectGuid);
+	m_inputEndRadiusResult.SetObject( GetObjectInfo() );
+	RegisterInputObject( &m_inputEndRadiusResult, _T( "PolarTransformEndRadiusResult" ) );
 	
 	// Start Angle
-	inputStartAngleResult.SetInputObjectType( SVOutputEvaluateStartAngleResultObjectGuid, SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType );
-	inputStartAngleResult.SetObject( GetObjectInfo() );
-	RegisterInputObject( &inputStartAngleResult, _T( "PolarTransformStartAngleResult" ) );
+	m_inputStartAngleResult.SetInputObjectType(SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType, SVOutputEvaluateStartAngleResultObjectGuid);
+	m_inputStartAngleResult.SetObject( GetObjectInfo() );
+	RegisterInputObject( &m_inputStartAngleResult, _T( "PolarTransformStartAngleResult" ) );
 
 	// End Angle
-	inputEndAngleResult.SetInputObjectType( SVOutputEvaluateEndAngleResultObjectGuid, SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType );
-	inputEndAngleResult.SetObject( GetObjectInfo() );
-	RegisterInputObject( &inputEndAngleResult, _T( "PolarTransformEndAngleResult" ) );
+	m_inputEndAngleResult.SetInputObjectType(SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType, SVOutputEvaluateEndAngleResultObjectGuid);
+	m_inputEndAngleResult.SetObject( GetObjectInfo() );
+	RegisterInputObject( &m_inputEndAngleResult, _T( "PolarTransformEndAngleResult" ) );
 
 	// Add Default Inputs and Outputs
 	addDefaultInputObjects();
@@ -82,27 +82,33 @@ bool SVPolarTransformClass::ResetObject(SvStl::MessageContainerVector *pErrorMes
 
 SVDoubleValueObjectClass* SVPolarTransformClass::getInputCenterXResult()
 {
-	if( inputCenterXResult.IsConnected() && inputCenterXResult.GetInputObjectInfo().m_pObject )
+	if( m_inputCenterXResult.IsConnected() && m_inputCenterXResult.GetInputObjectInfo().getObject() )
 	{
-		return ( SVDoubleValueObjectClass* ) inputCenterXResult.GetInputObjectInfo().m_pObject;
+		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
+		//! We are sure that when getObject() is not nullptr that it is the correct type
+		return static_cast<SVDoubleValueObjectClass*> (m_inputCenterXResult.GetInputObjectInfo().getObject());
 	}
 	return nullptr;
 }
 
 SVDoubleValueObjectClass* SVPolarTransformClass::getInputCenterYResult()
 {
-	if( inputCenterYResult.IsConnected() && inputCenterYResult.GetInputObjectInfo().m_pObject )
+	if( m_inputCenterYResult.IsConnected() && m_inputCenterYResult.GetInputObjectInfo().getObject())
 	{
-		return ( SVDoubleValueObjectClass* ) inputCenterYResult.GetInputObjectInfo().m_pObject;
+		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
+		//! We are sure that when getObject() is not nullptr that it is the correct type
+		return static_cast<SVDoubleValueObjectClass*> (m_inputCenterYResult.GetInputObjectInfo().getObject());
 	}
 	return nullptr;
 }
 
 SVDoubleValueObjectClass* SVPolarTransformClass::getInputStartRadiusResult()
 {
-	if( inputStartRadiusResult.IsConnected() && inputStartRadiusResult.GetInputObjectInfo().m_pObject )
+	if( m_inputStartRadiusResult.IsConnected() && m_inputStartRadiusResult.GetInputObjectInfo().getObject())
 	{
-		return ( SVDoubleValueObjectClass* ) inputStartRadiusResult.GetInputObjectInfo().m_pObject;
+		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
+		//! We are sure that when getObject() is not nullptr that it is the correct type
+		return static_cast<SVDoubleValueObjectClass*> (m_inputStartRadiusResult.GetInputObjectInfo().getObject());
 	}
 
 	return nullptr;
@@ -111,27 +117,33 @@ SVDoubleValueObjectClass* SVPolarTransformClass::getInputStartRadiusResult()
 SVDoubleValueObjectClass* SVPolarTransformClass::getInputEndRadiusResult()
 {
 
-	if( inputEndRadiusResult.IsConnected() && inputEndRadiusResult.GetInputObjectInfo().m_pObject )
+	if( m_inputEndRadiusResult.IsConnected() && m_inputEndRadiusResult.GetInputObjectInfo().getObject())
 	{
-		return ( SVDoubleValueObjectClass* ) inputEndRadiusResult.GetInputObjectInfo().m_pObject;
+		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
+		//! We are sure that when getObject() is not nullptr that it is the correct type
+		return static_cast<SVDoubleValueObjectClass*> (m_inputEndRadiusResult.GetInputObjectInfo().getObject());
 	}
 	return nullptr;
 }
 
 SVDoubleValueObjectClass* SVPolarTransformClass::getInputStartAngleResult()
 {
-	if( inputStartAngleResult.IsConnected() && inputStartAngleResult.GetInputObjectInfo().m_pObject )
+	if( m_inputStartAngleResult.IsConnected() && m_inputStartAngleResult.GetInputObjectInfo().getObject())
 	{
-		return ( SVDoubleValueObjectClass* ) inputStartAngleResult.GetInputObjectInfo().m_pObject;
+		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
+		//! We are sure that when getObject() is not nullptr that it is the correct type
+		return static_cast<SVDoubleValueObjectClass*> (m_inputStartAngleResult.GetInputObjectInfo().getObject());
 	}
 	return nullptr;
 }
 
 SVDoubleValueObjectClass* SVPolarTransformClass::getInputEndAngleResult()
 {
-	if( inputEndAngleResult.IsConnected() && inputEndAngleResult.GetInputObjectInfo().m_pObject )
+	if( m_inputEndAngleResult.IsConnected() && m_inputEndAngleResult.GetInputObjectInfo().getObject())
 	{
-		return ( SVDoubleValueObjectClass* ) inputEndAngleResult.GetInputObjectInfo().m_pObject;
+		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
+		//! We are sure that when getObject() is not nullptr that it is the correct type
+		return static_cast<SVDoubleValueObjectClass*> (m_inputEndAngleResult.GetInputObjectInfo().getObject());
 	}
 	return nullptr;
 }

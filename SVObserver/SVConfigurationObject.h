@@ -327,7 +327,14 @@ public:
 	//! \param rTree <in> a reference to the XML-tree which it will be loaded from
 	//! \returns S_OK, if loading successful
 	//************************************
-	HRESULT LoadGlobalConstants( SVTreeType& rTree );
+	HRESULT LoadGlobalConstants(SVTreeType& rTree);
+
+	//************************************
+	//! The method loads the ObjectAttributesSet
+	//! \param rTree <in> a reference to the XML-tree which it will be loaded from
+	//! \returns S_OK, if loading successful
+	//************************************
+	HRESULT LoadObjectAttributesSet(SVTreeType& rTree);
 
 	bool HasCameraTrigger(SVPPQObject* p_pPPQ) const;
 
@@ -353,6 +360,7 @@ protected:
 
 private:
 	typedef std::set<SVInspectionProcess*> SVInspectionSet;
+	typedef std::map<UINT, SVObjectReferenceVector> AttributesSetMap;
 
 	void SaveEnvironment(SvXml::SVObjectXMLWriter& rWriter) const;
 	void SaveIO(SvXml::SVObjectXMLWriter& rWriter) const;
@@ -360,7 +368,7 @@ private:
 	void SaveAcquistionConfiguration(SvXml::SVObjectXMLWriter& rWriter, const SVLightReference& rLight, const SVLut& rLut, const SVDeviceParamCollection& rDeviceParams) const;
 	void SaveCamera(SvXml::SVObjectXMLWriter& rWriter) const;
 	void SaveTrigger(SvXml::SVObjectXMLWriter& rWriter) const;
-	void SaveInspection(SvXml::SVObjectXMLWriter& rWriter) const;
+	void SaveInspection(SvXml::SVObjectXMLWriter& rWriter, AttributesSetMap& rAttributeSetVector) const;
 	void SavePPQ(SvXml::SVObjectXMLWriter& rWriter) const;
 	void SavePPQ_Attributes(SvXml::SVObjectXMLWriter& rWriter, const SVPPQObject& rPPQ ) const;
 	void SavePPQ_Cameras(SvXml::SVObjectXMLWriter& rWriter, const SVPPQObject& rPPQ ) const;
@@ -386,7 +394,21 @@ private:
 	//! The method saves the Global Constant list
 	//! \param rWriter <in> a reference to the xml-writer
 	//************************************
-	void SaveGlobalConstants(SvXml::SVObjectXMLWriter& rWriter ) const;
+	void SaveGlobalConstants(SvXml::SVObjectXMLWriter& rWriter) const;
+
+	//************************************
+	//! The method saves the Object Attributes Set list
+	//! \param rWriter <in> a reference to the xml-writer
+	//! \param rAttributesSetMap <in> a reference to attribute set map
+	//************************************
+	void SaveObjectAttributesSet(SvXml::SVObjectXMLWriter& rWriter, const AttributesSetMap& rAttributesSetMap) const;
+
+	//************************************
+	//! The method gets Object Attributes for the inspection
+	//! \param pInspection <in> a pointer to the inspection
+	//! \param rAttributesSetMap <in> a reference to attribute set map
+	//************************************
+	void getInspectionObjectAttributesSet(const SVInspectionProcess* pInspection, AttributesSetMap& rAttributesSetMap) const;
 
 	//************************************
 	//! The method checks and if necessary converts the product type to a mixed type

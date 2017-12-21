@@ -159,7 +159,7 @@ bool SVColorToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages
 
 	Result = SVToolClass::ResetObject(pErrorMessages) && Result;
 
-	if (!m_InputImageObjectInfo.IsConnected() || nullptr == m_InputImageObjectInfo.GetInputObjectInfo().m_pObject)
+	if (nullptr == getInputImage())
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
@@ -354,11 +354,11 @@ void SVColorToolClass::LocalInitialize()
 
 SVImageClass* SVColorToolClass::getInputImage() const
 {
-	if (m_InputImageObjectInfo.IsConnected() && nullptr != m_InputImageObjectInfo.GetInputObjectInfo().m_pObject)
+	if (m_InputImageObjectInfo.IsConnected() && nullptr != m_InputImageObjectInfo.GetInputObjectInfo().getObject())
 	{
 		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when m_pObject is not nullptr then it is a SVImageClass
-		return static_cast<SVImageClass*> (m_InputImageObjectInfo.GetInputObjectInfo().m_pObject);
+		//! We are sure that when getObject() is not nullptr that it is the correct type
+		return static_cast<SVImageClass*> (m_InputImageObjectInfo.GetInputObjectInfo().getObject());
 	}
 
 	return nullptr;

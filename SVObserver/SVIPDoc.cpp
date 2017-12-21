@@ -1414,7 +1414,7 @@ void SVIPDoc::OnEditPaste()
 			pTool->SetImageDepth( pInspection->GetImageDepth() );
 
 			SVObjectLevelCreateStruct createStruct;
-			createStruct.OwnerObjectInfo = pInspection;
+			createStruct.OwnerObjectInfo.SetObject(pInspection);
 			createStruct.m_pInspection = pInspection;
 
 			pInspection->ConnectObject(createStruct);
@@ -2269,7 +2269,7 @@ SvDef::StringSet SVIPDoc::TranslateSelectedObjects(const SVObjectReferenceVector
 	SvDef::StringSet SelectedObjectNames;
 	for (auto const& rItem : rSelectedObjects)
 	{
-		std::string Name{ rItem.GetCompleteOneBasedObjectName() };
+		std::string Name{ rItem.GetCompleteName(true) };
 
 		for (auto const& rTranslateName : TranslateNames)
 		{
@@ -2936,7 +2936,7 @@ HRESULT SVIPDoc::DeleteTool(SVTaskObjectClass* pTaskObject)
 					for (j = 0; j < l_OutputList.GetSize(); j++)
 					{
 						pOutputObjectInfo = l_OutputList.GetAt(j);
-						if (ViewImageUniqueId == pOutputObjectInfo->m_UniqueObjectID)
+						if (ViewImageUniqueId == pOutputObjectInfo->getUniqueObjectID())
 						{
 							// Close Display resources...
 							pImageView->DetachFromImage();
@@ -3568,7 +3568,7 @@ std::string SVIPDoc::GetCompleteToolSetName() const
 
 	if( nullptr != l_pToolSet )
 	{
-		Result = l_pToolSet->GetCompleteObjectNameToObjectType( nullptr, SvDef::SVToolObjectType );
+		Result = l_pToolSet->GetObjectNameToObjectType(SvDef::SVToolObjectType);
 	}
 
 	return Result;

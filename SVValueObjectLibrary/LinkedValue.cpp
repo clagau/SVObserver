@@ -84,7 +84,7 @@ HRESULT LinkedValue::GetValue(_variant_t& rValue, int Index /*= -1*/,  int Bucke
 
 bool LinkedValue::DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo )
 {
-	if ( nullptr != pObjectInInfo && pObjectInInfo->GetInputObjectInfo().m_pObject == m_LinkedObjectRef.getObject())
+	if ( nullptr != pObjectInInfo && pObjectInInfo->GetInputObjectInfo().getObject() == m_LinkedObjectRef.getObject())
 	{
 		DisconnectInput();
 	}
@@ -95,7 +95,7 @@ void LinkedValue::UpdateLinkedName()
 {
 	if( nullptr != m_LinkedObjectRef.getObject() )
 	{
-		m_LinkedName.SetValue( m_LinkedObjectRef.GetCompleteOneBasedObjectName() );
+		m_LinkedName.SetValue( m_LinkedObjectRef.GetCompleteName(true) );
 		m_LinkedName.SetObjectAttributesAllowed( SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute );
 	}
 	else
@@ -241,7 +241,7 @@ bool LinkedValue::UpdateConnection(SvStl::MessageContainerVector *pErrorMessages
 			//Convert old dotted name format to Unique GUID
 			if( ConvertDottedName )
 			{
-				SVVariantValueObjectClass::setValue( m_LinkedObjectRef.GetCompleteOneBasedObjectName() );
+				SVVariantValueObjectClass::setValue( m_LinkedObjectRef.GetCompleteName(true) );
 			}
 			bool messageReturn = ConnectInput();
 			assert( messageReturn );

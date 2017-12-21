@@ -251,11 +251,11 @@ SVImageClass* SVPerspectiveToolClass::GetInputImage() const
 {
 	SVImageClass *pImage = nullptr;
 
-	if( m_InputImageObjectInfo.IsConnected() && nullptr != m_InputImageObjectInfo.GetInputObjectInfo().m_pObject )
+	if( m_InputImageObjectInfo.IsConnected() && nullptr != m_InputImageObjectInfo.GetInputObjectInfo().getObject() )
 	{
 		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
 		//! We are sure that when m_pObject is not nullptr then it is a SVImageClass
-		pImage = static_cast<SVImageClass*> (m_InputImageObjectInfo.GetInputObjectInfo().m_pObject);
+		pImage = static_cast<SVImageClass*> (m_InputImageObjectInfo.GetInputObjectInfo().getObject());
 	}
 
 	return pImage;
@@ -374,7 +374,7 @@ void SVPerspectiveToolClass::LocalInitialize()
 	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvDef::SVPerspectiveToolObjectType;
 
 	// Identify our input image...
-	m_InputImageObjectInfo.SetInputObjectType( SvDef::SVImageObjectType );
+	m_InputImageObjectInfo.SetInputObjectType(SvDef::SVImageObjectType, SvDef::SVImageMonoType);
 	m_InputImageObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_InputImageObjectInfo, _T( "PerspectiveToolImage" ) );
 

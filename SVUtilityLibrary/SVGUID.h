@@ -25,7 +25,8 @@ public:
 	SVGUID();
 	SVGUID( const SVGUID& rObject );
 	SVGUID( const GUID& rGuid );
-	SVGUID( const _bstr_t& rString );
+	SVGUID(const _bstr_t& rString);
+	SVGUID(const std::string& rString);
 	SVGUID( const _variant_t& rVariant );
 
 	virtual ~SVGUID();
@@ -46,18 +47,19 @@ public:
 	_bstr_t ToBSTR() const;
 	std::string ToString() const;
 
-	const SVGUID& operator=( const SVGUID& rObject );
-	const SVGUID& operator=( const GUID& rGuid );
-	const SVGUID& operator=( const _bstr_t& rString );
+	const SVGUID& operator=(const SVGUID& rGuid);
+	const SVGUID& operator=(const GUID& rGuid);
+	const SVGUID& operator=(const _bstr_t& rString);
+	const SVGUID& operator=(const std::string& rString);
 
-	bool operator==( const SVGUID& p_rObject ) const;
-	bool operator==( const GUID& p_rGuid ) const;
+	bool operator==(const SVGUID& rGuid ) const;
+	bool operator==(const GUID& rGuid ) const;
 
-	bool operator<( const SVGUID& p_rObject ) const;
-	bool operator<( const GUID& p_rGuid ) const;
+	bool operator<(const SVGUID& rGuid) const;
+	bool operator<(const GUID& rGuid) const;
 
-	bool operator>( const SVGUID& p_rObject ) const;
-	bool operator>( const GUID& p_rGuid ) const;
+	bool operator>(const SVGUID& rGuid) const;
+	bool operator>(const GUID& rGuid) const;
 
 protected:
 	GUID m_Guid;

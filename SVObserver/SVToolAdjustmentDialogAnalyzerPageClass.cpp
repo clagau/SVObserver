@@ -413,7 +413,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnResultButton()
 		// Get Dialog Title...
 		std::string Title = SvUl::LoadStdString( IDS_RESULT_ADJUSTMENT_DIALOG_TITLE );
 		// Get Complete Name up to the tool level...
-		Title = m_pCurrentAnalyzer->GetCompleteObjectNameToObjectType( nullptr, SvDef::SVToolSetObjectType ) + _T(" ") + Title;
+		Title = m_pCurrentAnalyzer->GetObjectNameToObjectType() + _T(" ") + Title;
 
 		SVIPDoc* l_pIPDoc = nullptr;
 

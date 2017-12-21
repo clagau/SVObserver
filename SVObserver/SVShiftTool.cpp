@@ -365,35 +365,35 @@ SVImageClass* SVShiftTool::getInputImage() const
 {
 	SVImageClass* pImage = nullptr;
 
-	if( m_ImageInput.IsConnected() && nullptr != m_ImageInput.GetInputObjectInfo().m_pObject)
+	if( m_ImageInput.IsConnected() && nullptr != m_ImageInput.GetInputObjectInfo().getObject())
 	{
 		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when m_pObject is not nullptr then it is a SVImageClass
-		pImage = static_cast<SVImageClass*> (m_ImageInput.GetInputObjectInfo().m_pObject);
+		//! We are sure that when getObject() is not nullptr that it is the correct type
+		pImage = static_cast<SVImageClass*> (m_ImageInput.GetInputObjectInfo().getObject());
 	}
 	return pImage;
 }
 
 SVDoubleValueObjectClass* SVShiftTool::GetTranslationXInput() const
 {
-	SVDoubleValueObjectClass* l_pValue = nullptr;
-
-	if( m_TranslationXInput.IsConnected() )
+	if( m_TranslationXInput.IsConnected() && nullptr != m_TranslationXInput.GetInputObjectInfo().getObject())
 	{
-		l_pValue = dynamic_cast< SVDoubleValueObjectClass* >( m_TranslationXInput.GetInputObjectInfo().m_pObject );
+		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
+		//! We are sure that when getObject() is not nullptr that it is the correct type
+		return static_cast<SVDoubleValueObjectClass*> (m_TranslationXInput.GetInputObjectInfo().getObject());
 	}
-	return l_pValue;
+	return nullptr;
 }
 
 SVDoubleValueObjectClass* SVShiftTool::GetTranslationYInput() const
 {
-	SVDoubleValueObjectClass* l_pValue = nullptr;
-
-	if( m_TranslationYInput.IsConnected() )
+	if(m_TranslationYInput.IsConnected() && nullptr != m_TranslationYInput.GetInputObjectInfo().getObject())
 	{
-		l_pValue = dynamic_cast< SVDoubleValueObjectClass* >( m_TranslationYInput.GetInputObjectInfo().m_pObject );
+		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
+		//! We are sure that when getObject() is not nullptr that it is the correct type
+		return static_cast<SVDoubleValueObjectClass*> (m_TranslationYInput.GetInputObjectInfo().getObject());
 	}
-	return l_pValue;
+	return nullptr;
 }
 #pragma endregion Protected Methods
 
@@ -431,11 +431,11 @@ void SVShiftTool::LocalInitialize()
 	m_ImageInput.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_ImageInput, _T( "ShiftToolImage" ) );
 
-	m_TranslationXInput.SetInputObjectType(SVOutputEvaluateTranslationXResultObjectGuid, SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType);
+	m_TranslationXInput.SetInputObjectType(SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType, SVOutputEvaluateTranslationXResultObjectGuid);
 	m_TranslationXInput.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_TranslationXInput, _T( "ShiftToolTranslationX" ) );
 
-	m_TranslationYInput.SetInputObjectType( SVOutputEvaluateTranslationYResultObjectGuid, SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType );
+	m_TranslationYInput.SetInputObjectType(SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType, SVOutputEvaluateTranslationYResultObjectGuid);
 	m_TranslationYInput.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_TranslationYInput, _T( "ShiftToolTranslationY" ) );
 

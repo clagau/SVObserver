@@ -64,10 +64,10 @@ bool TableExcludeAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMess
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
-	SVObjectClass* pObject = m_excludeColumnObjectInfo.GetInputObjectInfo().m_pObject;
+	SVObjectClass* pObject = m_excludeColumnObjectInfo.GetInputObjectInfo().getObject();
 	if (!m_excludeColumnObjectInfo.IsConnected() || nullptr == dynamic_cast<DoubleSortValueObject*> (pObject) 
 		//check if column part of the right table object (The object must be from same tool as this analyzer.)
-		|| nullptr == pObject->GetOwner() || pObject->GetOwner()->GetOwner() != m_ownerObjectInfo.m_pObject)
+		|| nullptr == pObject->GetOwner() || pObject->GetOwner()->GetOwner() != m_ownerObjectInfo.getObject())
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
@@ -116,8 +116,8 @@ bool TableExcludeAnalyzer::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCo
 		m_excludeLow.GetValue( TempValue );
 		double excludeLow= static_cast<double> (TempValue);
 
-		TableAnalyzerTool* pTool = dynamic_cast<TableAnalyzerTool*>(m_ownerObjectInfo.m_pObject);
-		DoubleSortValueObject* pColumnValues = dynamic_cast<DoubleSortValueObject*>(m_excludeColumnObjectInfo.GetInputObjectInfo().m_pObject);
+		TableAnalyzerTool* pTool = dynamic_cast<TableAnalyzerTool*>(m_ownerObjectInfo.getObject());
+		DoubleSortValueObject* pColumnValues = dynamic_cast<DoubleSortValueObject*>(m_excludeColumnObjectInfo.GetInputObjectInfo().getObject());
 		if (nullptr != pTool && nullptr != pColumnValues)
 		{
 			ValueObjectSortContainer sortContainer = pColumnValues->getSortContainer();

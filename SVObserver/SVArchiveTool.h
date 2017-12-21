@@ -36,11 +36,11 @@ public:
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
-	void UpdateTaskObjectOutputList();
-	void RebuildResultsArchiveList();
+	SVObjectReferenceVector getResultArchiveList();
+	void setResultArchiveList(const SVObjectReferenceVector& rObjectRefVector);
 	void AddImageToArray(SVImageClass* pImage);
-	void RebuildImageArchiveList();
-	void SetImageAttributesFromArchiveList(SVImageClassPtrVector* pImageList);
+	SVObjectReferenceVector getImageArchiveList();
+	void setImageArchiveList(const SVObjectReferenceVector& rObjectRefVector);
 
 	bool GetFileArchive( std::string& rName );
 	bool GetImageArchivePath( std::string& rName );

@@ -95,9 +95,9 @@ bool SVVariantResultClass::CreateObject( const SVObjectLevelCreateStruct& rCreat
 
 SVObjectClass* SVVariantResultClass::GetInputValue()
 {
-	if( m_inputObjectInfo.IsConnected() )
+	if( m_inputObjectInfo.IsConnected() && nullptr != m_inputObjectInfo.GetInputObjectInfo().getObject())
 	{
-		return m_inputObjectInfo.GetInputObjectInfo().m_pObject;
+		return m_inputObjectInfo.GetInputObjectInfo().getObject();
 	}
 
 	return nullptr;

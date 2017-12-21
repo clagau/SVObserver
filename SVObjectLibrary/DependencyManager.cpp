@@ -95,8 +95,8 @@ namespace SvOl
 			SVObjectClass* pClient = SVObjectManagerClass::Instance().GetObject(IterDependency->second);
 			if (nullptr != pSupplier && nullptr != pClient)
 			{
-				std::string SupplierName = pSupplier->GetCompleteObjectNameToObjectType(nullptr, nameToObjectType);
-				std::string ClientName = pClient->GetCompleteObjectNameToObjectType(nullptr, nameToObjectType);
+				std::string SupplierName = pSupplier->GetObjectNameToObjectType(nameToObjectType);
+				std::string ClientName = pClient->GetObjectNameToObjectType(nameToObjectType);
 
 				Inserter = SvDef::StringPair(SupplierName, ClientName);
 

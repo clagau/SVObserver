@@ -27,9 +27,9 @@ SVMathContainerClass::SVMathContainerClass( SVObjectClass* POwner, int StringRes
 	// Identify our input type needs...
 
 	// Input Math Result...
-	inputMathResult.SetInputObjectType(SVMathEquationResultObjectGuid, SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType);
-	inputMathResult.SetObject( GetObjectInfo() );
-	RegisterInputObject( &inputMathResult, _T( "MathResult" ) );
+	m_inputMathResult.SetInputObjectType(SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType, SVMathEquationResultObjectGuid);
+	m_inputMathResult.SetObject( GetObjectInfo() );
+	RegisterInputObject( &m_inputMathResult, _T( "MathResult" ) );
 
 	// Register Embedded Objects
 
@@ -74,8 +74,12 @@ bool SVMathContainerClass::ResetObject(SvStl::MessageContainerVector *pErrorMess
 
 SVDoubleValueObjectClass* SVMathContainerClass::getInputMathResult()
 {
-	if( inputMathResult.IsConnected() && inputMathResult.GetInputObjectInfo().m_pObject )
-		return ( SVDoubleValueObjectClass* ) inputMathResult.GetInputObjectInfo().m_pObject;
+	if (m_inputMathResult.IsConnected() && m_inputMathResult.GetInputObjectInfo().getObject())
+	{
+		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
+		//! We are sure that when getObject() is not nullptr that it is the correct type
+		return static_cast<SVDoubleValueObjectClass*> (m_inputMathResult.GetInputObjectInfo().getObject());
+	}
 
 	return nullptr;
 }

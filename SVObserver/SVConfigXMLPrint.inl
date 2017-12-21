@@ -975,9 +975,9 @@ inline void SVConfigXMLPrint::WriteTool(Writer writer, SVToolClass * ts) const
 
 				if( l_psvImageInfo->IsConnected() )
 				{
-					pCurrentSourceImage = dynamic_cast <SVImageClass*> (l_psvImageInfo->GetInputObjectInfo().m_pObject);
+					pCurrentSourceImage = dynamic_cast <SVImageClass*> (l_psvImageInfo->GetInputObjectInfo().getObject());
 
-					WriteValueObject(writer, L"Property",  utf16(SvUl::LoadStdString(IDS_IMAGE_SOURCE_STRING)), SvUl::to_utf16(pCurrentSourceImage->GetCompleteObjectNameToObjectType().c_str(), cp_dflt).c_str());
+					WriteValueObject(writer, L"Property",  utf16(SvUl::LoadStdString(IDS_IMAGE_SOURCE_STRING)), SvUl::to_utf16(pCurrentSourceImage->GetObjectNameToObjectType().c_str(), cp_dflt).c_str());
 				}
 			}
 			else
@@ -1311,9 +1311,9 @@ void SVConfigXMLPrint::WriteFriends( Writer writer, SVObjectClass* pObj ) const
 		{
 			const SVObjectInfoStruct& rObjInfo = rFriendList[nCnt];
 			
-			if (rObjInfo.m_pObject)
+			if (rObjInfo.getObject())
 			{
-				WriteObject(writer, rObjInfo.m_pObject);
+				WriteObject(writer, rObjInfo.getObject());
 			}  // end if( rObjInfo )
 		}  // end for( int nCnt = 0; nCnt < sz; nCnt++ )
 		writer->WriteEndElement();
@@ -1332,9 +1332,9 @@ void SVConfigXMLPrint::WriteInputOutputList( Writer writer, SVObjectClass* pObj 
 	{
 		SVOutObjectInfoStruct* pOutput = l_OutputList.GetAt(nCnt);
 		
-		if (pOutput->m_pObject->GetOwner() == pObj)
+		if (pOutput->getObject()->GetOwner() == pObj)
 		{
-			WriteObject(writer, pOutput->m_pObject);
+			WriteObject(writer, pOutput->getObject());
 		}  // end if( pOutput->PObject->GetOwner () == pObj )
 	}  // end for( int nCnt = 0; nCnt < pOutputInfoList->GetSize(); nCnt++ )
 }  // end function void SVConfigXMLPrint:::PrintInputOutputList( ... )

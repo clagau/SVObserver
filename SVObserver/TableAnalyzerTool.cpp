@@ -129,7 +129,7 @@ bool TableAnalyzerTool::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 
 	Result = ValidateLocal(pErrorMessages) && Result;
 
-	SVObjectClass* pObject = m_sourceTableObjectInfo.GetInputObjectInfo().m_pObject;
+	SVObjectClass* pObject = m_sourceTableObjectInfo.GetInputObjectInfo().getObject();
 	if( !m_sourceTableObjectInfo.IsConnected() || nullptr == dynamic_cast<TableObject*> (pObject) )
 	{
 		Result = false;
@@ -155,7 +155,7 @@ bool TableAnalyzerTool::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 
 	if (Result)
 	{
-		m_pResultTable->setSourecTable( dynamic_cast<TableObject*> (m_sourceTableObjectInfo.GetInputObjectInfo().m_pObject) );
+		m_pResultTable->setSourecTable( dynamic_cast<TableObject*> (m_sourceTableObjectInfo.GetInputObjectInfo().getObject()) );
 		Result = m_pResultTable->ResetObject(pErrorMessages);
 	}
 	else
