@@ -81,10 +81,15 @@
       <FileType>Document</FileType>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(PATH_3RDPARTY)\protobuf\protobuf-3.4.0\bin\protoc.exe -I=$(MSBuildProjectDirectory)  --cpp_out=$(MSBuildProjectDirectory)  $(MSBuildProjectDirectory)\InspectionCommands.proto</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating c++ code from ./InspectionCommands.proto</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">InspectionCommads.pb.cc;InspectionCommads.pb.h;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">InspectionCommands.pb.cc;InspectionCommands.pb.h</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(PATH_3RDPARTY)\protobuf\protobuf-3.4.0\bin\protoc.exe -I=$(MSBuildProjectDirectory)  --cpp_out=$(MSBuildProjectDirectory)  $(MSBuildProjectDirectory)\InspectionCommands.proto</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating c++ code from ./InspectionCommands.proto</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">InspectionCommads.pb.cc;InspectionCommads.pb.h;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">InspectionCommands.pb.cc;InspectionCommands.pb.h;%(Outputs)</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</TreatOutputAsContent>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</TreatOutputAsContent>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
