@@ -12,6 +12,7 @@ namespace SvSml
 	/// struct with PPQ informations for MLCpyContainer
 	struct MLPPQInfo
 	{
+		MLPPQInfo::MLPPQInfo() = delete;
 		MLPPQInfo::MLPPQInfo(int LastSlot, int RejectSlot)
 			:NumLastSlot(LastSlot),
 			NumRejectSlot(RejectSlot),

@@ -59,6 +59,7 @@
 #include <stdio.h>
 #include <tchar.h>
 #include <shlwapi.h>
+#include <stdlib.h>
 #include <string>
 #include <vector>
 #include <winioctl.h>

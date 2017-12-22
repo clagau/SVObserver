@@ -28,6 +28,7 @@ namespace SvSml
 		m_Version = 0;
 		m_InspectionInfoMap.clear();
 		m_MonitorListCpyMap.clear();
+		m_PPQInfoMap.clear();
 
 	}
 	//! Load MonitorLists from Shared  Memory
@@ -65,7 +66,7 @@ namespace SvSml
 				}
 					
 			}
-			return monotorlistnames.size();
+			return static_cast<int>(monotorlistnames.size());
 		
 	}
 	

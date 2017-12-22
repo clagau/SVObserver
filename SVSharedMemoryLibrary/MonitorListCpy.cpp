@@ -185,6 +185,8 @@ namespace SvSml
 		}
 		else
 		{
+			PPQInfoMap[m_ppqName]->NumRejectSlot = m_rejectDepth;
+			PPQInfoMap[m_ppqName]->NumLastSlot = m_ProductDepth;
 			PPQIndex = PPQInfoMap[m_ppqName]->SlotManagerIndex;
 		}
 		

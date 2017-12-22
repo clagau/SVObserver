@@ -12,7 +12,6 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <fstream>
-
 #pragma endregion Includes
 
 namespace SvSml
@@ -33,8 +32,11 @@ namespace SvSml
 		SVSharedConfiguration() =delete;
 		static inline const std::string LogFilename() 
 		{ 
-			char buf[40] = {0};
-			return std::string(GetSharedDrive() + "\\Temp\\") + _itoa(::GetCurrentProcessId(), buf, 16) + "log.txt";
+			const int bufsize{ 40 };
+			char buf[bufsize] = {0};
+			_itoa_s(::GetCurrentProcessId(), buf, bufsize, 16);
+			std::string procId(buf);
+			return std::string(GetSharedDrive() + "\\Temp\\") + procId + "log.txt";
 		}
 		static bool SharedDriveSizeOk();
 	};
