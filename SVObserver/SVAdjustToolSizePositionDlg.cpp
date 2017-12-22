@@ -27,8 +27,8 @@
 #include "InspectionEngine/SVExtentPropertiesInfoStruct.h"
 #include "SVMainFrm.h"
 #include "ToolSizeAdjustTask.h"
-#include "InspectionCommands/InspectionRunOnce.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "InspectionCommands/CommandFunctionHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -274,11 +274,10 @@ void SVAdjustToolSizePositionDlg::OnOK()
 
 		if (nullptr != m_pToolTask && nullptr != m_pToolTask->GetInspection())
 		{
-			const SVGUID& inspectionId = m_pToolTask->GetInspection()->GetUniqueObjectID();
-			SvCmd::InspectionRunOncePtr commandPtr{ new SvCmd::InspectionRunOnce(inspectionId) };
-			SVObjectSynchronousCommandTemplate< SvCmd::InspectionRunOncePtr > command( inspectionId, commandPtr );
-
-			command.Execute( TWO_MINUTE_CMD_TIMEOUT );
+			const SVGUID& rInspectionId = m_pToolTask->GetInspection()->GetUniqueObjectID();
+			SvPB::InspectionRunOnceRequest requestMessage;
+			requestMessage.mutable_inspectionid()->CopyFrom(SvCmd::setGuidToMessage(rInspectionId));
+			SvCmd::InspectionCommandsSynchronous(rInspectionId, &requestMessage, nullptr);
 		}
 	}
 	CDialog::OnOK();

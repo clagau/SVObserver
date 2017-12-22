@@ -65,7 +65,6 @@
 #include "SVHBitmapUtilitiesLibrary\SVHBitmapUtilities.h"
 #include "SVDirectX.h"
 #include "SVCommandInspectionCollectImageData.h"
-#include "InspectionCommands/InspectionRunOnce.h"
 #include "SVGuiExtentUpdater.h"
 #include "SVArchiveTool.h"
 #include "SVColorTool.h"
@@ -99,6 +98,7 @@
 #include "TableTool.h"
 #include "TableAnalyzerTool.h"
 #include "SVOGui/ResultTableSelectionDlg.h"
+#include "InspectionCommands/CommandFunctionHelper.h"
 #include "InspectionCommands/GetAvailableObjects.h"
 #include "InspectionCommands/GetAllowedImageList.h"
 #include "SVOGui/TextDefinesSvOg.h"
@@ -4143,21 +4143,21 @@ HRESULT SVIPDoc::UpdateWithLastProduct()
 	return l_Status;
 }
 
-bool SVIPDoc::RunOnce( SVToolClass* p_pTool )
+bool SVIPDoc::RunOnce( SVToolClass* pTool )
 {
 	SVInspectionProcess* pInspection = GetInspectionProcess();
 	bool l_Status = ( nullptr != pInspection );
 
 	if( l_Status )
 	{
-		SVGUID l_ToolId;
-
-		if( nullptr != p_pTool ) { l_ToolId = p_pTool->GetUniqueObjectID(); }
-
-		SvCmd::InspectionRunOncePtr l_CommandPtr{ new SvCmd::InspectionRunOnce(pInspection->GetUniqueObjectID(), l_ToolId) };
-		SVObjectSynchronousCommandTemplate< SvCmd::InspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
-
-		l_Status = ( S_OK == l_Command.Execute( TWO_MINUTE_CMD_TIMEOUT ) );
+		SvPB::InspectionRunOnceRequest requestMessage;
+		requestMessage.mutable_inspectionid()->CopyFrom(SvCmd::setGuidToMessage(pInspection->GetUniqueObjectID()));
+		if (nullptr != pTool) 
+		{ 
+			requestMessage.mutable_taskid()->CopyFrom(SvCmd::setGuidToMessage(pTool->GetUniqueObjectID()));
+		}
+		
+		l_Status = (S_OK == SvCmd::InspectionCommandsSynchronous(pInspection->GetUniqueObjectID(), &requestMessage, nullptr));
 	}
 
 	return l_Status;

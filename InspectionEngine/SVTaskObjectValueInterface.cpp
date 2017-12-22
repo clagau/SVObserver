@@ -9,14 +9,16 @@
 //* .Check In Date   : $Date:   15 May 2014 13:07:10  $
 //******************************************************************************
 
+#pragma region Includes
 #include "StdAfx.h"
 #include "SVTaskObjectValueInterface.h"
 
 #include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "InspectionCommands/InspectionRunOnce.h"
 #include "SVTaskObject.h"
+#include "InspectionCommands/CommandFunctionHelper.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -105,15 +107,15 @@ HRESULT SVTaskObjectValueInterface::AddInputRequestMarker()
 
 HRESULT SVTaskObjectValueInterface::RunOnce( const SVGUID& rToolID)
 {
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT hrOk = S_FALSE;
 
 	try
 	{
 		const SVGUID& rInspectionID = m_pTaskObject->GetInspection()->GetUniqueObjectID();
-		SvCmd::InspectionRunOncePtr l_CommandPtr{ new SvCmd::InspectionRunOnce(rInspectionID, rToolID) };
-		SVObjectSynchronousCommandTemplate< SvCmd::InspectionRunOncePtr > l_Command( rInspectionID, l_CommandPtr );
-
-		l_hrOk = l_Command.Execute( TWO_MINUTE_CMD_TIMEOUT );
+		SvPB::InspectionRunOnceRequest requestMessage;
+		requestMessage.mutable_inspectionid()->CopyFrom(SvCmd::setGuidToMessage(rInspectionID));
+		requestMessage.mutable_taskid()->CopyFrom(SvCmd::setGuidToMessage(rToolID));
+		hrOk = SvCmd::InspectionCommandsSynchronous(rInspectionID, &requestMessage, nullptr);
 	}
 	catch( ... )
 	{
@@ -121,7 +123,7 @@ HRESULT SVTaskObjectValueInterface::RunOnce( const SVGUID& rToolID)
 		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_CannotRunOnce, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10208 );
 	}
 
-	return l_hrOk;
+	return hrOk;
 }
 
 HRESULT SVTaskObjectValueInterface::AddInputRequest( const SVInputRequestStructMap& rMap )

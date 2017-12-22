@@ -52,13 +52,6 @@ namespace SvOi
 		virtual bool DestroyChild(ITaskObject& rObject, DWORD context) = 0;
 
 		/**********
-			The method destroys a friend object.
-			/param rObject <in> object to destroy.
-			/param context <in> set which action should done. Possible flags:  SvDef::SVMFSetDefaultInputs and SvDef::SVMFResetInspection
-		***********/
-		virtual bool DestroyFriendObject(IObjectClass& rObject, DWORD context) = 0;
-
-		/**********
 			This method removes he connection to the output objject.
 			/param pOutObject <in> object to disconnect.
 		***********/

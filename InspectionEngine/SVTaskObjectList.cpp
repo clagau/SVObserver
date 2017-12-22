@@ -482,15 +482,37 @@ bool SVTaskObjectListClass::DestroyChildObject( SVTaskObjectClass* pTaskObject, 
 	// Kill the Object
 	if (nullptr != pTaskObject)
 	{
-		// if the object is a Child of this
-		for (int i = 0; i < static_cast<int> (m_TaskObjectVector.size()); i++)
+		// Get the object's uniqueID
+		GUID objectID = pTaskObject->GetUniqueObjectID();
+		if (RemoveFromTaskObjectVector(objectID) || RemoveFriend(objectID))
 		{
-			SVObjectClass* pObject = m_TaskObjectVector[i];
-			if (nullptr != pObject && pObject == pTaskObject)
+			// Notify the Owner of our inputs that they are not needed anymore
+			pTaskObject->Disconnect();
+
+			// Close the Object
+			pTaskObject->CloseObject();
+
+			// Destroy our Friends
+			pTaskObject->DestroyFriends();
+
+			// delete object.
+			delete pTaskObject;
+			pTaskObject = nullptr;
+
+			SvOi::IInspectionProcess* pInspection = GetInspectionInterface();
+			if (nullptr != pInspection)
 			{
-				DestroyTaskObject(*pTaskObject, context);
-				return true;
+				if (SvDef::SVMFSetDefaultInputs == (context & SvDef::SVMFSetDefaultInputs))
+				{
+					pInspection->SetDefaultInputs();
+				}
+
+				if (SvDef::SVMFResetInspection == (context & SvDef::SVMFResetInspection))
+				{
+					GetInspection()->resetAllObjects();
+				}
 			}
+			return true;
 		}
 	}
 	return false;
@@ -518,32 +540,13 @@ SvUl::NameGuidList SVTaskObjectListClass::GetTaskObjectList( ) const
 
 void SVTaskObjectListClass::Delete(const SVGUID& rObjectID)
 {
-	SVTaskObjectClass* pTaskObject;
-
-	for (int i = 0; i < static_cast<int> (m_TaskObjectVector.size()); i++)
+	SVTaskObjectClass* pTaskObject = dynamic_cast<SVTaskObjectClass*>(SVObjectManagerClass::Instance().GetObject(rObjectID));
+	if (nullptr != pTaskObject)
 	{
-		pTaskObject = m_TaskObjectVector[i];
-
-		if (pTaskObject && pTaskObject->GetUniqueObjectID() == rObjectID)
+		// look in friend list
+		if (RemoveFromTaskObjectVector(rObjectID) || RemoveFriend(rObjectID))
 		{
-			m_LastListUpdateTimestamp = SvTl::GetTimeStamp();
-
-			m_TaskObjectVector.erase(m_TaskObjectVector.begin() + i);
-			// Delete object not till it is removed from list!!!
-			if (pTaskObject)
-			{
-				delete(pTaskObject);
-				return;
-			}
-		}
-	}
-	// look in friend list
-	if (RemoveFriend(rObjectID))
-	{
-		SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(rObjectID);
-		if (pObject)
-		{
-			delete(pObject);
+			delete(pTaskObject);
 			return;
 		}
 	}
@@ -561,48 +564,6 @@ bool SVTaskObjectListClass::DestroyChild(SvOi::ITaskObject& rObject, DWORD conte
 {
 	SVTaskObjectClass* pTaskObject = dynamic_cast<SVTaskObjectClass*>(&rObject);
 	return DestroyChildObject(pTaskObject, context);
-}
-
-bool SVTaskObjectListClass::DestroyFriendObject(SvOi::IObjectClass& rObject, DWORD context)
-{
-	// Get the object's uniqueID
-	GUID objectID = rObject.GetUniqueObjectID();
-
-	SVTaskObjectClass* pTaskObject = dynamic_cast<SVTaskObjectClass*>(&rObject);
-
-	if (nullptr != pTaskObject)
-	{
-		// Notify the Owner of our inputs that they are not needed anymore
-		pTaskObject->Disconnect();
-
-		// Close the Object
-		pTaskObject->CloseObject();
-
-		// Destroy our Friends
-		pTaskObject->DestroyFriends();
-	}
-
-	bool retVal = RemoveFriend(objectID);
-	if (retVal)
-	{
-		delete(&rObject);
-	}
-
-	SvOi::IInspectionProcess* pInspection = GetInspectionInterface();
-	if( nullptr != pInspection )
-	{
-		if( SvDef::SVMFSetDefaultInputs == ( context & SvDef::SVMFSetDefaultInputs ) )
-		{
-			pInspection->SetDefaultInputs();
-		}
-
-		if( SvDef::SVMFResetInspection == ( context & SvDef::SVMFResetInspection ) )
-		{
-			GetInspection()->resetAllObjects();
-		}
-	}
-
-	return retVal;
 }
 
 SvUl::NameGuidList SVTaskObjectListClass::GetCreatableObjects(const SvDef::SVObjectTypeInfoStruct& pObjectTypeInfo) const
@@ -1077,38 +1038,6 @@ void SVTaskObjectListClass::connectChildObject( SVTaskObjectClass& rChildObject 
 #pragma endregion protected methods
 
 #pragma region Private Methods
-void SVTaskObjectListClass::DestroyTaskObject(SVTaskObjectClass& rTaskObject, DWORD context)
-{
-	// Notify the Owner of our inputs that they are not needed anymore
-	rTaskObject.Disconnect();
-
-	// Close the Object
-	rTaskObject.CloseObject();
-
-	// Get the object's uniqueID
-	GUID objectID = rTaskObject.GetUniqueObjectID();
-
-	// Destroy our Friends
-	rTaskObject.DestroyFriends();
-
-	// Remove it from the SVTaskObjectList ( Destruct it )
-	Delete(objectID);
-
-	SvOi::IInspectionProcess* pInspection = GetInspectionInterface();
-	if( nullptr != pInspection )
-	{
-		if( SvDef::SVMFSetDefaultInputs == ( context & SvDef::SVMFSetDefaultInputs ) )
-		{
-			pInspection->SetDefaultInputs();
-		}
-
-		if( SvDef::SVMFResetInspection == ( context & SvDef::SVMFResetInspection ) )
-		{
-			GetInspection()->resetAllObjects();
-		}
-	}
-}
-
 SvOi::IObjectClass* SVTaskObjectListClass::getFirstObjectWithRequestor( const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends, const SvOi::IObjectClass* pRequestor ) const
 {
 	SvOi::IObjectClass* retObject = nullptr;
@@ -1167,4 +1096,50 @@ SvOi::IObjectClass* SVTaskObjectListClass::getFirstObjectWithRequestor( const Sv
 	}
 	return retObject;
 }
+
+/*
+This method is used to remove an object from the friends list via the object's unique object identifier.
+*/
+bool SVTaskObjectListClass::RemoveFriend(const GUID& rFriendGUID)
+{
+	// Check GUID...
+	if (SV_GUID_NULL != rFriendGUID)
+	{
+		// Check if friend is applied...
+		if (m_friendList.size())
+		{
+			for (int i = static_cast<int>(m_friendList.size()) - 1; i >= 0; --i)
+			{
+				if (m_friendList[i].getUniqueObjectID() == rFriendGUID)
+				{
+					// Remove Friend...
+					m_friendList.RemoveAt(i);
+
+					// Success...
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+
+bool SVTaskObjectListClass::RemoveFromTaskObjectVector(const SVGUID& rObjectID)
+{
+	for (int i = 0; i < static_cast<int> (m_TaskObjectVector.size()); i++)
+	{
+		SVTaskObjectClass* pTaskObject = m_TaskObjectVector[i];
+
+		if (pTaskObject && pTaskObject->GetUniqueObjectID() == rObjectID)
+		{
+			m_LastListUpdateTimestamp = SvTl::GetTimeStamp();
+
+			m_TaskObjectVector.erase(m_TaskObjectVector.begin() + i);
+			// Delete object not till it is removed from list!!!
+			return true;
+		}
+	}
+	return false;
+}
+
 #pragma endregion Private Methods

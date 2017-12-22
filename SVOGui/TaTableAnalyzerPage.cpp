@@ -14,10 +14,8 @@
 #include "TextDefinesSvOg.h"
 #include "InspectionCommands/GetCreatableObjects.h"
 #include "InspectionCommands/GetAvailableObjects.h"
-#include "InspectionCommands/InspectionRunOnce.h"
 #include "InspectionCommands/GetObjectTypeInfo.h"
 #include "InspectionCommands/ConstructAndInsertTaskObject.h"
-#include "InspectionCommands/DestroyChildObject.h"
 #include "InspectionCommands/ConnectToObject.h"
 #include "InspectionCommands/GetInputs.h"
 #include "SVStatusLibrary/MessageManager.h"
@@ -26,6 +24,7 @@
 #include "ToolSetItemSelector.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "InspectionCommands/CommandFunctionHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -161,13 +160,12 @@ namespace SvOg {
 			SVGUID analyzerGUID = availableList[i].second;
 			if( SV_GUID_NULL != analyzerGUID )
 			{
-				SvCmd::DestroyChildObject::FlagEnum flag = SvCmd::DestroyChildObject::Flag_None;
 				// Close, Disconnect and Delete it
-				typedef SvCmd::DestroyChildObject DestroyCommand;
-				typedef std::shared_ptr<DestroyCommand> DestroyCommandPtr;
-				DestroyCommandPtr destroyCommandPtr{ new DestroyCommand(m_TaskObjectID, analyzerGUID, flag) };
-				SVObjectSynchronousCommandTemplate<DestroyCommandPtr> destroyCmd(m_InspectionID, destroyCommandPtr);
-				destroyCmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+				SvPB::DestroyChildRequest requestMessage;
+				requestMessage.set_flag(SvPB::DestroyChildRequest::Flag_None);
+				requestMessage.mutable_taskobjectlistid()->CopyFrom(SvCmd::setGuidToMessage(m_TaskObjectID));
+				requestMessage.mutable_objectid()->CopyFrom(SvCmd::setGuidToMessage(analyzerGUID));
+				SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, nullptr);
 			}
 		}
 
@@ -182,11 +180,10 @@ namespace SvOg {
 		if( SV_GUID_NULL != m_selectedAnalyzerID ) 
 		{
 			// Close, Disconnect and Delete it
-			typedef SvCmd::DestroyChildObject DestroyCommand;
-			typedef std::shared_ptr<DestroyCommand> DestroyCommandPtr;
-			DestroyCommandPtr destroyCommandPtr{ new DestroyCommand(m_TaskObjectID, m_selectedAnalyzerID) };
-			SVObjectSynchronousCommandTemplate<DestroyCommandPtr> destroyCmd(m_InspectionID, destroyCommandPtr);
-			destroyCmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+			SvPB::DestroyChildRequest requestMessage;
+			requestMessage.mutable_taskobjectlistid()->CopyFrom(SvCmd::setGuidToMessage(m_TaskObjectID));
+			requestMessage.mutable_objectid()->CopyFrom(SvCmd::setGuidToMessage(m_selectedAnalyzerID));
+			SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, nullptr);
 			m_selectedAnalyzerID = SV_GUID_NULL;
 			m_selectedSubType = SvDef::SVNotSetSubObjectType;
 
@@ -599,14 +596,13 @@ namespace SvOg {
 			if ( SV_GUID_NULL != analyzerGUID && analyzerGUID != m_selectedAnalyzerID)
 			{
 				// Do a reset of the analyzer
-				typedef std::shared_ptr<SvCmd::ResetObject> ResetObjectCommandPtr;
-				ResetObjectCommandPtr commandPtr(new SvCmd::ResetObject(analyzerGUID));
-				SVObjectSynchronousCommandTemplate<ResetObjectCommandPtr> cmd(m_InspectionID, commandPtr);
-
-				hrOk = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+				SvPB::ResetObjectRequest requestMessage;
+				SvPB::ResetObjectResponse responseMessage;
+				requestMessage.mutable_objectid()->CopyFrom(SvCmd::setGuidToMessage(analyzerGUID));
+				hrOk = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, &responseMessage);
 				if (S_OK != hrOk)
 				{
-					SvStl::MessageContainerVector errorMessageList = commandPtr->getErrorMessages();
+					SvStl::MessageContainerVector errorMessageList = SvCmd::setMessageContainerFromMessagePB(responseMessage.messages());
 					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 					if (0 < errorMessageList.size())
 					{

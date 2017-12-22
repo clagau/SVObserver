@@ -17,12 +17,11 @@
 #include "FormulaController.h"
 #include "InspectionCommands\GetAvailableObjects.h"
 #include "InspectionCommands\ConstructAndInsertFriend.h"
-#include "InspectionCommands\DestroyFriend.h"
 #include "InspectionCommands\SetObjectName.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage\SVMessage.h"
-#include "InspectionCommands\GetErrorMessageList.h"
 #include "InspectionCommands\MoveFriendObject.h"
+#include "InspectionCommands/CommandFunctionHelper.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
@@ -115,11 +114,11 @@ namespace SvOg {
 			{
 				if(m_Grid.IsCellSelected( i, j ) )
 				{
-					typedef SvCmd::DestroyFriend Command;
-					typedef std::shared_ptr<Command> CommandPtr;
-					CommandPtr commandPtr{ new Command(m_TaskObjectID, m_gridList[i - 1].second, SvCmd::DestroyFriend::Flag_ResetInspection) };
-					SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-					HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+					SvPB::DestroyChildRequest requestMessage;
+					requestMessage.set_flag(SvPB::DestroyChildRequest::Flag_ResetInspection);
+					requestMessage.mutable_taskobjectlistid()->CopyFrom(SvCmd::setGuidToMessage(m_TaskObjectID));
+					requestMessage.mutable_objectid()->CopyFrom(SvCmd::setGuidToMessage(m_gridList[i - 1].second));
+					HRESULT hr =  SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, nullptr);
 					if (S_OK != hr)
 					{
 						SvDef::StringVector msgList;
@@ -314,24 +313,17 @@ namespace SvOg {
 		UpdateData(TRUE);
 		HRESULT hResult = S_OK;
 		// Do a reset of the Tool
-		typedef std::shared_ptr<SvCmd::ResetObject> ResetObjectCommandPtr;
-		ResetObjectCommandPtr commandPtr(new SvCmd::ResetObject(m_InspectionID));
-		SVObjectSynchronousCommandTemplate<ResetObjectCommandPtr> cmd(m_InspectionID, commandPtr);
-
-		hResult = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-		if (S_OK != hResult)
+		SvPB::ResetObjectRequest requestMessage;
+		SvPB::ResetObjectResponse responseMessage;
+		requestMessage.mutable_objectid()->CopyFrom(SvCmd::setGuidToMessage(m_InspectionID));
+		hResult = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, &responseMessage);
+		SvStl::MessageContainerVector errorMessageList = SvCmd::setMessageContainerFromMessagePB(responseMessage.messages());
+		if (0 < errorMessageList.size())
 		{
-			typedef std::shared_ptr<SvCmd::GetErrorMessageList> GetErrorMessageListCommandPtr;
-			GetErrorMessageListCommandPtr errorCommandPtr(new SvCmd::GetErrorMessageList(m_TaskObjectID));
-			SVObjectSynchronousCommandTemplate<GetErrorMessageListCommandPtr> errorCmd(m_InspectionID, errorCommandPtr);
-			errorCmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-			SvStl::MessageContainerVector errorMessageList = errorCommandPtr->GetMessageList();
-			if (0 < errorMessageList.size())
-			{
-				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( errorMessageList[0].getMessage() );
-			}
+			SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+			Msg.setMessage(errorMessageList[0].getMessage());
 		}
+
 		return hResult;
 	}
 

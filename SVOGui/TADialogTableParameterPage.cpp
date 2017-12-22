@@ -17,7 +17,6 @@
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage\SVMessage.h"
 #include "Definitions/GlobalConst.h"
-#include "InspectionCommands\GetErrorMessageList.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -178,23 +177,15 @@ namespace SvOg {
 
 	void TADialogTableParameterPage::resetInspection()
 	{
-		typedef std::shared_ptr<SvCmd::ResetObject> ResetObjectCommandPtr;
-		ResetObjectCommandPtr commandPtr(new SvCmd::ResetObject(m_InspectionID));
-		SVObjectSynchronousCommandTemplate<ResetObjectCommandPtr> cmd(m_InspectionID, commandPtr);
-
-		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-		if (S_OK != hr)
+		SvPB::ResetObjectRequest requestMessage;
+		SvPB::ResetObjectResponse responseMessage;
+		requestMessage.mutable_objectid()->CopyFrom(SvCmd::setGuidToMessage(m_InspectionID));
+		SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, &responseMessage);
+		SvStl::MessageContainerVector messages = SvCmd::setMessageContainerFromMessagePB(responseMessage.messages());
+		if (messages.size() > 0 && 0 != messages[0].getMessage().m_MessageCode)
 		{
-			typedef std::shared_ptr<SvCmd::GetErrorMessageList> GetErrorMessageListCommandPtr;
-			GetErrorMessageListCommandPtr errorCommandPtr(new SvCmd::GetErrorMessageList(m_TaskObjectID));
-			SVObjectSynchronousCommandTemplate<GetErrorMessageListCommandPtr> errorCmd(m_InspectionID, errorCommandPtr);
-			errorCmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-			SvStl::MessageContainerVector messages = errorCommandPtr->GetMessageList();
-			if (messages.size() > 0 && 0 != messages[0].getMessage().m_MessageCode)
-			{
-				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-				Msg.setMessage(messages[0].getMessage());
-			}
+			SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+			Msg.setMessage(messages[0].getMessage());
 		}
 	}
 #pragma endregion Private Mehods

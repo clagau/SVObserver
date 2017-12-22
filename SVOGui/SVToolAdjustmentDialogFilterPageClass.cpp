@@ -25,15 +25,14 @@
 #include "InspectionCommands/GetCreatableObjects.h"
 #include "InspectionCommands/GetInstanceIDByTypeInfo.h"
 #include "InspectionCommands/GetAvailableObjects.h"
-#include "InspectionCommands/InspectionRunOnce.h"
 #include "InspectionCommands/GetObjectTypeInfo.h"
 #include "InspectionCommands/ConstructAndInsertTaskObject.h"
-#include "InspectionCommands/DestroyChildObject.h"
 #include "InspectionCommands/ShouldInspectionReset.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "TextDefinesSvOg.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
+#include "InspectionCommands/CommandFunctionHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -83,10 +82,10 @@ namespace SvOg
 	{
 		UpdateData( TRUE ); // get data from dialog
 
-		SvCmd::InspectionRunOncePtr commandPtr{ new SvCmd::InspectionRunOnce(m_InspectionID, m_TaskObjectID) } ;
-		SVObjectSynchronousCommandTemplate< SvCmd::InspectionRunOncePtr > command( m_InspectionID, commandPtr );
-
-		HRESULT hrOk = command.Execute( TWO_MINUTE_CMD_TIMEOUT );
+		SvPB::InspectionRunOnceRequest requestMessage;
+		requestMessage.mutable_inspectionid()->CopyFrom(SvCmd::setGuidToMessage(m_InspectionID));
+		requestMessage.mutable_taskid()->CopyFrom(SvCmd::setGuidToMessage(m_TaskObjectID));
+		HRESULT hrOk = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, nullptr);
 
 		UpdateData( FALSE );
 
@@ -290,18 +289,17 @@ namespace SvOg
 				HRESULT hr = resetCmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 				bReset |= resetCommandPtr->shouldResetInspection();
 
-				SvCmd::DestroyChildObject::FlagEnum flag = SvCmd::DestroyChildObject::Flag_None;
-				//if last object and it should be reset, set flag
-				if (bReset && listSize-1==i )
-				{
-					flag = SvCmd::DestroyChildObject::Flag_SetDefaultInputs_And_ResetInspection;
-				}
 				// Close, Disconnect and Delete it
-				typedef SvCmd::DestroyChildObject DestroyCommand;
-				typedef std::shared_ptr<DestroyCommand> DestroyCommandPtr;
-				DestroyCommandPtr destroyCommandPtr{ new DestroyCommand(m_UnaryImageOperatorID, filterGUID, flag) };
-				SVObjectSynchronousCommandTemplate<DestroyCommandPtr> destroyCmd(m_InspectionID, destroyCommandPtr);
-				destroyCmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+				SvPB::DestroyChildRequest requestMessage;
+				//if last object and it should be reset, set flag
+				if (bReset && listSize - 1 == i)
+				{
+					requestMessage.set_flag(SvPB::DestroyChildRequest::Flag_SetDefaultInputs_And_ResetInspection);
+				}
+
+				requestMessage.mutable_taskobjectlistid()->CopyFrom(SvCmd::setGuidToMessage(m_UnaryImageOperatorID));
+				requestMessage.mutable_objectid()->CopyFrom(SvCmd::setGuidToMessage(filterGUID));
+				SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, nullptr);
 			}
 		}
 
@@ -330,19 +328,16 @@ namespace SvOg
 
 			if( S_OK == hr )
 			{
-				SvCmd::DestroyChildObject::FlagEnum flag = SvCmd::DestroyChildObject::Flag_None;
-
-				if( resetCommandPtr->shouldResetInspection() )
+				SvPB::DestroyChildRequest requestMessage;
+				//if last object and it should be reset, set flag
+				if (resetCommandPtr->shouldResetInspection())
 				{
-					flag = SvCmd::DestroyChildObject::Flag_SetDefaultInputs_And_ResetInspection;
+					requestMessage.set_flag(SvPB::DestroyChildRequest::Flag_SetDefaultInputs_And_ResetInspection);
 				}
 
-				// Close, Disconnect and Delete it
-				typedef SvCmd::DestroyChildObject DestroyCommand;
-				typedef std::shared_ptr<DestroyCommand> DestroyCommandPtr;
-				DestroyCommandPtr destroyCommandPtr{ new DestroyCommand(m_UnaryImageOperatorID, filterGUID, flag) };
-				SVObjectSynchronousCommandTemplate<DestroyCommandPtr> destroyCmd(m_InspectionID, destroyCommandPtr);
-				destroyCmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+				requestMessage.mutable_taskobjectlistid()->CopyFrom(SvCmd::setGuidToMessage(m_UnaryImageOperatorID));
+				requestMessage.mutable_objectid()->CopyFrom(SvCmd::setGuidToMessage(filterGUID));
+				SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, nullptr);
 			}
 
 			// Refresh Dialog...

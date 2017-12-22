@@ -15,7 +15,6 @@
 
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
-#include "InspectionCommands/InspectionRunOnce.h"
 
 #include "InspectionEngine/SVAnalyzer.h"
 #include "SVChildrenSetupDialog.h"
@@ -33,7 +32,7 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary/MessageManager.h"
-
+#include "InspectionCommands/CommandFunctionHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -220,10 +219,10 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnButtonDetails()
 					l_ToolId = m_pTool->GetUniqueObjectID();
 				}
 
-				SvCmd::InspectionRunOncePtr l_CommandPtr{ new SvCmd::InspectionRunOnce(pInspection->GetUniqueObjectID(), l_ToolId) };
-				SVObjectSynchronousCommandTemplate< SvCmd::InspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
-
-				l_Command.Execute( TWO_MINUTE_CMD_TIMEOUT );
+				SvPB::InspectionRunOnceRequest requestMessage;
+				requestMessage.mutable_inspectionid()->CopyFrom(SvCmd::setGuidToMessage(pInspection->GetUniqueObjectID()));
+				requestMessage.mutable_taskid()->CopyFrom(SvCmd::setGuidToMessage(l_ToolId));
+				SvCmd::InspectionCommandsSynchronous(pInspection->GetUniqueObjectID(), &requestMessage, nullptr);
 			}
 		}
 	}
@@ -322,10 +321,10 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 				l_ToolId = m_pTool->GetUniqueObjectID();
 			}
 
-			SvCmd::InspectionRunOncePtr l_CommandPtr{ new SvCmd::InspectionRunOnce(pInspection->GetUniqueObjectID(), l_ToolId) };
-			SVObjectSynchronousCommandTemplate< SvCmd::InspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
-
-			l_Command.Execute( TWO_MINUTE_CMD_TIMEOUT );
+			SvPB::InspectionRunOnceRequest requestMessage;
+			requestMessage.mutable_inspectionid()->CopyFrom(SvCmd::setGuidToMessage(pInspection->GetUniqueObjectID()));
+			requestMessage.mutable_taskid()->CopyFrom(SvCmd::setGuidToMessage(l_ToolId));
+			SvCmd::InspectionCommandsSynchronous(pInspection->GetUniqueObjectID(), &requestMessage, nullptr);
 		}
 	}
 

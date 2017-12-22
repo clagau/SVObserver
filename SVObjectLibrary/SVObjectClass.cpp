@@ -687,33 +687,6 @@ SVObjectClass*  SVObjectClass::GetFriend( const SvDef::SVObjectTypeInfoStruct& r
 }
 
 /*
-This method is used to remove an object from the friends list via the object's unique object identifier.
-*/
-bool SVObjectClass::RemoveFriend( const GUID& rFriendGUID )
-{
-	// Check GUID...
-	if (SV_GUID_NULL != rFriendGUID)
-	{
-		// Check if friend is applied...
-		if (m_friendList.size())
-		{
-			for (int i = static_cast<int>(m_friendList.size()) - 1; i >= 0; --i)
-			{
-				if (m_friendList[i].getUniqueObjectID() == rFriendGUID)
-				{
-					// Remove Friend...
-					m_friendList.RemoveAt(i);
-
-					// Success...
-					return true;
-				}
-			}
-		}
-	}
-	return false;
-}
-
-/*
 Set the object data depth. ( Data Table )  Should be overridden and must be called in derived classes...
 */
 void SVObjectClass::SetObjectDepth( int NewObjectDepth )
@@ -801,7 +774,7 @@ std::string SVObjectClass::GetObjectNameToObjectType(SvDef::SVObjectTypeEnum obj
 		{
 			Result = pObject->GetObjectNameToObjectType(objectTypeToInclude);
 		}
-	}
+		}
 	if (!Result.empty())
 	{
 		Result += _T(".");

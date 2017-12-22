@@ -119,7 +119,6 @@ public:
 	/// \param rAddPreGuid [in] The new object will be added before this object. Default: SV_GUID_NULL This means: it will be added at the end.
 	/// \returns bool
 	bool AddFriend( const GUID& rFriendGUID, const GUID& rAddPreGuid = SV_GUID_NULL );
-	bool RemoveFriend( const GUID& rFriendGUID );
 	void DestroyFriends();
 
 	/// Destroy a friend (Disconnect, CloseObject and Destroy his friend), but it must be a taskObject. 

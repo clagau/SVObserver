@@ -15,14 +15,12 @@
 #include "InspectionCommands\GetConnectedObjects.h"
 #include "InspectionCommands\ConnectToObject.h"
 #include "InspectionCommands\GetResultImage.h"
-#include "InspectionCommands\IsValid.h"
-#include "InspectionCommands\InspectionRunOnce.h"
-#include "InspectionCommands\ResetObject.h"
 #include "InspectionCommands\SaveImage.h"
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
 #include "ObjectInterfaces\IObjectManager.h"
 #include "ObjectInterfaces\ISVImage.h"
+#include "InspectionCommands\CommandFunctionHelper.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -209,41 +207,33 @@ namespace SvOg
 	bool ImageController::IsToolValid() const
 	{
 		bool bIsValid = false;
-		typedef SvCmd::IsValid Command;
-		typedef std::shared_ptr<Command> CommandPtr;
-		CommandPtr commandPtr{ new Command(m_TaskObjectID) };
-		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+		SvPB::IsValidRequest requestMessageList;
+		SvPB::IsValidResponse responseMessageList;
+		requestMessageList.mutable_objectid()->CopyFrom(SvCmd::setGuidToMessage(m_TaskObjectID));
+		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessageList, &responseMessageList);
 		if (S_OK == hr)
 		{
-			bIsValid = commandPtr->isValid();
+			bIsValid = responseMessageList.isvalid();
 		}
 		return bIsValid;
 	}
 
 	HRESULT ImageController::ResetTask(SvStl::MessageContainerVector& messages) const
 	{
-		bool bIsValid = false;
-		typedef SvCmd::ResetObject Command;
-		typedef std::shared_ptr<Command> CommandPtr;
-		CommandPtr commandPtr{ new Command(m_TaskObjectID) };
-		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-		if (S_OK != hr)
-		{
-			messages = commandPtr->getErrorMessages();
-		}
+		SvPB::ResetObjectRequest requestMessage;
+		SvPB::ResetObjectResponse responseMessage;
+		requestMessage.mutable_objectid()->CopyFrom(SvCmd::setGuidToMessage(m_TaskObjectID));
+		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, &responseMessage);
+		messages = SvCmd::setMessageContainerFromMessagePB(responseMessage.messages());
 		return hr;
 	}
 
 	HRESULT ImageController::ToolRunOnce()
 	{
-		typedef SvCmd::InspectionRunOnce Command;
-		typedef std::shared_ptr<Command> CommandPtr;
-		CommandPtr commandPtr{ new Command(m_InspectionID, m_TaskObjectID) };
-		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-		return hr;
+		SvPB::InspectionRunOnceRequest requestMessage;
+		requestMessage.mutable_inspectionid()->CopyFrom(SvCmd::setGuidToMessage(m_InspectionID));
+		requestMessage.mutable_taskid()->CopyFrom(SvCmd::setGuidToMessage(m_TaskObjectID));
+		return SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, nullptr);
 	}
 
 	SvDef::SVImageTypeEnum ImageController::GetImageType(const GUID& rImageID) const

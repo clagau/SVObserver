@@ -143,7 +143,7 @@ bool TableTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 				else
 				{
 					Result = false;
-					DestroyFriendObject(*equation, 0);
+					DestroyChild(*equation, 0);
 					j--;
 					if (nullptr != pErrorMessages)
 					{

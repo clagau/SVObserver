@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GetEquation.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TaskObjectGetEmbeddedValues.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -25,9 +22,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GetObjectName.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ResetObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SetDefaultInputs.h">
@@ -49,12 +43,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GetConnectedObjects.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IsValid.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="InspectionRunOnce.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GetResultImage.h">
@@ -102,9 +90,6 @@
     <ClInclude Include="GetCreatableObjects.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DestroyChildObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ShouldInspectionReset.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -118,9 +103,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GetPPQObjectName.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ValidateAndSetEquation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GetOutputRectangle.h">
@@ -144,19 +126,10 @@
     <ClInclude Include="ConstructAndInsertFriend.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DestroyFriend.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SetObjectName.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GetErrorMessageList.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GetInputs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CreateModel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GetInstanceIDByTypeInfo.h">
@@ -168,5 +141,28 @@
     <ClInclude Include="MoveFriendObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="InspectionCommand_protoBuf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandFunction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandFunctionHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="CommandFunction.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandFunctionHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

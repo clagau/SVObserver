@@ -17,8 +17,8 @@ namespace SvCmd
 	class SetAuxSourceImage
 	{
 	public:
-		SetAuxSourceImage(const ResetObject&) = delete;
-		SetAuxSourceImage& operator=(const ResetObject&) = delete;
+		SetAuxSourceImage(const SetAuxSourceImage&) = delete;
+		SetAuxSourceImage& operator=(const SetAuxSourceImage&) = delete;
 		
 		SetAuxSourceImage(const SVGUID& rObjectID, const SVGUID& rImageID) : m_InstanceID(rObjectID), m_ImageID(rImageID) {};
 

@@ -16,7 +16,6 @@
 
 #include "SVConfigurationObject.h"
 
-#include "InspectionCommands/InspectionRunOnce.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVObjectLibrary/SVObjectAsynchronousCommandTemplate.h"
 #include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
@@ -69,6 +68,7 @@
 #include "Definitions/GlobalConst.h"
 #include "TextDefinesSvO.h"
 #include "SVColorTool.h"
+#include "InspectionCommands/CommandFunctionHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -3840,12 +3840,11 @@ bool SVConfigurationObject::Activate()
 
 	for ( long l = lSize - 1; -1 < l; l-- )
 	{
-		SVInspectionProcess* l_pInspection = m_arInspectionArray[l];
+		SVInspectionProcess* pInspection = m_arInspectionArray[l];
 
-		SvCmd::InspectionRunOncePtr l_CommandPtr{ new SvCmd::InspectionRunOnce(l_pInspection->GetUniqueObjectID()) };
-		SVObjectSynchronousCommandTemplate< SvCmd::InspectionRunOncePtr > l_Command( l_pInspection->GetUniqueObjectID(), l_CommandPtr );
-
-		l_Command.Execute( TWO_MINUTE_CMD_TIMEOUT );
+		SvPB::InspectionRunOnceRequest requestMessage;
+		requestMessage.mutable_inspectionid()->CopyFrom(SvCmd::setGuidToMessage(pInspection->GetUniqueObjectID()));
+		SvCmd::InspectionCommandsSynchronous(pInspection->GetUniqueObjectID(), &requestMessage, nullptr);
 	}
 
 	return bOk;
@@ -4801,10 +4800,9 @@ HRESULT SVConfigurationObject::SetInspectionItems( const SVNameStorageMap& p_rIt
 
 				if( nullptr != pInspection )
 				{
-					SvCmd::InspectionRunOncePtr l_CommandPtr{ new SvCmd::InspectionRunOnce(pInspection->GetUniqueObjectID()) };
-					SVObjectSynchronousCommandTemplate< SvCmd::InspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
-
-					l_Command.Execute( TWO_MINUTE_CMD_TIMEOUT );
+					SvPB::InspectionRunOnceRequest requestMessage;
+					requestMessage.mutable_inspectionid()->CopyFrom(SvCmd::setGuidToMessage(pInspection->GetUniqueObjectID()));
+					SvCmd::InspectionCommandsSynchronous(pInspection->GetUniqueObjectID(), &requestMessage, nullptr);
 				}
 			}
 		}
@@ -4935,10 +4933,9 @@ HRESULT SVConfigurationObject::SetRemoteInputItems( const SVNameStorageMap& p_rI
 
 				if( nullptr != pInspection )
 				{
-					SvCmd::InspectionRunOncePtr l_CommandPtr{ new SvCmd::InspectionRunOnce(pInspection->GetUniqueObjectID()) };
-					SVObjectSynchronousCommandTemplate< SvCmd::InspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
-
-					l_Command.Execute( TWO_MINUTE_CMD_TIMEOUT );
+					SvPB::InspectionRunOnceRequest requestMessage;
+					requestMessage.mutable_inspectionid()->CopyFrom(SvCmd::setGuidToMessage(pInspection->GetUniqueObjectID()));
+					SvCmd::InspectionCommandsSynchronous(pInspection->GetUniqueObjectID(), &requestMessage, nullptr);
 				}
 			}
 		}

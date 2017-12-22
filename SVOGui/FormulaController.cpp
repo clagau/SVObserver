@@ -21,11 +21,8 @@
 #include "InspectionCommands/GetPPQObjectName.h"
 #include "InspectionCommands/GetPPQSelectorList.h"
 #include "InspectionCommands/GetInstanceIDByTypeInfo.h"
-#include "InspectionCommands/GetEquation.h"
-#include "InspectionCommands/ValidateAndSetEquation.h"
 #include "InspectionCommands/TaskObjectGetEmbeddedValues.h"
 #include "InspectionCommands/TaskObjectSetEmbeddedValues.h"
-#include "InspectionCommands/ResetObject.h"
 #include "InspectionCommands/SetDefaultInputs.h"
 #include "SVObjectLibrary\SVClsIds.h"
 #include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
@@ -87,16 +84,13 @@ namespace SvOg
 	std::string FormulaController::GetEquationText() const
 	{
 		std::string equationText;
-	
-		typedef SvCmd::GetEquation Command;
-		typedef std::shared_ptr<Command> CommandPtr;
-
-		CommandPtr commandPtr{ new Command(m_EquationID) };
-		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+		SvPB::GetEquationRequest requestMessage;
+		SvPB::GetEquationResponse responseMessage;
+		requestMessage.mutable_objectid()->CopyFrom(SvCmd::setGuidToMessage(m_EquationID));
+		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, &responseMessage);
 		if (S_OK == hr)
 		{
-			equationText = commandPtr->GetEquationString();
+			equationText = responseMessage.equationtext();
 		}
 		else
 		{
@@ -147,26 +141,23 @@ namespace SvOg
 	int FormulaController::ValidateEquation( const std::string& equationString, double& result, bool bSetValue, SvStl::MessageContainerVector& rErrorMessages ) const
 	{
 		int retValue = validateSuccessful;
-		typedef SvCmd::ValidateAndSetEquation Command;
-		typedef std::shared_ptr<Command> CommandPtr;
-
-		CommandPtr commandPtr(new Command(m_EquationID, equationString, bSetValue));
-		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+		SvPB::ValidateAndSetEquationRequest requestEquationMessage;
+		SvPB::ValidateAndSetEquationResponse responseEquationMessage;
+		requestEquationMessage.mutable_objectid()->CopyFrom(SvCmd::setGuidToMessage(m_EquationID));
+		requestEquationMessage.set_equationtext(equationString);
+		requestEquationMessage.set_bsetvalue(bSetValue);
+		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestEquationMessage, &responseEquationMessage);
 		if (S_OK == hr)
 		{
-			retValue = commandPtr->GetValidateStatus();
-			result = commandPtr->GetResultValue();
-			rErrorMessages = commandPtr->GetErrorMessages();
+			retValue = responseEquationMessage.validatestatus();
+			result = responseEquationMessage.result();
+			rErrorMessages = SvCmd::setMessageContainerFromMessagePB(responseEquationMessage.messages());;
 
 			if (validateSuccessful == retValue && bSetValue)
 			{
-				typedef SvCmd::ResetObject ResetCommand;
-				typedef std::shared_ptr<ResetCommand> ResetCommandPtr;
-
-				ResetCommandPtr commandPtr(new ResetCommand(m_TaskObjectID));
-				SVObjectSynchronousCommandTemplate<ResetCommandPtr> cmd(m_InspectionID, commandPtr);
-				HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+				SvPB::ResetObjectRequest requestResetMessage;
+				requestResetMessage.mutable_objectid()->CopyFrom(SvCmd::setGuidToMessage(m_TaskObjectID));
+				hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestResetMessage);
 				if (S_OK != hr)
 				{
 					retValue = resetFailed; 

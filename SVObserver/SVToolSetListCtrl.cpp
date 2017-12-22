@@ -16,8 +16,7 @@
 #include "ToolSetView.h"
 #include "ObjectInterfaces\ISVOApp_Helper.h"
 #include "TextDefinesSvO.h"
-#include "InspectionCommands\IsValid.h"
-#include "InspectionCommands\GetErrorMessageList.h"
+#include "InspectionCommands/CommandFunctionHelper.h"
 #include "InspectionCommands\GetTaskObjects.h"
 #include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
 #include "SVOResource\ConstGlobalSvOr.h"
@@ -283,20 +282,16 @@ bool SVToolSetListCtrl::IsEmptyStringPlaceHolder( const std::string& rName ) con
 
 bool SVToolSetListCtrl::displayErrorBox(const SVGUID& rGuid) const
 {
-	typedef SvCmd::GetErrorMessageList Command;
-	typedef std::shared_ptr<Command> CommandPtr;
-	CommandPtr commandPtr{ new Command(rGuid) };
-	SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionId, commandPtr);
-	HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-	if (S_OK == hr)
+	SvPB::GetMessageListRequest requestMessageList;
+	SvPB::GetMessageListResponse responseMessageList;
+	requestMessageList.mutable_objectid()->CopyFrom(SvCmd::setGuidToMessage(rGuid));
+	SvCmd::InspectionCommandsSynchronous(m_InspectionId, &requestMessageList, &responseMessageList);
+	SvStl::MessageContainerVector messageList = SvCmd::setMessageContainerFromMessagePB(responseMessageList.messages());
+	if (0 < messageList.size())
 	{
-		const SvStl::MessageContainerVector& messageList = commandPtr->GetMessageList();
-		if (0 < messageList.size())
-		{
-			SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
-			Exception.setMessage( messageList[0].getMessage() );
-			return true;
-		}
+		SvStl::MessageMgrStd Exception(SvStl::LogAndDisplay);
+		Exception.setMessage(messageList[0].getMessage());
+		return true;
 	}
 	return false;
 }
@@ -304,14 +299,13 @@ bool SVToolSetListCtrl::displayErrorBox(const SVGUID& rGuid) const
 bool SVToolSetListCtrl::isToolValid(const SVGUID& tool) const
 {
 	bool isToolValid = false;
-	typedef SvCmd::IsValid Command;
-	typedef std::shared_ptr<Command> CommandPtr;
-	CommandPtr commandPtr{ new Command(tool) };
-	SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionId, commandPtr);
-	HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+	SvPB::IsValidRequest requestMessageList;
+	SvPB::IsValidResponse responseMessageList;
+	requestMessageList.mutable_objectid()->CopyFrom(SvCmd::setGuidToMessage(tool));
+	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionId, &requestMessageList, &responseMessageList);
 	if (S_OK == hr)
 	{
-		isToolValid = commandPtr->isValid();
+		isToolValid = responseMessageList.isvalid();
 	}
 	return isToolValid;
 }

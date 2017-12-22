@@ -84,7 +84,6 @@ public:
 	virtual void Delete(const SVGUID& rObjectID) override;
 	virtual void InsertAt(int index, SvOi::ITaskObject& rObject, int Count = 1) override;
 	virtual bool DestroyChild(SvOi::ITaskObject& rObject, DWORD context) override;
-	virtual bool DestroyFriendObject(IObjectClass& rObject, DWORD context) override;
 	virtual SvUl::NameGuidList GetCreatableObjects(const SvDef::SVObjectTypeInfoStruct& pObjectTypeInfo) const override;
 #pragma endregion virtual methods (ITaskObjectListClass)
 
@@ -130,12 +129,17 @@ protected:
 
 #pragma region Private Methods
 private:
-	/// The method destroy a taskObject
-	/// \param rTaskObject [in] This object will destroyed.
-	/// \param context [in] Bits define action (e.g. SvDef::SVMFSetDefaultInputs = set default inputs, SvDef::SVMFResetInspection = reset inspection)
-	void DestroyTaskObject(SVTaskObjectClass& rTaskObject, DWORD context);
-
 	SvOi::IObjectClass* getFirstObjectWithRequestor( const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends, const SvOi::IObjectClass* pRequestor ) const;
+
+	/// Remove the object from the friend-List (don't delete the object itself)
+	/// \param rFriendGUID [in] GUID of the friend to be removed.
+	/// \returns bool true if object in the list found and removed. False if object is not in the list.
+	bool RemoveFriend(const GUID& rFriendGUID);
+
+	/// Remove the object from the TaskObjectVector (don't delete the object itself)
+	/// \param rObjectID [in] GUID of the task to be removed.
+	/// \returns bool true if object in the list found and removed. False if object is not in the list.
+	bool RemoveFromTaskObjectVector(const SVGUID& rObjectID);
 #pragma endregion Private Methods
 	
 #pragma region Member Variables

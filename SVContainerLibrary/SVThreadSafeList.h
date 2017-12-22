@@ -106,15 +106,15 @@ public:
 protected:
 	mutable Concurrency::reader_writer_lock m_dataLock;
 	Container m_list;
-	type m_emptytype; // empy item to be returned if
+	type m_emptytype; // empty item to be returned if
 #pragma endregion Protected
 
 #pragma region Private
 private:
-	SVThreadSafeList(const SVThreadSafeList& rObject);// not copyable - do not implement
-	const SVThreadSafeList& operator=(const SVThreadSafeList& rObject); // not assignable - do not implement
-	const SVThreadSafeList& operator=(const Container& rObject); // not assignable - do not implement
-	void resize(size_type Newsize); // not thread/concurrent safe - do not implement
-	void clear(); //not thread/concurrent safe - do not implement
+	SVThreadSafeList(const SVThreadSafeList& rObject) = delete;// not copyable - do not implement
+	const SVThreadSafeList& operator=(const SVThreadSafeList& rObject) = delete; // not assignable - do not implement
+	const SVThreadSafeList& operator=(const Container& rObject) = delete; // not assignable - do not implement
+	void resize(size_type Newsize) = delete; // not thread/concurrent safe - do not implement
+	void clear() = delete; //not thread/concurrent safe - do not implement
 #pragma endregion Private
 };

@@ -21,7 +21,7 @@
 #include "SVOGui/DisplayHelper.h"
 #include "SVOGui/GuiValueHelper.h"
 #include "Definitions/Color.h"
-#include "InspectionCommands/CreateModel.h"
+#include "Definitions/TextDefineSvDef.h"
 #include "SVMessage/SVMessage.h"
 #include "SVMatroxLibrary/SVMatroxPatternInterface.h"
 #include "SVImageLibrary/SVExtentPointStruct.h"
@@ -256,9 +256,15 @@ void SVPatModelPageClass::OnCreateModel()
 
 	if ( GetModelFile( false, m_strModelName ) ) // false parameter is mode for save file.
 	{
-		std::shared_ptr<SvCmd::CreateModel> commandPtr{ new SvCmd::CreateModel(m_rAnalyzerID, m_nXPos, m_nYPos, m_lModelWidth, m_lModelHeight, std::string(m_strModelName)) };
-		SVObjectSynchronousCommandTemplate<std::shared_ptr<SvCmd::CreateModel>> cmd(m_rInspectionID, commandPtr);
-		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+		SvPB::CreateModelRequest requestMessage;
+		SvPB::CreateModelResponse responseMessage;
+		requestMessage.mutable_patternanalyzerid()->CopyFrom(SvCmd::setGuidToMessage(m_rAnalyzerID));
+		requestMessage.set_posx(m_nXPos);
+		requestMessage.set_posy(m_nYPos);
+		requestMessage.set_modelwidth(m_lModelWidth);
+		requestMessage.set_modelheight(m_lModelHeight);
+		requestMessage.set_filename(m_strModelName);
+		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_rInspectionID, &requestMessage, &responseMessage);
 		if (S_OK == hr)
 		{
 			SvStl::MessageContainerVector ErrorMessages;
@@ -271,7 +277,7 @@ void SVPatModelPageClass::OnCreateModel()
 		}
 		else
 		{
-			SvStl::MessageContainerVector ErrorMessages = commandPtr->getErrorMessages();
+			SvStl::MessageContainerVector ErrorMessages = SvCmd::setMessageContainerFromMessagePB(responseMessage.messages());
 			if (!ErrorMessages.empty())
 			{
 				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );

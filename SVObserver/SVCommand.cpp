@@ -50,7 +50,6 @@
 #include "InspectionEngine/SVTool.h"
 #include "SVCommandStreamManager.h"
 #include "SVCommandInspectionCollectImageData.h"
-#include "InspectionCommands/InspectionRunOnce.h"
 
 #include "SVOLicenseManager.h"
 #include "RemoteCommand.h"
@@ -61,7 +60,7 @@
 #include "TextDefinesSvO.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVStatusLibrary/GlobalPath.h"
-
+#include "InspectionCommands/CommandFunctionHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -2773,10 +2772,9 @@ STDMETHODIMP CSVCommand::SVRunOnce(BSTR bstrName)
 	{
 		if( SVConfigurationObject::GetInspection( W2T(bstrName), pInspection) )
 		{
-			SvCmd::InspectionRunOncePtr l_CommandPtr{ new SvCmd::InspectionRunOnce(pInspection->GetUniqueObjectID()) };
-			SVObjectSynchronousCommandTemplate< SvCmd::InspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
-
-			hrResult = l_Command.Execute( TWO_MINUTE_CMD_TIMEOUT );
+			SvPB::InspectionRunOnceRequest requestMessage;
+			requestMessage.mutable_inspectionid()->CopyFrom(SvCmd::setGuidToMessage(pInspection->GetUniqueObjectID()));
+			hrResult = SvCmd::InspectionCommandsSynchronous(pInspection->GetUniqueObjectID(), &requestMessage, nullptr);
 		}
 	}// end if
 	else

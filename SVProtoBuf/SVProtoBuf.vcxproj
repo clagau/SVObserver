@@ -10,78 +10,24 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="AreAuxiliaryExtentsAvailable.h" />
-    <ClInclude Include="AttributesAllowedFilter.h" />
-    <ClInclude Include="AttributesSetFilter.h" />
-    <ClInclude Include="CommandFunction.h" />
-    <ClInclude Include="CommandFunctionHelper.h" />
-    <ClInclude Include="ConnectToObject.h" />
-    <ClInclude Include="ConstructAndInsertFriend.h" />
-    <ClInclude Include="ExportMask.h" />
-    <ClInclude Include="GetAllowedImageList.h" />
-    <ClInclude Include="GetAttributesAllowed.h" />
-    <ClInclude Include="GetAuxSourceImage.h" />
-    <ClInclude Include="GetAvailableAuxSourceImages.h" />
-    <ClInclude Include="GetAvailableObjects.h" />
-    <ClInclude Include="GetCreatableObjects.h" />
-    <ClInclude Include="GetConnectedObjects.h" />
-    <ClInclude Include="GetImage.h" />
-    <ClInclude Include="GetInputs.h" />
-    <ClInclude Include="GetInstanceIDByDottedName.h" />
-    <ClInclude Include="GetMaskImage.h" />
-    <ClInclude Include="GetMaskData.h" />
-    <ClInclude Include="GetObjectName.h" />
-    <ClInclude Include="GetObjectTypeInfo.h" />
-    <ClInclude Include="GetOutputRectangle.h" />
-    <ClInclude Include="GetPPQObjectName.h" />
-    <ClInclude Include="GetPPQSelectorList.h" />
-    <ClInclude Include="GetReferenceImage.h" />
-    <ClInclude Include="GetResultImage.h" />
-    <ClInclude Include="GetInstanceIDByTypeInfo.h" />
-    <ClInclude Include="GetSelectorList.h" />
-    <ClInclude Include="GetTaskObjects.h" />
-    <ClInclude Include="ImportMask.h" />
-    <ClInclude Include="ConstructAndInsertTaskObject.h" />
-    <ClInclude Include="InspectionCommand_protoBuf.h" />
-    <ClInclude Include="MLRejectValueFilter.h" />
-    <ClInclude Include="MoveFriendObject.h" />
-    <ClInclude Include="RangeSelectorFilter.h" />
-    <ClInclude Include="SaveImage.h" />
-    <ClInclude Include="SetAuxSourceImage.h" />
-    <ClInclude Include="SetDefaultInputs.h" />
-    <ClInclude Include="SetMaskData.h" />
-    <ClInclude Include="SetObjectName.h" />
-    <ClInclude Include="ShouldInspectionReset.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="TaskObjectGetEmbeddedValues.h" />
-    <ClInclude Include="TaskObjectSetEmbeddedValues.h" />
-    <ClInclude Include="ValueObjectGetEnums.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="CommandFunction.cpp" />
-    <ClCompile Include="CommandFunctionHelper.cpp" />
-    <ClCompile Include="stdafx.cpp" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{A505841E-F43F-472B-B6E0-D1110479621C}</ProjectGuid>
-    <Keyword>Win64Proj</Keyword>
-    <RootNamespace>InspectionCommands</RootNamespace>
+    <ProjectGuid>{2F3FD18D-3FDE-414C-8AF5-4A872B1519FF}</ProjectGuid>
+    <RootNamespace>SVProtoBuf</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <CharacterSet>NotSet</CharacterSet>
     <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>NotSet</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -95,6 +41,7 @@
     <Import Project="..\SVOGlobalProperties.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)$(Configuration)\$(Platform)\bin\</OutDir>
     <IntDir>$(SolutionDir)$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
@@ -107,36 +54,50 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_WIN64;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>_WIN64;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="InspectionCommands.proto">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(PATH_3RDPARTY)\protobuf\protobuf-3.4.0\bin\protoc.exe -I=$(MSBuildProjectDirectory)  --cpp_out=$(MSBuildProjectDirectory)  $(MSBuildProjectDirectory)\InspectionCommands.proto</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating c++ code from ./InspectionCommands.proto</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">InspectionCommads.pb.cc;InspectionCommads.pb.h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(PATH_3RDPARTY)\protobuf\protobuf-3.4.0\bin\protoc.exe -I=$(MSBuildProjectDirectory)  --cpp_out=$(MSBuildProjectDirectory)  $(MSBuildProjectDirectory)\InspectionCommands.proto</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating c++ code from ./InspectionCommands.proto</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">InspectionCommads.pb.cc;InspectionCommads.pb.h;%(Outputs)</Outputs>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="InspectionCommands.pb.cc">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="InspectionCommands.pb.h" />
+    <ClInclude Include="stdafx.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

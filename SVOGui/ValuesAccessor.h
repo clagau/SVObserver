@@ -15,9 +15,8 @@
 #include "InspectionCommands/TaskObjectGetEmbeddedValues.h"
 #include "InspectionCommands/TaskObjectSetEmbeddedValues.h"
 #include "InspectionCommands/ValueObjectGetEnums.h"
-#include "InspectionCommands/InspectionRunOnce.h"
-#include "InspectionCommands/ResetObject.h"
 #include "InspectionCommands/GetObjectName.h"
+#include "InspectionCommands/CommandFunctionHelper.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -68,23 +67,19 @@ namespace SvOg
 				if (bReset)
 				{
 					// Do a reset of the Tool
-					typedef std::shared_ptr<SvCmd::ResetObject> ResetObjectCommandPtr;
-					ResetObjectCommandPtr commandPtr(new SvCmd::ResetObject(ownerID));
-					SVObjectSynchronousCommandTemplate<ResetObjectCommandPtr> cmd(inspectionID, commandPtr);
-
-					hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-					if (S_OK != hr)
-					{
-						m_setMessageFailList = commandPtr->getErrorMessages();
-					}
+					SvPB::ResetObjectRequest requestMessage;
+					SvPB::ResetObjectResponse responseMessage;
+					requestMessage.mutable_objectid()->CopyFrom(SvCmd::setGuidToMessage(ownerID));
+					hr = SvCmd::InspectionCommandsSynchronous(inspectionID, &requestMessage, &responseMessage);
+					m_setMessageFailList = SvCmd::setMessageContainerFromMessagePB(responseMessage.messages());
 				}
 				if (S_OK == hr)
 				{
 					// Do a run once of the Tool/Inspection ?
-					SvCmd::InspectionRunOncePtr commandPtr(new SvCmd::InspectionRunOnce(inspectionID, ownerID));
-					SVObjectSynchronousCommandTemplate<SvCmd::InspectionRunOncePtr> cmd(inspectionID, commandPtr);
-
-					hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+					SvPB::InspectionRunOnceRequest requestMessage;
+					requestMessage.mutable_inspectionid()->CopyFrom(SvCmd::setGuidToMessage(inspectionID));
+					requestMessage.mutable_taskid()->CopyFrom(SvCmd::setGuidToMessage(ownerID));
+					hr = SvCmd::InspectionCommandsSynchronous(inspectionID, &requestMessage, nullptr);
 				}
 			}
 			return hr;

@@ -23,8 +23,8 @@ namespace SvCmd
 	struct SetDefaultInputs
 	{
 	public:
-		SetDefaultInputs(const ResetObject&) = delete;
-		SetDefaultInputs& operator=(const ResetObject&) = delete;
+		SetDefaultInputs(const SetDefaultInputs&) = delete;
+		SetDefaultInputs& operator=(const SetDefaultInputs&) = delete;
 
 		SetDefaultInputs(const SVGUID& rInstanceID) : m_InstanceID(rInstanceID) {};
 

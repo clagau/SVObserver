@@ -13,9 +13,9 @@
 #include "InspectionCommands\GetAvailableAuxSourceImages.h"
 #include "InspectionCommands\GetAuxSourceImage.h"
 #include "InspectionCommands\SetAuxSourceImage.h"
-#include "InspectionCommands\InspectionRunOnce.h"
 #include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
 #include "SVObjectLibrary\SVClsids.h"
+#include "InspectionCommands\CommandFunctionHelper.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -146,11 +146,9 @@ namespace SvOg
 	
 	HRESULT AuxiliaryExtentsController::RunOnce()
 	{
-		typedef SvCmd::InspectionRunOnce Command;
-		typedef std::shared_ptr<Command> CommandPtr;
-		CommandPtr commandPtr{ new Command(m_InspectionID, m_TaskObjectID) };
-		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-		return hr;
+		SvPB::InspectionRunOnceRequest requestMessage;
+		requestMessage.mutable_inspectionid()->CopyFrom(SvCmd::setGuidToMessage(m_InspectionID));
+		requestMessage.mutable_taskid()->CopyFrom(SvCmd::setGuidToMessage(m_TaskObjectID));
+		return SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, nullptr);
 	}
 } //namespace SvOg
