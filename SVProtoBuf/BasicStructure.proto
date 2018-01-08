@@ -1,0 +1,27 @@
+syntax = "proto2";
+package SvPB;
+
+
+message UUID //Guid-structure
+{
+  optional uint64 part1 = 1 [default = 0];
+  optional uint64 part2 = 2 [default = 0];
+}
+
+message MessageContainer //structure for a (error/warning/info-)message 
+{
+	optional int32 MessageCode = 1;
+	optional int32 AdditionalTextId = 2;
+	repeated string AdditionalTextList = 3;
+	optional string CompileDate = 4;
+	optional string CompileTime = 5;
+	optional string FileName = 6;
+	optional int32 FileLine = 7;
+	optional string FileDateTime = 8;
+	optional UUID ObjectId = 9;
+}
+
+message MessageContainerVector
+{
+	repeated MessageContainer Messages = 1;  //list of messages
+}
