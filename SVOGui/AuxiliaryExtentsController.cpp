@@ -147,8 +147,8 @@ namespace SvOg
 	HRESULT AuxiliaryExtentsController::RunOnce()
 	{
 		SvPB::InspectionRunOnceRequest requestMessage;
-		requestMessage.mutable_inspectionid()->CopyFrom(SvCmd::setGuidToMessage(m_InspectionID));
-		requestMessage.mutable_taskid()->CopyFrom(SvCmd::setGuidToMessage(m_TaskObjectID));
+		requestMessage.mutable_inspectionid()->CopyFrom(SvPB::setGuidToMessage(m_InspectionID));
+		requestMessage.mutable_taskid()->CopyFrom(SvPB::setGuidToMessage(m_TaskObjectID));
 		return SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, nullptr);
 	}
 } //namespace SvOg

@@ -35,8 +35,8 @@ namespace SvCmd
 	{
 		HRESULT hr = S_OK;
 
-		SVGUID InspectionID = getGuidFromMessage(rMessage.inspectionid());
-		SVGUID ToolID = getGuidFromMessage(rMessage.taskid());
+		SVGUID InspectionID = SvPB::getGuidFromMessage(rMessage.inspectionid());
+		SVGUID ToolID = SvPB::getGuidFromMessage(rMessage.taskid());
 
 		SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess *>(SvOi::getObject(InspectionID));
 		if (nullptr != pInspection)
@@ -59,8 +59,8 @@ namespace SvCmd
 	{
 		HRESULT hr = S_OK;
 
-		SvOi::ITaskObjectListClass *pTaskObjectList = dynamic_cast<SvOi::ITaskObjectListClass*>(SvOi::getObject(getGuidFromMessage(rMessage.taskobjectlistid())));
-		SvOi::ITaskObject *pObject = dynamic_cast<SvOi::ITaskObject*>(SvOi::getObject(getGuidFromMessage(rMessage.objectid())));
+		SvOi::ITaskObjectListClass *pTaskObjectList = dynamic_cast<SvOi::ITaskObjectListClass*>(SvOi::getObject(SvPB::getGuidFromMessage(rMessage.taskobjectlistid())));
+		SvOi::ITaskObject *pObject = dynamic_cast<SvOi::ITaskObject*>(SvOi::getObject(SvPB::getGuidFromMessage(rMessage.objectid())));
 		if (nullptr != pTaskObjectList && nullptr != pObject)
 		{
 			DWORD flag = 0;
@@ -92,7 +92,7 @@ namespace SvCmd
 	{
 		HRESULT hr = S_OK;
 
-		SvOi::ITaskObject* pTask = dynamic_cast<SvOi::ITaskObject *>(SvOi::getObject(getGuidFromMessage(rRequestMessage.objectid())));
+		SvOi::ITaskObject* pTask = dynamic_cast<SvOi::ITaskObject *>(SvOi::getObject(SvPB::getGuidFromMessage(rRequestMessage.objectid())));
 		if (pTask)
 		{
 			rResponseMessage.mutable_messages()->CopyFrom(setMessageContainerToMessagePB(pTask->getErrorMessages()));
@@ -107,7 +107,7 @@ namespace SvCmd
 	HRESULT ResetObject(const SvPB::ResetObjectRequest& rRequestMessage, SvPB::ResetObjectResponse* pResponseMessage)
 	{
 		HRESULT hr = S_OK;
-		SvOi::IObjectClass* pObject = SvOi::getObject(getGuidFromMessage(rRequestMessage.objectid()));
+		SvOi::IObjectClass* pObject = SvOi::getObject(SvPB::getGuidFromMessage(rRequestMessage.objectid()));
 
 		if (nullptr != pObject)
 		{
@@ -129,7 +129,7 @@ namespace SvCmd
 	{
 		HRESULT hr = S_OK;
 		SvStl::MessageContainerVector messages;
-		SVGUID patternID = getGuidFromMessage(rRequestMessage.patternanalyzerid());
+		SVGUID patternID = SvPB::getGuidFromMessage(rRequestMessage.patternanalyzerid());
 		SvOi::IPatternAnalyzer* pPatAnalyzer = dynamic_cast<SvOi::IPatternAnalyzer*>(SvOi::getObject(patternID));
 
 		if (nullptr != pPatAnalyzer && pPatAnalyzer->UpdateModelFromInputImage(rRequestMessage.posx(), rRequestMessage.posy(), rRequestMessage.modelwidth(), rRequestMessage.modelheight()))
@@ -185,7 +185,7 @@ namespace SvCmd
 	{
 		HRESULT hr = S_OK;
 
-		SvOi::ITaskObject* pObject = dynamic_cast<SvOi::ITaskObject *>(SvOi::getObject(getGuidFromMessage(rRequestMessage.objectid())));
+		SvOi::ITaskObject* pObject = dynamic_cast<SvOi::ITaskObject *>(SvOi::getObject(SvPB::getGuidFromMessage(rRequestMessage.objectid())));
 		if (pObject)
 		{
 			rResponseMessage.set_isvalid(pObject->IsObjectValid());
@@ -201,7 +201,7 @@ namespace SvCmd
 	{
 		HRESULT hr = S_OK;
 
-		SvOi::IEquation* pEquation = dynamic_cast<SvOi::IEquation *>(SvOi::getObject(getGuidFromMessage(rRequestMessage.objectid())));
+		SvOi::IEquation* pEquation = dynamic_cast<SvOi::IEquation *>(SvOi::getObject(SvPB::getGuidFromMessage(rRequestMessage.objectid())));
 		if (pEquation)
 		{
 			rResponseMessage.set_equationtext(pEquation->GetEquationText());
@@ -217,7 +217,7 @@ namespace SvCmd
 	{
 		HRESULT hr = S_OK;
 
-		SvOi::IEquation* pEquation = dynamic_cast<SvOi::IEquation *>(SvOi::getObject(getGuidFromMessage(rRequestMessage.objectid())));
+		SvOi::IEquation* pEquation = dynamic_cast<SvOi::IEquation *>(SvOi::getObject(SvPB::getGuidFromMessage(rRequestMessage.objectid())));
 		if (pEquation)
 		{
 			std::string oldString;

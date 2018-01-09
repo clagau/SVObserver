@@ -258,7 +258,7 @@ void SVPatModelPageClass::OnCreateModel()
 	{
 		SvPB::CreateModelRequest requestMessage;
 		SvPB::CreateModelResponse responseMessage;
-		requestMessage.mutable_patternanalyzerid()->CopyFrom(SvCmd::setGuidToMessage(m_rAnalyzerID));
+		requestMessage.mutable_patternanalyzerid()->CopyFrom(SvPB::setGuidToMessage(m_rAnalyzerID));
 		requestMessage.set_posx(m_nXPos);
 		requestMessage.set_posy(m_nYPos);
 		requestMessage.set_modelwidth(m_lModelWidth);

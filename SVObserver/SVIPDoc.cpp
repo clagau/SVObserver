@@ -4151,10 +4151,10 @@ bool SVIPDoc::RunOnce( SVToolClass* pTool )
 	if( l_Status )
 	{
 		SvPB::InspectionRunOnceRequest requestMessage;
-		requestMessage.mutable_inspectionid()->CopyFrom(SvCmd::setGuidToMessage(pInspection->GetUniqueObjectID()));
+		requestMessage.mutable_inspectionid()->CopyFrom(SvPB::setGuidToMessage(pInspection->GetUniqueObjectID()));
 		if (nullptr != pTool) 
 		{ 
-			requestMessage.mutable_taskid()->CopyFrom(SvCmd::setGuidToMessage(pTool->GetUniqueObjectID()));
+			requestMessage.mutable_taskid()->CopyFrom(SvPB::setGuidToMessage(pTool->GetUniqueObjectID()));
 		}
 		
 		l_Status = (S_OK == SvCmd::InspectionCommandsSynchronous(pInspection->GetUniqueObjectID(), &requestMessage, nullptr));

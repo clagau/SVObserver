@@ -69,7 +69,7 @@ namespace SvOg
 					// Do a reset of the Tool
 					SvPB::ResetObjectRequest requestMessage;
 					SvPB::ResetObjectResponse responseMessage;
-					requestMessage.mutable_objectid()->CopyFrom(SvCmd::setGuidToMessage(ownerID));
+					requestMessage.mutable_objectid()->CopyFrom(SvPB::setGuidToMessage(ownerID));
 					hr = SvCmd::InspectionCommandsSynchronous(inspectionID, &requestMessage, &responseMessage);
 					m_setMessageFailList = SvCmd::setMessageContainerFromMessagePB(responseMessage.messages());
 				}
@@ -77,8 +77,8 @@ namespace SvOg
 				{
 					// Do a run once of the Tool/Inspection ?
 					SvPB::InspectionRunOnceRequest requestMessage;
-					requestMessage.mutable_inspectionid()->CopyFrom(SvCmd::setGuidToMessage(inspectionID));
-					requestMessage.mutable_taskid()->CopyFrom(SvCmd::setGuidToMessage(ownerID));
+					requestMessage.mutable_inspectionid()->CopyFrom(SvPB::setGuidToMessage(inspectionID));
+					requestMessage.mutable_taskid()->CopyFrom(SvPB::setGuidToMessage(ownerID));
 					hr = SvCmd::InspectionCommandsSynchronous(inspectionID, &requestMessage, nullptr);
 				}
 			}

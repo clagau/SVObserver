@@ -113,8 +113,8 @@ HRESULT SVTaskObjectValueInterface::RunOnce( const SVGUID& rToolID)
 	{
 		const SVGUID& rInspectionID = m_pTaskObject->GetInspection()->GetUniqueObjectID();
 		SvPB::InspectionRunOnceRequest requestMessage;
-		requestMessage.mutable_inspectionid()->CopyFrom(SvCmd::setGuidToMessage(rInspectionID));
-		requestMessage.mutable_taskid()->CopyFrom(SvCmd::setGuidToMessage(rToolID));
+		requestMessage.mutable_inspectionid()->CopyFrom(SvPB::setGuidToMessage(rInspectionID));
+		requestMessage.mutable_taskid()->CopyFrom(SvPB::setGuidToMessage(rToolID));
 		hrOk = SvCmd::InspectionCommandsSynchronous(rInspectionID, &requestMessage, nullptr);
 	}
 	catch( ... )

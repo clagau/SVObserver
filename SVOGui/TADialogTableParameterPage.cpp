@@ -179,7 +179,7 @@ namespace SvOg {
 	{
 		SvPB::ResetObjectRequest requestMessage;
 		SvPB::ResetObjectResponse responseMessage;
-		requestMessage.mutable_objectid()->CopyFrom(SvCmd::setGuidToMessage(m_InspectionID));
+		requestMessage.mutable_objectid()->CopyFrom(SvPB::setGuidToMessage(m_InspectionID));
 		SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, &responseMessage);
 		SvStl::MessageContainerVector messages = SvCmd::setMessageContainerFromMessagePB(responseMessage.messages());
 		if (messages.size() > 0 && 0 != messages[0].getMessage().m_MessageCode)

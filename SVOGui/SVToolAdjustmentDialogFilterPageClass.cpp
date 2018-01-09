@@ -83,8 +83,8 @@ namespace SvOg
 		UpdateData( TRUE ); // get data from dialog
 
 		SvPB::InspectionRunOnceRequest requestMessage;
-		requestMessage.mutable_inspectionid()->CopyFrom(SvCmd::setGuidToMessage(m_InspectionID));
-		requestMessage.mutable_taskid()->CopyFrom(SvCmd::setGuidToMessage(m_TaskObjectID));
+		requestMessage.mutable_inspectionid()->CopyFrom(SvPB::setGuidToMessage(m_InspectionID));
+		requestMessage.mutable_taskid()->CopyFrom(SvPB::setGuidToMessage(m_TaskObjectID));
 		HRESULT hrOk = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, nullptr);
 
 		UpdateData( FALSE );
@@ -297,8 +297,8 @@ namespace SvOg
 					requestMessage.set_flag(SvPB::DestroyChildRequest::Flag_SetDefaultInputs_And_ResetInspection);
 				}
 
-				requestMessage.mutable_taskobjectlistid()->CopyFrom(SvCmd::setGuidToMessage(m_UnaryImageOperatorID));
-				requestMessage.mutable_objectid()->CopyFrom(SvCmd::setGuidToMessage(filterGUID));
+				requestMessage.mutable_taskobjectlistid()->CopyFrom(SvPB::setGuidToMessage(m_UnaryImageOperatorID));
+				requestMessage.mutable_objectid()->CopyFrom(SvPB::setGuidToMessage(filterGUID));
 				SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, nullptr);
 			}
 		}
@@ -335,8 +335,8 @@ namespace SvOg
 					requestMessage.set_flag(SvPB::DestroyChildRequest::Flag_SetDefaultInputs_And_ResetInspection);
 				}
 
-				requestMessage.mutable_taskobjectlistid()->CopyFrom(SvCmd::setGuidToMessage(m_UnaryImageOperatorID));
-				requestMessage.mutable_objectid()->CopyFrom(SvCmd::setGuidToMessage(filterGUID));
+				requestMessage.mutable_taskobjectlistid()->CopyFrom(SvPB::setGuidToMessage(m_UnaryImageOperatorID));
+				requestMessage.mutable_objectid()->CopyFrom(SvPB::setGuidToMessage(filterGUID));
 				SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, nullptr);
 			}
 

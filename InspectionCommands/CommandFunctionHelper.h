@@ -10,6 +10,7 @@
 #pragma region Includes
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVUtilityLibrary\SVGUID.h"
+#include "SVProtoBuf\BasicStructureHelper.h"
 #pragma warning( push )
 #pragma warning( disable : 4800 ) 
 #include "SVProtoBuf\InspectionCommands.pb.h"
@@ -24,15 +25,6 @@ namespace SvCmd
 	/// \param pResponse [in, out] The response message (must fit to the request message). If request message has no response message, it should be nullptr.
 	/// \returns HRESULT ErrorCode.
 	HRESULT InspectionCommandsSynchronous(const SVGUID& rInspectionID, const google::protobuf::Message* pRequest, google::protobuf::Message* pResponse = nullptr);
-
-	/// Set a SVGUID to the protobuf-structure.
-	/// \param rSVGuidID [in] The guid.
-	/// \returns SvCmd::UUID The new protobuf-structure.
-	SvPB::UUID setGuidToMessage(const SVGUID& rSVGuidID);
-	/// Convert a guid in protobuf-structure to a SVGUID.
-	/// \param rUUId [in] The protobuf-structure
-	/// \returns SVGUID The guid.
-	SVGUID getGuidFromMessage(const SvPB::UUID& rUUId);
 
 	/// Set messages from SVObserver to a protobuf-structure.
 	/// \param messageContainers [in] Messages

@@ -24,9 +24,13 @@
     <ClCompile Include="BasicStructure.pb.cc">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="BasicStructureHelper.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="InspectionCommands.proto" />
+    <CustomBuild Include="BasicStructure.proto" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="InspectionCommands.pb.h">
@@ -38,8 +42,8 @@
     <ClInclude Include="BasicStructure.pb.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="BasicStructure.proto" />
+    <ClInclude Include="BasicStructureHelper.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

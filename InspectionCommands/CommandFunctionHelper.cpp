@@ -23,29 +23,6 @@ namespace SvCmd
 		return Result;
 	}
 
-	SvPB::UUID setGuidToMessage(const SVGUID& rSVGuidID)
-	{
-		SvPB::UUID UUId;
-		const GUID& rGuid = rSVGuidID.ToGUID();
-		__int64 temp = 0;
-		memcpy(&temp, &rGuid.Data1, sizeof(__int64));
-		UUId.set_part1(temp);
-		memcpy(&temp, rGuid.Data4, sizeof(rGuid.Data4));
-		UUId.set_part2(temp);
-
-		return UUId;
-	}
-
-	SVGUID getGuidFromMessage(const SvPB::UUID& rUUId)
-	{
-		GUID guid = SV_GUID_NULL;
-		__int64 temp = rUUId.part1();
-		memcpy(&guid.Data1, &temp, sizeof(__int64));
-		temp = rUUId.part2();
-		memcpy(guid.Data4, &temp, sizeof(guid.Data4));
-		return guid;
-	}
-
 	SvPB::MessageContainerVector setMessageContainerToMessagePB(const SvStl::MessageContainerVector& messageContainers)
 	{
 		SvPB::MessageContainerVector messagePB;
@@ -64,7 +41,7 @@ namespace SvCmd
 			pMessageContainerPB->set_filename(messageData.m_SourceFile.m_FileName);
 			pMessageContainerPB->set_fileline(messageData.m_SourceFile.m_Line);
 			pMessageContainerPB->set_filedatetime(messageData.m_SourceFile.m_FileDateTime);
-			pMessageContainerPB->mutable_objectid()->CopyFrom(SvCmd::setGuidToMessage(messageContainer.getObjectId()));
+			pMessageContainerPB->mutable_objectid()->CopyFrom(SvPB::setGuidToMessage(messageContainer.getObjectId()));
 		}
 		return messagePB;
 	}
@@ -80,7 +57,7 @@ namespace SvCmd
 			{
 				AdditionalTextList.push_back(text);
 			}
-			SvStl::MessageContainer messageContainer(messagePB.messagecode(), static_cast<SvStl::MessageTextEnum>(messagePB.additionaltextid()), AdditionalTextList, fileParam, 0, getGuidFromMessage(messagePB.objectid()));
+			SvStl::MessageContainer messageContainer(messagePB.messagecode(), static_cast<SvStl::MessageTextEnum>(messagePB.additionaltextid()), AdditionalTextList, fileParam, 0, SvPB::getGuidFromMessage(messagePB.objectid()));
 			messageContainerVector.push_back(messageContainer);
 		}
 

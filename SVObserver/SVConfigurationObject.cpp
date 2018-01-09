@@ -3843,7 +3843,7 @@ bool SVConfigurationObject::Activate()
 		SVInspectionProcess* pInspection = m_arInspectionArray[l];
 
 		SvPB::InspectionRunOnceRequest requestMessage;
-		requestMessage.mutable_inspectionid()->CopyFrom(SvCmd::setGuidToMessage(pInspection->GetUniqueObjectID()));
+		requestMessage.mutable_inspectionid()->CopyFrom(SvPB::setGuidToMessage(pInspection->GetUniqueObjectID()));
 		SvCmd::InspectionCommandsSynchronous(pInspection->GetUniqueObjectID(), &requestMessage, nullptr);
 	}
 
@@ -4801,7 +4801,7 @@ HRESULT SVConfigurationObject::SetInspectionItems( const SVNameStorageMap& p_rIt
 				if( nullptr != pInspection )
 				{
 					SvPB::InspectionRunOnceRequest requestMessage;
-					requestMessage.mutable_inspectionid()->CopyFrom(SvCmd::setGuidToMessage(pInspection->GetUniqueObjectID()));
+					requestMessage.mutable_inspectionid()->CopyFrom(SvPB::setGuidToMessage(pInspection->GetUniqueObjectID()));
 					SvCmd::InspectionCommandsSynchronous(pInspection->GetUniqueObjectID(), &requestMessage, nullptr);
 				}
 			}
@@ -4934,7 +4934,7 @@ HRESULT SVConfigurationObject::SetRemoteInputItems( const SVNameStorageMap& p_rI
 				if( nullptr != pInspection )
 				{
 					SvPB::InspectionRunOnceRequest requestMessage;
-					requestMessage.mutable_inspectionid()->CopyFrom(SvCmd::setGuidToMessage(pInspection->GetUniqueObjectID()));
+					requestMessage.mutable_inspectionid()->CopyFrom(SvPB::setGuidToMessage(pInspection->GetUniqueObjectID()));
 					SvCmd::InspectionCommandsSynchronous(pInspection->GetUniqueObjectID(), &requestMessage, nullptr);
 				}
 			}

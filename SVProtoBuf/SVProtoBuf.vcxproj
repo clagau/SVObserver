@@ -97,6 +97,7 @@
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
     </ClCompile>
+    <ClCompile Include="BasicStructureHelper.cpp" />
     <ClCompile Include="InspectionCommands.pb.cc">
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
@@ -105,6 +106,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasicStructure.pb.h" />
+    <ClInclude Include="BasicStructureHelper.h" />
     <ClInclude Include="InspectionCommands.pb.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
