@@ -418,7 +418,7 @@ namespace SvStl
 	(Tid_ConditionalValue_Invalid, _T("The conditional value of tool \"%s\" is invalid.")) 
 
 	(Tid_TableColumnName_NotUnique, _T("The name \"%s\" is used already by another column.\nThe name must be unique."))
-	(Tid_TableColumnName_Empty, _T("The name must not be empty."))
+	(Tid_TableColumnName_Empty, _T("The column name must not be empty and is not allowed to contain only invalid characters."))
 	(Tid_TableColumn_AddingFailed, _T("Adding a column failed. Error number %s."))
 	(Tid_TableColumn_MovingFailed, _T("Moving a column failed. Error number %s."))
 	(Tid_TableColumn_RemovingFailed, _T("Removing a column failed. Error number %s."))
