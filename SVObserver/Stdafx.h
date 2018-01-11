@@ -173,6 +173,7 @@ namespace Gdiplus
 #include <boost/tokenizer.hpp>
 #include <boost/type_traits.hpp>
 #include <boost/utility.hpp>
+#include <google\protobuf\stubs\common.h>
 #pragma endregion Precompiled Headers
 
 // Global includes that everyone needs

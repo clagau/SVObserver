@@ -12,6 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <iostream>
+//Moved to precompiled header: #include <google\protobuf\stubs\common.h>
 #include "SVObserver.h"
 
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
@@ -359,6 +360,9 @@ SVObserverApp::~SVObserverApp()
 {
 	// File management for config file.
 	SVFileNameManagerClass::Instance().RemoveItem( &m_ConfigFileName );
+
+	// Optional:  Delete all global objects allocated by libprotobuf.
+	google::protobuf::ShutdownProtobufLibrary();
 }
 #pragma endregion Constructor
 
