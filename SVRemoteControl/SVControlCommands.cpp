@@ -1111,8 +1111,8 @@ template<typename API>
 HRESULT SVControlCommands::SendFile(SvSol::SVRCClientSocket<API>& rSocket, std::istream& is)
 {
 	HRESULT hr = S_OK;
-
-	int enc_len = 1024 * 1024;  // base64 encoded data
+	
+	int enc_len = 64 * 1024;  // base64 encoded data
 	const size_t amtToRead = (enc_len / 4) * 3; // unencoded file data
 
 	try

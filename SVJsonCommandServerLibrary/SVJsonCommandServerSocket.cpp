@@ -268,7 +268,7 @@ void SVJsonCommandServerSocket::ThreadProcessHandler(bool& bWaitEvents)
 					//data is available on the socket, read it
 					//a return value of 0 on the socket indicates the socket was closed
 					//for that case close the socket and remove socket from fd_set
-					unsigned char buf[ 16 * 1024 ];
+					unsigned char buf[ 64 * 1024 ];
 					size_t l_Size = sizeof(buf) - 1;
 					size_t amtRead;
 					SvSol::SVSocketError::ErrorEnum error = m_client.Read(buf, l_Size, amtRead);
@@ -305,16 +305,44 @@ void SVJsonCommandServerSocket::ThreadProcessHandler(bool& bWaitEvents)
 
 void SVJsonCommandServerSocket::ProcessDataRead(const char* p_pBuf)
 {
+	
+#ifdef TIMEMSGBOX
+	static int tick(0);
+	if (m_dataBuffer.isEmpty())
+	{
+		tick = ::GetTickCount();
+	}
+#endif 	
 	m_dataBuffer.Add(p_pBuf);
 	
 	// check if complete json
 	while (m_dataBuffer.IsComplete())
 	{
+#ifdef TIMEMSGBOX		
+		{
+			DWORD time = ::GetTickCount() - tick;
+			time = time / 1000;
+			std::stringstream strStream;
+			strStream << "Daten Complete empfangen:  " << time << std::endl;;
+			::MessageBox(NULL, strStream.str().c_str(), NULL, MB_OK);
+		}
+#endif 
+		
 		if (m_dataBuffer.IsValid())
 		{
 			OnDataReceived(m_dataBuffer.GetJsonData());
 		}
 		m_dataBuffer.Clear();
+#ifdef TIMEMSGBOX				
+		{
+			DWORD time = ::GetTickCount() - tick;
+			time = time / 1000;
+			std::stringstream strStream;
+			strStream << "Nach OnDataReceived Fertig:  " << time << std::endl;;
+			::MessageBox(NULL, strStream.str().c_str(), NULL, MB_OK);
+		}
+#endif 
+
 	}
 }
 
