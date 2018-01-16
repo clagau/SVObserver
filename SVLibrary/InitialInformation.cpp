@@ -50,7 +50,7 @@ namespace SvLib
 		m_AcquisitionTriggerDLL.clear();
 		m_DigitizerDLL.clear();
 		m_FileAcquisitionDLL.clear();
-		m_DigitalDLL.clear();
+		m_DigitalIODLL.clear();
 
 		m_ReloadTriggerDLL = _T("Y");
 		m_ReloadAcquisitionDLL = _T("Y");
@@ -89,7 +89,7 @@ namespace SvLib
 
 		if ((InitializationStatusFlags & SV_HARDWARE_FAILURE_IO) == SV_HARDWARE_FAILURE_IO)
 		{
-			msgDllLoadFailuresList.push_back(_T("Discrete IO: ") + m_DigitalBoardName + _T("/") + m_DigitalDLL);
+			msgDllLoadFailuresList.push_back(_T("Discrete IO: ") + m_DigitalBoardName + _T("/") + m_DigitalIODLL);
 		}
 		if ((InitializationStatusFlags & SV_HARDWARE_FAILURE_TRIGGER) == SV_HARDWARE_FAILURE_TRIGGER)
 		{

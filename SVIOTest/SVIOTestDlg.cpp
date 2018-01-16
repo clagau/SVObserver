@@ -176,9 +176,8 @@ BEGIN_MESSAGE_MAP(CSVIOTESTDlg, CDialog)
 	ON_BN_CLICKED(IDC_RADIO1, OnSlow)
 	ON_BN_CLICKED(IDC_RADIO2, OnFast)
 	ON_WM_DESTROY()
+	ON_BN_CLICKED(IDC_ACCEPT_TRIGGERS, &CSVIOTESTDlg::OnBnClickedAcceptTriggers)
 	ON_BN_CLICKED(IDC_TEST_OUTPUTS, OnTestOutputs)
-	ON_BN_CLICKED(IDC_START_TRIGGERS, OnStartTriggers)
-	ON_BN_CLICKED(IDC_STOP_TRIGGERS, OnStopTriggers)
 	ON_BN_CLICKED(IDC_START_OUTPUTS, OnStartTest)
 	ON_BN_CLICKED(IDC_RANDOM_BUTTON, OnRandBtn)
 	ON_BN_CLICKED(IDC_FAST_BUTTON, OnFastSlow)
@@ -808,13 +807,13 @@ void CSVIOTESTDlg::OnStartTest()
 {
 	DWORD dwThreadID;
 
-	if( m_lStaticChannel >= 0 && m_lStaticChannel < 16 )
-	{
-		SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue( m_lStaticChannel, false );
-	}
-
 	if( !m_bThreadRunning )
 	{
+		if (m_lStaticChannel >= 0 && m_lStaticChannel < 16)
+		{
+			SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue(m_lStaticChannel, false);
+		}
+
 		m_bThreadRunning = true;
 		m_hWorkerThread = ::CreateThread(nullptr, 0, SVWorkerThreadFunc, (LPVOID)this, 0, &dwThreadID );
 	}
@@ -1091,4 +1090,19 @@ void CSVIOTESTDlg::updateValues(int triggerchannel)
 		m_TriggerAverage[triggerchannel].SetWindowText( csText );
 	}
 
+}
+
+
+void CSVIOTESTDlg::OnBnClickedAcceptTriggers()
+{
+	if (m_bCurrentlyAcceptingTriggers)
+	{
+		OnStopTriggers();
+		m_bCurrentlyAcceptingTriggers = false;
+	}
+	else
+	{
+		OnStartTriggers();
+		m_bCurrentlyAcceptingTriggers = true;
+	}
 }

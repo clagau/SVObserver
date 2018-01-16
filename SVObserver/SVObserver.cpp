@@ -5734,7 +5734,8 @@ void SVObserverApp::SaveConfigurationAndRelatedFiles(bool isAutoSave)
 	CString csFilePath = m_ConfigFileName.GetFullFileName().c_str();
 	if(isAutoSave) 
 	{
-		ExtrasEngine::Instance().CopyDirectoryToTempDirectory(SvStl::GlobalPath::Inst().GetRunPath().c_str()); //ABX wäre CopyDirectoryToTempDirectory() nicht woanders besser aufgehoben als bei ExtrasEngine?
+		ExtrasEngine::Instance().CopyDirectoryToTempDirectory(SvStl::GlobalPath::Inst().GetRunPath().c_str()); 
+		//@TODO [Arvid][7.40][25.10.2016] shouldn't CopyDirectoryToTempDirectory() be someplace else (instead of a member of ExtrasEngine)?
 		ExtrasEngine::Instance().ResetAutoSaveInformation(); //update autosave timestamp
 
 		//in an AutoSave the configuration is not to be saved into its standard directory!

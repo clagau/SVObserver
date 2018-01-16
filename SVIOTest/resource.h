@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
-// Microsoft Visual C++ generated include file.
-// Used by SVIOTEST.rc
+// Von Microsoft Visual C++ generierte Includedatei.
+// Verwendet durch SVIOTest.rc
 //
 #define IDM_ABOUTBOX                    0x0010
 #define IDD_ABOUTBOX                    100
@@ -58,6 +58,8 @@
 #define IDC_RANDOM_BUTTON               1043
 #define IDC_FAST_BUTTON                 1044
 #define IDC_TRIGGER_PARAM               1045
+#define IDC_START_OUTPUTS2              1046
+#define IDC_ACCEPT_TRIGGERS             1046
 #define IDC_TRIG1_RISING_CHECK          1053
 #define IDC_TRIG2_RISING_CHECK          1054
 #define IDC_TRIG3_RISING_CHECK          1055

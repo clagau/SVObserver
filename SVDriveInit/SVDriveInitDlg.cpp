@@ -414,8 +414,8 @@ bool SVDriveInitDlg::IsValidModelNumber() const
 
 		if (S_OK == hr)
 		{
-			if (iniLoader.GetInitialInfo().m_ProcessorBoardName.empty() || //ABXXXX neue Methode?
-				iniLoader.GetInitialInfo().m_TriggerBoardName .empty() ||
+			if (iniLoader.GetInitialInfo().m_ProcessorBoardName.empty() || //@TODO [Arvid][8.00][16.01.2018] better create a new method here
+				iniLoader.GetInitialInfo().m_TriggerBoardName.empty() ||
 				iniLoader.GetInitialInfo().m_AcquisitionBoardName.empty() ||
 				iniLoader.GetInitialInfo().m_DigitalBoardName.empty())
 			{

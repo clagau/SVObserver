@@ -73,7 +73,8 @@ BOOL CSVIOTESTApp::InitInstance()
 	bool l_bOk = true;
 
 	l_bOk = S_OK == m_svTriggers.Open( l_iniLoader.GetInitialInfo().m_TriggerDLL.c_str() ) && l_bOk;
-	l_bOk = S_OK == SVIOConfigurationInterfaceClass::Instance().OpenDigital( l_iniLoader.GetInitialInfo().m_DigitalDLL.c_str() ) && l_bOk;
+
+	l_bOk = S_OK == SVIOConfigurationInterfaceClass::Instance().OpenDigital(l_iniLoader.GetInitialInfo().m_DigitalIODLL.c_str() ) && l_bOk;
 
 	if ( ! l_bOk )
 	{
@@ -86,7 +87,7 @@ BOOL CSVIOTESTApp::InitInstance()
 		m_pMainWnd = &dlg;
 
 		dlg.m_psvTriggers = &m_svTriggers;
-		dlg.m_csDigital = l_iniLoader.GetInitialInfo().m_DigitalDLL.c_str();
+		dlg.m_csDigital = l_iniLoader.GetInitialInfo().m_DigitalIODLL.c_str();
 		dlg.m_csTrigger = l_iniLoader.GetInitialInfo().m_Trigger.c_str();
 		dlg.m_lSystemType = atol(l_iniLoader.GetInitialInfo().m_IOBoard.c_str());
 

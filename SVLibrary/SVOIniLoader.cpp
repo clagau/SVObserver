@@ -235,7 +235,7 @@ namespace SvLib
 		m_rInitialInfo.m_DigitalBoardName = HardwareINI.GetValueString( IOBoardSectionTag, m_rInitialInfo.m_IOBoard.c_str(), EmptyString );
 		if( !m_rInitialInfo.m_DigitalBoardName.empty() )
 		{
-			m_rInitialInfo.m_DigitalDLL = HardwareINI.GetValueString(m_rInitialInfo.m_DigitalBoardName.c_str(), DigitalIODLLTag, EmptyString );
+			m_rInitialInfo.m_DigitalIODLL = HardwareINI.GetValueString(m_rInitialInfo.m_DigitalBoardName.c_str(), DigitalIODLLTag, EmptyString );
 			m_rInitialInfo.m_ReloadDigitalDLL = HardwareINI.GetValueString(m_rInitialInfo.m_DigitalBoardName.c_str(), ReloadDLLTag, YTag );
 
 			if (m_rInitialInfo.m_TriggerDLL.empty() )

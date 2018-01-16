@@ -63,7 +63,7 @@ namespace SvLib
 
 		std::string m_DigitizerDLL;
 		std::string m_TriggerDLL;
-		std::string m_DigitalDLL;
+		std::string m_DigitalIODLL;
 		std::string m_FileAcquisitionDLL;
 		std::string m_SoftwareTriggerDLL;
 		std::string m_AcquisitionTriggerDLL;

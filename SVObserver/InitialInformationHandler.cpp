@@ -294,9 +294,9 @@ HRESULT InitialInformationHandler::LoadDigitalDLL()
 {
 	HRESULT l_hrOk = S_OK;
 
-	if (!m_InitialInfo.m_DigitalDLL.empty())
+	if (!m_InitialInfo.m_DigitalIODLL.empty())
 	{
-		if (SVIOConfigurationInterfaceClass::Instance().OpenDigital(m_InitialInfo.m_DigitalDLL.c_str()) != S_OK)
+		if (SVIOConfigurationInterfaceClass::Instance().OpenDigital(m_InitialInfo.m_DigitalIODLL.c_str()) != S_OK)
 		{
 			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_IO;
 		}

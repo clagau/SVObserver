@@ -129,6 +129,7 @@ protected:
 	afx_msg void OnTestOutputs();
 	afx_msg void OnStartTriggers();
 	afx_msg void OnStopTriggers();
+	afx_msg void OnBnClickedAcceptTriggers();
 	afx_msg void OnStartTest();
 	afx_msg void OnRandBtn();
 	afx_msg void OnFastSlow();
@@ -153,7 +154,7 @@ private:
 
 	long m_FanFreq[c_upperBoundForFanId];
 
-public:
+	bool m_bCurrentlyAcceptingTriggers = false;
 };
 
 
