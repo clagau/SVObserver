@@ -73,7 +73,6 @@ BOOL CSVIOTESTApp::InitInstance()
 	bool l_bOk = true;
 
 	l_bOk = S_OK == m_svTriggers.Open( l_iniLoader.GetInitialInfo().m_TriggerDLL.c_str() ) && l_bOk;
-
 	l_bOk = S_OK == SVIOConfigurationInterfaceClass::Instance().OpenDigital( l_iniLoader.GetInitialInfo().m_DigitalDLL.c_str() ) && l_bOk;
 
 	if ( ! l_bOk )
