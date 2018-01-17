@@ -23,7 +23,6 @@
 #include "SVLibrary/SVWinUtility.h"	// for SVYieldPaintMessages
 #include "SVUserMaskOperatorClass.h"
 #include "SVOGui/DisplayHelper.h"
-#include "SVImageLibrary/MatroxImageData.h"
 #include "Definitions/Color.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
@@ -280,11 +279,8 @@ BOOL SVMaskShapeEditorDlg::OnInitDialog()
 
 	if(nullptr != m_pMask->m_MaskBufferHandlePtr)
 	{
-		SVImageBufferHandleImage l_MilHandle;
-		m_pMask->m_MaskBufferHandlePtr->GetData( l_MilHandle );
-
 		GetCurrentShape()->Refresh();	// renders based on new properties
-		GetCurrentShape()->Draw( l_MilHandle.GetBuffer() );
+		GetCurrentShape()->Draw(m_pMask->m_MaskBufferHandlePtr->GetBuffer() );
 	}
 
 	setImages();
@@ -861,8 +857,7 @@ void SVMaskShapeEditorDlg::setImages()
 	m_dialogImage.setImageFromParent( m_pMask->getReferenceImage(), tabIndex );
 	tabIndex++;
 	// Set second tab to Mask
-	MatroxImageData data(m_pMask->m_MaskBufferHandlePtr);
-	m_dialogImage.setImage( &data, tabIndex );
+	m_dialogImage.setImage( m_pMask->m_MaskBufferHandlePtr, tabIndex );
 	tabIndex++;
 	// Set third tab to source image
 	const SVImageInfoClass* pImageInfo = m_pTool->getFirstImageInfo();

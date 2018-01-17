@@ -11,9 +11,15 @@
 
 #include "stdafx.h"
 #include "SVImageBufferHandleImage.h"
+#include "SVMatroxLibrary\SVMatroxBufferInterface.h"
 
 SVImageBufferHandleImage::SVImageBufferHandleImage()
-: SVImageBufferHandleData(), m_Buffer()
+	: SvOi::SVImageBufferHandleInterface(), m_Buffer()
+{
+}
+
+SVImageBufferHandleImage::SVImageBufferHandleImage(const SVMatroxBuffer& rMilImage)
+	: m_Buffer(rMilImage)
 {
 }
 
@@ -32,6 +38,42 @@ void SVImageBufferHandleImage::clear()
 	m_Buffer.clear();
 }
 
+SVPoint SVImageBufferHandleImage::GetPositionPoint() const
+{
+	SVPoint l_Point;
+
+	if (!(m_Buffer.empty()))
+	{
+		SVMatroxBufferInterface::GetPositionPoint(l_Point, m_Buffer);
+	}
+
+	return l_Point;
+}
+
+SVBitmapInfo SVImageBufferHandleImage::GetBitmapInfo() const
+{
+	SVBitmapInfo l_BitmapInfo;
+
+	if (!(m_Buffer.empty()))
+	{
+		SVMatroxBufferInterface::GetBitmapInfo(l_BitmapInfo, m_Buffer);
+	}
+
+	return l_BitmapInfo;
+}
+
+unsigned char* SVImageBufferHandleImage::GetBufferAddress() const
+{
+	unsigned char* l_pHostBuffer = nullptr;
+
+	if (!(m_Buffer.empty()))
+	{
+		SVMatroxBufferInterface::GetHostAddress(&l_pHostBuffer, m_Buffer);
+	}
+
+	return l_pHostBuffer;
+}
+
 const SVMatroxBuffer& SVImageBufferHandleImage::GetBuffer() const
 {
 	return m_Buffer;
@@ -42,10 +84,10 @@ SVMatroxBuffer& SVImageBufferHandleImage::GetBuffer()
 	return m_Buffer;
 }
 
-HRESULT SVImageBufferHandleImage::SetHandleData( const SVImageBufferHandleStruct& p_rObject )
+HBITMAP SVImageBufferHandleImage::GetHBitmap() const
 {
-	m_Buffer = p_rObject.milImage;
+	HBITMAP hBitmap = nullptr;
+	HRESULT status = SVMatroxBufferInterface::Create(hBitmap, GetBuffer());
 
-	return S_OK;
+	return hBitmap;
 }
-

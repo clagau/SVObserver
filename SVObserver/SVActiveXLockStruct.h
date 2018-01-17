@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVImageLibrary/SVImageBufferHandleInterface.h"
+#include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 
 #pragma endregion Includes
 
@@ -33,6 +33,6 @@ struct SVActiveXLockStruct
 	std::string m_Name;
 	long m_ProcessCount;
 
-	SVImageBufferHandlePtr m_ImageHandlePtr;
+	SvOi::SVImageBufferHandlePtr m_ImageHandlePtr;
 };
 

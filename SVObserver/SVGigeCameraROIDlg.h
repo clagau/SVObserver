@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVImageLibrary/SVImageInfoClass.h"
-#include "SVImageLibrary/SVImageBufferHandleInterface.h"
+#include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "CameraLibrary/SVDeviceParam.h"
 #include "CameraLibrary/SVDeviceParams.h"
 #include "CameraLibrary/SVCustomDeviceParam.h"
@@ -150,7 +150,7 @@ private:
 	SVAcquisitionClassPtr m_pDevice;
 	SVCameraFormat* m_pFormat;
 	SVImageInfoClass m_ImageInfo;
-	SVImageBufferHandlePtr m_pImageHandle;
+	SvOi::SVImageBufferHandlePtr m_pImageHandle;
 
 	Binning m_verticalBinning;
 	Binning m_horizontalBinning;

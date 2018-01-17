@@ -19,6 +19,7 @@
 #include "TextDefinesSvO.h"
 #include "ObjectInterfaces/IValueObject.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #pragma endregion Includes
 
 #pragma region Constructor
@@ -250,25 +251,15 @@ HRESULT SVArchiveRecord::QueueImage( SVMatroxBuffer& buf, const std::string& rFi
 		if(nullptr != m_ImageBufferPtr)
 		{
 			m_ImageBufferPtr->SetCurrentIndex( m_LastIndexHandle );
-			SVImageBufferHandlePtr handle;
+			SvOi::SVImageBufferHandlePtr handle;
 			m_ImageBufferPtr->GetImageHandle( m_LastIndexHandle.GetIndex(), handle );
 
-			if(nullptr != handle)
+			if (nullptr != handle && !(handle->empty()))
 			{
-				SVImageBufferHandleImage l_MilBuffer;
-				handle->GetData( l_MilBuffer );
-
-				if( !( l_MilBuffer.empty() ) )
-				{
-					Result = SVMatroxBufferInterface::CopyBuffer(l_MilBuffer.GetBuffer(), buf );
-					// SafeImageCopyToHandle	// no... this happens in the inspection, therefore not necessary
-													// No, because we remove all previous duplicate filenames in the Queue function
-													// therefore they are never written out
-				}
-				else
-				{
-					Result = E_FAIL;
-				}
+				Result = SVMatroxBufferInterface::CopyBuffer(handle->GetBuffer(), buf);
+				// SafeImageCopyToHandle	// no... this happens in the inspection, therefore not necessary
+												// No, because we remove all previous duplicate filenames in the Queue function
+												// therefore they are never written out
 			}
 			else
 			{
@@ -319,7 +310,7 @@ HRESULT SVArchiveRecord::AllocateBuffers( long lBufferSize )
 			hr = S_OK;
 		}
 
-		// now ceate buffer if reserve OK
+		// now create buffer if reserve OK
 		if ( S_OK == hr && SVArchiveAsynchronous != m_eArchiveMethod )
 		{
 			if(nullptr != m_ImageBufferPtr)
@@ -353,18 +344,12 @@ HRESULT SVArchiveRecord::WriteImageQueue()
 		long lCount = m_lMaxIndex;
 		for ( long l = 1; l <= lCount; l++ )
 		{
-			SVImageBufferHandlePtr handle;
+			SvOi::SVImageBufferHandlePtr handle;
 			m_ImageBufferPtr->GetImageHandle( m_aFileNames[l].second.GetIndex(), handle );
 
-			if( nullptr != handle)
+			if (nullptr != handle && !handle->empty())
 			{
-				SVImageBufferHandleImage l_MilBuffer;
-				handle->GetData( l_MilBuffer );
-
-				if ( !l_MilBuffer.empty() )
-				{
-					WriteImage( l_MilBuffer.GetBuffer(), m_aFileNames[l].first );
-				}
+				WriteImage(handle->GetBuffer(), m_aFileNames[l].first);
 			}
 			else
 			{
@@ -397,16 +382,13 @@ HRESULT SVArchiveRecord::WriteImage( )
 		// Create a file and convert the image to a .bmp type 
 		// file.
 		//
-		SVImageBufferHandlePtr ImageHandle;
+		SvOi::SVImageBufferHandlePtr ImageHandle;
 		bOk = pImage->GetImageHandle( ImageHandle ) && (nullptr != ImageHandle);
 		if ( bOk )
 		{
 			HRESULT l_Code;
 
-			SVImageBufferHandleImage l_MilBuffer;
-			ImageHandle->GetData( l_MilBuffer );
-
-			SVMatroxBuffer milBuffer = l_MilBuffer.GetBuffer();
+			SVMatroxBuffer milBuffer = ImageHandle->GetBuffer();
 			std::string ImageFile;
 
 			//

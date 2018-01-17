@@ -12,7 +12,7 @@
 
 #pragma region Includes
 #include "SVImageLibrary/SVImageInfoClass.h"
-#include "SVImageLibrary/SVImageBufferHandleInterface.h"
+#include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVImageAnalyzerClass.h"
 #include "SVStatusLibrary/MessageTextEnum.h"
@@ -51,7 +51,7 @@ public:
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 	virtual void getSpecialImageList(SvDef::StringVector& rList) const override;
-	virtual bool getSpecialImage(const std::string& rName, SvOi::MatroxImageSmartHandlePtr& rImagePtr) const override;
+	virtual bool getSpecialImage(const std::string& rName, SvOi::SVImageBufferHandlePtr& rImagePtr) const override;
 	virtual SvStl::MessageContainerVector validateAndSetEmmeddedValues(const SvOi::SetValueObjectPairVector& rValueVector, bool shouldSet) override;
 	
 protected:
@@ -133,7 +133,7 @@ private:
 	/// \param height [in] Required height.
 	/// \param rBufferHandle [in,out] Smart pointer to the buffer handle. It will be cleared at the begin.
 	/// \returns bool true if creation was successfully.
-	bool CreateBuffer(long width, long height, SVImageBufferHandlePtr& rBufferHandle);
+	bool CreateBuffer(long width, long height, SvOi::SVImageBufferHandlePtr& rBufferHandle);
 
 	/// Load an image and copy it to a new created buffer.
 	/// \param rImageFile [in] The file name.
@@ -142,7 +142,7 @@ private:
 	/// \param bufferHandle [in,out] The handle of the reloaded image.
 	/// \param pErrorMessages [out] A vector of happened error during reloading.
 	/// \returns bool true if reloading was successfully.
-	bool ReloadImage(const std::string& rImageFile, SVLongValueObjectClass& rWidthValueObject, SVLongValueObjectClass& rHeightValueObject, SVImageBufferHandlePtr& bufferHandle, SvStl::MessageContainerVector * pErrorMessages);
+	bool ReloadImage(const std::string& rImageFile, SVLongValueObjectClass& rWidthValueObject, SVLongValueObjectClass& rHeightValueObject, SvOi::SVImageBufferHandlePtr& bufferHandle, SvStl::MessageContainerVector * pErrorMessages);
 
 	HRESULT CreateModelHandle(long modelWidth, long modelHeight);
 private:
@@ -193,13 +193,13 @@ private:
 	
 	SVBoolValueObjectClass msv_bpatCircularOverscan;
 	SVFileNameValueObjectClass msv_szModelImageFile; // Name of the Model Image File
-	SVImageBufferHandlePtr m_patBufferHandlePtr;	// Model Image Buffer Handle
+	SvOi::SVImageBufferHandlePtr m_patBufferHandlePtr;	// Model Image Buffer Handle
 
 	SVBoolValueObjectClass m_bpatDontCare;
 	SVFileNameValueObjectClass m_DontCareImageFile; // Name of the Model Image File
 	SVLongValueObjectClass m_dontCareWidth;		// Don't Care Width.
 	SVLongValueObjectClass m_dontCareHeight;	// Don't Care Height.
-	SVImageBufferHandlePtr m_DontCareBufferHandlePtr;
+	SvOi::SVImageBufferHandlePtr m_DontCareBufferHandlePtr;
 	bool m_bReloadModelFromFile;
 
 	int m_nPatternIndex; // index of pattern moused over, for displaying results

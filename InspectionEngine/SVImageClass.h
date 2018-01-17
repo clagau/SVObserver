@@ -15,7 +15,7 @@
 //Moved to precompiled header: #include <set>
 //Moved to precompiled header: #include <vector>
 #include "ObjectInterfaces/ISVImage.h"
-#include "SVImageLibrary/SVImageBufferHandleInterface.h"
+#include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVMatroxLibrary/SVMatroxEnums.h"
 #include "SVObjectLibrary/SVObjectClass.h"
@@ -72,8 +72,8 @@ public:
 	HRESULT ValidateAgainstOutputExtents( const SVImageExtentClass& rExtent );
 	HRESULT ValidateAgainstChildrenExtents( SVImageExtentClass& rExtent );
 
-	HRESULT GetParentImageHandle( SVImageBufferHandlePtr& rBufferHandle ); //@TODO:  Change method to const?
-	HRESULT GetParentImageHandle( SVImageIndexStruct BufferIndex, SVImageBufferHandlePtr& rBufferHandle ); //@TODO:  Change method to const?
+	HRESULT GetParentImageHandle(SvOi::SVImageBufferHandlePtr& rBufferHandle); //@TODO:  Change method to const?
+	HRESULT GetParentImageHandle( SVImageIndexStruct BufferIndex, SvOi::SVImageBufferHandlePtr& rBufferHandle ); //@TODO:  Change method to const?
 
 	// Need to deal with source and result image buckets
 	virtual bool GetImageHandleIndex( SVImageIndexStruct& rsvIndex ) const;
@@ -81,11 +81,11 @@ public:
 
 	virtual bool CopyImageTo( SVImageIndexStruct svIndex );
 
-	virtual bool GetImageHandle( SVImageBufferHandlePtr& p_rHandlePtr ); //@TODO:  Change method to const?
-	virtual bool GetImageHandle( SVImageIndexStruct svIndex, SVImageBufferHandlePtr& rHandle );
+	virtual bool GetImageHandle(SvOi::SVImageBufferHandlePtr& p_rHandlePtr ); //@TODO:  Change method to const?
+	virtual bool GetImageHandle( SVImageIndexStruct svIndex, SvOi::SVImageBufferHandlePtr& rHandle );
 
-	bool SafeImageCopyToHandle     ( SVImageBufferHandlePtr& p_rHandle );
-	bool SafeImageCopyToHandle     ( SVImageIndexStruct p_svFromIndex, SVImageBufferHandlePtr& p_rHandle );
+	bool SafeImageCopyToHandle     (SvOi::SVImageBufferHandlePtr& p_rHandle );
+	bool SafeImageCopyToHandle     ( SVImageIndexStruct p_svFromIndex, SvOi::SVImageBufferHandlePtr& p_rHandle );
 
 	HRESULT LoadImageFullSize( LPCTSTR p_szFileName, SVImageExtentClass& p_rNewExtent );
 	HRESULT LoadImage( LPCTSTR p_szFileName, SVImageIndexStruct p_svToIndex );
@@ -107,8 +107,8 @@ public:
 #pragma region virtual method (ISVImage)
 	virtual SvDef::SVImageTypeEnum GetImageType() const override;
 	virtual SvOi::ISVImage* GetParentImageInterface() const override;
-	virtual SvOi::MatroxImageSmartHandlePtr getImageData() override;
-	virtual SvOi::MatroxImageSmartHandlePtr getParentImageData() override;
+	virtual SvOi::SVImageBufferHandlePtr getImageData() override;
+	virtual SvOi::SVImageBufferHandlePtr getParentImageData() override;
 	virtual std::string getDisplayedName() const override;
 	virtual long getPixelDepth() const override;
 	virtual HRESULT Save(const std::string& rFilename) override; 
@@ -146,8 +146,8 @@ protected:
 
 	HRESULT GetChildImageInfo( const SVGUID& p_rChildID, SVImageInfoClass& p_rImageInfo ) const;
 
-	HRESULT GetChildImageHandle( const SVGUID& p_rChildID, SVImageBufferHandlePtr& p_rsvBufferHandle ) const;
-	HRESULT GetChildImageHandle( const SVGUID& p_rChildID, SVImageIndexStruct p_svBufferIndex, SVImageBufferHandlePtr& p_rsvBufferHandle ) const;
+	HRESULT GetChildImageHandle( const SVGUID& p_rChildID, SvOi::SVImageBufferHandlePtr& p_rsvBufferHandle ) const;
+	HRESULT GetChildImageHandle( const SVGUID& p_rChildID, SVImageIndexStruct p_svBufferIndex, SvOi::SVImageBufferHandlePtr& p_rsvBufferHandle ) const;
 
 	virtual HRESULT GetImageIndex( SVDataManagerHandle& p_rHandle, const SVImageIndexStruct& rIndex ) const;
 

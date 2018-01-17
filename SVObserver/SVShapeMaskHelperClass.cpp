@@ -175,7 +175,7 @@ bool SVShapeMaskHelperClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 	return __super::ResetObject(pErrorMessages);
 }
 
-bool SVShapeMaskHelperClass::onRun( bool First, SVImageBufferHandlePtr RInputImageHandle, SVImageBufferHandlePtr ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVShapeMaskHelperClass::onRun( bool First, SvOi::SVImageBufferHandlePtr RInputImageHandle, SvOi::SVImageBufferHandlePtr ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	return TRUE;	// what do we want to do here for the status?
 }
@@ -377,11 +377,8 @@ HRESULT SVShapeMaskHelperClass::Refresh()
 			// render based on new values
 			hrTemp = m_pShape->Refresh();
 
-			SVImageBufferHandleImage l_MilHandle;
-			pMaskOperator->m_MaskBufferHandlePtr->GetData( l_MilHandle );
-
 			// draw the mask to the MIL buffer
-			hrTemp = m_pShape->Draw( l_MilHandle.GetBuffer() );
+			hrTemp = m_pShape->Draw(pMaskOperator->m_MaskBufferHandlePtr->GetBuffer() );
 		}
 	}
 	return hr;

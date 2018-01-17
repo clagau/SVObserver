@@ -21,7 +21,7 @@
 #include "SVDataManagerLibrary/DataManager.h"
 #include "Definitions/SVGigeEnums.h"
 #include "SVMatroxGigeCameraProxy.h"
-#include "SVImageLibrary/SVImageBufferHandleInterface.h"
+#include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "InspectionEngine/SVImageObjectClass.h"
 #include "SVObserver.h"
 #include "SVDigitizerProcessingClass.h"
@@ -698,7 +698,7 @@ void SVMatroxGigeAcquisitionClass::ClearDeviceIdentifier()
 	m_DeviceParams.SetParameter( DeviceParamSerialNumberString, SVStringValueDeviceParam( "" ) );
 }
 
-HRESULT SVMatroxGigeAcquisitionClass::SingleGrab( SVImageBufferHandlePtr p_SingleGrabHandle )
+HRESULT SVMatroxGigeAcquisitionClass::SingleGrab(SvOi::SVImageBufferHandlePtr p_SingleGrabHandle)
 {
 	HRESULT hr = SVAcquisitionClass::SingleGrab( p_SingleGrabHandle );
 

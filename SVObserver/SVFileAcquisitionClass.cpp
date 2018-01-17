@@ -15,7 +15,6 @@
 
 #include "SVDataManagerLibrary/DataManager.h"
 #include "TriggerHandling/SVDigitizerLoadLibraryClass.h"
-#include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "CameraLibrary/SVDeviceParams.h"
 

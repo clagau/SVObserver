@@ -19,6 +19,8 @@
 #include "InspectionEngine/SVImageClass.h"
 #include "InspectionEngine/SVTool.h"
 #include "SVToolImage.h"
+#include "SVMatroxLibrary/SVMatroxImageInterface.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVImageArithmeticClass, SVImageArithmeticClassGuid )
@@ -332,24 +334,14 @@ bool SVImageArithmeticClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Message
 			return false;
 		}
 
-		SVImageBufferHandlePtr HandleA;
-		SVImageBufferHandlePtr HandleB;
-		SVImageBufferHandlePtr Output;
-
-		SVImageBufferHandleImage l_MilAHandle;
-		SVImageBufferHandleImage l_MilBHandle;
-		SVImageBufferHandleImage l_MilOutHandle;
+		SvOi::SVImageBufferHandlePtr HandleA;
+		SvOi::SVImageBufferHandlePtr HandleB;
+		SvOi::SVImageBufferHandlePtr Output;
 
 		if ( pImageA->GetImageHandle( HandleA ) && nullptr != HandleA &&
 			pImageB->GetImageHandle( HandleB ) && nullptr != HandleB &&
-			pOutputImage->GetImageHandle( Output ) && nullptr != Output )
-		{
-			HandleA->GetData( l_MilAHandle );
-			HandleB->GetData( l_MilBHandle );
-			Output->GetData( l_MilOutHandle );
-		}
-
-		if( !( l_MilAHandle.empty() ) &&  !( l_MilBHandle.empty() ) && !( l_MilOutHandle.empty() ) )
+			pOutputImage->GetImageHandle( Output ) && nullptr != Output &&
+			!(HandleA->empty() ) &&  !(HandleB->empty() ) && !(Output->empty() ) )
 		{
 			HRESULT l_Code;
 
@@ -360,7 +352,7 @@ bool SVImageArithmeticClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Message
 			case SvDef::SVImageOperatorAverage:
 				{
 
-					l_Code = SVMatroxImageInterface::Arithmetic( l_MilOutHandle.GetBuffer(), l_MilAHandle.GetBuffer(), l_MilBHandle.GetBuffer(), SVImageMultipleAccumulate );
+					l_Code = SVMatroxImageInterface::Arithmetic(Output->GetBuffer(), HandleA->GetBuffer(), HandleB->GetBuffer(), SVImageMultipleAccumulate );
 					// Build average of two input images and store resulting image in output image...
 					// NOTE: 
 					//		 M_MULTIPLY_ACCUMULATE_2 
@@ -378,13 +370,13 @@ bool SVImageArithmeticClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Message
 
 			case SvDef::SVImageOperatorFlipVertical:
 				{
-					l_Code = SVMatroxImageInterface::Flip( l_MilOutHandle.GetBuffer(), l_MilAHandle.GetBuffer(), SVImageFlipVertical );
+					l_Code = SVMatroxImageInterface::Flip(Output->GetBuffer(), HandleA->GetBuffer(), SVImageFlipVertical );
 				}
 				break;
 
 			case SvDef::SVImageOperatorFlipHorizontal:
 				{
-					l_Code = SVMatroxImageInterface::Flip( l_MilOutHandle.GetBuffer(), l_MilAHandle.GetBuffer(), SVImageFlipHorizontal );
+					l_Code = SVMatroxImageInterface::Flip(Output->GetBuffer(), HandleA->GetBuffer(), SVImageFlipHorizontal );
 				}
 				break;
 
@@ -398,7 +390,7 @@ bool SVImageArithmeticClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Message
 
 			default:
 				// Default Operation,,,
-				l_Code = SVMatroxImageInterface::Arithmetic( l_MilOutHandle.GetBuffer(), l_MilAHandle.GetBuffer(), l_MilBHandle.GetBuffer(),
+				l_Code = SVMatroxImageInterface::Arithmetic(Output->GetBuffer(), HandleA->GetBuffer(), HandleB->GetBuffer(),
 					static_cast<SVImageOperationTypeEnum>(lOperator) );
 			}
 
@@ -433,11 +425,8 @@ void SVImageArithmeticClass::ScaleWithAveraging( SVImageClass* pInputImage, SVIm
 		SVImageInfoClass InputImageInfo = pInputImage->GetImageInfo();
 		SVImageInfoClass OutputImageInfo = pOutputImage->GetImageInfo();
 
-		SVImageBufferHandlePtr InputImageBufferHandle;
-		SVImageBufferHandlePtr OutputImageBufferHandle;
-
-		SVImageBufferHandleImage l_InMilHandle;
-		SVImageBufferHandleImage l_OutMilHandle;
+		SvOi::SVImageBufferHandlePtr InputImageBufferHandle;
+		SvOi::SVImageBufferHandlePtr OutputImageBufferHandle;
 
 		RECT l_oInputRect;
 		RECT l_oOutputRect;
@@ -449,19 +438,16 @@ void SVImageArithmeticClass::ScaleWithAveraging( SVImageClass* pInputImage, SVIm
 		{
 			pSrcHostBuffer = InputImageBufferHandle->GetBufferAddress();
 			pDstHostBuffer = OutputImageBufferHandle->GetBufferAddress();
-
-			InputImageBufferHandle->GetData( l_InMilHandle );
-			OutputImageBufferHandle->GetData( l_OutMilHandle );
 		}
 		
-		if( pSrcHostBuffer && pDstHostBuffer && !( l_InMilHandle.empty() ) && !( l_OutMilHandle.empty() ) )
+		if( pSrcHostBuffer && pDstHostBuffer && !(InputImageBufferHandle->empty() ) && !(OutputImageBufferHandle->empty() ) )
 		{
 			HRESULT l_Code;
 			
 			if( l_oOutputRect.bottom && l_oInputRect.bottom )
 			{
-				l_Code = SVMatroxBufferInterface::Get( l_InMilHandle.GetBuffer(), SVPitch, srcPitch );
-				l_Code = SVMatroxBufferInterface::Get( l_OutMilHandle.GetBuffer(), SVPitch, dstPitch );
+				l_Code = SVMatroxBufferInterface::Get(InputImageBufferHandle->GetBuffer(), SVPitch, srcPitch );
+				l_Code = SVMatroxBufferInterface::Get(OutputImageBufferHandle->GetBuffer(), SVPitch, dstPitch );
 				
 				srcLinePtr = ( unsigned char * )pSrcHostBuffer;
 				srcLinePtr1 = ( unsigned char * )pSrcHostBuffer + srcPitch;

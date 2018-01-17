@@ -12,7 +12,7 @@
 #include "stdafx.h"
 #include "SVRemoteFontManager.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "SVImageLibrary/SVImageBufferHandleInterface.h"
+#include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
@@ -598,7 +598,7 @@ bool SVRemoteFontManager::GetFontCharImage( long p_lFontIdentifier, SVMatroxOcr 
 	
 
 	SVImageInfoClass ImageInfo;
-	SVImageBufferHandlePtr ImageBufferHandle;
+	SvOi::SVImageBufferHandlePtr ImageBufferHandle;
 
 	SVMatroxOcrInterface::Get( p_FontHandle, SVCharCellSizeX, dCharBoxSizeX);
 
@@ -616,10 +616,7 @@ bool SVRemoteFontManager::GetFontCharImage( long p_lFontIdentifier, SVMatroxOcr 
 
 	if(nullptr != ImageBufferHandle)
 	{
-		SVImageBufferHandleImage l_MilHandle;
-		ImageBufferHandle->GetData( l_MilHandle );
-
-		p_CharHandle = l_MilHandle.GetBuffer();
+		p_CharHandle = ImageBufferHandle->GetBuffer();
 
 		// Find the current Font
 		CharMappings::iterator l_it;

@@ -125,7 +125,7 @@ HRESULT SVCommandInspectionGetItems::UpdateResultsWithImageData(const std::strin
 		HRESULT GetStatus = S_OK;
 
 		SVStorage Storage;
-		SVImageBufferHandlePtr ImageHandlePtr;
+		SvOi::SVImageBufferHandlePtr ImageHandlePtr;
 		unsigned long TriggerCount = TriggerCnt;
 
 		pImage->GetImageHandle(ImageHandlePtr);

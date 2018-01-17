@@ -15,6 +15,7 @@
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/NameGuidList.h"
+#include "SVImageBufferHandleInterface.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -105,7 +106,7 @@ namespace SvOi
 		/// \param rName [in] The name of the special image of this task.
 		/// \param rImagePtr [out] Pointer to the image.
 		/// \returns bool return true if setting of this image was succeeded.
-		virtual bool getSpecialImage(const std::string& rName, MatroxImageSmartHandlePtr& rImagePtr) const = 0;
+		virtual bool getSpecialImage(const std::string& rName, SVImageBufferHandlePtr& rImagePtr) const = 0;
 
 		virtual HRESULT GetOutputList(SVOutputInfoListClass& p_rOutputInfoList) const = 0;
 	};

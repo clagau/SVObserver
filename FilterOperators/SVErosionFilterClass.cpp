@@ -13,6 +13,7 @@
 #include "SVErosionFilterClass.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVObjectLibrary/SVClsids.h"
+#include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #pragma endregion Includes
 
 SV_IMPLEMENT_CLASS(SVErosionFilterClass, SVErosionFilterClassGuid)
@@ -33,19 +34,13 @@ SVErosionFilterClass::~SVErosionFilterClass()
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVErosionFilterClass::onRun( bool First, SVImageBufferHandlePtr rInputImageHandle, SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVErosionFilterClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
 	if (m_pCurrentUIOPL && nullptr != rInputImageHandle && nullptr != rOutputImageHandle)
 	{
-		SVImageBufferHandleImage l_InMilHandle;
-		SVImageBufferHandleImage l_OutMilHandle;
-
-		rInputImageHandle->GetData( l_InMilHandle );
-		rOutputImageHandle->GetData( l_OutMilHandle );
-
 		HRESULT l_Code;
-		l_Code = SVMatroxImageInterface::Erode( l_OutMilHandle.GetBuffer(),
-				First ? l_InMilHandle.GetBuffer() : l_OutMilHandle.GetBuffer(),
+		l_Code = SVMatroxImageInterface::Erode(rOutputImageHandle->GetBuffer(),
+				First ? rInputImageHandle->GetBuffer() : rOutputImageHandle->GetBuffer(),
 				1,
 				SVImageGrayScale );
 		if( l_Code != S_OK )

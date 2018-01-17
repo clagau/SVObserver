@@ -282,7 +282,7 @@ bool SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 			break;
 		}
 
-		SVImageBufferHandlePtr ImageHandle;
+		SvOi::SVImageBufferHandlePtr ImageHandle;
 
 		if( ! pInputImage->GetImageHandle( ImageHandle ) || nullptr == ImageHandle )
 		{
@@ -295,24 +295,9 @@ bool SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 			break;
 		}
 
-		SVImageBufferHandleImage l_MilBuffer;
-
-		HRESULT l_Status = ImageHandle->GetData( l_MilBuffer );
-
-		if( S_OK != l_Status )
-		{
-			LastError = true;
-			if (nullptr != pErrorMessages)
-			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16101, GetUniqueObjectID() );
-				pErrorMessages->push_back(Msg);
-			}
-			break;
-		}
-
 		SVMatroxImageInterface l_lImageIntf;
 
-		MatroxResult = l_lImageIntf.Histogram(m_HistResultID, l_MilBuffer.GetBuffer() );
+		MatroxResult = l_lImageIntf.Histogram(m_HistResultID, ImageHandle->GetBuffer() );
 		if( S_OK != MatroxResult )
 		{
 			//          35 = Invalid MIL ID, for others see milerr.h

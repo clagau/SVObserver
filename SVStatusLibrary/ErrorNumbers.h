@@ -394,7 +394,6 @@ namespace SvStl
 	static const int 	Err_16098  =  Mec_ErrorBase + 98;
 	static const int 	Err_16099  =  Mec_ErrorBase + 99;
 	static const int 	Err_16100  =  Mec_ErrorBase + 100;
-	static const int 	Err_16101  =  Mec_ErrorBase + 101;
 	static const int 	Err_16102  =  Mec_ErrorBase + 102;
 	static const int 	Err_16103  =  Mec_ErrorBase + 103;
 	static const int 	Err_16104  =  Mec_ErrorBase + 104;

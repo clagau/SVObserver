@@ -18,7 +18,6 @@
 #include "SVSystemLibrary/SVImageConvertorGDI.h"
 #include "SVMatroxImagingLibrary.h"  // has MIL includes
 #include "SVMatroxResourceMonitor.h"
-#include "MatroxSharedBuffer.h"
 #include "SVStatusLibrary/MessageContainer.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
@@ -1682,7 +1681,7 @@ HRESULT SVMatroxBufferInterface::CreateBuffer(SVMatroxBuffer& p_rBuffer, MatroxI
 
 	if (S_OK == Code)
 	{
-		p_rBuffer.m_BufferPtr = SVMatroxBufferPtr{ new MatroxSharedBuffer(NewBuf, "SVMatroxBufferInterface::CreateBuffer") };
+		p_rBuffer.m_BufferPtr = SVMatroxBufferPtr{ new SVMatroxImageBuffer(NewBuf, "SVMatroxBufferInterface::CreateBuffer") };
 	}
 	else
 	{

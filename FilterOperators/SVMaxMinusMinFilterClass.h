@@ -12,7 +12,7 @@
 
 #pragma region Includes
 #include "SVFilterClass.h"
-#include "SVImageLibrary/SVImageBufferHandleInterface.h"
+#include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
 #pragma endregion Includes
 
@@ -28,10 +28,10 @@ public:
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 protected:
-	virtual bool onRun( bool First, SVImageBufferHandlePtr RInputImageHandle, SVImageBufferHandlePtr ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( bool First, SvOi::SVImageBufferHandlePtr RInputImageHandle, SvOi::SVImageBufferHandlePtr ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	SVImageInfoClass mProcBufferInfo;
-	SVImageBufferHandlePtr m_ProcBufferHandlePtr;
+	SvOi::SVImageBufferHandlePtr m_ProcBufferHandlePtr;
 
 private:
 	void init();

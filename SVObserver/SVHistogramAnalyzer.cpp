@@ -675,7 +675,7 @@ bool SVHistogramAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 			break;
 		}
 
-		SVImageBufferHandlePtr ImageHandle;
+		SvOi::SVImageBufferHandlePtr ImageHandle;
 
 		if( ! pInputImage->GetImageHandle( ImageHandle ) || nullptr == ImageHandle)
 		{
@@ -690,10 +690,7 @@ bool SVHistogramAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 
 		SVMatroxImageInterface l_lImageIntf;
 
-		SVImageBufferHandleImage l_MilHandle;
-		ImageHandle->GetData( l_MilHandle );
-
-		if( l_MilHandle.empty() )
+		if(ImageHandle->empty() )
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)
@@ -704,7 +701,7 @@ bool SVHistogramAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 			break;
 		}
 
-		MatroxCode = l_lImageIntf.Histogram(m_HistResultID, l_MilHandle.GetBuffer() );
+		MatroxCode = l_lImageIntf.Histogram(m_HistResultID, ImageHandle->GetBuffer() );
 		if (S_OK != MatroxCode)
 		{
 			Result = false;
@@ -1085,7 +1082,7 @@ bool SVHistogramAnalyzerClass::calcHistogram()
 		LastError = true;
 	}
 
-	SVImageBufferHandlePtr ImageHandle;
+	SvOi::SVImageBufferHandlePtr ImageHandle;
 	if(!LastError)
 	{
 		if( ! pInputImage->GetImageHandle( ImageHandle ) || nullptr == ImageHandle)
@@ -1097,12 +1094,10 @@ bool SVHistogramAnalyzerClass::calcHistogram()
 		}
 	}
 	SVMatroxImageInterface l_lImageIntf;
-	SVImageBufferHandleImage l_MilHandle;
 
 	if(!LastError)
 	{
-		ImageHandle->GetData( l_MilHandle );
-		if( l_MilHandle.empty() )
+		if(ImageHandle->empty() )
 		{
 			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16202);
@@ -1112,7 +1107,7 @@ bool SVHistogramAnalyzerClass::calcHistogram()
 
 	if(!LastError)
 	{
-		MatroxCode = l_lImageIntf.Histogram(m_HistResultID, l_MilHandle.GetBuffer() );
+		MatroxCode = l_lImageIntf.Histogram(m_HistResultID, ImageHandle->GetBuffer() );
 		if (S_OK != MatroxCode)
 		{
 			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
@@ -1170,19 +1165,17 @@ HRESULT SVHistogramAnalyzerClass::createHistogramImage()
 HRESULT SVHistogramAnalyzerClass::paintHistogramImage()
 {
 	HRESULT hr = S_OK;
-	SVImageBufferHandlePtr l_handle;
+	SvOi::SVImageBufferHandlePtr l_handle;
 	if (!m_histogramImage.GetImageHandle(l_handle) || nullptr == l_handle)
 	{
 		return Err_GetImageHandle;
 	}
-	SVImageBufferHandleImage l_MilHandle;
-	l_handle->GetData( l_MilHandle );
 
 	CRect l_client;
 	m_histogramImage.GetImageExtents().GetRectangle(l_client);
 	
 	m_histogram.SetClient(l_client);
-	MILCanvas canvas(l_MilHandle.GetBuffer());
+	MILCanvas canvas(l_handle->GetBuffer());
 	m_histogram.DrawHistogram(canvas);
 
 	return hr;

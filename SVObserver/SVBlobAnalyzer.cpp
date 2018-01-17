@@ -1001,7 +1001,7 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 
 	do
 	{
-		SVImageBufferHandlePtr ImageHandle;
+		SvOi::SVImageBufferHandlePtr ImageHandle;
 
 		if(!__super::onRun(rRunStatus, pErrorMessages))
 		{
@@ -1037,10 +1037,7 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 			break;
 		}
 
-		SVImageBufferHandleImage l_MilBuffer;
-		ImageHandle->GetData( l_MilBuffer );
-
-		if ( l_MilBuffer.empty() )
+		if (ImageHandle->empty() )
 		{
 			ASSERT( false );
 			Result = false;
@@ -1055,7 +1052,7 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 		//
 		// Analyze the image for blobs and features of blobs.
 		//
-		MatroxCode = SVMatroxBlobInterface::Execute( m_ResultBufferID, l_MilBuffer.GetBuffer(), m_BlobContextID );
+		MatroxCode = SVMatroxBlobInterface::Execute( m_ResultBufferID, ImageHandle->GetBuffer(), m_BlobContextID );
 
 		if( S_OK != MatroxCode )
 		{
@@ -1489,7 +1486,7 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 				}
 			}// end switch( l_lType )
 
-			MatroxCode = SVMatroxBlobInterface::BlobFill( m_ResultBufferID, l_MilBuffer.GetBuffer(), eCriterion, Color);
+			MatroxCode = SVMatroxBlobInterface::BlobFill( m_ResultBufferID, ImageHandle->GetBuffer(), eCriterion, Color);
 		}// end if
 	} while ( false );
 

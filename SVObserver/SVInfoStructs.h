@@ -22,7 +22,7 @@
 //Moved to precompiled header: #include <boost/any.hpp>
 #include "SVDataManagerLibrary/SVDataManagerHandle.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
-#include "SVImageLibrary/SVImageBufferHandleInterface.h"
+#include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "InspectionEngine/SVCameraInfoStruct.h"
 #include "SVStatusLibrary/SVImageIndexStruct.h"
 #include "SVUtilityLibrary/SVGUID.h"
@@ -366,7 +366,7 @@ struct SVInputImageRequestInfoStruct
 
 	std::string m_ObjectName;
 	SVImageInfoClass m_ImageInfo;
-	SVImageBufferHandlePtr m_ImageHandlePtr;
+	SvOi::SVImageBufferHandlePtr m_ImageHandlePtr;
 	bool m_bUsingCameraName;
 
 private:

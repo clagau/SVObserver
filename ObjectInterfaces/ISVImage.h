@@ -8,12 +8,11 @@
 #pragma once
 #pragma region Includes
 #include "Definitions/SVImageEnums.h"
-#include "IMatroxImageData.h"
+#include "SVImageBufferHandleInterface.h"
 #pragma endregion Includes
 
 namespace SvOi
 {
-	typedef std::shared_ptr< IMatroxImageData > MatroxImageSmartHandlePtr;
 	//this class is a interface. It should only have pure virtual public method and no member variables
 	class ISVImage
 	{
@@ -34,15 +33,15 @@ namespace SvOi
 
 		//************************************
 		/// Return the data of the image.
-		/// \returns MatroxImageSmartHandlePtr
+		/// \returns SVImageBufferHandlePtr
 		//************************************
-		virtual MatroxImageSmartHandlePtr getImageData() = 0;
+		virtual SVImageBufferHandlePtr getImageData() = 0;
 
 		//************************************
 		/// Return the data of the parent image.
-		/// \returns MatroxImageSmartHandlePtr
+		/// \returns SVImageBufferHandlePtr
 		//************************************
-		virtual MatroxImageSmartHandlePtr getParentImageData() = 0;
+		virtual SVImageBufferHandlePtr getParentImageData() = 0;
 
 		//************************************
 		/// Return the display name the image.

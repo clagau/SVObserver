@@ -13,6 +13,7 @@
 #include "SVSmoothFilterClass.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVObjectLibrary/SVClsids.h"
+#include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #pragma endregion Includes
 
 
@@ -34,18 +35,15 @@ SVSmoothFilterClass::~SVSmoothFilterClass()
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVSmoothFilterClass::onRun( bool First, SVImageBufferHandlePtr rInputImageHandle, SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVSmoothFilterClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	SVImageBufferHandleImage l_InMilHandle;
-	SVImageBufferHandleImage l_OutMilHandle;
 	if( nullptr != m_pCurrentUIOPL && nullptr != rInputImageHandle && nullptr != rOutputImageHandle &&
-		S_OK == rInputImageHandle->GetData( l_InMilHandle ) && !( l_InMilHandle.empty() ) &&
-		S_OK == rOutputImageHandle->GetData( l_OutMilHandle ) && !( l_OutMilHandle.empty() )	)
+		!(rInputImageHandle->empty() ) && !(rOutputImageHandle->empty() )	)
 	{
 		HRESULT l_Code;
 
-		l_Code = SVMatroxImageInterface::Convolve( l_OutMilHandle.GetBuffer(),
-			First ? l_InMilHandle.GetBuffer() : l_OutMilHandle.GetBuffer(),
+		l_Code = SVMatroxImageInterface::Convolve(rOutputImageHandle->GetBuffer(),
+			First ? rInputImageHandle->GetBuffer() : rOutputImageHandle->GetBuffer(),
 			SVFilterOpSmooth );
 
 		if( S_OK != l_Code )

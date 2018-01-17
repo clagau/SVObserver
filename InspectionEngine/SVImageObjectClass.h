@@ -15,7 +15,7 @@
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <vector>
 #include "SVDataManagerLibrary/SVDataManagerHandle.h"
-#include "SVImageLibrary/SVImageBufferHandleInterface.h"
+#include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVStatusLibrary/MessageContainer.h"
@@ -59,13 +59,13 @@ public:
 	bool CopyValue( const SVDataManagerHandle& p_FromDMIndexHandle, const SVDataManagerHandle& p_ToDMIndexHandle );
 	bool CopyValue( const SVDataManagerHandle& p_ToDMIndexHandle );
 
-	bool GetImageHandle( long lIndex, SVImageBufferHandlePtr& p_rValuePtr ) const;
-	bool GetImageHandle( SVImageBufferHandlePtr& p_rValuePtr ) const;
+	bool GetImageHandle( long lIndex, SvOi::SVImageBufferHandlePtr& p_rValuePtr ) const;
+	bool GetImageHandle(SvOi::SVImageBufferHandlePtr& p_rValuePtr ) const;
 
 	HRESULT LoadImageFullSize( LPCTSTR p_szFileName, SVImageExtentClass& p_rNewExtent );
 	HRESULT LoadImage( LPCTSTR p_szFileName, SVDataManagerHandle& p_rToDMIndexHandle, bool p_bRestore=false );
 
-	HRESULT CopyToHandle( SVImageBufferHandlePtr& p_rHandle );
+	HRESULT CopyToHandle(SvOi::SVImageBufferHandlePtr& p_rHandle );
 	HRESULT CopyToBSTR( BSTR &p_rbstrData );
 	HRESULT CopyFromBSTR( BSTR p_Image );
 
@@ -82,11 +82,11 @@ protected:
 	struct SVImageObjectElement
 	{
 		SVImageObjectElement();
-		SVImageObjectElement( size_t p_MasterIndex, SVImageObjectClassPtr p_ParentPtr, SVImageBufferHandlePtr p_ImageHandle );
+		SVImageObjectElement( size_t p_MasterIndex, SVImageObjectClassPtr p_ParentPtr, SvOi::SVImageBufferHandlePtr p_ImageHandle );
 
 		size_t m_MasterIndex;
 		SVImageObjectClassPtr m_ParentPtr;
-		SVImageBufferHandlePtr m_ImageHandle;
+		SvOi::SVImageBufferHandlePtr m_ImageHandle;
 
 	private:
 		// Do not implement
@@ -107,11 +107,11 @@ protected:
 	bool DestroyBufferArrays();
 
 	bool CreateImageBuffer( SVImageInfoClass &rInfo, long p_Index, SVImageObjectElementPtr& p_Handle, SvStl::MessageContainerVector *pErrorContainer=nullptr );
-	bool CreateImageChildBuffer( const SVImageInfoClass &rParentInfo, SVImageBufferHandlePtr pParentHandle, 
+	bool CreateImageChildBuffer( const SVImageInfoClass &rParentInfo, SvOi::SVImageBufferHandlePtr pParentHandle,
 	                             SVImageInfoClass &rChildInfo, long p_Index, SVImageObjectElementPtr& p_Handle );
 	bool DestroyImageBuffer( SVImageObjectElementPtr& p_Handle );
 
-	bool GetArrayImageHandle( long lIndex, SVImageBufferHandlePtr& rHandle ) const;
+	bool GetArrayImageHandle( long lIndex, SvOi::SVImageBufferHandlePtr& rHandle ) const;
 
 	bool CreateImageHandleArray( long lSize, SvStl::MessageContainerVector *pErrorContainer=nullptr );
 	bool DestroyImageHandleArray();

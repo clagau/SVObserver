@@ -372,23 +372,18 @@ bool SVCylindricalWarpToolClass::onRun( SVRunStatusClass& p_rRunStatus, SvStl::M
 		if ( nullptr != l_pInputImage &&
 			   m_OutputImage.SetImageHandleIndex( p_rRunStatus.Images ) )
 		{
-			SVImageBufferHandlePtr l_InputHandle;
-			SVImageBufferHandlePtr l_OutputHandle;
+			SvOi::SVImageBufferHandlePtr l_InputHandle;
+			SvOi::SVImageBufferHandlePtr l_OutputHandle;
 
 			SVImageBufferHandleImage l_InMilHandle;
 			SVImageBufferHandleImage l_OutMilHandle;
 
 			if ( l_pInputImage->GetImageHandle( l_InputHandle ) && nullptr != l_InputHandle &&
-				   m_OutputImage.GetImageHandle( l_OutputHandle ) && nullptr != l_OutputHandle)
+				m_OutputImage.GetImageHandle( l_OutputHandle ) && nullptr != l_OutputHandle &&
+				!(l_InputHandle->empty() ) && !(l_OutputHandle->empty() ) )
 			{
-				l_InputHandle->GetData( l_InMilHandle );
-				l_OutputHandle->GetData( l_OutMilHandle );
-			}
-
-			if( !( l_InMilHandle.empty() ) && !( l_OutMilHandle.empty() ) )
-			{
-				MatroxCode = SVMatroxImageInterface::Warp(l_OutMilHandle.GetBuffer(), 
-					l_InMilHandle.GetBuffer(), 
+				MatroxCode = SVMatroxImageInterface::Warp(l_OutputHandle->GetBuffer(),
+					l_InputHandle->GetBuffer(),
 					m_LutX, 
 					m_LutY,
 					static_cast<SVImageOperationTypeEnum>(Interpolation));

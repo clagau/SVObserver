@@ -48,11 +48,6 @@ unsigned char* SVDisplayImageBufferClass::GetBufferAddress() const
 	return m_pucImageData;
 }
 
-HRESULT SVDisplayImageBufferClass::GetData( SVImageBufferHandleData& p_rData ) const
-{
-	return E_FAIL;
-}
-
 bool SVDisplayImageBufferClass::UpdateDisplayBufferInfo( long bufWidth, long bufHeight, int iFormat )
 {
 	bool l_bOk = DestroyDisplayBuffer();

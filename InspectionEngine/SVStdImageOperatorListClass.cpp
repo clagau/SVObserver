@@ -161,8 +161,8 @@ bool SVStdImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::Mess
 	{
 		if ( pOutputImage->SetImageHandleIndex( rRunStatus.Images ) )
 		{
-			SVImageBufferHandlePtr input;
-			SVImageBufferHandlePtr output;
+			SvOi::SVImageBufferHandlePtr input;
+			SvOi::SVImageBufferHandlePtr output;
 
 			// Check for new image type...
 			if( nullptr == pOutputImage->GetParentImage() )
@@ -204,8 +204,8 @@ bool SVStdImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::Mess
 			}
 
 			//set tmp variable
-			SVImageBufferHandlePtr sourceImage = m_milTmpImageObjectInfo1;
-			SVImageBufferHandlePtr destinationImage = m_milTmpImageObjectInfo2;
+			SvOi::SVImageBufferHandlePtr sourceImage = m_milTmpImageObjectInfo1;
+			SvOi::SVImageBufferHandlePtr destinationImage = m_milTmpImageObjectInfo2;
 			if ( sourceImage->empty() || destinationImage->empty() || !copyBuffer( input, sourceImage ) )
 			{
 				bRetVal = false;
@@ -226,7 +226,7 @@ bool SVStdImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::Mess
 						if( pOperator->Run( true, sourceImage, destinationImage, ChildRunStatus ) )
 						{
 							//switch image buffer for next run
-							SVImageBufferHandlePtr tmpImage = sourceImage;
+							SvOi::SVImageBufferHandlePtr tmpImage = sourceImage;
 							sourceImage = destinationImage;
 							destinationImage = tmpImage;
 						}
@@ -331,21 +331,16 @@ HRESULT SVStdImageOperatorListClass::CollectInputImageNames()
 	return hr;
 }
 
-bool SVStdImageOperatorListClass::copyBuffer( const SVImageBufferHandlePtr input, SVImageBufferHandlePtr output )
+bool SVStdImageOperatorListClass::copyBuffer( const SvOi::SVImageBufferHandlePtr input, SvOi::SVImageBufferHandlePtr output )
 {
 	bool bRetVal = true;
-	SVImageBufferHandleImage sourceMilHandle;
-	SVImageBufferHandleImage destinationMilHandle;
 
-	input->GetData( sourceMilHandle );
-	output->GetData( destinationMilHandle );
-
-	bRetVal = bRetVal && !( sourceMilHandle.empty() );
-	bRetVal = bRetVal && !( destinationMilHandle.empty() );
+	bRetVal = bRetVal && !( input->empty() );
+	bRetVal = bRetVal && !( output->empty() );
 
 	if( bRetVal )
 	{
-		HRESULT  Code = SVMatroxBufferInterface::CopyBuffer( destinationMilHandle.GetBuffer(), sourceMilHandle.GetBuffer() );
+		HRESULT  Code = SVMatroxBufferInterface::CopyBuffer(output->GetBuffer(), input->GetBuffer() );
 		bRetVal = (S_OK == Code);
 	}	
 	

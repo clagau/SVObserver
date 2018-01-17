@@ -56,7 +56,7 @@ namespace SvCmd
 		HRESULT Execute()
 		{
 			HRESULT hr = S_OK;
-			SvOi::MatroxImageSmartHandlePtr data;
+			SvOi::SVImageBufferHandlePtr data;
 
 			if (SV_GUID_NULL != m_InstanceID)
 			{
@@ -86,11 +86,11 @@ namespace SvCmd
 				return E_POINTER;
 			}
 			
-			SvOi::IMatroxImageData* pImageData = data.get();
+			SvOi::SVImageBufferHandleInterface* pImageData = data.get();
 			if (nullptr != pImageData && !pImageData->empty())
 			{
-				m_Width = abs(pImageData->getBitmapInfo().GetWidth());
-				m_Height = abs(pImageData->getBitmapInfo().GetHeight());
+				m_Width = abs(pImageData->GetBitmapInfo().GetWidth());
+				m_Height = abs(pImageData->GetBitmapInfo().GetHeight());
 				HBITMAP hBitmap = pImageData->GetHBitmap();
 				if (nullptr != hBitmap)
 				{

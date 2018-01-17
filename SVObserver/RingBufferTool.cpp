@@ -137,7 +137,7 @@ bool RingBufferTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 			imageInfo.setDibBufferFlag(false);
 			for (int i=0; i<ringBufferDepth; i++)
 			{
-				SVImageBufferHandlePtr imageHandle;
+				SvOi::SVImageBufferHandlePtr imageHandle;
 				SVImageProcessingClass::CreateImageBuffer(imageInfo, imageHandle);
 				m_ringBuffer[i] = imageHandle;
 			}
@@ -216,25 +216,20 @@ bool RingBufferTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContaine
 		}
 
 		//copy input image to ring buffer
-		SVImageBufferHandleImage milHandleTo;
-		SVImageBufferHandleImage milHandleFrom;
+		SvOi::SVImageBufferHandlePtr milHandleTo;
+		SvOi::SVImageBufferHandlePtr inputImageBuffer;
 		if( static_cast<int>(m_ringBuffer.size()) > m_nextBufferPos && nullptr != m_ringBuffer[m_nextBufferPos] )
 		{
-			m_ringBuffer[m_nextBufferPos]->GetData( milHandleTo );
+			milHandleTo = m_ringBuffer[m_nextBufferPos];
 		}
 		SVImageClass* inputImage = getInputImage ();
 		if (nullptr != inputImage)
 		{
-			SVImageBufferHandlePtr inputImageBuffer;
 			inputImage->GetImageHandle(inputImageBuffer);
-			if( nullptr != inputImageBuffer)
-			{
-				inputImageBuffer->GetData( milHandleFrom );
-			}
 		}
-		if (!milHandleTo.empty() && !milHandleFrom.empty())
+		if (nullptr != milHandleTo.get() && !milHandleTo->empty() && nullptr != inputImageBuffer.get() && !inputImageBuffer->empty())
 		{
-			SVMatroxBufferInterface::CopyBuffer( milHandleTo.GetBuffer(), milHandleFrom.GetBuffer());
+			SVMatroxBufferInterface::CopyBuffer( milHandleTo->GetBuffer(), inputImageBuffer->GetBuffer());
 		}
 
 		//calculate next image pos
@@ -322,24 +317,17 @@ int RingBufferTool::SetOutputImage( int outputIndex, int imageIndex, int maxInde
 	
 	if ( 0 <= pos && maxIndexPos >= pos)
 	{
-		SVImageBufferHandleImage handleToIndex;
-		SVImageBufferHandleImage handleToOutputImage;
-		if( static_cast<int>(m_ringBuffer.size()) > pos && nullptr != m_ringBuffer[pos] )
+		if (static_cast<int>(m_ringBuffer.size()) > pos && nullptr != m_ringBuffer[pos])
 		{
-			m_ringBuffer[pos]->GetData( handleToIndex );
-		}
-		SVImageBufferHandlePtr outputImageBuffer;
-		m_OutputImages[outputIndex].GetImageHandle(outputImageBuffer);
-		if( nullptr != outputImageBuffer )
-		{
-			outputImageBuffer->GetData( handleToOutputImage );
-		}
-		if (!handleToOutputImage.empty() && !handleToIndex.empty())
-		{
-			HRESULT statusCode = SVMatroxBufferInterface::CopyBuffer( handleToOutputImage.GetBuffer(), handleToIndex.GetBuffer());
-			if (S_OK == statusCode)
+			SvOi::SVImageBufferHandlePtr outputImageBuffer;
+			m_OutputImages[outputIndex].GetImageHandle(outputImageBuffer);
+			if (nullptr != outputImageBuffer && !outputImageBuffer->empty() && !m_ringBuffer[pos]->empty())
 			{
-				retValue = 1 << outputIndex;
+				HRESULT statusCode = SVMatroxBufferInterface::CopyBuffer(outputImageBuffer->GetBuffer(), m_ringBuffer[pos]->GetBuffer());
+				if (S_OK == statusCode)
+				{
+					retValue = 1 << outputIndex;
+				}
 			}
 		}
 	}

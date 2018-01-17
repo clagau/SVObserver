@@ -175,13 +175,12 @@ bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 
 	if (Result)
 	{
-		SVImageBufferHandlePtr OutImageHandle;
-		SVImageBufferHandleImage l_OutMilHandle;
+		SvOi::SVImageBufferHandlePtr OutImageHandle;
 
 		if (m_OutputImage.SetImageHandleIndex(rRunStatus.Images) && m_OutputImage.GetImageHandle(OutImageHandle) &&
-			nullptr != OutImageHandle && (S_OK == OutImageHandle->GetData(l_OutMilHandle)) && !l_OutMilHandle.empty())
+			nullptr != OutImageHandle && !OutImageHandle->empty())
 		{
-			SVMatroxBufferInterface::ClearBuffer(l_OutMilHandle.GetBuffer(), 0);
+			SVMatroxBufferInterface::ClearBuffer(OutImageHandle->GetBuffer(), 0);
 		}
 		else
 		{
@@ -300,8 +299,7 @@ bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 
 		if (Result)
 		{
-			SVImageBufferHandlePtr InImageHandle;
-			SVImageBufferHandleImage l_InMilHandle;
+			SvOi::SVImageBufferHandlePtr InImageHandle;
 
 			SVImageClass* l_pImageInput = getInputImage();
 
@@ -313,8 +311,7 @@ bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 			Result = Result && (nullptr != l_pImageInput);
 			Result = Result && (l_pImageInput->GetImageHandle(InImageHandle));
 			Result = Result && (nullptr != InImageHandle);
-			Result = Result && (S_OK == InImageHandle->GetData(l_InMilHandle));
-			Result = Result && !(l_InMilHandle.empty());
+			Result = Result && !(InImageHandle->empty());
 
 			if (Result)
 			{
@@ -324,7 +321,7 @@ bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 					m_OutputImage.SetTranslationOffset(l_OffsetX, l_OffsetY);
 				}
 
-				HRESULT MatroxCode = SVMatroxBufferInterface::CopyBuffer(l_OutMilHandle.GetBuffer(), l_InMilHandle.GetBuffer(), static_cast<long>(-l_OffsetX), static_cast<long>(-l_OffsetY));
+				HRESULT MatroxCode = SVMatroxBufferInterface::CopyBuffer(OutImageHandle->GetBuffer(), InImageHandle->GetBuffer(), static_cast<long>(-l_OffsetX), static_cast<long>(-l_OffsetY));
 
 				if (S_OK != MatroxCode)
 				{

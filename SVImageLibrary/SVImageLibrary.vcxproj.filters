@@ -50,12 +50,6 @@
     <ClCompile Include="SVImageBufferHandleImage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVImageBufferHandleInterface.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVImageBufferHandleStruct.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVImageBufferInterface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -78,9 +72,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVLutTransform.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MatroxImageData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ImageFileUtilities.cpp">
@@ -130,16 +121,7 @@
     <ClInclude Include="SVGeometryClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVImageBufferHandleData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVImageBufferHandleImage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVImageBufferHandleInterface.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVImageBufferHandleStruct.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVImageBufferInterface.h">
@@ -164,9 +146,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVLutTransform.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MatroxImageData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ImageFileUtilities.h">

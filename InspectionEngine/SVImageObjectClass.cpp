@@ -125,7 +125,7 @@ bool SVImageObjectClass::Clear( long lIndex, unsigned long ulValue )
 {
 	bool Result( true );
 	
-	SVImageBufferHandlePtr ImageHandle;
+	SvOi::SVImageBufferHandlePtr ImageHandle;
 
 	Result = Result && GetImageHandle( lIndex, ImageHandle );
 	Result = Result && ( S_OK == SVImageProcessingClass::InitBuffer( ImageHandle, ulValue ) );
@@ -192,16 +192,13 @@ bool SVImageObjectClass::SetCurrentIndex( const SVDataManagerHandle& rDMIndexHan
 		{
 			HRESULT l_Code;
 
-			SVImageBufferHandlePtr l_svOutBuffer;
+			SvOi::SVImageBufferHandlePtr l_svOutBuffer;
 			
 			Result = GetImageHandle( rDMIndexHandle.GetIndex(), l_svOutBuffer ) && nullptr != l_svOutBuffer;
 
 			if( Result )
 			{
-				SVImageBufferHandleImage l_MilHandle;
-				l_svOutBuffer->GetData( l_MilHandle );
-
-				l_Code = SVMatroxBufferInterface::ClearBuffer( l_MilHandle.GetBuffer(), 0.0 );
+				l_Code = SVMatroxBufferInterface::ClearBuffer(l_svOutBuffer->GetBuffer(), 0.0 );
 				
 				Result = l_Code == S_OK;
 			}
@@ -298,7 +295,7 @@ bool SVImageObjectClass::CopyValue( const SVDataManagerHandle& p_ToDMIndexHandle
 	return CopyValue( m_CurrentDMIndexHandle, p_ToDMIndexHandle );
 }
 
-bool SVImageObjectClass::GetImageHandle( long lIndex, SVImageBufferHandlePtr& p_rValuePtr ) const
+bool SVImageObjectClass::GetImageHandle( long lIndex, SvOi::SVImageBufferHandlePtr& p_rValuePtr ) const
 {
 	bool Result( true );
 	
@@ -318,7 +315,7 @@ bool SVImageObjectClass::GetImageHandle( long lIndex, SVImageBufferHandlePtr& p_
 	return Result;
 }
 
-bool SVImageObjectClass::GetImageHandle( SVImageBufferHandlePtr& p_rValuePtr ) const
+bool SVImageObjectClass::GetImageHandle(SvOi::SVImageBufferHandlePtr& p_rValuePtr ) const
 {
 	bool Result( true );
 
@@ -348,7 +345,7 @@ HRESULT SVImageObjectClass::LoadImage( LPCTSTR p_szFileName, SVDataManagerHandle
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	SVImageBufferHandlePtr l_svHandle;
+	SvOi::SVImageBufferHandlePtr l_svHandle;
 
 	if( SetCurrentIndex( p_rToDMIndexHandle ) &&
 			GetImageHandle( p_rToDMIndexHandle.GetIndex(), l_svHandle ) && nullptr != l_svHandle )
@@ -356,10 +353,8 @@ HRESULT SVImageObjectClass::LoadImage( LPCTSTR p_szFileName, SVDataManagerHandle
 		
 		HRESULT l_Code;
 
-		SVImageBufferHandleImage l_MilHandle;
-		l_svHandle->GetData( l_MilHandle );
-		
-		l_Code = SVMatroxBufferInterface::ClearBuffer( l_MilHandle.GetBuffer(), 0 );
+	
+		l_Code = SVMatroxBufferInterface::ClearBuffer(l_svHandle->GetBuffer(), 0 );
 		
 		if( l_Code == S_OK )
 		{
@@ -373,18 +368,15 @@ HRESULT SVImageObjectClass::LoadImage( LPCTSTR p_szFileName, SVDataManagerHandle
 				{
 					std::string l_strFile(p_szFileName);
 					
-					SVImageBufferHandleImage l_MilHandle;
-					l_svHandle->GetData( l_MilHandle );
-		
-					l_Code = SVMatroxBufferInterface::Import( l_MilHandle.GetBuffer(), l_strFile, fileformatID, p_bRestore );
+					l_Code = SVMatroxBufferInterface::Import(l_svHandle->GetBuffer(), l_strFile, fileformatID, p_bRestore );
 
 					if( p_bRestore )
 					{
 						long l_lWidth = 0;
 						long l_lHeight = 0;
 						HRESULT l_Stat;
-						l_Stat = SVMatroxBufferInterface::Get( l_MilHandle.GetBuffer(), SVSizeX, l_lWidth );
-						l_Stat = SVMatroxBufferInterface::Get( l_MilHandle.GetBuffer(), SVSizeY, l_lHeight );
+						l_Stat = SVMatroxBufferInterface::Get(l_svHandle->GetBuffer(), SVSizeX, l_lWidth );
+						l_Stat = SVMatroxBufferInterface::Get(l_svHandle->GetBuffer(), SVSizeY, l_lHeight );
 						m_ImageInfo.SetExtentProperty( SVExtentPropertyEnum::SVExtentPropertyWidth, l_lWidth);
 						m_ImageInfo.SetExtentProperty( SVExtentPropertyEnum::SVExtentPropertyHeight, l_lHeight);
 						m_ImageInfo.SetExtentProperty( SVExtentPropertyEnum::SVExtentPropertyPositionPointX, 0 );
@@ -444,25 +436,19 @@ HRESULT SVImageObjectClass::GetImageExtentFromFile( LPCTSTR pFileName, SVImageEx
 	return hrOk;	
 }
 
-HRESULT SVImageObjectClass::CopyToHandle( SVImageBufferHandlePtr &p_rHandle )
+HRESULT SVImageObjectClass::CopyToHandle(SvOi::SVImageBufferHandlePtr &p_rHandle )
 {
 	HRESULT l_Status = S_OK;
 
 	if(nullptr != p_rHandle)
 	{
-		SVImageBufferHandleImage l_ToMilHandle;
-		p_rHandle->GetData( l_ToMilHandle );
-
 		HRESULT l_Code;
 
-		SVImageBufferHandlePtr l_svHandle;
+		SvOi::SVImageBufferHandlePtr l_svHandle;
 
 		if ( GetImageHandle( l_svHandle ) && nullptr != l_svHandle )
 		{
-			SVImageBufferHandleImage l_FromMilHandle;
-			l_svHandle->GetData( l_FromMilHandle );
-
-			l_Code = SVMatroxBufferInterface::CopyBuffer( l_ToMilHandle.GetBuffer(), l_FromMilHandle.GetBuffer() );
+			l_Code = SVMatroxBufferInterface::CopyBuffer(p_rHandle->GetBuffer(), l_svHandle->GetBuffer() );
 
 			if( l_Code != S_OK )
 			{
@@ -471,7 +457,7 @@ HRESULT SVImageObjectClass::CopyToHandle( SVImageBufferHandlePtr &p_rHandle )
 		}
 		else
 		{
-			SVMatroxBufferInterface::ClearBuffer( l_ToMilHandle.GetBuffer(), 0.0 );
+			SVMatroxBufferInterface::ClearBuffer(p_rHandle->GetBuffer(), 0.0 );
 
 			l_Status = E_FAIL;
 		}
@@ -490,10 +476,10 @@ HRESULT SVImageObjectClass::CopyToBSTR( BSTR &p_rbstrData )
 
 	BITMAPINFO* pbmInfo = nullptr;
 
-	SVImageBufferHandlePtr l_svOrigHandle;
-	SVImageBufferHandlePtr l_svCopyHandle;
+	SvOi::SVImageBufferHandlePtr l_svOrigHandle;
+	SvOi::SVImageBufferHandlePtr l_svCopyHandle;
 
-	SVImageBufferHandlePtr l_psvHandle;
+	SvOi::SVImageBufferHandlePtr l_psvHandle;
 
 	if( ! GetImageHandle( l_svOrigHandle ) || nullptr == l_svOrigHandle || l_svOrigHandle->GetBitmapInfo().empty() || nullptr == l_svOrigHandle->GetBufferAddress() )
 	{
@@ -597,7 +583,7 @@ HRESULT SVImageObjectClass::CopyFromBSTR( BSTR p_Image )
 {
 	HRESULT l_Status = S_OK;
 	
-	SVImageBufferHandlePtr l_Handle;
+	SvOi::SVImageBufferHandlePtr l_Handle;
 
 	if( GetImageHandle( l_Handle ) )
 	{
@@ -624,7 +610,7 @@ SVImageObjectClass::SVImageObjectElement::SVImageObjectElement()
 {
 }
 
-SVImageObjectClass::SVImageObjectElement::SVImageObjectElement( size_t p_MasterIndex, SVImageObjectClassPtr p_ParentPtr, SVImageBufferHandlePtr p_ImageHandle )
+SVImageObjectClass::SVImageObjectElement::SVImageObjectElement( size_t p_MasterIndex, SVImageObjectClassPtr p_ParentPtr, SvOi::SVImageBufferHandlePtr p_ImageHandle )
 : m_MasterIndex( p_MasterIndex ), m_ParentPtr( p_ParentPtr ), m_ImageHandle( p_ImageHandle )
 {
 }
@@ -667,19 +653,12 @@ bool SVImageObjectClass::CreateBufferArrays(SvStl::MessageContainerVector *pErro
 
 			if( Result && nullptr == m_ParentImagePtr )
 			{
-				SVImageBufferHandlePtr l_svOutBuffer;
+				SvOi::SVImageBufferHandlePtr l_svOutBuffer;
 				Result = GetImageHandle( i, l_svOutBuffer );
 
 				if( Result )
 				{
-					SVImageBufferHandleImage l_MilHandle;
-					l_svOutBuffer->GetData( l_MilHandle );
-
-					HRESULT l_Code;
-
-					l_Code = SVMatroxBufferInterface::ClearBuffer( l_MilHandle.GetBuffer(), 0.0 );
-
-					Result = l_Code == S_OK;
+					Result = (S_OK == SVMatroxBufferInterface::ClearBuffer(l_svOutBuffer->GetBuffer(), 0.0));
 				}
 			}
 
@@ -709,7 +688,7 @@ bool SVImageObjectClass::CreateImageBuffer(SVImageInfoClass &rInfo, long p_Index
 	DestroyImageBuffer( p_Handle );
 
 	SVImageObjectElementPtr l_IndexHandle;
-	SVImageBufferHandlePtr l_Handle;
+	SvOi::SVImageBufferHandlePtr l_Handle;
 
 	HRESULT hr = SVImageProcessingClass::CreateImageBuffer( rInfo, l_Handle, pErrorContainer );
 	if (S_OK != hr)
@@ -741,7 +720,7 @@ bool SVImageObjectClass::CreateImageBuffer(SVImageInfoClass &rInfo, long p_Index
 }
 
 bool SVImageObjectClass::CreateImageChildBuffer(const SVImageInfoClass& rParentInfo, 
-                                                SVImageBufferHandlePtr pParentHandle, 
+												SvOi::SVImageBufferHandlePtr pParentHandle,
                                                 SVImageInfoClass& rChildInfo, 
                                                 long p_Index, SVImageObjectElementPtr& p_Handle)
 {
@@ -751,7 +730,7 @@ bool SVImageObjectClass::CreateImageChildBuffer(const SVImageInfoClass& rParentI
 
 	Result = (nullptr != pParentHandle);
 
-	SVImageBufferHandlePtr l_Handle;
+	SvOi::SVImageBufferHandlePtr l_Handle;
 	SVImageBufferHandleImage l_MilHandle;
 
 	if( Result )
@@ -789,7 +768,7 @@ bool SVImageObjectClass::DestroyImageBuffer(SVImageObjectElementPtr& pHandle)
 	return Result;
 }
 
-bool SVImageObjectClass::GetArrayImageHandle( long lIndex, SVImageBufferHandlePtr& rHandle ) const
+bool SVImageObjectClass::GetArrayImageHandle( long lIndex, SvOi::SVImageBufferHandlePtr& rHandle ) const
 {
 	SVImageHandleMap::const_iterator l_Iter( m_MasterImageHandles.find( lIndex ) );
 
@@ -825,7 +804,7 @@ bool SVImageObjectClass::CreateImageHandleArray( long lSize, SvStl::MessageConta
 
 		if (nullptr != m_ParentImagePtr)
 		{
-			SVImageBufferHandlePtr l_ParentHandlePtr;
+			SvOi::SVImageBufferHandlePtr l_ParentHandlePtr;
 			
 			Result = m_ParentImagePtr->GetArrayImageHandle( l, l_ParentHandlePtr );
 

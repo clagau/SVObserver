@@ -279,15 +279,11 @@ void SVToolAdjustmentDialogThresholdPageClass::initThreshold()
 				histResultID = svData.HBuffer.milResult;
 			}
 
-			SVImageBufferHandlePtr ImageHandle;
+			SvOi::SVImageBufferHandlePtr ImageHandle;
 
 			if ( m_pCurrentThreshold->getReferenceImage()->GetImageHandle( ImageHandle ) && nullptr != ImageHandle)
 			{
-				SVImageBufferHandleImage l_MilHandle;
-				ImageHandle->GetData( l_MilHandle );
-
-				HRESULT l_Code;
-				l_Code = SVMatroxImageInterface::Histogram( histResultID, l_MilHandle.GetBuffer() );
+				HRESULT l_Code = SVMatroxImageInterface::Histogram( histResultID, ImageHandle->GetBuffer() );
 				l_Code = SVMatroxImageInterface::GetResult( histResultID, l_alHistValues );
 				l_Code = SVMatroxImageInterface::Destroy( histResultID );
 

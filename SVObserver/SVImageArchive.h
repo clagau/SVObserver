@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVImageLibrary/SVImageBufferHandleInterface.h"
+#include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "InspectionEngine/SVImageObjectClass.h"
 #pragma endregion Includes
@@ -28,7 +28,7 @@ public:
 	bool LoadImageArchiveFile( SVImageObjectClassPtr p_AcquisitionCircleBufferPtr );
 	bool ImageArchiveFileExists( const std::string& rFileName );
 	bool LoadImageArchiveFile( SVImageClass *pImage );
-	bool LoadImageArchiveFile( SVImageBufferHandlePtr p_HandlePtr );
+	bool LoadImageArchiveFile(SvOi::SVImageBufferHandlePtr p_HandlePtr);
 	DWORD NextFileName ();
 	DWORD ResetFileNumber ();
 	void SetImageArchivePath( const std::string& rPath );

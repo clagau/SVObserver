@@ -113,8 +113,8 @@ bool SVLinearImageOperatorListClass::ResetObject(SvStl::MessageContainerVector *
 
 bool SVLinearImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	SVImageBufferHandlePtr output;
-	SVImageBufferHandlePtr input;
+	SvOi::SVImageBufferHandlePtr output;
+	SvOi::SVImageBufferHandlePtr input;
 	SVImageExtentClass l_svImageExtent;
 
 	BOOL UseRotation = true;
@@ -158,34 +158,32 @@ bool SVLinearImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::M
 		{
 			if ( outputImageObject.SetImageHandleIndex( rRunStatus.Images ) )
 			{
-				SVImageBufferHandleImage l_InMilHandle;
-				SVImageBufferHandleImage l_OutMilHandle;
-
 				outputImageObject.GetImageHandle( output );
 				l_psvInputImage->GetImageHandle( input );
 				
-				if(nullptr != input && nullptr != output )
+				if (nullptr != input && nullptr != output)
 				{
-					input->GetData( l_InMilHandle );
-					output->GetData( l_OutMilHandle );
+					POINT l_oInPoint;
+					POINT l_oOutPoint;
+					double dRotationAngle;
+
+					l_svImageExtent.GetExtentProperty(SVExtentPropertyRotationAngle, dRotationAngle);
+					l_svImageExtent.GetExtentProperty(SVExtentPropertyPositionPoint, l_oInPoint);
+					l_svImageExtent.GetExtentProperty(SVExtentPropertyOutputPositionPoint, l_oOutPoint);
+
+					SVMatroxImageRotateStruct l_Rotate(input->GetBuffer());
+					l_Rotate.m_dAngle = dRotationAngle;
+					l_Rotate.m_dSrcCenX = l_oInPoint.x;
+					l_Rotate.m_dSrcCenY = l_oInPoint.y;
+					l_Rotate.m_dDstCenX = l_oOutPoint.x;
+					l_Rotate.m_dDstCenY = l_oOutPoint.y;
+					l_Rotate.m_eInterpolation = SVNearestNeighOverScanClear;
+					MatroxCode = SVMatroxImageInterface::Rotate(output->GetBuffer(), l_Rotate);
 				}
-
-				POINT l_oInPoint;
-				POINT l_oOutPoint;
-				double dRotationAngle;
-
-				l_svImageExtent.GetExtentProperty(SVExtentPropertyRotationAngle,dRotationAngle);
-				l_svImageExtent.GetExtentProperty(SVExtentPropertyPositionPoint,l_oInPoint);
-				l_svImageExtent.GetExtentProperty(SVExtentPropertyOutputPositionPoint,l_oOutPoint);
-
-				SVMatroxImageRotateStruct l_Rotate( l_InMilHandle.GetBuffer() );
-				l_Rotate.m_dAngle = dRotationAngle;
-				l_Rotate.m_dSrcCenX = l_oInPoint.x;
-				l_Rotate.m_dSrcCenY = l_oInPoint.y;
-				l_Rotate.m_dDstCenX = l_oOutPoint.x;
-				l_Rotate.m_dDstCenY = l_oOutPoint.y;
-				l_Rotate.m_eInterpolation = SVNearestNeighOverScanClear;
-				MatroxCode = SVMatroxImageInterface::Rotate( l_OutMilHandle.GetBuffer(), l_Rotate );
+				else
+				{
+					MatroxCode = E_FAIL;
+				}
 
 
 				// Run children...
@@ -261,13 +259,13 @@ bool SVLinearImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::M
 
 	if( bRetVal )
 	{
-		SVImageBufferHandleImage l_OutMilHandle;
+		SVMatroxBuffer buffer;
 
 		outputImageObject.GetImageHandle( output );
 
 		if(nullptr != output)
 		{
-			output->GetData( l_OutMilHandle );
+			buffer = output->GetBuffer();
 		}
 
 		SVDataBufferInfoClass& rDataBufferInfo = m_svProfileResultData.GetDataBufferInfo();
@@ -292,7 +290,7 @@ bool SVLinearImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::M
 		{
 			double l_dProjectHeight = 0.0;
 
-			MatroxCode = SVMatroxImageInterface::Project( rDataBufferInfo.HBuffer.milResult, l_OutMilHandle.GetBuffer(), static_cast<double> (ProjectAngle) );
+			MatroxCode = SVMatroxImageInterface::Project( rDataBufferInfo.HBuffer.milResult, buffer, static_cast<double> (ProjectAngle) );
 
 			MatroxCode = SVMatroxImageInterface::GetResult( rDataBufferInfo.HBuffer.milResult, m_aulLineData );
 

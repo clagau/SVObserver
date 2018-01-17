@@ -24,8 +24,9 @@
 #include "SVMatroxBufferCreateLineStruct.h"
 #include "SVMatroxBufferCreateStruct.h"
 #include "SVMatroxSystem.h"
-#pragma endregion Includes
 #include "MatroxImageProps.h"
+#pragma endregion Includes
+
 
 class SVImageCopyUtility;
 /**

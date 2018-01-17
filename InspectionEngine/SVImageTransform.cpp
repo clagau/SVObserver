@@ -273,8 +273,8 @@ bool SVImageTransformClass::onRun( SVRunStatusClass& runStatus, SvStl::MessageCo
 
 	if( bRetVal )
 	{
-		SVImageBufferHandlePtr InImageHandle;
-		SVImageBufferHandlePtr OutImageHandle;
+		SvOi::SVImageBufferHandlePtr InImageHandle;
+		SvOi::SVImageBufferHandlePtr OutImageHandle;
 
 		if ( !l_psvInputImage->GetImageHandle( InImageHandle ) || nullptr == InImageHandle )
 		{
@@ -322,11 +322,7 @@ bool SVImageTransformClass::onRun( SVRunStatusClass& runStatus, SvStl::MessageCo
 			memset( OutImageHandle->GetBufferAddress(), 0, static_cast<size_t>(width * height) );
 		}
 
-		SVImageBufferHandleImage l_InMilHandle;
-		SVImageBufferHandleImage l_OutMilHandle;
-
-		if( bRetVal && ( S_OK != InImageHandle->GetData( l_InMilHandle ) || l_InMilHandle.empty() || 
-							S_OK != OutImageHandle->GetData( l_OutMilHandle ) || l_OutMilHandle.empty() ))
+		if( bRetVal && ( InImageHandle->empty() || OutImageHandle->empty() ))
 		{
 			bRetVal = false;
 			if (nullptr != pErrorMessages)
@@ -338,7 +334,7 @@ bool SVImageTransformClass::onRun( SVRunStatusClass& runStatus, SvStl::MessageCo
 
 		if( bRetVal )
 		{
-			SVMatroxImageRotateStruct l_Rotate(l_InMilHandle.GetBuffer());
+			SVMatroxImageRotateStruct l_Rotate(InImageHandle->GetBuffer());
 			l_Rotate.m_dAngle = angle;
 			l_Rotate.m_dSrcCenX = srcX + xDisplacement;
 			l_Rotate.m_dSrcCenY = srcY + yDisplacement;
@@ -348,7 +344,7 @@ bool SVImageTransformClass::onRun( SVRunStatusClass& runStatus, SvStl::MessageCo
 
 			// Use MimRotate to Rotate, Translate or Copy buffer
 			// Rotate...( and translate image )
-			HRESULT MatroxCode = SVMatroxImageInterface::Rotate( l_OutMilHandle.GetBuffer(), l_Rotate );
+			HRESULT MatroxCode = SVMatroxImageInterface::Rotate(OutImageHandle->GetBuffer(), l_Rotate );
 
 			if (S_OK != MatroxCode)
 			{

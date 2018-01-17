@@ -123,7 +123,7 @@ public:
 
 	bool IsDigitizerSubsystemValid() const;
 
-	virtual HRESULT SingleGrab( SVImageBufferHandlePtr p_SingleGrabHandle );
+	virtual HRESULT SingleGrab(SvOi::SVImageBufferHandlePtr p_SingleGrabHandle );
 
 	virtual bool SetCurrentIndex( const SVDataManagerHandle& rDMIndexHandle );
 	virtual bool SetCurrentIndex( const SVDataManagerHandle& rDMIndexHandle, SVDataManagerLockTypeEnum p_LockType );
@@ -184,7 +184,7 @@ protected:
 
 	bool mbIsBufferCreated;
 	bool mbTempOnline;
-	SVImageBufferHandlePtr m_SingleGrabHandle;
+	SvOi::SVImageBufferHandlePtr m_SingleGrabHandle;
 	SVDigitizerProcessingClass& m_rDigitizerProc;
 
 private:

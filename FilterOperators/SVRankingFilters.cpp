@@ -16,6 +16,7 @@
 #include "SVObjectLibrary/SVClsids.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -297,23 +298,17 @@ void SVRankingFilterClass::RebuildRanking()
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVRankingFilterClass::onRun( bool First, SVImageBufferHandlePtr rInputImageHandle, SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVRankingFilterClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
 	long lRank;
 
 	if (m_pCurrentUIOPL && nullptr != rInputImageHandle && nullptr != rOutputImageHandle)
 	{
-		SVImageBufferHandleImage l_InMilHandle;
-		SVImageBufferHandleImage l_OutMilHandle;
-
-		rInputImageHandle->GetData( l_InMilHandle );
-		rOutputImageHandle->GetData( l_OutMilHandle );
-		
 		HRESULT l_Code;
 
 		m_lvoRankingRank.GetValue( lRank );
-		l_Code = SVMatroxImageInterface::Rank( l_OutMilHandle.GetBuffer(),
-				First ? l_InMilHandle.GetBuffer() : l_OutMilHandle.GetBuffer(),
+		l_Code = SVMatroxImageInterface::Rank(rOutputImageHandle->GetBuffer(),
+				First ? rInputImageHandle->GetBuffer() : rOutputImageHandle->GetBuffer(),
 				m_milRanking, lRank );
 	    if( S_OK != l_Code )
 		{

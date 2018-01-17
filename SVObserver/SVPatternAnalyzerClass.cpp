@@ -14,7 +14,6 @@
 //Moved to precompiled header: #include <cmath>
 #include "SVPatternAnalyzerClass.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "SVImageLibrary/MatroxImageData.h"
 #include "SVMessage/SVMessage.h"
 #include "Definitions/Color.h"
 #include "SVStatusLibrary\MessageManager.h"
@@ -278,7 +277,7 @@ bool SVPatternAnalyzerClass::UpdateModelFromInputImage(long posX, long posY)
 		// Destroy and Recreate Model Image Buffer
 		CreateModelBuffer();
 
-		SVImageBufferHandlePtr l_ImageHandle;
+		SvOi::SVImageBufferHandlePtr l_ImageHandle;
 		l_pInputImage->GetImageHandle( l_ImageHandle );
 
 		SVImageInfoClass imageInfo = l_pInputImage->GetImageInfo();
@@ -286,7 +285,7 @@ bool SVPatternAnalyzerClass::UpdateModelFromInputImage(long posX, long posY)
 		// Copy Source Image into Model Image
 		// Create a child buffer on the Source Image
 		SVImageInfoClass childImageInfo;
-		SVImageBufferHandlePtr childImageHandle;
+		SvOi::SVImageBufferHandlePtr childImageHandle;
 		
 		childImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, SV8BitUnsigned );
 		childImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
@@ -302,14 +301,8 @@ bool SVPatternAnalyzerClass::UpdateModelFromInputImage(long posX, long posY)
 		HRESULT hr = SVImageProcessingClass::CreateImageChildBuffer(imageInfo, l_ImageHandle, childImageInfo, childImageHandle);
 		if (S_OK == hr && nullptr != childImageHandle && nullptr != m_patBufferHandlePtr )
 		{
-			SVImageBufferHandleImage l_ChildMilHandle;
-			SVImageBufferHandleImage l_PatMilHandle;
-
-			childImageHandle->GetData( l_ChildMilHandle );
-			m_patBufferHandlePtr->GetData( l_PatMilHandle );
-
 			// Copy from source child to Model Image buffer
-			l_Code = SVMatroxBufferInterface::CopyBuffer( l_PatMilHandle.GetBuffer(), l_ChildMilHandle.GetBuffer() );
+			l_Code = SVMatroxBufferInterface::CopyBuffer(m_patBufferHandlePtr->GetBuffer(), childImageHandle->GetBuffer() );
 
 			// free child buffer
 			childImageHandle.reset();
@@ -337,19 +330,16 @@ bool SVPatternAnalyzerClass::UpdateModelFromBuffer()
 
 	if (nullptr != m_patBufferHandlePtr)
 	{
-		SVImageBufferHandleImage l_PatMilHandle;
-		m_patBufferHandlePtr->GetData( l_PatMilHandle );
-
 		HRESULT MatroxCode;
 
 		long modelWidth=0;
 		long modelHeight=0;
-		MatroxCode = SVMatroxBufferInterface::Get( l_PatMilHandle.GetBuffer(), SVSizeX, modelWidth );
+		MatroxCode = SVMatroxBufferInterface::Get(m_patBufferHandlePtr->GetBuffer(), SVSizeX, modelWidth );
 		
 		if (S_OK == MatroxCode)
 		{
 			m_lpatModelWidth.SetValue(modelWidth);
-			MatroxCode = SVMatroxBufferInterface::Get( l_PatMilHandle.GetBuffer(), SVSizeY, modelHeight );
+			MatroxCode = SVMatroxBufferInterface::Get(m_patBufferHandlePtr->GetBuffer(), SVSizeY, modelHeight );
 			if (S_OK == MatroxCode)
 			{
 				m_lpatModelHeight.SetValue(modelHeight);
@@ -433,16 +423,14 @@ bool SVPatternAnalyzerClass::SetSearchParameters ()
 
 			msv_lpatMaxOccurances.GetValue(lParam);
 
-			SVImageBufferHandlePtr ImageHandle;
+			SvOi::SVImageBufferHandlePtr ImageHandle;
 			pSVImage->GetImageHandle( ImageHandle );
 
-			SVImageBufferHandleImage l_MilHandle;
+			SVMatroxBuffer ImageBufId;
 			if(nullptr !=  ImageHandle)
 			{
-				ImageHandle->GetData( l_MilHandle );
+				ImageBufId = ImageHandle->GetBuffer();
 			}
-
-			SVMatroxBuffer ImageBufId = l_MilHandle.GetBuffer();
 
 			long modelWidth = 0;
 			long modelHeight = 0;
@@ -610,18 +598,13 @@ bool SVPatternAnalyzerClass::SetSearchParameters ()
 						m_bpatDontCare.GetValue(useDontCare);
 						if (useDontCare)
 						{
-							if (nullptr != m_DontCareBufferHandlePtr)
+							if (nullptr != m_DontCareBufferHandlePtr && !m_DontCareBufferHandlePtr->empty())
 							{
-								SVImageBufferHandleImage patMilHandle;
-								m_DontCareBufferHandlePtr->GetData(patMilHandle);
-								if (!patMilHandle.empty())
-								{
-									MatroxCode = SVMatroxPatternInterface::SetDontCare(patMilHandle.GetBuffer(), m_patContextHandle);
-								}
-								else
-								{
-									bOk = false;
-								}
+								MatroxCode = SVMatroxPatternInterface::SetDontCare(m_DontCareBufferHandlePtr->GetBuffer(), m_patContextHandle);
+							}
+							else
+							{
+								bOk = false;
 							}
 						}
 					}
@@ -772,16 +755,14 @@ bool SVPatternAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::Message
 		if (Result)
 		{
 			SVImageClass* pSVImage = (SVImageClass *)getInputImage();
-			SVImageBufferHandlePtr ImageHandle;
+			SvOi::SVImageBufferHandlePtr ImageHandle;
 			if( nullptr != pSVImage && pSVImage->GetImageHandle( ImageHandle ) )
 			{
-				SVImageBufferHandleImage l_MilHandle;
+				SVMatroxBuffer ImageBufId;
 				if(nullptr != ImageHandle)
 				{
-					ImageHandle->GetData( l_MilHandle );
+					ImageBufId = ImageHandle->GetBuffer();
 				}
-
-				SVMatroxBuffer ImageBufId = l_MilHandle.GetBuffer();
 				HRESULT MatroxCode = executePatternAndSetResults(ImageBufId);
 
 				// check if one of the matrox calls failed
@@ -916,16 +897,16 @@ void SVPatternAnalyzerClass::getSpecialImageList(SvDef::StringVector& rList) con
 	rList.push_back(SvDef::PatternDontCareImageName);
 }
 
-bool SVPatternAnalyzerClass::getSpecialImage(const std::string& rName, SvOi::MatroxImageSmartHandlePtr& rImagePtr) const
+bool SVPatternAnalyzerClass::getSpecialImage(const std::string& rName, SvOi::SVImageBufferHandlePtr& rImagePtr) const
 {
 	if (SvDef::PatternModelImageName == rName)
 	{
-		rImagePtr = SvOi::MatroxImageSmartHandlePtr{ new MatroxImageData(m_patBufferHandlePtr) };
+		rImagePtr = m_patBufferHandlePtr;
 		return true;
 	}
 	else if (SvDef::PatternDontCareImageName == rName)
 	{
-		rImagePtr = SvOi::MatroxImageSmartHandlePtr{ new MatroxImageData(m_DontCareBufferHandlePtr) };
+		rImagePtr = m_DontCareBufferHandlePtr;
 		return true;
 	}
 	return false;
@@ -1531,7 +1512,7 @@ bool SVPatternAnalyzerClass::CreateModelBuffer()
 	return CreateBuffer(width, height, m_patBufferHandlePtr);
 }
 
-bool SVPatternAnalyzerClass::CreateBuffer(long width, long height, SVImageBufferHandlePtr& rBufferHandle)
+bool SVPatternAnalyzerClass::CreateBuffer(long width, long height, SvOi::SVImageBufferHandlePtr& rBufferHandle)
 {
 	rBufferHandle.reset();
 
@@ -1547,7 +1528,7 @@ bool SVPatternAnalyzerClass::CreateBuffer(long width, long height, SVImageBuffer
 	return (S_OK == SVImageProcessingClass::CreateImageBuffer(patBuffer, rBufferHandle));
 }
 
-bool SVPatternAnalyzerClass::ReloadImage(const std::string& rImageFile, SVLongValueObjectClass& rWidthValueObject, SVLongValueObjectClass& rHeightValueObject, SVImageBufferHandlePtr& rBufferHandle, SvStl::MessageContainerVector* pErrorMessages)
+bool SVPatternAnalyzerClass::ReloadImage(const std::string& rImageFile, SVLongValueObjectClass& rWidthValueObject, SVLongValueObjectClass& rHeightValueObject, SvOi::SVImageBufferHandlePtr& rBufferHandle, SvStl::MessageContainerVector* pErrorMessages)
 {
 	bool bOk = true;
 	SVMatroxBuffer importHandle;
@@ -1573,10 +1554,7 @@ bool SVPatternAnalyzerClass::ReloadImage(const std::string& rImageFile, SVLongVa
 
 			if (bOk)
 			{
-				SVImageBufferHandleImage l_PatMilHandle;
-				rBufferHandle->GetData(l_PatMilHandle);
-
-				MatroxCode = SVMatroxBufferInterface::CopyBuffer(l_PatMilHandle.GetBuffer(), importHandle);
+				MatroxCode = SVMatroxBufferInterface::CopyBuffer(rBufferHandle->GetBuffer(), importHandle);
 				if (S_OK != MatroxCode)
 				{
 					bOk = false;
@@ -1631,9 +1609,6 @@ HRESULT SVPatternAnalyzerClass::CreateModelHandle(long modelWidth, long modelHei
 	// Destroy the pattern
 	SVMatroxPatternInterface::DestroyContext(m_patContextHandle);
 
-	SVImageBufferHandleImage imageHandle;
-	m_patBufferHandlePtr->GetData(imageHandle);
-
 	// Check if Circular Overscan is enabled
 	BOOL bCircularScan;
 	msv_bpatCircularOverscan.GetValue(bCircularScan);
@@ -1645,7 +1620,7 @@ HRESULT SVPatternAnalyzerClass::CreateModelHandle(long modelWidth, long modelHei
 		RECT innerRect = SVMatroxPatternInterface::CalculateOverscanInnerRect(pos, size);
 
 		MatroxCode = SVMatroxPatternInterface::CreateContext(m_patContextHandle,
-			imageHandle.GetBuffer(),
+			m_patBufferHandlePtr->GetBuffer(),
 			innerRect.left,
 			innerRect.top,
 			innerRect.right - innerRect.left,
@@ -1663,7 +1638,7 @@ HRESULT SVPatternAnalyzerClass::CreateModelHandle(long modelWidth, long modelHei
 	else
 	{
 		MatroxCode = SVMatroxPatternInterface::CreateContext(m_patContextHandle,
-			imageHandle.GetBuffer(),
+			m_patBufferHandlePtr->GetBuffer(),
 			0, 0,
 			modelWidth, modelHeight);
 	}	

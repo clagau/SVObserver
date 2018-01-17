@@ -17,7 +17,7 @@
 #include "SVDataManagerLibrary/DataManager.h"
 #include "TriggerHandling/SVDigitizerLoadLibraryClass.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "SVImageLibrary/SVImageBufferHandleInterface.h"
+#include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVMessage/SVMessage.h"
 #include "SVTimerLibrary/SVClock.h"
@@ -806,7 +806,7 @@ DWORD WINAPI SVAcquisitionClass::SingleGrabHelperFn(LPVOID lpParameter)
 	return 0;
 }
 
-HRESULT SVAcquisitionClass::SingleGrab( SVImageBufferHandlePtr p_SingleGrabHandle )
+HRESULT SVAcquisitionClass::SingleGrab(SvOi::SVImageBufferHandlePtr p_SingleGrabHandle )
 {
 	HRESULT l_Status = S_OK;
 
@@ -910,7 +910,7 @@ HRESULT SVAcquisitionClass::GetNextBuffer( SVImageBufferInterface& p_rBuffer )
 	{
 		if( nullptr != m_AcquisitionBuffersPtr && SetCurrentIndex( l_Handle ) )
 		{
-			SVImageBufferHandlePtr l_ImageHandle;
+			SvOi::SVImageBufferHandlePtr l_ImageHandle;
 
 			if( m_AcquisitionBuffersPtr->GetImageHandle( l_Handle.GetIndex(), l_ImageHandle ) && nullptr != l_ImageHandle)
 			{
@@ -944,18 +944,9 @@ HRESULT SVAcquisitionClass::UpdateWithCompletedBuffer( const SVImageBufferInterf
 
 	if( nullptr != m_SingleGrabHandle)
 	{
-		SVImageBufferHandleImage l_From;
-		SVImageBufferHandleImage l_To;
-
-		if(nullptr != p_rBuffer.m_ImageHandle)
+		if( !(p_rBuffer.m_ImageHandle->empty() ) && !(m_SingleGrabHandle->empty() ) )
 		{
-			p_rBuffer.m_ImageHandle->GetData( l_From );
-			m_SingleGrabHandle->GetData( l_To );
-		}
-
-		if( !( l_From.empty() ) && !( l_To.empty() ) )
-		{
-			SVMatroxBufferInterface::CopyBuffer( l_To.GetBuffer(), l_From.GetBuffer() );
+			SVMatroxBufferInterface::CopyBuffer(m_SingleGrabHandle->GetBuffer(), p_rBuffer.m_ImageHandle->GetBuffer() );
 		}
 
 		m_SingleGrabHandle.reset();

@@ -12,7 +12,6 @@
 #include "stdafx.h"
 #include "SVUserMaskOperatorClass.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "SVImageLibrary/MatroxImageData.h"
 #include "SVUtilityLibrary/SetBits.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
@@ -336,9 +335,6 @@ HRESULT SVUserMaskOperatorClass::BuildMaskLines( SVExtentMultiLineStruct& p_Mult
 	if( l_eCriteria != SVNone && Activated && nullptr != m_MaskBufferHandlePtr &&
 		( MASK_TYPE_IMAGE != dwMaskType || nullptr != pInputImage ) )
 	{
-		SVImageBufferHandleImage l_MilHandle;
-		m_MaskBufferHandlePtr->GetData( l_MilHandle );
-
 		SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
 		if (pTool)
 		{
@@ -352,9 +348,9 @@ HRESULT SVUserMaskOperatorClass::BuildMaskLines( SVExtentMultiLineStruct& p_Mult
 			HRESULT l_Code;
 		
 			LPVOID pSrcHostBuffer = nullptr;
-			l_Code = SVMatroxBufferInterface::GetHostAddress( &pSrcHostBuffer, l_MilHandle.GetBuffer() );
+			l_Code = SVMatroxBufferInterface::GetHostAddress( &pSrcHostBuffer, m_MaskBufferHandlePtr->GetBuffer() );
 			long l_lSrcBytes;
-			l_Code = SVMatroxBufferInterface::Get( l_MilHandle.GetBuffer(), SVPitchByte, l_lSrcBytes );
+			l_Code = SVMatroxBufferInterface::Get(m_MaskBufferHandlePtr->GetBuffer(), SVPitchByte, l_lSrcBytes );
 			unsigned char* pSrcLine = ( unsigned char* )pSrcHostBuffer;
 
 			long l_lSkip = 1;
@@ -700,24 +696,15 @@ HRESULT SVUserMaskOperatorClass::SetObjectValue( SVObjectAttributeClass* pDataOb
 // .Description : Runs this operator.
 //              : Returns false, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVUserMaskOperatorClass::onRun( bool First, SVImageBufferHandlePtr rInputImageHandle, SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVUserMaskOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
 	BOOL bActive;
 	m_Data.bvoActivated.GetValue( bActive );
 
 	if( bActive && nullptr != rInputImageHandle && nullptr != rOutputImageHandle )
 	{
-		SVImageBufferHandleImage l_InMilHandle;
-		SVImageBufferHandleImage l_OutMilHandle;
-
-		rInputImageHandle->GetData( l_InMilHandle );
-		rOutputImageHandle->GetData( l_OutMilHandle );
-
 		if( nullptr != m_MaskBufferHandlePtr )
 		{
-			SVImageBufferHandleImage l_MaskMilHandle;
-			m_MaskBufferHandlePtr->GetData( l_MaskMilHandle );
-
 			HRESULT MatroxCode;
 
 			DWORD dwMaskType = MASK_TYPE_STATIC;
@@ -733,7 +720,7 @@ bool SVUserMaskOperatorClass::onRun( bool First, SVImageBufferHandlePtr rInputIm
 				{
 					SVExtentPointStruct l_svPoint;
 
-					SVImageBufferHandlePtr l_MaskInputBuffer;
+					SvOi::SVImageBufferHandlePtr l_MaskInputBuffer;
 
 					SVImageExtentClass l_svExtents = l_pRefImage->GetImageExtents();
 
@@ -742,7 +729,7 @@ bool SVUserMaskOperatorClass::onRun( bool First, SVImageBufferHandlePtr rInputIm
 					{
 						if ( S_OK != l_pMaskInputImage->ValidateAgainstOutputExtents( l_svExtents ) )
 						{
-							MatroxCode = SVMatroxBufferInterface::ClearBuffer( l_MaskMilHandle.GetBuffer(), 0.0 );
+							MatroxCode = SVMatroxBufferInterface::ClearBuffer(m_MaskBufferHandlePtr->GetBuffer(), 0.0 );
 
 							if (S_OK != MatroxCode)
 							{
@@ -758,10 +745,7 @@ bool SVUserMaskOperatorClass::onRun( bool First, SVImageBufferHandlePtr rInputIm
 							}
 						}
 
-						SVImageBufferHandleImage l_MaskMilBuffer;
-						l_MaskInputBuffer->GetData( l_MaskMilBuffer );
-
-						MatroxCode = SVMatroxBufferInterface::CopyBuffer( l_MaskMilHandle.GetBuffer(), l_MaskMilBuffer.GetBuffer(), (long)-l_svPoint.m_dPositionX, (long)-l_svPoint.m_dPositionY );
+						MatroxCode = SVMatroxBufferInterface::CopyBuffer(m_MaskBufferHandlePtr->GetBuffer(), l_MaskInputBuffer->GetBuffer(), (long)-l_svPoint.m_dPositionX, (long)-l_svPoint.m_dPositionY );
 
 						if (S_OK != MatroxCode)
 						{
@@ -800,9 +784,9 @@ bool SVUserMaskOperatorClass::onRun( bool First, SVImageBufferHandlePtr rInputIm
 			long lMaskOperator = SVImageAnd;
 			m_Data.evoCurrentMaskOperator.GetValue( lMaskOperator );
 
-			MatroxCode = SVMatroxImageInterface::Arithmetic(l_OutMilHandle.GetBuffer(),
-				First ? l_InMilHandle.GetBuffer() : l_OutMilHandle.GetBuffer(),
-				l_MaskMilHandle.GetBuffer(), 
+			MatroxCode = SVMatroxImageInterface::Arithmetic(rOutputImageHandle->GetBuffer(),
+				First ? rInputImageHandle->GetBuffer() : rOutputImageHandle->GetBuffer(),
+				m_MaskBufferHandlePtr->GetBuffer(),
 				static_cast<SVImageOperationTypeEnum>(lMaskOperator) );
 
 			if (S_OK != MatroxCode)
@@ -912,9 +896,9 @@ bool SVUserMaskOperatorClass::hasToAskFriendForConnection( const SvDef::SVObject
 }
 
 #pragma region IMask
-SvOi::MatroxImageSmartHandlePtr SVUserMaskOperatorClass::GetReferenceImage() const
+SvOi::SVImageBufferHandlePtr SVUserMaskOperatorClass::GetReferenceImage() const
 {
-	SvOi::MatroxImageSmartHandlePtr handlePtr;
+	SvOi::SVImageBufferHandlePtr handlePtr;
 	SVImageClass* pImage = const_cast<SVUserMaskOperatorClass*>(this)->getReferenceImage();
 	if (pImage)
 	{
@@ -930,10 +914,9 @@ SvOi::MatroxImageSmartHandlePtr SVUserMaskOperatorClass::GetReferenceImage() con
 	return handlePtr;
 }
 
-SvOi::MatroxImageSmartHandlePtr SVUserMaskOperatorClass::GetMaskImage() const
+SvOi::SVImageBufferHandlePtr SVUserMaskOperatorClass::GetMaskImage() const
 {
-	SvOi::MatroxImageSmartHandlePtr data(new MatroxImageData(m_MaskBufferHandlePtr));
-	return data;
+	return m_MaskBufferHandlePtr;
 }
 
 HRESULT SVUserMaskOperatorClass::Import(const std::string& filename)

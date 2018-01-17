@@ -12,6 +12,7 @@
 #include "TextDefinesSvO.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #pragma endregion Includes
 
 
@@ -573,7 +574,7 @@ bool ResizeTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVec
 		}
 	}
 
-	SVImageBufferHandlePtr	roiImageHandle;
+	SvOi::SVImageBufferHandlePtr	roiImageHandle;
 	if (Result)
 	{
 		// The following logic was extrapolated from the StdImageOperatorList Run method.
@@ -607,11 +608,9 @@ bool ResizeTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVec
 		}
 	}
 
-	SVImageBufferHandleImage roiMilHandle;
 	if (Result)
 	{
-		roiImageHandle->GetData(roiMilHandle);
-		if (roiMilHandle.empty())
+		if (roiImageHandle->empty())
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)
@@ -624,7 +623,7 @@ bool ResizeTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVec
 
 	if (Result)
 	{
-		const SVMatroxBuffer& roiMilBuffer = roiMilHandle.GetBuffer();
+		const SVMatroxBuffer& roiMilBuffer = roiImageHandle->GetBuffer();
 
 		if (roiMilBuffer.empty())
 		{
@@ -636,7 +635,7 @@ bool ResizeTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVec
 			}
 		}
 
-		SVImageBufferHandlePtr outputImageHandle;
+		SvOi::SVImageBufferHandlePtr outputImageHandle;
 
 		if (Result)
 		{
@@ -652,13 +651,9 @@ bool ResizeTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVec
 			}
 		}
 
-		SVImageBufferHandleImage outputMilHandle;
-
 		if (Result)
 		{
-			outputImageHandle->GetData(outputMilHandle);
-
-			if (outputMilHandle.empty())
+			if (outputImageHandle->empty())
 			{
 				Result = false;
 				if (nullptr != pErrorMessages)
@@ -670,7 +665,7 @@ bool ResizeTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVec
 
 			if (Result)
 			{
-				const SVMatroxBuffer& outputMilBuffer = outputMilHandle.GetBuffer();
+				const SVMatroxBuffer& outputMilBuffer = outputImageHandle->GetBuffer();
 
 				if (outputMilBuffer.empty())
 				{

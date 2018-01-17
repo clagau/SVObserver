@@ -11,23 +11,28 @@
 
 #pragma once
 
-#include "SVImageBufferHandleData.h"
-#include "SVImageBufferHandleStruct.h"
+#include "ObjectInterfaces\SVImageBufferHandleInterface.h"
+#include "SVMatroxLibrary\SVMatroxBuffer.h"
 
-class SVImageBufferHandleImage : public SVImageBufferHandleData
+class SVImageBufferHandleImage : public SvOi::SVImageBufferHandleInterface
 {
 public:
 	SVImageBufferHandleImage();
+	SVImageBufferHandleImage(const SVMatroxBuffer& rMilImage);
 	virtual ~SVImageBufferHandleImage();
 
 	bool empty() const;
 	void clear();
 
-	const SVMatroxBuffer& GetBuffer() const;
-	SVMatroxBuffer& GetBuffer();
+	virtual SVPoint GetPositionPoint() const override;
+	virtual SVBitmapInfo GetBitmapInfo() const override;
+	virtual unsigned char* GetBufferAddress() const override;
 
+	virtual const SVMatroxBuffer& GetBuffer() const override;
+	virtual SVMatroxBuffer& GetBuffer() override;
+
+	virtual HBITMAP GetHBitmap() const override;
 protected:
-	virtual HRESULT SetHandleData( const SVImageBufferHandleStruct& p_rObject ) override;
 
 	SVMatroxBuffer m_Buffer;
 

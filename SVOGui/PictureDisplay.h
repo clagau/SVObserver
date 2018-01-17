@@ -20,7 +20,7 @@
 #include "CDSVPictureDisplay.h"
 #include "SVLibrary\DrawObject.h" // for ParamMap typedefs
 #include "ObjectInterfaces\ISVImage.h"
-#include "ObjectInterfaces\IMatroxImageData.h"
+#include "ObjectInterfaces\SVImageBufferHandleInterface.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -62,7 +62,7 @@ namespace SvOg
 		//! \param tabNumber [in] The tab number of the activeX-control. Default value = 0.
 		//! \returns void
 		//************************************
-		void setImage( const SvOi::IMatroxImageData *imageData, long tabNumber = 0 ); //@TODO - this needs to go!
+		void setImage( const SvOi::SVImageBufferHandlePtr imageData, long tabNumber = 0 ); //@TODO - this needs to go!
 
 		//************************************
 		//! Set a image to a tab of the activeX-control.

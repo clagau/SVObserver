@@ -212,9 +212,7 @@ SVDoubleValueObjectClass* SVThresholdClass::getExternalATM()
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVThresholdClass::onRun( bool First, 
-							  SVImageBufferHandlePtr rInputImageHandle, 
-							  SVImageBufferHandlePtr rOutputImageHandle, 
+bool SVThresholdClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle,
 							  SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
 	// Binarizing: lowerThresh <= x <= m_upperThresh		--> 255 
@@ -226,10 +224,6 @@ bool SVThresholdClass::onRun( bool First,
 	HRESULT l_Code = 0;
 	HRESULT l_RetCode = 0;
 
-
-	SVImageBufferHandleImage l_InMilHandle;
-	SVImageBufferHandleImage l_OutMilHandle;
-
 	while (1)
 	{
 		if (!m_pCurrentUIOPL || nullptr == rInputImageHandle || nullptr == rOutputImageHandle )
@@ -237,9 +231,6 @@ bool SVThresholdClass::onRun( bool First,
 			l_Code = -15401;
 			break;
 		}
-
-		rInputImageHandle->GetData( l_InMilHandle );
-		rOutputImageHandle->GetData( l_OutMilHandle );
 
 		BOOL bThreshActive	    = false;
 		BOOL bAutoThreshold     = false;
@@ -261,7 +252,7 @@ bool SVThresholdClass::onRun( bool First,
 		{
 				// Read histogram...
 				l_RetCode = SVMatroxImageInterface::Histogram( m_histResultID,
-					( First == TRUE ) ? l_InMilHandle.GetBuffer() : l_OutMilHandle.GetBuffer() );
+					( First == TRUE ) ? rInputImageHandle->GetBuffer() : rOutputImageHandle->GetBuffer() );
 				if (l_RetCode & SV_OC_ERROR)
 				{
 					l_Code = -15404;
@@ -412,8 +403,8 @@ bool SVThresholdClass::onRun( bool First,
 				
 		if( upper >= lower )
 		{
-			l_Code = SVMatroxImageInterface::Binarize(l_OutMilHandle.GetBuffer(), 
-				( First == TRUE ) ? l_InMilHandle.GetBuffer() : l_OutMilHandle.GetBuffer(),
+			l_Code = SVMatroxImageInterface::Binarize(rOutputImageHandle->GetBuffer(),
+				( First == TRUE ) ? rInputImageHandle->GetBuffer() : rOutputImageHandle->GetBuffer(),
 				SVECondInRange,
 				lower,
 				upper );
@@ -426,8 +417,8 @@ bool SVThresholdClass::onRun( bool First,
 		} // if( upper >= lower )
 		else
 		{
-			l_Code = SVMatroxImageInterface::Binarize(l_OutMilHandle.GetBuffer(), 
-				( First == TRUE ) ? l_InMilHandle.GetBuffer() : l_OutMilHandle.GetBuffer(),
+			l_Code = SVMatroxImageInterface::Binarize(rOutputImageHandle->GetBuffer(),
+				( First == TRUE ) ? rInputImageHandle->GetBuffer() : rOutputImageHandle->GetBuffer(),
 				SVECondOutRange,
 				upper,
 				lower );

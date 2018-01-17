@@ -95,22 +95,14 @@ bool SVMaxMinusMinFilterClass::ResetObject(SvStl::MessageContainerVector *pError
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVMaxMinusMinFilterClass::onRun( bool First, SVImageBufferHandlePtr RInputImageHandle, SVImageBufferHandlePtr ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVMaxMinusMinFilterClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
-	if( m_pCurrentUIOPL && nullptr != m_ProcBufferHandlePtr && nullptr != RInputImageHandle && nullptr != ROutputImageHandle )
+	if( m_pCurrentUIOPL && nullptr != m_ProcBufferHandlePtr && nullptr != rInputImageHandle && nullptr != rOutputImageHandle)
 	{
-		SVImageBufferHandleImage l_ProcMilHandle;
-		SVImageBufferHandleImage l_InMilHandle;
-		SVImageBufferHandleImage l_OutMilHandle;
-
-		m_ProcBufferHandlePtr->GetData( l_ProcMilHandle );
-		RInputImageHandle->GetData( l_InMilHandle );
-		ROutputImageHandle->GetData( l_OutMilHandle );
-		
 		HRESULT l_Code;
 		// Do Min...
-		l_Code = SVMatroxImageInterface::Erode( l_ProcMilHandle.GetBuffer(),
-			First ? l_InMilHandle.GetBuffer() : l_OutMilHandle.GetBuffer(), 
+		l_Code = SVMatroxImageInterface::Erode(m_ProcBufferHandlePtr->GetBuffer(),
+			First ? rInputImageHandle->GetBuffer() : rOutputImageHandle->GetBuffer(),
 			1,
 			SVImageGrayScale);
 
@@ -130,8 +122,8 @@ bool SVMaxMinusMinFilterClass::onRun( bool First, SVImageBufferHandlePtr RInputI
 		}
 
 		// Do Max...
-		l_Code = SVMatroxImageInterface::Dilate( l_OutMilHandle.GetBuffer(),
-			First ? l_InMilHandle.GetBuffer() : l_OutMilHandle.GetBuffer(), 
+		l_Code = SVMatroxImageInterface::Dilate(rOutputImageHandle->GetBuffer(),
+			First ? rInputImageHandle->GetBuffer() : rOutputImageHandle->GetBuffer(),
 			1,
 			SVImageGrayScale);
 
@@ -151,9 +143,9 @@ bool SVMaxMinusMinFilterClass::onRun( bool First, SVImageBufferHandlePtr RInputI
 		}
 
 		// Do MaxMinusMin...
-		l_Code = SVMatroxImageInterface::Arithmetic( l_OutMilHandle.GetBuffer(),
-			l_OutMilHandle.GetBuffer(), 
-			l_ProcMilHandle.GetBuffer(),
+		l_Code = SVMatroxImageInterface::Arithmetic(rOutputImageHandle->GetBuffer(),
+			rOutputImageHandle->GetBuffer(),
+			m_ProcBufferHandlePtr->GetBuffer(),
 			SVImageSubAbs);
 
 

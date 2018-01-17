@@ -11,7 +11,7 @@
 #pragma once
 #pragma region Includes
 #include "SVFilterClass.h"
-#include "SVImageLibrary/SVImageBufferHandleInterface.h"
+#include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #pragma region Includes
 
 class SVLaplacianEdge2FilterClass : public SVFilterClass
@@ -22,6 +22,6 @@ public:
 	virtual ~SVLaplacianEdge2FilterClass();
 
 protected:
-	virtual bool onRun( bool First, SVImageBufferHandlePtr RInputImageHandle, SVImageBufferHandlePtr ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( bool First, SvOi::SVImageBufferHandlePtr RInputImageHandle, SvOi::SVImageBufferHandlePtr ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 };
 

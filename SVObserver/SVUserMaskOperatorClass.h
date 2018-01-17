@@ -16,7 +16,7 @@
 #include "InspectionEngine/SVUnaryImageOperatorClass.h"
 #include "SVLibrary\SVGraphix.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
-#include "SVImageLibrary/SVImageBufferHandleInterface.h"
+#include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "InspectionEngine/SVTaskObjectInterfaceInputRequestStruct.h"
 
 #pragma endregion Includes
@@ -60,8 +60,8 @@ public:
 	SVShapeMaskHelperClass* GetShapeHelper();
 
 #pragma region IMask
-	virtual SvOi::MatroxImageSmartHandlePtr GetReferenceImage() const override;
-	virtual SvOi::MatroxImageSmartHandlePtr GetMaskImage() const override;
+	virtual SvOi::SVImageBufferHandlePtr GetReferenceImage() const override;
+	virtual SvOi::SVImageBufferHandlePtr GetMaskImage() const override;
 	virtual HRESULT Import(const std::string& filename) override;
 	virtual HRESULT Export(const std::string& filename) override;
 	virtual HGLOBAL GetMaskData() const override;
@@ -79,11 +79,11 @@ public:
 
 protected:
 	virtual bool isInputImage(const SVGUID& rImageGuid) const override;
-	virtual bool onRun( bool First, SVImageBufferHandlePtr RInputImageHandle, SVImageBufferHandlePtr ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun(bool First, SvOi::SVImageBufferHandlePtr RInputImageHandle, SvOi::SVImageBufferHandlePtr ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
 	virtual bool hasToAskFriendForConnection( const SvDef::SVObjectTypeInfoStruct& rInfo, SVObjectClass*& rPOwner ) const override;
 	
 	SVImageInfoClass      m_MaskBufferInfo;
-	SVImageBufferHandlePtr  m_MaskBufferHandlePtr;
+	SvOi::SVImageBufferHandlePtr  m_MaskBufferHandlePtr;
 
 	mutable SVGraphixClass m_graphixObject;
 

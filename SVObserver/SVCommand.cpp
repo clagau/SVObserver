@@ -23,7 +23,6 @@
 #include "SVDataManagerLibrary/DataManager.h"
 #include "SVCommandLibrary/SVFileSystemCommandFactory.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "SVImageLibrary/SVImageBufferHandleStruct.h"
 #include "SVLibrary/SVPackedFile.h"
 #include "SVMatroxLibrary/SVMatroxCommandFactory.h"
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
@@ -2181,7 +2180,7 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 						if (nullptr != pImage)
 						{
 							SVImageInfoClass svImageInfo;
-							SVImageBufferHandlePtr svImageHandle;
+							SvOi::SVImageBufferHandlePtr svImageHandle;
 							BSTR bstrImage = nullptr;
 
 							// this works for Source Images (SVMainImageClass) and Published Result images
@@ -2337,17 +2336,12 @@ STDMETHODIMP CSVCommand::SVGetLUT(BSTR bstrCameraName, SAFEARRAY** ppaulLUTTable
 	return hr;
 }
 
-HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo, SVImageBufferHandlePtr rImageHandle, BSTR* pbstr)
+HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo, SvOi::SVImageBufferHandlePtr rImageHandle, BSTR* pbstr)
 {
 	HRESULT hr = S_OK;
 
 	SVImageBufferHandleImage l_MilBuffer;
-	if (nullptr != rImageHandle)
-	{
-		rImageHandle->GetData( l_MilBuffer );
-	}
-
-	if ( l_MilBuffer.empty() )
+	if (nullptr == rImageHandle || rImageHandle->empty() )
 	{
 		hr = -1578;
 	}
@@ -2357,7 +2351,7 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo, SVImageBufferHand
 		HRESULT l_Code;
 
 		SVImageInfoClass oChildInfo;
-		SVImageBufferHandlePtr oChildHandle;
+		SvOi::SVImageBufferHandlePtr oChildHandle;
 		BITMAPINFOHEADER* pbmhInfo = nullptr;
 		SVBitmapInfo l_BitmapInfo;
 		long lNumColor;
@@ -2404,13 +2398,15 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo, SVImageBufferHand
 
 			SVImageBufferHandleImage l_ChildMilBuffer;
 
-			if(nullptr != oChildHandle)
+			if (nullptr != oChildHandle)
 			{
-				oChildHandle->GetData( l_ChildMilBuffer );
+				// Copy input image to output image
+				l_Code = SVMatroxBufferInterface::CopyBuffer(oChildHandle->GetBuffer(), rImageHandle->GetBuffer(), l_lBandLink);
 			}
-
-			// Copy input image to output image
-			l_Code = SVMatroxBufferInterface::CopyBuffer(l_ChildMilBuffer.GetBuffer(), l_MilBuffer.GetBuffer(), l_lBandLink );
+			else
+			{
+				l_Code = E_FAIL;
+			}
 		} 
 
 		if ((l_lType == SvDef::SVImageTypeEnum::SVImageTypeLogicalAndPhysical) ||
@@ -2422,27 +2418,22 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo, SVImageBufferHand
 
 			SVImageBufferHandleImage l_ChildMilBuffer;
 
-			if(nullptr != oChildHandle)
+			if (nullptr != oChildHandle)
 			{
-				oChildHandle->GetData( l_ChildMilBuffer );
+				// Copy input image to output image
+				l_Code = SVMatroxBufferInterface::CopyBuffer(oChildHandle->GetBuffer(), rImageHandle->GetBuffer());
 			}
-
-			// Copy input image to output image
-			l_Code = SVMatroxBufferInterface::CopyBuffer(l_ChildMilBuffer.GetBuffer(), l_MilBuffer.GetBuffer() );
+			else
+			{
+				l_Code = E_FAIL;
+			}
 		}
 
 		// Get the BITMAPINFO from MIL
 		l_BitmapInfo = oChildHandle->GetBitmapInfo();
 		if( l_BitmapInfo.empty() )
 		{
-			SVImageBufferHandleImage l_ChildMilBuffer;
-
-			if(nullptr != oChildHandle)
-			{
-				oChildHandle->GetData( l_ChildMilBuffer );
-			}
-
-			l_Code = SVMatroxBufferInterface::GetBitmapInfo( l_BitmapInfo, l_ChildMilBuffer.GetBuffer() );
+			l_Code = SVMatroxBufferInterface::GetBitmapInfo( l_BitmapInfo, nullptr != oChildHandle ? oChildHandle->GetBuffer() : SVMatroxBuffer() );
 		}
 
 		pbmhInfo = &( l_BitmapInfo.GetBitmapInfo()->bmiHeader );
@@ -2521,7 +2512,7 @@ HRESULT CSVCommand::SafeImageToBSTR( SVImageClass *p_pImage, SVImageIndexStruct 
 	{
 		SVImageInfoClass oChildInfo = p_pImage->GetImageInfo();
 
-		SVImageBufferHandlePtr oChildHandle;
+		SvOi::SVImageBufferHandlePtr oChildHandle;
 
 		SVImageProcessingClass::CreateImageBuffer( oChildInfo, oChildHandle );
 
@@ -3375,22 +3366,15 @@ HRESULT CSVCommand::SVLockImage(long ProcessCount, long Index, BSTR bName)
 		if ( nullptr != pImage && !l_svImageIndex.IsNull() )
 		{
 			SVImageInfoClass l_svImageInfo = pImage->GetImageInfo();
-			SVImageBufferHandlePtr l_svImageHandle;
+			SvOi::SVImageBufferHandlePtr l_svImageHandle;
 
 			if( pImage->GetImageHandle( l_svImageIndex, l_svImageHandle ) && nullptr != l_svImageHandle)
 			{
-				SVImageBufferHandleImage l_MilBuffer;
-				l_svImageHandle->GetData( l_MilBuffer );
-
 				SVImageInfoClass l_ImageInfo = l_svImageInfo;
 
 				if ( S_OK == SVImageProcessingClass::CreateImageBuffer( l_ImageInfo, SVaxls.m_ImageHandlePtr ) && nullptr != SVaxls.m_ImageHandlePtr)
 				{
-					SVImageBufferHandleImage l_AxlsMilBuffer;
-					SVaxls.m_ImageHandlePtr->GetData( l_AxlsMilBuffer );
-
-					HRESULT l_Code;
-					l_Code = SVMatroxBufferInterface::CopyBuffer( l_AxlsMilBuffer.GetBuffer(), l_MilBuffer.GetBuffer() );
+					HRESULT l_Code = SVMatroxBufferInterface::CopyBuffer(SVaxls.m_ImageHandlePtr->GetBuffer(), l_svImageHandle->GetBuffer() );
 
 					// Add locked image to Lock array
 					if (Index >= static_cast<long> (m_aSVActXLock.size()))
@@ -3601,7 +3585,7 @@ SVMatroxBuffer CSVCommand::CreateImageFromBSTR( BSTR bstrImage )
 	}// end if
 
 	SVImageInfoClass oTempInfo;
-	SVImageBufferHandlePtr oTempHandle;
+	SvOi::SVImageBufferHandlePtr oTempHandle;
 
 	oTempInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, pbmhInfo->biBitCount );
 	oTempInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
@@ -3628,10 +3612,7 @@ SVMatroxBuffer CSVCommand::CreateImageFromBSTR( BSTR bstrImage )
 		memcpy( oTempHandle->GetBufferAddress(), pBits, pbmhInfo->biSizeImage );
 	}// end if
 
-	SVImageBufferHandleImage l_MilBuffer;
-	oTempHandle->GetData( l_MilBuffer );
-
-	return l_MilBuffer.GetBuffer();
+	return oTempHandle->GetBuffer();
 };// end CreateImageFromBSTR
 
 STDMETHODIMP CSVCommand::SVConnectFont(long* lFontIdentifier)
@@ -4552,7 +4533,7 @@ STDMETHODIMP CSVCommand::SVGetFontCharacter(long lFontIdentifier, long  lCharID,
 				l_Code = SVMatroxBufferInterface::Get(lCharHandle, SVType, l_lValue );
 				ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, l_lValue );
 
-				SVImageBufferHandlePtr ImageBufferHandle{ new SVImageBufferHandleStruct(lCharHandle) };
+				SvOi::SVImageBufferHandlePtr ImageBufferHandle{ new SVImageBufferHandleImage(lCharHandle) };
 
 				ImageToBSTR( ImageInfo, ImageBufferHandle, pbstrLabelImage);
 				lCharHandle.clear();

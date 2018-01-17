@@ -22,6 +22,7 @@
 #include "ObjectInterfaces/IValueObject.h"
 #include "SVPPQObject.h"
 #include "SVConfigurationObject.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 
 #pragma endregion Includes
 
@@ -83,15 +84,13 @@ void RemoteMonitorListHelper::GetPropertiesFromMonitoredObject(const MonitoredOb
 	
 	if (nullptr != pImageObject)
 	{
-		SVImageBufferHandlePtr imageHandlePtr;
+		SvOi::SVImageBufferHandlePtr imageHandlePtr;
 		// Special check for Color Tool's RGBMainImage which is HSI ???
 		pImageObject->GetImageHandle(imageHandlePtr);
 		if (nullptr != imageHandlePtr)
 		{
-			SVImageBufferHandleImage MilHandle;
-			imageHandlePtr->GetData(MilHandle);
 			MatroxImageProps Imageprops;
-			SVMatroxBufferInterface::InquireBufferProperties(MilHandle.GetBuffer(), Imageprops);
+			SVMatroxBufferInterface::InquireBufferProperties(imageHandlePtr->GetBuffer(), Imageprops);
 			data.sizeX = Imageprops.sizeX;
 			data.sizeY = Imageprops.sizeY;
 			data.PitchByte = Imageprops.PitchByte;

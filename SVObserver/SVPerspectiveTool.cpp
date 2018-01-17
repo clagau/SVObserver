@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVPerspectiveTool.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "SVImageLibrary/SVImageBufferHandleInterface.h"
+#include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "SVImageLibrary/SVImageExtentClass.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -329,21 +329,14 @@ bool SVPerspectiveToolClass::onRun( SVRunStatusClass &p_rRunStatus, SvStl::Messa
 
 		if ( nullptr != l_pInputImage && m_OutputImage.SetImageHandleIndex( p_rRunStatus.Images ) )
 		{
-			SVImageBufferHandlePtr l_InputHandle;
-			SVImageBufferHandlePtr l_OutputHandle;
+			SvOi::SVImageBufferHandlePtr l_InputHandle;
+			SvOi::SVImageBufferHandlePtr l_OutputHandle;
 
 			if ( l_pInputImage->GetImageHandle( l_InputHandle ) && nullptr != l_InputHandle &&
 				   m_OutputImage.GetImageHandle( l_OutputHandle ) && nullptr != l_OutputHandle)
 			{
-				SVImageBufferHandleImage l_InMilHandle;
-				SVImageBufferHandleImage l_OutMilHandle;
-
-				l_InputHandle->GetData( l_InMilHandle );
-				l_OutputHandle->GetData( l_OutMilHandle );
-
-				HRESULT l_Code;
-				l_Code = SVMatroxImageInterface::Warp( l_OutMilHandle.GetBuffer(), 
-					l_InMilHandle.GetBuffer(), m_LutX, m_LutY, static_cast<SVImageOperationTypeEnum>(Interpolation) );
+				HRESULT l_Code = SVMatroxImageInterface::Warp(l_OutputHandle->GetBuffer(),
+					l_InputHandle->GetBuffer(), m_LutX, m_LutY, static_cast<SVImageOperationTypeEnum>(Interpolation) );
 
 			}
 			else

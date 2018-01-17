@@ -14,10 +14,8 @@
 #include "SVGigeCameraROIDlg.h"
 #include "SVAcquisitionClass.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
-#include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "CameraLibrary/SVStringValueDeviceParam.h"
 #include "SVOGui/DisplayHelper.h"
-#include "SVImageLibrary/MatroxImageData.h"
 #include "Definitions/Color.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
@@ -667,8 +665,7 @@ double SVGigeCameraROIDlg::GetScaledValue(long value, double scaleFactor) const
 
 void SVGigeCameraROIDlg::setImages()
 {
-	MatroxImageData data(m_pImageHandle);
-	m_Image.setImage( &data );
+	m_Image.setImage(m_pImageHandle);
 	m_Image.Refresh();
 }
 #pragma endregion Private Methods

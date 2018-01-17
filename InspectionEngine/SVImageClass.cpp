@@ -27,7 +27,6 @@
 #include "ObjectInterfaces/ITool.h"
 #include "SVTaskObject.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
-#include "SVImageLibrary\MatroxImageData.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
@@ -821,7 +820,7 @@ HRESULT SVImageClass::GetChildImageInfo( const SVGUID& rChildID, SVImageInfoClas
 Updated method to use GetParentImage() method which validates the Parent Image pointer attribute.
 The Parent Image attribute should not be used unless it is validated first.
 */
-HRESULT SVImageClass::GetChildImageHandle( const SVGUID& rChildID, SVImageBufferHandlePtr& rBufferHandle ) const
+HRESULT SVImageClass::GetChildImageHandle( const SVGUID& rChildID, SvOi::SVImageBufferHandlePtr& rBufferHandle ) const
 {
 	HRESULT l_hrOk = E_FAIL;
 
@@ -880,7 +879,7 @@ HRESULT SVImageClass::GetChildImageHandle( const SVGUID& rChildID, SVImageBuffer
 Updated method to use GetParentImage() method which validates the Parent Image pointer attribute.
 The Parent Image attribute should not be used unless it is validated first.
 */
-HRESULT SVImageClass::GetChildImageHandle( const SVGUID& rChildID, SVImageIndexStruct BufferIndex, SVImageBufferHandlePtr& rBufferHandle ) const
+HRESULT SVImageClass::GetChildImageHandle( const SVGUID& rChildID, SVImageIndexStruct BufferIndex, SvOi::SVImageBufferHandlePtr& rBufferHandle ) const
 {
 	HRESULT l_hrOk = E_FAIL;
 
@@ -943,10 +942,10 @@ HRESULT SVImageClass::GetChildImageHandle( const SVGUID& rChildID, SVImageIndexS
 Updated method to use GetParentImage() method which validates the Parent Image pointer attribute.
 The Parent Image attribute should not be used unless it is validated first.
 */
-HRESULT SVImageClass::GetParentImageHandle( SVImageBufferHandlePtr& rBufferHandle )
+HRESULT SVImageClass::GetParentImageHandle(SvOi::SVImageBufferHandlePtr& rBufferHandle )
 {
 	HRESULT l_hrOk = E_FAIL;
-	SVImageBufferHandlePtr imageStruct;
+	SvOi::SVImageBufferHandlePtr imageStruct;
 
 	SVImageClass* l_pParentImage = GetParentImage();
 
@@ -967,7 +966,7 @@ HRESULT SVImageClass::GetParentImageHandle( SVImageBufferHandlePtr& rBufferHandl
 Updated method to use GetParentImage() method which validates the Parent Image pointer attribute.
 The Parent Image attribute should not be used unless it is validated first.
 */
-HRESULT SVImageClass::GetParentImageHandle( SVImageIndexStruct BufferIndex, SVImageBufferHandlePtr& rBufferHandle )
+HRESULT SVImageClass::GetParentImageHandle( SVImageIndexStruct BufferIndex, SvOi::SVImageBufferHandlePtr& rBufferHandle )
 {
 	HRESULT l_hrOk = E_FAIL;
 
@@ -1129,7 +1128,7 @@ bool SVImageClass::CopyImageTo( SVImageIndexStruct svIndex )
 	return Result;
 }
 
-bool SVImageClass::GetImageHandle( SVImageBufferHandlePtr& p_rHandlePtr )
+bool SVImageClass::GetImageHandle(SvOi::SVImageBufferHandlePtr& p_rHandlePtr )
 {
 	bool bOk = false;
 		
@@ -1150,7 +1149,7 @@ bool SVImageClass::GetImageHandle( SVImageBufferHandlePtr& p_rHandlePtr )
 	return bOk;
 }
 
-bool SVImageClass::GetImageHandle( SVImageIndexStruct svIndex, SVImageBufferHandlePtr& rHandle )
+bool SVImageClass::GetImageHandle( SVImageIndexStruct svIndex, SvOi::SVImageBufferHandlePtr& rHandle )
 {
 	bool bOk = false;
 		
@@ -1175,7 +1174,7 @@ bool SVImageClass::GetImageHandle( SVImageIndexStruct svIndex, SVImageBufferHand
 	return bOk;
 }
 
-bool SVImageClass::SafeImageCopyToHandle( SVImageBufferHandlePtr &p_rHandle )
+bool SVImageClass::SafeImageCopyToHandle(SvOi::SVImageBufferHandlePtr &p_rHandle )
 {
 	bool l_bOk = (nullptr != p_rHandle);
 
@@ -1185,23 +1184,17 @@ bool SVImageClass::SafeImageCopyToHandle( SVImageBufferHandlePtr &p_rHandle )
 		{
 			HRESULT l_Code;
 
-			SVImageBufferHandleImage l_ToMilHandle;
-			p_rHandle->GetData( l_ToMilHandle );
-
-			SVImageBufferHandlePtr l_svHandle;
+			SvOi::SVImageBufferHandlePtr l_svHandle;
 
 			l_bOk = GetImageHandle( l_svHandle ) && nullptr != l_svHandle;
 
 			if ( l_bOk )
 			{
-				SVImageBufferHandleImage l_FromMilHandle;
-				l_svHandle->GetData( l_FromMilHandle );
-
-				l_Code = SVMatroxBufferInterface::CopyBuffer( l_ToMilHandle.GetBuffer(), l_FromMilHandle.GetBuffer() );
+				l_Code = SVMatroxBufferInterface::CopyBuffer(p_rHandle->GetBuffer(), l_svHandle->GetBuffer() );
 			}
 			else
 			{
-				l_Code = SVMatroxBufferInterface::ClearBuffer( l_ToMilHandle.GetBuffer(), 0.0 );
+				l_Code = SVMatroxBufferInterface::ClearBuffer(p_rHandle->GetBuffer(), 0.0 );
 			}
 
 			l_bOk = Unlock() && l_bOk && S_OK == l_Code;
@@ -1210,7 +1203,7 @@ bool SVImageClass::SafeImageCopyToHandle( SVImageBufferHandlePtr &p_rHandle )
 	return l_bOk;
 }
 
-bool SVImageClass::SafeImageCopyToHandle( SVImageIndexStruct p_svFromIndex, SVImageBufferHandlePtr& p_rHandle )
+bool SVImageClass::SafeImageCopyToHandle( SVImageIndexStruct p_svFromIndex, SvOi::SVImageBufferHandlePtr& p_rHandle )
 {
 	bool l_bOk = (nullptr != p_rHandle);
 	
@@ -1220,23 +1213,17 @@ bool SVImageClass::SafeImageCopyToHandle( SVImageIndexStruct p_svFromIndex, SVIm
 		{
 			HRESULT l_Code;
 
-			SVImageBufferHandleImage l_ToMilHandle;
-			p_rHandle->GetData( l_ToMilHandle );
-
-			SVImageBufferHandlePtr l_svHandle;
+			SvOi::SVImageBufferHandlePtr l_svHandle;
 
 			l_bOk = GetImageHandle( p_svFromIndex, l_svHandle ) && nullptr != l_svHandle;
 
 			if ( l_bOk )
 			{
-				SVImageBufferHandleImage l_FromMilHandle;
-				l_svHandle->GetData( l_FromMilHandle );
-
-				l_Code = SVMatroxBufferInterface::CopyBuffer( l_ToMilHandle.GetBuffer(), l_FromMilHandle.GetBuffer() );
+				l_Code = SVMatroxBufferInterface::CopyBuffer(p_rHandle->GetBuffer(), l_svHandle->GetBuffer() );
 			}
 			else
 			{
-				l_Code = SVMatroxBufferInterface::ClearBuffer( l_ToMilHandle.GetBuffer(), 0.0 );
+				l_Code = SVMatroxBufferInterface::ClearBuffer(p_rHandle->GetBuffer(), 0.0 );
 			}
 
 			l_bOk = Unlock() && l_bOk && S_OK == l_Code;
@@ -1950,10 +1937,9 @@ SvOi::ISVImage* SVImageClass::GetParentImageInterface() const
 	return GetParentImage();
 }
 
-SvOi::MatroxImageSmartHandlePtr SVImageClass::getImageData()
+SvOi::SVImageBufferHandlePtr SVImageClass::getImageData()
 {
-	SVImageBufferHandlePtr handle;
-	SvOi::MatroxImageSmartHandlePtr dataSmartPointer;
+	SvOi::SVImageBufferHandlePtr dataSmartPointer;
 
 	if ((SvDef::SVImageTypeEnum::SVImageTypeLogical == m_ImageType) ||
 		(SvDef::SVImageTypeEnum::SVImageTypeDependent == m_ImageType) )
@@ -1962,37 +1948,23 @@ SvOi::MatroxImageSmartHandlePtr SVImageClass::getImageData()
 		// the Parent Image Child, and not as part of the SVImageObjectClass.
 		// getImageData should redirect.  
 
-		SVImageBufferHandlePtr childHandle;
-		if (S_OK == GetParentImageHandle(childHandle))
-		{
-			dataSmartPointer = SvOi::MatroxImageSmartHandlePtr{ new MatroxImageData(childHandle) };
-		}
+		GetParentImageHandle(dataSmartPointer);
 	}
 	else
 	{
 		// For all other buffer types, images are retrieved from 
 		// SVImageObjectClass.
-
-		if (GetImageHandle(handle))
-		{
-			dataSmartPointer = SvOi::MatroxImageSmartHandlePtr{ new MatroxImageData(handle) };
-		}
+		GetImageHandle(dataSmartPointer);
 	}
 	return dataSmartPointer;
 }
 
-SvOi::MatroxImageSmartHandlePtr SVImageClass::getParentImageData()
+SvOi::SVImageBufferHandlePtr SVImageClass::getParentImageData()
 {
-	SVImageBufferHandlePtr handle;
-	SvOi::MatroxImageSmartHandlePtr dataSmartPointer;
+	SvOi::SVImageBufferHandlePtr handle;
 
-	if (S_OK == GetParentImageHandle(handle))
-	{
-		MatroxImageData *data = new MatroxImageData(handle);
-		data->setImageHandle(handle);
-		dataSmartPointer = SvOi::MatroxImageSmartHandlePtr{ data };
-	}
-	return dataSmartPointer;
+	GetParentImageHandle(handle);
+	return handle;
 }
 
 std::string SVImageClass::getDisplayedName() const
@@ -2031,12 +2003,9 @@ HRESULT SVImageClass::Save(const std::string& rFilename)
 	HRESULT hr = S_OK;
 	
 	// Get output buffer handle...
-	SVImageBufferHandlePtr hBuffer;
+	SvOi::SVImageBufferHandlePtr hBuffer;
 	if (GetImageHandle(hBuffer) && nullptr != hBuffer)
 	{
-		SVImageBufferHandleImage MilHandle;
-		hBuffer->GetData(MilHandle);
-
 		std::string ext;
 		size_t pos = rFilename.find_last_of(".");
 		if (std::string::npos != pos)
@@ -2048,7 +2017,7 @@ HRESULT SVImageClass::Save(const std::string& rFilename)
 		if (efileformat != SVFileUnknown)
 		{
 			std::string strPath = rFilename.c_str();
-			HRESULT l_Code = SVMatroxBufferInterface::Export(MilHandle.GetBuffer(), strPath, efileformat);
+			HRESULT l_Code = SVMatroxBufferInterface::Export(hBuffer->GetBuffer(), strPath, efileformat);
 		}
 		else
 		{

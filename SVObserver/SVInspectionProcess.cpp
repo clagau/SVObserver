@@ -312,22 +312,18 @@ bool   SVInspectionProcess::CopyToWatchlist(SVProductInfoStruct& rLastProduct)
 			int offset = element->MonEntryPtr->data.Store_Offset;
 			int Bytesyze = static_cast<int>(element->MonEntryPtr->data.ByteSize);
 			int imageIndex = element->MonEntryPtr->data.ItemId;
-			SVImageBufferHandlePtr imageHandlePtr;
+			SvOi::SVImageBufferHandlePtr imageHandlePtr;
 			pImage->GetImageHandle(imageHandlePtr);
 
 			if (nullptr != imageHandlePtr)
 			{
-
 				HRESULT hr(S_FALSE);
-
-				SVImageBufferHandleImage FromImageBufferHandle;
-				HRESULT Result = imageHandlePtr->GetData(FromImageBufferHandle);
 				SVMatroxBuffer& rToBuffer
 					= SvSml::SharedMemWriter::Instance().GetImageBuffer(slotindex, m_StoreIndex, imageIndex);
 				//Write Image to buffer
-				if (rToBuffer.empty() == false && FromImageBufferHandle.empty() == false)
+				if (rToBuffer.empty() == false && imageHandlePtr->empty() == false)
 				{
-					hr = SVMatroxBufferInterface::CopyBuffer(rToBuffer, FromImageBufferHandle.GetBuffer());
+					hr = SVMatroxBufferInterface::CopyBuffer(rToBuffer, imageHandlePtr->GetBuffer());
 				}
 			}
 		}
@@ -2362,19 +2358,11 @@ bool SVInspectionProcess::ProcessInputImageRequests(SVProductInfoStruct *p_psvPr
 
 						if (l_bOk)
 						{
-							SVImageBufferHandlePtr l_ImageHandle;
+							SvOi::SVImageBufferHandlePtr l_ImageHandle;
 
 							if (pImage->GetImageHandle(l_ImageHandle) && nullptr != l_ImageHandle && nullptr != l_pInRequest->m_ImageHandlePtr)
 							{
-								HRESULT l_Code;
-
-								SVImageBufferHandleImage l_MilHandle;
-								SVImageBufferHandleImage l_RequestMilHandle;
-
-								l_ImageHandle->GetData(l_MilHandle);
-								l_pInRequest->m_ImageHandlePtr->GetData(l_RequestMilHandle);
-
-								l_Code = SVMatroxBufferInterface::CopyBuffer(l_MilHandle.GetBuffer(), l_RequestMilHandle.GetBuffer());
+								HRESULT l_Code = SVMatroxBufferInterface::CopyBuffer(l_ImageHandle->GetBuffer(), l_pInRequest->m_ImageHandlePtr->GetBuffer());
 							}
 							else
 							{
@@ -2546,7 +2534,7 @@ HRESULT SVInspectionProcess::AddInputImageRequestByCameraName(const std::string&
 	HRESULT hrOk = S_OK;
 
 	SVImageInfoClass svInfo;
-	SVImageBufferHandlePtr svHandleStruct;
+	SvOi::SVImageBufferHandlePtr svHandleStruct;
 	SVInputImageRequestInfoStructPtr l_pInRequest;
 	try
 	{

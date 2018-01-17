@@ -84,7 +84,7 @@ bool SVWatershedFilterClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVWatershedFilterClass::onRun( bool First, SVImageBufferHandlePtr rInputImageHandle, SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVWatershedFilterClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	long lMinVariation;
 	long lControlFlag;
@@ -93,16 +93,10 @@ bool SVWatershedFilterClass::onRun( bool First, SVImageBufferHandlePtr rInputIma
 	m_lvoMinVariation.GetValue(lMinVariation);
 	m_lvoControlFlag.GetValue(lControlFlag);
 
-	SVImageBufferHandlePtr ImageHandle;
+	SvOi::SVImageBufferHandlePtr ImageHandle;
 
 	if( m_pCurrentUIOPL && nullptr != rInputImageHandle && nullptr != rOutputImageHandle)
 	{
-		SVImageBufferHandleImage l_InMilHandle;
-		SVImageBufferHandleImage l_OutMilHandle;
-
-		rInputImageHandle->GetData( l_InMilHandle );
-		rOutputImageHandle->GetData( l_OutMilHandle );
-		
 		HRESULT l_Code;
 		if( bUseMarker && m_MarkerImageInfo.IsConnected() )
 		{
@@ -111,15 +105,15 @@ bool SVWatershedFilterClass::onRun( bool First, SVImageBufferHandlePtr rInputIma
 			{
 				pInputImage->GetImageHandle( ImageHandle );
 				
-				SVImageBufferHandleImage l_MilHandle;
+				SVMatroxBuffer milBuffer;
 				if( nullptr != ImageHandle )
 				{
-					ImageHandle->GetData( l_MilHandle );
+					milBuffer = ImageHandle->GetBuffer();
 				}
 
-				l_Code = SVMatroxImageInterface::Watershed( l_OutMilHandle.GetBuffer(),
-					First ? l_InMilHandle.GetBuffer() : l_OutMilHandle.GetBuffer(),
-					l_MilHandle.GetBuffer(),
+				l_Code = SVMatroxImageInterface::Watershed(rOutputImageHandle->GetBuffer(),
+					First ? rInputImageHandle->GetBuffer() : rOutputImageHandle->GetBuffer(),
+					milBuffer,
 					lMinVariation,
 					static_cast<SVImageWaterShedEnum>(lControlFlag));
 			}
@@ -127,15 +121,9 @@ bool SVWatershedFilterClass::onRun( bool First, SVImageBufferHandlePtr rInputIma
 		}
 		else
 		{
-			SVImageBufferHandleImage l_MilHandle;
-			if (nullptr != ImageHandle)
-			{
-				ImageHandle->GetData( l_MilHandle );
-			}
-
-			l_Code = SVMatroxImageInterface::Watershed( l_OutMilHandle.GetBuffer(),
-				First ? l_InMilHandle.GetBuffer() : l_OutMilHandle.GetBuffer(),
-				l_MilHandle.GetBuffer(),
+			l_Code = SVMatroxImageInterface::Watershed(rOutputImageHandle->GetBuffer(),
+				First ? rInputImageHandle->GetBuffer() : rOutputImageHandle->GetBuffer(),
+				SVMatroxBuffer(),
 				lMinVariation,
 				static_cast<SVImageWaterShedEnum>(lControlFlag));
 		}

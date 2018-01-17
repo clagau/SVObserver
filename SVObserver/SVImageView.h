@@ -14,7 +14,7 @@
 #pragma region Includes
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVStatusLibrary/SVImageIndexStruct.h"
-#include "SVImageLibrary/SVImageBufferHandleInterface.h"
+#include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "SVSystemLibrary/SVThreadWait.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVUtilityLibrary/SVWinHandle.h"

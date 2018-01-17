@@ -44,8 +44,7 @@ namespace SvCmd
 			SvOi::IMask* pMask = dynamic_cast<SvOi::IMask *>(SvOi::getObject(m_InstanceID));
 			if (pMask)
 			{
-				SvOi::MatroxImageSmartHandlePtr data = pMask->GetReferenceImage();
-				SvOi::IMatroxImageData* pImageData = data.get();
+				SvOi::SVImageBufferHandlePtr pImageData = pMask->GetReferenceImage();
 
 				if (nullptr != pImageData && !pImageData->empty())
 				{
@@ -53,8 +52,7 @@ namespace SvCmd
 					BYTE* pMilBuffer(nullptr);
 					//copy the image buffer, as the source doesn't have a DIB
 					SVMatroxBuffer newBuffer;
-					SVMatroxBuffer oldBuffer;
-					pImageData->GetBuffer(oldBuffer);
+					const SVMatroxBuffer& oldBuffer = pImageData->GetBuffer();
 
 					HRESULT l_Code = SVMatroxBufferInterface::Create(newBuffer, oldBuffer);
 					if (S_OK == l_Code)

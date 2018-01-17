@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVImageArchive.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "SVImageLibrary/SVImageBufferHandleInterface.h"
+#include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "SVObserver.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "InspectionEngine/SVImageClass.h"
@@ -89,7 +89,7 @@ DWORD SVImageArchiveClass::NextFileName()
 	return m_FileNumber++;
 }
 
-bool SVImageArchiveClass::LoadImageArchiveFile( SVImageBufferHandlePtr p_HandlePtr )
+bool SVImageArchiveClass::LoadImageArchiveFile(SvOi::SVImageBufferHandlePtr p_HandlePtr )
 {
 	SVFileNameClass svFileName;
 	std::string FileName;
@@ -108,10 +108,7 @@ bool SVImageArchiveClass::LoadImageArchiveFile( SVImageBufferHandlePtr p_HandleP
 	{
 		hCursor = SetCursor (LoadCursor(nullptr, IDC_WAIT));
 
-		SVImageBufferHandleImage l_MilHandle;
-		p_HandlePtr->GetData( l_MilHandle );
-
-		MatroxCode = SVMatroxBufferInterface::Import(l_MilHandle.GetBuffer(), FileName, SVFileBitmap, false );
+		MatroxCode = SVMatroxBufferInterface::Import(p_HandlePtr->GetBuffer(), FileName, SVFileBitmap, false );
 		SetCursor (hCursor);
 		if (S_OK == MatroxCode)
 		{
@@ -126,7 +123,7 @@ bool SVImageArchiveClass::LoadImageArchiveFile(SVImageClass *pImage)
 {
 	bool bOk = false;
 
-	SVImageBufferHandlePtr l_ImageHandlePtr;
+	SvOi::SVImageBufferHandlePtr l_ImageHandlePtr;
 
 	if( pImage->GetImageHandle( l_ImageHandlePtr ) )
 	{
@@ -139,7 +136,7 @@ bool SVImageArchiveClass::LoadImageArchiveFile(SVImageClass *pImage)
 
 bool SVImageArchiveClass::LoadImageArchiveFile( SVImageObjectClassPtr p_AcquisitionCircleBufferPtr )
 {
-	SVImageBufferHandlePtr l_ImageHandlePtr;
+	SvOi::SVImageBufferHandlePtr l_ImageHandlePtr;
 	
 	bool bRetValue = false;
 	
@@ -155,10 +152,7 @@ bool SVImageArchiveClass::LoadImageArchiveFile( SVImageObjectClassPtr p_Acquisit
 		
 		HRESULT l_Code;
 
-		SVImageBufferHandleImage l_MilHandle;
-		l_ImageHandlePtr->GetData( l_MilHandle );
-
-		SVMatroxBuffer MilId = l_MilHandle.GetBuffer();
+		SVMatroxBuffer MilId = l_ImageHandlePtr->GetBuffer();
 		bRetValue = LoadImageArchiveFile( l_ImageHandlePtr );
 		
 		for (i = 1; bRetValue && (i < static_cast< int >( p_AcquisitionCircleBufferPtr->size() ) ); i++)
@@ -166,9 +160,7 @@ bool SVImageArchiveClass::LoadImageArchiveFile( SVImageObjectClassPtr p_Acquisit
 			bRetValue = p_AcquisitionCircleBufferPtr->GetImageHandle( i, l_ImageHandlePtr );
 			if ( bRetValue )
 			{
-				l_ImageHandlePtr->GetData( l_MilHandle );
-
-				l_Code = SVMatroxBufferInterface::CopyBuffer( l_MilHandle.GetBuffer(), MilId );
+				l_Code = SVMatroxBufferInterface::CopyBuffer(l_ImageHandlePtr->GetBuffer(), MilId );
 			}
 		}
 	}

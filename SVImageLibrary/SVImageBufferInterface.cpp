@@ -26,7 +26,7 @@ SVImageBufferInterface::SVImageBufferInterface( const SVImageBufferInterface& p_
 	m_IndexHandle.Assign( p_rObject.m_IndexHandle, p_rObject.m_IndexHandle.GetLockType() );
 }
 
-SVImageBufferInterface::SVImageBufferInterface( SVImageBufferHandlePtr p_ImageHandle, const SVDataManagerHandle& p_rIndexHandle )
+SVImageBufferInterface::SVImageBufferInterface(SvOi::SVImageBufferHandlePtr p_ImageHandle, const SVDataManagerHandle& p_rIndexHandle )
 :	m_ImageHandle( p_ImageHandle ),
 	m_StartTimeStamp( 0 ),
 	m_EndTimeStamp( 0 )
@@ -59,7 +59,7 @@ void SVImageBufferInterface::clear()
 	m_EndTimeStamp = 0;
 }
 
-HRESULT SVImageBufferInterface::Assign( SVImageBufferHandlePtr p_ImageHandle, const SVDataManagerHandle& p_rIndexHandle )
+HRESULT SVImageBufferInterface::Assign(SvOi::SVImageBufferHandlePtr p_ImageHandle, const SVDataManagerHandle& p_rIndexHandle )
 {
 	HRESULT l_Status = S_OK;
 

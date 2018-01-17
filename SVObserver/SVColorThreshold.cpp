@@ -15,7 +15,7 @@
 
 #include "Definitions/SVImageFormatEnum.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "SVImageLibrary/SVImageBufferHandleInterface.h"
+#include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "Definitions/Color.h"
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 
@@ -293,31 +293,17 @@ bool SVColorThresholdClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCo
 
 	if (Result)
 	{
-		SVImageBufferHandlePtr BandHandle[BandEnum::BandNumber];
-		SVImageBufferHandlePtr OutputHandle;
-
-		SVImageBufferHandleImage BandMilBuffer[BandEnum::BandNumber];
-		SVImageBufferHandleImage l_OutputMilBuffer;
+		SvOi::SVImageBufferHandlePtr BandHandle[BandEnum::BandNumber];
+		SvOi::SVImageBufferHandlePtr OutputHandle;
 
 		for (BandEnum Band : BandList)
 		{
 			Result = Result && GetBandOutputImage(Band).GetImageHandle(BandHandle[Band]);
-			Result &= (nullptr != BandHandle[Band]);
-			if (Result)
-			{
-				BandHandle[Band]->GetData(BandMilBuffer[Band]);
-				Result &= !BandMilBuffer[Band].empty();
-			}
+			Result &= (nullptr != BandHandle[Band]) && !BandHandle[Band]->empty();
 		}
 
 		Result = Result && m_OutputImage.GetImageHandle(OutputHandle);
-		Result &= (nullptr != OutputHandle);
-
-		if (Result)
-		{
-			OutputHandle->GetData(l_OutputMilBuffer);
-			Result &= !l_OutputMilBuffer.empty();
-		}
+		Result &= (nullptr != OutputHandle) && !OutputHandle->empty();
 
 		if (!Result)
 		{
@@ -337,16 +323,16 @@ bool SVColorThresholdClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCo
 				{
 				case 1LL:
 					//If only one Threshold image enabled then just copy it to Output image
-					SVMatroxBufferInterface::CopyBuffer(l_OutputMilBuffer.GetBuffer(), BandMilBuffer[ThresholdEnabledVector[0]].GetBuffer());
+					SVMatroxBufferInterface::CopyBuffer(OutputHandle->GetBuffer(), BandHandle[ThresholdEnabledVector[0]]->GetBuffer());
 					break;
 				case 2LL:
 					//! The Output image is a bitwise AND of 2 Threshold images
-					SVMatroxImageInterface::Arithmetic(l_OutputMilBuffer.GetBuffer(), BandMilBuffer[ThresholdEnabledVector[0]].GetBuffer(), BandMilBuffer[ThresholdEnabledVector[1]].GetBuffer(), SVImageAnd);
+					SVMatroxImageInterface::Arithmetic(OutputHandle->GetBuffer(), BandHandle[ThresholdEnabledVector[0]]->GetBuffer(), BandHandle[ThresholdEnabledVector[1]]->GetBuffer(), SVImageAnd);
 					break;
 				case 3LL:
 					//! The Output image is a bitwise AND of all 3 Threshold images
-					SVMatroxImageInterface::Arithmetic(l_OutputMilBuffer.GetBuffer(), BandMilBuffer[BandEnum::Band0].GetBuffer(), BandMilBuffer[BandEnum::Band1].GetBuffer(), SVImageAnd);
-					SVMatroxImageInterface::Arithmetic(l_OutputMilBuffer.GetBuffer(), BandMilBuffer[BandEnum::Band2].GetBuffer(), l_OutputMilBuffer.GetBuffer(), SVImageAnd);
+					SVMatroxImageInterface::Arithmetic(OutputHandle->GetBuffer(), BandHandle[BandEnum::Band0]->GetBuffer(), BandHandle[BandEnum::Band1]->GetBuffer(), SVImageAnd);
+					SVMatroxImageInterface::Arithmetic(OutputHandle->GetBuffer(), BandHandle[BandEnum::Band2]->GetBuffer(), OutputHandle->GetBuffer(), SVImageAnd);
 					break;
 				default:
 					assert(false);
@@ -365,8 +351,8 @@ bool SVColorThresholdClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCo
 				m_ExtentLeft.GetValue(Value);
 				lLeft = static_cast<long> (Value);
 
-				SVImageBufferHandlePtr ImageHandle;
-				SVImageBufferHandlePtr InputImageHandle;
+				SvOi::SVImageBufferHandlePtr ImageHandle;
+				SvOi::SVImageBufferHandlePtr InputImageHandle;
 
 				for (BandEnum Band : BandList)
 				{
@@ -377,15 +363,9 @@ bool SVColorThresholdClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCo
 						if (nullptr != GetBandInputImage(Band) && GetBandInputImage(Band)->GetImageHandle(InputImageHandle) &&
 							nullptr !=InputImageHandle && GetBandHistogramImage(Band).GetImageHandle(ImageHandle) && nullptr != ImageHandle)
 						{
-							SVImageBufferHandleImage FromMilBuffer;
-							SVImageBufferHandleImage ToMilBuffer;
-
-							InputImageHandle->GetData(FromMilBuffer);
-							ImageHandle->GetData(ToMilBuffer);
-
-							if (!(FromMilBuffer.empty()) && !(ToMilBuffer.empty()))
+							if (!(InputImageHandle->empty()) && !(ImageHandle->empty()))
 							{
-								HRESULT MatroxCode = SVMatroxBufferInterface::CopyBuffer(ToMilBuffer.GetBuffer(), FromMilBuffer.GetBuffer(), -lLeft, -lTop);
+								HRESULT MatroxCode = SVMatroxBufferInterface::CopyBuffer(ImageHandle->GetBuffer(), InputImageHandle->GetBuffer(), -lLeft, -lTop);
 								if (S_OK != MatroxCode)
 								{
 									Result = false;
@@ -612,20 +592,14 @@ bool SVColorThresholdClass::Binarize( long lower, long upper, BOOL bExclude, Ban
 	SVImageClass& rOutputImage = GetBandOutputImage(Band);
 	if(nullptr != pInputImage)
 	{
-		SVImageBufferHandlePtr InputImageHandle;
-		SVImageBufferHandlePtr OutputImageHandle;
+		SvOi::SVImageBufferHandlePtr InputImageHandle;
+		SvOi::SVImageBufferHandlePtr OutputImageHandle;
 
 	    SVImageBufferHandleImage InputMilBuffer;
 		SVImageBufferHandleImage OutputMilBuffer;
 
-		if ( pInputImage->GetImageHandle( InputImageHandle ) && nullptr != InputImageHandle &&
-			 rOutputImage.GetImageHandle( OutputImageHandle ) && nullptr != OutputImageHandle )
-		{
-			InputImageHandle->GetData( InputMilBuffer );
-			OutputImageHandle->GetData( OutputMilBuffer );
-		}
-
-		if( !( InputMilBuffer.empty() ) && !( OutputMilBuffer.empty() ) )
+		if ( pInputImage->GetImageHandle( InputImageHandle ) && nullptr != InputImageHandle && !(InputImageHandle->empty()) &&
+			 rOutputImage.GetImageHandle( OutputImageHandle ) && nullptr != OutputImageHandle && !(OutputImageHandle->empty()) )
 		{
 			HRESULT MatroxCode;
 			double minVal(0.0);
@@ -643,7 +617,7 @@ bool SVColorThresholdClass::Binarize( long lower, long upper, BOOL bExclude, Ban
 			}
 
 			SVConditionEnum  BinirizeType = bExclude ? SVECondOutRange : SVECondInRange;
-			MatroxCode = SVMatroxImageInterface::Binarize( OutputMilBuffer.GetBuffer(),  InputMilBuffer.GetBuffer(), BinirizeType, minVal, maxVal );
+			MatroxCode = SVMatroxImageInterface::Binarize(OutputImageHandle->GetBuffer(), InputImageHandle->GetBuffer(), BinirizeType, minVal, maxVal );
 			
 			Result = (S_OK == MatroxCode) ? true : false;
 		}
@@ -655,18 +629,12 @@ bool SVColorThresholdClass::getHistogram( BandEnum Band )
 {
 	bool Result(false);
 
-	SVImageBufferHandleImage l_MilBuffer;
-	SVImageBufferHandlePtr ImageHandle;
+	SvOi::SVImageBufferHandlePtr ImageHandle;
 
-	if (GetBandHistogramImage(Band).GetImageHandle( ImageHandle ) && nullptr != ImageHandle)
-	{
-		ImageHandle->GetData( l_MilBuffer );
-	}
-
-	if( !( l_MilBuffer.empty() ) )
+	if (GetBandHistogramImage(Band).GetImageHandle( ImageHandle ) && nullptr != ImageHandle && !(ImageHandle->empty() ) )
 	{
 		HRESULT MatroxCode;
-		MatroxCode = SVMatroxImageInterface::Histogram(m_HistogramResultID, l_MilBuffer.GetBuffer());
+		MatroxCode = SVMatroxImageInterface::Histogram(m_HistogramResultID, ImageHandle->GetBuffer());
 			// Need to compute Histogram on a portion of the image...
 
 		long l_MILError( 0 );

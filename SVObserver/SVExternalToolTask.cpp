@@ -30,6 +30,7 @@
 #include "SVValueObjectLibrary/BasicValueObject.h"
 #include "SVStatusLibrary\GlobalPath.h"
 #include "TextDefinesSvO.h"
+#include "SVMatroxLibrary\SVMatroxBufferInterface.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -397,17 +398,13 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 					m_aPreviousInputImageRect.push_back( rect );
 
 					// remember MIL handle
-					SVImageBufferHandlePtr l_ImageBuffer;
+					SvOi::SVImageBufferHandlePtr l_ImageBuffer;
 					pImage->GetImageHandle(l_ImageBuffer);
-
-					SVImageBufferHandleImage l_MilHandle;
 
 					if(nullptr != l_ImageBuffer)
 					{
-						l_ImageBuffer->GetData( l_MilHandle );
-
 						// this cast assumes that a mil handle will never be larger 32 bits.
-						m_aInspectionInputImages[i] = static_cast<long>(l_MilHandle.GetBuffer().GetIdentifier());
+						m_aInspectionInputImages[i] = static_cast<long>(l_ImageBuffer->GetBuffer().GetIdentifier());
 
 						if( !m_dll.UseMil() )
 						{
@@ -824,24 +821,20 @@ bool SVExternalToolTask::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 			// collect input images
 			for ( i=0; i < m_Data.m_lNumInputImages; i++)
 			{
-				SVImageBufferHandlePtr l_ImageBuffer;
+				SvOi::SVImageBufferHandlePtr l_ImageBuffer;
 				SVImageClass* pInputImage = GetInputImage(i);
 				if ( pInputImage )
 				{
 					pInputImage->GetImageHandle(l_ImageBuffer);
 
-					SVImageBufferHandleImage l_MilHandle;
-
 					if(nullptr != l_ImageBuffer)
 					{
-						l_ImageBuffer->GetData( l_MilHandle );
-
 						if( m_dll.UseMil() )
 						{
 							if( !m_bUseImageCopies )
 							{
 								// This cast assumes that a mil handle will never get larger than a 32 bit long.
-								m_aInspectionInputImages[i] = static_cast<long>(l_MilHandle.GetBuffer().GetIdentifier());	// assign to internal buffer handle
+								m_aInspectionInputImages[i] = static_cast<long>(l_ImageBuffer->GetBuffer().GetIdentifier());	// assign to internal buffer handle
 								if( m_aInspectionInputImages[i] == 0 )
 								{
 									l_bOkToRun = false;
@@ -849,21 +842,15 @@ bool SVExternalToolTask::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 							}
 							else
 							{
-								SVImageBufferHandlePtr l_ImageBufferCopy;
+								SvOi::SVImageBufferHandlePtr l_ImageBufferCopy;
 								m_aInputImagesCopy[i].GetImageHandle(l_ImageBufferCopy);
 								
-								SVImageBufferHandleImage l_CopyMilHandle;
-								if (nullptr != l_ImageBufferCopy)
+								if (nullptr != l_ImageBufferCopy && !l_ImageBufferCopy->empty() && !l_ImageBuffer->empty() )
 								{
-									l_ImageBufferCopy->GetData( l_CopyMilHandle );
-								}
-
-								if( ! l_CopyMilHandle.empty() && ! l_MilHandle.empty() )
-								{
-									MatroxCode = SVMatroxBufferInterface::CopyBuffer( l_CopyMilHandle.GetBuffer(), l_MilHandle.GetBuffer());
+									MatroxCode = SVMatroxBufferInterface::CopyBuffer(l_ImageBufferCopy->GetBuffer(), l_ImageBuffer->GetBuffer());
 									
 									// This cast assumes that a Mil Id will never get larger than 32 bits in size.
-									m_aInspectionInputImages[i] = static_cast<long>(l_CopyMilHandle.GetBuffer().GetIdentifier());	// assign to copy handle
+									m_aInspectionInputImages[i] = static_cast<long>(l_ImageBufferCopy->GetBuffer().GetIdentifier());	// assign to copy handle
 									if( m_aInspectionInputImages[i] == 0 )
 									{
 										l_bOkToRun = false;
@@ -877,11 +864,11 @@ bool SVExternalToolTask::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 						}// if( m_dll.UseMil() )
 						else
 						{
-							if( l_MilHandle.empty() )
+							if(l_ImageBuffer->empty() )
 							{
 								l_bOkToRun = false;
 							}
-							MatroxCode = SVMatroxBufferInterface::CopyBuffer( m_aInspectionInputHBMImages[i].hbm, l_MilHandle.GetBuffer() );
+							MatroxCode = SVMatroxBufferInterface::CopyBuffer( m_aInspectionInputHBMImages[i].hbm, l_ImageBuffer->GetBuffer() );
 						}
 					}
 				}
@@ -913,18 +900,18 @@ bool SVExternalToolTask::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 					{
 						GetResultImage(i)->SetImageHandleIndex( rRunStatus.Images );
 
-						SVImageBufferHandlePtr l_ImageBuffer;
+						SvOi::SVImageBufferHandlePtr l_ImageBuffer;
 						GetResultImage(i)->GetImageHandle(l_ImageBuffer);
 
-						SVImageBufferHandleImage l_MilHandle;
+						SVMatroxBuffer buffer;
 
 						if(nullptr != l_ImageBuffer)
 						{
-							l_ImageBuffer->GetData( l_MilHandle );
+							buffer = l_ImageBuffer->GetBuffer();
 						}
 
 						// this cast assumes that a mil handle will never be larger 32 bits.
-						m_aInspectionResultImages[i] = static_cast<long>(l_MilHandle.GetBuffer().GetIdentifier());
+						m_aInspectionResultImages[i] = static_cast<long>(buffer.GetIdentifier());
 						if( m_aInspectionResultImages[i] == 0 )
 						{
 							l_bOkToRun = false;
@@ -937,18 +924,18 @@ bool SVExternalToolTask::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 					for ( i=0; i < m_Data.m_lNumResultImages; i++)
 					{
 						// Always use bucket 0 for copy
-						SVImageBufferHandlePtr l_ImageBuffer;
+						SvOi::SVImageBufferHandlePtr l_ImageBuffer;
 						m_aResultImagesCopy[i].GetImageHandle(l_ImageBuffer);
 
-						SVImageBufferHandleImage l_MilHandle;
+						SVMatroxBuffer buffer;
 
 						if(nullptr != l_ImageBuffer)
 						{
-							l_ImageBuffer->GetData( l_MilHandle );
+							buffer = l_ImageBuffer->GetBuffer();
 						}
 
 						// this cast assumes that a mil handle will never be larger 32 bits.
-						m_aInspectionResultImages[i] = static_cast<long>(l_MilHandle.GetBuffer().GetIdentifier());
+						m_aInspectionResultImages[i] = static_cast<long>(buffer.GetIdentifier());
 						if( m_aInspectionResultImages[i] == 0 )
 						{
 							l_bOkToRun = false;
@@ -1013,25 +1000,16 @@ bool SVExternalToolTask::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 						{
 							GetResultImage(i)->SetImageHandleIndex( rRunStatus.Images );
 
-							SVImageBufferHandlePtr l_ImageBuffer;
+							SvOi::SVImageBufferHandlePtr l_ImageBuffer;
 							GetResultImage(i)->GetImageHandle(l_ImageBuffer);
 
-							SVImageBufferHandlePtr l_ImageBufferCopy;
+							SvOi::SVImageBufferHandlePtr l_ImageBufferCopy;
 							m_aResultImagesCopy[i].GetImageHandle(l_ImageBufferCopy);
 
-							SVImageBufferHandleImage l_MilHandle;
-							SVImageBufferHandleImage l_CopyMilHandle;
-
-							if(nullptr != l_ImageBuffer && nullptr != l_ImageBufferCopy )
-							{
-								l_ImageBuffer->GetData( l_MilHandle );
-								l_ImageBufferCopy->GetData( l_CopyMilHandle );
-							}
-
-							if( ! l_MilHandle.empty() && ! l_CopyMilHandle.empty() )
+							if(nullptr != l_ImageBuffer && !l_ImageBuffer->empty() && nullptr != l_ImageBufferCopy && !l_ImageBufferCopy->empty())
 							{
 								// Ask Joe: what if different sizes??
-								SVMatroxBufferInterface::CopyBuffer( l_MilHandle.GetBuffer(), l_CopyMilHandle.GetBuffer());
+								SVMatroxBufferInterface::CopyBuffer(l_ImageBuffer->GetBuffer(), l_ImageBufferCopy->GetBuffer());
 							}
 						}
 					}// end if ( m_bUseImageCopies )
@@ -1042,17 +1020,19 @@ bool SVExternalToolTask::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 					for( int i = 0 ; i < m_Data.m_lNumResultImages ; i++ )
 					{
 						// Create new Mil handle from HBitmap
-						SVImageBufferHandlePtr l_ImageBuffer;
+						SvOi::SVImageBufferHandlePtr l_ImageBuffer;
 						GetResultImage(i)->GetImageHandle(l_ImageBuffer);
 
 						SVImageBufferHandleImage l_MilHandle;
 
-						if(nullptr != l_ImageBuffer )
+						if (nullptr != l_ImageBuffer)
 						{
-							l_ImageBuffer->GetData( l_MilHandle );
+							MatroxCode = SVMatroxBufferInterface::CopyBuffer(l_ImageBuffer->GetBuffer(), m_aInspectionResultHBMImages[i]);
 						}
-
-						MatroxCode = SVMatroxBufferInterface::CopyBuffer( l_MilHandle.GetBuffer(), m_aInspectionResultHBMImages[i] );
+						else
+						{
+							MatroxCode = E_FAIL;
+						}
 						if ( S_OK == hr )
 						{
 							if (S_OK != MatroxCode)
@@ -1764,18 +1744,18 @@ HRESULT SVExternalToolTask::ConnectInputImages()
 			GetImageDefinitionStruct( aInputImages[i] , imageInfo );
 
 			// remember MIL handle
-			SVImageBufferHandlePtr l_ImageBuffer;
+			SvOi::SVImageBufferHandlePtr l_ImageBuffer;
 			pImage->GetImageHandle(l_ImageBuffer);
 
-			SVImageBufferHandleImage l_MilHandle;
+			SVMatroxBuffer buffer;
 
 			if(nullptr != l_ImageBuffer)
 			{
-				l_ImageBuffer->GetData( l_MilHandle );
+				buffer = l_ImageBuffer->GetBuffer();
 			}
 
 			// this cast assumes that a mil handle will never be larger 32 bits.
-			m_aInspectionInputImages[i] = static_cast<long>(l_MilHandle.GetBuffer().GetIdentifier());
+			m_aInspectionInputImages[i] = static_cast<long>(buffer.GetIdentifier());
 
 			if( m_bUseImageCopies )
 			{

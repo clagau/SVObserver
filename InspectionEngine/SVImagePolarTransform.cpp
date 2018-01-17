@@ -558,8 +558,8 @@ bool SVImagePolarTransformClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Mes
 	{
 		SVImageExtentClass l_svExtents;
 
-		SVImageBufferHandlePtr l_svInputHandle;
-		SVImageBufferHandlePtr l_svOutputHandle;
+		SvOi::SVImageBufferHandlePtr l_svInputHandle;
+		SvOi::SVImageBufferHandlePtr l_svOutputHandle;
 
 		SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
 		l_bOk = l_bOk && (nullptr != pTool) && (S_OK == pTool->GetImageExtent( l_svExtents ));
@@ -574,12 +574,6 @@ bool SVImagePolarTransformClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Mes
 		l_bOk = l_bOk && outputImageObject.GetImageHandle( l_svOutputHandle ) && (nullptr != l_svOutputHandle);
 
 		l_bOk = l_bOk && getInputImage()->GetImageHandle( l_svInputHandle ) && (nullptr != l_svInputHandle);
-
-		SVImageBufferHandleImage l_InMilHandle;
-		l_bOk = l_bOk && ( S_OK == l_svInputHandle->GetData( l_InMilHandle ) );
-
-		SVImageBufferHandleImage l_OutMilHandle;
-		l_bOk = l_bOk && ( S_OK == l_svOutputHandle->GetData( l_OutMilHandle ) );
 
 		if (!l_bOk && nullptr != pErrorMessages)
 		{
@@ -648,7 +642,7 @@ bool SVImagePolarTransformClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Mes
 					AnglesTo360(l_dTmpStartAngle, l_dTmpEndAngle);
 
 
-					SVMatroxPolarTransformStruct l_Polar(l_InMilHandle.GetBuffer());
+					SVMatroxPolarTransformStruct l_Polar(l_svInputHandle->GetBuffer());
 					l_Polar.m_dCenterX = dCenterX;
 					l_Polar.m_dCenterY = dCenterY;
 					l_Polar.m_dStartRadius = dStartRadius;
@@ -658,7 +652,7 @@ bool SVImagePolarTransformClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Mes
 					l_Polar.m_eInterpMode = static_cast<SVImageOperationTypeEnum>(l_lInterpolationMode);
 					l_Polar.m_eOpMode = SVRectToPolar;
 
-					MatroxCode = SVMatroxImageInterface::PolarTransform(l_OutMilHandle.GetBuffer(), l_Polar );
+					MatroxCode = SVMatroxImageInterface::PolarTransform(l_svOutputHandle->GetBuffer(), l_Polar );
 
 
 
@@ -669,7 +663,7 @@ bool SVImagePolarTransformClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Mes
 
 						if( l_dPartialWidth >= 1.0 )
 						{
-							MatroxCode = SVMatroxBufferInterface::CopyBuffer( l_OutMilHandle.GetBuffer(), l_OutMilHandle.GetBuffer(), (long) l_Polar.m_dDestSizeX,  0L);
+							MatroxCode = SVMatroxBufferInterface::CopyBuffer(l_svOutputHandle->GetBuffer(), l_svOutputHandle->GetBuffer(), (long) l_Polar.m_dDestSizeX,  0L);
 						}
 					}
 

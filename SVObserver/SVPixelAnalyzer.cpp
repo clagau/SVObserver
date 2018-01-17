@@ -177,7 +177,7 @@ bool SVPixelAnalyzerClass::onRun(SVRunStatusClass &rRunStatus, SvStl::MessageCon
 
 	while (1)
 	{
-		SVImageBufferHandlePtr ImageHandle;
+		SvOi::SVImageBufferHandlePtr ImageHandle;
 
 		pInputImage = getInputImage ();
 
@@ -203,10 +203,7 @@ bool SVPixelAnalyzerClass::onRun(SVRunStatusClass &rRunStatus, SvStl::MessageCon
 			break;
 		}
 
-		SVImageBufferHandleImage l_MilHandle;
-		ImageHandle->GetData( l_MilHandle );
-
-		HRESULT MatroxCode = SVMatroxImageInterface::Histogram( m_histResultID, l_MilHandle.GetBuffer() );
+		HRESULT MatroxCode = SVMatroxImageInterface::Histogram( m_histResultID, ImageHandle->GetBuffer() );
 
 		if (S_OK != MatroxCode)
 		{

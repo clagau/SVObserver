@@ -90,7 +90,6 @@
     <ClInclude Include="IEnumerateValueObject.h" />
     <ClInclude Include="IEquation.h" />
     <ClInclude Include="IMask.h" />
-    <ClInclude Include="IMatroxImageData.h" />
     <ClInclude Include="IObjectManager.h" />
     <ClInclude Include="IObjectWriter.h" />
     <ClInclude Include="IPatternAnalyzer.h" />
@@ -108,6 +107,7 @@
     <ClInclude Include="IToolSet.h" />
     <ClInclude Include="IValueObject.h" />
     <ClInclude Include="NameValueList.h" />
+    <ClInclude Include="SVImageBufferHandleInterface.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

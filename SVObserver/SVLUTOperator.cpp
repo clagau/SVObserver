@@ -377,7 +377,7 @@ SVByteValueObjectClass* SVLUTOperatorClass::getInputLUTVectorResult()
 // .Description : Runs this operator.
 //              : Returns false, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVLUTOperatorClass::onRun( bool First, SVImageBufferHandlePtr rInputImageHandle, SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVLUTOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
 	// Is doing special friend routing !!!
 	// Don't call base class onRun(...).
@@ -395,12 +395,6 @@ bool SVLUTOperatorClass::onRun( bool First, SVImageBufferHandlePtr rInputImageHa
 		rRunStatus.SetInvalid();
 		return false;
 	}
-
-	SVImageBufferHandleImage l_InMilHandle;
-	SVImageBufferHandleImage l_OutMilHandle;
-
-	rInputImageHandle->GetData( l_InMilHandle );
-	rOutputImageHandle->GetData( l_OutMilHandle );
 
 	BOOL bUseLUT  = false;
 	BOOL bContinuousRecalcLUT = false;
@@ -467,7 +461,7 @@ bool SVLUTOperatorClass::onRun( bool First, SVImageBufferHandlePtr rInputImageHa
 	}
 
 	// Do LUT...
-	HRESULT MatroxCode = SVMatroxImageInterface::LutMap( l_OutMilHandle.GetBuffer(), First ? l_InMilHandle.GetBuffer() : l_OutMilHandle.GetBuffer(), m_lutBufID);
+	HRESULT MatroxCode = SVMatroxImageInterface::LutMap(rOutputImageHandle->GetBuffer(), First ? rInputImageHandle->GetBuffer() : rOutputImageHandle->GetBuffer(), m_lutBufID);
 
 	if (S_OK != MatroxCode)
 	{

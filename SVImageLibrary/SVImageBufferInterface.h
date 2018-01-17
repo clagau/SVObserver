@@ -14,21 +14,21 @@
 #pragma region Includes
 #include "SVDataManagerLibrary/SVDataManagerHandle.h"
 #include "SVTimerLibrary/SVClock.h"
-#include "SVImageBufferHandleInterface.h"
+#include "ObjectInterfaces\SVImageBufferHandleInterface.h"
 #pragma endregion Includes
 
 struct SVImageBufferInterface  
 {
 	SVImageBufferInterface();
 	SVImageBufferInterface( const SVImageBufferInterface& p_rObject );
-	SVImageBufferInterface( SVImageBufferHandlePtr p_ImageHandle, const SVDataManagerHandle& p_rIndexHandle );
+	SVImageBufferInterface(SvOi::SVImageBufferHandlePtr p_ImageHandle, const SVDataManagerHandle& p_rIndexHandle);
 	~SVImageBufferInterface();
 
 	const SVImageBufferInterface& operator=( const SVImageBufferInterface& p_rObject );
 
 	void clear();
 
-	HRESULT Assign( SVImageBufferHandlePtr p_ImageHandle, const SVDataManagerHandle& p_rIndexHandle );
+	HRESULT Assign(SvOi::SVImageBufferHandlePtr p_ImageHandle, const SVDataManagerHandle& p_rIndexHandle );
 
 	unsigned char* GetBufferAddress() const;
 
@@ -40,7 +40,7 @@ struct SVImageBufferInterface
 	void SetEndFrameTimeStamp();
 	void SetEndFrameTimeStamp( const SvTl::SVTimeStamp& p_rTimeStamp );
 
-	SVImageBufferHandlePtr m_ImageHandle;
+	SvOi::SVImageBufferHandlePtr m_ImageHandle;
 	SVDataManagerHandle m_IndexHandle;
 
 	SvTl::SVTimeStamp m_StartTimeStamp;

@@ -21,6 +21,8 @@
 #include "ToolSizeAdjustTask.h"
 #include "SVImageLibrary\SVImageBufferHandleImage.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVMatroxLibrary/SVMatroxImageInterface.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -244,34 +246,26 @@ bool SVColorToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContain
 
 	m_convertToHSI.GetValue(convertToHSI);
 
-	SVImageBufferHandlePtr OutputImageHandle;
+	SvOi::SVImageBufferHandlePtr OutputImageHandle;
 	if (m_OutputImage.SetImageHandleIndex(rRunStatus.Images) && m_OutputImage.GetImageHandle(OutputImageHandle))
 	{
-		SVImageBufferHandleImage milHandleTo;
-		SVImageBufferHandleImage milHandleFrom;
-
-		OutputImageHandle->GetData(milHandleTo);
 		SVImageClass* pInputImage = getInputImage();
 		if (m_LogicalROIImage.GetLastResetTimeStamp() <= pInputImage->GetLastResetTimeStamp())
 		{
 			UpdateImageWithExtent();
 		}
-		SVImageBufferHandlePtr inputImageHandle;
+		SvOi::SVImageBufferHandlePtr inputImageHandle;
 		m_LogicalROIImage.GetParentImageHandle(inputImageHandle);
-		if (nullptr != inputImageHandle)
-		{
-			inputImageHandle->GetData(milHandleFrom);
-		}
-		if (!milHandleTo.empty() && !milHandleFrom.empty())
+		if (!OutputImageHandle->empty() && nullptr != inputImageHandle && !inputImageHandle->empty())
 		{
 			HRESULT MatroxCode(S_OK);
 			if (convertToHSI)
 			{
-				MatroxCode = SVMatroxImageInterface::Convert(milHandleTo.GetBuffer(), milHandleFrom.GetBuffer(), SVImageRGBToHLS);
+				MatroxCode = SVMatroxImageInterface::Convert(OutputImageHandle->GetBuffer(), inputImageHandle->GetBuffer(), SVImageRGBToHLS);
 			}
 			else
 			{
-				MatroxCode = SVMatroxBufferInterface::CopyBuffer(milHandleTo.GetBuffer(), milHandleFrom.GetBuffer());
+				MatroxCode = SVMatroxBufferInterface::CopyBuffer(OutputImageHandle->GetBuffer(), inputImageHandle->GetBuffer());
 			}
 			if (S_OK != MatroxCode)
 			{

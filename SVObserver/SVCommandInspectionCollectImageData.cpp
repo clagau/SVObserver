@@ -198,7 +198,7 @@ HRESULT SVCommandInspectionCollectImageData::UpdateBuffer(const SVGUID& rImageId
 
 		svResultImageIndex.m_CameraDMIndexHandle.Assign( l_SourceImageDMIndexHandle, SV_DISPLAY );
 
-		SVImageBufferHandlePtr ImageBuffer;
+		SvOi::SVImageBufferHandlePtr ImageBuffer;
 
 		pImage->GetImageHandle( svResultImageIndex, ImageBuffer );
 

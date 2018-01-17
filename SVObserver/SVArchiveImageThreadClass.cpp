@@ -11,6 +11,7 @@
 #include "SVMemoryManager.h"
 #include "SVSystemLibrary/SVThreadManager.h"
 #include "TextDefinesSvO.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #pragma endregion Includes
 
 #pragma region Constructor
@@ -96,25 +97,18 @@ HRESULT SVArchiveImageThreadClass::QueueImage( BufferInfo p_BufferInfo )
 			BufferInfo& rBufferInfo = *iter;
 			// must do the copy with the queue locked
 			// ** COPY BUFFER **
-			SVImageBufferHandlePtr l_DestHandle;
+			SvOi::SVImageBufferHandlePtr l_DestHandle;
 			rBufferInfo.pImageObject->GetImageHandle( 0, l_DestHandle );
 
-			if(nullptr != l_DestHandle)
+			if(nullptr != l_DestHandle && !l_DestHandle->empty() )
 			{
-				SVImageBufferHandleImage l_MilBuffer;
-				l_DestHandle->GetData( l_MilBuffer );
+				SVMatroxBufferInterface::CopyBuffer(l_DestHandle->GetBuffer(), p_BufferInfo.id);
+				// at this point, p_BufferInfo.id is the source buffer
 
-				if ( !l_MilBuffer.empty() )
-				{
+				rBufferInfo.id = l_DestHandle->GetBuffer();	// switch over to copy
 
-					SVMatroxBufferInterface::CopyBuffer(l_MilBuffer.GetBuffer(), p_BufferInfo.id );
-					// at this point, p_BufferInfo.id is the source buffer
-
-					rBufferInfo.id = l_MilBuffer.GetBuffer();	// switch over to copy
-
-					// update timestamp
-					rBufferInfo.m_Timestamp = SvTl::GetTimeStamp();
-				}
+				// update timestamp
+				rBufferInfo.m_Timestamp = SvTl::GetTimeStamp();
 			}
 		}// end if ( iter != m_Queue.end() )	// found filename
 		else
@@ -148,27 +142,21 @@ HRESULT SVArchiveImageThreadClass::QueueImage( BufferInfo p_BufferInfo )
 					p_BufferInfo.pImageObject = pImageObject;
 
 					// ** COPY BUFFER **
-					SVImageBufferHandlePtr l_DestHandle;
+					SvOi::SVImageBufferHandlePtr l_DestHandle;
 					pImageObject->GetImageHandle( 0, l_DestHandle );
 
-					if(nullptr != l_DestHandle)
+					if(nullptr != l_DestHandle && !l_DestHandle->empty() )
 					{
-						SVImageBufferHandleImage l_MilBuffer;
-						l_DestHandle->GetData( l_MilBuffer );
-
-						if ( !l_MilBuffer.empty() )
-						{
-							// at this point, p_BufferInfo.id is the source buffer
-							SVMatroxBufferInterface::CopyBuffer( l_MilBuffer.GetBuffer(), p_BufferInfo.id );
-							p_BufferInfo.id = l_MilBuffer.GetBuffer();	// switch over to copy
+						// at this point, p_BufferInfo.id is the source buffer
+						SVMatroxBufferInterface::CopyBuffer(l_DestHandle->GetBuffer(), p_BufferInfo.id);
+						p_BufferInfo.id = l_DestHandle->GetBuffer();	// switch over to copy
 
 
-							// ** ADD NEW BUFFER TO QUEUE **
-							p_BufferInfo.m_Timestamp = SvTl::GetTimeStamp();
-							lock.Lock();
-							m_Queue.push_back( p_BufferInfo );
-							lock.Unlock();
-						}
+						// ** ADD NEW BUFFER TO QUEUE **
+						p_BufferInfo.m_Timestamp = SvTl::GetTimeStamp();
+						lock.Lock();
+						m_Queue.push_back(p_BufferInfo);
+						lock.Unlock();
 					}
 				}
 
@@ -194,22 +182,16 @@ HRESULT SVArchiveImageThreadClass::QueueImage( BufferInfo p_BufferInfo )
 					BufferInfo& rBufferInfo = *iterOldest;
 
 					// must do the copy with the queue locked
-					SVImageBufferHandlePtr l_DestHandle;
+					SvOi::SVImageBufferHandlePtr l_DestHandle;
 					iterOldest->pImageObject->GetImageHandle( 0, l_DestHandle );
 
-					if(nullptr != l_DestHandle)
+					if(nullptr != l_DestHandle && !l_DestHandle->empty() )
 					{
-						SVImageBufferHandleImage l_MilBuffer;
-						l_DestHandle->GetData( l_MilBuffer );
-
-						if ( !l_MilBuffer.empty() )
-						{
-							// at this point, p_BufferInfo.id is the source buffer
-							SVMatroxBufferInterface::CopyBuffer( l_MilBuffer.GetBuffer(), p_BufferInfo.id );
-							rBufferInfo.id = l_MilBuffer.GetBuffer();	// switch over to copy
-							// update timestamp
-							rBufferInfo.m_Timestamp = SvTl::GetTimeStamp();
-						}
+						// at this point, p_BufferInfo.id is the source buffer
+						SVMatroxBufferInterface::CopyBuffer(l_DestHandle->GetBuffer(), p_BufferInfo.id);
+						rBufferInfo.id = l_DestHandle->GetBuffer();	// switch over to copy
+						// update timestamp
+						rBufferInfo.m_Timestamp = SvTl::GetTimeStamp();
 					}
 				}
 			}// end else not enough room on queue

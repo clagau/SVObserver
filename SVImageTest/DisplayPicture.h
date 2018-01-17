@@ -12,7 +12,7 @@
 #ifndef DISPLAYPICTURE_H
 #define DISPLAYPICTURE_H
 
-#include "SVImageLibrary/SVImageBufferHandleInterface.h"
+#include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 
 struct SVImageBufferInterface;
 
@@ -38,7 +38,7 @@ public:
 	HRESULT GetNextBuffer( SVImageBufferInterface& p_rBuffer );
 
 	long m_BufferInUse;
-	SVImageBufferHandlePtr m_pImage;
+	SvOi::SVImageBufferHandlePtr m_pImage;
 
 	int m_ScrollY;
 	int m_ScrollX;

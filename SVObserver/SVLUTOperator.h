@@ -13,7 +13,7 @@
 #pragma region Includes
 #include "InspectionEngine/SVUnaryImageOperatorClass.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
-#include "SVImageLibrary/SVImageBufferHandleInterface.h"
+#include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #pragma endregion Includes
 
 class SVLUTOperatorClass : public SVUnaryImageOperatorClass
@@ -36,7 +36,7 @@ public:
 	bool RecalcLUT( SVRunStatusClass& rRunStatus );
 
 protected:
-	virtual bool onRun( bool First, SVImageBufferHandlePtr RInputImageHandle, SVImageBufferHandlePtr ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun(bool First, SvOi::SVImageBufferHandlePtr RInputImageHandle, SvOi::SVImageBufferHandlePtr ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
 	SVByteValueObjectClass* getInputLUTVectorResult();
 
 protected:

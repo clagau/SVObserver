@@ -17,8 +17,8 @@ namespace SvOi
 	{
 	public:
 		virtual ~IMask() {}
-		virtual MatroxImageSmartHandlePtr GetReferenceImage() const = 0;
-		virtual MatroxImageSmartHandlePtr GetMaskImage() const = 0;
+		virtual SVImageBufferHandlePtr GetReferenceImage() const = 0;
+		virtual SVImageBufferHandlePtr GetMaskImage() const = 0;
 		virtual HRESULT Import(const std::string& filename) = 0;
 		virtual HRESULT Export(const std::string& filename) = 0;
 		virtual HGLOBAL GetMaskData() const = 0;

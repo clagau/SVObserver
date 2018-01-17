@@ -32,7 +32,6 @@
 #include "SVGigeCameraROIDlg.h"
 #include "SVAcquisitionClass.h"
 #include "SVDigitizerProcessingClass.h"
-#include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVGigeCameraFileLibrary/SVGigeCameraParamValidateClass.h"
 #include "SVPPQObject.h"
 #include "SVPPQConstants.h"

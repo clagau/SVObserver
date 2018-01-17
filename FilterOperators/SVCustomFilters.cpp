@@ -337,20 +337,14 @@ void SVCustomFilterClass::RebuildKernel()
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVCustomFilterClass::onRun( bool First, SVImageBufferHandlePtr rInputImageHandle, SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVCustomFilterClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
 	HRESULT l_Code;
 
 	if (m_pCurrentUIOPL && nullptr != rInputImageHandle && nullptr != rOutputImageHandle)
 	{
-		SVImageBufferHandleImage l_MilHandle;
-		rOutputImageHandle->GetData( l_MilHandle );
-
-		SVImageBufferHandleImage l_InMilHandle;
-		rInputImageHandle->GetData( l_InMilHandle );
-
-		l_Code = SVMatroxImageInterface::Convolve(l_MilHandle.GetBuffer(), 
-						First ? l_InMilHandle.GetBuffer() : l_MilHandle.GetBuffer(), 
+		l_Code = SVMatroxImageInterface::Convolve(rOutputImageHandle->GetBuffer(),
+						First ? rInputImageHandle->GetBuffer() : rOutputImageHandle->GetBuffer(),
 						m_milKernel );
 
 

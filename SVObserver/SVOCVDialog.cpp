@@ -15,7 +15,6 @@
 #include "InspectionEngine/SVTool.h"
 #include "InspectionEngine/SVUnaryImageOperatorList.h"
 #include "SVOCVAnalyzerResult.h"
-#include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

@@ -43,12 +43,11 @@ namespace SvCmd
 			SvOi::IMask* pMask = dynamic_cast<SvOi::IMask *>(SvOi::getObject(m_InstanceID));
 			if (pMask)
 			{
-				SvOi::MatroxImageSmartHandlePtr data = pMask->GetMaskImage();
-				SvOi::IMatroxImageData *imageData = data.get();
+				SvOi::SVImageBufferHandlePtr imageData = pMask->GetMaskImage();
 				if( nullptr != imageData && !imageData->empty())
 				{
-					SVBitmapInfo dibInfo = imageData->getBitmapInfo();
-					BYTE* pMilBuffer = static_cast< BYTE* >( imageData->getBufferAddress() );
+					SVBitmapInfo dibInfo = imageData->GetBitmapInfo();
+					BYTE* pMilBuffer = static_cast< BYTE* >( imageData->GetBufferAddress() );
 
 					if (nullptr != pMilBuffer && !dibInfo.empty())
 					{

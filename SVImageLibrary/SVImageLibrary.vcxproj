@@ -113,7 +113,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ImageFileUtilities.cpp" />
-    <ClCompile Include="MatroxImageData.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -130,8 +129,6 @@
     <ClCompile Include="SVExtentSizeStruct.cpp" />
     <ClCompile Include="SVGeometryClass.cpp" />
     <ClCompile Include="SVImageBufferHandleImage.cpp" />
-    <ClCompile Include="SVImageBufferHandleInterface.cpp" />
-    <ClCompile Include="SVImageBufferHandleStruct.cpp" />
     <ClCompile Include="SVImageBufferInterface.cpp" />
     <ClCompile Include="SVImageExtentClass.cpp" />
     <ClCompile Include="SVImageInfoClass.cpp" />
@@ -143,7 +140,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImageFileUtilities.h" />
-    <ClInclude Include="MatroxImageData.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="SVAcquisitionBufferInterface.h" />
     <ClInclude Include="SVCameraFormat.h" />
@@ -158,10 +154,7 @@
     <ClInclude Include="SVExtentPositionClass.h" />
     <ClInclude Include="SVExtentSizeStruct.h" />
     <ClInclude Include="SVGeometryClass.h" />
-    <ClInclude Include="SVImageBufferHandleData.h" />
     <ClInclude Include="SVImageBufferHandleImage.h" />
-    <ClInclude Include="SVImageBufferHandleInterface.h" />
-    <ClInclude Include="SVImageBufferHandleStruct.h" />
     <ClInclude Include="SVImageBufferInterface.h" />
     <ClInclude Include="SVImageExtentClass.h" />
     <ClInclude Include="SVImageInfoClass.h" />

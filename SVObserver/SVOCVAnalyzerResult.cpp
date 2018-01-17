@@ -14,7 +14,7 @@
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVMessage/SVMessage.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "SVImageLibrary/SVImageBufferHandleInterface.h"
+#include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "Definitions/Color.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "InspectionEngine/SVImageClass.h"
@@ -702,14 +702,11 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 		}
 		else
 		{
-			SVImageBufferHandlePtr ImageHandle;
+			SvOi::SVImageBufferHandlePtr ImageHandle;
 
 			if( pImage->GetImageHandle( ImageHandle ) && nullptr != ImageHandle)
 			{
-				SVImageBufferHandleImage l_MilHandle;
-				ImageHandle->GetData( l_MilHandle );
-
-				l_milImageID = l_MilHandle.GetBuffer();
+				l_milImageID = ImageHandle->GetBuffer();
 
 				//
 				// Get the Mil buffer host pointer ( address in the process address space )

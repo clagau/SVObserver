@@ -134,7 +134,7 @@ namespace SvCmd
 
 		if (nullptr != pPatAnalyzer && pPatAnalyzer->UpdateModelFromInputImage(rRequestMessage.posx(), rRequestMessage.posy(), rRequestMessage.modelwidth(), rRequestMessage.modelheight()))
 		{
-			SvOi::MatroxImageSmartHandlePtr imageHandle;
+			SvOi::SVImageBufferHandlePtr imageHandle;
 			SvOi::ITaskObject* pTaskObject = dynamic_cast<SvOi::ITaskObject*>(pPatAnalyzer);
 			if (nullptr != pTaskObject && pTaskObject->getSpecialImage(SvDef::PatternModelImageName, imageHandle) && !imageHandle->empty())
 			{
@@ -152,8 +152,7 @@ namespace SvCmd
 					FileFormatID = SVFileTiff;
 				}
 
-				SVMatroxBuffer milBuffer;
-				imageHandle->GetBuffer(milBuffer);
+				SVMatroxBuffer milBuffer = imageHandle->GetBuffer();
 				hr = SVMatroxBufferInterface::Export(milBuffer, FileName, FileFormatID);
 				if (S_OK != hr)
 				{

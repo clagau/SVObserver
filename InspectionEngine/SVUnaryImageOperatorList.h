@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVTaskObjectList.h"
-#include "SVImageLibrary/SVImageBufferHandleInterface.h"
+#include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #pragma endregion Includes
 
 class SVImageClass;
@@ -59,6 +59,6 @@ private:
 
 protected:
 	SVInObjectInfoStruct		inputImageObjectInfo;
-	SVImageBufferHandlePtr		m_milTmpImageObjectInfo1;
-	SVImageBufferHandlePtr		m_milTmpImageObjectInfo2;
+	SvOi::SVImageBufferHandlePtr		m_milTmpImageObjectInfo1;
+	SvOi::SVImageBufferHandlePtr		m_milTmpImageObjectInfo2;
 };

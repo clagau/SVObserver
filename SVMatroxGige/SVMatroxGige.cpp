@@ -25,6 +25,8 @@
 #include "SVMatroxGigeDeviceParameterManager.h"
 #include "SVImageLibrary/SVAcquisitionBufferInterface.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
+#include "SVMatroxLibrary/SVMatroxApplicationInterface.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #pragma endregion Includes
 
 // helpers for System/Digitizer Handles
@@ -1041,16 +1043,9 @@ HRESULT SVMatroxGige::CameraEndFrame( SVMatroxGigeDigitizer& p_rCamera, SVMatrox
 		
 		if( S_OK == p_rCamera.m_pBufferInterface->GetNextBuffer( l_Buffer ) )
 		{
-			SVImageBufferHandleImage l_MilBuffer;
-
-			if(nullptr != l_Buffer.m_ImageHandle )
+			if(nullptr != l_Buffer.m_ImageHandle && !(l_Buffer.m_ImageHandle->empty() ) )
 			{
-				l_Buffer.m_ImageHandle->GetData( l_MilBuffer );
-			}
-
-			if( !( l_MilBuffer.empty() ) )
-			{
-				HRESULT l_Code = SVMatroxBufferInterface::CopyBuffer( l_MilBuffer.GetBuffer(), p_SrcBufferID );
+				HRESULT l_Code = SVMatroxBufferInterface::CopyBuffer(l_Buffer.m_ImageHandle->GetBuffer(), p_SrcBufferID );
 				hr = l_Code;
 
 				if( S_OK == hr)

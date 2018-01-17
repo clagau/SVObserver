@@ -21,7 +21,6 @@
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"
 #include "DisplayHelper.h"
 #include "ObjectInterfaces\ISVImage.h"
-#include "ObjectInterfaces\IMatroxImageData.h"
 #include "SVUtilityLibrary/BitmapHelper.h"
 #pragma endregion Includes
 
@@ -39,7 +38,7 @@ namespace SvOg
 	{
 		if (nullptr != pImage)
 		{
-			SvOi::MatroxImageSmartHandlePtr data;
+			SvOi::SVImageBufferHandlePtr data;
 			if( SvDef::SVImageTypeEnum::SVImageTypePhysical == pImage->GetImageType() )
 			{
 				data = pImage->GetParentImageInterface()->getImageData();
@@ -48,7 +47,7 @@ namespace SvOg
 			{
 				data = pImage->getParentImageData();
 			}
-			setImage( data.get(), tabNumber );
+			setImage( data, tabNumber );
 		}
 	}
 
@@ -56,24 +55,22 @@ namespace SvOg
 	{
 		if (nullptr != pImage)
 		{
-			SvOi::MatroxImageSmartHandlePtr data = pImage->getImageData();
-			setImage( data.get(), tabNumber );
+			setImage(pImage->getImageData(), tabNumber );
 		}
 	}
 
 	//@TODO - needs to go!
-	void PictureDisplay::setImage( const SvOi::IMatroxImageData *imageData, long tabNumber )
+	void PictureDisplay::setImage( const SvOi::SVImageBufferHandlePtr imageData, long tabNumber )
 	{
 		if( nullptr != imageData && !( imageData->empty() ) )
 		{
-			SVBitmapInfo dibInfo = imageData->getBitmapInfo();
-			BYTE* pMilBuffer = static_cast< BYTE* >( imageData->getBufferAddress() );
+			SVBitmapInfo dibInfo = imageData->GetBitmapInfo();
+			BYTE* pMilBuffer = static_cast< BYTE* >( imageData->GetBufferAddress() );
 			if (nullptr != pMilBuffer)
 			{
 				//copy the image buffer - because the UnaryImageOperatorList/StdImageOperatorList does not support DIB!
 				SVMatroxBuffer newBuffer;
-				SVMatroxBuffer oldBuffer;
-				imageData->GetBuffer(oldBuffer);
+				SVMatroxBuffer oldBuffer = imageData->GetBuffer();
 
 				HRESULT l_Code = SVMatroxBufferInterface::Create(newBuffer, oldBuffer);
 				if (S_OK == l_Code)

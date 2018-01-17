@@ -63,7 +63,7 @@ private:
 	//! \param output [in,out] Output buffer, has to be allocated and the same size as input.
 	//! \returns bool If copy was successfully.
 	//************************************
-	bool copyBuffer( const SVImageBufferHandlePtr input, SVImageBufferHandlePtr output );
+	bool copyBuffer( const SvOi::SVImageBufferHandlePtr input, SvOi::SVImageBufferHandlePtr output );
 
 public:
 	HRESULT CollectInputImageNames();
