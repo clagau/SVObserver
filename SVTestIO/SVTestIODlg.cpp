@@ -167,53 +167,9 @@ void SVTestIODlg::OnTriggerButtonClicked( UINT nID )
 {
 	int triggerchannel = nID - IDC_TRIGGER_1 + 1; //triggerchannel is one-based
 
-	CallTrigger(triggerchannel);
+	m_TriggerDispatchers.DispatchIfPossible(triggerchannel);
 
 }
-
-
-void SVTestIODlg::CallTrigger(int index, bool CalledByTimer)
-{
-	UpdateData(TRUE);
-
-	for( SvTh::TriggerDispatcherMap::iterator it = m_triggerDispatcherMap.begin() ; it != m_triggerDispatcherMap.end() ; ++it)
-	{
-		SvTh::DispatcherVector& list = it->second;
-		if( it->first == index) // Trigger index....1 based handle / index.
-		{
-			for (size_t i = 0;i < list.size();i++)
-			{
-				if (list[i].m_IsStarted)
-				{
-					list[i].Dispatch();
-				}
-			}
-		}
-	}
-}
-
-
-
-HRESULT SVTestIODlg::afterStopTrigger(HRESULT hr)
-{
-
-	if( S_OK == hr )
-	{
-		bool l_bDisableIrq = true;
-		for( auto it = m_triggerDispatcherMap.begin() ; it != m_triggerDispatcherMap.end() ; ++it )
-		{
-			SvTh::DispatcherVector& list = it->second;
-
-			if( 0 == list.size() || list[0].m_IsStarted )
-			{
-				l_bDisableIrq = false;
-			}
-		}
-	}
-
-	return hr;
-}
-
 
 
 void SVTestIODlg::OnCancel()

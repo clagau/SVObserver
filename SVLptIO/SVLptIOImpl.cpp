@@ -204,7 +204,7 @@ HRESULT SVLptIOImpl::Initialize(bool bInit)
 				SetActive(0);  
 			}
 			// Stop all triggers
-			m_triggerDispatcherMap.clear();
+			m_TriggerDispatchers.Clear();
 		}
 	}
 	return hr;
@@ -701,17 +701,7 @@ HRESULT SVLptIOImpl::afterStopTrigger(HRESULT hr)
 {
 	if (S_OK == hr)
 	{
-		bool bDisableIrq = true;
-		for (auto it = m_triggerDispatcherMap.begin() ; it != m_triggerDispatcherMap.end() ; ++it)
-		{
-			SvTh::DispatcherVector& list = it->second;
-
-			if(0 == list.size() || list[0].m_IsStarted)
-			{
-				bDisableIrq = false;
-			}
-		}
-		if (bDisableIrq) // Make sure all triggers are stopped before Masking the IRQ
+		if (m_TriggerDispatchers.ContainsNoActiveTriggers()) // Make sure all triggers are stopped before Masking the IRQ
 		{
 			m_TriggerActive = false;
 		}
@@ -1655,16 +1645,12 @@ void SVLptIOImpl::HandleIRQ()
 		#endif
 
 		// call trigger callbacks
-		SvTh::TriggerDispatcherMap::iterator it;
-
-		for (it = m_triggerDispatcherMap.begin();it != m_triggerDispatcherMap.end() ;it++)
+		for (auto ChannelAndDispatcherList : m_TriggerDispatchers.GetDispatchers())
 		{
-			long lTrigger = it->first; // Trigger = the 1 based handle.
-
 			short nTriggerBit = SVTriggerNone;
 
 			// Get the trigger bit 
-			switch (lTrigger)
+			switch (ChannelAndDispatcherList.first) //the 1 based channel.
 			{
 				case 1: // trigger 1 Bit 3 of Status port
 				{
@@ -1697,7 +1683,7 @@ void SVLptIOImpl::HandleIRQ()
 					m_StatusLog.push_back(String);
 				#endif
 
-				SvTh::DispatcherVector& list = it->second;
+				SvTh::DispatcherVector& list = ChannelAndDispatcherList.second;
 
 				for (size_t i = 0;i < list.size();i++)
 				{

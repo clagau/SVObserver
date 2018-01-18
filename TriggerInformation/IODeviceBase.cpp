@@ -12,83 +12,45 @@
 
 namespace SvTi
 {
-	HRESULT IODeviceBase::AddTriggerCallback(unsigned long handle, const SvTh::TriggerDispatcher &rDispatcher)
+	HRESULT IODeviceBase::AddDispatcher(unsigned long handle, const SvTh::TriggerDispatcher &rDispatcher)
 	{
 		HRESULT hr = S_FALSE;
 
-		SvTh::TriggerDispatcherMap::iterator it = m_triggerDispatcherMap.find(handle);
-		if (it != m_triggerDispatcherMap.end())
+		lockIfRequired();
+
+		if(m_TriggerDispatchers.AddDispatcher(handle, rDispatcher))
 		{
-			SvTh::DispatcherVector& list = it->second;
-
-			// check for dups
-			SvTh::DispatcherVector::iterator callbackIt = std::find_if(list.begin(), list.end(), std::bind2nd(TriggerFinder(), rDispatcher.getCallback()));
-
-			if (callbackIt != list.end())
-			{
-				// DUPLICATE Entry!!!
-			}
-			else
-			{
-				// add it
-				list.push_back(rDispatcher);
-				hr = S_OK;
-			}
-		}
-		else
-		{
-			// add it
-			SvTh::DispatcherVector list;
-
-			list.push_back(rDispatcher);
-			lockIfRequired();
-			m_triggerDispatcherMap.insert(std::make_pair(handle, list));
-			unlockIfRequired();
 			hr = S_OK;
 		}
+
+		unlockIfRequired();
 		return hr;
 	}
 
 
-	HRESULT IODeviceBase::RemoveTriggerCallback(unsigned long handle, SvTh::SVTriggerCallbackPtr pCallback)
+	HRESULT IODeviceBase::RemoveDispatcher(unsigned long handle, const SvTh::TriggerDispatcher &rDispatcher)
 	{
 		lockIfRequired();
 		HRESULT hr = S_FALSE;
 
-		SvTh::TriggerDispatcherMap::iterator it = m_triggerDispatcherMap.find(handle);
-		if (it != m_triggerDispatcherMap.end())
+		if (m_TriggerDispatchers.RemoveDispatcher(handle, rDispatcher))
 		{
-			// check if it is in the list
-			SvTh::DispatcherVector& list = it->second;
-
-			SvTh::DispatcherVector::iterator callbackIt = std::find_if(list.begin(), list.end(), std::bind2nd(TriggerFinder(), pCallback));
-			if (callbackIt != list.end())
-			{
-				list.erase(callbackIt);
-				hr = S_OK;
-			}
+			hr = S_OK;
 		}
 		unlockIfRequired();
 		return hr;
 	}
 
 
-	HRESULT IODeviceBase::RemoveAllTriggerCallbacks(unsigned long handle)
+	HRESULT IODeviceBase::RemoveAllDispatchers(unsigned long handle)
 	{
 		lockIfRequired();
-		SvTh::TriggerDispatcherMap::iterator it = m_triggerDispatcherMap.find(handle);
-		if (it != m_triggerDispatcherMap.end())
-		{
-			SvTh::DispatcherVector& list = it->second;
-			for (size_t i = 0;i < list.size();i++)
-			{
-				list[i].m_IsStarted = false;
-			}
-			m_triggerDispatcherMap.erase(it);
-		}
+
+		m_TriggerDispatchers.RemoveAllDispatchers(handle);
 		unlockIfRequired();
 		return S_OK;
 	}
+
 
 	HRESULT IODeviceBase::StartTrigger(unsigned long handle)
 	{
@@ -96,17 +58,11 @@ namespace SvTi
 
 		beforeStartTrigger(handle);
 
-		SvTh::TriggerDispatcherMap::iterator it = m_triggerDispatcherMap.find(handle);
-		if (it != m_triggerDispatcherMap.end())
+		if (m_TriggerDispatchers.StartTrigger(handle))
 		{
-			SvTh::DispatcherVector& list = it->second;
-
-			for (size_t i = 0;i < list.size();i++)
-			{
-				list[i].m_IsStarted = true;
-			}
 			hr = S_OK;
 		}
+
 		hr = afterStartTrigger(hr);
 
 		return hr;
@@ -119,15 +75,8 @@ namespace SvTi
 
 		beforeStopTrigger(handle);
 
-		SvTh::TriggerDispatcherMap::iterator it = m_triggerDispatcherMap.find(handle);
-		if (it != m_triggerDispatcherMap.end())
+		if (m_TriggerDispatchers.StopTrigger(handle))
 		{
-			SvTh::DispatcherVector& list = it->second;
-
-			for (size_t i = 0;i < list.size();i++)
-			{
-				list[i].m_IsStarted = false;
-			}
 			hr = S_OK;
 		}
 

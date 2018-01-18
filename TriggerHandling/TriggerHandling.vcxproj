@@ -93,9 +93,9 @@
     <ClCompile Include="SVTriggerClass.cpp" />
     <ClCompile Include="SVTriggerHandler.cpp" />
     <ClCompile Include="TriggerBasics.cpp" />
+    <ClCompile Include="TriggerDispatcherCollection.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CallbackStructContainers.h" />
     <ClInclude Include="Stdafx.h" />
     <ClInclude Include="SVAcquisitionInitiator.h" />
     <ClInclude Include="SVDigitizerLoadLibraryClass.h" />
@@ -106,6 +106,7 @@
     <ClInclude Include="SVTriggerClass.h" />
     <ClInclude Include="SVTriggerHandler.h" />
     <ClInclude Include="TriggerBasics.h" />
+    <ClInclude Include="TriggerDispatcherCollection.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SVDigitizerLoadLibraryClass.inl" />

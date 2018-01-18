@@ -49,7 +49,7 @@ HRESULT SVSoftwareTriggerDevice::Initialize(bool bInit)
 		SvTl::SVMMTimer::Stop();
 
 		// Clear all callbacks
-		m_triggerDispatcherMap.clear();
+		m_TriggerDispatchers.Clear();
 		m_timerList.clear();
 	}
 	else
@@ -117,7 +117,7 @@ HRESULT SVSoftwareTriggerDevice::TriggerGetParameterCount( unsigned long trigger
 	return l_hrOk;
 }
 
-HRESULT SVSoftwareTriggerDevice::TriggerGetParameterName( unsigned long triggerchannel, unsigned long p_ulIndex, BSTR *p_pbstrName )
+HRESULT SVSoftwareTriggerDevice::TriggerGetParameterName( unsigned long triggerchannel, unsigned long ulIndex, BSTR *p_pbstrName )
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -134,7 +134,7 @@ HRESULT SVSoftwareTriggerDevice::TriggerGetParameterName( unsigned long triggerc
 			// SVTriggerPeriod and SVBoardVersion enums are used here to make the code more clear.
 			// however at some time in the future the Dll parameters may be implemented
 			// as an array and therefore this enum may not apply.
-			switch ( p_ulIndex )
+			switch ( ulIndex )
 			{
 				case SVTriggerPeriod:
 				*p_pbstrName = ::SysAllocString( L"Trigger Timer Period" );
@@ -153,7 +153,7 @@ HRESULT SVSoftwareTriggerDevice::TriggerGetParameterName( unsigned long triggerc
 	return l_hrOk;
 }
 
-HRESULT SVSoftwareTriggerDevice::TriggerGetParameterValue( unsigned long triggerchannel, unsigned long p_ulIndex, VARIANT *p_pvarValue )
+HRESULT SVSoftwareTriggerDevice::TriggerGetParameterValue( unsigned long triggerchannel, unsigned long ulIndex, VARIANT *p_pvarValue )
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -166,7 +166,7 @@ HRESULT SVSoftwareTriggerDevice::TriggerGetParameterValue( unsigned long trigger
 				// SVTriggerPeriod and SVBoardVersion enums are used here to make the code more clear.
 				// however at some time in the future the Dll parameters may be implemented
 				// as an array and therefore this enum may not apply.
-				switch ( p_ulIndex)
+				switch ( ulIndex)
 				{
 					case SVTriggerPeriod:
 					{
@@ -196,7 +196,7 @@ HRESULT SVSoftwareTriggerDevice::TriggerGetParameterValue( unsigned long trigger
 	return l_hrOk;
 }
 
-HRESULT SVSoftwareTriggerDevice::TriggerSetParameterValue( unsigned long triggerchannel, unsigned long p_ulIndex, VARIANT *p_pvarValue )
+HRESULT SVSoftwareTriggerDevice::TriggerSetParameterValue( unsigned long triggerchannel, unsigned long ulIndex, VARIANT *p_pvarValue )
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -204,7 +204,7 @@ HRESULT SVSoftwareTriggerDevice::TriggerSetParameterValue( unsigned long trigger
 	{
 		if ( nullptr != p_pvarValue )
 		{
-			switch (p_ulIndex)
+			switch (ulIndex)
 			{
 				case SVTriggerPeriod:
 				{
@@ -280,6 +280,7 @@ HRESULT SVSoftwareTriggerDevice::SetTimerCallback(unsigned long handle)
 	return hr;
 }
 
+
 HRESULT SVSoftwareTriggerDevice::RemoveTimerCallback(unsigned long handle)
 {
 	HRESULT hr = S_FALSE;
@@ -300,13 +301,6 @@ HRESULT SVSoftwareTriggerDevice::RemoveTimerCallback(unsigned long handle)
 	return hr;
 }
 
-void SVSoftwareTriggerDevice::DispatchTrigger(const SvTh::TriggerDispatcher& triggerListenerInfo)
-{
-	triggerListenerInfo.DispatchIfPossible();
-}
-
-
-
 
 void SVSoftwareTriggerDevice::OnSoftwareTimer(const std::string& tag)
 {
@@ -314,16 +308,10 @@ void SVSoftwareTriggerDevice::OnSoftwareTimer(const std::string& tag)
 	NameHandleList::const_iterator it = m_nameHandleList.get<from>().find(tag);
 	if (it != m_nameHandleList.end())
 	{
-		unsigned long handle = it->second;
-
+		unsigned long channel = it->second;
 		// get callback list
 		m_CritSec.Lock();
-		SvTh::TriggerDispatcherMap::iterator triggerIt = m_triggerDispatcherMap.find(handle);
-		if (triggerIt != m_triggerDispatcherMap.end())
-		{
-			SvTh::DispatcherVector& list = triggerIt->second;
-			std::for_each(list.begin(), list.end(), SVSoftwareTriggerDevice::DispatchTrigger);
-		}
+		m_TriggerDispatchers.DispatchIfPossible(channel);
 		m_CritSec.Unlock();
 	}
 }

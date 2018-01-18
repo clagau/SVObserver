@@ -14,7 +14,7 @@
 //namespace used only for forward declaration
 namespace SvTh
 {
-	struct TriggerDispatcher;
+	class TriggerDispatcher;
 } //namespace SvTh
 
 typedef HRESULT (WINAPI *SVCreatePtr)( void );

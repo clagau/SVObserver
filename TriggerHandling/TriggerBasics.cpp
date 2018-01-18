@@ -18,7 +18,7 @@
 
 namespace SvTh
 {
-	TriggerDispatcher::TriggerDispatcher(const SVTriggerCallbackPtr callback, const TriggerParameters &tp): 
+	TriggerDispatcher::TriggerDispatcher(const SVTriggerCallbackPtr callback, const TriggerParameters &tp):
 			m_pCallback(callback), m_TriggerParameters(tp),
 				m_IsStarted(false)
 	{
@@ -62,5 +62,6 @@ namespace SvTh
 		m_pCallback = nullptr;
 		m_TriggerParameters = TriggerParameters();
 	}
+
 } //namespace SvTh
 

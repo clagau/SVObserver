@@ -36,8 +36,6 @@ public:
 
 private:
 	FILE *m_fpLog;
-	void CallTrigger(int index, bool CalledByTimer = false);
-	CStatic& GetTriggerIntervalStaticWindow(int index);
 	afx_msg void OnInputButtonClicked( UINT nID );
 
 
@@ -46,8 +44,6 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
-
-	HRESULT afterStopTrigger(HRESULT hr);
 
 	void SetOutput( unsigned long p_iChannel, bool p_bState);
 	CRITICAL_SECTION m_CriticalSection;

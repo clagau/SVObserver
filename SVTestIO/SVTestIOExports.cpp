@@ -248,7 +248,7 @@ HRESULT WINAPI SVTriggerRegister( unsigned long triggerchannel, const SvTh::Trig
 
 	if ( rDispatcher.hasCallback() && 0 < triggerchannel && triggerchannel <= 4 )
 	{
-		l_hrOk = theApp.m_pTestIODlg->AddTriggerCallback(triggerchannel, rDispatcher);
+		l_hrOk = theApp.m_pTestIODlg->AddDispatcher(triggerchannel, rDispatcher);
 	} 
 
 	return l_hrOk;
@@ -262,7 +262,7 @@ HRESULT WINAPI SVTriggerUnregister( unsigned long triggerchannel, const SvTh::Tr
 
 	if ( rDispatcher.hasCallback() && 0 < triggerchannel && triggerchannel <= 4 )
 	{
-		l_hrOk = theApp.m_pTestIODlg->RemoveTriggerCallback(triggerchannel, rDispatcher.getCallback());
+		l_hrOk = theApp.m_pTestIODlg->RemoveDispatcher(triggerchannel, rDispatcher);
 	} 
 
 	return l_hrOk;
@@ -276,7 +276,7 @@ HRESULT WINAPI SVTriggerUnregisterAll( unsigned long triggerchannel )
 
 	if ( 0 < triggerchannel && triggerchannel <= 4 )
 	{
-		l_hrOk = theApp.m_pTestIODlg->RemoveAllTriggerCallbacks(triggerchannel);
+		l_hrOk = theApp.m_pTestIODlg->RemoveAllDispatchers(triggerchannel);
 	} 
 
 	return l_hrOk;
@@ -372,6 +372,7 @@ HRESULT WINAPI SVTriggerGetParameterValue( unsigned long triggerchannel, unsigne
 
 	return l_hrOk;
 }
+
 
 HRESULT WINAPI SVTriggerSetParameterValue( unsigned long triggerchannel, unsigned long p_ulIndex, VARIANT *p_pvarValue )
 {

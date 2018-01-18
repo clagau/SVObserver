@@ -83,7 +83,6 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AcquisitionTriggers.cpp" />
     <ClCompile Include="IODeviceBase.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -104,7 +103,6 @@
     <ClCompile Include="SVTriggerProcessingClass.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AcquisitionTriggers.h" />
     <ClInclude Include="IODeviceBase.h" />
     <ClInclude Include="Stdafx.h" />
     <ClInclude Include="SVAcquisitionConstructParams.h" />

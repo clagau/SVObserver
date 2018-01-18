@@ -12,7 +12,8 @@
 
 #pragma region Includes
 #include "TriggerInformation/SVInternalTrigger.h"
-#include "TriggerInformation/AcquisitionTriggers.h"
+#include "TriggerHandling/TriggerDispatcherCollection.h"
+#include "TriggerInformation/IODeviceBase.h"
 #include "SVMatroxGigeSystemList.h" 
 #include "SVMatroxGigeCameraParamTracker.h"
 #pragma endregion Includes
@@ -89,7 +90,7 @@ private:
 	SVMatroxGigeSystemList m_Systems;
 
 	SvTi::SVInternalTrigger m_triggerMgr;
-	SvTi::AcquisitionTriggers m_acquisitionTriggers;
+	SvTh::TriggerDispatcherCollection m_AcquisitionDispatchers;
 
 	SVMatroxGigeCameraParamTracker m_trackedCameraParameters;
 

@@ -264,7 +264,7 @@ HRESULT WINAPI SVTriggerRegister(unsigned long triggerchannel, const SvTh::Trigg
 	{
 		hr = S_OK;
 
-		g_Lpt.AddTriggerCallback(triggerchannel, rDispatcher);
+		g_Lpt.AddDispatcher(triggerchannel, rDispatcher);
 	} 
 	return hr;
 }
@@ -275,7 +275,7 @@ HRESULT WINAPI SVTriggerUnregister(unsigned long triggerchannel, const SvTh::Tri
 
 	if (rDispatcher.hasCallback() && 0 < triggerchannel)
 	{
-		hr = g_Lpt.RemoveTriggerCallback(triggerchannel, rDispatcher.getCallback());
+		hr = g_Lpt.RemoveDispatcher(triggerchannel, rDispatcher);
 	} 
 	return hr;
 }
@@ -286,7 +286,7 @@ HRESULT WINAPI SVTriggerUnregisterAll(unsigned long triggerchannel)
 
 	if (0 < triggerchannel)
 	{
-		hr = g_Lpt.RemoveAllTriggerCallbacks(triggerchannel);
+		hr = g_Lpt.RemoveAllDispatchers(triggerchannel);
 	} 
 	return hr;
 }

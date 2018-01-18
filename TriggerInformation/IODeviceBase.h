@@ -10,7 +10,7 @@
 #pragma once
 
 #pragma region Includes
-#include "TriggerHandling/CallbackStructContainers.h"
+#include "TriggerHandling/TriggerDispatcherCollection.h"
 #pragma endregion Includes
 
 namespace SvTi
@@ -27,16 +27,16 @@ namespace SvTi
 
 	#pragma region public methods
 	public:
-		HRESULT AddTriggerCallback(unsigned long handle, const SvTh::TriggerDispatcher &rDispatcher);
-		HRESULT RemoveTriggerCallback(unsigned long handle, SvTh::SVTriggerCallbackPtr pCallback);
-		HRESULT RemoveAllTriggerCallbacks(unsigned long handle);
+		HRESULT AddDispatcher(unsigned long handle, const SvTh::TriggerDispatcher &rDispatcher);
+		HRESULT RemoveDispatcher(unsigned long handle, const SvTh::TriggerDispatcher &rDispatcher);
+		HRESULT RemoveAllDispatchers(unsigned long handle);
 		HRESULT StartTrigger(unsigned long handle);
 		HRESULT StopTrigger(unsigned long handle);
 	#pragma endregion public methods
 
 	#pragma region protected methods
-	protected:
 
+	protected:
 		virtual void lockIfRequired(){}
 		virtual void unlockIfRequired(){}
 		virtual void beforeStartTrigger(unsigned long handle){}
@@ -47,19 +47,10 @@ namespace SvTi
 
 	#pragma region member variables
 	protected:
-		SvTh::TriggerDispatcherMap m_triggerDispatcherMap;
+		SvTh::TriggerDispatcherCollection m_TriggerDispatchers;
 	#pragma endregion member variables
 
 	};
 
 
-	/// a functor that sets the trigger callback pointer in a TriggerDispatcher struct
-	class TriggerFinder : public std::binary_function<SvTh::TriggerDispatcher, SvTh::SVTriggerCallbackPtr, bool>
-	{
-	public:
-		bool operator()(const SvTh::TriggerDispatcher& rDispatcher, const SvTh::SVTriggerCallbackPtr& pCallback) const
-		{
-			return (rDispatcher.getCallback()== pCallback);
-		}
-	};
 } //namespace SvTi

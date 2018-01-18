@@ -12,7 +12,8 @@
 #pragma once
 
 #include "TriggerInformation/SVInternalTrigger.h"
-#include "TriggerInformation/AcquisitionTriggers.h"
+#include "TriggerHandling/TriggerDispatcherCollection.h"
+#include "TriggerInformation/IODeviceBase.h"
 
 #include "SVOLibrary/SVQueueObject.h"
 #include "SVFileAcquisitionDeviceExports.h"
@@ -28,7 +29,7 @@ private:
 	SVFileCameraList m_cameras;
 	
 	SvTi::SVInternalTrigger m_triggerMgr;
-	SvTi::AcquisitionTriggers m_acquisitionTriggers;
+	SvTh::TriggerDispatcherCollection m_AcquisitionDispatchers;
 
 public:
 	SVFileAcquisitionDevice();

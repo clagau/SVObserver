@@ -80,7 +80,6 @@ private:
 	HRESULT SetTimerCallback(unsigned long handle);
 	HRESULT RemoveTimerCallback(unsigned long handle);
 	void OnSoftwareTimer(const std::string& tag);
-	static void DispatchTrigger(const SvTh::TriggerDispatcher& triggerListenerInfo);
 	SVCriticalSection m_CritSec;
 };
 

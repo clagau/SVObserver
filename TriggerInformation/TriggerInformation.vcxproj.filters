@@ -57,9 +57,6 @@
     <ClCompile Include="SVSoftwareTriggerClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AcquisitionTriggers.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="IODeviceBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -123,9 +120,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVTriggerRelayClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AcquisitionTriggers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IODeviceBase.h">

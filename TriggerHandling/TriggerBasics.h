@@ -26,11 +26,12 @@ namespace SvTh
 
 	//! this adds a callback function pointer and further informational variables
 	//! (currently just one) to the information contained in TriggerParameters
-	//! Note: assignment and comparison operators ('=' and '=='), which hat been implemented previously,
+	//! Note: assignment and comparison operators ('=' and '=='), which had been implemented previously,
 	//! were removed because the defaults for both TriggerDispatcher and m_TriggerParameters seemed 
 	//! better (and safer)
-	struct TriggerDispatcher
+	class TriggerDispatcher
 	{
+	public:
 		TriggerDispatcher(const SVTriggerCallbackPtr callback, const TriggerParameters &tp);
 		TriggerDispatcher( const TriggerDispatcher &p_rOriginal );
 
@@ -44,14 +45,15 @@ namespace SvTh
 
 		bool hasCallback() const {return (nullptr != m_pCallback);}
 
-		bool m_IsStarted;
-
 		const SVTriggerCallbackPtr getCallback() const {return m_pCallback;}
 		const TriggerParameters &GetTriggerParameters() const  {return m_TriggerParameters;}
 
 		void SetData(void *data){m_TriggerParameters.m_pData = data;}
 
+		bool m_IsStarted;
+
 	private:
+
 		SVTriggerCallbackPtr m_pCallback;
 		TriggerParameters m_TriggerParameters;
 	};

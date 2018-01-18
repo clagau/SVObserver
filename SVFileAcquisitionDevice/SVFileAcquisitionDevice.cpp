@@ -677,7 +677,7 @@ HRESULT SVFileAcquisitionDevice::InternalTrigger( unsigned long p_ulIndex )
 
 HRESULT SVFileAcquisitionDevice::RegisterInternalTriggerCallback( unsigned long p_ulIndex, const SvTh::TriggerDispatcher& rDispatcher )
 {
-	m_acquisitionTriggers.Add(p_ulIndex, rDispatcher );
+	m_AcquisitionDispatchers.AddDispatcher(p_ulIndex, rDispatcher );
 	
 	typedef SvTi::SVTriggerActivatorFunc<SVFileAcquisitionDevice> Activator;
 	typedef SvTi::SVTriggerCallbackFunc<SVFileAcquisitionDevice> TriggerCallback;
@@ -690,13 +690,13 @@ HRESULT SVFileAcquisitionDevice::RegisterInternalTriggerCallback( unsigned long 
 
 HRESULT SVFileAcquisitionDevice::UnregisterInternalTriggerCallback( unsigned long p_ulIndex, const SvTh::TriggerDispatcher& rDispatcher )
 {
-	m_acquisitionTriggers.Remove(p_ulIndex, rDispatcher);
+	m_AcquisitionDispatchers.RemoveDispatcher(p_ulIndex, rDispatcher);
 	return m_triggerMgr.Unsubscribe( p_ulIndex);
 }
 
 HRESULT SVFileAcquisitionDevice::UnregisterAllInternalTriggerCallbacks( unsigned long p_ulIndex )
 {
-	m_acquisitionTriggers.RemoveAll(p_ulIndex);
+	m_AcquisitionDispatchers.RemoveAllDispatchers(p_ulIndex);
 	return m_triggerMgr.Unsubscribe( p_ulIndex );
 }
 
@@ -712,8 +712,14 @@ HRESULT SVFileAcquisitionDevice::FireOneShot( unsigned long p_ulIndex )
 
 HRESULT SVFileAcquisitionDevice::DispatchTriggerCallback( unsigned long p_ulIndex )
 {
-	HRESULT hr = m_acquisitionTriggers.Dispatch( p_ulIndex );
-	return hr;
+	if(m_AcquisitionDispatchers.Dispatch(p_ulIndex))
+	{
+		return S_OK;
+	}
+	else
+	{
+		return S_FALSE;
+	}
 }
 
 HRESULT SVFileAcquisitionDevice::TriggerGetCount(unsigned long& p_ulCount)
