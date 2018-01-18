@@ -10,6 +10,7 @@
 //******************************************************************************
 #pragma once
 
+
 #pragma region Includes
 //Moved to precompiled header: #include <fstream>
 #pragma endregion Includes

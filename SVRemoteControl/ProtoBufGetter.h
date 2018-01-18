@@ -10,7 +10,10 @@
 #pragma once
 #include "SVRemoteControl.h"
 #include <atlcomcli.h>
-#include "RunReApi\format.pb.h"
+#pragma warning( push )
+#pragma warning( disable : 4800 ) 
+#include "RunReApi\RunReApi.pb.h"
+#pragma warning( pop )
 #include "RunReApi\ClientFrontEndApi.h"
 
 CComVariant  GetComVariant(const ::RRApi::Variant& var);

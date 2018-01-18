@@ -8,7 +8,11 @@
 /// A DESCRIPTION
 //******************************************************************************
 #pragma once
-#include "format.pb.h"
+#pragma warning( push )
+#pragma warning( disable : 4800 ) 
+#include "RunReApi.pb.h"
+#pragma warning( pop )
+
 namespace RRApi
 {
 	class Helper

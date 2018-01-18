@@ -16,6 +16,8 @@
 
 #include "SVSocketLibrary/SVSocketLibrary.h"
 #include "dlldatax.h"
+#include <google/protobuf/stubs/common.h>
+
 #pragma endregion Includes
 
 class CSVRemoteControlModule : public CAtlDllModuleT< CSVRemoteControlModule >
@@ -56,6 +58,7 @@ extern "C" BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpRes
 		else if( dwReason == DLL_PROCESS_DETACH )
 		{
 			SvSol::SVSocketLibrary::Destroy();
+			google::protobuf::ShutdownProtobufLibrary();
 		}
 	}
 

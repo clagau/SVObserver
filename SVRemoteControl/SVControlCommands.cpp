@@ -243,6 +243,31 @@ inline Json::Value MkArray(const CComVariant & items)
 	return arr;
 }
 
+SVControlCommands::SVControlCommands(NotifyFunctor p_Func, bool connectToRRS)
+	: m_ServerName(""),
+	m_CommandPort(svr::cmdPort),
+	m_RejectPort(svr::rjctPort),
+	m_RunServerPort(svr::runpgePort),
+	m_Connected(false),
+	m_RRSConnected(false),
+	m_Notifier(p_Func)
+{
+	m_ClientSocket.SetConnectionStatusCallback(boost::bind(&SVControlCommands::OnConnectionStatus, this, _1));
+	m_ClientSocket.SetDataReceivedCallback(boost::bind(&SVControlCommands::OnControlDataReceived, this, _1));
+	if (connectToRRS)
+	{
+		m_pioServiceWork = std::make_unique<boost::asio::io_service::work>(m_io_service);
+
+		for (int i = 0; i < RRApi::Default_NrOfIoThreads; ++i)
+		{
+			m_Threads.push_back(std::make_unique<std::thread>(boost::bind(&boost::asio::io_service::run, &m_io_service)));
+		}
+
+		m_pFrontEndApi = RRApi::ClientFrontEndApi::Init(m_io_service);
+	}
+}
+
+
 SVControlCommands::~SVControlCommands()
 {
 	m_ClientSocket.Disconnect();
@@ -256,18 +281,23 @@ HRESULT SVControlCommands::SetConnectionData(const _bstr_t& p_rServerName, unsig
 {
 	HRESULT hr = S_OK;
 	m_ClientSocket.Disconnect();
-	m_pFrontEndApi->DisConnect();
+	if (m_pFrontEndApi.get())
+	{
+		m_pFrontEndApi->DisConnect();
+	}
 	m_Connected = false;
 	m_ServerName = p_rServerName;
 	m_CommandPort = p_CommandPort;
 
 	if (0 < m_ServerName.length())
 	{
-		m_pFrontEndApi->Connect(RRApi::Default_Port, static_cast<char*>(m_ServerName));
+		if (m_pFrontEndApi.get())
+			m_pFrontEndApi->Connect(RRApi::Default_Port, static_cast<char*>(m_ServerName));
 		SvSol::SVSocketError::ErrorEnum err = SvSol::SVSocketError::Success;
 		if ((err = m_ClientSocket.BuildConnection(m_ServerName, svr::cmdPort, timeout)) == SvSol::SVSocketError::Success)
 		{
-			m_RRSConnected = m_pFrontEndApi->IsConnected();
+			if (m_pFrontEndApi.get())
+				m_RRSConnected = m_pFrontEndApi->IsConnected();
 			m_Connected = true;
 		}
 		else
@@ -328,16 +358,15 @@ HRESULT SVControlCommands::GetVersion(_bstr_t& p_rSVObserverVersion, _bstr_t& p_
 		// get version from run reject server
 		if (m_ClientSocket.IsConnected())
 		{
-			auto version = m_pFrontEndApi->GetVersion(RRApi::GetVersionRequest()).get();
-			if (version.has_version())
+			p_rRunRejectServerVersion = _bstr_t(L"N/A");
+			if (m_pFrontEndApi.get())
 			{
-				p_rRunRejectServerVersion = _bstr_t(version.version().c_str());
+				auto version = m_pFrontEndApi->GetVersion(RRApi::GetVersionRequest()).get();
+				if (version.has_version())
+				{
+					p_rRunRejectServerVersion = _bstr_t(version.version().c_str());
+				}
 			}
-			else
-			{
-				p_rRunRejectServerVersion = _bstr_t(L"N/A");
-			}
-
 		}
 		p_rStatus = rsp.m_Status;
 		SVLOG((l_Status = p_rStatus.hResult));
@@ -765,29 +794,6 @@ HRESULT SVControlCommands::GetDataDefinitionList(const _bstr_t& p_rInspectionNam
 		return l_Status;
 }
 
-SVControlCommands::SVControlCommands(NotifyFunctor p_Func)
-	: m_ServerName(""),
-	m_CommandPort(svr::cmdPort),
-	m_RejectPort(svr::rjctPort),
-	m_RunServerPort(svr::runpgePort),
-	//m_ImagePort(svr::imgPort),
-	m_Connected(false),
-	m_RRSConnected(false),
-	m_Notifier(p_Func)
-{
-	m_ClientSocket.SetConnectionStatusCallback(boost::bind(&SVControlCommands::OnConnectionStatus, this, _1));
-	m_ClientSocket.SetDataReceivedCallback(boost::bind(&SVControlCommands::OnControlDataReceived, this, _1));
-
-	m_pioServiceWork = std::make_unique<boost::asio::io_service::work>(m_io_service);
-
-	for (int i = 0; i < RRApi::Default_NrOfIoThreads; ++i)
-	{
-		m_Threads.push_back(std::make_unique<std::thread>(boost::bind(&boost::asio::io_service::run, &m_io_service)));
-	}
-
-	m_pFrontEndApi = RRApi::ClientFrontEndApi::Init(m_io_service);
-
-}
 
 std::string trim(const std::string & str) // for debugging 
 {
@@ -1111,7 +1117,7 @@ template<typename API>
 HRESULT SVControlCommands::SendFile(SvSol::SVRCClientSocket<API>& rSocket, std::istream& is)
 {
 	HRESULT hr = S_OK;
-	
+
 	int enc_len = 64 * 1024;  // base64 encoded data
 	const size_t amtToRead = (enc_len / 4) * 3; // unencoded file data
 
@@ -1592,8 +1598,17 @@ HRESULT SVControlCommands::GetProduct(bool bGetReject, const _bstr_t & listName,
 	HRESULT Status = E_FAIL;
 	try
 	{
+		if (0 == listName.length())
+		{
+			throw std::invalid_argument("missing Monitorlistname");
+		}
+		if(0 == m_pFrontEndApi)
+		{
+			throw std::invalid_argument("Not connected To RRServer");
+		}
+
 		RRApi::GetProductRequest ProductRequest;
-		ProductRequest.set_name((const char*)listName);
+		ProductRequest.set_name(static_cast<const char*>(listName));
 		if (triggerCount > -1)
 		{
 			ProductRequest.set_triggercount(triggerCount);
@@ -1602,11 +1617,11 @@ HRESULT SVControlCommands::GetProduct(bool bGetReject, const _bstr_t & listName,
 		RRApi::GetProductResponse resp;
 		if (bGetReject)
 		{
-			resp = m_pFrontEndApi->GetProduct(ProductRequest).get();
+			resp = m_pFrontEndApi->GetReject(ProductRequest).get();
 		}
 		else
 		{
-			resp = m_pFrontEndApi->GetReject(ProductRequest).get();
+			resp = m_pFrontEndApi->GetProduct(ProductRequest).get();
 		}
 		if (resp.has_status())
 		{
@@ -1627,7 +1642,7 @@ HRESULT SVControlCommands::GetProduct(bool bGetReject, const _bstr_t & listName,
 	HANDLE_EXCEPTION(Status, p_rStatus)
 
 
-		return Status;
+	return Status;
 }
 HRESULT SVControlCommands::GetProduct(const _bstr_t & listName, long triggerCount, long imageScale, ISVProductItems ** currentViewItems, SVCommandStatus& p_rStatus)
 {
@@ -1667,7 +1682,15 @@ HRESULT SVControlCommands::GetFailStatus(const _bstr_t & listName, CComVariant &
 	try
 	{
 		RRApi::GetFailStatusRequest FailstatusRequest;
-		FailstatusRequest.set_name((const char*)listName);
+		if (0 == listName.length())
+		{
+			throw std::invalid_argument("missing Monitorlistname");
+		}
+		if (0 == m_pFrontEndApi)
+		{
+			throw std::invalid_argument("Not connected To RRServer");
+		}
+		FailstatusRequest.set_name(static_cast<const char*>(listName));
 
 		FailstatusRequest.set_nameinresponse(true);
 		RRApi::GetFailStatusResponse resp;
@@ -1692,6 +1715,7 @@ HRESULT SVControlCommands::GetFailStatus(const _bstr_t & listName, CComVariant &
 	HANDLE_EXCEPTION(Status, p_rStatus)
 		return Status;
 }
+		
 
 
 HRESULT SVControlCommands::ShutDown(SVShutdownOptionsEnum options, SVCommandStatus& p_rStatus)

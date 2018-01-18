@@ -4,18 +4,18 @@
 //*****************************************************************************
 /// COM object for Images
 //******************************************************************************
-
 #pragma once
 #pragma region Includes
 #include "resource.h"       // main symbols
-
 #include "SVRemoteControl.h"
 #include "SVSocketLibrary/SVClientSocket.h"
 #include <boost/shared_array.hpp>
-#include "RunReApi/format.pb.h"
+#pragma warning( push )
+#pragma warning( disable : 4800 ) 
+#include "RunReApi\RunReApi.pb.h"
+#pragma warning( pop )
 #include "RunReApi/ClientFrontEndApi.h"
 #pragma endregion Includes
-
 
 
 #if defined(_WIN32_WCE) && !defined(_CE_DCOM) && !defined(_CE_ALLOW_SINGLE_THREADED_OBJECTS_IN_MTA)

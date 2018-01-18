@@ -31,5 +31,6 @@ namespace SvSol
 		const std::string& GetJsonData() const;
 		void Clear();
 		void Reset();
+		bool isEmpty();
 	};
 } //namespace SvSol

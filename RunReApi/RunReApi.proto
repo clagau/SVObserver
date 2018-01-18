@@ -1,13 +1,14 @@
 syntax = "proto2";
 package RRApi;
 
+//Commands 
 enum MessageType 
 {
-	GetVersion = 1;
+	GetVersion = 1; 
 	GetProduct = 2;
 	GetReject = 3;
 	GetFailStatus=4;
-	GetImageFromCurId=5;
+	GetImageFromCurId=5; 
 	GetItems =6;
 	QueryListName=7;
 	QueryListItem=8;
@@ -30,6 +31,7 @@ enum State
 	SharedMemoryBlocked =6;
 } 
 
+//actual only string is used 
 message Variant 
 {
 	optional bool bool_value = 1;
@@ -50,6 +52,8 @@ message MessageEnvelope
     optional bytes payload = 3;
 }
 
+
+//query version of Server
 message GetVersionRequest 
 {
 }
@@ -59,6 +63,7 @@ message GetVersionResponse
 	optional string version = 1;
 }
 
+//query active monitorlist 
 message QueryListNameRequest
 {
 }
@@ -67,6 +72,7 @@ message QueryListNameResponse
 	repeated  string   ListName =1;
 }
 
+//one Item in the list 
 message ListItemDefinition
 {
 	optional string name =1;
@@ -75,19 +81,21 @@ message ListItemDefinition
 	optional uint32 uid=4;
 }
 
+//Query the Definition of the list 
 message QueryListItemRequest
 {
 	optional string name =1;
-	required ListType type =2;
+	optional ListType type =2;
 }
 
 message QueryListItemResponse
 {
-	repeated ListItemDefinition  ValueDefinition = 1;
-	repeated ListItemDefinition  ImageDefinition = 2;
+	optional State Status =1;
+	repeated ListItemDefinition  ValueDefinition = 2;
+	repeated ListItemDefinition  ImageDefinition = 3;
 }
 
-
+//the id for one image 
 message CurImageId
 {
 	required int32 ImageStore =1;
@@ -102,6 +110,7 @@ message GetProductRequest
 	optional bool NameInResponse = 3;
 }
 
+// In product response are an array of image ids
 message GetProductResponse
 {
 	optional State Status =1;
@@ -118,7 +127,7 @@ message Image
 	optional uint32 w = 2;    
 	optional uint32 h = 3;
 } 
-
+//request the image for a the Id 
 message GetImageFromCurIdRequest
 {
 	required CurImageId Id =1;
@@ -154,6 +163,7 @@ message GetItemsRequest
 
 message GetItemsResponse
 {
+	
 	optional uint32 triggercount = 1;
 	repeated	Variant Values=2;
 	repeated   Image Images = 3;

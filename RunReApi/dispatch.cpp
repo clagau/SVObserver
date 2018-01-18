@@ -8,7 +8,11 @@
 /// A DESCRIPTION
 //******************************************************************************
 #include "stdafx.h"
-#include "format.pb.h"
+#pragma warning( push )
+#pragma warning( disable : 4800 ) 
+#include "RunReApi.pb.h"
+#pragma warning( pop )
+
 #include "Helper.h"
 #include "ServerFrontEndApi.h"
 namespace RRApi

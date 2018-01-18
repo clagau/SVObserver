@@ -74,7 +74,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <CustomBuildBeforeTargets>BuildCompile</CustomBuildBeforeTargets>
+    <CustomBuildBeforeTargets>
+    </CustomBuildBeforeTargets>
     <PreBuildEventUseInBuild>true</PreBuildEventUseInBuild>
     <OutDir>$(SolutionDir)$(Configuration)\$(Platform)\bin\</OutDir>
     <IntDir>$(SolutionDir)$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
@@ -119,19 +120,24 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PreBuildEvent>
-      <Command>D:\Programme\thirdparty\protobuf\bin\protoc.exe -I=$(MSBuildProjectDirectory) --cpp_out=$(MSBuildProjectDirectory)  format.proto</Command>
+      <Command>
+      </Command>
     </PreBuildEvent>
     <CustomBuildStep>
-      <Command>D:\Programme\thirdparty\protobuf\bin\protoc.exe -I=$(MSBuildProjectDirectory) --cpp_out=$(MSBuildProjectDirectory)  format.proto</Command>
+      <Command>
+      </Command>
     </CustomBuildStep>
     <CustomBuildStep>
-      <Message>Creating proobuf source files </Message>
+      <Message>
+      </Message>
     </CustomBuildStep>
     <CustomBuildStep>
-      <Outputs>format.pb.h;format.pb.cc;%(Outputs)</Outputs>
+      <Outputs>
+      </Outputs>
     </CustomBuildStep>
     <CustomBuildStep>
-      <TreatOutputAsContent>true</TreatOutputAsContent>
+      <TreatOutputAsContent>
+      </TreatOutputAsContent>
     </CustomBuildStep>
     <CustomBuild>
       <Message />
@@ -182,29 +188,24 @@
   <ItemGroup>
     <ClInclude Include="ClientFrontEndApi.h" />
     <ClInclude Include="Definition.h" />
-    <ClInclude Include="format.pb.h" />
     <ClInclude Include="Helper.h" />
+    <ClInclude Include="RunReApi.pb.h" />
     <ClInclude Include="ServerFrontEndApi.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TcpConnection.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ClientFrontEndApi.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="ClientFrontEndApi.cpp" />
     <ClCompile Include="dispatch.cpp" />
-    <ClCompile Include="format.pb.cc">
+    <ClCompile Include="RunReApi.pb.cc">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Level1</WarningLevel>
-      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Level1</WarningLevel>
-      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Level1</WarningLevel>
-      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Level1</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Level2</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Level2</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Level2</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Level2</WarningLevel>
     </ClCompile>
     <ClCompile Include="ServerFrontEndApi.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -216,20 +217,20 @@
     <ClCompile Include="TcpConnection.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="format.proto">
+    <CustomBuild Include="RunReApi.proto">
       <FileType>Document</FileType>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating c++ code from ./format.proto</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(MSBuildProjectDirectory)\format.pb.cc;$(MSBuildProjectDirectory)\format.pb.h</Outputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating c++ code from ./format.proto</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(MSBuildProjectDirectory)\format.pb.cc;$(MSBuildProjectDirectory)\format.pb.h</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(PATH_3RDPARTY)\protobuf\protobuf-3.4.0\bin\protoc.exe -I=$(MSBuildProjectDirectory)   --cpp_out=$(MSBuildProjectDirectory)  $(MSBuildProjectDirectory)\format.proto</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(PATH_3RDPARTY)\protobuf\protobuf-3.4.0\bin\protoc.exe -I=$(MSBuildProjectDirectory)   --cpp_out=$(MSBuildProjectDirectory)  $(MSBuildProjectDirectory)\format.proto</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(PATH_3RDPARTY)\protobuf\protobuf-3.4.0\bin\protoc.exe -I=$(MSBuildProjectDirectory)   --cpp_out=$(MSBuildProjectDirectory)  $(MSBuildProjectDirectory)\format.proto</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(PATH_3RDPARTY)\protobuf\protobuf-3.4.0\bin\protoc.exe -I=$(MSBuildProjectDirectory)   --cpp_out=$(MSBuildProjectDirectory)  $(MSBuildProjectDirectory)\format.proto</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating c++ code from ./format.proto</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating c++ code from ./format.proto</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(MSBuildProjectDirectory)\format.pb.cc;$(MSBuildProjectDirectory)\format.pb.h</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(MSBuildProjectDirectory)\format.pb.cc;$(MSBuildProjectDirectory)\format.pb.h</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating c++ code from ./RunReApi.proto</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(MSBuildProjectDirectory)\RunReApi.pb.cc;$(MSBuildProjectDirectory)\RunReApi.pb.h;</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating c++ code from ./RunReApi.proto</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(MSBuildProjectDirectory)\RunReApi.pb.cc;$(MSBuildProjectDirectory)\RunReApi.pb.h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(PATH_3RDPARTY)\protobuf\protobuf-3.4.0\bin\protoc.exe -I=$(MSBuildProjectDirectory)   --cpp_out=$(MSBuildProjectDirectory)  $(MSBuildProjectDirectory)\RunReApi.proto</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(PATH_3RDPARTY)\protobuf\protobuf-3.4.0\bin\protoc.exe -I=$(MSBuildProjectDirectory)   --cpp_out=$(MSBuildProjectDirectory)  $(MSBuildProjectDirectory)\RunReApi.proto</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(PATH_3RDPARTY)\protobuf\protobuf-3.4.0\bin\protoc.exe -I=$(MSBuildProjectDirectory)   --cpp_out=$(MSBuildProjectDirectory)  $(MSBuildProjectDirectory)\RunReApi.proto</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(PATH_3RDPARTY)\protobuf\protobuf-3.4.0\bin\protoc.exe -I=$(MSBuildProjectDirectory)   --cpp_out=$(MSBuildProjectDirectory)  $(MSBuildProjectDirectory)\RunReApi.proto</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating c++ code from ./RunReApi.proto</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating c++ code from ./RunReApi.proto</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(MSBuildProjectDirectory)\RunReApi.pb.cc;$(MSBuildProjectDirectory)\RunReApi.pb.h;</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(MSBuildProjectDirectory)\RunReApi.pb.cc;$(MSBuildProjectDirectory)\RunReApi.pb.h;</Outputs>
       <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</TreatOutputAsContent>
       <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</TreatOutputAsContent>
       <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</TreatOutputAsContent>

@@ -120,4 +120,9 @@ void SVJsonPacket::Add(const std::string& data)
 		m_pending.clear();
 		m_count = 0;
 	}
+	
+	bool SVJsonPacket::isEmpty()
+	{
+		return m_packet.size() == 0;
+	};
 } //namespace SvSol

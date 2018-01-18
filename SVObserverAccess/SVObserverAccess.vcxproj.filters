@@ -21,22 +21,19 @@
     <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ServerFrontEndApi.h">
+    <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ClientFrontEndApi.h">
+    <ClInclude Include="SVObserverAccess.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Helper.h">
+    <ClInclude Include="LastResponseData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TcpConnection.h">
+    <ClInclude Include="RunReServer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Definition.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RunReApi.pb.h">
+    <ClInclude Include="ShareControl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -44,23 +41,17 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ServerFrontEndApi.cpp">
+    <ClCompile Include="SVObserverAccess.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="dispatch.cpp">
+    <ClCompile Include="dllmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TcpConnection.cpp">
+    <ClCompile Include="RunReServer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ClientFrontEndApi.cpp">
+    <ClCompile Include="ShareControl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RunReApi.pb.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <CustomBuild Include="RunReApi.proto" />
   </ItemGroup>
 </Project>

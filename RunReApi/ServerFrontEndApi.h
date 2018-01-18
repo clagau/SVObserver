@@ -11,7 +11,11 @@
 #include <boost/asio/io_service.hpp>
 #include <thread>
 #include <future>
-#include "format.pb.h"
+#pragma warning( push )
+#pragma warning( disable : 4800 ) 
+#include "RunReApi.pb.h"
+#pragma warning( pop )
+
 namespace RRApi
 {
 	class IRRServer

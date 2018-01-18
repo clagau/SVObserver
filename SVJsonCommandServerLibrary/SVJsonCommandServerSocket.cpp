@@ -340,10 +340,10 @@ void SVJsonCommandServerSocket::ProcessDataRead(const char* p_pBuf)
 			std::stringstream strStream;
 			strStream << "Nach OnDataReceived Fertig:  " << time << std::endl;;
 			::MessageBox(NULL, strStream.str().c_str(), NULL, MB_OK);
-		}
+	}
 #endif 
 
-	}
+}
 }
 
 void SVJsonCommandServerSocket::CloseClient()

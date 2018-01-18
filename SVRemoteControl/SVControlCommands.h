@@ -44,6 +44,8 @@ class SVControlCommands
 {
 public:
 	virtual ~SVControlCommands();
+	//! Connect to RRS only when connectToRRS is true
+	SVControlCommands(NotifyFunctor p_Func, bool connectToRRS);
 
 	HRESULT SetConnectionData( const _bstr_t& p_rServerName, unsigned short p_CommandPort, long timeout );
 
@@ -80,7 +82,7 @@ public:
 	HRESULT SetProductFilter( const _bstr_t& rListName, unsigned long filter, SVCommandStatus& p_rStatus );
 	bool isConnected() const { return m_Connected;}
 
-	SVControlCommands( NotifyFunctor p_Func );
+	
 
 
 
