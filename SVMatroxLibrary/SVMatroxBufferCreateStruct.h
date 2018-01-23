@@ -35,6 +35,7 @@ public:
 	SVMatroxBufferTypeEnum		m_eType;
 	SVMatroxBufferAttributeEnum	m_eAttribute;
 	bool SetImageDepth( long p_lDepth);
+	bool operator ==(const SVMatroxBufferCreateStruct& other) const;
 };
 
 

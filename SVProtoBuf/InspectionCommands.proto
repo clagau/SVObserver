@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "proto3";
 package SvPB;
 
 import "BasicStructure.proto";
@@ -9,15 +9,15 @@ import "BasicStructure.proto";
 // This message do a runOnce for an inspection or taskObject
 message InspectionRunOnceRequest 
 {
-	optional UUID inspectionID = 1; //GUID of the inspection.
-	optional UUID taskID = 2; //GUID of the taskObject on which the runOnce should be done. If this field empty the whole inspection will run.
+	UUID inspectionID = 1; //GUID of the inspection.
+	UUID taskID = 2; //GUID of the taskObject on which the runOnce should be done. If this field empty the whole inspection will run.
 }
 
 // This is the message for Destroy child object.
 message DestroyChildRequest
 {
-	optional UUID taskObjectListID = 1;  //GUID of the task-object-list-object.
-	optional UUID objectID = 2; //GUID of the object which should be destroyed.
+	UUID taskObjectListID = 1;  //GUID of the task-object-list-object.
+	UUID objectID = 2; //GUID of the object which should be destroyed.
 
 	enum FlagEnum
 	{
@@ -27,90 +27,90 @@ message DestroyChildRequest
 		Flag_SetDefaultInputs_And_ResetInspection = 3;
 	}
 
-	optional FlagEnum flag = 3 [default = Flag_None]; //Define if after destroying object the default inputs are set and/or inspection are reset.
+	FlagEnum flag = 3; //Define if after destroying object the default inputs are set and/or inspection are reset.
 }
 
 
 // This is the message to get the last (Error)MessageList from an taskObject
 message GetMessageListRequest
 {
-	optional UUID objectId = 1;  //GUID of the task-object.
+	UUID objectId = 1;  //GUID of the task-object.
 }
 
 // This is the message response-message from GetMessageListRequest
 message GetMessageListResponse
 {
-	optional MessageContainerVector Messages = 1;  //list of messages
+	MessageContainerVector Messages = 1;  //list of messages
 }
 
 
 // This is the message to reset an object
 message ResetObjectRequest
 {
-	optional UUID objectId = 1;  //GUID of the task-object.
+	UUID objectId = 1;  //GUID of the task-object.
 }
 
 // This is the message response-message from ResetObjectRequest
 message ResetObjectResponse
 {
-	optional MessageContainerVector Messages = 1;  //list of messages
+	MessageContainerVector Messages = 1;  //list of messages
 }
 
 
 //This is the message to create a model for the pattern-analyzer. The model will copy from the current source image of the analyzer.
 message CreateModelRequest
 {
-	optional UUID patternAnalyzerID = 1; //GUID of the pattern-analyzer
-	optional int32 posX = 2; //x-Pos in the source image.
-	optional int32 posY = 3; //y-Pos in the source image.
-	optional int32 modelWidth = 4; //wanted model width.
-	optional int32 modelHeight = 5; //wanted model height.
-	optional string FileName = 6; //filename where the model should be saved.
+	UUID patternAnalyzerID = 1; //GUID of the pattern-analyzer
+	int32 posX = 2; //x-Pos in the source image.
+	int32 posY = 3; //y-Pos in the source image.
+	int32 modelWidth = 4; //wanted model width.
+	int32 modelHeight = 5; //wanted model height.
+	string FileName = 6; //filename where the model should be saved.
 }
 
 // This is the message response-message from CreateModelRequest
 message CreateModelResponse
 {
-	optional MessageContainerVector Messages = 1;  //list of messages
+	MessageContainerVector Messages = 1;  //list of messages
 }
 
 // This is the message to return the state if an object is valid
 message IsValidRequest
 {
-	optional UUID objectId = 1;  //GUID of the object.
+	UUID objectId = 1;  //GUID of the object.
 }
 
 // This is the message response-message from IsValidRequest
 message IsValidResponse
 {
-	optional bool IsValid = 1;  //flag if valid
+	bool IsValid = 1;  //flag if valid
 }
 
 
 // This is the message to return the equation string
 message GetEquationRequest
 {
-	optional UUID objectId = 1;  //GUID of the equation-object.
+	UUID objectId = 1;  //GUID of the equation-object.
 }
 
 // This is the message response-message from GetEquationRequest
 message GetEquationResponse
 {
-	optional string equationText = 1;  //string of the equation
+	string equationText = 1;  //string of the equation
 }
 
 //This message validate and if required set an equation
 message ValidateAndSetEquationRequest
 {
-	optional UUID objectId = 1;  //GUID of the equation-object.
-	optional string equationText = 2;  //string of the equation.
-	optional bool bSetValue = 3; //flag if value should be set.
+	UUID objectId = 1;  //GUID of the equation-object.
+	string equationText = 2;  //string of the equation.
+	bool bSetValue = 3; //flag if value should be set.
 }
 
 // This is the message response-message from ValidateAndSetEquationRequest
 message ValidateAndSetEquationResponse
 {
-	optional int32 validateStatus = 1; //return validateSuccessful if text is valid, else it return the position of the first error in the text.
-	optional double result = 2; //if validateStatus is validateSuccessful, this variable contain the result of the equation. 
-	optional MessageContainerVector Messages = 3;  //list of error messages
+	int32 validateStatus = 1; //return validateSuccessful if text is valid, else it return the position of the first error in the text.
+	double result = 2; //if validateStatus is validateSuccessful, this variable contain the result of the equation. 
+	MessageContainerVector Messages = 3;  //list of error messages
 }

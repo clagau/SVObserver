@@ -57,4 +57,7 @@ bool SVMatroxBufferCreateStruct::SetImageDepth( long p_lDepth)
 	return l_bRet;
 }
 
-
+bool SVMatroxBufferCreateStruct::operator ==(const SVMatroxBufferCreateStruct& other) const
+{
+	return m_lSizeBand == other.m_lSizeBand && m_lSizeX == other.m_lSizeX && m_lSizeY == other.m_lSizeY	&& m_eType == other.m_eType && m_eAttribute == other.m_eAttribute;
+}

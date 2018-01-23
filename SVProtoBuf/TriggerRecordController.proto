@@ -1,0 +1,30 @@
+syntax = "proto3";
+package SvPB;
+
+import "BasicStructure.proto";
+
+message ImageDefinition
+{
+	UUID imageID = 1; //GUID of the image.
+	bytes type = 2; ////should from struct SVMatroxBufferCreateStruct
+	int32 sizeID = 3;
+}
+
+message ImageList
+{
+	repeated ImageDefinition list = 1;
+}
+
+message ImageSizeData
+{
+	bytes type = 1; //should from struct SVMatroxBufferCreateStruct
+	int32 sizeID = 2;
+	int32 numberOfImage = 3;
+	int32 numberOfBuffers = 4;
+	int32 offset = 5;
+}
+
+message ImageSizeList
+{
+	repeated ImageSizeData list = 1;
+}

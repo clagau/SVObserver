@@ -15,42 +15,49 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="InspectionCommands.pb.cc">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="BasicStructure.pb.cc">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="TriggerRecordController.pb.cc">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="BasicStructureHelper.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <CustomBuild Include="InspectionCommands.proto" />
-    <CustomBuild Include="BasicStructure.proto" />
-    <CustomBuild Include="TriggerRecordController.proto" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="InspectionCommands.pb.h">
+    <ClInclude Include="ITriggerRecordR.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ITriggerRecordRW.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ITriggerRecordControllerR.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ITriggerRecordControllerRW.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="TriggerRecordController.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="BasicStructure.pb.h">
+    <ClInclude Include="TriggerRecord.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="TriggerRecordController.pb.h">
+    <ClInclude Include="ImageBufferController.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="BasicStructureHelper.h">
+    <ClInclude Include="IImage.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="Image.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="TriggerRecordController.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="TriggerRecord.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageBufferController.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
