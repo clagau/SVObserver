@@ -136,7 +136,6 @@
     <ClInclude Include="SVTaskObject.h" />
     <ClInclude Include="SVTaskObjectInterfaceInputRequestStruct.h" />
     <ClInclude Include="SVTaskObjectList.h" />
-    <ClInclude Include="SVTaskObjectValueInterface.h" />
     <ClInclude Include="SVThresholdClass.h" />
     <ClInclude Include="SVTool.h" />
     <ClInclude Include="SVToolExtentClass.h" />
@@ -203,7 +202,6 @@
     <ClCompile Include="SVTaskObject.cpp" />
     <ClCompile Include="SVTaskObjectInterfaceInputRequestStruct.cpp" />
     <ClCompile Include="SVTaskObjectList.cpp" />
-    <ClCompile Include="SVTaskObjectValueInterface.cpp" />
     <ClCompile Include="SVThresholdClass.cpp" />
     <ClCompile Include="SVTool.cpp" />
     <ClCompile Include="SVToolExtentClass.cpp" />

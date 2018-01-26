@@ -424,7 +424,6 @@ void SVHistogramAnalyzerClass::AddResult(const std::pair<GUID, DWORD> & p)
 {
 	SVClassInfoStruct l_resultInfo;
 	SvDef::SVObjectTypeInfoStruct l_ifceInfo;
-	SVLongResultClass * pAnalyzerResult;
 
 	l_ifceInfo.EmbeddedID = p.first;
 	l_resultInfo.m_DesiredInputVector.push_back( l_ifceInfo );
@@ -433,14 +432,12 @@ void SVHistogramAnalyzerClass::AddResult(const std::pair<GUID, DWORD> & p)
 	l_resultInfo.m_ClassId = SVLongResultClassGuid;
 	l_resultInfo.m_ClassName = SvUl::LoadStdString(p.second);
 
-	pAnalyzerResult = dynamic_cast<SVLongResultClass *>(l_resultInfo.Construct());
+	m_pAnalyzerResult = dynamic_cast<SVLongResultClass *>(l_resultInfo.Construct());
 
-	if (!pAnalyzerResult)
+	if (nullptr != m_pAnalyzerResult)
 	{
-		throw fail_to_create();
+		Add(m_pAnalyzerResult);
 	}
-
-	Add( pAnalyzerResult );
 }
 
 bool SVHistogramAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
@@ -1138,9 +1135,9 @@ HRESULT SVHistogramAnalyzerClass::createHistogramImage()
 	double l_dWidth  = histogram_width;
 	double l_dHeight = histogram_height;
 
-	if( nullptr != GetOwner() )
+	if( nullptr != GetParent() )
 	{
-		ImageInfo.SetOwner( GetOwner()->GetUniqueObjectID() );
+		ImageInfo.SetOwner( GetParent()->GetUniqueObjectID() );
 	}
 
 	ImageInfo.SetOwnerImage( m_histogramImage.GetUniqueObjectID() );
@@ -1155,7 +1152,7 @@ HRESULT SVHistogramAnalyzerClass::createHistogramImage()
 	ImageInfo.SetTranslation( SVExtentTranslationNone );
 
 	// Try to create image object...
-	if( S_OK != m_histogramImage.UpdateImage( SV_GUID_NULL, ImageInfo ) )
+	if( S_OK != m_histogramImage.UpdateImage( GUID_NULL, ImageInfo ) )
 	{
 		return Err_SetImageInfo;
 	}

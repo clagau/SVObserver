@@ -125,7 +125,7 @@ namespace SvOg
 			break;
 		}
 		//If it already existed then do not allow to change the type
-		if( SV_GUID_NULL != m_rData.m_Guid )
+		if( GUID_NULL != m_rData.m_Guid )
 		{
 			m_Type.EnableWindow( FALSE );
 		}

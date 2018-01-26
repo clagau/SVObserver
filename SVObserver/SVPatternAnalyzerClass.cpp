@@ -25,7 +25,6 @@
 #include "SVPatAdvancedPageClass.h"
 #include "SVPatGeneralPageClass.h"
 #include "SVPatResultDlgClass.h"   
-#include "SVPatSelectModelPageClass.h"
 #include "SVRange.h"
 #include "SVResultLong.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
@@ -146,7 +145,7 @@ SVPatternAnalyzerClass::SVPatternAnalyzerClass(SVObjectClass* POwner, int String
 	msv_lpatNumFoundOccurances.setSaveValueFlag(false);
 
 	// Setup the result
-	pAnalyzerResult = nullptr;
+	m_pAnalyzerResult = nullptr;
 	CreateResult();
 	
 	// Set default inputs and outputs
@@ -161,7 +160,7 @@ SVPatternAnalyzerClass::~SVPatternAnalyzerClass()
 
 void SVPatternAnalyzerClass::CreateResult()
 {
-	if (nullptr == pAnalyzerResult)
+	if (nullptr == m_pAnalyzerResult)
 	{
 		// Declare Input Interface of Result...
 		SVClassInfoStruct resultClassInfo;
@@ -198,7 +197,7 @@ void SVPatternAnalyzerClass::CreateResult()
 			}
 
 			Add(pResult);
-			pAnalyzerResult = pResult; //
+			m_pAnalyzerResult = pResult; //
 			
 			pRange->FailLow.SetDefaultValue(1.0);
 			pRange->WarnLow.SetDefaultValue(1.0);
@@ -713,16 +712,16 @@ bool SVPatternAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCrea
 	SvOi::IObjectClass* pResult = GetResultObject();
 	if (nullptr == pResult)
 	{
-		pAnalyzerResult = nullptr;
+		m_pAnalyzerResult = nullptr;
 		CreateResult();
 
 		// Ensure this Object's inputs get connected
-		if (nullptr != pAnalyzerResult)
+		if (nullptr != m_pAnalyzerResult)
 		{
-			pAnalyzerResult->ConnectAllInputs();
+			m_pAnalyzerResult->ConnectAllInputs();
 		}
 
-		CreateChildObject(pAnalyzerResult);
+		CreateChildObject(m_pAnalyzerResult);
 	}
 
 	m_isCreated = bOk;
@@ -912,7 +911,7 @@ bool SVPatternAnalyzerClass::getSpecialImage(const std::string& rName, SvOi::SVI
 	return false;
 }
 
-SvStl::MessageContainerVector SVPatternAnalyzerClass::validateAndSetEmmeddedValues(const SvOi::SetValueObjectPairVector& rValueVector, bool shouldSet)
+SvStl::MessageContainerVector SVPatternAnalyzerClass::validateAndSetEmbeddedValues(const SvOi::SetValueStructVector& rValueVector, bool shouldSet)
 {
 	SvStl::MessageContainerVector messages;
 	bool isModelFileNameToSet = false;
@@ -936,7 +935,7 @@ SvStl::MessageContainerVector SVPatternAnalyzerClass::validateAndSetEmmeddedValu
 	if (messages.empty())
 	{
 		m_bReloadModelFromFile = isModelFileNameToSet;
-		return __super::validateAndSetEmmeddedValues(rValueVector, shouldSet);
+		return __super::validateAndSetEmbeddedValues(rValueVector, shouldSet);
 	}
 	return messages;
 }
@@ -1340,18 +1339,18 @@ bool SVPatternAnalyzerClass::RestoreDontCareImage(SvStl::MessageContainerVector 
 	return Result;
 }
 
-bool SVPatternAnalyzerClass::getNewUseDontCareValue(const SvOi::SetValueObjectPairVector &rValueVector)
+bool SVPatternAnalyzerClass::getNewUseDontCareValue(const SvOi::SetValueStructVector &rValueVector)
 {
 	BOOL useDontCare = false;
-	SvOi::SetValueObjectPairVector::const_iterator iter = std::find_if(rValueVector.begin(), rValueVector.end(), [&](const SvOi::SetValueObjectPairVector::value_type& entry)->bool
+	SvOi::SetValueStructVector::const_iterator iter = std::find_if(rValueVector.begin(), rValueVector.end(), [&](const SvOi::SetValueStructVector::value_type& rEntry)->bool
 	{
-		return entry.first == &m_bpatDontCare;
+		return rEntry.m_pValueObject == &m_bpatDontCare;
 	}
 	);
 	if (rValueVector.end() != iter)
 	{
-		assert(VT_BOOL == iter->second.vt);
-		useDontCare = iter->second.boolVal;
+		assert(VT_BOOL == iter->m_Value.vt);
+		useDontCare = iter->m_Value.boolVal;
 	}
 	else
 	{
@@ -1360,18 +1359,18 @@ bool SVPatternAnalyzerClass::getNewUseDontCareValue(const SvOi::SetValueObjectPa
 	return useDontCare ? true : false;
 }
 
-bool SVPatternAnalyzerClass::validateNewDontCareFileName(const SvOi::SetValueObjectPairVector &rValueVector, long& rDontCareWidth, long& rDontCareHeight, SvStl::MessageContainerVector& rMessages)
+bool SVPatternAnalyzerClass::validateNewDontCareFileName(const SvOi::SetValueStructVector &rValueVector, long& rDontCareWidth, long& rDontCareHeight, SvStl::MessageContainerVector& rMessages)
 {
 	bool isValueToSet = false;
-	SvOi::SetValueObjectPairVector::const_iterator iter = std::find_if(rValueVector.begin(), rValueVector.end(), [&](const SvOi::SetValueObjectPairVector::value_type& entry)->bool
+	SvOi::SetValueStructVector::const_iterator iter = std::find_if(rValueVector.begin(), rValueVector.end(), [&](const SvOi::SetValueStructVector::value_type& rEntry)->bool
 	{
-		return entry.first == &m_DontCareImageFile;
+		return rEntry.m_pValueObject == &m_DontCareImageFile;
 	}
 	);
 	if (rValueVector.end() != iter)
 	{
-		assert(VT_BSTR == iter->second.vt);
-		std::string newFileName = SvUl::createStdString(iter->second.bstrVal);
+		assert(VT_BSTR == iter->m_Value.vt);
+		std::string newFileName = SvUl::createStdString(iter->m_Value.bstrVal);
 
 		SVMatroxBuffer importHandle;
 		if (S_OK != SVMatroxBufferInterface::Import(importHandle, newFileName, SVFileBitmap, true) ||
@@ -1395,20 +1394,20 @@ bool SVPatternAnalyzerClass::validateNewDontCareFileName(const SvOi::SetValueObj
 	return isValueToSet;
 }
 
-bool SVPatternAnalyzerClass::validateNewModelFileName(const SvOi::SetValueObjectPairVector &rValueVector, long& rModelWidth, long& rModelHeight, SvStl::MessageContainerVector &messages)
+bool SVPatternAnalyzerClass::validateNewModelFileName(const SvOi::SetValueStructVector &rValueVector, long& rModelWidth, long& rModelHeight, SvStl::MessageContainerVector &messages)
 {
 	bool isValueToSet = false;
-	SvOi::SetValueObjectPairVector::const_iterator iter = std::find_if(rValueVector.begin(), rValueVector.end(), [&](const SvOi::SetValueObjectPairVector::value_type& entry)->bool
+	SvOi::SetValueStructVector::const_iterator iter = std::find_if(rValueVector.begin(), rValueVector.end(), [&](const SvOi::SetValueStructVector::value_type& rEntry)->bool
 	{
-		return entry.first == &msv_szModelImageFile;
+		return rEntry.m_pValueObject == &msv_szModelImageFile;
 	}
 	);
 	if (rValueVector.end() != iter)
 	{
-		assert(VT_BSTR == iter->second.vt);
+		assert(VT_BSTR == iter->m_Value.vt);
 		std::string fileName;
 		msv_szModelImageFile.GetValue(fileName);
-		std::string newFileName = SvUl::createStdString(iter->second.bstrVal);
+		std::string newFileName = SvUl::createStdString(iter->m_Value.bstrVal);
 		if (fileName != newFileName)
 		{
 			SVMatroxBuffer importHandle;

@@ -20,6 +20,8 @@
 #include "Definitions/GlobalConst.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "SVOGui/ValuesAccessor.h"
+#include "SVOGui/DataController.h"
 #pragma endregion Includes
 
 #pragma region Properry Tree Items Enum
@@ -115,10 +117,6 @@ BOOL SVTADlgTranslationResizePage::OnInitDialog()
 		}
 		else
 		{
-			// This sets the base class 
-			//   SVTaskObjectValueInterface::m_psvTaskObject (Tool).  This is 
-			//   necessary for performing a RunOnce later.
-			SetTaskObject( m_pTool );
 			
 			m_pTool->BackupInspectionParameters ();
 
@@ -853,10 +851,15 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 
 	}
 
+	//@TODO[gra][8.00][15.01.2018]: The data controller should be used like the rest of SVOGui
+	typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
+	typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
+	Controller Values{ SvOg::BoundValues{ m_pTool->GetInspection()->GetUniqueObjectID(), m_pTool->GetUniqueObjectID() } };
+	Values.Init();
 
 	// Set new values -------------------------------------------------------
 	// Want to do as much error checking as possible before calling 
-	// AddInputRequest(), which can not be easily backed out.  Restoring from
+	// commit, which can not be easily backed out.  Restoring from
 	// an error prior to this point is easier than restoring from an error 
 	// after this point.
 	if (heightScaleFactorSucceeded) // reduces flicker.
@@ -874,46 +877,43 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 	if (interpolationModeSucceeded)
 	{
 		SVObjectClass*	pObject = dynamic_cast<SVObjectClass*> (&m_pTool->getInterpolationMode());
-		AddInputRequest(pObject, newInterpolationValue);
+		Values.Set<long>(pObject->GetEmbeddedID(), newInterpolationValue);
 		embeddedChanged = true;
 	}
 
 	if (overscanSucceeded)
 	{
 		SVObjectClass*	pObject = dynamic_cast<SVObjectClass*> (&m_pTool->getOverscan());
-		AddInputRequest(pObject, newOverscanValue);
+		Values.Set<long>(pObject->GetEmbeddedID(), newOverscanValue);
 		embeddedChanged = true;
 	}
 
 	if (performanceSucceeded)
 	{
 		SVObjectClass*	pObject = dynamic_cast<SVObjectClass*> (&m_pTool->getPerformance());
-		AddInputRequest(pObject, newPerformanceValue);
+		Values.Set<long>(pObject->GetEmbeddedID(), newPerformanceValue);
 		embeddedChanged = true;
 	}
 
-	if (true == extentChanged)
+	if (embeddedChanged)
+	{
+		Values.Commit();
+	}
+
+	if (extentChanged)
 	{
 		HRESULT hr = SVGuiExtentUpdater::SetImageExtent(m_pTool, toolImageExtents);
 	}
 
-	if (true == embeddedChanged)
+	if (extentChanged || embeddedChanged)
 	{
-		HRESULT hr = AddInputRequestMarker();
-	}
+		SVGUID InspectionID = m_pTool->GetInspection()->GetUniqueObjectID();
+		SvPB::InspectionRunOnceRequest requestMessage;
+		requestMessage.mutable_inspectionid()->CopyFrom(SvPB::setGuidToMessage(InspectionID));
+		requestMessage.mutable_taskid()->CopyFrom(SvPB::setGuidToMessage(m_pTool->GetUniqueObjectID()));
+		SvCmd::InspectionCommandsSynchronous(InspectionID, &requestMessage, nullptr);
 
-	if ((true == extentChanged) || (true == embeddedChanged))
-	{
-		HRESULT hr2 = RunOnce(m_pTool->GetUniqueObjectID());
-		if (S_FALSE == hr2)
-		{
-			hr2 = SVMSG_SVO_5066_CATCHRUNONCESFALSE;
-		}
-
-		if (SUCCEEDED (hr2))
-		{
-			hr2 = UpdateImages();
-		}
+		HRESULT hr2 = UpdateImages();
 
 		if (SUCCEEDED (hr2))
 		{
@@ -975,17 +975,11 @@ HRESULT	SVTADlgTranslationResizePage::ExitTabValidation ()
 
 	if (SUCCEEDED (message.getMessage().m_MessageCode))
 	{
-		HRESULT hr = RunOnce(m_pTool->GetUniqueObjectID());
-		SvStl::MessageContainer tmpMessage = m_pTool->getFirstTaskMessage();
-		if (hr == tmpMessage.getMessage().m_MessageCode)
-		{
-			message = tmpMessage;
-		}
-		else
-		{
-			message.clearMessage();
-			message.setMessage( SvStl::MessageData(hr) );
-		}
+		SVGUID InspectionID = m_pTool->GetInspection()->GetUniqueObjectID();
+		SvPB::InspectionRunOnceRequest requestMessage;
+		requestMessage.mutable_inspectionid()->CopyFrom(SvPB::setGuidToMessage(InspectionID));
+		requestMessage.mutable_taskid()->CopyFrom(SvPB::setGuidToMessage(m_pTool->GetUniqueObjectID()));
+		SvCmd::InspectionCommandsSynchronous(InspectionID, &requestMessage, nullptr);
 	}
 
 	if (!SUCCEEDED (message.getMessage().m_MessageCode))

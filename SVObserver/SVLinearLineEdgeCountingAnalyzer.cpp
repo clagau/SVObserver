@@ -12,9 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVLinearLineEdgeCountingAnalyzer.h"
-#include "SVProfileEdgeMarkerAdjustmentPage.h"
 #include "SVLinearEdgeAProcessingClass.h"
-#include "SVGlobal.h"
 #include "InspectionEngine/SVTool.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes

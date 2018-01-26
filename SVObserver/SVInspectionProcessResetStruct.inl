@@ -60,7 +60,7 @@ inline SvOi::SVResetItemEnum SVInspectionProcessResetStruct::SetResetData( SvOi:
 		{
 			if( eResetItem <= m_eResetItem )
 			{
-				m_ObjectSet.insert( pObject->GetOwner() );
+				m_ObjectSet.insert( pObject->GetParent() );
 
 				m_eResetItem = SvOi::SVResetItemOwner;
 			}

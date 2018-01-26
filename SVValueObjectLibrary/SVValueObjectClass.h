@@ -82,119 +82,35 @@ public:
 	bool CompareWithCurrentValue( const std::string& rCompare ) const;
 	void setStatic( bool isStatic ) { m_isStatic = isStatic; };
 	
-
-#pragma region virtual method
-	virtual UINT SetObjectAttributesSet( UINT Attributes, SvOi::SetAttributeType Type, int iIndex=0 ) override;
-
-	//! Gets the value for Value object NOTE this comes from IObjectClass
-	//! \param rValue [out] The reference to write the value to
-	//! \param Index [in] The corresponding array index to write to, if required
-	//! \param Bucket [in] The corresponding bucket index to get, if required
-	//! \returns S_OK if succeeded
+#pragma region virtual method (IObjectClass/IValueObject)
+	//! For these methods see IObject documentation
+	virtual UINT SetObjectAttributesSet(UINT Attributes, SvOi::SetAttributeType Type, int iIndex = 0) override;
 	virtual HRESULT getValue(double& rValue, int Index = -1, int Bucket = -1) const override;
-
-	//! Gets the values for Value object NOTE this comes from IObjectClass
-	//! \param rValue [out] The reference to double vector to store the values
-	//! \param Bucket [in] The corresponding bucket index to get, if required
-	//! \returns S_OK if succeeded
 	virtual HRESULT getValues(std::vector<double>& rValues, int Bucket = -1) const override;
-
-	//! Gets the default value for the Value object
-	//! \returns the default value as a variant
-	virtual _variant_t getDefaultValue() const override { return ValueType2Variant(m_DefaultValue); };
-
-	//! Sets the value for Value object
-	//! \param rValue [in] The value to set the Value object to
-	//! \param Index [in] The corresponding array index to write to, if required
-	//! \returns S_OK if succeeded
-	virtual HRESULT setValue(const _variant_t& rValue, int Index = -1) override;
-
-	//! Gets the value for Value object
-	//! \param rValue [out] The reference to write the value to
-	//! \param Index [in] The corresponding array index to write to, if required
-	//! \param Bucket [in] The corresponding bucket index to get, if required
-	//! \returns S_OK if succeeded
-	virtual HRESULT getValue(_variant_t& rValue, int Index = -1, int Bucket = -1) const override;
-
-	//! Gets the values for Value object
-	//! \param rValue [out] The reference to _variant_t vector to store the values
-	//! \param Bucket [in] The corresponding bucket index to get, if required
-	//! \returns S_OK if succeeded
-	virtual HRESULT getValues(std::vector<_variant_t>&  rValues, int Bucket = -1) const override;
-
-	//! Sets the value for Value object
-	//! \param rValue [in] The value to set the Value object to
-	//! \param Index [in] The corresponding array index to write to, if required
-	//! \returns S_OK if succeeded
-	virtual HRESULT setValue( const std::string& rValue, int Index = -1 ) override;
-
-	//! Gets the value for Value object
-	//! \param rValue [out] The reference to write the value to
-	//! \param Index [in] The corresponding array index to write to, if required
-	//! \param Bucket [in] The corresponding bucket index to get, if required
-	//! \returns S_OK if succeeded
-	virtual HRESULT getValue(std::string& rValue, int Index = -1, int Bucket = -1) const override;
-
-	//! Set the value object bucketized flag
-	//! \param Bucketized [in] true if bucketized (Only set if not a static ValueObject
-	virtual void setBucketized( bool isBucketized ) override { m_isBucketized = m_isStatic ? false : isBucketized; };
-
-	//! Set the reset options for the value object
-	//! \param bResetAlways [in] 
-	//! \param eResetItem [in] Which item to reset
-	virtual void setResetOptions( bool p_bResetAlways, SvOi::SVResetItemEnum p_eResetItem ) override;
-	
-	//! Validate the value. If value invalid an exception message will be thrown.
-	//! \param rValue [in] The value to validate
-	virtual void validateValue( const _variant_t& rValue ) const override;
-
-	//! Gets the type name for the Value object
-	//! \returns the type name
-	virtual std::string getTypeName() const override { return m_TypeName; };
-	
-	//! Checks if the value object is an array
-	//! \returns true if an array
-	virtual bool isArray() const override { return 1 < m_ArraySize; };
-	
-	//! Gets the size of the value object array
-	//! \returns size 0 if not an array
-	virtual int getArraySize() const override { return m_ArraySize; };
-	
-	//! Gets the result size of the value object
-	//! \returns size
-	virtual int getResultSize() const override { return m_ResultSize; };
-
-	//! Gets the reset item type
-	//! \returns the reset item enum type
-	virtual SvOi::SVResetItemEnum getResetItem() const override { return m_eResetItem; };
-
-	//! Gets the reset always value object flag
-	//! \returns true if reset always
-	virtual bool ResetAlways() const override {	return m_ResetAlways; };
-
-	//! Copies the last set value to the destination bucket
-	//! \returns the result of copying
-	virtual HRESULT CopyValue( int DestBucket ) override;
-
-	//! Returns the value object byte size
-	//! \returns the number of bytes for the data
-	virtual DWORD GetByteSize() const override;
-
-	//! Returns the variant type of the value object
-	//! \returns the VT type
-	virtual DWORD GetType() const override { return ValueType2Variant(m_Value).vt; };
-
-	//! Copies the value object to the memory block
-	//! \param pMemoryBlock [in] Pointer to the byte address of the memory block
-	//! \param MemByteSize [in] The memory block byte size
-	//! \param Index [in] The index of the array (-1 if no array)
-	//! \returns S_OK if successful
-	virtual HRESULT CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD MemByteSize, int Index = -1) const override;
-
 	virtual void Persist(SvOi::IObjectWriter& rWriter) override;
-
-	virtual void setSaveValueFlag(bool shouldSaveValue) override { m_shouldSaveValue = shouldSaveValue; } ;
-#pragma endregion virtual method
+	//! For these methods see IValueObject documentation
+	virtual HRESULT setDefaultValue(const _variant_t& rValue) override { return SetDefaultValue(Variant2ValueType(rValue), false); }
+	virtual _variant_t getDefaultValue() const override { return ValueType2Variant(m_DefaultValue); };
+	virtual HRESULT setValue(const _variant_t& rValue, int Index = -1) override;
+	virtual HRESULT getValue(_variant_t& rValue, int Index = -1, int Bucket = -1) const override;
+	virtual HRESULT getValues(std::vector<_variant_t>&  rValues, int Bucket = -1) const override;
+	virtual HRESULT setValue(const std::string& rValue, int Index = -1) override;
+	virtual HRESULT getValue(std::string& rValue, int Index = -1, int Bucket = -1) const override;
+	virtual void setBucketized(bool isBucketized) override { m_isBucketized = m_isStatic ? false : isBucketized; };
+	virtual void setResetOptions(bool p_bResetAlways, SvOi::SVResetItemEnum p_eResetItem) override;
+	virtual void validateValue(const _variant_t& rValue) const override;
+	virtual std::string getTypeName() const override { return m_TypeName; };
+	virtual bool isArray() const override { return 1 < m_ArraySize; };
+	virtual int getArraySize() const override { return m_ArraySize; };
+	virtual int getResultSize() const override { return m_ResultSize; };
+	virtual SvOi::SVResetItemEnum getResetItem() const override { return m_eResetItem; };
+	virtual bool ResetAlways() const override {	return m_ResetAlways; };
+	virtual HRESULT CopyValue( int DestBucket ) override;
+	virtual DWORD GetByteSize() const override;
+	virtual DWORD GetType() const override { return ValueType2Variant(m_Value).vt; };
+	virtual HRESULT CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD MemByteSize, int Index = -1) const override;
+	virtual void setSaveValueFlag(bool shouldSaveValue) override { m_shouldSaveValue = shouldSaveValue; };
+#pragma endregion virtual method (IObjectClass/IValueObject)
 	
 	void SetLegacyVectorObjectCompatibility() { m_LegacyVectorObjectCompatibility = true; }
 

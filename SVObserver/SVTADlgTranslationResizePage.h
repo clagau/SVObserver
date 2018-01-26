@@ -10,7 +10,6 @@
 #pragma once
 
 #pragma region Includes
-#include "InspectionEngine/SVTaskObjectValueInterface.h"
 #include "SVRPropertyTree/SVRPropTree.h"
 #include "SVOGui/PictureDisplay.h"
 #include "SVOGui\ISVPropertyPageDialog.h"  // for QueryAllowExit()
@@ -23,8 +22,7 @@ class SVImageExtentClass;
 
 class SVTADlgTranslationResizePage : 
 	public CPropertyPage, 
-	public SvOg::ISVPropertyPageDialog, 
-	private SVTaskObjectValueInterface
+	public SvOg::ISVPropertyPageDialog
 {
 public:
 	SVTADlgTranslationResizePage( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent, int id = IDD );

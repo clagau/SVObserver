@@ -30,7 +30,6 @@ namespace SvOg
 	static LPCTSTR SecondImageTag = _T("Second Image");
 	static LPCTSTR ResultImageTag = _T("Result Image");
 	static LPCTSTR NoImageTag = _T("(No Image Available)"); // maybe move this to the control class?
-	static LPCSTR ArithmeticOperatorTag = "ArithmeticOperator";
 	static const int NumberOfImagesRequired = 2;
 
 	enum ImageTabsEnum
@@ -54,10 +53,8 @@ namespace SvOg
 	, SvOg::ImageController(rInspectionID, rTaskObjectID, SvDef::SVImageMonoType, false)
 	, m_InspectionID(rInspectionID)
 	, m_TaskObjectID(rTaskObjectID)
-	, m_Values(SvOg::BoundValues(rInspectionID, rTaskObjectID, boost::assign::map_list_of(ArithmeticOperatorTag, SVArithmeticOperatorObjectGuid)))
+		, m_Values{ SvOg::BoundValues{ rInspectionID, rTaskObjectID } }
 	{
-		//{{AFX_DATA_INIT(SVToolAdjustmentDialogTwoImagePageClass)
-		//}}AFX_DATA_INIT
 	}
 
 	SVToolAdjustmentDialogTwoImagePageClass::~SVToolAdjustmentDialogTwoImagePageClass()
@@ -72,7 +69,7 @@ namespace SvOg
 		UpdateData(true); // get data from dialog
 
 		long lOperator = static_cast<long>(m_operatorCtrl.GetItemData(m_operatorCtrl.GetCurSel()));
-		m_Values.Set<long>(ArithmeticOperatorTag, lOperator);
+		m_Values.Set<long>(SVArithmeticOperatorObjectGuid, lOperator);
 		m_Values.Commit();
 		
 		if (SvDef::SVImageOperatorDoubleHeight == lOperator || SvDef::SVImageOperatorFlipVertical == lOperator || SvDef::SVImageOperatorFlipHorizontal == lOperator)
@@ -159,7 +156,7 @@ namespace SvOg
 
 		// Get Current Arithmetic Operator...
 	
-		long lOperator = m_Values.Get<long>(ArithmeticOperatorTag);
+		long lOperator = m_Values.Get<long>(SVArithmeticOperatorObjectGuid);
 
 		for (int i = 0;i < m_operatorCtrl.GetCount(); ++ i)
 		{

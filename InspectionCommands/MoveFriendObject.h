@@ -23,7 +23,7 @@ namespace SvCmd
 		MoveFriendObject(const MoveFriendObject&) = delete;
 		MoveFriendObject& operator=(const MoveFriendObject&) = delete;
 
-		MoveFriendObject(const SVGUID& rParentID, const SVGUID& rObjectID, const SVGUID& rMovePreGuid = SV_GUID_NULL)
+		MoveFriendObject(const SVGUID& rParentID, const SVGUID& rObjectID, const SVGUID& rMovePreGuid = GUID_NULL)
 			: m_InstanceID(rParentID), m_ObjectID(rObjectID), m_movePreGuid(rMovePreGuid) {};
 		
 		// This method is where the real separation would occur by using sockets/named pipes/shared memory

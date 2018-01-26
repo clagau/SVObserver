@@ -72,7 +72,7 @@ SVExternalToolDlg::SVExternalToolDlg( const SVGUID& rInspectionID, const SVGUID&
 : CPropertyPage(IDD)
 , m_InspectionID(rInspectionID)
 , m_ToolObjectID(rToolObjectID)
-, m_TaskObjectID(SV_GUID_NULL)
+, m_TaskObjectID(GUID_NULL)
 {
 	m_pSheet = pSheet;
 

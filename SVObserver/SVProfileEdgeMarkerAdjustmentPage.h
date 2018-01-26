@@ -14,21 +14,22 @@
 #pragma once
 
 #pragma region Includes
-#include "SVEdgeMarkerAdjustmentPageClass.h"
-//TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
+#include "SVOResource/resource.h"
+#include "SVOGui/SVEdgeMarkerAdjustmentPageClass.h"
 #include "SVOGui/PictureDisplay.h"
 #pragma endregion Includes
 
 #pragma region Declarations
+//@TODO[gra][8.00][25.01.2018]: This class should move to SVOGui
+class SVToolClass;
 class SVLinearEdgeProcessingClass;
 #pragma endregion Declarations
 
-class SVProfileEdgeMarkerAdjustmentPageClass : public SVEdgeMarkerAdjustmentPageClass
+class SVProfileEdgeMarkerAdjustmentPageClass : public SvOg::SVEdgeMarkerAdjustmentPageClass
 {
-	DECLARE_DYNCREATE(SVProfileEdgeMarkerAdjustmentPageClass)
 #pragma region Constructor
 public:
-	SVProfileEdgeMarkerAdjustmentPageClass( UINT nIDCaption = 0 );
+	SVProfileEdgeMarkerAdjustmentPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SVGuidVector& rEdgeEmbeddedGuids, UINT nIDCaption = 0 );
 	virtual ~SVProfileEdgeMarkerAdjustmentPageClass();
 #pragma endregion Constructor
 
@@ -70,7 +71,7 @@ public:
 
 #pragma region Protected Methods
 protected:
-	virtual HRESULT UpdateSliderData( double p_dLower, double p_dUpper ) override;
+	virtual HRESULT UpdateSliderData(DWORD Lower, DWORD Upper) override;
 #pragma region Protected Methods
 
 #pragma region Private Methods
@@ -79,15 +80,14 @@ private:
 	void updateGraphDisplay();
 
 	/// Set the histogram and the edge lines as overlay to the display control. 
-	/// \param pEdge [in] The linear edge class from where to get the graph points.
 	/// \param bVertical [in] If true it spin the graph to vertical.
-	void setGraphOverlayToPicture( SVLinearEdgeProcessingClass* pEdge, bool bVertical);
+	void setGraphOverlayToPicture(bool bVertical);
 
 	/// Set a marker overlay to the display control.
 	/// \param value [in] The position of the marker.
 	/// \param bVertical [in] If true it spin the graph to vertical.
 	/// \param allowType [in] Set the allowType to the control. Default is none change allowed.
-	void setMarkerOverlayToPicture( unsigned long value, bool bVertical, long allowType = CDSVPictureDisplay::AllowNone );
+	void setMarkerOverlayToPicture( DWORD value, bool bVertical, long allowType = CDSVPictureDisplay::AllowNone );
 #pragma endregion Private Methods
 
 #pragma region Member variables
@@ -97,7 +97,6 @@ private:
 	static const long m_egdeLinesStartPos = 8;
 	static const long m_egdeLinesStopPos = 12;
 
-	//{{AFX_DATA(SVProfileEdgeMarkerAdjustmentPageClass)
 	enum { IDD = IDD_PROFILE_GR_EDGE_MARKER_ADJUST_DIALOG };
 	CEdit	m_LowerMinOffsetEditCtrl;
 	CEdit	m_LowerMaxOffsetEditCtrl;
@@ -114,10 +113,9 @@ private:
 	int		m_lowerThresholdOption;
 	int		m_upperThresholdOption;
 	SvOg::PictureDisplay m_dialogImage;
-	//}}AFX_DATA
+
+	//@TODO[gra][8.00][25.01.2018]: This should be changed when access is possible through Inspection commands
+	SVToolClass* m_pTool{ nullptr };
+	SVLinearEdgeProcessingClass* m_pEdge{ nullptr };
 #pragma endregion Member variables
 };
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Developer Studio 
-

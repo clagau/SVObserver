@@ -47,16 +47,13 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-	static const std::string EnabledTag("Enabled");
-
 	#pragma region Constructor
 	FormulaController::FormulaController(const GUID& rInspectionID, const GUID& rTaskObjectID, const SvDef::SVObjectTypeInfoStruct& rInfo, bool bEnabledReadOnly)
 	: m_InspectionID(rInspectionID)
 	, m_TaskObjectID(rTaskObjectID)
 	, m_info(rInfo)
 	, m_EquationID(GUID_NULL)
-	, m_taskValues(SvOg::BoundValues(rInspectionID, rTaskObjectID, boost::assign::map_list_of(EnabledTag, SvOg::BoundValue(SVToolEnabledObjectGuid, bEnabledReadOnly))))
-	, m_equationValues(SvOg::BoundValues(rInspectionID, rTaskObjectID, boost::assign::map_list_of(EnabledTag, SvOg::BoundValue(SVEquationEnabledObjectGuid, bEnabledReadOnly))))
+	, m_Values(SvOg::BoundValues(rInspectionID, rTaskObjectID, bEnabledReadOnly))
 	{
 		init();
 	}
@@ -66,8 +63,7 @@ namespace SvOg
 		, m_TaskObjectID(rTaskObjectID)
 		, m_info(SvDef::SVObjectTypeInfoStruct())
 		, m_EquationID(rEquationID)
-		, m_taskValues(SvOg::BoundValues(rInspectionID, rTaskObjectID, boost::assign::map_list_of(EnabledTag, SvOg::BoundValue(SVToolEnabledObjectGuid, bEnabledReadOnly))))
-		, m_equationValues(SvOg::BoundValues(rInspectionID, rTaskObjectID, boost::assign::map_list_of(EnabledTag, SvOg::BoundValue(SVEquationEnabledObjectGuid, bEnabledReadOnly))))
+		, m_Values(SvOg::BoundValues(rInspectionID, rTaskObjectID, bEnabledReadOnly))
 	{
 		init();
 	}
@@ -114,8 +110,8 @@ namespace SvOg
 		//Only when the controller is of type SvDef::SVConditionalObjectType
 		if (SvDef::SVConditionalObjectType == m_info.SubType)
 		{
-			ownerEnabled = m_taskValues.Get<bool>(EnabledTag);
-			equationEnabled = m_equationValues.Get<bool>(EnabledTag);
+			ownerEnabled = m_Values.Get<bool>(SVToolEnabledObjectGuid);
+			equationEnabled = m_Values.Get<bool>(SVEquationEnabledObjectGuid);
 		}
 		else
 		{
@@ -130,10 +126,9 @@ namespace SvOg
 		HRESULT hr = S_OK;
 		if (SvDef::SVConditionalObjectType == m_info.SubType)
 		{
-			m_taskValues.Set<bool>(EnabledTag, ownerEnabled);
-			m_equationValues.Set<bool>(EnabledTag, equationEnabled);
-			m_taskValues.Commit();
-			m_equationValues.Commit();
+			m_Values.Set<bool>(SVToolEnabledObjectGuid, ownerEnabled);
+			m_Values.Set<bool>(SVEquationEnabledObjectGuid, equationEnabled);
+			m_Values.Commit();
 		}
 		return hr;
 	}
@@ -245,11 +240,10 @@ namespace SvOg
 		//Only when the controller is of type SvDef::SVConditionalObjectType
 		if (SvDef::SVConditionalObjectType == m_info.SubType)
 		{
-			m_taskValues.Init();
-			m_equationValues.Init();
+			m_Values.Init();
 		}
 
-		if (SV_GUID_NULL == m_EquationID)
+		if (GUID_NULL == m_EquationID)
 		{
 			typedef SvCmd::GetInstanceIDByTypeInfo Command;
 			typedef std::shared_ptr<Command> CommandPtr;

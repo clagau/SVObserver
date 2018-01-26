@@ -13,13 +13,12 @@
 
 #pragma region Includes
 #include "SVTADlgColorThresholdBasePage.h"
-#include "InspectionEngine/SVTaskObjectValueInterface.h"
 #pragma endregion Includes
 
 /////////////////////////////////////////////////////////////////////////////
 // SVTADlgColorThresholdROI dialog
 
-class SVTADlgColorThresholdROI : public SVTADlgColorThresholdBasePage, public SVTaskObjectValueInterface
+class SVTADlgColorThresholdROI : public SVTADlgColorThresholdBasePage
 {
 	DECLARE_DYNCREATE(SVTADlgColorThresholdROI)
 

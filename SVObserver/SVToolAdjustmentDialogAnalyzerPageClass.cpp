@@ -58,7 +58,7 @@ SVToolAdjustmentDialogAnalyzerPageClass::SVToolAdjustmentDialogAnalyzerPageClass
 , m_pCurrentAnalyzer(nullptr)
 , m_InspectionID(rInspectionID)
 , m_TaskObjectID(rTaskObjectID)
-, m_additionalAnalyzerId(SV_GUID_NULL)
+, m_additionalAnalyzerId(GUID_NULL)
 {
 	if( m_pParentDialog )
 	{
@@ -242,7 +242,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 	SVGUID classGUID = m_availableAnalyzerCombobox.getSelectedGUID();
 
 	// Check for valid selection
-	if( SV_GUID_NULL != classGUID )
+	if( GUID_NULL != classGUID )
 	{
 		// Check if its the same Analyzer
 		if( m_pCurrentAnalyzer && m_pCurrentAnalyzer->GetClassID() != classGUID )
@@ -281,7 +281,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 
 						// Remove it from the Tool TaskObjectList ( Destruct it )
 						GUID objectID = m_pCurrentAnalyzer->GetUniqueObjectID();
-						if( SV_GUID_NULL != objectID )
+						if( GUID_NULL != objectID )
 						{
 							m_pTool->Delete( objectID );
 						}
@@ -337,10 +337,10 @@ void SVToolAdjustmentDialogAnalyzerPageClass::DestroyAnalyzer()
 	if( m_pCurrentAnalyzer )
 	{
 		//This is to remove the analyzer due to MIL License restrictions.
-		if ( SV_GUID_NULL != m_additionalAnalyzerId && m_pCurrentAnalyzer->GetClassID() == m_additionalAnalyzerId )
+		if ( GUID_NULL != m_additionalAnalyzerId && m_pCurrentAnalyzer->GetClassID() == m_additionalAnalyzerId )
 		{
 			m_availableAnalyzerCombobox.remove(m_pCurrentAnalyzer->GetObjectName());
-			m_additionalAnalyzerId = SV_GUID_NULL;
+			m_additionalAnalyzerId = GUID_NULL;
 		}
 
 		m_pCurrentAnalyzer->DisconnectImages();

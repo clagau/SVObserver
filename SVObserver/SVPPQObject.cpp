@@ -950,7 +950,7 @@ bool SVPPQObject::DetachInspection(SVInspectionProcess* pInspection)
 
 	if (!bFound) { return false; }
 
-	pInspection->SetPPQIdentifier(SV_GUID_NULL);
+	pInspection->SetPPQIdentifier(GUID_NULL);
 
 	SVProductInfoStruct l_svProduct;
 
@@ -1439,7 +1439,7 @@ void SVPPQObject::GoOnline()
 	for (size_t i = 0; i < m_UsedOutputs.size(); i++)
 	{
 		SVObjectClass* pObject = m_UsedOutputs[i]->getObject();
-		void* l_pInit = nullptr != pObject ? dynamic_cast<SVPPQObject*>(pObject->GetOwner()) : nullptr;
+		void* l_pInit = nullptr != pObject ? dynamic_cast<SVPPQObject*>(pObject->GetParent()) : nullptr;
 	}
 
 	if (SvDef::SVPPQNextTriggerMode == m_oOutputMode)
@@ -2382,7 +2382,7 @@ bool SVPPQObject::RebuildOutputList()
 						//Normal object types require the name and set the owner
 						pObject->SetName(pOldOutput->getObject()->GetName());
 						pNewOutput->setObject(pOldOutput->getObject());
-						pNewOutput->getObject()->SetObjectOwner(pOldOutput->getObject()->GetOwner());
+						pNewOutput->getObject()->SetObjectOwner(pOldOutput->getObject()->GetParent());
 					}
 
 					pNewOutput->m_DeleteValueObject = false;

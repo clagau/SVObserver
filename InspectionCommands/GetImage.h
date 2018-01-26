@@ -33,7 +33,7 @@ namespace SvCmd
 		/// \param rObjectID [in] The SVGUID of the requested Image.
 		GetImage(const SVGUID& rObjectID) : m_InstanceID(rObjectID)
 			, m_Name()
-			, m_ParentID(SV_GUID_NULL)
+			, m_ParentID(GUID_NULL)
 			, m_Width(0)
 			, m_Height(0)
 		{};
@@ -41,7 +41,7 @@ namespace SvCmd
 		/// Constructor to get an image from a taskObject with a name.
 		/// \param rName [in] Name of the image.
 		/// \param rParentID [in] The SVGUID of the taskObject which is the parent of the image.
-		GetImage(const std::string& rName, const SVGUID& rParentID) : m_InstanceID(SV_GUID_NULL)
+		GetImage(const std::string& rName, const SVGUID& rParentID) : m_InstanceID(GUID_NULL)
 			, m_Name(rName)
 			, m_ParentID(rParentID)
 			, m_Width(0)
@@ -58,7 +58,7 @@ namespace SvCmd
 			HRESULT hr = S_OK;
 			SvOi::SVImageBufferHandlePtr data;
 
-			if (SV_GUID_NULL != m_InstanceID)
+			if (GUID_NULL != m_InstanceID)
 			{
 				SvOi::ISVImage* pImage = dynamic_cast<SvOi::ISVImage*>(SvOi::getObject(m_InstanceID));
 				if (pImage)
@@ -66,7 +66,7 @@ namespace SvCmd
 					data = pImage->getImageData();
 				}
 			}
-			else if ( !m_Name.empty() && SV_GUID_NULL != m_ParentID )
+			else if ( !m_Name.empty() && GUID_NULL != m_ParentID )
 			{
 				SvOi::ITaskObject* pObject = dynamic_cast<SvOi::ITaskObject*>(SvOi::getObject(m_ParentID));
 				if (nullptr != pObject)

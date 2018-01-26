@@ -52,9 +52,13 @@ BOOL SVBlobAnalyzerResultDlg::OnInitDialog()
 	
 	m_ResultList.SetTabStops(80);
 
-	for( SVBlobFeatureEnum i = SV_AREA; i < SV_TOPOF_LIST; i = (SVBlobFeatureEnum)(i + 1))
-	{	
-		if (m_pBlobAnalyzer->m_FeaturesEnabled [i] == _T('1'))
+	std::string FeaturesEnabled;
+	m_pBlobAnalyzer->m_PersistantFeaturesEnabled.getValue(FeaturesEnabled);
+	assert(FeaturesEnabled.size() != SvOi::SV_NUMBER_OF_BLOB_FEATURES);
+
+	for (int i = 0; i < SvOi::SV_NUMBER_OF_BLOB_FEATURES; i++)
+	{
+		if (_T('1') == FeaturesEnabled [i])
 		{
 			double* pData = &(m_pBlobAnalyzer->m_vec2dBlobResults[i][0]);
 			

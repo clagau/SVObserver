@@ -136,7 +136,7 @@ namespace SvOg
 	{
 		int index = m_filterListBox.GetCurSel();
 		SVGUID filterGUID	= m_filterListBox.getGUID(index);
-		if (SV_GUID_NULL != filterGUID)
+		if (GUID_NULL != filterGUID)
 		{
 			typedef SvCmd::GetObjectTypeInfo Command;
 			typedef std::shared_ptr<Command> CommandPtr;
@@ -227,7 +227,7 @@ namespace SvOg
 	{ 
 		const SVGUID classID = m_availableFilterCB.getSelectedGUID();
 
-		if( SV_GUID_NULL != classID )
+		if( GUID_NULL != classID )
 		{
 			int destinyIndex	= m_filterListBox.GetCurSel();
 
@@ -280,7 +280,7 @@ namespace SvOg
 		for (int i=0; i<listSize; ++i)
 		{
 			SVGUID filterGUID = availableList[i].second;
-			if( SV_GUID_NULL != filterGUID )
+			if( GUID_NULL != filterGUID )
 			{
 				typedef SvCmd::ShouldInspectionReset ResetCommand;
 				typedef std::shared_ptr<ResetCommand> ResetCommandPtr;
@@ -318,7 +318,7 @@ namespace SvOg
 	{
 		int index = m_filterListBox.GetCurSel();
 		SVGUID filterGUID = m_filterListBox.getGUID(index);
-		if( SV_GUID_NULL != filterGUID ) 
+		if( GUID_NULL != filterGUID ) 
 		{
 			typedef SvCmd::ShouldInspectionReset ResetCommand;
 			typedef std::shared_ptr<ResetCommand> ResetCommandPtr;
@@ -354,7 +354,7 @@ namespace SvOg
 	{
 		int index = m_filterListBox.GetCurSel();
 		SVGUID filterGUID	= m_filterListBox.getGUID(index);
-		if( SV_GUID_NULL != filterGUID ) 
+		if( GUID_NULL != filterGUID ) 
 		{
 			typedef SvCmd::GetObjectTypeInfo Command;
 			typedef std::shared_ptr<Command> CommandPtr;

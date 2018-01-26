@@ -24,7 +24,7 @@ namespace SvCmd
 		ConstructAndInsertFriend(const ConstructAndInsertFriend&) = delete;
 		ConstructAndInsertFriend& operator=(const ConstructAndInsertFriend&) = delete;
 
-		ConstructAndInsertFriend(const SVGUID& rParentID, const SVGUID& rClassID, LPCTSTR objectName, const SVGUID& rAddPreGuid = SV_GUID_NULL)
+		ConstructAndInsertFriend(const SVGUID& rParentID, const SVGUID& rClassID, LPCTSTR objectName, const SVGUID& rAddPreGuid = GUID_NULL)
 			: m_InstanceID(rParentID), m_ClassID(rClassID), m_objectName(objectName), m_addPreGuid(rAddPreGuid) {};
 
 		virtual ~ConstructAndInsertFriend() {};
@@ -34,7 +34,7 @@ namespace SvCmd
 		// and replaced with the building and sending of the command
 		HRESULT Execute()
 		{
-			return SVObjectBuilder::CreateFriendObject(m_ClassID, SV_GUID_NULL, m_objectName, m_InstanceID, m_addPreGuid);
+			return SVObjectBuilder::CreateFriendObject(m_ClassID, GUID_NULL, m_objectName, m_InstanceID, m_addPreGuid);
 		}
 		bool empty() const { return false; }
 

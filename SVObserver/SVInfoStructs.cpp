@@ -758,7 +758,7 @@ void SVProductInfoStruct::DumpIndexInfo( std::string& rData )
 
 	for( ; CamIter != m_svCameraInfos.end(); ++CamIter )
 	{
-		if( SV_GUID_NULL != CamIter->first )
+		if( GUID_NULL != CamIter->first )
 		{
 			std::string CameraName( _T( "(null)" ) );
 

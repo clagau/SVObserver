@@ -1145,13 +1145,6 @@ bool SVToolClass::SetFirstInputImageName( LPCTSTR FirstName )
 	return false;
 }
 
-
-
-SVObjectClass* SVToolClass::GetToolComment()
-{
-	return &m_ToolComment;
-}
-
 bool SVToolClass::createAllObjectsFromChild( SVObjectClass& rChildObject )
 {
 	SVObjectLevelCreateStruct createStruct;

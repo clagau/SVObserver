@@ -195,7 +195,7 @@ SVExternalToolTask::SVExternalToolTask( SVObjectClass* POwner, int StringResourc
 
 		SVImageClass* pImage = &(m_aResultImages[i]);
 		pImage->InitializeImage(SvDef::SVImageTypeEnum::SVImageTypePhysical);
-		pImage->UpdateImage(SV_GUID_NULL, imageInfo );
+		pImage->UpdateImage(GUID_NULL, imageInfo );
 	}
 
 	// Result Objects
@@ -429,13 +429,13 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 								}
 								else
 								{
-									imageInfoCopy.SetOwner( SV_GUID_NULL );
+									imageInfoCopy.SetOwner( GUID_NULL );
 								}
 
 								// create buffer
 								SVImageClass* pImage = &(m_aInputImagesCopy[i]);
 								pImage->InitializeImage(SvDef::SVImageTypeEnum::SVImageTypePhysical);
-								pImage->UpdateImage( SV_GUID_NULL, imageInfoCopy );
+								pImage->UpdateImage( GUID_NULL, imageInfoCopy );
 								pImage->SetImageDepth( 1 );
 							}
 						}
@@ -585,13 +585,13 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 					}
 					else
 					{
-						imageInfo.SetOwner( SV_GUID_NULL );
+						imageInfo.SetOwner( GUID_NULL );
 					}
 
 					// create buffer
 					SVImageClass* pImage = &(m_aResultImages[i]);
 					pImage->InitializeImage(SvDef::SVImageTypeEnum::SVImageTypePhysical);
-					pImage->UpdateImage( SV_GUID_NULL, imageInfo );
+					pImage->UpdateImage( GUID_NULL, imageInfo );
 				}// end block
 				if ( m_bUseImageCopies )
 				{
@@ -603,13 +603,13 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 					}
 					else
 					{
-						imageInfo.SetOwner( SV_GUID_NULL );
+						imageInfo.SetOwner( GUID_NULL );
 					}
 
 					// create buffer
 					SVImageClass* pImage = &(m_aResultImagesCopy[i]);
 					pImage->InitializeImage(SvDef::SVImageTypeEnum::SVImageTypePhysical);
-					pImage->UpdateImage( SV_GUID_NULL, imageInfo );
+					pImage->UpdateImage( GUID_NULL, imageInfo );
 					pImage->SetImageDepth( 1 );
 				}// end if ( m_bUseImageCopies )
 
@@ -633,7 +633,7 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 				// create buffer
 				SVImageClass* pImage = &(m_aResultImages[i]);
 				pImage->InitializeImage(SvDef::SVImageTypeEnum::SVImageTypePhysical);
-				pImage->UpdateImage( SV_GUID_NULL, imageInfo );
+				pImage->UpdateImage( GUID_NULL, imageInfo );
 			}
 
 			hr = m_dll.DestroyImageDefinitionStructure(paResultImageDefs);
@@ -1418,7 +1418,7 @@ HRESULT SVExternalToolTask::AllocateResult (int iIndex)
 			{
 				// Remove it from the TaskObjectList ( Destruct it )
 				GUID objectID = pResult->GetUniqueObjectID();
-				if( SV_GUID_NULL != objectID )
+				if( GUID_NULL != objectID )
 				{
 					Delete( objectID );
 				}
@@ -1712,7 +1712,7 @@ bool SVExternalToolTask::ConnectAllInputs()
 	{
 		l_bRunConnect = false;
 		SVInObjectInfoStruct& rInfo = m_Data.m_aInputImageInfo[i];
-		if( SV_GUID_NULL != rInfo.GetInputObjectInfo().getUniqueObjectID() )
+		if( GUID_NULL != rInfo.GetInputObjectInfo().getUniqueObjectID() )
 		{
 			l_bRunConnect = true;
 			break;
@@ -1767,7 +1767,7 @@ HRESULT SVExternalToolTask::ConnectInputImages()
 				}
 				else
 				{
-					imageInfoCopy.SetOwner( SV_GUID_NULL );
+					imageInfoCopy.SetOwner( GUID_NULL );
 				}
 
 				m_aInputImagesCopy[i].ResetObject();

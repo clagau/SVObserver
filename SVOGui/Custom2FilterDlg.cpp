@@ -48,13 +48,6 @@ namespace SvOg
 	static const TCHAR StatusGridMultiCell[] = _T("Count: %d  Sum: %d");
 	static const TCHAR CustomFilterExportFileFilters[] = _T("Custom Filter Export Files (*.xcf)|*.xcf||");
 	static const TCHAR CustomFilterExportFileExt[] = _T("xcf");
-
-	static const std::string KernelWidthTag("KernelWidth");
-	static const std::string KernelHeidghtTag("KernelHeight");
-	static const std::string IsClippingTag("IsClipping");
-	static const std::string IsAbsoluteValueTag("IsAbsoluteValue");
-	static const std::string NormalizationFactorTag("NormalizationFactor");
-	static const std::string KernelValueTag("KernelValue");
 #pragma endregion Declarations
 
 	BEGIN_MESSAGE_MAP(Custom2FilterDlg, CDialog)
@@ -87,13 +80,7 @@ namespace SvOg
 		, m_GridStatus( _T("") )
 		,m_filterID(rFilterID)
 		,m_rInspectionID(rInspectionID)
-		, m_Values(SvOg::BoundValues(rInspectionID, rFilterID, boost::assign::map_list_of
-		(KernelWidthTag, SVCustomFilterKernelWidthGuid)
-		(KernelHeidghtTag, SVCustomFilterKernelHeightGuid)
-		(IsClippingTag, SVCustomFilterClippingGuid)
-		(IsAbsoluteValueTag, SVCustomFilterAbsoluteGuid)
-		(NormalizationFactorTag, SVCustomFilterTransformGuid)
-		(KernelValueTag, Custom2FilterKernelGuid)))
+		, m_Values(SvOg::BoundValues(rInspectionID, rFilterID))
 	{
 	}
 
@@ -107,14 +94,14 @@ namespace SvOg
 	{
 		HRESULT Result = S_OK;
 
-		m_Values.Set<long>(KernelWidthTag, m_KernelWidth);
-		m_Values.Set<long>(KernelHeidghtTag, m_KernelHeight);
-		m_Values.Set<long>(NormalizationFactorTag, m_NormalizationFactor);
-		m_Values.Set<bool>(IsAbsoluteValueTag, TRUE == m_AbsoluteValue);
-		m_Values.Set<bool>(IsClippingTag, TRUE == m_ClippingEnabled);
+		m_Values.Set<long>(SVCustomFilterKernelWidthGuid, m_KernelWidth);
+		m_Values.Set<long>(SVCustomFilterKernelHeightGuid, m_KernelHeight);
+		m_Values.Set<long>(SVCustomFilterTransformGuid, m_NormalizationFactor);
+		m_Values.Set<bool>(SVCustomFilterAbsoluteGuid, m_AbsoluteValue ? true : false);
+		m_Values.Set<bool>(SVCustomFilterClippingGuid, m_ClippingEnabled ? true : false);
 		_variant_t value = ConvertVectorToVariantSafeArray<LongArray>(m_KernelArray);
-		m_Values.Set<_variant_t>(KernelValueTag, value);
-		m_Values.Commit(true);
+		m_Values.Set<_variant_t>(Custom2FilterKernelGuid, value);
+		m_Values.Commit(SvOg::doResetRunOnce);
 
 		return Result;
 	}
@@ -449,14 +436,14 @@ namespace SvOg
 	void Custom2FilterDlg::initializeFilter()
 	{
 		m_Values.Init();
-		m_KernelWidth = m_Values.Get<long>(KernelWidthTag);
-		m_KernelHeight = m_Values.Get<long>(KernelHeidghtTag);
-		m_NormalizationFactor = m_Values.Get<long>(NormalizationFactorTag);
-		m_AbsoluteValue = m_Values.Get<bool>(IsAbsoluteValueTag);
-		m_ClippingEnabled = m_Values.Get<bool>(IsClippingTag);
+		m_KernelWidth = m_Values.Get<long>(SVCustomFilterKernelWidthGuid);
+		m_KernelHeight = m_Values.Get<long>(SVCustomFilterKernelHeightGuid);
+		m_NormalizationFactor = m_Values.Get<long>(SVCustomFilterTransformGuid);
+		m_AbsoluteValue = m_Values.Get<bool>(SVCustomFilterAbsoluteGuid);
+		m_ClippingEnabled = m_Values.Get<bool>(SVCustomFilterClippingGuid);
 
 		m_KernelArray.clear();
-		m_KernelArray = ConvertVariantSafeArrayToVector<long>(m_Values.Get<_variant_t>(KernelValueTag));
+		m_KernelArray = ConvertVariantSafeArrayToVector<long>(m_Values.Get<_variant_t>(Custom2FilterKernelGuid));
 	}
 
 	bool Custom2FilterDlg::inputGridCtrlCharacter( WPARAM Character )

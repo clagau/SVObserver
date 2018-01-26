@@ -28,7 +28,7 @@
 ResultViewReferences::ResultViewReferences(LPCTSTR tagname)
 	: m_LastUpdateTimeStamp(0),
 	  m_TagName(tagname)
-	, m_resultTableGuid( SV_GUID_NULL )
+	, m_resultTableGuid( GUID_NULL )
 	, m_resultTable(nullptr)
 {
 }
@@ -143,7 +143,7 @@ bool ResultViewReferences::Save(SvOi::IObjectWriter& rWriter)
 			rWriter.WriteAttribute(SvXml::CTAG_COMPLETENAME, Value);
 		}
 	}
-	if (SV_GUID_NULL != m_resultTableGuid)
+	if (GUID_NULL != m_resultTableGuid)
 	{
 		_variant_t Value;
 		Value.SetString(m_resultTableGuid.ToBSTR());
@@ -227,9 +227,9 @@ void  ResultViewReferences::GetResultData( SVIPResultData& p_rResultData) const
 
 		unsigned long Color = SvDef::DefaultWhiteColor;
 
-		if( it->getObject()->GetOwner() )
+		if( it->getObject()->GetParent() )
 		{
-			Color = it->getObject()->GetOwner()->GetObjectColor();
+			Color = it->getObject()->GetParent()->GetObjectColor();
 		}
 
 

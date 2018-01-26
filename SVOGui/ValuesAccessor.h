@@ -10,7 +10,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <guiddef.h>
 #include "BoundValue.h"
-#include "ObjectInterfaces/NameValueList.h"
+#include "ObjectInterfaces/NameValueVector.h"
 #include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
 #include "InspectionCommands/TaskObjectGetEmbeddedValues.h"
 #include "InspectionCommands/TaskObjectSetEmbeddedValues.h"
@@ -27,19 +27,26 @@ namespace SvOg
 	public:
 		typedef Values value_type;
 
+	#pragma region Constructor
+	public:
 		ValuesAccessor() {}
 		virtual ~ValuesAccessor() {}
 
-		HRESULT GetValues(Values& rValues) 
+		ValuesAccessor& operator=(const ValuesAccessor&) = delete;
+	#pragma endregion Constructor
+
+	#pragma region Public Methods
+	public:
+		HRESULT GetValues(Values& rValues)
 		{
-			const GUID& inspectionID = rValues.GetInspectionID();
-			const GUID& ownerID = rValues.GetOwnerID();
+			const GUID& rInspectionID = rValues.GetInspectionID();
+			const GUID& rTaskID = rValues.GetTaskID();
 	
 			typedef SvCmd::TaskObjectGetEmbeddedValues<Values> Command;
 			typedef std::shared_ptr<Command> CommandPtr;
 
-			CommandPtr commandPtr(new Command(ownerID, rValues));
-			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(inspectionID, commandPtr);
+			CommandPtr commandPtr(new Command(rInspectionID, rTaskID));
+			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(rInspectionID, commandPtr);
 			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 			if (S_OK == hr)
 			{
@@ -48,44 +55,62 @@ namespace SvOg
 			return hr;
 		}
 
-		HRESULT SetValues(const SvOg::BoundValues& rValues, bool bReset) 
+		HRESULT SetValues(const SvOg::BoundValues& rValues, PostAction doAction)
 		{
-			m_setMessageFailList.clear();
-			const GUID& ownerID = rValues.GetOwnerID();
-			const GUID& inspectionID = rValues.GetInspectionID();
+			m_MessageFailList.clear();
+			const GUID& rTaskID = rValues.GetTaskID();
+			const GUID& rInspectionID = rValues.GetInspectionID();
 	
 			typedef SvCmd::TaskObjectSetEmbeddedValues<Values> Command;
 			typedef std::shared_ptr<Command> CommandPtr;
 
-			CommandPtr commandPtr(new Command(rValues));
-			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(inspectionID, commandPtr);
+			CommandPtr commandPtr(new Command(rTaskID, rValues));
+			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(rInspectionID, commandPtr);
 			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-			m_setMessageFailList = commandPtr->getErrorMessages();
+			m_MessageFailList = commandPtr->getErrorMessages();
 
 			if (S_OK == hr)
 			{
+				bool bReset{ false };
+				bool bRunOnce{ false };
+
+				switch (doAction)
+				{
+				case doReset:
+					{
+						bReset = true;
+						break;
+					}
+				case doRunOnce:
+					{
+						bRunOnce = true;
+						break;
+					}
+				case doResetRunOnce:
+					{
+						bReset = true;
+						bRunOnce = true;
+						break;
+					}
+				default:
+					{
+						break;
+					}
+				}
 				if (bReset)
 				{
 					// Do a reset of the Tool
-					SvPB::ResetObjectRequest requestMessage;
-					SvPB::ResetObjectResponse responseMessage;
-					requestMessage.mutable_objectid()->CopyFrom(SvPB::setGuidToMessage(ownerID));
-					hr = SvCmd::InspectionCommandsSynchronous(inspectionID, &requestMessage, &responseMessage);
-					m_setMessageFailList = SvCmd::setMessageContainerFromMessagePB(responseMessage.messages());
+					hr = ResetObject(rInspectionID, rTaskID);
 				}
-				if (S_OK == hr)
+				if (S_OK == hr && bRunOnce)
 				{
-					// Do a run once of the Tool/Inspection ?
-					SvPB::InspectionRunOnceRequest requestMessage;
-					requestMessage.mutable_inspectionid()->CopyFrom(SvPB::setGuidToMessage(inspectionID));
-					requestMessage.mutable_taskid()->CopyFrom(SvPB::setGuidToMessage(ownerID));
-					hr = SvCmd::InspectionCommandsSynchronous(inspectionID, &requestMessage, nullptr);
+					hr = RunOnce(rInspectionID, rTaskID);
 				}
 			}
 			return hr;
 		}
 
-		SvOi::NameValueList GetEnums(const GUID& rInspectionID, const GUID& rObjectID) const
+		SvOi::NameValueVector GetEnums(const GUID& rInspectionID, const GUID& rObjectID) const
 		{
 			typedef SvCmd::ValueObjectGetEnums Command;
 			typedef std::shared_ptr<Command> CommandPtr;
@@ -98,7 +123,7 @@ namespace SvOg
 			{
 				return commandPtr->GetEnumList();
 			}
-			return SvOi::NameValueList();
+			return SvOi::NameValueVector();
 		}
 
 		std::string GetObjectName(const GUID& rInspectionID, const GUID& rObjectID) const
@@ -117,9 +142,33 @@ namespace SvOg
 			return std::string();
 		}
 
-		SvStl::MessageContainerVector getSetFailedMessageList() { return m_setMessageFailList; };
+		HRESULT ResetObject(const GUID& rInspectionID, const GUID& rObjectID)
+		{
+			m_MessageFailList.clear();
+			SvPB::ResetObjectRequest requestMessage;
+			SvPB::ResetObjectResponse responseMessage;
+			requestMessage.mutable_objectid()->CopyFrom(SvPB::setGuidToMessage(rObjectID));
+			HRESULT hr = SvCmd::InspectionCommandsSynchronous(rInspectionID, &requestMessage, &responseMessage);
+			m_MessageFailList = SvCmd::setMessageContainerFromMessagePB(responseMessage.messages());
+			return hr;
+		}
 
-	protected:
-		SvStl::MessageContainerVector m_setMessageFailList;
+		HRESULT RunOnce(const GUID& rInspectionID, const GUID& rObjectID)
+		{
+			// Do a run once of the Tool/Inspection ?
+			SvPB::InspectionRunOnceRequest requestMessage;
+			requestMessage.mutable_inspectionid()->CopyFrom(SvPB::setGuidToMessage(rInspectionID));
+			requestMessage.mutable_taskid()->CopyFrom(SvPB::setGuidToMessage(rObjectID));
+			HRESULT hr = SvCmd::InspectionCommandsSynchronous(rInspectionID, &requestMessage, nullptr);
+			return hr;
+		}
+
+		const SvStl::MessageContainerVector& getFailedMessageList() { return m_MessageFailList; };
+	#pragma endregion Public Methods
+
+	#pragma region Member Variables
+	private:
+		SvStl::MessageContainerVector m_MessageFailList;
+	#pragma endregion Member Variables
 	};
 } //namespace SvOg

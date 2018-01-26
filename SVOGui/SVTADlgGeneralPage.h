@@ -19,6 +19,7 @@
 #include "DataController.h"
 #include "AuxiliaryExtentsController.h"
 #include "SVMFCControls\AvailableObjectListComboBox.h"
+#include "SVMFCControls\SVEnumerateCombo.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -56,14 +57,13 @@ namespace SvOg
 		void SetImages();
 
 	public:
-		//{{AFX_DATA(SVToolAdjustmentDialogGeneralPageClass)
 		enum { IDD = IDD_TA_GENERAL_DIALOG };
-		SvMc::AvailableObjectListComboBox m_AvailableSourceImageCombo;
-		CComboBox m_drawToolCombo;
-		BOOL m_bUpdateAuxiliaryExtents;
-		//}}AFX_DATA
 
 	protected:
+		SvMc::AvailableObjectListComboBox m_AvailableSourceImageCombo;
+		SvMc::SVEnumerateComboClass m_drawToolCombo;
+		BOOL m_bUpdateAuxiliaryExtents;
+
 		bool m_bAuxExtentsAvailable;
 		bool m_bIsImageTool;
 		SVGUID m_InspectionID;

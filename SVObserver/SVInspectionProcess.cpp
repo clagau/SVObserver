@@ -1200,7 +1200,7 @@ bool SVInspectionProcess::AddInputRequest(const SVObjectReference& rObjectRef, c
 	return Result;
 }
 
-bool SVInspectionProcess::AddInputRequest(SVInputRequestInfoStructPtr p_pInRequest)
+bool SVInspectionProcess::AddInputRequest(SVInputRequestInfoStructPtr pInRequest)
 {
 	DWORD notAllowedStates = SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING | SV_STATE_CLOSING;
 
@@ -1216,7 +1216,7 @@ bool SVInspectionProcess::AddInputRequest(SVInputRequestInfoStructPtr p_pInReque
 		DebugBreak();
 	}
 
-	if (!m_InputRequests.AddTail(p_pInRequest))
+	if (!m_InputRequests.AddTail(pInRequest))
 	{
 		if (!m_InputRequests.Unlock())
 		{
@@ -1231,9 +1231,9 @@ bool SVInspectionProcess::AddInputRequest(SVInputRequestInfoStructPtr p_pInReque
 
 	std::string l_StringValue;
 
-	if (VT_BSTR == p_pInRequest->m_Value.vt)
+	if (VT_BSTR == pInRequest->m_Value.vt)
 	{
-		l_StringValue = SvUl::createStdString(p_pInRequest->m_Value);
+		l_StringValue = SvUl::createStdString(pInRequest->m_Value);
 	}
 
 	if (l_StringValue == SvO::SVTOOLPARAMETERLIST_MARKER)
@@ -3782,15 +3782,6 @@ long SVInspectionProcess::GetLastIndex() const
 		lastIndex = l_Handle.GetIndex();
 	}
 	return lastIndex;
-}
-
-bool SVInspectionProcess::AddInputRequest(const SVGUID& rGuid, const _variant_t& rValue, long Index)
-{
-	SVObjectReference ObjectRef(SVObjectManagerClass::Instance().GetObject(rGuid), Index);
-
-	bool Result = AddInputRequest(ObjectRef, rValue);
-
-	return Result;
 }
 
 bool SVInspectionProcess::AddInputRequestMarker()

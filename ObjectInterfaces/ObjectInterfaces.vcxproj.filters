@@ -60,9 +60,6 @@
     <ClInclude Include="EquationTestResult.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="NameValueList.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="IEnumerateValueObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -88,6 +85,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVImageBufferHandleInterface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NameValueVector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

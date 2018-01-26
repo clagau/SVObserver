@@ -928,7 +928,7 @@ void SVLutDlgPage::OnColorBandSync()
 {
 	// we will have to adjust this once we implement the "All" option... All -> Sync??? disable Sync if all is selected
 	SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-	INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_LUT_ShouldOverwriteAllBands, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10235, SV_GUID_NULL, MB_YESNO );
+	INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_LUT_ShouldOverwriteAllBands, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10235, GUID_NULL, MB_YESNO );
 	if (IDYES == result )
 	{
 		// copy current band data to all other bands

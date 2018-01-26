@@ -20,6 +20,6 @@ public:
 	static void SetToolNormalize(SVShiftTool* pShiftTool);
 
 private:
-	SVShiftToolUtility();
-	~SVShiftToolUtility();
+	SVShiftToolUtility() = delete;
+	virtual ~SVShiftToolUtility() = delete;
 };

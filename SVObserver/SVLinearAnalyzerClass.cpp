@@ -327,7 +327,7 @@ HRESULT SVLinearAnalyzerClass::onCollectOverlays(SVImageClass *p_Image,SVExtentM
 		BOOL l_bShow = false;
 		if ( nullptr != GetEdgeA() )
 		{ 
-			if( nullptr != m_svShowAllEdgeAOverlays.GetOwner() && 
+			if( nullptr != m_svShowAllEdgeAOverlays.GetParent() && 
 				( S_OK == m_svShowAllEdgeAOverlays.GetValue(l_bShow) ) && l_bShow )
 			{
 				SVExtentLineStruct l_svLine;
@@ -362,7 +362,7 @@ HRESULT SVLinearAnalyzerClass::onCollectOverlays(SVImageClass *p_Image,SVExtentM
 		}
 		if ( nullptr != GetEdgeB() )
 		{ 
-			if( nullptr != m_svShowAllEdgeBOverlays.GetOwner() && 
+			if( nullptr != m_svShowAllEdgeBOverlays.GetParent() && 
 				( S_OK == m_svShowAllEdgeBOverlays.GetValue(l_bShow) ) && l_bShow )
 			{
 				SVExtentLineStruct svLine;

@@ -17,16 +17,17 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
 
-#include "SVAnalyzerLuminance.h"
-#include "SVAnalyzerLuminanceSetup.h"
-#include "SVBarCodeAnalyzerClass.h"
+#include "InspectionEngine/SVAnalyzer.h"
+#include "SVOGui/ValuesAccessor.h"
+#include "SVOGui/DataController.h"
+#include "SVOGui/SVLuminanceAnalyzerDlg.h"
 #include "SVOGui/SVBarCodeProperties.h"
+#include "SVBarCodeAnalyzerClass.h"
 #include "SVBarCodeResult.h"
 #include "SVBlobAnalyzer.h"
-#include "SVBlobAnalyzerDialog.h"
+#include "SVOGui/SVBlobAnalyzerDialog.h"
 #include "SVColorThreshold.h"
 #include "SVColorTool.h"
-#include "SVEdgeMarkerAdjustmentPageClass.h"
 #include "SVHistogramAnalyzer.h"
 #include "SVHistogramAnalyzerSetup.h"
 #include "SVInspectionProcess.h"
@@ -36,14 +37,14 @@
 #include "SVMeasureAnalyzerAdjustmentSheet.h"
 #include "SVOCVAnalyzer.h"
 #include "SVOCVAnalyzerResult.h"
-#include "SVOCVDialog.h"
+#include "SVOGui/SVOCVSheet.h"
 #include "SVPatAdvancedPageClass.h"
 #include "SVPatAnalyzeSetupDlgSheet.h"
 #include "SVPatGeneralPageClass.h"
-#include "SVPatSelectModelPageClass.h"
+#include "SVOGui/SVPatternAnalyzerModelPage.h"
 #include "SVPatternAnalyzerClass.h"
 #include "SVPixelAnalyzer.h"
-#include "SVPixelAnalyzerSetup.h"
+#include "SVPixelAnalyzerDlg.h"
 #include "SVProfileEdgeMarkerAdjustmentPage.h"
 #include "SVResult.h"
 #include "SVTADlgColorThresholdSheet.h"
@@ -231,11 +232,11 @@ HRESULT SVSetupDialogManager::SVNotImplemented( const SVGUID& p_rObjectId, CWnd*
 	return E_NOTIMPL;
 }
 
-HRESULT SVSetupDialogManager::SVBarCodeAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd )
+HRESULT SVSetupDialogManager::SVBarCodeAnalyzerClassSetupDialog( const SVGUID& rObjectId, CWnd* pParentWnd )
 {
 	HRESULT l_Status = S_OK;
 
-	SVBarCodeAnalyzerClass* pAnalyzer = dynamic_cast< SVBarCodeAnalyzerClass* >( SVObjectManagerClass::Instance().GetObject( p_rObjectId ) );
+	SVBarCodeAnalyzerClass* pAnalyzer = dynamic_cast< SVBarCodeAnalyzerClass* >( SVObjectManagerClass::Instance().GetObject( rObjectId ) );
 	
 	SVInspectionProcess* pInspection( nullptr );
 	
@@ -317,58 +318,47 @@ HRESULT SVSetupDialogManager::SVBarCodeAnalyzerClassSetupDialog( const SVGUID& p
 			SingleFile = dlgProp.m_dlgBarCodeStringMatch.GetSingleFileName();
 			bUseMultiple = dlgProp.m_dlgBarCodeStringMatch.GetUseMultiple();
 			MultiFile = dlgProp.m_dlgBarCodeStringMatch.GetMultiFileName();
-				
-			try
-			{
-				pInspection->AddInputRequest( &pAnalyzer->msv_lBarCodeType, dlgProp.m_dlgBarCodeGeneral.GetBarCodeType() );
-				pInspection->AddInputRequest( &pAnalyzer->msv_dSpeed, dlgProp.m_dlgBarCodeGeneral.GetBarCodeSearchSpeed() );
-				pInspection->AddInputRequest( &pAnalyzer->msv_dOrientation, dlgProp.m_dlgBarCodeGeneral.GetOrientation() );
-				pInspection->AddInputRequest( &pAnalyzer->msv_dSkewNegative, dlgProp.m_dlgBarCodeGeneral.GetSkewNegative() );
-				pInspection->AddInputRequest( &pAnalyzer->msv_dSkewPositive, dlgProp.m_dlgBarCodeGeneral.GetSkewPositive() );
-				pInspection->AddInputRequest( &pAnalyzer->msv_dThreshold, dlgProp.m_dlgBarCodeGeneral.GetThreshold() );
-				pInspection->AddInputRequest( &pAnalyzer->msv_dForegroundColor, dlgProp.m_dlgBarCodeGeneral.GetForegroundColor() );
-				pInspection->AddInputRequest( &pAnalyzer->msv_dStringSize, dlgProp.m_dlgBarCodeGeneral.GetBarCodeStringSize() );
-				pInspection->AddInputRequest( &pAnalyzer->m_bWarnOnFailedRead, dlgProp.m_dlgBarCodeGeneral.GetWarnedOnFail() );
-				pInspection->AddInputRequest( &pAnalyzer->msv_dEncoding, dlgProp.m_dlgBarCodeAttributes.GetEncoding() );
-				pInspection->AddInputRequest( &pAnalyzer->msv_dErrorCorrection, dlgProp.m_dlgBarCodeAttributes.GetErrorCorrection() );
-				pInspection->AddInputRequest( &( pResult->msv_bUseSingleMatchString ), bUseSingle );
-				pInspection->AddInputRequest( &pAnalyzer->msv_szRegExpressionValue, RegExp.c_str() );
-				pInspection->AddInputRequest( &pAnalyzer->msv_bSaveStringInFile, bSaveInFile );
-				pInspection->AddInputRequest( &pAnalyzer->msv_szStringFileName, SingleFile.c_str() );
-				pInspection->AddInputRequest( &( pResult->msv_bUseMatchStringFile ), bUseMultiple );
-				pInspection->AddInputRequest( &( pResult->msv_szMatchStringFileName ), MultiFile.c_str() );
-				pInspection->AddInputRequest( &pAnalyzer->msv_dCellNumberX, dlgProp.m_dlgBarCodeDataMatrix.GetCellX() );
-				pInspection->AddInputRequest( &pAnalyzer->msv_dCellNumberY, dlgProp.m_dlgBarCodeDataMatrix.GetCellY() );
-				pInspection->AddInputRequest( &pAnalyzer->msv_dCellMinSize, dlgProp.m_dlgBarCodeDataMatrix.GetMinCellSize() );
-				pInspection->AddInputRequest( &pAnalyzer->msv_dCellMaxSize, dlgProp.m_dlgBarCodeDataMatrix.GetMaxCellSize() );
-				pInspection->AddInputRequest( &pAnalyzer->msv_lBarcodeTimeout, dlgProp.m_dlgBarCodeGeneral.GetTimeout() );
+			
+			//@TODO[gra][8.00][15.01.2018]: The data controller should be moved into the dialog
+			typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
+			typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
+			Controller Values{ SvOg::BoundValues{ pInspection->GetUniqueObjectID(), rObjectId } };
+			Values.Init();
 
-				// To support special DMCs May 2008.
-				pInspection->AddInputRequest( &pAnalyzer->msv_eStringFormat, dlgProp.m_dlgBarCodeGeneral.GetBarcodeStringFormat( ) );
-				pInspection->AddInputRequest( &pAnalyzer->msv_lThresholdType, dlgProp.m_dlgBarCodeGeneral.GetBarcodeThresholdType( ) );
+			Values.Set<long>(SVBCTypeObjectGuid, dlgProp.m_dlgBarCodeGeneral.GetBarCodeType());
+			Values.Set<double>(SVBCSpeedObjectGuid, dlgProp.m_dlgBarCodeGeneral.GetBarCodeSearchSpeed());
+			Values.Set<double>(SVBCOrientationObjectGuid, dlgProp.m_dlgBarCodeGeneral.GetOrientation());
+			Values.Set<double>(SVBCSkewNegativeObjectGuid, dlgProp.m_dlgBarCodeGeneral.GetSkewNegative());
+			Values.Set<double>(SVBCSkewPositiveObjectGuid, dlgProp.m_dlgBarCodeGeneral.GetSkewPositive());
+			Values.Set<double>(SVBCThresholdObjectGuid, dlgProp.m_dlgBarCodeGeneral.GetThreshold());
+			Values.Set<double>(SVBCForegroundColorObjectGuid, dlgProp.m_dlgBarCodeGeneral.GetForegroundColor());
+			Values.Set<double>(SVBCStringSizeObjectGuid, dlgProp.m_dlgBarCodeGeneral.GetBarCodeStringSize());
+			Values.Set<bool>(SVBCWarnOnFailedReadObjectGuid, dlgProp.m_dlgBarCodeGeneral.GetWarnedOnFail() ? true : false);
+			Values.Set<long>(SVBCTimeoutGuid, dlgProp.m_dlgBarCodeGeneral.GetTimeout());
+			Values.Set<CString>(SVBCStringFormatGuid, dlgProp.m_dlgBarCodeGeneral.GetBarcodeStringFormat());
+			Values.Set<long>(SVBCThresholdTypeGuid, dlgProp.m_dlgBarCodeGeneral.GetBarcodeThresholdType());
+			Values.Set<bool>(SVBCUnevenGridGuid, dlgProp.m_dlgBarCodeGeneral.GetUnEvenGrid() ? true : false);
 
-				//for support for the Uneven grid step for DMCs
-				pInspection->AddInputRequest( &pAnalyzer->msv_bUnEvenGrid, dlgProp.m_dlgBarCodeGeneral.GetUnEvenGrid( ) );
+			Values.Set<double>(SVBCEncodingObjectGuid, dlgProp.m_dlgBarCodeAttributes.GetEncoding());
+			Values.Set<double>(SVBCErrorCorrectionObjectGuid, dlgProp.m_dlgBarCodeAttributes.GetErrorCorrection());
+			Values.Set<CString>(SVRegExpressionObjectGuid, RegExp.c_str());
+			Values.Set<bool>(SVBCSaveStringInFileObjectGuid, bSaveInFile ? true : false);
+			Values.Set<CString>(SVBCStringFileNameObjectGuid, SingleFile.c_str());
 
-				pInspection->AddInputRequestMarker();
+			Values.Set<double>(SVBCCellNumberXObjectGuid, static_cast<double> (dlgProp.m_dlgBarCodeDataMatrix.GetCellX()));
+			Values.Set<double>(SVBCCellNumberYObjectGuid, static_cast<double> (dlgProp.m_dlgBarCodeDataMatrix.GetCellY()));
+			Values.Set<double>(SVBCCellMinSizeObjectGuid, static_cast<double> (dlgProp.m_dlgBarCodeDataMatrix.GetMinCellSize()));
+			Values.Set<double>(SVBCCellMaxSizeObjectGuid, static_cast<double> (dlgProp.m_dlgBarCodeDataMatrix.GetMaxCellSize()));
 
-				SVGUID l_ToolId;
+			Values.Commit();
 
-				SVObjectClass* pTool = pAnalyzer->GetTool();
-				if( nullptr != pTool )
-				{
-					l_ToolId = pTool->GetUniqueObjectID();
-				}
+			Controller Result{ SvOg::BoundValues{ pInspection->GetUniqueObjectID(), pResult->GetUniqueObjectID() } };
+			Result.Init();
 
-				SvPB::InspectionRunOnceRequest requestMessage;
-				requestMessage.mutable_inspectionid()->CopyFrom(SvPB::setGuidToMessage(pInspection->GetUniqueObjectID()));
-				requestMessage.mutable_taskid()->CopyFrom(SvPB::setGuidToMessage(l_ToolId));
-				l_Status = SvCmd::InspectionCommandsSynchronous(pInspection->GetUniqueObjectID(), &requestMessage, nullptr);
-			}
-			catch( ... )
-			{
-				ASSERT( FALSE );
-			}
+			Result.Set<bool>(SVBCUseSingleMatchStringGuid, bUseSingle ? true : false);
+			Result.Set<bool>(SVBCUseMatchStringFileGuid, bUseMultiple ? true : false);
+			Result.Set<CString>(SVBCMatchStringFileNameObjectGuid, MultiFile.c_str());
+			Result.Commit();
 		}
 	}
 	else
@@ -379,35 +369,40 @@ HRESULT SVSetupDialogManager::SVBarCodeAnalyzerClassSetupDialog( const SVGUID& p
 	return l_Status;
 }
 
-HRESULT SVSetupDialogManager::SVBlobAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd )
+HRESULT SVSetupDialogManager::SVBlobAnalyzerClassSetupDialog( const SVGUID& rObjectId, CWnd* pParentWnd )
 {
 	HRESULT l_Status = S_OK;
 
-	SVBlobAnalyzerClass* l_pAnalyzer = dynamic_cast< SVBlobAnalyzerClass* >( SVObjectManagerClass::Instance().GetObject( p_rObjectId ) );
+	SVBlobAnalyzerClass* pAnalyzer = dynamic_cast<SVBlobAnalyzerClass*> (SVObjectManagerClass::Instance().GetObject(rObjectId));
 	
-	if( nullptr != l_pAnalyzer )
+	if( nullptr != pAnalyzer )
 	{
-		if( nullptr != l_pAnalyzer->GetInspection() )
+		if( nullptr != pAnalyzer->GetInspection() )
 		{
-			SVIPDoc* l_pIPDoc = TheSVObserverApp.GetIPDoc( l_pAnalyzer->GetInspection()->GetUniqueObjectID() );
+			SVGUID InspectionID(pAnalyzer->GetInspection()->GetUniqueObjectID());
+			SVIPDoc* pIPDoc = TheSVObserverApp.GetIPDoc(InspectionID);
 
-			if( nullptr != l_pIPDoc )
+			if( nullptr != pIPDoc )
 			{
-				l_pIPDoc->SetModifiedFlag();
+				pIPDoc->SetModifiedFlag();
 
-				SVBlobAnalyzeFeatureDialogClass dlg( dynamic_cast<SVToolClass*>(l_pAnalyzer->GetTool()), l_pAnalyzer, l_pIPDoc, PParentWnd );
+				SvOg::SVBlobAnalyzeFeatureDialogClass dlg(InspectionID, rObjectId, pParentWnd );
 
-				if ( IDOK == dlg.DoModal() )
+				if (IDOK == dlg.DoModal())
 				{
 					BOOL l_bIsFillBlob;
-					l_pAnalyzer->m_bvoFillBlobs.GetValue( l_bIsFillBlob );
+					pAnalyzer->m_bvoFillBlobs.GetValue( l_bIsFillBlob );
 #if SV_DESIRED_MIL_VERSION == 0x0900
-					SVMatroxBlobInterface::Set( l_pAnalyzer->m_ResultBufferID, SVEBlobSaveRuns, static_cast<long>(l_bIsFillBlob?SVValueEnable: SVValueDisable) );
+					SVMatroxBlobInterface::Set( pAnalyzer->m_ResultBufferID, SVEBlobSaveRuns, static_cast<long>(l_bIsFillBlob?SVValueEnable: SVValueDisable) );
 #else
-					SVMatroxBlobInterface::Set(l_pAnalyzer->m_BlobContextID, SVEBlobSaveRuns, static_cast<long>(l_bIsFillBlob ? SVValueEnable : SVValueDisable));
+					SVMatroxBlobInterface::Set(pAnalyzer->m_BlobContextID, SVEBlobSaveRuns, static_cast<long>(l_bIsFillBlob ? SVValueEnable : SVValueDisable));
 #endif
+					pAnalyzer->CreateArray();
 
-					l_pAnalyzer->CreateArray();
+
+					// Rebuild results list/view
+					// what about published results list ?
+					pIPDoc->UpdateAllViews(nullptr);
 				}
 				else
 				{
@@ -530,173 +525,82 @@ HRESULT SVSetupDialogManager::SVHistogramAnalyzerClassSetupDialog( const SVGUID&
 	return l_Status;
 }
 
-HRESULT SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd )
+HRESULT SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog( const SVGUID& rObjectId, CWnd* pParentWnd )
 {
 	HRESULT l_Status = S_OK;
 
-	SVLinearAnalyzerClass* l_pAnalyzer = dynamic_cast< SVLinearAnalyzerClass* >( SVObjectManagerClass::Instance().GetObject( p_rObjectId ) );
+	SVLinearAnalyzerClass* pAnalyzer = dynamic_cast< SVLinearAnalyzerClass* >( SVObjectManagerClass::Instance().GetObject( rObjectId ) );
 	
 	SVInspectionProcess* pInspection( nullptr );
 
-	if( nullptr != l_pAnalyzer && nullptr != (pInspection = dynamic_cast<SVInspectionProcess*>(l_pAnalyzer->GetInspection())) )
+	if( nullptr != pAnalyzer && nullptr != (pInspection = dynamic_cast<SVInspectionProcess*>(pAnalyzer->GetInspection())) )
 	{
 		std::string Title = SvUl::LoadStdString( IDS_ADJUSTMENT_STRING );
 		// Get Complete Name up to the tool level...
-		Title = l_pAnalyzer->GetObjectNameToObjectType(SvDef::SVToolObjectType) + _T( " " ) + Title;
+		Title = pAnalyzer->GetObjectNameToObjectType(SvDef::SVToolObjectType) + _T( " " ) + Title;
 
 		SVIPDoc* pIPDoc = TheSVObserverApp.GetIPDoc( pInspection->GetUniqueObjectID() );
 
-		SVLinearEdgeProcessingClass *l_psvEdgeA = l_pAnalyzer->GetEdgeA();
-		SVLinearEdgeProcessingClass *l_psvEdgeB = l_pAnalyzer->GetEdgeB();
+		SVLinearEdgeProcessingClass *pEdgeA = pAnalyzer->GetEdgeA();
+		SVLinearEdgeProcessingClass *pEdgeB = pAnalyzer->GetEdgeB();
 
 		SVMeasureAnalyzerAdjustmentSheetClass measureDialog( Title.c_str() );
 
 		measureDialog.m_psh.dwFlags |= PSH_NOAPPLYNOW;
 
-		SVEdgeMarkerAdjustmentPageClass *pPageA = nullptr;
-		SVEdgeMarkerAdjustmentPageClass *pPageB = nullptr;
+		SVProfileEdgeMarkerAdjustmentPageClass *pPageA = nullptr;
+		SVProfileEdgeMarkerAdjustmentPageClass *pPageB = nullptr;
 
-		if( nullptr != l_psvEdgeA )
+		if( nullptr != pEdgeA )
 		{
-			pPageA = new SVProfileEdgeMarkerAdjustmentPageClass( IDS_EDGE_A );
+			pPageA = new SVProfileEdgeMarkerAdjustmentPageClass(pInspection->GetUniqueObjectID(), pEdgeA->GetUniqueObjectID(), pEdgeA->getEdgeEmbeddedGuids(), IDS_EDGE_A );
 		}
 
-		if( nullptr != l_psvEdgeB )
+		if( nullptr != pEdgeB )
 		{
-			pPageB = new SVProfileEdgeMarkerAdjustmentPageClass( IDS_EDGE_B );
+			pPageB = new SVProfileEdgeMarkerAdjustmentPageClass(pInspection->GetUniqueObjectID(), pEdgeB->GetUniqueObjectID(), pEdgeB->getEdgeEmbeddedGuids(), IDS_EDGE_B);
 		}
 
 		if( nullptr != pIPDoc && ( nullptr != pPageA || nullptr != pPageB ) )
 		{
-			if( nullptr != pPageA && nullptr != l_psvEdgeA )
+			if( nullptr != pPageA && nullptr != pEdgeA )
 			{
-				pPageA->m_pCurrentAnalyzer = l_pAnalyzer;
-				pPageA->SetNormalizer( l_pAnalyzer->m_svNormalizer );
+				pPageA->SetNormalizer( pAnalyzer->m_svNormalizer );
 				pPageA->m_bEdgeA = true;
 
-				pPageA->m_pvoUseLowerThresholdSelectable = &l_psvEdgeA->m_svUseLowerThresholdSelectable;
-				pPageA->m_pvoUseLowerThresholdMaxMinusPercentDiff= &l_psvEdgeA->m_svUseLowerThresholdMaxMinusPercentDiff;		
-				pPageA->m_pvoUseLowerThresholdMaxMinusOffset = &l_psvEdgeA->m_svUseLowerThresholdMaxMinusOffset;		
-				pPageA->m_pvoUseLowerThresholdMinPlusOffset = &l_psvEdgeA->m_svUseLowerThresholdMinPlusOffset;			
-				pPageA->m_pvoLowerThresholdMaxMinusPercentDiff = &l_psvEdgeA->m_svLowerMaxMinusPercentDiffValue;		
-				pPageA->m_pvoLowerThresholdMaxMinusOffset = &l_psvEdgeA->m_svLowerMaxMinusOffsetValue;		
-				pPageA->m_pvoLowerThresholdMinPlusOffset = &l_psvEdgeA->m_svLowerMinPlusOffsetValue;		
-
-				pPageA->m_pvoUseUpperThresholdSelectable = &l_psvEdgeA->m_svUseUpperThresholdSelectable;		
-				pPageA->m_pvoUseUpperThresholdMaxMinusPercentDiff = &l_psvEdgeA->m_svUseUpperThresholdMaxMinusPercentDiff;		
-				pPageA->m_pvoUseUpperThresholdMaxMinusOffset = &l_psvEdgeA->m_svUseUpperThresholdMaxMinusOffset;		
-				pPageA->m_pvoUseUpperThresholdMinPlusOffset = &l_psvEdgeA->m_svUseUpperThresholdMinPlusOffset;		
-				pPageA->m_pvoUpperThresholdMaxMinusPercentDiff = &l_psvEdgeA->m_svUpperMaxMinusPercentDiffValue;		
-				pPageA->m_pvoUpperThresholdMaxMinusOffset = &l_psvEdgeA->m_svUpperMaxMinusOffsetValue;		
-				pPageA->m_pvoUpperThresholdMinPlusOffset = &l_psvEdgeA->m_svUpperMinPlusOffsetValue;
-				pPageA->m_pvoEdgeDirection = &l_psvEdgeA->m_svDirection;
-				pPageA->m_pvoEdgeSelect	= &l_psvEdgeA->m_svEdgeSelect;
-				pPageA->m_pvoEdgePolarisation	= &l_psvEdgeA->m_svPolarisation;
-				pPageA->m_pvoEdgeSelectThisValue = &l_psvEdgeA->m_svEdgeSelectThisValue;
-				pPageA->m_pvoEdgeIsFixedEdgeMarker = &l_psvEdgeA->m_svIsFixedEdgeMarker;
-				pPageA->m_pvoEdgePosition = &l_psvEdgeA->m_svPosition;
-				pPageA->m_pvoEdgePositionOffsetValue = &l_psvEdgeA->m_svPositionOffsetValue;
-				pPageA->m_pvoEdgeLowerThresholdValue = &l_psvEdgeA->m_svLowerThresholdValue;
-				pPageA->m_pvoEdgeUpperThresholdValue = &l_psvEdgeA->m_svUpperThresholdValue;
-
 				//set enable flags
-				pPageA->m_bEnableDirection = l_pAnalyzer->m_bEnableDirection;
-				pPageA->m_bEnableEdgeSelect = l_pAnalyzer->m_bEnableEdgeSelect;
-				pPageA->m_bEnablePolarisation= l_pAnalyzer->m_bEnablePolarisation;
-				pPageA->m_bEnablePosition	= l_pAnalyzer->m_bEnablePosition;
-				pPageA->m_bEnableThreshold = l_pAnalyzer->m_bEnableThreshold;
+				pPageA->m_bEnableDirection = pAnalyzer->m_bEnableDirection;
+				pPageA->m_bEnableEdgeSelect = pAnalyzer->m_bEnableEdgeSelect;
+				pPageA->m_bEnablePolarisation= pAnalyzer->m_bEnablePolarisation;
+				pPageA->m_bEnablePosition	= pAnalyzer->m_bEnablePosition;
+				pPageA->m_bEnableThreshold = pAnalyzer->m_bEnableThreshold;
 
-				measureDialog.AddPage( pPageA );
+				measureDialog.AddPage(pPageA);
 			}
 
-			if( nullptr != pPageB && nullptr != l_psvEdgeB )
+			if( nullptr != pPageB && nullptr != pEdgeB )
 			{
-				pPageB->m_pCurrentAnalyzer = l_pAnalyzer;
-				pPageB->SetNormalizer( l_pAnalyzer->m_svNormalizer );
+				pPageB->SetNormalizer( pAnalyzer->m_svNormalizer );
 				pPageB->m_bEdgeA = false;
 
-				pPageB->m_pvoUseLowerThresholdSelectable = &l_psvEdgeB->m_svUseLowerThresholdSelectable;
-				pPageB->m_pvoUseLowerThresholdMaxMinusPercentDiff = &l_psvEdgeB->m_svUseLowerThresholdMaxMinusPercentDiff;		
-				pPageB->m_pvoUseLowerThresholdMaxMinusOffset = &l_psvEdgeB->m_svUseLowerThresholdMaxMinusOffset;		
-				pPageB->m_pvoUseLowerThresholdMinPlusOffset = &l_psvEdgeB->m_svUseLowerThresholdMinPlusOffset;			
-				pPageB->m_pvoLowerThresholdMaxMinusPercentDiff = &l_psvEdgeB->m_svLowerMaxMinusPercentDiffValue;		
-				pPageB->m_pvoLowerThresholdMaxMinusOffset = &l_psvEdgeB->m_svLowerMaxMinusOffsetValue;		
-				pPageB->m_pvoLowerThresholdMinPlusOffset = &l_psvEdgeB->m_svLowerMinPlusOffsetValue;		
-
-				pPageB->m_pvoUseUpperThresholdSelectable = &l_psvEdgeB->m_svUseUpperThresholdSelectable;		
-				pPageB->m_pvoUseUpperThresholdMaxMinusPercentDiff = &l_psvEdgeB->m_svUseUpperThresholdMaxMinusPercentDiff;		
-				pPageB->m_pvoUseUpperThresholdMaxMinusOffset = &l_psvEdgeB->m_svUseUpperThresholdMaxMinusOffset;		
-				pPageB->m_pvoUseUpperThresholdMinPlusOffset = &l_psvEdgeB->m_svUseUpperThresholdMinPlusOffset;		
-				pPageB->m_pvoUpperThresholdMaxMinusPercentDiff = &l_psvEdgeB->m_svUpperMaxMinusPercentDiffValue;		
-				pPageB->m_pvoUpperThresholdMaxMinusOffset = &l_psvEdgeB->m_svUpperMaxMinusOffsetValue;		
-				pPageB->m_pvoUpperThresholdMinPlusOffset = &l_psvEdgeB->m_svUpperMinPlusOffsetValue;		
-
-				pPageB->m_pvoEdgeDirection = &l_psvEdgeB->m_svDirection;
-				pPageB->m_pvoEdgeSelect = &l_psvEdgeB->m_svEdgeSelect;
-				pPageB->m_pvoEdgePolarisation = &l_psvEdgeB->m_svPolarisation;
-				pPageB->m_pvoEdgeSelectThisValue = &l_psvEdgeB->m_svEdgeSelectThisValue;
-				pPageB->m_pvoEdgeIsFixedEdgeMarker = &l_psvEdgeB->m_svIsFixedEdgeMarker;
-				pPageB->m_pvoEdgePosition = &l_psvEdgeB->m_svPosition;
-				pPageB->m_pvoEdgePositionOffsetValue = &l_psvEdgeB->m_svPositionOffsetValue;
-				pPageB->m_pvoEdgeLowerThresholdValue = &l_psvEdgeB->m_svLowerThresholdValue;
-				pPageB->m_pvoEdgeUpperThresholdValue = &l_psvEdgeB->m_svUpperThresholdValue;
-
 				//set enable flags
-				pPageB->m_bEnableDirection = l_pAnalyzer->m_bEnableDirection;
-				pPageB->m_bEnableEdgeSelect = l_pAnalyzer->m_bEnableEdgeSelect;
-				pPageB->m_bEnablePolarisation = l_pAnalyzer->m_bEnablePolarisation;
-				pPageB->m_bEnablePosition = l_pAnalyzer->m_bEnablePosition;
-				pPageB->m_bEnableThreshold = l_pAnalyzer->m_bEnableThreshold;
+				pPageB->m_bEnableDirection = pAnalyzer->m_bEnableDirection;
+				pPageB->m_bEnableEdgeSelect = pAnalyzer->m_bEnableEdgeSelect;
+				pPageB->m_bEnablePolarisation = pAnalyzer->m_bEnablePolarisation;
+				pPageB->m_bEnablePosition = pAnalyzer->m_bEnablePosition;
+				pPageB->m_bEnableThreshold = pAnalyzer->m_bEnableThreshold;
 
-				measureDialog.AddPage( pPageB );
+				measureDialog.AddPage(pPageB);
 			}
-
-			BOOL l_bShowA = false;
-			BOOL l_bShowB = false;
-
-			l_pAnalyzer->m_svShowAllEdgeAOverlays.GetValue( l_bShowA );
-			l_pAnalyzer->m_svShowAllEdgeBOverlays.GetValue( l_bShowB );
 
 			if( IDOK == measureDialog.DoModal() )
 			{
-				// Make sure the persistance objects are updated.
+				// Make sure the persistence objects are updated.
 				pIPDoc->SetModifiedFlag();
 			}
 			else
 			{
-				l_Status = S_FALSE;
-			}
-
-			try
-			{
-				if( nullptr != l_pAnalyzer->m_svShowAllEdgeAOverlays.GetOwner() )
-				{
-					pInspection->AddInputRequest( &l_pAnalyzer->m_svShowAllEdgeAOverlays, l_bShowA );
-				}
-
-				if( nullptr != l_pAnalyzer->m_svShowAllEdgeBOverlays.GetOwner() )
-				{
-					pInspection->AddInputRequest( &l_pAnalyzer->m_svShowAllEdgeBOverlays, l_bShowB );
-				}
-
-				pInspection->AddInputRequestMarker();
-
-				SVGUID l_ToolId;
-				SVObjectClass* pTool = l_pAnalyzer->GetTool();
-				if( nullptr != pTool )
-				{
-					l_ToolId = pTool->GetUniqueObjectID();
-				}
-
-				SvPB::InspectionRunOnceRequest requestMessage;
-				requestMessage.mutable_inspectionid()->CopyFrom(SvPB::setGuidToMessage(pInspection->GetUniqueObjectID()));
-				requestMessage.mutable_taskid()->CopyFrom(SvPB::setGuidToMessage(l_ToolId));
-				l_Status = SvCmd::InspectionCommandsSynchronous(pInspection->GetUniqueObjectID(), &requestMessage, nullptr);
-			}
-			catch( ... )
-			{
 				l_Status = E_FAIL;
-				ASSERT( false );
 			}
 		}
 		else
@@ -721,16 +625,15 @@ HRESULT SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog( const SVGUID& p_
 	return l_Status;
 }
 
-HRESULT SVSetupDialogManager::SVLuminanceAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd )
+HRESULT SVSetupDialogManager::SVLuminanceAnalyzerClassSetupDialog( const SVGUID& rObjectId, CWnd* PParentWnd )
 {
 	HRESULT l_Status = S_OK;
 
-	SVLuminanceAnalyzerClass* l_pAnalyzer = dynamic_cast< SVLuminanceAnalyzerClass* >( SVObjectManagerClass::Instance().GetObject( p_rObjectId ) );
+	SVAnalyzerClass* pAnalyzer = dynamic_cast<SVAnalyzerClass*> (SVObjectManagerClass::Instance().GetObject( rObjectId ));
 	
-	if( nullptr != l_pAnalyzer )
+	if( nullptr != pAnalyzer && SvDef::SVLuminanceAnalyzerObjectType == pAnalyzer->GetObjectSubType())
 	{
-		SVLuminanceAnalyzerSetupClass dlg;
-		dlg.m_pAnalyzer = l_pAnalyzer;
+		SvOg::SVLuminanceAnalyzerDlg dlg{ pAnalyzer->GetInspection()->GetUniqueObjectID(), rObjectId };
 		dlg.DoModal();
 	}
 	else
@@ -741,29 +644,30 @@ HRESULT SVSetupDialogManager::SVLuminanceAnalyzerClassSetupDialog( const SVGUID&
 	return l_Status;
 }
 
-HRESULT SVSetupDialogManager::SVOCVAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd )
+HRESULT SVSetupDialogManager::SVOCVAnalyzerClassSetupDialog( const SVGUID& rObjectId, CWnd* PParentWnd )
 {
 	HRESULT l_Status = S_OK;
 
-	SVOCVAnalyzerClass* l_pAnalyzer = dynamic_cast< SVOCVAnalyzerClass* >( SVObjectManagerClass::Instance().GetObject( p_rObjectId ) );
+	SVOCVAnalyzerClass* pAnalyzer = dynamic_cast< SVOCVAnalyzerClass* >( SVObjectManagerClass::Instance().GetObject( rObjectId ) );
 	
-	if( nullptr != l_pAnalyzer )
+	if( nullptr != pAnalyzer )
 	{
-		SVOCVAnalyzeResultClass* pOCVResult = ( SVOCVAnalyzeResultClass* ) l_pAnalyzer->GetResultObject();
-		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(l_pAnalyzer->GetInspection());
+		SVOCVAnalyzeResultClass* pOCVResult = dynamic_cast<SVOCVAnalyzeResultClass*> (pAnalyzer->GetResultObject());
+		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(pAnalyzer->GetInspection());
 		
-		if( nullptr != pOCVResult && nullptr != pInspection )
+		if (nullptr != pOCVResult && nullptr != pInspection)
 		{
-			SVIPDoc* pIPDoc = nullptr;
-
-			if( nullptr != l_pAnalyzer->GetInspection() )
-			{
-				pIPDoc = TheSVObserverApp.GetIPDoc( l_pAnalyzer->GetInspection()->GetUniqueObjectID() );
-			}
-			SVOCVDialogClass dlg(pIPDoc, pOCVResult);
+			SvOg::SVOCVSheet dlg(pInspection->GetUniqueObjectID(), pOCVResult->GetUniqueObjectID());
 
 			if( IDOK == dlg.DoModal() )
 			{
+				SVIPDoc*pIPDoc = TheSVObserverApp.GetIPDoc(pInspection->GetUniqueObjectID());
+
+				if (nullptr != pIPDoc)
+				{
+					pIPDoc->SetModifiedFlag(true);
+				}
+
 				if ( TheSVOLicenseManager().HasMatroxIdentificationLicense() )
 				{
 					pOCVResult->LoadMatchString();
@@ -820,23 +724,24 @@ HRESULT SVSetupDialogManager::SVOCVAnalyzerClassSetupDialog( const SVGUID& p_rOb
 	return l_Status;
 }
 
-HRESULT SVSetupDialogManager::SVPixelAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* pParentWnd )
+HRESULT SVSetupDialogManager::SVPixelAnalyzerClassSetupDialog( const SVGUID& rObjectId, CWnd* pParentWnd )
 {
 	HRESULT l_Status = S_FALSE;
 
-	SVPixelAnalyzerClass* l_pAnalyzer = dynamic_cast< SVPixelAnalyzerClass* >( SVObjectManagerClass::Instance().GetObject( p_rObjectId ) );
+	SVPixelAnalyzerClass* pAnalyzer = dynamic_cast<SVPixelAnalyzerClass*> (SVObjectManagerClass::Instance().GetObject( rObjectId ));
 	
-	if( nullptr != l_pAnalyzer )
+	if( nullptr != pAnalyzer )
 	{
-		if( nullptr  != l_pAnalyzer->GetInspection() )
+		if( nullptr  != pAnalyzer->GetInspection() )
 		{
-			SVIPDoc* l_pIPDoc = TheSVObserverApp.GetIPDoc( l_pAnalyzer->GetInspection()->GetUniqueObjectID() );
+			const SVGUID& rInspectionID = pAnalyzer->GetInspection()->GetUniqueObjectID();
+			SVIPDoc* pIPDoc = TheSVObserverApp.GetIPDoc(rInspectionID);
 
-			if( nullptr != l_pIPDoc )
+			if( nullptr != pIPDoc )
 			{
-				l_pIPDoc->SetModifiedFlag();
+				pIPDoc->SetModifiedFlag();
 		
-				SVPixelAnalyzerSetupClass Dlg (l_pAnalyzer, pParentWnd);
+				SVPixelAnalyzerDlg Dlg(rInspectionID, rObjectId);
 				Dlg.DoModal();
 				l_Status = S_OK;
 			}
@@ -845,10 +750,10 @@ HRESULT SVSetupDialogManager::SVPixelAnalyzerClassSetupDialog( const SVGUID& p_r
 	return l_Status;
 }
 
-HRESULT SVSetupDialogManager::SVPatternAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* pParentWnd )
+HRESULT SVSetupDialogManager::SVPatternAnalyzerClassSetupDialog( const SVGUID& rObjectId, CWnd* pParentWnd )
 {
 	HRESULT l_Status = S_OK;
-	SVPatternAnalyzerClass* l_pAnalyzer = dynamic_cast< SVPatternAnalyzerClass* >( SVObjectManagerClass::Instance().GetObject( p_rObjectId ) );
+	SVPatternAnalyzerClass* l_pAnalyzer = dynamic_cast< SVPatternAnalyzerClass* >( SVObjectManagerClass::Instance().GetObject( rObjectId ) );
 
 	SVInspectionProcess* pInspection( nullptr );
 
@@ -859,17 +764,17 @@ HRESULT SVSetupDialogManager::SVPatternAnalyzerClassSetupDialog( const SVGUID& p
 		long lSpeedFactor[5] = { SVValueVeryLow, SVValueLow, SVValueMedium, SVValueHigh, SVValueVeryHigh };
 		int index;
 
-		SVPatAnalyzeSetupDlgSheet SetupDlgSheet("Pattern Analyzer Setup", pParentWnd);
+		SVPatAnalyzeSetupDlgSheet SetupDlgSheet(_T("Pattern Analyzer Setup"), pParentWnd);
 
 		SetupDlgSheet.m_psh.dwFlags |= PSH_NOAPPLYNOW;
 		// Pages on this sheet
-		SVPatModelPageClass ModelPage(l_pAnalyzer->GetInspection()->GetUniqueObjectID(), l_pAnalyzer->GetUniqueObjectID());
+		SvOg::SVPatternAnalyzerModelPage ModelPage(l_pAnalyzer->GetInspection()->GetUniqueObjectID(), l_pAnalyzer->GetUniqueObjectID());
 		SVPatGeneralPageClass GeneralPage;
 		SVPatAdvancedPageClass AdvancedPage;
 
 		// General page
-		l_pAnalyzer->msv_lpatMaxOccurances.GetValue(lParam); 
-		GeneralPage.m_nOccurances = (int)lParam;
+		l_pAnalyzer->msv_lpatMaxOccurances.GetValue(lParam);
+		GeneralPage.m_lOccurances = (int)lParam;
 		l_pAnalyzer->msv_dpatAcceptanceThreshold.GetValue(dParam);
 		GeneralPage.m_lAcceptance = (long)dParam;
 		l_pAnalyzer->msv_dpatCertaintyThreshold.GetValue(dParam); 
@@ -909,7 +814,7 @@ HRESULT SVSetupDialogManager::SVPatternAnalyzerClassSetupDialog( const SVGUID& p
 
 		double l_dInterpMode = 0;
 		l_pAnalyzer->msv_dpatAngleInterpolation.GetValue(l_dInterpMode);
-		GeneralPage.m_dInterpolationMode = static_cast<SVImageOperationTypeEnum>( static_cast<long>(l_dInterpMode) );
+		GeneralPage.m_dInterpolationMode = static_cast<SVImageOperationTypeEnum> (static_cast<long>(l_dInterpMode));
 
 		GeneralPage.m_pPatAnalyzer = l_pAnalyzer;
 
@@ -930,65 +835,45 @@ HRESULT SVSetupDialogManager::SVPatternAnalyzerClassSetupDialog( const SVGUID& p
 
 		if (IDOK == SetupDlgSheet.DoModal())
 		{
-			l_pAnalyzer->m_bAngleAccuracy = GeneralPage.m_bAccuracy?true:false;
+			l_pAnalyzer->m_bAngleAccuracy = GeneralPage.m_bAccuracy ? true : false;
 
-			try
+			//@TODO[gra][8.00][15.01.2018]: The data controller should be moved into the dialog
+			typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
+			typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
+			Controller Values{ SvOg::BoundValues{ pInspection->GetUniqueObjectID(), rObjectId } };
+			Values.Init();
+
+			// Save General Page
+			Values.Set<long>(SVpatMaxOccurancesObjectGuid, GeneralPage.m_lOccurances);
+			Values.Set<double>(SVpatAcceptThresholdObjectGuid, static_cast<double> (GeneralPage.m_lAcceptance));
+			Values.Set<double>(SVpatCertainThresholdObjectGuid, static_cast<double> (GeneralPage.m_lCertainty));
+			Values.Set<long>(SVpatAccuracyObjectGuid, lSpeedFactor[GeneralPage.m_nPosAccuracyIndex + 1]);
+			Values.Set<long>(SVpatSpeedObjectGuid, lSpeedFactor[GeneralPage.m_nSpeedIndex]);
+			Values.Set<bool>(SVpatSearchAngleModeObjectGuid, GeneralPage.m_bAngleSearch ? true : false);
+
+			if (GeneralPage.m_bAngleSearch)
 			{
-				// Do General Page
-				pInspection->AddInputRequest( &( l_pAnalyzer->msv_lpatMaxOccurances ), GeneralPage.m_nOccurances );
-				pInspection->AddInputRequest( &( l_pAnalyzer->msv_dpatAcceptanceThreshold ), GeneralPage.m_lAcceptance );
-				pInspection->AddInputRequest( &( l_pAnalyzer->msv_dpatCertaintyThreshold ), GeneralPage.m_lCertainty );
-				pInspection->AddInputRequest( &( l_pAnalyzer->msv_lpatAccuracy ), lSpeedFactor[GeneralPage.m_nPosAccuracyIndex + 1] );
-				pInspection->AddInputRequest( &( l_pAnalyzer->msv_lpatSpeed ), lSpeedFactor[GeneralPage.m_nSpeedIndex] );
-				pInspection->AddInputRequest( &( l_pAnalyzer->msv_bpatSearchAngleMode ), GeneralPage.m_bAngleSearch );
+				Values.Set<double>(SVpatSearchAngleObjectGuid, GeneralPage.m_dSearchAngle);
+				Values.Set<double>(SVpatAngleDeltaNegObjectGuid, GeneralPage.m_dAngleDeltaNegative);
+				Values.Set<double>(SVpatAngleDeltaPosObjectGuid, GeneralPage.m_dAngleDeltaPositive);
+				Values.Set<double>(SVpatAngleToleranceObjectGuid, GeneralPage.m_dAngleTolerance);
+				Values.Set<double>(SVpatAngleInterpolationObjectGuid, GeneralPage.m_dInterpolationMode);
 
-				// Do Advanced Page
-				pInspection->AddInputRequest( &( l_pAnalyzer->msv_lpatFastFind ), AdvancedPage.m_lFastFind );
-				pInspection->AddInputRequest( &( l_pAnalyzer->msv_lpatAdditionalCandidates), AdvancedPage.m_lAdditionalCandidates );
-				pInspection->AddInputRequest( &( l_pAnalyzer->msv_dpatCandidateSpacingXMin), AdvancedPage.m_dCandidateSpacingXMin );
-				pInspection->AddInputRequest( &( l_pAnalyzer->msv_dpatCandidateSpacingYMin), AdvancedPage.m_dCandidateSpacingYMin );
-				pInspection->AddInputRequest( &( l_pAnalyzer->msv_dpatPreliminaryAcceptanceThreshold), AdvancedPage.m_dPreliminaryAcceptanceThreshold );
-				pInspection->AddInputRequest( &( l_pAnalyzer->msv_lpatModelStep), AdvancedPage.m_lModelStep );
-				pInspection->AddInputRequest( &( l_pAnalyzer->msv_lpatBeginningResolutionLevel), AdvancedPage.m_lBeginningResolutionLevel );
-				pInspection->AddInputRequest( &( l_pAnalyzer->msv_lpatFinalResolutionLevel), AdvancedPage.m_lFinalResolutionLevel );
-
-				if (GeneralPage.m_bAngleSearch)
-				{
-					pInspection->AddInputRequest( &( l_pAnalyzer->msv_dpatSearchAngle ), GeneralPage.m_dSearchAngle);
-					pInspection->AddInputRequest( &( l_pAnalyzer->msv_dpatAngleDeltaNeg ), GeneralPage.m_dAngleDeltaNegative);
-					pInspection->AddInputRequest( &( l_pAnalyzer->msv_dpatAngleDeltaPos ), GeneralPage.m_dAngleDeltaPositive);
-					pInspection->AddInputRequest( &( l_pAnalyzer->msv_dpatAngleTolerance ), GeneralPage.m_dAngleTolerance );
-					if(l_pAnalyzer->m_bAngleAccuracy)
-					{
-						pInspection->AddInputRequest( &( l_pAnalyzer->msv_dpatAngleAccuracy ), GeneralPage.m_dAngularAccuracy);
-					}
-					else
-					{
-						pInspection->AddInputRequest( &( l_pAnalyzer->msv_dpatAngleAccuracy ), SVValueDisable );
-					}
-					pInspection->AddInputRequest( &( l_pAnalyzer->msv_dpatAngleInterpolation ), GeneralPage.m_dInterpolationMode );
-				}
-
-				pInspection->AddInputRequestMarker();
-
-				SVGUID l_ToolId;
-				SVObjectClass* pTool = l_pAnalyzer->GetTool();
-				if( nullptr != pTool )
-				{
-					l_ToolId = pTool->GetUniqueObjectID();
-				}
-
-				SvPB::InspectionRunOnceRequest requestMessage;
-				requestMessage.mutable_inspectionid()->CopyFrom(SvPB::setGuidToMessage(pInspection->GetUniqueObjectID()));
-				requestMessage.mutable_taskid()->CopyFrom(SvPB::setGuidToMessage(l_ToolId));
-				l_Status = SvCmd::InspectionCommandsSynchronous(pInspection->GetUniqueObjectID(), &requestMessage, nullptr);
+				double dAngleAccuracy = l_pAnalyzer->m_bAngleAccuracy ? GeneralPage.m_dAngularAccuracy : static_cast<double> (SVValueDisable);
+				Values.Set<double>(SVpatAngleAccuracyObjectGuid, dAngleAccuracy);
 			}
-			catch( ... )
-			{
-				l_Status = E_FAIL;
 
-				ASSERT( FALSE );
-			}
+			// Save Advanced Page
+			Values.Set<long>(SVpatFastFindObjectGuid, AdvancedPage.m_lFastFind);
+			Values.Set<long>(SVpatAdditionalCandidatesObjectGuid, AdvancedPage.m_lAdditionalCandidates);
+			Values.Set<double>(SVpatCandidateSpacingXMinObjectGuid, AdvancedPage.m_dCandidateSpacingXMin);
+			Values.Set<double>(SVpatCandidateSpacingYMinObjectGuid, AdvancedPage.m_dCandidateSpacingYMin);
+			Values.Set<double>(SVpatPreliminaryAcceptanceThresholdObjectGuid, AdvancedPage.m_dPreliminaryAcceptanceThreshold);
+			Values.Set<long>(SVpatModelStepObjectGuid, AdvancedPage.m_lModelStep);
+			Values.Set<long>(SVpatBeginningResolutionLevelObjectGuid, AdvancedPage.m_lBeginningResolutionLevel);
+			Values.Set<long>(SVpatFinalResolutionLevelObjectGuid, AdvancedPage.m_lFinalResolutionLevel);
+
+			Values.Commit();
 		}
 		else
 		{
@@ -1003,18 +888,18 @@ HRESULT SVSetupDialogManager::SVPatternAnalyzerClassSetupDialog( const SVGUID& p
 	return l_Status;
 }
 
-HRESULT SVSetupDialogManager::SVResultClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd )
+HRESULT SVSetupDialogManager::SVResultClassSetupDialog( const SVGUID& rObjectId, CWnd* pParentWnd )
 {
 	HRESULT l_Status = S_OK;
 
-	SVResultClass* l_pResult = dynamic_cast< SVResultClass* >( SVObjectManagerClass::Instance().GetObject( p_rObjectId ) );
+	SVResultClass* l_pResult = dynamic_cast<SVResultClass*> (SVObjectManagerClass::Instance().GetObject(rObjectId ));
 	
 	if( nullptr != l_pResult )
 	{
 		SVRangeClass* pRange = l_pResult->GetResultRange();
 		if( pRange )
 		{
-			RangeXDialogClass dlg( pRange, PParentWnd );
+			RangeXDialogClass dlg( pRange, pParentWnd );
 			if( IDOK != dlg.DoModal() )
 			{
 				l_Status = S_FALSE;

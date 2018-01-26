@@ -460,7 +460,7 @@ BOOL SVObjectScriptParserSVXClass::EvaluateOperandExpression( int OperandType, c
 			{
 				// ...using owner info...
 				SVObjectClass* pObject = nullptr;
-				if( SV_GUID_NULL != rOwnerInfo.getUniqueObjectID() )
+				if( GUID_NULL != rOwnerInfo.getUniqueObjectID() )
 				{
 					SVObjectManagerClass::Instance().GetObjectByDottedName( std::string(rExpressionStack.GetAt( riIndex )), pObject);
 				}
@@ -1444,7 +1444,7 @@ bool SVObjectScriptParserSVXClass::ReattachInputs( SVObjectClass* pObject, SVObj
 		SVObjectScriptOperandStruct& rOperand = rInputOperandList[i];
 
 		// Check if valid GUID type
-		if( rOperand.ValueSize() == sizeof( GUID ) && SV_GUID_NULL != *( ( GUID* ) rOperand.Value() ) )
+		if( rOperand.ValueSize() == sizeof( GUID ) && GUID_NULL != *( ( GUID* ) rOperand.Value() ) )
 		{
 			SVGUID inputGuid = *( ( GUID* ) rOperand.Value() );
 

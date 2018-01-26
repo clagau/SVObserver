@@ -126,7 +126,8 @@ public:
 	virtual const SvStl::MessageContainerVector& getResetErrorMessages() const override {return m_ResetErrorMessages;};
 	virtual const SvStl::MessageContainerVector& getRunErrorMessages() const override {return m_RunErrorMessages;};
 	virtual SvStl::MessageContainerVector getErrorMessages() const override;
-	virtual SvStl::MessageContainerVector validateAndSetEmmeddedValues(const SvOi::SetValueObjectPairVector& rValueVector, bool shouldSet) override;
+	virtual SvStl::MessageContainerVector validateAndSetEmbeddedValues(const SvOi::SetValueStructVector& rValueVector, bool shouldSet) override;
+	virtual SvStl::MessageContainerVector setEmbeddedDefaultValues(const SvOi::SetValueStructVector& rValueVector) override;
 	virtual void ResolveDesiredInputs(const SvDef::SVObjectTypeInfoVector& rDesiredInputs) override;
 	//************************************
 	//! Get the first task message
@@ -135,6 +136,7 @@ public:
 	virtual SvStl::MessageContainer getFirstTaskMessage() const override;
 	virtual void getSpecialImageList(SvDef::StringVector& rList) const override {};
 	virtual bool getSpecialImage(const std::string& rName, SvOi::SVImageBufferHandlePtr& rImagePtr) const override { return false; };
+	virtual SVGuidVector getEmbeddedList() const override;
 #pragma endregion virtual method (ITaskObject)
 
 #pragma region Methods to replace processMessage

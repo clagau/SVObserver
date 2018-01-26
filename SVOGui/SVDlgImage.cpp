@@ -51,8 +51,8 @@ namespace SvOg
 	END_MESSAGE_MAP()
 
 	SVDlgImageClass::SVDlgImageClass()
-		: m_inspectionId(SV_GUID_NULL)
-		, m_imageId(SV_GUID_NULL)
+		: m_inspectionId(GUID_NULL)
+		, m_imageId(GUID_NULL)
 	{
 		mbInit = false;
 		m_dZoomX = 1.0;
@@ -71,7 +71,7 @@ namespace SvOg
 
 	void SVDlgImageClass::UpdateImageInfo(const SVGUID& inspectionId, const SVGUID& imageId)
 	{
-		ASSERT(SV_GUID_NULL != inspectionId || SV_GUID_NULL != imageId);	// if no source image, must supply info & handle
+		ASSERT(GUID_NULL != inspectionId || GUID_NULL != imageId);	// if no source image, must supply info & handle
 
 		m_inspectionId = inspectionId;
 		m_imageId = imageId;

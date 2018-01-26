@@ -224,7 +224,7 @@ HRESULT SVObjectManagerClass::ConstructObject( const SVGUID& rClassID, GUID& rOb
 	}
 	else
 	{
-		rObjectID = SV_GUID_NULL;
+		rObjectID = GUID_NULL;
 
 		if( S_OK == Result )
 		{
@@ -305,7 +305,7 @@ HRESULT SVObjectManagerClass::GetObjectByDottedName( const std::string& rFullNam
 			Status = E_FAIL;
 		}
 
-		rObjectID = SV_GUID_NULL;
+		rObjectID = GUID_NULL;
 	}
 
 	return Status;
@@ -460,8 +460,8 @@ bool SVObjectManagerClass::CreateUniqueObjectID( SVObjectClass* pObject )
 					m_UniqueObjectEntries[ pUniqueObject->m_ObjectUID ] = pUniqueObject;
 
 					SvOl::DependencyManager::Instance().Add( pUniqueObject->m_ObjectUID );
-					SVGUID OwnerGuid = pObject->GetOwnerID();
-					if( SV_GUID_NULL != OwnerGuid && OwnerGuid != pUniqueObject->m_ObjectUID )
+					SVGUID OwnerGuid = pObject->GetParentID();
+					if( GUID_NULL != OwnerGuid && OwnerGuid != pUniqueObject->m_ObjectUID )
 					{
 						SvOl::DependencyManager::Instance().Connect( OwnerGuid, pUniqueObject->m_ObjectUID, SvOl::JoinType::Owner );
 					}
@@ -503,8 +503,8 @@ bool SVObjectManagerClass::OpenUniqueObjectID( SVObjectClass* pObject )
 					m_UniqueObjectEntries[ pUniqueObject->m_ObjectUID ] = pUniqueObject;
 
 					SvOl::DependencyManager::Instance().Add( pUniqueObject->m_ObjectUID );
-					SVGUID OwnerGuid = pObject->GetOwnerID();
-					if( SV_GUID_NULL != OwnerGuid && OwnerGuid != pUniqueObject->m_ObjectUID )
+					SVGUID OwnerGuid = pObject->GetParentID();
+					if( GUID_NULL != OwnerGuid && OwnerGuid != pUniqueObject->m_ObjectUID )
 					{
 						SvOl::DependencyManager::Instance().Connect( OwnerGuid, pUniqueObject->m_ObjectUID, SvOl::JoinType::Owner );
 					}
@@ -549,7 +549,7 @@ bool SVObjectManagerClass::CloseUniqueObjectID( SVObjectClass* pObject )
 
 bool SVObjectManagerClass::ChangeUniqueObjectID( SVObjectClass* pObject, const SVGUID& rNewGuid )
 {
-	if(	SV_GUID_NULL != rNewGuid && CloseUniqueObjectID( pObject ) )
+	if(	GUID_NULL != rNewGuid && CloseUniqueObjectID( pObject ) )
 	{
 		pObject->m_outObjectInfo.GetObjectReference().setGuid(rNewGuid);
 		bool bRetVal = OpenUniqueObjectID( pObject );
@@ -566,7 +566,7 @@ SVObjectClass* SVObjectManagerClass::GetObject( const SVGUID& rGuid ) const
 {
 	SVObjectClass* pObject = nullptr;
 	SVAutoLockAndReleaseTemplate< SVCriticalSection > AutoLock;
-	bool Result = ( SV_GUID_NULL != rGuid );
+	bool Result = ( GUID_NULL != rGuid );
 
 	if( Result && ReadWrite == m_State )
 	{

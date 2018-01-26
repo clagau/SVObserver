@@ -404,7 +404,7 @@ void SVCameraPage::OnDestroy()
 		::KillTimer(m_hWnd, m_timerID);
 		m_timerID = 0;
 	}
-	CDialog::OnDestroy();
+	CPropertyPage::OnDestroy();
 }
 
 

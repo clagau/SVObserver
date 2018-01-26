@@ -128,7 +128,7 @@ bool SVEnumerateValueObjectClass::SetEnumTypes( LPCTSTR szEnumList )
 				long lDummy = 0L;
 				if ( !EnumString.empty() && !GetEnumerator( EnumString.c_str(), lDummy ) )	// If this fails enumerator was unknown!
 				{
-					m_enumVector.push_back(SVEnumeratePair(EnumString, enumValue));
+					m_enumVector.push_back(SvOi::NameValuePair{ EnumString, enumValue });
 					enumValue++;
 				}
 				else
@@ -143,7 +143,7 @@ bool SVEnumerateValueObjectClass::SetEnumTypes( LPCTSTR szEnumList )
 			free( szList );
 		}
 
-		std::sort(m_enumVector.begin(), m_enumVector.end(), [](const SVEnumeratePair& rLhs, const SVEnumeratePair& rRhs) -> bool
+		std::sort(m_enumVector.begin(), m_enumVector.end(), [](const SvOi::NameValuePair& rLhs, const SvOi::NameValuePair& rRhs) -> bool
 		{
 			return rLhs.second < rRhs.second;
 		});
@@ -151,10 +151,10 @@ bool SVEnumerateValueObjectClass::SetEnumTypes( LPCTSTR szEnumList )
 	return bRetVal;
 }
 
-bool SVEnumerateValueObjectClass::SetEnumTypes( const SVEnumerateVector& rVec )
+bool SVEnumerateValueObjectClass::SetEnumTypes(const SvOi::NameValueVector& rEnumVector)
 {
 	//! Note the enums are not sorted
-	m_enumVector = rVec;
+	m_enumVector = rEnumVector;
 	return true;
 }
 
@@ -212,18 +212,6 @@ bool SVEnumerateValueObjectClass::GetEnumerator( LPCTSTR szEnumerator, long& rVa
 
 	return bRetVal;
 }
-
-#pragma region IVEnumerateValueObject
-SvOi::NameValueList SVEnumerateValueObjectClass::GetEnumList() const
-{
-	SvOi::NameValueList list;
-	for (auto const& rEntry : m_enumVector)
-	{
-		list.push_back(std::make_pair(rEntry.first.c_str(), rEntry.second));
-	}
-	return list;
-}
-#pragma endregion IVEnumerateValueObject
 
 /*static*/ bool SVEnumerateValueObjectClass::ToNumber(const std::string& rString, long& rValue)
 {
@@ -306,22 +294,6 @@ bool SVEnumerateValueObjectClass::GetEnumTypes( std::string& rEnumList ) const
 		rEnumList += rEntry.first + SvUl::Format( "=%d", rEntry.second );
 	}
 	return bRetVal;
-}
-
-HRESULT SVEnumerateValueObjectClass::GetVariantValue(_variant_t& rValue, int Index, int Bucket) const
-{
-	long Value;
-	HRESULT Result = GetValue(Value, Index, Bucket);
-	if( S_OK == Result )
-	{
-		rValue.SetString( ConvertType2String( Value ).c_str() );
-	}
-	else
-	{
-		rValue.Clear();
-	}
-
-	return Result;
 }
 
 long SVEnumerateValueObjectClass::ConvertString2Type( const std::string& rValue ) const

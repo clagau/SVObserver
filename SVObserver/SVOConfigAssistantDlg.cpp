@@ -350,7 +350,7 @@ void CSVOConfigAssistantDlg::OnSelchangeComboAvalSys()
 				(!SvTi::SVHardwareManifest::IsNonIOSVIM(l_ConfigurationType) && SvTi::SVHardwareManifest::IsNonIOSVIM(CurrentSvimType)))
 			{
 				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-				INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_Config_SwitchResetQuestion, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10138, SV_GUID_NULL, MB_YESNO);
+				INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_Config_SwitchResetQuestion, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10138, GUID_NULL, MB_YESNO);
 				if ( IDYES == result )
 				{
 					m_lConfigurationType = l_ConfigurationType;
@@ -361,7 +361,7 @@ void CSVOConfigAssistantDlg::OnSelchangeComboAvalSys()
 			else
 			{
 				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-				INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_Config_SwitchInvalidQuestion, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10139, SV_GUID_NULL, MB_YESNO);
+				INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_Config_SwitchInvalidQuestion, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10139, GUID_NULL, MB_YESNO);
 				if ( IDYES == result )
 				{
 					m_lConfigurationType = l_ConfigurationType;

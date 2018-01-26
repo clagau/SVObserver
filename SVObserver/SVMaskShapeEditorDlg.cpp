@@ -66,8 +66,12 @@ namespace	// file local
 #pragma endregion Declarations
 
 #pragma region Constructor
-SVMaskShapeEditorDlg::SVMaskShapeEditorDlg(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SVGUID& rMaskOperatorID, CWnd* pParent /*=nullptr*/)
+SVMaskShapeEditorDlg::SVMaskShapeEditorDlg(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SVGUID& rMaskOperatorID, const SVGUID& rShapeMaskHelperID, CWnd* pParent /*=nullptr*/)
 : CDialog(SVMaskShapeEditorDlg::IDD, pParent)
+, m_rInspectionID{ rInspectionID }
+, m_rTaskObjectID{ rTaskObjectID }
+, m_Values{ SvOg::BoundValues{ rInspectionID, rMaskOperatorID } }
+, m_ShapeHelperValues{ SvOg::BoundValues{ rInspectionID, rShapeMaskHelperID } }
 , m_sFillColor( _T( "" ) )
 , m_sCoordinates( _T( "" ) )
 , m_bAutoResize( FALSE )
@@ -79,8 +83,8 @@ SVMaskShapeEditorDlg::SVMaskShapeEditorDlg(const SVGUID& rInspectionID, const SV
 {
 	m_pThis = this;
 
-	m_pTool = dynamic_cast<SVToolClass *>(SvOi::getObject(rTaskObjectID));
-	m_pMask = dynamic_cast<SVUserMaskOperatorClass *>(SvOi::getObject(rMaskOperatorID));
+	m_pTool = dynamic_cast<SVToolClass*> (SvOi::getObject(rTaskObjectID));
+	m_pMask = dynamic_cast<SVUserMaskOperatorClass*> (SvOi::getObject(rMaskOperatorID));
 	
 	for (int i = 0; i < m_numberOfTabs; i++)
 	{
@@ -111,8 +115,13 @@ void SVMaskShapeEditorDlg::CheckPoint()
 
 void SVMaskShapeEditorDlg::Revert()
 {
-	AddInputRequest(m_cancelData);
-	RunOnce(m_pTool->GetUniqueObjectID());
+	for (auto const& rEntry : m_cancelData)
+	{
+		SVGUID EmbeddedID = rEntry.first.m_ObjectRef.getObject()->GetEmbeddedID();
+		m_ShapeHelperValues.Set<long>(EmbeddedID, static_cast<long> (rEntry.second));
+	}
+
+	m_ShapeHelperValues.Commit();
 }
 
 long SVMaskShapeEditorDlg::getSelectedTab() // BRW - This method should be const.
@@ -154,18 +163,26 @@ HRESULT SVMaskShapeEditorDlg::SetInspectionData()
 	SVInputRequestStructMap mapData;
 
 	SVMaskShape::MapType::iterator iter;
-	for ( iter = mapProperties.begin(); iter != mapProperties.end(); ++iter )
+	for (auto const& rEntry : mapProperties)
 	{
-		GUID guid = iter->first;
+		GUID guid = rEntry.first;
 		SVObjectClass* pObject = m_pMask->GetShapeHelper()->GetEmbeddedValueObject( guid );
 		if ( nullptr != dynamic_cast<SvOi::IValueObject*> (pObject) )
 		{
-			mapData[ SVObjectReference( pObject ) ] = _variant_t( iter->second.value );
+			mapData[ SVObjectReference( pObject ) ] = _variant_t( rEntry.second.value );
 		}
 	}
 
-	AddInputRequest( mapData );
-	RunOnce( m_pMask->GetTool()->GetUniqueObjectID() );
+	for (auto const& rEntry : mapData)
+	{
+		SVGUID EmbeddedID = rEntry.first.m_ObjectRef.getObject()->GetEmbeddedID();
+		m_ShapeHelperValues.Set<long>(EmbeddedID, static_cast<long> (rEntry.second));
+	}
+
+	m_ShapeHelperValues.Commit();
+	
+	//This needs to be called due to SetInspectionData being called by UpdateMask which has values set but not commited
+	m_Values.Commit();
 
 	return S_OK;
 }
@@ -188,17 +205,18 @@ void SVMaskShapeEditorDlg::DoDataExchange(CDataExchange* pDX)
 
 BOOL SVMaskShapeEditorDlg::OnInitDialog()
 {
-	// must set these before calling DoModal
-	ASSERT( nullptr != m_pTool );
-	ASSERT( nullptr != m_pMask );
+	CDialog::OnInitDialog();
 
-	// SVTaskObjectValueInterface requirement
-	SetTaskObject( m_pTool );
+	// must set these before calling DoModal
+	assert( nullptr != m_pTool );
+	assert( nullptr != m_pMask );
+
+	m_Values.Init();
+	m_ShapeHelperValues.Init();
 
 	bool l_bAutoResize = m_pMask->GetShapeHelper()->IsAutoResize();
 	m_bAutoResize = l_bAutoResize;
 
-	CDialog::OnInitDialog();
 
 	///////////////////////////////////////////////////////////////////////
 	// Create Property box
@@ -303,25 +321,26 @@ void SVMaskShapeEditorDlg::OnOK()
 
 	iSel = m_cbMaskShape.GetCurSel();
 	lValue = static_cast<long>( m_cbMaskShape.GetItemData( iSel ) );
-	AddInputRequest( SVObjectReference( &pShapeMaskHelper->m_Data.evoShapeType ), _variant_t(lValue) );
-
-	iSel = m_cbMaskOperator.GetCurSel();
-	lValue = static_cast<long>( m_cbMaskOperator.GetItemData( iSel ) );
-	AddInputRequest( SVObjectReference( &m_pMask->m_Data.evoCurrentMaskOperator ), _variant_t(lValue) );
+	m_ShapeHelperValues.Set<long>(pShapeMaskHelper->m_Data.evoShapeType.GetEmbeddedID(), lValue);
 
 	iSel = m_cbMaskArea.GetCurSel();
 	lValue = static_cast<long>( m_cbMaskArea.GetItemData( iSel ) );
-	AddInputRequest( SVObjectReference( &pShapeMaskHelper->m_Data.evoMaskArea ), _variant_t(lValue) );
+	m_ShapeHelperValues.Set<long>(pShapeMaskHelper->m_Data.evoMaskArea.GetEmbeddedID(), lValue);
+
+	lValue = static_cast<long> (m_eShapeType);
+	m_ShapeHelperValues.Set<long>(pShapeMaskHelper->m_Data.evoShapeType.GetEmbeddedID(), lValue);
+
+	iSel = m_cbMaskOperator.GetCurSel();
+	lValue = static_cast<long>( m_cbMaskOperator.GetItemData( iSel ) );
+	m_Values.Set<long>(m_pMask->m_Data.evoCurrentMaskOperator.GetEmbeddedID(), lValue);
 
 	iSel = m_cbFillOptions.GetCurSel();
 	lValue = static_cast<long>( m_cbFillOptions.GetItemData( iSel ) );
-	AddInputRequest( SVObjectReference( &m_pMask->m_Data.evoFillArea ), _variant_t(lValue) );
+	m_Values.Set<long>(m_pMask->m_Data.evoFillArea.GetEmbeddedID(), lValue);
 
 	lValue = atol(m_sFillColor);
-	AddInputRequest( SVObjectReference( &m_pMask->m_Data.lvoFillColor ), _variant_t(lValue) );
+	m_Values.Set<long>(m_pMask->m_Data.lvoFillColor.GetEmbeddedID(), lValue);
 
-	lValue = static_cast<long> (m_eShapeType);
-	AddInputRequest( SVObjectReference( &m_pMask->GetShapeHelper()->m_Data.evoShapeType ), _variant_t(lValue) );
 	SetInspectionData();
 
 	UpdateMask(true);
@@ -351,15 +370,14 @@ void SVMaskShapeEditorDlg::OnBtnFillColorMore()
 		COLORREF rgb = dlg.GetColor();
 		long FillColor = static_cast<long>( GetRValue(rgb) );
 		m_sFillColor = SvUl::AsString(FillColor).c_str();
-		UpdateData(FALSE);
+		UpdateData(false);
 
-		// stuff into value object
-		AddInputRequest( SVObjectReference( &m_pMask->m_Data.lvoFillColor ), _variant_t(FillColor) );
+		m_Values.Set<long>(m_pMask->m_Data.lvoFillColor.GetEmbeddedID(), FillColor);
 		UpdateMask();	// need to reset object for shape change
 	}
 	else
 	{
-		AddInputRequest( SVObjectReference( &m_pMask->m_Data.lvoFillColor ), _variant_t(lOriginalColor) );
+		m_Values.Set<long>(m_pMask->m_Data.lvoFillColor.GetEmbeddedID(), lOriginalColor);
 		UpdateMask();	// need to reset object for shape change
 	}
 }
@@ -387,7 +405,8 @@ void SVMaskShapeEditorDlg::OnSelChangeComboShape()
 
 		GetCurrentShape()->SetProperties( mapOldProperties ); // reuse common properties; any that don't apply will be ignored
 		GetCurrentShape()->SetAutoResize( TRUE == m_bAutoResize );
-		AddInputRequest( &m_pMask->GetShapeHelper()->m_Data.evoShapeType, SvUl::AsString(m_eShapeType).c_str() );
+
+		m_ShapeHelperValues.Set<long>(m_pMask->GetShapeHelper()->m_Data.evoShapeType.GetEmbeddedID(), static_cast<long> (m_eShapeType));
 		SetInspectionData();
 
 		UpdateMask(true);	// need to reset object for shape change
@@ -405,7 +424,7 @@ void SVMaskShapeEditorDlg::OnSelChangeComboMaskOperator()
 	if ( iSel != CB_ERR )
 	{
 		long lValue = static_cast<long>( m_cbMaskOperator.GetItemData( iSel ) );
-		AddInputRequest( SVObjectReference( &m_pMask->m_Data.evoCurrentMaskOperator ), _variant_t(lValue) );
+		m_Values.Set<long>(m_pMask->m_Data.evoCurrentMaskOperator.GetEmbeddedID(), lValue);
 
 		UpdateMask(true);
 		setImages();
@@ -422,7 +441,7 @@ void SVMaskShapeEditorDlg::OnSelChangeComboMaskArea()
 			( SVObjectManagerClass::Instance().GetObject(m_pMask->m_guidShapeHelper) );
 
 		long lValue = (long) m_cbMaskArea.GetItemData( iSel );
-		AddInputRequest( SVObjectReference( &pShapeMaskHelper->m_Data.evoMaskArea ), _variant_t(lValue) );
+		m_ShapeHelperValues.Set<long>(pShapeMaskHelper->m_Data.evoMaskArea.GetEmbeddedID(), lValue);
 
 		UpdateMask();
 		setImages();
@@ -436,7 +455,7 @@ void SVMaskShapeEditorDlg::OnSelChangeComboFillOptions()
 	if ( iSel != CB_ERR )
 	{
 		long lValue = static_cast<long>( m_cbFillOptions.GetItemData( iSel ) );
-		AddInputRequest( SVObjectReference( &m_pMask->m_Data.evoFillArea ), _variant_t(lValue) );
+		m_Values.Set<long>(m_pMask->m_Data.evoFillArea.GetEmbeddedID(), lValue);
 
 		UpdateMask();
 	}
@@ -446,14 +465,15 @@ void SVMaskShapeEditorDlg::OnChangeEditFillColor()
 {
 	UpdateData();
 	// stuff into value object
-	AddInputRequest( SVObjectReference( &m_pMask->m_Data.lvoFillColor ), _variant_t(atol( m_sFillColor )) );
+	m_Values.Set<long>(m_pMask->m_Data.lvoFillColor.GetEmbeddedID(), atol(m_sFillColor));
 	UpdateMask();	// need to reset object for shape change
 }
 
 void SVMaskShapeEditorDlg::OnCheckAutoResize()
 {
 	UpdateData();
-	AddInputRequest( SVObjectReference( &m_pMask->GetShapeHelper()->m_Data.bvoAutoResize ), _variant_t( m_bAutoResize ) );
+
+	m_ShapeHelperValues.Set<bool>(m_pMask->GetShapeHelper()->m_Data.bvoAutoResize.GetEmbeddedID(), m_bAutoResize ? true : false);
 	GetCurrentShape()->SetAutoResize( m_bAutoResize ? true : false ); // reuse common properties; any that don't apply will be ignored
 
 	UpdateMask(true);
@@ -512,7 +532,7 @@ void SVMaskShapeEditorDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult
 				assert( pObject );
 				if ( nullptr != dynamic_cast<SvOi::IValueObject*> (pObject) )
 				{
-					AddInputRequest( SVObjectReference( pObject ), _variant_t(lValue) );
+					m_ShapeHelperValues.Set<long>(pObject->GetEmbeddedID(), lValue);
 				}
 
 				if ( pCombo )
@@ -644,7 +664,7 @@ UINT_PTR CALLBACK SVMaskShapeEditorDlg::ColorDlgHookFn( HWND hdlg, UINT uiMsg, W
 			{
 				CString sText;
 				pWndRed->GetWindowText( sText );
-				m_pThis->AddInputRequest( SVObjectReference( &m_pThis->m_pMask->m_Data.lvoFillColor ), _variant_t( atol(sText) ) );
+				m_pThis->GetValues().Set<long>(m_pThis->m_pMask->m_Data.lvoFillColor.GetEmbeddedID(), atol(sText));
 				m_pThis->UpdateMask();
 			}
 			break;
@@ -669,7 +689,7 @@ int SVMaskShapeEditorDlg::GetPropertyID(GUID guidProperty )
 		do
 		{
 			id = (rand() % 15000) + ID_BASE; //@TODO:  Explain the use of rand() and the 15000.
-		} while ( SV_GUID_NULL != GetPropertyGuid(id) );
+		} while ( GUID_NULL != GetPropertyGuid(id) );
 
 		m_mapPropertyIds[ guidProperty ] = id;
 	}
@@ -686,7 +706,7 @@ GUID SVMaskShapeEditorDlg::GetPropertyGuid(int iPropertyID )
 			return iter->first;
 		}
 	}
-	return SV_GUID_NULL;
+	return GUID_NULL;
 }
 
 HRESULT SVMaskShapeEditorDlg::BuildPropertyList()

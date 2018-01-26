@@ -23,16 +23,11 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-	static const std::string GrayOnTag("GrayOn");
-	static const std::string IterationTag("Iteration");
-
 	SVThickeningFilterDlg::SVThickeningFilterDlg(const SVGUID& rInspectionID, const SVGUID& rFilterID, CWnd* pParent): 
 		CDialog(SVThickeningFilterDlg::IDD)
-		,m_filterID(rFilterID)
-		,m_rInspectionID(rInspectionID)
-		, m_Values(SvOg::BoundValues(rInspectionID, rFilterID, boost::assign::map_list_of
-			(GrayOnTag, SVThickeningFilterGrayOnGuid)
-			(IterationTag, SVThickeningFilterItterationsGuid)))
+		, m_filterID(rFilterID)
+		, m_rInspectionID(rInspectionID)
+		, m_Values{ SvOg::BoundValues{ rInspectionID, rFilterID } }
 	{
 		//{{AFX_DATA_INIT(SVThickeningFilterDlg)
 		m_bGrayScale = FALSE;
@@ -50,8 +45,8 @@ namespace SvOg
 
 		UpdateData( TRUE ); // get data from dialog
 
-		m_Values.Set<bool>(GrayOnTag, TRUE == m_bGrayScale);
-		m_Values.Set<long>(IterationTag, m_lIterations);
+		m_Values.Set<bool>(SVThickeningFilterGrayOnGuid, m_bGrayScale ? true : false);
+		m_Values.Set<long>(SVThickeningFilterItterationsGuid, m_lIterations);
 		m_Values.Commit();
 
 		UpdateData( FALSE );
@@ -81,8 +76,8 @@ namespace SvOg
 		CDialog::OnInitDialog();
 
 		m_Values.Init();
-		m_bGrayScale = m_Values.Get<bool>(GrayOnTag);
-		m_lIterations = m_Values.Get<long>(IterationTag);
+		m_bGrayScale = m_Values.Get<bool>(SVThickeningFilterGrayOnGuid);
+		m_lIterations = m_Values.Get<long>(SVThickeningFilterItterationsGuid);
 
 		UpdateData( FALSE );
 

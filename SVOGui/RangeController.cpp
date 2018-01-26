@@ -25,30 +25,16 @@
 
 namespace SvOg
 {
-	#pragma region Declarations
+#pragma region Declarations
 	const std::string RangeController::FailHigh = "FailHigh";
 	const std::string RangeController::FailLow = "FailLow";
 	const std::string RangeController::WarnHigh = "WarnHigh";
 	const std::string RangeController::WarnLow = "WarnLow";
-	static const std::string FailHighIndirect = "FailHighIndirect";
-	static const std::string FailLowIndirect = "FailLowIndirect";
-	static const std::string WarnHighIndirect = "WarnHighIndirect";
-	static const std::string WarnLowIndirect = "WarnLowIndirect";
-	#pragma endregion Declarations
+#pragma endregion Declarations
 
 	RangeController::RangeController(const GUID& rInspectionID, const GUID& rTaskObjectID)
-	: m_InspectionID(rInspectionID)
-	, m_TaskObjectID(rTaskObjectID)
-	, m_directRangeValues(SvOg::BoundValues(rInspectionID, rTaskObjectID, boost::assign::map_list_of
-							(FailHigh, SVRangeClassFailHighObjectGuid)
-							(FailLow, SVRangeClassFailLowObjectGuid)
-							(WarnHigh, SVRangeClassWarnHighObjectGuid)
-							(WarnLow, SVRangeClassWarnLowObjectGuid)))
-	, m_indirectRangeValues(SvOg::BoundValues(rInspectionID, rTaskObjectID, boost::assign::map_list_of
-							(FailHighIndirect, SVRangeClassFailHighIndirectObjectGuid)
-							(WarnHighIndirect, SVRangeClassWarnHighIndirectObjectGuid)
-							(FailLowIndirect, SVRangeClassFailLowIndirectObjectGuid)
-							(WarnLowIndirect, SVRangeClassWarnLowIndirectObjectGuid)))
+		: m_rInspectionID(rInspectionID)
+		, m_rTaskObjectID(rTaskObjectID)
 	{
 	}
 
@@ -58,14 +44,30 @@ namespace SvOg
 
 	void RangeController::Init()
 	{
-		m_directRangeValues.Init();
-		m_indirectRangeValues.Init();
+		SvDef::SVObjectTypeInfoStruct ObjectInfo;
+		ObjectInfo.ObjectType = SvDef::SVRangeObjectType;
+		ObjectInfo.SubType = SvDef::SVNotSetSubObjectType;
+		SvOi::IObjectClass* pTool = SvOi::getObject(m_rTaskObjectID);
+		if (nullptr != pTool)
+		{
+			SvOi::IObjectClass* pRange = pTool->getFirstObject(ObjectInfo);
+			if (nullptr != pRange)
+			{
+				m_pRangeValues = std::unique_ptr<Controller>(new Controller{ SvOg::BoundValues{ m_rInspectionID, pRange->GetUniqueObjectID() } });
+				if (nullptr != m_pRangeValues)
+				{
+					m_pRangeValues->Init();
+				}
+			}
+		}
 	}
 
 	void RangeController::Commit()
 	{
-		m_indirectRangeValues.Commit();
-		m_directRangeValues.Commit(true);
+		if (nullptr != m_pRangeValues)
+		{
+			m_pRangeValues->Commit(SvOg::doResetRunOnce);
+		}
 	}
 
 	std::string RangeController::Get(const std::string& rName) const
@@ -74,34 +76,34 @@ namespace SvOg
 		// Check if indirect is empty
 		if (rName == FailHigh)
 		{
-			value = GetIndirectValue(FailHighIndirect);
+			value = GetIndirectValue(SVRangeClassFailHighIndirectObjectGuid);
 			if (value.empty())
 			{
-				value = GetDirectValue(FailHigh);
+				value = GetDirectValue(SVRangeClassFailHighObjectGuid);
 			}
 		}
 		else if (rName == FailLow)
 		{
-			value = GetIndirectValue(FailLowIndirect);
+			value = GetIndirectValue(SVRangeClassFailLowIndirectObjectGuid);
 			if (value.empty())
 			{
-				value = GetDirectValue(FailLow);
+				value = GetDirectValue(SVRangeClassFailLowObjectGuid);
 			}
 		}
 		else if (rName == WarnHigh)
 		{
-			value = GetIndirectValue(WarnHighIndirect);
+			value = GetIndirectValue(SVRangeClassWarnHighIndirectObjectGuid);
 			if (value.empty())
 			{
-				value = GetDirectValue(WarnHigh);
+				value = GetDirectValue(SVRangeClassWarnHighObjectGuid);
 			}
 		}
 		else if (rName == WarnLow)
 		{
-			value = GetIndirectValue(WarnLowIndirect);
+			value = GetIndirectValue(SVRangeClassWarnLowIndirectObjectGuid);
 			if (value.empty())
 			{
-				value = GetDirectValue(WarnLow);
+				value = GetDirectValue(SVRangeClassWarnLowObjectGuid);
 			}
 		}
 		else
@@ -122,48 +124,48 @@ namespace SvOg
 		{
 			if (isNumeric(rValue))
 			{
-				SetIndirectValue(FailHighIndirect, std::string());
-				SetDirectValue(FailHigh, rValue);
+				SetIndirectValue(SVRangeClassFailHighIndirectObjectGuid, std::string());
+				SetDirectValue(SVRangeClassFailHighObjectGuid, rValue);
 			}
 			else
 			{
-				SetIndirectValue(FailHighIndirect, rValue);
+				SetIndirectValue(SVRangeClassFailHighIndirectObjectGuid, rValue);
 			}
 		}
 		else if (rName == FailLow)
 		{
 			if (isNumeric(rValue))
 			{
-				SetIndirectValue(FailLowIndirect, std::string());
-				SetDirectValue(FailLow, rValue);
+				SetIndirectValue(SVRangeClassFailLowIndirectObjectGuid, std::string());
+				SetDirectValue(SVRangeClassFailLowObjectGuid, rValue);
 			}
 			else
 			{
-				SetIndirectValue(FailLowIndirect, rValue);
+				SetIndirectValue(SVRangeClassFailLowIndirectObjectGuid, rValue);
 			}
 		}
 		else if (rName == WarnHigh)
 		{
 			if (isNumeric(rValue))
 			{
-				SetIndirectValue(WarnHighIndirect, std::string());
-				SetDirectValue(WarnHigh, rValue);
+				SetIndirectValue(SVRangeClassWarnHighIndirectObjectGuid, std::string());
+				SetDirectValue(SVRangeClassWarnHighObjectGuid, rValue);
 			}
 			else
 			{
-				SetIndirectValue(WarnHighIndirect, rValue);
+				SetIndirectValue(SVRangeClassWarnHighIndirectObjectGuid, rValue);
 			}
 		}
 		else if (rName == WarnLow)
 		{
 			if (isNumeric(rValue))
 			{
-				SetIndirectValue(WarnLowIndirect, std::string());
-				SetDirectValue(WarnLow, rValue);
+				SetIndirectValue(SVRangeClassWarnLowIndirectObjectGuid, std::string());
+				SetDirectValue(SVRangeClassWarnLowObjectGuid, rValue);
 			}
 			else
 			{
-				SetIndirectValue(WarnLowIndirect, rValue);
+				SetIndirectValue(SVRangeClassWarnLowIndirectObjectGuid, rValue);
 			}
 		}
 		else
@@ -172,30 +174,36 @@ namespace SvOg
 		}
 	}
 
-	std::string RangeController::GetIndirectValue(const std::string& rName) const
+	std::string RangeController::GetIndirectValue(const GUID& rEmbeddedID) const
 	{
-		_bstr_t value = m_indirectRangeValues.Get<_bstr_t>(rName);
+		_bstr_t value = m_pRangeValues->Get<_bstr_t>(rEmbeddedID);
 		return std::string(static_cast<LPCSTR>(value));
 	}
 
-	std::string RangeController::GetDirectValue(const std::string& rName) const
+	std::string RangeController::GetDirectValue(const GUID& rEmbeddedID) const
 	{
-		double value = m_directRangeValues.Get<double>(rName);
+		double value = m_pRangeValues->Get<double>(rEmbeddedID);
 		std::stringstream ss;
 		ss.precision(6);
 		ss << std::fixed << value;
 		return ss.str();
 	}
 
-	void RangeController::SetIndirectValue(const std::string& rName, const std::string& rValue)
+	void RangeController::SetIndirectValue(const GUID& rEmbeddedID, const std::string& rValue)
 	{
-		m_indirectRangeValues.Set<LPCSTR>(rName, rValue.c_str());
+		if (nullptr != m_pRangeValues)
+		{
+			m_pRangeValues->Set<LPCSTR>(rEmbeddedID, rValue.c_str());
+		}
 	}
 
-	void RangeController::SetDirectValue(const std::string& rName, const std::string& rValue)
+	void RangeController::SetDirectValue(const GUID& rEmbeddedID, const std::string& rValue)
 	{
-		double value = boost::lexical_cast<double>(rValue);
-		m_directRangeValues.Set<double>(rName, value);
+		if (nullptr != m_pRangeValues)
+		{
+			double value = boost::lexical_cast<double>(rValue);
+			m_pRangeValues->Set<double>(rEmbeddedID, value);
+		}
 	}
 
 	std::string RangeController::GetOwnerName() const
@@ -204,8 +212,8 @@ namespace SvOg
 		typedef SvCmd::GetObjectName Command;
 		typedef std::shared_ptr<Command> CommandPtr;
 
-		CommandPtr commandPtr(new Command(m_TaskObjectID));
-		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+		CommandPtr commandPtr(new Command(m_rTaskObjectID));
+		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_rInspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
 		{
@@ -221,8 +229,8 @@ namespace SvOg
 		typedef SvCmd::GetObjectName Command;
 		typedef std::shared_ptr<Command> CommandPtr;
 
-		CommandPtr commandPtr(new Command(m_InspectionID));
-		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+		CommandPtr commandPtr(new Command(m_rInspectionID));
+		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_rInspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
 		{
@@ -237,8 +245,8 @@ namespace SvOg
 		typedef SvCmd::GetPPQObjectName Command;
 		typedef std::shared_ptr<Command> CommandPtr;
 
-		CommandPtr commandPtr(new Command(m_InspectionID));
-		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+		CommandPtr commandPtr(new Command(m_rInspectionID));
+		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_rInspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
 		{
@@ -256,15 +264,15 @@ namespace SvOg
 	{
 		std::string InspectionName = GetInspectionName();
 
-		const std::string& FailHighIndirectValue = GetIndirectValue(FailHighIndirect);
-		const std::string& FailLowIndirectValue = GetIndirectValue(FailLowIndirect);
-		const std::string& WarnHighIndirectValue = GetIndirectValue(WarnHighIndirect);
-		const std::string& WarnLowIndirectValue = GetIndirectValue(WarnLowIndirect);
-		double FailHighValue = m_directRangeValues.Get<double>(FailHigh);
-		double FailLowValue = m_directRangeValues.Get<double>(FailLow);
-		double WarnHighValue = m_directRangeValues.Get<double>(WarnHigh);
-		double WarnLowValue = m_directRangeValues.Get<double>(WarnLow);
+		const std::string& FailHighIndirectValue = GetIndirectValue(SVRangeClassFailHighIndirectObjectGuid);
+		const std::string& FailLowIndirectValue = GetIndirectValue(SVRangeClassFailLowIndirectObjectGuid);
+		const std::string& WarnHighIndirectValue = GetIndirectValue(SVRangeClassWarnHighIndirectObjectGuid);
+		const std::string& WarnLowIndirectValue = GetIndirectValue(SVRangeClassWarnLowIndirectObjectGuid);
+		double FailHighValue = m_pRangeValues->Get<double>(SVRangeClassFailHighObjectGuid);
+		double FailLowValue = m_pRangeValues->Get<double>(SVRangeClassFailLowObjectGuid);
+		double WarnHighValue = m_pRangeValues->Get<double>(SVRangeClassWarnHighObjectGuid);
+		double WarnLowValue = m_pRangeValues->Get<double>(SVRangeClassWarnLowObjectGuid);
 
-		RangeValidator::Validate(InspectionName, FailHighIndirectValue, FailLowIndirectValue, WarnHighIndirectValue, WarnLowIndirectValue, FailHighValue, FailLowValue, WarnHighValue, WarnLowValue, m_InspectionID);
+		RangeValidator::Validate(InspectionName, FailHighIndirectValue, FailLowIndirectValue, WarnHighIndirectValue, WarnLowIndirectValue, FailHighValue, FailLowValue, WarnHighValue, WarnLowValue, m_rInspectionID);
 	}
 } //namespace SvOg

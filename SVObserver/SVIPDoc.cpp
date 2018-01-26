@@ -89,7 +89,6 @@
 #include "ExtrasEngine.h"
 #include "TextDefinesSvO.h"
 #include "SVShiftTool.h"
-#include "SVShiftToolUtility.h"
 #include "RingBufferTool.h"
 #include "SVOGui/NoSelector.h"
 #include "SVOGui/GlobalSelector.h"

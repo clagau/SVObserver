@@ -25,15 +25,10 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-	static LPCSTR PathNameTag = "PathName";
-	static LPCSTR ContinuousReloadTag = "ContinuousReload";
-
-	SVToolAdjustmentDialogFileImageSourcePageClass::SVToolAdjustmentDialogFileImageSourcePageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID) 
-	: CPropertyPage( SVToolAdjustmentDialogFileImageSourcePageClass::IDD )
-	, m_ImageController(rInspectionID, rTaskObjectID)
-	, m_Values(SvOg::BoundValues(rInspectionID, rTaskObjectID, boost::assign::map_list_of
-		(PathNameTag, SVPathNameObjectGuid)
-		(ContinuousReloadTag, SVContinuousReloadObjectGuid)))
+	SVToolAdjustmentDialogFileImageSourcePageClass::SVToolAdjustmentDialogFileImageSourcePageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID)
+		: CPropertyPage(SVToolAdjustmentDialogFileImageSourcePageClass::IDD)
+		, m_ImageController(rInspectionID, rTaskObjectID)
+		, m_Values{ SvOg::BoundValues{ rInspectionID, rTaskObjectID } }
 	{
 		//{{AFX_DATA_INIT(SVToolAdjustmentDialogFileImageSourcePageClass)
 		m_PathName = _T("");
@@ -50,7 +45,7 @@ namespace SvOg
 		HRESULT hr = S_OK;
 
 		SetData();
-		hr = m_Values.Commit(true);
+		hr = m_Values.Commit(SvOg::doResetRunOnce);
 		m_Values.Init(); // because we want to show C:\run and not C:\Images, etc...
 		GetData();
 
@@ -65,8 +60,8 @@ namespace SvOg
 
 	void SVToolAdjustmentDialogFileImageSourcePageClass::GetData()
 	{
-		m_PathName = m_Values.Get<CString>(PathNameTag);
-		m_BContinuousReload = m_Values.Get<bool>(ContinuousReloadTag);
+		m_PathName = m_Values.Get<CString>(SVPathNameObjectGuid);
+		m_BContinuousReload = m_Values.Get<bool>(SVContinuousReloadObjectGuid);
 		UpdateData(false); // Set data to dialog
 	}
 
@@ -78,9 +73,9 @@ namespace SvOg
 		CString name = m_svfncImageSourceFile.GetFullFileName().c_str();
 		if (!name.IsEmpty())
 		{
-			m_Values.Set<CString>(PathNameTag, name);
+			m_Values.Set<CString>(SVPathNameObjectGuid, name);
 		}
-		m_Values.Set<bool>(ContinuousReloadTag, m_BContinuousReload  ? true : false);
+		m_Values.Set<bool>(SVContinuousReloadObjectGuid, m_BContinuousReload  ? true : false);
 	}
 
 	void SVToolAdjustmentDialogFileImageSourcePageClass::DoDataExchange(CDataExchange* pDX)

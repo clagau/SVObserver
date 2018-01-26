@@ -17,6 +17,7 @@
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
 #include "SVOGui\PictureDisplay.h"
 #include "SVMFCControls\AvailableObjectListComboBox.h"
+#include "SVMFCControls\SVEnumerateCombo.h"
 #include "SVOGui\ImageController.h"
 #include "SVOGui\BoundValue.h"
 #include "SVOGui\ValuesAccessor.h"
@@ -32,7 +33,7 @@ class SVToolAdjustmentDialogMaskPageClass : public CPropertyPage
 	typedef SvOg::DataController<Values, Values::value_type> ValueController;
 
 public:
-	SVToolAdjustmentDialogMaskPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID);
+	SVToolAdjustmentDialogMaskPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SVGUID& rMaskOperatorID);
 	virtual ~SVToolAdjustmentDialogMaskPageClass();
 
 protected:
@@ -79,15 +80,15 @@ protected:
 	CButton	m_btnEditStaticMask;
 	CButton	m_btnEditShapeMask;
 	CEdit m_ebFillColor;
-	CComboBox m_cbFillOptions;
+	SvMc::SVEnumerateComboClass m_cbFillOptions;
 	CButton	m_btnFillColorMore;
 	SvMc::AvailableObjectListComboBox m_cbAvailableSourceImageList;
-	CComboBox m_cbMaskOperator;
+	SvMc::SVEnumerateComboClass m_cbMaskOperator;
 	SvOg::PictureDisplay m_dialogImage;
 	BOOL m_bActivateMask;
 	int m_iMaskType;
 	CString	m_sFillColor;
-	CComboBox m_DrawCriteriaCombo;
+	SvMc::SVEnumerateComboClass m_DrawCriteriaCombo;
 	//}}AFX_DATA
 
 	SvMc::CSVMaskEditor* m_pMaskEditorCtl;
@@ -100,15 +101,10 @@ private:
 	void SetupFillAreaComboBox();
 	void SetupDrawCriteriaCombo();
 
-	void SetupComboBoxes();
 	void SetupImageMaskCombo();
 	void ShowControls(int iMaskType);
 	void setImages();
-	void SetData();
-	void GetData();
 
-	void RefreshComboBox(const CString& rValue, CComboBox& rComboBox); 
-	
 	void RetreiveCurrentlySelectedImageNames();
 	void RetreiveResultImageNames();
 

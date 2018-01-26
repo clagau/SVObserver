@@ -8,88 +8,160 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <boost/noncopyable.hpp>
-//Moved to precompiled header: #include <boost/any.hpp>
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <string>
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <guiddef.h>
-#include "Definitions/SVObjectTypeInfoStruct.h"
 #pragma endregion Includes
 
 namespace SvOg
 {
+	enum PostAction
+	{
+		doNothing = 0,
+		doRunOnce,
+		doReset,
+		doResetRunOnce
+	};
+
 	class BoundValue
 	{
-	private:
-		GUID m_embeddedID; // maybe use SVObjectTypeInfo instead ?
-		GUID m_instanceID;
-		SvDef::SVObjectTypeInfoStruct m_ownerInfo; // to access an object within the hierarchy owned at a certain level
-		mutable boost::any m_value;
-		bool m_bReadOnly;
-		mutable bool m_bModified;
-
+#pragma region Constructor
 	public:
-		BoundValue() : m_embeddedID(GUID_NULL), m_instanceID(GUID_NULL), m_bReadOnly(false), m_bModified(false) {} // for map...
+		BoundValue() {};
+		BoundValue(const GUID& rEmbeddedID, const GUID& rInstanceID, const variant_t& rValue, const variant_t& rDefaultValue)
+			: m_embeddedID(rEmbeddedID), m_instanceID(rInstanceID), m_Value(rValue), m_DefaultValue(rDefaultValue) {}
 			
-		BoundValue(const GUID& rEmbeddedID, bool bReadOnly = false) 
-		: m_embeddedID(rEmbeddedID), m_instanceID(GUID_NULL), m_bReadOnly(bReadOnly), m_bModified(false) {}
+		~BoundValue() { }
+	#pragma endregion Constructor
 
-		BoundValue(const GUID& rEmbeddedID, const SvDef::SVObjectTypeInfoStruct& ownerInfo, bool bReadOnly = false) 
-		: m_embeddedID(rEmbeddedID), m_instanceID(GUID_NULL), m_ownerInfo(ownerInfo), m_bReadOnly(bReadOnly), m_bModified(false) {}
+	#pragma region Public Methods
+	public:
+		const variant_t& GetDefaultValue() const { return m_DefaultValue; }
+		const variant_t& GetValue() const { return m_Value; }
+		int GetArrayIndex() const { return m_ArrayIndex; }
 
-		BoundValue(const GUID& rEmbeddedID, const GUID& rInstanceID, const boost::any& value, const SvDef::SVObjectTypeInfoStruct& ownerInfo, bool bReadOnly = false) 
-		: m_embeddedID(rEmbeddedID), m_instanceID(rInstanceID),  m_value(value), m_ownerInfo(ownerInfo), m_bReadOnly(bReadOnly), m_bModified(false) {}
-			
-		~BoundValue() { m_value.clear(); }
+		void SetDefaultValue(const variant_t& rDefaultValue)
+		{
+			if (rDefaultValue != m_DefaultValue)
+			{
+				m_DefaultValue = rDefaultValue;
+				m_bDefaultModified = true;
+			}
+		}
 
-		const boost::any& GetValue() const { return m_value; }
-		void SetValue(const boost::any& value) const { m_value = value; m_bModified = true; }
+		void SetValue(const variant_t& rValue, int ArrayIndex = -1)
+		{
+			if (rValue != m_Value)
+			{
+				m_Value = rValue;
+				m_ArrayIndex = ArrayIndex;
+				m_bModified = true;
+			}
+		}
 
 		const GUID& GetEmbeddedID() const { return m_embeddedID; }
 		const GUID& GetObjectID() const { return m_instanceID; }
-		const SvDef::SVObjectTypeInfoStruct& GetOwnerInfo() const { return m_ownerInfo; }
 
-		bool isReadOnly() const { return m_bReadOnly; }
 		bool isModified() const { return m_bModified; }
+		bool isDefaultModified() const { return m_bDefaultModified; }
 		//Need to make this const to be able to clear the flag in other const methods
 		void ClearModified() const { m_bModified = false; }
+		void ClearArrayIndex() const { m_ArrayIndex = -1; }
+		void ClearDefaultModified() const { m_bModified = false; }
+#pragma endregion Public Methods
+
+	#pragma region Member Variables
+	private:
+		GUID m_embeddedID{ GUID_NULL };
+		GUID m_instanceID{ GUID_NULL };
+		variant_t m_DefaultValue;
+		variant_t m_Value;
+		mutable bool m_bModified{ false };
+		mutable bool m_bDefaultModified{ false };
+		mutable int m_ArrayIndex{ -1 };
+#pragma endregion Member Variables
 	};
 
 	class BoundValues
 	{
 	public:
-		typedef std::map<std::string, BoundValue> Container;
+		typedef std::map<GUID, BoundValue> Container;
 		typedef Container::iterator iterator;
 		typedef Container::const_iterator const_iterator;
 		typedef Container::value_type value_type;
+		typedef Container::key_type key_type;
 		typedef Container::mapped_type mapped_type;
 
-		BoundValues() : m_inspectionID(GUID_NULL), m_ownerID(GUID_NULL) {}
-		BoundValues(const GUID& inspectionID, const GUID& ownerID, const Container& values)
-		: m_inspectionID(inspectionID), m_ownerID(ownerID), m_values(values) {}
-		~BoundValues() { m_values.clear(); }
+	#pragma region Constructor
+	public:
+		BoundValues(const GUID& rInspectionID, const GUID& rTaskID, bool ReadOnly = false)
+			: m_inspectionID(rInspectionID), m_TaskID(rTaskID), m_ReadOnly{ ReadOnly } {}
+		~BoundValues() {}
 
-		const GUID& GetOwnerID() const { return m_ownerID; }
+		BoundValues() = delete;
+	#pragma endregion Constructor
+
+	#pragma region Public Methods
+	public:
+		Container::_Pairib insert(const key_type& rKey, const mapped_type& rMapped) { return m_values.insert(value_type(rKey, rMapped)); }
+		mapped_type& operator[](const key_type& rKey) { return m_values[rKey]; }
+
+		const GUID& GetTaskID() const { return m_TaskID; };
 		const GUID& GetInspectionID() const { return m_inspectionID; }
 
-		void SetValue(const std::string& name, const BoundValue& value) { m_values[name].SetValue(value); }
-		void SetValue(const std::string& name, const boost::any& value) { m_values[name].SetValue(value); }
+		variant_t GetDefaultValue(const GUID& rEmbeddedID) const
+		{
+			Container::const_iterator it = m_values.find(rEmbeddedID);
+			if (m_values.end() != it)
+			{
+				return it->second.GetDefaultValue();
+			}
+			return variant_t();
+		}
 
-		const boost::any& GetValue(const std::string& name) const 
-		{ 
-			Container::const_iterator it = m_values.find(name); 
-			if (it != m_values.end()) 
+		variant_t GetValue(const GUID& rEmbeddedID) const
+		{
+			Container::const_iterator it = m_values.find(rEmbeddedID);
+			if (m_values.end() != it)
 			{
 				return it->second.GetValue();
 			}
-			throw std::out_of_range(name.c_str()); 
+			return variant_t();
 		}
 
-		GUID GetObjectID(const std::string& name) const 
-		{ 
+		bool SetDefaultValue(const GUID& rEmbeddedID, const variant_t& rDefaultValue)
+		{
+			if (!m_ReadOnly)
+			{
+				Container::iterator it = m_values.find(rEmbeddedID);
+				if (m_values.end() != it)
+				{
+					it->second.SetDefaultValue(rDefaultValue);
+					return true;
+				}
+			}
+			return false;
+		}
+
+		bool SetValue(const GUID& rEmbeddedID, const variant_t& rValue, int ArrayIndex = -1)
+		{
+			if (!m_ReadOnly)
+			{
+				Container::iterator it = m_values.find(rEmbeddedID);
+				if (m_values.end() != it)
+				{
+					it->second.SetValue(rValue, ArrayIndex);
+					return true;
+				}
+			}
+			return false;
+		}
+
+		GUID GetObjectID(const GUID& rEmbeddedID) const
+		{
 			GUID objectID = GUID_NULL;
-			Container::const_iterator it = m_values.find(name);
+			Container::const_iterator it = m_values.find(rEmbeddedID);
 			if (it != m_values.end())
 			{
 				objectID = it->second.GetObjectID();
@@ -101,10 +173,14 @@ namespace SvOg
 		iterator end() { return m_values.end(); }
 		const_iterator begin() const { return m_values.begin(); }
 		const_iterator end() const { return m_values.end(); }
+	#pragma endregion Public Methods
 
+	#pragma region Member Variables
 	private:
 		Container m_values;
-		GUID m_ownerID;
-		GUID m_inspectionID;
+		GUID m_inspectionID{ GUID_NULL };
+		GUID m_TaskID{ GUID_NULL };
+		bool m_ReadOnly{ false };
+	#pragma endregion Member Variables
 	};
 } //namespace SvOg

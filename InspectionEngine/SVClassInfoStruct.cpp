@@ -27,7 +27,7 @@ static char THIS_FILE[] = __FILE__;
 ////////////////////////////////////////////////////////////////////////////////
 SVClassInfoStruct::SVClassInfoStruct()
 {
-	m_ClassId = SV_GUID_NULL;
+	m_ClassId = GUID_NULL;
 }
 
 SVClassInfoStruct::SVClassInfoStruct( const SVClassInfoStruct& rRhs )

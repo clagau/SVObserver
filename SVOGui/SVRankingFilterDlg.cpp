@@ -25,78 +25,24 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-	static const std::string WidthTag("Width");
-	static const std::string HeidghtTag("Height");
-	static const std::string RankValueTag("RankValue");
-	static const std::string CellValueTag("CellValue");
+	static const std::vector<GUID> CellValueGuidList
+	{
+		SVRankingFilterCell01Guid, SVRankingFilterCell02Guid, SVRankingFilterCell03Guid, SVRankingFilterCell04Guid, SVRankingFilterCell05Guid,
+		SVRankingFilterCell06Guid, SVRankingFilterCell07Guid, SVRankingFilterCell08Guid, SVRankingFilterCell09Guid, SVRankingFilterCell10Guid,
+		SVRankingFilterCell11Guid, SVRankingFilterCell12Guid, SVRankingFilterCell13Guid, SVRankingFilterCell14Guid, SVRankingFilterCell15Guid,
+		SVRankingFilterCell16Guid, SVRankingFilterCell17Guid, SVRankingFilterCell18Guid, SVRankingFilterCell19Guid, SVRankingFilterCell20Guid,
+		SVRankingFilterCell21Guid, SVRankingFilterCell22Guid, SVRankingFilterCell23Guid, SVRankingFilterCell24Guid, SVRankingFilterCell25Guid,
+		SVRankingFilterCell26Guid, SVRankingFilterCell27Guid, SVRankingFilterCell28Guid, SVRankingFilterCell29Guid, SVRankingFilterCell30Guid,
+		SVRankingFilterCell31Guid, SVRankingFilterCell32Guid, SVRankingFilterCell33Guid, SVRankingFilterCell34Guid, SVRankingFilterCell35Guid,
+		SVRankingFilterCell36Guid, SVRankingFilterCell37Guid, SVRankingFilterCell38Guid, SVRankingFilterCell39Guid, SVRankingFilterCell40Guid,
+		SVRankingFilterCell41Guid, SVRankingFilterCell42Guid, SVRankingFilterCell43Guid, SVRankingFilterCell44Guid, SVRankingFilterCell45Guid,
+		SVRankingFilterCell46Guid, SVRankingFilterCell47Guid, SVRankingFilterCell48Guid, SVRankingFilterCell49Guid
+	};
 
-	static const std::vector<std::string> CellValueTagList = 
-		boost::assign::list_of(CellValueTag+"1") (CellValueTag+"2") (CellValueTag+"3") (CellValueTag+"4") (CellValueTag+"5") (CellValueTag+"6") (CellValueTag+"7")
-								(CellValueTag+"8")  (CellValueTag+"9")  (CellValueTag+"10") (CellValueTag+"11") (CellValueTag+"12") (CellValueTag+"13") (CellValueTag+"14")
-								(CellValueTag+"15") (CellValueTag+"16") (CellValueTag+"17") (CellValueTag+"18") (CellValueTag+"19") (CellValueTag+"20") (CellValueTag+"21")
-								(CellValueTag+"22") (CellValueTag+"23") (CellValueTag+"24") (CellValueTag+"25") (CellValueTag+"26") (CellValueTag+"27") (CellValueTag+"28")
-								(CellValueTag+"29") (CellValueTag+"30") (CellValueTag+"31") (CellValueTag+"32") (CellValueTag+"33") (CellValueTag+"34") (CellValueTag+"35")
-								(CellValueTag+"36") (CellValueTag+"37") (CellValueTag+"38") (CellValueTag+"39") (CellValueTag+"40") (CellValueTag+"41") (CellValueTag+"42")
-								(CellValueTag+"43") (CellValueTag+"44") (CellValueTag+"45") (CellValueTag+"46") (CellValueTag+"47") (CellValueTag+"48") (CellValueTag+"49");
-
-	/////////////////////////////////////////////////////////////////////////////
-	// SVRankingFilterDlg dialog
 	SVRankingFilterDlg::SVRankingFilterDlg(const SVGUID& rInspectionID, const SVGUID& rFilterID, CWnd* pParent) : CDialog(SVRankingFilterDlg::IDD, pParent)
 		,m_filterID(rFilterID)
 		,m_rInspectionID(rInspectionID)
-		, m_Values(SvOg::BoundValues(rInspectionID, rFilterID, boost::assign::map_list_of
-		(WidthTag, SVRankingFilterRankingWidthGuid)
-		(HeidghtTag, SVRankingFilterRankingHeightGuid)
-		(RankValueTag, SVRankingFilterRankingRankGuid)
-		(CellValueTagList[0],  SVRankingFilterCell01Guid)
-		(CellValueTagList[1],  SVRankingFilterCell02Guid)
-		(CellValueTagList[2],  SVRankingFilterCell03Guid)
-		(CellValueTagList[3],  SVRankingFilterCell04Guid)
-		(CellValueTagList[4],  SVRankingFilterCell05Guid)
-		(CellValueTagList[5],  SVRankingFilterCell06Guid)
-		(CellValueTagList[6],  SVRankingFilterCell07Guid)
-		(CellValueTagList[7],  SVRankingFilterCell08Guid)
-		(CellValueTagList[8],  SVRankingFilterCell09Guid)
-		(CellValueTagList[9],  SVRankingFilterCell10Guid)
-		(CellValueTagList[10], SVRankingFilterCell11Guid)
-		(CellValueTagList[11], SVRankingFilterCell12Guid)
-		(CellValueTagList[12], SVRankingFilterCell13Guid)
-		(CellValueTagList[13], SVRankingFilterCell14Guid)
-		(CellValueTagList[14], SVRankingFilterCell15Guid)
-		(CellValueTagList[15], SVRankingFilterCell16Guid)
-		(CellValueTagList[16], SVRankingFilterCell17Guid)
-		(CellValueTagList[17], SVRankingFilterCell18Guid)
-		(CellValueTagList[18], SVRankingFilterCell19Guid)
-		(CellValueTagList[19], SVRankingFilterCell20Guid)
-		(CellValueTagList[20], SVRankingFilterCell21Guid)
-		(CellValueTagList[21], SVRankingFilterCell22Guid)
-		(CellValueTagList[22], SVRankingFilterCell23Guid)
-		(CellValueTagList[23], SVRankingFilterCell24Guid)
-		(CellValueTagList[24], SVRankingFilterCell25Guid)
-		(CellValueTagList[25], SVRankingFilterCell26Guid)
-		(CellValueTagList[26], SVRankingFilterCell27Guid)
-		(CellValueTagList[27], SVRankingFilterCell28Guid)
-		(CellValueTagList[28], SVRankingFilterCell29Guid)
-		(CellValueTagList[29], SVRankingFilterCell30Guid)
-		(CellValueTagList[30], SVRankingFilterCell31Guid)
-		(CellValueTagList[31], SVRankingFilterCell32Guid)
-		(CellValueTagList[32], SVRankingFilterCell33Guid)
-		(CellValueTagList[33], SVRankingFilterCell34Guid)
-		(CellValueTagList[34], SVRankingFilterCell35Guid)
-		(CellValueTagList[35], SVRankingFilterCell36Guid)
-		(CellValueTagList[36], SVRankingFilterCell37Guid)
-		(CellValueTagList[37], SVRankingFilterCell38Guid)
-		(CellValueTagList[38], SVRankingFilterCell39Guid)
-		(CellValueTagList[39], SVRankingFilterCell40Guid)
-		(CellValueTagList[40], SVRankingFilterCell41Guid)
-		(CellValueTagList[41], SVRankingFilterCell42Guid)
-		(CellValueTagList[42], SVRankingFilterCell43Guid)
-		(CellValueTagList[43], SVRankingFilterCell44Guid)
-		(CellValueTagList[44], SVRankingFilterCell45Guid)
-		(CellValueTagList[45], SVRankingFilterCell46Guid)
-		(CellValueTagList[46], SVRankingFilterCell47Guid)
-		(CellValueTagList[47], SVRankingFilterCell48Guid)
-		(CellValueTagList[48], SVRankingFilterCell49Guid)))
+		, m_Values{ SvOg::BoundValues{ rInspectionID, rFilterID } }
 	{
 		//{{AFX_DATA_INIT(SVRankingFilterDlg)
 		m_lRankingWidth = 3;
@@ -119,9 +65,9 @@ namespace SvOg
 
 		UpdateData( TRUE ); // get data from dialog
 
-		m_Values.Set<long>(WidthTag, m_lRankingWidth);
-		m_Values.Set<long>(HeidghtTag, m_lRankingHeight);
-		m_Values.Set<long>(RankValueTag, m_lRankingRank);
+		m_Values.Set<long>(SVRankingFilterRankingWidthGuid, m_lRankingWidth);
+		m_Values.Set<long>(SVRankingFilterRankingHeightGuid, m_lRankingHeight);
+		m_Values.Set<long>(SVRankingFilterRankingRankGuid, m_lRankingRank);
 
 		for( long j = 0; S_OK == l_hrOk && j < m_lRankingWidth; j++ )
 		{
@@ -130,11 +76,11 @@ namespace SvOg
 				long l_lKernelIndex = k * m_lRankingWidth + j;
 				long l_lDialogIndex = ( k + ( ( 7 - m_lRankingHeight ) / 2 ) ) * 7 + ( j + ( ( 7 - m_lRankingWidth ) / 2 ) );
 
-				m_Values.Set<long>( CellValueTagList[l_lKernelIndex], m_lRankingCells[ l_lDialogIndex ] );
+				m_Values.Set<long>( CellValueGuidList[l_lKernelIndex], m_lRankingCells[ l_lDialogIndex ] );
 			}// end for
 		}// end for
 
-		m_Values.Commit(true);
+		m_Values.Commit(SvOg::doResetRunOnce);
 
 		UpdateData( FALSE );
 
@@ -178,15 +124,15 @@ namespace SvOg
 		
 		m_Values.Init();
 		
-		m_lRankingWidth = m_Values.Get<long>(WidthTag);
+		m_lRankingWidth = m_Values.Get<long>(SVRankingFilterRankingWidthGuid);
 		Temp = SvUl::Format( "%d", m_lRankingWidth );
 		m_ctlRankingWidth.SelectString( -1, Temp.c_str() );
 
-		m_lRankingHeight = m_Values.Get<long>(HeidghtTag);
+		m_lRankingHeight = m_Values.Get<long>(SVRankingFilterRankingHeightGuid);
 		Temp = SvUl::Format( "%d", m_lRankingHeight );
 		m_ctlRankingHeight.SelectString( -1, Temp.c_str() );
 
-		m_lRankingRank = m_Values.Get<long>(RankValueTag);
+		m_lRankingRank = m_Values.Get<long>(SVRankingFilterRankingRankGuid);
 		m_ctlRankingRank.SetCurSel(m_lRankingRank);
 
 		EnableCells();
@@ -197,7 +143,7 @@ namespace SvOg
 			{
 				long l_lKernelIndex = i * m_lRankingWidth + h;
 				long l_lDialogIndex = ( i + ( ( 7 - m_lRankingHeight ) / 2 ) ) * 7 + ( h + ( ( 7 - m_lRankingWidth ) / 2 ) );
-				long lValue = m_Values.Get<long>(CellValueTagList[l_lKernelIndex]);
+				long lValue = m_Values.Get<long>(CellValueGuidList[l_lKernelIndex]);
 				m_lRankingCells[ l_lDialogIndex ] = ( lValue == 1 ? 1 : 0 );
 			}// end for
 		}// end for

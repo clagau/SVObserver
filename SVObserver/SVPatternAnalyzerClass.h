@@ -52,7 +52,7 @@ public:
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 	virtual void getSpecialImageList(SvDef::StringVector& rList) const override;
 	virtual bool getSpecialImage(const std::string& rName, SvOi::SVImageBufferHandlePtr& rImagePtr) const override;
-	virtual SvStl::MessageContainerVector validateAndSetEmmeddedValues(const SvOi::SetValueObjectPairVector& rValueVector, bool shouldSet) override;
+	virtual SvStl::MessageContainerVector validateAndSetEmbeddedValues(const SvOi::SetValueStructVector& rValueVector, bool shouldSet) override;
 	
 protected:
 	/// Reload model from file and restore the pattern.
@@ -91,7 +91,7 @@ private:
 	/// Get new Value for "use dont Care" if in ValueVector or get the current value.
 	/// \param rValueVector [in] Vector of new values.
 	/// \returns bool "Use dont Care"-Value
-	bool getNewUseDontCareValue(const SvOi::SetValueObjectPairVector &rValueVector);
+	bool getNewUseDontCareValue(const SvOi::SetValueStructVector &rValueVector);
 
 	/// Check if a new "dont care" filename is in the list and if the file correct.
 	/// \param rValueVector [in] Vector of new values.
@@ -99,7 +99,7 @@ private:
 	/// \param rDontCareHeight [out] Height of the new image or the current image if this value is not in the vector.
 	/// \param rMessages [out] Vector of errors.
 	/// \returns bool True if the value should be set and the image should reloaded from file.
-	bool validateNewDontCareFileName(const SvOi::SetValueObjectPairVector &rValueVector, long& rDontCareWidth, long& rDontCareHeight, SvStl::MessageContainerVector& rMessages);
+	bool validateNewDontCareFileName(const SvOi::SetValueStructVector &rValueVector, long& rDontCareWidth, long& rDontCareHeight, SvStl::MessageContainerVector& rMessages);
 
 	/// Check if a new model filename is in the list and if the file correct.
 	/// \param rValueVector [in] Vector of new values.
@@ -107,7 +107,7 @@ private:
 	/// \param rDontCareHeight [out] Height of the new image or the current image if this value is not in the vector.
 	/// \param rMessages [out] Vector of errors.
 	/// \returns bool True if the value should be set and the image should reloaded from file.
-	bool validateNewModelFileName(const SvOi::SetValueObjectPairVector &rValueVector, long& rModelWidth, long& rModelHeight, SvStl::MessageContainerVector &messages);
+	bool validateNewModelFileName(const SvOi::SetValueStructVector &rValueVector, long& rModelWidth, long& rModelHeight, SvStl::MessageContainerVector &messages);
 
 	/// Check if the size of the model, and if dont care is use also the size of this, is valid.
 	/// \param pErrorMessages [in, out] Fill the error message if invalid data found.

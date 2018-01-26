@@ -3567,20 +3567,20 @@ void SVConfigurationObject::SaveObjectAttributesSet(SvXml::SVObjectXMLWriter &rW
 		if (AttributeSetTypes.end() != Iter)
 		{
 			rWriter.StartElement(Iter->second.c_str());
-			SVGUID ArrayGuid{ SV_GUID_NULL };
+			SVGUID ArrayGuid{ GUID_NULL };
 			std::string ArrayIndexList;
 			int StartIndex{ -1 };
 			int EndIndex{ -1 };
 			for (auto const& rObjectRef : rEntry.second)
 			{
 				//!If previous object is an array and new object is different then we need to save the array values
-				if (SV_GUID_NULL != ArrayGuid && rObjectRef.Guid() != ArrayGuid)
+				if (GUID_NULL != ArrayGuid && rObjectRef.Guid() != ArrayGuid)
 				{
 					ArrayIndexList += (StartIndex == EndIndex) ? SvUl::Format(_T("%d,"), StartIndex) : SvUl::Format(_T("%d-%d,"), StartIndex, EndIndex);
 					_variant_t Value{ ArrayIndexList.c_str() };
 					rWriter.WriteAttribute(scUniqueReferenceIDTag, Value);
 
-					ArrayGuid = SV_GUID_NULL;
+					ArrayGuid = GUID_NULL;
 					StartIndex = -1;
 					EndIndex = -1;
 					ArrayIndexList.clear();
@@ -3594,7 +3594,7 @@ void SVConfigurationObject::SaveObjectAttributesSet(SvXml::SVObjectXMLWriter &rW
 				else
 				{
 					//If an array element then bundle the zero based indexes in the format 2-15,20,25-30 etc..
-					if (SV_GUID_NULL == ArrayGuid)
+					if (GUID_NULL == ArrayGuid)
 					{
 						ArrayGuid = rObjectRef.Guid();
 						ArrayIndexList = ArrayGuid.ToString();
@@ -3617,7 +3617,7 @@ void SVConfigurationObject::SaveObjectAttributesSet(SvXml::SVObjectXMLWriter &rW
 				}
 			}
 			//! Last object is of array then we need to save the object
-			if (SV_GUID_NULL != ArrayGuid)
+			if (GUID_NULL != ArrayGuid)
 			{
 				ArrayIndexList += (StartIndex == EndIndex) ? SvUl::Format(_T("%d,"), StartIndex) : SvUl::Format(_T("%d-%d,"), StartIndex, EndIndex);
 				_variant_t Value{ ArrayIndexList.c_str() };
@@ -4614,7 +4614,7 @@ HRESULT SVConfigurationObject::GetRemoteInputItems( const SVNameSet& p_rNames, S
 	return l_Status;
 }
 
-HRESULT SVConfigurationObject::SetInspectionItems( const SVNameStorageMap& p_rItems, SVNameStatusMap& p_rStatus )
+HRESULT SVConfigurationObject::SetInspectionItems(const SVNameStorageMap& p_rItems, SVNameStatusMap& p_rStatus, bool RunOnce)
 {
 	typedef std::map<std::string, SVInspectionProcess*> SVInspectionMap;
 
@@ -4792,7 +4792,7 @@ HRESULT SVConfigurationObject::SetInspectionItems( const SVNameStorageMap& p_rIt
 			}
 		}
 
-		if( !l_Online )
+		if( !l_Online && RunOnce )
 		{
 			for( SVInspectionMap::iterator l_InspectionIter = l_Inspections.begin(); l_InspectionIter != l_Inspections.end(); ++l_InspectionIter )
 			{
@@ -4985,7 +4985,7 @@ HRESULT SVConfigurationObject::SetCameraItems( const SVNameStorageMap& rItems, S
 						{
 							LoopStatus = pValueObject->setValue(Iter->second.m_Variant);
 
-							SVVirtualCamera* pVirtualCamera = dynamic_cast< SVVirtualCamera* > (pValueObject->GetOwner());
+							SVVirtualCamera* pVirtualCamera = dynamic_cast< SVVirtualCamera* > (pValueObject->GetParent());
 							if( nullptr != pVirtualCamera )
 							{
 								CamerasChanged.insert(pVirtualCamera);
@@ -5404,7 +5404,7 @@ HRESULT SVConfigurationObject::LoadMonitoredObjectList( SVTreeType& rTree, SVTre
 				SvStl::MessageMgrStd Exception(MsgType);
 				SvDef::StringVector msgList;
 				msgList.push_back(Name);
-				INT_PTR DlgResult = Exception.setMessage(SVMSG_SVO_106_MONITOR_LIST_OBJECT_MISSING, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams), 0, SV_GUID_NULL, MB_YESNO);
+				INT_PTR DlgResult = Exception.setMessage(SVMSG_SVO_106_MONITOR_LIST_OBJECT_MISSING, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GUID_NULL, MB_YESNO);
 				if (SvStl::LogAndDisplay == MsgType && IDNO == DlgResult)
 				{
 					rList.clear();
@@ -5440,7 +5440,7 @@ HRESULT SVConfigurationObject::LoadGlobalConstants( SVTreeType& rTree )
 			std::string GlobalConstantName( rTree.getBranchName( hChild ) );
 
 			_variant_t Value;
-			SVGUID UniqueID(SV_GUID_NULL);
+			SVGUID UniqueID(GUID_NULL);
 			std::string Description;
 
 			if ( S_OK == Result )

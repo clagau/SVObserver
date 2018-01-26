@@ -57,40 +57,13 @@ BEGIN_MESSAGE_MAP(SVExternalToolInputSelectPage, CPropertyPage)
     ON_NOTIFY(PTN_ITEMBUTTONCLICK, IDC_INPUT_LIST_TREE, OnItemButtonClick)
 END_MESSAGE_MAP()
 
-std::string getInputValueTag(int index)
-{
-	return SvUl::Format(_T("InputValue%d"), index);
-}
-
-std::string getInputValueLinkTag(int index)
-{
-	return SvUl::Format(_T("InputValueLink%d"), index);
-}
-
-std::string getInputNameTag(int index)
-{
-	return SvUl::Format(_T("InputName%d"), index);
-}
-
-std::map<std::string, SvOg::BoundValue> createValueMap()
-{
-	std::map<std::string, SvOg::BoundValue> retValue;
-	for (int i = 0; i < COUNT_OF_INPUT_OUTPUT_GUIDs; i++)
-	{
-		retValue[getInputValueTag(i)] = aInputObjectGUID[i];
-		retValue[getInputValueLinkTag(i)] = aInputObject_LinkedGUID[i];
-		retValue[getInputNameTag(i)] = aInputObjectNameGuid[i];
-	}
-	return retValue;
-}
-
 
 SVExternalToolInputSelectPage::SVExternalToolInputSelectPage( LPCTSTR Title, const SVGUID& rInspectionID, const SVGUID& rToolObjectID, const SVGUID& rTaskObjectID, int id )
 : CPropertyPage( id )
 , m_InspectionID( rInspectionID )
 , m_ToolObjectID( rToolObjectID )
 , m_TaskObjectID( rTaskObjectID )
-, m_Values(SvOg::BoundValues(rInspectionID, rTaskObjectID, createValueMap() ))
+, m_Values{ SvOg::BoundValues{ rInspectionID, rTaskObjectID } }
 {
 	SVObjectClass* pObject = nullptr;
 	SVObjectManagerClass::Instance().GetObjectByIdentifier(m_TaskObjectID, pObject);
@@ -210,7 +183,7 @@ BOOL SVExternalToolInputSelectPage::OnInitDialog()
 			pEdit->SetCtrlID( iID );
 
 			// display name like: "Input 01 (Translation-X)"
-			std::string sLabel = SvUl::Format( _T("%s (%s)"), m_Values.GetName(getInputValueTag(i)).c_str(), m_Values.Get<CString>(getInputNameTag(i)) );
+			std::string sLabel = SvUl::Format( _T("%s (%s)"), m_Values.GetName(aInputObjectGUID[i]).c_str(), m_Values.Get<CString>(aInputObjectNameGuid[i]) );
 			pEdit->SetLabelText( sLabel.c_str() );
 
 			std::string Type;
@@ -227,10 +200,10 @@ BOOL SVExternalToolInputSelectPage::OnInitDialog()
 			Description = _T(" (Type : ") + Type +_T(")  ") + Description;
 			pEdit->SetInfoText( Description.c_str() ) ;
 
-			std::string Value(m_Values.Get<CString>(getInputValueLinkTag(i)));
+			std::string Value(m_Values.Get<CString>(aInputObject_LinkedGUID[i]));
 			if (Value.empty())
 			{
-				Value = m_Values.Get<CString>(getInputValueTag(i));
+				Value = m_Values.Get<CString>(aInputObjectGUID[i]);
 			}
 			pEdit->SetItemValue( Value.c_str() );
 			pEdit->OnRefresh();
@@ -380,7 +353,7 @@ void SVExternalToolInputSelectPage::OnOK()
 
 					std::string Value;
 					pItem->GetItemValue(Value);
-					m_Values.Set<CString>(getInputValueTag(iIndex), Value.c_str());
+					m_Values.Set<CString>(aInputObjectGUID[iIndex], Value.c_str());
 				}
 
 				pItem = pItem->GetSibling();
@@ -388,7 +361,7 @@ void SVExternalToolInputSelectPage::OnOK()
 			pGroup = pGroup->GetSibling();
 		}
 		m_Tree.SaveState( m_pTask->m_Data.m_PropTreeState );
-		m_Values.Commit(true);
+		m_Values.Commit(SvOg::doResetRunOnce);
 		CPropertyPage::OnOK();
 	}
 }

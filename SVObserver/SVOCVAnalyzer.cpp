@@ -13,10 +13,6 @@
 #include "SVAnalyzerResultDlg.h"
 #include "SVOCVAnalyzerResult.h"
 #include "SVOCVAnalyzer.h"
-#include "SVOCVDialog.h"
-#include "SVInspectionProcess.h"
-#include "SVToolSet.h"
-#include "InspectionEngine/SVTool.h"
 #include "SVOLicenseManager.h"
 
 #ifdef _DEBUG
@@ -51,12 +47,12 @@ void SVOCVAnalyzerClass::init()
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVAnalyzerObjectType;
 	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVOCVAnalyzerObjectType;
 
-	SVOCVAnalyzeResultClass* pAnalyzerResult = new SVOCVAnalyzeResultClass( this );
+	m_pAnalyzerResult = new SVOCVAnalyzeResultClass( this );
 
 	// Children list defaults:
-	if( pAnalyzerResult )
+	if(nullptr != m_pAnalyzerResult )
 	{
-		Add( pAnalyzerResult );
+		Add(m_pAnalyzerResult);
 	}
 
 }
@@ -69,9 +65,6 @@ SVOCVAnalyzerClass::~SVOCVAnalyzerClass()
 		m_bHasLicenseError = false;
 		TheSVOLicenseManager().RemoveLicenseErrorFromList(GetUniqueObjectID());
 	}
-		//remove error from LicenseManager
-	//delete( pAnalyzerResult ); 
-	//Error!!!! Must be ONLY killed by SVResultListClass or PreDestroy()
 }
 
 
@@ -87,17 +80,6 @@ bool SVOCVAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCreateS
 	}
 
 	return m_isCreated;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-SvOi::IObjectClass* SVOCVAnalyzerClass::GetResultObject()
-{
-	SVResultClass* pAnalyzerResult = nullptr;
-
-	// Find the result Object in Our List
-	pAnalyzerResult = (SVResultClass *) GetAt(0);
-
-	return( pAnalyzerResult );
 }
 
 bool SVOCVAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)

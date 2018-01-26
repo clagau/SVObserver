@@ -70,8 +70,6 @@ public:
 	bool InitMil(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 	virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure) override;
 
-	SvOi::IObjectClass* GetResultObject();
-	
 	virtual bool CloseObject() override;
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;

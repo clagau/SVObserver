@@ -59,7 +59,7 @@ namespace SvCmd
 
 						// Remove it from the Tool TaskObjectList ( Destruct it )
 						const SVGUID& rObjectID = pObject->GetUniqueObjectID();
-						if( SV_GUID_NULL != rObjectID )
+						if( GUID_NULL != rObjectID )
 						{
 							pTaskObjectList->Delete( rObjectID.ToGUID() );
 						}

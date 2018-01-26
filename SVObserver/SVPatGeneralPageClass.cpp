@@ -44,7 +44,7 @@ SVPatGeneralPageClass::SVPatGeneralPageClass()
 	m_dAngularAccuracy = 0.1;
 	m_lAcceptance = 0;
 	m_lCertainty = 0;
-	m_nOccurances = 0;
+	m_lOccurances = 0;
 	m_bAccuracy = false;
 	//}}AFX_DATA_INIT
 	m_dInterpolationMode = SVNearestNeighbor;
@@ -73,7 +73,7 @@ void SVPatGeneralPageClass::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_PAT_ANGULAR_ACCURACY_VALUE, m_dAngularAccuracy);
 	DDX_Text(pDX, IDC_PAT_MDL_ACC_THRESHOLD, m_lAcceptance);
 	DDX_Text(pDX, IDC_PAT_MDL_CERT_THRESHOLD, m_lCertainty);
-	DDX_Text(pDX, IDC_PAT_OCCURANCE_NUMBER, m_nOccurances);
+	DDX_Text(pDX, IDC_PAT_OCCURANCE_NUMBER, m_lOccurances);
 	DDX_Check(pDX, IDC_PAT_ANGULAR_ACCURACY, m_bAccuracy);
 	//}}AFX_DATA_MAP
 }

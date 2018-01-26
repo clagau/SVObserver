@@ -26,7 +26,6 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 namespace SvOg {
-	static const std::string MaxRowTag("MaxRow");
 
 	BEGIN_MESSAGE_MAP(TADialogTableParameterPage, CPropertyPage)
 		//{{AFX_MSG_MAP(TADialogTableParameterPage)
@@ -39,9 +38,9 @@ namespace SvOg {
 		: CPropertyPage(TADialogTableParameterPage::IDD)
 		, m_InspectionID(rInspectionID)
 		, m_TaskObjectID(rTaskObjectID)
-		, m_ClearEquationID(SV_GUID_NULL)
+		, m_ClearEquationID(GUID_NULL)
 		, m_pFormulaController(nullptr)
-		, m_Values(SvOg::BoundValues(rInspectionID, rTaskObjectID, boost::assign::map_list_of(MaxRowTag, TableTool_MaxRowGuid)))
+		, m_Values{ SvOg::BoundValues{ rInspectionID, rTaskObjectID } }
 	{
 	}
 
@@ -96,7 +95,7 @@ namespace SvOg {
 		}
 		setEquationText();
 
-		m_maxRows = m_Values.Get<long>(MaxRowTag);
+		m_maxRows = m_Values.Get<long>(TableTool_MaxRowGuid);
 
 		UpdateData( FALSE );
 
@@ -138,12 +137,12 @@ namespace SvOg {
 		BOOL updateState = UpdateData(true);
 		if (updateState)
 		{
-			m_Values.Set<long>(MaxRowTag, m_maxRows);
+			m_Values.Set<long>(TableTool_MaxRowGuid, m_maxRows);
 			hResult = m_Values.Commit();
 
 			if (S_OK != hResult)
 			{
-				SvStl::MessageContainerVector messages = m_Values.getCommitErrorList();
+				SvStl::MessageContainerVector messages = m_Values.getFailedMessageList();
 				if (messages.size() > 0 && 0 != messages[0].getMessage().m_MessageCode)
 				{
 					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );

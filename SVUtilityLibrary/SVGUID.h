@@ -17,8 +17,6 @@
 #include "SVUtilityGlobals.h"
 #pragma endregion Includes
 
-extern const GUID SV_GUID_NULL;
-
 class SVGUID
 {
 public:

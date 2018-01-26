@@ -603,6 +603,40 @@ HRESULT SVValueObjectClass<T>::getValues(std::vector<double>&  rValues, int Buck
 }
 
 template <typename T>
+void SVValueObjectClass<T>::Persist(SvOi::IObjectWriter& rWriter)
+{
+	rWriter.StartElement(GetObjectName()); // use internal name for node name
+
+										   // Get the Heading (Class Info)
+	__super::Persist(rWriter);
+
+	if (shouldSaveDefaultValue())
+	{
+		WriteDefaultValues(rWriter);
+	}
+
+	// Get the Data Values (Member Info, Values)
+	if (shouldSaveValue())
+	{
+		rWriter.StartElement(scArrayElementsTag);
+		WriteValues(rWriter);
+		rWriter.EndElement();
+	}
+	else
+	{
+		int size = getArraySize();
+		if (1 < size)
+		{
+			_variant_t varSize = size;
+			varSize.ChangeType(VT_I4);
+			rWriter.WriteAttribute(scArraySizeTag, varSize);
+		}
+	}
+
+	rWriter.EndElement();
+}
+
+template <typename T>
 HRESULT SVValueObjectClass<T>::setValue( const _variant_t& rValue, int Index /*= -1*/  )
 {
 	HRESULT hr = S_OK;
@@ -796,39 +830,6 @@ void SVValueObjectClass<T>::validateValue( const _variant_t& rValue ) const
 	}
 }
 
-template <typename T>
-void SVValueObjectClass<T>::Persist(SvOi::IObjectWriter& rWriter)
-{
-	rWriter.StartElement(GetObjectName()); // use internal name for node name
-
-	// Get the Heading (Class Info)
-	__super::Persist(rWriter);
-
-	if (shouldSaveDefaultValue())
-	{
-		WriteDefaultValues(rWriter);
-	}
-
-	// Get the Data Values (Member Info, Values)
-	if (shouldSaveValue())
-	{
-		rWriter.StartElement(scArrayElementsTag);
-		WriteValues(rWriter);
-		rWriter.EndElement();
-	}
-	else
-	{
-		int size = getArraySize();
-		if (1 < size)
-		{
-			_variant_t varSize = size;
-			varSize.ChangeType(VT_I4);
-			rWriter.WriteAttribute(scArraySizeTag, varSize);
-		}
-	}
-
-	rWriter.EndElement();
-}
 #pragma endregion virtual method
 #pragma endregion Public Methods
 

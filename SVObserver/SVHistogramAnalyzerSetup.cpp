@@ -21,6 +21,7 @@
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "InspectionCommands/CommandFunctionHelper.h"
 #pragma endregion Includes
 
 IMPLEMENT_DYNAMIC(SVSquare, CStatic)
@@ -125,7 +126,14 @@ END_MESSAGE_MAP()
 
 HRESULT SVHistogramAnalyzerSetupClass::SetInspectionData()
 {
-	return RunOnce( m_pAnalyzer->GetTool()->GetUniqueObjectID() );
+	const SVGUID& rInspectionID = m_pAnalyzer->GetInspection()->GetUniqueObjectID();
+	const SVGUID& rToolID = m_pAnalyzer->GetTool()->GetUniqueObjectID();
+	SvPB::InspectionRunOnceRequest requestMessage;
+	requestMessage.mutable_inspectionid()->CopyFrom(SvPB::setGuidToMessage(rInspectionID));
+	requestMessage.mutable_taskid()->CopyFrom(SvPB::setGuidToMessage(rToolID));
+	HRESULT Result = SvCmd::InspectionCommandsSynchronous(rInspectionID, &requestMessage, nullptr);
+
+	return Result;
 }
 
 int SVHistogramAnalyzerSetupClass::OnCreate(LPCREATESTRUCT lpCreateStruct)

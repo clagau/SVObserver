@@ -69,8 +69,7 @@ namespace SvOg
 
 		typedef SvOg::ValuesAccessor<SvOg::BoundValues> FormulaCommand;
 		typedef SvOg::DataController<FormulaCommand, FormulaCommand::value_type> Controller;
-		Controller m_taskValues;
-		Controller m_equationValues;
+		Controller m_Values;
 	#pragma endregion Member Variables
 
 	private:

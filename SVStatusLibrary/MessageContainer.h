@@ -41,7 +41,7 @@ namespace SvStl
 		//! \param ProgramCode <in> the unique program ID for the code
 		//! \param rObjectId <in> reference to the unique object ID of the message owner
 		//************************************
-		MessageContainer( long MessageCode, MessageTextEnum AdditionalTextId,  SourceFileParams SourceFile, DWORD ProgramCode = 0, const GUID& rObjectId = SV_GUID_NULL );
+		MessageContainer( long MessageCode, MessageTextEnum AdditionalTextId,  SourceFileParams SourceFile, DWORD ProgramCode = 0, const GUID& rObjectId = GUID_NULL );
 
 		//************************************
 		//! This is the constructor to set the data on construction
@@ -52,7 +52,7 @@ namespace SvStl
 		//! \param ProgramCode <in> the unique program ID for the code
 		//! \param rObjectId <in> reference to the unique object ID of the message owner
 		//************************************
-		MessageContainer( long MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode = 0, const GUID& rObjectId = SV_GUID_NULL );
+		MessageContainer( long MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode = 0, const GUID& rObjectId = GUID_NULL );
 
 		//************************************
 		//! This is the assignment operator
@@ -85,7 +85,7 @@ namespace SvStl
 		//! \param ProgramCode <in> the unique program ID for the code
 		//! \param rObjectId <in> reference to the unique object ID of the message owner
 		//************************************
-		void setMessage( long MessageCode, MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, DWORD ProgramCode=0, const GUID& rObjectId=SV_GUID_NULL );
+		void setMessage( long MessageCode, MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, DWORD ProgramCode=0, const GUID& rObjectId=GUID_NULL );
 
 		//************************************
 		//! This is the method to set the data this will delete the m_AdditonalMessages list
@@ -96,7 +96,7 @@ namespace SvStl
 		//! \param ProgramCode <in> the unique program ID for the code
 		//! \param rObjectId <in> reference to the unique object ID of the message owner
 		//************************************
-		void setMessage( long MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode=0, const GUID& rObjectId=SV_GUID_NULL );
+		void setMessage( long MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode=0, const GUID& rObjectId=GUID_NULL );
 
 		//************************************
 		//! This is the method to set the data this will delete the m_AdditonalMessages list
@@ -104,7 +104,7 @@ namespace SvStl
 		//! \param rObjectId <in> reference to the unique object ID of the message owner
 		//! \param clearData <in> flag to determine if data should be cleared prior to setting the data
 		//************************************
-		void setMessage( const MessageData& rMessage, const GUID& rObjectId=SV_GUID_NULL, bool clearData = true );
+		void setMessage( const MessageData& rMessage, const GUID& rObjectId=GUID_NULL, bool clearData = true );
 
 		//************************************
 		//! This method first adds the current main message to the m_AdditionalMessage list 

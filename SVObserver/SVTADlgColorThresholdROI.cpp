@@ -18,6 +18,8 @@
 #include "SVInspectionProcess.h"
 #include "SVValueObjectLibrary/SVValueObject.h"
 #include "SVIPDoc.h"
+#include "SVOGui/ValuesAccessor.h"
+#include "SVOGui/DataController.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -75,8 +77,6 @@ void SVTADlgColorThresholdROI::DoDataExchange(CDataExchange* pDX)
 BOOL SVTADlgColorThresholdROI::OnInitDialog() 
 {
 	SVTADlgColorThresholdBasePage::OnInitDialog();
-
-	SetTaskObject( m_pTool );
 
 	SvDef::SVObjectTypeInfoStruct objectInfo;
 	objectInfo.ObjectType = SvDef::SVOperatorObjectType;
@@ -208,33 +208,24 @@ void SVTADlgColorThresholdROI::UpdateToolFigure()
 
 HRESULT SVTADlgColorThresholdROI::SetInspectionData()
 {
-	HRESULT l_hrOk = AddInputRequest( m_pExtentLeft, m_pSheet->m_rectROI.left );
+	HRESULT Result{ E_FAIL };
+	UpdateData(true);
 
-	if( S_OK == l_hrOk )
+	if (nullptr != m_pThreshold)
 	{
-		l_hrOk = AddInputRequest( m_pExtentTop, m_pSheet->m_rectROI.top );
-	}
+		//@TODO[gra][8.00][15.01.2018]: The data controller should be used like the rest of SVOGui
+		typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
+		typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
+		Controller Values{ SvOg::BoundValues{ m_pThreshold->GetInspection()->GetUniqueObjectID(), m_pThreshold->GetUniqueObjectID() } };
+		Values.Init();
 
-	if( S_OK == l_hrOk )
-	{
-		l_hrOk = AddInputRequest( m_pExtentWidth, m_pSheet->m_rectROI.Width() );
-	}
+		Values.Set<double>(m_pExtentLeft->GetEmbeddedID(), static_cast<double> (m_pSheet->m_rectROI.left));
+		Values.Set<double>(m_pExtentTop->GetEmbeddedID(), static_cast<double> (m_pSheet->m_rectROI.top));
+		Values.Set<double>(m_pExtentWidth->GetEmbeddedID(), static_cast<double> (m_pSheet->m_rectROI.Width()));
+		Values.Set<double>(m_pExtentHeight->GetEmbeddedID(), static_cast<double> (m_pSheet->m_rectROI.Height()));
+		Result = Values.Commit();
+	};
 
-	if( S_OK == l_hrOk )
-	{
-		l_hrOk = AddInputRequest( m_pExtentHeight, m_pSheet->m_rectROI.Height() );
-	}
-
-	if( S_OK == l_hrOk )
-	{
-		l_hrOk = AddInputRequestMarker();
-	}
-
-	if( S_OK == l_hrOk )
-	{
-		l_hrOk = RunOnce( m_pTool->GetUniqueObjectID() );
-	}
-
-	return l_hrOk;
+	return Result;
 }
 

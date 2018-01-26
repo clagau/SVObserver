@@ -145,7 +145,7 @@ void CSVRegressionFileSelectSheet::OnOK()
 		case SvStl::Tid_RegressionTest_EmptyDirectory:
 		{
 			SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
-			INT_PTR result = Msg.setMessage( rExp.getMessage(), SV_GUID_NULL, MB_YESNO);
+			INT_PTR result = Msg.setMessage( rExp.getMessage(), GUID_NULL, MB_YESNO);
 			if (IDYES == result)
 			{
 				return;

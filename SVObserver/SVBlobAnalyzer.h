@@ -23,83 +23,14 @@
 
 class SVLongResultClass;
 
-enum { SV_MAX_NUMBER_OF_BLOBS = 100 };
-
-enum SVBlobFeatureEnum
-{
-	SV_AREA = 0,            // 0
-	SV_BOXX_MAX,            // 1
-	SV_BOXX_MIN,            // 2
-	SV_BOXY_MAX,            // 3
-	SV_BOXY_MIN,            // 4
-	SV_BREADTH,             // 5
-	SV_CENTEROFGRAVITY_X,   // 6
-	SV_CENTEROFGRAVITY_Y,   // 7
-	SV_CONVEX_PERIMETER,    // 8
-	SV_FERET_ELONGATION,    // 9
-	SV_FERETMAX_ANGLE,      // 10
-	SV_FERETMAX_DIAMETER,   // 11
-	SV_FERETMEAN_DIAMETER,  // 12
-	SV_FERETMIN_ANGLE,      // 13
-	SV_FERETMIN_DIAMETER,   // 14
-	SV_FERET_X,             // 15
-	SV_FERET_Y,             // 16
-	SV_FIRSTPOINT_X,        // 17
-	SV_FIRSTPOINT_Y,        // 18
-	SV_LABEL,               // 19
-	SV_LENGTH,              // 20
-	SV_NBROF_HOLES,         // 21
-	SV_PERIMETER,           // 22
-	SV_ROUGHNESS,           // 23
-//- SV_SUM_PIXEL - This setting does not work on binary images, and is
-//- therefore being removed from available features at this time.  The 
-//- selection must still be available in the list in order to support
-//- previous configurations, but will not appear in the list of available
-//- features.  This is being enforced within 
-//- SVBlobAnalyzeFeatureListBoxClass::Init ().
-	SV_SUM_PIXEL,           // 24  // Will not work with thresholded images i.e.
-	                               // binary images vs. grey scale images.
-	//
-	// v3.1 Added Blob Features
-	//
-	SV_COMPACTNESS,         // 25
-	SV_NBR_RUNS,            // 26
-	SV_XMINAT_YMIN,         // 27
-	SV_XMAXAT_YMAX,         // 28
-	SV_YMINAT_XMAX,         // 29
-	SV_YMAXAT_XMIN,         // 30
-	SV_ELONGATION,          // 31
-	SV_INTERCEPT_0,         // 32
-	SV_INTERCEPT_45,        // 33
-	SV_INTERCEPT_90,        // 34
-	SV_INTERCEPT_135,       // 35
-	SV_MOMENT_X0Y1,         // 36
-	SV_MOMENT_X1Y0,         // 37
-	SV_MOMENT_X1Y1,         // 38
-	SV_MOMENT_X0Y2,         // 39
-	SV_MOMENT_X2Y0,         // 40
-	SV_CENTRAL_X0Y2,        // 41
-	SV_CENTRAL_X2Y0,        // 42
-	SV_CENTRAL_X1Y1,        // 43
-	SV_AXISPRINCIPAL_ANGLE, // 44
-	SV_AXISSECONDARY_ANGLE, // 45
-	SV_EULER_NBR,           // 46
-	SV_CENTER_X_SOURCE,     // 47
-	SV_CENTER_Y_SOURCE,		// 48
-
-	SV_TOPOF_LIST
-};
-
-enum { SV_NUMBER_OF_BLOB_FEATURES  = SV_TOPOF_LIST };
-
 /////////////////////////////////////////////////////////////////////////////
 //
 // Define a record for the constant attributes of a SVBlobFeature record.
 //
-struct SVBlobFeatureConstants
+struct SVBlobFeatureConstant
 {
 	SVBlobSelectionEnum  MILFeatureDef;
-	GUID*   pEmbeddedID;
+	GUID&   rEmbeddedID;
 	int     NewStringResourceID;
 };
 
@@ -148,9 +79,11 @@ public:
 
 	virtual ~SVBlobAnalyzerClass();
 
-#pragma region IEnumerateValueObject
-	virtual SvOi::NameValueList getFeatureList(bool isSelected) const override;
-#pragma endregion IEnumerateValueObject
+#pragma region IBlobAnalyzer
+	virtual SvOi::NameValueVector getFeatureList(bool isSelected) const override;
+	virtual SvOi::IObjectClass* getResultObject(int FeatureIndex) override;
+	virtual SvOi::IObjectClass* getResultBlob() override;
+#pragma endregion IBlobAnalyzer
 
 	virtual bool CloseObject() override;
 
@@ -158,9 +91,9 @@ public:
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	DWORD BuildFeatureListID ();
-	DWORD EnableFeature (SVBlobFeatureEnum aIndex);
-	DWORD DisableFeature (SVBlobFeatureEnum aIndex);
-	DWORD AllocateBlobResult ();
+	void UpdateBlobFeatures();
+	void EnableFeature(int FeatureIndex);
+	DWORD AllocateBlobResult();
 
 /*- SortBlobs () --------------------------------------------------------------*/
 /*- This will create a sorted mapping of the items in the msvDblValueArray.    */
@@ -170,15 +103,14 @@ public:
 /*- multiple sort maps. -------------------------------------------------------*/
 	void SortBlobs (long asvlSortFeature, long* alSortMap, long p_lArraySize );
 
-	DWORD AllocateResult (SVBlobFeatureEnum aFeatureIndex);
-	DWORD FreeResult (SVBlobFeatureEnum aFeatureIndex);
+	DWORD AllocateResult(int FeatureIndex);
+	void FreeResult(int FeatureIndex);
 	void RebuildResultObjectArray();
 
 /*- GetResultObject () --------------------------------------------------------*/
 /*- Each enabled feature is associated with its own result. This function      */
 /*- will hand back the associated with the feature which is referenced by      */ 
 /*- aFeatureIndex. ------------------------------------------------------------*/
-	SvOi::IObjectClass* GetResultObject(SVBlobFeatureEnum aFeatureIndex);
 	SVLongResultClass* GetBlobResultObject();
 
 	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
@@ -187,19 +119,10 @@ public:
 	virtual	void DisplayAnalyzerResult() override;
 
 	SVLongResultClass*           m_pResultBlob;
-
-/*- ENABLED FEATURES ----------------------------------------------------------*/
-/*- Since the std::string member of the SVStringValueObject can not be directly    */
-/*- accessed, the msvszFeaturesEnabled string acts at a workspace for          */
-/*- manipulating the enabled features configuration.                           */
-/*- msvPersistantFeaturesEnabled is required to preserve the values during     */
-/*- scripting. ----------------------------------------------------------------*/
 	SVStringValueObjectClass     m_PersistantFeaturesEnabled;
-	TCHAR                        m_FeaturesEnabled [SV_NUMBER_OF_BLOB_FEATURES + 1]; // Null Terminated
-/*- End of ENABLED FEATURES. --------------------------------------------------*/
 
-	SVDoubleValueObjectClass     m_Value [SV_NUMBER_OF_BLOB_FEATURES];
-	GUID                         m_guidResults[ SV_NUMBER_OF_BLOB_FEATURES ];
+	SVDoubleValueObjectClass     m_Value[SvOi::SV_NUMBER_OF_BLOB_FEATURES];
+	GUID                         m_guidResults[SvOi::SV_NUMBER_OF_BLOB_FEATURES];
 
 /*- msvPersistantNbrOfBlobs ---------------------------------------------------*/
 /*- This value is for persistant storage only.  The "working" counterpart is   */
@@ -211,7 +134,7 @@ public:
 	long                         m_lMaxBlobDataArraySize;
 
 /* msvSortFeature -------------------------------------------------------------*/
-/* MIL value from the msvlMILFeatureDef array. This value determins which      */
+/* MIL value from the msvlMILFeatureDef array. This value determines which      */
 /* feature should be sorted on. -----------------------------------------------*/
 	SVLongValueObjectClass       m_SortFeature;
 	SVBoolValueObjectClass       m_SortAscending;
@@ -232,8 +155,6 @@ public:
 /*- data. ---------------------------------------------------------------------*/
 	std::vector<long> m_SortVector;
 
-	DWORD                        m_DefaultAttributes; 
-
 	SVMatroxIdentifier			m_BlobContextID = M_NULL;
 	SVMatroxIdentifier			m_ResultBufferID = M_NULL;
 
@@ -245,7 +166,7 @@ public:
 	SVEnumerateValueObjectClass  m_evoBlobType;
 
 	TableObject* m_pResultTable;
-	DoubleSortValueObject* m_ResultTableColumnValueObjects[SV_NUMBER_OF_BLOB_FEATURES];
+	DoubleSortValueObject* m_ResultTableColumnValueObjects[SvOi::SV_NUMBER_OF_BLOB_FEATURES];
 
 protected:
 	virtual HRESULT onCollectOverlays(SVImageClass* p_pImage, SVExtentMultiLineStructVector& p_rMultiLineArray ) override;

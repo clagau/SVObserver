@@ -46,18 +46,15 @@ SVTADlgRemoteInputToolPage::~SVTADlgRemoteInputToolPage()
 
 void SVTADlgRemoteInputToolPage::DoDataExchange(CDataExchange* pDX)
 {
-	CDialog::DoDataExchange(pDX);
+	CPropertyPage::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_REMOTE_INPUT_NAME, m_RemoteInputNameCtrl);
 }
 
 
-BEGIN_MESSAGE_MAP(SVTADlgRemoteInputToolPage, CDialog)
+BEGIN_MESSAGE_MAP(SVTADlgRemoteInputToolPage, CPropertyPage)
 	ON_BN_CLICKED(IDC_CLEAR_INPUT_BUTTON, &SVTADlgRemoteInputToolPage::OnBnClickedClearInputButton)
 	ON_BN_CLICKED(IDC_SELECT_INPUT_BUTTON, &SVTADlgRemoteInputToolPage::OnBnClickedSelectInputButton)
 END_MESSAGE_MAP()
-
-/////////////////////////////////////////////////////////////////////////////
-// SVCylindricalWarpDlg message handlers
 
 BOOL SVTADlgRemoteInputToolPage::OnInitDialog() 
 {

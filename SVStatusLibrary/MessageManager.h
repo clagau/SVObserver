@@ -99,7 +99,7 @@ namespace SvStl
 		//! \param MsgBoxType [in] is the display message box type
 		//! \returns the result of the message box or IDCANCEL if not displayed
 		//************************************
-		INT_PTR setMessage( DWORD MessageCode, LPCTSTR sAdditionalText, SourceFileParams SourceFile, DWORD ProgramCode = 0, const GUID& rObjectId=SV_GUID_NULL, const UINT MsgBoxType = MB_OK );
+		INT_PTR setMessage( DWORD MessageCode, LPCTSTR sAdditionalText, SourceFileParams SourceFile, DWORD ProgramCode = 0, const GUID& rObjectId=GUID_NULL, const UINT MsgBoxType = MB_OK );
 
 		//************************************
 		//! Sets the message data
@@ -111,7 +111,7 @@ namespace SvStl
 		//! \param MsgBoxType [in] is the display message box type
 		//! \returns the result of the message box or IDCANCEL if not displayed
 		//************************************
-		INT_PTR setMessage( DWORD MessageCode, MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, DWORD ProgramCode = 0, const GUID& rObjectId=SV_GUID_NULL, const UINT MsgBoxType = MB_OK );
+		INT_PTR setMessage( DWORD MessageCode, MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, DWORD ProgramCode = 0, const GUID& rObjectId=GUID_NULL, const UINT MsgBoxType = MB_OK );
 
 		//************************************
 		//! Sets the message data
@@ -124,7 +124,7 @@ namespace SvStl
 		//! \param MsgBoxType [in] is the display message box type
 		//! \returns the result of the message box or IDCANCEL if not displayed
 		//************************************
-		INT_PTR setMessage( DWORD MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode = 0, const GUID& rObjectId=SV_GUID_NULL, const UINT MsgBoxType = MB_OK );
+		INT_PTR setMessage( DWORD MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode = 0, const GUID& rObjectId=GUID_NULL, const UINT MsgBoxType = MB_OK );
 
 		//************************************
 		//! Sets the message data
@@ -133,7 +133,7 @@ namespace SvStl
 		//! \param MsgBoxType [in] is the display message box type
 		//! \returns the result of the message box or IDCANCEL if not displayed
 		//************************************
-		INT_PTR setMessage( const M_Data& rData, const GUID& rObjectId=SV_GUID_NULL, const UINT MsgBoxType = MB_OK );
+		INT_PTR setMessage( const M_Data& rData, const GUID& rObjectId=GUID_NULL, const UINT MsgBoxType = MB_OK );
 
 		//************************************
 		//! Gets the message container

@@ -21,7 +21,6 @@
 #include "SVInspectionProcess.h"
 #include "SVIPDoc.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -65,54 +64,22 @@ SVTADlgColorThresholdAdjustment::~SVTADlgColorThresholdAdjustment()
 
 HRESULT SVTADlgColorThresholdAdjustment::SetInspectionData()
 {
-	HRESULT l_hrOk = AddInputRequest( m_pLowerThreshold, m_lowerThreshold );
+	HRESULT Result{ E_FAIL };
 
-	if( S_OK == l_hrOk )
+	if (nullptr != m_pValues)
 	{
-		l_hrOk = AddInputRequest( m_pUpperThreshold, m_upperThreshold );
+		m_pValues->Set<long>(m_pLowerThreshold->GetEmbeddedID(), static_cast<long> (m_lowerThreshold));
+		m_pValues->Set<long>(m_pUpperThreshold->GetEmbeddedID(), static_cast<long> (m_upperThreshold));
+		m_pValues->Set<bool>(m_pExclude->GetEmbeddedID(), m_exclude ? true : false);
+		m_pValues->Set<bool>(m_pEnabled->GetEmbeddedID(), m_Enabled ? true : false);
+		m_pValues->Set<double>(m_pExtentLeft->GetEmbeddedID(), static_cast<double> (m_pSheet->m_rectROI.left));
+		m_pValues->Set<double>(m_pExtentTop->GetEmbeddedID(), static_cast<double> (m_pSheet->m_rectROI.top));
+		m_pValues->Set<double>(m_pExtentWidth->GetEmbeddedID(), static_cast<double> (m_pSheet->m_rectROI.Width()));
+		m_pValues->Set<double>(m_pExtentHeight->GetEmbeddedID(), static_cast<double> (m_pSheet->m_rectROI.Height()));
+		Result = m_pValues->Commit();
 	}
 
-	if (S_OK == l_hrOk)
-	{
-		l_hrOk = AddInputRequest(m_pExclude, m_exclude);
-	}
-
-	if (S_OK == l_hrOk)
-	{
-		l_hrOk = AddInputRequest(m_pEnabled, m_Enabled);
-	}
-
-	if( S_OK == l_hrOk )
-	{
-		l_hrOk = AddInputRequest( m_pExtentLeft, m_pSheet->m_rectROI.left );
-	}
-
-	if( S_OK == l_hrOk )
-	{
-		l_hrOk = AddInputRequest( m_pExtentTop, m_pSheet->m_rectROI.top );
-	}
-
-	if( S_OK == l_hrOk )
-	{
-		l_hrOk = AddInputRequest( m_pExtentWidth, m_pSheet->m_rectROI.Width() );
-	}
-
-	if( S_OK == l_hrOk )
-	{
-		l_hrOk = AddInputRequest( m_pExtentHeight, m_pSheet->m_rectROI.Height() );
-	}
-
-	if( S_OK == l_hrOk )
-	{
-		l_hrOk = AddInputRequestMarker();
-	}
-
-	if( S_OK == l_hrOk )
-	{
-		l_hrOk = RunOnce( m_pTool->GetUniqueObjectID() );
-	}
-
-	return l_hrOk;
+	return Result;
 }
 
 void SVTADlgColorThresholdAdjustment::DoDataExchange(CDataExchange* pDX)
@@ -141,8 +108,6 @@ BOOL SVTADlgColorThresholdAdjustment::OnInitDialog()
 
 	m_pTool = m_pSheet->GetTool();
 
-	SetTaskObject( m_pTool );
-
 	// Get the color threshold object
 	SvDef::SVObjectTypeInfoStruct objectInfo;
 	objectInfo.ObjectType = SvDef::SVOperatorObjectType;
@@ -152,6 +117,8 @@ BOOL SVTADlgColorThresholdAdjustment::OnInitDialog()
 
 	if( m_pThreshold )
 	{
+		m_pValues = std::unique_ptr<Controller>(new Controller{ SvOg::BoundValues{ m_pThreshold->GetInspection()->GetUniqueObjectID(), m_pThreshold->GetUniqueObjectID() } });
+		m_pValues->Init();
 		// Get Train Color Extent Variables
 		SvDef::SVObjectTypeInfoStruct extentObjectInfo;
 		extentObjectInfo.ObjectType = SvDef::SVValueObjectType;
@@ -302,11 +269,12 @@ void SVTADlgColorThresholdAdjustment::updateGraphDisplay()
 {
 	if( nullptr != m_pTool )
 	{
-		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(m_pTool->GetInspection());
-
 		m_pTool->resetAllObjects();
 
-		RunOnce(m_pTool->GetUniqueObjectID());
+		if (nullptr != m_pValues)
+		{
+			m_pValues->RunOnce(m_pTool->GetInspection()->GetUniqueObjectID(), m_pTool->GetUniqueObjectID());
+		}
 
 		m_svDlgImage.ClearOverlayPoints();
 

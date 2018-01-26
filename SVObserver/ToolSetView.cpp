@@ -36,6 +36,8 @@
 #include "ObjectInterfaces/ISVOApp_Helper.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "SVOGui/ValuesAccessor.h"
+#include "SVOGui/DataController.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -451,7 +453,7 @@ void ToolSetView::RenameItem(int item, const std::string& rOldName, const std::s
 		if ( !m_toolSetListCtrl.IsEndListDelimiter( Name ) && !m_toolSetListCtrl.IsEmptyStringPlaceHolder( Name ) )
 		{
 			SVGUID toolId = m_toolSetListCtrl.getToolGuid(m_labelingIndex);
-			if (SV_GUID_NULL != toolId) // it's a Tool
+			if (GUID_NULL != toolId) // it's a Tool
 			{
 				TheSVObserverApp.OnObjectRenamed(m_LabelSaved, toolId);
 			}
@@ -549,32 +551,24 @@ void ToolSetView::OnSelectToolComment()
 		SVToolSetClass* pToolSet = pCurrentDocument->GetToolSet();
 		if (nullptr != pToolSet)
 		{
-			const SVGUID& rGuid = m_toolSetListCtrl.GetSelectedTool();
-			if (!rGuid.empty())
+			const SVGUID& rToolGuid = m_toolSetListCtrl.GetSelectedTool();
+			if (!rToolGuid.empty())
 			{
-				SVToolClass* pSelectedTool = dynamic_cast<SVToolClass *>(SVObjectManagerClass::Instance().GetObject(rGuid));
-				if (nullptr != pSelectedTool)
-				{
-					// Get the tool comment...
-					std::string ToolComment;
-					SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*> (pSelectedTool->GetToolComment());
-					// bring up tool comment edit.
-					HRESULT hr = pValueObject->getValue(ToolComment);
-					if (S_OK == hr )
-					{
-						SvOg::SVTextEditDialog Dlg( ToolComment.c_str() );
-						INT_PTR Result = Dlg.DoModal();
-						if( IDOK == Result )
-						{
-							// Set 
-							SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
-							SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(pToolSet->GetInspection());
-							pInspection->AddInputRequest(pSelectedTool->GetToolComment(), static_cast<LPCTSTR>( Dlg.getText() ));
-							pInspection->AddInputRequestMarker();
+				SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(pToolSet->GetInspection());
+				
+				typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
+				typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
+				Controller Values{ SvOg::BoundValues{ pInspection->GetUniqueObjectID(), rToolGuid } };
+				Values.Init();
 
-							pCurrentDocument->RunOnce(pSelectedTool);
-						}
-					}
+				// Get the tool comment...
+				std::string ToolComment = Values.Get<CString>(SVToolCommentTypeObjectGuid);
+				SvOg::SVTextEditDialog Dlg( ToolComment.c_str() );
+				if( IDOK == Dlg.DoModal() )
+				{
+					Values.Set<CString>(SVToolCommentTypeObjectGuid, Dlg.getText());
+					SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+					Values.Commit();
 				}
 			}
 		}
@@ -640,7 +634,7 @@ bool ToolSetView::ShowDuplicateNameMessage(const std::string& rName) const
 	SvDef::StringVector msgList;
 	msgList.push_back(rName);
 	SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay);
-	INT_PTR res  = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RenameError_DuplicateName, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10221, SV_GUID_NULL,MB_RETRYCANCEL );
+	INT_PTR res  = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RenameError_DuplicateName, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10221, GUID_NULL,MB_RETRYCANCEL );
 	return (IDRETRY == res);
 }
 

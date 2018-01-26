@@ -301,7 +301,7 @@ void SVIOAdjustDialogClass::OnSelChangeIOCombo()
 			if( pWnd ) { pWnd->EnableWindow( TRUE ); }
 
 			// You can't combine inputs or non inspection results
-			if( m_bInputMode || SV_IS_KIND_OF( pIOEntry->getObject()->GetOwner(), SVPPQObject ) )
+			if( m_bInputMode || SV_IS_KIND_OF( pIOEntry->getObject()->GetParent(), SVPPQObject ) )
 			{
 				// disable Combine unit...
 				pWnd = GetDlgItem( IDC_COMBINE_ACK_RADIO );

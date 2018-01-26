@@ -33,20 +33,13 @@ enum
 
 namespace SvOg
 {
-	static const std::string ControlFlagTag("ControlFlag");
-	static const std::string MinVariationTag("MinVariation");
-	static const std::string UseMarkerTag("UseMarker");
-
 	SVWatershedFilterDlg::SVWatershedFilterDlg(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SVGUID& rFilterID, CWnd* pParent): 
-			CDialog(SVWatershedFilterDlg::IDD, pParent)
-			,m_filterID(rFilterID)
-			,m_rInspectionID(rInspectionID)
-			,m_rTaskObjectID(rTaskObjectID)
-			, SvOg::ImageController(rInspectionID, rTaskObjectID)
-			, m_Values(SvOg::BoundValues(rInspectionID, rFilterID, boost::assign::map_list_of
-			(ControlFlagTag, SVWatershedFilterControlFlagGuid)
-			(MinVariationTag, SVWatershedFilterMinVariationGuid)
-			(UseMarkerTag, SVWatershedFilterUseMarkerGuid)))
+		CDialog(SVWatershedFilterDlg::IDD, pParent)
+		,m_filterID(rFilterID)
+		,m_rInspectionID(rInspectionID)
+		,m_rTaskObjectID(rTaskObjectID)
+		, SvOg::ImageController(rInspectionID, rTaskObjectID)
+		, m_Values{ SvOg::BoundValues{ rInspectionID, rFilterID } }
 	{
 
 		//{{AFX_DATA_INIT(SVWatershedFilterDlg)
@@ -81,10 +74,10 @@ namespace SvOg
 		lControlFlag |= m_iMinFillBasin ? SVImageWSMaximaFill  : 0;
 		lControlFlag |= m_iRegularWatershedLines ? SVImageWSStraight : 0;
 
-		m_Values.Set<long>(ControlFlagTag, lControlFlag);
-		m_Values.Set<long>(MinVariationTag, m_lMinVariation);
-		m_Values.Set<bool>(UseMarkerTag, TRUE == m_bUseMarker);
-		m_Values.Commit(true);
+		m_Values.Set<long>(SVWatershedFilterControlFlagGuid, lControlFlag);
+		m_Values.Set<long>(SVWatershedFilterMinVariationGuid, m_lMinVariation);
+		m_Values.Set<bool>(SVWatershedFilterUseMarkerGuid, m_bUseMarker ? true : false);
+		m_Values.Commit(SvOg::doResetRunOnce);
 
 		UpdateData( FALSE );
 
@@ -126,14 +119,14 @@ namespace SvOg
 		CDialog::OnInitDialog();
 		Init(); //ImageController
 		m_Values.Init();
-		long lControlFlag =  m_Values.Get<long>(ControlFlagTag);
-		long lMinVariation =  m_Values.Get<long>(MinVariationTag);;
+		long lControlFlag =  m_Values.Get<long>(SVWatershedFilterControlFlagGuid);
+		long lMinVariation =  m_Values.Get<long>(SVWatershedFilterMinVariationGuid);;
 
 		// Check Boxes
 		m_bSkipLastLevel = (lControlFlag & SVImageSkipLastLevel) == SVImageSkipLastLevel;
 		m_bUseBasin = (lControlFlag & SVImageWSBasin) == SVImageWSBasin;
 		m_bUseWatershed = (lControlFlag & SVImageWSWatershed) == SVImageWSWatershed;
-		m_bUseMarker = m_Values.Get<bool>(UseMarkerTag);
+		m_bUseMarker = m_Values.Get<bool>(SVWatershedFilterUseMarkerGuid);
 
 		// Radios
 		m_iEightWatershedLines = (lControlFlag & SVImage8Connected)  == SVImage8Connected ;

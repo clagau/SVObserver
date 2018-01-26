@@ -79,12 +79,14 @@ namespace SvOg
 		Set(FailLow, static_cast<LPCSTR>(m_FailLow));
 		Set(WarnHigh, static_cast<LPCSTR>(m_WarnHigh));
 		Set(WarnLow, static_cast<LPCSTR>(m_WarnLow));
+
+		Commit();
 	}
 
 	#pragma region Protected Methods
 	void SVToolAdjustmentDialogPassFailPageClass::DoDataExchange(CDataExchange* pDX)
 	{
-		CDialog::DoDataExchange(pDX);
+		CPropertyPage::DoDataExchange(pDX);
 
 		//{{AFX_DATA_MAP(SVToolAdjustmentDialogPassFailPageClass)
 		DDX_Text(pDX, IDC_EDIT_FAILHIGH, m_FailHigh);
@@ -203,7 +205,6 @@ namespace SvOg
 		{
 			SetInspectionData();
 			Validate();
-			Commit();
 		}
 		catch (const SvStl::MessageContainer& rSvE)
 		{

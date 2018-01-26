@@ -65,7 +65,7 @@ namespace SvMc
 
 	SVGUID AvailableObjectListComboBox::getSelectedGUID() const
 	{
-		SVGUID Result = SV_GUID_NULL;
+		SVGUID Result = GUID_NULL;
 		int index = GetCurSel();
 
 		if (CB_ERR != index)

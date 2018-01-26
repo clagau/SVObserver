@@ -127,7 +127,7 @@ bool SVObjectInfoStruct::CheckExistence()
 {
 	bool Result = true;
 
-	Result = Result && (SV_GUID_NULL != m_ObjectRef.Guid());
+	Result = Result && (GUID_NULL != m_ObjectRef.Guid());
 
 	if( Result )
 	{

@@ -12,9 +12,8 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVLinearMeasurementAnalyzerClass.h"
-#include "SVProfileEdgeMarkerAdjustmentPage.h"
 #include "SVMessage/SVMessage.h"
-#include "SVGlobal.h"
+#include "Definitions/LinearEdgeEnums.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "SVLinearEdgeAProcessingClass.h"
 #include "SVLinearEdgeBProcessingClass.h"
@@ -69,7 +68,7 @@ void SVLinearMeasurementAnalyzerClass::init()
 	{
 		AddFriend(l_pEdgeB->GetUniqueObjectID());
 
-		l_pEdgeB->m_svEdgeSelect.SetDefaultValue( SV_LAST_EDGE, true );
+		l_pEdgeB->m_svEdgeSelect.SetDefaultValue(SvDef::SV_LAST_EDGE, true);
 	}
 
 	// Set Embedded defaults

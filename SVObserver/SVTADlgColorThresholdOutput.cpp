@@ -17,6 +17,8 @@
 #include "SVTADlgColorThresholdSheet.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVInspectionProcess.h"
+#include "SVOGui/ValuesAccessor.h"
+#include "SVOGui/DataController.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -64,7 +66,6 @@ BOOL SVTADlgColorThresholdOutput::OnInitDialog()
 	ASSERT( m_pSheet );
 
 	m_pTool = m_pSheet->GetTool();
-	SetTaskObject(m_pTool);
 
 	// Get the color threshold object
 	SvDef::SVObjectTypeInfoStruct objectInfo;
@@ -90,14 +91,17 @@ BOOL SVTADlgColorThresholdOutput::OnInitDialog()
 
 void SVTADlgColorThresholdOutput::OnEnabledThreshold()
 {
-	UpdateData();
+	UpdateData(true);
 
-	AddInputRequest(m_pEnabled, m_Enabled);
-	AddInputRequestMarker();
-	if (nullptr != m_pTool)
+	if (nullptr != m_pThreshold)
 	{
-		m_pTool->resetAllObjects();
-		RunOnce(m_pTool->GetUniqueObjectID());
-	}
+		//@TODO[gra][8.00][15.01.2018]: The data controller should be used like the rest of SVOGui
+		typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
+		typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
+		Controller Values{ SvOg::BoundValues{ m_pThreshold->GetInspection()->GetUniqueObjectID(), m_pThreshold->GetUniqueObjectID() } };
+		Values.Init();
+		Values.Set<bool>(m_pEnabled->GetEmbeddedID(), m_Enabled ? true : false);
+		Values.Commit(SvOg::doResetRunOnce);
+	};
 	m_svDlgImage.refresh();
 }

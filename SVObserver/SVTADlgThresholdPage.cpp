@@ -19,7 +19,6 @@
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVIPDoc.h"
 #include "InspectionEngine/SVLowerThresholdEquation.h"
-#include "SVObserver.h"
 #include "InspectionEngine/SVThresholdClass.h"
 #include "InspectionEngine/SVTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
@@ -28,6 +27,8 @@
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "SVOGui/ValuesAccessor.h"
+#include "SVOGui/DataController.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -91,12 +92,12 @@ SVToolAdjustmentDialogThresholdPageClass::SVToolAdjustmentDialogThresholdPageCla
 	{
 		m_pTool = m_pParentDialog->GetTool();
 
-		if (m_pTool)
+		if (nullptr != m_pTool)
 		{
 			SvDef::SVObjectTypeInfoStruct info(SvDef::SVUnaryImageOperatorObjectType, SvDef::SVThresholdObjectType);
 			m_pCurrentThreshold = dynamic_cast<SVThresholdClass *>(m_pTool->getFirstObject(info));
 
-			if( m_pCurrentThreshold )
+			if( nullptr != m_pCurrentThreshold )
 			{
 				// Try to get Threshold Embeddeds...
 
@@ -128,71 +129,35 @@ SVToolAdjustmentDialogThresholdPageClass::~SVToolAdjustmentDialogThresholdPageCl
 
 HRESULT SVToolAdjustmentDialogThresholdPageClass::SetInspectionData()
 {
-	HRESULT l_hrOk = S_OK;
+	HRESULT Result{ S_OK };
 
 	UpdateData(true); // get data from dialog
 
-	if (S_OK == l_hrOk)
+	if (nullptr != m_pCurrentThreshold)
 	{
-		l_hrOk = AddInputRequest( &(m_pCurrentThreshold->m_upperThresh), m_upperThreshold.GetPos() );
+		//@TODO[gra][8.00][15.01.2018]: The data controller should be used like the rest of SVOGui
+		typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
+		typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
+		Controller Values{ SvOg::BoundValues{ m_pCurrentThreshold->GetInspection()->GetUniqueObjectID(), m_pCurrentThreshold->GetUniqueObjectID() } };
+		Values.Init();
+
+		Values.Set<long>(m_pCurrentThreshold->m_upperThresh.GetEmbeddedID(), m_upperThreshold.GetPos());
+		Values.Set<long>(m_pCurrentThreshold->m_lowerThresh.GetEmbeddedID(), m_lowerThreshold.GetPos());
+		Values.Set<bool>(m_pCurrentThreshold->m_threshActivate.GetEmbeddedID(), m_thresholdActive ? true : false);
+		Values.Set<bool>(m_pCurrentThreshold->m_upperThreshActivate.GetEmbeddedID(), m_upperThresholdActive ? true : false);
+		Values.Set<bool>(m_pCurrentThreshold->m_lowerThreshActivate.GetEmbeddedID(), m_lowerThresholdActive ? true : false);
+		Values.Set<bool>(m_pCurrentThreshold->m_useExternalLT.GetEmbeddedID(), m_bUseExternLT ? true : false);
+		Values.Set<bool>(m_pCurrentThreshold->m_useExternalUT.GetEmbeddedID(), m_bUseExternUT ? true : false);
+		Values.Set<bool>(m_pCurrentThreshold->m_autoThreshold.GetEmbeddedID(), m_bUseAutoThreshold ? true : false);
+		Values.Set<double>(m_pCurrentThreshold->m_dAutoThresholdMultiplier.GetEmbeddedID(), m_dAutoThreshold);
+		Values.Set<bool>(m_pCurrentThreshold->m_blackBackground.GetEmbeddedID(), m_autoThresholdBlackRadio.GetCheck() ? true : false);
+		Values.Set<bool>(m_pCurrentThreshold->m_useExternalATM.GetEmbeddedID(), m_bUseExternATM ? true : false);
+
+		Result = Values.Commit();
 	}
 
-	if (S_OK == l_hrOk)
-	{
-		l_hrOk = AddInputRequest( &(m_pCurrentThreshold->m_lowerThresh), m_lowerThreshold.GetPos() );
-	}
 
-	if (S_OK == l_hrOk)
-	{
-		l_hrOk = AddInputRequest( &(m_pCurrentThreshold->m_threshActivate), m_thresholdActive );
-	}
-
-	if (S_OK ==  l_hrOk)
-	{
-		l_hrOk = AddInputRequest( &(m_pCurrentThreshold->m_upperThreshActivate), m_upperThresholdActive );
-	}
-
-	if (S_OK == l_hrOk)
-	{
-		l_hrOk = AddInputRequest( &(m_pCurrentThreshold->m_lowerThreshActivate), m_lowerThresholdActive );
-	}
-
-	if (S_OK == l_hrOk)
-	{
-		l_hrOk = AddInputRequest( &(m_pCurrentThreshold->m_useExternalLT), m_bUseExternLT );
-	}
-
-	if (S_OK == l_hrOk)
-	{
-		l_hrOk = AddInputRequest( &(m_pCurrentThreshold->m_useExternalUT), m_bUseExternUT );
-	}
-
-	if (S_OK == l_hrOk)
-	{
-		l_hrOk = AddInputRequest( &(m_pCurrentThreshold->m_autoThreshold), m_bUseAutoThreshold );
-	}
-
-	if (S_OK == l_hrOk)
-	{
-		l_hrOk = AddInputRequest( &(m_pCurrentThreshold->m_dAutoThresholdMultiplier), m_dAutoThreshold );
-	}
-
-	if (S_OK == l_hrOk)
-	{
-		l_hrOk = AddInputRequest( &(m_pCurrentThreshold->m_blackBackground), m_autoThresholdBlackRadio.GetCheck() );
-	}
-
-	if (S_OK == l_hrOk)
-	{
-		l_hrOk = AddInputRequest( &(m_pCurrentThreshold->m_useExternalATM), m_bUseExternATM );
-	}
-
-	if (S_OK == l_hrOk)
-	{
-		l_hrOk = AddInputRequestMarker();
-	}
-
-	if (S_OK == l_hrOk)
+	if (S_OK == Result)
 	{
 		m_histState = 0;
 		if (m_thresholdActive)
@@ -204,7 +169,6 @@ HRESULT SVToolAdjustmentDialogThresholdPageClass::SetInspectionData()
 			}
 		}
 		m_pCurrentThreshold->saveHistogram = true;
-		l_hrOk = RunOnce( m_pTool->GetUniqueObjectID() );
 		const SVMatroxLongArray & l_val = m_pCurrentThreshold->GetHistogramValues();
 		m_histogram.SetPixelCounts(l_val.begin(), l_val.end());
 		m_histogram.PostMessage(ID_BOUND_CHANGE, 1, m_lowerThreshold.GetPos());
@@ -213,7 +177,7 @@ HRESULT SVToolAdjustmentDialogThresholdPageClass::SetInspectionData()
 	}
 	UpdateData(false);
 
-	return l_hrOk;
+	return Result;
 }
 
 void SVToolAdjustmentDialogThresholdPageClass::DoDataExchange(CDataExchange* pDX)
@@ -317,8 +281,6 @@ SVImageClass* SVToolAdjustmentDialogThresholdPageClass::getReferenceImage(SVTool
 BOOL SVToolAdjustmentDialogThresholdPageClass::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
-
-	SetTaskObject( m_pTool );
 
 	if( m_pTool )
 	{

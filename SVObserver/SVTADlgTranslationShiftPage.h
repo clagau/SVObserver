@@ -12,9 +12,11 @@
 #pragma once
 
 #pragma region Includes
-#include "SVEnumerateCombo.h"
-#include "InspectionEngine/SVTaskObjectValueInterface.h"
+#include "SVMFCControls/SVEnumerateCombo.h"
 #include "SVRPropertyTree/SVRPropTree.h"
+#include "SVUtilityLibrary/SVGuid.h"
+#include "SVOGui/ValuesAccessor.h"
+#include "SVOGui/DataController.h"
 #pragma endregion Includes
 
 class SVToolAdjustmentDialogSheetClass;
@@ -34,7 +36,7 @@ enum SVShiftResultEnum
 	PROP_SHIFT_RESULT_LEFT	= 105,
 };
 
-class SVTADlgTranslationShiftPageClass : public CPropertyPage, public SVTaskObjectValueInterface
+class SVTADlgTranslationShiftPageClass : public CPropertyPage
 {
 //	DECLARE_DYNAMIC(SVTADlgTranslationShiftPage)
 
@@ -67,7 +69,7 @@ protected:
 	void FillShiftProperties();
 
 	SVToolAdjustmentDialogSheetClass* pParentDialog;
-	SVToolClass* pTool;
+	SVToolClass* m_pTool;
 
 	SVEvaluateClass* pEvaluateTranslationX;
 	SVEvaluateClass* pEvaluateTranslationY;
@@ -80,7 +82,7 @@ public:
 	afx_msg void OnBnClickedTranslationYFormulaButton();
 	CString m_TranslationXValue;
 	CString m_TranslationYValue;
-	SVEnumerateComboClass m_ctlShiftModeCombo;
+	SvMc::SVEnumerateComboClass m_ctlShiftModeCombo;
 
 public:
 	SVEnumerateValueObjectClass *m_pvoShiftMode;
@@ -93,6 +95,10 @@ public:
 	CStatic m_ShiftValueStatic;
 
 private:
+	typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
+	typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
+	std::unique_ptr<Controller> m_pValues{ nullptr };
+
 	long m_lShiftType;
 };
 

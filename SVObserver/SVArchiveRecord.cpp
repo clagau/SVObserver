@@ -174,7 +174,7 @@ HRESULT SVArchiveRecord::BuildArchiveImageFilePath(std::string& rImageFile)
 
 void SVArchiveRecord::ConnectInputObject()
 {
-	if( SV_GUID_NULL != m_svObjectReference.Guid() )
+	if( GUID_NULL != m_svObjectReference.Guid() )
 	{
 		//
 		// Get a pointer to the object based on the guid.
@@ -207,7 +207,7 @@ void SVArchiveRecord::ConnectInputObject()
 		}
 	}
 	
-	if( SV_GUID_NULL != m_svObjectReference.Guid() )
+	if( GUID_NULL != m_svObjectReference.Guid() )
 	{
 		ASSERT(m_pArchiveTool);
 
@@ -224,7 +224,7 @@ void SVArchiveRecord::ConnectInputObject()
 
 void SVArchiveRecord::DisconnectInputObject()
 {
-	if( SV_GUID_NULL != m_svObjectReference.Guid() )
+	if( GUID_NULL != m_svObjectReference.Guid() )
 	{
 		SVInObjectInfoStruct InObjectInfo;
 		

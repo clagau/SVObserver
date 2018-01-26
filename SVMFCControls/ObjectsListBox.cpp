@@ -67,7 +67,7 @@ namespace SvMc
 
 	SVGUID ObjectsListBox::getGUID(int index) const
 	{
-		SVGUID Result = SV_GUID_NULL;
+		SVGUID Result = GUID_NULL;
 		if (0 <= index && m_List.size() > index)
 		{
 			Result = m_List[index].second;

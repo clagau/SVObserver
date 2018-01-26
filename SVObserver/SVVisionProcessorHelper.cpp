@@ -54,18 +54,20 @@ SVVisionProcessorHelper& SVVisionProcessorHelper::Instance()
 SVVisionProcessorHelper::SVVisionProcessorHelper()
 {
 
-	m_GetItemsFunctors = (boost::assign::map_list_of<std::string, SVGetItemsFunctor>
-		(StandardItems, boost::bind(&SVVisionProcessorHelper::GetStandardItems, this, _1, _2))
-		(SvDef::FqnInspections, boost::bind(&SVVisionProcessorHelper::GetInspectionItems, this, _1, _2))
-		(SvDef::FqnRemoteInputs, boost::bind(&SVVisionProcessorHelper::GetRemoteInputItems, this, _1, _2))
-		).convert_to_container<SVGetItemsFunctorMap>() ;
+	m_GetItemsFunctors = SVGetItemsFunctorMap
+	{
+		{StandardItems, boost::bind(&SVVisionProcessorHelper::GetStandardItems, this, _1, _2)},
+		{SvDef::FqnInspections, boost::bind(&SVVisionProcessorHelper::GetInspectionItems, this, _1, _2)},
+		{SvDef::FqnRemoteInputs, boost::bind(&SVVisionProcessorHelper::GetRemoteInputItems, this, _1, _2)}
+	};
 
-	m_SetItemsFunctors = (boost::assign::map_list_of<std::string, SVSetItemsFunctor>
-		(StandardItems, boost::bind(&SVVisionProcessorHelper::SetStandardItems, this, _1, _2))
-		(SvDef::FqnInspections, boost::bind(&SVVisionProcessorHelper::SetInspectionItems, this, _1, _2))
-		(SvDef::FqnRemoteInputs, boost::bind(&SVVisionProcessorHelper::SetRemoteInputItems, this, _1, _2))
-		(SvDef::FqnCameras, boost::bind(&SVVisionProcessorHelper::SetCameraItems, this, _1, _2))
-		).convert_to_container<SVSetItemsFunctorMap>();
+	m_SetItemsFunctors = SVSetItemsFunctorMap
+	{
+		{StandardItems, boost::bind(&SVVisionProcessorHelper::SetStandardItems, this, _1, _2, _3)},
+		{SvDef::FqnInspections, boost::bind(&SVVisionProcessorHelper::SetInspectionItems, this, _1, _2, _3)},
+		{SvDef::FqnRemoteInputs, boost::bind(&SVVisionProcessorHelper::SetRemoteInputItems, this, _1, _2, _3)},
+		{SvDef::FqnCameras, boost::bind(&SVVisionProcessorHelper::SetCameraItems, this, _1, _2, _3)}
+	};
 }
 
 SVVisionProcessorHelper::~SVVisionProcessorHelper()
@@ -368,7 +370,7 @@ HRESULT SVVisionProcessorHelper::GetDataDefinitionList( const std::string& rInsp
 	return l_Status;
 }
 
-HRESULT SVVisionProcessorHelper::GetItems( const SVNameSet& rNames, SVNameStorageResultMap& rItems , bool isOneBased ) const
+HRESULT SVVisionProcessorHelper::GetItems( const SVNameSet& rNames, SVNameStorageResultMap& rItems) const
 {
 	HRESULT l_Status = S_OK;
 
@@ -472,7 +474,7 @@ static bool IsRemoteInputRequest(const SVObjectNameInfo& rInfo, bool& bValidRemo
 	return bRemoteInput;
 }
 
-HRESULT SVVisionProcessorHelper::SetItems( const SVNameStorageMap& rItems, SVNameStatusMap& rStatusItems, bool isOneBased )
+HRESULT SVVisionProcessorHelper::SetItems(const SVNameStorageMap& rItems, SVNameStatusMap& rStatusItems, bool RunOnce)
 {
 	DWORD notAllowedStates = SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING |
 		SV_STATE_CREATING | SV_STATE_LOADING | SV_STATE_SAVING | SV_STATE_CLOSING;
@@ -549,7 +551,7 @@ HRESULT SVVisionProcessorHelper::SetItems( const SVNameStorageMap& rItems, SVNam
 		if( l_FunctorIter != m_SetItemsFunctors.end() )
 		{
 			SVNameStatusMap StatusItems;
-			HRESULT l_LoopStatus = l_FunctorIter->second( l_NameIterator->second, StatusItems );
+			HRESULT l_LoopStatus = l_FunctorIter->second(l_NameIterator->second, StatusItems, RunOnce);
 	
 			SVNameStatusMap::const_iterator StatusItemIter =  StatusItems.begin();
 			for( ; StatusItems.end() != StatusItemIter; ++StatusItemIter )
@@ -617,11 +619,26 @@ HRESULT SVVisionProcessorHelper::GetStandardItems( const SVNameSet& rNames, SVNa
 				if ( nullptr != pValueObject )
 				{
 					_variant_t Value;
-					if( S_OK == pValueObject->getValue( Value ) )
+					//Enumeration Value objects need to return the text and not the value
+					if (SvDef::SVEnumValueObjectType == ObjectRef.getObject()->GetObjectSubType())
 					{
-						ValueStorage.m_Variant = Value;
-						ValueStorage.m_StorageType = SVVisionProcessor::SVStorageValue;
-						LoopStatus = S_OK;
+						std::string StringValue;
+						if (S_OK == pValueObject->getValue(StringValue))
+						{
+							Value.SetString(StringValue.c_str());
+							ValueStorage.m_Variant = Value;
+							ValueStorage.m_StorageType = SVVisionProcessor::SVStorageValue;
+							LoopStatus = S_OK;
+						}
+					}
+					else
+					{
+						if (S_OK == pValueObject->getValue(Value))
+						{
+							ValueStorage.m_Variant = Value;
+							ValueStorage.m_StorageType = SVVisionProcessor::SVStorageValue;
+							LoopStatus = S_OK;
+						}
 					}
 				}
 				else // This is an error, was a request for a non value object.
@@ -709,7 +726,7 @@ HRESULT SVVisionProcessorHelper::GetRemoteInputItems( const SVNameSet& rNames, S
 	return l_Status;
 }
 
-HRESULT SVVisionProcessorHelper::SetStandardItems( const SVNameStorageMap& rItems, SVNameStatusMap& rStatus )
+HRESULT SVVisionProcessorHelper::SetStandardItems( const SVNameStorageMap& rItems, SVNameStatusMap& rStatus, bool RunOnce)
 {
 	HRESULT Status = S_OK;
 
@@ -768,7 +785,7 @@ HRESULT SVVisionProcessorHelper::SetStandardItems( const SVNameStorageMap& rItem
 	return Status;
 }
 
-HRESULT SVVisionProcessorHelper::SetInspectionItems( const SVNameStorageMap& rItems, SVNameStatusMap& rStatus )
+HRESULT SVVisionProcessorHelper::SetInspectionItems(const SVNameStorageMap& rItems, SVNameStatusMap& rStatus, bool RunOnce)
 {
 	HRESULT l_Status = S_OK;
 
@@ -778,7 +795,7 @@ HRESULT SVVisionProcessorHelper::SetInspectionItems( const SVNameStorageMap& rIt
 
 	if( nullptr != pConfig )
 	{
-		l_Status = pConfig->SetInspectionItems( rItems, rStatus );
+		l_Status = pConfig->SetInspectionItems(rItems, rStatus, RunOnce);
 	}
 	else if( S_OK == l_Status )
 	{
@@ -788,7 +805,7 @@ HRESULT SVVisionProcessorHelper::SetInspectionItems( const SVNameStorageMap& rIt
 	return l_Status;
 }
 
-HRESULT SVVisionProcessorHelper::SetRemoteInputItems( const SVNameStorageMap& rItems, SVNameStatusMap& rStatus )
+HRESULT SVVisionProcessorHelper::SetRemoteInputItems(const SVNameStorageMap& rItems, SVNameStatusMap& rStatus, bool RunOnce)
 {
 	HRESULT l_Status = S_OK;
 
@@ -808,7 +825,7 @@ HRESULT SVVisionProcessorHelper::SetRemoteInputItems( const SVNameStorageMap& rI
 	return l_Status;
 }
 
-HRESULT SVVisionProcessorHelper::SetCameraItems( const SVNameStorageMap& rItems, SVNameStatusMap& rStatus )
+HRESULT SVVisionProcessorHelper::SetCameraItems(const SVNameStorageMap& rItems, SVNameStatusMap& rStatus, bool RunOnce)
 {
 	HRESULT l_Status = S_OK;
 

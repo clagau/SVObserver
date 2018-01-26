@@ -39,7 +39,6 @@
 #include "SVIPChildFrm.h"
 #include "SVOResource/ConstGlobalSvOr.h"
 #include "SVShiftTool.h"
-#include "SVShiftToolUtility.h"
 #include "SVGuiExtentUpdater.h"
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary/GlobalPath.h"

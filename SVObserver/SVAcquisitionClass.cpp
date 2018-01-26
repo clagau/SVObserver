@@ -366,7 +366,7 @@ HRESULT SVAcquisitionClass::LoadFiles(SVFileNameArrayClass &rArray)
 			else
 			{
 				SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
-				if( IDYES == Exception.setMessage( SVMSG_SVO_74_LOAD_FILE, mFiles[l].GetFullFileName().c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25047_LoadFileFailed, SV_GUID_NULL, MB_YESNO ) )
+				if( IDYES == Exception.setMessage( SVMSG_SVO_74_LOAD_FILE, mFiles[l].GetFullFileName().c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25047_LoadFileFailed, GUID_NULL, MB_YESNO ) )
 				{
 					//All other missing files will only be logged
 					LogOnly = true;

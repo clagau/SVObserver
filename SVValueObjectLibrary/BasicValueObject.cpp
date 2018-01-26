@@ -489,7 +489,7 @@ HRESULT BasicValueObject::RefreshObject( const SVObjectClass* const pSender, Ref
 {
 	HRESULT Result( S_FALSE );
 	
-	SVObjectClass* pOwner = GetOwner();
+	SVObjectClass* pOwner = GetParent();
 
 	if( nullptr != pOwner )
 	{
@@ -503,7 +503,7 @@ bool BasicValueObject::RefreshOwner( RefreshObjectType Type ) const
 {
 	bool Result( false );
 
-	SVObjectClass* pOwner = GetOwner();
+	SVObjectClass* pOwner = GetParent();
 
 	if( nullptr != pOwner )
 	{

@@ -13,8 +13,9 @@
 
 #pragma region Includes
 #include "SVTADlgColorThresholdBasePage.h"
-#include "SVValueBaseNormalizerClass.h"
-#include "InspectionEngine/SVTaskObjectValueInterface.h"
+#include "SVLibrary/SVValueBaseNormalizerClass.h"
+#include "SVOGui/ValuesAccessor.h"
+#include "SVOGui/DataController.h"
 #pragma endregion Includes
 
 class SVIPDoc;
@@ -26,7 +27,7 @@ class SVBoolValueObjectClass;
 /////////////////////////////////////////////////////////////////////////////
 // SVTADlgColorThresholdAdjustment dialog
 
-class SVTADlgColorThresholdAdjustment : public SVTADlgColorThresholdBasePage, public SVTaskObjectValueInterface
+class SVTADlgColorThresholdAdjustment : public SVTADlgColorThresholdBasePage
 {
 	DECLARE_DYNCREATE(SVTADlgColorThresholdAdjustment)
 
@@ -94,6 +95,11 @@ protected:
 	SVBoolValueObjectClass* m_pEnabled;
 
 	SVValueBaseNormalizerClass m_Normalizer;
+
+private:
+	typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
+	typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
+	std::unique_ptr<Controller> m_pValues{ nullptr };
 };
 
 //{{AFX_INSERT_LOCATION}}

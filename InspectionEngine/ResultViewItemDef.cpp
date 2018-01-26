@@ -16,7 +16,7 @@
 
 #pragma region Constructor
 ResultViewItemDef::ResultViewItemDef()
-: m_ObjectID( SV_GUID_NULL )
+: m_ObjectID( GUID_NULL )
 , m_hasIndex(false)
 ,m_Index(0)
 {

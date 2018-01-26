@@ -15,7 +15,6 @@
 #pragma once
 
 #pragma region Includes
-#include "InspectionEngine/SVTaskObjectValueInterface.h"
 #include "InspectionEngine/SVTaskObjectList.h"
 #include "Definitions/RangeEnum.h"
 #include "SVStatusLibrary/MessageTextEnum.h"
@@ -24,14 +23,13 @@
 
 #pragma region Declarations
 class SVRangeClass;
-class SVIPDoc;
 #pragma endregion Declarations
 
-class RangeClassHelper : public SVTaskObjectValueInterface
+class RangeClassHelper
 {
 #pragma region Constructor
 public:
-	RangeClassHelper(SVRangeClass* PRange = nullptr);
+	RangeClassHelper(SVRangeClass* pRange = nullptr);
 	virtual ~RangeClassHelper();
 #pragma endregion Constructor
 

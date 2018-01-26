@@ -71,7 +71,7 @@ SVToolAdjustmentDialogStatisticsPageClass::SVToolAdjustmentDialogStatisticsPageC
 
 	if( m_pTool = dynamic_cast <SVStatisticsToolClass*> (SvOi::getObject(rTaskObjectID)) )
 	{
-		m_pToolSet = dynamic_cast <SVToolSetClass*> (m_pTool->GetOwner());
+		m_pToolSet = dynamic_cast <SVToolSetClass*> (m_pTool->GetParent());
 	}
 }
 

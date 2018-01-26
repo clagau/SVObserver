@@ -64,47 +64,45 @@ void SVUserMaskOperatorClass::init()
 	RegisterEmbeddedObject( &m_Data.lvoFillColor, SVMaskFillColorGuid, IDS_OBJECTNAME_MASK_FILL_COLOR, false, SvOi::SVResetItemOwner );
 	RegisterEmbeddedObject( &m_Data.evoDrawCriteria, SVDrawCriteriaObjectGuid, IDS_OBJECTNAME_DRAW_CRITERIA, false, SvOi::SVResetItemOwner );
 
-	SVEnumerateVector vec;
-	vec.push_back( SVEnumeratePair(_T( "AND" ), SVImageAnd ) );
-	vec.push_back( SVEnumeratePair(_T( "OR" ), SVImageOr ) );	
-	vec.push_back( SVEnumeratePair(_T( "XOR" ), SVImageXOr ) );	
-	vec.push_back( SVEnumeratePair(_T( "NOR" ), SVImageNor ) );	
-	vec.push_back( SVEnumeratePair(_T( "XNOR" ), SVImageXNor ) );	
-	vec.push_back( SVEnumeratePair(_T( "NAND" ), SVImageNand ) );	
-	vec.push_back( SVEnumeratePair(_T( "ADD" ), SVImageAddSaturation ) );
-	vec.push_back( SVEnumeratePair(_T( "SUB" ), SVImageSubSaturation ) );
-	vec.push_back( SVEnumeratePair(_T( "MULT" ), SVImageMulSaturation ) );
-	vec.push_back( SVEnumeratePair(_T( "DIV" ), SVImageDiv ) );
-	vec.push_back( SVEnumeratePair(_T( "MIN" ), SVImageMin ) );	
-	vec.push_back( SVEnumeratePair(_T( "MAX" ), SVImageMax ) );	
-	vec.push_back( SVEnumeratePair(_T( "PASS" ), SVImagePass ) );
-	m_Data.evoCurrentMaskOperator.SetEnumTypes(vec);
+	SvOi::NameValueVector EnumVector
+	{
+		{ _T("AND"), SVImageAnd },
+		{ _T("OR"), SVImageOr },
+		{ _T("XOR"), SVImageXOr },
+		{ _T("NOR"), SVImageNor },
+		{ _T("XNOR"), SVImageXNor },
+		{ _T("NAND"), SVImageNand },
+		{ _T("ADD"), SVImageAddSaturation },
+		{ _T("SUB"), SVImageSubSaturation },
+		{ _T("MULT"), SVImageMulSaturation },
+		{ _T("DIV"), SVImageDiv },
+		{ _T("MIN"), SVImageMin },
+		{ _T("MAX"), SVImageMax },
+		{ _T("PASS"), SVImagePass }
+	};
+	m_Data.evoCurrentMaskOperator.SetEnumTypes(EnumVector);
 	m_Data.evoCurrentMaskOperator.SetDefaultValue(SVImageAnd, true);
 
-	vec.clear();
-	vec.push_back( SVEnumeratePair(_T("Mask Area"), 0 ) );
-	vec.push_back( SVEnumeratePair(_T("Background"), 1 ) );
-	m_Data.evoFillArea.SetEnumTypes(vec);
+	EnumVector.clear();
+	EnumVector.push_back(SvOi::NameValuePair{ _T("Mask Area"), 0 });
+	EnumVector.push_back(SvOi::NameValuePair{ _T("Background"), 1 });
+	m_Data.evoFillArea.SetEnumTypes(EnumVector);
 	m_Data.evoFillArea.SetDefaultValue(0l, true);	// mask area is default
 
 	m_Data.lvoFillColor.SetDefaultValue(0, true);	// black default
 
-	vec.clear();
-	vec.push_back( SVEnumeratePair(_T("None"), SVNone ) );
-	vec.push_back( SVEnumeratePair(_T("Non-Black"), SVNonBlackPixels ) );
-	vec.push_back( SVEnumeratePair(_T("Non-White"), SVNonWhitePixels ) );
-	m_Data.evoDrawCriteria.SetEnumTypes( vec );
+	EnumVector.clear();
+	EnumVector.push_back(SvOi::NameValuePair{ _T("None"), SVNone });
+	EnumVector.push_back(SvOi::NameValuePair{ _T("Non-Black"), SVNonBlackPixels });
+	EnumVector.push_back(SvOi::NameValuePair{ _T("Non-White"), SVNonWhitePixels });
+	m_Data.evoDrawCriteria.SetEnumTypes(EnumVector);
 	m_Data.evoDrawCriteria.SetDefaultValue( SVNone, true );
 
 	m_Data.bvoActivated.SetDefaultValue( BOOL(false), true);
 	m_Data.dwvoMaskType.SetDefaultValue(MASK_TYPE_STATIC, true);
 
-
-
-
-	m_MaskBufferInfo.SetOwnerImage( SV_GUID_NULL );
-	m_MaskBufferInfo.SetOwner( SV_GUID_NULL );
-
+	m_MaskBufferInfo.SetOwnerImage( GUID_NULL );
+	m_MaskBufferInfo.SetOwner( GUID_NULL );
 
 	// Set default inputs and outputs
 	addDefaultInputObjects();

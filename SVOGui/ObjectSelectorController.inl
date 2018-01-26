@@ -23,7 +23,7 @@ namespace SvOg
 		SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::TypeSingleObject );
 
 		SVGUID InstanceGuid = m_InstanceID;
-		if (SV_GUID_NULL == InstanceGuid)
+		if (GUID_NULL == InstanceGuid)
 		{
 			InstanceGuid = GetToolSetGUID();
 		}

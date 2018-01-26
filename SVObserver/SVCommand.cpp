@@ -2818,117 +2818,74 @@ STDMETHODIMP CSVCommand::SVSetInputs(SAFEARRAY* psaNames, SAFEARRAY* psaValues, 
 {
 	USES_CONVERSION;
 
-	HRESULT                hr = S_OK;
-	HRESULT                hrStatus = S_OK;
-	SVObjectReference	   ObjectRef;
-	BSTR                   bstrName;
-	BSTR                   bstrValue;
-	std::string            TmpName;
-	std::string			   TmpVal;
-	SVInspectionProcessVector aInspections;
+	HRESULT                Result = S_OK;
+	HRESULT                Status = S_OK;
 
-	do
+	long lNumberOfElements1 = psaNames->rgsabound[0].cElements;
+	long lNumberOfElements2 = psaValues->rgsabound[0].cElements;
+
+	if ((lNumberOfElements1 == 0) || (lNumberOfElements1 != lNumberOfElements2))
 	{
-		long lNumberOfElements1 = psaNames->rgsabound[0].cElements;
-		long lNumberOfElements2 = psaValues->rgsabound[0].cElements;
+		Result = SVMSG_TOO_MANY_REQUESTED_ITEMS;
+		return Result;
+	}
 
-		if ((lNumberOfElements1 == 0) || (lNumberOfElements1 != lNumberOfElements2))
+	SVNameSet				ParameterNames;
+	SVNameStorageMap		ParameterObjects;
+	SVConfigurationObject* pConfig( nullptr );
+	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
+
+	for (long l = 0; l < lNumberOfElements1; l++)
+	{
+		BSTR bstrName = nullptr;
+		Status = SafeArrayGetElementNoCopy(psaNames, &l, &bstrName);
+		if (FAILED(Status)) { break; }
+
+		std::string Name = SvUl::createStdString(bstrName);
+
+		BSTR bstrValue = nullptr;
+		Status = SafeArrayGetElementNoCopy(psaValues, &l, &bstrValue);
+		if (FAILED(Status)) { break; }
+
+		std::string Value = SvUl::createStdString(bstrValue);
+
+		//!Check if an inspection name
+		SVInspectionProcess*   pInspection(nullptr);
+		if (nullptr != pConfig && pConfig->GetInspectionObject(Name.c_str(), &pInspection))
 		{
-			hr = SVMSG_TOO_MANY_REQUESTED_ITEMS;
-			break;
-		}// end if
-
-		SVConfigurationObject* pConfig( nullptr );
-		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-
-		for (long l = 0; l < lNumberOfElements1; l++)
-		{
-			bool bAddRequest = false;
-
-			hrStatus = SafeArrayGetElementNoCopy(psaNames, &l, &bstrName);
-			if ( FAILED( hrStatus ) ) { break; }
-
-			TmpName = SvUl::createStdString( _bstr_t(bstrName) );
-
-			hrStatus = SafeArrayGetElementNoCopy(psaValues, &l, &bstrValue);
-			if ( FAILED( hrStatus ) ) { break; }
-
-			TmpVal = SvUl::createStdString( _bstr_t(bstrValue) );
-
-			SVInspectionProcess*   pInspection(nullptr);
-			//GetInspectionObject is only true if the pointer is valid
-			if ( nullptr != pConfig && pConfig->GetInspectionObject(TmpName.c_str(), &pInspection) )
+			//If Remote inputs then the name must be replaced otherwise add "Inspections." to name
+			if (std::string::npos != Name.find(SvDef::FqnRemoteInput))
 			{
-				//got the inspection.
-				SVObjectManagerClass::Instance().GetObjectByDottedName( TmpName.c_str(), ObjectRef );
-				if( nullptr != ObjectRef.getValueObject() )
-				{
-					SVObjectClass* pOwnerObject = ObjectRef.getObject()->GetOwner();
-
-					if( SV_IS_KIND_OF(pOwnerObject, SVInspectionProcess) )
-					{
-						// this object was found and is an input
-						bAddRequest = true;
-					}// end if
-					else
-					{
-						// item not able to be set online.
-						hrStatus = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_NOT_AN_INPUT;
-						::SafeArrayPutElement(*ppsaStatus,&l,&hrStatus);
-					}// end else
-				}// end if
-				else
-				{
-					// object not found.  send back status
-					hrStatus = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
-					::SafeArrayPutElement(*ppsaStatus,&l,&hrStatus);
-				}// end else
-			}// end if
-			else
+				SvUl::searchAndReplace(Name, pInspection->GetName(), SvDef::FqnRemoteInputs);
+			}
+			else if (std::string::npos != Name.find(pInspection->GetName()))
 			{
-				//did not find inspection.
-				//put an error back into the list
-				hrStatus = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;
-				::SafeArrayPutElement(*ppsaStatus,&l,&hrStatus);
-			} // end else
+				std::string Prefix{ SvDef::FqnInspections };
+				Prefix += '.';
+				Name = Prefix + Name;
+			}
+		}
 
-			if ( bAddRequest )
-			{
-				//add request to inspection process
-				pInspection->AddInputRequest( ObjectRef, W2T( bstrValue ) );
+		SVStorage	Parameter;
+		SVSAFEARRAY	Values;
 
-				bool l_bFound = false;
-				long lSize = static_cast<long> (aInspections.size());
-				for( long k = 0; k < lSize; k++ )
-				{
-					if( pInspection == aInspections[k] )
-					{
-						l_bFound = true;
-						break;
-					}// end if
-				}// end if
+		//Values must be in array format
+		Values.Add(_variant_t(bstrValue));
+		Parameter.m_StorageType = SVVisionProcessor::SVStorageValue;
+		Parameter.m_Variant = Values;
+		ParameterObjects[std::string(Name)] = Parameter;
+	}// end for	
 
-				if( !l_bFound )
-				{
-					aInspections.push_back(pInspection);
-				}// end if
-			}// end if
-		}// end for	
+	Result = Status;
 
-		// New delimiter added after each SVSetToolParameterList call
-		// This breaks the list into pieces and we are only processing
-		// 1 piece of the list per inspection iteration
-		for(auto pInspection : aInspections)
-		{
-			//add request to inspection process
-			pInspection->AddInputRequestMarker();
-		}// end for					
+	if (S_OK == Result && 0 != ParameterObjects.size())
+	{
+		SVNameStatusMap SetItemsResult;
+		Result = SVVisionProcessorHelper::Instance().SetItems(ParameterObjects, SetItemsResult, false);
+	}
 
-	} while(0); // end while
 
-	hr = hrStatus;
-
-	return hr;
+	return Result;
 }
 
 HRESULT CSVCommand::SVSetImageList(SAFEARRAY *psaNames, SAFEARRAY *psaImages, SAFEARRAY **ppsaStatus)
@@ -3091,183 +3048,51 @@ HRESULT CSVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVa
 		return Result;
 	}
 
-	int						ItemErrorCount = 0;
-	bool					StateOnline;
-	SVNameSet				ParameterNames;
 	SVConfigurationObject*	pConfig = nullptr;
 	SVNameStorageMap		ParameterObjects;
-	SVInspectionProcessVector InspectionVector;
 
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-	StateOnline = SVSVIMStateClass::CheckState(SV_STATE_RUNNING);
 
 	for ( long l = 0; l < NumberOfElements; l++ )
 	{
-		std::string				Name;
-		std::string				Value;
-		SVInspectionProcess*	pInspection = nullptr;
-		SVObjectReference		ObjectRef;
-
-		bool AddRequest = false;
-
 		BSTR bstrName = nullptr;
 		Status = SafeArrayGetElementNoCopy(psaNames, &l, &bstrName);
 		if ( FAILED( Status ) ) { break; }
 
-		Name = SvUl::createStdString( bstrName );
+		std::string Name = SvUl::createStdString( bstrName );
 
 		BSTR bstrValue = nullptr;
 		Status = SafeArrayGetElementNoCopy(psaValues, &l, &bstrValue);
 		if ( FAILED( Status ) ) { break; }
 
-		Value = SvUl::createStdString( bstrValue );
-		if(nullptr != pConfig)
+		std::string Value = SvUl::createStdString( bstrValue );
+
+		//!Check if an inspection name
+		SVInspectionProcess*   pInspection(nullptr);
+		if (nullptr != pConfig && pConfig->GetInspectionObject(Name.c_str(), &pInspection) && nullptr != pInspection)
 		{
-			pConfig->GetInspectionObject( Name.c_str(), &pInspection );
+			if (std::string::npos != Name.find(pInspection->GetName()))
+			{
+				std::string Prefix{ SvDef::FqnInspections };
+				Prefix += '.';
+				Name = Prefix + Name;
+			}
 		}
-		HRESULT hrFind = SVObjectManagerClass::Instance().GetObjectByDottedName( Name.c_str(), ObjectRef );
+		SVStorage	Parameter;
+		SVSAFEARRAY	Values;
 
-		if ( nullptr != ObjectRef.getObject() || nullptr != pInspection )
-		{
-			if ( S_OK == hrFind && ObjectRef.ArrayIndex() < 0 && !ObjectRef.isArray())
-			{
-				Name = StripBrackets(Name);
-				hrFind = SVObjectManagerClass::Instance().GetObjectByDottedName( Name.c_str(), ObjectRef );
-				if (S_OK == hrFind)
-				{
-					Value = StripQuotes(Value);
-				}
-			}
-
-			if ( S_OK == hrFind )
-			{
-				// Check if item is already in the list
-				if( nullptr != ObjectRef.getObject() )
-				{
-					HRESULT hres = S_OK;
-					std::string strCompleteObjectName( ObjectRef.GetCompleteName() );
-					if ( ParameterNames.find( strCompleteObjectName ) != ParameterNames.end() )
-					{
-						// Item is already in the list
-						Status = SVMSG_OBJECT_ALREADY_SET_IN_THIS_LIST;
-						::SafeArrayPutElement(*ppsaStatus, &l, &Status);
-						ItemErrorCount++;
-					}
-					else if ( (ObjectRef.ObjectAttributesAllowed() & SvDef::SV_REMOTELY_SETABLE) != SvDef::SV_REMOTELY_SETABLE )
-					{
-						// Item is not allowed to be set remotely
-						Status = SVMSG_OBJECT_CANNOT_BE_SET_REMOTELY;
-						::SafeArrayPutElement(*ppsaStatus, &l, &Status);
-						ItemErrorCount++;
-					}
-					else if (StateOnline && ((ObjectRef.ObjectAttributesAllowed() & SvDef::SV_SETABLE_ONLINE) != SvDef::SV_SETABLE_ONLINE)  ) 
-					{
-						Status = SVMSG_OBJECT_CANNOT_BE_SET_WHILE_ONLINE;
-						::SafeArrayPutElement(*ppsaStatus, &l, &Status);
-						ItemErrorCount++;
-					}
-					else if(RangeClassHelper::IsOwnedByRangeObject((*ObjectRef.getObject())) && !RangeClassHelper::IsAllowedToSet(*ObjectRef.getObject(),Value,StateOnline, hres))
-					{
-						Status = hres;
-						::SafeArrayPutElement(*ppsaStatus, &l, &Status);
-						ItemErrorCount++;
-					}
-					else
-					{
-						AddRequest = true;
-						ParameterNames.insert( strCompleteObjectName );
-					}
-
-
-				}// end if ( nullptr != ObjectRef.Object() )	// object not a value object
-				else
-				{
-					// object not found.  send back status
-					Status = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
-					::SafeArrayPutElement(*ppsaStatus, &l, &Status);
-					ItemErrorCount++;
-				}
-			}// end if found value object
-			else
-			{
-				// object not found.  send back status
-				Status = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
-				::SafeArrayPutElement(*ppsaStatus, &l, &Status);
-				ItemErrorCount++;
-			}// end else
-		}// end if found inspection
-		else
-		{
-			//did not find inspection.
-			//put an error back into the list
-			Status = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;
-			::SafeArrayPutElement(*ppsaStatus, &l, &Status);
-			ItemErrorCount++;
-		} // end else
-
-		if ( AddRequest )
-		{
-			//Check if the parameter is for inspection or not
-			if(nullptr == pInspection)
-			{
-				SVStorage	Parameter;
-				SVSAFEARRAY	Values;
-
-				//Values must be in array format
-				Values.Add(_variant_t( bstrValue ));
-				Parameter.m_StorageType = SVVisionProcessor::SVStorageValue;
-				Parameter.m_Variant = Values;
-				ParameterObjects[std::string(Name)] = Parameter;
-			}
-			else
-			{
-				//add request to inspection process
-				pInspection->AddInputRequest( ObjectRef, W2T( bstrValue ) );
-
-				bool Found = false;
-				long Size = static_cast<long>(InspectionVector.size());
-				for( long k = 0; k < Size; k++ )
-				{
-					if( pInspection == InspectionVector[k] )
-					{
-						Found = true;
-						break;
-					}// end if
-				}// end if
-
-				if( !Found )
-				{
-					InspectionVector.push_back( pInspection );
-				}// end if
-			} //end else nullptr == pInspection
-		}// end if ( bAddRequest )
+		//Values must be in array format
+		Values.Add(_variant_t( bstrValue ));
+		Parameter.m_StorageType = SVVisionProcessor::SVStorageValue;
+		Parameter.m_Variant = Values;
+		ParameterObjects[std::string(Name)] = Parameter;
 	}// end for ( long l = 0; l < lNumberOfElements; l++ )
+	Result = Status;
 
-	//Check if there are parameters other than for the inspection 
-	if(0 != ParameterObjects.size())
+	if(S_OK == Result && 0 != ParameterObjects.size())
 	{
 		SVNameStatusMap SetItemsResult;
-		///SVO785
-		bool IsOneBased(false);
-
-		SVVisionProcessorHelper::Instance().SetItems(ParameterObjects, SetItemsResult, IsOneBased);
-	}
-	// New delimiter added after each SVSetToolParameterList call
-	// This breaks the list into pieces and we are only processing
-	// 1 piece of the list per inspection iteration
-	for(auto pInspection : InspectionVector)
-	{
-		//add request to inspection process
-		pInspection->AddInputRequestMarker();
-	}// end for
-
-	if ( ItemErrorCount > 0 ) //some error happened
-	{
-		Result = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
-	}
-	else
-	{
-		Result = S_OK;
+		Result = SVVisionProcessorHelper::Instance().SetItems(ParameterObjects, SetItemsResult, false);
 	}
 
 	return Result;

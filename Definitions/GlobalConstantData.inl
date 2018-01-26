@@ -9,7 +9,7 @@ namespace SvDef
 {
 #pragma region Constructor
 	GlobalConstantData::GlobalConstantData():
-		m_Guid( SV_GUID_NULL )
+		m_Guid( GUID_NULL )
 		,m_Selected( false )
 	{
 	}

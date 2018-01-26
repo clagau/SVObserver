@@ -116,6 +116,7 @@
     <ClCompile Include="SVGraphix.cpp" />
     <ClCompile Include="SVOIniLoader.cpp" />
     <ClCompile Include="SVPackedFile.cpp" />
+    <ClCompile Include="SVValueBaseNormalizerClass.cpp" />
     <ClCompile Include="SVWinUtility.cpp" />
     <ClCompile Include="DirectoryUtilities.cpp" />
   </ItemGroup>
@@ -133,6 +134,7 @@
     <ClInclude Include="SVOIniLoader.h" />
     <ClInclude Include="SVPackedFile.h" />
     <ClInclude Include="SVTemplate.h" />
+    <ClInclude Include="SVValueBaseNormalizerClass.h" />
     <ClInclude Include="SVWinUtility.h" />
     <ClInclude Include="DirectoryUtilities.h" />
   </ItemGroup>

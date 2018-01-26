@@ -62,7 +62,7 @@ namespace SvOg {
 		: CPropertyPage(TaTableAnalyzerPage::IDD)
 		, m_InspectionID(rInspectionID)
 		, m_TaskObjectID(rTaskObjectID)
-		, m_selectedAnalyzerID(SV_GUID_NULL)
+		, m_selectedAnalyzerID(GUID_NULL)
 		, m_SortDirection(-1)
 		, m_selectedSubType(SvDef::SVNotSetSubObjectType)
 		, m_inputName(_T(""))
@@ -158,7 +158,7 @@ namespace SvOg {
 		for (int i=0; i<listSize; ++i)
 		{
 			SVGUID analyzerGUID = availableList[i].second;
-			if( SV_GUID_NULL != analyzerGUID )
+			if( GUID_NULL != analyzerGUID )
 			{
 				// Close, Disconnect and Delete it
 				SvPB::DestroyChildRequest requestMessage;
@@ -177,14 +177,14 @@ namespace SvOg {
 
 	void TaTableAnalyzerPage::OnButtonDeleteCurrentAnalyzer() 
 	{
-		if( SV_GUID_NULL != m_selectedAnalyzerID ) 
+		if( GUID_NULL != m_selectedAnalyzerID ) 
 		{
 			// Close, Disconnect and Delete it
 			SvPB::DestroyChildRequest requestMessage;
 			requestMessage.mutable_taskobjectlistid()->CopyFrom(SvPB::setGuidToMessage(m_TaskObjectID));
 			requestMessage.mutable_objectid()->CopyFrom(SvPB::setGuidToMessage(m_selectedAnalyzerID));
 			SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, nullptr);
-			m_selectedAnalyzerID = SV_GUID_NULL;
+			m_selectedAnalyzerID = GUID_NULL;
 			m_selectedSubType = SvDef::SVNotSetSubObjectType;
 
 			// Refresh Dialog...
@@ -201,7 +201,7 @@ namespace SvOg {
 
 		const SVGUID classID = m_availableAnaylzerCB.getSelectedGUID();
 
-		if( SV_GUID_NULL != classID )
+		if( GUID_NULL != classID )
 		{
 			int destinyIndex = m_analyzerListBox.GetCurSel();
 
@@ -246,7 +246,7 @@ namespace SvOg {
 		UpdateData(TRUE); // get data from dialog
 
 		SVGUID columnGuid = m_columnSelectionCB.getSelectedGUID();
-		if (SV_GUID_NULL != columnGuid && SV_GUID_NULL != m_selectedAnalyzerID)
+		if (GUID_NULL != columnGuid && GUID_NULL != m_selectedAnalyzerID)
 		{
 			HRESULT hr = E_INVALIDARG;
 			typedef SvCmd::ConnectToObject Command;
@@ -332,28 +332,28 @@ namespace SvOg {
 			switch (m_selectedSubType)
 			{
 			case SvDef::TableAnalyzerSortType:
-				m_Values->Set<bool>(IsAscTag, 0 == m_SortDirection);
+				m_Values->Set<bool>(TableAnaylzerSortIsASCGuid, 0 == m_SortDirection);
 				hrOk = m_Values->Commit();
-				errorMessageList = m_Values->getCommitErrorList();
+				errorMessageList = m_Values->getFailedMessageList();
 				break;
 			case SvDef::TableAnalyzerExcludeType:
 				{
 					CString Value;
 					m_EditExcludeHigh.GetWindowText( Value );
-					m_Values->Set<CString>(ExcludeHighTag, Value);
+					m_Values->Set<CString>(TableAnaylzerExcludeHighGuid, Value);
 					m_EditExcludeLow.GetWindowText( Value );
-					m_Values->Set<CString>(ExcludeLowTag, Value);
-					hrOk = m_Values->Commit(true);
-					errorMessageList = m_Values->getCommitErrorList();
+					m_Values->Set<CString>(TableAnaylzerExcludeLowGuid, Value);
+					hrOk = m_Values->Commit(SvOg::doResetRunOnce);
+					errorMessageList = m_Values->getFailedMessageList();
 				}
 				break;
 			case SvDef::TableAnalyzerLimitType:
 				{
 					CString Value;
 					m_EditLimitValue.GetWindowText( Value );
-					m_Values->Set<CString>(LimitValueTag, Value);
-					hrOk = m_Values->Commit(true);
-					errorMessageList = m_Values->getCommitErrorList();
+					m_Values->Set<CString>(TableAnaylzerLimitValueGuid, Value);
+					hrOk = m_Values->Commit(SvOg::doResetRunOnce);
+					errorMessageList = m_Values->getFailedMessageList();
 				}
 				break;
 			default:
@@ -410,7 +410,7 @@ namespace SvOg {
 	void TaTableAnalyzerPage::SetPropertyControls( )
 	{
 		m_selectedSubType = SvDef::SVNotSetSubObjectType;
-		if( SV_GUID_NULL != m_selectedAnalyzerID ) 
+		if( GUID_NULL != m_selectedAnalyzerID ) 
 		{
 			typedef SvCmd::GetObjectTypeInfo Command;
 			typedef std::shared_ptr<Command> CommandPtr;
@@ -484,14 +484,14 @@ namespace SvOg {
 	{
 		setColumnSelectionCB();
 
-		if (nullptr == m_Values || m_selectedAnalyzerID != m_Values->GetOwnerID())
+		if (nullptr == m_Values || m_selectedAnalyzerID != m_Values->GetTaskID())
 		{
 			m_Values.reset();
-			m_Values = std::shared_ptr<Controller>{ new Controller(SvOg::BoundValues(m_InspectionID, m_selectedAnalyzerID, boost::assign::map_list_of(IsAscTag, TableAnaylzerSortIsASCGuid))) };
+			m_Values = std::shared_ptr<Controller>{ new Controller{ SvOg::BoundValues{ m_InspectionID, m_selectedAnalyzerID } } };
 			m_Values->Init();
 		}
 		
-		m_SortDirection = m_Values->Get<bool>(IsAscTag)?0:1;
+		m_SortDirection = m_Values->Get<bool>(TableAnaylzerSortIsASCGuid) ? 0 : 1;
 		UpdateData( FALSE );
 	}
 
@@ -499,48 +499,40 @@ namespace SvOg {
 	{
 		setColumnSelectionCB();
 
-		if (nullptr == m_Values || m_selectedAnalyzerID != m_Values->GetOwnerID())
+		if (nullptr == m_Values || m_selectedAnalyzerID != m_Values->GetTaskID())
 		{
 			m_Values.reset();
-			m_Values = std::shared_ptr<Controller>{ new Controller(SvOg::BoundValues(m_InspectionID, m_selectedAnalyzerID, boost::assign::map_list_of
-				(ExcludeHighTag, TableAnaylzerExcludeHighGuid)
-				(ExcludeHighLinkTag, TableAnaylzerExcludeHigh_LinkGuid)
-				(ExcludeLowTag, TableAnaylzerExcludeLowGuid)
-				(ExcludeLowLinkTag, TableAnaylzerExcludeLow_LinkGuid)
-				)) };
+			m_Values = std::shared_ptr<Controller>{ new Controller{ SvOg::BoundValues{ m_InspectionID, m_selectedAnalyzerID } } };
 			m_Values->Init();
 		}
 
-		std::string highString = m_Values->Get<CString>(ExcludeHighLinkTag);
+		std::string highString = m_Values->Get<CString>(TableAnaylzerExcludeHigh_LinkGuid);
 		if( highString.empty() )
 		{
-			highString = m_Values->Get<CString>(ExcludeHighTag);
+			highString = m_Values->Get<CString>(TableAnaylzerExcludeHighGuid);
 		}
 		m_EditExcludeHigh.SetWindowText(highString.c_str());
-		std::string lowString = m_Values->Get<CString>(ExcludeLowLinkTag);
+		std::string lowString = m_Values->Get<CString>(TableAnaylzerExcludeLow_LinkGuid);
 		if( lowString.empty() )
 		{
-			lowString = m_Values->Get<CString>(ExcludeLowTag);
+			lowString = m_Values->Get<CString>(TableAnaylzerExcludeLowGuid);
 		}
 		m_EditExcludeLow.SetWindowText(lowString.c_str());
 	}
 
 	void TaTableAnalyzerPage::setLimitProperties()
 	{
-		if (nullptr == m_Values || m_selectedAnalyzerID != m_Values->GetOwnerID())
+		if (nullptr == m_Values || m_selectedAnalyzerID != m_Values->GetTaskID())
 		{
 			m_Values.reset();
-			m_Values = std::shared_ptr<Controller>{ new Controller(SvOg::BoundValues(m_InspectionID, m_selectedAnalyzerID, boost::assign::map_list_of
-				(LimitValueTag, TableAnaylzerLimitValueGuid)
-				(LimitValueLinkTag, TableAnaylzerLimitValue_LinkGuid)
-				)) };
+			m_Values = std::shared_ptr<Controller>{ new Controller{ SvOg::BoundValues{ m_InspectionID, m_selectedAnalyzerID } } };
 			m_Values->Init();
 		}
 
-		std::string valueString = m_Values->Get<CString>(LimitValueLinkTag);
+		std::string valueString = m_Values->Get<CString>(TableAnaylzerLimitValue_LinkGuid);
 		if( valueString.empty() )
 		{
-			valueString = m_Values->Get<CString>(LimitValueTag);
+			valueString = m_Values->Get<CString>(TableAnaylzerLimitValueGuid);
 		}
 		m_EditLimitValue.SetWindowText(valueString.c_str());
 	}
@@ -593,7 +585,7 @@ namespace SvOg {
 		for (int i=0; S_OK == hrOk && i< m_analyzerListBox.GetCount(); i++)
 		{
 			SVGUID analyzerGUID = m_analyzerListBox.getGUID(i);
-			if ( SV_GUID_NULL != analyzerGUID && analyzerGUID != m_selectedAnalyzerID)
+			if ( GUID_NULL != analyzerGUID && analyzerGUID != m_selectedAnalyzerID)
 			{
 				// Do a reset of the analyzer
 				SvPB::ResetObjectRequest requestMessage;

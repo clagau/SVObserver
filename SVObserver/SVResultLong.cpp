@@ -89,7 +89,7 @@ const GUID & SVLongResultClass::GetInputEmbeddedID() const
 	}
 	else
 	{
-		return SV_GUID_NULL;
+		return GUID_NULL;
 	}
 }
 

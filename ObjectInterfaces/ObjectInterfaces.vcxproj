@@ -106,7 +106,7 @@
     <ClInclude Include="ITool.h" />
     <ClInclude Include="IToolSet.h" />
     <ClInclude Include="IValueObject.h" />
-    <ClInclude Include="NameValueList.h" />
+    <ClInclude Include="NameValueVector.h" />
     <ClInclude Include="SVImageBufferHandleInterface.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

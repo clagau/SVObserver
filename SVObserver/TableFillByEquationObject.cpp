@@ -80,7 +80,7 @@ void TableFillByEquationObject::setColumnValueObjects(const std::vector<TableCol
 			{
 				//new column, add it.
 				SVGUID newGuid = getNextFreeEmbeddedColumGUID();
-				if (SV_GUID_NULL == newGuid)
+				if (GUID_NULL == newGuid)
 				{
 					SvStl::MessageMgrStd e(SvStl::LogOnly);
 					e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_columnValue_NoFreeGUID, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
@@ -165,6 +165,6 @@ SVGUID TableFillByEquationObject::getNextFreeEmbeddedColumGUID()
 			return TableColumnValueObjectGuid[i];
 		}
 	}
-	return SV_GUID_NULL;
+	return GUID_NULL;
 }
 #pragma endregion Private Methods

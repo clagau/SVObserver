@@ -140,8 +140,6 @@ public:
 
 	SVInObjectInfoStruct m_AuxSourceImageObjectInfo;
 
-	SVObjectClass* GetToolComment();
-
 	const SVImageInfoClass* getFirstImageInfo() const;
 
 #pragma region ITool methods

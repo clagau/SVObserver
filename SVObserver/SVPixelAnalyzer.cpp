@@ -19,7 +19,6 @@
 #include "InspectionEngine/SVDataBuffer.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
-#include "SVPixelAnalyzerSetup.h" // Required by SVPixelAnalyzerSetupClass
 #include "SVResultLong.h"   // Required by SVLongResultClass
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
@@ -60,16 +59,17 @@ void SVPixelAnalyzerClass::init()
 	addDefaultInputObjects();
 
 	// Instantiate Children
-	SVLongResultClass *pAnalyzerResult = new SVLongResultClass (this, IDS_CLASSNAME_SVPIXELANALYZERESULT);
+	m_pAnalyzerResult = new SVLongResultClass (this, IDS_CLASSNAME_SVPIXELANALYZERESULT);
 
-	if (!pAnalyzerResult)
+	if (nullptr != m_pAnalyzerResult)
+	{
+		Add(m_pAnalyzerResult);
+	}
+	else
 	{
 		SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16187);
-
 	}
-
-	Add( pAnalyzerResult );
 
 	// set defaults
 	m_alHistValues.clear();

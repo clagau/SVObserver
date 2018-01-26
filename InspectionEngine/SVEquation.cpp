@@ -307,7 +307,7 @@ bool SVEquationClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStru
 	// Set / Reset Printable Flag
 	enabled.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 
-	SVObjectClass *owner = enabled.GetOwner();
+	SVObjectClass *owner = enabled.GetParent();
 	if (nullptr != owner)
 	{
 		std::string conditionalString = SvUl::LoadStdString( IDS_CLASSNAME_SVCONDITIONAL );

@@ -21,7 +21,7 @@ namespace SvOg
 	class RangeController
 	{
 		typedef SvOg::ValuesAccessor<SvOg::BoundValues> Values;
-		typedef SvOg::DataController<Values, Values::value_type> ValueController;
+		typedef SvOg::DataController<Values, Values::value_type> Controller;
 
 	public:
 		RangeController(const GUID& rInspectionID, const GUID& rTaskObjectID);
@@ -43,18 +43,17 @@ namespace SvOg
 		static const std::string WarnLow;
 
 	private:
-		std::string GetIndirectValue(const std::string& rName) const;
-		std::string GetDirectValue(const std::string& rName) const;
-		void SetIndirectValue(const std::string& rName, const std::string& rValue);
-		void SetDirectValue(const std::string& rName, const std::string& rValue);
+		std::string GetIndirectValue(const GUID& rEmbeddedID) const;
+		std::string GetDirectValue(const GUID& rEmbeddedID) const;
+		void SetIndirectValue(const GUID& rEmbeddedID, const std::string& rValue);
+		void SetDirectValue(const GUID& rEmbeddedID, const std::string& rValue);
 
 		std::string GetInspectionName() const;
 		std::string GetPPQName() const;
 		std::string GetToolName() const;
 
-		GUID m_InspectionID;
-		GUID m_TaskObjectID;
-		ValueController m_directRangeValues;
-		ValueController m_indirectRangeValues;
+		const GUID& m_rInspectionID;
+		const GUID& m_rTaskObjectID;
+		std::unique_ptr<Controller> m_pRangeValues{ nullptr };
 	};
 } //namespace SvOg

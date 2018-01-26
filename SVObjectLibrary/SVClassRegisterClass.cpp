@@ -27,7 +27,7 @@ SVClassRegisterClass::~SVClassRegisterClass()
 SVGUID SVClassRegisterClass::GetClassID() 
 { 
 	assert( 0 );
-	return SV_GUID_NULL; 
+	return GUID_NULL; 
 }
 
 SVObjectClass* SVClassRegisterClass::Construct() 

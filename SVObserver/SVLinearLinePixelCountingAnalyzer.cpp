@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVLinearLinePixelCountingAnalyzer.h"
-#include "SVGlobal.h"
+#include "Definitions/LinearEdgeEnums.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "SVLinearEdgeAProcessingClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -42,7 +42,7 @@ void SVLinearPixelCountingLineAnalyzerClass::init()
 
 	if( nullptr != l_pEdge )
 	{
-		l_pEdge->m_svDirection.SetDefaultValue( SV_UNDEFINED_DIRECTION, true );
+		l_pEdge->m_svDirection.SetDefaultValue(SvDef::SV_UNDEFINED_DIRECTION, true );
 
 		AddFriend( l_pEdge->GetUniqueObjectID() );
 	}

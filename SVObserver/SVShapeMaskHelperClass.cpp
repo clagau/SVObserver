@@ -48,26 +48,28 @@ void SVShapeMaskHelperClass::init()
 
 	m_Data.bvoAutoResize.SetDefaultValue( false, false );
 
-	SVEnumerateVector vec;
-	vec.push_back( SVEnumeratePair(SvUl::LoadStdString(IDS_OBJECTNAME_SHAPE_TYPE_RECTANGLE), SVMaskShapeTypeRectangle ) );
-	vec.push_back( SVEnumeratePair(SvUl::LoadStdString(IDS_OBJECTNAME_SHAPE_TYPE_OVAL), SVMaskShapeTypeOval ) );
-	vec.push_back( SVEnumeratePair(SvUl::LoadStdString(IDS_OBJECTNAME_SHAPE_TYPE_DOUGHNUT), SVMaskShapeTypeDoughnut ) );
-	vec.push_back( SVEnumeratePair(SvUl::LoadStdString(IDS_OBJECTNAME_SHAPE_TYPE_SYMMETRIC_TRAPEZOID), SVMaskShapeTypeSymmetricTrapezoid ) );
-	m_Data.evoShapeType.SetEnumTypes(vec);
+	SvOi::NameValueVector EnumVector
+	{
+		{SvUl::LoadStdString(IDS_OBJECTNAME_SHAPE_TYPE_RECTANGLE), SVMaskShapeTypeRectangle},
+		{SvUl::LoadStdString(IDS_OBJECTNAME_SHAPE_TYPE_OVAL), SVMaskShapeTypeOval},
+		{SvUl::LoadStdString(IDS_OBJECTNAME_SHAPE_TYPE_DOUGHNUT), SVMaskShapeTypeDoughnut},
+		{SvUl::LoadStdString(IDS_OBJECTNAME_SHAPE_TYPE_SYMMETRIC_TRAPEZOID), SVMaskShapeTypeSymmetricTrapezoid}
+	};
+	m_Data.evoShapeType.SetEnumTypes(EnumVector);
 	m_Data.evoShapeType.SetDefaultValue(SVMaskShapeTypeRectangle);
 
-	vec.clear();
-	vec.push_back( SVEnumeratePair(_T( "Inside Shape" ), 1 ) );
-	vec.push_back( SVEnumeratePair(_T( "Outside Shape" ), 2 ) );
-	m_Data.evoMaskArea.SetEnumTypes(vec);
+	EnumVector.clear();
+	EnumVector.push_back(SvOi::NameValuePair{ _T("Inside Shape"), 1 });
+	EnumVector.push_back(SvOi::NameValuePair{ _T("Outside Shape"), 2 });
+	m_Data.evoMaskArea.SetEnumTypes(EnumVector);
 	m_Data.evoMaskArea.SetDefaultValue(2);
 
-	vec.clear();
-	vec.push_back( SVEnumeratePair(_T( "Vertical Axis Top" ), 0 ) );
-	vec.push_back( SVEnumeratePair(_T( "Vertical Axis Bottom" ), 180 ) );
-	vec.push_back( SVEnumeratePair(_T( "Horizontal Axis Left" ), -90 ) );
-	vec.push_back( SVEnumeratePair(_T( "Horizontal Axis Right" ), 90 ) );
-	m_Data.evoXYSymmetry.SetEnumTypes(vec);
+	EnumVector.clear();
+	EnumVector.push_back(SvOi::NameValuePair{ _T("Vertical Axis Top"), 0 });
+	EnumVector.push_back(SvOi::NameValuePair{ _T("Vertical Axis Bottom"), 180 });
+	EnumVector.push_back(SvOi::NameValuePair{ _T("Horizontal Axis Left"), -90 });
+	EnumVector.push_back(SvOi::NameValuePair{ _T("Horizontal Axis Right"), 90 });
+	m_Data.evoXYSymmetry.SetEnumTypes(EnumVector);
 	m_Data.evoXYSymmetry.SetDefaultValue(0l);
 
 	m_Data.lvoCenterX.SetDefaultValue( 50 );
@@ -140,7 +142,7 @@ bool SVShapeMaskHelperClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 			m_pShape = new SVMaskShapeRectangle;
 	}
 
-	SVUserMaskOperatorClass* pMaskOperator = dynamic_cast<SVUserMaskOperatorClass*> ( GetOwner() );
+	SVUserMaskOperatorClass* pMaskOperator = dynamic_cast<SVUserMaskOperatorClass*> ( GetParent() );
 	ASSERT( pMaskOperator );
 	if ( pMaskOperator )
 	{
@@ -344,7 +346,7 @@ HRESULT SVShapeMaskHelperClass::Refresh()
 			mapProperties[ SVShapeMaskPropertySymmetryOrientationGuid ] = lValue;
 		}
 		
-		SVUserMaskOperatorClass* pMaskOperator = dynamic_cast<SVUserMaskOperatorClass*> ( GetOwner() );
+		SVUserMaskOperatorClass* pMaskOperator = dynamic_cast<SVUserMaskOperatorClass*> ( GetParent() );
 		ASSERT( pMaskOperator );
 		if ( pMaskOperator && nullptr != pMaskOperator->m_MaskBufferHandlePtr )
 		{

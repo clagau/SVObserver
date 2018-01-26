@@ -23,11 +23,10 @@ namespace SvOg
 	static LPCSTR UpdateAuxiliaryExtentsTag = "UpdateAuxiliaryExtents";
 
 	AuxiliaryExtentsController::AuxiliaryExtentsController(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID)
-	: m_InspectionID(rInspectionID)
-	, m_TaskObjectID(rTaskObjectID)
-	, m_ImageController(rInspectionID, rTaskObjectID)
-	, m_Values(BoundValues(rInspectionID, rTaskObjectID, boost::assign::map_list_of
-			(UpdateAuxiliaryExtentsTag, SVUpdateAuxiliaryExtentsObjectGuid)))
+		: m_InspectionID{ rInspectionID }
+		, m_TaskObjectID{ rTaskObjectID }
+		, m_ImageController{ rInspectionID, rTaskObjectID }
+		, m_Values{ BoundValues{ rInspectionID, rTaskObjectID } }
 	{
 	}
 
@@ -64,12 +63,12 @@ namespace SvOg
 
 	bool AuxiliaryExtentsController::IsUpdateAuxExtentsEnabled() const
 	{
-		return m_Values.Get<bool>(UpdateAuxiliaryExtentsTag);
+		return m_Values.Get<bool>(SVUpdateAuxiliaryExtentsObjectGuid);
 	}
 
 	void AuxiliaryExtentsController::EnableAuxExtents(bool bEnable)
 	{
-		m_Values.Set<bool>(UpdateAuxiliaryExtentsTag, bEnable);
+		m_Values.Set<bool>(SVUpdateAuxiliaryExtentsObjectGuid, bEnable);
 	}
 
 	const SvUl::NameGuidList& AuxiliaryExtentsController::GetAvailableImageList() const

@@ -563,7 +563,7 @@ void SVRemoteOutputsView::OnRemoteOutputDelete()
 				else
 				{
 					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-					INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_RemoteOutput_DeletingOutput, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10195, SV_GUID_NULL, MB_YESNO ); 
+					INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_RemoteOutput_DeletingOutput, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10195, GUID_NULL, MB_YESNO ); 
 					if( IDYES == result )
 					{
 						pConfig->DeleteRemoteOutputEntry( RemoteGroup, pRemoteOutput );
@@ -590,7 +590,7 @@ void SVRemoteOutputsView::OnRemoteOutputDelete()
 					SvDef::StringVector msgList;
 					msgList.push_back(strGroup);
 					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-					INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_RemoteOutput_DeletingAllOutput, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10196, SV_GUID_NULL, MB_YESNO );
+					INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_RemoteOutput_DeletingAllOutput, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10196, GUID_NULL, MB_YESNO );
 					if( IDYES == result )
 					{
 						// Delete all DLL entries

@@ -11,7 +11,7 @@
 #pragma region Includes
 #include "ObjectInterfaces\IObjectManager.h"
 #include "ObjectInterfaces\IEnumerateValueObject.h"
-#include "ObjectInterfaces\NameValueList.h"
+#include "ObjectInterfaces\NameValueVector.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -40,7 +40,7 @@ namespace SvCmd
 			SvOi::IEnumerateValueObject* pValueObject = dynamic_cast<SvOi::IEnumerateValueObject *>(SvOi::getObject(m_InstanceID));
 			if (pValueObject)
 			{
-				m_list = pValueObject->GetEnumList();
+				m_list = pValueObject->GetEnumVector();
 			}
 			else
 			{
@@ -49,10 +49,10 @@ namespace SvCmd
 			return hr;
 		}
 
-		const SvOi::NameValueList& GetEnumList() const { return m_list; }
+		const SvOi::NameValueVector& GetEnumList() const { return m_list; }
 
 	private:
 		SVGUID m_InstanceID;
-		SvOi::NameValueList m_list;
+		SvOi::NameValueVector m_list;
 	};
 }

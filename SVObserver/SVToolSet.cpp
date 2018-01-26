@@ -882,32 +882,32 @@ bool SVToolSetClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 
 HRESULT SVToolSetClass::ResetCounts()
 {
-	HRESULT l_hrOk = S_OK;
+	HRESULT Result = S_OK;
 
 	try
 	{
 		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(GetInspection());
 
 		//add request to inspection process
-		if( nullptr != pInspection && pInspection->AddInputRequest( &m_ResetCounts, _T( "true" ) ) )
+		if (nullptr != pInspection && pInspection->AddInputRequest(&m_ResetCounts, _T("true")))
 		{
 			//add request to inspection process
-			if( ! pInspection->AddInputRequestMarker() )
+			if (!pInspection->AddInputRequestMarker())
 			{
-				l_hrOk = S_FALSE;
+				Result = E_FAIL;
 			}
 		}
 		else
 		{
-			l_hrOk = S_FALSE;
+			Result = E_FAIL;
 		}
 	}
-	catch( ... )
+	catch (...)
 	{
-		l_hrOk = S_FALSE;
+		Result = E_FAIL;
 	}
 
-	return l_hrOk;
+	return Result;
 }
 
 HRESULT SVToolSetClass::ClearResetCounts()

@@ -40,6 +40,11 @@ namespace SvOi
 	public:
 		virtual ~IValueObject() {}
 
+		//! Sets the default value for the Value object
+		//! \param rValue [in] The value to set the Default Value object to
+		//! \returns S_OK if succeeded
+		virtual HRESULT setDefaultValue(const _variant_t& rValue) = 0;
+
 		//! Gets the default value for the Value object
 		//! \returns the default value as a variant
 		virtual _variant_t getDefaultValue() const = 0;
@@ -138,8 +143,17 @@ namespace SvOi
 		virtual void setSaveValueFlag(bool shouldSaveValue) = 0;
 	};
 
+	struct SetValueStruct 
+	{
+		SetValueStruct(IValueObject* pValueObject, _variant_t Value, int Index) :
+			m_pValueObject{ pValueObject }, m_Value{ Value }, m_ArrayIndex{ Index } {}
+
+		IValueObject* m_pValueObject{ nullptr };
+		_variant_t m_Value;
+		int m_ArrayIndex{ -1 };
+	};
+
 	typedef std::set<IValueObject*> IValueObjectPtrSet;
-	typedef std::pair<IValueObject*, _variant_t> SetValueObjectPair;
-	typedef std::vector<SetValueObjectPair> SetValueObjectPairVector;
+	typedef std::vector<SetValueStruct> SetValueStructVector;
 
 } //namespace SvOi

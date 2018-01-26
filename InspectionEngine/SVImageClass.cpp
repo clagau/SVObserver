@@ -76,7 +76,7 @@ bool SVImageClass::CloseObject()
 	SvOi::ITool* pTool = dynamic_cast<SvOi::ITool*> (GetTool());
 	if( nullptr != pTool )
 	{
-		pTool->SetToolImage( SV_GUID_NULL );
+		pTool->SetToolImage( GUID_NULL );
 	}
 
 	if ( m_isCreated )
@@ -569,7 +569,7 @@ HRESULT SVImageClass::UpdateFromToolInformation()
 			}
 		}
 
-		ToolID = nullptr != GetTool() ? GetTool()->GetUniqueObjectID() : SV_GUID_NULL;
+		ToolID = nullptr != GetTool() ? GetTool()->GetUniqueObjectID() : GUID_NULL;
 	}
 
 	if( m_ImageInfo.GetOwnerID() != ToolID )
@@ -1974,9 +1974,9 @@ std::string SVImageClass::getDisplayedName() const
 
 	if (SvDef::SVImageTypeMain == m_ImageType)
 	{
-		if( GetOwner() )
+		if( GetParent() )
 		{
-			strName = GetOwner()->GetName();
+			strName = GetParent()->GetName();
 			strName += _T( ".Image1" );
 		}
 	}

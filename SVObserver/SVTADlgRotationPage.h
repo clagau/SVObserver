@@ -11,8 +11,8 @@
 #pragma once
 
 #pragma region Includes
-#include "InspectionEngine/SVTaskObjectValueInterface.h"
-#include "SVEnumerateCombo.h"
+#include "SVMFCControls/SVEnumerateCombo.h"
+#include "SVUtilityLibrary/SVGuid.h"
 #pragma endregion
 
 #pragma region Declarations
@@ -21,9 +21,10 @@ class SVToolAdjustmentDialogSheetClass;
 class SVToolClass;
 class SVDoubleValueObjectClass;
 class SVBoolValueObjectClass;
+class SVEnumerateValueObjectClass;
 #pragma endregion;
 
-class SVToolAdjustmentDialogRotationPageClass : public CPropertyPage, public SVTaskObjectValueInterface
+class SVToolAdjustmentDialogRotationPageClass : public CPropertyPage
 {
 public:
 	SVToolAdjustmentDialogRotationPageClass( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent );
@@ -60,7 +61,7 @@ protected:
 public:
 	//{{AFX_DATA(SVToolAdjustmentDialogRotationPageClass)
 	enum { IDD = IDD_TA_ROTATION_DIALOG };
-	SVEnumerateComboClass	m_cbInterpolation;
+	SvMc::SVEnumerateComboClass	m_cbInterpolation;
 	CString	m_strRotationAngleValue;
 	CString	m_strRotationXValue;
 	CString	m_strRotationYValue;

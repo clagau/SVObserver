@@ -15,39 +15,37 @@
 #include "SVGUID.h"
 #pragma endregion Includes
 
-const GUID SV_GUID_NULL = GUID_NULL;
-
 SVGUID::SVGUID()
-: m_Guid( SV_GUID_NULL )
+: m_Guid( GUID_NULL )
 {
 }
 
 SVGUID::SVGUID( const SVGUID& rGuid )
-: m_Guid( SV_GUID_NULL )
+: m_Guid( GUID_NULL )
 {
 	*this = rGuid;
 }
 
 SVGUID::SVGUID( const GUID& rGuid )
-: m_Guid( SV_GUID_NULL )
+: m_Guid( GUID_NULL )
 {
 	*this = rGuid;
 }
 
 SVGUID::SVGUID(const _bstr_t& rString)
-	: m_Guid(SV_GUID_NULL)
+	: m_Guid(GUID_NULL)
 {
 	*this = rString;
 }
 
 SVGUID::SVGUID(const std::string& rString)
-	: m_Guid(SV_GUID_NULL)
+	: m_Guid(GUID_NULL)
 {
 	*this = rString;
 }
 
 SVGUID::SVGUID( const _variant_t& rVariant )
-: m_Guid( SV_GUID_NULL )
+: m_Guid( GUID_NULL )
 {
 	if( VT_BSTR == rVariant.vt )
 	{
@@ -61,12 +59,12 @@ SVGUID::~SVGUID()
 
 bool SVGUID::empty() const
 {
-	return ( m_Guid == SV_GUID_NULL ) != FALSE;
+	return ( m_Guid == GUID_NULL ) != FALSE;
 }
 
 void SVGUID::clear()
 {
-	m_Guid = SV_GUID_NULL;
+	m_Guid = GUID_NULL;
 }
 
 SVGUID::operator const GUID& () const
@@ -143,7 +141,7 @@ const SVGUID& SVGUID::operator=( const _bstr_t& rString )
 
 const SVGUID& SVGUID::operator=(const std::string& rString)
 {
-	GUID Guid(SV_GUID_NULL);
+	GUID Guid(GUID_NULL);
 
 	std::string GuidString = rString;
 	SvUl::RemoveCharacters(GuidString, _T("{}"));
@@ -155,7 +153,7 @@ const SVGUID& SVGUID::operator=(const std::string& rString)
 	}
 	else
 	{
-		m_Guid = SV_GUID_NULL;
+		m_Guid = GUID_NULL;
 	}
 
 	return *this;

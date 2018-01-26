@@ -41,7 +41,7 @@ public:
 	double	m_dAngularAccuracy;
 	long	m_lAcceptance;
 	long	m_lCertainty;
-	int		m_nOccurances;
+	long	m_lOccurances;
 	BOOL	m_bAccuracy;
 	//}}AFX_DATA
 	SVImageOperationTypeEnum	m_dInterpolationMode;

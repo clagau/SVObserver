@@ -122,6 +122,7 @@
     <ClCompile Include="SVDlgBitmap.cpp" />
     <ClCompile Include="SVDlgGraph.cpp" />
     <ClCompile Include="SVEditControlWithHelp.cpp" />
+    <ClCompile Include="SVEnumerateCombo.cpp" />
     <ClCompile Include="SVHistogram.cpp" />
     <ClCompile Include="SVOSelectItemListDlg.cpp" />
     <ClCompile Include="SVSlideBar.cpp" />
@@ -165,6 +166,7 @@
     <ClInclude Include="SVDlgBitmap.H" />
     <ClInclude Include="SVDlgGraph.h" />
     <ClInclude Include="SVEditControlWithHelp.h" />
+    <ClInclude Include="SVEnumerateCombo.h" />
     <ClInclude Include="SVHistogram.h" />
     <ClInclude Include="SVHistogramLabels.h" />
     <ClInclude Include="SVOSelectItemListDlg.h" />

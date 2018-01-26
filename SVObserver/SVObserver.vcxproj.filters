@@ -47,12 +47,6 @@
     <ClCompile Include="SVAdjustToolSizePositionDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVAnalyzerLuminance.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVAnalyzerLuminanceSetup.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVAnalyzerResultDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -68,13 +62,7 @@
     <ClCompile Include="SVBlobAnalyzer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVBlobAnalyzerDialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVBlobAnalyzerResultDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVBlobFeaturePropertiesDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVCameraImageTemplate.cpp">
@@ -99,9 +87,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVConfigurationPrint.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVCylindricalWarpDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVCylindricalWarpTool.cpp">
@@ -143,12 +128,6 @@
     <ClCompile Include="SVDrawObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVEdgeMarkerAdjustmentPageClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVEnumerateCombo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVEnvironmentSettingsDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -174,9 +153,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVFileAcquisitionClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVFillBlobDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVGigeCameraManager.cpp">
@@ -356,15 +332,6 @@
     <ClCompile Include="SVOCVBlobRecord.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVOCVDialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVOCVGeneralDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVOCVMatchDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVOInspectionList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -413,22 +380,13 @@
     <ClCompile Include="SVPatResultDlgClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVPatSelectModelPageClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVPatternAnalyzerClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVPerspectiveTool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVPerspectiveWarpDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVPixelAnalyzer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="svpixelanalyzersetup.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVPPQBar.cpp">
@@ -447,9 +405,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVPPQShiftRegister.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVProfileEdgeMarkerAdjustmentPage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVProgressDialog.cpp">
@@ -572,9 +527,6 @@
     <ClCompile Include="SVTADlgColorThresholdSheet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVTADlgLUTPage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVTADlgPolarTransformPage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -605,12 +557,6 @@
     <ClCompile Include="SVToolAdjustmentDialogAnalyzerPageClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVToolAdjustmentDialogCommentPageClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVToolAdjustmentDialogLinearSpecialPageClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVToolAdjustmentDialogMaskPageClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -639,9 +585,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVUtilitiesCustomizeDialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVValueBaseNormalizerClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVVariantResultClass.cpp">
@@ -887,6 +830,15 @@
     <ClCompile Include="SVOLicenseManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SVLuminanceAnalyzer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVPixelAnalyzerDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVProfileEdgeMarkerAdjustmentPage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="SVObserver.odl">
@@ -915,12 +867,6 @@
     <ClInclude Include="SVAdjustToolSizePositionDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVAnalyzerLuminance.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVAnalyzerLuminanceSetup.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVAnalyzerResultDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -939,13 +885,7 @@
     <ClInclude Include="SVBlobAnalyzer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVBlobAnalyzerDialog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVBlobAnalyzerResultDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVBlobFeaturePropertiesDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVCameraImageTemplate.h">
@@ -973,9 +913,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVConfigurationTreeWriter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVCylindricalWarpDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVCylindricalWarpTool.h">
@@ -1020,12 +957,6 @@
     <ClInclude Include="SVDrawObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVEdgeMarkerAdjustmentPageClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVEnumerateCombo.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVEnvironmentSettingsDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1051,9 +982,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVFileAcquisitionClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVFillBlobDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVGigeCameraManager.h">
@@ -1248,15 +1176,6 @@
     <ClInclude Include="SVOCVBlobRecord.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVOCVDialog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVOCVGeneralDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVOCVMatchDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVOInspectionList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1308,22 +1227,13 @@
     <ClInclude Include="SVPatResultDlgClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVPatSelectModelPageClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVPatternAnalyzerClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVPerspectiveTool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVPerspectiveWarpDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVPixelAnalyzer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVPixelAnalyzerSetup.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVPPQBar.h">
@@ -1342,9 +1252,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVPPQShiftRegister.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVProfileEdgeMarkerAdjustmentPage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVProgressDialog.h">
@@ -1470,9 +1377,6 @@
     <ClInclude Include="SVTADlgColorThresholdSheet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVTADlgLUTPage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVTADlgPolarTransformPage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1503,12 +1407,6 @@
     <ClInclude Include="SVToolAdjustmentDialogAnalyzerPageClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVToolAdjustmentDialogCommentPageClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVToolAdjustmentDialogLinearSpecialPageClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVToolAdjustmentDialogMaskPageClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1537,9 +1435,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVUtilitiesCustomizeDialog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVValueBaseNormalizerClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVVariantResultClass.h">
@@ -1804,6 +1699,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVOLicenseManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVLuminanceAnalyzer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVPixelAnalyzerDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVProfileEdgeMarkerAdjustmentPage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

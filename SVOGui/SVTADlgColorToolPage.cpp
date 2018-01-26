@@ -28,7 +28,6 @@ namespace SvOg
 {
 	static LPCTSTR cImageTag = _T("Tool Input");
 	static LPCTSTR cNoImageTag = _T("(No Image Available)");
-	static LPCTSTR cConvertToHsiTag = _T("ConvertToHSI");
 
 	BEGIN_MESSAGE_MAP(SVTADlgColorToolPage, CPropertyPage)
 		//{{AFX_MSG_MAP(SVTADlgColorToolPageClass)
@@ -43,7 +42,7 @@ namespace SvOg
 	, m_Images(rInspectionID, rTaskObjectID, SvDef::SVImageColorType)
 	, m_InspectionID(rInspectionID)
 	, m_TaskObjectID(rTaskObjectID)
-	, m_Values(SvOg::BoundValues(rInspectionID, rTaskObjectID, { { cConvertToHsiTag, SVConvertToHSIObjectGuid } }))
+		, m_Values{ SvOg::BoundValues{ rInspectionID, rTaskObjectID } }
 	, m_convertToHSI{ false }
 	{
 	}
@@ -57,8 +56,8 @@ namespace SvOg
 		HRESULT Result{ E_FAIL };
 		UpdateData( true ); // get data from dialog
 
-		m_Values.Set<bool>(cConvertToHsiTag, m_convertToHSI ? true : false);
-		Result = m_Values.Commit(true);
+		m_Values.Set<bool>(SVConvertToHSIObjectGuid, m_convertToHSI ? true : false);
+		Result = m_Values.Commit(SvOg::doResetRunOnce);
 
 		UpdateData( false );
 		return Result;
@@ -81,7 +80,7 @@ namespace SvOg
 		m_Images.Init();
 		m_Values.Init();
 
-		m_convertToHSI = m_Values.Get<bool>(cConvertToHsiTag);
+		m_convertToHSI = m_Values.Get<bool>(SVConvertToHSIObjectGuid);
 
 		const SvUl::NameGuidList& rAvailableImageList = m_Images.GetAvailableImageList();
 

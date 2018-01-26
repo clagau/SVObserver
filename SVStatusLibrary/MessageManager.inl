@@ -74,7 +74,7 @@ INT_PTR MessageManager<M_Container, M_Data>::Process( UINT MsgBoxType /*= MB_OK*
 }
 
 template <typename M_Container, typename M_Data>
-INT_PTR MessageManager<M_Container, M_Data>::setMessage( DWORD MessageCode, LPCTSTR AdditionalText, SourceFileParams SourceFile, DWORD ProgramCode /*= 0*/, const GUID& rObjectId /*= SV_GUID_NULL*/, UINT MsgBoxType /*= MB_OK*/ )
+INT_PTR MessageManager<M_Container, M_Data>::setMessage( DWORD MessageCode, LPCTSTR AdditionalText, SourceFileParams SourceFile, DWORD ProgramCode /*= 0*/, const GUID& rObjectId /*= GUID_NULL*/, UINT MsgBoxType /*= MB_OK*/ )
 {
 	SvDef::StringVector textList;
 	MessageTextEnum id = SvStl::Tid_Empty;
@@ -88,13 +88,13 @@ INT_PTR MessageManager<M_Container, M_Data>::setMessage( DWORD MessageCode, LPCT
 }
 
 template <typename M_Container, typename M_Data>
-INT_PTR MessageManager<M_Container, M_Data>::setMessage( DWORD MessageCode, MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, DWORD ProgramCode /*= 0*/, const GUID& rObjectId /*= SV_GUID_NULL*/, UINT MsgBoxType /*= MB_OK*/)
+INT_PTR MessageManager<M_Container, M_Data>::setMessage( DWORD MessageCode, MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, DWORD ProgramCode /*= 0*/, const GUID& rObjectId /*= GUID_NULL*/, UINT MsgBoxType /*= MB_OK*/)
 {
 	return setMessage( MessageCode, AdditionalTextId, SvDef::StringVector(), SourceFile, ProgramCode, rObjectId, MsgBoxType );
 }
 
 template <typename M_Container, typename M_Data>
-INT_PTR MessageManager<M_Container, M_Data>::setMessage( DWORD MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode /*= 0*/, const GUID& rObjectId /*= SV_GUID_NULL*/ , UINT MsgBoxType /*= MB_OK*/ )
+INT_PTR MessageManager<M_Container, M_Data>::setMessage( DWORD MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode /*= 0*/, const GUID& rObjectId /*= GUID_NULL*/ , UINT MsgBoxType /*= MB_OK*/ )
 {
 	INT_PTR Result( IDCANCEL );
 
@@ -106,7 +106,7 @@ INT_PTR MessageManager<M_Container, M_Data>::setMessage( DWORD MessageCode, Mess
 }
 
 template <typename M_Container, typename M_Data>
-INT_PTR MessageManager<M_Container, M_Data>::setMessage( const M_Data& rData, const GUID& rObjectId /*= SV_GUID_NULL*/, UINT MsgBoxType /*= MB_OK */ )
+INT_PTR MessageManager<M_Container, M_Data>::setMessage( const M_Data& rData, const GUID& rObjectId /*= GUID_NULL*/, UINT MsgBoxType /*= MB_OK */ )
 {
 	INT_PTR Result( IDCANCEL );
 

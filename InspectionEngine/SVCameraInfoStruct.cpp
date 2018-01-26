@@ -22,7 +22,7 @@ static char THIS_FILE[] = __FILE__;
 
 #pragma region Constructor
 SVCameraInfoStruct::SVCameraInfoStruct() :
- m_CameraGuid( SV_GUID_NULL )
+ m_CameraGuid( GUID_NULL )
 ,m_SourceImageDMIndexHandle()
 ,m_StartFrameTimeStamp( 0 )
 ,m_EndFrameTimeStamp( 0 )
@@ -31,7 +31,7 @@ SVCameraInfoStruct::SVCameraInfoStruct() :
 }
 
 SVCameraInfoStruct::SVCameraInfoStruct( const SVCameraInfoStruct &rRhs ) :
-m_CameraGuid( SV_GUID_NULL )
+m_CameraGuid( GUID_NULL )
 ,m_SourceImageDMIndexHandle()
 ,m_StartFrameTimeStamp( 0 )
 ,m_EndFrameTimeStamp( 0 )
@@ -110,7 +110,7 @@ HRESULT SVCameraInfoStruct::Assign( SvTl::SVTimeStamp p_StartFrameTS, SvTl::SVTi
 
 void SVCameraInfoStruct::Reset()
 {
-	m_CameraGuid = SV_GUID_NULL;
+	m_CameraGuid = GUID_NULL;
 	m_StartFrameTimeStamp = 0;
 	m_EndFrameTimeStamp = 0;
 	//! For Debugging Only

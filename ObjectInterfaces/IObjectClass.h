@@ -99,6 +99,9 @@ namespace SvOi
 		*/
 		virtual const SVGUID& GetUniqueObjectID() const = 0;
 
+		/// This method returns the embedded ID of the object
+		virtual const SVGUID& GetEmbeddedID() const = 0;
+
 		/*
 		This method returns the creation state of the object.
 		*/
@@ -125,8 +128,8 @@ namespace SvOi
 
 		/// Move an object in the friend-list to a position in front of another object.
 		/// \param objectToMoveId [in] GUID of the object to move.
-		/// \param preObjectId [in] GUID of the object in front of the other object should moved. If this GUID is SV_GUID_NULL, the other object will be moved to the end of the list.
-		virtual void moveFriendObject(const SVGUID& objectToMoveId, const SVGUID& preObjectId = SV_GUID_NULL) = 0;
+		/// \param preObjectId [in] GUID of the object in front of the other object should moved. If this GUID is GUID_NULL, the other object will be moved to the end of the list.
+		virtual void moveFriendObject(const SVGUID& objectToMoveId, const SVGUID& preObjectId = GUID_NULL) = 0;
 
 		/// Reset this object and all children and required all friends.
 		/// \param pErrorMessages [in,out] Pointer to an Error Message Container. If the pointer unequal nullptr, an error message will be added if it happens during reset.

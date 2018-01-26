@@ -527,7 +527,7 @@ bool SVColorThresholdClass::createOutputImage( SVImageClass* pInputImage, SVImag
 	}
 
 	// Setup...
-	ImageInfo.SetOwner( GetOwnerID() );
+	ImageInfo.SetOwner( GetParentID() );
 
 	ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatMono8 );
 	ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
@@ -566,7 +566,7 @@ bool SVColorThresholdClass::createHistogramImage( SVImageClass* pInputImage, SVI
 	m_ExtentHeight.GetValue( l_dHeight );
 
 	// Setup...
-	ImageInfo.SetOwner( GetOwnerID() );
+	ImageInfo.SetOwner( GetParentID() );
 	ImageInfo.SetOwnerImage( pOutputImage->GetUniqueObjectID() );
 
 	ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatMono8 );

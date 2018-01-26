@@ -323,7 +323,7 @@ HRESULT SVCameraImageTemplate::RebuildCameraImage()
 	HRESULT l_Status = S_OK;
 
 	SVVirtualCamera* pCamera( nullptr );
-	SVObjectClass* pOwner = GetOwner();
+	SVObjectClass* pOwner = GetParent();
 
 	if( !( digitizerObjectID.empty() ) )
 	{

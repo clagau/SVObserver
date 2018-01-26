@@ -12,7 +12,6 @@
 #pragma once
 
 #pragma region Includes
-#include "InspectionEngine/SVTaskObjectValueInterface.h"
 #include "SVMFCControls/SVHistogram.h"
 #include "Definitions/Color.h"
 #pragma region Includes
@@ -39,7 +38,7 @@ private:
 
 // SVHistogramAnalyzerSetup dialog
 
-class SVHistogramAnalyzerSetupClass : public CDialog, public SVTaskObjectValueInterface
+class SVHistogramAnalyzerSetupClass : public CDialog
 {
 //	DECLARE_DYNAMIC(SVHistogramAnalyzerSetupClass)
 public:

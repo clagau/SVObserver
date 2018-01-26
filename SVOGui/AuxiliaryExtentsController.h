@@ -9,7 +9,7 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <boost/noncopyable.hpp>
-#include "ObjectInterfaces\NameValueList.h"
+#include "ObjectInterfaces\NameValueVector.h"
 #include "SVUtilityLibrary\SVGUID.h"
 
 #include "ImageController.h"

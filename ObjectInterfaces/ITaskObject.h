@@ -16,6 +16,7 @@
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/NameGuidList.h"
 #include "SVImageBufferHandleInterface.h"
+#include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -86,7 +87,12 @@ namespace SvOi
 		/// \param rValueVector [in] A vector of parameter-value pairs.
 		/// \param shouldSet [in] If true, value will be set if validation was successfully.
 		/// \returns SvStl::MessageContainerVector A list of error messages. This list is empty if all validations and set was successfully.
-		virtual SvStl::MessageContainerVector validateAndSetEmmeddedValues(const SetValueObjectPairVector& rValueVector, bool shouldSet) = 0;
+		virtual SvStl::MessageContainerVector validateAndSetEmbeddedValues(const SetValueStructVector& rValueVector, bool shouldSet) = 0;
+
+		/// Set default embedded values
+		/// \param rValueVector [in] A vector of parameter-value pairs.
+		/// \returns SvStl::MessageContainerVector A list of error messages. This list is empty if all validations and set was successful
+		virtual SvStl::MessageContainerVector setEmbeddedDefaultValues(const SetValueStructVector& rValueVector) = 0;
 
 		// Resolve desired inputs, called on Construction from Class Factory
 		/// \param rDesiredInputs [in] List of desired inputs.
@@ -109,5 +115,9 @@ namespace SvOi
 		virtual bool getSpecialImage(const std::string& rName, SVImageBufferHandlePtr& rImagePtr) const = 0;
 
 		virtual HRESULT GetOutputList(SVOutputInfoListClass& p_rOutputInfoList) const = 0;
+
+		// Get the embedded list of the task object
+		/// \returns a list of embedded GUIDs
+		virtual SVGuidVector getEmbeddedList() const = 0;
 	};
 } //namespace SvOi

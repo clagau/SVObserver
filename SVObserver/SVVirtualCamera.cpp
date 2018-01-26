@@ -691,7 +691,7 @@ HRESULT SVVirtualCamera::UnregisterTriggerRelay()
 void SVVirtualCamera::createCameraParameters()
 {
 	BasicValueObjectPtr pValue;
-	SVGUID ParameterUID( SV_GUID_NULL );
+	SVGUID ParameterUID( GUID_NULL );
 	//Initialize the parameters and set their unique GUID
 	pValue = m_CameraValues.setValueObject( SvDef::FqnCameraSerialNumber, _T(""), this, SvDef::SVCameraObjectType );
 	ParameterUID = CameraBaseSerialNumberUidGuid;

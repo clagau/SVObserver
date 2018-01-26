@@ -24,7 +24,7 @@ namespace SvOg
 	{
 #pragma region Constructor
 	public:
-		ObjectSelectorController(const SVGUID& rInspectionID, const SVGUID& rInstanceID = SV_GUID_NULL);
+		ObjectSelectorController(const SVGUID& rInspectionID, const SVGUID& rInstanceID = GUID_NULL);
 		virtual ~ObjectSelectorController();
 #pragma endregion Constructor
 
@@ -38,7 +38,7 @@ namespace SvOg
 		/// \param rInstanceId [in] 
 		/// \returns bool True if selector was closed by OK-button.
 		template <typename ToolsetSelector>
-		bool Show( std::string& rName, const std::string& rTitle, CWnd* pParent, const SVGUID& rInstanceId = SV_GUID_NULL );
+		bool Show( std::string& rName, const std::string& rTitle, CWnd* pParent, const SVGUID& rInstanceId = GUID_NULL );
 #pragma endregion Public Methods
 
 #pragma endregion Private Methods

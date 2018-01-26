@@ -28,9 +28,9 @@ inline const SVGUID& SVObjectClass::GetEmbeddedID() const
 }
 
 /*
-This method returns the object's Global Unique Identifier (GUID) of this object's owner.
+This method returns the object's Global Unique Identifier (GUID) of this object's parent
 */
-inline const SVGUID& SVObjectClass::GetOwnerID() const
+inline const SVGUID& SVObjectClass::GetParentID() const
 {
 	return m_ownerObjectInfo.getUniqueObjectID();
 }
@@ -48,7 +48,7 @@ inline const SvDef::SVObjectTypeEnum& SVObjectClass::GetObjectType() const
 /*
 This metthod return the pointer to the owner object.
 */
-inline SVObjectClass* SVObjectClass::GetOwner() const
+inline SVObjectClass* SVObjectClass::GetParent() const
 {
 	return m_ownerObjectInfo.getObject();
 }

@@ -24,7 +24,7 @@ inline void SVObjectReference::init()
 {
 	m_pObject = nullptr;
 	m_pValueObject = nullptr;
-	m_Guid = SV_GUID_NULL;
+	m_Guid = GUID_NULL;
 	m_NameInfo.clear();
 	m_ArrayIndex = -1;
 }

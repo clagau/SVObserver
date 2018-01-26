@@ -135,8 +135,8 @@ namespace SvOg {
 
 	void TADialogTableDefinesPage::OnBnClickedMoveUp()
 	{
-		SVGUID moveGuid = SV_GUID_NULL;
-		SVGUID preGuid = SV_GUID_NULL;
+		SVGUID moveGuid = GUID_NULL;
+		SVGUID preGuid = GUID_NULL;
 		SvGcl::CCellRange Selection = m_Grid.GetSelectedCellRange();
 		if (Selection.GetMinRow() == Selection.GetMaxRow() && 1 < Selection.GetMinRow())
 		{
@@ -153,8 +153,8 @@ namespace SvOg {
 
 	void TADialogTableDefinesPage::OnBnClickedMoveDown()
 	{
-		SVGUID moveGuid = SV_GUID_NULL;
-		SVGUID preGuid = SV_GUID_NULL;
+		SVGUID moveGuid = GUID_NULL;
+		SVGUID preGuid = GUID_NULL;
 		SvGcl::CCellRange Selection = m_Grid.GetSelectedCellRange();
 		if (Selection.GetMinRow() == Selection.GetMaxRow() && 0 < Selection.GetMinRow() && Selection.GetMinRow()+1 < m_Grid.GetRowCount())
 		{
@@ -175,7 +175,7 @@ namespace SvOg {
 
 	void TADialogTableDefinesPage::OnBnClickedButtonAdd()
 	{
-		SVGUID addPreGuid = SV_GUID_NULL;
+		SVGUID addPreGuid = GUID_NULL;
 		SvGcl::CCellRange Selection = m_Grid.GetSelectedCellRange();
 		if ( Selection.GetMinRow() == Selection.GetMaxRow() && 0 < Selection.GetMinRow() )
 		{

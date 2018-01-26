@@ -60,16 +60,6 @@ namespace SvOi
 		***********/
 		virtual bool IsColorCamera() const = 0;
 
-		/***********
-		This method adds an input request
-		***********/
-		virtual bool AddInputRequest( const SVGUID& rGuid, const _variant_t& rValue, long Index = -1 ) = 0;
-
-		/***********
-		This method adds an input request marker
-		***********/
-		virtual bool AddInputRequestMarker() = 0;
-
 		///Checks whether the reset state is set 
 		virtual bool IsResetStateSet(unsigned long p_State) const = 0;
 

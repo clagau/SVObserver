@@ -34,7 +34,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVObjectClass, SV_GUID_NULL )
+SV_IMPLEMENT_CLASS( SVObjectClass, GUID_NULL )
 
 //This is the default constructor for this object.  This constructor initializes the name objects, clears all owner information, and calls the init method.
 SVObjectClass::SVObjectClass()
@@ -89,7 +89,7 @@ void SVObjectClass::init()
 	m_objectDepth = 0;	// Standard Depth
 
 	m_isObjectValid		  = false;
-	m_embeddedID = SV_GUID_NULL;
+	m_embeddedID = GUID_NULL;
 
 	// Set object Info...
 	SVObjectManagerClass::Instance().CreateUniqueObjectID( this );
@@ -114,7 +114,7 @@ void SVObjectClass::DestroyFriends()
 		SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject( rFriend.getUniqueObjectID() );
 		if( pFriend )
 		{
-			SVObjectClass* pOwner = pFriend->GetOwner();
+			SVObjectClass* pOwner = pFriend->GetParent();
 			if( pOwner )
 			{
 				// Close, Disconnect and Delete Friend...
@@ -343,11 +343,6 @@ HRESULT SVObjectClass::GetCompleteNameToType(SvDef::SVObjectTypeEnum objectType,
 	return hr;
 }
 
-const SVGUID& SVObjectClass::GetParentID() const
-{
-	return GetOwnerID();
-}
-
 SvOi::IObjectClass* SVObjectClass::GetAncestorInterface(SvDef::SVObjectTypeEnum ancestorObjectType)
 {
 	if (ancestorObjectType == GetObjectType())
@@ -391,19 +386,19 @@ void SVObjectClass::SetName( LPCTSTR Name )
 SvOi::IObjectClass* SVObjectClass::getFirstObject(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends, const SvOi::IObjectClass* pRequestor) const
 {
 	// check the owner of this class
-	if( nullptr != pRequestor && (pRequestor == this || pRequestor == GetOwner()) )
+	if( nullptr != pRequestor && (pRequestor == this || pRequestor == GetParent()) )
 	{
 		// Do not reference self or owner
 		return nullptr;
 	}
 
 	// Find best match....EmbeddedID, Type, SubType...
-	if(( SV_GUID_NULL       == rObjectTypeInfo.EmbeddedID || rObjectTypeInfo.EmbeddedID == GetEmbeddedID() ) &&
+	if(( GUID_NULL       == rObjectTypeInfo.EmbeddedID || rObjectTypeInfo.EmbeddedID == GetEmbeddedID() ) &&
 		( SvDef::SVNotSetObjectType == rObjectTypeInfo.ObjectType || rObjectTypeInfo.ObjectType == GetObjectType() ) &&
 		( SvDef::SVNotSetSubObjectType == rObjectTypeInfo.SubType || rObjectTypeInfo.SubType    == GetObjectSubType() )
 		)
 	{
-		if( SV_GUID_NULL         != rObjectTypeInfo.EmbeddedID ||
+		if( GUID_NULL         != rObjectTypeInfo.EmbeddedID ||
 			SvDef::SVNotSetObjectType    != rObjectTypeInfo.ObjectType ||
 			SvDef::SVNotSetSubObjectType != rObjectTypeInfo.SubType
 			)
@@ -479,7 +474,7 @@ bool SVObjectClass::SetObjectOwner( SVObjectClass* pNewOwner )
 
 		//First disconnect the previous owner
 		SVGUID Guid = m_ownerObjectInfo.getUniqueObjectID();
-		if(SV_GUID_NULL !=Guid)
+		if(GUID_NULL !=Guid)
 		{
 			SVObjectManagerClass::Instance().disconnectDependency(Guid, GetUniqueObjectID(), SvOl::JoinType::Owner);
 		}
@@ -614,7 +609,7 @@ bool SVObjectClass::AddFriend( const GUID& rFriendGUID, const GUID& rAddPreGuid 
 {
 	size_t position = m_friendList.size();
 	// Check GUID...
-	if( SV_GUID_NULL == rFriendGUID )
+	if( GUID_NULL == rFriendGUID )
 	{
 		return false;
 	}
@@ -643,7 +638,7 @@ bool SVObjectClass::AddFriend( const GUID& rFriendGUID, const GUID& rAddPreGuid 
 		// Check if we are the Owner
 		// Note:: Special hack for friend scripting
 		// if we are the owner - it's not from the script
-		SVObjectClass* l_psvOwner = pNewFriend->GetOwner();
+		SVObjectClass* l_psvOwner = pNewFriend->GetParent();
 
 		if ( l_psvOwner == this )
 		{
@@ -677,7 +672,7 @@ SVObjectClass*  SVObjectClass::GetFriend( const SvDef::SVObjectTypeInfoStruct& r
 		const SvDef::SVObjectTypeInfoStruct* pInfoStruct =  &(m_friendList[ i ].m_ObjectTypeInfo); 
 		if( pInfoStruct->ObjectType == rObjectType.ObjectType && pInfoStruct->SubType == rObjectType.SubType)
 		{
-			if( SV_GUID_NULL == pInfoStruct->EmbeddedID || pInfoStruct->EmbeddedID == rObjectType.EmbeddedID )
+			if( GUID_NULL == pInfoStruct->EmbeddedID || pInfoStruct->EmbeddedID == rObjectType.EmbeddedID )
 			{
 				return 	m_friendList[i].getObject();
 			}
@@ -717,7 +712,7 @@ This method returns Ancestor Object of specified Object Type of this Object, if 
 */
 SVObjectClass* SVObjectClass::GetAncestor( SvDef::SVObjectTypeEnum AncestorObjectType ) const
 {
-	SVObjectClass* pOwner = this->GetOwner();
+	SVObjectClass* pOwner = this->GetParent();
 	
 	while( nullptr != pOwner )
 	{
@@ -725,7 +720,7 @@ SVObjectClass* SVObjectClass::GetAncestor( SvDef::SVObjectTypeEnum AncestorObjec
 		{
 			return pOwner;
 		}
-		pOwner = pOwner->GetOwner();
+		pOwner = pOwner->GetParent();
 	}
 	return nullptr;
 }
@@ -842,7 +837,7 @@ void SVObjectClass::Persist( SvOi::IObjectWriter& rWriter )
 	value.Clear();
 
 	// Set up object definition...
-	if( SV_GUID_NULL != GetEmbeddedID() )
+	if( GUID_NULL != GetEmbeddedID() )
 	{
 		value.SetString(GetEmbeddedID().ToString().c_str());
 		rWriter.WriteAttribute( scEmbeddedIDTag, value );

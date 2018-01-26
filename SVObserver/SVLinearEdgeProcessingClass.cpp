@@ -9,14 +9,17 @@
 // * .Check In Date   : $Date:   10 Jul 2014 17:46:18  $
 // ******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVLinearEdgeProcessingClass.h"
 #include "Definitions/Color.h"
 #include "Definitions/GlobalConst.h"
+#include "Definitions/LinearEdgeEnums.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "InspectionEngine/SVTool.h"
 #include "InspectionEngine/SVAnalyzer.h"
 #include "SVGlobal.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -57,18 +60,18 @@ SVLinearEdgeProcessingClass::SVLinearEdgeProcessingClass( SVObjectClass* POwner,
 	m_dwMaxThreshold = 0;
 	m_dwColorNumber = 0;
 
-	m_svDirection.SetEnumTypes( cDirectionEnums );
-	m_svPolarisation.SetEnumTypes( cPolarisationEnums );
-	m_svEdgeSelect.SetEnumTypes( cEdgeSelectEnums );
-	m_svPosition.SetEnumTypes( cPositionEnums );
+	m_svDirection.SetEnumTypes( SvDef::cDirectionEnums );
+	m_svPolarisation.SetEnumTypes( SvDef::cPolarisationEnums );
+	m_svEdgeSelect.SetEnumTypes( SvDef::cEdgeSelectEnums );
+	m_svPosition.SetEnumTypes( SvDef::cPositionEnums );
 
-	m_svDirection.SetDefaultValue(SV_HEAD_TO_TAIL_DIRECTION);
-	m_svPolarisation.SetDefaultValue(SV_ANY_POLARISATION);
-	m_svEdgeSelect.SetDefaultValue(SV_FIRST_EDGE);
+	m_svDirection.SetDefaultValue(SvDef::SV_HEAD_TO_TAIL_DIRECTION);
+	m_svPolarisation.SetDefaultValue(SvDef::SV_ANY_POLARISATION);
+	m_svEdgeSelect.SetDefaultValue(SvDef::SV_FIRST_EDGE);
 	m_svEdgeSelectThisValue.SetDefaultValue(1.0);
 
 	m_svIsFixedEdgeMarker.SetDefaultValue(BOOL(false));
-	m_svPosition.SetDefaultValue(SV_START_POSITION);
+	m_svPosition.SetDefaultValue(SvDef::SV_START_POSITION);
 	m_svPositionOffsetValue.SetDefaultValue(1.0);
 
 	m_svUseLowerThresholdSelectable.SetDefaultValue(BOOL(true));
@@ -313,7 +316,7 @@ HRESULT SVLinearEdgeProcessingClass::GetOutputEdgeDistance( double& rValue )
 			// Get the selected fixed position...
 			switch ( Position )
 			{
-				case SV_START_POSITION:
+				case SvDef::SV_START_POSITION:
 				{
 					// Get measure line start position
 					// Allways 0!
@@ -325,7 +328,7 @@ HRESULT SVLinearEdgeProcessingClass::GetOutputEdgeDistance( double& rValue )
 					break;
 				}
 
-				case SV_END_POSITION:
+				case SvDef::SV_END_POSITION:
 				{
 					// Get measure line end position
 					// Allways line length - 1, if length > 0!
@@ -337,7 +340,7 @@ HRESULT SVLinearEdgeProcessingClass::GetOutputEdgeDistance( double& rValue )
 					break;
 				}
 			
-				case SV_CENTER_POSITION:
+				case SvDef::SV_CENTER_POSITION:
 				{
 					// Get measure line center position
 					// Allways ( line length / 2 ), if ( length / 2 ) > 0!
@@ -348,7 +351,7 @@ HRESULT SVLinearEdgeProcessingClass::GetOutputEdgeDistance( double& rValue )
 					break;
 				}
 
-				case SV_OFFSET_POSITION:
+				case SvDef::SV_OFFSET_POSITION:
 				{
 					double Offset = 0.0;
 
@@ -375,7 +378,7 @@ HRESULT SVLinearEdgeProcessingClass::GetOutputEdgeDistance( double& rValue )
 			{
 				switch ( EdgeSelect )
 				{
-					case SV_FIRST_EDGE:
+					case SvDef::SV_FIRST_EDGE:
 					{
 						// Get first found edge position
 						// Allways first edge, if edge number > 0!
@@ -389,7 +392,7 @@ HRESULT SVLinearEdgeProcessingClass::GetOutputEdgeDistance( double& rValue )
 						break;
 					}
 
-					case SV_LAST_EDGE:
+					case SvDef::SV_LAST_EDGE:
 					{
 						// Get last found edge position
 						// Allways last edge, if edge number > 0!
@@ -403,7 +406,7 @@ HRESULT SVLinearEdgeProcessingClass::GetOutputEdgeDistance( double& rValue )
 						break;
 					}
 
-					case SV_THIS_EDGE:
+					case SvDef::SV_THIS_EDGE:
 					{
 						// Get user defined edge position
 						// Allways user defined edge, if edge number >= user defined edge
@@ -422,7 +425,7 @@ HRESULT SVLinearEdgeProcessingClass::GetOutputEdgeDistance( double& rValue )
 
 							switch( Direction )
 							{
-								case SV_HEAD_TO_TAIL_DIRECTION:
+								case SvDef::SV_HEAD_TO_TAIL_DIRECTION:
 								{
 									if( Edge - 1 < static_cast<long>(Edges.size()) )
 									{
@@ -439,7 +442,7 @@ HRESULT SVLinearEdgeProcessingClass::GetOutputEdgeDistance( double& rValue )
 									break;
 								}
 
-								case SV_TAIL_TO_HEAD_DIRECTION:
+								case SvDef::SV_TAIL_TO_HEAD_DIRECTION:
 								{
 									if( Edge - 1 < static_cast<long>(Edges.size()) )
 									{
@@ -707,7 +710,7 @@ HRESULT SVLinearEdgeProcessingClass::GetEdgesOverlay( SVExtentMultiLineStruct &r
 
 	if( S_OK == l_hrOk )
 	{
-		long Direction( SV_UNDEFINED_DIRECTION );
+		long Direction( SvDef::SV_UNDEFINED_DIRECTION );
 
 		m_svDirection.GetValue( Direction );
 
@@ -721,7 +724,7 @@ HRESULT SVLinearEdgeProcessingClass::GetEdgesOverlay( SVExtentMultiLineStruct &r
 		{
 			double l_dX = Edges[ l ];
 
-			if( SV_UNDEFINED_DIRECTION == Direction )
+			if(SvDef::SV_UNDEFINED_DIRECTION == Direction)
 			{
 				l_dX = static_cast<int>(l);
 
@@ -799,32 +802,6 @@ HRESULT SVLinearEdgeProcessingClass::GetSelectedEdgeOverlay( SVExtentLineStruct 
 	}
 
 	return l_hrOk;
-}
-
-long SVLinearEdgeProcessingClass::getLowerThresholdValue() const
-{
-	DWORD thresholdValue = 0;
-	if (S_OK == m_svLowerThresholdValue.GetValue( thresholdValue ))
-	{
-		return static_cast<long>(thresholdValue);
-	}
-	else
-	{
-		return -1;
-	}
-}
-
-long SVLinearEdgeProcessingClass::getUpperThresholdValue() const
-{
-	DWORD thresholdValue = 0;
-	if (S_OK == m_svUpperThresholdValue.GetValue( thresholdValue ))
-	{
-		return static_cast<long>(thresholdValue);
-	}
-	else
-	{
-		return -1;
-	}
 }
 
 HRESULT SVLinearEdgeProcessingClass::UpdateUpperThresholdValues()
@@ -1063,20 +1040,20 @@ HRESULT SVLinearEdgeProcessingClass::UpdateEdgeList()
 
 		switch( Direction )
 		{
-			case SV_HEAD_TO_TAIL_DIRECTION:
+			case SvDef::SV_HEAD_TO_TAIL_DIRECTION:
 			{
 				// Calc edges...
 				for( long l = 0; l < l_lCount - 1; ++l )
 				{
 					if( S_OK == IsEdge( Data[ l ], Data[ l + 1 ], Upper, Lower, Polarisation ) )
 					{
-						if( Polarisation == SV_ANY_POLARISATION )
+						if( Polarisation == SvDef::SV_ANY_POLARISATION )
 						{
 							double l_dDistance1 = 0.0;
 							double l_dDistance2 = 0.0;
 
-							bool l_bDistance1 = S_OK == CalculateSubPixelEdge( Data[ l ], Data[ l + 1 ], Upper, Lower, SV_POSITIVE_POLARISATION, l_dDistance1 );
-							bool l_bDistance2 = S_OK == CalculateSubPixelEdge( Data[ l ], Data[ l + 1 ], Upper, Lower, SV_NEGATIVE_POLARISATION, l_dDistance2 );
+							bool l_bDistance1 = S_OK == CalculateSubPixelEdge( Data[ l ], Data[ l + 1 ], Upper, Lower, SvDef::SV_POSITIVE_POLARISATION, l_dDistance1 );
+							bool l_bDistance2 = S_OK == CalculateSubPixelEdge( Data[ l ], Data[ l + 1 ], Upper, Lower, SvDef::SV_NEGATIVE_POLARISATION, l_dDistance2 );
 
 							if ( l_dDistance1 <= l_dDistance2 )
 							{
@@ -1128,19 +1105,19 @@ HRESULT SVLinearEdgeProcessingClass::UpdateEdgeList()
 				break;
 			}
 
-			case SV_TAIL_TO_HEAD_DIRECTION:
+			case SvDef::SV_TAIL_TO_HEAD_DIRECTION:
 			{
 				for( long l = l_lCount - 1; 0 < l; --l )
 				{
 					if( S_OK == IsEdge( Data[ l ], Data[ l - 1 ], Upper, Lower, Polarisation ) )
 					{
-						if( Polarisation == SV_ANY_POLARISATION )
+						if( Polarisation == SvDef::SV_ANY_POLARISATION )
 						{
 							double l_dDistance1 = 0.0;
 							double l_dDistance2 = 0.0;
 
-							bool l_bDistance1 = S_OK == CalculateSubPixelEdge( Data[ l ], Data[ l - 1 ], Upper, Lower, SV_POSITIVE_POLARISATION, l_dDistance1 );
-							bool l_bDistance2 = S_OK == CalculateSubPixelEdge( Data[ l ], Data[ l - 1 ], Upper, Lower, SV_NEGATIVE_POLARISATION, l_dDistance2 );
+							bool l_bDistance1 = S_OK == CalculateSubPixelEdge( Data[ l ], Data[ l - 1 ], Upper, Lower, SvDef::SV_POSITIVE_POLARISATION, l_dDistance1 );
+							bool l_bDistance2 = S_OK == CalculateSubPixelEdge( Data[ l ], Data[ l - 1 ], Upper, Lower, SvDef::SV_NEGATIVE_POLARISATION, l_dDistance2 );
 
 							if ( l_dDistance1 <= l_dDistance2 )
 							{
@@ -1192,7 +1169,7 @@ HRESULT SVLinearEdgeProcessingClass::UpdateEdgeList()
 				break;
 			}
 
-			case SV_UNDEFINED_DIRECTION:
+			case SvDef::SV_UNDEFINED_DIRECTION:
 			{
 				// Calc edges...
 				for( long l = 0; l < l_lCount; ++l )
@@ -1231,7 +1208,7 @@ HRESULT SVLinearEdgeProcessingClass::IsEdge( double p_dStart, double p_dEnd, DWO
 
 	switch( p_dwPolarisation )
 	{
-		case SV_POSITIVE_POLARISATION:
+		case SvDef::SV_POSITIVE_POLARISATION:
 		{
 			bool l_bIsPositive = false;
 
@@ -1245,7 +1222,7 @@ HRESULT SVLinearEdgeProcessingClass::IsEdge( double p_dStart, double p_dEnd, DWO
 			}
 			break;
 		}
-		case SV_NEGATIVE_POLARISATION:
+		case SvDef::SV_NEGATIVE_POLARISATION:
 		{
 			bool l_bIsNegative = false;
 
@@ -1259,7 +1236,7 @@ HRESULT SVLinearEdgeProcessingClass::IsEdge( double p_dStart, double p_dEnd, DWO
 			}
 			break;
 		}
-		case SV_ANY_POLARISATION:
+		case SvDef::SV_ANY_POLARISATION:
 		{
 			bool l_bIsAny = false;
 
@@ -1313,7 +1290,7 @@ HRESULT SVLinearEdgeProcessingClass::CalculateSubPixelEdge( double p_dStart, dou
 		{
 			switch( p_dwPolarisation )
 			{
-				case SV_POSITIVE_POLARISATION:
+				case SvDef::SV_POSITIVE_POLARISATION:
 				{
 					if( p_dStart < p_dwLower && p_dwLower <= p_dEnd )
 					{
@@ -1330,7 +1307,7 @@ HRESULT SVLinearEdgeProcessingClass::CalculateSubPixelEdge( double p_dStart, dou
 
 					break;
 				}
-				case SV_NEGATIVE_POLARISATION:
+				case SvDef::SV_NEGATIVE_POLARISATION:
 				{
 					if( p_dwLower <= p_dStart && p_dEnd < p_dwLower )
 					{

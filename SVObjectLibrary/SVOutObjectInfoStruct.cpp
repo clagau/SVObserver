@@ -103,7 +103,7 @@ HRESULT SVOutObjectInfoStruct::DisconnectAllInputs()
 
 		inObjectInfo.SetInputObject( getUniqueObjectID() );
 
-		if( SV_GUID_NULL != inObjectInfo.getUniqueObjectID() )
+		if( GUID_NULL != inObjectInfo.getUniqueObjectID() )
 		{
 			// Send to the Object that is using this output
 			SVObjectManagerClass::Instance().DisconnectObjectInput(inObjectInfo.getUniqueObjectID(), &inObjectInfo);

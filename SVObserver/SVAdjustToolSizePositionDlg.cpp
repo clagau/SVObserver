@@ -127,7 +127,7 @@ BOOL SVAdjustToolSizePositionDlg::OnInitDialog()
 	GetDlgItem(IDC_BUT_EDIT_TOOL)->ShowWindow( bShowEditTool? SW_SHOW : SW_HIDE );
 
 	// If it's a Linear Tool, hide the "Full Image" button if rotation is enabled.
-	SVLinearToolClass* lt = dynamic_cast< SVLinearToolClass* >( m_pToolTask );
+	SVLinearToolClass* lt = dynamic_cast<SVLinearToolClass*> (m_pToolTask);
 	if( nullptr != lt )
 	{
 		bool rotation = lt->GetRotation();

@@ -8,8 +8,7 @@
 #pragma once
 #pragma region Includes
 #include "afxwin.h"
-#include "SVEnumerateCombo.h"
-#include "InspectionEngine/SVTaskObjectValueInterface.h"
+#include "SVMFCControls/SVEnumerateCombo.h"
 #include "SVOGui\ISVPropertyPageDialog.h"
 #include "ToolSizeAdjustTask.h"
 #pragma endregion Includes
@@ -26,7 +25,7 @@ class SVToolAdjustmentDialogSheetClass;
 
 //! \brief Property Page: Position and Size for The ToolAdjustmen Dialog
 //!  has pointer to ToolSizeAdjustTask
-class SVToolAdjustmentDialogSizePage : public CPropertyPage, public SVTaskObjectValueInterface, public SvOg::ISVPropertyPageDialog
+class SVToolAdjustmentDialogSizePage : public CPropertyPage, public SvOg::ISVPropertyPageDialog
 {
 	DECLARE_DYNAMIC(SVToolAdjustmentDialogSizePage)
 
@@ -72,7 +71,7 @@ protected:
 	//************************************
 	EQAdjustSize* GetEvaluateObject(ToolSizeAdjustTask::TSValues typ  ) ;
 	
-	SVEnumerateComboClass m_ComboBox[ToolSizeAdjustTask::TSValuesCount];
+	SvMc::SVEnumerateComboClass m_ComboBox[ToolSizeAdjustTask::TSValuesCount];
 
 	SVToolAdjustmentDialogSheetClass*	m_pParentDialog;
 	SVToolClass*						 m_pTool;

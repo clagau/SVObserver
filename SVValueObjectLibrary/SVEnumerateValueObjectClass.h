@@ -20,9 +20,6 @@
 #include "SVContainerLibrary/SVObjectArrayClassTemplate.h"
 #pragma endregion Includes
 
-typedef std::pair<std::string, long> SVEnumeratePair;
-typedef std::vector<SVEnumeratePair> SVEnumerateVector;
-
 class SVEnumerateValueObjectClass : public SVValueObjectClass<long>, public SvOi::IEnumerateValueObject
 {
 	SV_DECLARE_CLASS( SVEnumerateValueObjectClass );
@@ -33,16 +30,13 @@ public:
 
 	virtual ~SVEnumerateValueObjectClass();
 
-	//virtual HRESULT GetObjectValue( const std::string& rValueName, _variant_t& rValue ) const override;
-	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject ) override;
-
-	const SVEnumerateVector& GetEnumVector() const {return m_enumVector; };
+	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject ) override;
 
 	bool GetEnumerator( LPCTSTR szEnumerator, long& lValue ) const;
 	bool GetEnumeratorName( long lValue, std::string& rEnumerator ) const;
 	bool GetEnumTypes( std::string& rEnumList ) const;
 
-	bool SetEnumTypes( const SVEnumerateVector& rVec );
+	bool SetEnumTypes( const SvOi::NameValueVector& rVec );
 	bool SetEnumTypes( LPCTSTR szEnumList );
 	bool SetEnumTypes( int StringResourceID );
 
@@ -51,7 +45,7 @@ public:
 	virtual HRESULT SetDefaultValue( const long& rValue, bool bResetAll = true ) override { return __super::SetDefaultValue( rValue, bResetAll ); };
 
 #pragma region IEnumerateValueObject
-	virtual SvOi::NameValueList GetEnumList() const override;
+	virtual const SvOi::NameValueVector& GetEnumVector() const override { return m_enumVector; };
 #pragma endregion IEnumerateValueObject
 
 	//IMPLEMENT_VALUE_OBJECT_GET_SET()
@@ -60,9 +54,6 @@ public:
 	static bool ToNumber(const std::string& str, long& rlValue);
 
 protected:
-	//This is a specialized version as it is required to return the enum text not value
-	virtual HRESULT GetVariantValue(_variant_t& rValue, int Index = -1, int Bucket = -1) const override;
-
 	//The variant should have the enum text and not the long value
 	virtual double ValueType2Double(const long& rValue) const override { return static_cast<double> (rValue); };
 	virtual _variant_t ValueType2Variant( const long& rValue ) const override { return _variant_t( rValue ); };
@@ -82,6 +73,6 @@ private:
 	
 #pragma region Member Variables
 private:
-	SVEnumerateVector m_enumVector;
+	SvOi::NameValueVector m_enumVector;
 #pragma endregion Member Variables
 };

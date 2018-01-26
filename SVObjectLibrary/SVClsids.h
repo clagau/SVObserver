@@ -13,6 +13,7 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <guiddef.h>
+#include "ObjectInterfaces/IBlobAnalyzer.h"
 #pragma endregion Includes
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -196,67 +197,16 @@ extern /*const*/ GUID SVNbrOfBlobsObjectGuid;
 extern /*const*/ GUID SVMaxBlobDataArraySizeObjectGuid;
 extern /*const*/ GUID SVSortFeatureObjectGuid;
 extern /*const*/ GUID SVNbrOfBlobsFoundObjectGuid;
-
-extern /*const*/ GUID SVBlobAreaObjectGuid;
-extern /*const*/ GUID SVBlobBoxXMaxObjectGuid;
-extern /*const*/ GUID SVBlobBoxXMinObjectGuid;
-extern /*const*/ GUID SVBlobBoxYMaxObjectGuid;
-extern /*const*/ GUID SVBlobBoxYMinObjectGuid;
-extern /*const*/ GUID SVBlobBreadthObjectGuid;
-extern /*const*/ GUID SVBlobCenterOfGravityXObjectGuid;
-extern /*const*/ GUID SVBlobCenterOfGravityYObjectGuid;
-extern /*const*/ GUID SVBlobConvexPerimeterObjectGuid;
-extern /*const*/ GUID SVBlobFeretElongationObjectGuid;
-extern /*const*/ GUID SVBlobFeretMaxAngleObjectGuid;
-extern /*const*/ GUID SVBlobFeretMaxDiameterObjectGuid;
-extern /*const*/ GUID SVBlobFeretMeanDiameterObjectGuid;
-extern /*const*/ GUID SVBlobFeretMinAngleObjectGuid;
-extern /*const*/ GUID SVBlobFeretMinDiameterObjectGuid;
-extern /*const*/ GUID SVBlobFeretXObjectGuid;
-extern /*const*/ GUID SVBlobFeretYObjectGuid;
-extern /*const*/ GUID SVBlobFirstPointXObjectGuid;
-extern /*const*/ GUID SVBlobFirstPointYObjectGuid;
-extern /*const*/ GUID SVBlobLabelObjectGuid;
-extern /*const*/ GUID SVBlobLengthObjectGuid;
-extern /*const*/ GUID SVBlobNbrOfHolesObjectGuid;
-extern /*const*/ GUID SVBlobPerimeterObjectGuid;
-extern /*const*/ GUID SVBlobRoughnessObjectGuid;
-extern /*const*/ GUID SVBlobSumPixelObjectGuid;
-extern /*const*/ GUID SVBlobCompactnessObjectGuid;
-extern /*const*/ GUID SVBlobNumberOfRunsObjectGuid;
-extern /*const*/ GUID SVBlobXMinAtYMinObjectGuid;
-extern /*const*/ GUID SVBlobXMaxAtYMaxObjectGuid;
-extern /*const*/ GUID SVBlobYMinAtXMaxObjectGuid;
-extern /*const*/ GUID SVBlobYMaxAtXMinObjectGuid;
-extern /*const*/ GUID SVBlobElongationObjectGuid;
-extern /*const*/ GUID SVBlobIntercept0ObjectGuid;
-extern /*const*/ GUID SVBlobIntercept45ObjectGuid;
-extern /*const*/ GUID SVBlobIntercept90ObjectGuid;
-extern /*const*/ GUID SVBlobIntercept135ObjectGuid;
-extern /*const*/ GUID SVBlobMomentX0Y1;
-extern /*const*/ GUID SVBlobMomentX1Y0;
-extern /*const*/ GUID SVBlobMomentX1Y1;
-extern /*const*/ GUID SVBlobMomentX0Y2;
-extern /*const*/ GUID SVBlobMomentX2Y0;
-extern /*const*/ GUID SVBlobMomentCentralX0Y2;
-extern /*const*/ GUID SVBlobMomentCentralX2Y0;
-extern /*const*/ GUID SVBlobMomentCentralX1Y1;
-extern /*const*/ GUID SVBlobAxisPrincipalAngle;
-extern /*const*/ GUID SVBlobAxisSecondaryAngle;
-extern /*const*/ GUID SVBlobEulerNumber;
 extern /*const*/ GUID SVSortAscendingObjectGuid;
 extern /*const*/ GUID SVExcludeFailedObjectGuid;
-
-//GUID for new blob feature.  CenterOfBoundingBox
-extern /*const*/ GUID SVBlobCenterOfBoundingBoxXGuid;
-extern /*const*/ GUID SVBlobCenterOfBoundingBoxYGuid;
-
-extern /*const*/ GUID SVBlobIsBlackGuid;
+extern /*const*/ GUID SVBlobColorGuid;
 
 //new GUIDs for BlobAnalyzer for Use FIll, Fill Color, and Fill Type
 extern /*const*/ GUID SVBlobUseFillGuid;
 extern /*const*/ GUID SVBlobFillColorGuid;
 extern /*const*/ GUID SVBlobFillTypeGuid;
+
+extern /*const*/ GUID SVBlobFeatureGuids[SvOi::SV_NUMBER_OF_BLOB_FEATURES];
 
 // GUIDs for the Embedded Objects in the SVStatisticsToolClass
 extern /*const*/ GUID SVStatMinObjectGuid;

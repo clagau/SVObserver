@@ -123,8 +123,6 @@ public:
 	virtual SvOi::ITaskObject* GetToolSetInterface() const override;
 	virtual HRESULT RunOnce(SvOi::ITaskObject* pTask) override;
 	virtual long GetLastIndex() const  override;
-	virtual bool AddInputRequest( const SVGUID& ObjectRef, const _variant_t& rValue, long Index ) override;
-	virtual bool AddInputRequestMarker() override;
 #pragma endregion virtual method (IInspectionProcess)
 
 	bool IsCameraInInspection( const std::string& rCameraName ) const;
@@ -150,6 +148,8 @@ public:
 	void RemoveCamera( const std::string& rCameraName );
 	
 	bool AddInputRequest( const SVObjectReference& rObjectRef, const _variant_t& rValue );
+	bool AddInputRequest(SVInputRequestInfoStructPtr pInRequest);
+	bool AddInputRequestMarker();
 
 	HRESULT AddInputImageRequest( SVImageClass* p_psvImage, BSTR& p_rbstrValue );
 	HRESULT AddInputImageFileNameRequest( SVImageClass* p_psvImage, const std::string& p_rFileName );
@@ -376,8 +376,6 @@ protected:
 	HRESULT GetInspectionValueObject( LPCTSTR Name, SVObjectReference& rObjectRef );
 	HRESULT GetInspectionImage( LPCTSTR Name, SVImageClass*& p_rRefObject );
 	HRESULT GetInspectionObject( LPCTSTR Name, SVObjectReference& rObjectRef );
-
-	bool AddInputRequest( SVInputRequestInfoStructPtr p_pInRequest );
 
 	bool ProcessInputRequests( bool &rForceOffsetUpdate );
 	bool ProcessInputRequests( SvOi::SVResetItemEnum& rResetItem, SVStdMapSVToolClassPtrSVInspectionProcessResetStruct &rToolMap );

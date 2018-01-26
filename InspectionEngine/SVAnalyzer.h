@@ -40,7 +40,7 @@ protected:
 	virtual void connectChildObject( SVTaskObjectClass& rChildObject ) override;
 
 protected:
-	SVResultClass* pAnalyzerResult;
+	SVResultClass* m_pAnalyzerResult;
 
 private:
 	void init();

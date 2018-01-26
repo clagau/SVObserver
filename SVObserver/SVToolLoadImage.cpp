@@ -85,7 +85,7 @@ bool SVLoadImageToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreat
 		ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
 		ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth,8);
 
-		bOk = ( S_OK == m_fileImage.UpdateImage(SV_GUID_NULL, ImageInfo) );
+		bOk = ( S_OK == m_fileImage.UpdateImage(GUID_NULL, ImageInfo) );
 	}
 
 	// Set / Reset Printable Flags

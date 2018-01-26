@@ -213,15 +213,6 @@ bool SVLinearToolClass::DoesObjectHaveExtents() const
 	return true;
 }
 
-std::string SVLinearToolClass::GetProfileOrientation()
-{
-	std::string Result;
-
-	m_voProfileOrientation.getValue( Result );
-
-	return Result;
-}
-
 bool SVLinearToolClass::GetRotation()
 {
 	BOOL bVal = false;
@@ -293,7 +284,7 @@ void SVLinearToolClass::init()
 	m_svRotationAngle.SetDefaultValue( 0.0, true );
 	m_svRotationPointX.SetDefaultValue( SvDef::cDefaultWindowToolLeft, true);
 	m_svRotationPointY.SetDefaultValue( ( SvDef::cDefaultWindowToolTop + ( SvDef::cDefaultWindowToolHeight / 2 ) ), true);
-	m_voProfileOrientation.SetEnumTypes(g_strOrientationEnums);
+	m_voProfileOrientation.SetEnumTypes(cOrientationEnums);
 	m_voProfileOrientation.SetDefaultValue( "Horizontal", true);
 	m_voUseProfileRotation.SetDefaultValue( BOOL(true), true);
 

@@ -23,6 +23,7 @@ namespace SvOg
 		MaskController(const GUID& rInspectionID, const GUID& rTaskObjectID);
 		void Init();
 		const GUID& GetInstanceID() const;
+		const GUID& GetShapeMaskHelperID() const;
 		IPictureDisp* GetReferenceImage() const;
 		IPictureDisp* GetMaskImage() const;
 		HRESULT SetMask(IPictureDisp* pImage);
@@ -32,8 +33,9 @@ namespace SvOg
 		bool SetMaskData(HGLOBAL hGlobal);
 
 	private:
-		GUID m_InspectionID;
-		GUID m_TaskObjectID;
-		GUID m_maskOperatorID;
+		GUID m_InspectionID{ GUID_NULL };
+		GUID m_TaskObjectID{ GUID_NULL };
+		GUID m_maskOperatorID{ GUID_NULL };
+		GUID m_ShapeMaskHelperID{ GUID_NULL };
 	};
 } //namespace SvOg

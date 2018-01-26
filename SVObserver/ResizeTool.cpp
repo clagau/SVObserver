@@ -61,13 +61,13 @@ HRESULT	ResizeTool::InitializeInterpolationModeMember()
 {
 	HRESULT	hr = S_OK;
 
-	SVEnumerateVector interpolationModeOptions;
-
-	// push_back(s) will throw exceptions if they fail to allocate.
-	interpolationModeOptions.push_back( SVEnumeratePair(SvO::Auto, SVInterpolationModeOptions::InterpolationModeAuto ) );
-	interpolationModeOptions.push_back( SVEnumeratePair(SvO::Bicubic, SVInterpolationModeOptions::InterpolationModeBicubic ) );
-	interpolationModeOptions.push_back( SVEnumeratePair(SvO::Bilinear, SVInterpolationModeOptions::InterpolationModeBilinear ) );
-	interpolationModeOptions.push_back( SVEnumeratePair(SvO::NearestNeighbor, SVInterpolationModeOptions::InterpolationModeNearestNeighbor ) );
+	SvOi::NameValueVector interpolationModeOptions
+	{
+		{SvO::Auto, SVInterpolationModeOptions::InterpolationModeAuto},
+		{SvO::Bicubic, SVInterpolationModeOptions::InterpolationModeBicubic},
+		{SvO::Bilinear, SVInterpolationModeOptions::InterpolationModeBilinear},
+		{SvO::NearestNeighbor, SVInterpolationModeOptions::InterpolationModeNearestNeighbor}
+	};
 
 	m_ResizeInterpolationMode.SetEnumTypes(interpolationModeOptions);
 	m_ResizeInterpolationMode.SetDefaultValue(SVInterpolationModeOptions::InterpolationModeAuto, true);
@@ -79,11 +79,13 @@ HRESULT	ResizeTool::InitializeOverscanMember()
 {
 	HRESULT	hr = S_OK;
 
-	SVEnumerateVector overscanOptions;
-	overscanOptions.push_back( SVEnumeratePair(SvO::Enabled, SVOverscanOptions::OverscanEnable ) );
-	overscanOptions.push_back( SVEnumeratePair(SvO::Disabled, SVOverscanOptions::OverscanDisable ) );
+	SvOi::NameValueVector EnumVector
+	{
+		{SvO::Enabled, SVOverscanOptions::OverscanEnable},
+		{SvO::Disabled, SVOverscanOptions::OverscanDisable},
+	};
 
-	m_ResizeOverscan.SetEnumTypes(overscanOptions);
+	m_ResizeOverscan.SetEnumTypes(EnumVector);
 	m_ResizeOverscan.SetDefaultValue(SVOverscanOptions::OverscanEnable, true);
 
 	return hr;
@@ -93,9 +95,9 @@ HRESULT	ResizeTool::InitializePerformanceMember()
 {
 	HRESULT	hr = S_OK;
 
-	SVEnumerateVector performanceOptions;
-	performanceOptions.push_back( SVEnumeratePair(SvO::Fast, SVPerformanceOptions::PerformanceFast ) );
-	performanceOptions.push_back( SVEnumeratePair(SvO::Precise, SVPerformanceOptions::PerformancePresice ) );
+	SvOi::NameValueVector performanceOptions;
+	performanceOptions.push_back(SvOi::NameValuePair{ SvO::Fast, SVPerformanceOptions::PerformanceFast });
+	performanceOptions.push_back(SvOi::NameValuePair{ SvO::Precise, SVPerformanceOptions::PerformancePresice });
 
 	m_ResizePerformance.SetEnumTypes(performanceOptions);
 	m_ResizePerformance.SetDefaultValue(SVPerformanceOptions::PerformancePresice, TRUE);

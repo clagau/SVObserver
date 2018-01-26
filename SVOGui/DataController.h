@@ -8,62 +8,80 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <boost/any.hpp>
-//Moved to precompiled header: #include <boost/noncopyable.hpp>
-
-#include "ObjectInterfaces\NameValueList.h"
+#include "BoundValue.h"
+#include "ObjectInterfaces\NameValueVector.h"
 #include "SVStatusLibrary\MessageContainer.h"
 #pragma endregion Includes
 
 namespace SvOg
 {
 	template <typename Command, typename Model>
-	class DataController : public Command, public boost::noncopyable
+	class DataController : public Command
 	{
-		mutable Model m_Data;
-		
+	#pragma region Constructor
 	public:
 		DataController(const Model& rModel) : m_Data(rModel) {}
 		virtual ~DataController() {}
 
+		DataController() = delete;
+		DataController& operator=(const DataController&) = delete;
+	#pragma endregion Constructor
+
+	#pragma region Public Methods
+	public:
 		HRESULT Init()
 		{
 			return GetValues(m_Data);
 		}
 			
 		template<typename DataType>
-		DataType Get(const std::string& rName) const
+		DataType GetDefault(const GUID& rEmbeddedID) const
 		{
-			return static_cast<DataType>(boost::any_cast<_variant_t>(m_Data.GetValue(rName)));
+			return static_cast<DataType>(m_Data.GetDefaultValue(rEmbeddedID));
 		}
 
 		template<typename DataType>
-		void Set(const std::string& rName, const DataType& rValue)
+		DataType Get(const GUID& rEmbeddedID) const
 		{
-			_variant_t v(rValue);
-			m_Data.SetValue(rName, boost::any(v));
+			return static_cast<DataType>(m_Data.GetValue(rEmbeddedID));
 		}
 
-		SvOi::NameValueList GetEnumTypes(const std::string& rName) const
+		template<typename DataType>
+		void SetDefault(const GUID& rEmbeddedID, const DataType& rValue)
 		{
-			return GetEnums(m_Data.GetInspectionID(), m_Data.GetObjectID(rName));
+			_variant_t Value(rValue);
+			m_Data.SetDefaultValue(rEmbeddedID, Value);
 		}
 
-		std::string GetName(const std::string& rName) const
+		template<typename DataType>
+		void Set(const GUID& rEmbeddedID, const DataType& rValue, int ArrayIndex = -1)
 		{
-			return GetObjectName(m_Data.GetInspectionID(), m_Data.GetObjectID(rName));
+			_variant_t Value(rValue);
+			m_Data.SetValue(rEmbeddedID, Value, ArrayIndex);
 		}
 
-		HRESULT Commit(bool bReset = false)
+		SvOi::NameValueVector GetEnumTypes(const GUID& rEmbeddedID) const
 		{
-			return SetValues(m_Data, bReset);
+			return GetEnums(m_Data.GetInspectionID(), m_Data.GetObjectID(rEmbeddedID));
 		}
 
-		SvStl::MessageContainerVector getCommitErrorList()
+		std::string GetName(const GUID& rEmbeddedID) const
 		{
-			return getSetFailedMessageList();
+			return GetObjectName(m_Data.GetInspectionID(), m_Data.GetObjectID(rEmbeddedID));
 		}
 
-		const GUID& GetOwnerID() const { return m_Data.GetOwnerID(); };
+		HRESULT Commit(PostAction doAction = doRunOnce)
+		{
+			return SetValues(m_Data, doAction);
+		}
+
+		const GUID& GetTaskID() const { return m_Data.GetTaskID(); };
+		GUID GetObjectID(const GUID& rEmbeddedID) const { return m_Data.GetObjectID(rEmbeddedID); }
+	#pragma endregion Public Methods
+
+	#pragma region Member Variables
+	private:
+		Model m_Data;
+	#pragma endregion Member Variables
 	};
 } //namespace SvOg

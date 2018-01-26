@@ -734,7 +734,7 @@ void SVImagePolarTransformClass::SetCalculatedPrintableFlags()
 
 bool SVImagePolarTransformClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	SVPolarTransformationToolClass* pTool = dynamic_cast<SVPolarTransformationToolClass*> ( GetOwner() );
+	SVPolarTransformationToolClass* pTool = dynamic_cast<SVPolarTransformationToolClass*> ( GetParent() );
 
 	HRESULT hr;
 	BOOL Value( false );

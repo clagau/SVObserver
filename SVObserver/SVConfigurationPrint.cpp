@@ -73,7 +73,7 @@ static const LPCTSTR ToolGroupCommentLabel = _T("Tool Comment:");
 
 static const int LEFT_MARGIN = 50;
 
-static GUID* pguidNonPrintArray[] = 
+static GUID* pGuidNonPrintArray[] = 
 {
 	&SVTaskObjectClassIsObjectValidGuid,
 	&SVStatusObjectGuid,
@@ -89,61 +89,61 @@ static GUID* pguidNonPrintArray[] =
 	&SVEdgeCountObjectGuid,
 	&SVEnabledCountObjectGuid,
 	&SVProcessedCountObjectGuid,
-	&SVBlobAreaObjectGuid,
-	&SVBlobBoxXMaxObjectGuid,
-	&SVBlobBoxXMinObjectGuid,
-	&SVBlobBoxYMaxObjectGuid,
-	&SVBlobBoxYMinObjectGuid,
-	&SVBlobBreadthObjectGuid,
-	&SVBlobCenterOfGravityXObjectGuid,
-	&SVBlobCenterOfGravityYObjectGuid,
-	&SVBlobConvexPerimeterObjectGuid,
-	&SVBlobFeretElongationObjectGuid,
-	&SVBlobFeretMaxAngleObjectGuid,
-	&SVBlobFeretMaxDiameterObjectGuid,
-	&SVBlobFeretMeanDiameterObjectGuid,
-	&SVBlobFeretMinAngleObjectGuid,
-	&SVBlobFeretMinDiameterObjectGuid,
-	&SVBlobFeretXObjectGuid,
-	&SVBlobFeretYObjectGuid,
-	&SVBlobFirstPointXObjectGuid,
-	&SVBlobFirstPointYObjectGuid,
-	&SVBlobLabelObjectGuid,
-	&SVBlobLengthObjectGuid,
-	&SVBlobNbrOfHolesObjectGuid,
-	&SVBlobPerimeterObjectGuid,
-	&SVBlobRoughnessObjectGuid,
-	&SVBlobSumPixelObjectGuid,
-	&SVBlobCompactnessObjectGuid,              // v3.1 10 Feb 2000 - frb.
-	&SVBlobNumberOfRunsObjectGuid,
-	&SVBlobXMinAtYMinObjectGuid,
-	&SVBlobXMaxAtYMaxObjectGuid,
-	&SVBlobYMinAtXMaxObjectGuid,
-	&SVBlobYMaxAtXMinObjectGuid,
-	&SVBlobElongationObjectGuid,
-	&SVBlobIntercept0ObjectGuid,
-	&SVBlobIntercept45ObjectGuid,
-	&SVBlobIntercept90ObjectGuid,
-	&SVBlobIntercept135ObjectGuid,
-	&SVBlobMomentX0Y1,
-	&SVBlobMomentX1Y0,
-	&SVBlobMomentX1Y1,
-	&SVBlobMomentX0Y2,
-	&SVBlobMomentX2Y0,
-	&SVBlobMomentCentralX0Y2,
-	&SVBlobMomentCentralX2Y0,
-	&SVBlobMomentCentralX1Y1,
-	&SVBlobAxisPrincipalAngle,
-	&SVBlobAxisSecondaryAngle,
-	&SVBlobEulerNumber,
-	&SVBlobCenterOfBoundingBoxYGuid,
-	&SVBlobCenterOfBoundingBoxXGuid,
+	&SVBlobFeatureGuids[SvOi::SV_AREA],
+	&SVBlobFeatureGuids[SvOi::SV_BOXX_MAX],
+	&SVBlobFeatureGuids[SvOi::SV_BOXX_MIN],
+	&SVBlobFeatureGuids[SvOi::SV_BOXY_MAX],
+	&SVBlobFeatureGuids[SvOi::SV_BOXY_MIN],
+	&SVBlobFeatureGuids[SvOi::SV_BREADTH],
+	&SVBlobFeatureGuids[SvOi::SV_CENTEROFGRAVITY_X],
+	&SVBlobFeatureGuids[SvOi::SV_CENTEROFGRAVITY_Y],
+	&SVBlobFeatureGuids[SvOi::SV_CONVEX_PERIMETER],
+	&SVBlobFeatureGuids[SvOi::SV_FERET_ELONGATION],
+	&SVBlobFeatureGuids[SvOi::SV_FERETMAX_ANGLE],
+	&SVBlobFeatureGuids[SvOi::SV_FERETMAX_DIAMETER],
+	&SVBlobFeatureGuids[SvOi::SV_FERETMEAN_DIAMETER],
+	&SVBlobFeatureGuids[SvOi::SV_FERETMIN_ANGLE],
+	&SVBlobFeatureGuids[SvOi::SV_FERETMIN_DIAMETER],
+	&SVBlobFeatureGuids[SvOi::SV_FERET_X],
+	&SVBlobFeatureGuids[SvOi::SV_FERET_Y],
+	&SVBlobFeatureGuids[SvOi::SV_FIRSTPOINT_X],
+	&SVBlobFeatureGuids[SvOi::SV_FIRSTPOINT_Y],
+	&SVBlobFeatureGuids[SvOi::SV_LABEL],
+	&SVBlobFeatureGuids[SvOi::SV_LENGTH],
+	&SVBlobFeatureGuids[SvOi::SV_NBROF_HOLES],
+	&SVBlobFeatureGuids[SvOi::SV_PERIMETER],
+	&SVBlobFeatureGuids[SvOi::SV_ROUGHNESS],
+	&SVBlobFeatureGuids[SvOi::SV_SUM_PIXEL],
+	&SVBlobFeatureGuids[SvOi::SV_COMPACTNESS],
+	&SVBlobFeatureGuids[SvOi::SV_NBR_RUNS],
+	&SVBlobFeatureGuids[SvOi::SV_XMINAT_YMIN],
+	&SVBlobFeatureGuids[SvOi::SV_XMAXAT_YMAX],
+	&SVBlobFeatureGuids[SvOi::SV_YMINAT_XMAX],
+	&SVBlobFeatureGuids[SvOi::SV_YMAXAT_XMIN],
+	&SVBlobFeatureGuids[SvOi::SV_ELONGATION],
+	&SVBlobFeatureGuids[SvOi::SV_INTERCEPT_0],
+	&SVBlobFeatureGuids[SvOi::SV_INTERCEPT_45],
+	&SVBlobFeatureGuids[SvOi::SV_INTERCEPT_90],
+	&SVBlobFeatureGuids[SvOi::SV_INTERCEPT_135],
+	&SVBlobFeatureGuids[SvOi::SV_MOMENT_X0Y1],
+	&SVBlobFeatureGuids[SvOi::SV_MOMENT_X1Y0],
+	&SVBlobFeatureGuids[SvOi::SV_MOMENT_X1Y1],
+	&SVBlobFeatureGuids[SvOi::SV_MOMENT_X0Y2],
+	&SVBlobFeatureGuids[SvOi::SV_MOMENT_X2Y0],
+	&SVBlobFeatureGuids[SvOi::SV_CENTRAL_X0Y2],
+	&SVBlobFeatureGuids[SvOi::SV_CENTRAL_X2Y0],
+	&SVBlobFeatureGuids[SvOi::SV_CENTRAL_X1Y1],
+	&SVBlobFeatureGuids[SvOi::SV_AXISPRINCIPAL_ANGLE],
+	&SVBlobFeatureGuids[SvOi::SV_AXISSECONDARY_ANGLE],
+	&SVBlobFeatureGuids[SvOi::SV_EULER_NBR],
+	&SVBlobFeatureGuids[SvOi::SV_CENTER_X_SOURCE],
+	&SVBlobFeatureGuids[SvOi::SV_CENTER_Y_SOURCE],
 	&SVOCVCharacterResultClassGuid
 };
 
 std::pair<GUID **, size_t> NonPrintGuids()
 {
-	return std::make_pair(pguidNonPrintArray, sizeof(pguidNonPrintArray)/sizeof(GUID *));
+	return std::make_pair(pGuidNonPrintArray, sizeof(pGuidNonPrintArray)/sizeof(GUID *));
 }
 
 class SVDeviceParamConfigPrintHelper :
@@ -664,7 +664,7 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
     for (int nIndex = 0; nIndex < m_NPArraySize; nIndex++)
     {
         // If the GUID is for a non-printing object, Skip printing.
-        if (guidObjID == *pguidNonPrintArray[nIndex])
+        if (guidObjID == *pGuidNonPrintArray[nIndex])
         {
             return;
         }  // end if ( guidObjID == *pguidNonPrintArray [nIndex] )
@@ -881,7 +881,7 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 			SVDoubleResultClass* pBlobResult = dynamic_cast<SVDoubleResultClass*> (pObject);
 			if( nullptr != pBlobResult )
 			{
-				if (SV_IS_KIND_OF(pBlobResult->GetOwner(),SVBlobAnalyzerClass))
+				if (SV_IS_KIND_OF(pBlobResult->GetParent(),SVBlobAnalyzerClass))
 				{  
 					sLabel = SvUl::LoadStdString(IDS_BLOB_FEATURE_DEFAULT_VALUE) + _T(":");
 					const SVDoubleValueObjectClass* pDoubleValueObj = dynamic_cast<const SVDoubleValueObjectClass*> (pBlobResult->getInput());
@@ -1089,7 +1089,7 @@ void SVConfigurationPrint::PrintInputOutputList( CDC* pDC, SVObjectClass* pObj, 
 	{
 		SVOutObjectInfoStruct* pOutput = l_OutputList.GetAt(nCnt);
 		
-		if (pOutput->getObject()->GetOwner() == pObj)
+		if (pOutput->getObject()->GetParent() == pObj)
 		{
 			PrintDetails(pDC, pOutput->getObject(), ptCurPos, nIndentLevel);
 		}  // end if( pOutput->PObject->GetOwner () == pObj )
@@ -1359,7 +1359,7 @@ void SVConfigurationPrint::OnVirtualPrint(BOOL bRealPrintInput /* = FALSE */)
 	pcfontOldFont = pDC->SelectObject(&m_fontTitle);
 	
     // Initialize the Non-Printing GUID pointer array size variable.
-    m_NPArraySize = sizeof(pguidNonPrintArray) / sizeof(GUID*);
+    m_NPArraySize = sizeof(pGuidNonPrintArray) / sizeof(GUID*);
 	
     // Print config title
 	std::string Label = SvUl::Format(_T("Configuration %s"), pApp->getConfigFileName().c_str() );

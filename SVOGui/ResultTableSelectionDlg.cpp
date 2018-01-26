@@ -32,7 +32,7 @@ namespace SvOg
 	  : CDialog(ResultTableSelectionDlg::IDD, pParent)
 		, m_availableList(availableList)
 		, m_selectedItem(selectedItem)
-		, m_selectedGuid(SV_GUID_NULL)
+		, m_selectedGuid(GUID_NULL)
 	{
 
 	}

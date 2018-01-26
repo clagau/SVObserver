@@ -114,8 +114,6 @@ BOOL SVToolAdjustmentDialogRotationPageClass::OnInitDialog()
 
 	if( m_pParentDialog && ( m_pTool = m_pParentDialog->GetTool() ) )
 	{
-		SetTaskObject( m_pTool );
-
 		// Get Evaluate Object for the X coordinate...
 		SvDef::SVObjectTypeInfoStruct evaluateObjectInfo;
 		evaluateObjectInfo.ObjectType = SvDef::SVMathContainerObjectType;
@@ -168,10 +166,7 @@ BOOL SVToolAdjustmentDialogRotationPageClass::OnInitDialog()
 		m_pInterpolationMode = dynamic_cast<SVEnumerateValueObjectClass*>(m_pTool->getFirstObject(objectInfo));
 		if( nullptr != m_pInterpolationMode )
 		{
-			std::string EnumList;
-
-			m_pInterpolationMode->GetEnumTypes( EnumList );
-			m_cbInterpolation.SetEnumTypes( EnumList.c_str() );
+			m_cbInterpolation.SetEnumTypes(m_pInterpolationMode->GetEnumVector());
 
 			std::string EnumString;
 			m_pInterpolationMode->getValue( EnumString );
@@ -275,53 +270,30 @@ void SVToolAdjustmentDialogRotationPageClass::OnSelChangeInterpolationModeCombo(
 
 HRESULT SVToolAdjustmentDialogRotationPageClass::SetInspectionData()
 {
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT Result{ E_FAIL };
 
 	if( m_pTool )
 	{
-		UpdateData( TRUE ); // get data from dialog
-		bool bUpdate = false;
+		UpdateData(true); // get data from dialog
 
-		l_hrOk = AddInputRequest( m_pPerformRotation, m_performRotation );
+		typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
+		typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
+		Controller Values{ SvOg::BoundValues{ m_pTool->GetInspection()->GetUniqueObjectID(), m_pTool->GetUniqueObjectID() } };
+		Values.Init();
 
-		if( S_OK == l_hrOk )
-		{
-			l_hrOk = AddInputRequestMarker();
-		}
-
-		if( S_OK == l_hrOk )
-		{
-			l_hrOk = RunOnce( m_pTool->GetUniqueObjectID() );
-		}
+		Values.Set<bool>(m_pPerformRotation->GetEmbeddedID(), m_performRotation ? true : false);
 
 		int sel = m_cbInterpolation.GetCurSel();
-		if( sel >= 0 )
+		if(0 <= sel)
 		{
 			long lValue = ( long ) m_cbInterpolation.GetItemData( sel );
-			bUpdate = true;
-			if( S_OK == l_hrOk )
-			{
-				l_hrOk = AddInputRequest( m_pInterpolationMode, lValue );
-			}
+			Values.Set<long>(m_pInterpolationMode->GetEmbeddedID(), lValue);
 		}
 
-		if( bUpdate )
-		{
-			if( S_OK == l_hrOk )
-			{
-				l_hrOk = AddInputRequestMarker();
-			}
-
-			if( S_OK == l_hrOk )
-			{
-				l_hrOk = RunOnce( m_pTool->GetUniqueObjectID() );
-			}
-		}
-
-		UpdateData( FALSE );
+		Result = Values.Commit();
 	}
 
-	return l_hrOk;
+	return Result;
 }
 
 void SVToolAdjustmentDialogRotationPageClass::refresh()

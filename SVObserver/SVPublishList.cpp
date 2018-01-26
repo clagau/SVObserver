@@ -197,7 +197,7 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 						pIOEntry = SVIOEntryHostStructPtr{ new SVIOEntryHostStruct };
 						pIOEntry->m_DeleteValueObject = false;
 						pIOEntry->setObject(pObject);
-						pIOEntry->getObject()->SetObjectOwner(pObject->GetOwner());
+						pIOEntry->getObject()->SetObjectOwner(pObject->GetParent());
 						pIOEntry->m_ObjectType		= IO_DIGITAL_OUTPUT;
 						pIOEntry->m_PPQIndex		= -1;
 						pIOEntry->m_Enabled			= ( nullptr != pDigital );
@@ -214,7 +214,7 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 						pIOEntry = SVIOEntryHostStructPtr{ new SVIOEntryHostStruct };
 						pIOEntry->m_DeleteValueObject = false;
 						pIOEntry->setObject(pObject);
-						pIOEntry->getObject()->SetObjectOwner(pObject->GetOwner());
+						pIOEntry->getObject()->SetObjectOwner(pObject->GetParent());
 						pIOEntry->m_ObjectType		= IO_REMOTE_OUTPUT;
 						pIOEntry->m_PPQIndex		= -1;
 						pIOEntry->m_Enabled			= true;

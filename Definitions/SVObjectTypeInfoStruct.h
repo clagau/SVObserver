@@ -278,7 +278,7 @@ namespace SvDef
 
 		struct SVObjectTypeInfoStruct
 		{
-			SVObjectTypeInfoStruct( SVObjectTypeEnum ObjectType=SVNotSetObjectType, SVObjectSubTypeEnum SubType=SVNotSetSubObjectType, const SVGUID& rEmbeddedID=SV_GUID_NULL)
+			SVObjectTypeInfoStruct( SVObjectTypeEnum ObjectType=SVNotSetObjectType, SVObjectSubTypeEnum SubType=SVNotSetSubObjectType, const SVGUID& rEmbeddedID=GUID_NULL)
 				: ObjectType(ObjectType ), SubType(SubType ), EmbeddedID( rEmbeddedID ) {};
 
 			//******************************************************************************

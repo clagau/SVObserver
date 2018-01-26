@@ -12,8 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVLinearLineMaximumForegroundObjectAnalyzer.h"
-#include "SVProfileEdgeMarkerAdjustmentPage.h"
-#include "SVGlobal.h"
+#include "Definitions/LinearEdgeEnums.h"
 #include "SVLinearEdgeAProcessingClass.h"
 #include "SVLinearEdgeBProcessingClass.h"
 #include "InspectionEngine/SVTool.h"
@@ -64,20 +63,20 @@ void SVLinearMaximumForegroundObjectLineAnalyzerClass::init()
 	{
 		AddFriend(l_pEdgeA->GetUniqueObjectID());
 
-		l_pEdgeA->m_svPolarisation.SetDefaultValue( SV_POSITIVE_POLARISATION, true );
+		l_pEdgeA->m_svPolarisation.SetDefaultValue(SvDef::SV_POSITIVE_POLARISATION, true);
 
-		l_pEdgeA->m_svEdgeSelect.SetDefaultValue( SV_THIS_EDGE, true );
-		l_pEdgeA->m_svEdgeSelectThisValue.SetDefaultValue( 1.0, true );
+		l_pEdgeA->m_svEdgeSelect.SetDefaultValue(SvDef::SV_THIS_EDGE, true);
+		l_pEdgeA->m_svEdgeSelectThisValue.SetDefaultValue(1.0, true);
 	}
 
 	if( nullptr != l_pEdgeB )
 	{
 		AddFriend(l_pEdgeB->GetUniqueObjectID());
 
-		l_pEdgeB->m_svPolarisation.SetDefaultValue( SV_NEGATIVE_POLARISATION, true );
+		l_pEdgeB->m_svPolarisation.SetDefaultValue(SvDef::SV_NEGATIVE_POLARISATION, true);
 
-		l_pEdgeB->m_svEdgeSelect.SetDefaultValue( SV_THIS_EDGE, true );
-		l_pEdgeB->m_svEdgeSelectThisValue.SetDefaultValue( 1.0, true );
+		l_pEdgeB->m_svEdgeSelect.SetDefaultValue(SvDef::SV_THIS_EDGE, true);
+		l_pEdgeB->m_svEdgeSelectThisValue.SetDefaultValue(1.0, true);
 	}
 
 	// Set Embedded defaults

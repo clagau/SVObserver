@@ -1176,7 +1176,7 @@ inline void SVConfigXMLPrint::WriteObject( Writer writer, SVObjectClass* pObject
 
 			if (SVDoubleResultClass* pBlobResult = dynamic_cast<SVDoubleResultClass*>(pObject))
 			{
-				if (SV_IS_KIND_OF(pBlobResult->GetOwner(),SVBlobAnalyzerClass))
+				if (SV_IS_KIND_OF(pBlobResult->GetParent(),SVBlobAnalyzerClass))
 				{  
 					sLabel = SvUl::LoadStdString(IDS_BLOB_FEATURE_DEFAULT_VALUE) + _T(":");
 					const SVDoubleValueObjectClass* pDoubleValueObj = dynamic_cast<const SVDoubleValueObjectClass*> (pBlobResult->getInput());
@@ -1332,7 +1332,7 @@ void SVConfigXMLPrint::WriteInputOutputList( Writer writer, SVObjectClass* pObj 
 	{
 		SVOutObjectInfoStruct* pOutput = l_OutputList.GetAt(nCnt);
 		
-		if (pOutput->getObject()->GetOwner() == pObj)
+		if (pOutput->getObject()->GetParent() == pObj)
 		{
 			WriteObject(writer, pOutput->getObject());
 		}  // end if( pOutput->PObject->GetOwner () == pObj )

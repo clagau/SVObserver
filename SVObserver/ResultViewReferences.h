@@ -157,7 +157,7 @@ protected:
 
 #pragma region Member Variables
 	std::string m_TagName; // Branch name in the config file
-	SVGUID m_resultTableGuid; //The Guid of the table to display in result table view (if no table should displayed it is set to SV_GUID_NULL)
+	SVGUID m_resultTableGuid; //The Guid of the table to display in result table view (if no table should displayed it is set to GUID_NULL)
 	TableObject* m_resultTable;
 	SVObjectReferenceVector m_ReferenceVector;
 	std::list<ResultViewItemDef> m_ResultViewItemDefList;

@@ -326,9 +326,9 @@ void SVColorToolClass::LocalInitialize()
 	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatRGB8888);
 	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 3L);
 	ImageInfo.SetTranslation(SVExtentTranslationNone);
-	m_LogicalROIImage.UpdateImage(SV_GUID_NULL, ImageInfo);
+	m_LogicalROIImage.UpdateImage(GUID_NULL, ImageInfo);
 	m_LogicalROIImage.InitializeImage(SvDef::SVImageTypeEnum::SVImageTypeLogical);
-	m_OutputImage.UpdateImage(SV_GUID_NULL, ImageInfo);
+	m_OutputImage.UpdateImage(GUID_NULL, ImageInfo);
 	m_OutputImage.InitializeImage(SvDef::SVImageTypeEnum::SVImageTypePhysical);
 
 	for (BandEnum Band : BandList)

@@ -206,7 +206,7 @@ bool GlobalConstantView::editItem( int Item )
 		Result = true;
 
 		//New or editing Global value ?
-		if( SV_GUID_NULL == GlobalData.m_Guid )
+		if( GUID_NULL == GlobalData.m_Guid )
 		{
 			insertGlobalConstant( GlobalData );
 			updateView();

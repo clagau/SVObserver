@@ -56,18 +56,17 @@ ToolSizeAdjustTask::ToolSizeAdjustTask(bool AllowFullsize , bool AllowAdjustSize
 	RegisterEmbeddedObject( &m_InputModes[TSPositionX], ToolSizeAdjustSizePositionXModeGuid, IDS_OBJECTNAME_TOOLSIZEADJUSTPOSITIONX, false, SvOi::SVResetItemNone );
 	RegisterEmbeddedObject( &m_InputModes[TSPositionY], ToolSizeAdjustSizePositionYModeGuid, IDS_OBJECTNAME_TOOLSIZEADJUSTPOSITIONY, false, SvOi::SVResetItemNone );
 
-	SVEnumerateVector vec;
+	SvOi::NameValueVector EnumVector{ {SvO::SizeAdjustTextNone, TSModes::TSNone} };
 	
-	vec.push_back(SVEnumeratePair(SvO::SizeAdjustTextNone, TSModes::TSNone ));
 	if (m_AllowFullSize == true)
 	{
-		vec.push_back(SVEnumeratePair(SvO::SizeAdjustTextFullSize, TSModes::TSFullSize ));
+		EnumVector.push_back(SvOi::NameValuePair{ SvO::SizeAdjustTextFullSize, TSModes::TSFullSize });
 	}
-	vec.push_back(SVEnumeratePair(SvO::SizeAdjustTextFormula, TSModes::TSFormula ) );
+	EnumVector.push_back(SvOi::NameValuePair{ SvO::SizeAdjustTextFormula, TSModes::TSFormula });
 
 	for( int vType  = TSPositionX ; vType < TSValuesCount ; ++vType)
 	{
-		m_InputModes[vType].SetEnumTypes( vec );
+		m_InputModes[vType].SetEnumTypes(EnumVector);
 		m_InputModes[vType].SetDefaultValue( TSModes::TSNone, true );
 		m_InputModes[vType].SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
 	}
@@ -213,7 +212,7 @@ HRESULT ToolSizeAdjustTask::GetResultValue( TSValues val, long& rValue) const
 
 SVToolClass* ToolSizeAdjustTask::GetTool() const 
 {
-	return dynamic_cast<SVToolClass*> (GetOwner());
+	return dynamic_cast<SVToolClass*> (GetParent());
 }
 
 bool ToolSizeAdjustTask::ResetObject(SvStl::MessageContainerVector *pErrorMessages)

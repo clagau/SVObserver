@@ -25,8 +25,6 @@ public:
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 
-	SvOi::IObjectClass* GetResultObject();
-
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	virtual bool IsPtOverResult( const POINT& rPoint ) override;

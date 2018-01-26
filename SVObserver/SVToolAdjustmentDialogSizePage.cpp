@@ -15,10 +15,11 @@
 #include "SvOGui/SVFormulaEditorSheet.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "InspectionEngine/EQAdjustSize.h"
-#include "SVStatusLibrary\MessageManager.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "SVGuiExtentUpdater.h"
 #include "TextDefinesSvO.h"
-
+#include "SVOGui/ValuesAccessor.h"
+#include "SVOGui/DataController.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -89,7 +90,6 @@ BOOL SVToolAdjustmentDialogSizePage::OnInitDialog()
 	}
 	if(  nullptr != m_pTool )
 	{
-		SetTaskObject( m_pTool );
 		// Get ToolSizeAdjustTask 
 		SvDef::SVObjectTypeInfoStruct ToolSizeAdjustTaskInfo;
 		ToolSizeAdjustTaskInfo.ObjectType = SvDef::SVToolSizeAdjustTaskType;
@@ -99,12 +99,10 @@ BOOL SVToolAdjustmentDialogSizePage::OnInitDialog()
 		{
 			for( int vType  = ToolSizeAdjustTask::TSPositionX ; vType <  ToolSizeAdjustTask::TSValuesCount; ++vType)
 			{
-				std::string Mode;
 				SVEnumerateValueObjectClass* pValue = m_pToolSizeAdjustTask->GetInputMode(static_cast<ToolSizeAdjustTask::TSValues>(vType));
 				if (pValue)
 				{
-					pValue->GetEnumTypes(Mode);
-					m_ComboBox[vType].SetEnumTypes(Mode.c_str());
+					m_ComboBox[vType].SetEnumTypes(pValue->GetEnumVector());
 					if (false == m_pToolSizeAdjustTask->IsFullSizeAllowed())
 					{
 						///Remove Fullsize from combobox
@@ -158,9 +156,15 @@ HRESULT SVToolAdjustmentDialogSizePage::SetInspectionData()
 
 	if( nullptr !=  m_pToolSizeAdjustTask && nullptr !=  m_pTool)
 	{
-		UpdateData( TRUE ); // get data from dialog
+		UpdateData(true); // get data from dialog
 		
 		EAutoSize AutoSizeEnable = m_pTool->GetAutoSizeEnabled();
+
+		//@TODO[gra][8.00][15.01.2018]: The data controller should be used like the rest of SVOGui
+		typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
+		typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
+		Controller Values{ SvOg::BoundValues{ m_pToolSizeAdjustTask->GetInspection()->GetUniqueObjectID(), m_pToolSizeAdjustTask->GetUniqueObjectID() } };
+		Values.Init();
 
 		for( int vType  = ToolSizeAdjustTask::TSPositionX; vType < ToolSizeAdjustTask::TSValuesCount; ++vType)
 		{
@@ -182,18 +186,18 @@ HRESULT SVToolAdjustmentDialogSizePage::SetInspectionData()
 				}
 				
 				SVEnumerateValueObjectClass* pValue = m_pToolSizeAdjustTask->GetInputMode(static_cast<ToolSizeAdjustTask::TSValues>(vType));
-				if (pValue)
+				if (nullptr != pValue)
 				{
-					hresult = AddInputRequest( pValue, Value );
+					Values.Set<long>(pValue->GetEmbeddedID(), Value);
 				}
-				if (S_OK == hresult) 
+				bool bEnabled = (Value == ToolSizeAdjustTask::TSFormula);
+				EQAdjustSize* pEquation = GetEvaluateObject( (ToolSizeAdjustTask::TSValues) vType);
+				if (nullptr != pEquation)
 				{
-					BOOL bEnabled = (Value == ToolSizeAdjustTask::TSFormula);
-					EQAdjustSize* pEQ = GetEvaluateObject( (ToolSizeAdjustTask::TSValues) vType);
-					if (nullptr != pEQ)
-					{
-						hresult = AddInputRequest( &(pEQ->enabled), bEnabled );
-					}
+					//@TODO[gra][8.00][15.01.2018]: The data controller should be used like the rest of SVOGui
+					Controller EquationValues{ SvOg::BoundValues{ pEquation->GetInspection()->GetUniqueObjectID(), pEquation->GetUniqueObjectID() } };
+					Values.Set<bool>(pEquation->enabled.GetEmbeddedID(), bEnabled);
+					EquationValues.Commit(SvOg::doNothing);
 				}
 			}
 			else
@@ -206,16 +210,7 @@ HRESULT SVToolAdjustmentDialogSizePage::SetInspectionData()
 			}
 		}
 
-		if( S_OK == hresult )
-		{
-			hresult = AddInputRequestMarker();
-		}
-
-		if( S_OK == hresult )
-		{
-			hresult = RunOnce( m_pTool->GetUniqueObjectID() );
-		}
-		UpdateData( false );
+		Values.Commit();
 	}
 	return hresult;
 }

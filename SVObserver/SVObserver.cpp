@@ -2541,7 +2541,7 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 					msgList.push_back( App );
 
 					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-					INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVObserver_WrongVersionNumber, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10128, SV_GUID_NULL, MB_YESNO );
+					INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVObserver_WrongVersionNumber, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10128, GUID_NULL, MB_YESNO );
 					if( IDNO == result )
 					{
 						hr = E_FAIL;
@@ -2914,7 +2914,7 @@ HRESULT SVObserverApp::DestroyConfig( bool AskForSavingOrClosing /* = true */,
 			SvDef::StringVector msgList;
 			msgList.push_back(getConfigFileName()); 
 			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-			INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_UserQuestionCloseConfig, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10130, SV_GUID_NULL, MB_YESNO );
+			INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_UserQuestionCloseConfig, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10130, GUID_NULL, MB_YESNO );
 			bClose = IDYES == result;
 			if (!bClose)
 			{
@@ -2937,7 +2937,7 @@ HRESULT SVObserverApp::DestroyConfig( bool AskForSavingOrClosing /* = true */,
 					SvDef::StringVector msgList;
 					msgList.push_back( getConfigFileName() ); 
 					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-					INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_UserQuestionSaveChanges, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10131, SV_GUID_NULL, MB_YESNOCANCEL );
+					INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_UserQuestionSaveChanges, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10131, GUID_NULL, MB_YESNOCANCEL );
 					switch( result )
 					{
 					case IDNO:
@@ -6267,7 +6267,7 @@ bool SVObserverApp::InitATL()
 		if( ! l_AppRegister && ! l_AppUnregister )
 		{
 			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-			INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVObserver_RegisterClassObjectsFailed_Question, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10135, SV_GUID_NULL, MB_YESNO );
+			INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVObserver_RegisterClassObjectsFailed_Question, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10135, GUID_NULL, MB_YESNO );
 			if( IDYES == result )
 			{
 				return false;

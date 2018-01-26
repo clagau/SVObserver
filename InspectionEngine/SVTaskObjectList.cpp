@@ -93,7 +93,7 @@ void SVTaskObjectListClass::AppendInputObjects()
 
 void SVTaskObjectListClass::RemoveOutputObject( SVOutObjectInfoStruct* p_pOutObject )
 {
-	if ( SVTaskObjectListClass* pTaskObjectList = dynamic_cast <SVTaskObjectListClass*> (GetOwner()) )
+	if ( SVTaskObjectListClass* pTaskObjectList = dynamic_cast <SVTaskObjectListClass*> (GetParent()) )
 	{
 		pTaskObjectList->RemoveOutputObject( p_pOutObject );
 	}
@@ -899,7 +899,7 @@ bool SVTaskObjectListClass::isInputImage(const SVGUID& rImageGuid) const
 {
 	bool Result = SVTaskObjectClass::isInputImage(rImageGuid);
 
-	if (SV_GUID_NULL != rImageGuid)
+	if (GUID_NULL != rImageGuid)
 	{
 		// Get Object from our children
 		for (int i = 0; !Result && i < static_cast<int> (m_TaskObjectVector.size()); i++)
@@ -1041,7 +1041,7 @@ void SVTaskObjectListClass::connectChildObject( SVTaskObjectClass& rChildObject 
 SvOi::IObjectClass* SVTaskObjectListClass::getFirstObjectWithRequestor( const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends, const SvOi::IObjectClass* pRequestor ) const
 {
 	SvOi::IObjectClass* retObject = nullptr;
-	if (pRequestor == this || pRequestor == GetOwner())
+	if (pRequestor == this || pRequestor == GetParent())
 	{
 		return nullptr;
 	}
@@ -1065,7 +1065,7 @@ SvOi::IObjectClass* SVTaskObjectListClass::getFirstObjectWithRequestor( const Sv
 				pObject = SVObjectManagerClass::Instance().GetObject(pOutputInfo->getUniqueObjectID());
 			}
 
-			if (nullptr != pObject && pObject->GetOwner() != pRequestor && pObject != pRequestor)
+			if (nullptr != pObject && pObject->GetParent() != pRequestor && pObject != pRequestor)
 			{
 				// Don't send to requester owned outputs
 				retObject = pObject->getFirstObject(rObjectTypeInfo, useFriends, pRequestor);
@@ -1103,7 +1103,7 @@ This method is used to remove an object from the friends list via the object's u
 bool SVTaskObjectListClass::RemoveFriend(const GUID& rFriendGUID)
 {
 	// Check GUID...
-	if (SV_GUID_NULL != rFriendGUID)
+	if (GUID_NULL != rFriendGUID)
 	{
 		// Check if friend is applied...
 		if (m_friendList.size())

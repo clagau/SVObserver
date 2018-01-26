@@ -444,7 +444,7 @@ void SVRangeClass::ConnectAllInputObjects()
 
 		if(nullptr != m_ValueObjectReferences[i].getObject())
 		{
-			if( SV_GUID_NULL != m_ValueObjectReferences[i].Guid() )
+			if( GUID_NULL != m_ValueObjectReferences[i].Guid() )
 			{
 				SVInObjectInfoStruct InObjectInfo;
 				InObjectInfo.SetObject(this);
@@ -461,7 +461,7 @@ void SVRangeClass::DisconnectAllInputObjects()
 	{
 		if(nullptr != m_ValueObjectReferences[i].getObject() && m_IsConnectedInput[i] == true)
 		{
-			if( SV_GUID_NULL != m_ValueObjectReferences[i].Guid() )
+			if( GUID_NULL != m_ValueObjectReferences[i].Guid() )
 			{
 				SVInObjectInfoStruct InObjectInfo;
 

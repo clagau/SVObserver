@@ -9,8 +9,6 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <map>
-//Moved to precompiled header: #include <Guiddef.h>
-
 #include "SVUtilityLibrary\NameGuidList.h"
 #pragma endregion Includes
 
@@ -32,7 +30,7 @@ namespace SvMc
 		void Init(const SvUl::NameGuidList& List, const std::string& rSelectedItem, const std::string& rEmptyListText, const std::string& rFirstListText = _T(""));
 
 		//************************************
-		/// Return the guid of the selected item. If no item selected or an error it return SV_GUID_NULL.
+		/// Return the guid of the selected item. If no item selected or an error it return GUID_NULL.
 		/// \returns SVGUID
 		//************************************
 		SVGUID getSelectedGUID() const;

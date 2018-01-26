@@ -47,19 +47,7 @@ public:
 	HRESULT GetEdgesOverlay( SVExtentMultiLineStruct &p_rsvMiltiLine );
 	HRESULT GetSelectedEdgeOverlay( SVExtentLineStruct &p_rsvLine );
 	
-	//************************************
-	// Method:    getLowerThresholdValue
-	// Description: Get the value of the lower threshold. If there is are error, it return -1. 
-	// Returns:   long
-	//************************************
-	long getLowerThresholdValue() const;
-
-	//************************************
-	// Method:    geUpperThresholdValue
-	// Description: Get the value of the upper threshold. If there is are error, it return -1. 
-	// Returns:   long
-	//************************************
-	long getUpperThresholdValue() const;
+	const SVGuidVector& getEdgeEmbeddedGuids() { return m_EdgeEmbeddedGuids; }
 
 	SVEnumerateValueObjectClass m_svDirection;
 	SVEnumerateValueObjectClass m_svPolarisation;
@@ -113,5 +101,7 @@ protected:
 	COLORREF m_cfThresholds;
 	COLORREF m_cfHistogram;
 	COLORREF m_cfEdges;
+
+	SVGuidVector m_EdgeEmbeddedGuids;
 };
 

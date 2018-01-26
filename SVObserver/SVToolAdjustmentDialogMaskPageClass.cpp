@@ -16,7 +16,7 @@
 #include "SVToolAdjustmentDialogMaskPageClass.h"
 #include "SVMaskShapeEditorDlg.h"
 #include "SVMFCControls\SVMaskEditor.h"
-#include "ObjectInterfaces\NameValueList.h"
+#include "ObjectInterfaces\NameValueVector.h"
 #include "SVObserver.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
@@ -32,12 +32,6 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 static LPCTSTR NoImageTag = _T("(No Image)");
-static LPCSTR EnabledTag = "Enabled";
-static LPCSTR MaskTypeTag = "MaskType";
-static LPCSTR OperatorTag = "Operator";
-static LPCSTR FillAreaTag = "FillArea";
-static LPCSTR FillColorTag = "FillColor";
-static LPCSTR DrawCriteriaTag = "DrawCriteria";
 
 const UINT UISetRGB = RegisterWindowMessage(SETRGBSTRING);
 enum ImageTabEnums
@@ -68,20 +62,14 @@ BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogMaskPageClass, CPropertyPage)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-SVToolAdjustmentDialogMaskPageClass::SVToolAdjustmentDialogMaskPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID) 
+SVToolAdjustmentDialogMaskPageClass::SVToolAdjustmentDialogMaskPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SVGUID& rMaskOperatorID) 
 : CPropertyPage(SVToolAdjustmentDialogMaskPageClass::IDD)
 , m_InspectionID(rInspectionID)
 , m_TaskObjectID(rTaskObjectID)
 , m_pMaskEditorCtl(nullptr)
 , m_ImageController(rInspectionID, rTaskObjectID)
-, m_Values(SvOg::BoundValues(rInspectionID, rTaskObjectID, boost::assign::map_list_of
-	(EnabledTag, SVMaskEnabledObjectGuid)
-	(MaskTypeTag, SVMaskUseImageMaskGuid)
-	(OperatorTag, SVMaskOperatorGuid)
-	(FillAreaTag, SVMaskFillAreaGuid)
-	(FillColorTag, SVMaskFillColorGuid)
-	(DrawCriteriaTag, SVDrawCriteriaObjectGuid)))
-, m_maskController(rInspectionID, rTaskObjectID)
+, m_Values{ SvOg::BoundValues{ rInspectionID, rMaskOperatorID } }
+, m_maskController{ rInspectionID, rTaskObjectID }
 {
 	m_pThis = this;
 
@@ -111,102 +99,62 @@ SVToolAdjustmentDialogMaskPageClass::~SVToolAdjustmentDialogMaskPageClass()
 	}
 }
 
-void SVToolAdjustmentDialogMaskPageClass::SetData()
-{
-	UpdateData(true);
-	m_Values.Set<bool>(EnabledTag, m_bActivateMask ? true : false);
-	m_Values.Set<DWORD>(MaskTypeTag, m_iMaskType);
-
-	int sel = m_cbMaskOperator.GetCurSel();
-	if (CB_ERR != sel)
-	{
-		CString maskOperator;
-		m_cbMaskOperator.GetLBText(sel, maskOperator);
-		m_Values.Set<CString>(OperatorTag, maskOperator);
-	}
-
-	sel = m_cbFillOptions.GetCurSel();
-	if (CB_ERR != sel)
-	{
-		CString fillArea;
-		m_cbFillOptions.GetLBText(sel, fillArea);
-		m_Values.Set<CString>(FillAreaTag, fillArea);
-	}
-
-	sel = m_DrawCriteriaCombo.GetCurSel();
-	if (CB_ERR != sel)
-	{
-		CString drawCriteria;
-		m_DrawCriteriaCombo.GetLBText(sel, drawCriteria);
-		m_Values.Set<CString>(DrawCriteriaTag, drawCriteria);
-	}
-}
-
-void SVToolAdjustmentDialogMaskPageClass::GetData()
-{
-	m_bActivateMask = m_Values.Get<bool>(EnabledTag);
-	long lColor = m_Values.Get<long>(FillColorTag);
-	m_sFillColor = SvUl::AsString(lColor).c_str();
-
-	m_iMaskType = m_Values.Get<int>(MaskTypeTag);
-
-	UpdateData(false);
-}
-
 void SVToolAdjustmentDialogMaskPageClass::SetupMaskOperatorComboBox()
 {
-	// Fill Arithmetic Operator Combo...
-	m_cbMaskOperator.ResetContent();
-	CString maskOperator = m_Values.Get<CString>(OperatorTag);
-	const SvOi::NameValueList& maskOperators = m_Values.GetEnumTypes(OperatorTag);
-	for (SvOi::NameValueList::const_iterator it = maskOperators.begin(); it != maskOperators.end();++it)
-	{
-		m_cbMaskOperator.SetItemData(m_cbMaskOperator.AddString(it->first.c_str()), it->second);
-	}
-	RefreshComboBox(maskOperator, m_cbMaskOperator);
+	const SvOi::NameValueVector& rMaskOperators = m_Values.GetEnumTypes(SVMaskOperatorGuid);
+	m_cbMaskOperator.SetEnumTypes(rMaskOperators);
+	long CurrentSelection = m_Values.Get<long>(SVMaskOperatorGuid);
+	m_cbMaskOperator.SetCurSelItemData(CurrentSelection);
 }
 
 void SVToolAdjustmentDialogMaskPageClass::SetupFillAreaComboBox()
 {
-	// Fill the Fill Area combo
-	m_cbFillOptions.ResetContent();
-	CString fillAreaValue = m_Values.Get<CString>(FillAreaTag);
-	const SvOi::NameValueList& fillArea = m_Values.GetEnumTypes(FillAreaTag);
-	for (SvOi::NameValueList::const_iterator it = fillArea.begin(); it != fillArea.end();++it)
-	{
-		m_cbFillOptions.SetItemData(m_cbFillOptions.AddString(it->first.c_str()), it->second);
-	}
-	RefreshComboBox(fillAreaValue, m_cbFillOptions);
+	const SvOi::NameValueVector& rFillArea = m_Values.GetEnumTypes(SVMaskFillAreaGuid);
+	m_cbFillOptions.SetEnumTypes(rFillArea);
+	long CurrentSelection = m_Values.Get<long>(SVMaskFillAreaGuid);
+	m_cbFillOptions.SetCurSelItemData(CurrentSelection);
 }
 
 void SVToolAdjustmentDialogMaskPageClass::SetupDrawCriteriaCombo()
 {
-	// Populate Draw Criteria combo...
-	m_DrawCriteriaCombo.ResetContent();
-	CString drawCriteriaValue = m_Values.Get<CString>(DrawCriteriaTag);
-	const SvOi::NameValueList& drawCriteria = m_Values.GetEnumTypes(DrawCriteriaTag);
-	// Set Combos Current Value
-	for (SvOi::NameValueList::const_iterator it = drawCriteria.begin(); it != drawCriteria.end();++it)
-	{
-		m_DrawCriteriaCombo.SetItemData(m_DrawCriteriaCombo.AddString(it->first.c_str()), it->second);
-	}
-	RefreshComboBox(drawCriteriaValue, m_DrawCriteriaCombo);
-}
-
-void SVToolAdjustmentDialogMaskPageClass::SetupComboBoxes()
-{
-	SetupMaskOperatorComboBox();
-	SetupFillAreaComboBox();
-	SetupDrawCriteriaCombo();
+	const SvOi::NameValueVector& rDrawCriteria = m_Values.GetEnumTypes(SVDrawCriteriaObjectGuid);
+	m_DrawCriteriaCombo.SetEnumTypes(rDrawCriteria);
+	long CurrentSelection = m_Values.Get<long>(SVDrawCriteriaObjectGuid);
+	m_DrawCriteriaCombo.SetCurSelItemData(CurrentSelection);
 }
 
 HRESULT SVToolAdjustmentDialogMaskPageClass::SetInspectionData()
 {
-	HRESULT hr = S_OK;
-	SetData();
-	m_Values.Commit(true);
-	GetData();
-	return hr;
+	HRESULT Result{ S_OK };
+
+	UpdateData(true);
+	m_Values.Set<bool>(SVMaskEnabledObjectGuid, m_bActivateMask ? true : false);
+	m_Values.Set<DWORD>(SVMaskUseImageMaskGuid, m_iMaskType);
+
+	long Value{ 0L };
+	int CurrentSelection = m_cbMaskOperator.GetCurSel();
+	if (CB_ERR != CurrentSelection)
+	{
+		Value = static_cast<long> (m_cbMaskOperator.GetItemData(CurrentSelection));
+		m_Values.Set<long>(SVMaskOperatorGuid, Value);
+	}
+
+	CurrentSelection = m_cbFillOptions.GetCurSel();
+	if (CB_ERR != CurrentSelection)
+	{
+		Value = static_cast<long> (m_cbFillOptions.GetItemData(CurrentSelection));
+		m_Values.Set<long>(SVMaskFillAreaGuid, Value);
+	}
+
+	CurrentSelection = m_DrawCriteriaCombo.GetCurSel();
+	if (CB_ERR != CurrentSelection)
+	{
+		Value = static_cast<long> (m_DrawCriteriaCombo.GetItemData(CurrentSelection));
+		m_Values.Set<long>(SVDrawCriteriaObjectGuid, Value);
+	}
+
+	Result = m_Values.Commit(SvOg::doResetRunOnce);
+	return Result;
 }
 
 void SVToolAdjustmentDialogMaskPageClass::DoDataExchange(CDataExchange* pDX)
@@ -266,10 +214,14 @@ BOOL SVToolAdjustmentDialogMaskPageClass::OnInitDialog()
 
 	m_dialogImage.SelectTab(2);
 
-	// get Values
-	GetData();
+	m_bActivateMask = m_Values.Get<bool>(SVMaskEnabledObjectGuid);
+	long lColor = m_Values.Get<long>(SVMaskFillColorGuid);
+	m_sFillColor = SvUl::AsString(lColor).c_str();
+	m_iMaskType = m_Values.Get<int>(SVMaskUseImageMaskGuid);
 
-	SetupComboBoxes();
+	SetupMaskOperatorComboBox();
+	SetupFillAreaComboBox();
+	SetupDrawCriteriaCombo();
 
 	ShowControls(m_iMaskType);
 
@@ -287,20 +239,6 @@ BOOL SVToolAdjustmentDialogMaskPageClass::OnInitDialog()
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // EXCEPTION: OCX-Eigenschaftenseiten sollten FALSE zurückgeben
-}
-
-void SVToolAdjustmentDialogMaskPageClass::RefreshComboBox(const CString& rValue, CComboBox& rComboBox)
-{
-	for (int i = 0; i < rComboBox.GetCount(); ++i)
-	{
-		CString entry;
-		rComboBox.GetLBText(i, entry);
-		if (rValue == entry)
-		{
-			rComboBox.SetCurSel(i);
-			break;
-		}
-	}
 }
 
 void SVToolAdjustmentDialogMaskPageClass::OnEditStaticMaskButton() 
@@ -453,9 +391,9 @@ void SVToolAdjustmentDialogMaskPageClass::OnImportMaskButton()
 
 void SVToolAdjustmentDialogMaskPageClass::OnEditShapeMaskButton() 
 {
-	m_Values.Commit(true);
+	m_Values.Commit(SvOg::doResetRunOnce);
 
-	SVMaskShapeEditorDlg dlg(m_InspectionID, m_TaskObjectID, m_maskController.GetInstanceID());
+	SVMaskShapeEditorDlg dlg(m_InspectionID, m_TaskObjectID, m_maskController.GetInstanceID(), m_maskController.GetShapeMaskHelperID());
 
 	long selTab = 2; 
 	m_dialogImage.GetSelectedTab(&selTab);
@@ -467,7 +405,11 @@ void SVToolAdjustmentDialogMaskPageClass::OnEditShapeMaskButton()
 	if (IDOK == dlg.DoModal())
 	{
 		m_Values.Init();
-		GetData();
+
+		m_bActivateMask = m_Values.Get<bool>(SVMaskEnabledObjectGuid);
+		long lColor = m_Values.Get<long>(SVMaskFillColorGuid);
+		m_sFillColor = SvUl::AsString(lColor).c_str();
+		m_iMaskType = m_Values.Get<int>(SVMaskUseImageMaskGuid);
 
 		SetupMaskOperatorComboBox();
 		SetupFillAreaComboBox();
@@ -655,8 +597,8 @@ UINT_PTR CALLBACK SVToolAdjustmentDialogMaskPageClass::ColorDlgHookFn( HWND hdlg
 				CString sText;
 				pWndRed->GetWindowText(sText);
 
-				m_pThis->m_Values.Set<CString>(FillColorTag, sText);
-				m_pThis->m_Values.Commit(true);
+				m_pThis->m_Values.Set<CString>(SVMaskFillColorGuid, sText);
+				m_pThis->m_Values.Commit(SvOg::doResetRunOnce);
 				m_pThis->setImages();
 			}
 		}

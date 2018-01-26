@@ -116,9 +116,9 @@ public:
 
 	/// Add the object to the friend list.
 	/// \param rFriendGUID [in] Guid of the object
-	/// \param rAddPreGuid [in] The new object will be added before this object. Default: SV_GUID_NULL This means: it will be added at the end.
+	/// \param rAddPreGuid [in] The new object will be added before this object. Default: GUID_NULL This means: it will be added at the end.
 	/// \returns bool
-	bool AddFriend( const GUID& rFriendGUID, const GUID& rAddPreGuid = SV_GUID_NULL );
+	bool AddFriend( const GUID& rFriendGUID, const GUID& rAddPreGuid = GUID_NULL );
 	void DestroyFriends();
 
 	/// Destroy a friend (Disconnect, CloseObject and Destroy his friend), but it must be a taskObject. 
@@ -142,11 +142,9 @@ public:
 	LPCTSTR GetObjectName() const;
 	int GetObjectNameLength() const;
 
-	SVObjectClass* GetOwner() const;
+	SVObjectClass* GetParent() const;
 	SVOutObjectInfoStruct& GetObjectOutputInfo();
 	
-	const SVGUID& GetEmbeddedID() const;
-	const SVGUID& GetOwnerID() const;
 	bool IsCreated() const;
 
 	virtual HRESULT RegisterSubObject( SVObjectClass* pObject );
@@ -167,11 +165,12 @@ public:
 	virtual UINT ObjectAttributesSet(int iIndex=0) const override;
 	virtual UINT SetObjectAttributesSet( UINT Attributes, SvOi::SetAttributeType Type, int iIndex=0 ) override;
 	virtual const SVGUID& GetUniqueObjectID() const override;
+	virtual const SVGUID& GetEmbeddedID() const override;
 	virtual bool is_Created() const override;
 	virtual SvUl::NameGuidList GetCreatableObjects(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo) const override;
 	virtual void SetName( LPCTSTR Name ) override;
 	virtual SvOi::IObjectClass* getFirstObject(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends = true, const SvOi::IObjectClass* pRequestor = nullptr) const override;
-	virtual void moveFriendObject(const SVGUID& objectToMoveId, const SVGUID& preObjectId = SV_GUID_NULL) override;
+	virtual void moveFriendObject(const SVGUID& objectToMoveId, const SVGUID& preObjectId = GUID_NULL) override;
 	virtual bool resetAllObjects( SvStl::MessageContainerVector *pErrorMessages=nullptr ) override { return ResetObject(pErrorMessages); };
 	virtual HRESULT getValue(double& rValue, int Index = -1, int Bucket = -1) const override { return E_NOTIMPL; };
 	virtual HRESULT getValues(std::vector<double>& rValues, int Bucket = -1) const override { return E_NOTIMPL; };

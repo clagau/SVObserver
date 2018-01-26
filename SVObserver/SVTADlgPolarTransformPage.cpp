@@ -18,6 +18,8 @@
 #include "InspectionEngine/SVTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "SVOGui/ValuesAccessor.h"
+#include "SVOGui/DataController.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -40,7 +42,7 @@ SVToolAdjustmentDialogPolarTransformPageClass::SVToolAdjustmentDialogPolarTransf
 	//}}AFX_DATA_INIT
 
 	m_pParentDialog	= Parent;
-	pTool			= nullptr;
+	m_pTool			= nullptr;
 
 	m_pEvaluateCenterX	 = nullptr;
 	m_pCenterXResult		 = nullptr;
@@ -65,56 +67,44 @@ SVToolAdjustmentDialogPolarTransformPageClass::~SVToolAdjustmentDialogPolarTrans
 
 HRESULT SVToolAdjustmentDialogPolarTransformPageClass::SetInspectionData()
 {
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT Result{ E_FAIL };
 
-	if( pTool )
+	if( nullptr != m_pTool )
 	{
-		UpdateData( TRUE ); // get data from dialog
+		UpdateData( true ); // get data from dialog
 
-		l_hrOk = AddInputRequest( m_pUseFormula, bUseFormula );
+		//@TODO[gra][8.00][15.01.2018]: The data controller should be used like the rest of SVOGui
+		typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
+		typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
+		Controller Values{ SvOg::BoundValues{ m_pTool->GetInspection()->GetUniqueObjectID(), m_pTool->GetUniqueObjectID() } };
+		Values.Init();
 
-		if( S_OK == l_hrOk )
+		Values.Set<bool>(m_pUseFormula->GetEmbeddedID(), bUseFormula ? true : false);
+
+		int sel = interpolationComboCtrl.GetCurSel();
+		if (0 <= sel)
 		{
-			int sel = interpolationComboCtrl.GetCurSel();
-			if( sel >= 0 )
-			{
-				long lValue = ( long ) interpolationComboCtrl.GetItemData( sel );
-
-				l_hrOk = AddInputRequest( m_pInterpolationMode, lValue );
-			}
+			long lValue = static_cast<long> (interpolationComboCtrl.GetItemData( sel ));
+			Values.Set<long>(m_pInterpolationMode->GetEmbeddedID(), lValue);
 		}
 
-		if( S_OK == l_hrOk )
+		sel = m_AngularMethodCombo.GetCurSel();
+		if (0 <= sel)
 		{
-			int sel = m_AngularMethodCombo.GetCurSel();
-			if( sel >= 0 )
-			{
-				long lValue = ( long ) m_AngularMethodCombo.GetItemData( sel );
-
-				l_hrOk = AddInputRequest( m_pAngleMethod, lValue );
-			}
+			long lValue = static_cast<long>  (m_AngularMethodCombo.GetItemData(sel));
+			Values.Set<long>(m_pAngleMethod->GetEmbeddedID(), lValue);
 		}
-
-		if( S_OK == l_hrOk )
-		{
-			l_hrOk = AddInputRequestMarker();
-		}
-
-		if( S_OK == l_hrOk )
-		{
-			l_hrOk = RunOnce( pTool->GetUniqueObjectID() );
-		}
-
-		UpdateData( FALSE );
+		
+		Result = Values.Commit();
 	}
 
-	return l_hrOk;
+	return Result;
 }
 
 
 void SVToolAdjustmentDialogPolarTransformPageClass::refresh()
 {
-	if( pTool )
+	if( m_pTool )
 	{
 		CWnd* pWnd = nullptr;
 
@@ -268,10 +258,8 @@ BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
-	if( m_pParentDialog && ( pTool = m_pParentDialog->GetTool() ) )
+	if( m_pParentDialog && ( m_pTool = m_pParentDialog->GetTool() ) )
 	{
-		SetTaskObject( pTool );
-
 		// Get Evaluate Object...
 		SvDef::SVObjectTypeInfoStruct evaluateObjectInfo;
 		evaluateObjectInfo.ObjectType = SvDef::SVMathContainerObjectType;
@@ -283,7 +271,7 @@ BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog()
 
 		// Get Evaluate Center X...
 		evaluateObjectInfo.SubType = SvDef::SVEvaluateCenterXObjectType;		
-		m_pEvaluateCenterX = dynamic_cast<SVEvaluateClass*>(pTool->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateCenterX = dynamic_cast<SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateCenterX )
 		{
 			// Get Center X Result...
@@ -293,7 +281,7 @@ BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog()
 
 		// Get Evaluate Center Y...
 		evaluateObjectInfo.SubType = SvDef::SVEvaluateCenterYObjectType;		
-		m_pEvaluateCenterY = dynamic_cast<SVEvaluateClass*>(pTool->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateCenterY = dynamic_cast<SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateCenterY )
 		{
 			// Get Center Y Result...
@@ -303,7 +291,7 @@ BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog()
 
 		// Get Evaluate Start Radius...
 		evaluateObjectInfo.SubType = SvDef::SVEvaluateStartRadiusObjectType;		
-		m_pEvaluateStartRadius = dynamic_cast<SVEvaluateClass*>(pTool->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateStartRadius = dynamic_cast<SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateStartRadius )
 		{
 			// Get Start Radius Result...
@@ -313,7 +301,7 @@ BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog()
 
 		// Get Evaluate End Radius...
 		evaluateObjectInfo.SubType = SvDef::SVEvaluateEndRadiusObjectType;		
-		m_pEvaluateEndRadius = dynamic_cast<SVEvaluateClass*>(pTool->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateEndRadius = dynamic_cast<SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateEndRadius )
 		{
 			// Get End Radius Result...
@@ -323,7 +311,7 @@ BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog()
 
 		// Get Evaluate Start Angle...
 		evaluateObjectInfo.SubType = SvDef::SVEvaluateStartAngleObjectType;		
-		m_pEvaluateStartAngle = dynamic_cast<SVEvaluateClass*>(pTool->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateStartAngle = dynamic_cast<SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateStartAngle )
 		{
 			// Get Start Angle Result...
@@ -333,7 +321,7 @@ BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog()
 
 		// Get Evaluate End Angle...
 		evaluateObjectInfo.SubType = SvDef::SVEvaluateEndAngleObjectType;		
-		m_pEvaluateEndAngle = dynamic_cast<SVEvaluateClass*>(pTool->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateEndAngle = dynamic_cast<SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateEndAngle )
 		{
 			// Get End Angle Result...
@@ -344,7 +332,7 @@ BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog()
 		// Get Use Formula...
 		SvDef::SVObjectTypeInfoStruct objectInfo;
 		objectInfo.EmbeddedID = SVOutputUseFormulaObjectGuid;
-		m_pUseFormula = dynamic_cast<SVBoolValueObjectClass*>(pTool->getFirstObject(objectInfo));
+		m_pUseFormula = dynamic_cast<SVBoolValueObjectClass*>(m_pTool->getFirstObject(objectInfo));
 		if( m_pUseFormula )
 		{
 			m_pUseFormula->GetValue( bUseFormula );
@@ -352,23 +340,19 @@ BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog()
 
 		// Get Use Angle Method ...
 		objectInfo.EmbeddedID = SVOutputAngularMethodObjectGuid;
-		m_pAngleMethod = dynamic_cast<SVEnumerateValueObjectClass*>(pTool->getFirstObject(objectInfo));
+		m_pAngleMethod = dynamic_cast<SVEnumerateValueObjectClass*>(m_pTool->getFirstObject(objectInfo));
 		if( m_pAngleMethod )
 		{
-			std::string EnumList;
-			m_pAngleMethod->GetEnumTypes( EnumList );
-			m_AngularMethodCombo.SetEnumTypes( EnumList.c_str() );
+			m_AngularMethodCombo.SetEnumTypes(m_pAngleMethod->GetEnumVector());
 		}
 
 		// Get Interpolation Mode...
 		objectInfo.EmbeddedID = SVOutputInterpolationModeObjectGuid;
-		m_pInterpolationMode = dynamic_cast<SVEnumerateValueObjectClass*>(pTool->getFirstObject(objectInfo));
+		m_pInterpolationMode = dynamic_cast<SVEnumerateValueObjectClass*>(m_pTool->getFirstObject(objectInfo));
 		if( m_pInterpolationMode )
 		{
 			// Populate Interpolation Mode combo...
-			std::string EnumList;
-			m_pInterpolationMode->GetEnumTypes( EnumList );
-			interpolationComboCtrl.SetEnumTypes( EnumList.c_str() );
+			interpolationComboCtrl.SetEnumTypes(m_pInterpolationMode->GetEnumVector());
 		}
 		
 

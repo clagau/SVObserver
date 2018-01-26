@@ -164,7 +164,7 @@ BOOL SVChildrenSetupDialogClass::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	
-	if( m_pAvailableChildrenList && m_pParentObject && ( m_pParentOwner = m_pParentObject->GetOwner() ) )
+	if( m_pAvailableChildrenList && m_pParentObject && ( m_pParentOwner = m_pParentObject->GetParent() ) )
 	{
 		// Setup available list...
 		m_AvailableChildrenListCtrl.ModifyStyle( 0, LVS_REPORT );
@@ -231,7 +231,7 @@ void SVChildrenSetupDialogClass::OnAddButton()
 
 						// Remove it from the Tool TaskObjectList ( Destruct it )
 						GUID objectID = pObject->GetUniqueObjectID();
-						if( SV_GUID_NULL != objectID )
+						if( GUID_NULL != objectID )
 						{
 							m_pParentObject->Delete( objectID );
 						}

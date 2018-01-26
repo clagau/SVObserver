@@ -193,7 +193,7 @@ bool LinkedValue::UpdateConnection(SvStl::MessageContainerVector *pErrorMessages
 		//Check if current value is a GUID, but not exist anymore. In this case it is probably an deleted object. Set this value to invalid.
 		std::string::size_type Pos = guidAndIndexString.find_first_of(_T("["));
 		std::string guidString = guidAndIndexString.substr(0, Pos);
-		if (SV_GUID_NULL != SVGUID(_bstr_t(guidString.c_str())))
+		if (GUID_NULL != SVGUID(_bstr_t(guidString.c_str())))
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)

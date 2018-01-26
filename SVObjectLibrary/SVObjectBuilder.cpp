@@ -214,8 +214,8 @@ HRESULT SVObjectBuilder::CreateFriendObject(const GUID& classID, const GUID& uni
 	{
 		pObject->SetName(objectName.c_str());
 		pObject->SetObjectOwner(ownerUniqueID);
-		GUID friendId = SV_GUID_NULL;
-		if (SV_GUID_NULL != uniqueID)
+		GUID friendId = GUID_NULL;
+		if (GUID_NULL != uniqueID)
 		{
 			if( SVObjectManagerClass::Instance().ChangeUniqueObjectID( pObject, uniqueID ) )
 			{
@@ -226,7 +226,7 @@ HRESULT SVObjectBuilder::CreateFriendObject(const GUID& classID, const GUID& uni
 		{
 			friendId = pObject->GetUniqueObjectID();
 		}
-		if( SV_GUID_NULL != friendId )
+		if( GUID_NULL != friendId )
 		{
 			bool Result = pOwnerObject->AddFriend(friendId, rAddPreGuid);
 			if (Result)

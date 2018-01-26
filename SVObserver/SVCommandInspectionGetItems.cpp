@@ -175,8 +175,18 @@ HRESULT SVCommandInspectionGetItems::UpdateResultsWithValueData(const std::strin
 	SvOi::IValueObject* pValueObject = rValueRef.getValueObject();
 	if( nullptr != pValueObject && !rValueRef.isEntireArray())
 	{
-		///if this is an Array this is Zero based!!!!
-		GetStatus = pValueObject->getValue( Storage.m_Variant, rValueRef.getValidArrayIndex() );
+		//Enumeration Value objects need to return the text and not the value
+		if (SvDef::SVEnumValueObjectType == rValueRef.getObject()->GetObjectSubType())
+		{
+			std::string Value;
+			GetStatus = pValueObject->getValue(Value, rValueRef.getValidArrayIndex());
+			Storage.m_Variant.SetString(Value.c_str());
+		}
+		else
+		{
+			///if this is an Array this is Zero based!!!!
+			GetStatus = pValueObject->getValue( Storage.m_Variant, rValueRef.getValidArrayIndex() );
+		}
 
 		if (S_OK == GetStatus)
 		{

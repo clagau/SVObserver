@@ -11,6 +11,7 @@
 #pragma region Includes
 #include "ObjectInterfaces\IObjectManager.h"
 #include "ObjectInterfaces\IObjectClass.h"
+#include "ObjectInterfaces\ITaskObject.h"
 #include "SVUtilityLibrary\SVGUID.h"
 #pragma endregion Includes
 
@@ -23,7 +24,7 @@ namespace SvCmd
 		TaskObjectGetEmbeddedValues(const TaskObjectGetEmbeddedValues&) = delete;
 		TaskObjectGetEmbeddedValues& operator=(const TaskObjectGetEmbeddedValues&) = delete;
 
-		TaskObjectGetEmbeddedValues(const SVGUID& ownerID, const Items& items) : m_ownerID(ownerID), m_Items(items) {};
+		TaskObjectGetEmbeddedValues(const SVGUID& rInspectionID, const SVGUID& rTaskID) : m_Items{ Items{rInspectionID , rTaskID} }, m_rTaskID(rTaskID) {};
 
 		virtual ~TaskObjectGetEmbeddedValues() {};
 
@@ -32,66 +33,46 @@ namespace SvCmd
 		// and replaced with the building and sending of the command
 		HRESULT Execute()
 		{
-			HRESULT hr = S_OK;
-			for (Items::iterator it = m_Items.begin();S_OK == hr && it != m_Items.end();++it)
+			HRESULT Result = S_OK;
+
+			SvOi::ITaskObject* pTaskObj = dynamic_cast<SvOi::ITaskObject*> (SvOi::getObject(m_rTaskID));
+			SVGuidVector EmbeddedVector = pTaskObj->getEmbeddedList();
+
+			for (auto const& rEntry : EmbeddedVector)
 			{
-				SvDef::SVObjectTypeInfoStruct objectInfo;
-				objectInfo.EmbeddedID = it->second.GetEmbeddedID();
-
-				bool bFound = false;
-
-				// try owner, then parent(s), until found or there is no parent, return E_POINTER if not found
-				SVGUID parentID = m_ownerID;
-				while (!bFound && GUID_NULL != parentID)
+				SvOi::IObjectClass* pObject = SvOi::getObject(rEntry);
+				SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*> (pObject);
+				if (nullptr != pValueObject)
 				{
-					const SvDef::SVObjectTypeInfoStruct& ownerInfo = it->second.GetOwnerInfo();
-					SvOi::IObjectClass* pObject = SvOi::FindObject(parentID, objectInfo);
-					SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*> (pObject);
-					if( nullptr != pValueObject )
+					_variant_t DefaultValue{ pValueObject->getDefaultValue() };
+					_variant_t Value;
+					HRESULT tmpHr = pValueObject->getValue(Value);
+					if (S_OK == tmpHr)
 					{
-						bFound = true;
-
-						_variant_t Value;
-						HRESULT tmpHr = pValueObject->getValue( Value );
-						if (S_OK == tmpHr)
-						{
-							it->second = Items::mapped_type(objectInfo.EmbeddedID, pObject->GetUniqueObjectID(), Value, ownerInfo, it->second.isReadOnly());
-						}
-						else if (E_BOUNDS == tmpHr)
-						{
-							Value.Clear();
-							it->second = Items::mapped_type(objectInfo.EmbeddedID, pObject->GetUniqueObjectID(), Value, ownerInfo, it->second.isReadOnly());
-						}
-						else
-						{
-							hr = tmpHr;
-						}
+						m_Items[pObject->GetEmbeddedID()] = Items::mapped_type{ pObject->GetEmbeddedID(), rEntry, Value, DefaultValue };
+					}
+					else if (E_BOUNDS == tmpHr)
+					{
+						Value.Clear();
+						m_Items[pObject->GetEmbeddedID()] = Items::mapped_type{ pObject->GetEmbeddedID(), rEntry, Value, DefaultValue };
 					}
 					else
 					{
-						SvOi::IObjectClass* pParent = SvOi::getObject(parentID);
-						if (pParent)
-						{
-							parentID = pParent->GetParentID();
-						}
-						else
-						{
-							parentID = GUID_NULL; 
-						}
+						Result = tmpHr;
+						return Result;
 					}
 				}
-				if (!bFound)
-				{
-					hr = E_POINTER;
-				}
 			}
-			return hr;
+			
+			return Result;
 		}
+
 		bool empty() const { return false; }
+		
 		const Items& GetItems() const { return m_Items; }
 
 	private:
-		SVGUID m_ownerID;
+		SVGUID m_rTaskID;
 		Items m_Items;
 	};
 } //namespace SvCmd

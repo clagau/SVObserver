@@ -24,8 +24,6 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-	static LPCSTR UseExtentsOnlyTag = "UseExtentsOnly";
-
 	BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogTransformImagePageClass, CPropertyPage)
 		//{{AFX_MSG_MAP(SVToolAdjustmentDialogTransformImagePageClass)
 		ON_CBN_SELCHANGE(IDC_COMBO1, OnSelchangeCombo1)
@@ -35,7 +33,7 @@ namespace SvOg
 
 	SVToolAdjustmentDialogTransformImagePageClass::SVToolAdjustmentDialogTransformImagePageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, int id) 
 	: SVToolAdjustmentDialogImagePageClass(rInspectionID, rTaskObjectID, id)
-	, m_Values(SvOg::BoundValues(rInspectionID, rTaskObjectID, boost::assign::map_list_of(UseExtentsOnlyTag, SVUseExtentsOnlyObjectGuid)))
+		, m_Values{ SvOg::BoundValues{ rInspectionID, rTaskObjectID } }
 	{
 		//{{AFX_DATA_INIT(SVToolAdjustmentDialogTransformImagePageClass)
 		m_useExtentsOnly = FALSE;
@@ -63,12 +61,12 @@ namespace SvOg
 
 	void SVToolAdjustmentDialogTransformImagePageClass::GetData()
 	{
-		m_useExtentsOnly = m_Values.Get<bool>(UseExtentsOnlyTag);
+		m_useExtentsOnly = m_Values.Get<bool>(SVUseExtentsOnlyObjectGuid);
 	}
 
 	void SVToolAdjustmentDialogTransformImagePageClass::SetData()
 	{
-		m_Values.Set<bool>(UseExtentsOnlyTag, m_useExtentsOnly ? true : false);
+		m_Values.Set<bool>(SVUseExtentsOnlyObjectGuid, m_useExtentsOnly ? true : false);
 	}
 		
 	void SVToolAdjustmentDialogTransformImagePageClass::CheckSourceImage()

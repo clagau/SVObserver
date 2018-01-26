@@ -18,7 +18,7 @@
 #pragma endregion Includes
 
 #pragma region Declarations
-const LPCSTR g_strOrientationEnums = _T( "Horizontal=0,Vertical=90" );
+const SvOi::NameValueVector cOrientationEnums{ {_T("Horizontal"), 0}, {_T("Vertical"), 90}};
 #pragma endregion Declarations
 
 class SVLinearToolClass : public SVToolClass
@@ -40,7 +40,6 @@ public:
 	virtual SVTaskObjectClass *GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint ) override;
 	virtual bool DoesObjectHaveExtents() const override;
 
-	std::string GetProfileOrientation();
 	bool GetRotation();
 
 	//************************************

@@ -17,18 +17,21 @@
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
 #include "SVOGui/PictureDisplay.h"
 #include "SVRPropertyTree/SVRPropTree.h"
-#include "InspectionEngine/SVTaskObjectValueInterface.h"
 #include "SVUtilityLibrary\SVGUID.h"
+#include "SVOGui/ValuesAccessor.h"
+#include "SVOGui/DataController.h"
 #pragma endregion Includes
 
 class SVUserMaskOperatorClass;
 class SVToolClass;
 
-class SVMaskShapeEditorDlg : public CDialog, public SVTaskObjectValueInterface
+class SVMaskShapeEditorDlg : public CDialog
 {
+	typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
+	typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
 #pragma region Construction
 public:
-	SVMaskShapeEditorDlg(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SVGUID& rMaskOperatorID, CWnd* pParent = nullptr);   // standard constructor
+	SVMaskShapeEditorDlg(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SVGUID& rMaskOperatorID, const SVGUID& rShapeMaskHelperID, CWnd* pParent = nullptr);   // standard constructor
 	virtual ~SVMaskShapeEditorDlg();
 #pragma endregion Construction
 
@@ -53,6 +56,8 @@ public:
 	void setSelectedTab(long tabNumber);
 
 	SVMaskShape* GetCurrentShape(); // holds the properties and does the rendering
+
+	Controller& GetValues() { return m_Values; }
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -139,6 +144,7 @@ private:
 #pragma endregion Private Methods
 
 #pragma region Member Variables
+private:
 	// Dialog Data
 	//{{AFX_DATA(SVMaskShapeEditorDlg)
 	enum { IDD = IDD_MASK_SHAPE_EDITOR };
@@ -166,5 +172,10 @@ private:
 	SVToolClass* m_pTool;
 	SVUserMaskOperatorClass* m_pMask;
 	SVInputRequestStructMap m_cancelData;
+
+	const SVGUID& m_rInspectionID;
+	const SVGUID& m_rTaskObjectID;
+	Controller m_Values;
+	Controller m_ShapeHelperValues;
 #pragma endregion Member Variables
 };

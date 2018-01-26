@@ -479,7 +479,7 @@ void SVTaskObjectClass::GetInputs(SvUl::InputNameGuidPairList& rList, const SvDe
 		{
 			SvOi::IObjectClass* pObject = dynamic_cast<SvOi::IObjectClass*> (pInputInfo->GetInputObjectInfo().getObject());
 			std::string name = "";
-			SVGUID objectGUID = SV_GUID_NULL;
+			SVGUID objectGUID = GUID_NULL;
 			if (pInputInfo->IsConnected() && nullptr != pObject)
 			{
 				SvOi::ISVImage* pImage = dynamic_cast <SvOi::ISVImage*>(pObject);
@@ -505,15 +505,19 @@ void SVTaskObjectClass::GetInputs(SvUl::InputNameGuidPairList& rList, const SvDe
 	}
 }
 
-SvStl::MessageContainerVector SVTaskObjectClass::validateAndSetEmmeddedValues(const SvOi::SetValueObjectPairVector& rValueVector, bool shouldSet)
+SvStl::MessageContainerVector SVTaskObjectClass::validateAndSetEmbeddedValues(const SvOi::SetValueStructVector& rValueVector, bool shouldSet)
 {
 	SvStl::MessageContainerVector messages;
 	HRESULT Result(S_OK);
-	for(SvOi::SetValueObjectPairVector::const_iterator it = rValueVector.begin(); rValueVector.end() != it && S_OK == Result; ++it)
+	
+	for(auto const& rEntry : rValueVector)
 	{
 		try
 		{
-			it->first->validateValue( it->second );
+			if (nullptr != rEntry.m_pValueObject)
+			{
+				rEntry.m_pValueObject->validateValue( rEntry.m_Value );
+			}
 		}
 		catch ( const SvStl::MessageContainer& rSvE )
 		{
@@ -525,14 +529,17 @@ SvStl::MessageContainerVector SVTaskObjectClass::validateAndSetEmmeddedValues(co
 
 	if (shouldSet)
 	{
-		for(SvOi::SetValueObjectPairVector::const_iterator it = rValueVector.begin(); rValueVector.end() != it && S_OK == Result; ++it)
+		for (auto const& rEntry : rValueVector)
 		{
-			Result = it->first->setValue( it->second );
+			if (nullptr != rEntry.m_pValueObject)
+			{
+				Result = rEntry.m_pValueObject->setValue(rEntry.m_Value, rEntry.m_ArrayIndex);
+			}
 			if (S_OK != Result)
 			{
 				SvStl::MessageMgrStd Msg( SvStl::LogOnly );
 				SvDef::StringVector msgList;
-				SvOi::IObjectClass* pObject = dynamic_cast<SvOi::IObjectClass*> (it->first);
+				SvOi::IObjectClass* pObject = dynamic_cast<SvOi::IObjectClass*> (rEntry.m_pValueObject);
 				if( nullptr != pObject )
 				{
 					msgList.push_back( pObject->GetName() );
@@ -547,7 +554,45 @@ SvStl::MessageContainerVector SVTaskObjectClass::validateAndSetEmmeddedValues(co
 					Msg.setMessage( Result, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 				}
 				messages.push_back(Msg.getMessageContainer());
+				break;
 			}
+		}
+	}
+
+	return messages;
+}
+
+SvStl::MessageContainerVector SVTaskObjectClass::setEmbeddedDefaultValues(const SvOi::SetValueStructVector& rValueVector)
+{
+	SvStl::MessageContainerVector messages;
+	HRESULT Result(S_OK);
+
+	for (auto const& rEntry : rValueVector)
+	{
+		if (nullptr != rEntry.m_pValueObject)
+		{
+			Result = rEntry.m_pValueObject->setDefaultValue(rEntry.m_Value);
+		}
+		if (S_OK != Result)
+		{
+			SvStl::MessageMgrStd Msg(SvStl::LogOnly);
+			SvDef::StringVector msgList;
+			SvOi::IObjectClass* pObject = dynamic_cast<SvOi::IObjectClass*> (rEntry.m_pValueObject);
+			if (nullptr != pObject)
+			{
+				msgList.push_back(pObject->GetName());
+			}
+			//! Check if general error or specific error for detailed information
+			if (E_FAIL == Result || S_FALSE == Result)
+			{
+				Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SetEmbeddedValueFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			}
+			else
+			{
+				Msg.setMessage(Result, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			}
+			messages.push_back(Msg.getMessageContainer());
+			break;
 		}
 	}
 
@@ -574,8 +619,8 @@ void SVTaskObjectClass::ResolveDesiredInputs(const SvDef::SVObjectTypeInfoVector
 
 		const SvDef::SVObjectTypeInfoStruct& info = pInInfo->GetInputObjectInfo().m_ObjectTypeInfo;
 
-		assert ( SV_GUID_NULL != pInInfo->GetInputObjectInfo().getUniqueObjectID() ||
-			SV_GUID_NULL != info.EmbeddedID || 
+		assert ( GUID_NULL != pInInfo->GetInputObjectInfo().getUniqueObjectID() ||
+			GUID_NULL != info.EmbeddedID || 
 			SvDef::SVNotSetObjectType != info.ObjectType ||
 			SvDef::SVNotSetSubObjectType != info.SubType );
 	}
@@ -589,6 +634,18 @@ SvStl::MessageContainer SVTaskObjectClass::getFirstTaskMessage() const
 	}
 
 	return SvStl::MessageContainer();
+}
+
+SVGuidVector SVTaskObjectClass::getEmbeddedList() const
+{
+	SVGuidVector Result;
+
+	for (auto const& rEntry : m_embeddedList)
+	{
+		Result.push_back(rEntry->GetUniqueObjectID());
+	}
+
+	return Result;
 }
 #pragma endregion virtual method (ITaskObject)
 
@@ -674,7 +731,7 @@ SvOi::IObjectClass* SVTaskObjectClass::getFirstObject(const SvDef::SVObjectTypeI
 		}
 	}
 
-	if (pRequestor && pRequestor == this || pRequestor == GetOwner())
+	if (pRequestor && pRequestor == this || pRequestor == GetParent())
 	{
 		// Do not reference self 
 		return nullptr;
@@ -724,14 +781,14 @@ bool SVTaskObjectClass::isInputImage(const SVGUID& rImageGuid) const
 {
 	bool Result(false);
 
-	if(SV_GUID_NULL != rImageGuid)
+	if(GUID_NULL != rImageGuid)
 	{
 		// Notify friends...
 		for( size_t i = 0; !Result && i < m_friendList.size(); ++i )
 		{
 			const SVObjectInfoStruct &rFriend = m_friendList[i];
 
-			if( nullptr != rFriend.getObject() && rFriend.getObject()->GetOwner() == this )
+			if( nullptr != rFriend.getObject() && rFriend.getObject()->GetParent() == this )
 			{
 				Result = rFriend.getObject()->isInputImage(rImageGuid);
 			}
@@ -761,7 +818,7 @@ SVTaskObjectClass* SVTaskObjectClass::GetObjectAtPoint( const SVExtentPointStruc
 
 		pObject = dynamic_cast<SVTaskObjectClass*>(l_rsvFriend.getObject());
 
-		if( nullptr != pObject && pObject->GetOwner() == this )
+		if( nullptr != pObject && pObject->GetParent() == this )
 		{
 			pObject = pObject->GetObjectAtPoint( rPoint );
 		}
@@ -824,8 +881,8 @@ void SVTaskObjectClass::ResetPrivateInputInterface()
 
 			SvDef::SVObjectTypeInfoStruct info = pInInfo->GetInputObjectInfo().m_ObjectTypeInfo;
 
-			if ( SV_GUID_NULL == pInInfo->GetInputObjectInfo().getUniqueObjectID() &&
-			     SV_GUID_NULL == info.EmbeddedID && 
+			if ( GUID_NULL == pInInfo->GetInputObjectInfo().getUniqueObjectID() &&
+			     GUID_NULL == info.EmbeddedID && 
 			     SvDef::SVNotSetObjectType == info.ObjectType &&
 			     SvDef::SVNotSetSubObjectType == info.SubType )
 			{
@@ -836,8 +893,8 @@ void SVTaskObjectClass::ResetPrivateInputInterface()
 
 			info = pInInfo->GetInputObjectInfo().m_ObjectTypeInfo;
 
-			if ( SV_GUID_NULL == pInInfo->GetInputObjectInfo().getUniqueObjectID() &&
-			     SV_GUID_NULL == info.EmbeddedID && 
+			if ( GUID_NULL == pInInfo->GetInputObjectInfo().getUniqueObjectID() &&
+			     GUID_NULL == info.EmbeddedID && 
 			     SvDef::SVNotSetObjectType == info.ObjectType &&
 			     SvDef::SVNotSetSubObjectType == info.SubType )
 			{
@@ -876,14 +933,14 @@ bool SVTaskObjectClass::ConnectAllInputs()
 			if (!pInputInfo->IsConnected())
 			{
 				// if Connect to Default
-				if ( SV_GUID_NULL == pInputInfo->GetInputObjectInfo().getUniqueObjectID() )
+				if ( GUID_NULL == pInputInfo->GetInputObjectInfo().getUniqueObjectID() )
 				{
 					// Input Object is not set...Try to get one...
 					SvDef::SVObjectTypeInfoStruct info = pInputInfo->GetInputObjectInfo().m_ObjectTypeInfo;
 					// At least one item from the SvDef::SVObjectTypeInfoStruct is required, but not all
-					if ( SV_GUID_NULL != info.EmbeddedID || SvDef::SVNotSetObjectType != info.ObjectType || SvDef::SVNotSetSubObjectType != info.SubType )
+					if ( GUID_NULL != info.EmbeddedID || SvDef::SVNotSetObjectType != info.ObjectType || SvDef::SVNotSetSubObjectType != info.SubType )
 					{
-						SVObjectClass* pOwner = GetOwner();
+						SVObjectClass* pOwner = GetParent();
 						SVObjectClass* pRequestor = pInputInfo->getObject();
 						const SvOi::IObjectClass* pObject( nullptr );
 						bool bSuccess = false;
@@ -936,16 +993,16 @@ bool SVTaskObjectClass::ConnectAllInputs()
 								}
 								else
 								{
-									pOwner = pOwner->GetOwner();
-									pRequestor = pRequestor->GetOwner();
+									pOwner = pOwner->GetParent();
+									pRequestor = pRequestor->GetParent();
 								}
 							}// end while (pOwner)
 						}// end if (! bSuccess)
 					}
-				}// end if (SV_GUID_NULL == pInInfo->InputObjectInfo.UniqueObjectID )
+				}// end if (GUID_NULL == pInInfo->InputObjectInfo.UniqueObjectID )
 				
 				// Finally try to connect...
-				if ( SV_GUID_NULL != pInputInfo->GetInputObjectInfo().getUniqueObjectID() )
+				if ( GUID_NULL != pInputInfo->GetInputObjectInfo().getUniqueObjectID() )
 				{
 					Result = SVObjectManagerClass::Instance().ConnectObjectInput(pInputInfo->GetInputObjectInfo().getUniqueObjectID(), pInputInfo);
 				}
@@ -1225,8 +1282,8 @@ void SVTaskObjectClass::addDefaultInputObjects(SVInputInfoListClass* PInputListT
 		{
 			SvDef::SVObjectTypeInfoStruct info = pInInfo->GetInputObjectInfo().m_ObjectTypeInfo;
 
-			if ( SV_GUID_NULL == pInInfo->GetInputObjectInfo().getUniqueObjectID() &&
-			     SV_GUID_NULL == info.EmbeddedID && 
+			if ( GUID_NULL == pInInfo->GetInputObjectInfo().getUniqueObjectID() &&
+			     GUID_NULL == info.EmbeddedID && 
 			     SvDef::SVNotSetObjectType == info.ObjectType &&
 			     SvDef::SVNotSetSubObjectType == info.SubType )
 			{
@@ -1679,7 +1736,7 @@ void SVTaskObjectClass::Disconnect()
 		SVInObjectInfoStruct* pInObjectInfo = m_InputObjectList[inIndex];
 		if (pInObjectInfo)
 		{
-			if( pInObjectInfo->IsConnected() && SV_GUID_NULL != pInObjectInfo->getUniqueObjectID())
+			if( pInObjectInfo->IsConnected() && GUID_NULL != pInObjectInfo->getUniqueObjectID())
 			{
 				// Send to the Object we are using
 				SVObjectManagerClass::Instance().DisconnectObjectInput( pInObjectInfo->GetInputObjectInfo().getUniqueObjectID(), pInObjectInfo );
@@ -1700,7 +1757,7 @@ void SVTaskObjectClass::Disconnect()
 		SVOutObjectInfoStruct* pOutObjectInfo = l_OutputInfoList.GetAt(outIndex);
 		if (pOutObjectInfo)
 		{
-			if ( SvOi::ITaskObjectListClass* pTaskObjectList = dynamic_cast <SvOi::ITaskObjectListClass*> (GetOwner()) )
+			if ( SvOi::ITaskObjectListClass* pTaskObjectList = dynamic_cast <SvOi::ITaskObjectListClass*> (GetParent()) )
 			{
 				pTaskObjectList->RemoveOutputObject( pOutObjectInfo );
 			}
@@ -1754,7 +1811,7 @@ bool SVTaskObjectClass::DisconnectObjectInput(SVInObjectInfoStruct* pInObjectInf
 			{
 				if( pInObjectInfo->GetInputObjectInfo().getUniqueObjectID() == pImage->GetUniqueObjectID() )
 				{
-					pImage->UpdateImage( SV_GUID_NULL, pImage->GetImageInfo() );
+					pImage->UpdateImage( GUID_NULL, pImage->GetImageInfo() );
 				}
 			}
 		}
@@ -1819,7 +1876,7 @@ void SVTaskObjectClass::RemoveEmbeddedObject(SVObjectClass* pObjectToRemove )
 		if (pOutObjectInfo && pOutObjectInfo->getObject() == pObjectToRemove)
 		{
 			// remove from owner's list
-			if ( SvOi::ITaskObjectListClass* pTaskObjectList = dynamic_cast <SvOi::ITaskObjectListClass*> (GetOwner()) )
+			if ( SvOi::ITaskObjectListClass* pTaskObjectList = dynamic_cast <SvOi::ITaskObjectListClass*> (GetParent()) )
 			{
 				pTaskObjectList->RemoveOutputObject( pOutObjectInfo );
 			}
@@ -1958,7 +2015,7 @@ HRESULT SVTaskObjectClass::DisconnectInputsOutputs(SVObjectPtrVector& rListOfObj
 			SVInObjectInfoStruct* pInObjectInfo = *iterInput;
 			if (pInObjectInfo)
 			{
-				if( pInObjectInfo->IsConnected() && SV_GUID_NULL != pInObjectInfo->getUniqueObjectID())
+				if( pInObjectInfo->IsConnected() && GUID_NULL != pInObjectInfo->getUniqueObjectID())
 				{
 					// Send to the Object we are using
 					SVObjectManagerClass::Instance().DisconnectObjectInput( pInObjectInfo->GetInputObjectInfo().getUniqueObjectID(), pInObjectInfo );

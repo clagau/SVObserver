@@ -90,19 +90,18 @@ public:
 	//! Get Items value for the Item in NameSet to the SVNameStorageResultMap 
 	//! \param rNames [in]
 	//! \param rItems [out]
-	//! \param IsOneBased [in] if One based is true the index for arrays are taken as one based otherwise as zero based  
 	//! \returns HRESULT
 	//************************************
-	HRESULT GetItems( const SVNameSet& rNames, SVNameStorageResultMap& rItems , bool IsOneBased) const;
+	HRESULT GetItems( const SVNameSet& rNames, SVNameStorageResultMap& rItems) const;
 	
 	//************************************
 	//! Set the item values in SVnameStorage map Result are in SVNameStatusMap 
 	//! \param rItems [in]
 	//! \param rStatusItems [out]
-	//! \param IsOneBased [in] if One based is true the index for arrays are taken as one based otherwise as zero based  
+	//! \param RunOnce [in] True if run once should be called
 	//! \returns HRESULT
 	//************************************
-	HRESULT SetItems( const SVNameStorageMap& rItems, SVNameStatusMap& rStatusItems,  bool IsOneBased );
+	HRESULT SetItems(const SVNameStorageMap& rItems, SVNameStatusMap& rStatusItems,  bool RunOnce);
 
 	//************************************
 	//! Starts an Message notification via SVRC
@@ -139,7 +138,7 @@ public:
 
 protected:
 	typedef boost::function< HRESULT ( const SVNameSet&, SVNameStorageResultMap& ) > SVGetItemsFunctor;
-	typedef boost::function< HRESULT ( const SVNameStorageMap&, SVNameStatusMap& ) > SVSetItemsFunctor;
+	typedef boost::function< HRESULT ( const SVNameStorageMap&, SVNameStatusMap&, bool RunOnce ) > SVSetItemsFunctor;
 	typedef std::map<std::string, SVGetItemsFunctor> SVGetItemsFunctorMap;
 	typedef std::map<std::string, SVSetItemsFunctor> SVSetItemsFunctorMap;
 
@@ -149,10 +148,10 @@ protected:
 	HRESULT GetInspectionItems( const SVNameSet& rNames, SVNameStorageResultMap& rItems ) const;
 	HRESULT GetRemoteInputItems( const SVNameSet& rNames, SVNameStorageResultMap& rItems ) const;
 
-	HRESULT SetStandardItems( const SVNameStorageMap& rItems, SVNameStatusMap& rStatus );
-	HRESULT SetInspectionItems( const SVNameStorageMap& rItems, SVNameStatusMap& rStatus );
-	HRESULT SetRemoteInputItems( const SVNameStorageMap& rItems, SVNameStatusMap& rStatus );
-	HRESULT SetCameraItems( const SVNameStorageMap& rItems, SVNameStatusMap& rStatus );
+	HRESULT SetStandardItems(const SVNameStorageMap& rItems, SVNameStatusMap& rStatus, bool RunOnce);
+	HRESULT SetInspectionItems(const SVNameStorageMap& rItems, SVNameStatusMap& rStatus, bool RunOnce);
+	HRESULT SetRemoteInputItems(const SVNameStorageMap& rItems, SVNameStatusMap& rStatus, bool RunOnce);
+	HRESULT SetCameraItems(const SVNameStorageMap& rItems, SVNameStatusMap& rStatus, bool RunOnce);
 
 	HRESULT GetObjectDefinition( const SVObjectClass& rObj, const long p_Filter, SVDataDefinitionStruct& rDataDef ) const;
 

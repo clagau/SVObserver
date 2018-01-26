@@ -13,6 +13,7 @@
 
 #pragma region Includes
 #include "SVValueObjectLibrary/SVValueObject.h"
+#include "SVMFCControls/SVEnumerateCombo.h"
 #pragma endregion Includes
 
 // Enum for threshold type radio
@@ -46,7 +47,7 @@ public:
 	double GetBarCodeStringSize ();
 
 	bool SetBarcodeStringFormat( SVEnumerateValueObjectClass& p_sveStringFormat );
-	long GetBarcodeStringFormat( );
+	CString GetBarcodeStringFormat( );
 
 	bool SetBarcodeThresholdType( SVLongValueObjectClass& p_svThresholdType );
 	int GetBarcodeThresholdType( );
@@ -112,6 +113,7 @@ protected:
 	afx_msg void OnSelChangeSearchSpeed();
 	afx_msg void OnSelChangeBarCodeType();
 	afx_msg void OnSelChangeBarCodeStringSize();
+	afx_msg void OnSelChangeStringFormat();
 	afx_msg void OnDeltaposSpinTimeout(NMHDR* pNMHDR, LRESULT* pResult);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
@@ -147,9 +149,9 @@ public:
 
 	SVBarCodeInfoVector m_aBarCodeInfo;
 	long m_lInitialBarCodeType;
-	int m_lStringFormat;
-	CComboBox m_StringFormatCombo;
-	SVEnumerateVector m_EnumVect;
+	SvMc::SVEnumerateComboClass m_StringFormatCombo;
+	CString m_StringFormat;
+	SvOi::NameValueVector m_EnumVect;
 
 	bool  m_bUnEvenGrid;
 

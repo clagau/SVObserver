@@ -1,5 +1,5 @@
 //*****************************************************************************
-/// \copyright (c) 2015,2016 by Seidenader Maschinenbau GmbH
+/// \copyright (c) 2017,2017 by Seidenader Maschinenbau GmbH
 /// All Rights Reserved 
 /// \file SelectorItem.cpp
 //*****************************************************************************

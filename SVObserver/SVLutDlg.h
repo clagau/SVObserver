@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVEnumerateCombo.h"
+#include "SVMFCControls/SVEnumerateCombo.h"
 #include "SVMFCControls/SVDlgGraph.h"
 #include "SVVirtualCamera.h"
 #pragma endregion Includes
@@ -70,7 +70,7 @@ public:
 	CSliderCtrl	m_UpperSlider;
 	CSliderCtrl	m_LowerSlider;
 	SvMc::SVDlgGraphClass m_LUTGraph;
-	SVEnumerateComboClass m_LutModeCombo;
+	SvMc::SVEnumerateComboClass m_LutModeCombo;
 	CString	m_UpperClipValue;
 	CString	m_LowerClipValue;
 	BOOL m_bUseLUT;

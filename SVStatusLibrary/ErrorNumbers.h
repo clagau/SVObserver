@@ -283,17 +283,6 @@ namespace SvStl
 	//Marcus Eichengrün error base
 	static const int Mec_ErrorBase = 16000;
 	//RangeHelper
-	static const int Err_16001 = Mec_ErrorBase + 1;
-	static const int Err_16002 = Mec_ErrorBase + 2;
-	static const int Err_16003 = Mec_ErrorBase + 3;
-	static const int Err_16004 = Mec_ErrorBase + 4;
-	static const int Err_16005 = Mec_ErrorBase + 5;
-	static const int Err_16006 = Mec_ErrorBase + 6;
-	static const int Err_16007 = Mec_ErrorBase + 7;
-	static const int Err_16008 = Mec_ErrorBase + 8;
-	static const int Err_16009 = Mec_ErrorBase + 9;
-	static const int Err_16010 = Mec_ErrorBase + 10;
-	static const int Err_16011 = Mec_ErrorBase + 11;
 	static const int Err_16012 = Mec_ErrorBase + 12;
 	static const int Err_16013 = Mec_ErrorBase + 13;
 	static const int Err_16014 = Mec_ErrorBase + 14;
@@ -375,10 +364,8 @@ namespace SvStl
 	///Replace SVerror 
 	static const int 	Err_16080  =  Mec_ErrorBase + 80;
 	static const int 	Err_16081  =  Mec_ErrorBase + 81;
-	static const int 	Err_16082  =  Mec_ErrorBase + 82;
-	static const int 	Err_16083  =  Mec_ErrorBase + 83;
-	static const int 	Err_16084  =  Mec_ErrorBase + 84;
-	static const int 	Err_16085  =  Mec_ErrorBase + 85;
+	static const int 	Err_16084 =	  Mec_ErrorBase + 84;
+	static const int 	Err_16085 =   Mec_ErrorBase + 85;
 	static const int 	Err_16086  =  Mec_ErrorBase + 86;
 	static const int 	Err_16087  =  Mec_ErrorBase + 87;
 	static const int 	Err_16088  =  Mec_ErrorBase + 88;

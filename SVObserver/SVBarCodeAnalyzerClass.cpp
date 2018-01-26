@@ -136,11 +136,12 @@ void SVBarCodeAnalyzerClass::init()
 	addDefaultInputObjects();
 	
 	// Instantiate Children
-	SVBarCodeResultClass *pAnalyzerResult = new SVBarCodeResultClass (this, IDS_CLASSNAME_SVBARCODEANALYZERESULT);
+	m_pAnalyzerResult = new SVBarCodeResultClass (this, IDS_CLASSNAME_SVBARCODEANALYZERESULT);
 	
-	if (pAnalyzerResult)
-		Add (pAnalyzerResult);
-
+	if (nullptr != m_pAnalyzerResult)
+	{
+		Add(m_pAnalyzerResult);
+	}
 }
 
 bool SVBarCodeAnalyzerClass::InitMil (SvStl::MessageContainerVector *pErrorMessages)
@@ -354,16 +355,6 @@ bool SVBarCodeAnalyzerClass::CloseObject()
 	return SVImageAnalyzerClass::CloseObject();
 }
 
-SvOi::IObjectClass* SVBarCodeAnalyzerClass::GetResultObject()
-{
-	SVResultClass* pAnalyzerResult = nullptr;
-
-	// Find the result Object in Our List
-	pAnalyzerResult = (SVResultClass *)GetAt(0);
-
-	return( pAnalyzerResult );
-}
-
 bool SVBarCodeAnalyzerClass::CharIsControl( TCHAR p_Char )
 {
 	return p_Char < ' ' || p_Char > 126;
@@ -413,7 +404,7 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::Message
 					{
 						for (SvStl::MessageContainerVector::iterator iter = pErrorMessages->begin(); pErrorMessages->end() != iter; iter++ )
 						{	//set GUId of this object to the error message without a GUID. (should be error message from the matrox interface)
-							if (SV_GUID_NULL == iter->getObjectId())
+							if (GUID_NULL == iter->getObjectId())
 							{
 								iter->setObjectId(GetUniqueObjectID());
 							}
@@ -532,7 +523,7 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::Message
 							{	//set GUId of this object to the error message without a GUID. (should be error message from the matrox interface)
 								for (SvStl::MessageContainerVector::iterator iter = pErrorMessages->begin(); pErrorMessages->end() != iter; iter++ )
 								{
-									if (SV_GUID_NULL == iter->getObjectId())
+									if (GUID_NULL == iter->getObjectId())
 									{
 										iter->setObjectId(GetUniqueObjectID());
 									}

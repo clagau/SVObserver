@@ -195,7 +195,7 @@ bool SVStatisticsToolClass::CreateObject(const SVObjectLevelCreateStruct& rCreat
 		m_VariableGUID_OBSOLETE.GetValue( GuidString );
 		if ( !GuidString.empty() )
 		{
-			GUID guid( SV_GUID_NULL );
+			GUID guid( GUID_NULL );
 			AfxGetClassIDFromString(GuidString.c_str(), &guid);
 			SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(guid);
 			if( nullptr != pObject )
@@ -373,7 +373,7 @@ void SVStatisticsToolClass::AllocateResult (SVStatisticsFeatureEnum aFeatureInde
 			{
 				// Remove it from the Blob Analyzer TaskObjectList ( Destruct it )
 				GUID objectID = pResult->GetUniqueObjectID();
-				if( SV_GUID_NULL != objectID )
+				if( GUID_NULL != objectID )
 				{
 					Delete( objectID );
 				}

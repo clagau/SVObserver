@@ -18,7 +18,6 @@
 #include "Definitions/Color.h"
 
 #include "SVInspectionProcess.h"
-#include "SVBlobAnalyzerDialog.h"
 #include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
 #include "SVResultDouble.h"
 #include "SVResultLong.h"
@@ -34,163 +33,57 @@
 
 #pragma region Declarations
 
-struct SVBlobFeatureConstants BlobFeatureConstants[]=
+struct SVBlobFeatureConstant BlobFeatureConstants[]=
 {
-   SVEBlobArea, //M_AREA,
-      &SVBlobAreaObjectGuid,
-        IDS_OBJECTNAME_AREA,
-   SVEBlobBoxXMax, //M_BOX_X_MAX,
-      &SVBlobBoxXMaxObjectGuid,
-        IDS_OBJECTNAME_BOXXMAX,
-   SVEBlobBoxXMin, //M_BOX_X_MIN,
-      &SVBlobBoxXMinObjectGuid,
-        IDS_OBJECTNAME_BOXXMIN,
-   SVEBlobBoxYMax, //M_BOX_Y_MAX,
-      &SVBlobBoxYMaxObjectGuid,
-      IDS_OBJECTNAME_BOXYMAX,
-   SVEBlobBoxYMin, //M_BOX_Y_MIN,
-      &SVBlobBoxYMinObjectGuid,
-        IDS_OBJECTNAME_BOXYMIN,
-   SVEBlobBreadth, // M_BREADTH,
-      &SVBlobBreadthObjectGuid,
-      IDS_OBJECTNAME_BREADTH,
-   SVEBlobCenterOfGravityX, //M_CENTER_OF_GRAVITY_X,
-      &SVBlobCenterOfGravityXObjectGuid,
-      IDS_OBJECTNAME_CENTEROFGRAVITYX,
-   SVEBlobCenterOfGravityY, //M_CENTER_OF_GRAVITY_Y,
-      &SVBlobCenterOfGravityYObjectGuid,
-      IDS_OBJECTNAME_CENTEROFGRAVITYY,
-   SVEBlobConvexParameter, //M_CONVEX_PERIMETER,
-      &SVBlobConvexPerimeterObjectGuid,
-      IDS_OBJECTNAME_CONVEXPERIMETER,
-   SVEBlobFeretElongation, //M_FERET_ELONGATION,
-      &SVBlobFeretElongationObjectGuid,
-      IDS_OBJECTNAME_FERETELONGATION,
-   SVEBlobFeretMaxAngle, //M_FERET_MAX_ANGLE,
-      &SVBlobFeretMaxAngleObjectGuid,
-      IDS_OBJECTNAME_FERETMAXANGLE,
-   SVEBlobFeretMaxDia, //M_FERET_MAX_DIAMETER,
-      &SVBlobFeretMaxDiameterObjectGuid,
-      IDS_OBJECTNAME_FERETMAXDIAMETER,
-   SVEBlobFeretMeanDia, //M_FERET_MEAN_DIAMETER,
-      &SVBlobFeretMeanDiameterObjectGuid,
-      IDS_OBJECTNAME_FERETMEANDIAMETER,
-   SVEBlobFeretMinAngle, //M_FERET_MIN_ANGLE,
-      &SVBlobFeretMinAngleObjectGuid,
-      IDS_OBJECTNAME_FERETMINANGLE,
-   SVEBlobFeretMinDia, //M_FERET_MIN_DIAMETER,
-      &SVBlobFeretMinDiameterObjectGuid,
-        IDS_OBJECTNAME_FERETMINDIAMETER,
-   SVEBlobFeretX, //M_FERET_X,
-      &SVBlobFeretXObjectGuid,
-      IDS_OBJECTNAME_FERETX,
-   SVEBlobFeretY, //M_FERET_Y,
-      &SVBlobFeretYObjectGuid,
-      IDS_OBJECTNAME_FERETY,
-   SVEBlobFirstPointX, //M_FIRST_POINT_X,
-      &SVBlobFirstPointXObjectGuid,
-      IDS_OBJECTNAME_FIRSTPOINTX,
-   SVEBlobFirstPointY, //M_FIRST_POINT_Y,
-      &SVBlobFirstPointYObjectGuid,
-      IDS_OBJECTNAME_FIRSTPOINTY,
-   SVEBlobLabelValue, //M_LABEL_VALUE,
-      &SVBlobLabelObjectGuid,
-      IDS_OBJECTNAME_LABEL,
-   SVEBlobLength, //M_LENGTH,
-      &SVBlobLengthObjectGuid,
-      IDS_OBJECTNAME_LENGTH,
-   SVEBlobNumberOfHoles, //M_NUMBER_OF_HOLES,
-      &SVBlobNbrOfHolesObjectGuid,
-      IDS_OBJECTNAME_NBROFHOLES,
-   SVEBlobPerimeter, //M_PERIMETER,
-      &SVBlobPerimeterObjectGuid,
-      IDS_OBJECTNAME_PERIMETER,
-   SVEBlobRoughness, //M_ROUGHNESS,
-      &SVBlobRoughnessObjectGuid,
-      IDS_OBJECTNAME_ROUGHNESS,
-   SVEBlobSumPixel, //M_SUM_PIXEL,
-      &SVBlobSumPixelObjectGuid,
-        IDS_OBJECTNAME_SUMPIXEL,
-
-	//
-	// v3.1 Added Blob Features
-	//
-// The "chain" values do not seem to want to be excluded from the list based
-// on their pass/fail criteria. And since I don't know what they do, I am 
-// removing them. jab
-
-	SVEBlobCompactness, //M_COMPACTNESS,
-      &SVBlobCompactnessObjectGuid,
-	   IDS_OBJECTNAME_BLOB_COMPACTNESS,
-	SVEBlobNumberOfRuns, //M_NUMBER_OF_RUNS,
-      &SVBlobNumberOfRunsObjectGuid,
-	   IDS_OBJECTNAME_NUMBER_OF_RUNS,
-	SVEBlobXMinAtYMin, //M_X_MIN_AT_Y_MIN,
-      &SVBlobXMinAtYMinObjectGuid,
-	   IDS_OBJECTNAME_XMIN_AT_YMIN,
-	SVEBlobXMaxAtYMax, //M_X_MAX_AT_Y_MAX,
-      &SVBlobXMaxAtYMaxObjectGuid,
-	   IDS_OBJECTNAME_XMAX_AT_YMAX,
-	SVEBlobYMinAtXMax, //M_Y_MIN_AT_X_MAX,
-      &SVBlobYMinAtXMaxObjectGuid,
-	   IDS_OBJECTNAME_YMIN_AT_XMAX,
-	SVEBlobYMaxAtXMin, //M_Y_MAX_AT_X_MIN,
-      &SVBlobYMaxAtXMinObjectGuid,
-	   IDS_OBJECTNAME_YMAX_AT_XMIN,
-	SVEBlobElongation, //M_ELONGATION,
-      &SVBlobElongationObjectGuid,
-	    IDS_OBJECTNAME_BLOB_ELONGATION,
-	SVEBlobIntercept, //M_INTERCEPT_0,
-      &SVBlobIntercept0ObjectGuid,
-	   IDS_OBJECTNAME_BLOB_INTERCEPT0,
-	SVEBlobIntercept45, //M_INTERCEPT_45,
-      &SVBlobIntercept45ObjectGuid,
-	   IDS_OBJECTNAME_BLOB_INTERCEPT45,
-	SVEBlobIntercept90, //M_INTERCEPT_90,
-      &SVBlobIntercept90ObjectGuid,
-	   IDS_OBJECTNAME_BLOB_INTERCEPT90,
-	SVEBlobIntercept135, //M_INTERCEPT_135,
-      &SVBlobIntercept135ObjectGuid,
-	   IDS_OBJECTNAME_BLOB_INTERCEPT135,
-	SVEBlobMomentX0Y1, // M_MOMENT_X0_Y1,
-      &SVBlobMomentX0Y1,
-		IDS_OBJECTNAME_BLOB_MOMENT_X0Y1,
-	SVEBlobMomentX1Y0, //M_MOMENT_X1_Y0,
-      &SVBlobMomentX1Y0,
-		IDS_OBJECTNAME_BLOB_MOMENT_X1Y0,
-	SVEBlobMomentX1Y1, //M_MOMENT_X1_Y1,
-      &SVBlobMomentX1Y1,
-		IDS_OBJECTNAME_BLOB_MOMENT_X1Y1,
-	SVEBlobMomentX0Y2, //M_MOMENT_X0_Y2,
-      &SVBlobMomentX0Y2,
-		IDS_OBJECTNAME_BLOB_MOMENT_X0Y2,
-	SVEBlobMomentX2Y0, //M_MOMENT_X2_Y0,
-      &SVBlobMomentX2Y0,
-		IDS_OBJECTNAME_BLOB_MOMENT_X2Y0,
-	SVEBlobMomentCentralX0Y2, // M_MOMENT_CENTRAL_X0_Y2,
-      &SVBlobMomentCentralX0Y2,
-		IDS_OBJECTNAME_BLOB_MOMENT_CENTRAL_X0Y2,
-	SVEBlobMomentCentralX2Y0, //M_MOMENT_CENTRAL_X2_Y0,
-      &SVBlobMomentCentralX2Y0,
-		IDS_OBJECTNAME_BLOB_MOMENT_CENTRAL_X2Y0,
-	SVEBlobMomentCentralX1Y1, //M_MOMENT_CENTRAL_X1_Y1,
-      &SVBlobMomentCentralX1Y1,
-		IDS_OBJECTNAME_BLOB_MOMENT_CENTRAL_X1Y1,
-	SVEBlobAxisPrincipalAngle, //M_AXIS_PRINCIPAL_ANGLE,
-      &SVBlobAxisPrincipalAngle,
-		IDS_OBJECTNAME_BLOB_AXIS_PRINCIPAL_ANGLE,
-	SVEBlobAxisSecondaryAngle, //M_AXIS_SECONDARY_ANGLE,
-      &SVBlobAxisSecondaryAngle,
-		IDS_OBJECTNAME_BLOB_AXIS_SECONDARY_ANGLE,
-    SVEBlobEulerNumber, //M_EULER_NUMBER,
-      &SVBlobEulerNumber,
-        IDS_OBJECTNAME_BLOB_EULER_NUMBER,
-	SV_M_CENTER_BOUNDING_BOX_X,
-	  &SVBlobCenterOfBoundingBoxXGuid,
-		IDS_OBJECTNAME_CENTER_X_SOURCE,
-	SV_M_CENTER_BOUNDING_BOX_Y,
-	  &SVBlobCenterOfBoundingBoxYGuid,
-		IDS_OBJECTNAME_CENTER_Y_SOURCE
+	{SVEBlobArea /*M_AREA*/, SVBlobFeatureGuids[SvOi::SV_AREA], IDS_OBJECTNAME_AREA},
+	{SVEBlobBoxXMax /*M_BOX_X_MAX*/, SVBlobFeatureGuids[SvOi::SV_BOXX_MAX], IDS_OBJECTNAME_BOXXMAX},
+	{SVEBlobBoxXMin /*M_BOX_X_MIN*/, SVBlobFeatureGuids[SvOi::SV_BOXX_MIN], IDS_OBJECTNAME_BOXXMIN},
+	{SVEBlobBoxYMax /*M_BOX_Y_MAX*/, SVBlobFeatureGuids[SvOi::SV_BOXY_MAX], IDS_OBJECTNAME_BOXYMAX},
+	{SVEBlobBoxYMin /*M_BOX_Y_MIN*/, SVBlobFeatureGuids[SvOi::SV_BOXY_MIN], IDS_OBJECTNAME_BOXYMIN},
+	{SVEBlobBreadth /*M_BREADTH*/, SVBlobFeatureGuids[SvOi::SV_BREADTH], IDS_OBJECTNAME_BREADTH},
+	{SVEBlobCenterOfGravityX /*M_CENTER_OF_GRAVITY_X*/, SVBlobFeatureGuids[SvOi::SV_CENTEROFGRAVITY_X], IDS_OBJECTNAME_CENTEROFGRAVITYX},
+	{SVEBlobCenterOfGravityY /*M_CENTER_OF_GRAVITY_Y*/, SVBlobFeatureGuids[SvOi::SV_CENTEROFGRAVITY_Y], IDS_OBJECTNAME_CENTEROFGRAVITYY},
+	{SVEBlobConvexParameter /*M_CONVEX_PERIMETER*/, SVBlobFeatureGuids[SvOi::SV_CONVEX_PERIMETER], IDS_OBJECTNAME_CONVEXPERIMETER},
+	{SVEBlobFeretElongation /*M_FERET_ELONGATION*/, SVBlobFeatureGuids[SvOi::SV_FERET_ELONGATION], IDS_OBJECTNAME_FERETELONGATION},
+	{SVEBlobFeretMaxAngle /*M_FERET_MAX_ANGLE*/, SVBlobFeatureGuids[SvOi::SV_FERETMAX_ANGLE], IDS_OBJECTNAME_FERETMAXANGLE},
+	{SVEBlobFeretMaxDia /*M_FERET_MAX_DIAMETER*/, SVBlobFeatureGuids[SvOi::SV_FERETMAX_DIAMETER], IDS_OBJECTNAME_FERETMAXDIAMETER},
+	{SVEBlobFeretMeanDia/*M_FERET_MEAN_DIAMETER*/, SVBlobFeatureGuids[SvOi::SV_FERETMEAN_DIAMETER], IDS_OBJECTNAME_FERETMEANDIAMETER},
+	{SVEBlobFeretMinAngle /*M_FERET_MIN_ANGLE*/, SVBlobFeatureGuids[SvOi::SV_FERETMIN_ANGLE], IDS_OBJECTNAME_FERETMINANGLE},
+	{SVEBlobFeretMinDia /*M_FERET_MIN_DIAMETER*/, SVBlobFeatureGuids[SvOi::SV_FERETMIN_DIAMETER], IDS_OBJECTNAME_FERETMINDIAMETER},
+	{SVEBlobFeretX /*M_FERET_X*/, SVBlobFeatureGuids[SvOi::SV_FERET_X], IDS_OBJECTNAME_FERETX},
+	{SVEBlobFeretY /*M_FERET_Y*/, SVBlobFeatureGuids[SvOi::SV_FERET_Y], IDS_OBJECTNAME_FERETY},
+	{SVEBlobFirstPointX /*M_FIRST_POINT_X*/, SVBlobFeatureGuids[SvOi::SV_FIRSTPOINT_X], IDS_OBJECTNAME_FIRSTPOINTX},
+	{SVEBlobFirstPointY /*M_FIRST_POINT_Y*/, SVBlobFeatureGuids[SvOi::SV_FIRSTPOINT_Y], IDS_OBJECTNAME_FIRSTPOINTY},
+	{SVEBlobLabelValue /*M_LABEL_VALUE*/, SVBlobFeatureGuids[SvOi::SV_LABEL], IDS_OBJECTNAME_LABEL},
+	{SVEBlobLength /*M_LENGTH*/, SVBlobFeatureGuids[SvOi::SV_LENGTH], IDS_OBJECTNAME_LENGTH},
+	{SVEBlobNumberOfHoles /*M_NUMBER_OF_HOLES*/, SVBlobFeatureGuids[SvOi::SV_NBROF_HOLES], IDS_OBJECTNAME_NBROFHOLES},
+	{SVEBlobPerimeter /*M_PERIMETER*/, SVBlobFeatureGuids[SvOi::SV_PERIMETER], IDS_OBJECTNAME_PERIMETER},
+	{SVEBlobRoughness /*M_ROUGHNESS*/, SVBlobFeatureGuids[SvOi::SV_ROUGHNESS], IDS_OBJECTNAME_ROUGHNESS},
+	{SVEBlobSumPixel /*M_SUM_PIXEL*/, SVBlobFeatureGuids[SvOi::SV_SUM_PIXEL], IDS_OBJECTNAME_SUMPIXEL},
+	{SVEBlobCompactness /*M_COMPACTNESS*/, SVBlobFeatureGuids[SvOi::SV_COMPACTNESS], IDS_OBJECTNAME_BLOB_COMPACTNESS},
+	{SVEBlobNumberOfRuns /*M_NUMBER_OF_RUNS*/, SVBlobFeatureGuids[SvOi::SV_NBR_RUNS], IDS_OBJECTNAME_NUMBER_OF_RUNS},
+	{SVEBlobXMinAtYMin /*M_X_MIN_AT_Y_MIN*/, SVBlobFeatureGuids[SvOi::SV_XMINAT_YMIN], IDS_OBJECTNAME_XMIN_AT_YMIN},
+	{SVEBlobXMaxAtYMax /*M_X_MAX_AT_Y_MAX*/, SVBlobFeatureGuids[SvOi::SV_XMAXAT_YMAX], IDS_OBJECTNAME_XMAX_AT_YMAX},
+	{SVEBlobYMinAtXMax /*M_Y_MIN_AT_X_MAX*/, SVBlobFeatureGuids[SvOi::SV_YMINAT_XMAX], IDS_OBJECTNAME_YMIN_AT_XMAX},
+	{SVEBlobYMaxAtXMin /*M_Y_MAX_AT_X_MIN*/, SVBlobFeatureGuids[SvOi::SV_YMAXAT_XMIN], IDS_OBJECTNAME_YMAX_AT_XMIN},
+	{SVEBlobElongation /*M_ELONGATION*/, SVBlobFeatureGuids[SvOi::SV_ELONGATION], IDS_OBJECTNAME_BLOB_ELONGATION},
+	{SVEBlobIntercept /*M_INTERCEPT_0*/, SVBlobFeatureGuids[SvOi::SV_INTERCEPT_0], IDS_OBJECTNAME_BLOB_INTERCEPT0},
+	{SVEBlobIntercept45 /*M_INTERCEPT_45*/, SVBlobFeatureGuids[SvOi::SV_INTERCEPT_45], IDS_OBJECTNAME_BLOB_INTERCEPT45},
+	{SVEBlobIntercept90 /*M_INTERCEPT_90*/, SVBlobFeatureGuids[SvOi::SV_INTERCEPT_90], IDS_OBJECTNAME_BLOB_INTERCEPT90},
+	{SVEBlobIntercept135 /*M_INTERCEPT_135*/, SVBlobFeatureGuids[SvOi::SV_INTERCEPT_135], IDS_OBJECTNAME_BLOB_INTERCEPT135},
+	{SVEBlobMomentX0Y1 /*M_MOMENT_X0_Y1*/, SVBlobFeatureGuids[SvOi::SV_MOMENT_X0Y1], IDS_OBJECTNAME_BLOB_MOMENT_X0Y1},
+	{SVEBlobMomentX1Y0 /*M_MOMENT_X1_Y0*/, SVBlobFeatureGuids[SvOi::SV_MOMENT_X1Y0], IDS_OBJECTNAME_BLOB_MOMENT_X1Y0},
+	{SVEBlobMomentX1Y1 /*M_MOMENT_X1_Y1*/, SVBlobFeatureGuids[SvOi::SV_MOMENT_X1Y1], IDS_OBJECTNAME_BLOB_MOMENT_X1Y1},
+	{SVEBlobMomentX0Y2 /*M_MOMENT_X0_Y2*/, SVBlobFeatureGuids[SvOi::SV_MOMENT_X0Y2], IDS_OBJECTNAME_BLOB_MOMENT_X0Y2},
+	{SVEBlobMomentX2Y0 /*M_MOMENT_X2_Y0*/, SVBlobFeatureGuids[SvOi::SV_MOMENT_X2Y0], IDS_OBJECTNAME_BLOB_MOMENT_X2Y0},
+	{SVEBlobMomentCentralX0Y2 /*M_MOMENT_CENTRAL_X0_Y2*/, SVBlobFeatureGuids[SvOi::SV_CENTRAL_X0Y2], IDS_OBJECTNAME_BLOB_MOMENT_CENTRAL_X0Y2},
+	{SVEBlobMomentCentralX2Y0 /*M_MOMENT_CENTRAL_X2_Y0*/, SVBlobFeatureGuids[SvOi::SV_CENTRAL_X2Y0], IDS_OBJECTNAME_BLOB_MOMENT_CENTRAL_X2Y0},
+	{SVEBlobMomentCentralX1Y1 /*M_MOMENT_CENTRAL_X1_Y1*/, SVBlobFeatureGuids[SvOi::SV_CENTRAL_X1Y1], IDS_OBJECTNAME_BLOB_MOMENT_CENTRAL_X1Y1},
+	{SVEBlobAxisPrincipalAngle /*M_AXIS_PRINCIPAL_ANGLE*/, SVBlobFeatureGuids[SvOi::SV_AXISPRINCIPAL_ANGLE], IDS_OBJECTNAME_BLOB_AXIS_PRINCIPAL_ANGLE},
+	{SVEBlobAxisSecondaryAngle /*M_AXIS_SECONDARY_ANGLE*/, SVBlobFeatureGuids[SvOi::SV_AXISSECONDARY_ANGLE], IDS_OBJECTNAME_BLOB_AXIS_SECONDARY_ANGLE},
+	{SVEBlobEulerNumber /*M_EULER_NUMBER*/, SVBlobFeatureGuids[SvOi::SV_EULER_NBR], IDS_OBJECTNAME_BLOB_EULER_NUMBER},
+	{SV_M_CENTER_BOUNDING_BOX_X, SVBlobFeatureGuids[SvOi::SV_CENTER_X_SOURCE], IDS_OBJECTNAME_CENTER_X_SOURCE},
+	{SV_M_CENTER_BOUNDING_BOX_Y, SVBlobFeatureGuids[SvOi::SV_CENTER_Y_SOURCE], IDS_OBJECTNAME_CENTER_Y_SOURCE}
 };
 
 SV_IMPLEMENT_CLASS( SVBlobAnalyzerClass, SVBlobAnalyzerClassGuid );
@@ -203,17 +96,13 @@ SVBlobAnalyzerClass::SVBlobAnalyzerClass( SVObjectClass* POwner, int StringResou
 	init();
 }
 
-/////////////////////////////////////////////////////////////////////////////
-//
-//
 void SVBlobAnalyzerClass::init()
 {
-	for (int i = 0; i < SV_NUMBER_OF_BLOB_FEATURES; i++)
+	for (int i = 0; i < SvOi::SV_NUMBER_OF_BLOB_FEATURES; i++)
 	{
 		m_ResultTableColumnValueObjects[i] = nullptr;
 	}
 
-	m_DefaultAttributes = 0;
 	m_lNumberOfBlobsFound = 0;
 	m_lNumberOfBlobsToProcess = 0;
 	m_pResultBlob = nullptr;
@@ -273,7 +162,7 @@ void SVBlobAnalyzerClass::init()
 
 	RegisterEmbeddedObject(
 		&m_colorBlobEnumValue,
-		SVBlobIsBlackGuid,
+		SVBlobColorGuid,
 		IDS_BLACK_BLOBS,
 		false, SvOi::SVResetItemOwner );
 
@@ -289,48 +178,38 @@ void SVBlobAnalyzerClass::init()
 		IDS_BLOB_FILL_TYPE,
 		false, SvOi::SVResetItemNone );
 
-	for (SVBlobFeatureEnum i = SV_AREA; i < SV_TOPOF_LIST; i = (SVBlobFeatureEnum) (i + 1))
+	for (int i = 0; i < SvOi::SV_NUMBER_OF_BLOB_FEATURES; i++)
 	{
 		RegisterEmbeddedObject(
 			&m_Value[i], 
-			*BlobFeatureConstants[i].pEmbeddedID,
+			BlobFeatureConstants[i].rEmbeddedID,
 			BlobFeatureConstants[i].NewStringResourceID,
 			false, SvOi::SVResetItemNone );
 
 		m_Value[i].SetDefaultValue(0, true);
 		m_Value[i].setSaveValueFlag(false);
 		m_Value[i].setSaveDefaultValueFlag(true);
+		m_Value[i].SetObjectAttributesAllowed(SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute);
 
-		m_FeaturesEnabled [i] = _T('1');             // Not enabled.
-		m_guidResults[i] = SV_GUID_NULL;
+		m_guidResults[i] = GUID_NULL;
 	}
-
-	m_FeaturesEnabled [SV_TOPOF_LIST] = _T('\0');    // Null termination.
 
 	m_SortAscending.SetDefaultValue(BOOL(false), true);
 	m_bExcludeFailed.SetDefaultValue(BOOL(false), true);
 
-	m_DefaultAttributes = m_Value[0].ObjectAttributesAllowed();
+	//Default Features all disabled
+	std::string FeaturesEnabled;
+	FeaturesEnabled.resize(SvOi::SV_NUMBER_OF_BLOB_FEATURES, _T('0'));
+	m_PersistantFeaturesEnabled.SetDefaultValue (FeaturesEnabled, true);
+	/*--- End of FEATURE LIST. -------------------------------------------------*/
 
 	// Set default inputs and outputs
 	addDefaultInputObjects();
 
-	/*--- FEATURE LIST ---------------------------------------------------------*/
-	/*--- The list of enabled features is kept in a string because, of the      */
-	/*--- "value objects", the string appeared to contain the least overhead. --*/
-	for (SVBlobFeatureEnum i = SV_AREA; i < SV_TOPOF_LIST; i = (SVBlobFeatureEnum) (i + 1))
-	{
-		m_FeaturesEnabled [i] = _T('0');             // Not enabled.
-		m_Value[i].SetObjectAttributesAllowed( SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
-	}
-
-	m_PersistantFeaturesEnabled.SetDefaultValue (m_FeaturesEnabled, true);
-	/*--- End of FEATURE LIST. -------------------------------------------------*/
-
-	m_lvoBlobSampleSize.SetDefaultValue (SV_MAX_NUMBER_OF_BLOBS, true);
+	m_lvoBlobSampleSize.SetDefaultValue (SvOi::SV_MAX_NUMBER_OF_BLOBS, true);
 	m_lvoMaxBlobDataArraySize.SetDefaultValue(1, true);
 
-	m_SortFeature.SetDefaultValue (SV_AREA, true);
+	m_SortFeature.SetDefaultValue (SvOi::SV_AREA, true);
 
 	CreateArray();
 
@@ -352,28 +231,38 @@ SVBlobAnalyzerClass::~SVBlobAnalyzerClass()
 	CloseObject ();
 }
 
-#pragma region IEnumerateValueObject
-SvOi::NameValueList SVBlobAnalyzerClass::getFeatureList(bool isSelected) const
+#pragma region IBlobAnalyzer
+SvOi::NameValueVector SVBlobAnalyzerClass::getFeatureList(bool isSelected) const
 {
-	SvOi::NameValueList list;
-	for (int i = SV_AREA; i < SV_TOPOF_LIST; i++)
-	{	
+	std::string FeaturesEnabled;
+	m_PersistantFeaturesEnabled.getValue(FeaturesEnabled);
+	assert(SvOi::SV_NUMBER_OF_BLOB_FEATURES == FeaturesEnabled.size());
 
-		if ( (m_FeaturesEnabled[i] == '1' && isSelected) || (m_FeaturesEnabled[i] == '0' && !isSelected))
+	SvOi::NameValueVector list;
+	for (int i = 0; i < SvOi::SV_NUMBER_OF_BLOB_FEATURES; i++)
+	{
+
+		if ( (_T('1') == FeaturesEnabled[i] && isSelected) || (_T('0') == FeaturesEnabled[i] && !isSelected))
 		{
 			//
 			// Skip the M_SUM_PIXEL blob feature if doing 'available' list.
 			//
-			if(i == SV_SUM_PIXEL && !isSelected)
+			if(SvOi::SV_SUM_PIXEL == i  && !isSelected)
 			{
 				continue;
 			}
-			list.push_back( SvOi::NameValuePair(m_Value [i].GetName(), i) );
+			list.push_back(SvOi::NameValuePair{ m_Value[i].GetName(), i });
 		}
 	}
 	return list;
 }
-#pragma endregion IEnumerateValueObject
+
+SvOi::IObjectClass* SVBlobAnalyzerClass::getResultBlob()
+{ 
+	return dynamic_cast<SvOi::IObjectClass*> (m_pResultBlob);
+}
+
+#pragma endregion IBlobAnalyzer
 
 bool SVBlobAnalyzerClass::CloseObject()
 {
@@ -385,7 +274,7 @@ bool SVBlobAnalyzerClass::CloseObject()
     return true;
 }
 
-DWORD SVBlobAnalyzerClass::AllocateResult (SVBlobFeatureEnum aFeatureIndex)
+DWORD SVBlobAnalyzerClass::AllocateResult(int FeatureIndex)
 {
 	SVClassInfoStruct       resultClassInfo;
 	SvDef::SVObjectTypeInfoStruct  interfaceInfo;
@@ -395,82 +284,78 @@ DWORD SVBlobAnalyzerClass::AllocateResult (SVBlobFeatureEnum aFeatureIndex)
 
 
 	//not a MIL Feature...  Just return
-	if ( (aFeatureIndex == SV_CENTER_X_SOURCE)  || (aFeatureIndex == SV_CENTER_Y_SOURCE) )
-		return 0;
-
-	do
+	if ((FeatureIndex == SvOi::SV_CENTER_X_SOURCE) || (FeatureIndex == SvOi::SV_CENTER_Y_SOURCE))
 	{
-		// Setup the result
+		return 0;
+	}
 
-		// Declare Input Interface of Result...
-		interfaceInfo.EmbeddedID = m_Value[aFeatureIndex].GetEmbeddedID();
-		resultClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
+	// Setup the result
 
-		resultClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVResultObjectType;
-		resultClassInfo.m_ObjectTypeInfo.SubType	= SvDef::SVResultDoubleObjectType;
-		resultClassInfo.m_ClassId = SVDoubleResultClassGuid;
-		resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_RESULT );
-		std::string Title = m_Value[aFeatureIndex].GetName();
-		resultClassInfo.m_ClassName += _T(" ") + Title;
+	// Declare Input Interface of Result...
+	interfaceInfo.EmbeddedID = m_Value[FeatureIndex].GetEmbeddedID();
+	resultClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
 
-		// Construct the result class
-		pResult = (SVDoubleResultClass *) resultClassInfo.Construct();
-		m_guidResults[ aFeatureIndex ] = pResult->GetUniqueObjectID();
+	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVResultObjectType;
+	resultClassInfo.m_ObjectTypeInfo.SubType	= SvDef::SVResultDoubleObjectType;
+	resultClassInfo.m_ClassId = SVDoubleResultClassGuid;
+	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_RESULT );
+	std::string Title = m_Value[FeatureIndex].GetName();
+	resultClassInfo.m_ClassName += _T(" ") + Title;
 
-		if(!pResult)
-		{	
-			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16111, GetUniqueObjectID());
-			LastError =  -SvStl::Err_16111;
-			break;
-		}
+	// Construct the result class
+	pResult = dynamic_cast<SVDoubleResultClass*> (resultClassInfo.Construct());
+	m_guidResults[FeatureIndex] = pResult->GetUniqueObjectID();
 
-		Add( pResult );
+	if(!pResult)
+	{	
+		SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16111, GetUniqueObjectID());
+		return -SvStl::Err_16111;
+	}
 
-		SvDef::SVObjectTypeInfoStruct info;
-		info.ObjectType = SvDef::SVValueObjectType;
-		info.SubType = SvDef::SVDoubleValueObjectType;
-		info.EmbeddedID = SVValueObjectGuid;
+	Add(pResult);
 
-		SVDoubleValueObjectClass* pValue = dynamic_cast<SVDoubleValueObjectClass*>( getFirstObject( info ) );
+	SvDef::SVObjectTypeInfoStruct info;
+	info.ObjectType = SvDef::SVValueObjectType;
+	info.SubType = SvDef::SVDoubleValueObjectType;
+	info.EmbeddedID = SVValueObjectGuid;
 
-		if (!pValue)
+	SVDoubleValueObjectClass* pValue = dynamic_cast<SVDoubleValueObjectClass*>( getFirstObject( info ) );
+
+	if (!pValue)
+	{
+		SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16112, GetUniqueObjectID());
+		return -SvStl::Err_16112 ; 
+	}
+
+	pValue->SetObjectAttributesAllowed( SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
+
+	// Ensure this Object's inputs get connected
+	pResult->ConnectAllInputs();
+
+	// And last - Create (initialize) it
+
+	if( !pResult->IsCreated() )
+	{
+		// And finally try to create the child object...
+		if( !CreateChildObject(pResult) )
 		{
-			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16112, GetUniqueObjectID());
-			LastError =   -SvStl::Err_16112 ; 
-			break;
-		}
-
-		pValue->SetObjectAttributesAllowed( SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
-
-		// Ensure this Object's inputs get connected
-		pResult->ConnectAllInputs();
-
-		// And last - Create (initialize) it
-
-		if( ! pResult->IsCreated() )
-		{
-			// And finally try to create the child object...
-			if( !CreateChildObject(pResult) )
-			{
-				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_BlobAnalyzer_ResultCreationFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10041 ); 
+			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_BlobAnalyzer_ResultCreationFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10041 ); 
 					
-				// Remove it from the Blob Analyzer TaskObjectList ( Destruct it )
-				GUID objectID = pResult->GetUniqueObjectID();
-				if( SV_GUID_NULL != objectID )
-				{
-					Delete( objectID );
-				}
-				else
-				{
-					delete pResult;
-				}
+			// Remove it from the Blob Analyzer TaskObjectList ( Destruct it )
+			GUID objectID = pResult->GetUniqueObjectID();
+			if( GUID_NULL != objectID )
+			{
+				Delete( objectID );
+			}
+			else
+			{
+				delete pResult;
 			}
 		}
-
-	} while (false);
+	}
 
 	return LastError;	
 }
@@ -533,7 +418,7 @@ DWORD SVBlobAnalyzerClass::AllocateBlobResult ()
 		{		
 			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16114, GetUniqueObjectID());
-			LastError =   -SvStl::Err_16114 ; 
+			LastError = -SvStl::Err_16114 ; 
 			break;
 		}
 		
@@ -554,7 +439,7 @@ DWORD SVBlobAnalyzerClass::AllocateBlobResult ()
 				
 				// Remove it from the Blob Analyzer TaskObjectList ( Destruct it )
 				GUID objectID = m_pResultBlob->GetUniqueObjectID();
-				if( SV_GUID_NULL != objectID )
+				if( GUID_NULL != objectID )
 				{
 					Delete( objectID );
 				}
@@ -570,39 +455,26 @@ DWORD SVBlobAnalyzerClass::AllocateBlobResult ()
 	return LastError;	
 }
 
-DWORD SVBlobAnalyzerClass::FreeResult (SVBlobFeatureEnum aFeatureIndex)
+void SVBlobAnalyzerClass::FreeResult(int FeatureIndex)
 {
-	SvOi::IObjectClass* pResult(nullptr);
-	DWORD LastError(0);
-	
-	pResult = GetResultObject (aFeatureIndex);
+	SvOi::IObjectClass* pResult = getResultObject(FeatureIndex);
 
-	if (nullptr == pResult)
+	if (nullptr != pResult)
 	{
-		SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16115, GetUniqueObjectID());
-		LastError =   -SvStl::Err_16115 ; 
-
-	}
-	else
-	{
-		m_guidResults[ aFeatureIndex ] = SV_GUID_NULL;
-
+		m_guidResults[FeatureIndex] = GUID_NULL;
 		DestroyChildObject(dynamic_cast<SVTaskObjectClass*>(pResult), SvDef::SVMFSetDefaultInputs);
-
 		pResult = nullptr;
 	}
-	
-	return LastError;
-	
 }
 
-
-SvOi::IObjectClass* SVBlobAnalyzerClass::GetResultObject(SVBlobFeatureEnum aFeatureIndex)
+SvOi::IObjectClass* SVBlobAnalyzerClass::getResultObject(int Feature)
 {
-	return static_cast <IObjectClass*> ( SVObjectManagerClass::Instance().GetObject(m_guidResults[aFeatureIndex]) );
+	if (0 <= Feature && SvOi::SV_NUMBER_OF_BLOB_FEATURES > Feature)
+	{
+		return dynamic_cast<IObjectClass*> (SVObjectManagerClass::Instance().GetObject(m_guidResults[Feature]));
+	}
+	return nullptr;
 }
-
 
 void SVBlobAnalyzerClass::RebuildResultObjectArray()
 {
@@ -635,16 +507,15 @@ void SVBlobAnalyzerClass::RebuildResultObjectArray()
 
 		pSVObject = pResultInputInfo->GetInputObjectInfo().getObject();
 
-		for ( int iFeature = SV_AREA; iFeature < SV_NUMBER_OF_BLOB_FEATURES; iFeature++ )
+		for (int i = 0; i < SvOi::SV_NUMBER_OF_BLOB_FEATURES; i++)
 		{
-			if (&m_Value[iFeature] == pSVObject)
+			if (&m_Value[i] == pSVObject)
 			{
-				m_guidResults[iFeature] = pResult->GetUniqueObjectID();
+				m_guidResults[i] = pResult->GetUniqueObjectID();
 				break;
 			}
 		}
 	}
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -702,13 +573,8 @@ SVLongResultClass* SVBlobAnalyzerClass::GetBlobResultObject()
 //
 bool SVBlobAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
-	std::string            tempString;
-	SVBlobFeatureEnum   i(SV_AREA);
-	bool 				bOk = true;
-	
-	
-	
-	HRESULT MatroxCode(S_OK);
+	bool Result{ true };
+	std::string FeaturesEnabled;
 
 	do
 	{
@@ -716,7 +582,7 @@ bool SVBlobAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateS
 		{
 			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16116, GetUniqueObjectID());
-			bOk = false;
+			Result = false;
 			break;
 		}
 
@@ -727,7 +593,7 @@ bool SVBlobAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateS
 			Add(m_pResultTable);
 			if (!CreateChildObject(m_pResultTable))
 			{
-				bOk = false;
+				Result = false;
 				SvStl::MessageContainer message;
 				message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_CreateFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 				SvStl::MessageMgrStd Msg(SvStl::LogOnly);
@@ -735,19 +601,14 @@ bool SVBlobAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateS
 				break;
 			}
 		}
-		
-		//
-		// Restore manipulatable string from persistant string.
-		//
-		m_PersistantFeaturesEnabled.GetValue ( tempString );
 
-		if ( SV_TOPOF_LIST > static_cast<int> (tempString.size()) )
+		m_PersistantFeaturesEnabled.GetValue(FeaturesEnabled);
+		if (SvOi::SV_NUMBER_OF_BLOB_FEATURES > static_cast<int> (FeaturesEnabled.size()))
 		{
-			tempString += _T("00");
-			m_PersistantFeaturesEnabled.SetValue(tempString);
+
+			FeaturesEnabled.resize(SvOi::SV_NUMBER_OF_BLOB_FEATURES, '0');
+			m_PersistantFeaturesEnabled.SetValue(FeaturesEnabled);
 		}
-		
-		_tcscpy (m_FeaturesEnabled, tempString.c_str());
 		
 		m_lvoBlobSampleSize.GetValue( m_lBlobSampleSize );
 		m_lvoMaxBlobDataArraySize.GetValue( m_lMaxBlobDataArraySize );
@@ -755,30 +616,22 @@ bool SVBlobAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateS
 		//--- It is assumed, in the body of the class, that only enabled features
 		//--- are registered.  All features needed to be register before now so that
 		//--- the scripting would have access to them.
-		for (i = SV_AREA; i < SV_TOPOF_LIST; i = (SVBlobFeatureEnum) (i + 1))
+		for (int i = 0; i < SvOi::SV_NUMBER_OF_BLOB_FEATURES; i++)
 		{
-			if (m_FeaturesEnabled [i] == _T('0'))
+			if (FeaturesEnabled[i] == _T('0'))
 			{
-				RemoveEmbeddedObject (&m_Value[i]);
+				RemoveEmbeddedObject(&m_Value[i]);
 			}
-		}
-
-		// EB 2005 01 28
-		// add array capability to blob results
-		for ( int iFeature = 0; iFeature < SV_NUMBER_OF_BLOB_FEATURES; iFeature++ )
-		{
-			m_Value[iFeature].SetArraySize( m_lMaxBlobDataArraySize );	// no longer sample size (max number of blobs found)
+			m_Value[i].SetArraySize(m_lMaxBlobDataArraySize);	// no longer sample size (max number of blobs found)
 		}
 		
-		dynamic_cast<SVInspectionProcess*>(GetInspection())->SetDefaultInputs();
-
-		MatroxCode = SVMatroxBlobInterface::CreateResult(m_ResultBufferID);
+		HRESULT MatroxCode = SVMatroxBlobInterface::CreateResult(m_ResultBufferID);
 
 		if (M_NULL == m_ResultBufferID)
 		{
 			SvStl::MessageMgrStd MesMan(SvStl::LogOnly);
 			MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16117, GetUniqueObjectID());
-			bOk = false;
+			Result = false;
 			break;
 		}
 
@@ -802,7 +655,7 @@ bool SVBlobAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateS
 		{
 			SvStl::MessageMgrStd MesMan(SvStl::LogOnly);
 			MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16148);
-			bOk = false;
+			Result = false;
 			break;
 		}
 
@@ -820,38 +673,34 @@ bool SVBlobAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateS
 		}
 #endif
 
-		//    Restore selected features after recreation. msvFeatureListID get
-		//    created (allocated) here.
-		BuildFeatureListID ();
-
 		// size to fit number of blobs MIL searches for
-		m_vec2dBlobResults.resize(SV_NUMBER_OF_BLOB_FEATURES, m_lBlobSampleSize);
+		m_vec2dBlobResults.resize(SvOi::SV_NUMBER_OF_BLOB_FEATURES, m_lBlobSampleSize);
 
 		// Sri	04-12-00
 		// Features Box X Max, Box X Min, Box Y Max and Box Y Min should always be enabled,
 		// since we have to draw bounding rectangles to all the blobs found.
-		for (i = SV_AREA; i <= SV_BOXY_MIN; i = (SVBlobFeatureEnum)(i + 1))
+		for (int i = 0; i <= SvOi::SV_BOXY_MIN; i++)
 		{
-			if (m_FeaturesEnabled [i] != _T('1'))
+			if (_T('1') != FeaturesEnabled [i])
 			{
-				m_FeaturesEnabled [i] = _T('1');
-				EnableFeature (i);
+				FeaturesEnabled[i] = _T('1');
+				EnableFeature(i);
 				
-				SvOi::IObjectClass* pResult = GetResultObject (i);
-				if(!pResult)
+				SvOi::IObjectClass* pResult = getResultObject(i);
+				if(nullptr == pResult)
 				{
 					SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 					MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16118, GetUniqueObjectID());
-					bOk = false;
+					Result = false;
 					break; // Break out of for loop 
 				}
 				
 				SVRangeClass *pRange = dynamic_cast<SVResultClass*>(pResult)->GetResultRange();
-				if(!pRange)
+				if(nullptr == pRange)
 				{
 					SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 					MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16119, GetUniqueObjectID());
-					bOk = false;
+					Result = false;
 					break; // Break out of for loop 
 				}
 				
@@ -859,18 +708,18 @@ bool SVBlobAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateS
 				pRange->WarnHigh.SetValue(Range_defaults::highDef);
 			}
 		}
+		m_PersistantFeaturesEnabled.SetValue(FeaturesEnabled);
+
+		dynamic_cast<SVInspectionProcess*>(GetInspection())->SetDefaultInputs();
+		//    Restore selected features after recreation. msvFeatureListID get
+		//    created (allocated) here.
+		BuildFeatureListID();
 
 
-		if ( !bOk )
+		if ( !Result )
 		{
 			break; // If any error had occurred in the for loop, break out of while loop also.	
 		}
-
-
-		// RDS 2002-03-26
-		// Set currently existing features into the persistence string.
-		// Mainly this should be SV_BOXX_MAX thru SV_BOXY_MIN
-		m_PersistantFeaturesEnabled.SetValue(std::string(m_FeaturesEnabled));
 
 		long lSortIndex;
 		m_SortFeature.GetValue (lSortIndex);
@@ -880,8 +729,10 @@ bool SVBlobAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateS
 		}
 		if(!m_pResultBlob && !(m_pResultBlob = GetBlobResultObject()))
 		{
-			if (AllocateBlobResult() & SV_ERROR_CONDITION) 
+			if (AllocateBlobResult() & SV_ERROR_CONDITION)
+			{
 				break; // Some error has occurred.
+			}
 			
 			SVRangeClass *pRange = m_pResultBlob->GetResultRange();
 			if(!pRange)
@@ -889,7 +740,7 @@ bool SVBlobAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateS
 			
 				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16120, GetUniqueObjectID());
-				bOk = false;
+				Result = false;
 				break; 
 			}
 			pRange->FailLow.SetValue(m_defaultResultNumberOfBlobsLowFail);
@@ -904,7 +755,7 @@ bool SVBlobAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateS
 	} while ( false );
 
 	
-	if ( !bOk )
+	if ( !Result )
 	{
 		m_isCreated = false;
 	}
@@ -914,14 +765,14 @@ bool SVBlobAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateS
 	}
 
 	// Set Embedded defaults
-	for (i = SV_AREA; i < SV_TOPOF_LIST; i = (SVBlobFeatureEnum) (i + 1))
+	for (int i = 0; i < SvOi::SV_NUMBER_OF_BLOB_FEATURES; i++)
 	{
 		if( !m_Value[i].IsCreated() )
 		{
 			CreateChildObject( &m_Value[i] );
 		}
 
-		if ( m_FeaturesEnabled[i] != _T('1') )
+		if (FeaturesEnabled[i] == '0')
 		{
 			m_Value[i].SetObjectAttributesAllowed( SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
 		}
@@ -932,11 +783,12 @@ bool SVBlobAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateS
 
 		if ( SvDef::SV_NO_ATTRIBUTES != m_Value[i].ObjectAttributesAllowed() )
 		{
-			m_Value[i].SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );	// for older configs
+			//! Required for older configurations
+			m_Value[i].SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 		}
 	}
 
-	// add printable for older configs
+	//! Required for older configurations
 	m_PersistantFeaturesEnabled.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 	m_lvoBlobSampleSize.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 	m_SortFeature.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
@@ -950,44 +802,50 @@ bool SVBlobAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateS
 /////////////////////////////////////////////////////////////////////////////
 //
 //
-DWORD SVBlobAnalyzerClass::EnableFeature (SVBlobFeatureEnum aIndex)
+void SVBlobAnalyzerClass::UpdateBlobFeatures()
 {
-	m_Value[aIndex].SetObjectAttributesAllowed( m_DefaultAttributes, SvOi::SetAttributeType::OverwriteAttribute );
+	std::string FeaturesEnabled;
+	m_PersistantFeaturesEnabled.getValue(FeaturesEnabled);
+	assert(SvOi::SV_NUMBER_OF_BLOB_FEATURES == FeaturesEnabled.size());
 
-	RegisterEmbeddedObject( &m_Value[aIndex], *BlobFeatureConstants[aIndex].pEmbeddedID, BlobFeatureConstants[aIndex].NewStringResourceID, false, SvOi::SVResetItemNone );
-	
-	dynamic_cast<SVInspectionProcess*>(GetInspection())->SetDefaultInputs();
-	
-	AllocateResult (aIndex);
-
-	dynamic_cast<SVInspectionProcess*>(GetInspection())->SetDefaultInputs();
-	if ( !(SV_CENTER_X_SOURCE == aIndex || SV_CENTER_Y_SOURCE == aIndex) )
+	for (int i = 0; i < SvOi::SV_NUMBER_OF_BLOB_FEATURES;  i++)
 	{
-		BuildFeatureListID();
+		if (SvOi::SV_CENTER_X_SOURCE != i && SvOi::SV_CENTER_Y_SOURCE != i)
+		{
+			if ('1' == FeaturesEnabled[i])
+			{
+				EnableFeature(i);
+			}
+			else
+			{
+				m_Value[i].SetObjectAttributesAllowed(SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute);
+				FreeResult(i);
+				RemoveEmbeddedObject(&m_Value[i]);
+			}
+		}
 	}
-	return 0;
-}
 
-/////////////////////////////////////////////////////////////////////////////
-//
-//
-DWORD SVBlobAnalyzerClass::DisableFeature(SVBlobFeatureEnum aIndex)
-{
-	if ( SV_CENTER_X_SOURCE  != aIndex && SV_CENTER_Y_SOURCE != aIndex )
-	{
-		FreeResult (aIndex);
-	}
-	RemoveEmbeddedObject (&m_Value[aIndex]);
 	dynamic_cast<SVInspectionProcess*>(GetInspection())->SetDefaultInputs();
-
 	BuildFeatureListID();
-
-	return 0;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//
-//
+void SVBlobAnalyzerClass::EnableFeature(int Feature)
+{
+	assert(0 <= Feature && SvOi::SV_NUMBER_OF_BLOB_FEATURES > Feature);
+	//! Check is Feature already in embedded list	
+	SVObjectPtrVector::const_iterator Iter = std::find_if(m_embeddedList.begin(), m_embeddedList.end(), [Feature](const SVObjectPtrVector::value_type pEntry)->bool
+	{
+		return (pEntry->GetEmbeddedID() == BlobFeatureConstants[Feature].rEmbeddedID);
+	}
+	);
+	if (m_embeddedList.end() == Iter)
+	{
+		m_Value[Feature].SetObjectAttributesAllowed(SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute);
+		RegisterEmbeddedObject(&m_Value[Feature], BlobFeatureConstants[Feature].rEmbeddedID, BlobFeatureConstants[Feature].NewStringResourceID, false, SvOi::SVResetItemNone);
+		AllocateResult(Feature);
+	}
+}
+
 bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool Result = true;
@@ -1066,6 +924,10 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 			break;
 		}
 
+		std::string FeaturesEnabled;
+		m_PersistantFeaturesEnabled.getValue(FeaturesEnabled);
+		assert(SvOi::SV_NUMBER_OF_BLOB_FEATURES == FeaturesEnabled.size());
+
 		// Sri 04-12-00
 		// Check whether we want to exclude the blobs, which has at least one of its features 
 		// out of Range
@@ -1073,19 +935,19 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 		m_bExcludeFailed.GetValue(bExclude);
 		if(bExclude)
 		{
-			for ( SVBlobFeatureEnum eFeature = SV_AREA; eFeature < SV_TOPOF_LIST; eFeature = (SVBlobFeatureEnum)(eFeature + 1) )
+			for (int i = 0; i < SvOi::SV_NUMBER_OF_BLOB_FEATURES; i++)
 			{
-				if (m_FeaturesEnabled[eFeature] == _T('1'))
+				if (_T('1') == FeaturesEnabled[i])
 				{
 					// check to see if the feature is SV_CENTER_X_SOURCE or SV_CENTER_Y_SOURCE
 					// if so do not call the MIL functions.
 					
-					if ( (eFeature == SV_CENTER_X_SOURCE) || (eFeature == SV_CENTER_Y_SOURCE) )
+					if ( (i == SvOi::SV_CENTER_X_SOURCE) || (i == SvOi::SV_CENTER_Y_SOURCE) )
 					{
 						continue;
 					}
 					
-					SVResultClass* pResult = dynamic_cast<SVResultClass*>(GetResultObject(eFeature));
+					SVResultClass* pResult = dynamic_cast<SVResultClass*>(getResultObject(i));
 					if(!pResult)
 					{
 						Result = false;
@@ -1125,7 +987,7 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 						// To exclude all blobs, also exclude any blobs which are in the range.
 						MatroxCode = SVMatroxBlobInterface::BlobSelect( m_ResultBufferID, 
 							SVEBlobExclude, 
-							BlobFeatureConstants[eFeature].MILFeatureDef, 
+							BlobFeatureConstants[i].MILFeatureDef, 
 							SVECondInRange, 
 							dLow, 
 							dHigh );
@@ -1134,7 +996,7 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 					// Exclude all blobs that are out of the range for this feature.
 					MatroxCode = SVMatroxBlobInterface::BlobSelect(m_ResultBufferID, 
 						SVEBlobExclude, 
-						BlobFeatureConstants[eFeature].MILFeatureDef, 
+						BlobFeatureConstants[i].MILFeatureDef, 
 						SVECondOutRange, 
 						dLow, 
 						dHigh );
@@ -1245,11 +1107,11 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 		// EB 2005 01 28
 		// add array capability to blob results
 		m_lNumberOfBlobsToProcess = std::min(m_lNumberOfBlobsFound, m_lMaxBlobDataArraySize);	// no more results than max data array size
-		for ( int iFeature = 0; iFeature < SV_NUMBER_OF_BLOB_FEATURES; iFeature++ )
+		for (int i = 0; i < SvOi::SV_NUMBER_OF_BLOB_FEATURES; i++)
 		{
-			if (m_FeaturesEnabled[iFeature] == _T('1'))
+			if (_T('1') == FeaturesEnabled[i])
 			{
-				m_Value[iFeature].SetResultSize(m_lNumberOfBlobsToProcess);
+				m_Value[i].SetResultSize(m_lNumberOfBlobsToProcess);
 			}
 		}
 
@@ -1257,24 +1119,22 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 		//if number of blobs to process = 0,  make sure the feature do not have values from previous runs.
 		if (0 == m_lNumberOfBlobsToProcess)
 		{
-			for (SVBlobFeatureEnum eFeature = SV_AREA; eFeature < SV_TOPOF_LIST; eFeature = (SVBlobFeatureEnum)(eFeature + 1))
-			{	
-				if (m_FeaturesEnabled[ eFeature ] == _T('1'))
+			for (int i = 0; i < SvOi::SV_NUMBER_OF_BLOB_FEATURES; i++)
+			{
+				if (_T('1') == FeaturesEnabled[i])
 				{
-					m_Value[ eFeature ].SetValue(0.0);
+					m_Value[ i ].SetValue(0.0);
 				}
 			}
 		}
 	
-		register SVBlobFeatureEnum eFeature;
-
 		// Get the array of features values for each feature selected.
 		//
-		for (eFeature = SV_AREA; eFeature < SV_TOPOF_LIST; eFeature = (SVBlobFeatureEnum) (eFeature + 1))
+		for (int i = 0; i < SvOi::SV_NUMBER_OF_BLOB_FEATURES; i++)
 		{
-			if (m_FeaturesEnabled[ eFeature ] == _T('1'))
+			if ( _T('1') == FeaturesEnabled[i])
 			{
-				if ( (eFeature == SV_CENTER_X_SOURCE) || (eFeature == SV_CENTER_Y_SOURCE) ) // not a MIL Feature, do not process
+				if (SvOi::SV_CENTER_X_SOURCE == i  || SvOi::SV_CENTER_Y_SOURCE == i) // not a MIL Feature, do not process
 				{
 					//calculate the values if the feature is enabled.  
 					// do not continue with rest of feature code for these two
@@ -1287,7 +1147,7 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 				// feature.
 				//
 
-				vector2d<double>::row_type& row = m_vec2dBlobResults[eFeature];
+				vector2d<double>::row_type& row = m_vec2dBlobResults[i];
 				row.resize( m_lNumberOfBlobsFound );
 				double* pData = nullptr;
 				if(row.size() != 0)
@@ -1300,7 +1160,7 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 				// Check to make sure we don't try to get M_SUM_PIXEL result
 				// on a binary image.  We can't do M_SUM_PIXEL
 				//
-				if(BlobFeatureConstants[eFeature].MILFeatureDef == SVEBlobSumPixel)
+				if(SVEBlobSumPixel == BlobFeatureConstants[i].MILFeatureDef)
 				{
 					//
 					// If we could find out if this was a binarized image. We could
@@ -1318,23 +1178,22 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 				//
 				// Get the results for each feature for each blob found.
 				//
-				if (m_lNumberOfBlobsFound != 0 && ((eFeature != SV_CENTER_X_SOURCE) || (eFeature != SV_CENTER_Y_SOURCE)) )
+				if (m_lNumberOfBlobsFound != 0 && (SvOi::SV_CENTER_X_SOURCE != i || SvOi::SV_CENTER_Y_SOURCE != i) )
 				{
-					MatroxCode = SVMatroxBlobInterface::GetResult( m_ResultBufferID, 
-						BlobFeatureConstants [eFeature]. MILFeatureDef,
-						pData );
+					MatroxCode = SVMatroxBlobInterface::GetResult(m_ResultBufferID, BlobFeatureConstants[i]. MILFeatureDef, pData);
 				}
 			}// end if (msvszFeaturesEnabled [eFeature] == _T('1'))
 
-		}// end for (eFeature = SV_AREA; eFeature < SV_TOPOF_LIST; eFeature = (SVBlobFeatureEnum) (eFeature + 1))
-		if (m_lNumberOfBlobsFound != 0 && ((m_FeaturesEnabled [SV_CENTER_X_SOURCE] == _T('1')) || 
-				(m_FeaturesEnabled [SV_CENTER_Y_SOURCE] == _T('1'))) )
+		}// end for (eFeature = SV_AREA; eFeature < SV_NUMBER_OF_BLOB_FEATURES; eFeature = (SVBlobFeatureEnum) (eFeature + 1))
+		
+		if (m_lNumberOfBlobsFound != 0 && ( _T('1') == FeaturesEnabled[SvOi::SV_CENTER_X_SOURCE] || 
+				_T('1') == FeaturesEnabled[SvOi::SV_CENTER_Y_SOURCE]))
 		{
 			double * pCenterXData = nullptr;
 			bool l_bCenterXSet = false;
-			if (m_FeaturesEnabled [SV_CENTER_X_SOURCE] == _T('1') )
+			if (_T('1') == FeaturesEnabled[SvOi::SV_CENTER_X_SOURCE])
 			{
-				vector2d<double>::row_type& row = m_vec2dBlobResults[SV_CENTER_X_SOURCE];
+				vector2d<double>::row_type& row = m_vec2dBlobResults[SvOi::SV_CENTER_X_SOURCE];
 				pCenterXData = &(row[0]);
 				memset( pCenterXData, 0L, sizeof( double ) * row.size() );
 				l_bCenterXSet = true;
@@ -1342,18 +1201,18 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 
 			double * pCenterYData = nullptr;
 			bool l_bCenterYSet = false;
-			if (m_FeaturesEnabled [SV_CENTER_Y_SOURCE] == _T('1') )
+			if ( _T('1') == FeaturesEnabled [SvOi::SV_CENTER_Y_SOURCE])
 			{
-				vector2d<double>::row_type& row = m_vec2dBlobResults[SV_CENTER_Y_SOURCE];
+				vector2d<double>::row_type& row = m_vec2dBlobResults[SvOi::SV_CENTER_Y_SOURCE];
 				pCenterYData = &(row[0]);
 				memset( pCenterYData, 0L, sizeof( double ) * row.size() );
 				l_bCenterYSet = true;
 			}
 
-			double * pBoxXMaxData = &(m_vec2dBlobResults[SV_BOXX_MAX][0]);
-			double * pBoxXMinData = &(m_vec2dBlobResults[SV_BOXX_MIN][0]);
-			double * pBoxYMaxData = &(m_vec2dBlobResults[SV_BOXY_MAX][0]);
-			double * pBoxYMinData = &(m_vec2dBlobResults[SV_BOXY_MIN][0]);
+			double * pBoxXMaxData = &(m_vec2dBlobResults[SvOi::SV_BOXX_MAX][0]);
+			double * pBoxXMinData = &(m_vec2dBlobResults[SvOi::SV_BOXX_MIN][0]);
+			double * pBoxYMaxData = &(m_vec2dBlobResults[SvOi::SV_BOXY_MAX][0]);
+			double * pBoxYMinData = &(m_vec2dBlobResults[SvOi::SV_BOXY_MIN][0]);
 
 			for(int n=0; n < m_lBlobSampleSize; n++)
 			{
@@ -1378,7 +1237,7 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 
 				SVImageClass* pTmpImage = nullptr;
 
-				if ( pImage )
+				if (nullptr != pImage)
 				{
 					pTmpImage = pImage;
 					while ( nullptr != pTmpImage->GetParentImage() )
@@ -1406,7 +1265,7 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 		// Note Sort Feature will be -1 if no features have been selected
 		// otherwise if at least one feature has been selected
 		// lSortFeature will be a valid feature index
-		if( lSortFeature >= SV_AREA && lSortFeature < SV_TOPOF_LIST )
+		if( lSortFeature >= SvOi::SV_AREA && lSortFeature < SvOi::SV_NUMBER_OF_BLOB_FEATURES)
 		{
 			SortBlobs( lSortFeature, m_SortVector.data(), static_cast<long> (m_SortVector.size()));
 		}
@@ -1422,9 +1281,9 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 		}
 		m_pResultTable->setSortContainer(resultTableSortContainer, rRunStatus);
 
-		for (eFeature = SV_AREA; eFeature < SV_TOPOF_LIST; eFeature = (SVBlobFeatureEnum) (eFeature + 1))
+		for (int i = 0; i < SvOi::SV_NUMBER_OF_BLOB_FEATURES; i++)
 		{
-			if (m_FeaturesEnabled [eFeature] == _T('1'))
+			if (_T('1') == FeaturesEnabled[i])
 			{
 				if (m_lNumberOfBlobsToProcess > 0)
 				{
@@ -1436,16 +1295,16 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 					// add array capability to blob results
 					for ( int iBlob = 0; iBlob < m_lNumberOfBlobsToProcess; iBlob++ )
 					{
-						m_ResultTableColumnValueObjects[eFeature]->SetValue(m_vec2dBlobResults[eFeature][m_SortVector[iBlob]], iBlob);
-						m_Value[eFeature].SetValue(m_vec2dBlobResults[eFeature][m_SortVector[iBlob]], iBlob );
+						m_ResultTableColumnValueObjects[i]->SetValue(m_vec2dBlobResults[i][m_SortVector[iBlob]], iBlob);
+						m_Value[i].SetValue(m_vec2dBlobResults[i][m_SortVector[iBlob]], iBlob );
 					}
 				}
 				else
 				{
 					//Arvid set array size to 1 even if no blobs are present so as not to cause errors in math tools in "old style" configurations
 					//Arvid this will in practice, however, undo the changes of SVO-322
-					m_Value[ eFeature ].SetResultSize(1); 
-					m_Value[ eFeature ].SetValue(0.0);
+					m_Value[i].SetResultSize(1); 
+					m_Value[i].SetValue(0.0);
 				}
 			}
 		}
@@ -1615,11 +1474,15 @@ DWORD SVBlobAnalyzerClass::BuildFeatureListID ()
 
 	std::set<SVBlobSelectionEnum> featureSet;
 
-	for (SVBlobFeatureEnum i = SV_AREA; i < SV_TOPOF_LIST; i = (SVBlobFeatureEnum)(i + 1))
+	std::string FeaturesEnabled;
+	m_PersistantFeaturesEnabled.getValue(FeaturesEnabled);
+	assert(SvOi::SV_NUMBER_OF_BLOB_FEATURES == FeaturesEnabled.size());
+
+	for (int i = 0; i < SvOi::SV_NUMBER_OF_BLOB_FEATURES; i++)
 	{
-		if (m_FeaturesEnabled[i] == _T('1'))
+		if (_T('1') == FeaturesEnabled[i])
 		{
-			if ((i == SV_CENTER_X_SOURCE) || (i == SV_CENTER_Y_SOURCE))
+			if ((i == SvOi::SV_CENTER_X_SOURCE) || (i == SvOi::SV_CENTER_Y_SOURCE))
 			{
 				continue;
 			}
@@ -1668,10 +1531,10 @@ bool SVBlobAnalyzerClass::IsPtOverResult( const POINT& rPoint )
 
 			if (S_OK == hr )
 			{
-				double* pxMax = &(m_vec2dBlobResults[SV_BOXX_MAX][0]);
-				double* pxMin = &(m_vec2dBlobResults[SV_BOXX_MIN][0]);
-				double* pyMax = &(m_vec2dBlobResults[SV_BOXY_MAX][0]);
-				double* pyMin = &(m_vec2dBlobResults[SV_BOXY_MIN][0]);
+				double* pxMax = &(m_vec2dBlobResults[SvOi::SV_BOXX_MAX][0]);
+				double* pxMin = &(m_vec2dBlobResults[SvOi::SV_BOXX_MIN][0]);
+				double* pyMax = &(m_vec2dBlobResults[SvOi::SV_BOXY_MAX][0]);
+				double* pyMin = &(m_vec2dBlobResults[SvOi::SV_BOXY_MIN][0]);
 
 				int iMapSize = static_cast<int> (m_SortVector.size());
 			
@@ -1731,32 +1594,38 @@ void SVBlobAnalyzerClass::CreateArray()
 
 	m_SortVector.resize(m_lBlobSampleSize);
 
-	m_vec2dBlobResults.resize( SV_NUMBER_OF_BLOB_FEATURES, m_lBlobSampleSize );
+	m_vec2dBlobResults.resize(SvOi::SV_NUMBER_OF_BLOB_FEATURES, m_lBlobSampleSize );
+
+	std::string FeaturesEnabled;
+	m_PersistantFeaturesEnabled.getValue(FeaturesEnabled);
+	assert(SvOi::SV_NUMBER_OF_BLOB_FEATURES == FeaturesEnabled.size());
 
 	// add array capability to blob results
-	for ( int iFeature = 0; iFeature < SV_NUMBER_OF_BLOB_FEATURES; iFeature++ )
+	for (int i = 0; i < SvOi::SV_NUMBER_OF_BLOB_FEATURES; i++ )
 	{
-		assert(iFeature < c_maxTableColumn);
-		if ( m_FeaturesEnabled[iFeature] == _T('1') )
+		assert(i < c_maxTableColumn);
+		if (_T('1') == FeaturesEnabled[i])
 		{
-			m_Value[iFeature].SetArraySize( m_lMaxBlobDataArraySize );	// no longer sample size (max number of blobs found)
-			m_ResultTableColumnValueObjects[iFeature] = m_pResultTable->updateOrCreateColumn(TableColumnValueObjectGuid[iFeature], BlobFeatureConstants[iFeature].NewStringResourceID, m_lMaxBlobDataArraySize);
+			m_Value[i].SetArraySize( m_lMaxBlobDataArraySize );	// no longer sample size (max number of blobs found)
+			m_ResultTableColumnValueObjects[i] = m_pResultTable->updateOrCreateColumn(TableColumnValueObjectGuid[i], BlobFeatureConstants[i].NewStringResourceID, m_lMaxBlobDataArraySize);
 		}
 		else
 		{
-			m_Value[iFeature].SetArraySize( 0 );
-			if (nullptr != m_ResultTableColumnValueObjects[iFeature])
+			m_Value[i].SetArraySize( 0 );
+			if (nullptr != m_ResultTableColumnValueObjects[i])
 			{
-				m_pResultTable->removeColumn(TableColumnValueObjectGuid[iFeature]);
-				m_ResultTableColumnValueObjects[iFeature] = nullptr;
+				m_pResultTable->removeColumn(TableColumnValueObjectGuid[i]);
+				m_ResultTableColumnValueObjects[i] = nullptr;
+			}
 		}
-	}
 	}
 }
 
 bool SVBlobAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);
+
+	UpdateBlobFeatures();
 
 	BOOL l_bIsFillBlob;
 	m_bvoFillBlobs.GetValue( l_bIsFillBlob );
@@ -1822,14 +1691,13 @@ HRESULT SVBlobAnalyzerClass::onCollectOverlays(SVImageClass* p_pImage, SVExtentM
 					RECT Rect;
 
 					double Value( 0.0 );
-					// Get Values from Bucketized (managed) data
-					m_Value[SV_BOXX_MIN].GetValue(Value, i);
+					m_Value[SvOi::SV_BOXX_MIN].GetValue(Value, i);
 					Rect.left = static_cast<long> (Value);
-					m_Value[SV_BOXX_MAX].GetValue(Value, i);
+					m_Value[SvOi::SV_BOXX_MAX].GetValue(Value, i);
 					Rect.right = static_cast<long> (Value);
-					m_Value[SV_BOXY_MIN].GetValue(Value, i);
+					m_Value[SvOi::SV_BOXY_MIN].GetValue(Value, i);
 					Rect.top = static_cast<long> (Value);
-					m_Value[SV_BOXY_MAX].GetValue(Value, i);
+					m_Value[SvOi::SV_BOXY_MAX].GetValue(Value, i);
 					Rect.bottom = static_cast<long> (Value);
 
 					SVExtentFigureStruct l_svFigure = Rect;
@@ -1887,17 +1755,20 @@ void SVBlobAnalyzerClass::addDefaultInputObjects( SVInputInfoListClass* PInputLi
 	__super::addDefaultInputObjects( PInputListToFill );
 
 #ifdef _DEBUG
-	for( SVBlobFeatureEnum i = SV_AREA; i < SV_TOPOF_LIST; i = (SVBlobFeatureEnum) (i + 1))
+	std::string FeaturesEnabled;
+	m_PersistantFeaturesEnabled.getValue(FeaturesEnabled);
+	assert(SvOi::SV_NUMBER_OF_BLOB_FEATURES == FeaturesEnabled.size());
+
+	for (int i = 0; i < SvOi::SV_NUMBER_OF_BLOB_FEATURES; i++)
 	{
 		UINT uiAttributes = m_Value[i].ObjectAttributesAllowed();
-		TCHAR tchEnabled = m_FeaturesEnabled[i];
-		bool l_bOk = ( tchEnabled == _T('1') && 
+		bool l_bOk = ( _T('1') == FeaturesEnabled[i] &&
 			( uiAttributes & SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES) != SvDef::SV_NO_ATTRIBUTES ) ||
-			( tchEnabled == _T('0') && 
+			( _T('0') == FeaturesEnabled[i] &&
 			(uiAttributes & SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES) == SvDef::SV_NO_ATTRIBUTES );
 
 		// if this ASSERT fires, verify that the attributes are being set correctly!!!!!!! jms & eb 2006 01 20
-		ASSERT( !IsCreated() || l_bOk || (i == SV_CENTER_X_SOURCE || i == SV_CENTER_Y_SOURCE) );
+		ASSERT( !IsCreated() || l_bOk || (i == SvOi::SV_CENTER_X_SOURCE || i == SvOi::SV_CENTER_Y_SOURCE) );
 	}
 #endif
 }

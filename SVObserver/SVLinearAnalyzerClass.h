@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "InspectionEngine/SVAnalyzer.h"
-#include "SVValueBaseNormalizerClass.h"
+#include "SVLibrary/SVValueBaseNormalizerClass.h"
 #pragma endregion Includes
 
 class SVLinearEdgeProcessingClass;
@@ -36,8 +36,8 @@ public:
 
 	virtual HRESULT GetImageExtent( SVImageExtentClass &p_rsvImageExtent ) override;
 
-	SVLinearEdgeProcessingClass *GetEdgeA();
-	SVLinearEdgeProcessingClass *GetEdgeB();
+	SVLinearEdgeProcessingClass* GetEdgeA();
+	SVLinearEdgeProcessingClass* GetEdgeB();
 
 	SVImageClass *GetInputImage();
 

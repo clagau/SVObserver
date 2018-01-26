@@ -9,9 +9,11 @@
 // * .Check In Date   : $Date:   23 Apr 2013 11:53:16  $
 // ******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVLinearEdgeBProcessingClass.h"
-#include "SVGlobal.h"
+#include "Definitions/LinearEdgeEnums.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -68,10 +70,23 @@ SVLinearEdgeBProcessingClass::SVLinearEdgeBProcessingClass( SVObjectClass* POwne
 
 	RegisterEmbeddedObject(&m_svLinearEdges, SVLinearEdgesClassGuid, IDS_CLASSNAME_SVLINEAREDGESCLASS, false, SvOi::SVResetItemNone );
 
-	m_svDirection.SetEnumTypes( cDirectionEnums );
-	m_svPolarisation.SetEnumTypes( cPolarisationEnums );
-	m_svEdgeSelect.SetEnumTypes( cEdgeSelectEnums );
-	m_svPosition.SetEnumTypes( cPositionEnums );
+	m_svDirection.SetEnumTypes(SvDef::cDirectionEnums);
+	m_svPolarisation.SetEnumTypes(SvDef::cPolarisationEnums);
+	m_svEdgeSelect.SetEnumTypes(SvDef::cEdgeSelectEnums);
+	m_svPosition.SetEnumTypes(SvDef::cPositionEnums);
+
+	//! This cannot be initialized direct during construction because m_EdgeEmbeddedGuids is inherited
+	m_EdgeEmbeddedGuids = SVGuidVector
+	{
+		SVEdgeBDirectionGuid, SVEdgeBPolarisationGuid, SVEdgeBEdgeSelectGuid, SVEdgeBEdgeSelectThisValueGuid,
+		SVEdgeBIsFixedEdgeMarkerGuid, SVEdgeBPositionGuid, SVEdgeBPositionOffsetGuid, SVUseLowerThresholdSelectableBObjectGuid,
+		SVUseLowerThresholdMaxMinusPercentDiffBObjectGuid, SVUseLowerThresholdMaxMinusOffsetBObjectGuid, SVUseLowerThresholdMinPlusOffsetBObjectGuid,
+		SVEdgeBLowerThresholdValueGuid, SVLowerThresholdMaxMinusPercentDiffBObjectGuid, SVLowerThresholdMaxMinusOffsetBObjectGuid,
+		SVLowerThresholdMinPlusOffsetBObjectGuid, SVUseUpperThresholdSelectableBObjectGuid, SVUseUpperThresholdMaxMinusPercentDiffBObjectGuid,
+		SVUseUpperThresholdMaxMinusOffsetBObjectGuid, SVUseLowerThresholdMinPlusOffsetBObjectGuid, SVEdgeBUpperThresholdValueGuid,
+		SVUpperThresholdMaxMinusPercentDiffBObjectGuid, SVUpperThresholdMaxMinusOffsetBObjectGuid, SVUpperThresholdMinPlusOffsetBObjectGuid,
+		SVLinearEdgesClassGuid 
+	};
 
 	// Set default inputs and outputs
 	addDefaultInputObjects();

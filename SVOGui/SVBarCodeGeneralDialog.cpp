@@ -25,7 +25,6 @@ static char THIS_FILE[] = __FILE__;
 
 SVBarCodeGeneralDialog::SVBarCodeGeneralDialog(CWnd* pParent /*=nullptr*/)
 	: CPropertyPage(SVBarCodeGeneralDialog::IDD)
-	, m_lStringFormat(0)
 	, m_iThresholdRadio(0)
 {
 	//{{AFX_DATA_INIT(SVBarCodeGeneralDialog)
@@ -95,7 +94,6 @@ void SVBarCodeGeneralDialog::DoDataExchange(CDataExchange* pDX)
 	DDV_MinMaxLong(pDX, m_lTimeout, 1, 10000);
 	DDX_Check(pDX, IDC_WARN_ON_FAIL_CHECK, m_bWarnOnFail);
 	//}}AFX_DATA_MAP
-	DDX_CBIndex(pDX, IDC_STRING_FORMAT, m_lStringFormat);
 	DDX_Control(pDX, IDC_STRING_FORMAT, m_StringFormatCombo);
 	DDX_Radio(pDX, IDC_THRESHOLD_NORMAL_RADIO, m_iThresholdRadio);
 	DDX_Control(pDX, IDC_CHK_UNEVEN_GRID, m_UnevenCheck);
@@ -114,6 +112,7 @@ BEGIN_MESSAGE_MAP(SVBarCodeGeneralDialog, CPropertyPage)
 	ON_CBN_SELCHANGE(IDC_SEARCH_SPEED, OnSelChangeSearchSpeed)
 	ON_CBN_SELCHANGE(IDC_BARCODETYPE, OnSelChangeBarCodeType)
 	ON_CBN_SELCHANGE(IDC_BARCODE_STRINGSIZE, OnSelChangeBarCodeStringSize)
+	ON_CBN_SELCHANGE(IDC_STRING_FORMAT, OnSelChangeStringFormat)
 	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_TIMEOUT, OnDeltaposSpinTimeout)
 	ON_CONTROL_RANGE(BN_CLICKED, IDC_THRESHOLD_NORMAL_RADIO, IDC_THRESHOLD_ADAPTIVE_RADIO, &SVBarCodeGeneralDialog::OnBnClickedThresholdNormalRadio)
 	//}}AFX_MSG_MAP
@@ -362,17 +361,19 @@ double SVBarCodeGeneralDialog::SetThreshold(SVDoubleValueObjectClass &svdThresho
 
 bool SVBarCodeGeneralDialog::SetBarcodeStringFormat( SVEnumerateValueObjectClass& p_sveStringFormat )
 {
-
-	m_EnumVect = p_sveStringFormat.GetEnumVector();
+	const SvOi::NameValueVector& rStringFormatList = p_sveStringFormat.GetEnumVector();
+	m_StringFormatCombo.SetEnumTypes(rStringFormatList);
 	long Value;
 	bool l_bRet = S_OK == p_sveStringFormat.GetValue( Value );
-	m_lStringFormat = static_cast<int> (Value);
+	m_StringFormatCombo.SetCurSelItemData(Value);
+	m_StringFormatCombo.GetLBText(Value, m_StringFormat);
+
 	return l_bRet;
 }
 
-long SVBarCodeGeneralDialog::GetBarcodeStringFormat( )
+CString SVBarCodeGeneralDialog::GetBarcodeStringFormat( )
 {
-	return m_lStringFormat;
+	return m_StringFormat;
 }
 
 bool SVBarCodeGeneralDialog::SetBarcodeThresholdType( SVLongValueObjectClass& p_svlThresholdType )
@@ -408,15 +409,6 @@ BOOL SVBarCodeGeneralDialog::GetUnEvenGrid()
 BOOL SVBarCodeGeneralDialog::OnInitDialog() 
 {
 	CPropertyPage::OnInitDialog();
-
-	// String Format 
-	m_StringFormatCombo.ResetContent();
-	for( int i = 0 ; i < static_cast< int >( m_EnumVect.size() ); i++ )
-	{
-		m_StringFormatCombo.InsertString( i, m_EnumVect[i].first.c_str() );
-	}
-	m_StringFormatCombo.SetCurSel( m_lStringFormat );
-
 
 	for (int i = 0; i < m_aBarCodeInfo.size(); i++)
 	{
@@ -619,7 +611,16 @@ void SVBarCodeGeneralDialog::OnSelChangeBarCodeStringSize()
   UpdateData (TRUE);	
 }
 
-void SVBarCodeGeneralDialog::OnSelChangeBarCodeColor() 
+void SVBarCodeGeneralDialog::OnSelChangeStringFormat()
+{
+	int CurrentSelection = m_StringFormatCombo.GetCurSel();
+	if (0 <= CurrentSelection)
+	{
+		m_StringFormatCombo.GetLBText(CurrentSelection, m_StringFormat);
+	}
+}
+
+void SVBarCodeGeneralDialog::OnSelChangeBarCodeColor()
 {
 	UpdateData (TRUE);
 }

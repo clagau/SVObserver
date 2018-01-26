@@ -17,7 +17,7 @@
 
 SVTaskObjectInterfaceInputRequestStruct::SVTaskObjectInterfaceInputRequestStruct()
 {
-	m_Guid = SV_GUID_NULL;
+	m_Guid = GUID_NULL;
 }
 
 SVTaskObjectInterfaceInputRequestStruct::SVTaskObjectInterfaceInputRequestStruct( const SVObjectReference& rObjectRef, const SVGUID& rGuid, const std::string& rName )
@@ -43,7 +43,7 @@ inline bool SVTaskObjectInterfaceInputRequestStruct::operator < ( const SVTaskOb
 	{
 		return m_ObjectRef < rhs.m_ObjectRef;
 	}
-	else if ( SV_GUID_NULL != m_Guid && SV_GUID_NULL != rhs.m_Guid )
+	else if ( GUID_NULL != m_Guid && GUID_NULL != rhs.m_Guid )
 	{
 		return m_Guid < rhs.m_Guid;
 	}

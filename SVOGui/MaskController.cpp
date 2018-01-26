@@ -31,14 +31,24 @@ namespace SvOg
 		typedef SvCmd::GetInstanceIDByTypeInfo Command;
 		typedef std::shared_ptr<Command> CommandPtr;
 	
-		SvDef::SVObjectTypeInfoStruct info(SvDef::SVUnaryImageOperatorObjectType, SvDef::SVUserMaskOperatorObjectType);
+		SvDef::SVObjectTypeInfoStruct ObjectInfo(SvDef::SVUnaryImageOperatorObjectType, SvDef::SVUserMaskOperatorObjectType);
 	
-		CommandPtr commandPtr = CommandPtr{ new Command(m_TaskObjectID, info) };
-		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-		if (S_OK == hr)
+		CommandPtr commandPtr = CommandPtr{ new Command(m_TaskObjectID, ObjectInfo) };
+		SVObjectSynchronousCommandTemplate<CommandPtr> cmdMask(m_InspectionID, commandPtr);
+		HRESULT Result = cmdMask.Execute(TWO_MINUTE_CMD_TIMEOUT);
+		if (S_OK == Result)
 		{
 			m_maskOperatorID = commandPtr->GetInstanceID();
+
+			ObjectInfo.ObjectType = SvDef::SVUnaryImageOperatorObjectType;
+			ObjectInfo.SubType = SvDef::SVShapeMaskHelperObjectType;
+			commandPtr = CommandPtr{ new Command(m_maskOperatorID, ObjectInfo) };
+			SVObjectSynchronousCommandTemplate<CommandPtr> cmdShapeHelper(m_InspectionID, commandPtr);
+			Result = cmdShapeHelper.Execute(TWO_MINUTE_CMD_TIMEOUT);
+			if (S_OK == Result)
+			{
+				m_ShapeMaskHelperID = commandPtr->GetInstanceID();
+			}
 		}
 	}
 
@@ -46,6 +56,12 @@ namespace SvOg
 	const GUID& MaskController::GetInstanceID() const
 	{
 		return m_maskOperatorID;
+	}
+
+	// must call init before calling this method
+	const GUID& MaskController::GetShapeMaskHelperID() const
+	{
+		return m_ShapeMaskHelperID;
 	}
 
 	IPictureDisp* MaskController::GetReferenceImage() const

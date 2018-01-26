@@ -48,13 +48,13 @@ SVSecurityGeneralPage::~SVSecurityGeneralPage()
 
 void SVSecurityGeneralPage::DoDataExchange(CDataExchange* pDX)
 {
-	CDialog::DoDataExchange(pDX);
+	CPropertyPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(SVSecurityGeneralPage)
 		// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
 }
 
-BEGIN_MESSAGE_MAP(SVSecurityGeneralPage, CDialog)
+BEGIN_MESSAGE_MAP(SVSecurityGeneralPage, CPropertyPage)
 	//{{AFX_MSG_MAP(SVSecurityGeneralPage)
 	ON_BN_CLICKED(IDC_USER_MGR_BTN, OnUserMgrBtn)
 	ON_BN_CLICKED(IDC_EVENT_VIEWER_BTN, OnEventViewerBtn)
@@ -100,7 +100,7 @@ void SVSecurityGeneralPage::OnLoginBtn()
 
 BOOL SVSecurityGeneralPage::OnInitDialog() 
 {
-	CDialog::OnInitDialog();
+	CPropertyPage::OnInitDialog();
 	
 	SVSecuritySetupSheet* pPropSheet = (SVSecuritySetupSheet*)GetParent();
 

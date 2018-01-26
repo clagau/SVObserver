@@ -14,10 +14,9 @@
 //Moved to precompiled header: #include <boost/assign/list_of.hpp>
 #include "SVTADlgGeneralPage.h"
 #include "SVObjectLibrary\SVClsids.h"
-#include "ObjectInterfaces\NameValueList.h"
+#include "ObjectInterfaces\NameValueVector.h"
 #include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
 #include "SVShowDependentsDialog.h"
-
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -28,16 +27,13 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-	static LPCSTR DrawFlagTag = "DrawFlag";
-
 	SVToolAdjustmentDialogGeneralPageClass::SVToolAdjustmentDialogGeneralPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID) 
 	: CPropertyPage(SVToolAdjustmentDialogGeneralPageClass::IDD)
 	, m_bIsImageTool(false)
 	, m_bAuxExtentsAvailable(false)
 	, m_InspectionID(rInspectionID)
 	, m_TaskObjectID(rTaskObjectID)
-	, m_Values(SvOg::BoundValues(rInspectionID, rTaskObjectID, boost::assign::map_list_of
-			(DrawFlagTag, SVConditionalToolDrawFlagObjectGuid)))
+	, m_Values(SvOg::BoundValues(rInspectionID, rTaskObjectID))
 	, m_AuxExtentsController(rInspectionID, rTaskObjectID)
 	{
 		//{{AFX_DATA_INIT(SVToolAdjustmentDialogGeneralPageClass)
@@ -55,12 +51,11 @@ namespace SvOg
 
 		UpdateData(true); // get data from dialog
 
-		int sel = m_drawToolCombo.GetCurSel();
-		if (CB_ERR != sel)
+		int CurrentSelection = m_drawToolCombo.GetCurSel();
+		if (CB_ERR != CurrentSelection)
 		{
-			CString item;
-			m_drawToolCombo.GetLBText(sel, item);
-			m_Values.Set<CString>(DrawFlagTag, item);
+			long Value = static_cast<long> (m_drawToolCombo.GetItemData(CurrentSelection));
+			m_Values.Set<long>(SVConditionalToolDrawFlagObjectGuid, Value);
 		}			
 		m_AuxExtentsController.EnableAuxExtents(m_bUpdateAuxiliaryExtents ? true : false);
 			
@@ -77,17 +72,15 @@ namespace SvOg
 	void SVToolAdjustmentDialogGeneralPageClass::refresh()
 	{
 		// Update dialog with freeze tool attributes...
-		BOOL bOk = false;
-		CString strEnum = m_Values.Get<CString>(DrawFlagTag);
-		int index = m_drawToolCombo.SelectString(-1, strEnum);
-		bOk = true;
+		long CurrentSelection = m_Values.Get<long>(SVConditionalToolDrawFlagObjectGuid);
+		m_drawToolCombo.SetCurSelItemData(CurrentSelection);
 	
 		// Check, if drawToolCombo must be disabled/enabled...
 		// based on What?
 		CWnd* pWnd = GetDlgItem(IDC_DRAW_TOOL_COMBO);
 		if (pWnd)
 		{
-			pWnd->EnableWindow(bOk);
+			pWnd->EnableWindow(true);
 		}
 		if (m_bIsImageTool)
 		{
@@ -104,14 +97,10 @@ namespace SvOg
 
 	void SVToolAdjustmentDialogGeneralPageClass::SetupDrawFlagComboBox()
 	{
-		m_drawToolCombo.ResetContent();
-		CString drawFlag = m_Values.Get<CString>(DrawFlagTag);
-		const SvOi::NameValueList& flags = m_Values.GetEnumTypes(DrawFlagTag);
-		for (SvOi::NameValueList::const_iterator it = flags.begin(); it != flags.end();++it)
-		{
-			m_drawToolCombo.SetItemData(m_drawToolCombo.AddString(it->first.c_str()), it->second);
-		}
-		m_drawToolCombo.SelectString(-1, drawFlag);
+		const SvOi::NameValueVector& rDrawCriteria = m_Values.GetEnumTypes(SVConditionalToolDrawFlagObjectGuid);
+		m_drawToolCombo.SetEnumTypes(rDrawCriteria);
+		long CurrentSelection = m_Values.Get<long>(SVConditionalToolDrawFlagObjectGuid);
+		m_drawToolCombo.SetCurSelItemData(CurrentSelection);
 	}
 
 	void SVToolAdjustmentDialogGeneralPageClass::SetImages()

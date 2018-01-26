@@ -12,8 +12,10 @@
 #pragma once
 
 #pragma region Includes
-#include "InspectionEngine/SVTaskObjectValueInterface.h"
-#include "SVEnumerateCombo.h"
+#include "SVMFCControls/SVEnumerateCombo.h"
+#include "SVUtilityLibrary/SVGuid.h"
+#include "SVOGui/ValuesAccessor.h"
+#include "SVOGui/DataController.h"
 #pragma endregion
 
 #pragma region Declarations
@@ -22,9 +24,10 @@ class SVToolClass;
 class SVEvaluateClass;
 class SVDoubleValueObjectClass;
 class SVBoolValueObjectClass;
+class SVEnumerateValueObjectClass;
 #pragma endregion
 
-class SVToolAdjustmentDialogTranslationPageClass : public CPropertyPage, public SVTaskObjectValueInterface
+class SVToolAdjustmentDialogTranslationPageClass : public CPropertyPage
 {
 public:
 	SVToolAdjustmentDialogTranslationPageClass( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent );
@@ -59,7 +62,7 @@ protected:
 	//{{AFX_DATA(SVToolAdjustmentDialogTranslationPageClass)
 public:
 	enum { IDD = IDD_TA_TRANSLATION_DIALOG };
-	SVEnumerateComboClass	m_cbInterpolation;
+	SvMc::SVEnumerateComboClass	m_cbInterpolation;
 	CString	m_TranslationXValue;
 	CString	m_TranslationYValue;
 	BOOL	m_performTranslation;
@@ -73,6 +76,10 @@ protected:
 	SVEvaluateClass* m_pEvaluateTranslationX;
 	SVEvaluateClass* m_pEvaluateTranslationY;
 	SVEnumerateValueObjectClass* m_pInterpolationMode;
+
+	typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
+	typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
+	std::unique_ptr<Controller> m_pValues{ nullptr };
 #pragma endregion
 };
 

@@ -30,6 +30,8 @@
 #include "SVOGui/GlobalSelector.h"
 #include "SVOGui/NoSelector.h"
 #include "SVOGui/ToolSetItemSelector.h"
+#include "SVOGui/ValuesAccessor.h"
+#include "SVOGui/DataController.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
@@ -51,7 +53,6 @@ RangeClassHelper::~RangeClassHelper()
 #pragma region Public Methods
 void RangeClassHelper::SetRangeTaskObject()
 {
-	SetTaskObject(m_pRange);
 }
 
 HRESULT RangeClassHelper::GetInspectionData(RangeEnum::ERange ra)
@@ -287,99 +288,28 @@ HRESULT RangeClassHelper::CheckInternalData(SvStl::MessageTextEnum &messageId, S
 
 HRESULT RangeClassHelper::SetInspectionData()
 {
-	HRESULT hr = -SvStl::Err_16011;
-	if( m_pRange )
+	HRESULT Result{ S_OK };
+
+	if (nullptr != m_pRange)
 	{
-		hr = AddInputRequest( &( m_pRange->FailHigh ), m_FailHigh );
+		typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
+		typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
+		Controller Values{ SvOg::BoundValues{ m_pRange->GetInspection()->GetUniqueObjectID(), m_pRange->GetUniqueObjectID() } };
+		Values.Init();
 
-		if( S_OK != hr )
-		{
-			hr = -SvStl::Err_16001;
-		}
-		else
-		{
-			hr = AddInputRequest( &( m_pRange->FailLow ), m_FailLow );
-		}
+		Values.Set<double>(SVRangeClassFailHighObjectGuid, m_FailHigh);
+		Values.Set<double>(SVRangeClassWarnHighObjectGuid, m_WarnHigh);
+		Values.Set<double>(SVRangeClassWarnLowObjectGuid, m_WarnLow);
+		Values.Set<double>(SVRangeClassFailLowObjectGuid, m_FailLow);
 
-		if( S_OK != hr )
-		{
-			hr = -SvStl::Err_16002;
-		}
-		else
-		{
-			hr = AddInputRequest( &( m_pRange->WarnHigh ), m_WarnHigh );
-		}
+		Values.Set<CString>(SVRangeClassFailHighIndirectObjectGuid, m_FailHighIndirect.c_str());
+		Values.Set<CString>(SVRangeClassWarnHighIndirectObjectGuid, m_WarnHighIndirect.c_str());
+		Values.Set<CString>(SVRangeClassWarnLowIndirectObjectGuid, m_WarnLowIndirect.c_str());
+		Values.Set<CString>(SVRangeClassFailLowIndirectObjectGuid, m_FailLowIndirect.c_str());
 
-		if( S_OK != hr )
-		{
-			hr = -SvStl::Err_16003;
-		}
-		else
-		{
-			hr = AddInputRequest( &( m_pRange->WarnLow ), m_WarnLow );
-		}
-
-		if( S_OK != hr )
-		{
-			hr = -SvStl::Err_16004;
-		}
-		else
-		{
-			hr = AddInputRequest( m_pRange->GetIndirectObject(RangeEnum::ER_FailHigh), m_FailHighIndirect.c_str() );
-		}
-
-		if( S_OK != hr )
-		{
-			hr = -SvStl::Err_16005;
-		}
-		else
-		{
-			hr = AddInputRequest( m_pRange->GetIndirectObject(RangeEnum::ER_FailLow), m_FailLowIndirect.c_str() );
-		}
-
-		if( S_OK != hr )
-		{
-			hr = -SvStl::Err_16006;
-		}
-		else
-		{
-			hr = AddInputRequest( m_pRange->GetIndirectObject(RangeEnum::ER_WarnHigh), m_WarnHighIndirect.c_str() );
-		}
-
-		if( S_OK != hr )
-		{
-			hr = -SvStl::Err_16007;
-		}
-		else
-		{
-			hr = AddInputRequest( m_pRange->GetIndirectObject(RangeEnum::ER_WarnLow), m_WarnLowIndirect.c_str() );
-		}
-
-		if( S_OK != hr )
-		{
-			hr = -SvStl::Err_16008;
-		}
-		else
-		{
-			hr = AddInputRequestMarker();
-		}
-
-		if( S_OK != hr )
-		{
-			hr = -SvStl::Err_16009;
-		}
-		else
-		{
-			hr = RunOnce( m_pRange->GetTool()->GetUniqueObjectID() );
-		}
-
-		if( S_OK != hr )
-		{
-			hr = -SvStl::Err_16010;
-		}
+		Result = Values.Commit();
 	}
-
-	return hr;
+	return Result;
 }
 
 std::string RangeClassHelper::GetStringFromRange(RangeEnum::ERange ra) const
@@ -409,9 +339,9 @@ bool RangeClassHelper::IsOwnedByRangeObject(const SVObjectClass& rObject)
 {
 	bool result = false;
 
-	if(rObject.GetOwner())
+	if(rObject.GetParent())
 	{
-		if(SvDef::SVRangeObjectType == rObject.GetOwner()->GetObjectType())
+		if(SvDef::SVRangeObjectType == rObject.GetParent()->GetObjectType())
 		{
 			result = true;
 		}
@@ -465,9 +395,9 @@ bool RangeClassHelper::IsAllowedToSet(const SVObjectClass& ObjectRef, const std:
 LPCTSTR RangeClassHelper::GetOwnerName() const
 {
 	LPCTSTR ret = nullptr;
-	if(m_pRange && m_pRange->GetOwner())
+	if(m_pRange && m_pRange->GetParent())
 	{
-		ret = m_pRange->GetOwner()->GetName();
+		ret = m_pRange->GetParent()->GetName();
 	}
 	return ret;
 }

@@ -22,7 +22,7 @@ SVObjectReference::SVObjectReference( SVObjectClass* pObject ):
 , m_pValueObject(nullptr)
 {
 	m_pObject = pObject;
-	m_Guid = (nullptr != m_pObject) ? m_pObject->GetUniqueObjectID() : SV_GUID_NULL;
+	m_Guid = (nullptr != m_pObject) ? m_pObject->GetUniqueObjectID() : GUID_NULL;
 	(nullptr != m_pObject) ? m_NameInfo.ParseObjectName(m_pObject->GetCompleteName().c_str()) : m_NameInfo.clear();
 }
 
@@ -31,7 +31,7 @@ SVObjectReference::SVObjectReference( SVObjectClass* pObject, long lArrayIndex, 
 , m_pValueObject(nullptr)
 {
 	m_pObject = pObject;
-	m_Guid = m_pObject ? m_pObject->GetUniqueObjectID() : SV_GUID_NULL;
+	m_Guid = m_pObject ? m_pObject->GetUniqueObjectID() : GUID_NULL;
 	if( nullptr != m_pObject )
 	{
 		m_NameInfo.ParseObjectName( m_NameInfo, m_pObject->GetCompleteName().c_str() );
@@ -46,7 +46,7 @@ SVObjectReference::SVObjectReference( SVObjectClass* pObject, const SVObjectName
 	: m_pValueObject (nullptr)
 {
 	m_pObject = pObject;
-	m_Guid = m_pObject ? m_pObject->GetUniqueObjectID() : SV_GUID_NULL;
+	m_Guid = m_pObject ? m_pObject->GetUniqueObjectID() : GUID_NULL;
 	m_NameInfo = p_rNameInfo;
 	m_ArrayIndex = p_rNameInfo.GetIndexValue();
 }
@@ -79,7 +79,7 @@ const SVObjectReference& SVObjectReference::operator = ( const SVObjectReference
 {
 	m_pObject = rhs.m_pObject;
 	m_pValueObject = nullptr;
-	m_Guid = rhs.m_Guid != SV_GUID_NULL ? rhs.m_Guid : (nullptr != m_pObject ? m_pObject->GetUniqueObjectID() : SV_GUID_NULL);
+	m_Guid = rhs.m_Guid != GUID_NULL ? rhs.m_Guid : (nullptr != m_pObject ? m_pObject->GetUniqueObjectID() : GUID_NULL);
 	m_NameInfo = rhs.m_NameInfo;
 	m_ArrayIndex = rhs.m_ArrayIndex;
 	return *this;

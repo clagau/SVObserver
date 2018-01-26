@@ -25,8 +25,8 @@ static char THIS_FILE[]=__FILE__;
 SV_IMPLEMENT_CLASS( SVLinearEdgeAProcessingClass, SVLinearEdgeAProcessingClassGuid );
 
 
-SVLinearEdgeAProcessingClass::SVLinearEdgeAProcessingClass( SVObjectClass* POwner, int StringResourceID )
-					                   :SVLinearEdgeProcessingClass( POwner, StringResourceID )
+SVLinearEdgeAProcessingClass::SVLinearEdgeAProcessingClass(SVObjectClass* POwner, int StringResourceID)
+	:SVLinearEdgeProcessingClass(POwner, StringResourceID)
 {
 	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVLinearEdgeAProcessingObjectType;
 
@@ -67,6 +67,18 @@ SVLinearEdgeAProcessingClass::SVLinearEdgeAProcessingClass( SVObjectClass* POwne
 
 	RegisterEmbeddedObject(&m_svLinearEdges, SVLinearEdgesClassGuid, IDS_CLASSNAME_SVLINEAREDGESCLASS, false, SvOi::SVResetItemNone );
 
+	//! This cannot be initialized direct during construction because m_EdgeEmbeddedGuids is inherited
+	m_EdgeEmbeddedGuids = SVGuidVector
+	{
+		SVEdgeADirectionGuid, SVEdgeAPolarisationGuid, SVEdgeAEdgeSelectGuid, SVEdgeAEdgeSelectThisValueGuid,
+		SVEdgeAIsFixedEdgeMarkerGuid, SVEdgeAPositionGuid, SVEdgeAPositionOffsetGuid, SVUseLowerThresholdSelectableObjectGuid,
+		SVUseLowerThresholdMaxMinusPercentDiffObjectGuid, SVUseLowerThresholdMaxMinusOffsetObjectGuid, SVUseLowerThresholdMinPlusOffsetObjectGuid,
+		SVEdgeALowerThresholdValueGuid, SVLowerThresholdMaxMinusPercentDiffObjectGuid, SVLowerThresholdMaxMinusOffsetObjectGuid,
+		SVLowerThresholdMinPlusOffsetObjectGuid, SVUseUpperThresholdSelectableObjectGuid, SVUseUpperThresholdMaxMinusPercentDiffObjectGuid,
+		SVUseUpperThresholdMaxMinusOffsetObjectGuid, SVUseLowerThresholdMinPlusOffsetObjectGuid, SVEdgeUpperThresholdValueGuid,
+		SVUpperThresholdMaxMinusPercentDiffObjectGuid, SVUpperThresholdMaxMinusOffsetObjectGuid, SVUpperThresholdMinPlusOffsetObjectGuid,
+		SVLinearEdgesClassGuid 
+	};
 	// Set default inputs and outputs
 	addDefaultInputObjects();
 }

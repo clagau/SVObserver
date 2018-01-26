@@ -176,11 +176,14 @@ void SVArchiveTool::initializeArchiveTool()
 	m_dwArchiveMaxImagesCount.SetDefaultValue(10, true);
 
 	m_evoArchiveMethod.SetDefaultValue( SVArchiveAsynchronous, true);
-	SVEnumerateVector vec;
-	vec.push_back( SVEnumeratePair(_T("Synchronous"), SVArchiveSynchronous ) );
-	vec.push_back( SVEnumeratePair(_T("Change Mode"), SVArchiveGoOffline ) );
-	vec.push_back( SVEnumeratePair(_T("Asynchronous"), SVArchiveAsynchronous ) );
-	m_evoArchiveMethod.SetEnumTypes(vec);
+
+	SvOi::NameValueVector EnumVector
+	{
+		{ _T("Synchronous"), SVArchiveSynchronous },
+		{ _T("Change Mode"), SVArchiveGoOffline },
+		{ _T("Asynchronous"), SVArchiveAsynchronous }
+	};
+	m_evoArchiveMethod.SetEnumTypes(EnumVector);
 	
 	m_stringArchiveImageGuids_OBSOLETE.SetObjectAttributesAllowed( SvDef::SV_NO_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute );
 	m_stringArchiveResultGuids_OBSOLETE.SetObjectAttributesAllowed( SvDef::SV_NO_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute );

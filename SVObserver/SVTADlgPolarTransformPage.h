@@ -16,15 +16,20 @@
 #pragma once
 
 #pragma region Includes
-#include "SVEnumerateCombo.h"
-#include "InspectionEngine/SVTaskObjectValueInterface.h"
+#include "SVMFCControls/SVEnumerateCombo.h"
+#include "SVUtilityLibrary/SVGuid.h"
 #pragma endregion Includes
 
+#pragma region Declarations
 class SVToolAdjustmentDialogSheetClass;
 class SVToolClass;
 class SVEvaluateClass;
+class SVBoolValueObjectClass;
+class SVDoubleValueObjectClass;
+class SVEnumerateValueObjectClass;
+#pragma endregion Declarations
 
-class SVToolAdjustmentDialogPolarTransformPageClass : public CPropertyPage, public SVTaskObjectValueInterface
+class SVToolAdjustmentDialogPolarTransformPageClass : public CPropertyPage
 {
 public:
 	SVToolAdjustmentDialogPolarTransformPageClass( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent );
@@ -61,8 +66,8 @@ protected:
 public:
 	//{{AFX_DATA(SVToolAdjustmentDialogPolarTransformPageClass)
 	enum { IDD = IDD_TA_POLARTRANSFORM_DIALOG };
-	SVEnumerateComboClass	m_AngularMethodCombo;
-	SVEnumerateComboClass	interpolationComboCtrl;
+	SvMc::SVEnumerateComboClass	m_AngularMethodCombo;
+	SvMc::SVEnumerateComboClass	interpolationComboCtrl;
 	CString	m_CenterXValue;
 	CString	m_CenterYValue;
 	CString	m_StartRadiusValue;
@@ -74,7 +79,7 @@ public:
 
 protected:
 	SVToolAdjustmentDialogSheetClass* m_pParentDialog;
-	SVToolClass* pTool;
+	SVToolClass* m_pTool;
 
 	SVEvaluateClass*			m_pEvaluateCenterX;
 	SVDoubleValueObjectClass*	m_pCenterXResult;
