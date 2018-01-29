@@ -258,15 +258,14 @@ void SVPixelAnalyzerDlg::OnPixelSetRange()
 
 		pAnalyzerResult = m_pAnalyzer->GetResultObject();
 
-		if (nullptr == pAnalyzerResult)
+		if (nullptr != pAnalyzerResult)
+		{
+			SVSetupDialogManager::Instance().SetupDialog(pAnalyzerResult->GetClassID(), pAnalyzerResult->GetUniqueObjectID(), this);
+		}
+		else
 		{
 			SvStl::MessageMgrStd  Exception(SvStl::LogAndDisplay);
 			Exception.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16085);
-		}
-		else if (S_OK != SVSetupDialogManager::Instance().SetupDialog(pAnalyzerResult->GetClassID(), pAnalyzerResult->GetUniqueObjectID(), this))
-		{
-			SvStl::MessageMgrStd  Exception(SvStl::LogAndDisplay);
-			Exception.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16086);;
 		}
 	}
 }

@@ -366,7 +366,6 @@ namespace SvStl
 	static const int 	Err_16081  =  Mec_ErrorBase + 81;
 	static const int 	Err_16084 =	  Mec_ErrorBase + 84;
 	static const int 	Err_16085 =   Mec_ErrorBase + 85;
-	static const int 	Err_16086  =  Mec_ErrorBase + 86;
 	static const int 	Err_16087  =  Mec_ErrorBase + 87;
 	static const int 	Err_16088  =  Mec_ErrorBase + 88;
 	static const int 	Err_16089  =  Mec_ErrorBase + 89;
