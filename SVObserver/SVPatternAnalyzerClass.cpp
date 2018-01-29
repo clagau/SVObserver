@@ -738,11 +738,14 @@ bool SVPatternAnalyzerClass::CloseObject()
 
 void SVPatternAnalyzerClass::ResetResultValues()
 {
-// Reset the results to its default values (for the current index, which is One based).
-	msv_dpatResultMatchScore.SetValue(0.0);
-	msv_dpatResultX.SetValue(0.0);
-	msv_dpatResultY.SetValue(0.0);
-	msv_dpatResultAngle.SetValue(0.0);
+	int ArraySize = msv_dpatResultMatchScore.getArraySize();
+	for(int i=0; i < ArraySize; i++)
+	{
+		msv_dpatResultMatchScore.SetValue(0.0, i);
+		msv_dpatResultX.SetValue(0.0, i);
+		msv_dpatResultY.SetValue(0.0, i);
+		msv_dpatResultAngle.SetValue(0.0, i);
+	}
 }
 
 bool SVPatternAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::MessageContainerVector *pErrorMessages)

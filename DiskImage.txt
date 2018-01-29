@@ -1,53 +1,26 @@
-NOTABLE SVOBSERVER CHANGES:
+Notable changes from 7.55 to 7.56
+
+Known new Bugs:
++ None
 
 Compatible Changes:
-+ Pattern Analyzer
-+ Define center for pattern matching
-+ Width and Height of Pattern Analyzer Model
-+ Enable Don't Care Areas in Pattern Matching
-+ Color Camera
-+ Draw ROI on Color image
-+ Color Tool ROI in Result Picker
-+ Color Tool: Function to disable Tresholds 2nd try
-+ Regression Test stop condition
-+ Display Table Object
-+ Return table from Blob Analyzer
++ None
+
 Incompatible Changes:
-+ Variables removed
- - Clean up SVX file – Results are not saved any more 
- - Remove IsValid from objects
- - SVObjectClass::Get/SetObjectValue has old name tags – removed "Friend", "DataLinkID" and "AttributesAllowed" from old configurations
-+ Remote Inputs are mixed
-+ Replace image transfer from V-Drive – V-Drive size was reduced to 3 GB
-+ Invalid result values in monitor lists are provided with their default value (resp. 0)
++ SVO-1753: Fixed problem with "MaximumBlobDataArraySize" > 1 in Blob Analyzer is incompatible to SVObserver 7.50 and 7.55
++ SVO-1756: Fixed problem with "Max Number of Model" > 1 in pattern match is incompatible to SVObserver 7.50 and 7.55
+
 Fixed Bugs:
-+ Table
- - Table Tool in Archive Tool
- - TableAnalyzerTool: Invalid tool state resolved only after deletion of the affected Analyzer
- - Table tool remove table object causes crash
-+ Configuration
- - Wrong result in Math Tool
- - Disappearing tool
- - Renaming of a tool can lead to duplicate tool names (by using F2 button)
- - SVIM error message when camera address was not set
- - Linear edge count analyzer: no tool graph with thresholds in the image
-+ SVRC
- - SVO Crash after setting via SVRC (SAMI) an empty string to two Global (Text-) Constants
- - SVRC methode setDeviceMode() waits for timeout even when there is no connection
++ See Incompatible Changes
 
-NOTABLE SVIM IMAGE CHANGES:
+Notable SVIM Image Changes:
++ None
 
-+ Install newly compiled LPT driver
-+ Update ImageJ to version 1.51k 
-+ Misleading name in Hardware.ini and Error Messages
-+ Changes in ini file for RRS and ShardMemory
-+ Camera files updated
-
-Image Name: Z7R0750A
+Image Name: Z7R0756A
 
 SOFTWARE VERSIONS:
 
-Seidenader Vision Inc. SVObserver version 7.50
+Seidenader Vision Inc. SVObserver version 7.56
 
 SVRC Version 7.50
 SIAC Version 7.50
