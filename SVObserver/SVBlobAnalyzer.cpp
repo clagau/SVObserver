@@ -806,27 +806,33 @@ void SVBlobAnalyzerClass::UpdateBlobFeatures()
 {
 	std::string FeaturesEnabled;
 	m_PersistantFeaturesEnabled.getValue(FeaturesEnabled);
-	assert(SvOi::SV_NUMBER_OF_BLOB_FEATURES == FeaturesEnabled.size());
 
-	for (int i = 0; i < SvOi::SV_NUMBER_OF_BLOB_FEATURES;  i++)
+	//! Only update the features if they have changed
+	if (m_PreviousFeaturesEnabled != FeaturesEnabled)
 	{
-		if (SvOi::SV_CENTER_X_SOURCE != i && SvOi::SV_CENTER_Y_SOURCE != i)
+		assert(SvOi::SV_NUMBER_OF_BLOB_FEATURES == FeaturesEnabled.size());
+
+		for (int i = 0; i < SvOi::SV_NUMBER_OF_BLOB_FEATURES; i++)
 		{
-			if ('1' == FeaturesEnabled[i])
+			if (SvOi::SV_CENTER_X_SOURCE != i && SvOi::SV_CENTER_Y_SOURCE != i)
 			{
-				EnableFeature(i);
-			}
-			else
-			{
-				m_Value[i].SetObjectAttributesAllowed(SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute);
-				FreeResult(i);
-				RemoveEmbeddedObject(&m_Value[i]);
+				if ('1' == FeaturesEnabled[i])
+				{
+					EnableFeature(i);
+				}
+				else
+				{
+					m_Value[i].SetObjectAttributesAllowed(SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute);
+					FreeResult(i);
+					RemoveEmbeddedObject(&m_Value[i]);
+				}
 			}
 		}
-	}
 
-	dynamic_cast<SVInspectionProcess*>(GetInspection())->SetDefaultInputs();
-	BuildFeatureListID();
+		dynamic_cast<SVInspectionProcess*>(GetInspection())->SetDefaultInputs();
+		BuildFeatureListID();
+		m_PreviousFeaturesEnabled = FeaturesEnabled;
+	}
 }
 
 void SVBlobAnalyzerClass::EnableFeature(int Feature)

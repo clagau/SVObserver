@@ -182,7 +182,9 @@ protected:
 private:
 	void init();
 	void CreateArray();
-
+	
+	std::string m_PreviousFeaturesEnabled
+		;
 	static const int m_defaultResultNumberOfBlobsLowFail = 0;
 	static const int m_defaultResultNumberOfBlobsLowWarn = 0;
 	static const int m_defaultResultNumberOfBlobsHighFail = 9999;
