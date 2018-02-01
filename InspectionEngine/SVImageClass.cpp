@@ -412,13 +412,8 @@ HRESULT SVImageClass::RebuildStorage( bool p_ExcludePositionCheck, SvStl::Messag
 			hr = l_Temp;
 		}
 
-		// but we still update children?
-		l_Temp = UpdateChildren();
-
-		if( S_OK == hr )
-		{
-			hr = l_Temp;
-		}
+		//Update children but do not check if they cause errors as these are handled somewhere else
+		UpdateChildren();
 	} 
 
 	if( S_OK == hr )
@@ -426,9 +421,9 @@ HRESULT SVImageClass::RebuildStorage( bool p_ExcludePositionCheck, SvStl::Messag
 		m_LastReset = SvTl::GetTimeStamp();
 	}
 
-	if ( S_OK != hr && nullptr != pErrorMessages && pErrorMessages->empty() )
+	if (S_OK != hr && nullptr != pErrorMessages && pErrorMessages->empty())
 	{
-		SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RebuildFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RebuildFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 		pErrorMessages->push_back(Msg);
 	}
 

@@ -464,8 +464,8 @@ namespace SvStl
 	(Tid_MilBarCodeInitFailed, _T("Mil Bar code initilized failed."))
 	(Tid_BarCodeMatchStringLoadFailed, _T("Load of the match string for the Bar code result failed."))
 	(Tid_UpdateOutputImageExtentsFailed, _T("Update Output image extents failed."))
-	(Tid_InitExternalTaskFailed, _T("Initialized of External Taks failed."))
-	(Tid_InitImageFailed, _T("Initialized of Image failed."))
+	(Tid_InitExternalTaskFailed, _T("External Task initialization failed."))
+	(Tid_InitImageFailed, _T("Image initialization failed."))
 	(Tid_UpdateTransformDataFailed, _T("Updating transform data failed."))
 	(Tid_UpdateLineExtentDataFailed, _T("Updating Line extent data failed."))
 	(Tid_UpdateLinearToolDataFailed, _T("Updating Linear tool data failed."))
@@ -521,5 +521,6 @@ namespace SvStl
 	(Tid_StdException, _T("Std:Exception  what: %s"))
 	(Tid_ColorToolExtentsChanged, _T("For backward compatibility: The ROI of at least one Color tool in the configuration has been changed to the size of the Main image"))
 	(Tid_FailstatusNotFound, _T("Could not get Failstatus"))
+	(Tid_WrongInputImageType, _T("The input image is the wrong color type"))
 	;
 } //namespace SvStl

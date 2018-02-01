@@ -122,6 +122,32 @@ namespace SvOl
 			OutputGraph.saveGraphDot(rFileName.c_str(), NameLookup);
 		}
 	}
+
+	void DependencyManager::getToolDependency(SvOi::SvGuidInserter Inserter, const SVGuidSet& rSourceSet) const
+	{
+		//! Note before calling this method the graph index must be updated this is done in the interface!
+		Dependencies ObjectDependencies;
+
+		getChildDependents(rSourceSet, std::inserter(ObjectDependencies, ObjectDependencies.end()), SvOl::JoinType::Owner, SvOl::JoinType::Dependent, false);
+
+		for (auto const& rEntry : ObjectDependencies)
+		{
+			SVObjectClass* pClient = SVObjectManagerClass::Instance().GetObject(rEntry.second);
+			if (nullptr != pClient)
+			{
+				SVObjectClass* pTool = (SvDef::SVToolObjectType == pClient->GetObjectType()) ? pClient : pClient->GetAncestor(SvDef::SVToolObjectType);
+				if (nullptr != pTool)
+				{
+					const SVGUID& rToolID = pTool->GetUniqueObjectID();
+					// If tool not in Source add it
+					if (rSourceSet.end() == rSourceSet.find(rToolID))
+					{
+						Inserter = rToolID;
+					}
+				}
+			}
+		}
+	}
 	#pragma endregion Public Methods
 } //namespace SvOl
 
@@ -130,5 +156,11 @@ void SvOi::getToolDependency( StringPairInserter Inserter, const SVGuidSet& rSou
 {
 	SvOl::DependencyManager::Instance().updateVertexIndex();
 	SvOl::DependencyManager::Instance().getToolDependency(Inserter, rSourceSet, nameToObjectType, ToolDependency, rFileName);
+}
+
+void SvOi::getToolDependency(SvGuidInserter Inserter, const SVGuidSet& rSourceSet)
+{
+	SvOl::DependencyManager::Instance().updateVertexIndex();
+	SvOl::DependencyManager::Instance().getToolDependency(Inserter, rSourceSet);
 }
 #pragma endregion IDependencyManager

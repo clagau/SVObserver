@@ -43,7 +43,11 @@ namespace SvOl
 	//! \param rFileName [in] Optional file name to save the graph file 
 	void getToolDependency( SvOi::StringPairInserter Inserter, const SVGuidSet& rSourceSet, SvDef::SVObjectTypeEnum nameToObjectType, SvOi::ToolDependencyEnum ToolDependency = SvOi::ToolDependencyEnum::Client, const std::string& rFileName = std::string()) const;
 
-	#pragma endregion Public Methods
+	//! Return the tool dependency of the given sources
+	//! \param Inserter [in] Iterator to insert the tool GUID
+	//! \param rSourceSet [in] reference to the source set of GUIDs
+	void getToolDependency(SvOi::SvGuidInserter Inserter, const SVGuidSet& rSourceSet) const;
+#pragma endregion Public Methods
 
 	#pragma region Private Methods
 	private:

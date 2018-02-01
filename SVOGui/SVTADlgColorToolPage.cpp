@@ -42,8 +42,9 @@ namespace SvOg
 	, m_Images(rInspectionID, rTaskObjectID, SvDef::SVImageColorType)
 	, m_InspectionID(rInspectionID)
 	, m_TaskObjectID(rTaskObjectID)
-		, m_Values{ SvOg::BoundValues{ rInspectionID, rTaskObjectID } }
+	, m_Values{ SvOg::BoundValues{ rInspectionID, rTaskObjectID } }
 	, m_convertToHSI{ false }
+	, m_InputName{ SvDef::cColorToolInputImage }
 	{
 	}
 
@@ -88,9 +89,8 @@ namespace SvOg
 		// and that the images we are concerned with are first in the list
 		std::string SelectedImageName;
 		const SvUl::InputNameGuidPairList& rImageList = m_Images.GetConnectedImageList();
-		if (rImageList.size())
+		if(0 < rImageList.size() && m_InputName == rImageList.begin()->first)
 		{
-			m_InputName = rImageList.begin()->first;
 			SelectedImageName = rImageList.begin()->second.first;
 		}
 		m_availableSourceImageListBox.Init(rAvailableImageList, SelectedImageName, cNoImageTag);
@@ -109,7 +109,6 @@ namespace SvOg
 		int index = m_availableSourceImageListBox.GetCurSel();
 		if (LB_ERR != index)
 		{
-			bool bIsValid = m_Images.IsToolValid();
 			CString Text;
 			m_availableSourceImageListBox.GetLBText(index, Text);
 			std::string ImageName(Text);
@@ -120,7 +119,7 @@ namespace SvOg
 				HRESULT result = m_Images.ResetTask(errorMessages);
 				m_Images.ToolRunOnce();
 				SetImage();
-				if (bIsValid && S_OK != result)
+				if (S_OK != result)
 				{
 					SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
 					Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_ToolPositionError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10232);

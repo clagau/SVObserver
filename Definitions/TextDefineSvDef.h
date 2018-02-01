@@ -12,6 +12,7 @@ namespace SvDef
 {
 	const TCHAR* const WatershedMarkerImageConnectionName = _T( "WatershedFilterMarkerImage" );
 	const TCHAR* const ImageAnalyzerImageName = _T( "ImageAnalyzerImage" );
+	const TCHAR* const cColorToolInputImage = _T("ColorToolInputImage");
 	const TCHAR* const PatternModelImageName = _T( "Model Image" );
 	const TCHAR* const PatternDontCareImageName = _T( "Dont care Image" );
 	const TCHAR* const TableClearEquationName = _T("ClearConditionalFormula");

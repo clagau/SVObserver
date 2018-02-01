@@ -12,6 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "Definitions/SVImageFormatEnum.h"
+#include "Definitions/TextDefineSvDef.h"
 #include "SVColorTool.h"
 #include "SVInspectionProcess.h"
 #include "SVToolSet.h"
@@ -250,31 +251,43 @@ bool SVColorToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContain
 	if (m_OutputImage.SetImageHandleIndex(rRunStatus.Images) && m_OutputImage.GetImageHandle(OutputImageHandle))
 	{
 		SVImageClass* pInputImage = getInputImage();
-		if (m_LogicalROIImage.GetLastResetTimeStamp() <= pInputImage->GetLastResetTimeStamp())
+		if (nullptr != pInputImage)
 		{
-			UpdateImageWithExtent();
-		}
-		SvOi::SVImageBufferHandlePtr inputImageHandle;
-		m_LogicalROIImage.GetParentImageHandle(inputImageHandle);
-		if (!OutputImageHandle->empty() && nullptr != inputImageHandle && !inputImageHandle->empty())
-		{
-			HRESULT MatroxCode(S_OK);
-			if (convertToHSI)
+			if (m_LogicalROIImage.GetLastResetTimeStamp() <= pInputImage->GetLastResetTimeStamp())
 			{
-				MatroxCode = SVMatroxImageInterface::Convert(OutputImageHandle->GetBuffer(), inputImageHandle->GetBuffer(), SVImageRGBToHLS);
+				UpdateImageWithExtent();
 			}
-			else
+			SvOi::SVImageBufferHandlePtr inputImageHandle;
+			m_LogicalROIImage.GetParentImageHandle(inputImageHandle);
+			if (!OutputImageHandle->empty() && nullptr != inputImageHandle && !inputImageHandle->empty())
 			{
-				MatroxCode = SVMatroxBufferInterface::CopyBuffer(OutputImageHandle->GetBuffer(), inputImageHandle->GetBuffer());
-			}
-			if (S_OK != MatroxCode)
-			{
-				Result = false;
-				if (nullptr != pErrorMessages)
+				HRESULT MatroxCode(S_OK);
+				if (convertToHSI)
 				{
-					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
-					pErrorMessages->push_back(Msg);
+					MatroxCode = SVMatroxImageInterface::Convert(OutputImageHandle->GetBuffer(), inputImageHandle->GetBuffer(), SVImageRGBToHLS);
 				}
+				else
+				{
+					MatroxCode = SVMatroxBufferInterface::CopyBuffer(OutputImageHandle->GetBuffer(), inputImageHandle->GetBuffer());
+				}
+				if (S_OK != MatroxCode)
+				{
+					Result = false;
+					if (nullptr != pErrorMessages)
+					{
+						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+						pErrorMessages->push_back(Msg);
+					}
+				}
+			}
+		}
+		else
+		{
+			Result = false;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NoSourceImage, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				pErrorMessages->push_back(Msg);
 			}
 		}
 	}
@@ -303,7 +316,7 @@ void SVColorToolClass::LocalInitialize()
 
 	m_InputImageObjectInfo.SetInputObjectType(SvDef::SVImageObjectType, SvDef::SVImageColorType);
 	m_InputImageObjectInfo.SetObject(GetObjectInfo());
-	RegisterInputObject(&m_InputImageObjectInfo, _T("ColorToolInputImage"));
+	RegisterInputObject(&m_InputImageObjectInfo, SvDef::cColorToolInputImage);
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject(&m_OutputImage, SVOutputImageObjectGuid, IDS_OBJECTNAME_IMAGE1);

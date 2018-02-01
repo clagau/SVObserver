@@ -248,6 +248,8 @@ public:
 	/// \returns bool
 	bool shouldPauseRegressionTestByCondition();
 
+	bool isImageAvailable(SvDef::SVObjectSubTypeEnum ImageType) const;
+
 protected:
 	virtual BOOL SaveModified() override;
 	//}}AFX_VIRTUAL
@@ -362,8 +364,6 @@ private:
 	//! \param rInspectionName [in] the inspection name
 	//! \returns the selected string set of object names
 	SvDef::StringSet TranslateSelectedObjects(const SVObjectReferenceVector& rSelectedObjects, const std::string& rInspectionName) const;
-
-	bool isImageAvailable(SvDef::SVObjectSubTypeEnum ImageType) const;
 
 #pragma endregion Private Methods
 

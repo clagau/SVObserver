@@ -48,11 +48,11 @@ bool SVUnaryImageOperatorListClass::CreateObject( const SVObjectLevelCreateStruc
 
 SVImageClass* SVUnaryImageOperatorListClass::getInputImage() const
 {
-	if (inputImageObjectInfo.IsConnected() && nullptr != inputImageObjectInfo.GetInputObjectInfo().getObject())
+	if (m_inputImageObjectInfo.IsConnected() && nullptr != m_inputImageObjectInfo.GetInputObjectInfo().getObject())
 	{
 		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
 		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return static_cast<SVImageClass*> (inputImageObjectInfo.GetInputObjectInfo().getObject());
+		return static_cast<SVImageClass*> (m_inputImageObjectInfo.GetInputObjectInfo().getObject());
 	}
 
 	return nullptr;
@@ -62,7 +62,21 @@ bool SVUnaryImageOperatorListClass::ResetObject(SvStl::MessageContainerVector *p
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
-	if (nullptr == getInputImage())
+	SVImageClass* pInputImage = getInputImage();
+	if (nullptr != pInputImage)
+	{
+		//! Check that the image color type is correct
+		if (pInputImage->GetObjectSubType() != m_inputImageObjectInfo.GetInputObjectInfo().m_ObjectTypeInfo.SubType)
+		{
+			Result = false;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongInputImageType, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				pErrorMessages->push_back(Msg);
+			}
+		}
+	}
+	else
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
@@ -98,9 +112,9 @@ void SVUnaryImageOperatorListClass::init()
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVUnaryImageOperatorListObjectType;
 
 	// Identify our input type needs
-	inputImageObjectInfo.SetInputObjectType(SvDef::SVImageObjectType, SvDef::SVImageMonoType);
-	inputImageObjectInfo.SetObject(GetObjectInfo());
-	RegisterInputObject(&inputImageObjectInfo, _T("UnaryImageOperatorListImage"));
+	m_inputImageObjectInfo.SetInputObjectType(SvDef::SVImageObjectType, SvDef::SVImageMonoType);
+	m_inputImageObjectInfo.SetObject(GetObjectInfo());
+	RegisterInputObject(&m_inputImageObjectInfo, _T("UnaryImageOperatorListImage"));
 
 	// SetObjectDepth() already called in SVObjectClass Ctor
 

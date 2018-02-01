@@ -55,6 +55,7 @@
 #include "SVOGui/TADialogTableDefinesPage.h"
 #include "SVOGui/TATableSourcePage.h"
 #include "SVOGui/TATableAnalyzerPage.h"
+#include "ObjectInterfaces/IDependencyManager.h"
 #include "Definitions/StringTypeDef.h"
 #include "TextDefinesSvO.h"
 #pragma endregion Includes
@@ -433,13 +434,21 @@ void SVToolAdjustmentDialogSheetClass::OnOK()
 		}
 	}
 
-	SVImageExtentClass oldImageExtend;
 	SVToolClass* pTool = GetTool();
-	pTool->GetImageExtent(oldImageExtend);
 	bool resetResult = false;
 	if ( nullptr != pTool )
 	{
 		resetResult = pTool->resetAllObjects();
+		//Reset all tools dependent on this tool
+		SVGuidSet ToolSet;
+		ToolSet.insert(pTool->GetUniqueObjectID());
+		SVGuidSet ToolDependencySet;
+		SvOi::getToolDependency(std::inserter(ToolDependencySet, ToolDependencySet.end()), ToolSet);
+		for (auto const& rEntry : ToolDependencySet)
+		{
+			SVObjectClass* pTool = SVObjectManagerClass::Instance().GetObject(rEntry);
+			pTool->resetAllObjects();
+		}
 	}
 		
 	if( resetResult )

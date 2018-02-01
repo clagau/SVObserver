@@ -58,7 +58,7 @@ private:
 	void init();
 
 protected:
-	SVInObjectInfoStruct		inputImageObjectInfo;
+	SVInObjectInfoStruct		m_inputImageObjectInfo;
 	SvOi::SVImageBufferHandlePtr		m_milTmpImageObjectInfo1;
 	SvOi::SVImageBufferHandlePtr		m_milTmpImageObjectInfo2;
 };
