@@ -370,8 +370,8 @@ namespace SvOg
 				// Deactivate Mouse Proc Func of SVDlgGraph Control...
 				m_LUTGraph.SetMousePointProcFunc(nullptr, nullptr);
 				showFormulaControls();
-				m_isFormulaClip = m_Values.Get<long>(SVLUTUpperClipObjectGuid) ? true : false;
-					break;
+				m_isFormulaClip = m_LutEquation.Get<bool>(SVLUTEquationClipFlagObjectGuid);
+				break;
 			}
 
 			case 5: // Free Form...

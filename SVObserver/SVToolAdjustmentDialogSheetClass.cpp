@@ -276,8 +276,8 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 
 		case SvDef::SVTransformationToolObjectType:
 			AddPage( new SvOg::SVToolAdjustmentDialogTransformImagePageClass( m_InspectionID, m_TaskObjectID ) );
-			AddPage( new SVToolAdjustmentDialogTranslationPageClass( m_InspectionID, m_TaskObjectID, this ) );
-			AddPage( new SVToolAdjustmentDialogRotationPageClass( m_InspectionID, m_TaskObjectID, this ) );
+			AddPage( new SVToolAdjustmentDialogTranslationPageClass(m_InspectionID, m_TaskObjectID) );
+			AddPage( new SVToolAdjustmentDialogRotationPageClass(m_InspectionID, m_TaskObjectID) );
 			AddPage( new SVToolAdjustmentDialogTransformationLearnPageClass( m_InspectionID, m_TaskObjectID, this ) );
 			AddPage( pConditionalDlg );
 			AddPage( new SvOg::SVToolAdjustmentDialogGeneralPageClass( m_InspectionID, m_TaskObjectID ) );

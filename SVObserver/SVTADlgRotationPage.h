@@ -13,21 +13,18 @@
 #pragma region Includes
 #include "SVMFCControls/SVEnumerateCombo.h"
 #include "SVUtilityLibrary/SVGuid.h"
+#include "SVOGui/ValuesAccessor.h"
+#include "SVOGui/DataController.h"
 #pragma endregion
 
 #pragma region Declarations
 class SVEvaluateClass;
-class SVToolAdjustmentDialogSheetClass;
-class SVToolClass;
-class SVDoubleValueObjectClass;
-class SVBoolValueObjectClass;
-class SVEnumerateValueObjectClass;
 #pragma endregion;
 
 class SVToolAdjustmentDialogRotationPageClass : public CPropertyPage
 {
 public:
-	SVToolAdjustmentDialogRotationPageClass( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent );
+	SVToolAdjustmentDialogRotationPageClass( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID);
 	virtual ~SVToolAdjustmentDialogRotationPageClass();
 
 #pragma region Protected Methods
@@ -62,30 +59,25 @@ public:
 	//{{AFX_DATA(SVToolAdjustmentDialogRotationPageClass)
 	enum { IDD = IDD_TA_ROTATION_DIALOG };
 	SvMc::SVEnumerateComboClass	m_cbInterpolation;
-	CString	m_strRotationAngleValue;
-	CString	m_strRotationXValue;
-	CString	m_strRotationYValue;
-	BOOL	m_performRotation;
+	CString	m_RotationAngleValue;
+	CString	m_RotationXValue;
+	CString	m_RotationYValue;
+	BOOL	m_performRotation{ false };
 	//}}AFX_DATA
 #pragma endregion Data Elements
 
 protected:
-	SVToolAdjustmentDialogSheetClass* m_pParentDialog;
-	SVToolClass* m_pTool;
-
-	SVEvaluateClass*			m_pEvaluateRotationX;
-	SVDoubleValueObjectClass*	m_pRotationXResult;
-
-	SVEvaluateClass*			m_pEvaluateRotationY;
-	SVDoubleValueObjectClass*	m_pRotationYResult;
-
-	SVEvaluateClass*			m_pEvaluateRotationAngle;
-	SVDoubleValueObjectClass*	m_pRotationAngleResult;
-
-	SVBoolValueObjectClass*		m_pPerformRotation;
-	SVEnumerateValueObjectClass* m_pInterpolationMode;
-
 	CFont angleFont;
+
+	SVEvaluateClass*			m_pEvaluateRotationX{ nullptr };
+	SVEvaluateClass*			m_pEvaluateRotationY{ nullptr };
+	SVEvaluateClass*			m_pEvaluateRotationAngle{ nullptr };
+
+	SVGUID m_InspectionID;
+	SVGUID m_TaskObjectID;
+	typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
+	typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
+	std::unique_ptr<Controller> m_pValues{ nullptr };
 #pragma endregion
 };
 

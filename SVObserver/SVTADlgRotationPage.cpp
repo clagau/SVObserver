@@ -14,11 +14,7 @@
 #include "SVTADlgRotationPage.h"
 #include "SvOGui/SVFormulaEditorSheet.h"
 #include "InspectionEngine/SVEvaluate.h"
-#include "SVIPDoc.h"
-#include "InspectionEngine/SVTool.h"
-#include "SVToolAdjustmentDialogSheetClass.h"
 #include "InspectionEngine/SVImageTransform.h"
-#include "SVToolSet.h"
 
 #pragma endregion
 
@@ -43,27 +39,11 @@ BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogRotationPageClass, CPropertyPage)
 END_MESSAGE_MAP()
 
 #pragma region Constructor
-SVToolAdjustmentDialogRotationPageClass::SVToolAdjustmentDialogRotationPageClass( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent )
-	: CPropertyPage(SVToolAdjustmentDialogRotationPageClass::IDD)
+SVToolAdjustmentDialogRotationPageClass::SVToolAdjustmentDialogRotationPageClass( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID)
+: CPropertyPage(SVToolAdjustmentDialogRotationPageClass::IDD)
+, m_InspectionID{ rInspectionID }
+, m_TaskObjectID{ rTaskObjectID }
 {
-	//{{AFX_DATA_INIT(SVToolAdjustmentDialogRotationPageClass)
-	m_strRotationAngleValue = _T("");
-	m_strRotationXValue = _T("");
-	m_strRotationYValue = _T("");
-	m_performRotation = FALSE;
-	//}}AFX_DATA_INIT
-
-	m_pParentDialog	= Parent;
-	m_pTool			= nullptr;
-
-	m_pPerformRotation		= nullptr;
-	m_pEvaluateRotationX	= nullptr;
-	m_pRotationXResult		= nullptr;
-	m_pEvaluateRotationY	= nullptr;
-	m_pRotationYResult		= nullptr;
-	m_pEvaluateRotationAngle= nullptr;
-	m_pRotationAngleResult	= nullptr;
-	m_pInterpolationMode	= nullptr;
 }
 #pragma endregion
 
@@ -78,20 +58,19 @@ void SVToolAdjustmentDialogRotationPageClass::DoDataExchange(CDataExchange* pDX)
 	CPropertyPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(SVToolAdjustmentDialogRotationPageClass)
 	DDX_Control(pDX, IDC_INTERPOLATION_MODE_COMBO, m_cbInterpolation);
-	DDX_Text(pDX, IDC_ROTATION_ANGLE_EDIT, m_strRotationAngleValue);
-	DDX_Text(pDX, IDC_ROTATION_X_EDIT, m_strRotationXValue);
-	DDX_Text(pDX, IDC_ROTATION_Y_EDIT, m_strRotationYValue);
+	DDX_Text(pDX, IDC_ROTATION_ANGLE_EDIT, m_RotationAngleValue);
+	DDX_Text(pDX, IDC_ROTATION_X_EDIT, m_RotationXValue);
+	DDX_Text(pDX, IDC_ROTATION_Y_EDIT, m_RotationYValue);
 	DDX_Check(pDX, IDC_PERFORM_ROTATION, m_performRotation);
 	//}}AFX_DATA_MAP
 }
 
 BOOL SVToolAdjustmentDialogRotationPageClass::OnSetActive()
 {
-	if( m_pInterpolationMode )
+	if (nullptr != m_pValues)
 	{
-		std::string EnumString;
-		m_pInterpolationMode->getValue( EnumString );
-		m_cbInterpolation.SelectString( -1, EnumString.c_str() );
+		long CurrentSelection = m_pValues->Get<long>(SVOutputInterpolationModeObjectGuid);
+		m_cbInterpolation.SetCurSelItemData(CurrentSelection);
 	}
 
 	return CPropertyPage::OnSetActive();
@@ -112,111 +91,64 @@ BOOL SVToolAdjustmentDialogRotationPageClass::OnInitDialog()
 
 	pWnd->SetWindowText("q:");
 
-	if( m_pParentDialog && ( m_pTool = m_pParentDialog->GetTool() ) )
+	CPropertyPage::OnInitDialog();
+
+	SvOi::IObjectClass* pTool = SvOi::getObject(m_TaskObjectID);
+	if (nullptr != pTool)
 	{
-		// Get Evaluate Object for the X coordinate...
+		// Get Evaluate Object...
 		SvDef::SVObjectTypeInfoStruct evaluateObjectInfo;
 		evaluateObjectInfo.ObjectType = SvDef::SVMathContainerObjectType;
-	
-		// Set up the requestor for the evaluate result object
-		SvDef::SVObjectTypeInfoStruct resultObjectInfo;
-		resultObjectInfo.ObjectType = SvDef::SVValueObjectType;
-		resultObjectInfo.SubType = SvDef::SVDoubleValueObjectType;
-		
+
 		// Get Evaluate Object for the X coordinate...
 		evaluateObjectInfo.SubType = SvDef::SVEvaluateRotationXObjectType;
-		m_pEvaluateRotationX = dynamic_cast<SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
-		if( m_pEvaluateRotationX )
-		{
-			// Get Evaluate Result Object for the X coordinate...
-			resultObjectInfo.EmbeddedID = SVOutputEvaluateRotationXResultObjectGuid;
-			m_pRotationXResult = dynamic_cast<SVDoubleValueObjectClass*>(m_pEvaluateRotationX->getFirstObject(resultObjectInfo));
-		}
+		m_pEvaluateRotationX = dynamic_cast<SVEvaluateClass*> (pTool->getFirstObject(evaluateObjectInfo));
 
 		// Get Evaluate Object for the Y coordinate...
 		evaluateObjectInfo.SubType = SvDef::SVEvaluateRotationYObjectType;
-		m_pEvaluateRotationY = dynamic_cast<SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
-		if( m_pEvaluateRotationY )
-		{
-			// Get Evaluate Result Object for the Y coordinate...
-			resultObjectInfo.EmbeddedID = SVOutputEvaluateRotationYResultObjectGuid;
-			m_pRotationYResult = dynamic_cast<SVDoubleValueObjectClass*>(m_pEvaluateRotationY->getFirstObject(resultObjectInfo));
-		}
+		m_pEvaluateRotationY = dynamic_cast<SVEvaluateClass*> (pTool->getFirstObject(evaluateObjectInfo));
 
-		// Get Evaluate Object for the Angle...
-		evaluateObjectInfo.SubType	   = SvDef::SVEvaluateRotationAngleObjectType;
-		m_pEvaluateRotationAngle = dynamic_cast<SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
-		if( m_pEvaluateRotationAngle )
-		{
-			// Get Evaluate Result Object for the Angle...
-			resultObjectInfo.EmbeddedID = SVOutputEvaluateRotationAngleResultObjectGuid;
-			m_pRotationAngleResult = dynamic_cast<SVDoubleValueObjectClass*>(m_pEvaluateRotationAngle->getFirstObject(resultObjectInfo));
-		}
-		
-		// Get Rotation enabled...
+		evaluateObjectInfo.SubType = SvDef::SVEvaluateRotationAngleObjectType;
+		m_pEvaluateRotationAngle = dynamic_cast<SVEvaluateClass*>(pTool->getFirstObject(evaluateObjectInfo));
+
+		//Image Transformation
 		SvDef::SVObjectTypeInfoStruct objectInfo;
-		objectInfo.ObjectType = SvDef::SVValueObjectType;
-		objectInfo.SubType = SvDef::SVBoolValueObjectType;
-		objectInfo.EmbeddedID = SVPerformRotationObjectGuid;
-		m_pPerformRotation = dynamic_cast<SVBoolValueObjectClass*>(m_pTool->getFirstObject(objectInfo));
+		objectInfo.ObjectType = SvDef::SVTransformObjectType;
+		objectInfo.SubType = SvDef::SVImageTransformObjectType;
 
-		// Interpolation Mode
-		objectInfo.SubType = SvDef::SVEnumValueObjectType;
-		objectInfo.EmbeddedID = SVOutputInterpolationModeObjectGuid;
-		m_pInterpolationMode = dynamic_cast<SVEnumerateValueObjectClass*>(m_pTool->getFirstObject(objectInfo));
-		if( nullptr != m_pInterpolationMode )
+		SvOi::IObjectClass* pImageTransform = pTool->getFirstObject(objectInfo);
+		if (nullptr != pImageTransform)
 		{
-			m_cbInterpolation.SetEnumTypes(m_pInterpolationMode->GetEnumVector());
+			m_pValues = std::unique_ptr<Controller>(new Controller{ SvOg::BoundValues{ m_InspectionID, pImageTransform->GetUniqueObjectID() } });
+			m_pValues->Init();
 
-			std::string EnumString;
-			m_pInterpolationMode->getValue( EnumString );
-			m_cbInterpolation.SelectString( -1, EnumString.c_str() );
+			const SvOi::NameValueVector& rInterpolationModeList = m_pValues->GetEnumTypes(SVOutputInterpolationModeObjectGuid);
+			m_cbInterpolation.SetEnumTypes(rInterpolationModeList);
+			long CurrentSelection = m_pValues->Get<long>(SVOutputInterpolationModeObjectGuid);
+			m_cbInterpolation.SetCurSelItemData(CurrentSelection);
 		}
+	}
 
-		UpdateData( FALSE );
+	if (nullptr != m_pEvaluateRotationX && nullptr != m_pEvaluateRotationY && nullptr != m_pEvaluateRotationAngle && nullptr != m_pValues)
+	{
+		m_performRotation = m_pValues->Get<bool>(SVPerformRotationObjectGuid);
+		UpdateData(false);
+		refresh();
+	}
 	
-		// Check...
-		if( m_pEvaluateRotationX && m_pRotationXResult &&
-			m_pEvaluateRotationY && m_pRotationYResult &&
-			m_pEvaluateRotationAngle && m_pRotationAngleResult &&
-			m_pPerformRotation)
-		{
-			// Get Inspection Data..
-			m_pPerformRotation->GetValue( m_performRotation );
-			UpdateData(FALSE);
-
-			refresh();
-
-			return TRUE;
-		}
-
-	}
-
-	// Not valid call...
-	if( GetParent() )
-	{
-		GetParent()->SendMessage( WM_CLOSE );
-	}
-	else
-	{
-		SendMessage( WM_CLOSE );
-	}
-
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX-Eigenschaftenseiten sollten FALSE zurückgeben
 }
 
 void SVToolAdjustmentDialogRotationPageClass::OnAngleFormulaButton() 
 {
-	if( m_pEvaluateRotationAngle )
+	if(nullptr != m_pEvaluateRotationAngle)
 	{
 		std::string Caption = m_pEvaluateRotationAngle->GetName();
 		Caption += _T( " Formula" );
 
-		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
-		const GUID& rObjectID = m_pParentDialog->GetToolID();
 		SvDef::SVObjectTypeInfoStruct info(SvDef::SVMathContainerObjectType, SvDef::SVEvaluateRotationAngleObjectType);
-		SvOg::SVFormulaEditorSheetClass dlg( rInspectionID, rObjectID, info, Caption.c_str() );
+		SvOg::SVFormulaEditorSheetClass dlg( m_InspectionID, m_TaskObjectID, info, Caption.c_str() );
 		dlg.DoModal();
 
 		refresh();
@@ -225,15 +157,13 @@ void SVToolAdjustmentDialogRotationPageClass::OnAngleFormulaButton()
 
 void SVToolAdjustmentDialogRotationPageClass::OnXFormulaButton() 
 {
-	if( m_pEvaluateRotationX )
+	if(nullptr !=  m_pEvaluateRotationX)
 	{
 		std::string Caption = m_pEvaluateRotationX->GetName();
 		Caption += _T( " Formula" );
 
-		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
-		const GUID& rObjectID = m_pParentDialog->GetToolID();
 		SvDef::SVObjectTypeInfoStruct info(SvDef::SVMathContainerObjectType, SvDef::SVEvaluateRotationXObjectType);
-		SvOg::SVFormulaEditorSheetClass dlg( rInspectionID, rObjectID, info, Caption.c_str() );
+		SvOg::SVFormulaEditorSheetClass dlg(m_InspectionID, m_TaskObjectID, info, Caption.c_str() );
 		dlg.DoModal();
 
 		refresh();
@@ -242,15 +172,13 @@ void SVToolAdjustmentDialogRotationPageClass::OnXFormulaButton()
 
 void SVToolAdjustmentDialogRotationPageClass::OnYFormulaButton() 
 {
-	if( m_pEvaluateRotationY )
+	if(nullptr != m_pEvaluateRotationY)
 	{
 		std::string Caption = m_pEvaluateRotationY->GetName();
 		Caption += _T( " Formula" );
 
-		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
-		const GUID& rObjectID = m_pParentDialog->GetToolID();
 		SvDef::SVObjectTypeInfoStruct info(SvDef::SVMathContainerObjectType, SvDef::SVEvaluateRotationYObjectType);
-		SvOg::SVFormulaEditorSheetClass dlg( rInspectionID, rObjectID, info, Caption.c_str() );
+		SvOg::SVFormulaEditorSheetClass dlg( m_InspectionID, m_TaskObjectID, info, Caption.c_str() );
 		dlg.DoModal();
 
 		refresh();
@@ -272,25 +200,20 @@ HRESULT SVToolAdjustmentDialogRotationPageClass::SetInspectionData()
 {
 	HRESULT Result{ E_FAIL };
 
-	if( m_pTool )
+	if(nullptr != m_pValues)
 	{
 		UpdateData(true); // get data from dialog
 
-		typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
-		typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
-		Controller Values{ SvOg::BoundValues{ m_pTool->GetInspection()->GetUniqueObjectID(), m_pTool->GetUniqueObjectID() } };
-		Values.Init();
+		m_pValues->Set<bool>(SVPerformRotationObjectGuid, m_performRotation ? true : false);
 
-		Values.Set<bool>(m_pPerformRotation->GetEmbeddedID(), m_performRotation ? true : false);
-
-		int sel = m_cbInterpolation.GetCurSel();
-		if(0 <= sel)
+		int CurrentSelection = m_cbInterpolation.GetCurSel();
+		if(0 <= CurrentSelection)
 		{
-			long lValue = ( long ) m_cbInterpolation.GetItemData( sel );
-			Values.Set<long>(m_pInterpolationMode->GetEmbeddedID(), lValue);
+			long lValue = static_cast<long> (m_cbInterpolation.GetItemData(CurrentSelection));
+			m_pValues->Set<long>(SVOutputInterpolationModeObjectGuid, lValue);
 		}
 
-		Result = Values.Commit();
+		Result = m_pValues->Commit();
 	}
 
 	return Result;
@@ -298,48 +221,28 @@ HRESULT SVToolAdjustmentDialogRotationPageClass::SetInspectionData()
 
 void SVToolAdjustmentDialogRotationPageClass::refresh()
 {
-	if( m_pTool )
+	SetInspectionData();
+
+	if (nullptr != m_pEvaluateRotationX && nullptr != m_pEvaluateRotationX->getOutputMathResult())
 	{
-		CWnd* pWnd = nullptr;
-
-		SetInspectionData();
-
-		std::string Value;
-		// refresh X settings...
-		if( nullptr != m_pRotationXResult )
-		{
-			m_pRotationXResult->getValue( Value );
-			m_strRotationXValue = Value.c_str();
-		}
-		else
-		{
-			m_strRotationXValue = _T("");
-		}
-
-		// refresh Y settings...
-		if( nullptr != m_pRotationYResult )
-		{
-			m_pRotationYResult->getValue( Value );
-			m_strRotationYValue = Value.c_str();
-		}
-		else
-		{
-			m_strRotationYValue = _T("");
-		}
-
-		// refresh Angle settings...
-		if( nullptr != m_pRotationAngleResult )
-		{
-			m_pRotationAngleResult->getValue( Value );
-			m_strRotationAngleValue = Value.c_str();
-		}
-		else
-		{
-			m_strRotationAngleValue = _T("");
-		}
-
-		UpdateData( FALSE ); // set data to dialog
+		double Value{ 0.0 };
+		m_pEvaluateRotationX->getOutputMathResult()->GetValue(Value);
+		m_RotationXValue.Format(_T("%f"), Value);
 	}
+	if (nullptr != m_pEvaluateRotationY && nullptr != m_pEvaluateRotationY->getOutputMathResult())
+	{
+		double Value{ 0.0 };
+		m_pEvaluateRotationY->getOutputMathResult()->GetValue(Value);
+		m_RotationYValue.Format(_T("%f"), Value);
+	}
+	if (nullptr != m_pEvaluateRotationAngle && nullptr != m_pEvaluateRotationAngle->getOutputMathResult())
+	{
+		double Value{ 0.0 };
+		m_pEvaluateRotationAngle->getOutputMathResult()->GetValue(Value);
+		m_RotationAngleValue.Format(_T("%f"), Value);
+	}
+
+	UpdateData(false); // set data to dialog
 }
 #pragma endregion
 

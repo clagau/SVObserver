@@ -14,9 +14,6 @@
 #include "SVTADlgTranslationPage.h"
 #include "InspectionEngine/SVEvaluate.h"
 #include "SvOGui/SVFormulaEditorSheet.h"
-#include "SVIPDoc.h"
-#include "InspectionEngine/SVTool.h"
-#include "SVToolAdjustmentDialogSheetClass.h"
 #include "InspectionEngine/SVTransformationTool.h"
 #pragma endregion
 
@@ -36,20 +33,11 @@ BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogTranslationPageClass, CPropertyPage)
 END_MESSAGE_MAP()
 
 #pragma region Constructor
-SVToolAdjustmentDialogTranslationPageClass::SVToolAdjustmentDialogTranslationPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent)
+SVToolAdjustmentDialogTranslationPageClass::SVToolAdjustmentDialogTranslationPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID)
 : CPropertyPage(SVToolAdjustmentDialogTranslationPageClass::IDD)
+, m_InspectionID{ rInspectionID }
+, m_TaskObjectID{ rTaskObjectID }
 {
-	//{{AFX_DATA_INIT(SVToolAdjustmentDialogTranslationPageClass)
-	m_TranslationXValue = _T("");
-	m_TranslationYValue = _T("");
-	m_performTranslation = FALSE;
-	//}}AFX_DATA_INIT
-	
-	m_pParentDialog	= Parent;
-	m_pTool = nullptr;
-	m_pEvaluateTranslationX	= nullptr;
-	m_pEvaluateTranslationY	= nullptr;
-	m_pInterpolationMode	= nullptr;
 }
 #pragma endregion
 
@@ -64,62 +52,48 @@ SVToolAdjustmentDialogTranslationPageClass::~SVToolAdjustmentDialogTranslationPa
 BOOL SVToolAdjustmentDialogTranslationPageClass::OnInitDialog() 
 {
 	CPropertyPage::OnInitDialog();
-	
-	if (m_pParentDialog && (m_pTool = m_pParentDialog->GetTool()))
-	{
-		m_pValues = std::unique_ptr<Controller>(new Controller{ SvOg::BoundValues{ m_pTool->GetInspection()->GetUniqueObjectID(), m_pTool->GetUniqueObjectID() } });
-		m_pValues->Init();
 
+	SvOi::IObjectClass* pTool = SvOi::getObject(m_TaskObjectID);
+	if (nullptr != pTool)
+	{
 		// Get Evaluate Object...
 		SvDef::SVObjectTypeInfoStruct evaluateObjectInfo;
 		evaluateObjectInfo.ObjectType = SvDef::SVMathContainerObjectType;
-		
+
 		// Get Evaluate Object for the X coordinate...
-		evaluateObjectInfo.SubType = SvDef::SVEvaluateTranslationXObjectType;		
-		m_pEvaluateTranslationX = dynamic_cast<SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
-		
+		evaluateObjectInfo.SubType = SvDef::SVEvaluateTranslationXObjectType;
+		m_pEvaluateTranslationX = dynamic_cast<SVEvaluateClass*> (pTool->getFirstObject(evaluateObjectInfo));
+
 		// Get Evaluate Object for the Y coordinate...
 		evaluateObjectInfo.SubType = SvDef::SVEvaluateTranslationYObjectType;
-		m_pEvaluateTranslationY = dynamic_cast<SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateTranslationY = dynamic_cast<SVEvaluateClass*> (pTool->getFirstObject(evaluateObjectInfo));
 
-		// Interpolation Mode
+		//Image Transformation
 		SvDef::SVObjectTypeInfoStruct objectInfo;
-		objectInfo.ObjectType = SvDef::SVValueObjectType;
-		objectInfo.SubType = SvDef::SVEnumValueObjectType;
-		objectInfo.EmbeddedID = SVOutputInterpolationModeObjectGuid;
-		m_pInterpolationMode = dynamic_cast<SVEnumerateValueObjectClass*>(m_pTool->getFirstObject(objectInfo));
-		if( m_pInterpolationMode )
+		objectInfo.ObjectType = SvDef::SVTransformObjectType;
+		objectInfo.SubType = SvDef::SVImageTransformObjectType;
+
+		SvOi::IObjectClass* pImageTransform = pTool->getFirstObject(objectInfo);
+		if (nullptr != pImageTransform)
 		{
-			m_cbInterpolation.SetEnumTypes(m_pInterpolationMode->GetEnumVector());
+			m_pValues = std::unique_ptr<Controller>(new Controller{ SvOg::BoundValues{ m_InspectionID, pImageTransform->GetUniqueObjectID() } });
+			m_pValues->Init();
 
-			std::string EnumString;
-			m_pInterpolationMode->getValue( EnumString );
-
-			m_cbInterpolation.SelectString( -1, EnumString.c_str() );
-		}
-
-		// Check...
-		if( nullptr != m_pEvaluateTranslationX && nullptr != m_pEvaluateTranslationY && nullptr != m_pValues )
-		{
-			m_performTranslation = m_pValues->Get<bool>(SVPerformTranslationObjectGuid);
-
-			UpdateData(false);
-			refresh();
-			
-			return TRUE;
+			const SvOi::NameValueVector& rInterpolationModeList = m_pValues->GetEnumTypes(SVOutputInterpolationModeObjectGuid);
+			m_cbInterpolation.SetEnumTypes(rInterpolationModeList);
+			long CurrentSelection = m_pValues->Get<long>(SVOutputInterpolationModeObjectGuid);
+			m_cbInterpolation.SetCurSelItemData(CurrentSelection);
 		}
 	}
-	
-	// Not valid call...
-	if (GetParent())
+
+	// Check...
+	if( nullptr != m_pEvaluateTranslationX && nullptr != m_pEvaluateTranslationY && nullptr != m_pValues )
 	{
-		GetParent()->SendMessage(WM_CLOSE);
+		m_performTranslation = m_pValues->Get<bool>(SVPerformTranslationObjectGuid);
+		UpdateData(false);
+		refresh();
 	}
-	else
-	{
-		SendMessage(WM_CLOSE);
-	}
-	
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX-Eigenschaftenseiten sollten FALSE zurückgeben
 }
@@ -137,11 +111,10 @@ void SVToolAdjustmentDialogTranslationPageClass::DoDataExchange(CDataExchange* p
 
 BOOL SVToolAdjustmentDialogTranslationPageClass::OnSetActive()
 {
-	if( m_pInterpolationMode )
+	if (nullptr != m_pValues)
 	{
-		std::string EnumString;
-		m_pInterpolationMode->getValue( EnumString );
-		m_cbInterpolation.SelectString( -1, EnumString.c_str() );
+		long CurrentSelection = m_pValues->Get<long>(SVOutputInterpolationModeObjectGuid);
+		m_cbInterpolation.SetCurSelItemData(CurrentSelection);
 	}
 
 	return CPropertyPage::OnSetActive();
@@ -149,15 +122,13 @@ BOOL SVToolAdjustmentDialogTranslationPageClass::OnSetActive()
 
 void SVToolAdjustmentDialogTranslationPageClass::OnXFormulaButton() 
 {
-	if (m_pEvaluateTranslationX)
+	if (nullptr != m_pEvaluateTranslationX)
 	{
 		std::string Caption = m_pEvaluateTranslationX->GetName();
 		Caption += _T(" Formula");
 
-		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
-		const GUID& rObjectID = m_pParentDialog->GetToolID();
 		SvDef::SVObjectTypeInfoStruct info(SvDef::SVMathContainerObjectType, SvDef::SVEvaluateTranslationXObjectType);
-		SvOg::SVFormulaEditorSheetClass dlg(rInspectionID, rObjectID, info, Caption.c_str());
+		SvOg::SVFormulaEditorSheetClass dlg(m_InspectionID, m_TaskObjectID, info, Caption.c_str());
 		dlg.DoModal();
 		
 		refresh();
@@ -166,15 +137,13 @@ void SVToolAdjustmentDialogTranslationPageClass::OnXFormulaButton()
 
 void SVToolAdjustmentDialogTranslationPageClass::OnYFormulaButton() 
 {
-	if (m_pEvaluateTranslationY)
+	if (nullptr != m_pEvaluateTranslationY)
 	{
 		std::string Caption = m_pEvaluateTranslationY->GetName();
 		Caption += _T(" Formula");
 
-		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
-		const GUID& rObjectID = m_pParentDialog->GetToolID();
 		SvDef::SVObjectTypeInfoStruct info(SvDef::SVMathContainerObjectType, SvDef::SVEvaluateTranslationYObjectType);
-		SvOg::SVFormulaEditorSheetClass dlg(rInspectionID, rObjectID, info, Caption.c_str());
+		SvOg::SVFormulaEditorSheetClass dlg(m_InspectionID, m_TaskObjectID, info, Caption.c_str());
 		dlg.DoModal();
 		
 		refresh();
@@ -196,17 +165,17 @@ HRESULT SVToolAdjustmentDialogTranslationPageClass::SetInspectionData()
 {
 	HRESULT Result{ E_FAIL };
 
-	if(nullptr !=  m_pTool && nullptr != m_pValues)
+	if(nullptr != m_pValues)
 	{
 		UpdateData( true ); // get data from dialog
 
 		m_pValues->Set<bool>(SVPerformTranslationObjectGuid, m_performTranslation ? true : false);
 
-		int sel = m_cbInterpolation.GetCurSel();
-		if(0 <= sel)
+		int CurrentSelection = m_cbInterpolation.GetCurSel();
+		if(0 <= CurrentSelection)
 		{
-			long lValue = static_cast<long> (m_cbInterpolation.GetItemData( sel ));
-			m_pValues->Set<long>(m_pInterpolationMode->GetUniqueObjectID(), lValue);
+			long lValue = static_cast<long> (m_cbInterpolation.GetItemData(CurrentSelection));
+			m_pValues->Set<long>(SVOutputInterpolationModeObjectGuid, lValue);
 		}
 		Result = m_pValues->Commit();
 	}
@@ -216,19 +185,21 @@ HRESULT SVToolAdjustmentDialogTranslationPageClass::SetInspectionData()
 
 void SVToolAdjustmentDialogTranslationPageClass::refresh()
 {
-	if (m_pTool)
+	SetInspectionData();
+	
+	if (nullptr != m_pEvaluateTranslationX && nullptr != m_pEvaluateTranslationX->getOutputMathResult())
 	{
-		CWnd* pWnd = nullptr;
-
-		SetInspectionData();
-
-		double Value = m_pValues->Get<double>(SVOutputEvaluateTranslationXResultObjectGuid);
+		double Value{ 0.0 };
+		m_pEvaluateTranslationX->getOutputMathResult()->GetValue(Value);
 		m_TranslationXValue.Format(_T("%.0f"), Value);
-
-		Value = m_pValues->Get<double>(SVOutputEvaluateTranslationYResultObjectGuid);
-		m_TranslationYValue.Format(_T("%.0f"), Value);
-
-		UpdateData(false); // set data to dialog
 	}
+	if (nullptr != m_pEvaluateTranslationY && nullptr != m_pEvaluateTranslationY->getOutputMathResult())
+	{
+		double Value{ 0.0 };
+		m_pEvaluateTranslationY->getOutputMathResult()->GetValue(Value);
+		m_TranslationYValue.Format(_T("%.0f"), Value);
+	}
+
+	UpdateData(false); // set data to dialog
 }
 #pragma endregion

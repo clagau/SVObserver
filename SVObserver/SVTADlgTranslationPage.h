@@ -19,38 +19,28 @@
 #pragma endregion
 
 #pragma region Declarations
-class SVToolAdjustmentDialogSheetClass;
-class SVToolClass;
 class SVEvaluateClass;
-class SVDoubleValueObjectClass;
-class SVBoolValueObjectClass;
 class SVEnumerateValueObjectClass;
 #pragma endregion
 
 class SVToolAdjustmentDialogTranslationPageClass : public CPropertyPage
 {
 public:
-	SVToolAdjustmentDialogTranslationPageClass( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent );
+	SVToolAdjustmentDialogTranslationPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID);
 	virtual ~SVToolAdjustmentDialogTranslationPageClass();
 
 #pragma region Protected Methods
 protected:
 #pragma region MFC Methods
-	// ClassWizard generate virtual function overrides
-	//{{AFX_VIRTUAL(SVToolAdjustmentDialogTranslationPageClass)
 protected:
 	virtual BOOL OnInitDialog() override;
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	virtual BOOL OnSetActive() override;
-	//}}AFX_VIRTUAL
 
-	// Generated message map functions
-	//{{AFX_MSG(SVToolAdjustmentDialogTranslationPageClass)
 	afx_msg void OnXFormulaButton();
 	afx_msg void OnYFormulaButton();
 	afx_msg void OnPerformTranslation();
 	afx_msg void OnSelChangeInterpolationModeCombo();
-	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 #pragma endregion MFC Methods
 	HRESULT SetInspectionData();
@@ -65,24 +55,18 @@ public:
 	SvMc::SVEnumerateComboClass	m_cbInterpolation;
 	CString	m_TranslationXValue;
 	CString	m_TranslationYValue;
-	BOOL	m_performTranslation;
+	BOOL	m_performTranslation{ false };
 	//}}AFX_DATA
 #pragma endregion Data Elements
 
 protected:
-	SVToolAdjustmentDialogSheetClass* m_pParentDialog;
-	SVToolClass* m_pTool;
+	SVEvaluateClass* m_pEvaluateTranslationX{ nullptr };
+	SVEvaluateClass* m_pEvaluateTranslationY{ nullptr };
 
-	SVEvaluateClass* m_pEvaluateTranslationX;
-	SVEvaluateClass* m_pEvaluateTranslationY;
-	SVEnumerateValueObjectClass* m_pInterpolationMode;
-
+	SVGUID m_InspectionID;
+	SVGUID m_TaskObjectID;
 	typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
 	typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
 	std::unique_ptr<Controller> m_pValues{ nullptr };
 #pragma endregion
 };
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-

@@ -25,8 +25,8 @@ public:
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 
-protected:
 	SVDoubleValueObjectClass*		getOutputMathResult();
+protected:
 
 	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
