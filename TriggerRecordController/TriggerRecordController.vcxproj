@@ -85,6 +85,7 @@
     <ClInclude Include="ITriggerRecordControllerRW.h" />
     <ClInclude Include="ITriggerRecordR.h" />
     <ClInclude Include="ITriggerRecordRW.h" />
+    <ClInclude Include="ResetLocker.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TriggerRecord.h" />
     <ClInclude Include="TriggerRecordController.h" />

@@ -41,14 +41,12 @@ namespace SvTRC
 #pragma region Public Methods
 	public:
 		/// Reset the whole buffers to new structures.
-		/// \param trNumbers [in] Numbers of trigger records (this is the multiplier per needed image)
-		/// \param imageSizeList [in] New image Size list, entries with no needed image will be deleted.
-		/// \param imageList [in] New image list.
-		void reset(int trNumbers, const SvPB::ImageSizeList& rImageSizeList, const SvPB::ImageList& rImageList);
+		/// \param rImageStructList [in] New image Size list, entries with no needed image will be deleted.
+		/// \returns std::vector<std::pair<int, int>> Return a vector of pairs of change structID. First is old ID, Second is new ID.
+		std::vector<std::pair<int, int>> reset(const SvPB::ImageStructList& rImageStructList);
 
-		const SvPB::ImageSizeList& getImageSizeList() const { return m_imageSizeList; };
-		const SvPB::ImageList& getImageList() const { return m_imageList; };
-
+		const SvPB::ImageStructList& getImageStructList() const { return m_imageStructList; };
+		
 		/// Increase the reference count onces.
 		/// \param pos [in] Buffer position.
 		/// \returns bool true if increase successfully. Is false if pos invalid.
@@ -62,10 +60,10 @@ namespace SvTRC
 		std::shared_ptr<IImage> getImage(int pos) const;
 
 		/// Search an unused buffer in the required size and create a new image handle in write mode.
-		/// \param sizeID [in] SizeID of the required buffer.
+		/// \param structId [in] structId of the required buffer.
 		/// \param imagePos [out] Set the bufferPosition to parameter.
 		/// \returns SvTRC::IImagePtr The image handle in write mode.
-		IImagePtr createNewImageHandle(int sizeID, int& rImagePos) const;
+		IImagePtr createNewImageHandle(int structId, int& rImagePos) const;
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -79,9 +77,8 @@ namespace SvTRC
 
 #pragma region Member Variables
 	private:
-		SvPB::ImageSizeList m_imageSizeList;
-		SvPB::ImageList m_imageList;
-		int* m_imageRefCountArray = nullptr; //an array of the reference counts.
+		SvPB::ImageStructList m_imageStructList;
+		long* m_imageRefCountArray = nullptr; //an array of the reference counts.
 		int m_imageRefCountSize = 0; //the numbers of refCounts reserved in m_imageRefCountArray.
 		std::vector<SVMatroxBuffer> m_bufferVector;
 #pragma endregion Member Variables

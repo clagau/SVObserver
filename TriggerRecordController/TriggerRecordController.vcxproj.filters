@@ -45,6 +45,9 @@
     <ClInclude Include="Image.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="ResetLocker.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TriggerRecordController.cpp">

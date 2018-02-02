@@ -44,44 +44,48 @@ namespace SvTRC
 #pragma endregion Constructor
 
 #pragma region Public Methods
-	void ImageBufferController::reset(int trNumbers, const SvPB::ImageSizeList& rImageSizeList, const SvPB::ImageList& rImageList)
+	std::vector<std::pair<int, int>> ImageBufferController::reset(const SvPB::ImageStructList& rImageStructList)
 	{
 		int groupPos = 0;
 		int vectorPos = 0;
+
+		assert(rImageStructList.list_size() >= m_imageStructList.list_size());
+		assert(0 == m_imageStructList.list_size() || rImageStructList.list(m_imageStructList.list_size() - 1).structid() == m_imageStructList.list(m_imageStructList.list_size() - 1).structid());
+
 		//step through new imageSize list to fit buffer to the new required structure
-		for (const auto& rImageSize : rImageSizeList.list() )
+		for (const auto& rImageStruct : rImageStructList.list() )
 		{
-			SvPB::ImageSizeData* pSizeData = nullptr;
-			if (m_imageSizeList.list_size() > groupPos)
+			SvPB::ImageStructData* pStructData = nullptr;
+			if (m_imageStructList.list_size() > groupPos)
 			{
-				pSizeData = m_imageSizeList.mutable_list(groupPos);
-				if (0 == rImageSize.numberofimage())
+				pStructData = m_imageStructList.mutable_list(groupPos);
+				if (0 == rImageStruct.numberofbuffersrequired())
 				{
 					//this size is not longer used, delete the buffers.
 					auto bufferIter = m_bufferVector.begin() + vectorPos;
-					m_bufferVector.erase(bufferIter, bufferIter + pSizeData->numberofbuffers());
-					m_imageSizeList.mutable_list()->erase(m_imageSizeList.list().begin() + groupPos);
+					m_bufferVector.erase(bufferIter, bufferIter + pStructData->numberofbuffers());
+					m_imageStructList.mutable_list()->erase(m_imageStructList.list().begin() + groupPos);
 					continue;
 				}
 				else
 				{	//this size is used, move vectorPos to the end of this bufferSize in Vector.
-					vectorPos += pSizeData->numberofbuffers();
+					vectorPos += pStructData->numberofbuffers();
 				}
 			}
 			else
 			{	//new size, add it to the image size list
-				pSizeData = m_imageSizeList.add_list();
-				pSizeData->set_type(rImageSize.type());
+				pStructData = m_imageStructList.add_list();
+				pStructData->set_type(rImageStruct.type());
 			}
 
-			pSizeData->set_numberofimage(rImageSize.numberofimage());
-			pSizeData->set_sizeid(rImageSize.sizeid());
+			pStructData->set_numberofbuffersrequired(rImageStruct.numberofbuffersrequired());
+			pStructData->set_structid(rImageStruct.structid());
 
-			if (pSizeData->numberofbuffers() < rImageSize.numberofimage() * trNumbers)
+			if (pStructData->numberofbuffers() < rImageStruct.numberofbuffersrequired())
 			{ //add more buffer of this size if necessary
 				SVMatroxBufferCreateStruct bufferStruct;
-				memcpy(&bufferStruct, pSizeData->type().c_str(), sizeof(SVMatroxBufferCreateStruct));
-				for (int i = pSizeData->numberofbuffers(); i < rImageSize.numberofimage() * trNumbers; i++)
+				memcpy(&bufferStruct, pStructData->type().c_str(), sizeof(SVMatroxBufferCreateStruct));
+				for (int i = pStructData->numberofbuffers(); i < rImageStruct.numberofbuffersrequired(); i++)
 				{
 					SVMatroxBuffer buffer;
 					SVMatroxBufferInterface::Create(buffer, bufferStruct);
@@ -95,17 +99,17 @@ namespace SvTRC
 					}
 					vectorPos++;
 				}
-				pSizeData->set_numberofbuffers(rImageSize.numberofimage() * trNumbers);
+				pStructData->set_numberofbuffers(rImageStruct.numberofbuffersrequired());
 			}
 
 			//correct offset
-			if (groupPos > 0)
+			if (0 < groupPos)
 			{
-				pSizeData->set_offset(m_imageSizeList.list(groupPos - 1).offset() + m_imageSizeList.list(groupPos - 1).numberofbuffers());
+				pStructData->set_offset(m_imageStructList.list(groupPos - 1).offset() + m_imageStructList.list(groupPos - 1).numberofbuffers());
 			}
 			else
 			{
-				pSizeData->set_offset(0);
+				pStructData->set_offset(0);
 			}
 
 			groupPos++;
@@ -116,39 +120,39 @@ namespace SvTRC
 		{
 			delete[] m_imageRefCountArray;
 			m_imageRefCountSize = static_cast<int>(vectorPos);
-			m_imageRefCountArray = new int[m_imageRefCountSize];
+			m_imageRefCountArray = new long[m_imageRefCountSize];
 		}
-		memset(m_imageRefCountArray, 0, sizeof(int)*m_imageRefCountSize);
+		memset(m_imageRefCountArray, 0, sizeof(long)*m_imageRefCountSize);
 
-		//update sizeId to fit to the position in m_imageSizeList
-		m_imageList = rImageList;
+		//update structId to fit to the position in m_imageStructList
 		int i = 0;
-		for (auto& rImageSizeData : (*m_imageSizeList.mutable_list()))
+		std::vector<std::pair<int, int>> moveVec;
+		for (auto& rImageStructData : (*m_imageStructList.mutable_list()))
 		{
-			//old sizeId must be equal or higher (it is higher if an size-entry was deleted.
-			assert(rImageSizeData.sizeid() >= i);
-			if (rImageSizeData.sizeid() > i)
+			//old structId must be equal or higher (it is higher if an size-entry was deleted.)
+			int oldId = rImageStructData.structid();
+			assert(oldId >= i);
+			if (oldId > i)
 			{
 				//Because oldID is 
-				int oldId = rImageSizeData.sizeid();
-				for (auto& imageData : (*m_imageList.mutable_list()))
-				{
-					if (imageData.sizeid() == oldId)
-					{
-						imageData.set_sizeid(i);
-					}
-				}
-				rImageSizeData.set_sizeid(i);
+				moveVec.push_back({ oldId, i });
+				rImageStructData.set_structid(i);
 			}
 			i++;
 		}
+
+		return moveVec;
 	}
 
 	bool ImageBufferController::IncreaseRefCounter(int pos)
 	{
 		if (0 <= pos &&  m_imageRefCountSize > pos)
-		{//@TODO[MZA][8.00][18.01.2018] check if here is thread-safe-function to add
-			m_imageRefCountArray[pos]++;
+		{
+			long value = m_imageRefCountArray[pos];
+			while (InterlockedCompareExchange(&(m_imageRefCountArray[pos]), value + 1, value) != value)
+			{
+				value = m_imageRefCountArray[pos];
+			}
 			return true;
 		}
 		return false;
@@ -157,14 +161,20 @@ namespace SvTRC
 	bool ImageBufferController::DecreaseRefCounter(int pos)
 	{
 		if (0 <= pos &&  m_imageRefCountSize > pos)
-		{//@TODO[MZA][8.00][18.01.2018] check if here is thread-safe-function to add
-			assert(m_imageRefCountArray[pos] > 0);
-			if (m_imageRefCountArray[pos] > 0)
+		{
+			long value = m_imageRefCountArray[pos];
+			if (0 < value)
 			{
-				m_imageRefCountArray[pos]--;
+				while (InterlockedCompareExchange(&(m_imageRefCountArray[pos]), value - 1, value) != value)
+				{
+					assert(m_imageRefCountArray[pos] > 0);
+					value = m_imageRefCountArray[pos];
+				}
 				return true;
 			}
+			assert(false);
 		}
+
 		return false;
 	}
 
@@ -179,22 +189,25 @@ namespace SvTRC
 		return pImage;
 	}
 
-	IImagePtr ImageBufferController::createNewImageHandle(int sizeID, int& imagePos) const
+	IImagePtr ImageBufferController::createNewImageHandle(int structId, int& imagePos) const
 	{
 		IImagePtr pImage;
-		auto& rList = m_imageSizeList.list();
-		if (0 <= sizeID &&  rList.size() > sizeID)
+		auto& rList = m_imageStructList.list();
+		if (0 <= structId &&  rList.size() > structId)
 		{
-			int offset = rList[sizeID].offset();
-			for (int i = 0; i < rList[sizeID].numberofbuffers(); i++)
+			int offset = rList[structId].offset();
+			for (int i = 0; i < rList[structId].numberofbuffers(); i++)
 			{
-				if (0 == m_imageRefCountArray[i + offset])
+				int imagePosTmp = i + offset;
+				long value = m_imageRefCountArray[imagePosTmp];
+				if (0 == value)
 				{
-					imagePos = i + offset;
-					m_imageRefCountArray[imagePos]++;
-					SvOi::SVImageBufferHandlePtr pImagePtr = SvOi::SVImageBufferHandlePtr{ new SVImageBufferHandleImage(m_bufferVector[imagePos]) };
-					pImage = IImagePtr{ new Image(pImagePtr, false) };					
-					break;
+					if (InterlockedCompareExchange(&(m_imageRefCountArray[imagePosTmp]), value + 1, value) == value)
+					{
+						imagePos = imagePosTmp;
+						SvOi::SVImageBufferHandlePtr pImagePtr = SvOi::SVImageBufferHandlePtr{ new SVImageBufferHandleImage(m_bufferVector[imagePos]) };
+						return IImagePtr{ new Image(pImagePtr, false) };
+					}
 				}
 			}			
 		}

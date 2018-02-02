@@ -10,6 +10,7 @@
 #pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <assert.h>
+//Moved to precompiled header: #include <WinBase.h>
 #include "ITriggerRecordControllerRW.h"
 #include "ITriggerRecordRW.h"
 #include "TriggerRecordController.h"
@@ -34,102 +35,156 @@ namespace SvTRC
 
 	TriggerRecordController::~TriggerRecordController()
 	{
-		if (m_bInit)
+		for (int i=0; i < m_IPDataNumber; i++)
 		{
-			delete[] m_triggerRecords;
-			m_bInit = false;
+			ResetInspectionData(i);
 		}
+		delete m_pData;
 	}
 #pragma endregion Constructor
 
 #pragma region Public Methods
-	const SvPB::ImageList& TriggerRecordController::GetImageDefList()
+	int TriggerRecordController::getLastTRId(int inspectionPos) const
 	{
-		if (!m_bReset && m_bInit)
+		int id = -1;
+		if (0 <= inspectionPos && m_IPDataNumber > inspectionPos)
 		{
-			return ImageBufferController::getImageBufferControllerInstance().getImageList();
+			id = m_pData[inspectionPos].m_lastTRID;
+		}
+		return id;
+	}
+
+	const SvPB::ImageList& TriggerRecordController::GetImageDefList(int inspectionPos)
+	{
+		if (-1 == m_resetStarted4IP)
+		{
+			if (0 <= inspectionPos && m_IPDataNumber > inspectionPos && m_pData[inspectionPos].m_bInit)
+			{
+				if (nullptr != m_pData[inspectionPos].m_pImageList)
+				{
+					return *m_pData[inspectionPos].m_pImageList;
+				}
+			}
 		}
 		throw false;
 	}
 
-	ITriggerRecordRPtr TriggerRecordController::CreateTriggerRecordObject(int trId)
+	ITriggerRecordRPtr TriggerRecordController::CreateTriggerRecordObject(int inspectionPos, int trId)
 	{
-		assert(!m_bReset && m_bInit);
-		if (0 <= trId)
+		assert(-1 == m_resetStarted4IP);
+		
+		if (-1 == m_resetStarted4IP && 0 <= inspectionPos && m_IPDataNumber > inspectionPos 
+			&& m_pData[inspectionPos].m_bInit && nullptr != m_pData[inspectionPos].m_pImageList)
 		{
-			for (int i = 0; i < m_TriggerRecordNumber; i++)
+			if (0 <= trId)
 			{
-				TriggerRecord::TriggerRecordData& rCurrentTR = getTRData(i);
-				if (rCurrentTR.m_trId == trId)
+				for (int i = 0; i < m_pData[inspectionPos].m_TriggerRecordNumber; i++)
 				{
-					if (rCurrentTR.m_referenceCount >= 0)
-					{//@TODO[MZA][8.00][20.12.2017] check if here is thread-safe-function to add
-						rCurrentTR.m_referenceCount++;
-						return ITriggerRecordRPtr(new TriggerRecord(rCurrentTR));
+					TriggerRecord::TriggerRecordData& rCurrentTR = getTRData(inspectionPos, i);
+					if (rCurrentTR.m_trId == trId)
+					{
+						long refTemp = rCurrentTR.m_referenceCount;
+						while (0 <= refTemp)
+						{
+							if (InterlockedCompareExchange(&(rCurrentTR.m_referenceCount), refTemp + 1, refTemp) == refTemp)
+							{
+								return ITriggerRecordRPtr(new TriggerRecord(rCurrentTR, *m_pData[inspectionPos].m_pImageList, m_resetTime));
+							}
+							refTemp = rCurrentTR.m_referenceCount;
+						}
 					}
 				}
 			}
 		}
 		return nullptr;
 	}
-
-	ITriggerRecordRWPtr TriggerRecordController::CreateTriggerRecordObjectToWrite()
+	
+	void TriggerRecordController::setInspections(const SvPB::InspectionList& rInspectionList)
 	{
-		assert(!m_bReset && m_bInit);
-
-		int currentPos = m_nextPosForFreeCheck;
-		do
+		m_inspectionList = rInspectionList;
+		for (int i = 0; i < m_IPDataNumber; i++)
 		{
-			TriggerRecord::TriggerRecordData& rCurrentTR = getTRData(currentPos);
-			int count = rCurrentTR.m_referenceCount;
-			if (TriggerRecord::m_InvalidData == count || 0 == count)
-			{//@TODO[MZA][8.00][20.12.2017] check if here is thread-safe-function to add
-				rCurrentTR.m_referenceCount = TriggerRecord::m_WriteBlocked;
-				rCurrentTR.m_trId = m_nextTRID++;
-				m_lastTRID = rCurrentTR.m_trId;
-				m_nextPosForFreeCheck = (currentPos + 1) % (m_TriggerRecordNumber);
-				return ITriggerRecordRWPtr(new TriggerRecord(rCurrentTR));
-			}
-			currentPos++;
-			currentPos = currentPos%m_TriggerRecordNumber;
+			ResetInspectionData(i);
 		}
-		while (currentPos != m_nextPosForFreeCheck);
-		assert(false);
+		if (rInspectionList.inspectionid_size() != m_IPDataNumber && 0 < rInspectionList.inspectionid_size())
+		{
+			delete m_pData;
+			m_IPDataNumber = rInspectionList.inspectionid_size();
+			m_pData = new TRControllerDataPerIP[m_IPDataNumber];
+		}
+	}
+
+	ITriggerRecordRWPtr TriggerRecordController::CreateTriggerRecordObjectToWrite(int inspectionPos)
+	{
+		assert(-1 == m_resetStarted4IP && 0 <= inspectionPos && m_IPDataNumber > inspectionPos && m_pData[inspectionPos].m_bInit);
+
+		if (-1 == m_resetStarted4IP && 0 <= inspectionPos && m_IPDataNumber > inspectionPos 
+			&& m_pData[inspectionPos].m_bInit && nullptr != m_pData[inspectionPos].m_pImageList)
+		{
+			int currentPos = m_pData[inspectionPos].m_nextPosForFreeCheck;
+			do
+			{
+				TriggerRecord::TriggerRecordData& rCurrentTR = getTRData(inspectionPos, currentPos);
+				long count = rCurrentTR.m_referenceCount;
+				while (TriggerRecord::m_InvalidData == count || 0 == count)
+				{
+					if (InterlockedCompareExchange(&(rCurrentTR.m_referenceCount), TriggerRecord::m_WriteBlocked, count) == count)
+					{
+						rCurrentTR.m_trId = m_nextTRID++;
+						m_pData[inspectionPos].m_lastTRID = rCurrentTR.m_trId;
+						m_pData[inspectionPos].m_nextPosForFreeCheck = (currentPos + 1) % (m_pData[inspectionPos].m_TriggerRecordNumber);
+						return ITriggerRecordRWPtr(new TriggerRecord(rCurrentTR, *m_pData[inspectionPos].m_pImageList, m_resetTime));
+					}
+				}
+				currentPos++;
+				currentPos = currentPos%m_pData[inspectionPos].m_TriggerRecordNumber;
+			} while (currentPos != m_pData[inspectionPos].m_nextPosForFreeCheck);
+			assert(false);
+		}
+
 		return ITriggerRecordRWPtr();
 	};
 
-	bool TriggerRecordController::StartResetTriggerRecordStructure(int TriggerRecordSize)
+	bool TriggerRecordController::StartResetTriggerRecordStructure(int inspectionPos, int TriggerRecordSize)
 	{
-		if (m_bReset)
+		if (-1 != m_resetStarted4IP || 0 > inspectionPos || m_inspectionList.inspectionid_size() <= inspectionPos)
 		{   //new start of reset is not allowed if reset is in progress.
 			assert(false);
 			return false;
 		}
 
 		bool Result = false;
-		m_lastTRID = -1;
 		if (TriggerRecordSize < m_maxTriggerRecords)
 		{
-			m_bReset = true;
-			if (m_bInit)
-			{
-				delete[] m_triggerRecords;
-				m_triggerRecords = nullptr;
-				m_triggerRecordBufferSize = 0;
-			}
-			//clear imageList and reset imageSizeList
+			m_resetStarted4IP = inspectionPos;
+
+			//clear imageList and reset ImageStructList
 			m_imageListResetTmp.Clear();
-			int sizeID = 0;
-			m_imageSizeListResetTmp.Clear();
-			m_imageSizeListResetTmp = ImageBufferController::getImageBufferControllerInstance().getImageSizeList();
-			for( auto& rSizeData: (*m_imageSizeListResetTmp.mutable_list()) )
-			{	
-				rSizeData.set_numberofimage(0);
-				rSizeData.set_sizeid(sizeID++);
+			int TRNumber = 0;
+			if (nullptr != m_pData[m_resetStarted4IP].m_pImageList)
+			{
+				m_imageListResetTmp = *m_pData[m_resetStarted4IP].m_pImageList;
+				TRNumber = m_pData[m_resetStarted4IP].m_TriggerRecordNumber;
 			}
-			m_TriggerRecordNumber = TriggerRecordSize + m_TriggerRecordAddOn;
-			m_nextPosForFreeCheck = 0;
-			m_bInit = true;
+			int structId = 0;
+			m_imageStructListResetTmp.Clear();
+			m_imageStructListResetTmp = ImageBufferController::getImageBufferControllerInstance().getImageStructList();
+			for( const auto& rSizeData: m_imageListResetTmp.list() )
+			{	
+				int id = rSizeData.structid();
+				if (0 <= id && m_imageStructListResetTmp.list_size() > id)
+				{
+					auto* pImageStruct = m_imageStructListResetTmp.mutable_list(id);
+					if (nullptr != pImageStruct)
+					{
+						pImageStruct->set_numberofbuffersrequired(pImageStruct->numberofbuffersrequired() - TRNumber);
+					}
+				}
+			}
+			
+			m_imageListResetTmp.Clear();
+
+			m_TriggerRecordNumberResetTmp = TriggerRecordSize + m_TriggerRecordAddOn;
 			Result = true;
 		}
 		return Result;
@@ -137,7 +192,7 @@ namespace SvTRC
 
 	bool TriggerRecordController::AddImage2TriggerRecordStructure(const GUID& imageId, SVMatroxBufferCreateStruct bufferStruct)
 	{ 
-		if (!m_bReset)
+		if (-1 == m_resetStarted4IP)
 		{   //stop of reset is not allowed if reset is not started.
 			assert(false);
 			return false;
@@ -160,8 +215,8 @@ namespace SvTRC
 		
 
 		//check if size already in sizeList
-		auto pImageSizeList = m_imageSizeListResetTmp.mutable_list();
-		auto imageSizeIter = std::find_if(pImageSizeList->begin(), pImageSizeList->end(), [bufferStruct](auto data)->bool
+		auto pImageStructList = m_imageStructListResetTmp.mutable_list();
+		auto imageSizeIter = std::find_if(pImageStructList->begin(), pImageStructList->end(), [bufferStruct](auto data)->bool
 		{
 			SVMatroxBufferCreateStruct bufferStruct2;
 			memcpy(&bufferStruct2, data.type().c_str(), sizeof(SVMatroxBufferCreateStruct));
@@ -169,22 +224,22 @@ namespace SvTRC
 		});
 		
 		
-		if (pImageSizeList->end() != imageSizeIter)
+		if (pImageStructList->end() != imageSizeIter)
 		{   //use existing imageSize
-			imageSizeIter->set_numberofimage(imageSizeIter->numberofimage() + 1);
+			imageSizeIter->set_numberofbuffersrequired(imageSizeIter->numberofbuffersrequired() + m_TriggerRecordNumberResetTmp);
 			pImageDefinition->set_type((*imageSizeIter).type());
-			pImageDefinition->set_sizeid((*imageSizeIter).sizeid());
+			pImageDefinition->set_structid((*imageSizeIter).structid());
 		}
 		else
 		{	//add new imageSize
-			SvPB::ImageSizeData* pImageSizeData = m_imageSizeListResetTmp.add_list();
+			SvPB::ImageStructData* pImageStructData = m_imageStructListResetTmp.add_list();
 			std::string typeStr(reinterpret_cast<const char*>(&bufferStruct), sizeof(bufferStruct));
-			pImageSizeData->set_type(typeStr);
-			pImageSizeData->set_numberofbuffers(0);
-			pImageSizeData->set_numberofimage(1);
-			pImageSizeData->set_sizeid(m_imageSizeListResetTmp.list_size()-1);
-			pImageDefinition->set_type(pImageSizeData->type());
-			pImageDefinition->set_sizeid(pImageSizeData->sizeid());
+			pImageStructData->set_type(typeStr);
+			pImageStructData->set_numberofbuffers(0);
+			pImageStructData->set_numberofbuffersrequired(m_TriggerRecordNumberResetTmp);
+			pImageStructData->set_structid(m_imageStructListResetTmp.list_size()-1);
+			pImageDefinition->set_type(pImageStructData->type());
+			pImageDefinition->set_structid(pImageStructData->structid());
 		}
 
 		//add to list
@@ -193,35 +248,79 @@ namespace SvTRC
 
 	bool TriggerRecordController::FinishResetTriggerRecordStructure()
 	{ 
-		if (!m_bReset)
+		if (-1 == m_resetStarted4IP)
 		{   //stop of reset is not allowed if reset is not started.
 			assert(false);
 			return false;
 		}
-		m_triggerRecordBufferSize = (sizeof(TriggerRecord::TriggerRecordData) + sizeof(int)*m_imageListResetTmp.list_size());
-		m_triggerRecords = malloc (m_triggerRecordBufferSize*m_TriggerRecordNumber);
-		memset(m_triggerRecords, -1, m_triggerRecordBufferSize*m_TriggerRecordNumber);
-		for (int i=0; i<m_TriggerRecordNumber; i++)
+
+		time(&m_resetTime);
+		while (0 < m_resetLockCounter) {}; //wait if any other method have access of this structure
+		
+		ResetInspectionData(m_resetStarted4IP);
+		m_pData[m_resetStarted4IP].m_TriggerRecordNumber = m_TriggerRecordNumberResetTmp;
+		m_pData[m_resetStarted4IP].m_triggerRecordBufferSize = (sizeof(TriggerRecord::TriggerRecordData) + sizeof(int)*m_imageListResetTmp.list_size());
+		m_pData[m_resetStarted4IP].m_pTriggerRecords = malloc (m_pData[m_resetStarted4IP].m_triggerRecordBufferSize*m_pData[m_resetStarted4IP].m_TriggerRecordNumber);
+		memset(m_pData[m_resetStarted4IP].m_pTriggerRecords, -1, m_pData[m_resetStarted4IP].m_triggerRecordBufferSize*m_pData[m_resetStarted4IP].m_TriggerRecordNumber);
+		for (int i=0; i<m_pData[m_resetStarted4IP].m_TriggerRecordNumber; i++)
 		{	//initialize buffer
-			getTRData(i).init();
+			getTRData(m_resetStarted4IP, i).init();
+		}
+		m_pData[m_resetStarted4IP].m_pImageList = new SvPB::ImageList(m_imageListResetTmp);
+
+		//update structId to fit to the position in m_imageStructList
+		std::vector<std::pair<int,int>> changeVect = ImageBufferController::getImageBufferControllerInstance().reset(m_imageStructListResetTmp);
+		for (const auto& rChangePair : changeVect)
+		{
+			for (int i=0; i<m_IPDataNumber; i++)
+			{
+				auto* pImageList = m_pData[i].m_pImageList;
+				if (nullptr != pImageList)
+				{
+					for (auto& rImageData : (*pImageList->mutable_list()))
+					{
+						if (rImageData.structid() == rChangePair.first)
+						{
+							rImageData.set_structid(rChangePair.second);
+						}
+					}
+				}
+			}
 		}
 
-		ImageBufferController::getImageBufferControllerInstance().reset(m_TriggerRecordNumber, m_imageSizeListResetTmp, m_imageListResetTmp);
-
-		m_bReset = false;
+		m_pData[m_resetStarted4IP].m_bInit = true;
+		m_resetStarted4IP = -1;
 
 		return true; 
 	}
 #pragma endregion Public Methods
 
 #pragma region Private Methods
-	TriggerRecord::TriggerRecordData& TriggerRecordController::getTRData(int pos) const
+	TriggerRecord::TriggerRecordData& TriggerRecordController::getTRData(int inspectionPos, int pos) const
 	{
-		assert(0 <= pos && m_TriggerRecordNumber > pos);
+		//do not check of the input parameter, because this is are private method and the parameter will be checked before in the calling method.
+		assert(0 <= pos && 0 <= inspectionPos && m_IPDataNumber > inspectionPos && m_pData[inspectionPos].m_TriggerRecordNumber > pos);
 		
-		void* tmp = static_cast<char*>(m_triggerRecords) + (pos*m_triggerRecordBufferSize);
+		void* tmp = static_cast<char*>(m_pData[inspectionPos].m_pTriggerRecords) + (pos*m_pData[inspectionPos].m_triggerRecordBufferSize);
 		TriggerRecord::TriggerRecordData* tr = reinterpret_cast<TriggerRecord::TriggerRecordData*>(tmp);
 		return *tr;
+	}
+
+	void TriggerRecordController::ResetInspectionData(int inspectionID)
+	{
+		if (0 <= inspectionID && m_IPDataNumber > inspectionID)
+		{
+			m_pData[inspectionID].m_lastTRID = -1;
+			if (m_pData[inspectionID].m_bInit)
+			{
+				delete[] m_pData[inspectionID].m_pTriggerRecords;
+				m_pData[inspectionID].m_pTriggerRecords = nullptr;
+				m_pData[inspectionID].m_triggerRecordBufferSize = 0;
+				delete m_pData[inspectionID].m_pImageList;
+				m_pData[inspectionID].m_pImageList = nullptr;
+			}
+			m_pData[m_resetStarted4IP].m_nextPosForFreeCheck = 0;
+		}
 	}
 #pragma endregion Private Methods
 

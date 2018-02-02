@@ -7,7 +7,7 @@ message ImageDefinition
 {
 	UUID imageID = 1; //GUID of the image.
 	bytes type = 2; ////should from struct SVMatroxBufferCreateStruct
-	int32 sizeID = 3;
+	int32 structID = 3;
 }
 
 message ImageList
@@ -15,16 +15,21 @@ message ImageList
 	repeated ImageDefinition list = 1;
 }
 
-message ImageSizeData
+message ImageStructData
 {
 	bytes type = 1; //should from struct SVMatroxBufferCreateStruct
-	int32 sizeID = 2;
-	int32 numberOfImage = 3;
-	int32 numberOfBuffers = 4;
+	int32 structID = 2;
+	int32 numberOfBuffersRequired = 3;  //number of required buffers
+	int32 numberOfBuffers = 4; //number of buffer avaiable
 	int32 offset = 5;
 }
 
-message ImageSizeList
+message ImageStructList
 {
-	repeated ImageSizeData list = 1;
+	repeated ImageStructData list = 1;
+}
+
+message InspectionList
+{
+	repeated UUID InspectionID = 1;
 }

@@ -13,6 +13,10 @@
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"
 #include "RotationTool.h"
 #include "DeactivedTool.h"
+#pragma warning( push )
+#pragma warning( disable : 4800 ) 
+#include "SVProtoBuf\TriggerRecordController.pb.h"
+#pragma warning( pop )
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -135,6 +139,9 @@ namespace SvTRCT
 		SetIcon(m_hIcon, FALSE);		// Kleines Symbol verwenden
 
 		// TODO: Hier zusätzliche Initialisierung einfügen
+		SvPB::InspectionList inspList;
+		inspList.add_inspectionid();
+		m_recordController.setInspections(inspList);
 		resetController();
 		updateControls();
 		m_ToolSelectCombo.SetCurSel(0);
@@ -255,7 +262,7 @@ namespace SvTRCT
 		if (0 <= index && m_toolList.size() > index)
 		{
 			//delete m_toolList[index];
-			m_toolList.erase(m_toolList.begin() + (index - 1));
+			m_toolList.erase(m_toolList.begin() + index);
 			m_isEdit = true;
 		}
 		updateControls();
@@ -277,9 +284,9 @@ namespace SvTRCT
 			return;
 		}
 
-		int lastTRid = m_recordController.getLastTRId();
-		auto& lastTriggerRecord = m_recordController.CreateTriggerRecordObject(lastTRid);
-		auto& triggerRecord = m_recordController.CreateTriggerRecordObjectToWrite();
+		int lastTRid = m_recordController.getLastTRId(m_inspectionPos);
+		auto& lastTriggerRecord = m_recordController.CreateTriggerRecordObject(m_inspectionPos, lastTRid);
+		auto& triggerRecord = m_recordController.CreateTriggerRecordObjectToWrite(m_inspectionPos);
 		if (m_isCopyTR && nullptr != lastTriggerRecord)
 		{
 			triggerRecord->setImages(*(lastTriggerRecord.get()));
@@ -306,7 +313,7 @@ namespace SvTRCT
 			MessageBox("Trigger: LoadMainImage failed!");
 		}
 
-		m_lastID.Format("%d", m_recordController.getLastTRId());
+		m_lastID.Format("%d", m_recordController.getLastTRId(m_inspectionPos));
 		UpdateData(false);
 	}
 
@@ -316,9 +323,9 @@ namespace SvTRCT
 		int id = m_trIDToDisplay;
 		if (-1 == id)
 		{
-			id = m_recordController.getLastTRId();
+			id = m_recordController.getLastTRId(m_inspectionPos);
 		}
-		auto triggerRecord = m_recordController.CreateTriggerRecordObject(id);
+		auto triggerRecord = m_recordController.CreateTriggerRecordObject(m_inspectionPos, id);
 		if (nullptr != triggerRecord && triggerRecord->getImage(m_ImageCombo.GetCurSel()))
 		{
 			m_dialogImage.setImage(triggerRecord->getImage(m_ImageCombo.GetCurSel())->getHandle());
@@ -368,7 +375,7 @@ namespace SvTRCT
 		bufferStruct.m_lSizeY = m_mainHeigth;
 		bufferStruct.m_eAttribute = SVBufAttImageProcDib;
 		bufferStruct.m_eType = SV8BitUnsigned;
-		m_recordController.StartResetTriggerRecordStructure(m_trNumbers);
+		m_recordController.StartResetTriggerRecordStructure(m_inspectionPos, m_trNumbers);
 		m_recordController.AddImage2TriggerRecordStructure(m_mainGuid, bufferStruct);
 		int pos = 0;
 		for (const auto& tool : m_toolList)
@@ -378,7 +385,7 @@ namespace SvTRCT
 			m_recordController.AddImage2TriggerRecordStructure(tool->getGuid(), bufferStruct);
 		}
 		m_recordController.FinishResetTriggerRecordStructure();
-		m_lastID.Format("%d", m_recordController.getLastTRId());
+		m_lastID.Format("%d", m_recordController.getLastTRId(m_inspectionPos));
 	}
 
 	void CTriggerRecordControllerTestDlg::updateToolList()

@@ -74,5 +74,6 @@ namespace SvTRCT
 		CComboBox	m_ToolSelectCombo;
 		CComboBox	m_ImageCombo;
 		SvOg::PictureDisplay m_dialogImage;
+		const int m_inspectionPos = 0;
 	};
 } // namespace SvTRCT

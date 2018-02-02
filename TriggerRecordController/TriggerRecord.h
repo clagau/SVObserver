@@ -10,6 +10,10 @@
 #pragma region Includes
 #include "ITriggerRecordR.h"
 #include "ITriggerRecordRW.h"
+#pragma warning( push )
+#pragma warning( disable : 4800 ) 
+#include "SVProtoBuf\TriggerRecordController.pb.h"
+#pragma warning( pop )
 #pragma endregion Includes
 
 namespace SvTRC
@@ -44,7 +48,7 @@ namespace SvTRC
 			}
 
 			int m_trId = m_InvalidTrId; //This should be unique ID for the trigger record
-			int m_referenceCount = m_InvalidData; //The ReferenceCount for this TriggerRecord. m_InvalidData = invalid; m_WriteBlocked = write blocked; 0 = readable, but can be "deleted"; >0 = readable and blocked 
+			long m_referenceCount = m_InvalidData; //The ReferenceCount for this TriggerRecord. m_InvalidData = invalid; m_WriteBlocked = write blocked; 0 = readable, but can be "deleted"; >0 = readable and blocked 
 			TriggerData m_triggerData;
 		};
 #pragma region Constructor
@@ -53,22 +57,22 @@ namespace SvTRC
 		~TriggerRecord();
 
 	private:
-		TriggerRecord(TriggerRecordData& data);
+		TriggerRecord(TriggerRecordData& rData, const SvPB::ImageList& rImageList, const time_t& rResetTime);
 #pragma endregion Constructor
 
 #pragma region Public Methods
 	public:
 #pragma region ITriggerRecordR Methods
-		virtual int getId() const override { return m_data.m_trId; };
+		virtual int getId() const override { return m_rData.m_trId; };
 
-		virtual const TriggerData& getTriggerData() const override { return m_data.m_triggerData; }
+		virtual const TriggerData& getTriggerData() const override { return m_rData.m_triggerData; }
 
 		virtual IImagePtr getImage(const GUID& imageId) const override;
 		virtual IImagePtr getImage(int pos) const override;
 #pragma endregion ITriggerRecordR Methods
 
 #pragma region ITriggerRecordRW Methods
-		virtual void setTriggerData(const TriggerData& data) override { m_data.m_triggerData = data; };
+		virtual void setTriggerData(const TriggerData& data) override { m_rData.m_triggerData = data; };
 
 		virtual void setImages(const ITriggerRecordR& rDestTR) override;
 
@@ -77,13 +81,16 @@ namespace SvTRC
 		virtual IImagePtr createNewImageHandle(int pos) override;
 #pragma endregion ITriggerRecordRW Methods
 
-		const TriggerRecordData& getTRData() const { return m_data;	};
+		const TriggerRecordData& getTRData() const { return m_rData;	};
 #pragma endregion Public Methods
 
 #pragma region Member variables
 	private:
 		static const int m_InvalidTrId = -1;
-		TriggerRecordData& m_data;
+		TriggerRecordData& m_rData;
+		const SvPB::ImageList& m_rImageList;
+		const time_t m_ResetTime = 0;
+
 		static const int m_InvalidData = -2;
 		static const int m_WriteBlocked = -1;
 #pragma endregion Member variables

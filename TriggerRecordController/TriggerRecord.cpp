@@ -11,42 +11,45 @@
 #include "TriggerRecord.h"
 #include "ImageBufferController.h"
 #include "SVProtoBuf\BasicStructureHelper.h"
+#include "ResetLocker.h"
 #pragma endregion Includes
 
 namespace SvTRC
 {
-	TriggerRecord::TriggerRecord(TriggerRecordData& data)
-		: m_data (data)
+	TriggerRecord::TriggerRecord(TriggerRecordData& rData, const SvPB::ImageList& rImageList, const time_t& rResetTime)
+		: m_rData (rData), m_rImageList(rImageList), m_ResetTime(rResetTime)
 	{
 	}
 
 	TriggerRecord::~TriggerRecord()
 	{
-		//@TODO[MZA][8.00][20.12.2017] check if here is thread-safe-function to add
-		if (0 < m_data.m_referenceCount)
+		int refTmp = 0;
+		int refNew = 0;
 		{
-			m_data.m_referenceCount--;
+			refTmp = m_rData.m_referenceCount;
+			refNew = std::max(refTmp - 1 , 0);
 		}
-		else
-		{
-			m_data.m_referenceCount = 0;
-		}
+		while (InterlockedCompareExchange(&(m_rData.m_referenceCount), refNew, refTmp) == refTmp);
 	}
 
 	IImagePtr TriggerRecord::getImage(const GUID& imageId) const
 	{
 		IImagePtr pImage;
-		auto& imageController = ImageBufferController::getImageBufferControllerInstance();
-		const auto& rImageList = imageController.getImageList().list();
-		SvPB::UUID imageUuid = SvPB::setGuidToMessage(imageId);
-		auto imageIter = std::find_if(rImageList.begin(), rImageList.end(), [imageUuid](auto data)->bool
+		auto lock = ResetLocker::lockReset(m_ResetTime);
+		if (nullptr != lock)
 		{
-			return data.imageid().part1() == imageUuid.part1() && data.imageid().part2() == imageUuid.part2();
-		});
-		if (rImageList.end() != imageIter)
-		{
-			size_t pos_offset = std::distance(rImageList.begin(), imageIter);
-			pImage = getImage(static_cast<int>(pos_offset));
+			auto& imageController = ImageBufferController::getImageBufferControllerInstance();
+			const auto& rImageList = m_rImageList.list();
+			SvPB::UUID imageUuid = SvPB::setGuidToMessage(imageId);
+			auto imageIter = std::find_if(rImageList.begin(), rImageList.end(), [imageUuid](auto data)->bool
+			{
+				return data.imageid().part1() == imageUuid.part1() && data.imageid().part2() == imageUuid.part2();
+			});
+			if (rImageList.end() != imageIter)
+			{
+				size_t pos_offset = std::distance(rImageList.begin(), imageIter);
+				pImage = getImage(static_cast<int>(pos_offset));
+			}
 		}
 		return pImage;
 	}
@@ -54,12 +57,16 @@ namespace SvTRC
 	IImagePtr TriggerRecord::getImage(int pos) const
 	{
 		IImagePtr pImage;
-		auto& rImageController = ImageBufferController::getImageBufferControllerInstance();
-		const auto& rImageList = rImageController.getImageList().list();
-		const int*const imagePos = m_data.getImagePos();
-		if (0 <= pos && rImageList.size() > pos)
+		auto pLock = ResetLocker::lockReset(m_ResetTime);
+		if (nullptr != pLock)
 		{
-			return rImageController.getImage(imagePos[pos]);
+			auto& rImageController = ImageBufferController::getImageBufferControllerInstance();
+			const auto& rImageList = m_rImageList.list();
+			const int*const imagePos = m_rData.getImagePos();
+			if (0 <= pos && rImageList.size() > pos)
+			{
+				return rImageController.getImage(imagePos[pos]);
+			}
 		}
 		return pImage;
 	}
@@ -67,8 +74,8 @@ namespace SvTRC
 	void TriggerRecord::setImages(const ITriggerRecordR& rDestTR)
 	{
 		auto& rImageController = ImageBufferController::getImageBufferControllerInstance();
-		const auto& rImageList = rImageController.getImageList().list();
-		int*const pImagePos = m_data.getImagePos();
+		const auto& rImageList = m_rImageList.list();
+		int*const pImagePos = m_rData.getImagePos();
 		const int*const pImagePosOld = dynamic_cast<const TriggerRecord&>(rDestTR).getTRData().getImagePos();
 		for (int i = 0; i < rImageList.size(); i++)
 		{
@@ -84,12 +91,11 @@ namespace SvTRC
 	void TriggerRecord::setImage(int pos, int bufferPos)
 	{
 		auto& rImageController = ImageBufferController::getImageBufferControllerInstance();
-		const auto& rImageList = rImageController.getImageList().list();
-		int*const pImagePos = m_data.getImagePos();
+		const auto& rImageList = m_rImageList.list();
+		int*const pImagePos = m_rData.getImagePos();
 		if (0 <= pos && rImageList.size() > pos)
 		{
-			int sizeId = rImageList[pos].sizeid();
-			const auto& rSizeList = rImageController.getImageSizeList().list()[pos];
+			const auto& rSizeList = rImageController.getImageStructList().list()[pos];
 			if (bufferPos >= rSizeList.offset() && bufferPos < rSizeList.offset() + rSizeList.numberofbuffers())
 			{
 				if (pImagePos[pos] != bufferPos)
@@ -110,12 +116,12 @@ namespace SvTRC
 	{
 		IImagePtr pImage;
 		auto& rImageController = ImageBufferController::getImageBufferControllerInstance();
-		const auto& rImageList = rImageController.getImageList().list();
-		int*const pImagePos = m_data.getImagePos();
+		const auto& rImageList = m_rImageList.list();
+		int*const pImagePos = m_rData.getImagePos();
 		if (0 <= pos && rImageList.size() > pos)
 		{
 			rImageController.DecreaseRefCounter(pImagePos[pos]);
-			pImage = rImageController.createNewImageHandle(rImageList[pos].sizeid(), pImagePos[pos]);
+			pImage = rImageController.createNewImageHandle(rImageList[pos].structid(), pImagePos[pos]);
 			if (nullptr == pImage)
 			{
 				pImagePos[pos] = -1;

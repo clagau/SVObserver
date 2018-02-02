@@ -18,14 +18,20 @@ namespace SvTRC
 	class ITriggerRecordControllerRW : public ITriggerRecordControllerR
 	{
 	public:
-		/// Create a new trigger record in a free slot and block this slot for this instance in write-modus.
-		/// \returns SvTRC::ITriggerRecordRWPtr
-		virtual ITriggerRecordRWPtr CreateTriggerRecordObjectToWrite() = 0;
+		/// Set the list of GUID of the available inspections. ATTENTION: This command reset the whole controller.
+		/// \param rInspectionList [in] inspection list.
+		virtual void setInspections(const SvPB::InspectionList& rInspectionList) = 0;
 
-		/// Delete intern the memory and start the process to create the new memory structure. ATTENTION: All old TR-instances have to be deleted before.
+		/// Create a new trigger record in a free slot and block this slot for this instance in write-modus.
+		/// \param inspectionPos [in] ID of the inspection.
+		/// \returns SvTRC::ITriggerRecordRWPtr
+		virtual ITriggerRecordRWPtr CreateTriggerRecordObjectToWrite(int inspectionPos) = 0;
+
+		/// Delete intern the memory and start the process to create the new memory structure. ATTENTION: All old TR-instances of all IPs have to be deleted before.
+		/// \param inspectionPos [in] ID of the inspection.
 		/// \param TriggerRecordSize [in] The wished size of slots for the trigger records.
 		/// \returns bool True if successfully.
-		virtual bool StartResetTriggerRecordStructure(int TriggerRecordSize) = 0;
+		virtual bool StartResetTriggerRecordStructure(int inspectionPos, int TriggerRecordSize) = 0;
 
 		/// Add a new image to the trigger record structure. It must called StartResetTriggerRecordStructure before.
 		/// \param imageId [in] Guid of the image.

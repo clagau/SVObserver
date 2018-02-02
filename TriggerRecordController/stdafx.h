@@ -45,8 +45,10 @@
 #include <memory>
 #include <set>
 #include <vector>
-#include <boost/function.hpp>
+#include <time.h>
+#include <WinBase.h>
 
+#include <boost/function.hpp>
 #include <boost/multi_index_container.hpp>				//Used by static library
 #include <boost/multi_index/member.hpp>					//Used by static library
 #include <boost/multi_index/ordered_index.hpp>			//Used by static library
