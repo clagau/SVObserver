@@ -108,7 +108,7 @@ namespace SvOg {
 	void TADialogTableDefinesPage::OnBnClickedButtonRemove()
 	{
 		SvGcl::CCellRange Selection = m_Grid.GetSelectedCellRange();
-		for( int i = Selection.GetMinRow(); i <= Selection.GetMaxRow(); i++ )
+		for( int i = Selection.GetMinRow(); i <= Selection.GetMaxRow() && i <= m_gridList.size(); i++ )
 		{
 			for( int j = Selection.GetMinCol(); j <= Selection.GetMaxCol(); j++ )
 			{
@@ -159,7 +159,7 @@ namespace SvOg {
 		if (Selection.GetMinRow() == Selection.GetMaxRow() && 0 < Selection.GetMinRow() && Selection.GetMinRow()+1 < m_Grid.GetRowCount())
 		{
 			moveGuid = m_gridList[Selection.GetMinRow() - 1].second;
-			if (Selection.GetMinRow() + 2 < m_Grid.GetRowCount())
+			if (Selection.GetMinRow() + 3 < m_Grid.GetRowCount()) //3 because minRow is zero-based and last line in this grid is a empty line and should not be chosen
 			{
 				preGuid = m_gridList[Selection.GetMinRow()+1].second;
 			}
@@ -177,11 +177,11 @@ namespace SvOg {
 	{
 		SVGUID addPreGuid = GUID_NULL;
 		SvGcl::CCellRange Selection = m_Grid.GetSelectedCellRange();
-		if ( Selection.GetMinRow() == Selection.GetMaxRow() && 0 < Selection.GetMinRow() )
+		if ( Selection.GetMinRow() == Selection.GetMaxRow() && 0 < Selection.GetMinRow() && m_gridList.size() > Selection.GetMaxRow())
 		{
 			addPreGuid = m_gridList[Selection.GetMinRow()-1].second;
 		}
-		int number = static_cast<int>(m_gridList.size()+1);
+		int number = static_cast<int>(m_gridList.size());
 		std::string name = SvUl::Format(_T("%s %d"), cEquationName, number);
 
 		//search for unique name until one is found
@@ -190,19 +190,8 @@ namespace SvOg {
 			number++;
 			name = SvUl::Format(_T("%s %d"), cEquationName, number);
 		}
-		// Construct and Create the Filter Class Object
-		typedef SvCmd::ConstructAndInsertFriend Command;
-		typedef std::shared_ptr<Command> CommandPtr;
-		CommandPtr commandPtr{ new Command(m_TaskObjectID, TableColumnEquationGuid, name.c_str(), addPreGuid) };
-		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-		if (S_OK != hr)
-		{
-			SvDef::StringVector msgList;
-			msgList.push_back(SvUl::Format(_T("%d"), hr));
-			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TableColumn_AddingFailed, msgList, SvStl::SourceFileParams(StdMessageParams) );
-		}
+		AddColumn(name, addPreGuid);
+
 		ValidateData(); //validate the new line (this does a reset and add the column to the tableObject)
 		FillGridControl();
 	}
@@ -239,7 +228,7 @@ namespace SvOg {
 		SvGcl::NM_GRIDVIEW* pItem = (SvGcl::NM_GRIDVIEW*) pNotifyStruct;
 		bool bAcceptChange = true;
 
-		if (cNameColumn == pItem->iColumn && 0 < pItem->iRow && m_gridList.size() >= pItem->iRow)
+		if (cNameColumn == pItem->iColumn && 0 < pItem->iRow)
 		{
 			std::string CellText = m_Grid.GetCell(pItem->iRow, pItem->iColumn)->GetText();
 			std::string newName = CellText;
@@ -249,7 +238,7 @@ namespace SvOg {
 				m_Grid.SetItemText(pItem->iRow, pItem->iColumn, newName.c_str());
 			}
 			//Has the name changed
-			if (newName == m_gridList[pItem->iRow - 1].first)
+			if (m_gridList.size() >= pItem->iRow && newName == m_gridList[pItem->iRow - 1].first)
 			{
 				bAcceptChange = false;
 			}
@@ -262,22 +251,41 @@ namespace SvOg {
 				{
 					if (isTableNameUnique(newName))
 					{
-						typedef SvCmd::SetObjectName Command;
-						typedef std::shared_ptr<Command> CommandPtr;
-						CommandPtr commandPtr{ new Command(m_gridList[pItem->iRow - 1].second.ToGUID(), newName.c_str()) };
-						SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-						HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-						if (S_OK != hr)
+						if (m_gridList.size() >= pItem->iRow)
 						{
-							bAcceptChange = false;
-							SvDef::StringVector msgList;
-							msgList.push_back(SvUl::Format(_T("%d"), hr));
-							SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
-							Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TableColumn_RenamingFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
+							typedef SvCmd::SetObjectName Command;
+							typedef std::shared_ptr<Command> CommandPtr;
+							CommandPtr commandPtr{ new Command(m_gridList[pItem->iRow - 1].second.ToGUID(), newName.c_str()) };
+							SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+							HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+							if (S_OK != hr)
+							{
+								bAcceptChange = false;
+								SvDef::StringVector msgList;
+								msgList.push_back(SvUl::Format(_T("%d"), hr));
+								SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+								Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TableColumn_RenamingFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
+							}
+							else
+							{
+								m_gridList[pItem->iRow - 1].first = newName;
+							}
+						}
+						else if (m_gridList.size() + 1 == pItem->iRow)
+						{
+							HRESULT hr = AddColumn(newName);
+							if (S_OK != hr)
+							{
+								bAcceptChange = false;
+							}
+							else
+							{
+								FillGridControl();
+							}
 						}
 						else
 						{
-							m_gridList[pItem->iRow - 1].first = newName;
+							bAcceptChange = false;
 						}
 					}
 					else
@@ -296,6 +304,7 @@ namespace SvOg {
 					Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TableColumnName_Empty, SvStl::SourceFileParams(StdMessageParams));
 				}
 			}
+			
 		}
 
 		*pResult = (bAcceptChange)? 0 : -1;
@@ -364,7 +373,7 @@ namespace SvOg {
 		if (S_OK == hr)
 		{
 			m_gridList = commandPtr->AvailableObjects();
-			m_Grid.SetRowCount( cHeaderSize + static_cast<int>(m_gridList.size()) );
+			m_Grid.SetRowCount( cHeaderSize + static_cast<int>(m_gridList.size()) + 1 ); //the last one is the empty line "----"
 			SvGcl::GV_ITEM Item;
 			Item.mask = GVIF_TEXT | GVIF_FORMAT | GVIF_BKCLR;
 			Item.crBkClr = CLR_DEFAULT;
@@ -382,6 +391,16 @@ namespace SvOg {
 				m_Grid.SetItem( &Item );
 				m_Grid.SetItemState(Item.row, cFormulaColumn, m_Grid.GetItemState(Item.row,cFormulaColumn) | GVIS_READONLY);
 			}
+
+			Item.row = static_cast<int>(m_gridList.size() + cHeaderSize);
+			Item.col = cNameColumn;
+			Item.strText = "";
+			m_Grid.SetItem(&Item);
+
+			Item.col = cFormulaColumn;
+			Item.strText = "";
+			m_Grid.SetItem(&Item);
+			m_Grid.SetItemState(Item.row, cFormulaColumn, m_Grid.GetItemState(Item.row, cFormulaColumn) | GVIS_READONLY);
 		}
 		m_Grid.Refresh();
 		UpdateEnableButtons();
@@ -438,13 +457,13 @@ namespace SvOg {
 		bool bMoveDownEnable = false;
 		if (Selection.GetMinRow() == Selection.GetMaxRow())
 		{
-			bMoveUpEnable = (1 < Selection.GetMinRow());
-			bMoveDownEnable = (0 < Selection.GetMinRow() && Selection.GetMinRow() + 1 < m_Grid.GetRowCount());
+			bMoveUpEnable = (1 < Selection.GetMinRow() && Selection.GetMinRow() <= m_gridList.size());
+			bMoveDownEnable = (0 < Selection.GetMinRow() && Selection.GetMinRow() + 2 < m_Grid.GetRowCount());
 		}
 
 		GetDlgItem(IDC_BUTTON_MOVEUP)->EnableWindow(bMoveUpEnable);
 		GetDlgItem(IDC_BUTTON_MOVEDOWN)->EnableWindow(bMoveDownEnable);
-		GetDlgItem(IDC_BUTTON_REMOVE)->EnableWindow(-1 != Selection.GetMaxRow());
+		GetDlgItem(IDC_BUTTON_REMOVE)->EnableWindow(-1 != Selection.GetMaxRow() && Selection.GetMinRow() <= m_gridList.size());
 
 		if (c_maxTableColumn > m_gridList.size())
 		{
@@ -454,6 +473,24 @@ namespace SvOg {
 		{
 			GetDlgItem(IDC_BUTTON_ADD)->EnableWindow(false);
 		}
+	}
+
+	HRESULT TADialogTableDefinesPage::AddColumn(const std::string& rName, SVGUID addPreGuid)
+	{
+		// Construct and Create the Filter Class Object
+		typedef SvCmd::ConstructAndInsertFriend Command;
+		typedef std::shared_ptr<Command> CommandPtr;
+		CommandPtr commandPtr{ new Command(m_TaskObjectID, TableColumnEquationGuid, rName.c_str(), addPreGuid) };
+		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+		if (S_OK != hr)
+		{
+			SvDef::StringVector msgList;
+			msgList.push_back(SvUl::Format(_T("%d"), hr));
+			SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TableColumn_AddingFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
+		}
+		return hr;
 	}
 
 #pragma endregion Private Mehods

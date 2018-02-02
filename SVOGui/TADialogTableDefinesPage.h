@@ -54,6 +54,7 @@ namespace SvOg
 		virtual BOOL OnKillActive( ) override;
 		void OnBnClickedButtonRemove();
 		void OnBnClickedButtonAdd();
+
 		void OnBnClickedMoveUp();
 		void OnBnClickedMoveDown();
 
@@ -93,6 +94,8 @@ namespace SvOg
 		
 		/// Update the state of the buttons, which are enabled and disabled.
 		void UpdateEnableButtons();
+
+		HRESULT AddColumn(const std::string& rName, SVGUID addPreGuid = GUID_NULL);
 #pragma endregion Private Methods
 
 #pragma region Member Variables
