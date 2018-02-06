@@ -48,7 +48,7 @@ public:
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 
-	SVImageClass* getInputImage() const;
+	SVImageClass* getInputImage(bool bRunMode = false) const;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 protected:
@@ -58,7 +58,7 @@ private:
 	void init();
 
 protected:
-	SVInObjectInfoStruct		m_inputImageObjectInfo;
+	mutable SVInObjectInfoStruct		m_inputImageObjectInfo; ///Mutable to reset input object when invalid
 	SvOi::SVImageBufferHandlePtr		m_milTmpImageObjectInfo1;
 	SvOi::SVImageBufferHandlePtr		m_milTmpImageObjectInfo2;
 };

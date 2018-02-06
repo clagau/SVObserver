@@ -46,13 +46,28 @@ bool SVUnaryImageOperatorListClass::CreateObject( const SVObjectLevelCreateStruc
 	return m_isCreated;
 }
 
-SVImageClass* SVUnaryImageOperatorListClass::getInputImage() const
+SVImageClass* SVUnaryImageOperatorListClass::getInputImage(bool bRunMode /*=false*/) const
 {
 	if (m_inputImageObjectInfo.IsConnected() && nullptr != m_inputImageObjectInfo.GetInputObjectInfo().getObject())
 	{
-		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return static_cast<SVImageClass*> (m_inputImageObjectInfo.GetInputObjectInfo().getObject());
+		if (bRunMode)
+		{
+			//! Use static_cast to avoid time penalty in run mode for dynamic_cast
+			//! We are sure that when getObject() is not nullptr that it is the correct type
+			return static_cast<SVImageClass*> (m_inputImageObjectInfo.GetInputObjectInfo().getObject());
+		}
+		else
+		{
+			///During reset make sure image is valid, there is also enough time for the dynamic_cast 
+			const SVGUID& rImageID = m_inputImageObjectInfo.GetInputObjectInfo().getUniqueObjectID();
+			SVImageClass* pImage  = dynamic_cast<SVImageClass*> (SvOi::getObject(rImageID));
+			if (nullptr == pImage)
+			{
+				m_inputImageObjectInfo.SetInputObject(nullptr);
+			}
+
+			return pImage;
+		}
 	}
 
 	return nullptr;

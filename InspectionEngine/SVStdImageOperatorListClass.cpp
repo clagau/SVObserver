@@ -147,7 +147,7 @@ bool SVStdImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::Mess
 	// Run yourself...
 	bRetVal = onRun( rRunStatus, &m_RunErrorMessages );
 
-	SVImageClass* pInputImage = getInputImage();
+	SVImageClass* pInputImage = getInputImage(true);
 	SVImageClass* pOutputImage = getOutputImage();
 	
 	if ( nullptr == pInputImage || nullptr == pOutputImage )

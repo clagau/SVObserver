@@ -144,7 +144,7 @@ bool SVLinearImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::M
 		// Run yourself...
 		bRetVal &= onRun( rRunStatus, &m_RunErrorMessages );
 		
-		SVImageClass *l_psvInputImage = getInputImage();
+		SVImageClass *l_psvInputImage = getInputImage(true);
 
 		if( nullptr == l_psvInputImage )
 		{

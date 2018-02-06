@@ -95,7 +95,7 @@ bool SVInPlaceImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::
 	// Run yourself...
 	bool bRetVal = onRun( rRunStatus, &m_RunErrorMessages );
 
-	if( nullptr == getInputImage() )
+	if( nullptr == getInputImage(true) )
 	{
 		// Signal something is wrong...
 		bRetVal = false;
@@ -109,8 +109,8 @@ bool SVInPlaceImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::
 		SvOi::SVImageBufferHandlePtr output;
 		// Use input image for in- and output.
 		// Image must be a Physical type!!! ( Is already checked in ResetObject() )
-		getInputImage()->GetImageHandle( input );
-		getInputImage()->GetImageHandle( output );
+		getInputImage(true)->GetImageHandle( input );
+		getInputImage(true)->GetImageHandle( output );
 		
 		bool bFirstFlag = true;
 
