@@ -11,18 +11,17 @@
 #pragma region Includes
 #include "MonitorEntry.h"
 #include "SVProductFilterEnum.h"
-#include "SVSharedMonitorList.h"
 #include "MLInspectionInfo.h"
 #include "MonitorListCpy.h"
 #include "Definitions\SVIMCommand.h"
 #include "Definitions\StringTypeDef.h"
+#include "RunReApi\RunReApi.pb.h"
 #pragma endregion Includes
 
 
 namespace SvSml
 {
-	class SVMonitorListReader;
-	class SVMonitorListWriter;
+	class MesMLCpyContainer;
 	
 	//!class encapsulate an container wit all active monitorlists 
 	class MLCpyContainer
@@ -33,10 +32,7 @@ namespace SvSml
 
 		///Clear all Entries
 		void Clear();
-		
-		//! Load MonitorLists from Shared  Memory
-		void ReloadMonitorMap(SVMonitorListReader& rmlReader, DWORD version);
-		
+
 		DWORD GetVersion() const; 
 		
 		//! Get the names of all active Monitorlist 
@@ -50,22 +46,30 @@ namespace SvSml
 		
 		const MonitorListCpy*  GetMonitorListCpyPointerForPPQ(const std::string& PPQName)  const;
 	
-		DWORD GetInspectionStoreId(const std::string& InspectionName);
+		DWORD GetInspectionStoreId(const std::string& rInspectionName) const;
 	
-		void Insert(MonitorListCpyPointer& MLCpyPtr);
+		void Insert(MonitorListCpyPointer& rMLCpyPtr);
 		
 		///Return the total size of the all images for this inspection 
-		DWORD GetInspectionImageSize(const std::string& inspectionName   );
+		DWORD GetInspectionImageSize(const std::string& rInspectionName   ) const;
 		
 		///searches all monitorlist for the full dotet nane and return the pointer if it is not found throw an exception 
 		MonitorEntryPointer GetMonitorEntryPointer(const std::string& rname);
 
-		///Writes all Monitorlist to shared memory 
-		void WriteMonitorList(SVMonitorListWriter& rWriter) ;
-
 		///Calculates the Storindex, offset and itemindex for all images 
 		void CalculateStoreIds();
-	
+
+		///Serialize to ProtoBufMessage
+		void BuildProtoMessage(MesMLCpyContainer& rMesMLCpyContainer) const;
+
+		///Fill the class from protobufmessage
+		void BuildFromProtoMessage(const MesMLCpyContainer& rMesMLCpyContainer);
+		
+		void QueryListName(const RRApi::QueryListNameRequest& rReq, RRApi::QueryListNameResponse& rResp) const;
+		void QueryListItem(const RRApi::QueryListItemRequest& rReq, RRApi::QueryListItemResponse& resp) const;
+		
+
+	//private:
 		DWORD m_Version;							//< VersionsNumber used from RRS
 		MonitorListCpyMap m_MonitorListCpyMap;		//<map Monitorlistname  active MonitorListCpyPointer   
 		MLInspectionInfoMap	  m_InspectionInfoMap;	//<Map inspection-nname  InspectionInfos

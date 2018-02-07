@@ -7,10 +7,9 @@
 //******************************************************************************
 #include "StdAfx.h"
 #include "MLcpyContainer.h"
-#include "SVMonitorListReader.h"
-#include "SVMonitorListWriter.h"
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "Definitions/StringTypeDef.h"
+#include "RunReApi/RunReApi.pb.h"
 
 namespace SvSml
 {
@@ -29,26 +28,7 @@ namespace SvSml
 		m_InspectionInfoMap.clear();
 		m_MonitorListCpyMap.clear();
 		m_PPQInfoMap.clear();
-
 	}
-	//! Load MonitorLists from Shared  Memory
-	//! \param mlReader [in]
-	//! \returns void
-	void MLCpyContainer::ReloadMonitorMap(SVMonitorListReader& rmlReader, DWORD version)
-	{
-		rmlReader.Open();
-		Clear();
-		SvDef::StringVector mlNames = rmlReader.GetListNames();
-		SvDef::StringVector::const_iterator it;
-		for (it = mlNames.begin(); it != mlNames.end(); it++)
-		{
-			m_MonitorListCpyMap[*it] = MonitorListCpyPointer(new MonitorListCpy(rmlReader[*it]));
-			m_MonitorListCpyMap[*it]->InsertToMLInspectionInfoMap(m_InspectionInfoMap, m_PPQInfoMap);
-		}
-		rmlReader.Close();
-		m_Version = version;
-	}
-
 	DWORD MLCpyContainer::GetVersion()  const
 	{
 		return m_Version;
@@ -111,7 +91,7 @@ namespace SvSml
 		return nullptr;
 	}
 	
-	DWORD MLCpyContainer::GetInspectionStoreId(const std::string& InspectionName)
+	DWORD MLCpyContainer::GetInspectionStoreId(const std::string& InspectionName) const
 	{
 		auto& it = m_InspectionInfoMap.find(InspectionName);
 		if (it != m_InspectionInfoMap.end())
@@ -128,7 +108,7 @@ namespace SvSml
 		m_MonitorListCpyMap[monitorlistName] = std::move(MLCpyPtr);
 	}
 
-	DWORD MLCpyContainer::GetInspectionImageSize(const std::string& inspectionName)
+	DWORD MLCpyContainer::GetInspectionImageSize(const std::string& inspectionName) const
 	{
 		SvSml::MLInspectionInfoMap::const_iterator it = m_InspectionInfoMap.find(inspectionName);
 		if (it != m_InspectionInfoMap.end() && it->second.get())
@@ -141,19 +121,8 @@ namespace SvSml
 		}
 	}
 
-	void MLCpyContainer::WriteMonitorList(SVMonitorListWriter& rWriter)
-	{
-		MonitorListCpyMap::const_iterator  it;
-		for (it = m_MonitorListCpyMap.begin(); it != m_MonitorListCpyMap.end(); ++it)
-		{
-			if (it->second.get() && it->second->GetIsActive())
-			{
-				it->second->WriteMonitorList(rWriter);
-			}
-		}
-	}
 
-	MonitorEntryPointer MLCpyContainer::GetMonitorEntryPointer(const std::string& rname)
+	MonitorEntryPointer MLCpyContainer::GetMonitorEntryPointer(const std::string& rname) 
 	{
 		MonitorListCpyMap::iterator  it;
 		for (it = m_MonitorListCpyMap.begin(); it != m_MonitorListCpyMap.end(); ++it)
@@ -234,4 +203,68 @@ namespace SvSml
 			}
 		}
 	}
+	void  MLCpyContainer::BuildProtoMessage(MesMLCpyContainer& rMesMLCpyCont) const
+	{
+		for (auto &mlCp : m_MonitorListCpyMap)
+		{
+			mlCp.second->BuildProtoMessage(*(rMesMLCpyCont.add_monitorlistcpy()));
+
+		}
+
+	}
+
+	void MLCpyContainer::BuildFromProtoMessage(const MesMLCpyContainer& rMesMLCpyContainer)
+	{
+		Clear();
+		for (int m = 0; m < rMesMLCpyContainer.monitorlistcpy_size(); m++)
+		{
+			const MesMonitorListCpy& mlCpy = rMesMLCpyContainer.monitorlistcpy(m);
+			MonitorListCpyPointer pMonitorListCpy = std::make_unique<MonitorListCpy>();
+			pMonitorListCpy->BuildFromProtoMessage(mlCpy);
+			Insert(pMonitorListCpy);
+		}
+
+	}
+
+	void MLCpyContainer::QueryListName(const RRApi::QueryListNameRequest&, RRApi::QueryListNameResponse& resp) const
+	{
+		for (auto& mlc : m_MonitorListCpyMap)
+		{
+			if (mlc.second->GetIsActive())
+			{
+				*(resp.add_listname()) = mlc.first;
+			}
+		}
+	}
+
+	void MLCpyContainer::QueryListItem(const RRApi::QueryListItemRequest& request, RRApi::QueryListItemResponse& resp) const
+	{
+		
+		if (0 == request.name().size())
+		{
+			for (const auto& pair : m_MonitorListCpyMap)
+			{
+				if (pair.second->GetIsActive())
+				{
+					pair.second->QueryListItem(request, resp);
+				}
+			}
+		}
+		else
+		{
+			MonitorListCpyMap::const_iterator it;
+			it = m_MonitorListCpyMap.find(request.name());
+			if (it != m_MonitorListCpyMap.end() && it->second->GetIsActive())
+			{
+				it->second->QueryListItem( request, resp);
+			}
+			else
+			{
+				resp.set_status(RRApi::InvalidMonitorName);
+			}
+
+		}
+
+	}
+	
 } //namespace SvSml

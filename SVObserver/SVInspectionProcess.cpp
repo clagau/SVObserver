@@ -276,8 +276,8 @@ bool   SVInspectionProcess::CopyToWatchlist(SVProductInfoStruct& rLastProduct)
 				{
 					pValueObject->CopyToMemoryBlock(pBuffer, Bytesyze, arrayindex);
 				}
-
-				if (element->MonEntryPtr->data.m_MonitorListFlag & SvSml::RejectConditionFlag)
+				DWORD   RejectConditionFlag = SvSml::ListFlags[SvSml::ListType::rejectCondition];
+				if (element->MonEntryPtr->data.m_MonitorListFlag & RejectConditionFlag)
 				{
 					double val(0);
 					SvOi::IObjectClass* PObj = dynamic_cast<SvOi::IObjectClass*>(element->ObjRef.getValueObject());

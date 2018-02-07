@@ -27,7 +27,7 @@ ProductDlg::ProductDlg(SvSml::MLProduct* pProduct, CWnd* pParent /*=NULL*/)
 	m_pFailstatus = nullptr;
 }
 
-ProductDlg::ProductDlg(SvSml::productPointerVector* pFailstatus, CWnd* pParent /*=NULL*/)
+ProductDlg::ProductDlg(SvSml::vecpProd* pFailstatus, CWnd* pParent /*=NULL*/)
 	: CDialog(IDD_PRODUCT_DLG, pParent)
 {
 	m_pProduct = nullptr;

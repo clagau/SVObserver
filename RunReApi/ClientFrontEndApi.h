@@ -42,6 +42,7 @@ namespace RRApi
 		std::future<GetItemsResponse> GetItems(const GetItemsRequest&);
 		std::future<QueryListNameResponse> QueryListName(const QueryListNameRequest&);
 		std::future<QueryListItemResponse> QueryListItem(const QueryListItemRequest&);
+		
 	
 	private:
 		int GetNextMessageId()

@@ -101,19 +101,11 @@ namespace SvSml
 		return m_settings;
 	}
 
-	SvSml::SVMonitorListWriter& SharedMemWriter::GetMonitorListWriter()
-	{
-		return m_monitorListWriter;
-	}
-
-
 	void SharedMemWriter::Destroy()
 	{
-		{
-			CloseDataConnection();
-			m_monitorListWriter.Release();
-			ClearMonitorListCpyVector();
-		}
+		CloseDataConnection();
+		m_monitorListStore.CloseConnection();
+		ClearMonitorListCpyVector();
 	}
 
 	void SharedMemWriter::CloseDataConnection()
@@ -175,7 +167,14 @@ namespace SvSml
 	}
 	void SharedMemWriter::WriteMonitorList()
 	{
-		return m_MLContainer.WriteMonitorList(m_monitorListWriter);
+		MesMLCpyContainer MesMLCpyCont;
+		m_MLContainer.BuildProtoMessage(MesMLCpyCont);
+		size_t size = MesMLCpyCont.ByteSizeLong();
+		const SvSml::SVSharedMemorySettings& rSettings = SvSml::SharedMemWriter::Instance().GetSettings();
+		SMParameterStruct Param(rSettings.GetCreateTimeout(), rSettings.GetCreateWaitTime());
+		m_monitorListStore.CreateMonitorStore("Monitor", static_cast<DWORD>(size), Param);
+		MesMLCpyCont.SerializeToArray(m_monitorListStore.GetPtr(), static_cast<DWORD>(size));
+		return;
 	}
 
 	void  SharedMemWriter::CalculateStoreIds()

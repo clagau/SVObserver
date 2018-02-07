@@ -178,7 +178,7 @@ namespace SvOg {
 	{
 		SvPB::ResetObjectRequest requestMessage;
 		SvPB::ResetObjectResponse responseMessage;
-		requestMessage.mutable_objectid()->CopyFrom(SvPB::setGuidToMessage(m_InspectionID));
+		SvPB::SetGuidInMessage(requestMessage.mutable_objectid(), m_InspectionID);
 		SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, &responseMessage);
 		SvStl::MessageContainerVector messages = SvCmd::setMessageContainerFromMessagePB(responseMessage.messages());
 		if (messages.size() > 0 && 0 != messages[0].getMessage().m_MessageCode)

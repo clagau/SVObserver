@@ -33,11 +33,13 @@ public:
 	void GetItems(const GetItemsRequest&, GetItemsResponse&);
 	void QueryListName(const QueryListNameRequest&, QueryListNameResponse&);
 	void QueryListItem(const QueryListItemRequest&, QueryListItemResponse&);
+	
+
 private:
 	//! Fills pResp struct from pProduct, adds input name to pResp if nameInResponse is true.
 	void SetProductResponse(bool nameInResponse, const SvSml::MLProduct* pProduct, GetProductResponse* pResp);
 	//! Fills pFailstatus struct from rFailStatResp, adds input name to pFailstatus depend from GetFailStatusRequest
-	void GetFailstatus(SvSml::Failstatus* pFailstatus, const GetFailStatusRequest&, GetFailStatusResponse& rFailStatResp) ;
+	void GetFailstatus(SvSml::vecpProd* pFailstatus, const GetFailStatusRequest&, GetFailStatusResponse& rFailStatResp) ;
 	//! 
 	void GetProduct(SvSml::MLProduct* pProduct, const GetProductRequest&, GetProductResponse&);
 	//!

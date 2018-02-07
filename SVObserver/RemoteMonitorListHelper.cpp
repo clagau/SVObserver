@@ -91,15 +91,7 @@ void RemoteMonitorListHelper::GetPropertiesFromMonitoredObject(const MonitoredOb
 		{
 			MatroxImageProps Imageprops;
 			SVMatroxBufferInterface::InquireBufferProperties(imageHandlePtr->GetBuffer(), Imageprops);
-			data.sizeX = Imageprops.sizeX;
-			data.sizeY = Imageprops.sizeY;
-			data.PitchByte = Imageprops.PitchByte;
-			data.Pitch = Imageprops.Pitch;
-			data.Matrox_type = Imageprops.Matrox_type;
-			data.Attrib = Imageprops.Attrib;
-			data.BandSize = Imageprops.Bandsize;
-			data.ByteSize = Imageprops.Bytesize;
-
+			data.SetMatroxImageProps(Imageprops);
 		}
 	}
 }

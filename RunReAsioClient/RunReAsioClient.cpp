@@ -39,10 +39,7 @@ void PrintCurImage(const ::RRApi::CurImageId& curIm)
 }
 void PrintVariant(const ::RRApi::Variant& var)
 {
-	if (var.has_status())
-	{
-		std::cout << "Status: " << var.status() << std::endl;
-	}
+	
 	if (var.has_bool_value())
 	{
 		std::cout << "value: " << var.bool_value() << std::endl;
@@ -143,7 +140,7 @@ void PrintProductResponse(const RRApi::GetProductResponse& resp)
 			return;
 		}
 	}
-	std::cout << "Product: " << "for Trigger: " << resp.tiggercount() << std::endl;
+	std::cout << "Product: " << "for Trigger: " << resp.trigger() << std::endl;
 	bool bpImageName = resp.images_size() == resp.imagenames_size();
 	bool bpValueName = resp.values_size() == resp.valuenames_size();
 
@@ -183,7 +180,6 @@ int main(int argc, char *argv[])
 		std::string ipAdress("127.0.0.1");
 		if (argc > 1)
 			ipAdress = argv[1];
-		//auto api = RRApi::ClientFrontEndApi::Init(io_service, 8080, ipAdress);
 		auto api = RRApi::ClientFrontEndApi::Init(io_service);
 		api->Connect(RRApi::Default_Port, ipAdress);
 
@@ -262,7 +258,7 @@ int main(int argc, char *argv[])
 					int t = atoi(words[2].c_str());
 					if (t > -1)
 					{
-						ProductRequest.set_triggercount(t);
+						ProductRequest.set_trigger(t);
 					}
 				}
 				ProductRequest.set_nameinresponse(true);
@@ -367,7 +363,56 @@ int main(int argc, char *argv[])
 					api->Connect(port, ipAdress);
 				}
 			}
+			else if (words[0] == "qli")
+			{
+				std::string monitorlistname;
+				RRApi::ListType  t{ RRApi::All };
+				bool bImage{ true };
+				bool bValues{ true };
+				if (wordsize >= 2)
+				{
+					monitorlistname = words[1].c_str();
+				}
+				if (wordsize >= 3)
+				{
+					if (words[2] == "p")
+					{
+						t = RRApi::ProductItem;
+					}
+					else if (words[2] == "r")
+					{
+						t = RRApi::RejectCondition;
+					}
+					else if (words[2] == "f")
+					{
+						t = RRApi::FailStatus;
+					}
+
+				}
+				if (wordsize >= 4)
+				{
+					int temp = atoi(words[3].c_str());
+					bImage = temp > 0;
+				}
+				if (wordsize >= 5)
+				{
+					int temp = atoi(words[4].c_str());
+					bValues = temp > 0;
+				}
+				RRApi::QueryListItemRequest  request;
+				request.set_name(monitorlistname.c_str());
+				request.set_type(t);
+				request.set_queryimages(bImage);
+				request.set_queryvalues(bValues) ;
+
+				RRApi::QueryListItemResponse resp = api->QueryListItem(request).get();
 				
+				std::cout << "QueryListItemResponse .DebugString: " << std::endl;
+				std::cout << resp.DebugString() << std::endl;
+
+
+
+			}
 			else if (words[0] == "h" )
 			{
 				std::cout << "commands: " << std::endl;
@@ -382,6 +427,7 @@ int main(int argc, char *argv[])
 				std::cout << "b2 [image_width=200] [iterations=1000] [repeats=1] (Benchmark 2)" << std::endl;
 				std::cout << "d disconnect" << std::endl;
 				std::cout << "c  connect [ip adress] [portnr  = 8080] " << std::endl;
+				std::cout << "qli [monitorlistname] [p,r,f,a] [Image=1]  [val=1]" << std::endl;
 			}
 		}
 

@@ -12,36 +12,49 @@
 
 #include "MLInspectionInfo.h"
 #include "SVMatroxLibrary\MatroxImageProps.h"
+#pragma warning( push )
+#pragma warning( disable : 4800 ) 
+#include "SVprotobuf\MonitorListStore.pb.h"
+#pragma warning(pop)
+#include "RunReApi\RunReApi.pb.h"
+#include "Definitions\SVObjectTypeInfoStruct.h"
+
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <map>
 #pragma endregion Includes
 
 namespace SvSml
 {
-	struct ShMonitorEntry; 
+	
 	///struct holds data element used in MonitorEntry and ShMonitorEntry
 	struct MonitorEntryData
 	{
-		MonitorEntryData();
-		DWORD InspectionStoreId; //<Inspection Store Index  
-		DWORD ItemId;	//<Index in the Inspection Store
-		DWORD ObjectType;		//<SvDef::SVObjectTypeEnum 
-		DWORD variant_type; ///vt value from variant
-		DWORD Store_Offset;  ///offset in Inspection Store
-
-		BOOL isArray;
-		BOOL wholeArray;
-		long arrayIndex;
-		DWORD m_MonitorListFlag; // combination of SvSml::ListFlags[]
 		
-		long long sizeY;		//< MbufInquire  M_SIZE_Y   
-		long long sizeX;		//< MbufInquire  M_SIZE_Y   
-		long long PitchByte;	//< MbufInquire  M_PITCH_BYTE   
-		long long Pitch;		//< MbufInquire  M_PITCH   
-		long long Matrox_type;  //< MbufInquire  M_TYPE   
-		long long Attrib;		//< MbufInquire  M_EXTENDED_ATTRIBUTE   
-		long long BandSize;		//< MbufInquire  M_SIZE_BAND   
-		long long ByteSize;		//< MbufInquire  M_SIZE_BYTE   
+		bool GetMatroxImageProps(MatroxImageProps& rImageProps) const;
+		void SetMatroxImageProps(const MatroxImageProps& rImageProps);
+		///Serialize to ProtoBufMessage
+		void BuildProtoMessage(MesMonitorEntryData& rprotoMessage) const;
+		void BuildFromProtoMessage(const MesMonitorEntryData& rprotoMessage);
+
+		DWORD InspectionStoreId{ UINT_MAX }; //<Inspection Store Index  
+		DWORD ItemId{UINT_MAX };	//<Index in the Inspection Store
+		DWORD ObjectType{ 0 };		//<SvDef::SVObjectTypeEnum 
+		DWORD variant_type{ VT_EMPTY };  ///vt value from variant
+		DWORD Store_Offset{ 0 };  ///offset in Inspection Store
+
+		bool isArray{ false };
+		bool wholeArray{ false };
+		long arrayIndex =-1;
+		DWORD m_MonitorListFlag{ 0 };	 // combination of SvSml::ListFlags[]
+		
+		long long sizeY{ 0 };		//< MbufInquire  M_SIZE_Y   
+		long long sizeX{ 0 };		//< MbufInquire  M_SIZE_Y   
+		long long PitchByte{ 0 };	//< MbufInquire  M_PITCH_BYTE   
+		long long Pitch{ 0 };		//< MbufInquire  M_PITCH   
+		long long Matrox_type{ 0 };  //< MbufInquire  M_TYPE   
+		long long Attrib{ 0 };		//< MbufInquire  M_EXTENDED_ATTRIBUTE   
+		long long BandSize{ 0};		//< MbufInquire  M_SIZE_BAND   
+		long long ByteSize{ 0};		//< MbufInquire  M_SIZE_BYTE   
 	};
 	
 	///Struct holds data for one entry in Monitorlist
@@ -50,13 +63,18 @@ namespace SvSml
 	public:
 		MonitorEntry();
 		MonitorEntry(const std::string &name);
-		MonitorEntry(const ShMonitorEntry &rentry );
 		
-		bool GetMatroxImageProps(MatroxImageProps &ImageProps);
+		bool GetMatroxImageProps(MatroxImageProps &rImageProps) const;
 		void SetMatroxImageProps(const MatroxImageProps  &rImageProps);
-		bool GetValue(std::string& string, BYTE* offset);
-		bool GetValue(_variant_t& val , BYTE* offset);
-
+		bool GetValue(std::string& rString, BYTE* offset) const;
+		///Not used yet 
+		bool GetValue(_variant_t& rVal , BYTE* pOffset) const;
+		///Serialize to ProtoBufMessage
+		void BuildProtoMessage(MesMonitorEntry &rMesMonitorEntry) const;
+		///set values from serializing 
+		void BuildFromProtoMessage(const MesMonitorEntry &rMesMonitorEntry);
+		void AddListItem(RRApi::QueryListItemResponse& rResp) const;
+		bool IsImage() const { return (data.ObjectType == SvDef::SVImageObjectType); };
 	public:	
 		GUID m_Guid;   //Object Guid 
 		std::string name; //<Full name 
@@ -66,18 +84,4 @@ namespace SvSml
 	typedef std::shared_ptr<MonitorEntry>  MonitorEntryPointer; //< shared_ptr MonitorEntry 
 	typedef std::vector<MonitorEntryPointer>  MonitorEntries; //< vector MonitorEntryPointer 
 	typedef std::map<std::string, MonitorEntryPointer>  MonitorEntriesMap; //< map objectname MonitorEntryPointer
-
-	///struct holds data for one entry in Monitorlist. Uses boost interprocess data type for string. Can be used in managed shared memory
-	struct ShMonitorEntry
-	{	
-		ShMonitorEntry(const void_allocator &allocator);
-		ShMonitorEntry(const void_allocator &allocator, const MonitorEntry &rentry );
-		
-		bip_string name;
-		MonitorEntryData data;
-	};
-
-	typedef bip::allocator<ShMonitorEntry, segment_manager_t>     ShMoListEntry_allocator;
-	typedef bip::vector<ShMonitorEntry, ShMoListEntry_allocator> ShMoListEntryVector;
-	
 } //namespace SvSml

@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package SvSml;
+///for Serializing class MonitorEntryData
+message MesMonitorEntryData 
+{
+	uint32 InspectionStoreId =1;
+	uint32 ItemId = 2;	//<Index in the Inspection Store
+	uint32 ObjectType = 3;		//<SvDef::SVObjectTypeEnum 
+	uint32 variant_type = 4;  ///vt value from variant
+	uint32 Store_Offset = 5;  ///offset in Inspection Store
+	bool isArray = 6;
+	bool wholeArray = 7;	
+	int32 arrayIndex = 8;
+	uint32 MonitorListFlag =9; // combination of SvSml::ListFlags[]
+	int64 sizeX  =10;		
+	int64 sizeY = 11;		
+	int64  PitchByte = 12 ;	
+	int64  Pitch = 13;		
+	int64 Matrox_type= 14;  
+	int64 Attrib= 15;		
+	int64 BandSize= 16;		
+	int64 ByteSize= 17;		
+}
+
+///for Serializing class MonitorEntry
+message MesMonitorEntry
+{
+	bytes GUID =1;
+	string name =2;
+	MesMonitorEntryData EntryData =3;
+}
+ 
+///for Serializing class MonitorListCpy
+message MesMonitorListCpy
+{
+	string MonitorlistName =1;
+	string PPQName = 2;
+	int32 RejectDepth = 3;
+	int32 ProductDepth = 4;
+	bool IsActive = 5;
+	repeated MesMonitorEntry	 MonitorEntries = 6;
+}
+
+///for Serializing all Monitorlists
+message MesMLCpyContainer
+{
+	repeated MesMonitorListCpy MonitorListCpy =1;
+}

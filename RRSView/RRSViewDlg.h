@@ -10,19 +10,15 @@
 //******************************************************************************
 
 #pragma once
-#include "SVSharedMemoryLibrary\SVMonitorListReader.h"
+
 #include "SVSharedMemoryLibrary\MonitorListCpy.h"
 #include "SVSharedMemoryLibrary\MLCpyContainer.h"
 #include "SVSharedMemoryLibrary\SharedDataContainer.h"
 #include "SVSharedMemoryLibrary\SharedMemReader.h"
 #include "afxwin.h"
 
-
-
-class SVMonitorListReader;
 class MonitorListMap;
 enum CallBackType;
-
 
 //! CShareViewDlg dialog application's main dialog
 class CRRSViewDlg : public CDialogEx

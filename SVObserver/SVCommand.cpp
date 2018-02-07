@@ -2764,7 +2764,7 @@ STDMETHODIMP CSVCommand::SVRunOnce(BSTR bstrName)
 		if( SVConfigurationObject::GetInspection( W2T(bstrName), pInspection) )
 		{
 			SvPB::InspectionRunOnceRequest requestMessage;
-			requestMessage.mutable_inspectionid()->CopyFrom(SvPB::setGuidToMessage(pInspection->GetUniqueObjectID()));
+			SvPB::SetGuidInMessage(requestMessage.mutable_inspectionid(), pInspection->GetUniqueObjectID());
 			hrResult = SvCmd::InspectionCommandsSynchronous(pInspection->GetUniqueObjectID(), &requestMessage, nullptr);
 		}
 	}// end if

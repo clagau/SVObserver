@@ -129,8 +129,10 @@ HRESULT SVHistogramAnalyzerSetupClass::SetInspectionData()
 	const SVGUID& rInspectionID = m_pAnalyzer->GetInspection()->GetUniqueObjectID();
 	const SVGUID& rToolID = m_pAnalyzer->GetTool()->GetUniqueObjectID();
 	SvPB::InspectionRunOnceRequest requestMessage;
-	requestMessage.mutable_inspectionid()->CopyFrom(SvPB::setGuidToMessage(rInspectionID));
-	requestMessage.mutable_taskid()->CopyFrom(SvPB::setGuidToMessage(rToolID));
+	SvPB::SetGuidInMessage(requestMessage.mutable_inspectionid(), rInspectionID);
+	SvPB::SetGuidInMessage(requestMessage.mutable_taskid(), rToolID);
+
+	
 	HRESULT Result = SvCmd::InspectionCommandsSynchronous(rInspectionID, &requestMessage, nullptr);
 
 	return Result;

@@ -198,11 +198,15 @@ namespace SvTRC
 			return false;
 		}
 
-		SvPB::UUID imageUuid = SvPB::setGuidToMessage(imageId);
+		SvPB::UUID imageUuid;
+		SvPB::SetGuidInMessage(&imageUuid, imageId);
+		
 		//check if image with this GUID already in list (this is not allowed.)
 		auto imageIter = std::find_if(m_imageListResetTmp.list().begin(), m_imageListResetTmp.list().end(), [imageUuid](auto data)->bool
 		{
-			return data.imageid().part1() == imageUuid.part1() && data.imageid().part2() == imageUuid.part2();
+			
+			return (0 == data.imageid().guid().compare(imageUuid.guid()));
+			
 		});
 		if (m_imageListResetTmp.list().end() != imageIter)
 		{

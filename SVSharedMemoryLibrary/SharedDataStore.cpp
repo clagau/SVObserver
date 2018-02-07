@@ -29,6 +29,10 @@ namespace SvSml
 		SYSTEM_INFO siSysInfo;
 		GetSystemInfo(&siSysInfo);
 		m_AllocationGranularity = siSysInfo.dwAllocationGranularity;
+		if (0 == m_AllocationGranularity)
+		{
+			m_AllocationGranularity = 1;
+		}
 		m_DataStoreHeaderSize = (sizeof(DataStoreHeader) / m_AllocationGranularity + 1) *  m_AllocationGranularity;
 	}
 
@@ -105,7 +109,7 @@ namespace SvSml
 			{
 				break;
 			}
-			if (GetLastError() == ERROR_ALREADY_EXISTS)
+			if (ERROR_ALREADY_EXISTS == GetLastError())
 			{
 				//Wait for the clients   to closehandle to SharedMemory 
 				CloseHandle(m_hMapFileImage);

@@ -41,7 +41,7 @@ namespace SvCmd
 			pMessageContainerPB->set_filename(messageData.m_SourceFile.m_FileName);
 			pMessageContainerPB->set_fileline(messageData.m_SourceFile.m_Line);
 			pMessageContainerPB->set_filedatetime(messageData.m_SourceFile.m_FileDateTime);
-			pMessageContainerPB->mutable_objectid()->CopyFrom(SvPB::setGuidToMessage(messageContainer.getObjectId()));
+			SvPB::SetGuidInMessage(pMessageContainerPB->mutable_objectid(), messageContainer.getObjectId());
 		}
 		return messagePB;
 	}

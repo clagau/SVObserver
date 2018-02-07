@@ -61,6 +61,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="RunReApi.proto" />
+    <CustomBuild Include="RunReApi.proto">
+      <Filter>Resource Files</Filter>
+    </CustomBuild>
   </ItemGroup>
 </Project>

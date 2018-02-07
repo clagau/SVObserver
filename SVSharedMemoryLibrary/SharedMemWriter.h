@@ -10,7 +10,6 @@
 //Moved to precompiled header: #include <map>
 #include "MLCpyContainer.h"
 #include "MonitorListCpy.h"
-#include "SVMonitorListWriter.h"
 #include "SVSharedMemorySettings.h"
 #include "SVProductFilterEnum.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
@@ -18,6 +17,7 @@
 #include "SVUtilityLibrary/SVGUID.h"
 
 #include "SharedDataContainer.h"
+#include "MonitorListStore.h"
 
 #pragma endregion Includes
 
@@ -36,7 +36,6 @@ namespace SvSml
 		
 		RingBufferPointer GetSlotManager(LPCTSTR PPQname);
 
-		SVMonitorListWriter& GetMonitorListWriter();
 		
 		const SVSharedMemorySettings& GetSettings() const;
 	
@@ -73,7 +72,7 @@ namespace SvSml
 		void ReadSettings();
 		void CheckDirectories();
 	private:
-		SVMonitorListWriter m_monitorListWriter;
+		MonitorListStore	m_monitorListStore;		
 		SharedDataContainer m_DataContainer;
 		MLCpyContainer m_MLContainer;  //<Container holds MonitorlistInformation  
 		SVSharedMemorySettings m_settings;

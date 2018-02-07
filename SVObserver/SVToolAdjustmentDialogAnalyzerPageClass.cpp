@@ -220,8 +220,8 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnButtonDetails()
 				}
 
 				SvPB::InspectionRunOnceRequest requestMessage;
-				requestMessage.mutable_inspectionid()->CopyFrom(SvPB::setGuidToMessage(pInspection->GetUniqueObjectID()));
-				requestMessage.mutable_taskid()->CopyFrom(SvPB::setGuidToMessage(l_ToolId));
+				SvPB::SetGuidInMessage(requestMessage.mutable_inspectionid(), pInspection->GetUniqueObjectID());
+				SvPB::SetGuidInMessage(requestMessage.mutable_taskid(), l_ToolId);
 				SvCmd::InspectionCommandsSynchronous(pInspection->GetUniqueObjectID(), &requestMessage, nullptr);
 			}
 		}
@@ -322,8 +322,8 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 			}
 
 			SvPB::InspectionRunOnceRequest requestMessage;
-			requestMessage.mutable_inspectionid()->CopyFrom(SvPB::setGuidToMessage(pInspection->GetUniqueObjectID()));
-			requestMessage.mutable_taskid()->CopyFrom(SvPB::setGuidToMessage(l_ToolId));
+			SvPB::SetGuidInMessage(requestMessage.mutable_inspectionid(), pInspection->GetUniqueObjectID());
+			SvPB::SetGuidInMessage(requestMessage.mutable_taskid(), l_ToolId);
 			SvCmd::InspectionCommandsSynchronous(pInspection->GetUniqueObjectID(), &requestMessage, nullptr);
 		}
 	}

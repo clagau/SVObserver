@@ -379,6 +379,7 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::Message
 	{
 		SvOi::SVImageBufferHandlePtr ImageHandle;
 		
+		//@Todo[MEC][8.00] [05.02.2018] during debugging  i saw some crashes near this code
 		// Used in Result Class to know whether to Fail or Warn.
 		SVBarCodeResultClass* pResult = static_cast<SVBarCodeResultClass*>(GetResultObject());
 		BOOL bWarnOnFailedRead;

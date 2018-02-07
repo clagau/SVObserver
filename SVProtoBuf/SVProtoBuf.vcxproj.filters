@@ -30,6 +30,9 @@
     <ClCompile Include="BasicStructureHelper.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="MonitorListStore.pb.cc">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="InspectionCommands.proto" />
@@ -52,5 +55,11 @@
     <ClInclude Include="BasicStructureHelper.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="MonitorListStore.pb.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="MonitorListStore.proto" />
   </ItemGroup>
 </Project>

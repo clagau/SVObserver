@@ -4,8 +4,8 @@ package SvPB;
 
 message UUID //Guid-structure
 {
-  uint64 part1 = 1;
-  uint64 part2 = 2;
+  
+  bytes guid = 1;
 }
 
 message MessageContainer //structure for a (error/warning/info-)message 

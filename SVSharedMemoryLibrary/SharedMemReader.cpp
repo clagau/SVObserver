@@ -1,3 +1,10 @@
+//*****************************************************************************
+/// \copyright (c) 2018,2018 by Seidenader Maschinenbau GmbH
+/// \file SharedMemReader.cpp
+/// All Rights Reserved 
+//*****************************************************************************
+///// Class encapsulate function to open  and read from the  shared Memory
+//******************************************************************************
 #include "StdAfx.h"
 #include "SharedMemReader.h"
 #include "ShareEvents.h"
@@ -11,16 +18,22 @@ namespace SvSml
 	SharedMemReader::~SharedMemReader(void)
 	{
 	}
-	
+
 	void SharedMemReader::Clear(void)
 	{
 		m_DataContainer.CloseConnection();
+		m_MonitorListStore.CloseConnection();
 		m_MLContainer.Clear();
 	}
 
-	void SharedMemReader::Reload( DWORD version)
+	void SharedMemReader::Reload(DWORD version)
 	{
-		m_MLContainer.ReloadMonitorMap(m_monitorListReader,version);
+		m_MonitorListStore.OpenMonitorStore("Monitor");
+		DWORD size = m_MonitorListStore.GetSize();
+		MesMLCpyContainer MesMLCpyCont;
+		MesMLCpyCont.ParseFromArray(m_MonitorListStore.GetPtr(), size);
+		m_MLContainer.BuildFromProtoMessage(MesMLCpyCont);
+
 		m_DataContainer.CloseConnection();
 		m_DataContainer.OpenSlotManagment(m_MLContainer);
 		m_DataContainer.OpenStores(m_MLContainer);
@@ -31,7 +44,7 @@ namespace SvSml
 		{
 			if (it.second.get() && it.second->GetIsActive())
 			{
-				int Slotmanagerindex = GetSlotManagerIndex(it.second->GetPPQname().c_str());
+				int Slotmanagerindex = GetSlotManagerIndexForPPQName(it.second->GetPPQname().c_str());
 				if (Slotmanagerindex >= 0)
 				{
 					m_SlotManagerIndexMap[it.first] = Slotmanagerindex;
@@ -40,12 +53,12 @@ namespace SvSml
 		}
 
 	}
-	
+
 
 	RingBufferPointer SharedMemReader::GetSlotManager(int index)
 	{
 		if (index >= 0 && index < m_MLContainer.m_PPQInfoMap.size())
-		{ 
+		{
 			return m_DataContainer.GetSlotManager(index);
 		}
 		else
@@ -53,7 +66,7 @@ namespace SvSml
 			return RingBufferPointer(nullptr);
 		}
 	}
-	int SharedMemReader::GetSlotManagerIndex(LPCTSTR PPQname)
+	int SharedMemReader::GetSlotManagerIndexForPPQName(LPCTSTR PPQname)
 	{
 		auto& it = m_MLContainer.m_PPQInfoMap.find(PPQname);
 		if (it != m_MLContainer.m_PPQInfoMap.end() && it->second.get())
@@ -65,11 +78,13 @@ namespace SvSml
 			return -1;
 		}
 	}
-	
-	SharedMemReader::retvalues  SharedMemReader::_GetProduct(LPCTSTR Monitorlist, int trigger,bool failstatus, bool reject,   MLProduct* pProduct, const MLProduct* pLastProduct, bool releaseSlot)
+
+	SharedMemReader::retvalues  SharedMemReader::_GetProduct(const GetProdPar& par, LPCTSTR Monitorlist, int trigger, MLProduct* pProduct, const MLProduct* pLastProduct)
 	{
 		if (nullptr == pProduct)
+		{
 			return fail;
+		}
 		pProduct->ResetProduct();
 		const MonitorListCpy*  pML = m_MLContainer.GetMonitorListCpyPointer(Monitorlist);
 		if (nullptr == pML || FALSE == pML->GetIsActive())
@@ -90,11 +105,11 @@ namespace SvSml
 		}
 		//get readerslot
 		int slot(-1);
-		if (trigger > -1)
+		if (-1 < trigger)
 		{
 			slot = rBp->GetReaderSlotByTrigger(trigger);
 		}
-		else if (reject)
+		else if (par.reject)
 		{
 			slot = rBp->GetReaderSlotLastWritten(SMRingBuffer::Reject);
 		}
@@ -102,9 +117,7 @@ namespace SvSml
 		{
 			slot = rBp->GetReaderSlotLastWritten(SMRingBuffer::Last);
 		}
-		
-		;
-		if(slot < 0)
+		if ( 0 < slot  )
 		{
 			return fail;
 		}
@@ -116,22 +129,21 @@ namespace SvSml
 				rBp->ReleaseReaderSlot(slot);
 				return last;
 			}
-
 		}
 
 		pProduct->m_slot = slot;
 		pProduct->m_SlotManagerIndex = SlotManagerIndex;
 		pProduct->m_trigger = rBp->GetTriggerNumber(slot);
 		pProduct->m_status = S_OK;
-		 
-		ListType::typ t = failstatus ? ListType::failStatus : ListType::productItemsData;
+
+		ListType::typ t = par.failstatus ? ListType::failStatus : ListType::productItemsData;
 		const MonitorEntries& ProdEnties = pML->GetMonitorEntries(t);
 		for (MonitorEntryPointer mep : ProdEnties)
 		{
 			std::string value;
 			int Offset = mep->data.Store_Offset;
 			int store = mep->data.InspectionStoreId;
-			BYTE* ptr = 	m_DataContainer.GetDataBufferPtr(slot, store, Offset);
+			BYTE* ptr = m_DataContainer.GetDataBufferPtr(slot, store, Offset);
 			if (mep->data.wholeArray)
 			{
 				//@Todo[MEC][7.50] [14.07.2017] Implement Whole Array;
@@ -145,48 +157,43 @@ namespace SvSml
 			pProduct->m_dataEntries.push_back(mep);
 		}
 		const MonitorEntries& ProdImageEntries = pML->GetMonitorEntries(ListType::productItemsImage);
-		if (!failstatus)
+		if (!par.failstatus)
 		{
 			for (MonitorEntryPointer mep : ProdImageEntries)
 			{
 				pProduct->m_ImageEntries.push_back(mep);
 			}
 		}
-		if (releaseSlot)
+		if (par.releaseTrigger)
 		{
 			rBp->ReleaseReaderSlot(slot);
 		}
 		return sucess;
 
 	}
-	bool SharedMemReader::GetRejectData(LPCTSTR Monitorlist, int TriggerNumber, MLProduct* pProduct, bool releaseSlot)
-	{
-		return (sucess == _GetProduct(Monitorlist, TriggerNumber, false, true, pProduct,nullptr, releaseSlot));
-	}
-	
-	bool  SharedMemReader::GetProductData(LPCTSTR Monitorlist, int TriggerNumber, MLProduct* pProduct, bool releaseSlot)
-	{
-		return (sucess == _GetProduct(Monitorlist, TriggerNumber, false, false, pProduct, nullptr, releaseSlot));
-	}
+
 
 
 	bool SharedMemReader::GetFailStatusData(LPCTSTR Monitorlist, int  TriggerNumber, MLProduct* pProduct)
 	{
-		return (sucess == _GetProduct(Monitorlist, TriggerNumber, true, false, pProduct, nullptr, true));
+		GetProdPar par;
+		par.reject = false;
+		par.releaseTrigger = false;
+		par.failstatus = true;
+		return (sucess == _GetProduct(par, Monitorlist, TriggerNumber, pProduct, nullptr));
 	}
-
 
 	SVMatroxBuffer& SharedMemReader::GetImageBuffer(DWORD  SlotIndex, DWORD storeIndex, DWORD ImageIndex)
 	{
-		
-		return m_DataContainer.GetImageBuffer(SlotIndex, storeIndex,ImageIndex);
+
+		return m_DataContainer.GetImageBuffer(SlotIndex, storeIndex, ImageIndex);
 	}
 
 	int SharedMemReader::GetSlotManagerIndexForMonitorList(LPCTSTR Monitorlist)
 	{
 		auto it = m_SlotManagerIndexMap.find(Monitorlist);
 		if (it == m_SlotManagerIndexMap.end())
-		{ 
+		{
 			return -1;
 		}
 		else
@@ -194,24 +201,19 @@ namespace SvSml
 			return it->second;
 		}
 	}
-	
-	bool  SharedMemReader::GetFailstatus(LPCTSTR Monitorlist, productPointerVector* pFailstatus)
-	{
-		return(sucess == GetFailstatus(Monitorlist, pFailstatus, nullptr));
-		
-	}
-	SharedMemReader::retvalues SharedMemReader::GetFailstatus(LPCTSTR Monitorlist, productPointerVector* pFailstatus, productPointerVector*  pLastFailstatus)
-	{
 
+	SharedMemReader::retvalues SharedMemReader::GetFailstatus(LPCTSTR Monitorlist, vecpProd* pFailstatus, vecpProd*  pLastFailstatus)
+	{
 		int SlotManagerIndex = GetSlotManagerIndexForMonitorList(Monitorlist);
 		if (nullptr == pFailstatus || SlotManagerIndex < 0)
+		{
 			return fail;
-
+		}
 		std::vector<DWORD> rejectsTrigger;
 		m_DataContainer.GetSlotManager(SlotManagerIndex)->GetRejects(rejectsTrigger);
 		int max = m_DataContainer.GetSlotManager(SlotManagerIndex)->GetRejectSlotCount();
 		max -= MLPPQInfo::NumRejectSizeDelta;
-		max = std::min(max, (int)rejectsTrigger.size());
+		max = std::min(max, static_cast<int>(rejectsTrigger.size()));
 		pFailstatus->clear();
 		if (nullptr != pLastFailstatus)
 		{
@@ -219,13 +221,13 @@ namespace SvSml
 			{
 				bool equal(true);
 				for (int i = 0; i < max; i++)
-				{	
-					if ( (*pLastFailstatus)[i]->m_trigger != rejectsTrigger[i])
+				{
+					if ((*pLastFailstatus)[i]->m_trigger != rejectsTrigger[i])
 					{
 						equal = false;
 						break;
 					}
-				}	
+				}
 
 				if (equal)
 				{
@@ -237,7 +239,7 @@ namespace SvSml
 		}
 		for (int i = 0; i < max; i++)
 		{
-			productPointer productPtr = productPointer(new MLProduct);
+			pProd productPtr = pProd(new MLProduct);
 			if (GetFailStatusData(Monitorlist, rejectsTrigger[i], productPtr.get()))
 				pFailstatus->push_back(std::move(productPtr));
 			else
@@ -250,11 +252,20 @@ namespace SvSml
 
 	SharedMemReader::retvalues SharedMemReader::GetRejectData(LPCTSTR Monitorlist, int TriggerNumber, MLProduct* pProduct, const MLProduct* pLastProduct, bool releaseSlot)
 	{
-		return _GetProduct(Monitorlist, TriggerNumber, false, true, pProduct, pLastProduct, releaseSlot);
+		GetProdPar par;
+		par.failstatus = false;
+		par.reject = true;
+		par.releaseTrigger = releaseSlot;
+		return _GetProduct(par, Monitorlist, TriggerNumber, pProduct, pLastProduct);
 	}
+
 	SharedMemReader::retvalues SharedMemReader::GetProductData(LPCTSTR Monitorlist, int TriggerNumber, MLProduct* pProduct, const MLProduct* pLastProduct, bool  releaseSlot)
 	{
-		return _GetProduct(Monitorlist, TriggerNumber, false, false, pProduct, pLastProduct, releaseSlot);
+		GetProdPar par;
+		par.failstatus = false;
+		par.reject = false;
+		par.releaseTrigger = releaseSlot;
+		return _GetProduct(par, Monitorlist, TriggerNumber, pProduct, pLastProduct);
 	}
 
 } //namespace SvSml

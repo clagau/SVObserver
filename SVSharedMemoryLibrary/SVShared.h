@@ -18,36 +18,13 @@
 //Moved to precompiled header: #include <iomanip>
 //Moved to precompiled header: #include <limits>
 
-//#define BOOST_USE_WINDOWS_H // does not work correctly // for boost 1_56_0
-
-//Moved to precompiled header: #include <boost/interprocess/detail/shared_dir_helpers.hpp>
-//Moved to precompiled header: #include <boost/interprocess/file_mapping.hpp>
-//Moved to precompiled header: #include <boost/interprocess/mapped_region.hpp>
-//Moved to precompiled header: #include <boost/interprocess/managed_shared_memory.hpp>
-//Moved to precompiled header: #include <boost/interprocess/allocators/allocator.hpp>
-//Moved to precompiled header: #include <boost/interprocess/containers/map.hpp>
-//Moved to precompiled header: #include <boost/interprocess/containers/flat_map.hpp>
-//Moved to precompiled header: #include <boost/interprocess/containers/string.hpp>
-//Moved to precompiled header: #include <boost/interprocess/containers/vector.hpp>
-//Moved to precompiled header: #include <boost/interprocess/offset_ptr.hpp>
-//Moved to precompiled header: #include <boost/interprocess/sync/interprocess_mutex.hpp>
-//Moved to precompiled header: #include <boost/interprocess/sync/scoped_lock.hpp>
 
 //Moved to precompiled header: #include <boost/function.hpp>
 //Moved to precompiled header: #include <boost/bind.hpp>
 #pragma endregion Includes
 
-namespace bip = boost::interprocess;
-
 namespace SvSml
 {
-	//Typedefs of allocators and containers
-	typedef bip::managed_shared_memory::segment_manager                       segment_manager_t;
-	typedef bip::allocator<void, segment_manager_t>                           void_allocator;
-	typedef bip::allocator<char, segment_manager_t>                           char_allocator;
-	typedef bip::basic_string<char, std::char_traits<char>, char_allocator>   bip_string;
-	typedef bip::allocator<bip_string, segment_manager_t>					  bip_string_allocator;
-	typedef bip::offset_t													  offset_t;
 
 	struct statics
 	{
@@ -72,16 +49,15 @@ namespace SvSml
 	{
 		//! enum for monitorlist sublist type	
 		enum  typ { productItemsData =0 ,productItemsImage, rejectCondition, failStatus, Count };
+		enum flag { productItemsDataFlag = 0x1, productItemsImageFlag= 0x2, rejectConditionFlag = 0x4, failStatusFlag = 0x8  };
 	}
-	const static DWORD ProductItemDataFlag = 0x1;
-	const static DWORD ProductItemImageFlag = 0x2;
-	const static DWORD RejectConditionFlag = 0x4;
-	const static DWORD FailstatusFlag = 0x8;
+	
 
 	const static DWORD ListFlags[ListType::Count] =
 	{
-		ProductItemDataFlag, ProductItemImageFlag, RejectConditionFlag,FailstatusFlag
+		ListType::productItemsDataFlag, ListType::productItemsImageFlag, ListType::rejectConditionFlag,ListType::failStatusFlag
 	};
+	
 
 
 } //namespace SvSml

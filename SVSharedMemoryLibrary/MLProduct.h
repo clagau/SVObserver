@@ -30,10 +30,8 @@ namespace SvSml
 		std::vector<stringpointer> m_data; //< data values as string 
 		
 	};
-	typedef std::unique_ptr<MLProduct> productPointer;
-	typedef std::vector<productPointer>  productPointerVector;
-	typedef productPointerVector Failstatus;
-	typedef std::unique_ptr<productPointerVector> FailstatusPointer;
+	typedef std::unique_ptr<MLProduct> pProd;
+	typedef std::vector<pProd>  vecpProd;
 }
 
 

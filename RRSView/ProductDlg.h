@@ -17,7 +17,7 @@ class ProductDlg : public CDialog
 	DECLARE_DYNAMIC(ProductDlg)
 public:
 	ProductDlg(SvSml::MLProduct* pProduct, CWnd* pParent = NULL);   
-	ProductDlg(SvSml::productPointerVector *pFailstatus, CWnd* pParent = NULL);
+	ProductDlg(SvSml::vecpProd *pFailstatus, CWnd* pParent = NULL);
 	virtual ~ProductDlg();
 	enum ECOL { trigger = 0, name, obj, var,size, data, ecolSize };
 	static LPCTSTR ColHeader[ecolSize];
@@ -36,7 +36,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	SvSml::MLProduct* m_pProduct;
-	SvSml::productPointerVector *m_pFailstatus;
+	SvSml::vecpProd *m_pFailstatus;
 	CListCtrl m_ListCtrl;
 	virtual BOOL OnInitDialog();
 

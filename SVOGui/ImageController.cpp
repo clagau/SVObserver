@@ -209,7 +209,7 @@ namespace SvOg
 		bool bIsValid = false;
 		SvPB::IsValidRequest requestMessageList;
 		SvPB::IsValidResponse responseMessageList;
-		requestMessageList.mutable_objectid()->CopyFrom(SvPB::setGuidToMessage(m_TaskObjectID));
+		SvPB::SetGuidInMessage(requestMessageList.mutable_objectid(), m_TaskObjectID);
 		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessageList, &responseMessageList);
 		if (S_OK == hr)
 		{
@@ -222,7 +222,7 @@ namespace SvOg
 	{
 		SvPB::ResetObjectRequest requestMessage;
 		SvPB::ResetObjectResponse responseMessage;
-		requestMessage.mutable_objectid()->CopyFrom(SvPB::setGuidToMessage(m_TaskObjectID));
+		SvPB::SetGuidInMessage(requestMessage.mutable_objectid(), m_TaskObjectID);
 		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, &responseMessage);
 		messages = SvCmd::setMessageContainerFromMessagePB(responseMessage.messages());
 		return hr;
@@ -231,8 +231,8 @@ namespace SvOg
 	HRESULT ImageController::ToolRunOnce()
 	{
 		SvPB::InspectionRunOnceRequest requestMessage;
-		requestMessage.mutable_inspectionid()->CopyFrom(SvPB::setGuidToMessage(m_InspectionID));
-		requestMessage.mutable_taskid()->CopyFrom(SvPB::setGuidToMessage(m_TaskObjectID));
+		SvPB::SetGuidInMessage(requestMessage.mutable_inspectionid(), m_InspectionID);
+		SvPB::SetGuidInMessage(requestMessage.mutable_taskid(), m_TaskObjectID);
 		return SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, nullptr);
 	}
 

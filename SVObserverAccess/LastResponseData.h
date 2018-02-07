@@ -10,6 +10,7 @@
 
 #include "SVSharedMemoryLibrary\ShareEvents.h"
 #include "SVSharedMemoryLibrary\MLProduct.h"
+#include <mutex>
 //!LastResponseData holds the data of the last response 
 struct LastResponseData
 {
@@ -19,13 +20,26 @@ public:
 	
 	void ClearHeld()
 	{
-		m_LastFailstatus.clear();
-		m_LastReject.clear();;
-		m_LastProduct.clear();
+		{
+			std::lock_guard<std::mutex> guard(m_ProtectLastFailstatus);
+			m_LastFailstatus.clear();
+		}
+		{
+			std::lock_guard<std::mutex> guard(m_ProtectLastReject);
+			m_LastReject.clear();;
+		}
+		{
+			std::lock_guard<std::mutex> guard(m_ProtectLastProduct);
+			m_LastProduct.clear();
+		}
 	}
-	std::map<std::string, SvSml::productPointer> m_LastProduct;
-	std::map<std::string, SvSml::productPointer> m_LastReject;
-	std::map<std::string, SvSml::FailstatusPointer> m_LastFailstatus;
+	std::mutex m_ProtectLastProduct;
+	std::mutex m_ProtectLastReject;
+	std::mutex m_ProtectLastFailstatus;
+	
+	std::map<std::string, SvSml::pProd> m_LastProduct;
+	std::map<std::string, SvSml::pProd> m_LastReject;
+	std::map<std::string, std::unique_ptr<SvSml::vecpProd>> m_LastFailstatus;
 };
 
 

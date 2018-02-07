@@ -10,9 +10,7 @@
 //******************************************************************************
 #pragma region Includes
 #include "StdAfx.h"
-#include "SVSharedMonitorList.h"
 #include "SVSharedConfiguration.h"
-#include "SVMonitorListWriter.h"
 #pragma endregion Includes
 
 namespace SvSml

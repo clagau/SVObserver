@@ -3,40 +3,87 @@
 #include "MonitorEntry.h"
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "SVMatroxLibrary\MatroxImageProps.h"
+#include "SVProtoBuf\BasicStructure.pb.h"
+#include "SVProtoBuf\BasicStructureHelper.h"
 
 #pragma endregion Includes
 
 namespace SvSml
 {
-
-	MonitorEntryData::MonitorEntryData()
+	
+	bool MonitorEntryData::GetMatroxImageProps(MatroxImageProps& rImageProps) const
 	{
-		ObjectType = 0;		//<SvDef::SVObjectTypeEnum
-		InspectionStoreId = -1;
-		ItemId = -1;	//<Index in the Inspection Store
-		Store_Offset = 0;  ///offset in Inspection Store
+		if (ObjectType != SvDef::SVObjectTypeEnum::SVImageObjectType)
+		{
+			return false;
+		}
+		rImageProps.Pitch = Pitch;
+		rImageProps.sizeX = sizeX;
+		rImageProps.sizeY = sizeY;
+		rImageProps.PitchByte = PitchByte;
+		rImageProps.Matrox_type = Matrox_type;
+		rImageProps.Attrib = Attrib;
+		rImageProps.Bandsize = BandSize;
+		rImageProps.Bytesize = ByteSize;
+		return true;
+	}
+	void MonitorEntryData::SetMatroxImageProps(const MatroxImageProps  &rImageProps)
+	{
+		ObjectType = SvDef::SVImageObjectType;
+		Pitch = rImageProps.Pitch;
+		sizeX = rImageProps.sizeX;
+		sizeY = rImageProps.sizeY;
+		PitchByte = rImageProps.PitchByte;
+		Matrox_type = rImageProps.Matrox_type;
+		Attrib = rImageProps.Attrib;
+		ByteSize = rImageProps.Bytesize;
+		BandSize = rImageProps.Bandsize;
+	}
+	void MonitorEntryData::BuildProtoMessage(MesMonitorEntryData &rprotoMessage) const
+	{
+		rprotoMessage.set_inspectionstoreid(InspectionStoreId);
+		rprotoMessage.set_itemid(ItemId);
+		rprotoMessage.set_objecttype(ObjectType);
+		rprotoMessage.set_variant_type(variant_type);
+		rprotoMessage.set_store_offset(Store_Offset);
+		rprotoMessage.set_isarray(isArray);
+		rprotoMessage.set_wholearray(wholeArray);
+		rprotoMessage.set_arrayindex(arrayIndex);
+		rprotoMessage.set_monitorlistflag(m_MonitorListFlag);
+		rprotoMessage.set_sizey(sizeY);
+		rprotoMessage.set_sizex(sizeX);
+		rprotoMessage.set_pitchbyte(PitchByte);
+		rprotoMessage.set_pitch(Pitch);
+		rprotoMessage.set_matrox_type(Matrox_type);
+		rprotoMessage.set_attrib(Attrib);
+		rprotoMessage.set_bandsize(BandSize);
+		rprotoMessage.set_bytesize(ByteSize);
+	}
 
-		variant_type = VT_EMPTY; ///vt value from variant
-		isArray = FALSE; ;
-		wholeArray = FALSE;
-		arrayIndex = -1;
-		m_MonitorListFlag = 0;
+	void MonitorEntryData::BuildFromProtoMessage(const MesMonitorEntryData& rprotoMessage)
+	{
 
-
-		//Images 
-		sizeX = 0;
-		sizeY = 0;
-		PitchByte = 0;
-		Matrox_type = 0;
-		Attrib = 0;
-		BandSize = 0;
-		ByteSize = 0;
-		Pitch = 0;
+		InspectionStoreId = rprotoMessage.inspectionstoreid();
+		ItemId = rprotoMessage.itemid();
+		ObjectType = rprotoMessage.objecttype();
+		variant_type = rprotoMessage.variant_type();
+		Store_Offset = rprotoMessage.store_offset();
+		isArray = rprotoMessage.isarray();
+		arrayIndex = rprotoMessage.arrayindex();
+		wholeArray = rprotoMessage.wholearray();
+		m_MonitorListFlag = rprotoMessage.monitorlistflag();
+		sizeY = rprotoMessage.sizey();
+		sizeX = rprotoMessage.sizex();
+		PitchByte = rprotoMessage.pitchbyte();
+		Pitch = rprotoMessage.pitch();
+		Matrox_type = rprotoMessage.matrox_type();
+		Attrib = rprotoMessage.attrib();
+		BandSize = rprotoMessage.bandsize();
+		ByteSize = rprotoMessage.bytesize();
 	}
 
 	MonitorEntry::MonitorEntry() :data(), m_Guid(GUID_NULL)
 	{
-
 	};
 
 	MonitorEntry::MonitorEntry(const std::string& na) :data(), m_Guid(GUID_NULL)
@@ -44,42 +91,17 @@ namespace SvSml
 		name = na;
 	};
 
-	MonitorEntry::MonitorEntry(const ShMonitorEntry &rentry) :data(), m_Guid(GUID_NULL)
+	bool MonitorEntry::GetMatroxImageProps(MatroxImageProps &ImageProps) const
 	{
-		name = rentry.name.c_str();
-		data = rentry.data;
+		return data.GetMatroxImageProps(ImageProps);
 	}
 
-	bool MonitorEntry::GetMatroxImageProps(MatroxImageProps &ImageProps)
+	void MonitorEntry::SetMatroxImageProps(const MatroxImageProps  &rImageProps) 
 	{
-		if (data.ObjectType != SvDef::SVImageObjectType)
-			return false;
-
-		ImageProps.Pitch = data.Pitch;
-		ImageProps.sizeX = data.sizeX;
-		ImageProps.sizeY = data.sizeY;
-		ImageProps.PitchByte = data.PitchByte;
-		ImageProps.Matrox_type = data.Matrox_type;
-		ImageProps.Attrib = data.Attrib;
-		ImageProps.Bandsize = data.BandSize;
-		ImageProps.Bytesize = data.ByteSize;
-		return true;
+		 data.SetMatroxImageProps(rImageProps);
 	}
 
-	void MonitorEntry::SetMatroxImageProps(const MatroxImageProps  &rImageProps)
-	{
-		data.ObjectType = SvDef::SVImageObjectType;
-		data.Pitch = rImageProps.Pitch;
-		data.sizeX = rImageProps.sizeX;
-		data.sizeY = rImageProps.sizeY;
-		data.PitchByte = rImageProps.PitchByte;
-		data.Matrox_type = rImageProps.Matrox_type;
-		data.Attrib = rImageProps.Attrib;
-		data.ByteSize = rImageProps.Bytesize;
-		data.BandSize = rImageProps.Bandsize;
-	}
-
-	bool MonitorEntry::GetValue(std::string& string, BYTE* ptr)
+	bool MonitorEntry::GetValue(std::string& string, BYTE* ptr) const 
 	{
 		TCHAR Text[100];
 		switch (data.variant_type)
@@ -227,20 +249,51 @@ namespace SvSml
 		}
 		return true;
 	}
-	bool MonitorEntry::GetValue(_variant_t& val, BYTE* offset)
+	bool MonitorEntry::GetValue(_variant_t& val, BYTE* offset) const
 	{
 		//@Todo[MEC][7.50] [17.07.2017] not implemented yet
 		return false;
 	}
 
-	ShMonitorEntry::ShMonitorEntry(const void_allocator &allocator) :name(allocator), data()
+	
+	
+	void  MonitorEntry::BuildProtoMessage(MesMonitorEntry& rmesMonitorEntry) const
 	{
+		SvPB::SetGuidInProtoBytes(rmesMonitorEntry.mutable_guid(), m_Guid);
+		rmesMonitorEntry.set_name(name.c_str());
+		auto pEntryDataMessage = rmesMonitorEntry.mutable_entrydata();
+		data.BuildProtoMessage(*pEntryDataMessage);
+	}
+
+	
+	void MonitorEntry::BuildFromProtoMessage(const MesMonitorEntry& rmesMonitorEntry)
+	{
+		SvPB::GetGuidFromProtoBytes(rmesMonitorEntry.guid(), m_Guid);
+		name = rmesMonitorEntry.name();
+		data.BuildFromProtoMessage(rmesMonitorEntry.entrydata());
+	}
+
+	void MonitorEntry::AddListItem(RRApi::QueryListItemResponse& resp) const
+	{
+		if (IsImage())
+		{
+			auto pImDef = resp.add_imagedefinition();
+			pImDef->set_name(name.c_str());
+			pImDef->set_sizex(static_cast<INT32>(data.sizeX));
+			pImDef->set_sizey(static_cast<INT32>(data.sizeY));
+			pImDef->set_storeid(data.InspectionStoreId);
+			pImDef->set_imageid(data.ItemId);
+		}
+		else
+		{
+			auto pValueDef = resp.add_valuedefinition();
+			pValueDef->set_name(name.c_str());
+			pValueDef->set_type(data.variant_type);
+			pValueDef->set_size (static_cast<INT32>(data.ByteSize));
+			pValueDef->set_storeid (data.InspectionStoreId);
+			pValueDef->set_offset(data.Store_Offset);
+		}
 
 	}
-	ShMonitorEntry::ShMonitorEntry(const void_allocator &allocator, const MonitorEntry &rentry) : name(rentry.name.c_str(), allocator)
-	{
-		data = rentry.data;
-	};
-
 
 }

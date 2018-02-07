@@ -1,24 +1,29 @@
 syntax = "proto2";
 package RRApi;
 
-//Commands 
+//Command messages. These commands can be executed directly by accessing the shared memory 
+//and do not require a direct connection to the SVObserver. The commands are explained in more detail below. 
+  
 enum MessageType 
 {
-	GetVersion = 1; 
-	GetProduct = 2;
-	GetReject = 3;
-	GetFailStatus=4;
-	GetImageFromCurId=5; 
-	GetItems =6;
-	QueryListName=7;
-	QueryListItem=8;
+	GetVersion = 0; 
+	GetProduct = 1;
+	GetReject = 2;
+	GetFailStatus=3;
+	GetImageFromCurId=4; 
+	GetItems =5;
+	QueryListName=6;
+	QueryListItem=7;
 }
 
+///The entries in the monitor list can belong to one or more of the following groups:
+/// there are also free entries that do not belong to Productitem RejectCondition and FailstatusList
 enum ListType
 {
-	ProductItem = 1;
-	RejectCondition =2;
-	FailStatus =3;
+	ProductItem = 0;
+	RejectCondition =1;
+	FailStatus =2;
+	All =3;
 }
 
 enum State
@@ -29,20 +34,39 @@ enum State
 	InvalidMonitorName =3;
 	InternalError =5;
 	SharedMemoryBlocked =6;
+	Unchanged =7;
 } 
 
-//actual only string is used 
+message DoublePoint
+{
+	optional double x=1;
+	optional double y=2;
+}
+message Point
+{
+	optional int32 x=1;
+	optional int32 y=2;
+}
+
+//At the moment all values are stored as a string.  
+//In the future, this will be changed for performance reasons. Probably the message is not complet now
 message Variant 
 {
-	optional bool bool_value = 1;
-	optional int32 int32_value = 2;
-	optional int64 int64_value = 3;
-	optional uint32 uint32_value = 4;
-	optional uint64 uint64_value = 5;
-	optional string string_value = 6;
-	optional double double_value = 7;
-	optional float float_value = 8;
-	optional State Status = 9;
+	oneof data 
+	{
+		bool bool_value = 1;
+		int32 int32_value = 2;
+		int64 int64_value = 3;
+		uint32 uint32_value = 4;
+		uint64 uint64_value = 5;
+		string string_value = 6;
+		double double_value = 7;
+		float float_value = 8;
+		DoublePoint dpount_value =9;
+		Point        pint_value= 10;
+		bytes		GUID_value=11;
+	}
+	optional int32 variantType =12;
 }
 
 message MessageEnvelope 
@@ -51,7 +75,6 @@ message MessageEnvelope
 	optional MessageType type = 2;
     optional bytes payload = 3;
 }
-
 
 //query version of Server
 message GetVersionRequest 
@@ -67,54 +90,83 @@ message GetVersionResponse
 message QueryListNameRequest
 {
 }
+
+//a list with all active monitorlist.
+//The monitor lists contain all metadata for the existing data and images in the shared memory.
+// There can be a maximum of one monitor list per PPQ. 
 message QueryListNameResponse
 {
 	repeated  string   ListName =1;
 }
 
 //one Item in the list 
-message ListItemDefinition
+//there is a 1:1 relationship between name and (offset, image Store).  
+//Therefore, if this message is used as a parameter in a request, only the name or the IDs must be filled in. 
+//type and size are additional information 
+message ListValueItemDefinition
 {
 	optional string name =1;
 	optional int32 type =2;
 	optional int32 size =3;
-	optional uint32 uid=4;
+	optional uint32 StoreId=4;
+	optional uint32 Offset=5;
 }
 
-//Query the Definition of the list 
+//one Item in the list for Images
+message ListImageItemDefinition
+{
+	optional string name =1;
+	optional int32 sizeX =2;
+	optional int32 sizeY =3;  
+	optional uint32 StoreId=4;
+	optional uint32 ImageId=5;
+}
+
+//Query the Definition of the list.If name is empty, the response is from all active Monitorlist
 message QueryListItemRequest
 {
 	optional string name =1;
 	optional ListType type =2;
+	optional bool queryImages = 3;
+	optional bool  queryValues =4;
 }
 
 message QueryListItemResponse
 {
 	optional State Status =1;
-	repeated ListItemDefinition  ValueDefinition = 2;
-	repeated ListItemDefinition  ImageDefinition = 3;
+	repeated ListValueItemDefinition  ValueDefinition = 2;
+	repeated ListImageItemDefinition  ImageDefinition = 3;
 }
+
 
 //the id for one image 
 message CurImageId
 {
-	required int32 ImageStore =1;
-	required int32 ImageIndex =2;
+	optional int32 ImageStore =1;
+	optional int32 ImageIndex =2;
 	optional int32	SlotIndex =3 ;
 }
 
+//Name is the Monitorlistname. 
+//if the Trigger is -1, the values for the last trigger are returned
+//if  Triggercount = -1 and the last trigger is the PreviousTrigger the status in the response is unchanged
+//and no values are retrieved 
 message GetProductRequest
 {
-	optional int32 TriggerCount = 1;
-	required string Name =2;
-	optional bool NameInResponse = 3;
+	optional int32 Trigger = 1;
+	optional int32 PeviousTrigger = 2;
+	optional string Name =3;
+	optional bool NameInResponse = 4;
+	optional bool bReject =5;
 }
 
+
 // In product response are an array of image ids
+// it is ensured that these images are available at least until GetProduct is called again 
 message GetProductResponse
 {
 	optional State Status =1;
-	optional uint32 TiggerCount=2;
+	optional uint32 Trigger=2;
 	repeated Variant Values =3;
 	repeated CurImageId Images =4;
 	repeated string ImageNames = 5;
@@ -127,26 +179,33 @@ message Image
 	optional uint32 w = 2;    
 	optional uint32 h = 3;
 } 
-//request the image for a the Id 
+//request the image for an Id from GetProduct or GetRejectResponse 
 message GetImageFromCurIdRequest
 {
 	required CurImageId Id =1;
 }
-message GetImageStreamFromCurIdRequest
-{
-	optional uint32 count = 1;
-	optional CurImageId Id = 2;
-}
+
 message GetImageFromCurIdResponse
 {
 	optional State Status =1;
 	optional Image ImageData=2;
 }
 
+/*
+message GetImageStreamFromCurIdRequest
+{
+	optional uint32 count = 1;
+	optional CurImageId Id = 2;
+}
+*/
+
+//If the Response would be the values from LastRejectTriggers
+//the response has the state unchanged 
 message GetFailStatusRequest
 {
-	required string name =1;
+	optional string name =1;
 	optional bool NameInResponse = 2;
+	repeated int32 PreviousRejects =3;
 }
 message GetFailStatusResponse
 {
@@ -154,18 +213,28 @@ message GetFailStatusResponse
 	repeated  GetProductResponse productResponse=2;
 }
 
+///Request Values or Images for triggercount =-1 the last value is retrived 
+//If the Response would be the values from LastTriggercount
+//the response has the state unchanged 
 message GetItemsRequest
 {
-	optional uint32 triggercount = 1;
-	repeated ListItemDefinition  valueDefs=2;
-	repeated ListItemDefinition  imageDefs= 3;
+	optional uint32 Trigger = 1;
+	optional uint32 PreviousTrigger=2; 
+	repeated ListValueItemDefinition  valueDefs=3;
+	repeated ListImageItemDefinition  imageDefs= 4;
 }
 
 message GetItemsResponse
 {
-	
-	optional uint32 triggercount = 1;
+	optional uint32 trigger = 1;
 	repeated	Variant Values=2;
 	repeated   Image Images = 3;
 	optional State Status =4; 
 }
+
+message GetImageStreamRequest
+{
+	optional uint32 count = 1;
+	optional ListImageItemDefinition imageDef =2;
+}
+

@@ -40,10 +40,11 @@ namespace SvTRC
 		{
 			auto& imageController = ImageBufferController::getImageBufferControllerInstance();
 			const auto& rImageList = m_rImageList.list();
-			SvPB::UUID imageUuid = SvPB::setGuidToMessage(imageId);
+			SvPB::UUID imageUuid;
+			SvPB::SetGuidInMessage(&imageUuid, imageId);
 			auto imageIter = std::find_if(rImageList.begin(), rImageList.end(), [imageUuid](auto data)->bool
 			{
-				return data.imageid().part1() == imageUuid.part1() && data.imageid().part2() == imageUuid.part2();
+				return (0 == data.imageid().guid().compare(imageUuid.guid()));
 			});
 			if (rImageList.end() != imageIter)
 			{

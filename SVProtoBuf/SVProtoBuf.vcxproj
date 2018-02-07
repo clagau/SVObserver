@@ -102,6 +102,9 @@
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
     </ClCompile>
+    <ClCompile Include="MonitorListStore.pb.cc">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Level2</WarningLevel>
+    </ClCompile>
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="TriggerRecordController.pb.cc">
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
@@ -112,6 +115,7 @@
     <ClInclude Include="BasicStructure.pb.h" />
     <ClInclude Include="BasicStructureHelper.h" />
     <ClInclude Include="InspectionCommands.pb.h" />
+    <ClInclude Include="MonitorListStore.pb.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TriggerRecordController.pb.h" />
   </ItemGroup>
@@ -143,6 +147,16 @@
       <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</TreatOutputAsContent>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TriggerRecordController.pb.cc;TriggerRecordController.pb.h</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TriggerRecordController.pb.cc;TriggerRecordController.pb.h</Outputs>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="MonitorListStore.proto">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(PATH_3RDPARTY)\protobuf\protobuf-3.4.0\bin\protoc.exe -I=$(MSBuildProjectDirectory)  --cpp_out=$(MSBuildProjectDirectory)  $(MSBuildProjectDirectory)\MonitorListStore.proto</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(PATH_3RDPARTY)\protobuf\protobuf-3.4.0\bin\protoc.exe -I=$(MSBuildProjectDirectory)  --cpp_out=$(MSBuildProjectDirectory)  $(MSBuildProjectDirectory)\MonitorListStore.proto</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">MonitorListStore.pb.cc;MonitorListstore.pb.h</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">MonitorListStore.pb.cc;MonitorListstore.pb.h</Outputs>
     </CustomBuild>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

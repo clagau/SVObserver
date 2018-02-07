@@ -29,6 +29,7 @@ namespace RRApi
 		virtual void GetItems(const GetItemsRequest&, GetItemsResponse&) = 0;
 		virtual void QueryListName(const QueryListNameRequest&, QueryListNameResponse&) = 0;
 		virtual void QueryListItem(const QueryListItemRequest&, QueryListItemResponse&) = 0;
+		
 	};
 	
 	class ServerFrontEndApi

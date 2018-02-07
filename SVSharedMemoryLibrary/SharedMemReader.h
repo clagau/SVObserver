@@ -8,7 +8,7 @@
 #pragma once
 
 #include "SharedDataContainer.h"
-#include "SVMonitorListReader.h"
+#include "MonitorListStore.h"
 
 namespace SvSml
 {
@@ -25,8 +25,6 @@ namespace SvSml
 		~SharedMemReader(void);
 		
 		///Function call to m_MLContainer
-		
-		
 		int GetAllActiveMonitorlistName(SvDef::StringVector& monotorlistnames) const
 		{
 			return m_MLContainer.GetAllActiveMonitorlistName(monotorlistnames);
@@ -36,7 +34,16 @@ namespace SvSml
 			return m_MLContainer.IsActiveMonitorList(Monitorlistname);
 		}
 
+		void QueryListName(const RRApi::QueryListNameRequest& req, RRApi::QueryListNameResponse& resp) const
+		{
+			return m_MLContainer.QueryListName(req, resp);
+		}
 		
+		void QueryListItem(const RRApi::QueryListItemRequest& req, RRApi::QueryListItemResponse& resp) const
+		{
+			return m_MLContainer.QueryListItem(req, resp);
+		}
+
 		DWORD GetVersion() const
 		{
 			return m_MLContainer.GetVersion();
@@ -53,22 +60,11 @@ namespace SvSml
 		int  GetSlotManagerIndexForMonitorList(LPCTSTR Monitorlist);
 		
 		///get SlotmanagerIndex from PPQName 
-		int GetSlotManagerIndex(LPCTSTR PPQname); 
+		int GetSlotManagerIndexForPPQName(LPCTSTR PPQname); 
 		
 		///get Slot manager  from Index  
 		RingBufferPointer GetSlotManager(int SlotManagerIndex);
 		
-		///Fills MLProduct for Monitorlistname and Trigger, last product for Trigger = -1 returns true if successful
-		/// the readerslot is released if releaseslot = true;
-		bool GetRejectData(LPCTSTR Monitorlist, int TriggerNumber, MLProduct* pProduct, bool releaseslot);
-		
-		///Fills MLProduct for Monitorlistname and Trigger, last product for Trigger = -1 returns true if successful
-		/// the readerslot is released if releaseslot = true;
-		bool GetProductData(LPCTSTR Monitorlist, int TriggerNumber, MLProduct* pProduct, bool releaseSlot);
-		
-		///Fills Failstatus  for Monitorlistname  returns true if successful
-		bool GetFailstatus(LPCTSTR Monitorlist, productPointerVector* pFailstatus);
-
 		
 		///Fills MLProduct for Monitorlistname and Trigger, last product for Trigger = -1 returns sucess if successful
 		/// the readerslot is released if releaseslot = true;
@@ -81,32 +77,34 @@ namespace SvSml
 		
 		///Fills Failstatus  for Monitorlistname  returns sucess if successful
 		///if pLastFailstatus has the same trigger as failstatus would have last is returned
-		retvalues GetFailstatus(LPCTSTR Monitorlist, productPointerVector* pFailstatus, productPointerVector*  pLastFailstatus);
+		retvalues GetFailstatus(LPCTSTR Monitorlist, vecpProd* pFailstatus, vecpProd*  pLastFailstatus);
 		
+		//! Get the data from the failstatuslist for triggernumber
 		bool  GetFailStatusData(LPCTSTR Monitorlist, int TriggerNumber, MLProduct* pProduct);
 		SVMatroxBuffer& GetImageBuffer(DWORD  SlotIndex, DWORD storeIndex, DWORD ImageIndex);
 
 	//private:
-		SVMonitorListReader m_monitorListReader;
+		MonitorListStore      m_MonitorListStore;
 		SharedDataContainer    m_DataContainer;
 		MLCpyContainer m_MLContainer;  //Container holds MonitorlistInformation  
 		/// map contains monitorlist name Slotmanager index 
 		std::map<std::string, int> m_SlotManagerIndexMap; 
 	private: 
+		
+		///parameter for GetProduct
+		struct GetProdPar
+		{
+			bool failstatus{ false }; //<only values from the failstatuslist are retrieved
+			bool reject{ false };    //< if trigger == -1 the the latest trigger is assumed.
+			bool releaseTrigger{ false };  //< release trigger immediately 
+
+		};
 		//************************************
-		// Method:    _GetProduct
-		// FullName:  SvSml::SharedMemReader::_GetProduct
-		// Access:    private 
-		// Returns:   retvalues
-		// Qualifier:
-		// Parameter: LPCTSTR Monitorlist
 		// Parameter: int trigger  -1 for last trigger or reject
-		// Parameter: bool failstatus if true only values in Failstatuslist 
-		// Parameter: bool reject if true returns last reject for -1 
-		// Parameter: MLProduct & rProduct
-		// Parameter: bool releaseSlot  if true the reader slot is released after this call 
+		// return last when recent trigger == PreviousTrigger
 		//************************************
-		retvalues _GetProduct(LPCTSTR Monitorlist, int trigger, bool failstatus, bool reject, MLProduct* pProduct, const MLProduct* pLastProduct, bool releaseSlot);
+		//retvalues GetProduct(const GetProdPar& par,LPCSTR monitorlist, int Trigger, int PreviousTrigger, MLProduct* pProduct);
+		retvalues _GetProduct(const GetProdPar& par, LPCTSTR Monitorlist, int trigger,  MLProduct* pProduct, const MLProduct* pLastProduct);
 
 	};
 } //namespace SvSml

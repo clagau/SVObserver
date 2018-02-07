@@ -33,27 +33,10 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>			//Used by static library
 
-#define BOOST_INTERPROCESS_SHARED_DIR_PATH "V:/boost_interprocess"
 #define BOOST_DATE_TIME_NO_LIB
-
-#include <boost/interprocess/containers/flat_map.hpp>
-#include <boost/interprocess/containers/map.hpp>			//Used by static library
-#include <boost/interprocess/containers/string.hpp>			//Used by static library
-#include <boost/interprocess/containers/vector.hpp>			//Used by static library
-#include <boost/interprocess/file_mapping.hpp>			//Used by static library
-#include <boost/interprocess/managed_shared_memory.hpp>		//Used by static library
-
 
 #pragma warning (push)
 #pragma warning (default : 4005)
-
-
-
-
-
-
-
-
 
 
 #ifdef _UNICODE

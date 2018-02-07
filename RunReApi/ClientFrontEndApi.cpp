@@ -40,17 +40,10 @@ namespace RRApi
 		std::vector<char> buf_envelope2_;
 		bool m_isConnected = false;
 
-		ClientFrontEndApi_Impl(boost::asio::io_service& io_service/*, uint16_t port, const std::string& ipAdress*/  ) 
+		ClientFrontEndApi_Impl(boost::asio::io_service& io_service ) 
 			: io_service_(io_service), socket_(io_service)
 		{
 			boost::asio::ip::address host;
-			/*if (ipAdress.size() == 0)
-				host = boost::asio::ip::address::from_string("127.0.0.1");
-			else
-				host = boost::asio::ip::address::from_string(ipAdress);
-
-			auto endpoint = boost::asio::ip::tcp::endpoint(host, port);
-			socket_.connect(endpoint);*/
 		}
 		
 		bool IsConnected()
@@ -294,6 +287,8 @@ namespace RRApi
 		return promise->get_future();
 	
 	}
+
+	
 
 	void ClientFrontEndApi::Connect(uint16_t port, const std::string &ipAdress)
 	{

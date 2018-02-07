@@ -49,8 +49,7 @@ namespace SvSml
 	
 	
 	private:
-		//Not implemented don't  allow copyconstructor 
-		SharedDataStore(const SharedDataStore& datastore);
+		SharedDataStore(const SharedDataStore& datastore) = delete;
 		void BuildMapFileName();
 		void ThrowCreateFileMappingFailed(SvStl::SourceFileParams& FileParams, DWORD Programmcode);
 		void ThrowMapViewOfFileFailedFailed(SvStl::SourceFileParams& FileParams, DWORD Programmcode);

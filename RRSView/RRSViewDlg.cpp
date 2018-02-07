@@ -306,11 +306,11 @@ void CRRSViewDlg::DisplayProduct(bool isreject)
 	m_EditTrigger.SetWindowTextA(text.GetString());
 	if (isreject)
 	{
-		m_MemReader.GetRejectData(MonitorListName.GetString(), trigger, productPtr.get(), 1);
+		m_MemReader.GetRejectData(MonitorListName.GetString(), trigger, productPtr.get(), nullptr,true);
 	}
 	else
 	{
-		m_MemReader.GetProductData(MonitorListName.GetString(), trigger, productPtr.get(), 1);
+		m_MemReader.GetProductData(MonitorListName.GetString(), trigger, productPtr.get(), nullptr, true);
 	}
 	ProductDlg prod(productPtr.get());
 	prod.DoModal();
@@ -325,8 +325,8 @@ void CRRSViewDlg::OnBnClickedButGetfailstatus()
 		return;
 	}
 	CString MonitorListName = m_MonListsCtrl.GetItemText(sel, 0);
-	SvSml::productPointerVector Failstatus;
-	m_MemReader.GetFailstatus(MonitorListName.GetString(), &Failstatus);
+	SvSml::vecpProd Failstatus;
+	m_MemReader.GetFailstatus(MonitorListName.GetString(), &Failstatus,nullptr );
 	ProductDlg prod(&Failstatus);
 	prod.DoModal();
 }

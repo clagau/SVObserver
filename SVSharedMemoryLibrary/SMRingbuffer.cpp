@@ -17,6 +17,8 @@
 #include "SVStatusLibrary\MessageTextEnum.h"
 #include "SVMessage\SVMessage.h"
 #include "SMParameterStruct.h"
+
+
 #pragma endregion Includes
 
 namespace SvSml
@@ -33,6 +35,10 @@ namespace SvSml
 		SYSTEM_INFO siSysInfo;
 		GetSystemInfo(&siSysInfo);
 		m_AllocationGranularity = siSysInfo.dwAllocationGranularity;
+		if (0 == m_AllocationGranularity)
+		{
+			m_AllocationGranularity = 1;
+		}
 		m_InfoSize = sizeof(RingbufferInfos);
 		m_MatchedInfoSize = MatchedSize(m_InfoSize, m_AllocationGranularity);
 		
