@@ -10,8 +10,6 @@
 //Moved to precompiled header: #include <iosfwd>
 //Moved to precompiled header: #include <string>
 //Moved to precompiled header: #include <sstream>
-//Moved to precompiled header: #include <boost/assign/std/map.hpp>
-//Moved to precompiled header: #include <boost/assign/list_of.hpp>
 #include "VariantHelper.h"
 #include "SVVariantCustomTypes.h"
 #include "SVStatusLibrary/MessageContainer.h"
@@ -32,28 +30,29 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvXml
 {
-	static std::map<std::wstring, UINT>  map_wstring2Type = boost::assign::map_list_of<>
-		(L"VT_EMPTY",		(UINT)VT_EMPTY)
-		(L"VT_NULL",		(UINT)VT_NULL)
-		(L"VT_BOOL",		(UINT)VT_BOOL)
-		(L"VT_INT",		(UINT)VT_INT)
-		(L"VT_I4",		(UINT)VT_I4)
-		(L"VT_UINT",		(UINT)VT_UINT)
-		(L"VT_UI4",		(UINT)VT_UI4)
-		(L"VT_R4",		(UINT)VT_R4)
-		(L"VT_R8",		(UINT)VT_R8)
-		(L"VT_I8",		(UINT)VT_I8)
-		(L"VT_UI8",		(UINT)VT_UI8)
-		(L"VT_UI1",		(UINT)VT_UI1)
-		(L"VT_I1",		(UINT)VT_I1)
-		(L"VT_I2",		(UINT)VT_I2)
-		(L"VT_UI2",		(UINT)VT_UI2)
-		(L"VT_BSTR",	(UINT)VT_BSTR)
-		(L"VT_ARRAY",	(UINT)VT_ARRAY)
-		(L"SV_ARRAYNODE", VT_SVARRAYNODE)  /// not used ?
-		(L"SV_NODEWITHDATA", VT_SVNODEWITHDATA) /// not used ?
-		(L"SV_SVBASENODE", VT_SVBASENODE)
-		;
+	static std::map<std::wstring, UINT>  map_wstring2Type
+	{
+		{L"VT_EMPTY",	static_cast<UINT> (VT_EMPTY)},
+		{L"VT_NULL",	static_cast<UINT> (VT_NULL)},
+		{L"VT_BOOL",	static_cast<UINT> (VT_BOOL)},
+		{L"VT_INT",		static_cast<UINT> (VT_INT)},
+		{L"VT_I4",		static_cast<UINT> (VT_I4)},
+		{L"VT_UINT",	static_cast<UINT> (VT_UINT)},
+		{L"VT_UI4",		static_cast<UINT> (VT_UI4)},
+		{L"VT_R4",		static_cast<UINT> (VT_R4)},
+		{L"VT_R8",		static_cast<UINT> (VT_R8)},
+		{L"VT_I8",		static_cast<UINT> (VT_I8)},
+		{L"VT_UI8",		static_cast<UINT> (VT_UI8)},
+		{L"VT_UI1",		static_cast<UINT> (VT_UI1)},
+		{L"VT_I1",		static_cast<UINT> (VT_I1)},
+		{L"VT_I2",		static_cast<UINT> (VT_I2)},
+		{L"VT_UI2",		static_cast<UINT> (VT_UI2)},
+		{L"VT_BSTR",	static_cast<UINT> (VT_BSTR)},
+		{L"VT_ARRAY",	static_cast<UINT> (VT_ARRAY)},
+		{L"SV_ARRAYNODE", VT_SVARRAYNODE},  /// not used ?
+		{L"SV_NODEWITHDATA", VT_SVNODEWITHDATA}, /// not used ?
+		{L"SV_SVBASENODE", VT_SVBASENODE}
+	};
 
 
 	UINT  VariantHelper::WCHAR2Type(const wchar_t *ptype )

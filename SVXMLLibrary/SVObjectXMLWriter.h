@@ -24,7 +24,7 @@
 #pragma region Declarations
 typedef std::shared_ptr<xml::writer> XMLWriterPtr;
 typedef std::shared_ptr<xml::element> XMLElementPtr;
-typedef std::deque<XMLElementPtr> Elements;
+typedef std::deque<XMLElementPtr> cElements;
 #pragma endregion Declarations
 
 namespace  SvXml
@@ -90,7 +90,7 @@ namespace  SvXml
 		void setHeader(LPCTSTR header);
 	private:
 		XMLWriterPtr m_pWriter;
-		Elements m_elements;
+		cElements m_elements;
 		SVXMLEncryptionClass*  m_pEncryption;
 
 	};

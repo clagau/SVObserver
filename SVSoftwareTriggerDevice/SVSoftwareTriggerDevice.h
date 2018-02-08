@@ -14,12 +14,11 @@
 #pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <utility>
 //Moved to precompiled header: #include <vector>
 #include "SVTimerLibrary/SVTimerCallbackImpl.h"
 #include "TriggerInformation/IODeviceBase.h"
-#include "SVContainerLibrary/SVBidirectionalMap.h"
 #include "SVSystemLibrary/SVCriticalSection.h"
-
 #pragma endregion Includes
 
 ///////////////////////////////////////////////////////////////////////
@@ -44,7 +43,7 @@ class SVSoftwareTriggerDevice : public SvTi::IODeviceBase
 	};
 
 protected:
-	typedef SVBidirectionalMap<std::string, unsigned long>::type NameHandleList;
+	typedef std::vector<std::pair<std::string, unsigned long>> NameHandleList;
 	NameHandleList m_nameHandleList;
 	TimerList m_timerList;
 	int m_numTriggers;

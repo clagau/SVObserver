@@ -77,7 +77,6 @@
 #include <vector>
 
 #include <boost/any.hpp>
-#include <boost/assign/list_of.hpp>
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 #include <boost/lexical_cast.hpp>

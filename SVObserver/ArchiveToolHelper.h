@@ -6,7 +6,6 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <boost/assign.hpp>
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
@@ -19,13 +18,15 @@
 	const std::string KW_SECONDS( "\"SS\"" );
 
 	typedef SvDef::StringSet KeywordSet;
-	static KeywordSet KeywordList = boost::assign::list_of
-		(KW_DAY)
-		(KW_MONTH)
-		(KW_YEAR)
-		(KW_HOUR)
-		(KW_MINUTE)
-		(KW_SECONDS);
+	static KeywordSet KeywordList
+	{
+		KW_DAY,
+		KW_MONTH,
+		KW_YEAR,
+		KW_HOUR,
+		KW_MINUTE,
+		KW_SECONDS
+	};
 #pragma endregion Declarations
 
 class ArchiveToolHelper

@@ -12,7 +12,6 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <boost/foreach.hpp>
-//Moved to precompiled header: #include <boost/assign/list_of.hpp>
 #include "SVObjectXMLWriter.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
@@ -39,32 +38,33 @@ const WCHAR* const	cFormatVersion = L"FormatVersion";
 
 typedef std::map<VARTYPE, std::string> VariantTypeToStringLookup;
 
-static VariantTypeToStringLookup var_types = boost::assign::map_list_of<>
-(VT_EMPTY, Stringtize(VT_EMPTY))	// nothing
-(VT_NULL, Stringtize(VT_NULL))		// SQL style Null
-(VT_I2, Stringtize(VT_I2))			// 2 byte signed int
-(VT_I4, Stringtize(VT_I4))			// 4 byte signed int
-(VT_INT, Stringtize(VT_INT))			// 4 byte signed int
-(VT_R4, Stringtize(VT_R4))			// 4 byte real
-(VT_R8, Stringtize(VT_R8))			// 8 byte real
-// not allowed (VT_CY, Stringtize(VT_CY))		// currency
-// not allowed (VT_DATE, Stringtize(VT_DATE))	// date
-(VT_BSTR, Stringtize(VT_BSTR))	// OLE Automation string
-// not allowed (VT_DISPATCH, Stringtize(VT_DISPATCH)) // IDispatch *
-// not allowed (VT_ERROR, Stringtize(VT_ERROR))	// SCODE
-(VT_BOOL, Stringtize(VT_BOOL))	// True=-1, False=0
-// not allowed (VT_VARIANT, Stringtize(VT_VARIANT)) // VARIANT *
-// not allowed (VT_UNKNOWN, Stringtize(VT_UNKNOWN)) // IUnknown *
-// not allowed (VT_DECIMAL, Stringtize(VT_DECIMAL)) // 16 byte fixed point
-// not allowed (VT_RECORD, Stringtize(VT_RECORD)) // user defined type
-(VT_I1, Stringtize(VT_I1))			// signed char
-(VT_UI1, Stringtize(VT_UI1))		// unsigned char
-(VT_UI2, Stringtize(VT_UI2))		// unsigned short
-(VT_UI4, Stringtize(VT_UI4))		// unsigned long
-(VT_UINT, Stringtize(VT_UI4))		// unsigned long
-(VT_I8, Stringtize(VT_I8))			// signed 64-bit int
-(VT_UI8, Stringtize(VT_UI8))		// unsigned 64-bit int
-;
+static const VariantTypeToStringLookup cVarTypes
+{
+	{VT_EMPTY, Stringtize(VT_EMPTY)},	// nothing
+	{VT_NULL, Stringtize(VT_NULL)},		// SQL style Null
+	{VT_I2, Stringtize(VT_I2)},			// 2 byte signed int
+	{VT_I4, Stringtize(VT_I4)},			// 4 byte signed int
+	{VT_INT, Stringtize(VT_INT)},			// 4 byte signed int
+	{VT_R4, Stringtize(VT_R4)},			// 4 byte real
+	{VT_R8, Stringtize(VT_R8)},			// 8 byte real
+	// not allowed {VT_CY, Stringtize(VT_CY)}		// currency
+	// not allowed {VT_DATE, Stringtize(VT_DATE)}	// date
+	{VT_BSTR, Stringtize(VT_BSTR)},	// OLE Automation string
+	// not allowed {VT_DISPATCH, Stringtize(VT_DISPATCH)} // IDispatch *
+	// not allowed {VT_ERROR, Stringtize(VT_ERROR)}	// SCODE
+	{VT_BOOL, Stringtize(VT_BOOL)},	// True=-1, False=0
+	// not allowed {VT_VARIANT, Stringtize(VT_VARIANT)} // VARIANT *
+	// not allowed {VT_UNKNOWN, Stringtize(VT_UNKNOWN)} // IUnknown *
+	// not allowed {VT_DECIMAL, Stringtize(VT_DECIMAL)} // 16 byte fixed point
+	// not allowed {VT_RECORD, Stringtize(VT_RECORD)} // user defined type
+	{VT_I1, Stringtize(VT_I1)},			// signed char
+	{VT_UI1, Stringtize(VT_UI1)},		// unsigned char
+	{VT_UI2, Stringtize(VT_UI2)},		// unsigned short
+	{VT_UI4, Stringtize(VT_UI4)},		// unsigned long
+	{VT_UINT, Stringtize(VT_UI4)},		// unsigned long
+	{VT_I8, Stringtize(VT_I8)},			// signed 64-bit int
+	{VT_UI8, Stringtize(VT_UI8)}		// unsigned 64-bit int
+};
 
 namespace  SvXml
 {
@@ -108,7 +108,7 @@ namespace  SvXml
 
 	static std::string VariantTypeToString(VARTYPE vt)
 	{
-		return var_types[vt];
+		return cVarTypes.at(vt);
 	}
 
 	static std::string VariantToString(_variant_t value)

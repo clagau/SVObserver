@@ -11,7 +11,6 @@
 
 #pragma region Includes
 #include "stdafx.h"
-//Moved to precompiled header: #include <boost/assign/list_of.hpp>
 #include "SVTADlgGeneralPage.h"
 #include "SVObjectLibrary\SVClsids.h"
 #include "ObjectInterfaces\NameValueVector.h"

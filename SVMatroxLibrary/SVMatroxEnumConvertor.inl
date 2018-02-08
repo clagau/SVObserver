@@ -12,86 +12,49 @@
 #include "SVMatroxEnumConvertor.h"
 #include "SVMatroxErrorEnum.h"
 
-template<typename SVEnumType, typename MatroxType>
-SVMatroxEnumConvertor<SVEnumType, MatroxType>::SVMatroxEnumConvertor()
+template<typename SVEnumType>
+HRESULT ConvertEnumToMatroxType(const std::vector<std::pair<SVEnumType, long long>>& rEnumPairList, SVEnumType Type, long long& rMatroxType)
 {
-}
-
-template<typename SVEnumType, typename MatroxType>
-template<class _Iter>
-SVMatroxEnumConvertor<SVEnumType, MatroxType>::SVMatroxEnumConvertor(_Iter first, _Iter last)
-{
-	for (; first != last; ++first)
-		m_map.insert(*first);
-}
-
-template<typename SVEnumType, typename MatroxType>
-HRESULT SVMatroxEnumConvertor<SVEnumType, MatroxType>::ConvertEnumToMatroxType(SVEnumType type, MatroxType& matroxType)
-{
-	HRESULT hr(SVMEE_INTERNAL_CONVERSION_ERROR);
-
-	SVMatroxEnumConvertor<SVEnumType, MatroxType>::SVMatroxEnumMap::const_iterator it = m_map.get<from>().find(type);
-	if (it != m_map.end())
+	for(const auto& rEntry : rEnumPairList)
 	{
-		hr = S_OK;
-		matroxType = it->second;
-	}
-	return hr;
-}
-
-template<typename SVEnumType, typename MatroxType>
-HRESULT SVMatroxEnumConvertor<SVEnumType, MatroxType>::ConvertBitSetToMatroxType(SVEnumType type, MatroxType& matroxType)
-{
-	HRESULT hr(SVMEE_INTERNAL_CONVERSION_ERROR);
-
-	matroxType = 0;
-
-	// iterate over set of enums as bit set and apply conversion
-	SVMatroxEnumConvertor<SVEnumType, MatroxType>::SVMatroxEnumMap::const_iterator it;
-	for (it = m_map.get<from>().begin(); it != m_map.get<from>().end();++it)
-	{
-		if ((type & it->first) == it->first)
+		if(rEntry.first == Type)
 		{
-			matroxType |= it->second;
-			hr = S_OK;
+			rMatroxType = rEntry.second;
+			return S_OK;
 		}
 	}
-	return hr;
+	return SVMEE_INTERNAL_CONVERSION_ERROR;
 }
 
-template<typename SVEnumType, typename MatroxType>
-HRESULT SVMatroxEnumConvertor<SVEnumType, MatroxType>::ConvertEnumFromMatroxType(MatroxType matroxType, SVEnumType& type)
+template<typename SVEnumType>
+HRESULT ConvertBitSetToMatroxType(const std::vector<std::pair<SVEnumType, long long>>& rEnumPairList, SVEnumType Type, long long& rMatroxType)
 {
-	HRESULT hr(SVMEE_INTERNAL_CONVERSION_ERROR);
+	HRESULT Result {SVMEE_INTERNAL_CONVERSION_ERROR};
 
-	typedef typename SVMatroxEnumConvertor<SVEnumType, MatroxType>::SVMatroxEnumMap::index_const_iterator<to>::type Iterator;
-	Iterator it = m_map.get<to>().find(type);
-	if (it != m_map.get<to>().end())
+	rMatroxType = 0;
+	// Loop over set of enums as bit set and apply conversion
+	for (const auto& rEntry : rEnumPairList)
 	{
-		hr = S_OK;
-		type = it->first;
-	}
-	return hr;
-}
-
-template<typename SVEnumType, typename MatroxType>
-HRESULT SVMatroxEnumConvertor<SVEnumType, MatroxType>::ConvertBitSetFromMatroxType(MatroxType matroxType, SVEnumType& type)
-{
-	HRESULT hr(SVMEE_INTERNAL_CONVERSION_ERROR);
-
-	type = 0;
-
-	// iterate over set of enums as bit set and apply conversion
-	typedef typename SVMatroxEnumConvertor<SVEnumType, MatroxType>::SVMatroxEnumMap::index_const_iterator<to>::type Iterator;
-	Iterator it = m_map.get<to>().find(type);
-	for (it = m_map.get<to>().begin(); it != m_map.get<to>().end();++it)
-	{
-		if ((matroxType & it->second) == it->second)
+		if (rEntry.first == (Type & rEntry.first))
 		{
-			type |= it->first;
-			hr = S_OK;
+			rMatroxType |= rEntry.second;
+			Result = S_OK;
 		}
 	}
-	return hr;
+	return Result;
+}
+
+template<typename SVEnumType>
+HRESULT ConvertEnumFromMatroxType(const std::vector<std::pair<SVEnumType, long long>>& rEnumPairList, long long MatroxType, SVEnumType& rType)
+{
+	for (const auto& rEntry : rEnumPairList)
+	{
+		if (rEntry.second == MatroxType)
+		{
+			rType = rEntry.first;
+			return S_OK;
+		}
+	}
+	return SVMEE_INTERNAL_CONVERSION_ERROR;
 }
 

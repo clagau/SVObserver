@@ -11,8 +11,6 @@
 
 #pragma once
 
-#include "SVContainerLibrary/SVBidirectionalMap.h"
-
 /**
 @SVObjectName Matrox Enum/Bit Set Collection/Convertor
 
@@ -24,25 +22,13 @@ The ConvertEnumFromMatroxType method converts a simple Matrox Type (Enum) to a S
 The ConvertBitSetFromMatroxType method converts a complex Matrox Type (BitSet) to a SVEnumType Bit Combination. 
 */
 
-template<typename SVEnumType, typename MatroxType>
-class SVMatroxEnumConvertor
-{
-	typedef typename SVBidirectionalMap<SVEnumType, MatroxType>::type SVMatroxEnumMap;
-	typedef typename SVMatroxEnumMap::iterator iterator;
-	SVMatroxEnumMap m_map;
+template<typename SVEnumType>
+HRESULT ConvertEnumToMatroxType(const std::vector<std::pair<SVEnumType, long long>>& rEnumPairList, SVEnumType type, long long& rMatroxType);
+template<typename SVEnumType>
+HRESULT ConvertBitSetToMatroxType(const std::vector<std::pair<SVEnumType, long long>>& rEnumPairList, SVEnumType type, long long& rMatroxType);
 
-public:
-	SVMatroxEnumConvertor();
-
-	template<class _Iter>
-	SVMatroxEnumConvertor(_Iter first, _Iter last);
-	
-	HRESULT ConvertEnumToMatroxType(SVEnumType type, MatroxType& matroxType);
-	HRESULT ConvertBitSetToMatroxType(SVEnumType type, MatroxType& matroxType);
-
-	HRESULT ConvertEnumFromMatroxType(MatroxType matroxType, SVEnumType& type);
-	HRESULT ConvertBitSetFromMatroxType(MatroxType matroxType, SVEnumType& type);
-};
+template<typename SVEnumType>
+HRESULT ConvertEnumFromMatroxType(const std::vector<std::pair<SVEnumType, long long>>& rEnumPairList, long long MatroxType, SVEnumType& type);
 
 #include "SVMatroxEnumConvertor.inl"
 

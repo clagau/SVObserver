@@ -11,7 +11,6 @@
 
 #include "stdafx.h"
 //Moved to precompiled header: #include <boost/config.hpp>
-//Moved to precompiled header: #include <boost/assign/list_of.hpp>
 //Moved to precompiled header: #include <boost/bind.hpp>
 #include "SVStreamCommandFactory.h"
 
@@ -27,19 +26,26 @@ const SVQueryInputStreamNamesCommand::SVCommandAttributes::SVDefaultAttributes S
 typedef SVCommandConcreteFactoryTemplate< SVQueryInputStreamNamesCommand > SVQueryInputStreamNamesFactory;
 
 typedef SVCommandConcreteTemplate< 0x00030002 > SVQueryInputStreamDataItemsCommand;
-const SVQueryInputStreamDataItemsCommand::SVCommandAttributes::SVDefaultAttributes SVQueryInputStreamDataItemsCommand::SVCommandAttributes::m_DefaultAttributes = boost::assign::map_list_of<>
-	( _T( "Stream Name" ),  SVCommandDataFacadePtr( new SVCommandDataValue ) );
+const SVQueryInputStreamDataItemsCommand::SVCommandAttributes::SVDefaultAttributes SVQueryInputStreamDataItemsCommand::SVCommandAttributes::m_DefaultAttributes
+{
+	{_T("Stream Name"),  SVCommandDataFacadePtr(new SVCommandDataValue)}
+};
 typedef SVCommandConcreteFactoryTemplate< SVQueryInputStreamDataItemsCommand > SVQueryInputStreamDataItemsFactory;
 
 typedef SVCommandConcreteTemplate< 0x00030003 > SVClearInputStreamDataItemsCommand;
-const SVClearInputStreamDataItemsCommand::SVCommandAttributes::SVDefaultAttributes SVClearInputStreamDataItemsCommand::SVCommandAttributes::m_DefaultAttributes = boost::assign::map_list_of<>
-	( _T( "Stream Name" ),  SVCommandDataFacadePtr( new SVCommandDataValue ) );
+const SVClearInputStreamDataItemsCommand::SVCommandAttributes::SVDefaultAttributes SVClearInputStreamDataItemsCommand::SVCommandAttributes::m_DefaultAttributes
+{
+	{_T("Stream Name"),  SVCommandDataFacadePtr(new SVCommandDataValue)}
+};
+
 typedef SVCommandConcreteFactoryTemplate< SVClearInputStreamDataItemsCommand > SVClearInputStreamDataItemsFactory;
 
-SVStreamCommandFactory::SVCommandFactoryMap SVStreamCommandFactory::m_DefaultFactories = boost::assign::map_list_of<>
-	( SVQueryInputStreamNamesFactory::GetStaticCommandType(), SVCommandFactoryTemplatePtr( new SVQueryInputStreamNamesFactory( boost::bind( &SVStreamCommandFactory::QueryInputStreamNames, _1, _2 ) ) ) )
-	( SVQueryInputStreamDataItemsFactory::GetStaticCommandType(), SVCommandFactoryTemplatePtr( new SVQueryInputStreamDataItemsFactory( boost::bind( &SVStreamCommandFactory::QueryInputStreamDataItems, _1, _2 ) ) ) )
-	( SVClearInputStreamDataItemsFactory::GetStaticCommandType(), SVCommandFactoryTemplatePtr( new SVClearInputStreamDataItemsFactory( boost::bind( &SVStreamCommandFactory::ClearInputStreamDataItems, _1, _2 ) ) ) );
+SVStreamCommandFactory::SVCommandFactoryMap SVStreamCommandFactory::m_DefaultFactories
+{
+	{SVQueryInputStreamNamesFactory::GetStaticCommandType(),		SVCommandFactoryTemplatePtr(new SVQueryInputStreamNamesFactory(boost::bind(&SVStreamCommandFactory::QueryInputStreamNames, _1, _2)))},
+	{SVQueryInputStreamDataItemsFactory::GetStaticCommandType(),	SVCommandFactoryTemplatePtr(new SVQueryInputStreamDataItemsFactory(boost::bind(&SVStreamCommandFactory::QueryInputStreamDataItems, _1, _2)))},
+	{SVClearInputStreamDataItemsFactory::GetStaticCommandType(),	SVCommandFactoryTemplatePtr(new SVClearInputStreamDataItemsFactory(boost::bind(&SVStreamCommandFactory::ClearInputStreamDataItems, _1, _2)))}
+};
 
 HRESULT SVStreamCommandFactory::QueryInputStreamNames( const SVCommandDataHolder& p_rAttributes, SVCommandDataHolder& p_rResults )
 {

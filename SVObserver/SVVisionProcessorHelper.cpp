@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <boost/config.hpp>
-//Moved to precompiled header: #include <boost/assign.hpp>
 //Moved to precompiled header: #include <boost/bind.hpp>
 #include "SVVisionProcessorHelper.h"
 

@@ -11,7 +11,6 @@
 
 #include "stdafx.h"
 //Moved to precompiled header: #include <boost/config.hpp>
-//Moved to precompiled header: #include <boost/assign/list_of.hpp>
 //Moved to precompiled header: #include <boost/bind.hpp>
 #include "SVFileSystemCommandFactory.h"
 
@@ -21,12 +20,17 @@
 #include "SVCommandConcreteFactoryTemplate.h"
 
 typedef SVCommandConcreteTemplate< 0x00020001 > SVDoesFileExistCommand;
-const SVDoesFileExistCommand::SVCommandAttributes::SVDefaultAttributes SVDoesFileExistCommand::SVCommandAttributes::m_DefaultAttributes = boost::assign::map_list_of<>
-	( _T( "File Name" ),  SVCommandDataFacadePtr( new SVCommandDataValue ) );
+const SVDoesFileExistCommand::SVCommandAttributes::SVDefaultAttributes SVDoesFileExistCommand::SVCommandAttributes::m_DefaultAttributes
+{
+	{_T( "File Name" ),  SVCommandDataFacadePtr( new SVCommandDataValue )}
+};
+
 typedef SVCommandConcreteFactoryTemplate< SVDoesFileExistCommand > SVDoesFileExistFactory;
 
-SVFileSystemCommandFactory::SVCommandFactoryMap SVFileSystemCommandFactory::m_DefaultFactories = boost::assign::map_list_of<>
-	( SVDoesFileExistFactory::GetStaticCommandType(), SVCommandFactoryTemplatePtr( new SVDoesFileExistFactory( boost::bind( &SVFileSystemCommandFactory::DoesFileExist, _1, _2 ) ) ) );
+SVFileSystemCommandFactory::SVCommandFactoryMap SVFileSystemCommandFactory::m_DefaultFactories
+{
+	{SVDoesFileExistFactory::GetStaticCommandType(), SVCommandFactoryTemplatePtr( new SVDoesFileExistFactory( boost::bind( &SVFileSystemCommandFactory::DoesFileExist, _1, _2 ) ) )}
+};
 
 HRESULT SVFileSystemCommandFactory::DoesFileExist( const SVCommandDataHolder& p_rAttributes, SVCommandDataHolder& p_rResults )
 {

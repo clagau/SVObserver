@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <iterator>
-//Moved to precompiled header: #include <boost/assign.hpp>
 //Moved to precompiled header: #include <sys/stat.h>
 //Moved to precompiled header: #include <io.h>
 
@@ -112,19 +111,20 @@ static const TCHAR* const MESSAGE_FILE_ACQUISITION_INVALID_IMAGE_SIZE ( _T("The 
 static const TCHAR* const MESSAGE_FILE_ACQUISITION_COLOR_MISMATCH ( _T("The bitmap file acquisition color does not match the camera color setting") );
 static const TCHAR* const MESSAGE_INSPECTION_CAMERA_COLOR  ( _T("-The toolset camera image color does not match the inspection color") );
 
-const CSVOConfigAssistantDlg::SVProductStringMap CSVOConfigAssistantDlg::m_ProductStringMap = boost::assign::map_list_of< SVIMProductEnum, std::string >
+const CSVOConfigAssistantDlg::SVProductStringMap CSVOConfigAssistantDlg::m_ProductStringMap
+{
 	// SYSTEM ID, DISPLAY NAME
-	( SVIM_PRODUCT_X2_GD1A, std::string( SYSTEM_SVIM_X2_GD1A ) )
-	( SVIM_PRODUCT_X2_GD1A_COLOR, std::string( SYSTEM_SVIM_X2_GD1A_COLOR ) )
-	( SVIM_PRODUCT_X2_GD2A, std::string( SYSTEM_SVIM_X2_GD2A ) )
-	( SVIM_PRODUCT_X2_GD2A_COLOR, std::string( SYSTEM_SVIM_X2_GD2A_COLOR ) )
-	( SVIM_PRODUCT_X2_GD4A, std::string( SYSTEM_SVIM_X2_GD4A ) )
-	( SVIM_PRODUCT_X2_GD4A_COLOR, std::string( SYSTEM_SVIM_X2_GD4A_COLOR ) )
-	( SVIM_PRODUCT_X2_GD8A, std::string( SYSTEM_SVIM_X2_GD8A ) )
-	( SVIM_PRODUCT_X2_GD8A_COLOR, std::string( SYSTEM_SVIM_X2_GD8A_COLOR ) )
-	//( SVIM_PRODUCT_X2_GD8A_NONIO, std::string( SYSTEM_SVIM_X2_GD8A_NONIO ) )
-	//( SVIM_PRODUCT_X2_GD8A_NONIO_COLOR, std::string( SYSTEM_SVIM_X2_GD8A_NONIO_COLOR ) );
-	;
+	{SVIM_PRODUCT_X2_GD1A, std::string(SYSTEM_SVIM_X2_GD1A )},
+	{SVIM_PRODUCT_X2_GD1A_COLOR, std::string(SYSTEM_SVIM_X2_GD1A_COLOR)},
+	{SVIM_PRODUCT_X2_GD2A, std::string(SYSTEM_SVIM_X2_GD2A)},
+	{SVIM_PRODUCT_X2_GD2A_COLOR, std::string(SYSTEM_SVIM_X2_GD2A_COLOR)},
+	{SVIM_PRODUCT_X2_GD4A, std::string(SYSTEM_SVIM_X2_GD4A)},
+	{SVIM_PRODUCT_X2_GD4A_COLOR, std::string(SYSTEM_SVIM_X2_GD4A_COLOR)},
+	{SVIM_PRODUCT_X2_GD8A, std::string(SYSTEM_SVIM_X2_GD8A)},
+	{SVIM_PRODUCT_X2_GD8A_COLOR, std::string(SYSTEM_SVIM_X2_GD8A_COLOR)},
+	//{SVIM_PRODUCT_X2_GD8A_NONIO, std::string(SYSTEM_SVIM_X2_GD8A_NONIO)},
+	//{SVIM_PRODUCT_X2_GD8A_NONIO_COLOR, std::string(SYSTEM_SVIM_X2_GD8A_NONIO_COLOR)};
+};
 
 /////////////////////////////////////////////////////////////////////////////
 // CSVOConfigAssistantDlg dialog

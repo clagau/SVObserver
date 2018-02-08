@@ -7,7 +7,6 @@
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
-//Moved to precompiled header: #include <boost/assign/list_of.hpp>
 //Moved to precompiled header: #include <afxctl.h>
 #include "TATableSourcePage.h"
 #include "SVStatusLibrary\MessageManager.h"

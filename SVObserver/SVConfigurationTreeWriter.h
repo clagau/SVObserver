@@ -13,7 +13,6 @@
 #pragma region Includes
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <boost/foreach.hpp>
-//Moved to precompiled header: #include <boost/assign/list_of.hpp>
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVNavigateTree.h"

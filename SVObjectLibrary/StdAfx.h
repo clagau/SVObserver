@@ -65,8 +65,6 @@
 #include <vector>
 
 #include <boost/algorithm/string.hpp>
-#include <boost/assign.hpp>
-#include <boost/assign/list_of.hpp>
 #include <boost/bind.hpp>
 #include <boost/config.hpp>
 #include <boost/foreach.hpp>

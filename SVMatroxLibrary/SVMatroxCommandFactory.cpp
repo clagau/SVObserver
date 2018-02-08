@@ -11,7 +11,6 @@
 
 #include "stdafx.h"
 //Moved to precompiled header: #include <boost/config.hpp>
-//Moved to precompiled header: #include <boost/assign/list_of.hpp>
 //Moved to precompiled header: #include <boost/bind.hpp>
 #include "SVMatroxCommandFactory.h"
 
@@ -25,36 +24,46 @@
 #include "SVMatroxOcrInterface.h"
 
 typedef SVCommandConcreteTemplate< 0x00010001 > SVAdaptiveThresholdCommand;
-const SVAdaptiveThresholdCommand::SVCommandAttributes::SVDefaultAttributes SVAdaptiveThresholdCommand::SVCommandAttributes::m_DefaultAttributes = boost::assign::map_list_of<>
-	( _T( "Source Image" ),         SVCommandDataFacadePtr( new SVMatroxCommandDataImage           ) )
-	( _T( "Is Black Background" ),  SVCommandDataFacadePtr( new SVCommandDataValue( bool( true ) ) ) );
+const SVAdaptiveThresholdCommand::SVCommandAttributes::SVDefaultAttributes SVAdaptiveThresholdCommand::SVCommandAttributes::m_DefaultAttributes
+{
+	{_T("Source Image"),			SVCommandDataFacadePtr(new SVMatroxCommandDataImage)},
+	{_T("Is Black Background"),	SVCommandDataFacadePtr(new SVCommandDataValue(true))}
+};
 typedef SVCommandConcreteFactoryTemplate< SVAdaptiveThresholdCommand > SVAdaptiveThresholdFactory;
 
 typedef SVCommandConcreteTemplate< 0x00010002 > SVAutoThresholdCommand;
-const SVAutoThresholdCommand::SVCommandAttributes::SVDefaultAttributes SVAutoThresholdCommand::SVCommandAttributes::m_DefaultAttributes = boost::assign::map_list_of<>
-	( _T( "Source Image" ),         SVCommandDataFacadePtr( new SVMatroxCommandDataImage            ) )
-	( _T( "Threshold Multiplier" ), SVCommandDataFacadePtr( new SVCommandDataValue( double( 1.0 ) ) ) )
-	( _T( "Is Black Background" ),  SVCommandDataFacadePtr( new SVCommandDataValue( bool( true ) )  ) );
+const SVAutoThresholdCommand::SVCommandAttributes::SVDefaultAttributes SVAutoThresholdCommand::SVCommandAttributes::m_DefaultAttributes
+{
+	{_T("Source Image"),         SVCommandDataFacadePtr(new SVMatroxCommandDataImage)},
+	{_T("Threshold Multiplier"), SVCommandDataFacadePtr(new SVCommandDataValue(1.0))},
+	{_T("Is Black Background"),  SVCommandDataFacadePtr(new SVCommandDataValue(true))}
+};
 typedef SVCommandConcreteFactoryTemplate< SVAutoThresholdCommand > SVAutoThresholdFactory;
 
 typedef SVCommandConcreteTemplate< 0x00010003 > SVFixedThresholdCommand;
-const SVFixedThresholdCommand::SVCommandAttributes::SVDefaultAttributes SVFixedThresholdCommand::SVCommandAttributes::m_DefaultAttributes = boost::assign::map_list_of<>
-	( _T( "Source Image" ),          SVCommandDataFacadePtr( new SVMatroxCommandDataImage                   ) )
-	( _T( "Threshold Lower Value" ), SVCommandDataFacadePtr( new SVCommandDataValue( unsigned char( 128 ) ) ) )
-	( _T( "Threshold Upper Value" ), SVCommandDataFacadePtr( new SVCommandDataValue( unsigned char( 0 ) )   ) );
+const SVFixedThresholdCommand::SVCommandAttributes::SVDefaultAttributes SVFixedThresholdCommand::SVCommandAttributes::m_DefaultAttributes
+{
+	{_T("Source Image"),          SVCommandDataFacadePtr(new SVMatroxCommandDataImage)},
+	{_T("Threshold Lower Value"), SVCommandDataFacadePtr(new SVCommandDataValue(unsigned char(128)))},
+	{_T("Threshold Upper Value"), SVCommandDataFacadePtr(new SVCommandDataValue(unsigned char(0)))}
+};
 typedef SVCommandConcreteFactoryTemplate< SVFixedThresholdCommand > SVFixedThresholdFactory;
 
 typedef SVCommandConcreteTemplate< 0x00010004 > SVFindFontCharactersCommand;
-const SVFindFontCharactersCommand::SVCommandAttributes::SVDefaultAttributes SVFindFontCharactersCommand::SVCommandAttributes::m_DefaultAttributes = boost::assign::map_list_of<>
-	( _T( "Source Image" ),        SVCommandDataFacadePtr( new SVMatroxCommandDataImage           ) )
-	( _T( "Width" ),               SVCommandDataFacadePtr( new SVCommandDataValue( long( 0 ) )    ) )
-	( _T( "Height" ),              SVCommandDataFacadePtr( new SVCommandDataValue( long( 0 ) )    ) )
-	( _T( "Is Black Background" ), SVCommandDataFacadePtr( new SVCommandDataValue( bool( false ) ) ) );
+const SVFindFontCharactersCommand::SVCommandAttributes::SVDefaultAttributes SVFindFontCharactersCommand::SVCommandAttributes::m_DefaultAttributes
+{
+	{_T("Source Image"),        SVCommandDataFacadePtr(new SVMatroxCommandDataImage)},
+	{_T("Width"),               SVCommandDataFacadePtr(new SVCommandDataValue(0L))},
+	{_T("Height"),              SVCommandDataFacadePtr(new SVCommandDataValue(0L))},
+	{_T("Is Black Background"), SVCommandDataFacadePtr(new SVCommandDataValue(false))}
+};
 typedef SVCommandConcreteFactoryTemplate< SVFindFontCharactersCommand > SVFindFontCharactersFactory;
 
 typedef SVCommandConcreteTemplate< 0x00010005 > SVLoadFontCommand;
-const SVLoadFontCommand::SVCommandAttributes::SVDefaultAttributes SVLoadFontCommand::SVCommandAttributes::m_DefaultAttributes = boost::assign::map_list_of<>
-	( _T( "Character File Contents" ),  SVCommandDataFacadePtr( new SVCommandDataValue ) );
+const SVLoadFontCommand::SVCommandAttributes::SVDefaultAttributes SVLoadFontCommand::SVCommandAttributes::m_DefaultAttributes
+{
+	{_T("Character File Contents"),  SVCommandDataFacadePtr(new SVCommandDataValue)}
+};
 typedef SVCommandConcreteFactoryTemplate< SVLoadFontCommand > SVLoadFontFactory;
 
 typedef SVCommandConcreteTemplate< 0x00010006 > SVSaveFontCommand;
@@ -62,48 +71,58 @@ const SVSaveFontCommand::SVCommandAttributes::SVDefaultAttributes SVSaveFontComm
 typedef SVCommandConcreteFactoryTemplate< SVSaveFontCommand > SVSaveFontFactory;
 
 typedef SVCommandConcreteTemplate< 0x00010007 > SVCalibrateFontCommand;
-const SVCalibrateFontCommand::SVCommandAttributes::SVDefaultAttributes SVCalibrateFontCommand::SVCommandAttributes::m_DefaultAttributes = boost::assign::map_list_of<>
-	( _T( "Calibrate Image" ),               SVCommandDataFacadePtr( new SVMatroxCommandDataImage        ) )
-	( _T( "Calibrate String" ),              SVCommandDataFacadePtr( new SVCommandDataValue              ) )
-	( _T( "Maximum Character Size Width" ),  SVCommandDataFacadePtr( new SVCommandDataValue( long( 0 ) ) ) )
-	( _T( "Minimum Character Size Width" ),  SVCommandDataFacadePtr( new SVCommandDataValue( long( 0 ) ) ) )
-	( _T( "Maximum Character Size Height" ), SVCommandDataFacadePtr( new SVCommandDataValue( long( 0 ) ) ) )
-	( _T( "Minimum Character Size Height" ), SVCommandDataFacadePtr( new SVCommandDataValue( long( 0 ) ) ) )
-	( _T( "Character Step Size Width" ),     SVCommandDataFacadePtr( new SVCommandDataValue( long( 0 ) ) ) )
-	( _T( "Character Step Size Height" ),    SVCommandDataFacadePtr( new SVCommandDataValue( long( 0 ) ) ) )
-	( _T( "Font" ),                          SVCommandDataFacadePtr( new SVCommandDataContainer          ) );
+const SVCalibrateFontCommand::SVCommandAttributes::SVDefaultAttributes SVCalibrateFontCommand::SVCommandAttributes::m_DefaultAttributes
+{
+	{_T("Calibrate Image"),               SVCommandDataFacadePtr(new SVMatroxCommandDataImage)},
+	{_T("Calibrate String"),              SVCommandDataFacadePtr(new SVCommandDataValue)},
+	{_T("Maximum Character Size Width"),  SVCommandDataFacadePtr(new SVCommandDataValue(0L))},
+	{_T("Minimum Character Size Width"),  SVCommandDataFacadePtr(new SVCommandDataValue(0L))},
+	{_T("Maximum Character Size Height"), SVCommandDataFacadePtr(new SVCommandDataValue(0L))},
+	{_T("Minimum Character Size Height"), SVCommandDataFacadePtr(new SVCommandDataValue(0L))},
+	{_T("Character Step Size Width"),     SVCommandDataFacadePtr(new SVCommandDataValue(0L))},
+	{_T("Character Step Size Height"),    SVCommandDataFacadePtr(new SVCommandDataValue(0L))},
+	{_T("Font"),                          SVCommandDataFacadePtr(new SVCommandDataContainer)}
+};
 typedef SVCommandConcreteFactoryTemplate< SVCalibrateFontCommand > SVCalibrateFontFactory;
 
 typedef SVCommandConcreteTemplate< 0x00010008 > SVReadFontCommand;
-const SVReadFontCommand::SVCommandAttributes::SVDefaultAttributes SVReadFontCommand::SVCommandAttributes::m_DefaultAttributes = boost::assign::map_list_of<>
-	( _T( "Read Image" ), SVCommandDataFacadePtr( new SVMatroxCommandDataImage ) )
-	( _T( "Font" ),       SVCommandDataFacadePtr( new SVCommandDataContainer   ) );
+const SVReadFontCommand::SVCommandAttributes::SVDefaultAttributes SVReadFontCommand::SVCommandAttributes::m_DefaultAttributes
+{
+	{_T("Read Image"), SVCommandDataFacadePtr(new SVMatroxCommandDataImage)},
+	{_T("Font"),       SVCommandDataFacadePtr(new SVCommandDataContainer)}
+};
 typedef SVCommandConcreteFactoryTemplate< SVReadFontCommand > SVReadFontFactory;
 
 typedef SVCommandConcreteTemplate< 0x00010009 > SVVerifyFontCommand;
-const SVVerifyFontCommand::SVCommandAttributes::SVDefaultAttributes SVVerifyFontCommand::SVCommandAttributes::m_DefaultAttributes = boost::assign::map_list_of<>
-	( _T( "Verify Image" ),  SVCommandDataFacadePtr( new SVMatroxCommandDataImage     ) )
-	( _T( "Verify String" ), SVCommandDataFacadePtr( new SVCommandDataValue           ) )
-	( _T( "Font" ),          SVCommandDataFacadePtr( new SVCommandDataContainer       ) );
+const SVVerifyFontCommand::SVCommandAttributes::SVDefaultAttributes SVVerifyFontCommand::SVCommandAttributes::m_DefaultAttributes
+{
+	{_T("Verify Image"),  SVCommandDataFacadePtr(new SVMatroxCommandDataImage)},
+	{_T("Verify String"), SVCommandDataFacadePtr(new SVCommandDataValue)},
+	{_T("Font"),          SVCommandDataFacadePtr(new SVCommandDataContainer)}
+};
 typedef SVCommandConcreteFactoryTemplate< SVVerifyFontCommand > SVVerifyFontFactory;
 
 typedef SVCommandConcreteTemplate< 0x0001000A > SVCharacterThicknessCommand;
-const SVCharacterThicknessCommand::SVCommandAttributes::SVDefaultAttributes SVCharacterThicknessCommand::SVCommandAttributes::m_DefaultAttributes = boost::assign::map_list_of<>
-	( _T( "Threshold Image" ), SVCommandDataFacadePtr( new SVMatroxCommandDataImage ) )
-	( _T( "Background Type" ), SVCommandDataFacadePtr( new SVCommandDataValue       ) );
+const SVCharacterThicknessCommand::SVCommandAttributes::SVDefaultAttributes SVCharacterThicknessCommand::SVCommandAttributes::m_DefaultAttributes
+{
+	{_T("Threshold Image" ), SVCommandDataFacadePtr(new SVMatroxCommandDataImage)},
+	{_T("Background Type" ), SVCommandDataFacadePtr(new SVCommandDataValue)}
+};
 typedef SVCommandConcreteFactoryTemplate< SVCharacterThicknessCommand > SVCharacterThicknessFactory;
 
-SVMatroxCommandFactory::SVCommandFactoryMap SVMatroxCommandFactory::m_DefaultFactories = boost::assign::map_list_of<>
-	( SVAdaptiveThresholdFactory::GetStaticCommandType(),  SVCommandFactoryTemplatePtr( new SVAdaptiveThresholdFactory( boost::bind( &SVMatroxImageInterface::AdaptiveThreshold, _1, _2 ) ) ) )
-	( SVAutoThresholdFactory::GetStaticCommandType(),      SVCommandFactoryTemplatePtr( new SVAutoThresholdFactory( boost::bind( &SVMatroxImageInterface::AutoThreshold, _1, _2 ) )         ) )
-	( SVFixedThresholdFactory::GetStaticCommandType(),     SVCommandFactoryTemplatePtr( new SVFixedThresholdFactory( boost::bind( &SVMatroxImageInterface::FixedThreshold, _1, _2 ) )       ) )
-	( SVFindFontCharactersFactory::GetStaticCommandType(), SVCommandFactoryTemplatePtr( new SVFindFontCharactersFactory( boost::bind( &SVMatroxOcrInterface::FindFontCharacters, _1, _2 ) ) ) )
-	( SVLoadFontFactory::GetStaticCommandType(),           SVCommandFactoryTemplatePtr( new SVLoadFontFactory( boost::bind( &SVMatroxOcrInterface::RestoreFont, _1, _2 ) )                  ) )
-	( SVSaveFontFactory::GetStaticCommandType(),           SVCommandFactoryTemplatePtr( new SVSaveFontFactory( boost::bind( &SVMatroxOcrInterface::SaveFont, _1, _2 ) )                     ) )
-	( SVCalibrateFontFactory::GetStaticCommandType(),      SVCommandFactoryTemplatePtr( new SVCalibrateFontFactory( boost::bind( &SVMatroxOcrInterface::CalibrateFontCommand, _1, _2 ) )    ) )
-	( SVReadFontFactory::GetStaticCommandType(),           SVCommandFactoryTemplatePtr( new SVReadFontFactory( boost::bind( &SVMatroxOcrInterface::ReadString, _1, _2 ) )                   ) )
-	( SVVerifyFontFactory::GetStaticCommandType(),         SVCommandFactoryTemplatePtr( new SVVerifyFontFactory( boost::bind( &SVMatroxOcrInterface::VerifyString, _1, _2 ) )               ) )
-	( SVCharacterThicknessFactory::GetStaticCommandType(), SVCommandFactoryTemplatePtr( new SVCharacterThicknessFactory( boost::bind( &SVMatroxOcrInterface::CharacterThickness, _1, _2 ) ) ) );
+SVMatroxCommandFactory::SVCommandFactoryMap SVMatroxCommandFactory::m_DefaultFactories
+{
+	{SVAdaptiveThresholdFactory::GetStaticCommandType(),  SVCommandFactoryTemplatePtr( new SVAdaptiveThresholdFactory( boost::bind( &SVMatroxImageInterface::AdaptiveThreshold, _1, _2 ) ))},
+	{SVAutoThresholdFactory::GetStaticCommandType(),      SVCommandFactoryTemplatePtr( new SVAutoThresholdFactory( boost::bind( &SVMatroxImageInterface::AutoThreshold, _1, _2 ) )        )},
+	{SVFixedThresholdFactory::GetStaticCommandType(),     SVCommandFactoryTemplatePtr( new SVFixedThresholdFactory( boost::bind( &SVMatroxImageInterface::FixedThreshold, _1, _2 ) )      )},
+	{SVFindFontCharactersFactory::GetStaticCommandType(), SVCommandFactoryTemplatePtr( new SVFindFontCharactersFactory( boost::bind( &SVMatroxOcrInterface::FindFontCharacters, _1, _2 ) ))},
+	{SVLoadFontFactory::GetStaticCommandType(),           SVCommandFactoryTemplatePtr( new SVLoadFontFactory( boost::bind( &SVMatroxOcrInterface::RestoreFont, _1, _2 ) )                 )},
+	{SVSaveFontFactory::GetStaticCommandType(),           SVCommandFactoryTemplatePtr( new SVSaveFontFactory( boost::bind( &SVMatroxOcrInterface::SaveFont, _1, _2 ) )                    )},
+	{SVCalibrateFontFactory::GetStaticCommandType(),      SVCommandFactoryTemplatePtr( new SVCalibrateFontFactory( boost::bind( &SVMatroxOcrInterface::CalibrateFontCommand, _1, _2 ) )   )},
+	{SVReadFontFactory::GetStaticCommandType(),           SVCommandFactoryTemplatePtr( new SVReadFontFactory( boost::bind( &SVMatroxOcrInterface::ReadString, _1, _2 ) )                  )},
+	{SVVerifyFontFactory::GetStaticCommandType(),         SVCommandFactoryTemplatePtr( new SVVerifyFontFactory( boost::bind( &SVMatroxOcrInterface::VerifyString, _1, _2 ) )              )},
+	{SVCharacterThicknessFactory::GetStaticCommandType(), SVCommandFactoryTemplatePtr( new SVCharacterThicknessFactory( boost::bind( &SVMatroxOcrInterface::CharacterThickness, _1, _2 ) ))}
+};
 
 SVMatroxCommandFactory::SVMatroxCommandFactory()
 : SVCommandAbstractFactoryTemplate( m_DefaultFactories )

@@ -58,7 +58,6 @@
 #include <tchar.h>			//Used by static library
 #include <vector>			//Used by static library
 
-#include <boost/assign/list_of.hpp>
 #include <boost/config.hpp>
 #include <boost/utility.hpp>
 #include <boost/multi_index_container.hpp>				//Used by static library

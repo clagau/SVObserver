@@ -12,8 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <boost/config.hpp>
-//Moved to precompiled header: #include <boost/assign/list_of.hpp>
-//Moved to precompiled header: #include <boost/assign/list_inserter.hpp>
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <set>
 #include "SVOResource/resource.h"
@@ -32,19 +30,20 @@ namespace SvTi
 	typedef std::set<SVIMProductEnum> SVIMProductEnumSet;
 	typedef std::map<SVIMProductEnum, SVIMProductEnumSet> SVIMProductCompatibilityList;
 
-	const SVHardwareManifest::SVIMTypeMap SVHardwareManifest::m_SVIMTypeMap = boost::assign::map_list_of< SVIMProductEnum, SVIMTypeInfoStruct >
-		// SVIMProductEnum,                               SUPPORTED, DIGITIZERS, TRIGGERS
-		( SVIM_PRODUCT_X2_GD1A,       SVIMTypeInfoStruct( true,      1,			1 ) )
-		( SVIM_PRODUCT_X2_GD1A_COLOR, SVIMTypeInfoStruct( false,     1,			1 ) )
-		( SVIM_PRODUCT_X2_GD2A,       SVIMTypeInfoStruct( false,     2,			2 ) )
-		( SVIM_PRODUCT_X2_GD2A_COLOR, SVIMTypeInfoStruct( false,     2,			2 ) )
-		( SVIM_PRODUCT_X2_GD4A,       SVIMTypeInfoStruct( false,     4,			3 ) )
-		( SVIM_PRODUCT_X2_GD4A_COLOR, SVIMTypeInfoStruct( false,     4,			3 ) )
-		( SVIM_PRODUCT_X2_GD8A,       SVIMTypeInfoStruct( true,      8,			3 ) )
-		( SVIM_PRODUCT_X2_GD8A_COLOR, SVIMTypeInfoStruct( false,     8,			3 ) )
-		//	( SVIM_PRODUCT_X2_GD8A_NONIO, SVIMTypeInfoStruct( true,      8,			3 ) )
-		//	( SVIM_PRODUCT_X2_GD8A_NONIO_COLOR, SVIMTypeInfoStruct( true, 8,			3 ) )
-		;
+	const SVHardwareManifest::SVIMTypeMap SVHardwareManifest::m_SVIMTypeMap
+	{
+		// SVIMProductEnum,                             SUPPORTED, DIGITIZERS, TRIGGERS
+		{SVIM_PRODUCT_X2_GD1A,       SVIMTypeInfoStruct( true,      1,			1 )},
+		{SVIM_PRODUCT_X2_GD1A_COLOR, SVIMTypeInfoStruct( false,     1,			1 )},
+		{SVIM_PRODUCT_X2_GD2A,       SVIMTypeInfoStruct( false,     2,			2 )},
+		{SVIM_PRODUCT_X2_GD2A_COLOR, SVIMTypeInfoStruct( false,     2,			2 )},
+		{SVIM_PRODUCT_X2_GD4A,       SVIMTypeInfoStruct( false,     4,			3 )},
+		{SVIM_PRODUCT_X2_GD4A_COLOR, SVIMTypeInfoStruct( false,     4,			3 )},
+		{SVIM_PRODUCT_X2_GD8A,       SVIMTypeInfoStruct( true,      8,			3 )},
+		{SVIM_PRODUCT_X2_GD8A_COLOR, SVIMTypeInfoStruct( false,     8,			3 )}
+		//{SVIM_PRODUCT_X2_GD8A_NONIO, SVIMTypeInfoStruct( true,      8,			3 ) )
+		//{SVIM_PRODUCT_X2_GD8A_NONIO_COLOR, SVIMTypeInfoStruct( true, 8,			3 ) )
+	};
 	
 	SVHardwareManifest& SVHardwareManifest::Instance()
 	{
@@ -63,59 +62,61 @@ namespace SvTi
 
 	void SVHardwareManifest::Startup()
 	{
-		m_TriggerDeviceParams = boost::assign::list_of< SVTriggerDeviceParams >
-			( SVTriggerDeviceParams( _T( "IO_Board_1.Dig_0" ), 0 ) )
-			( SVTriggerDeviceParams( _T( "IO_Board_1.Dig_1" ), 1 ) )
-			( SVTriggerDeviceParams( _T( "IO_Board_1.Dig_2" ), 2 ) )
-			( SVTriggerDeviceParams( _T( "IO_Board_1.Dig_3" ), 3 ) )
-			( SVTriggerDeviceParams( _T( "IO_Board_1.Dig_4" ), 4 ) )
-			( SVTriggerDeviceParams( _T( "IO_Board_1.Dig_5" ), 5 ) )
-			( SVTriggerDeviceParams( _T( "IO_Board_1.Dig_6" ), 6 ) )
-			( SVTriggerDeviceParams( _T( "IO_Board_1.Dig_7" ), 7 ) )
-			( SVTriggerDeviceParams( _T( "SoftwareTrigger_1.Dig_0" ), 0 ) )
-			( SVTriggerDeviceParams( _T( "SoftwareTrigger_1.Dig_1" ), 1 ) )
-			( SVTriggerDeviceParams( _T( "SoftwareTrigger_1.Dig_2" ), 2 ) )
-			( SVTriggerDeviceParams( _T( "SoftwareTrigger_1.Dig_3" ), 3 ) )
-			( SVTriggerDeviceParams( _T( "SoftwareTrigger_1.Dig_4" ), 4 ) )
-			( SVTriggerDeviceParams( _T( "SoftwareTrigger_1.Dig_5" ), 5 ) )
-			( SVTriggerDeviceParams( _T( "SoftwareTrigger_1.Dig_6" ), 6 ) )
-			( SVTriggerDeviceParams( _T( "SoftwareTrigger_1.Dig_7" ), 7 ) )
-			( SVTriggerDeviceParams( _T( "CameraTrigger.Dig_0" ), 0 ) )
-			( SVTriggerDeviceParams( _T( "CameraTrigger.Dig_1" ), 1 ) )
-			( SVTriggerDeviceParams( _T( "CameraTrigger.Dig_2" ), 2 ) )
-			( SVTriggerDeviceParams( _T( "CameraTrigger.Dig_3" ), 3 ) )
-			( SVTriggerDeviceParams( _T( "CameraTrigger.Dig_4" ), 4 ) )
-			( SVTriggerDeviceParams( _T( "CameraTrigger.Dig_5" ), 5 ) )
-			( SVTriggerDeviceParams( _T( "CameraTrigger.Dig_6" ), 6 ) )
-			( SVTriggerDeviceParams( _T( "CameraTrigger.Dig_7" ), 7 ) )
-		;
+		m_TriggerDeviceParams = SVTriggerDeviceParamsVector
+		{
+			{_T("IO_Board_1.Dig_0"), 0},
+			{_T("IO_Board_1.Dig_1"), 1},
+			{_T("IO_Board_1.Dig_2"), 2},
+			{_T("IO_Board_1.Dig_3"), 3},
+			{_T("IO_Board_1.Dig_4"), 4},
+			{_T("IO_Board_1.Dig_5"), 5},
+			{_T("IO_Board_1.Dig_6"), 6},
+			{_T("IO_Board_1.Dig_7"), 7},
+			{_T("SoftwareTrigger_1.Dig_0"), 0},
+			{_T("SoftwareTrigger_1.Dig_1"), 1},
+			{_T("SoftwareTrigger_1.Dig_2"), 2},
+			{_T("SoftwareTrigger_1.Dig_3"), 3},
+			{_T("SoftwareTrigger_1.Dig_4"), 4},
+			{_T("SoftwareTrigger_1.Dig_5"), 5},
+			{_T("SoftwareTrigger_1.Dig_6"), 6},
+			{_T("SoftwareTrigger_1.Dig_7"), 7},
+			{_T("CameraTrigger.Dig_0"), 0},
+			{_T("CameraTrigger.Dig_1"), 1},
+			{_T("CameraTrigger.Dig_2"), 2},
+			{_T("CameraTrigger.Dig_3"), 3},
+			{_T("CameraTrigger.Dig_4"), 4},
+			{_T("CameraTrigger.Dig_5"), 5},
+			{_T("CameraTrigger.Dig_6"), 6},
+			{_T("CameraTrigger.Dig_7"), 7},
+		};
 
-		m_AcquisitionDeviceParams = boost::assign::list_of< SVAcquisitionConstructParams >
-			( SVAcquisitionConstructParams( _T( "File.Dig_0" ),  0, 0,  1, 1 ) )
-			( SVAcquisitionConstructParams( _T( "File.Dig_1" ),  0, 1,  1, 1 ) )
-			( SVAcquisitionConstructParams( _T( "File.Dig_2" ),  0, 2,  1, 1 ) )
-			( SVAcquisitionConstructParams( _T( "File.Dig_3" ),  0, 3,  1, 1 ) )
-			( SVAcquisitionConstructParams( _T( "File.Dig_4" ),  0, 4,  1, 1 ) )
-			( SVAcquisitionConstructParams( _T( "File.Dig_5" ),  0, 5,  1, 1 ) )
-			( SVAcquisitionConstructParams( _T( "File.Dig_6" ),  0, 6,  1, 1 ) )
-			( SVAcquisitionConstructParams( _T( "File.Dig_7" ),  0, 7,  1, 1 ) )
-			( SVAcquisitionConstructParams( _T( "File.Dig_8" ),  0, 8,  1, 1 ) )
-			( SVAcquisitionConstructParams( _T( "File.Dig_9" ),  0, 9,  1, 1 ) )
-			( SVAcquisitionConstructParams( _T( "File.Dig_10" ), 0, 10, 1, 1 ) )
-			( SVAcquisitionConstructParams( _T( "File.Dig_11" ), 0, 11, 1, 1 ) )
-			( SVAcquisitionConstructParams( _T( "Matrox_GIGE.Dig_0" ),  0, 0,  1, 1, SVLutInfo( 1, 255, 254, SVDefaultLutTransform( SVLutTransformOperationNormal() ) ), 1 ) )
-			( SVAcquisitionConstructParams( _T( "Matrox_GIGE.Dig_1" ),  0, 1,  1, 1, SVLutInfo( 1, 255, 254, SVDefaultLutTransform( SVLutTransformOperationNormal() ) ), 1 ) )
-			( SVAcquisitionConstructParams( _T( "Matrox_GIGE.Dig_2" ),  0, 2,  1, 1, SVLutInfo( 1, 255, 254, SVDefaultLutTransform( SVLutTransformOperationNormal() ) ), 1 ) )
-			( SVAcquisitionConstructParams( _T( "Matrox_GIGE.Dig_3" ),  0, 3,  1, 1, SVLutInfo( 1, 255, 254, SVDefaultLutTransform( SVLutTransformOperationNormal() ) ), 1 ) )
-			( SVAcquisitionConstructParams( _T( "Matrox_GIGE.Dig_4" ),  0, 4,  1, 1, SVLutInfo( 1, 255, 254, SVDefaultLutTransform( SVLutTransformOperationNormal() ) ), 1 ) )
-			( SVAcquisitionConstructParams( _T( "Matrox_GIGE.Dig_5" ),  0, 5,  1, 1, SVLutInfo( 1, 255, 254, SVDefaultLutTransform( SVLutTransformOperationNormal() ) ), 1 ) )
-			( SVAcquisitionConstructParams( _T( "Matrox_GIGE.Dig_6" ),  0, 6,  1, 1, SVLutInfo( 1, 255, 254, SVDefaultLutTransform( SVLutTransformOperationNormal() ) ), 1 ) )
-			( SVAcquisitionConstructParams( _T( "Matrox_GIGE.Dig_7" ),  0, 7,  1, 1, SVLutInfo( 1, 255, 254, SVDefaultLutTransform( SVLutTransformOperationNormal() ) ), 1 ) )
-			( SVAcquisitionConstructParams( _T( "Matrox_GIGE.Dig_8" ),  0, 8,  1, 1, SVLutInfo( 1, 255, 254, SVDefaultLutTransform( SVLutTransformOperationNormal() ) ), 1 ) )
-			( SVAcquisitionConstructParams( _T( "Matrox_GIGE.Dig_9" ),  0, 9,  1, 1, SVLutInfo( 1, 255, 254, SVDefaultLutTransform( SVLutTransformOperationNormal() ) ), 1 ) )
-			( SVAcquisitionConstructParams( _T( "Matrox_GIGE.Dig_10" ), 0, 10, 1, 1, SVLutInfo( 1, 255, 254, SVDefaultLutTransform( SVLutTransformOperationNormal() ) ), 1 ) )
-			( SVAcquisitionConstructParams( _T( "Matrox_GIGE.Dig_11" ), 0, 11, 1, 1, SVLutInfo( 1, 255, 254, SVDefaultLutTransform( SVLutTransformOperationNormal() ) ), 1 ) )
-		;
+		m_AcquisitionDeviceParams = SVAcquisitionConstructParamsVector
+		{
+			{_T("File.Dig_0"),  0, 0,  1, 1},
+			{_T("File.Dig_1"),  0, 1,  1, 1},
+			{_T("File.Dig_2"),  0, 2,  1, 1},
+			{_T("File.Dig_3"),  0, 3,  1, 1},
+			{_T("File.Dig_4"),  0, 4,  1, 1},
+			{_T("File.Dig_5"),  0, 5,  1, 1},
+			{_T("File.Dig_6"),  0, 6,  1, 1},
+			{_T("File.Dig_7"),  0, 7,  1, 1},
+			{_T("File.Dig_8"),  0, 8,  1, 1},
+			{_T("File.Dig_9"),  0, 9,  1, 1},
+			{_T("File.Dig_10"), 0, 10, 1, 1},
+			{_T("File.Dig_11"), 0, 11, 1, 1},
+			{_T("Matrox_GIGE.Dig_0"),  0, 0,  1, 1, SVLutInfo(1, 255, 254, SVDefaultLutTransform(SVLutTransformOperationNormal())), 1},
+			{_T("Matrox_GIGE.Dig_1"),  0, 1,  1, 1, SVLutInfo(1, 255, 254, SVDefaultLutTransform(SVLutTransformOperationNormal())), 1},
+			{_T("Matrox_GIGE.Dig_2"),  0, 2,  1, 1, SVLutInfo(1, 255, 254, SVDefaultLutTransform(SVLutTransformOperationNormal())), 1},
+			{_T("Matrox_GIGE.Dig_3"),  0, 3,  1, 1, SVLutInfo(1, 255, 254, SVDefaultLutTransform(SVLutTransformOperationNormal())), 1},
+			{_T("Matrox_GIGE.Dig_4"),  0, 4,  1, 1, SVLutInfo(1, 255, 254, SVDefaultLutTransform(SVLutTransformOperationNormal())), 1},
+			{_T("Matrox_GIGE.Dig_5"),  0, 5,  1, 1, SVLutInfo(1, 255, 254, SVDefaultLutTransform(SVLutTransformOperationNormal())), 1},
+			{_T("Matrox_GIGE.Dig_6"),  0, 6,  1, 1, SVLutInfo(1, 255, 254, SVDefaultLutTransform(SVLutTransformOperationNormal())), 1},
+			{_T("Matrox_GIGE.Dig_7"),  0, 7,  1, 1, SVLutInfo(1, 255, 254, SVDefaultLutTransform(SVLutTransformOperationNormal())), 1},
+			{_T("Matrox_GIGE.Dig_8"),  0, 8,  1, 1, SVLutInfo(1, 255, 254, SVDefaultLutTransform(SVLutTransformOperationNormal())), 1},
+			{_T("Matrox_GIGE.Dig_9"),  0, 9,  1, 1, SVLutInfo(1, 255, 254, SVDefaultLutTransform(SVLutTransformOperationNormal())), 1},
+			{_T("Matrox_GIGE.Dig_10"), 0, 10, 1, 1, SVLutInfo(1, 255, 254, SVDefaultLutTransform(SVLutTransformOperationNormal())), 1},
+			{_T("Matrox_GIGE.Dig_11"), 0, 11, 1, 1, SVLutInfo(1, 255, 254, SVDefaultLutTransform(SVLutTransformOperationNormal())), 1},
+		};
 	}
 
 	void SVHardwareManifest::Shutdown()
@@ -168,31 +169,35 @@ namespace SvTi
 
 	bool SVHardwareManifest::IsValidProductType(SVIMProductEnum productType )
 	{
-		static SVIMProductEnumSet list = boost::assign::list_of<>
-		(SVIM_PRODUCT_X2_GD1A_COLOR)
-		(SVIM_PRODUCT_X2_GD2A_COLOR)
-		(SVIM_PRODUCT_X2_GD4A_COLOR)
-		(SVIM_PRODUCT_X2_GD8A_COLOR)
-		(SVIM_PRODUCT_X2_GD1A)
-		(SVIM_PRODUCT_X2_GD2A)
-		(SVIM_PRODUCT_X2_GD4A)
-		(SVIM_PRODUCT_X2_GD8A)
-		;
+		static SVIMProductEnumSet list
+		{
+ 			SVIM_PRODUCT_X2_GD1A_COLOR,
+			SVIM_PRODUCT_X2_GD2A_COLOR,
+			SVIM_PRODUCT_X2_GD4A_COLOR,
+			SVIM_PRODUCT_X2_GD8A_COLOR,
+			SVIM_PRODUCT_X2_GD1A,
+			SVIM_PRODUCT_X2_GD2A,
+			SVIM_PRODUCT_X2_GD4A,
+			SVIM_PRODUCT_X2_GD8A,
+		};
+
 		SVIMProductEnumSet::const_iterator it = list.find(productType);
 		return (it != list.end());
 	}
 
 	bool SVHardwareManifest::IsCompatible( SVIMProductEnum ConfigType, SVIMProductEnum ProductType )
 	{
-		static SVIMProductCompatibilityList l_compatibleList = boost::assign::map_list_of<>
-			(SVIM_PRODUCT_X2_GD1A_COLOR, boost::assign::list_of(SVIM_PRODUCT_X2_GD8A).convert_to_container<SVIMProductEnumSet>())
-			(SVIM_PRODUCT_X2_GD2A_COLOR, boost::assign::list_of(SVIM_PRODUCT_X2_GD8A).convert_to_container<SVIMProductEnumSet>())
-			(SVIM_PRODUCT_X2_GD4A_COLOR, boost::assign::list_of(SVIM_PRODUCT_X2_GD8A).convert_to_container<SVIMProductEnumSet>())
-			(SVIM_PRODUCT_X2_GD8A_COLOR, boost::assign::list_of(SVIM_PRODUCT_X2_GD8A).convert_to_container<SVIMProductEnumSet>())
+		static SVIMProductCompatibilityList CompatibleList
+		{
+			{SVIM_PRODUCT_X2_GD1A_COLOR, SVIMProductEnumSet{SVIM_PRODUCT_X2_GD8A}},
+			{SVIM_PRODUCT_X2_GD2A_COLOR, SVIMProductEnumSet{SVIM_PRODUCT_X2_GD8A}},
+			{SVIM_PRODUCT_X2_GD4A_COLOR, SVIMProductEnumSet{SVIM_PRODUCT_X2_GD8A}},
+			{SVIM_PRODUCT_X2_GD8A_COLOR, SVIMProductEnumSet{SVIM_PRODUCT_X2_GD8A}},
 
-			(SVIM_PRODUCT_X2_GD1A, boost::assign::list_of(SVIM_PRODUCT_X2_GD8A).convert_to_container<SVIMProductEnumSet>())
-			(SVIM_PRODUCT_X2_GD2A, boost::assign::list_of(SVIM_PRODUCT_X2_GD8A).convert_to_container<SVIMProductEnumSet>())
-			(SVIM_PRODUCT_X2_GD4A, boost::assign::list_of(SVIM_PRODUCT_X2_GD8A).convert_to_container<SVIMProductEnumSet>());
+			{SVIM_PRODUCT_X2_GD1A, SVIMProductEnumSet{SVIM_PRODUCT_X2_GD8A}},
+			{SVIM_PRODUCT_X2_GD2A, SVIMProductEnumSet{SVIM_PRODUCT_X2_GD8A}},
+			{SVIM_PRODUCT_X2_GD4A, SVIMProductEnumSet{SVIM_PRODUCT_X2_GD8A}},
+		};
 
 
 		bool l_bRet = false;
@@ -203,8 +208,8 @@ namespace SvTi
 		}
 		else
 		{
-			SVIMProductCompatibilityList::const_iterator dstIt = l_compatibleList.find(ConfigType);
-			if (dstIt != l_compatibleList.end())
+			SVIMProductCompatibilityList::const_iterator dstIt = CompatibleList.find(ConfigType);
+			if (dstIt != CompatibleList.end())
 			{
 				const SVIMProductEnumSet& l_productSet = dstIt->second;
 				SVIMProductEnumSet::const_iterator it = l_productSet.find(ProductType);
@@ -216,77 +221,87 @@ namespace SvTi
 
 	bool SVHardwareManifest::IsColorSystem(SVIMProductEnum p_ProductType)
 	{
-		static SVIMProductEnumSet l_ColorList = boost::assign::list_of
-			(SVIM_PRODUCT_X2_GD1A_COLOR)
-			(SVIM_PRODUCT_X2_GD2A_COLOR)
-			(SVIM_PRODUCT_X2_GD4A_COLOR)
-			(SVIM_PRODUCT_X2_GD8A_COLOR)
-			(SVIM_PRODUCT_X2_GD8A_NONIO_COLOR)
-			;
-		SVIMProductEnumSet::const_iterator it = l_ColorList.find(p_ProductType);
-		return (it != l_ColorList.end());
+		static SVIMProductEnumSet ColorList
+		{
+			SVIM_PRODUCT_X2_GD1A_COLOR,
+			SVIM_PRODUCT_X2_GD2A_COLOR,
+			SVIM_PRODUCT_X2_GD4A_COLOR,
+			SVIM_PRODUCT_X2_GD8A_COLOR,
+			SVIM_PRODUCT_X2_GD8A_NONIO_COLOR
+		};
+
+		SVIMProductEnumSet::const_iterator it = ColorList.find(p_ProductType);
+		return (it != ColorList.end());
 	}
 
 	bool SVHardwareManifest::IsMatroxGige(SVIMProductEnum p_ProductType)
 	{
-		static SVIMProductEnumSet l_GigeList = boost::assign::list_of
-		(SVIM_PRODUCT_X2_GD1A)
-		(SVIM_PRODUCT_X2_GD1A_COLOR)
-		(SVIM_PRODUCT_X2_GD2A)
-		(SVIM_PRODUCT_X2_GD2A_COLOR)
-		(SVIM_PRODUCT_X2_GD4A)
-		(SVIM_PRODUCT_X2_GD4A_COLOR)
-		(SVIM_PRODUCT_X2_GD8A)
-		(SVIM_PRODUCT_X2_GD8A_COLOR)
-		(SVIM_PRODUCT_X2_GD8A_NONIO)
-		(SVIM_PRODUCT_X2_GD8A_NONIO_COLOR)
-		;
-		SVIMProductEnumSet::const_iterator it = l_GigeList.find(p_ProductType);
-		return (it != l_GigeList.end());
+		static SVIMProductEnumSet GigeList
+		{
+			SVIM_PRODUCT_X2_GD1A,
+			SVIM_PRODUCT_X2_GD1A_COLOR,
+			SVIM_PRODUCT_X2_GD2A,
+			SVIM_PRODUCT_X2_GD2A_COLOR,
+			SVIM_PRODUCT_X2_GD4A,
+			SVIM_PRODUCT_X2_GD4A_COLOR,
+			SVIM_PRODUCT_X2_GD8A,
+			SVIM_PRODUCT_X2_GD8A_COLOR,
+			SVIM_PRODUCT_X2_GD8A_NONIO,
+			SVIM_PRODUCT_X2_GD8A_NONIO_COLOR
+		};
+
+		SVIMProductEnumSet::const_iterator it = GigeList.find(p_ProductType);
+		return (it != GigeList.end());
 	}
 
 	bool SVHardwareManifest::IsDigitalSVIM(SVIMProductEnum p_ProductType)
 	{
-		static SVIMProductEnumSet l_DigitalList = boost::assign::list_of
-		(SVIM_PRODUCT_X2_GD1A)
-		(SVIM_PRODUCT_X2_GD1A_COLOR)
-		(SVIM_PRODUCT_X2_GD2A)
-		(SVIM_PRODUCT_X2_GD2A_COLOR)
-		(SVIM_PRODUCT_X2_GD4A)
-		(SVIM_PRODUCT_X2_GD4A_COLOR)
-		(SVIM_PRODUCT_X2_GD8A)
-		(SVIM_PRODUCT_X2_GD8A_COLOR)
-		(SVIM_PRODUCT_X2_GD8A_NONIO)
-		(SVIM_PRODUCT_X2_GD8A_NONIO_COLOR)
-		;
-		SVIMProductEnumSet::const_iterator it = l_DigitalList.find(p_ProductType);
-		return (it != l_DigitalList.end());
+		static SVIMProductEnumSet DigitalList
+		{
+			SVIM_PRODUCT_X2_GD1A,
+			SVIM_PRODUCT_X2_GD1A_COLOR,
+			SVIM_PRODUCT_X2_GD2A,
+			SVIM_PRODUCT_X2_GD2A_COLOR,
+			SVIM_PRODUCT_X2_GD4A,
+			SVIM_PRODUCT_X2_GD4A_COLOR,
+			SVIM_PRODUCT_X2_GD8A,
+			SVIM_PRODUCT_X2_GD8A_COLOR,
+			SVIM_PRODUCT_X2_GD8A_NONIO,
+			SVIM_PRODUCT_X2_GD8A_NONIO_COLOR
+		};
+
+		SVIMProductEnumSet::const_iterator it = DigitalList.find(p_ProductType);
+		return (it != DigitalList.end());
 	}
 
 	bool SVHardwareManifest::IsProductTypeRAID(SVIMProductEnum p_ProductType)
 	{
-		static SVIMProductEnumSet l_RaidList = boost::assign::list_of
-		(SVIM_PRODUCT_X2_GD1A)
-		(SVIM_PRODUCT_X2_GD1A_COLOR)
-		(SVIM_PRODUCT_X2_GD2A)
-		(SVIM_PRODUCT_X2_GD2A_COLOR)
-		(SVIM_PRODUCT_X2_GD8A)
-		(SVIM_PRODUCT_X2_GD8A_COLOR)
-		(SVIM_PRODUCT_X2_GD8A_NONIO)
-		(SVIM_PRODUCT_X2_GD8A_NONIO_COLOR)
-		;
-		SVIMProductEnumSet::const_iterator it = l_RaidList.find(p_ProductType);
-		return (it != l_RaidList.end());
+		static SVIMProductEnumSet RaidList
+		{
+			SVIM_PRODUCT_X2_GD1A,
+			SVIM_PRODUCT_X2_GD1A_COLOR,
+			SVIM_PRODUCT_X2_GD2A,
+			SVIM_PRODUCT_X2_GD2A_COLOR,
+			SVIM_PRODUCT_X2_GD8A,
+			SVIM_PRODUCT_X2_GD8A_COLOR,
+			SVIM_PRODUCT_X2_GD8A_NONIO,
+			SVIM_PRODUCT_X2_GD8A_NONIO_COLOR
+		};
+
+		SVIMProductEnumSet::const_iterator it = RaidList.find(p_ProductType);
+		return (it != RaidList.end());
 	}
 
 	bool SVHardwareManifest::IsNonIOSVIM(SVIMProductEnum p_ProductType)
 	{
-		static SVIMProductEnumSet l_NonIOList = boost::assign::list_of
-		(SVIM_PRODUCT_X2_GD8A_NONIO)
-		(SVIM_PRODUCT_X2_GD8A_NONIO_COLOR)
-		;
-		SVIMProductEnumSet::const_iterator it = l_NonIOList.find(p_ProductType);
-		return (it != l_NonIOList.end());
+		static SVIMProductEnumSet NonIOList = SVIMProductEnumSet
+		{
+			SVIM_PRODUCT_X2_GD8A_NONIO_COLOR,
+			SVIM_PRODUCT_X2_GD8A_NONIO
+		};
+
+		SVIMProductEnumSet::const_iterator it = NonIOList.find(p_ProductType);
+		return (it != NonIOList.end());
 	}
 } //namespace SvTi
 

@@ -11,7 +11,6 @@
 
 #pragma region Inlcudes
 #include "stdafx.h"
-//Moved to precompiled header: #include <boost/assign.hpp>
 #include "SVSetupDialogManager.h"
 #include "SVObserver.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"

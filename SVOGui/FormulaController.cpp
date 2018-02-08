@@ -15,7 +15,6 @@
 #pragma region Includes
 #include "Stdafx.h"
 //Moved to precompiled header: #include <string>
-//Moved to precompiled header: #include <boost/assign/list_of.hpp>
 #include "FormulaController.h"
 #include "InspectionCommands/GetObjectName.h"
 #include "InspectionCommands/GetPPQObjectName.h"

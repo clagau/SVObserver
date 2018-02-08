@@ -32,10 +32,12 @@ SVClassRegisterListClass& SVClassRegisterListClass::Instance()
 	return Object;
 }
 
-SVClassRegisterListClass::SVClassRegisterListClass()
+SVClassRegisterListClass::SVClassRegisterListClass() :
+	m_ExchangeClassID
+	{
+		{SVGUID(SVStaticStringValueObjectClassGuid), SVGUID(SVStringValueObjectClassGuid)}
+	}
 {
-	m_ExchangeClassID = boost::assign::map_list_of<SVGUID, SVGUID>
-		(SVGUID(SVStaticStringValueObjectClassGuid), SVGUID(SVStringValueObjectClassGuid)).convert_to_container<ExchangeClassMap>();
 }
 
 SVClassRegisterListClass::~SVClassRegisterListClass()

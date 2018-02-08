@@ -16,14 +16,15 @@
 #pragma once
 
 #pragma region Includes
-
-#include "SVContainerLibrary/SVBidirectionalMap.h"
+//Moved to precompiled header: #include <vector>
+//Moved to precompiled header: #include <utility>
 #pragma endregion Includes
 
 
 class SVGigeFeatureStringEnumList
 {
-	SVBidirectionalMap<std::string, std::string>::type m_stringEnums;
+	typedef std::vector<std::pair<std::string, std::string>> StringPairVector;
+	StringPairVector m_stringEnums;
 
 public:
 	SVGigeFeatureStringEnumList();
@@ -32,7 +33,9 @@ public:
 	template<class _Iter>
 	SVGigeFeatureStringEnumList(_Iter first, _Iter last);
 
-	SVGigeFeatureStringEnumList(const SVGigeFeatureStringEnumList& rList);
+	SVGigeFeatureStringEnumList(const SVGigeFeatureStringEnumList& );
+	//This is the initializer list constructor
+	SVGigeFeatureStringEnumList(_XSTD initializer_list<StringPairVector::value_type> _Ilist);
 	SVGigeFeatureStringEnumList& operator=(const SVGigeFeatureStringEnumList& rList);
 
 	bool HasTranslation() const;

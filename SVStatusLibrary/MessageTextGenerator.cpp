@@ -39,8 +39,8 @@ namespace SvStl
 	std::string MessageTextGenerator::getText(MessageTextEnum messageId, const SvDef::StringVector &additionalList) const
 	{
 		std::string retString("");
-		MessageTextMap::const_iterator it = g_MessageTextMap.find(messageId);
-		if (it != g_MessageTextMap.end())
+		MessageTextMap::const_iterator it = cMessageTextMap.find(messageId);
+		if (it != cMessageTextMap.end())
 		{
 			retString = it->second;
 			//replace %s with additionalList-strings

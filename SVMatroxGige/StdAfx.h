@@ -66,7 +66,6 @@
 #include <utility>
 #include <vector>
 
-#include <boost/assign/list_of.hpp>
 #include <boost/config.hpp>
 #include <boost/function.hpp>							//Used by static library
 #include <boost/multi_index_container.hpp>				//Used by static library

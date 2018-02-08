@@ -181,7 +181,7 @@ HRESULT SVMatroxSystemInterface::Get(const SVMatroxSystem& SystemId, SVMatroxSys
 #endif
 	{
 		SVMatroxInt l_MatroxType = 0;
-		HRESULT hr = SVMatroxSystemInquire::m_convertor.ConvertEnumToMatroxType( InquireType, l_MatroxType );
+		HRESULT hr = ConvertEnumToMatroxType(SVMatroxSystemInquire::m_convertor, InquireType, l_MatroxType );
 		if (S_OK == hr)
 		{
 			MIL_INT l_Value = 0;
@@ -219,7 +219,7 @@ HRESULT SVMatroxSystemInterface::Set(const SVMatroxSystem& SystemId, SVMatroxSys
 #endif
 	{
 		MatroxType l_MatroxType = 0;
-		HRESULT hr = SVMatroxSystemControl::m_convertor.ConvertEnumToMatroxType(ControlType, l_MatroxType);
+		HRESULT hr = ConvertEnumToMatroxType(SVMatroxSystemControl::m_convertor, ControlType, l_MatroxType);
 		if (S_OK == hr)
 		{
 			MsysControl( SystemId.m_SystemIdentifier, l_MatroxType, ControlValue );
@@ -271,7 +271,7 @@ HRESULT SVMatroxSystemInterface::SetHookFunction(const SVMatroxSystem& SystemId,
 
 	// Convert Enum
 	SVMatroxInt l_MatroxType = 0;
-	HRESULT hr = SVMatroxSystemHook::m_convertor.ConvertEnumToMatroxType( HookType, l_MatroxType );
+	HRESULT hr = ConvertEnumToMatroxType(SVMatroxSystemHook::m_convertor, HookType, l_MatroxType );
 	if (S_OK == hr)
 	{
 		MsysHookFunction( SystemId.m_SystemIdentifier, l_MatroxType, HookHandlerPtr, UserDataPtr );
@@ -297,7 +297,7 @@ HRESULT SVMatroxSystemInterface::ReleaseHookFunction(const SVMatroxSystem& Syste
 
 	// Convert Enum
 	SVMatroxInt l_MatroxType = 0;
-	HRESULT hr = SVMatroxSystemHook::m_convertor.ConvertEnumToMatroxType( HookType, l_MatroxType );
+	HRESULT hr = ConvertEnumToMatroxType(SVMatroxSystemHook::m_convertor, HookType, l_MatroxType );
 	if (S_OK == hr)
 	{	
 		MsysHookFunction( SystemId.m_SystemIdentifier, l_MatroxType | M_UNHOOK, HookHandlerPtr, UserDataPtr);
@@ -323,7 +323,7 @@ HRESULT SVMatroxSystemInterface::GetHookInfo(const SVMatroxSystem& SystemId, SVM
 	
 	// Convert Enum
 	SVMatroxInt l_MatroxType = 0;
-	HRESULT hr = SVMatroxSystemHookInfo::m_convertor.ConvertEnumToMatroxType(HookInfoType, l_MatroxType);
+	HRESULT hr = ConvertEnumToMatroxType(SVMatroxSystemHookInfo::m_convertor, HookInfoType, l_MatroxType);
 	if (S_OK == hr)
 	{
 		MIL_INT mValue;
@@ -351,7 +351,7 @@ HRESULT SVMatroxSystemInterface::GetHookInfo(const SVMatroxSystem& SystemId, SVM
 
 	// Convert Enum
 	SVMatroxInt l_MatroxType = 0;
-	HRESULT hr = SVMatroxSystemHookInfo::m_convertor.ConvertEnumToMatroxType(HookInfoType, l_MatroxType);
+	HRESULT hr = ConvertEnumToMatroxType(SVMatroxSystemHookInfo::m_convertor, HookInfoType, l_MatroxType);
 	if (S_OK == hr)
 	{
 		MsysGetHookInfo(SystemId.m_SystemIdentifier, p_EventId, l_MatroxType, &value);

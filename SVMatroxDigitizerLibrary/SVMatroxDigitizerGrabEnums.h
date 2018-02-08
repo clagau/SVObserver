@@ -11,8 +11,12 @@
 
 #pragma once
 
+#pragma region Includes
+//Moved to precompiled header: #include <vector>
+//Moved to precompiled header: #include <utility>
 #include "SVMatroxLibrary/SVMatroxTypedefs.h"
 #include "SVMatroxLibrary/SVMatroxEnumConvertor.h"
+#pragma endregion Includes
 
 /**
 @SVObjectName Matrox Digitizer Grab Enum
@@ -32,9 +36,9 @@ struct SVMatroxDigitizerGrab
 		SVGrabAsynchronousQueued,	// M_ASYNCHRONOUS_QUEUED
 		SVGrabSynchronous,			// M_SYNCHRONOUS  
 	};
-	// define convertor for from/to SVEnum/Matrox types
-	typedef SVMatroxEnumConvertor<SVGrabModeEnum, long> SVGrabModeEnumMap;
-	static SVGrabModeEnumMap m_GrabModeEnumConvertor;
+	// define converter for from/to SVEnum/Matrox types
+	typedef std::vector<std::pair<SVGrabModeEnum, long long>> SVGrabModeEnumPair;
+	static SVGrabModeEnumPair m_GrabModeEnumConvertor;
 
 	// Grab Wait
 	enum SVGrabWaitEnum
@@ -45,22 +49,9 @@ struct SVMatroxDigitizerGrab
 		SVGrabFrameEnd, // M_GRAB_FRAME_END 
 						// Waits for the end of the current grab. 
 	};
-	// define convertor for from/to SVEnum/Matrox types
-	typedef SVMatroxEnumConvertor<SVGrabWaitEnum, long> SVGrabWaitEnumMap;
-	static SVGrabWaitEnumMap m_GrabWaitEnumConvertor;
-
-	// M_GRAB_DIRECTION_X
-	// M_GRAB_DIRECTION_Y
-	// Sets the horizontal/vertical grab direction.
-	enum SVGrabDirectionEnum
-	{
-		SVGrabDirectionDefault,	//  M_DEFAULT - Same as M_FORWARD . 
-		SVForward,				//  M_FORWARD - Grabs from left to right, in the horizontal direction. This is the default value.
-		SVReverse				//  M_REVERSE - Flips the grabbed image vertically. 
-	};
-	// define convertor for from/to SVEnum/Matrox types
-	typedef SVMatroxEnumConvertor<SVGrabDirectionEnum, long> SVGrabDirectionEnumMap;
-	static SVGrabDirectionEnumMap m_GrabFirectionEnumConvertor;
+	// define converter for from/to SVEnum/Matrox types
+	typedef std::vector<std::pair<SVGrabWaitEnum, long long>> SVGrabWaitEnumPair;
+	static SVGrabWaitEnumPair m_GrabWaitEnumConvertor;
 
 	// M_GRAB_TRIGGER Sets the grab trigger detection state.
 	enum SVGrabTriggerEnum		// M_GRAB_TRIGGER Sets the grab trigger detection state.
@@ -71,8 +62,8 @@ struct SVMatroxDigitizerGrab
 		SVGrabTriggerEnable		// M_ENABLE  Enables trigger detection. 
 	};
 	// define convertor for from/to SVEnum/Matrox types
-	typedef SVMatroxEnumConvertor<SVGrabTriggerEnum, long> SVGrabTriggerEnumMap;
-	static SVGrabTriggerEnumMap m_GrabTriggerEnumConvertor;
+	typedef std::vector<std::pair<SVGrabTriggerEnum, long long>> SVGrabTriggerEnumPair;
+	static SVGrabTriggerEnumPair m_GrabTriggerEnumConvertor;
 
 	// M_GRAB_TRIGGER_MODE Sets the hardware trigger activation mode.
 	enum SVGrabTriggerModeEnum
@@ -84,7 +75,7 @@ struct SVMatroxDigitizerGrab
 		SVLevelLow					// M_LEVEL_LOW  Specifies to trigger while a minimum signal level occurs. 
  	};
 	// define convertor for from/to SVEnum/Matrox types
-	typedef SVMatroxEnumConvertor<SVGrabTriggerModeEnum, long> SVGrabTriggerModeEnumMap;
-	static SVGrabTriggerModeEnumMap m_GrabTriggerModeEnumConvertor;
+	typedef std::vector<std::pair<SVGrabTriggerModeEnum, long long>> SVGrabTriggerModeEnumPair;
+	static SVGrabTriggerModeEnumPair m_GrabTriggerModeEnumConvertor;
 };
 

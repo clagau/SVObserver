@@ -54,7 +54,6 @@
 #include <comdef.h>
 
 #include <boost/any.hpp>
-#include <boost/assign.hpp>
 #include <boost/bind.hpp>
 #include <boost/config.hpp>
 #include <boost/function.hpp>

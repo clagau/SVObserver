@@ -10,7 +10,6 @@
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
-//Moved to precompiled header: #include <boost/assign/list_of.hpp> 
 #include "SVCustomFilterDlg.h"
 #include "SVObjectLibrary/SVClsids.h"
 #include "SVUtilityLibrary/StringHelper.h"

@@ -13,6 +13,8 @@ template< typename _Iter>
 SVGigeFeatureStringEnumList::SVGigeFeatureStringEnumList(_Iter first, _Iter last)
 {
 	for (; first != last; ++first)
-		m_stringEnums.insert(*first);
+	{
+		m_stringEnums.push_back(*first);
+	}
 }
 

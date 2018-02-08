@@ -11,17 +11,13 @@
 
 #pragma once
 
+#pragma region Includes
+//Moved to precompiled header: #include <vector>
+//Moved to precompiled header: #include <utility>
 #include "SVMatroxLibrary/SVMatroxTypedefs.h"
 #include "SVMatroxLibrary/SVMatroxEnumConvertor.h"
+#pragma endregion Includes
 
-/**
-@SVObjectName Matrox Digitizer Control Enum
-
-@SVObjectOverview This enum is used to set the parameters of the Digitizer.
-
-@SVObjectOperations None
-
-*/
 struct SVMatroxDigitizerControl
 {
 	// Camera
@@ -50,9 +46,11 @@ struct SVMatroxDigitizerControl
 									// Note that certain source sizes, offsets, and destination buffer sizes can affect a grab. Refer to MdigGrab() and MdigGrabContinuous() for more information. 
 									// Value  Specifies the height, in pixels. 
  	};
+
 	// define convertor for from/to SVEnum/Matrox types
-	typedef SVMatroxEnumConvertor<SVCameraEnum, long> SVCameraEnumMap;
-	static SVCameraEnumMap m_CameraEnumConvertor;
+	typedef std::vector<std::pair<SVCameraEnum, long long>> SVCameraEnumPair;
+
+	static SVCameraEnumPair m_CameraEnumConvertor;
 };
 
 struct SVMatroxDigitizerFormat

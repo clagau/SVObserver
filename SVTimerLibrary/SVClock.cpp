@@ -21,13 +21,14 @@
 namespace SvTl
 {
 	typedef std::map< SvTl::SVConversionEnum, double > SVConversionFactorMap;
-	static const SVConversionFactorMap g_Conversions = boost::assign::map_list_of< SvTl::SVConversionEnum, double >
-		( SvTl::Hours, ( 1.0 / 3600.0 ) )
-		( SvTl::Minutes, ( 1.0 / 60.0 ) )
-		( SvTl::Seconds, 1.0 )
-		( SvTl::Milliseconds, 1000.0 )
-		( SvTl::Microseconds, 1000000.0 )
-		;
+	static const SVConversionFactorMap cConversions
+	{
+		{SvTl::Hours, ( 1.0 / 3600.0 )},
+		{SvTl::Minutes, ( 1.0 / 60.0 )},
+		{SvTl::Seconds, 1.0},
+		{SvTl::Milliseconds, 1000.0},
+		{SvTl::Microseconds, 1000000.0}
+	};
 
 	SvTl::SVFrequency SvTl::GetFrequency()
 	{
@@ -71,9 +72,9 @@ namespace SvTl
 	{
 		double l_Value = 0.0;
 
-		SVConversionFactorMap::const_iterator l_Iter = g_Conversions.find( p_Units );
+		SVConversionFactorMap::const_iterator l_Iter = cConversions.find( p_Units );
 
-		if( l_Iter != g_Conversions.end() )
+		if( l_Iter != cConversions.end() )
 		{
 			l_Value = p_rTimeStamp;
 			l_Value /= GetFrequency();
@@ -87,9 +88,9 @@ namespace SvTl
 	{
 		SvTl::SVTimeStamp l_TimeStamp = 0.0;
 
-		SVConversionFactorMap::const_iterator l_Iter = g_Conversions.find( p_Units );
+		SVConversionFactorMap::const_iterator l_Iter = cConversions.find( p_Units );
 
-		if( l_Iter != g_Conversions.end() )
+		if( l_Iter != cConversions.end() )
 		{
 			l_TimeStamp = p_Time;
 			l_TimeStamp /= l_Iter->second;

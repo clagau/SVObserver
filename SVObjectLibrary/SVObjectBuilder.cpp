@@ -15,7 +15,6 @@
 #pragma warning (disable : 4996)
 //Moved to precompiled header: #include <boost/config.hpp>
 //Moved to precompiled header: #include <boost/tokenizer.hpp>
-//Moved to precompiled header: #include <boost/assign.hpp>
 //Moved to precompiled header: #include <boost/foreach.hpp>
 #include "SVObjectBuilder.h"
 #include "SVObjectLibrary.h"
@@ -35,21 +34,22 @@
 
 typedef std::map<SvDef::SVObjectSubTypeEnum, SVObjectScriptDataObjectTypeEnum> ObjectTypeTable;
 
-static ObjectTypeTable typeTable = boost::assign::map_list_of<>
-(SvDef::SVBoolValueObjectType, SV_BOOL_Type)
-(SvDef::SVByteValueObjectType, SV_BYTE_Type)
-(SvDef::SVDWordValueObjectType, SV_DWORD_Type)
-(SvDef::SVLongValueObjectType, SV_LONG_Type)
-(SvDef::SVEnumValueObjectType, SV_LONG_Type)
-(SvDef::SVDoubleValueObjectType, SV_DOUBLE_Type)
-(SvDef::DoubleSortValueObjectType, SV_DOUBLE_Type)
-(SvDef::SVPointValueObjectType, SV_POINT_Type)
-(SvDef::SVStringValueObjectType, SV_STRING_Type)
-(SvDef::SVDPointValueObjectType, SV_DPOINT_Type)
-(SvDef::SVCharValueObjectType, SV_BYTE_Type)
-(SvDef::SVVariantValueObjectType, SV_VARIANT_Type)
-(SvDef::SVInt64ValueObjectType, SV_INT64_Type)
-;
+static const ObjectTypeTable cTypeTable
+{
+	{SvDef::SVBoolValueObjectType, SV_BOOL_Type},
+	{SvDef::SVByteValueObjectType, SV_BYTE_Type},
+	{SvDef::SVDWordValueObjectType, SV_DWORD_Type},
+	{SvDef::SVLongValueObjectType, SV_LONG_Type},
+	{SvDef::SVEnumValueObjectType, SV_LONG_Type},
+	{SvDef::SVDoubleValueObjectType, SV_DOUBLE_Type},
+	{SvDef::DoubleSortValueObjectType, SV_DOUBLE_Type},
+	{SvDef::SVPointValueObjectType, SV_POINT_Type},
+	{SvDef::SVStringValueObjectType, SV_STRING_Type},
+	{SvDef::SVDPointValueObjectType, SV_DPOINT_Type},
+	{SvDef::SVCharValueObjectType, SV_BYTE_Type},
+	{SvDef::SVVariantValueObjectType, SV_VARIANT_Type},
+	{SvDef::SVInt64ValueObjectType, SV_INT64_Type}
+};
 
 template<typename Separator>
 static void SplitString(const std::string& rValue, SvDef::StringVector& rContainer, Separator sep)
@@ -453,8 +453,8 @@ HRESULT SVObjectBuilder::GetObjectDataType(const GUID& ownerID, const GUID& obje
 	{
 		SvDef::SVObjectSubTypeEnum type = pObject->GetObjectSubType();
 		dataType = SV_UNKNOWN_Type;
-		ObjectTypeTable::const_iterator it = typeTable.find(type);
-		if (it != typeTable.end())
+		ObjectTypeTable::const_iterator it = cTypeTable.find(type);
+		if (it != cTypeTable.end())
 		{
 			dataType = it->second;
 		}

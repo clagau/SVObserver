@@ -63,13 +63,12 @@
 #include <comdef.h>
 #include <concrt.h>
 #include <cstdlib>
+#include <list>					//Used by static library
 #include <memory>
+#include <set>					//Used by static library
 #include <tchar.h>				//Used by static library
 
 #include <boost/any.hpp>
-#include <boost/assign.hpp>
-#include <boost/assign/list_of.hpp>
-#include <boost/assign/list_inserter.hpp>
 #include <boost/bind.hpp>
 #include <boost/config.hpp>
 #define BOOST_DATE_TIME_NO_LIB

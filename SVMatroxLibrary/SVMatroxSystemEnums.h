@@ -11,8 +11,12 @@
 
 #pragma once
 
+#pragma region Includes
+//Moved to precompiled header: #include <vector>
+//Moved to precompiled header: #include <utility>
 #include "SVMatroxTypedefs.h"
 #include "SVMatroxEnumConvertor.h"
+#pragma endregion Includes
 
 /**
 @SVObjectName Matrox System Control Enum
@@ -98,8 +102,8 @@ struct SVMatroxSystemControl
 	};
 
 	// define convertor for from/to SVEnum/Matrox types
-	typedef SVMatroxEnumConvertor<SVMatroxSystemControlEnum, MatroxType> SVMatroxSystemControlEnumMap;
-	static SVMatroxSystemControlEnumMap m_convertor;
+	typedef std::vector<std::pair<SVMatroxSystemControlEnum, long long>> SVMatroxSystemControlEnumPair;
+	static SVMatroxSystemControlEnumPair m_convertor;
 };
 
 /**
@@ -233,8 +237,8 @@ struct SVMatroxSystemInquire
 									// Returns the maximum amount of time, in secs, for the Host to wait for a synchronous function to return before generating a time-out error
 	};
 	// define convertor for from/to SVEnum/Matrox types
-	typedef SVMatroxEnumConvertor< SVMatroxSystemInquireEnum, MatroxType > SVMatroxSystemInquireEnumMap;
-	static SVMatroxSystemInquireEnumMap m_convertor;
+	typedef std::vector<std::pair<SVMatroxSystemInquireEnum, long long>> SVMatroxSystemInquireEnumPair;
+	static SVMatroxSystemInquireEnumPair m_convertor;
 };
 
 /**
@@ -252,8 +256,8 @@ struct SVMatroxSystemHook
 		SVCameraPresent
 	};
 
-	typedef SVMatroxEnumConvertor< SVMatroxSystemHookEnum, MatroxType > SVMatroxSystemHookEnumMap;
-	static SVMatroxSystemHookEnumMap m_convertor;
+	typedef std::vector<std::pair<SVMatroxSystemHookEnum, long long>> SVMatroxSystemHookEnumPair;
+	static SVMatroxSystemHookEnumPair m_convertor;
 };
 
 /**
@@ -273,7 +277,7 @@ struct SVMatroxSystemHookInfo
 		SVGigeMacAddress
 	};
 
-	typedef SVMatroxEnumConvertor< SVMatroxSystemHookInfoEnum, MatroxType > SVMatroxSystemHookInfoEnumMap;
-	static SVMatroxSystemHookInfoEnumMap m_convertor;
+	typedef std::vector<std::pair<SVMatroxSystemHookInfoEnum, long long>> SVMatroxSystemHookInfoEnumPair;
+	static SVMatroxSystemHookInfoEnumPair m_convertor;
 };
 

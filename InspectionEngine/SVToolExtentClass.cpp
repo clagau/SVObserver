@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <boost/config.hpp>
-//Moved to precompiled header: #include <boost/assign.hpp>
 #include "SVToolExtentClass.h"
 #include "SVImageClass.h"
 #include "ObjectInterfaces/IInspectionProcess.h"
@@ -25,9 +24,8 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-SVToolExtentClass::SVTranslationFilterSet SVToolExtentClass::m_LinearToolTranslations = boost::assign::list_of
-	( SVExtentTranslationProfile )
-	( SVExtentTranslationProfileShift )
+SVToolExtentClass::SVTranslationFilterSet SVToolExtentClass::
+m_LinearToolTranslations {SVExtentTranslationProfile, SVExtentTranslationProfileShift}
 ;
 
 SVToolExtentClass::SVToolExtentClass()
@@ -40,13 +38,13 @@ SVToolExtentClass::~SVToolExtentClass()
 	Initialize();
 }
 
-HRESULT SVToolExtentClass::ValidExtentAgainstParentImage( const SVImageExtentClass& rImageExtent ) const
+HRESULT SVToolExtentClass::ValidExtentAgainstParentImage(const SVImageExtentClass& rImageExtent) const
 {
 	HRESULT l_Status = S_OK;
 
-	if( nullptr != m_psvToolImage && nullptr != m_psvToolImage->GetParentImage() )
+	if (nullptr != m_psvToolImage && nullptr != m_psvToolImage->GetParentImage())
 	{
-		l_Status = m_psvToolImage->GetParentImage()->ValidateAgainstOutputExtents( rImageExtent );
+		l_Status = m_psvToolImage->GetParentImage()->ValidateAgainstOutputExtents(rImageExtent);
 	}
 	else
 	{
@@ -55,36 +53,36 @@ HRESULT SVToolExtentClass::ValidExtentAgainstParentImage( const SVImageExtentCla
 	return l_Status;
 }
 
-HRESULT SVToolExtentClass::UpdateExtentToParentExtents( SVImageExtentClass& rNewExtent )
+HRESULT SVToolExtentClass::UpdateExtentToParentExtents(SVImageExtentClass& rNewExtent)
 {
 	HRESULT l_Status = S_OK;
 
-	if( nullptr != m_psvToolImage )
+	if (nullptr != m_psvToolImage)
 	{
 		SVImageClass* pParent = m_psvToolImage->GetParentImage();
 
-		if( nullptr != pParent )
+		if (nullptr != pParent)
 		{
-			double dPosX( 0.0 ), dPosY( 0.0 ), dWidth( 0.0 ), dHeight( 0.0 );
+			double dPosX(0.0), dPosY(0.0), dWidth(0.0), dHeight(0.0);
 			SVImageExtentClass TempExt = pParent->GetImageExtents();
 			// Get the Width and Height form the parent extent. Set the Position point to zero, zero.
-			l_Status = TempExt.GetExtentProperty( SVExtentPropertyOutputHeight, dHeight );
-			KeepPrevError( l_Status, TempExt.GetExtentProperty( SVExtentPropertyOutputWidth, dWidth ));
-			KeepPrevError( l_Status, rNewExtent.SetExtentProperty( SVExtentPropertyPositionPointX, dPosX ));
-			KeepPrevError( l_Status, rNewExtent.SetExtentProperty( SVExtentPropertyPositionPointY, dPosY ));
-			KeepPrevError( l_Status, rNewExtent.SetExtentProperty( SVExtentPropertyHeight, dHeight ));
-			KeepPrevError( l_Status, rNewExtent.SetExtentProperty( SVExtentPropertyWidth, dWidth ));
+			l_Status = TempExt.GetExtentProperty(SVExtentPropertyOutputHeight, dHeight);
+			KeepPrevError(l_Status, TempExt.GetExtentProperty(SVExtentPropertyOutputWidth, dWidth));
+			KeepPrevError(l_Status, rNewExtent.SetExtentProperty(SVExtentPropertyPositionPointX, dPosX));
+			KeepPrevError(l_Status, rNewExtent.SetExtentProperty(SVExtentPropertyPositionPointY, dPosY));
+			KeepPrevError(l_Status, rNewExtent.SetExtentProperty(SVExtentPropertyHeight, dHeight));
+			KeepPrevError(l_Status, rNewExtent.SetExtentProperty(SVExtentPropertyWidth, dWidth));
 		}
 		else
 		{
 			l_Status = E_FAIL;
 		}
 
-		if( S_OK == l_Status  )
+		if (S_OK == l_Status)
 		{
-			if( rNewExtent != m_psvToolImage->GetImageExtents() )
+			if (rNewExtent != m_psvToolImage->GetImageExtents())
 			{
-				l_Status = m_psvToolImage->UpdateImage( rNewExtent );
+				l_Status = m_psvToolImage->UpdateImage(rNewExtent);
 			}
 		}
 	}
@@ -95,12 +93,12 @@ HRESULT SVToolExtentClass::UpdateExtentToParentExtents( SVImageExtentClass& rNew
 	return l_Status;
 }
 
-HRESULT SVToolExtentClass::GetParentExtent( SVImageExtentClass& p_rParent ) const
+HRESULT SVToolExtentClass::GetParentExtent(SVImageExtentClass& p_rParent) const
 {
 	HRESULT l_Status = S_OK;
 	SVImageClass* l_pParent = m_psvToolImage->GetParentImage();
 
-	if( nullptr != l_pParent )
+	if (nullptr != l_pParent)
 	{
 		p_rParent = l_pParent->GetImageExtents();
 	}
@@ -111,11 +109,11 @@ HRESULT SVToolExtentClass::GetParentExtent( SVImageExtentClass& p_rParent ) cons
 	return l_Status;
 }
 
-HRESULT SVToolExtentClass::UpdateExtentAgainstParentImage( const SVImageExtentClass& p_rImageExtent )
+HRESULT SVToolExtentClass::UpdateExtentAgainstParentImage(const SVImageExtentClass& p_rImageExtent)
 {
 	HRESULT l_Status = S_OK;
 
-	if( nullptr != m_psvToolImage )
+	if (nullptr != m_psvToolImage)
 	{
 		SVImageExtentClass l_Extent = p_rImageExtent;
 
@@ -123,11 +121,11 @@ HRESULT SVToolExtentClass::UpdateExtentAgainstParentImage( const SVImageExtentCl
 
 		SVImageClass* l_pParent = m_psvToolImage->GetParentImage();
 
-		if( S_OK == l_Status  )
+		if (S_OK == l_Status)
 		{
-			if( l_Extent != m_psvToolImage->GetImageExtents() )
+			if (l_Extent != m_psvToolImage->GetImageExtents())
 			{
-				l_Status = m_psvToolImage->UpdateImage( l_Extent );
+				l_Status = m_psvToolImage->UpdateImage(l_Extent);
 			}
 		}
 	}
@@ -139,15 +137,15 @@ HRESULT SVToolExtentClass::UpdateExtentAgainstParentImage( const SVImageExtentCl
 	return l_Status;
 }
 
-HRESULT SVToolExtentClass::UpdateImageWithExtent( SVToolExtentTypeEnum p_ToolExtentType )
+HRESULT SVToolExtentClass::UpdateImageWithExtent(SVToolExtentTypeEnum p_ToolExtentType)
 {
 	HRESULT l_Status = S_OK;
 
-	if( nullptr != m_psvToolImage )
+	if (nullptr != m_psvToolImage)
 	{
 		bool l_Update = true;
 
-		if( l_Update )
+		if (l_Update)
 		{
 			SVImageExtentClass l_Extent;
 
@@ -155,71 +153,71 @@ HRESULT SVToolExtentClass::UpdateImageWithExtent( SVToolExtentTypeEnum p_ToolExt
 
 			SVImageClass* l_pParent = m_psvToolImage->GetParentImage();
 
-			if( nullptr != l_pParent )
+			if (nullptr != l_pParent)
 			{
-				if( ( SvDef::SVImageTypeEnum::SVImageTypeLogicalAndPhysical == l_Type ) && ( SVExtentTranslationProfile == GetTranslation() ) )
+				if ((SvDef::SVImageTypeEnum::SVImageTypeLogicalAndPhysical == l_Type) && (SVExtentTranslationProfile == GetTranslation()))
 				{
 					l_Type = SvDef::SVImageTypeEnum::SVImageTypePhysical;
 
-					m_psvToolImage->UpdateImage( l_Type );
+					m_psvToolImage->UpdateImage(l_Type);
 				}
 
-				if( SvDef::SVImageTypeEnum::SVImageTypeDependent == l_Type )
+				if (SvDef::SVImageTypeEnum::SVImageTypeDependent == l_Type)
 				{
 					l_Extent = l_pParent->GetImageExtents();
 
-					l_Extent.SetTranslation( GetTranslation() );
+					l_Extent.SetTranslation(GetTranslation());
 
 					SVExtentPositionClass l_Position = l_Extent.GetPosition();
 
-					l_Status = l_Position.SetExtentProperty( SVExtentPropertyPositionPoint, 0.0 );
+					l_Status = l_Position.SetExtentProperty(SVExtentPropertyPositionPoint, 0.0);
 
-					if( S_OK == l_Status  )
+					if (S_OK == l_Status)
 					{
-						l_Status = l_Extent.SetPosition( l_Position );
+						l_Status = l_Extent.SetPosition(l_Position);
 					}
 
-					l_Status = SetImageExtent( l_Extent );
+					l_Status = SetImageExtent(l_Extent);
 				}
 				else
 				{
-					l_Status = GetImageExtent( l_Extent );
+					l_Status = GetImageExtent(l_Extent);
 
 					SvOi::IInspectionProcess* pInspection = m_psvToolImage->GetInspectionInterface();
 
-					if ( nullptr != pInspection && pInspection->IsResetStateSet(SvDef::SVResetAutoMoveAndResize ) )
+					if (nullptr != pInspection && pInspection->IsResetStateSet(SvDef::SVResetAutoMoveAndResize))
 					{
-						if( l_Extent != m_psvToolImage->GetImageExtents() )
+						if (l_Extent != m_psvToolImage->GetImageExtents())
 						{
-							if( S_OK != m_psvToolImage->ValidateAgainstParentExtents( l_Extent ) )
+							if (S_OK != m_psvToolImage->ValidateAgainstParentExtents(l_Extent))
 							{
-								l_pParent->GetImageExtentsToFit( l_Extent, l_Extent );
+								l_pParent->GetImageExtentsToFit(l_Extent, l_Extent);
 
-								SetImageExtent( l_Extent );
+								SetImageExtent(l_Extent);
 							}
 						}
 					}
 
-					if( SVTransformationToolExtent == p_ToolExtentType )
+					if (SVTransformationToolExtent == p_ToolExtentType)
 					{
 						double l_Value = 0.0;
 						SVImageExtentClass l_InputExtent = l_pParent->GetImageExtents();
 
-						if( S_OK == l_InputExtent.GetExtentProperty( SVExtentPropertyOutputWidth, l_Value ) )
+						if (S_OK == l_InputExtent.GetExtentProperty(SVExtentPropertyOutputWidth, l_Value))
 						{
-							l_Extent.SetExtentProperty( SVExtentPropertyWidth, l_Value );
+							l_Extent.SetExtentProperty(SVExtentPropertyWidth, l_Value);
 						}
 
-						if( S_OK == l_InputExtent.GetExtentProperty( SVExtentPropertyOutputHeight, l_Value ) )
+						if (S_OK == l_InputExtent.GetExtentProperty(SVExtentPropertyOutputHeight, l_Value))
 						{
-							l_Extent.SetExtentProperty( SVExtentPropertyHeight, l_Value );
+							l_Extent.SetExtentProperty(SVExtentPropertyHeight, l_Value);
 						}
 
-						l_Status = SetImageExtent( l_Extent );
+						l_Status = SetImageExtent(l_Extent);
 
-						HRESULT l_Temp = GetImageExtent( l_Extent );
+						HRESULT l_Temp = GetImageExtent(l_Extent);
 
-						if( S_OK == l_Status  )
+						if (S_OK == l_Status)
 						{
 							l_Status = l_Temp;
 						}
@@ -228,20 +226,20 @@ HRESULT SVToolExtentClass::UpdateImageWithExtent( SVToolExtentTypeEnum p_ToolExt
 			}
 			else
 			{
-				l_Status = GetImageExtent( l_Extent );
+				l_Status = GetImageExtent(l_Extent);
 			}
 
-			if( S_OK == l_Status )
+			if (S_OK == l_Status)
 			{
-				if( l_Extent != m_psvToolImage->GetImageExtents() )
+				if (l_Extent != m_psvToolImage->GetImageExtents())
 				{
-					l_Status = m_psvToolImage->UpdateImage( l_Extent );
+					l_Status = m_psvToolImage->UpdateImage(l_Extent);
 				}
 			}
 
-			if( S_OK == l_Status )
+			if (S_OK == l_Status)
 			{
-				if( nullptr != m_psvTool )
+				if (nullptr != m_psvTool)
 				{
 					SvOi::IInspectionProcess* pInspection = m_psvTool->GetInspectionInterface();
 					if (pInspection)
@@ -250,9 +248,9 @@ HRESULT SVToolExtentClass::UpdateImageWithExtent( SVToolExtentTypeEnum p_ToolExt
 					}
 				}
 
-				if( S_OK == l_Status )
+				if (S_OK == l_Status)
 				{
-					l_Status = UpdateOffsetData( true );
+					l_Status = UpdateOffsetData(true);
 				}
 			}
 		}
@@ -319,7 +317,7 @@ HRESULT SVToolExtentClass::SetLinearTranslation(SVExtentTranslationEnum eTransla
 	return l_hrOk;
 }
 
-HRESULT SVToolExtentClass::GetExtentShape( SVExtentPropertyEnum p_eProperty, SVExtentShapeEnum &p_reValue ) const
+HRESULT SVToolExtentClass::GetExtentShape(SVExtentPropertyEnum p_eProperty, SVExtentShapeEnum &p_reValue) const
 {
 	HRESULT l_hrOk = S_OK;
 
@@ -328,39 +326,39 @@ HRESULT SVToolExtentClass::GetExtentShape( SVExtentPropertyEnum p_eProperty, SVE
 	return l_hrOk;
 }
 
-HRESULT SVToolExtentClass::GetExtentObject( SVExtentPropertyEnum p_eProperty, SvOi::IValueObject*& rpValueObject ) const
+HRESULT SVToolExtentClass::GetExtentObject(SVExtentPropertyEnum p_eProperty, SvOi::IValueObject*& rpValueObject) const
 {
 	HRESULT l_hrOk = S_OK;
 
-	l_hrOk = m_svProperties.GetExtentObject( p_eProperty, rpValueObject );
+	l_hrOk = m_svProperties.GetExtentObject(p_eProperty, rpValueObject);
 
 	return l_hrOk;
 }
 
-HRESULT SVToolExtentClass::SetExtentObject( SVExtentPropertyEnum p_eProperty, SvOi::IValueObject* pValueObject )
+HRESULT SVToolExtentClass::SetExtentObject(SVExtentPropertyEnum p_eProperty, SvOi::IValueObject* pValueObject)
 {
 	HRESULT l_hrOk = S_OK;
 
-	l_hrOk = m_svProperties.SetExtentObject( p_eProperty, pValueObject );
+	l_hrOk = m_svProperties.SetExtentObject(p_eProperty, pValueObject);
 
 	return l_hrOk;
 }
 
-HRESULT SVToolExtentClass::GetExtentValue( SVExtentPropertyEnum p_eProperty, _variant_t& rValue ) const
+HRESULT SVToolExtentClass::GetExtentValue(SVExtentPropertyEnum p_eProperty, _variant_t& rValue) const
 {
 	HRESULT l_hrOk = S_OK;
 
-	SvOi::IValueObject* pValueObject( nullptr );
+	SvOi::IValueObject* pValueObject(nullptr);
 
 	rValue.Clear();
 
-	l_hrOk = GetExtentObject( p_eProperty, pValueObject );
+	l_hrOk = GetExtentObject(p_eProperty, pValueObject);
 
-	if( nullptr != pValueObject )
+	if (nullptr != pValueObject)
 	{
-		l_hrOk = pValueObject->getValue( rValue );
+		l_hrOk = pValueObject->getValue(rValue);
 	}
-	else if( S_OK == l_hrOk )
+	else if (S_OK == l_hrOk)
 	{
 		l_hrOk = E_FAIL;
 	}
@@ -368,40 +366,40 @@ HRESULT SVToolExtentClass::GetExtentValue( SVExtentPropertyEnum p_eProperty, _va
 	return l_hrOk;
 }
 
-HRESULT SVToolExtentClass::SetExtentValue( SVExtentPropertyEnum p_eProperty, const _variant_t& rValue )
+HRESULT SVToolExtentClass::SetExtentValue(SVExtentPropertyEnum p_eProperty, const _variant_t& rValue)
 {
 	HRESULT l_hrOk = S_OK;
 
-	SvOi::IValueObject* pValueObject( nullptr );
+	SvOi::IValueObject* pValueObject(nullptr);
 
-	l_hrOk = GetExtentObject( p_eProperty, pValueObject );
+	l_hrOk = GetExtentObject(p_eProperty, pValueObject);
 
-	if( nullptr != pValueObject  )
+	if (nullptr != pValueObject)
 	{
-		l_hrOk = pValueObject->setValue( rValue );
+		l_hrOk = pValueObject->setValue(rValue);
 	}
-	else if( S_OK == l_hrOk )
+	else if (S_OK == l_hrOk)
 	{
 		l_hrOk = E_FAIL;
 	}
 	return l_hrOk;
 }
 
-HRESULT SVToolExtentClass::GetImageExtent( SVImageExtentClass &rImageExtent ) const
+HRESULT SVToolExtentClass::GetImageExtent(SVImageExtentClass &rImageExtent) const
 {
 	HRESULT l_hrOk = rImageExtent.Initialize();
 
-	if ( S_OK == l_hrOk )
+	if (S_OK == l_hrOk)
 	{
-		l_hrOk = rImageExtent.SetTranslation( m_eTranslation );
+		l_hrOk = rImageExtent.SetTranslation(m_eTranslation);
 	}
 
-	if ( S_OK == l_hrOk )
+	if (S_OK == l_hrOk)
 	{
-		l_hrOk = m_svProperties.GetProperties( rImageExtent );
+		l_hrOk = m_svProperties.GetProperties(rImageExtent);
 	}
 
-	if ( S_OK == l_hrOk )
+	if (S_OK == l_hrOk)
 	{
 		l_hrOk = rImageExtent.UpdateData();
 	}
@@ -412,7 +410,7 @@ HRESULT SVToolExtentClass::GetImageExtent( SVImageExtentClass &rImageExtent ) co
 	return l_hrOk;
 }
 
-HRESULT SVToolExtentClass::SetImageExtent( const SVImageExtentClass& rImageExtent )
+HRESULT SVToolExtentClass::SetImageExtent(const SVImageExtentClass& rImageExtent)
 {
 	HRESULT l_hrOk = S_OK;
 
@@ -420,137 +418,137 @@ HRESULT SVToolExtentClass::SetImageExtent( const SVImageExtentClass& rImageExten
 
 	SVExtentTranslationEnum translation = rImageExtent.GetTranslation();
 
-	if ( SVExtentTranslationUnknown != translation )
+	if (SVExtentTranslationUnknown != translation)
 	{
 		m_eTranslation = translation;
 	}
 
-	if( S_OK == rImageExtent.GetExtentProperty( SVExtentPropertyPositionPointX, dValue ) )
+	if (S_OK == rImageExtent.GetExtentProperty(SVExtentPropertyPositionPointX, dValue))
 	{
-		l_hrOk &= SetExtentValue( SVExtentPropertyPositionPointX, dValue );
+		l_hrOk &= SetExtentValue(SVExtentPropertyPositionPointX, dValue);
 	}
 
-	if( S_OK == rImageExtent.GetExtentProperty( SVExtentPropertyPositionPointY, dValue ) )
+	if (S_OK == rImageExtent.GetExtentProperty(SVExtentPropertyPositionPointY, dValue))
 	{
-		l_hrOk &= SetExtentValue( SVExtentPropertyPositionPointY, dValue );
+		l_hrOk &= SetExtentValue(SVExtentPropertyPositionPointY, dValue);
 	}
 
-	if( S_OK == rImageExtent.GetExtentProperty( SVExtentPropertyPositionPointEndOfLineX, dValue ) )
+	if (S_OK == rImageExtent.GetExtentProperty(SVExtentPropertyPositionPointEndOfLineX, dValue))
 	{
-		l_hrOk &= SetExtentValue( SVExtentPropertyPositionPointEndOfLineX, dValue );
+		l_hrOk &= SetExtentValue(SVExtentPropertyPositionPointEndOfLineX, dValue);
 	}
 
-	if( S_OK == rImageExtent.GetExtentProperty( SVExtentPropertyPositionPointEndOfLineY, dValue ) )
+	if (S_OK == rImageExtent.GetExtentProperty(SVExtentPropertyPositionPointEndOfLineY, dValue))
 	{
-		l_hrOk &= SetExtentValue( SVExtentPropertyPositionPointEndOfLineY, dValue );
+		l_hrOk &= SetExtentValue(SVExtentPropertyPositionPointEndOfLineY, dValue);
 	}
 
-	if( S_OK == rImageExtent.GetExtentProperty( SVExtentPropertyRotationAngle, dValue ) )
+	if (S_OK == rImageExtent.GetExtentProperty(SVExtentPropertyRotationAngle, dValue))
 	{
-		l_hrOk &= SetExtentValue( SVExtentPropertyRotationAngle, dValue );
+		l_hrOk &= SetExtentValue(SVExtentPropertyRotationAngle, dValue);
 	}
 
-	if( S_OK == rImageExtent.GetExtentProperty( SVExtentPropertyTranslationOffsetX, dValue ) )
+	if (S_OK == rImageExtent.GetExtentProperty(SVExtentPropertyTranslationOffsetX, dValue))
 	{
-		l_hrOk &= SetExtentValue( SVExtentPropertyTranslationOffsetX, dValue );
+		l_hrOk &= SetExtentValue(SVExtentPropertyTranslationOffsetX, dValue);
 	}
 
-	if( S_OK == rImageExtent.GetExtentProperty( SVExtentPropertyTranslationOffsetY, dValue ) )
+	if (S_OK == rImageExtent.GetExtentProperty(SVExtentPropertyTranslationOffsetY, dValue))
 	{
-		l_hrOk &= SetExtentValue( SVExtentPropertyTranslationOffsetY, dValue );
+		l_hrOk &= SetExtentValue(SVExtentPropertyTranslationOffsetY, dValue);
 	}
 
-	if( S_OK == rImageExtent.GetExtentProperty( SVExtentPropertyHeight, dValue ) )
+	if (S_OK == rImageExtent.GetExtentProperty(SVExtentPropertyHeight, dValue))
 	{
-		l_hrOk &= SetExtentValue( SVExtentPropertyHeight, dValue );
+		l_hrOk &= SetExtentValue(SVExtentPropertyHeight, dValue);
 	}
 
-	if( S_OK == rImageExtent.GetExtentProperty( SVExtentPropertyWidth, dValue ) )
+	if (S_OK == rImageExtent.GetExtentProperty(SVExtentPropertyWidth, dValue))
 	{
-		l_hrOk &= SetExtentValue( SVExtentPropertyWidth, dValue );
+		l_hrOk &= SetExtentValue(SVExtentPropertyWidth, dValue);
 	}
 
-	if( S_OK == rImageExtent.GetExtentProperty( SVExtentPropertyStartAngle, dValue ) )
+	if (S_OK == rImageExtent.GetExtentProperty(SVExtentPropertyStartAngle, dValue))
 	{
-		l_hrOk &= SetExtentValue( SVExtentPropertyStartAngle, dValue );
+		l_hrOk &= SetExtentValue(SVExtentPropertyStartAngle, dValue);
 	}
 
-	if( S_OK == rImageExtent.GetExtentProperty( SVExtentPropertyEndAngle, dValue ) )
+	if (S_OK == rImageExtent.GetExtentProperty(SVExtentPropertyEndAngle, dValue))
 	{
-		l_hrOk &= SetExtentValue( SVExtentPropertyEndAngle, dValue );
+		l_hrOk &= SetExtentValue(SVExtentPropertyEndAngle, dValue);
 	}
 
-	if( S_OK == rImageExtent.GetExtentProperty( SVExtentPropertyInnerRadius, dValue ) )
+	if (S_OK == rImageExtent.GetExtentProperty(SVExtentPropertyInnerRadius, dValue))
 	{
-		l_hrOk &= SetExtentValue( SVExtentPropertyInnerRadius, dValue );
+		l_hrOk &= SetExtentValue(SVExtentPropertyInnerRadius, dValue);
 	}
 
-	if( S_OK == rImageExtent.GetExtentProperty( SVExtentPropertyOuterRadius, dValue ) )
+	if (S_OK == rImageExtent.GetExtentProperty(SVExtentPropertyOuterRadius, dValue))
 	{
-		l_hrOk &= SetExtentValue( SVExtentPropertyOuterRadius, dValue );
+		l_hrOk &= SetExtentValue(SVExtentPropertyOuterRadius, dValue);
 	}
 
-	if( S_OK == rImageExtent.GetExtentProperty( SVExtentPropertyHeightScaleFactor, dValue ) )
+	if (S_OK == rImageExtent.GetExtentProperty(SVExtentPropertyHeightScaleFactor, dValue))
 	{
-		l_hrOk &= SetExtentValue( SVExtentPropertyHeightScaleFactor, dValue );
+		l_hrOk &= SetExtentValue(SVExtentPropertyHeightScaleFactor, dValue);
 	}
 
-	if( S_OK == rImageExtent.GetExtentProperty( SVExtentPropertyWidthScaleFactor, dValue ) )
+	if (S_OK == rImageExtent.GetExtentProperty(SVExtentPropertyWidthScaleFactor, dValue))
 	{
-		l_hrOk &= SetExtentValue( SVExtentPropertyWidthScaleFactor, dValue );
+		l_hrOk &= SetExtentValue(SVExtentPropertyWidthScaleFactor, dValue);
 	}
 	return l_hrOk;
 }
 
 namespace local	// struct local
 {
-	struct IsFormula
+struct IsFormula
+{
+	IsFormula(SVToolExtentClass* pToolExtents) : m_pToolExtents(pToolExtents) {}
+	bool operator () (SVExtentPropertyEnum eProperty)
 	{
-		IsFormula(SVToolExtentClass* pToolExtents) : m_pToolExtents(pToolExtents) {}
-		bool operator () (SVExtentPropertyEnum eProperty)
+		SVExtentPropertyInfoStruct info;
+		HRESULT hr = m_pToolExtents->GetExtentPropertyInfo(eProperty, info);
+		if (S_OK == hr)
 		{
-			SVExtentPropertyInfoStruct info;
-			HRESULT hr = m_pToolExtents->GetExtentPropertyInfo(eProperty, info);
-			if ( S_OK == hr  )
-			{
-				return info.bFormula || info.bHidden;
-			}
-			return false;
+			return info.bFormula || info.bHidden;
 		}
-		SVToolExtentClass* m_pToolExtents;
-	};
+		return false;
+	}
+	SVToolExtentClass* m_pToolExtents;
+};
 }
- 
-HRESULT SVToolExtentClass::GetFilteredImageExtentPropertyList( SVExtentPropertyListType& p_rPropertyList )
+
+HRESULT SVToolExtentClass::GetFilteredImageExtentPropertyList(SVExtentPropertyListType& p_rPropertyList)
 {
 	HRESULT hr = S_OK;
 
 	p_rPropertyList.clear();
 
 	SVImageExtentClass l_svExtents;
-	GetImageExtent( l_svExtents );
-	l_svExtents.GetExtentPropertyList( SVExtentPropertyAll, p_rPropertyList );
+	GetImageExtent(l_svExtents);
+	l_svExtents.GetExtentPropertyList(SVExtentPropertyAll, p_rPropertyList);
 
 	SVExtentPropertyListType::iterator iter;
 	// remove those that are formula
-	iter = std::remove_if( p_rPropertyList.begin(), p_rPropertyList.end(), local::IsFormula(this) );
-	if ( iter != p_rPropertyList.end() )
+	iter = std::remove_if(p_rPropertyList.begin(), p_rPropertyList.end(), local::IsFormula(this));
+	if (iter != p_rPropertyList.end())
 	{
-		p_rPropertyList.erase( iter, p_rPropertyList.end() );
+		p_rPropertyList.erase(iter, p_rPropertyList.end());
 	}
-	if ( SVExtentTranslationPolarUnwrap == l_svExtents.GetTranslation() )
+	if (SVExtentTranslationPolarUnwrap == l_svExtents.GetTranslation())
 	{
 		// special case for Rotation Angle
 		SVExtentPropertyInfoStruct infoStart;
 		SVExtentPropertyInfoStruct infoEnd;
-		GetExtentPropertyInfo( SVExtentPropertyEndAngle, infoEnd );
-		GetExtentPropertyInfo( SVExtentPropertyStartAngle, infoStart );
-		if ( infoStart.bFormula || infoEnd.bFormula )
+		GetExtentPropertyInfo(SVExtentPropertyEndAngle, infoEnd);
+		GetExtentPropertyInfo(SVExtentPropertyStartAngle, infoStart);
+		if (infoStart.bFormula || infoEnd.bFormula)
 		{
-			iter = std::find(p_rPropertyList.begin(), p_rPropertyList.end(), SVExtentPropertyRotationAngle );
-			if ( iter != p_rPropertyList.end() )
+			iter = std::find(p_rPropertyList.begin(), p_rPropertyList.end(), SVExtentPropertyRotationAngle);
+			if (iter != p_rPropertyList.end())
 			{
-				p_rPropertyList.erase( iter );
+				p_rPropertyList.erase(iter);
 			}
 		}
 	}
@@ -558,29 +556,29 @@ HRESULT SVToolExtentClass::GetFilteredImageExtentPropertyList( SVExtentPropertyL
 	return hr;
 }
 
-HRESULT SVToolExtentClass::GetRootOffsetData( SVExtentOffsetStruct& p_rsvOffsetData )
+HRESULT SVToolExtentClass::GetRootOffsetData(SVExtentOffsetStruct& p_rsvOffsetData)
 {
 	HRESULT l_svOk = S_FALSE;
 
-	if( nullptr == m_svRootOffsetData.m_psvImage )
+	if (nullptr == m_svRootOffsetData.m_psvImage)
 	{
-		l_svOk = UpdateOffsetDataToImage( m_svRootOffsetData, nullptr );
+		l_svOk = UpdateOffsetDataToImage(m_svRootOffsetData, nullptr);
 	}
 
 	p_rsvOffsetData = m_svRootOffsetData;
 
-	if( nullptr != p_rsvOffsetData.m_psvImage )
+	if (nullptr != p_rsvOffsetData.m_psvImage)
 	{
 		l_svOk = S_OK;
 	}
 	return l_svOk;
 }
 
-HRESULT SVToolExtentClass::GetSelectedOffsetData( SVExtentOffsetStruct& p_rsvOffsetData )
+HRESULT SVToolExtentClass::GetSelectedOffsetData(SVExtentOffsetStruct& p_rsvOffsetData)
 {
 	HRESULT l_svOk = S_FALSE;
 
-	if( nullptr == m_psvSelectedImage )
+	if (nullptr == m_psvSelectedImage)
 	{
 		p_rsvOffsetData = m_svRootOffsetData;
 	}
@@ -589,41 +587,41 @@ HRESULT SVToolExtentClass::GetSelectedOffsetData( SVExtentOffsetStruct& p_rsvOff
 		p_rsvOffsetData = m_svSelectedOffsetData;
 	}
 
-	if( nullptr != p_rsvOffsetData.m_psvImage )
+	if (nullptr != p_rsvOffsetData.m_psvImage)
 	{
 		l_svOk = S_OK;
 	}
 	return l_svOk;
 }
 
-HRESULT SVToolExtentClass::UpdateOffsetDataToImage( SVExtentOffsetStruct& p_rsvOffsetData, SVImageClass* pToolImage )
+HRESULT SVToolExtentClass::UpdateOffsetDataToImage(SVExtentOffsetStruct& p_rsvOffsetData, SVImageClass* pToolImage)
 {
 	HRESULT l_svOk = S_OK;
 
-	if( nullptr != m_psvToolImage )
+	if (nullptr != m_psvToolImage)
 	{
 		SVExtentOffsetStruct l_svOffsetData;
 
 		SVImageClass* pImageParent = m_psvToolImage->GetParentImage();
 
-		if( nullptr != pImageParent )
+		if (nullptr != pImageParent)
 		{
 			SVToolClass* pToolParent = dynamic_cast<SVToolClass*>(pImageParent->GetTool());
 
-			if( pImageParent != pToolImage && pImageParent != m_psvToolImage && 
-				nullptr != pToolParent && pToolParent != m_psvTool )
+			if (pImageParent != pToolImage && pImageParent != m_psvToolImage &&
+				nullptr != pToolParent && pToolParent != m_psvTool)
 			{
-				l_svOk = pToolParent->UpdateOffsetDataToImage( l_svOffsetData, pToolImage );
+				l_svOk = pToolParent->UpdateOffsetDataToImage(l_svOffsetData, pToolImage);
 			}
-			else if( pImageParent == pToolImage || nullptr == pToolImage )
+			else if (pImageParent == pToolImage || nullptr == pToolImage)
 			{
 				SVImageExtentClass l_svExtent;
 
-				l_svOk = GetImageExtent( l_svExtent );
+				l_svOk = GetImageExtent(l_svExtent);
 
-				if( S_OK == l_svOk )
+				if (S_OK == l_svOk)
 				{
-					l_svOk = l_svExtent.UpdateSourceOffset( l_svOffsetData );
+					l_svOk = l_svExtent.UpdateSourceOffset(l_svOffsetData);
 				}
 			}
 			else
@@ -631,17 +629,17 @@ HRESULT SVToolExtentClass::UpdateOffsetDataToImage( SVExtentOffsetStruct& p_rsvO
 				l_svOk = E_FAIL;
 			}
 
-			if( S_OK == l_svOk )
+			if (S_OK == l_svOk)
 			{
-				if( nullptr == p_rsvOffsetData.m_psvImage )
+				if (nullptr == p_rsvOffsetData.m_psvImage)
 				{
-					if( nullptr != p_rsvOffsetData.m_psvRootImage )
+					if (nullptr != p_rsvOffsetData.m_psvRootImage)
 					{
 						l_svOffsetData.m_psvRootImage = p_rsvOffsetData.m_psvRootImage;
 					}
 					else
 					{
-						if( nullptr != m_svRootOffsetData.m_psvRootImage )
+						if (nullptr != m_svRootOffsetData.m_psvRootImage)
 						{
 							l_svOffsetData.m_psvRootImage = m_svRootOffsetData.m_psvRootImage;
 						}
@@ -654,7 +652,7 @@ HRESULT SVToolExtentClass::UpdateOffsetDataToImage( SVExtentOffsetStruct& p_rsvO
 					l_svOffsetData.m_psvImage = pImageParent;
 					l_svOffsetData.m_bAlwaysUpdate |= m_bAlwaysUpdate;
 
-					if( nullptr != pImageParent )
+					if (nullptr != pImageParent)
 					{
 						l_svOffsetData.m_csImageName = pImageParent->GetCompleteName();
 					}
@@ -670,30 +668,30 @@ HRESULT SVToolExtentClass::UpdateOffsetDataToImage( SVExtentOffsetStruct& p_rsvO
 	return l_svOk;
 }
 
-HRESULT SVToolExtentClass::UpdateOffsetData( bool p_bForceUpdate )
+HRESULT SVToolExtentClass::UpdateOffsetData(bool p_bForceUpdate)
 {
 	HRESULT l_svOk = S_OK;
 
 	try
 	{
-		if( p_bForceUpdate ||
+		if (p_bForceUpdate ||
 			m_bAlwaysUpdate ||
-			m_svRootOffsetData.m_bAlwaysUpdate || 
-			nullptr == m_svRootOffsetData.m_psvImage )
+			m_svRootOffsetData.m_bAlwaysUpdate ||
+			nullptr == m_svRootOffsetData.m_psvImage)
 		{
-			if( nullptr != m_psvToolImage )
+			if (nullptr != m_psvToolImage)
 			{
 				SVExtentOffsetStruct l_svOffsetData;
 
 				SVImageClass* pImageParent = m_psvToolImage->GetParentImage();
 
-				if( nullptr != pImageParent )
+				if (nullptr != pImageParent)
 				{
 					SVToolClass* pToolParent = dynamic_cast<SVToolClass*>(pImageParent->GetTool());
 
-					if( nullptr != pToolParent && pToolParent != m_psvTool )
+					if (nullptr != pToolParent && pToolParent != m_psvTool)
 					{
-						l_svOk = pToolParent->GetRootOffsetData( l_svOffsetData );
+						l_svOk = pToolParent->GetRootOffsetData(l_svOffsetData);
 					}
 					else
 					{
@@ -709,19 +707,19 @@ HRESULT SVToolExtentClass::UpdateOffsetData( bool p_bForceUpdate )
 					l_svOffsetData.m_csImageName = m_psvToolImage->GetCompleteName();
 				}
 
-				if( S_OK == l_svOk )
+				if (S_OK == l_svOk)
 				{
 					SVImageExtentClass Extent;
 
-					l_svOk = GetImageExtent( Extent );
+					l_svOk = GetImageExtent(Extent);
 
-					if( S_OK == l_svOk )
+					if (S_OK == l_svOk)
 					{
-						l_svOk = Extent.UpdateSourceOffset( l_svOffsetData );
+						l_svOk = Extent.UpdateSourceOffset(l_svOffsetData);
 					}
 				}
 
-				if( S_OK == l_svOk )
+				if (S_OK == l_svOk)
 				{
 					l_svOffsetData.m_bAlwaysUpdate |= m_bAlwaysUpdate;
 
@@ -730,15 +728,15 @@ HRESULT SVToolExtentClass::UpdateOffsetData( bool p_bForceUpdate )
 			}
 		}
 
-		if( S_OK == l_svOk )
+		if (S_OK == l_svOk)
 		{
-			if( p_bForceUpdate ||
+			if (p_bForceUpdate ||
 				m_bAlwaysUpdate ||
 				m_svSelectedOffsetData.m_bAlwaysUpdate ||
 				nullptr == m_svSelectedOffsetData.m_psvImage ||
-				m_svSelectedOffsetData.m_psvImage != m_psvSelectedImage )
+				m_svSelectedOffsetData.m_psvImage != m_psvSelectedImage)
 			{
-				if( nullptr == m_psvSelectedImage )
+				if (nullptr == m_psvSelectedImage)
 				{
 					m_svSelectedOffsetData.Initialize();
 				}
@@ -746,9 +744,9 @@ HRESULT SVToolExtentClass::UpdateOffsetData( bool p_bForceUpdate )
 				{
 					SVExtentOffsetStruct l_svOffsetData;
 
-					l_svOk = UpdateOffsetDataToImage( l_svOffsetData, m_psvSelectedImage );
+					l_svOk = UpdateOffsetDataToImage(l_svOffsetData, m_psvSelectedImage);
 
-					if( S_OK == l_svOk )
+					if (S_OK == l_svOk)
 					{
 						m_svSelectedOffsetData = l_svOffsetData;
 					}
@@ -756,7 +754,7 @@ HRESULT SVToolExtentClass::UpdateOffsetData( bool p_bForceUpdate )
 			}
 		}
 	}
-	catch( ... )
+	catch (...)
 	{
 		l_svOk = S_FALSE;
 	}
@@ -764,26 +762,26 @@ HRESULT SVToolExtentClass::UpdateOffsetData( bool p_bForceUpdate )
 	return l_svOk;
 }
 
-HRESULT SVToolExtentClass::UpdateOffsetData( bool p_bForceUpdate, SVImageClass* p_svToolImage )
+HRESULT SVToolExtentClass::UpdateOffsetData(bool p_bForceUpdate, SVImageClass* p_svToolImage)
 {
-	SetToolImage( p_svToolImage );
+	SetToolImage(p_svToolImage);
 
-	return UpdateOffsetData( p_bForceUpdate );
+	return UpdateOffsetData(p_bForceUpdate);
 }
 
-HRESULT SVToolExtentClass::TranslatePointToSource( SVExtentPointStruct p_svIn, SVExtentPointStruct& p_rsvOut )
+HRESULT SVToolExtentClass::TranslatePointToSource(SVExtentPointStruct p_svIn, SVExtentPointStruct& p_rsvOut)
 {
 	HRESULT l_svOk;
 
 	SVImageExtentClass l_svExtent;
 
-	l_svOk = GetImageExtent( l_svExtent );
+	l_svOk = GetImageExtent(l_svExtent);
 
-	if( S_OK == l_svOk )
+	if (S_OK == l_svOk)
 	{
-		if( m_svRootOffsetData.m_bIsLinear )
+		if (m_svRootOffsetData.m_bIsLinear)
 		{
-			p_svIn = SVRotatePoint( m_svRootOffsetData.m_svRotationPoint, p_svIn, m_svRootOffsetData.m_dRotationAngle );
+			p_svIn = SVRotatePoint(m_svRootOffsetData.m_svRotationPoint, p_svIn, m_svRootOffsetData.m_dRotationAngle);
 
 			p_rsvOut.m_dPositionX = m_svRootOffsetData.m_svOffset.m_dPositionX + p_svIn.m_dPositionX;
 			p_rsvOut.m_dPositionY = m_svRootOffsetData.m_svOffset.m_dPositionY + p_svIn.m_dPositionY;
@@ -791,35 +789,35 @@ HRESULT SVToolExtentClass::TranslatePointToSource( SVExtentPointStruct p_svIn, S
 			p_rsvOut.m_dPositionX -= m_svRootOffsetData.m_svRotationPoint.m_dPositionX;
 			p_rsvOut.m_dPositionY -= m_svRootOffsetData.m_svRotationPoint.m_dPositionY;
 		}
-		else 
+		else
 		{
-			l_svOk = l_svExtent.TranslateFromOutputSpace( p_svIn, p_svIn );
+			l_svOk = l_svExtent.TranslateFromOutputSpace(p_svIn, p_svIn);
 
-			if( S_OK == l_svOk )
+			if (S_OK == l_svOk)
 			{
 				try
 				{
-					if( nullptr != m_psvToolImage )
+					if (nullptr != m_psvToolImage)
 					{
 						SVImageClass* pImageParent = m_psvToolImage->GetParentImage();
 
-						if( nullptr != pImageParent )
+						if (nullptr != pImageParent)
 						{
 							SVToolClass* pToolParent = dynamic_cast<SVToolClass*>(pImageParent->GetTool());
 
-							if( nullptr != pToolParent )
+							if (nullptr != pToolParent)
 							{
-								l_svOk = pToolParent->TranslatePointToSource( p_svIn, p_svIn );
+								l_svOk = pToolParent->TranslatePointToSource(p_svIn, p_svIn);
 							}
 						}
 					}
 
-					if( S_OK == l_svOk )
+					if (S_OK == l_svOk)
 					{
 						p_rsvOut = p_svIn;
 					}
 				}
-				catch( ... )
+				catch (...)
 				{
 					l_svOk = S_FALSE;
 				}
@@ -829,11 +827,11 @@ HRESULT SVToolExtentClass::TranslatePointToSource( SVExtentPointStruct p_svIn, S
 	return l_svOk;
 }
 
-HRESULT SVToolExtentClass::TranslatePositionPointToSource( SVExtentPointStruct& p_rsvOut )
+HRESULT SVToolExtentClass::TranslatePositionPointToSource(SVExtentPointStruct& p_rsvOut)
 {
 	HRESULT l_svOk = S_OK;
 
-	if( m_svRootOffsetData.m_bIsLinear )
+	if (m_svRootOffsetData.m_bIsLinear)
 	{
 		p_rsvOut = m_svRootOffsetData.m_svOffset;
 	}
@@ -844,21 +842,21 @@ HRESULT SVToolExtentClass::TranslatePositionPointToSource( SVExtentPointStruct& 
 			SVImageExtentClass l_svExtent;
 			SVExtentPointStruct l_svPoint;
 
-			l_svOk = GetImageExtent( l_svExtent );
+			l_svOk = GetImageExtent(l_svExtent);
 
-			if( S_OK == l_svOk )
+			if (S_OK == l_svOk)
 			{
-				l_svExtent.GetExtentProperty( SVExtentPropertyOutputPositionPoint, l_svPoint );
+				l_svExtent.GetExtentProperty(SVExtentPropertyOutputPositionPoint, l_svPoint);
 
-				l_svOk = TranslatePointToSource( l_svPoint, l_svPoint );
+				l_svOk = TranslatePointToSource(l_svPoint, l_svPoint);
 			}
 
-			if( S_OK == l_svOk )
+			if (S_OK == l_svOk)
 			{
 				p_rsvOut = l_svPoint;
 			}
 		}
-		catch( ... )
+		catch (...)
 		{
 			l_svOk = S_FALSE;
 		}
@@ -871,7 +869,7 @@ std::string SVToolExtentClass::GetAuxiliaryDrawTypeString() const
 	std::string Result;
 
 	// SVExtentTranslationEnum
-	switch( m_eTranslation )
+	switch (m_eTranslation)
 	{
 		case SVExtentTranslationUnknown:
 		{
@@ -987,15 +985,15 @@ std::string SVToolExtentClass::GetAuxiliaryDrawTypeString() const
 	return Result;
 }
 
-HRESULT SVToolExtentClass::GetExtentPropertyInfo( SVExtentPropertyEnum p_eProperty, SVExtentPropertyInfoStruct& p_rInfo ) const
+HRESULT SVToolExtentClass::GetExtentPropertyInfo(SVExtentPropertyEnum p_eProperty, SVExtentPropertyInfoStruct& p_rInfo) const
 {
-	HRESULT hr = m_svProperties.GetPropertyInfo( p_eProperty, p_rInfo );
+	HRESULT hr = m_svProperties.GetPropertyInfo(p_eProperty, p_rInfo);
 	return hr;
 }
 
-HRESULT SVToolExtentClass::SetExtentPropertyInfo( SVExtentPropertyEnum p_eProperty, const SVExtentPropertyInfoStruct& p_rInfo )
+HRESULT SVToolExtentClass::SetExtentPropertyInfo(SVExtentPropertyEnum p_eProperty, const SVExtentPropertyInfoStruct& p_rInfo)
 {
-	HRESULT hr = m_svProperties.SetPropertyInfo( p_eProperty, p_rInfo );
+	HRESULT hr = m_svProperties.SetPropertyInfo(p_eProperty, p_rInfo);
 	return hr;
 }
 

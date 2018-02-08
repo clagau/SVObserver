@@ -11,8 +11,12 @@
 
 #pragma once
 
+#pragma region Includes
+//Moved to precompiled header: #include <vector>
+//Moved to precompiled header: #include <utility>
 #include "SVMatroxLibrary/SVMatroxTypedefs.h"
 #include "SVMatroxLibrary/SVMatroxEnumConvertor.h"
+#pragma endregion Includes
 
 
 /**
@@ -112,8 +116,8 @@ struct SVMatroxDigitizerHook
 								// M_UNHOOK
 	};
 	// define convertor for from/to SVEnum/Matrox types
-	typedef SVMatroxEnumConvertor<SVHookTypeEnum, long> SVHookTypeEnumMap;
-	static SVHookTypeEnumMap m_HookTypeEnumConvertor;
+	typedef std::vector<std::pair<SVHookTypeEnum, long long>> SVHookTypeEnumPair;
+	static SVHookTypeEnumPair m_HookTypeEnumConvertor;
 
 	// Hook Info
 	enum SVHookInfoEnum
@@ -134,7 +138,7 @@ struct SVMatroxDigitizerHook
 		SVGigeEventType, // M_GC_EVENT_TYPE
 	};
 	// define convertor for from/to SVEnum/Matrox types
-	typedef SVMatroxEnumConvertor< SVHookInfoEnum, SVMatroxInt > SVHookInfoEnumMap;
-	static SVHookInfoEnumMap m_HookInfoEnumConvertor;
+	typedef std::vector<std::pair<SVHookInfoEnum, long long>> SVHookInfoEnumPair;
+	static SVHookInfoEnumPair m_HookInfoEnumConvertor;
 };
 

@@ -10,39 +10,41 @@
 //******************************************************************************
 #include "stdafx.h"
 //Moved to precompiled header: #include <boost/config.hpp>
-//Moved to precompiled header: #include <boost/assign/list_of.hpp>
 #include "SVMatroxDigitizerHookEnums.h"
 #include "SVMatroxLibrary/SVMatroxImagingLibrary.h" // for SV_CURRENT_MIL_VERSION define
 
 // Assign mappings for Hook Types
-SVMatroxDigitizerHook::SVHookTypeEnumMap SVMatroxDigitizerHook::m_HookTypeEnumConvertor = boost::assign::map_list_of<>
-(SVMatroxDigitizerHook::SVCameraPresent,		M_CAMERA_PRESENT)
-(SVMatroxDigitizerHook::SVFieldStart,			M_FIELD_START)
-(SVMatroxDigitizerHook::SVFieldStartEven,		M_FIELD_START_EVEN)
-(SVMatroxDigitizerHook::SVFieldStartOdd,		M_FIELD_START_ODD)
-(SVMatroxDigitizerHook::SVFrameStart,			M_FRAME_START)
-(SVMatroxDigitizerHook::SVGrabEnd,				M_GRAB_END)
-(SVMatroxDigitizerHook::SVGrabFieldEnd,			M_GRAB_FIELD_END)
-(SVMatroxDigitizerHook::SVGrabFieldEndEven,		M_GRAB_FIELD_END_EVEN)
-(SVMatroxDigitizerHook::SVGrabFieldEndOdd,		M_GRAB_FIELD_END_ODD)
-(SVMatroxDigitizerHook::SVGrabFrameEnd,			M_GRAB_FRAME_END)
-(SVMatroxDigitizerHook::SVGrabFrameStart,		M_GRAB_FRAME_START)
-(SVMatroxDigitizerHook::SVGrabStart,			M_GRAB_START)
+SVMatroxDigitizerHook::SVHookTypeEnumPair SVMatroxDigitizerHook::m_HookTypeEnumConvertor
+{
+	{SVMatroxDigitizerHook::SVCameraPresent,		M_CAMERA_PRESENT},
+	{SVMatroxDigitizerHook::SVFieldStart,			M_FIELD_START},
+	{SVMatroxDigitizerHook::SVFieldStartEven,		M_FIELD_START_EVEN},
+	{SVMatroxDigitizerHook::SVFieldStartOdd,		M_FIELD_START_ODD},
+	{SVMatroxDigitizerHook::SVFrameStart,			M_FRAME_START},
+	{SVMatroxDigitizerHook::SVGrabEnd,				M_GRAB_END},
+	{SVMatroxDigitizerHook::SVGrabFieldEnd,			M_GRAB_FIELD_END},
+	{SVMatroxDigitizerHook::SVGrabFieldEndEven,		M_GRAB_FIELD_END_EVEN},
+	{SVMatroxDigitizerHook::SVGrabFieldEndOdd,		M_GRAB_FIELD_END_ODD},
+	{SVMatroxDigitizerHook::SVGrabFrameEnd,			M_GRAB_FRAME_END},
+	{SVMatroxDigitizerHook::SVGrabFrameStart,		M_GRAB_FRAME_START},
+	{SVMatroxDigitizerHook::SVGrabStart,			M_GRAB_START},
 #if SV_DESIRED_MIL_VERSION == 0x0900
-(SVMatroxDigitizerHook::SVUserBitChange,		M_USER_BIT_CHANGE)
+	{SVMatroxDigitizerHook::SVUserBitChange,		M_USER_BIT_CHANGE},
 #else
-(SVMatroxDigitizerHook::SVIOChange,				M_IO_CHANGE)
+	{SVMatroxDigitizerHook::SVIOChange,				M_IO_CHANGE},
 #endif
-(SVMatroxDigitizerHook::SVGigeEvent,			M_GC_EVENT)
-(SVMatroxDigitizerHook::SVLineRisingEdgeEvent,	M_LINE_RISING_EDGE)
-(SVMatroxDigitizerHook::SVLineFallingEdgeEvent,	M_LINE_FALLING_EDGE)
-(SVMatroxDigitizerHook::SVLineAnyEdgeEvent,		M_LINE_ANY_EDGE)
-;
+	{SVMatroxDigitizerHook::SVGigeEvent,			M_GC_EVENT},
+	{SVMatroxDigitizerHook::SVLineRisingEdgeEvent,	M_LINE_RISING_EDGE},
+	{SVMatroxDigitizerHook::SVLineFallingEdgeEvent,	M_LINE_FALLING_EDGE},
+	{SVMatroxDigitizerHook::SVLineAnyEdgeEvent,		M_LINE_ANY_EDGE}
+};
+
 // Assign mappings for Hook Info Types
-SVMatroxDigitizerHook::SVHookInfoEnumMap SVMatroxDigitizerHook::m_HookInfoEnumConvertor = boost::assign::map_list_of< SVMatroxDigitizerHook::SVHookInfoEnum, SVMatroxIdentifier >
-(SVMatroxDigitizerHook::SVUserBit,			M_USER_BIT)
-(SVMatroxDigitizerHook::SVUserBitState,		M_USER_BIT_STATE)
-(SVMatroxDigitizerHook::SVGigeCameraTimeStamp,	M_GC_CAMERA_TIME_STAMP)
-(SVMatroxDigitizerHook::SVGigeEventType,		M_GC_EVENT_TYPE)
-;
+SVMatroxDigitizerHook::SVHookInfoEnumPair SVMatroxDigitizerHook::m_HookInfoEnumConvertor
+{
+	{SVMatroxDigitizerHook::SVUserBit,			M_USER_BIT},
+	{SVMatroxDigitizerHook::SVUserBitState,		M_USER_BIT_STATE},
+	{SVMatroxDigitizerHook::SVGigeCameraTimeStamp,	M_GC_CAMERA_TIME_STAMP},
+	{SVMatroxDigitizerHook::SVGigeEventType,		M_GC_EVENT_TYPE}
+};
 

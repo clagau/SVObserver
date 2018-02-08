@@ -51,7 +51,6 @@
 #include <tchar.h>
 #include <vector>
 
-#include <boost/assign/list_of.hpp>
 #include <boost/circular_buffer.hpp>
 #include <boost/function.hpp> //Used by static library
 #pragma endregion Precompiled Headers

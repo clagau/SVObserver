@@ -11,8 +11,12 @@
 
 #pragma once
 
+#pragma region Includes
+//Moved to precompiled header: #include <vector>
+//Moved to precompiled header: #include <utility>
 #include "SVMatroxLibrary/SVMatroxTypedefs.h"
 #include "SVMatroxLibrary/SVMatroxEnumConvertor.h"
+#pragma endregion Includes
 
 /**
 @SVObjectName Matrox Digitizer Feature Enum
@@ -37,7 +41,7 @@ struct SVMatroxDigitizerFeature
 		SVTypeBool,					// M_TYPE_BOOLEAN
 	};
 	// define convertor for from/to SVEnum/Matrox types
-	typedef SVMatroxEnumConvertor<SVFeatureTypeEnum, MatroxType> SVFeatureTypeEnumMap;
-	static SVFeatureTypeEnumMap m_FeatureTypeEnumConvertor;
+	typedef std::vector<std::pair<SVFeatureTypeEnum, long long>> SVFeatureTypeEnumPair;
+	static SVFeatureTypeEnumPair m_FeatureTypeEnumConvertor;
 };
 

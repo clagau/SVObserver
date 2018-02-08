@@ -11,8 +11,6 @@
 
 #include "stdafx.h"
 //Moved to precompiled header: #include <boost/config.hpp>
-//Moved to precompiled header: #include <boost/assign/list_of.hpp>
-//Moved to precompiled header: #include <boost/assign/list_inserter.hpp>
 //Moved to precompiled header: #include <functional>
 //Moved to precompiled header: #include <algorithm>
 //Moved to precompiled header: #include <string>
@@ -27,14 +25,13 @@ static const long SVDefaultTimerPeriod = 200;
 static const int SVMaximumSoftwareTriggers = 4;
 
 SVSoftwareTriggerDevice::SVSoftwareTriggerDevice()
-: m_numTriggers(SVMaximumSoftwareTriggers)
+	: m_numTriggers {SVMaximumSoftwareTriggers}
+	, m_nameHandleList {
+	std::make_pair(std::string(_T("SoftwareTrigger_1.Dig_0")), 1ul),
+	std::make_pair(std::string(_T("SoftwareTrigger_1.Dig_1")), 2ul),
+	std::make_pair(std::string(_T("SoftwareTrigger_1.Dig_2")), 3ul),
+	std::make_pair(std::string(_T("SoftwareTrigger_1.Dig_3")), 4ul)}
 {
-	m_nameHandleList = (boost::assign::list_of<NameHandleList::value_type>
-		(std::make_pair(std::string(_T("SoftwareTrigger_1.Dig_0")), 1ul))
-		(std::make_pair(std::string(_T("SoftwareTrigger_1.Dig_1")), 2ul))
-		(std::make_pair(std::string(_T("SoftwareTrigger_1.Dig_2")), 3ul))
-		(std::make_pair(std::string(_T("SoftwareTrigger_1.Dig_3")), 4ul))
-		).convert_to_container<NameHandleList>();
 }
 
 SVSoftwareTriggerDevice::~SVSoftwareTriggerDevice()
@@ -60,11 +57,13 @@ HRESULT SVSoftwareTriggerDevice::Initialize(bool bInit)
 		timerStruct.timerPeriod = SVDefaultTimerPeriod;
 		timerStruct.timerCallback.Bind(this, &SVSoftwareTriggerDevice::OnSoftwareTimer);
 		
-		m_timerList = (boost::assign::map_list_of<unsigned long, SVSoftwareTimerStruct>
-			(1, timerStruct)
-			(2, timerStruct)
-			(3, timerStruct)
-			(4, timerStruct)).convert_to_container<TimerList>();
+		m_timerList = TimerList
+		{
+			{1, timerStruct},
+			{2, timerStruct},
+			{3, timerStruct},
+			{4, timerStruct}
+		};
 
 
 		//SvTl::SVMMTimer::Start();
@@ -86,12 +85,14 @@ BSTR SVSoftwareTriggerDevice::GetTriggerName(unsigned long handle)
 {
 	BSTR name = nullptr;
 
-	typedef NameHandleList::index_const_iterator<to>::type Iterator;
-	Iterator it = m_nameHandleList.get<to>().find(handle);
-	if (it != m_nameHandleList.get<to>().end())
+	for(const auto& rEntry : m_nameHandleList)
 	{
-		_bstr_t bstrName = _bstr_t(it->first.c_str());
-		name = bstrName.Detach();
+		if(rEntry.second == handle)
+		{
+			_bstr_t bstrName = _bstr_t(rEntry.first.c_str());
+			name = bstrName.Detach();
+			break;
+		}
 	}
 
 	return name;
@@ -243,12 +244,15 @@ HRESULT SVSoftwareTriggerDevice::SetTriggerPeriod( unsigned long handle, long p_
 	{
 		SVSoftwareTimerStruct& timerInfo = it->second;
 		timerInfo.timerPeriod = p_lPeriod;
-		typedef NameHandleList::index_const_iterator<to>::type Iterator;
-		Iterator nameIt = m_nameHandleList.get<to>().find(handle);
-		if (nameIt != m_nameHandleList.get<to>().end())
+		for (const auto& rEntry : m_nameHandleList)
 		{
-			SvTl::SVMMTimer::SetInterval(nameIt->first, p_lPeriod);
+			if (rEntry.second == handle)
+			{
+				SvTl::SVMMTimer::SetInterval(rEntry.first, p_lPeriod);
+				break;
+			}
 		}
+
 		hr = S_OK;
 	}
 	m_CritSec.Unlock();
@@ -268,12 +272,14 @@ HRESULT SVSoftwareTriggerDevice::SetTimerCallback(unsigned long handle)
 		timerInfo.timerCallback.Bind(this, &SVSoftwareTriggerDevice::OnSoftwareTimer);
 		
 		// register callback for MM Timer (need some sort of context)
-		typedef NameHandleList::index_const_iterator<to>::type Iterator;
-		Iterator nameIt = m_nameHandleList.get<to>().find(handle);
-		if (nameIt != m_nameHandleList.get<to>().end())
+		for (const auto& rEntry : m_nameHandleList)
 		{
-			SvTl::SVMMTimer::Subscribe(nameIt->first, timerInfo.timerPeriod, &timerInfo.timerCallback);
-			hr = S_OK;
+			if (rEntry.second == handle)
+			{
+				SvTl::SVMMTimer::Subscribe(rEntry.first, timerInfo.timerPeriod, &timerInfo.timerCallback);
+				hr = S_OK;
+				break;
+			}
 		}
 	}
 	m_CritSec.Unlock();
@@ -288,13 +294,15 @@ HRESULT SVSoftwareTriggerDevice::RemoveTimerCallback(unsigned long handle)
 	TimerList::iterator it = m_timerList.find(handle);
 	if (it != m_timerList.end())
 	{
-		// register callback for MM Timer (need some sort of context)
-		typedef NameHandleList::index_const_iterator<to>::type Iterator;
-		Iterator nameIt = m_nameHandleList.get<to>().find(handle);
-		if (nameIt != m_nameHandleList.get<to>().end())
+		// unregister callback for MM Timer (need some sort of context)
+		for (const auto& rEntry : m_nameHandleList)
 		{
-			SvTl::SVMMTimer::UnSubscribe(nameIt->first);
-			hr = S_OK;
+			if (rEntry.second == handle)
+			{
+				SvTl::SVMMTimer::UnSubscribe(rEntry.first);
+				hr = S_OK;
+				break;
+			}
 		}
 	}
 	m_CritSec.Unlock();
@@ -305,14 +313,17 @@ HRESULT SVSoftwareTriggerDevice::RemoveTimerCallback(unsigned long handle)
 void SVSoftwareTriggerDevice::OnSoftwareTimer(const std::string& tag)
 {
 	// find trigger callbacks for this trigger and dispatch
-	NameHandleList::const_iterator it = m_nameHandleList.get<from>().find(tag);
-	if (it != m_nameHandleList.end())
+	for (const auto& rEntry : m_nameHandleList)
 	{
-		unsigned long channel = it->second;
-		// get callback list
-		m_CritSec.Lock();
-		m_TriggerDispatchers.DispatchIfPossible(channel);
-		m_CritSec.Unlock();
+		if (rEntry.first == tag)
+		{
+			unsigned long channel = rEntry.second;
+			// get callback list
+			m_CritSec.Lock();
+			m_TriggerDispatchers.DispatchIfPossible(channel);
+			m_CritSec.Unlock();
+			break;
+		}
 	}
 }
 

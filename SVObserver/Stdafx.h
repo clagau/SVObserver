@@ -131,9 +131,6 @@ namespace Gdiplus
 #include <boost\algorithm\string.hpp>
 #include <boost\algorithm\string\replace.hpp>
 #include <boost/any.hpp>
-#include <boost/assign.hpp>
-#include <boost/assign/list_of.hpp>
-#include <boost/assign/list_inserter.hpp>
 #include <boost/bind.hpp>
 #include <boost/circular_buffer.hpp>
 #include <boost/config.hpp>

@@ -12,7 +12,6 @@
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <boost/config.hpp>
-//Moved to precompiled header: #include <boost/assign/list_of.hpp>
 #include "SVCustomParameterBuilder.h"
 #include "CameraLibrary/SVDeviceParams.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -50,54 +49,56 @@ static const double DefaultDivisor = 1.0;
 static const TCHAR* const cDEFAULTUNIT = _T("Unit");
 
 typedef std::map<std::string, SVDeviceParamDataTypeEnum> DeviceDataTypeEnumNameMap;
-static const DeviceDataTypeEnumNameMap g_DeviceDataTypeEnumNameMap = boost::assign::map_list_of<std::string, SVDeviceParamDataTypeEnum>
-(cLongDataType, DeviceDataTypeLong)
-(cBoolDataType, DeviceDataTypeBool)
-(cStringDataType, DeviceDataTypeString)
-(cInt64DataType, DeviceDataTypei64)
-(cComplexDataType, DeviceDataTypeComplex)
-(cUnknownDataType, DeviceDataTypeUnknown)
-;
+static const DeviceDataTypeEnumNameMap cDeviceDataTypeEnumNameMap
+{
+	{cLongDataType, DeviceDataTypeLong},
+	{cBoolDataType, DeviceDataTypeBool},
+	{cStringDataType, DeviceDataTypeString},
+	{cInt64DataType, DeviceDataTypei64},
+	{cComplexDataType, DeviceDataTypeComplex},
+	{cUnknownDataType, DeviceDataTypeUnknown}
+};
 
 typedef std::map<std::string, SVDeviceParamEnum> DeviceParamEnumNameMap;
-static const DeviceParamEnumNameMap g_DeviceParamEnumNameMap = boost::assign::map_list_of<std::string, SVDeviceParamEnum>
-(DeviceParamGigeCustom1_String, DeviceParamGigeCustom1)
-(DeviceParamGigeCustom2_String, DeviceParamGigeCustom2)
-(DeviceParamGigeCustom3_String, DeviceParamGigeCustom3)
-(DeviceParamGigeCustom4_String, DeviceParamGigeCustom4)
-(DeviceParamGigeCustom5_String, DeviceParamGigeCustom5)
-(DeviceParamGigeCustom6_String, DeviceParamGigeCustom6)
-(DeviceParamGigeCustom7_String, DeviceParamGigeCustom7)
-(DeviceParamGigeCustom8_String, DeviceParamGigeCustom8)
-(DeviceParamGigeCustom9_String, DeviceParamGigeCustom9)
-(DeviceParamGigeCustom10_String, DeviceParamGigeCustom10)
-(DeviceParamGigeCustom11_String, DeviceParamGigeCustom11)
-(DeviceParamGigeCustom12_String, DeviceParamGigeCustom12)
-(DeviceParamGigeCustom13_String, DeviceParamGigeCustom13)
-(DeviceParamGigeCustom14_String, DeviceParamGigeCustom14)
-(DeviceParamGigeCustom15_String, DeviceParamGigeCustom15)
-(DeviceParamGigeCustom16_String, DeviceParamGigeCustom16)
-(DeviceParamGigeCustom17_String, DeviceParamGigeCustom17)
-(DeviceParamGigeCustom18_String, DeviceParamGigeCustom18)
-(DeviceParamGigeCustom19_String, DeviceParamGigeCustom19)
-(DeviceParamGigeCustom20_String, DeviceParamGigeCustom20)
-(DeviceParamGigeCustom21_String, DeviceParamGigeCustom21)
-(DeviceParamGigeCustom22_String, DeviceParamGigeCustom22)
-(DeviceParamGigeCustom23_String, DeviceParamGigeCustom23)
-(DeviceParamGigeCustom24_String, DeviceParamGigeCustom24)
-(DeviceParamGigeCustom25_String, DeviceParamGigeCustom25)
-(DeviceParamGigeCustom26_String, DeviceParamGigeCustom26)
-(DeviceParamGigeCustom27_String, DeviceParamGigeCustom27)
-(DeviceParamGigeCustom28_String, DeviceParamGigeCustom28)
-(DeviceParamGigeCustom29_String, DeviceParamGigeCustom29)
-(DeviceParamGigeCustom30_String, DeviceParamGigeCustom30)
-;
+static const DeviceParamEnumNameMap cDeviceParamEnumNameMap
+{
+	{DeviceParamGigeCustom1_String, DeviceParamGigeCustom1},
+	{DeviceParamGigeCustom2_String, DeviceParamGigeCustom2},
+	{DeviceParamGigeCustom3_String, DeviceParamGigeCustom3},
+	{DeviceParamGigeCustom4_String, DeviceParamGigeCustom4},
+	{DeviceParamGigeCustom5_String, DeviceParamGigeCustom5},
+	{DeviceParamGigeCustom6_String, DeviceParamGigeCustom6},
+	{DeviceParamGigeCustom7_String, DeviceParamGigeCustom7},
+	{DeviceParamGigeCustom8_String, DeviceParamGigeCustom8},
+	{DeviceParamGigeCustom9_String, DeviceParamGigeCustom9},
+	{DeviceParamGigeCustom10_String, DeviceParamGigeCustom10},
+	{DeviceParamGigeCustom11_String, DeviceParamGigeCustom11},
+	{DeviceParamGigeCustom12_String, DeviceParamGigeCustom12},
+	{DeviceParamGigeCustom13_String, DeviceParamGigeCustom13},
+	{DeviceParamGigeCustom14_String, DeviceParamGigeCustom14},
+	{DeviceParamGigeCustom15_String, DeviceParamGigeCustom15},
+	{DeviceParamGigeCustom16_String, DeviceParamGigeCustom16},
+	{DeviceParamGigeCustom17_String, DeviceParamGigeCustom17},
+	{DeviceParamGigeCustom18_String, DeviceParamGigeCustom18},
+	{DeviceParamGigeCustom19_String, DeviceParamGigeCustom19},
+	{DeviceParamGigeCustom20_String, DeviceParamGigeCustom20},
+	{DeviceParamGigeCustom21_String, DeviceParamGigeCustom21},
+	{DeviceParamGigeCustom22_String, DeviceParamGigeCustom22},
+	{DeviceParamGigeCustom23_String, DeviceParamGigeCustom23},
+	{DeviceParamGigeCustom24_String, DeviceParamGigeCustom24},
+	{DeviceParamGigeCustom25_String, DeviceParamGigeCustom25},
+	{DeviceParamGigeCustom26_String, DeviceParamGigeCustom26},
+	{DeviceParamGigeCustom27_String, DeviceParamGigeCustom27},
+	{DeviceParamGigeCustom28_String, DeviceParamGigeCustom28},
+	{DeviceParamGigeCustom29_String, DeviceParamGigeCustom29},
+	{DeviceParamGigeCustom30_String, DeviceParamGigeCustom30}
+};
 
 SVDeviceParamEnum GetEnumFromCustomID(const std::string& tag)
 {
 	SVDeviceParamEnum paramEnum(DeviceParamInvalid);
-	DeviceParamEnumNameMap::const_iterator it = g_DeviceParamEnumNameMap.find(tag);
-	if (it != g_DeviceParamEnumNameMap.end())
+	DeviceParamEnumNameMap::const_iterator it = cDeviceParamEnumNameMap.find(tag);
+	if (it != cDeviceParamEnumNameMap.end())
 	{
 		paramEnum = it->second;
 	}
@@ -107,8 +108,8 @@ SVDeviceParamEnum GetEnumFromCustomID(const std::string& tag)
 SVDeviceParamDataTypeEnum GetDataTypeEnumFromString(const std::string& tag)
 {
 	SVDeviceParamDataTypeEnum dataTypeEnum(DeviceDataTypeUnknown);
-	DeviceDataTypeEnumNameMap::const_iterator it = g_DeviceDataTypeEnumNameMap.find(tag);
-	if (it != g_DeviceDataTypeEnumNameMap.end())
+	DeviceDataTypeEnumNameMap::const_iterator it = cDeviceDataTypeEnumNameMap.find(tag);
+	if (it != cDeviceDataTypeEnumNameMap.end())
 	{
 		dataTypeEnum = it->second;
 	}

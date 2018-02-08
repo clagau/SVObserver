@@ -30,6 +30,11 @@ SVGigeFeatureStringEnumList::SVGigeFeatureStringEnumList(const SVGigeFeatureStri
 	}
 }
 
+SVGigeFeatureStringEnumList::SVGigeFeatureStringEnumList(_XSTD initializer_list<StringPairVector::value_type> _Ilist) :
+m_stringEnums{_Ilist}
+{
+}
+
 SVGigeFeatureStringEnumList& SVGigeFeatureStringEnumList::operator=(const SVGigeFeatureStringEnumList& rList)
 {
 	if (this != &rList)
@@ -49,35 +54,29 @@ bool SVGigeFeatureStringEnumList::HasTranslation() const
 
 HRESULT SVGigeFeatureStringEnumList::GetGigeFeatureString(const std::string& rDeviceParam, std::string& rGigeFeature) const
 {
-	HRESULT hr = S_OK;
+	for(const auto& rEntry : m_stringEnums)
+	{
+		if(rEntry.first == rDeviceParam)
+		{
+			rGigeFeature = rEntry.second;
+			return S_OK;
+		}
+	}
 
-	typedef SVBidirectionalMap<std::string, std::string>::type::index_const_iterator<from>::type const_iterator;
-	const_iterator it = m_stringEnums.get<from>().find(rDeviceParam);
-	if (it != m_stringEnums.get<from>().end())
-	{
-		rGigeFeature = it->second;
-	}
-	else
-	{
-		hr = S_FALSE;
-	}
-	return hr;
+	return E_FAIL;
 }
 
 HRESULT SVGigeFeatureStringEnumList::GetDeviceParamString(const std::string& rGigeFeature, std::string& rDeviceParam) const
 {
-	HRESULT hr = S_OK;
+	for (const auto& rEntry : m_stringEnums)
+	{
+		if (rEntry.second == rGigeFeature)
+		{
+			rDeviceParam = rEntry.first;
+			return S_OK;
+		}
+	}
 
-	typedef SVBidirectionalMap<std::string, std::string>::type::index_const_iterator<to>::type const_iterator;
-	const_iterator it = m_stringEnums.get<to>().find(rGigeFeature);
-	if (it != m_stringEnums.get<to>().end())
-	{
-		rDeviceParam = it->first;
-	}
-	else
-	{
-		hr = S_FALSE;
-	}
-	return hr;
+	return E_FAIL;
 }
 

@@ -16,7 +16,10 @@
 //Moved to precompiled header: #include <boost/multi_index_container.hpp>
 //Moved to precompiled header: #include <boost/multi_index/member.hpp>
 //Moved to precompiled header: #include <boost/multi_index/ordered_index.hpp>
-#include "SVBimapDeclarations.h"
+
+// tags for accessing both sides of a bidirectional map
+struct from {};
+struct to {};
 
 // The class template bidirectional_map wraps the specification
 // of a bidirectional map based on multi_index_container.

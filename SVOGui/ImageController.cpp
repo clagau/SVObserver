@@ -9,7 +9,6 @@
 #pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <boost/bind.hpp>
-//Moved to precompiled header: #include <boost/assign/list_of.hpp>
 #include "ImageController.h"
 #include "InspectionCommands\GetImage.h"
 #include "InspectionCommands\GetConnectedObjects.h"

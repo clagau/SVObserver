@@ -11,8 +11,12 @@
 
 #pragma once
 
+#pragma region Includes
+//Moved to precompiled header: #include <vector>
+//Moved to precompiled header: #include <utility>
 #include "SVMatroxLibrary/SVMatroxTypedefs.h"
 #include "SVMatroxLibrary/SVMatroxEnumConvertor.h"
+#pragma endregion Includes
 
 /**
 @SVObjectName Matrox Digitizer Inquire Enum
@@ -32,8 +36,8 @@ struct SVMatroxDigitizerInquire
 		SVChannelNum,				// M_CHANNEL_NUM
 	};
 	// define convertor for from/to SVEnum/Matrox types
-	typedef SVMatroxEnumConvertor<SVBoardEnum, long> SVBoardEnumMap;
-	static SVBoardEnumMap m_BoardEnumConvertor;
+	typedef std::vector<std::pair<SVBoardEnum, long long>> SVBoardEnumPair;
+	static SVBoardEnumPair m_BoardEnumConvertor;
 	
 	// Camera Format
 	enum SVColorModeEnum
@@ -44,8 +48,8 @@ struct SVMatroxDigitizerInquire
 		SVMonochrome,			// M_MONOCHROME  Monochrome input.  
 		SVRGB,					// M_RGB  
 	};
-	typedef SVMatroxEnumConvertor<SVColorModeEnum, long> SVColorModeEnumMap;
-	static SVColorModeEnumMap m_ColorModeEnumConvertor;
+	typedef std::vector<std::pair<SVColorModeEnum, long long>> SVColorModeEnumPair;
+	static SVColorModeEnumPair m_ColorModeEnumConvertor;
 
 	enum SVScanModeEnum
 	{
@@ -53,8 +57,8 @@ struct SVMatroxDigitizerInquire
 		SVLinescan, 	// M_LINESCAN  Line-scan mode  
 		SVProgressive, 	// M_PROGRESSIVE  Progressive mode  
 	};
-	typedef SVMatroxEnumConvertor<SVScanModeEnum, long> SVScanModeEnumMap;
-	static SVScanModeEnumMap m_ScanModeEnumConvertor;
+	typedef std::vector<std::pair<SVScanModeEnum, long long>> SVScanModeEnumPair;
+	static SVScanModeEnumPair m_ScanModeEnumConvertor;
 	
 	// Frame
 	enum SVFrameEnum
@@ -64,7 +68,7 @@ struct SVMatroxDigitizerInquire
 		SVProcessFrameCorrupted,	// M_PROCESS_FRAME_CORRUPTED
 		SVProcessFrameRate,			// M_PROCESS_FRAME_RATE
 	};
-	typedef SVMatroxEnumConvertor<SVFrameEnum, long> SVFrameEnumMap;
-	static SVFrameEnumMap m_FrameEnumConvertor;
+	typedef std::vector<std::pair<SVFrameEnum, long long>> SVFrameEnumPair;
+	static SVFrameEnumPair m_FrameEnumConvertor;
 };
 

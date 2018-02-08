@@ -45,7 +45,6 @@
 #include <vector>
 #include <utility>
 
-#include <boost/assign.hpp>
 #include <boost/bind.hpp>
 #include <boost/config.hpp>
 #include <boost/function.hpp>

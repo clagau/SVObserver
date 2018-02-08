@@ -10,7 +10,6 @@
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
-//Moved to precompiled header: #include <boost/assign/list_of.hpp> 
 #include "SVMatroxLibrary/SVMatroxEnums.h"
 #include "SVRankingFilterDlg.h"
 #include "SVObjectLibrary/SVClsids.h"

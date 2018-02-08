@@ -11,7 +11,6 @@
 
 #pragma region Includes
 #include "stdafx.h"
-//Moved to precompiled header: #include <boost/assign/list_of.hpp>
 #include "SVToolAdjustmentDialogTwoImagePage.h"
 #include "SVMatroxLibrary\SVMatroxEnums.h"
 #include "Definitions/ImageOperatorEnums.h"

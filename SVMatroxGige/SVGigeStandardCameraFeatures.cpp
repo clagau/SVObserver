@@ -12,7 +12,6 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <boost/config.hpp>
-//Moved to precompiled header: #include <boost/assign/list_of.hpp>
 #include "SVGigeStandardCameraFeatures.h"
 #include "SVGigeCameraParametersLibrary/SVGigeEmptySetter.h"
 #include "SVGigeCameraParametersLibrary/SVGigeEmptyGetter.h"
@@ -191,788 +190,882 @@ struct SVGigeEventSetter
 
 const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeatures()
 {
-	static const SVGigeDeviceParameterMap features = boost::assign::map_list_of<SvDef::SVGigeParameterEnum, SVGigeDeviceParameterStruct>
-	///////////////////////////////////////////////////////////////////////
-	// Exposure Mode - not supported yet
-	///////////////////////////////////////////////////////////////////////
-	( SvDef::SVGigeParameterExposureMode,				
-		SVGigeDeviceParameterStruct
-		(
-			std::string( _T("Trigger Mode") ), VT_BSTR,
-			SVGigeParameterAccessor
-			(
-				SVGigeFeature
-				( _T("ExposureMode"),  SVMatroxDigitizerFeature::SVTypeStringEnumeration,
-					SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
-				),
-				SVGigeEmptyGetter(),
-				SVGigeEmptySetter()
-			)
-		)
-	)
+	static const SVGigeDeviceParameterMap cFeatures
+	{
+		///////////////////////////////////////////////////////////////////////
+		// Exposure Mode - not supported yet
+		///////////////////////////////////////////////////////////////////////
+		{ SvDef::SVGigeParameterExposureMode,
+			SVGigeDeviceParameterStruct
+			{
+				std::string(_T("Trigger Mode")), VT_BSTR,
+				SVGigeParameterAccessor
+				{
+					SVGigeFeature
+					{	
+						_T("ExposureMode"),  SVMatroxDigitizerFeature::SVTypeStringEnumeration, 
+						SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
+					},
+					SVGigeEmptyGetter(),
+					SVGigeEmptySetter()
+				}
+			}
+		},
 	
-	///////////////////////////////////////////////////////////////////////
-	// Bayer Pattern - not supported yet
-	///////////////////////////////////////////////////////////////////////
-	( SvDef::SVGigeParameterBayerPattern,
-		SVGigeDeviceParameterStruct
-		(
-			std::string( _T("Bayer Pattern") ), VT_I4,
-			SVGigeParameterAccessor
-			(
-				SVGigeFeature
-				( _T(""), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
-					SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
-				),
-				SVGigeEmptyGetter(),
-				SVGigeEmptySetter()
-			)
-		)
-	)
+		///////////////////////////////////////////////////////////////////////
+		// Bayer Pattern - not supported yet
+		///////////////////////////////////////////////////////////////////////
+		{ SvDef::SVGigeParameterBayerPattern,
+			SVGigeDeviceParameterStruct
+			{
+				std::string( _T("Bayer Pattern") ), VT_I4,
+				SVGigeParameterAccessor
+				{
+					SVGigeFeature{ _T(""), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
+						SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite},
+					SVGigeEmptyGetter(),
+					SVGigeEmptySetter()
+				}
+			}
+		},
 
-	///////////////////////////////////////////////////////////////////////
-	// X Offset
-	///////////////////////////////////////////////////////////////////////
-	( SvDef::SVGigeParameterXOffset,
-		SVGigeDeviceParameterStruct
-		(
-			std::string( _T("X Offset") ), VT_I4,
-			SVGigeParameterAccessor
-			(
-				SVGigeFeature( _T("OffsetX"), SVMatroxDigitizerFeature::SVTypeInt32 )
-			)
-		)
-	)
+		///////////////////////////////////////////////////////////////////////
+		// X Offset
+		///////////////////////////////////////////////////////////////////////
+		{ SvDef::SVGigeParameterXOffset,
+			SVGigeDeviceParameterStruct
+			{
+				std::string( _T("X Offset") ), VT_I4,
+				SVGigeParameterAccessor
+				{ 
+					SVGigeFeature{ _T("OffsetX"), SVMatroxDigitizerFeature::SVTypeInt32 }
+				}
+			}
+		},
 
-	///////////////////////////////////////////////////////////////////////
-	// Y Offset
-	///////////////////////////////////////////////////////////////////////
-	( SvDef::SVGigeParameterYOffset,
-		SVGigeDeviceParameterStruct
-		(
-			std::string( _T("Y Offset") ), VT_I4,
-			SVGigeParameterAccessor
-			(
-				SVGigeFeature( _T("OffsetY"), SVMatroxDigitizerFeature::SVTypeInt32 )
-			)
-		)
-	)
+		///////////////////////////////////////////////////////////////////////
+		// Y Offset
+		///////////////////////////////////////////////////////////////////////
+		{ SvDef::SVGigeParameterYOffset,
+			SVGigeDeviceParameterStruct
+			{
+				std::string( _T("Y Offset") ), VT_I4,
+				SVGigeParameterAccessor
+				{
+					SVGigeFeature{ _T("OffsetY"), SVMatroxDigitizerFeature::SVTypeInt32}
+				}
+			}
+		},
 
-	///////////////////////////////////////////////////////////////////////
-	// Width
-	///////////////////////////////////////////////////////////////////////
-	( SvDef::SVGigeParameterXSize,
-		SVGigeDeviceParameterStruct
-		(
-			std::string( _T("X Size") ), VT_I4,
-			SVGigeParameterAccessor
-			(
-				SVGigeFeature( _T("Width"), SVMatroxDigitizerFeature::SVTypeInt32 )
-			)
-		)
-	)
+		///////////////////////////////////////////////////////////////////////
+		// Width
+		///////////////////////////////////////////////////////////////////////
+		{ SvDef::SVGigeParameterXSize,
+			SVGigeDeviceParameterStruct
+			{
+				std::string( _T("X Size") ), VT_I4,
+				SVGigeParameterAccessor
+				{
+					SVGigeFeature{_T("Width"), SVMatroxDigitizerFeature::SVTypeInt32}
+				}
+			}
+		},
 
-	///////////////////////////////////////////////////////////////////////
-	// Height
-	///////////////////////////////////////////////////////////////////////
-	( SvDef::SVGigeParameterYSize,
-		SVGigeDeviceParameterStruct
-		(
-			std::string( _T("Y Size") ), VT_I4,
-			SVGigeParameterAccessor
-			(
-				SVGigeFeature( _T("Height"), SVMatroxDigitizerFeature::SVTypeInt32)
-			)
-		)
-	)
+		///////////////////////////////////////////////////////////////////////
+		// Height
+		///////////////////////////////////////////////////////////////////////
+		{ SvDef::SVGigeParameterYSize,
+			SVGigeDeviceParameterStruct
+			{
+				std::string( _T("Y Size") ), VT_I4,
+				SVGigeParameterAccessor
+				{
+					SVGigeFeature{_T("Height"), SVMatroxDigitizerFeature::SVTypeInt32}
+				}
+			}
+		},
 
-	///////////////////////////////////////////////////////////////////////
-	// Color Format
-	///////////////////////////////////////////////////////////////////////
-	( SvDef::SVGigeParameterColorFormat,
-		SVGigeDeviceParameterStruct
-		( std::string( _T("Color Format") ),	VT_BSTR,
-			SVGigeParameterAccessor
-			(
-				SVGigeFeature
-				( _T("PixelFormat"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
-					SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
-					SVGigeFeatureSelector( ),
-					(  boost::assign::map_list_of<std::string, std::string>
-						( _T("Y"), _T("Mono8") )
-						( _T("YUV422"), _T("YUV422Packed") )
-						(_T("BayerRG8"), _T("BayerRG8"))
-						(_T("BayerRG12"), _T("BayerRG12"))
-						(_T("BayerGB8"), _T("BayerGB8"))
-						(_T("BayerGB10"), _T("BayerGB10"))
-						(_T("BayerGB12"), _T("BayerGB12"))
-						)
-				)
-			)
-		) 
-	)
+		///////////////////////////////////////////////////////////////////////
+		// Color Format
+		///////////////////////////////////////////////////////////////////////
+		{ SvDef::SVGigeParameterColorFormat,
+			SVGigeDeviceParameterStruct
+			{ 
+				std::string( _T("Color Format") ),	VT_BSTR,
+				SVGigeParameterAccessor
+				{
+					SVGigeFeature
+					{ 
+						_T("PixelFormat"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
+						SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
+						SVGigeFeatureSelector(),
+						SVGigeFeatureStringEnumList
+						{
+							{_T("Y"),			_T("Mono8")},
+							{_T("YUV422"),		_T("YUV422Packed")},
+							{_T("BayerRG8"),	_T("BayerRG8")},
+							{_T("BayerRG12"),	_T("BayerRG12")},
+							{_T("BayerGB8"),	_T("BayerGB8")},
+							{_T("BayerGB10"),	_T("BayerGB10")},
+							{_T("BayerGB12"),	_T("BayerGB12")}
+						}
+					}
+				}
+			}
+		},
 
-	///////////////////////////////////////////////////////////////////////
-	// Brightness
-	///////////////////////////////////////////////////////////////////////
-	( SvDef::SVGigeParameterFeatureBrightness,
-		SVGigeDeviceParameterStruct
-		(
-			std::string( _T("Brightness") ), VT_I4,
-			SVGigeParameterAccessor
-			(
-				SVGigeFeature
-				( _T("BlackLevelRaw"), SVMatroxDigitizerFeature::SVTypeInt32,
-					SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
-					SVGigeFeatureSelector( _T("BlackLevelSelector"), _T("All") )
-				)
-			)
-		)
-	)
+		///////////////////////////////////////////////////////////////////////
+		// Brightness
+		///////////////////////////////////////////////////////////////////////
+		{ SvDef::SVGigeParameterFeatureBrightness,
+			SVGigeDeviceParameterStruct
+			{
+				std::string( _T("Brightness") ), VT_I4,
+				SVGigeParameterAccessor
+				{
+					SVGigeFeature
+					{
+						_T("BlackLevelRaw"), SVMatroxDigitizerFeature::SVTypeInt32,
+						SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
+						SVGigeFeatureSelector
+						{
+							_T("BlackLevelSelector"), 
+							_T("All")
+						}
+					}
+				}
+			}
+		},
 
-	///////////////////////////////////////////////////////////////////////
-	// Auto Exposure - not supported yet
-	///////////////////////////////////////////////////////////////////////
-	( SvDef::SVGigeParameterFeatureAutoExposure,
-		SVGigeDeviceParameterStruct
-		(
-			std::string( _T("Auto Exposure") ), VT_I4,
-			SVGigeParameterAccessor
-			(
-				SVGigeFeature
-				( _T("ExposureTimeAuto"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
-					SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
-				),
-				SVGigeEmptyGetter(),
-				SVGigeEmptySetter()
-			)
-		)
-	)
+		///////////////////////////////////////////////////////////////////////
+		// Auto Exposure - not supported yet
+		///////////////////////////////////////////////////////////////////////
+		{ SvDef::SVGigeParameterFeatureAutoExposure,
+			SVGigeDeviceParameterStruct
+			{
+				std::string( _T("Auto Exposure") ), VT_I4,
+				SVGigeParameterAccessor
+				{
+					SVGigeFeature
+					{
+						_T("ExposureTimeAuto"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
+						SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
+					},
+					SVGigeEmptyGetter(),
+					SVGigeEmptySetter()
+				}
+			}
+		},
 
-	///////////////////////////////////////////////////////////////////////
-	// Sharpness - not supported yet
-	///////////////////////////////////////////////////////////////////////
-	( SvDef::SVGigeParameterFeatureSharpness,
-		SVGigeDeviceParameterStruct
-		(
-			std::string( _T("Sharpness") ), VT_I4,
-			SVGigeParameterAccessor
-			(
-				SVGigeFeature
-				( _T(""), SVMatroxDigitizerFeature::SVTypeInt32,
-					SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
-				),
-				SVGigeEmptyGetter(),
-				SVGigeEmptySetter()
-			)
-		)
-	)
+		///////////////////////////////////////////////////////////////////////
+		// Sharpness - not supported yet
+		///////////////////////////////////////////////////////////////////////
+		{ SvDef::SVGigeParameterFeatureSharpness,
+			SVGigeDeviceParameterStruct
+			{
+				std::string( _T("Sharpness") ), VT_I4,
+				SVGigeParameterAccessor
+				{
+					SVGigeFeature
+					{ 
+						_T(""), SVMatroxDigitizerFeature::SVTypeInt32,
+						SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
+					},
+					SVGigeEmptyGetter(),
+					SVGigeEmptySetter()
+				}
+			}
+		},
 
-	///////////////////////////////////////////////////////////////////////
-	// WhiteBalanceU - not supported yet
-	///////////////////////////////////////////////////////////////////////
-	( SvDef::SVGigeParameterFeatureWhiteBalanceU,	
-		SVGigeDeviceParameterStruct
-		(
-			std::string( _T("White Balance - U") ), VT_I4,
-			SVGigeParameterAccessor
-			(
-				SVGigeFeature
-				( _T(""), SVMatroxDigitizerFeature::SVTypeInt32,
-					SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
-				),
-				SVGigeEmptyGetter(), 
-				SVGigeEmptySetter()
-			)
-		)
-	)
+		///////////////////////////////////////////////////////////////////////
+		// WhiteBalanceU - not supported yet
+		///////////////////////////////////////////////////////////////////////
+		{ SvDef::SVGigeParameterFeatureWhiteBalanceU,	
+			SVGigeDeviceParameterStruct
+			{
+				std::string( _T("White Balance - U") ), VT_I4,
+				SVGigeParameterAccessor
+				{
+					SVGigeFeature
+					{
+						_T(""), SVMatroxDigitizerFeature::SVTypeInt32,
+						SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
+					},
+					SVGigeEmptyGetter(), 
+					SVGigeEmptySetter()
+				}
+			}
+		},
 
-	///////////////////////////////////////////////////////////////////////
-	// WhiteBalanceV - not supported yet
-	///////////////////////////////////////////////////////////////////////
-	( SvDef::SVGigeParameterFeatureWhiteBalanceV,
-		SVGigeDeviceParameterStruct
-		(
-			std::string( _T("White Balance - V") ), VT_I4,
-			SVGigeParameterAccessor
-			(
-				SVGigeFeature
-				( _T(""), SVMatroxDigitizerFeature::SVTypeInt32, 
-					SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
-				),
-				SVGigeEmptyGetter(), 
-				SVGigeEmptySetter()
-			)
-		)
-	)
+		///////////////////////////////////////////////////////////////////////
+		// WhiteBalanceV - not supported yet
+		///////////////////////////////////////////////////////////////////////
+		{ SvDef::SVGigeParameterFeatureWhiteBalanceV,
+			SVGigeDeviceParameterStruct
+			{
+				std::string( _T("White Balance - V") ), VT_I4,
+				SVGigeParameterAccessor
+				{
+					SVGigeFeature
+					{
+						_T(""), SVMatroxDigitizerFeature::SVTypeInt32, 
+						SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
+					},
+					SVGigeEmptyGetter(), 
+					SVGigeEmptySetter()
+				}
+			}
+		},
 
-	///////////////////////////////////////////////////////////////////////
-	// Hue - not supported yet
-	///////////////////////////////////////////////////////////////////////
-	( SvDef::SVGigeParameterFeatureHue,
-		SVGigeDeviceParameterStruct
-		(
-			std::string( _T("Hue") ), VT_I4,
-			SVGigeParameterAccessor
-			(
-				SVGigeFeature
-				( _T(""), SVMatroxDigitizerFeature::SVTypeInt32,
-					SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
-				),
-				SVGigeEmptyGetter(),
-				SVGigeEmptySetter()
-			)
-		)
-	)
+		///////////////////////////////////////////////////////////////////////
+		// Hue - not supported yet
+		///////////////////////////////////////////////////////////////////////
+		{ SvDef::SVGigeParameterFeatureHue,
+			SVGigeDeviceParameterStruct
+			{
+				std::string( _T("Hue") ), VT_I4,
+				SVGigeParameterAccessor
+				{
+					SVGigeFeature
+					{
+						_T(""), SVMatroxDigitizerFeature::SVTypeInt32,
+						SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
+					},
+					SVGigeEmptyGetter(),
+					SVGigeEmptySetter()
+				}
+			}
+		},
 
-	///////////////////////////////////////////////////////////////////////
-	// Saturation - not supported yet
-	///////////////////////////////////////////////////////////////////////
-	( SvDef::SVGigeParameterFeatureSaturation,
-		SVGigeDeviceParameterStruct
-		(
-			std::string( _T("Saturation") ), VT_I4,
-			SVGigeParameterAccessor
-			(
-				SVGigeFeature
-				( _T(""), SVMatroxDigitizerFeature::SVTypeInt32,
-					SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
-				),
-				SVGigeEmptyGetter(),
-				SVGigeEmptySetter()
-			)
-		)
-	)
+		///////////////////////////////////////////////////////////////////////
+		// Saturation - not supported yet
+		///////////////////////////////////////////////////////////////////////
+		{ SvDef::SVGigeParameterFeatureSaturation,
+			SVGigeDeviceParameterStruct
+			{
+				std::string( _T("Saturation") ), VT_I4,
+				SVGigeParameterAccessor
+				{
+					SVGigeFeature
+					{ 
+						_T(""), SVMatroxDigitizerFeature::SVTypeInt32,
+						SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
+					},
+					SVGigeEmptyGetter(),
+					SVGigeEmptySetter()
+				}
+			}
+		},
 
-	///////////////////////////////////////////////////////////////////////
-	// Gamma
-	///////////////////////////////////////////////////////////////////////
-	( SvDef::SVGigeParameterFeatureGamma,
-		SVGigeDeviceParameterStruct
-		(
-			std::string( _T("Gamma") ), VT_R8,
-			SVGigeParameterAccessor
-			(
-				SVGigeFeature( _T("Gamma"), SVMatroxDigitizerFeature::SVTypeDouble )
-			)
-		)
-	)
+		///////////////////////////////////////////////////////////////////////
+		// Gamma
+		///////////////////////////////////////////////////////////////////////
+		{ SvDef::SVGigeParameterFeatureGamma,
+			SVGigeDeviceParameterStruct
+			{
+				std::string( _T("Gamma") ), VT_R8,
+				SVGigeParameterAccessor
+				{
+					SVGigeFeature
+					{
+						_T("Gamma"), SVMatroxDigitizerFeature::SVTypeDouble
+					}
+				}
+			}
+		},
 
-	///////////////////////////////////////////////////////////////////////
-	// Shutter
-	///////////////////////////////////////////////////////////////////////
-	( SvDef::SVGigeParameterFeatureShutter,
-		SVGigeDeviceParameterStruct
-		(
-			std::string( _T("Shutter") ), VT_R8,
-			SVGigeParameterAccessor
-			(
-				SVGigeFeature( _T("ExposureTimeAbs"), SVMatroxDigitizerFeature::SVTypeDouble )
-			)
-		)
-	)
+		///////////////////////////////////////////////////////////////////////
+		// Shutter
+		///////////////////////////////////////////////////////////////////////
+		{ SvDef::SVGigeParameterFeatureShutter,
+			SVGigeDeviceParameterStruct
+			{
+				std::string( _T("Shutter") ), VT_R8,
+				SVGigeParameterAccessor
+				{
+					SVGigeFeature
+					{
+						_T("ExposureTimeAbs"), SVMatroxDigitizerFeature::SVTypeDouble
+					}
+				}
+			}
+		},
 
-	///////////////////////////////////////////////////////////////////////
-	// Gain
-	///////////////////////////////////////////////////////////////////////
-	( SvDef::SVGigeParameterFeatureGain,
-		SVGigeDeviceParameterStruct
-		(
-			std::string( _T("Gain") ), VT_R8,
-			SVGigeParameterAccessor
-			(
-				SVGigeFeature
-				( _T("GainAbs"), SVMatroxDigitizerFeature::SVTypeDouble, 
-					SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
-					SVGigeFeatureSelector( _T("GainSelector"), _T("All") )
-				)
-			)
-		)
-	)
+		///////////////////////////////////////////////////////////////////////
+		// Gain
+		///////////////////////////////////////////////////////////////////////
+		{ SvDef::SVGigeParameterFeatureGain,
+			SVGigeDeviceParameterStruct
+			{
+				std::string( _T("Gain") ), VT_R8,
+				SVGigeParameterAccessor
+				{
+					SVGigeFeature
+					{
+						_T("GainAbs"), SVMatroxDigitizerFeature::SVTypeDouble, 
+						SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
+						SVGigeFeatureSelector
+						{
+							_T("GainSelector"), 
+							_T("All")
+						}
+					}
+				}
+			}
+		},
 
-	///////////////////////////////////////////////////////////////////////
-	// Trigger Source
-	///////////////////////////////////////////////////////////////////////
-	( SvDef::SVGigeParameterTriggerSource,
-		SVGigeDeviceParameterStruct
-		(
-			std::string( _T("Trigger Source") ), VT_BSTR,
-			SVGigeParameterAccessor
-			(
-				SVGigeFeature
-				( _T("TriggerSource"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
-					SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
-					SVGigeFeatureSelector( _T("TriggerSelector"), _T("FrameStart") ),
-					( boost::assign::map_list_of<std::string, std::string>
-						( _T("External Trigger"), _T("Line0") )
-						( _T("Software Trigger"), _T("Software") )
-					)
-				)
-			)
-		)
-	)
+		///////////////////////////////////////////////////////////////////////
+		// Trigger Source
+		///////////////////////////////////////////////////////////////////////
+		{ SvDef::SVGigeParameterTriggerSource,
+			SVGigeDeviceParameterStruct
+			{
+				std::string( _T("Trigger Source") ), VT_BSTR,
+				SVGigeParameterAccessor
+				{
+					SVGigeFeature
+					{
+						_T("TriggerSource"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
+						SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
+						SVGigeFeatureSelector
+						{
+							_T("TriggerSelector"), 
+							_T("FrameStart")
+						},
+						SVGigeFeatureStringEnumList
+						{
+							{_T("External Trigger"), _T("Line0")},
+							{_T("Software Trigger"), _T("Software")}
+						}
+					}
+				}
+			}
+		},
 
-	///////////////////////////////////////////////////////////////////////
-	// Trigger Edge
-	///////////////////////////////////////////////////////////////////////
-	( SvDef::SVGigeParameterTriggerEdge,
-		SVGigeDeviceParameterStruct
-		( 
-			std::string( _T("Trigger Edge") ), VT_BSTR,
-			SVGigeParameterAccessor
-			(
-				SVGigeFeature
-				( _T("TriggerActivation"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
-					SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
-					SVGigeFeatureSelector( _T("TriggerSelector"), _T("FrameStart") ),
-					( boost::assign::map_list_of<std::string, std::string>
-						( _T("Rising"), _T("RisingEdge") )
-						( _T("Falling"), _T("FallingEdge") )
-					)
-				)
-			)
-		)
-	)
+		///////////////////////////////////////////////////////////////////////
+		// Trigger Edge
+		///////////////////////////////////////////////////////////////////////
+		{ SvDef::SVGigeParameterTriggerEdge,
+			SVGigeDeviceParameterStruct
+			{ 
+				std::string( _T("Trigger Edge") ), VT_BSTR,
+				SVGigeParameterAccessor
+				{
+					SVGigeFeature
+					{
+						_T("TriggerActivation"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
+						SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
+						SVGigeFeatureSelector
+						{	
+							_T("TriggerSelector"),
+							_T("FrameStart") 
+						},
+						SVGigeFeatureStringEnumList
+						{
+							{_T("Rising"), _T("RisingEdge")},
+							{_T("Falling"), _T("FallingEdge")}
+						}
+					}
+				}
+			}
+		},
 
-	///////////////////////////////////////////////////////////////////////
-	// Trigger Invert
-	///////////////////////////////////////////////////////////////////////
-	( SvDef::SVGigeParameterTriggerInvert,
-		SVGigeDeviceParameterStruct
-		(
-			std::string( _T("Trigger Invert") ), VT_BOOL,
-			SVGigeParameterAccessor
-			(
-				SVGigeFeature
-				( _T("LineInvertor"), SVMatroxDigitizerFeature::SVTypeBool,
-					SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
-				),
-				SVGigeEmptyGetter(),
-				SVGigeEmptySetter()
-			)
-		)
-	)
+		///////////////////////////////////////////////////////////////////////
+		// Trigger Invert
+		///////////////////////////////////////////////////////////////////////
+		{ SvDef::SVGigeParameterTriggerInvert,
+			SVGigeDeviceParameterStruct
+			{
+				std::string( _T("Trigger Invert") ), VT_BOOL,
+				SVGigeParameterAccessor
+				{
+					SVGigeFeature
+					{
+						_T("LineInvertor"), SVMatroxDigitizerFeature::SVTypeBool,
+						SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
+					},
+					SVGigeEmptyGetter(),
+					SVGigeEmptySetter()
+				}
+			}
+		},
 
-	///////////////////////////////////////////////////////////////////////
-	// Trigger Line
-	///////////////////////////////////////////////////////////////////////
-	( SvDef::SVGigeParameterTriggerLine,
-		SVGigeDeviceParameterStruct
-		(
-			std::string( _T("Trigger Line") ), VT_BSTR,
-			SVGigeParameterAccessor
-			(
-				SVGigeFeature
-				( _T("LineMode"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
-					SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
-					SVGigeFeatureSelector( _T("LineSelector"), _T("Line0") )
-				),
-				SVGigeTriggerLineGet(),
-				SVGigeTriggerLineSet()
-			)
-		)
-	)
+		///////////////////////////////////////////////////////////////////////
+		// Trigger Line
+		///////////////////////////////////////////////////////////////////////
+		{ SvDef::SVGigeParameterTriggerLine,
+			SVGigeDeviceParameterStruct
+			{
+				std::string( _T("Trigger Line") ), VT_BSTR,
+				SVGigeParameterAccessor
+				{
+					SVGigeFeature
+					{
+						_T("LineMode"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
+						SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
+						SVGigeFeatureSelector
+						{
+							_T("LineSelector"),
+							_T("Line0")
+						}
+					},
+					SVGigeTriggerLineGet(),
+					SVGigeTriggerLineSet()
+				}
+			}
+		},
 
-	///////////////////////////////////////////////////////////////////////
-	// Trigger Delay
-	///////////////////////////////////////////////////////////////////////
-	( SvDef::SVGigeParameterTriggerDelay,
-		SVGigeDeviceParameterStruct
-		(
-			std::string( _T("Trigger Delay") ), VT_R8,
-			SVGigeParameterAccessor
-			(
-				SVGigeFeature( _T("TriggerDelayAbs"), SVMatroxDigitizerFeature::SVTypeDouble )
-			)
-		)
-	)
+		///////////////////////////////////////////////////////////////////////
+		// Trigger Delay
+		///////////////////////////////////////////////////////////////////////
+		{ SvDef::SVGigeParameterTriggerDelay,
+			SVGigeDeviceParameterStruct
+			{
+				std::string( _T("Trigger Delay") ), VT_R8,
+				SVGigeParameterAccessor
+				{
+					SVGigeFeature
+					{
+						_T("TriggerDelayAbs"), 
+						SVMatroxDigitizerFeature::SVTypeDouble
+					}
+				}
+			}
+		},
 
-	///////////////////////////////////////////////////////////////////////
-	// Trigger Enable
-	///////////////////////////////////////////////////////////////////////
-	( SvDef::SVGigeParameterTriggerEnable,
-		 SVGigeDeviceParameterStruct
-		 (
-			 std::string( _T("Trigger Enable") ), VT_BSTR,
-			 SVGigeParameterAccessor
-			 (
-				SVGigeFeature
-				( _T("TriggerMode"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
-					SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
-					SVGigeFeatureSelector( _T("TriggerSelector"), _T("FrameStart") ),
-					( boost::assign::map_list_of<std::string, std::string>
-						( _T("Enable"), _T("On") )
-						( _T("Disable"), _T("Off") )
-					)
-				)
-			 )
-		 )
-	 )
+		///////////////////////////////////////////////////////////////////////
+		// Trigger Enable
+		///////////////////////////////////////////////////////////////////////
+		{ SvDef::SVGigeParameterTriggerEnable,
+			 SVGigeDeviceParameterStruct
+			{
+				std::string( _T("Trigger Enable") ), VT_BSTR,
+				SVGigeParameterAccessor
+				{
+					SVGigeFeature
+					{
+						_T("TriggerMode"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
+						SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
+						SVGigeFeatureSelector
+						{
+							_T("TriggerSelector"), 
+							_T("FrameStart")
+						},
+						SVGigeFeatureStringEnumList
+						{
+							{_T("Enable"), _T("On")},
+							{_T("Disable"), _T("Off")}
+						}
+					}
+				}
+			}
+		},
 
-	///////////////////////////////////////////////////////////////////////
-	// Strobe Source - Non Standard
-	///////////////////////////////////////////////////////////////////////
-	( SvDef::SVGigeParameterStrobeSource,
-		 SVGigeDeviceParameterStruct
-		 (
-			 std::string( _T("Strobe Source") ), VT_BSTR,
-			 SVGigeParameterAccessor
-			 (
-				 SVGigeFeature
-				 ( _T("StrobeSource"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
-					SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
-				 ),
-				 SVGigeEmptyGetter(),
-				 SVGigeEmptySetter()
-			 )
-		 )
-	 )
+		///////////////////////////////////////////////////////////////////////
+		// Strobe Source - Non Standard
+		///////////////////////////////////////////////////////////////////////
+		{ SvDef::SVGigeParameterStrobeSource,
+			SVGigeDeviceParameterStruct
+			{
+				std::string( _T("Strobe Source") ), VT_BSTR,
+				SVGigeParameterAccessor
+				{
+					SVGigeFeature
+					{
+						_T("StrobeSource"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
+						SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
+					},
+					SVGigeEmptyGetter(),
+					SVGigeEmptySetter()
+				}
+			}
+		},
 
-	///////////////////////////////////////////////////////////////////////
-	// Strobe Edge - Non Standard
-	///////////////////////////////////////////////////////////////////////
-	( SvDef::SVGigeParameterStrobeEdge,
-		SVGigeDeviceParameterStruct
-		(
-			std::string( _T("Strobe Edge") ), VT_BSTR,
-			SVGigeParameterAccessor
-			(
-				SVGigeFeature
-				( _T("StrobePolarity"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
-					SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
-				),
-				SVGigeEmptyGetter(),
-				SVGigeEmptySetter()
-			)
-		)
-	)
+		///////////////////////////////////////////////////////////////////////
+		// Strobe Edge - Non Standard
+		///////////////////////////////////////////////////////////////////////
+		{ SvDef::SVGigeParameterStrobeEdge,
+			SVGigeDeviceParameterStruct
+			{
+				std::string( _T("Strobe Edge") ), VT_BSTR,
+				SVGigeParameterAccessor
+				{
+					SVGigeFeature
+					{
+						_T("StrobePolarity"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
+						SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
+					},
+					SVGigeEmptyGetter(),
+					SVGigeEmptySetter()
+				}
+			}
+		},
 
-	///////////////////////////////////////////////////////////////////////
-	// Strobe Invert
-	///////////////////////////////////////////////////////////////////////
-	( SvDef::SVGigeParameterStrobeInvert,
-		SVGigeDeviceParameterStruct
-		(
-			std::string( _T("Strobe Invert") ), VT_BOOL,
-			SVGigeParameterAccessor
-			(
-				SVGigeFeature
-				( _T("LineInvertor"), SVMatroxDigitizerFeature::SVTypeBool,
-					SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
-				),
-				SVGigeEmptyGetter(),
-				SVGigeEmptySetter()
-			)
-		)
-	)
+		///////////////////////////////////////////////////////////////////////
+		// Strobe Invert
+		///////////////////////////////////////////////////////////////////////
+		{ SvDef::SVGigeParameterStrobeInvert,
+			SVGigeDeviceParameterStruct
+			{
+				std::string( _T("Strobe Invert") ), VT_BOOL,
+				SVGigeParameterAccessor
+				{
+					SVGigeFeature
+					{
+						_T("LineInvertor"), SVMatroxDigitizerFeature::SVTypeBool,
+						SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
+					},
+					SVGigeEmptyGetter(),
+					SVGigeEmptySetter()
+				}
+			}
+		},
 
-	///////////////////////////////////////////////////////////////////////
-	// Strobe Delay - Non Standard
-	///////////////////////////////////////////////////////////////////////
-	( SvDef::SVGigeParameterStrobeDelay,
-		SVGigeDeviceParameterStruct
-		(
-			std::string(_T("Strobe Delay")), VT_R8,
-			SVGigeParameterAccessor
-			(
-				SVGigeFeature
-				( ("StrobeDelayAbs"), SVMatroxDigitizerFeature::SVTypeDouble,
-					SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
-				),
-				SVGigeEmptyGetter(),
-				SVGigeEmptySetter()
-			)
-		)
-	)
+		///////////////////////////////////////////////////////////////////////
+		// Strobe Delay - Non Standard
+		///////////////////////////////////////////////////////////////////////
+		{ SvDef::SVGigeParameterStrobeDelay,
+			SVGigeDeviceParameterStruct
+			{
+				std::string(_T("Strobe Delay")), VT_R8,
+				SVGigeParameterAccessor
+				{
+					SVGigeFeature
+					{
+						_T("StrobeDelayAbs"), SVMatroxDigitizerFeature::SVTypeDouble,
+						SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
+					},
+					SVGigeEmptyGetter(),
+					SVGigeEmptySetter()
+				}
+			}
+		},
 
-	///////////////////////////////////////////////////////////////////////
-	// Strobe Duration - Non Standard
-	///////////////////////////////////////////////////////////////////////
-	( SvDef::SVGigeParameterStrobeDuration,
-		SVGigeDeviceParameterStruct
-		(
-			std::string( _T("Strobe Duration") ),	VT_R8,
-			SVGigeParameterAccessor
-			(
-				SVGigeFeature
-				( _T("StrobeDurationAbs"), SVMatroxDigitizerFeature::SVTypeDouble,
-					SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
-				),
-				SVGigeEmptyGetter(),
-				SVGigeEmptySetter()
-			)
-		)
-	)
+		///////////////////////////////////////////////////////////////////////
+		// Strobe Duration - Non Standard
+		///////////////////////////////////////////////////////////////////////
+		{ SvDef::SVGigeParameterStrobeDuration,
+			SVGigeDeviceParameterStruct
+			{
+				std::string( _T("Strobe Duration") ),	VT_R8,
+				SVGigeParameterAccessor
+				{
+					SVGigeFeature
+					{
+						_T("StrobeDurationAbs"), SVMatroxDigitizerFeature::SVTypeDouble,
+						SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
+					},
+					SVGigeEmptyGetter(),
+					SVGigeEmptySetter()
+				}
+			}
+		},
 
-	///////////////////////////////////////////////////////////////////////
-	// Strobe Line
-	///////////////////////////////////////////////////////////////////////
-	( SvDef::SVGigeParameterStrobeLine,
-		SVGigeDeviceParameterStruct
-		(
-			std::string( _T("Strobe Line") ), VT_BSTR,
-			SVGigeParameterAccessor
-			(
-				SVGigeFeature
-				( _T("LineMode"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
-					SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
-					SVGigeFeatureSelector( _T("LineSelector"), _T("Line1") )
-				),
-				SVGigeStrobeLineGetter(),
-				SVGigeStrobeLineSetter()
-			)
-		)
-	)
+		///////////////////////////////////////////////////////////////////////
+		// Strobe Line
+		///////////////////////////////////////////////////////////////////////
+		{ SvDef::SVGigeParameterStrobeLine,
+			SVGigeDeviceParameterStruct
+			{
+				std::string( _T("Strobe Line") ), VT_BSTR,
+				SVGigeParameterAccessor
+				{
+					SVGigeFeature
+					{
+						_T("LineMode"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
+						SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
+						SVGigeFeatureSelector
+						{
+							_T("LineSelector"), 
+							_T("Line1")
+						}
+					},
+					SVGigeStrobeLineGetter(),
+					SVGigeStrobeLineSetter()
+				}
+			}
+		},
 
-	///////////////////////////////////////////////////////////////////////
-	// Strobe Enable - Non Standard
-	///////////////////////////////////////////////////////////////////////
-	( SvDef::SVGigeParameterStrobeEnable,
-		SVGigeDeviceParameterStruct
-		(
-			std::string( _T("Strobe Enable") ), VT_BSTR,
-			SVGigeParameterAccessor
-			(
-				SVGigeFeature
-				( _T("StrobeEnable"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
-					SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
-				),
-				SVGigeEmptyGetter(),
-				SVGigeEmptySetter()
-			)
-		)
-	)
+		///////////////////////////////////////////////////////////////////////
+		// Strobe Enable - Non Standard
+		///////////////////////////////////////////////////////////////////////
+		{ SvDef::SVGigeParameterStrobeEnable,
+			SVGigeDeviceParameterStruct
+			{
+				std::string( _T("Strobe Enable") ), VT_BSTR,
+				SVGigeParameterAccessor
+				{
+					SVGigeFeature
+					{
+						_T("StrobeEnable"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
+						SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
+					},
+					SVGigeEmptyGetter(),
+					SVGigeEmptySetter()
+				}
+			}
+		},
 
-	///////////////////////////////////////////////////////////////////////
-	// Horizontal Binning
-	///////////////////////////////////////////////////////////////////////
-	( SvDef::SVGigeParameterHorizontalBinning,
-		SVGigeDeviceParameterStruct
-		(
-			std::string( _T("Horizontal Binning") ), VT_I4,
-			SVGigeParameterAccessor
-			(
-				SVGigeFeature
-				( _T("BinningHorizontal"), SVMatroxDigitizerFeature::SVTypeInt32,
-					SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
-				),
-				SVGigeEmptyGetter(),
-				SVGigeEmptySetter()
-			)
-		)
-	)
+		///////////////////////////////////////////////////////////////////////
+		// Horizontal Binning
+		///////////////////////////////////////////////////////////////////////
+		{ SvDef::SVGigeParameterHorizontalBinning,
+			SVGigeDeviceParameterStruct
+			{
+				std::string( _T("Horizontal Binning") ), VT_I4,
+				SVGigeParameterAccessor
+				{
+					SVGigeFeature
+					{
+						_T("BinningHorizontal"), SVMatroxDigitizerFeature::SVTypeInt32,
+						SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
+					},
+					SVGigeEmptyGetter(),
+					SVGigeEmptySetter()
+				}
+			}
+		},
 
-	///////////////////////////////////////////////////////////////////////
-	// Vertical Binning
-	///////////////////////////////////////////////////////////////////////
-	( SvDef::SVGigeParameterVerticalBinning,
-		SVGigeDeviceParameterStruct
-		(
-			std::string( _T("Vertical Binning") ), VT_I4,
-			SVGigeParameterAccessor
-			(
-				SVGigeFeature
-				( _T("BinningVertical"), SVMatroxDigitizerFeature::SVTypeInt32,
-					SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
-				),
-				SVGigeEmptyGetter(),
-				SVGigeEmptySetter()
-			)
-		)
-	)
+		///////////////////////////////////////////////////////////////////////
+		// Vertical Binning
+		///////////////////////////////////////////////////////////////////////
+		{ SvDef::SVGigeParameterVerticalBinning,
+			SVGigeDeviceParameterStruct
+			{
+				std::string( _T("Vertical Binning") ), VT_I4,
+				SVGigeParameterAccessor
+				{
+					SVGigeFeature
+					{
+						_T("BinningVertical"), SVMatroxDigitizerFeature::SVTypeInt32,
+						SVGigeFeature::NotSupported, SVGigeFeature::ReadWrite
+					},
+					SVGigeEmptyGetter(),
+					SVGigeEmptySetter()
+				}
+			}
+		},
 
-	///////////////////////////////////////////////////////////////////////
-	// Packet Size
-	///////////////////////////////////////////////////////////////////////
-	( SvDef::SVGigeParameterPacketSize,
-		SVGigeDeviceParameterStruct
-		(
-			std::string( _T("Packet Size") ), VT_I4,
-			SVGigeParameterAccessor
-			(
-				SVGigeFeature( _T("GevSCPSPacketSize"), SVMatroxDigitizerFeature::SVTypeInt32 )
-			)
-		)
-	)
+		///////////////////////////////////////////////////////////////////////
+		// Packet Size
+		///////////////////////////////////////////////////////////////////////
+		{ SvDef::SVGigeParameterPacketSize,
+			SVGigeDeviceParameterStruct
+			{
+				std::string( _T("Packet Size") ), VT_I4,
+				SVGigeParameterAccessor
+				{
+					SVGigeFeature
+					{
+						_T("GevSCPSPacketSize"), 
+						SVMatroxDigitizerFeature::SVTypeInt32
+					}
+				}
+			}
+		},
 
-	///////////////////////////////////////////////////////////////////////
-	// LUT Enable
-	///////////////////////////////////////////////////////////////////////
-	( SvDef::SVGigeParameterLutEnable,
-		SVGigeDeviceParameterStruct
-		(
-			std::string( _T("LUT Enable") ), VT_BOOL,
-			SVGigeParameterAccessor
-			(
-				SVGigeFeature
-				( 
-					_T("LUTEnable"), SVMatroxDigitizerFeature::SVTypeBool,
-					SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
-					SVGigeFeatureSelector( _T("LUTSelector"), _T("Luminance") )
-				)
-			)
-		)
-	)
+		///////////////////////////////////////////////////////////////////////
+		// LUT Enable
+		///////////////////////////////////////////////////////////////////////
+		{ SvDef::SVGigeParameterLutEnable,
+			SVGigeDeviceParameterStruct
+			{
+				std::string( _T("LUT Enable") ), VT_BOOL,
+				SVGigeParameterAccessor
+				{
+					SVGigeFeature
+					{ 
+						_T("LUTEnable"), SVMatroxDigitizerFeature::SVTypeBool,
+						SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
+						SVGigeFeatureSelector
+						{
+							_T("LUTSelector"),
+							_T("Luminance")
+						}
+					}
+				}
+			}
+		},
 
-	///////////////////////////////////////////////////////////////////////
-	// LUT Value Array
-	///////////////////////////////////////////////////////////////////////
-	( SvDef::SVGigeParameterLutArray,
-		SVGigeDeviceParameterStruct
-		(
-			std::string( _T("LUT") ), VT_I4 | VT_ARRAY,
-			SVGigeParameterAccessor
-			(
-				SVGigeFeature
-				( 
-					_T("LUTValue"), SVMatroxDigitizerFeature::SVTypeInt32,
-					SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
-					SVGigeFeatureSelector( _T("LUTSelector"), _T("Luminance") )
-				),
-				SVGigeLUTGetter(),
-				SVGigeLUTSetter()
-			)
-		)
-	)
+		///////////////////////////////////////////////////////////////////////
+		// LUT Value Array
+		///////////////////////////////////////////////////////////////////////
+		{ SvDef::SVGigeParameterLutArray,
+			SVGigeDeviceParameterStruct
+			{
+				std::string( _T("LUT") ), VT_I4 | VT_ARRAY,
+				SVGigeParameterAccessor
+				{
+					SVGigeFeature
+					{ 
+						_T("LUTValue"), SVMatroxDigitizerFeature::SVTypeInt32,
+						SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
+						SVGigeFeatureSelector
+						{
+							_T("LUTSelector"), 
+							_T("Luminance")
+						}
+					},
+					SVGigeLUTGetter(),
+					SVGigeLUTSetter()
+				}
+			}
+		},
 
-	///////////////////////////////////////////////////////////////////////
-	// Input
-	///////////////////////////////////////////////////////////////////////
-	( SvDef::SVGigeParameterLineInput,
-		SVGigeDeviceParameterStruct
-		(
-			std::string( _T("Input") ), VT_BSTR,
-			SVGigeParameterAccessor
-			(
-				SVGigeFeature
-				( _T("LineMode"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
-					SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
-					SVGigeFeatureSelector( _T("LineSelector") )
-				),
-				SVGigeInputLineGetter(),
-				SVGigeInputLineSetter()
-			)
-		)
-	)
+		///////////////////////////////////////////////////////////////////////
+		// Input
+		///////////////////////////////////////////////////////////////////////
+		{ SvDef::SVGigeParameterLineInput,
+			SVGigeDeviceParameterStruct
+			{
+				std::string( _T("Input") ), VT_BSTR,
+				SVGigeParameterAccessor
+				{
+					SVGigeFeature
+					{
+						_T("LineMode"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
+						SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
+						SVGigeFeatureSelector
+						{
+							_T("LineSelector")
+						}
+					},
+					SVGigeInputLineGetter(),
+					SVGigeInputLineSetter()
+				}
+			}
+		},
 
-	///////////////////////////////////////////////////////////////////////
-	// Input Event
-	///////////////////////////////////////////////////////////////////////
-	( SvDef::SVGigeParameterInputEvent,
-		SVGigeDeviceParameterStruct
-		(
-			std::string( _T("Input Event") ), VT_BSTR,
-			SVGigeParameterAccessor
-			(
-				SVGigeFeature
-				( _T("EventNotification"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
-					SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
-					SVGigeFeatureSelector( _T("EventSelector") ),
-					( boost::assign::map_list_of<std::string, std::string>
-						( _T("Enable"), _T("On") )
-						( _T("Disable"), _T("Off") )
-					)
-				),
-				SVGigeEmptyGetter(),
-				SVGigeEventSetter()
-			)
-		)
-	)
+		///////////////////////////////////////////////////////////////////////
+		// Input Event
+		///////////////////////////////////////////////////////////////////////
+		{ SvDef::SVGigeParameterInputEvent,
+			SVGigeDeviceParameterStruct
+			{
+				std::string( _T("Input Event") ), VT_BSTR,
+				SVGigeParameterAccessor
+				{
+					SVGigeFeature
+					{
+						_T("EventNotification"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
+						SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
+						SVGigeFeatureSelector
+						{
+							_T("EventSelector")
+						},
+						SVGigeFeatureStringEnumList
+						{
+							{_T("Enable"), _T("On")},
+							{_T("Disable"), _T("Off")}
+						}
+					},
+					SVGigeEmptyGetter(),
+					SVGigeEventSetter()
+				}
+			}
+		},
 
-	///////////////////////////////////////////////////////////////////////
-	// Vendor Name
-	///////////////////////////////////////////////////////////////////////
-	( SvDef::SVGigeParameterVendorName,
-		SVGigeDeviceParameterStruct
-		(
-			std::string( _T("Vendor Name") ), VT_BSTR,
-			SVGigeParameterAccessor
-			(
-				SVGigeFeature
-				( _T("DeviceVendorName"), SVMatroxDigitizerFeature::SVTypeString,
-					SVGigeFeature::Supported, SVGigeFeature::ReadOnly
-				)
-			)
-		)
-	)
+		///////////////////////////////////////////////////////////////////////
+		// Vendor Name
+		///////////////////////////////////////////////////////////////////////
+		{ SvDef::SVGigeParameterVendorName,
+			SVGigeDeviceParameterStruct
+			{
+				std::string( _T("Vendor Name") ), VT_BSTR,
+				SVGigeParameterAccessor
+				{
+					SVGigeFeature
+					{
+						_T("DeviceVendorName"), SVMatroxDigitizerFeature::SVTypeString,
+						SVGigeFeature::Supported, SVGigeFeature::ReadOnly
+					}
+				}
+			}
+		},
 
-	///////////////////////////////////////////////////////////////////////
-	// Model Name
-	///////////////////////////////////////////////////////////////////////
-	( SvDef::SVGigeParameterModelName,
-		SVGigeDeviceParameterStruct
-		(
-			std::string( _T("Model Name") ), VT_BSTR,
-			SVGigeParameterAccessor
-			(
-				SVGigeFeature
-				( _T("DeviceModelName"), SVMatroxDigitizerFeature::SVTypeString,
-					SVGigeFeature::Supported, SVGigeFeature::ReadOnly
-				)
-			)
-		)
-	)
+		///////////////////////////////////////////////////////////////////////
+		// Model Name
+		///////////////////////////////////////////////////////////////////////
+		{ SvDef::SVGigeParameterModelName,
+			SVGigeDeviceParameterStruct
+			{
+				std::string( _T("Model Name") ), VT_BSTR,
+				SVGigeParameterAccessor
+				{
+					SVGigeFeature
+					{
+						_T("DeviceModelName"), SVMatroxDigitizerFeature::SVTypeString,
+						SVGigeFeature::Supported, SVGigeFeature::ReadOnly
+					}
+				}
+			}
+		},
 
-	///////////////////////////////////////////////////////////////////////
-	// Serial Number
-	///////////////////////////////////////////////////////////////////////
-	( SvDef::SVGigeParameterSerialNumber,
-		SVGigeDeviceParameterStruct
-		(
-			std::string( _T("Serial Number") ), VT_BSTR,
-			SVGigeParameterAccessor
-			(
-				SVGigeFeature
-				( _T("DeviceID"), SVMatroxDigitizerFeature::SVTypeString,
-					SVGigeFeature::Supported, SVGigeFeature::ReadOnly
-				),
-				SVGigeReadSerialNumber(),
-				SVGigeEmptySetter()
-			)
-		)
-	)
-	///////////////////////////////////////////////////////////////////////
-	// IP Address
-	///////////////////////////////////////////////////////////////////////
-	( SvDef::SVGigeParameterIPAddress,
-		SVGigeDeviceParameterStruct
-		(
-			std::string( _T("IP Address") ), VT_BSTR,
-			SVGigeParameterAccessor
-			(
-				SVGigeFeature
-				( _T("DeviceID"), SVMatroxDigitizerFeature::SVTypeString,
-					SVGigeFeature::Supported, SVGigeFeature::ReadOnly
-				),
-				SVGigeReadIPAddress(),
-				SVGigeEmptySetter()
-			)
-		)
-	)
+		///////////////////////////////////////////////////////////////////////
+		// Serial Number
+		///////////////////////////////////////////////////////////////////////
+		{ SvDef::SVGigeParameterSerialNumber,
+			SVGigeDeviceParameterStruct
+			{
+				std::string( _T("Serial Number") ), VT_BSTR,
+				SVGigeParameterAccessor
+				{
+					SVGigeFeature
+					{
+						_T("DeviceID"), SVMatroxDigitizerFeature::SVTypeString,
+						SVGigeFeature::Supported, SVGigeFeature::ReadOnly
+					},
+					SVGigeReadSerialNumber(),
+					SVGigeEmptySetter()
+				}
+			}
+		},
 
-	///////////////////////////////////////////////////////////////////////
-	// Camera Default Settings
-	///////////////////////////////////////////////////////////////////////
-	( SvDef::SVGigeParameterCameraDefaultSettings,
-		SVGigeDeviceParameterStruct
-		(
-			std::string( _T("Default Settings") ), VT_BSTR,
-			SVGigeParameterAccessor
-			(
-				SVGigeFeature
-				( _T("UserSetDefaultSelector"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
-					SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
-					SVGigeFeatureSelector( ),
-					(  boost::assign::map_list_of<std::string, std::string>
-						( _T("Enable"), _T("Default") )
-						( _T("Disable"), _T("UserSet1") )
-					)
-				)
-			)
-		)
-	)
-	;
+		///////////////////////////////////////////////////////////////////////
+		// IP Address
+		///////////////////////////////////////////////////////////////////////
+		{ SvDef::SVGigeParameterIPAddress,
+			SVGigeDeviceParameterStruct
+			{
+				std::string( _T("IP Address") ), VT_BSTR,
+				SVGigeParameterAccessor
+				{
+					SVGigeFeature
+					{
+						_T("DeviceID"), SVMatroxDigitizerFeature::SVTypeString,
+						SVGigeFeature::Supported, SVGigeFeature::ReadOnly
+					},
+					SVGigeReadIPAddress(),
+					SVGigeEmptySetter()
+				}
+			}
+		},
 
-	return features;
+		///////////////////////////////////////////////////////////////////////
+		// Camera Default Settings
+		///////////////////////////////////////////////////////////////////////
+		{ SvDef::SVGigeParameterCameraDefaultSettings,
+			SVGigeDeviceParameterStruct
+			{
+				std::string( _T("Default Settings") ), VT_BSTR,
+				SVGigeParameterAccessor
+				{
+					SVGigeFeature
+					{
+						_T("UserSetDefaultSelector"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
+						SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
+						SVGigeFeatureSelector(),
+						SVGigeFeatureStringEnumList
+						{
+							{_T("Enable"),	_T("Default")},
+							{_T("Disable"), _T("UserSet1")}
+						}
+					}
+				}
+			}
+		}
+	};
+
+	return cFeatures;
 }
 

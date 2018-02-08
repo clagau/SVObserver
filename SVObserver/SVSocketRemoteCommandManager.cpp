@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <boost/config.hpp>
-//Moved to precompiled header: #include <boost/assign.hpp>
 //Moved to precompiled header: #include <fstream>
 //Moved to precompiled header: #include <io.h>
 #include "SVSocketRemoteCommandManager.h"
@@ -38,36 +37,38 @@
 #define SV_DATA_TO_CONTENTS
 //#define SV_OUTPUT_JSON
 
-SVRemoteCommandFunctions::SVCommandFunctionMap SVRemoteCommandFunctions::m_Functions = boost::assign::map_list_of< std::string, SVRemoteCommandFunctions::SVCommandFunction >
-(SVRC::cmdName::getMode, &SVRemoteCommandFunctions::GetDeviceMode)
-(SVRC::cmdName::getState, &SVRemoteCommandFunctions::GetState)
-(SVRC::cmdName::getVersion, &SVRemoteCommandFunctions::GetVersions)
-(SVRC::cmdName::getOLCount, &SVRemoteCommandFunctions::GetDeviceOfflineCount)
-(SVRC::cmdName::actvMonList, &SVRemoteCommandFunctions::ActivateMonitorList)
-(SVRC::cmdName::getProductFilter, &SVRemoteCommandFunctions::GetProductFilter)
-(SVRC::cmdName::setProductFilter, &SVRemoteCommandFunctions::SetProductFilter)
-;
+SVRemoteCommandFunctions::SVCommandFunctionMap SVRemoteCommandFunctions::m_Functions
+{
+	{SVRC::cmdName::getMode,			&SVRemoteCommandFunctions::GetDeviceMode},
+	{SVRC::cmdName::getState,			&SVRemoteCommandFunctions::GetState},
+	{SVRC::cmdName::getVersion,			&SVRemoteCommandFunctions::GetVersions},
+	{SVRC::cmdName::getOLCount,			&SVRemoteCommandFunctions::GetDeviceOfflineCount},
+	{SVRC::cmdName::actvMonList,		&SVRemoteCommandFunctions::ActivateMonitorList},
+	{SVRC::cmdName::getProductFilter,	&SVRemoteCommandFunctions::GetProductFilter},
+	{SVRC::cmdName::setProductFilter,	&SVRemoteCommandFunctions::SetProductFilter}
+};
 
-SVRemoteCommandFunctions::SVCommandFunctionMap SVRemoteCommandFunctions::m_AsyncFunctions = boost::assign::map_list_of< std::string, SVRemoteCommandFunctions::SVCommandFunction >
-(SVRC::cmdName::getConfig, &SVRemoteCommandFunctions::GetConfig)
-(SVRC::cmdName::getItems, &SVRemoteCommandFunctions::GetItems)
-(SVRC::cmdName::getFile, &SVRemoteCommandFunctions::GetDeviceFile)
-(SVRC::cmdName::getReport, &SVRemoteCommandFunctions::GetDeviceConfigReport)
-(SVRC::cmdName::getDefList, &SVRemoteCommandFunctions::GetDataDefinitionList)
-(SVRC::cmdName::putConfig, &SVRemoteCommandFunctions::PutConfig)
-(SVRC::cmdName::putFile, &SVRemoteCommandFunctions::PutDeviceFile)
-(SVRC::cmdName::setMode, &SVRemoteCommandFunctions::SetDeviceMode)
-(SVRC::cmdName::setItems, &SVRemoteCommandFunctions::SetItems)
-(SVRC::cmdName::regMon, &SVRemoteCommandFunctions::RegisterMonitorList)
-(SVRC::cmdName::qryProd,  &SVRemoteCommandFunctions::QueryProductList)
-(SVRC::cmdName::qryRjct, &SVRemoteCommandFunctions::QueryRejectCondList)
-(SVRC::cmdName::qryFail, &SVRemoteCommandFunctions::QueryFailStatusList)
-(SVRC::cmdName::qryMonListNames, &SVRemoteCommandFunctions::QueryMonitorListNames)
-(SVRC::cmdName::getInspectionNames, &SVRemoteCommandFunctions::GetInspectionNames)
-(SVRC::cmdName::shutdownSVIM, &SVRemoteCommandFunctions::Shutdown)
-(SVRC::cmdName::getMonitorListProperties, &SVRemoteCommandFunctions::GetMonitorListProperties)
-(SVRC::cmdName::getMaxRejectDeptCmd, &SVRemoteCommandFunctions::GetMaxRejectDepth)
-;
+SVRemoteCommandFunctions::SVCommandFunctionMap SVRemoteCommandFunctions::m_AsyncFunctions
+{
+	{SVRC::cmdName::getConfig,					&SVRemoteCommandFunctions::GetConfig},
+	{SVRC::cmdName::getItems,					&SVRemoteCommandFunctions::GetItems},
+	{SVRC::cmdName::getFile,					&SVRemoteCommandFunctions::GetDeviceFile},
+	{SVRC::cmdName::getReport,					&SVRemoteCommandFunctions::GetDeviceConfigReport},
+	{SVRC::cmdName::getDefList,					&SVRemoteCommandFunctions::GetDataDefinitionList},
+	{SVRC::cmdName::putConfig,					&SVRemoteCommandFunctions::PutConfig},
+	{SVRC::cmdName::putFile,					&SVRemoteCommandFunctions::PutDeviceFile},
+	{SVRC::cmdName::setMode,					&SVRemoteCommandFunctions::SetDeviceMode},
+	{SVRC::cmdName::setItems,					&SVRemoteCommandFunctions::SetItems},
+	{SVRC::cmdName::regMon,						&SVRemoteCommandFunctions::RegisterMonitorList},
+	{SVRC::cmdName::qryProd,					&SVRemoteCommandFunctions::QueryProductList},
+	{SVRC::cmdName::qryRjct,					&SVRemoteCommandFunctions::QueryRejectCondList},
+	{SVRC::cmdName::qryFail,					&SVRemoteCommandFunctions::QueryFailStatusList},
+	{SVRC::cmdName::qryMonListNames,			&SVRemoteCommandFunctions::QueryMonitorListNames},
+	{SVRC::cmdName::getInspectionNames,			&SVRemoteCommandFunctions::GetInspectionNames},
+	{SVRC::cmdName::shutdownSVIM,				&SVRemoteCommandFunctions::Shutdown},
+	{SVRC::cmdName::getMonitorListProperties,	&SVRemoteCommandFunctions::GetMonitorListProperties},
+	{SVRC::cmdName::getMaxRejectDeptCmd,		&SVRemoteCommandFunctions::GetMaxRejectDepth}
+};
 
 bool SVRemoteCommandFunctions::IsAsyncCommand( const std::string& p_rJsonCommand )
 {

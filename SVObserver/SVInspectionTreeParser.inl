@@ -13,7 +13,6 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <boost/config.hpp>
-//Moved to precompiled header: #include <boost/assign.hpp>
 #include "SVInspectionTreeParser.h"
 #include "SVXMLLibrary\SVNavigateTree.h"
 #include "SVObjectLibrary\SVObjectBuilder.h"
@@ -28,20 +27,22 @@
 #include "SVUtilityLibrary\SVGUID.h"
 #pragma endregion Includes
 
-static SvDef::StringSet g_ObjectAttributeFilter = boost::assign::list_of< std::string >
-( std::string(scObjectNameTag) )
-( std::string(scClassIDTag) )
-( std::string(scUniqueReferenceIDTag) )
-( std::string(scEmbeddedIDTag) )
-;
+static const SvDef::StringSet cObjectAttributeFilter
+{
+	std::string(scObjectNameTag),
+	std::string(scClassIDTag),
+	std::string(scUniqueReferenceIDTag),
+	std::string(scEmbeddedIDTag)
+};
 
 // The attribute object type table is needed to convert string type to point or double point type.
 typedef std::map<std::string, SVObjectScriptDataObjectTypeEnum> SVObjectAttributeTypeMap;
 
-static SVObjectAttributeTypeMap g_ObjectAttributeType = boost::assign::map_list_of<>
-(_T( "RotationCenter" ), SV_POINT_Type)
-(_T( "Translation" ), SV_POINT_Type)
-;
+static const SVObjectAttributeTypeMap cObjectAttributeType
+{
+	{_T("RotationCenter"),	SV_POINT_Type},
+	{_T("Translation"),		SV_POINT_Type}
+};
 
 template< typename SVTreeType >
 SVInspectionTreeParser< SVTreeType >::SVInspectionTreeParser(SVTreeType& rTreeCtrl, typename SVTreeType::SVBranchHandle hItem, unsigned long parserHandle, const GUID& OwnerGuid, SVObjectClass* pOwnerObject, CWnd* pWnd)
@@ -403,7 +404,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessBranchObjectValues(typename
 
 			DataName = m_rTree.getBranchName(hValue);
 
-			if( g_ObjectAttributeFilter.find( DataName.c_str() ) == g_ObjectAttributeFilter.end() )
+			if( cObjectAttributeFilter.find( DataName.c_str() ) == cObjectAttributeFilter.end() )
 			{
 				if( SvXml::SVNavigateTree::HasChildren( m_rTree, hValue ) )
 				{
@@ -430,9 +431,9 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessBranchObjectValues(typename
 				// The attribute object type table is needed to convert string type to point or double point type.
 				// This functionality is not necessary for the RotationPoint and Translation elements because they are nto being persisted.
 				// It is an example of what could be done to convert to a specific dastionation data type.
-				SVObjectAttributeTypeMap::const_iterator l_Iter = g_ObjectAttributeType.find( DataName.c_str() );
+				SVObjectAttributeTypeMap::const_iterator l_Iter = cObjectAttributeType.find( DataName.c_str() );
 
-				if( l_Iter != g_ObjectAttributeType.end() )
+				if( l_Iter != cObjectAttributeType.end() )
 				{
 					l_Type = l_Iter->second; 
 				}
@@ -469,7 +470,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessLeafObjectValues(typename S
 
 			DataName = m_rTree.getLeafName(hValue);
 
-			if( g_ObjectAttributeFilter.find( DataName.c_str() ) == g_ObjectAttributeFilter.end() )
+			if( cObjectAttributeFilter.find( DataName.c_str() ) == cObjectAttributeFilter.end() )
 			{
 				_variant_t Data;
 
@@ -481,9 +482,9 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessLeafObjectValues(typename S
 				// The attribute object type table is needed to convert string type to point or double point type.
 				// This functionality is not necessary for the RotationPoint and Translation elements because they are nto being persisted.
 				// It is an example of what could be done to convert to a specific dastionation data type.
-				SVObjectAttributeTypeMap::const_iterator l_Iter = g_ObjectAttributeType.find( DataName.c_str() );
+				SVObjectAttributeTypeMap::const_iterator l_Iter = cObjectAttributeType.find( DataName.c_str() );
 
-				if( l_Iter != g_ObjectAttributeType.end() )
+				if( l_Iter != cObjectAttributeType.end() )
 				{
 					l_Type = l_Iter->second; 
 				}

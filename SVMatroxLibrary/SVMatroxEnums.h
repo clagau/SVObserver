@@ -11,11 +11,13 @@
 
 #pragma once
 
+#pragma region Includes
+//Moved to precompiled header: #include <vector>
+//Moved to precompiled header: #include <utility>
 #include "SVMatroxEnumConvertor.h" //SVMatroxEnumConvertor 
 ///all enums from this file were moved to SVMatroxSimpleEnums.h"
 #include "SVMatroxSimpleEnums.h" 
-
-
+#pragma endregion Includes
 
 //// Image processing enums
 /**
@@ -41,8 +43,8 @@ public:
 		InterpolationModeNearestNeighbor		= 0x00000040L	// M_NEAREST_NEIGHBOR 
 	};
 
-	typedef SVMatroxEnumConvertor<SVInterpolationModeOptionsEnum, long> SVInterpolationModeOptionsEnumMap;
-	static SVInterpolationModeOptionsEnumMap m_Convertor;
+	typedef std::vector<std::pair<SVInterpolationModeOptionsEnum, long long>> SVInterpolationModeOptionsEnumPair;
+	static SVInterpolationModeOptionsEnumPair m_Convertor;
 };
 
 
@@ -57,8 +59,8 @@ public:
 		OverscanDisable						= 0x00080000L  // M_OVERSCAN_DISABLE
 	};
 
-	typedef SVMatroxEnumConvertor<SVOverscanOptionsEnum, long> SVOverscanOptionsEnumMap;
-	static SVOverscanOptionsEnumMap m_Convertor;
+	typedef std::vector<std::pair<SVOverscanOptionsEnum, long long>> SVOverscanOptionsEnumPair;
+	static SVOverscanOptionsEnumPair m_Convertor;
 };
 
 
@@ -73,9 +75,8 @@ public:
 		PerformancePresice					= 0x00020000L  // M_REGULAR
 	};
 
-
-	typedef SVMatroxEnumConvertor<SVPerformanceOptionsEnum, long> SVPerformanceOptionsEnumMap;
-	static SVPerformanceOptionsEnumMap m_Convertor;
+	typedef std::vector<std::pair<SVPerformanceOptionsEnum, long long>> SVPerformanceOptionsEnumPair;
+	static SVPerformanceOptionsEnumPair m_Convertor;
 };
 
 

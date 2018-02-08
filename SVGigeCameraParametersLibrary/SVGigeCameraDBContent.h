@@ -48,7 +48,7 @@ private:
 
 		SVGigeFeatureSelectorInfo m_GigeSelector;
 
-		SVBidirectionalMap<std::string, std::string>::type m_GigeFeatureStringEnumList;
+		std::vector<std::pair<std::string, std::string>> m_GigeFeatureStringEnumList;
 
 		void clear() 
 		{ 

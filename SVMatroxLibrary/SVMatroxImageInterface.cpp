@@ -12,7 +12,6 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <assert.h>
 //Moved to precompiled header: #include <boost/config.hpp>
-//Moved to precompiled header: #include <boost/assign/list_of.hpp>
 #include "SVMatroxImageInterface.h"
 
 #include "SVCommandLibrary/SVCommandDataHolder.h"
@@ -25,20 +24,26 @@
 #include "SVMatroxResourceMonitor.h"
 
 
-SVInterpolationModeOptions::SVInterpolationModeOptionsEnumMap SVInterpolationModeOptions::m_Convertor = boost::assign::map_list_of<>
-	(SVInterpolationModeOptions::InterpolationModeAuto, M_INTERPOLATE)
-	(SVInterpolationModeOptions::InterpolationModeBilinear, M_BILINEAR)
-	(SVInterpolationModeOptions::InterpolationModeBicubic, M_BICUBIC)
-	(SVInterpolationModeOptions::InterpolationModeAverage, M_AVERAGE)
-	(SVInterpolationModeOptions::InterpolationModeNearestNeighbor, M_NEAREST_NEIGHBOR);
+SVInterpolationModeOptions::SVInterpolationModeOptionsEnumPair SVInterpolationModeOptions::m_Convertor
+{
+	{SVInterpolationModeOptions::InterpolationModeAuto, M_INTERPOLATE},
+	{SVInterpolationModeOptions::InterpolationModeBilinear, M_BILINEAR},
+	{SVInterpolationModeOptions::InterpolationModeBicubic, M_BICUBIC},
+	{SVInterpolationModeOptions::InterpolationModeAverage, M_AVERAGE},
+	{SVInterpolationModeOptions::InterpolationModeNearestNeighbor, M_NEAREST_NEIGHBOR}
+};
 
-SVOverscanOptions::SVOverscanOptionsEnumMap SVOverscanOptions::m_Convertor = boost::assign::map_list_of<>
-	(SVOverscanOptions::OverscanEnable, M_OVERSCAN_ENABLE)
-	(SVOverscanOptions::OverscanDisable, M_OVERSCAN_DISABLE);
+SVOverscanOptions::SVOverscanOptionsEnumPair SVOverscanOptions::m_Convertor
+{
+	{SVOverscanOptions::OverscanEnable, M_OVERSCAN_ENABLE},
+	{SVOverscanOptions::OverscanDisable, M_OVERSCAN_DISABLE}
+};
 
-SVPerformanceOptions::SVPerformanceOptionsEnumMap SVPerformanceOptions::m_Convertor = boost::assign::map_list_of<>
-	(SVPerformanceOptions::PerformanceFast, M_FAST)
-	(SVPerformanceOptions::PerformancePresice, M_REGULAR);
+SVPerformanceOptions::SVPerformanceOptionsEnumPair SVPerformanceOptions::m_Convertor
+{
+	{SVPerformanceOptions::PerformanceFast, M_FAST},
+	{SVPerformanceOptions::PerformancePresice, M_REGULAR}
+};
 
 /**
 @SVOperationName Default Constructor
@@ -2137,18 +2142,18 @@ HRESULT SVMatroxImageInterface::Resize( const SVMatroxBuffer&		p_rDest,
 				break;
 			}
 
-			long matroxInterpolationMode	= 0;
-			long matroxOverscan				= 0;
-			long matroxPerformance			= 0;
+			long long matroxInterpolationMode{0LL};
+			long long matroxOverscan {0LL};
+			long long matroxPerformance {0LL};
 
-			l_Code = SVInterpolationModeOptions::m_Convertor.ConvertBitSetToMatroxType(interpolationMode, matroxInterpolationMode);
+			l_Code = ConvertBitSetToMatroxType(SVInterpolationModeOptions::m_Convertor, interpolationMode, matroxInterpolationMode);
 
 			if (S_OK != l_Code)
 			{
 				break;
 			}
 
-			l_Code = SVOverscanOptions::m_Convertor.ConvertBitSetToMatroxType(overscan, matroxOverscan);
+			l_Code = ConvertBitSetToMatroxType(SVOverscanOptions::m_Convertor, overscan, matroxOverscan);
 
 			if (S_OK != l_Code)
 			{
@@ -2161,7 +2166,7 @@ HRESULT SVMatroxImageInterface::Resize( const SVMatroxBuffer&		p_rDest,
 			case	SVPerformanceOptions::PerformancePresice:
 				{
 					// valid parameter
-					l_Code = SVPerformanceOptions::m_Convertor.ConvertBitSetToMatroxType(performance, matroxPerformance);
+					l_Code = ConvertBitSetToMatroxType(SVPerformanceOptions::m_Convertor, performance, matroxPerformance);
 					break;
 				}
 			default:

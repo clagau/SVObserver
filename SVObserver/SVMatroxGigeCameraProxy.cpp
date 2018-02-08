@@ -17,7 +17,6 @@
 //Moved to precompiled header: #include <string>
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <boost/config.hpp>
-//Moved to precompiled header: #include <boost/assign/list_of.hpp>
 //Moved to precompiled header: #include <boost/algorithm/string.hpp>
 #include "SVMatroxGigeCameraProxy.h"
 #include "Definitions/SVGigeEnums.h"
@@ -37,61 +36,63 @@
 #pragma region Includes
 
 typedef std::map<SVDeviceParamEnum, SvDef::SVGigeParameterEnum> DeviceParamToGigeParamAssoc;
-static DeviceParamToGigeParamAssoc DeviceParamEnumToGigeParamEnum = boost::assign::map_list_of<SVDeviceParamEnum, SvDef::SVGigeParameterEnum>
-(DeviceParamShutter, SvDef::SVGigeParameterFeatureShutter)
-(DeviceParamGamma, SvDef::SVGigeParameterFeatureGamma)
-(DeviceParamBrightness, SvDef::SVGigeParameterFeatureBrightness)
-(DeviceParamGain, SvDef::SVGigeParameterFeatureGain)
-(DeviceParamWhiteBalanceUB, SvDef::SVGigeParameterFeatureWhiteBalanceU)
-(DeviceParamWhiteBalanceVR, SvDef::SVGigeParameterFeatureWhiteBalanceV)
-(DeviceParamSharpness, SvDef::SVGigeParameterFeatureSharpness)
-(DeviceParamHue, SvDef::SVGigeParameterFeatureHue)
-(DeviceParamSaturation, SvDef::SVGigeParameterFeatureSaturation)
-(DeviceParamGigeTriggerSource, SvDef::SVGigeParameterTriggerSource)
-(DeviceParamGigeTriggerEdge, SvDef::SVGigeParameterTriggerEdge)
-(DeviceParamGigeTriggerEnable, SvDef::SVGigeParameterTriggerEnable)
-(DeviceParamGigeTriggerLine, SvDef::SVGigeParameterTriggerLine)
-(DeviceParamGigeStrobeSource, SvDef::SVGigeParameterStrobeSource)
-(DeviceParamGigeStrobeEdge, SvDef::SVGigeParameterStrobeEdge)
-(DeviceParamGigeStrobeEnable, SvDef::SVGigeParameterStrobeEnable)
-(DeviceParamStrobePulseDelay, SvDef::SVGigeParameterStrobeDelay)
-(DeviceParamStrobePulseDuration, SvDef::SVGigeParameterStrobeDuration)
-(DeviceParamGigeStrobeLine, SvDef::SVGigeParameterStrobeLine)
-(DeviceParamGigePacketSize, SvDef::SVGigeParameterPacketSize)
-(DeviceParamGigeCustom1, SvDef::SVGigeParameterCustom1)
-(DeviceParamGigeCustom2, SvDef::SVGigeParameterCustom2)
-(DeviceParamGigeCustom3, SvDef::SVGigeParameterCustom3)
-(DeviceParamGigeCustom4, SvDef::SVGigeParameterCustom4)
-(DeviceParamGigeCustom5, SvDef::SVGigeParameterCustom5)
-(DeviceParamGigeCustom6, SvDef::SVGigeParameterCustom6)
-(DeviceParamGigeCustom7, SvDef::SVGigeParameterCustom7)
-(DeviceParamGigeCustom8, SvDef::SVGigeParameterCustom8)
-(DeviceParamGigeCustom9, SvDef::SVGigeParameterCustom9)
-(DeviceParamGigeCustom10, SvDef::SVGigeParameterCustom10)
-(DeviceParamGigeCustom11, SvDef::SVGigeParameterCustom11)
-(DeviceParamGigeCustom12, SvDef::SVGigeParameterCustom12)
-(DeviceParamGigeCustom13, SvDef::SVGigeParameterCustom13)
-(DeviceParamGigeCustom14, SvDef::SVGigeParameterCustom14)
-(DeviceParamGigeCustom15, SvDef::SVGigeParameterCustom15)
-(DeviceParamGigeCustom16, SvDef::SVGigeParameterCustom16)
-(DeviceParamGigeCustom17, SvDef::SVGigeParameterCustom17)
-(DeviceParamGigeCustom18, SvDef::SVGigeParameterCustom18)
-(DeviceParamGigeCustom19, SvDef::SVGigeParameterCustom19)
-(DeviceParamGigeCustom20, SvDef::SVGigeParameterCustom20)
-(DeviceParamGigeCustom21, SvDef::SVGigeParameterCustom21)
-(DeviceParamGigeCustom22, SvDef::SVGigeParameterCustom22)
-(DeviceParamGigeCustom23, SvDef::SVGigeParameterCustom23)
-(DeviceParamGigeCustom24, SvDef::SVGigeParameterCustom24)
-(DeviceParamGigeCustom25, SvDef::SVGigeParameterCustom25)
-(DeviceParamGigeCustom26, SvDef::SVGigeParameterCustom26)
-(DeviceParamGigeCustom27, SvDef::SVGigeParameterCustom27)
-(DeviceParamGigeCustom28, SvDef::SVGigeParameterCustom28)
-(DeviceParamGigeCustom29, SvDef::SVGigeParameterCustom29)
-(DeviceParamGigeCustom30, SvDef::SVGigeParameterCustom30)
-(DeviceParamHorizontalBinning, SvDef::SVGigeParameterHorizontalBinning)
-(DeviceParamVerticalBinning, SvDef::SVGigeParameterVerticalBinning)
-(DeviceParamCameraDefaultSettings, SvDef::SVGigeParameterCameraDefaultSettings)
-;
+static DeviceParamToGigeParamAssoc cDeviceParamEnumToGigeParamEnum
+{
+	// Device parameter enum			Gige parameter enum
+	{DeviceParamShutter,				SvDef::SVGigeParameterFeatureShutter},
+	{DeviceParamGamma,					SvDef::SVGigeParameterFeatureGamma},
+	{DeviceParamBrightness,				SvDef::SVGigeParameterFeatureBrightness},
+	{DeviceParamGain,					SvDef::SVGigeParameterFeatureGain},
+	{DeviceParamWhiteBalanceUB,			SvDef::SVGigeParameterFeatureWhiteBalanceU},
+	{DeviceParamWhiteBalanceVR,			SvDef::SVGigeParameterFeatureWhiteBalanceV},
+	{DeviceParamSharpness,				SvDef::SVGigeParameterFeatureSharpness},
+	{DeviceParamHue,					SvDef::SVGigeParameterFeatureHue},
+	{DeviceParamSaturation,				SvDef::SVGigeParameterFeatureSaturation},
+	{DeviceParamGigeTriggerSource,		SvDef::SVGigeParameterTriggerSource},
+	{DeviceParamGigeTriggerEdge,		SvDef::SVGigeParameterTriggerEdge},
+	{DeviceParamGigeTriggerEnable,		SvDef::SVGigeParameterTriggerEnable},
+	{DeviceParamGigeTriggerLine,		SvDef::SVGigeParameterTriggerLine},
+	{DeviceParamGigeStrobeSource,		SvDef::SVGigeParameterStrobeSource},
+	{DeviceParamGigeStrobeEdge,			SvDef::SVGigeParameterStrobeEdge},
+	{DeviceParamGigeStrobeEnable,		SvDef::SVGigeParameterStrobeEnable},
+	{DeviceParamStrobePulseDelay,		SvDef::SVGigeParameterStrobeDelay},
+	{DeviceParamStrobePulseDuration,	SvDef::SVGigeParameterStrobeDuration},
+	{DeviceParamGigeStrobeLine,			SvDef::SVGigeParameterStrobeLine},
+	{DeviceParamGigePacketSize,			SvDef::SVGigeParameterPacketSize},
+	{DeviceParamGigeCustom1,			SvDef::SVGigeParameterCustom1},
+	{DeviceParamGigeCustom2,			SvDef::SVGigeParameterCustom2},
+	{DeviceParamGigeCustom3,			SvDef::SVGigeParameterCustom3},
+	{DeviceParamGigeCustom4,			SvDef::SVGigeParameterCustom4},
+	{DeviceParamGigeCustom5,			SvDef::SVGigeParameterCustom5},
+	{DeviceParamGigeCustom6,			SvDef::SVGigeParameterCustom6},
+	{DeviceParamGigeCustom7,			SvDef::SVGigeParameterCustom7},
+	{DeviceParamGigeCustom8,			SvDef::SVGigeParameterCustom8},
+	{DeviceParamGigeCustom9,			SvDef::SVGigeParameterCustom9},
+	{DeviceParamGigeCustom10,			SvDef::SVGigeParameterCustom10},
+	{DeviceParamGigeCustom11,			SvDef::SVGigeParameterCustom11},
+	{DeviceParamGigeCustom12,			SvDef::SVGigeParameterCustom12},
+	{DeviceParamGigeCustom13,			SvDef::SVGigeParameterCustom13},
+	{DeviceParamGigeCustom14,			SvDef::SVGigeParameterCustom14},
+	{DeviceParamGigeCustom15,			SvDef::SVGigeParameterCustom15},
+	{DeviceParamGigeCustom16,			SvDef::SVGigeParameterCustom16},
+	{DeviceParamGigeCustom17,			SvDef::SVGigeParameterCustom17},
+	{DeviceParamGigeCustom18,			SvDef::SVGigeParameterCustom18},
+	{DeviceParamGigeCustom19,			SvDef::SVGigeParameterCustom19},
+	{DeviceParamGigeCustom20,			SvDef::SVGigeParameterCustom20},
+	{DeviceParamGigeCustom21,			SvDef::SVGigeParameterCustom21},
+	{DeviceParamGigeCustom22,			SvDef::SVGigeParameterCustom22},
+	{DeviceParamGigeCustom23,			SvDef::SVGigeParameterCustom23},
+	{DeviceParamGigeCustom24,			SvDef::SVGigeParameterCustom24},
+	{DeviceParamGigeCustom25,			SvDef::SVGigeParameterCustom25},
+	{DeviceParamGigeCustom26,			SvDef::SVGigeParameterCustom26},
+	{DeviceParamGigeCustom27,			SvDef::SVGigeParameterCustom27},
+	{DeviceParamGigeCustom28,			SvDef::SVGigeParameterCustom28},
+	{DeviceParamGigeCustom29,			SvDef::SVGigeParameterCustom29},
+	{DeviceParamGigeCustom30,			SvDef::SVGigeParameterCustom30},
+	{DeviceParamHorizontalBinning,		SvDef::SVGigeParameterHorizontalBinning},
+	{DeviceParamVerticalBinning,		SvDef::SVGigeParameterVerticalBinning},
+	{DeviceParamCameraDefaultSettings,	SvDef::SVGigeParameterCameraDefaultSettings},
+};
 
 SVMatroxGigeCameraProxy::SVMatroxGigeCameraProxy()
 : m_pAcquisition(nullptr)
@@ -757,7 +758,7 @@ HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParam
 						}
 						if (S_OK == hr)
 						{
-							hr = pDigitizer->ParameterSetValue(hDigitizer, DeviceParamEnumToGigeParamEnum[l_eType], 0, &l_oValue);
+							hr = pDigitizer->ParameterSetValue(hDigitizer, cDeviceParamEnumToGigeParamEnum[l_eType], 0, &l_oValue);
 						}
 					}
 				}
