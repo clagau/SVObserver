@@ -116,8 +116,8 @@ namespace SvOg {
 				{
 					SvPB::DestroyChildRequest requestMessage;
 					requestMessage.set_flag(SvPB::DestroyChildRequest::Flag_ResetInspection);
-					SvPB::SetGuidInMessage(requestMessage.mutable_taskobjectlistid(), m_TaskObjectID);
-					SvPB::SetGuidInMessage(requestMessage.mutable_objectid(), m_gridList[i - 1].second);
+					SvPB::SetGuidInProtoBytes(requestMessage.mutable_taskobjectlistid(), m_TaskObjectID);
+					SvPB::SetGuidInProtoBytes(requestMessage.mutable_objectid(), m_gridList[i - 1].second);
 					HRESULT hr =  SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, nullptr);
 					if (S_OK != hr)
 					{
@@ -324,7 +324,7 @@ namespace SvOg {
 		// Do a reset of the Tool
 		SvPB::ResetObjectRequest requestMessage;
 		SvPB::ResetObjectResponse responseMessage;
-		SvPB::SetGuidInMessage(requestMessage.mutable_objectid(), m_InspectionID);
+		SvPB::SetGuidInProtoBytes(requestMessage.mutable_objectid(), m_InspectionID);
 		hResult = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, &responseMessage);
 		SvStl::MessageContainerVector errorMessageList = SvCmd::setMessageContainerFromMessagePB(responseMessage.messages());
 		if (0 < errorMessageList.size())

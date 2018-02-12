@@ -183,9 +183,6 @@
     </CustomBuild>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="ClientFrontEndApi.h" />
     <ClInclude Include="Definition.h" />
     <ClInclude Include="Helper.h" />

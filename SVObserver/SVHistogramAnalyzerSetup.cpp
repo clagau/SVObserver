@@ -43,30 +43,30 @@ void SVSquare::OnPaint()
 
 BOOL SVSquare::RegisterWindowClass()
 {
-    WNDCLASS wndcls;
-    HINSTANCE hInst = AfxGetResourceHandle();
+	WNDCLASS wndcls;
+	HINSTANCE hInst = AfxGetResourceHandle();
 
-    if (!(::GetClassInfo(hInst, _T("SVCuteSquare"), &wndcls)))
-    {
-        // otherwise we need to register a new class
-        wndcls.style            = CS_DBLCLKS | CS_PARENTDC | CS_BYTEALIGNCLIENT;
-        wndcls.lpfnWndProc      = ::DefWindowProc;
-        wndcls.cbClsExtra       = wndcls.cbWndExtra = 0;
-        wndcls.hInstance        = hInst;
-        wndcls.hIcon            = nullptr;
-        wndcls.hCursor          = AfxGetApp()->LoadStandardCursor(IDC_ARROW);
-        wndcls.hbrBackground    = (HBRUSH) (COLOR_GRADIENTACTIVECAPTION);
-        wndcls.lpszMenuName     = nullptr;
-        wndcls.lpszClassName    = _T("SVCuteSquare");
+	if (!(::GetClassInfo(hInst, _T("SVCuteSquare"), &wndcls)))
+	{
+		// otherwise we need to register a new class
+		wndcls.style = CS_DBLCLKS | CS_PARENTDC | CS_BYTEALIGNCLIENT;
+		wndcls.lpfnWndProc = ::DefWindowProc;
+		wndcls.cbClsExtra = wndcls.cbWndExtra = 0;
+		wndcls.hInstance = hInst;
+		wndcls.hIcon = nullptr;
+		wndcls.hCursor = AfxGetApp()->LoadStandardCursor(IDC_ARROW);
+		wndcls.hbrBackground = (HBRUSH)(COLOR_GRADIENTACTIVECAPTION);
+		wndcls.lpszMenuName = nullptr;
+		wndcls.lpszClassName = _T("SVCuteSquare");
 
-        if (!AfxRegisterClass(&wndcls))
-        {
-            AfxThrowResourceException();
-            return FALSE;
-        }
-    }
+		if (!AfxRegisterClass(&wndcls))
+		{
+			AfxThrowResourceException();
+			return FALSE;
+		}
+	}
 
-    return TRUE;
+	return TRUE;
 }
 
 SVHistogramAnalyzerSetupClass::SVHistogramAnalyzerSetupClass(CWnd* pParent /*=nullptr*/)
@@ -129,10 +129,10 @@ HRESULT SVHistogramAnalyzerSetupClass::SetInspectionData()
 	const SVGUID& rInspectionID = m_pAnalyzer->GetInspection()->GetUniqueObjectID();
 	const SVGUID& rToolID = m_pAnalyzer->GetTool()->GetUniqueObjectID();
 	SvPB::InspectionRunOnceRequest requestMessage;
-	SvPB::SetGuidInMessage(requestMessage.mutable_inspectionid(), rInspectionID);
-	SvPB::SetGuidInMessage(requestMessage.mutable_taskid(), rToolID);
+	SvPB::SetGuidInProtoBytes(requestMessage.mutable_inspectionid(), rInspectionID);
+	SvPB::SetGuidInProtoBytes(requestMessage.mutable_taskid(), rToolID);
 
-	
+
 	HRESULT Result = SvCmd::InspectionCommandsSynchronous(rInspectionID, &requestMessage, nullptr);
 
 	return Result;
@@ -184,7 +184,7 @@ void SVHistogramAnalyzerSetupClass::OnBnClickedAccumulate()
 	GetDlgItem(IDC_ACCUMULATE, &hWndCtrl);
 	bool l_accumulate = ::SendMessage(hWndCtrl, BM_GETCHECK, 0, 0L) > 0;
 
-	if (m_histogram.SetDisplay(l_accumulate?histogram::accumulated:histogram::normal))
+	if (m_histogram.SetDisplay(l_accumulate ? histogram::accumulated : histogram::normal))
 	{
 		m_histogram.ForceRepaint();
 		m_histogram.Invalidate(0);
@@ -214,12 +214,12 @@ inline void SVHistogramAnalyzerSetupClass::SetResultRange(const GUID & resultGui
 	SvOi::IObjectClass* pAnalyzerResult = m_pAnalyzer->GetResultObject(resultGuid);
 	if (pAnalyzerResult)
 	{
-		SVSetupDialogManager::Instance().SetupDialog( pAnalyzerResult->GetClassID(), pAnalyzerResult->GetUniqueObjectID(), this );
+		SVSetupDialogManager::Instance().SetupDialog(pAnalyzerResult->GetClassID(), pAnalyzerResult->GetUniqueObjectID(), this);
 	}
 	else
 	{
-		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_NoResultObject, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10234 );
+		SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_NoResultObject, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10234);
 	}
 }
 
@@ -252,7 +252,7 @@ void SVHistogramAnalyzerSetupClass::OnEnChangeDefaultPeak()
 {
 	BOOL l_ok = false;
 	int l_defaultPeak = static_cast<int>(GetDlgItemInt(IDC_DEFAULT_PEAK, &l_ok, FALSE));
-	if(l_ok && m_histogram.SetPeakDefault(l_defaultPeak))
+	if (l_ok && m_histogram.SetPeakDefault(l_defaultPeak))
 	{
 		Refresh();
 	}
@@ -308,7 +308,7 @@ void SVHistogramAnalyzerSetupClass::OnEnChangeLowValley()
 {
 	BOOL l_ok = false;
 	int l_tmp = static_cast<int>(GetDlgItemInt(IDC_LOW_VALLEY, &l_ok, FALSE));
-	if(l_ok && m_histogram.SetValleyLow(l_tmp))
+	if (l_ok && m_histogram.SetValleyLow(l_tmp))
 	{
 		Refresh();
 	}
@@ -318,7 +318,7 @@ void SVHistogramAnalyzerSetupClass::OnEnChangeHighValley()
 {
 	BOOL l_ok = false;
 	int l_tmp = static_cast<int>(GetDlgItemInt(IDC_HIGH_VALLEY, &l_ok, FALSE));
-	if(l_ok && m_histogram.SetValleyHigh(l_tmp))
+	if (l_ok && m_histogram.SetValleyHigh(l_tmp))
 	{
 		Refresh();
 	}
@@ -328,7 +328,7 @@ void SVHistogramAnalyzerSetupClass::OnEnChangeDefaultValley()
 {
 	BOOL l_ok = false;
 	int l_tmp = static_cast<int>(GetDlgItemInt(IDC_DEFAULT_VALLEY, &l_ok, FALSE));
-	if(l_ok && m_histogram.SetValleyDefault(l_tmp))
+	if (l_ok && m_histogram.SetValleyDefault(l_tmp))
 	{
 		Refresh();
 	}
@@ -341,8 +341,8 @@ void SVHistogramAnalyzerSetupClass::OnEnKillfocusDistThreshold()
 
 void SVHistogramAnalyzerSetupClass::OnEnKillfocusHeightThreshold()
 {
-	std::string Text = SvUl::Format( _T("%3.2f"), m_histogram.GetMinHeight() );
-	SetDlgItemText( IDC_HEIGHT_THRESHOLD, Text.c_str() );
+	std::string Text = SvUl::Format(_T("%3.2f"), m_histogram.GetMinHeight());
+	SetDlgItemText(IDC_HEIGHT_THRESHOLD, Text.c_str());
 }
 
 void SVHistogramAnalyzerSetupClass::OnEnKillfocusLowclip()
@@ -362,8 +362,8 @@ void SVHistogramAnalyzerSetupClass::OnEnKillfocusDefaultPeak()
 
 void SVHistogramAnalyzerSetupClass::OnEnKillfocusFixededit()
 {
-	std::string Text = SvUl::Format( _T("%3.2f"), m_histogram.GetFixedHeight() );
-	SetDlgItemText( IDC_FIXEDEDIT, Text.c_str() );
+	std::string Text = SvUl::Format(_T("%3.2f"), m_histogram.GetFixedHeight());
+	SetDlgItemText(IDC_FIXEDEDIT, Text.c_str());
 }
 
 void SVHistogramAnalyzerSetupClass::OnEnKillfocusLowValley()
@@ -391,24 +391,24 @@ void SVHistogramAnalyzerSetupClass::Refresh()
 	m_histogram.CalcStats();
 	m_histogram.ForceRepaint();
 	std::string Text;
-	Text = SvUl::Format( _T("%3.2f"), m_histogram.mean() );
-	SetDlgItemText( IDC_MEAN, Text.c_str() );
-	Text = SvUl::Format( _T("%3.2f"), m_histogram.stdDev() );
-	SetDlgItemText( IDC_STDDEV, Text.c_str() );
-	Text = SvUl::Format( _T("%d"), m_histogram.min_pixel() );
-	SetDlgItemText( IDC_MIN, Text.c_str() );
-	Text = SvUl::Format( _T("%d"), m_histogram.max_pixel() );
-	SetDlgItemText( IDC_MAX, Text.c_str() );
-	Text = SvUl::Format( _T("%d"), m_histogram.pixel_num() );
-	SetDlgItemText( IDC_COUNT, Text.c_str() );
-	Text = SvUl::Format( _T("%d"), m_histogram.bin_count() );
-	SetDlgItemText( IDC_GRAYS, Text.c_str() );
-	Text = SvUl::Format( _T("%d"), m_histogram.low_peak() );
-	SetDlgItemText( IDC_LOWPEAK, Text.c_str() );
-	Text = SvUl::Format( _T("%d"), m_histogram.high_peak() );
-	SetDlgItemText( IDC_HIGHPEAK, Text.c_str() );
-	Text = SvUl::Format( _T("%d"), m_histogram.valley() );
-	SetDlgItemText( IDC_VALLEY, Text.c_str() );
+	Text = SvUl::Format(_T("%3.2f"), m_histogram.mean());
+	SetDlgItemText(IDC_MEAN, Text.c_str());
+	Text = SvUl::Format(_T("%3.2f"), m_histogram.stdDev());
+	SetDlgItemText(IDC_STDDEV, Text.c_str());
+	Text = SvUl::Format(_T("%d"), m_histogram.min_pixel());
+	SetDlgItemText(IDC_MIN, Text.c_str());
+	Text = SvUl::Format(_T("%d"), m_histogram.max_pixel());
+	SetDlgItemText(IDC_MAX, Text.c_str());
+	Text = SvUl::Format(_T("%d"), m_histogram.pixel_num());
+	SetDlgItemText(IDC_COUNT, Text.c_str());
+	Text = SvUl::Format(_T("%d"), m_histogram.bin_count());
+	SetDlgItemText(IDC_GRAYS, Text.c_str());
+	Text = SvUl::Format(_T("%d"), m_histogram.low_peak());
+	SetDlgItemText(IDC_LOWPEAK, Text.c_str());
+	Text = SvUl::Format(_T("%d"), m_histogram.high_peak());
+	SetDlgItemText(IDC_HIGHPEAK, Text.c_str());
+	Text = SvUl::Format(_T("%d"), m_histogram.valley());
+	SetDlgItemText(IDC_VALLEY, Text.c_str());
 	Invalidate(0);
 }
 
@@ -417,11 +417,11 @@ BOOL SVHistogramAnalyzerSetupClass::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	Refresh();
-	HWND hWndCtrl =	::GetDlgItem(m_hWnd, IDC_ACCUMULATE);
+	HWND hWndCtrl = ::GetDlgItem(m_hWnd, IDC_ACCUMULATE);
 	int l_chk = m_histogram.GetDisplay();
 	::SendMessage(hWndCtrl, BM_SETCHECK, l_chk, 0L);
 
-	l_chk = (m_histogram.GetScale() == histogram::linear)?IDC_RADIOLIN:IDC_RADIOLOG;
+	l_chk = (m_histogram.GetScale() == histogram::linear) ? IDC_RADIOLIN : IDC_RADIOLOG;
 	CheckRadioButton(IDC_RADIOLOG, IDC_RADIOLIN, l_chk);
 
 	SetDlgItemInt(IDC_HIGHCLIP, m_histogram.GetHighClip(), FALSE);
@@ -432,12 +432,12 @@ BOOL SVHistogramAnalyzerSetupClass::OnInitDialog()
 	SetDlgItemInt(IDC_HIGH_VALLEY, m_histogram.GetValleyHigh(), FALSE);
 	SetDlgItemInt(IDC_DEFAULT_VALLEY, m_histogram.GetValleyDefault(), FALSE);
 
-	std::string Text = SvUl::Format( _T("%3.2f"), m_histogram.GetMinHeight() );
-	SetDlgItemText( IDC_HEIGHT_THRESHOLD, Text.c_str() );
-	l_chk = (m_histogram.GetHeightOption() == histogram::dynamic)?IDC_RADIODYNAMIC:IDC_RADIOFIXED;
-	CheckRadioButton( IDC_RADIODYNAMIC, IDC_RADIOFIXED, l_chk );
-	Text = SvUl::Format( _T("%3.2f"), m_histogram.GetFixedHeight() );
-	SetDlgItemText( IDC_FIXEDEDIT, Text.c_str() );
+	std::string Text = SvUl::Format(_T("%3.2f"), m_histogram.GetMinHeight());
+	SetDlgItemText(IDC_HEIGHT_THRESHOLD, Text.c_str());
+	l_chk = (m_histogram.GetHeightOption() == histogram::dynamic) ? IDC_RADIODYNAMIC : IDC_RADIOFIXED;
+	CheckRadioButton(IDC_RADIODYNAMIC, IDC_RADIOFIXED, l_chk);
+	Text = SvUl::Format(_T("%3.2f"), m_histogram.GetFixedHeight());
+	SetDlgItemText(IDC_FIXEDEDIT, Text.c_str());
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 }

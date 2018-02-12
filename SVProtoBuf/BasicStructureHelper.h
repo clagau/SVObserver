@@ -16,19 +16,13 @@
 
 namespace SvPB
 {
-	///Set a Guid to a bytes variable in a protobufmessage 
-	void SetGuidInProtoBytes(std::string  *pString, const GUID& guid);
-	
-	///Get a Guid from a bytes variable in a protobufmessage. 
-	void GetGuidFromProtoBytes(const std::string& strguid, GUID& rGuid);
-	
-	//!set the in th eprotobuf messager  	
-	void SetGuidInMessage(SvPB::UUID* pMessage, const GUID& rGuid);
-	
-	//!GUID From protobufmessage 
-	void GetGuidFromMessage(const SvPB::UUID& rMessage, GUID& rGuid);
+///Set a Guid to a bytes variable in a protobufmessage 
+void SetGuidInProtoBytes(std::string  *pString, const GUID& guid);
 
-	//!GUID From protobufmessage 
-	GUID getGuidFromMessage(const SvPB::UUID& rUUId);
+///Get a Guid from a bytes variable in a protobufmessage. 
+void GetGuidFromProtoBytes(const std::string& strguid, GUID& rGuid);
+
+//!GUID From protobufmessage 
+GUID GetGuidFromProtoBytes(const std::string& strguid);
 
 } //namespace SvPB

@@ -284,7 +284,7 @@ bool SVToolSetListCtrl::displayErrorBox(const SVGUID& rGuid) const
 {
 	SvPB::GetMessageListRequest requestMessageList;
 	SvPB::GetMessageListResponse responseMessageList;
-	SvPB::SetGuidInMessage(requestMessageList.mutable_objectid(), rGuid);
+	SvPB::SetGuidInProtoBytes(requestMessageList.mutable_objectid(), rGuid);
 	SvCmd::InspectionCommandsSynchronous(m_InspectionId, &requestMessageList, &responseMessageList);
 	SvStl::MessageContainerVector messageList = SvCmd::setMessageContainerFromMessagePB(responseMessageList.messages());
 	if (0 < messageList.size())
@@ -301,7 +301,7 @@ bool SVToolSetListCtrl::isToolValid(const SVGUID& tool) const
 	bool isToolValid = false;
 	SvPB::IsValidRequest requestMessageList;
 	SvPB::IsValidResponse responseMessageList;
-	SvPB::SetGuidInMessage(requestMessageList.mutable_objectid(), tool);
+	SvPB::SetGuidInProtoBytes(requestMessageList.mutable_objectid(), tool);
 	
 	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionId, &requestMessageList, &responseMessageList);
 	if (S_OK == hr)

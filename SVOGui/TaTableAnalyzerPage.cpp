@@ -163,8 +163,8 @@ namespace SvOg {
 				// Close, Disconnect and Delete it
 				SvPB::DestroyChildRequest requestMessage;
 				requestMessage.set_flag(SvPB::DestroyChildRequest::Flag_None);
-				SvPB::SetGuidInMessage(requestMessage.mutable_taskobjectlistid(), m_TaskObjectID);
-				SvPB::SetGuidInMessage(requestMessage.mutable_objectid(), analyzerGUID);
+				SvPB::SetGuidInProtoBytes(requestMessage.mutable_taskobjectlistid(), m_TaskObjectID);
+				SvPB::SetGuidInProtoBytes(requestMessage.mutable_objectid(), analyzerGUID);
 				SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, nullptr);
 			}
 		}
@@ -181,8 +181,8 @@ namespace SvOg {
 		{
 			// Close, Disconnect and Delete it
 			SvPB::DestroyChildRequest requestMessage;
-			SvPB::SetGuidInMessage(requestMessage.mutable_taskobjectlistid(), m_TaskObjectID);
-			SvPB::SetGuidInMessage(requestMessage.mutable_objectid(), m_selectedAnalyzerID);
+			SvPB::SetGuidInProtoBytes(requestMessage.mutable_taskobjectlistid(), m_TaskObjectID);
+			SvPB::SetGuidInProtoBytes(requestMessage.mutable_objectid(), m_selectedAnalyzerID);
 			SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, nullptr);
 			m_selectedAnalyzerID = GUID_NULL;
 			m_selectedSubType = SvDef::SVNotSetSubObjectType;
@@ -590,7 +590,7 @@ namespace SvOg {
 				// Do a reset of the analyzer
 				SvPB::ResetObjectRequest requestMessage;
 				SvPB::ResetObjectResponse responseMessage;
-				SvPB::SetGuidInMessage(requestMessage.mutable_objectid(), analyzerGUID);
+				SvPB::SetGuidInProtoBytes(requestMessage.mutable_objectid(), analyzerGUID);
 				
 				hrOk = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, &responseMessage);
 				if (S_OK != hrOk)

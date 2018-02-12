@@ -41,7 +41,7 @@ namespace SvCmd
 			pMessageContainerPB->set_filename(messageData.m_SourceFile.m_FileName);
 			pMessageContainerPB->set_fileline(messageData.m_SourceFile.m_Line);
 			pMessageContainerPB->set_filedatetime(messageData.m_SourceFile.m_FileDateTime);
-			SvPB::SetGuidInMessage(pMessageContainerPB->mutable_objectid(), messageContainer.getObjectId());
+			SvPB::SetGuidInProtoBytes(pMessageContainerPB->mutable_objectid(), messageContainer.getObjectId());
 		}
 		return messagePB;
 	}
@@ -57,7 +57,7 @@ namespace SvCmd
 			{
 				AdditionalTextList.push_back(text);
 			}
-			SvStl::MessageContainer messageContainer(messagePB.messagecode(), static_cast<SvStl::MessageTextEnum>(messagePB.additionaltextid()), AdditionalTextList, fileParam, 0, SvPB::getGuidFromMessage(messagePB.objectid()));
+			SvStl::MessageContainer messageContainer(messagePB.messagecode(), static_cast<SvStl::MessageTextEnum>(messagePB.additionaltextid()), AdditionalTextList, fileParam, 0, SvPB::GetGuidFromProtoBytes(messagePB.objectid()));
 			messageContainerVector.push_back(messageContainer);
 		}
 

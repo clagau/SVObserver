@@ -38,6 +38,7 @@
     <CustomBuild Include="InspectionCommands.proto" />
     <CustomBuild Include="BasicStructure.proto" />
     <CustomBuild Include="TriggerRecordController.proto" />
+    <CustomBuild Include="MonitorListStore.proto" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="InspectionCommands.pb.h">
@@ -58,8 +59,5 @@
     <ClInclude Include="MonitorListStore.pb.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="MonitorListStore.proto" />
   </ItemGroup>
 </Project>

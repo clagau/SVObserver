@@ -117,7 +117,7 @@ namespace SvSml
 		{
 			slot = rBp->GetReaderSlotLastWritten(SMRingBuffer::Last);
 		}
-		if ( 0 < slot  )
+		if ( 0 > slot  )
 		{
 			return fail;
 		}

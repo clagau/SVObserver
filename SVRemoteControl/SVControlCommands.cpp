@@ -1610,6 +1610,7 @@ HRESULT SVControlCommands::GetProduct(bool bGetReject, const _bstr_t & listName,
 		RRApi::GetProductRequest ProductRequest;
 		ProductRequest.set_name(static_cast<const char*>(listName));
 		ProductRequest.set_trigger(( -1 < triggerCount ) ? triggerCount : -1);
+		ProductRequest.set_pevioustrigger(-1);
 
 		ProductRequest.set_nameinresponse(true);
 		RRApi::GetProductResponse resp;

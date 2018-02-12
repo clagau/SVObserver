@@ -234,7 +234,7 @@ namespace SvOg
 		{
 			SvPB::CreateModelRequest requestMessage;
 			SvPB::CreateModelResponse responseMessage;
-			SvPB::SetGuidInMessage(requestMessage.mutable_patternanalyzerid(), m_rAnalyzerID);
+			SvPB::SetGuidInProtoBytes(requestMessage.mutable_patternanalyzerid(), m_rAnalyzerID);
 			requestMessage.set_posx(m_nXPos);
 			requestMessage.set_posy(m_nYPos);
 			requestMessage.set_modelwidth(m_lModelWidth);

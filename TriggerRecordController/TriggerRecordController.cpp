@@ -198,14 +198,15 @@ namespace SvTRC
 			return false;
 		}
 
-		SvPB::UUID imageUuid;
-		SvPB::SetGuidInMessage(&imageUuid, imageId);
 		
+		std::string ImageIdBytes;
+		SvPB::SetGuidInProtoBytes(&ImageIdBytes, imageId);
+
 		//check if image with this GUID already in list (this is not allowed.)
-		auto imageIter = std::find_if(m_imageListResetTmp.list().begin(), m_imageListResetTmp.list().end(), [imageUuid](auto data)->bool
+		auto imageIter = std::find_if(m_imageListResetTmp.list().begin(), m_imageListResetTmp.list().end(), [&ImageIdBytes](auto data)->bool
 		{
 			
-			return (0 == data.imageid().guid().compare(imageUuid.guid()));
+			return (0 == data.imageid().compare(ImageIdBytes));
 			
 		});
 		if (m_imageListResetTmp.list().end() != imageIter)
@@ -215,7 +216,7 @@ namespace SvTRC
 
 		//add new image to imageList
 		SvPB::ImageDefinition* pImageDefinition = m_imageListResetTmp.add_list();
-		pImageDefinition->mutable_imageid()->CopyFrom(imageUuid);
+		SvPB::SetGuidInProtoBytes(pImageDefinition->mutable_imageid(), imageId);
 		
 
 		//check if size already in sizeList

@@ -9,15 +9,15 @@ import "BasicStructure.proto";
 // This message do a runOnce for an inspection or taskObject
 message InspectionRunOnceRequest 
 {
-	UUID inspectionID = 1; //GUID of the inspection.
-	UUID taskID = 2; //GUID of the taskObject on which the runOnce should be done. If this field empty the whole inspection will run.
+	bytes inspectionID = 1; //GUID of the inspection.
+	bytes taskID = 2; //GUID of the taskObject on which the runOnce should be done. If this field empty the whole inspection will run.
 }
 
 // This is the message for Destroy child object.
 message DestroyChildRequest
 {
-	UUID taskObjectListID = 1;  //GUID of the task-object-list-object.
-	UUID objectID = 2; //GUID of the object which should be destroyed.
+	bytes taskObjectListID = 1;  //GUID of the task-object-list-object.
+	bytes objectID = 2; //GUID of the object which should be destroyed.
 
 	enum FlagEnum
 	{
@@ -34,7 +34,7 @@ message DestroyChildRequest
 // This is the message to get the last (Error)MessageList from an taskObject
 message GetMessageListRequest
 {
-	UUID objectId = 1;  //GUID of the task-object.
+	bytes objectId = 1;  //GUID of the task-object.
 }
 
 // This is the message response-message from GetMessageListRequest
@@ -47,7 +47,7 @@ message GetMessageListResponse
 // This is the message to reset an object
 message ResetObjectRequest
 {
-	UUID objectId = 1;  //GUID of the task-object.
+	bytes objectId = 1;  //GUID of the task-object.
 }
 
 // This is the message response-message from ResetObjectRequest
@@ -60,7 +60,7 @@ message ResetObjectResponse
 //This is the message to create a model for the pattern-analyzer. The model will copy from the current source image of the analyzer.
 message CreateModelRequest
 {
-	UUID patternAnalyzerID = 1; //GUID of the pattern-analyzer
+	bytes patternAnalyzerID = 1; //GUID of the pattern-analyzer
 	int32 posX = 2; //x-Pos in the source image.
 	int32 posY = 3; //y-Pos in the source image.
 	int32 modelWidth = 4; //wanted model width.
@@ -77,7 +77,7 @@ message CreateModelResponse
 // This is the message to return the state if an object is valid
 message IsValidRequest
 {
-	UUID objectId = 1;  //GUID of the object.
+	bytes objectId = 1;  //GUID of the object.
 }
 
 // This is the message response-message from IsValidRequest
@@ -90,7 +90,7 @@ message IsValidResponse
 // This is the message to return the equation string
 message GetEquationRequest
 {
-	UUID objectId = 1;  //GUID of the equation-object.
+	bytes objectId = 1;  //GUID of the equation-object.
 }
 
 // This is the message response-message from GetEquationRequest
@@ -102,7 +102,7 @@ message GetEquationResponse
 //This message validate and if required set an equation
 message ValidateAndSetEquationRequest
 {
-	UUID objectId = 1;  //GUID of the equation-object.
+	bytes objectId = 1;  //GUID of the equation-object.
 	string equationText = 2;  //string of the equation.
 	bool bSetValue = 3; //flag if value should be set.
 }

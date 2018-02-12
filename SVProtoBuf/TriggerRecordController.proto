@@ -1,11 +1,9 @@
 syntax = "proto3";
 package SvPB;
 
-import "BasicStructure.proto";
-
 message ImageDefinition
 {
-	UUID imageID = 1; //GUID of the image.
+	bytes imageID = 1; //GUID of the image.
 	bytes type = 2; ////should from struct SVMatroxBufferCreateStruct
 	int32 structID = 3;
 }
@@ -31,5 +29,5 @@ message ImageStructList
 
 message InspectionList
 {
-	repeated UUID InspectionID = 1;
+	repeated bytes InspectionID = 1;
 }

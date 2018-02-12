@@ -94,6 +94,9 @@ static bool GetImageId(RRApi::ClientFrontEndApi* api, int imageWidth, RRApi::Cur
 	{
 		RRApi::GetProductRequest prodReq;
 		prodReq.set_name(listname);
+		prodReq.set_trigger(-1);
+		prodReq.set_pevioustrigger(-1);
+
 		auto prodRes = api->GetProduct(prodReq).get();
 		for (const auto& imgId : *prodRes.mutable_images())
 		{
@@ -244,6 +247,9 @@ int main(int argc, char *argv[])
 			else if (words[0] == "p" || words[0] == "r")
 			{
 				RRApi::GetProductRequest ProductRequest;
+				ProductRequest.set_trigger(-1);
+				ProductRequest.set_pevioustrigger(-1);
+
 				if (wordsize > 1)
 				{
 					ProductRequest.set_name(words[1].c_str());

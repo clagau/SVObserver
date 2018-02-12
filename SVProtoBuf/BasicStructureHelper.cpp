@@ -12,40 +12,27 @@
 
 namespace SvPB
 {
-	
-	void SetGuidInProtoBytes(std::string  *pString, const GUID& guid)
-	{
-		if (pString)
-		{
-			pString->assign(reinterpret_cast<const char*>(&guid), sizeof(GUID) );
-		}
-	}
-	
-	void GetGuidFromProtoBytes(const std::string& strguid, GUID& rGuid)
-	{
-		if (strguid.size() == sizeof(GUID))
-		{
-			rGuid = *(reinterpret_cast<const GUID*>(strguid.data()));
-		}
-	}
-	
-	
-	void SetGuidInMessage(SvPB::UUID* pMessage ,const GUID& rGuid )
-	{
-		if (pMessage)
-		{
-			SetGuidInProtoBytes(pMessage->mutable_guid(), rGuid);
-		}
-	}
-	void GetGuidFromMessage(const SvPB::UUID& rMessage, GUID& rGuid)
-	{
-		GetGuidFromProtoBytes(rMessage.guid(), rGuid);
-	}
 
-	GUID getGuidFromMessage(const SvPB::UUID& rUUId)
+void SetGuidInProtoBytes(std::string  *pString, const GUID& guid)
+{
+	if (pString)
 	{
-		GUID guid = GUID_NULL;
-		GetGuidFromProtoBytes(rUUId.guid(), guid);
-		return guid;
+		pString->assign(reinterpret_cast<const char*>(&guid), sizeof(GUID));
 	}
+}
+
+void GetGuidFromProtoBytes(const std::string& strguid, GUID& rGuid)
+{
+	if (strguid.size() == sizeof(GUID))
+	{
+		rGuid = *(reinterpret_cast<const GUID*>(strguid.data()));
+	}
+}
+
+GUID GetGuidFromProtoBytes(const std::string& strguid)
+{
+	GUID guid = GUID_NULL;
+	GetGuidFromProtoBytes(strguid, guid);
+	return guid;
+}
 } //namespace SvPB

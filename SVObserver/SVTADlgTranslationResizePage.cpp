@@ -910,8 +910,8 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 		SVGUID InspectionID = m_pTool->GetInspection()->GetUniqueObjectID();
 		SvPB::InspectionRunOnceRequest requestMessage;
 		
-		SvPB::SetGuidInMessage(requestMessage.mutable_inspectionid(), InspectionID);
-		SvPB::SetGuidInMessage(requestMessage.mutable_taskid(), (m_pTool->GetUniqueObjectID()));
+		SvPB::SetGuidInProtoBytes(requestMessage.mutable_inspectionid(), InspectionID);
+		SvPB::SetGuidInProtoBytes(requestMessage.mutable_taskid(), (m_pTool->GetUniqueObjectID()));
 		SvCmd::InspectionCommandsSynchronous(InspectionID, &requestMessage, nullptr);
 
 		HRESULT hr2 = UpdateImages();
@@ -979,8 +979,8 @@ HRESULT	SVTADlgTranslationResizePage::ExitTabValidation ()
 		SVGUID InspectionID = m_pTool->GetInspection()->GetUniqueObjectID();
 		SvPB::InspectionRunOnceRequest requestMessage;
 		
-		SvPB::SetGuidInMessage(requestMessage.mutable_inspectionid(), InspectionID);
-		SvPB::SetGuidInMessage(requestMessage.mutable_taskid(), (m_pTool->GetUniqueObjectID()));
+		SvPB::SetGuidInProtoBytes(requestMessage.mutable_inspectionid(), InspectionID);
+		SvPB::SetGuidInProtoBytes(requestMessage.mutable_taskid(), (m_pTool->GetUniqueObjectID()));
 		SvCmd::InspectionCommandsSynchronous(InspectionID, &requestMessage, nullptr);
 	}
 

@@ -104,6 +104,7 @@
     </ClCompile>
     <ClCompile Include="MonitorListStore.pb.cc">
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Level2</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Level2</WarningLevel>
     </ClCompile>
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="TriggerRecordController.pb.cc">

@@ -81,7 +81,7 @@ namespace SvOg
 		std::string equationText;
 		SvPB::GetEquationRequest requestMessage;
 		SvPB::GetEquationResponse responseMessage;
-		SvPB::SetGuidInMessage(requestMessage.mutable_objectid(), m_EquationID);
+		SvPB::SetGuidInProtoBytes(requestMessage.mutable_objectid(), m_EquationID);
 		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, &responseMessage);
 		if (S_OK == hr)
 		{
@@ -138,7 +138,7 @@ namespace SvOg
 		SvPB::ValidateAndSetEquationRequest requestEquationMessage;
 		SvPB::ValidateAndSetEquationResponse responseEquationMessage;
 		
-		SvPB::SetGuidInMessage(requestEquationMessage.mutable_objectid(), m_EquationID);
+		SvPB::SetGuidInProtoBytes(requestEquationMessage.mutable_objectid(), m_EquationID);
 	
 		requestEquationMessage.set_equationtext(equationString);
 		requestEquationMessage.set_bsetvalue(bSetValue);
@@ -152,7 +152,7 @@ namespace SvOg
 			if (validateSuccessful == retValue && bSetValue)
 			{
 				SvPB::ResetObjectRequest requestResetMessage;
-				SvPB::SetGuidInMessage(requestResetMessage.mutable_objectid(), m_TaskObjectID);
+				SvPB::SetGuidInProtoBytes(requestResetMessage.mutable_objectid(), m_TaskObjectID);
 				hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestResetMessage);
 				if (S_OK != hr)
 				{

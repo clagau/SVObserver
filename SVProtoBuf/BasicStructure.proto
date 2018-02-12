@@ -1,13 +1,6 @@
 syntax = "proto3";
 package SvPB;
 
-
-message UUID //Guid-structure
-{
-  
-  bytes guid = 1;
-}
-
 message MessageContainer //structure for a (error/warning/info-)message 
 {
 	int32 MessageCode = 1;
@@ -18,7 +11,7 @@ message MessageContainer //structure for a (error/warning/info-)message
 	string FileName = 6;
 	int32 FileLine = 7;
 	string FileDateTime = 8;
-	UUID ObjectId = 9;
+	bytes ObjectId = 9;
 }
 
 message MessageContainerVector
