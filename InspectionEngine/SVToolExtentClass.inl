@@ -22,8 +22,8 @@ inline HRESULT SVToolExtentClass::Initialize()
 
 	m_eImageType = SvDef::SVImageTypeEnum::SVImageTypeUnknown;
 
-	m_eTranslation = SVExtentTranslationUnknown;
-	m_eShape = SVExtentShapeUnknown;
+	m_eTranslation = SvDef::SVExtentTranslationUnknown;
+	m_eShape = SvDef::SVExtentShapeUnknown;
 
 	KeepPrevError( l_svOk, m_svProperties.Initialize() );
 

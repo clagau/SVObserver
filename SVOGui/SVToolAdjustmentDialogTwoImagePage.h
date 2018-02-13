@@ -86,8 +86,8 @@ namespace SvOg
 		std::string m_resultImageName;
 		SVGUID m_resultImageID;
 
-		SVGUID m_InspectionID;
-		SVGUID m_TaskObjectID;
+		const SVGUID m_InspectionID;
+		const SVGUID m_TaskObjectID;
 
 		ValueController m_Values;
 	#pragma endregion Member variables

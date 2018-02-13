@@ -863,7 +863,7 @@ HRESULT SVTaskObjectClass::SetImageExtentToFit( const SVImageExtentClass& rImage
 	return S_FALSE;
 }
 
-HRESULT SVTaskObjectClass::GetPropertyInfo( SVExtentPropertyEnum p_eProperty, SVExtentPropertyInfoStruct& p_rInfo ) const
+HRESULT SVTaskObjectClass::GetPropertyInfo( SvDef::SVExtentPropertyEnum p_eProperty, SVExtentPropertyInfoStruct& p_rInfo ) const
 {
 	return S_FALSE;
 }

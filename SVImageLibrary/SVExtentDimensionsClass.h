@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "SVExtentEnums.h"
+#include "Definitions/SVExtentEnums.h"
 
 class SVExtentDimensionsClass
 {
@@ -24,13 +24,13 @@ public:
 
 	HRESULT Initialize();
 
-	HRESULT DisableExtentProperty( SVExtentPropertyEnum p_eProperty );
-	bool IsEnabled( SVExtentPropertyEnum p_eProperty ) const;
+	HRESULT DisableExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty );
+	bool IsEnabled( SvDef::SVExtentPropertyEnum p_eProperty ) const;
 
-	HRESULT GetExtentProperty( SVExtentPropertyEnum p_eProperty, long &p_rlValue ) const;
-	HRESULT GetExtentProperty( SVExtentPropertyEnum p_eProperty, double &p_rdValue ) const;
+	HRESULT GetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, long &p_rlValue ) const;
+	HRESULT GetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, double &p_rdValue ) const;
 
-	HRESULT SetExtentProperty( SVExtentPropertyEnum p_eProperty, double p_dValue );
+	HRESULT SetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, double p_dValue );
 
 	bool operator==( const SVExtentDimensionsClass &p_rsvValue ) const;
 	bool operator!=( const SVExtentDimensionsClass &p_rsvValue ) const;

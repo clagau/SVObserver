@@ -129,7 +129,7 @@ SVTaskObjectClass* SVShiftTool::GetObjectAtPoint( const SVExtentPointStruct &p_r
 	SVTaskObjectClass* l_pObject = nullptr;
 
 	if( S_OK == m_svToolExtent.GetImageExtent( l_Extents )  &&
-	    l_Extents.GetLocationPropertyAt( p_rPoint ) != SVExtentLocationPropertyUnknown )
+	    l_Extents.GetLocationPropertyAt( p_rPoint ) != SvDef::SVExtentLocationPropertyUnknown )
 	{
 		l_pObject = this;
 	}
@@ -457,8 +457,8 @@ void SVShiftTool::LocalInitialize()
 	m_LearnedTranslationY.SetObjectAttributesAllowed( SvDef::SV_EXTENT_OBJECT, SvOi::SetAttributeType::RemoveAttribute );
 
 	//Set Extent Information
-	m_svToolExtent.SetExtentObject( SVExtentPropertyTranslationOffsetX, &m_DisplacementX );
-	m_svToolExtent.SetExtentObject( SVExtentPropertyTranslationOffsetY, &m_DisplacementY );
+	m_svToolExtent.SetExtentObject( SvDef::SVExtentPropertyTranslationOffsetX, &m_DisplacementX );
+	m_svToolExtent.SetExtentObject( SvDef::SVExtentPropertyTranslationOffsetY, &m_DisplacementY );
 
 	//Set Default Values
 	m_ExtentTop.SetDefaultValue( 10, true );
@@ -511,60 +511,60 @@ void SVShiftTool::SetAttributeData()
 			//Turn Extent data on
 			//Set Extent Property Info so items show up in the Adjust Tool Position Dlg
 
-			m_svToolExtent.GetExtentPropertyInfo(SVExtentPropertyTranslationOffsetX, info);
+			m_svToolExtent.GetExtentPropertyInfo(SvDef::SVExtentPropertyTranslationOffsetX, info);
 			info.bHidden = false;
-			m_svToolExtent.SetExtentPropertyInfo(SVExtentPropertyTranslationOffsetX, info);
+			m_svToolExtent.SetExtentPropertyInfo(SvDef::SVExtentPropertyTranslationOffsetX, info);
 
-			m_svToolExtent.GetExtentPropertyInfo(SVExtentPropertyTranslationOffsetY, info);
+			m_svToolExtent.GetExtentPropertyInfo(SvDef::SVExtentPropertyTranslationOffsetY, info);
 			info.bHidden = false;
-			m_svToolExtent.SetExtentPropertyInfo(SVExtentPropertyTranslationOffsetY, info);
+			m_svToolExtent.SetExtentPropertyInfo(SvDef::SVExtentPropertyTranslationOffsetY, info);
 
-			m_svToolExtent.GetExtentPropertyInfo(SVExtentPropertyPositionPointX, info);
+			m_svToolExtent.GetExtentPropertyInfo(SvDef::SVExtentPropertyPositionPointX, info);
 			info.bHidden = false;
-			m_svToolExtent.SetExtentPropertyInfo(SVExtentPropertyPositionPointX ,info);
+			m_svToolExtent.SetExtentPropertyInfo(SvDef::SVExtentPropertyPositionPointX ,info);
 
-			m_svToolExtent.GetExtentPropertyInfo(SVExtentPropertyPositionPointY, info);
+			m_svToolExtent.GetExtentPropertyInfo(SvDef::SVExtentPropertyPositionPointY, info);
 			info.bHidden = false;
-			m_svToolExtent.SetExtentPropertyInfo(SVExtentPropertyPositionPointY, info);
+			m_svToolExtent.SetExtentPropertyInfo(SvDef::SVExtentPropertyPositionPointY, info);
 		}
 		else if ( SV_SHIFT_ENUM::SV_SHIFT_NONE == l_Mode )
 		{
 			//Set Extent Property Info so items don't show up in the Adjust Tool Position Dlg
-			m_svToolExtent.GetExtentPropertyInfo(SVExtentPropertyTranslationOffsetX, info);
+			m_svToolExtent.GetExtentPropertyInfo(SvDef::SVExtentPropertyTranslationOffsetX, info);
 			info.bHidden = true;
-			m_svToolExtent.SetExtentPropertyInfo(SVExtentPropertyTranslationOffsetX, info);
+			m_svToolExtent.SetExtentPropertyInfo(SvDef::SVExtentPropertyTranslationOffsetX, info);
 
-			m_svToolExtent.GetExtentPropertyInfo(SVExtentPropertyTranslationOffsetY, info);
+			m_svToolExtent.GetExtentPropertyInfo(SvDef::SVExtentPropertyTranslationOffsetY, info);
 			info.bHidden = true;
-			m_svToolExtent.SetExtentPropertyInfo(SVExtentPropertyTranslationOffsetY, info);
+			m_svToolExtent.SetExtentPropertyInfo(SvDef::SVExtentPropertyTranslationOffsetY, info);
 
 			//Set Extent Property Info so items show up in the Adjust Tool Position Dlg
-			m_svToolExtent.GetExtentPropertyInfo(SVExtentPropertyPositionPointX, info);
+			m_svToolExtent.GetExtentPropertyInfo(SvDef::SVExtentPropertyPositionPointX, info);
 			info.bHidden = false;
-			m_svToolExtent.SetExtentPropertyInfo(SVExtentPropertyPositionPointX, info);
+			m_svToolExtent.SetExtentPropertyInfo(SvDef::SVExtentPropertyPositionPointX, info);
 
-			m_svToolExtent.GetExtentPropertyInfo(SVExtentPropertyPositionPointY, info);
+			m_svToolExtent.GetExtentPropertyInfo(SvDef::SVExtentPropertyPositionPointY, info);
 			info.bHidden = false;
-			m_svToolExtent.SetExtentPropertyInfo(SVExtentPropertyPositionPointY, info);
+			m_svToolExtent.SetExtentPropertyInfo(SvDef::SVExtentPropertyPositionPointY, info);
 		}
 		else
 		{
 			//Set Extent Property Info so items don't show up in the Adjust Tool Position Dlg
-			m_svToolExtent.GetExtentPropertyInfo(SVExtentPropertyTranslationOffsetX, info);
+			m_svToolExtent.GetExtentPropertyInfo(SvDef::SVExtentPropertyTranslationOffsetX, info);
 			info.bHidden = true;
-			m_svToolExtent.SetExtentPropertyInfo(SVExtentPropertyTranslationOffsetX, info);
+			m_svToolExtent.SetExtentPropertyInfo(SvDef::SVExtentPropertyTranslationOffsetX, info);
 
-			m_svToolExtent.GetExtentPropertyInfo(SVExtentPropertyTranslationOffsetY, info);
+			m_svToolExtent.GetExtentPropertyInfo(SvDef::SVExtentPropertyTranslationOffsetY, info);
 			info.bHidden = true;
-			m_svToolExtent.SetExtentPropertyInfo(SVExtentPropertyTranslationOffsetY, info);
+			m_svToolExtent.SetExtentPropertyInfo(SvDef::SVExtentPropertyTranslationOffsetY, info);
 
-			m_svToolExtent.GetExtentPropertyInfo(SVExtentPropertyPositionPointX, info);
+			m_svToolExtent.GetExtentPropertyInfo(SvDef::SVExtentPropertyPositionPointX, info);
 			info.bHidden = true;
-			m_svToolExtent.SetExtentPropertyInfo(SVExtentPropertyPositionPointX, info);
+			m_svToolExtent.SetExtentPropertyInfo(SvDef::SVExtentPropertyPositionPointX, info);
 
-			m_svToolExtent.GetExtentPropertyInfo(SVExtentPropertyPositionPointY, info);
+			m_svToolExtent.GetExtentPropertyInfo(SvDef::SVExtentPropertyPositionPointY, info);
 			info.bHidden = true;
-			m_svToolExtent.SetExtentPropertyInfo(SVExtentPropertyPositionPointY, info);
+			m_svToolExtent.SetExtentPropertyInfo(SvDef::SVExtentPropertyPositionPointY, info);
 
 			//set default value to be 0, 0
 			m_ExtentLeft.SetDefaultValue(0, true);

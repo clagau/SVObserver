@@ -20,7 +20,7 @@
 #pragma endregion Includes
 
 class SVToolAdjustmentDialogSheetClass;
-class SVToolClass;
+class SVShiftTool;
 class SVEvaluateClass;
 class SVDoubleValueObjectClass;
 class SVBoolValueObjectClass;
@@ -68,8 +68,8 @@ protected:
 	void SetupShiftPropertyTree();
 	void FillShiftProperties();
 
-	SVToolAdjustmentDialogSheetClass* pParentDialog;
-	SVToolClass* m_pTool;
+	SVToolAdjustmentDialogSheetClass* m_pParentDialog;
+	SVShiftTool* m_pTool;
 
 	SVEvaluateClass* pEvaluateTranslationX;
 	SVEvaluateClass* pEvaluateTranslationY;

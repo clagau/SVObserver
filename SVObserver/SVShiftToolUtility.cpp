@@ -39,6 +39,7 @@ void SVShiftToolUtility::SetToolNormalize(SVShiftTool* pShiftTool)
 		typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
 		typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
 		Controller m_Values{ SvOg::BoundValues{pShiftTool->GetInspection()->GetUniqueObjectID(), pShiftTool->GetUniqueObjectID()} };
+		m_Values.Init();
 
 		m_Values.Set<double>(SVShiftToolReferenceXObjectGuid, static_cast<double> (lTranslationX));
 		m_Values.Set<double>(SVShiftToolReferenceYObjectGuid, static_cast<double> (lTranslationY));
@@ -71,6 +72,7 @@ void SVShiftToolUtility::SetToolSetReference(SVShiftTool *pShiftTool)
 
 		Controller m_Values{ SvOg::BoundValues{ pShiftTool->GetInspection()->GetUniqueObjectID(), pShiftTool->GetUniqueObjectID() } };
 
+		m_Values.Init();
 		long lLeft = static_cast<long> (m_Values.Get<double>(SVExtentRelativeLeftPositionObjectGuid));
 		long lTop = static_cast<long> (m_Values.Get<double>(SVExtentRelativeTopPositionObjectGuid));
 		long lOffset = static_cast<long> (m_Values.Get<double>(SVImageTransformDisplacementXGuid));

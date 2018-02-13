@@ -12,7 +12,7 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <map>
-#include "SVImageLibrary/SVExtentEnums.h"
+#include "Definitions/SVExtentEnums.h"
 #include "SVImageLibrary/SVImageExtentClass.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVExtentPropertiesInfoStruct.h"
@@ -29,11 +29,11 @@ public:
 
 	HRESULT GetProperties( SVImageExtentClass &rExtents ) const;
 
-	HRESULT GetExtentObject( SVExtentPropertyEnum eProperty, SvOi::IValueObject *&rpValueObject ) const;
-	HRESULT SetExtentObject( SVExtentPropertyEnum eProperty, SvOi::IValueObject *pValueObject );
+	HRESULT GetExtentObject( SvDef::SVExtentPropertyEnum eProperty, SvOi::IValueObject *&rpValueObject ) const;
+	HRESULT SetExtentObject( SvDef::SVExtentPropertyEnum eProperty, SvOi::IValueObject *pValueObject );
 
-	HRESULT GetPropertyInfo( SVExtentPropertyEnum eProperty, SVExtentPropertyInfoStruct& rInfo ) const;
-	HRESULT SetPropertyInfo( SVExtentPropertyEnum eProperty, const SVExtentPropertyInfoStruct& rInfo );
+	HRESULT GetPropertyInfo( SvDef::SVExtentPropertyEnum eProperty, SVExtentPropertyInfoStruct& rInfo ) const;
+	HRESULT SetPropertyInfo( SvDef::SVExtentPropertyEnum eProperty, const SVExtentPropertyInfoStruct& rInfo );
 
 private:
 	struct SVExtentPropertyInfoStructImpl
@@ -41,7 +41,7 @@ private:
 		SvOi::IValueObject*  pValueObject;
 		SVExtentPropertyInfoStruct info;
 	};
-	typedef std::map< SVExtentPropertyEnum, SVExtentPropertyInfoStructImpl > SVToolExtentPropertiesMap;
+	typedef std::map<SvDef::SVExtentPropertyEnum, SVExtentPropertyInfoStructImpl> SVToolExtentPropertiesMap;
 
 	SVToolExtentPropertiesMap m_svProperties;
 };

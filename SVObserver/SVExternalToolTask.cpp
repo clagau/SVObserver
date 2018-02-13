@@ -189,9 +189,9 @@ SVExternalToolTask::SVExternalToolTask( SVObjectClass* POwner, int StringResourc
 		imageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, 8 );
 		imageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatMono8 ); 
 
-		imageInfo.SetExtentProperty( SVExtentPropertyOutputPositionPoint, 0 );
-		imageInfo.SetExtentProperty( SVExtentPropertyWidth, 100 );
-		imageInfo.SetExtentProperty( SVExtentPropertyHeight, 100 );
+		imageInfo.SetExtentProperty( SvDef::SVExtentPropertyOutputPositionPoint, 0 );
+		imageInfo.SetExtentProperty( SvDef::SVExtentPropertyWidth, 100 );
+		imageInfo.SetExtentProperty( SvDef::SVExtentPropertyHeight, 100 );
 
 		SVImageClass* pImage = &(m_aResultImages[i]);
 		pImage->InitializeImage(SvDef::SVImageTypeEnum::SVImageTypePhysical);
@@ -626,9 +626,9 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 				imageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, 8 );
 				imageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatMono8 ); 
 
-				imageInfo.SetExtentProperty( SVExtentPropertyOutputPositionPoint, 0 );
-				imageInfo.SetExtentProperty( SVExtentPropertyWidth, 100 );
-				imageInfo.SetExtentProperty( SVExtentPropertyHeight, 100 );
+				imageInfo.SetExtentProperty( SvDef::SVExtentPropertyOutputPositionPoint, 0 );
+				imageInfo.SetExtentProperty( SvDef::SVExtentPropertyWidth, 100 );
+				imageInfo.SetExtentProperty( SvDef::SVExtentPropertyHeight, 100 );
 
 				// create buffer
 				SVImageClass* pImage = &(m_aResultImages[i]);
@@ -1314,9 +1314,9 @@ HRESULT SVExternalToolTask::GetImageInfo(const SVImageDefinitionStruct* pDefinit
 	rInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, 8 ); 
 	rInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, pDefinitionStruct->eImageFormat ); 
 
-	rInfo.SetExtentProperty( SVExtentPropertyOutputPositionPoint, 0 );
-	rInfo.SetExtentProperty( SVExtentPropertyWidth, pDefinitionStruct->lWidth );
-	rInfo.SetExtentProperty( SVExtentPropertyHeight, pDefinitionStruct->lHeight );
+	rInfo.SetExtentProperty( SvDef::SVExtentPropertyOutputPositionPoint, 0 );
+	rInfo.SetExtentProperty( SvDef::SVExtentPropertyWidth, pDefinitionStruct->lWidth );
+	rInfo.SetExtentProperty( SvDef::SVExtentPropertyHeight, pDefinitionStruct->lHeight );
 
 	switch (pDefinitionStruct->eImageFormat)
 	{
@@ -1337,8 +1337,8 @@ HRESULT SVExternalToolTask::GetImageDefinitionStruct( SVImageDefinitionStruct& r
 	long l_lBandNumber = 1;
 	long l_lFormat = SvDef::SVImageFormatUnknown;
 
-	rInfo.GetExtentProperty( SVExtentPropertyWidth, rImageDef.lWidth );
-	rInfo.GetExtentProperty( SVExtentPropertyHeight, rImageDef.lHeight );
+	rInfo.GetExtentProperty( SvDef::SVExtentPropertyWidth, rImageDef.lWidth );
+	rInfo.GetExtentProperty( SvDef::SVExtentPropertyHeight, rImageDef.lHeight );
 
 	rInfo.GetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, l_lFormat ); 
 	rInfo.GetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, l_lBandNumber ); 

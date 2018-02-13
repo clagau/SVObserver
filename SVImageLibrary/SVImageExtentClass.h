@@ -15,7 +15,7 @@
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <vector>
 #include "SVExtentDimensionsClass.h"
-#include "SVExtentEnums.h"
+#include "Definitions/SVExtentEnums.h"
 #include "SVExtentFigureStruct.h"
 #include "SVExtentOffsetStruct.h"
 #include "SVExtentPointStruct.h"
@@ -35,8 +35,8 @@ extern double SVGetFlippedRotationAngle( SVExtentPointStruct p_svCenter, SVExten
 extern SVExtentPointStruct SVRotateAndFlipPoint( SVExtentPointStruct p_svCenter, double p_dRadius, double p_dAngle );
 extern SVExtentPointStruct SVRotateAndFlipPoint( SVExtentPointStruct p_svCenter, SVExtentPointStruct p_svStart, double p_dAngle );
 
-typedef std::vector<SVExtentPropertyEnum> SVExtentPropertyListType;
-typedef std::map< SVExtentPropertyEnum, std::string > SVExtentPropertyMapType;
+typedef std::vector<SvDef::SVExtentPropertyEnum> SVExtentPropertyListType;
+typedef std::map< SvDef::SVExtentPropertyEnum, std::string > SVExtentPropertyMapType;
 
 class SVImageExtentClass
 {
@@ -49,8 +49,8 @@ public:
 
 	HRESULT Initialize();
 
-	SVExtentTranslationEnum GetTranslation() const;
-	HRESULT SetTranslation( SVExtentTranslationEnum p_eTranslation );
+	SvDef::SVExtentTranslationEnum GetTranslation() const;
+	HRESULT SetTranslation( SvDef::SVExtentTranslationEnum p_eTranslation );
 
 	const SVExtentDimensionsClass& GetDimensions() const;
 	HRESULT SetDimensions( SVExtentDimensionsClass p_svDimensions );
@@ -58,27 +58,27 @@ public:
 	const SVExtentPositionClass &GetPosition() const;
 	HRESULT SetPosition( SVExtentPositionClass p_svPosition );
 
-	HRESULT DisableExtentProperty( SVExtentPropertyEnum p_eProperty );
+	HRESULT DisableExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty );
 
-	HRESULT GetExtentProperty( SVExtentPropertyEnum p_eProperty, long &p_rlValue ) const;
-	HRESULT GetExtentProperty( SVExtentPropertyEnum p_eProperty, double &p_rdValue ) const;
-	HRESULT GetExtentProperty( SVExtentPropertyEnum p_eProperty, POINT &p_roValue ) const;
-	HRESULT GetExtentProperty( SVExtentPropertyEnum p_eProperty, SVExtentPointStruct &p_rsvValue ) const;
-	HRESULT GetExtentPropertyList( SVExtentPropertyEnum p_eWhichProperties, SVExtentPropertyListType& p_rPropertyList ) const;
-	HRESULT GetExtentPropertyList( SVExtentPropertyEnum p_eWhichProperties, SVExtentPropertyMapType& p_rPropertyMap ) const;
-	static std::string GetExtentPropertyName( SVExtentPropertyEnum p_eProperty );
+	HRESULT GetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, long &p_rlValue ) const;
+	HRESULT GetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, double &p_rdValue ) const;
+	HRESULT GetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, POINT &p_roValue ) const;
+	HRESULT GetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, SVExtentPointStruct &p_rsvValue ) const;
+	HRESULT GetExtentPropertyList( SvDef::SVExtentPropertyEnum p_eWhichProperties, SVExtentPropertyListType& p_rPropertyList ) const;
+	HRESULT GetExtentPropertyList( SvDef::SVExtentPropertyEnum p_eWhichProperties, SVExtentPropertyMapType& p_rPropertyMap ) const;
+	static std::string GetExtentPropertyName( SvDef::SVExtentPropertyEnum p_eProperty );
 
-	HRESULT SetExtentProperty( SVExtentPropertyEnum p_eProperty, double p_dValue );
-	HRESULT SetExtentProperty( SVExtentPropertyEnum p_eProperty, SVExtentPointStruct p_svValue );
+	HRESULT SetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, double p_dValue );
+	HRESULT SetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, SVExtentPointStruct p_svValue );
 
 	HRESULT UpdateData();
 
 	HRESULT GetFigure( SVExtentFigureStruct &p_rsvFigure ) const;
 
-	SVExtentLocationPropertyEnum GetLocationPropertyAt( SVExtentPointStruct p_svPoint );
+	SvDef::SVExtentLocationPropertyEnum GetLocationPropertyAt( SVExtentPointStruct p_svPoint );
 
-	HRESULT Update( SVExtentLocationPropertyEnum p_eLocation, SVExtentPointStruct p_svStart, SVExtentPointStruct p_svEnd );
-	HRESULT UpdateFromOutputSpace( SVExtentLocationPropertyEnum p_eLocation, long p_lX, long p_lY );
+	HRESULT Update( SvDef::SVExtentLocationPropertyEnum p_eLocation, SVExtentPointStruct p_svStart, SVExtentPointStruct p_svEnd );
+	HRESULT UpdateFromOutputSpace( SvDef::SVExtentLocationPropertyEnum p_eLocation, long p_lX, long p_lY );
 
 	/// GetRectangle  
 	///  Retrieves the rect values for the input/parent image that is 
@@ -118,11 +118,11 @@ public:
 	HRESULT UpdateSourceOffset( SVExtentOffsetStruct& p_rsvOffsetData );
 
 protected:
-	HRESULT UpdateLine( SVExtentLocationPropertyEnum p_eLocation, SVExtentPointStruct p_svStart, SVExtentPointStruct p_svEnd );
-	HRESULT UpdatePolar( SVExtentLocationPropertyEnum p_eLocation, SVExtentPointStruct p_svStart, SVExtentPointStruct p_svEnd );
-	HRESULT UpdatePolarFromOutputSpace( SVExtentLocationPropertyEnum p_eLocation, long p_dX, long p_dY );
-	HRESULT UpdateHorizontalPerspective( SVExtentLocationPropertyEnum p_eLocation, SVExtentPointStruct p_svStart, SVExtentPointStruct p_svEnd );
-	HRESULT UpdateVerticalPerspective( SVExtentLocationPropertyEnum p_eLocation, SVExtentPointStruct p_svStart, SVExtentPointStruct p_svEnd );
+	HRESULT UpdateLine( SvDef::SVExtentLocationPropertyEnum p_eLocation, SVExtentPointStruct p_svStart, SVExtentPointStruct p_svEnd );
+	HRESULT UpdatePolar( SvDef::SVExtentLocationPropertyEnum p_eLocation, SVExtentPointStruct p_svStart, SVExtentPointStruct p_svEnd );
+	HRESULT UpdatePolarFromOutputSpace( SvDef::SVExtentLocationPropertyEnum p_eLocation, long p_dX, long p_dY );
+	HRESULT UpdateHorizontalPerspective( SvDef::SVExtentLocationPropertyEnum p_eLocation, SVExtentPointStruct p_svStart, SVExtentPointStruct p_svEnd );
+	HRESULT UpdateVerticalPerspective( SvDef::SVExtentLocationPropertyEnum p_eLocation, SVExtentPointStruct p_svStart, SVExtentPointStruct p_svEnd );
 
 	HRESULT ClearOutputData();
 
@@ -135,7 +135,7 @@ private:
 	///  to the ROI of the parent image.
 	HRESULT TranslateToLocalSpace(const SVExtentPointStruct& rValue, SVExtentPointStruct& rResult);
 	// Input Attributes
-	SVExtentTranslationEnum m_eTranslation;
+	SvDef::SVExtentTranslationEnum m_eTranslation;
 	SVExtentPositionClass m_svPosition;
 	SVExtentDimensionsClass m_svDimensions;
 

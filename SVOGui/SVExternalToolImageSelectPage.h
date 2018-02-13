@@ -78,8 +78,8 @@ namespace SvOg
 		//}}AFX_DATA
 
 		SVRPropTree	m_Tree;
-		SVGUID m_InspectionID;
-		SVGUID m_TaskObjectID;
+		const SVGUID m_InspectionID;
+		const SVGUID m_TaskObjectID;
 		int m_numImages;
 		ImageInputList m_imageInputList;
 	#pragma endregion Member variables

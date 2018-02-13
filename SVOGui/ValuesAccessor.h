@@ -41,6 +41,7 @@ namespace SvOg
 		{
 			const GUID& rInspectionID = rValues.GetInspectionID();
 			const GUID& rTaskID = rValues.GetTaskID();
+			rValues.clear();
 	
 			typedef SvCmd::TaskObjectGetEmbeddedValues<Values> Command;
 			typedef std::shared_ptr<Command> CommandPtr;

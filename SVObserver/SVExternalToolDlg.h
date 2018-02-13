@@ -71,8 +71,8 @@ protected:
 	CString m_strLastDllPath;
 	CToolTipCtrl m_ToolTip;
 	SVCancelData* m_pCancelData;
-	SVGUID m_InspectionID;
-	SVGUID m_ToolObjectID;
+	const SVGUID m_InspectionID;
+	const SVGUID m_ToolObjectID;
 	SVGUID m_TaskObjectID;
 
 	// Generated message map functions

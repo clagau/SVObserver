@@ -39,11 +39,15 @@ SVTADlgTranslationShiftPageClass::SVTADlgTranslationShiftPageClass(const SVGUID&
 : CPropertyPage(SVTADlgTranslationShiftPageClass::IDD)
 , m_TranslationXValue(_T(""))
 , m_TranslationYValue(_T(""))
-, pParentDialog( Parent )
+, m_pParentDialog( Parent )
 , m_pTool( nullptr ) // This needs to change
 , pEvaluateTranslationY( nullptr ) // This needs to change
 , m_lShiftType( 0 )
 {
+	if(nullptr != m_pParentDialog)
+	{
+		m_pParentDialog->GetToolByType(m_pTool);
+	}
 }
 
 SVTADlgTranslationShiftPageClass::~SVTADlgTranslationShiftPageClass()
@@ -79,7 +83,7 @@ BOOL SVTADlgTranslationShiftPageClass::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 	
-	if (pParentDialog && (m_pTool = pParentDialog->GetTool()))
+	if (nullptr != m_pTool)
 	{
 		m_pValues = std::unique_ptr<Controller>(new Controller{ SvOg::BoundValues{ m_pTool->GetInspection()->GetUniqueObjectID(), m_pTool->GetUniqueObjectID() } });
 		m_pValues->Init();
@@ -95,11 +99,7 @@ BOOL SVTADlgTranslationShiftPageClass::OnInitDialog()
 		evaluateObjectInfo.SubType = SvDef::SVEvaluateTranslationYObjectType;
 		pEvaluateTranslationY = dynamic_cast<SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
 
-		SVShiftTool* l_pTool = nullptr;
-
-		pParentDialog->GetToolByType( l_pTool );
-
-		m_pvoShiftMode = &l_pTool->m_evoShiftMode;
+		m_pvoShiftMode = &m_pTool->m_evoShiftMode;
 		
 		m_ctlShiftModeCombo.SetEnumTypes(m_pvoShiftMode->GetEnumVector());
 
@@ -151,7 +151,7 @@ HRESULT SVTADlgTranslationShiftPageClass::SetInspectionData()
 
 		SVShiftTool* l_pTool = nullptr;
 
-		pParentDialog->GetToolByType( l_pTool );
+		m_pParentDialog->GetToolByType( l_pTool );
 
 		int iCurSel = m_ctlShiftModeCombo.GetCurSel();
 		if( iCurSel >= 0 )
@@ -171,6 +171,8 @@ void SVTADlgTranslationShiftPageClass::refresh()
 	if (nullptr != m_pTool && nullptr != m_pValues)
 	{
 		SetInspectionData();
+		//Fetch new values
+		m_pValues->Init();
 
 		FillShiftProperties();
 
@@ -186,20 +188,14 @@ void SVTADlgTranslationShiftPageClass::refresh()
  
 void SVTADlgTranslationShiftPageClass::OnBnClickedBtnLearn()
 {
-	SVShiftTool* l_pTool = nullptr;
-
-	pParentDialog->GetToolByType( l_pTool );
-	SVShiftToolUtility::SetToolSetReference(l_pTool);
+	SVShiftToolUtility::SetToolSetReference(m_pTool);
 
 	refresh();
 }
 
 void SVTADlgTranslationShiftPageClass::OnBnClickedBtnNormalize()
 {
-	SVShiftTool* l_pTool = nullptr;
-
-	pParentDialog->GetToolByType( l_pTool );
-	SVShiftToolUtility::SetToolNormalize(l_pTool);
+	SVShiftToolUtility::SetToolNormalize(m_pTool);
 
 	refresh();
 }
@@ -216,8 +212,8 @@ void SVTADlgTranslationShiftPageClass::OnBnClickedTranslationXFormulaButton()
 		std::string Caption = pEvaluateTranslationX->GetName();
 		Caption += _T(" Formula");
 
-		const GUID& rInspectionID = pParentDialog->GetInspectionID();
-		const GUID& rObjectID = pParentDialog->GetToolID();
+		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
+		const GUID& rObjectID = m_pParentDialog->GetToolID();
 		SvDef::SVObjectTypeInfoStruct info(SvDef::SVMathContainerObjectType, SvDef::SVEvaluateTranslationXObjectType);
 		SvOg::SVFormulaEditorSheetClass dlg(rInspectionID, rObjectID, info, Caption.c_str());
 		dlg.DoModal();
@@ -233,8 +229,8 @@ void SVTADlgTranslationShiftPageClass::OnBnClickedTranslationYFormulaButton()
 		std::string Caption = pEvaluateTranslationY->GetName();
 		Caption += _T(" Formula");
 
-		const GUID& rInspectionID = pParentDialog->GetInspectionID();
-		const GUID& rObjectID = pParentDialog->GetToolID();
+		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
+		const GUID& rObjectID = m_pParentDialog->GetToolID();
 		SvDef::SVObjectTypeInfoStruct info(SvDef::SVMathContainerObjectType, SvDef::SVEvaluateTranslationYObjectType);
 		SvOg::SVFormulaEditorSheetClass dlg(rInspectionID, rObjectID, info, Caption.c_str());
 		dlg.DoModal();
@@ -402,7 +398,7 @@ void SVTADlgTranslationShiftPageClass::FillShiftProperties()
 	pPropItem = dynamic_cast<SVRPropertyItemStatic*> (m_Tree.FindItem(PROP_SHIFT_RESULT_LEFT));
 	if (nullptr != pPropItem)
 	{
-		pPropItem->SetItemValue( static_cast< LPCTSTR >( _bstr_t(Value) ) );
+		pPropItem->SetItemValue( static_cast<LPCTSTR> (_bstr_t(Value)));
 	}
 	
 	m_Tree.RefreshItems();

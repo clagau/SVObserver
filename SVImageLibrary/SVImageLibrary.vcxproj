@@ -145,7 +145,6 @@
     <ClInclude Include="SVCameraFormat.h" />
     <ClInclude Include="SVDrawContext.h" />
     <ClInclude Include="SVExtentDimensionsClass.h" />
-    <ClInclude Include="SVExtentEnums.h" />
     <ClInclude Include="SVExtentFigureStruct.h" />
     <ClInclude Include="SVExtentLineStruct.h" />
     <ClInclude Include="SVExtentMultiLineStruct.h" />

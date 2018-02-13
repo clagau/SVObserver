@@ -65,7 +65,7 @@ protected:
 #pragma region Private Methods
 private:
 	HRESULT ButtonAction(SvMc::SVUpDownButton* pButton);
-	HRESULT AdjustTool( SVExtentLocationPropertyEnum eAction, int dx, int dy );
+	HRESULT AdjustTool( SvDef::SVExtentLocationPropertyEnum eAction, int dx, int dy );
 	HRESULT AdjustToolAngle(double dDAngle);
 
 	//************************************
@@ -145,7 +145,7 @@ private:
 	SVImageExtentClass m_svOriginalExtents;
 	SVTaskObjectClass* m_pToolTask;
 	SVRPropTree m_Tree;
-	const static int m_iPropertyFilter = SVExtentPropertyPositionsInput | SVExtentPropertyDimensionsInput;
+	const static int m_iPropertyFilter = SvDef::SVExtentPropertyPositionsInput | SvDef::SVExtentPropertyDimensionsInput;
 	const static int ID_BASE = 1000;
 
 	SVWinHandle<HICON> m_icoArrowUp;

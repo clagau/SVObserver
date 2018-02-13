@@ -42,19 +42,19 @@ public:
 /*- SetBlack () -------------------------------------------------------------------------*/
 /*- Actions associated with the black radio button. This also forces the radio button    */
 /*- state. ------------------------------------------------------------------------------*/
-    unsigned long           SetBlack();
+    void SetBlack();
 
 /*- SetWhite () -------------------------------------------------------------------------*/
 /*- Actions associated with the white radio button. This also forces the radio button    */
 /*- state. ------------------------------------------------------------------------------*/
-    unsigned long           SetWhite();
+    void SetWhite();
 
 /*- SetOther () -------------------------------------------------------------------------*/
 /*- Actions associated with the other radio button. This also forces the radio button    */
 /*- state. ------------------------------------------------------------------------------*/
-    unsigned long           SetOther(long alGrayscale);
+    void SetOther(long lGrayscale);
 
-    unsigned long           SetGrayscale(long alGrayscale);
+    void SetGrayscale(long lGrayscale);
 
 	SVPixelAnalyzerClass*   m_pAnalyzer{ nullptr };
 	unsigned long           msvulMaxGrayscale{ 0L };
@@ -73,8 +73,8 @@ protected:
 	int		m_GrayscaleSliderValue{ 0 };
 
 private:
-	const SVGUID& m_rInspectionID;
-	const SVGUID& m_rTaskObjectID;
+	const SVGUID m_InspectionID;
+	const SVGUID m_TaskObjectID;
 	typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
 	typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
 	Controller m_Values;

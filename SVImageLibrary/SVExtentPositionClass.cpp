@@ -33,76 +33,76 @@ const SVExtentPositionClass &SVExtentPositionClass::operator=( const SVExtentPos
 {
 	if ( this != &p_rsvValue )
 	{
-		if ( ( p_rsvValue.m_ulProperties & SVExtentPropertyPositionPoint ) != 0 )
+		if ( ( p_rsvValue.m_ulProperties & SvDef::SVExtentPropertyPositionPoint ) != 0 )
 		{
-			SetExtentProperty( SVExtentPropertyPositionPoint, p_rsvValue.m_svPositionPoint );
+			SetExtentProperty( SvDef::SVExtentPropertyPositionPoint, p_rsvValue.m_svPositionPoint );
 		}
 		else
 		{
-			if ( ( p_rsvValue.m_ulProperties & SVExtentPropertyPositionPointX ) != 0 )
+			if ( ( p_rsvValue.m_ulProperties & SvDef::SVExtentPropertyPositionPointX ) != 0 )
 			{
-				SetExtentProperty( SVExtentPropertyPositionPointX, p_rsvValue.m_svPositionPoint.m_dPositionX );
+				SetExtentProperty( SvDef::SVExtentPropertyPositionPointX, p_rsvValue.m_svPositionPoint.m_dPositionX );
 			}
 
-			if ( ( p_rsvValue.m_ulProperties & SVExtentPropertyPositionPointY ) != 0 )
+			if ( ( p_rsvValue.m_ulProperties & SvDef::SVExtentPropertyPositionPointY ) != 0 )
 			{
-				SetExtentProperty( SVExtentPropertyPositionPointY, p_rsvValue.m_svPositionPoint.m_dPositionY );
-			}
-		}
-
-		if ( ( p_rsvValue.m_ulProperties & SVExtentPropertyPositionPointEndOfLine ) != 0 )
-		{
-			SetExtentProperty( SVExtentPropertyPositionPointEndOfLine, p_rsvValue.m_svPositionPointEndOfLine );
-		}
-		else
-		{
-			if ( ( p_rsvValue.m_ulProperties & SVExtentPropertyPositionPointEndOfLineX ) != 0 )
-			{
-				SetExtentProperty( SVExtentPropertyPositionPointEndOfLineX, p_rsvValue.m_svPositionPointEndOfLine.m_dPositionX );
-			}
-
-			if ( ( p_rsvValue.m_ulProperties & SVExtentPropertyPositionPointEndOfLineY ) != 0 )
-			{
-				SetExtentProperty( SVExtentPropertyPositionPointEndOfLineY, p_rsvValue.m_svPositionPointEndOfLine.m_dPositionY );
+				SetExtentProperty( SvDef::SVExtentPropertyPositionPointY, p_rsvValue.m_svPositionPoint.m_dPositionY );
 			}
 		}
 
-		if ( ( p_rsvValue.m_ulProperties & SVExtentPropertyTranslationOffset ) != 0 )
+		if ( ( p_rsvValue.m_ulProperties & SvDef::SVExtentPropertyPositionPointEndOfLine ) != 0 )
 		{
-			SetExtentProperty( SVExtentPropertyTranslationOffset, p_rsvValue.m_svTranslationOffset );
+			SetExtentProperty( SvDef::SVExtentPropertyPositionPointEndOfLine, p_rsvValue.m_svPositionPointEndOfLine );
 		}
 		else
 		{
-			if ( ( p_rsvValue.m_ulProperties & SVExtentPropertyTranslationOffsetX ) != 0 )
+			if ( ( p_rsvValue.m_ulProperties & SvDef::SVExtentPropertyPositionPointEndOfLineX ) != 0 )
 			{
-				SetExtentProperty( SVExtentPropertyTranslationOffsetX, p_rsvValue.m_svTranslationOffset.m_dPositionX );
+				SetExtentProperty( SvDef::SVExtentPropertyPositionPointEndOfLineX, p_rsvValue.m_svPositionPointEndOfLine.m_dPositionX );
 			}
 
-			if ( ( p_rsvValue.m_ulProperties & SVExtentPropertyTranslationOffsetY ) != 0 )
+			if ( ( p_rsvValue.m_ulProperties & SvDef::SVExtentPropertyPositionPointEndOfLineY ) != 0 )
 			{
-				SetExtentProperty( SVExtentPropertyTranslationOffsetY, p_rsvValue.m_svTranslationOffset.m_dPositionY );
+				SetExtentProperty( SvDef::SVExtentPropertyPositionPointEndOfLineY, p_rsvValue.m_svPositionPointEndOfLine.m_dPositionY );
 			}
 		}
 
-		if ( ( p_rsvValue.m_ulProperties & SVExtentPropertyRotationAngle ) != 0 )
+		if ( ( p_rsvValue.m_ulProperties & SvDef::SVExtentPropertyTranslationOffset ) != 0 )
 		{
-			SetExtentProperty( SVExtentPropertyRotationAngle, p_rsvValue.m_dRotationAngle );
-		}
-
-		if ( ( p_rsvValue.m_ulProperties & SVExtentPropertyOutputPositionPoint ) != 0 )
-		{
-			SetExtentProperty( SVExtentPropertyOutputPositionPoint, p_rsvValue.m_svOutputPositionPoint );
+			SetExtentProperty( SvDef::SVExtentPropertyTranslationOffset, p_rsvValue.m_svTranslationOffset );
 		}
 		else
 		{
-			if ( ( p_rsvValue.m_ulProperties & SVExtentPropertyOutputPositionPointX ) != 0 )
+			if ( ( p_rsvValue.m_ulProperties & SvDef::SVExtentPropertyTranslationOffsetX ) != 0 )
 			{
-				SetExtentProperty( SVExtentPropertyOutputPositionPointX, p_rsvValue.m_svOutputPositionPoint.m_dPositionX );
+				SetExtentProperty( SvDef::SVExtentPropertyTranslationOffsetX, p_rsvValue.m_svTranslationOffset.m_dPositionX );
 			}
 
-			if ( ( p_rsvValue.m_ulProperties & SVExtentPropertyOutputPositionPointY ) != 0 )
+			if ( ( p_rsvValue.m_ulProperties & SvDef::SVExtentPropertyTranslationOffsetY ) != 0 )
 			{
-				SetExtentProperty( SVExtentPropertyOutputPositionPointY, p_rsvValue.m_svOutputPositionPoint.m_dPositionY );
+				SetExtentProperty( SvDef::SVExtentPropertyTranslationOffsetY, p_rsvValue.m_svTranslationOffset.m_dPositionY );
+			}
+		}
+
+		if ( ( p_rsvValue.m_ulProperties & SvDef::SVExtentPropertyRotationAngle ) != 0 )
+		{
+			SetExtentProperty( SvDef::SVExtentPropertyRotationAngle, p_rsvValue.m_dRotationAngle );
+		}
+
+		if ( ( p_rsvValue.m_ulProperties & SvDef::SVExtentPropertyOutputPositionPoint ) != 0 )
+		{
+			SetExtentProperty( SvDef::SVExtentPropertyOutputPositionPoint, p_rsvValue.m_svOutputPositionPoint );
+		}
+		else
+		{
+			if ( ( p_rsvValue.m_ulProperties & SvDef::SVExtentPropertyOutputPositionPointX ) != 0 )
+			{
+				SetExtentProperty( SvDef::SVExtentPropertyOutputPositionPointX, p_rsvValue.m_svOutputPositionPoint.m_dPositionX );
+			}
+
+			if ( ( p_rsvValue.m_ulProperties & SvDef::SVExtentPropertyOutputPositionPointY ) != 0 )
+			{
+				SetExtentProperty( SvDef::SVExtentPropertyOutputPositionPointY, p_rsvValue.m_svOutputPositionPoint.m_dPositionY );
 			}
 		}
 	}// end if ( this != p_rsvValue )
@@ -139,57 +139,57 @@ HRESULT SVExtentPositionClass::Initialize()
 	return l_hrOk;
 }
 
-HRESULT SVExtentPositionClass::DisableExtentProperty( SVExtentPropertyEnum p_eProperty )
+HRESULT SVExtentPositionClass::DisableExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty )
 {
 	HRESULT l_hrOk = S_OK;
 
-	if ( ( p_eProperty & ~SVExtentPropertyPositionsAll ) == 0 )
+	if ( ( p_eProperty & ~SvDef::SVExtentPropertyPositionsAll ) == 0 )
 	{
-		if ( ( p_eProperty & SVExtentPropertyPositionPointX ) != 0 )
+		if ( ( p_eProperty & SvDef::SVExtentPropertyPositionPointX ) != 0 )
 		{
-			m_ulProperties &= ~SVExtentPropertyPositionPointX;
+			m_ulProperties &= ~SvDef::SVExtentPropertyPositionPointX;
 
 			l_hrOk = S_OK;
 		}
 
-		if ( ( p_eProperty & SVExtentPropertyPositionPointY ) != 0 )
+		if ( ( p_eProperty & SvDef::SVExtentPropertyPositionPointY ) != 0 )
 		{
-			m_ulProperties &= ~SVExtentPropertyPositionPointY;
+			m_ulProperties &= ~SvDef::SVExtentPropertyPositionPointY;
 
 			l_hrOk = S_OK;
 		}
 
-		if ( ( p_eProperty & SVExtentPropertyTranslationOffsetX ) != 0 )
+		if ( ( p_eProperty & SvDef::SVExtentPropertyTranslationOffsetX ) != 0 )
 		{
-			m_ulProperties &= ~SVExtentPropertyTranslationOffsetX;
+			m_ulProperties &= ~SvDef::SVExtentPropertyTranslationOffsetX;
 
 			l_hrOk = S_OK;
 		}
 
-		if ( ( p_eProperty & SVExtentPropertyTranslationOffsetY ) != 0 )
+		if ( ( p_eProperty & SvDef::SVExtentPropertyTranslationOffsetY ) != 0 )
 		{
-			m_ulProperties &= ~SVExtentPropertyTranslationOffsetY;
+			m_ulProperties &= ~SvDef::SVExtentPropertyTranslationOffsetY;
 
 			l_hrOk = S_OK;
 		}
 
-		if ( ( p_eProperty & SVExtentPropertyRotationAngle ) != 0 )
+		if ( ( p_eProperty & SvDef::SVExtentPropertyRotationAngle ) != 0 )
 		{
-			m_ulProperties &= ~SVExtentPropertyRotationAngle;
+			m_ulProperties &= ~SvDef::SVExtentPropertyRotationAngle;
 
 			l_hrOk = S_OK;
 		}
 
-		if ( ( p_eProperty & SVExtentPropertyOutputPositionPointX ) != 0 )
+		if ( ( p_eProperty & SvDef::SVExtentPropertyOutputPositionPointX ) != 0 )
 		{
-			m_ulProperties &= ~SVExtentPropertyOutputPositionPointX;
+			m_ulProperties &= ~SvDef::SVExtentPropertyOutputPositionPointX;
 
 			l_hrOk = S_OK;
 		}
 
-		if ( ( p_eProperty & SVExtentPropertyOutputPositionPointY ) != 0 )
+		if ( ( p_eProperty & SvDef::SVExtentPropertyOutputPositionPointY ) != 0 )
 		{
-			m_ulProperties &= ~SVExtentPropertyOutputPositionPointY;
+			m_ulProperties &= ~SvDef::SVExtentPropertyOutputPositionPointY;
 
 			l_hrOk = S_OK;
 		}
@@ -198,7 +198,7 @@ HRESULT SVExtentPositionClass::DisableExtentProperty( SVExtentPropertyEnum p_ePr
 	return l_hrOk;
 }
 
-HRESULT SVExtentPositionClass::GetExtentProperty( SVExtentPropertyEnum p_eProperty, long &p_rlValue ) const
+HRESULT SVExtentPositionClass::GetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, long &p_rlValue ) const
 {
 	double l_dValue = 0.0;
 
@@ -212,7 +212,7 @@ HRESULT SVExtentPositionClass::GetExtentProperty( SVExtentPropertyEnum p_eProper
 	return l_hrOk;
 }
 
-HRESULT SVExtentPositionClass::GetExtentProperty( SVExtentPropertyEnum p_eProperty, double &p_rdValue ) const
+HRESULT SVExtentPositionClass::GetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, double &p_rdValue ) const
 {
 	HRESULT l_hrOk = S_OK;
 
@@ -220,55 +220,55 @@ HRESULT SVExtentPositionClass::GetExtentProperty( SVExtentPropertyEnum p_eProper
 	{
 		switch ( p_eProperty )
 		{
-			case SVExtentPropertyPositionPointX:
+			case SvDef::SVExtentPropertyPositionPointX:
 			{
 				p_rdValue = m_svPositionPoint.m_dPositionX;
 
 				break;
 			}
-			case SVExtentPropertyPositionPointY:
+			case SvDef::SVExtentPropertyPositionPointY:
 			{
 				p_rdValue = m_svPositionPoint.m_dPositionY;
 
 				break;
 			}
-			case SVExtentPropertyPositionPointEndOfLineX:
+			case SvDef::SVExtentPropertyPositionPointEndOfLineX:
 			{
 				p_rdValue = m_svPositionPointEndOfLine.m_dPositionX;
 
 				break;
 			}
-			case SVExtentPropertyPositionPointEndOfLineY:
+			case SvDef::SVExtentPropertyPositionPointEndOfLineY:
 			{
 				p_rdValue = m_svPositionPointEndOfLine.m_dPositionY;
 
 				break;
 			}
-			case SVExtentPropertyTranslationOffsetX:
+			case SvDef::SVExtentPropertyTranslationOffsetX:
 			{
 				p_rdValue = m_svTranslationOffset.m_dPositionX;
 
 				break;
 			}
-			case SVExtentPropertyTranslationOffsetY:
+			case SvDef::SVExtentPropertyTranslationOffsetY:
 			{
 				p_rdValue = m_svTranslationOffset.m_dPositionY;
 
 				break;
 			}
-			case SVExtentPropertyRotationAngle:
+			case SvDef::SVExtentPropertyRotationAngle:
 			{
 				p_rdValue = m_dRotationAngle;
 
 				break;
 			}
-			case SVExtentPropertyOutputPositionPointX:
+			case SvDef::SVExtentPropertyOutputPositionPointX:
 			{
 				p_rdValue = m_svOutputPositionPoint.m_dPositionX;
 
 				break;
 			}
-			case SVExtentPropertyOutputPositionPointY:
+			case SvDef::SVExtentPropertyOutputPositionPointY:
 			{
 				p_rdValue = m_svOutputPositionPoint.m_dPositionY;
 
@@ -290,7 +290,7 @@ HRESULT SVExtentPositionClass::GetExtentProperty( SVExtentPropertyEnum p_eProper
 	return l_hrOk;
 }
 
-HRESULT SVExtentPositionClass::GetExtentProperty( SVExtentPropertyEnum p_eProperty, POINT &p_roValue ) const
+HRESULT SVExtentPositionClass::GetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, POINT &p_roValue ) const
 {
 	SVExtentPointStruct l_svPoint;
 
@@ -304,7 +304,7 @@ HRESULT SVExtentPositionClass::GetExtentProperty( SVExtentPropertyEnum p_eProper
 	return l_hrOk;
 }
 
-HRESULT SVExtentPositionClass::GetExtentProperty( SVExtentPropertyEnum p_eProperty, SVExtentPointStruct &p_rsvValue ) const
+HRESULT SVExtentPositionClass::GetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, SVExtentPointStruct &p_rsvValue ) const
 {
 	HRESULT l_hrOk = S_OK;
 
@@ -312,25 +312,25 @@ HRESULT SVExtentPositionClass::GetExtentProperty( SVExtentPropertyEnum p_eProper
 	{
 		switch ( p_eProperty )
 		{
-			case SVExtentPropertyPositionPoint:
+			case SvDef::SVExtentPropertyPositionPoint:
 			{
 				p_rsvValue = m_svPositionPoint;
 
 				break;
 			}
-			case SVExtentPropertyPositionPointEndOfLine:
+			case SvDef::SVExtentPropertyPositionPointEndOfLine:
 			{
 				p_rsvValue = m_svPositionPointEndOfLine;
 
 				break;
 			}
-			case SVExtentPropertyTranslationOffset:
+			case SvDef::SVExtentPropertyTranslationOffset:
 			{
 				p_rsvValue = m_svTranslationOffset;
 
 				break;
 			}
-			case SVExtentPropertyOutputPositionPoint:
+			case SvDef::SVExtentPropertyOutputPositionPoint:
 			{
 				p_rsvValue = m_svOutputPositionPoint;
 
@@ -352,140 +352,140 @@ HRESULT SVExtentPositionClass::GetExtentProperty( SVExtentPropertyEnum p_eProper
 	return l_hrOk;
 }
 
-HRESULT SVExtentPositionClass::SetExtentProperty( SVExtentPropertyEnum p_eProperty, double p_dValue )
+HRESULT SVExtentPositionClass::SetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, double p_dValue )
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( ( p_eProperty & ~SVExtentPropertyPositionsAll ) == 0 )
+	if ( ( p_eProperty & ~SvDef::SVExtentPropertyPositionsAll ) == 0 )
 	{
-		if ( ( p_eProperty & SVExtentPropertyPositionPointX ) != 0 )
+		if ( ( p_eProperty & SvDef::SVExtentPropertyPositionPointX ) != 0 )
 		{
 			m_svPositionPoint.m_dPositionX = (long)p_dValue;
 
-			m_ulProperties |= SVExtentPropertyPositionPointX;
+			m_ulProperties |= SvDef::SVExtentPropertyPositionPointX;
 
 			l_hrOk = S_OK;
 		}
 
-		if ( ( p_eProperty & SVExtentPropertyPositionPointY ) != 0 )
+		if ( ( p_eProperty & SvDef::SVExtentPropertyPositionPointY ) != 0 )
 		{
 			m_svPositionPoint.m_dPositionY = (long)p_dValue;
 
-			m_ulProperties |= SVExtentPropertyPositionPointY;
+			m_ulProperties |= SvDef::SVExtentPropertyPositionPointY;
 
 			l_hrOk = S_OK;
 		}
 
-		if ( ( p_eProperty & SVExtentPropertyPositionPointEndOfLineX ) != 0 )
+		if ( ( p_eProperty & SvDef::SVExtentPropertyPositionPointEndOfLineX ) != 0 )
 		{
 			m_svPositionPointEndOfLine.m_dPositionX = (long)p_dValue;
 
-			m_ulProperties |= SVExtentPropertyPositionPointEndOfLineX;
+			m_ulProperties |= SvDef::SVExtentPropertyPositionPointEndOfLineX;
 
 			l_hrOk = S_OK;
 		}
 
-		if ( ( p_eProperty & SVExtentPropertyPositionPointEndOfLineY ) != 0 )
+		if ( ( p_eProperty & SvDef::SVExtentPropertyPositionPointEndOfLineY ) != 0 )
 		{
 			m_svPositionPointEndOfLine.m_dPositionY = (long)p_dValue;
 
-			m_ulProperties |= SVExtentPropertyPositionPointEndOfLineY;
+			m_ulProperties |= SvDef::SVExtentPropertyPositionPointEndOfLineY;
 
 			l_hrOk = S_OK;
 		}
 
-		if ( ( p_eProperty & SVExtentPropertyTranslationOffsetX ) != 0 )
+		if ( ( p_eProperty & SvDef::SVExtentPropertyTranslationOffsetX ) != 0 )
 		{
 			m_svTranslationOffset.m_dPositionX = (long)p_dValue;
 
-			m_ulProperties |= SVExtentPropertyTranslationOffsetX;
+			m_ulProperties |= SvDef::SVExtentPropertyTranslationOffsetX;
 
 			l_hrOk = S_OK;
 		}
 
-		if ( ( p_eProperty & SVExtentPropertyTranslationOffsetY ) != 0 )
+		if ( ( p_eProperty & SvDef::SVExtentPropertyTranslationOffsetY ) != 0 )
 		{
 			m_svTranslationOffset.m_dPositionY = (long)p_dValue;
 
-			m_ulProperties |= SVExtentPropertyTranslationOffsetY;
+			m_ulProperties |= SvDef::SVExtentPropertyTranslationOffsetY;
 
 			l_hrOk = S_OK;
 		}
 
-		if ( ( p_eProperty & SVExtentPropertyRotationAngle ) != 0 )
+		if ( ( p_eProperty & SvDef::SVExtentPropertyRotationAngle ) != 0 )
 		{
 			m_dRotationAngle = p_dValue;
 
-			m_ulProperties |= SVExtentPropertyRotationAngle;
+			m_ulProperties |= SvDef::SVExtentPropertyRotationAngle;
 
 			l_hrOk = S_OK;
 		}
 
-		if ( ( p_eProperty & SVExtentPropertyOutputPositionPointX ) != 0 )
+		if ( ( p_eProperty & SvDef::SVExtentPropertyOutputPositionPointX ) != 0 )
 		{
 			m_svOutputPositionPoint.m_dPositionX = (long)p_dValue;
 
-			m_ulProperties |= SVExtentPropertyOutputPositionPointX;
+			m_ulProperties |= SvDef::SVExtentPropertyOutputPositionPointX;
 
 			l_hrOk = S_OK;
 		}
 
-		if ( ( p_eProperty & SVExtentPropertyOutputPositionPointY ) != 0 )
+		if ( ( p_eProperty & SvDef::SVExtentPropertyOutputPositionPointY ) != 0 )
 		{
 			m_svOutputPositionPoint.m_dPositionY = (long)p_dValue;
 
-			m_ulProperties |= SVExtentPropertyOutputPositionPointY;
+			m_ulProperties |= SvDef::SVExtentPropertyOutputPositionPointY;
 
 			l_hrOk = S_OK;
 		}
-	} // if ( ( p_eProperty & ~SVExtentPropertyPositionsAll ) == 0 )
+	} // if ( ( p_eProperty & ~SvDef::SVExtentPropertyPositionsAll ) == 0 )
 
 
 	return l_hrOk;
 }
 
-HRESULT SVExtentPositionClass::SetExtentProperty( SVExtentPropertyEnum p_eProperty, SVExtentPointStruct p_svValue )
+HRESULT SVExtentPositionClass::SetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, SVExtentPointStruct p_svValue )
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( ( p_eProperty & ~SVExtentPropertyPositionsAll ) == 0 )
+	if ( ( p_eProperty & ~SvDef::SVExtentPropertyPositionsAll ) == 0 )
 	{
-		if ( ( p_eProperty & SVExtentPropertyPositionPoint ) != 0 )
+		if ( ( p_eProperty & SvDef::SVExtentPropertyPositionPoint ) != 0 )
 		{
 			m_svPositionPoint.m_dPositionX = (long)(p_svValue.m_dPositionX);
 			m_svPositionPoint.m_dPositionY = (long)(p_svValue.m_dPositionY);
 
-			m_ulProperties |= SVExtentPropertyPositionPoint;
+			m_ulProperties |= SvDef::SVExtentPropertyPositionPoint;
 
 			l_hrOk = S_OK;
 		}
 
-		if ( ( p_eProperty & SVExtentPropertyPositionPointEndOfLine ) != 0 )
+		if ( ( p_eProperty & SvDef::SVExtentPropertyPositionPointEndOfLine ) != 0 )
 		{
 			m_svPositionPointEndOfLine.m_dPositionX = (long)(p_svValue.m_dPositionX);
 			m_svPositionPointEndOfLine.m_dPositionY = (long)(p_svValue.m_dPositionY);
 
-			m_ulProperties |= SVExtentPropertyPositionPointEndOfLine;
+			m_ulProperties |= SvDef::SVExtentPropertyPositionPointEndOfLine;
 
 			l_hrOk = S_OK;
 		}
 
-		if ( ( p_eProperty & SVExtentPropertyTranslationOffset ) != 0 )
+		if ( ( p_eProperty & SvDef::SVExtentPropertyTranslationOffset ) != 0 )
 		{
 			m_svTranslationOffset.m_dPositionX = (long)(p_svValue.m_dPositionX);
 			m_svTranslationOffset.m_dPositionY = (long)(p_svValue.m_dPositionY);
 
-			m_ulProperties |= SVExtentPropertyTranslationOffset;
+			m_ulProperties |= SvDef::SVExtentPropertyTranslationOffset;
 
 			l_hrOk = S_OK;
 		}
 
-		if ( ( p_eProperty & SVExtentPropertyOutputPositionPoint ) != 0 )
+		if ( ( p_eProperty & SvDef::SVExtentPropertyOutputPositionPoint ) != 0 )
 		{
 			m_svOutputPositionPoint.m_dPositionX = (long)(p_svValue.m_dPositionX);
 			m_svOutputPositionPoint.m_dPositionY = (long)(p_svValue.m_dPositionY);
 
-			m_ulProperties |= SVExtentPropertyOutputPositionPoint;
+			m_ulProperties |= SvDef::SVExtentPropertyOutputPositionPoint;
 
 			l_hrOk = S_OK;
 		}
@@ -498,74 +498,74 @@ bool SVExtentPositionClass::operator==( const SVExtentPositionClass &p_rsvValue 
 {
 	bool l_bOk = m_ulProperties == p_rsvValue.m_ulProperties;
 
-	if ( ( m_ulProperties & SVExtentPropertyPositionPoint ) != 0 )
+	if ( ( m_ulProperties & SvDef::SVExtentPropertyPositionPoint ) != 0 )
 	{
 		l_bOk = l_bOk && m_svPositionPoint == p_rsvValue.m_svPositionPoint;
 	}
 	else
 	{
-		if ( ( m_ulProperties & SVExtentPropertyPositionPointX ) != 0 )
+		if ( ( m_ulProperties & SvDef::SVExtentPropertyPositionPointX ) != 0 )
 		{
 			l_bOk = l_bOk && m_svPositionPoint.m_dPositionX == p_rsvValue.m_svPositionPoint.m_dPositionX;
 		}
 
-		if ( ( m_ulProperties & SVExtentPropertyPositionPointY ) != 0 )
+		if ( ( m_ulProperties & SvDef::SVExtentPropertyPositionPointY ) != 0 )
 		{
 			l_bOk = l_bOk && m_svPositionPoint.m_dPositionY == p_rsvValue.m_svPositionPoint.m_dPositionY;
 		}
 	}
 
-	if ( ( m_ulProperties & SVExtentPropertyPositionPointEndOfLine ) != 0 )
+	if ( ( m_ulProperties & SvDef::SVExtentPropertyPositionPointEndOfLine ) != 0 )
 	{
 		l_bOk = l_bOk && m_svPositionPointEndOfLine == p_rsvValue.m_svPositionPointEndOfLine;
 	}
 	else
 	{
-		if ( ( m_ulProperties & SVExtentPropertyPositionPointEndOfLineX ) != 0 )
+		if ( ( m_ulProperties & SvDef::SVExtentPropertyPositionPointEndOfLineX ) != 0 )
 		{
 			l_bOk = l_bOk && m_svPositionPointEndOfLine.m_dPositionX == p_rsvValue.m_svPositionPointEndOfLine.m_dPositionX;
 		}
 
-		if ( ( m_ulProperties & SVExtentPropertyPositionPointEndOfLineY ) != 0 )
+		if ( ( m_ulProperties & SvDef::SVExtentPropertyPositionPointEndOfLineY ) != 0 )
 		{
 			l_bOk = l_bOk && m_svPositionPointEndOfLine.m_dPositionY == p_rsvValue.m_svPositionPointEndOfLine.m_dPositionY;
 		}
 	}
 
-	if ( ( m_ulProperties & SVExtentPropertyTranslationOffset ) != 0 )
+	if ( ( m_ulProperties & SvDef::SVExtentPropertyTranslationOffset ) != 0 )
 	{
 		l_bOk = l_bOk && m_svTranslationOffset == p_rsvValue.m_svTranslationOffset;
 	}
 	else
 	{
-		if ( ( m_ulProperties & SVExtentPropertyTranslationOffsetX ) != 0 )
+		if ( ( m_ulProperties & SvDef::SVExtentPropertyTranslationOffsetX ) != 0 )
 		{
 			l_bOk = l_bOk && m_svTranslationOffset.m_dPositionX == p_rsvValue.m_svTranslationOffset.m_dPositionX;
 		}
 
-		if ( ( m_ulProperties & SVExtentPropertyTranslationOffsetY ) != 0 )
+		if ( ( m_ulProperties & SvDef::SVExtentPropertyTranslationOffsetY ) != 0 )
 		{
 			l_bOk = l_bOk && m_svTranslationOffset.m_dPositionY == p_rsvValue.m_svTranslationOffset.m_dPositionY;
 		}
 	}
 
-	if ( ( m_ulProperties & SVExtentPropertyRotationAngle ) != 0 )
+	if ( ( m_ulProperties & SvDef::SVExtentPropertyRotationAngle ) != 0 )
 	{
 		l_bOk = l_bOk && m_dRotationAngle == p_rsvValue.m_dRotationAngle;
 	}
 
-	if ( ( m_ulProperties & SVExtentPropertyOutputPositionPoint ) != 0 )
+	if ( ( m_ulProperties & SvDef::SVExtentPropertyOutputPositionPoint ) != 0 )
 	{
 		l_bOk = l_bOk && m_svOutputPositionPoint == p_rsvValue.m_svOutputPositionPoint;
 	}
 	else
 	{
-		if ( ( m_ulProperties & SVExtentPropertyOutputPositionPointX ) != 0 )
+		if ( ( m_ulProperties & SvDef::SVExtentPropertyOutputPositionPointX ) != 0 )
 		{
 			l_bOk = l_bOk && m_svOutputPositionPoint.m_dPositionX == p_rsvValue.m_svOutputPositionPoint.m_dPositionX;
 		}
 
-		if ( ( m_ulProperties & SVExtentPropertyOutputPositionPointY ) != 0 )
+		if ( ( m_ulProperties & SvDef::SVExtentPropertyOutputPositionPointY ) != 0 )
 		{
 			l_bOk = l_bOk && m_svOutputPositionPoint.m_dPositionY == p_rsvValue.m_svOutputPositionPoint.m_dPositionY;
 		}
@@ -579,8 +579,8 @@ bool SVExtentPositionClass::operator!=( const SVExtentPositionClass &p_rsvValue 
 	return ! ( *this == p_rsvValue );
 }
 
-bool SVExtentPositionClass::IsEnabled( SVExtentPropertyEnum p_eProperty ) const
+bool SVExtentPositionClass::IsEnabled( SvDef::SVExtentPropertyEnum p_eProperty ) const
 {
-	return ((m_ulProperties & p_eProperty) == (unsigned long) p_eProperty) && p_eProperty != SVExtentPropertyNone;
+	return ((m_ulProperties & p_eProperty) == (unsigned long) p_eProperty) && p_eProperty != SvDef::SVExtentPropertyNone;
 }
 

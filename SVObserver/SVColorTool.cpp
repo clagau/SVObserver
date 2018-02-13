@@ -219,7 +219,7 @@ SVTaskObjectClass* SVColorToolClass::GetObjectAtPoint(const SVExtentPointStruct 
 	SVTaskObjectClass* pObject(nullptr);
 
 	if (S_OK == m_svToolExtent.GetImageExtent(l_Extents) &&
-		l_Extents.GetLocationPropertyAt(rPoint) != SVExtentLocationPropertyUnknown)
+		l_Extents.GetLocationPropertyAt(rPoint) != SvDef::SVExtentLocationPropertyUnknown)
 	{
 		pObject = this;
 	}
@@ -338,7 +338,7 @@ void SVColorToolClass::LocalInitialize()
 	ImageInfo.SetOwner(GetUniqueObjectID());
 	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatRGB8888);
 	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 3L);
-	ImageInfo.SetTranslation(SVExtentTranslationNone);
+	ImageInfo.SetTranslation(SvDef::SVExtentTranslationNone);
 	m_LogicalROIImage.UpdateImage(GUID_NULL, ImageInfo);
 	m_LogicalROIImage.InitializeImage(SvDef::SVImageTypeEnum::SVImageTypeLogical);
 	m_OutputImage.UpdateImage(GUID_NULL, ImageInfo);

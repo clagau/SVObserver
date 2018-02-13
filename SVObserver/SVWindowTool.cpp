@@ -233,7 +233,7 @@ SVTaskObjectClass *SVWindowToolClass::GetObjectAtPoint( const SVExtentPointStruc
 	SVTaskObjectClass *l_psvObject = nullptr;
 
 	if( S_OK == m_svToolExtent.GetImageExtent( l_svExtents ) &&
-		SVExtentLocationPropertyUnknown  != l_svExtents.GetLocationPropertyAt( p_rsvPoint ) )
+		SvDef::SVExtentLocationPropertyUnknown  != l_svExtents.GetLocationPropertyAt( p_rsvPoint ) )
 	{
 		l_psvObject = this;
 	}

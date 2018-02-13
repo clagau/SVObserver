@@ -625,21 +625,21 @@ HRESULT SVTADlgTranslationResizePage::UpdatePropertyTreeData ()
 	if (S_OK == hr)
 	{
 		double newHeightScaleFactor = 0.0;
-		toolImageExtents.GetExtentProperty(SVExtentPropertyHeightScaleFactor, newHeightScaleFactor);
+		toolImageExtents.GetExtentProperty(SvDef::SVExtentPropertyHeightScaleFactor, newHeightScaleFactor);
 		double newWidthScaleFactor = 0.0;
-		toolImageExtents.GetExtentProperty(SVExtentPropertyWidthScaleFactor, newWidthScaleFactor);
+		toolImageExtents.GetExtentProperty(SvDef::SVExtentPropertyWidthScaleFactor, newWidthScaleFactor);
 		UpdateScaleFactors(newWidthScaleFactor, newHeightScaleFactor);
 
 		long newInputROIWidth(0);
 		long newInputROIHeight(0);
-		toolImageExtents.GetExtentProperty(SVExtentPropertyWidth, newInputROIWidth);
-		toolImageExtents.GetExtentProperty(SVExtentPropertyHeight, newInputROIHeight);
+		toolImageExtents.GetExtentProperty(SvDef::SVExtentPropertyWidth, newInputROIWidth);
+		toolImageExtents.GetExtentProperty(SvDef::SVExtentPropertyHeight, newInputROIHeight);
 		UpdateInputImageInfo(newInputROIWidth, newInputROIHeight);
 
 		long newOutputWidth(0);
 		long newOutputHeight(0);
-		toolImageExtents.GetExtentProperty(SVExtentPropertyOutputWidth, newOutputWidth);
-		toolImageExtents.GetExtentProperty(SVExtentPropertyOutputHeight , newOutputHeight);
+		toolImageExtents.GetExtentProperty(SvDef::SVExtentPropertyOutputWidth, newOutputWidth);
+		toolImageExtents.GetExtentProperty(SvDef::SVExtentPropertyOutputHeight , newOutputHeight);
 		UpdateOutputImageInfo(newOutputWidth, newOutputHeight);
 
 		UpdateOtherInfo();
@@ -692,8 +692,8 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 
 	if (SUCCEEDED (hr1))
 	{
-		toolImageExtents.GetExtentProperty (SVExtentPropertyHeightScaleFactor, oldHeightScaleFactor);
-		toolImageExtents.GetExtentProperty (SVExtentPropertyWidthScaleFactor, oldWidthScaleFactor);
+		toolImageExtents.GetExtentProperty (SvDef::SVExtentPropertyHeightScaleFactor, oldHeightScaleFactor);
+		toolImageExtents.GetExtentProperty (SvDef::SVExtentPropertyWidthScaleFactor, oldWidthScaleFactor);
 
 		SVEnumerateValueObjectClass& rInterpolationMode = m_pTool->getInterpolationMode ();
 		rInterpolationMode.GetValue (longOldInterpolationValue);
@@ -864,13 +864,13 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 	// after this point.
 	if (heightScaleFactorSucceeded) // reduces flicker.
 	{
-		toolImageExtents.SetExtentProperty (SVExtentPropertyHeightScaleFactor, newHeightScaleFactor);
+		toolImageExtents.SetExtentProperty (SvDef::SVExtentPropertyHeightScaleFactor, newHeightScaleFactor);
 		extentChanged = true;
 	}
 
 	if (widthScaleFactorSucceeded) // reduces flicker.
 	{
-			toolImageExtents.SetExtentProperty (SVExtentPropertyWidthScaleFactor, newWidthScaleFactor);
+			toolImageExtents.SetExtentProperty (SvDef::SVExtentPropertyWidthScaleFactor, newWidthScaleFactor);
 			extentChanged = true;
 	}
 

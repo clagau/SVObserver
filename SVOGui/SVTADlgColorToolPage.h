@@ -62,8 +62,8 @@ namespace SvOg
 		BOOL	m_convertToHSI;
 		std::string m_InputName;
 
-		SVGUID m_InspectionID;
-		SVGUID m_TaskObjectID;
+		const SVGUID m_InspectionID;
+		const SVGUID m_TaskObjectID;
 		
 		ImageController m_Images;
 		ValueController m_Values;

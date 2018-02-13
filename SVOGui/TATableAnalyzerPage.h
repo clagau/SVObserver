@@ -110,8 +110,8 @@ namespace SvOg
 		ObjectSelectorController m_objectSelector;
 
 		int m_SortDirection;
-		SVGUID m_InspectionID;
-		SVGUID m_TaskObjectID;
+		const SVGUID m_InspectionID;
+		const SVGUID m_TaskObjectID;
 		SVGUID m_selectedAnalyzerID;
 		long m_selectedSubType;
 		SvUl::NameGuidList m_availableColumn;

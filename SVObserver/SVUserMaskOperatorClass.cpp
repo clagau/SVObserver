@@ -722,7 +722,7 @@ bool SVUserMaskOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rI
 
 					SVImageExtentClass l_svExtents = l_pRefImage->GetImageExtents();
 
-					if ( S_OK == l_svExtents.GetExtentProperty( SVExtentPropertyPositionPoint, l_svPoint ) &&
+					if ( S_OK == l_svExtents.GetExtentProperty( SvDef::SVExtentPropertyPositionPoint, l_svPoint ) &&
 						l_pMaskInputImage->GetImageHandle( l_MaskInputBuffer ) && nullptr != l_MaskInputBuffer )
 					{
 						if ( S_OK != l_pMaskInputImage->ValidateAgainstOutputExtents( l_svExtents ) )

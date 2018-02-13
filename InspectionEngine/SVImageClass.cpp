@@ -167,12 +167,12 @@ void SVImageClass::init()
 
 	m_ImageInfo.SetOwnerImage( GetUniqueObjectID() );
 		
-	m_ImageInfo.SetExtentProperty( SVExtentPropertyPositionPointX, SvDef::cDefaultWindowToolLeft );
-	m_ImageInfo.SetExtentProperty( SVExtentPropertyPositionPointY, SvDef::cDefaultWindowToolTop );
-	m_ImageInfo.SetExtentProperty( SVExtentPropertyWidth, SvDef::cDefaultWindowToolWidth );
-	m_ImageInfo.SetExtentProperty( SVExtentPropertyHeight, SvDef::cDefaultWindowToolHeight );
-	m_ImageInfo.SetExtentProperty(	SVExtentPropertyWidthScaleFactor, SvDef::cDefaultWindowToolWidthScaleFactor );
-	m_ImageInfo.SetExtentProperty(	SVExtentPropertyHeightScaleFactor, SvDef::cDefaultWindowToolHeightScaleFactor );
+	m_ImageInfo.SetExtentProperty( SvDef::SVExtentPropertyPositionPointX, SvDef::cDefaultWindowToolLeft );
+	m_ImageInfo.SetExtentProperty( SvDef::SVExtentPropertyPositionPointY, SvDef::cDefaultWindowToolTop );
+	m_ImageInfo.SetExtentProperty( SvDef::SVExtentPropertyWidth, SvDef::cDefaultWindowToolWidth );
+	m_ImageInfo.SetExtentProperty( SvDef::SVExtentPropertyHeight, SvDef::cDefaultWindowToolHeight );
+	m_ImageInfo.SetExtentProperty(	SvDef::SVExtentPropertyWidthScaleFactor, SvDef::cDefaultWindowToolWidthScaleFactor );
+	m_ImageInfo.SetExtentProperty(	SvDef::SVExtentPropertyHeightScaleFactor, SvDef::cDefaultWindowToolHeightScaleFactor );
 }
 
 SVImageClass::~SVImageClass()
@@ -466,7 +466,7 @@ HRESULT SVImageClass::UpdateFromParentInformation()
 
 				SVExtentPositionClass l_Position = l_ImageExtent.GetPosition();
 
-				Result = l_Position.SetExtentProperty( SVExtentPropertyPositionPoint, 0.0 );
+				Result = l_Position.SetExtentProperty( SvDef::SVExtentPropertyPositionPoint, 0.0 );
 
 				if( S_OK == Result )
 				{
@@ -536,7 +536,7 @@ HRESULT SVImageClass::UpdateFromToolInformation()
 				// The usage that this is specifically excluded for is for 
 				// creating a logical ROI buffer, which should not reflect the 
 				// output buffer translation.
-				TempExtent.SetTranslation (SVExtentTranslationShift);
+				TempExtent.SetTranslation (SvDef::SVExtentTranslationShift);
 				l_Status = TempExtent.GetLogicalRectangle (l_Rect);
 			}
 			else
@@ -1866,8 +1866,8 @@ HRESULT SVImageClass::ValidateAgainstChildrenExtents( SVImageExtentClass& p_rsvE
 // Called by SVShitftTool::oRun
 void SVImageClass::SetTranslationOffset(double offsetX, double offsetY)
 {
-	m_ImageInfo.SetExtentProperty(SVExtentPropertyTranslationOffsetX, offsetX);
-	m_ImageInfo.SetExtentProperty(SVExtentPropertyTranslationOffsetY, offsetY);
+	m_ImageInfo.SetExtentProperty(SvDef::SVExtentPropertyTranslationOffsetX, offsetX);
+	m_ImageInfo.SetExtentProperty(SvDef::SVExtentPropertyTranslationOffsetY, offsetY);
 	SVImageObjectClassPtr ptr = GetBufferArrayPtr();
 	ptr->SetTranslationOffset(offsetX, offsetY);
 }

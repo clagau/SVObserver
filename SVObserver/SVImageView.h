@@ -189,7 +189,7 @@ protected:
 	void ReleaseImageSurface();
 
 	HICON GetObjectCursor( POINT p_point );
-	HICON GetObjectCursor( SVExtentLocationPropertyEnum p_svLocation, POINT p_point);
+	HICON GetObjectCursor( SvDef::SVExtentLocationPropertyEnum p_svLocation, POINT p_point);
 
 	HRESULT GetToolExtents(SVImageExtentClass& p_svToolExtents);
 
@@ -241,9 +241,9 @@ private:
 
 	SVTaskObjectClass* m_psvObject;
 
-	SVExtentLocationPropertyEnum m_svLocation;
+	SvDef::SVExtentLocationPropertyEnum m_svLocation;
 
-	SVExtentLocationPropertyEnum m_svMousePickLocation;
+	SvDef::SVExtentLocationPropertyEnum m_svMousePickLocation;
 
 	// JMS - Extent Objects
 

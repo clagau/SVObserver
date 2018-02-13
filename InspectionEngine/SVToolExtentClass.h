@@ -60,20 +60,20 @@ public:
 
 	HRESULT UpdateImageWithExtent( SVToolExtentTypeEnum p_ToolExtentType );
 
-	SVExtentTranslationEnum GetTranslation();
-	HRESULT SetTranslation( SVExtentTranslationEnum eTranslation );
-	HRESULT SetLinearTranslation(SVExtentTranslationEnum eTranslation);
+	SvDef::SVExtentTranslationEnum GetTranslation();
+	HRESULT SetTranslation( SvDef::SVExtentTranslationEnum eTranslation );
+	HRESULT SetLinearTranslation(SvDef::SVExtentTranslationEnum eTranslation);
 
-	HRESULT GetExtentShape( SVExtentPropertyEnum p_eProperty, SVExtentShapeEnum &p_reValue ) const;
+	HRESULT GetExtentShape( SvDef::SVExtentPropertyEnum p_eProperty, SvDef::SVExtentShapeEnum &p_reValue ) const;
 
-	HRESULT GetExtentObject( SVExtentPropertyEnum p_eProperty, SvOi::IValueObject*& rpValueObject ) const;
-	HRESULT SetExtentObject( SVExtentPropertyEnum p_eProperty, SvOi::IValueObject* pValueObject );
+	HRESULT GetExtentObject( SvDef::SVExtentPropertyEnum p_eProperty, SvOi::IValueObject*& rpValueObject ) const;
+	HRESULT SetExtentObject( SvDef::SVExtentPropertyEnum p_eProperty, SvOi::IValueObject* pValueObject );
 
-	HRESULT GetExtentValue( SVExtentPropertyEnum p_eProperty, _variant_t& rValue ) const;
-	HRESULT SetExtentValue( SVExtentPropertyEnum p_eProperty, const _variant_t& rValue );
+	HRESULT GetExtentValue( SvDef::SVExtentPropertyEnum p_eProperty, _variant_t& rValue ) const;
+	HRESULT SetExtentValue( SvDef::SVExtentPropertyEnum p_eProperty, const _variant_t& rValue );
 
-	HRESULT GetExtentPropertyInfo( SVExtentPropertyEnum p_eProperty, SVExtentPropertyInfoStruct& p_rInfo ) const;
-	HRESULT SetExtentPropertyInfo( SVExtentPropertyEnum p_eProperty, const SVExtentPropertyInfoStruct& p_rInfo );
+	HRESULT GetExtentPropertyInfo( SvDef::SVExtentPropertyEnum p_eProperty, SVExtentPropertyInfoStruct& p_rInfo ) const;
+	HRESULT SetExtentPropertyInfo( SvDef::SVExtentPropertyEnum p_eProperty, const SVExtentPropertyInfoStruct& p_rInfo );
 
 	
 //- GetImageExtent -----------------------------------------------------------
@@ -123,7 +123,7 @@ protected:
 	// ******* End Source Extent Data
 
 private:
-	typedef std::set< SVExtentTranslationEnum > SVTranslationFilterSet;
+	typedef std::set< SvDef::SVExtentTranslationEnum > SVTranslationFilterSet;
 
 	SVToolClass* m_psvTool;
 
@@ -132,8 +132,8 @@ private:
 	// This value does not appear to get used.
 	SvDef::SVImageTypeEnum m_eImageType;
 
-	SVExtentTranslationEnum m_eTranslation;
-	SVExtentShapeEnum m_eShape;
+	SvDef::SVExtentTranslationEnum m_eTranslation;
+	SvDef::SVExtentShapeEnum m_eShape;
 
 	SVToolExtentPropertiesClass m_svProperties;
 

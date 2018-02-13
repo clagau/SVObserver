@@ -24,8 +24,8 @@ namespace SvOg
 	{
 		typedef ValuesAccessor<BoundValues> Values;
 		typedef DataController<Values, Values::value_type> ValuesController;
-		SVGUID m_InspectionID;
-		SVGUID m_TaskObjectID;
+		const SVGUID m_InspectionID;
+		const SVGUID m_TaskObjectID;
 		ImageController m_ImageController;
 		ValuesController m_Values;
 		SvUl::NameGuidList m_auxSourceImages;

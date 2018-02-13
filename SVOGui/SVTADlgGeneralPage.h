@@ -66,8 +66,8 @@ namespace SvOg
 
 		bool m_bAuxExtentsAvailable;
 		bool m_bIsImageTool;
-		SVGUID m_InspectionID;
-		SVGUID m_TaskObjectID;
+		const SVGUID m_InspectionID;
+		const SVGUID m_TaskObjectID;
 
 		SvOg::AuxiliaryExtentsController m_AuxExtentsController;
 		ValuesController m_Values;

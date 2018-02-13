@@ -97,7 +97,7 @@ const SVExtentFigureStruct& SVExtentFigureStruct::operator = ( RECT p_oRect )
 
 	Initialize();
 
-	m_eShape = SVExtentShapeRectangle;
+	m_eShape = SvDef::SVExtentShapeRectangle;
 
 	m_svTopLeft = l_oPoint;
 	m_svTopRight = l_oPoint;
@@ -134,7 +134,7 @@ const SVExtentFigureStruct& SVExtentFigureStruct::operator = ( RECT p_oRect )
 
 HRESULT SVExtentFigureStruct::GetRect(RECT& p_rRect) const
 {
-	HRESULT hr = (m_eShape == SVExtentShapeRectangle) ? S_OK : E_FAIL;
+	HRESULT hr = (m_eShape == SvDef::SVExtentShapeRectangle) ? S_OK : E_FAIL;
 	if ( S_OK == hr )
 	{
 		p_rRect.top = (long) m_svTopLeft.m_dPositionY;
@@ -189,7 +189,7 @@ HRESULT SVExtentFigureStruct::SetRect( double p_dTop, double p_dLeft, double p_d
 
 	Initialize();
 
-	m_eShape = SVExtentShapeRectangle;
+	m_eShape = SvDef::SVExtentShapeRectangle;
 
 	m_svTopLeft = l_svPoint;
 	m_svTopRight = l_svPoint;
@@ -228,7 +228,7 @@ HRESULT SVExtentFigureStruct::Initialize()
 {
 	HRESULT l_hrOk = S_OK;
 
-	m_eShape = SVExtentShapeUnknown;
+	m_eShape = SvDef::SVExtentShapeUnknown;
 
 	if ( S_OK != m_svTopLeft.Initialize() )
 	{
@@ -282,7 +282,7 @@ HRESULT SVExtentFigureStruct::IsPointOverFigure( const SVExtentPointStruct& p_rP
 {
 	HRESULT l_hrOk = S_OK;
 
-	if( m_eShape != SVExtentShapeUnknown )
+	if( m_eShape != SvDef::SVExtentShapeUnknown )
 	{
 		POINT l_IntersectPt = { 0, 0 };
 

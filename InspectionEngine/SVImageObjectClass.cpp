@@ -377,12 +377,12 @@ HRESULT SVImageObjectClass::LoadImage( LPCTSTR p_szFileName, SVDataManagerHandle
 						HRESULT l_Stat;
 						l_Stat = SVMatroxBufferInterface::Get(l_svHandle->GetBuffer(), SVSizeX, l_lWidth );
 						l_Stat = SVMatroxBufferInterface::Get(l_svHandle->GetBuffer(), SVSizeY, l_lHeight );
-						m_ImageInfo.SetExtentProperty( SVExtentPropertyEnum::SVExtentPropertyWidth, l_lWidth);
-						m_ImageInfo.SetExtentProperty( SVExtentPropertyEnum::SVExtentPropertyHeight, l_lHeight);
-						m_ImageInfo.SetExtentProperty( SVExtentPropertyEnum::SVExtentPropertyPositionPointX, 0 );
-						m_ImageInfo.SetExtentProperty( SVExtentPropertyEnum::SVExtentPropertyPositionPointY, 0 );
-						m_ImageInfo.SetExtentProperty( SVExtentPropertyEnum::SVExtentPropertyHeightScaleFactor, 1.0 );
-						m_ImageInfo.SetExtentProperty( SVExtentPropertyEnum::SVExtentPropertyWidthScaleFactor, 1.0 );
+						m_ImageInfo.SetExtentProperty( SvDef::SVExtentPropertyEnum::SVExtentPropertyWidth, l_lWidth);
+						m_ImageInfo.SetExtentProperty( SvDef::SVExtentPropertyEnum::SVExtentPropertyHeight, l_lHeight);
+						m_ImageInfo.SetExtentProperty( SvDef::SVExtentPropertyEnum::SVExtentPropertyPositionPointX, 0 );
+						m_ImageInfo.SetExtentProperty( SvDef::SVExtentPropertyEnum::SVExtentPropertyPositionPointY, 0 );
+						m_ImageInfo.SetExtentProperty( SvDef::SVExtentPropertyEnum::SVExtentPropertyHeightScaleFactor, 1.0 );
+						m_ImageInfo.SetExtentProperty( SvDef::SVExtentPropertyEnum::SVExtentPropertyWidthScaleFactor, 1.0 );
 						ResetObject();
 					}
 
@@ -425,11 +425,11 @@ HRESULT SVImageObjectClass::GetImageExtentFromFile( LPCTSTR pFileName, SVImageEx
 
 	if(Code == S_OK)
 	{
-		rExtent.SetExtentProperty( SVExtentPropertyEnum::SVExtentPropertyWidth, Width);
-		rExtent.SetExtentProperty( SVExtentPropertyEnum::SVExtentPropertyHeight, Height);
-		rExtent.SetExtentProperty( SVExtentPropertyEnum::SVExtentPropertyPositionPointX, 0 );
-		rExtent.SetExtentProperty( SVExtentPropertyEnum::SVExtentPropertyPositionPointY, 0 );
-		rExtent.SetTranslation(SVExtentTranslationNone);
+		rExtent.SetExtentProperty( SvDef::SVExtentPropertyEnum::SVExtentPropertyWidth, Width);
+		rExtent.SetExtentProperty( SvDef::SVExtentPropertyEnum::SVExtentPropertyHeight, Height);
+		rExtent.SetExtentProperty( SvDef::SVExtentPropertyEnum::SVExtentPropertyPositionPointX, 0 );
+		rExtent.SetExtentProperty( SvDef::SVExtentPropertyEnum::SVExtentPropertyPositionPointY, 0 );
+		rExtent.SetTranslation(SvDef::SVExtentTranslationNone);
 		rExtent.UpdateData();
 		hrOk = S_OK;
 	}
@@ -601,8 +601,8 @@ HRESULT SVImageObjectClass::CopyFromBSTR( BSTR p_Image )
 
 void SVImageObjectClass::SetTranslationOffset(double offsetX, double offsetY)
 {
-	m_ImageInfo.SetExtentProperty(SVExtentPropertyTranslationOffsetX, offsetX);
-	m_ImageInfo.SetExtentProperty(SVExtentPropertyTranslationOffsetY, offsetY);
+	m_ImageInfo.SetExtentProperty(SvDef::SVExtentPropertyTranslationOffsetX, offsetX);
+	m_ImageInfo.SetExtentProperty(SvDef::SVExtentPropertyTranslationOffsetY, offsetY);
 }
 
 SVImageObjectClass::SVImageObjectElement::SVImageObjectElement()

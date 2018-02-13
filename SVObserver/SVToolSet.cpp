@@ -868,8 +868,8 @@ bool SVToolSetClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	SVImageExtentClass ImageExtent( m_MainImageObject.GetImageExtents() );
 	double Width(0.0);
 	double Height(0.0);
-	if( S_OK == ImageExtent.GetExtentProperty( SVExtentPropertyWidth, Width ) &&
-		S_OK == ImageExtent.GetExtentProperty( SVExtentPropertyHeight, Height) )
+	if( S_OK == ImageExtent.GetExtentProperty( SvDef::SVExtentPropertyWidth, Width ) &&
+		S_OK == ImageExtent.GetExtentProperty( SvDef::SVExtentPropertyHeight, Height) )
 	{
 		m_Width.SetDefaultValue( Width );
 		m_Height.SetDefaultValue( Height );

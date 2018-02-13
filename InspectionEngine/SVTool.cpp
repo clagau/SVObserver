@@ -94,14 +94,14 @@ void SVToolClass::init()
 	
 	m_svToolExtent.SetTool( this );
 	m_svToolExtent.SetImageType( SvDef::SVImageTypeEnum::SVImageTypeLogicalAndPhysical );
-	m_svToolExtent.SetTranslation( SVExtentTranslationShift );
+	m_svToolExtent.SetTranslation( SvDef::SVExtentTranslationShift );
 	m_svToolExtent.SetAlwaysUpdate( false );
-	m_svToolExtent.SetExtentObject( SVExtentPropertyPositionPointX, &m_ExtentLeft );
-	m_svToolExtent.SetExtentObject( SVExtentPropertyPositionPointY, &m_ExtentTop );
-	m_svToolExtent.SetExtentObject( SVExtentPropertyWidth, &m_ExtentWidth );
-	m_svToolExtent.SetExtentObject( SVExtentPropertyHeight, &m_ExtentHeight );
-	m_svToolExtent.SetExtentObject( SVExtentPropertyWidthScaleFactor, &m_ExtentWidthScaleFactor );
-	m_svToolExtent.SetExtentObject( SVExtentPropertyHeightScaleFactor, &m_ExtentHeightScaleFactor );
+	m_svToolExtent.SetExtentObject( SvDef::SVExtentPropertyPositionPointX, &m_ExtentLeft );
+	m_svToolExtent.SetExtentObject( SvDef::SVExtentPropertyPositionPointY, &m_ExtentTop );
+	m_svToolExtent.SetExtentObject( SvDef::SVExtentPropertyWidth, &m_ExtentWidth );
+	m_svToolExtent.SetExtentObject( SvDef::SVExtentPropertyHeight, &m_ExtentHeight );
+	m_svToolExtent.SetExtentObject( SvDef::SVExtentPropertyWidthScaleFactor, &m_ExtentWidthScaleFactor );
+	m_svToolExtent.SetExtentObject( SvDef::SVExtentPropertyHeightScaleFactor, &m_ExtentHeightScaleFactor );
 
 	//
 	// Set Embedded defaults
@@ -699,7 +699,7 @@ bool SVToolClass::getConditionalResult(long Index) const
 	return Value ? true : false;
 }
 
-HRESULT SVToolClass::SetImageExtentProperty( SVExtentPropertyEnum p_eProperty, SvOi::IValueObject* pValueObject )
+HRESULT SVToolClass::SetImageExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, SvOi::IValueObject* pValueObject )
 {
 	return m_svToolExtent.SetExtentObject( p_eProperty, pValueObject );
 }
@@ -891,12 +891,12 @@ void SVToolClass::removeEmbeddedExtents( bool p_DisconnectExtents )
 {
 	if( p_DisconnectExtents )
 	{
-		m_svToolExtent.SetExtentObject( SVExtentPropertyPositionPointX, nullptr );
-		m_svToolExtent.SetExtentObject( SVExtentPropertyPositionPointY, nullptr );
-		m_svToolExtent.SetExtentObject( SVExtentPropertyWidth, nullptr );
-		m_svToolExtent.SetExtentObject( SVExtentPropertyHeight, nullptr );
-		m_svToolExtent.SetExtentObject( SVExtentPropertyWidthScaleFactor, nullptr );
-		m_svToolExtent.SetExtentObject( SVExtentPropertyHeightScaleFactor, nullptr );
+		m_svToolExtent.SetExtentObject( SvDef::SVExtentPropertyPositionPointX, nullptr );
+		m_svToolExtent.SetExtentObject( SvDef::SVExtentPropertyPositionPointY, nullptr );
+		m_svToolExtent.SetExtentObject( SvDef::SVExtentPropertyWidth, nullptr );
+		m_svToolExtent.SetExtentObject( SvDef::SVExtentPropertyHeight, nullptr );
+		m_svToolExtent.SetExtentObject( SvDef::SVExtentPropertyWidthScaleFactor, nullptr );
+		m_svToolExtent.SetExtentObject( SvDef::SVExtentPropertyHeightScaleFactor, nullptr );
 	}
 
 	RemoveEmbeddedObject( &m_ExtentLeft ); // Remove it from the Embedded List so it is not scripted
@@ -920,12 +920,12 @@ HRESULT SVToolClass::GetFilteredImageExtentPropertyList( SVExtentPropertyListTyp
 	return hr;
 }
 
-HRESULT SVToolClass::GetPropertyInfo( SVExtentPropertyEnum p_eProperty, SVExtentPropertyInfoStruct& p_rInfo ) const
+HRESULT SVToolClass::GetPropertyInfo( SvDef::SVExtentPropertyEnum p_eProperty, SVExtentPropertyInfoStruct& p_rInfo ) const
 {
 	return m_svToolExtent.GetExtentPropertyInfo( p_eProperty, p_rInfo );
 }
 
-HRESULT SVToolClass::SetExtentPropertyInfo( SVExtentPropertyEnum p_eProperty, const SVExtentPropertyInfoStruct& p_rInfo )
+HRESULT SVToolClass::SetExtentPropertyInfo( SvDef::SVExtentPropertyEnum p_eProperty, const SVExtentPropertyInfoStruct& p_rInfo )
 {
 	return m_svToolExtent.SetExtentPropertyInfo( p_eProperty, p_rInfo);
 }
@@ -1125,6 +1125,20 @@ long SVToolClass::getToolPosition() const
 	m_ToolPosition.GetValue( Result ); 
 	return Result; 
 };
+
+HRESULT SVToolClass::getExtentProperty(const SvDef::SVExtentPropertyEnum& rExtentProperty, double& rValue)
+{
+	HRESULT Result{E_FAIL};
+	SVImageExtentClass ImageExtents;
+	Result = GetImageExtent(ImageExtents);
+	if(S_OK == Result)
+	{
+		Result = ImageExtents.GetExtentProperty(rExtentProperty, rValue);
+	}
+
+	return Result;
+};
+
 #pragma endregion ITool methods
 
 SVStringValueObjectClass* SVToolClass::GetInputImageNames( )
@@ -1165,19 +1179,19 @@ void SVToolClass::connectChildObject( SVTaskObjectClass& rChildObject )
 	rChildObject.ConnectObject(createStruct);
 }
 
-bool SVToolClass::IsAllowedLocation(const SVExtentLocationPropertyEnum Location , SVExtentDirectionsEnum Direction ) const 
+bool SVToolClass::IsAllowedLocation(const SvDef::SVExtentLocationPropertyEnum Location , SvDef::SVExtentDirectionsEnum Direction ) const 
 {
 	SVExtentPropertyInfoStruct info;
-	m_svToolExtent.GetExtentPropertyInfo(SVExtentPropertyHeight,info );
+	m_svToolExtent.GetExtentPropertyInfo(SvDef::SVExtentPropertyHeight,info );
 	bool bAllowHeight = !(info.bFormula || info.bSetByReset);
 
-	m_svToolExtent.GetExtentPropertyInfo(SVExtentPropertyWidth,info );
+	m_svToolExtent.GetExtentPropertyInfo(SvDef::SVExtentPropertyWidth,info );
 	bool bAllowWidth = !(info.bFormula || info.bSetByReset);
 
-	m_svToolExtent.GetExtentPropertyInfo(SVExtentPropertyPositionPointX,info );
+	m_svToolExtent.GetExtentPropertyInfo(SvDef::SVExtentPropertyPositionPointX,info );
 	bool bAllowMoveX = !(info.bFormula || info.bSetByReset);
 
-	m_svToolExtent.GetExtentPropertyInfo(SVExtentPropertyPositionPointY,info );
+	m_svToolExtent.GetExtentPropertyInfo(SvDef::SVExtentPropertyPositionPointY,info );
 	bool bAllowMoveY = !(info.bFormula || info.bSetByReset);
 
 	bool ret(true);
@@ -1185,72 +1199,72 @@ bool SVToolClass::IsAllowedLocation(const SVExtentLocationPropertyEnum Location 
 	switch(Location)
 	{
 
-	case  SVExtentLocationPropertyTopLeft:
+	case  SvDef::SVExtentLocationPropertyTopLeft:
 		if( !bAllowMoveX || !bAllowMoveY  || !bAllowHeight || !bAllowWidth )
 		{
 			ret = false;
 		}
 		break;
 
-	case  SVExtentLocationPropertyTopRight:
+	case  SvDef::SVExtentLocationPropertyTopRight:
 		if(  !bAllowMoveY  || !bAllowHeight || !bAllowWidth )
 		{
 			ret = false;
 		}
 		break;
-	case  SVExtentLocationPropertyBottomRight:
+	case  SvDef::SVExtentLocationPropertyBottomRight:
 		if(  !bAllowHeight || !bAllowWidth )
 		{
 			ret = false;
 		}
 		break;
 
-	case  SVExtentLocationPropertyBottomLeft:
+	case  SvDef::SVExtentLocationPropertyBottomLeft:
 		if( !bAllowMoveX ||  !bAllowHeight || !bAllowWidth )
 		{
 			ret = false;
 		}
 		break;
 
-	case  SVExtentLocationPropertyLeft:
+	case  SvDef::SVExtentLocationPropertyLeft:
 		if( !bAllowMoveX ||  !bAllowWidth )
 		{
 			ret = false;
 		}
 		break;
 
-	case  SVExtentLocationPropertyRight:
+	case  SvDef::SVExtentLocationPropertyRight:
 		if( !bAllowWidth )
 		{
 			ret = false;
 		}
 		break;	
 
-	case  SVExtentLocationPropertyTop:
+	case  SvDef::SVExtentLocationPropertyTop:
 		if( !bAllowMoveY  || !bAllowHeight )
 		{
 			ret = false;;
 		}
 		break;
 
-	case  SVExtentLocationPropertyBottom:
+	case  SvDef::SVExtentLocationPropertyBottom:
 		if( !bAllowHeight )
 		{
 			ret = false;;
 		}
 		break;
-	case	SVExtentLocationPropertyCenter:
+	case	SvDef::SVExtentLocationPropertyCenter:
 		
-		if( Direction == SVExtentDirectionBoth &&( !bAllowMoveX || !bAllowMoveY ) )
+		if( Direction == SvDef::SVExtentDirectionBoth &&( !bAllowMoveX || !bAllowMoveY ) )
 		{
 			ret = false;
 		}
-		else if (Direction == SVExtentDirectionHorizontal && !bAllowMoveX )
+		else if (Direction == SvDef::SVExtentDirectionHorizontal && !bAllowMoveX )
 		{
 			ret = false;;
 
 		}
-		else   if (Direction == SVExtentDirectionVertical && !bAllowMoveY)
+		else   if (Direction == SvDef::SVExtentDirectionVertical && !bAllowMoveY)
 		{
 
 			ret = false;;

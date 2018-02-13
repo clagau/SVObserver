@@ -55,7 +55,7 @@ public:
 	virtual HRESULT SetImageExtentToParent( );
 	virtual HRESULT SetImageExtentToFit( const SVImageExtentClass& rImageExtent );
 	virtual HRESULT GetFilteredImageExtentPropertyList( SVExtentPropertyListType& p_rPropertyList );
-	virtual HRESULT GetPropertyInfo( SVExtentPropertyEnum p_eProperty, SVExtentPropertyInfoStruct& p_rInfo ) const;
+	virtual HRESULT GetPropertyInfo( SvDef::SVExtentPropertyEnum p_eProperty, SVExtentPropertyInfoStruct& p_rInfo ) const;
 
 
 	void ResetPrivateInputInterface();

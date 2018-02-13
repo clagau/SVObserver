@@ -66,6 +66,9 @@
     <ClInclude Include="LinearEdgeEnums.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SVExtentEnums.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="GlobalConstantData.inl">

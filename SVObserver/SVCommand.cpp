@@ -1604,162 +1604,162 @@ DWORD WINAPI CSVCommand::SVStreamDataThread(LPVOID lpParam)
 		switch (dwResult)
 		{
 			case WAIT_OBJECT_0:
-				bRunning = false;
-				break;
+			bRunning = false;
+			break;
 			case WAIT_IO_COMPLETION:
-				// pass one - check for products to stream now that we are awake
-				lProductCount = static_cast<long> (pThis->m_arProductList.size());
-				lStreamCount = 0;
-				hr = S_OK;
+			// pass one - check for products to stream now that we are awake
+			lProductCount = static_cast<long> (pThis->m_arProductList.size());
+			lStreamCount = 0;
+			hr = S_OK;
 
 				for (l = 0; l < lProductCount; l++)
-				{
-					pProductData = pThis->m_arProductList[l];
+			{
+				pProductData = pThis->m_arProductList[l];
 					if (nullptr != pProductData && pProductData->lCallbackCount == m_InspectionNames.size())
-					{
-						lStreamCount++;
-					}// end if
-
-				}//end for
-
-				// pass two - build the packets to stream from these products
-				if (lStreamCount)
 				{
-					// pass two 
-					sabound[0].lLbound = 0;
-					sabound[0].cElements = lStreamCount * lStreamSize;
-					lPacketCount = lStreamCount * lStreamSize;
-					lIndex = 0;
+					lStreamCount++;
+				}// end if
+
+			}//end for
+
+			// pass two - build the packets to stream from these products
+				if (lStreamCount)
+			{
+				// pass two 
+				sabound[0].lLbound = 0;
+				sabound[0].cElements = lStreamCount * lStreamSize;
+				lPacketCount = lStreamCount * lStreamSize;
+				lIndex = 0;
 
 					saNames = ::SafeArrayCreate(VT_BSTR, 1, sabound);
 					saValues = ::SafeArrayCreate(VT_BSTR, 1, sabound);
 					saProcessCount = ::SafeArrayCreate(VT_I4, 1, sabound);
 
-					lProductCount = static_cast<long> (pThis->m_arProductList.size());
+				lProductCount = static_cast<long> (pThis->m_arProductList.size());
 					for (l = 0; lStreamCount && l < lProductCount; l++)
-					{
-						pProductData = pThis->m_arProductList[l];
+				{
+					pProductData = pThis->m_arProductList[l];
 
-						// Verify again that this is one of the ready products
+					// Verify again that this is one of the ready products
 						if (nullptr == pProductData || pProductData->lCallbackCount != m_InspectionNames.size())
-						{
-							continue;
-						}
+					{
+						continue;
+					}
 
 						for (k = 0; k < lStreamSize; k++)
-						{
-							lInspectIndex = -1;
+					{
+						lInspectIndex = -1;
 
-							pStreamData = pThis->m_arStreamList[k];
-							oPacketData = pProductData->m_PacketDataVector[k];
+						pStreamData = pThis->m_arStreamList[k];
+						oPacketData = pProductData->m_PacketDataVector[k];
 
 							if (nullptr == pStreamData || nullptr == pStreamData->pValueObject ||
 								nullptr == oPacketData.pValueObject ||
 								(oPacketData.lState & PRODUCT_INSPECTION_NOT_RUN) == PRODUCT_INSPECTION_NOT_RUN ||
 								pStreamData->pValueObject != oPacketData.pValueObject)
-							{
-								// product not found or item not found or product not inspected. 
-								// send -1 for process count to keep list same size, as what they requested.
+						{
+							// product not found or item not found or product not inspected. 
+							// send -1 for process count to keep list same size, as what they requested.
 								bstr = _bstr_t(pStreamData->strValueName.c_str()).Detach();
 								SafeArrayPutElementNoCopy(saNames, &lIndex, bstr);
 
 								strValue = _T("");
-								bstr = _bstr_t(pStreamData->strValueName.c_str()).Detach();
-								bstr = _bstr_t(strValue.c_str()).Detach();
+							bstr = _bstr_t(pStreamData->strValueName.c_str()).Detach();
+							bstr = _bstr_t(strValue.c_str()).Detach();
 								SafeArrayPutElementNoCopy(saValues, &lIndex, bstr);
 
 								::SafeArrayPutElement(saProcessCount, &lIndex, &lNoProduct);
 
-								lIndex++;
-							}// end if
-							else
-							{
-								// product and item were found, add values to SAFEARRAYS
-								bstr = _bstr_t(pStreamData->strValueName.c_str()).Detach();
+							lIndex++;
+						}// end if
+						else
+						{
+							// product and item were found, add values to SAFEARRAYS
+							bstr = _bstr_t(pStreamData->strValueName.c_str()).Detach();
 								SafeArrayPutElementNoCopy(saNames, &lIndex, bstr);
 
-								_bstr_t bTemp = oPacketData.strValue.c_str();
+							_bstr_t bTemp = oPacketData.strValue.c_str();
 								SafeArrayPutElementNoCopy(saValues, &lIndex, bTemp.Detach());
 
 								::SafeArrayPutElement(saProcessCount, &lIndex, &pProductData->lProductCount);
 
-								lIndex++;
-							}//end else
+							lIndex++;
+						}//end else
 
-						} // end for
-
-						m_lLastStreamedProduct = pProductData->lProductCount;
-						lProductCount = static_cast<long> (pThis->m_arProductList.size());
-						lStreamCount--;
-
-						::EnterCriticalSection(CProductCriticalSection::Get());
-
-						pThis->m_arProductList.erase(pThis->m_arProductList.begin() + l);
-
-						::LeaveCriticalSection(CProductCriticalSection::Get());
-						delete pProductData;
-						l--;
 					} // end for
 
-					try
-					{
+					m_lLastStreamedProduct = pProductData->lProductCount;
+					lProductCount = static_cast<long> (pThis->m_arProductList.size());
+					lStreamCount--;
+
+					::EnterCriticalSection(CProductCriticalSection::Get());
+
+					pThis->m_arProductList.erase(pThis->m_arProductList.begin() + l);
+
+						::LeaveCriticalSection(CProductCriticalSection::Get());
+					delete pProductData;
+					l--;
+				} // end for
+
+				try
+				{
 						hr = pThis->Fire_StreamingData(saProcessCount, saNames, saValues);
-					}// end try
+				}// end try
 					catch (...)
-					{
-						hr = S_FALSE;
-					}// end catch
+				{
+					hr = S_FALSE;
+				}// end catch
 
 					::SafeArrayDestroy(saNames);
 					::SafeArrayDestroy(saValues);
 					::SafeArrayDestroy(saProcessCount);
-				}// end if
+			}// end if
 
-				// pass three - check for products to stream before we go back to sleep
-				lProductCount = static_cast<long> (pThis->m_arProductList.size());
-				lStreamCount = 0;
+			// pass three - check for products to stream before we go back to sleep
+			lProductCount = static_cast<long> (pThis->m_arProductList.size());
+			lStreamCount = 0;
 
 				for (l = 0; l < lProductCount; l++)
-				{
-					pProductData = pThis->m_arProductList[l];
+			{
+				pProductData = pThis->m_arProductList[l];
 					if (pProductData->lCallbackCount == static_cast<long> (m_InspectionNames.size()))
-					{
-						lStreamCount++;
-					}// end if
-				}//end for
+				{
+					lStreamCount++;
+				}// end if
+			}//end for
 
-				// Make sure thread priority is set back down
+			// Make sure thread priority is set back down
 				::SetThreadPriority(m_hStreamingThread, THREAD_PRIORITY_NORMAL);
 
-				// Check to make sure that the streaming data didn't have a fatal error
+			// Check to make sure that the streaming data didn't have a fatal error
 				if (FAILED(hr))
-				{
-					SVCommandStreamManager::Instance().EraseCommandCallback();
-					m_InspectionNames.clear();
-					m_dwStreamDataProcessId = 0;
+			{
+				SVCommandStreamManager::Instance().EraseCommandCallback();
+				m_InspectionNames.clear();
+				m_dwStreamDataProcessId = 0;
 
 					lSize = static_cast<long>(m_arStreamList.size());
 					for (l = 0; l < lSize; l++)
-					{
-						pStreamData = m_arStreamList[l];
-						delete pStreamData;
-					}// end for
-					m_arStreamList.clear();
+				{
+					pStreamData = m_arStreamList[l];
+					delete pStreamData;
+				}// end for
+				m_arStreamList.clear();
 
-					lSize = static_cast<long> (m_arProductList.size());
+				lSize = static_cast<long> (m_arProductList.size());
 					for (l = 0; l < lSize; l++)
-					{
-						pProductData = m_arProductList[l];
-						delete pProductData;
-					}// end for
-					m_arProductList.clear();
+				{
+					pProductData = m_arProductList[l];
+					delete pProductData;
+				}// end for
+				m_arProductList.clear();
 
-					bRunning = false;
-				}// end if
+				bRunning = false;
+			}// end if
 
-				break;
-			default:
-				break;
+			break;
+		default:
+			break;
 		}// end switch
 	} while (bRunning);
 
@@ -2470,7 +2470,7 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo, SvOi::SVImageBuff
 		lBufSize = sizeof(BITMAPINFOHEADER) + lTabSize + pbmhInfo->biSizeImage;
 
 		*pbstr = SysAllocStringByteLen(nullptr, lBufSize);
-		if (nullptr == *pbstr)
+		if (nullptr  == *pbstr)
 		{
 			hr = -1568;
 		}
@@ -3012,12 +3012,12 @@ inline std::string StripBrackets(const std::string& rValue)
 {
 	std::string Result(rValue);
 	Result = SvUl::Trim(Result);
-	size_t Pos = Result.rfind('[');
+		size_t Pos = Result.rfind('[');
 	if (std::string::npos != Pos)
-	{
-		Result = SvUl::Left(Result, Pos);
-	}
-	return Result;
+		{
+			Result = SvUl::Left(Result, Pos);
+		}
+		return Result;
 }
 
 inline std::string StripQuotes(const std::string& rValue)
@@ -3025,7 +3025,7 @@ inline std::string StripQuotes(const std::string& rValue)
 	std::string Result(rValue);
 	Result = SvUl::Trim(Result);
 	Result = SvUl::Trim(Result, _T("`\'")); // strip single quotes or back-ticks
-	return Result;
+		return Result;
 }
 }
 
@@ -3418,8 +3418,8 @@ SVMatroxBuffer CSVCommand::CreateImageFromBSTR(BSTR bstrImage)
 	oTempInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1);
 	oTempInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, 0);
 
-	oTempInfo.SetExtentProperty(SVExtentPropertyHeight, abs(pbmhInfo->biHeight));
-	oTempInfo.SetExtentProperty(SVExtentPropertyWidth, pbmhInfo->biWidth);
+	oTempInfo.SetExtentProperty(SvDef::SVExtentPropertyHeight, abs(pbmhInfo->biHeight));
+	oTempInfo.SetExtentProperty(SvDef::SVExtentPropertyWidth, pbmhInfo->biWidth);
 
 	if (pbmhInfo->biBitCount == 24)
 	{
@@ -3643,9 +3643,9 @@ STDMETHODIMP CSVCommand::SVLoadFont(long lFontIdentifier, BSTR bstrFontFile, BST
 		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
 			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
 		{
-			std::string FontFileName = SvStl::GlobalPath::Inst().GetTempPath(_T("svlffont.mfo"));
-			std::string ControlsFileName = SvStl::GlobalPath::Inst().GetTempPath(_T("svlfcont.mfo"));
-			std::string ConstraintsFileName = SvStl::GlobalPath::Inst().GetTempPath(_T("svlfstra.mfo"));
+			std::string FontFileName		= SvStl::GlobalPath::Inst().GetTempPath(_T("svlffont.mfo"));
+			std::string ControlsFileName		= SvStl::GlobalPath::Inst().GetTempPath(_T("svlfcont.mfo"));
+			std::string ConstraintsFileName	= SvStl::GlobalPath::Inst().GetTempPath(_T("svlfstra.mfo"));
 			CFile oFile;
 
 			HRESULT MatroxCode;
@@ -3751,9 +3751,9 @@ STDMETHODIMP CSVCommand::SVSaveFont(long lFontIdentifier, BSTR* bstrFontFile, BS
 		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
 			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
 		{
-			std::string strFontFileName = SvStl::GlobalPath::Inst().GetTempPath(_T("svsffont.mfo")).c_str();
-			std::string strControlsFileName = SvStl::GlobalPath::Inst().GetTempPath(_T("svsfcont.mfo")).c_str();
-			std::string strConstraintsFileName = SvStl::GlobalPath::Inst().GetTempPath(_T("svsfstra.mfo")).c_str();
+			std::string strFontFileName		= SvStl::GlobalPath::Inst().GetTempPath(_T("svsffont.mfo")).c_str();
+			std::string strControlsFileName		= SvStl::GlobalPath::Inst().GetTempPath(_T("svsfcont.mfo")).c_str();
+			std::string strConstraintsFileName	= SvStl::GlobalPath::Inst().GetTempPath(_T("svsfstra.mfo")).c_str();
 			CFileStatus rStatus;
 			CFile oFile;
 
@@ -3787,7 +3787,7 @@ STDMETHODIMP CSVCommand::SVSaveFont(long lFontIdentifier, BSTR* bstrFontFile, BS
 			if (nullptr != *bstrFontControls)
 			{
 				MatroxCode = SVMatroxOcrInterface::SaveFont(lFontHandle, strControlsFileName, SVOcrSaveControl);
-				if (S_OK != MatroxCode)
+				if (S_OK !=  MatroxCode)
 				{
 					SVMatroxStatusInformation l_info;
 					SVMatroxApplicationInterface::GetLastStatus(l_info);
@@ -3964,7 +3964,7 @@ STDMETHODIMP CSVCommand::SVReadString(long lFontIdentifier, BSTR* bstrFoundStrin
 			}// end else
 
 			l_milImage.clear();
-			if (S_OK != MatroxCode)
+			if (S_OK !=  MatroxCode)
 			{
 				SVMatroxStatusInformation l_info;
 				SVMatroxApplicationInterface::GetLastStatus(l_info);
@@ -3977,7 +3977,7 @@ STDMETHODIMP CSVCommand::SVReadString(long lFontIdentifier, BSTR* bstrFoundStrin
 			}
 
 			MatroxCode = SVMatroxOcrInterface::DestroyResult(milResult);
-			if (S_OK != MatroxCode)
+			if (S_OK !=  MatroxCode)
 			{
 				SVMatroxStatusInformation l_info;
 				SVMatroxApplicationInterface::GetLastStatus(l_info);
@@ -4022,7 +4022,7 @@ STDMETHODIMP CSVCommand::SVVerifyString(long lFontIdentifier, BSTR bstrVerifyStr
 				SVMatroxIdentifier milResult = M_NULL;
 				MatroxCode = SVMatroxOcrInterface::CreateResult(milResult);
 
-				if (S_OK != MatroxCode)
+				if (S_OK !=  MatroxCode)
 				{
 					SVMatroxStatusInformation l_info;
 					SVMatroxApplicationInterface::GetLastStatus(l_info);
@@ -4347,12 +4347,12 @@ STDMETHODIMP CSVCommand::SVGetFontCharacter(long lFontIdentifier, long  lCharID,
 
 				long l_lValue = 0;
 
-				ImageInfo.SetExtentProperty(SVExtentPropertyOutputPositionPoint, 0);
+				ImageInfo.SetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, 0);
 				l_Code = SVMatroxBufferInterface::Get(lCharHandle, SVSizeX, l_lValue);
-				ImageInfo.SetExtentProperty(SVExtentPropertyWidth, l_lValue);
+				ImageInfo.SetExtentProperty(SvDef::SVExtentPropertyWidth, l_lValue);
 
 				l_Code = SVMatroxBufferInterface::Get(lCharHandle, SVSizeY, l_lValue);
-				ImageInfo.SetExtentProperty(SVExtentPropertyHeight, l_lValue);
+				ImageInfo.SetExtentProperty(SvDef::SVExtentPropertyHeight, l_lValue);
 
 				l_Code = SVMatroxBufferInterface::Get(lCharHandle, SVSizeBand, l_lValue);
 				ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, l_lValue);

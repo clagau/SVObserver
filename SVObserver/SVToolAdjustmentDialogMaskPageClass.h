@@ -109,8 +109,8 @@ private:
 	void RetreiveResultImageNames();
 
 	static SVToolAdjustmentDialogMaskPageClass* m_pThis;
-	SVGUID m_InspectionID;
-	SVGUID m_TaskObjectID;
+	const SVGUID m_InspectionID;
+	const SVGUID m_TaskObjectID;
 	SvOg::ImageController m_ImageController;
 	ValueController m_Values;
 	SvOg::MaskController m_maskController;

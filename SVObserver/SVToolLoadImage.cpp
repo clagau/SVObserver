@@ -59,7 +59,7 @@ void SVLoadImageToolClass::init()
 	// Default taskObjectList items:
 
 	// Set Translation
-	m_svToolExtent.SetTranslation(SVExtentTranslationFigureShift);
+	m_svToolExtent.SetTranslation(SvDef::SVExtentTranslationFigureShift);
 	ToolSizeAdjustTask::AddToFriendlist(this, true, true, false);
 	// Set default inputs and outputs
 	addDefaultInputObjects();
@@ -208,7 +208,7 @@ SVTaskObjectClass *SVLoadImageToolClass::GetObjectAtPoint( const SVExtentPointSt
 	SVTaskObjectClass *l_psvObject = nullptr;
 
 	if( S_OK == m_svToolExtent.GetImageExtent( l_svExtents ) &&
-	    SVExtentLocationPropertyUnknown != l_svExtents.GetLocationPropertyAt( p_rsvPoint ) )
+	    SvDef::SVExtentLocationPropertyUnknown != l_svExtents.GetLocationPropertyAt( p_rsvPoint ) )
 	{
 		l_psvObject = this;
 	}

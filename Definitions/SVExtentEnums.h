@@ -10,9 +10,12 @@
 //******************************************************************************
 
 #pragma once
+namespace SvDef
+{
 
 enum SVExtentPropertyEnum
 {
+	SVExtentPropertyNone					= 0,
 	SVExtentPropertyPositionPointX          = 0x00000001,
 	SVExtentPropertyPositionPointY          = 0x00000002,
 	SVExtentPropertyPositionPoint           = 0x00000003,
@@ -41,78 +44,83 @@ enum SVExtentPropertyEnum
 	SVExtentPropertyOutputHeight            = 0x80000000,
 
 	SVExtentPropertyPositionsInput = SVExtentPropertyPositionPointX
-	                               | SVExtentPropertyPositionPointY
-	                               | SVExtentPropertyPositionPointEndOfLineX
-	                               | SVExtentPropertyPositionPointEndOfLineY
-	                               | SVExtentPropertyTranslationOffsetX
-	                               | SVExtentPropertyTranslationOffsetY
-	                               | SVExtentPropertyRotationAngle,
+	                        | SVExtentPropertyPositionPointY
+	                        | SVExtentPropertyPositionPointEndOfLineX
+	                        | SVExtentPropertyPositionPointEndOfLineY
+	                        | SVExtentPropertyTranslationOffsetX
+	                        | SVExtentPropertyTranslationOffsetY
+	                        | SVExtentPropertyRotationAngle,
 
 	SVExtentPropertyPositionsOutput = SVExtentPropertyOutputPositionPointX
-	                                | SVExtentPropertyOutputPositionPointY,
+	                        | SVExtentPropertyOutputPositionPointY,
 
 	SVExtentPropertyDimensionsInput = SVExtentPropertyWidth
-	                                | SVExtentPropertyHeight
-	                                | SVExtentPropertyStartAngle
-	                                | SVExtentPropertyEndAngle
-	                                | SVExtentPropertyInnerRadius
-	                                | SVExtentPropertyOuterRadius
-									| SVExtentPropertyHeightScaleFactor
-									| SVExtentPropertyWidthScaleFactor,
+	                        | SVExtentPropertyHeight
+	                        | SVExtentPropertyStartAngle
+	                        | SVExtentPropertyEndAngle
+	                        | SVExtentPropertyInnerRadius
+	                        | SVExtentPropertyOuterRadius
+							| SVExtentPropertyHeightScaleFactor
+							| SVExtentPropertyWidthScaleFactor,
 
 	SVExtentPropertyDimentionsOutput = SVExtentPropertyOutputWidth
-	                                 | SVExtentPropertyOutputHeight,
+	                        | SVExtentPropertyOutputHeight,
 
 	SVExtentPropertyRectangle = SVExtentPropertyWidth
-	                          | SVExtentPropertyHeight
-	                          | SVExtentPropertyDimentionsOutput,
+							| SVExtentPropertyHeight
+							| SVExtentPropertyDimentionsOutput,
 
 	SVExtentPropertyScaleFactor = SVExtentPropertyWidthScaleFactor
-								| SVExtentPropertyHeightScaleFactor,
+							| SVExtentPropertyHeightScaleFactor,
 
 	SVExtentPropertyPoint = SVExtentPropertyRectangle,
 
 	SVExtentPropertyLine = SVExtentPropertyRectangle,
 
 	SVExtentPropertyPie = SVExtentPropertyStartAngle
-	                    | SVExtentPropertyEndAngle
-	                    | SVExtentPropertyInnerRadius
-	                    | SVExtentPropertyOuterRadius
+						| SVExtentPropertyEndAngle
+						| SVExtentPropertyInnerRadius
+						| SVExtentPropertyOuterRadius
 						| SVExtentPropertyDimentionsOutput,
 
 	SVExtentPropertyPositionsAll = SVExtentPropertyPositionsInput
-	                             | SVExtentPropertyPositionsOutput,
+							| SVExtentPropertyPositionsOutput,
 
 	SVExtentPropertyDimensionsAll = SVExtentPropertyDimensionsInput
-	                              | SVExtentPropertyDimentionsOutput,
+							| SVExtentPropertyDimentionsOutput,
 
 	SVExtentPropertyAll = SVExtentPropertyPositionsAll
-	                    | SVExtentPropertyDimensionsAll,
+						| SVExtentPropertyDimensionsAll,
 
-	SVExtentPropertyNone = 0,
-};
-
-//This parameter define how many decimal places the property have in the display
-const unsigned long g_SVExtentPropertyNoDecimalPlaces = SVExtentPropertyPositionPoint|SVExtentPropertyPositionPointEndOfLine|SVExtentPropertyTranslationOffset|
-														SVExtentPropertyOutputPositionPoint|SVExtentPropertyWidth|SVExtentPropertyHeight|
-														SVExtentPropertyOutputWidth|SVExtentPropertyOutputHeight;
-const unsigned long g_SVExtentProperty2DecimalPlaces = SVExtentPropertyRotationAngle|SVExtentPropertyStartAngle|
-														SVExtentPropertyEndAngle|SVExtentPropertyInnerRadius|SVExtentPropertyOuterRadius;
+	SVExtentPropertyNoDecimalPlaces = SVExtentPropertyPositionPoint
+							| SVExtentPropertyPositionPointEndOfLine
+							| SVExtentPropertyTranslationOffset
+							| SVExtentPropertyOutputPositionPoint
+							| SVExtentPropertyWidth
+							| SVExtentPropertyHeight
+							| SVExtentPropertyOutputWidth
+							| SVExtentPropertyOutputHeight,
 	
+	SVExtentProperty2DecimalPlaces = SVExtentPropertyRotationAngle
+							| SVExtentPropertyStartAngle
+							| SVExtentPropertyEndAngle
+							| SVExtentPropertyInnerRadius
+							| SVExtentPropertyOuterRadius,
+};
 
 enum SVExtentShapeEnum
 {
-	SVExtentShapeUnknown   = 0,
-	SVExtentShapePoint     = 100,
-	SVExtentShapeArrow     = 200,
-	SVExtentShapeLine      = 300,
+	SVExtentShapeUnknown		= 0,
+	SVExtentShapePoint			= 100,
+	SVExtentShapeArrow			= 200,
+	SVExtentShapeLine			= 300,
 	SVExtentShapeLineHorizontal = 301,
-	SVExtentShapeLineVertical = 302,
-	SVExtentShapeRectangle = 400,
-	SVExtentShapePie       = 500,
-	SVExtentShapeCircle    = 600,
-	SVExtentShapeDoubleCircle = 700,
-	SVExtentShapeHexagon   = 800,
+	SVExtentShapeLineVertical	= 302,
+	SVExtentShapeRectangle		= 400,
+	SVExtentShapePie			= 500,
+	SVExtentShapeCircle			= 600,
+	SVExtentShapeDoubleCircle	= 700,
+	SVExtentShapeHexagon		= 800,
 };
 
 enum SVExtentLocationPropertyEnum
@@ -128,7 +136,7 @@ enum SVExtentLocationPropertyEnum
 	SVExtentLocationPropertyBottom      = 8,
 	SVExtentLocationPropertyCenter      = 9,
 	SVExtentLocationPropertyRotate      = 10,
-	SVExtentLocationPropertyDisabled =  11,
+	SVExtentLocationPropertyDisabled	= 11,
 	SVExtentLocationPropertySize,
 };
 
@@ -160,7 +168,7 @@ enum SVExtentTranslationEnum
 	SVExtentTranslationPolarUnwrap     = 60,
 	SVExtentTranslationLine            = 80,
 
-	/// SVExtentTranslationResize - Does a position, height, and width, 
+	/// SvDef::SVExtentTranslationResize - Does a position, height, and width, 
 	///  translation that uses the scale factor values.
 	///  Uses include the Resize Tool.
 	SVExtentTranslationResize		   = 89,
@@ -174,16 +182,17 @@ enum SVExtentTranslationEnum
 	SVExtentTranslationFlipHorizontal  = 92,
 	SVExtentTranslationFigureShift	   = 93,
 	SVExtentTranslationLinear          = 100,
-	SVExtentTranslationCylindricalWarpH = 110,
-	SVExtentTranslationCylindricalWarpV = 111,
-	SVExtentTranslationHorizontalPerspective = 120,
-	SVExtentTranslationVerticalPerspective = 121,
+	SVExtentTranslationCylindricalWarpH			= 110,
+	SVExtentTranslationCylindricalWarpV			= 111,
+	SVExtentTranslationHorizontalPerspective	= 120,
+	SVExtentTranslationVerticalPerspective		= 121,
 };
 
 enum SVExtentDirectionsEnum
 {
-	SVExtentDirectionBoth         = 0,
-	SVExtentDirectionHorizontal            = 1,
-	SVExtentDirectionVertical           = 2
+	SVExtentDirectionBoth		= 0,
+	SVExtentDirectionHorizontal	= 1,
+	SVExtentDirectionVertical	= 2
 };
 
+} //namespace SvDef

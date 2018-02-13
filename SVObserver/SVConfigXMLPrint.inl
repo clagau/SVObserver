@@ -998,10 +998,10 @@ inline void SVConfigXMLPrint::WriteTool(Writer writer, SVToolClass * ts) const
 			long l_lWidth = 0;
 			long l_lHeight = 0;
 
-			if ( S_OK == pImageInfo->GetExtentProperty( SVExtentPropertyPositionPoint, l_oPoint ) &&
-				 S_OK == pImageInfo->GetExtentProperty( SVExtentPropertyOutputPositionPoint, l_oOutputPoint ) &&
-				 S_OK == pImageInfo->GetExtentProperty( SVExtentPropertyWidth, l_lWidth ) &&
-				 S_OK == pImageInfo->GetExtentProperty( SVExtentPropertyHeight, l_lHeight ) )
+			if ( S_OK == pImageInfo->GetExtentProperty( SvDef::SVExtentPropertyPositionPoint, l_oPoint ) &&
+				 S_OK == pImageInfo->GetExtentProperty( SvDef::SVExtentPropertyOutputPositionPoint, l_oOutputPoint ) &&
+				 S_OK == pImageInfo->GetExtentProperty( SvDef::SVExtentPropertyWidth, l_lWidth ) &&
+				 S_OK == pImageInfo->GetExtentProperty( SvDef::SVExtentPropertyHeight, l_lHeight ) )
 			{
 				sLabel = SvUl::LoadStdString(IDS_TOOL_LENGTH_STRING);
 				WriteValueObject(writer,  L"Property", utf16(sLabel), _itow(l_lWidth, buff, 10));

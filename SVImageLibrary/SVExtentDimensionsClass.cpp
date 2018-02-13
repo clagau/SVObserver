@@ -33,54 +33,54 @@ const SVExtentDimensionsClass &SVExtentDimensionsClass::operator=( const SVExten
 {
 	if ( this != &p_rsvValue )
 	{
-		if ( ( p_rsvValue.m_ulProperties & SVExtentPropertyHeight ) != 0 )
+		if ( ( p_rsvValue.m_ulProperties & SvDef::SVExtentPropertyHeight ) != 0 )
 		{
-			SetExtentProperty( SVExtentPropertyHeight, p_rsvValue.m_dHeight );
+			SetExtentProperty( SvDef::SVExtentPropertyHeight, p_rsvValue.m_dHeight );
 		}
 
-		if ( ( p_rsvValue.m_ulProperties & SVExtentPropertyWidth ) != 0 )
+		if ( ( p_rsvValue.m_ulProperties & SvDef::SVExtentPropertyWidth ) != 0 )
 		{
-			SetExtentProperty( SVExtentPropertyWidth, p_rsvValue.m_dWidth );
+			SetExtentProperty( SvDef::SVExtentPropertyWidth, p_rsvValue.m_dWidth );
 		}
 
-		if ( ( p_rsvValue.m_ulProperties & SVExtentPropertyStartAngle ) != 0 )
+		if ( ( p_rsvValue.m_ulProperties & SvDef::SVExtentPropertyStartAngle ) != 0 )
 		{
-			SetExtentProperty( SVExtentPropertyStartAngle, p_rsvValue.m_dStartAngle );
+			SetExtentProperty( SvDef::SVExtentPropertyStartAngle, p_rsvValue.m_dStartAngle );
 		}
 
-		if ( ( p_rsvValue.m_ulProperties & SVExtentPropertyEndAngle ) != 0 )
+		if ( ( p_rsvValue.m_ulProperties & SvDef::SVExtentPropertyEndAngle ) != 0 )
 		{
-			SetExtentProperty( SVExtentPropertyEndAngle, p_rsvValue.m_dEndAngle );
+			SetExtentProperty( SvDef::SVExtentPropertyEndAngle, p_rsvValue.m_dEndAngle );
 		}
 
-		if ( ( p_rsvValue.m_ulProperties & SVExtentPropertyInnerRadius ) != 0 )
+		if ( ( p_rsvValue.m_ulProperties & SvDef::SVExtentPropertyInnerRadius ) != 0 )
 		{
-			SetExtentProperty( SVExtentPropertyInnerRadius, p_rsvValue.m_dInnerRadius );
+			SetExtentProperty( SvDef::SVExtentPropertyInnerRadius, p_rsvValue.m_dInnerRadius );
 		}
 
-		if ( ( p_rsvValue.m_ulProperties & SVExtentPropertyOuterRadius ) != 0 )
+		if ( ( p_rsvValue.m_ulProperties & SvDef::SVExtentPropertyOuterRadius ) != 0 )
 		{
-			SetExtentProperty( SVExtentPropertyOuterRadius, p_rsvValue.m_dOuterRadius );
+			SetExtentProperty( SvDef::SVExtentPropertyOuterRadius, p_rsvValue.m_dOuterRadius );
 		}
 
-		if ( ( p_rsvValue.m_ulProperties & SVExtentPropertyHeightScaleFactor ) != 0 )
+		if ( ( p_rsvValue.m_ulProperties & SvDef::SVExtentPropertyHeightScaleFactor ) != 0 )
 		{
-			SetExtentProperty( SVExtentPropertyHeightScaleFactor, p_rsvValue.m_dHeightScaleFactor );
+			SetExtentProperty( SvDef::SVExtentPropertyHeightScaleFactor, p_rsvValue.m_dHeightScaleFactor );
 		}
 
-		if ( ( p_rsvValue.m_ulProperties & SVExtentPropertyOutputHeight ) != 0 )
+		if ( ( p_rsvValue.m_ulProperties & SvDef::SVExtentPropertyOutputHeight ) != 0 )
 		{
-			SetExtentProperty( SVExtentPropertyOutputHeight, p_rsvValue.m_lOutputHeight );
+			SetExtentProperty( SvDef::SVExtentPropertyOutputHeight, p_rsvValue.m_lOutputHeight );
 		}
 
-		if ( ( p_rsvValue.m_ulProperties & SVExtentPropertyWidthScaleFactor ) != 0 )
+		if ( ( p_rsvValue.m_ulProperties & SvDef::SVExtentPropertyWidthScaleFactor ) != 0 )
 		{
-			SetExtentProperty( SVExtentPropertyWidthScaleFactor, p_rsvValue.m_dWidthScaleFactor );
+			SetExtentProperty( SvDef::SVExtentPropertyWidthScaleFactor, p_rsvValue.m_dWidthScaleFactor );
 		}
 
-		if ( ( p_rsvValue.m_ulProperties & SVExtentPropertyOutputWidth ) != 0 )
+		if ( ( p_rsvValue.m_ulProperties & SvDef::SVExtentPropertyOutputWidth ) != 0 )
 		{
-			SetExtentProperty( SVExtentPropertyOutputWidth, p_rsvValue.m_lOutputWidth );
+			SetExtentProperty( SvDef::SVExtentPropertyOutputWidth, p_rsvValue.m_lOutputWidth );
 		}
 	}
 	return *this;
@@ -105,159 +105,159 @@ HRESULT SVExtentDimensionsClass::Initialize()
 	return l_hrOk;
 }
 
-HRESULT SVExtentDimensionsClass::DisableExtentProperty( SVExtentPropertyEnum p_eProperty )
+HRESULT SVExtentDimensionsClass::DisableExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty )
 {
 	HRESULT l_hrOk = S_OK;
 
-	if ( ( p_eProperty & ~SVExtentPropertyDimensionsAll ) == 0 )
+	if ( ( p_eProperty & ~SvDef::SVExtentPropertyDimensionsAll ) == 0 )
 	{
-		if ( ( p_eProperty & ~SVExtentPropertyPoint ) == 0 )
+		if ( ( p_eProperty & ~SvDef::SVExtentPropertyPoint ) == 0 )
 		{
-			if ( ( p_eProperty & SVExtentPropertyWidth ) != 0 )
+			if ( ( p_eProperty & SvDef::SVExtentPropertyWidth ) != 0 )
 			{
-				m_ulProperties &= ~SVExtentPropertyWidth;
+				m_ulProperties &= ~SvDef::SVExtentPropertyWidth;
 
 				l_hrOk = S_OK;
 			}
 
-			if ( ( p_eProperty & SVExtentPropertyHeight ) != 0 )
+			if ( ( p_eProperty & SvDef::SVExtentPropertyHeight ) != 0 )
 			{
-				m_ulProperties &= ~SVExtentPropertyHeight;
+				m_ulProperties &= ~SvDef::SVExtentPropertyHeight;
 
 				l_hrOk = S_OK;
 			}
 
-			if ( ( p_eProperty & SVExtentPropertyOutputWidth ) != 0 )
+			if ( ( p_eProperty & SvDef::SVExtentPropertyOutputWidth ) != 0 )
 			{
-				m_ulProperties &= ~SVExtentPropertyOutputWidth;
+				m_ulProperties &= ~SvDef::SVExtentPropertyOutputWidth;
 
 				l_hrOk = S_OK;
 			}
 
-			if ( ( p_eProperty & SVExtentPropertyOutputHeight ) != 0 )
+			if ( ( p_eProperty & SvDef::SVExtentPropertyOutputHeight ) != 0 )
 			{
-				m_ulProperties &= ~SVExtentPropertyOutputHeight;
+				m_ulProperties &= ~SvDef::SVExtentPropertyOutputHeight;
 
 				l_hrOk = S_OK;
 			}
 		}
 
-		if ( ( p_eProperty & ~SVExtentPropertyLine ) == 0 )
+		if ( ( p_eProperty & ~SvDef::SVExtentPropertyLine ) == 0 )
 		{
-			if ( ( p_eProperty & SVExtentPropertyWidth ) != 0 )
+			if ( ( p_eProperty & SvDef::SVExtentPropertyWidth ) != 0 )
 			{
-				m_ulProperties &= ~SVExtentPropertyWidth;
+				m_ulProperties &= ~SvDef::SVExtentPropertyWidth;
 
 				l_hrOk = S_OK;
 			}
 
-			if ( ( p_eProperty & SVExtentPropertyHeight ) != 0 )
+			if ( ( p_eProperty & SvDef::SVExtentPropertyHeight ) != 0 )
 			{
-				m_ulProperties &= ~SVExtentPropertyHeight;
+				m_ulProperties &= ~SvDef::SVExtentPropertyHeight;
 
 				l_hrOk = S_OK;
 			}
 
-			if ( ( p_eProperty & SVExtentPropertyOutputWidth ) != 0 )
+			if ( ( p_eProperty & SvDef::SVExtentPropertyOutputWidth ) != 0 )
 			{
-				m_ulProperties &= ~SVExtentPropertyOutputWidth;
+				m_ulProperties &= ~SvDef::SVExtentPropertyOutputWidth;
 
 				l_hrOk = S_OK;
 			}
 
-			if ( ( p_eProperty & SVExtentPropertyOutputHeight ) != 0 )
+			if ( ( p_eProperty & SvDef::SVExtentPropertyOutputHeight ) != 0 )
 			{
-				m_ulProperties &= ~SVExtentPropertyOutputHeight;
+				m_ulProperties &= ~SvDef::SVExtentPropertyOutputHeight;
 
 				l_hrOk = S_OK;
 			}
 		}
 
-		if ( ( p_eProperty & ~SVExtentPropertyRectangle ) == 0 )
+		if ( ( p_eProperty & ~SvDef::SVExtentPropertyRectangle ) == 0 )
 		{
-			if ( ( p_eProperty & SVExtentPropertyWidth ) != 0 )
+			if ( ( p_eProperty & SvDef::SVExtentPropertyWidth ) != 0 )
 			{
-				m_ulProperties &= ~SVExtentPropertyWidth;
+				m_ulProperties &= ~SvDef::SVExtentPropertyWidth;
 
 				l_hrOk = S_OK;
 			}
 
-			if ( ( p_eProperty & SVExtentPropertyHeight ) != 0 )
+			if ( ( p_eProperty & SvDef::SVExtentPropertyHeight ) != 0 )
 			{
-				m_ulProperties &= ~SVExtentPropertyHeight;
+				m_ulProperties &= ~SvDef::SVExtentPropertyHeight;
 
 				l_hrOk = S_OK;
 			}
 
-			if ( ( p_eProperty & SVExtentPropertyOutputWidth ) != 0 )
+			if ( ( p_eProperty & SvDef::SVExtentPropertyOutputWidth ) != 0 )
 			{
-				m_ulProperties &= ~SVExtentPropertyOutputWidth;
+				m_ulProperties &= ~SvDef::SVExtentPropertyOutputWidth;
 
 				l_hrOk = S_OK;
 			}
 
-			if ( ( p_eProperty & SVExtentPropertyOutputHeight ) != 0 )
+			if ( ( p_eProperty & SvDef::SVExtentPropertyOutputHeight ) != 0 )
 			{
-				m_ulProperties &= ~SVExtentPropertyOutputHeight;
+				m_ulProperties &= ~SvDef::SVExtentPropertyOutputHeight;
 
 				l_hrOk = S_OK;
 			}
 		}
 
-		if ( ( p_eProperty & SVExtentPropertyHeightScaleFactor ) != 0 )
+		if ( ( p_eProperty & SvDef::SVExtentPropertyHeightScaleFactor ) != 0 )
 		{
-			m_ulProperties &= ~SVExtentPropertyHeightScaleFactor;
+			m_ulProperties &= ~SvDef::SVExtentPropertyHeightScaleFactor;
 
 			l_hrOk = S_OK;
 		}
 
-		if ( ( p_eProperty & SVExtentPropertyWidthScaleFactor ) != 0 )
+		if ( ( p_eProperty & SvDef::SVExtentPropertyWidthScaleFactor ) != 0 )
 		{
-			m_ulProperties &= ~SVExtentPropertyWidthScaleFactor;
+			m_ulProperties &= ~SvDef::SVExtentPropertyWidthScaleFactor;
 
 			l_hrOk = S_OK;
 		}
 
-		if ( ( p_eProperty & ~SVExtentPropertyPie ) == 0 )
+		if ( ( p_eProperty & ~SvDef::SVExtentPropertyPie ) == 0 )
 		{
-			if ( ( p_eProperty & SVExtentPropertyStartAngle ) != 0 )
+			if ( ( p_eProperty & SvDef::SVExtentPropertyStartAngle ) != 0 )
 			{
-				m_ulProperties &= ~SVExtentPropertyStartAngle;
+				m_ulProperties &= ~SvDef::SVExtentPropertyStartAngle;
 
 				l_hrOk = S_OK;
 			}
 
-			if ( ( p_eProperty & SVExtentPropertyEndAngle ) != 0 )
+			if ( ( p_eProperty & SvDef::SVExtentPropertyEndAngle ) != 0 )
 			{
-				m_ulProperties &= ~SVExtentPropertyEndAngle;
+				m_ulProperties &= ~SvDef::SVExtentPropertyEndAngle;
 
 				l_hrOk = S_OK;
 			}
 
-			if ( ( p_eProperty & SVExtentPropertyInnerRadius ) != 0 )
+			if ( ( p_eProperty & SvDef::SVExtentPropertyInnerRadius ) != 0 )
 			{
-				m_ulProperties &= ~SVExtentPropertyInnerRadius;
+				m_ulProperties &= ~SvDef::SVExtentPropertyInnerRadius;
 
 				l_hrOk = S_OK;
 			}
 
-			if ( ( p_eProperty & SVExtentPropertyOuterRadius ) != 0 )
+			if ( ( p_eProperty & SvDef::SVExtentPropertyOuterRadius ) != 0 )
 			{
-				m_ulProperties &= ~SVExtentPropertyOuterRadius;
+				m_ulProperties &= ~SvDef::SVExtentPropertyOuterRadius;
 
 				l_hrOk = S_OK;
 			}
 
-			if ( ( p_eProperty & SVExtentPropertyOutputWidth ) != 0 )
+			if ( ( p_eProperty & SvDef::SVExtentPropertyOutputWidth ) != 0 )
 			{
-				m_ulProperties &= ~SVExtentPropertyOutputWidth;
+				m_ulProperties &= ~SvDef::SVExtentPropertyOutputWidth;
 
 				l_hrOk = S_OK;
 			}
 
-			if ( ( p_eProperty & SVExtentPropertyOutputHeight ) != 0 )
+			if ( ( p_eProperty & SvDef::SVExtentPropertyOutputHeight ) != 0 )
 			{
-				m_ulProperties &= ~SVExtentPropertyOutputHeight;
+				m_ulProperties &= ~SvDef::SVExtentPropertyOutputHeight;
 
 				l_hrOk = S_OK;
 			}
@@ -267,7 +267,7 @@ HRESULT SVExtentDimensionsClass::DisableExtentProperty( SVExtentPropertyEnum p_e
 	return l_hrOk;
 }
 
-HRESULT SVExtentDimensionsClass::GetExtentProperty( SVExtentPropertyEnum p_eProperty, long &p_rlValue ) const
+HRESULT SVExtentDimensionsClass::GetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, long &p_rlValue ) const
 {
 	double l_dValue = 0.0;
 
@@ -281,7 +281,7 @@ HRESULT SVExtentDimensionsClass::GetExtentProperty( SVExtentPropertyEnum p_eProp
 	return l_hrOk;
 }
 
-HRESULT SVExtentDimensionsClass::GetExtentProperty( SVExtentPropertyEnum p_eProperty, double &p_rdValue ) const
+HRESULT SVExtentDimensionsClass::GetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, double &p_rdValue ) const
 {
 	HRESULT l_hrOk = S_FALSE;
 	
@@ -289,7 +289,7 @@ HRESULT SVExtentDimensionsClass::GetExtentProperty( SVExtentPropertyEnum p_eProp
 	{
 		switch( p_eProperty )
 		{
-			case SVExtentPropertyWidth:
+			case SvDef::SVExtentPropertyWidth:
 			{
 				p_rdValue = m_dWidth;
 				
@@ -297,7 +297,7 @@ HRESULT SVExtentDimensionsClass::GetExtentProperty( SVExtentPropertyEnum p_eProp
 				
 				break;
 			}
-			case SVExtentPropertyHeight:
+			case SvDef::SVExtentPropertyHeight:
 			{
 				p_rdValue = m_dHeight;
 				
@@ -306,7 +306,7 @@ HRESULT SVExtentDimensionsClass::GetExtentProperty( SVExtentPropertyEnum p_eProp
 				break;
 			}
 
-			case SVExtentPropertyWidthScaleFactor:
+			case SvDef::SVExtentPropertyWidthScaleFactor:
 			{
 				p_rdValue = m_dWidthScaleFactor;
 
@@ -314,7 +314,7 @@ HRESULT SVExtentDimensionsClass::GetExtentProperty( SVExtentPropertyEnum p_eProp
 
 				break;
 			}
-			case SVExtentPropertyHeightScaleFactor:
+			case SvDef::SVExtentPropertyHeightScaleFactor:
 			{
 				p_rdValue = m_dHeightScaleFactor;
 
@@ -323,7 +323,7 @@ HRESULT SVExtentDimensionsClass::GetExtentProperty( SVExtentPropertyEnum p_eProp
 				break;
 			}
 			
-			case SVExtentPropertyStartAngle:
+			case SvDef::SVExtentPropertyStartAngle:
 			{
 				p_rdValue = m_dStartAngle;
 				
@@ -331,7 +331,7 @@ HRESULT SVExtentDimensionsClass::GetExtentProperty( SVExtentPropertyEnum p_eProp
 				
 				break;
 			}
-			case SVExtentPropertyEndAngle:
+			case SvDef::SVExtentPropertyEndAngle:
 			{
 				p_rdValue = m_dEndAngle;
 				
@@ -339,7 +339,7 @@ HRESULT SVExtentDimensionsClass::GetExtentProperty( SVExtentPropertyEnum p_eProp
 				
 				break;
 			}
-			case SVExtentPropertyInnerRadius:
+			case SvDef::SVExtentPropertyInnerRadius:
 			{
 				p_rdValue = m_dInnerRadius;
 				
@@ -347,7 +347,7 @@ HRESULT SVExtentDimensionsClass::GetExtentProperty( SVExtentPropertyEnum p_eProp
 				
 				break;
 			}
-			case SVExtentPropertyOuterRadius:
+			case SvDef::SVExtentPropertyOuterRadius:
 			{
 				p_rdValue = m_dOuterRadius;
 				
@@ -355,7 +355,7 @@ HRESULT SVExtentDimensionsClass::GetExtentProperty( SVExtentPropertyEnum p_eProp
 				
 				break;
 			}
-			case SVExtentPropertyOutputWidth:
+			case SvDef::SVExtentPropertyOutputWidth:
 			{
 				p_rdValue = m_lOutputWidth;
 				
@@ -363,7 +363,7 @@ HRESULT SVExtentDimensionsClass::GetExtentProperty( SVExtentPropertyEnum p_eProp
 				
 				break;
 			}
-			case SVExtentPropertyOutputHeight:
+			case SvDef::SVExtentPropertyOutputHeight:
 			{
 				p_rdValue = m_lOutputHeight;
 				
@@ -381,160 +381,160 @@ HRESULT SVExtentDimensionsClass::GetExtentProperty( SVExtentPropertyEnum p_eProp
 	return l_hrOk;
 }
 
-HRESULT SVExtentDimensionsClass::SetExtentProperty( SVExtentPropertyEnum p_eProperty, double p_dValue )
+HRESULT SVExtentDimensionsClass::SetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, double p_dValue )
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( ( p_eProperty & ~SVExtentPropertyDimensionsAll ) == 0 )
+	if ( ( p_eProperty & ~SvDef::SVExtentPropertyDimensionsAll ) == 0 )
 	{
-		if ( ( p_eProperty & ~SVExtentPropertyLine ) == 0 )
+		if ( ( p_eProperty & ~SvDef::SVExtentPropertyLine ) == 0 )
 		{
-			if ( ( p_eProperty & SVExtentPropertyWidth ) != 0 )
+			if ( ( p_eProperty & SvDef::SVExtentPropertyWidth ) != 0 )
 			{
 				m_dWidth = p_dValue;
 
-				m_ulProperties |= SVExtentPropertyWidth;
+				m_ulProperties |= SvDef::SVExtentPropertyWidth;
 
 				l_hrOk = S_OK;
 			}
 
-			if ( ( p_eProperty & SVExtentPropertyHeight ) != 0 )
+			if ( ( p_eProperty & SvDef::SVExtentPropertyHeight ) != 0 )
 			{
 				m_dHeight = p_dValue;
 
-				m_ulProperties |= SVExtentPropertyHeight;
+				m_ulProperties |= SvDef::SVExtentPropertyHeight;
 
 				l_hrOk = S_OK;
 			}
 
-			if ( ( p_eProperty & SVExtentPropertyOutputWidth ) != 0 )
+			if ( ( p_eProperty & SvDef::SVExtentPropertyOutputWidth ) != 0 )
 			{
 				m_lOutputWidth = (long)p_dValue;
 
-				m_ulProperties |= SVExtentPropertyOutputWidth;
+				m_ulProperties |= SvDef::SVExtentPropertyOutputWidth;
 
 				l_hrOk = S_OK;
 			}
 
-			if ( ( p_eProperty & SVExtentPropertyOutputHeight ) != 0 )
+			if ( ( p_eProperty & SvDef::SVExtentPropertyOutputHeight ) != 0 )
 			{
 				m_lOutputHeight = (long)p_dValue;
 
-				m_ulProperties |= SVExtentPropertyOutputHeight;
+				m_ulProperties |= SvDef::SVExtentPropertyOutputHeight;
 
 				l_hrOk = S_OK;
 			}
-		} //if ( ( p_eProperty & ~SVExtentPropertyLine ) == 0 )
+		} //if ( ( p_eProperty & ~SvDef::SVExtentPropertyLine ) == 0 )
 
-		if ( ( p_eProperty & ~SVExtentPropertyRectangle ) == 0 )
+		if ( ( p_eProperty & ~SvDef::SVExtentPropertyRectangle ) == 0 )
 		{
-			if ( ( p_eProperty & SVExtentPropertyWidth ) != 0 )
+			if ( ( p_eProperty & SvDef::SVExtentPropertyWidth ) != 0 )
 			{
 				m_dWidth = p_dValue;
 
-				m_ulProperties |= SVExtentPropertyWidth;
+				m_ulProperties |= SvDef::SVExtentPropertyWidth;
 
 				l_hrOk = S_OK;
 			}
 
-			if ( ( p_eProperty & SVExtentPropertyHeight ) != 0 )
+			if ( ( p_eProperty & SvDef::SVExtentPropertyHeight ) != 0 )
 			{
 				m_dHeight = p_dValue;
 
-				m_ulProperties |= SVExtentPropertyHeight;
+				m_ulProperties |= SvDef::SVExtentPropertyHeight;
 
 				l_hrOk = S_OK;
 			}
 
-			if ( ( p_eProperty & SVExtentPropertyOutputWidth ) != 0 )
+			if ( ( p_eProperty & SvDef::SVExtentPropertyOutputWidth ) != 0 )
 			{
 				m_lOutputWidth = (long)p_dValue;
 
-				m_ulProperties |= SVExtentPropertyOutputWidth;
+				m_ulProperties |= SvDef::SVExtentPropertyOutputWidth;
 
 				l_hrOk = S_OK;
 			}
 
-			if ( ( p_eProperty & SVExtentPropertyOutputHeight ) != 0 )
+			if ( ( p_eProperty & SvDef::SVExtentPropertyOutputHeight ) != 0 )
 			{
 				m_lOutputHeight = (long)p_dValue;
 
-				m_ulProperties |= SVExtentPropertyOutputHeight;
+				m_ulProperties |= SvDef::SVExtentPropertyOutputHeight;
 
 				l_hrOk = S_OK;
 			}
 		}
 
-		if ( ( p_eProperty & SVExtentPropertyWidthScaleFactor ) != 0 )
+		if ( ( p_eProperty & SvDef::SVExtentPropertyWidthScaleFactor ) != 0 )
 		{
 			m_dWidthScaleFactor = p_dValue;
 
-			m_ulProperties |= SVExtentPropertyWidthScaleFactor;
+			m_ulProperties |= SvDef::SVExtentPropertyWidthScaleFactor;
 
 			l_hrOk = S_OK;
 		}
 
-		if ( ( p_eProperty & SVExtentPropertyHeightScaleFactor ) != 0 )
+		if ( ( p_eProperty & SvDef::SVExtentPropertyHeightScaleFactor ) != 0 )
 		{
 			m_dHeightScaleFactor = p_dValue;
 
-			m_ulProperties |= SVExtentPropertyHeightScaleFactor;
+			m_ulProperties |= SvDef::SVExtentPropertyHeightScaleFactor;
 
 			l_hrOk = S_OK;
 		}
 
-		if ( ( p_eProperty & ~SVExtentPropertyPie ) == 0 )
+		if ( ( p_eProperty & ~SvDef::SVExtentPropertyPie ) == 0 )
 		{
-			if ( ( p_eProperty & SVExtentPropertyStartAngle ) != 0 )
+			if ( ( p_eProperty & SvDef::SVExtentPropertyStartAngle ) != 0 )
 			{
 				m_dStartAngle = p_dValue;
 
-				m_ulProperties |= SVExtentPropertyStartAngle;
+				m_ulProperties |= SvDef::SVExtentPropertyStartAngle;
 
 				l_hrOk = S_OK;
 			}
 
-			if ( ( p_eProperty & SVExtentPropertyEndAngle ) != 0 )
+			if ( ( p_eProperty & SvDef::SVExtentPropertyEndAngle ) != 0 )
 			{
 				m_dEndAngle = p_dValue;
 
-				m_ulProperties |= SVExtentPropertyEndAngle;
+				m_ulProperties |= SvDef::SVExtentPropertyEndAngle;
 
 				l_hrOk = S_OK;
 			}
 
-			if ( ( p_eProperty & SVExtentPropertyInnerRadius ) != 0 )
+			if ( ( p_eProperty & SvDef::SVExtentPropertyInnerRadius ) != 0 )
 			{
 				m_dInnerRadius = p_dValue;
 
-				m_ulProperties |= SVExtentPropertyInnerRadius;
+				m_ulProperties |= SvDef::SVExtentPropertyInnerRadius;
 
 				l_hrOk = S_OK;
 			}
 
-			if ( ( p_eProperty & SVExtentPropertyOuterRadius ) != 0 )
+			if ( ( p_eProperty & SvDef::SVExtentPropertyOuterRadius ) != 0 )
 			{
 				m_dOuterRadius = p_dValue;
 
-				m_ulProperties |= SVExtentPropertyOuterRadius;
+				m_ulProperties |= SvDef::SVExtentPropertyOuterRadius;
 
 				l_hrOk = S_OK;
 			}
 
-			if ( ( p_eProperty & SVExtentPropertyOutputWidth ) != 0 )
+			if ( ( p_eProperty & SvDef::SVExtentPropertyOutputWidth ) != 0 )
 			{
 				m_lOutputWidth = (long)p_dValue;
 
-				m_ulProperties |= SVExtentPropertyOutputWidth;
+				m_ulProperties |= SvDef::SVExtentPropertyOutputWidth;
 
 				l_hrOk = S_OK;
 			}
 
-			if ( ( p_eProperty & SVExtentPropertyOutputHeight ) != 0 )
+			if ( ( p_eProperty & SvDef::SVExtentPropertyOutputHeight ) != 0 )
 			{
 				m_lOutputHeight = (long)p_dValue;
 
-				m_ulProperties |= SVExtentPropertyOutputHeight;
+				m_ulProperties |= SvDef::SVExtentPropertyOutputHeight;
 
 				l_hrOk = S_OK;
 			}
@@ -550,52 +550,52 @@ bool SVExtentDimensionsClass::operator==( const SVExtentDimensionsClass &p_rsvVa
 
 	if ( l_bOk )
 	{
-		if ( ( m_ulProperties & SVExtentPropertyHeight ) != 0 )
+		if ( ( m_ulProperties & SvDef::SVExtentPropertyHeight ) != 0 )
 		{
 			l_bOk = l_bOk && m_dHeight == p_rsvValue.m_dHeight;
 		}
 
-		if ( ( m_ulProperties & SVExtentPropertyWidth ) != 0 )
+		if ( ( m_ulProperties & SvDef::SVExtentPropertyWidth ) != 0 )
 		{
 			l_bOk = l_bOk && m_dWidth == p_rsvValue.m_dWidth;
 		}
 
-		if ( ( m_ulProperties & SVExtentPropertyStartAngle ) != 0 )
+		if ( ( m_ulProperties & SvDef::SVExtentPropertyStartAngle ) != 0 )
 		{
 			l_bOk = l_bOk && m_dStartAngle == p_rsvValue.m_dStartAngle;
 		}
 
-		if ( ( m_ulProperties & SVExtentPropertyEndAngle ) != 0 )
+		if ( ( m_ulProperties & SvDef::SVExtentPropertyEndAngle ) != 0 )
 		{
 			l_bOk = l_bOk && m_dEndAngle == p_rsvValue.m_dEndAngle;
 		}
 
-		if ( ( m_ulProperties & SVExtentPropertyInnerRadius ) != 0 )
+		if ( ( m_ulProperties & SvDef::SVExtentPropertyInnerRadius ) != 0 )
 		{
 			l_bOk = l_bOk && m_dInnerRadius == p_rsvValue.m_dInnerRadius;
 		}
 
-		if ( ( m_ulProperties & SVExtentPropertyOuterRadius ) != 0 )
+		if ( ( m_ulProperties & SvDef::SVExtentPropertyOuterRadius ) != 0 )
 		{
 			l_bOk = l_bOk && m_dOuterRadius == p_rsvValue.m_dOuterRadius;
 		}
 
-		if ( ( m_ulProperties & SVExtentPropertyHeightScaleFactor ) != 0 )
+		if ( ( m_ulProperties & SvDef::SVExtentPropertyHeightScaleFactor ) != 0 )
 		{
 			l_bOk = l_bOk && m_dHeightScaleFactor == p_rsvValue.m_dHeightScaleFactor;
 		}
 
-		if ( ( m_ulProperties & SVExtentPropertyOutputHeight ) != 0 )
+		if ( ( m_ulProperties & SvDef::SVExtentPropertyOutputHeight ) != 0 )
 		{
 			l_bOk = l_bOk && m_lOutputHeight == p_rsvValue.m_lOutputHeight;
 		}
 
-		if ( ( m_ulProperties & SVExtentPropertyWidthScaleFactor ) != 0 )
+		if ( ( m_ulProperties & SvDef::SVExtentPropertyWidthScaleFactor ) != 0 )
 		{
 			l_bOk = l_bOk && m_dWidthScaleFactor == p_rsvValue.m_dWidthScaleFactor;
 		}
 
-		if ( ( m_ulProperties & SVExtentPropertyOutputWidth ) != 0 )
+		if ( ( m_ulProperties & SvDef::SVExtentPropertyOutputWidth ) != 0 )
 		{
 			l_bOk = l_bOk && m_lOutputWidth == p_rsvValue.m_lOutputWidth;
 		}
@@ -609,8 +609,8 @@ bool SVExtentDimensionsClass::operator!=( const SVExtentDimensionsClass &p_rsvVa
 	return ! ( *this == p_rsvValue );
 }
 
-bool SVExtentDimensionsClass::IsEnabled( SVExtentPropertyEnum p_eProperty ) const
+bool SVExtentDimensionsClass::IsEnabled( SvDef::SVExtentPropertyEnum p_eProperty ) const
 {
-	return ((m_ulProperties & p_eProperty) == (unsigned long) p_eProperty) && p_eProperty != SVExtentPropertyNone;
+	return ((m_ulProperties & p_eProperty) == (unsigned long) p_eProperty) && p_eProperty != SvDef::SVExtentPropertyNone;
 }
 

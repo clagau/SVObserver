@@ -168,6 +168,11 @@ namespace SvOg
 			}
 			return objectID;
 		}
+		
+		void clear()
+		{
+			m_values.clear();
+		}
 
 		iterator begin() { return m_values.begin(); }
 		iterator end() { return m_values.end(); }

@@ -106,7 +106,7 @@ void SVExtentMultiLineStruct::AssignExtentFigure( SVExtentFigureStruct &rValue, 
 
 	switch( rValue.m_eShape )
 	{
-		case SVExtentShapeArrow:
+		case SvDef::SVExtentShapeArrow:
 		{
 			svLine.m_bIsAngleValid = true;
 			svLine.m_dAngle = -90.0;
@@ -150,8 +150,8 @@ void SVExtentMultiLineStruct::AssignExtentFigure( SVExtentFigureStruct &rValue, 
 
 			break;
 		}
-		case SVExtentShapeLine:
-		case SVExtentShapeLineHorizontal:
+		case SvDef::SVExtentShapeLine:
+		case SvDef::SVExtentShapeLineHorizontal:
 		{
 			svLine.m_bIsAngleValid = true;
 			svLine.m_dAngle = 0.0;
@@ -163,7 +163,7 @@ void SVExtentMultiLineStruct::AssignExtentFigure( SVExtentFigureStruct &rValue, 
 
 			break;
 		}
-		case SVExtentShapeLineVertical:
+		case SvDef::SVExtentShapeLineVertical:
 		{
 			svLine.m_bIsAngleValid = true;
 			svLine.m_dAngle = 90.0;
@@ -175,7 +175,7 @@ void SVExtentMultiLineStruct::AssignExtentFigure( SVExtentFigureStruct &rValue, 
 
 			break;
 		}
-		case SVExtentShapeRectangle:
+		case SvDef::SVExtentShapeRectangle:
 		{
 			svLine.m_bIsAngleValid = true;
 			svLine.m_dAngle = 0.0;
@@ -211,7 +211,7 @@ void SVExtentMultiLineStruct::AssignExtentFigure( SVExtentFigureStruct &rValue, 
 
 			break;
 		}
-		case SVExtentShapePie:
+		case SvDef::SVExtentShapePie:
 		{
 			SVExtentPointStruct l_svPoint;
 
@@ -318,7 +318,7 @@ void SVExtentMultiLineStruct::AssignExtentFigure( SVExtentFigureStruct &rValue, 
 
 			break;
 		}
-		case SVExtentShapeCircle:
+		case SvDef::SVExtentShapeCircle:
 		{
 			SVExtentPointStruct l_svPoint;
 
@@ -425,7 +425,7 @@ void SVExtentMultiLineStruct::AssignExtentFigure( SVExtentFigureStruct &rValue, 
 
 			break;
 		}
-		case SVExtentShapeDoubleCircle:
+		case SvDef::SVExtentShapeDoubleCircle:
 		{
 			SVExtentPointStruct svPoint;
 
@@ -538,7 +538,7 @@ void SVExtentMultiLineStruct::AssignExtentFigure( SVExtentFigureStruct &rValue, 
 
 			break;
 		}
-		case SVExtentShapeHexagon:
+		case SvDef::SVExtentShapeHexagon:
 		{
 			svLine.m_svPointArray.clear();
 			svLine.m_svPointArray.push_back( rValue.m_svTopLeft );

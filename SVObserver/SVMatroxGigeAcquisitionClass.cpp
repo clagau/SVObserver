@@ -663,9 +663,9 @@ HRESULT SVMatroxGigeAcquisitionClass::GetCameraImageInfo( SVImageInfoClass &pIma
 	pImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, uiBandNumber );
 	pImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
 
-	pImageInfo.SetExtentProperty( SVExtentPropertyOutputPositionPoint, 0 );
-	pImageInfo.SetExtentProperty( SVExtentPropertyWidth, bufWidth );
-	pImageInfo.SetExtentProperty( SVExtentPropertyHeight, bufHeight );
+	pImageInfo.SetExtentProperty( SvDef::SVExtentPropertyOutputPositionPoint, 0 );
+	pImageInfo.SetExtentProperty( SvDef::SVExtentPropertyWidth, bufWidth );
+	pImageInfo.SetExtentProperty( SvDef::SVExtentPropertyHeight, bufHeight );
 
 	return S_OK;
 }

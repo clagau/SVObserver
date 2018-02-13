@@ -75,9 +75,9 @@ private:
 	SVRPropTree	m_Tree;
 	int m_inputValueCount;
 
-	SVGUID m_InspectionID;
-	SVGUID m_ToolObjectID;
-	SVGUID m_TaskObjectID;
+	const SVGUID m_InspectionID;
+	const SVGUID m_ToolObjectID;
+	const SVGUID m_TaskObjectID;
 
 	typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
 	SvOg::DataController<ValueCommand, ValueCommand::value_type> m_Values;

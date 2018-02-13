@@ -573,10 +573,10 @@ bool SVColorThresholdClass::createHistogramImage( SVImageClass* pInputImage, SVI
 	ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
 	ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
 
-	ImageInfo.SetExtentProperty( SVExtentPropertyPositionPoint, 0 );
-	ImageInfo.SetExtentProperty( SVExtentPropertyWidth, l_dWidth );
-	ImageInfo.SetExtentProperty( SVExtentPropertyHeight, l_dHeight );
-	ImageInfo.SetTranslation( SVExtentTranslationNone );
+	ImageInfo.SetExtentProperty( SvDef::SVExtentPropertyPositionPoint, 0 );
+	ImageInfo.SetExtentProperty( SvDef::SVExtentPropertyWidth, l_dWidth );
+	ImageInfo.SetExtentProperty( SvDef::SVExtentPropertyHeight, l_dHeight );
+	ImageInfo.SetTranslation( SvDef::SVExtentTranslationNone );
 
 	// Try to create image object...
 	Result = ( S_OK == pOutputImage->UpdateImage( l_InputID, ImageInfo ) );
@@ -692,8 +692,8 @@ bool SVColorThresholdClass::updateThresholdBars( long lMinThresholdValue, long l
 		
 		long l_lHeight = 0;
 		
-	    ImageInfo.GetExtentProperty( SVExtentPropertyPositionPoint, l_oPoint );
-		ImageInfo.GetExtentProperty( SVExtentPropertyHeight, l_lHeight );
+	    ImageInfo.GetExtentProperty( SvDef::SVExtentPropertyPositionPoint, l_oPoint );
+		ImageInfo.GetExtentProperty( SvDef::SVExtentPropertyHeight, l_lHeight );
 		
 		// MaxThresholdBar
 		// Max left...

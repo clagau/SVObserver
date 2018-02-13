@@ -13,7 +13,7 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
-#include "SVExtentEnums.h"
+#include "Definitions/SVExtentEnums.h"
 #include "SVExtentPointStruct.h"
 #include "SVExtentSizeStruct.h"
 #pragma endregion Includes
@@ -45,7 +45,7 @@ struct SVExtentFigureStruct
 	double Right() const;
 	HRESULT SetRect( double p_dTop, double p_dLeft, double p_dBottom, double p_dRight );
 
-	SVExtentShapeEnum m_eShape;
+	SvDef::SVExtentShapeEnum m_eShape;
 
 	SVExtentPointStruct m_svTopLeft;
 	SVExtentPointStruct m_svTopRight;

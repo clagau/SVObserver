@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "SVExtentEnums.h"
+#include "Definitions/SVExtentEnums.h"
 #include "SVExtentPointStruct.h"
 
 class SVExtentPositionClass
@@ -25,16 +25,16 @@ public:
 
 	HRESULT Initialize();
 
-	HRESULT DisableExtentProperty( SVExtentPropertyEnum p_eProperty );
-	bool IsEnabled( SVExtentPropertyEnum p_eProperty ) const;
+	HRESULT DisableExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty );
+	bool IsEnabled( SvDef::SVExtentPropertyEnum p_eProperty ) const;
 
-	HRESULT GetExtentProperty( SVExtentPropertyEnum p_eProperty, long &p_rlValue ) const;
-	HRESULT GetExtentProperty( SVExtentPropertyEnum p_eProperty, double &p_rdValue ) const;
-	HRESULT GetExtentProperty( SVExtentPropertyEnum p_eProperty, POINT &p_roValue ) const;
-	HRESULT GetExtentProperty( SVExtentPropertyEnum p_eProperty, SVExtentPointStruct &p_rsvValue ) const;
+	HRESULT GetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, long &p_rlValue ) const;
+	HRESULT GetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, double &p_rdValue ) const;
+	HRESULT GetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, POINT &p_roValue ) const;
+	HRESULT GetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, SVExtentPointStruct &p_rsvValue ) const;
 
-	HRESULT SetExtentProperty( SVExtentPropertyEnum p_eProperty, double p_dValue );
-	HRESULT SetExtentProperty( SVExtentPropertyEnum p_eProperty, SVExtentPointStruct p_svValue );
+	HRESULT SetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, double p_dValue );
+	HRESULT SetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, SVExtentPointStruct p_svValue );
 
 	bool operator==( const SVExtentPositionClass &p_rsvValue ) const;
 	bool operator!=( const SVExtentPositionClass &p_rsvValue ) const;

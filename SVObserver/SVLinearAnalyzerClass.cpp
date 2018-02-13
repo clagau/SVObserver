@@ -177,15 +177,15 @@ HRESULT SVLinearAnalyzerClass::GetImageExtent( SVImageExtentClass &rImageExtent 
 	    ( S_OK != GetInputUseRotationAngle( bUseRotation ) ) ||
 	    ( S_OK != GetInputProfileOrientation( Angle ) ) ||
 			S_OK != pTool->GetImageExtent( l_svExtents ) ||
-			S_OK != l_svExtents.GetExtentProperty( SVExtentPropertyOutputWidth, Width ) ||
-			S_OK != l_svExtents.GetExtentProperty( SVExtentPropertyOutputHeight, Height ) )
+			S_OK != l_svExtents.GetExtentProperty( SvDef::SVExtentPropertyOutputWidth, Width ) ||
+			S_OK != l_svExtents.GetExtentProperty( SvDef::SVExtentPropertyOutputHeight, Height ) )
 	{
 		l_hrOk = S_FALSE;
 	}
 
 	if( S_OK == l_hrOk )
 	{
-		rImageExtent.SetTranslation( SVExtentTranslationLinear );
+		rImageExtent.SetTranslation( SvDef::SVExtentTranslationLinear );
 
 		if( !bUseRotation )
 		{
@@ -199,10 +199,10 @@ HRESULT SVLinearAnalyzerClass::GetImageExtent( SVImageExtentClass &rImageExtent 
 				return S_FALSE;
 			}
 		}
-		rImageExtent.SetExtentProperty( SVExtentPropertyRotationAngle, static_cast<double> (Angle) );
-		rImageExtent.SetExtentProperty( SVExtentPropertyPositionPoint, l_svPosition );
-		rImageExtent.SetExtentProperty( SVExtentPropertyWidth, static_cast<double> (Width) );
-		rImageExtent.SetExtentProperty( SVExtentPropertyHeight, static_cast<double> (Height) );
+		rImageExtent.SetExtentProperty( SvDef::SVExtentPropertyRotationAngle, static_cast<double> (Angle) );
+		rImageExtent.SetExtentProperty( SvDef::SVExtentPropertyPositionPoint, l_svPosition );
+		rImageExtent.SetExtentProperty( SvDef::SVExtentPropertyWidth, static_cast<double> (Width) );
+		rImageExtent.SetExtentProperty( SvDef::SVExtentPropertyHeight, static_cast<double> (Height) );
 
 		l_hrOk = rImageExtent.UpdateData();
 	}

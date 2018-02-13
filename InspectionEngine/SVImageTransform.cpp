@@ -108,13 +108,13 @@ bool SVImageTransformClass::CreateObject( const SVObjectLevelCreateStruct& rCrea
 	SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
 	l_bOk = l_bOk && nullptr != pTool;
 
-	l_bOk = l_bOk && S_OK == pTool->SetImageExtentProperty( SVExtentPropertyWidth, &m_extentWidth );
-	l_bOk = l_bOk && S_OK == pTool->SetImageExtentProperty( SVExtentPropertyHeight, &m_extentHeight );
-	l_bOk = l_bOk && S_OK == pTool->SetImageExtentProperty( SVExtentPropertyTranslationOffsetX, &m_extentDisplacementX );
-	l_bOk = l_bOk && S_OK == pTool->SetImageExtentProperty( SVExtentPropertyTranslationOffsetY, &m_extentDisplacementY );
-	l_bOk = l_bOk && S_OK == pTool->SetImageExtentProperty( SVExtentPropertyPositionPointX, &m_extentSourceX );
-	l_bOk = l_bOk && S_OK == pTool->SetImageExtentProperty( SVExtentPropertyPositionPointY, &m_extentSourceY );
-	l_bOk = l_bOk && S_OK == pTool->SetImageExtentProperty( SVExtentPropertyRotationAngle, &m_extentRotationAngle );
+	l_bOk = l_bOk && S_OK == pTool->SetImageExtentProperty( SvDef::SVExtentPropertyWidth, &m_extentWidth );
+	l_bOk = l_bOk && S_OK == pTool->SetImageExtentProperty( SvDef::SVExtentPropertyHeight, &m_extentHeight );
+	l_bOk = l_bOk && S_OK == pTool->SetImageExtentProperty( SvDef::SVExtentPropertyTranslationOffsetX, &m_extentDisplacementX );
+	l_bOk = l_bOk && S_OK == pTool->SetImageExtentProperty( SvDef::SVExtentPropertyTranslationOffsetY, &m_extentDisplacementY );
+	l_bOk = l_bOk && S_OK == pTool->SetImageExtentProperty( SvDef::SVExtentPropertyPositionPointX, &m_extentSourceX );
+	l_bOk = l_bOk && S_OK == pTool->SetImageExtentProperty( SvDef::SVExtentPropertyPositionPointY, &m_extentSourceY );
+	l_bOk = l_bOk && S_OK == pTool->SetImageExtentProperty( SvDef::SVExtentPropertyRotationAngle, &m_extentRotationAngle );
 
 	l_bOk = l_bOk && S_OK == UpdateTransformData();
 
@@ -248,21 +248,21 @@ bool SVImageTransformClass::onRun( SVRunStatusClass& runStatus, SvStl::MessageCo
 
 		if( bTranslationEnabled )
 		{
-			bRetVal = bRetVal && S_OK == l_svExtents.GetExtentProperty( SVExtentPropertyTranslationOffsetX, xDisplacement );
-			bRetVal = bRetVal && S_OK == l_svExtents.GetExtentProperty( SVExtentPropertyTranslationOffsetY, yDisplacement );
+			bRetVal = bRetVal && S_OK == l_svExtents.GetExtentProperty( SvDef::SVExtentPropertyTranslationOffsetX, xDisplacement );
+			bRetVal = bRetVal && S_OK == l_svExtents.GetExtentProperty( SvDef::SVExtentPropertyTranslationOffsetY, yDisplacement );
 		}
 
 		if( bRotationEnabled )
 		{
-			bRetVal = bRetVal && S_OK == l_svExtents.GetExtentProperty( SVExtentPropertyPositionPointX, srcX );
-			bRetVal = bRetVal && S_OK == l_svExtents.GetExtentProperty( SVExtentPropertyPositionPointY, srcY );
-			bRetVal = bRetVal && S_OK == l_svExtents.GetExtentProperty( SVExtentPropertyRotationAngle, angle );
+			bRetVal = bRetVal && S_OK == l_svExtents.GetExtentProperty( SvDef::SVExtentPropertyPositionPointX, srcX );
+			bRetVal = bRetVal && S_OK == l_svExtents.GetExtentProperty( SvDef::SVExtentPropertyPositionPointY, srcY );
+			bRetVal = bRetVal && S_OK == l_svExtents.GetExtentProperty( SvDef::SVExtentPropertyRotationAngle, angle );
 		}
 
-		bRetVal = bRetVal && S_OK == l_svExtents.GetExtentProperty( SVExtentPropertyWidth, width );
-		bRetVal = bRetVal && S_OK == l_svExtents.GetExtentProperty( SVExtentPropertyHeight, height );
-		bRetVal = bRetVal && S_OK == l_svExtents.GetExtentProperty( SVExtentPropertyOutputPositionPointX, dstX );
-		bRetVal = bRetVal && S_OK == l_svExtents.GetExtentProperty( SVExtentPropertyOutputPositionPointY, dstY );
+		bRetVal = bRetVal && S_OK == l_svExtents.GetExtentProperty( SvDef::SVExtentPropertyWidth, width );
+		bRetVal = bRetVal && S_OK == l_svExtents.GetExtentProperty( SvDef::SVExtentPropertyHeight, height );
+		bRetVal = bRetVal && S_OK == l_svExtents.GetExtentProperty( SvDef::SVExtentPropertyOutputPositionPointX, dstX );
+		bRetVal = bRetVal && S_OK == l_svExtents.GetExtentProperty( SvDef::SVExtentPropertyOutputPositionPointY, dstY );
 
 		if (!bRetVal && nullptr != pErrorMessages)
 		{
@@ -296,7 +296,7 @@ bool SVImageTransformClass::onRun( SVRunStatusClass& runStatus, SvStl::MessageCo
 			POINT l_oPoint;
 			SVImageInfoClass InImageInfo = l_psvInputImage->GetImageInfo();
 
-			if( S_OK == InImageInfo.GetExtentProperty( SVExtentPropertyPositionPoint, l_oPoint ) )
+			if( S_OK == InImageInfo.GetExtentProperty( SvDef::SVExtentPropertyPositionPoint, l_oPoint ) )
 			{
 				// Get Root Image from our Input Image
 				SVImageClass* l_psvRootImage = dynamic_cast<SVImageClass*>( l_psvInputImage->GetRootImage() );
@@ -416,8 +416,8 @@ HRESULT SVImageTransformClass::UpdateTransformData( )
 		::KeepPrevError( l_hrOk, m_performRotation.GetValue( bRotationEnabled ) );
 		::KeepPrevError( l_hrOk, m_useExtentsOnly.GetValue( bUseExtentsOnly ) );
 
-		::KeepPrevError( l_hrOk, Extents.GetExtentProperty( SVExtentPropertyWidth, dWidth ) );
-		::KeepPrevError( l_hrOk, Extents.GetExtentProperty( SVExtentPropertyHeight, dHeight ) );
+		::KeepPrevError( l_hrOk, Extents.GetExtentProperty( SvDef::SVExtentPropertyWidth, dWidth ) );
+		::KeepPrevError( l_hrOk, Extents.GetExtentProperty( SvDef::SVExtentPropertyHeight, dHeight ) );
 
 		bool l_bAlwaysUpdate = false;
 
@@ -449,7 +449,7 @@ HRESULT SVImageTransformClass::UpdateTransformData( )
 
 		if( S_OK == l_hrOk && bUseExtentsOnly )
 		{
-			::KeepPrevError( l_hrOk, Extents.GetExtentProperty( SVExtentPropertyPositionPoint, UseExtentsOnlyPoint ) );
+			::KeepPrevError( l_hrOk, Extents.GetExtentProperty( SvDef::SVExtentPropertyPositionPoint, UseExtentsOnlyPoint ) );
 		}
 
 		if( S_OK == l_hrOk )
@@ -473,11 +473,11 @@ HRESULT SVImageTransformClass::UpdateTransformData( )
 				srcY = ( dRotationYResult - dLearnedRotationYValue );
 				angle = ( dRotationAngleResult - dLearnedRotationAngleValue );
 
-				l_hrOk = Extents.SetTranslation( SVExtentTranslationTransformRotate );
+				l_hrOk = Extents.SetTranslation( SvDef::SVExtentTranslationTransformRotate );
 			}
 			else
 			{
-				l_hrOk = Extents.SetTranslation( SVExtentTranslationTransformShift );
+				l_hrOk = Extents.SetTranslation( SvDef::SVExtentTranslationTransformShift );
 			}
 
 			// Check if using Source Image for Extents only
@@ -487,13 +487,13 @@ HRESULT SVImageTransformClass::UpdateTransformData( )
 				yDisplacement += UseExtentsOnlyPoint.y;
 			}
 
-			::KeepPrevError( l_hrOk, Extents.SetExtentProperty( SVExtentPropertyWidth, dWidth ) );
-			::KeepPrevError( l_hrOk, Extents.SetExtentProperty( SVExtentPropertyHeight, dHeight ) );
-			::KeepPrevError( l_hrOk, Extents.SetExtentProperty( SVExtentPropertyTranslationOffsetX, xDisplacement ) );
-			::KeepPrevError( l_hrOk, Extents.SetExtentProperty( SVExtentPropertyTranslationOffsetY, yDisplacement ) );
-			::KeepPrevError( l_hrOk, Extents.SetExtentProperty( SVExtentPropertyPositionPointX, srcX ) );
-			::KeepPrevError( l_hrOk, Extents.SetExtentProperty( SVExtentPropertyPositionPointY, srcY ) );
-			::KeepPrevError( l_hrOk, Extents.SetExtentProperty( SVExtentPropertyRotationAngle, angle ) );
+			::KeepPrevError( l_hrOk, Extents.SetExtentProperty( SvDef::SVExtentPropertyWidth, dWidth ) );
+			::KeepPrevError( l_hrOk, Extents.SetExtentProperty( SvDef::SVExtentPropertyHeight, dHeight ) );
+			::KeepPrevError( l_hrOk, Extents.SetExtentProperty( SvDef::SVExtentPropertyTranslationOffsetX, xDisplacement ) );
+			::KeepPrevError( l_hrOk, Extents.SetExtentProperty( SvDef::SVExtentPropertyTranslationOffsetY, yDisplacement ) );
+			::KeepPrevError( l_hrOk, Extents.SetExtentProperty( SvDef::SVExtentPropertyPositionPointX, srcX ) );
+			::KeepPrevError( l_hrOk, Extents.SetExtentProperty( SvDef::SVExtentPropertyPositionPointY, srcY ) );
+			::KeepPrevError( l_hrOk, Extents.SetExtentProperty( SvDef::SVExtentPropertyRotationAngle, angle ) );
 		}
 
 		::KeepPrevError( l_hrOk, pTool->SetImageExtent( Extents ) );

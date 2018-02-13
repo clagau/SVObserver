@@ -16,6 +16,8 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVObjectLibrary/SVClsids.h"
+#include "ObjectInterfaces/IObjectManager.h"
+#include "ObjectInterfaces/ITool.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -31,11 +33,14 @@ namespace SvOg
 		ON_BN_CLICKED(IDC_CHECK_ROTATION, OnCheckRotation)
 	END_MESSAGE_MAP()
 
+	static const long cRotationAngle_0	= 0;
+	static const long cRotationAngle_90 = 90;
+
 	SVToolAdjustmentDialogLinearSpecialPage::SVToolAdjustmentDialogLinearSpecialPage( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID)
 	: CPropertyPage(SVToolAdjustmentDialogLinearSpecialPage::IDD)
 	, m_Values{ SvOg::BoundValues{ rInspectionID, rTaskObjectID } }
-	, m_rInspectionID{ rInspectionID }
-	, m_rTaskObjectID{ rTaskObjectID }
+	, m_InspectionID{ rInspectionID }
+	, m_TaskObjectID{ rTaskObjectID }
 	{
 	}
 
@@ -56,7 +61,7 @@ namespace SvOg
 			long lValue = static_cast<long> (m_ctlProfileOrientation.GetItemData(iCurSel));
 			m_Values.Set<long>(SVProfileOrientationGuid, lValue);
 		}
-		Result = m_Values.Commit();
+		Result = m_Values.Commit(SvOg::doResetRunOnce);
 
 		return Result;
 	}
@@ -105,57 +110,64 @@ namespace SvOg
 
 	void SVToolAdjustmentDialogLinearSpecialPage::OnCheckRotation() 
 	{
-		BOOL l_bUpdateRotation = TRUE;
+		BOOL bUpdateRotation = TRUE;
 
-		bool bIsRotated = m_Values.Get<bool>(SVLinearToolUseRotationGuid);
-
-		BOOL l_bValue = m_ctlUseRotation.GetCheck();
+		bool bIsRotated{false};
 		
-		if ( l_bValue ) //true
+		SvOi::ITool* pTool = dynamic_cast<SvOi::ITool*> (SvOi::getObject(m_TaskObjectID));
+		if(nullptr != pTool)
 		{
-			CString Text;
-			//turning on Rotation.
-			m_ctlProfileOrientation.GetWindowText(Text);
-			if ( _T("Vertical") == Text  )
+			//@TODO[gra][8.00][13.02.2018]: The getExtentProperty needs to be converted to an Inspection command
+			double dRotationAngle{0.0};
+			if(S_OK == pTool->getExtentProperty(SvDef::SVExtentPropertyRotationAngle, dRotationAngle))
+			{
+				bIsRotated = (0.0 != dRotationAngle) ? true : false;
+			}
+		}
+
+		BOOL bValue = m_ctlUseRotation.GetCheck();
+
+		long Angle = static_cast<long> (m_ctlProfileOrientation.GetCurSelItemData());
+
+		if (bValue)
+		{
+			if (cRotationAngle_90 == Angle)
 			{
 				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 				INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_LinearSpecial_OrientationVertical, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10213, GUID_NULL, MB_YESNO );
-				l_bUpdateRotation = (IDYES == result);
+				bUpdateRotation = (IDYES == result);
 
-				if( ! l_bUpdateRotation )
+				if(!bUpdateRotation)
 				{
-					l_bValue = FALSE;
+					bValue = FALSE;
 				}
 			}
 		}
 		else
 		{
-			CString Text;
-			m_ctlProfileOrientation.GetWindowText(Text);
-
-			if ( "Horizontal" == Text )
+			if (cRotationAngle_0 == Angle)
 			{
-				if ( bIsRotated )
+				if (bIsRotated)
 				{
 					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 					INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_LinearSpecial_IsRotated, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10214, GUID_NULL, MB_YESNO );
-					l_bUpdateRotation = (IDYES == result);
-					if( ! l_bUpdateRotation )
+					bUpdateRotation = (IDYES == result);
+					if(!bUpdateRotation)
 					{
-						l_bValue = TRUE;
+						bValue = TRUE;
 					}
 				}
 			}
 		}
 
-		if( l_bUpdateRotation )
+		if( bUpdateRotation )
 		{
 			SetInspectionData();
 		}
 
-		m_ctlUseRotation.SetCheck( l_bValue );
+		m_ctlUseRotation.SetCheck( bValue );
 
-		if (l_bValue)
+		if (bValue)
 		{
 			m_ctlProfileOrientation.EnableWindow(false);
 			m_ctlProfileOrientation.SetCurSelItemData(0);

@@ -63,8 +63,8 @@ protected:
 	SVEvaluateClass* m_pEvaluateTranslationX{ nullptr };
 	SVEvaluateClass* m_pEvaluateTranslationY{ nullptr };
 
-	SVGUID m_InspectionID;
-	SVGUID m_TaskObjectID;
+	const SVGUID m_InspectionID;
+	const SVGUID m_TaskObjectID;
 	typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
 	typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
 	std::unique_ptr<Controller> m_pValues{ nullptr };

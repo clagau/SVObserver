@@ -121,9 +121,9 @@ BOOL SVAdjustToolSizePositionDlg::OnInitDialog()
 
 	createIcons();
 	SVToolClass* pTool = dynamic_cast<SVToolClass*> (m_pToolTask);
-	bool bShow = (nullptr != pTool) ? pTool->canResizeToParent() : false;
+	bool bShow =  (nullptr != pTool) ? pTool->canResizeToParent() : false;
 
-	bool bShowEditTool = (nullptr != ToolSizeAdjustTask::GetToolSizeAdjustTask(m_pToolTask));
+	bool bShowEditTool =  (nullptr !=	ToolSizeAdjustTask::GetToolSizeAdjustTask(m_pToolTask));
 	GetDlgItem(IDC_BUT_EDIT_TOOL)->ShowWindow(bShowEditTool ? SW_SHOW : SW_HIDE);
 
 	// If it's a Linear Tool, hide the "Full Image" button if rotation is enabled.
@@ -146,7 +146,7 @@ BOOL SVAdjustToolSizePositionDlg::OnInitDialog()
 	SVExtentPropertyListType list;
 	m_pToolTask->GetFilteredImageExtentPropertyList(list);
 
-	if (std::find(list.begin(), list.end(), SVExtentPropertyRotationAngle) == list.end())	// if item is not in filtered list, skip
+	if (std::find(list.begin(), list.end(), SvDef::SVExtentPropertyRotationAngle) == list.end())	// if item is not in filtered list, skip
 	{
 		GetDlgItem(IDC_ROTATION_RADIO)->ShowWindow(SW_HIDE);	// hide rotation option
 	}
@@ -239,7 +239,7 @@ void SVAdjustToolSizePositionDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* p
 		SVRPropertyItem* pItem = pNMPropTree->pItem;
 
 		// do validation
-		SVExtentPropertyEnum eProperty = static_cast<SVExtentPropertyEnum>(pItem->GetCtrlID() - ID_BASE);
+		SvDef::SVExtentPropertyEnum eProperty = static_cast<SvDef::SVExtentPropertyEnum> (pItem->GetCtrlID() - ID_BASE);
 		std::string Value;
 		pItem->GetItemValue(Value);
 		double dValue = atof(Value.c_str());
@@ -324,40 +324,40 @@ HRESULT SVAdjustToolSizePositionDlg::ButtonAction(SvMc::SVUpDownButton* pButton)
 {
 	UpdateData();
 
-	static SVExtentLocationPropertyEnum aActions[2][4] =	// rows are buttons (4), columns are modes (2)
+	static SvDef::SVExtentLocationPropertyEnum aActions[2][4] =	// rows are buttons (4), columns are modes (2)
 	{// TOP_LEFT, BOTTOM_RIGHT, MOVE, ROTATE
-		{ SVExtentLocationPropertyTop, SVExtentLocationPropertyBottom, SVExtentLocationPropertyCenter, SVExtentLocationPropertyUnknown },	// btnUp & btnDown
-		{ SVExtentLocationPropertyLeft, SVExtentLocationPropertyRight, SVExtentLocationPropertyCenter, SVExtentLocationPropertyRotate },	// btnLeft & btnRight
+		{ SvDef::SVExtentLocationPropertyTop, SvDef::SVExtentLocationPropertyBottom, SvDef::SVExtentLocationPropertyCenter, SvDef::SVExtentLocationPropertyUnknown },	// btnUp & btnDown
+		{ SvDef::SVExtentLocationPropertyLeft, SvDef::SVExtentLocationPropertyRight, SvDef::SVExtentLocationPropertyCenter, SvDef::SVExtentLocationPropertyRotate },	// btnLeft & btnRight
 	};
 	enum { BTN_UP_DOWN, BTN_LEFT_RIGHT };
 	int dx = 0;
 	int dy = 0;
-	SVExtentLocationPropertyEnum eAction = SVExtentLocationPropertyUnknown;
+	SvDef::SVExtentLocationPropertyEnum eAction = SvDef::SVExtentLocationPropertyUnknown;
 
-	SVExtentDirectionsEnum Direction = SVExtentDirectionBoth;
+	SvDef::SVExtentDirectionsEnum Direction = SvDef::SVExtentDirectionBoth;
 	if (pButton == &m_btnUp)
 	{
 		eAction = aActions[BTN_UP_DOWN][m_iMode];
 		dy = -1;
-		Direction = SVExtentDirectionVertical;
+		Direction = SvDef::SVExtentDirectionVertical;
 	}
 	else if (pButton == &m_btnDown)
 	{
 		eAction = aActions[BTN_UP_DOWN][m_iMode];
 		dy = 1;
-		Direction = SVExtentDirectionVertical;
+		Direction = SvDef::SVExtentDirectionVertical;
 	}
 	else if (pButton == &m_btnLeft)
 	{
 		eAction = aActions[BTN_LEFT_RIGHT][m_iMode];
 		dx = -1;
-		Direction = SVExtentDirectionHorizontal;
+		Direction = SvDef::SVExtentDirectionHorizontal;
 	}
 	else if (pButton == &m_btnRight)
 	{
 		eAction = aActions[BTN_LEFT_RIGHT][m_iMode];
 		dx = 1;
-		Direction = SVExtentDirectionHorizontal;
+		Direction = SvDef::SVExtentDirectionHorizontal;
 	}
 
 
@@ -374,7 +374,7 @@ HRESULT SVAdjustToolSizePositionDlg::ButtonAction(SvMc::SVUpDownButton* pButton)
 
 
 	HRESULT hr = S_OK;
-	if (bAllowedAction && eAction == SVExtentLocationPropertyRotate)
+	if (bAllowedAction && eAction == SvDef::SVExtentLocationPropertyRotate)
 	{
 		hr = AdjustToolAngle(dx);
 	}
@@ -389,7 +389,7 @@ HRESULT SVAdjustToolSizePositionDlg::ButtonAction(SvMc::SVUpDownButton* pButton)
 	return hr;
 }
 
-HRESULT SVAdjustToolSizePositionDlg::AdjustTool(SVExtentLocationPropertyEnum eAction, int dx, int dy)
+HRESULT SVAdjustToolSizePositionDlg::AdjustTool(SvDef::SVExtentLocationPropertyEnum eAction, int dx, int dy)
 {
 	HRESULT hr = S_OK;
 
@@ -416,8 +416,8 @@ HRESULT SVAdjustToolSizePositionDlg::AdjustToolAngle(double dDAngle)
 	SVImageExtentClass l_Extents;
 	double dCurrentAngle = 0.0;
 	hr = m_pToolTask->GetImageExtent(l_Extents);
-	hr = l_Extents.GetExtentProperty(SVExtentPropertyRotationAngle, dCurrentAngle);
-	if (l_Extents.GetTranslation() == SVExtentTranslationPolarUnwrap)
+	hr = l_Extents.GetExtentProperty(SvDef::SVExtentPropertyRotationAngle, dCurrentAngle);
+	if (l_Extents.GetTranslation() == SvDef::SVExtentTranslationPolarUnwrap)
 	{
 		dCurrentAngle += dDAngle;
 	}
@@ -428,7 +428,7 @@ HRESULT SVAdjustToolSizePositionDlg::AdjustToolAngle(double dDAngle)
 
 	if (S_OK == hr)
 	{
-		hr = l_Extents.SetExtentProperty(SVExtentPropertyRotationAngle, dCurrentAngle);
+		hr = l_Extents.SetExtentProperty(SvDef::SVExtentPropertyRotationAngle, dCurrentAngle);
 		if (S_OK == hr)
 		{
 			hr = SVGuiExtentUpdater::SetImageExtent(m_pToolTask, l_Extents, ResetMode_Tool);
@@ -473,7 +473,7 @@ void SVAdjustToolSizePositionDlg::FillTreeFromExtents(SVRPropertyItem* pRoot, bo
 	SVExtentPropertyListType list;
 	HRESULT hr = m_pToolTask->GetFilteredImageExtentPropertyList(list);
 	SVExtentPropertyMapType map;
-	m_svExtents.GetExtentPropertyList((SVExtentPropertyEnum)m_iPropertyFilter, map);
+	m_svExtents.GetExtentPropertyList(static_cast<SvDef::SVExtentPropertyEnum> (m_iPropertyFilter), map);
 
 	for (SVExtentPropertyMapType::const_iterator iter = map.begin(); iter != map.end(); ++iter)
 	{
@@ -505,11 +505,11 @@ void SVAdjustToolSizePositionDlg::FillTreeFromExtents(SVRPropertyItem* pRoot, bo
 			pEdit->SetHeight(16);
 
 			std::string Value;
-			if ((iter->first&g_SVExtentPropertyNoDecimalPlaces) != 0)
+			if ((iter->first & SvDef::SVExtentPropertyEnum::SVExtentPropertyNoDecimalPlaces) != 0)
 			{
 				Value = SvUl::Format(_T("%d"), static_cast<int> (dValue));
 			}
-			else if ((iter->first&g_SVExtentProperty2DecimalPlaces) != 0)
+			else if ((iter->first & SvDef::SVExtentPropertyEnum::SVExtentProperty2DecimalPlaces) != 0)
 			{
 				Value = SvUl::Format(_T("%.2f"), dValue);
 			}
@@ -528,7 +528,7 @@ void SVAdjustToolSizePositionDlg::FillTreeFromExtents(SVRPropertyItem* pRoot, bo
 				{
 					bReadonly = info.bSetByReset;
 				}
-				bReadonly = bReadonly || info.bFormula;
+				bReadonly = bReadonly ||    info.bFormula;
 
 			}
 
@@ -575,8 +575,8 @@ bool SVAdjustToolSizePositionDlg::IsFullSizeAllowed()
 
 
 	SVExtentPropertyInfoStruct info;
-	std::tr1::array<SVExtentPropertyEnum, 4> PropArray = {SVExtentPropertyWidth, SVExtentPropertyHeight,SVExtentPropertyPositionPointX, SVExtentPropertyPositionPointY};
-	std::for_each(PropArray.begin(), PropArray.end(), [&](SVExtentPropertyEnum p)
+	std::tr1::array<SvDef::SVExtentPropertyEnum, 4> PropArray = {SvDef::SVExtentPropertyWidth, SvDef::SVExtentPropertyHeight, SvDef::SVExtentPropertyPositionPointX, SvDef::SVExtentPropertyPositionPointY};
+	std::for_each(PropArray.begin(), PropArray.end(), [&](SvDef::SVExtentPropertyEnum p)
 	{
 		if (bAllowFullsize && S_OK == pTool->GetPropertyInfo(p, info))
 		{
@@ -600,10 +600,10 @@ bool SVAdjustToolSizePositionDlg::IsFullSize()
 	long lHeight = 0;
 	long lTop = 0;
 	long lLeft = 0;
-	HRESULT hr1 = m_svExtents.GetExtentProperty(SVExtentPropertyOutputWidth, lWidth);
-	HRESULT hr2 = m_svExtents.GetExtentProperty(SVExtentPropertyOutputHeight, lHeight);
-	HRESULT hr3 = m_svExtents.GetExtentProperty(SVExtentPropertyPositionPointX, lLeft);
-	HRESULT hr4 = m_svExtents.GetExtentProperty(SVExtentPropertyPositionPointY, lTop);
+	HRESULT hr1 = m_svExtents.GetExtentProperty(SvDef::SVExtentPropertyOutputWidth, lWidth);
+	HRESULT hr2 = m_svExtents.GetExtentProperty(SvDef::SVExtentPropertyOutputHeight, lHeight);
+	HRESULT hr3 = m_svExtents.GetExtentProperty(SvDef::SVExtentPropertyPositionPointX, lLeft);
+	HRESULT hr4 = m_svExtents.GetExtentProperty(SvDef::SVExtentPropertyPositionPointY, lTop);
 
 	m_pToolTask->GetImageExtent(m_svExtents);
 	SVImageExtentClass l_ParentExtent;
@@ -614,10 +614,10 @@ bool SVAdjustToolSizePositionDlg::IsFullSize()
 		long l_lParentHeight = 0;
 		long l_lParentTop = 0;
 		long l_lParentLeft = 0;
-		l_ParentExtent.GetExtentProperty(SVExtentPropertyOutputWidth, l_lParentWidth);
-		l_ParentExtent.GetExtentProperty(SVExtentPropertyOutputHeight, l_lParentHeight);
-		l_ParentExtent.GetExtentProperty(SVExtentPropertyPositionPointX, l_lParentTop);
-		l_ParentExtent.GetExtentProperty(SVExtentPropertyPositionPointY, l_lParentLeft);
+		l_ParentExtent.GetExtentProperty(SvDef::SVExtentPropertyOutputWidth, l_lParentWidth);
+		l_ParentExtent.GetExtentProperty(SvDef::SVExtentPropertyOutputHeight, l_lParentHeight);
+		l_ParentExtent.GetExtentProperty(SvDef::SVExtentPropertyPositionPointX, l_lParentTop);
+		l_ParentExtent.GetExtentProperty(SvDef::SVExtentPropertyPositionPointY, l_lParentLeft);
 		if (l_lParentWidth == lWidth
 			&& l_lParentHeight == lHeight
 			&& l_lParentTop == l_lParentTop

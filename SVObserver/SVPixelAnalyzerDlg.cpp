@@ -42,8 +42,8 @@ END_MESSAGE_MAP()
 
 SVPixelAnalyzerDlg::SVPixelAnalyzerDlg(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, CWnd* pParent /*=nullptr*/)
 : CDialog(SVPixelAnalyzerDlg::IDD, pParent)
-, m_rInspectionID{ rInspectionID }
-, m_rTaskObjectID{ rTaskObjectID }
+, m_InspectionID{ rInspectionID }
+, m_TaskObjectID{ rTaskObjectID }
 , m_Values{ SvOg::BoundValues{ rInspectionID, rTaskObjectID } }
 {
 }
@@ -55,8 +55,6 @@ SVPixelAnalyzerDlg::~SVPixelAnalyzerDlg()
 HRESULT SVPixelAnalyzerDlg::SetInspectionData()
 {
 	HRESULT Result{ E_FAIL };
-
-	UpdateData(true);
 
 	m_Values.Set<BYTE>(SVPixelColorIndexObjectGuid, static_cast<BYTE> (m_GrayscaleToCount));
 	Result = m_Values.Commit();
@@ -91,14 +89,14 @@ BOOL SVPixelAnalyzerDlg::OnInitDialog()
 
 	m_Values.Init();
 
-	if (GUID_NULL == m_rTaskObjectID)
+	if (GUID_NULL == m_TaskObjectID)
 	{
 		SvStl::MessageMgrStd  Exception( SvStl::LogAndDisplay );
 		Exception.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16080);
 	}
 	else
 	{
-		m_pAnalyzer = dynamic_cast<SVPixelAnalyzerClass*> (SVObjectManagerClass::Instance().GetObject(m_rTaskObjectID));
+		m_pAnalyzer = dynamic_cast<SVPixelAnalyzerClass*> (SVObjectManagerClass::Instance().GetObject(m_TaskObjectID));
 		msvulMinGrayscale = 0;
 		if (nullptr != m_pAnalyzer)
 		{
@@ -141,59 +139,47 @@ BOOL SVPixelAnalyzerDlg::OnInitDialog()
 }
 
 
-unsigned long SVPixelAnalyzerDlg::SetBlack()
+void SVPixelAnalyzerDlg::SetBlack()
 {
-	unsigned long ret(0);
 	m_WhiteRad.SetCheck(BST_UNCHECKED);
 	m_BlackRad.SetCheck (BST_CHECKED);
 	m_OtherRad.SetCheck(BST_UNCHECKED);
-	m_GrayscaleSld.EnableWindow (FALSE);
-	m_GrayScaleEdt.EnableWindow (FALSE);
-
-	SetGrayscale (msvulMinGrayscale);
-
-	return ret;
+	m_GrayscaleSld.EnableWindow (false);
+	m_GrayScaleEdt.EnableWindow (false);
+	SetGrayscale(msvulMinGrayscale);
 }
 
 
-unsigned long SVPixelAnalyzerDlg::SetWhite ()
+void SVPixelAnalyzerDlg::SetWhite ()
 {
-	unsigned long ret(0);
 	m_WhiteRad.SetCheck(BST_CHECKED);
 	m_BlackRad.SetCheck (BST_UNCHECKED);
 	m_OtherRad.SetCheck(BST_UNCHECKED);
-	m_GrayscaleSld.EnableWindow (FALSE);
-	m_GrayScaleEdt.EnableWindow (FALSE);
-
-	SetGrayscale (msvulMaxGrayscale);
-
-	return ret;
+	m_GrayscaleSld.EnableWindow (false);
+	m_GrayScaleEdt.EnableWindow (false);
+	SetGrayscale(msvulMaxGrayscale);
 }
 
 
-unsigned long SVPixelAnalyzerDlg::SetOther (long alGrayscale)
+void SVPixelAnalyzerDlg::SetOther (long lGrayscale)
 {
-	unsigned long ret(0);
 	m_WhiteRad.SetCheck(BST_UNCHECKED);
 	m_BlackRad.SetCheck (BST_UNCHECKED);
 	m_OtherRad.SetCheck(BST_CHECKED);
-	m_GrayscaleSld.EnableWindow (TRUE);
-	m_GrayScaleEdt.EnableWindow (TRUE);
+	m_GrayscaleSld.EnableWindow (true);
+	m_GrayScaleEdt.EnableWindow (true);
 
-	SetGrayscale (alGrayscale);
-	return ret;
+	SetGrayscale (lGrayscale);
 }
 
 
-unsigned long SVPixelAnalyzerDlg::SetGrayscale (long alGrayscale)
+void SVPixelAnalyzerDlg::SetGrayscale(long alGrayscale)
 {
-	unsigned long ret(0);
 	m_GrayscaleToCount = alGrayscale;
 	m_GrayscaleSliderValue = -alGrayscale;
 	UpdateData(false);
 
 	SetInspectionData();
-	return ret;
 }
 
 
@@ -228,8 +214,8 @@ void SVPixelAnalyzerDlg::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollB
 
 	CDialog::OnVScroll(nSBCode, nPos, pScrollBar);
 
-	UpdateData (TRUE);
-	SetGrayscale (-m_GrayscaleSliderValue);
+	UpdateData(true);
+	SetGrayscale(-m_GrayscaleSliderValue);
 }
 
 void SVPixelAnalyzerDlg::OnChangeGrayscaleEdt() 
@@ -239,8 +225,8 @@ void SVPixelAnalyzerDlg::OnChangeGrayscaleEdt()
 	// function and call CRichEditCtrl().SetEventMask()
 	// with the ENM_CHANGE flag ORed into the mask.
 	
-	UpdateData (TRUE);
-	SetGrayscale (m_GrayscaleToCount);
+	UpdateData(true);
+	SetGrayscale(m_GrayscaleToCount);
 	
 }
 

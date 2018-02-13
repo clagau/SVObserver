@@ -66,8 +66,8 @@ namespace SvOg
 	private:
 		SvMc::AvailableObjectListComboBox m_availableSourceTableCB;
 		
-		SVGUID m_InspectionID;
-		SVGUID m_TaskObjectID;
+		const SVGUID m_InspectionID;
+		const SVGUID m_TaskObjectID;
 		std::string m_inputName;
 		SvUl::NameGuidList m_availableList;
 #pragma endregion Member Variables

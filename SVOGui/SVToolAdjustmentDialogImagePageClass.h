@@ -49,8 +49,8 @@ namespace SvOg
 		PictureDisplay m_dialogImage;
 		//}}AFX_DATA
 	
-		SVGUID m_InspectionID;
-		SVGUID m_TaskObjectID;
+		const SVGUID m_InspectionID;
+		const SVGUID m_TaskObjectID;
 		std::string m_inputName;
 	};
 } //namespace SvOg

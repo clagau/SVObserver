@@ -271,28 +271,28 @@ bool ToolSizeAdjustTask::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 
 		if (S_OK == hresult)
 		{
-			hresult =ParentImageExtent.GetExtentProperty(SVExtentPropertyOutputWidth, ParentOutputWidth);
+			hresult =ParentImageExtent.GetExtentProperty(SvDef::SVExtentPropertyOutputWidth, ParentOutputWidth);
 		}
 		if (S_OK == hresult)
 		{
-			hresult =ParentImageExtent.GetExtentProperty(SVExtentPropertyOutputHeight, ParentOutputHeight);
+			hresult =ParentImageExtent.GetExtentProperty(SvDef::SVExtentPropertyOutputHeight, ParentOutputHeight);
 		}
 		if (S_OK == hresult)
 		{
-			hresult = ImageExtent.GetExtentProperty(SVExtentPropertyWidth, oldWidth);
+			hresult = ImageExtent.GetExtentProperty(SvDef::SVExtentPropertyWidth, oldWidth);
 		}
 
 		if (S_OK == hresult)
 		{
-			hresult = ImageExtent.GetExtentProperty(SVExtentPropertyHeight, oldHeight);
+			hresult = ImageExtent.GetExtentProperty(SvDef::SVExtentPropertyHeight, oldHeight);
 		}
 		if (S_OK  == hresult)
 		{
-			hresult = ImageExtent.GetExtentProperty(SVExtentPropertyPositionPointX, oldPosX);
+			hresult = ImageExtent.GetExtentProperty(SvDef::SVExtentPropertyPositionPointX, oldPosX);
 		}
 		if (S_OK  == hresult)
 		{
-			hresult = ImageExtent.GetExtentProperty(SVExtentPropertyPositionPointY, oldPosY);
+			hresult = ImageExtent.GetExtentProperty(SvDef::SVExtentPropertyPositionPointY, oldPosY);
 		}
 
 		bool bSetImageExtend(false);
@@ -314,7 +314,7 @@ bool ToolSizeAdjustTask::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 
 			if ((S_OK  == hresult) && (oldWidth != newWidth))
 			{
-					hresult = ImageExtent.SetExtentProperty(SVExtentPropertyWidth, newWidth);
+					hresult = ImageExtent.SetExtentProperty(SvDef::SVExtentPropertyWidth, newWidth);
 					bSetImageExtend = true;
 				}
 			}
@@ -325,12 +325,12 @@ bool ToolSizeAdjustTask::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 
 			if (S_OK  == hresult)
 			{
-				hresult = ImageExtent.GetExtentProperty(SVExtentPropertyHeight, oldHeight);
+				hresult = ImageExtent.GetExtentProperty(SvDef::SVExtentPropertyHeight, oldHeight);
 			}
 
 			if ((S_OK  == hresult) && (oldHeight != NewHeight))
 			{
-				hresult = ImageExtent.SetExtentProperty(SVExtentPropertyHeight, NewHeight);
+				hresult = ImageExtent.SetExtentProperty(SvDef::SVExtentPropertyHeight, NewHeight);
 				bSetImageExtend = true;
 			}
 		}
@@ -346,7 +346,7 @@ bool ToolSizeAdjustTask::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 
 			if ((S_OK  == hresult) && (oldPosX != PosX))
 			{
-				hresult = ImageExtent.SetExtentProperty(SVExtentPropertyPositionPointX, PosX);
+				hresult = ImageExtent.SetExtentProperty(SvDef::SVExtentPropertyPositionPointX, PosX);
 				bSetImageExtend = true;
 			}
 		}
@@ -362,7 +362,7 @@ bool ToolSizeAdjustTask::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 			
 			if ((S_OK == hresult) && (oldPosY != PosY))
 			{
-				hresult = ImageExtent.SetExtentProperty(SVExtentPropertyPositionPointY, PosY);
+				hresult = ImageExtent.SetExtentProperty(SvDef::SVExtentPropertyPositionPointY, PosY);
 				bSetImageExtend = true;
 			}
 		}
@@ -468,16 +468,16 @@ HRESULT ToolSizeAdjustTask::GetExtentValues( TSValues val, long &value) const
 		switch(val)
 		{
 		case TSPositionX:
-			hresult = ImageExtent.GetExtentProperty( SVExtentPropertyPositionPointX, value );
+			hresult = ImageExtent.GetExtentProperty( SvDef::SVExtentPropertyPositionPointX, value );
 			break;
 		case TSPositionY:
-			hresult = ImageExtent.GetExtentProperty( SVExtentPropertyPositionPointY, value );
+			hresult = ImageExtent.GetExtentProperty( SvDef::SVExtentPropertyPositionPointY, value );
 			break;
 		case TSWidth:
-			hresult = ImageExtent.GetExtentProperty( SVExtentPropertyWidth, value );
+			hresult = ImageExtent.GetExtentProperty( SvDef::SVExtentPropertyWidth, value );
 			break;
 		case TSHeight:
-			hresult = ImageExtent.GetExtentProperty( SVExtentPropertyHeight, value );
+			hresult = ImageExtent.GetExtentProperty( SvDef::SVExtentPropertyHeight, value );
 			break;
 		default:
 			hresult = SvStl::Err_16037_InvalidSelection;
@@ -507,16 +507,16 @@ HRESULT ToolSizeAdjustTask::GetParentExtentOutputValues( TSValues val, long &val
 		switch (val)
 		{
 		case TSPositionX:
-			hresult = ParentImageExtent.GetExtentProperty( SVExtentPropertyPositionPointX, value );
+			hresult = ParentImageExtent.GetExtentProperty( SvDef::SVExtentPropertyPositionPointX, value );
 			break;
 		case TSPositionY:
-			hresult = ParentImageExtent.GetExtentProperty( SVExtentPropertyPositionPointY, value );
+			hresult = ParentImageExtent.GetExtentProperty( SvDef::SVExtentPropertyPositionPointY, value );
 			break;
 		case TSWidth:
-			hresult = ParentImageExtent.GetExtentProperty( SVExtentPropertyOutputWidth, value );
+			hresult = ParentImageExtent.GetExtentProperty( SvDef::SVExtentPropertyOutputWidth, value );
 			break;
 		case TSHeight:
-			hresult = ParentImageExtent.GetExtentProperty( SVExtentPropertyOutputHeight, value );
+			hresult = ParentImageExtent.GetExtentProperty( SvDef::SVExtentPropertyOutputHeight, value );
 			break;
 		default:
 			hresult = SvStl::Err_16037_InvalidSelection;
@@ -563,28 +563,28 @@ HRESULT ToolSizeAdjustTask::SetExtendPropertyAutoReset()
 	SVExtentPropertyInfoStruct info;
 	if (S_OK == hresult)
 	{
-		hresult = pTool->GetPropertyInfo( SVExtentPropertyPositionPointX, info );
+		hresult = pTool->GetPropertyInfo( SvDef::SVExtentPropertyPositionPointX, info );
 		info.bSetByReset = bPosXSetByReset;
-		hresult = pTool->SetExtentPropertyInfo( SVExtentPropertyPositionPointX, info );
+		hresult = pTool->SetExtentPropertyInfo( SvDef::SVExtentPropertyPositionPointX, info );
 	}
 	if (S_OK == hresult)
 	{
-		hresult = pTool->GetPropertyInfo( SVExtentPropertyPositionPointY, info );
+		hresult = pTool->GetPropertyInfo( SvDef::SVExtentPropertyPositionPointY, info );
 		info.bSetByReset = bPosYSetByReset;
-		hresult = pTool->SetExtentPropertyInfo( SVExtentPropertyPositionPointY, info );
+		hresult = pTool->SetExtentPropertyInfo( SvDef::SVExtentPropertyPositionPointY, info );
 	}
 
 	if (S_OK == hresult)
 	{
-		hresult = pTool->GetPropertyInfo( SVExtentPropertyWidth, info );
+		hresult = pTool->GetPropertyInfo( SvDef::SVExtentPropertyWidth, info );
 		info.bSetByReset = bWidthSetByReset;
-		hresult = pTool->SetExtentPropertyInfo( SVExtentPropertyWidth, info );
+		hresult = pTool->SetExtentPropertyInfo( SvDef::SVExtentPropertyWidth, info );
 	}
 	if (S_OK == hresult)
 	{
-		hresult = pTool->GetPropertyInfo( SVExtentPropertyHeight, info );
+		hresult = pTool->GetPropertyInfo( SvDef::SVExtentPropertyHeight, info );
 		info.bSetByReset = bHeightSetByReset;
-		hresult = pTool->SetExtentPropertyInfo( SVExtentPropertyHeight, info );
+		hresult = pTool->SetExtentPropertyInfo( SvDef::SVExtentPropertyHeight, info );
 	}
 	return hresult;
 }

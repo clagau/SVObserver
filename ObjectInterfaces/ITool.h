@@ -7,7 +7,8 @@
 
 #pragma once
 #pragma region Includes
-#include "SVUtilityLibrary\NameGuidList.h"
+#include "Definitions/SVExtentEnums.h"
+#include "SVUtilityLibrary/NameGuidList.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -31,5 +32,7 @@ namespace SvOi
 		virtual HRESULT UpdateImageWithExtent() = 0;
 		virtual bool SetFirstInputImageName( LPCTSTR FirstName) = 0;
 		virtual long getToolPosition() const = 0;
+		// getExtentProperty cannot be const because GetImageExtents is not const
+		virtual HRESULT getExtentProperty(const SvDef::SVExtentPropertyEnum& rExtentProperty, double& rValue) = 0;
 	};
 } //namespace SvOi

@@ -57,7 +57,7 @@ SVAcquisitionClass::SVAcquisitionClass( const SvTi::SVAcquisitionConstructParams
 
 	m_AcquisitionBuffersPtr= SVImageObjectClassPtr{ new SVImageObjectClass };
 
-	msvImageInfo.SetExtentProperty( SVExtentPropertyPositionPoint, 0 );
+	msvImageInfo.SetExtentProperty( SvDef::SVExtentPropertyPositionPoint, 0 );
 
 	SetDigName( p_rParams.m_DigitizerName.c_str() );
 	

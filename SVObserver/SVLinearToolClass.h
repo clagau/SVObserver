@@ -47,14 +47,9 @@ public:
 	//! \returns  EnableSize  | EnablePosition
 	//************************************
 	virtual EAutoSize GetAutoSizeEnabled() override;
-	bool IsToolRotated();
 
 	virtual SVStringValueObjectClass* GetInputImageNames() override;
 #pragma endregion Public Methods
-
-	//Embedded Object : Profile Orientation
-	SVEnumerateValueObjectClass m_voProfileOrientation; // @WARNING:  bad practice making members public
-	SVBoolValueObjectClass m_voUseProfileRotation; // @WARNING:  bad practice making members public
 
 protected:
 #pragma region Protected Methods
@@ -72,6 +67,9 @@ private:
 #pragma region Member Variables
 private:
 	SVStringValueObjectClass m_SourceImageNames;
+	//Embedded Object : Profile Orientation
+	SVEnumerateValueObjectClass m_voProfileOrientation;
+	SVBoolValueObjectClass m_voUseProfileRotation;
 #pragma endregion Member Variables
 };
 

@@ -14,11 +14,11 @@
 #pragma region Includes
 #include "ObjectInterfaces/ITool.h"
 #include "ObjectInterfaces/IObjectClass.h"
-#include "ObjectInterfaces\IToolSet.h"
+#include "ObjectInterfaces/IToolSet.h"
 #include "SVTaskObjectList.h"
 #include "SVToolExtentClass.h"
 #include "SVImageClass.h"
-#include "SVStatusLibrary\MessageManager.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "SVValueObjectLibrary/SVStringValueObjectClass.h"
 #pragma endregion Includes
 
@@ -70,7 +70,7 @@ public:
 	
 	SvDef::SVImageTypeEnum GetImageType();
 
-	HRESULT SetImageExtentProperty( SVExtentPropertyEnum p_eProperty, SvOi::IValueObject* pValueObject );
+	HRESULT SetImageExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, SvOi::IValueObject* pValueObject );
 
 	virtual HRESULT GetImageExtent(SVImageExtentClass& rImageExtent) override;
 	virtual HRESULT SetImageExtent(const SVImageExtentClass& rImageExtent) override;
@@ -87,8 +87,8 @@ public:
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	virtual HRESULT GetPropertyInfo( SVExtentPropertyEnum p_eProperty, SVExtentPropertyInfoStruct& p_rInfo ) const override;
-	HRESULT SetExtentPropertyInfo( SVExtentPropertyEnum p_eProperty, const SVExtentPropertyInfoStruct& p_rInfo );
+	virtual HRESULT GetPropertyInfo( SvDef::SVExtentPropertyEnum p_eProperty, SVExtentPropertyInfoStruct& p_rInfo ) const override;
+	HRESULT SetExtentPropertyInfo( SvDef::SVExtentPropertyEnum p_eProperty, const SVExtentPropertyInfoStruct& p_rInfo );
 
 	bool getConditionalResult() const;
 	bool getConditionalResult(long p_lIndex) const;
@@ -115,7 +115,7 @@ public:
 	//! \param Location [in]
 	//! \param Direction 
 	//! \returns bool
-	bool IsAllowedLocation(const SVExtentLocationPropertyEnum Location, SVExtentDirectionsEnum Direction  = SVExtentDirectionBoth ) const;
+	bool IsAllowedLocation(const SvDef::SVExtentLocationPropertyEnum Location, SvDef::SVExtentDirectionsEnum Direction  = SvDef::SVExtentDirectionBoth ) const;
 
 	//! Calculates bottom and Right 
 	//! \returns void
@@ -149,6 +149,7 @@ public:
 	virtual HRESULT setAuxSourceImage(const SVGUID& rObjectID) override;
 	virtual void SetToolImage( const SVGUID& rObjectID ) override;
 	virtual long getToolPosition() const override;
+	virtual HRESULT getExtentProperty(const SvDef::SVExtentPropertyEnum& rExtentProperty, double& rValue) override;
 #pragma endregion ITool methods
 
 protected:

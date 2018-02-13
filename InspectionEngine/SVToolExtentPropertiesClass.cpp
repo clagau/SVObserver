@@ -56,7 +56,7 @@ HRESULT SVToolExtentPropertiesClass::GetProperties( SVImageExtentClass& rExtents
 	return l_hrOk;
 }
 
-HRESULT SVToolExtentPropertiesClass::GetExtentObject( SVExtentPropertyEnum p_eProperty, SvOi::IValueObject*& rpValueObject ) const
+HRESULT SVToolExtentPropertiesClass::GetExtentObject( SvDef::SVExtentPropertyEnum p_eProperty, SvOi::IValueObject*& rpValueObject ) const
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -71,7 +71,7 @@ HRESULT SVToolExtentPropertiesClass::GetExtentObject( SVExtentPropertyEnum p_ePr
 	return l_hrOk;
 }
 
-HRESULT SVToolExtentPropertiesClass::SetExtentObject( SVExtentPropertyEnum p_eProperty, SvOi::IValueObject* pValueObject )
+HRESULT SVToolExtentPropertiesClass::SetExtentObject( SvDef::SVExtentPropertyEnum p_eProperty, SvOi::IValueObject* pValueObject )
 {
 	HRESULT l_hrOk = S_OK;
 
@@ -87,7 +87,7 @@ HRESULT SVToolExtentPropertiesClass::SetExtentObject( SVExtentPropertyEnum p_ePr
 	return l_hrOk;
 }
 
-HRESULT SVToolExtentPropertiesClass::GetPropertyInfo( SVExtentPropertyEnum p_eProperty, SVExtentPropertyInfoStruct& p_rInfo ) const
+HRESULT SVToolExtentPropertiesClass::GetPropertyInfo( SvDef::SVExtentPropertyEnum p_eProperty, SVExtentPropertyInfoStruct& p_rInfo ) const
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -102,7 +102,7 @@ HRESULT SVToolExtentPropertiesClass::GetPropertyInfo( SVExtentPropertyEnum p_ePr
 	return l_hrOk;
 }
 
-HRESULT SVToolExtentPropertiesClass::SetPropertyInfo( SVExtentPropertyEnum p_eProperty, const SVExtentPropertyInfoStruct& p_rInfo )
+HRESULT SVToolExtentPropertiesClass::SetPropertyInfo( SvDef::SVExtentPropertyEnum p_eProperty, const SVExtentPropertyInfoStruct& p_rInfo )
 {
 	HRESULT l_hrOk = S_FALSE;
 

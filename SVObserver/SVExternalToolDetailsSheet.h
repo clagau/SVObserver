@@ -63,8 +63,8 @@ protected:
 	void DestroyPages();
 
 	SVExternalToolTask* m_pTask;
-	SVGUID m_InspectionID;
-	SVGUID m_ToolObjectID;
-	SVGUID m_TaskObjectID;
+	const SVGUID m_InspectionID;
+	const SVGUID m_ToolObjectID;
+	const SVGUID m_TaskObjectID;
 	long m_numImages;
 };

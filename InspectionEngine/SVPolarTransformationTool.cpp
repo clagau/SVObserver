@@ -43,7 +43,7 @@ void SVPolarTransformationToolClass::init()
 
 	m_svToolExtent.SetTool( this );
 	m_svToolExtent.SetImageType( SvDef::SVImageTypeEnum::SVImageTypePhysical );
-	m_svToolExtent.SetTranslation( SVExtentTranslationPolarUnwrap );
+	m_svToolExtent.SetTranslation( SvDef::SVExtentTranslationPolarUnwrap );
 	m_svToolExtent.SetAlwaysUpdate( true );
 
 	// Hide and Remove Embedded Extents
@@ -127,7 +127,7 @@ SVTaskObjectClass *SVPolarTransformationToolClass::GetObjectAtPoint( const SVExt
 	SVTaskObjectClass* l_psvObject = nullptr;
 
 	if( S_OK == m_svToolExtent.GetImageExtent( l_svExtents ) &&
-	    l_svExtents.GetLocationPropertyAt( p_rsvPoint ) != SVExtentLocationPropertyUnknown )
+	    l_svExtents.GetLocationPropertyAt( p_rsvPoint ) != SvDef::SVExtentLocationPropertyUnknown )
 	{
 		l_psvObject = this;
 	}
@@ -168,9 +168,9 @@ HRESULT SVPolarTransformationToolClass::SetImageExtent( const SVImageExtentClass
 	double l_dInnerRadius;
 	double l_dOuterRadius;
 
-	if( S_OK == (l_hrOk = rImageExtent.GetExtentProperty( SVExtentPropertyOuterRadius, l_dOuterRadius )) )
+	if( S_OK == (l_hrOk = rImageExtent.GetExtentProperty( SvDef::SVExtentPropertyOuterRadius, l_dOuterRadius )) )
 	{
-		l_hrOk = rImageExtent.GetExtentProperty( SVExtentPropertyOuterRadius, l_dInnerRadius );
+		l_hrOk = rImageExtent.GetExtentProperty( SvDef::SVExtentPropertyOuterRadius, l_dInnerRadius );
 	}
 	// Validate that at least one radius is greater than or equal to 1.
 	if( S_OK == l_hrOk && (l_dOuterRadius >= 1 || l_dInnerRadius >= 1) )

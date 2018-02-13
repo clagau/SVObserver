@@ -94,9 +94,6 @@
     <ClInclude Include="SVExtentDimensionsClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVExtentEnums.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVExtentFigureStruct.h">
       <Filter>Header Files</Filter>
     </ClInclude>

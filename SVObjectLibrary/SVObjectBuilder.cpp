@@ -413,8 +413,11 @@ HRESULT SVObjectBuilder::SetInputs(const GUID& objectID, const SvDef::StringPair
 				if (Iter != rInputPairVector.end())
 				{
 					SVObjectReference ObjectRef{ Iter->second };
-
-					pInInfo->SetInputObject(ObjectRef);
+					if(nullptr != ObjectRef.getObject())
+					{
+						ObjectRef.getObject()->ConnectObjectInput(pInInfo);
+						pInInfo->SetInputObject(ObjectRef);
+					}
 				}
 			}
 			else
