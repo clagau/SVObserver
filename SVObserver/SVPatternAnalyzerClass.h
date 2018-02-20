@@ -66,7 +66,7 @@ protected:
 	/// \returns bool True if no error happens.
 	bool ResetPattern(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 
-	void CreateResult();
+	SVObjectClass* CreateResult();
 
 	virtual HRESULT onCollectOverlays(SVImageClass* p_pImage, SVExtentMultiLineStructVector& p_rMultiLineArray ) override;
 	

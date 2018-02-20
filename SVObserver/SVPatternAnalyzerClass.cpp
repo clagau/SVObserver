@@ -144,8 +144,6 @@ SVPatternAnalyzerClass::SVPatternAnalyzerClass(SVObjectClass* POwner, int String
 	m_lpatModelCenterY.SetDefaultValue(0);
 	msv_lpatNumFoundOccurances.setSaveValueFlag(false);
 
-	// Setup the result
-	m_pAnalyzerResult = nullptr;
 	CreateResult();
 	
 	// Set default inputs and outputs
@@ -158,56 +156,49 @@ SVPatternAnalyzerClass::~SVPatternAnalyzerClass()
 	CloseObject();
 }
 
-void SVPatternAnalyzerClass::CreateResult()
+SVObjectClass* SVPatternAnalyzerClass::CreateResult()
 {
-	if (nullptr == m_pAnalyzerResult)
+	// Declare Input Interface of Result...
+	SVClassInfoStruct resultClassInfo;
+	SvDef::SVObjectTypeInfoStruct interfaceInfo;
+
+	interfaceInfo.EmbeddedID = SVpatResultNumFoundOccurancesObjectGuid;
+	resultClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
+
+	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVResultObjectType;
+	resultClassInfo.m_ObjectTypeInfo.SubType	= SvDef::SVResultLongObjectType;
+	resultClassInfo.m_ClassId = SVLongResultClassGuid;
+	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_RESULT );
+	std::string Title = SvUl::LoadStdString( IDS_OBJECTNAME_PAT_NBRFOUNDOCCURANCES );
+	resultClassInfo.m_ClassName += _T(" ") + Title;
+
+	// Construct the result class
+	SVLongResultClass* pResult = dynamic_cast<SVLongResultClass*> (resultClassInfo.Construct());
+	if (nullptr == pResult)
 	{
-		// Declare Input Interface of Result...
-		SVClassInfoStruct resultClassInfo;
-		SvDef::SVObjectTypeInfoStruct interfaceInfo;
-
-		interfaceInfo.EmbeddedID = SVpatResultNumFoundOccurancesObjectGuid;
-		resultClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
-
-		resultClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVResultObjectType;
-		resultClassInfo.m_ObjectTypeInfo.SubType	= SvDef::SVResultLongObjectType;
-		resultClassInfo.m_ClassId = SVLongResultClassGuid;
-		resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_RESULT );
-		std::string Title = SvUl::LoadStdString( IDS_OBJECTNAME_PAT_NBRFOUNDOCCURANCES );
-		resultClassInfo.m_ClassName += _T(" ") + Title;
-
-		while (1)
-		{
-			// Construct the result class
-			SVResultClass* pResult = (SVLongResultClass *)resultClassInfo.Construct();
-			if (!pResult)
-			{
-				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16199);
-				break;
-			}
-
-			// Set the defaults for the Range Object
-			SVRangeClass *pRange = pResult->GetResultRange();
-			if (!pRange)
-			{
-				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16200);
-				break;
-			}
-
-			Add(pResult);
-			m_pAnalyzerResult = pResult; //
-			
-			pRange->FailLow.SetDefaultValue(1.0);
-			pRange->WarnLow.SetDefaultValue(1.0);
-
-			pRange->FailLow.SetValue(1.0);
-			pRange->WarnLow.SetValue(1.0);
-
-			break;
-		}
+		SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16199);
+		return nullptr;
 	}
+
+	// Set the defaults for the Range Object
+	SVRangeClass *pRange = pResult->GetResultRange();
+	if (nullptr == pRange)
+	{
+		SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16200);
+		return nullptr;
+	}
+
+	Add(pResult);
+			
+	pRange->FailLow.SetDefaultValue(1.0);
+	pRange->WarnLow.SetDefaultValue(1.0);
+
+	pRange->FailLow.SetValue(1.0);
+	pRange->WarnLow.SetValue(1.0);
+
+	return pResult;
 }
 
 void SVPatternAnalyzerClass::SetDefaultSearchValues()
@@ -709,19 +700,17 @@ bool SVPatternAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCrea
 	msv_lpatNumFoundOccurances.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	// Check if Result is present
-	SvOi::IObjectClass* pResult = GetResultObject();
-	if (nullptr == pResult)
+	if (nullptr == GetResultObject())
 	{
-		m_pAnalyzerResult = nullptr;
-		CreateResult();
+		SVObjectClass* pResult = CreateResult();
 
 		// Ensure this Object's inputs get connected
-		if (nullptr != m_pAnalyzerResult)
+		if (nullptr != pResult)
 		{
-			m_pAnalyzerResult->ConnectAllInputs();
+			pResult->ConnectAllInputs();
 		}
 
-		CreateChildObject(m_pAnalyzerResult);
+		CreateChildObject(pResult);
 	}
 
 	m_isCreated = bOk;

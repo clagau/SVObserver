@@ -136,11 +136,11 @@ void SVBarCodeAnalyzerClass::init()
 	addDefaultInputObjects();
 	
 	// Instantiate Children
-	m_pAnalyzerResult = new SVBarCodeResultClass (this, IDS_CLASSNAME_SVBARCODEANALYZERESULT);
+	SVBarCodeResultClass* pAnalyzerResult = new SVBarCodeResultClass (this, IDS_CLASSNAME_SVBARCODEANALYZERESULT);
 	
-	if (nullptr != m_pAnalyzerResult)
+	if (nullptr != pAnalyzerResult)
 	{
-		Add(m_pAnalyzerResult);
+		Add(pAnalyzerResult);
 	}
 }
 
@@ -379,13 +379,20 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::Message
 	{
 		SvOi::SVImageBufferHandlePtr ImageHandle;
 		
-		//@Todo[MEC][8.00] [05.02.2018] during debugging  i saw some crashes near this code
-		// Used in Result Class to know whether to Fail or Warn.
-		SVBarCodeResultClass* pResult = static_cast<SVBarCodeResultClass*>(GetResultObject());
+		if (nullptr == m_pBarCodeResult)
+		{
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_NoResultObject, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				pErrorMessages->push_back(Msg);
+			}
+			return false;
+		}
+
 		BOOL bWarnOnFailedRead;
 		m_bWarnOnFailedRead.GetValue(bWarnOnFailedRead); // Add value from checkbox instead of true to warn on fail.
 									// default value will be false.
-		pResult->m_bFailedToRead = bWarnOnFailedRead != FALSE;// Preset flag to failed condition..
+		m_pBarCodeResult->m_bFailedToRead = bWarnOnFailedRead != FALSE;// Preset flag to failed condition..
 
 		SVImageClass* pInputImage = getInputImage ();		
 		if (pInputImage->GetImageHandle( ImageHandle ) && nullptr != ImageHandle)
@@ -420,7 +427,7 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::Message
 				{
 					case SVBCStatusReadOK:
 					{
-						pResult->m_bFailedToRead = false;
+						m_pBarCodeResult->m_bFailedToRead = false;
 						long cbBarCodeValue = 0;
 						Result &= SVMatroxBarCodeInterface::GetResult( m_MilCodeId, SVBCBarcodeStringSize, cbBarCodeValue, pErrorMessages );
 						std::string BarCodeString;
@@ -428,7 +435,7 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::Message
 						double dScore = 0.0;
 						Result &= SVMatroxBarCodeInterface::GetResult( m_MilCodeId, SVBCBarcodeScore, dScore, pErrorMessages );
 
-						pResult->m_dReadScore.SetValue(dScore * 100);
+						m_pBarCodeResult->m_dReadScore.SetValue(dScore * 100);
 
 						// To support special DMCs May 2008.
 						// Copy string to Byte Value Object
@@ -555,7 +562,7 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::Message
 				{
 					rRunStatus.SetFailed();
 				}
-				pResult->m_dReadScore.SetValue(0.0);
+				m_pBarCodeResult->m_dReadScore.SetValue(0.0);
 				return true;
 			}// end try
 			catch( ... )
@@ -667,7 +674,19 @@ bool SVBarCodeAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
-	if ( !m_bHasLicenseError )
+	//Get the pointer on reset
+	m_pBarCodeResult = dynamic_cast<SVBarCodeResultClass*> (GetResultObject());
+	if(nullptr == m_pBarCodeResult)
+	{
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_NoResultObject, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			pErrorMessages->push_back(Msg);
+		}
+	}
+
+	if ( Result && !m_bHasLicenseError )
 	{
 		if ( InitMil(pErrorMessages) )
 		{

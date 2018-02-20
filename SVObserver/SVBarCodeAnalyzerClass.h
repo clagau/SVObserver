@@ -16,6 +16,8 @@
 #include "SVStatusLibrary/MessageTextEnum.h"
 #pragma endregion Includes
 
+class SVBarCodeResultClass;
+
 enum 
 {
 	SVBCStringFormatRemoveCharacters = 0,
@@ -84,4 +86,6 @@ private:
 	bool LoadRegExpression( bool DisplayErrorMessage = true, SvStl::MessageContainerVector *pErrorMessages=nullptr );
 
 	bool m_bHasLicenseError;
+
+	SVBarCodeResultClass* m_pBarCodeResult{nullptr};
 };

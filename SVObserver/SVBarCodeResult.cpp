@@ -18,7 +18,7 @@
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "InspectionEngine/SVTool.h"
 
-SV_IMPLEMENT_CLASS (SVBarCodeResultClass, SVBarCodeResultClassGuid);
+SV_IMPLEMENT_CLASS(SVBarCodeResultClass, SVBarCodeResultClassGuid);
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -39,61 +39,61 @@ SVBarCodeResultClass::SVBarCodeResultClass(SVObjectClass* POwner, int StringReso
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVResultObjectType;
 	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVResultBarCodeObjectType;
 
-  RegisterEmbeddedObject(
-		&msv_bUseSingleMatchString, 
-	  SVBCUseSingleMatchStringGuid, 
-	  IDS_OBJECTNAME_BC_USE_SINGLE_MATCH_STRING,
-		false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject(
+		&msv_bUseSingleMatchString,
+		SVBCUseSingleMatchStringGuid,
+		IDS_OBJECTNAME_BC_USE_SINGLE_MATCH_STRING,
+		false, SvOi::SVResetItemOwner);
 
-  RegisterEmbeddedObject(
-		&msv_bUseMatchStringFile, 
-		SVBCUseMatchStringFileGuid, 
+	RegisterEmbeddedObject(
+		&msv_bUseMatchStringFile,
+		SVBCUseMatchStringFileGuid,
 		IDS_OBJECTNAME_BC_USE_MATCH_STRING_FILE,
-		false, SvOi::SVResetItemOwner );
+		false, SvOi::SVResetItemOwner);
 
-  RegisterEmbeddedObject(
-		&msv_szMatchStringFileName, 
-	  SVBCMatchStringFileNameObjectGuid, 
-	  IDS_OBJECTNAME_BC_MATCH_STRING_FILE_NAME,
-		false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject(
+		&msv_szMatchStringFileName,
+		SVBCMatchStringFileNameObjectGuid,
+		IDS_OBJECTNAME_BC_MATCH_STRING_FILE_NAME,
+		false, SvOi::SVResetItemOwner);
 
-  RegisterEmbeddedObject(
-		&msv_lMatchStringLine, 
-		SVBCMatchStringLineGuid, 
+	RegisterEmbeddedObject(
+		&msv_lMatchStringLine,
+		SVBCMatchStringLineGuid,
 		IDS_OBJECTNAME_BC_MATCH_STRING_LINE,
-		false, SvOi::SVResetItemNone );
+		false, SvOi::SVResetItemNone);
 
-  RegisterEmbeddedObject(
+	RegisterEmbeddedObject(
 		&m_dReadScore,
 		SVBCMatchScoreGuid,
 		IDS_OBJECTNAME_BC_READ_SCORE,
-		false, SvOi::SVResetItemNone );
+		false, SvOi::SVResetItemNone);
 
-	msv_bUseSingleMatchString.SetDefaultValue( BOOL(true), true );
+	msv_bUseSingleMatchString.SetDefaultValue(BOOL(true), true);
 	msv_szMatchStringFileName.SetDefaultValue(_T(""), true);
-	msv_lMatchStringLine.SetDefaultValue( 0, true);
+	msv_lMatchStringLine.SetDefaultValue(0, true);
 	msv_lMatchStringLine.setSaveValueFlag(false);
-	msv_bUseMatchStringFile.SetDefaultValue( BOOL(false), true);
-	m_dReadScore.SetDefaultValue( -1.0, true);
+	msv_bUseMatchStringFile.SetDefaultValue(BOOL(false), true);
+	m_dReadScore.SetDefaultValue(-1.0, true);
 	m_dReadScore.setSaveValueFlag(false);
-  // Specify which string SVResultString should require
+	// Specify which string SVResultString should require
 	m_inputObjectInfo.SetInputObjectType(SvDef::SVNotSetObjectType, SvDef::SVNotSetSubObjectType, SVBarCodeObjectGuid);
 
 	// Identify our input type needs
 	m_SVRegExpressionObjectInfo.SetInputObjectType(SvDef::SVValueObjectType, SvDef::SVStringValueObjectType, SVRegExpressionObjectGuid);
-	m_SVRegExpressionObjectInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_SVRegExpressionObjectInfo, _T( "BarCodeResultString" ) );
+	m_SVRegExpressionObjectInfo.SetObject(GetObjectInfo());
+	RegisterInputObject(&m_SVRegExpressionObjectInfo, _T("BarCodeResultString"));
 }
 
 SVBarCodeResultClass::~SVBarCodeResultClass()
 {
-	if(m_pBuffer)
+	if (m_pBuffer)
 	{
 		delete m_pBuffer;
 		m_pBuffer = nullptr;
 	}
 
-	if(m_pIndexTable)
+	if (m_pIndexTable)
 	{
 		delete m_pIndexTable;
 		m_pIndexTable = nullptr;
@@ -106,14 +106,14 @@ bool SVBarCodeResultClass::CreateObject(const SVObjectLevelCreateStruct& rCreate
 
 	if (bOk)
 	{
-		getRegExpression()->SetObjectAttributesAllowed( SvDef::SV_PRINTABLE | SvDef::SV_SETABLE_ONLINE | SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+		getRegExpression()->SetObjectAttributesAllowed(SvDef::SV_PRINTABLE | SvDef::SV_SETABLE_ONLINE | SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute);
 	}
 
-	msv_bUseSingleMatchString.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	msv_szMatchStringFileName.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE | SvDef::SV_SETABLE_ONLINE | SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
-	msv_lMatchStringLine.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	msv_bUseMatchStringFile.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_dReadScore.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	msv_bUseSingleMatchString.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute);
+	msv_szMatchStringFileName.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE | SvDef::SV_SETABLE_ONLINE | SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute);
+	msv_lMatchStringLine.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
+	msv_bUseMatchStringFile.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute);
+	m_dReadScore.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
 	m_isCreated = bOk;
 
 	return bOk;
@@ -121,7 +121,7 @@ bool SVBarCodeResultClass::CreateObject(const SVObjectLevelCreateStruct& rCreate
 
 SVStringValueObjectClass* SVBarCodeResultClass::getInputString()
 {
-	if( m_inputObjectInfo.IsConnected() && nullptr != m_inputObjectInfo.GetInputObjectInfo().getObject())
+	if (m_inputObjectInfo.IsConnected() && nullptr != m_inputObjectInfo.GetInputObjectInfo().getObject())
 	{
 		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
 		//! We are sure that when getObject() is not nullptr that it is the correct type
@@ -133,7 +133,7 @@ SVStringValueObjectClass* SVBarCodeResultClass::getInputString()
 
 SVStringValueObjectClass* SVBarCodeResultClass::getRegExpression()
 {
-	if(m_SVRegExpressionObjectInfo.IsConnected() && nullptr != m_SVRegExpressionObjectInfo.GetInputObjectInfo().getObject())
+	if (m_SVRegExpressionObjectInfo.IsConnected() && nullptr != m_SVRegExpressionObjectInfo.GetInputObjectInfo().getObject())
 	{
 		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
 		//! We are sure that when getObject() is not nullptr that it is the correct type
@@ -208,14 +208,14 @@ bool SVBarCodeResultClass::ResetObject(SvStl::MessageContainerVector *pErrorMess
 {
 	bool Result = SVStringResultClass::ResetObject(pErrorMessages);
 
-	if( S_OK != LoadMatchStringFile() )
+	if (S_OK != LoadMatchStringFile())
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
-	{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_BarCodeMatchStringLoadFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+		{
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_BarCodeMatchStringLoadFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 			pErrorMessages->push_back(Msg);
-	}
+		}
 	}
 
 	return Result && ValidateLocal(pErrorMessages);
@@ -227,7 +227,7 @@ HRESULT SVBarCodeResultClass::LoadMatchStringFile()
 	bool bOk = true;
 	BOOL bLoad = false;
 
-	if ( nullptr != m_pBuffer )
+	if (nullptr != m_pBuffer)
 	{
 		delete m_pBuffer;
 		m_pBuffer = nullptr;
@@ -235,18 +235,18 @@ HRESULT SVBarCodeResultClass::LoadMatchStringFile()
 
 	m_lTotalBytes = 0;
 
-	msv_bUseMatchStringFile.GetValue( bLoad );
-	if ( bLoad )
+	msv_bUseMatchStringFile.GetValue(bLoad);
+	if (bLoad)
 	{
 		std::string FileName;
 		CFile matchFile;
 
 		// Check to see if the file exists..
 		//
-		msv_szMatchStringFileName.GetValue( FileName );
+		msv_szMatchStringFileName.GetValue(FileName);
 
-		bOk = ! FileName.empty() && SVFileExists( FileName.c_str() );
-		if ( bOk )
+		bOk = !FileName.empty() && SVFileExists(FileName.c_str());
+		if (bOk)
 		{
 			//
 			// Open and read the Bar Code match string from the file.
@@ -254,17 +254,17 @@ HRESULT SVBarCodeResultClass::LoadMatchStringFile()
 			try
 			{
 				bOk = (matchFile.Open(FileName.c_str(), CFile::modeRead | CFile::shareDenyNone) ? true : false);
-				if ( bOk )
+				if (bOk)
 				{
 					unsigned long ulLength = static_cast<unsigned long>(matchFile.GetLength());
 
-					if ( 0 < ulLength )
+					if (0 < ulLength)
 					{
 						m_pBuffer = new char[ulLength + 1];
 						bOk = nullptr != m_pBuffer;
-						if ( bOk )
+						if (bOk)
 						{
-							m_lTotalBytes = matchFile.Read( m_pBuffer, ulLength );
+							m_lTotalBytes = matchFile.Read(m_pBuffer, ulLength);
 							m_pBuffer[m_lTotalBytes] = '\0';
 						}
 						else
@@ -275,12 +275,12 @@ HRESULT SVBarCodeResultClass::LoadMatchStringFile()
 
 					matchFile.Close();
 
-					if ( m_lTotalBytes > 0 )
+					if (m_lTotalBytes > 0)
 					{
-						if ( bOk )
+						if (bOk)
 						{
-							bOk = BuildHashTable( m_pBuffer );
-							if ( !bOk )
+							bOk = BuildHashTable(m_pBuffer);
+							if (!bOk)
 							{
 								Result = E_FAIL;
 							}
@@ -297,7 +297,7 @@ HRESULT SVBarCodeResultClass::LoadMatchStringFile()
 					Result = E_FAIL;
 				}
 			}
-			catch ( ... )
+			catch (...)
 			{
 				Result = E_FAIL;
 				bOk = false;
@@ -314,176 +314,176 @@ HRESULT SVBarCodeResultClass::LoadMatchStringFile()
 
 bool SVBarCodeResultClass::BuildHashTable(char *pBuffer)
 {
-   long lBufIndex = 0;
-   bool  bRet = true;
+	long lBufIndex = 0;
+	bool  bRet = true;
 
-   for(int i = 0; i < BC_MAX_ENTREES; i++)
-      m_pDataArr[i] = 0;
+	for (int i = 0; i < BC_MAX_ENTREES; i++)
+		m_pDataArr[i] = 0;
 
-   for(m_nTotalCount = 0; 
-         (m_nTotalCount < BC_MAX_ENTREES) && (lBufIndex < m_lTotalBytes);
-          m_nTotalCount++)
-   {
-      int nCharCount = 0;
-      long lIndexValue = 0;
-// Assign each line into a char pointer array.
-      m_pDataArr[m_nTotalCount] = &pBuffer[lBufIndex];
+	for (m_nTotalCount = 0;
+		(m_nTotalCount < BC_MAX_ENTREES) && (lBufIndex < m_lTotalBytes);
+		 m_nTotalCount++)
+	{
+		int nCharCount = 0;
+		long lIndexValue = 0;
+		// Assign each line into a char pointer array.
+		m_pDataArr[m_nTotalCount] = &pBuffer[lBufIndex];
 
-      while(pBuffer[lBufIndex] != BC_CAR_RETURN && (lBufIndex < m_lTotalBytes))
-      {
-// The index value is calculated as follows.
-// nValue = ASCII value of char at position index - ASCII of first displayable character
-// lIndexValue = Square of nValue * Position of the char from left.
-         nCharCount++;
-         int   nValue = pBuffer[lBufIndex++] - 0x20;
-         lIndexValue += nValue * nValue * nCharCount;
-      }
-      if(lBufIndex < m_lTotalBytes)
-      {
-         pBuffer[lBufIndex++] = 0; // Carriage Return
-         lBufIndex++; // skip the Line feed
-      }
-      if(!nCharCount) // If there is a blank line skip that one.
-      {
-         m_nTotalCount--;
-         continue;
-      }
-// We are calculating m_lLowValue and m_lHighValue because the string corresponding to
-// m_lLowValue should go to index 0 and the string for m_lHighValue should have the max index
-      if(!m_nTotalCount)
-         m_lLowValue = m_lHighValue = lIndexValue;
+		while (pBuffer[lBufIndex] != BC_CAR_RETURN && (lBufIndex < m_lTotalBytes))
+		{
+			// The index value is calculated as follows.
+			// nValue = ASCII value of char at position index - ASCII of first displayable character
+			// lIndexValue = Square of nValue * Position of the char from left.
+			nCharCount++;
+			int   nValue = pBuffer[lBufIndex++] - 0x20;
+			lIndexValue += nValue * nValue * nCharCount;
+		}
+		if (lBufIndex < m_lTotalBytes)
+		{
+			pBuffer[lBufIndex++] = 0; // Carriage Return
+			lBufIndex++; // skip the Line feed
+		}
+		if (!nCharCount) // If there is a blank line skip that one.
+		{
+			m_nTotalCount--;
+			continue;
+		}
+		// We are calculating m_lLowValue and m_lHighValue because the string corresponding to
+		// m_lLowValue should go to index 0 and the string for m_lHighValue should have the max index
+		if (!m_nTotalCount)
+			m_lLowValue = m_lHighValue = lIndexValue;
 
-      else if(lIndexValue < m_lLowValue)
-         m_lLowValue = lIndexValue; 
-      else if(lIndexValue > m_lHighValue)
-         m_lHighValue = lIndexValue; 
-   }
-   
-// Allocate a table that is 10 times the size of m_nTotalCount
-   while(1)
-   {
-      if(m_pIndexTable)
-         delete m_pIndexTable;
-// If there is only one entry in the file, make it work the old way.   
+		else if (lIndexValue < m_lLowValue)
+			m_lLowValue = lIndexValue;
+		else if (lIndexValue > m_lHighValue)
+			m_lHighValue = lIndexValue;
+	}
 
-      m_pIndexTable = new short[m_nTotalCount * 10];
-      if(!m_pIndexTable)
-      {
-         bRet = false;
-         break;
-      }
-      memset(m_pIndexTable, 0, (size_t)(sizeof(short) * m_nTotalCount * 10));
+	// Allocate a table that is 10 times the size of m_nTotalCount
+	while (1)
+	{
+		if (m_pIndexTable)
+			delete m_pIndexTable;
+		// If there is only one entry in the file, make it work the old way.   
 
-// Now calculate the hash table index for each enrty in the m_pDataArr
+		m_pIndexTable = new short[m_nTotalCount * 10];
+		if (!m_pIndexTable)
+		{
+			bRet = false;
+			break;
+		}
+		memset(m_pIndexTable, 0, (size_t)(sizeof(short) * m_nTotalCount * 10));
 
-      m_dFactor = ((double)(m_lHighValue - m_lLowValue)) / (double)m_nTotalCount;
+		// Now calculate the hash table index for each enrty in the m_pDataArr
 
-      for(short Count = 0; Count < m_nTotalCount ; Count++)
-      {
-         char *pData = m_pDataArr[Count];
-         int nCharCount = static_cast< int >( strlen( pData ) );
-         long lIndexValue = 0;
-         for (int i = 0; i < nCharCount; i++)
-         {
-            int   nValue = pData[i] - 0x20;
-            lIndexValue += nValue * nValue * (i + 1);
-         }
-// We are multiplying by 9.5 since we want to reserve some slots at the end of the table,
-// in case we get the max index for multiple strings.
+		m_dFactor = ((double)(m_lHighValue - m_lLowValue)) / (double)m_nTotalCount;
 
-		 if( m_dFactor <= 0.0 )
-		 {
-			 m_dFactor = 1.0;
-		 }
-         double dActualIndex = (((double)(lIndexValue - m_lLowValue)) / m_dFactor) * 9.5;
+		for (short Count = 0; Count < m_nTotalCount; Count++)
+		{
+			char *pData = m_pDataArr[Count];
+			int nCharCount = static_cast<int>(strlen(pData));
+			long lIndexValue = 0;
+			for (int i = 0; i < nCharCount; i++)
+			{
+				int   nValue = pData[i] - 0x20;
+				lIndexValue += nValue * nValue * (i + 1);
+			}
+			// We are multiplying by 9.5 since we want to reserve some slots at the end of the table,
+			// in case we get the max index for multiple strings.
 
-// Line number will be count  + 1
-         InsertValueToTable(Count + 1, (int) dActualIndex);
-      }
-      break;
-   }
-   return bRet;
+			if (m_dFactor <= 0.0)
+			{
+				m_dFactor = 1.0;
+			}
+			double dActualIndex = (((double)(lIndexValue - m_lLowValue)) / m_dFactor) * 9.5;
+
+			// Line number will be count  + 1
+			InsertValueToTable(Count + 1, (int)dActualIndex);
+		}
+		break;
+	}
+	return bRet;
 }
 
 void SVBarCodeResultClass::InsertValueToTable(short nValue, int nIndex)
 {
-// Check whether the location contains a data
+	// Check whether the location contains a data
 
-   if(m_pIndexTable[nIndex] == 0)
-      m_pIndexTable[nIndex] = nValue;
-   else
-   {
-//    
-      ++nIndex;
-      while(m_pIndexTable[nIndex] != 0)
-      {
-         nIndex++;
-// if we reach the end of the hash table, start from the begining( starting from 3rd position) 
-         if(nIndex >= m_nTotalCount * 10 )
-            nIndex = 2;
-      }
-   
-      m_pIndexTable[nIndex] = nValue;
-   }
+	if (m_pIndexTable[nIndex] == 0)
+		m_pIndexTable[nIndex] = nValue;
+	else
+	{
+		//    
+		++nIndex;
+		while (m_pIndexTable[nIndex] != 0)
+		{
+			nIndex++;
+			// if we reach the end of the hash table, start from the begining( starting from 3rd position) 
+			if (nIndex >= m_nTotalCount * 10)
+				nIndex = 2;
+		}
+
+		m_pIndexTable[nIndex] = nValue;
+	}
 }
 
-int SVBarCodeResultClass::CheckStringInTable( const std::string& rMatchString )
+int SVBarCodeResultClass::CheckStringInTable(const std::string& rMatchString)
 {
-   int Result = -1;
+	int Result = -1;
 
-   long  lIndexValue = 0;
-   size_t nCharCount = rMatchString.size();
+	long  lIndexValue = 0;
+	size_t nCharCount = rMatchString.size();
 
-   if (0 == nCharCount)
-   {
-	   return Result;
-   }
+	if (0 == nCharCount)
+	{
+		return Result;
+	}
 
-   for( size_t i = 0; i < nCharCount; i++ )
-   {
-      int nValue = rMatchString[i] - 0x20;
-      lIndexValue += nValue * nValue * static_cast<int> (i + 1);
-   }
+	for (size_t i = 0; i < nCharCount; i++)
+	{
+		int nValue = rMatchString[i] - 0x20;
+		lIndexValue += nValue * nValue * static_cast<int> (i + 1);
+	}
 
 	// if Index value is out of range, definitely there won't be a match in the file.
-   if(lIndexValue >= m_lLowValue && lIndexValue <= m_lHighValue)
-   {
-      int nActualIndex = (int)((((double)(lIndexValue - m_lLowValue)) / m_dFactor) * 9.5);
+	if (lIndexValue >= m_lLowValue && lIndexValue <= m_lHighValue)
+	{
+		int nActualIndex = (int)((((double)(lIndexValue - m_lLowValue)) / m_dFactor) * 9.5);
 		// Check whether the string at this location is the matchString.
 
-      while(m_pIndexTable[nActualIndex] != 0) 
-      {
-         TCHAR *pData = m_pDataArr[m_pIndexTable[nActualIndex] - 1];
+		while (m_pIndexTable[nActualIndex] != 0)
+		{
+			TCHAR *pData = m_pDataArr[m_pIndexTable[nActualIndex] - 1];
 
-         if(rMatchString  == pData)
-         {
-            Result = m_pIndexTable[nActualIndex];
-            break;
-         }
-         nActualIndex++;
+			if (rMatchString == pData)
+			{
+				Result = m_pIndexTable[nActualIndex];
+				break;
+			}
+			nActualIndex++;
 
 			// if we reach the end of the hash table, start from the begining( starting from 3rd position) 
-         if(nActualIndex >= m_nTotalCount * 10 )
-		 {
-            nActualIndex = 2;
-		 }
-      }
-   }
+			if (nActualIndex >= m_nTotalCount * 10)
+			{
+				nActualIndex = 2;
+			}
+		}
+	}
 
-   return  Result;
+	return  Result;
 }
 
 bool SVBarCodeResultClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
 {
-	if ( !m_SVRegExpressionObjectInfo.IsConnected() || nullptr == m_SVRegExpressionObjectInfo.GetInputObjectInfo().getObject() )
+	if (!m_SVRegExpressionObjectInfo.IsConnected() || nullptr == m_SVRegExpressionObjectInfo.GetInputObjectInfo().getObject())
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 			pErrorMessages->push_back(Msg);
 		}
 		return false;
 	}
-	
+
 	return true;
 }

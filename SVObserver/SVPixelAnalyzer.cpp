@@ -59,11 +59,11 @@ void SVPixelAnalyzerClass::init()
 	addDefaultInputObjects();
 
 	// Instantiate Children
-	m_pAnalyzerResult = new SVLongResultClass (this, IDS_CLASSNAME_SVPIXELANALYZERESULT);
+	SVLongResultClass* pAnalyzerResult = new SVLongResultClass(this, IDS_CLASSNAME_SVPIXELANALYZERESULT);
 
-	if (nullptr != m_pAnalyzerResult)
+	if (nullptr != pAnalyzerResult)
 	{
-		Add(m_pAnalyzerResult);
+		Add(pAnalyzerResult);
 	}
 	else
 	{

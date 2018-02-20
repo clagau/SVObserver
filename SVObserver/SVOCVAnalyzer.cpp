@@ -47,12 +47,12 @@ void SVOCVAnalyzerClass::init()
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVAnalyzerObjectType;
 	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVOCVAnalyzerObjectType;
 
-	m_pAnalyzerResult = new SVOCVAnalyzeResultClass( this );
+	SVOCVAnalyzeResultClass* pAnalyzerResult = new SVOCVAnalyzeResultClass(this);
 
 	// Children list defaults:
-	if(nullptr != m_pAnalyzerResult )
+	if(nullptr != pAnalyzerResult )
 	{
-		Add(m_pAnalyzerResult);
+		Add(pAnalyzerResult);
 	}
 
 }

@@ -413,10 +413,12 @@ HRESULT SVObjectBuilder::SetInputs(const GUID& objectID, const SvDef::StringPair
 				if (Iter != rInputPairVector.end())
 				{
 					SVObjectReference ObjectRef{ Iter->second };
+					pInInfo->SetInputObject(ObjectRef);
+					//Connect the dependency
 					if(nullptr != ObjectRef.getObject())
 					{
-						ObjectRef.getObject()->ConnectObjectInput(pInInfo);
-						pInInfo->SetInputObject(ObjectRef);
+						const SVGUID rGuid = ObjectRef.getObject()->GetUniqueObjectID();
+						SVObjectManagerClass::Instance().connectDependency(rGuid, pInInfo->getUniqueObjectID(), SvOl::JoinType::Dependent);
 					}
 				}
 			}

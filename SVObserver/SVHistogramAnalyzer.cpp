@@ -432,11 +432,11 @@ void SVHistogramAnalyzerClass::AddResult(const std::pair<GUID, DWORD> & p)
 	l_resultInfo.m_ClassId = SVLongResultClassGuid;
 	l_resultInfo.m_ClassName = SvUl::LoadStdString(p.second);
 
-	m_pAnalyzerResult = dynamic_cast<SVLongResultClass *>(l_resultInfo.Construct());
+	SVLongResultClass* pAnalyzerResult = dynamic_cast<SVLongResultClass*> (l_resultInfo.Construct());
 
-	if (nullptr != m_pAnalyzerResult)
+	if (nullptr != pAnalyzerResult)
 	{
-		Add(m_pAnalyzerResult);
+		Add(pAnalyzerResult);
 	}
 }
 

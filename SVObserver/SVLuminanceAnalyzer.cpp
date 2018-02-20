@@ -99,16 +99,16 @@ void SVLuminanceAnalyzerClass::init()
 
 	// Set Local
 
-	m_pAnalyzerResult = dynamic_cast<SVResultClass*> (new SVLongResultClass( this, IDS_CLASSNAME_SVLUMINANCEANALYZERESULT ));
+	SVLongResultClass* pAnalyzerResult = new SVLongResultClass(this, IDS_CLASSNAME_SVLUMINANCEANALYZERESULT);
 
-	if(nullptr == m_pAnalyzerResult)
+	if(nullptr == pAnalyzerResult)
 	{
 		SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16092);
 	}
 	else
 	{
-		Add(m_pAnalyzerResult);
+		Add(pAnalyzerResult);
 	}
 }
 

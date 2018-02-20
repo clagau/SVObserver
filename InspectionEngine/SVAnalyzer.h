@@ -14,8 +14,6 @@
 #include "SVTaskObjectList.h"
 #pragma endregion Includes
 
-class SVResultClass;
-
 class SVAnalyzerClass : public SVTaskObjectListClass
 {
 	SV_DECLARE_CLASS( SVAnalyzerClass );
@@ -38,9 +36,6 @@ protected:
 	virtual bool createAllObjectsFromChild( SVObjectClass& rChildObject ) override;
 
 	virtual void connectChildObject( SVTaskObjectClass& rChildObject ) override;
-
-protected:
-	SVResultClass* m_pAnalyzerResult;
 
 private:
 	void init();

@@ -40,8 +40,6 @@ SVAnalyzerClass::SVAnalyzerClass( SVObjectClass* POwner, int StringResourceID )
 // Initialization of newly Instantiated Object
 void SVAnalyzerClass::init()
 {
-	m_pAnalyzerResult	= nullptr;
-
 	// Indentify our type in the Output List
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVAnalyzerObjectType;
 
@@ -62,9 +60,8 @@ bool SVAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStru
 
 SvOi::IObjectClass* SVAnalyzerClass::GetResultObject()
 {
-	//@WARNING [gra][8.00][21.12.2017] When SVResultClass is moved to a separate project this should be changed back to dynamic_cast
-	//reinterpret_cast is used instead of dynamic_cast because SVResultClass (is in SVObserver project) is a forward deceleration
-	return reinterpret_cast<SvOi::IObjectClass*> (m_pAnalyzerResult);
+	SvDef::SVObjectTypeInfoStruct TypeInfo{SvDef::SVResultObjectType};
+	return getFirstObject(TypeInfo);
 }
 
 bool SVAnalyzerClass::createAllObjectsFromChild( SVObjectClass& rChildObject )
