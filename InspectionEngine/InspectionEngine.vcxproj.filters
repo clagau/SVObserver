@@ -204,6 +204,9 @@
     <ClInclude Include="SVGlobalHandles.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TableAddColumnEquation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -384,6 +387,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVTaskObjectInterfaceInputRequestStruct.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TableAddColumnEquation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

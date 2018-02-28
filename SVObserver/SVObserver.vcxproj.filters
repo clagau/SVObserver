@@ -839,6 +839,9 @@
     <ClCompile Include="SVProfileEdgeMarkerAdjustmentPage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TableAddColumnAnalyzer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="SVObserver.odl">
@@ -1708,6 +1711,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVProfileEdgeMarkerAdjustmentPage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TableAddColumnAnalyzer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

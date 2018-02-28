@@ -168,6 +168,7 @@ namespace SvDef
 			EQSizePositionYType							= 0x00000409,
 
 			TableColumnEquationObjectType				= 0x0000040a,
+			TableAddColumnEquationObjectType			= 0x0000040b,
 
 			// Math Container Subtypes:
 			SVEvaluateXObjectType						= 0x00000480,
@@ -257,6 +258,7 @@ namespace SvDef
 			TableAnalyzerSortType					= 0x00004010,
 			TableAnalyzerExcludeType				= 0x00004011,
 			TableAnalyzerLimitType					= 0x00004012,
+			TableAnalyzerAddColumnType				= 0x00004013,
 
 
 			//ValueObject SubTypes

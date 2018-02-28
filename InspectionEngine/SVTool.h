@@ -29,11 +29,11 @@ class SVThresholdClass;
 class SVConditionalClass;
 class SVToolClass;
 
-enum EAutoSize 
+enum EAutoSize
 {
-	EnableNone = 0x0, 
-	EnableSize = 0x1, 
-	EnablePosition = 0x2, 
+	EnableNone = 0x0,
+	EnableSize = 0x1,
+	EnablePosition = 0x2,
 	EnableSizeAndPosition = 0x3,
 	EnableNegativePosition = 0x4,
 	EnableAll = EnableSizeAndPosition | EnableNegativePosition
@@ -41,20 +41,20 @@ enum EAutoSize
 
 class SVToolClass : public SVTaskObjectListClass, public SvOi::ITool
 {
-	SV_DECLARE_CLASS( SVToolClass );
+	SV_DECLARE_CLASS(SVToolClass);
 
 	friend class SVInspectionProcess; // For access to Run()
 	friend class SVToolExtentClass; // For access to UpdateOffsetDataToImage()
 
 public:
-	SVToolClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTOOL );
+	SVToolClass(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTOOL);
 	virtual ~SVToolClass();
 
-	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
+	virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure) override;
 	virtual bool CloseObject() override;
 	virtual bool DisconnectObjectInput(SVInObjectInfoStruct* pInObjectInfo) override;
 
-	virtual HRESULT GetDrawInfo( SVExtentMultiLineStruct& p_rMultiLine ) override;
+	virtual HRESULT GetDrawInfo(SVExtentMultiLineStruct& p_rMultiLine) override;
 
 	bool IsEnabled() const;
 
@@ -66,56 +66,56 @@ public:
 	//************************************
 	virtual EAutoSize GetAutoSizeEnabled();
 
-	virtual bool SetDefaultFormulas(SvStl::MessageContainerVector *pErrorMessages=nullptr);
-	
+	virtual bool SetDefaultFormulas(SvStl::MessageContainerVector *pErrorMessages = nullptr);
+
 	SvDef::SVImageTypeEnum GetImageType();
 
-	HRESULT SetImageExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, SvOi::IValueObject* pValueObject );
+	HRESULT SetImageExtentProperty(SvDef::SVExtentPropertyEnum p_eProperty, SvOi::IValueObject* pValueObject);
 
 	virtual HRESULT GetImageExtent(SVImageExtentClass& rImageExtent) override;
 	virtual HRESULT SetImageExtent(const SVImageExtentClass& rImageExtent) override;
-	virtual HRESULT GetFilteredImageExtentPropertyList( SVExtentPropertyListType& p_rPropertyList ) override;
+	virtual HRESULT GetFilteredImageExtentPropertyList(SVExtentPropertyListType& p_rPropertyList) override;
 
 	const SVImageClass* GetToolImage() const;
 
-	void SetAlwaysUpdate( bool p_bAlwaysUpdate );
+	void SetAlwaysUpdate(bool p_bAlwaysUpdate);
 
-	HRESULT GetRootOffsetData( SVExtentOffsetStruct& p_rsvOffsetData );
-	HRESULT UpdateOffsetData( SVImageClass* p_svToolImage );
-	HRESULT TranslatePointToSource( SVExtentPointStruct p_svIn, SVExtentPointStruct& p_rsvOut );
-	HRESULT EnableAuxiliaryExtents( bool p_bEnable );
+	HRESULT GetRootOffsetData(SVExtentOffsetStruct& p_rsvOffsetData);
+	HRESULT UpdateOffsetData(SVImageClass* p_svToolImage);
+	HRESULT TranslatePointToSource(SVExtentPointStruct p_svIn, SVExtentPointStruct& p_rsvOut);
+	HRESULT EnableAuxiliaryExtents(bool p_bEnable);
 
-	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
 
-	virtual HRESULT GetPropertyInfo( SvDef::SVExtentPropertyEnum p_eProperty, SVExtentPropertyInfoStruct& p_rInfo ) const override;
-	HRESULT SetExtentPropertyInfo( SvDef::SVExtentPropertyEnum p_eProperty, const SVExtentPropertyInfoStruct& p_rInfo );
+	virtual HRESULT GetPropertyInfo(SvDef::SVExtentPropertyEnum p_eProperty, SVExtentPropertyInfoStruct& p_rInfo) const override;
+	HRESULT SetExtentPropertyInfo(SvDef::SVExtentPropertyEnum p_eProperty, const SVExtentPropertyInfoStruct& p_rInfo);
 
 	bool getConditionalResult() const;
 	bool getConditionalResult(long p_lIndex) const;
 
-	virtual HRESULT CollectOverlays( SVImageClass *p_Image, SVExtentMultiLineStructVector &p_MultiLineArray ) override;
+	virtual HRESULT CollectOverlays(SVImageClass *p_Image, SVExtentMultiLineStructVector &p_MultiLineArray) override;
 
 	// Auxiliary Source Image functions
-	HRESULT GetSourceImages( SVImageClassPtrVector* p_psvImageList ) const;
+	HRESULT GetSourceImages(SVImageClassPtrVector* p_psvImageList) const;
 	SVImageClass* GetAuxSourceImage() const;
-	HRESULT SetAuxSourceImage( SVImageClass* p_psvImage );
+	HRESULT SetAuxSourceImage(SVImageClass* p_psvImage);
 
-	virtual HRESULT IsAuxInputImage( const SVInObjectInfoStruct* p_psvInfo ) override; 
+	virtual HRESULT IsAuxInputImage(const SVInObjectInfoStruct* p_psvInfo) override;
 
 	// Set String value object for Source Image Names
-	virtual SVStringValueObjectClass* GetInputImageNames( );
-	virtual bool SetFirstInputImageName( LPCTSTR FirstName) override;
+	virtual SVStringValueObjectClass* GetInputImageNames();
+	virtual bool SetFirstInputImageName(LPCTSTR FirstName) override;
 
 
 	virtual HRESULT UpdateImageWithExtent() override;
-	virtual HRESULT GetParentExtent( SVImageExtentClass& p_rParent ) const;
+	virtual HRESULT GetParentExtent(SVImageExtentClass& p_rParent) const;
 
 	//!  Return false  if the input location 
 	//! is not allowed for the tool 
 	//! \param Location [in]
 	//! \param Direction 
 	//! \returns bool
-	bool IsAllowedLocation(const SvDef::SVExtentLocationPropertyEnum Location, SvDef::SVExtentDirectionsEnum Direction  = SvDef::SVExtentDirectionBoth ) const;
+	bool IsAllowedLocation(const SvDef::SVExtentLocationPropertyEnum Location, SvDef::SVExtentDirectionsEnum Direction = SvDef::SVExtentDirectionBoth) const;
 
 	//! Calculates bottom and Right 
 	//! \returns void
@@ -147,32 +147,32 @@ public:
 	virtual SvUl::NameGuidList getAvailableAuxSourceImages() const override;
 	virtual SvUl::NameGuidPair getAuxSourceImage() const override;
 	virtual HRESULT setAuxSourceImage(const SVGUID& rObjectID) override;
-	virtual void SetToolImage( const SVGUID& rObjectID ) override;
+	virtual void SetToolImage(const SVGUID& rObjectID) override;
 	virtual long getToolPosition() const override;
 	virtual HRESULT getExtentProperty(const SvDef::SVExtentPropertyEnum& rExtentProperty, double& rValue) override;
 #pragma endregion ITool methods
 
 protected:
 	void UpdateAuxiliaryExtents();
-	virtual bool Run( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
-	bool RunWithNewDisable( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr );
+	virtual bool Run(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
+	bool RunWithNewDisable(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr);
 
-	HRESULT UpdateOffsetDataToImage( SVExtentOffsetStruct& p_rsvOffsetData, SVImageClass* p_svToolImage ); 
+	HRESULT UpdateOffsetDataToImage(SVExtentOffsetStruct& p_rsvOffsetData, SVImageClass* p_svToolImage);
 
 	// Remove Embedded Extents
-	void removeEmbeddedExtents( bool p_DisconnectExtents = true );
+	void removeEmbeddedExtents(bool p_DisconnectExtents = true);
 
-	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
 
-	virtual HRESULT UpdateOverlayIDs( SVExtentMultiLineStruct& p_rMultiLine ) override;
+	virtual HRESULT UpdateOverlayIDs(SVExtentMultiLineStruct& p_rMultiLine) override;
 
-	virtual bool createAllObjectsFromChild( SVObjectClass& rChildObject ) override;
+	virtual bool createAllObjectsFromChild(SVObjectClass& rChildObject) override;
 
-	virtual void connectChildObject( SVTaskObjectClass& rChildObject ) override;
+	virtual void connectChildObject(SVTaskObjectClass& rChildObject) override;
 
 private:
 	void init();
-	bool ValidateLocal(SvStl::MessageContainerVector *pErrorMessages=nullptr) const;
+	bool ValidateLocal(SvStl::MessageContainerVector *pErrorMessages = nullptr) const;
 
 protected:
 	SvOi::IToolSet* m_pCurrentToolSet;

@@ -44,10 +44,6 @@ protected:
 #pragma region Private Methods
 private:
 	void Initialize();
-
-	/// Return the next unused embedded GUID for the columns
-	/// \returns SVGUID
-	SVGUID getNextFreeEmbeddedColumGUID();
 #pragma endregion Private Methods
 
 #pragma region Member Variables

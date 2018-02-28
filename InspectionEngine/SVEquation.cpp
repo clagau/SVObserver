@@ -718,10 +718,10 @@ bool SVEquationClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	bool Result = __super::ResetObject(pErrorMessages);
 
 	// call Test()...( Rebuilds symbol table !!! )
-	if( HasCondition() && IsEnabled() )
+	if( Result && HasCondition() && IsEnabled() )
 	{
 		//In reset object call test without displaying error messages is done using the returned result
-		Result = Test( pErrorMessages).bPassed && Result;
+		Result = Test( pErrorMessages).bPassed;
 	}
 
 	return Result;

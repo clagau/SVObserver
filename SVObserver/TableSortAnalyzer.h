@@ -20,23 +20,23 @@
 class TableSortAnalyzer : public SVTaskObjectClass
 {
 #pragma region Constructor
-	SV_DECLARE_CLASS( TableSortAnalyzer );
+	SV_DECLARE_CLASS(TableSortAnalyzer);
 public:
-	TableSortAnalyzer( LPCTSTR ObjectName );
-	TableSortAnalyzer( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_TABLEANALYZER_SORT );
+	TableSortAnalyzer(LPCTSTR ObjectName);
+	TableSortAnalyzer(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_TABLEANALYZER_SORT);
 
 	virtual ~TableSortAnalyzer();
 #pragma endregion Constructor
 
 #pragma region Public Methods
 public:
-	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
-	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
+	virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure) override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
 protected:
-	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
@@ -44,14 +44,14 @@ private:
 	void Initialize();
 
 	/// Build the embedded object list for this task.
-	void	BuildEmbeddedObjectList();
+	void BuildEmbeddedObjectList();
 
 	/// Build the input object list for this task.
-	void BuildInputObjectList ();
+	void BuildInputObjectList();
 
 	/// Check if tmp-array is big enough and realloc if not.
 	/// \param sizeTmp [in] The needed minimum size of the tmp-array
-	void CheckAndResizeTmpArray( size_t sizeTmp );
+	void CheckAndResizeTmpArray(size_t sizeTmp);
 #pragma endregion Private Methods
 
 #pragma region Member Variables

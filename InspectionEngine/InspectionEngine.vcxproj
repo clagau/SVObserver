@@ -146,6 +146,7 @@
     <ClInclude Include="SVUnaryImageOperatorList.h" />
     <ClInclude Include="SVUpperThresholdEquation.h" />
     <ClInclude Include="SVUtilityIniClass.h" />
+    <ClInclude Include="TableAddColumnEquation.h" />
     <ClInclude Include="TableColumnEquation.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -212,6 +213,7 @@
     <ClCompile Include="SVUnaryImageOperatorList.cpp" />
     <ClCompile Include="SVUpperThresholdEquation.cpp" />
     <ClCompile Include="SVUtilityIniClass.cpp" />
+    <ClCompile Include="TableAddColumnEquation.cpp" />
     <ClCompile Include="TableColumnEquation.cpp" />
   </ItemGroup>
   <ItemGroup>

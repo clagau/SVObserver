@@ -34,6 +34,7 @@
 #include "SVMessage/SVMessage.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "InspectionCommands/SetObjectName.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -96,6 +97,31 @@ namespace SvOg
 			ASSERT(false);
 		}
 		return equationText;
+	}
+
+	std::string FormulaController::GetEquationName() const
+	{
+		std::string name;
+		typedef SvCmd::GetObjectName Command;
+		typedef std::shared_ptr<Command> CommandPtr;
+
+		CommandPtr commandPtr(new Command(m_EquationID));
+		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+		if (S_OK == hr)
+		{
+			name = commandPtr->GetName();
+		}
+		return name;
+	}
+
+	HRESULT FormulaController::SetEquationName(const std::string& rNewName)
+	{
+		typedef SvCmd::SetObjectName Command;
+		typedef std::shared_ptr<Command> CommandPtr;
+		CommandPtr commandPtr {new Command(m_EquationID, rNewName.c_str())};
+		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+		return cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 	}
 
 	void FormulaController::BuildSelectableItems()

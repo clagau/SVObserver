@@ -1167,6 +1167,7 @@ extern /*const*/ GUID EQAdjustSizePositionYResultGuid;
 extern /*const*/ GUID TableToolGuid;
 extern /*const*/ GUID TableTool_MaxRowGuid;
 extern /*const*/ GUID TableColumnEquationGuid;
+extern /*const*/ GUID TableAddColumnEquationGuid;
 extern /*const*/ GUID TableObjectGuid;
 extern /*const*/ GUID TableFillObjectGuid;
 extern /*const*/ GUID TableObject_NumberOfRowsGuid;
@@ -1205,11 +1206,13 @@ extern /*const*/ GUID RemoteInputUidGuid;
 ///////////////////////////////////////////////////
 extern /*const*/ GUID TableAnalyzerToolGuid;
 extern /*const*/ GUID TableCopyObjectGuid;
+extern /*const*/ GUID TableAnalyzerIndexObjectGuid;
 
 extern /*const*/ GUID TableAnaylzerSortGuid;
 extern /*const*/ GUID TableAnaylzerExcludeGuid;
 extern /*const*/ GUID TableAnaylzerLimitGuid;
 extern /*const*/ GUID TableAnaylzerSortIsASCGuid;
+extern /*const*/ GUID TableAnaylzerAddColumnGuid;
 extern /*const*/ GUID TableAnaylzerExcludeHighGuid;
 extern /*const*/ GUID TableAnaylzerExcludeHigh_LinkGuid;
 extern /*const*/ GUID TableAnaylzerExcludeLowGuid;

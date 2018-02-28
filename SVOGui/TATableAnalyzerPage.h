@@ -16,6 +16,7 @@
 #include "DataController.h"
 #include "ObjectSelectorController.h"
 #include "ISVPropertyPageDialog.h"
+#include "ObjectInterfaces\IFormulaController.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -54,6 +55,7 @@ namespace SvOg
 		void OnButtonClickExcludeHigh();
 		void OnButtonClickExcludeLow();
 		void OnButtonClickLimitValue();
+		void OnAddColumnFormula();
 
 		virtual BOOL OnKillActive() override;
 
@@ -86,6 +88,8 @@ namespace SvOg
 		/// Update the displayed property controls of the selected limit analyzer.
 		void setLimitProperties();
 
+		void setAddColumnProperties();
+
 		/// Set the data of the old (current) selection and if this failed, it display an error and reset the selection to this analyzer.
 		/// \returns HRESULT S_OK, if setting works.
 		HRESULT prepareSwitchOfAnalyzerSelection();
@@ -106,6 +110,8 @@ namespace SvOg
 		CButton m_ButtonExcludeHigh;
 		CButton m_ButtonExcludeLow;
 		CButton m_ButtonLimitValue;
+		CEdit m_EditAddColumnName;
+		CButton m_ButtonAddColumnFormula;
 		CBitmap m_downArrowBitmap;
 		ObjectSelectorController m_objectSelector;
 
@@ -119,7 +125,9 @@ namespace SvOg
 
 		typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
 		typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
-		std::shared_ptr<Controller> m_Values;
+		std::shared_ptr<Controller> m_pValues;
+
+		SvOi::IFormulaControllerPtr m_pSelectedAddEquationFormula;
 #pragma endregion Member Variables
 	};
 } //namespace SvOg

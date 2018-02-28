@@ -88,7 +88,7 @@ void TableObject::setSortContainer(const ValueObjectSortContainer& sortMap, SVRu
 	m_NumberOfRows.SetValue(static_cast<long>(sortMap.size()));
 }
 
-DoubleSortValueObject* TableObject::updateOrCreateColumn(const GUID& rEmbeddedId, int nameId, int arraysize)
+DoubleSortValuePtr TableObject::updateOrCreateColumn(const GUID& rEmbeddedId, int nameId, int arraysize)
 {
 	std::string newName = SvUl::LoadStdString(nameId);
 	std::vector<DoubleSortValuePtr>::const_iterator valueIter = std::find_if(m_ValueList.begin(), m_ValueList.end(), [&](const DoubleSortValuePtr& entry)->bool
@@ -98,7 +98,7 @@ DoubleSortValueObject* TableObject::updateOrCreateColumn(const GUID& rEmbeddedId
 	);
 	if (m_ValueList.end() != valueIter)
 	{
-		DoubleSortValueObject* pValueObject = valueIter->get();
+		DoubleSortValuePtr pValueObject = *valueIter;
 		if (nullptr == pValueObject)
 		{
 			try
@@ -188,7 +188,7 @@ SVObjectClass* TableObject::OverwriteEmbeddedObject(const GUID& rUniqueID, const
 		DoubleSortValueObject* pObject = nullptr;
 		// Construct new object...
 		SVObjectManagerClass::Instance().ConstructObject(DoubleSortValueObjectGuid, pObject);
-		RegisterEmbeddedObject( pObject, rEmbeddedID, _T(""), true, SvOi::SVResetItemTool );
+		RegisterEmbeddedObject( pObject, rEmbeddedID, pObject->GetName(), true, SvOi::SVResetItemTool );
 		m_ValueList.push_back(DoubleSortValuePtr{ pObject });
 	}
 
@@ -197,9 +197,10 @@ SVObjectClass* TableObject::OverwriteEmbeddedObject(const GUID& rUniqueID, const
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-DoubleSortValueObject* TableObject::createColumnObject(SVGUID embeddedID, LPCTSTR name, int arraySize)
+DoubleSortValuePtr TableObject::createColumnObject(SVGUID embeddedID, LPCTSTR name, int arraySize)
 {
 	DoubleSortValueObject* pObject = nullptr;
+	DoubleSortValuePtr pRetObject = nullptr;
 	// Construct new object...
 	SVObjectManagerClass::Instance().ConstructObject(DoubleSortValueObjectGuid, pObject);
 
@@ -207,7 +208,8 @@ DoubleSortValueObject* TableObject::createColumnObject(SVGUID embeddedID, LPCTST
 	{
 		RegisterEmbeddedObject( pObject, embeddedID, name, true, SvOi::SVResetItemTool );
 		pObject->SetArraySize(arraySize);
-		m_ValueList.push_back(DoubleSortValuePtr{ pObject });
+		pRetObject = DoubleSortValuePtr {pObject};
+		m_ValueList.push_back(pRetObject);
 	}
 	else
 	{
@@ -218,11 +220,12 @@ DoubleSortValueObject* TableObject::createColumnObject(SVGUID embeddedID, LPCTST
 		e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_createColumnValueObjectFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 		e.Throw();
 	}
-	return pObject;
+	return pRetObject;
 }
 
 void TableObject::UpdateColumnValueObject(int pos, std::string objectName, int maxArray)
 {
+	assert(0 <= pos && m_ValueList.size() > pos);
 	//value already exist, update the name and size if needed.
 	DoubleSortValueObject* pValueObject = m_ValueList[pos].get();
 	if (nullptr != pValueObject)
@@ -253,6 +256,23 @@ void TableObject::MoveValueColumn(int oldPos, int newPos)
 		m_ValueList.insert(m_ValueList.begin() + newPos, value);
 		MovedEmbeddedObject(value.get(), posObject.get());
 	}
+}
+
+SVGUID TableObject::getNextFreeEmbeddedColumGUID()
+{
+	for (int i = c_maxTableColumn - 1; i >= 0; --i)
+	{
+		const auto& it = std::find_if(m_embeddedList.begin(), m_embeddedList.end(), [&](const auto* pEntry)->bool
+		{
+			return (nullptr != pEntry && pEntry->GetEmbeddedID() == TableColumnValueObjectGuid[i]);
+		}
+		);
+		if (m_embeddedList.end() == it)
+		{	//GUID not used yet
+			return TableColumnValueObjectGuid[i];
+		}
+	}
+	return GUID_NULL;
 }
 #pragma endregion Protected Methods
 

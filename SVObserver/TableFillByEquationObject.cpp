@@ -150,21 +150,4 @@ void TableFillByEquationObject::Initialize()
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::TableObjectType;
 	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvDef::TableFillObjectType;
 }
-
-SVGUID TableFillByEquationObject::getNextFreeEmbeddedColumGUID()
-{
-	for (int i=0; i < c_maxTableColumn; ++i)
-	{
-		std::vector<DoubleSortValuePtr>::const_iterator it = std::find_if(m_ValueList.begin(), m_ValueList.end(), [&](const DoubleSortValuePtr& entry)->bool 
-		{ 
-			return (nullptr != entry.get() && entry->GetEmbeddedID() == TableColumnValueObjectGuid[i]); 
-		} 
-		);
-		if (m_ValueList.end() == it)
-		{	//GUID not used yet
-			return TableColumnValueObjectGuid[i];
-		}
-	}
-	return GUID_NULL;
-}
 #pragma endregion Private Methods

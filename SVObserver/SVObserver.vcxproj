@@ -456,6 +456,7 @@ echo %time%
     <ClCompile Include="SVVariantResultClass.cpp" />
     <ClCompile Include="SVVirtualCamera.cpp" />
     <ClCompile Include="SVWindowTool.cpp" />
+    <ClCompile Include="TableAddColumnAnalyzer.cpp" />
     <ClCompile Include="TableAnalyzerTool.cpp" />
     <ClCompile Include="TableCopyObject.cpp" />
     <ClCompile Include="TableExcludeAnalyzer.cpp" />
@@ -548,6 +549,7 @@ echo %time%
     <ClInclude Include="SVThreadInfoDlg.h" />
     <ClInclude Include="SVToolAdjustmentDialogSizePage.h" />
     <ClInclude Include="SVToolGrouping.h" />
+    <ClInclude Include="TableAddColumnAnalyzer.h" />
     <ClInclude Include="TableAnalyzerTool.h" />
     <ClInclude Include="TableCopyObject.h" />
     <ClInclude Include="TableExcludeAnalyzer.h" />

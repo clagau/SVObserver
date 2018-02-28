@@ -31,6 +31,25 @@ public:
 public:
 	void setSourecTable(TableObject* sourceTable) { m_pSourceTable = sourceTable; };
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
+
+	/// Add a new column to the table, which is add on to the copied column of the source table.
+	/// \param name [in] Name of the new column.
+	/// \returns DoubleSortValuePtr Pointer to the new column object.
+	DoubleSortValuePtr addNewColumn(LPCTSTR name);
+
+	/// Set a column to the new column list at the result table object.
+	/// \param pColumn [in] The object which should be set.
+	/// \returns DoubleSortValuePtr Shared pointer of the set object.
+	DoubleSortValuePtr setNewColumn(const SVObjectClass* pColumn);
+	
+	/// Remove a add on column form the table.
+	/// \param pColumn [in] Column object to be removed.
+	void removeNewColumn(const DoubleSortValuePtr pColumn);
+
+	/// Change the embeddedId of a copy column to a new ID.
+	/// \param rOldId [in] Old embeddedID.
+	/// \param rNewId [in] New embeddedID.
+	void changeEmbeddedId(const SVGUID& rOldId, const SVGUID& rNewId);
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -42,10 +61,29 @@ protected:
 private:
 	void Initialize();
 
+	/// Remove all unused column objects.
+	void RemoveUnusedColumn();
+
+	/// Reset all column objects which are copy from source table.
+	/// \returns int Position of the last copy object in the m_ValueList.
+	int ResetCopyColumn();
+
+	/// Reset all new column objects (which are not from the source table.)
+	/// \param valueListPos [in] This is the position of the last entry before the new columns.
+	/// \param arraySize [in] Array of the columns.
+	/// \param pErrorMessages [in,out] Error message vector.
+	/// \returns bool if successfully.
+	bool ResetNewColumns(int valueListPos, int arraySize, SvStl::MessageContainerVector * pErrorMessages);
+
+	/// Send to other tool which use this object a message that the embeddedID has changed.
+	/// \param oldEmbeddedGuid [in] old embedded ID.
+	/// \param newEmbeddedGuid [in] new embedded ID.
+	void sendChangedEmbeddedIDToUser(SVGUID oldEmbeddedGuid, SVGUID newEmbeddedGuid);
 #pragma endregion Private Methods
 
 #pragma region Member Variables
 private:
 	TableObject* m_pSourceTable;
+	std::vector<DoubleSortValuePtr> m_NewValueList;
 #pragma endregion Member Variables
 };

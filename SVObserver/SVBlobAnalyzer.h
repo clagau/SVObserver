@@ -166,7 +166,7 @@ public:
 	SVEnumerateValueObjectClass  m_evoBlobType;
 
 	TableObject* m_pResultTable;
-	DoubleSortValueObject* m_ResultTableColumnValueObjects[SvOi::SV_NUMBER_OF_BLOB_FEATURES];
+	DoubleSortValuePtr m_ResultTableColumnValueObjects[SvOi::SV_NUMBER_OF_BLOB_FEATURES];
 
 protected:
 	virtual HRESULT onCollectOverlays(SVImageClass* p_pImage, SVExtentMultiLineStructVector& p_rMultiLineArray ) override;

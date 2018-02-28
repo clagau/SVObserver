@@ -45,6 +45,22 @@ public:
 
 	void setSortContainer(const ValueObjectSortContainer& sortMap, SVRunStatusClass& rRunStatus) {m_pResultTable->setSortContainer(sortMap, rRunStatus);};
 	const ValueObjectSortContainer&  getSortContainer() const { return m_pResultTable->getSortContainer();};
+
+	/// Add a new column to the table, which is add on to the copied column of the source table.
+	/// \param name [in] Name of the new column.
+	/// \returns DoubleSortValuePtr Pointer to the new column object.
+	DoubleSortValuePtr addNewColumn(LPCTSTR name);
+
+	/// Set a column to the new column list at the result table object.
+	/// \param pColumn [in] The object which should be set.
+	/// \returns DoubleSortValuePtr Shared pointer of the set object.
+	DoubleSortValuePtr setNewColumn(const SVObjectClass* pColumn);
+
+	/// Remove a add on column form the table.
+	/// \param pColumn [in] Column object to be removed.
+	void removeNewColumn(const DoubleSortValuePtr pColumn);
+
+	virtual void OnEmbeddedIDChanged(const SVObjectClass* pOwnerObject, const SVGUID& rOldEmbeddedID, const SVGUID& rNewEmbeddedID) override;
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -56,15 +72,20 @@ private:
 	bool ValidateLocal( SvStl::MessageContainerVector * pErrorMessages ) const;
 
 	/// Initialized the class.
-	void	LocalInitialize();
+	void LocalInitialize();
 
 	/// Build the input object list for this tool.
-	void	BuildInputObjectList();
+	void BuildInputObjectList();
 #pragma endregion Private Methods
 
 #pragma region Member Variables
 private:
 	TableCopyObject* m_pResultTable;
 	SVInObjectInfoStruct m_sourceTableObjectInfo;
+	// Index Counter...
+	// Can be used in Equation for e.g. Add-Column-Analyzer.
+	// NOTE:
+	// If Equation supports vector calculations also in future time it can be replaced.
+	SVLongValueObjectClass	m_Index;
 #pragma endregion Member Variables
 };
