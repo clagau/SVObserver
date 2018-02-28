@@ -22,8 +22,10 @@
 #include "SVRemoteCtrl.h"
 #include <Thread>
 #include <boost/asio/io_service.hpp>
-#include "RunReApi/ClientFrontEndApi.h"
+#include "WebsocketLibrary/clientservice.h"
+#include "SVRPCLibrary/RPCClient.h"
 #pragma endregion Includes
+
 
 typedef CComPtr<ISVRemoteCtrl> RemoteCtrlPtr;
 typedef CComPtr<ISVErrorObject> ErrorPtr;
@@ -118,11 +120,9 @@ protected:
 
 	SVJsonCommandHelper m_Command;
 	NotifyFunctor m_Notifier;
+	std::unique_ptr<SVRPC::RPCClient> m_pRpcClient;
+	std::unique_ptr<RRWS::ClientService> m_pClientService;
 
-	std::vector<std::shared_ptr<std::thread>> m_Threads;
-	boost::asio::io_service m_io_service;
-	std::unique_ptr<boost::asio::io_service::work> m_pioServiceWork;
-	std::unique_ptr<RRApi::ClientFrontEndApi> m_pFrontEndApi;
 
 
 };

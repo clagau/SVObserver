@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+
+package SVRPC;
+
+// Intentionally modeled after HTTP status codes
+// See https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
+enum ErrorCode
+{
+	Unknown = 0;
+	BadRequest = 400;
+	Unauthorized = 401;
+	Forbidden = 403;
+	NotFound = 404;
+	Locked = 423;
+	InternalError = 500;
+	NotImplemented = 501;
+	BadGateway = 502;
+	ServiceUnavailable = 503;
+	Timeout = 504;
+}
+
+message Error
+{
+	ErrorCode error_code = 1;
+	string message = 2;
+	google.protobuf.Any payload = 3;
+}
+
+enum MessageType
+{
+	Request = 0;
+	Response = 1;
+	ErrorResponse = 2;
+	StreamRequest = 3;
+	StreamResponse = 4;
+	StreamErrorResponse = 5;
+	StreamFinish = 6;
+}
+
+message Envelope
+{
+	uint64 transaction_id = 1;
+	MessageType type = 2;
+	Error error = 3;
+	google.protobuf.Any payload = 4;
+	uint32 payload_type = 5;
+}

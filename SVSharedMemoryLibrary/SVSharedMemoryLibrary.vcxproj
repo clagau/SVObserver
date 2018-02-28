@@ -88,6 +88,7 @@
     <ClCompile Include="MonitorEntry.cpp" />
     <ClCompile Include="MonitorListCpy.cpp" />
     <ClCompile Include="MonitorListStore.cpp" />
+    <ClCompile Include="ShareControl.cpp" />
     <ClCompile Include="SharedDataContainer.cpp" />
     <ClCompile Include="SharedDataStore.cpp" />
     <ClCompile Include="SharedMemReader.cpp" />
@@ -102,7 +103,9 @@
     <ClCompile Include="SVSharedMemorySettings.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="LastResponseData.h" />
     <ClInclude Include="MonitorListStore.h" />
+    <ClInclude Include="ShareControl.h" />
     <ClInclude Include="SMParameterStruct.h" />
     <ClInclude Include="MLCpyContainer.h" />
     <ClInclude Include="MLInspectionInfo.h" />

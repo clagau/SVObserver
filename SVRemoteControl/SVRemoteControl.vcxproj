@@ -130,7 +130,7 @@
     </ResourceCompile>
     <Link>
       <RegisterOutput>true</RegisterOutput>
-      <AdditionalDependencies>jsonLib.lib;$(SolutionDir)FreeImage\$(Platform)\FreeImage.lib;gdiplus.lib;runReApi.lib;libprotobufd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>jsonLib.lib;$(SolutionDir)FreeImage\$(Platform)\FreeImage.lib;gdiplus.lib;WebsocketLibrary.lib;libprotobufd.lib;SVRPCLibrary.lib;SVHTTPLibrary.lib;SVProtobuf.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).ocx</OutputFile>
       <ModuleDefinitionFile>.\SVRemoteControl.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -175,7 +175,7 @@
     </ResourceCompile>
     <Link>
       <RegisterOutput>true</RegisterOutput>
-      <AdditionalDependencies>jsonLib.lib;$(SolutionDir)FreeImage\$(Platform)\FreeImage.lib;gdiplus.lib;runReApi.lib;libprotobufd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>jsonLib.lib;$(SolutionDir)FreeImage\$(Platform)\FreeImage.lib;gdiplus.lib;libprotobufd.lib;WebsocketLibrary.lib;SVRPCLibrary.lib;SVHTTPLibrary.lib;SVProtobuf.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).ocx</OutputFile>
       <ModuleDefinitionFile>.\SVRemoteControl.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -227,7 +227,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalDependencies>jsonLib.lib;$(SolutionDir)FreeImage\$(Platform)\FreeImage.lib;gdiplus.lib;runReApi.lib;libprotobuf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>jsonLib.lib;$(SolutionDir)FreeImage\$(Platform)\FreeImage.lib;gdiplus.lib;WebsocketLibrary.lib;libprotobuf.lib;SVRPCLibrary.lib;SVHTTPLibrary.lib;SVProtobuf.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration)\$(Platform)\bin\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <Version>
       </Version>
@@ -273,7 +273,7 @@
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <AdditionalDependencies>jsonLib.lib;$(SolutionDir)FreeImage\$(Platform)\FreeImage.lib;gdiplus.lib;runReApi.lib;libprotobuf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>jsonLib.lib;$(SolutionDir)FreeImage\$(Platform)\FreeImage.lib;gdiplus.lib;WebsocketLibrary.lib;libprotobuf.lib;SVRPCLibrary.lib;SVHTTPLibrary.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration)\$(Platform)\bin\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
@@ -346,7 +346,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="registry.bin" />
     <None Include="SVDataDefObject.rgs" />
     <None Include="SVDataDefObjectList.rgs" />
     <None Include="SVErrorObject.rgs" />
@@ -385,7 +384,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AutoBuild.h" />
-    <ClInclude Include="Header.h" />
     <ClInclude Include="JsonDataHelper.h" />
     <ClInclude Include="Logging.h" />
     <ClInclude Include="ProtoBufGetter.h" />

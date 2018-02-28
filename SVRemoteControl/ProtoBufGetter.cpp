@@ -13,69 +13,69 @@
 #include "SVRemoteControl.h"
 #include "SVValueObject.h"
 #include "SVImageObject.h"
-#include "RunReApi\ClientFrontEndApi.h"
+#include "WebsocketLibrary/clientservice.h"
+#include "WebsocketLibrary/RunRequest.inl"
 #include "SVValueObjectList.h"
 
-CComVariant  GetComVariant(const ::RRApi::Variant& var)
+CComVariant  GetComVariant(const SVRPC::Variant& var)
 {
 	CComVariant comvar;
-
-	if (var.has_bool_value())
+	switch (var.value_case())
 	{
-		comvar.boolVal = static_cast<BOOL>(var.bool_value());
-		comvar.vt = VT_BOOL;
-		return comvar;
-	}
-	else if (var.has_int32_value())
-	{
-		comvar.intVal = var.int32_value();
-		comvar.vt = VT_I4;
-		return comvar;
-	}
-	else if (var.has_int64_value())
-	{
-		comvar.llVal = var.int64_value();
-		comvar.vt = VT_I8;
-		return comvar;
-
-	}
-	else if (var.has_uint32_value())
-	{
-		comvar.uintVal = var.uint32_value();
-		comvar.vt = VT_UI4;
-		return comvar;
-	}
-	else if (var.has_uint64_value())
-	{
-		comvar.ullVal = var.uint64_value();
-		comvar.vt = VT_UI8;
-		return comvar;
-	}
-	else if (var.has_string_value())
-	{
-
-		_bstr_t bstr(var.string_value().c_str());
-		comvar.bstrVal = bstr.Detach();
-		comvar.vt = VT_BSTR;
-		return comvar;
-	}
-	else if (var.has_double_value())
-	{
-		comvar.dblVal = var.double_value();
-		comvar.vt = VT_R8;
-		return comvar;
-
-	}
-	else if (var.has_float_value())
-	{
-		comvar.fltVal = var.float_value();
-		comvar.vt = VT_R4;
-		return comvar;
+		case SVRPC::Variant::kBoolValue:
+		{
+			comvar.boolVal = static_cast<BOOL>(var.bool_value());
+			comvar.vt = VT_BOOL;
+			return comvar;
+		}
+		case SVRPC::Variant::kInt32Value:
+		{
+			comvar.intVal = var.int32_value();
+			comvar.vt = VT_I4;
+			return comvar;
+		}
+		case SVRPC::Variant::kUint32Value:
+		{
+			comvar.uintVal = var.uint32_value();
+			comvar.vt = VT_UI4;
+			return comvar;
+		}
+		case SVRPC::Variant::kInt64Value:
+		{
+			comvar.llVal = var.int64_value();
+			comvar.vt = VT_I8;
+			return comvar;
+		}
+		case SVRPC::Variant::kUint64Value:
+		{
+			comvar.ullVal = var.uint64_value();
+			comvar.vt = VT_UI8;
+			return comvar;
+		}
+		case SVRPC::Variant::kStringValue:
+		{
+			_bstr_t bstr(var.string_value().c_str());
+			comvar.bstrVal = bstr.Detach();
+			comvar.vt = VT_BSTR;
+			return comvar;
+		}
+		case SVRPC::Variant::kDoubleValue:
+		{
+			comvar.dblVal = var.double_value();
+			comvar.vt = VT_R8;
+			return comvar;
+		}
+		case SVRPC::Variant::kFloatValue:
+		{
+			comvar.fltVal = var.float_value();
+			comvar.vt = VT_R4;
+			return comvar;
+		}
 	}
 	return comvar;
 }
 
-CComPtr<ISVImageObject> GetImageObjectPtr(int trigger, const std::string& name, const RRApi::CurImageId &imId, RRApi::ClientFrontEndApi* pFrontEndApi)
+CComPtr<ISVImageObject> GetImageObjectPtr(int trigger, const std::string& name, const RRWS::CurImageId &imId, RRWS::ClientService* pClientService)
 {
 	CComObject<SVImageObject> *pImageObject(0);
 	CComObject<SVImageObject>::CreateInstance(&pImageObject);
@@ -84,11 +84,12 @@ CComPtr<ISVImageObject> GetImageObjectPtr(int trigger, const std::string& name, 
 	_bstr_t bname(name.c_str());
 	pImageObject->put_Name(bname);
 	pImageObject->put_TriggerCount(trigger);
-	pImageObject->SetClientFrontEndApi(pFrontEndApi);
+	pImageObject->SetClientService(pClientService);
 	pImageObject->SetImageId(imId);
 	return pio;
 }
-CComPtr<ISVImageObject> GetImageObjectPtr(int trigger, const std::string& name, const RRApi::GetImageFromCurIdResponse& resp)
+
+CComPtr<ISVImageObject> GetImageObjectPtr(int trigger, const std::string& name, const RRWS::GetImageFromCurIdResponse& resp)
 {
 	CComObject<SVImageObject> *pImageObject(0);
 	CComObject<SVImageObject>::CreateInstance(&pImageObject);
@@ -97,18 +98,16 @@ CComPtr<ISVImageObject> GetImageObjectPtr(int trigger, const std::string& name, 
 	_bstr_t bname(name.c_str());
 	pImageObject->put_Name(bname);
 	pImageObject->put_TriggerCount(trigger);
-	//@Todo[MEC][8.00] [10.11.2017] avoid copying 
-	if (resp.has_status() && resp.status() == RRApi::IsValid)
+	//@Todo[MEC][8.00] [10.11.2017] avoid copying ??
+	if (resp.imagedata().rgb().length() > 0)
 	{
-		if (resp.imagedata().has_rgb())
-		{
-			BYTE *buff = new BYTE[resp.imagedata().rgb().length()];
-			memcpy(buff, resp.imagedata().rgb().c_str(), resp.imagedata().rgb().length());
-			boost::shared_array<BYTE> b(buff);
-			pImageObject->SetLen((ULONG)resp.imagedata().rgb().length());
-			pImageObject->SetDIB(b);
-		}
+		BYTE *buff = new BYTE[resp.imagedata().rgb().length()];
+		memcpy(buff, resp.imagedata().rgb().c_str(), resp.imagedata().rgb().length());
+		boost::shared_array<BYTE> b(buff);
+		pImageObject->SetLen((ULONG)resp.imagedata().rgb().length());
+		pImageObject->SetDIB(b);
 	}
+
 	else
 	{
 		pImageObject->SetLen(0);
@@ -118,7 +117,7 @@ CComPtr<ISVImageObject> GetImageObjectPtr(int trigger, const std::string& name, 
 	return pio;
 
 }
-CComPtr<ISVValueObject> GetValueObjectPtr(int trigger, const std::string& name, const ::RRApi::Variant& var)
+CComPtr<ISVValueObject> GetValueObjectPtr(int trigger, const std::string& name, const SVRPC::Variant& var)
 {
 	CComObject<SVValueObject>* pValueObject(0);
 	CComObject<SVValueObject>::CreateInstance(&pValueObject);
@@ -132,34 +131,36 @@ CComPtr<ISVValueObject> GetValueObjectPtr(int trigger, const std::string& name, 
 }
 
 
-CComPtr<ISVProductItems> GetProductPtr(RRApi::ClientFrontEndApi &FrontEndApi, const RRApi::GetProductResponse& resp)
+CComPtr<ISVProductItems> GetProductPtr(RRWS::ClientService& rClientService, const RRWS::Product &rResp)
 {
 	CComObject<SVProductItems> *pProd = 0;
 	CComObject<SVProductItems>::CreateInstance(&pProd);
 	CComPtr<ISVProductItems> ppi(pProd);
-	bool bpImageName = resp.images_size() == resp.imagenames_size();
-	bool bpValueName = resp.values_size() == resp.valuenames_size();
+	bool bpImageName = rResp.images_size() == rResp.imagenames_size();
+	bool bpValueName = rResp.values_size() == rResp.valuenames_size();
 
-	for (int v = 0; v < resp.values_size(); v++)
+	for (int v = 0; v < rResp.values_size(); v++)
 	{
-		pProd->AddValue(GetValueObjectPtr(resp.trigger(), resp.valuenames(v), resp.values(v)));
+		pProd->AddValue(GetValueObjectPtr(rResp.trigger(), rResp.valuenames(v), rResp.values(v)));
 	}
-	for (int i = 0; i < resp.images_size(); i++)
+	for (int i = 0; i < rResp.images_size(); i++)
 	{
 		bool InsertAllBitmapNow(false);
 		if (InsertAllBitmapNow)
 		{
-			RRApi::GetImageFromCurIdRequest request;
-			request.mutable_id()->set_imagestore(resp.images(i).imagestore());
-			request.mutable_id()->set_imageindex(resp.images(i).imageindex());
-			request.mutable_id()->set_slotindex(resp.images(i).slotindex());
-			RRApi::GetImageFromCurIdResponse Imageresp = FrontEndApi.GetImageFromCurId(request).get();
-			pProd->AddImage(GetImageObjectPtr(resp.trigger(), resp.imagenames(i), Imageresp));
+			RRWS::GetImageFromCurIdRequest request;
+			request.mutable_id()->set_imagestore(rResp.images(i).imagestore());
+			request.mutable_id()->set_imageindex(rResp.images(i).imageindex());
+			request.mutable_id()->set_slotindex(rResp.images(i).slotindex());
+			RRWS::GetImageFromCurIdResponse Imageresp  = 
+				RRWS::runRequest(rClientService, &RRWS::ClientService::getImageFromCurId, std::move(request)).get();
+
+			pProd->AddImage(GetImageObjectPtr(rResp.trigger(), rResp.imagenames(i), Imageresp));
 		}
 		else
 		{
 			pProd->AddImage(
-				GetImageObjectPtr(resp.trigger(), resp.imagenames(i), resp.images(i), &FrontEndApi)
+				GetImageObjectPtr(rResp.trigger(), rResp.imagenames(i), rResp.images(i), &rClientService)
 			);
 		}
 
@@ -169,34 +170,32 @@ CComPtr<ISVProductItems> GetProductPtr(RRApi::ClientFrontEndApi &FrontEndApi, co
 
 }
 
-FailList GetFailList(RRApi::ClientFrontEndApi &FrontEndApi, const RRApi::GetFailStatusResponse& resp)
+FailList GetFailList(RRWS::ClientService &rClientService , const RRWS::GetFailStatusResponse& resp)
 {
 	FailList list;
-	int TriggerCount = resp.productresponse_size();
+	int TriggerCount = resp.products_size();
 	list.Create(TriggerCount, 0);
 	for (int i = 0; i < TriggerCount; i++)
 	{
-		list[i] = GetValueObjectListPtr(resp.productresponse(i));
+		list[i] = GetValueObjectListPtr(resp.products(i));
 		//PrintProductResponse(resp.productresponse(i));
 	}
 	return list;
 }
 
-CComPtr<ISVValueObjectList> GetValueObjectListPtr(const RRApi::GetProductResponse& productResp)
+CComPtr<ISVValueObjectList> GetValueObjectListPtr(const RRWS::Product& rProduct)
 {
 	CComObject<SVValueObjectList> *vl = 0;
 	CComObject<SVValueObjectList>::CreateInstance(&vl);
 	CComPtr<ISVValueObjectList> vlp(vl);
-	if (productResp.has_status())
+	if (rProduct.status() != RRWS::IsValid)
 	{
-		if (productResp.status() != RRApi::IsValid)
-		{
 			return vlp;
-		}
+		
 	}
-	for (int v = 0; v < productResp.values_size() && v < productResp.valuenames_size(); v++)
+	for (int v = 0; v < rProduct.values_size() && v < rProduct.valuenames_size(); v++)
 	{
-		vl->Add(GetValueObjectPtr(productResp.trigger(), productResp.valuenames(v), productResp.values(v)));
+		vl->Add(GetValueObjectPtr(rProduct.trigger(), rProduct.valuenames(v), rProduct.values(v)));
 	}
 	return vlp;
 }

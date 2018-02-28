@@ -7,6 +7,7 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVMessage\SVMessage.h"
 #include "SVUtilityLibrary/StringHelper.h"
+
 #pragma endregion Includes
 
 namespace SvSml

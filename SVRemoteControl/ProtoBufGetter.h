@@ -12,20 +12,20 @@
 #include <atlcomcli.h>
 #pragma warning( push )
 #pragma warning( disable : 4800 ) 
-#include "RunReApi\RunReApi.pb.h"
+#include "SVProtobuf/RunRe.pb.h"
 #pragma warning( pop )
-#include "RunReApi\ClientFrontEndApi.h"
+#include "WebsocketLibrary/clientservice.h"
 
-CComVariant  GetComVariant(const ::RRApi::Variant& var);
-CComPtr<ISVProductItems> GetProductPtr(RRApi::ClientFrontEndApi &FrontEndApi, const RRApi::GetProductResponse& resp);
-CComPtr<ISVValueObject> GetValueObjectPtr(int trigger, const std::string& name, const ::RRApi::Variant& var);
+CComVariant  GetComVariant(const SVRPC::Variant& var);
+CComPtr<ISVProductItems> GetProductPtr(RRWS::ClientService& rClientService, const RRWS::Product& resp);
+CComPtr<ISVValueObject> GetValueObjectPtr(int trigger, const std::string& name, const SVRPC::Variant& var);
 /// Function return an ImageObject with a bitmap
-CComPtr<ISVImageObject> GetImageObjectPtr(int trigger, const std::string& name, const RRApi::GetImageFromCurIdResponse& resp);
+CComPtr<ISVImageObject> GetImageObjectPtr(int trigger, const std::string& name, const RRWS::GetImageFromCurIdResponse& resp);
 /// Function return an ImageObject with a Bitmap ID
-CComPtr<ISVImageObject> GetImageObjectPtr(int trigger, const std::string& name, const RRApi::CurImageId &imId, RRApi::ClientFrontEndApi* pFrontEndApi);
+CComPtr<ISVImageObject> GetImageObjectPtr(int trigger, const std::string& name, const RRWS::CurImageId &imId, RRWS::ClientService* pClientService);
 
 typedef CComSafeArray<VARIANT> FailList;
-FailList GetFailList(RRApi::ClientFrontEndApi &FrontEndApi, const RRApi::GetFailStatusResponse& resp);
-CComPtr<ISVValueObjectList> GetValueObjectListPtr(const RRApi::GetProductResponse& productResp);
+FailList GetFailList(RRWS::ClientService& clientService, const RRWS::GetFailStatusResponse& resp);
+CComPtr<ISVValueObjectList> GetValueObjectListPtr(const RRWS::Product &productResp);
 
 //FailList GetFailList(RRApi::ClientFrontEndApi &FrontEndApi, const RRApi::GetFailStatusResponse& resp);

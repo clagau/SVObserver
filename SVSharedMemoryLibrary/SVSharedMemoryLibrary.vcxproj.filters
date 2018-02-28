@@ -43,6 +43,9 @@
     <ClCompile Include="MonitorListStore.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ShareControl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -106,6 +109,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MonitorListStore.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LastResponseData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ShareControl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

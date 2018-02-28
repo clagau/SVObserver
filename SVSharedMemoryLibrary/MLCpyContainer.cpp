@@ -9,7 +9,9 @@
 #include "MLcpyContainer.h"
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "Definitions/StringTypeDef.h"
-#include "RunReApi/RunReApi.pb.h"
+#pragma warning (push ,2)
+#include "SVProtoBuf/RunRe.pb.h"
+#pragma warning (pop)
 
 namespace SvSml
 {
@@ -226,7 +228,7 @@ namespace SvSml
 
 	}
 
-	void MLCpyContainer::QueryListName(const RRApi::QueryListNameRequest&, RRApi::QueryListNameResponse& resp) const
+	bool  MLCpyContainer::QueryListName(const RRWS::QueryListNameRequest&, RRWS::QueryListNameResponse& resp, SVRPC::Error& err) const
 	{
 		for (auto& mlc : m_MonitorListCpyMap)
 		{
@@ -235,11 +237,13 @@ namespace SvSml
 				*(resp.add_listname()) = mlc.first;
 			}
 		}
+		return true;
 	}
 
-	void MLCpyContainer::QueryListItem(const RRApi::QueryListItemRequest& request, RRApi::QueryListItemResponse& resp) const
+	bool MLCpyContainer::QueryListItem(const RRWS::QueryListItemRequest& request, RRWS::QueryListItemResponse& resp, SVRPC::Error& err) const
 	{
 		
+		bool result {true};
 		if (0 == request.name().size())
 		{
 			for (const auto& pair : m_MonitorListCpyMap)
@@ -260,10 +264,14 @@ namespace SvSml
 			}
 			else
 			{
-				resp.set_status(RRApi::InvalidMonitorName);
+				SVRPC::Error err;
+				err.set_error_code(SVRPC::ErrorCode::NotFound);
+				err.set_message("MonitorList with given name does not exist or is not active");
+				result = false;
 			}
 
 		}
+		return result;
 
 	}
 	

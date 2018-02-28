@@ -16,6 +16,7 @@
 #include "SVImageConvertorGDI.h"
 #include "Logging.h"
 #include "SVSocketLibrary/SVSocketError.h"
+#include "WebsocketLibrary/RunRequest.inl"
 #pragma endregion Includes
 
 #pragma comment(lib,"gdiplus")
@@ -376,14 +377,17 @@ HRESULT SVImageObject::FetchImage()
 	SetLen(0);
 	try
 	{
-		if (nullptr != m_pFrontEndApi  && m_pFrontEndApi->IsConnected())
+		if (nullptr != m_pClientService)  // && m_pClientService->IsConnected())
 		{
-			RRApi::GetImageFromCurIdRequest request;
+			RRWS::GetImageFromCurIdRequest request;
 			request.mutable_id()->set_imagestore(m_CurImId.imagestore());
 			request.mutable_id()->set_imageindex(m_CurImId.imageindex());
 			request.mutable_id()->set_slotindex(m_CurImId.slotindex());
-			RRApi::GetImageFromCurIdResponse resp = m_pFrontEndApi->GetImageFromCurId(request).get();
-			if (resp.has_status() && resp.status() == RRApi::IsValid && resp.imagedata().has_rgb())
+			
+			auto resp = RRWS::runRequest(*m_pClientService, &RRWS::ClientService::getImageFromCurId, std::move(request)).get();
+
+
+			if (resp.imagedata().rgb().length() >0)
 			{
 				BYTE *buff = new BYTE[resp.imagedata().rgb().length()];
 				memcpy(buff, resp.imagedata().rgb().c_str(), resp.imagedata().rgb().length());
@@ -393,7 +397,7 @@ HRESULT SVImageObject::FetchImage()
 				hr = S_OK;
 			}
 		}
-		else if (m_pFrontEndApi == nullptr)
+		else if (m_pClientService == nullptr)
 		{
 				hr = INET_E_NO_IMAGE_SOCKET;
 		}

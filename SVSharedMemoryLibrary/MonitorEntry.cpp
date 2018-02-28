@@ -3,7 +3,7 @@
 #include "MonitorEntry.h"
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "SVMatroxLibrary\MatroxImageProps.h"
-#include "SVProtoBuf\BasicStructure.pb.h"
+
 #include "SVProtoBuf\BasicStructureHelper.h"
 
 #pragma endregion Includes
@@ -273,7 +273,7 @@ namespace SvSml
 		data.BuildFromProtoMessage(rmesMonitorEntry.entrydata());
 	}
 
-	void MonitorEntry::AddListItem(RRApi::QueryListItemResponse& resp) const
+	void MonitorEntry::AddListItem(RRWS::QueryListItemResponse& resp) const
 	{
 		if (IsImage())
 		{

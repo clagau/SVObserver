@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package SvSml;
-///for Serializing class MonitorEntryData
+//for Serialization class MonitorEntryData
 message MesMonitorEntryData 
 {
 	uint32 InspectionStoreId =1;
@@ -23,7 +23,7 @@ message MesMonitorEntryData
 	int64 ByteSize= 17;		
 }
 
-///for Serializing class MonitorEntry
+///for Serialization class MonitorEntry
 message MesMonitorEntry
 {
 	bytes GUID =1;
@@ -31,7 +31,7 @@ message MesMonitorEntry
 	MesMonitorEntryData EntryData =3;
 }
  
-///for Serializing class MonitorListCpy
+///for Serialization class MonitorListCpy
 message MesMonitorListCpy
 {
 	string MonitorlistName =1;
@@ -42,7 +42,7 @@ message MesMonitorListCpy
 	repeated MesMonitorEntry	 MonitorEntries = 6;
 }
 
-///for Serializing all Monitorlists
+///for Serialization all Monitorlists
 message MesMLCpyContainer
 {
 	repeated MesMonitorListCpy MonitorListCpy =1;

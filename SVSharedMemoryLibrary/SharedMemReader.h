@@ -34,14 +34,14 @@ namespace SvSml
 			return m_MLContainer.IsActiveMonitorList(Monitorlistname);
 		}
 
-		void QueryListName(const RRApi::QueryListNameRequest& req, RRApi::QueryListNameResponse& resp) const
+		bool QueryListName(const RRWS::QueryListNameRequest& req, RRWS::QueryListNameResponse& resp, SVRPC::Error& err) const
 		{
-			return m_MLContainer.QueryListName(req, resp);
+			return m_MLContainer.QueryListName(req, resp, err);
 		}
 		
-		void QueryListItem(const RRApi::QueryListItemRequest& req, RRApi::QueryListItemResponse& resp) const
+		bool  QueryListItem(const RRWS::QueryListItemRequest& req, RRWS::QueryListItemResponse& resp, SVRPC::Error& err) const
 		{
-			return m_MLContainer.QueryListItem(req, resp);
+			return m_MLContainer.QueryListItem(req, resp, err);
 		}
 
 		DWORD GetVersion() const

@@ -16,7 +16,9 @@
 #pragma warning( disable : 4800 ) 
 #include "SVprotobuf\MonitorListStore.pb.h"
 #pragma warning(pop)
-#include "RunReApi\RunReApi.pb.h"
+#pragma warning (push ,2)
+#include "SVProtobuf\RunRe.pb.h"
+#pragma warning (pop)
 #include "Definitions\SVObjectTypeInfoStruct.h"
 
 //Moved to precompiled header: #include <vector>
@@ -73,7 +75,7 @@ namespace SvSml
 		void BuildProtoMessage(MesMonitorEntry &rMesMonitorEntry) const;
 		///set values from serializing 
 		void BuildFromProtoMessage(const MesMonitorEntry &rMesMonitorEntry);
-		void AddListItem(RRApi::QueryListItemResponse& rResp) const;
+		void AddListItem(RRWS::QueryListItemResponse& rResp) const;
 		bool IsImage() const { return (data.ObjectType == SvDef::SVImageObjectType); };
 	public:	
 		GUID m_Guid;   //Object Guid 

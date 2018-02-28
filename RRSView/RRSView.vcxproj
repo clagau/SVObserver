@@ -73,7 +73,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SVMatroxLibrary.lib;SVSharedMemoryLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVUtilityLibrary.lib;RPCRT4.lib;SvProtoBuf.lib;libprotobufd.lib;RunReApi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SVMatroxLibrary.lib;SVSharedMemoryLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVUtilityLibrary.lib;RPCRT4.lib;SvProtoBuf.lib;libprotobufd.lib;WebsocketLibrary.lib;SVRPCLibrary.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration)\$(Platform)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Midl>
@@ -103,7 +103,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration)\$(Platform)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SVMatroxLibrary.lib;SVSharedMemoryLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVUtilityLibrary.lib;RPCRT4.lib;SvProtoBuf.lib;libprotobuf.lib;RunReApi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SVMatroxLibrary.lib;SVSharedMemoryLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVUtilityLibrary.lib;RPCRT4.lib;SvProtoBuf.lib;libprotobuf.lib;WebsocketLibrary.lib;SVRPCLibrary.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>

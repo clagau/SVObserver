@@ -14,7 +14,9 @@
 #include "SVProductFilterEnum.h"
 #include "MLInspectionInfo.h"
 #include "MLPPQInfo.h"
-#include "RunReApi/RunReApi.pb.h"
+#pragma warning (push ,2)
+#include "SVProtoBuf/RunRe.pb.h"
+#pragma warning (pop)
 
 
 #pragma endregion Includes
@@ -61,7 +63,7 @@ namespace SvSml
 		bool BuildProtoMessage(MesMonitorListCpy& refMessage) const;
 		void BuildFromProtoMessage(const MesMonitorListCpy& refMessage);
 		
-		void QueryListItem(const RRApi::QueryListItemRequest& rRequest, RRApi::QueryListItemResponse& rResp) const;
+		void QueryListItem(const RRWS::QueryListItemRequest& rRequest, RRWS::QueryListItemResponse& rResp) const;
 		
 		const static DWORD ImageBufferHeaderSize; //<Constant additional size needed fore every imagebuffer
 	public:

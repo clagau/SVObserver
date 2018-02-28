@@ -15,7 +15,11 @@
 #include "MonitorListCpy.h"
 #include "Definitions\SVIMCommand.h"
 #include "Definitions\StringTypeDef.h"
-#include "RunReApi\RunReApi.pb.h"
+
+#pragma warning (push ,2)
+#include "SVProtoBuf\envelope.pb.h"
+#include "SVProtoBuf\RunRe.pb.h"
+#pragma warning (pop)
 #pragma endregion Includes
 
 
@@ -65,8 +69,8 @@ namespace SvSml
 		///Fill the class from protobufmessage
 		void BuildFromProtoMessage(const MesMLCpyContainer& rMesMLCpyContainer);
 		
-		void QueryListName(const RRApi::QueryListNameRequest& rReq, RRApi::QueryListNameResponse& rResp) const;
-		void QueryListItem(const RRApi::QueryListItemRequest& rReq, RRApi::QueryListItemResponse& resp) const;
+		bool  QueryListName(const RRWS::QueryListNameRequest& rReq, RRWS::QueryListNameResponse& rResp, SVRPC::Error& err) const;
+		bool  QueryListItem(const RRWS::QueryListItemRequest& rReq, RRWS::QueryListItemResponse& resp, SVRPC::Error& err) const;
 		
 
 	//private:

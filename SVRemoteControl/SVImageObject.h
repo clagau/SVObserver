@@ -12,9 +12,9 @@
 #include <boost/shared_array.hpp>
 #pragma warning( push )
 #pragma warning( disable : 4800 ) 
-#include "RunReApi\RunReApi.pb.h"
+#include "WebsocketLibrary/clientservice.h"
+#include "SVProtobuf/RunRe.pb.h"
 #pragma warning( pop )
-#include "RunReApi/ClientFrontEndApi.h"
 #pragma endregion Includes
 
 
@@ -92,8 +92,8 @@ public:
 	const std::string & GetUrl() const { return url; }
 	void SetUrl(const std::string & u) { url = u; }
 	void SetImageSok(SvSol::SVClientSocket<SvSol::UdpApi>*  sok) {m_pImageSok = sok;}
-	void SetClientFrontEndApi(RRApi::ClientFrontEndApi* pFrontEndApi) { m_pFrontEndApi = pFrontEndApi; }
-	void SetImageId(const RRApi::CurImageId& CurImageId) 
+	void SetClientService(RRWS::ClientService*  pClientService) { m_pClientService = pClientService; }
+	void SetImageId(const RRWS::CurImageId& CurImageId)
 	{
 		m_CurImId = CurImageId;
 	}
@@ -116,8 +116,9 @@ private:
 	ULONG len =0;
 	SVImageFormatsEnum format = BMP;
 	SvSol::SVClientSocket<SvSol::UdpApi>*  m_pImageSok = nullptr;
-	RRApi::CurImageId m_CurImId;
-	RRApi::ClientFrontEndApi* m_pFrontEndApi = nullptr;
+	RRWS::CurImageId m_CurImId;
+	RRWS::ClientService* m_pClientService  = nullptr;
+	
 
 
 };

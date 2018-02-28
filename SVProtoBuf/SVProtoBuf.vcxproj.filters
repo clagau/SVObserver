@@ -33,12 +33,38 @@
     <ClCompile Include="MonitorListStore.pb.cc">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="RunRe.pb.cc">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="variant.pb.cc">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="envelope.pb.cc">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="InspectionCommands.proto" />
-    <CustomBuild Include="BasicStructure.proto" />
-    <CustomBuild Include="TriggerRecordController.proto" />
-    <CustomBuild Include="MonitorListStore.proto" />
+    <CustomBuild Include="BasicStructure.proto">
+      <Filter>Ressourcendateien</Filter>
+    </CustomBuild>
+    <CustomBuild Include="InspectionCommands.proto">
+      <Filter>Ressourcendateien</Filter>
+    </CustomBuild>
+    <CustomBuild Include="MonitorListStore.proto">
+      <Filter>Ressourcendateien</Filter>
+    </CustomBuild>
+    <CustomBuild Include="TriggerRecordController.proto">
+      <Filter>Ressourcendateien</Filter>
+    </CustomBuild>
+    <CustomBuild Include="RunRe.proto">
+      <Filter>Ressourcendateien</Filter>
+    </CustomBuild>
+    <CustomBuild Include="variant.proto">
+      <Filter>Ressourcendateien</Filter>
+    </CustomBuild>
+    <CustomBuild Include="envelope.proto">
+      <Filter>Ressourcendateien</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="InspectionCommands.pb.h">
@@ -57,6 +83,15 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="MonitorListStore.pb.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="RunRe.pb.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="variant.pb.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="envelope.pb.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,0 +1,223 @@
+syntax = "proto3";
+
+import "variant.proto";
+
+package RRWS;
+
+message RunRejectMessages
+{
+	oneof message
+	{
+		SetModeRequest setModeRequest = 1;
+		SetModeResponse setModeResponse = 2;
+		GetVersionRequest getVersionRequest = 3;
+		GetVersionResponse getVersionResponse = 4;
+		QueryListNameRequest queryListNameRequest = 5;
+		QueryListNameResponse queryListNameResponse = 6;
+		QueryListItemRequest queryListItemRequest = 7;
+		QueryListItemResponse queryListItemResponse = 8;
+		GetProductRequest getProductRequest = 9;
+		GetProductResponse getProductResponse = 10;
+		GetImageFromCurIdRequest getImageFromCurIdRequest = 11;
+		GetImageFromCurIdResponse getImageFromCurIdResponse = 12;
+		GetImageStreamFromCurIdRequest getImageStreamFromCurIdRequest = 13;
+		GetImageStreamFromCurIdResponse getImageStreamFromCurIdResponse = 14;
+		GetFailStatusRequest getFailStatusRequest = 15;
+		GetFailStatusResponse getFailStatusResponse = 16;
+		GetItemsRequest getItemsRequest = 17;
+		GetItemsResponse getItemsResponse = 18;
+		GetImageStreamRequest getImageStreanRequest = 19;
+	}
+}
+
+///The entries in the monitor list can belong to one or more of the following groups:
+/// there are also free entries that do not belong to Productitem RejectCondition and FailstatusList
+enum ListType
+{
+	ProductItem = 0;
+	RejectCondition = 1;
+	FailStatus = 2;
+	All =3;
+}
+
+///General errors should be reportete by the errorcode
+//State is usefull for states wich are not errors, or if only a part of bigger message is not valid 
+enum State
+{
+	IsValid = 0;
+	NotFound =1;
+	Unchanged =2;
+} 
+
+
+message GetVersionRequest 
+{
+	bool trigger_timeout = 1;
+}
+
+message GetVersionResponse 
+{
+	string version = 1;
+}
+
+message SetModeRequest 
+{
+	int32 mode = 1;
+}
+message SetModeResponse 
+{
+	int32 old_mode = 1;
+	int32 new_mode = 2;
+}
+
+//query active monitorlist 
+message QueryListNameRequest
+{
+}
+
+//a list with all active monitorlist.
+//The monitor lists contain all metadata for the existing data and images in the shared memory.
+// There can be a maximum of one monitor list per PPQ. 
+message QueryListNameResponse
+{
+	repeated string ListName = 1;
+}
+
+//one Item in the list 
+//there is a 1:1 relationship between name and (offset, image Store).  
+//Therefore, if this message is used as a parameter in a request, only the name or the IDs must be filled in. 
+//type and size are additional information 
+message ListValueItemDefinition
+{
+	 string name =1;
+	 int32 type =2;
+	 int32 size =3;
+	 uint32 StoreId=4;
+	 uint32 Offset=5;
+}
+
+//one Item in the list for Images
+message ListImageItemDefinition
+{
+	string name =1;
+	int32 sizeX =2;
+	int32 sizeY =3;  
+	uint32 StoreId=4;
+	uint32 ImageId=5;
+}
+
+//Query the Definition of the list.If name is empty, the response is from all active Monitorlist
+message QueryListItemRequest
+{
+	string name =1;
+	ListType type =2;
+	bool queryImages = 3;
+	bool  queryValues =4;
+}
+
+message QueryListItemResponse
+{
+	repeated ListValueItemDefinition  ValueDefinition = 2;
+	repeated ListImageItemDefinition  ImageDefinition = 3;
+}
+
+message CurImageId
+{
+	int32 ImageStore = 1;
+	int32 ImageIndex = 2;
+	int32 SlotIndex = 3 ;
+}
+
+message Product
+{
+	uint32 Trigger=1;
+	repeated SVRPC.Variant Values = 2;
+	repeated CurImageId Images =3;
+	repeated string ImageNames = 4;
+	repeated string ValueNames =5; 
+	State Status =6;
+}
+
+//Name is the Monitorlistname. 
+//if the Trigger is -1, the values for the last trigger are returned
+//if  Triggercount = -1 and the last trigger is the PreviousTrigger the status in the response is unchanged
+//and no values are retrieved 
+message GetProductRequest
+{
+	int32 Trigger = 1;
+	int32 PeviousTrigger = 2;
+	string Name =3;
+	bool NameInResponse = 4;
+	bool bReject =5;
+}
+
+// In product response are an array of image ids
+// it is ensured that these images are available at least until GetProduct is called again 
+message GetProductResponse
+{
+	Product product = 1;
+} 
+
+message Image
+{
+	bytes rgb = 1;	
+	uint32 w = 2;
+	uint32 h = 3;
+} 
+//request the image for an Id from GetProduct or GetRejectResponse 
+message GetImageFromCurIdRequest
+{
+	CurImageId Id = 1;
+}
+message GetImageFromCurIdResponse
+{
+	Image ImageData = 1;
+}
+
+message GetImageStreamFromCurIdRequest
+{
+	uint32 count = 1;
+	CurImageId Id = 2;
+}
+message GetImageStreamFromCurIdResponse
+{
+	Image ImageData = 1;
+}
+
+//If the Response would be the values from LastRejectTriggers
+//the response has the state unchanged 
+message GetFailStatusRequest
+{
+	string name = 1;
+	bool NameInResponse = 2;
+	repeated int32 PreviousRejects =3;
+}
+message GetFailStatusResponse
+{
+	repeated Product products = 1;
+	State Status =2;
+}
+
+///Request Values or Images for triggercount =-1 the last value is retrived 
+//If the Response would be the values from LastTriggercount
+//the response has the state unchanged 
+message GetItemsRequest
+{
+	uint32 Trigger = 1;
+	uint32 PreviousTrigger=2; 
+	repeated ListValueItemDefinition  valueDefs=3;
+	repeated ListImageItemDefinition  imageDefs= 4;
+}
+
+message GetItemsResponse
+{
+	uint32 triggercount = 1;
+	repeated SVRPC.Variant Values = 2;
+	repeated Image Images = 3;
+}
+
+message GetImageStreamRequest
+{
+	 uint32 count = 1;
+	 ListImageItemDefinition imageDef =2;
+}

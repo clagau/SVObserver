@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Logging.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="ClientService.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Logging.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ClientService.h" />
+    <ClInclude Include="Definition.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Resource">
+      <UniqueIdentifier>{aa3ab8e8-1a42-4113-9e45-5fe296f673b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headerdateien">
+      <UniqueIdentifier>{f18b032b-57bf-4a57-8f32-2198ee82e9d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien">
+      <UniqueIdentifier>{4e3ee55e-33a1-4848-b504-314b3b3e24c1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="RunRequest.inl" />
+  </ItemGroup>
+</Project>

@@ -22,8 +22,9 @@
 #include "Logging.h"
 #include "SVJsonParser.h"
 #include "JsonDataHelper.h"
-#include "RunReApi\Definition.h"
 #include "ProtoBufGetter.h"
+#include "WebsocketLibrary\RunRequest.inl"
+#include "WebsocketLibrary\Definition.h"
 #pragma endregion Includes
 
 static const unsigned long FiveSeconds = 5;
@@ -79,18 +80,18 @@ Json::Value SVJsonCmdBuilder::MkJson<CComVariant>(const CComVariant & var)
 {
 	switch (var.vt)
 	{
-	case VT_BSTR:
-		return Json::Value(SVStringConversions::to_utf8(_bstr_t(var.bstrVal)));
-	case VT_I4:
-		return Json::Value(var.iVal);
-	case VT_UI4:
-		return Json::Value(var.uiVal);
-	case VT_BOOL:
-		return Json::Value(static_cast<bool>(var.boolVal != VARIANT_FALSE));
-	case VT_R8:
-		return Json::Value(var.dblVal);
-	default:
-		return Json::Value();
+		case VT_BSTR:
+			return Json::Value(SVStringConversions::to_utf8(_bstr_t(var.bstrVal)));
+		case VT_I4:
+			return Json::Value(var.iVal);
+		case VT_UI4:
+			return Json::Value(var.uiVal);
+		case VT_BOOL:
+			return Json::Value(static_cast<bool>(var.boolVal != VARIANT_FALSE));
+		case VT_R8:
+			return Json::Value(var.dblVal);
+		default:
+			return Json::Value();
 	}
 }
 
@@ -256,14 +257,10 @@ SVControlCommands::SVControlCommands(NotifyFunctor p_Func, bool connectToRRS)
 	m_ClientSocket.SetDataReceivedCallback(boost::bind(&SVControlCommands::OnControlDataReceived, this, _1));
 	if (connectToRRS)
 	{
-		m_pioServiceWork = std::make_unique<boost::asio::io_service::work>(m_io_service);
+		m_pRpcClient = std::make_unique<SVRPC::RPCClient>("127.0.0.0", RRWS::Default_Port);
+		auto request_timeout = boost::posix_time::seconds(2);
 
-		for (int i = 0; i < RRApi::Default_NrOfIoThreads; ++i)
-		{
-			m_Threads.push_back(std::make_unique<std::thread>(boost::bind(&boost::asio::io_service::run, &m_io_service)));
-		}
-
-		m_pFrontEndApi = RRApi::ClientFrontEndApi::Init(m_io_service);
+		m_pClientService = std::make_unique<RRWS::ClientService>(*m_pRpcClient.get(), request_timeout);
 	}
 }
 
@@ -271,19 +268,16 @@ SVControlCommands::SVControlCommands(NotifyFunctor p_Func, bool connectToRRS)
 SVControlCommands::~SVControlCommands()
 {
 	m_ClientSocket.Disconnect();
-	if (nullptr != m_pFrontEndApi.get())
-	{
-		m_pFrontEndApi->DisConnect();
-	}
+
 }
 
 HRESULT SVControlCommands::SetConnectionData(const _bstr_t& p_rServerName, unsigned short p_CommandPort, long timeout)
 {
 	HRESULT hr = S_OK;
 	m_ClientSocket.Disconnect();
-	if (m_pFrontEndApi.get())
+	if (m_pRpcClient.get())
 	{
-		m_pFrontEndApi->DisConnect();
+		m_pRpcClient->Disconnect();
 	}
 	m_Connected = false;
 	m_ServerName = p_rServerName;
@@ -291,13 +285,16 @@ HRESULT SVControlCommands::SetConnectionData(const _bstr_t& p_rServerName, unsig
 
 	if (0 < m_ServerName.length())
 	{
-		if (m_pFrontEndApi.get())
-			m_pFrontEndApi->Connect(RRApi::Default_Port, static_cast<char*>(m_ServerName));
+		if (m_pRpcClient.get())
+			m_pRpcClient->Connect(static_cast<char*>(m_ServerName), RRWS::Default_Port);
 		SvSol::SVSocketError::ErrorEnum err = SvSol::SVSocketError::Success;
 		if ((err = m_ClientSocket.BuildConnection(m_ServerName, svr::cmdPort, timeout)) == SvSol::SVSocketError::Success)
 		{
-			if (m_pFrontEndApi.get())
-				m_RRSConnected = m_pFrontEndApi->IsConnected();
+			if (m_pRpcClient.get())
+			{
+				m_pRpcClient->waitForConnect();
+				m_RRSConnected = m_pRpcClient->isConnected();
+			}
 			m_Connected = true;
 		}
 		else
@@ -359,13 +356,15 @@ HRESULT SVControlCommands::GetVersion(_bstr_t& p_rSVObserverVersion, _bstr_t& p_
 		if (m_ClientSocket.IsConnected())
 		{
 			p_rRunRejectServerVersion = _bstr_t(L"N/A");
-			if (m_pFrontEndApi.get())
+			if (m_pClientService.get())
 			{
-				auto version = m_pFrontEndApi->GetVersion(RRApi::GetVersionRequest()).get();
-				if (version.has_version())
-				{
-					p_rRunRejectServerVersion = _bstr_t(version.version().c_str());
-				}
+				RRWS::GetVersionRequest req;
+				req.set_trigger_timeout(true);
+				auto version = RRWS::runRequest(*m_pClientService.get(), &RRWS::ClientService::getVersion, std::move(req)).get();
+
+
+				p_rRunRejectServerVersion = _bstr_t(version.version().c_str());
+
 			}
 		}
 		p_rStatus = rsp.m_Status;
@@ -1020,7 +1019,7 @@ static HRESULT ExtractBase64Contents(std::istream& is, std::stringstream& ss)
 				return hr;
 			}
 		}
-		POINT contentsPos = { -1, -1 };
+		POINT contentsPos = {-1, -1};
 		std::string filename;
 		findToken(tokens, is, SVRC::result::contents, contentsPos);
 		findToken(tokens, is, SVRC::result::filePath, filename);
@@ -1296,10 +1295,11 @@ HRESULT SVControlCommands::CheckSocketConnection()
 		SVLOG(l_Status);
 	}
 
-	if (l_Status == S_OK && m_pFrontEndApi.get() && !m_pFrontEndApi->IsConnected())
+	if (l_Status == S_OK &&  m_pRpcClient.get() && m_pClientService.get() && !m_pRpcClient->isConnected())
 	{
-		m_pFrontEndApi->Connect(m_RunServerPort, static_cast<char*>(m_ServerName));
-		m_RRSConnected = m_pFrontEndApi->IsConnected();
+		m_pRpcClient->Connect(static_cast<char*>(m_ServerName), m_RunServerPort);
+		m_pRpcClient->waitForConnect();
+		m_RRSConnected = m_pRpcClient->isConnected();
 	}
 
 	m_Connected = l_Status == S_OK;
@@ -1602,46 +1602,38 @@ HRESULT SVControlCommands::GetProduct(bool bGetReject, const _bstr_t & listName,
 		{
 			throw std::invalid_argument("missing Monitorlistname");
 		}
-		if(0 == m_pFrontEndApi)
+		if (0 == m_pRpcClient.get() || false == m_pRpcClient->isConnected())
 		{
 			throw std::invalid_argument("Not connected To RRServer");
 		}
 
-		RRApi::GetProductRequest ProductRequest;
+		RRWS::GetProductRequest ProductRequest;
 		ProductRequest.set_name(static_cast<const char*>(listName));
-		ProductRequest.set_trigger(( -1 < triggerCount ) ? triggerCount : -1);
+		ProductRequest.set_trigger((-1 < triggerCount) ? triggerCount : -1);
 		ProductRequest.set_pevioustrigger(-1);
+		ProductRequest.set_breject(bGetReject);
 
 		ProductRequest.set_nameinresponse(true);
-		RRApi::GetProductResponse resp;
-		if (bGetReject)
+		RRWS::GetProductResponse resp =
+			RRWS::runRequest(*m_pClientService.get(), &RRWS::ClientService::getProduct, std::move(ProductRequest)).get();
+
+		p_rStatus.hResult = (HRESULT)resp.product().status();
+		if (resp.product().status() == RRWS::IsValid)
 		{
-			resp = m_pFrontEndApi->GetReject(ProductRequest).get();
+			Status = S_OK;
+			GetProductPtr(*m_pClientService.get(), resp.product())->QueryInterface(IID_ISVProductItems, reinterpret_cast<void**>(currentViewItems));
 		}
 		else
 		{
-			resp = m_pFrontEndApi->GetProduct(ProductRequest).get();
+			p_rStatus.errorText = SVStringConversions::to_utf16(RRWS::State_Name(resp.product().status()));
 		}
-		if (resp.has_status())
-		{
-			p_rStatus.hResult = (HRESULT)resp.status();
-			if (resp.status() == RRApi::IsValid)
-			{
-				Status = S_OK;
-				GetProductPtr(*(m_pFrontEndApi.get()), resp)->QueryInterface(IID_ISVProductItems, reinterpret_cast<void**>(currentViewItems));
-			}
-			else
-			{
-				p_rStatus.errorText = SVStringConversions::to_utf16(RRApi::State_Name(resp.status()));
-			}
 
-		}
 		SVLOG(Status);
 	}
 	HANDLE_EXCEPTION(Status, p_rStatus)
 
 
-	return Status;
+		return Status;
 }
 HRESULT SVControlCommands::GetProduct(const _bstr_t & listName, long triggerCount, long imageScale, ISVProductItems ** currentViewItems, SVCommandStatus& p_rStatus)
 {
@@ -1680,41 +1672,42 @@ HRESULT SVControlCommands::GetFailStatus(const _bstr_t & listName, CComVariant &
 	HRESULT Status = S_OK;
 	try
 	{
-		RRApi::GetFailStatusRequest FailstatusRequest;
+
 		if (0 == listName.length())
 		{
 			throw std::invalid_argument("missing Monitorlistname");
 		}
-		if (0 == m_pFrontEndApi)
+		if (0 == m_pRpcClient.get() || false == m_pRpcClient->isConnected())
 		{
 			throw std::invalid_argument("Not connected To RRServer");
 		}
+
+		RRWS::GetFailStatusRequest FailstatusRequest;
 		FailstatusRequest.set_name(static_cast<const char*>(listName));
 
 		FailstatusRequest.set_nameinresponse(true);
-		RRApi::GetFailStatusResponse resp;
-		resp = m_pFrontEndApi->GetFailStatus(FailstatusRequest).get();
-		if (resp.has_status())
-		{
-			p_rStatus.hResult = (HRESULT)resp.status();
-			if (resp.status() == RRApi::IsValid)
-			{
-				Status = S_OK;
-				CComVariant variant = GetFailList(*m_pFrontEndApi.get(), resp);
-				values.Attach(&variant);
-			}
-			else
-			{
-				p_rStatus.errorText = SVStringConversions::to_utf16(RRApi::State_Name(resp.status()));
-			}
+		RRWS::GetFailStatusResponse resp
+			= RRWS::runRequest(*m_pClientService.get(), &RRWS::ClientService::getFailStatus, std::move(FailstatusRequest)).get();
 
+		p_rStatus.hResult = (HRESULT)resp.status();
+		if (resp.status() == RRWS::IsValid)
+		{
+			Status = S_OK;
+			CComVariant variant = GetFailList(*m_pClientService.get(), resp);
+			values.Attach(&variant);
 		}
+		else
+		{
+			p_rStatus.errorText = SVStringConversions::to_utf16(RRWS::State_Name(resp.status()));
+		}
+
+
 		SVLOG(Status);
 	}
 	HANDLE_EXCEPTION(Status, p_rStatus)
 		return Status;
 }
-		
+
 
 
 HRESULT SVControlCommands::ShutDown(SVShutdownOptionsEnum options, SVCommandStatus& p_rStatus)

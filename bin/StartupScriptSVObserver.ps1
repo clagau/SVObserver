@@ -1,5 +1,4 @@
 $MTXsrvName = "Matrox GigE Vision Assistant Service"
-$RRSsrvName = "Run Reject Server"
 $waitLoop=0
 $maxLoop=30
 $WaitTimeMs=500
@@ -67,11 +66,9 @@ if ($LastExitCode -ne 0) {
 
 
 
-#stop-service $RRSsrvName
-restart-service $RRSsrvName
 
 $MTXservicePrior = Get-Service $MTXsrvName 
-$RRSservicePrior = Get-Service $RRSsrvName 
+
 
 # make a loop until V-drive is ready and Matrox service is started
 do{
@@ -79,12 +76,11 @@ do{
   Start-Sleep -m $WaitTimeMs
   $booleanVDrive = (New-Object System.IO.DriveInfo("V:")).DriveType -ne 'NoRootDirectory'
   $booleanMatroxService = $MTXservicePrior.status -eq "Running"
-  $booleanRRSService = $RRSservicePrior.status -eq "Running"
-  Write-Progress -activity "Initialize SVObserver" -status "Progress: ($waitLoop / $maxLoop)" -PercentComplete (($waitLoop / $maxLoop)  * 100)
-  echo "Waiting Loop $waitLoop for Matrox $booleanMatroxService, RRS $booleanRRSService and V-Drive $booleanVDrive"
+ Write-Progress -activity "Initialize SVObserver" -status "Progress: ($waitLoop / $maxLoop)" -PercentComplete (($waitLoop / $maxLoop)  * 100)
+  echo "Waiting Loop $waitLoop for Matrox $booleanMatroxService,  V-Drive $booleanVDrive"
 }
 # Test until timout or (V-Drive ready and Martox service ready)
-while($waitLoop -ne $maxLoop -and ($booleanVDrive -eq $false -or $booleanMatroxService -eq $false -or $booleanRRSService -eq $false))
+while($waitLoop -ne $maxLoop -and ($booleanVDrive -eq $false -or $booleanMatroxService -eq $false ))
 if ($booleanVDrive -eq $false){
   write-eventlog -logname Application -source SVException -eventID 13 -entrytype Warning -message "The V-drive could not be initialized in time"  -Category 0
   echo "Could not initialize V-Drive"
@@ -92,14 +88,13 @@ if ($booleanVDrive -eq $false){
   if ($booleanMatroxService -eq $false) {
     write-eventlog -logname Application -source SVException -eventID 25 -entrytype Warning -message "The Matrox service could not be started in time"  -Category 0
     echo "Could not start Matrox Service"
-  } else {
-    if ($booleanRRSService -eq $false) {
-        write-eventlog -logname Application -source SVException -eventID 1 -entrytype Warning -message "The RRS service could not be started in time"  -Category 0
-        echo "Could not start RRS Service"
-    } else {
-        echo "Everything is fine"
-    }
-  }
+  } 
+  else 
+  {
+    echo "Everything is fine"
+	}
 }
+
 C:\SVObserver\bin\SVObserver.exe
+start-process "C:\SVObserver\bin\RunRejectServer.exe" 
 start-process "C:\SVObserver\bin\SyncSystemTime.bat" -WindowStyle Minimized

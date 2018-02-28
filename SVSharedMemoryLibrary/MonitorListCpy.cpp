@@ -5,8 +5,7 @@
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "Definitions/SVObjectTypeInfoStruct.h"
-#pragma warning( push )
-#pragma warning( disable : 4800 ) 
+#pragma warning (push ,2)
 #include "SVPRotobuf\MonitorListStore.pb.h"
 #pragma warning(pop)
 namespace SvSml
@@ -261,7 +260,7 @@ namespace SvSml
 
 	}
 
-	void MonitorListCpy::QueryListItem(const RRApi::QueryListItemRequest& request, RRApi::QueryListItemResponse& resp) const
+	void MonitorListCpy::QueryListItem(const RRWS::QueryListItemRequest& request, RRWS::QueryListItemResponse& resp) const
 	{
 		if (!m_IsActive)
 		{
@@ -271,15 +270,15 @@ namespace SvSml
 		const MonitorEntries*  pMonitorEntriesImages{ nullptr };
 		switch (request.type())
 		{
-		case RRApi::ProductItem:
+		case RRWS::ProductItem:
 			pMonitorEntries =  &(m_MonitorEntries[ListType::productItemsData]);
 			pMonitorEntriesImages = &(m_MonitorEntries[ListType::productItemsImage]);
 			break;
-		case RRApi::RejectCondition:
+		case RRWS::RejectCondition:
 			pMonitorEntries = &(m_MonitorEntries[ListType::rejectCondition]);
 			break;
 
-		case RRApi::FailStatus:
+		case RRWS::FailStatus:
 			pMonitorEntries = &(m_MonitorEntries[ListType::failStatus]);
 			break;
 		}
