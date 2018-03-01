@@ -341,7 +341,7 @@ namespace SvOg {
 		m_Grid.SetFixedRowCount( cHeaderSize );
 		m_Grid.SetFixedColumnCount( 0 );
 		m_Grid.SetRowResize( FALSE );
-		m_Grid.SetColumnResize( FALSE );
+		m_Grid.SetColumnResize( true );
 		m_Grid.AllowReorderColumn( false );
 		m_Grid.EnableDragAndDrop( FALSE );
 		m_Grid.SetEditable( true );
