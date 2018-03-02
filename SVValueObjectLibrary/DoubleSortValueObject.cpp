@@ -190,5 +190,9 @@ void DoubleSortValueObject::LocalInitialize()
 {
 	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::DoubleSortValueObjectType;
 	SetTypeName( _T("Decimal") );
+
+	//normally the DoubleSortValueObject is a result value and should not be print. 
+	//If a parameter should be printed, it has to be set after creating.
+	SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
 }
 #pragma endregion Private Methods
