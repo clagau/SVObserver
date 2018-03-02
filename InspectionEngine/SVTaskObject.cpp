@@ -1856,10 +1856,6 @@ void SVTaskObjectClass::RemoveEmbeddedObject(SVObjectClass* pObjectToRemove )
 		SVObjectClass* pObject = *Iter;
 		if( nullptr != pObject && pObject == pObjectToRemove )
 		{
-			if (pObject->IsCreated())
-			{
-				pObject->CloseObject();
-			}
 			m_embeddedList.erase( Iter );
 			break;
 		}
