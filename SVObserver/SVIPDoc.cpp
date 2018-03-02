@@ -103,6 +103,7 @@
 #include "SVOGui/TextDefinesSvOg.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "Definitions/StringTypeDef.h"
+#include "SVMFCControls/SVFileDialog.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -153,6 +154,8 @@ BEGIN_MESSAGE_MAP(SVIPDoc, CDocument)
 	ON_COMMAND(ID_EDIT_EDITTOOLSETCONDITION, OnEditToolSetCondition)
 	ON_COMMAND(ID_RESULTS_PICKER, OnResultsPicker)
 	ON_COMMAND(ID_RESULTS_TABLE_PICKER, OnResultsTablePicker)
+	ON_COMMAND(ID_SAVE_RESULTS_TO_FILE, OnSaveResultsToFile)
+	ON_COMMAND(ID_SAVE_RESULTSTABLE_TO_FILE, OnSaveTableResultsToFile)
 	ON_COMMAND(ID_PUBLISHED_RESULTS_PICKER, OnPublishedResultsPicker)
 	ON_COMMAND(ID_PUBLISHED_RESULT_IMAGES_PICKER, OnPublishedResultImagesPicker)
 	ON_COMMAND(ID_ADD_LOADIMAGETOOL, OnAddLoadImageTool)
@@ -1671,6 +1674,174 @@ void SVIPDoc::OnResultsTablePicker()
 	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
 	{
 		SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
+	}
+}
+
+void SVIPDoc::OnSaveResultsToFile()
+{
+	static TCHAR Filter[] = _T("CSV Files (*.csv)|*.csv||");
+	SvMc::SVFileDialog dlg(false, true, nullptr, nullptr, 0, Filter, nullptr);
+	dlg.m_ofn.lpstrTitle = _T("Select File");
+	if (dlg.DoModal() == IDOK)
+	{
+		CFile file;
+		BOOL bResult = file.Open(dlg.GetPathName(), CFile::modeCreate | CFile::modeReadWrite | CFile::shareDenyNone, nullptr);
+
+		if (bResult)
+		{
+			std::string tmpText;
+			SVResultDefinitionDeque ResultDefinitions;
+			SVIPResultData ResultData;
+			GetResultData(ResultData);
+			GetResultDefinitions(ResultDefinitions);
+
+			for (int i = 0; i < 4; i++)
+			{
+				tmpText += SvUl::LoadStdString(IDS_RESULTVIEW_COLUMN_NAME0 + i) + ";";
+			}
+			tmpText += "\n";
+			file.Write(tmpText.c_str(), static_cast<int> (tmpText.size()));
+
+			for (int i = 0; i < static_cast<int> (ResultDefinitions.size()); ++i)
+			{
+				std::string Name;
+				std::string NameToType;
+				std::string ItemIndex;
+				std::string Value;
+				//std::string Color(_T(""));
+
+				SVIPResultItemDefinition& l_rDef = ResultDefinitions[i];
+
+				SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject(l_rDef.GetObjectID());
+
+				if (nullptr != l_pObject)
+				{
+					if (l_rDef.GetIndexPresent())
+					{
+						if (0 <= l_rDef.GetIndex())
+						{
+							Name = SvUl::Format(_T("%s[%d]"), l_pObject->GetName(), l_rDef.GetIndex() + 1);
+						}
+						else
+						{
+							Name = SvUl::Format(_T("%s[]"), l_pObject->GetName());
+						}
+					}
+					else
+					{
+						Name = l_pObject->GetName();
+					}
+					NameToType = l_pObject->GetObjectNameToObjectType(SvDef::SVToolObjectType);
+				}
+
+				ItemIndex = SvUl::Format(_T("%d"), i);
+
+				SVIPResultData::SVResultDataMap::const_iterator l_Iter = ResultData.m_ResultData.find(l_rDef);
+
+				if (l_Iter != ResultData.m_ResultData.end())
+				{
+					Value = l_Iter->second.GetValue().c_str();
+					//Color = SvUl::Format(_T("0X%X6"), l_Iter->second.GetColor());
+
+					if (l_Iter->second.IsIOTypePresent())
+					{
+						ItemIndex.clear();
+
+						if (l_Iter->second.GetIOType() == IO_DIGITAL_INPUT)
+						{
+							NameToType = SvUl::LoadStdString(IDS_OBJECTNAME_DIGITAL_INPUT);
+						}
+						else if (l_Iter->second.GetIOType() == IO_REMOTE_INPUT)
+						{
+							NameToType = SvUl::LoadStdString(IDS_OBJECTNAME_REMOTE_INPUT);
+						}
+					}
+				}
+
+				tmpText = Name + ";" /*+ Color + ";"*/ + Value + "; " + NameToType + "; " + ItemIndex + "\n";
+				file.Write(tmpText.c_str(), static_cast<int> (tmpText.size()));
+			}
+
+			std::string TimeText = SvUl::Format(_T("%.3f ms ( %.3f ms )"), ResultData.m_ToolSetEndTime * 1000, ResultData.m_ToolSetAvgTime * 1000);
+			tmpText = _T("Toolset Time;") + TimeText + ";" + GetCompleteToolSetName() + "\n";
+			file.Write(tmpText.c_str(), static_cast<int> (tmpText.size()));
+			double dTime = ResultData.m_TriggerDistance / 1000.0;
+			if (dTime != 0.0)
+			{
+				TimeText = SvUl::Format(_T("%.3f / sec (%.3f / min)"), 1.0 / dTime, 1.0 / dTime * 60.0);
+			}
+			else
+			{
+				TimeText = _T("");
+			}
+			tmpText = _T("Complete Processes per Second;") + TimeText + ";" + GetCompleteToolSetName() + "\n";
+			file.Write(tmpText.c_str(), static_cast<int> (tmpText.size()));
+			file.Close();
+		}
+		else
+		{
+			SvDef::StringVector msgList;
+			msgList.push_back(std::string {dlg.GetPathName()});
+			SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WriteCSVFileFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10058);
+		}
+	}
+}
+
+void SVIPDoc::OnSaveTableResultsToFile()
+{
+	static TCHAR Filter[] = _T("CSV Files (*.csv)|*.csv||");
+	SvMc::SVFileDialog dlg(false, true, nullptr, nullptr, 0, Filter, nullptr);
+	dlg.m_ofn.lpstrTitle = _T("Select File");
+	if (dlg.DoModal() == IDOK)
+	{
+		CFile file;
+		BOOL bResult = file.Open(dlg.GetPathName(), CFile::modeCreate | CFile::modeReadWrite | CFile::shareDenyNone, nullptr);
+
+		if (bResult)
+		{
+			std::string tmpText;
+			SVResultDefinitionDeque ResultDefinitions;
+			SVIPResultData ResultData;
+			GetResultData(ResultData);
+			GetResultDefinitions(ResultDefinitions);
+
+			tmpText = _T("No.;");
+			for (IPResultTableData data : ResultData.m_ResultTableData)
+			{
+				tmpText += data.m_columnName + ";";
+			}
+			tmpText += "\n";
+			file.Write(tmpText.c_str(), static_cast<int> (tmpText.size()));
+
+			if (0 < ResultData.m_ResultTableData.size())
+			{
+				int rowCountNew = static_cast<int>(ResultData.m_ResultTableData[0].m_rowData.size());
+				for (int i = 0; i < rowCountNew; i++)
+				{
+					tmpText = SvUl::Format(_T("%d;"), i + 1);
+					for (int j = 0; j < ResultData.m_ResultTableData.size(); j++)
+					{
+						IPResultTableData data = ResultData.m_ResultTableData[j];
+						if (data.m_rowData.size() > i)
+						{
+							tmpText += CString(data.m_rowData[i]);
+						}
+						tmpText += ";";
+					}
+					tmpText += "\n";
+					file.Write(tmpText.c_str(), static_cast<int> (tmpText.size()));
+				}
+			}
+			file.Close();
+		}
+		else
+		{
+			SvDef::StringVector msgList;
+			msgList.push_back(std::string {dlg.GetPathName()});
+			SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WriteCSVFileFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10058);
+		}
 	}
 }
 

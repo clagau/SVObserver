@@ -486,6 +486,7 @@ namespace SvStl
 		Tid_StdException,
 		Tid_ColorToolExtentsChanged,
 		Tid_FailstatusNotFound,
-		Tid_WrongInputImageType
+		Tid_WrongInputImageType,
+		Tid_WriteCSVFileFailed,
 	};
 } //namespace SvStl

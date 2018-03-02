@@ -2207,7 +2207,9 @@
 #define ID_RC_GO_OFFLINE                20086
 #define ID_RC_SAVE_ALL_AND_GET_CONFIG   20087
 #define ID_RC_CLOSE_AND_CLEAN_RUN_DIR   20088
+#define ID_SAVE_RESULTS_TO_FILE         20089
 #define ID_RC_GO_ONLINE                 20090
+#define ID_SAVE_RESULTSTABLE_TO_FILE    20091
 #define ID_RC_CLOSE                     20092
 #define ID_FONT_TRAINING                20093
 #define ID_ADD_MATHTOOL                 20094

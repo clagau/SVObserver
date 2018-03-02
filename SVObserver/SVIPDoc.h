@@ -169,6 +169,8 @@ public:
 	afx_msg void OnEditToolSetCondition();
 	afx_msg void OnResultsPicker();
 	afx_msg void OnResultsTablePicker();
+	afx_msg void OnSaveResultsToFile();
+	afx_msg void OnSaveTableResultsToFile();
 	afx_msg void OnPublishedResultsPicker();
 	afx_msg void OnAddLoadImageTool();
 	afx_msg void RunRegressionTest();
