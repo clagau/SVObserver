@@ -821,7 +821,7 @@ void SVRemoteCtrl::AsyncThreadFunc( bool& p_rWaitForEvent )
 
 HRESULT SVRemoteCtrl::SetControlServer( SVCommandStatus& p_rStatus )
 {
-	HRESULT l_Status = m_dispatcher->SetConnectionData( m_servername, m_CommandPort, 6000 );
+	HRESULT l_Status = S_OK;
 
 	if( 0 < m_servername.length() )
 	{
@@ -867,6 +867,7 @@ STDMETHODIMP SVRemoteCtrl::Disconnect(void)
 
 STDMETHODIMP SVRemoteCtrl::Connect(BSTR address, LONG Timeout)
 {
+	
 	SVCommandStatus l_CommandStatus;
 	
 	HRESULT l_Status = m_dispatcher->SetConnectionData(address, m_CommandPort, Timeout);

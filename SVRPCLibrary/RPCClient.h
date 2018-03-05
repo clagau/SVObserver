@@ -54,7 +54,7 @@ public:
 	void Disconnect();
 	void stop();
 	bool isConnected();
-	void waitForConnect();
+	bool  waitForConnect(int time_in_ms );
 
 	void request(Envelope&& request, Task<Envelope>);
 	void request(Envelope&& request, Task<Envelope>, boost::posix_time::time_duration);

@@ -85,15 +85,21 @@ bool RPCClient::isConnected()
 	return m_connected.load();
 }
 
-void RPCClient::waitForConnect()
+bool  RPCClient::waitForConnect(int time_in_ms)
 {
 	if (isConnected())
 	{
-		return;
+		return true;
 	}
+	std::chrono::milliseconds time(time_in_ms);
 
 	std::unique_lock<std::mutex> lk(m_connect_mutex);
-	m_connect_cv.wait(lk, [this] { return m_connected.load(); });
+	m_connect_cv.wait_for(lk,time , [this] { return m_connected.load(); });
+	if (!isConnected())
+	{
+		m_TryToReconnect.store(false);
+	}
+	return isConnected();
 }
 
 void RPCClient::request(Envelope&& request, Task<Envelope> task)

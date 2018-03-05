@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package SVRPC.Example;
+
+message ApplicationMessages
+{
+	oneof message
+	{
+		HelloWorldReq HelloWorldReq = 1;
+		HelloWorldRes HelloWorldRes = 2;
+		GetCounterStreamRequest GetCounterStreamRequest = 3;
+		GetCounterStreamResponse GetCounterStreamResponse = 4;
+	}
+}
+
+message HelloWorldReq
+{
+	string name = 1;
+}
+
+message HelloWorldRes
+{
+	string message = 1;
+}
+
+
+message GetCounterStreamRequest
+{
+	uint32 count = 1;
+	uint32  start = 2;
+}
+message GetCounterStreamResponse
+{
+	uint32 counter = 1;
+}

@@ -29,18 +29,18 @@ template <typename TPayload, typename TReq, typename TRes> class SimpleClient
 {
 public:
 	SimpleClient(RPCClient& client)
-		: m_client(client), m_unwrap_error(build_error(ErrorCode::InternalError, "Error while unwrapping envelope!"))
+		: m_client(client),
+		m_unwrap_error(build_error(ErrorCode::InternalError, "Error while unwrapping envelope!"))
 	{
 	}
 
-	void request(TReq&& req, Task<TRes> task)
+	void request(TReq&& req, Task<TRes> task, boost::posix_time::time_duration timeout)
 	{
 		Envelope envelope;
 		m_req_wrapper.wrap(envelope, std::move(req));
-
 		m_client.request(std::move(envelope),
-			Task<Envelope>(
-			[this, task](Envelope&& resEnv)
+			Task<Envelope>
+			([this, task](Envelope&& resEnv)
 		{
 			TRes res;
 			if (!m_res_unwrapper.unwrap(res, std::move(resEnv)))
@@ -51,10 +51,14 @@ public:
 
 			task.finish(std::move(res));
 		},
-			[task](const Error& err) { task.error(err); }));
+			[task](const Error& err)
+		{
+			task.error(err);
+		}),
+			timeout);
 	}
 
-	std::future<TRes> request(TReq&& req)
+	std::future<TRes> request(TReq&& req, boost::posix_time::time_duration timeout)
 	{
 		auto promise = std::make_shared<std::promise<TRes>>();
 
@@ -74,7 +78,9 @@ public:
 
 			promise->set_value(std::move(res));
 		},
-			[promise](const Error& err) { promise->set_exception(errorToExceptionPtr(err)); }));
+			[promise](const Error& err) { promise->set_exception(errorToExceptionPtr(err)); }),
+			timeout
+		);
 
 		return promise->get_future();
 	}

@@ -292,7 +292,7 @@ HRESULT SVControlCommands::SetConnectionData(const _bstr_t& p_rServerName, unsig
 		{
 			if (m_pRpcClient.get())
 			{
-				m_pRpcClient->waitForConnect();
+				m_pRpcClient->waitForConnect(timeout);
 				m_RRSConnected = m_pRpcClient->isConnected();
 			}
 			m_Connected = true;
@@ -356,13 +356,11 @@ HRESULT SVControlCommands::GetVersion(_bstr_t& p_rSVObserverVersion, _bstr_t& p_
 		if (m_ClientSocket.IsConnected())
 		{
 			p_rRunRejectServerVersion = _bstr_t(L"N/A");
-			if (m_pClientService.get())
+			if (m_pClientService.get() && m_pRpcClient.get()&&  m_pRpcClient->isConnected())
 			{
 				RRWS::GetVersionRequest req;
 				req.set_trigger_timeout(true);
 				auto version = RRWS::runRequest(*m_pClientService.get(), &RRWS::ClientService::getVersion, std::move(req)).get();
-
-
 				p_rRunRejectServerVersion = _bstr_t(version.version().c_str());
 
 			}
@@ -1295,12 +1293,7 @@ HRESULT SVControlCommands::CheckSocketConnection()
 		SVLOG(l_Status);
 	}
 
-	if (l_Status == S_OK &&  m_pRpcClient.get() && m_pClientService.get() && !m_pRpcClient->isConnected())
-	{
-		m_pRpcClient->Connect(static_cast<char*>(m_ServerName), m_RunServerPort);
-		m_pRpcClient->waitForConnect();
-		m_RRSConnected = m_pRpcClient->isConnected();
-	}
+
 
 	m_Connected = l_Status == S_OK;
 	return l_Status;
