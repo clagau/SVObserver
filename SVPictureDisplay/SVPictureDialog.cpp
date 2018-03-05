@@ -108,7 +108,7 @@ BOOL SVPictureDialog::OnInitDialog()
 
 	// Initialize to the first bitmap.
 	m_PictDisplay.SetZoomFactor(1.0f);
-	m_PictDisplay.SetZoom(ZoomOneToOne);
+	m_PictDisplay.SetZoom(ZoomEnum::ZoomNormal);
 	PutIconsOnButtons();
 	SetScrollBars();
 	PositionVerticalSlider( 0, m_ButtonSize, 0, 0, IDC_VERTICAL_SCROLL );
@@ -848,7 +848,7 @@ void SVPictureDialog::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 
 void SVPictureDialog::OnBnClickedZoomPlus()
 {
-	m_PictDisplay.SetZoom(ZoomPlus);
+	m_PictDisplay.SetZoom(ZoomEnum::ZoomPlus);
 	SetZoomSlider(TRUE);
 	SetScrollBars();
 	CloneScrollPosition(SB_BOTH);
@@ -955,7 +955,7 @@ void SVPictureDialog::OnBnClickedZoomMinus()
 {
 	if( m_PictDisplay.HasBitmap() )
 	{
-		m_PictDisplay.SetZoom(ZoomMinus);
+		m_PictDisplay.SetZoom(ZoomEnum::ZoomMinus);
 		SetScrollBars();
 		SetZoomSlider(TRUE);
 		CloneScrollPosition(SB_BOTH);
@@ -967,7 +967,7 @@ void SVPictureDialog::OnBnClickedZoomFit()
 {
 	if( m_PictDisplay.HasBitmap() )
 	{
-		m_PictDisplay.SetZoom(ZoomToFit);
+		m_PictDisplay.SetZoom(ZoomEnum::ZoomFitAll);
 		SetScrollBars();
 		SetZoomSlider(TRUE);
 		CloneScrollPosition(SB_BOTH);
@@ -979,7 +979,7 @@ void SVPictureDialog::OnBnClickedZoomOne()
 {
 	if( m_PictDisplay.HasBitmap() )
 	{
-		m_PictDisplay.SetZoom(ZoomOneToOne);
+		m_PictDisplay.SetZoom(ZoomEnum::ZoomNormal);
 		SetScrollBars();
 		SetZoomSlider(TRUE);
 		CloneScrollPosition(SB_BOTH);
@@ -1214,7 +1214,7 @@ void SVPictureDialog::GetZoomRanges(double &min, double &max) const
 
 void SVPictureDialog::SetZoomFit()
 {
-	m_PictDisplay.SetZoom(ZoomToFit);
+	m_PictDisplay.SetZoom(ZoomEnum::ZoomFitAll);
 	SetScrollBars();
 	CloneScrollPosition(SB_BOTH);
 }

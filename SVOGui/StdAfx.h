@@ -41,6 +41,7 @@
 #endif
 
 #define OEMRESOURCE	// OEM resource to use nicer cursors...
+#define NOMINMAX			// Exclude min/max macros
 
 //************************************
 //! Precompiled headers section

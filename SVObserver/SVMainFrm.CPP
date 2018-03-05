@@ -297,65 +297,6 @@ void SVMainFrame::SetStatusInfoText( LPCTSTR SIText )
 	}
 }
 
-void SVMainFrame::ShowToolBars(BOOL Show, BOOL RememberOldState /*= FALSE*/, DWORD Flags /*= Flag_Standard | Flag_Zoom */)
-{
-	if( TRUE == Show )
-	{
-		if( RememberOldState )
-		{
-			if(Flags & Flag_Standard)
-			{
-				ShowControlBar( &m_wndToolBar, m_toolbarWasShown, FALSE );
-				ShowControlBar( &m_PPQBar, m_PPQBarWasShown, FALSE );
-			}
-
-			if(Flags & Flag_Zoom)
-			{
-				ShowControlBar( &m_wndToolBarZoom, m_toolbarZoomWasShown, FALSE );
-				m_wndToolBarZoom.Enable(IsZoomingPossible());
-			}
-		}
-		else
-		{
-			// Show all bars
-			if(Flags & Flag_Standard)
-			{
-				ShowControlBar( &m_wndToolBar, true, false );
-				ShowControlBar( &m_PPQBar, true, false );
-			}
-			if(Flags & Flag_Zoom)
-			{
-				ShowControlBar( &m_wndToolBarZoom, true, false );
-				m_wndToolBarZoom.Enable(IsZoomingPossible());
-			}
-		}
-	}
-	else
-	{
-		if(Flags & Flag_Standard)
-		{
-			m_toolbarWasShown = m_wndToolBar.IsWindowVisible();
-			m_PPQBarWasShown = m_PPQBar.IsWindowVisible();
-			ShowControlBar( &m_wndToolBar, false, false );
-
-			ShowControlBar( &m_PPQBar, false, false );
-		}
-
-		if(Flags & Flag_Zoom)
-		{
-			if(!SVSVIMStateClass::CheckState( SV_STATE_TEST  | SV_STATE_RUNNING))
-			{
-				m_toolbarZoomWasShown = m_wndToolBarZoom.IsWindowVisible();
-			}
-			ShowControlBar( &m_wndToolBarZoom, false, false );
-		}
-
-		SetStatusInfoText( _T(""));
-	}
-
-	RecalcLayout();
-}
-
 void SVMainFrame::OnUpdateFrameTitle( BOOL bAddToTitle )
 {
 	if( 0 == ( GetStyle() & FWS_ADDTOTITLE )  )
@@ -458,8 +399,7 @@ int SVMainFrame::OnCreate( LPCREATESTRUCT lpCreateStruct )
 		return -1;
 	}
 
-	if( !m_wndToolBar.Create( this ) ||
-		!m_wndToolBar.LoadToolBar( IDR_MAINFRAME ) )
+	if( !m_wndToolBar.Create( this ) || !m_wndToolBar.LoadToolBar( IDR_MAINFRAME ) )
 	{
 		return -1;      // Fehler beim Erzeugen
 	}
@@ -514,8 +454,10 @@ int SVMainFrame::OnCreate( LPCREATESTRUCT lpCreateStruct )
 		ASSERT(FALSE);
 	}
 
-	ShowControlBar( &m_wndStatusBar, TRUE, FALSE );
-	ShowToolBars(TRUE, TRUE, Flag_Standard | Flag_Zoom);
+	ShowControlBar(&m_wndToolBar, false, false);
+	ShowControlBar(&m_wndToolBarZoom, false, false);
+	ShowControlBar(&m_PPQBar, false, false);
+	ShowControlBar(&m_wndStatusBar, true, false);
 
 	LoadOEMIcon();
 
@@ -819,10 +761,7 @@ void SVMainFrame::OnMouseMove( UINT nFlags, CPoint point )
 
 void SVMainFrame::OnViewPPQBar()
 {
-	bool l_IsWindowVisible = ( m_PPQBar.IsWindowVisible() != FALSE );
-	bool l_ValidState = ( FALSE != SVSVIMStateClass::CheckState( SV_STATE_READY | SV_STATE_RUNNING ) );
-
-	if ( ! l_IsWindowVisible && l_ValidState && TheSVObserverApp.OkToEdit() )
+	if (!m_PPQBar.IsWindowVisible())
 	{
 		ShowControlBar( &m_PPQBar, true, false );
 		m_PPQBarWasShown = true;
@@ -874,12 +813,6 @@ void SVMainFrame::OnToolbarZoom()
 
 void SVMainFrame::OnUpdateViewPPQBar( CCmdUI* pCmdUI )
 {
-	BOOL bEnable = !SVSVIMStateClass::CheckState( SV_STATE_TEST|SV_STATE_RUNNING );
-	bEnable &= TheSVObserverApp.OkToEdit() ? 1 : 0;
-	bEnable &= !SVSVIMStateClass::CheckState( SV_STATE_REGRESSION );
-	bEnable |= m_PPQBar.IsWindowVisible();
-	pCmdUI->Enable(bEnable);
-
 	if( m_PPQBar.IsWindowVisible() )
 	{
 		pCmdUI->SetCheck( 1 );
@@ -888,17 +821,10 @@ void SVMainFrame::OnUpdateViewPPQBar( CCmdUI* pCmdUI )
 	{
 		pCmdUI->SetCheck( 0 );
 	}
-	//@TODO mec disable submenu ???
-
-	bool enableToolbars =  ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION );
-	CMenu* pMenu = GetMenu();
-	EnableParentMenu(pMenu,ID_TOOLBAR_ZOOM, enableToolbars,3 );
 }
 
 void SVMainFrame::OnUpdateViewToolbar( CCmdUI* pCmdUI )
 {
-	pCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION ) );
-
 	if ( m_wndToolBar.IsWindowVisible() )
 	{
 		pCmdUI->SetCheck( 1 );
@@ -911,8 +837,6 @@ void SVMainFrame::OnUpdateViewToolbar( CCmdUI* pCmdUI )
 
 void SVMainFrame::OnUpdateToolbarZoom(CCmdUI *pCmdUI)
 {
-	pCmdUI->Enable( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION ) );
-
 	if ( m_wndToolBarZoom.IsWindowVisible() )
 	{
 		pCmdUI->SetCheck( 1 );
@@ -1401,31 +1325,6 @@ void SVMainFrame::OnUpdateViewImageDisplayUpdate( CCmdUI* pCmdUI )
 	bool ImageUpdate( false );
 	RootObject::getRootChildValue( SvDef::FqnEnvironmentImageUpdate, ImageUpdate );
 	pCmdUI->SetCheck( ImageUpdate );
-
-	bool bEnableZoom = false;
-	CMDIChildWnd *pChild = (CMDIChildWnd*) GetActiveFrame();
-	CView*  pView =  pChild->GetActiveView();
-	SVImageViewClass *pIView = nullptr;
-	SVImageViewScroll *pSView = nullptr;
-	pIView = dynamic_cast<SVImageViewClass*> (pView);
-	if(pIView)
-	{
-		bEnableZoom = pIView->IsZoomAllowed();
-	}
-	else
-	{
-		pSView = dynamic_cast<SVImageViewScroll*>( pView);
-	}
-	if(pSView)
-	{
-		bEnableZoom = pSView->IsZoomAllowed();
-	}
-
-	CMenu* pMenu = GetMenu();
-	if(pMenu)
-	{
-		EnableParentMenu(pMenu,ID_ZOOM_MINUS, bEnableZoom,3 );
-	}
 }
 
 void SVMainFrame::OnViewResultDisplayUpdate()
@@ -1604,10 +1503,10 @@ double SVMainFrame::GetZoomToolbarValue() const
 	return m_wndToolBarZoom.GetValue();
 }
 
-void SVMainFrame::SetZoomToolbar(const ZoomHelperEx& helper)
+void SVMainFrame::SetZoomToolbar(const ZoomHelper& rZoomhelper)
 {
-	m_wndToolBarZoom.SetRange(helper.GetZoomMin(), helper.GetZoomMax(), helper.GetZoomStep());
-	m_wndToolBarZoom.SetValue(helper.GetZoom());
+	m_wndToolBarZoom.SetRange(rZoomhelper.GetZoomMin(), rZoomhelper.GetZoomMax(), rZoomhelper.GetZoomStep());
+	m_wndToolBarZoom.SetValue(rZoomhelper.GetZoom());
 }
 
 void SVMainFrame::EnableZoomToolbar(bool enable)
@@ -1623,13 +1522,6 @@ bool SVMainFrame::IsZoomingPossible()
 	if(nullptr != pChild)
 	{
 		pView = pChild->GetActiveView();
-	}
-
-	SVImageViewScroll* pImageViewScroll = dynamic_cast<SVImageViewScroll*>(pView);
-
-	if(nullptr != pImageViewScroll)
-	{
-		return !pImageViewScroll->ImageIsEmpty();
 	}
 
 	SVImageViewClass* pImageView = dynamic_cast<SVImageViewClass*>(pView);

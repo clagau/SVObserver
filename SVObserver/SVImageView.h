@@ -20,7 +20,6 @@
 #include "SVUtilityLibrary/SVWinHandle.h"
 #include "SVInfoStructs.h"
 #include "SVOGui/ZoomHelper.h"
-#include "SVOGui/ZoomHelperEx.h"
 #include "SVFileSystemLibrary/SVFileNameClass.h"
 #pragma endregion Includes
 
@@ -35,14 +34,6 @@ namespace SvOi
 {
 	class IObjectWriter;
 }
-
-// enums are parameter for function SetZoom
-enum EZoom {
-	EZoomMinus,
-	EZoomPlus,
-	EZoomFit,
-	EZoomOne,
-	EZoomValue };
 
 class SVImageViewClass : public CView
 {
@@ -90,17 +81,10 @@ public:
 	afx_msg void OnDestroy();
 	afx_msg void OnContextMenu( CWnd* p_pWnd, CPoint p_point );
 	afx_msg BOOL OnEraseBkgnd( CDC* p_pDC );
-	afx_msg void OnZoomPlus();
-	afx_msg void OnUpdateZoomPlus(CCmdUI *pCmdUI);
-	afx_msg void OnZoomMinus();
-	afx_msg void OnUpdateZoomMinus(CCmdUI *pCmdUI);
-	afx_msg void OnZoomOne();
-	afx_msg void OnUpdateZoomOne(CCmdUI *pCmdUI);
-	afx_msg void OnZoomFit();
-	afx_msg void OnZoomSliderMoved();
-	afx_msg void OnUpdateZoomFit(CCmdUI *pCmdUI);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnKillFocus(CWnd* pNewWnd);
+	afx_msg void OnZoomTypeChanged(UINT nId);
+	afx_msg void OnUpdateZoomTypeChanged(CCmdUI* PCmdUI);
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()
@@ -124,31 +108,30 @@ public:
 	bool ImageIsEmpty() const;
 
 	//************************************
-	// Method:    SetZoom
+	// Method:    SetZoomValue
 	// Description:  Set the zoom value according to the zoom parameter, which should be one of the new zoom values.
-	// Parameter: EZoom zoom (EZoomMinus, EZoomPlus, EZoomFit, EZoomOne, EZoomValue)
-	// Parameter: double value (only relevant for EZoomValue)
+	// Parameter: double value
 	// Parameter: bool when true, set the zoom slider in Mainframe
 	// Returns:   double
 	//************************************
-	double SetZoom(EZoom zoom, double value = 1.0, bool bSetSlider = true);
+	double SetZoomValue(double value = 1.0, bool bSetSlider = true);
 
 	//************************************
-	// Method:    SetZoomIndex
-	// Description:  Set Zoom value according to the ezoom parameter, which should be one of the zoom steps which are the old Zoomvalue.
-	// Parameter: EZoomMode ezoom ( SMALLEST,SMALL,NORMAL, LARGE, LARGEST, ZOOM_IN, ZOOM_OUT, ZOOM_VALUE) 
+	// Method:    SetZoom
+	// Description:  Set Zoom value according to the ZoomType parameter, which should be one of the zoom steps which are the old Zoomvalue.
+	// Parameter: ZoomEnum zoom type
 	// Parameter: unsigned int scaleIndex (only relevant for EZoomValue)
 	// Parameter: bool when true, set the zoom slider in Mainframe
 	// Returns:   bool
 	//************************************
-	bool SetZoomIndex( EZoomMode eZoom, unsigned int scaleIndex = 1 ,bool bSetSlider = true );
+	bool SetZoom(ZoomEnum ZoomType, unsigned int scaleIndex = 1 ,bool bSetSlider = true);
 
 	//************************************
 	// Method:    GetZoomHelper
 	// Description:  returns a const reference to zoom helper
-	// Returns:   const ZoomHelperEx&
+	// Returns:   const ZoomHelper&
 	//************************************
-	const ZoomHelperEx& GetZoomHelper() const;
+	const ZoomHelper& GetZoomHelper() const;
 
 	//************************************
 	// Method:    IsZoomAllowed
@@ -220,14 +203,14 @@ protected:
 	// Description:  Calculate the m_ZoomFit parameter for the current view port and image sizes
 	// Returns:   bool
 	//************************************
-	bool CalculateZoomFit();
+	bool CalculateZoomFit(ZoomEnum ZoomType);
 
 #pragma region Member variables
 private:
 	SVByteVector m_ImageDIB;
 	SVExtentMultiLineStructVector m_OverlayData;
 
-	ZoomHelperEx m_ZoomHelper;
+	ZoomHelper m_ZoomHelper;
 
 	SVGUID m_ImageId;
 	std::string m_imageName;

@@ -168,7 +168,8 @@ BOOL SVPPQBarClass::BuildButtons()
 		{
 			TC_ITEM tabCtrlItem;
 			tabCtrlItem.mask = TCIF_TEXT | TCIF_PARAM;
-			tabCtrlItem.pszText = const_cast< LPSTR >( pPPQ->GetCompleteName().c_str() );
+			//Use GetName as the pointer is longer valid while GetCompleteName returns a std::string which is only valid on return!
+			tabCtrlItem.pszText = const_cast<LPSTR> (pPPQ->GetName());
 			tabCtrlItem.lParam	= reinterpret_cast<DWORD_PTR>(pPPQ);
 			pqTabCtrl.InsertItem( tabIndex++, &tabCtrlItem );
 		}// end if

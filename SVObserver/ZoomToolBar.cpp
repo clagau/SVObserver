@@ -135,14 +135,9 @@ void ZoomToolBar::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	CToolBar::OnHScroll(nSBCode, nPos, pScrollBar);
 }
 
-void ZoomToolBar::Enable(bool enable)
+void ZoomToolBar::Enable(bool Enable)
 {
-	m_wndZoomSlider.EnableWindow(enable);
-	m_wndZoomStatic.EnableWindow(enable);
-}
-
-void ZoomToolBar::OnUpdateCmdUI(CFrameWnd* pTarget, BOOL bDisableIfNoHandler)
-{
-	CToolBar::OnUpdateCmdUI(pTarget,bDisableIfNoHandler);
+	m_wndZoomSlider.EnableWindow(Enable);
+	m_wndZoomStatic.EnableWindow(Enable);
 }
 

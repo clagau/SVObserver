@@ -53,11 +53,32 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-
-
 const  LPCTSTR  RegSection = _T( "Settings" );
 const  LPCTSTR  RegKeySaveViewPath = _T( "SaveViewFilePath" );
 const LPCTSTR  DefaultPath =  _T( "C:\\Images" );  
+
+IMPLEMENT_DYNCREATE(SVImageViewClass, CView)
+
+BEGIN_MESSAGE_MAP(SVImageViewClass, CView)
+	//{{AFX_MSG_MAP( SVImageViewClass )
+	ON_WM_LBUTTONDOWN()
+	ON_WM_MOUSEMOVE()
+	ON_WM_LBUTTONUP()
+	ON_WM_LBUTTONDBLCLK()
+	ON_WM_RBUTTONDBLCLK()
+	ON_WM_CAPTURECHANGED()
+	ON_WM_NCMOUSEMOVE()
+	ON_WM_DESTROY()
+	ON_WM_TIMER()
+	ON_WM_CONTEXTMENU()
+	ON_WM_ERASEBKGND()
+	//}}AFX_MSG_MAP
+	ON_WM_SETFOCUS()
+	ON_WM_KILLFOCUS()
+	//! When using Range the IDs must be sequential
+	ON_COMMAND_RANGE(ID_ZOOM_SMALLEST, ID_ZOOM_FIT_HEIGHT, OnZoomTypeChanged)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_ZOOM_SMALLEST, ID_ZOOM_FIT_HEIGHT, OnUpdateZoomTypeChanged)
+END_MESSAGE_MAP()
 
 static void UpdatePaletteForLut(bool bLut, LPDIRECTDRAWSURFACE7 pSurface)
 {
@@ -126,35 +147,6 @@ static void CalcLut(BYTE* p_pFrom, BYTE* p_pTo, unsigned long p_Width, unsigned 
 		}
 	}
 }
-
-IMPLEMENT_DYNCREATE( SVImageViewClass, CView )
-
-BEGIN_MESSAGE_MAP( SVImageViewClass, CView )
-	//{{AFX_MSG_MAP( SVImageViewClass )
-	ON_WM_LBUTTONDOWN()
-	ON_WM_MOUSEMOVE()
-	ON_WM_LBUTTONUP()
-	ON_WM_LBUTTONDBLCLK()
-	ON_WM_RBUTTONDBLCLK()
-	ON_WM_CAPTURECHANGED()
-	ON_WM_NCMOUSEMOVE()
-	ON_WM_DESTROY()
-	ON_WM_TIMER()
-	ON_WM_CONTEXTMENU()
-	ON_WM_ERASEBKGND()
-	//}}AFX_MSG_MAP
-	ON_COMMAND(ID_ZOOM_PLUS, &SVImageViewClass::OnZoomPlus)
-	ON_UPDATE_COMMAND_UI(ID_ZOOM_PLUS, &SVImageViewClass::OnUpdateZoomPlus)
-	ON_COMMAND(ID_ZOOM_MINUS, &SVImageViewClass::OnZoomMinus)
-	ON_UPDATE_COMMAND_UI(ID_ZOOM_MINUS, &SVImageViewClass::OnUpdateZoomMinus)
-	ON_COMMAND(ID_ZOOM_ONE, &SVImageViewClass::OnZoomOne)
-	ON_UPDATE_COMMAND_UI(ID_ZOOM_ONE, &SVImageViewClass::OnUpdateZoomOne)
-	ON_COMMAND(ID_ZOOM_FIT, &SVImageViewClass::OnZoomFit)
-	ON_UPDATE_COMMAND_UI(ID_ZOOM_FIT, &SVImageViewClass::OnUpdateZoomFit)
-	ON_COMMAND(ID_ZOOM_SLIDER_MOVED, &SVImageViewClass::OnZoomSliderMoved)
-	ON_WM_SETFOCUS()
-	ON_WM_KILLFOCUS()
-END_MESSAGE_MAP()
 
 SVImageViewClass::SVImageViewClass()
 : CView()
@@ -535,48 +527,6 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 			break;
 		}
 
-		case ID_ZOOM_SMALLEST:
-		{
-			SetZoomIndex(EZOOM_SMALLEST);
-			break;
-		}
-
-		case ID_ZOOM_SMALL:
-		{
-			SetZoomIndex(EZOOM_SMALL);
-			break;
-		}
-
-		case ID_ZOOM_NORMAL:
-		{
-			SetZoomIndex(EZOOM_NORMAL);
-			break;
-		}
-
-		case ID_ZOOM_LARGE:
-		{
-			SetZoomIndex(EZOOM_LARGE);
-			break;
-		}
-
-		case ID_ZOOM_LARGEST:
-		{
-			SetZoomIndex(EZOOM_LARGEST);
-			break;
-		}
-
-		case ID_ZOOM_IN:
-		{
-			SetZoomIndex(EZOOM_IN);
-			break;
-		}
-
-		case ID_ZOOM_OUT:
-		{
-			SetZoomIndex(EZOOM_OUT);
-			break;
-		}
-
 		case ID_SELECT_DISPLAY_IMAGE:
 		{
 			SelectDisplayImage();
@@ -604,7 +554,6 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 
 		default:
 		{
-			SetZoomIndex(EZOOM_NORMAL);
 			break;
 		}
 
@@ -1316,9 +1265,9 @@ bool SVImageViewClass::ImageIsEmpty() const
 	return m_ImageId.empty();
 }
 
-bool SVImageViewClass::CalculateZoomFit()
+bool SVImageViewClass::CalculateZoomFit(ZoomEnum ZoomType)
 {
-	bool ret = false;
+	bool Result{false};
 
 	SVIPDoc* pIPDoc = GetIPDoc();
 
@@ -1336,70 +1285,19 @@ bool SVImageViewClass::CalculateZoomFit()
 			CRect rect;
 			psvScroll->GetWindowRect(rect);
 			CSize viewsize(rect.Width(),rect.Height());
-			BOOL hasHorScroll, hasVertScroll;
-			psvScroll->CheckScrollBars(hasHorScroll, hasVertScroll);
-			if(hasHorScroll)
-			{
-				CRect rect;
-				CScrollBar* pScrollbar = psvScroll->GetScrollBarCtrl( SB_HORZ );
-
-				if( nullptr != pScrollbar )
-				{
-					pScrollbar->GetWindowRect(&rect);
-					viewsize.cy -= rect.Height();
-				}
-			}
-
-			if( hasVertScroll )
-			{
-				CRect rect;
-				CScrollBar* pScrollbar = psvScroll->GetScrollBarCtrl( SB_VERT );
-				if( nullptr != pScrollbar )
-				{
-					pScrollbar->GetWindowRect(&rect);
-					viewsize.cx -= rect.Width(); 
-				}
-			}
-
-		ret = m_ZoomHelper.CalculateZoomFit(ImageSize, viewsize);
+			Result = m_ZoomHelper.CalculateZoomFit(ZoomType, ImageSize, viewsize);
 		}
 	}
 
-	return ret;
+	return Result;
 }
 
-double SVImageViewClass::SetZoom( EZoom zoom, double value, bool bSetZoomSlider )
+double SVImageViewClass::SetZoomValue(double Value, bool bSetZoomSlider )
 {
-	double res = 1.0;
-	switch (zoom)
-	{
-	case EZoomFit:
-		{
-			bool suc = CalculateZoomFit();
+	double Result{1.0};
 
-			if(suc)
-			{
-				m_ZoomHelper.SetToFit();
-			}
-		}
-		break;
-	case EZoomOne:
-		m_ZoomHelper.SetToOne();
-		break;
-	case EZoomMinus:
-		m_ZoomHelper.ZoomMinus();
-		break;
-	case EZoomPlus:
-		m_ZoomHelper.ZoomPlus();
-		break;
-	case EZoomValue:
-		m_ZoomHelper.ExtendMinMax(value);
-		m_ZoomHelper.SetZoom(value);
-		break;
-	default:
-		return res;
-		break;
-	}
+	m_ZoomHelper.ExtendMinMax(Value);
+	m_ZoomHelper.SetZoom(Value);
 
 	CRect l_rect;
 	GetImageRect( l_rect );
@@ -1412,17 +1310,29 @@ double SVImageViewClass::SetZoom( EZoom zoom, double value, bool bSetZoomSlider 
 	return m_ZoomHelper.GetZoom();
 }
 
-bool SVImageViewClass::SetZoomIndex( EZoomMode eZoom, unsigned  scaleIndex, bool bSetZoomSlider )
+bool SVImageViewClass::SetZoom(ZoomEnum ZoomType, unsigned  scaleIndex, bool bSetZoomSlider)
 {
-	if (EZOOM_VALUE == eZoom)
+	if (ZoomEnum::ZoomValue == ZoomType)
 	{
 		if( scaleIndex >= m_ZoomHelper.GetScaleCount() )
 		{
 			return false;
 		}
 	}
+	//For the fit zoom types we need to calculate the zoom factor
+	switch(ZoomType)
+	{
+		case ZoomFitAll:
+		case ZoomFitWidth:
+		case ZoomFitHeight:
+			CalculateZoomFit(ZoomType);
+			break;
 
-	bool bZoomChanged = m_ZoomHelper.ChangeScaleIndex(eZoom, scaleIndex);
+		default:
+			break;
+	}
+
+	bool bZoomChanged = m_ZoomHelper.SetZoomType(ZoomType, scaleIndex);
 
 	if (bZoomChanged)
 	{
@@ -1438,7 +1348,7 @@ bool SVImageViewClass::SetZoomIndex( EZoomMode eZoom, unsigned  scaleIndex, bool
 	return true;
 }
 
-const ZoomHelperEx& SVImageViewClass::GetZoomHelper() const
+const ZoomHelper& SVImageViewClass::GetZoomHelper() const
 {
 	return m_ZoomHelper;
 }
@@ -1890,9 +1800,9 @@ bool SVImageViewClass::SetParameters( SVTreeType& p_tree, SVTreeType::SVBranchHa
 		if(bZoomExOK)
 		{
 			double dZoom = Value;
-			if( !SetZoom(EZoomValue, dZoom, false) )
+			if( !SetZoomValue(dZoom, false) )
 			{
-				SetZoom( EZoomValue, 1.0, false );
+				SetZoomValue(1.0, false);
 			}
 		}
 	}
@@ -1915,9 +1825,9 @@ bool SVImageViewClass::SetParameters( SVTreeType& p_tree, SVTreeType::SVBranchHa
 				l_index--;
 			}
 
-			if( !SetZoomIndex(EZOOM_VALUE, m_ZoomHelper.GetScaleCount() / 2 + l_index, false) )
+			if( !SetZoom(ZoomEnum::ZoomValue, m_ZoomHelper.GetScaleCount() / 2 + l_index, false) )
 			{
-				SetZoomIndex(EZOOM_VALUE, m_ZoomHelper.GetScaleCount() / 2, false );
+				SetZoom(ZoomEnum::ZoomValue, m_ZoomHelper.GetScaleCount() / 2, false );
 			}
 		}
 	}
@@ -1971,9 +1881,9 @@ bool SVImageViewClass::CheckParameters( SVTreeType& p_tree, SVTreeType::SVBranch
 
 			if( m_ZoomHelper.GetZoom() != dZoom )
 			{
-				if( !SetZoom(EZoomValue, dZoom, false) )
+				if(!SetZoomValue(dZoom, false))
 				{
-					SetZoom( EZoomValue, 1.0, false );
+					SetZoomValue(1.0, false);
 				}
 			}
 		}
@@ -1997,11 +1907,11 @@ bool SVImageViewClass::CheckParameters( SVTreeType& p_tree, SVTreeType::SVBranch
 				l_index--;
 			}
 
-			if( m_ZoomHelper.GetScaleIndex() != m_ZoomHelper.GetScaleCount() / 2 + l_index, false )
+			if( m_ZoomHelper.GetScaleIndex() != m_ZoomHelper.GetScaleCount() / 2 + l_index )
 			{
-				if( !SetZoomIndex( EZOOM_VALUE, m_ZoomHelper.GetScaleCount() / 2 + l_index, false ) )
+				if (!SetZoom(ZoomEnum::ZoomValue, m_ZoomHelper.GetScaleCount() / 2 + l_index, false))
 				{
-					SetZoomIndex( EZOOM_VALUE, m_ZoomHelper.GetScaleCount() / 2, false );
+					SetZoom(ZoomEnum::ZoomValue, m_ZoomHelper.GetScaleCount() / 2, false);
 				}
 			}
 		}
@@ -2204,11 +2114,6 @@ HRESULT SVImageViewClass::CopyBitsToSurface( const CRect& p_rSourceRect, const S
 	return l_Status;
 }
 
-void SVImageViewClass::OnZoomPlus()
-{
-	SetZoom( EZoomPlus );
-}
-
 bool SVImageViewClass::IsZoomAllowed() const
 {
 	bool allowed  =  !ImageIsEmpty();
@@ -2224,66 +2129,11 @@ void SVImageViewClass::UpdateZoomToolbar()
 
 	if( nullptr != pFrame && pFocus == this )
 	{
-		bool bZoom = IsZoomAllowed();
-		pFrame->EnableZoomToolbar(bZoom);
-
-		if( true == bZoom )
+		if (IsZoomAllowed())
 		{
 			pFrame->SetZoomToolbar(GetZoomHelper());
 		}
 	}
-}
-
-void SVImageViewClass::OnUpdateZoomPlus(CCmdUI *pCmdUI)
-{
-	bool enable  = IsZoomAllowed();
-	pCmdUI->Enable(enable);
-}
-
-void SVImageViewClass::OnZoomMinus()
-{
-	SetZoom( EZoomMinus);
-}
-
-void SVImageViewClass::OnUpdateZoomMinus(CCmdUI *pCmdUI)
-{
-	bool enable  = IsZoomAllowed();
-	pCmdUI->Enable(enable);
-}
-
-void SVImageViewClass::OnZoomOne()
-{
-	SetZoom( EZoomOne);
-}
-
-void SVImageViewClass::OnUpdateZoomOne(CCmdUI *pCmdUI)
-{
-	bool enable  = IsZoomAllowed();
-	pCmdUI->Enable(enable);
-}
-
-void SVImageViewClass::OnZoomFit()
-{
-	SetZoom( EZoomFit);
-}
-
-void SVImageViewClass::OnUpdateZoomFit(CCmdUI *pCmdUI)
-{
-	bool enable  = IsZoomAllowed();
-	pCmdUI->Enable(enable);
-}
-
-void SVImageViewClass::OnZoomSliderMoved()
-{
-	SVMainFrame* pFrame =  dynamic_cast<SVMainFrame*>( AfxGetMainWnd() );
-	double val = 1.0;
-
-	if(pFrame)
-	{
-		val = pFrame->GetZoomToolbarValue();
-	}
-
-	SetZoom( EZoomValue, val );
 }
 
 HRESULT SVImageViewClass::BlitToScaledSurface( CRect& p_rSourceRect, CRect& p_rDestRect, LPCTSTR Filepath, bool showOverlays)
@@ -2639,10 +2489,7 @@ void SVImageViewClass::OnSetFocus(CWnd* pOldWnd)
 		pSplitterFrame->RefreshAllSplitters();
 	}
 
-	bool bZoom = IsZoomAllowed();
-	pFrame->EnableZoomToolbar(bZoom);
-
-	if( bZoom )
+	if(IsZoomAllowed())
 	{
 		pFrame->SetZoomToolbar(GetZoomHelper());
 	}
@@ -2662,5 +2509,28 @@ void SVImageViewClass::OnKillFocus(CWnd* pNewWnd)
 	if( nullptr != pSplitterFrame )
 	{
 		pSplitterFrame->RefreshAllSplitters();
+	}
+}
+
+void SVImageViewClass::OnZoomTypeChanged(UINT nId)
+{
+	if (ID_ZOOM_SMALLEST <= nId && ID_ZOOM_FIT_HEIGHT >= nId)
+	{
+		ZoomEnum ZoomType = static_cast<ZoomEnum> (nId - ID_ZOOM_SMALLEST);
+		SetZoom(ZoomType);
+	}
+}
+
+void SVImageViewClass::OnUpdateZoomTypeChanged(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(IsZoomAllowed());
+	//For the Zoom Toolbar check once, when ID_ZOOM_NORMAL is checked to set the slider
+	if (ID_ZOOM_NORMAL == pCmdUI->m_nID)
+	{
+		SVMainFrame* pFrame = dynamic_cast<SVMainFrame*>(AfxGetMainWnd());
+		if (nullptr != pFrame)
+		{
+			pFrame->EnableZoomToolbar(IsZoomAllowed());
+		}
 	}
 }

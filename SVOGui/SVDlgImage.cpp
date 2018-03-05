@@ -279,7 +279,7 @@ namespace SvOg
 					int iRegionX = static_cast<int>(m_SourceRect.Width() * m_dFullSizeZoomFactor * m_dZoomX);
 					int iRegionY = static_cast<int>(m_SourceRect.Height() * m_dFullSizeZoomFactorY * m_dZoomY);
 					CRect rectRight(iRegionX, 0, m_ClientRect.Width(), m_ClientRect.Height());
-					CRect rectBottom(0, min(iRegionY, m_ClientRect.Height()), m_ClientRect.Width(), m_ClientRect.Height());
+					CRect rectBottom(0, std::min(iRegionY, m_ClientRect.Height()), m_ClientRect.Width(), m_ClientRect.Height());
 					dc.StretchBlt(0, 0, m_ClientRect.Width(), m_ClientRect.Height(),
 						&memDC, m_ViewportRect.left, m_ViewportRect.top,
 						m_ViewportRect.Width(), m_ViewportRect.Height(), SRCCOPY);

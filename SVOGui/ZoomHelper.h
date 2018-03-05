@@ -12,16 +12,38 @@
 
 #pragma once
 
+#pragma region Declarations
+enum ZoomEnum
+{
+	ZoomSmallest,
+	ZoomSmall,
+	ZoomNormal,
+	ZoomLarge,
+	ZoomLargest,
+	ZoomPlus,
+	ZoomMinus,
+	ZoomFitAll,
+	ZoomFitWidth,
+	ZoomFitHeight,
+	ZoomValue,
+};
+#pragma endregion Declarations
+
 class ZoomHelper
 {
 #pragma region Constructor
 public:
 	ZoomHelper();
 	virtual ~ZoomHelper();
+
+	void Init();
+	void Exit();
 #pragma endregion Constructor
 
 #pragma region Public Methods
 public:
+	bool SetZoomType(ZoomEnum ZoomType, unsigned int ZoomIndex=0);
+
 	//************************************
 	// Method:    GetZoom
 	// Description: returns Zoomfactor
@@ -78,26 +100,26 @@ public:
 	//************************************
 	// Method:    CalculateZoomFit
 	// Description:   Calculate m_ZoomFit,
-	// the maximum zoom value where the whole image is visible.
+	// Parameter ZoomType defines which side should fit
 	// Parameter: CSize ImageSize
 	// Parameter: CSize ViewSize
 	// Returns:  bool true if successful
 	//************************************
-	bool CalculateZoomFit(CSize ImageSize, CSize ViewSize);
+	bool CalculateZoomFit(ZoomEnum ZoomType, CSize ImageSize, CSize ViewSize);
 
 	//************************************
 	// Method:    IsFit
 	// Description:  True if zoom is set to fit
 	// Returns:   bool
 	//************************************
-	bool IsFit() const;
+	bool IsFit() const { return m_bIsFit; }
 
 	//************************************
 	// Method:    IsOne
 	// Description:  True if zoom is set to 1.0 (100%)
 	// Returns:   bool
 	//************************************
-	bool IsOne() const;
+	bool IsOne() const { return m_bIsOne; } 
 
 	//************************************
 	// Method:    CloneSettings
@@ -108,26 +130,14 @@ public:
 	//************************************
 	void CloneSettings(const ZoomHelper &Source);
 
-	//************************************
-	// Method:    Clear
-	// Description:  Reset to initial values
-	// Returns:   void
-	//************************************
 	void Clear();
 
-	//************************************
-	// Method:    GetZoomMin
-	// Description:  Return the smallest zoom value.
-	// Returns:   double
-	//************************************
-	double GetZoomMin() const;
-
-	//************************************
-	// Method:    GetZoomMax
-	// Description:  Return the biggest zoom value.
-	// Returns:   double
-	//************************************
-	double GetZoomMax() const;
+	double GetZoomMin() const {return m_Zoom_Min; }
+	double GetZoomMax() const { return m_Zoom_Max; }
+	
+	unsigned int GetScaleIndex() const { return m_ScaleIndex; }
+	unsigned int GetScaleCount() const { return m_cScaleCount; }
+	HGDIOBJ GetFont() const { return m_hFont[m_ScaleIndex]; }
 
 	//************************************
 	// Method:    GetZoomstep
@@ -138,31 +148,40 @@ public:
 	double GetZoomStep() const;
 #pragma endregion Public Methods
 
-#pragma region Protected Methods
+#pragma region Private Methods
 protected:
+	//************************************
+	// Method:    FindScaleIndex
+	// Description:  Calculate the index which corresponds to the zoom factor
+	// Parameter: void
+	// Returns:   unsigned int
+	//************************************
+	unsigned int FindScaleIndex();
+
 	//************************************
 	// Method:    ZoomChanged
 	// Description:  Called when Zoom factor is changed.
 	// This method exists to be overridden by derived classes.
 	// Returns:   void
 	//************************************
-	virtual void ZoomChanged();
-#pragma endregion Protected Methods
+	void ZoomChanged();
+#pragma endregion Private Methods
 
 #pragma region Member variables
 protected:
-	double m_Zoom;
+	double m_Zoom{1.0};
+	double m_ZoomFit{1.0};
 	double m_Zoom_Min;
 	double m_Zoom_Max;
-	double m_ZoomFit;
 
-	bool m_bIsOne;
-	bool m_bIsFit;
+	bool m_bIsOne{false};
+	bool m_bIsFit{false};
 
-	const double m_Default_Min;
-	const double m_Default_Max;
-	const double m_ZoomStepLarge;
-	const double m_ZoomStepSmall;
-#pragma endregion Member variables
+	unsigned int m_ScaleIndex;
+	static int m_InstanceCount;
+	static const unsigned int m_cScaleCount = 31;
+	static double m_ScaleFactor[m_cScaleCount];
+	static HGDIOBJ m_hFont[m_cScaleCount];
+ #pragma endregion Member variables
 };
 

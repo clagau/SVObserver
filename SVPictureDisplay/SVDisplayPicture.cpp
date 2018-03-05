@@ -337,12 +337,12 @@ HRESULT SVDisplayPicture::SetPicture( IPictureDisp* p_Picture, unsigned long Bac
 
 				if( AdjustZoom && (l_bFirstTime || m_Zoom.IsFit()) )
 				{
-					SetZoom(ZoomToFit);
+					SetZoom(ZoomEnum::ZoomFitAll);
 				}
 				else if ( AdjustZoom && m_Zoom.IsOne() )
 				{
 					// Set Default Zoom here.
-					SetZoom(ZoomOneToOne);
+					SetZoom(ZoomEnum::ZoomNormal);
 				}
 			}
 			l_pPicture->Release();
@@ -447,11 +447,11 @@ HRESULT SVDisplayPicture::SetPictureWithROI( IPictureDisp* p_Picture, unsigned l
 				}
 				if( AdjustZoom && (l_bFirstTime || m_Zoom.IsFit()) )
 				{
-					SetZoom(ZoomToFit);
+					SetZoom(ZoomEnum::ZoomFitAll);
 				}
 				else if( AdjustZoom && m_Zoom.IsOne() )
 				{
-					SetZoom(ZoomOneToOne);
+					SetZoom(ZoomEnum::ZoomNormal);
 				}
 			}
 			l_pPicture->Release();
@@ -491,37 +491,18 @@ void SVDisplayPicture::CalculateZoomToFit()
 		CRect rect = m_ViewMaxRect;
 
 		CSize ViewSize(rect.Width(), rect.Height());
-		m_Zoom.CalculateZoomFit(m_imageSize, ViewSize );
+		m_Zoom.CalculateZoomFit(ZoomEnum::ZoomFitAll, m_imageSize, ViewSize);
 	}
 }
 
-void SVDisplayPicture::SetZoom( ZoomEnum zoom )
+void SVDisplayPicture::SetZoom( ZoomEnum ZoomType )
 {
 	if(!HasBitmap())
 	{
 		return;
 	}
-	switch (zoom)
-	{
-	case ZoomToFit:
-		m_Zoom.SetToFit();
-		break;
 
-	case ZoomOneToOne:
-		m_Zoom.SetToOne();
-		break;
-
-	case ZoomPlus:
-		m_Zoom.ZoomPlus();
-		break;
-
-	case ZoomMinus:
-		m_Zoom.ZoomMinus();
-		break;
-
-	default:
-		return;
-	}
+	m_Zoom.SetZoomType(ZoomType);
 
 	CloneZoomSettings();
 

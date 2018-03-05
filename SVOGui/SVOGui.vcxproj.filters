@@ -128,9 +128,6 @@
     <ClCompile Include="ZoomHelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ZoomHelperEx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ResultTableSelectionDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -353,9 +350,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ZoomHelper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ZoomHelperEx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ResultTableSelectionDlg.h">

@@ -388,11 +388,6 @@ void SVIPSplitterFrame::OnMDIActivate(BOOL bActivate, CWnd* pActivateWnd, CWnd* 
 	if(FALSE == bActivate)
 	{
 		RefreshAllSplitters();
-		SVMainFrame* pFrame = dynamic_cast<SVMainFrame*>( AfxGetMainWnd() );
-		if(nullptr != pFrame)
-		{
-			pFrame->EnableZoomToolbar(false);
-		}
 	}
 }
 

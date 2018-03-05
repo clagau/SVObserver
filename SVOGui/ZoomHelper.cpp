@@ -15,39 +15,178 @@
 #include "ZoomHelper.h"
 #pragma endregion Includes
 
-#undef max
-#undef min
+static const double cDefault_Min = 0.0625;
+static const double cDefault_Max = 16.0;
+static const double cZoomStepLarge = 1.0;
+static const double cZoomStepSmall = 0.1;
+
+int ZoomHelper::m_InstanceCount{0};
+double ZoomHelper::m_ScaleFactor[ZoomHelper::m_cScaleCount] = {0};
+HGDIOBJ ZoomHelper::m_hFont[ZoomHelper::m_cScaleCount] = {nullptr};
 
 #pragma region Constructor
-ZoomHelper::ZoomHelper()
-: m_Default_Min(0.0625)
-, m_Zoom_Min(0.0625)
-, m_Default_Max(16.0)
-, m_Zoom_Max(16.0)
-, m_ZoomStepLarge(1.0)
-, m_ZoomStepSmall(0.1)
-, m_Zoom(1.0)
-, m_ZoomFit(1.0)
-, m_bIsOne(false)
-, m_bIsFit(false)
+ZoomHelper::ZoomHelper() :
+	m_Zoom_Min(cDefault_Min)
+	, m_Zoom_Max(cDefault_Max)
 {
+	m_ScaleIndex = m_cScaleCount / 2;
+	if (m_InstanceCount == 0)
+	{
+		Init();
+	}
+	m_InstanceCount++;
 }
 
 ZoomHelper::~ZoomHelper()
 {
+	m_InstanceCount--;
+	Exit();
+}
+
+void ZoomHelper::Init()
+{
+	if (m_InstanceCount != 0)
+	{
+		return;
+	}
+	for (int i = m_cScaleCount - 1; 0 <= i; i--)
+	{
+		// map the first 14 fonts (0 - 14) to the default since they're too small
+		// to read anyway.
+		if (i < static_cast<int>(m_cScaleCount / 2))
+		{
+			m_ScaleFactor[i] = 1.0 / (double)((m_cScaleCount / 2 + 1) - i);
+
+			m_hFont[i] = m_hFont[m_cScaleCount / 2];
+		}
+		else
+		{
+			m_ScaleFactor[i] = (double)(i - (m_cScaleCount / 2 - 1));
+
+			m_hFont[i] = CreateFont(static_cast<int>(m_ScaleFactor[i] * 8), // logical height of font
+									static_cast<long>(m_ScaleFactor[i] * 6), // logical average character width
+									0, // angle of escapement
+									0, // base-line orientation angle
+									0, // font weight
+									FALSE, // italic attribute flag
+									FALSE, // underline attribute flag
+									FALSE, // strikeout attribute flag
+									DEFAULT_CHARSET, // character set identifier
+									OUT_DEFAULT_PRECIS, // output precision
+									CLIP_DEFAULT_PRECIS, // clipping precision
+									DEFAULT_QUALITY, // output quality
+									DEFAULT_PITCH | FF_DONTCARE, // pitch and family
+									nullptr); // pointer to typeface name string
+		}
+	}
+}
+
+void ZoomHelper::Exit()
+{
+	if (0 != m_InstanceCount)
+	{
+		return;
+	}
+
+	for (unsigned int i = 0; i < m_cScaleCount; i++)
+	{
+		if (m_cScaleCount / 2 <= i)
+		{
+			DeleteObject(m_hFont[i]);
+		}
+
+		m_hFont[i] = nullptr;
+	}
 }
 #pragma endregion Constructor
 
 #pragma region Public Methods
 double ZoomHelper::GetZoom() const
 {
-	double retval = 1.0;
+	double Result{1.0};
 
-	if(m_Zoom > 0)
+	if (m_Zoom > 0)
 	{
-		retval = m_Zoom;
+		Result = m_Zoom;
 	}
-	return retval;
+	return Result;
+}
+
+bool ZoomHelper::SetZoomType(ZoomEnum ZoomType, unsigned int ZoomIndex /*=0*/)
+{
+	static const unsigned int cZoomSmallestIndex = 0;
+	static const unsigned int cZoomSmallIndex = 12;
+	static const unsigned int cZoomNormalIndex = 15;
+	static const unsigned int cZoomLargeIndex = 22;
+	static const unsigned int cZoomLargestIndex = 30;
+
+	bool Result{false};
+	double originalZoom = m_Zoom;
+
+	//First clear the flags then set accordingly
+	m_bIsOne = false;
+	m_bIsFit = false;
+
+	switch (ZoomType)
+	{
+		case ZoomEnum::ZoomSmallest:
+			m_ScaleIndex = cZoomSmallestIndex;
+			m_Zoom = m_ScaleFactor[m_ScaleIndex];
+			break;
+
+		case ZoomEnum::ZoomSmall:
+			m_ScaleIndex = cZoomSmallIndex;
+			m_Zoom = m_ScaleFactor[m_ScaleIndex];
+			break;
+
+		case ZoomEnum::ZoomNormal:
+			m_ScaleIndex = cZoomNormalIndex;
+			m_Zoom = m_ScaleFactor[m_ScaleIndex];
+			m_bIsOne = true;
+			break;
+
+		case ZoomEnum::ZoomLarge:
+			m_ScaleIndex = cZoomLargeIndex;
+			m_Zoom = m_ScaleFactor[m_ScaleIndex];
+			break;
+
+		case ZoomEnum::ZoomLargest:
+			m_ScaleIndex = cZoomLargestIndex;
+			m_Zoom = m_ScaleFactor[m_ScaleIndex];
+			break;
+
+		case ZoomEnum::ZoomPlus:
+			m_Zoom += GetZoomStep();
+			m_Zoom = std::min(m_Zoom_Max, m_Zoom);
+			break;
+
+		case ZoomEnum::ZoomMinus:
+			m_Zoom -= GetZoomStep();
+			m_Zoom = std::max(m_Zoom, m_Zoom_Min);
+			break;
+
+		case ZoomEnum::ZoomFitAll:
+		case ZoomEnum::ZoomFitWidth:
+		case ZoomEnum::ZoomFitHeight:
+			//Before this is called CalculateZoomFit must be called which sets m_ZoomFit
+			m_Zoom = m_ZoomFit;
+			m_bIsFit = true;
+			break;
+
+		case ZoomEnum::ZoomValue:
+			m_ScaleIndex = std::min(cZoomLargestIndex, ZoomIndex);
+			m_Zoom = m_ScaleFactor[m_ScaleIndex];
+			break;
+		
+		default:
+			break;
+	}
+	Result = (m_Zoom != originalZoom) ? true : false;
+	if(Result)
+	{
+		ZoomChanged();
+	}
+	return Result;
 }
 
 void ZoomHelper::SetZoom(double zoom)
@@ -56,9 +195,9 @@ void ZoomHelper::SetZoom(double zoom)
 	m_bIsOne = false;
 	m_bIsFit = false;
 
-	m_Zoom = std::max( std::min( zoom, m_Zoom_Max ), m_Zoom_Min );
+	m_Zoom = std::max(std::min(zoom, m_Zoom_Max), m_Zoom_Min);
 
-	if(originalZoom != m_Zoom)
+	if (originalZoom != m_Zoom)
 	{
 		ZoomChanged();
 	}
@@ -70,110 +209,61 @@ void ZoomHelper::ExtendMinMax(double zoom)
 	m_Zoom_Min = std::min(m_Zoom_Min, zoom);
 }
 
-double ZoomHelper::SetToFit()
+bool ZoomHelper::CalculateZoomFit(ZoomEnum ZoomType, CSize ImageSize, CSize ViewSize)
 {
-	double originalZoom = m_Zoom;
-	m_Zoom = m_ZoomFit;
-	m_bIsOne = false;
-	m_bIsFit = true;
-
-	if(originalZoom != m_Zoom)
+	if (ImageSize.cx < 1 || ImageSize.cy < 1 || ViewSize.cx < 1 || ViewSize.cy < 1)
 	{
-		ZoomChanged();
-	}
-
-	return m_Zoom;
-}
-
-void ZoomHelper::SetToOne()
-{
-	double originalZoom = m_Zoom;
-	m_Zoom = 1.0;
-	m_bIsOne = true;
-	m_bIsFit = false;
-
-	if(originalZoom != m_Zoom)
-	{
-		ZoomChanged();
-	}
-}
-
-double ZoomHelper::ZoomPlus()
-{
-	double originalZoom = m_Zoom;
-	m_bIsOne = false;
-	m_bIsFit = false;
-
-	m_Zoom += GetZoomStep();
-
-	m_Zoom = std::min(m_Zoom_Max, m_Zoom);
-	if(originalZoom != m_Zoom)
-	{
-		ZoomChanged();
-	}
-
-
-	return m_Zoom;
-}
-
-double ZoomHelper::ZoomMinus()
-{
-	double originalZoom = m_Zoom;
-	m_bIsOne = false;
-	m_bIsFit = false;
-
-	m_Zoom -= GetZoomStep();
-
-	m_Zoom = std::max(m_Zoom, m_Zoom_Min);
-	if(originalZoom != m_Zoom)
-	{
-		ZoomChanged();
-	}
-
-
-	return m_Zoom;
-}
-
-bool ZoomHelper::CalculateZoomFit(CSize ImageSize, CSize ViewSize)
-{
-	if( ImageSize.cx < 1 ||
-		ImageSize.cy < 1 ||
-		ViewSize.cx < 1 ||
-		ViewSize.cy < 1 )
-	{
-		ASSERT(FALSE);
-		m_ZoomFit =1.0;
+		assert(false);
+		m_ZoomFit = 1.0;
 		return false;
 	}
+	double ScrollWidth = static_cast<double> (::GetSystemMetrics(SM_CXVSCROLL) + 1);
+	double ScrollHeight = static_cast<double> (::GetSystemMetrics(SM_CYHSCROLL) + 1);
 
-	double Width = static_cast<double>(ViewSize.cx);
-	double Height = static_cast<double>( ViewSize.cy );
-	double ImageWidth = static_cast<double>(ImageSize.cx);
-	double ImageHeight = static_cast<double>(ImageSize.cy);
+	double Width = static_cast<double> (ViewSize.cx);
+	double Height = static_cast<double> (ViewSize.cy);
+	double ImageWidth = static_cast<double> (ImageSize.cx);
+	double ImageHeight = static_cast<double> (ImageSize.cy);
 
-	if( Width / ImageWidth > Height / ImageHeight )
+	switch (ZoomType)
 	{
-		m_ZoomFit = Height / ImageHeight;
-	}
-	else
-	{
-		m_ZoomFit = Width / ImageWidth;
+		case ZoomFitWidth:
+			//If width is bigger then we need to consider the scroll bar 
+			if (Width / ImageWidth > Height / ImageHeight)
+			{
+				Width -= ScrollWidth;
+			}
+			m_ZoomFit = Width / ImageWidth;
+			break;
+
+		case ZoomFitHeight:
+			//If height is bigger then we need to consider the scroll bar 
+			if (Width / ImageWidth < Height / ImageHeight)
+			{
+				Height -= ScrollHeight;
+			}
+			m_ZoomFit = Height / ImageHeight;
+			break;
+
+		case ZoomFitAll:
+			if (Width / ImageWidth > Height / ImageHeight)
+			{
+				m_ZoomFit = Height / ImageHeight;
+			}
+			else
+			{
+				m_ZoomFit = Width / ImageWidth;
+			}
+			break;
+
+		default:
+			break;
 	}
 
-	m_Zoom_Max = std::max(m_ZoomFit, m_Default_Max);
-	m_Zoom_Min = std::min(m_ZoomFit, m_Default_Min);
+	m_Zoom_Max = std::max(m_ZoomFit, cDefault_Max);
+	m_Zoom_Min = std::min(m_ZoomFit, cDefault_Min);
 
 	return true;
-}
-
-bool ZoomHelper::IsFit() const
-{
-	return m_bIsFit;
-}
-
-bool ZoomHelper::IsOne() const
-{
-	return m_bIsOne;
 }
 
 void ZoomHelper::CloneSettings(const ZoomHelper& Source)
@@ -181,7 +271,7 @@ void ZoomHelper::CloneSettings(const ZoomHelper& Source)
 	double originalZoom = m_Zoom;
 	m_Zoom = Source.m_Zoom;
 	m_bIsOne = Source.m_bIsOne;
-	if(originalZoom != m_Zoom)
+	if (originalZoom != m_Zoom)
 	{
 		ZoomChanged();
 	}
@@ -190,8 +280,8 @@ void ZoomHelper::CloneSettings(const ZoomHelper& Source)
 void ZoomHelper::Clear()
 {
 	m_Zoom = 1.0;
-	m_Zoom_Min = m_Default_Min;
-	m_Zoom_Max = m_Default_Max;
+	m_Zoom_Min = cDefault_Min;
+	m_Zoom_Max = cDefault_Max;
 	m_ZoomFit = 1.0;
 	m_bIsOne = false;
 	m_bIsFit = false;
@@ -199,29 +289,37 @@ void ZoomHelper::Clear()
 	ZoomChanged();
 }
 
-double ZoomHelper::GetZoomMin() const
-{
-	return m_Zoom_Min;
-}
-double ZoomHelper::GetZoomMax() const
-{
-	return m_Zoom_Max;
-}
-
 double ZoomHelper::GetZoomStep() const
 {
-	double step = m_ZoomStepSmall;
-	if( m_Zoom >= 2.0 * m_ZoomStepLarge )
+	double step = cZoomStepSmall;
+	if (m_Zoom >= 2.0 * cZoomStepLarge)
 	{
-		step = m_ZoomStepLarge;
+		step = cZoomStepLarge;
 	}
 
 	return step;
 }
+#pragma endregion Public Methods
+
+#pragma region Private Methods
+unsigned ZoomHelper::FindScaleIndex()
+{
+	m_ScaleIndex = m_cScaleCount - 1;
+	for (unsigned int i = 0; i < m_cScaleCount; i++)
+	{
+		if (m_Zoom <= m_ScaleFactor[i])
+		{
+			m_ScaleIndex = i;
+			break;
+		}
+	}
+
+	return m_ScaleIndex;
+}
 
 void ZoomHelper::ZoomChanged()
 {
-	return; // Base class does nothing.  For overriding by derived classes
+	FindScaleIndex();
 }
-#pragma endregion Public Methods
+#pragma endregion Private Methods
 

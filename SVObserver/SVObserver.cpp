@@ -2679,9 +2679,6 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 			{
 				AddToRecentFileList(std::string(FileName + _T("\\") + getConfigFileName()).c_str());
 			}
-
-			UpdatePPQBar();
-
 		} // try
 
 		catch (CUserException* pUE)
@@ -4795,9 +4792,6 @@ void SVObserverApp::SetTestMode(bool p_bNoSecurity)
 
 				SetAllIPDocumentsOnline();
 
-				GetMainFrame()->ShowToolBars(FALSE, TRUE, SVMainFrame::Flag_Zoom);
-				GetMainFrame()->RefreshAllSplitters();
-
 				SVSVIMStateClass::AddState(SV_STATE_TEST);
 				SVSVIMStateClass::RemoveState(SV_STATE_EDIT);
 
@@ -5401,9 +5395,6 @@ void SVObserverApp::Start()
 
 		SVSVIMStateClass::AddState(SV_STATE_UNAVAILABLE | SV_STATE_STARTING);
 		SVSVIMStateClass::RemoveState(SV_STATE_READY | SV_STATE_START_PENDING);
-
-		GetMainFrame()->ShowToolBars(FALSE, TRUE, SVMainFrame::Flag_Standard | SVMainFrame::Flag_Zoom);
-		GetMainFrame()->RefreshAllSplitters();
 
 		SetPriorityClass(GetCurrentProcess(), REALTIME_PRIORITY_CLASS);
 
@@ -6197,9 +6188,6 @@ void SVObserverApp::OnStopAll()
 
 			SVSVIMStateClass::RemoveState(SV_STATE_TEST);
 		}
-
-		GetMainFrame()->ShowToolBars(TRUE, TRUE, SVMainFrame::Flag_Standard | SVMainFrame::Flag_Zoom);
-		GetMainFrame()->RefreshAllSplitters();
 
 		SVSVIMStateClass::RemoveState(SV_STATE_RUNNING);
 

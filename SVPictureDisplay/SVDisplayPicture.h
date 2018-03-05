@@ -26,14 +26,6 @@
 #define MOUSE_MOVEDIM WM_USER +6
 #define TAB_CHANGED WM_USER + 7
 
-enum ZoomEnum
-{
-	ZoomToFit = 1,
-	ZoomOneToOne = 2,
-	ZoomPlus = 3,
-	ZoomMinus = 4
-};
-
 enum DisplayPictureErrors
 {
 	E_InvalidBitmapHandle = -79002,

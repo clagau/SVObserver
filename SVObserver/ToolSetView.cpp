@@ -862,7 +862,6 @@ void ToolSetView::OnSetFocus(CWnd* pOldWnd)
 		{
 			pSplitterFrame->RefreshAllSplitters();
 		}
-		pFrame->EnableZoomToolbar(false);
 	}
 }
 

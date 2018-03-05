@@ -53,13 +53,6 @@ public:
 	void SetImageSize( SIZE p_oSize );
 
 	//************************************
-	// Method:    ImageIsEmpty
-	// Description:  Return true if image is empty
-	// Returns:   bool
-	//************************************
-	bool ImageIsEmpty() const;
-
-	//************************************
 	// Method:    IsZoomAllowed
 	//  Description:  Return true if zooming is enabled
 	// Returns:   bool
@@ -78,14 +71,8 @@ protected:
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg BOOL OnEraseBkgnd( CDC* p_pDC );
-	afx_msg void OnZoomMinus();
-	afx_msg void OnUpdateZoomMinus(CCmdUI *pCmdUI);
-	afx_msg void OnZoomPlus();
-	afx_msg void OnUpdateZoomPlus(CCmdUI *pCmdUI);
-	afx_msg void OnZoomFit();
-	afx_msg void OnUpdateZoomFit(CCmdUI *pCmdUI);
-	afx_msg void OnZoomOne();
-	afx_msg void OnUpdateZoomOne(CCmdUI *pCmdUI);
+	afx_msg void OnZoomTypeChanged(UINT nId);
+	afx_msg void OnUpdateZoomTypeChanged(CCmdUI* PCmdUI);
 	afx_msg void OnZoomSliderMoved();
 	afx_msg void OnKillFocus(CWnd* pNewWnd);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);

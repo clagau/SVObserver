@@ -31,14 +31,9 @@ BEGIN_MESSAGE_MAP(SVImageViewScroll, CScrollView)
 	ON_WM_CONTEXTMENU()
 	ON_WM_ERASEBKGND()
 	//}}AFX_MSG_MAP
-	ON_COMMAND(ID_ZOOM_MINUS, &SVImageViewScroll::OnZoomMinus)
-	ON_UPDATE_COMMAND_UI(ID_ZOOM_MINUS, &SVImageViewScroll::OnUpdateZoomMinus)
-	ON_COMMAND(ID_ZOOM_PLUS, &SVImageViewScroll::OnZoomPlus)
-	ON_UPDATE_COMMAND_UI(ID_ZOOM_PLUS, &SVImageViewScroll::OnUpdateZoomPlus)
-	ON_COMMAND(ID_ZOOM_FIT, &SVImageViewScroll::OnZoomFit)
-	ON_UPDATE_COMMAND_UI(ID_ZOOM_FIT, &SVImageViewScroll::OnUpdateZoomFit)
-	ON_COMMAND(ID_ZOOM_ONE, &SVImageViewScroll::OnZoomOne)
-	ON_UPDATE_COMMAND_UI(ID_ZOOM_ONE, &SVImageViewScroll::OnUpdateZoomOne)
+	//! When using Range the IDs must be sequential
+	ON_COMMAND_RANGE(ID_ZOOM_SMALLEST, ID_ZOOM_FIT_HEIGHT, OnZoomTypeChanged)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_ZOOM_SMALLEST, ID_ZOOM_FIT_HEIGHT, OnUpdateZoomTypeChanged)
 	ON_COMMAND(ID_ZOOM_SLIDER_MOVED, &SVImageViewScroll::OnZoomSliderMoved)
 	ON_WM_KILLFOCUS()
 	ON_WM_SETFOCUS()
@@ -575,93 +570,56 @@ bool SVImageViewScroll::CheckParameters( SVTreeType& rTree, SVTreeType::SVBranch
 	return bOk;
 }
 
-void SVImageViewScroll::OnZoomMinus()
-{
-	if(nullptr != m_pView)
-	{
-		m_pView->OnZoomMinus();
-	}
-}
-
-void SVImageViewScroll::OnUpdateZoomMinus(CCmdUI *pCmdUI)
-{
-	bool enable = IsZoomAllowed();
-	pCmdUI->Enable(enable);
-}
-
-void SVImageViewScroll::OnZoomPlus()
-{
-	if(nullptr != m_pView)
-	{
-		m_pView->OnZoomPlus();
-	}
-}
-
 bool SVImageViewScroll::IsZoomAllowed() const
 {
-	bool allowed = !ImageIsEmpty() && !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST );
-	return allowed;
-}
+	bool Result{false};
 
-void SVImageViewScroll::OnUpdateZoomPlus(CCmdUI *pCmdUI)
-{
-	bool enable = IsZoomAllowed();
-	pCmdUI->Enable(enable);
-}
-
-void SVImageViewScroll::OnZoomFit()
-{
-	if(nullptr != m_pView)
+	if (nullptr != m_pView)
 	{
-		m_pView->OnZoomFit();
+		Result = m_pView->IsZoomAllowed();
+	}
+	return Result;
+}
+
+void SVImageViewScroll::OnZoomTypeChanged(UINT nId)
+{
+	if(ID_ZOOM_SMALLEST <= nId && ID_ZOOM_FIT_HEIGHT >= nId)
+	{
+		ZoomEnum ZoomType = static_cast<ZoomEnum> (nId - ID_ZOOM_SMALLEST);
+		if(nullptr != m_pView)
+		{
+			m_pView->SetZoom(ZoomType);
+		}
 	}
 }
 
-void SVImageViewScroll::OnUpdateZoomFit(CCmdUI *pCmdUI)
+void SVImageViewScroll::OnUpdateZoomTypeChanged(CCmdUI* pCmdUI)
 {
-	bool enable = IsZoomAllowed();
-	pCmdUI->Enable(enable);
-}
-
-void SVImageViewScroll::OnZoomOne()
-{
-	if(m_pView)
+	pCmdUI->Enable(IsZoomAllowed());
+	//For the Zoom Toolbar check once, when ID_ZOOM_NORMAL is checked to set the slider
+	if(ID_ZOOM_NORMAL == pCmdUI->m_nID)
 	{
-		m_pView->OnZoomOne();
+		SVMainFrame* pFrame = dynamic_cast<SVMainFrame*>(AfxGetMainWnd());
+		if(nullptr != pFrame)
+		{
+			pFrame->EnableZoomToolbar(IsZoomAllowed());
+		}
 	}
-}
-
-bool SVImageViewScroll::ImageIsEmpty() const
-{
-	bool retval = true;
-
-	if(nullptr != m_pView)
-	{
-		retval = m_pView->ImageIsEmpty();
-	}
-
-	return retval;
-}
-
-void SVImageViewScroll::OnUpdateZoomOne(CCmdUI *pCmdUI)
-{
-	bool enable = IsZoomAllowed();
-	pCmdUI->Enable(enable);
 }
 
 void SVImageViewScroll::OnZoomSliderMoved()
 {
 	SVMainFrame* pFrame = dynamic_cast<SVMainFrame*>( AfxGetMainWnd() );
-	double val = 1.0;
+	double Value = 1.0;
 
 	if(nullptr != pFrame)
 	{
-		val = pFrame->GetZoomToolbarValue();
+		Value = pFrame->GetZoomToolbarValue();
 	}
 
 	if(nullptr != m_pView)
 	{
-		m_pView->SetZoom(EZoomValue, val);
+		m_pView->SetZoomValue(Value);
 	}
 }
 
@@ -691,10 +649,7 @@ void SVImageViewScroll::UpdateZoomToolbar()
 
 	if(nullptr != pFrame && pFocus == this )
 	{
-		bool bZoom = IsZoomAllowed();
-		pFrame->EnableZoomToolbar(bZoom);
-
-		if( true == bZoom && nullptr != m_pView )
+		if( IsZoomAllowed() && nullptr != m_pView )
 		{
 			pFrame->SetZoomToolbar(m_pView->GetZoomHelper());
 		}
@@ -715,10 +670,7 @@ void SVImageViewScroll::OnSetFocus(CWnd* pOldWnd)
 			pSplitterFrame->RefreshAllSplitters();
 		}
 
-		bool bZoom = IsZoomAllowed();
-		pFrame->EnableZoomToolbar(bZoom);
-
-		if( true == bZoom && nullptr != m_pView )
+		if( IsZoomAllowed() && nullptr != m_pView )
 		{
 			pFrame->SetZoomToolbar(m_pView->GetZoomHelper());
 		}

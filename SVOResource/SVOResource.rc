@@ -3393,8 +3393,10 @@ BEGIN
     BUTTON      ID_ZOOM_MINUS
     BUTTON      ID_Dummy
     BUTTON      ID_ZOOM_PLUS
-    BUTTON      ID_ZOOM_FIT
-    BUTTON      ID_ZOOM_ONE
+    BUTTON      ID_ZOOM_FIT_ALL
+    BUTTON      ID_ZOOM_NORMAL
+    BUTTON      ID_ZOOM_FIT_WIDTH
+    BUTTON      ID_ZOOM_FIT_HEIGHT
 END
 
 IDR_MAINFRAME TOOLBAR 16, 15
@@ -3736,10 +3738,12 @@ BEGIN
         MENUITEM "Reset Counts All IPs\tCtrl+0", ID_VIEW_RESETCOUNTSALLIPS,MFT_STRING,MFS_ENABLED
         POPUP "Zoom",                           65535,MFT_STRING,MFS_ENABLED
         BEGIN
-            MENUITEM "Zoom +\tCtrl+plus",           ID_ZOOM_PLUS,MFT_STRING,MFS_ENABLED
-            MENUITEM "Zoom -\tCtrl+minus",          ID_ZOOM_MINUS,MFT_STRING,MFS_ENABLED
-            MENUITEM "Zoom 1:1",                    ID_ZOOM_ONE,MFT_STRING,MFS_ENABLED
-            MENUITEM "Zoom []",                     ID_ZOOM_FIT,MFT_STRING,MFS_ENABLED
+            MENUITEM "Zoom +\tCtrl+plus",  ID_ZOOM_PLUS,MFT_STRING,MFS_ENABLED
+            MENUITEM "Zoom -\tCtrl+minus", ID_ZOOM_MINUS,MFT_STRING,MFS_ENABLED
+            MENUITEM "Zoom 1:1",           ID_ZOOM_NORMAL,MFT_STRING,MFS_ENABLED
+            MENUITEM "Zoom []",            ID_ZOOM_FIT_ALL, MFT_STRING, MFS_ENABLED
+            MENUITEM "Zoom fit Width",     ID_ZOOM_FIT_WIDTH, MFT_STRING, MFS_ENABLED
+            MENUITEM "Zoom fit Height",    ID_ZOOM_FIT_HEIGHT, MFT_STRING, MFS_ENABLED
         END
     END
     POPUP "&Window",                        65535,MFT_STRING,MFS_ENABLED
@@ -3788,16 +3792,18 @@ BEGIN
     BEGIN
         POPUP "Zoom"
         BEGIN
-            MENUITEM "Smaller -",                   ID_ZOOM_OUT
-            MENUITEM "Larger +",                    ID_ZOOM_IN
+            MENUITEM "Smaller -",        ID_ZOOM_MINUS
+            MENUITEM "Larger +",         ID_ZOOM_PLUS
             MENUITEM SEPARATOR
-            MENUITEM "Tiny",                        ID_ZOOM_SMALLEST
-            MENUITEM "Small",                       ID_ZOOM_SMALL
-            MENUITEM "Normal 1:1",                  ID_ZOOM_NORMAL
-            MENUITEM "Large",                       ID_ZOOM_LARGE
-            MENUITEM "Extra Large",                 ID_ZOOM_LARGEST
+            MENUITEM "Tiny",             ID_ZOOM_SMALLEST
+            MENUITEM "Small",            ID_ZOOM_SMALL
+            MENUITEM "Normal 1:1",       ID_ZOOM_NORMAL
+            MENUITEM "Large",            ID_ZOOM_LARGE
+            MENUITEM "Extra Large",      ID_ZOOM_LARGEST
             MENUITEM SEPARATOR
-            MENUITEM "Zoom []",                     ID_ZOOM_FIT
+            MENUITEM "Zoom []",          ID_ZOOM_FIT_ALL
+            MENUITEM "Zoom fit Width",   ID_ZOOM_FIT_WIDTH
+            MENUITEM "Zoom fit Height",  ID_ZOOM_FIT_HEIGHT
         END
         MENUITEM "Configure Analyzer",          ID_CONFIG_ANALYZER
         MENUITEM "Show Analyzer Result",        ID_ANALYZER_RESULT
@@ -4929,9 +4935,9 @@ BEGIN
     IDS_OBJECTNAME_BAND1_THRESHOLDENABLED "Band 1 Threshold Enabled"
     IDS_OBJECTNAME_BAND2_THRESHOLDENABLED "Band 2 Threshold Enabled"
     IDS_OBJECTNAME_OUTPUT_THRESHOLDENABLED "Output Threshold Enabled"
-	IDS_OBJECTNAME_CONVERT_TO_HSI "Convert to HSI"
-	IDS_OBJECTNAME_HAS_ROI "Has ROI"
-	IDS_OBJECTNAME_ARCHIVE_FILEPATH "Archive File Path"
+    IDS_OBJECTNAME_CONVERT_TO_HSI "Convert to HSI"
+    IDS_OBJECTNAME_HAS_ROI "Has ROI"
+    IDS_OBJECTNAME_ARCHIVE_FILEPATH "Archive File Path"
 END
 
 STRINGTABLE
@@ -5181,8 +5187,11 @@ END
 STRINGTABLE
 BEGIN
     ID_ZOOM_MINUS           "Zoom minus\nZoom -"
-    ID_ZOOM_ONE             "zoom one\nZoom 1:1"
-    ID_ZOOM_FIT             "zoom fit\nZoom []"
+    ID_ZOOM_PLUS            "Zoom plus\nZoom +"
+    ID_ZOOM_NORMAL          "Zoom one\nZoom 1:1"
+    ID_ZOOM_FIT_ALL         "Zoom fit\nZoom []"
+    ID_ZOOM_FIT_WIDTH       "Zoom fit Width\nZoom fit Width"
+    ID_ZOOM_FIT_HEIGHT      "Zoom fit Height\nZoom fit Height"
     ID_TOOLBAR_STANDARD     "Show or hide the tool bar\nToggle Tool Bar"
 END
 
@@ -6037,11 +6046,6 @@ BEGIN
     IDS_TRIGGER_DELTA       "Trigger Delta"
     IDS_TRIGGER_TO_COMPLETION_TIME "Trigger To Completion Time"
     IDS_TRIGGER_TO_START_TIME "Trigger To Start Time"
-END
-
-STRINGTABLE
-BEGIN
-    ID_ZOOM_PLUS            "zoom plus\nZoom +"
 END
 
 

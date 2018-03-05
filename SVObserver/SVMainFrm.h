@@ -16,7 +16,7 @@
 #include "SVPPQBar.h"
 #include "SVMFCControls\SVStatusBar.h"
 #include "ZoomToolBar.h"
-#include "SVOGui/ZoomHelperEx.h"
+#include "SVOGui/ZoomHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -191,10 +191,10 @@ public:
 	//************************************
 	// Method:    SetZoomToolbar
 	// Description:  Set the zoom toolbar with the the values from Zoomhelper
-	// Parameter: ZoomHelperEx & helper
+	// Parameter: ZoomHelper& rZoomHelper
 	// Returns:   void
 	//************************************
-	void SetZoomToolbar(const ZoomHelperEx &helper );
+	void SetZoomToolbar(const ZoomHelper &rZoomHelper );
 
 	//************************************
 	// Method:    EnableZoomToolbar
@@ -202,7 +202,7 @@ public:
 	// Parameter: bool enable
 	// Returns:   void
 	//************************************
-	void EnableZoomToolbar(bool enable );	
+	void EnableZoomToolbar(bool enable);
 
 	//************************************
 	// Method:    IsZoomingPossible
@@ -234,8 +234,5 @@ private:
 	UINT m_PosSize;
 	HANDLE m_hDisplayChangedEvent; // Set if the display settings have been changed since the Window was created.
 
-public:
-	const static DWORD Flag_Standard = 0x1;
-	const static DWORD Flag_Zoom = 0x2;
 };
 

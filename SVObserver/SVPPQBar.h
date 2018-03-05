@@ -92,5 +92,6 @@ protected:
 	SVPPQWindowClass PPQWindow;
 
 	CTabCtrl	pqTabCtrl;
+	CString PPQName;
 };
 
