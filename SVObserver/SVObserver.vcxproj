@@ -449,7 +449,6 @@ echo %time%
     <ClCompile Include="SVToolImage.cpp" />
     <ClCompile Include="SVToolLoadImage.cpp" />
     <ClCompile Include="SVToolSet.cpp" />
-    <ClCompile Include="SVToolSetAdjustmentDialogSheet.cpp" />
     <ClCompile Include="SVToolSetListCtrl.cpp" />
     <ClCompile Include="SVUtilities.cpp" />
     <ClCompile Include="SVUtilitiesCustomizeDialog.cpp" />
@@ -760,7 +759,6 @@ echo %time%
     <ClInclude Include="SVToolImage.h" />
     <ClInclude Include="SVToolLoadImage.h" />
     <ClInclude Include="SVToolSet.h" />
-    <ClInclude Include="SVToolSetAdjustmentDialogSheet.h" />
     <ClInclude Include="SVToolSetListCtrl.h" />
     <ClInclude Include="SVUtilities.h" />
     <ClInclude Include="SVUtilitiesCustomizeDialog.h" />

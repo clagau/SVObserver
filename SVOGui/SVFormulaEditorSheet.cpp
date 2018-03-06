@@ -14,10 +14,12 @@
 #include "SVOResource/resource.h"
 #include "SVFormulaEditorSheet.h"
 #include "FormulaController.h"
-#include "SVStatusLibrary\MessageManager.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "TextDefinesSvOg.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
-#include "SVMessage\SVMessage.h"
+#include "SVMessage/SVMessage.h"
+#include "InspectionCommands/GetInstanceIDByTypeInfo.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -30,16 +32,16 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-	SVFormulaEditorSheetClass::SVFormulaEditorSheetClass(const GUID& rInspectionID, const GUID& rTaskObjectID, const SvDef::SVObjectTypeInfoStruct& rInfo, LPCTSTR pCaption, CWnd* pParentWnd, UINT iSelectPage)
+	SVFormulaEditorSheetClass::SVFormulaEditorSheetClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SvDef::SVObjectTypeInfoStruct& rInfo, LPCTSTR pCaption, CWnd* pParentWnd, UINT iSelectPage)
 	: CPropertySheet(pCaption, pParentWnd, iSelectPage)
 	{
 		init(rInspectionID, rTaskObjectID, rInfo);
 	}
 
-	SVFormulaEditorSheetClass::SVFormulaEditorSheetClass(const GUID& rInspectionID, const GUID& rTaskObjectID, const GUID& rEquationId, LPCTSTR pCaption, CWnd* pParentWnd, UINT iSelectPage)
+	SVFormulaEditorSheetClass::SVFormulaEditorSheetClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SVGUID& rEquationID, LPCTSTR pCaption, CWnd* pParentWnd, UINT iSelectPage)
 		: CPropertySheet(pCaption, pParentWnd, iSelectPage)
 	{
-		init(rInspectionID, rTaskObjectID, rEquationId);
+		init(SvOi::IFormulaControllerPtr {new FormulaController(rInspectionID, rTaskObjectID, rEquationID)});
 	}
 
 	SVFormulaEditorSheetClass::SVFormulaEditorSheetClass(SvOi::IFormulaControllerPtr formulaController, LPCTSTR pCaption, CWnd* pParentWnd, UINT iSelectPage)
@@ -52,19 +54,75 @@ namespace SvOg
 	{
 	}
 
-	void SVFormulaEditorSheetClass::init(const GUID& rInspectionID, const GUID& rTaskObjectID, const SvDef::SVObjectTypeInfoStruct& rInfo)
+	void SVFormulaEditorSheetClass::init(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SvDef::SVObjectTypeInfoStruct& rInfo)
 	{
-		init(SvOi::IFormulaControllerPtr{ new FormulaController(rInspectionID, rTaskObjectID, rInfo) });
-	}
+		typedef SvCmd::GetInstanceIDByTypeInfo Command;
+		typedef std::shared_ptr<Command> CommandPtr;
+		SVGUID EquationID;
 
-	void SVFormulaEditorSheetClass::init(const GUID& rInspectionID, const GUID& rTaskObjectID, const GUID& rEquationId)
-	{
-		init(SvOi::IFormulaControllerPtr{ new FormulaController(rInspectionID, rTaskObjectID, rEquationId) });
+		// check for Math Container...
+		if (SvDef::SVMathContainerObjectType == rInfo.ObjectType)
+		{
+			// Get the Math Container
+			CommandPtr commandPtr(new Command(rTaskObjectID, rInfo));
+			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(rInspectionID, commandPtr);
+			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+			if (S_OK == hr)
+			{
+				// Get the Equation
+				SvDef::SVObjectTypeInfoStruct info(SvDef::SVEquationObjectType, SvDef::SVMathEquationObjectType);
+				GUID containerID = commandPtr->GetInstanceID();
+				commandPtr = CommandPtr(new Command(containerID, info));
+				SVObjectSynchronousCommandTemplate<CommandPtr> cmd(rInspectionID, commandPtr);
+				HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+				if (S_OK == hr)
+				{
+					EquationID = commandPtr->GetInstanceID();
+				}
+				else
+				{
+					SvDef::StringVector msgList;
+					msgList.push_back(SvUl::Format(_T("%d"), hr));
+					SvStl::MessageMgrStd e(SvStl::LogOnly);
+					e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams));
+					assert(false);
+				}
+			}
+		}
+		else
+		{
+			// Get the Equation
+			CommandPtr commandPtr(new Command(rTaskObjectID, rInfo));
+			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(rInspectionID, commandPtr);
+			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+			if (S_OK == hr)
+			{
+				EquationID = commandPtr->GetInstanceID();
+			}
+			else
+			{
+				SvDef::StringVector msgList;
+				msgList.push_back(SvUl::Format(_T("%d"), hr));
+				SvStl::MessageMgrStd e(SvStl::LogOnly);
+				e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams));
+				assert(false);
+			}
+		}
+		m_isConditional = SvDef::SVConditionalObjectType == rInfo.SubType;
+
+		init(SvOi::IFormulaControllerPtr{ new FormulaController(rInspectionID, rTaskObjectID, EquationID, m_isConditional) });
 	}
 
 	void SVFormulaEditorSheetClass::init(SvOi::IFormulaControllerPtr formulaController)
 	{
-		m_formulaPage = FormulaEditorPagePtr(new SVFormulaEditorPageClass(formulaController));
+		if(m_isConditional)
+		{
+			m_formulaPage = FormulaEditorPagePtr {new SvOg::SVFormulaEditorPageClass(formulaController, true, IDS_CONDITIONAL_STRING, IDS_CLASSNAME_SVTOOLSET)};
+		}
+		else
+		{
+			m_formulaPage = FormulaEditorPagePtr(new SVFormulaEditorPageClass(formulaController));
+		}
 		m_psh.dwFlags |= PSH_NOAPPLYNOW;
 		AddPage(m_formulaPage.get());
 	}

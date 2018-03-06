@@ -54,7 +54,7 @@ BOOL SVBlobAnalyzerResultDlg::OnInitDialog()
 
 	std::string FeaturesEnabled;
 	m_pBlobAnalyzer->m_PersistantFeaturesEnabled.getValue(FeaturesEnabled);
-	assert(FeaturesEnabled.size() != SvOi::SV_NUMBER_OF_BLOB_FEATURES);
+	assert(FeaturesEnabled.size() == SvOi::SV_NUMBER_OF_BLOB_FEATURES);
 
 	for (int i = 0; i < SvOi::SV_NUMBER_OF_BLOB_FEATURES; i++)
 	{

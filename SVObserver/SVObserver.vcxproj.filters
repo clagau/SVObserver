@@ -575,9 +575,6 @@
     <ClCompile Include="SVToolSet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVToolSetAdjustmentDialogSheet.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVToolSetListCtrl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1426,9 +1423,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVToolSet.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVToolSetAdjustmentDialogSheet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVToolSetListCtrl.h">

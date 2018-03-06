@@ -20,6 +20,7 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVOGui/ValuesAccessor.h"
 #include "SVOGui/DataController.h"
+#include "InspectionEngine/SVImagePolarTransform.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -76,26 +77,30 @@ HRESULT SVToolAdjustmentDialogPolarTransformPageClass::SetInspectionData()
 		//@TODO[gra][8.00][15.01.2018]: The data controller should be used like the rest of SVOGui
 		typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
 		typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
-		Controller Values{ SvOg::BoundValues{ m_pTool->GetInspection()->GetUniqueObjectID(), m_pTool->GetUniqueObjectID() } };
-		Values.Init();
+		Controller PolarTransformValues{ SvOg::BoundValues{ m_pTool->GetInspection()->GetUniqueObjectID(), m_ImagePolarTransformID} };
+		PolarTransformValues.Init();
 
-		Values.Set<bool>(m_pUseFormula->GetEmbeddedID(), bUseFormula ? true : false);
+		PolarTransformValues.Set<bool>(m_pUseFormula->GetEmbeddedID(), bUseFormula ? true : false);
 
 		int sel = interpolationComboCtrl.GetCurSel();
 		if (0 <= sel)
 		{
 			long lValue = static_cast<long> (interpolationComboCtrl.GetItemData( sel ));
-			Values.Set<long>(m_pInterpolationMode->GetEmbeddedID(), lValue);
+			PolarTransformValues.Set<long>(m_pInterpolationMode->GetEmbeddedID(), lValue);
 		}
+		Result = PolarTransformValues.Commit();
 
 		sel = m_AngularMethodCombo.GetCurSel();
 		if (0 <= sel)
 		{
+			//@TODO[gra][8.00][15.01.2018]: The data controller should be used like the rest of SVOGui
+			Controller Values {SvOg::BoundValues {m_pTool->GetInspection()->GetUniqueObjectID(), m_pTool->GetUniqueObjectID()}};
+			Values.Init();
+
 			long lValue = static_cast<long>  (m_AngularMethodCombo.GetItemData(sel));
 			Values.Set<long>(m_pAngleMethod->GetEmbeddedID(), lValue);
+			Values.Commit();
 		}
-		
-		Result = Values.Commit();
 	}
 
 	return Result;
@@ -354,7 +359,16 @@ BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog()
 			// Populate Interpolation Mode combo...
 			interpolationComboCtrl.SetEnumTypes(m_pInterpolationMode->GetEnumVector());
 		}
-		
+
+		objectInfo.ObjectType = SvDef::SVPolarTransformObjectType;
+		objectInfo.SubType = SvDef::SVImagePolarTransformObjectType;
+		objectInfo.EmbeddedID = GUID_NULL;
+		SVImagePolarTransformClass* pImagePolarTransform = dynamic_cast<SVImagePolarTransformClass*> (m_pTool->getFirstObject(objectInfo));
+		if(nullptr != pImagePolarTransform)
+		{
+			m_ImagePolarTransformID = pImagePolarTransform->GetUniqueObjectID();
+		}
+
 
 		UpdateData( FALSE );
 	

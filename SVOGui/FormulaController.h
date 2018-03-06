@@ -26,9 +26,7 @@ namespace SvOg
 	{
 	#pragma region Constructor
 	public:
-		FormulaController(const GUID& rInspectionID, const GUID& rTaskObjectId, const SvDef::SVObjectTypeInfoStruct& rInfo, bool bEnabledReadOnly=true);
-
-		FormulaController(const GUID& rInspectionID, const GUID& rTaskObjectId, const GUID& rEquationObjectId, bool bEnabledReadOnly=true);
+		FormulaController(const SVGUID& rInspectionID, const SVGUID& rTaskObjectId, const SVGUID& rEquationObjectId, bool isConditional=false);
 	#pragma endregion Constructor
 
 	#pragma region Destructor
@@ -64,19 +62,19 @@ namespace SvOg
 	#pragma endregion Public Methods
 
 	#pragma region Member Variables
-	protected:
-		GUID m_InspectionID; // Instance ID of the Inspection
-		GUID m_TaskObjectID; // Instance ID of the Owner (Toolset or Tool or other TaskObject)
-		SvDef::SVObjectTypeInfoStruct m_info;
-		GUID m_EquationID; // Instance ID of the Equation
+	private:
+		const SVGUID m_InspectionID; // Instance ID of the Inspection
+		const SVGUID m_TaskObjectID; // Instance ID of the Owner (Toolset or Tool or other TaskObject)
+		const SVGUID m_EquationID; // Instance ID of the Equation
+		const bool m_isConditional;
+		SVGUID m_EnableID;
 
 		typedef SvOg::ValuesAccessor<SvOg::BoundValues> FormulaCommand;
 		typedef SvOg::DataController<FormulaCommand, FormulaCommand::value_type> Controller;
 		Controller m_Values;
-	#pragma endregion Member Variables
+		Controller m_EquationValues;
+#pragma endregion Member Variables
 
-	private:
-		void init();
 	};
 } //namespace SvOg
 

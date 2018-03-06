@@ -29,7 +29,7 @@ namespace SvOg
 #pragma region Constructor
 	public:
 		// Standard constructor
-		TADialogTableDefinesPage( const GUID& rInspectionID, const GUID& rTaskObjectID );
+		TADialogTableDefinesPage( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID );
 
 		// Standard destructor
 		virtual ~TADialogTableDefinesPage();
@@ -100,8 +100,8 @@ namespace SvOg
 
 #pragma region Member Variables
 	private:
-		GUID m_InspectionID;
-		GUID m_TaskObjectID;
+		const SVGUID m_InspectionID;
+		const SVGUID m_TaskObjectID;
 
 		SvGcl::CGridCtrl m_Grid;						//The grid displaying the name and the formulas
 		SvUl::NameGuidList m_gridList;

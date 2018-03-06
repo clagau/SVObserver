@@ -81,6 +81,8 @@ protected:
 	SVToolAdjustmentDialogSheetClass* m_pParentDialog;
 	SVToolClass* m_pTool;
 
+	SVGUID m_ImagePolarTransformID;
+
 	SVEvaluateClass*			m_pEvaluateCenterX;
 	SVDoubleValueObjectClass*	m_pCenterXResult;
 

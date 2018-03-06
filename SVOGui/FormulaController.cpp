@@ -17,9 +17,9 @@
 //Moved to precompiled header: #include <string>
 #include "FormulaController.h"
 #include "InspectionCommands/GetObjectName.h"
+#include "InspectionCommands/GetObjectTypeInfo.h"
 #include "InspectionCommands/GetPPQObjectName.h"
 #include "InspectionCommands/GetPPQSelectorList.h"
-#include "InspectionCommands/GetInstanceIDByTypeInfo.h"
 #include "InspectionCommands/TaskObjectGetEmbeddedValues.h"
 #include "InspectionCommands/TaskObjectSetEmbeddedValues.h"
 #include "InspectionCommands/SetDefaultInputs.h"
@@ -48,24 +48,34 @@ static char THIS_FILE[] = __FILE__;
 namespace SvOg
 {
 	#pragma region Constructor
-	FormulaController::FormulaController(const GUID& rInspectionID, const GUID& rTaskObjectID, const SvDef::SVObjectTypeInfoStruct& rInfo, bool bEnabledReadOnly)
-	: m_InspectionID(rInspectionID)
-	, m_TaskObjectID(rTaskObjectID)
-	, m_info(rInfo)
-	, m_EquationID(GUID_NULL)
-	, m_Values(SvOg::BoundValues(rInspectionID, rTaskObjectID, bEnabledReadOnly))
+	FormulaController::FormulaController(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SVGUID& rEquationID, bool isConditional /*=false*/)
+		: m_InspectionID{rInspectionID}
+		, m_TaskObjectID{rTaskObjectID}
+		, m_EquationID{rEquationID}
+		, m_EnableID{SVToolEnabledObjectGuid}
+		, m_isConditional{isConditional}
+		, m_Values{SvOg::BoundValues{rInspectionID, rTaskObjectID, !isConditional}}
+		, m_EquationValues{SvOg::BoundValues{rInspectionID, rEquationID, !isConditional}}
 	{
-		init();
-	}
+		if(m_isConditional)
+		{
+			typedef SvCmd::GetObjectTypeInfo Command;
+			typedef std::shared_ptr<Command> CommandPtr;
+			CommandPtr commandPtr {new Command(m_TaskObjectID)};
+			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+			if (S_OK == hr)
+			{
+				if(SvDef::SVToolSetObjectType == commandPtr->GetTypeInfo().ObjectType)
+				{
+					m_EnableID = SVToolSetEnabledObjectGuid;
+				}
 
-	FormulaController::FormulaController(const GUID& rInspectionID, const GUID& rTaskObjectID, const GUID& rEquationID, bool bEnabledReadOnly)
-		: m_InspectionID(rInspectionID)
-		, m_TaskObjectID(rTaskObjectID)
-		, m_info(SvDef::SVObjectTypeInfoStruct())
-		, m_EquationID(rEquationID)
-		, m_Values(SvOg::BoundValues(rInspectionID, rTaskObjectID, bEnabledReadOnly))
-	{
-		init();
+			}
+
+			m_Values.Init();
+			m_EquationValues.Init();
+		}
 	}
 	#pragma endregion Constructor
 
@@ -133,10 +143,10 @@ namespace SvOg
 	HRESULT FormulaController::IsOwnerAndEquationEnabled(bool& ownerEnabled, bool& equationEnabled) const
 	{
 		//Only when the controller is of type SvDef::SVConditionalObjectType
-		if (SvDef::SVConditionalObjectType == m_info.SubType)
+		if (m_isConditional)
 		{
-			ownerEnabled = m_Values.Get<bool>(SVToolEnabledObjectGuid);
-			equationEnabled = m_Values.Get<bool>(SVEquationEnabledObjectGuid);
+			ownerEnabled = m_Values.Get<bool>(m_EnableID);
+			equationEnabled = m_EquationValues.Get<bool>(SVEquationEnabledObjectGuid);
 		}
 		else
 		{
@@ -149,11 +159,12 @@ namespace SvOg
 	HRESULT FormulaController::SetOwnerAndEquationEnabled(bool ownerEnabled, bool equationEnabled)
 	{
 		HRESULT hr = S_OK;
-		if (SvDef::SVConditionalObjectType == m_info.SubType)
+		if (m_isConditional)
 		{
-			m_Values.Set<bool>(SVToolEnabledObjectGuid, ownerEnabled);
-			m_Values.Set<bool>(SVEquationEnabledObjectGuid, equationEnabled);
+			m_Values.Set<bool>(m_EnableID, ownerEnabled);
+			m_EquationValues.Set<bool>(SVEquationEnabledObjectGuid, equationEnabled);
 			m_Values.Commit();
+			m_EquationValues.Commit();
 		}
 		return hr;
 	}
@@ -261,60 +272,5 @@ namespace SvOg
 	}
 
 	#pragma endregion Protected Methods
-
-	void FormulaController::init()
-	{
-		//Only when the controller is of type SvDef::SVConditionalObjectType
-		if (SvDef::SVConditionalObjectType == m_info.SubType)
-		{
-			m_Values.Init();
-		}
-
-		if (GUID_NULL == m_EquationID)
-		{
-			typedef SvCmd::GetInstanceIDByTypeInfo Command;
-			typedef std::shared_ptr<Command> CommandPtr;
-			// check for Math Container...
-			if (SvDef::SVMathContainerObjectType == m_info.ObjectType)
-			{
-				// Get the Math Container
-				CommandPtr commandPtr(new Command(m_TaskObjectID, m_info));
-				SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-				HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-				if (S_OK == hr)
-				{
-					// Get the Equation
-					SvDef::SVObjectTypeInfoStruct info(SvDef::SVEquationObjectType, SvDef::SVMathEquationObjectType);
-					GUID containerID = commandPtr->GetInstanceID(); 
-					commandPtr = CommandPtr(new Command(containerID, info));
-					SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-					HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-					if (S_OK == hr)
-					{
-						m_EquationID = commandPtr->GetInstanceID();
-					}		
-				}
-			}
-			else
-			{
-				// Get the Equation
-				CommandPtr commandPtr(new Command(m_TaskObjectID, m_info));
-				SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-				HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-				if (S_OK == hr)
-				{
-					m_EquationID = commandPtr->GetInstanceID();
-				}
-				else
-				{
-					SvDef::StringVector msgList;
-					msgList.push_back(SvUl::Format(_T("%d"), hr));
-					SvStl::MessageMgrStd e( SvStl::LogOnly );
-					e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams) );
-					ASSERT(false);
-				}
-			}
-		}
-	}
 } //namespace SvOg
 

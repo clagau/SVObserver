@@ -38,7 +38,6 @@
 #include "SVObserver.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVToolSet.h"
-#include "SVToolSetAdjustmentDialogSheet.h"
 #include "ToolSetView.h"
 #include "ResultTabbedView.h"
 #include "InspectionEngine/SVTool.h"
@@ -104,6 +103,7 @@
 #include "SVStatusLibrary/GlobalPath.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVMFCControls/SVFileDialog.h"
+#include "SvOGui/SVFormulaEditorSheet.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -678,19 +678,6 @@ SVResultListClass* SVIPDoc::GetResultList() const
 		pResultList = pToolSet->GetResultList();
 	}
 	return pResultList;
-}
-
-SVConditionalClass* SVIPDoc::GetToolSetCondition()
-{
-	SVConditionalClass* l_pObject(nullptr);
-	SVToolSetClass* l_pToolSet(GetToolSet());
-
-	if (nullptr != l_pToolSet)
-	{
-		l_pObject = l_pToolSet->GetToolSetConditional();
-	}
-
-	return l_pObject;
 }
 
 bool SVIPDoc::GoOnline()
@@ -1534,7 +1521,18 @@ void SVIPDoc::OnEditToolSetCondition()
 		if (GetToolSet())
 		{
 			SVSVIMStateClass::AddState(SV_STATE_EDITING);
-			EditToolSetCondition();
+
+			SvDef::SVObjectTypeInfoStruct Info(SvDef::SVEquationObjectType, SvDef::SVConditionalObjectType);
+			std::string Title{_T("ToolSet Adjustment: ")};
+			Title += GetToolSet()->GetName();
+			SvOg::SVFormulaEditorSheetClass dlg(GetInspectionID(), GetToolSet()->GetUniqueObjectID(), Info, Title.c_str());
+
+			INT_PTR dlgResult = dlg.DoModal();
+			if (dlgResult == IDOK)
+			{ 
+				SetModifiedFlag();
+			}
+
 			SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 		}
 	}
@@ -1946,18 +1944,6 @@ void SVIPDoc::OnPublishedResultImagesPicker()
 
 		SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 	}
-}
-
-void SVIPDoc::EditToolSetCondition()
-{
-	SVConditionalClass* pCondition = GetToolSetCondition();
-	ASSERT(pCondition);
-	SVToolSetAdjustmentDialogSheetClass dlg(GetInspectionID(), GetToolSet()->GetUniqueObjectID(), *pCondition, GetToolSet()->GetName());
-
-	dlg.m_psh.dwFlags |= PSH_NOAPPLYNOW;
-
-	INT_PTR dlgResult = dlg.DoModal();
-	if (dlgResult == IDOK) { SetModifiedFlag(); }
 }
 
 void SVIPDoc::RebuildResultsList()

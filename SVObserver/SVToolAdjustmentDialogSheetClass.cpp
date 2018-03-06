@@ -120,11 +120,18 @@ SVToolAdjustmentDialogSheetClass::~SVToolAdjustmentDialogSheetClass()
 
 void SVToolAdjustmentDialogSheetClass::addPages()
 {
-	SvOi::IFormulaControllerPtr pFormularController{ new SvOg::FormulaController(m_InspectionID, m_TaskObjectID, SvDef::SVObjectTypeInfoStruct(SvDef::SVEquationObjectType, SvDef::SVConditionalObjectType), false) };
-	SvOg::SVFormulaEditorPageClass* pConditionalDlg{ new SvOg::SVFormulaEditorPageClass(pFormularController, true, IDS_CONDITIONAL_STRING, IDS_TOOL_STRING) };
+	SvDef::SVObjectTypeInfoStruct ObjectInfo;
+	ObjectInfo.ObjectType = SvDef::SVEquationObjectType;
+	ObjectInfo.SubType = SvDef::SVConditionalObjectType;
+	SvOg::SVFormulaEditorPageClass* pConditionalDlg{nullptr};
+	SvOi::IObjectClass* pEquation = GetTool()->getFirstObject(ObjectInfo);
+	if(nullptr != pEquation)
+	{
+		SvOi::IFormulaControllerPtr pFormularController{ new SvOg::FormulaController(m_InspectionID, m_TaskObjectID, pEquation->GetUniqueObjectID(), true) };
+		pConditionalDlg = new SvOg::SVFormulaEditorPageClass{pFormularController, true, IDS_CONDITIONAL_STRING, IDS_TOOL_STRING};
+	}
 
 	SvOi::IObjectClass* pLUTEquation{ nullptr };
-	SvDef::SVObjectTypeInfoStruct ObjectInfo;
 	ObjectInfo.ObjectType = SvDef::SVUnaryImageOperatorObjectType;
 	ObjectInfo.SubType	 = SvDef::SVLUTOperatorObjectType;
 	SvOi::IObjectClass* pLUTOperator = GetTool()->getFirstObject(ObjectInfo);
@@ -138,6 +145,10 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 	ObjectInfo.ObjectType = SvDef::SVUnaryImageOperatorObjectType;
 	ObjectInfo.SubType = SvDef::SVUserMaskOperatorObjectType;
 	SvOi::IObjectClass* pMaskOperator = GetTool()->getFirstObject(ObjectInfo);
+
+	ObjectInfo.ObjectType = SvDef::SVEquationObjectType;
+	ObjectInfo.SubType = SvDef::SVMathEquationObjectType;
+	SvOi::IObjectClass* pMathEquation = GetTool()->getFirstObject(ObjectInfo);
 
 	bool bHasSize = false;
 	ObjectInfo.ObjectType = SvDef::SVToolSizeAdjustTaskType;
@@ -239,9 +250,11 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 
 		case SvDef::SVMathToolObjectType:
 			{
-				SvDef::SVObjectTypeInfoStruct info(SvDef::SVEquationObjectType, SvDef::SVMathEquationObjectType);
-				SvOi::IFormulaControllerPtr pFormularController{ new SvOg::FormulaController(m_InspectionID, m_TaskObjectID, info) };
-				AddPage( new SvOg::SVFormulaEditorPageClass(pFormularController, false) );
+				if(nullptr != pMathEquation)
+				{
+					SvOi::IFormulaControllerPtr pFormularController {new SvOg::FormulaController(m_InspectionID, m_TaskObjectID, pMathEquation->GetUniqueObjectID())};
+					AddPage(new SvOg::SVFormulaEditorPageClass(pFormularController, false));
+				}
 				AddPage( new SvOg::SVToolAdjustmentDialogPassFailPageClass( m_InspectionID, m_TaskObjectID) );
 				AddPage( pConditionalDlg );
 			}

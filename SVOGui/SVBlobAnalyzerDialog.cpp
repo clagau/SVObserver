@@ -371,8 +371,8 @@ namespace SvOg
 	{
 		SetInspectionData();
 
-		//Reset the inspection
-		m_Values.ResetObject(m_rInspectionID, m_rInspectionID);
+		//Reset the tool
+		m_Values.ResetObject(m_rInspectionID, m_rTaskObjectID);
 		const SvStl::MessageContainerVector& rMessages = m_Values.getFailedMessageList();
 		if (rMessages.size() > 0 && 0 != rMessages[0].getMessage().m_MessageCode)
 		{

@@ -196,7 +196,8 @@ HRESULT SVToolAdjustmentDialogSizePage::SetInspectionData()
 				{
 					//@TODO[gra][8.00][15.01.2018]: The data controller should be used like the rest of SVOGui
 					Controller EquationValues{ SvOg::BoundValues{ pEquation->GetInspection()->GetUniqueObjectID(), pEquation->GetUniqueObjectID() } };
-					Values.Set<bool>(pEquation->enabled.GetEmbeddedID(), bEnabled);
+					EquationValues.Init();
+					EquationValues.Set<bool>(pEquation->enabled.GetEmbeddedID(), bEnabled);
 					EquationValues.Commit(SvOg::doNothing);
 				}
 			}

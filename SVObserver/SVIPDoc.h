@@ -287,8 +287,6 @@ protected:
 	CMDIChildWnd* GetMDIChild();
 	void SetMDIChild( CMDIChildWnd* p_pMDIChildWnd );
 
-	void EditToolSetCondition();
-
 	bool AddTool( SVToolClass* PTool );
 	HRESULT DeleteTool(SVTaskObjectClass* pTaskObject);
 
@@ -297,7 +295,6 @@ protected:
 	CView* getView() const;
 	SVImageViewClass* GetImageView( int p_Index = 0 );
 	ResultTabbedView* GetResultView();
-	SVConditionalClass* GetToolSetCondition();
 	SVInspectionProcess* GetInspectionProcess() const;
 	SVResultListClass* GetResultList() const;
 
