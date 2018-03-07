@@ -25,10 +25,13 @@ namespace SvSml
 ShareControl::ShareControl()
 {
 	m_pLastResponseData = std::make_unique<LastResponseData>();
+	SvSml::ShareEvents::GetInstance().SetCallbackFunction(boost::bind(&SvSml::ShareControl::EventHandler, boost::ref((*this)), _1));
+	SvSml::ShareEvents::GetInstance().StartWatch();
 }
 ShareControl::~ShareControl()
 {
-
+	SvSml::ShareEvents::GetInstance().StopWatch();
+	SvSml::ShareEvents::GetInstance().SetCallbackFunction(0);
 }
 
 bool  ShareControl::QueryListName(const RRWS::QueryListNameRequest& req, RRWS::QueryListNameResponse& resp, SVRPC::Error& err)

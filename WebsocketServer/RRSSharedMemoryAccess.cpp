@@ -16,21 +16,19 @@
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVSystemLibrary/SVVersionInfo.h"
 #include "SVUtilityLibrary/SVBitmapInfo.h"
-
+#include "SVObserverAccessDll/SVObserverAccessDll.h"
 namespace RRWS
 {
 RRSSharedMemoryAccess::RRSSharedMemoryAccess()
 	: m_io_service(), m_io_work(m_io_service), m_io_thread(boost::bind(&boost::asio::io_service::run, &m_io_service))
 {
-	m_pShareControl = std::make_unique<SvSml::ShareControl>();
-	SvSml::ShareEvents::GetInstance().SetCallbackFunction(
-		boost::bind(&SvSml::ShareControl::EventHandler, boost::ref((*m_pShareControl.get())), _1));
-	SvSml::ShareEvents::GetInstance().StartWatch();
+
+	SVObserverAccessDll::Init();
+
 }
 RRSSharedMemoryAccess::~RRSSharedMemoryAccess()
 {
-	SvSml::ShareEvents::GetInstance().StopWatch();
-	SvSml::ShareEvents::GetInstance().SetCallbackFunction(0);
+	SVObserverAccessDll::Finish();
 }
 
 void RRSSharedMemoryAccess::GetVersion(const GetVersionRequest& req, SVRPC::Task<GetVersionResponse> task)
@@ -45,7 +43,7 @@ void RRSSharedMemoryAccess::GetProduct(const GetProductRequest& request, SVRPC::
 	SVRPC::Error err;
 	GetProductResponse resp;
 
-	if (m_pShareControl->GetProductOrReject(request, resp, err))
+	if (SVObserverAccessDll::GetProductOrReject(request, resp, err))
 	{
 		task.finish(std::move(resp));
 	}
@@ -59,7 +57,7 @@ void RRSSharedMemoryAccess::GetFailstatus(const GetFailStatusRequest& request, S
 {
 	SVRPC::Error err;
 	GetFailStatusResponse resp;
-	if (m_pShareControl->GetFailstatus(request, resp, err))
+	if (SVObserverAccessDll::GetFailstatus(request, resp, err))
 	{
 		task.finish(std::move(resp));
 	}
@@ -76,7 +74,7 @@ void RRSSharedMemoryAccess::GetImageFromCurId(const GetImageFromCurIdRequest& re
 	GetImageFromCurIdResponse resp;
 	SVRPC::Error err;
 
-	if (m_pShareControl->GetImageFromCurId(request, resp, err))
+	if (SVObserverAccessDll::GetImageFromCurId(request, resp, err))
 	{
 		task.finish(std::move(resp));
 	}
@@ -104,7 +102,7 @@ void RRSSharedMemoryAccess::QueryListName(const QueryListNameRequest& request, S
 	QueryListNameResponse resp;
 	SVRPC::Error err;
 
-	if (m_pShareControl->QueryListName(request, resp, err))
+	if (SVObserverAccessDll::QueryListName(request, resp, err))
 	{
 		task.finish(std::move(resp));
 	}
@@ -117,7 +115,7 @@ void RRSSharedMemoryAccess::QueryListItem(const QueryListItemRequest& request, S
 {
 	QueryListItemResponse Resp;
 	SVRPC::Error err;
-	if (m_pShareControl->QueryListItem(request, Resp, err))
+	if (SVObserverAccessDll::QueryListItem(request, Resp, err))
 	{
 		task.finish(std::move(Resp));
 	}
