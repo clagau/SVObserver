@@ -120,9 +120,10 @@ protected:
 
 	SVJsonCommandHelper m_Command;
 	NotifyFunctor m_Notifier;
+	bool m_bConnectToRRS;
 	std::unique_ptr<SVRPC::RPCClient> m_pRpcClient;
 	std::unique_ptr<RRWS::ClientService> m_pClientService;
-
+	boost::posix_time::seconds m_RequestTimeout;
 
 
 };

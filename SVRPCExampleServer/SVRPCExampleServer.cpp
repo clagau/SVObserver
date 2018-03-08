@@ -26,7 +26,7 @@ using namespace SVRPC::Example;
 
 void GetCounterStreamRequestFkt(GetCounterStreamRequest&& Request, SVRPC::Observer<GetCounterStreamResponse> observer)
 {
-	for (int i = Request.start(); i < Request.count(); i++)
+	for (auto i = Request.start(); i < Request.count(); i++)
 	{
 		
 		GetCounterStreamResponse resp;
@@ -84,7 +84,7 @@ int main()
 		WebsocketServer server(settings, io_service, &rpcServer);
 		server.start();
 
-		BOOST_LOG_TRIVIAL(info) << "Server running on ws://" << settings.host << ":" << settings.port << "/";
+		BOOST_LOG_TRIVIAL(info) << "Server running on ws://" << settings.Host << ":" << settings.Port << "/";
 
 		io_service.run();
 	}

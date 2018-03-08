@@ -12,10 +12,6 @@
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage\SVMessage.h"
 #include "Definitions\StringTypeDef.h"
-#pragma warning (push ,2)
-#include "SVProtoBuf\RunRe.pb.h"
-#pragma warning (pop)
-
 #include "SVSystemLibrary/SVVersionInfo.h"
 #include "SVUtilityLibrary/SVBitmapInfo.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"

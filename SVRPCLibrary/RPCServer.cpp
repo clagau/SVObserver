@@ -16,11 +16,11 @@
 
 namespace SVRPC
 {
-RPCServer::RPCServer(RequestHandlerBase* request_handler) : m_request_handler(request_handler) {}
+RPCServer::RPCServer(RequestHandlerBase* pRequestHandler) : m_pRequestHandler(pRequestHandler) {}
 
-void RPCServer::onConnect(int id, SVHTTP::WebsocketServerConnection& conn)
+void RPCServer::onConnect(int id, SVHTTP::WebsocketServerConnection& rConnection)
 {
-	m_connections[id] = &conn;
+	m_Connections[id] = &rConnection;
 }
 
 void RPCServer::onTextMessage(int id, const std::vector<char>&)
@@ -59,13 +59,13 @@ void RPCServer::onBinaryMessage(int id, const std::vector<char>& buf)
 
 void RPCServer::onDisconnect(int id)
 {
-	m_connections.erase(id);
+	m_Connections.erase(id);
 }
 
 void RPCServer::on_request(int id, Envelope&& request)
 {
 	auto txId = request.transaction_id();
-	m_request_handler->onRequest(
+	m_pRequestHandler->onRequest(
 		std::move(request),
 		Task<Envelope>([this, id, txId](Envelope&& response) { send_response(id, txId, std::move(response)); },
 		[this, id, txId](const Error& err) { send_error_response(id, txId, err); }));
@@ -74,7 +74,7 @@ void RPCServer::on_request(int id, Envelope&& request)
 void RPCServer::on_stream(int id, Envelope&& request)
 {
 	auto txId = request.transaction_id();
-	m_request_handler->onStream(std::move(request),
+	m_pRequestHandler->onStream(std::move(request),
 		Observer<Envelope>(
 		[this, id, txId](Envelope&& response) -> std::future<void>
 	{
@@ -126,8 +126,8 @@ std::future<void> RPCServer::send_stream_finish(int id, uint64_t txId)
 
 std::future<void> RPCServer::send_envelope(int id, const Envelope& envelope)
 {
-	auto it = m_connections.find(id);
-	if (it == m_connections.end())
+	auto it = m_Connections.find(id);
+	if (it == m_Connections.end())
 	{
 		BOOST_LOG_TRIVIAL(error) << "Can not send envelope to connection " << id << ". not found.";
 		std::promise<void> promise;
@@ -155,4 +155,5 @@ std::future<void> RPCServer::send_envelope(int id, const Envelope& envelope)
 
 	return it->second->sendBinaryMessage(buf);
 }
-}
+
+} // namespace SVRPC

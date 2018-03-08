@@ -14,21 +14,22 @@ namespace SVHTTP
 {
 
 WebsocketClientFactory::WebsocketClientFactory(std::string host, uint16_t port)
-	: m_host(host), m_port(port)
+	: m_Host(host), m_Port(port)
 {
 }
 
 std::unique_ptr<WebsocketClient> WebsocketClientFactory::create(
-	boost::asio::io_service& io_service,
-	WebsocketClient::EventHandler* handler,
-	bool wait_for_connect)
+	boost::asio::io_service& rIoService,
+	WebsocketClient::EventHandler* pHandler,
+	bool bWaitForConnect)
 {
-	auto client = std::make_unique<WebsocketClient>(io_service, handler);
-	auto future = client->connect(m_host, m_port);
-	if (wait_for_connect)
+	auto client = std::make_unique<WebsocketClient>(rIoService, pHandler);
+	auto future = client->connect(m_Host, m_Port);
+	if (bWaitForConnect)
 	{
 		future.get();
 	}
 	return client;
 }
-}
+
+} // namespace SVHTTP

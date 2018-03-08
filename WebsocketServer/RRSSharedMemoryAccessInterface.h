@@ -8,12 +8,10 @@
 //******************************************************************************
 
 #pragma once
-#pragma warning (push,2)
-#include "SVProtoBuf/RunRe.pb.h"
-#pragma warning (pop)
-#include "SVSharedMemoryLibrary/ShareControl.h"
+#include "SVProtoBuf/RunRe.h"
 #include "SVRPCLibrary/Observer.h"
 #include "SVRPCLibrary/Task.h"
+#include "SVSharedMemoryLibrary/ShareControl.h"
 
 namespace RRWS
 {

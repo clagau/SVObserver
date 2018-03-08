@@ -38,9 +38,7 @@
 #include "SVHttpLibrary/WebsocketClientFactory.h"
 #include "SVRPCLibrary/Observer.h"
 #include "SVRPCLibrary/Task.h"
-#pragma warning (push,2)
-#include "SVProtoBuf/envelope.pb.h"
-#pragma warning (pop)
+#include "SVProtoBuf/envelope.h"
 
 namespace SVRPC
 {
@@ -50,11 +48,9 @@ public:
 	RPCClient(std::string host, uint16_t port);
 	~RPCClient();
 
-	void Connect(std::string host, uint16_t port);
-	void Disconnect();
 	void stop();
 	bool isConnected();
-	bool  waitForConnect(int time_in_ms );
+	bool waitForConnect(int time_in_ms);
 
 	void request(Envelope&& request, Task<Envelope>);
 	void request(Envelope&& request, Task<Envelope>, boost::posix_time::time_duration);
@@ -86,21 +82,22 @@ private:
 	void on_stream_finish(Envelope&&);
 
 private:
-	boost::asio::io_service m_io_service;
-	std::unique_ptr<boost::asio::io_service::work> m_io_work;
-	std::thread m_io_thread;
-	std::atomic_bool m_stopped {false};
-	SVHTTP::WebsocketClientFactory  m_websocket_client_factory;
-	std::unique_ptr<SVHTTP::WebsocketClient> m_websocket_client;
-	std::mutex m_connect_mutex;
-	std::condition_variable m_connect_cv;
-	std::atomic_bool m_connected {false};
-	boost::asio::deadline_timer m_reconnect_timer;
-	uint64_t m_next_transaction_id = 0;
-	std::map<uint64_t, Task<Envelope>> m_pending_requests;
+	boost::asio::io_service m_IoService;
+	std::unique_ptr<boost::asio::io_service::work> m_IoWork;
+	std::thread m_IoThread;
+	std::atomic_bool m_IsStopped {false};
+	SVHTTP::WebsocketClientFactory m_WebsocketClientFactory;
+	std::unique_ptr<SVHTTP::WebsocketClient> m_WebsocketClient;
+	std::mutex m_ConnectMutex;
+	std::condition_variable m_ConnectCV;
+	std::atomic_bool m_IsConnected {false};
+	boost::asio::deadline_timer m_ReconnectTimer;
+	uint64_t m_NextTransactionId = 0;
+	std::map<uint64_t, Task<Envelope>> m_PendingRequests;
 	// deadline_timer is neither movable nor copyable :/ therefore the shared_ptr workaround
-	std::map<uint64_t, std::shared_ptr<boost::asio::deadline_timer>> m_pending_requests_timer;
-	std::map<uint64_t, Observer<Envelope>> m_pending_streams;
-	std::atomic_bool m_TryToReconnect {true};
+	using DeadlineTimerPtr = std::shared_ptr<boost::asio::deadline_timer>;
+	std::map<uint64_t, DeadlineTimerPtr> m_PendingRequestsTimer;
+	std::map<uint64_t, Observer<Envelope>> m_PendingStreams;
 };
-}
+
+} // namespace SVRPC

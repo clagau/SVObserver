@@ -11,10 +11,7 @@
 #include "ITriggerRecordControllerRW.h"
 #include "ITriggerRecordRW.h"
 #include "TriggerRecord.h"
-#pragma warning( push )
-#pragma warning( disable : 4800 ) 
-#include "SVProtoBuf\TriggerRecordController.pb.h"
-#pragma warning( pop )
+#include "SVProtoBuf/TriggerRecordController.h"
 #pragma endregion Includes
 
 namespace SvTRC

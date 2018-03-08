@@ -30,15 +30,13 @@ int main()
 {
 	try
 	{
-		//SVHTTP::WebsocketClientFactory wsClientFactory("127.0.0.1", 8080);
 		auto Timeout = boost::posix_time::seconds(5);
-		SVRPC::RPCClient rpcClient("127.0.0.1", 8080);
-		rpcClient.Connect("127.0.0.1", 8080);
-		rpcClient.waitForConnect(6000);
+		auto pRpcClient = std::make_unique<SVRPC::RPCClient>("127.0.0.1", 8080);
+		pRpcClient->waitForConnect(6000);
 		{
 			HelloWorldReq req;
 			req.set_name("Homer Simpson");
-			SVRPC::SimpleClient<ApplicationMessages, HelloWorldReq, HelloWorldRes> client(rpcClient);
+			SVRPC::SimpleClient<ApplicationMessages, HelloWorldReq, HelloWorldRes> client(*pRpcClient);
 			auto res = client.request(std::move(req), Timeout).get();
 			BOOST_LOG_TRIVIAL(info) << res.message();
 		}
@@ -51,7 +49,7 @@ int main()
 			auto FinishFkt = [&promise](HelloWorldRes&& res) { promise->set_value(res); };
 			auto ErrorFkt = [&promise](const SVRPC::Error& err) { promise->set_exception(SVRPC::errorToExceptionPtr(err)); };
 			auto task = SVRPC::Task<HelloWorldRes>(FinishFkt, ErrorFkt);
-			SimpleClient<ApplicationMessages, HelloWorldReq, HelloWorldRes> client2(rpcClient);
+			SimpleClient<ApplicationMessages, HelloWorldReq, HelloWorldRes> client2(*pRpcClient);
 			client2.request(std::move(req), task,Timeout);
 			HelloWorldRes res2 = (promise->get_future()).get();
 			BOOST_LOG_TRIVIAL(info) << res2.message();
@@ -62,7 +60,7 @@ int main()
 			GetCounterStreamRequest getcounterStreamRequest;
 			getcounterStreamRequest.set_count(500);
 			getcounterStreamRequest.set_start(0);
-			SVRPC::SimpleClient<ApplicationMessages, GetCounterStreamRequest, GetCounterStreamResponse> streamClient(rpcClient);
+			SVRPC::SimpleClient<ApplicationMessages, GetCounterStreamRequest, GetCounterStreamResponse> streamClient(*pRpcClient);
 			auto CounterPromise = std::make_shared<std::promise<GetCounterStreamResponse>>();
 			auto nextFkt = [&lastcounter](GetCounterStreamResponse&& resp)-> std::future<void>
 			{

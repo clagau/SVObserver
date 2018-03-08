@@ -14,9 +14,8 @@
 #include "stdafx.h"
 
 #include "ClientService.h"
-#pragma warning (push,2)
-#include  "SVProtoBuf/RunRe.pb.h"
-#pragma warning (pop)
+#include "SVProtoBuf/RunRe.h"
+
 using time_duration = boost::posix_time::time_duration;
 
 const time_duration TwoSeconds = boost::posix_time::seconds(1);

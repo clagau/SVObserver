@@ -45,10 +45,10 @@ public:
 		virtual void onDisconnect(int id) = 0;
 	};
 
-	WebsocketServerConnection(const WebsocketServerSettings& settings,
-		boost::asio::io_service& io_service,
-		int connection_id,
-		EventHandler* event_handler);
+	WebsocketServerConnection(const WebsocketServerSettings& rSettings,
+		boost::asio::io_service& rIoService,
+		int ConnectionId,
+		EventHandler* pEventHandler);
 
 	bool isOpen() const;
 	boost::asio::ip::tcp::socket& socket();
@@ -78,25 +78,26 @@ private:
 	void handle_error(const boost::system::error_code& error);
 
 private:
-	int m_connection_id;
-	const WebsocketServerSettings& m_settings;
-	boost::asio::io_service& m_io_service;
-	boost::asio::ip::tcp::socket m_socket;
-	boost::asio::deadline_timer m_ping_timer;
-	uint32_t m_ping_timeout_count;
-	Handshake m_handshake;
-	EventHandler* m_event_handler;
-	WebSocketParser m_websocket_parser;
-	std::vector<char> m_buf;
-	std::vector<char> m_frames;
-	std::vector<char> m_payload;
-	bool m_sending_frame {false};
+	int m_ConnectionId;
+	const WebsocketServerSettings& m_rSettings;
+	boost::asio::io_service& m_rIoService;
+	boost::asio::ip::tcp::socket m_Socket;
+	boost::asio::deadline_timer m_PingTimer;
+	uint32_t m_PingTimeoutCount;
+	Handshake m_Handshake;
+	EventHandler* m_pEventHandler;
+	WebSocketParser m_WebsocketParser;
+	std::vector<char> m_Buf;
+	std::vector<char> m_Frames;
+	std::vector<char> m_Payload;
+	bool m_IsSendingFrame {false};
 	struct PendingFrame
 	{
-		std::vector<char> frame;
-		std::shared_ptr<std::promise<void>> promise;
+		std::vector<char> Frame;
+		std::shared_ptr<std::promise<void>> Promise;
 	};
-	std::queue<PendingFrame> m_frame_queue;
-	bool m_disconnect_error_handled {false};
+	std::queue<PendingFrame> m_FrameQueue;
+	bool m_IsDisconnectErrorHandled {false};
 };
-}
+
+} // namespace SVHTTP

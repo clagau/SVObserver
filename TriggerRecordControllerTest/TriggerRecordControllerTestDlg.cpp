@@ -13,10 +13,7 @@
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"
 #include "RotationTool.h"
 #include "DeactivedTool.h"
-#pragma warning( push )
-#pragma warning( disable : 4800 ) 
-#include "SVProtoBuf\TriggerRecordController.pb.h"
-#pragma warning( pop )
+#include "SVProtoBuf/TriggerRecordController.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

@@ -252,12 +252,11 @@ int main(int argc, char* argv[])
 		stPort = argv[2];
 		port = atoi(stPort.c_str());
 	}
-	//SVHTTP::WebsocketClientFactory wsClientFactory(host, port);
-	SVRPC::RPCClient rpcClient(host,port);
-	//rpcClient.waitForConnect();
+	auto pRpcClient = std::make_unique<SVRPC::RPCClient>(host,port);
+	pRpcClient->waitForConnect(6000);
 
 	auto request_timeout = boost::posix_time::seconds(2);
-	ClientService service(rpcClient, request_timeout);
+	auto pService = std::make_unique<ClientService>(*pRpcClient, request_timeout);
 
 
 	BOOST_LOG_TRIVIAL(info) << "Enter a command(Ctrl-Z to stop): ";
@@ -282,7 +281,7 @@ int main(int argc, char* argv[])
 				{
 					GetVersionRequest req;
 					req.set_trigger_timeout(true);
-					auto version = runRequest(service, &ClientService::getVersion, std::move(req)).get();
+					auto version = runRequest(*pService, &ClientService::getVersion, std::move(req)).get();
 					BOOST_LOG_TRIVIAL(info) << "Version: ";
 					BOOST_LOG_TRIVIAL(info) << " RunReWebsocketServer: " << version.version();
 				}
@@ -291,10 +290,10 @@ int main(int argc, char* argv[])
 					BOOST_LOG_TRIVIAL(error) << "Unable to get version: " << e.what();
 				}
 			}
-			else if ( rpcClient.isConnected() && words[0] == "m" )
+			else if ( pRpcClient->isConnected() && words[0] == "m" )
 			{
 
-				auto Listnames = runRequest(service, &ClientService::queryListName, QueryListNameRequest()).get();
+				auto Listnames = runRequest(*pService, &ClientService::queryListName, QueryListNameRequest()).get();
 				// BOOST_LOG_TRIVIAL(info) << "QueryListNameResponse.DebugString: ";
 				// BOOST_LOG_TRIVIAL(info) << Listnames.DebugString();
 				BOOST_LOG_TRIVIAL(info) << "MonitorlistNamen: ";
@@ -316,7 +315,7 @@ int main(int argc, char* argv[])
 					continue;
 				}
 				FailstatusRequest.set_nameinresponse(true);
-				auto resp = runRequest(service, &ClientService::getFailStatus, std::move(FailstatusRequest)).get();
+				auto resp = runRequest(*pService, &ClientService::getFailStatus, std::move(FailstatusRequest)).get();
 				for (int i = 0; i < resp.products_size(); i++)
 				{
 					PrintProductResponse(resp.products(i));
@@ -355,7 +354,7 @@ int main(int argc, char* argv[])
 				ProductRequest.set_pevioustrigger(-1);
 
 				GetProductResponse resp;
-				resp = runRequest(service, &ClientService::getProduct, std::move(ProductRequest)).get();
+				resp = runRequest(*pService, &ClientService::getProduct, std::move(ProductRequest)).get();
 				PrintProductResponse(resp.product());
 
 
@@ -372,7 +371,7 @@ int main(int argc, char* argv[])
 				request.mutable_id()->set_imagestore(atoi(words[1].c_str()));
 				request.mutable_id()->set_imageindex(atoi(words[2].c_str()));
 				request.mutable_id()->set_slotindex(atoi(words[3].c_str()));
-				auto resp = runRequest(service, &ClientService::getImageFromCurId, std::move(request)).get();
+				auto resp = runRequest(*pService, &ClientService::getImageFromCurId, std::move(request)).get();
 
 				BOOST_LOG_TRIVIAL(info) << "Image (Width ,Height) " << resp.imagedata().w() << "x"
 					<< resp.imagedata().h();
@@ -399,7 +398,7 @@ int main(int argc, char* argv[])
 				}
 				for (int i = 0; i < repeats; ++i)
 				{
-					Benchmark1(service).run(Benchmark1::StringBenchmark, iterations);
+					Benchmark1(*pService).run(Benchmark1::StringBenchmark, iterations);
 				}
 			}
 			else if (words[0] == "b2" || words[0] == "B2")
@@ -421,7 +420,7 @@ int main(int argc, char* argv[])
 				}
 				for (int i = 0; i < repeats; ++i)
 				{
-					RunBenchmark2(service, iterations, imgWidth, false);
+					RunBenchmark2(*pService, iterations, imgWidth, false);
 				}
 			}
 			else if (words[0] == "b3" || words[0] == "B3")
@@ -443,12 +442,13 @@ int main(int argc, char* argv[])
 				}
 				for (int i = 0; i < repeats; ++i)
 				{
-					RunBenchmark2(service, iterations, imgWidth, true);
+					RunBenchmark2(*pService, iterations, imgWidth, true);
 				}
 			}
 			else  if (words[0] == "dis") 
 			{
-				rpcClient.Disconnect();
+				pService.reset();
+				pRpcClient.reset();
 			}
 			else if (words[0] == "con")
 			{
@@ -460,9 +460,12 @@ int main(int argc, char* argv[])
 						port = atoi(words[2].c_str());
 					}
 					std::string ipAdress = words[1];
-					rpcClient.Disconnect();
-					rpcClient.Connect(ipAdress, port);
-					//rpcClient.waitForConnect();
+
+					pService.reset();
+					pRpcClient.reset();
+					pRpcClient = std::make_unique<SVRPC::RPCClient>(host, port);
+					pRpcClient->waitForConnect(2000);
+					pService = std::make_unique<ClientService>(*pRpcClient, request_timeout);
 				}
 			}
 			else if (words[0] == "qli")
@@ -507,8 +510,7 @@ int main(int argc, char* argv[])
 				request.set_queryimages(bImage);
 				request.set_queryvalues(bValues) ;
 
-				auto resp = runRequest(service, &ClientService::queryListItem, std::move(request)).get();
-				
+				auto resp = runRequest(*pService, &ClientService::queryListItem, std::move(request)).get();
 
 				std::cout << "QueryListItemResponse .DebugString: " << std::endl;
 				std::cout << resp.DebugString() << std::endl;
@@ -542,7 +544,7 @@ int main(int argc, char* argv[])
 	}
 
 
-	rpcClient.stop();
+	pRpcClient->stop();
 	system("pause");
 	return 0;
 }

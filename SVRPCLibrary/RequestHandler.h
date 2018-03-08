@@ -35,42 +35,42 @@ class RequestHandler : public RequestHandlerBase
 public:
 	~RequestHandler() override {}
 
-	template <typename TPayload, int message_case, typename TReq, typename TRes>
-	void registerRequestHandler(std::function<void(TReq&&, Task<TRes>)> fn)
+	template <typename TPayload, int MessageCase, typename TReq, typename TRes>
+	void registerRequestHandler(std::function<void(TReq&&, Task<TRes>)> Handler)
 	{
-		m_request_handler[message_case] = std::make_shared<TaskWrapper<TPayload, TReq, TRes>>(std::move(fn));
+		m_RequestHandler[MessageCase] = std::make_shared<TaskWrapper<TPayload, TReq, TRes>>(std::move(Handler));
 	}
 
-	template <typename TPayload, int message_case, typename TReq, typename TRes>
-	void registerStreamHandler(std::function<void(TReq&&, Observer<TRes>)> fn)
+	template <typename TPayload, int MessageCase, typename TReq, typename TRes>
+	void registerStreamHandler(std::function<void(TReq&&, Observer<TRes>)> Handler)
 	{
-		m_stream_handler[message_case] = std::make_shared<ObserverWrapper<TPayload, TReq, TRes>>(std::move(fn));
+		m_StreamHandler[MessageCase] = std::make_shared<ObserverWrapper<TPayload, TReq, TRes>>(std::move(Handler));
 	}
 
-	void registerDefaultRequestHandler(std::function<void(Envelope&&, Task<Envelope>)> fn)
+	void registerDefaultRequestHandler(std::function<void(Envelope&&, Task<Envelope>)> Handler)
 	{
-		m_default_request_handler = std::move(fn);
+		m_DefaultRequestHandler = std::move(Handler);
 	}
 
-	void registerDefaultStreamHandler(std::function<void(Envelope&&, Observer<Envelope>)> fn)
+	void registerDefaultStreamHandler(std::function<void(Envelope&&, Observer<Envelope>)> Handler)
 	{
-		m_default_stream_handler = std::move(fn);
+		m_DefaultStreamHandler = std::move(Handler);
 	}
 
 protected:
 	void onRequest(Envelope&& envelope, Task<Envelope> task) override
 	{
 		auto payload_type = envelope.payload_type();
-		auto it = m_request_handler.find(payload_type);
-		if (it != m_request_handler.end())
+		auto it = m_RequestHandler.find(payload_type);
+		if (it != m_RequestHandler.end())
 		{
 			(*it->second)(std::move(envelope), std::move(task));
 			return;
 		}
 
-		if (m_default_request_handler)
+		if (m_DefaultRequestHandler)
 		{
-			m_default_request_handler(std::move(envelope), std::move(task));
+			m_DefaultRequestHandler(std::move(envelope), std::move(task));
 			return;
 		}
 
@@ -81,16 +81,16 @@ protected:
 	void onStream(Envelope&& envelope, Observer<Envelope> observer) override
 	{
 		auto payload_type = envelope.payload_type();
-		auto it = m_stream_handler.find(payload_type);
-		if (it != m_stream_handler.end())
+		auto it = m_StreamHandler.find(payload_type);
+		if (it != m_StreamHandler.end())
 		{
 			(*it->second)(std::move(envelope), std::move(observer));
 			return;
 		}
 
-		if (m_default_stream_handler)
+		if (m_DefaultStreamHandler)
 		{
-			m_default_stream_handler(std::move(envelope), std::move(observer));
+			m_DefaultStreamHandler(std::move(envelope), std::move(observer));
 			return;
 		}
 
@@ -99,9 +99,10 @@ protected:
 	}
 
 private:
-	std::map<int, std::shared_ptr<TaskWrapperBase>> m_request_handler;
-	std::map<int, std::shared_ptr<ObserverWrapperBase>> m_stream_handler;
-	std::function<void(Envelope&&, Task<Envelope>)> m_default_request_handler;
-	std::function<void(Envelope&&, Observer<Envelope>)> m_default_stream_handler;
+	std::map<int, std::shared_ptr<TaskWrapperBase>> m_RequestHandler;
+	std::map<int, std::shared_ptr<ObserverWrapperBase>> m_StreamHandler;
+	std::function<void(Envelope&&, Task<Envelope>)> m_DefaultRequestHandler;
+	std::function<void(Envelope&&, Observer<Envelope>)> m_DefaultStreamHandler;
 };
-}
+
+} // namespace SVRPC

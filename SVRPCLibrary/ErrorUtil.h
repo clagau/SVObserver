@@ -12,9 +12,7 @@
 #include <sstream>
 #include <string>
 
-#pragma warning ( push, 2)
-#include "SVProtobuf/envelope.pb.h"
-#pragma warning (pop)
+#include "SVProtobuf/envelope.h"
 
 namespace std
 {
@@ -28,7 +26,8 @@ static std::string to_string(const SVRPC::Error& err)
 	}
 	return ss.str();
 }
-}
+
+} // namespace std
 
 namespace SVRPC
 {
@@ -52,4 +51,5 @@ static Error build_error(ErrorCode ec, const char* msg = nullptr)
 	}
 	return err;
 }
-}
+
+} // namespace SVRPC

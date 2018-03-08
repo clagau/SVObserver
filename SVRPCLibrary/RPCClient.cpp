@@ -17,13 +17,13 @@
 namespace SVRPC
 {
 RPCClient::RPCClient(std::string host, uint16_t port)
-	: m_io_service(1), 
-	m_io_work(std::make_unique<boost::asio::io_service::work>(m_io_service)), 
-	m_websocket_client_factory(host,port), 
-	m_reconnect_timer(m_io_service)
+	: m_IoService(1)
+	, m_IoWork(std::make_unique<boost::asio::io_service::work>(m_IoService))
+	, m_WebsocketClientFactory(host, port)
+	, m_ReconnectTimer(m_IoService)
 {
-	m_io_thread = std::thread([this]() { m_io_service.run(); });
-	//m_websocket_client = m_websocket_client_factory.create(m_io_service, this);
+	m_IoThread = std::thread([this]() { m_IoService.run(); });
+	m_WebsocketClient = m_WebsocketClientFactory.create(m_IoService, this);
 }
 
 RPCClient::~RPCClient()
@@ -31,74 +31,45 @@ RPCClient::~RPCClient()
 	stop();
 }
 
-void RPCClient::Connect(std::string host, uint16_t port)
-{
-	if (false == m_connected.load())
-	{
-		m_websocket_client_factory.m_host = host;
-		m_websocket_client_factory.m_port = port;
-		//schedule_reconnect(boost::posix_time::seconds(1));
-		BOOST_LOG_TRIVIAL(info) << "Trying to connect.";
-		m_websocket_client = m_websocket_client_factory.create(m_io_service, this);
-		m_TryToReconnect.store(true);
-	}
-}
-void RPCClient::Disconnect()
-{
-	m_connected.store(false);
-	BOOST_LOG_TRIVIAL(info) << "RPCClient Disconnect";
-	cancel_all_pending();
-	if(m_websocket_client.get())
-	m_websocket_client->disconnect();
-	m_TryToReconnect.store(false);
-	
-	//m_websocket_client.reset();
-}
-
 void RPCClient::stop()
 {
-	if (m_stopped.load())
+	if (m_IsStopped.load())
 	{
 		return;
 	}
 
 	BOOST_LOG_TRIVIAL(debug) << "Shut down of rpc client started";
-	if (m_connected && m_websocket_client)
+	if (m_IsConnected && m_WebsocketClient)
 	{
-		m_websocket_client->disconnect();
+		m_WebsocketClient->disconnect();
 	}
-	m_io_work.reset();
-	if (!m_io_service.stopped())
+	m_IoWork.reset();
+	if (!m_IoService.stopped())
 	{
-		m_io_service.stop();
+		m_IoService.stop();
 	}
-	if (m_io_thread.joinable())
+	if (m_IoThread.joinable())
 	{
-		m_io_thread.join();
+		m_IoThread.join();
 	}
-	m_stopped.store(true);
+	m_IsStopped.store(true);
 	BOOST_LOG_TRIVIAL(debug) << "Shut down of rpc client completed";
 }
 
 bool RPCClient::isConnected()
 {
-	return m_connected.load();
+	return m_IsConnected.load();
 }
 
-bool  RPCClient::waitForConnect(int time_in_ms)
+bool RPCClient::waitForConnect(int time_in_ms)
 {
 	if (isConnected())
 	{
 		return true;
 	}
 	std::chrono::milliseconds time(time_in_ms);
-
-	std::unique_lock<std::mutex> lk(m_connect_mutex);
-	m_connect_cv.wait_for(lk,time , [this] { return m_connected.load(); });
-	if (!isConnected())
-	{
-		m_TryToReconnect.store(false);
-	}
+	std::unique_lock<std::mutex> lk(m_ConnectMutex);
+	m_ConnectCV.wait_for(lk, time, [this] { return m_IsConnected.load(); });
 	return isConnected();
 }
 
@@ -109,7 +80,7 @@ void RPCClient::request(Envelope&& request, Task<Envelope> task)
 		task.error(build_error(ErrorCode::ServiceUnavailable));
 		return;
 	}
-	auto tx_id = ++m_next_transaction_id;
+	auto tx_id = ++m_NextTransactionId;
 	request_impl(std::move(request), task, tx_id);
 }
 
@@ -120,7 +91,7 @@ void RPCClient::request(Envelope&& request, Task<Envelope> task, boost::posix_ti
 		task.error(build_error(ErrorCode::ServiceUnavailable));
 		return;
 	}
-	auto tx_id = ++m_next_transaction_id;
+	auto tx_id = ++m_NextTransactionId;
 	schedule_timeout(tx_id, timeout);
 	request_impl(std::move(request), task, tx_id);
 }
@@ -130,23 +101,23 @@ void RPCClient::request_impl(Envelope&& request, Task<Envelope> task, uint64_t t
 	request.set_transaction_id(tx_id);
 	request.set_type(SVRPC::MessageType::Request);
 
-	m_pending_requests.insert({tx_id, task});
+	m_PendingRequests.insert({tx_id, task});
 
 	auto reqSize = request.ByteSize();
 	std::vector<char> buf;
 	buf.assign(reqSize, '\0');
 	request.SerializeToArray(buf.data(), reqSize);
 
-	m_websocket_client->sendBinaryMessage(buf);
+	m_WebsocketClient->sendBinaryMessage(buf);
 }
 
 void RPCClient::schedule_timeout(uint64_t tx_id, boost::posix_time::time_duration timeout)
 {
 	// use shared_ptr because boost::asio::deadline_timer is neither movable nor copyable
-	auto timer = std::make_shared<boost::asio::deadline_timer>(m_io_service);
+	auto timer = std::make_shared<boost::asio::deadline_timer>(m_IoService);
 	timer->expires_from_now(timeout);
 	timer->async_wait(std::bind(&RPCClient::on_request_timeout, this, std::placeholders::_1, tx_id));
-	m_pending_requests_timer.emplace(tx_id, timer);
+	m_PendingRequestsTimer.emplace(tx_id, timer);
 }
 
 void RPCClient::stream(Envelope&& request, Observer<Envelope> observer)
@@ -156,38 +127,36 @@ void RPCClient::stream(Envelope&& request, Observer<Envelope> observer)
 		observer.error(build_error(ErrorCode::ServiceUnavailable));
 		return;
 	}
-	auto tx_id = ++m_next_transaction_id;
+	auto tx_id = ++m_NextTransactionId;
 	request.set_transaction_id(tx_id);
 	request.set_type(SVRPC::MessageType::StreamRequest);
 
-	m_pending_streams.insert({tx_id, observer});
+	m_PendingStreams.insert({tx_id, observer});
 
 	auto reqSize = request.ByteSize();
 	std::vector<char> buf;
 	buf.resize(reqSize);
 	request.SerializeToArray(buf.data(), reqSize);
 
-	m_websocket_client->sendBinaryMessage(buf);
+	m_WebsocketClient->sendBinaryMessage(buf);
 }
 
 void RPCClient::onConnect()
 {
 	{
-		std::lock_guard<std::mutex> lk(m_connect_mutex);
-		m_connected.store(true);
+		std::lock_guard<std::mutex> lk(m_ConnectMutex);
+		m_IsConnected.store(true);
 	}
-	m_connect_cv.notify_all();
+	m_ConnectCV.notify_all();
 }
 
 void RPCClient::onDisconnect()
 {
-	m_connected.store(false);
+	m_IsConnected.store(false);
 	BOOST_LOG_TRIVIAL(info) << "RPCClient received disconnect event. Trying to reconnect.";
 	cancel_all_pending();
-	//m_websocket_client.reset(); ///!!!! seems to cause an crash
-	m_websocket_client->disconnect(); 
-	if(m_TryToReconnect.load())
-		schedule_reconnect(boost::posix_time::seconds(1));
+	m_WebsocketClient.reset();
+	schedule_reconnect(boost::posix_time::seconds(1));
 }
 
 void RPCClient::onTextMessage(const std::vector<char>&)
@@ -239,13 +208,13 @@ void RPCClient::onBinaryMessage(const std::vector<char>& buf)
 void RPCClient::schedule_reconnect(boost::posix_time::time_duration timeout)
 {
 	BOOST_LOG_TRIVIAL(debug) << "Scheduling reconnect in " << timeout.seconds() << " seconds.";
-	m_reconnect_timer.expires_from_now(timeout);
-	m_reconnect_timer.async_wait(std::bind(&RPCClient::on_reconnect, this, std::placeholders::_1));
+	m_ReconnectTimer.expires_from_now(timeout);
+	m_ReconnectTimer.async_wait(std::bind(&RPCClient::on_reconnect, this, std::placeholders::_1));
 }
 
 void RPCClient::on_reconnect(const boost::system::error_code& error)
 {
-	if (error == boost::asio::error::operation_aborted)
+	if (boost::asio::error::operation_aborted == error)
 	{
 		return;
 	}
@@ -257,12 +226,12 @@ void RPCClient::on_reconnect(const boost::system::error_code& error)
 	}
 
 	BOOST_LOG_TRIVIAL(info) << "Trying to reconnect.";
-	m_websocket_client = m_websocket_client_factory.create(m_io_service, this);
+	m_WebsocketClient = m_WebsocketClientFactory.create(m_IoService, this);
 }
 
 void RPCClient::on_request_timeout(const boost::system::error_code& error, uint64_t tx_id)
 {
-	if (error == boost::asio::error::operation_aborted)
+	if (boost::asio::error::operation_aborted == error)
 	{
 		return;
 	}
@@ -273,13 +242,13 @@ void RPCClient::on_request_timeout(const boost::system::error_code& error, uint6
 		return;
 	}
 
-	m_pending_requests_timer.erase(tx_id);
+	m_PendingRequestsTimer.erase(tx_id);
 
-	auto it = m_pending_requests.find(tx_id);
-	if (it != m_pending_requests.end())
+	auto it = m_PendingRequests.find(tx_id);
+	if (it != m_PendingRequests.end())
 	{
 		auto cb = it->second;
-		m_pending_requests.erase(it);
+		m_PendingRequests.erase(it);
 
 		cb.error(build_error(ErrorCode::Timeout));
 	}
@@ -287,11 +256,11 @@ void RPCClient::on_request_timeout(const boost::system::error_code& error, uint6
 
 void RPCClient::cancel_request_timeout(uint64_t tx_id)
 {
-	auto it = m_pending_requests_timer.find(tx_id);
-	if (it != m_pending_requests_timer.end())
+	auto it = m_PendingRequestsTimer.find(tx_id);
+	if (it != m_PendingRequestsTimer.end())
 	{
 		auto timer_ptr = it->second;
-		m_pending_requests_timer.erase(it);
+		m_PendingRequestsTimer.erase(it);
 		timer_ptr->cancel();
 	}
 }
@@ -304,25 +273,25 @@ void RPCClient::cancel_all_pending()
 
 void RPCClient::cancel_all_pending_requests()
 {
-	while (!m_pending_requests.empty())
+	while (!m_PendingRequests.empty())
 	{
-		auto it = m_pending_requests.begin();
+		auto it = m_PendingRequests.begin();
 		auto tx_id = it->first;
 		cancel_request_timeout(tx_id);
 		auto& task = it->second;
 		task.error(build_error(ErrorCode::ServiceUnavailable, "Connection lost. Please retry."));
-		m_pending_requests.erase(it);
+		m_PendingRequests.erase(it);
 	}
 }
 
 void RPCClient::cancel_all_pending_streams()
 {
-	while (!m_pending_streams.empty())
+	while (!m_PendingRequests.empty())
 	{
-		auto it = m_pending_streams.begin();
+		auto it = m_PendingRequests.begin();
 		auto& observer = it->second;
 		observer.error(build_error(ErrorCode::ServiceUnavailable, "Connection lost. Please retry."));
-		m_pending_streams.erase(it);
+		m_PendingRequests.erase(it);
 	}
 }
 
@@ -330,11 +299,11 @@ void RPCClient::on_response(Envelope&& response)
 {
 	auto tx_id = response.transaction_id();
 	cancel_request_timeout(tx_id);
-	auto it = m_pending_requests.find(tx_id);
-	if (it != m_pending_requests.end())
+	auto it = m_PendingRequests.find(tx_id);
+	if (it != m_PendingRequests.end())
 	{
 		auto cb = it->second;
-		m_pending_requests.erase(it);
+		m_PendingRequests.erase(it);
 		cb.finish(std::move(response));
 	}
 }
@@ -343,19 +312,19 @@ void RPCClient::on_error_response(Envelope&& response)
 {
 	auto tx_id = response.transaction_id();
 	cancel_request_timeout(tx_id);
-	auto it = m_pending_requests.find(tx_id);
-	if (it != m_pending_requests.end())
+	auto it = m_PendingRequests.find(tx_id);
+	if (it != m_PendingRequests.end())
 	{
 		auto cb = it->second;
-		m_pending_requests.erase(it);
+		m_PendingRequests.erase(it);
 		cb.error(response.error());
 	}
 }
 
 void RPCClient::on_stream_response(Envelope&& response)
 {
-	auto it = m_pending_streams.find(response.transaction_id());
-	if (it != m_pending_streams.end())
+	auto it = m_PendingStreams.find(response.transaction_id());
+	if (it != m_PendingStreams.end())
 	{
 		it->second.onNext(std::move(response));
 	}
@@ -363,23 +332,24 @@ void RPCClient::on_stream_response(Envelope&& response)
 
 void RPCClient::on_stream_error_response(Envelope&& response)
 {
-	auto it = m_pending_streams.find(response.transaction_id());
-	if (it != m_pending_streams.end())
+	auto it = m_PendingStreams.find(response.transaction_id());
+	if (it != m_PendingStreams.end())
 	{
 		auto cb = it->second;
-		m_pending_streams.erase(it);
+		m_PendingStreams.erase(it);
 		cb.error(response.error());
 	}
 }
 
 void RPCClient::on_stream_finish(Envelope&& response)
 {
-	auto it = m_pending_streams.find(response.transaction_id());
-	if (it != m_pending_streams.end())
+	auto it = m_PendingStreams.find(response.transaction_id());
+	if (it != m_PendingStreams.end())
 	{
 		auto cb = it->second;
-		m_pending_streams.erase(it);
+		m_PendingStreams.erase(it);
 		cb.finish();
 	}
 }
-}
+
+} // namespace SVRPC

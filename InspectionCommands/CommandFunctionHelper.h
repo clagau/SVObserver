@@ -11,10 +11,7 @@
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVUtilityLibrary\SVGUID.h"
 #include "SVProtoBuf\BasicStructureHelper.h"
-#pragma warning( push )
-#pragma warning( disable : 4800 ) 
-#include "SVProtoBuf\InspectionCommands.pb.h"
-#pragma warning( pop )
+#include "SVProtoBuf/InspectionCommands.h"
 #pragma endregion Includes
 
 namespace SvCmd

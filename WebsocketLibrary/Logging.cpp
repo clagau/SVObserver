@@ -116,7 +116,8 @@ private:
 		const WORD numStrings = 1; // we just log the provided message
 		LPCTSTR strings[numStrings];
 		strings[0] = message.c_str();
-		return ReportEvent(hdl, type, category, eventId, user, numStrings, binDataSize, strings, binData);
+		BOOL success = ReportEvent(hdl, type, category, eventId, user, numStrings, binDataSize, strings, binData);
+		return success != FALSE;
 	}
 
 	std::string get_last_error_as_string()

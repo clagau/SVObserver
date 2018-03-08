@@ -6,8 +6,8 @@
 // This class is exported from the SVObserverAccessDll.dll
 //******************************************************************************
 
-#include "SVProtoBuf\RunRe.pb.h"
-#include <SVProtoBuf\envelope.pb.h>
+#include "SVProtoBuf\RunRe.h"
+#include "SVProtoBuf\envelope.h"
 #include <SVSharedMemoryLibrary\ShareControl.h>
 // The following ifdef block is the standard way of creating macros which make exporting 
 // from a DLL simpler. All files within this DLL are compiled with the SVOBSERVERACCESSDLL_EXPORTS

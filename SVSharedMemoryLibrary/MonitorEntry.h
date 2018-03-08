@@ -12,13 +12,8 @@
 
 #include "MLInspectionInfo.h"
 #include "SVMatroxLibrary\MatroxImageProps.h"
-#pragma warning( push )
-#pragma warning( disable : 4800 ) 
-#include "SVprotobuf\MonitorListStore.pb.h"
-#pragma warning(pop)
-#pragma warning (push ,2)
-#include "SVProtobuf\RunRe.pb.h"
-#pragma warning (pop)
+#include "SVprotobuf/MonitorListStore.h"
+#include "SVProtobuf/RunRe.h"
 #include "Definitions\SVObjectTypeInfoStruct.h"
 
 //Moved to precompiled header: #include <vector>

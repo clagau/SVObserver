@@ -9,9 +9,8 @@
 
 #include "SharedMemReader.h"
 #include "LastResponseData.h"
-#pragma warning (push ,2)
-#include "SVProtoBuf/RunRe.pb.h"
-#pragma warning (pop)
+#include "SVProtoBuf/RunRe.h"
+
 namespace SvSml
 {
 //! ShareControl implements the connection to the shared memory 

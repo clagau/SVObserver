@@ -10,10 +10,7 @@
 #pragma once
 #include "SVRemoteControl.h"
 #include <atlcomcli.h>
-#pragma warning( push )
-#pragma warning( disable : 4800 ) 
-#include "SVProtobuf/RunRe.pb.h"
-#pragma warning( pop )
+#include "SVProtobuf/RunRe.h"
 #include "WebsocketLibrary/clientservice.h"
 
 CComVariant  GetComVariant(const SVRPC::Variant& var);

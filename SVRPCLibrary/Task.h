@@ -13,39 +13,39 @@
 
 #include <functional>
 
-#pragma warning (push,2)
-#include "SVProtoBuf/envelope.pb.h"
-#pragma warning (pop)
+#include "SVProtoBuf/envelope.h"
 
 namespace SVRPC
 {
 template <typename T> class Task
 {
 public:
-	using FinishFkt = std::function<void(T&& t)>;
-	using ErrorFkt = std::function<void(const Error&)>;
+	using OnFinishFn = std::function<void(T&& t)>;
+	using OnErrorFn = std::function<void(const Error&)>;
 	
-	Task(FinishFkt finish, ErrorFkt error) : m_finish(finish), m_error(error)
+	Task(OnFinishFn OnFinish, OnErrorFn OnError) : m_OnFinish(OnFinish), m_OnError(OnError)
 	{
 	}
 	
-void finish(T&& t) const
+	void finish(T&& t) const
 	{
-		if (m_finish)
+		if (m_OnFinish)
 		{
-			m_finish(std::move(t));
+			m_OnFinish(std::move(t));
 		}
 	}
+
 	void error(const Error& err) const
 	{
-		if (m_error)
+		if (m_OnError)
 		{
-			m_error(std::move(err));
+			m_OnError(std::move(err));
 		}
 	}
 
 public:
-	std::function<void(T&& t)> m_finish;
-	std::function<void(const Error&)> m_error;
+	OnFinishFn m_OnFinish;
+	OnErrorFn m_OnError;
 };
-}
+
+} // namespace SVRPC

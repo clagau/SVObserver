@@ -14,9 +14,7 @@
 
 #include "SVRPCLibrary/Observer.h"
 #include "SVRPCLibrary/Task.h"
-#pragma warning (push,2)
-#include "SVProtoBuf/envelope.pb.h"
-#pragma warning (pop)
+#include "SVProtoBuf/envelope.h"
 
 namespace SVRPC
 {
@@ -27,4 +25,5 @@ public:
 	virtual void onRequest(Envelope&& request, Task<Envelope> handler) = 0;
 	virtual void onStream(Envelope&& request, Observer<Envelope> observer) = 0;
 };
-}
+
+} // namespace SVRPC

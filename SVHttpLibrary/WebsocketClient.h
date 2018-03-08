@@ -44,7 +44,7 @@ public:
 	};
 
 public:
-	WebsocketClient(boost::asio::io_service& io_service, EventHandler*);
+	WebsocketClient(boost::asio::io_service& rIoService, EventHandler*);
 
 	boost::future<void> connect(std::string host, uint16_t port);
 	void disconnect();
@@ -74,16 +74,17 @@ private:
 	void send_pong();
 
 private:
-	boost::asio::io_service& m_io_service;
-	boost::asio::ip::tcp::socket m_socket;
-	boost::promise<void> m_connect_promise;
-	Handshake m_handshake;
-	EventHandler* m_event_handler;
-	bool m_disconnect_event_sent {false};
-	bool m_shutting_down {false};
-	WebSocketParser m_websocket_parser;
-	std::vector<char> m_buf;
-	std::vector<char> m_frames;
-	std::vector<char> m_payload;
+	boost::asio::io_service& m_rIoService;
+	boost::asio::ip::tcp::socket m_Socket;
+	boost::promise<void> m_ConnectPromise;
+	Handshake m_Handshake;
+	EventHandler* m_pEventHandler;
+	bool m_IsDisconnectEventSent {false};
+	bool m_IsShuttingDown {false};
+	WebSocketParser m_WebsocketParser;
+	std::vector<char> m_Buf;
+	std::vector<char> m_Frames;
+	std::vector<char> m_Payload;
 };
-}
+
+} // namespace SVHTTP

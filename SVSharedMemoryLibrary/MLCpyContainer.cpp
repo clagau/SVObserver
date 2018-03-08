@@ -9,9 +9,7 @@
 #include "MLcpyContainer.h"
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "Definitions/StringTypeDef.h"
-#pragma warning (push ,2)
-#include "SVProtoBuf/RunRe.pb.h"
-#pragma warning (pop)
+
 
 namespace SvSml
 {

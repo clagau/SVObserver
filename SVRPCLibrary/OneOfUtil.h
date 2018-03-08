@@ -35,47 +35,45 @@
 #pragma once
 
 #include "SVRPCLibrary/EnvelopeUtil.h"
-#pragma warning (push,2)
-#include "SVProtoBuf/envelope.pb.h"
-#pragma warning (pop)
+#include "SVProtoBuf/envelope.h"
 
 namespace SVRPC
 {
 template <typename TPayload, typename TMessage> class OneOfUtil
 {
 public:
-	OneOfUtil() : m_fdesc(getFieldDescriptor()) {}
+	OneOfUtil() : m_FieldDescriptor(getFieldDescriptor()) {}
 
-	bool unwrap(TMessage& message, TPayload&& payload)
+	bool unwrap(TMessage& rMessage, TPayload&& payload)
 	{
 		auto reflection = payload.GetReflection();
-		auto msg = reflection->MutableMessage(&payload, &m_fdesc);
-		message = std::move(*static_cast<TMessage*>(msg));
+		auto msg = reflection->MutableMessage(&payload, &m_FieldDescriptor);
+		rMessage = std::move(*static_cast<TMessage*>(msg));
 		return true;
 	}
 
-	bool unwrap(TMessage& message, Envelope&& envelope)
+	bool unwrap(TMessage& rMessage, Envelope&& envelope)
 	{
 		TPayload payload;
 		if (!unwrap_payload(envelope, payload))
 		{
 			return false;
 		}
-		return unwrap(message, std::move(payload));
+		return unwrap(rMessage, std::move(payload));
 	}
 
-	void wrap(TPayload& payload, TMessage&& message)
+	void wrap(TPayload& rPayload, TMessage&& message)
 	{
-		auto reflection = payload.GetReflection();
-		auto dest_message = reflection->MutableMessage(&payload, &m_fdesc);
+		auto reflection = rPayload.GetReflection();
+		auto dest_message = reflection->MutableMessage(&rPayload, &m_FieldDescriptor);
 		*static_cast<TMessage*>(dest_message) = std::move(message);
 	}
 
-	void wrap(Envelope& envelope, TMessage&& message)
+	void wrap(Envelope& rEnvelope, TMessage&& message)
 	{
 		TPayload payload;
 		wrap(payload, std::move(message));
-		wrap_payload(envelope, payload);
+		wrap_payload(rEnvelope, payload);
 	}
 
 private:
@@ -89,7 +87,7 @@ private:
 			for (int f = 0; f < oneof->field_count(); ++f)
 			{
 				const auto fdesc = oneof->field(f);
-				if (fdesc->type() == google::protobuf::FieldDescriptor::TYPE_MESSAGE)
+				if (google::protobuf::FieldDescriptor::TYPE_MESSAGE == fdesc->type())
 				{
 					if (fdesc->message_type() == msg_desc)
 					{
@@ -102,7 +100,7 @@ private:
 	}
 
 private:
-	const ::google::protobuf::FieldDescriptor& m_fdesc;
+	const ::google::protobuf::FieldDescriptor& m_FieldDescriptor;
 };
 
 } // namespace SVRPC

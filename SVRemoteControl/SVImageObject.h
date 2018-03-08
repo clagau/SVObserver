@@ -10,11 +10,8 @@
 #include "SVRemoteControl.h"
 #include "SVSocketLibrary/SVClientSocket.h"
 #include <boost/shared_array.hpp>
-#pragma warning( push )
-#pragma warning( disable : 4800 ) 
 #include "WebsocketLibrary/clientservice.h"
-#include "SVProtobuf/RunRe.pb.h"
-#pragma warning( pop )
+#include "SVProtobuf/RunRe.h"
 #pragma endregion Includes
 
 

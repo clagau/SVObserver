@@ -8,7 +8,7 @@
 
 #include "stdafx.h"
 #include "SVObserverAccessDll.h"
-#include <SVProtoBuf\envelope.pb.h>
+
 #include "SVSharedMemoryLibrary\ShareControl.h"
 
 

@@ -20,9 +20,7 @@
 
 #include "SVHttpLibrary/WebsocketServerConnection.h"
 #include "SVRPCLibrary/RequestHandlerBase.h"
-#pragma warning (push,2)
-#include "SVProtoBuf/envelope.pb.h"
-#pragma warning (pop)
+#include "SVProtoBuf/envelope.h"
 
 namespace SVRPC
 {
@@ -49,7 +47,8 @@ private:
 	std::future<void> send_envelope(int id, const Envelope& envelope);
 
 private:
-	RequestHandlerBase* m_request_handler;
-	std::map<int, SVHTTP::WebsocketServerConnection*> m_connections;
+	RequestHandlerBase* m_pRequestHandler;
+	std::map<int, SVHTTP::WebsocketServerConnection*> m_Connections;
 };
-}
+
+} // namespace SVRPC

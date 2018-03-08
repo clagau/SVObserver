@@ -251,17 +251,12 @@ SVControlCommands::SVControlCommands(NotifyFunctor p_Func, bool connectToRRS)
 	m_RunServerPort(svr::runpgePort),
 	m_Connected(false),
 	m_RRSConnected(false),
-	m_Notifier(p_Func)
+	m_Notifier(p_Func),
+	m_bConnectToRRS(connectToRRS),
+	m_RequestTimeout(2)
 {
 	m_ClientSocket.SetConnectionStatusCallback(boost::bind(&SVControlCommands::OnConnectionStatus, this, _1));
 	m_ClientSocket.SetDataReceivedCallback(boost::bind(&SVControlCommands::OnControlDataReceived, this, _1));
-	if (connectToRRS)
-	{
-		m_pRpcClient = std::make_unique<SVRPC::RPCClient>("127.0.0.0", RRWS::Default_Port);
-		auto request_timeout = boost::posix_time::seconds(2);
-
-		m_pClientService = std::make_unique<RRWS::ClientService>(*m_pRpcClient.get(), request_timeout);
-	}
 }
 
 
@@ -275,18 +270,19 @@ HRESULT SVControlCommands::SetConnectionData(const _bstr_t& p_rServerName, unsig
 {
 	HRESULT hr = S_OK;
 	m_ClientSocket.Disconnect();
-	if (m_pRpcClient.get())
-	{
-		m_pRpcClient->Disconnect();
-	}
+	m_pRpcClient.reset();
 	m_Connected = false;
 	m_ServerName = p_rServerName;
 	m_CommandPort = p_CommandPort;
 
 	if (0 < m_ServerName.length())
 	{
-		if (m_pRpcClient.get())
-			m_pRpcClient->Connect(static_cast<char*>(m_ServerName), RRWS::Default_Port);
+		if (m_bConnectToRRS)
+		{
+			m_pRpcClient = std::make_unique<SVRPC::RPCClient>(static_cast<char*>(m_ServerName), RRWS::Default_Port);
+			m_pClientService = std::make_unique<RRWS::ClientService>(*m_pRpcClient, m_RequestTimeout);
+		}
+
 		SvSol::SVSocketError::ErrorEnum err = SvSol::SVSocketError::Success;
 		if ((err = m_ClientSocket.BuildConnection(m_ServerName, svr::cmdPort, timeout)) == SvSol::SVSocketError::Success)
 		{

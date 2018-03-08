@@ -40,6 +40,17 @@ template <typename T> static void RegGetIntIfExists(T& dst, const std::string& n
 	{
 	}
 }
+template <> static void RegGetIntIfExists(bool& dst, const std::string& name)
+{
+	try
+	{
+		auto v = win32::RegGetDword(RRWS_KEY, _T(RRWS_SUBKEY), name);
+		dst = v != 0;
+	}
+	catch (const win32::RegistryError&)
+	{
+	}
+}
 void SettingsLoader::loadFromRegistry(Settings& settings)
 {
 	try
@@ -59,13 +70,12 @@ void SettingsLoader::loadFromRegistry(Settings& settings)
 	RegGetStringIfExists(settings.logSettings.windows_event_log_source, "EventLogSource");
 	RegGetStringIfExists(settings.logSettings.windows_event_log_level, "EventLogLevel");
 
-	RegGetStringIfExists(settings.websocketSettings.host, "WebsocketHost");
-	RegGetIntIfExists(settings.websocketSettings.port, "WebsocketPort");
-	RegGetIntIfExists(settings.websocketSettings.read_buffer_size, "WebsocketReadBufferSize");
-	RegGetIntIfExists(settings.websocketSettings.ping_interval_sec, "WebsocketPingIntervalSec");
-	RegGetIntIfExists(settings.websocketSettings.ping_timeout_count, "WebsocketPingTimeoutCount");
-	RegGetIntIfExists(settings.websocketSettings.connection_cleanup_interval_sec,
-		"WebsocketConnectionCleanupIntervalSec");
-	RegGetIntIfExists(settings.websocketSettings.split_large_payload, "WebsocketSplitLargePayload");
+	RegGetStringIfExists(settings.websocketSettings.Host, "WebsocketHost");
+	RegGetIntIfExists(settings.websocketSettings.Port, "WebsocketPort");
+	RegGetIntIfExists(settings.websocketSettings.ReadBufferSize, "WebsocketReadBufferSize");
+	RegGetIntIfExists(settings.websocketSettings.PingIntervalSec, "WebsocketPingIntervalSec");
+	RegGetIntIfExists(settings.websocketSettings.PingTimeoutCount, "WebsocketPingTimeoutCount");
+	RegGetIntIfExists(settings.websocketSettings.ConnectionCleanupIntervalSec, "WebsocketConnectionCleanupIntervalSec");
+	RegGetIntIfExists(settings.websocketSettings.SplitLargePayload, "WebsocketSplitLargePayload");
 }
 } // namespace RRWS

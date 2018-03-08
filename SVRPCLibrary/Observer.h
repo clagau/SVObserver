@@ -18,9 +18,8 @@
 
 #include <functional>
 #include <future>
-#pragma warning (push,2)
-#include "SVProtoBuf/envelope.pb.h"
-#pragma warning  (pop)
+
+#include "SVProtoBuf/envelope.h"
 
 namespace SVRPC
 {
@@ -28,39 +27,43 @@ namespace SVRPC
 template <typename T> struct Observer
 {
 public:
-	using FinishFkt = std::function<void()>;
-	using ErrorFkt = std::function<void(const Error&)>;
-	using NextFkt = std::function<std::future<void>(T&& t)> ;
+	using OnNextFn = std::function<std::future<void>(T&& t)> ;
+	using OnFinishFn = std::function<void()>;
+	using OnErrorFn = std::function<void(const Error&)>;
 
-	Observer(NextFkt on_next, FinishFkt finish, ErrorFkt error) : m_on_next(on_next), m_finish(finish), m_error(error)
+	Observer(OnNextFn OnNext, OnFinishFn OnFinish, OnErrorFn OnError) : m_OnNext(OnNext), m_OnFinish(OnFinish), m_OnError(OnError)
 	{
 	}
+
 	std::future<void> onNext(T&& t) const
 	{
-		if (!m_on_next)
+		if (!m_OnNext)
 		{
 			return std::future<void>();
 		}
-		return m_on_next(std::move(t));
+		return m_OnNext(std::move(t));
 	}
+
 	void finish() const
 	{
-		if (m_finish)
+		if (m_OnFinish)
 		{
-			m_finish();
+			m_OnFinish();
 		}
 	}
+
 	void error(const Error& err) const
 	{
-		if (m_error)
+		if (m_OnError)
 		{
-			m_error(err);
+			m_OnError(err);
 		}
 	}
 
 public:
-	std::function<std::future<void>(T&& t)> m_on_next;
-	std::function<void()> m_finish;
-	std::function<void(const Error&)> m_error;
+	OnNextFn m_OnNext;
+	OnFinishFn m_OnFinish;
+	OnErrorFn m_OnError;
 };
-}
+
+} // namespace SVRPC

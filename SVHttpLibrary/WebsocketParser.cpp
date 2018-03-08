@@ -94,7 +94,7 @@ WebSocketParser::parseFrame(unsigned char* buf, size_t buf_len, size_t& frame_le
 
 	if (!msg_fin && (msg_opcode == 0x1 || msg_opcode == 0x2))
 	{
-		m_is_binary_continuation = (msg_opcode == 0x2);
+		m_IsBinaryContinuation = (msg_opcode == 0x2);
 	}
 
 	switch (msg_opcode)
@@ -102,7 +102,7 @@ WebSocketParser::parseFrame(unsigned char* buf, size_t buf_len, size_t& frame_le
 		case 0x0:
 			if (msg_fin)
 			{
-				return m_is_binary_continuation ? FrameType::BINARY_FRAME : FrameType::TEXT_FRAME;
+				return m_IsBinaryContinuation ? FrameType::BINARY_FRAME : FrameType::TEXT_FRAME;
 			}
 			else
 			{
@@ -123,6 +123,7 @@ WebSocketParser::parseFrame(unsigned char* buf, size_t buf_len, size_t& frame_le
 			return FrameType::ERROR_FRAME;
 	}
 }
+
 static void makeFrameImpl(
 	std::vector<char>& buffer, WebSocketParser::FrameType frame_type, const char* msg, size_t msg_len, bool fin)
 {
@@ -158,10 +159,12 @@ static void makeFrameImpl(
 
 	buffer.insert(buffer.end(), msg, msg + msg_len);
 }
+
 void WebSocketParser::makeFrame(std::vector<char>& buffer, FrameType frame_type, const char* msg, size_t msg_len)
 {
 	makeFrameImpl(buffer, frame_type, msg, msg_len, true);
 }
+
 void WebSocketParser::makeFrames(std::vector<std::vector<char>>& dst,
 	FrameType frame_type,
 	const char* msg,
@@ -182,4 +185,5 @@ void WebSocketParser::makeFrames(std::vector<std::vector<char>>& dst,
 		dst.emplace_back(std::move(buf));
 	}
 }
-}
+
+} // namespace SVHTTP

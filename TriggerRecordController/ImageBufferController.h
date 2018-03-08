@@ -8,13 +8,10 @@
 #pragma once
 
 #pragma region Includes
-#pragma warning( push )
-#pragma warning( disable : 4800 ) 
-#include "SVProtoBuf\TriggerRecordController.pb.h"
-#pragma warning( pop )
 #include <mil.h>
 #include "SVMatroxLibrary\SVMatroxBufferCreateStruct.h"
 #include "SVMatroxLibrary\SVMatroxBuffer.h"
+#include "SVProtoBuf/TriggerRecordController.h"
 #include "IImage.h"
 #pragma endregion Includes
 

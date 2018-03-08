@@ -10,28 +10,29 @@
 
 #pragma once
 
-#pragma warning ( push, 2)
-#include "SVProtoBuf/envelope.pb.h"
-#pragma warning (pop)
+#include "SVProtoBuf/envelope.h"
+
 namespace SVRPC
 {
-template <typename TPayload> void wrap_payload(Envelope& envelope, const TPayload& payload)
+template <typename TPayload> void wrap_payload(Envelope& rEnvelope, const TPayload& payload)
 {
-	envelope.set_payload_type(payload.message_case());
-	envelope.mutable_payload()->PackFrom(payload);
+	rEnvelope.set_payload_type(payload.message_case());
+	rEnvelope.mutable_payload()->PackFrom(payload);
 }
-template <typename TPayload> bool unwrap_payload(const Envelope& envelope, TPayload& payload)
+
+template <typename TPayload> bool unwrap_payload(const Envelope& envelope, TPayload& rPayload)
 {
 	if (!envelope.has_payload())
 	{
 		return false;
 	}
 
-	if (!envelope.payload().UnpackTo(&payload))
+	if (!envelope.payload().UnpackTo(&rPayload))
 	{
 		return false;
 	}
 
 	return true;
 }
-}
+
+} // namespace SVRPC

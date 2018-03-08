@@ -52,7 +52,8 @@ int main()
 		RRWS::Settings settings;
 		RRWS::SettingsLoader settingsLoader;
 		settingsLoader.loadFromRegistry(settings);
-
+		//@Todo[MEC][8.00] [08.03.2018] could also be in Regestry
+		settings.websocketSettings.Host = "0.0.0.0";
 		RRWS::init_logging(settings.logSettings);
 		BOOST_LOG_TRIVIAL(info) << "RunReWebsocketServer is starting";
 

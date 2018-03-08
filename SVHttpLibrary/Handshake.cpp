@@ -21,25 +21,25 @@ namespace SVHTTP
 {
 Handshake::ParserState Handshake::parseClientRequest(char* buf, size_t len)
 {
-	if (!m_initialized)
+	if (!m_IsInitialized)
 	{
 		init_parser(/*parse_request=*/true);
-		m_initialized = true;
+		m_IsInitialized = true;
 	}
-	auto nparsed = http_parser_execute(&m_parser, &m_settings, buf, len);
+	auto nparsed = http_parser_execute(&m_Parser, &m_Settings, buf, len);
 	if (nparsed != len)
 	{
-		BOOST_LOG_TRIVIAL(warning) << "Error while parsing incoming http request! " << m_parser.http_errno;
+		BOOST_LOG_TRIVIAL(warning) << "Error while parsing incoming http request! " << m_Parser.http_errno;
 		return PS_ERROR;
 	}
 
-	if (!m_complete)
+	if (!m_IsComplete)
 	{
 		return PS_INCOMPLETE;
 	}
 
 	// TODO: check all headers
-	if (m_parser.upgrade != 1 || m_parser.method != HTTP_GET)
+	if (m_Parser.upgrade != 1 || m_Parser.method != HTTP_GET)
 	{
 		return PS_INVALID;
 	}
@@ -49,25 +49,25 @@ Handshake::ParserState Handshake::parseClientRequest(char* buf, size_t len)
 
 Handshake::ParserState Handshake::parseServerResponse(char* buf, size_t len)
 {
-	if (!m_initialized)
+	if (!m_IsInitialized)
 	{
 		init_parser(/*parse_request=*/false);
-		m_initialized = true;
+		m_IsInitialized = true;
 	}
-	auto nparsed = http_parser_execute(&m_parser, &m_settings, buf, len);
+	auto nparsed = http_parser_execute(&m_Parser, &m_Settings, buf, len);
 	if (nparsed != len)
 	{
-		BOOST_LOG_TRIVIAL(warning) << "Error while parsing incoming http request! " << m_parser.http_errno;
+		BOOST_LOG_TRIVIAL(warning) << "Error while parsing incoming http request! " << m_Parser.http_errno;
 		return PS_ERROR;
 	}
 
-	if (!m_complete)
+	if (!m_IsComplete)
 	{
 		return PS_INCOMPLETE;
 	}
 
 	// TODO: check all headers
-	if (m_parser.upgrade != 1 || m_parser.status_code != 101)
+	if (1 != m_Parser.upgrade || 101 != m_Parser.status_code)
 	{
 		return PS_INVALID;
 	}
@@ -207,7 +207,7 @@ static std::vector<char> generate_accept_key(const std::string& clientKey)
 
 std::string Handshake::generateServerResponse()
 {
-	if (!m_complete)
+	if (!m_IsComplete)
 	{
 		throw std::runtime_error("Cannot generate response for non-successful handshake request");
 	}
@@ -218,7 +218,7 @@ std::string Handshake::generateServerResponse()
 	handshake += "Connection: Upgrade\r\n";
 
 	auto keyIt = find_header("Sec-WebSocket-Key");
-	if (keyIt != m_headers.end())
+	if (keyIt != m_Headers.end())
 	{
 		auto accept = generate_accept_key(keyIt->second);
 		handshake += "Sec-WebSocket-Accept: ";
@@ -226,7 +226,7 @@ std::string Handshake::generateServerResponse()
 		handshake += "\r\n";
 	}
 
-	if (find_header("Sec-WebSocket-Protocol") != m_headers.end())
+	if (find_header("Sec-WebSocket-Protocol") != m_Headers.end())
 	{
 		// TODO: validate list of requested protocols
 		handshake += "Sec-WebSocket-Protocol: seidenader-svo\r\n";
@@ -239,14 +239,14 @@ std::string Handshake::generateServerResponse()
 
 void Handshake::init_parser(bool parse_request)
 {
-	http_parser_settings_init(&m_settings);
-	m_settings.on_url = Handshake::on_url_cb;
-	m_settings.on_header_field = Handshake::on_header_field_cb;
-	m_settings.on_header_value = Handshake::on_header_value_cb;
-	m_settings.on_message_complete = Handshake::on_message_complete_cb;
+	http_parser_settings_init(&m_Settings);
+	m_Settings.on_url = Handshake::on_url_cb;
+	m_Settings.on_header_field = Handshake::on_header_field_cb;
+	m_Settings.on_header_value = Handshake::on_header_value_cb;
+	m_Settings.on_message_complete = Handshake::on_message_complete_cb;
 	auto type = parse_request ? HTTP_REQUEST : HTTP_RESPONSE;
-	http_parser_init(&m_parser, type);
-	m_parser.data = this;
+	http_parser_init(&m_Parser, type);
+	m_Parser.data = this;
 }
 
 int Handshake::on_url_cb(http_parser* parser, const char* at, size_t length)
@@ -256,7 +256,7 @@ int Handshake::on_url_cb(http_parser* parser, const char* at, size_t length)
 
 int Handshake::on_url(http_parser* parser, const char* at, size_t length)
 {
-	m_url.append(at, length);
+	m_Url.append(at, length);
 	return 0;
 }
 
@@ -267,7 +267,7 @@ int Handshake::on_header_field_cb(http_parser* parser, const char* at, size_t le
 
 int Handshake::on_header_field(http_parser* parser, const char* at, size_t length)
 {
-	m_curr_header = str_to_lower(std::string(at, length));
+	m_CurrHeader = str_to_lower(std::string(at, length));
 	return 0;
 }
 
@@ -278,8 +278,8 @@ int Handshake::on_header_value_cb(http_parser* parser, const char* at, size_t le
 
 int Handshake::on_header_value(http_parser* parser, const char* at, size_t length)
 {
-	m_headers[m_curr_header] = std::string(at, length);
-	m_curr_header.clear();
+	m_Headers[m_CurrHeader] = std::string(at, length);
+	m_CurrHeader.clear();
 	return 0;
 }
 
@@ -290,12 +290,13 @@ int Handshake::on_message_complete_cb(http_parser* parser)
 
 int Handshake::on_message_complete(http_parser* parser)
 {
-	m_complete = true;
+	m_IsComplete = true;
 	return 0;
 }
 
 std::map<std::string, std::string>::iterator Handshake::find_header(const std::string& key)
 {
-	return m_headers.find(str_to_lower(key));
+	return m_Headers.find(str_to_lower(key));
 }
-}
+
+} // namespace SVHTTP

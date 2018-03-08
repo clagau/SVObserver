@@ -25,9 +25,7 @@
 #include "SVRPCLibrary/EnvelopeUtil.h"
 #include "SVRPCLibrary/Observer.h"
 #include "SVRPCLibrary/OneOfUtil.h"
-#pragma warning (push,2)
-#include "SVProtoBuf/envelope.pb.h"
-#pragma warning (pop)
+#include "SVProtoBuf/envelope.h"
 
 namespace SVRPC
 {
@@ -41,25 +39,25 @@ public:
 template <typename TPayload, typename TReq, typename TRes> class ObserverWrapper : public ObserverWrapperBase
 {
 public:
-	ObserverWrapper(std::function<void(TReq&&, Observer<TRes>)>&& fn) : m_fn(std::move(fn)) {}
+	ObserverWrapper(std::function<void(TReq&&, Observer<TRes>)>&& Handler) : m_Handler(std::move(Handler)) {}
 	~ObserverWrapper() override {}
 
 	void operator()(Envelope&& envelope, Observer<Envelope> observer) override
 	{
 		TReq req;
-		if (!m_req_unwrapper.unwrap(req, std::move(envelope)))
+		if (!m_ReqUnwrapper.unwrap(req, std::move(envelope)))
 		{
 			BOOST_LOG_TRIVIAL(warning) << "Envelope with unknown payload!";
 			observer.error(build_error(ErrorCode::InternalError, "Unknown payload"));
 			return;
 		}
 
-		m_fn(std::move(req),
+		m_Handler(std::move(req),
 			Observer<TRes>(
 			[this, observer](TRes&& res) -> std::future<void>
 		{
 			Envelope resEnvelope;
-			m_res_wrapper.wrap(resEnvelope, std::move(res));
+			m_ResWrapper.wrap(resEnvelope, std::move(res));
 
 			return observer.onNext(std::move(resEnvelope));
 		},
@@ -68,8 +66,9 @@ public:
 	}
 
 private:
-	std::function<void(TReq&&, Observer<TRes>)> m_fn;
-	OneOfUtil<TPayload, TReq> m_req_unwrapper;
-	OneOfUtil<TPayload, TRes> m_res_wrapper;
+	std::function<void(TReq&&, Observer<TRes>)> m_Handler;
+	OneOfUtil<TPayload, TReq> m_ReqUnwrapper;
+	OneOfUtil<TPayload, TRes> m_ResWrapper;
 };
+
 } // namespace SVRPC

@@ -8,10 +8,7 @@
 #pragma once
 
 #pragma region Includes
-#pragma warning( push )
-#pragma warning( disable : 4800 ) 
-#include "SVProtoBuf\BasicStructure.pb.h"
-#pragma warning( pop )
+#include "SVProtoBuf/BasicStructure.h"
 #pragma endregion Includes
 
 namespace SvPB

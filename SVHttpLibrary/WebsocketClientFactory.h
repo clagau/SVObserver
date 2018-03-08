@@ -22,12 +22,13 @@ public:
 	WebsocketClientFactory(std::string host, uint16_t port);
 
 	std::unique_ptr<WebsocketClient> create(
-		boost::asio::io_service& io_service,
+		boost::asio::io_service& rIoService,
 		WebsocketClient::EventHandler*,
-		bool wait_for_connect = false);
+		bool waitForConnect = false);
 
-//private:
-	std::string m_host;
-	uint16_t m_port;
+private:
+	std::string m_Host;
+	uint16_t m_Port;
 };
-}
+
+} // namespace SVHTTP

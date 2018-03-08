@@ -30,9 +30,9 @@ namespace SVHTTP
 class WebsocketServer
 {
 public:
-	WebsocketServer(const WebsocketServerSettings& settings,
-		boost::asio::io_service& io_service,
-		WebsocketServerConnection::EventHandler* event_handler);
+	WebsocketServer(const WebsocketServerSettings& rSettings,
+		boost::asio::io_service& rIoService,
+		WebsocketServerConnection::EventHandler* pEventHandler);
 
 	void start();
 
@@ -44,13 +44,14 @@ private:
 	void do_cleanup(const boost::system::error_code& error);
 
 private:
-	const WebsocketServerSettings& m_settings;
-	boost::asio::io_service& m_io_service;
-	boost::asio::deadline_timer m_cleanup_timer;
-	boost::asio::ip::tcp::acceptor m_acceptor;
-	int m_next_connection_id;
-	WebsocketServerConnection::EventHandler* m_event_handler;
-	std::vector<std::shared_ptr<WebsocketServerConnection>> m_connections;
-	std::vector<std::shared_ptr<WebsocketServerConnection>> m_connections_marked_for_deletion;
+	const WebsocketServerSettings& m_rSettings;
+	boost::asio::io_service& m_rIoService;
+	boost::asio::deadline_timer m_CleanupTimer;
+	boost::asio::ip::tcp::acceptor m_Acceptor;
+	int m_NextConnectionId;
+	WebsocketServerConnection::EventHandler* m_pEventHandler;
+	std::vector<std::shared_ptr<WebsocketServerConnection>> m_Connections;
+	std::vector<std::shared_ptr<WebsocketServerConnection>> m_ConnectionsMarkedForDeletion;
 };
-}
+
+} // namespace SVHTTP

@@ -21,27 +21,31 @@ namespace SVHTTP
 static boost::asio::ip::tcp::endpoint build_endpoint(const WebsocketServerSettings& settings)
 {
 	using namespace boost::asio::ip;
-	return tcp::endpoint(address_v4::from_string(settings.host), settings.port);
+	return tcp::endpoint(address_v4::from_string(settings.Host), settings.Port);
 }
-WebsocketServer::WebsocketServer(const WebsocketServerSettings& settings,
-	boost::asio::io_service& io_service,
-	WebsocketServerConnection::EventHandler* event_handler)
-	: m_settings(settings), m_io_service(io_service), m_cleanup_timer(m_io_service),
-	m_acceptor(io_service, build_endpoint(settings)), m_event_handler(event_handler), m_next_connection_id(0)
+
+WebsocketServer::WebsocketServer(const WebsocketServerSettings& rSettings,
+	boost::asio::io_service& rIoService,
+	WebsocketServerConnection::EventHandler* pEventHandler)
+	: m_rSettings(rSettings), m_rIoService(rIoService), m_CleanupTimer(rIoService),
+	m_Acceptor(rIoService, build_endpoint(rSettings)), m_pEventHandler(pEventHandler), m_NextConnectionId(0)
 {
 }
+
 void WebsocketServer::start()
 {
 	start_accept();
 	schedule_cleanup();
 }
+
 void WebsocketServer::start_accept()
 {
 	auto connection =
-		std::make_shared<WebsocketServerConnection>(m_settings, m_io_service, ++m_next_connection_id, m_event_handler);
-	m_acceptor.async_accept(connection->socket(),
+		std::make_shared<WebsocketServerConnection>(m_rSettings, m_rIoService, ++m_NextConnectionId, m_pEventHandler);
+	m_Acceptor.async_accept(connection->socket(),
 		std::bind(&WebsocketServer::handle_accept, this, connection, std::placeholders::_1));
 }
+
 void WebsocketServer::handle_accept(std::shared_ptr<WebsocketServerConnection> connection,
 	const boost::system::error_code& ec)
 {
@@ -53,15 +57,17 @@ void WebsocketServer::handle_accept(std::shared_ptr<WebsocketServerConnection> c
 
 	connection->start();
 
-	m_connections.push_back(connection);
+	m_Connections.push_back(connection);
 
 	start_accept();
 }
+
 void WebsocketServer::schedule_cleanup()
 {
-	m_cleanup_timer.expires_from_now(boost::posix_time::seconds(m_settings.connection_cleanup_interval_sec));
-	m_cleanup_timer.async_wait(std::bind(&WebsocketServer::do_cleanup, this, std::placeholders::_1));
+	m_CleanupTimer.expires_from_now(boost::posix_time::seconds(m_rSettings.ConnectionCleanupIntervalSec));
+	m_CleanupTimer.async_wait(std::bind(&WebsocketServer::do_cleanup, this, std::placeholders::_1));
 }
+
 void WebsocketServer::do_cleanup(const boost::system::error_code& error)
 {
 	if (error)
@@ -71,16 +77,16 @@ void WebsocketServer::do_cleanup(const boost::system::error_code& error)
 	}
 
 	// delete connection added during last cleanup
-	m_connections_marked_for_deletion.clear();
+	m_ConnectionsMarkedForDeletion.clear();
 
-	for (auto it = m_connections.begin(); it != m_connections.end();)
+	for (auto it = m_Connections.begin(); it != m_Connections.end();)
 	{
 		auto conn = *it;
 		if (!conn->isOpen())
 		{
 			BOOST_LOG_TRIVIAL(debug) << "Marking connection for deletion";
-			it = m_connections.erase(it);
-			m_connections_marked_for_deletion.push_back(conn);
+			it = m_Connections.erase(it);
+			m_ConnectionsMarkedForDeletion.push_back(conn);
 		}
 		else
 		{
@@ -90,4 +96,5 @@ void WebsocketServer::do_cleanup(const boost::system::error_code& error)
 
 	schedule_cleanup();
 }
-}
+
+} // namespace SVHTTP

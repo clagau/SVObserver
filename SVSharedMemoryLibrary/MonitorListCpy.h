@@ -14,11 +14,7 @@
 #include "SVProductFilterEnum.h"
 #include "MLInspectionInfo.h"
 #include "MLPPQInfo.h"
-#pragma warning (push ,2)
-#include "SVProtoBuf/RunRe.pb.h"
-#pragma warning (pop)
-
-
+#include "SVProtoBuf/RunRe.h"
 #pragma endregion Includes
 
 namespace SvSml

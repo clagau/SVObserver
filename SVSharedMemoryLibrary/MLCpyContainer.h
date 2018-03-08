@@ -15,11 +15,8 @@
 #include "MonitorListCpy.h"
 #include "Definitions\SVIMCommand.h"
 #include "Definitions\StringTypeDef.h"
-
-#pragma warning (push ,2)
-#include "SVProtoBuf\envelope.pb.h"
-#include "SVProtoBuf\RunRe.pb.h"
-#pragma warning (pop)
+#include "SVProtoBuf/envelope.h"
+#include "SVProtoBuf/RunRe.h"
 #pragma endregion Includes
 
 

@@ -26,6 +26,9 @@
 #include <string.h>
 #include <limits.h>
 
+#pragma warning( push )
+#pragma warning( disable : 4244 )
+
 #ifndef ULLONG_MAX
 # define ULLONG_MAX ((uint64_t) -1) /* 2^64-1 */
 #endif
@@ -2406,3 +2409,5 @@ http_parser_version(void) {
          HTTP_PARSER_VERSION_MINOR * 0x00100 |
          HTTP_PARSER_VERSION_PATCH * 0x00001;
 }
+
+#pragma warning( pop )

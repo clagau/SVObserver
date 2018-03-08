@@ -63,13 +63,14 @@ private:
 	std::map<std::string, std::string>::iterator find_header(const std::string&);
 
 private:
-	http_parser_settings m_settings;
-	http_parser m_parser;
+	http_parser_settings m_Settings;
+	http_parser m_Parser;
 
-	bool m_initialized {false};
-	bool m_complete {false};
-	std::string m_url;
-	std::string m_curr_header;
-	std::map<std::string, std::string> m_headers;
+	bool m_IsInitialized {false};
+	bool m_IsComplete {false};
+	std::string m_Url;
+	std::string m_CurrHeader;
+	std::map<std::string, std::string> m_Headers;
 };
-}
+
+} // namespace SVHTTP

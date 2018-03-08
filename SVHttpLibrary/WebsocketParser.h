@@ -49,6 +49,7 @@ public:
 private:
 	// in case of continuation, we need to keep info
 	// whether first frame was binary or text
-	bool m_is_binary_continuation;
+	bool m_IsBinaryContinuation;
 };
-}
+
+} // namespace SVHTTP
