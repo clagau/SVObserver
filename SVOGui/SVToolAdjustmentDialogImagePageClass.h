@@ -22,15 +22,16 @@
 
 namespace SvOg
 {
-	class SVToolAdjustmentDialogImagePageClass : public CPropertyPage, protected ImageController
+	class SVToolAdjustmentDialogImagePageClass : public CPropertyPage
 	{
 	public:
-		SVToolAdjustmentDialogImagePageClass(const SVGUID & rInspectionID, const SVGUID& rTaskObjectID, int id = IDD );
+		SVToolAdjustmentDialogImagePageClass(const SVGUID & rInspectionID, const SVGUID& rTaskObjectID, SvDef::SVObjectSubTypeEnum SubType =  SvDef::SVImageMonoType, int id = IDD );
 		virtual ~SVToolAdjustmentDialogImagePageClass();
 		HRESULT SetInspectionData();
 
 	protected:
 		void refresh();
+		ImageController& getImageController() { return m_ImageController; }
 
 		//{{AFX_MSG(SVToolAdjustmentDialogImagePageClass)
 		virtual BOOL OnInitDialog() override;
@@ -49,8 +50,11 @@ namespace SvOg
 		PictureDisplay m_dialogImage;
 		//}}AFX_DATA
 	
+	private:
 		const SVGUID m_InspectionID;
 		const SVGUID m_TaskObjectID;
 		std::string m_inputName;
+		
+		ImageController m_ImageController;
 	};
 } //namespace SvOg

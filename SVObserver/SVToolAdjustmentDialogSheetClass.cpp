@@ -333,7 +333,8 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 			break;
 
 		case SvDef::SVRingBufferToolObjectType:
-			AddPage( new SvOg::SVToolAdjustmentDialogImagePageClass( m_InspectionID, m_TaskObjectID ) );
+			// When the Object sub type is not set, then both mono and color images are placed into the selection list
+			AddPage( new SvOg::SVToolAdjustmentDialogImagePageClass( m_InspectionID, m_TaskObjectID, SvDef::SVNotSetSubObjectType) );
 			AddPage( new SvOg::TADialogRingBufferParameterPage( m_InspectionID, m_TaskObjectID ) );
 			AddPage( pConditionalDlg );
 			break;

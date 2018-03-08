@@ -37,9 +37,9 @@ namespace SvOg
 		//}}AFX_MSG_MAP
 	END_MESSAGE_MAP()
 
-	SVToolAdjustmentDialogImagePageClass::SVToolAdjustmentDialogImagePageClass(const SVGUID & rInspectionID, const SVGUID& rTaskObjectID, int id ) 
+	SVToolAdjustmentDialogImagePageClass::SVToolAdjustmentDialogImagePageClass(const SVGUID & rInspectionID, const SVGUID& rTaskObjectID, SvDef::SVObjectSubTypeEnum SubType /*= SvDef::SVImageMonoType*/, int id /*=IDD*/ )
 	: CPropertyPage( id )
-	, ImageController(rInspectionID, rTaskObjectID)
+		, m_ImageController{rInspectionID, rTaskObjectID, SubType}
 	{
 	}
 
@@ -51,7 +51,7 @@ namespace SvOg
 	{
 		UpdateData(true); // get data from dialog
 
-		HRESULT hr = ToolRunOnce();
+		HRESULT hr = m_ImageController.ToolRunOnce();
 
 		UpdateData(false);
 
@@ -76,13 +76,13 @@ namespace SvOg
 	BOOL SVToolAdjustmentDialogImagePageClass::OnInitDialog() 
 	{
 		CPropertyPage::OnInitDialog();
-		Init();
-		const SvUl::NameGuidList& rAvailableImageList = GetAvailableImageList();
+		m_ImageController.Init();
+		const SvUl::NameGuidList& rAvailableImageList = m_ImageController.GetAvailableImageList();
 	
 		// This requires that the input name sorts in descending natural order
 		// and that the images we are concerned with are first in the list
 		std::string selectedImageName;
-		const SvUl::InputNameGuidPairList& rImageList = GetConnectedImageList();
+		const SvUl::InputNameGuidPairList& rImageList = m_ImageController.GetConnectedImageList();
 		if (rImageList.size())
 		{
 			m_inputName = rImageList.begin()->first;
@@ -91,7 +91,7 @@ namespace SvOg
 	
 		m_availableSourceImageListBox.Init(rAvailableImageList, selectedImageName, NoImageTag);
 		m_dialogImage.AddTab(ImageTag);
-		m_dialogImage.setImage(GetImage(selectedImageName));
+		m_dialogImage.setImage(m_ImageController.GetImage(selectedImageName));
 		m_dialogImage.Refresh();
 
 		UpdateData(false); // set data to dialog
@@ -107,18 +107,18 @@ namespace SvOg
 		int index = m_availableSourceImageListBox.GetCurSel();
 		if (LB_ERR != index)
 		{
-			bool bIsValid = IsToolValid();
+			bool bIsValid = m_ImageController.IsToolValid();
 			CString imageName;
 			m_availableSourceImageListBox.GetLBText(index, imageName);
 			if (!imageName.IsEmpty() && imageName != NoImageTag)
 			{
 				std::string svImageName(imageName);
-				ConnectToImage(m_inputName, svImageName);
-				IPictureDisp* pImage = GetImage(svImageName);
+				m_ImageController.ConnectToImage(m_inputName, svImageName);
+				IPictureDisp* pImage = m_ImageController.GetImage(svImageName);
 				m_dialogImage.setImage(pImage);
 				refresh();
 				SvStl::MessageContainerVector errorMessages;
-				HRESULT result = ResetTask(errorMessages);
+				HRESULT result = m_ImageController.ResetTask(errorMessages);
 
 				if (bIsValid && S_OK != result)
 				{

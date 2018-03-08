@@ -45,7 +45,7 @@ bool RingBufferTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStruc
 {
 	bool bOk = SVToolClass::CreateObject( rCreateStructure );
 
-	SVImageClass* pInputImage = getInputImage ();
+	SVImageClass* pInputImage = getInputImage();
 	bOk &= (nullptr != pInputImage);
 
 	bOk &= (S_OK == m_svToolExtent.SetTranslation( SvDef::SVExtentTranslationNone ));
@@ -72,7 +72,7 @@ bool RingBufferTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStruc
 	// This value will not be exposed for the RingBuffer Tool.
 	drawToolFlag.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
 
-	// Override base class exposure of the auxillary extent variables
+	// Override base class exposure of the auxiliary extent variables
 	// These values will not be exposed for the RingBuffer Tool.
 	m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
 	m_svAuxiliarySourceX.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
@@ -120,13 +120,18 @@ bool RingBufferTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 
 	if (Result)
 	{
-		SVImageClass* inputImage = getInputImage();
-		if (nullptr != inputImage)
+		SVImageClass* pInputImage = getInputImage();
+		if (nullptr != pInputImage)
 		{
-			//Set input name to source image name to display it in result picker
-			m_SourceImageNames.SetValue( inputImage->GetCompleteName() );
+			SVImageInfoClass ImageInfo = pInputImage->GetImageInfo();
 
-			SVImageInfoClass imageInfo = inputImage->GetImageInfo();
+			for (int i = 0; i < SvDef::cRingBufferNumberOutputImages; i++)
+			{
+				m_OutputImages[i].UpdateImage(pInputImage->GetUniqueObjectID(), ImageInfo);
+			}
+
+			//Set input name to source image name to display it in result picker
+			m_SourceImageNames.SetValue( pInputImage->GetCompleteName() );
 
 			//create ring buffer images
 			m_ringBuffer.clear();
@@ -134,11 +139,11 @@ bool RingBufferTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 			m_isBufferFull = false;
 			m_nextBufferPos = 0;
 
-			imageInfo.setDibBufferFlag(false);
+			ImageInfo.setDibBufferFlag(false);
 			for (int i=0; i<ringBufferDepth; i++)
 			{
 				SvOi::SVImageBufferHandlePtr imageHandle;
-				SVImageProcessingClass::CreateImageBuffer(imageInfo, imageHandle);
+				SVImageProcessingClass::CreateImageBuffer(ImageInfo, imageHandle);
 				m_ringBuffer[i] = imageHandle;
 			}
 		}
