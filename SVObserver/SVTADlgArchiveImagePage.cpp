@@ -177,8 +177,8 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 	{
 		SvDef::StringVector msgList;
 		msgList.push_back(SvUl::Format(_T("%ld"),  dwTemp));
-		SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
-		Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_ArchiveTool_WarningMaxImages, msgList, SvStl::SourceFileParams(StdMessageParams) );
+		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
+		Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ArchiveTool_WarningMaxImages, msgList, SvStl::SourceFileParams(StdMessageParams) );
 	}
 	//Max images must be at least 1
 	if( 1L > dwTemp )
