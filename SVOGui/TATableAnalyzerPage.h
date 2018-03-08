@@ -97,6 +97,11 @@ namespace SvOg
 		/// Reset one analyzer by one analyzer and check if the correct. If the find an error display an message and set the focus to this analyzer.
 		/// \returns HRESULT S_OK, if all analyzer correct.
 		HRESULT checkAllAnaylzer();
+
+		/// Set Data for the Add-Analyzer
+		/// \param rErrorMessageList [in,out] List of ErrorMessages.
+		/// \returns HRESULT S_OK, if setting correct.
+		HRESULT SetAddAnalyzerData(SvStl::MessageContainerVector &rErrorMessageList);
 #pragma endregion Private Methods
 
 #pragma region Member Variables

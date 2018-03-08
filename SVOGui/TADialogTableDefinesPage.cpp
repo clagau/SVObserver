@@ -324,7 +324,7 @@ namespace SvOg {
 		// Do a reset of the Tool
 		SvPB::ResetObjectRequest requestMessage;
 		SvPB::ResetObjectResponse responseMessage;
-		SvPB::SetGuidInProtoBytes(requestMessage.mutable_objectid(), m_InspectionID);
+		SvPB::SetGuidInProtoBytes(requestMessage.mutable_objectid(), m_TaskObjectID);
 		hResult = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, &responseMessage);
 		SvStl::MessageContainerVector errorMessageList = SvCmd::setMessageContainerFromMessagePB(responseMessage.messages());
 		if (0 < errorMessageList.size())
