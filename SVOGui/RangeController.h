@@ -54,6 +54,6 @@ namespace SvOg
 
 		const GUID& m_rInspectionID;
 		const GUID& m_rTaskObjectID;
-		std::unique_ptr<Controller> m_pRangeValues{ nullptr };
+		Controller m_RangeValues;
 	};
 } //namespace SvOg

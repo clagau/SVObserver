@@ -97,7 +97,7 @@ public:
 private:
 	typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
 	typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
-	std::unique_ptr<Controller> m_pValues{ nullptr };
+	Controller m_Values;
 
 	long m_lShiftType;
 };

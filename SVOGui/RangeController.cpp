@@ -34,6 +34,8 @@ namespace SvOg
 	RangeController::RangeController(const GUID& rInspectionID, const GUID& rTaskObjectID)
 		: m_rInspectionID(rInspectionID)
 		, m_rTaskObjectID(rTaskObjectID)
+		//TaskID is set later
+		, m_RangeValues{SvOg::BoundValues{rInspectionID, GUID_NULL}}
 	{
 	}
 
@@ -52,21 +54,15 @@ namespace SvOg
 			SvOi::IObjectClass* pRange = pTool->getFirstObject(ObjectInfo);
 			if (nullptr != pRange)
 			{
-				m_pRangeValues = std::unique_ptr<Controller>(new Controller{ SvOg::BoundValues{ m_rInspectionID, pRange->GetUniqueObjectID() } });
-				if (nullptr != m_pRangeValues)
-				{
-					m_pRangeValues->Init();
-				}
+				m_RangeValues.SetTaskID(pRange->GetUniqueObjectID());
+				m_RangeValues.Init();
 			}
 		}
 	}
 
 	void RangeController::Commit()
 	{
-		if (nullptr != m_pRangeValues)
-		{
-			m_pRangeValues->Commit(SvOg::doResetRunOnce);
-		}
+		m_RangeValues.Commit(SvOg::doResetRunOnce);
 	}
 
 	std::string RangeController::Get(const std::string& rName) const
@@ -175,13 +171,13 @@ namespace SvOg
 
 	std::string RangeController::GetIndirectValue(const GUID& rEmbeddedID) const
 	{
-		_bstr_t value = m_pRangeValues->Get<_bstr_t>(rEmbeddedID);
+		_bstr_t value = m_RangeValues.Get<_bstr_t>(rEmbeddedID);
 		return std::string(static_cast<LPCSTR>(value));
 	}
 
 	std::string RangeController::GetDirectValue(const GUID& rEmbeddedID) const
 	{
-		double value = m_pRangeValues->Get<double>(rEmbeddedID);
+		double value = m_RangeValues.Get<double>(rEmbeddedID);
 		std::stringstream ss;
 		ss.precision(6);
 		ss << std::fixed << value;
@@ -190,19 +186,13 @@ namespace SvOg
 
 	void RangeController::SetIndirectValue(const GUID& rEmbeddedID, const std::string& rValue)
 	{
-		if (nullptr != m_pRangeValues)
-		{
-			m_pRangeValues->Set<LPCSTR>(rEmbeddedID, rValue.c_str());
-		}
+		m_RangeValues.Set<LPCSTR>(rEmbeddedID, rValue.c_str());
 	}
 
 	void RangeController::SetDirectValue(const GUID& rEmbeddedID, const std::string& rValue)
 	{
-		if (nullptr != m_pRangeValues)
-		{
-			double value = boost::lexical_cast<double>(rValue);
-			m_pRangeValues->Set<double>(rEmbeddedID, value);
-		}
+		double value = boost::lexical_cast<double>(rValue);
+		m_RangeValues.Set<double>(rEmbeddedID, value);
 	}
 
 	std::string RangeController::GetOwnerName() const
@@ -267,10 +257,10 @@ namespace SvOg
 		const std::string& FailLowIndirectValue = GetIndirectValue(SVRangeClassFailLowIndirectObjectGuid);
 		const std::string& WarnHighIndirectValue = GetIndirectValue(SVRangeClassWarnHighIndirectObjectGuid);
 		const std::string& WarnLowIndirectValue = GetIndirectValue(SVRangeClassWarnLowIndirectObjectGuid);
-		double FailHighValue = m_pRangeValues->Get<double>(SVRangeClassFailHighObjectGuid);
-		double FailLowValue = m_pRangeValues->Get<double>(SVRangeClassFailLowObjectGuid);
-		double WarnHighValue = m_pRangeValues->Get<double>(SVRangeClassWarnHighObjectGuid);
-		double WarnLowValue = m_pRangeValues->Get<double>(SVRangeClassWarnLowObjectGuid);
+		double FailHighValue = m_RangeValues.Get<double>(SVRangeClassFailHighObjectGuid);
+		double FailLowValue = m_RangeValues.Get<double>(SVRangeClassFailLowObjectGuid);
+		double WarnHighValue = m_RangeValues.Get<double>(SVRangeClassWarnHighObjectGuid);
+		double WarnLowValue = m_RangeValues.Get<double>(SVRangeClassWarnLowObjectGuid);
 
 		RangeValidator::Validate(InspectionName, FailHighIndirectValue, FailLowIndirectValue, WarnHighIndirectValue, WarnLowIndirectValue, FailHighValue, FailLowValue, WarnHighValue, WarnLowValue, m_rInspectionID);
 	}

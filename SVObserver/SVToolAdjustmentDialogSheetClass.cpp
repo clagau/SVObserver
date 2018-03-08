@@ -123,13 +123,8 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 	SvDef::SVObjectTypeInfoStruct ObjectInfo;
 	ObjectInfo.ObjectType = SvDef::SVEquationObjectType;
 	ObjectInfo.SubType = SvDef::SVConditionalObjectType;
-	SvOg::SVFormulaEditorPageClass* pConditionalDlg{nullptr};
-	SvOi::IObjectClass* pEquation = GetTool()->getFirstObject(ObjectInfo);
-	if(nullptr != pEquation)
-	{
-		SvOi::IFormulaControllerPtr pFormularController{ new SvOg::FormulaController(m_InspectionID, m_TaskObjectID, pEquation->GetUniqueObjectID(), true) };
-		pConditionalDlg = new SvOg::SVFormulaEditorPageClass{pFormularController, true, IDS_CONDITIONAL_STRING, IDS_TOOL_STRING};
-	}
+	SvOi::IFormulaControllerPtr pFormularController{ new SvOg::FormulaController(m_InspectionID, m_TaskObjectID, ObjectInfo) };
+	SvOg::SVFormulaEditorPageClass* pConditionalDlg = new SvOg::SVFormulaEditorPageClass{pFormularController, true, IDS_CONDITIONAL_STRING, IDS_TOOL_STRING};
 
 	SvOi::IObjectClass* pLUTEquation{ nullptr };
 	ObjectInfo.ObjectType = SvDef::SVUnaryImageOperatorObjectType;
@@ -158,7 +153,6 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 	{
 		bHasSize = true;
 	}
-
 
 	const SvDef::SVObjectTypeInfoStruct& rToolType = GetTool()->GetObjectInfo().m_ObjectTypeInfo;
 	switch( rToolType.SubType )

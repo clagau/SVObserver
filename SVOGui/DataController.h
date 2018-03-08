@@ -47,17 +47,17 @@ namespace SvOg
 		}
 
 		template<typename DataType>
-		void SetDefault(const GUID& rEmbeddedID, const DataType& rValue)
+		bool SetDefault(const GUID& rEmbeddedID, const DataType& rValue)
 		{
 			_variant_t Value(rValue);
-			m_Data.SetDefaultValue(rEmbeddedID, Value);
+			return m_Data.SetDefaultValue(rEmbeddedID, Value);
 		}
 
 		template<typename DataType>
-		void Set(const GUID& rEmbeddedID, const DataType& rValue, int ArrayIndex = -1)
+		bool Set(const GUID& rEmbeddedID, const DataType& rValue, int ArrayIndex = -1)
 		{
 			_variant_t Value(rValue);
-			m_Data.SetValue(rEmbeddedID, Value, ArrayIndex);
+			return m_Data.SetValue(rEmbeddedID, Value, ArrayIndex);
 		}
 
 		SvOi::NameValueVector GetEnumTypes(const GUID& rEmbeddedID) const
@@ -75,7 +75,10 @@ namespace SvOg
 			return SetValues(m_Data, doAction);
 		}
 
-		const GUID& GetTaskID() const { return m_Data.GetTaskID(); };
+		void SetTaskID(const GUID& rTaskID) { return m_Data.SetTaskID(rTaskID); }
+		const GUID& GetTaskID() const { return m_Data.GetTaskID(); }
+		void SetInspectionID(const GUID& rInspectionID) { return m_Data.SetInspectionID(rInspectionID); }
+		const GUID& GetInspectionID() const { return m_Data.GetInspectionID(); }
 		GUID GetObjectID(const GUID& rEmbeddedID) const { return m_Data.GetObjectID(rEmbeddedID); }
 	#pragma endregion Public Methods
 

@@ -43,6 +43,8 @@ SVToolAdjustmentDialogRotationPageClass::SVToolAdjustmentDialogRotationPageClass
 : CPropertyPage(SVToolAdjustmentDialogRotationPageClass::IDD)
 , m_InspectionID{ rInspectionID }
 , m_TaskObjectID{ rTaskObjectID }
+//TaskID is set later
+, m_Values {SvOg::BoundValues{rInspectionID, GUID_NULL}}
 {
 }
 #pragma endregion
@@ -67,11 +69,8 @@ void SVToolAdjustmentDialogRotationPageClass::DoDataExchange(CDataExchange* pDX)
 
 BOOL SVToolAdjustmentDialogRotationPageClass::OnSetActive()
 {
-	if (nullptr != m_pValues)
-	{
-		long CurrentSelection = m_pValues->Get<long>(SVOutputInterpolationModeObjectGuid);
-		m_cbInterpolation.SetCurSelItemData(CurrentSelection);
-	}
+	long CurrentSelection = m_Values.Get<long>(SVOutputInterpolationModeObjectGuid);
+	m_cbInterpolation.SetCurSelItemData(CurrentSelection);
 
 	return CPropertyPage::OnSetActive();
 }
@@ -119,19 +118,19 @@ BOOL SVToolAdjustmentDialogRotationPageClass::OnInitDialog()
 		SvOi::IObjectClass* pImageTransform = pTool->getFirstObject(objectInfo);
 		if (nullptr != pImageTransform)
 		{
-			m_pValues = std::unique_ptr<Controller>(new Controller{ SvOg::BoundValues{ m_InspectionID, pImageTransform->GetUniqueObjectID() } });
-			m_pValues->Init();
+			m_Values.SetTaskID(pImageTransform->GetUniqueObjectID());
+			m_Values.Init();
 
-			const SvOi::NameValueVector& rInterpolationModeList = m_pValues->GetEnumTypes(SVOutputInterpolationModeObjectGuid);
+			const SvOi::NameValueVector& rInterpolationModeList = m_Values.GetEnumTypes(SVOutputInterpolationModeObjectGuid);
 			m_cbInterpolation.SetEnumTypes(rInterpolationModeList);
-			long CurrentSelection = m_pValues->Get<long>(SVOutputInterpolationModeObjectGuid);
+			long CurrentSelection = m_Values.Get<long>(SVOutputInterpolationModeObjectGuid);
 			m_cbInterpolation.SetCurSelItemData(CurrentSelection);
 		}
 	}
 
-	if (nullptr != m_pEvaluateRotationX && nullptr != m_pEvaluateRotationY && nullptr != m_pEvaluateRotationAngle && nullptr != m_pValues)
+	if (nullptr != m_pEvaluateRotationX && nullptr != m_pEvaluateRotationY && nullptr != m_pEvaluateRotationAngle)
 	{
-		m_performRotation = m_pValues->Get<bool>(SVPerformRotationObjectGuid);
+		m_performRotation = m_Values.Get<bool>(SVPerformRotationObjectGuid);
 		UpdateData(false);
 		refresh();
 	}
@@ -200,21 +199,18 @@ HRESULT SVToolAdjustmentDialogRotationPageClass::SetInspectionData()
 {
 	HRESULT Result{ E_FAIL };
 
-	if(nullptr != m_pValues)
+	UpdateData(true); // get data from dialog
+
+	m_Values.Set<bool>(SVPerformRotationObjectGuid, m_performRotation ? true : false);
+
+	int CurrentSelection = m_cbInterpolation.GetCurSel();
+	if(0 <= CurrentSelection)
 	{
-		UpdateData(true); // get data from dialog
-
-		m_pValues->Set<bool>(SVPerformRotationObjectGuid, m_performRotation ? true : false);
-
-		int CurrentSelection = m_cbInterpolation.GetCurSel();
-		if(0 <= CurrentSelection)
-		{
-			long lValue = static_cast<long> (m_cbInterpolation.GetItemData(CurrentSelection));
-			m_pValues->Set<long>(SVOutputInterpolationModeObjectGuid, lValue);
-		}
-
-		Result = m_pValues->Commit();
+		long lValue = static_cast<long> (m_cbInterpolation.GetItemData(CurrentSelection));
+		m_Values.Set<long>(SVOutputInterpolationModeObjectGuid, lValue);
 	}
+
+	Result = m_Values.Commit();
 
 	return Result;
 }

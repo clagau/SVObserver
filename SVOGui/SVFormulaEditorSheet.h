@@ -39,7 +39,7 @@ namespace SvOg
 		/// \param rInfo [in] info struct of the equation
 		void init(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SvDef::SVObjectTypeInfoStruct& rInfo);
 
-		void init(SvOi::IFormulaControllerPtr formulaController);
+		void init(SvOi::IFormulaControllerPtr formulaController, bool isConditional=false);
 
 		//{{AFX_MSG(SVFormulaEditorSheetClass)
 		afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
@@ -51,7 +51,5 @@ namespace SvOg
 
 		typedef std::shared_ptr<SVFormulaEditorPageClass> FormulaEditorPagePtr;
 		FormulaEditorPagePtr m_formulaPage;
-
-		bool m_isConditional{false};
 	};
 } //namespace SvOg

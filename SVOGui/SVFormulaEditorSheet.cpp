@@ -18,7 +18,6 @@
 #include "TextDefinesSvOg.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVMessage/SVMessage.h"
-#include "InspectionCommands/GetInstanceIDByTypeInfo.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
@@ -56,66 +55,13 @@ namespace SvOg
 
 	void SVFormulaEditorSheetClass::init(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SvDef::SVObjectTypeInfoStruct& rInfo)
 	{
-		typedef SvCmd::GetInstanceIDByTypeInfo Command;
-		typedef std::shared_ptr<Command> CommandPtr;
-		SVGUID EquationID;
-
-		// check for Math Container...
-		if (SvDef::SVMathContainerObjectType == rInfo.ObjectType)
-		{
-			// Get the Math Container
-			CommandPtr commandPtr(new Command(rTaskObjectID, rInfo));
-			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(rInspectionID, commandPtr);
-			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-			if (S_OK == hr)
-			{
-				// Get the Equation
-				SvDef::SVObjectTypeInfoStruct info(SvDef::SVEquationObjectType, SvDef::SVMathEquationObjectType);
-				GUID containerID = commandPtr->GetInstanceID();
-				commandPtr = CommandPtr(new Command(containerID, info));
-				SVObjectSynchronousCommandTemplate<CommandPtr> cmd(rInspectionID, commandPtr);
-				HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-				if (S_OK == hr)
-				{
-					EquationID = commandPtr->GetInstanceID();
-				}
-				else
-				{
-					SvDef::StringVector msgList;
-					msgList.push_back(SvUl::Format(_T("%d"), hr));
-					SvStl::MessageMgrStd e(SvStl::LogOnly);
-					e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams));
-					assert(false);
-				}
-			}
-		}
-		else
-		{
-			// Get the Equation
-			CommandPtr commandPtr(new Command(rTaskObjectID, rInfo));
-			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(rInspectionID, commandPtr);
-			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-			if (S_OK == hr)
-			{
-				EquationID = commandPtr->GetInstanceID();
-			}
-			else
-			{
-				SvDef::StringVector msgList;
-				msgList.push_back(SvUl::Format(_T("%d"), hr));
-				SvStl::MessageMgrStd e(SvStl::LogOnly);
-				e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams));
-				assert(false);
-			}
-		}
-		m_isConditional = SvDef::SVConditionalObjectType == rInfo.SubType;
-
-		init(SvOi::IFormulaControllerPtr{ new FormulaController(rInspectionID, rTaskObjectID, EquationID, m_isConditional) });
+		bool isConditional = SvDef::SVConditionalObjectType == rInfo.SubType;
+		init(SvOi::IFormulaControllerPtr{ new FormulaController(rInspectionID, rTaskObjectID, rInfo) }, isConditional);
 	}
 
-	void SVFormulaEditorSheetClass::init(SvOi::IFormulaControllerPtr formulaController)
+	void SVFormulaEditorSheetClass::init(SvOi::IFormulaControllerPtr formulaController, bool isConditional /*= false*/)
 	{
-		if(m_isConditional)
+		if(isConditional)
 		{
 			m_formulaPage = FormulaEditorPagePtr {new SvOg::SVFormulaEditorPageClass(formulaController, true, IDS_CONDITIONAL_STRING, IDS_CLASSNAME_SVTOOLSET)};
 		}

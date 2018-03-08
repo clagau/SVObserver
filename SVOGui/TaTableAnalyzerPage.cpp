@@ -586,29 +586,9 @@ void TaTableAnalyzerPage::setAddColumnProperties()
 {
 	if (nullptr == m_pSelectedAddEquationFormula || m_selectedAnalyzerID != m_pSelectedAddEquationFormula->GetTaskId())
 	{
-		typedef SvCmd::GetInstanceIDByTypeInfo Command;
-		typedef std::shared_ptr<Command> CommandPtr;
-		SVGUID EquationID;
-		SvDef::SVObjectTypeInfoStruct Info{SvDef::SVEquationObjectType, SvDef::TableAddColumnEquationObjectType};
-
 		m_pSelectedAddEquationFormula.reset();
-		// Get the Equation
-		CommandPtr commandPtr(new Command(m_selectedAnalyzerID, Info));
-		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-		if (S_OK == hr)
-		{
-			EquationID = commandPtr->GetInstanceID();
-		}
-		else
-		{
-			SvDef::StringVector msgList;
-			msgList.push_back(SvUl::Format(_T("%d"), hr));
-			SvStl::MessageMgrStd e(SvStl::LogOnly);
-			e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams));
-			assert(false);
-		}
-		m_pSelectedAddEquationFormula = SvOi::IFormulaControllerPtr {new FormulaController {m_InspectionID, m_selectedAnalyzerID, EquationID}};
+		SvDef::SVObjectTypeInfoStruct Info {SvDef::SVEquationObjectType, SvDef::TableAddColumnEquationObjectType};
+		m_pSelectedAddEquationFormula = SvOi::IFormulaControllerPtr {new FormulaController {m_InspectionID, m_selectedAnalyzerID, Info}};
 	}
 
 	if (nullptr != m_pSelectedAddEquationFormula)
