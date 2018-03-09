@@ -55,4 +55,6 @@ private:
 	SVRPC::SimpleClient<RunRejectMessages, SetModeRequest, SetModeResponse> m_set_mode_client;
 
 };
+
+using ClientServicePointer = std::unique_ptr<RRWS::ClientService>;
 }

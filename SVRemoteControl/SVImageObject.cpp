@@ -32,9 +32,9 @@ STDMETHODIMP SVImageObject::get_Image(IPictureDisp** pVal)
 	{
 		hr = FetchImage();
 	}
-	if ( SUCCEEDED( hr ) )
+	if (SUCCEEDED(hr))
 	{
-		HGLOBAL hg =::GlobalAlloc(GHND, len);
+		HGLOBAL hg = ::GlobalAlloc(GHND, len);
 		if (hg)
 		{
 			memcpy(::GlobalLock(hg), DIB.get(), len);
@@ -179,7 +179,7 @@ STDMETHODIMP SVImageObject::get_PNG(VARIANT* pVal)
 								memcpy(png, pDst, dstLen);
 								::SafeArrayUnaccessData(pArr);
 								CComVariant var(pArr);
-								var.Detach( pVal );
+								var.Detach(pVal);
 								::SafeArrayDestroy(pArr);
 							}
 							else
@@ -200,7 +200,7 @@ STDMETHODIMP SVImageObject::get_PNG(VARIANT* pVal)
 		}
 	}
 
-	if (SUCCEEDED(hr) && !ok )
+	if (SUCCEEDED(hr) && !ok)
 	{
 		hr = CO_E_CONVERSIONFAILED;
 	}
@@ -233,11 +233,11 @@ HRESULT SVImageObject::SaveBitmap(gdi::Bitmap & bmp)
 
 STDMETHODIMP SVImageObject::GetImage(VARIANT_BOOL overlays, DOUBLE zoom, SVImageFormatsEnum format, VARIANT* result)
 {
-	if (!overlays && (abs(zoom - 1.0) < std::numeric_limits<double>::epsilon() ))
+	if (!overlays && (abs(zoom - 1.0) < std::numeric_limits<double>::epsilon()))
 	{
-		switch(format & Mask)
+		switch (format & Mask)
 		{
-		case IDisp:
+			case IDisp:
 			{
 				IPictureDisp* idisp(nullptr);
 				HRESULT hr = get_Image(&idisp);
@@ -249,10 +249,10 @@ STDMETHODIMP SVImageObject::GetImage(VARIANT_BOOL overlays, DOUBLE zoom, SVImage
 				}
 				return hr;
 			}
-		case BMP:
-			return get_DIB(result);
-		case PNG:
-			return get_PNG(result);
+			case BMP:
+				return get_DIB(result);
+			case PNG:
+				return get_PNG(result);
 		}
 	}
 	return E_NOTIMPL;
@@ -284,7 +284,7 @@ STDMETHODIMP SVImageObject::get_DIB(VARIANT* pVal)
 		if (SUCCEEDED(hr))
 		{
 			CComVariant var(arr);
-			var.Detach( pVal );
+			var.Detach(pVal);
 		}
 		::SafeArrayDestroy(arr);
 	}
@@ -300,7 +300,7 @@ STDMETHODIMP SVImageObject::SetImage(VARIANT image)
 {
 	HRESULT l_Status = S_OK;
 
-	if( ( image.vt == VT_DISPATCH ) && ( image.pdispVal != NULL ) )
+	if ((image.vt == VT_DISPATCH) && (image.pdispVal != NULL))
 	{
 		HBITMAP l_hSourceBitmap = NULL;
 
@@ -310,7 +310,7 @@ STDMETHODIMP SVImageObject::SetImage(VARIANT image)
 
 		SVLOG(l_Status);
 
-		if( l_PictureDispPtr.p != NULL )
+		if (l_PictureDispPtr.p != NULL)
 		{
 			CComQIPtr<IPicture> l_PicturePtr;
 			l_Status = l_PictureDispPtr->QueryInterface(&l_PicturePtr);
@@ -324,7 +324,7 @@ STDMETHODIMP SVImageObject::SetImage(VARIANT image)
 
 				if (SUCCEEDED(l_Status))
 				{
-					l_PicturePtr->SaveAsFile( stream, false, NULL );
+					l_PicturePtr->SaveAsFile(stream, false, NULL);
 
 					HGLOBAL hg;
 					l_Status = ::GetHGlobalFromStream(stream, &hg);
@@ -339,7 +339,7 @@ STDMETHODIMP SVImageObject::SetImage(VARIANT image)
 			}
 		}
 	}
-	else if ( (image.vt == (VT_ARRAY | VT_UI1)) || (image.vt == (VT_ARRAY | VT_I1)) )
+	else if ((image.vt == (VT_ARRAY | VT_UI1)) || (image.vt == (VT_ARRAY | VT_I1)))
 	{
 		SAFEARRAY * arr = image.parray;
 		::SafeArrayGetUBound(arr, 1, reinterpret_cast<LONG *>(&len));
@@ -371,23 +371,26 @@ STDMETHODIMP SVImageObject::SetImage(VARIANT image)
 	return l_Status;
 }
 
+
+
+
 HRESULT SVImageObject::FetchImage()
 {
 	HRESULT hr = INET_E_DOWNLOAD_FAILURE;;
 	SetLen(0);
 	try
 	{
-		if (nullptr != m_pClientService)  // && m_pClientService->IsConnected())
+		if (nullptr != m_pClientService && m_pClientService->get())
 		{
 			RRWS::GetImageFromCurIdRequest request;
 			request.mutable_id()->set_imagestore(m_CurImId.imagestore());
 			request.mutable_id()->set_imageindex(m_CurImId.imageindex());
 			request.mutable_id()->set_slotindex(m_CurImId.slotindex());
-			
-			auto resp = RRWS::runRequest(*m_pClientService, &RRWS::ClientService::getImageFromCurId, std::move(request)).get();
+
+			auto resp = RRWS::runRequest(*(m_pClientService->get()), &RRWS::ClientService::getImageFromCurId, std::move(request)).get();
 
 
-			if (resp.imagedata().rgb().length() >0)
+			if (resp.imagedata().rgb().length() > 0)
 			{
 				BYTE *buff = new BYTE[resp.imagedata().rgb().length()];
 				memcpy(buff, resp.imagedata().rgb().c_str(), resp.imagedata().rgb().length());
@@ -399,17 +402,17 @@ HRESULT SVImageObject::FetchImage()
 		}
 		else if (m_pClientService == nullptr)
 		{
-				hr = INET_E_NO_IMAGE_SOCKET;
+			hr = INET_E_NO_IMAGE_SOCKET;
 		}
-		else 
+		else
 		{
-				hr = INET_E_NO_SESSION;
+			hr = INET_E_NO_SESSION;
 		}
 
 	}
 	catch (std::exception & /*ex*/)
 	{
-		DIB.swap(bytes());
+		DIB.reset();
 		len = 0;
 		hr = INET_E_DOWNLOAD_FAILURE;
 		SVLOG(hr);
@@ -422,3 +425,11 @@ void SVImageObject::SetOverlays(VARIANT bsOverlays)
 
 }
 
+void SVImageObject::SetClientService(RRWS::ClientServicePointer&   rpClientService)
+{
+	m_pClientService = &rpClientService;
+}
+void SVImageObject::SetImageId(const RRWS::CurImageId& CurImageId)
+{
+	m_CurImId = CurImageId;
+}

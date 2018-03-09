@@ -41,13 +41,13 @@ public:
 		m_pImageSok = nullptr;
 	}
 
-DECLARE_REGISTRY_RESOURCEID(IDR_SVIMAGEOBJECT)
+	DECLARE_REGISTRY_RESOURCEID(IDR_SVIMAGEOBJECT)
 
 
-BEGIN_COM_MAP(SVImageObject)
-	COM_INTERFACE_ENTRY(ISVImageObject)
-	COM_INTERFACE_ENTRY(IDispatch)
-END_COM_MAP()
+	BEGIN_COM_MAP(SVImageObject)
+		COM_INTERFACE_ENTRY(ISVImageObject)
+		COM_INTERFACE_ENTRY(IDispatch)
+	END_COM_MAP()
 
 
 
@@ -80,20 +80,20 @@ public:
 	STDMETHOD(GetImage)(VARIANT_BOOL overlays, DOUBLE zoom, SVImageFormatsEnum format, VARIANT* result);
 	STDMETHOD(SetImage)(VARIANT image);
 
-	
 
-	void SetOverlays(VARIANT bsOverlays );
+
+	void SetOverlays(VARIANT bsOverlays);
 	void SetDIB(bytes dib) { DIB.swap(dib); }
 	void SetLen(ULONG l) { len = l; }
 
 	const std::string & GetUrl() const { return url; }
 	void SetUrl(const std::string & u) { url = u; }
-	void SetImageSok(SvSol::SVClientSocket<SvSol::UdpApi>*  sok) {m_pImageSok = sok;}
-	void SetClientService(RRWS::ClientService*  pClientService) { m_pClientService = pClientService; }
-	void SetImageId(const RRWS::CurImageId& CurImageId)
+	void SetImageSok(SvSol::SVClientSocket<SvSol::UdpApi>*  sok)
 	{
-		m_CurImId = CurImageId;
+		m_pImageSok = sok;
 	}
+	void SetClientService(RRWS::ClientServicePointer&   rpClientService);
+	void SetImageId(const RRWS::CurImageId& CurImageId);
 private:
 	STDMETHOD(get_Image)(IPictureDisp** pVal);
 	STDMETHOD(put_Image)(IPictureDisp * newVal);
@@ -108,14 +108,14 @@ private:
 	CComBSTR name;
 	std::string url;
 	bytes DIB;
-	LONG status =0;
-	LONG trigger =0;
-	ULONG len =0;
+	LONG status = 0;
+	LONG trigger = 0;
+	ULONG len = 0;
 	SVImageFormatsEnum format = BMP;
 	SvSol::SVClientSocket<SvSol::UdpApi>*  m_pImageSok = nullptr;
 	RRWS::CurImageId m_CurImId;
-	RRWS::ClientService* m_pClientService  = nullptr;
-	
+	RRWS::ClientServicePointer*  m_pClientService = nullptr;
+
 
 
 };

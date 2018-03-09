@@ -270,7 +270,9 @@ HRESULT SVControlCommands::SetConnectionData(const _bstr_t& p_rServerName, unsig
 {
 	HRESULT hr = S_OK;
 	m_ClientSocket.Disconnect();
-	m_pRpcClient.reset();
+	m_pClientService.release();
+	m_pRpcClient.release();
+	m_RRSConnected = false;
 	m_Connected = false;
 	m_ServerName = p_rServerName;
 	m_CommandPort = p_CommandPort;
@@ -289,7 +291,13 @@ HRESULT SVControlCommands::SetConnectionData(const _bstr_t& p_rServerName, unsig
 			if (m_pRpcClient.get())
 			{
 				m_pRpcClient->waitForConnect(timeout);
-				m_RRSConnected = m_pRpcClient->isConnected();
+				m_RRSConnected = true;
+				if (false == m_pRpcClient->isConnected())
+				{
+					m_RRSConnected = false;
+					m_pClientService.release();
+					m_pRpcClient.release();
+				}
 			}
 			m_Connected = true;
 		}
@@ -1610,7 +1618,7 @@ HRESULT SVControlCommands::GetProduct(bool bGetReject, const _bstr_t & listName,
 		if (resp.product().status() == RRWS::IsValid)
 		{
 			Status = S_OK;
-			GetProductPtr(*m_pClientService.get(), resp.product())->QueryInterface(IID_ISVProductItems, reinterpret_cast<void**>(currentViewItems));
+			GetProductPtr( m_pClientService, resp.product())->QueryInterface(IID_ISVProductItems, reinterpret_cast<void**>(currentViewItems));
 		}
 		else
 		{
@@ -1682,7 +1690,7 @@ HRESULT SVControlCommands::GetFailStatus(const _bstr_t & listName, CComVariant &
 		if (resp.status() == RRWS::IsValid)
 		{
 			Status = S_OK;
-			CComVariant variant = GetFailList(*m_pClientService.get(), resp);
+			CComVariant variant = GetFailList(m_pClientService, resp);
 			values.Attach(&variant);
 		}
 		else
