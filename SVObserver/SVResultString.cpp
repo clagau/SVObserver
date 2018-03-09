@@ -56,13 +56,14 @@ bool SVStringResultClass::CreateObject( const SVObjectLevelCreateStruct& rCreate
 	return bOk;
 }
 
-SVStringValueObjectClass* SVStringResultClass::getInputString()
+SVStringValueObjectClass* SVStringResultClass::getInputString(bool bRunMode /*= false*/)
 {
 	if( m_inputObjectInfo.IsConnected() && nullptr != m_inputObjectInfo.GetInputObjectInfo().getObject())
 	{
+		SVObjectClass* pObject = m_inputObjectInfo.GetInputObjectInfo().getObject();
 		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
 		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return static_cast<SVStringValueObjectClass*> (m_inputObjectInfo.GetInputObjectInfo().getObject());
+		return bRunMode ? static_cast<SVStringValueObjectClass*> (pObject) : dynamic_cast<SVStringValueObjectClass*> (pObject);
 	}
 
 	return nullptr;
@@ -73,7 +74,7 @@ bool SVStringResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 	// All inputs and outputs must be validated first
 	if( __super::onRun( rRunStatus, pErrorMessages ) )
 	{
-		SVStringValueObjectClass* pValueObject = getInputString();
+		SVStringValueObjectClass* pValueObject = getInputString(true);
 		ASSERT( pValueObject );
 
 		if( nullptr != pValueObject )

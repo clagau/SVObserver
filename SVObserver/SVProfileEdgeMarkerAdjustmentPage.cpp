@@ -782,7 +782,7 @@ void SVProfileEdgeMarkerAdjustmentPageClass::setGraphOverlayToPicture(bool bVert
 	if (nullptr != m_pEdge)
 	{
 		std::vector<double> HistogramData;
-		m_pEdge->GetInputLinearData(HistogramData);
+		m_pEdge->GetInputLinearVectorData(HistogramData);
 		long handle = -1;
 		size_t sizePointsArray = HistogramData.size();
 		double* points = new double[sizePointsArray * 2];

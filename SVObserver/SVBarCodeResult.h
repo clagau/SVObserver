@@ -26,7 +26,6 @@ class SVBarCodeResultClass : public SVStringResultClass
 public:
 	bool m_bFailedToRead;
 	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
-	SVStringValueObjectClass* getRegExpression();
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	SVBarCodeResultClass(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVBARCODEANALYZERESULT);
 	virtual ~SVBarCodeResultClass();
@@ -45,7 +44,8 @@ public:
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 protected:
-	SVStringValueObjectClass* getInputString();
+	SVStringValueObjectClass* getInputString(bool bRunMode = false);
+	SVStringValueObjectClass* getRegExpression(bool bRunMode = false);
 
 private:
 	bool ValidateLocal(SvStl::MessageContainerVector *pErrorMessages=nullptr) const;

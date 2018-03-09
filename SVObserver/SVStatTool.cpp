@@ -216,6 +216,12 @@ bool SVStatisticsToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMes
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 	
+	// Check if the input object is still valid otherwise the pointer is invalid
+	if (m_inputObjectInfo.IsConnected() && !m_inputObjectInfo.GetInputObjectInfo().CheckExistence())
+	{
+		m_inputObjectInfo.SetInputObject(nullptr);
+	}
+
 	if ( Result )
 	{
 		std::string Name;

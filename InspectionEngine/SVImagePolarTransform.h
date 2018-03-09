@@ -33,7 +33,7 @@ public:
 
 	bool SetDefaultFormulas(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 
-	SVImageClass* getInputImage() const;
+	SVImageClass* getInputImage(bool bRunMode = false) const;
 
 protected:
 	void NewCorrectAngles( double& RDStartAngle, double& RDEndAngle );

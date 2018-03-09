@@ -47,11 +47,11 @@ public:
 	void InsertValueToTable(short nValue, int index);
 	long CheckStringInTable(const std::string& rMatchString);
 
-	SVImageClass* getInputImage();
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 protected:
+	SVImageClass* getInputImage(bool bRunMode = false);
 	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 	virtual HRESULT onCollectOverlays(SVImageClass* p_pImage, SVExtentMultiLineStructVector& p_rMultiLineArray ) override;
 

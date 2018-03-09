@@ -123,17 +123,15 @@ bool SVObjectInfoStruct::operator == ( const SVObjectReference& rRhs ) const
 	return (m_ObjectRef == rRhs);
 }
 
-bool SVObjectInfoStruct::CheckExistence()
+bool SVObjectInfoStruct::CheckExistence() const
 {
-	bool Result = true;
+	bool Result = (GUID_NULL != m_ObjectRef.Guid());
 
-	Result = Result && (GUID_NULL != m_ObjectRef.Guid());
-
-	if( Result )
+	if(Result)
 	{
-		SVObjectClass *pObject = SVObjectManagerClass::Instance().GetObject(m_ObjectRef.Guid());
+		const SVObjectClass* const pObject = SVObjectManagerClass::Instance().GetObject(m_ObjectRef.Guid());
 
-		Result = Result && (pObject == m_ObjectRef.getObject());
+		Result = (pObject == m_ObjectRef.getObject());
 	}
 
 	return Result;

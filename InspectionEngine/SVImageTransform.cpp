@@ -137,6 +137,12 @@ bool SVImageTransformClass::ResetObject( SvStl::MessageContainerVector *pErrorMe
 {
 	bool Result = true;
 	
+	// Check if the input object is still valid otherwise the pointer is invalid
+	if (m_inputImageObjectInfo.IsConnected() && !m_inputImageObjectInfo.GetInputObjectInfo().CheckExistence())
+	{
+		m_inputImageObjectInfo.SetInputObject(nullptr);
+	}
+
 	if (S_OK != UpdateTransformData())
 	{
 		Result = false;
@@ -159,13 +165,14 @@ bool SVImageTransformClass::ResetObject( SvStl::MessageContainerVector *pErrorMe
 }
 #pragma endregion
 
-SVImageClass* SVImageTransformClass::getInputImage() const
+SVImageClass* SVImageTransformClass::getInputImage(bool bRunMode /*= false*/) const
 {
 	if (m_inputImageObjectInfo.IsConnected() && nullptr != m_inputImageObjectInfo.GetInputObjectInfo().getObject())
 	{
+		SVObjectClass* pObject = m_inputImageObjectInfo.GetInputObjectInfo().getObject();
 		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
 		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return static_cast<SVImageClass*> (m_inputImageObjectInfo.GetInputObjectInfo().getObject());
+		return bRunMode ? static_cast<SVImageClass*> (pObject) : dynamic_cast<SVImageClass*> (pObject);
 	}
 
 	return nullptr;
@@ -209,9 +216,9 @@ bool SVImageTransformClass::onRun( SVRunStatusClass& runStatus, SvStl::MessageCo
 	double width = 0.0;
 	double height = 0.0;
 
-	SVImageClass* l_psvInputImage = getInputImage();
+	SVImageClass* pInputImage = getInputImage(true);
 
-	if ( nullptr == l_psvInputImage )
+	if ( nullptr == pInputImage )
 	{
 		bRetVal = false;
 		if (nullptr != pErrorMessages)
@@ -276,7 +283,7 @@ bool SVImageTransformClass::onRun( SVRunStatusClass& runStatus, SvStl::MessageCo
 		SvOi::SVImageBufferHandlePtr InImageHandle;
 		SvOi::SVImageBufferHandlePtr OutImageHandle;
 
-		if ( !l_psvInputImage->GetImageHandle( InImageHandle ) || nullptr == InImageHandle )
+		if ( !pInputImage->GetImageHandle( InImageHandle ) || nullptr == InImageHandle )
 		{
 			bRetVal = false;
 			if (nullptr != pErrorMessages)
@@ -294,12 +301,12 @@ bool SVImageTransformClass::onRun( SVRunStatusClass& runStatus, SvStl::MessageCo
 		if( bUseExtentsOnly )
 		{
 			POINT l_oPoint;
-			SVImageInfoClass InImageInfo = l_psvInputImage->GetImageInfo();
+			SVImageInfoClass InImageInfo = pInputImage->GetImageInfo();
 
 			if( S_OK == InImageInfo.GetExtentProperty( SvDef::SVExtentPropertyPositionPoint, l_oPoint ) )
 			{
 				// Get Root Image from our Input Image
-				SVImageClass* l_psvRootImage = dynamic_cast<SVImageClass*>( l_psvInputImage->GetRootImage() );
+				SVImageClass* l_psvRootImage = dynamic_cast<SVImageClass*>( pInputImage->GetRootImage() );
 				if( nullptr != l_psvRootImage )
 				{
 					interpolationType = SVImageDefault; // M_DEFAULT;
@@ -377,7 +384,7 @@ HRESULT SVImageTransformClass::UpdateTransformData( )
 {
 	HRESULT l_hrOk = S_OK;
 
-	SVImageClass* pInputImage = getInputImage();
+	SVImageClass* pInputImage = getInputImage(true);
 	SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
 
 	if( nullptr != pInputImage && nullptr != pTool )
@@ -386,11 +393,11 @@ HRESULT SVImageTransformClass::UpdateTransformData( )
 
 		SVImageExtentClass Extents = pInputImage->GetImageExtents();
 
-		SVDoubleValueObjectClass* l_pTranslationXResult = getInputTranslationXResult();
-		SVDoubleValueObjectClass* l_pTranslationYResult = getInputTranslationYResult();
-		SVDoubleValueObjectClass* l_pRotationXResult = getInputRotationXResult();
-		SVDoubleValueObjectClass* l_pRotationYResult = getInputRotationYResult();
-		SVDoubleValueObjectClass* l_pRotationAngleResult = getInputRotationAngleResult();
+		SVDoubleValueObjectClass* pTranslationXResult = getInputTranslationXResult(true);
+		SVDoubleValueObjectClass* pTranslationYResult = getInputTranslationYResult(true);
+		SVDoubleValueObjectClass* pRotationXResult = getInputRotationXResult(true);
+		SVDoubleValueObjectClass* pRotationYResult = getInputRotationYResult(true);
+		SVDoubleValueObjectClass* pRotationAngleResult = getInputRotationAngleResult(true);
 
 		BOOL bTranslationEnabled( false );
 		BOOL bRotationEnabled( false );
@@ -421,24 +428,24 @@ HRESULT SVImageTransformClass::UpdateTransformData( )
 
 		bool l_bAlwaysUpdate = false;
 
-		if( S_OK == l_hrOk && bTranslationEnabled )
+		if( S_OK == l_hrOk && bTranslationEnabled && nullptr != pTranslationXResult && nullptr != pTranslationYResult)
 		{
 			l_bAlwaysUpdate = true;
 
-			::KeepPrevError( l_hrOk, l_pTranslationXResult->GetValue( dTranslationXResult ) );
-			::KeepPrevError( l_hrOk, l_pTranslationYResult->GetValue( dTranslationYResult ) );
+			::KeepPrevError( l_hrOk, pTranslationXResult->GetValue( dTranslationXResult ) );
+			::KeepPrevError( l_hrOk, pTranslationYResult->GetValue( dTranslationYResult ) );
 
 			::KeepPrevError( l_hrOk, m_learnedTranslationX.GetValue( dLearnedTranslationXValue ) );
 			::KeepPrevError( l_hrOk, m_learnedTranslationY.GetValue( dLearnedTranslationYValue ) );
 		}
 
-		if( S_OK == l_hrOk && bRotationEnabled )
+		if( S_OK == l_hrOk && bRotationEnabled && nullptr != pRotationXResult && nullptr != pRotationYResult && nullptr != pRotationAngleResult)
 		{
 			l_bAlwaysUpdate = true;
 
-			::KeepPrevError( l_hrOk, l_pRotationXResult->GetValue( dRotationXResult ) );
-			::KeepPrevError( l_hrOk, l_pRotationYResult->GetValue( dRotationYResult ) );
-			::KeepPrevError( l_hrOk, l_pRotationAngleResult->GetValue( dRotationAngleResult ) );
+			::KeepPrevError( l_hrOk, pRotationXResult->GetValue( dRotationXResult ) );
+			::KeepPrevError( l_hrOk, pRotationYResult->GetValue( dRotationYResult ) );
+			::KeepPrevError( l_hrOk, pRotationAngleResult->GetValue( dRotationAngleResult ) );
 
 			::KeepPrevError( l_hrOk, m_learnedRotationX.GetValue( dLearnedRotationXValue ) );
 			::KeepPrevError( l_hrOk, m_learnedRotationY.GetValue( dLearnedRotationYValue ) );
@@ -505,7 +512,7 @@ HRESULT SVImageTransformClass::UpdateTransformData( )
 	}
 	else
 	{
-		l_hrOk = S_FALSE;
+		l_hrOk = E_FAIL;
 	}
 
 	return l_hrOk;

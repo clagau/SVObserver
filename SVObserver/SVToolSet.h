@@ -68,8 +68,6 @@ public:
 
 	SVEnumerateValueObjectClass* GetDrawFlagObject();
 
-	bool getConditionalResult() const;
-
 	SVConditionalClass* GetToolSetConditional() const;
 
 	template<typename SvGuidInserter>
@@ -99,6 +97,8 @@ public:
 
 #pragma region Protected Methods
 protected:
+	bool getConditionalResult(bool bRunMode = false) const;
+
 	virtual bool Run( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 	bool RunWithNewDisable( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr );
 

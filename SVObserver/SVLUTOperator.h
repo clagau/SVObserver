@@ -37,7 +37,7 @@ public:
 
 protected:
 	virtual bool onRun(bool First, SvOi::SVImageBufferHandlePtr RInputImageHandle, SvOi::SVImageBufferHandlePtr ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
-	SVByteValueObjectClass* getInputLUTVectorResult();
+	SVByteValueObjectClass* getInputLUTVectorResult(bool bRunMode = false);
 
 protected:
 

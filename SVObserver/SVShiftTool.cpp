@@ -87,20 +87,37 @@ bool SVShiftTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructur
 
 bool SVShiftTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	SVGUID l_ParentGuid;
-	SVImageClass* l_pInputImage = getInputImage();
+	SVInObjectInfoStruct* InputList[]
+	{
+		&m_ImageInput,
+		&m_TranslationYInput,
+		&m_TranslationXInput
+	};
+
+	for (auto pEntry : InputList)
+	{
+		// Check if the input object is still valid otherwise the pointer is invalid
+		// Pointer do not need to be checked as the list are pointers of member variables
+		if (pEntry->IsConnected() && !pEntry->GetInputObjectInfo().CheckExistence())
+		{
+			pEntry->SetInputObject(nullptr);
+		}
+	}
+
+	SVGUID ParentGuid;
+	SVImageClass* pInputImage = getInputImage();
 
 	SetAttributeData();
 
-	if( nullptr != l_pInputImage )
+	if( nullptr != pInputImage )
 	{
-		l_ParentGuid = l_pInputImage->GetUniqueObjectID();
+		ParentGuid = pInputImage->GetUniqueObjectID();
 
 		//Set input name to source image name to display it in result picker
-		m_SourceImageName.SetValue( l_pInputImage->GetCompleteName() );
+		m_SourceImageName.SetValue( pInputImage->GetCompleteName() );
 	}
 
-	m_OutputImage.UpdateImage( l_ParentGuid, m_OutputImage.GetImageInfo() );
+	m_OutputImage.UpdateImage( ParentGuid, m_OutputImage.GetImageInfo() );
 	
 	return SVToolClass::ResetObject(pErrorMessages) && ValidateLocal(pErrorMessages);
 }
@@ -214,16 +231,16 @@ bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 
 			if ((SV_SHIFT_ENUM::SV_SHIFT_REFERENCE == Mode) || (SV_SHIFT_ENUM::SV_SHIFT_ABSOLUTE == Mode))
 			{
-				SVDoubleValueObjectClass* l_pTranslationXInput = GetTranslationXInput();
-				SVDoubleValueObjectClass* l_pTranslationYInput = GetTranslationYInput();
+				SVDoubleValueObjectClass* pTranslationXInput = GetTranslationXInput(true);
+				SVDoubleValueObjectClass* pTranslationYInput = GetTranslationYInput(true);
 				double Value(0.0);
 				Result = Result && (S_OK == m_LearnedTranslationX.GetValue(Value));
 				LearnedTranslationX = static_cast<long> (Value);
 				Result = Result && (S_OK == m_LearnedTranslationY.GetValue(Value));
 				LearnedTranslationY = static_cast<long> (Value);
 
-				Result = Result && (nullptr != l_pTranslationXInput && S_OK == l_pTranslationXInput->GetValue(dInputTranslationX));
-				Result = Result && (nullptr != l_pTranslationYInput && S_OK == l_pTranslationYInput->GetValue(dInputTranslationY));
+				Result = Result && (nullptr != pTranslationXInput && S_OK == pTranslationXInput->GetValue(dInputTranslationX));
+				Result = Result && (nullptr != pTranslationYInput && S_OK == pTranslationYInput->GetValue(dInputTranslationY));
 
 				if (!Result)
 				{
@@ -301,15 +318,15 @@ bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 		{
 			SvOi::SVImageBufferHandlePtr InImageHandle;
 
-			SVImageClass* l_pImageInput = getInputImage();
+			SVImageClass* pImageInput = getInputImage(true);
 
 			double l_OffsetX = 0.0;
 			double l_OffsetY = 0.0;
 
 			Result = Result && (S_OK == m_LeftResult.GetValue(l_OffsetX));
 			Result = Result && (S_OK == m_TopResult.GetValue(l_OffsetY));
-			Result = Result && (nullptr != l_pImageInput);
-			Result = Result && (l_pImageInput->GetImageHandle(InImageHandle));
+			Result = Result && (nullptr != pImageInput);
+			Result = Result && (pImageInput->GetImageHandle(InImageHandle));
 			Result = Result && (nullptr != InImageHandle);
 			Result = Result && !(InImageHandle->empty());
 
@@ -358,37 +375,40 @@ bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 	return Result;
 }
 
-SVImageClass* SVShiftTool::getInputImage() const
+SVImageClass* SVShiftTool::getInputImage(bool bRunMode /*= false*/) const
 {
 	SVImageClass* pImage = nullptr;
 
 	if( m_ImageInput.IsConnected() && nullptr != m_ImageInput.GetInputObjectInfo().getObject())
 	{
+		SVObjectClass* pObject = m_ImageInput.GetInputObjectInfo().getObject();
 		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
 		//! We are sure that when getObject() is not nullptr that it is the correct type
-		pImage = static_cast<SVImageClass*> (m_ImageInput.GetInputObjectInfo().getObject());
+		return bRunMode ? static_cast<SVImageClass*> (pObject) : dynamic_cast<SVImageClass*> (pObject);
 	}
 	return pImage;
 }
 
-SVDoubleValueObjectClass* SVShiftTool::GetTranslationXInput() const
+SVDoubleValueObjectClass* SVShiftTool::GetTranslationXInput(bool bRunMode /*= false*/) const
 {
 	if( m_TranslationXInput.IsConnected() && nullptr != m_TranslationXInput.GetInputObjectInfo().getObject())
 	{
+		SVObjectClass* pObject = m_TranslationXInput.GetInputObjectInfo().getObject();
 		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
 		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return static_cast<SVDoubleValueObjectClass*> (m_TranslationXInput.GetInputObjectInfo().getObject());
+		return bRunMode ? static_cast<SVDoubleValueObjectClass*> (pObject) : dynamic_cast<SVDoubleValueObjectClass*> (pObject);
 	}
 	return nullptr;
 }
 
-SVDoubleValueObjectClass* SVShiftTool::GetTranslationYInput() const
+SVDoubleValueObjectClass* SVShiftTool::GetTranslationYInput(bool bRunMode /*= false*/) const
 {
 	if(m_TranslationYInput.IsConnected() && nullptr != m_TranslationYInput.GetInputObjectInfo().getObject())
 	{
+		SVObjectClass* pObject = m_TranslationYInput.GetInputObjectInfo().getObject();
 		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
 		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return static_cast<SVDoubleValueObjectClass*> (m_TranslationYInput.GetInputObjectInfo().getObject());
+		return bRunMode ? static_cast<SVDoubleValueObjectClass*> (pObject) : dynamic_cast<SVDoubleValueObjectClass*> (pObject);
 	}
 	return nullptr;
 }

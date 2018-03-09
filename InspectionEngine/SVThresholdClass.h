@@ -41,9 +41,9 @@ public:
 protected:
 	virtual bool onRun( bool First, SvOi::SVImageBufferHandlePtr RInputImageHandle, SvOi::SVImageBufferHandlePtr ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
-	SVDoubleValueObjectClass* getExternalUT();
-	SVDoubleValueObjectClass* getExternalLT();
-	SVDoubleValueObjectClass* getExternalATM();
+	SVDoubleValueObjectClass* getExternalUT(bool bRunMode = false);
+	SVDoubleValueObjectClass* getExternalLT(bool bRunMode = false);
+	SVDoubleValueObjectClass* getExternalATM(bool bRunMode = false);
 
 	SVMatroxIdentifier m_histResultID = M_NULL;
 	SVMatroxLongArray  m_HistValueArray;

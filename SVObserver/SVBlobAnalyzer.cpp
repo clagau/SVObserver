@@ -859,7 +859,7 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 	bool l_bCenterXSet = false;
 	bool l_bCenterYSet = false;
 
-	SVImageClass* pImage(nullptr);
+	SVImageClass* pInputImage(nullptr);
 
 	HRESULT MatroxCode;
 
@@ -876,9 +876,9 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 		//
 		// Mil library determines the blobs and count of blobs.
 		//
-		pImage = getInputImage();
+		pInputImage = getInputImage(true);
 
-		if (!pImage)
+		if (nullptr == pInputImage)
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)
@@ -889,7 +889,7 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 			break;
 		}
 
-		if ( ! pImage->GetImageHandle( ImageHandle ) || nullptr == ImageHandle )
+		if ( !pInputImage->GetImageHandle( ImageHandle ) || nullptr == ImageHandle )
 		{
 			ASSERT( false );
 			Result = false;
@@ -1244,14 +1244,14 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 
 				SVImageClass* pTmpImage = nullptr;
 
-				if (nullptr != pImage)
+				if (nullptr != pInputImage)
 				{
-					pTmpImage = pImage;
+					pTmpImage = pInputImage;
 					while ( nullptr != pTmpImage->GetParentImage() )
 					{
 						pTmpImage = pTmpImage->GetParentImage();
 					}
-					pImage->TranslateFromOutputSpaceToImage(pTmpImage,ptSt,ptSt);
+					pInputImage->TranslateFromOutputSpaceToImage(pTmpImage,ptSt,ptSt);
 
 					if ( l_bCenterXSet )
 					{

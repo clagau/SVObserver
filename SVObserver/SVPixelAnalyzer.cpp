@@ -171,15 +171,13 @@ bool SVPixelAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCreat
 
 bool SVPixelAnalyzerClass::onRun(SVRunStatusClass &rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
-	SVImageClass* pInputImage (nullptr);
-	BYTE byIndex(0);
-	bool Result = true;
+	bool Result{true};
 
 	while (1)
 	{
 		SvOi::SVImageBufferHandlePtr ImageHandle;
 
-		pInputImage = getInputImage ();
+		SVImageClass* pInputImage = getInputImage(true);
 
 		if( ! pInputImage )
 		{
@@ -229,6 +227,7 @@ bool SVPixelAnalyzerClass::onRun(SVRunStatusClass &rRunStatus, SvStl::MessageCon
 			break;
 		}
 
+		BYTE byIndex{0};
 		m_pixelCountColor.GetValue(byIndex);
 		m_pixelCount.SetValue(m_alHistValues[byIndex]);
 

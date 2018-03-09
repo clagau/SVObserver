@@ -39,14 +39,14 @@ public:
 	SVLinearEdgeProcessingClass* GetEdgeA();
 	SVLinearEdgeProcessingClass* GetEdgeB();
 
-	SVImageClass *GetInputImage();
-
 	HRESULT GetPixelDepth();
 
 	SVBoolValueObjectClass m_svShowAllEdgeAOverlays;
 	SVBoolValueObjectClass m_svShowAllEdgeBOverlays;
 
 protected:
+	SVImageClass *GetInputImage(bool bRunMode = false);
+
 	virtual HRESULT onCollectOverlays(SVImageClass *p_Image, SVExtentMultiLineStructVector &p_MultiLineArray ) override;
 
 	HRESULT GetProjectedExtent( long p_lIndex, long &p_rlBottom, SVImageExtentClass &p_rsvImageExtent );

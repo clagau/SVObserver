@@ -225,6 +225,17 @@ bool ToolSizeAdjustTask::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 
 	bool Result = SVTaskObjectClass::ResetObject(pErrorMessages);
 
+	for (auto rEntry : m_InObjectInfoDResult)
+	{
+		// Check if the input object is still valid otherwise the pointer is invalid
+		// Pointer do not need to be checked as the list are pointers of member variables
+		if (rEntry.IsConnected() && !rEntry.GetInputObjectInfo().CheckExistence())
+		{
+			rEntry.SetInputObject(nullptr);
+		}
+	}
+
+
 	EAutoSize  	 AutoSizeEnable(EnableNone);
 	SVToolClass* pTool = GetTool();
 	if (nullptr != pTool)
@@ -442,7 +453,7 @@ SVDoubleValueObjectClass* ToolSizeAdjustTask::GetDResultObjects(ToolSizeAdjustTa
 
 	if( m_InObjectInfoDResult[val].IsConnected() )
 	{
-		pValue = dynamic_cast< SVDoubleValueObjectClass* >( m_InObjectInfoDResult[val].GetInputObjectInfo().getObject() );
+		pValue = dynamic_cast<SVDoubleValueObjectClass*> (m_InObjectInfoDResult[val].GetInputObjectInfo().getObject());
 	}
 	return pValue;
 }

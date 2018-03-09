@@ -221,13 +221,14 @@ bool ResizeTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure
 	return bOk;
 }
 
-SVImageClass* ResizeTool::getInputImage() const
+SVImageClass* ResizeTool::getInputImage(bool bRunMode /*= false*/) const
 {
 	if (m_InputImageObjectInfo.IsConnected() && m_InputImageObjectInfo.GetInputObjectInfo().getObject())
 	{
+		SVObjectClass* pObject = m_InputImageObjectInfo.GetInputObjectInfo().getObject();
 		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
 		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return static_cast<SVImageClass*> (m_InputImageObjectInfo.GetInputObjectInfo().getObject());
+		return bRunMode ? static_cast<SVImageClass*> (pObject) : dynamic_cast<SVImageClass*> (pObject);
 	}
 
 	return nullptr;
@@ -299,14 +300,20 @@ SVStringValueObjectClass* ResizeTool::GetInputImageNames()
 bool ResizeTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = ValidateParameters(pErrorMessages) && ValidateOfflineParameters(pErrorMessages);
-	
-	SVImageClass* inputImage = getInputImage();
+
+	// Check if the input object is still valid otherwise the pointer is invalid
+	if (m_InputImageObjectInfo.IsConnected() && !m_InputImageObjectInfo.GetInputObjectInfo().CheckExistence())
+	{
+		m_InputImageObjectInfo.SetInputObject(nullptr);
+	}
+
+	SVImageClass* pInputImage = getInputImage();
 	if (Result)
 	{
-		if (nullptr != inputImage)
+		if (nullptr != pInputImage)
 		{
 			//Set input name to source image name to display it in result picker
-			m_SourceImageNames.SetValue( inputImage->GetCompleteName() );
+			m_SourceImageNames.SetValue( pInputImage->GetCompleteName() );
 		}
 		else
 		{
@@ -323,7 +330,7 @@ bool ResizeTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	{
 		// required within ResetObject in order to correctly reallocate
 		// buffers when source image is changed within GUI.
-		if (E_FAIL == m_LogicalROIImage.InitializeImage( inputImage ))
+		if (E_FAIL == m_LogicalROIImage.InitializeImage( pInputImage ))
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)
@@ -338,7 +345,7 @@ bool ResizeTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	{
 		// required within ResetObject in order to correctly reallocate
 		// buffers when source image is changed within GUI.
-		if (E_FAIL == m_OutputImage.InitializeImage( inputImage ))
+		if (E_FAIL == m_OutputImage.InitializeImage( pInputImage ))
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)
@@ -581,7 +588,7 @@ bool ResizeTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVec
 	{
 		// The following logic was extrapolated from the StdImageOperatorList Run method.
 		// It corrects an issue where the output image is black while running when using the toolset image.
-		if (m_LogicalROIImage.GetLastResetTimeStamp() <= getInputImage()->GetLastResetTimeStamp())
+		if (m_LogicalROIImage.GetLastResetTimeStamp() <= getInputImage(true)->GetLastResetTimeStamp())
 		{
 			if (S_OK != UpdateImageWithExtent())
 			{

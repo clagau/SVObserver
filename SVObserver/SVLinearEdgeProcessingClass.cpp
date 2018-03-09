@@ -157,8 +157,26 @@ bool SVLinearEdgeProcessingClass::ResetObject(SvStl::MessageContainerVector *pEr
 {
 	bool Result = SVTaskObjectClass::ResetObject(pErrorMessages);
 
-	BOOL bUpper = FALSE;
-	BOOL bLower = FALSE;
+	SVInObjectInfoStruct* InputList[]
+	{
+		&m_svInputImageObjectInfo,
+		&m_svInputMinThreshold,
+		&m_svInputMaxThreshold,
+		&m_svInputLinearData
+	};
+
+	for (auto pEntry : InputList)
+	{
+		// Check if the input object is still valid otherwise the pointer is invalid
+		// Pointer do not need to be checked as the list are pointers of member variables
+		if (pEntry->IsConnected() && !pEntry->GetInputObjectInfo().CheckExistence())
+		{
+			pEntry->SetInputObject(nullptr);
+		}
+	}
+
+	BOOL bUpper{false};
+	BOOL bLower{false};
 
 	m_svUseLowerThresholdSelectable.GetValue(bLower);
 	m_svLowerThresholdValue.setSaveValueFlag(TRUE == bLower);
@@ -217,30 +235,30 @@ bool SVLinearEdgeProcessingClass::onRun( SVRunStatusClass &p_rsvRunStatus, SvStl
 	return l_bOk;
 }
 
-SVImageClass *SVLinearEdgeProcessingClass::GetInputImage()
+SVImageClass *SVLinearEdgeProcessingClass::GetInputImage(bool bRunMode /*= false*/)
 {
 	if( m_svInputImageObjectInfo.IsConnected() && nullptr != m_svInputImageObjectInfo.GetInputObjectInfo().getObject())
 	{
+		SVObjectClass* pObject = m_svInputImageObjectInfo.GetInputObjectInfo().getObject();
 		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
 		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return static_cast<SVImageClass*> (m_svInputImageObjectInfo.GetInputObjectInfo().getObject());
+		return bRunMode ? static_cast<SVImageClass*> (pObject) : dynamic_cast<SVImageClass*> (pObject);
 	}
 
 	return nullptr;
 }
 
-SVDoubleValueObjectClass* SVLinearEdgeProcessingClass::GetInputLinearData()
+SVDoubleValueObjectClass* SVLinearEdgeProcessingClass::GetInputLinearData(bool bRunMode /*= false*/)
 {
-	SVDoubleValueObjectClass* pData = nullptr;
-
 	if (m_svInputLinearData.IsConnected() && nullptr != m_svInputLinearData.GetInputObjectInfo().getObject())
 	{
+		SVObjectClass* pObject = m_svInputLinearData.GetInputObjectInfo().getObject();
 		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
 		//! We are sure that when getObject() is not nullptr that it is the correct type
-		pData = static_cast<SVDoubleValueObjectClass*> (m_svInputLinearData.GetInputObjectInfo().getObject());
+		return bRunMode ? static_cast<SVDoubleValueObjectClass*> (pObject) : dynamic_cast<SVDoubleValueObjectClass*> (pObject);
 	}
 
-	return pData;
+	return nullptr;
 }
 
 HRESULT SVLinearEdgeProcessingClass::GetInputMinThreshold(double& rMinThreshold)
@@ -267,7 +285,7 @@ HRESULT SVLinearEdgeProcessingClass::GetInputMaxThreshold(double& rMaxThreshold)
 	return Result;
 }
 
-HRESULT SVLinearEdgeProcessingClass::GetInputLinearData(std::vector<double>& rData)
+HRESULT SVLinearEdgeProcessingClass::GetInputLinearVectorData(std::vector<double>& rData)
 {
 	HRESULT Result(E_FAIL);
 
@@ -301,7 +319,7 @@ HRESULT SVLinearEdgeProcessingClass::GetOutputEdgeDistance( double& rValue )
 
 	rValue = 0.0;
 
-	if( S_OK == GetInputLinearData(Data) )
+	if( S_OK == GetInputLinearVectorData(Data) )
 	{
 		BOOL IsFixedEdgeMarker = false;
 		long Position( 0L );
@@ -661,7 +679,7 @@ HRESULT SVLinearEdgeProcessingClass::GetHistogramOverlay( SVExtentLineStruct &rL
 	if( nullptr == pAnalyzer ||
 		S_OK != pAnalyzer->GetImageExtent( Extents ) ||
 		S_OK != Extents.GetOutputRectangle( l_oRect ) ||
-		(S_OK != GetInputLinearData( Data )) )
+		(S_OK != GetInputLinearVectorData( Data )) )
 	{
 		l_hrOk = S_FALSE;
 	}
@@ -1012,7 +1030,7 @@ HRESULT SVLinearEdgeProcessingClass::UpdateEdgeList()
 	long Direction( 0L );
 	long Polarisation( 0L );
 
-	Result = GetInputLinearData( Data );
+	Result = GetInputLinearVectorData( Data );
 
 	if( S_OK == Result )
 	{

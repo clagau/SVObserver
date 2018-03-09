@@ -59,6 +59,12 @@ bool SVMathContainerClass::ResetObject(SvStl::MessageContainerVector *pErrorMess
 {
 	bool Valid = __super::ResetObject(pErrorMessages);
 
+	// Check if the input object is still valid otherwise the pointer is invalid
+	if (m_inputMathResult.IsConnected() && !m_inputMathResult.GetInputObjectInfo().CheckExistence())
+	{
+		m_inputMathResult.SetInputObject(nullptr);
+	}
+
 	if( nullptr == getInputMathResult() )
 	{
 		if (nullptr != pErrorMessages)
@@ -72,13 +78,14 @@ bool SVMathContainerClass::ResetObject(SvStl::MessageContainerVector *pErrorMess
 	return Valid;
 }
 
-SVDoubleValueObjectClass* SVMathContainerClass::getInputMathResult()
+SVDoubleValueObjectClass* SVMathContainerClass::getInputMathResult(bool bRunMode /*= false*/)
 {
 	if (m_inputMathResult.IsConnected() && m_inputMathResult.GetInputObjectInfo().getObject())
 	{
+		SVObjectClass* pObject = m_inputMathResult.GetInputObjectInfo().getObject();
 		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
 		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return static_cast<SVDoubleValueObjectClass*> (m_inputMathResult.GetInputObjectInfo().getObject());
+		return bRunMode ? static_cast<SVDoubleValueObjectClass*> (pObject) : dynamic_cast<SVDoubleValueObjectClass*> (pObject);
 	}
 
 	return nullptr;

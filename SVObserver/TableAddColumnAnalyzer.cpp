@@ -86,6 +86,12 @@ bool TableAddColumnAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMe
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
+	// Check if the input object is still valid otherwise the pointer is invalid
+	if (m_newColumnObjectInfo.IsConnected() && !m_newColumnObjectInfo.GetInputObjectInfo().CheckExistence())
+	{
+		m_newColumnObjectInfo.SetInputObject(nullptr);
+	}
+
 	TableAnalyzerTool* pTool = dynamic_cast<TableAnalyzerTool*> (m_ownerObjectInfo.getObject());
 	if (nullptr == pTool || nullptr == m_pColumnEquation || nullptr == m_pNewColumn)
 	{

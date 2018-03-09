@@ -50,7 +50,7 @@ public:
 	bool Refresh();
 	HRESULT GetFillProperties( SVMaskFillPropertiesStruct& rsvFillStruct );
 
-	SVImageClass* getMaskInputImage() const;
+	SVImageClass* getMaskInputImage(bool bRunMode = false) const;
 
 	virtual void Persist(SvOi::IObjectWriter& rWriter) override;
 

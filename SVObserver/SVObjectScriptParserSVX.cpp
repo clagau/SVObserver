@@ -1436,7 +1436,7 @@ bool SVObjectScriptParserSVXClass::ReattachInputs( SVObjectClass* pObject, SVObj
 
 	SVToolClass* l_psvTool = dynamic_cast<SVToolClass*>( pObject );
 
-	SVInObjectInfoStruct* l_pAuxInfo = &( l_psvTool->m_AuxSourceImageObjectInfo );
+	const SVInObjectInfoStruct* pAuxInfo = l_psvTool->GetAuxInputImageInfo();
 
 	// reattach inputs
 	for( int i = 0; l_bOk && i < l_lOperandSize; i++ )
@@ -1462,7 +1462,7 @@ bool SVObjectScriptParserSVXClass::ReattachInputs( SVObjectClass* pObject, SVObj
 					{
 						pInInfo = inputInfoList[i + l_lOffset];
 
-						if( TheSVObserverApp.getLoadingVersion() < 0x00044B00 && pInInfo == l_pAuxInfo )
+						if( TheSVObserverApp.getLoadingVersion() < 0x00044B00 && pInInfo == pAuxInfo )
 						{
 							pInInfo = nullptr;
 

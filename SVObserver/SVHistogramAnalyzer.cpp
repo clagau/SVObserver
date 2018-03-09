@@ -658,9 +658,9 @@ bool SVHistogramAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 			break;
 		}
 
-		pInputImage = getInputImage();
+		pInputImage = getInputImage(true);
 
-		if( ! pInputImage )
+		if(nullptr == pInputImage)
 		{
 			SetInvalid();
 			Result = false;

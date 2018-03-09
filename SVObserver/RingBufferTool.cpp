@@ -100,6 +100,12 @@ bool RingBufferTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = SVToolClass::ResetObject(pErrorMessages);
 
+	// Check if the input object is still valid otherwise the pointer is invalid
+	if (m_InputImageObjectInfo.IsConnected() && !m_InputImageObjectInfo.GetInputObjectInfo().CheckExistence())
+	{
+		m_InputImageObjectInfo.SetInputObject(nullptr);
+	}
+
 	SetToolROIExtentToFullInputImage ();
 
 	long ringBufferDepth = 0;
@@ -161,13 +167,14 @@ bool RingBufferTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	return Result;
 }
 
-SVImageClass* RingBufferTool::getInputImage()
+SVImageClass* RingBufferTool::getInputImage(bool bRunMode /*= false*/)
 {
 	if (m_InputImageObjectInfo.IsConnected() && nullptr != m_InputImageObjectInfo.GetInputObjectInfo().getObject())
 	{
+		SVObjectClass* pObject = m_InputImageObjectInfo.GetInputObjectInfo().getObject();
 		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
 		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return static_cast<SVImageClass*> (m_InputImageObjectInfo.GetInputObjectInfo().getObject());
+		return bRunMode ? static_cast<SVImageClass*> (pObject) : dynamic_cast<SVImageClass*> (pObject);
 	}
 
 	return nullptr;
@@ -227,10 +234,10 @@ bool RingBufferTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContaine
 		{
 			milHandleTo = m_ringBuffer[m_nextBufferPos];
 		}
-		SVImageClass* inputImage = getInputImage ();
-		if (nullptr != inputImage)
+		SVImageClass* pInputImage = getInputImage(true);
+		if (nullptr != pInputImage)
 		{
-			inputImage->GetImageHandle(inputImageBuffer);
+			pInputImage->GetImageHandle(inputImageBuffer);
 		}
 		if (nullptr != milHandleTo.get() && !milHandleTo->empty() && nullptr != inputImageBuffer.get() && !inputImageBuffer->empty())
 		{
@@ -341,11 +348,11 @@ int RingBufferTool::SetOutputImage( int outputIndex, int imageIndex, int maxInde
 
 void RingBufferTool::SetToolROIExtentToFullInputImage ()
 {
-	SVImageClass* inputImage = getInputImage ();
+	SVImageClass* pInputImage = getInputImage ();
 
-	if (nullptr != inputImage)
+	if (nullptr != pInputImage)
 	{
-		SVImageExtentClass inputImageExtents = inputImage->GetImageExtents ();
+		SVImageExtentClass inputImageExtents = pInputImage->GetImageExtents ();
 
 		double inputHeight( 0.0 );
 		double inputWidth( 0.0 );

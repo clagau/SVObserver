@@ -28,11 +28,11 @@ public:
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 protected:
-	SVDoubleValueObjectClass* getInputTranslationXResult();
-	SVDoubleValueObjectClass* getInputTranslationYResult();
-	SVDoubleValueObjectClass* getInputRotationXResult();
-	SVDoubleValueObjectClass* getInputRotationYResult();
-	SVDoubleValueObjectClass* getInputRotationAngleResult();
+	SVDoubleValueObjectClass* getInputTranslationXResult(bool bRunMode = false);
+	SVDoubleValueObjectClass* getInputTranslationYResult(bool bRunMode = false);
+	SVDoubleValueObjectClass* getInputRotationXResult(bool bRunMode = false);
+	SVDoubleValueObjectClass* getInputRotationYResult(bool bRunMode = false);
+	SVDoubleValueObjectClass* getInputRotationAngleResult(bool bRunMode = false);
 
 //******************************************************************************
 // Data Element(s):

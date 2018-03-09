@@ -25,7 +25,7 @@ public:
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 
 protected:
-	SVStringValueObjectClass* getInputString();
+	SVStringValueObjectClass* getInputString(bool bRunMode = false);
 	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 //******************************************************************************

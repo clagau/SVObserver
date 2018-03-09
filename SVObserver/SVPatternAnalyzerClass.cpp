@@ -745,9 +745,9 @@ bool SVPatternAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::Message
 	{
 		if (Result)
 		{
-			SVImageClass* pSVImage = (SVImageClass *)getInputImage();
+			SVImageClass* pInputImage = getInputImage(true);
 			SvOi::SVImageBufferHandlePtr ImageHandle;
-			if( nullptr != pSVImage && pSVImage->GetImageHandle( ImageHandle ) )
+			if( nullptr != pInputImage && pInputImage->GetImageHandle( ImageHandle ) )
 			{
 				SVMatroxBuffer ImageBufId;
 				if(nullptr != ImageHandle)

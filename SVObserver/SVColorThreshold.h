@@ -80,7 +80,7 @@ private:
 	bool updateThresholdBars(long lMinThresholdValue, long lMaxThresholdValue, BandEnum Band);
 	bool ValidateLocal() const;
 
-	SVImageClass* GetBandInputImage(BandEnum Band);
+	SVImageClass* GetBandInputImage(BandEnum Band, bool bRunMode = false);
 	//! The Band should only use the values Band0 to Band2 never BandNumber as this is private this should never be a problem
 	SVImageClass& GetBandHistogramImage(BandEnum Band) { return m_BandThreshold[Band].m_HistogramImage; };
 	SVImageClass& GetBandOutputImage(BandEnum Band) { return m_BandThreshold[Band].m_OutputImage; };

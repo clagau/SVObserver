@@ -97,7 +97,26 @@ bool SVTransformClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStr
 
 bool SVTransformClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
+	SVInObjectInfoStruct* InputList[]
+	{
+		&m_inputTranslationXResult,
+		&m_inputTranslationYResult,
+		&m_inputRotationXResult,
+		&m_inputRotationYResult,
+		&m_inputRotationAngleResult
+	};
+
 	bool Valid = __super::ResetObject(pErrorMessages);
+
+	for (auto pEntry : InputList)
+	{
+		// Check if the input object is still valid otherwise the pointer is invalid
+		// Pointer do not need to be checked as the list are pointers of member variables
+		if (pEntry->IsConnected() && !pEntry->GetInputObjectInfo().CheckExistence())
+		{
+			pEntry->SetInputObject(nullptr);
+		}
+	}
 
 	if( nullptr == getInputTranslationXResult() || nullptr == getInputTranslationYResult() ||
 		nullptr == getInputRotationXResult()    || nullptr == getInputRotationYResult() ||
@@ -114,62 +133,67 @@ bool SVTransformClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages
 	return Valid;
 }
 
-SVDoubleValueObjectClass* SVTransformClass::getInputTranslationXResult()
+SVDoubleValueObjectClass* SVTransformClass::getInputTranslationXResult(bool bRunMode /*= false*/)
 {
 	if (m_inputTranslationXResult.IsConnected() && m_inputTranslationXResult.GetInputObjectInfo().getObject())
 	{
+		SVObjectClass* pObject = m_inputTranslationXResult.GetInputObjectInfo().getObject();
 		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
 		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return static_cast<SVDoubleValueObjectClass*> (m_inputTranslationXResult.GetInputObjectInfo().getObject());
+		return bRunMode ? static_cast<SVDoubleValueObjectClass*> (pObject) : dynamic_cast<SVDoubleValueObjectClass*> (pObject);
 	}
 
 	return nullptr;
 }
 
-SVDoubleValueObjectClass* SVTransformClass::getInputTranslationYResult()
+SVDoubleValueObjectClass* SVTransformClass::getInputTranslationYResult(bool bRunMode /*= false*/)
 {
 	if (m_inputTranslationYResult.IsConnected() && m_inputTranslationYResult.GetInputObjectInfo().getObject())
 	{
+		SVObjectClass* pObject = m_inputTranslationYResult.GetInputObjectInfo().getObject();
 		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
 		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return static_cast<SVDoubleValueObjectClass*> (m_inputTranslationYResult.GetInputObjectInfo().getObject());
+		return bRunMode ? static_cast<SVDoubleValueObjectClass*> (pObject) : dynamic_cast<SVDoubleValueObjectClass*> (pObject);
 	}
 
 	return nullptr;
 }
 
-SVDoubleValueObjectClass* SVTransformClass::getInputRotationXResult()
+SVDoubleValueObjectClass* SVTransformClass::getInputRotationXResult(bool bRunMode /*= false*/)
 {
 	if (m_inputRotationXResult.IsConnected() && m_inputRotationXResult.GetInputObjectInfo().getObject())
 	{
+		SVObjectClass* pObject = m_inputRotationXResult.GetInputObjectInfo().getObject();
 		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
 		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return static_cast<SVDoubleValueObjectClass*> (m_inputRotationXResult.GetInputObjectInfo().getObject());
+		return bRunMode ? static_cast<SVDoubleValueObjectClass*> (pObject) : dynamic_cast<SVDoubleValueObjectClass*> (pObject);
 	}
 
 	return nullptr;
 }
 
-SVDoubleValueObjectClass* SVTransformClass::getInputRotationYResult()
+SVDoubleValueObjectClass* SVTransformClass::getInputRotationYResult(bool bRunMode /*= false*/)
 {
 	if (m_inputRotationYResult.IsConnected() && m_inputRotationYResult.GetInputObjectInfo().getObject())
 	{
+		SVObjectClass* pObject = m_inputRotationYResult.GetInputObjectInfo().getObject();
 		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
 		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return static_cast<SVDoubleValueObjectClass*> (m_inputRotationYResult.GetInputObjectInfo().getObject());
+		return bRunMode ? static_cast<SVDoubleValueObjectClass*> (pObject) : dynamic_cast<SVDoubleValueObjectClass*> (pObject);
 	}
 
 	return nullptr;
 }
 
 
-SVDoubleValueObjectClass* SVTransformClass::getInputRotationAngleResult()
+SVDoubleValueObjectClass* SVTransformClass::getInputRotationAngleResult(bool bRunMode /*= false*/)
 {
 	if (m_inputRotationAngleResult.IsConnected() && m_inputRotationAngleResult.GetInputObjectInfo().getObject())
 	{
+		SVObjectClass* pObject = m_inputRotationAngleResult.GetInputObjectInfo().getObject();
 		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
 		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return static_cast<SVDoubleValueObjectClass*> (m_inputRotationAngleResult.GetInputObjectInfo().getObject());
+		return bRunMode ? static_cast<SVDoubleValueObjectClass*> (pObject) : dynamic_cast<SVDoubleValueObjectClass*> (pObject);
 	}
 
 	return nullptr;

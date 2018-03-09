@@ -32,7 +32,7 @@ public:
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	SVImageClass* GetInputImage();
+	SVImageClass* GetInputImage(bool bRunMode = false);
 	HRESULT ValidateAngle(double &p_dWarpAngle );
 
 	enum WarpType

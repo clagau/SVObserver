@@ -102,7 +102,7 @@ SVBarCodeResultClass::~SVBarCodeResultClass()
 
 bool SVBarCodeResultClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
-	bool bOk = SVStringResultClass::CreateObject(rCreateStructure) && getInputString() && getRegExpression();
+	bool bOk = SVStringResultClass::CreateObject(rCreateStructure) && nullptr != getInputString() && nullptr != getRegExpression();
 
 	if (bOk)
 	{
@@ -119,25 +119,27 @@ bool SVBarCodeResultClass::CreateObject(const SVObjectLevelCreateStruct& rCreate
 	return bOk;
 }
 
-SVStringValueObjectClass* SVBarCodeResultClass::getInputString()
+SVStringValueObjectClass* SVBarCodeResultClass::getInputString(bool bRunMode /*= false*/)
 {
 	if (m_inputObjectInfo.IsConnected() && nullptr != m_inputObjectInfo.GetInputObjectInfo().getObject())
 	{
+		SVObjectClass* pObject = m_inputObjectInfo.GetInputObjectInfo().getObject();
 		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
 		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return static_cast<SVStringValueObjectClass*> (m_inputObjectInfo.GetInputObjectInfo().getObject());
+		return bRunMode ? static_cast<SVStringValueObjectClass*> (pObject) : dynamic_cast<SVStringValueObjectClass*> (pObject);
 	}
 
 	return nullptr;
 }
 
-SVStringValueObjectClass* SVBarCodeResultClass::getRegExpression()
+SVStringValueObjectClass* SVBarCodeResultClass::getRegExpression(bool bRunMode /*= false*/)
 {
 	if (m_SVRegExpressionObjectInfo.IsConnected() && nullptr != m_SVRegExpressionObjectInfo.GetInputObjectInfo().getObject())
 	{
+		SVObjectClass* pObject = m_SVRegExpressionObjectInfo.GetInputObjectInfo().getObject();
 		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
 		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return static_cast<SVStringValueObjectClass*>  (m_SVRegExpressionObjectInfo.GetInputObjectInfo().getObject());
+		return bRunMode ? static_cast<SVStringValueObjectClass*> (pObject) : dynamic_cast<SVStringValueObjectClass*> (pObject);
 	}
 
 	return nullptr;
@@ -154,9 +156,9 @@ bool SVBarCodeResultClass::onRun(SVRunStatusClass &rRunStatus, SvStl::MessageCon
 			return true;
 		}
 
-		SVStringValueObjectClass* pValue = getInputString();
+		SVStringValueObjectClass* pValue = getInputString(true);
 
-		if (pValue->IsValid())
+		if (nullptr != pValue && pValue->IsValid())
 		{
 			BOOL bLoad = false;
 
@@ -180,7 +182,7 @@ bool SVBarCodeResultClass::onRun(SVRunStatusClass &rRunStatus, SvStl::MessageCon
 			else
 			{
 				std::string RegExpression;
-				SVStringValueObjectClass* pRegExp = getRegExpression();
+				SVStringValueObjectClass* pRegExp = getRegExpression(true);
 				pRegExp->GetValue(RegExpression);
 
 				if (RegExpression.empty() || !InputString.compare(RegExpression.c_str()))
@@ -207,6 +209,12 @@ bool SVBarCodeResultClass::onRun(SVRunStatusClass &rRunStatus, SvStl::MessageCon
 bool SVBarCodeResultClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = SVStringResultClass::ResetObject(pErrorMessages);
+
+	// Check if the input object is still valid otherwise the pointer is invalid
+	if (m_SVRegExpressionObjectInfo.IsConnected() && !m_SVRegExpressionObjectInfo.GetInputObjectInfo().CheckExistence())
+	{
+		m_SVRegExpressionObjectInfo.SetInputObject(nullptr);
+	}
 
 	if (S_OK != LoadMatchStringFile())
 	{

@@ -30,8 +30,6 @@ public:
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	SVImageClass* GetInputImage() const;
-
 	virtual SVTaskObjectClass* GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint ) override;
 	virtual bool DoesObjectHaveExtents() const override;
 	virtual HRESULT SetImageExtent( const SVImageExtentClass& rImageExtent ) override;
@@ -48,6 +46,7 @@ public:
 	virtual SVStringValueObjectClass* GetInputImageNames() override;
 
 protected:
+	SVImageClass* GetInputImage(bool bRunMode = false) const;
 	HRESULT UpdateOutputImageExtents();
 	virtual bool isInputImage(const SVGUID& rImageGuid) const override;
 	virtual bool onRun( SVRunStatusClass &p_rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr ) override;

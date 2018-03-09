@@ -30,7 +30,7 @@ public:
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 protected:
-	SVDoubleValueObjectClass*	getInputMathResult();
+	SVDoubleValueObjectClass*	getInputMathResult(bool bRunMode = false);
 
 protected:
 	SVInObjectInfoStruct		m_inputMathResult;

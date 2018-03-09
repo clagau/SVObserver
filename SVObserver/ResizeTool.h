@@ -58,7 +58,7 @@ public:
 		long*	oldOverscan,
 		long*	oldPerformance);
 		
-	SVImageClass* getInputImage() const;
+	SVImageClass* getInputImage(bool bRunMode = false) const;
 	SVImageClass* getLogicalROIImage();
 	SVImageClass* getOutputImage();
 

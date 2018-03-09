@@ -73,6 +73,13 @@ void SVWatershedFilterClass::init()
 bool SVWatershedFilterClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);
+
+	// Check if the input object is still valid otherwise the pointer is invalid
+	if (m_MarkerImageInfo.IsConnected() && !m_MarkerImageInfo.GetInputObjectInfo().CheckExistence())
+	{
+		m_MarkerImageInfo.SetInputObject(nullptr);
+	}
+
 	Result = ValidateLocal(pErrorMessages) && Result;
 
 	return Result;
@@ -100,7 +107,7 @@ bool SVWatershedFilterClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rIn
 		HRESULT l_Code;
 		if( bUseMarker && m_MarkerImageInfo.IsConnected() )
 		{
-			SVImageClass* pInputImage = getInputImage();
+			SVImageClass* pInputImage = getInputImage(true);
 			if( pInputImage )
 			{
 				pInputImage->GetImageHandle( ImageHandle );
@@ -159,13 +166,14 @@ bool SVWatershedFilterClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rIn
 	return false;
 }
 
-SVImageClass* SVWatershedFilterClass::getInputImage() const
+SVImageClass* SVWatershedFilterClass::getInputImage(bool bRunMode /*= false*/) const
 {
 	if (m_MarkerImageInfo.IsConnected() && nullptr != m_MarkerImageInfo.GetInputObjectInfo().getObject())
 	{
+		SVObjectClass* pObject = m_MarkerImageInfo.GetInputObjectInfo().getObject();
 		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
 		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return static_cast<SVImageClass*> (m_MarkerImageInfo.GetInputObjectInfo().getObject());
+		return bRunMode ? static_cast<SVImageClass*> (pObject) : dynamic_cast<SVImageClass*> (pObject);
 	}
 
 	return nullptr;

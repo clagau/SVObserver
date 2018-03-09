@@ -28,11 +28,9 @@ public:
 
 	virtual bool onRun( SVRunStatusClass &p_rsvRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
-	SVImageClass*             GetInputImage();
-	SVDoubleValueObjectClass* GetInputLinearData();
 	HRESULT GetInputMinThreshold(double& rMinThreshold);
 	HRESULT GetInputMaxThreshold(double& rMaxThreshold);
-	HRESULT GetInputLinearData(std::vector<double>& rData);
+	HRESULT GetInputLinearVectorData(std::vector<double>& rData);
 
 	HRESULT GetPixelDepth();
 
@@ -81,6 +79,9 @@ public:
 	DWORD m_dwColorNumber;
 
 protected:
+	SVImageClass* GetInputImage(bool bRunMode = false);
+	SVDoubleValueObjectClass* GetInputLinearData(bool bRunMode = false);
+
 	HRESULT UpdateUpperThresholdValues();
 	HRESULT UpdateLowerThresholdValues();
 	HRESULT UpdateEdgeList();

@@ -28,14 +28,14 @@ public:
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 protected:
-	SVDoubleValueObjectClass* getInputCenterXResult();
-	SVDoubleValueObjectClass* getInputCenterYResult();
+	SVDoubleValueObjectClass* getInputCenterXResult(bool bRunMode = false);
+	SVDoubleValueObjectClass* getInputCenterYResult(bool bRunMode = false);
 
-	SVDoubleValueObjectClass* getInputStartRadiusResult();
-	SVDoubleValueObjectClass* getInputEndRadiusResult();
+	SVDoubleValueObjectClass* getInputStartRadiusResult(bool bRunMode = false);
+	SVDoubleValueObjectClass* getInputEndRadiusResult(bool bRunMode = false);
 
-	SVDoubleValueObjectClass* getInputStartAngleResult();
-	SVDoubleValueObjectClass* getInputEndAngleResult();
+	SVDoubleValueObjectClass* getInputStartAngleResult(bool bRunMode = false);
+	SVDoubleValueObjectClass* getInputEndAngleResult(bool bRunMode = false);
 
 //******************************************************************************
 // Data Element(s):

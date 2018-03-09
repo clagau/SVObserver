@@ -64,6 +64,12 @@ bool TableExcludeAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMess
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
+	// Check if the input object is still valid otherwise the pointer is invalid
+	if (m_excludeColumnObjectInfo.IsConnected() && !m_excludeColumnObjectInfo.GetInputObjectInfo().CheckExistence())
+	{
+		m_excludeColumnObjectInfo.SetInputObject(nullptr);
+	}
+
 	SVObjectClass* pObject = m_excludeColumnObjectInfo.GetInputObjectInfo().getObject();
 	if (!m_excludeColumnObjectInfo.IsConnected() || nullptr == dynamic_cast<DoubleSortValueObject*> (pObject) 
 		//check if column part of the right table object (The object must be from same tool as this analyzer.)

@@ -145,6 +145,16 @@ bool SVColorThresholdClass::CloseObject()
 
 bool SVColorThresholdClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
+	for(auto& rEntry : m_BandThreshold)
+	{
+		// Check if the input object is still valid otherwise the pointer is invalid
+		if (rEntry.m_InputImage.IsConnected() && !rEntry.m_InputImage.GetInputObjectInfo().CheckExistence())
+		{
+			rEntry.m_InputImage.SetInputObject(nullptr);
+		}
+	}
+
+
 	double l_dWidth = 0.0;
 	double l_dHeight = 0.0;
 
@@ -360,7 +370,7 @@ bool SVColorThresholdClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCo
 					{
 						GetBandHistogramImage(Band).SetImageHandleIndex(rRunStatus.Images);
 
-						if (nullptr != GetBandInputImage(Band) && GetBandInputImage(Band)->GetImageHandle(InputImageHandle) &&
+						if (nullptr != GetBandInputImage(Band, true) && GetBandInputImage(Band, true)->GetImageHandle(InputImageHandle) &&
 							nullptr !=InputImageHandle && GetBandHistogramImage(Band).GetImageHandle(ImageHandle) && nullptr != ImageHandle)
 						{
 							if (!(InputImageHandle->empty()) && !(ImageHandle->empty()))
@@ -676,7 +686,7 @@ bool SVColorThresholdClass::updateThresholdBars( long lMinThresholdValue, long l
 {
 	bool Result(false);
 
-	SVImageClass* pInputImage = GetBandInputImage(Band);
+	SVImageClass* pInputImage = GetBandInputImage(Band, true);
 	if (nullptr != pInputImage)
 	{
 		m_ThresholdBarFigures[Band].Flush();
@@ -752,13 +762,14 @@ bool SVColorThresholdClass::ValidateLocal() const
 	return Result;
 }
 
-SVImageClass* SVColorThresholdClass::GetBandInputImage(BandEnum Band)
+SVImageClass* SVColorThresholdClass::GetBandInputImage(BandEnum Band, bool bRunMode /*= false*/)
 {
 	if (m_BandThreshold[Band].m_InputImage.IsConnected() && m_BandThreshold[Band].m_InputImage.GetInputObjectInfo().getObject())
 	{
+		SVObjectClass* pObject = m_BandThreshold[Band].m_InputImage.GetInputObjectInfo().getObject();
 		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
 		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return static_cast<SVImageClass*> (m_BandThreshold[Band].m_InputImage.GetInputObjectInfo().getObject());
+		return bRunMode ? static_cast<SVImageClass*> (pObject) : dynamic_cast<SVImageClass*> (pObject);
 	}
 
 	return nullptr;

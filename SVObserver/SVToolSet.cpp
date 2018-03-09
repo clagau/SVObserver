@@ -332,16 +332,20 @@ SvOi::ISVImage* SVToolSetClass::getCurrentImageInterface()
 	return &m_MainImageObject;
 }
 
-bool SVToolSetClass::getConditionalResult() const
+bool SVToolSetClass::getConditionalResult(bool bRunMode /*= false*/) const
 {
 	BOOL Value( false );
 
 	if( m_inputConditionBoolObjectInfo.IsConnected() && m_inputConditionBoolObjectInfo.GetInputObjectInfo().getObject() )
 	{
+		SVObjectClass* pObject = m_inputConditionBoolObjectInfo.GetInputObjectInfo().getObject();
 		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
 		//! We are sure that when getObject() is not nullptr that it is the correct type
-		SVBoolValueObjectClass* pBoolObject = static_cast<SVBoolValueObjectClass*> (m_inputConditionBoolObjectInfo.GetInputObjectInfo().getObject());
-		pBoolObject->GetValue( Value );
+		SVBoolValueObjectClass* pBoolObject = bRunMode ? static_cast<SVBoolValueObjectClass*> (pObject) : dynamic_cast<SVBoolValueObjectClass*> (pObject);
+		if(nullptr != pBoolObject)
+		{
+			pBoolObject->GetValue( Value );
+		}
 	}
 	return Value ? true : false;
 }
@@ -443,7 +447,7 @@ bool SVToolSetClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContaine
 	{
 		// Friends were running, validation was successfully
 		// Check conditional execution
-		if ( !getConditionalResult() )
+		if ( !getConditionalResult(true) )
 		{
 			rRunStatus.SetDisabledByCondition();
 		}
@@ -722,7 +726,7 @@ bool SVToolSetClass::RunWithNewDisable( SVRunStatusClass& rRunStatus, SvStl::Mes
 		if( l_pConditional )
 			l_pConditional->Run( rRunStatus );
 
-		if( !l_pConditional || getConditionalResult() )
+		if( !l_pConditional || getConditionalResult(true) )
 		{
 			++m_SetNumber;
 
@@ -846,9 +850,15 @@ void SVToolSetClass::SetInvalid()
 bool SVToolSetClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages) && ValidateLocal(pErrorMessages);
-	BOOL bReset( false );
 
-	if( S_OK == m_ResetCounts.GetValue( bReset ) && bReset )
+	// Check if the input object is still valid otherwise the pointer is invalid
+	if (m_inputConditionBoolObjectInfo.IsConnected() && !m_inputConditionBoolObjectInfo.GetInputObjectInfo().CheckExistence())
+	{
+		m_inputConditionBoolObjectInfo.SetInputObject(nullptr);
+	}
+
+	BOOL bResetCounter(false);
+	if( S_OK == m_ResetCounts.GetValue(bResetCounter) && bResetCounter)
 	{
 		// Reset Counters...
 		m_PassedCount.SetDefaultValue( 0 );

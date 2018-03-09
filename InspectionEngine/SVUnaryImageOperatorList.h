@@ -58,7 +58,7 @@ private:
 	void init();
 
 protected:
-	mutable SVInObjectInfoStruct		m_inputImageObjectInfo; ///Mutable to reset input object when invalid
-	SvOi::SVImageBufferHandlePtr		m_milTmpImageObjectInfo1;
-	SvOi::SVImageBufferHandlePtr		m_milTmpImageObjectInfo2;
+	SVInObjectInfoStruct m_inputImageObjectInfo;
+	SvOi::SVImageBufferHandlePtr m_milTmpImageObjectInfo1;
+	SvOi::SVImageBufferHandlePtr m_milTmpImageObjectInfo2;
 };

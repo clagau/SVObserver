@@ -150,9 +150,36 @@ bool SVThresholdClass::CloseObject()
 
 bool SVThresholdClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
+	SVInObjectInfoStruct* InputList[]
+	{
+		&m_inputATM,
+		&m_inputUT,
+		&m_inputLT
+	};
+
 	bool Result = __super::ResetObject(pErrorMessages);
 
-	if( !Rebuild() )
+	for (auto pEntry : InputList)
+	{
+		// Check if the input object is still valid otherwise the pointer is invalid
+		// Pointer do not need to be checked as the list are pointers of member variables
+		if (pEntry->IsConnected() && !pEntry->GetInputObjectInfo().CheckExistence())
+		{
+			pEntry->SetInputObject(nullptr);
+		}
+	}
+
+	if (nullptr == getExternalUT() || nullptr == getExternalLT() || nullptr == getExternalATM())
+	{
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			pErrorMessages->push_back(Msg);
+		}
+	}
+
+	if( Result && !Rebuild() )
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
@@ -170,37 +197,40 @@ SVBoolValueObjectClass& SVThresholdClass::GetThresholdActivateAttribute()
 	return m_threshActivate;
 }
 
-SVDoubleValueObjectClass* SVThresholdClass::getExternalUT()
+SVDoubleValueObjectClass* SVThresholdClass::getExternalUT(bool bRunMode /*= false*/)
 {
 	if (m_inputUT.IsConnected() && m_inputUT.GetInputObjectInfo().getObject())
 	{
+		SVObjectClass* pObject = m_inputUT.GetInputObjectInfo().getObject();
 		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
 		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return static_cast<SVDoubleValueObjectClass*> (m_inputUT.GetInputObjectInfo().getObject());
+		return bRunMode ? static_cast<SVDoubleValueObjectClass*> (pObject) : dynamic_cast<SVDoubleValueObjectClass*> (pObject);
 	}
 
 	return nullptr;
 }
 
-SVDoubleValueObjectClass* SVThresholdClass::getExternalLT()
+SVDoubleValueObjectClass* SVThresholdClass::getExternalLT(bool bRunMode /*= false*/)
 {
 	if (m_inputLT.IsConnected() && m_inputLT.GetInputObjectInfo().getObject())
 	{
+		SVObjectClass* pObject = m_inputLT.GetInputObjectInfo().getObject();
 		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
 		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return static_cast<SVDoubleValueObjectClass*> (m_inputLT.GetInputObjectInfo().getObject());
+		return bRunMode ? static_cast<SVDoubleValueObjectClass*> (pObject) : dynamic_cast<SVDoubleValueObjectClass*> (pObject);
 	}
 
 	return nullptr;
 }
 
-SVDoubleValueObjectClass* SVThresholdClass::getExternalATM()
+SVDoubleValueObjectClass* SVThresholdClass::getExternalATM(bool bRunMode /*= false*/)
 {
 	if (m_inputATM.IsConnected() && m_inputATM.GetInputObjectInfo().getObject())
 	{
+		SVObjectClass* pObject = m_inputATM.GetInputObjectInfo().getObject();
 		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
 		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return static_cast<SVDoubleValueObjectClass*> (m_inputATM.GetInputObjectInfo().getObject());
+		return bRunMode ? static_cast<SVDoubleValueObjectClass*> (pObject) : dynamic_cast<SVDoubleValueObjectClass*> (pObject);
 	}
 
 	return nullptr;
@@ -317,7 +347,7 @@ bool SVThresholdClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputIma
 				m_dAutoThresholdMultiplier.GetValue( dTemp );
 				if( bUseExternalATM )
 				{
-					SVDoubleValueObjectClass* pExtATMValue = getExternalATM();
+					SVDoubleValueObjectClass* pExtATMValue = getExternalATM(true);
 					if( pExtATMValue )
 					{
 						pExtATMValue->GetValue( dTemp );
@@ -361,7 +391,7 @@ bool SVThresholdClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputIma
 				if( bUseExternalUT )
 				{
 					double dUpper = 0.0;
-					SVDoubleValueObjectClass* pExtUTValue = getExternalUT();
+					SVDoubleValueObjectClass* pExtUTValue = getExternalUT(true);
 					if( pExtUTValue )
 					{
 						pExtUTValue->GetValue( dUpper );
@@ -383,7 +413,7 @@ bool SVThresholdClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputIma
 				if( bUseExternalLT )
 				{
 					double dLower = 0.0;
-					SVDoubleValueObjectClass* pExtLTValue = getExternalLT();
+					SVDoubleValueObjectClass* pExtLTValue = getExternalLT(true);
 					if( pExtLTValue )
 					{
 						pExtLTValue->GetValue( dLower );

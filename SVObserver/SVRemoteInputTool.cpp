@@ -76,6 +76,12 @@ bool SVRemoteInputTool::CloseObject()
 
 bool SVRemoteInputTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
+	// Check if the input object is still valid otherwise the pointer is invalid
+	if (m_InputObjectInfo.IsConnected() && !m_InputObjectInfo.GetInputObjectInfo().CheckExistence())
+	{
+		m_InputObjectInfo.SetInputObject(nullptr);
+	}
+
 	return __super::ResetObject(pErrorMessages) && ValidateLocal(pErrorMessages);
 }
 

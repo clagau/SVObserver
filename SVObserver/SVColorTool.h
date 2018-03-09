@@ -78,7 +78,7 @@ private:
 	//! Initialize the class
 	void LocalInitialize();
 
-	SVImageClass* getInputImage() const;
+	SVImageClass* getInputImage(bool bRunMode = false) const;
 	bool createBandChildLayer(BandEnum Band);
 	HRESULT CollectInputImageNames();
 #pragma endregion Private Methods

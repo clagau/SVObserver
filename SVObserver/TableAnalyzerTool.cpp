@@ -130,6 +130,12 @@ bool TableAnalyzerTool::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 
 	Result = ValidateLocal(pErrorMessages) && Result;
 
+	// Check if the input object is still valid otherwise the pointer is invalid
+	if (m_sourceTableObjectInfo.IsConnected() && !m_sourceTableObjectInfo.GetInputObjectInfo().CheckExistence())
+	{
+		m_sourceTableObjectInfo.SetInputObject(nullptr);
+	}
+
 	SVObjectClass* pObject = m_sourceTableObjectInfo.GetInputObjectInfo().getObject();
 	if (!m_sourceTableObjectInfo.IsConnected() || nullptr == dynamic_cast<TableObject*> (pObject))
 	{

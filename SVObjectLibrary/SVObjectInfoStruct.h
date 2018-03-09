@@ -50,7 +50,7 @@ struct SVObjectInfoStruct
 
 	SVObjectReference& GetObjectReference() { return m_ObjectRef; };
 	const SVObjectReference& GetObjectReference() const { return m_ObjectRef; };
-	bool CheckExistence();
+	bool CheckExistence() const;
 
 
 	SvDef::SVObjectTypeInfoStruct m_ObjectTypeInfo;  // What I am

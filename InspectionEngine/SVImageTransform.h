@@ -33,7 +33,7 @@ public:
 	virtual bool ResetObject( SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 #pragma endregion
 
-	SVImageClass* getInputImage() const;
+	SVImageClass* getInputImage(bool bRunMode = false) const;
 	SVImageClass* getOutputImage();
 #pragma endregion
 

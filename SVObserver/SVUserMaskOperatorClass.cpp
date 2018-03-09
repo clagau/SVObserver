@@ -144,13 +144,19 @@ bool SVUserMaskOperatorClass::ResetObject(SvStl::MessageContainerVector *pErrorM
 {
 	bool Result = SVUnaryImageOperatorClass::ResetObject(pErrorMessages);
 
+	// Check if the input object is still valid otherwise the pointer is invalid
+	if (m_inObjectInfo.IsConnected() && !m_inObjectInfo.GetInputObjectInfo().CheckExistence())
+	{
+		m_inObjectInfo.SetInputObject(nullptr);
+	}
+
 	DWORD dwMaskType;
 	m_Data.dwvoMaskType.GetValue( dwMaskType );
 	BOOL bActive = false;
 	m_Data.bvoActivated.GetValue(bActive);
 
 	SVShapeMaskHelperClass* pShapeHelper = GetShapeHelper();
-	ASSERT( pShapeHelper );
+	assert( pShapeHelper );
 	if ( pShapeHelper )
 	{
 		Result = pShapeHelper->ResetObject(pErrorMessages) && Result;
@@ -710,7 +716,7 @@ bool SVUserMaskOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rI
 
 			if ( dwMaskType == MASK_TYPE_IMAGE )
 			{
-				SVImageClass* l_pMaskInputImage = getMaskInputImage();
+				SVImageClass* l_pMaskInputImage = getMaskInputImage(true);
 				SVImageClass* l_pRefImage = getReferenceImage();
 
 				if ( nullptr != l_pRefImage &&
@@ -871,13 +877,14 @@ bool SVUserMaskOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rI
 	return false;
 }
 
-SVImageClass* SVUserMaskOperatorClass::getMaskInputImage() const
+SVImageClass* SVUserMaskOperatorClass::getMaskInputImage(bool bRunMode /*= false*/) const
 {
 	if( m_inObjectInfo.IsConnected() && nullptr != m_inObjectInfo.GetInputObjectInfo().getObject() )
 	{
+		SVObjectClass* pObject = m_inObjectInfo.GetInputObjectInfo().getObject();
 		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
 		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return static_cast<SVImageClass*> (m_inObjectInfo.GetInputObjectInfo().getObject());
+		return bRunMode ? static_cast<SVImageClass*> (pObject) : dynamic_cast<SVImageClass*> (pObject);
 	}
 	return nullptr;
 }

@@ -135,6 +135,12 @@ bool SVColorToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages
 {
 	bool Result{ true };
 
+	// Check if the input object is still valid otherwise the pointer is invalid
+	if (m_InputImageObjectInfo.IsConnected() && !m_InputImageObjectInfo.GetInputObjectInfo().CheckExistence())
+	{
+		m_InputImageObjectInfo.SetInputObject(nullptr);
+	}
+
 	for (BandEnum Band : BandList)
 	{
 		createBandChildLayer(Band);
@@ -250,7 +256,7 @@ bool SVColorToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContain
 	SvOi::SVImageBufferHandlePtr OutputImageHandle;
 	if (m_OutputImage.SetImageHandleIndex(rRunStatus.Images) && m_OutputImage.GetImageHandle(OutputImageHandle))
 	{
-		SVImageClass* pInputImage = getInputImage();
+		SVImageClass* pInputImage = getInputImage(true);
 		if (nullptr != pInputImage)
 		{
 			if (m_LogicalROIImage.GetLastResetTimeStamp() <= pInputImage->GetLastResetTimeStamp())
@@ -359,13 +365,14 @@ void SVColorToolClass::LocalInitialize()
 	}
 }
 
-SVImageClass* SVColorToolClass::getInputImage() const
+SVImageClass* SVColorToolClass::getInputImage(bool bRunMode /*= false*/) const
 {
 	if (m_InputImageObjectInfo.IsConnected() && nullptr != m_InputImageObjectInfo.GetInputObjectInfo().getObject())
 	{
+		SVObjectClass* pObject = m_InputImageObjectInfo.GetInputObjectInfo().getObject();
 		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
 		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return static_cast<SVImageClass*> (m_InputImageObjectInfo.GetInputObjectInfo().getObject());
+		return bRunMode ? static_cast<SVImageClass*> (pObject) : dynamic_cast<SVImageClass*> (pObject);
 	}
 
 	return nullptr;

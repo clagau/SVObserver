@@ -132,6 +132,12 @@ bool SVLUTOperatorClass::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 {
 	bool Result = SVUnaryImageOperatorClass::ResetObject(pErrorMessages);
 
+	// Check if the input object is still valid otherwise the pointer is invalid
+	if (m_inputLUTVectorResult.IsConnected() && !m_inputLUTVectorResult.GetInputObjectInfo().CheckExistence())
+	{
+		m_inputLUTVectorResult.SetInputObject(nullptr);
+	}
+
 	m_bForceLUTRecalc = m_bForceLUTRecalc || Result;
 
 	return Result;
@@ -296,7 +302,7 @@ bool SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& rRunStatus )
 
 				// Get LUT Vector from equation and stick it inside m_lutVector...
 				std::vector<BYTE> byteVector;
-				SVByteValueObjectClass* pLUTResult = getInputLUTVectorResult();
+				SVByteValueObjectClass* pLUTResult = getInputLUTVectorResult(true);
 
 				l_bOk = l_bOk && nullptr != pLUTResult;
 				l_bOk = l_bOk && S_OK == pLUTResult->GetArrayValues(byteVector);
@@ -354,18 +360,14 @@ bool SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& rRunStatus )
 }
 
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : getInputLUTVectorResult
-// -----------------------------------------------------------------------------
-// .Description : Returns input LUT Vector. Is comming from LUTEquation friend.
-////////////////////////////////////////////////////////////////////////////////
-SVByteValueObjectClass* SVLUTOperatorClass::getInputLUTVectorResult()
+SVByteValueObjectClass* SVLUTOperatorClass::getInputLUTVectorResult(bool bRunMode /*= false*/)
 {
 	if (m_inputLUTVectorResult.IsConnected() && m_inputLUTVectorResult.GetInputObjectInfo().getObject())
 	{
+		SVObjectClass* pObject = m_inputLUTVectorResult.GetInputObjectInfo().getObject();
 		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
 		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return static_cast <SVByteValueObjectClass*> (m_inputLUTVectorResult.GetInputObjectInfo().getObject());
+		return bRunMode ? static_cast<SVByteValueObjectClass*> (pObject) : dynamic_cast<SVByteValueObjectClass*> (pObject);
 	}
 
 	return nullptr;

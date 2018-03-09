@@ -98,6 +98,24 @@ bool SVLinearAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMes
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
+	SVInObjectInfoStruct* InputList[]
+	{
+		&m_svInputImageObjectInfo,
+		&m_svInputProfileOrientation,
+		&m_svInputUseRotationAngle
+	};
+
+	for (auto pEntry : InputList)
+	{
+		// Check if the input object is still valid otherwise the pointer is invalid
+		// Pointer do not need to be checked as the list are pointers of member variables
+		if (pEntry->IsConnected() && !pEntry->GetInputObjectInfo().CheckExistence())
+		{
+			pEntry->SetInputObject(nullptr);
+		}
+	}
+
+
 	if( S_OK != GetPixelDepth() )
 	{
 		Result = false;
@@ -238,13 +256,14 @@ SVLinearEdgeProcessingClass *SVLinearAnalyzerClass::GetEdgeB()
 	return l_psvEdge;
 }
 
-SVImageClass *SVLinearAnalyzerClass::GetInputImage()
+SVImageClass *SVLinearAnalyzerClass::GetInputImage(bool bRunMode /*= false*/)
 {
 	if( m_svInputImageObjectInfo.IsConnected() && nullptr != m_svInputImageObjectInfo.GetInputObjectInfo().getObject() )
 	{
+		SVObjectClass* pObject = m_svInputImageObjectInfo.GetInputObjectInfo().getObject();
 		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
 		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return static_cast<SVImageClass*> (m_svInputImageObjectInfo.GetInputObjectInfo().getObject());
+		return bRunMode ? static_cast<SVImageClass*> (pObject) : dynamic_cast<SVImageClass*> (pObject);
 	}
 
 	return nullptr;
@@ -254,9 +273,10 @@ HRESULT SVLinearAnalyzerClass::GetPixelDepth()
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if( nullptr != GetInputImage() )
+	SVImageClass* pInputImage = GetInputImage();
+	if(nullptr != pInputImage)
 	{
-    SVImageInfoClass ImageInfo = GetInputImage()->GetImageInfo();
+		SVImageInfoClass ImageInfo = pInputImage->GetImageInfo();
 
 		l_hrOk = ImageInfo.GetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, m_lPixelDepth );
 	}

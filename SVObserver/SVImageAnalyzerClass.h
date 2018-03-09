@@ -26,9 +26,9 @@ public:
 /*- will be returned. ------------------------------------------------------*/
     unsigned long       GetInputPixelDepth ();
 
-	SVImageClass*		getInputImage();
 
 protected:
+	SVImageClass* getInputImage(bool bRunMode = false);
 	SVInObjectInfoStruct		m_inputImageObjectInfo;
 
 private:

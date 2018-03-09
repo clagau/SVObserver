@@ -33,8 +33,8 @@ public:
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	SVImageClass* getInputImageA() const;
-	SVImageClass* getInputImageB() const;
+	SVImageClass* getInputImageA(bool bRunMode = false) const;
+	SVImageClass* getInputImageB(bool bRunMode = false) const;
 	SVImageClass* getOutputImage();
 
 protected:
@@ -42,13 +42,13 @@ protected:
 	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 private:
-	SVBoolValueObjectClass*		getInputEnableOffsetA() const;
-	SVPointValueObjectClass*	getInputOffsetAPoint() const;
+	SVBoolValueObjectClass*		getInputEnableOffsetA(bool bRunMode = false) const;
+	SVPointValueObjectClass*	getInputOffsetAPoint(bool bRunMode = false) const;
 
-	SVBoolValueObjectClass*		getInputEnableOffsetB() const;
-	SVPointValueObjectClass*	getInputOffsetBPoint() const;
+	SVBoolValueObjectClass*		getInputEnableOffsetB(bool bRunMode = false) const;
+	SVPointValueObjectClass*	getInputOffsetBPoint(bool bRunMode = false) const;
 	
-	SVLongValueObjectClass*		getInputArithOperator() const;
+	SVLongValueObjectClass*		getInputArithOperator(bool bRunMode = false) const;
 
 	void ScaleWithAveraging( SVImageClass* pInputImage, SVImageClass* pOutputImage );
 	

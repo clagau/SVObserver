@@ -56,15 +56,15 @@ public:
 	virtual EAutoSize GetAutoSizeEnabled() override;
 
 	//These need to be public so that SVShiftToolUtility can access the values
-	SVDoubleValueObjectClass* GetTranslationXInput() const;
-	SVDoubleValueObjectClass* GetTranslationYInput() const;
+	SVDoubleValueObjectClass* GetTranslationXInput(bool bRunMode = false) const;
+	SVDoubleValueObjectClass* GetTranslationYInput(bool bRunMode = false) const;
 #pragma endregion Public Methods
 
 protected:
 #pragma region Protected Methods
 	virtual bool isInputImage(const SVGUID& rImageGuid) const override;
 	virtual bool onRun( SVRunStatusClass &p_rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
-	SVImageClass* getInputImage() const;
+	SVImageClass* getInputImage(bool bRunMode = false) const;
 #pragma endregion Protected Methods
 
 #pragma region Member Variables

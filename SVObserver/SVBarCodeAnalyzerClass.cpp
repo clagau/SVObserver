@@ -146,12 +146,12 @@ void SVBarCodeAnalyzerClass::init()
 
 bool SVBarCodeAnalyzerClass::InitMil (SvStl::MessageContainerVector *pErrorMessages)
 {
-	SVImageClass *pSVImage;
 	double dParm;
 
 	CloseMil();
 	
-	if (pSVImage = getInputImage ())
+	SVImageClass *pInputImage = getInputImage();
+	if (nullptr != pInputImage)
 	{
 		// &&&
 		SVBarCodeBufferInfoClass svData;
@@ -394,7 +394,7 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::Message
 									// default value will be false.
 		m_pBarCodeResult->m_bFailedToRead = bWarnOnFailedRead != FALSE;// Preset flag to failed condition..
 
-		SVImageClass* pInputImage = getInputImage ();		
+		SVImageClass* pInputImage = getInputImage(true);
 		if (pInputImage->GetImageHandle( ImageHandle ) && nullptr != ImageHandle)
 		{
 			try

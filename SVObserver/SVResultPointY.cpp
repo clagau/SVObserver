@@ -82,13 +82,14 @@ bool SVPointYResultClass::CreateObject( const SVObjectLevelCreateStruct& rCreate
 	return bOk;
 }
 
-SVPointValueObjectClass* SVPointYResultClass::getInputPoint()
+SVPointValueObjectClass* SVPointYResultClass::getInputPoint(bool bRunMode /*= false*/)
 {
 	if( m_inputObjectInfo.IsConnected() && nullptr != m_inputObjectInfo.GetInputObjectInfo().getObject())
 	{
+		SVObjectClass* pObject = m_inputObjectInfo.GetInputObjectInfo().getObject();
 		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
 		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return static_cast<SVPointValueObjectClass*> (m_inputObjectInfo.GetInputObjectInfo().getObject());
+		return bRunMode ? static_cast<SVPointValueObjectClass*> (pObject) : dynamic_cast<SVPointValueObjectClass*> (pObject);
 	}
 
 	return nullptr;
@@ -99,8 +100,8 @@ bool SVPointYResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 	// All inputs and outputs must be validated first
 	if( __super::onRun( rRunStatus, pErrorMessages ) )
 	{
-		const SVPointValueObjectClass* pValueObject = getInputPoint();
-		ASSERT( pValueObject );
+		const SVPointValueObjectClass* pValueObject = getInputPoint(true);
+		assert( pValueObject );
 
 		if( nullptr != pValueObject )
 		{

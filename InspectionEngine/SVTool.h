@@ -90,17 +90,19 @@ public:
 	virtual HRESULT GetPropertyInfo(SvDef::SVExtentPropertyEnum p_eProperty, SVExtentPropertyInfoStruct& p_rInfo) const override;
 	HRESULT SetExtentPropertyInfo(SvDef::SVExtentPropertyEnum p_eProperty, const SVExtentPropertyInfoStruct& p_rInfo);
 
-	bool getConditionalResult() const;
+	bool getConditionalResult(bool bRunMode = false) const;
 	bool getConditionalResult(long p_lIndex) const;
 
 	virtual HRESULT CollectOverlays(SVImageClass *p_Image, SVExtentMultiLineStructVector &p_MultiLineArray) override;
 
 	// Auxiliary Source Image functions
 	HRESULT GetSourceImages(SVImageClassPtrVector* p_psvImageList) const;
-	SVImageClass* GetAuxSourceImage() const;
+	SVImageClass* GetAuxSourceImage(bool bRunMode = false) const;
 	HRESULT SetAuxSourceImage(SVImageClass* p_psvImage);
 
 	virtual HRESULT IsAuxInputImage(const SVInObjectInfoStruct* p_psvInfo) override;
+
+	const SVInObjectInfoStruct* GetAuxInputImageInfo() const { return &m_AuxSourceImageObjectInfo;}
 
 	// Set String value object for Source Image Names
 	virtual SVStringValueObjectClass* GetInputImageNames();
@@ -133,13 +135,6 @@ public:
 	// Flag to indicate this tool is selected for SVIM operator move.
 	// 26 Jan 2000 - frb.
 	//
-	SVBoolValueObjectClass ToolSelectedForOperatorMove;
-	SVConditionalClass* m_pToolConditional;
-
-	SVBoolValueObjectClass enabled;
-
-	SVInObjectInfoStruct m_AuxSourceImageObjectInfo;
-
 	const SVImageInfoClass* getFirstImageInfo() const;
 
 #pragma region ITool methods
@@ -175,9 +170,16 @@ private:
 	bool ValidateLocal(SvStl::MessageContainerVector *pErrorMessages = nullptr) const;
 
 protected:
+	SVBoolValueObjectClass ToolSelectedForOperatorMove;
+	SVConditionalClass* m_pToolConditional;
+
+	SVBoolValueObjectClass enabled;
+
+
 	SvOi::IToolSet* m_pCurrentToolSet;
-	// Conditional input
+
 	SVInObjectInfoStruct m_inputConditionBoolObjectInfo;
+	SVInObjectInfoStruct m_AuxSourceImageObjectInfo;
 
 	// Conditional tool set drawing flag.
 	SVEnumerateValueObjectClass	drawToolFlag;

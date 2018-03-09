@@ -216,6 +216,12 @@ bool SVPerspectiveToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 
 	bool Result = SVToolClass::ResetObject(pErrorMessages);
 	
+	// Check if the input object is still valid otherwise the pointer is invalid
+	if (m_InputImageObjectInfo.IsConnected() && !m_InputImageObjectInfo.GetInputObjectInfo().CheckExistence())
+	{
+		m_InputImageObjectInfo.SetInputObject(nullptr);
+	}
+
 	// Now the input image is valid!
 	if( m_OutputImage.ResetObject(pErrorMessages) )
 	{
@@ -234,12 +240,21 @@ bool SVPerspectiveToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 		Result = false;
 	}
 
-	SVImageClass *inputImage = GetInputImage();
+	SVImageClass *pInputImage = GetInputImage();
 
-	if (nullptr != inputImage)
+	if (nullptr != pInputImage)
 	{
 		//Set input name to source image name to display it in result picker
-		m_SourceImageNames.SetValue( inputImage->GetCompleteName() );
+		m_SourceImageNames.SetValue( pInputImage->GetCompleteName() );
+	}
+	else
+	{
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NoSourceImage, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			pErrorMessages->push_back(Msg);
+		}
 	}
 
 	UpdateImageWithExtent();
@@ -247,18 +262,17 @@ bool SVPerspectiveToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 	return Result;
 }
 
-SVImageClass* SVPerspectiveToolClass::GetInputImage() const
+SVImageClass* SVPerspectiveToolClass::GetInputImage(bool bRunMode /*= false*/) const
 {
-	SVImageClass *pImage = nullptr;
-
 	if( m_InputImageObjectInfo.IsConnected() && nullptr != m_InputImageObjectInfo.GetInputObjectInfo().getObject() )
 	{
+		SVObjectClass* pObject = m_InputImageObjectInfo.GetInputObjectInfo().getObject();
 		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when m_pObject is not nullptr then it is a SVImageClass
-		pImage = static_cast<SVImageClass*> (m_InputImageObjectInfo.GetInputObjectInfo().getObject());
+		//! We are sure that when getObject() is not nullptr that it is the correct type
+		return bRunMode ? static_cast<SVImageClass*> (pObject) : dynamic_cast<SVImageClass*> (pObject);
 	}
 
-	return pImage;
+	return nullptr;
 }
 
 SVTaskObjectClass* SVPerspectiveToolClass::GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint )
@@ -300,20 +314,20 @@ bool SVPerspectiveToolClass::onRun( SVRunStatusClass &p_rRunStatus, SvStl::Messa
 
 	if ( l_bOk )
 	{
-		SVImageClass *l_pInputImage = GetInputImage();
+		SVImageClass *pInputImage = GetInputImage(true);
 
 		SVImageExtentClass l_svToolExtents;
 		l_bOk = S_OK == GetImageExtent(l_svToolExtents);
 
-		SVImageExtentClass l_svInputExtents = l_pInputImage->GetImageExtents();
+		SVImageExtentClass InputExtents = (nullptr != pInputImage) ? pInputImage->GetImageExtents() : SVImageExtentClass();
 		long l_dInputWidth, l_dToolWidth, l_dInputHeight, l_dToolHeight;
 
 		long Interpolation;
 		m_svInterpolationMode.GetValue(Interpolation);
 
-		l_bOk = ( S_OK ==  l_svInputExtents.GetExtentProperty( SvDef::SVExtentPropertyOutputWidth, l_dInputWidth ) ) && l_bOk;
+		l_bOk = ( S_OK ==  InputExtents.GetExtentProperty( SvDef::SVExtentPropertyOutputWidth, l_dInputWidth ) ) && l_bOk;
 		l_bOk = ( S_OK == l_svToolExtents.GetExtentProperty( SvDef::SVExtentPropertyWidth, l_dToolWidth ) ) && l_bOk;
-		l_bOk = ( S_OK == l_svInputExtents.GetExtentProperty( SvDef::SVExtentPropertyOutputHeight, l_dInputHeight ) ) && l_bOk;
+		l_bOk = ( S_OK == InputExtents.GetExtentProperty( SvDef::SVExtentPropertyOutputHeight, l_dInputHeight ) ) && l_bOk;
 		l_bOk = ( S_OK == l_svToolExtents.GetExtentProperty( SvDef::SVExtentPropertyHeight, l_dToolHeight ) ) && l_bOk;
 
 		if (!l_bOk && nullptr != pErrorMessages)
@@ -327,12 +341,12 @@ bool SVPerspectiveToolClass::onRun( SVRunStatusClass &p_rRunStatus, SvStl::Messa
 			l_bOk = ResetObject(pErrorMessages) && l_bOk;
 		}
 
-		if ( nullptr != l_pInputImage && m_OutputImage.SetImageHandleIndex( p_rRunStatus.Images ) )
+		if ( nullptr != pInputImage && m_OutputImage.SetImageHandleIndex( p_rRunStatus.Images ) )
 		{
 			SvOi::SVImageBufferHandlePtr l_InputHandle;
 			SvOi::SVImageBufferHandlePtr l_OutputHandle;
 
-			if ( l_pInputImage->GetImageHandle( l_InputHandle ) && nullptr != l_InputHandle &&
+			if ( pInputImage->GetImageHandle( l_InputHandle ) && nullptr != l_InputHandle &&
 				   m_OutputImage.GetImageHandle( l_OutputHandle ) && nullptr != l_OutputHandle)
 			{
 				HRESULT l_Code = SVMatroxImageInterface::Warp(l_OutputHandle->GetBuffer(),
