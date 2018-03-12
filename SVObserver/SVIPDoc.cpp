@@ -1523,13 +1523,13 @@ void SVIPDoc::OnEditToolSetCondition()
 			SVSVIMStateClass::AddState(SV_STATE_EDITING);
 
 			SvDef::SVObjectTypeInfoStruct Info(SvDef::SVEquationObjectType, SvDef::SVConditionalObjectType);
-			std::string Title{_T("ToolSet Adjustment: ")};
+			std::string Title {_T("ToolSet Adjustment: ")};
 			Title += GetToolSet()->GetName();
 			SvOg::SVFormulaEditorSheetClass dlg(GetInspectionID(), GetToolSet()->GetUniqueObjectID(), Info, Title.c_str());
 
 			INT_PTR dlgResult = dlg.DoModal();
 			if (dlgResult == IDOK)
-			{ 
+			{
 				SetModifiedFlag();
 			}
 
@@ -1678,7 +1678,7 @@ void SVIPDoc::OnResultsTablePicker()
 void SVIPDoc::OnSaveResultsToFile()
 {
 	static TCHAR Filter[] = _T("CSV Files (*.csv)|*.csv||");
-	SvMc::SVFileDialog dlg(false, true, nullptr, nullptr, 0, Filter, nullptr);
+	SvMc::SVFileDialog dlg(false, true, _T("csv"), nullptr, 0, Filter, nullptr);
 	dlg.m_ofn.lpstrTitle = _T("Select File");
 	if (dlg.DoModal() == IDOK)
 	{
@@ -1756,7 +1756,7 @@ void SVIPDoc::OnSaveResultsToFile()
 					}
 				}
 
-				tmpText = Name + ";" /*+ Color + ";"*/ + Value + "; " + NameToType + "; " + ItemIndex + "\n";
+				tmpText = Name + ";" /*+ Color + ";"*/ + Value + ";" + NameToType + ";" + ItemIndex + "\n";
 				file.Write(tmpText.c_str(), static_cast<int> (tmpText.size()));
 			}
 
