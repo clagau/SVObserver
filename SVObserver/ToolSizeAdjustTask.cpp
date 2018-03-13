@@ -90,7 +90,7 @@ ToolSizeAdjustTask::~ToolSizeAdjustTask()
 {
 }
 
-bool ToolSizeAdjustTask::AddEvaluationObject(SVInObjectInfoStruct* pInfo, GUID const &GuidClass, LPCTSTR Name)
+bool ToolSizeAdjustTask::AddEvaluationObject(SvOl::SVInObjectInfoStruct* pInfo, GUID const &GuidClass, LPCTSTR Name)
 {
 	SVObjectClass* pObject(nullptr);
 	SVObjectManagerClass::Instance().ConstructObject( GuidClass, pObject );
@@ -227,12 +227,7 @@ bool ToolSizeAdjustTask::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 
 	for (auto rEntry : m_InObjectInfoDResult)
 	{
-		// Check if the input object is still valid otherwise the pointer is invalid
-		// Pointer do not need to be checked as the list are pointers of member variables
-		if (rEntry.IsConnected() && !rEntry.GetInputObjectInfo().CheckExistence())
-		{
-			rEntry.SetInputObject(nullptr);
-		}
+		SvOl::ValidateInput(rEntry);
 	}
 
 

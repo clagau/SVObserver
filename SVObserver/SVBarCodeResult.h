@@ -43,15 +43,11 @@ public:
 	SVDoubleValueObjectClass m_dReadScore;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-protected:
-	SVStringValueObjectClass* getInputString(bool bRunMode = false);
-	SVStringValueObjectClass* getRegExpression(bool bRunMode = false);
-
 private:
 	bool ValidateLocal(SvStl::MessageContainerVector *pErrorMessages=nullptr) const;
 
 private:
-	SVInObjectInfoStruct m_SVRegExpressionObjectInfo;
+	SvOl::SVInObjectInfoStruct m_SVRegExpressionObjectInfo;
 
 	long     m_lTotalBytes;
 	int      m_nTotalCount;

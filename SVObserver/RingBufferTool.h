@@ -36,7 +36,6 @@ public:
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	SVImageClass* getInputImage(bool bRunMode = false);
 	SVImageClass* getOutputImage(int index); 
 #pragma endregion Public Methods
 
@@ -88,7 +87,7 @@ private:
 	SVImageClass m_OutputImages[SvDef::cRingBufferNumberOutputImages];
 
 	// Source Image - input
-	SVInObjectInfoStruct m_InputImageObjectInfo;
+	SvOl::SVInObjectInfoStruct m_InputImageObjectInfo;
 
 	//embedded parameter
 	SVLongValueObjectClass m_BufferDepth;

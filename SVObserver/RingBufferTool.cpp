@@ -45,7 +45,7 @@ bool RingBufferTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStruc
 {
 	bool bOk = SVToolClass::CreateObject( rCreateStructure );
 
-	SVImageClass* pInputImage = getInputImage();
+	SVImageClass* pInputImage = SvOl::getInput<SVImageClass>(m_InputImageObjectInfo);
 	bOk &= (nullptr != pInputImage);
 
 	bOk &= (S_OK == m_svToolExtent.SetTranslation( SvDef::SVExtentTranslationNone ));
@@ -100,11 +100,7 @@ bool RingBufferTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = SVToolClass::ResetObject(pErrorMessages);
 
-	// Check if the input object is still valid otherwise the pointer is invalid
-	if (m_InputImageObjectInfo.IsConnected() && !m_InputImageObjectInfo.GetInputObjectInfo().CheckExistence())
-	{
-		m_InputImageObjectInfo.SetInputObject(nullptr);
-	}
+	SvOl::ValidateInput(m_InputImageObjectInfo);
 
 	SetToolROIExtentToFullInputImage ();
 
@@ -126,7 +122,7 @@ bool RingBufferTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 
 	if (Result)
 	{
-		SVImageClass* pInputImage = getInputImage();
+		SVImageClass* pInputImage = SvOl::getInput<SVImageClass>(m_InputImageObjectInfo);
 		if (nullptr != pInputImage)
 		{
 			SVImageInfoClass ImageInfo = pInputImage->GetImageInfo();
@@ -165,19 +161,6 @@ bool RingBufferTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	}
 
 	return Result;
-}
-
-SVImageClass* RingBufferTool::getInputImage(bool bRunMode /*= false*/)
-{
-	if (m_InputImageObjectInfo.IsConnected() && nullptr != m_InputImageObjectInfo.GetInputObjectInfo().getObject())
-	{
-		SVObjectClass* pObject = m_InputImageObjectInfo.GetInputObjectInfo().getObject();
-		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return bRunMode ? static_cast<SVImageClass*> (pObject) : dynamic_cast<SVImageClass*> (pObject);
-	}
-
-	return nullptr;
 }
 
 SVImageClass* RingBufferTool::getOutputImage(int index)
@@ -234,7 +217,7 @@ bool RingBufferTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContaine
 		{
 			milHandleTo = m_ringBuffer[m_nextBufferPos];
 		}
-		SVImageClass* pInputImage = getInputImage(true);
+		SVImageClass* pInputImage = SvOl::getInput<SVImageClass>(m_InputImageObjectInfo, true);
 		if (nullptr != pInputImage)
 		{
 			pInputImage->GetImageHandle(inputImageBuffer);
@@ -348,7 +331,7 @@ int RingBufferTool::SetOutputImage( int outputIndex, int imageIndex, int maxInde
 
 void RingBufferTool::SetToolROIExtentToFullInputImage ()
 {
-	SVImageClass* pInputImage = getInputImage ();
+	SVImageClass* pInputImage = SvOl::getInput<SVImageClass>(m_InputImageObjectInfo);
 
 	if (nullptr != pInputImage)
 	{

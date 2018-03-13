@@ -244,7 +244,7 @@ bool SVPixelAnalyzerClass::onRun(SVRunStatusClass &rRunStatus, SvStl::MessageCon
 
 bool SVPixelAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	bool Valid = __super::ResetObject(pErrorMessages);
+	bool Result = __super::ResetObject(pErrorMessages);
 
 	if (M_NULL == m_histResultID)
 	{
@@ -253,7 +253,7 @@ bool SVPixelAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMess
 			SvStl::MessageContainer Msg(  SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16197, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
-		Valid = false;
+		Result = false;
 	}
 
 	if (m_alHistValues.size() != m_svlHistValueArraySize)
@@ -263,8 +263,8 @@ bool SVPixelAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMess
 			SvStl::MessageContainer Msg(  SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16198, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
-		Valid = false;
+		Result = false;
 	}
 
-	return Valid;
+	return Result;
 }

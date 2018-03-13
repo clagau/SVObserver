@@ -52,7 +52,7 @@ private:
 
 #pragma region Member Variables
 protected:
-	SVInObjectInfoStruct m_excludeColumnObjectInfo;
+	SvOl::SVInObjectInfoStruct m_excludeColumnObjectInfo;
 	LinkedValue m_excludeHigh;
 	LinkedValue m_excludeLow;
 #pragma endregion Member Variables

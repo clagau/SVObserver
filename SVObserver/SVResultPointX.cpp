@@ -72,24 +72,11 @@ SVPointXResultClass::~SVPointXResultClass()
 
 bool SVPointXResultClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	m_isCreated = SVResultClass::CreateObject(rCreateStructure) && nullptr != getInputPoint();
+	m_isCreated = SVResultClass::CreateObject(rCreateStructure) && nullptr != SvOl::getInput<SVPointValueObjectClass>(m_inputObjectInfo);
 	
 	m_X.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	return m_isCreated;
-}
-
-SVPointValueObjectClass* SVPointXResultClass::getInputPoint(bool bRunMode /*= false*/)
-{
-	if( m_inputObjectInfo.IsConnected() && nullptr != m_inputObjectInfo.GetInputObjectInfo().getObject())
-	{
-		SVObjectClass* pObject = m_inputObjectInfo.GetInputObjectInfo().getObject();
-		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return bRunMode ? static_cast<SVPointValueObjectClass*> (pObject) : dynamic_cast<SVPointValueObjectClass*> (pObject);
-	}
-
-	return nullptr;
 }
 
 bool SVPointXResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
@@ -97,7 +84,7 @@ bool SVPointXResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 	// All inputs and outputs must be validated first
 	if( __super::onRun( rRunStatus, pErrorMessages ) )
 	{
-		const SVPointValueObjectClass* pValueObject = getInputPoint(true);
+		const SVPointValueObjectClass* pValueObject = SvOl::getInput<SVPointValueObjectClass>(m_inputObjectInfo, true);
 		assert( pValueObject );
 
 		if( nullptr != pValueObject )

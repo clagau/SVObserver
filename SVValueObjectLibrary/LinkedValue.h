@@ -38,7 +38,7 @@ public:
 	//************************************
 	virtual HRESULT GetValue(_variant_t& rValue, int Index = -1, int Bucket = -1) const override;
 
-	virtual bool DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo ) override;
+	virtual bool DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo ) override;
 
 	//************************************
 	/// Update the linked name 

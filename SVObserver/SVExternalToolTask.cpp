@@ -1199,7 +1199,7 @@ HRESULT SVExternalToolTask::SetCancelData(SVCancelData* pCancelData)
 		for ( i = 0 ; i < m_Data.m_aInputImageInfo.size() ; i++)
 		{
 
-			SVInObjectInfoStruct* pImageInfo = &m_Data.m_aInputImageInfo[i];
+			SvOl::SVInObjectInfoStruct* pImageInfo = &m_Data.m_aInputImageInfo[i];
 		
 			// Disconnect input info of input object...
 			if( pImageInfo->IsConnected() )
@@ -1225,7 +1225,7 @@ HRESULT SVExternalToolTask::SetCancelData(SVCancelData* pCancelData)
 
 		for ( i = 0 ; i < m_Data.m_aInputImageInfo.size() ; i++)
 		{
-			SVInObjectInfoStruct* pImageInfo = &m_Data.m_aInputImageInfo[i];
+			SvOl::SVInObjectInfoStruct* pImageInfo = &m_Data.m_aInputImageInfo[i];
 			// reconnect changed objects
 			// Connect input info to new input object...
 			SVObjectManagerClass::Instance().ConnectObjectInput(pImageInfo->GetInputObjectInfo().getUniqueObjectID(), pImageInfo);
@@ -1281,7 +1281,7 @@ SVImageClass* SVExternalToolTask::GetInputImage(int iIndex)
 {
 	if ( iIndex >= 0 && iIndex < m_Data.m_lNumInputImages )
 	{
-		SVInObjectInfoStruct& rInfo = m_Data.m_aInputImageInfo[iIndex];
+		SvOl::SVInObjectInfoStruct& rInfo = m_Data.m_aInputImageInfo[iIndex];
 		return static_cast <SVImageClass*> (rInfo.GetInputObjectInfo().getObject());
 	}
 	return nullptr;
@@ -1447,10 +1447,10 @@ HRESULT SVExternalToolTask::AllocateResult (int iIndex)
 
 SVResultClass* SVExternalToolTask::GetResultRangeObject(int iIndex)
 {
-	SVInputInfoListClass	resultInputList;
+	SvOl::SVInputInfoListClass	resultInputList;
 	SVOutputInfoListClass	resultOutputList;
 	
-	SVInObjectInfoStruct*	pResultInputInfo;
+	SvOl::SVInObjectInfoStruct*	pResultInputInfo;
 	
 	SvDef::SVObjectTypeInfoStruct  info;
 	SVVariantResultClass*   pResult = nullptr;
@@ -1636,7 +1636,7 @@ HRESULT SVExternalToolTask::FindInvalidatedObjects(SVObjectPtrVector& rList, con
 		{
 			for ( int i = pNewData->m_lNumInputImages ; i < pOriginalData->m_lNumInputImages; i++ )
 			{
-				const SVInObjectInfoStruct* pStruct = &(pOriginalData->m_aInputImageInfo[i]);
+				const SvOl::SVInObjectInfoStruct* pStruct = &(pOriginalData->m_aInputImageInfo[i]);
 				rList.push_back( pStruct->GetInputObjectInfo().getObject());
 			}
 		}
@@ -1659,7 +1659,7 @@ void SVExternalToolTask::GetDLLMessageString(HRESULT hr, BSTR* bstrMessage) cons
 	m_dll.GetMessageString(hr, bstrMessage);
 }
 
-bool SVExternalToolTask::DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo )
+bool SVExternalToolTask::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo )
 {
 	bool Result(false);
 	if (nullptr != pObjectInInfo)
@@ -1670,7 +1670,7 @@ bool SVExternalToolTask::DisconnectObjectInput( SVInObjectInfoStruct* pObjectInI
 			// find object
 			for ( int i=0; i < SVExternalToolTaskData::NUM_INPUT_IMAGES; i++ )
 			{
-				SVInObjectInfoStruct& rInfo = m_Data.m_aInputImageInfo[i];
+				SvOl::SVInObjectInfoStruct& rInfo = m_Data.m_aInputImageInfo[i];
 				if ( rInfo.GetInputObjectInfo().getObject() == pImage )
 				{
 					// replace with tool set image
@@ -1711,7 +1711,7 @@ bool SVExternalToolTask::ConnectAllInputs()
 	for( i = 0 ; i < m_Data.m_lNumInputImages ; i++ )
 	{
 		l_bRunConnect = false;
-		SVInObjectInfoStruct& rInfo = m_Data.m_aInputImageInfo[i];
+		SvOl::SVInObjectInfoStruct& rInfo = m_Data.m_aInputImageInfo[i];
 		if( GUID_NULL != rInfo.GetInputObjectInfo().getUniqueObjectID() )
 		{
 			l_bRunConnect = true;

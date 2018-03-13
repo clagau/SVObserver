@@ -15,6 +15,9 @@
 #include "SVInObjectInfoStruct.h"
 #pragma endregion Includes
 
+namespace SvOl
+{
+
 class SVInputInfoListClass
 {
 public:
@@ -54,4 +57,4 @@ protected:
 
 	SVInObjectInfoStructPtrVector m_InObjectInfoVector;
 };
-
+} //namespace SvOl

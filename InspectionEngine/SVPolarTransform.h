@@ -28,28 +28,15 @@ public:
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 protected:
-	SVDoubleValueObjectClass* getInputCenterXResult(bool bRunMode = false);
-	SVDoubleValueObjectClass* getInputCenterYResult(bool bRunMode = false);
-
-	SVDoubleValueObjectClass* getInputStartRadiusResult(bool bRunMode = false);
-	SVDoubleValueObjectClass* getInputEndRadiusResult(bool bRunMode = false);
-
-	SVDoubleValueObjectClass* getInputStartAngleResult(bool bRunMode = false);
-	SVDoubleValueObjectClass* getInputEndAngleResult(bool bRunMode = false);
-
-//******************************************************************************
-// Data Element(s):
-//******************************************************************************
-protected:
 	// Inputs
-	SVInObjectInfoStruct m_inputCenterXResult;
-	SVInObjectInfoStruct m_inputCenterYResult;
+	SvOl::SVInObjectInfoStruct m_inputCenterXResult;
+	SvOl::SVInObjectInfoStruct m_inputCenterYResult;
 	
-	SVInObjectInfoStruct m_inputStartRadiusResult;
-	SVInObjectInfoStruct m_inputEndRadiusResult;
+	SvOl::SVInObjectInfoStruct m_inputStartRadiusResult;
+	SvOl::SVInObjectInfoStruct m_inputEndRadiusResult;
 
-	SVInObjectInfoStruct m_inputStartAngleResult;
-	SVInObjectInfoStruct m_inputEndAngleResult;
+	SvOl::SVInObjectInfoStruct m_inputStartAngleResult;
+	SvOl::SVInObjectInfoStruct m_inputEndAngleResult;
 };
 
 

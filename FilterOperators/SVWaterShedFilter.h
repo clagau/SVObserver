@@ -30,8 +30,6 @@ public:
 	virtual bool shouldResetInspection() const override { return true; }
 #pragma region virtual method (IFilter)
 
-	SVImageClass* getInputImage(bool bRunMode = false) const;
-
 protected:
 	virtual bool onRun( bool First, SvOi::SVImageBufferHandlePtr RInputImageHandle, SvOi::SVImageBufferHandlePtr ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
@@ -41,7 +39,7 @@ private:
 
 
 private:
-	SVInObjectInfoStruct m_MarkerImageInfo;
+	SvOl::SVInObjectInfoStruct m_MarkerImageInfo;
 	SVBoolValueObjectClass m_bvoUseMarker;
 	SVLongValueObjectClass m_lvoMinVariation;
 	SVLongValueObjectClass m_lvoControlFlag;

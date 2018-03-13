@@ -53,7 +53,7 @@ SVInPlaceImageOperatorListClass::~SVInPlaceImageOperatorListClass()
 
 bool SVInPlaceImageOperatorListClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	bool Valid = __super::ResetObject(pErrorMessages);
+	bool Result = __super::ResetObject(pErrorMessages);
 
 	if( nullptr == getInputImage() )
 	{
@@ -62,7 +62,7 @@ bool SVInPlaceImageOperatorListClass::ResetObject(SvStl::MessageContainerVector 
 			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
-		Valid = false;
+		Result = false;
 	}
 	else if( getInputImage()->GetImageType() != SvDef::SVImageTypeEnum::SVImageTypePhysical )
 	{
@@ -71,10 +71,10 @@ bool SVInPlaceImageOperatorListClass::ResetObject(SvStl::MessageContainerVector 
 			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NotImageTypePhysical, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
-		Valid = false;
+		Result = false;
 	}
 
-	return Valid;
+	return Result;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

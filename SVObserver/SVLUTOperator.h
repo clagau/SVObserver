@@ -37,7 +37,6 @@ public:
 
 protected:
 	virtual bool onRun(bool First, SvOi::SVImageBufferHandlePtr RInputImageHandle, SvOi::SVImageBufferHandlePtr ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
-	SVByteValueObjectClass* getInputLUTVectorResult(bool bRunMode = false);
 
 protected:
 
@@ -70,7 +69,7 @@ protected:
 
 	// LUT Vector Input, calculated by LUTEquation.
 	//	( SVByteVectorObjectClass )
-	SVInObjectInfoStruct	 m_inputLUTVectorResult;
+	SvOl::SVInObjectInfoStruct	 m_inputLUTVectorResult;
 
 	bool m_bForceLUTRecalc;
 };

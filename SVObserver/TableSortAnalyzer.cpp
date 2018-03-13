@@ -60,11 +60,7 @@ bool TableSortAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
-	// Check if the input object is still valid otherwise the pointer is invalid
-	if (m_sortColumnObjectInfo.IsConnected() && !m_sortColumnObjectInfo.GetInputObjectInfo().CheckExistence())
-	{
-		m_sortColumnObjectInfo.SetInputObject(nullptr);
-	}
+	SvOl::ValidateInput(m_sortColumnObjectInfo);
 
 	SVObjectClass* pObject = m_sortColumnObjectInfo.GetInputObjectInfo().getObject();
 	if (!m_sortColumnObjectInfo.IsConnected() || nullptr == dynamic_cast<DoubleSortValueObject*> (pObject)

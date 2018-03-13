@@ -27,24 +27,17 @@ public:
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-protected:
-	SVDoubleValueObjectClass* getInputTranslationXResult(bool bRunMode = false);
-	SVDoubleValueObjectClass* getInputTranslationYResult(bool bRunMode = false);
-	SVDoubleValueObjectClass* getInputRotationXResult(bool bRunMode = false);
-	SVDoubleValueObjectClass* getInputRotationYResult(bool bRunMode = false);
-	SVDoubleValueObjectClass* getInputRotationAngleResult(bool bRunMode = false);
-
 //******************************************************************************
 // Data Element(s):
 //******************************************************************************
 protected:
 	// Inputs
-	SVInObjectInfoStruct m_inputTranslationXResult;
-	SVInObjectInfoStruct m_inputTranslationYResult;
+	SvOl::SVInObjectInfoStruct m_inputTranslationXResult;
+	SvOl::SVInObjectInfoStruct m_inputTranslationYResult;
 	
-	SVInObjectInfoStruct m_inputRotationXResult;
-	SVInObjectInfoStruct m_inputRotationYResult;
-	SVInObjectInfoStruct m_inputRotationAngleResult;
+	SvOl::SVInObjectInfoStruct m_inputRotationXResult;
+	SvOl::SVInObjectInfoStruct m_inputRotationYResult;
+	SvOl::SVInObjectInfoStruct m_inputRotationAngleResult;
 
 	// Embedded Objects (outputs)
 	SVBoolValueObjectClass m_performTranslation;

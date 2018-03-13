@@ -138,7 +138,7 @@ HRESULT SVCylindricalWarpToolClass::LocalCreate()
 		SVImageInfoClass l_ImageInfo;
 		SVImageExtentClass Extents;
 
-		SVImageClass* pInputImage = GetInputImage();
+		SVImageClass* pInputImage = SvOl::getInput<SVImageClass>(m_InputImageObjectInfo);
 
 		if( nullptr != pInputImage )
 		{
@@ -224,8 +224,9 @@ HRESULT SVCylindricalWarpToolClass::UpdateOutputImageExtents()
 {
 	HRESULT l_hrOk = S_OK;
 
+	SVImageClass* pInputImage = SvOl::getInput<SVImageClass>(m_InputImageObjectInfo);
 	// Get Input Width and Height put in output Image Extent.
-	SVImageExtentClass InputExtents = GetInputImage()->GetImageExtents();
+	SVImageExtentClass InputExtents = (nullptr != pInputImage) ? pInputImage->GetImageExtents() : SVImageExtentClass();
 	SVImageExtentClass OutputExtents = m_OutputImage.GetImageExtents();
 	
 	SVImageExtentClass l_svToolExtents;
@@ -258,9 +259,9 @@ HRESULT SVCylindricalWarpToolClass::UpdateOutputImageExtents()
 
 	SVGUID l_InputID;
 
-	if( nullptr != GetInputImage() )
+	if(nullptr != pInputImage)
 	{
-		l_InputID = GetInputImage()->GetUniqueObjectID();
+		l_InputID = pInputImage->GetUniqueObjectID();
 	}
 
 	SVImageInfoClass l_ImageInfo = m_OutputImage.GetImageInfo();
@@ -276,11 +277,7 @@ bool SVCylindricalWarpToolClass::ResetObject(SvStl::MessageContainerVector *pErr
 {
 	bool Result = SVToolClass::ResetObject(pErrorMessages);
 
-	// Check if the input object is still valid otherwise the pointer is invalid
-	if (m_InputImageObjectInfo.IsConnected() && !m_InputImageObjectInfo.GetInputObjectInfo().CheckExistence())
-	{
-		m_InputImageObjectInfo.SetInputObject(nullptr);
-	}
+	SvOl::ValidateInput(m_InputImageObjectInfo);
 
 	HRESULT l_hrOk = UpdateOutputImageExtents();
 	if (S_OK != l_hrOk)
@@ -309,7 +306,7 @@ bool SVCylindricalWarpToolClass::ResetObject(SvStl::MessageContainerVector *pErr
 		}
 	}
 
-	SVImageClass* pInputImage = GetInputImage();
+	SVImageClass* pInputImage = SvOl::getInput<SVImageClass>(m_InputImageObjectInfo);
 	if (nullptr != pInputImage)
 	{
 		//Set input name to source image name to display it in result picker
@@ -330,19 +327,6 @@ bool SVCylindricalWarpToolClass::ResetObject(SvStl::MessageContainerVector *pErr
 	return Result;
 }
 
-SVImageClass* SVCylindricalWarpToolClass::GetInputImage(bool bRunMode /*= false*/)
-{
-	if( m_InputImageObjectInfo.IsConnected() && nullptr != m_InputImageObjectInfo.GetInputObjectInfo().getObject() )
-	{
-		SVObjectClass* pObject = m_InputImageObjectInfo.GetInputObjectInfo().getObject();
-		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return bRunMode ? static_cast<SVImageClass*> (pObject) : dynamic_cast<SVImageClass*> (pObject);
-	}
-
-	return nullptr;
-}
-
 bool SVCylindricalWarpToolClass::DoesObjectHaveExtents() const
 {
 	return false;
@@ -354,7 +338,7 @@ bool SVCylindricalWarpToolClass::onRun( SVRunStatusClass& p_rRunStatus, SvStl::M
 
 	if (l_bOk)
 	{
-		SVImageClass* pInputImage = GetInputImage(true);
+		SVImageClass* pInputImage = SvOl::getInput<SVImageClass>(m_InputImageObjectInfo, true);
 
 		SVImageExtentClass l_svToolExtents;
 		l_bOk = S_OK == GetImageExtent(l_svToolExtents);

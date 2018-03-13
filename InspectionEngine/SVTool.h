@@ -52,7 +52,7 @@ public:
 
 	virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure) override;
 	virtual bool CloseObject() override;
-	virtual bool DisconnectObjectInput(SVInObjectInfoStruct* pInObjectInfo) override;
+	virtual bool DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pInObjectInfo) override;
 
 	virtual HRESULT GetDrawInfo(SVExtentMultiLineStruct& p_rMultiLine) override;
 
@@ -91,18 +91,16 @@ public:
 	HRESULT SetExtentPropertyInfo(SvDef::SVExtentPropertyEnum p_eProperty, const SVExtentPropertyInfoStruct& p_rInfo);
 
 	bool getConditionalResult(bool bRunMode = false) const;
-	bool getConditionalResult(long p_lIndex) const;
 
 	virtual HRESULT CollectOverlays(SVImageClass *p_Image, SVExtentMultiLineStructVector &p_MultiLineArray) override;
 
 	// Auxiliary Source Image functions
 	HRESULT GetSourceImages(SVImageClassPtrVector* p_psvImageList) const;
-	SVImageClass* GetAuxSourceImage(bool bRunMode = false) const;
 	HRESULT SetAuxSourceImage(SVImageClass* p_psvImage);
 
-	virtual HRESULT IsAuxInputImage(const SVInObjectInfoStruct* p_psvInfo) override;
+	virtual HRESULT IsAuxInputImage(const SvOl::SVInObjectInfoStruct* p_psvInfo) override;
 
-	const SVInObjectInfoStruct* GetAuxInputImageInfo() const { return &m_AuxSourceImageObjectInfo;}
+	const SvOl::SVInObjectInfoStruct* GetAuxInputImageInfo() const { return &m_AuxSourceImageObjectInfo;}
 
 	// Set String value object for Source Image Names
 	virtual SVStringValueObjectClass* GetInputImageNames();
@@ -178,8 +176,8 @@ protected:
 
 	SvOi::IToolSet* m_pCurrentToolSet;
 
-	SVInObjectInfoStruct m_inputConditionBoolObjectInfo;
-	SVInObjectInfoStruct m_AuxSourceImageObjectInfo;
+	SvOl::SVInObjectInfoStruct m_inputConditionBoolObjectInfo;
+	SvOl::SVInObjectInfoStruct m_AuxSourceImageObjectInfo;
 
 	// Conditional tool set drawing flag.
 	SVEnumerateValueObjectClass	drawToolFlag;

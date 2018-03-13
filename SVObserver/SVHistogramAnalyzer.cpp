@@ -442,7 +442,7 @@ void SVHistogramAnalyzerClass::AddResult(const std::pair<GUID, DWORD> & p)
 
 bool SVHistogramAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	bool Valid = __super::ResetObject(pErrorMessages);
+	bool Result = __super::ResetObject(pErrorMessages);
 
 	if (M_NULL == m_HistResultID)
 	{
@@ -451,7 +451,7 @@ bool SVHistogramAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pError
 			SvStl::MessageContainer Msg(  SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16151, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
-		Valid = false;
+		Result = false;
 	}
 
 	if (0 == msvplHistValues.size())
@@ -461,10 +461,10 @@ bool SVHistogramAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pError
 			SvStl::MessageContainer Msg(  SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16152, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
-		Valid = false;
+		Result = false;
 	}
 
-	return Valid;
+	return Result;
 }
 
 SVHistogramAnalyzerClass::~SVHistogramAnalyzerClass()

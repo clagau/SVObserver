@@ -107,7 +107,7 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 				continue;
 			}// end if
 
-			SVInObjectInfoStruct InObjectInfo;
+			SvOl::SVInObjectInfoStruct InObjectInfo;
 
 			InObjectInfo.SetObject( m_pInspection );
 			InObjectInfo.SetInputObject( pPublishedOutObjectInfo->getUniqueObjectID() );
@@ -167,7 +167,7 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 
 		if( !found ) // not in original list - have to add it
 		{
-			SVInObjectInfoStruct InObjectInfo;
+			SvOl::SVInObjectInfoStruct InObjectInfo;
 
 			InObjectInfo.SetObject( m_pInspection );
 			InObjectInfo.SetInputObject( pOutObjectInfo->getUniqueObjectID() );
@@ -251,7 +251,7 @@ void SVPublishListClass::Release(SVTaskObjectClass * pRootObject)
 	{
 		SVOutObjectInfoStruct* pPublishedOutObjectInfo = GetAt( i );
 
-		SVInObjectInfoStruct InObjectInfo;
+		SvOl::SVInObjectInfoStruct InObjectInfo;
 
 		InObjectInfo.SetObject( m_pInspection );
 		InObjectInfo.SetInputObject( pPublishedOutObjectInfo->getUniqueObjectID() );

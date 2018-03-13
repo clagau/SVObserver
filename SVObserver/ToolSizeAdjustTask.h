@@ -122,7 +122,7 @@ protected:
 	//! \param Name [in] InputObjectname
 	//! \returns bool true if sucessfull 
 	//************************************
-	bool AddEvaluationObject(SVInObjectInfoStruct* pInfo, GUID const &GuidClass, LPCTSTR Name);
+	bool AddEvaluationObject(SvOl::SVInObjectInfoStruct* pInfo, GUID const &GuidClass, LPCTSTR Name);
 	
 	//************************************
 	//! DoNothing in Run
@@ -153,7 +153,7 @@ public:
 
 protected:
 	SVEnumerateValueObjectClass m_InputModes[TSValuesCount]; //< the four input modes None=0,Full Size,Formula
-	SVInObjectInfoStruct m_InObjectInfoDResult[TSValuesCount]; //<The four inputs from the Equations 
+	SvOl::SVInObjectInfoStruct m_InObjectInfoDResult[TSValuesCount]; //<The four inputs from the Equations 
 	
 	bool m_AllowFullSize;
 	bool m_AllowAdjustSize;

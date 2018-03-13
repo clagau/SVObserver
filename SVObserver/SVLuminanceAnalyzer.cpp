@@ -114,7 +114,7 @@ void SVLuminanceAnalyzerClass::init()
 
 bool SVLuminanceAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	bool Valid = __super::ResetObject(pErrorMessages);
+	bool Result = __super::ResetObject(pErrorMessages);
 
 	if (M_NULL == m_HistResultID)
 	{
@@ -123,7 +123,7 @@ bool SVLuminanceAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pError
 			SvStl::MessageContainer Msg(  SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16094, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
-		Valid = false;
+		Result = false;
 	}
 	else if (0 == msvplHistValues.size())
 	{
@@ -132,10 +132,10 @@ bool SVLuminanceAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pError
 			SvStl::MessageContainer Msg(  SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16095, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
-		Valid = false;
+		Result = false;
 	}
 
-	return Valid;
+	return Result;
 }
 
 SVLuminanceAnalyzerClass::~SVLuminanceAnalyzerClass()

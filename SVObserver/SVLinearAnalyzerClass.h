@@ -45,8 +45,6 @@ public:
 	SVBoolValueObjectClass m_svShowAllEdgeBOverlays;
 
 protected:
-	SVImageClass *GetInputImage(bool bRunMode = false);
-
 	virtual HRESULT onCollectOverlays(SVImageClass *p_Image, SVExtentMultiLineStructVector &p_MultiLineArray ) override;
 
 	HRESULT GetProjectedExtent( long p_lIndex, long &p_rlBottom, SVImageExtentClass &p_rsvImageExtent );
@@ -56,9 +54,9 @@ protected:
 	bool ValidateEdgeA(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 	bool ValidateEdgeB(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 
-	SVInObjectInfoStruct m_svInputImageObjectInfo;
-	SVInObjectInfoStruct m_svInputProfileOrientation;
-	SVInObjectInfoStruct m_svInputUseRotationAngle;
+	SvOl::SVInObjectInfoStruct m_InputImageObjectInfo;
+	SvOl::SVInObjectInfoStruct m_InputProfileOrientation;
+	SvOl::SVInObjectInfoStruct m_InputUseRotationAngle;
 
 	long m_lPixelDepth;
 

@@ -76,7 +76,7 @@ protected:
 	// This gives an easy shortcut to the input object.  Really only useful 
 	// with objects that KNOW they only have a single input object (otherwise walk 
 	// the input object list).  Objects that can use this are Double and Long.
-	SVInObjectInfoStruct		m_inputObjectInfo;
+	SvOl::SVInObjectInfoStruct m_inputObjectInfo;
 
 	// Passed, if TRUE ( Reset Value: FALSE )
 	SVBoolValueObjectClass	m_Passed;

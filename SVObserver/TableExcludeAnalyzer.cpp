@@ -64,11 +64,7 @@ bool TableExcludeAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMess
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
-	// Check if the input object is still valid otherwise the pointer is invalid
-	if (m_excludeColumnObjectInfo.IsConnected() && !m_excludeColumnObjectInfo.GetInputObjectInfo().CheckExistence())
-	{
-		m_excludeColumnObjectInfo.SetInputObject(nullptr);
-	}
+	SvOl::ValidateInput(m_excludeColumnObjectInfo);
 
 	SVObjectClass* pObject = m_excludeColumnObjectInfo.GetInputObjectInfo().getObject();
 	if (!m_excludeColumnObjectInfo.IsConnected() || nullptr == dynamic_cast<DoubleSortValueObject*> (pObject) 

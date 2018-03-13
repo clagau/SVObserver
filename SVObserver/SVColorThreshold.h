@@ -27,7 +27,7 @@ struct BandThreshold
 	SVBoolValueObjectClass	m_ThresholdExclude;		//! When this is set then the color is excluded
 	SVBoolValueObjectClass	m_ThresholdEnabled;		//! Enables or disables the threshold band
 
-	SVInObjectInfoStruct	m_InputImage;			//! The structure to the input image (band image of the color tool)
+	SvOl::SVInObjectInfoStruct m_InputImage;		//! The structure to the input image (band image of the color tool)
 	SVImageClass			m_OutputImage;			//! The result image of the threshold
 	SVImageClass			m_HistogramImage;		//! The Histogram image
 };

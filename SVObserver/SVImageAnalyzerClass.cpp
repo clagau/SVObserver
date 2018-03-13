@@ -59,14 +59,7 @@ bool SVImageAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCo
 
 SVImageClass* SVImageAnalyzerClass::getInputImage(bool bRunMode /*= false*/)
 {
-	if( m_inputImageObjectInfo.IsConnected() && m_inputImageObjectInfo.GetInputObjectInfo().getObject() )
-	{
-		SVObjectClass* pObject = m_inputImageObjectInfo.GetInputObjectInfo().getObject();
-		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return bRunMode ? static_cast<SVImageClass*> (pObject) : dynamic_cast<SVImageClass*> (pObject);
-	}
-	return nullptr;
+	return SvOl::getInput<SVImageClass>(m_inputImageObjectInfo, bRunMode);
 }
 
 unsigned long SVImageAnalyzerClass::GetInputPixelDepth()

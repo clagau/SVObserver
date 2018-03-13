@@ -91,7 +91,7 @@ bool SVImageArithmeticClass::CreateObject( const SVObjectLevelCreateStruct& rCre
 {
 	bool bOk = SVTaskObjectClass::CreateObject(rCreateStructure);
 
-	bOk &= ( S_OK == m_OutputImage.InitializeImage( getInputImageA() ) );
+	bOk &= ( S_OK == m_OutputImage.InitializeImage(SvOl::getInput<SVImageClass>(m_InputImageAInfo)));
 
 	// Reset Printable flag
 	m_OutputImage.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
@@ -114,7 +114,7 @@ bool SVImageArithmeticClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 {
 	bool Result{true};
 
-	SVInObjectInfoStruct* InputList[]
+	SvOl::SVInObjectInfoStructPtrVector InputList
 	{
 		&m_InputImageAInfo,
 		&m_InputEnableOffsetAInfo,
@@ -125,17 +125,9 @@ bool SVImageArithmeticClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 		&m_InputArithmaticOperatorInfo
 	};
 
-	for (auto pEntry : InputList)
-	{
-		// Check if the input object is still valid otherwise the pointer is invalid
-		// Pointer do not need to be checked as the list are pointers of member variables
-		if (pEntry->IsConnected() && !pEntry->GetInputObjectInfo().CheckExistence())
-		{
-			pEntry->SetInputObject(nullptr);
-		}
-	}
+	SvOl::ValidateInputList(InputList);
 
-	HRESULT l_hrOk = m_OutputImage.InitializeImage( getInputImageA() );
+	HRESULT l_hrOk = m_OutputImage.InitializeImage(SvOl::getInput<SVImageClass>(m_InputImageAInfo));
 	if (S_OK != l_hrOk)
 	{
 		Result = false;
@@ -156,110 +148,14 @@ bool SVImageArithmeticClass::isInputImage(const SVGUID& rImageGuid) const
 {
 	bool Result(false);
 
-	const SVImageClass* pImageA = getInputImageA();
-	const SVImageClass* pImageB = getInputImageB();
+	const SVImageClass* pImageA = SvOl::getInput<SVImageClass>(m_InputImageAInfo);
+	const SVImageClass* pImageB = SvOl::getInput<SVImageClass>(m_InputImageBInfo);
 	if ((nullptr != pImageA && rImageGuid == pImageA->GetUniqueObjectID()) || (nullptr != pImageB && rImageGuid == pImageB->GetUniqueObjectID()))
 	{
 		Result = true;
 	}
 
 	return Result;
-}
-
-SVImageClass* SVImageArithmeticClass::getInputImageA(bool bRunMode /*= false*/) const
-{
-	if (m_InputImageAInfo.IsConnected() && nullptr != m_InputImageAInfo.GetInputObjectInfo().getObject())
-	{
-		SVObjectClass* pObject = m_InputImageAInfo.GetInputObjectInfo().getObject();
-		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return bRunMode ? static_cast<SVImageClass*> (pObject) : dynamic_cast<SVImageClass*> (pObject);
-	}
-
-	return nullptr;
-}
-
-SVBoolValueObjectClass* SVImageArithmeticClass::getInputEnableOffsetA(bool bRunMode /*= false*/) const
-{
-	if (m_InputEnableOffsetAInfo.IsConnected() && m_InputEnableOffsetAInfo.GetInputObjectInfo().getObject())
-	{
-		SVObjectClass* pObject = m_InputEnableOffsetAInfo.GetInputObjectInfo().getObject();
-		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return bRunMode ? static_cast<SVBoolValueObjectClass*> (pObject) : dynamic_cast<SVBoolValueObjectClass*> (pObject);
-	}
-
-	return nullptr;
-}
-
-SVPointValueObjectClass* SVImageArithmeticClass::getInputOffsetAPoint(bool bRunMode /*= false*/) const
-{
-	if (m_InputOffsetAPointInfo.IsConnected() && m_InputOffsetAPointInfo.GetInputObjectInfo().getObject())
-	{
-		SVObjectClass* pObject = m_InputOffsetAPointInfo.GetInputObjectInfo().getObject();
-		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return bRunMode ? static_cast<SVPointValueObjectClass*> (pObject) : dynamic_cast<SVPointValueObjectClass*> (pObject);
-	}
-
-	return nullptr;
-}
-
-SVImageClass* SVImageArithmeticClass::getInputImageB(bool bRunMode /*= false*/) const
-{
-	if (m_InputImageBInfo.IsConnected() && nullptr != m_InputImageBInfo.GetInputObjectInfo().getObject())
-	{
-		SVObjectClass* pObject = m_InputImageBInfo.GetInputObjectInfo().getObject();
-		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return bRunMode ? static_cast<SVImageClass*> (pObject) : dynamic_cast<SVImageClass*> (pObject);
-	}
-
-	return nullptr;
-}
-
-SVBoolValueObjectClass* SVImageArithmeticClass::getInputEnableOffsetB(bool bRunMode /*= false*/) const
-{
-	if (m_InputEnableOffsetBInfo.IsConnected() && m_InputEnableOffsetBInfo.GetInputObjectInfo().getObject())
-	{
-		SVObjectClass* pObject = m_InputEnableOffsetBInfo.GetInputObjectInfo().getObject();
-		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return bRunMode ? static_cast<SVBoolValueObjectClass*> (pObject) : dynamic_cast<SVBoolValueObjectClass*> (pObject);
-	}
-
-	return nullptr;
-}
-
-SVPointValueObjectClass* SVImageArithmeticClass::getInputOffsetBPoint(bool bRunMode /*= false*/) const
-{
-	if (m_InputOffsetBPointInfo.IsConnected() && m_InputOffsetBPointInfo.GetInputObjectInfo().getObject())
-	{
-		SVObjectClass* pObject = m_InputOffsetBPointInfo.GetInputObjectInfo().getObject();
-		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return bRunMode ? static_cast<SVPointValueObjectClass*> (pObject) : dynamic_cast<SVPointValueObjectClass*> (pObject);
-	}
-
-	return nullptr;
-}
-
-SVLongValueObjectClass* SVImageArithmeticClass::getInputArithOperator(bool bRunMode /*= false*/) const
-{
-	if (m_InputArithmaticOperatorInfo.IsConnected() && m_InputArithmaticOperatorInfo.GetInputObjectInfo().getObject())
-	{
-		SVObjectClass* pObject = m_InputArithmaticOperatorInfo.GetInputObjectInfo().getObject();
-		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return bRunMode ? static_cast<SVLongValueObjectClass*> (pObject) : dynamic_cast<SVLongValueObjectClass*> (pObject);
-	}
-
-	return nullptr;
-}
-	
-SVImageClass* SVImageArithmeticClass::getOutputImage()
-{
-	return &m_OutputImage;
 }
 
 bool SVImageArithmeticClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
@@ -269,22 +165,23 @@ bool SVImageArithmeticClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Message
 	bool Return = SVTaskObjectClass::onRun(rRunStatus) && ValidateLocal(pErrorMessages);
 	if (Return)
 	{
-		SVImageClass*			 pImageA		= getInputImageA(true);
-		ASSERT( pImageA );
-		SVBoolValueObjectClass*  pEnableOffsetA = getInputEnableOffsetA();
-		ASSERT( pEnableOffsetA );
-		SVPointValueObjectClass* pOffsetAPoint  = getInputOffsetAPoint();
-		ASSERT( pOffsetAPoint );
-		SVImageClass*			 pImageB		= getInputImageB(true);
-		ASSERT( pImageB );
-		SVBoolValueObjectClass*  pEnableOffsetB	= getInputEnableOffsetB();
-		ASSERT( pEnableOffsetB );
-		SVPointValueObjectClass* pOffsetBPoint  = getInputOffsetBPoint();
-		ASSERT( pOffsetBPoint );
-		SVLongValueObjectClass*  pArithOperator = getInputArithOperator();
-		ASSERT( pArithOperator );
-		SVImageClass*            pOutputImage   = getOutputImage();
-		ASSERT( pOutputImage );
+		SVImageClass* pImageA = SvOl::getInput<SVImageClass>(m_InputImageAInfo, true);
+		SVBoolValueObjectClass*  pEnableOffsetA = SvOl::getInput<SVBoolValueObjectClass>(m_InputEnableOffsetAInfo, true);
+		SVPointValueObjectClass* pOffsetAPoint  = SvOl::getInput<SVPointValueObjectClass>(m_InputOffsetAPointInfo, true);
+		SVImageClass* pImageB = SvOl::getInput<SVImageClass>(m_InputImageBInfo, true);
+		SVBoolValueObjectClass*  pEnableOffsetB = SvOl::getInput<SVBoolValueObjectClass>(m_InputEnableOffsetBInfo, true);
+		SVPointValueObjectClass* pOffsetBPoint = SvOl::getInput<SVPointValueObjectClass>(m_InputOffsetBPointInfo, true);
+		SVLongValueObjectClass* pArithOperator = SvOl::getInput<SVLongValueObjectClass>(m_InputArithmaticOperatorInfo, true);
+		SVImageClass* pOutputImage   = getOutputImage();
+
+		assert(pImageA);
+		assert(pEnableOffsetA);
+		assert(pOffsetAPoint);
+		assert(pImageB);
+		assert(pEnableOffsetB);
+		assert(pOffsetBPoint);
+		assert(pArithOperator);
+		assert(pOutputImage);
 
 		if ( ! pOutputImage->SetImageHandleIndex( rRunStatus.Images ) )
 		{
@@ -555,7 +452,7 @@ HRESULT SVImageArithmeticClass::CollectInputImageNames( )
 	SVImageToolClass* pTool = dynamic_cast<SVImageToolClass*>(GetTool());
 	if (nullptr != pTool)
 	{
-		SVImageClass* pInputImage = getInputImageA();
+		SVImageClass* pInputImage = SvOl::getInput<SVImageClass>(m_InputImageAInfo);
 		SVStringValueObjectClass* pImageNames = pTool->GetInputImageNames();
 		if( nullptr != pInputImage && nullptr != pImageNames )
 		{
@@ -563,7 +460,7 @@ HRESULT SVImageArithmeticClass::CollectInputImageNames( )
 			l_hr = S_OK;
 		}
 
-		pInputImage = getInputImageB();
+		pInputImage = SvOl::getInput<SVImageClass>(m_InputImageBInfo);
 		if( nullptr != pInputImage && nullptr != pImageNames)
 		{
 			pImageNames->SetValue( pInputImage->GetCompleteName(), 1 );
@@ -577,8 +474,16 @@ bool SVImageArithmeticClass::ValidateLocal(SvStl::MessageContainerVector *pError
 {
 	bool Result = true;
 
-	if( nullptr == getInputImageA() || nullptr == getInputEnableOffsetA() || nullptr == getInputOffsetAPoint() ||
-		nullptr == getInputImageB() || nullptr == getInputEnableOffsetB() || nullptr == getInputOffsetBPoint() || nullptr == getInputArithOperator() )
+	SVImageClass* pImageA = SvOl::getInput<SVImageClass>(m_InputImageAInfo);
+	SVBoolValueObjectClass*  pEnableOffsetA = SvOl::getInput<SVBoolValueObjectClass>(m_InputEnableOffsetAInfo);
+	SVPointValueObjectClass* pOffsetAPoint = SvOl::getInput<SVPointValueObjectClass>(m_InputOffsetAPointInfo);
+	SVImageClass* pImageB = SvOl::getInput<SVImageClass>(m_InputImageBInfo);
+	SVBoolValueObjectClass*  pEnableOffsetB = SvOl::getInput<SVBoolValueObjectClass>(m_InputEnableOffsetBInfo);
+	SVPointValueObjectClass* pOffsetBPoint = SvOl::getInput<SVPointValueObjectClass>(m_InputOffsetBPointInfo);
+	SVLongValueObjectClass* pArithOperator = SvOl::getInput<SVLongValueObjectClass>(m_InputArithmaticOperatorInfo);
+
+	if( nullptr == pImageA || nullptr == pEnableOffsetA || nullptr == pOffsetAPoint ||
+		nullptr == pImageB || nullptr == pEnableOffsetB || nullptr == pOffsetBPoint || nullptr == pArithOperator)
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)

@@ -255,7 +255,7 @@ bool SVToolClass::CloseObject()
 	return SVTaskObjectListClass::CloseObject();
 }
 
-bool SVToolClass::DisconnectObjectInput( SVInObjectInfoStruct* pInObjectInfo )
+bool SVToolClass::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pInObjectInfo )
 {
 	bool Result( SVTaskObjectListClass::DisconnectObjectInput( pInObjectInfo ) && nullptr != pInObjectInfo );
 
@@ -352,15 +352,15 @@ void SVToolClass::UpdateAuxiliaryExtents()
 		if( S_OK == hr && l_bUpdateSourceExtents )
 		{
 			SVExtentOffsetStruct l_svOffsetData;
+			SVImageClass* pAuxSourceImage = SvOl::getInput<SVImageClass>(m_AuxSourceImageObjectInfo, true);
 
 			hr = m_svToolExtent.GetSelectedOffsetData( l_svOffsetData );
 			if( S_OK != hr || ! l_svOffsetData.m_bIsLinear )
 			{
-				hr = m_svToolExtent.UpdateOffsetDataToImage( l_svOffsetData, GetAuxSourceImage() );
+				hr = m_svToolExtent.UpdateOffsetDataToImage( l_svOffsetData, pAuxSourceImage);
 			}
 
-			SVImageClass* pAuxSourceImage = GetAuxSourceImage(true);
-			if( nullptr != pAuxSourceImage )
+			if(nullptr != pAuxSourceImage)
 			{
 				m_svAuxiliarySourceImageName.SetValue(pAuxSourceImage->GetCompleteName());
 			}
@@ -370,7 +370,7 @@ void SVToolClass::UpdateAuxiliaryExtents()
 			
 			SVExtentPointStruct pt;
 			SVImageClass* pImage = m_svToolExtent.GetToolImage();
-			if (pImage && pAuxSourceImage)
+			if (nullptr != pImage && nullptr != pAuxSourceImage)
 			{
 				pImage->TranslateFromOutputSpaceToImage(pAuxSourceImage, pt, pt);
 			}
@@ -672,34 +672,12 @@ bool SVToolClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 bool SVToolClass::getConditionalResult(bool bRunMode /*= false*/) const
 {
 	BOOL Value( false );
-	SVBoolValueObjectClass* pBoolObject{nullptr};
-
-	if( m_inputConditionBoolObjectInfo.IsConnected() && m_inputConditionBoolObjectInfo.GetInputObjectInfo().getObject())
+	SVBoolValueObjectClass* pBoolObject = SvOl::getInput<SVBoolValueObjectClass>(m_inputConditionBoolObjectInfo);
+	if(nullptr != pBoolObject)
 	{
-		SVObjectClass* pObject = m_inputConditionBoolObjectInfo.GetInputObjectInfo().getObject();
-		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when getObject() is not nullptr that it is the correct type
-		pBoolObject = bRunMode ? static_cast<SVBoolValueObjectClass*> (pObject) : dynamic_cast<SVBoolValueObjectClass*> (pObject);
-		if(nullptr != pBoolObject)
-		{
-			pBoolObject->GetValue( Value );
-		}
+		pBoolObject->GetValue( Value );
 	}
-	return Value ? true : false;
-}
 
-bool SVToolClass::getConditionalResult(long Index) const
-{
-	BOOL Value( false );
-	SVBoolValueObjectClass* pBoolObject;
-
-	if( m_inputConditionBoolObjectInfo.IsConnected() && m_inputConditionBoolObjectInfo.GetInputObjectInfo().getObject())
-	{
-		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when getObject() is not nullptr that it is the correct type
-		pBoolObject = static_cast<SVBoolValueObjectClass*> (m_inputConditionBoolObjectInfo.GetInputObjectInfo().getObject());
-		pBoolObject->GetValue( Value, -1, Index );
-	}
 	return Value ? true : false;
 }
 
@@ -754,15 +732,8 @@ bool SVToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages) && ValidateLocal(pErrorMessages);
 
-	// Check if the input object is still valid otherwise the pointer is invalid
-	if (m_AuxSourceImageObjectInfo.IsConnected() && !m_AuxSourceImageObjectInfo.GetInputObjectInfo().CheckExistence())
-	{
-		m_AuxSourceImageObjectInfo.SetInputObject(nullptr);
-	}
-	if (m_inputConditionBoolObjectInfo.IsConnected() && !m_inputConditionBoolObjectInfo.GetInputObjectInfo().CheckExistence())
-	{
-		m_inputConditionBoolObjectInfo.SetInputObject(nullptr);
-	}
+	SvOl::ValidateInput(m_AuxSourceImageObjectInfo);
+	SvOl::ValidateInput(m_inputConditionBoolObjectInfo);
 
 	SvOi::IInspectionProcess* pInspection = GetInspectionInterface();
 	if ( nullptr != pInspection)
@@ -999,18 +970,6 @@ HRESULT SVToolClass::GetSourceImages( SVImageClassPtrVector* pImageList ) const
 	return l_hr;
 }
 
-SVImageClass* SVToolClass::GetAuxSourceImage(bool bRunMode /*= false*/) const
-{
-	if( m_AuxSourceImageObjectInfo.IsConnected() && m_AuxSourceImageObjectInfo.GetInputObjectInfo().getObject() )
-	{
-		SVObjectClass* pObject = m_AuxSourceImageObjectInfo.GetInputObjectInfo().getObject();
-		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return bRunMode ? static_cast<SVImageClass*> (pObject) : dynamic_cast<SVImageClass*> (pObject);
-	}
-	return nullptr;
-}
-
 HRESULT SVToolClass::SetAuxSourceImage( SVImageClass* pImage )
 {
 	HRESULT l_hr = S_FALSE;
@@ -1040,7 +999,7 @@ HRESULT SVToolClass::SetAuxSourceImage( SVImageClass* pImage )
 
 		::KeepPrevError( l_hr, ConnectToObject( &m_AuxSourceImageObjectInfo, pConnectImage ) );
 
-		m_svToolExtent.SetSelectedImage( GetAuxSourceImage() );
+		m_svToolExtent.SetSelectedImage(SvOl::getInput<SVImageClass>(m_AuxSourceImageObjectInfo));
 
 		SvOi::IInspectionProcess* pInspection = GetInspectionInterface();
 		if ( nullptr != pInspection )
@@ -1054,7 +1013,7 @@ HRESULT SVToolClass::SetAuxSourceImage( SVImageClass* pImage )
 	return l_hr;
 }
 
-HRESULT SVToolClass::IsAuxInputImage( const SVInObjectInfoStruct* p_psvInfo )
+HRESULT SVToolClass::IsAuxInputImage( const SvOl::SVInObjectInfoStruct* p_psvInfo )
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -1110,7 +1069,7 @@ SvUl::NameGuidList SVToolClass::getAvailableAuxSourceImages() const
 SvUl::NameGuidPair SVToolClass::getAuxSourceImage() const
 {
 	SvUl::NameGuidPair result;
-	SVImageClass* pImage = GetAuxSourceImage();
+	SVImageClass* pImage = SvOl::getInput<SVImageClass>(m_AuxSourceImageObjectInfo);
 	if (pImage)
 	{
 		result = std::make_pair(pImage->getDisplayedName(), pImage->GetUniqueObjectID());

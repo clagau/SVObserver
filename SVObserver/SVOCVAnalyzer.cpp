@@ -84,7 +84,8 @@ bool SVOCVAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCreateS
 
 bool SVOCVAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	bool Valid = __super::ResetObject(pErrorMessages);
+	bool Result = __super::ResetObject(pErrorMessages);
+
 	if( m_bHasLicenseError )
 	{
 		if (nullptr != pErrorMessages)
@@ -92,10 +93,10 @@ bool SVOCVAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_MatroxLicenseNotFound, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16151, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
-		Valid = false;
+		Result = false;
 	}
 
-	return Valid;
+	return Result;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

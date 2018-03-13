@@ -19,6 +19,8 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
+namespace SvOl
+{
 SVInObjectInfoStruct::SVInObjectInfoStruct()
 : SVObjectInfoStruct(), m_InputObjectInfo(), m_IsConnected( false ), m_InputName()
 {
@@ -100,3 +102,23 @@ void SVInObjectInfoStruct::SetInputName( const std::string& rInputName )
 	m_InputName = rInputName;
 }
 
+void ValidateInput(SVInObjectInfoStruct& rInputObject)
+{
+	// Check if the input object is still valid otherwise the pointer is invalid
+	if (rInputObject.IsConnected() && !rInputObject.GetInputObjectInfo().CheckExistence())
+	{
+		rInputObject.SetInputObject(nullptr);
+	}
+}
+
+void ValidateInputList(SVInObjectInfoStructPtrVector& rInputObjectList)
+{
+	for(auto pEntry : rInputObjectList)
+	{
+		if(nullptr != pEntry)
+		{
+			ValidateInput(*pEntry);
+		}
+	}
+}
+} //namespace SvOl

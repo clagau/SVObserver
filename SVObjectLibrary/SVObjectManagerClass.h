@@ -206,13 +206,13 @@ public:
 	/// \param rSourceId [in] reference to the source object ID
 	/// \param pObjectInInfo [in] object input info
 	/// \returns bool
-	bool ConnectObjectInput( const SVGUID& rSourceId, SVInObjectInfoStruct* pObjectInInfo );
+	bool ConnectObjectInput( const SVGUID& rSourceId, SvOl::SVInObjectInfoStruct* pObjectInInfo );
 
 	/// Disconnect input from a object
 	/// \param rSourceId [in] reference to the source object ID
 	/// \param pObjectInInfo [in] object input info
 	/// \returns bool
-	bool DisconnectObjectInput( const SVGUID& rSourceId, SVInObjectInfoStruct* pObjectInInfo );
+	bool DisconnectObjectInput( const SVGUID& rSourceId, SvOl::SVInObjectInfoStruct* pObjectInInfo );
 
 	//! Create Bucket for value object
 	//! \param rpBucket [in/out] reference to the Bucket shared pointer

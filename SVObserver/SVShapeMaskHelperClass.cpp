@@ -120,8 +120,12 @@ bool SVShapeMaskHelperClass::CreateObject( const SVObjectLevelCreateStruct& rCre
 
 bool SVShapeMaskHelperClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	if ( m_pShape )
+	bool Result = __super::ResetObject(pErrorMessages);
+
+	if (nullptr != m_pShape )
+	{
 		delete m_pShape;
+	}
 
 	long lShapeType;
 	m_Data.evoShapeType.GetValue( lShapeType );
@@ -143,8 +147,8 @@ bool SVShapeMaskHelperClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 	}
 
 	SVUserMaskOperatorClass* pMaskOperator = dynamic_cast<SVUserMaskOperatorClass*> ( GetParent() );
-	ASSERT( pMaskOperator );
-	if ( pMaskOperator )
+	assert( pMaskOperator );
+	if (nullptr != pMaskOperator )
 	{
 		m_pShape->SetImageInfo( pMaskOperator->m_MaskBufferInfo );
 
@@ -172,9 +176,18 @@ bool SVShapeMaskHelperClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 		AddRemoveType = bIsShape && bIsTrapezoid ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
 		m_Data.lvoOffset.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, AddRemoveType );
 		m_Data.evoXYSymmetry.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, AddRemoveType );
-	}	
+	}
+	else
+	{
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidOwner, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			pErrorMessages->push_back(Msg);
+		}
+	}
 
-	return __super::ResetObject(pErrorMessages);
+	return Result;
 }
 
 bool SVShapeMaskHelperClass::onRun( bool First, SvOi::SVImageBufferHandlePtr RInputImageHandle, SvOi::SVImageBufferHandlePtr ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )

@@ -81,7 +81,7 @@ private:
 #pragma region Member Variables
 private:
 	TableCopyObject* m_pResultTable;
-	SVInObjectInfoStruct m_sourceTableObjectInfo;
+	SvOl::SVInObjectInfoStruct m_sourceTableObjectInfo;
 	// Index Counter...
 	// Can be used in Equation for e.g. Add-Column-Analyzer.
 	// NOTE:

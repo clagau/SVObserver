@@ -33,38 +33,28 @@ public:
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	SVImageClass* getInputImageA(bool bRunMode = false) const;
-	SVImageClass* getInputImageB(bool bRunMode = false) const;
-	SVImageClass* getOutputImage();
+	SVImageClass* getOutputImage() { return &m_OutputImage; }
 
 protected:
 	virtual bool isInputImage(const SVGUID& rImageGuid) const override;
 	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 private:
-	SVBoolValueObjectClass*		getInputEnableOffsetA(bool bRunMode = false) const;
-	SVPointValueObjectClass*	getInputOffsetAPoint(bool bRunMode = false) const;
-
-	SVBoolValueObjectClass*		getInputEnableOffsetB(bool bRunMode = false) const;
-	SVPointValueObjectClass*	getInputOffsetBPoint(bool bRunMode = false) const;
-	
-	SVLongValueObjectClass*		getInputArithOperator(bool bRunMode = false) const;
-
 	void ScaleWithAveraging( SVImageClass* pInputImage, SVImageClass* pOutputImage );
 	
 	HRESULT CollectInputImageNames( );
 
 	bool ValidateLocal(SvStl::MessageContainerVector *pErrorMessages=nullptr) const;
 
-	SVInObjectInfoStruct		m_InputImageAInfo;
-	SVInObjectInfoStruct		m_InputEnableOffsetAInfo;
-	SVInObjectInfoStruct		m_InputOffsetAPointInfo;
+	SvOl::SVInObjectInfoStruct	m_InputImageAInfo;
+	SvOl::SVInObjectInfoStruct	m_InputEnableOffsetAInfo;
+	SvOl::SVInObjectInfoStruct	m_InputOffsetAPointInfo;
 
-	SVInObjectInfoStruct		m_InputImageBInfo;
-	SVInObjectInfoStruct		m_InputEnableOffsetBInfo;
-	SVInObjectInfoStruct		m_InputOffsetBPointInfo;
+	SvOl::SVInObjectInfoStruct	m_InputImageBInfo;
+	SvOl::SVInObjectInfoStruct	m_InputEnableOffsetBInfo;
+	SvOl::SVInObjectInfoStruct	m_InputOffsetBPointInfo;
 
-	SVInObjectInfoStruct		m_InputArithmaticOperatorInfo;
+	SvOl::SVInObjectInfoStruct	m_InputArithmaticOperatorInfo;
 
 	// Embedded Object:
 	SVImageClass				m_OutputImage;

@@ -396,13 +396,13 @@ HRESULT SVObjectBuilder::SetInputs(const GUID& objectID, const SvDef::StringPair
 	
 	if (pObject)
 	{
-		SVInputInfoListClass inputInfoList;
+		SvOl::SVInputInfoListClass inputInfoList;
 		pObject->GetInputInterface(inputInfoList, false );
 		
 		// reattach inputs
 		for( int i = 0; S_OK == hr && i < static_cast<int> (inputInfoList.size()); i++ )
 		{
-			SVInObjectInfoStruct* pInInfo = inputInfoList[i];
+			SvOl::SVInObjectInfoStruct* pInInfo = inputInfoList[i];
 			if (pInInfo)
 			{
 				auto Iter = std::find_if(rInputPairVector.begin(), rInputPairVector.end(), 

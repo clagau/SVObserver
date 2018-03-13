@@ -3022,7 +3022,7 @@ bool SVInspectionProcess::ResetObject(SvStl::MessageContainerVector *pErrorMessa
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
-	if (Result && !m_pCurrentToolset->IsCreated())
+	if (!m_pCurrentToolset->IsCreated())
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
@@ -3915,7 +3915,7 @@ void SVInspectionProcess::getToolMessages(SvStl::MessageContainerInserter& rInse
 	}
 }
 
-bool SVInspectionProcess::DisconnectObjectInput(SVInObjectInfoStruct* pObjectInInfo)
+bool SVInspectionProcess::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo)
 {
 	bool Result = m_publishList.RemovePublishedEntry(pObjectInInfo->GetInputObjectInfo().getUniqueObjectID());
 

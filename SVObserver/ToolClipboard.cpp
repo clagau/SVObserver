@@ -296,8 +296,8 @@ void ToolClipboard::writeSourceGuids(SvXml::SVObjectXMLWriter& rXmlWriter, SVToo
 	rXmlWriter.WriteAttribute(SvXml::ToolTypeTag, Value );
 
 	SVGUID ToolImageGuid( GUID_NULL );
-	SVInObjectInfoStruct* pImageInfo = nullptr;
-	SVInObjectInfoStruct* pLastImageInfo = nullptr;
+	SvOl::SVInObjectInfoStruct* pImageInfo = nullptr;
+	SvOl::SVInObjectInfoStruct* pLastImageInfo = nullptr;
 
 	while( nullptr == pImageInfo && S_OK ==  rTool.FindNextInputImageInfo( pImageInfo, pLastImageInfo ) )
 	{

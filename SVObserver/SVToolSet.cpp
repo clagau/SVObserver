@@ -336,16 +336,10 @@ bool SVToolSetClass::getConditionalResult(bool bRunMode /*= false*/) const
 {
 	BOOL Value( false );
 
-	if( m_inputConditionBoolObjectInfo.IsConnected() && m_inputConditionBoolObjectInfo.GetInputObjectInfo().getObject() )
+	SVBoolValueObjectClass* pBoolObject = SvOl::getInput<SVBoolValueObjectClass>(m_inputConditionBoolObjectInfo, bRunMode);
+	if(nullptr != pBoolObject)
 	{
-		SVObjectClass* pObject = m_inputConditionBoolObjectInfo.GetInputObjectInfo().getObject();
-		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when getObject() is not nullptr that it is the correct type
-		SVBoolValueObjectClass* pBoolObject = bRunMode ? static_cast<SVBoolValueObjectClass*> (pObject) : dynamic_cast<SVBoolValueObjectClass*> (pObject);
-		if(nullptr != pBoolObject)
-		{
-			pBoolObject->GetValue( Value );
-		}
+		pBoolObject->GetValue( Value );
 	}
 	return Value ? true : false;
 }
@@ -851,11 +845,7 @@ bool SVToolSetClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages) && ValidateLocal(pErrorMessages);
 
-	// Check if the input object is still valid otherwise the pointer is invalid
-	if (m_inputConditionBoolObjectInfo.IsConnected() && !m_inputConditionBoolObjectInfo.GetInputObjectInfo().CheckExistence())
-	{
-		m_inputConditionBoolObjectInfo.SetInputObject(nullptr);
-	}
+	SvOl::ValidateInput(m_inputConditionBoolObjectInfo);
 
 	BOOL bResetCounter(false);
 	if( S_OK == m_ResetCounts.GetValue(bResetCounter) && bResetCounter)

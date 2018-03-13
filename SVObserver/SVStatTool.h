@@ -69,7 +69,7 @@ public:
 	DWORD FreeResult( SVStatisticsFeatureEnum aFeatureIndex );
 	SVResultClass* GetResult( SVStatisticsFeatureEnum aFeatureIndex );
 
-	virtual bool DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo ) override;
+	virtual bool DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo ) override;
 
 protected:
 	double getInputValue();
@@ -100,6 +100,6 @@ protected:
 	double                      m_AccumulatedSquares;
 
 	// Input: 
-	SVInObjectInfoStruct        m_inputObjectInfo;
+	SvOl::SVInObjectInfoStruct m_inputObjectInfo;
 };
 

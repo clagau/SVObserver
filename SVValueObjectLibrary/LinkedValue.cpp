@@ -82,7 +82,7 @@ HRESULT LinkedValue::GetValue(_variant_t& rValue, int Index /*= -1*/,  int Bucke
 	return Result;
 }
 
-bool LinkedValue::DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo )
+bool LinkedValue::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo )
 {
 	if ( nullptr != pObjectInInfo && pObjectInInfo->GetInputObjectInfo().getObject() == m_LinkedObjectRef.getObject())
 	{
@@ -290,7 +290,7 @@ void LinkedValue::DisconnectInput()
 {
 	if( nullptr != m_LinkedObjectRef.getObject())
 	{
-		SVInObjectInfoStruct InputConnectionInfo;
+		SvOl::SVInObjectInfoStruct InputConnectionInfo;
 		InputConnectionInfo.SetInputObject(m_LinkedObjectRef.getObject());
 		InputConnectionInfo.SetObject( this );
 		m_LinkedObjectRef.getObject()->DisconnectObjectInput(&InputConnectionInfo);
@@ -301,7 +301,7 @@ void LinkedValue::DisconnectInput()
 bool LinkedValue::ConnectInput()
 {
 	bool Result = false;
-	SVInObjectInfoStruct InputConnectionInfo;
+	SvOl::SVInObjectInfoStruct InputConnectionInfo;
 	InputConnectionInfo.SetInputObject(m_LinkedObjectRef.getObject());
 	InputConnectionInfo.SetObject( this );
 	if (nullptr != m_LinkedObjectRef.getObject())

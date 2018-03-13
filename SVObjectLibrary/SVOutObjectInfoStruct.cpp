@@ -54,7 +54,7 @@ const SVOutObjectInfoStruct& SVOutObjectInfoStruct::operator=( const SVOutObject
 	return *this;
 }
 
-HRESULT SVOutObjectInfoStruct::AddInput( SVInObjectInfoStruct& p_rsvInput )
+HRESULT SVOutObjectInfoStruct::AddInput(SvOl::SVInObjectInfoStruct& p_rsvInput )
 {
 	// Update Pointer...
 	p_rsvInput.SetInputObject( SVObjectManagerClass::Instance().GetObject( p_rsvInput.GetInputObjectInfo().getUniqueObjectID() ) );
@@ -64,7 +64,7 @@ HRESULT SVOutObjectInfoStruct::AddInput( SVInObjectInfoStruct& p_rsvInput )
 	return S_OK;
 }
 
-HRESULT SVOutObjectInfoStruct::RemoveInput( SVInObjectInfoStruct& rInputInfo )
+HRESULT SVOutObjectInfoStruct::RemoveInput(SvOl::SVInObjectInfoStruct& rInputInfo )
 {
 	bool l_bFound = false;
 
@@ -72,7 +72,7 @@ HRESULT SVOutObjectInfoStruct::RemoveInput( SVInObjectInfoStruct& rInputInfo )
 
 	for( long l = l_lCount - 1; 0 <= l; l-- )
 	{
-		SVInObjectInfoStruct& inObjectInfo = m_UserInfoList[ l ];
+		SvOl::SVInObjectInfoStruct& inObjectInfo = m_UserInfoList[ l ];
 
 		l_bFound = inObjectInfo.getUniqueObjectID() == rInputInfo.getUniqueObjectID();
 
@@ -99,7 +99,7 @@ HRESULT SVOutObjectInfoStruct::DisconnectAllInputs()
 
 	for( long l = l_lCount - 1; 0 <= l; l-- )
 	{
-		SVInObjectInfoStruct& inObjectInfo = m_UserInfoList[l];
+		SvOl::SVInObjectInfoStruct& inObjectInfo = m_UserInfoList[l];
 
 		inObjectInfo.SetInputObject( getUniqueObjectID() );
 

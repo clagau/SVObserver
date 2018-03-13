@@ -118,7 +118,7 @@ protected:
 	const static long MaxScaleFactor;		   // Maximum allowed Scale Factor. 
 
 	// Source Image - input
-	SVInObjectInfoStruct m_InputImageObjectInfo;
+	SvOl::SVInObjectInfoStruct m_InputImageObjectInfo;
 
 #pragma endregion Protected Members
 };

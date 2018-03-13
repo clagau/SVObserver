@@ -44,7 +44,7 @@ private:
 #pragma region Member Variables
 protected:
 	TableAddColumnEquation* m_pColumnEquation;
-	SVInObjectInfoStruct m_newColumnObjectInfo;
+	SvOl::SVInObjectInfoStruct m_newColumnObjectInfo;
 	DoubleSortValuePtr m_pNewColumn;
 #pragma endregion Member Variables
 };

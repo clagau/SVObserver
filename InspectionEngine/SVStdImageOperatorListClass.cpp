@@ -89,7 +89,8 @@ bool SVStdImageOperatorListClass::CloseObject()
 
 bool SVStdImageOperatorListClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	bool Result = true;
+	bool Result = __super::ResetObject(pErrorMessages);
+
 	if (outputImageObject.InitializeImage( getInputImage() ))
 	{
 		Result = false;
@@ -100,13 +101,11 @@ bool SVStdImageOperatorListClass::ResetObject(SvStl::MessageContainerVector *pEr
 		}
 	}
 
-	Result = __super::ResetObject(pErrorMessages) && Result;
-
 	CollectInputImageNames();
 
 	//create tmp mil buffer for operator
 	SVImageClass* pImage = getOutputImage();
-	if (pImage)
+	if (nullptr != pImage)
 	{
 		SVImageInfoClass imageInfo = pImage->GetImageInfo();
 		imageInfo.setDibBufferFlag(false);

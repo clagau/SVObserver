@@ -88,14 +88,10 @@ bool SVResultClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStruct
 bool SVResultClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);
-	// Check if the input object is still valid otherwise the pointer is invalid
-	if (m_inputObjectInfo.IsConnected() && !m_inputObjectInfo.GetInputObjectInfo().CheckExistence())
-	{
-		m_inputObjectInfo.SetInputObject(nullptr);
-	}
 
-	Result = Result && ValidateLocal(pErrorMessages);
-	return Result;
+	SvOl::ValidateInput(m_inputObjectInfo);
+
+	return Result && ValidateLocal(pErrorMessages);
 }
 
 bool SVResultClass::IsFailed()

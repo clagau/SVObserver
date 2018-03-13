@@ -40,7 +40,7 @@ bool SVPerspectiveToolClass::CreateObject( const SVObjectLevelCreateStruct& rCre
 {
 	bool l_bOk = SVToolClass::CreateObject(rCreateStructure);
 
-	l_bOk &= ( S_OK == m_OutputImage.InitializeImage( GetInputImage() ) );
+	l_bOk &= ( S_OK == m_OutputImage.InitializeImage(SvOl::getInput<SVImageClass>(m_InputImageObjectInfo)));
 
 	m_SourceImageNames.setStatic( true );
 	m_SourceImageNames.setSaveValueFlag(false);
@@ -62,8 +62,9 @@ HRESULT SVPerspectiveToolClass::UpdateOutputImageExtents()
 {
 	HRESULT l_hrOk;
 
+	SVImageClass* pInputImage = SvOl::getInput<SVImageClass>(m_InputImageObjectInfo);
 	// Get Input Width and Height put in output Image Extent.
-	SVImageExtentClass InputExtents = GetInputImage()->GetImageExtents();
+	SVImageExtentClass InputExtents = (nullptr != pInputImage) ? pInputImage->GetImageExtents() : SVImageExtentClass();
 	SVImageExtentClass OutputExtents = m_OutputImage.GetImageExtents();
 	SVImageExtentClass ToolExtents;
 	double l_dValue;
@@ -111,10 +112,9 @@ HRESULT SVPerspectiveToolClass::UpdateOutputImageExtents()
 	l_hrOk = OutputExtents.UpdateData();
 
 	SVGUID l_InputID;
-
-	if( nullptr != GetInputImage() )
+	if(nullptr != pInputImage)
 	{
-		l_InputID = GetInputImage()->GetUniqueObjectID();
+		l_InputID = pInputImage->GetUniqueObjectID();
 	}
 
 	SVImageInfoClass l_ImageInfo = m_OutputImage.GetImageInfo();
@@ -216,11 +216,7 @@ bool SVPerspectiveToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 
 	bool Result = SVToolClass::ResetObject(pErrorMessages);
 	
-	// Check if the input object is still valid otherwise the pointer is invalid
-	if (m_InputImageObjectInfo.IsConnected() && !m_InputImageObjectInfo.GetInputObjectInfo().CheckExistence())
-	{
-		m_InputImageObjectInfo.SetInputObject(nullptr);
-	}
+	SvOl::ValidateInput(m_InputImageObjectInfo);
 
 	// Now the input image is valid!
 	if( m_OutputImage.ResetObject(pErrorMessages) )
@@ -240,7 +236,7 @@ bool SVPerspectiveToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 		Result = false;
 	}
 
-	SVImageClass *pInputImage = GetInputImage();
+	SVImageClass *pInputImage = SvOl::getInput<SVImageClass>(m_InputImageObjectInfo);
 
 	if (nullptr != pInputImage)
 	{
@@ -260,19 +256,6 @@ bool SVPerspectiveToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 	UpdateImageWithExtent();
 
 	return Result;
-}
-
-SVImageClass* SVPerspectiveToolClass::GetInputImage(bool bRunMode /*= false*/) const
-{
-	if( m_InputImageObjectInfo.IsConnected() && nullptr != m_InputImageObjectInfo.GetInputObjectInfo().getObject() )
-	{
-		SVObjectClass* pObject = m_InputImageObjectInfo.GetInputObjectInfo().getObject();
-		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return bRunMode ? static_cast<SVImageClass*> (pObject) : dynamic_cast<SVImageClass*> (pObject);
-	}
-
-	return nullptr;
 }
 
 SVTaskObjectClass* SVPerspectiveToolClass::GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint )
@@ -299,7 +282,8 @@ bool SVPerspectiveToolClass::isInputImage(const SVGUID& rImageGuid) const
 {
 	bool Result(false);
 
-	if ( nullptr != GetInputImage() && rImageGuid == GetInputImage()->GetUniqueObjectID() )
+	SVImageClass *pInputImage = SvOl::getInput<SVImageClass>(m_InputImageObjectInfo);
+	if ( nullptr != pInputImage && rImageGuid == pInputImage->GetUniqueObjectID() )
 	{
 		Result = true;
 	}
@@ -314,7 +298,7 @@ bool SVPerspectiveToolClass::onRun( SVRunStatusClass &p_rRunStatus, SvStl::Messa
 
 	if ( l_bOk )
 	{
-		SVImageClass *pInputImage = GetInputImage(true);
+		SVImageClass *pInputImage = SvOl::getInput<SVImageClass>(m_InputImageObjectInfo, true);
 
 		SVImageExtentClass l_svToolExtents;
 		l_bOk = S_OK == GetImageExtent(l_svToolExtents);
@@ -450,7 +434,7 @@ HRESULT SVPerspectiveToolClass::CreateLUT()
 
 	long l_lWidth = 100;
 	long l_lHeight = 100;
-	if ( nullptr != GetInputImage() )
+	if ( nullptr != SvOl::getInput<SVImageClass>(m_InputImageObjectInfo))
 	{
 		HRESULT l_hr = GetImageExtent(l_svOutputExtents);
 

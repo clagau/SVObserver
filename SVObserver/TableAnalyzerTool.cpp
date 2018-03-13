@@ -70,10 +70,10 @@ bool TableAnalyzerTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStr
 	SVLongResultClass* pResult = dynamic_cast<SVLongResultClass*>(SvOi::FindObject(GetUniqueObjectID(), SvDef::SVObjectTypeInfoStruct(SvDef::SVResultObjectType, SvDef::SVResultLongObjectType)));
 	if (nullptr != pResult)
 	{
-		SVInputInfoListClass inputInterface;
+		SvOl::SVInputInfoListClass inputInterface;
 		pResult->GetPrivateInputList(inputInterface);
 		//find right input
-		SVInputInfoListClass::const_iterator iter = std::find_if(inputInterface.begin(), inputInterface.end(), [](const SVInObjectInfoStruct* rInfo)->bool
+		SvOl::SVInputInfoListClass::const_iterator iter = std::find_if(inputInterface.begin(), inputInterface.end(), [](const SvOl::SVInObjectInfoStruct* rInfo)->bool
 		{
 			return rInfo->GetInputName() == SvO::cInputTag_LongResultValue;
 		});
@@ -130,11 +130,7 @@ bool TableAnalyzerTool::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 
 	Result = ValidateLocal(pErrorMessages) && Result;
 
-	// Check if the input object is still valid otherwise the pointer is invalid
-	if (m_sourceTableObjectInfo.IsConnected() && !m_sourceTableObjectInfo.GetInputObjectInfo().CheckExistence())
-	{
-		m_sourceTableObjectInfo.SetInputObject(nullptr);
-	}
+	SvOl::ValidateInput(m_sourceTableObjectInfo);
 
 	SVObjectClass* pObject = m_sourceTableObjectInfo.GetInputObjectInfo().getObject();
 	if (!m_sourceTableObjectInfo.IsConnected() || nullptr == dynamic_cast<TableObject*> (pObject))

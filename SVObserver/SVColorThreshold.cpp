@@ -147,11 +147,7 @@ bool SVColorThresholdClass::ResetObject(SvStl::MessageContainerVector *pErrorMes
 {
 	for(auto& rEntry : m_BandThreshold)
 	{
-		// Check if the input object is still valid otherwise the pointer is invalid
-		if (rEntry.m_InputImage.IsConnected() && !rEntry.m_InputImage.GetInputObjectInfo().CheckExistence())
-		{
-			rEntry.m_InputImage.SetInputObject(nullptr);
-		}
+		SvOl::ValidateInput(rEntry.m_InputImage);
 	}
 
 
@@ -764,14 +760,6 @@ bool SVColorThresholdClass::ValidateLocal() const
 
 SVImageClass* SVColorThresholdClass::GetBandInputImage(BandEnum Band, bool bRunMode /*= false*/)
 {
-	if (m_BandThreshold[Band].m_InputImage.IsConnected() && m_BandThreshold[Band].m_InputImage.GetInputObjectInfo().getObject())
-	{
-		SVObjectClass* pObject = m_BandThreshold[Band].m_InputImage.GetInputObjectInfo().getObject();
-		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return bRunMode ? static_cast<SVImageClass*> (pObject) : dynamic_cast<SVImageClass*> (pObject);
-	}
-
-	return nullptr;
+	return SvOl::getInput<SVImageClass>(m_BandThreshold[Band].m_InputImage, bRunMode);
 }
 #pragma endregion Private Methods

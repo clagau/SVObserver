@@ -102,11 +102,14 @@ SVBarCodeResultClass::~SVBarCodeResultClass()
 
 bool SVBarCodeResultClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
-	bool bOk = SVStringResultClass::CreateObject(rCreateStructure) && nullptr != getInputString() && nullptr != getRegExpression();
+	bool Result = SVStringResultClass::CreateObject(rCreateStructure);
+	Result = Result && nullptr != SvOl::getInput<SVStringValueObjectClass>(m_inputObjectInfo);
+	SVStringValueObjectClass* pRegExpression = SvOl::getInput<SVStringValueObjectClass>(m_SVRegExpressionObjectInfo);
+	Result = Result && nullptr != pRegExpression;
 
-	if (bOk)
+	if (Result)
 	{
-		getRegExpression()->SetObjectAttributesAllowed(SvDef::SV_PRINTABLE | SvDef::SV_SETABLE_ONLINE | SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute);
+		pRegExpression->SetObjectAttributesAllowed(SvDef::SV_PRINTABLE | SvDef::SV_SETABLE_ONLINE | SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute);
 	}
 
 	msv_bUseSingleMatchString.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute);
@@ -114,35 +117,9 @@ bool SVBarCodeResultClass::CreateObject(const SVObjectLevelCreateStruct& rCreate
 	msv_lMatchStringLine.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
 	msv_bUseMatchStringFile.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute);
 	m_dReadScore.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
-	m_isCreated = bOk;
+	m_isCreated = Result;
 
-	return bOk;
-}
-
-SVStringValueObjectClass* SVBarCodeResultClass::getInputString(bool bRunMode /*= false*/)
-{
-	if (m_inputObjectInfo.IsConnected() && nullptr != m_inputObjectInfo.GetInputObjectInfo().getObject())
-	{
-		SVObjectClass* pObject = m_inputObjectInfo.GetInputObjectInfo().getObject();
-		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return bRunMode ? static_cast<SVStringValueObjectClass*> (pObject) : dynamic_cast<SVStringValueObjectClass*> (pObject);
-	}
-
-	return nullptr;
-}
-
-SVStringValueObjectClass* SVBarCodeResultClass::getRegExpression(bool bRunMode /*= false*/)
-{
-	if (m_SVRegExpressionObjectInfo.IsConnected() && nullptr != m_SVRegExpressionObjectInfo.GetInputObjectInfo().getObject())
-	{
-		SVObjectClass* pObject = m_SVRegExpressionObjectInfo.GetInputObjectInfo().getObject();
-		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return bRunMode ? static_cast<SVStringValueObjectClass*> (pObject) : dynamic_cast<SVStringValueObjectClass*> (pObject);
-	}
-
-	return nullptr;
+	return Result;
 }
 
 bool SVBarCodeResultClass::onRun(SVRunStatusClass &rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
@@ -156,7 +133,7 @@ bool SVBarCodeResultClass::onRun(SVRunStatusClass &rRunStatus, SvStl::MessageCon
 			return true;
 		}
 
-		SVStringValueObjectClass* pValue = getInputString(true);
+		SVStringValueObjectClass* pValue = SvOl::getInput<SVStringValueObjectClass>(m_inputObjectInfo, true);
 
 		if (nullptr != pValue && pValue->IsValid())
 		{
@@ -182,7 +159,7 @@ bool SVBarCodeResultClass::onRun(SVRunStatusClass &rRunStatus, SvStl::MessageCon
 			else
 			{
 				std::string RegExpression;
-				SVStringValueObjectClass* pRegExp = getRegExpression(true);
+				SVStringValueObjectClass* pRegExp = SvOl::getInput<SVStringValueObjectClass>(m_SVRegExpressionObjectInfo, true);
 				pRegExp->GetValue(RegExpression);
 
 				if (RegExpression.empty() || !InputString.compare(RegExpression.c_str()))
@@ -210,11 +187,7 @@ bool SVBarCodeResultClass::ResetObject(SvStl::MessageContainerVector *pErrorMess
 {
 	bool Result = SVStringResultClass::ResetObject(pErrorMessages);
 
-	// Check if the input object is still valid otherwise the pointer is invalid
-	if (m_SVRegExpressionObjectInfo.IsConnected() && !m_SVRegExpressionObjectInfo.GetInputObjectInfo().CheckExistence())
-	{
-		m_SVRegExpressionObjectInfo.SetInputObject(nullptr);
-	}
+	SvOl::ValidateInput(m_SVRegExpressionObjectInfo);
 
 	if (S_OK != LoadMatchStringFile())
 	{

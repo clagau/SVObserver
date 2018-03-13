@@ -89,7 +89,7 @@ protected:
 
 	SVMaskOperatorCancelData   m_Data;
 
-	SVInObjectInfoStruct       m_inObjectInfo;
+	SvOl::SVInObjectInfoStruct m_inObjectInfo;
 	SVExtentMultiLineStruct	   m_MultiLine;
 	GUID                       m_guidShapeHelper;
 

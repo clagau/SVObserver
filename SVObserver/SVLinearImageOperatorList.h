@@ -34,8 +34,8 @@ protected:
 	HRESULT getUseRotationAngle(BOOL& rUseRotationAngle);
 	HRESULT getInputProfileOrientation(long& rProfileOrientation);
 
-	SVInObjectInfoStruct inputUseRotationAngle;
-	SVInObjectInfoStruct inputProfileOrientation;
+	SvOl::SVInObjectInfoStruct inputUseRotationAngle;
+	SvOl::SVInObjectInfoStruct inputProfileOrientation;
 
 	SVDoubleValueObjectClass m_svLinearData;
 

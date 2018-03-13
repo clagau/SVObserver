@@ -65,9 +65,9 @@ SVPolarTransformClass::~SVPolarTransformClass()
 
 bool SVPolarTransformClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	bool Result {true};
+	bool Result = __super::ResetObject(pErrorMessages);
 
-	SVInObjectInfoStruct* InputList[]
+	SvOl::SVInObjectInfoStructPtrVector InputList
 	{
 		&m_inputCenterXResult,
 		&m_inputCenterYResult,
@@ -77,100 +77,21 @@ bool SVPolarTransformClass::ResetObject(SvStl::MessageContainerVector *pErrorMes
 		&m_inputStartRadiusResult
 	};
 
+	SvOl::ValidateInputList(InputList);
+
 	for(auto pEntry : InputList)
 	{
-		// Check if the input object is still valid otherwise the pointer is invalid
-		// Pointer do not need to be checked as the list are pointers of member variables
-		if(pEntry->IsConnected() && !pEntry->GetInputObjectInfo().CheckExistence())
+		// pEntry cannot be nullptr as the InputList are member variable addresses
+		if(nullptr == SvOl::getInput<SVDoubleValueObjectClass>(*pEntry))
 		{
-			pEntry->SetInputObject(nullptr);
+			Result = false;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
+			break;
 		}
 	}
-
-	if( nullptr == getInputCenterXResult() || nullptr == getInputCenterYResult() ||
-		 nullptr == getInputStartRadiusResult() || nullptr == getInputEndRadiusResult() ||
-		 nullptr == getInputStartAngleResult() ||  nullptr == getInputEndAngleResult() )
-	{
-		Result = false;
-		if (nullptr != pErrorMessages)
-		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
-			pErrorMessages->push_back(Msg);
-		}
-	}
-	return __super::ResetObject(pErrorMessages) && Result;
-}
-
-SVDoubleValueObjectClass* SVPolarTransformClass::getInputCenterXResult(bool bRunMode /*= false*/)
-{
-	if( m_inputCenterXResult.IsConnected() && m_inputCenterXResult.GetInputObjectInfo().getObject() )
-	{
-		SVObjectClass* pObject = m_inputCenterXResult.GetInputObjectInfo().getObject();
-		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return bRunMode ? static_cast<SVDoubleValueObjectClass*> (pObject) : dynamic_cast<SVDoubleValueObjectClass*> (pObject);
-	}
-	return nullptr;
-}
-
-SVDoubleValueObjectClass* SVPolarTransformClass::getInputCenterYResult(bool bRunMode /*= false*/)
-{
-	if( m_inputCenterYResult.IsConnected() && m_inputCenterYResult.GetInputObjectInfo().getObject())
-	{
-		SVObjectClass* pObject = m_inputCenterYResult.GetInputObjectInfo().getObject();
-		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return bRunMode ? static_cast<SVDoubleValueObjectClass*> (pObject) : dynamic_cast<SVDoubleValueObjectClass*> (pObject);
-	}
-	return nullptr;
-}
-
-SVDoubleValueObjectClass* SVPolarTransformClass::getInputStartRadiusResult(bool bRunMode /*= false*/)
-{
-	if( m_inputStartRadiusResult.IsConnected() && m_inputStartRadiusResult.GetInputObjectInfo().getObject())
-	{
-		SVObjectClass* pObject = m_inputStartRadiusResult.GetInputObjectInfo().getObject();
-		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return bRunMode ? static_cast<SVDoubleValueObjectClass*> (pObject) : dynamic_cast<SVDoubleValueObjectClass*> (pObject);
-	}
-
-	return nullptr;
-}
-
-SVDoubleValueObjectClass* SVPolarTransformClass::getInputEndRadiusResult(bool bRunMode /*= false*/)
-{
-
-	if( m_inputEndRadiusResult.IsConnected() && m_inputEndRadiusResult.GetInputObjectInfo().getObject())
-	{
-		SVObjectClass* pObject = m_inputEndRadiusResult.GetInputObjectInfo().getObject();
-		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return bRunMode ? static_cast<SVDoubleValueObjectClass*> (pObject) : dynamic_cast<SVDoubleValueObjectClass*> (pObject);
-	}
-	return nullptr;
-}
-
-SVDoubleValueObjectClass* SVPolarTransformClass::getInputStartAngleResult(bool bRunMode /*= false*/)
-{
-	if( m_inputStartAngleResult.IsConnected() && m_inputStartAngleResult.GetInputObjectInfo().getObject())
-	{
-		SVObjectClass* pObject = m_inputStartAngleResult.GetInputObjectInfo().getObject();
-		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return bRunMode ? static_cast<SVDoubleValueObjectClass*> (pObject) : dynamic_cast<SVDoubleValueObjectClass*> (pObject);
-	}
-	return nullptr;
-}
-
-SVDoubleValueObjectClass* SVPolarTransformClass::getInputEndAngleResult(bool bRunMode /*= false*/)
-{
-	if( m_inputEndAngleResult.IsConnected() && m_inputEndAngleResult.GetInputObjectInfo().getObject())
-	{
-		SVObjectClass* pObject = m_inputEndAngleResult.GetInputObjectInfo().getObject();
-		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return bRunMode ? static_cast<SVDoubleValueObjectClass*> (pObject) : dynamic_cast<SVDoubleValueObjectClass*> (pObject);
-	}
-	return nullptr;
+	return Result;
 }

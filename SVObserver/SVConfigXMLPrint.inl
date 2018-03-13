@@ -959,13 +959,13 @@ inline void SVConfigXMLPrint::WriteTool(Writer writer, SVToolClass * ts) const
 	wchar_t buff[64];
 	if (ts)
 	{
-		SVInputInfoListClass    toolInputList;
+		SvOl::SVInputInfoListClass    toolInputList;
 		SVImageClass*           pCurrentSourceImage = nullptr;
-		SVInObjectInfoStruct*   pImageInputInfo = nullptr;
+		SvOl::SVInObjectInfoStruct*   pImageInputInfo = nullptr;
 		SVToolClass*            pTool = ts;
 		
-		SVInObjectInfoStruct* l_psvImageInfo = nullptr;
-		SVInObjectInfoStruct* l_psvLastImageInfo = nullptr;
+		SvOl::SVInObjectInfoStruct* l_psvImageInfo = nullptr;
+		SvOl::SVInObjectInfoStruct* l_psvLastImageInfo = nullptr;
 
 		while( nullptr == l_psvImageInfo && S_OK ==  pTool->FindNextInputImageInfo( l_psvImageInfo, l_psvLastImageInfo ) )
 		{

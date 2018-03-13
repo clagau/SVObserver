@@ -223,15 +223,7 @@ bool ResizeTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure
 
 SVImageClass* ResizeTool::getInputImage(bool bRunMode /*= false*/) const
 {
-	if (m_InputImageObjectInfo.IsConnected() && m_InputImageObjectInfo.GetInputObjectInfo().getObject())
-	{
-		SVObjectClass* pObject = m_InputImageObjectInfo.GetInputObjectInfo().getObject();
-		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return bRunMode ? static_cast<SVImageClass*> (pObject) : dynamic_cast<SVImageClass*> (pObject);
-	}
-
-	return nullptr;
+	return SvOl::getInput<SVImageClass>(m_InputImageObjectInfo, bRunMode);;
 }
 
 SVImageClass* ResizeTool::getOutputImage()
@@ -301,11 +293,7 @@ bool ResizeTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = ValidateParameters(pErrorMessages) && ValidateOfflineParameters(pErrorMessages);
 
-	// Check if the input object is still valid otherwise the pointer is invalid
-	if (m_InputImageObjectInfo.IsConnected() && !m_InputImageObjectInfo.GetInputObjectInfo().CheckExistence())
-	{
-		m_InputImageObjectInfo.SetInputObject(nullptr);
-	}
+	SvOl::ValidateInput(m_InputImageObjectInfo);
 
 	SVImageClass* pInputImage = getInputImage();
 	if (Result)

@@ -224,26 +224,13 @@ SVOCVAnalyzeResultClass::~SVOCVAnalyzeResultClass()
 	}
 }
 
-
-SVImageClass* SVOCVAnalyzeResultClass::getInputImage(bool bRunMode /*= false*/)
-{
-	if( m_inputObjectInfo.IsConnected() && nullptr != m_inputObjectInfo.GetInputObjectInfo().getObject())
-	{
-		SVObjectClass* pObject = m_inputObjectInfo.GetInputObjectInfo().getObject();
-		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return bRunMode ? static_cast<SVImageClass*> (pObject) : dynamic_cast<SVImageClass*> (pObject);
-	}
-	return nullptr;
-}
-
 bool SVOCVAnalyzeResultClass::CreateObject(	const SVObjectLevelCreateStruct& rCreateStructure )
 {
 	bool bOk = SVResultClass::CreateObject(rCreateStructure);
 
 	if ( bOk )
 	{
-		bOk = nullptr != getInputImage();
+		bOk = nullptr != SvOl::getInput<SVImageClass>(m_inputObjectInfo);
 	}
 	
 	if ( bOk && !m_bHasLicenseError )
@@ -690,7 +677,7 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 
 	if( bOk && !rRunStatus.IsDisabled() && !rRunStatus.IsDisabledByCondition() )
 	{
-		SVImageClass* pInputImage = getInputImage(true);
+		SVImageClass* pInputImage = SvOl::getInput<SVImageClass>(m_inputObjectInfo, true);
 		if(nullptr == pInputImage)
 		{
 			SetInvalid();

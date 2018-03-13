@@ -46,7 +46,6 @@ public:
 	virtual SVStringValueObjectClass* GetInputImageNames() override;
 
 protected:
-	SVImageClass* GetInputImage(bool bRunMode = false) const;
 	HRESULT UpdateOutputImageExtents();
 	virtual bool isInputImage(const SVGUID& rImageGuid) const override;
 	virtual bool onRun( SVRunStatusClass &p_rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr ) override;
@@ -57,7 +56,7 @@ private:
 	HRESULT CreateLUT();
 	void DestroyLUT();
 	
-	SVInObjectInfoStruct m_InputImageObjectInfo;
+	SvOl::SVInObjectInfoStruct m_InputImageObjectInfo;
 
 	SVImageClass m_OutputImage;
 	SVEnumerateValueObjectClass m_svWarpType;

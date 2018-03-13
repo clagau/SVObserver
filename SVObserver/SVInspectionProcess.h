@@ -261,7 +261,7 @@ public:
 	//************************************
 	void getToolMessages( SvStl::MessageContainerInserter& rInserter ) const;
 
-	virtual bool DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo ) override;
+	virtual bool DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo) override;
 
 	/// sets the flag that forces the global extent data to update
 	void ForceOffsetUpdate() override { m_bForceOffsetUpdate = true; }

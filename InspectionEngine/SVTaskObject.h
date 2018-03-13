@@ -61,14 +61,14 @@ public:
 	void ResetPrivateInputInterface();
 
 	virtual bool ConnectAllInputs() override;
-	HRESULT ConnectToObject(SVInObjectInfoStruct* p_psvInputInfo, SVObjectClass* pNewObject);
+	HRESULT ConnectToObject(SvOl::SVInObjectInfoStruct* p_psvInputInfo, SVObjectClass* pNewObject);
 
 	virtual bool IsValid() const override;
 
 	virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure) override;
 	virtual bool CloseObject() override;
 	void Disconnect();
-	virtual bool DisconnectObjectInput(SVInObjectInfoStruct* pInObjectInfo) override;
+	virtual bool DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pInObjectInfo) override;
 	virtual HRESULT GetOutputList(SVOutputInfoListClass& p_rOutputInfoList) const override;
 
 	virtual HRESULT DisconnectInputsOutputs(SVObjectPtrVector& rListOfObjects);
@@ -89,16 +89,16 @@ public:
 	/// \param pToMoveObject [in] This object should moved.
 	/// \param pPosObject [in] The other object will be moved before this object.
 	void MovedEmbeddedObject(SVObjectClass* pToMoveObject, SVObjectClass* pPosObject);
-	bool RegisterInputObject(SVInObjectInfoStruct* PInObjectInfo, const std::string& p_rInputName);
+	bool RegisterInputObject(SvOl::SVInObjectInfoStruct* PInObjectInfo, const std::string& p_rInputName);
 
 	HRESULT GetOutputListFiltered(SVObjectReferenceVector& rvecObjects, UINT uiAttributes = SvDef::SV_NO_ATTRIBUTES, bool bAND = true); /* true means AND, false means OR */
 
 	HRESULT GetNonToolsetOutputList(SVOutputInfoListClass& p_rOutputInfoList) const;
 
-	virtual HRESULT IsAuxInputImage(const SVInObjectInfoStruct* p_psvInfo);
+	virtual HRESULT IsAuxInputImage(const SvOl::SVInObjectInfoStruct* p_psvInfo);
 
 	virtual HRESULT GetChildObject(SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0) const override;
-	HRESULT FindNextInputImageInfo(SVInObjectInfoStruct*& p_rpsvFoundInfo, const SVInObjectInfoStruct* p_psvLastInfo = nullptr);
+	HRESULT FindNextInputImageInfo(SvOl::SVInObjectInfoStruct*& p_rpsvFoundInfo, const SvOl::SVInObjectInfoStruct* p_psvLastInfo = nullptr);
 
 	//************************************
 	//! Clears the task set message list 
@@ -141,14 +141,14 @@ public:
 
 #pragma region Methods to replace processMessage
 	virtual SVObjectClass* OverwriteEmbeddedObject(const GUID& uniqueID, const GUID& rEmbeddedID) override;
-	virtual void GetInputInterface(SVInputInfoListClass& rInputList, bool bAlsoFriends) const override;
+	virtual void GetInputInterface(SvOl::SVInputInfoListClass& rInputList, bool bAlsoFriends) const override;
 	virtual void DestroyFriend(SVObjectClass* pObject) override;
 	virtual SvOi::IObjectClass* getFirstObject(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends = true, const SvOi::IObjectClass* pRequestor = nullptr) const override;
 	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override;
 #pragma endregion Methods to replace processMessage
 
 protected:
-	SVInputInfoListClass m_svToolInputList;
+	SvOl::SVInputInfoListClass m_svToolInputList;
 	long m_lLastToolInputListIndex;
 
 	bool RegisterEmbeddedObjectAsClass(SVObjectClass* PEmbeddedObject, const GUID& REmbeddedID, LPCTSTR newObjectName);
@@ -164,14 +164,14 @@ public:
 	virtual DWORD GetObjectColor() const override;
 	// Get the local object state...
 	virtual DWORD GetObjectState() const override;
-	void GetInputObjects(SVInputInfoListClass& RInputObjectList);
+	void GetInputObjects(SvOl::SVInputInfoListClass& RInputObjectList);
 	virtual void GetAllInputObjects();
 	virtual void Persist(SvOi::IObjectWriter& rWriter) override;
 	void PersistFriends(SvOi::IObjectWriter& rWriter);
 	void PersistInputs(SvOi::IObjectWriter& rWriter);
 	void PersistEmbeddeds(SvOi::IObjectWriter& rWriter);
 
-	void GetPrivateInputList(SVInputInfoListClass& RInputInterface) const;
+	void GetPrivateInputList(SvOl::SVInputInfoListClass& RInputInterface) const;
 
 	HRESULT GetImageList(SVImageClassPtrVector& p_rImageList, UINT uiAttributes = SvDef::SV_NO_ATTRIBUTES, bool bAND = true);
 
@@ -209,7 +209,7 @@ protected:
 	virtual SVObjectPtrDeque GetPreProcessObjects() const override;
 	virtual SVObjectPtrDeque GetPostProcessObjects() const override;
 
-	virtual void addDefaultInputObjects(SVInputInfoListClass* PInputListToFill = nullptr);
+	virtual void addDefaultInputObjects(SvOl::SVInputInfoListClass* PInputListToFill = nullptr);
 
 	// Called by Run()
 	// NOTE:
@@ -225,7 +225,7 @@ private:
 
 protected:
 	SvOi::IValueObjectPtrSet m_ValueObjectSet;
-	SVInputInfoListClass	m_InputObjectList;
+	SvOl::SVInputInfoListClass	m_InputObjectList;
 
 	// Embedded Object:
 	SVBoolValueObjectClass  m_isObjectValid;	//	Embedded
@@ -247,7 +247,7 @@ protected:
 	// Used to register your input interface...
 	// Counterpart to embeddedList, which is some kind of 
 	// outputInterfaceList.
-	SVInputInfoListClass m_inputInterfaceList;
+	SvOl::SVInputInfoListClass m_inputInterfaceList;
 
 	bool m_bUseOverlays;
 

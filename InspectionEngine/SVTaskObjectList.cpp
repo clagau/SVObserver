@@ -624,7 +624,7 @@ void SVTaskObjectListClass::ConnectObject( const SVObjectLevelCreateStruct& rCre
 	}
 }
 
-void SVTaskObjectListClass::GetInputInterface(SVInputInfoListClass& rInputList, bool bAlsoFriends) const
+void SVTaskObjectListClass::GetInputInterface(SvOl::SVInputInfoListClass& rInputList, bool bAlsoFriends) const
 {
 	SVTaskObjectClass::GetInputInterface(rInputList, bAlsoFriends);
 

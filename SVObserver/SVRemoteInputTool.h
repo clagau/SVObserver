@@ -90,7 +90,7 @@ protected:
 
 	bool ValidateLocal(SvStl::MessageContainerVector *pErrorMessages=nullptr) const;
 
-	SVInObjectInfoStruct m_InputObjectInfo;
+	SvOl::SVInObjectInfoStruct m_InputObjectInfo;
 
 	SVVariantValueObjectClass m_MatchedValueId;
 	SVVariantValueObjectClass m_MatchedValue;

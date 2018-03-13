@@ -478,10 +478,10 @@ SvOi::IObjectClass* SVBlobAnalyzerClass::getResultObject(int Feature)
 
 void SVBlobAnalyzerClass::RebuildResultObjectArray()
 {
-	SVInputInfoListClass	resultInputList;
+	SvOl::SVInputInfoListClass	resultInputList;
 	SVOutputInfoListClass	resultOutputList;
 
-	SVInObjectInfoStruct*	pResultInputInfo;
+	SvOl::SVInObjectInfoStruct*	pResultInputInfo;
 
 	SVDoubleResultClass*    pResult;
 	SVObjectClass*          pSVObject;
@@ -531,10 +531,10 @@ void SVBlobAnalyzerClass::RebuildResultObjectArray()
 ////////////////////////////////////////////////////////////////////////////////
 SVLongResultClass* SVBlobAnalyzerClass::GetBlobResultObject()
 {
-	SVInputInfoListClass	resultInputList;
+	SvOl::SVInputInfoListClass	resultInputList;
 	SVOutputInfoListClass	resultOutputList;
 
-	SVInObjectInfoStruct*	pResultInputInfo;
+	SvOl::SVInObjectInfoStruct*	pResultInputInfo;
 	SVLongResultClass*    pResult = nullptr;
 	SVObjectClass*          pSVObject;
 
@@ -1757,7 +1757,7 @@ HRESULT SVBlobAnalyzerClass::onCollectOverlays(SVImageClass* p_pImage, SVExtentM
 	return S_OK;
 }
 
-void SVBlobAnalyzerClass::addDefaultInputObjects( SVInputInfoListClass* PInputListToFill )
+void SVBlobAnalyzerClass::addDefaultInputObjects( SvOl::SVInputInfoListClass* PInputListToFill )
 {
 	__super::addDefaultInputObjects( PInputListToFill );
 

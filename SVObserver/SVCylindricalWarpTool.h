@@ -32,7 +32,6 @@ public:
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	SVImageClass* GetInputImage(bool bRunMode = false);
 	HRESULT ValidateAngle(double &p_dWarpAngle );
 
 	enum WarpType
@@ -59,7 +58,7 @@ private:
 	bool CreateLUT();
 	HRESULT DestroyLUT();
 	
-	SVInObjectInfoStruct m_InputImageObjectInfo;
+	SvOl::SVInObjectInfoStruct m_InputImageObjectInfo;
 
 	SVImageClass m_OutputImage;
 	SVEnumerateValueObjectClass m_svWarpType;

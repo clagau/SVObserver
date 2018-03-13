@@ -77,21 +77,15 @@ bool SVLinearImageOperatorListClass::CloseObject()
 
 bool SVLinearImageOperatorListClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	SVInObjectInfoStruct* InputList[]
+	bool Result = __super::ResetObject(pErrorMessages);
+
+	SvOl::SVInObjectInfoStructPtrVector InputList
 	{
 		&inputUseRotationAngle,
 		&inputProfileOrientation
 	};
 
-	for (auto pEntry : InputList)
-	{
-		// Check if the input object is still valid otherwise the pointer is invalid
-		// Pointer do not need to be checked as the list are pointers of member variables
-		if (pEntry->IsConnected() && !pEntry->GetInputObjectInfo().CheckExistence())
-		{
-			pEntry->SetInputObject(nullptr);
-		}
-	}
+	SvOl::ValidateInputList(InputList);
 
 	BOOL UseRotation{true};
 	if( (S_OK == getUseRotationAngle( UseRotation )) && !UseRotation )
@@ -102,8 +96,6 @@ bool SVLinearImageOperatorListClass::ResetObject(SvStl::MessageContainerVector *
 	{
 		outputImageObject.InitializeImage( SvDef::SVImageTypeEnum::SVImageTypePhysical );
 	}
-
-	bool Result = __super::ResetObject(pErrorMessages);
 
 	CollectInputImageNames();
 

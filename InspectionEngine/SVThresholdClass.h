@@ -41,10 +41,6 @@ public:
 protected:
 	virtual bool onRun( bool First, SvOi::SVImageBufferHandlePtr RInputImageHandle, SvOi::SVImageBufferHandlePtr ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
-	SVDoubleValueObjectClass* getExternalUT(bool bRunMode = false);
-	SVDoubleValueObjectClass* getExternalLT(bool bRunMode = false);
-	SVDoubleValueObjectClass* getExternalATM(bool bRunMode = false);
-
 	SVMatroxIdentifier m_histResultID = M_NULL;
 	SVMatroxLongArray  m_HistValueArray;
 	int    m_histValueArraySize;
@@ -53,16 +49,16 @@ protected:
 
 	SVDoubleValueObjectClass m_dAutoThresholdMultiplier;
 	SVBoolValueObjectClass   m_useExternalATM;	// use external auto threshold multiplier
-	SVInObjectInfoStruct	 m_inputATM;
+	SvOl::SVInObjectInfoStruct	 m_inputATM;
 
 
 	SVLongValueObjectClass	 m_upperThresh;
 	SVBoolValueObjectClass   m_useExternalUT;		// use external Upper Threshold Value
-	SVInObjectInfoStruct	 m_inputUT;
+	SvOl::SVInObjectInfoStruct	 m_inputUT;
 
 	SVLongValueObjectClass	 m_lowerThresh;
 	SVBoolValueObjectClass   m_useExternalLT;		// use external Lower Threshold Value
-	SVInObjectInfoStruct	 m_inputLT;
+	SvOl::SVInObjectInfoStruct	 m_inputLT;
 
 	
 	SVBoolValueObjectClass	 m_threshActivate;

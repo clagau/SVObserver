@@ -59,7 +59,7 @@ void SVEquationSymbolTableClass::ClearAll()
 	// Disconnect the dynmaic Inputs
 	for( int i = static_cast<int> (m_toolsetSymbolTable.size() - 1); i >= 0; i-- )
 	{
-		SVInObjectInfoStruct* pInObjectInfo = m_toolsetSymbolTable[i];
+		SvOl::SVInObjectInfoStruct* pInObjectInfo = m_toolsetSymbolTable[i];
 		SVObjectManagerClass::Instance().DisconnectObjectInput(pInObjectInfo->GetInputObjectInfo().getUniqueObjectID(), pInObjectInfo);
 	}
 	// Empty the ToolSet Symbol table 
@@ -180,7 +180,7 @@ int SVEquationSymbolTableClass::AddSymbol(LPCTSTR name, SVObjectClass* pRequesto
 /////////////////////////////////////////////////////////////////
 // Get the ToolSet Symbol table
 /////////////////////////////////////////////////////////////////
-SVInputInfoListClass& SVEquationSymbolTableClass::GetToolSetSymbolTable()
+SvOl::SVInputInfoListClass& SVEquationSymbolTableClass::GetToolSetSymbolTable()
 {
 	return m_toolsetSymbolTable;
 }
@@ -590,16 +590,16 @@ int SVEquationClass::AddSymbol( LPCTSTR name )
 	return index;
 }
 
-bool SVEquationClass::DisconnectObjectInput( SVInObjectInfoStruct* pInObjectInfo )
+bool SVEquationClass::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pInObjectInfo )
 {
 	// Update ToolSet Symbol table - Gets called when one of our inputs goes away
 	if( pInObjectInfo )
 	{
-		SVInputInfoListClass& toolSetSymbols = m_Symbols.GetToolSetSymbolTable();
+		SvOl::SVInputInfoListClass& toolSetSymbols = m_Symbols.GetToolSetSymbolTable();
 
 		for( int i = 0;i < static_cast<int> (toolSetSymbols.size()); i++ )
 		{
-			SVInObjectInfoStruct* pSymbolInputObjectInfo = toolSetSymbols[i];
+			SvOl::SVInObjectInfoStruct* pSymbolInputObjectInfo = toolSetSymbols[i];
 
 			if( pSymbolInputObjectInfo )
 			{

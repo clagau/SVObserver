@@ -55,7 +55,7 @@ struct SVExternalToolTaskData : public SVCancelData
 	SVLongValueObjectClass                 m_voToolVersion;
 
 	// Inputs
-	std::vector<SVInObjectInfoStruct>      m_aInputImageInfo; //[NUM_INPUT_IMAGES]; // used to connect to other images
+	std::vector<SvOl::SVInObjectInfoStruct> m_aInputImageInfo; //[NUM_INPUT_IMAGES]; // used to connect to other images
 	std::vector<LinkedValue> m_aInputObjects; //[NUM_INPUT_OBJECTS]; // our own value objects
 	std::vector<SVStringValueObjectClass>  m_aInputObjectNames; //[NUM_INPUT_OBJECTS]; // our value object names
 
@@ -118,7 +118,7 @@ public:
 	void GetDLLMessageString(HRESULT hr, BSTR* bstrMessage) const;
 
 #pragma region Methods to replace processMessage
-	virtual bool DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo ) override;
+	virtual bool DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo) override;
 #pragma endregion Methods to replace processMessage
 
 protected:

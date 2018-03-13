@@ -32,13 +32,13 @@ struct SVOutObjectInfoStruct : public SVObjectInfoStruct
 
 	const SVOutObjectInfoStruct& operator=( const SVOutObjectInfoStruct& p_rsvValue );
 
-	HRESULT AddInput( SVInObjectInfoStruct& p_rsvInput );
-	HRESULT RemoveInput( SVInObjectInfoStruct& p_rsvInput );
+	HRESULT AddInput(SvOl::SVInObjectInfoStruct& p_rsvInput);
+	HRESULT RemoveInput(SvOl::SVInObjectInfoStruct& p_rsvInput);
 
 	HRESULT DisconnectAllInputs();
 
 	INT_PTR GetInputSize() { return static_cast<INT_PTR> (m_UserInfoList.size()); }
-	SVInObjectInfoStruct& GetInputAt( long lIndex ) { return m_UserInfoList[lIndex]; }
+	SvOl::SVInObjectInfoStruct& GetInputAt( long lIndex ) { return m_UserInfoList[lIndex]; }
 
 	bool Lock( DWORD p_TimeOutMilliseconds = INFINITE ) const;
 	bool Unlock() const;
@@ -48,7 +48,7 @@ private:
 	//	If you have to send messages to the user objects ( especially in SETUP MODE ),
 	//  you should use their object GUID! In RUN MODE you should normally not send 
 	//  messages, but you can use the validated object pointer!
-	SVInObjectInfoStructVector m_UserInfoList;
+	SvOl::SVInObjectInfoStructVector m_UserInfoList;
 
 	mutable SVCriticalSectionPtr m_CriticalSectionPtr;
 

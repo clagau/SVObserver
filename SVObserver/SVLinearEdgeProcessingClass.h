@@ -79,9 +79,6 @@ public:
 	DWORD m_dwColorNumber;
 
 protected:
-	SVImageClass* GetInputImage(bool bRunMode = false);
-	SVDoubleValueObjectClass* GetInputLinearData(bool bRunMode = false);
-
 	HRESULT UpdateUpperThresholdValues();
 	HRESULT UpdateLowerThresholdValues();
 	HRESULT UpdateEdgeList();
@@ -89,10 +86,10 @@ protected:
 	HRESULT GetBlackWhiteEdgeValue( double p_dCurrent, DWORD p_dwUpper, DWORD p_dwLower, double &l_rdValue );
 	HRESULT CalculateSubPixelEdge( double p_dStart, double p_dEnd, DWORD p_dwUpper, DWORD p_dwLower, DWORD p_dwPolarisation, double &p_rdDistance );
 
-	SVInObjectInfoStruct m_svInputImageObjectInfo;
-	SVInObjectInfoStruct m_svInputMinThreshold;
-	SVInObjectInfoStruct m_svInputMaxThreshold;
-	SVInObjectInfoStruct m_svInputLinearData;
+	SvOl::SVInObjectInfoStruct m_InputImageObjectInfo;
+	SvOl::SVInObjectInfoStruct m_InputMinThreshold;
+	SvOl::SVInObjectInfoStruct m_InputMaxThreshold;
+	SvOl::SVInObjectInfoStruct m_InputLinearData;
 
 	long m_lPixelDepth;
 

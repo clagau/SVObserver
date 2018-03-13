@@ -138,7 +138,7 @@ public:
 	void   UpdateRange(RangeEnum::ERange  range );
 
 #pragma region Methods to replace processMessage
-	virtual bool DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo ) override;
+	virtual bool DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo) override;
 	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override;
 #pragma endregion Methods to replace processMessage
 	
@@ -166,6 +166,6 @@ protected:
 	bool m_IsConnectedInput[RangeEnum::ER_COUNT];
 	SVObjectReference m_ValueObjectReferences[RangeEnum::ER_COUNT];
 	bool m_isValidRange;
-	SVInObjectInfoStruct m_inputObjectInfo;
+	SvOl::SVInObjectInfoStruct m_inputObjectInfo;
 };
 

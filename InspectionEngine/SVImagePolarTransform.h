@@ -33,8 +33,6 @@ public:
 
 	bool SetDefaultFormulas(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 
-	SVImageClass* getInputImage(bool bRunMode = false) const;
-
 protected:
 	void NewCorrectAngles( double& RDStartAngle, double& RDEndAngle );
 	void correctAngles( double& RDStartAngle, double& RDEndAngle );
@@ -72,7 +70,7 @@ protected:
 	SVEnumerateValueObjectClass m_interpolationMode;
 
 	// Inputs
-	SVInObjectInfoStruct		m_inputImageObjectInfo;
+	SvOl::SVInObjectInfoStruct		m_inputImageObjectInfo;
 
 private:
 	void SetCalculatedPrintableFlags();

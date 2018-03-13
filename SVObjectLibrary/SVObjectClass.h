@@ -29,7 +29,10 @@
 #pragma endregion Includes
 
 #pragma region Declarations
+namespace SvOl
+{
 struct SVInObjectInfoStruct;
+}
 struct SVObjectLevelCreateStruct;
 struct SVObjectNameInfo;
 
@@ -104,8 +107,8 @@ public:
 	virtual HRESULT RefreshObject( const SVObjectClass* const pSender, RefreshObjectType Type );
 
 	virtual bool ConnectAllInputs() { return false; };
-	bool ConnectObjectInput( SVInObjectInfoStruct* pObjectInInfo );
-	virtual bool DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo );
+	bool ConnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo );
+	virtual bool DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo );
 
 	virtual bool isInputImage(const SVGUID& rImageGuid) const { return false; };
 
@@ -201,7 +204,7 @@ public:
 	/// Get the input list combined also from children and if required from friends.
 	/// \param inputList [in,out] Add the new input object to the end of the list.
 	/// \param bAlsoFriends [in] If true, it adds also the inputs of the friend.
-	virtual void GetInputInterface(SVInputInfoListClass& rInputList, bool bAlsoFriends) const {};
+	virtual void GetInputInterface(SvOl::SVInputInfoListClass& rInputList, bool bAlsoFriends) const {};
 
 	/// Will be called, if an object was renamed.
 	/// \param rRenamedObject [in] Reference to the renamed object.

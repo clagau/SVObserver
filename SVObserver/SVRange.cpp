@@ -132,11 +132,7 @@ bool SVRangeClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = InitReferencesAndInputs(pErrorMessages);
 
-	// Check if the input object is still valid otherwise the pointer is invalid
-	if (m_inputObjectInfo.IsConnected() && !m_inputObjectInfo.GetInputObjectInfo().CheckExistence())
-	{
-		m_inputObjectInfo.SetInputObject(nullptr);
-	}
+	SvOl::ValidateInput(m_inputObjectInfo);
 
 	// check if input is valid
 	if( !m_inputObjectInfo.IsConnected() || nullptr == m_inputObjectInfo.GetInputObjectInfo().getObject() )
@@ -286,7 +282,7 @@ void   SVRangeClass::UpdateRange(RangeEnum::ERange  range )
 	}
 }
 
-bool SVRangeClass::DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo )
+bool SVRangeClass::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo )
 {
 // This Message occurs for two scenarios
 // 1. Some Object is using our outputs and they are no longer needed.
@@ -452,7 +448,7 @@ void SVRangeClass::ConnectAllInputObjects()
 		{
 			if( GUID_NULL != m_ValueObjectReferences[i].Guid() )
 			{
-				SVInObjectInfoStruct InObjectInfo;
+				SvOl::SVInObjectInfoStruct InObjectInfo;
 				InObjectInfo.SetObject(this);
 				InObjectInfo.m_ObjectTypeInfo.ObjectType  = SvDef::SVRangeObjectType;
 				m_IsConnectedInput[i] = SVObjectManagerClass::Instance().ConnectObjectInput( m_ValueObjectReferences[i].Guid(), &InObjectInfo );
@@ -469,7 +465,7 @@ void SVRangeClass::DisconnectAllInputObjects()
 		{
 			if( GUID_NULL != m_ValueObjectReferences[i].Guid() )
 			{
-				SVInObjectInfoStruct InObjectInfo;
+				SvOl::SVInObjectInfoStruct InObjectInfo;
 
 				InObjectInfo.SetObject(this);
 				InObjectInfo.m_ObjectTypeInfo.ObjectType  = SvDef::SVRangeObjectType;

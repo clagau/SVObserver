@@ -132,11 +132,7 @@ bool SVLUTOperatorClass::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 {
 	bool Result = SVUnaryImageOperatorClass::ResetObject(pErrorMessages);
 
-	// Check if the input object is still valid otherwise the pointer is invalid
-	if (m_inputLUTVectorResult.IsConnected() && !m_inputLUTVectorResult.GetInputObjectInfo().CheckExistence())
-	{
-		m_inputLUTVectorResult.SetInputObject(nullptr);
-	}
+	SvOl::ValidateInput(m_inputLUTVectorResult);
 
 	m_bForceLUTRecalc = m_bForceLUTRecalc || Result;
 
@@ -302,7 +298,7 @@ bool SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& rRunStatus )
 
 				// Get LUT Vector from equation and stick it inside m_lutVector...
 				std::vector<BYTE> byteVector;
-				SVByteValueObjectClass* pLUTResult = getInputLUTVectorResult(true);
+				SVByteValueObjectClass* pLUTResult = SvOl::getInput<SVByteValueObjectClass>(m_inputLUTVectorResult, true);
 
 				l_bOk = l_bOk && nullptr != pLUTResult;
 				l_bOk = l_bOk && S_OK == pLUTResult->GetArrayValues(byteVector);
@@ -359,26 +355,6 @@ bool SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& rRunStatus )
 	return false;
 }
 
-
-SVByteValueObjectClass* SVLUTOperatorClass::getInputLUTVectorResult(bool bRunMode /*= false*/)
-{
-	if (m_inputLUTVectorResult.IsConnected() && m_inputLUTVectorResult.GetInputObjectInfo().getObject())
-	{
-		SVObjectClass* pObject = m_inputLUTVectorResult.GetInputObjectInfo().getObject();
-		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return bRunMode ? static_cast<SVByteValueObjectClass*> (pObject) : dynamic_cast<SVByteValueObjectClass*> (pObject);
-	}
-
-	return nullptr;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : onRun
-// -----------------------------------------------------------------------------
-// .Description : Runs this operator.
-//              : Returns false, if operator cannot run ( may be deactivated ! )
-////////////////////////////////////////////////////////////////////////////////
 bool SVLUTOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
 	// Is doing special friend routing !!!

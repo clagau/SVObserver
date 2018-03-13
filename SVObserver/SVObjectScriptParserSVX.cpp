@@ -1420,7 +1420,7 @@ bool SVObjectScriptParserSVXClass::ReattachInputs( SVObjectClass* pObject, SVObj
 {
 	bool l_bOk = true;
 
-	SVInputInfoListClass inputInfoList;
+	SvOl::SVInputInfoListClass inputInfoList;
 
 	if (nullptr != pObject)
 	{
@@ -1436,7 +1436,7 @@ bool SVObjectScriptParserSVXClass::ReattachInputs( SVObjectClass* pObject, SVObj
 
 	SVToolClass* l_psvTool = dynamic_cast<SVToolClass*>( pObject );
 
-	const SVInObjectInfoStruct* pAuxInfo = l_psvTool->GetAuxInputImageInfo();
+	const SvOl::SVInObjectInfoStruct* pAuxInfo = l_psvTool->GetAuxInputImageInfo();
 
 	// reattach inputs
 	for( int i = 0; l_bOk && i < l_lOperandSize; i++ )
@@ -1448,7 +1448,7 @@ bool SVObjectScriptParserSVXClass::ReattachInputs( SVObjectClass* pObject, SVObj
 		{
 			SVGUID inputGuid = *( ( GUID* ) rOperand.Value() );
 
-			SVInObjectInfoStruct* pInInfo = nullptr;
+			SvOl::SVInObjectInfoStruct* pInInfo = nullptr;
 
 			if( l_lOperandSize == l_lInfoSize )
 			{

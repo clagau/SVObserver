@@ -90,7 +90,7 @@ public:
 #pragma region Methods to replace processMessage
 	virtual bool createAllObjects( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual void ConnectObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
-	virtual void GetInputInterface(SVInputInfoListClass& rInputList, bool bAlsoFriends) const override;
+	virtual void GetInputInterface(SvOl::SVInputInfoListClass& rInputList, bool bAlsoFriends) const override;
 	virtual SvOi::IObjectClass* getFirstObject(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends = true, const SvOi::IObjectClass* pRequestor = nullptr) const override;
 	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override;
 	virtual bool ConnectAllInputs() override;

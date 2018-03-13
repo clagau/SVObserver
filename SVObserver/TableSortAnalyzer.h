@@ -56,7 +56,7 @@ private:
 
 #pragma region Member Variables
 protected:
-	SVInObjectInfoStruct m_sortColumnObjectInfo;
+	SvOl::SVInObjectInfoStruct m_sortColumnObjectInfo;
 	SVBoolValueObjectClass m_isASC;
 	std::shared_ptr<double> m_tmpValues;
 	size_t m_tmpArraySize;

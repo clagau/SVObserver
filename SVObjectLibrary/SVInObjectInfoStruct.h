@@ -16,6 +16,9 @@
 
 #include "SVObjectInfoStruct.h"
 
+namespace SvOl
+{
+
 struct SVInObjectInfoStruct : public SVObjectInfoStruct
 {
 	SVInObjectInfoStruct();
@@ -54,3 +57,20 @@ protected:
 typedef std::vector<SVInObjectInfoStruct> SVInObjectInfoStructVector;
 typedef std::vector<SVInObjectInfoStruct*> SVInObjectInfoStructPtrVector;
 
+void ValidateInput(SVInObjectInfoStruct& rInputObject);
+void ValidateInputList(SVInObjectInfoStructPtrVector& rInputObjectList);
+
+template <typename T>
+T* getInput(const SVInObjectInfoStruct& rInputObject, bool bRunMode=false)
+{
+	if (rInputObject.IsConnected() && nullptr != rInputObject.GetInputObjectInfo().getObject())
+	{
+		SVObjectClass* pObject = rInputObject.GetInputObjectInfo().getObject();
+		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
+		//! We are sure that when getObject() is not nullptr that it is the correct type
+		return bRunMode ? static_cast<T*> (pObject) : dynamic_cast<T*> (pObject);
+	}
+
+	return nullptr;
+}
+} //namespace SvOl

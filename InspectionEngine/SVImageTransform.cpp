@@ -135,13 +135,9 @@ bool SVImageTransformClass::CreateObject( const SVObjectLevelCreateStruct& rCrea
 
 bool SVImageTransformClass::ResetObject( SvStl::MessageContainerVector *pErrorMessages )
 {
-	bool Result = true;
+	bool Result = __super::ResetObject(pErrorMessages);
 	
-	// Check if the input object is still valid otherwise the pointer is invalid
-	if (m_inputImageObjectInfo.IsConnected() && !m_inputImageObjectInfo.GetInputObjectInfo().CheckExistence())
-	{
-		m_inputImageObjectInfo.SetInputObject(nullptr);
-	}
+	SvOl::ValidateInput(m_inputImageObjectInfo);
 
 	if (S_OK != UpdateTransformData())
 	{
@@ -154,29 +150,14 @@ bool SVImageTransformClass::ResetObject( SvStl::MessageContainerVector *pErrorMe
 	}
 	else
 	{
-		Result = m_outputImageObject.ResetObject(pErrorMessages);
+		Result = Result && m_outputImageObject.ResetObject(pErrorMessages);
 	}
-
-	Result = __super::ResetObject(pErrorMessages) && Result;
 
 	CollectInputImageNames();
 
 	return Result;
 }
 #pragma endregion
-
-SVImageClass* SVImageTransformClass::getInputImage(bool bRunMode /*= false*/) const
-{
-	if (m_inputImageObjectInfo.IsConnected() && nullptr != m_inputImageObjectInfo.GetInputObjectInfo().getObject())
-	{
-		SVObjectClass* pObject = m_inputImageObjectInfo.GetInputObjectInfo().getObject();
-		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return bRunMode ? static_cast<SVImageClass*> (pObject) : dynamic_cast<SVImageClass*> (pObject);
-	}
-
-	return nullptr;
-}
 
 SVImageClass* SVImageTransformClass::getOutputImage()
 {
@@ -189,7 +170,7 @@ bool SVImageTransformClass::isInputImage(const SVGUID& rImageGuid) const
 {
 	bool Result(false);
 
-	SVImageClass* pImage = getInputImage();
+	SVImageClass* pImage = SvOl::getInput<SVImageClass>(m_inputImageObjectInfo);
 	if (nullptr != pImage && rImageGuid == pImage->GetUniqueObjectID())
 	{
 		Result = true;
@@ -216,7 +197,7 @@ bool SVImageTransformClass::onRun( SVRunStatusClass& runStatus, SvStl::MessageCo
 	double width = 0.0;
 	double height = 0.0;
 
-	SVImageClass* pInputImage = getInputImage(true);
+	SVImageClass* pInputImage = SvOl::getInput<SVImageClass>(m_inputImageObjectInfo, true);
 
 	if ( nullptr == pInputImage )
 	{
@@ -384,7 +365,7 @@ HRESULT SVImageTransformClass::UpdateTransformData( )
 {
 	HRESULT l_hrOk = S_OK;
 
-	SVImageClass* pInputImage = getInputImage(true);
+	SVImageClass* pInputImage = SvOl::getInput<SVImageClass>(m_inputImageObjectInfo, true);
 	SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
 
 	if( nullptr != pInputImage && nullptr != pTool )
@@ -393,11 +374,11 @@ HRESULT SVImageTransformClass::UpdateTransformData( )
 
 		SVImageExtentClass Extents = pInputImage->GetImageExtents();
 
-		SVDoubleValueObjectClass* pTranslationXResult = getInputTranslationXResult(true);
-		SVDoubleValueObjectClass* pTranslationYResult = getInputTranslationYResult(true);
-		SVDoubleValueObjectClass* pRotationXResult = getInputRotationXResult(true);
-		SVDoubleValueObjectClass* pRotationYResult = getInputRotationYResult(true);
-		SVDoubleValueObjectClass* pRotationAngleResult = getInputRotationAngleResult(true);
+		SVDoubleValueObjectClass* pTranslationXResult = SvOl::getInput<SVDoubleValueObjectClass>(m_inputTranslationXResult, true);
+		SVDoubleValueObjectClass* pTranslationYResult = SvOl::getInput<SVDoubleValueObjectClass>(m_inputTranslationYResult, true);
+		SVDoubleValueObjectClass* pRotationXResult = SvOl::getInput<SVDoubleValueObjectClass>(m_inputRotationXResult, true);
+		SVDoubleValueObjectClass* pRotationYResult = SvOl::getInput<SVDoubleValueObjectClass>(m_inputRotationYResult, true);
+		SVDoubleValueObjectClass* pRotationAngleResult = SvOl::getInput<SVDoubleValueObjectClass>(m_inputRotationAngleResult, true);
 
 		BOOL bTranslationEnabled( false );
 		BOOL bRotationEnabled( false );
@@ -505,7 +486,7 @@ HRESULT SVImageTransformClass::UpdateTransformData( )
 
 		::KeepPrevError( l_hrOk, pTool->SetImageExtent( Extents ) );
 
-		::KeepPrevError( l_hrOk, m_outputImageObject.InitializeImage( getInputImage() ) );
+		::KeepPrevError( l_hrOk, m_outputImageObject.InitializeImage(pInputImage) );
 
 		// Return code for UpdateImageWithExtend not being checked because it may not be valid the first time.
 		pTool->UpdateImageWithExtent();
@@ -524,7 +505,7 @@ HRESULT SVImageTransformClass::UpdateTransformData( )
 HRESULT SVImageTransformClass::CollectInputImageNames()
 {
 	HRESULT l_hr = S_FALSE;
-	SVImageClass* pInputImage = getInputImage();
+	SVImageClass* pInputImage = SvOl::getInput<SVImageClass>(m_inputImageObjectInfo);
 	SVTransformationToolClass* pTool = dynamic_cast<SVTransformationToolClass*>(GetTool());
 	if( nullptr != pInputImage && nullptr != pTool )
 	{

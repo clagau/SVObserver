@@ -51,42 +51,25 @@ SVMathContainerClass::~SVMathContainerClass()
 bool SVMathContainerClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
 	m_isCreated = SVTaskObjectClass::CreateObject(rCreateStructure ) && nullptr != GetInspection() && 
-		nullptr != GetTool() && nullptr != getInputMathResult();
+		nullptr != GetTool() && nullptr != SvOl::getInput<SVDoubleValueObjectClass>(m_inputMathResult);
 	return m_isCreated;
 }
 
 bool SVMathContainerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	bool Valid = __super::ResetObject(pErrorMessages);
+	bool Result = __super::ResetObject(pErrorMessages);
 
-	// Check if the input object is still valid otherwise the pointer is invalid
-	if (m_inputMathResult.IsConnected() && !m_inputMathResult.GetInputObjectInfo().CheckExistence())
-	{
-		m_inputMathResult.SetInputObject(nullptr);
-	}
+	SvOl::ValidateInput(m_inputMathResult);
 
-	if( nullptr == getInputMathResult() )
+	if( nullptr == SvOl::getInput<SVDoubleValueObjectClass>(m_inputMathResult) )
 	{
 		if (nullptr != pErrorMessages)
 		{
 			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
-		Valid = false;
+		Result = false;
 	}
 
-	return Valid;
-}
-
-SVDoubleValueObjectClass* SVMathContainerClass::getInputMathResult(bool bRunMode /*= false*/)
-{
-	if (m_inputMathResult.IsConnected() && m_inputMathResult.GetInputObjectInfo().getObject())
-	{
-		SVObjectClass* pObject = m_inputMathResult.GetInputObjectInfo().getObject();
-		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return bRunMode ? static_cast<SVDoubleValueObjectClass*> (pObject) : dynamic_cast<SVDoubleValueObjectClass*> (pObject);
-	}
-
-	return nullptr;
+	return Result;
 }

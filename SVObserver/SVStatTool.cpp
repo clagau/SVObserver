@@ -216,13 +216,9 @@ bool SVStatisticsToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMes
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 	
-	// Check if the input object is still valid otherwise the pointer is invalid
-	if (m_inputObjectInfo.IsConnected() && !m_inputObjectInfo.GetInputObjectInfo().CheckExistence())
-	{
-		m_inputObjectInfo.SetInputObject(nullptr);
-	}
+	SvOl::ValidateInput(m_inputObjectInfo);
 
-	if ( Result )
+	if (Result)
 	{
 		std::string Name;
 		m_VariableName.GetValue( Name );
@@ -421,10 +417,10 @@ DWORD SVStatisticsToolClass::FreeResult (SVStatisticsFeatureEnum aFeatureIndex)
 
 SVResultClass* SVStatisticsToolClass::GetResult(SVStatisticsFeatureEnum aFeatureIndex)
 {
-	SVInputInfoListClass	resultInputList;
+	SvOl::SVInputInfoListClass	resultInputList;
 	SVOutputInfoListClass	resultOutputList;
 	
-	SVInObjectInfoStruct*	pResultInputInfo;
+	SvOl::SVInObjectInfoStruct*	pResultInputInfo;
 	
 	SvDef::SVObjectTypeInfoStruct  info;
 	SVDoubleResultClass*    pResult;
@@ -528,7 +524,7 @@ void SVStatisticsToolClass::SetVariableSelected( const std::string& rName )
 	}
 }
 
-bool SVStatisticsToolClass::DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo )
+bool SVStatisticsToolClass::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo )
 {
 	if( pObjectInInfo && pObjectInInfo->GetInputObjectInfo().getUniqueObjectID() == m_inputObjectInfo.GetInputObjectInfo().getUniqueObjectID() )
 	{

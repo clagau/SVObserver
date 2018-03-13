@@ -1022,8 +1022,7 @@ HRESULT SVTADlgTranslationResizePage::UpdateImages()
 
 	SvOi::SVImageBufferHandlePtr inputImageHandle;
 
-	SVImageClass* inputImage = m_pTool->getInputImage();
-	if (nullptr == inputImage)
+	if (nullptr == m_pTool->getInputImage())
 	{
 		// if (nullptr == inputImage) should not need checked here.
 		// is already checked in SetupTempROIImage().  If this error is
@@ -1033,8 +1032,8 @@ HRESULT SVTADlgTranslationResizePage::UpdateImages()
 	}
 	else
 	{
-		SVImageClass* logicalROIImage = m_pTool->getLogicalROIImage();
-		if (nullptr == logicalROIImage)
+		SVImageClass* pLogicalROIImage = m_pTool->getLogicalROIImage();
+		if (nullptr == pLogicalROIImage)
 		{
 			// if (nullptr == logicalROIImage) should not need checked here.
 			// is already checked in SetupTempROIImage().  If this error is
@@ -1044,15 +1043,15 @@ HRESULT SVTADlgTranslationResizePage::UpdateImages()
 		}
 		else
 		{
-			SVImageClass* outputImage = m_pTool->getOutputImage();
-			if (!outputImage)
+			SVImageClass* pOutputImage = m_pTool->getOutputImage();
+			if (nullptr == pOutputImage)
 			{
 				hr = SVMSG_SVO_5041_COULDNOTGETOUTPUTIMAGE;
 			}
 			else
 			{
-				m_DialogImage.setImage(logicalROIImage, m_ROITabHandle);
-				m_DialogImage.setImage(outputImage, m_OutputTabHandle);
+				m_DialogImage.setImage(pLogicalROIImage, m_ROITabHandle);
+				m_DialogImage.setImage(pOutputImage, m_OutputTabHandle);
 
 				m_DialogImage.Refresh();
 			}

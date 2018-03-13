@@ -754,12 +754,12 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 			{
 				bPrintToolExtents = FALSE;
 				
-				SVInputInfoListClass    toolInputList;
+				SvOl::SVInputInfoListClass    toolInputList;
 				SVImageClass*           pCurrentSourceImage = nullptr;
-				SVInObjectInfoStruct*   pImageInputInfo = nullptr;
+				SvOl::SVInObjectInfoStruct*   pImageInputInfo = nullptr;
 				
-				SVInObjectInfoStruct* l_psvImageInfo = nullptr;
-				SVInObjectInfoStruct* l_psvLastImageInfo = nullptr;
+				SvOl::SVInObjectInfoStruct* l_psvImageInfo = nullptr;
+				SvOl::SVInObjectInfoStruct* l_psvLastImageInfo = nullptr;
 
 				while( nullptr == l_psvImageInfo && S_OK == pTool->FindNextInputImageInfo( l_psvImageInfo, l_psvLastImageInfo ) )
 				{
@@ -769,7 +769,7 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 
 						if( l_psvImageInfo->IsConnected() )
 						{
-							pCurrentSourceImage = dynamic_cast <SVImageClass*> (l_psvImageInfo->GetInputObjectInfo().getObject());
+							pCurrentSourceImage = dynamic_cast<SVImageClass*> (l_psvImageInfo->GetInputObjectInfo().getObject());
 
 							PrintValueObject( pDC, ptCurPos, SvUl::LoadStdString(IDS_IMAGE_SOURCE_STRING).c_str(), pCurrentSourceImage->GetObjectNameToObjectType().c_str() );
 						}

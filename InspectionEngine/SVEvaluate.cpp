@@ -62,7 +62,7 @@ bool SVEvaluateClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContain
 	// All inputs and outputs must be validated first
 	if( __super::onRun( rRunStatus, pErrorMessages ) )
 	{
-		SVDoubleValueObjectClass* pInputResult = getInputMathResult(true);
+		SVDoubleValueObjectClass* pInputResult = SvOl::getInput<SVDoubleValueObjectClass>(m_inputMathResult, true);
 
 		double Value( 0.0 );
 		if( S_OK != pInputResult->GetValue(Value) || S_OK != pResult->SetValue(Value))

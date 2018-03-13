@@ -930,7 +930,7 @@ void SVArchiveTool::getTranslatedImagePath(std::string &rImagePath)
 	rImagePath = m_ImageTranslatedPath;
 }
 
-bool SVArchiveTool::DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo )
+bool SVArchiveTool::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo )
 {
 	if (nullptr != pObjectInInfo)
 	{

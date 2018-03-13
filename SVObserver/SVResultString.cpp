@@ -47,7 +47,7 @@ SVStringResultClass::~SVStringResultClass()
 
 bool SVStringResultClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVResultClass::CreateObject(rCreateStructure) && nullptr != getInputString();
+	bool bOk = SVResultClass::CreateObject(rCreateStructure) && nullptr != SvOl::getInput<SVStringValueObjectClass>(m_inputObjectInfo);
 
 	m_Value.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
@@ -56,25 +56,12 @@ bool SVStringResultClass::CreateObject( const SVObjectLevelCreateStruct& rCreate
 	return bOk;
 }
 
-SVStringValueObjectClass* SVStringResultClass::getInputString(bool bRunMode /*= false*/)
-{
-	if( m_inputObjectInfo.IsConnected() && nullptr != m_inputObjectInfo.GetInputObjectInfo().getObject())
-	{
-		SVObjectClass* pObject = m_inputObjectInfo.GetInputObjectInfo().getObject();
-		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return bRunMode ? static_cast<SVStringValueObjectClass*> (pObject) : dynamic_cast<SVStringValueObjectClass*> (pObject);
-	}
-
-	return nullptr;
-}
-
 bool SVStringResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	// All inputs and outputs must be validated first
 	if( __super::onRun( rRunStatus, pErrorMessages ) )
 	{
-		SVStringValueObjectClass* pValueObject = getInputString(true);
+		SVStringValueObjectClass* pValueObject = SvOl::getInput<SVStringValueObjectClass>(m_inputObjectInfo, true);
 		ASSERT( pValueObject );
 
 		if( nullptr != pValueObject )

@@ -64,13 +64,12 @@ protected:
 #pragma region Protected Methods
 	virtual bool isInputImage(const SVGUID& rImageGuid) const override;
 	virtual bool onRun( SVRunStatusClass &p_rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
-	SVImageClass* getInputImage(bool bRunMode = false) const;
 #pragma endregion Protected Methods
 
 #pragma region Member Variables
-	SVInObjectInfoStruct m_ImageInput;
-	SVInObjectInfoStruct m_TranslationYInput;
-	SVInObjectInfoStruct m_TranslationXInput;
+	SvOl::SVInObjectInfoStruct m_ImageInput;
+	SvOl::SVInObjectInfoStruct m_TranslationYInput;
+	SvOl::SVInObjectInfoStruct m_TranslationXInput;
 
 	SVStringValueObjectClass m_SourceImageName;
 	SVLongValueObjectClass m_TranslationX;

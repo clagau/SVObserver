@@ -62,7 +62,7 @@ public:
 	void getTranslatedImagePath(std::string& rImagePath);
 
 #pragma region Methods to replace processMessage
-	virtual bool DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo ) override;
+	virtual bool DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo ) override;
 	virtual void goingOffline() override;
 	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override;
 #pragma endregion Methods to replace processMessage

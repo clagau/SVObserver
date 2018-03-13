@@ -23,6 +23,8 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
+namespace SvOl
+{
 SVInputInfoListClass::SVInputInfoListClass()
 {
 }
@@ -105,3 +107,4 @@ bool SVInputInfoListClass::checkDuplicates( SVInObjectInfoStruct* pInObjectInfo 
 	return false;
 }
 
+} //namespace SvOl

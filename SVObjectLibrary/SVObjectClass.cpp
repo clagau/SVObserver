@@ -197,7 +197,7 @@ HRESULT SVObjectClass::RefreshObject( const SVObjectClass* const pSender, Refres
 }
 
 // Connect Input from somebody else to my Output...( to me )
-bool SVObjectClass::ConnectObjectInput( SVInObjectInfoStruct* pObjectInInfo )
+bool SVObjectClass::ConnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo )
 {
 	if( pObjectInInfo )
 	{
@@ -216,7 +216,7 @@ bool SVObjectClass::ConnectObjectInput( SVInObjectInfoStruct* pObjectInInfo )
 }
 
 // Disconnect Input from somebody else from my Output...( from me )
-bool SVObjectClass::DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo )
+bool SVObjectClass::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo )
 {
 	if( nullptr != pObjectInInfo )
 	{

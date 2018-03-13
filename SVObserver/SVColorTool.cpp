@@ -60,7 +60,7 @@ bool SVColorToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStr
 		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*> (GetInspection());
 		if (nullptr != pInspection && nullptr != pInspection->GetToolSet())
 		{
-			SVImageClass* pInputImage = getInputImage();
+			SVImageClass* pInputImage = SvOl::getInput<SVImageClass>(m_InputImageObjectInfo);
 			if (nullptr != pInputImage)
 			{
 				//! We do not want the Logical ROI image showing up as an output image.
@@ -135,11 +135,7 @@ bool SVColorToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages
 {
 	bool Result{ true };
 
-	// Check if the input object is still valid otherwise the pointer is invalid
-	if (m_InputImageObjectInfo.IsConnected() && !m_InputImageObjectInfo.GetInputObjectInfo().CheckExistence())
-	{
-		m_InputImageObjectInfo.SetInputObject(nullptr);
-	}
+	SvOl::ValidateInput(m_InputImageObjectInfo);
 
 	for (BandEnum Band : BandList)
 	{
@@ -147,7 +143,8 @@ bool SVColorToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages
 		m_bandImage[Band].ResetObject();
 	}
 	
-	if (m_LogicalROIImage.InitializeImage(getInputImage()))
+	SVImageClass* pInputImage = SvOl::getInput<SVImageClass>(m_InputImageObjectInfo);
+	if (m_LogicalROIImage.InitializeImage(pInputImage))
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
@@ -156,7 +153,7 @@ bool SVColorToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages
 			pErrorMessages->push_back(Msg);
 		}
 	}
-	if (m_OutputImage.InitializeImage(getInputImage()))
+	if (m_OutputImage.InitializeImage(pInputImage))
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
@@ -168,7 +165,7 @@ bool SVColorToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages
 
 	Result = SVToolClass::ResetObject(pErrorMessages) && Result;
 
-	if (nullptr == getInputImage())
+	if (nullptr == pInputImage)
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
@@ -238,7 +235,7 @@ bool SVColorToolClass::isInputImage(const SVGUID& rImageGuid) const
 {
 	bool Result(false);
 
-	SVImageClass* pImage = getInputImage();
+	SVImageClass* pImage = SvOl::getInput<SVImageClass>(m_InputImageObjectInfo);
 	if (nullptr != pImage && rImageGuid == pImage->GetUniqueObjectID())
 	{
 		Result = true;
@@ -256,7 +253,7 @@ bool SVColorToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContain
 	SvOi::SVImageBufferHandlePtr OutputImageHandle;
 	if (m_OutputImage.SetImageHandleIndex(rRunStatus.Images) && m_OutputImage.GetImageHandle(OutputImageHandle))
 	{
-		SVImageClass* pInputImage = getInputImage(true);
+		SVImageClass* pInputImage = SvOl::getInput<SVImageClass>(m_InputImageObjectInfo, true);
 		if (nullptr != pInputImage)
 		{
 			if (m_LogicalROIImage.GetLastResetTimeStamp() <= pInputImage->GetLastResetTimeStamp())
@@ -365,19 +362,6 @@ void SVColorToolClass::LocalInitialize()
 	}
 }
 
-SVImageClass* SVColorToolClass::getInputImage(bool bRunMode /*= false*/) const
-{
-	if (m_InputImageObjectInfo.IsConnected() && nullptr != m_InputImageObjectInfo.GetInputObjectInfo().getObject())
-	{
-		SVObjectClass* pObject = m_InputImageObjectInfo.GetInputObjectInfo().getObject();
-		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return bRunMode ? static_cast<SVImageClass*> (pObject) : dynamic_cast<SVImageClass*> (pObject);
-	}
-
-	return nullptr;
-}
-
 bool SVColorToolClass::createBandChildLayer(BandEnum Band)
 {
 	bool l_bOk = false;
@@ -400,9 +384,10 @@ HRESULT SVColorToolClass::CollectInputImageNames()
 {
 	std::string Name;
 
-	if (nullptr != getInputImage())
+	SVImageClass* pInputImage = SvOl::getInput<SVImageClass>(m_InputImageObjectInfo);
+	if (nullptr != pInputImage)
 	{
-		std::string Name = getInputImage()->GetCompleteName();
+		std::string Name = pInputImage->GetCompleteName();
 		m_SourceImageNames.SetDefaultValue(Name, true);
 		return S_OK;
 	}

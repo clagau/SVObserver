@@ -29,7 +29,7 @@ public:
 
 protected:
 	SVImageClass* getInputImage(bool bRunMode = false);
-	SVInObjectInfoStruct		m_inputImageObjectInfo;
+	SvOl::SVInObjectInfoStruct m_inputImageObjectInfo;
 
 private:
 	void init();

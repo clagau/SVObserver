@@ -1847,7 +1847,7 @@ SvOi::IObjectClass* SVObjectManagerClass::getFirstObject(const SVGUID& rSourceId
 	return pRetObject;
 }
 
-bool SVObjectManagerClass::ConnectObjectInput( const SVGUID& rSourceId, SVInObjectInfoStruct* pObjectInInfo )
+bool SVObjectManagerClass::ConnectObjectInput( const SVGUID& rSourceId, SvOl::SVInObjectInfoStruct* pObjectInInfo )
 {
 	bool Result = false;
 	SVObjectClass* pSource = SVObjectManagerClass::Instance().GetObject( rSourceId );
@@ -1858,7 +1858,7 @@ bool SVObjectManagerClass::ConnectObjectInput( const SVGUID& rSourceId, SVInObje
 	return Result;
 }
 
-bool SVObjectManagerClass::DisconnectObjectInput( const SVGUID& rSourceId, SVInObjectInfoStruct* pObjectInInfo )
+bool SVObjectManagerClass::DisconnectObjectInput( const SVGUID& rSourceId, SvOl::SVInObjectInfoStruct* pObjectInInfo )
 {
 	bool Result = false;
 	SVObjectClass* pSource = SVObjectManagerClass::Instance().GetObject( rSourceId );

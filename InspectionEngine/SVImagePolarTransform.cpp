@@ -141,7 +141,7 @@ bool SVImagePolarTransformClass::CreateObject( const SVObjectLevelCreateStruct& 
 	l_bOk = l_bOk && S_OK == pTool->SetImageExtentProperty( SvDef::SVExtentPropertyStartAngle, &m_startAngle );
 	l_bOk = l_bOk && S_OK == pTool->SetImageExtentProperty( SvDef::SVExtentPropertyEndAngle, &m_endAngle );
 
-	l_bOk &= S_OK == ( outputImageObject.InitializeImage( getInputImage() ) );
+	l_bOk &= S_OK == ( outputImageObject.InitializeImage(SvOl::getInput<SVImageClass>(m_inputImageObjectInfo)));
 
 	// Set / Reset Printable Flag
 	const UINT cAttributes = SvDef::SV_PRINTABLE | SvDef::SV_REMOTELY_SETABLE | SvDef::SV_EXTENT_OBJECT | SvDef::SV_SETABLE_ONLINE;
@@ -165,26 +165,13 @@ bool SVImagePolarTransformClass::isInputImage(const SVGUID& rImageGuid) const
 {
 	bool Result(false);
 
-	SVImageClass* pImage = getInputImage();
+	SVImageClass* pImage = SvOl::getInput<SVImageClass>(m_inputImageObjectInfo);
 	if ( nullptr != pImage && rImageGuid == pImage->GetUniqueObjectID())
 	{
 		Result = true;
 	}
 
 	return Result;
-}
-
-SVImageClass* SVImagePolarTransformClass::getInputImage(bool bRunMode /*= false*/) const
-{
-	if (m_inputImageObjectInfo.IsConnected() && nullptr != m_inputImageObjectInfo.GetInputObjectInfo().getObject())
-	{
-		SVObjectClass* pObject = m_inputImageObjectInfo.GetInputObjectInfo().getObject();
-		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return bRunMode ? static_cast<SVImageClass*> (pObject) : dynamic_cast<SVImageClass*> (pObject);
-	}
-
-	return nullptr;
 }
 
 SVImageClass* SVImagePolarTransformClass::GetOutputImage()
@@ -492,12 +479,18 @@ bool SVImagePolarTransformClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Mes
 		
 		if ( bUseFormula )
 		{
-			l_bOk = l_bOk && nullptr != getInputStartAngleResult(true) && S_OK == ( getInputStartAngleResult(true)->GetValue( dStartAngle ) );
-			l_bOk = l_bOk && nullptr != getInputEndAngleResult(true) && S_OK == ( getInputEndAngleResult(true)->GetValue( dEndAngle ) );
-			l_bOk = l_bOk && nullptr != getInputCenterXResult(true) && S_OK == ( getInputCenterXResult(true)->GetValue( dCenterX ) );
-			l_bOk = l_bOk && nullptr != getInputCenterYResult(true) && S_OK == ( getInputCenterYResult(true)->GetValue( dCenterY ) );
-			l_bOk = l_bOk && nullptr != getInputStartRadiusResult(true) && ( S_OK == getInputStartRadiusResult(true)->GetValue( dStartRadius ) );
-			l_bOk = l_bOk && nullptr != getInputEndRadiusResult(true) && ( S_OK == getInputEndRadiusResult(true)->GetValue( dEndRadius ) );
+			SVDoubleValueObjectClass* pValue = SvOl::getInput<SVDoubleValueObjectClass>(m_inputStartAngleResult, true);
+			l_bOk = l_bOk && nullptr != pValue && S_OK == (pValue->GetValue(dStartAngle));
+			pValue = SvOl::getInput<SVDoubleValueObjectClass>(m_inputEndAngleResult, true);
+			l_bOk = l_bOk && nullptr != pValue && S_OK == (pValue->GetValue(dEndAngle));
+			pValue = SvOl::getInput<SVDoubleValueObjectClass>(m_inputCenterXResult, true);
+			l_bOk = l_bOk && nullptr != pValue && S_OK == (pValue->GetValue(dCenterX));
+			pValue = SvOl::getInput<SVDoubleValueObjectClass>(m_inputCenterYResult, true);
+			l_bOk = l_bOk && nullptr != pValue && S_OK == (pValue->GetValue(dCenterY));
+			pValue = SvOl::getInput<SVDoubleValueObjectClass>(m_inputStartRadiusResult, true);
+			l_bOk = l_bOk && nullptr != pValue && ( S_OK == pValue->GetValue(dStartRadius));
+			pValue = SvOl::getInput<SVDoubleValueObjectClass>(m_inputEndRadiusResult, true);
+			l_bOk = l_bOk && nullptr != pValue && ( S_OK == pValue->GetValue(dEndRadius));
 
 			if (!l_bOk && nullptr != pErrorMessages)
 			{
@@ -574,7 +567,7 @@ bool SVImagePolarTransformClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Mes
 
 		l_bOk = l_bOk && outputImageObject.GetImageHandle( l_svOutputHandle ) && (nullptr != l_svOutputHandle);
 
-		l_bOk = l_bOk && getInputImage(true)->GetImageHandle( l_svInputHandle ) && (nullptr != l_svInputHandle);
+		l_bOk = l_bOk && SvOl::getInput<SVImageClass>(m_inputImageObjectInfo, true)->GetImageHandle( l_svInputHandle ) && (nullptr != l_svInputHandle);
 
 		if (!l_bOk && nullptr != pErrorMessages)
 		{
@@ -735,17 +728,14 @@ void SVImagePolarTransformClass::SetCalculatedPrintableFlags()
 
 bool SVImagePolarTransformClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	// Check if the input object is still valid otherwise the pointer is invalid
-	if (m_inputImageObjectInfo.IsConnected() && !m_inputImageObjectInfo.GetInputObjectInfo().CheckExistence())
-	{
-		m_inputImageObjectInfo.SetInputObject(nullptr);
-	}
+	bool Result = __super::ResetObject(pErrorMessages);
+	SvOl::ValidateInput(m_inputImageObjectInfo);
 
 	SVPolarTransformationToolClass* pTool = dynamic_cast<SVPolarTransformationToolClass*> ( GetParent() );
 
 	HRESULT hr;
 	BOOL Value( false );
-	bool Result = ( S_OK == m_useFormulaInput.GetValue( Value ) );	// one formula option for all values?
+	Result = Result && ( S_OK == m_useFormulaInput.GetValue( Value ) );	// one formula option for all values?
 	bool bUseFormula = Value ? true : false;
 	SVExtentPropertyInfoStruct info;
 
@@ -777,7 +767,7 @@ bool SVImagePolarTransformClass::ResetObject(SvStl::MessageContainerVector *pErr
 	info.bFormula = bUseFormula;
 	hr = pTool->m_svToolExtent.SetExtentPropertyInfo( SvDef::SVExtentPropertyRotationAngle, info );
 
-	if (S_OK != outputImageObject.InitializeImage( getInputImage() ))
+	if (S_OK != outputImageObject.InitializeImage(SvOl::getInput<SVImageClass>(m_inputImageObjectInfo)))
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
@@ -786,8 +776,6 @@ bool SVImagePolarTransformClass::ResetObject(SvStl::MessageContainerVector *pErr
 			pErrorMessages->push_back(Msg);
 		}
 	}
-
-	Result = __super::ResetObject(pErrorMessages) && Result;
 
 	SetCalculatedPrintableFlags();
 
@@ -800,11 +788,11 @@ bool SVImagePolarTransformClass::ResetObject(SvStl::MessageContainerVector *pErr
 HRESULT SVImagePolarTransformClass::CollectInputImageNames()
 {
 	HRESULT l_hr = S_FALSE;
-	SVImageClass* l_pInputImage = getInputImage();
+	SVImageClass* pInputImage = SvOl::getInput<SVImageClass>(m_inputImageObjectInfo);
 	SVPolarTransformationToolClass* pTool = dynamic_cast<SVPolarTransformationToolClass*>(GetTool());
-	if( l_pInputImage && pTool )
+	if( pInputImage && pTool )
 	{
-		std::string Name = l_pInputImage->GetCompleteName();
+		std::string Name = pInputImage->GetCompleteName();
 
 		pTool->m_SourceImageNames.SetValue(Name);
 
@@ -815,7 +803,7 @@ HRESULT SVImagePolarTransformClass::CollectInputImageNames()
 
 bool SVImagePolarTransformClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
 {
-	if( nullptr == getInputImage() )
+	if(nullptr == SvOl::getInput<SVImageClass>(m_inputImageObjectInfo))
 	{
 		if (nullptr != pErrorMessages)
 		{

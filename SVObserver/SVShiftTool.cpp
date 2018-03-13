@@ -52,7 +52,7 @@ bool SVShiftTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructur
 {
 	bool l_Status = SVToolClass::CreateObject(rCreateStructure);
 
-	l_Status &= (S_OK == m_OutputImage.InitializeImage( getInputImage() ) );
+	l_Status &= (S_OK == m_OutputImage.InitializeImage(SvOl::getInput<SVImageClass>(m_ImageInput)) );
 
 	const UINT cAttributes = SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE | SvDef::SV_PRINTABLE;
 	m_SourceImageName.SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
@@ -87,28 +87,20 @@ bool SVShiftTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructur
 
 bool SVShiftTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	SVInObjectInfoStruct* InputList[]
+	SvOl::SVInObjectInfoStructPtrVector InputList
 	{
 		&m_ImageInput,
 		&m_TranslationYInput,
 		&m_TranslationXInput
 	};
 
-	for (auto pEntry : InputList)
-	{
-		// Check if the input object is still valid otherwise the pointer is invalid
-		// Pointer do not need to be checked as the list are pointers of member variables
-		if (pEntry->IsConnected() && !pEntry->GetInputObjectInfo().CheckExistence())
-		{
-			pEntry->SetInputObject(nullptr);
-		}
-	}
+	SvOl::ValidateInputList(InputList);
 
 	SVGUID ParentGuid;
-	SVImageClass* pInputImage = getInputImage();
 
 	SetAttributeData();
 
+	SVImageClass* pInputImage = SvOl::getInput<SVImageClass>(m_ImageInput);
 	if( nullptr != pInputImage )
 	{
 		ParentGuid = pInputImage->GetUniqueObjectID();
@@ -164,7 +156,7 @@ bool SVShiftTool::isInputImage(const SVGUID& rImageGuid) const
 {
 	bool Result(false);
 
-	SVImageClass* pImage = getInputImage();
+	SVImageClass* pImage = SvOl::getInput<SVImageClass>(m_ImageInput);
 	if (nullptr != pImage && rImageGuid == pImage->GetUniqueObjectID())
 	{
 		Result = true;
@@ -318,7 +310,7 @@ bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 		{
 			SvOi::SVImageBufferHandlePtr InImageHandle;
 
-			SVImageClass* pImageInput = getInputImage(true);
+			SVImageClass* pImageInput = SvOl::getInput<SVImageClass>(m_ImageInput, true);
 
 			double l_OffsetX = 0.0;
 			double l_OffsetY = 0.0;
@@ -375,42 +367,14 @@ bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 	return Result;
 }
 
-SVImageClass* SVShiftTool::getInputImage(bool bRunMode /*= false*/) const
-{
-	SVImageClass* pImage = nullptr;
-
-	if( m_ImageInput.IsConnected() && nullptr != m_ImageInput.GetInputObjectInfo().getObject())
-	{
-		SVObjectClass* pObject = m_ImageInput.GetInputObjectInfo().getObject();
-		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return bRunMode ? static_cast<SVImageClass*> (pObject) : dynamic_cast<SVImageClass*> (pObject);
-	}
-	return pImage;
-}
-
 SVDoubleValueObjectClass* SVShiftTool::GetTranslationXInput(bool bRunMode /*= false*/) const
 {
-	if( m_TranslationXInput.IsConnected() && nullptr != m_TranslationXInput.GetInputObjectInfo().getObject())
-	{
-		SVObjectClass* pObject = m_TranslationXInput.GetInputObjectInfo().getObject();
-		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return bRunMode ? static_cast<SVDoubleValueObjectClass*> (pObject) : dynamic_cast<SVDoubleValueObjectClass*> (pObject);
-	}
-	return nullptr;
+	return SvOl::getInput<SVDoubleValueObjectClass>(m_TranslationXInput, bRunMode);
 }
 
 SVDoubleValueObjectClass* SVShiftTool::GetTranslationYInput(bool bRunMode /*= false*/) const
 {
-	if(m_TranslationYInput.IsConnected() && nullptr != m_TranslationYInput.GetInputObjectInfo().getObject())
-	{
-		SVObjectClass* pObject = m_TranslationYInput.GetInputObjectInfo().getObject();
-		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return bRunMode ? static_cast<SVDoubleValueObjectClass*> (pObject) : dynamic_cast<SVDoubleValueObjectClass*> (pObject);
-	}
-	return nullptr;
+	return SvOl::getInput<SVDoubleValueObjectClass>(m_TranslationYInput, bRunMode);
 }
 #pragma endregion Protected Methods
 
@@ -610,7 +574,7 @@ bool SVShiftTool::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) c
 	long mode = SV_SHIFT_NONE;
 	m_evoShiftMode.GetValue(mode);
 
-	if ( nullptr == getInputImage() )
+	if ( nullptr == SvOl::getInput<SVImageClass>(m_ImageInput))
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)

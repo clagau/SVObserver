@@ -211,7 +211,7 @@ void SVArchiveRecord::ConnectInputObject()
 	{
 		ASSERT(m_pArchiveTool);
 
-		SVInObjectInfoStruct InObjectInfo;
+		SvOl::SVInObjectInfoStruct InObjectInfo;
 
 		InObjectInfo.SetObject(m_pArchiveTool);
 		InObjectInfo.m_ObjectTypeInfo.ObjectType  = SvDef::SVToolObjectType;
@@ -226,7 +226,7 @@ void SVArchiveRecord::DisconnectInputObject()
 {
 	if( GUID_NULL != m_svObjectReference.Guid() )
 	{
-		SVInObjectInfoStruct InObjectInfo;
+		SvOl::SVInObjectInfoStruct InObjectInfo;
 		
 		InObjectInfo.SetObject(m_pArchiveTool);
 		InObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVToolObjectType;

@@ -36,17 +36,17 @@ SVLinearAnalyzerClass::SVLinearAnalyzerClass( SVObjectClass* POwner, int StringR
 	// Identify yourself
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVAnalyzerObjectType;
 
-	m_svInputImageObjectInfo.SetInputObjectType(SvDef::SVImageObjectType, SvDef::SVImageMonoType);
-	m_svInputImageObjectInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_svInputImageObjectInfo, _T( "LinearAnalyzerImage" ) );
+	m_InputImageObjectInfo.SetInputObjectType(SvDef::SVImageObjectType, SvDef::SVImageMonoType);
+	m_InputImageObjectInfo.SetObject( GetObjectInfo() );
+	RegisterInputObject( &m_InputImageObjectInfo, _T( "LinearAnalyzerImage" ) );
 
-	m_svInputProfileOrientation.SetInputObjectType(SvDef::SVValueObjectType, SvDef::SVEnumValueObjectType, SVProfileOrientationGuid);
-	m_svInputProfileOrientation.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_svInputProfileOrientation, _T( "LinearAnalyzerOrientation" ) );
+	m_InputProfileOrientation.SetInputObjectType(SvDef::SVValueObjectType, SvDef::SVEnumValueObjectType, SVProfileOrientationGuid);
+	m_InputProfileOrientation.SetObject( GetObjectInfo() );
+	RegisterInputObject( &m_InputProfileOrientation, _T( "LinearAnalyzerOrientation" ) );
 
-	m_svInputUseRotationAngle.SetInputObjectType(SvDef::SVValueObjectType, SvDef::SVBoolValueObjectType, SVLinearToolUseRotationGuid);
-	m_svInputUseRotationAngle.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_svInputUseRotationAngle, _T( "LinearAnalyzerUseRotationAngle" ) );
+	m_InputUseRotationAngle.SetInputObjectType(SvDef::SVValueObjectType, SvDef::SVBoolValueObjectType, SVLinearToolUseRotationGuid);
+	m_InputUseRotationAngle.SetObject( GetObjectInfo() );
+	RegisterInputObject( &m_InputUseRotationAngle, _T( "LinearAnalyzerUseRotationAngle" ) );
 
 	m_lPixelDepth = 0;
 	m_dwMinThreshold = 0;
@@ -98,23 +98,14 @@ bool SVLinearAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMes
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
-	SVInObjectInfoStruct* InputList[]
+	SvOl::SVInObjectInfoStructPtrVector InputList
 	{
-		&m_svInputImageObjectInfo,
-		&m_svInputProfileOrientation,
-		&m_svInputUseRotationAngle
+		&m_InputImageObjectInfo,
+		&m_InputProfileOrientation,
+		&m_InputUseRotationAngle
 	};
 
-	for (auto pEntry : InputList)
-	{
-		// Check if the input object is still valid otherwise the pointer is invalid
-		// Pointer do not need to be checked as the list are pointers of member variables
-		if (pEntry->IsConnected() && !pEntry->GetInputObjectInfo().CheckExistence())
-		{
-			pEntry->SetInputObject(nullptr);
-		}
-	}
-
+	SvOl::ValidateInputList(InputList);
 
 	if( S_OK != GetPixelDepth() )
 	{
@@ -256,24 +247,11 @@ SVLinearEdgeProcessingClass *SVLinearAnalyzerClass::GetEdgeB()
 	return l_psvEdge;
 }
 
-SVImageClass *SVLinearAnalyzerClass::GetInputImage(bool bRunMode /*= false*/)
-{
-	if( m_svInputImageObjectInfo.IsConnected() && nullptr != m_svInputImageObjectInfo.GetInputObjectInfo().getObject() )
-	{
-		SVObjectClass* pObject = m_svInputImageObjectInfo.GetInputObjectInfo().getObject();
-		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
-		//! We are sure that when getObject() is not nullptr that it is the correct type
-		return bRunMode ? static_cast<SVImageClass*> (pObject) : dynamic_cast<SVImageClass*> (pObject);
-	}
-
-	return nullptr;
-}
-
 HRESULT SVLinearAnalyzerClass::GetPixelDepth()
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	SVImageClass* pInputImage = GetInputImage();
+	SVImageClass* pInputImage = SvOl::getInput<SVImageClass>(m_InputImageObjectInfo);
 	if(nullptr != pInputImage)
 	{
 		SVImageInfoClass ImageInfo = pInputImage->GetImageInfo();
@@ -287,10 +265,10 @@ HRESULT SVLinearAnalyzerClass::GetPixelDepth()
 HRESULT SVLinearAnalyzerClass::GetInputProfileOrientation(long& rProfileOrientation)
 {
 	HRESULT Result(E_FAIL);
-	if( m_svInputProfileOrientation.IsConnected() && nullptr != m_svInputProfileOrientation.GetInputObjectInfo().getObject() )
+	if( m_InputProfileOrientation.IsConnected() && nullptr != m_InputProfileOrientation.GetInputObjectInfo().getObject() )
 	{
 		double Value(0.0);
-		Result = m_svInputProfileOrientation.GetInputObjectInfo().getObject()->getValue(Value);
+		Result = m_InputProfileOrientation.GetInputObjectInfo().getObject()->getValue(Value);
 		rProfileOrientation = static_cast<long> (Value);
 	}
 
@@ -300,10 +278,10 @@ HRESULT SVLinearAnalyzerClass::GetInputProfileOrientation(long& rProfileOrientat
 HRESULT SVLinearAnalyzerClass::GetInputUseRotationAngle(bool& rUseRotationAngle)
 {
 	HRESULT Result(E_FAIL);
-	if( m_svInputUseRotationAngle.IsConnected() && nullptr != m_svInputUseRotationAngle.GetInputObjectInfo().getObject())
+	if( m_InputUseRotationAngle.IsConnected() && nullptr != m_InputUseRotationAngle.GetInputObjectInfo().getObject())
 	{
 		double Value(0.0);
-		Result = m_svInputUseRotationAngle.GetInputObjectInfo().getObject()->getValue(Value);
+		Result = m_InputUseRotationAngle.GetInputObjectInfo().getObject()->getValue(Value);
 		rUseRotationAngle = 0.0 < Value ? true : false;
 	}
 
