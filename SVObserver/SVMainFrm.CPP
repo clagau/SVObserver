@@ -127,10 +127,6 @@ END_MESSAGE_MAP()
 
 SVMainFrame::SVMainFrame()
 {
-	m_toolbarWasShown			= false;
-	m_PPQBarWasShown			= false;
-	m_toolbarZoomWasShown		= false;
-
 	m_oemLargeIcon = nullptr;
 	m_oemSmallIcon = nullptr;
 
@@ -146,10 +142,14 @@ SVMainFrame::~SVMainFrame()
 	}
 
 	if( m_oemLargeIcon )
+	{
 		::DestroyIcon( m_oemLargeIcon );
+	}
 	
 	if( m_oemSmallIcon )
+	{
 		::DestroyIcon( m_oemSmallIcon );
+	}
 
 	m_BackgroundBrush.DeleteObject();
 }
@@ -454,10 +454,7 @@ int SVMainFrame::OnCreate( LPCREATESTRUCT lpCreateStruct )
 		ASSERT(FALSE);
 	}
 
-	ShowControlBar(&m_wndToolBar, false, false);
-	ShowControlBar(&m_wndToolBarZoom, false, false);
-	ShowControlBar(&m_PPQBar, false, false);
-	ShowControlBar(&m_wndStatusBar, true, false);
+	InitToolBars();
 
 	LoadOEMIcon();
 
@@ -761,17 +758,17 @@ void SVMainFrame::OnMouseMove( UINT nFlags, CPoint point )
 
 void SVMainFrame::OnViewPPQBar()
 {
-	if (!m_PPQBar.IsWindowVisible())
+	bool accessAllowed = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_VIEW_MENU_PPQ_BAR);
+
+	if (accessAllowed && !m_PPQBar.IsWindowVisible())
 	{
 		ShowControlBar( &m_PPQBar, true, false );
-		m_PPQBarWasShown = true;
 		m_PPQBar.BuildButtons();
 	}
 	else
 	{
 		// Hide bar...
 		ShowControlBar( &m_PPQBar, false, false );
-		m_PPQBarWasShown = false;
 	}
 
 	RecalcLayout();
@@ -782,13 +779,11 @@ void SVMainFrame::OnViewToolBar()
 	if( !m_wndToolBar.IsWindowVisible() )
 	{
 		ShowControlBar( &m_wndToolBar, true, false );
-		m_toolbarWasShown = true;
 	}
 	else
 	{
 		// Hide bar...
 		ShowControlBar( &m_wndToolBar, false, false );
-		m_toolbarWasShown = false;
 	}
 
 	RecalcLayout();
@@ -799,13 +794,11 @@ void SVMainFrame::OnToolbarZoom()
 	if( !m_wndToolBarZoom.IsWindowVisible() )
 	{
 		ShowControlBar( &m_wndToolBarZoom, true, false );
-		m_toolbarZoomWasShown = true;
 	}
 	else
 	{
 		// Hide bar...
 		ShowControlBar( &m_wndToolBarZoom, false, false );
-		m_toolbarZoomWasShown = false;
 	}
 
 	RecalcLayout();
@@ -1281,28 +1274,19 @@ void SVMainFrame::Dump(CDumpContext& dc) const
 
 LRESULT SVMainFrame::OnUserChanged( WPARAM wParam, LPARAM lParam )
 {
-	BOOL recalcNeeded = FALSE;
-	BOOL accessAllowed = FALSE;
-
-	accessAllowed = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_VIEW_MENU_PPQ_BAR ) ;  // ID_VIEW_PPQ_BAR );
+	bool accessAllowed = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_VIEW_MENU_PPQ_BAR ) ;  // ID_VIEW_PPQ_BAR );
 
 	if( !accessAllowed )
 	{
 		// Hide PPQ Bar
 		if( m_PPQBar.IsWindowVisible() )
 		{
-			ShowControlBar( &m_PPQBar, FALSE, FALSE );
-			recalcNeeded = TRUE;
+			ShowControlBar(&m_PPQBar, false, false);
+			RecalcLayout();
 		}
 	}
 
-	// Reposition windows if required
-	if( recalcNeeded )
-	{
-		RecalcLayout();
-	}
-
-	return (LRESULT)TRUE;
+	return static_cast<LRESULT> (true);
 }
 
 void SVMainFrame::OnViewImageDisplayUpdate()
@@ -1541,5 +1525,13 @@ void SVMainFrame::RefreshAllSplitters()
 	{
 		pSplitterFrame->RefreshAllSplitters();
 	}
+}
+
+void SVMainFrame::InitToolBars()
+{
+	ShowControlBar(&m_wndToolBar, false, false);
+	ShowControlBar(&m_wndToolBarZoom, false, false);
+	ShowControlBar(&m_PPQBar, false, false);
+	ShowControlBar(&m_wndStatusBar, true, false);
 }
 

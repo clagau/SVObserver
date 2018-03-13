@@ -2693,8 +2693,6 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 
 			setConfigFullFileName(nullptr);
 
-			UpdatePPQBar();
-
 			SVSVIMStateClass::AddState(SV_STATE_AVAILABLE);
 			SVSVIMStateClass::RemoveState(SV_STATE_UNAVAILABLE);
 		}  // catch
@@ -3028,16 +3026,13 @@ HRESULT SVObserverApp::DestroyConfig(bool AskForSavingOrClosing /* = true */,
 
 				wait.Restore();
 
-				((SVMainFrame*)m_pMainWnd)->SetStatusInfoText(_T(""));
+				GetMainFrame()->SetStatusInfoText(_T(""));
 
 				wait.Restore();
 
 				// Destroy the current PPQ
-				((SVMainFrame*)m_pMainWnd)->DestroyPPQButtons();
-
-				wait.Restore();
-
-				UpdatePPQBar();
+				GetMainFrame()->DestroyPPQButtons();
+				GetMainFrame()->InitToolBars();
 
 				wait.Restore();
 
@@ -3860,16 +3855,6 @@ bool SVObserverApp::SetStatusText(LPCTSTR PStrStatusText)
 		return true;
 	}
 	return false;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : UpdatePPQBar()
-// -----------------------------------------------------------------------------
-// .Description : ...
-////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::UpdatePPQBar()
-{
-	GetMainFrame()->OnViewPPQBar();
 }
 
 const std::string& SVObserverApp::getConfigFileNameOnly() const

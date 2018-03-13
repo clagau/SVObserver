@@ -211,17 +211,14 @@ public:
 	//************************************
 	bool IsZoomingPossible();
 
-private: //Arvid 150203: changed access class from protected
-	// Bars...
+	void InitToolBars();
+private:
+
 	SVStatusBar				m_wndStatusBar;
 	CToolBar				m_wndToolBar;
 	ZoomToolBar				m_wndToolBarZoom;
 
 	SVPPQBarClass			m_PPQBar;
-
-	BOOL m_toolbarZoomWasShown;
-	BOOL m_toolbarWasShown;
-	BOOL m_PPQBarWasShown;
 
 	CBrush m_BackgroundBrush;
 

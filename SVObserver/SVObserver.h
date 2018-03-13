@@ -224,7 +224,6 @@ public:
 	HRESULT OnObjectRenamed( const std::string& p_rOldName, const SVGUID& p_rObjectId );
 	HRESULT RebuildOutputList();
 	bool SetStatusText( LPCTSTR PStrStatusText );
-	void UpdatePPQBar();
 
 	const std::string& getConfigFileNameOnly() const;
 	const std::string& getConfigPathName() const;
