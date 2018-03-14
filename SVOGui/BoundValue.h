@@ -43,7 +43,9 @@ namespace SvOg
 
 		void SetDefaultValue(const variant_t& rDefaultValue)
 		{
-			if (rDefaultValue != m_DefaultValue)
+			bool isArray = VT_ARRAY == (m_DefaultValue.vt & VT_ARRAY);
+			//_variant does not allow compare for arrays 
+			if (isArray || rDefaultValue != m_DefaultValue)
 			{
 				m_DefaultValue = rDefaultValue;
 				m_bDefaultModified = true;
@@ -52,7 +54,9 @@ namespace SvOg
 
 		void SetValue(const variant_t& rValue, int ArrayIndex = -1)
 		{
-			if (rValue != m_Value)
+			bool isArray = VT_ARRAY == (m_Value.vt & VT_ARRAY);
+			//_variant does not allow compare for arrays 
+			if (isArray || rValue != m_Value)
 			{
 				m_Value = rValue;
 				m_ArrayIndex = ArrayIndex;

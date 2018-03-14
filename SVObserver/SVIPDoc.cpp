@@ -1486,24 +1486,46 @@ void SVIPDoc::OpenToolAdjustmentDialog(int tab)
 		if (nullptr != l_pTool)
 		{
 			const SvDef::SVObjectTypeInfoStruct& rToolType = l_pTool->GetObjectInfo().m_ObjectTypeInfo;
-
 			SVSVIMStateClass::AddState(SV_STATE_EDITING);
-			SVToolAdjustmentDialogSheetClass toolAdjustmentDialog(this, GetInspectionID(), GetSelectedToolID(), _T("Tool Adjustment"), nullptr, tab);
-			INT_PTR dlgResult = toolAdjustmentDialog.DoModal();
-			if (IDOK == dlgResult)
+			try
 			{
-				ExtrasEngine::Instance().ExecuteAutoSaveIfAppropriate(false);//Arvid: after tool was edited: update the autosave timestamp
-				SVConfigurationObject* pConfig = nullptr;
-				SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-				if (nullptr != pConfig)
+				SVToolAdjustmentDialogSheetClass toolAdjustmentDialog(this, GetInspectionID(), GetSelectedToolID(), _T("Tool Adjustment"), nullptr, tab);
+				INT_PTR dlgResult = toolAdjustmentDialog.DoModal();
+				if (IDOK == dlgResult)
 				{
-					pConfig->ValidateRemoteMonitorList();
-					TheSVObserverApp.GetIODoc()->UpdateAllViews(nullptr);
+					ExtrasEngine::Instance().ExecuteAutoSaveIfAppropriate(false);//Arvid: after tool was edited: update the autosave timestamp
+					SVConfigurationObject* pConfig = nullptr;
+					SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+					if (nullptr != pConfig)
+					{
+						pConfig->ValidateRemoteMonitorList();
+						TheSVObserverApp.GetIODoc()->UpdateAllViews(nullptr);
+					}
+				}
+				else
+				{
+					l_pTool->ResetObject();
 				}
 			}
-			else
+			catch (const SvStl::MessageContainer& rExp)
 			{
-				l_pTool->ResetObject();
+				//This is the topmost catch of the TA for MessageContainer exceptions
+				SvStl::MessageMgrStd Exception(SvStl::LogAndDisplay);
+				//Set the error code to unhandled exception but use the rest of the data from the original exception
+				SvStl::MessageData Msg(rExp.getMessage());
+				std::string OrgMessageCode = SvUl::Format(_T("0x%08X"), Msg.m_MessageCode);
+				Msg.m_AdditionalTextId = SvStl::Tid_Default;
+				SvDef::StringVector msgList;
+				msgList.push_back(OrgMessageCode);
+				Msg.m_AdditionalTextList = msgList;
+				Msg.m_MessageCode = SVMSG_SVO_72_UNHANDLED_EXCEPTION;
+				Exception.setMessage(Msg);
+			}
+			catch(...)
+			{
+				//This is the topmost catch of TA for other exceptions
+				SvStl::MessageMgrStd Exception(SvStl::LogAndDisplay);
+				Exception.setMessage(SVMSG_SVO_UNHANDLED_EXCEPTION, SvStl::Tid_Default, SvStl::SourceFileParams(StdMessageParams));
 			}
 			SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 		}
