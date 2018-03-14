@@ -34,14 +34,16 @@ public:
 
 	/// Add a new column to the table, which is add on to the copied column of the source table.
 	/// \param name [in] Name of the new column.
+	/// \param pos [in] Add the column to the new position. If pos == -1, add it at the end.
 	/// \returns DoubleSortValuePtr Pointer to the new column object.
-	DoubleSortValuePtr addNewColumn(LPCTSTR name);
+	DoubleSortValuePtr addNewColumn(LPCTSTR name, int pos = -1);
 
 	/// Set a column to the new column list at the result table object.
 	/// \param pColumn [in] The object which should be set.
+	/// \param pos [in] Add the column to the new position. If pos == -1, add it at the end.
 	/// \returns DoubleSortValuePtr Shared pointer of the set object.
-	DoubleSortValuePtr setNewColumn(const SVObjectClass* pColumn);
-	
+	DoubleSortValuePtr setNewColumn(const SVObjectClass* pColumn, int pos = -1);
+
 	/// Remove a add on column form the table.
 	/// \param pColumn [in] Column object to be removed.
 	void removeNewColumn(const DoubleSortValuePtr pColumn);
@@ -79,6 +81,11 @@ private:
 	/// \param oldEmbeddedGuid [in] old embedded ID.
 	/// \param newEmbeddedGuid [in] new embedded ID.
 	void sendChangedEmbeddedIDToUser(SVGUID oldEmbeddedGuid, SVGUID newEmbeddedGuid);
+
+	/// Add a column to the new value list a the required position.
+	/// \param pos [in] Add position. If pos == -1, add it at the end.
+	/// \param pColumn [in] The new Column.
+	void AddEntryToNewValueList(int pos, DoubleSortValuePtr pColumn);
 #pragma endregion Private Methods
 
 #pragma region Member Variables

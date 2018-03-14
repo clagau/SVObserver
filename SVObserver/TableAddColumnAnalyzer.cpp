@@ -64,15 +64,16 @@ bool TableAddColumnAnalyzer::CreateObject(const SVObjectLevelCreateStruct& rCrea
 		DoubleSortValueObject* pNewColumn = dynamic_cast<DoubleSortValueObject*>(m_newColumnObjectInfo.GetInputObjectInfo().getObject());
 		if (!m_newColumnObjectInfo.IsConnected() || nullptr == pNewColumn)
 		{
-			m_pNewColumn = pTool->addNewColumn("NewColumn");
+			m_pNewColumn = pTool->addNewColumn("NewColumn", this);
 			m_newColumnObjectInfo.SetInputObject(m_pNewColumn.get());
 		}
 		else
 		{
-			m_pNewColumn = pTool->setNewColumn(pNewColumn);
+			m_pNewColumn = pTool->setNewColumn(pNewColumn, this);
 		}
 
 		m_pColumnEquation->setResultColumn(m_pNewColumn);
+		m_pNewColumn->SetName(m_pColumnEquation->GetName());
 	}
 	else
 	{

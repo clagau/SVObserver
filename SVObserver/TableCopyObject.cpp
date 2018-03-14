@@ -86,7 +86,7 @@ bool TableCopyObject::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	return retValue && TableObject::ResetObject(pErrorMessages);
 }
 
-DoubleSortValuePtr TableCopyObject::addNewColumn(LPCTSTR name)
+DoubleSortValuePtr TableCopyObject::addNewColumn(LPCTSTR name, int pos)
 {
 	DoubleSortValueObject* pObject = nullptr;
 	SVObjectManagerClass::Instance().ConstructObject(DoubleSortValueObjectGuid, pObject);
@@ -94,7 +94,7 @@ DoubleSortValuePtr TableCopyObject::addNewColumn(LPCTSTR name)
 
 	if (CreateChildObject(pObject))
 	{
-		m_NewValueList.push_back(pSharedObject);
+		AddEntryToNewValueList(pos, pSharedObject);
 	}
 	else
 	{
@@ -104,7 +104,7 @@ DoubleSortValuePtr TableCopyObject::addNewColumn(LPCTSTR name)
 	return pSharedObject;
 }
 
-DoubleSortValuePtr TableCopyObject::setNewColumn(const SVObjectClass* pColumn)
+DoubleSortValuePtr TableCopyObject::setNewColumn(const SVObjectClass* pColumn, int pos)
 {
 	DoubleSortValuePtr pRetColumn;
 
@@ -116,7 +116,7 @@ DoubleSortValuePtr TableCopyObject::setNewColumn(const SVObjectClass* pColumn)
 	if (m_ValueList.end() != pIter)
 	{
 		pRetColumn = *pIter;
-		m_NewValueList.push_back(pRetColumn);
+		AddEntryToNewValueList(pos, pRetColumn);
 	}
 
 	return pRetColumn;
@@ -412,6 +412,18 @@ void TableCopyObject::sendChangedEmbeddedIDToUser(SVGUID oldEmbeddedGuid, SVGUID
 	{
 		SVToolClass* pTool = dynamic_cast<SVToolClass*>(SvOi::getObject(rGuid));
 		pTool->OnEmbeddedIDChanged(this, oldEmbeddedGuid, newEmbeddedGuid);
+	}
+}
+
+void TableCopyObject::AddEntryToNewValueList(int pos, DoubleSortValuePtr pColumn)
+{
+	if (0 <= pos && m_NewValueList.size() > pos)
+	{
+		m_NewValueList.insert(m_NewValueList.begin() + pos, pColumn);
+	}
+	else
+	{
+		m_NewValueList.push_back(pColumn);
 	}
 }
 

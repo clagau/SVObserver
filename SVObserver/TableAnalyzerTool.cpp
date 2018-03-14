@@ -17,6 +17,7 @@
 #include "SVResultLong.h"
 #include "TextDefinesSvO.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "TableAddColumnAnalyzer.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -175,22 +176,24 @@ void TableAnalyzerTool::InsertAt(int index, ITaskObject& rObject, int count)
 	SVTaskObjectListClass::InsertAt(index + 1, pObject, count);
 }
 
-DoubleSortValuePtr TableAnalyzerTool::addNewColumn(LPCTSTR name)
+DoubleSortValuePtr TableAnalyzerTool::addNewColumn(LPCTSTR name, const SVTaskObjectClass* pAnalyzer)
 {
 	DoubleSortValuePtr pRet;
 	if (nullptr != m_pResultTable)
 	{
-		pRet = m_pResultTable->addNewColumn(name);
+		int pos = calcNewColumnPosition(pAnalyzer);
+		pRet = m_pResultTable->addNewColumn(name, pos);
 	}
 	return pRet;
 }
 
-DoubleSortValuePtr TableAnalyzerTool::setNewColumn(const SVObjectClass* pColumn)
+DoubleSortValuePtr TableAnalyzerTool::setNewColumn(const SVObjectClass* pColumn, const SVTaskObjectClass* pAnalyzer)
 {
 	DoubleSortValuePtr pRet;
 	if (nullptr != m_pResultTable)
 	{
-		pRet = m_pResultTable->setNewColumn(pColumn);
+		int pos = calcNewColumnPosition(pAnalyzer);
+		pRet = m_pResultTable->setNewColumn(pColumn, pos);
 	}
 	return pRet;
 }
@@ -304,4 +307,22 @@ void TableAnalyzerTool::BuildInputObjectList()
 	
 	addDefaultInputObjects();
 }
+
+int TableAnalyzerTool::calcNewColumnPosition(const SVTaskObjectClass* pAnalyzer)
+{
+	int pos = 0;
+	for (auto pTask : m_TaskObjectVector)
+	{
+		if (pAnalyzer == pTask)
+		{
+			break;
+		}
+		if (nullptr != dynamic_cast<const TableAddColumnAnalyzer*>(pTask))
+		{
+			pos++;
+		}
+	}	
+	return pos;
+}
+
 #pragma endregion Private Methods
