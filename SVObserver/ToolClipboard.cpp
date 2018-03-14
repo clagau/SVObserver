@@ -509,10 +509,10 @@ HRESULT ToolClipboard::validateGuids( std::string& rXmlData, SVTreeType& rTree, 
 		SVGUID ToolTypeGuid( ToolType );
 		SVGUID ToolImageGuid( ToolImage );
 
-		//Color tool can not be inserted into non color system
 		SVIPDoc* pDoc = TheSVObserverApp.GetIPDoc(m_rInspection.GetUniqueObjectID());
 		if (nullptr != pDoc)
 		{
+			//Color tool can not be inserted into a IPD without color images
 			if (SVColorToolClassGuid == ToolTypeGuid && !pDoc->isImageAvailable(SvDef::SVImageColorType))
 			{
 				Result = S_FALSE;
@@ -530,30 +530,34 @@ HRESULT ToolClipboard::validateGuids( std::string& rXmlData, SVTreeType& rTree, 
 			}
 			else
 			{
-				//Color Tool do not use the ToolImage, for Color Tool the ToolImageId should not be changed because the ID are used also from Band0
-				if (SVColorToolClassGuid != ToolTypeGuid)
+				if (GUID_NULL != ToolImageGuid)
 				{
-					if (GUID_NULL != ToolImageGuid)
+					bool useStandardImage = true;
+					SVObjectClass* pImage = SVObjectManagerClass::Instance().GetObject(ToolImageGuid);
+					if (nullptr != pImage)
 					{
-						bool useStandardImage = true;
-						SVObjectClass* pImage = SVObjectManagerClass::Instance().GetObject(ToolImageGuid);
-						if (nullptr != pImage)
+						SVToolClass* pTool = dynamic_cast<SVToolClass*> (pImage->GetAncestor(SvDef::SVToolObjectType));
+						if (nullptr != pTool && nullptr != m_rInspection.GetToolSet())
 						{
-							SVToolClass* pTool = dynamic_cast<SVToolClass*> (pImage->GetAncestor(SvDef::SVToolObjectType));
-							if (nullptr != pTool && nullptr != m_rInspection.GetToolSet())
+							int ImageToolsetIndex = m_rInspection.GetToolSet()->GetIndex(pTool);
+							if (ImageToolsetIndex < ToolListindex && InspectionGuid == m_rInspection.GetUniqueObjectID())
 							{
-								int ImageToolsetIndex = m_rInspection.GetToolSet()->GetIndex(pTool);
-								if (ImageToolsetIndex < ToolListindex && InspectionGuid == m_rInspection.GetUniqueObjectID())
-								{
-									useStandardImage = false;
-								}
+								useStandardImage = false;
 							}
 						}
+					}
 
-						if (useStandardImage)
+					if (useStandardImage)
+					{
+						SVGUID DefaultImageGuid(GUID_NULL);
+						bool useToolSetImage{false};
+						if (m_rInspection.IsColorCamera())
 						{
-							SVGUID DefaultImageGuid(GUID_NULL);
-							if (m_rInspection.IsColorCamera())
+							if (SVColorToolClassGuid == ToolTypeGuid)
+							{
+								useToolSetImage = true;
+							}
+							else
 							{
 								SVObjectClass* pBand0Image = dynamic_cast<SVObjectClass*> (m_rInspection.GetToolSet()->getBand0Image());
 								if (nullptr != pBand0Image)
@@ -561,15 +565,21 @@ HRESULT ToolClipboard::validateGuids( std::string& rXmlData, SVTreeType& rTree, 
 									DefaultImageGuid = pBand0Image->GetUniqueObjectID();
 								}
 							}
-							else
-							{
-								if (nullptr != m_rInspection.GetToolSetMainImage())
-								{
-									DefaultImageGuid = m_rInspection.GetToolSetMainImage()->GetUniqueObjectID();
-								}
-							}
-							SvUl::searchAndReplace(rXmlData, ToolImageGuid.ToString().c_str(), DefaultImageGuid.ToString().c_str());
 						}
+						else
+						{
+							//For mono IPD the toolset image can be used for all tools except color tool
+							if (nullptr != m_rInspection.GetToolSetMainImage() && SVColorToolClassGuid != ToolTypeGuid)
+							{
+								useToolSetImage = true;
+							}
+						}
+						
+						if(useToolSetImage)
+						{
+							DefaultImageGuid = m_rInspection.GetToolSetMainImage()->GetUniqueObjectID();
+						}
+						SvUl::searchAndReplace(rXmlData, ToolImageGuid.ToString().c_str(), DefaultImageGuid.ToString().c_str());
 					}
 				}
 			}

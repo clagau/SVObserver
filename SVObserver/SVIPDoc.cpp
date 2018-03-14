@@ -1228,15 +1228,13 @@ void SVIPDoc::OnEditDelete()
 		const SVGUID& rGuid = pToolSetView->GetSelectedTool();
 		if (!rGuid.empty())
 		{
-			// Don't let the first tool be deleted if it is a Color Tool and 
-			// the next tool isn't a Color Tool.
-			// A Color Tool must always be first on a RGB Color System.
 			SVTaskObjectClass* pFirstTaskObject = pToolSet->GetAt(0);
-			if (pFirstTaskObject && pFirstTaskObject->GetUniqueObjectID() == rGuid) // If deleting first item
+			// If deleting first item in a color IPD first tool must be a color tool
+			if (nullptr != pFirstTaskObject && pFirstTaskObject->GetUniqueObjectID() == rGuid && pInspection->IsColorCamera())
 			{
 				if (pToolSet->GetSize() > 1)
 				{
-					SVToolClass* pNextTool = dynamic_cast<SVToolClass*>(pToolSet->GetAt(1));
+					SVToolClass* pNextTool = dynamic_cast<SVToolClass*> (pToolSet->GetAt(1));
 
 					if (pFirstTaskObject && SV_IS_KIND_OF(pFirstTaskObject, SVColorToolClass) &&
 						pNextTool && !SV_IS_KIND_OF(pNextTool, SVColorToolClass))
