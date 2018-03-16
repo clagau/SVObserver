@@ -30,7 +30,7 @@ INT_PTR SvOi::OpenSVFileDialog(bool bOpenFileDialog, LPCTSTR Extention, std::str
 {
 	bool FullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
 
-	SvMc::SVFileDialog FileDlg(true,
+	SvMc::SVFileDialog FileDlg(bOpenFileDialog,
 		FullAccess,
 		Extention,
 		FileName.c_str(),
