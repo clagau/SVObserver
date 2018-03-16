@@ -771,7 +771,7 @@ bool SVExternalToolTask::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 
 			for ( i=0; i < m_Data.m_lNumInputImages; i++)
 			{
-				SVImageClass* pInputImage = GetInputImage(i);
+				SVImageClass* pInputImage = GetInputImage(i, true);
 				if ( pInputImage )
 				{
 					SVImageExtentClass l_InputImageExtents(pInputImage->GetImageExtents());
@@ -822,7 +822,7 @@ bool SVExternalToolTask::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 			for ( i=0; i < m_Data.m_lNumInputImages; i++)
 			{
 				SvOi::SVImageBufferHandlePtr l_ImageBuffer;
-				SVImageClass* pInputImage = GetInputImage(i);
+				SVImageClass* pInputImage = GetInputImage(i, true);
 				if ( pInputImage )
 				{
 					pInputImage->GetImageHandle(l_ImageBuffer);
@@ -1277,12 +1277,12 @@ HRESULT SVExternalToolTask::InspectionInputsToVariantArray()
 	return S_OK;
 }
 
-SVImageClass* SVExternalToolTask::GetInputImage(int iIndex)
+SVImageClass* SVExternalToolTask::GetInputImage(int iIndex, bool bRunMode /*= false*/)
 {
-	if ( iIndex >= 0 && iIndex < m_Data.m_lNumInputImages )
+	if (iIndex >= 0 && iIndex < m_Data.m_lNumInputImages)
 	{
-		SvOl::SVInObjectInfoStruct& rInfo = m_Data.m_aInputImageInfo[iIndex];
-		return static_cast <SVImageClass*> (rInfo.GetInputObjectInfo().getObject());
+		const SvOl::SVInObjectInfoStruct& rInfo = m_Data.m_aInputImageInfo[iIndex];
+		return SvOl::getInput<SVImageClass>(rInfo, bRunMode);
 	}
 	return nullptr;
 }
@@ -1561,6 +1561,12 @@ HRESULT SVExternalToolTask::SetDefaultValues()
 bool SVExternalToolTask::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = SVTaskObjectListClass::ResetObject(pErrorMessages);
+
+	for (int i = 0; i < m_Data.m_lNumInputImages; i++)
+	{
+		SvOl::SVInObjectInfoStruct& rInfo = m_Data.m_aInputImageInfo[i];
+		SvOl::ValidateInput(rInfo);
+	}
 
 	if( m_bUseImageCopies )
 	{

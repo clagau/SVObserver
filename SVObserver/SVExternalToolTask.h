@@ -129,7 +129,7 @@ protected:
 	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 	HRESULT InspectionInputsToVariantArray();
 
-	SVImageClass* GetInputImage(int iIndex);
+	SVImageClass* GetInputImage(int iIndex, bool bRunMode = false);
 	SVImageClass* GetResultImage(int iIndex);
 
 	SVVariantValueObjectClass* GetResultValueObject(int iIndex);
