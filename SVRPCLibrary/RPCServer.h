@@ -15,6 +15,7 @@
 
 #pragma once
 
+#include <map>
 #include <memory>
 #include <vector>
 
@@ -38,6 +39,9 @@ protected:
 private:
 	void on_request(int id, Envelope&&);
 	void on_stream(int id, Envelope&&);
+	void on_stream_cancel(int id, Envelope&&);
+
+	void remove_stream_context(int id, uint64_t txId);
 
 	std::future<void> send_response(int id, uint64_t txId, Envelope&& response);
 	std::future<void> send_error_response(int id, uint64_t txId, const Error& err);
@@ -49,6 +53,7 @@ private:
 private:
 	RequestHandlerBase* m_pRequestHandler;
 	std::map<int, SVHTTP::WebsocketServerConnection*> m_Connections;
+	std::map<int, std::map<uint64_t, std::weak_ptr<ServerStreamContext>>> m_ServerStreamContexts;
 };
 
 } // namespace SVRPC

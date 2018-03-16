@@ -36,6 +36,7 @@
 #include <boost/chrono/duration.hpp>
 
 #include "SVHttpLibrary/WebsocketClientFactory.h"
+#include "SVRPCLibrary/ClientStreamContext.h"
 #include "SVRPCLibrary/Observer.h"
 #include "SVRPCLibrary/Task.h"
 #include "SVProtoBuf/envelope.h"
@@ -54,7 +55,7 @@ public:
 
 	void request(Envelope&& request, Task<Envelope>);
 	void request(Envelope&& request, Task<Envelope>, boost::posix_time::time_duration);
-	void stream(Envelope&& request, Observer<Envelope>);
+	ClientStreamContext stream(Envelope&& request, Observer<Envelope>);
 
 protected:
 	void onConnect() override;
@@ -80,6 +81,9 @@ private:
 	void on_stream_response(Envelope&&);
 	void on_stream_error_response(Envelope&&);
 	void on_stream_finish(Envelope&&);
+
+	void cancel_stream(uint64_t txId);
+	void send_envelope(Envelope&&);
 
 private:
 	boost::asio::io_service m_IoService;

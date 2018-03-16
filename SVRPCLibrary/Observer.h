@@ -18,16 +18,17 @@
 
 #include <functional>
 #include <future>
+#include <memory>
 
 #include "SVProtoBuf/envelope.h"
 
 namespace SVRPC
 {
-//typename is typically a result class 
+// typename is typically a result class
 template <typename T> struct Observer
 {
 public:
-	using OnNextFn = std::function<std::future<void>(T&& t)> ;
+	using OnNextFn = std::function<std::future<void>(T&& t)>;
 	using OnFinishFn = std::function<void()>;
 	using OnErrorFn = std::function<void(const Error&)>;
 

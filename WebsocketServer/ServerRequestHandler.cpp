@@ -87,9 +87,9 @@ ServerRequestHandler::ServerRequestHandler(RRSSharedMemoryAccessInterface* sma)
 		RunRejectMessages::kGetImageStreamFromCurIdRequest,
 		GetImageStreamFromCurIdRequest,
 		GetImageStreamFromCurIdResponse>(
-		[sma](GetImageStreamFromCurIdRequest&& req, SVRPC::Observer<GetImageStreamFromCurIdResponse> observer)
+		[sma](GetImageStreamFromCurIdRequest&& req, SVRPC::Observer<GetImageStreamFromCurIdResponse> observer, SVRPC::ServerStreamContext::Ptr ctx)
 	{
-		sma->GetImageStreamFromCurId(req, observer);
+		sma->GetImageStreamFromCurId(req, observer, ctx);
 	});
 
 	registerRequestHandler<
@@ -111,5 +111,16 @@ ServerRequestHandler::ServerRequestHandler(RRSSharedMemoryAccessInterface* sma)
 	{
 		sma->GetItems(req, task);
 	});
+
+	registerStreamHandler<
+		RunRejectMessages,
+		RunRejectMessages::kGetNotificationStreamRequest,
+		GetNotificationStreamRequest,
+		GetNotificationStreamResponse>(
+		[sma](GetNotificationStreamRequest&& req, SVRPC::Observer<GetNotificationStreamResponse> observer, SVRPC::ServerStreamContext::Ptr ctx)
+	{
+		sma->GetNotificationStream(req, observer, ctx);
+	});
+
 }
 }

@@ -83,12 +83,12 @@ public:
 		return promise->get_future();
 	}
 
-	void stream(TReq&& req, Observer<TRes> observer)
+	ClientStreamContext stream(TReq&& req, Observer<TRes> observer)
 	{
 		Envelope envelope;
 		m_ReqWrapper.wrap(envelope, std::move(req));
 
-		m_rClient.stream(std::move(envelope),
+		return m_rClient.stream(std::move(envelope),
 			Observer<Envelope>(
 			[this, observer](Envelope&& resEnv) -> std::future<void>
 		{

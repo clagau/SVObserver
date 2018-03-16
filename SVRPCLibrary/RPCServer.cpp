@@ -21,6 +21,7 @@ RPCServer::RPCServer(RequestHandlerBase* pRequestHandler) : m_pRequestHandler(pR
 void RPCServer::onConnect(int id, SVHTTP::WebsocketServerConnection& rConnection)
 {
 	m_Connections[id] = &rConnection;
+	m_ServerStreamContexts[id] = {};
 }
 
 void RPCServer::onTextMessage(int id, const std::vector<char>&)
@@ -51,6 +52,10 @@ void RPCServer::onBinaryMessage(int id, const std::vector<char>& buf)
 			on_stream(id, std::move(request));
 			break;
 
+		case MessageType::StreamCancel:
+			on_stream_cancel(id, std::move(request));
+			break;
+
 		default:
 			BOOST_LOG_TRIVIAL(error) << "Invalid message type " << type;
 			break;
@@ -60,6 +65,7 @@ void RPCServer::onBinaryMessage(int id, const std::vector<char>& buf)
 void RPCServer::onDisconnect(int id)
 {
 	m_Connections.erase(id);
+	m_ServerStreamContexts.erase(id);
 }
 
 void RPCServer::on_request(int id, Envelope&& request)
@@ -74,14 +80,51 @@ void RPCServer::on_request(int id, Envelope&& request)
 void RPCServer::on_stream(int id, Envelope&& request)
 {
 	auto txId = request.transaction_id();
+	auto ctx = std::make_shared<ServerStreamContext>();
+	m_ServerStreamContexts[id].insert({txId, ctx});
 	m_pRequestHandler->onStream(std::move(request),
 		Observer<Envelope>(
-		[this, id, txId](Envelope&& response) -> std::future<void>
+		[this, ctx, id, txId](Envelope&& response) -> std::future<void>
 	{
 		return send_stream_response(id, txId, std::move(response));
 	},
-		[this, id, txId]() { send_stream_finish(id, txId); },
-		[this, id, txId](const Error& err) { send_stream_error_response(id, txId, err); }));
+		[this, ctx, id, txId]()
+	{
+		send_stream_finish(id, txId);
+		remove_stream_context(id, txId);
+	},
+		[this, ctx, id, txId](const Error& err)
+	{
+		send_stream_error_response(id, txId, err);
+		remove_stream_context(id, txId);
+	}),
+		ctx);
+}
+
+void RPCServer::on_stream_cancel(int id, Envelope&& request)
+{
+	auto it = m_ServerStreamContexts.find(id);
+	if (it != m_ServerStreamContexts.end())
+	{
+		auto txId = request.transaction_id();
+		auto ctxIt = it->second.find(txId);
+		if (ctxIt != it->second.end())
+		{
+			if (auto ctx = ctxIt->second.lock())
+			{
+				ctx->cancel();
+			}
+		}
+	}
+}
+
+void RPCServer::remove_stream_context(int id, uint64_t txId)
+{
+	auto it = m_ServerStreamContexts.find(id);
+	if (it != m_ServerStreamContexts.end())
+	{
+		it->second.erase(txId);
+	}
 }
 
 std::future<void> RPCServer::send_response(int id, uint64_t txId, Envelope&& response)
@@ -131,20 +174,7 @@ std::future<void> RPCServer::send_envelope(int id, const Envelope& envelope)
 	{
 		BOOST_LOG_TRIVIAL(error) << "Can not send envelope to connection " << id << ". not found.";
 		std::promise<void> promise;
-		try
-		{
-			throw std::runtime_error("Example");
-		}
-		catch (...)
-		{
-			try
-			{
-				promise.set_exception(std::current_exception());
-			}
-			catch (...)
-			{
-			} // set_exception() may throw too
-		}
+		promise.set_exception(std::make_exception_ptr(std::runtime_error("Connection lost")));
 		return promise.get_future();
 	}
 

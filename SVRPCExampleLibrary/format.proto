@@ -8,8 +8,10 @@ message ApplicationMessages
 	{
 		HelloWorldReq HelloWorldReq = 1;
 		HelloWorldRes HelloWorldRes = 2;
-		GetCounterStreamRequest GetCounterStreamRequest = 3;
-		GetCounterStreamResponse GetCounterStreamResponse = 4;
+		HelloRouterReq HelloRouterReq = 3;
+		HelloRouterRes HelloRouterRes = 4;
+		GetCounterStreamRequest GetCounterStreamRequest = 5;
+		GetCounterStreamResponse GetCounterStreamResponse = 6;
 	}
 }
 
@@ -23,11 +25,19 @@ message HelloWorldRes
 	string message = 1;
 }
 
+message HelloRouterReq
+{
+	string name = 1;
+}
+
+message HelloRouterRes
+{
+	string message = 1;
+}
 
 message GetCounterStreamRequest
 {
-	uint32 count = 1;
-	uint32  start = 2;
+	uint32 start = 1;
 }
 message GetCounterStreamResponse
 {

@@ -10,6 +10,7 @@
 #pragma once
 #include "SVProtoBuf/RunRe.h"
 #include "SVRPCLibrary/Observer.h"
+#include "SVRPCLibrary/ServerStreamContext.h"
 #include "SVRPCLibrary/Task.h"
 #include "SVSharedMemoryLibrary/ShareControl.h"
 
@@ -26,9 +27,11 @@ public:
 	virtual void GetFailstatus(const GetFailStatusRequest&, SVRPC::Task<GetFailStatusResponse>) = 0;
 	virtual void GetImageFromCurId(const GetImageFromCurIdRequest&, SVRPC::Task<GetImageFromCurIdResponse>) = 0;
 	virtual void GetImageStreamFromCurId(const GetImageStreamFromCurIdRequest&,
-		SVRPC::Observer<GetImageStreamFromCurIdResponse>) = 0;
+		SVRPC::Observer<GetImageStreamFromCurIdResponse>, SVRPC::ServerStreamContext::Ptr) = 0;
 	virtual void GetItems(const GetItemsRequest&, SVRPC::Task<GetItemsResponse>) = 0;
 	virtual void QueryListName(const QueryListNameRequest&, SVRPC::Task<QueryListNameResponse>) = 0;
 	virtual void QueryListItem(const QueryListItemRequest&, SVRPC::Task<QueryListItemResponse>) = 0;
+	virtual void GetNotificationStream(const GetNotificationStreamRequest&,
+		SVRPC::Observer<GetNotificationStreamResponse>, SVRPC::ServerStreamContext::Ptr) = 0;
 };
 }

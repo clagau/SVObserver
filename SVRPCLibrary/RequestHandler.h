@@ -42,7 +42,7 @@ public:
 	}
 
 	template <typename TPayload, int MessageCase, typename TReq, typename TRes>
-	void registerStreamHandler(std::function<void(TReq&&, Observer<TRes>)> Handler)
+	void registerStreamHandler(std::function<void(TReq&&, Observer<TRes>, ServerStreamContext::Ptr)> Handler)
 	{
 		m_StreamHandler[MessageCase] = std::make_shared<ObserverWrapper<TPayload, TReq, TRes>>(std::move(Handler));
 	}
@@ -52,7 +52,7 @@ public:
 		m_DefaultRequestHandler = std::move(Handler);
 	}
 
-	void registerDefaultStreamHandler(std::function<void(Envelope&&, Observer<Envelope>)> Handler)
+	void registerDefaultStreamHandler(std::function<void(Envelope&&, Observer<Envelope>, ServerStreamContext::Ptr)> Handler)
 	{
 		m_DefaultStreamHandler = std::move(Handler);
 	}
@@ -78,19 +78,19 @@ protected:
 		task.error(build_error(ErrorCode::NotImplemented, "No handler for given payload type."));
 	}
 
-	void onStream(Envelope&& envelope, Observer<Envelope> observer) override
+	void onStream(Envelope&& envelope, Observer<Envelope> observer, ServerStreamContext::Ptr ctx) override
 	{
 		auto payload_type = envelope.payload_type();
 		auto it = m_StreamHandler.find(payload_type);
 		if (it != m_StreamHandler.end())
 		{
-			(*it->second)(std::move(envelope), std::move(observer));
+			(*it->second)(std::move(envelope), std::move(observer), ctx);
 			return;
 		}
 
 		if (m_DefaultStreamHandler)
 		{
-			m_DefaultStreamHandler(std::move(envelope), std::move(observer));
+			m_DefaultStreamHandler(std::move(envelope), std::move(observer), ctx);
 			return;
 		}
 
@@ -102,7 +102,7 @@ private:
 	std::map<int, std::shared_ptr<TaskWrapperBase>> m_RequestHandler;
 	std::map<int, std::shared_ptr<ObserverWrapperBase>> m_StreamHandler;
 	std::function<void(Envelope&&, Task<Envelope>)> m_DefaultRequestHandler;
-	std::function<void(Envelope&&, Observer<Envelope>)> m_DefaultStreamHandler;
+	std::function<void(Envelope&&, Observer<Envelope>, ServerStreamContext::Ptr)> m_DefaultStreamHandler;
 };
 
 } // namespace SVRPC

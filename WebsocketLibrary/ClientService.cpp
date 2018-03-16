@@ -33,7 +33,8 @@ ClientService::ClientService(SVRPC::RPCClient& rpc_client, boost::posix_time::ti
 	m_get_image_stream_from_cur_id_client(rpc_client),
 	m_get_fail_status_client(rpc_client),
 	m_get_items_client(rpc_client),
-	m_set_mode_client(rpc_client)
+	m_set_mode_client(rpc_client),
+	m_notification_stream_client(rpc_client)
 {
 }
 
@@ -56,7 +57,6 @@ void ClientService::getProduct(GetProductRequest&& req, SVRPC::Task<GetProductRe
 {
 	m_get_product_client.request(std::move(req), task, FourSeconds);
 }
-
 
 void ClientService::getImageFromCurId(GetImageFromCurIdRequest&& req, SVRPC::Task<GetImageFromCurIdResponse> task)
 {
@@ -84,8 +84,10 @@ void ClientService::setMode(SetModeRequest&& req, SVRPC::Task<SetModeResponse> t
 	m_set_mode_client.request(std::move(req), task, FourSeconds);
 }
 
-
-
-
+SVRPC::ClientStreamContext ClientService::getNotificationStream(GetNotificationStreamRequest&& req,
+	SVRPC::Observer<GetNotificationStreamResponse> observer)
+{
+	return m_notification_stream_client.stream(std::move(req), observer);
+}
 
 }

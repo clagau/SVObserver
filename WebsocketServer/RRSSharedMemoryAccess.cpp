@@ -85,7 +85,8 @@ void RRSSharedMemoryAccess::GetImageFromCurId(const GetImageFromCurIdRequest& re
 
 }
 void RRSSharedMemoryAccess::GetImageStreamFromCurId(const GetImageStreamFromCurIdRequest& req,
-	SVRPC::Observer<GetImageStreamFromCurIdResponse> observer)
+	SVRPC::Observer<GetImageStreamFromCurIdResponse> observer,
+	SVRPC::ServerStreamContext::Ptr ctx)
 {
 	SVRPC::Error err;
 	err.set_error_code(SVRPC::ErrorCode::NotImplemented);
@@ -123,5 +124,13 @@ void RRSSharedMemoryAccess::QueryListItem(const QueryListItemRequest& request, S
 	{
 		task.error(err);
 	}
+}
+void RRSSharedMemoryAccess::GetNotificationStream(const GetNotificationStreamRequest& request,
+	SVRPC::Observer<GetNotificationStreamResponse> observer,
+	SVRPC::ServerStreamContext::Ptr ctx)
+{
+	SVRPC::Error err;
+	err.set_error_code(SVRPC::ErrorCode::NotImplemented);
+	observer.error(err);
 }
 }

@@ -37,6 +37,7 @@ enum MessageType
 	StreamResponse = 4;
 	StreamErrorResponse = 5;
 	StreamFinish = 6;
+	StreamCancel = 7;
 }
 
 message Envelope

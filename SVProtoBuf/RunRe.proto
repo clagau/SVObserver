@@ -27,6 +27,8 @@ message RunRejectMessages
 		GetItemsRequest getItemsRequest = 17;
 		GetItemsResponse getItemsResponse = 18;
 		GetImageStreamRequest getImageStreanRequest = 19;
+		GetNotificationStreamRequest getNotificationStreamRequest = 20;
+		GetNotificationStreamResponse getNotificationStreamResponse = 21;
 	}
 }
 
@@ -220,4 +222,18 @@ message GetImageStreamRequest
 {
 	 uint32 count = 1;
 	 ListImageItemDefinition imageDef =2;
+}
+
+message GetNotificationStreamRequest
+{
+	repeated string Types = 1;
+	uint64 StartId = 2;
+	uint64 MaxCcount = 3;
+}
+
+message GetNotificationStreamResponse
+{
+	uint64 Id = 1;
+	string Type = 2;
+	string Message = 3;
 }

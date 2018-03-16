@@ -9,6 +9,7 @@
 
 #include "stdafx.h"
 
+#include "SVRPCLibrary/ClientStreamContext.h"
 #include "SVRPCLibrary/ErrorUtil.h"
 #include "SVRPCLibrary/RPCClient.h"
 
@@ -103,12 +104,7 @@ void RPCClient::request_impl(Envelope&& request, Task<Envelope> task, uint64_t t
 
 	m_PendingRequests.insert({tx_id, task});
 
-	auto reqSize = request.ByteSize();
-	std::vector<char> buf;
-	buf.assign(reqSize, '\0');
-	request.SerializeToArray(buf.data(), reqSize);
-
-	m_WebsocketClient->sendBinaryMessage(buf);
+	send_envelope(std::move(request));
 }
 
 void RPCClient::schedule_timeout(uint64_t tx_id, boost::posix_time::time_duration timeout)
@@ -120,12 +116,12 @@ void RPCClient::schedule_timeout(uint64_t tx_id, boost::posix_time::time_duratio
 	m_PendingRequestsTimer.emplace(tx_id, timer);
 }
 
-void RPCClient::stream(Envelope&& request, Observer<Envelope> observer)
+ClientStreamContext RPCClient::stream(Envelope&& request, Observer<Envelope> observer)
 {
 	if (!isConnected())
 	{
 		observer.error(build_error(ErrorCode::ServiceUnavailable));
-		return;
+		return ClientStreamContext(nullptr);
 	}
 	auto tx_id = ++m_NextTransactionId;
 	request.set_transaction_id(tx_id);
@@ -133,12 +129,9 @@ void RPCClient::stream(Envelope&& request, Observer<Envelope> observer)
 
 	m_PendingStreams.insert({tx_id, observer});
 
-	auto reqSize = request.ByteSize();
-	std::vector<char> buf;
-	buf.resize(reqSize);
-	request.SerializeToArray(buf.data(), reqSize);
+	send_envelope(std::move(request));
 
-	m_WebsocketClient->sendBinaryMessage(buf);
+	return ClientStreamContext(std::bind(&RPCClient::cancel_stream, this, tx_id));
 }
 
 void RPCClient::onConnect()
@@ -286,12 +279,12 @@ void RPCClient::cancel_all_pending_requests()
 
 void RPCClient::cancel_all_pending_streams()
 {
-	while (!m_PendingRequests.empty())
+	while (!m_PendingStreams.empty())
 	{
-		auto it = m_PendingRequests.begin();
+		auto it = m_PendingStreams.begin();
 		auto& observer = it->second;
 		observer.error(build_error(ErrorCode::ServiceUnavailable, "Connection lost. Please retry."));
-		m_PendingRequests.erase(it);
+		m_PendingStreams.erase(it);
 	}
 }
 
@@ -350,6 +343,24 @@ void RPCClient::on_stream_finish(Envelope&& response)
 		m_PendingStreams.erase(it);
 		cb.finish();
 	}
+}
+
+void RPCClient::cancel_stream(uint64_t txId)
+{
+	Envelope request;
+	request.set_transaction_id(txId);
+	request.set_type(SVRPC::MessageType::StreamCancel);
+	send_envelope(std::move(request));
+}
+
+void RPCClient::send_envelope(Envelope&& envelope)
+{
+	auto reqSize = envelope.ByteSize();
+	std::vector<char> buf;
+	buf.resize(reqSize);
+	envelope.SerializeToArray(buf.data(), reqSize);
+
+	m_WebsocketClient->sendBinaryMessage(buf);
 }
 
 } // namespace SVRPC

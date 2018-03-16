@@ -25,6 +25,7 @@
 #include "SVRPCLibrary/EnvelopeUtil.h"
 #include "SVRPCLibrary/Observer.h"
 #include "SVRPCLibrary/OneOfUtil.h"
+#include "SVRPCLibrary/ServerStreamContext.h"
 #include "SVProtoBuf/envelope.h"
 
 namespace SVRPC
@@ -33,16 +34,16 @@ class ObserverWrapperBase
 {
 public:
 	virtual ~ObserverWrapperBase() {}
-	virtual void operator()(Envelope&&, Observer<Envelope>) = 0;
+	virtual void operator()(Envelope&&, Observer<Envelope>, ServerStreamContext::Ptr) = 0;
 };
 
 template <typename TPayload, typename TReq, typename TRes> class ObserverWrapper : public ObserverWrapperBase
 {
 public:
-	ObserverWrapper(std::function<void(TReq&&, Observer<TRes>)>&& Handler) : m_Handler(std::move(Handler)) {}
+	ObserverWrapper(std::function<void(TReq&&, Observer<TRes>, ServerStreamContext::Ptr)>&& Handler) : m_Handler(std::move(Handler)) {}
 	~ObserverWrapper() override {}
 
-	void operator()(Envelope&& envelope, Observer<Envelope> observer) override
+	void operator()(Envelope&& envelope, Observer<Envelope> observer, ServerStreamContext::Ptr ctx) override
 	{
 		TReq req;
 		if (!m_ReqUnwrapper.unwrap(req, std::move(envelope)))
@@ -62,11 +63,12 @@ public:
 			return observer.onNext(std::move(resEnvelope));
 		},
 			[observer]() { observer.finish(); },
-			[observer](const Error& err) { observer.error(err); }));
+			[observer](const Error& err) { observer.error(err); }),
+			ctx);
 	}
 
 private:
-	std::function<void(TReq&&, Observer<TRes>)> m_Handler;
+	std::function<void(TReq&&, Observer<TRes>, ServerStreamContext::Ptr)> m_Handler;
 	OneOfUtil<TPayload, TReq> m_ReqUnwrapper;
 	OneOfUtil<TPayload, TRes> m_ResWrapper;
 };

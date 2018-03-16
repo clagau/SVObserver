@@ -107,10 +107,11 @@ void RRSSharedMemoryAccessMock::GetImageFromCurId(const GetImageFromCurIdRequest
 }
 
 void RRSSharedMemoryAccessMock::GetImageStreamFromCurId(const GetImageStreamFromCurIdRequest& req,
-	SVRPC::Observer<GetImageStreamFromCurIdResponse> observer)
+	SVRPC::Observer<GetImageStreamFromCurIdResponse> observer,
+	SVRPC::ServerStreamContext::Ptr ctx)
 {
 	m_io_service.post(
-		std::bind(&RRSSharedMemoryAccessMock::getImageStreamFromCurIdStep, this, req.count(), req.id(), observer));
+		std::bind(&RRSSharedMemoryAccessMock::getImageStreamFromCurIdStep, this, req.count(), req.id(), observer, ctx));
 }
 
 void RRSSharedMemoryAccessMock::GetItems(const GetItemsRequest&, SVRPC::Task<GetItemsResponse> task)
@@ -134,6 +135,13 @@ void RRSSharedMemoryAccessMock::QueryListItem(const QueryListItemRequest&, SVRPC
 	SVRPC::Error err;
 	err.set_error_code(SVRPC::ErrorCode::NotImplemented);
 	task.error(err);
+}
+
+void RRSSharedMemoryAccessMock::GetNotificationStream(const GetNotificationStreamRequest& request,
+	SVRPC::Observer<GetNotificationStreamResponse> observer,
+	SVRPC::ServerStreamContext::Ptr ctx)
+{
+	m_io_service.post(std::bind(&RRSSharedMemoryAccessMock::getNotificationStreamImpl, this, observer, ctx));
 }
 
 void RRSSharedMemoryAccessMock::getProduct(Product& product, bool name_in_response)
@@ -191,11 +199,12 @@ void RRSSharedMemoryAccessMock::getImageById(RRWS::Image& img, const RRWS::CurIm
 
 void RRSSharedMemoryAccessMock::getImageStreamFromCurIdStep(int iterations,
 	const CurImageId& id,
-	SVRPC::Observer<GetImageStreamFromCurIdResponse> observer)
+	SVRPC::Observer<GetImageStreamFromCurIdResponse> observer,
+	SVRPC::ServerStreamContext::Ptr ctx)
 {
 	static const auto MAX_PENDING_RESPONSES = 20;
 	std::queue<std::future<void>> futures;
-	for (int i = 0; i < iterations; ++i)
+	for (int i = 0; i < iterations && !ctx->isCancelled(); ++i)
 	{
 		bool even = i % 2 == 0;
 		// will be true in the very first iteration only
@@ -213,5 +222,22 @@ void RRSSharedMemoryAccessMock::getImageStreamFromCurIdStep(int iterations,
 	}
 
 	observer.finish();
+}
+
+void RRSSharedMemoryAccessMock::getNotificationStreamImpl(
+	SVRPC::Observer<GetNotificationStreamResponse> observer,
+	SVRPC::ServerStreamContext::Ptr ctx)
+{
+	uint64_t notification_id = 0;
+	while (!ctx->isCancelled())
+	{
+		GetNotificationStreamResponse res;
+		res.set_id(++notification_id);
+		res.set_type("info");
+		res.set_message("hello");
+		observer.onNext(std::move(res));
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+	}
+	observer.m_OnFinish();
 }
 }

@@ -83,6 +83,26 @@ void PrintVariant(const ::SVRPC::Variant& var)
 	}
 }
 
+static void GetNotifications(ClientService& client)
+{
+	GetNotificationStreamRequest req;
+	auto ctx = client.getNotificationStream(std::move(req), SVRPC::Observer<GetNotificationStreamResponse>(
+		[](GetNotificationStreamResponse&& res) -> std::future<void>
+	{
+		BOOST_LOG_TRIVIAL(info) << "Received notification " << res.id() << " " << res.type() << " " << res.message();
+		return std::future<void>();
+	},
+		[]()
+	{
+		BOOST_LOG_TRIVIAL(info) << "Finished receiving notifications";
+	},
+		[](const SVRPC::Error& err)
+	{
+		BOOST_LOG_TRIVIAL(info) << "Error while receiving notifications: " << err.message();
+	}));
+	std::this_thread::sleep_for(std::chrono::seconds(2));
+	ctx.cancel();
+}
 
 static bool GetImageId(ClientService& client, int imageWidth, CurImageId& imgIdOut)
 {
@@ -288,6 +308,17 @@ int main(int argc, char* argv[])
 				catch (const std::exception& e)
 				{
 					BOOST_LOG_TRIVIAL(error) << "Unable to get version: " << e.what();
+				}
+			}
+			else if (words[0] == "n")
+			{
+				try
+				{
+					GetNotifications(*pService);
+				}
+				catch (const std::exception& e)
+				{
+					BOOST_LOG_TRIVIAL(error) << "Unable to get notifications: " << e.what();
 				}
 			}
 			else if ( pRpcClient->isConnected() && words[0] == "m" )
@@ -524,7 +555,8 @@ int main(int argc, char* argv[])
 					<< "  q  quit" << std::endl 
 					<< "  h  Hilfe" << std::endl 
 					<< "  v  (Version)" << std::endl 
-					<< "  m  (Monitorlist)" << std::endl 
+					<< "  n  notification" << std::endl
+					<< "  m  (Monitorlist)" << std::endl
 					<< "  p  name triggercount (GetProdukt)" << std::endl 
 					<< "  i  StoreNr  imageNr slotNr (GetImage)" << std::endl 
 					<< "  r  name triggercount (GetRejekt)" << std::endl 

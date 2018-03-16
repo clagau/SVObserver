@@ -19,7 +19,7 @@
 #include <boost/thread.hpp>
 
 #include "SVHttpLibrary/WebsocketClient.h"
-#include "SVRPCExampleServer/format.pb.h"
+#include "SVRPCExampleLibrary/format.h"
 #include "SVRPCLibrary/RPCClient.h"
 #include "SVRPCLibrary/SimpleClient.h"
 
@@ -31,7 +31,7 @@ int main()
 	try
 	{
 		auto Timeout = boost::posix_time::seconds(5);
-		auto pRpcClient = std::make_unique<SVRPC::RPCClient>("127.0.0.1", 8080);
+		auto pRpcClient = std::make_unique<SVRPC::RPCClient>("127.0.0.1", 8081);
 		pRpcClient->waitForConnect(6000);
 		{
 			HelloWorldReq req;
@@ -41,7 +41,7 @@ int main()
 			BOOST_LOG_TRIVIAL(info) << res.message();
 		}
 		
-		//////Alternative
+		/// Alternative
 		{
 			HelloWorldReq req;
 			req.set_name("Marcus Eichengruen");
@@ -54,39 +54,45 @@ int main()
 			HelloWorldRes res2 = (promise->get_future()).get();
 			BOOST_LOG_TRIVIAL(info) << res2.message();
 		}
-		//////Streaming ???
+		/// Request answered by Router
 		{
-			int lastcounter {0};
-			GetCounterStreamRequest getcounterStreamRequest;
-			getcounterStreamRequest.set_count(500);
-			getcounterStreamRequest.set_start(0);
-			SVRPC::SimpleClient<ApplicationMessages, GetCounterStreamRequest, GetCounterStreamResponse> streamClient(*pRpcClient);
-			auto CounterPromise = std::make_shared<std::promise<GetCounterStreamResponse>>();
+			HelloRouterReq req;
+			req.set_name("Bart Simpson");
+			SVRPC::SimpleClient<ApplicationMessages, HelloRouterReq, HelloRouterRes> client(*pRpcClient);
+			auto res = client.request(std::move(req), Timeout).get();
+			BOOST_LOG_TRIVIAL(info) << res.message();
+		}
+		/// Streaming
+		{
+			auto lastcounter = 0;
+			auto CounterPromise = std::make_shared<std::promise<int>>();
 			auto nextFkt = [&lastcounter](GetCounterStreamResponse&& resp)-> std::future<void>
 			{
 				lastcounter = resp.counter();
 				BOOST_LOG_TRIVIAL(info) << resp.counter();
-				//::Sleep(100);
 				return std::future<void>();
 			};
-			auto FinishFkt= [CounterPromise, lastcounter]()
+			auto FinishFkt = [CounterPromise, &lastcounter]()
 			{
-				GetCounterStreamResponse resp;
-				BOOST_LOG_TRIVIAL(info) << "Finish last counter was "  << lastcounter; 
-				resp.set_counter(lastcounter);
-				CounterPromise->set_value(resp);
+				CounterPromise->set_value(lastcounter);
 			};
-			auto errorFkt = [CounterPromise](const SVRPC::Error& err)
+			auto errorFkt = [CounterPromise, &lastcounter](const SVRPC::Error& err)
 			{ 
 				CounterPromise->set_exception(SVRPC::errorToExceptionPtr(err));
 			};
-
-
 			auto observer = SVRPC::Observer<GetCounterStreamResponse>(nextFkt, FinishFkt, errorFkt);
-			streamClient.stream(std::move(getcounterStreamRequest), observer);
-			GetCounterStreamResponse resp = CounterPromise->get_future().get();
+
+			SVRPC::SimpleClient<ApplicationMessages, GetCounterStreamRequest, GetCounterStreamResponse> streamClient(*pRpcClient);
+
+			GetCounterStreamRequest getCounterStreamRequest;
+			getCounterStreamRequest.set_start(0);
+			auto ctx = streamClient.stream(std::move(getCounterStreamRequest), observer);
+			std::this_thread::sleep_for(std::chrono::seconds(2));
+			ctx.cancel();
+
+			auto res = CounterPromise->get_future().get();
+			BOOST_LOG_TRIVIAL(info) << "Finish last counter was " << res;
 		}
-	
 	}
 	catch (std::exception& e)
 	{

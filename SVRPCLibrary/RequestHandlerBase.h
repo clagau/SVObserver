@@ -13,6 +13,7 @@
 #pragma once
 
 #include "SVRPCLibrary/Observer.h"
+#include "SVRPCLibrary/ServerStreamContext.h"
 #include "SVRPCLibrary/Task.h"
 #include "SVProtoBuf/envelope.h"
 
@@ -23,7 +24,7 @@ class RequestHandlerBase
 public:
 	virtual ~RequestHandlerBase() {}
 	virtual void onRequest(Envelope&& request, Task<Envelope> handler) = 0;
-	virtual void onStream(Envelope&& request, Observer<Envelope> observer) = 0;
+	virtual void onStream(Envelope&& request, Observer<Envelope> observer, ServerStreamContext::Ptr ctx) = 0;
 };
 
 } // namespace SVRPC

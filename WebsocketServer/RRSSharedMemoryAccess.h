@@ -31,10 +31,12 @@ public:
 	void GetFailstatus(const GetFailStatusRequest&, SVRPC::Task<GetFailStatusResponse>) override;
 	void GetImageFromCurId(const GetImageFromCurIdRequest&, SVRPC::Task<GetImageFromCurIdResponse>) override;
 	void GetImageStreamFromCurId(const GetImageStreamFromCurIdRequest&,
-		SVRPC::Observer<GetImageStreamFromCurIdResponse>) override;
+		SVRPC::Observer<GetImageStreamFromCurIdResponse>, SVRPC::ServerStreamContext::Ptr) override;
 	void GetItems(const GetItemsRequest&, SVRPC::Task<GetItemsResponse>) override;
 	void QueryListName(const QueryListNameRequest&, SVRPC::Task<QueryListNameResponse>) override;
 	void QueryListItem(const QueryListItemRequest&, SVRPC::Task<QueryListItemResponse>) override;
+	void GetNotificationStream(const GetNotificationStreamRequest&,
+		SVRPC::Observer<GetNotificationStreamResponse>, SVRPC::ServerStreamContext::Ptr) override;
 
 private:
 	boost::asio::io_service m_io_service;

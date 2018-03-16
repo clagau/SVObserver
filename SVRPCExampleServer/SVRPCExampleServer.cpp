@@ -8,13 +8,15 @@
 
 #include "stdafx.h"
 
+#include <chrono>
 #include <sstream>
+#include <thread>
 
 #include <boost/asio.hpp>
 #include <boost/log/trivial.hpp>
 
 #include "SVHttpLibrary/WebsocketServer.h"
-#include "SVRPCExampleServer/format.pb.h"
+#include "SVRPCExampleLibrary/format.h"
 #include "SVRPCLibrary/RPCServer.h"
 #include "SVRPCLibrary/RequestHandler.h"
 
@@ -22,20 +24,34 @@ using namespace SVHTTP;
 using namespace SVRPC;
 using namespace SVRPC::Example;
 
-
-
-void GetCounterStreamRequestFkt(GetCounterStreamRequest&& Request, SVRPC::Observer<GetCounterStreamResponse> observer)
+static void counter_async(const boost::system::error_code& ec,
+	std::shared_ptr<boost::asio::deadline_timer> timer,
+	boost::asio::io_service& io_service,
+	SVRPC::Observer<GetCounterStreamResponse> observer,
+	ServerStreamContext::Ptr ctx,
+	int i)
 {
-	for (auto i = Request.start(); i < Request.count(); i++)
+	if (ec)
 	{
-		
-		GetCounterStreamResponse resp;
-		resp.set_counter(i);
-		///ToDO 
-		observer.onNext(std::move(resp));
+		SVRPC::Error error;
+		error.set_message(ec.message());
+		error.set_error_code(SVRPC::ErrorCode::InternalError);
+		observer.error(error);
+		return;
 	}
-	
-	observer.finish();
+	if (ctx->isCancelled())
+	{
+		observer.finish();
+		return;
+	}
+
+	GetCounterStreamResponse resp;
+	resp.set_counter(i);
+	observer.onNext(std::move(resp));
+
+	timer = std::make_shared<boost::asio::deadline_timer>(io_service);
+	timer->expires_from_now(boost::posix_time::milliseconds(100));
+	timer->async_wait(std::bind(counter_async, std::placeholders::_1, timer, std::ref(io_service), observer, ctx, ++i));
 }
 
 int main()
@@ -59,28 +75,19 @@ int main()
 			task.finish(std::move(res));
 		});
 
-		auto fkt = &GetCounterStreamRequestFkt;
 		requestHandler.registerStreamHandler<
 			ApplicationMessages,
 			ApplicationMessages::kGetCounterStreamRequest,
 			GetCounterStreamRequest,
 			GetCounterStreamResponse>
-			([&fkt, &io_service ](GetCounterStreamRequest&& req, SVRPC::Observer<GetCounterStreamResponse> observer)
+			([&io_service](GetCounterStreamRequest&& req, SVRPC::Observer<GetCounterStreamResponse> observer, ServerStreamContext::Ptr ctx)
 		{
-			
-			fkt(std::move(req), observer);
-			//std::function<void(void)> f = std::bind(*fkt, req, observer);
-			//auto f = boost::bind(*fkt, boost::ref(req), boost::ref(observer));
-			//io_service.post(f);
-		}
-		);
-			
-
+			counter_async({}, nullptr, io_service, observer, ctx, req.start());
+		});
 
 		RPCServer rpcServer(&requestHandler);
-
 		WebsocketServerSettings settings;
-		
+		settings.Port = 8080;
 		WebsocketServer server(settings, io_service, &rpcServer);
 		server.start();
 

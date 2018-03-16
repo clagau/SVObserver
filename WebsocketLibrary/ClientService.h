@@ -12,9 +12,8 @@
 
 #pragma once
 
-#pragma warning (push,2)
-#include "SVprotobuf/RunRe.pb.h"
-#pragma warning (pop)
+#include "SVProtobuf/RunRe.h"
+#include "SVRPCLibrary/ClientStreamContext.h"
 #include "SVRPCLibrary/Observer.h"
 #include "SVRPCLibrary/RPCCLient.h"
 #include "SVRPCLibrary/SimpleClient.h"
@@ -37,7 +36,8 @@ public:
 	void getFailStatus(GetFailStatusRequest&& req, SVRPC::Task<GetFailStatusResponse> task);
 	void getItems(GetItemsRequest&& req, SVRPC::Task<GetItemsResponse> task);
 	void setMode(SetModeRequest&& req, SVRPC::Task<SetModeResponse> task);
-
+	SVRPC::ClientStreamContext getNotificationStream(GetNotificationStreamRequest&& req,
+		SVRPC::Observer<GetNotificationStreamResponse> observer);
 
 private:
 	boost::posix_time::time_duration m_request_timeout;
@@ -53,7 +53,8 @@ private:
 	SVRPC::SimpleClient<RunRejectMessages, GetFailStatusRequest, GetFailStatusResponse> m_get_fail_status_client;
 	SVRPC::SimpleClient<RunRejectMessages, GetItemsRequest, GetItemsResponse> m_get_items_client;
 	SVRPC::SimpleClient<RunRejectMessages, SetModeRequest, SetModeResponse> m_set_mode_client;
-
+	SVRPC::SimpleClient<RunRejectMessages, GetNotificationStreamRequest, GetNotificationStreamResponse>
+		m_notification_stream_client;
 };
 
 using ClientServicePointer = std::unique_ptr<RRWS::ClientService>;
