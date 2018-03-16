@@ -1809,7 +1809,7 @@ void SVIPDoc::OnSaveResultsToFile()
 void SVIPDoc::OnSaveTableResultsToFile()
 {
 	static TCHAR Filter[] = _T("CSV Files (*.csv)|*.csv||");
-	SvMc::SVFileDialog dlg(false, true, nullptr, nullptr, 0, Filter, nullptr);
+	SvMc::SVFileDialog dlg(false, true, _T("csv"), nullptr, 0, Filter, nullptr);
 	dlg.m_ofn.lpstrTitle = _T("Select File");
 	if (dlg.DoModal() == IDOK)
 	{
