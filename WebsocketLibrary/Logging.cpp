@@ -43,7 +43,7 @@ using namespace boost::log;
 using namespace boost::log::sinks;
 using boost::log::trivial::severity_level;
 
-namespace RRWS
+namespace SvWsl
 {
 
 namespace
@@ -189,4 +189,4 @@ void init_logging(const LogSettings& settings)
 	}
 }
 
-} // namespace RRWS
+} // namespace SvWsl

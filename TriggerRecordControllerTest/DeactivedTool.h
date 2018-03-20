@@ -14,7 +14,7 @@
 
 #pragma region Declarations
 #pragma endregion Declarations
-namespace SvTRCT
+namespace SvTrcT
 {
 	class DeactivedTool : public ToolObject
 	{
@@ -29,7 +29,7 @@ namespace SvTRCT
 		virtual void reset(int pos, const SVMatroxBufferCreateStruct& bufferStructIn) override;
 		virtual CString getName() const override { return _T("(De)actived Tool"); };
 		static CString getDescription() { return _T("Copy the whole input image every second time."); };
-		virtual bool run(SvTRC::ITriggerRecordRWPtr pTriggerRecord) override;
+		virtual bool run(SvTrc::ITriggerRecordRWPtr pTriggerRecord) override;
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -47,4 +47,4 @@ namespace SvTRCT
 		bool m_isActive = false;
 #pragma endregion Member Variables
 	};
-} //namespace SvTRCT
+} //namespace SvTrcT

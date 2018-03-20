@@ -14,12 +14,12 @@
 
 #include <boost/log/trivial.hpp>
 
-#include "SVHttpLibrary/Handshake.h"
-#include "SVHttpLibrary/WebsocketClient.h"
+#include "SvHttpLibrary/Handshake.h"
+#include "SvHttpLibrary/WebsocketClient.h"
 
 #define BUF_SIZE (64 * 1024)
 
-namespace SVHTTP
+namespace SvHttp
 {
 WebsocketClient::WebsocketClient(boost::asio::io_service& rIoService, EventHandler* pEventHandler)
 	: m_rIoService(rIoService), m_Socket(rIoService), m_Handshake(), m_pEventHandler(pEventHandler)
@@ -292,4 +292,4 @@ void WebsocketClient::send_pong()
 		&WebsocketClient::handle_request_sent, this, std::placeholders::_1, std::placeholders::_2, res_frame));
 }
 
-} // namespace SVHTTP
+} // namespace SvHttp

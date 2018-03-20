@@ -26,9 +26,9 @@
 #include <map>
 #include <string>
 
-#include "SVHttpLibrary/http_parser.h"
+#include "SvHttpLibrary/http_parser.h"
 
-namespace SVHTTP
+namespace SvHttp
 {
 class Handshake
 {
@@ -73,4 +73,4 @@ private:
 	std::map<std::string, std::string> m_Headers;
 };
 
-} // namespace SVHTTP
+} // namespace SvHttp

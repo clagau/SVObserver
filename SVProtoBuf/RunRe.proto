@@ -1,8 +1,8 @@
 syntax = "proto3";
+package SvPb;
 
 import "variant.proto";
 
-package RRWS;
 
 message RunRejectMessages
 {
@@ -133,7 +133,7 @@ message CurImageId
 message Product
 {
 	uint32 Trigger=1;
-	repeated SVRPC.Variant Values = 2;
+	repeated Variant Values = 2;
 	repeated CurImageId Images =3;
 	repeated string ImageNames = 4;
 	repeated string ValueNames =5; 
@@ -214,7 +214,7 @@ message GetItemsRequest
 message GetItemsResponse
 {
 	uint32 triggercount = 1;
-	repeated SVRPC.Variant Values = 2;
+	repeated Variant Values = 2;
 	repeated Image Images = 3;
 }
 

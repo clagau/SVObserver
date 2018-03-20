@@ -1,5 +1,5 @@
 #pragma once
-namespace RRWS
+namespace SvWsl
 {
 const unsigned Default_Port = 8080;
 }

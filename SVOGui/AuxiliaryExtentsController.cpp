@@ -144,9 +144,9 @@ namespace SvOg
 	
 	HRESULT AuxiliaryExtentsController::RunOnce()
 	{
-		SvPB::InspectionRunOnceRequest requestMessage;
-		SvPB::SetGuidInProtoBytes(requestMessage.mutable_inspectionid(), m_InspectionID);
-		SvPB::SetGuidInProtoBytes(requestMessage.mutable_taskid(), m_TaskObjectID);
+		SvPb::InspectionRunOnceRequest requestMessage;
+		SvPb::SetGuidInProtoBytes(requestMessage.mutable_inspectionid(), m_InspectionID);
+		SvPb::SetGuidInProtoBytes(requestMessage.mutable_taskid(), m_TaskObjectID);
 		return SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, nullptr);
 	}
 } //namespace SvOg

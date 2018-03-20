@@ -3330,8 +3330,8 @@ void SVObserverApp::ResetAllCounts()
 
 			if (nullptr != pInspection)
 			{
-				SvPB::InspectionRunOnceRequest requestMessage;
-				SvPB::SetGuidInProtoBytes(requestMessage.mutable_inspectionid(), pInspection->GetUniqueObjectID());
+				SvPb::InspectionRunOnceRequest requestMessage;
+				SvPb::SetGuidInProtoBytes(requestMessage.mutable_inspectionid(), pInspection->GetUniqueObjectID());
 				SvCmd::InspectionCommandsSynchronous(pInspection->GetUniqueObjectID(), &requestMessage, nullptr);
 			}
 

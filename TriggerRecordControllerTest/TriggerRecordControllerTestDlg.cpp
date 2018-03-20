@@ -19,7 +19,7 @@
 #define new DEBUG_NEW
 #endif
 
-namespace SvTRCT
+namespace SvTrcT
 {
 	// CAboutDlg-Dialogfeld für Anwendungsbefehl "Info"
 
@@ -136,7 +136,7 @@ namespace SvTRCT
 		SetIcon(m_hIcon, FALSE);		// Kleines Symbol verwenden
 
 		// TODO: Hier zusätzliche Initialisierung einfügen
-		SvPB::InspectionList inspList;
+		SvPb::InspectionList inspList;
 		inspList.add_inspectionid();
 		m_recordController.setInspections(inspList);
 		resetController();
@@ -415,7 +415,7 @@ namespace SvTRCT
 		GetDlgItem(IDC_BUTTON_TRIGGER)->EnableWindow(!m_isEdit);
 	}
 
-	bool CTriggerRecordControllerTestDlg::LoadMainImage(SvTRC::ITriggerRecordRWPtr triggerRecord, const CString& rPath)
+	bool CTriggerRecordControllerTestDlg::LoadMainImage(SvTrc::ITriggerRecordRWPtr triggerRecord, const CString& rPath)
 	{
 		bool retValue = false;
 		auto& main_image = triggerRecord->createNewImageHandle(0);
@@ -432,4 +432,4 @@ namespace SvTRCT
 		return retValue;
 	}
 
-} // namespace SvTRCT
+} // namespace SvTrcT

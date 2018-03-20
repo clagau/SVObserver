@@ -1,122 +1,122 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
+    <Filter Include="Quelldateien">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Header Files">
+    <Filter Include="Headerdateien">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
+    <Filter Include="Ressourcendateien">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVCriticalSection.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVImageConvertorGDI.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVSAXContentHandlerImpl.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVThreadWait.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVVersionInfo.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVWaitFuncs.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVEncodeDecodeUtilities.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVThreadManager.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVLockableClass.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVAsyncProcedure.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVAutoLockAndReleaseTemplate.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVCriticalSection.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVEventThread.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVImageConvertorGDI.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVSAXContentHandlerImpl.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVSAXErrorHandlerImpl.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVSequencer.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVThread.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVThreadWait.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVVersionInfo.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVWaitFuncs.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVEncodeDecodeUtilities.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVThreadManager.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVLockableClass.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVObserverEnums.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SVAsyncProcedure.inl">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </None>
     <None Include="SVAutoLockAndReleaseTemplate.inl">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </None>
     <None Include="SVEventThread.inl">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </None>
     <None Include="SVSAXErrorHandlerImpl.inl">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </None>
     <None Include="SVSequencer.inl">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </None>
     <None Include="SVThread.inl">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </None>
   </ItemGroup>
 </Project>

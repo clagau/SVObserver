@@ -12,9 +12,9 @@
 
 #include <boost/asio/io_service.hpp>
 
-#include "SVHttpLibrary/WebSocketClient.h"
+#include "SvHttpLibrary/WebSocketClient.h"
 
-namespace SVHTTP
+namespace SvHttp
 {
 class WebsocketClientFactory
 {
@@ -31,4 +31,4 @@ private:
 	uint16_t m_Port;
 };
 
-} // namespace SVHTTP
+} // namespace SvHttp

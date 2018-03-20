@@ -117,9 +117,9 @@ std::string FormulaController::GetPPQName() const
 std::string FormulaController::GetEquationText() const
 {
 	std::string equationText;
-	SvPB::GetEquationRequest requestMessage;
-	SvPB::GetEquationResponse responseMessage;
-	SvPB::SetGuidInProtoBytes(requestMessage.mutable_objectid(), m_EquationID);
+	SvPb::GetEquationRequest requestMessage;
+	SvPb::GetEquationResponse responseMessage;
+	SvPb::SetGuidInProtoBytes(requestMessage.mutable_objectid(), m_EquationID);
 	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, &responseMessage);
 	if (S_OK == hr)
 	{
@@ -199,10 +199,10 @@ HRESULT FormulaController::SetOwnerAndEquationEnabled(bool ownerEnabled, bool eq
 int FormulaController::ValidateEquation(const std::string& equationString, double& result, bool bSetValue, SvStl::MessageContainerVector& rErrorMessages) const
 {
 	int retValue = validateSuccessful;
-	SvPB::ValidateAndSetEquationRequest requestEquationMessage;
-	SvPB::ValidateAndSetEquationResponse responseEquationMessage;
+	SvPb::ValidateAndSetEquationRequest requestEquationMessage;
+	SvPb::ValidateAndSetEquationResponse responseEquationMessage;
 
-	SvPB::SetGuidInProtoBytes(requestEquationMessage.mutable_objectid(), m_EquationID);
+	SvPb::SetGuidInProtoBytes(requestEquationMessage.mutable_objectid(), m_EquationID);
 
 	requestEquationMessage.set_equationtext(equationString);
 	requestEquationMessage.set_bsetvalue(bSetValue);
@@ -215,8 +215,8 @@ int FormulaController::ValidateEquation(const std::string& equationString, doubl
 
 		if (validateSuccessful == retValue && bSetValue)
 		{
-			SvPB::ResetObjectRequest requestResetMessage;
-			SvPB::SetGuidInProtoBytes(requestResetMessage.mutable_objectid(), m_TaskObjectID);
+			SvPb::ResetObjectRequest requestResetMessage;
+			SvPb::SetGuidInProtoBytes(requestResetMessage.mutable_objectid(), m_TaskObjectID);
 			hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestResetMessage);
 			if (S_OK != hr)
 			{

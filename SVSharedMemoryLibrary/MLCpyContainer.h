@@ -61,13 +61,13 @@ namespace SvSml
 		void CalculateStoreIds();
 
 		///Serialize to ProtoBufMessage
-		void BuildProtoMessage(MesMLCpyContainer& rMesMLCpyContainer) const;
+		void BuildProtoMessage(SvPml::MesMLCpyContainer& rMesMLCpyContainer) const;
 
 		///Fill the class from protobufmessage
-		void BuildFromProtoMessage(const MesMLCpyContainer& rMesMLCpyContainer);
+		void BuildFromProtoMessage(const SvPml::MesMLCpyContainer& rMesMLCpyContainer);
 		
-		bool  QueryListName(const RRWS::QueryListNameRequest& rReq, RRWS::QueryListNameResponse& rResp, SVRPC::Error& err) const;
-		bool  QueryListItem(const RRWS::QueryListItemRequest& rReq, RRWS::QueryListItemResponse& resp, SVRPC::Error& err) const;
+		bool  QueryListName(const SvPb::QueryListNameRequest& rReq, SvPb::QueryListNameResponse& rResp, SvPenv::Error& err) const;
+		bool  QueryListItem(const SvPb::QueryListItemRequest& rReq, SvPb::QueryListItemResponse& resp, SvPenv::Error& err) const;
 		
 
 	//private:

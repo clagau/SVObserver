@@ -27,7 +27,7 @@ namespace SvSml
 		rImageProps.Bytesize = ByteSize;
 		return true;
 	}
-	void MonitorEntryData::SetMatroxImageProps(const MatroxImageProps  &rImageProps)
+	void MonitorEntryData::SetMatroxImageProps(const MatroxImageProps& rImageProps)
 	{
 		ObjectType = SvDef::SVImageObjectType;
 		Pitch = rImageProps.Pitch;
@@ -39,47 +39,47 @@ namespace SvSml
 		ByteSize = rImageProps.Bytesize;
 		BandSize = rImageProps.Bandsize;
 	}
-	void MonitorEntryData::BuildProtoMessage(MesMonitorEntryData &rprotoMessage) const
+	void MonitorEntryData::BuildProtoMessage(SvPml::MesMonitorEntryData& rProtoMessage) const
 	{
-		rprotoMessage.set_inspectionstoreid(InspectionStoreId);
-		rprotoMessage.set_itemid(ItemId);
-		rprotoMessage.set_objecttype(ObjectType);
-		rprotoMessage.set_variant_type(variant_type);
-		rprotoMessage.set_store_offset(Store_Offset);
-		rprotoMessage.set_isarray(isArray);
-		rprotoMessage.set_wholearray(wholeArray);
-		rprotoMessage.set_arrayindex(arrayIndex);
-		rprotoMessage.set_monitorlistflag(m_MonitorListFlag);
-		rprotoMessage.set_sizey(sizeY);
-		rprotoMessage.set_sizex(sizeX);
-		rprotoMessage.set_pitchbyte(PitchByte);
-		rprotoMessage.set_pitch(Pitch);
-		rprotoMessage.set_matrox_type(Matrox_type);
-		rprotoMessage.set_attrib(Attrib);
-		rprotoMessage.set_bandsize(BandSize);
-		rprotoMessage.set_bytesize(ByteSize);
+		rProtoMessage.set_inspectionstoreid(InspectionStoreId);
+		rProtoMessage.set_itemid(ItemId);
+		rProtoMessage.set_objecttype(ObjectType);
+		rProtoMessage.set_variant_type(variant_type);
+		rProtoMessage.set_store_offset(Store_Offset);
+		rProtoMessage.set_isarray(isArray);
+		rProtoMessage.set_wholearray(wholeArray);
+		rProtoMessage.set_arrayindex(arrayIndex);
+		rProtoMessage.set_monitorlistflag(m_MonitorListFlag);
+		rProtoMessage.set_sizey(sizeY);
+		rProtoMessage.set_sizex(sizeX);
+		rProtoMessage.set_pitchbyte(PitchByte);
+		rProtoMessage.set_pitch(Pitch);
+		rProtoMessage.set_matrox_type(Matrox_type);
+		rProtoMessage.set_attrib(Attrib);
+		rProtoMessage.set_bandsize(BandSize);
+		rProtoMessage.set_bytesize(ByteSize);
 	}
 
-	void MonitorEntryData::BuildFromProtoMessage(const MesMonitorEntryData& rprotoMessage)
+	void MonitorEntryData::BuildFromProtoMessage(const SvPml::MesMonitorEntryData& rProtoMessage)
 	{
 
-		InspectionStoreId = rprotoMessage.inspectionstoreid();
-		ItemId = rprotoMessage.itemid();
-		ObjectType = rprotoMessage.objecttype();
-		variant_type = rprotoMessage.variant_type();
-		Store_Offset = rprotoMessage.store_offset();
-		isArray = rprotoMessage.isarray();
-		arrayIndex = rprotoMessage.arrayindex();
-		wholeArray = rprotoMessage.wholearray();
-		m_MonitorListFlag = rprotoMessage.monitorlistflag();
-		sizeY = rprotoMessage.sizey();
-		sizeX = rprotoMessage.sizex();
-		PitchByte = rprotoMessage.pitchbyte();
-		Pitch = rprotoMessage.pitch();
-		Matrox_type = rprotoMessage.matrox_type();
-		Attrib = rprotoMessage.attrib();
-		BandSize = rprotoMessage.bandsize();
-		ByteSize = rprotoMessage.bytesize();
+		InspectionStoreId = rProtoMessage.inspectionstoreid();
+		ItemId = rProtoMessage.itemid();
+		ObjectType = rProtoMessage.objecttype();
+		variant_type = rProtoMessage.variant_type();
+		Store_Offset = rProtoMessage.store_offset();
+		isArray = rProtoMessage.isarray();
+		arrayIndex = rProtoMessage.arrayindex();
+		wholeArray = rProtoMessage.wholearray();
+		m_MonitorListFlag = rProtoMessage.monitorlistflag();
+		sizeY = rProtoMessage.sizey();
+		sizeX = rProtoMessage.sizex();
+		PitchByte = rProtoMessage.pitchbyte();
+		Pitch = rProtoMessage.pitch();
+		Matrox_type = rProtoMessage.matrox_type();
+		Attrib = rProtoMessage.attrib();
+		BandSize = rProtoMessage.bandsize();
+		ByteSize = rProtoMessage.bytesize();
 	}
 
 	MonitorEntry::MonitorEntry() :data(), m_Guid(GUID_NULL)
@@ -257,23 +257,23 @@ namespace SvSml
 
 	
 	
-	void  MonitorEntry::BuildProtoMessage(MesMonitorEntry& rmesMonitorEntry) const
+	void  MonitorEntry::BuildProtoMessage(SvPml::MesMonitorEntry& rMesMonitorEntry) const
 	{
-		SvPB::SetGuidInProtoBytes(rmesMonitorEntry.mutable_guid(), m_Guid);
-		rmesMonitorEntry.set_name(name.c_str());
-		auto pEntryDataMessage = rmesMonitorEntry.mutable_entrydata();
+		SvPb::SetGuidInProtoBytes(rMesMonitorEntry.mutable_guid(), m_Guid);
+		rMesMonitorEntry.set_name(name.c_str());
+		auto pEntryDataMessage = rMesMonitorEntry.mutable_entrydata();
 		data.BuildProtoMessage(*pEntryDataMessage);
 	}
 
 	
-	void MonitorEntry::BuildFromProtoMessage(const MesMonitorEntry& rmesMonitorEntry)
+	void MonitorEntry::BuildFromProtoMessage(const SvPml::MesMonitorEntry& rMesMonitorEntry)
 	{
-		SvPB::GetGuidFromProtoBytes(rmesMonitorEntry.guid(), m_Guid);
-		name = rmesMonitorEntry.name();
-		data.BuildFromProtoMessage(rmesMonitorEntry.entrydata());
+		SvPb::GetGuidFromProtoBytes(rMesMonitorEntry.guid(), m_Guid);
+		name = rMesMonitorEntry.name();
+		data.BuildFromProtoMessage(rMesMonitorEntry.entrydata());
 	}
 
-	void MonitorEntry::AddListItem(RRWS::QueryListItemResponse& resp) const
+	void MonitorEntry::AddListItem(SvPb::QueryListItemResponse& resp) const
 	{
 		if (IsImage())
 		{

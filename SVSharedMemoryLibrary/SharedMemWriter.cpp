@@ -167,7 +167,7 @@ namespace SvSml
 	}
 	void SharedMemWriter::WriteMonitorList()
 	{
-		MesMLCpyContainer MesMLCpyCont;
+		SvPml::MesMLCpyContainer MesMLCpyCont;
 		m_MLContainer.BuildProtoMessage(MesMLCpyCont);
 		size_t size = MesMLCpyCont.ByteSizeLong();
 		const SvSml::SVSharedMemorySettings& rSettings = SvSml::SharedMemWriter::Instance().GetSettings();

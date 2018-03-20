@@ -8,9 +8,9 @@
 
 #include "stdafx.h"
 
-#include "SVHttpLibrary/WebsocketClientFactory.h"
+#include "SvHttpLibrary/WebsocketClientFactory.h"
 
-namespace SVHTTP
+namespace SvHttp
 {
 
 WebsocketClientFactory::WebsocketClientFactory(std::string host, uint16_t port)
@@ -32,4 +32,4 @@ std::unique_ptr<WebsocketClient> WebsocketClientFactory::create(
 	return client;
 }
 
-} // namespace SVHTTP
+} // namespace SvHttp

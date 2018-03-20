@@ -14,9 +14,9 @@
 
 #include <boost/log/trivial.hpp>
 
-#include "SVHttpLibrary/WebsocketServer.h"
+#include "SvHttpLibrary/WebsocketServer.h"
 
-namespace SVHTTP
+namespace SvHttp
 {
 static boost::asio::ip::tcp::endpoint build_endpoint(const WebsocketServerSettings& settings)
 {
@@ -97,4 +97,4 @@ void WebsocketServer::do_cleanup(const boost::system::error_code& error)
 	schedule_cleanup();
 }
 
-} // namespace SVHTTP
+} // namespace SvHttp

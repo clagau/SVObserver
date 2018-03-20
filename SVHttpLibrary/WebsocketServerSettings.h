@@ -13,7 +13,7 @@
 #include <cstdint>
 #include <string>
 
-namespace SVHTTP
+namespace SvHttp
 {
 struct WebsocketServerSettings
 {
@@ -53,4 +53,4 @@ struct WebsocketServerSettings
 	bool SplitLargePayload {false};
 };
 
-} // namespace SVHTTP
+} // namespace SvHttp

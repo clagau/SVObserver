@@ -12,6 +12,9 @@
 
 #define WIN32_LEAN_AND_MEAN // Exclude rarely-used stuff from Windows headers
 
+#include <functional>
+#include <future>
+#include <memory>
 #include <thread>
 
 #include <boost/array.hpp>

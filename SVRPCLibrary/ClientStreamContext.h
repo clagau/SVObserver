@@ -8,7 +8,7 @@
 
 #pragma once
 
-namespace SVRPC
+namespace SvRpc
 {
 
 class ClientStreamContext
@@ -32,4 +32,4 @@ private:
 	OnCancelFn m_OnCancel;
 };
 
-} // namespace SVRPC
+} // namespace SvRpc

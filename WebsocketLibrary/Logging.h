@@ -11,7 +11,7 @@
 
 #pragma once
 
-namespace RRWS
+namespace SvWsl
 {
 struct LogSettings
 {
@@ -42,4 +42,4 @@ struct LogSettings
 };
 
 extern void init_logging(const LogSettings& settings);
-} // namespace RRWS
+} // namespace SvWsl

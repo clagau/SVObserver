@@ -15,46 +15,46 @@ namespace SvCmd
 	/// Do a runOnce for an inspection or taskObject.
 	/// \param rMessage [in] a request-protoBuf-message.
 	/// \returns HRESULT
-	HRESULT InspectionRunOnce(const SvPB::InspectionRunOnceRequest& rMessage);
+	HRESULT InspectionRunOnce(const SvPb::InspectionRunOnceRequest& rMessage);
 
 	/// Destroyed a child object.
 	/// \param rMessage [in] a request-protoBuf-message.
 	/// \returns HRESULT
-	HRESULT DestroyChildObject(const SvPB::DestroyChildRequest& rMessage);
+	HRESULT DestroyChildObject(const SvPb::DestroyChildRequest& rMessage);
 
 	/// Get the last (Error)MessageList from an taskObject.
 	/// \param rRequestMessage [in] The request-protoBuf-message.
 	/// \param rResponseMessage [in,out] The response-protoBuf-message.
 	/// \returns HRESULT
-	HRESULT GetMessageList(const SvPB::GetMessageListRequest& rRequestMessage, SvPB::GetMessageListResponse& rResponseMessage);
+	HRESULT GetMessageList(const SvPb::GetMessageListRequest& rRequestMessage, SvPb::GetMessageListResponse& rResponseMessage);
 
 	/// Reset an object.
 	/// \param rRequestMessage [in] The request-protoBuf-message.
 	/// \param rResponseMessage [in,out] The response-protoBuf-message.
 	/// \returns HRESULT
-	HRESULT ResetObject(const SvPB::ResetObjectRequest& rRequestMessage, SvPB::ResetObjectResponse* pResponseMessage);
+	HRESULT ResetObject(const SvPb::ResetObjectRequest& rRequestMessage, SvPb::ResetObjectResponse* pResponseMessage);
 
 	/// Create a model for the pattern-analyzer. The model will copy from the current source image of the analyzer.
 	/// \param rRequestMessage [in] The request-protoBuf-message.
 	/// \param rResponseMessage [in,out] The response-protoBuf-message.
 	/// \returns HRESULT
-	HRESULT CreateModel(const SvPB::CreateModelRequest& rRequestMessage, SvPB::CreateModelResponse& rResponseMessage);
+	HRESULT CreateModel(const SvPb::CreateModelRequest& rRequestMessage, SvPb::CreateModelResponse& rResponseMessage);
 
 	/// Return the state if an object is valid.
 	/// \param rRequestMessage [in] The request-protoBuf-message.
 	/// \param rResponseMessage [in,out] The response-protoBuf-message.
 	/// \returns HRESULT
-	HRESULT IsValid(const SvPB::IsValidRequest& rRequestMessage, SvPB::IsValidResponse& rResponseMessage);
+	HRESULT IsValid(const SvPb::IsValidRequest& rRequestMessage, SvPb::IsValidResponse& rResponseMessage);
 
 	/// Return the equation string.
 	/// \param rRequestMessage [in] The request-protoBuf-message.
 	/// \param rResponseMessage [in,out] The response-protoBuf-message.
 	/// \returns HRESULT
-	HRESULT GetEquation(const SvPB::GetEquationRequest& rRequestMessage, SvPB::GetEquationResponse& rResponseMessage);
+	HRESULT GetEquation(const SvPb::GetEquationRequest& rRequestMessage, SvPb::GetEquationResponse& rResponseMessage);
 
 	/// Validate and if required set an equation. Return the status and if successfully the result.
 	/// \param rRequestMessage [in] The request-protoBuf-message.
 	/// \param rResponseMessage [in,out] The response-protoBuf-message.
 	/// \returns HRESULT
-	HRESULT ValidateAndSetEquation(const SvPB::ValidateAndSetEquationRequest& rRequestMessage, SvPB::ValidateAndSetEquationResponse& rResponseMessage);
+	HRESULT ValidateAndSetEquation(const SvPb::ValidateAndSetEquationRequest& rRequestMessage, SvPb::ValidateAndSetEquationResponse& rResponseMessage);
 } //namespace SvCmd

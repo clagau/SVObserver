@@ -9,13 +9,13 @@
 
 #include "stdafx.h"
 
-#include "SVRPCLibrary/ClientStreamContext.h"
-#include "SVRPCLibrary/ErrorUtil.h"
-#include "SVRPCLibrary/RPCClient.h"
+#include "ClientStreamContext.h"
+#include "ErrorUtil.h"
+#include "RPCClient.h"
 
 #include <boost/log/trivial.hpp>
 
-namespace SVRPC
+namespace SvRpc
 {
 RPCClient::RPCClient(std::string host, uint16_t port)
 	: m_IoService(1)
@@ -74,22 +74,22 @@ bool RPCClient::waitForConnect(int time_in_ms)
 	return isConnected();
 }
 
-void RPCClient::request(Envelope&& request, Task<Envelope> task)
+void RPCClient::request(SvPenv::Envelope&& Request, Task<SvPenv::Envelope> Task)
 {
 	if (!isConnected())
 	{
-		task.error(build_error(ErrorCode::ServiceUnavailable));
+		Task.error(build_error(SvPenv::ErrorCode::ServiceUnavailable));
 		return;
 	}
 	auto tx_id = ++m_NextTransactionId;
-	request_impl(std::move(request), task, tx_id);
+	request_impl(std::move(Request), Task, tx_id);
 }
 
-void RPCClient::request(Envelope&& request, Task<Envelope> task, boost::posix_time::time_duration timeout)
+void RPCClient::request(SvPenv::Envelope&& request, Task<SvPenv::Envelope> task, boost::posix_time::time_duration timeout)
 {
 	if (!isConnected())
 	{
-		task.error(build_error(ErrorCode::ServiceUnavailable));
+		task.error(build_error(SvPenv::ErrorCode::ServiceUnavailable));
 		return;
 	}
 	auto tx_id = ++m_NextTransactionId;
@@ -97,14 +97,14 @@ void RPCClient::request(Envelope&& request, Task<Envelope> task, boost::posix_ti
 	request_impl(std::move(request), task, tx_id);
 }
 
-void RPCClient::request_impl(Envelope&& request, Task<Envelope> task, uint64_t tx_id)
+void RPCClient::request_impl(SvPenv::Envelope&& Request, Task<SvPenv::Envelope> Task, uint64_t tx_id)
 {
-	request.set_transaction_id(tx_id);
-	request.set_type(SVRPC::MessageType::Request);
+	Request.set_transaction_id(tx_id);
+	Request.set_type(SvPenv::MessageType::Request);
 
-	m_PendingRequests.insert({tx_id, task});
+	m_PendingRequests.insert({tx_id, Task});
 
-	send_envelope(std::move(request));
+	send_envelope(std::move(Request));
 }
 
 void RPCClient::schedule_timeout(uint64_t tx_id, boost::posix_time::time_duration timeout)
@@ -116,20 +116,20 @@ void RPCClient::schedule_timeout(uint64_t tx_id, boost::posix_time::time_duratio
 	m_PendingRequestsTimer.emplace(tx_id, timer);
 }
 
-ClientStreamContext RPCClient::stream(Envelope&& request, Observer<Envelope> observer)
+ClientStreamContext RPCClient::stream(SvPenv::Envelope&& Request, Observer<SvPenv::Envelope> Observer)
 {
 	if (!isConnected())
 	{
-		observer.error(build_error(ErrorCode::ServiceUnavailable));
+		Observer.error(build_error(SvPenv::ErrorCode::ServiceUnavailable));
 		return ClientStreamContext(nullptr);
 	}
 	auto tx_id = ++m_NextTransactionId;
-	request.set_transaction_id(tx_id);
-	request.set_type(SVRPC::MessageType::StreamRequest);
+	Request.set_transaction_id(tx_id);
+	Request.set_type(SvPenv::MessageType::StreamRequest);
 
-	m_PendingStreams.insert({tx_id, observer});
+	m_PendingStreams.insert({tx_id, Observer});
 
-	send_envelope(std::move(request));
+	send_envelope(std::move(Request));
 
 	return ClientStreamContext(std::bind(&RPCClient::cancel_stream, this, tx_id));
 }
@@ -166,30 +166,30 @@ void RPCClient::onBinaryMessage(const std::vector<char>& buf)
 		return;
 	}
 
-	Envelope response;
-	response.ParseFromArray(buf.data(), static_cast<int>(buf.size()));
+	SvPenv::Envelope Response;
+	Response.ParseFromArray(buf.data(), static_cast<int>(buf.size()));
 
-	auto type = response.type();
+	auto type = Response.type();
 	switch (type)
 	{
-		case MessageType::Response:
-			on_response(std::move(response));
+		case SvPenv::MessageType::Response:
+			on_response(std::move(Response));
 			break;
 
-		case MessageType::ErrorResponse:
-			on_error_response(std::move(response));
+		case SvPenv::MessageType::ErrorResponse:
+			on_error_response(std::move(Response));
 			break;
 
-		case MessageType::StreamResponse:
-			on_stream_response(std::move(response));
+		case SvPenv::MessageType::StreamResponse:
+			on_stream_response(std::move(Response));
 			break;
 
-		case MessageType::StreamErrorResponse:
-			on_stream_error_response(std::move(response));
+		case SvPenv::MessageType::StreamErrorResponse:
+			on_stream_error_response(std::move(Response));
 			break;
 
-		case MessageType::StreamFinish:
-			on_stream_finish(std::move(response));
+		case SvPenv::MessageType::StreamFinish:
+			on_stream_finish(std::move(Response));
 			break;
 
 		default:
@@ -243,7 +243,7 @@ void RPCClient::on_request_timeout(const boost::system::error_code& error, uint6
 		auto cb = it->second;
 		m_PendingRequests.erase(it);
 
-		cb.error(build_error(ErrorCode::Timeout));
+		cb.error(build_error(SvPenv::ErrorCode::Timeout));
 	}
 }
 
@@ -272,7 +272,7 @@ void RPCClient::cancel_all_pending_requests()
 		auto tx_id = it->first;
 		cancel_request_timeout(tx_id);
 		auto& task = it->second;
-		task.error(build_error(ErrorCode::ServiceUnavailable, "Connection lost. Please retry."));
+		task.error(build_error(SvPenv::ErrorCode::ServiceUnavailable, "Connection lost. Please retry."));
 		m_PendingRequests.erase(it);
 	}
 }
@@ -283,60 +283,60 @@ void RPCClient::cancel_all_pending_streams()
 	{
 		auto it = m_PendingStreams.begin();
 		auto& observer = it->second;
-		observer.error(build_error(ErrorCode::ServiceUnavailable, "Connection lost. Please retry."));
+		observer.error(build_error(SvPenv::ErrorCode::ServiceUnavailable, "Connection lost. Please retry."));
 		m_PendingStreams.erase(it);
 	}
 }
 
-void RPCClient::on_response(Envelope&& response)
+void RPCClient::on_response(SvPenv::Envelope&& Response)
 {
-	auto tx_id = response.transaction_id();
+	auto tx_id = Response.transaction_id();
 	cancel_request_timeout(tx_id);
 	auto it = m_PendingRequests.find(tx_id);
 	if (it != m_PendingRequests.end())
 	{
 		auto cb = it->second;
 		m_PendingRequests.erase(it);
-		cb.finish(std::move(response));
+		cb.finish(std::move(Response));
 	}
 }
 
-void RPCClient::on_error_response(Envelope&& response)
+void RPCClient::on_error_response(SvPenv::Envelope&& Response)
 {
-	auto tx_id = response.transaction_id();
+	auto tx_id = Response.transaction_id();
 	cancel_request_timeout(tx_id);
 	auto it = m_PendingRequests.find(tx_id);
 	if (it != m_PendingRequests.end())
 	{
 		auto cb = it->second;
 		m_PendingRequests.erase(it);
-		cb.error(response.error());
+		cb.error(Response.error());
 	}
 }
 
-void RPCClient::on_stream_response(Envelope&& response)
+void RPCClient::on_stream_response(SvPenv::Envelope&& Response)
 {
-	auto it = m_PendingStreams.find(response.transaction_id());
+	auto it = m_PendingStreams.find(Response.transaction_id());
 	if (it != m_PendingStreams.end())
 	{
-		it->second.onNext(std::move(response));
+		it->second.onNext(std::move(Response));
 	}
 }
 
-void RPCClient::on_stream_error_response(Envelope&& response)
+void RPCClient::on_stream_error_response(SvPenv::Envelope&& Response)
 {
-	auto it = m_PendingStreams.find(response.transaction_id());
+	auto it = m_PendingStreams.find(Response.transaction_id());
 	if (it != m_PendingStreams.end())
 	{
 		auto cb = it->second;
 		m_PendingStreams.erase(it);
-		cb.error(response.error());
+		cb.error(Response.error());
 	}
 }
 
-void RPCClient::on_stream_finish(Envelope&& response)
+void RPCClient::on_stream_finish(SvPenv::Envelope&& Response)
 {
-	auto it = m_PendingStreams.find(response.transaction_id());
+	auto it = m_PendingStreams.find(Response.transaction_id());
 	if (it != m_PendingStreams.end())
 	{
 		auto cb = it->second;
@@ -347,20 +347,20 @@ void RPCClient::on_stream_finish(Envelope&& response)
 
 void RPCClient::cancel_stream(uint64_t txId)
 {
-	Envelope request;
-	request.set_transaction_id(txId);
-	request.set_type(SVRPC::MessageType::StreamCancel);
-	send_envelope(std::move(request));
+	SvPenv::Envelope Request;
+	Request.set_transaction_id(txId);
+	Request.set_type(SvPenv::MessageType::StreamCancel);
+	send_envelope(std::move(Request));
 }
 
-void RPCClient::send_envelope(Envelope&& envelope)
+void RPCClient::send_envelope(SvPenv::Envelope&& Envelope)
 {
-	auto reqSize = envelope.ByteSize();
+	auto reqSize = Envelope.ByteSize();
 	std::vector<char> buf;
 	buf.resize(reqSize);
-	envelope.SerializeToArray(buf.data(), reqSize);
+	Envelope.SerializeToArray(buf.data(), reqSize);
 
 	m_WebsocketClient->sendBinaryMessage(buf);
 }
 
-} // namespace SVRPC
+} // namespace SvRpc

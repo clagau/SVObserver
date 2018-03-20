@@ -1,262 +1,266 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{73d8a0da-06c9-4a39-a492-50dfbacebacf}</UniqueIdentifier>
-      <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
+    <Filter Include="Headerdateien">
       <UniqueIdentifier>{51d06e09-b795-457f-9c92-ddff7e665e94}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl</Extensions>
+    </Filter>
+    <Filter Include="Ressourcendateien">
+      <UniqueIdentifier>{A22E6DED-D05C-473F-96CA-A237D539D604}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Quelldateien">
+      <UniqueIdentifier>{73d8a0da-06c9-4a39-a492-50dfbacebacf}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StdAfx.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVBufferResource.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVMatroxApplicationInterface.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVMatroxBarCodeInterface.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVMatroxBlobInterface.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVMatroxBuffer.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVMatroxBufferArray.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVMatroxBufferCreateChildStruct.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVMatroxBufferCreateExtStruct.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVMatroxBufferCreateLineStruct.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVMatroxBufferCreateStruct.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVMatroxBufferInterface.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVMatroxBufferTemplate.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVMatroxCommandDataImage.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVMatroxCommandFactory.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVMatroxDisplayInterface.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVMatroxGraphicsInterface.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVMatroxImageBuffer.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVMatroxImageChildBuffer.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVMatroxImageInterface.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVMatroxImageRotateStruct.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVMatroxOcr.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVMatroxOcrCalibrateStruct.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVMatroxOcrCreateStruct.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVMatroxOcrInterface.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVMatroxPatternInterface.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVMatroxPolarTransformStruct.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVMatroxResourceMonitor.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVMatroxStatusInformation.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVMatroxSystem.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVMatroxSystemEnums.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVMatroxSystemInterface.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVMatroxLicenseInterface.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="MatroxBuffer2D.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVMatroxHelper.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdAfx.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVBufferResource.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxApplicationInterface.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxBarCodeInterface.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxBlobInterface.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxBuffer.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxBufferArray.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxBufferCreateChildStruct.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxBufferCreateExtStruct.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxBufferCreateLineStruct.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxBufferCreateStruct.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxBufferInterface.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxBufferTemplate.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxCommandDataImage.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxCommandFactory.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxDisplayInterface.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxEnumConvertor.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxEnums.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxErrorEnum.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxGraphicsInterface.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxIdentifierEnum.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxImageBuffer.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxImageChildBuffer.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxImageInterface.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxImageRotateStruct.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxImagingLibrary.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxLibrary.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxOcr.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxOcrCalibrateStruct.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxOcrCreateStruct.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxOcrInterface.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxPatternInterface.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxPolarTransformStruct.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxResourceMonitor.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxStatusInformation.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxSystem.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxSystemEnums.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxSystemInterface.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxSystemRef.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxTypedefs.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxLicenseInterface.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxSimpleEnums.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="MatroxImageProps.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="MatroxBuffer2D.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxHelper.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SVMatroxEnumConvertor.inl">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </None>
   </ItemGroup>
 </Project>

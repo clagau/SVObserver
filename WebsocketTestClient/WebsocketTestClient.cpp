@@ -27,53 +27,51 @@
 #pragma warning (push,2)
 #include "SVPROTOBUF/RunRE.pb.h"
 #pragma warning (pop)
-#include "SVHttpLibrary/WebsocketClientFactory.h"
+#include "SvHttpLibrary/WebsocketClientFactory.h"
 #include "SVRPCLibrary/ErrorUtil.h"
 #include "SVRPCLibrary/RPCClient.h"
 #include "WebsocketLibrary/RunRequest.inl"
 #include "WebsocketLibrary/Definition.h"
 
 
-namespace RRWS
+void PrintCurImage(const SvPb::CurImageId& rCurrentImage)
 {
-void PrintCurImage(const CurImageId& curIm)
-{
-	BOOST_LOG_TRIVIAL(info) << "StoreIndex: " << curIm.imagestore() << " ImageIndex: " << curIm.imageindex()
-		<< " SlotIndex: " << curIm.slotindex();
+	BOOST_LOG_TRIVIAL(info) << "StoreIndex: " << rCurrentImage.imagestore() << " ImageIndex: " << rCurrentImage.imageindex()
+		<< " SlotIndex: " << rCurrentImage.slotindex();
 }
-void PrintVariant(const ::SVRPC::Variant& var)
+void PrintVariant(const SvPb::Variant& var)
 {
 	switch (var.value_case())
 	{
-		case SVRPC::Variant::kBoolValue:
+		case SvPb::Variant::kBoolValue:
 			BOOST_LOG_TRIVIAL(info) << "value: " << var.bool_value();
 			break;
 
-		case SVRPC::Variant::kInt32Value:
+		case SvPb::Variant::kInt32Value:
 			BOOST_LOG_TRIVIAL(info) << "value: " << var.int32_value();
 			break;
 
-		case SVRPC::Variant::kInt64Value:
+		case SvPb::Variant::kInt64Value:
 			BOOST_LOG_TRIVIAL(info) << "value: " << var.int64_value();
 			break;
 
-		case SVRPC::Variant::kUint32Value:
+		case SvPb::Variant::kUint32Value:
 			BOOST_LOG_TRIVIAL(info) << "value: " << var.uint32_value();
 			break;
 
-		case SVRPC::Variant::kUint64Value:
+		case SvPb::Variant::kUint64Value:
 			BOOST_LOG_TRIVIAL(info) << "value: " << var.uint64_value();
 			break;
 
-		case SVRPC::Variant::kDoubleValue:
+		case SvPb::Variant::kDoubleValue:
 			BOOST_LOG_TRIVIAL(info) << "value: " << var.double_value();
 			break;
 
-		case SVRPC::Variant::kFloatValue:
+		case SvPb::Variant::kFloatValue:
 			BOOST_LOG_TRIVIAL(info) << "value: " << var.float_value();
 			break;
 
-		case SVRPC::Variant::kStringValue:
+		case SvPb::Variant::kStringValue:
 			BOOST_LOG_TRIVIAL(info) << "value: " << var.string_value();
 			break;
 
@@ -83,11 +81,11 @@ void PrintVariant(const ::SVRPC::Variant& var)
 	}
 }
 
-static void GetNotifications(ClientService& client)
+static void GetNotifications(SvWsl::ClientService& client)
 {
-	GetNotificationStreamRequest req;
-	auto ctx = client.getNotificationStream(std::move(req), SVRPC::Observer<GetNotificationStreamResponse>(
-		[](GetNotificationStreamResponse&& res) -> std::future<void>
+	SvPb::GetNotificationStreamRequest req;
+	auto ctx = client.getNotificationStream(std::move(req), SvRpc::Observer<SvPb::GetNotificationStreamResponse>(
+		[](SvPb::GetNotificationStreamResponse&& res) -> std::future<void>
 	{
 		BOOST_LOG_TRIVIAL(info) << "Received notification " << res.id() << " " << res.type() << " " << res.message();
 		return std::future<void>();
@@ -96,7 +94,7 @@ static void GetNotifications(ClientService& client)
 	{
 		BOOST_LOG_TRIVIAL(info) << "Finished receiving notifications";
 	},
-		[](const SVRPC::Error& err)
+		[](const SvPenv::Error& err)
 	{
 		BOOST_LOG_TRIVIAL(info) << "Error while receiving notifications: " << err.message();
 	}));
@@ -104,33 +102,33 @@ static void GetNotifications(ClientService& client)
 	ctx.cancel();
 }
 
-static bool GetImageId(ClientService& client, int imageWidth, CurImageId& imgIdOut)
+static bool GetImageId(SvWsl::ClientService& client, int imageWidth, SvPb::CurImageId& rImageIdOut)
 {
-	QueryListNameRequest mListReq;
-	auto mListRes = runRequest(client, &ClientService::queryListName, std::move(mListReq)).get();
+	SvPb::QueryListNameRequest mListReq;
+	auto mListRes = runRequest(client, &SvWsl::ClientService::queryListName, std::move(mListReq)).get();
 	for (const auto& listname : *mListRes.mutable_listname())
 	{
-		GetProductRequest prodReq;
+		SvPb::GetProductRequest prodReq;
 		prodReq.set_name(listname);
-		auto prodRes = runRequest(client, &ClientService::getProduct, std::move(prodReq)).get();
+		auto prodRes = runRequest(client, &SvWsl::ClientService::getProduct, std::move(prodReq)).get();
 		for (const auto& imgId : prodRes.product().images())
 		{
-			GetImageFromCurIdRequest imgReq;
+			SvPb::GetImageFromCurIdRequest imgReq;
 			*imgReq.mutable_id() = imgId;
-			auto imgRes = runRequest(client, &ClientService::getImageFromCurId, std::move(imgReq)).get();
+			auto imgRes = runRequest(client, &SvWsl::ClientService::getImageFromCurId, std::move(imgReq)).get();
 			if (imgRes.imagedata().w() == imageWidth)
 			{
-				imgIdOut = imgId;
+				rImageIdOut = imgId;
 				return true;
 			}
 		}
 	}
 	return false;
 }
-static void RunBenchmark2(ClientService& client, int iterations, int imageWitdh, bool use_streaming)
+static void RunBenchmark2(SvWsl::ClientService& rClient, int iterations, int imageWitdh, bool use_streaming)
 {
-	CurImageId imgId;
-	if (!GetImageId(client, imageWitdh, imgId))
+	SvPb::CurImageId ImageId;
+	if (!GetImageId(rClient, imageWitdh, ImageId))
 	{
 		BOOST_LOG_TRIVIAL(error) << "Unable to find image for request width " << imageWitdh;
 		return;
@@ -139,18 +137,18 @@ static void RunBenchmark2(ClientService& client, int iterations, int imageWitdh,
 	auto start = std::chrono::steady_clock::now();
 	if (use_streaming)
 	{
-		GetImageStreamFromCurIdRequest request;
+		SvPb::GetImageStreamFromCurIdRequest request;
 		request.set_count(iterations);
-		*request.mutable_id() = imgId;
-		auto response = runStream(client, &ClientService::getImageStreamFromCurId, std::move(request), volume).get();
+		*request.mutable_id() = ImageId;
+		auto response = runStream(rClient, &SvWsl::ClientService::getImageStreamFromCurId, std::move(request), volume).get();
 	}
 	else
 	{
 		for (int i = 0; i < iterations; ++i)
 		{
-			GetImageFromCurIdRequest request;
-			*request.mutable_id() = imgId;
-			auto resp = runRequest(client, &ClientService::getImageFromCurId, std::move(request)).get();
+			SvPb::GetImageFromCurIdRequest Request;
+			*Request.mutable_id() = ImageId;
+			auto resp = runRequest(rClient, &SvWsl::ClientService::getImageFromCurId, std::move(Request)).get();
 			volume += resp.ByteSize() / (1024.0 * 1024.0);
 		}
 	}
@@ -159,34 +157,34 @@ static void RunBenchmark2(ClientService& client, int iterations, int imageWitdh,
 	BOOST_LOG_TRIVIAL(info) << "Benchmark2: iterations=" << iterations << " duration=" << duration
 		<< " volume=" << volume;
 }
-void PrintProductResponse(const Product& product)
+void PrintProductResponse(const SvPb::Product& rProduct)
 {
-	BOOST_LOG_TRIVIAL(info) << "Product for Trigger: " << product.trigger();
-	bool bpImageName = product.images_size() == product.imagenames_size();
-	bool bpValueName = product.values_size() == product.valuenames_size();
+	BOOST_LOG_TRIVIAL(info) << "Product for Trigger: " << rProduct.trigger();
+	bool bpImageName = rProduct.images_size() == rProduct.imagenames_size();
+	bool bpValueName = rProduct.values_size() == rProduct.valuenames_size();
 
-	for (int i = 0; i < product.images_size(); i++)
+	for (int i = 0; i < rProduct.images_size(); i++)
 	{
 		if (bpImageName)
 		{
-			BOOST_LOG_TRIVIAL(info) << product.imagenames(i);
+			BOOST_LOG_TRIVIAL(info) << rProduct.imagenames(i);
 		}
-		PrintCurImage(product.images(i));
+		PrintCurImage(rProduct.images(i));
 	}
-	for (int v = 0; v < product.values_size(); v++)
+	for (int v = 0; v < rProduct.values_size(); v++)
 	{
 		if (bpValueName)
 		{
-			BOOST_LOG_TRIVIAL(info) << product.valuenames(v);
+			BOOST_LOG_TRIVIAL(info) << rProduct.valuenames(v);
 		}
-		PrintVariant(product.values(v));
+		PrintVariant(rProduct.values(v));
 	}
 }
 
 class Benchmark1
 {
 public:
-	Benchmark1(ClientService& client) : m_client(client) {}
+	Benchmark1(SvWsl::ClientService& rClient) : m_rClient(rClient) {}
 
 	enum BenchmarkType
 	{
@@ -201,13 +199,13 @@ public:
 		switch (benchmark_type)
 		{
 			case StringBenchmark:
-				doStringBenchmark(m_client, num_iterations);
+				doStringBenchmark(m_rClient, num_iterations);
 				break;
 			case ImageBenchmark:
-				doImageBenchmark(m_client, num_iterations);
+				doImageBenchmark(m_rClient, num_iterations);
 				break;
 			case ImageStreamBenchmark:
-				doImageStreamBenchmark(m_client, num_iterations);
+				doImageStreamBenchmark(m_rClient, num_iterations);
 				break;
 		}
 		auto finish = std::chrono::steady_clock::now();
@@ -216,47 +214,46 @@ public:
 	}
 
 private:
-	void doStringBenchmark(ClientService& client, int num_iterations)
+	void doStringBenchmark(SvWsl::ClientService& rClient, int num_iterations)
 	{
 		for (auto i = 0; i < num_iterations; ++i)
 		{
-			QueryListNameRequest request;
-			auto response = runRequest(client, &ClientService::queryListName, std::move(request)).get();
+			SvPb::QueryListNameRequest request;
+			auto response = runRequest(rClient, &SvWsl::ClientService::queryListName, std::move(request)).get();
 		}
 	}
 
-	void doImageBenchmark(ClientService& client, int num_iterations)
+	void doImageBenchmark(SvWsl::ClientService& rClient, int num_iterations)
 	{
 		for (auto i = 0; i < num_iterations; ++i)
 		{
-			GetImageFromCurIdRequest request;
+			SvPb::GetImageFromCurIdRequest request;
 			request.mutable_id()->set_slotindex(0); // TODO: slotindex should be product-index
 			request.mutable_id()->set_imageindex(0);
 			request.mutable_id()->set_imagestore(0); // TODO: what is this? MonitorList?
-			auto response = runRequest(client, &ClientService::getImageFromCurId, std::move(request)).get();
+			auto response = runRequest(rClient, &SvWsl::ClientService::getImageFromCurId, std::move(request)).get();
 		}
 	}
 
-	void doImageStreamBenchmark(ClientService& client, int num_iterations)
+	void doImageStreamBenchmark(SvWsl::ClientService& rClient, int num_iterations)
 	{
-		GetImageStreamFromCurIdRequest request;
+		SvPb::GetImageStreamFromCurIdRequest request;
 		request.set_count(num_iterations);
 		request.mutable_id()->set_slotindex(0); // TODO: slotindex should be product-index
 		request.mutable_id()->set_imageindex(0);
 		request.mutable_id()->set_imagestore(0); // TODO: what is this? MonitorList?
 		double volume = 0;
-		auto response = runStream(client, &ClientService::getImageStreamFromCurId, std::move(request), volume).get();
+		auto response = runStream(rClient, &SvWsl::ClientService::getImageStreamFromCurId, std::move(request), volume).get();
 	}
 
 private:
-	ClientService& m_client;
+	SvWsl::ClientService& m_rClient;
 };
-}
+
 int main(int argc, char* argv[])
 {
-	using namespace RRWS;
-	
-	LogSettings logSettings;
+
+	SvWsl::LogSettings logSettings;
 	logSettings.log_level = "debug";
 	logSettings.log_to_stdout_enabled = true;
 	logSettings.windows_event_log_enabled = false;
@@ -264,7 +261,7 @@ int main(int argc, char* argv[])
 
 	std::string host("127.0.0.1");
 	std::string stPort("8080");
-	uint16_t port(RRWS::Default_Port);
+	uint16_t port(SvWsl::Default_Port);
 	if (argc > 1)
 		host = argv[1];
 	if (argc > 2)
@@ -272,11 +269,11 @@ int main(int argc, char* argv[])
 		stPort = argv[2];
 		port = atoi(stPort.c_str());
 	}
-	auto pRpcClient = std::make_unique<SVRPC::RPCClient>(host,port);
+	auto pRpcClient = std::make_unique<SvRpc::RPCClient>(host,port);
 	pRpcClient->waitForConnect(6000);
 
 	auto request_timeout = boost::posix_time::seconds(2);
-	auto pService = std::make_unique<ClientService>(*pRpcClient, request_timeout);
+	auto pService = std::make_unique<SvWsl::ClientService>(*pRpcClient, request_timeout);
 
 
 	BOOST_LOG_TRIVIAL(info) << "Enter a command(Ctrl-Z to stop): ";
@@ -299,9 +296,9 @@ int main(int argc, char* argv[])
 			{
 				try
 				{
-					GetVersionRequest req;
+					SvPb::GetVersionRequest req;
 					req.set_trigger_timeout(true);
-					auto version = runRequest(*pService, &ClientService::getVersion, std::move(req)).get();
+					auto version = runRequest(*pService, &SvWsl::ClientService::getVersion, std::move(req)).get();
 					BOOST_LOG_TRIVIAL(info) << "Version: ";
 					BOOST_LOG_TRIVIAL(info) << " RunReWebsocketServer: " << version.version();
 				}
@@ -324,7 +321,7 @@ int main(int argc, char* argv[])
 			else if ( pRpcClient->isConnected() && words[0] == "m" )
 			{
 
-				auto Listnames = runRequest(*pService, &ClientService::queryListName, QueryListNameRequest()).get();
+				auto Listnames = runRequest(*pService, &SvWsl::ClientService::queryListName, SvPb::QueryListNameRequest()).get();
 				// BOOST_LOG_TRIVIAL(info) << "QueryListNameResponse.DebugString: ";
 				// BOOST_LOG_TRIVIAL(info) << Listnames.DebugString();
 				BOOST_LOG_TRIVIAL(info) << "MonitorlistNamen: ";
@@ -335,7 +332,7 @@ int main(int argc, char* argv[])
 			}
 			else if (words[0] == "f")
 			{
-				GetFailStatusRequest FailstatusRequest;
+				SvPb::GetFailStatusRequest FailstatusRequest;
 				if (wordsize > 1)
 				{
 					FailstatusRequest.set_name(words[1].c_str());
@@ -346,7 +343,7 @@ int main(int argc, char* argv[])
 					continue;
 				}
 				FailstatusRequest.set_nameinresponse(true);
-				auto resp = runRequest(*pService, &ClientService::getFailStatus, std::move(FailstatusRequest)).get();
+				auto resp = runRequest(*pService, &SvWsl::ClientService::getFailStatus, std::move(FailstatusRequest)).get();
 				for (int i = 0; i < resp.products_size(); i++)
 				{
 					PrintProductResponse(resp.products(i));
@@ -377,15 +374,15 @@ int main(int argc, char* argv[])
 
 				bool bReject = words[0] == "r";
 
-				GetProductRequest ProductRequest;
+				SvPb::GetProductRequest ProductRequest;
 				ProductRequest.set_name(name);
 				ProductRequest.set_trigger(trigger);
 				ProductRequest.set_nameinresponse(true);
 				ProductRequest.set_breject(bReject);
 				ProductRequest.set_pevioustrigger(-1);
 
-				GetProductResponse resp;
-				resp = runRequest(*pService, &ClientService::getProduct, std::move(ProductRequest)).get();
+				SvPb::GetProductResponse resp;
+				resp = runRequest(*pService, &SvWsl::ClientService::getProduct, std::move(ProductRequest)).get();
 				PrintProductResponse(resp.product());
 
 
@@ -398,11 +395,11 @@ int main(int argc, char* argv[])
 					continue;
 				}
 
-				GetImageFromCurIdRequest request;
+				SvPb::GetImageFromCurIdRequest request;
 				request.mutable_id()->set_imagestore(atoi(words[1].c_str()));
 				request.mutable_id()->set_imageindex(atoi(words[2].c_str()));
 				request.mutable_id()->set_slotindex(atoi(words[3].c_str()));
-				auto resp = runRequest(*pService, &ClientService::getImageFromCurId, std::move(request)).get();
+				auto resp = runRequest(*pService, &SvWsl::ClientService::getImageFromCurId, std::move(request)).get();
 
 				BOOST_LOG_TRIVIAL(info) << "Image (Width ,Height) " << resp.imagedata().w() << "x"
 					<< resp.imagedata().h();
@@ -485,7 +482,7 @@ int main(int argc, char* argv[])
 			{
 				if (wordsize > 1)
 				{
-					uint16_t port = Default_Port;
+					uint16_t port = SvWsl::Default_Port;
 					if (wordsize > 2)
 					{
 						port = atoi(words[2].c_str());
@@ -494,15 +491,15 @@ int main(int argc, char* argv[])
 
 					pService.reset();
 					pRpcClient.reset();
-					pRpcClient = std::make_unique<SVRPC::RPCClient>(host, port);
+					pRpcClient = std::make_unique<SvRpc::RPCClient>(host, port);
 					pRpcClient->waitForConnect(2000);
-					pService = std::make_unique<ClientService>(*pRpcClient, request_timeout);
+					pService = std::make_unique<SvWsl::ClientService>(*pRpcClient, request_timeout);
 				}
 			}
 			else if (words[0] == "qli")
 			{
 				std::string monitorlistname;
-				ListType  t{ All };
+				SvPb::ListType  t{SvPb::All };
 				bool bImage{ true };
 				bool bValues{ true };
 				if (wordsize >= 2)
@@ -513,15 +510,15 @@ int main(int argc, char* argv[])
 				{
 					if (words[2] == "p")
 					{
-						t = ProductItem;
+						t = SvPb::ProductItem;
 					}
 					else if (words[2] == "r")
 					{
-						t = RejectCondition;
+						t = SvPb::RejectCondition;
 					}
 					else if (words[2] == "f")
 					{
-						t = FailStatus;
+						t = SvPb::FailStatus;
 					}
 
 				}
@@ -535,13 +532,13 @@ int main(int argc, char* argv[])
 					int temp = atoi(words[4].c_str());
 					bValues = temp > 0;
 				}
-				QueryListItemRequest  request;
+				SvPb::QueryListItemRequest  request;
 				request.set_name(monitorlistname.c_str());
 				request.set_type(t);
 				request.set_queryimages(bImage);
 				request.set_queryvalues(bValues) ;
 
-				auto resp = runRequest(*pService, &ClientService::queryListItem, std::move(request)).get();
+				auto resp = runRequest(*pService, &SvWsl::ClientService::queryListItem, std::move(request)).get();
 
 				std::cout << "QueryListItemResponse .DebugString: " << std::endl;
 				std::cout << resp.DebugString() << std::endl;

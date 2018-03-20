@@ -14,7 +14,7 @@
 #include "SVProtoBuf/TriggerRecordController.h"
 #pragma endregion Includes
 
-namespace SvTRC
+namespace SvTrc
 {
 	class TriggerRecordController : public ITriggerRecordControllerRW
 	{
@@ -34,17 +34,17 @@ namespace SvTRC
 	public:
 
 #pragma region ITriggerRecordControllerR Methods
-		virtual const SvPB::InspectionList& getInspections() const override { return m_inspectionList; }
+		virtual const SvPb::InspectionList& getInspections() const override { return m_inspectionList; }
 
 		virtual int getLastTRId(int inspectionPos) const override;
 
-		virtual const SvPB::ImageList& GetImageDefList(int inspectionPos) override;
+		virtual const SvPb::ImageList& GetImageDefList(int inspectionPos) override;
 
 		virtual ITriggerRecordRPtr CreateTriggerRecordObject(int inspectionPos, int trId) override;
 #pragma endregion ITriggerRecordControllerR Methods
 
 #pragma region ITriggerRecordControllerRW Methods
-		virtual void setInspections(const SvPB::InspectionList& rInspectionList) override;
+		virtual void setInspections(const SvPb::InspectionList& rInspectionList) override;
 
 		virtual ITriggerRecordRWPtr CreateTriggerRecordObjectToWrite(int inspectionPos) override;
 
@@ -81,7 +81,7 @@ namespace SvTRC
 			int m_lastTRID = -1;
 			int m_triggerRecordBufferSize = 0; //This is the size of the buffer reserved for one trigger Record.
 			int m_nextPosForFreeCheck = 0; //This variable contains on which position it should be started for searching for a free slot.
-			SvPB::ImageList* m_pImageList = nullptr;
+			SvPb::ImageList* m_pImageList = nullptr;
 			void* m_pTriggerRecords = nullptr;
 		};
 		
@@ -90,12 +90,12 @@ namespace SvTRC
 		int m_nextTRID = 0; //the next ID for next created trigger record.
 		time_t m_resetTime = 0; //time of the last reset
 		long m_resetLockCounter = 0; //counter of current used methods of ITriggerRecordR-instance 
-		SvPB::InspectionList m_inspectionList;
+		SvPb::InspectionList m_inspectionList;
 
 		int m_resetStarted4IP = -1; //Position of IP with is in reset state. If m_resetStarted4IP == -1, no reset started.
-		SvPB::ImageStructList m_imageStructListResetTmp; //This ImageStructList is only temporary during reset process. In normal run don't use this.
-		SvPB::ImageList m_imageListResetTmp; //This imageList is only temporary during reset process. In normal run don't use this.
+		SvPb::ImageStructList m_imageStructListResetTmp; //This ImageStructList is only temporary during reset process. In normal run don't use this.
+		SvPb::ImageList m_imageListResetTmp; //This imageList is only temporary during reset process. In normal run don't use this.
 		int m_TriggerRecordNumberResetTmp = 0; //This parameter is only temporary during reset process. In normal run don't use this.
 #pragma endregion Member variables
 	};
-} //namespace SvTRC
+} //namespace SvTrc

@@ -2,77 +2,77 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="ObjectTreeGenerator.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="ObjectSelectorPpg.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="ObjectTreeCtrl.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="LeafTreeCtrl.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="NodeTreeCtrl.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="ObjectFilterPpg.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ObjectTreeGenerator.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="ObjectSelectorPpg.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="ObjectTreeCtrl.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="LeafTreeCtrl.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="NodeTreeCtrl.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="ObjectFilterPpg.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="TextDefinesSvOsl.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SelectorOptions.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ObjectTreeGenerator.inl">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </None>
     <None Include="ObjectSelectorPpg.inl">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </None>
     <None Include="ObjectTreeCtrl.inl">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="Source Files">
+    <Filter Include="Quelldateien">
       <UniqueIdentifier>{5e65bb9e-77a2-415a-876e-c4a1e93877e2}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Header Files">
+    <Filter Include="Headerdateien">
       <UniqueIdentifier>{e0ff537a-c433-478e-ae37-9ac64c137b1b}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
+    <Filter Include="Ressourcendateien">
       <UniqueIdentifier>{23496051-d310-467c-a08d-48dc13fbc3cf}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
     </Filter>

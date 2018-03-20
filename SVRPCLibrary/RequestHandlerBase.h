@@ -3,7 +3,7 @@
 /// \file RequestHandlerBae.h
 /// All Rights Reserved
 //******************************************************************************
-/// Implement the RequestHandlerBase interface to receive incoming Envelopes of
+/// Implement the RequestHandlerBase interface to receive incoming SvPenv::Envelopes of
 /// type request or stream. Use the RequestHandler interface for a more comfort.
 ///
 /// Internally, both are the same, but we need the Handler and Observer
@@ -12,19 +12,19 @@
 
 #pragma once
 
-#include "SVRPCLibrary/Observer.h"
-#include "SVRPCLibrary/ServerStreamContext.h"
-#include "SVRPCLibrary/Task.h"
-#include "SVProtoBuf/envelope.h"
+#include "Observer.h"
+#include "ServerStreamContext.h"
+#include "Task.h"
+#include "SVProtoBuf/Envelope.h"
 
-namespace SVRPC
+namespace SvRpc
 {
 class RequestHandlerBase
 {
 public:
 	virtual ~RequestHandlerBase() {}
-	virtual void onRequest(Envelope&& request, Task<Envelope> handler) = 0;
-	virtual void onStream(Envelope&& request, Observer<Envelope> observer, ServerStreamContext::Ptr ctx) = 0;
+	virtual void onRequest(SvPenv::Envelope&& request, Task<SvPenv::Envelope> handler) = 0;
+	virtual void onStream(SvPenv::Envelope&& request, Observer<SvPenv::Envelope> observer, ServerStreamContext::Ptr ctx) = 0;
 };
 
-} // namespace SVRPC
+} // namespace SvRpc

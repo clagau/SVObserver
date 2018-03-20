@@ -14,7 +14,7 @@
 
 #pragma region Declarations
 #pragma endregion Declarations
-namespace SvTRCT
+namespace SvTrcT
 {
 	class WindowTool : public ToolObject
 	{
@@ -30,7 +30,7 @@ namespace SvTRCT
 		virtual CString getName() const override{ return _T("Window Tool"); };
 		static CString getDescription() { return _T("Copy a part of the input image (10 pixel smaller on all sides)."); };
 
-		virtual bool run(SvTRC::ITriggerRecordRWPtr pTriggerRecord) override;
+		virtual bool run(SvTrc::ITriggerRecordRWPtr pTriggerRecord) override;
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -49,4 +49,4 @@ namespace SvTRCT
 		int m_offsetY = 10;
 #pragma endregion Member Variables
 	};
-} //namespace SvTRCT
+} //namespace SvTrcT

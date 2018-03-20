@@ -10,7 +10,7 @@
 #include "BasicStructureHelper.h"
 #pragma endregion Includes
 
-namespace SvPB
+namespace SvPb
 {
 
 void SetGuidInProtoBytes(std::string  *pString, const GUID& guid)

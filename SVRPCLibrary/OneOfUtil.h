@@ -34,10 +34,10 @@
 
 #pragma once
 
-#include "SVRPCLibrary/EnvelopeUtil.h"
+#include "EnvelopeUtil.h"
 #include "SVProtoBuf/envelope.h"
 
-namespace SVRPC
+namespace SvRpc
 {
 template <typename TPayload, typename TMessage> class OneOfUtil
 {
@@ -52,28 +52,28 @@ public:
 		return true;
 	}
 
-	bool unwrap(TMessage& rMessage, Envelope&& envelope)
+	bool unwrap(TMessage& rMessage, SvPenv::Envelope&& rEnvelope)
 	{
-		TPayload payload;
-		if (!unwrap_payload(envelope, payload))
+		TPayload Payload;
+		if (!unwrap_payload(rEnvelope, Payload))
 		{
 			return false;
 		}
-		return unwrap(rMessage, std::move(payload));
+		return unwrap(rMessage, std::move(Payload));
 	}
 
-	void wrap(TPayload& rPayload, TMessage&& message)
+	void wrap(TPayload& rPayload, TMessage&& Message)
 	{
 		auto reflection = rPayload.GetReflection();
 		auto dest_message = reflection->MutableMessage(&rPayload, &m_FieldDescriptor);
-		*static_cast<TMessage*>(dest_message) = std::move(message);
+		*static_cast<TMessage*>(dest_message) = std::move(Message);
 	}
 
-	void wrap(Envelope& rEnvelope, TMessage&& message)
+	void wrap(SvPenv::Envelope& rEnvelope, TMessage&& Message)
 	{
-		TPayload payload;
-		wrap(payload, std::move(message));
-		wrap_payload(rEnvelope, payload);
+		TPayload Payload;
+		wrap(Payload, std::move(Message));
+		wrap_payload(rEnvelope, Payload);
 	}
 
 private:
@@ -103,4 +103,4 @@ private:
 	const ::google::protobuf::FieldDescriptor& m_FieldDescriptor;
 };
 
-} // namespace SVRPC
+} // namespace SvRpc

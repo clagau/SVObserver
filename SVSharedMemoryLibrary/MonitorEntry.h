@@ -8,16 +8,16 @@
 
 #pragma once
 #pragma region Includes
-#include "SVShared.h"
+//Moved to precompiled header: #include <vector>
+//Moved to precompiled header: #include <map>
 
+#include "SVShared.h"
 #include "MLInspectionInfo.h"
 #include "SVMatroxLibrary\MatroxImageProps.h"
 #include "SVprotobuf/MonitorListStore.h"
 #include "SVProtobuf/RunRe.h"
 #include "Definitions\SVObjectTypeInfoStruct.h"
 
-//Moved to precompiled header: #include <vector>
-//Moved to precompiled header: #include <map>
 #pragma endregion Includes
 
 namespace SvSml
@@ -30,8 +30,8 @@ namespace SvSml
 		bool GetMatroxImageProps(MatroxImageProps& rImageProps) const;
 		void SetMatroxImageProps(const MatroxImageProps& rImageProps);
 		///Serialize to ProtoBufMessage
-		void BuildProtoMessage(MesMonitorEntryData& rprotoMessage) const;
-		void BuildFromProtoMessage(const MesMonitorEntryData& rprotoMessage);
+		void BuildProtoMessage(SvPml::MesMonitorEntryData& rProtoMessage) const;
+		void BuildFromProtoMessage(const SvPml::MesMonitorEntryData& rProtoMessage);
 
 		DWORD InspectionStoreId{ UINT_MAX }; //<Inspection Store Index  
 		DWORD ItemId{UINT_MAX };	//<Index in the Inspection Store
@@ -67,10 +67,10 @@ namespace SvSml
 		///Not used yet 
 		bool GetValue(_variant_t& rVal , BYTE* pOffset) const;
 		///Serialize to ProtoBufMessage
-		void BuildProtoMessage(MesMonitorEntry &rMesMonitorEntry) const;
+		void BuildProtoMessage(SvPml::MesMonitorEntry &rMesMonitorEntry) const;
 		///set values from serializing 
-		void BuildFromProtoMessage(const MesMonitorEntry &rMesMonitorEntry);
-		void AddListItem(RRWS::QueryListItemResponse& rResp) const;
+		void BuildFromProtoMessage(const SvPml::MesMonitorEntry &rMesMonitorEntry);
+		void AddListItem(SvPb::QueryListItemResponse& rResp) const;
 		bool IsImage() const { return (data.ObjectType == SvDef::SVImageObjectType); };
 	public:	
 		GUID m_Guid;   //Object Guid 

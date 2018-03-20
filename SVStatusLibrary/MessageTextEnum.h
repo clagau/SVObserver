@@ -12,6 +12,8 @@ namespace SvStl
 	{
 		Tid_Empty,
 		Tid_Default,
+		Tid_Started,
+		Tid_Stopped,
 		Tid_ErrorClass,
 		Tid_XmlParserError,
 		Tid_RestoreVariantError,
@@ -488,5 +490,7 @@ namespace SvStl
 		Tid_FailstatusNotFound,
 		Tid_WrongInputImageType,
 		Tid_WriteCSVFileFailed,
+		Tid_Error_SetServiceStatus,
+		Tid_Error_RegisterServiceHandler,
 	};
 } //namespace SvStl

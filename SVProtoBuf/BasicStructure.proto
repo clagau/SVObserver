@@ -1,5 +1,5 @@
 syntax = "proto3";
-package SvPB;
+package SvPb;
 
 message MessageContainer //structure for a (error/warning/info-)message 
 {

@@ -34,12 +34,12 @@ namespace SvSml
 			return m_MLContainer.IsActiveMonitorList(Monitorlistname);
 		}
 
-		bool QueryListName(const RRWS::QueryListNameRequest& req, RRWS::QueryListNameResponse& resp, SVRPC::Error& err) const
+		bool QueryListName(const SvPb::QueryListNameRequest& req, SvPb::QueryListNameResponse& resp, SvPenv::Error& err) const
 		{
 			return m_MLContainer.QueryListName(req, resp, err);
 		}
 		
-		bool  QueryListItem(const RRWS::QueryListItemRequest& req, RRWS::QueryListItemResponse& resp, SVRPC::Error& err) const
+		bool  QueryListItem(const SvPb::QueryListItemRequest& req, SvPb::QueryListItemResponse& resp, SvPenv::Error& err) const
 		{
 			return m_MLContainer.QueryListItem(req, resp, err);
 		}

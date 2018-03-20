@@ -56,10 +56,10 @@ namespace SvSml
 		int GetProductDepth() const;
 		SVProductFilterEnum GetProductFilter() const;
 		bool GetIsActive() const;
-		bool BuildProtoMessage(MesMonitorListCpy& refMessage) const;
-		void BuildFromProtoMessage(const MesMonitorListCpy& refMessage);
+		bool BuildProtoMessage(SvPml::MesMonitorListCpy& rMessage) const;
+		void BuildFromProtoMessage(const SvPml::MesMonitorListCpy& rMessage);
 		
-		void QueryListItem(const RRWS::QueryListItemRequest& rRequest, RRWS::QueryListItemResponse& rResp) const;
+		void QueryListItem(const SvPb::QueryListItemRequest& rRequest, SvPb::QueryListItemResponse& rResponse) const;
 		
 		const static DWORD ImageBufferHeaderSize; //<Constant additional size needed fore every imagebuffer
 	public:

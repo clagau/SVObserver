@@ -30,21 +30,21 @@ ShareControl::~ShareControl()
 	SvSml::ShareEvents::GetInstance().SetCallbackFunction(0);
 }
 
-bool  ShareControl::QueryListName(const RRWS::QueryListNameRequest& req, RRWS::QueryListNameResponse& resp, SVRPC::Error& err)
+bool  ShareControl::QueryListName(const SvPb::QueryListNameRequest& req, SvPb::QueryListNameResponse& resp, SvPenv::Error& err)
 {
 	return m_MemReader.QueryListName(req, resp, err);
 };
-bool  ShareControl::QueryListItem(const RRWS::QueryListItemRequest& req, RRWS::QueryListItemResponse& resp, SVRPC::Error& err)
+bool  ShareControl::QueryListItem(const SvPb::QueryListItemRequest& req, SvPb::QueryListItemResponse& resp, SvPenv::Error& err)
 {
 	return m_MemReader.QueryListItem(req, resp, err);
 }
 
-bool  ShareControl::GetProductOrReject(const RRWS::GetProductRequest& request, RRWS::GetProductResponse& rResp, SVRPC::Error& err)
+bool  ShareControl::GetProductOrReject(const SvPb::GetProductRequest& request, SvPb::GetProductResponse& rResp, SvPenv::Error& err)
 {
 	bool isready = SvSml::ShareEvents::GetInstance().GetIsReady();
 	if (!isready)
 	{
-		err.set_error_code(SVRPC::ErrorCode::Locked);
+		err.set_error_code(SvPenv::ErrorCode::Locked);
 		err.set_message("Shared Memory is blocked");
 		return false;
 	}
@@ -58,7 +58,7 @@ bool  ShareControl::GetProductOrReject(const RRWS::GetProductRequest& request, R
 	}
 	if (!bValid)
 	{
-		err.set_error_code(SVRPC::ErrorCode::BadRequest);
+		err.set_error_code(SvPenv::ErrorCode::BadRequest);
 		err.set_message("MonitorList with given name does not exist or is not active");
 		return false;
 	}
@@ -96,7 +96,7 @@ bool  ShareControl::GetProductOrReject(const RRWS::GetProductRequest& request, R
 					if (index < 0)
 					{
 						//@Todo[MEC][8.00] [19.10.2017] log errors 
-						err.set_error_code(SVRPC::ErrorCode::InternalError);
+						err.set_error_code(SvPenv::ErrorCode::InternalError);
 						err.set_message("Unable to get slot for requested MonitorList");
 						return false;
 					}
@@ -120,7 +120,7 @@ bool  ShareControl::GetProductOrReject(const RRWS::GetProductRequest& request, R
 			{
 				if (prevTrigger == pLastProduct->m_trigger)
 				{
-					rResp.mutable_product()->set_status(RRWS::State::Unchanged);
+					rResp.mutable_product()->set_status(SvPb::State::Unchanged);
 				}
 				else
 				{
@@ -134,13 +134,13 @@ bool  ShareControl::GetProductOrReject(const RRWS::GetProductRequest& request, R
 			break;
 			case SvSml::SharedMemReader::fail:
 			{
-				err.set_error_code(SVRPC::ErrorCode::NotFound);
+				err.set_error_code(SvPenv::ErrorCode::NotFound);
 				return false;
 			}
 			break;
 			default:
 			{
-				err.set_error_code(SVRPC::ErrorCode::InternalError);
+				err.set_error_code(SvPenv::ErrorCode::InternalError);
 				return false;
 			}
 			break;
@@ -149,13 +149,13 @@ bool  ShareControl::GetProductOrReject(const RRWS::GetProductRequest& request, R
 }
 
 
-bool  ShareControl::GetProduct(SvSml::MLProduct* pProduct, bool nameInResponse, RRWS::Product* pProductMsg, SVRPC::Error& err)
+bool  ShareControl::GetProduct(SvSml::MLProduct* pProduct, bool nameInResponse, SvPb::Product* pProductMsg, SvPenv::Error& err)
 {
 
 	bool isready = SvSml::ShareEvents::GetInstance().GetIsReady();
 	if (!isready)
 	{
-		err.set_error_code(SVRPC::ErrorCode::Locked);
+		err.set_error_code(SvPenv::ErrorCode::Locked);
 		err.set_message("Shared Memory is blocked");
 		return false;
 	}
@@ -164,16 +164,16 @@ bool  ShareControl::GetProduct(SvSml::MLProduct* pProduct, bool nameInResponse, 
 
 }
 
-bool  ShareControl::SetProductResponse(bool nameInResponse, const SvSml::MLProduct* pProduct, RRWS::Product&  rProductMsg, SVRPC::Error& err)
+bool  ShareControl::SetProductResponse(bool nameInResponse, const SvSml::MLProduct* pProduct, SvPb::Product&  rProductMsg, SvPenv::Error& err)
 {
 	if (nullptr == pProduct)
 	{
-		err.set_error_code(SVRPC::ErrorCode::NotFound);
+		err.set_error_code(SvPenv::ErrorCode::NotFound);
 		return false;
 	}
 
 	rProductMsg.set_trigger((int)pProduct->m_trigger);
-	rProductMsg.set_status(RRWS::State::IsValid);
+	rProductMsg.set_status(SvPb::State::IsValid);
 
 	for (int i = 0; i < pProduct->m_data.size(); i++)
 	{
@@ -207,20 +207,20 @@ bool  ShareControl::SetProductResponse(bool nameInResponse, const SvSml::MLProdu
 	return true;
 }
 
-bool ShareControl::GetFailstatus(SvSml::vecpProd* pFailstatus, const RRWS::GetFailStatusRequest& request, RRWS::GetFailStatusResponse& resp, SVRPC::Error& err)
+bool ShareControl::GetFailstatus(SvSml::vecpProd* pFailstatus, const SvPb::GetFailStatusRequest& request, SvPb::GetFailStatusResponse& resp, SvPenv::Error& err)
 {
 	bool nameInresponse = request.nameinresponse();
 
 	bool isready = SvSml::ShareEvents::GetInstance().GetIsReady();
 	if (!isready)
 	{
-		err.set_error_code(SVRPC::ErrorCode::Locked);
+		err.set_error_code(SvPenv::ErrorCode::Locked);
 		err.set_message("Shared Memory is blocked");
 		return false;
 	}
 	if (nullptr == pFailstatus)
 	{
-		err.set_error_code(SVRPC::ErrorCode::InternalError);
+		err.set_error_code(SvPenv::ErrorCode::InternalError);
 		return false;
 	}
 
@@ -236,12 +236,12 @@ bool ShareControl::GetFailstatus(SvSml::vecpProd* pFailstatus, const RRWS::GetFa
 }
 
 
-bool  ShareControl::GetFailstatus(const RRWS::GetFailStatusRequest& request, RRWS::GetFailStatusResponse& resp, SVRPC::Error& err)
+bool  ShareControl::GetFailstatus(const SvPb::GetFailStatusRequest& request, SvPb::GetFailStatusResponse& resp, SvPenv::Error& err)
 {
 	bool isready = SvSml::ShareEvents::GetInstance().GetIsReady();
 	if (!isready)
 	{
-		err.set_error_code(SVRPC::ErrorCode::Locked);
+		err.set_error_code(SvPenv::ErrorCode::Locked);
 		err.set_message("Shared Memory is blocked");
 		return false;
 	}
@@ -254,8 +254,8 @@ bool  ShareControl::GetFailstatus(const RRWS::GetFailStatusRequest& request, RRW
 	}
 	if (!bValid)
 	{
-		SVRPC::Error err;
-		err.set_error_code(SVRPC::ErrorCode::BadRequest);
+		SvPenv::Error err;
+		err.set_error_code(SvPenv::ErrorCode::BadRequest);
 		err.set_message("MonitorList with given name does not exist or is not active");
 		return false;
 	}
@@ -294,8 +294,8 @@ bool  ShareControl::GetFailstatus(const RRWS::GetFailStatusRequest& request, RRW
 			break;
 			case SvSml::SharedMemReader::fail:
 			{
-				SVRPC::Error err;
-				err.set_error_code(SVRPC::ErrorCode::InternalError);
+				SvPenv::Error err;
+				err.set_error_code(SvPenv::ErrorCode::InternalError);
 				return false;
 			}
 			break;
@@ -304,12 +304,12 @@ bool  ShareControl::GetFailstatus(const RRWS::GetFailStatusRequest& request, RRW
 	return true;
 }
 
-bool ShareControl::GetImageFromCurId(const  RRWS::GetImageFromCurIdRequest& req, RRWS::GetImageFromCurIdResponse& resp, SVRPC::Error& err)
+bool ShareControl::GetImageFromCurId(const  SvPb::GetImageFromCurIdRequest& req, SvPb::GetImageFromCurIdResponse& resp, SvPenv::Error& err)
 {
 	bool isready = SvSml::ShareEvents::GetInstance().GetIsReady();
 	if (!isready)
 	{
-		err.set_error_code(SVRPC::ErrorCode::Locked);
+		err.set_error_code(SvPenv::ErrorCode::Locked);
 		err.set_message("Shared Memory is blocked");
 		return false;
 	}
@@ -345,7 +345,7 @@ bool ShareControl::EventHandler(DWORD event)
 				SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 				SvDef::StringVector msgList;
 				msgList.push_back(rExp.what());
-				Exception.setMessage(SVMSG_RRS_2_STD_EXCEPTION, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams));
+				Exception.setMessage(SVMSG_SVWebSrv_0_GENERAL_ERROR, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams));
 			}
 			break;
 		case SvSml::ShareEvents::Ready:
@@ -362,7 +362,7 @@ bool ShareControl::EventHandler(DWORD event)
 				SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 				SvDef::StringVector msgList;
 				msgList.push_back(rExp.what());
-				Exception.setMessage(SVMSG_RRS_2_STD_EXCEPTION, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams));
+				Exception.setMessage(SVMSG_SVWebSrv_0_GENERAL_ERROR, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams));
 			}
 			break;
 		}

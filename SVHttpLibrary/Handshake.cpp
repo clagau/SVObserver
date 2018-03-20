@@ -15,9 +15,9 @@
 
 #include <boost/log/trivial.hpp>
 
-#include "SVHttpLibrary/Handshake.h"
+#include "SvHttpLibrary/Handshake.h"
 
-namespace SVHTTP
+namespace SvHttp
 {
 Handshake::ParserState Handshake::parseClientRequest(char* buf, size_t len)
 {
@@ -299,4 +299,4 @@ std::map<std::string, std::string>::iterator Handshake::find_header(const std::s
 	return m_Headers.find(str_to_lower(key));
 }
 
-} // namespace SVHTTP
+} // namespace SvHttp

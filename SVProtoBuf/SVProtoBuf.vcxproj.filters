@@ -62,7 +62,7 @@
     <CustomBuild Include="variant.proto">
       <Filter>Ressourcendateien</Filter>
     </CustomBuild>
-    <CustomBuild Include="envelope.proto">
+    <CustomBuild Include="Envelope.proto">
       <Filter>Ressourcendateien</Filter>
     </CustomBuild>
   </ItemGroup>

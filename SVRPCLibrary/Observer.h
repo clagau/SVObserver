@@ -16,13 +16,12 @@
 
 #pragma once
 
-#include <functional>
-#include <future>
-#include <memory>
-
+//Moved to precompiled header: #include <functional>
+//Moved to precompiled header: #include <future>
+//Moved to precompiled header: #include <memory>
 #include "SVProtoBuf/envelope.h"
 
-namespace SVRPC
+namespace SvRpc
 {
 // typename is typically a result class
 template <typename T> struct Observer
@@ -30,7 +29,7 @@ template <typename T> struct Observer
 public:
 	using OnNextFn = std::function<std::future<void>(T&& t)>;
 	using OnFinishFn = std::function<void()>;
-	using OnErrorFn = std::function<void(const Error&)>;
+	using OnErrorFn = std::function<void(const SvPenv::Error&)>;
 
 	Observer(OnNextFn OnNext, OnFinishFn OnFinish, OnErrorFn OnError) : m_OnNext(OnNext), m_OnFinish(OnFinish), m_OnError(OnError)
 	{
@@ -53,7 +52,7 @@ public:
 		}
 	}
 
-	void error(const Error& err) const
+	void error(const SvPenv::Error& err) const
 	{
 		if (m_OnError)
 		{
@@ -67,4 +66,4 @@ public:
 	OnErrorFn m_OnError;
 };
 
-} // namespace SVRPC
+} // namespace SvRpc

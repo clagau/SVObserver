@@ -146,9 +146,9 @@ namespace SvOg
 		HRESULT ResetObject(const GUID& rInspectionID, const GUID& rObjectID)
 		{
 			m_MessageFailList.clear();
-			SvPB::ResetObjectRequest requestMessage;
-			SvPB::ResetObjectResponse responseMessage;
-			SvPB::SetGuidInProtoBytes(requestMessage.mutable_objectid(), rObjectID);
+			SvPb::ResetObjectRequest requestMessage;
+			SvPb::ResetObjectResponse responseMessage;
+			SvPb::SetGuidInProtoBytes(requestMessage.mutable_objectid(), rObjectID);
 			HRESULT hr = SvCmd::InspectionCommandsSynchronous(rInspectionID, &requestMessage, &responseMessage);
 			m_MessageFailList = SvCmd::setMessageContainerFromMessagePB(responseMessage.messages());
 			return hr;
@@ -157,9 +157,9 @@ namespace SvOg
 		HRESULT RunOnce(const GUID& rInspectionID, const GUID& rObjectID)
 		{
 			// Do a run once of the Tool/Inspection ?
-			SvPB::InspectionRunOnceRequest requestMessage;
-			SvPB::SetGuidInProtoBytes(requestMessage.mutable_inspectionid(), rInspectionID);
-			SvPB::SetGuidInProtoBytes(requestMessage.mutable_taskid(), rObjectID);
+			SvPb::InspectionRunOnceRequest requestMessage;
+			SvPb::SetGuidInProtoBytes(requestMessage.mutable_inspectionid(), rInspectionID);
+			SvPb::SetGuidInProtoBytes(requestMessage.mutable_taskid(), rObjectID);
 			HRESULT hr = SvCmd::InspectionCommandsSynchronous(rInspectionID, &requestMessage, nullptr);
 			return hr;
 		}

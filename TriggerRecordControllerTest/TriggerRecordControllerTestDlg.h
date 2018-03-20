@@ -8,7 +8,7 @@
 #include "SVMFCControls\ObjectsListBox.h"
 #include "SVOGui\PictureDisplay.h"
 
-namespace SvTRCT
+namespace SvTrcT
 {
 	typedef std::shared_ptr< ToolObject > ToolObjectPtr;
 
@@ -47,7 +47,7 @@ namespace SvTRCT
 		void OnSetImage();
 		void OnToolTypeChanged();
 
-		bool LoadMainImage(SvTRC::ITriggerRecordRWPtr triggerRecord, const CString& Path);
+		bool LoadMainImage(SvTrc::ITriggerRecordRWPtr triggerRecord, const CString& Path);
 
 		void updateControls();
 
@@ -58,7 +58,7 @@ namespace SvTRCT
 		void updateImageCombo();
 
 	private:
-		SvTRC::ITriggerRecordControllerRW& m_recordController = SvTRC::getTriggerRecordControllerRWInstance();
+		SvTrc::ITriggerRecordControllerRW& m_recordController = SvTrc::getTriggerRecordControllerRWInstance();
 		bool m_bResetStart = false;
 		bool m_isEdit = false;
 		int m_trNumbers = 10;
@@ -76,4 +76,4 @@ namespace SvTRCT
 		SvOg::PictureDisplay m_dialogImage;
 		const int m_inspectionPos = 0;
 	};
-} // namespace SvTRCT
+} // namespace SvTrcT

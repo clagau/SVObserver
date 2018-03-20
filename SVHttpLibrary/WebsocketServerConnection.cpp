@@ -19,10 +19,10 @@
 #include <boost/asio.hpp>
 #include <boost/log/trivial.hpp>
 
-#include "SVHttpLibrary/Handshake.h"
-#include "SVHttpLibrary/WebsocketServerConnection.h"
+#include "SvHttpLibrary/Handshake.h"
+#include "SvHttpLibrary/WebsocketServerConnection.h"
 
-namespace SVHTTP
+namespace SvHttp
 {
 WebsocketServerConnection::WebsocketServerConnection(const WebsocketServerSettings& rSettings,
 	boost::asio::io_service& rIoService,
@@ -355,4 +355,4 @@ void WebsocketServerConnection::handle_error(const boost::system::error_code& er
 	BOOST_LOG_TRIVIAL(warning) << "client connection error: " << error;
 }
 
-} // namespace SVHTTP
+} // namespace SvHttp

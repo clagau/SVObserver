@@ -1,6 +1,6 @@
 //******************************************************************************
 /// \copyright (c) 2017,2018 by Seidenader Maschinenbau GmbH
-/// \file RRSSharedMemoryAccessMock.cpp
+/// \file SharedMemoryAccessMock.cpp
 /// All Rights Reserved
 //******************************************************************************
 /// Mock returning dummy data instead of reading from shared memory.
@@ -8,14 +8,14 @@
 
 #include "stdafx.h"
 
-#include "RRSSharedMemoryAccessInterface.h"
-#include "RRSSharedMemoryAccessMock.h"
+#include "SharedMemoryAccessInterface.h"
+#include "SharedMemoryAccessMock.h"
 
 #include <fstream>
 #include <future>
 #include <queue>
 
-namespace RRWS
+namespace SvOws
 {
 
 std::string loadBitmap(const char* filename)
@@ -62,14 +62,14 @@ const BitmapWithMetadata& getBitmap(unsigned int width, bool rotated = false)
 	}
 }
 
-RRSSharedMemoryAccessMock::RRSSharedMemoryAccessMock()
+SharedMemoryAccessMock::SharedMemoryAccessMock()
 	: m_io_service(), m_io_work(m_io_service), m_io_thread(boost::bind(&boost::asio::io_service::run, &m_io_service))
 {
 }
 
-RRSSharedMemoryAccessMock::~RRSSharedMemoryAccessMock() {}
+SharedMemoryAccessMock::~SharedMemoryAccessMock() {}
 
-void RRSSharedMemoryAccessMock::GetVersion(const GetVersionRequest& req, SVRPC::Task<GetVersionResponse> task)
+void SharedMemoryAccessMock::GetVersion(const SvPb::GetVersionRequest& req, SvRpc::Task<SvPb::GetVersionResponse> task)
 {
 	// trigger timeout by not calling task.finish()
 	if (req.trigger_timeout())
@@ -77,74 +77,74 @@ void RRSSharedMemoryAccessMock::GetVersion(const GetVersionRequest& req, SVRPC::
 		return;
 	}
 
-	GetVersionResponse resp;
+	SvPb::GetVersionResponse resp;
 	resp.set_version("Mock Version");
 	task.finish(std::move(resp));
 }
 
-void RRSSharedMemoryAccessMock::GetProduct(const GetProductRequest& request, SVRPC::Task<GetProductResponse> task)
+void SharedMemoryAccessMock::GetProduct(const SvPb::GetProductRequest& request, SvRpc::Task<SvPb::GetProductResponse> task)
 {
-	GetProductResponse resp;
+	SvPb::GetProductResponse resp;
 	getProduct(*resp.mutable_product(), request.nameinresponse());
 	task.finish(std::move(resp));
 }
 
 
 
-void RRSSharedMemoryAccessMock::GetFailstatus(const GetFailStatusRequest&, SVRPC::Task<GetFailStatusResponse> task)
+void SharedMemoryAccessMock::GetFailstatus(const SvPb::GetFailStatusRequest&, SvRpc::Task<SvPb::GetFailStatusResponse> task)
 {
-	SVRPC::Error err;
-	err.set_error_code(SVRPC::ErrorCode::NotImplemented);
+	SvPenv::Error err;
+	err.set_error_code(SvPenv::ErrorCode::NotImplemented);
 	task.error(err);
 }
 
-void RRSSharedMemoryAccessMock::GetImageFromCurId(const GetImageFromCurIdRequest& request,
-	SVRPC::Task<GetImageFromCurIdResponse> task)
+void SharedMemoryAccessMock::GetImageFromCurId(const SvPb::GetImageFromCurIdRequest& request,
+	SvRpc::Task<SvPb::GetImageFromCurIdResponse> task)
 {
-	GetImageFromCurIdResponse resp;
+	SvPb::GetImageFromCurIdResponse resp;
 	this->getImageById(*resp.mutable_imagedata(), request.id());
 	task.finish(std::move(resp));
 }
 
-void RRSSharedMemoryAccessMock::GetImageStreamFromCurId(const GetImageStreamFromCurIdRequest& req,
-	SVRPC::Observer<GetImageStreamFromCurIdResponse> observer,
-	SVRPC::ServerStreamContext::Ptr ctx)
+void SharedMemoryAccessMock::GetImageStreamFromCurId(const SvPb::GetImageStreamFromCurIdRequest& req,
+	SvRpc::Observer<SvPb::GetImageStreamFromCurIdResponse> observer,
+	SvRpc::ServerStreamContext::Ptr ctx)
 {
 	m_io_service.post(
-		std::bind(&RRSSharedMemoryAccessMock::getImageStreamFromCurIdStep, this, req.count(), req.id(), observer, ctx));
+		std::bind(&SharedMemoryAccessMock::getImageStreamFromCurIdStep, this, req.count(), req.id(), observer, ctx));
 }
 
-void RRSSharedMemoryAccessMock::GetItems(const GetItemsRequest&, SVRPC::Task<GetItemsResponse> task)
+void SharedMemoryAccessMock::GetItems(const SvPb::GetItemsRequest&, SvRpc::Task<SvPb::GetItemsResponse> task)
 {
-	SVRPC::Error err;
-	err.set_error_code(SVRPC::ErrorCode::NotImplemented);
+	SvPenv::Error err;
+	err.set_error_code(SvPenv::ErrorCode::NotImplemented);
 	task.error(err);
 }
 
-void RRSSharedMemoryAccessMock::QueryListName(const QueryListNameRequest&, SVRPC::Task<QueryListNameResponse> task)
+void SharedMemoryAccessMock::QueryListName(const SvPb::QueryListNameRequest&, SvRpc::Task<SvPb::QueryListNameResponse> task)
 {
-	QueryListNameResponse resp;
+	SvPb::QueryListNameResponse resp;
 	SvDef::StringVector stringVector;
 
 	*(resp.add_listname()) = "Hello";
 	task.finish(std::move(resp));
 }
 
-void RRSSharedMemoryAccessMock::QueryListItem(const QueryListItemRequest&, SVRPC::Task<QueryListItemResponse> task)
+void SharedMemoryAccessMock::QueryListItem(const SvPb::QueryListItemRequest&, SvRpc::Task<SvPb::QueryListItemResponse> task)
 {
-	SVRPC::Error err;
-	err.set_error_code(SVRPC::ErrorCode::NotImplemented);
+	SvPenv::Error err;
+	err.set_error_code(SvPenv::ErrorCode::NotImplemented);
 	task.error(err);
 }
 
-void RRSSharedMemoryAccessMock::GetNotificationStream(const GetNotificationStreamRequest& request,
-	SVRPC::Observer<GetNotificationStreamResponse> observer,
-	SVRPC::ServerStreamContext::Ptr ctx)
+void SharedMemoryAccessMock::GetNotificationStream(const SvPb::GetNotificationStreamRequest& request,
+	SvRpc::Observer<SvPb::GetNotificationStreamResponse> observer,
+	SvRpc::ServerStreamContext::Ptr ctx)
 {
-	m_io_service.post(std::bind(&RRSSharedMemoryAccessMock::getNotificationStreamImpl, this, observer, ctx));
+	m_io_service.post(std::bind(&SharedMemoryAccessMock::getNotificationStreamImpl, this, observer, ctx));
 }
 
-void RRSSharedMemoryAccessMock::getProduct(Product& product, bool name_in_response)
+void SharedMemoryAccessMock::getProduct(SvPb::Product& product, bool name_in_response)
 {
 	product.set_trigger(123);
 	product.add_values()->set_string_value("TestValue");
@@ -175,7 +175,7 @@ void RRSSharedMemoryAccessMock::getProduct(Product& product, bool name_in_respon
 	}
 }
 
-void RRSSharedMemoryAccessMock::getImageById(RRWS::Image& img, const RRWS::CurImageId& imageId, bool rotated)
+void SharedMemoryAccessMock::getImageById(SvPb::Image& img, const SvPb::CurImageId& imageId, bool rotated)
 {
 	switch (imageId.slotindex())
 	{
@@ -197,10 +197,10 @@ void RRSSharedMemoryAccessMock::getImageById(RRWS::Image& img, const RRWS::CurIm
 	}
 }
 
-void RRSSharedMemoryAccessMock::getImageStreamFromCurIdStep(int iterations,
-	const CurImageId& id,
-	SVRPC::Observer<GetImageStreamFromCurIdResponse> observer,
-	SVRPC::ServerStreamContext::Ptr ctx)
+void SharedMemoryAccessMock::getImageStreamFromCurIdStep(int iterations,
+	const SvPb::CurImageId& id,
+	SvRpc::Observer<SvPb::GetImageStreamFromCurIdResponse> observer,
+	SvRpc::ServerStreamContext::Ptr ctx)
 {
 	static const auto MAX_PENDING_RESPONSES = 20;
 	std::queue<std::future<void>> futures;
@@ -214,7 +214,7 @@ void RRSSharedMemoryAccessMock::getImageStreamFromCurIdStep(int iterations,
 			futures.pop();
 		}
 
-		GetImageStreamFromCurIdResponse resp;
+		SvPb::GetImageStreamFromCurIdResponse resp;
 		this->getImageById(*resp.mutable_imagedata(), id, even);
 
 		auto future = observer.onNext(std::move(resp));
@@ -224,14 +224,14 @@ void RRSSharedMemoryAccessMock::getImageStreamFromCurIdStep(int iterations,
 	observer.finish();
 }
 
-void RRSSharedMemoryAccessMock::getNotificationStreamImpl(
-	SVRPC::Observer<GetNotificationStreamResponse> observer,
-	SVRPC::ServerStreamContext::Ptr ctx)
+void SharedMemoryAccessMock::getNotificationStreamImpl(
+	SvRpc::Observer<SvPb::GetNotificationStreamResponse> observer,
+	SvRpc::ServerStreamContext::Ptr ctx)
 {
 	uint64_t notification_id = 0;
 	while (!ctx->isCancelled())
 	{
-		GetNotificationStreamResponse res;
+		SvPb::GetNotificationStreamResponse res;
 		res.set_id(++notification_id);
 		res.set_type("info");
 		res.set_message("hello");

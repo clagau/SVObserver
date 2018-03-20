@@ -10,13 +10,13 @@
 
 #include "stdafx.h"
 
-#include "WebsocketServer/Registry.h"
-#include "WebsocketServer/SettingsLoader.h"
+#include "Registry.h"
+#include "SettingsLoader.h"
 
 #define RRWS_KEY HKEY_LOCAL_MACHINE
 #define RRWS_SUBKEY "Software\\Seidenader\\WebsocketServer\\"
 
-namespace RRWS
+namespace SvOws
 {
 static void RegGetStringIfExists(std::string& dst, const std::string& name)
 {

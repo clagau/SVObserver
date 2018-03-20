@@ -10,5 +10,5 @@
 
 #pragma warning( push )
 #pragma warning( disable : 4800 )
-#include "SVProtoBuf/InspectionCommands.pb.h"
+#include "InspectionCommands.pb.h"
 #pragma warning( pop )

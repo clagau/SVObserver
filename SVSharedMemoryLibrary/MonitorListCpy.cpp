@@ -227,31 +227,31 @@ namespace SvSml
 		return res;
 	}
 
-	bool MonitorListCpy::BuildProtoMessage(MesMonitorListCpy& refMessage) const
+	bool MonitorListCpy::BuildProtoMessage(SvPml::MesMonitorListCpy& rMessage) const
 	{
-		refMessage.set_monitorlistname(m_MonitorListName.c_str());
-		refMessage.set_ppqname(m_ppqName.c_str());
-		refMessage.set_isactive(m_IsActive);
-		refMessage.set_productdepth(m_ProductDepth);
-		refMessage.set_rejectdepth(m_rejectDepth);
+		rMessage.set_monitorlistname(m_MonitorListName.c_str());
+		rMessage.set_ppqname(m_ppqName.c_str());
+		rMessage.set_isactive(m_IsActive);
+		rMessage.set_productdepth(m_ProductDepth);
+		rMessage.set_rejectdepth(m_rejectDepth);
 
 		for (auto &MonEntry : m_EntriesMap)
 		{
-			auto pMonEntryMessage = refMessage.add_monitorentries();
+			auto pMonEntryMessage = rMessage.add_monitorentries();
 			MonEntry.second->BuildProtoMessage(*pMonEntryMessage);
 		}
 		return true;
 	}
-	void MonitorListCpy::BuildFromProtoMessage(const MesMonitorListCpy& refMessage)
+	void MonitorListCpy::BuildFromProtoMessage(const SvPml::MesMonitorListCpy& rMessage)
 	{
-		m_MonitorListName = refMessage.monitorlistname();
-		m_ppqName = refMessage.ppqname();
-		m_IsActive = refMessage.isactive();
-		m_ProductDepth = refMessage.productdepth();
-		m_rejectDepth = refMessage.rejectdepth();
-		for (int m = 0; m < refMessage.monitorentries_size(); m++)
+		m_MonitorListName = rMessage.monitorlistname();
+		m_ppqName = rMessage.ppqname();
+		m_IsActive = rMessage.isactive();
+		m_ProductDepth = rMessage.productdepth();
+		m_rejectDepth = rMessage.rejectdepth();
+		for (int m = 0; m < rMessage.monitorentries_size(); m++)
 		{
-			const MesMonitorEntry& mEntry = refMessage.monitorentries(m);
+			const SvPml::MesMonitorEntry& mEntry = rMessage.monitorentries(m);
 			std::string name = mEntry.name();
 			DWORD monitorlistflag = mEntry.entrydata().monitorlistflag();
 			MonitorEntryPointer pMonitorEntry = AddMultEntries(monitorlistflag, name);
@@ -260,7 +260,7 @@ namespace SvSml
 
 	}
 
-	void MonitorListCpy::QueryListItem(const RRWS::QueryListItemRequest& request, RRWS::QueryListItemResponse& resp) const
+	void MonitorListCpy::QueryListItem(const SvPb::QueryListItemRequest& request, SvPb::QueryListItemResponse& resp) const
 	{
 		if (!m_IsActive)
 		{
@@ -270,15 +270,15 @@ namespace SvSml
 		const MonitorEntries*  pMonitorEntriesImages{ nullptr };
 		switch (request.type())
 		{
-		case RRWS::ProductItem:
+		case SvPb::ProductItem:
 			pMonitorEntries =  &(m_MonitorEntries[ListType::productItemsData]);
 			pMonitorEntriesImages = &(m_MonitorEntries[ListType::productItemsImage]);
 			break;
-		case RRWS::RejectCondition:
+		case SvPb::RejectCondition:
 			pMonitorEntries = &(m_MonitorEntries[ListType::rejectCondition]);
 			break;
 
-		case RRWS::FailStatus:
+		case SvPb::FailStatus:
 			pMonitorEntries = &(m_MonitorEntries[ListType::failStatus]);
 			break;
 		}

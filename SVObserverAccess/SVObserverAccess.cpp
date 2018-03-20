@@ -7,12 +7,12 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include "SVObserverAccessDll.h"
+#include "SVObserverAccess.h"
 
 #include "SVSharedMemoryLibrary\ShareControl.h"
 
 
-namespace SVObserverAccessDll
+namespace SvOa
 {
 
 std::unique_ptr<SvSml::ShareControl> ShareControlInstance;
@@ -30,7 +30,7 @@ void Finish()
 
 
 
-bool  QueryListItem(const RRWS::QueryListItemRequest& req, RRWS::QueryListItemResponse& resp, SVRPC::Error& err)
+bool  QueryListItem(const SvPb::QueryListItemRequest& req, SvPb::QueryListItemResponse& resp, SvPenv::Error& err)
 {
 	if (ShareControlInstance.get())
 	{
@@ -41,7 +41,7 @@ bool  QueryListItem(const RRWS::QueryListItemRequest& req, RRWS::QueryListItemRe
 		return false;
 	}
 }
-bool GetProductOrReject(const RRWS::GetProductRequest& request, RRWS::GetProductResponse& resp, SVRPC::Error& err)
+bool GetProductOrReject(const SvPb::GetProductRequest& request, SvPb::GetProductResponse& resp, SvPenv::Error& err)
 {
 	if (ShareControlInstance.get())
 	{
@@ -52,7 +52,7 @@ bool GetProductOrReject(const RRWS::GetProductRequest& request, RRWS::GetProduct
 		return false;
 	}
 }
-bool GetFailstatus(const RRWS::GetFailStatusRequest& request, RRWS::GetFailStatusResponse& resp, SVRPC::Error& err)
+bool GetFailstatus(const SvPb::GetFailStatusRequest& request, SvPb::GetFailStatusResponse& resp, SvPenv::Error& err)
 {
 
 	if (ShareControlInstance.get())
@@ -65,7 +65,7 @@ bool GetFailstatus(const RRWS::GetFailStatusRequest& request, RRWS::GetFailStatu
 	}
 
 }
-bool  GetImageFromCurId(const  RRWS::GetImageFromCurIdRequest& req, RRWS::GetImageFromCurIdResponse& resp, SVRPC::Error& err)
+bool  GetImageFromCurId(const  SvPb::GetImageFromCurIdRequest& req, SvPb::GetImageFromCurIdResponse& resp, SvPenv::Error& err)
 {
 
 	if (ShareControlInstance.get())
@@ -79,7 +79,7 @@ bool  GetImageFromCurId(const  RRWS::GetImageFromCurIdRequest& req, RRWS::GetIma
 
 }
 
-bool QueryListName(const RRWS::QueryListNameRequest& req, RRWS::QueryListNameResponse& resp, SVRPC::Error& err)
+bool QueryListName(const SvPb::QueryListNameRequest& req, SvPb::QueryListNameResponse& resp, SvPenv::Error& err)
 {
 	if (ShareControlInstance.get())
 	{

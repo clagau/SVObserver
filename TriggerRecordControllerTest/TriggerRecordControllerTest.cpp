@@ -15,7 +15,7 @@
 #define new DEBUG_NEW
 #endif
 
-namespace SvTRCT
+namespace SvTrcT
 {
 	// CTriggerRecordControllerTestApp
 
@@ -123,4 +123,4 @@ namespace SvTRCT
 		//  Anwendung verlassen, anstatt das Nachrichtensystem der Anwendung zu starten.
 		return FALSE;
 	}
-} // namespace SvTRCT
+} // namespace SvTrcT

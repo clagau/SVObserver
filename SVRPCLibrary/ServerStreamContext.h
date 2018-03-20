@@ -8,10 +8,10 @@
 
 #pragma once
 
-#include <atomic>
-#include <memory>
+//Moved to precompiled header: #include <atomic>
+//Moved to precompiled header: #include <memory>
 
-namespace SVRPC
+namespace SvRpc
 {
 
 class ServerStreamContext
@@ -51,4 +51,4 @@ private:
 	std::function<void()> m_OnCancel;
 };
 
-} // namespace SVRPC
+} // namespace SvRpc

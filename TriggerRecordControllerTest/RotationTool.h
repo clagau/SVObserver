@@ -14,7 +14,7 @@
 
 #pragma region Declarations
 #pragma endregion Declarations
-namespace SvTRCT
+namespace SvTrcT
 {
 	class RotationTool : public ToolObject
 	{
@@ -30,7 +30,7 @@ namespace SvTRCT
 		virtual CString getName() const override { return _T("Rotation Tool"); };
 		static CString getDescription() { return _T("Rotated the input image (by 45°)."); };
 
-		virtual bool run(SvTRC::ITriggerRecordRWPtr pTriggerRecord) override;
+		virtual bool run(SvTrc::ITriggerRecordRWPtr pTriggerRecord) override;
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -48,4 +48,4 @@ namespace SvTRCT
 		double m_roationValue = 45;
 #pragma endregion Member Variables
 	};
-} //namespace SvTRCT
+} //namespace SvTrcT

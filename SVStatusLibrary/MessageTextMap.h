@@ -23,6 +23,8 @@ namespace SvStl
 	{
 		{Tid_Empty, _T("")},
 		{Tid_Default, _T("%s")},
+		{Tid_Started, _T("Started")},
+		{Tid_Stopped, _T("Stopped")},
 		{Tid_ErrorClass, _T("Error Nbr = %s, Program Cd = %s")},
 		{Tid_XmlParserError, _T("%s, Error Code:%s, On line %s position %s")},
 		{Tid_RestoreVariantError, _T("RestoreVariant returns: %s")},
@@ -523,6 +525,8 @@ namespace SvStl
 		{Tid_ColorToolExtentsChanged, _T("For backward compatibility: The ROI of at least one Color tool in the configuration has been changed to the size of the Main image")},
 		{Tid_FailstatusNotFound, _T("Could not get Failstatus")},
 		{Tid_WrongInputImageType, _T("The input image is the wrong color type")},
-		{Tid_WriteCSVFileFailed, _T("Write to file %s failed.")}
+		{Tid_WriteCSVFileFailed, _T("Write to file %s failed.")},
+		{Tid_Error_SetServiceStatus, _T("SetServiceStatus returned error")},
+		{Tid_Error_RegisterServiceHandler, _T("RegisterServiceCtrlHandler returned error")},
 	};
 } //namespace SvStl

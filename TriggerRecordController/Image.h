@@ -16,7 +16,7 @@
 
 #pragma region Declarations
 #pragma endregion Declarations
-namespace SvTRC
+namespace SvTrc
 {
 	class Image : public IImage
 	{
@@ -48,4 +48,4 @@ namespace SvTRC
 		SvOi::SVImageBufferHandlePtr m_buffer;
 #pragma endregion Member Variables
 	};
-} // namespace SvTRC
+} // namespace SvTrc

@@ -19,7 +19,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
-namespace SvTRCT
+namespace SvTrcT
 {
 #pragma region Constructor
 #pragma endregion Constructor
@@ -31,7 +31,7 @@ namespace SvTRCT
 		m_bufferStructOut = m_bufferStructIn;
 	};
 
-	bool DeactivedTool::run(SvTRC::ITriggerRecordRWPtr pTriggerRecord)
+	bool DeactivedTool::run(SvTrc::ITriggerRecordRWPtr pTriggerRecord)
 	{
 		bool retValue = false;
 		m_isActive = !m_isActive;

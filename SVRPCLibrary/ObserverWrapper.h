@@ -18,23 +18,22 @@
 //******************************************************************************
 
 #pragma once
+//Moved to precompiled header: #include <functional>
+//Moved to precompiled header: #include <memory>
 
-#include <functional>
-#include <memory>
-
-#include "SVRPCLibrary/EnvelopeUtil.h"
-#include "SVRPCLibrary/Observer.h"
-#include "SVRPCLibrary/OneOfUtil.h"
-#include "SVRPCLibrary/ServerStreamContext.h"
+#include "EnvelopeUtil.h"
+#include "Observer.h"
+#include "OneOfUtil.h"
+#include "ServerStreamContext.h"
 #include "SVProtoBuf/envelope.h"
 
-namespace SVRPC
+namespace SvRpc
 {
 class ObserverWrapperBase
 {
 public:
 	virtual ~ObserverWrapperBase() {}
-	virtual void operator()(Envelope&&, Observer<Envelope>, ServerStreamContext::Ptr) = 0;
+	virtual void operator()(SvPenv::Envelope&&, Observer<SvPenv::Envelope>, ServerStreamContext::Ptr) = 0;
 };
 
 template <typename TPayload, typename TReq, typename TRes> class ObserverWrapper : public ObserverWrapperBase
@@ -43,13 +42,13 @@ public:
 	ObserverWrapper(std::function<void(TReq&&, Observer<TRes>, ServerStreamContext::Ptr)>&& Handler) : m_Handler(std::move(Handler)) {}
 	~ObserverWrapper() override {}
 
-	void operator()(Envelope&& envelope, Observer<Envelope> observer, ServerStreamContext::Ptr ctx) override
+	void operator()(SvPenv::Envelope&& envelope, Observer<SvPenv::Envelope> observer, ServerStreamContext::Ptr ctx) override
 	{
 		TReq req;
 		if (!m_ReqUnwrapper.unwrap(req, std::move(envelope)))
 		{
 			BOOST_LOG_TRIVIAL(warning) << "Envelope with unknown payload!";
-			observer.error(build_error(ErrorCode::InternalError, "Unknown payload"));
+			observer.error(build_error(SvPenv::ErrorCode::InternalError, "Unknown payload"));
 			return;
 		}
 
@@ -57,13 +56,13 @@ public:
 			Observer<TRes>(
 			[this, observer](TRes&& res) -> std::future<void>
 		{
-			Envelope resEnvelope;
+			SvPenv::Envelope resEnvelope;
 			m_ResWrapper.wrap(resEnvelope, std::move(res));
 
 			return observer.onNext(std::move(resEnvelope));
 		},
 			[observer]() { observer.finish(); },
-			[observer](const Error& err) { observer.error(err); }),
+			[observer](const SvPenv::Error& err) { observer.error(err); }),
 			ctx);
 	}
 
@@ -73,4 +72,4 @@ private:
 	OneOfUtil<TPayload, TRes> m_ResWrapper;
 };
 
-} // namespace SVRPC
+} // namespace SvRpc

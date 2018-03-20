@@ -22,7 +22,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-namespace SvTRC
+namespace SvTrc
 {
 #pragma region Constructor
 	ImageBufferController& ImageBufferController::getImageBufferControllerInstance()
@@ -44,7 +44,7 @@ namespace SvTRC
 #pragma endregion Constructor
 
 #pragma region Public Methods
-	std::vector<std::pair<int, int>> ImageBufferController::reset(const SvPB::ImageStructList& rImageStructList)
+	std::vector<std::pair<int, int>> ImageBufferController::reset(const SvPb::ImageStructList& rImageStructList)
 	{
 		int groupPos = 0;
 		int vectorPos = 0;
@@ -55,7 +55,7 @@ namespace SvTRC
 		//step through new imageSize list to fit buffer to the new required structure
 		for (const auto& rImageStruct : rImageStructList.list() )
 		{
-			SvPB::ImageStructData* pStructData = nullptr;
+			SvPb::ImageStructData* pStructData = nullptr;
 			if (m_imageStructList.list_size() > groupPos)
 			{
 				pStructData = m_imageStructList.mutable_list(groupPos);
@@ -221,4 +221,4 @@ namespace SvTRC
 
 #pragma region Private Methods
 #pragma endregion Private Methods
-} //namespace SvTRC
+} //namespace SvTrc

@@ -22,19 +22,19 @@
 #include <functional>
 #include <memory>
 
-#include "SVRPCLibrary/EnvelopeUtil.h"
-#include "SVRPCLibrary/OneOfUtil.h"
-#include "SVRPCLibrary/Task.h"
+#include "EnvelopeUtil.h"
+#include "OneOfUtil.h"
+#include "Task.h"
 #include "SVProtoBuf/envelope.h"
 
-namespace SVRPC
+namespace SvRpc
 {
 
 class TaskWrapperBase
 {
 public:
 	virtual ~TaskWrapperBase() {}
-	virtual void operator()(Envelope&&, Task<Envelope>) = 0;
+	virtual void operator()(SvPenv::Envelope&&, Task<SvPenv::Envelope>) = 0;
 };
 
 template <typename TPayload, typename TReq, typename TRes> class TaskWrapper : public TaskWrapperBase
@@ -44,13 +44,13 @@ public:
 
 	~TaskWrapper() override {}
 
-	void operator()(Envelope&& envelope, Task<Envelope> task) override
+	void operator()(SvPenv::Envelope&& envelope, Task<SvPenv::Envelope> task) override
 	{
 		TReq req;
 		if (!m_ReqUnwrapper.unwrap(req, std::move(envelope)))
 		{
 			BOOST_LOG_TRIVIAL(warning) << "Envelope with unknown payload!";
-			task.error(build_error(ErrorCode::InternalError, "Unknown payload"));
+			task.error(build_error(SvPenv::ErrorCode::InternalError, "Unknown payload"));
 			return;
 		}
 
@@ -58,12 +58,12 @@ public:
 			Task<TRes>(
 			[this, task](TRes&& res)
 		{
-			SVRPC::Envelope resEnvelope;
+			SvPenv::Envelope resEnvelope;
 			m_ResWrapper.wrap(resEnvelope, std::move(res));
 
 			task.finish(std::move(resEnvelope));
 		},
-			[task](const SVRPC::Error& err) { task.error(err); }));
+			[task](const SvPenv::Error& err) { task.error(err); }));
 	}
 
 private:
@@ -72,4 +72,4 @@ private:
 	OneOfUtil<TPayload, TRes> m_ResWrapper;
 };
 
-} // namespace SVRPC
+} // namespace SvRpc

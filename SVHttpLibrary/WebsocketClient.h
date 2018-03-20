@@ -25,10 +25,10 @@
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/thread/future.hpp>
 
-#include "SVHttpLibrary/Handshake.h"
-#include "SVHttpLibrary/WebSocketParser.h"
+#include "SvHttpLibrary/Handshake.h"
+#include "SvHttpLibrary/WebSocketParser.h"
 
-namespace SVHTTP
+namespace SvHttp
 {
 class WebsocketClient
 {
@@ -87,4 +87,4 @@ private:
 	std::vector<char> m_Payload;
 };
 
-} // namespace SVHTTP
+} // namespace SvHttp

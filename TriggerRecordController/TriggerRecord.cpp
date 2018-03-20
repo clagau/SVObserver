@@ -14,9 +14,9 @@
 #include "ResetLocker.h"
 #pragma endregion Includes
 
-namespace SvTRC
+namespace SvTrc
 {
-	TriggerRecord::TriggerRecord(TriggerRecordData& rData, const SvPB::ImageList& rImageList, const time_t& rResetTime)
+	TriggerRecord::TriggerRecord(TriggerRecordData& rData, const SvPb::ImageList& rImageList, const time_t& rResetTime)
 		: m_rData (rData), m_rImageList(rImageList), m_ResetTime(rResetTime)
 	{
 	}
@@ -41,7 +41,7 @@ namespace SvTRC
 			auto& imageController = ImageBufferController::getImageBufferControllerInstance();
 			const auto& rImageList = m_rImageList.list();
 			std::string ImageIdBytes;
-			SvPB::SetGuidInProtoBytes(&ImageIdBytes, imageId);
+			SvPb::SetGuidInProtoBytes(&ImageIdBytes, imageId);
 			
 			
 			auto imageIter = std::find_if(rImageList.begin(), rImageList.end(), [&ImageIdBytes](auto data)->bool
@@ -132,4 +132,4 @@ namespace SvTRC
 		}
 		return pImage;
 	}
-} //namespace SvTRC
+} //namespace SvTrc

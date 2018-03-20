@@ -27,23 +27,22 @@
 
 #pragma once
 
-#include <atomic>
-#include <condition_variable>
-#include <memory>
-#include <vector>
+//Moved to precompiled header: #include <atomic>
+//Moved to precompiled header: #include <condition_variable>
+//Moved to precompiled header: #include <memory>
+//Moved to precompiled header: #include <vector>
+//Moved to precompiled header: #include <boost/asio/io_service.hpp>
+//Moved to precompiled header: #include <boost/chrono/duration.hpp>
 
-#include <boost/asio/io_service.hpp>
-#include <boost/chrono/duration.hpp>
-
-#include "SVHttpLibrary/WebsocketClientFactory.h"
-#include "SVRPCLibrary/ClientStreamContext.h"
-#include "SVRPCLibrary/Observer.h"
-#include "SVRPCLibrary/Task.h"
+#include "SvHttpLibrary/WebsocketClientFactory.h"
+#include "ClientStreamContext.h"
+#include "Observer.h"
+#include "Task.h"
 #include "SVProtoBuf/envelope.h"
 
-namespace SVRPC
+namespace SvRpc
 {
-class RPCClient : public SVHTTP::WebsocketClient::EventHandler
+class RPCClient : public SvHttp::WebsocketClient::EventHandler
 {
 public:
 	RPCClient(std::string host, uint16_t port);
@@ -53,9 +52,9 @@ public:
 	bool isConnected();
 	bool waitForConnect(int time_in_ms);
 
-	void request(Envelope&& request, Task<Envelope>);
-	void request(Envelope&& request, Task<Envelope>, boost::posix_time::time_duration);
-	ClientStreamContext stream(Envelope&& request, Observer<Envelope>);
+	void request(SvPenv::Envelope&& Request, Task<SvPenv::Envelope>);
+	void request(SvPenv::Envelope&& Request, Task<SvPenv::Envelope>, boost::posix_time::time_duration);
+	ClientStreamContext stream(SvPenv::Envelope&& Request, Observer<SvPenv::Envelope>);
 
 protected:
 	void onConnect() override;
@@ -64,7 +63,7 @@ protected:
 	void onBinaryMessage(const std::vector<char>&) override;
 
 private:
-	void request_impl(Envelope&& request, Task<Envelope>, uint64_t);
+	void request_impl(SvPenv::Envelope&& request, Task<SvPenv::Envelope>, uint64_t);
 
 	void schedule_reconnect(boost::posix_time::time_duration);
 	void on_reconnect(const boost::system::error_code&);
@@ -76,32 +75,32 @@ private:
 	void cancel_all_pending_requests();
 	void cancel_all_pending_streams();
 
-	void on_response(Envelope&&);
-	void on_error_response(Envelope&&);
-	void on_stream_response(Envelope&&);
-	void on_stream_error_response(Envelope&&);
-	void on_stream_finish(Envelope&&);
+	void on_response(SvPenv::Envelope&&);
+	void on_error_response(SvPenv::Envelope&&);
+	void on_stream_response(SvPenv::Envelope&&);
+	void on_stream_error_response(SvPenv::Envelope&&);
+	void on_stream_finish(SvPenv::Envelope&&);
 
 	void cancel_stream(uint64_t txId);
-	void send_envelope(Envelope&&);
+	void send_envelope(SvPenv::Envelope&&);
 
 private:
 	boost::asio::io_service m_IoService;
 	std::unique_ptr<boost::asio::io_service::work> m_IoWork;
 	std::thread m_IoThread;
 	std::atomic_bool m_IsStopped {false};
-	SVHTTP::WebsocketClientFactory m_WebsocketClientFactory;
-	std::unique_ptr<SVHTTP::WebsocketClient> m_WebsocketClient;
+	SvHttp::WebsocketClientFactory m_WebsocketClientFactory;
+	std::unique_ptr<SvHttp::WebsocketClient> m_WebsocketClient;
 	std::mutex m_ConnectMutex;
 	std::condition_variable m_ConnectCV;
 	std::atomic_bool m_IsConnected {false};
 	boost::asio::deadline_timer m_ReconnectTimer;
 	uint64_t m_NextTransactionId = 0;
-	std::map<uint64_t, Task<Envelope>> m_PendingRequests;
+	std::map<uint64_t, Task<SvPenv::Envelope>> m_PendingRequests;
 	// deadline_timer is neither movable nor copyable :/ therefore the shared_ptr workaround
 	using DeadlineTimerPtr = std::shared_ptr<boost::asio::deadline_timer>;
 	std::map<uint64_t, DeadlineTimerPtr> m_PendingRequestsTimer;
-	std::map<uint64_t, Observer<Envelope>> m_PendingStreams;
+	std::map<uint64_t, Observer<SvPenv::Envelope>> m_PendingStreams;
 };
 
-} // namespace SVRPC
+} // namespace SvRpc

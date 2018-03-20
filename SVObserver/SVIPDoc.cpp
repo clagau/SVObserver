@@ -4325,13 +4325,13 @@ bool SVIPDoc::RunOnce(SVToolClass* pTool)
 
 	if (l_Status)
 	{
-		SvPB::InspectionRunOnceRequest requestMessage;
+		SvPb::InspectionRunOnceRequest requestMessage;
 
-		SvPB::SetGuidInProtoBytes(requestMessage.mutable_inspectionid(), pInspection->GetUniqueObjectID());
+		SvPb::SetGuidInProtoBytes(requestMessage.mutable_inspectionid(), pInspection->GetUniqueObjectID());
 
 		if (nullptr != pTool)
 		{
-			SvPB::SetGuidInProtoBytes(requestMessage.mutable_taskid(), pTool->GetUniqueObjectID());
+			SvPb::SetGuidInProtoBytes(requestMessage.mutable_taskid(), pTool->GetUniqueObjectID());
 
 		}
 

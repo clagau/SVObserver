@@ -22,10 +22,10 @@
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/ip/tcp.hpp>
 
-#include "SVHttpLibrary/WebsocketServerConnection.h"
-#include "SVHttpLibrary/WebsocketServerSettings.h"
+#include "SvHttpLibrary/WebsocketServerConnection.h"
+#include "SvHttpLibrary/WebsocketServerSettings.h"
 
-namespace SVHTTP
+namespace SvHttp
 {
 class WebsocketServer
 {
@@ -54,4 +54,4 @@ private:
 	std::vector<std::shared_ptr<WebsocketServerConnection>> m_ConnectionsMarkedForDeletion;
 };
 
-} // namespace SVHTTP
+} // namespace SvHttp

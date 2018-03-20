@@ -14,7 +14,7 @@
 
 #pragma region Declarations
 #pragma endregion Declarations
-namespace SvTRCT
+namespace SvTrcT
 {
 	class ToolObject
 	{
@@ -38,7 +38,7 @@ namespace SvTRCT
 		/// After an trigger, this method will run the operation of the tool.
 		/// \param pTriggerRecord [in] The current record.
 		/// \returns bool
-		virtual bool run(SvTRC::ITriggerRecordRWPtr pTriggerRecord) = 0;
+		virtual bool run(SvTrc::ITriggerRecordRWPtr pTriggerRecord) = 0;
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -59,4 +59,4 @@ namespace SvTRCT
 		SVMatroxBufferCreateStruct m_bufferStructOut;
 #pragma endregion Member Variables
 	};
-} //namespace SvTRCT
+} //namespace SvTrcT

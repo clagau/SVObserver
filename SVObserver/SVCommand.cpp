@@ -2765,8 +2765,8 @@ STDMETHODIMP CSVCommand::SVRunOnce(BSTR bstrName)
 	{
 		if (SVConfigurationObject::GetInspection(W2T(bstrName), pInspection))
 		{
-			SvPB::InspectionRunOnceRequest requestMessage;
-			SvPB::SetGuidInProtoBytes(requestMessage.mutable_inspectionid(), pInspection->GetUniqueObjectID());
+			SvPb::InspectionRunOnceRequest requestMessage;
+			SvPb::SetGuidInProtoBytes(requestMessage.mutable_inspectionid(), pInspection->GetUniqueObjectID());
 			hrResult = SvCmd::InspectionCommandsSynchronous(pInspection->GetUniqueObjectID(), &requestMessage, nullptr);
 		}
 	}// end if

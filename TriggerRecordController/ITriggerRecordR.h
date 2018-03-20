@@ -10,7 +10,7 @@
 #include "IImage.h"
 //Moved to precompiled header: #include <memory>
 
-namespace SvTRC
+namespace SvTrc
 {
 	struct TriggerData
 	{
@@ -30,14 +30,14 @@ namespace SvTRC
 
 		/// Return an pointer to a image instance (only in read only modus). ATTENTION: Use this instance only as long as this TriggerRecord-instance existing.
 		/// \param imageId [in] GUID of the image.
-		/// \returns SvTRC::IImagePtr
+		/// \returns SvTrc::IImagePtr
 		virtual IImagePtr getImage(const GUID& imageId) const = 0;
 
 		/// Return an pointer to a image instance (only in read only modus). ATTENTION: Use this instance only as long as this TriggerRecord-instance existing.
 		/// \param pos [in] Position in this triggerRecord.
-		/// \returns SvTRC::IImagePtr
+		/// \returns SvTrc::IImagePtr
 		virtual IImagePtr getImage(int pos) const = 0;
 	};
 
 	typedef std::shared_ptr< ITriggerRecordR > ITriggerRecordRPtr;
-} //namespace SvTRC
+} //namespace SvTrc

@@ -26,11 +26,11 @@
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/ip/tcp.hpp>
 
-#include "SVHttpLibrary/Handshake.h"
-#include "SVHttpLibrary/WebSocketParser.h"
-#include "SVHttpLibrary/WebSocketServerSettings.h"
+#include "SvHttpLibrary/Handshake.h"
+#include "SvHttpLibrary/WebSocketParser.h"
+#include "SvHttpLibrary/WebSocketServerSettings.h"
 
-namespace SVHTTP
+namespace SvHttp
 {
 class WebsocketServerConnection : std::enable_shared_from_this<WebsocketServerConnection>
 {
@@ -100,4 +100,4 @@ private:
 	bool m_IsDisconnectErrorHandled {false};
 };
 
-} // namespace SVHTTP
+} // namespace SvHttp

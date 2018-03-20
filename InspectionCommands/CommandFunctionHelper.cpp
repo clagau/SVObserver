@@ -23,13 +23,13 @@ namespace SvCmd
 		return Result;
 	}
 
-	SvPB::MessageContainerVector setMessageContainerToMessagePB(const SvStl::MessageContainerVector& messageContainers)
+	SvPb::MessageContainerVector setMessageContainerToMessagePB(const SvStl::MessageContainerVector& messageContainers)
 	{
-		SvPB::MessageContainerVector messagePB;
+		SvPb::MessageContainerVector messagePB;
 		for (auto messageContainer : messageContainers)
 		{
 			auto messageData = messageContainer.getMessage();
-			SvPB::MessageContainer* pMessageContainerPB = messagePB.add_messages();
+			SvPb::MessageContainer* pMessageContainerPB = messagePB.add_messages();
 			pMessageContainerPB->set_messagecode(messageData.m_MessageCode);
 			pMessageContainerPB->set_additionaltextid(messageData.m_AdditionalTextId);
 			for (auto text : messageData.m_AdditionalTextList)
@@ -41,12 +41,12 @@ namespace SvCmd
 			pMessageContainerPB->set_filename(messageData.m_SourceFile.m_FileName);
 			pMessageContainerPB->set_fileline(messageData.m_SourceFile.m_Line);
 			pMessageContainerPB->set_filedatetime(messageData.m_SourceFile.m_FileDateTime);
-			SvPB::SetGuidInProtoBytes(pMessageContainerPB->mutable_objectid(), messageContainer.getObjectId());
+			SvPb::SetGuidInProtoBytes(pMessageContainerPB->mutable_objectid(), messageContainer.getObjectId());
 		}
 		return messagePB;
 	}
 
-	SvStl::MessageContainerVector setMessageContainerFromMessagePB(const SvPB::MessageContainerVector& messagesPB)
+	SvStl::MessageContainerVector setMessageContainerFromMessagePB(const SvPb::MessageContainerVector& messagesPB)
 	{
 		SvStl::MessageContainerVector messageContainerVector;
 		for (auto messagePB : messagesPB.messages())
@@ -57,7 +57,7 @@ namespace SvCmd
 			{
 				AdditionalTextList.push_back(text);
 			}
-			SvStl::MessageContainer messageContainer(messagePB.messagecode(), static_cast<SvStl::MessageTextEnum>(messagePB.additionaltextid()), AdditionalTextList, fileParam, 0, SvPB::GetGuidFromProtoBytes(messagePB.objectid()));
+			SvStl::MessageContainer messageContainer(messagePB.messagecode(), static_cast<SvStl::MessageTextEnum>(messagePB.additionaltextid()), AdditionalTextList, fileParam, 0, SvPb::GetGuidFromProtoBytes(messagePB.objectid()));
 			messageContainerVector.push_back(messageContainer);
 		}
 

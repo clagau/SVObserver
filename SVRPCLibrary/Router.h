@@ -9,25 +9,25 @@
 
 #pragma once
 
-#include "SVRPCLibrary/RequestHandler.h"
-#include "SVRPCLibrary/RPCClient.h"
-#include "SVRPCLibrary/RequestHandler.h"
+#include "RequestHandler.h"
+#include "RPCClient.h"
+#include "RequestHandler.h"
 
-namespace SVRPC
+namespace SvRpc
 {
 class Router
 {
 public:
 	Router::Router(RPCClient& rClient, RequestHandler* pRequestHandler)
 	{
-		pRequestHandler->registerDefaultRequestHandler([&rClient](Envelope&& req, Task<Envelope> task)
+		pRequestHandler->registerDefaultRequestHandler([&rClient](SvPenv::Envelope&& Request, Task<SvPenv::Envelope> Task)
 		{
-			rClient.request(std::move(req), std::move(task));
+			rClient.request(std::move(Request), std::move(Task));
 		});
-		pRequestHandler->registerDefaultStreamHandler([&rClient](Envelope&& req, Observer<Envelope> observer, ServerStreamContext::Ptr server_ctx)
+		pRequestHandler->registerDefaultStreamHandler([&rClient](SvPenv::Envelope&& Request, Observer<SvPenv::Envelope> Observer, ServerStreamContext::Ptr pServerContext)
 		{
-			auto client_ctx = rClient.stream(std::move(req), std::move(observer));
-			server_ctx->registerOnCancelHandler([client_ctx]() mutable
+			auto client_ctx = rClient.stream(std::move(Request), std::move(Observer));
+			pServerContext->registerOnCancelHandler([client_ctx]() mutable
 			{
 				client_ctx.cancel();
 			});
@@ -35,4 +35,4 @@ public:
 	}
 };
 
-} // namespace SVRPC
+} // namespace SvRpc

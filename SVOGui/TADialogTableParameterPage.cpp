@@ -176,9 +176,9 @@ namespace SvOg {
 
 	void TADialogTableParameterPage::resetInspection()
 	{
-		SvPB::ResetObjectRequest requestMessage;
-		SvPB::ResetObjectResponse responseMessage;
-		SvPB::SetGuidInProtoBytes(requestMessage.mutable_objectid(), m_TaskObjectID);
+		SvPb::ResetObjectRequest requestMessage;
+		SvPb::ResetObjectResponse responseMessage;
+		SvPb::SetGuidInProtoBytes(requestMessage.mutable_objectid(), m_TaskObjectID);
 		SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, &responseMessage);
 		SvStl::MessageContainerVector messages = SvCmd::setMessageContainerFromMessagePB(responseMessage.messages());
 		if (messages.size() > 0 && 0 != messages[0].getMessage().m_MessageCode)

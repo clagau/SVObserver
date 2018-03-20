@@ -12,33 +12,33 @@
 
 #pragma once
 
-#include <future>
-#include <memory>
+//Moved to precompiled header: #include <future>
+//Moved to precompiled header: #include <memory>
 
-#include "SVRPCLibrary/EnvelopeUtil.h"
-#include "SVRPCLibrary/ErrorUtil.h"
-#include "SVRPCLibrary/OneOfUtil.h"
-#include "SVRPCLibrary/RPCClient.h"
+#include "EnvelopeUtil.h"
+#include "ErrorUtil.h"
+#include "OneOfUtil.h"
+#include "RPCClient.h"
 #include "SVProtoBuf/envelope.h"
 
-namespace SVRPC
+namespace SvRpc
 {
 template <typename TPayload, typename TReq, typename TRes> class SimpleClient
 {
 public:
 	SimpleClient(RPCClient& rClient)
 		: m_rClient(rClient)
-		, m_UnwrapError(build_error(ErrorCode::InternalError, "Error while unwrapping envelope!"))
+		, m_UnwrapError(build_error(SvPenv::ErrorCode::InternalError, "Error while unwrapping envelope!"))
 	{
 	}
 
 	void request(TReq&& req, Task<TRes> task, boost::posix_time::time_duration timeout)
 	{
-		Envelope envelope;
-		m_ReqWrapper.wrap(envelope, std::move(req));
-		m_rClient.request(std::move(envelope),
-			Task<Envelope>(
-			[this, task](Envelope&& resEnv)
+		SvPenv::Envelope Envelope;
+		m_ReqWrapper.wrap(Envelope, std::move(req));
+		m_rClient.request(std::move(Envelope),
+			Task<SvPenv::Envelope>(
+			[this, task](SvPenv::Envelope&& resEnv)
 		{
 			TRes res;
 			if (!m_ResUnwrapper.unwrap(res, std::move(resEnv)))
@@ -49,9 +49,9 @@ public:
 
 			task.finish(std::move(res));
 		},
-			[task](const Error& err)
+			[task](const SvPenv::Error& rError)
 		{
-			task.error(err);
+			task.error(rError);
 		}),
 			timeout);
 	}
@@ -60,12 +60,12 @@ public:
 	{
 		auto promise = std::make_shared<std::promise<TRes>>();
 
-		Envelope envelope;
-		m_ReqWrapper.wrap(envelope, std::move(req));
+		SvPenv::Envelope Envelope;
+		m_ReqWrapper.wrap(Envelope, std::move(req));
 
-		m_rClient.request(std::move(envelope),
-			Task<Envelope>(
-			[this, promise](Envelope&& resEnv)
+		m_rClient.request(std::move(Envelope),
+			Task<SvPenv::Envelope>(
+			[this, promise](SvPenv::Envelope&& resEnv)
 		{
 			TRes res;
 			if (!m_ResUnwrapper.unwrap(res, std::move(resEnv)))
@@ -83,14 +83,14 @@ public:
 		return promise->get_future();
 	}
 
-	ClientStreamContext stream(TReq&& req, Observer<TRes> observer)
+	ClientStreamContext stream(TReq&& Request, Observer<TRes> observer)
 	{
-		Envelope envelope;
-		m_ReqWrapper.wrap(envelope, std::move(req));
+		SvPenv::Envelope Envelope;
+		m_ReqWrapper.wrap(Envelope, std::move(Request));
 
-		return m_rClient.stream(std::move(envelope),
-			Observer<Envelope>(
-			[this, observer](Envelope&& resEnv) -> std::future<void>
+		return m_rClient.stream(std::move(Envelope),
+			Observer<SvPenv::Envelope>(
+			[this, observer](SvPenv::Envelope&& resEnv) -> std::future<void>
 		{
 			TRes res;
 			if (!m_ResUnwrapper.unwrap(res, std::move(resEnv)))
@@ -102,14 +102,14 @@ public:
 			return observer.onNext(std::move(res));
 		},
 			[observer]() { observer.finish(); },
-			[observer](const Error& err) { observer.error(err); }));
+			[observer](const SvPenv::Error& rError) { observer.error(rError); }));
 	}
 
 private:
 	RPCClient& m_rClient;
 	OneOfUtil<TPayload, TReq> m_ReqWrapper;
 	OneOfUtil<TPayload, TRes> m_ResUnwrapper;
-	Error m_UnwrapError;
+	SvPenv::Error m_UnwrapError;
 };
 
-} // namespace SVRPC
+} // namespace SvRpc

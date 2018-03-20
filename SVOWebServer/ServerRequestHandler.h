@@ -3,7 +3,7 @@
 /// \file ServerRequestHandler.h
 /// All Rights Reserved
 //******************************************************************************
-/// Glue code that maps incoming requests to calls to the RRSSharedMemoryAccess.
+/// Glue code that maps incoming requests to calls to the SharedMemoryAccess.
 /// Most of the logic is just unwrapping the custom request from the envelope,
 /// calling the according function from the interface and wrapping the response
 /// into an envelope again.
@@ -13,14 +13,14 @@
 
 #include "SVRPCLibrary/RequestHandler.h"
 
-namespace RRWS
+namespace SvOws
 {
 
-class RRSSharedMemoryAccessInterface;
+class SharedMemoryAccessInterface;
 
-class ServerRequestHandler : public SVRPC::RequestHandler
+class ServerRequestHandler : public SvRpc::RequestHandler
 {
 public:
-	ServerRequestHandler(RRSSharedMemoryAccessInterface* service);
+	ServerRequestHandler(SharedMemoryAccessInterface* service);
 };
 }

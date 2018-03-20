@@ -15,7 +15,7 @@
 
 #include "stdafx.h"
 
-#include "SVHttpLibrary/WebSocketParser.h"
+#include "SvHttpLibrary/WebSocketParser.h"
 
 #include <iostream>
 #include <string>
@@ -27,7 +27,7 @@
 #define htonll(x) ((1 == htonl(1)) ? (x) : ((uint64_t)htonl((x)&0xFFFFFFFF) << 32) | htonl((x) >> 32))
 #define ntohll(x) ((1 == ntohl(1)) ? (x) : ((uint64_t)ntohl((x)&0xFFFFFFFF) << 32) | ntohl((x) >> 32))
 
-namespace SVHTTP
+namespace SvHttp
 {
 WebSocketParser::FrameType
 WebSocketParser::parseFrame(unsigned char* buf, size_t buf_len, size_t& frame_len, std::vector<char>& message)
@@ -186,4 +186,4 @@ void WebSocketParser::makeFrames(std::vector<std::vector<char>>& dst,
 	}
 }
 
-} // namespace SVHTTP
+} // namespace SvHttp

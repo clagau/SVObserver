@@ -128,9 +128,9 @@ HRESULT SVHistogramAnalyzerSetupClass::SetInspectionData()
 {
 	const SVGUID& rInspectionID = m_pAnalyzer->GetInspection()->GetUniqueObjectID();
 	const SVGUID& rToolID = m_pAnalyzer->GetTool()->GetUniqueObjectID();
-	SvPB::InspectionRunOnceRequest requestMessage;
-	SvPB::SetGuidInProtoBytes(requestMessage.mutable_inspectionid(), rInspectionID);
-	SvPB::SetGuidInProtoBytes(requestMessage.mutable_taskid(), rToolID);
+	SvPb::InspectionRunOnceRequest requestMessage;
+	SvPb::SetGuidInProtoBytes(requestMessage.mutable_inspectionid(), rInspectionID);
+	SvPb::SetGuidInProtoBytes(requestMessage.mutable_taskid(), rToolID);
 
 
 	HRESULT Result = SvCmd::InspectionCommandsSynchronous(rInspectionID, &requestMessage, nullptr);

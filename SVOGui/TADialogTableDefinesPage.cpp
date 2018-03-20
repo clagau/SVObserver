@@ -115,10 +115,10 @@ void TADialogTableDefinesPage::OnBnClickedButtonRemove()
 		{
 			if (m_Grid.IsCellSelected(i, j))
 			{
-				SvPB::DestroyChildRequest requestMessage;
-				requestMessage.set_flag(SvPB::DestroyChildRequest::Flag_ResetInspection);
-				SvPB::SetGuidInProtoBytes(requestMessage.mutable_taskobjectlistid(), m_TaskObjectID);
-				SvPB::SetGuidInProtoBytes(requestMessage.mutable_objectid(), m_gridList[i - 1].second);
+				SvPb::DestroyChildRequest requestMessage;
+				requestMessage.set_flag(SvPb::DestroyChildRequest::Flag_ResetInspection);
+				SvPb::SetGuidInProtoBytes(requestMessage.mutable_taskobjectlistid(), m_TaskObjectID);
+				SvPb::SetGuidInProtoBytes(requestMessage.mutable_objectid(), m_gridList[i - 1].second);
 				HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, nullptr);
 				if (S_OK != hr)
 				{
@@ -323,9 +323,9 @@ HRESULT TADialogTableDefinesPage::ValidateData()
 	UpdateData(TRUE);
 	HRESULT hResult = S_OK;
 	// Do a reset of the Tool
-	SvPB::ResetObjectRequest requestMessage;
-	SvPB::ResetObjectResponse responseMessage;
-	SvPB::SetGuidInProtoBytes(requestMessage.mutable_objectid(), m_TaskObjectID);
+	SvPb::ResetObjectRequest requestMessage;
+	SvPb::ResetObjectResponse responseMessage;
+	SvPb::SetGuidInProtoBytes(requestMessage.mutable_objectid(), m_TaskObjectID);
 	hResult = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, &responseMessage);
 	SvStl::MessageContainerVector errorMessageList = SvCmd::setMessageContainerFromMessagePB(responseMessage.messages());
 	if (0 < errorMessageList.size())

@@ -15,45 +15,45 @@
 
 #pragma once
 
-#include <map>
-#include <memory>
-#include <vector>
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <memory>
+//Moved to precompiled header: #include <vector>
 
-#include "SVHttpLibrary/WebsocketServerConnection.h"
-#include "SVRPCLibrary/RequestHandlerBase.h"
+#include "SvHttpLibrary/WebsocketServerConnection.h"
+#include "RequestHandlerBase.h"
 #include "SVProtoBuf/envelope.h"
 
-namespace SVRPC
+namespace SvRpc
 {
-class RPCServer : public SVHTTP::WebsocketServerConnection::EventHandler
+class RPCServer : public SvHttp::WebsocketServerConnection::EventHandler
 {
 public:
 	RPCServer(RequestHandlerBase* request_handler);
 
 protected:
-	virtual void onConnect(int id, SVHTTP::WebsocketServerConnection&) override;
+	virtual void onConnect(int id, SvHttp::WebsocketServerConnection&) override;
 	virtual void onTextMessage(int id, const std::vector<char>&) override;
 	virtual void onBinaryMessage(int id, const std::vector<char>&) override;
 	virtual void onDisconnect(int id) override;
 
 private:
-	void on_request(int id, Envelope&&);
-	void on_stream(int id, Envelope&&);
-	void on_stream_cancel(int id, Envelope&&);
+	void on_request(int id, SvPenv::Envelope&&);
+	void on_stream(int id, SvPenv::Envelope&&);
+	void on_stream_cancel(int id, SvPenv::Envelope&&);
 
 	void remove_stream_context(int id, uint64_t txId);
 
-	std::future<void> send_response(int id, uint64_t txId, Envelope&& response);
-	std::future<void> send_error_response(int id, uint64_t txId, const Error& err);
-	std::future<void> send_stream_response(int id, uint64_t txId, Envelope&& response);
-	std::future<void> send_stream_error_response(int id, uint64_t txId, const Error& err);
+	std::future<void> send_response(int id, uint64_t txId, SvPenv::Envelope&& Response);
+	std::future<void> send_error_response(int id, uint64_t txId, const SvPenv::Error& rError);
+	std::future<void> send_stream_response(int id, uint64_t txId, SvPenv::Envelope&& Response);
+	std::future<void> send_stream_error_response(int id, uint64_t txId, const SvPenv::Error& rError);
 	std::future<void> send_stream_finish(int id, uint64_t txId);
-	std::future<void> send_envelope(int id, const Envelope& envelope);
+	std::future<void> send_envelope(int id, const SvPenv::Envelope& rEnvelope);
 
 private:
 	RequestHandlerBase* m_pRequestHandler;
-	std::map<int, SVHTTP::WebsocketServerConnection*> m_Connections;
+	std::map<int, SvHttp::WebsocketServerConnection*> m_Connections;
 	std::map<int, std::map<uint64_t, std::weak_ptr<ServerStreamContext>>> m_ServerStreamContexts;
 };
 
-} // namespace SVRPC
+} // namespace SvRpc

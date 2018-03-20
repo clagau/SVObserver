@@ -10,7 +10,7 @@
 
 #include "resource.h"		// Hauptsymbole
 
-namespace SvTRCT
+namespace SvTrcT
 {
 	// CTriggerRecordControllerTestApp:
 	// Siehe TriggerRecordControllerTest.cpp für die Implementierung dieser Klasse
@@ -33,4 +33,4 @@ namespace SvTRCT
 	};
 
 	extern CTriggerRecordControllerTestApp theApp;
-} // namespace SvTRCT
+} // namespace SvTrcT

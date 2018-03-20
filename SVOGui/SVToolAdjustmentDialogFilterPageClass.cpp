@@ -82,9 +82,9 @@ namespace SvOg
 	{
 		UpdateData( TRUE ); // get data from dialog
 
-		SvPB::InspectionRunOnceRequest requestMessage;
-		SvPB::SetGuidInProtoBytes(requestMessage.mutable_inspectionid(), m_InspectionID);
-		SvPB::SetGuidInProtoBytes(requestMessage.mutable_taskid(), m_TaskObjectID);
+		SvPb::InspectionRunOnceRequest requestMessage;
+		SvPb::SetGuidInProtoBytes(requestMessage.mutable_inspectionid(), m_InspectionID);
+		SvPb::SetGuidInProtoBytes(requestMessage.mutable_taskid(), m_TaskObjectID);
 		HRESULT hrOk = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, nullptr);
 
 		UpdateData( FALSE );
@@ -290,15 +290,15 @@ namespace SvOg
 				bReset |= resetCommandPtr->shouldResetInspection();
 
 				// Close, Disconnect and Delete it
-				SvPB::DestroyChildRequest requestMessage;
+				SvPb::DestroyChildRequest requestMessage;
 				//if last object and it should be reset, set flag
 				if (bReset && listSize - 1 == i)
 				{
-					requestMessage.set_flag(SvPB::DestroyChildRequest::Flag_SetDefaultInputs_And_ResetInspection);
+					requestMessage.set_flag(SvPb::DestroyChildRequest::Flag_SetDefaultInputs_And_ResetInspection);
 				}
 				
-				SvPB::SetGuidInProtoBytes(requestMessage.mutable_taskobjectlistid(), m_UnaryImageOperatorID);
-				SvPB::SetGuidInProtoBytes(requestMessage.mutable_objectid(), filterGUID);
+				SvPb::SetGuidInProtoBytes(requestMessage.mutable_taskobjectlistid(), m_UnaryImageOperatorID);
+				SvPb::SetGuidInProtoBytes(requestMessage.mutable_objectid(), filterGUID);
 				SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, nullptr);
 			}
 		}
@@ -328,14 +328,14 @@ namespace SvOg
 
 			if( S_OK == hr )
 			{
-				SvPB::DestroyChildRequest requestMessage;
+				SvPb::DestroyChildRequest requestMessage;
 				//if last object and it should be reset, set flag
 				if (resetCommandPtr->shouldResetInspection())
 				{
-					requestMessage.set_flag(SvPB::DestroyChildRequest::Flag_SetDefaultInputs_And_ResetInspection);
+					requestMessage.set_flag(SvPb::DestroyChildRequest::Flag_SetDefaultInputs_And_ResetInspection);
 				}
-				SvPB::SetGuidInProtoBytes(requestMessage.mutable_taskobjectlistid(), m_UnaryImageOperatorID);
-				SvPB::SetGuidInProtoBytes(requestMessage.mutable_objectid(), filterGUID);
+				SvPb::SetGuidInProtoBytes(requestMessage.mutable_taskobjectlistid(), m_UnaryImageOperatorID);
+				SvPb::SetGuidInProtoBytes(requestMessage.mutable_objectid(), filterGUID);
 				SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, nullptr);
 			}
 

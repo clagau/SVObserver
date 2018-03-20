@@ -15,13 +15,13 @@
 
 #include "SVProtoBuf/envelope.h"
 
-namespace SVRPC
+namespace SvRpc
 {
 template <typename T> class Task
 {
 public:
 	using OnFinishFn = std::function<void(T&& t)>;
-	using OnErrorFn = std::function<void(const Error&)>;
+	using OnErrorFn = std::function<void(const SvPenv::Error&)>;
 	
 	Task(OnFinishFn OnFinish, OnErrorFn OnError) : m_OnFinish(OnFinish), m_OnError(OnError)
 	{
@@ -35,11 +35,11 @@ public:
 		}
 	}
 
-	void error(const Error& err) const
+	void error(const SvPenv::Error& rError) const
 	{
 		if (m_OnError)
 		{
-			m_OnError(std::move(err));
+			m_OnError(std::move(rError));
 		}
 	}
 
@@ -48,4 +48,4 @@ public:
 	OnErrorFn m_OnError;
 };
 
-} // namespace SVRPC
+} // namespace SvRpc

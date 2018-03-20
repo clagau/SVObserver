@@ -203,7 +203,7 @@ namespace SvSml
 			}
 		}
 	}
-	void  MLCpyContainer::BuildProtoMessage(MesMLCpyContainer& rMesMLCpyCont) const
+	void  MLCpyContainer::BuildProtoMessage(SvPml::MesMLCpyContainer& rMesMLCpyCont) const
 	{
 		for (auto &mlCp : m_MonitorListCpyMap)
 		{
@@ -213,20 +213,19 @@ namespace SvSml
 
 	}
 
-	void MLCpyContainer::BuildFromProtoMessage(const MesMLCpyContainer& rMesMLCpyContainer)
+	void MLCpyContainer::BuildFromProtoMessage(const SvPml::MesMLCpyContainer& rMesMLCpyContainer)
 	{
 		Clear();
 		for (int m = 0; m < rMesMLCpyContainer.monitorlistcpy_size(); m++)
 		{
-			const MesMonitorListCpy& mlCpy = rMesMLCpyContainer.monitorlistcpy(m);
+			const SvPml::MesMonitorListCpy& rMlCpy = rMesMLCpyContainer.monitorlistcpy(m);
 			MonitorListCpyPointer pMonitorListCpy = std::make_unique<MonitorListCpy>();
-			pMonitorListCpy->BuildFromProtoMessage(mlCpy);
+			pMonitorListCpy->BuildFromProtoMessage(rMlCpy);
 			Insert(pMonitorListCpy);
 		}
-
 	}
 
-	bool  MLCpyContainer::QueryListName(const RRWS::QueryListNameRequest&, RRWS::QueryListNameResponse& resp, SVRPC::Error& err) const
+	bool  MLCpyContainer::QueryListName(const SvPb::QueryListNameRequest&, SvPb::QueryListNameResponse& resp, SvPenv::Error& err) const
 	{
 		for (auto& mlc : m_MonitorListCpyMap)
 		{
@@ -238,7 +237,7 @@ namespace SvSml
 		return true;
 	}
 
-	bool MLCpyContainer::QueryListItem(const RRWS::QueryListItemRequest& request, RRWS::QueryListItemResponse& resp, SVRPC::Error& err) const
+	bool MLCpyContainer::QueryListItem(const SvPb::QueryListItemRequest& request, SvPb::QueryListItemResponse& resp, SvPenv::Error& err) const
 	{
 		
 		bool result {true};
@@ -262,8 +261,8 @@ namespace SvSml
 			}
 			else
 			{
-				SVRPC::Error err;
-				err.set_error_code(SVRPC::ErrorCode::NotFound);
+				SvPenv::Error err;
+				err.set_error_code(SvPenv::ErrorCode::NotFound);
 				err.set_message("MonitorList with given name does not exist or is not active");
 				result = false;
 			}

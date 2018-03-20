@@ -26,9 +26,9 @@ namespace SvCmd
 	/// Set messages from SVObserver to a protobuf-structure.
 	/// \param messageContainers [in] Messages
 	/// \returns SvCmd::MessageContainerVector The protobuf-structure.
-	SvPB::MessageContainerVector setMessageContainerToMessagePB(const SvStl::MessageContainerVector& messageContainers);
+	SvPb::MessageContainerVector setMessageContainerToMessagePB(const SvStl::MessageContainerVector& messageContainers);
 	/// Convert a protobuf-structure to messages from SVObserver.
 	/// \param messagesPB [in] The protobuf-structure.
 	/// \returns SvStl::MessageContainerVector The messages
-	SvStl::MessageContainerVector setMessageContainerFromMessagePB(const SvPB::MessageContainerVector& messagesPB);
+	SvStl::MessageContainerVector setMessageContainerFromMessagePB(const SvPb::MessageContainerVector& messagesPB);
 } //namespace SvCmd

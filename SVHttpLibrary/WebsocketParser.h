@@ -20,7 +20,7 @@
 #include <string>
 #include <vector>
 
-namespace SVHTTP
+namespace SvHttp
 {
 class WebSocketParser
 {
@@ -52,4 +52,4 @@ private:
 	bool m_IsBinaryContinuation;
 };
 
-} // namespace SVHTTP
+} // namespace SvHttp

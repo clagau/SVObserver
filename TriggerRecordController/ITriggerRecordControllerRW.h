@@ -13,18 +13,18 @@
 #include "ITriggerRecordRW.h"
 #pragma endregion Includes
 
-namespace SvTRC
+namespace SvTrc
 {
 	class ITriggerRecordControllerRW : public ITriggerRecordControllerR
 	{
 	public:
 		/// Set the list of GUID of the available inspections. ATTENTION: This command reset the whole controller.
 		/// \param rInspectionList [in] inspection list.
-		virtual void setInspections(const SvPB::InspectionList& rInspectionList) = 0;
+		virtual void setInspections(const SvPb::InspectionList& rInspectionList) = 0;
 
 		/// Create a new trigger record in a free slot and block this slot for this instance in write-modus.
 		/// \param inspectionPos [in] ID of the inspection.
-		/// \returns SvTRC::ITriggerRecordRWPtr
+		/// \returns SvTrc::ITriggerRecordRWPtr
 		virtual ITriggerRecordRWPtr CreateTriggerRecordObjectToWrite(int inspectionPos) = 0;
 
 		/// Delete intern the memory and start the process to create the new memory structure. ATTENTION: All old TR-instances of all IPs have to be deleted before.
@@ -47,4 +47,4 @@ namespace SvTRC
 	/// Get an instance of the TR controller in read/write modus.
 	/// \returns ITriggerRecordControllerRW&
 	ITriggerRecordControllerRW& getTriggerRecordControllerRWInstance();
-} //namespace SvTRC
+} //namespace SvTrc

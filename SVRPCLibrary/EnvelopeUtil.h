@@ -9,25 +9,24 @@
 //******************************************************************************
 
 #pragma once
-
 #include "SVProtoBuf/envelope.h"
 
-namespace SVRPC
+namespace SvRpc
 {
-template <typename TPayload> void wrap_payload(Envelope& rEnvelope, const TPayload& payload)
+template <typename TPayload> void wrap_payload(SvPenv::Envelope& rEnvelope, const TPayload& rPayload)
 {
-	rEnvelope.set_payload_type(payload.message_case());
-	rEnvelope.mutable_payload()->PackFrom(payload);
+	rEnvelope.set_payload_type(rPayload.message_case());
+	rEnvelope.mutable_payload()->PackFrom(rPayload);
 }
 
-template <typename TPayload> bool unwrap_payload(const Envelope& envelope, TPayload& rPayload)
+template <typename TPayload> bool unwrap_payload(const SvPenv::Envelope& rEnvelope, TPayload& rPayload)
 {
-	if (!envelope.has_payload())
+	if (!rEnvelope.has_payload())
 	{
 		return false;
 	}
 
-	if (!envelope.payload().UnpackTo(&rPayload))
+	if (!rEnvelope.payload().UnpackTo(&rPayload))
 	{
 		return false;
 	}
@@ -35,4 +34,4 @@ template <typename TPayload> bool unwrap_payload(const Envelope& envelope, TPayl
 	return true;
 }
 
-} // namespace SVRPC
+} // namespace SvRpc

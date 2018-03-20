@@ -1,8 +1,8 @@
 syntax = "proto3";
+package SvPenv;
 
 import "google/protobuf/any.proto";
 
-package SVRPC;
 
 // Intentionally modeled after HTTP status codes
 // See https://en.wikipedia.org/wiki/List_of_HTTP_status_codes

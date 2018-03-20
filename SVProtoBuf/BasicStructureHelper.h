@@ -8,10 +8,10 @@
 #pragma once
 
 #pragma region Includes
-#include "SVProtoBuf/BasicStructure.h"
+#include "BasicStructure.h"
 #pragma endregion Includes
 
-namespace SvPB
+namespace SvPb
 {
 ///Set a Guid to a bytes variable in a protobufmessage 
 void SetGuidInProtoBytes(std::string  *pString, const GUID& guid);
@@ -22,4 +22,4 @@ void GetGuidFromProtoBytes(const std::string& strguid, GUID& rGuid);
 //!GUID From protobufmessage 
 GUID GetGuidFromProtoBytes(const std::string& strguid);
 
-} //namespace SvPB
+} //namespace SvPb

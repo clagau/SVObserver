@@ -9,7 +9,7 @@
 #include "TriggerRecordController.h"
 
 
-namespace SvTRC
+namespace SvTrc
 {
 	class ResetLocker
 	{
@@ -50,4 +50,4 @@ namespace SvTRC
 	private:
 		long& m_rRefCount;
 	};
-} //namespace SvTRC
+} //namespace SvTrc

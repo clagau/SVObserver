@@ -232,9 +232,9 @@ namespace SvOg
 
 		if ( GetModelFile( false, m_strModelName ) ) // false parameter is mode for save file.
 		{
-			SvPB::CreateModelRequest requestMessage;
-			SvPB::CreateModelResponse responseMessage;
-			SvPB::SetGuidInProtoBytes(requestMessage.mutable_patternanalyzerid(), m_rAnalyzerID);
+			SvPb::CreateModelRequest requestMessage;
+			SvPb::CreateModelResponse responseMessage;
+			SvPb::SetGuidInProtoBytes(requestMessage.mutable_patternanalyzerid(), m_rAnalyzerID);
 			requestMessage.set_posx(m_nXPos);
 			requestMessage.set_posy(m_nYPos);
 			requestMessage.set_modelwidth(m_lModelWidth);

@@ -9,5 +9,5 @@
 #pragma once
 
 #pragma warning (push,2)
-#include "SVProtoBuf/envelope.pb.h"
+#include "envelope.pb.h"
 #pragma warning (pop)

@@ -31,12 +31,12 @@
 
 namespace SvCmd
 {
-HRESULT InspectionRunOnce(const SvPB::InspectionRunOnceRequest &rMessage)
+HRESULT InspectionRunOnce(const SvPb::InspectionRunOnceRequest &rMessage)
 {
 	HRESULT hr = S_OK;
 
-	SVGUID InspectionID = SvPB::GetGuidFromProtoBytes(rMessage.inspectionid());
-	SVGUID ToolID = SvPB::GetGuidFromProtoBytes(rMessage.taskid());
+	SVGUID InspectionID = SvPb::GetGuidFromProtoBytes(rMessage.inspectionid());
+	SVGUID ToolID = SvPb::GetGuidFromProtoBytes(rMessage.taskid());
 
 	SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess *>(SvOi::getObject(InspectionID));
 	if (nullptr != pInspection)
@@ -55,24 +55,24 @@ HRESULT InspectionRunOnce(const SvPB::InspectionRunOnceRequest &rMessage)
 	return hr;
 }
 
-HRESULT DestroyChildObject(const SvPB::DestroyChildRequest& rMessage)
+HRESULT DestroyChildObject(const SvPb::DestroyChildRequest& rMessage)
 {
 	HRESULT hr = S_OK;
 
-	SvOi::ITaskObjectListClass *pTaskObjectList = dynamic_cast<SvOi::ITaskObjectListClass*>(SvOi::getObject(SvPB::GetGuidFromProtoBytes(rMessage.taskobjectlistid())));
-	SvOi::ITaskObject *pObject = dynamic_cast<SvOi::ITaskObject*>(SvOi::getObject(SvPB::GetGuidFromProtoBytes(rMessage.objectid())));
+	SvOi::ITaskObjectListClass *pTaskObjectList = dynamic_cast<SvOi::ITaskObjectListClass*>(SvOi::getObject(SvPb::GetGuidFromProtoBytes(rMessage.taskobjectlistid())));
+	SvOi::ITaskObject *pObject = dynamic_cast<SvOi::ITaskObject*>(SvOi::getObject(SvPb::GetGuidFromProtoBytes(rMessage.objectid())));
 	if (nullptr != pTaskObjectList && nullptr != pObject)
 	{
 		DWORD flag = 0;
 		switch (rMessage.flag())
 		{
-			case SvPB::DestroyChildRequest::Flag_SetDefaultInputs:
+			case SvPb::DestroyChildRequest::Flag_SetDefaultInputs:
 				flag = SvDef::SVMFSetDefaultInputs;
 				break;
-			case SvPB::DestroyChildRequest::Flag_ResetInspection:
+			case SvPb::DestroyChildRequest::Flag_ResetInspection:
 				flag = SvDef::SVMFResetInspection;
 				break;
-			case SvPB::DestroyChildRequest::Flag_SetDefaultInputs_And_ResetInspection:
+			case SvPb::DestroyChildRequest::Flag_SetDefaultInputs_And_ResetInspection:
 				flag = SvDef::SVMFSetDefaultInputs | SvDef::SVMFResetInspection;
 				break;
 			default:
@@ -88,11 +88,11 @@ HRESULT DestroyChildObject(const SvPB::DestroyChildRequest& rMessage)
 	return hr;
 }
 
-HRESULT GetMessageList(const SvPB::GetMessageListRequest& rRequestMessage, SvPB::GetMessageListResponse& rResponseMessage)
+HRESULT GetMessageList(const SvPb::GetMessageListRequest& rRequestMessage, SvPb::GetMessageListResponse& rResponseMessage)
 {
 	HRESULT hr = S_OK;
 
-	SvOi::ITaskObject* pTask = dynamic_cast<SvOi::ITaskObject *>(SvOi::getObject(SvPB::GetGuidFromProtoBytes(rRequestMessage.objectid())));
+	SvOi::ITaskObject* pTask = dynamic_cast<SvOi::ITaskObject *>(SvOi::getObject(SvPb::GetGuidFromProtoBytes(rRequestMessage.objectid())));
 	if (pTask)
 	{
 		rResponseMessage.mutable_messages()->CopyFrom(setMessageContainerToMessagePB(pTask->getErrorMessages()));
@@ -104,10 +104,10 @@ HRESULT GetMessageList(const SvPB::GetMessageListRequest& rRequestMessage, SvPB:
 	return hr;
 }
 
-HRESULT ResetObject(const SvPB::ResetObjectRequest& rRequestMessage, SvPB::ResetObjectResponse* pResponseMessage)
+HRESULT ResetObject(const SvPb::ResetObjectRequest& rRequestMessage, SvPb::ResetObjectResponse* pResponseMessage)
 {
 	HRESULT hr = S_OK;
-	SvOi::IObjectClass* pObject = SvOi::getObject(SvPB::GetGuidFromProtoBytes(rRequestMessage.objectid()));
+	SvOi::IObjectClass* pObject = SvOi::getObject(SvPb::GetGuidFromProtoBytes(rRequestMessage.objectid()));
 
 	if (nullptr != pObject)
 	{
@@ -125,11 +125,11 @@ HRESULT ResetObject(const SvPB::ResetObjectRequest& rRequestMessage, SvPB::Reset
 	return hr;
 }
 
-HRESULT CreateModel(const SvPB::CreateModelRequest& rRequestMessage, SvPB::CreateModelResponse& rResponseMessage)
+HRESULT CreateModel(const SvPb::CreateModelRequest& rRequestMessage, SvPb::CreateModelResponse& rResponseMessage)
 {
 	HRESULT hr = S_OK;
 	SvStl::MessageContainerVector messages;
-	SVGUID patternID = SvPB::GetGuidFromProtoBytes(rRequestMessage.patternanalyzerid());
+	SVGUID patternID = SvPb::GetGuidFromProtoBytes(rRequestMessage.patternanalyzerid());
 	SvOi::IPatternAnalyzer* pPatAnalyzer = dynamic_cast<SvOi::IPatternAnalyzer*>(SvOi::getObject(patternID));
 
 	if (nullptr != pPatAnalyzer && pPatAnalyzer->UpdateModelFromInputImage(rRequestMessage.posx(), rRequestMessage.posy(), rRequestMessage.modelwidth(), rRequestMessage.modelheight()))
@@ -180,11 +180,11 @@ HRESULT CreateModel(const SvPB::CreateModelRequest& rRequestMessage, SvPB::Creat
 	return hr;
 }
 
-HRESULT IsValid(const SvPB::IsValidRequest& rRequestMessage, SvPB::IsValidResponse& rResponseMessage)
+HRESULT IsValid(const SvPb::IsValidRequest& rRequestMessage, SvPb::IsValidResponse& rResponseMessage)
 {
 	HRESULT hr = S_OK;
 
-	SvOi::ITaskObject* pObject = dynamic_cast<SvOi::ITaskObject *>(SvOi::getObject(SvPB::GetGuidFromProtoBytes(rRequestMessage.objectid())));
+	SvOi::ITaskObject* pObject = dynamic_cast<SvOi::ITaskObject *>(SvOi::getObject(SvPb::GetGuidFromProtoBytes(rRequestMessage.objectid())));
 	if (pObject)
 	{
 		rResponseMessage.set_isvalid(pObject->IsObjectValid());
@@ -196,11 +196,11 @@ HRESULT IsValid(const SvPB::IsValidRequest& rRequestMessage, SvPB::IsValidRespon
 	return hr;
 }
 
-HRESULT GetEquation(const SvPB::GetEquationRequest& rRequestMessage, SvPB::GetEquationResponse& rResponseMessage)
+HRESULT GetEquation(const SvPb::GetEquationRequest& rRequestMessage, SvPb::GetEquationResponse& rResponseMessage)
 {
 	HRESULT hr = S_OK;
 
-	SvOi::IEquation* pEquation = dynamic_cast<SvOi::IEquation *>(SvOi::getObject(SvPB::GetGuidFromProtoBytes(rRequestMessage.objectid())));
+	SvOi::IEquation* pEquation = dynamic_cast<SvOi::IEquation *>(SvOi::getObject(SvPb::GetGuidFromProtoBytes(rRequestMessage.objectid())));
 	if (pEquation)
 	{
 		rResponseMessage.set_equationtext(pEquation->GetEquationText());
@@ -212,11 +212,11 @@ HRESULT GetEquation(const SvPB::GetEquationRequest& rRequestMessage, SvPB::GetEq
 	return hr;
 }
 
-HRESULT ValidateAndSetEquation(const SvPB::ValidateAndSetEquationRequest& rRequestMessage, SvPB::ValidateAndSetEquationResponse& rResponseMessage)
+HRESULT ValidateAndSetEquation(const SvPb::ValidateAndSetEquationRequest& rRequestMessage, SvPb::ValidateAndSetEquationResponse& rResponseMessage)
 {
 	HRESULT hr = S_OK;
 
-	SvOi::IEquation* pEquation = dynamic_cast<SvOi::IEquation *>(SvOi::getObject(SvPB::GetGuidFromProtoBytes(rRequestMessage.objectid())));
+	SvOi::IEquation* pEquation = dynamic_cast<SvOi::IEquation *>(SvOi::getObject(SvPb::GetGuidFromProtoBytes(rRequestMessage.objectid())));
 	if (pEquation)
 	{
 		std::string oldString;

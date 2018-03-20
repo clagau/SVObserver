@@ -21,15 +21,15 @@ public:
 	ShareControl();
 	~ShareControl();
 	bool EventHandler(DWORD event);
-	bool QueryListName(const RRWS::QueryListNameRequest& req, RRWS::QueryListNameResponse& resp, SVRPC::Error& err);
-	bool  QueryListItem(const RRWS::QueryListItemRequest& req, RRWS::QueryListItemResponse& resp, SVRPC::Error& err);
-	bool GetProductOrReject(const RRWS::GetProductRequest& request, RRWS::GetProductResponse& resp, SVRPC::Error& err);
-	bool GetFailstatus(const RRWS::GetFailStatusRequest& request, RRWS::GetFailStatusResponse& resp, SVRPC::Error& err);
-	bool  GetImageFromCurId(const  RRWS::GetImageFromCurIdRequest& req, RRWS::GetImageFromCurIdResponse& resp, SVRPC::Error& err);
+	bool QueryListName(const SvPb::QueryListNameRequest& req, SvPb::QueryListNameResponse& resp, SvPenv::Error& err);
+	bool  QueryListItem(const SvPb::QueryListItemRequest& req, SvPb::QueryListItemResponse& resp, SvPenv::Error& err);
+	bool GetProductOrReject(const SvPb::GetProductRequest& request, SvPb::GetProductResponse& resp, SvPenv::Error& err);
+	bool GetFailstatus(const SvPb::GetFailStatusRequest& request, SvPb::GetFailStatusResponse& resp, SvPenv::Error& err);
+	bool  GetImageFromCurId(const  SvPb::GetImageFromCurIdRequest& req, SvPb::GetImageFromCurIdResponse& resp, SvPenv::Error& err);
 private:
-	bool GetProduct(SvSml::MLProduct* pProduct, bool nameInResponse, RRWS::Product* pProdMsg, SVRPC::Error& err);
-	bool SetProductResponse(bool nameInResponse, const SvSml::MLProduct* pProduct, RRWS::Product& rProduct, SVRPC::Error& err);
-	bool GetFailstatus(SvSml::vecpProd* pFailstatus, const RRWS::GetFailStatusRequest& request, RRWS::GetFailStatusResponse& resp, SVRPC::Error& err);
+	bool GetProduct(SvSml::MLProduct* pProduct, bool nameInResponse, SvPb::Product* pProdMsg, SvPenv::Error& err);
+	bool SetProductResponse(bool nameInResponse, const SvSml::MLProduct* pProduct, SvPb::Product& rProduct, SvPenv::Error& err);
+	bool GetFailstatus(SvSml::vecpProd* pFailstatus, const SvPb::GetFailStatusRequest& request, SvPb::GetFailStatusResponse& resp, SvPenv::Error& err);
 
 private:
 	SvSml::SharedMemReader   m_MemReader;

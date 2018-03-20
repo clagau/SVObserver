@@ -28,9 +28,9 @@
 
 #pragma once
 
-#include "WebsocketServer/Settings.h"
+#include "Settings.h"
 
-namespace RRWS
+namespace SvOws
 {
 class SettingsLoader
 {

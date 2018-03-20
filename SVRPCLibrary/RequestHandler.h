@@ -14,21 +14,20 @@
 
 #pragma once
 
-#include <map>
-#include <memory>
-
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <memory>
 #include <boost/log/trivial.hpp>
 
-#include "SVRPCLibrary/EnvelopeUtil.h"
-#include "SVRPCLibrary/ErrorUtil.h"
-#include "SVRPCLibrary/Observer.h"
-#include "SVRPCLibrary/ObserverWrapper.h"
-#include "SVRPCLibrary/OneOfUtil.h"
-#include "SVRPCLibrary/RequestHandlerBase.h"
-#include "SVRPCLibrary/Task.h"
-#include "SVRPCLibrary/TaskWrapper.h"
+#include "EnvelopeUtil.h"
+#include "ErrorUtil.h"
+#include "Observer.h"
+#include "ObserverWrapper.h"
+#include "OneOfUtil.h"
+#include "RequestHandlerBase.h"
+#include "Task.h"
+#include "TaskWrapper.h"
 
-namespace SVRPC
+namespace SvRpc
 {
 class RequestHandler : public RequestHandlerBase
 {
@@ -47,62 +46,62 @@ public:
 		m_StreamHandler[MessageCase] = std::make_shared<ObserverWrapper<TPayload, TReq, TRes>>(std::move(Handler));
 	}
 
-	void registerDefaultRequestHandler(std::function<void(Envelope&&, Task<Envelope>)> Handler)
+	void registerDefaultRequestHandler(std::function<void(SvPenv::Envelope&&, Task<SvPenv::Envelope>)> Handler)
 	{
 		m_DefaultRequestHandler = std::move(Handler);
 	}
 
-	void registerDefaultStreamHandler(std::function<void(Envelope&&, Observer<Envelope>, ServerStreamContext::Ptr)> Handler)
+	void registerDefaultStreamHandler(std::function<void(SvPenv::Envelope&&, Observer<SvPenv::Envelope>, ServerStreamContext::Ptr)> Handler)
 	{
 		m_DefaultStreamHandler = std::move(Handler);
 	}
 
 protected:
-	void onRequest(Envelope&& envelope, Task<Envelope> task) override
+	void onRequest(SvPenv::Envelope&& Envelope, Task<SvPenv::Envelope> Task) override
 	{
-		auto payload_type = envelope.payload_type();
+		auto payload_type = Envelope.payload_type();
 		auto it = m_RequestHandler.find(payload_type);
 		if (it != m_RequestHandler.end())
 		{
-			(*it->second)(std::move(envelope), std::move(task));
+			(*it->second)(std::move(Envelope), std::move(Task));
 			return;
 		}
 
 		if (m_DefaultRequestHandler)
 		{
-			m_DefaultRequestHandler(std::move(envelope), std::move(task));
+			m_DefaultRequestHandler(std::move(Envelope), std::move(Task));
 			return;
 		}
 
 		BOOST_LOG_TRIVIAL(warning) << "No request handler for payload type " << payload_type;
-		task.error(build_error(ErrorCode::NotImplemented, "No handler for given payload type."));
+		Task.error(build_error(SvPenv::ErrorCode::NotImplemented, "No handler for given payload type."));
 	}
 
-	void onStream(Envelope&& envelope, Observer<Envelope> observer, ServerStreamContext::Ptr ctx) override
+	void onStream(SvPenv::Envelope&& Envelope, Observer<SvPenv::Envelope> Observer, ServerStreamContext::Ptr Context) override
 	{
-		auto payload_type = envelope.payload_type();
+		auto payload_type = Envelope.payload_type();
 		auto it = m_StreamHandler.find(payload_type);
 		if (it != m_StreamHandler.end())
 		{
-			(*it->second)(std::move(envelope), std::move(observer), ctx);
+			(*it->second)(std::move(Envelope), std::move(Observer), Context);
 			return;
 		}
 
 		if (m_DefaultStreamHandler)
 		{
-			m_DefaultStreamHandler(std::move(envelope), std::move(observer), ctx);
+			m_DefaultStreamHandler(std::move(Envelope), std::move(Observer), Context);
 			return;
 		}
 
 		BOOST_LOG_TRIVIAL(warning) << "No request handler for payload type " << payload_type;
-		observer.error(build_error(ErrorCode::NotImplemented, "No handler for given payload type."));
+		Observer.error(build_error(SvPenv::ErrorCode::NotImplemented, "No handler for given payload type."));
 	}
 
 private:
 	std::map<int, std::shared_ptr<TaskWrapperBase>> m_RequestHandler;
 	std::map<int, std::shared_ptr<ObserverWrapperBase>> m_StreamHandler;
-	std::function<void(Envelope&&, Task<Envelope>)> m_DefaultRequestHandler;
-	std::function<void(Envelope&&, Observer<Envelope>, ServerStreamContext::Ptr)> m_DefaultStreamHandler;
+	std::function<void(SvPenv::Envelope&&, Task<SvPenv::Envelope>)> m_DefaultRequestHandler;
+	std::function<void(SvPenv::Envelope&&, Observer<SvPenv::Envelope>, ServerStreamContext::Ptr)> m_DefaultStreamHandler;
 };
 
-} // namespace SVRPC
+} // namespace SvRpc

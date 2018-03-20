@@ -13,7 +13,7 @@
 #include "SVProtoBuf/TriggerRecordController.h"
 #pragma endregion Includes
 
-namespace SvTRC
+namespace SvTrc
 {
 	class TriggerRecord : public ITriggerRecordRW
 	{
@@ -54,7 +54,7 @@ namespace SvTRC
 		~TriggerRecord();
 
 	private:
-		TriggerRecord(TriggerRecordData& rData, const SvPB::ImageList& rImageList, const time_t& rResetTime);
+		TriggerRecord(TriggerRecordData& rData, const SvPb::ImageList& rImageList, const time_t& rResetTime);
 #pragma endregion Constructor
 
 #pragma region Public Methods
@@ -85,11 +85,11 @@ namespace SvTRC
 	private:
 		static const int m_InvalidTrId = -1;
 		TriggerRecordData& m_rData;
-		const SvPB::ImageList& m_rImageList;
+		const SvPb::ImageList& m_rImageList;
 		const time_t m_ResetTime = 0;
 
 		static const int m_InvalidData = -2;
 		static const int m_WriteBlocked = -1;
 #pragma endregion Member variables
 	};
-} //namespace SvTRC
+} //namespace SvTrc

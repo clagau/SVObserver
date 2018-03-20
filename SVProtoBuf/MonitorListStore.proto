@@ -1,6 +1,6 @@
 syntax = "proto3";
+package SvPml;
 
-package SvSml;
 //for Serialization class MonitorEntryData
 message MesMonitorEntryData 
 {

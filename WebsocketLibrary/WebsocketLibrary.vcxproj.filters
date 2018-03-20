@@ -26,7 +26,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="Resource">
+    <Filter Include="Ressourcendateien">
       <UniqueIdentifier>{aa3ab8e8-1a42-4113-9e45-5fe296f673b2}</UniqueIdentifier>
     </Filter>
     <Filter Include="Headerdateien">

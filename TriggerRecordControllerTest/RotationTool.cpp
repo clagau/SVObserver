@@ -21,7 +21,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
-namespace SvTRCT
+namespace SvTrcT
 {
 #pragma region Constructor
 #pragma endregion Constructor
@@ -33,7 +33,7 @@ namespace SvTRCT
 		m_bufferStructOut = m_bufferStructIn;
 	};
 
-	bool RotationTool::run(SvTRC::ITriggerRecordRWPtr pTriggerRecord)
+	bool RotationTool::run(SvTrc::ITriggerRecordRWPtr pTriggerRecord)
 	{
 		bool retValue = false;
 		const auto pSourceImage = pTriggerRecord->getImage(m_pos);

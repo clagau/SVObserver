@@ -10,5 +10,5 @@
 
 #pragma warning( push )
 #pragma warning( disable : 4800 )
-#include "SVProtobuf/RunRe.pb.h"
+#include "RunRe.pb.h"
 #pragma warning( pop )

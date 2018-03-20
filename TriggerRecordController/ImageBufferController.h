@@ -18,7 +18,7 @@
 #pragma region Declarations
 #pragma endregion Declarations
 
-namespace SvTRC
+namespace SvTrc
 {
 	class ImageBufferController
 	{
@@ -40,9 +40,9 @@ namespace SvTRC
 		/// Reset the whole buffers to new structures.
 		/// \param rImageStructList [in] New image Size list, entries with no needed image will be deleted.
 		/// \returns std::vector<std::pair<int, int>> Return a vector of pairs of change structID. First is old ID, Second is new ID.
-		std::vector<std::pair<int, int>> reset(const SvPB::ImageStructList& rImageStructList);
+		std::vector<std::pair<int, int>> reset(const SvPb::ImageStructList& rImageStructList);
 
-		const SvPB::ImageStructList& getImageStructList() const { return m_imageStructList; };
+		const SvPb::ImageStructList& getImageStructList() const { return m_imageStructList; };
 		
 		/// Increase the reference count onces.
 		/// \param pos [in] Buffer position.
@@ -59,7 +59,7 @@ namespace SvTRC
 		/// Search an unused buffer in the required size and create a new image handle in write mode.
 		/// \param structId [in] structId of the required buffer.
 		/// \param imagePos [out] Set the bufferPosition to parameter.
-		/// \returns SvTRC::IImagePtr The image handle in write mode.
+		/// \returns SvTrc::IImagePtr The image handle in write mode.
 		IImagePtr createNewImageHandle(int structId, int& rImagePos) const;
 #pragma endregion Public Methods
 
@@ -74,10 +74,10 @@ namespace SvTRC
 
 #pragma region Member Variables
 	private:
-		SvPB::ImageStructList m_imageStructList;
+		SvPb::ImageStructList m_imageStructList;
 		long* m_imageRefCountArray = nullptr; //an array of the reference counts.
 		int m_imageRefCountSize = 0; //the numbers of refCounts reserved in m_imageRefCountArray.
 		std::vector<SVMatroxBuffer> m_bufferVector;
 #pragma endregion Member Variables
 	};
-} //namespace SvTRC
+} //namespace SvTrc

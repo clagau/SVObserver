@@ -9,5 +9,5 @@
 #pragma once
 
 #pragma warning (push,2)
-#include "SVProtoBuf/MonitorListStore.pb.h"
+#include "MonitorListStore.pb.h"
 #pragma warning (pop)

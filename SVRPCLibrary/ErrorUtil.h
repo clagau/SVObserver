@@ -16,10 +16,10 @@
 
 namespace std
 {
-static std::string to_string(const SVRPC::Error& err)
+static std::string to_string(const SvPenv::Error& err)
 {
 	std::stringstream ss;
-	ss << "Error " << err.error_code() << " " << SVRPC::ErrorCode_Name(err.error_code());
+	ss << "Error " << err.error_code() << " " << SvPenv::ErrorCode_Name(err.error_code());
 	if (!err.message().empty())
 	{
 		ss << ": " << err.message();
@@ -29,27 +29,27 @@ static std::string to_string(const SVRPC::Error& err)
 
 } // namespace std
 
-namespace SVRPC
+namespace SvRpc
 {
-static std::runtime_error errorToException(const Error& err)
+static std::runtime_error errorToException(const SvPenv::Error& err)
 {
 	return std::runtime_error(std::to_string(err));
 }
 
-static std::exception_ptr errorToExceptionPtr(const Error& err)
+static std::exception_ptr errorToExceptionPtr(const SvPenv::Error& err)
 {
 	return std::make_exception_ptr(errorToException(err));
 }
 
-static Error build_error(ErrorCode ec, const char* msg = nullptr)
+static SvPenv::Error build_error(SvPenv::ErrorCode ErrorCode, const char* pMsg = nullptr)
 {
-	Error err;
-	err.set_error_code(ec);
-	if (msg)
+	SvPenv::Error Result;
+	Result.set_error_code(ErrorCode);
+	if (nullptr != pMsg)
 	{
-		err.set_message(msg);
+		Result.set_message(pMsg);
 	}
-	return err;
+	return Result;
 }
 
-} // namespace SVRPC
+} // namespace SvRpc

@@ -10,7 +10,7 @@
 #include "ObjectInterfaces\SVImageBufferHandleInterface.h"
 //Moved to precompiled header: #include <memory>
 
-namespace SvTRC
+namespace SvTrc
 {
 	class IImage
 	{
@@ -25,4 +25,4 @@ namespace SvTRC
 	};
 
 	typedef std::shared_ptr<IImage> IImagePtr;
-} //namespace SvTRC
+} //namespace SvTrc

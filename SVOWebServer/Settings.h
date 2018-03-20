@@ -9,14 +9,14 @@
 #pragma once
 
 #include "WebsocketLibrary/Logging.h"
-#include "SVHttpLibrary/WebsocketServerSettings.h"
+#include "SvHttpLibrary/WebsocketServerSettings.h"
 
-namespace RRWS
+namespace SvOws
 {
 struct Settings
 {
 	bool dummySharedMemory {false};
-	LogSettings logSettings;
-	SVHTTP::WebsocketServerSettings websocketSettings;
+	SvWsl::LogSettings logSettings;
+	SvHttp::WebsocketServerSettings websocketSettings;
 };
 } // namespace RRWS

@@ -19,7 +19,7 @@
 #include "SVMatroxLibrary\SVMatroxBufferCreateStruct.h"
 #pragma endregion Includes
 
-namespace SvTRC
+namespace SvTrc
 {
 #pragma region Constructor
 	TriggerRecordController& TriggerRecordController::getTriggerRecordControllerInstance()
@@ -54,7 +54,7 @@ namespace SvTRC
 		return id;
 	}
 
-	const SvPB::ImageList& TriggerRecordController::GetImageDefList(int inspectionPos)
+	const SvPb::ImageList& TriggerRecordController::GetImageDefList(int inspectionPos)
 	{
 		if (-1 == m_resetStarted4IP)
 		{
@@ -99,7 +99,7 @@ namespace SvTRC
 		return nullptr;
 	}
 	
-	void TriggerRecordController::setInspections(const SvPB::InspectionList& rInspectionList)
+	void TriggerRecordController::setInspections(const SvPb::InspectionList& rInspectionList)
 	{
 		m_inspectionList = rInspectionList;
 		for (int i = 0; i < m_IPDataNumber; i++)
@@ -200,7 +200,7 @@ namespace SvTRC
 
 		
 		std::string ImageIdBytes;
-		SvPB::SetGuidInProtoBytes(&ImageIdBytes, imageId);
+		SvPb::SetGuidInProtoBytes(&ImageIdBytes, imageId);
 
 		//check if image with this GUID already in list (this is not allowed.)
 		auto imageIter = std::find_if(m_imageListResetTmp.list().begin(), m_imageListResetTmp.list().end(), [&ImageIdBytes](auto data)->bool
@@ -215,8 +215,8 @@ namespace SvTRC
 		}
 
 		//add new image to imageList
-		SvPB::ImageDefinition* pImageDefinition = m_imageListResetTmp.add_list();
-		SvPB::SetGuidInProtoBytes(pImageDefinition->mutable_imageid(), imageId);
+		SvPb::ImageDefinition* pImageDefinition = m_imageListResetTmp.add_list();
+		SvPb::SetGuidInProtoBytes(pImageDefinition->mutable_imageid(), imageId);
 		
 
 		//check if size already in sizeList
@@ -237,7 +237,7 @@ namespace SvTRC
 		}
 		else
 		{	//add new imageSize
-			SvPB::ImageStructData* pImageStructData = m_imageStructListResetTmp.add_list();
+			SvPb::ImageStructData* pImageStructData = m_imageStructListResetTmp.add_list();
 			std::string typeStr(reinterpret_cast<const char*>(&bufferStruct), sizeof(bufferStruct));
 			pImageStructData->set_type(typeStr);
 			pImageStructData->set_numberofbuffers(0);
@@ -271,7 +271,7 @@ namespace SvTRC
 		{	//initialize buffer
 			getTRData(m_resetStarted4IP, i).init();
 		}
-		m_pData[m_resetStarted4IP].m_pImageList = new SvPB::ImageList(m_imageListResetTmp);
+		m_pData[m_resetStarted4IP].m_pImageList = new SvPb::ImageList(m_imageListResetTmp);
 
 		//update structId to fit to the position in m_imageStructList
 		std::vector<std::pair<int,int>> changeVect = ImageBufferController::getImageBufferControllerInstance().reset(m_imageStructListResetTmp);
@@ -338,4 +338,4 @@ namespace SvTRC
 	{
 		return TriggerRecordController::getTriggerRecordControllerInstance();
 	}
-} //namespace SvTRC
+} //namespace SvTrc

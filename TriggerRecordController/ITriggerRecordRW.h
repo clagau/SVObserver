@@ -12,7 +12,7 @@
 #include "ITriggerRecordR.h"
 #pragma endregion Includes
 
-namespace SvTRC
+namespace SvTrc
 {
 	class ITriggerRecordRW : public ITriggerRecordR
 	{
@@ -32,9 +32,9 @@ namespace SvTRC
 
 		/// Return an pointer to a image instance in write modus. Content of the Buffer is random. Clear or Set the buffer by your own. ATTENTION: Use this instance only as long as this TriggerRecord-instance existing.
 		/// \param pos [in] Position in this triggerRecord.
-		/// \returns SvTRC::IImagePtr
+		/// \returns SvTrc::IImagePtr
 		virtual IImagePtr createNewImageHandle(int pos) = 0;
 	};
 
 	typedef std::shared_ptr< ITriggerRecordRW > ITriggerRecordRWPtr;
-} //namespace SvTRC
+} //namespace SvTrc
