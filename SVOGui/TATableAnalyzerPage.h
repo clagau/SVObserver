@@ -116,9 +116,9 @@ namespace SvOg
 		CButton m_ButtonExcludeLow;
 		CButton m_ButtonLimitValue;
 		CEdit m_EditAddColumnName;
-		CButton m_ButtonAddColumnFormula;
 		CBitmap m_downArrowBitmap;
 		ObjectSelectorController m_objectSelector;
+		CString m_AddFormulaString;
 
 		int m_SortDirection;
 		const SVGUID m_InspectionID;

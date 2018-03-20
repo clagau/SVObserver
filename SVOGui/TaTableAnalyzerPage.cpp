@@ -104,11 +104,11 @@ void TaTableAnalyzerPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT_EXCLUDE_LOW, m_EditExcludeLow);
 	DDX_Control(pDX, IDC_EDIT_LIMIT_VALUE, m_EditLimitValue);
 	DDX_Control(pDX, IDC_EDIT_ADDCOLUMN_NAME, m_EditAddColumnName);
-	DDX_Control(pDX, IDC_BUTTON_ADDCOLUMN_FORMULA, m_ButtonAddColumnFormula);
 	DDX_Control(pDX, IDC_BUTTON_EXCLUDE_HIGH, m_ButtonExcludeHigh);
 	DDX_Control(pDX, IDC_BUTTON_EXCLUDE_LOW, m_ButtonExcludeLow);
 	DDX_Control(pDX, IDC_BUTTON_LIMIT_VALUE, m_ButtonLimitValue);
 	DDX_Radio(pDX, IDC_ASC_RADIO, m_SortDirection);
+	DDX_Text(pDX, IDC_EDIT_ADDCOLUMN_FORMULA, m_AddFormulaString);
 	//}}AFX_DATA_MAP
 }
 
@@ -316,7 +316,7 @@ void TaTableAnalyzerPage::OnAddColumnFormula()
 	{
 		SvOg::SVFormulaEditorSheetClass dlg(m_pSelectedAddEquationFormula, "Formula");
 		dlg.DoModal();
-		m_ButtonAddColumnFormula.SetWindowText(m_pSelectedAddEquationFormula->GetEquationText().c_str());
+		m_AddFormulaString = m_pSelectedAddEquationFormula->GetEquationText().c_str();
 	}
 	UpdateData(false);
 }
@@ -390,8 +390,8 @@ HRESULT TaTableAnalyzerPage::SetInspectionData()
 	{
 		if (0 < errorMessageList.size())
 		{
-				SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
-				Msg.setMessage(errorMessageList[0].getMessage());
+			SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+			Msg.setMessage(errorMessageList[0].getMessage());
 		}
 		else
 		{
@@ -465,6 +465,7 @@ void TaTableAnalyzerPage::SetPropertyControls()
 		default:
 			break;
 	}
+	UpdateData(false);
 }
 
 HRESULT TaTableAnalyzerPage::RetrieveAvailableColumnList()
@@ -505,7 +506,8 @@ void TaTableAnalyzerPage::ShowControls(long SubType)
 
 	GetDlgItem(IDC_ADDCOLUMN_LABEL)->ShowWindow((SvDef::TableAnalyzerAddColumnType == SubType) ? SW_SHOW : SW_HIDE);
 	m_EditAddColumnName.ShowWindow((SvDef::TableAnalyzerAddColumnType == SubType) ? SW_SHOW : SW_HIDE);
-	m_ButtonAddColumnFormula.ShowWindow((SvDef::TableAnalyzerAddColumnType == SubType) ? SW_SHOW : SW_HIDE);
+	GetDlgItem(IDC_BUTTON_ADDCOLUMN_FORMULA)->ShowWindow((SvDef::TableAnalyzerAddColumnType == SubType) ? SW_SHOW : SW_HIDE);
+	GetDlgItem(IDC_EDIT_ADDCOLUMN_FORMULA)->ShowWindow((SvDef::TableAnalyzerAddColumnType == SubType) ? SW_SHOW : SW_HIDE);
 
 	RedrawWindow();
 }
@@ -578,8 +580,8 @@ void TaTableAnalyzerPage::setAddColumnProperties()
 
 	if (nullptr != m_pSelectedAddEquationFormula)
 	{
-		m_EditAddColumnName.SetWindowText( m_pSelectedAddEquationFormula->GetEquationName().c_str() );
-		m_ButtonAddColumnFormula.SetWindowText(m_pSelectedAddEquationFormula->GetEquationText().c_str());
+		m_EditAddColumnName.SetWindowText(m_pSelectedAddEquationFormula->GetEquationName().c_str());
+		m_AddFormulaString = m_pSelectedAddEquationFormula->GetEquationText().c_str();
 	}
 }
 
@@ -669,54 +671,79 @@ HRESULT TaTableAnalyzerPage::SetAddAnalyzerData(SvStl::MessageContainerVector &r
 	{
 		CString columnName;
 		m_EditAddColumnName.GetWindowText(columnName);
-		hrOk = m_pSelectedAddEquationFormula->SetEquationName(std::string(columnName));
-		if (S_OK != hrOk)
-		{
-			SvDef::StringVector msgList;
-			msgList.push_back(SvUl::Format(_T("%d"), hrOk));
-			SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_SetTableAnalyzerData, msgList, SvStl::SourceFileParams(StdMessageParams));
-			rErrorMessageList.push_back(Msg);
-			return E_FAIL;
-		}
-		
-		// Do a reset of the analyzer
-		SvPB::ResetObjectRequest requestResetMessage;
-		SvPB::ResetObjectResponse responseResetMessage;
-		SvPB::SetGuidInProtoBytes(requestResetMessage.mutable_objectid(), m_TaskObjectID);
 
-		hrOk = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestResetMessage, &responseResetMessage);
-		if (S_OK != hrOk)
+		std::string oldName = columnName;
+		std::string newName = columnName;
+		SvUl::RemoveCharacters(newName, SvDef::cGeneralExcludeChars);
+		if (newName != oldName)
 		{
-			SvStl::MessageContainerVector taskResetMessageList = SvCmd::setMessageContainerFromMessagePB(responseResetMessage.messages());
-			for (const auto& rMessage : taskResetMessageList)
+			m_EditAddColumnName.SetWindowText(newName.c_str());
+		}
+
+		//Has the name changed
+		if (newName != m_pSelectedAddEquationFormula->GetEquationName())
+		{
+			std::string CheckOnlySpaces {newName};
+			SvUl::RemoveCharacters(CheckOnlySpaces, _T(" "));
+
+			if (!newName.empty() && !CheckOnlySpaces.empty())
 			{
-				const auto& rMessageData = rMessage.getMessage();
-				if (SvStl::Tid_TableColumnName_NotUnique == rMessageData.m_AdditionalTextId &&
-					0 < rMessageData.m_AdditionalTextList.size() && 0 == columnName.Compare(rMessageData.m_AdditionalTextList[0].c_str()))
+				hrOk = m_pSelectedAddEquationFormula->SetEquationName(newName);
+				if (S_OK != hrOk)
 				{
-					rErrorMessageList.push_back(rMessage);
+					SvDef::StringVector msgList;
+					msgList.push_back(SvUl::Format(_T("%d"), hrOk));
+					SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_SetTableAnalyzerData, msgList, SvStl::SourceFileParams(StdMessageParams));
+					rErrorMessageList.push_back(Msg);
+					return E_FAIL;
+				}
+
+				// Do a reset of the analyzer
+				SvPB::ResetObjectRequest requestResetMessage;
+				SvPB::ResetObjectResponse responseResetMessage;
+				SvPB::SetGuidInProtoBytes(requestResetMessage.mutable_objectid(), m_TaskObjectID);
+
+				hrOk = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestResetMessage, &responseResetMessage);
+				if (S_OK != hrOk)
+				{
+					SvStl::MessageContainerVector taskResetMessageList = SvCmd::setMessageContainerFromMessagePB(responseResetMessage.messages());
+					for (const auto& rMessage : taskResetMessageList)
+					{
+						const auto& rMessageData = rMessage.getMessage();
+						if (SvStl::Tid_TableColumnName_NotUnique == rMessageData.m_AdditionalTextId &&
+							0 < rMessageData.m_AdditionalTextList.size() && 0 == columnName.Compare(rMessageData.m_AdditionalTextList[0].c_str()))
+						{
+							rErrorMessageList.push_back(rMessage);
+						}
+					}
+
+					if (0 == rErrorMessageList.size())
+					{	//if error found, but no name error with this analyzer, check if this analyzer have an error
+						SvPB::GetMessageListRequest requestGetMessageList;
+						SvPB::GetMessageListResponse responseGetMessageList;
+						SvPB::SetGuidInProtoBytes(requestGetMessageList.mutable_objectid(), m_selectedAnalyzerID);
+						SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestGetMessageList, &responseGetMessageList);
+						rErrorMessageList = SvCmd::setMessageContainerFromMessagePB(responseGetMessageList.messages());
+						if (0 < rErrorMessageList.size())
+						{
+							SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+							Msg.setMessage(rErrorMessageList[0].getMessage());
+						}
+						else
+						{
+							hrOk = S_OK;
+						}
+					}
 				}
 			}
-
-			if (0 == rErrorMessageList.size())
-			{	//if error found, but no name error with this analyzer, check if this analyzer have an error
-				SvPB::GetMessageListRequest requestGetMessageList;
-				SvPB::GetMessageListResponse responseGetMessageList;
-				SvPB::SetGuidInProtoBytes(requestGetMessageList.mutable_objectid(), m_selectedAnalyzerID);
-				SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestGetMessageList, &responseGetMessageList);
-				rErrorMessageList = SvCmd::setMessageContainerFromMessagePB(responseGetMessageList.messages());
-				if (0 < rErrorMessageList.size())
-				{
-					SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
-					Msg.setMessage(rErrorMessageList[0].getMessage());
-				}
-				else
-				{
-					hrOk = S_OK;
-				}
+			else
+			{
+				hrOk = E_FAIL;
+				SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+				Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TableColumnName_Empty, SvStl::SourceFileParams(StdMessageParams));
 			}
 		}
-	}	
+	}
 	return hrOk;
 }
 

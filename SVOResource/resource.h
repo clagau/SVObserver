@@ -2138,6 +2138,7 @@
 #define IDC_ADDCOLUMN_LABEL             16125
 #define IDC_EDIT_ADDCOLUMN_NAME         16126
 #define IDC_BUTTON_ADDCOLUMN_FORMULA    16127
+#define IDC_EDIT_ADDCOLUMN_FORMULA      16128
 #define ID_TEST                         20000
 #define ID_BROWSE_BUTTON                20001
 #define ID_PLUSBUTTON                   20002
@@ -2361,7 +2362,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        11136
 #define _APS_NEXT_COMMAND_VALUE         20358
-#define _APS_NEXT_CONTROL_VALUE         16128
+#define _APS_NEXT_CONTROL_VALUE         16129
 #define _APS_NEXT_SYMED_VALUE           3002
 #endif
 #endif
