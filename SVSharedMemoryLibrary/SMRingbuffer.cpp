@@ -401,12 +401,13 @@ namespace SvSml
 
 		for (int i = 0; i < maxcount; i++)
 		{
-			IncreaseSlotNumber(rejectSlot, m_RejectSlotCount);
+			//The newest reject is the first to insert in rRejects
 			if (m_pRingBufferReject[rejectSlot].SlotNumberLast >= 0)
 			{
 				DWORD TriggerNumber = m_pRingBufferReject[rejectSlot].TriggerNumber;
 				rRejects.push_back(TriggerNumber);
 			}
+			DecreaseSlotNumber(rejectSlot, m_RejectSlotCount);
 
 		}
 		return static_cast<int>(rRejects.size());
