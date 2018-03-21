@@ -92,8 +92,8 @@ public:
 	{
 		m_pImageSok = sok;
 	}
-	void SetClientService(RRWS::ClientServicePointer&   rpClientService);
-	void SetImageId(const RRWS::CurImageId& CurImageId);
+	void SetClientService(SvWsl::ClientServicePointer&   rpClientService);
+	void SetImageId(const SvPb::CurImageId& CurImageId);
 private:
 	STDMETHOD(get_Image)(IPictureDisp** pVal);
 	STDMETHOD(put_Image)(IPictureDisp * newVal);
@@ -113,8 +113,8 @@ private:
 	ULONG len = 0;
 	SVImageFormatsEnum format = BMP;
 	SvSol::SVClientSocket<SvSol::UdpApi>*  m_pImageSok = nullptr;
-	RRWS::CurImageId m_CurImId;
-	RRWS::ClientServicePointer*  m_pClientService = nullptr;
+	SvPb::CurImageId m_CurImId;
+	SvWsl::ClientServicePointer*  m_pClientService = nullptr;
 
 
 

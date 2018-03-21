@@ -17,55 +17,55 @@
 #include "WebsocketLibrary/RunRequest.inl"
 #include "SVValueObjectList.h"
 
-CComVariant  GetComVariant(const SVRPC::Variant& var)
+CComVariant  GetComVariant(const SvPb::Variant& var)
 {
 	CComVariant comvar;
 	switch (var.value_case())
 	{
-		case SVRPC::Variant::kBoolValue:
+		case SvPb::Variant::kBoolValue:
 		{
 			comvar.boolVal = static_cast<BOOL>(var.bool_value());
 			comvar.vt = VT_BOOL;
 			return comvar;
 		}
-		case SVRPC::Variant::kInt32Value:
+		case SvPb::Variant::kInt32Value:
 		{
 			comvar.intVal = var.int32_value();
 			comvar.vt = VT_I4;
 			return comvar;
 		}
-		case SVRPC::Variant::kUint32Value:
+		case SvPb::Variant::kUint32Value:
 		{
 			comvar.uintVal = var.uint32_value();
 			comvar.vt = VT_UI4;
 			return comvar;
 		}
-		case SVRPC::Variant::kInt64Value:
+		case SvPb::Variant::kInt64Value:
 		{
 			comvar.llVal = var.int64_value();
 			comvar.vt = VT_I8;
 			return comvar;
 		}
-		case SVRPC::Variant::kUint64Value:
+		case SvPb::Variant::kUint64Value:
 		{
 			comvar.ullVal = var.uint64_value();
 			comvar.vt = VT_UI8;
 			return comvar;
 		}
-		case SVRPC::Variant::kStringValue:
+		case SvPb::Variant::kStringValue:
 		{
 			_bstr_t bstr(var.string_value().c_str());
 			comvar.bstrVal = bstr.Detach();
 			comvar.vt = VT_BSTR;
 			return comvar;
 		}
-		case SVRPC::Variant::kDoubleValue:
+		case SvPb::Variant::kDoubleValue:
 		{
 			comvar.dblVal = var.double_value();
 			comvar.vt = VT_R8;
 			return comvar;
 		}
-		case SVRPC::Variant::kFloatValue:
+		case SvPb::Variant::kFloatValue:
 		{
 			comvar.fltVal = var.float_value();
 			comvar.vt = VT_R4;
@@ -75,7 +75,7 @@ CComVariant  GetComVariant(const SVRPC::Variant& var)
 	return comvar;
 }
 
-CComPtr<ISVImageObject> GetImageObjectPtr(int trigger, const std::string& name, const RRWS::CurImageId &imId, RRWS::ClientServicePointer& rClientServicePointer)
+CComPtr<ISVImageObject> GetImageObjectPtr(int trigger, const std::string& name, const SvPb::CurImageId &imId, SvWsl::ClientServicePointer& rClientServicePointer)
 {
 	CComObject<SVImageObject> *pImageObject(0);
 	CComObject<SVImageObject>::CreateInstance(&pImageObject);
@@ -89,7 +89,7 @@ CComPtr<ISVImageObject> GetImageObjectPtr(int trigger, const std::string& name, 
 	return pio;
 }
 
-CComPtr<ISVImageObject> GetImageObjectPtr(int trigger, const std::string& name, const RRWS::GetImageFromCurIdResponse& resp)
+CComPtr<ISVImageObject> GetImageObjectPtr(int trigger, const std::string& name, const SvPb::GetImageFromCurIdResponse& resp)
 {
 	CComObject<SVImageObject> *pImageObject(0);
 	CComObject<SVImageObject>::CreateInstance(&pImageObject);
@@ -117,7 +117,7 @@ CComPtr<ISVImageObject> GetImageObjectPtr(int trigger, const std::string& name, 
 	return pio;
 
 }
-CComPtr<ISVValueObject> GetValueObjectPtr(int trigger, const std::string& name, const SVRPC::Variant& var)
+CComPtr<ISVValueObject> GetValueObjectPtr(int trigger, const std::string& name, const SvPb::Variant& var)
 {
 	CComObject<SVValueObject>* pValueObject(0);
 	CComObject<SVValueObject>::CreateInstance(&pValueObject);
@@ -131,7 +131,7 @@ CComPtr<ISVValueObject> GetValueObjectPtr(int trigger, const std::string& name, 
 }
 
 
-CComPtr<ISVProductItems> GetProductPtr(RRWS::ClientServicePointer& rClientServicePointer, const RRWS::Product &rResp)
+CComPtr<ISVProductItems> GetProductPtr(SvWsl::ClientServicePointer& rClientServicePointer, const SvPb::Product &rResp)
 {
 	CComObject<SVProductItems> *pProd = 0;
 	CComObject<SVProductItems>::CreateInstance(&pProd);
@@ -148,11 +148,11 @@ CComPtr<ISVProductItems> GetProductPtr(RRWS::ClientServicePointer& rClientServic
 		bool InsertAllBitmapNow(false);
 		if (InsertAllBitmapNow)
 		{
-			RRWS::GetImageFromCurIdRequest request;
+			SvPb::GetImageFromCurIdRequest request;
 			request.mutable_id()->set_imagestore(rResp.images(i).imagestore());
 			request.mutable_id()->set_imageindex(rResp.images(i).imageindex());
 			request.mutable_id()->set_slotindex(rResp.images(i).slotindex());
-			RRWS::GetImageFromCurIdResponse Imageresp = RRWS::runRequest(*rClientServicePointer, &RRWS::ClientService::getImageFromCurId, std::move(request)).get();
+			SvPb::GetImageFromCurIdResponse Imageresp = SvWsl::runRequest(*rClientServicePointer, &SvWsl::ClientService::getImageFromCurId, std::move(request)).get();
 
 			pProd->AddImage(GetImageObjectPtr(rResp.trigger(), rResp.imagenames(i), Imageresp));
 		}
@@ -169,7 +169,7 @@ CComPtr<ISVProductItems> GetProductPtr(RRWS::ClientServicePointer& rClientServic
 
 }
 
-FailList GetFailList(RRWS::ClientServicePointer& rClientServicePointer, const RRWS::GetFailStatusResponse& resp)
+FailList GetFailList(SvWsl::ClientServicePointer& rClientServicePointer, const SvPb::GetFailStatusResponse& resp)
 {
 	FailList list;
 	int TriggerCount = resp.products_size();
@@ -182,12 +182,12 @@ FailList GetFailList(RRWS::ClientServicePointer& rClientServicePointer, const RR
 	return list;
 }
 
-CComPtr<ISVValueObjectList> GetValueObjectListPtr(const RRWS::Product& rProduct)
+CComPtr<ISVValueObjectList> GetValueObjectListPtr(const SvPb::Product& rProduct)
 {
 	CComObject<SVValueObjectList> *vl = 0;
 	CComObject<SVValueObjectList>::CreateInstance(&vl);
 	CComPtr<ISVValueObjectList> vlp(vl);
-	if (rProduct.status() != RRWS::IsValid)
+	if (rProduct.status() != SvPb::IsValid)
 	{
 			return vlp;
 		

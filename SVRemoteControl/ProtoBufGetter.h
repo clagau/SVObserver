@@ -14,15 +14,15 @@
 #include "WebsocketLibrary/clientservice.h"
 
 
-CComVariant  GetComVariant(const SVRPC::Variant& var);
-CComPtr<ISVProductItems> GetProductPtr(RRWS::ClientServicePointer& rClientServicePointer, const RRWS::Product& resp);
-CComPtr<ISVValueObject> GetValueObjectPtr(int trigger, const std::string& name, const SVRPC::Variant& var);
+CComVariant  GetComVariant(const SvPb::Variant& var);
+CComPtr<ISVProductItems> GetProductPtr(SvWsl::ClientServicePointer& rClientServicePointer, const SvPb::Product& resp);
+CComPtr<ISVValueObject> GetValueObjectPtr(int trigger, const std::string& name, const SvPb::Variant& var);
 /// Function return an ImageObject with a bitmap
-CComPtr<ISVImageObject> GetImageObjectPtr(int trigger, const std::string& name, const RRWS::GetImageFromCurIdResponse& resp);
+CComPtr<ISVImageObject> GetImageObjectPtr(int trigger, const std::string& name, const SvPb::GetImageFromCurIdResponse& resp);
 /// Function return an ImageObject with a Bitmap ID
-CComPtr<ISVImageObject> GetImageObjectPtr(int trigger, const std::string& name, const RRWS::CurImageId &imId, RRWS::ClientServicePointer& rClientServicePointer);
+CComPtr<ISVImageObject> GetImageObjectPtr(int trigger, const std::string& name, const SvPb::CurImageId &imId, SvWsl::ClientServicePointer& rClientServicePointer);
 
 typedef CComSafeArray<VARIANT> FailList;
-FailList GetFailList(RRWS::ClientServicePointer& rClientServicePointer, const RRWS::GetFailStatusResponse& resp);
-CComPtr<ISVValueObjectList> GetValueObjectListPtr(const RRWS::Product &productResp);
+FailList GetFailList(SvWsl::ClientServicePointer& rClientServicePointer, const SvPb::GetFailStatusResponse& resp);
+CComPtr<ISVValueObjectList> GetValueObjectListPtr(const SvPb::Product &productResp);
 

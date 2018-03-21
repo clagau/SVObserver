@@ -382,12 +382,12 @@ HRESULT SVImageObject::FetchImage()
 	{
 		if (nullptr != m_pClientService && m_pClientService->get())
 		{
-			RRWS::GetImageFromCurIdRequest request;
+			SvPb::GetImageFromCurIdRequest request;
 			request.mutable_id()->set_imagestore(m_CurImId.imagestore());
 			request.mutable_id()->set_imageindex(m_CurImId.imageindex());
 			request.mutable_id()->set_slotindex(m_CurImId.slotindex());
 
-			auto resp = RRWS::runRequest(*(m_pClientService->get()), &RRWS::ClientService::getImageFromCurId, std::move(request)).get();
+			auto resp = SvWsl::runRequest(*(m_pClientService->get()), &SvWsl::ClientService::getImageFromCurId, std::move(request)).get();
 
 
 			if (resp.imagedata().rgb().length() > 0)
@@ -425,11 +425,11 @@ void SVImageObject::SetOverlays(VARIANT bsOverlays)
 
 }
 
-void SVImageObject::SetClientService(RRWS::ClientServicePointer&   rpClientService)
+void SVImageObject::SetClientService(SvWsl::ClientServicePointer&   rpClientService)
 {
 	m_pClientService = &rpClientService;
 }
-void SVImageObject::SetImageId(const RRWS::CurImageId& CurImageId)
+void SVImageObject::SetImageId(const SvPb::CurImageId& CurImageId)
 {
 	m_CurImId = CurImageId;
 }

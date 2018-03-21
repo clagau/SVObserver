@@ -281,8 +281,8 @@ HRESULT SVControlCommands::SetConnectionData(const _bstr_t& p_rServerName, unsig
 	{
 		if (m_bConnectToRRS)
 		{
-			m_pRpcClient = std::make_unique<SVRPC::RPCClient>(static_cast<char*>(m_ServerName), RRWS::Default_Port);
-			m_pClientService = std::make_unique<RRWS::ClientService>(*m_pRpcClient, m_RequestTimeout);
+			m_pRpcClient = std::make_unique<SvRpc::RPCClient>(static_cast<char*>(m_ServerName), SvWsl::Default_Port);
+			m_pClientService = std::make_unique<SvWsl::ClientService>(*m_pRpcClient, m_RequestTimeout);
 		}
 
 		SvSol::SVSocketError::ErrorEnum err = SvSol::SVSocketError::Success;
@@ -362,9 +362,9 @@ HRESULT SVControlCommands::GetVersion(_bstr_t& p_rSVObserverVersion, _bstr_t& p_
 			p_rRunRejectServerVersion = _bstr_t(L"N/A");
 			if (m_pClientService.get() && m_pRpcClient.get()&&  m_pRpcClient->isConnected())
 			{
-				RRWS::GetVersionRequest req;
+				SvPb::GetVersionRequest req;
 				req.set_trigger_timeout(true);
-				auto version = RRWS::runRequest(*m_pClientService.get(), &RRWS::ClientService::getVersion, std::move(req)).get();
+				auto version = SvWsl::runRequest(*m_pClientService.get(), &SvWsl::ClientService::getVersion, std::move(req)).get();
 				p_rRunRejectServerVersion = _bstr_t(version.version().c_str());
 
 			}
@@ -1604,25 +1604,25 @@ HRESULT SVControlCommands::GetProduct(bool bGetReject, const _bstr_t & listName,
 			throw std::invalid_argument("Not connected To RRServer");
 		}
 
-		RRWS::GetProductRequest ProductRequest;
+		SvPb::GetProductRequest ProductRequest;
 		ProductRequest.set_name(static_cast<const char*>(listName));
 		ProductRequest.set_trigger((-1 < triggerCount) ? triggerCount : -1);
 		ProductRequest.set_pevioustrigger(-1);
 		ProductRequest.set_breject(bGetReject);
 
 		ProductRequest.set_nameinresponse(true);
-		RRWS::GetProductResponse resp =
-			RRWS::runRequest(*m_pClientService.get(), &RRWS::ClientService::getProduct, std::move(ProductRequest)).get();
+		SvPb::GetProductResponse resp =
+			SvWsl::runRequest(*m_pClientService.get(), &SvWsl::ClientService::getProduct, std::move(ProductRequest)).get();
 
 		p_rStatus.hResult = (HRESULT)resp.product().status();
-		if (resp.product().status() == RRWS::IsValid)
+		if (resp.product().status() == SvPb::IsValid)
 		{
 			Status = S_OK;
 			GetProductPtr( m_pClientService, resp.product())->QueryInterface(IID_ISVProductItems, reinterpret_cast<void**>(currentViewItems));
 		}
 		else
 		{
-			p_rStatus.errorText = SVStringConversions::to_utf16(RRWS::State_Name(resp.product().status()));
+			p_rStatus.errorText = SVStringConversions::to_utf16(SvPb::State_Name(resp.product().status()));
 		}
 
 		SVLOG(Status);
@@ -1679,15 +1679,15 @@ HRESULT SVControlCommands::GetFailStatus(const _bstr_t & listName, CComVariant &
 			throw std::invalid_argument("Not connected To RRServer");
 		}
 
-		RRWS::GetFailStatusRequest FailstatusRequest;
+		SvPb::GetFailStatusRequest FailstatusRequest;
 		FailstatusRequest.set_name(static_cast<const char*>(listName));
 
 		FailstatusRequest.set_nameinresponse(true);
-		RRWS::GetFailStatusResponse resp
-			= RRWS::runRequest(*m_pClientService.get(), &RRWS::ClientService::getFailStatus, std::move(FailstatusRequest)).get();
+		SvPb::GetFailStatusResponse resp
+			= SvWsl::runRequest(*m_pClientService.get(), &SvWsl::ClientService::getFailStatus, std::move(FailstatusRequest)).get();
 
 		p_rStatus.hResult = (HRESULT)resp.status();
-		if (resp.status() == RRWS::IsValid)
+		if (resp.status() == SvPb::IsValid)
 		{
 			Status = S_OK;
 			CComVariant variant = GetFailList(m_pClientService, resp);
@@ -1695,7 +1695,7 @@ HRESULT SVControlCommands::GetFailStatus(const _bstr_t & listName, CComVariant &
 		}
 		else
 		{
-			p_rStatus.errorText = SVStringConversions::to_utf16(RRWS::State_Name(resp.status()));
+			p_rStatus.errorText = SVStringConversions::to_utf16(SvPb::State_Name(resp.status()));
 		}
 
 

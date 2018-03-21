@@ -53,6 +53,9 @@
 #include <algorithm>
 #include <comdef.h>
 #include <cstdio>
+#include <functional>
+#include <future>
+#include <memory>
 #include <fstream>
 #include <sstream>
 #include <string>
