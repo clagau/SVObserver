@@ -64,9 +64,6 @@ public:
 protected:
 	HRESULT GetCancelData(SVInputRequestStructMap& rMap);
 
-	// SVTaskObjectInterfaceClass
-	HRESULT SetInspectionData();
-
 #pragma region AFX Methods
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(SVMaskShapeEditorDlg)
@@ -117,6 +114,7 @@ private:
 	HRESULT BuildPropertyList();
 	HRESULT RefreshProperties();
 
+	HRESULT SetInspectionData(bool bResetObject = false);
 	HRESULT UpdateMask(bool bResetObject = false);
 	void FillComboBox(SVEnumerateValueObjectClass& p_rValueObject, CComboBox* p_pCombo);
 

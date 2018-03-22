@@ -117,10 +117,26 @@ void SVMaskShapeEditorDlg::Revert()
 {
 	for (auto const& rEntry : m_cancelData)
 	{
-		SVGUID EmbeddedID = rEntry.first.m_ObjectRef.getObject()->GetEmbeddedID();
-		m_ShapeHelperValues.Set<long>(EmbeddedID, static_cast<long> (rEntry.second));
+		SVObjectClass* pObject = rEntry.first.m_ObjectRef.getObject();
+		if(nullptr != pObject)
+		{
+			SVGUID EmbeddedID = pObject->GetEmbeddedID();
+			SVObjectClass* pParent = pObject->GetParent();
+			if(nullptr != pParent)
+			{
+				if (m_Values.GetTaskID() == pParent->GetUniqueObjectID())
+				{
+					m_Values.Set<_variant_t>(EmbeddedID, rEntry.second);
+				}
+				else if (m_ShapeHelperValues.GetTaskID() == pParent->GetUniqueObjectID())
+				{
+					m_ShapeHelperValues.Set<_variant_t>(EmbeddedID, rEntry.second);
+				}
+			}
+		}
 	}
 
+	m_Values.Commit();
 	m_ShapeHelperValues.Commit();
 }
 
@@ -155,7 +171,7 @@ HRESULT SVMaskShapeEditorDlg::GetCancelData(SVInputRequestStructMap& rMap)
 	return m_pMask->GetCancelData( rMap );
 }
 
-HRESULT SVMaskShapeEditorDlg::SetInspectionData()
+HRESULT SVMaskShapeEditorDlg::SetInspectionData(bool bResetObject/* = false*/)
 {
 	SVMaskShape::MapType mapProperties;
 	GetCurrentShape()->GetProperties(mapProperties);
@@ -180,9 +196,11 @@ HRESULT SVMaskShapeEditorDlg::SetInspectionData()
 	}
 
 	m_ShapeHelperValues.Commit();
-	
+
 	//This needs to be called due to SetInspectionData being called by UpdateMask which has values set but not commited
-	m_Values.Commit();
+	m_Values.Commit(bResetObject ? SvOg::doResetRunOnce : SvOg::doRunOnce);
+
+	m_ShapeHelperValues.Init();
 
 	return S_OK;
 }
@@ -341,8 +359,6 @@ void SVMaskShapeEditorDlg::OnOK()
 	lValue = atol(m_sFillColor);
 	m_Values.Set<long>(m_pMask->m_Data.lvoFillColor.GetEmbeddedID(), lValue);
 
-	SetInspectionData();
-
 	UpdateMask(true);
 
 	CDialog::OnOK();
@@ -407,7 +423,6 @@ void SVMaskShapeEditorDlg::OnSelChangeComboShape()
 		GetCurrentShape()->SetAutoResize( TRUE == m_bAutoResize );
 
 		m_ShapeHelperValues.Set<long>(m_pMask->GetShapeHelper()->m_Data.evoShapeType.GetEmbeddedID(), static_cast<long> (m_eShapeType));
-		SetInspectionData();
 
 		UpdateMask(true);	// need to reset object for shape change
 
@@ -427,7 +442,6 @@ void SVMaskShapeEditorDlg::OnSelChangeComboMaskOperator()
 		m_Values.Set<long>(m_pMask->m_Data.evoCurrentMaskOperator.GetEmbeddedID(), lValue);
 
 		UpdateMask(true);
-		setImages();
 	}
 }
 
@@ -444,7 +458,6 @@ void SVMaskShapeEditorDlg::OnSelChangeComboMaskArea()
 		m_ShapeHelperValues.Set<long>(pShapeMaskHelper->m_Data.evoMaskArea.GetEmbeddedID(), lValue);
 
 		UpdateMask();
-		setImages();
 	}
 }
 
@@ -478,7 +491,6 @@ void SVMaskShapeEditorDlg::OnCheckAutoResize()
 
 	UpdateMask(true);
 	RefreshProperties();
-	setImages();
 }
 
 void SVMaskShapeEditorDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
@@ -835,9 +847,8 @@ HRESULT SVMaskShapeEditorDlg::RefreshProperties()
 
 HRESULT SVMaskShapeEditorDlg::UpdateMask(bool bResetObject)
 {
-	GetCurrentShape()->Refresh(); // renders based on new properties
-	SetInspectionData();
-
+	SetInspectionData(bResetObject);
+	GetCurrentShape()->Refresh();
 	setImages();
 
 	resetShapeOverlay();
