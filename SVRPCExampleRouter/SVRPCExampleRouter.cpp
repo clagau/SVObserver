@@ -20,9 +20,9 @@
 #include "SVRPCLibrary/RPCServer.h"
 #include "SVRPCLibrary/RequestHandler.h"
 
-using namespace SVHTTP;
-using namespace SVRPC;
-using namespace SVRPC::Example;
+using namespace SvHttp;
+using namespace SvRpc;
+using namespace SvRpc::Example;
 
 int main()
 {

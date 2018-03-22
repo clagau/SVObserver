@@ -9,6 +9,7 @@
 #include "stdafx.h"
 
 #include <chrono>
+#include <functional>
 #include <sstream>
 #include <thread>
 
@@ -20,22 +21,22 @@
 #include "SVRPCLibrary/RPCServer.h"
 #include "SVRPCLibrary/RequestHandler.h"
 
-using namespace SVHTTP;
-using namespace SVRPC;
-using namespace SVRPC::Example;
+using namespace SvHttp;
+using namespace SvRpc;
+using namespace SvRpc::Example;
 
 static void counter_async(const boost::system::error_code& ec,
 	std::shared_ptr<boost::asio::deadline_timer> timer,
 	boost::asio::io_service& io_service,
-	SVRPC::Observer<GetCounterStreamResponse> observer,
+	Observer<GetCounterStreamResponse> observer,
 	ServerStreamContext::Ptr ctx,
 	int i)
 {
 	if (ec)
 	{
-		SVRPC::Error error;
+		SvPenv::Error error;
 		error.set_message(ec.message());
-		error.set_error_code(SVRPC::ErrorCode::InternalError);
+		error.set_error_code(SvPenv::ErrorCode::InternalError);
 		observer.error(error);
 		return;
 	}
@@ -80,20 +81,30 @@ int main()
 			ApplicationMessages::kGetCounterStreamRequest,
 			GetCounterStreamRequest,
 			GetCounterStreamResponse>
-			([&io_service](GetCounterStreamRequest&& req, SVRPC::Observer<GetCounterStreamResponse> observer, ServerStreamContext::Ptr ctx)
+			([&io_service](GetCounterStreamRequest&& req, Observer<GetCounterStreamResponse> observer, ServerStreamContext::Ptr ctx)
 		{
 			counter_async({}, nullptr, io_service, observer, ctx, req.start());
 		});
 
-		RPCServer rpcServer(&requestHandler);
+		auto rpcServer = std::make_unique<RPCServer>(&requestHandler);
+
 		WebsocketServerSettings settings;
 		settings.Port = 8080;
-		WebsocketServer server(settings, io_service, &rpcServer);
-		server.start();
+		auto server = std::make_unique<WebsocketServer>(settings, io_service, rpcServer.get());
+		server->start();
 
 		BOOST_LOG_TRIVIAL(info) << "Server running on ws://" << settings.Host << ":" << settings.Port << "/";
 
-		io_service.run();
+		auto thread = std::thread([&io_service]() { io_service.run(); });
+		
+		std::this_thread::sleep_for(std::chrono::seconds(5));
+		
+		server->stop();
+		io_service.stop();
+		thread.join();
+
+		rpcServer.reset();
+		server.reset();
 	}
 	catch (std::exception& e)
 	{

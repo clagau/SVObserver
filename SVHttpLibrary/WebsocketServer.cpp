@@ -38,6 +38,12 @@ void WebsocketServer::start()
 	schedule_cleanup();
 }
 
+void WebsocketServer::stop()
+{
+	m_Acceptor.cancel();
+	m_CleanupTimer.cancel();
+}
+
 void WebsocketServer::start_accept()
 {
 	auto connection =
@@ -49,6 +55,10 @@ void WebsocketServer::start_accept()
 void WebsocketServer::handle_accept(std::shared_ptr<WebsocketServerConnection> connection,
 	const boost::system::error_code& ec)
 {
+	if (ec == boost::asio::error::operation_aborted)
+	{
+		return;
+	}
 	if (ec)
 	{
 		BOOST_LOG_TRIVIAL(error) << "Error while accepting connection: " << ec;
@@ -70,6 +80,10 @@ void WebsocketServer::schedule_cleanup()
 
 void WebsocketServer::do_cleanup(const boost::system::error_code& error)
 {
+	if (error == boost::asio::error::operation_aborted)
+	{
+		return;
+	}
 	if (error)
 	{
 		BOOST_LOG_TRIVIAL(error) << "Cleanup schedule error: " << error;

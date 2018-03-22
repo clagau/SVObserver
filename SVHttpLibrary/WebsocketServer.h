@@ -35,6 +35,7 @@ public:
 		WebsocketServerConnection::EventHandler* pEventHandler);
 
 	void start();
+	void stop();
 
 private:
 	void start_accept();

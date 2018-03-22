@@ -9,6 +9,8 @@
 #include "stdafx.h"
 
 #include <chrono>
+#include <functional>
+#include <future>
 #include <iostream>
 #include <memory>
 #include <string>
@@ -23,20 +25,21 @@
 #include "SVRPCLibrary/RPCClient.h"
 #include "SVRPCLibrary/SimpleClient.h"
 
-using namespace SVRPC;
-using namespace SVRPC::Example;
+using namespace SvPenv;
+using namespace SvRpc;
+using namespace SvRpc::Example;
 
 int main()
 {
 	try
 	{
 		auto Timeout = boost::posix_time::seconds(5);
-		auto pRpcClient = std::make_unique<SVRPC::RPCClient>("127.0.0.1", 8081);
+		auto pRpcClient = std::make_unique<RPCClient>("127.0.0.1", 8081);
 		pRpcClient->waitForConnect(6000);
 		{
 			HelloWorldReq req;
 			req.set_name("Homer Simpson");
-			SVRPC::SimpleClient<ApplicationMessages, HelloWorldReq, HelloWorldRes> client(*pRpcClient);
+			SimpleClient<ApplicationMessages, HelloWorldReq, HelloWorldRes> client(*pRpcClient);
 			auto res = client.request(std::move(req), Timeout).get();
 			BOOST_LOG_TRIVIAL(info) << res.message();
 		}
@@ -47,8 +50,8 @@ int main()
 			req.set_name("Marcus Eichengruen");
 			auto promise = std::make_shared<std::promise<HelloWorldRes>>();
 			auto FinishFkt = [&promise](HelloWorldRes&& res) { promise->set_value(res); };
-			auto ErrorFkt = [&promise](const SVRPC::Error& err) { promise->set_exception(SVRPC::errorToExceptionPtr(err)); };
-			auto task = SVRPC::Task<HelloWorldRes>(FinishFkt, ErrorFkt);
+			auto ErrorFkt = [&promise](const Error& err) { promise->set_exception(errorToExceptionPtr(err)); };
+			auto task = Task<HelloWorldRes>(FinishFkt, ErrorFkt);
 			SimpleClient<ApplicationMessages, HelloWorldReq, HelloWorldRes> client2(*pRpcClient);
 			client2.request(std::move(req), task,Timeout);
 			HelloWorldRes res2 = (promise->get_future()).get();
@@ -58,7 +61,7 @@ int main()
 		{
 			HelloRouterReq req;
 			req.set_name("Bart Simpson");
-			SVRPC::SimpleClient<ApplicationMessages, HelloRouterReq, HelloRouterRes> client(*pRpcClient);
+			SimpleClient<ApplicationMessages, HelloRouterReq, HelloRouterRes> client(*pRpcClient);
 			auto res = client.request(std::move(req), Timeout).get();
 			BOOST_LOG_TRIVIAL(info) << res.message();
 		}
@@ -76,13 +79,13 @@ int main()
 			{
 				CounterPromise->set_value(lastcounter);
 			};
-			auto errorFkt = [CounterPromise, &lastcounter](const SVRPC::Error& err)
+			auto errorFkt = [CounterPromise, &lastcounter](const Error& err)
 			{ 
-				CounterPromise->set_exception(SVRPC::errorToExceptionPtr(err));
+				CounterPromise->set_exception(errorToExceptionPtr(err));
 			};
-			auto observer = SVRPC::Observer<GetCounterStreamResponse>(nextFkt, FinishFkt, errorFkt);
+			auto observer = Observer<GetCounterStreamResponse>(nextFkt, FinishFkt, errorFkt);
 
-			SVRPC::SimpleClient<ApplicationMessages, GetCounterStreamRequest, GetCounterStreamResponse> streamClient(*pRpcClient);
+			SimpleClient<ApplicationMessages, GetCounterStreamRequest, GetCounterStreamResponse> streamClient(*pRpcClient);
 
 			GetCounterStreamRequest getCounterStreamRequest;
 			getCounterStreamRequest.set_start(0);
