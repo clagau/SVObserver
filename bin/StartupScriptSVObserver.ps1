@@ -96,5 +96,5 @@ if ($booleanVDrive -eq $false){
 }
 
 C:\SVObserver\bin\SVObserver.exe
-start-process "C:\SVObserver\bin\WebsocketServer.exe" 
+start-process "C:\SVObserver\bin\SVOWebserver.exe" 
 start-process "C:\SVObserver\bin\SyncSystemTime.bat" -WindowStyle Minimized
