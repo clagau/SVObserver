@@ -119,8 +119,8 @@
     <CustomBuild Include="SVMessage.mc">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">echo del "$(IntDir)*.bin"
 del "$(IntDir)*.bin"
-echo mc -uUv -h "$(IntDir)\" -r "$(IntDir)\" %(Filename).mc
-mc -uUv -h "$(IntDir)\" -r "$(IntDir)\" %(Filename).mc
+echo mc -uU -h "$(IntDir)\" -r "$(IntDir)\" %(Filename).mc
+mc -uU -h "$(IntDir)\" -r "$(IntDir)\" %(Filename).mc
 Call CopyIfDifferent.bat "$(IntDir)%(Filename).h" %(Filename).h
 Call CopyIfDifferent.bat "$(IntDir)%(Filename).rc" %(Filename).rc
 Call CopyIfDifferent.bat "$(IntDir)%USEnglish.bin" USEnglish.bin
@@ -129,8 +129,8 @@ Call CopyIfDifferent.bat "$(IntDir)%USEnglish.bin" USEnglish.bin
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)USEnglish.bin;$(IntDir)%(Filename).h;$(IntDir)%(Filename).rc;%(Outputs)</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">echo del "$(IntDir)*.bin"
 del "$(IntDir)*.bin"
-echo mc -uUv -h "$(IntDir)\" -r "$(IntDir)\" %(Filename).mc
-mc -uUv -h "$(IntDir)\" -r "$(IntDir)\" %(Filename).mc
+echo mc -uU -h "$(IntDir)\" -r "$(IntDir)\" %(Filename).mc
+mc -uU -h "$(IntDir)\" -r "$(IntDir)\" %(Filename).mc
 Call CopyIfDifferent.bat "$(IntDir)%(Filename).h" %(Filename).h
 Call CopyIfDifferent.bat "$(IntDir)%(Filename).rc" %(Filename).rc
 Call CopyIfDifferent.bat "$(IntDir)%USEnglish.bin" USEnglish.bin

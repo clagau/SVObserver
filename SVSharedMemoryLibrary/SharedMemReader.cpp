@@ -212,7 +212,7 @@ SharedMemReader::retvalues SharedMemReader::GetFailstatus(LPCTSTR Monitorlist, v
 		std::vector<DWORD> rejectsTrigger;
 		m_DataContainer.GetSlotManager(SlotManagerIndex)->GetRejects(rejectsTrigger);
 		int max = m_DataContainer.GetSlotManager(SlotManagerIndex)->GetRejectSlotCount();
-		max -= MLPPQInfo::NumRejectSizeDelta;
+		max -= (MLPPQInfo::NumRejectSizeDelta+1);
 		max = std::min(max, static_cast<int>(rejectsTrigger.size()));
 		pFailstatus->clear();
 		if (nullptr != pLastFailstatus)
