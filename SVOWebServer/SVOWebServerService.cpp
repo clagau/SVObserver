@@ -14,9 +14,9 @@
 #pragma endregion Includes
 
 #pragma region Declarations
-SERVICE_STATUS        g_ServiceStatus = {0};
-SERVICE_STATUS_HANDLE g_StatusHandle( nullptr );
-boost::asio::io_service gIoService{1};
+SERVICE_STATUS        gServiceStatus = {0};
+SERVICE_STATUS_HANDLE gStatusHandle( nullptr );
+HANDLE gServiceStopEvent(INVALID_HANDLE_VALUE);
 ServiceWorkerFunction gpStartThread( nullptr );
 
 #ifdef _DEBUG
@@ -29,33 +29,49 @@ void WINAPI ServiceMain( DWORD argc, LPTSTR *argv )
 {
     DWORD Status( E_FAIL );
 
-    g_StatusHandle = RegisterServiceCtrlHandler( cServiceName, ControlHandler );
+    gStatusHandle = RegisterServiceCtrlHandler( cServiceName, ControlHandler );
 
-    if( nullptr != g_StatusHandle )
+    if( nullptr != gStatusHandle )
 	{
 
 		// Tell the service controller we are starting
-		ZeroMemory( &g_ServiceStatus, sizeof( g_ServiceStatus ) );
-		g_ServiceStatus.dwServiceType = SERVICE_WIN32_OWN_PROCESS;
-		g_ServiceStatus.dwControlsAccepted = 0;
-		g_ServiceStatus.dwCurrentState = SERVICE_START_PENDING;
-		g_ServiceStatus.dwWin32ExitCode = 0;
-		g_ServiceStatus.dwServiceSpecificExitCode = 0;
-		g_ServiceStatus.dwCheckPoint = 0;
+		ZeroMemory( &gServiceStatus, sizeof( gServiceStatus ) );
+		gServiceStatus.dwServiceType = SERVICE_WIN32_OWN_PROCESS;
+		gServiceStatus.dwControlsAccepted = 0;
+		gServiceStatus.dwCurrentState = SERVICE_START_PENDING;
+		gServiceStatus.dwWin32ExitCode = 0;
+		gServiceStatus.dwServiceSpecificExitCode = 0;
+		gServiceStatus.dwCheckPoint = 0;
 
-		if( !::SetServiceStatus( g_StatusHandle, &g_ServiceStatus ) ) 
+		if( !::SetServiceStatus( gStatusHandle, &gServiceStatus ) ) 
 		{
 			SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 			Exception.setMessage(SVMSG_SVWebSrv_0_GENERAL_ERROR, SvStl::Tid_Error_SetServiceStatus, SvStl::SourceFileParams(StdMessageParams));
 		}
 
-		// Tell the service controller we are started
-		g_ServiceStatus.dwControlsAccepted = SERVICE_ACCEPT_STOP;
-		g_ServiceStatus.dwCurrentState = SERVICE_RUNNING;
-		g_ServiceStatus.dwWin32ExitCode = 0;
-		g_ServiceStatus.dwCheckPoint = 0;
+		gServiceStopEvent = ::CreateEvent(nullptr, true, false, nullptr);
+		if (nullptr == gServiceStopEvent)
+		{
+			SvStl::MessageMgrStd Exception(SvStl::LogOnly);
+			Exception.setMessage(SVMSG_SVWebSrv_0_GENERAL_ERROR, SvStl::Tid_Error_CreateEvent, SvStl::SourceFileParams(StdMessageParams));
+			gServiceStatus.dwControlsAccepted = 0;
+			gServiceStatus.dwCurrentState = SERVICE_STOPPED;
+			gServiceStatus.dwWin32ExitCode = GetLastError();
+			gServiceStatus.dwCheckPoint = 1;
 
-		if( !::SetServiceStatus( g_StatusHandle, &g_ServiceStatus ) )
+			if (!::SetServiceStatus(gStatusHandle, &gServiceStatus))
+			{
+				Exception.setMessage(SVMSG_SVWebSrv_0_GENERAL_ERROR, SvStl::Tid_Error_SetServiceStatus, SvStl::SourceFileParams(StdMessageParams));
+			}
+		}
+
+		// Tell the service controller we have started
+		gServiceStatus.dwControlsAccepted = SERVICE_ACCEPT_STOP;
+		gServiceStatus.dwCurrentState = SERVICE_RUNNING;
+		gServiceStatus.dwWin32ExitCode = 0;
+		gServiceStatus.dwCheckPoint = 0;
+
+		if( !::SetServiceStatus( gStatusHandle, &gServiceStatus ) )
 		{
 			SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 			Exception.setMessage(SVMSG_SVWebSrv_0_GENERAL_ERROR, SvStl::Tid_Error_SetServiceStatus, SvStl::SourceFileParams(StdMessageParams));
@@ -67,12 +83,12 @@ void WINAPI ServiceMain( DWORD argc, LPTSTR *argv )
 			gpStartThread( argc, argv	);
 		}
     
-		g_ServiceStatus.dwControlsAccepted = 0;
-		g_ServiceStatus.dwCurrentState = SERVICE_STOPPED;
-		g_ServiceStatus.dwWin32ExitCode = 0;
-		g_ServiceStatus.dwCheckPoint = 3;
+		gServiceStatus.dwControlsAccepted = 0;
+		gServiceStatus.dwCurrentState = SERVICE_STOPPED;
+		gServiceStatus.dwWin32ExitCode = 0;
+		gServiceStatus.dwCheckPoint = 3;
 
-		if( !::SetServiceStatus( g_StatusHandle, &g_ServiceStatus ) )
+		if( !::SetServiceStatus( gStatusHandle, &gServiceStatus ) )
 		{
 			SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 			Exception.setMessage(SVMSG_SVWebSrv_0_GENERAL_ERROR, SvStl::Tid_Error_SetServiceStatus, SvStl::SourceFileParams(StdMessageParams));
@@ -91,21 +107,21 @@ void WINAPI ControlHandler( DWORD ControlCode )
 	{
 	case SERVICE_CONTROL_STOP :
 		{
-			if( SERVICE_RUNNING == g_ServiceStatus.dwCurrentState )
+			if( SERVICE_RUNNING == gServiceStatus.dwCurrentState )
 			{
-				g_ServiceStatus.dwControlsAccepted = 0;
-				g_ServiceStatus.dwCurrentState = SERVICE_STOP_PENDING;
-				g_ServiceStatus.dwWin32ExitCode = 0;
-				g_ServiceStatus.dwCheckPoint = 4;
+				gServiceStatus.dwControlsAccepted = 0;
+				gServiceStatus.dwCurrentState = SERVICE_STOP_PENDING;
+				gServiceStatus.dwWin32ExitCode = 0;
+				gServiceStatus.dwCheckPoint = 4;
 
-				if( !::SetServiceStatus( g_StatusHandle, &g_ServiceStatus ) )
+				if( !::SetServiceStatus( gStatusHandle, &gServiceStatus ) )
 				{
 					SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 					Exception.setMessage(SVMSG_SVWebSrv_0_GENERAL_ERROR, SvStl::Tid_Error_SetServiceStatus, SvStl::SourceFileParams(StdMessageParams));
 				}
 
 				// This will signal the worker thread to start shutting down
-				gIoService.reset();
+				::SetEvent(gServiceStopEvent);
 			}
 		}
 		break;

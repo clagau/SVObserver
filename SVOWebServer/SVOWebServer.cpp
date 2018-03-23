@@ -13,12 +13,6 @@
 
 #include "stdafx.h"
 
-#include <chrono>
-#include <iostream>
-#include <memory>
-#include <string>
-#include <thread>
-
 #include <boost/log/trivial.hpp>
 
 #include <mil.h>
@@ -31,8 +25,8 @@
 #include "SvHttpLibrary/WebsocketServer.h"
 #include "SVRPCLibrary/RPCServer.h"
 #include "SVOWebServerService.h"
-#include "SVMessage\SVMessage.h"
-#include "SVStatusLibrary\MessageManager.h"
+#include "SVMessage/SVMessage.h"
+#include "SVStatusLibrary/MessageManager.h"
 
 static std::unique_ptr<SvOws::SharedMemoryAccessInterface> createSharedMemoryAccess(bool dummy)
 {
@@ -67,7 +61,6 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 {
 	SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 	Exception.setMessage(SVMSG_SVWebSrv_2_GENERAL_INFORMATIONAL, SvStl::Tid_Started, SvStl::SourceFileParams(StdMessageParams));
-	MIL_ID myAppId = M_NULL;
 	try
 	{
 		SvOws::Settings settings;
@@ -76,13 +69,13 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 		//@Todo[MEC][8.00] [08.03.2018] could also be in Registry
 		settings.websocketSettings.Host = "0.0.0.0";
 		init_logging(settings.logSettings);
-		BOOST_LOG_TRIVIAL(info) << "RunReWebsocketServer is starting";
+		BOOST_LOG_TRIVIAL(info) << "WebsocketServer is starting";
 
 		BOOST_LOG_TRIVIAL(debug) << "Initializing Matrox Image Library";
 		// Allocate MilSystem
-		myAppId = MappAlloc(M_DEFAULT, M_NULL);
-		BOOST_LOG_TRIVIAL(debug) << "MatrixImage library was successfully initialized";
-		if (myAppId == M_NULL)
+		MIL_ID MilId = MappAlloc(M_DEFAULT, M_NULL);
+		BOOST_LOG_TRIVIAL(debug) << "Matrox Image library was successfully initialized";
+		if (M_NULL == MilId)
 		{
 			throw std::exception("MapAlloc failed");
 		}
@@ -90,19 +83,29 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 		auto sharedMemoryAccess = createSharedMemoryAccess(settings.dummySharedMemory);
 		SvOws::ServerRequestHandler requestHandler(sharedMemoryAccess.get());
 		SvRpc::RPCServer rpcServer(&requestHandler);
+		boost::asio::io_service IoService {1};
 
-		SvHttp::WebsocketServer server(settings.websocketSettings, gIoService, &rpcServer);
-		server.start();
+		SvHttp::WebsocketServer Server(settings.websocketSettings, IoService, &rpcServer);
+		Server.start();
+		std::thread ServerThread([&] { IoService.run(); });
 
-		gIoService.run();
+		//Wait until service should stop
+		::WaitForSingleObject(gServiceStopEvent, INFINITE);
+
+		Server.stop();
+		IoService.stop();
+		ServerThread.join();
+
+		sharedMemoryAccess.reset();
+
+		if (M_NULL != MilId)
+		{
+			MappFree(MilId);
+		}
 	}
 	catch (std::exception& e)
 	{
 		BOOST_LOG_TRIVIAL(error) << e.what();
-	}
-	if (myAppId != M_NULL)
-	{
-		MappFree(myAppId);
 	}
 	Exception.setMessage(SVMSG_SVWebSrv_2_GENERAL_INFORMATIONAL, SvStl::Tid_Stopped, SvStl::SourceFileParams(StdMessageParams));
 }
@@ -113,7 +116,11 @@ int main(int argc, _TCHAR* argv[])
 	SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 	Exception.setMessage(SVMSG_SVWebSrv_2_GENERAL_INFORMATIONAL, SvStl::Tid_Started, SvStl::SourceFileParams(StdMessageParams));
 
-	if(CheckCommandLineArgs(argc, argv, _T("/service")))
+	if(CheckCommandLineArgs(argc, argv, _T("/cmd")))
+	{
+		StartWebServer(argc, argv);
+	}
+	else
 	{
 		//Function pointer for starting the threads
 		gpStartThread = &StartWebServer;
@@ -136,10 +143,6 @@ int main(int argc, _TCHAR* argv[])
 				StartWebServer(argc, argv);
 			}
 		}
-	}
-	else
-	{
-		StartWebServer(argc, argv);
 	}
 
 	Exception.setMessage(SVMSG_SVWebSrv_2_GENERAL_INFORMATIONAL, SvStl::Tid_Stopped, SvStl::SourceFileParams(StdMessageParams));

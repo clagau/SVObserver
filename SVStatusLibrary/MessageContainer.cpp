@@ -50,8 +50,8 @@ static const TCHAR* const CategoryNone = _T("None");
 static const TCHAR* const CategorySystem = _T("System");
 static const TCHAR* const CategoryApplication = _T("Application");
 static const TCHAR* const TaskCategory[CategoryNr]= { 
-	_T("RRS"),
-	_T("Unused02"),  
+	_T("Unused01"),
+	_T("SVWebSrv"),  
 	_T("Unused03"), 
 	_T("Unused04"), 
 	_T("Unused05"),

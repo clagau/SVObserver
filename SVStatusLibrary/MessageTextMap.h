@@ -528,5 +528,6 @@ namespace SvStl
 		{Tid_WriteCSVFileFailed, _T("Write to file %s failed.")},
 		{Tid_Error_SetServiceStatus, _T("SetServiceStatus returned error")},
 		{Tid_Error_RegisterServiceHandler, _T("RegisterServiceCtrlHandler returned error")},
+		{Tid_Error_CreateEvent, _T("Could not create the Event Handler")},
 	};
 } //namespace SvStl

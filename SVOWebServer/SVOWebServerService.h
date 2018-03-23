@@ -9,7 +9,6 @@
 
 #pragma region Includes
 #include <tchar.h>
-#include <boost/asio.hpp>
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -20,5 +19,5 @@ typedef void (*ServiceWorkerFunction)( DWORD argc, LPTSTR  *argv );
 void WINAPI ServiceMain( DWORD argc, LPTSTR *argv );
 void WINAPI ControlHandler( DWORD ControlCode );
 
-extern boost::asio::io_service gIoService;
+extern HANDLE gServiceStopEvent;
 extern ServiceWorkerFunction gpStartThread;

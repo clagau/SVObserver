@@ -28,6 +28,14 @@ SharedMemoryAccess::SharedMemoryAccess()
 }
 SharedMemoryAccess::~SharedMemoryAccess()
 {
+	if (!m_io_service.stopped())
+	{
+		m_io_service.stop();
+	}
+	if (m_io_thread.joinable())
+	{
+		m_io_thread.join();
+	}
 	SvOa::Finish();
 }
 
