@@ -1620,6 +1620,7 @@ void SVTaskObjectClass::PersistInputs(SvOi::IObjectWriter& rWriter)
 				_bstr_t name;
 				_variant_t value;
 				
+				SvOl::ValidateInput(*inputList[i]);
 				const SvOl::SVInObjectInfoStruct& rInputInfo = *inputList[i];
 				value.SetString(rInputInfo.GetInputObjectInfo().GetObjectReference().GetGuidAndIndexOneBased().c_str());
 				name = _bstr_t(rInputInfo.GetInputName().c_str());
