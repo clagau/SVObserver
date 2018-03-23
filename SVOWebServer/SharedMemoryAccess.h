@@ -43,6 +43,7 @@ private:
 	boost::asio::io_service::work m_io_work;
 	boost::thread m_io_thread;
 	SvPb::GetImageStreamFromCurIdResponse m_unsent_resp;
+	std::unique_ptr<SvSml::ShareControl> m_pShareControlInstance;
 	
 };
 }

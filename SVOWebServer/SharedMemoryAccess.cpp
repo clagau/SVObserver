@@ -23,7 +23,7 @@ SharedMemoryAccess::SharedMemoryAccess()
 	: m_io_service(), m_io_work(m_io_service), m_io_thread(boost::bind(&boost::asio::io_service::run, &m_io_service))
 {
 
-	SvOa::Init();
+	m_pShareControlInstance = std::make_unique<SvSml::ShareControl>();
 
 }
 SharedMemoryAccess::~SharedMemoryAccess()
@@ -51,7 +51,7 @@ void SharedMemoryAccess::GetProduct(const SvPb::GetProductRequest& request, SvRp
 	SvPenv::Error err;
 	SvPb::GetProductResponse resp;
 
-	if (SvOa::GetProductOrReject(request, resp, err))
+	if (m_pShareControlInstance->GetProductOrReject(request, resp, err))
 	{
 		task.finish(std::move(resp));
 	}
@@ -65,7 +65,7 @@ void SharedMemoryAccess::GetFailstatus(const SvPb::GetFailStatusRequest& request
 {
 	SvPenv::Error err;
 	SvPb::GetFailStatusResponse resp;
-	if (SvOa::GetFailstatus(request, resp, err))
+	if (m_pShareControlInstance->GetFailstatus(request, resp, err))
 	{
 		task.finish(std::move(resp));
 	}
@@ -82,7 +82,7 @@ void SharedMemoryAccess::GetImageFromCurId(const SvPb::GetImageFromCurIdRequest&
 	SvPb::GetImageFromCurIdResponse resp;
 	SvPenv::Error err;
 
-	if (SvOa::GetImageFromCurId(request, resp, err))
+	if (m_pShareControlInstance->GetImageFromCurId(request, resp, err))
 	{
 		task.finish(std::move(resp));
 	}
@@ -111,7 +111,7 @@ void SharedMemoryAccess::QueryListName(const SvPb::QueryListNameRequest& request
 	SvPb::QueryListNameResponse resp;
 	SvPenv::Error err;
 
-	if (SvOa::QueryListName(request, resp, err))
+	if (m_pShareControlInstance->QueryListName(request, resp, err))
 	{
 		task.finish(std::move(resp));
 	}
@@ -124,7 +124,7 @@ void SharedMemoryAccess::QueryListItem(const SvPb::QueryListItemRequest& request
 {
 	SvPb::QueryListItemResponse Resp;
 	SvPenv::Error err;
-	if (SvOa::QueryListItem(request, Resp, err))
+	if (m_pShareControlInstance->QueryListItem(request, Resp, err))
 	{
 		task.finish(std::move(Resp));
 	}
