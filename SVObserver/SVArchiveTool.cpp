@@ -786,7 +786,7 @@ void SVArchiveTool::setResultArchiveList(const SVObjectReferenceVector& rObjectR
 		m_arrayResultsInfoObjectsToArchive.Add( pArchiveRecord );
 		pArchiveRecord->ConnectInputObject();
 
-		m_svoArchiveResultNames.SetValue( rObjectRef.GetCompleteName(), i );
+		m_svoArchiveResultNames.SetValue( rObjectRef.GetCompleteName(true), i );
 	}
 
 	m_stringArchiveResultGuids_OBSOLETE.SetValue( std::string() );

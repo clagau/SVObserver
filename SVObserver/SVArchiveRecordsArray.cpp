@@ -86,9 +86,6 @@ HRESULT SVArchiveRecordsArray::InitializeObjects(SVArchiveTool* pToolArchive, SV
 				HRESULT hrGetObject = SVObjectManagerClass::Instance().GetObjectByDottedName( NewName.c_str(), ObjectRef );
 				if( S_OK == hrGetObject )
 				{
-					/// names in m_svoArchiveResultNames are zero based!!!
-					ObjectRef.IncrementIndex();
-
 					if( NewName != Name )
 					{
 						// Set value with new inspection name.
