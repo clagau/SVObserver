@@ -358,11 +358,9 @@ void SVHistogramAnalyzerClass::init()
 		msvMeanValue.SetDefaultValue(0.0, true);
 		msvMeanValue.setSaveValueFlag(false);
 		msvFixedHeightValue.SetDefaultValue(10.0, true);
-
 		msvRangeStartValue.SetDefaultValue(0, true);
-		msvRangeStartValue.setSaveValueFlag(false);
 		msvRangeEndValue.SetDefaultValue(255, true);
-		msvRangeEndValue.setSaveValueFlag(false);
+
 		msvMaxPixelValue.SetDefaultValue(0, true);
 		msvMaxPixelValue.setSaveValueFlag(false);
 		msvMinPixelValue.SetDefaultValue(0, true);
