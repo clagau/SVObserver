@@ -18,7 +18,6 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVMaskShape.h"
 #include "SVObserver.h"
-#include "InspectionEngine/SVTool.h"
 #include "SVIPDoc.h"
 #include "SVLibrary/SVWinUtility.h"	// for SVYieldPaintMessages
 #include "SVUserMaskOperatorClass.h"
@@ -75,15 +74,14 @@ SVMaskShapeEditorDlg::SVMaskShapeEditorDlg(const SVGUID& rInspectionID, const SV
 , m_sFillColor( _T( "" ) )
 , m_sCoordinates( _T( "" ) )
 , m_bAutoResize( FALSE )
-, m_pTool( nullptr )
 , m_pMask( nullptr )
 , m_isInit( false )
 , m_currentTabNumber( 2 ) // BRW - Why is this 2?
 , m_eShapeType( SVShapeMaskHelperClass::SVMaskShapeTypeInvalid )
+, m_maskController {rInspectionID, rTaskObjectID, rMaskOperatorID}
 {
 	m_pThis = this;
 
-	m_pTool = dynamic_cast<SVToolClass*> (SvOi::getObject(rTaskObjectID));
 	m_pMask = dynamic_cast<SVUserMaskOperatorClass*> (SvOi::getObject(rMaskOperatorID));
 	
 	for (int i = 0; i < m_numberOfTabs; i++)
@@ -178,7 +176,6 @@ HRESULT SVMaskShapeEditorDlg::SetInspectionData(bool bResetObject/* = false*/)
 
 	SVInputRequestStructMap mapData;
 
-	SVMaskShape::MapType::iterator iter;
 	for (auto const& rEntry : mapProperties)
 	{
 		GUID guid = rEntry.first;
@@ -226,9 +223,9 @@ BOOL SVMaskShapeEditorDlg::OnInitDialog()
 	CDialog::OnInitDialog();
 
 	// must set these before calling DoModal
-	assert( nullptr != m_pTool );
 	assert( nullptr != m_pMask );
 
+	m_maskController.Init();
 	m_Values.Init();
 	m_ShapeHelperValues.Init();
 
@@ -332,13 +329,11 @@ void SVMaskShapeEditorDlg::OnOK()
 {
 	//!! store combo box values to value objects
 	UpdateData();
-	int iSel = CB_ERR;
-	long lValue = 0;
 	SVShapeMaskHelperClass* pShapeMaskHelper = dynamic_cast <SVShapeMaskHelperClass*> 
 		( SVObjectManagerClass::Instance().GetObject(m_pMask->m_guidShapeHelper) );
 
-	iSel = m_cbMaskShape.GetCurSel();
-	lValue = static_cast<long>( m_cbMaskShape.GetItemData( iSel ) );
+	int iSel = m_cbMaskShape.GetCurSel();
+	long lValue = static_cast<long>( m_cbMaskShape.GetItemData( iSel ) );
 	m_ShapeHelperValues.Set<long>(pShapeMaskHelper->m_Data.evoShapeType.GetEmbeddedID(), lValue);
 
 	iSel = m_cbMaskArea.GetCurSel();
@@ -518,49 +513,41 @@ void SVMaskShapeEditorDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult
 			pItem->GetItemValue( sValue );
 			lNewValue = atol( sValue.c_str() );
 		}
-		bool bValidated = true;
 
-		if ( !bValidated )
+		SVMaskShape::MapType mapProperties;
+		GetCurrentShape()->GetProperties(mapProperties);
+
+		long lOldValue = mapProperties[guidProperty].value;
+
+		if (lOldValue != lNewValue)
 		{
-			*plResult = S_FALSE;
-		}
-		else
-		{
-			SVMaskShape::MapType mapProperties;
+			mapProperties[guidProperty] = static_cast<long>(lNewValue);
+
+			GetCurrentShape()->SetProperties(mapProperties);
+
 			GetCurrentShape()->GetProperties(mapProperties);
+			long lValue = mapProperties[guidProperty].value;
 
-			long lOldValue = mapProperties[guidProperty].value;
-
-			if ( lOldValue != lNewValue )
+			SVObjectClass* pObject = m_pMask->GetShapeHelper()->GetEmbeddedValueObject(guidProperty);
+			assert(pObject);
+			if (nullptr != dynamic_cast<SvOi::IValueObject*> (pObject))
 			{
-				mapProperties[guidProperty] = static_cast< long >( lNewValue );
-
-				GetCurrentShape()->SetProperties( mapProperties );
-
-				GetCurrentShape()->GetProperties(mapProperties);
-				long lValue = mapProperties[guidProperty].value;
-
-				SVObjectClass* pObject = m_pMask->GetShapeHelper()->GetEmbeddedValueObject( guidProperty );
-				assert( pObject );
-				if ( nullptr != dynamic_cast<SvOi::IValueObject*> (pObject) )
-				{
-					m_ShapeHelperValues.Set<long>(pObject->GetEmbeddedID(), lValue);
-				}
-
-				if ( pCombo )
-				{
-					pCombo->SetItemValue( (unsigned long) lValue );
-				}
-				else
-				{
-					pItem->SetItemValue( SvUl::AsString(lValue).c_str() );
-				}
-
-				pItem->OnRefresh();
-
-				// redraw shape
-				UpdateMask();
+				m_ShapeHelperValues.Set<long>(pObject->GetEmbeddedID(), lValue);
 			}
+
+			if (pCombo)
+			{
+				pCombo->SetItemValue((unsigned long)lValue);
+			}
+			else
+			{
+				pItem->SetItemValue(SvUl::AsString(lValue).c_str());
+			}
+
+			pItem->OnRefresh();
+
+			// redraw shape
+			UpdateMask();
 		}
 	}// end if ( pNMPropTree->pItem )
 }
@@ -632,7 +619,7 @@ void SVMaskShapeEditorDlg::ObjectChangedExDialogImage(long Tab, long Handle, VAR
 
 void SVMaskShapeEditorDlg::MouseMovedImDialogImage(long Tab, long X, long Y)
 {
-	m_sCoordinates.Format( _T("%d, %d"), X, Y );
+	m_sCoordinates.Format( _T("%ld, %ld"), X, Y );
 	UpdateData(FALSE);
 }
 
@@ -884,21 +871,15 @@ void SVMaskShapeEditorDlg::FillComboBox(SVEnumerateValueObjectClass& rValueObjec
 void SVMaskShapeEditorDlg::setImages()
 {
 	int tabIndex = 0;
-	// Get the Image for this tool and set to first tab
-	m_dialogImage.setImageFromParent( m_pMask->getReferenceImage(), tabIndex );
+	IPictureDisp* pSourceImage = m_maskController.GetReferenceImage();
+	IPictureDisp* pMaskImage = m_maskController.GetMaskImage();
+	IPictureDisp* pResultImage = m_maskController.GetResultImage();
+
+	m_dialogImage.setImage(pSourceImage, tabIndex);
 	tabIndex++;
-	// Set second tab to Mask
-	m_dialogImage.setImage( m_pMask->m_MaskBufferHandlePtr, tabIndex );
+	m_dialogImage.setImage(pMaskImage, tabIndex);
 	tabIndex++;
-	// Set third tab to source image
-	const SVImageInfoClass* pImageInfo = m_pTool->getFirstImageInfo();
-	if( nullptr != pImageInfo )
-	{
-		SVImageClass* pImage = nullptr;
-		pImageInfo->GetOwnerImage( pImage );
-		m_dialogImage.setImage( pImage, tabIndex );
-	}
-	tabIndex++;
+	m_dialogImage.setImage(pResultImage, tabIndex);
 
 	m_dialogImage.Refresh();
 }

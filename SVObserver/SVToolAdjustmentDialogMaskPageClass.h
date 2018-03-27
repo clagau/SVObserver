@@ -106,7 +106,6 @@ private:
 	void setImages();
 
 	void RetreiveCurrentlySelectedImageNames();
-	void RetreiveResultImageNames();
 
 	static SVToolAdjustmentDialogMaskPageClass* m_pThis;
 	const SVGUID m_InspectionID;
@@ -116,8 +115,6 @@ private:
 	SvOg::MaskController m_maskController;
 	std::string m_imageInputName;
 	std::string m_imageName;
-	std::string m_resultImageName;
-	SVGUID m_resultImageID;
 };
 
 ////////////////////////////////////////////////////////////////////////////////

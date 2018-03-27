@@ -23,6 +23,7 @@
 #include "SVToolSet.h"
 #include "SVShapeMaskHelperClass.h"
 #include "InspectionEngine/SVUnaryImageOperatorList.h"
+#include "Definitions/TextDefineSvDef.h"
 
 SV_IMPLEMENT_CLASS( SVUserMaskOperatorClass, SVUserMaskOperatorClassGuid )
 
@@ -245,6 +246,38 @@ SVShapeMaskHelperClass* SVUserMaskOperatorClass::GetShapeHelper()
 	return pMaskHelper;
 }
 
+void SVUserMaskOperatorClass::getSpecialImageList(SvDef::StringVector& rList) const
+{
+	rList.push_back(SvDef::MaskImageName);
+	rList.push_back(SvDef::ReferenceImageName);
+}
+
+bool SVUserMaskOperatorClass::getSpecialImage(const std::string& rName, SvOi::SVImageBufferHandlePtr& rImagePtr) const
+{
+	if (SvDef::MaskImageName == rName)
+	{
+		rImagePtr = m_MaskBufferHandlePtr;
+		return true;
+	}
+	else if (SvDef::ReferenceImageName == rName)
+	{
+		const SVImageClass* pImage = getReferenceImage();
+		if (pImage)
+		{
+			if (SvDef::SVImageTypeEnum::SVImageTypePhysical == pImage->GetImageType())
+			{
+				rImagePtr = pImage->GetParentImageInterface()->getImageData();
+			}
+			else
+			{
+				rImagePtr = pImage->getParentImageData();
+			}
+			return true;
+		}
+	}
+	return false;
+}
+
 HRESULT SVUserMaskOperatorClass::GetCancelData(SVInputRequestStructMap& rMap)
 {
 	HRESULT hr = S_OK;
@@ -450,7 +483,7 @@ HRESULT SVUserMaskOperatorClass::CreateLocalImageBuffer()
 {
 	HRESULT l_hrOk = S_OK;
 
-	SVImageClass *l_psvImage = getReferenceImage();
+	const SVImageClass *l_psvImage = getOutputImage();
 
 	if( nullptr != l_psvImage )
 	{
@@ -713,7 +746,7 @@ bool SVUserMaskOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rI
 			if ( dwMaskType == MASK_TYPE_IMAGE )
 			{
 				SVImageClass* l_pMaskInputImage = getMaskInputImage(true);
-				SVImageClass* l_pRefImage = getReferenceImage();
+				const SVImageClass* l_pRefImage = getOutputImage(true);
 
 				if ( nullptr != l_pRefImage &&
 					nullptr != l_pMaskInputImage )
@@ -890,29 +923,6 @@ bool SVUserMaskOperatorClass::hasToAskFriendForConnection( const SvDef::SVObject
 }
 
 #pragma region IMask
-SvOi::SVImageBufferHandlePtr SVUserMaskOperatorClass::GetReferenceImage() const
-{
-	SvOi::SVImageBufferHandlePtr handlePtr;
-	SVImageClass* pImage = const_cast<SVUserMaskOperatorClass*>(this)->getReferenceImage();
-	if (pImage)
-	{
-		if (SvDef::SVImageTypeEnum::SVImageTypePhysical == pImage->GetImageType())
-		{
-			handlePtr = pImage->GetParentImageInterface()->getImageData();
-		}
-		else
-		{
-			handlePtr = pImage->getParentImageData();
-		}
-	}
-	return handlePtr;
-}
-
-SvOi::SVImageBufferHandlePtr SVUserMaskOperatorClass::GetMaskImage() const
-{
-	return m_MaskBufferHandlePtr;
-}
-
 HRESULT SVUserMaskOperatorClass::Import(const std::string& filename)
 {
 	HRESULT hr(S_OK);

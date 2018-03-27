@@ -29,14 +29,12 @@
     <ClInclude Include="GetImage.h" />
     <ClInclude Include="GetInputs.h" />
     <ClInclude Include="GetInstanceIDByDottedName.h" />
-    <ClInclude Include="GetMaskImage.h" />
     <ClInclude Include="GetMaskData.h" />
     <ClInclude Include="GetObjectName.h" />
     <ClInclude Include="GetObjectTypeInfo.h" />
     <ClInclude Include="GetOutputRectangle.h" />
     <ClInclude Include="GetPPQObjectName.h" />
     <ClInclude Include="GetPPQSelectorList.h" />
-    <ClInclude Include="GetReferenceImage.h" />
     <ClInclude Include="GetResultImage.h" />
     <ClInclude Include="GetInstanceIDByTypeInfo.h" />
     <ClInclude Include="GetSelectorList.h" />

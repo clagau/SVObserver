@@ -272,7 +272,6 @@ void SVLinearToolClass::init()
 	m_voProfileOrientation.SetDefaultValue( "Horizontal", true);
 	m_voUseProfileRotation.SetDefaultValue( BOOL(true), true);
 
-	m_svToolExtent.SetImageType( SvDef::SVImageTypeEnum::SVImageTypePhysical );
 	m_svToolExtent.SetTranslation( SvDef::SVExtentTranslationProfile );
 	m_svToolExtent.SetExtentObject( SvDef::SVExtentPropertyPositionPointX, &m_svRotationPointX );
 	m_svToolExtent.SetExtentObject( SvDef::SVExtentPropertyPositionPointY, &m_svRotationPointY );

@@ -28,7 +28,7 @@ public:
 	virtual bool CloseObject() override;
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
-	virtual bool Run( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool Run(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
 
 protected:
 	HRESULT getUseRotationAngle(BOOL& rUseRotationAngle);
@@ -53,5 +53,8 @@ private:
 	void init();
 
 	HRESULT UpdateLineExtentData();
+
+	/// If Rotation used, remove ROIImage, if not add ROIImage to the embeddedList.
+	void ResetLogicalROIImage();
 };
 

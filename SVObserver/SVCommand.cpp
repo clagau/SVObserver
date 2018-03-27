@@ -2411,8 +2411,7 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo, SvOi::SVImageBuff
 			}
 		}
 
-		if ((l_lType == SvDef::SVImageTypeEnum::SVImageTypeLogicalAndPhysical) ||
-			(l_lType == SvDef::SVImageTypeEnum::SVImageTypeLogical))
+		if (l_lType == SvDef::SVImageTypeEnum::SVImageTypeLogical)
 		{
 			bDestroyHandle = true;
 

@@ -93,7 +93,6 @@ void SVToolClass::init()
 	RegisterEmbeddedObject( &m_ToolComment, SVToolCommentTypeObjectGuid, IDS_OBJECTNAME_TOOL_COMMENT, false, SvOi::SVResetItemNone );
 	
 	m_svToolExtent.SetTool( this );
-	m_svToolExtent.SetImageType( SvDef::SVImageTypeEnum::SVImageTypeLogicalAndPhysical );
 	m_svToolExtent.SetTranslation( SvDef::SVExtentTranslationShift );
 	m_svToolExtent.SetAlwaysUpdate( false );
 	m_svToolExtent.SetExtentObject( SvDef::SVExtentPropertyPositionPointX, &m_ExtentLeft );
@@ -847,11 +846,6 @@ EAutoSize SVToolClass::GetAutoSizeEnabled()
 bool SVToolClass::SetDefaultFormulas(SvStl::MessageContainerVector *pErrorMessages)
 {
 	return true;
-}
-
-SvDef::SVImageTypeEnum SVToolClass::GetImageType()
-{
-	return m_svToolExtent.GetImageType();
 }
 
 HRESULT SVToolClass::GetImageExtent( SVImageExtentClass& rImageExtent )

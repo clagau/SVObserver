@@ -25,37 +25,40 @@
 #pragma endregion Includes
 
 #pragma region Properry Tree Items Enum
-enum {	IDC_INPUTLISTTREE = 99,
-		IDC_INPUTLISTTREE_ROOT,
-		IDC_INPUTLISTTREE_SCALEFACTOR,
-		IDC_INPUTLISTTREE_HEIGHTSCALEFACTOR,
-		IDC_INPUTLISTTREE_WIDTHSCALEFACTOR,
-		IDC_INPUTLISTTREE_INPUTIMAGE,
-		IDC_INPUTLISTTREE_ROIHEIGHT,
-		IDC_INPUTLISTTREE_ROIWIDTH,
-		IDC_INPUTLISTTREE_OUTPUTIMAGE,
-		IDC_INPUTLISTTREE_OUTPUTHEIGHT,
-		IDC_INPUTLISTTREE_OUTPUTWIDTH,
-		IDC_INPUTLISTTREE_OTHER,
-		IDC_INPUTLISTTREE_INTERPOLATIONMODE,
-		IDC_INPUTLISTTREE_OVERSCAN,
-		IDC_INPUTLISTTREE_PERFORMANCE
+enum
+{
+	IDC_INPUTLISTTREE = 99,
+	IDC_INPUTLISTTREE_ROOT,
+	IDC_INPUTLISTTREE_SCALEFACTOR,
+	IDC_INPUTLISTTREE_HEIGHTSCALEFACTOR,
+	IDC_INPUTLISTTREE_WIDTHSCALEFACTOR,
+	IDC_INPUTLISTTREE_INPUTIMAGE,
+	IDC_INPUTLISTTREE_ROIHEIGHT,
+	IDC_INPUTLISTTREE_ROIWIDTH,
+	IDC_INPUTLISTTREE_OUTPUTIMAGE,
+	IDC_INPUTLISTTREE_OUTPUTHEIGHT,
+	IDC_INPUTLISTTREE_OUTPUTWIDTH,
+	IDC_INPUTLISTTREE_OTHER,
+	IDC_INPUTLISTTREE_INTERPOLATIONMODE,
+	IDC_INPUTLISTTREE_OVERSCAN,
+	IDC_INPUTLISTTREE_PERFORMANCE
 };
 #pragma endregion Properry Tree Items Enum
 
 SVTADlgTranslationResizePage::SVTADlgTranslationResizePage(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent, int id)
-: CPropertyPage(id)
-, m_pTool(nullptr)
-, m_ParentDialog(Parent)
-, m_HeightScaleFactor(1.0)
-, m_WidthScaleFactor(1.0)
-, m_SourceHeight(0)
-, m_SourceWidth(0)
-, m_OutputHeight(0)
-, m_OutputWidth(0)
-, m_SourceTabHandle(0)
-, m_ROITabHandle(0)
-, m_OutputTabHandle(0)
+	: CPropertyPage(id)
+	, m_pTool(nullptr)
+	, m_ParentDialog(Parent)
+	, m_HeightScaleFactor(1.0)
+	, m_WidthScaleFactor(1.0)
+	, m_SourceHeight(0)
+	, m_SourceWidth(0)
+	, m_OutputHeight(0)
+	, m_OutputWidth(0)
+	, m_SourceTabHandle(0)
+	, m_ROITabHandle(0)
+	, m_OutputTabHandle(0)
+	, m_ImageController(rInspectionID, rTaskObjectID)
 {
 }
 
@@ -77,7 +80,7 @@ BOOL SVTADlgTranslationResizePage::OnKillActive()
 {
 	HRESULT hr = ExitTabValidation();
 
-	if (SUCCEEDED (hr))
+	if (SUCCEEDED(hr))
 	{
 		if (false == CPropertyPage::OnKillActive())
 		{
@@ -85,7 +88,7 @@ BOOL SVTADlgTranslationResizePage::OnKillActive()
 		}
 	}
 
-	bool br = SUCCEEDED (hr); // returning false should make it stay on the 
+	bool br = SUCCEEDED(hr); // returning false should make it stay on the 
 							  // current tab.
 
 	return br;
@@ -95,12 +98,13 @@ BOOL SVTADlgTranslationResizePage::OnKillActive()
 /////////////////////////////////////////////////////////////////////////////
 // SVTADlgTranslationResizePage message handlers
 
-BOOL SVTADlgTranslationResizePage::OnInitDialog() 
+BOOL SVTADlgTranslationResizePage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
 	HRESULT hr = S_OK;
-
+	m_ImageController.Init();
+	
 	if (nullptr == m_ParentDialog)
 	{
 		//	This should not be able to happen.  I'm not using an ASSERT 
@@ -109,7 +113,7 @@ BOOL SVTADlgTranslationResizePage::OnInitDialog()
 	}
 	else
 	{
-		m_pTool = static_cast <ResizeTool*> (m_ParentDialog->GetTool ());
+		m_pTool = static_cast <ResizeTool*> (m_ParentDialog->GetTool());
 
 		if (nullptr == m_pTool)
 		{
@@ -117,11 +121,11 @@ BOOL SVTADlgTranslationResizePage::OnInitDialog()
 		}
 		else
 		{
-			
-			m_pTool->BackupInspectionParameters ();
+
+			m_pTool->BackupInspectionParameters();
 
 			hr = SetupResizePropertyTree();
-			if (S_OK == hr )
+			if (S_OK == hr)
 			{
 				hr = SetupResizeImageControl();
 			}
@@ -130,8 +134,17 @@ BOOL SVTADlgTranslationResizePage::OnInitDialog()
 
 	if (S_OK != hr)
 	{
-		SvStl::MessageMgrStd Exception(  SvStl::LogAndDisplay );
-		Exception.setMessage( hr, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 5015);
+		SvStl::MessageMgrStd Exception(SvStl::LogAndDisplay);
+		Exception.setMessage(hr, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 5015);
+	}
+	else
+	{
+		const SvUl::NameGuidList& rImageList = m_ImageController.GetResultImages();
+		std::string toolName = m_pTool->GetName();
+		std::string tmpString = toolName + _T(".") + SvUl::LoadStdString(IDS_OBJECTNAME_ROIIMAGE);
+		m_ROIImageID = SvUl::FindGUID(rImageList, tmpString);
+		tmpString = toolName + _T(".") + SvUl::LoadStdString(IDS_OBJECTNAME_IMAGE1);
+		m_OutputImageID = SvUl::FindGUID(rImageList, tmpString);
 	}
 
 	UpdateData(FALSE); // dialog being initialized.
@@ -157,7 +170,7 @@ HRESULT SVTADlgTranslationResizePage::AddScaleFactors(SVRPropertyItem* pRoot)
 	}
 	else
 	{
-		pGroupItem->SetCtrlID (IDC_INPUTLISTTREE_SCALEFACTOR);
+		pGroupItem->SetCtrlID(IDC_INPUTLISTTREE_SCALEFACTOR);
 		pGroupItem->SetCanShrink(false);
 		pGroupItem->SetLabelText(_T("Scale Factor"));
 		pGroupItem->SetInfoText(_T(""));
@@ -174,9 +187,9 @@ HRESULT SVTADlgTranslationResizePage::AddScaleFactors(SVRPropertyItem* pRoot)
 		}
 		else
 		{
-			pEdit->SetCtrlID( IDC_INPUTLISTTREE_WIDTHSCALEFACTOR );
-			pEdit->SetLabelText( _T("Width"));
-			pEdit->SetInfoText( _T("Width scale factor modifies the width of the image. < 1 will reduce.  > 1 will expand. Range: > 0 - 1000."));
+			pEdit->SetCtrlID(IDC_INPUTLISTTREE_WIDTHSCALEFACTOR);
+			pEdit->SetLabelText(_T("Width"));
+			pEdit->SetInfoText(_T("Width scale factor modifies the width of the image. < 1 will reduce.  > 1 will expand. Range: > 0 - 1000."));
 			pEdit = static_cast <SVRPropertyItemEdit*> (m_Tree.InsertItem(new SVRPropertyItemEdit(), pGroupItem));
 			if (!pEdit)
 			{
@@ -184,9 +197,9 @@ HRESULT SVTADlgTranslationResizePage::AddScaleFactors(SVRPropertyItem* pRoot)
 			}
 			else
 			{
-				pEdit->SetCtrlID( IDC_INPUTLISTTREE_HEIGHTSCALEFACTOR );
-				pEdit->SetLabelText( _T("Height"));
-				pEdit->SetInfoText( _T("Height scale factor modifies the height of the image. < 1 will reduce.  > 1 will expand. Range: > 0 - 1000."));
+				pEdit->SetCtrlID(IDC_INPUTLISTTREE_HEIGHTSCALEFACTOR);
+				pEdit->SetLabelText(_T("Height"));
+				pEdit->SetInfoText(_T("Height scale factor modifies the height of the image. < 1 will reduce.  > 1 will expand. Range: > 0 - 1000."));
 			}
 		}
 	}
@@ -203,7 +216,7 @@ HRESULT SVTADlgTranslationResizePage::AddInputImageInfo(SVRPropertyItem* pRoot)
 	}
 	else
 	{
-		pGroupItem->SetCtrlID (IDC_INPUTLISTTREE_INPUTIMAGE);
+		pGroupItem->SetCtrlID(IDC_INPUTLISTTREE_INPUTIMAGE);
 		pGroupItem->SetCanShrink(false);
 		pGroupItem->SetLabelText(_T("Input Image ROI Size"));
 		pGroupItem->SetInfoText(_T(""));
@@ -220,9 +233,9 @@ HRESULT SVTADlgTranslationResizePage::AddInputImageInfo(SVRPropertyItem* pRoot)
 		}
 		else
 		{
-			staticItem->SetCtrlID( IDC_INPUTLISTTREE_ROIWIDTH );
-			staticItem->SetLabelText( _T("Width"));
-			staticItem->SetInfoText( _T("Width of input ROI (read only)"));
+			staticItem->SetCtrlID(IDC_INPUTLISTTREE_ROIWIDTH);
+			staticItem->SetLabelText(_T("Width"));
+			staticItem->SetInfoText(_T("Width of input ROI (read only)"));
 			staticItem = static_cast <SVRPropertyItemStatic*> (m_Tree.InsertItem(new SVRPropertyItemStatic(), pGroupItem));
 			if (nullptr == staticItem)
 			{
@@ -230,7 +243,7 @@ HRESULT SVTADlgTranslationResizePage::AddInputImageInfo(SVRPropertyItem* pRoot)
 			}
 			else
 			{
-				staticItem->SetCtrlID( IDC_INPUTLISTTREE_ROIHEIGHT );
+				staticItem->SetCtrlID(IDC_INPUTLISTTREE_ROIHEIGHT);
 				staticItem->SetLabelText(_T("Height"));
 				staticItem->SetInfoText(_T("Height of input ROI (read only)"));
 			}
@@ -249,7 +262,7 @@ HRESULT SVTADlgTranslationResizePage::AddOutputImageInfo(SVRPropertyItem* pRoot)
 	}
 	else
 	{
-		pGroupItem->SetCtrlID (IDC_INPUTLISTTREE_OUTPUTIMAGE);
+		pGroupItem->SetCtrlID(IDC_INPUTLISTTREE_OUTPUTIMAGE);
 		pGroupItem->SetCanShrink(false);
 		pGroupItem->SetLabelText(_T("Output Image Size"));
 		pGroupItem->SetInfoText(_T(""));
@@ -267,9 +280,9 @@ HRESULT SVTADlgTranslationResizePage::AddOutputImageInfo(SVRPropertyItem* pRoot)
 		else
 		{
 			staticItem->SetCtrlID(IDC_INPUTLISTTREE_OUTPUTWIDTH);
-			staticItem->SetLabelText( _T("Width"));
-			staticItem->SetInfoText( _T("Ouput Image width after the Width Scale Factor is applied. (read only)"));
-			staticItem->SetItemValue( _T("400") );
+			staticItem->SetLabelText(_T("Width"));
+			staticItem->SetInfoText(_T("Ouput Image width after the Width Scale Factor is applied. (read only)"));
+			staticItem->SetItemValue(_T("400"));
 
 			staticItem = static_cast <SVRPropertyItemStatic*> (m_Tree.InsertItem(new SVRPropertyItemStatic(), pGroupItem));
 			if (nullptr == staticItem)
@@ -279,9 +292,9 @@ HRESULT SVTADlgTranslationResizePage::AddOutputImageInfo(SVRPropertyItem* pRoot)
 			else
 			{
 				staticItem->SetCtrlID(IDC_INPUTLISTTREE_OUTPUTHEIGHT);
-				staticItem->SetLabelText( _T("Height"));
-				staticItem->SetInfoText( _T("Ouput Image height after the Height Scale Factor is applied. (read only)"));
-				staticItem->SetItemValue( _T("300") );
+				staticItem->SetLabelText(_T("Height"));
+				staticItem->SetInfoText(_T("Ouput Image height after the Height Scale Factor is applied. (read only)"));
+				staticItem->SetItemValue(_T("300"));
 			}
 		}
 	}
@@ -298,31 +311,31 @@ HRESULT SVTADlgTranslationResizePage::AddInterpolationMode(SVRPropertyItem* pGro
 	}
 	else
 	{
-		comboItem->SetCtrlID( IDC_INPUTLISTTREE_INTERPOLATIONMODE );
-		comboItem->SetLabelText( _T("Interpolation Mode"));
-		comboItem->SetInfoText( _T("Pulldown menu options: Auto (enlarge is Bilinear, reduce is Average), Bicubic, Bilinear, Nearest neighbor."));
+		comboItem->SetCtrlID(IDC_INPUTLISTTREE_INTERPOLATIONMODE);
+		comboItem->SetLabelText(_T("Interpolation Mode"));
+		comboItem->SetInfoText(_T("Pulldown menu options: Auto (enlarge is Bilinear, reduce is Average), Bicubic, Bilinear, Nearest neighbor."));
 
 		comboItem->CreateComboBox();
 
-		SVEnumerateValueObjectClass& rInterpolationMode = m_pTool->getInterpolationMode ();
+		SVEnumerateValueObjectClass& rInterpolationMode = m_pTool->getInterpolationMode();
 		std::string enumeratorName;
 
-		rInterpolationMode.GetEnumeratorName( SVInterpolationModeOptions::InterpolationModeAuto, enumeratorName );
-		long insertedIndex = comboItem->AddString( enumeratorName.c_str() );
+		rInterpolationMode.GetEnumeratorName(SVInterpolationModeOptions::InterpolationModeAuto, enumeratorName);
+		long insertedIndex = comboItem->AddString(enumeratorName.c_str());
 		comboItem->SetItemData(insertedIndex, SVInterpolationModeOptions::InterpolationModeAuto);
 
 		// Average will only work with values less than 1.  
 		// Auto will already use Average for values less than 1.
-		rInterpolationMode.GetEnumeratorName( SVInterpolationModeOptions::InterpolationModeBicubic, enumeratorName );
-		insertedIndex = comboItem->AddString( enumeratorName.c_str() );
+		rInterpolationMode.GetEnumeratorName(SVInterpolationModeOptions::InterpolationModeBicubic, enumeratorName);
+		insertedIndex = comboItem->AddString(enumeratorName.c_str());
 		comboItem->SetItemData(insertedIndex, SVInterpolationModeOptions::InterpolationModeBicubic);
 
-		rInterpolationMode.GetEnumeratorName( SVInterpolationModeOptions::InterpolationModeBilinear, enumeratorName );
-		insertedIndex = comboItem->AddString( enumeratorName.c_str() );
+		rInterpolationMode.GetEnumeratorName(SVInterpolationModeOptions::InterpolationModeBilinear, enumeratorName);
+		insertedIndex = comboItem->AddString(enumeratorName.c_str());
 		comboItem->SetItemData(insertedIndex, SVInterpolationModeOptions::InterpolationModeBilinear);
 
-		rInterpolationMode.GetEnumeratorName( SVInterpolationModeOptions::InterpolationModeNearestNeighbor, enumeratorName );
-		insertedIndex = comboItem->AddString( enumeratorName.c_str() );
+		rInterpolationMode.GetEnumeratorName(SVInterpolationModeOptions::InterpolationModeNearestNeighbor, enumeratorName);
+		insertedIndex = comboItem->AddString(enumeratorName.c_str());
 		comboItem->SetItemData(insertedIndex, SVInterpolationModeOptions::InterpolationModeNearestNeighbor);
 
 		comboItem->SetItemValue(SVInterpolationModeOptions::InterpolationModeAuto); // Currently selected value.
@@ -340,24 +353,24 @@ HRESULT SVTADlgTranslationResizePage::AddOverScan(SVRPropertyItem* pGroupItem)
 	}
 	else
 	{
-		comboItem->SetCtrlID( IDC_INPUTLISTTREE_OVERSCAN );
-		comboItem->SetLabelText( _T("Overscan"));
-		comboItem->SetInfoText( _T("Pulldown menu options: Enabled - use pixels from outside ROI for interpolation (if available), Disabled."));
+		comboItem->SetCtrlID(IDC_INPUTLISTTREE_OVERSCAN);
+		comboItem->SetLabelText(_T("Overscan"));
+		comboItem->SetInfoText(_T("Pulldown menu options: Enabled - use pixels from outside ROI for interpolation (if available), Disabled."));
 
 		comboItem->CreateComboBox();
 
-		SVEnumerateValueObjectClass& rOverscan = m_pTool->getOverscan ();
+		SVEnumerateValueObjectClass& rOverscan = m_pTool->getOverscan();
 		std::string enumeratorName;
 
-		rOverscan.GetEnumeratorName( SVOverscanOptions::OverscanEnable, enumeratorName );
-		long insertedIndex = comboItem->AddString( enumeratorName.c_str() );
-		comboItem->SetItemData (insertedIndex, SVOverscanOptions::OverscanEnable);
+		rOverscan.GetEnumeratorName(SVOverscanOptions::OverscanEnable, enumeratorName);
+		long insertedIndex = comboItem->AddString(enumeratorName.c_str());
+		comboItem->SetItemData(insertedIndex, SVOverscanOptions::OverscanEnable);
 
-		rOverscan.GetEnumeratorName( SVOverscanOptions::OverscanDisable, enumeratorName );
-		insertedIndex = comboItem->AddString( enumeratorName.c_str() );
-		comboItem->SetItemData (insertedIndex, SVOverscanOptions::OverscanDisable);
+		rOverscan.GetEnumeratorName(SVOverscanOptions::OverscanDisable, enumeratorName);
+		insertedIndex = comboItem->AddString(enumeratorName.c_str());
+		comboItem->SetItemData(insertedIndex, SVOverscanOptions::OverscanDisable);
 
-		comboItem->SetItemValue (SVOverscanOptions::OverscanEnable); // Currently selected value.
+		comboItem->SetItemValue(SVOverscanOptions::OverscanEnable); // Currently selected value.
 	}
 	return hr;
 }
@@ -372,24 +385,24 @@ HRESULT SVTADlgTranslationResizePage::AddPerformance(SVRPropertyItem* pGroupItem
 	}
 	else
 	{
-		comboItem->SetCtrlID( IDC_INPUTLISTTREE_PERFORMANCE	);
-		comboItem->SetLabelText( _T("Performance"));
-		comboItem->SetInfoText( _T("Pulldown menu options: Fast, Precise."));
+		comboItem->SetCtrlID(IDC_INPUTLISTTREE_PERFORMANCE);
+		comboItem->SetLabelText(_T("Performance"));
+		comboItem->SetInfoText(_T("Pulldown menu options: Fast, Precise."));
 
 		comboItem->CreateComboBox();
 
-		SVEnumerateValueObjectClass& rPerformance = m_pTool->getPerformance ();
+		SVEnumerateValueObjectClass& rPerformance = m_pTool->getPerformance();
 		std::string enumeratorName;
 
-		rPerformance.GetEnumeratorName( SVPerformanceOptions::PerformanceFast, enumeratorName );
-		long insertedIndex = comboItem->AddString( enumeratorName.c_str() );
-		comboItem->SetItemData (insertedIndex, SVPerformanceOptions::PerformanceFast);
+		rPerformance.GetEnumeratorName(SVPerformanceOptions::PerformanceFast, enumeratorName);
+		long insertedIndex = comboItem->AddString(enumeratorName.c_str());
+		comboItem->SetItemData(insertedIndex, SVPerformanceOptions::PerformanceFast);
 
-		rPerformance.GetEnumeratorName( SVPerformanceOptions::PerformancePresice, enumeratorName );
-		insertedIndex = comboItem->AddString( enumeratorName.c_str() );
-		comboItem->SetItemData (insertedIndex, SVPerformanceOptions::PerformancePresice);
+		rPerformance.GetEnumeratorName(SVPerformanceOptions::PerformancePresice, enumeratorName);
+		insertedIndex = comboItem->AddString(enumeratorName.c_str());
+		comboItem->SetItemData(insertedIndex, SVPerformanceOptions::PerformancePresice);
 
-		comboItem->SetItemValue (SVPerformanceOptions::PerformancePresice); // Currently selected value.
+		comboItem->SetItemValue(SVPerformanceOptions::PerformancePresice); // Currently selected value.
 	}
 	return hr;
 }
@@ -405,7 +418,7 @@ HRESULT SVTADlgTranslationResizePage::AddOtherInfo(SVRPropertyItem* pRoot)
 	}
 	else
 	{
-		pGroupItem->SetCtrlID (IDC_INPUTLISTTREE_OTHER);
+		pGroupItem->SetCtrlID(IDC_INPUTLISTTREE_OTHER);
 		pGroupItem->SetCanShrink(false);//(true); // Comboboxes in expand/shrink groups do not work correctly when collapsing
 		pGroupItem->SetLabelText(_T("Other"));
 		pGroupItem->SetInfoText(_T(""));
@@ -419,7 +432,7 @@ HRESULT SVTADlgTranslationResizePage::AddOtherInfo(SVRPropertyItem* pRoot)
 		if (S_OK == hr)
 		{
 			hr = AddOverScan(pGroupItem);
-		
+
 			if (S_OK == hr)
 			{
 				hr = AddPerformance(pGroupItem);
@@ -429,7 +442,7 @@ HRESULT SVTADlgTranslationResizePage::AddOtherInfo(SVRPropertyItem* pRoot)
 	return hr;
 }
 
-HRESULT SVTADlgTranslationResizePage::SetupResizePropertyTree ()
+HRESULT SVTADlgTranslationResizePage::SetupResizePropertyTree()
 {
 	HRESULT	hr = S_OK;
 
@@ -437,7 +450,7 @@ HRESULT SVTADlgTranslationResizePage::SetupResizePropertyTree ()
 	CRect rc;
 
 	// PTS_NOTIFY - SVRPropTree will send notification messages to the parent window
-	dwStyle = WS_CHILD|WS_VISIBLE|PTS_NOTIFY;
+	dwStyle = WS_CHILD | WS_VISIBLE | PTS_NOTIFY;
 
 	// Init the control's size to cover the entire client area
 	// Use dummy control for editor placement of Tree/list control.
@@ -472,18 +485,18 @@ HRESULT SVTADlgTranslationResizePage::SetupResizePropertyTree ()
 			pRoot->SetCanShrink(false);
 			pRoot->SetLabelText(_T(""));
 			pRoot->SetInfoText(_T(""));
-			pRoot->SetCtrlID (IDC_INPUTLISTTREE_ROOT);
+			pRoot->SetCtrlID(IDC_INPUTLISTTREE_ROOT);
 
 			hr = AddScaleFactors(pRoot);
 		}
 		if (S_OK == hr)
 		{
 			hr = AddInputImageInfo(pRoot);
-		
+
 			if (S_OK == hr)
 			{
 				hr = AddOutputImageInfo(pRoot);
-			
+
 				if (S_OK == hr)
 				{
 					hr = AddOtherInfo(pRoot);
@@ -492,8 +505,8 @@ HRESULT SVTADlgTranslationResizePage::SetupResizePropertyTree ()
 		}
 		if (S_OK == hr)
 		{
-			hr = UpdatePropertyTreeData ();
-		
+			hr = UpdatePropertyTreeData();
+
 			if (S_OK == hr)
 			{
 				if (nullptr == m_ParentDialog)
@@ -504,7 +517,7 @@ HRESULT SVTADlgTranslationResizePage::SetupResizePropertyTree ()
 				}
 				else
 				{
-					pRoot->Expand( true );	// needed for redrawing
+					pRoot->Expand(true);	// needed for redrawing
 				}
 			}
 		}
@@ -520,7 +533,7 @@ void SVTADlgTranslationResizePage::UpdateScaleFactors(double newWidthScaleFactor
 	editItem->GetItemValue(oldHeightScaleFactor);
 	if (newHeightScaleFactor != oldHeightScaleFactor) // reduces flicker.
 	{
-		editItem->SetItemValue( newHeightScaleFactor );
+		editItem->SetItemValue(newHeightScaleFactor);
 		m_HeightScaleFactor = newHeightScaleFactor;
 	}
 
@@ -529,7 +542,7 @@ void SVTADlgTranslationResizePage::UpdateScaleFactors(double newWidthScaleFactor
 	editItem->GetItemValue(oldWidthScaleFactor);
 	if (newWidthScaleFactor != oldWidthScaleFactor) // reduces flicker.
 	{
-		editItem->SetItemValue( newWidthScaleFactor ); 
+		editItem->SetItemValue(newWidthScaleFactor);
 		m_WidthScaleFactor = newWidthScaleFactor;
 	}
 }
@@ -537,24 +550,24 @@ void SVTADlgTranslationResizePage::UpdateScaleFactors(double newWidthScaleFactor
 void SVTADlgTranslationResizePage::UpdateInputImageInfo(long newInputROIWidth, long newInputROIHeight)
 {
 	SVRPropertyItemStatic* staticItem = static_cast <SVRPropertyItemStatic*> (m_Tree.FindItem(IDC_INPUTLISTTREE_ROIHEIGHT));
-	
+
 	std::string Value;
-	staticItem->GetItemValue( Value );
-	long oldInputROIHeight = atol( Value.c_str() );
+	staticItem->GetItemValue(Value);
+	long oldInputROIHeight = atol(Value.c_str());
 	if (newInputROIHeight != oldInputROIHeight)
 	{
-		Value = SvUl::Format( _T("%d"), newInputROIHeight);
-		staticItem->SetItemValue( Value.c_str() );
+		Value = SvUl::Format(_T("%d"), newInputROIHeight);
+		staticItem->SetItemValue(Value.c_str());
 	}
 
 	staticItem = static_cast <SVRPropertyItemStatic*> (m_Tree.FindItem(IDC_INPUTLISTTREE_ROIWIDTH));
 
 	staticItem->GetItemValue(Value);
-	long oldInputROIWidth = atol ( Value.c_str() );
+	long oldInputROIWidth = atol(Value.c_str());
 	if (newInputROIWidth != oldInputROIWidth)
 	{
-		Value = SvUl::Format( _T("%d"), newInputROIWidth);
-		staticItem->SetItemValue( Value.c_str() );
+		Value = SvUl::Format(_T("%d"), newInputROIWidth);
+		staticItem->SetItemValue(Value.c_str());
 	}
 }
 
@@ -563,62 +576,62 @@ void SVTADlgTranslationResizePage::UpdateOutputImageInfo(long newOutputWidth, lo
 	SVRPropertyItemStatic* staticItem = static_cast <SVRPropertyItemStatic*> (m_Tree.FindItem(IDC_INPUTLISTTREE_OUTPUTHEIGHT));
 
 	std::string Value;
-	staticItem->GetItemValue( Value );
-	long oldOutputHeight = atol( Value.c_str() );
+	staticItem->GetItemValue(Value);
+	long oldOutputHeight = atol(Value.c_str());
 	if (newOutputHeight != oldOutputHeight)
 	{
-		Value = SvUl::Format( _T("%d"), newOutputHeight );
-		staticItem->SetItemValue( Value.c_str() );
+		Value = SvUl::Format(_T("%d"), newOutputHeight);
+		staticItem->SetItemValue(Value.c_str());
 	}
 
 	staticItem = static_cast <SVRPropertyItemStatic*> (m_Tree.FindItem(IDC_INPUTLISTTREE_OUTPUTWIDTH));
 
-	staticItem->GetItemValue( Value );
-	long oldOutputWidth = atol( Value.c_str() );
+	staticItem->GetItemValue(Value);
+	long oldOutputWidth = atol(Value.c_str());
 	if (newOutputWidth != oldOutputWidth)
 	{
-		Value = SvUl::Format( _T("%d"), newOutputWidth);
-		staticItem->SetItemValue( Value.c_str() );
+		Value = SvUl::Format(_T("%d"), newOutputWidth);
+		staticItem->SetItemValue(Value.c_str());
 	}
 }
 
 void SVTADlgTranslationResizePage::UpdateOtherInfo()
 {
 	SVRPropertyItemCombo* comboItem = static_cast <SVRPropertyItemCombo*> (m_Tree.FindItem(IDC_INPUTLISTTREE_INTERPOLATIONMODE));
-	SVEnumerateValueObjectClass& rInterpolationMode = m_pTool->getInterpolationMode ();
+	SVEnumerateValueObjectClass& rInterpolationMode = m_pTool->getInterpolationMode();
 	long oldInterpolationValue;
 	long newInterpolationValue;
-	rInterpolationMode.GetValue (newInterpolationValue);
+	rInterpolationMode.GetValue(newInterpolationValue);
 	comboItem->GetItemValue(oldInterpolationValue);
 	if (newInterpolationValue != oldInterpolationValue)
 	{
-		comboItem->SetItemValue( newInterpolationValue );
+		comboItem->SetItemValue(newInterpolationValue);
 	}
 
 	comboItem = static_cast <SVRPropertyItemCombo*> (m_Tree.FindItem(IDC_INPUTLISTTREE_OVERSCAN));
-	SVEnumerateValueObjectClass& rOverscan = m_pTool->getOverscan ();
+	SVEnumerateValueObjectClass& rOverscan = m_pTool->getOverscan();
 	long oldOverscanValue;
 	long newOverscanValue;
-	rOverscan.GetValue (newOverscanValue);
+	rOverscan.GetValue(newOverscanValue);
 	comboItem->GetItemValue(oldOverscanValue);
 	if (newOverscanValue != oldOverscanValue)
 	{
-		comboItem->SetItemValue( newOverscanValue );
+		comboItem->SetItemValue(newOverscanValue);
 	}
 
 	comboItem = static_cast <SVRPropertyItemCombo*> (m_Tree.FindItem(IDC_INPUTLISTTREE_PERFORMANCE));
-	SVEnumerateValueObjectClass& rPerformance = m_pTool->getPerformance ();
+	SVEnumerateValueObjectClass& rPerformance = m_pTool->getPerformance();
 	long oldPerformanceValue;
 	long newPerformanceValue;
-	rPerformance.GetValue (newPerformanceValue);
+	rPerformance.GetValue(newPerformanceValue);
 	comboItem->GetItemValue(oldPerformanceValue);
 	if (newPerformanceValue != oldPerformanceValue)
 	{
-		comboItem->SetItemValue( newPerformanceValue );
+		comboItem->SetItemValue(newPerformanceValue);
 	}
 }
 
-HRESULT SVTADlgTranslationResizePage::UpdatePropertyTreeData ()
+HRESULT SVTADlgTranslationResizePage::UpdatePropertyTreeData()
 {
 	SVImageExtentClass toolImageExtents;
 	HRESULT hr = m_pTool->GetImageExtent(toolImageExtents);
@@ -639,7 +652,7 @@ HRESULT SVTADlgTranslationResizePage::UpdatePropertyTreeData ()
 		long newOutputWidth(0);
 		long newOutputHeight(0);
 		toolImageExtents.GetExtentProperty(SvDef::SVExtentPropertyOutputWidth, newOutputWidth);
-		toolImageExtents.GetExtentProperty(SvDef::SVExtentPropertyOutputHeight , newOutputHeight);
+		toolImageExtents.GetExtentProperty(SvDef::SVExtentPropertyOutputHeight, newOutputHeight);
 		UpdateOutputImageInfo(newOutputWidth, newOutputHeight);
 
 		UpdateOtherInfo();
@@ -651,35 +664,35 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 {
 	HRESULT	hr1 = S_OK;
 
-	bool	extentChanged =					false;
-	bool	embeddedChanged =				false;
-	bool	heightScaleFactorSucceeded =	false;
-	bool	widthScaleFactorSucceeded =		false;
-	bool	interpolationModeSucceeded =	false;
-	bool	overscanSucceeded =				false;
-	bool	performanceSucceeded =			false;
-	
+	bool	extentChanged = false;
+	bool	embeddedChanged = false;
+	bool	heightScaleFactorSucceeded = false;
+	bool	widthScaleFactorSucceeded = false;
+	bool	interpolationModeSucceeded = false;
+	bool	overscanSucceeded = false;
+	bool	performanceSucceeded = false;
 
-	double	oldWidthScaleFactor =	0.0;
+
+	double	oldWidthScaleFactor = 0.0;
 	double	oldHeightScaleFactor = 0.0;
 
 	long	longOldInterpolationValue = 0;
-	SVInterpolationModeOptions::SVInterpolationModeOptionsEnum oldInterpolationValue = 
-		SVInterpolationModeOptions::InterpolationModeInitialize;	
+	SVInterpolationModeOptions::SVInterpolationModeOptionsEnum oldInterpolationValue =
+		SVInterpolationModeOptions::InterpolationModeInitialize;
 	long	longDefaultInterpolationValue = 0;
-	SVInterpolationModeOptions::SVInterpolationModeOptionsEnum defaultInterpolationValue = 
+	SVInterpolationModeOptions::SVInterpolationModeOptionsEnum defaultInterpolationValue =
 		SVInterpolationModeOptions::InterpolationModeInitialize;
 	long	longOldOverscanValue = 0;
-	SVOverscanOptions::SVOverscanOptionsEnum oldOverscanValue = 
+	SVOverscanOptions::SVOverscanOptionsEnum oldOverscanValue =
 		SVOverscanOptions::OverscanInitialize;
 	long	longDefaultOverscanValue = 0;
-	SVOverscanOptions::SVOverscanOptionsEnum defaultOverscanValue = 
+	SVOverscanOptions::SVOverscanOptionsEnum defaultOverscanValue =
 		SVOverscanOptions::OverscanInitialize;
 	long	longOldPerformanceValue = 0;
-	SVPerformanceOptions::SVPerformanceOptionsEnum oldPerformanceValue = 
+	SVPerformanceOptions::SVPerformanceOptionsEnum oldPerformanceValue =
 		SVPerformanceOptions::PerformanceInitialize;
 	long	longDefaultPerformanceValue = 0;
-	SVPerformanceOptions::SVPerformanceOptionsEnum defaultPerformanceValue = 
+	SVPerformanceOptions::SVPerformanceOptionsEnum defaultPerformanceValue =
 		SVPerformanceOptions::PerformanceInitialize;
 
 	SVRPropertyItemEdit*	editItem = nullptr;
@@ -690,25 +703,25 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 	// Retrieve current values --------------------------------------------------
 	hr1 = m_pTool->GetImageExtent(toolImageExtents);
 
-	if (SUCCEEDED (hr1))
+	if (SUCCEEDED(hr1))
 	{
-		toolImageExtents.GetExtentProperty (SvDef::SVExtentPropertyHeightScaleFactor, oldHeightScaleFactor);
-		toolImageExtents.GetExtentProperty (SvDef::SVExtentPropertyWidthScaleFactor, oldWidthScaleFactor);
+		toolImageExtents.GetExtentProperty(SvDef::SVExtentPropertyHeightScaleFactor, oldHeightScaleFactor);
+		toolImageExtents.GetExtentProperty(SvDef::SVExtentPropertyWidthScaleFactor, oldWidthScaleFactor);
 
-		SVEnumerateValueObjectClass& rInterpolationMode = m_pTool->getInterpolationMode ();
-		rInterpolationMode.GetValue (longOldInterpolationValue);
+		SVEnumerateValueObjectClass& rInterpolationMode = m_pTool->getInterpolationMode();
+		rInterpolationMode.GetValue(longOldInterpolationValue);
 		oldInterpolationValue = static_cast<SVInterpolationModeOptions::SVInterpolationModeOptionsEnum> (longOldInterpolationValue);
 		longDefaultInterpolationValue = rInterpolationMode.GetDefaultValue();
 		defaultInterpolationValue = static_cast<SVInterpolationModeOptions::SVInterpolationModeOptionsEnum> (longDefaultInterpolationValue);
 
-		SVEnumerateValueObjectClass& rOverscan = m_pTool->getOverscan ();
-		rOverscan.GetValue (longOldOverscanValue);
+		SVEnumerateValueObjectClass& rOverscan = m_pTool->getOverscan();
+		rOverscan.GetValue(longOldOverscanValue);
 		oldOverscanValue = static_cast<SVOverscanOptions::SVOverscanOptionsEnum> (longOldOverscanValue);
 		longDefaultOverscanValue = rOverscan.GetDefaultValue();
 		defaultOverscanValue = static_cast<SVOverscanOptions::SVOverscanOptionsEnum> (longDefaultOverscanValue);
 
-		SVEnumerateValueObjectClass& rPerformance = m_pTool->getPerformance ();
-		rPerformance.GetValue (longOldPerformanceValue);
+		SVEnumerateValueObjectClass& rPerformance = m_pTool->getPerformance();
+		rPerformance.GetValue(longOldPerformanceValue);
 		oldPerformanceValue = static_cast<SVPerformanceOptions::SVPerformanceOptionsEnum> (longOldPerformanceValue);
 		longDefaultPerformanceValue = rPerformance.GetDefaultValue();
 		defaultPerformanceValue = static_cast<SVPerformanceOptions::SVPerformanceOptionsEnum> (longDefaultPerformanceValue);
@@ -716,16 +729,16 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 
 	// Validate new values --------------------------------------------------
 
-	double	newHeightScaleFactor =	0.0;
-	if (SUCCEEDED (hr1))
+	double	newHeightScaleFactor = 0.0;
+	if (SUCCEEDED(hr1))
 	{
 		editItem = static_cast <SVRPropertyItemEdit*> (m_Tree.FindItem(IDC_INPUTLISTTREE_HEIGHTSCALEFACTOR));
 		editItem->GetItemValue(newHeightScaleFactor);
-		if (!m_pTool->ValidateScaleFactor (newHeightScaleFactor, pErrorMessages))
+		if (!m_pTool->ValidateScaleFactor(newHeightScaleFactor, pErrorMessages))
 		{
 			hr1 = E_FAIL;
 			newHeightScaleFactor = oldHeightScaleFactor;
-			if (!m_pTool->ValidateScaleFactor (newHeightScaleFactor, pErrorMessages))
+			if (!m_pTool->ValidateScaleFactor(newHeightScaleFactor, pErrorMessages))
 			{
 				// old values were also invalid.  Currently this can happen 
 				// with corruption or with Remote Access putting in an 
@@ -742,18 +755,18 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 		}
 	}
 
-	double	newWidthScaleFactor =	0.0;
-	if (SUCCEEDED (hr1))
+	double	newWidthScaleFactor = 0.0;
+	if (SUCCEEDED(hr1))
 	{
 		editItem = static_cast <SVRPropertyItemEdit*> (m_Tree.FindItem(IDC_INPUTLISTTREE_WIDTHSCALEFACTOR));
 		editItem->GetItemValue(newWidthScaleFactor);
-		if (!m_pTool->ValidateScaleFactor (newWidthScaleFactor, pErrorMessages))
+		if (!m_pTool->ValidateScaleFactor(newWidthScaleFactor, pErrorMessages))
 		{
 			hr1 = E_FAIL;
 			// Expected codes include...
 			//  SVMSG_SVO_5061_SFOUTSIDERANGE
 			newWidthScaleFactor = oldWidthScaleFactor;
-			if (!m_pTool->ValidateScaleFactor (newWidthScaleFactor, pErrorMessages))
+			if (!m_pTool->ValidateScaleFactor(newWidthScaleFactor, pErrorMessages))
 			{
 				// old values were also invalid.  Currently this can happen 
 				// with corruption or with Remote Access putting in an 
@@ -769,10 +782,10 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 		}
 	}
 
-	SVInterpolationModeOptions::SVInterpolationModeOptionsEnum newInterpolationValue = 
+	SVInterpolationModeOptions::SVInterpolationModeOptionsEnum newInterpolationValue =
 		SVInterpolationModeOptions::InterpolationModeInitialize;
-	
-	if (SUCCEEDED (hr1))
+
+	if (SUCCEEDED(hr1))
 	{
 		SVRPropertyItemCombo* comboItem = static_cast <SVRPropertyItemCombo*> (m_Tree.FindItem(IDC_INPUTLISTTREE_INTERPOLATIONMODE));
 		comboItem->GetItemValue(*(reinterpret_cast <long*> (&newInterpolationValue)));
@@ -797,9 +810,9 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 		}
 	}
 
-	SVOverscanOptions::SVOverscanOptionsEnum newOverscanValue = 
+	SVOverscanOptions::SVOverscanOptionsEnum newOverscanValue =
 		SVOverscanOptions::OverscanInitialize;
-	if (SUCCEEDED (hr1))
+	if (SUCCEEDED(hr1))
 	{
 		comboItem = static_cast <SVRPropertyItemCombo*> (m_Tree.FindItem(IDC_INPUTLISTTREE_OVERSCAN));
 		comboItem->GetItemValue(*(reinterpret_cast <long*> (&newOverscanValue)));
@@ -824,9 +837,9 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 		}
 	}
 
-	SVPerformanceOptions::SVPerformanceOptionsEnum newPerformanceValue = 
+	SVPerformanceOptions::SVPerformanceOptionsEnum newPerformanceValue =
 		SVPerformanceOptions::PerformanceInitialize;
-	if (SUCCEEDED (hr1))
+	if (SUCCEEDED(hr1))
 	{
 		comboItem = static_cast <SVRPropertyItemCombo*> (m_Tree.FindItem(IDC_INPUTLISTTREE_PERFORMANCE));
 		comboItem->GetItemValue(*(reinterpret_cast <long*> (&newPerformanceValue)));
@@ -854,7 +867,7 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 	//@TODO[gra][8.00][15.01.2018]: The data controller should be used like the rest of SVOGui
 	typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
 	typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
-	Controller Values{ SvOg::BoundValues{ m_pTool->GetInspection()->GetUniqueObjectID(), m_pTool->GetUniqueObjectID() } };
+	Controller Values {SvOg::BoundValues{ m_pTool->GetInspection()->GetUniqueObjectID(), m_pTool->GetUniqueObjectID() }};
 	Values.Init();
 
 	// Set new values -------------------------------------------------------
@@ -864,14 +877,14 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 	// after this point.
 	if (heightScaleFactorSucceeded) // reduces flicker.
 	{
-		toolImageExtents.SetExtentProperty (SvDef::SVExtentPropertyHeightScaleFactor, newHeightScaleFactor);
+		toolImageExtents.SetExtentProperty(SvDef::SVExtentPropertyHeightScaleFactor, newHeightScaleFactor);
 		extentChanged = true;
 	}
 
 	if (widthScaleFactorSucceeded) // reduces flicker.
 	{
-			toolImageExtents.SetExtentProperty (SvDef::SVExtentPropertyWidthScaleFactor, newWidthScaleFactor);
-			extentChanged = true;
+		toolImageExtents.SetExtentProperty(SvDef::SVExtentPropertyWidthScaleFactor, newWidthScaleFactor);
+		extentChanged = true;
 	}
 
 	if (interpolationModeSucceeded)
@@ -909,24 +922,12 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 	{
 		SVGUID InspectionID = m_pTool->GetInspection()->GetUniqueObjectID();
 		SvPb::InspectionRunOnceRequest requestMessage;
-		
+
 		SvPb::SetGuidInProtoBytes(requestMessage.mutable_inspectionid(), InspectionID);
 		SvPb::SetGuidInProtoBytes(requestMessage.mutable_taskid(), (m_pTool->GetUniqueObjectID()));
 		SvCmd::InspectionCommandsSynchronous(InspectionID, &requestMessage, nullptr);
-
-		HRESULT hr2 = UpdateImages();
-
-		if (SUCCEEDED (hr2))
-		{
-			m_pTool->BackupInspectionParameters();
-		}
-
-		if (SUCCEEDED (hr1))
-		{
-			// if there was no hr1 error prior to attempting the RunOnce, 
-			// then flag the hr2 error.
-			hr1 = hr2;
-		}
+		UpdateImages();
+		m_pTool->BackupInspectionParameters();
 	}
 
 	return hr1;
@@ -936,14 +937,14 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 bool	SVTADlgTranslationResizePage::QueryAllowExit()
 {
 	HRESULT hr = ExitTabValidation();
-	
-	bool br = SUCCEEDED (hr); // returning false should make it stay on the 
+
+	bool br = SUCCEEDED(hr); // returning false should make it stay on the 
 							  // current tab.
 	return br;
 }
 
 
-HRESULT	SVTADlgTranslationResizePage::ExitTabValidation ()
+HRESULT	SVTADlgTranslationResizePage::ExitTabValidation()
 {
 	// if changes in the property are pending, CommitChanges() will fire off 
 	// OnItemChanged(). Because OnItemChanged() will in turn go into 
@@ -960,34 +961,34 @@ HRESULT	SVTADlgTranslationResizePage::ExitTabValidation ()
 	}
 
 	SvStl::MessageContainer message = m_pTool->getFirstTaskMessage();
-	
+
 	// above validates the parameters from the translation tab.
 	// below validates the whole tool.
-	if (SUCCEEDED (message.getMessage().m_MessageCode))
+	if (SUCCEEDED(message.getMessage().m_MessageCode))
 	{
 		bool br = m_pTool->resetAllObjects();
 		message = m_pTool->getFirstTaskMessage();
-		if ( br != SUCCEEDED (message.getMessage().m_MessageCode))
+		if (br != SUCCEEDED(message.getMessage().m_MessageCode))
 		{
 			message.clearMessage();
-			message.setMessage( SvStl::MessageData(SVMSG_SVO_5078_INCONSISTENTDATA) );
+			message.setMessage(SvStl::MessageData(SVMSG_SVO_5078_INCONSISTENTDATA));
 		}
 	}
 
-	if (SUCCEEDED (message.getMessage().m_MessageCode))
+	if (SUCCEEDED(message.getMessage().m_MessageCode))
 	{
 		SVGUID InspectionID = m_pTool->GetInspection()->GetUniqueObjectID();
 		SvPb::InspectionRunOnceRequest requestMessage;
-		
+
 		SvPb::SetGuidInProtoBytes(requestMessage.mutable_inspectionid(), InspectionID);
 		SvPb::SetGuidInProtoBytes(requestMessage.mutable_taskid(), (m_pTool->GetUniqueObjectID()));
 		SvCmd::InspectionCommandsSynchronous(InspectionID, &requestMessage, nullptr);
 	}
 
-	if (!SUCCEEDED (message.getMessage().m_MessageCode))
+	if (!SUCCEEDED(message.getMessage().m_MessageCode))
 	{
-		SvStl::MessageMgrStd Exception(  SvStl::LogAndDisplay );
-		Exception.setMessage( message.getMessage().m_MessageCode, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvStl::ProgCode_5068_ValidateTabData );
+		SvStl::MessageMgrStd Exception(SvStl::LogAndDisplay);
+		Exception.setMessage(message.getMessage().m_MessageCode, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvStl::ProgCode_5068_ValidateTabData);
 	}
 
 	return message.getMessage().m_MessageCode;
@@ -1010,68 +1011,33 @@ HRESULT SVTADlgTranslationResizePage::SetupResizeImageControl()
 		}
 		else
 		{
-			hr = UpdateImages();
+			UpdateImages();
 		}
 	}
 	return hr;
 }
 
-HRESULT SVTADlgTranslationResizePage::UpdateImages()
+void SVTADlgTranslationResizePage::UpdateImages()
 {
-	HRESULT hr = S_OK;
-
-	SvOi::SVImageBufferHandlePtr inputImageHandle;
-
-	if (nullptr == m_pTool->getInputImage())
-	{
-		// if (nullptr == inputImage) should not need checked here.
-		// is already checked in SetupTempROIImage().  If this error is
-		// occurring but that one did not, then something bad happened 
-		// between there and here.
-		hr = SVMSG_SVO_5039_COULDNOTGETINPUTIMAGE;
-	}
-	else
-	{
-		SVImageClass* pLogicalROIImage = m_pTool->getLogicalROIImage();
-		if (nullptr == pLogicalROIImage)
-		{
-			// if (nullptr == logicalROIImage) should not need checked here.
-			// is already checked in SetupTempROIImage().  If this error is
-			// occurring but that one did not, then something bad happened 
-			// between there and here.
-			hr = SVMSG_SVO_5040_COULDNOTGETROIIMAGE;
-		}
-		else
-		{
-			SVImageClass* pOutputImage = m_pTool->getOutputImage();
-			if (nullptr == pOutputImage)
-			{
-				hr = SVMSG_SVO_5041_COULDNOTGETOUTPUTIMAGE;
-			}
-			else
-			{
-				m_DialogImage.setImage(pLogicalROIImage, m_ROITabHandle);
-				m_DialogImage.setImage(pOutputImage, m_OutputTabHandle);
-
-				m_DialogImage.Refresh();
-			}
-		}
-	}
-	return hr;
+	IPictureDisp* pROIImage = m_ImageController.GetImage(m_ROIImageID.ToGUID());
+	IPictureDisp* pOutputImage = m_ImageController.GetImage(m_OutputImageID.ToGUID());
+	m_DialogImage.setImage(pROIImage, m_ROITabHandle);
+	m_DialogImage.setImage(pOutputImage, m_OutputTabHandle);
+	m_DialogImage.Refresh();
 }
 
 
 void SVTADlgTranslationResizePage::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 {
-	LPNMPROPTREE pNMPropTree = reinterpret_cast< LPNMPROPTREE >(pNotifyStruct);
+	LPNMPROPTREE pNMPropTree = reinterpret_cast<LPNMPROPTREE>(pNotifyStruct);
 	*plResult = S_OK;  // the OS (DefWindowProc) is not required to process this 
 					   // message.
 
-	HRESULT hr = ValidateCurrentTreeData (pNMPropTree->pItem);
+	HRESULT hr = ValidateCurrentTreeData(pNMPropTree->pItem);
 }
 
 
-HRESULT SVTADlgTranslationResizePage::ValidateCurrentTreeData (SVRPropertyItem* item)
+HRESULT SVTADlgTranslationResizePage::ValidateCurrentTreeData(SVRPropertyItem* item)
 {
 	SvStl::MessageContainer message;
 	SvStl::MessageContainerVector messageList;
@@ -1082,7 +1048,7 @@ HRESULT SVTADlgTranslationResizePage::ValidateCurrentTreeData (SVRPropertyItem* 
 
 	HRESULT	hr = SetInspectionData(&messageList);
 
-	if (!SUCCEEDED (hr))
+	if (!SUCCEEDED(hr))
 	{
 		if (messageList.empty())
 		{
@@ -1104,7 +1070,7 @@ HRESULT SVTADlgTranslationResizePage::ValidateCurrentTreeData (SVRPropertyItem* 
 
 				SvDef::StringVector msgList;
 				msgList.push_back(item->GetLabelText());
-				message.setMessage( hr, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
+				message.setMessage(hr, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams));
 			}
 		}
 		else
@@ -1112,20 +1078,20 @@ HRESULT SVTADlgTranslationResizePage::ValidateCurrentTreeData (SVRPropertyItem* 
 			message = messageList[0];
 		}
 
-		SvStl::MessageMgrStd Exception(  SvStl::LogAndDisplay );
+		SvStl::MessageMgrStd Exception(SvStl::LogAndDisplay);
 		Exception.setMessage(message.getMessage());
 	}
 
-	if (!SUCCEEDED (hr))
+	if (!SUCCEEDED(hr))
 	{
 		if (item)
 		{
 			// Attempt to restore to previous values.
-			RestorePropertyTreeItemFromBackup (item);
+			RestorePropertyTreeItemFromBackup(item);
 		}
 
 		// It is understood that we are loosing the previous error.
-		hr = SetInspectionData ();
+		hr = SetInspectionData();
 	}
 
 	if (SUCCEEDED(hr))
@@ -1136,13 +1102,13 @@ HRESULT SVTADlgTranslationResizePage::ValidateCurrentTreeData (SVRPropertyItem* 
 	return hr;
 }
 
-HRESULT SVTADlgTranslationResizePage::RestorePropertyTreeItemFromBackup (SVRPropertyItem* pItem)
+HRESULT SVTADlgTranslationResizePage::RestorePropertyTreeItemFromBackup(SVRPropertyItem* pItem)
 {
 	HRESULT hr = S_OK;
 
 	UINT controlID = pItem->GetCtrlID();
 
-	double	oldWidthScaleFactor =	0.0;
+	double	oldWidthScaleFactor = 0.0;
 	double	oldHeightScaleFactor = 0.0;
 	long	oldInterpolationModeValue = 0;
 	long	oldOverscanValue = 0;
@@ -1150,7 +1116,7 @@ HRESULT SVTADlgTranslationResizePage::RestorePropertyTreeItemFromBackup (SVRProp
 
 	SVRPropertyItemEdit* editItem = nullptr;
 
-	m_pTool->GetBackupInspectionParameters (	&oldHeightScaleFactor,
+	m_pTool->GetBackupInspectionParameters(&oldHeightScaleFactor,
 		&oldWidthScaleFactor,
 		&oldInterpolationModeValue,
 		&oldOverscanValue,
@@ -1158,33 +1124,33 @@ HRESULT SVTADlgTranslationResizePage::RestorePropertyTreeItemFromBackup (SVRProp
 
 	switch (controlID)
 	{
-	case IDC_INPUTLISTTREE_WIDTHSCALEFACTOR:
+		case IDC_INPUTLISTTREE_WIDTHSCALEFACTOR:
 		{
 			pItem->SetItemValue(oldWidthScaleFactor);
 			break;
 		}
-	case IDC_INPUTLISTTREE_HEIGHTSCALEFACTOR:
+		case IDC_INPUTLISTTREE_HEIGHTSCALEFACTOR:
 		{
 			pItem->SetItemValue(oldHeightScaleFactor);
 			break;
 		}
-	case IDC_INPUTLISTTREE_INTERPOLATIONMODE:
+		case IDC_INPUTLISTTREE_INTERPOLATIONMODE:
 		{
 			pItem->SetItemValue(oldInterpolationModeValue);
 			break;
 		}
-	case IDC_INPUTLISTTREE_OVERSCAN:
+		case IDC_INPUTLISTTREE_OVERSCAN:
 		{
 			pItem->SetItemValue(oldOverscanValue);
 			break;
 		}
 
-	case IDC_INPUTLISTTREE_PERFORMANCE:
+		case IDC_INPUTLISTTREE_PERFORMANCE:
 		{
 			pItem->SetItemValue(oldPerformanceValue);
 			break;
 		}
-	default:
+		default:
 		{
 			//  ingore for now.
 			break;

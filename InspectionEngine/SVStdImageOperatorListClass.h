@@ -48,12 +48,14 @@ public:
 
 	virtual bool Run( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
+	virtual const SVImageClass* getOutputImage(bool bRunMode = false) const override { return &m_OutputImage; };
+	virtual const SVImageClass* getReferenceImage(bool bRunMode = false) const override { return &m_LogicalROIImage; };
+
 protected:
 
-	SVImageClass *getOutputImage();
-
-	SVImageClass outputImageObject;	// Embedded
-
+	SVImageClass m_LogicalROIImage; // Embedded
+	SVImageClass m_OutputImage;	// Embedded
+	
 private:
 	void init();
 

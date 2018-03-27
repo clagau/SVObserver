@@ -20,10 +20,10 @@
 #include "SVUtilityLibrary\SVGUID.h"
 #include "SVOGui/ValuesAccessor.h"
 #include "SVOGui/DataController.h"
+#include "SVOGui/MaskController.h"
 #pragma endregion Includes
 
 class SVUserMaskOperatorClass;
-class SVToolClass;
 
 class SVMaskShapeEditorDlg : public CDialog
 {
@@ -167,7 +167,7 @@ private:
 	long m_currentTabNumber; //only use until m_isInit is true
 	long m_handleToActiveObjects[m_numberOfTabs];
 	SVShapeMaskHelperClass::ShapeTypeEnum m_eShapeType;
-	SVToolClass* m_pTool;
+	SvOg::MaskController m_maskController;
 	SVUserMaskOperatorClass* m_pMask;
 	SVInputRequestStructMap m_cancelData;
 

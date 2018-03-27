@@ -386,7 +386,7 @@ void SVHistogramAnalyzerClass::init()
 		msvDynamicHeight.SetDefaultValue( BOOL(false), true);
 		msvAccumulateCounts.SetDefaultValue( BOOL(false), true);
 
-		m_histogramImage.InitializeImage(SvDef::SVImageTypeEnum::SVImageTypeFixed);
+		m_histogramImage.InitializeImage(SvDef::SVImageTypeEnum::SVImageTypeIndependent);
 		// Set default inputs and outputs
 		addDefaultInputObjects();
 

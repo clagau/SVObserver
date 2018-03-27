@@ -8,7 +8,6 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
-#include "ISVImage.h"
 #pragma endregion Includes
 
 namespace SvOi
@@ -17,8 +16,6 @@ namespace SvOi
 	{
 	public:
 		virtual ~IMask() {}
-		virtual SVImageBufferHandlePtr GetReferenceImage() const = 0;
-		virtual SVImageBufferHandlePtr GetMaskImage() const = 0;
 		virtual HRESULT Import(const std::string& filename) = 0;
 		virtual HRESULT Export(const std::string& filename) = 0;
 		virtual HGLOBAL GetMaskData() const = 0;

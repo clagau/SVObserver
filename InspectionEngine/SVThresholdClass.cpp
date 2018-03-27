@@ -460,7 +460,7 @@ bool SVThresholdClass::Rebuild()
 		// &&&
 		SVDataBufferInfoClass svData;
 
-		long l_lPixelDepth = getReferenceImage()->getPixelDepth();
+		long l_lPixelDepth = getOutputImage()->getPixelDepth();
 
 		if( l_lPixelDepth < 0 )
 		{

@@ -256,12 +256,13 @@ bool SVColorToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContain
 		SVImageClass* pInputImage = SvOl::getInput<SVImageClass>(m_InputImageObjectInfo, true);
 		if (nullptr != pInputImage)
 		{
+			//@TODO[MZA][8.10][12.03.2018] check if necessary.
 			if (m_LogicalROIImage.GetLastResetTimeStamp() <= pInputImage->GetLastResetTimeStamp())
 			{
 				UpdateImageWithExtent();
 			}
 			SvOi::SVImageBufferHandlePtr inputImageHandle;
-			m_LogicalROIImage.GetParentImageHandle(inputImageHandle);
+			m_LogicalROIImage.GetImageHandle(inputImageHandle);
 			if (!OutputImageHandle->empty() && nullptr != inputImageHandle && !inputImageHandle->empty())
 			{
 				HRESULT MatroxCode(S_OK);
@@ -297,10 +298,11 @@ bool SVColorToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContain
 
 	for (BandEnum Band : BandList)
 	{
-		if (m_bandImage[Band].GetLastResetTimeStamp() <= m_OutputImage.GetLastResetTimeStamp())
-		{
-			Result &= m_bandImage[Band].ResetObject();
-		}
+		//@TODO[MZA][8.10][12.03.2018] check if necessary.
+		//if (m_bandImage[Band].GetLastResetTimeStamp() <= m_OutputImage.GetLastResetTimeStamp())
+		//{
+		//	Result &= m_bandImage[Band].ResetObject();
+		//}
 	}
 	Result &= __super::onRun(rRunStatus, pErrorMessages);
 	
@@ -323,7 +325,7 @@ void SVColorToolClass::LocalInitialize()
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject(&m_OutputImage, SVOutputImageObjectGuid, IDS_OBJECTNAME_IMAGE1);
-	RegisterEmbeddedObject(&m_LogicalROIImage, SVLogicalROIImageGuid, IDS_OBJECTNAME_IMAGE2);
+	RegisterEmbeddedObject(&m_LogicalROIImage, SVLogicalROIImageGuid, IDS_OBJECTNAME_ROIIMAGE);
 	RegisterEmbeddedObject(&m_bandImage[Band0], SVBand0ImageObjectGuid, IDS_OBJECTNAME_BAND0_IMAGE);
 	RegisterEmbeddedObject(&m_bandImage[Band1], SVBand1ImageObjectGuid, IDS_OBJECTNAME_BAND1_IMAGE);
 	RegisterEmbeddedObject(&m_bandImage[Band2], SVBand2ImageObjectGuid, IDS_OBJECTNAME_BAND2_IMAGE);

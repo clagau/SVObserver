@@ -163,9 +163,9 @@ bool SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& rRunStatus )
 {
 	long lLutMode = 0;
 
-	if( getReferenceImage() )
+	if( getOutputImage() )
 	{
-		long pixelDepth = getReferenceImage()->getPixelDepth();
+		long pixelDepth = getOutputImage()->getPixelDepth();
 
 		HRESULT l_Code;
 		

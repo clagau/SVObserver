@@ -12,10 +12,12 @@
 #include "stdafx.h"
 #include "SVLinearImageOperatorList.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
+#include "SVObjectLibrary/SVInObjectInfoStruct.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVLinearToolClass.h"
 #include "InspectionEngine/SVUnaryImageOperatorClass.h"
 #include "InspectionEngine/SVTool.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -45,16 +47,7 @@ bool SVLinearImageOperatorListClass::CreateObject( const SVObjectLevelCreateStru
 	SVDataBufferInfoClass& rBufferInfo = m_svProfileResultData.GetDataBufferInfo();
 	rBufferInfo.Type = SVDataBufferInfoClass::SVProjectResult;
 
-	BOOL UseRotation = TRUE;
-
-	if( ( S_OK == getUseRotationAngle( UseRotation ) ) && !UseRotation )
-	{
-		outputImageObject.InitializeImage( SvDef::SVImageTypeEnum::SVImageTypeLogicalAndPhysical );
-	}
-	else
-	{
-		outputImageObject.InitializeImage( SvDef::SVImageTypeEnum::SVImageTypePhysical );
-	}
+	ResetLogicalROIImage();
 
 	l_bOk &= S_OK == UpdateLineExtentData();
 	m_svLinearData.SetObjectAttributesAllowed( SvDef::SV_VIEWABLE | SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
@@ -78,6 +71,7 @@ bool SVLinearImageOperatorListClass::CloseObject()
 bool SVLinearImageOperatorListClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);
+	ResetLogicalROIImage();
 
 	SvOl::SVInObjectInfoStructPtrVector InputList
 	{
@@ -86,16 +80,6 @@ bool SVLinearImageOperatorListClass::ResetObject(SvStl::MessageContainerVector *
 	};
 
 	SvOl::ValidateInputList(InputList);
-
-	BOOL UseRotation{true};
-	if( (S_OK == getUseRotationAngle( UseRotation )) && !UseRotation )
-	{
-		outputImageObject.InitializeImage( SvDef::SVImageTypeEnum::SVImageTypeLogicalAndPhysical );
-	}
-	else
-	{
-		outputImageObject.InitializeImage( SvDef::SVImageTypeEnum::SVImageTypePhysical );
-	}
 
 	CollectInputImageNames();
 
@@ -163,9 +147,9 @@ bool SVLinearImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::M
 		
 		if( bRetVal )
 		{
-			if ( outputImageObject.SetImageHandleIndex( rRunStatus.Images ) )
+			if ( m_OutputImage.SetImageHandleIndex( rRunStatus.Images ) )
 			{
-				outputImageObject.GetImageHandle( output );
+				m_OutputImage.GetImageHandle( output );
 				l_psvInputImage->GetImageHandle( input );
 				
 				if (nullptr != input && nullptr != output)
@@ -268,7 +252,7 @@ bool SVLinearImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::M
 	{
 		SVMatroxBuffer buffer;
 
-		outputImageObject.GetImageHandle( output );
+		m_OutputImage.GetImageHandle( output );
 
 		if(nullptr != output)
 		{
@@ -427,8 +411,6 @@ void SVLinearImageOperatorListClass::init()
 
 	m_ulLineLength = 0;
 
-	outputImageObject.InitializeImage( SvDef::SVImageTypeEnum::SVImageTypePhysical );
-
 	// Set default inputs and outputs
 	addDefaultInputObjects();
 }
@@ -475,5 +457,28 @@ HRESULT SVLinearImageOperatorListClass::UpdateLineExtentData()
 	}
 
 	return l_hrOk;
+}
+
+void SVLinearImageOperatorListClass::ResetLogicalROIImage()
+{
+	BOOL UseRotation = TRUE;
+	if ((S_OK == getUseRotationAngle(UseRotation)) && !UseRotation)
+	{
+		//if Rotation don't used, add logical ROI image to embeddedList (It will be used.)
+		auto Iter = std::find(m_embeddedList.begin(), m_embeddedList.end(), &m_LogicalROIImage);
+		if (m_embeddedList.end() == Iter)
+		{
+			AddEmbeddedObject(&m_LogicalROIImage);
+		}
+	}
+	else
+	{
+		//if Rotation used, remove logical ROI image from embeddedList to avoid the reset. (It will not used in this case.)
+		auto Iter = std::find(m_embeddedList.begin(), m_embeddedList.end(), &m_LogicalROIImage);
+		if (m_embeddedList.end() != Iter)
+		{
+			m_embeddedList.erase(Iter);
+		}
+	}
 }
 

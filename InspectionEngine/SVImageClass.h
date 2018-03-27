@@ -65,15 +65,12 @@ public:
 	
 	HRESULT RebuildStorage( bool p_ExcludePositionCheck, SvStl::MessageContainerVector *pErrorMessages=nullptr );
 
-	SVImageExtentClass GetImageExtents();
+	SVImageExtentClass GetImageExtents() const;
 	HRESULT GetImageExtentsToFit( SVImageExtentClass p_svInExtent, SVImageExtentClass &p_rsvOutExtent );
 
 	HRESULT ValidateAgainstParentExtents( SVImageExtentClass& rExtent );
 	HRESULT ValidateAgainstOutputExtents( const SVImageExtentClass& rExtent );
 	HRESULT ValidateAgainstChildrenExtents( SVImageExtentClass& rExtent );
-
-	HRESULT GetParentImageHandle(SvOi::SVImageBufferHandlePtr& rBufferHandle); //@TODO:  Change method to const?
-	HRESULT GetParentImageHandle( SVImageIndexStruct BufferIndex, SvOi::SVImageBufferHandlePtr& rBufferHandle ); //@TODO:  Change method to const?
 
 	// Need to deal with source and result image buckets
 	virtual bool GetImageHandleIndex( SVImageIndexStruct& rsvIndex ) const;
@@ -81,8 +78,8 @@ public:
 
 	virtual bool CopyImageTo( SVImageIndexStruct svIndex );
 
-	virtual bool GetImageHandle(SvOi::SVImageBufferHandlePtr& p_rHandlePtr ); //@TODO:  Change method to const?
-	virtual bool GetImageHandle( SVImageIndexStruct svIndex, SvOi::SVImageBufferHandlePtr& rHandle );
+	virtual bool GetImageHandle(SvOi::SVImageBufferHandlePtr& p_rHandlePtr ) const;
+	virtual bool GetImageHandle( SVImageIndexStruct svIndex, SvOi::SVImageBufferHandlePtr& rHandle ) const;
 
 	bool SafeImageCopyToHandle     (SvOi::SVImageBufferHandlePtr& p_rHandle );
 	bool SafeImageCopyToHandle     ( SVImageIndexStruct p_svFromIndex, SvOi::SVImageBufferHandlePtr& p_rHandle );
@@ -107,8 +104,8 @@ public:
 #pragma region virtual method (ISVImage)
 	virtual SvDef::SVImageTypeEnum GetImageType() const override;
 	virtual SvOi::ISVImage* GetParentImageInterface() const override;
-	virtual SvOi::SVImageBufferHandlePtr getImageData() override;
-	virtual SvOi::SVImageBufferHandlePtr getParentImageData() override;
+	virtual SvOi::SVImageBufferHandlePtr getImageData() const override;
+	virtual SvOi::SVImageBufferHandlePtr getParentImageData() const override;
 	virtual std::string getDisplayedName() const override;
 	virtual long getPixelDepth() const override;
 	virtual HRESULT Save(const std::string& rFilename) override; 
@@ -144,8 +141,6 @@ protected:
 
 	HRESULT UpdateBufferArrays( bool p_ExcludePositionCheck = false, SvStl::MessageContainerVector *pErrorMessages=nullptr );
 
-	HRESULT GetChildImageInfo( const SVGUID& p_rChildID, SVImageInfoClass& p_rImageInfo ) const;
-
 	HRESULT GetChildImageHandle( const SVGUID& p_rChildID, SvOi::SVImageBufferHandlePtr& p_rsvBufferHandle ) const;
 	HRESULT GetChildImageHandle( const SVGUID& p_rChildID, SVImageIndexStruct p_svBufferIndex, SvOi::SVImageBufferHandlePtr& p_rsvBufferHandle ) const;
 
@@ -160,20 +155,24 @@ protected:
 	virtual bool ValidateImage();
 
 	void setImageSubType();
-	
+private:
+	HRESULT GetParentImageHandle(SvOi::SVImageBufferHandlePtr& rBufferHandle) const; 
+	HRESULT GetParentImageHandle(SVImageIndexStruct BufferIndex, SvOi::SVImageBufferHandlePtr& rBufferHandle) const;
+	void init();
+
+protected:
 	mutable SvTl::SVTimeStamp m_LastUpdate;
 	mutable SvTl::SVTimeStamp m_LastReset;
 
-	mutable SVParentObjectPair m_ParentImageInfo;
 	SvDef::SVImageTypeEnum m_ImageType;
 	SVImageInfoClass m_ImageInfo;
 	
-	SVImageObjectClassPtr m_BufferArrayPtr;
-
 	SVGuidImageChildMap m_ChildArrays;
 
 private:
-	void init();
+	SVImageObjectClassPtr m_BufferArrayPtr;
+	mutable SVParentObjectPair m_ParentImageInfo;
+
 	mutable bool m_bCriticalSectionCreated;
 	mutable CRITICAL_SECTION m_hCriticalSection;
 };

@@ -12,6 +12,7 @@
 //Moved to precompiled header: #include <boost/noncopyable.hpp>
 //Moved to precompiled header: #include <string>
 //Moved to precompiled header: #include <comdef.h>
+#include "SVOGui\ImageController.h"
 
 #pragma endregion Includes
 
@@ -20,13 +21,13 @@ namespace SvOg
 	class MaskController : public boost::noncopyable
 	{
 	public:
-		MaskController(const GUID& rInspectionID, const GUID& rTaskObjectID);
+		MaskController(const GUID& rInspectionID, const GUID& rTaskObjectID, const GUID& maskOperatorID);
 		void Init();
 		const GUID& GetInstanceID() const;
 		const GUID& GetShapeMaskHelperID() const;
 		IPictureDisp* GetReferenceImage() const;
 		IPictureDisp* GetMaskImage() const;
-		HRESULT SetMask(IPictureDisp* pImage);
+		IPictureDisp* GetResultImage() const;
 		HRESULT ImportMask(const std::string& filename);
 		HRESULT ExportMask(const std::string& filename);
 		HGLOBAL GetMaskData() const;
@@ -37,5 +38,7 @@ namespace SvOg
 		GUID m_TaskObjectID{ GUID_NULL };
 		GUID m_maskOperatorID{ GUID_NULL };
 		GUID m_ShapeMaskHelperID{ GUID_NULL };
+		SvOg::ImageController m_MaskImageController;
+		SvOg::ImageController m_TaskImageController;
 	};
 } //namespace SvOg

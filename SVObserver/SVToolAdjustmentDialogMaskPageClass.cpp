@@ -68,7 +68,7 @@ SVToolAdjustmentDialogMaskPageClass::SVToolAdjustmentDialogMaskPageClass(const S
 , m_pMaskEditorCtl(nullptr)
 , m_ImageController(rInspectionID, rTaskObjectID)
 , m_Values{ SvOg::BoundValues{ rInspectionID, rMaskOperatorID } }
-, m_maskController{ rInspectionID, rTaskObjectID }
+, m_maskController{ rInspectionID, rTaskObjectID, rMaskOperatorID }
 {
 	m_pThis = this;
 
@@ -205,7 +205,6 @@ BOOL SVToolAdjustmentDialogMaskPageClass::OnInitDialog()
 	m_maskController.Init();
 
 	RetreiveCurrentlySelectedImageNames();
-	RetreiveResultImageNames();
 
 	m_dialogImage.AddTab(_T("Tool Input")); 
 	m_dialogImage.AddTab(_T("Mask")); 
@@ -620,8 +619,8 @@ void SVToolAdjustmentDialogMaskPageClass::setImages()
 	RetreiveCurrentlySelectedImageNames();
 
 	IPictureDisp* pSourceImage = m_maskController.GetReferenceImage();
-	IPictureDisp* pResultImage = m_ImageController.GetImage(m_resultImageID.ToGUID());
 	IPictureDisp* pMaskImage = m_maskController.GetMaskImage();
+	IPictureDisp* pResultImage = m_maskController.GetResultImage();
 
 	m_dialogImage.setImage(pSourceImage, SourceTab);
 	m_dialogImage.setImage(pMaskImage, MaskTab);
@@ -646,16 +645,3 @@ void SVToolAdjustmentDialogMaskPageClass::RetreiveCurrentlySelectedImageNames()
 		m_imageName = it->second.first;
 	}
 }
-
-void SVToolAdjustmentDialogMaskPageClass::RetreiveResultImageNames()
-{
-	const SvUl::NameGuidList& rImageList = m_ImageController.GetResultImages();
-
-	SvUl::NameGuidList::const_iterator it = rImageList.begin();
-	if (it != rImageList.end())
-	{
-		m_resultImageName = it->first;
-		m_resultImageID = it->second;
-	}
-}
-

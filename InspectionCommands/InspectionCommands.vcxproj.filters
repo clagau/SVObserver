@@ -51,12 +51,6 @@
     <ClInclude Include="ValueObjectGetEnums.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="GetReferenceImage.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="GetMaskImage.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="GetMaskData.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>

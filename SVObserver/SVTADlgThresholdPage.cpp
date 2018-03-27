@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVTADlgThresholdPage.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "InspectionEngine/SVAutoThresholdEquation.h"
 #include "InspectionEngine/SVDataBuffer.h"
 #include "SvOGui/SVFormulaEditorSheet.h"
@@ -81,6 +80,7 @@ SVToolAdjustmentDialogThresholdPageClass::SVToolAdjustmentDialogThresholdPageCla
 , m_dAutoThreshold(1.0)
 , m_histState(0)
 , m_isEdit(false)
+, m_ImageController(rInspectionID, rTaskObjectID)
 {
 	//{{AFX_DATA_INIT(SVToolAdjustmentDialogThresholdPageClass)
 	m_bUseExternATM = false;
@@ -226,7 +226,7 @@ void SVToolAdjustmentDialogThresholdPageClass::initThreshold()
 	{
 		SetInspectionData();
 
-		if( m_pCurrentThreshold && m_pCurrentThreshold->getReferenceImage() )
+		if( m_pCurrentThreshold && m_pCurrentThreshold->getOutputImage() )
 		{
 			// Calculate And Show White Pixels...
 			// &&&
@@ -245,7 +245,7 @@ void SVToolAdjustmentDialogThresholdPageClass::initThreshold()
 
 			SvOi::SVImageBufferHandlePtr ImageHandle;
 
-			if ( m_pCurrentThreshold->getReferenceImage()->GetImageHandle( ImageHandle ) && nullptr != ImageHandle)
+			if ( m_pCurrentThreshold->getOutputImage()->GetImageHandle( ImageHandle ) && nullptr != ImageHandle)
 			{
 				HRESULT l_Code = SVMatroxImageInterface::Histogram( histResultID, ImageHandle->GetBuffer() );
 				l_Code = SVMatroxImageInterface::GetResult( histResultID, l_alHistValues );
@@ -266,25 +266,16 @@ BOOL SVToolAdjustmentDialogThresholdPageClass::OnSetActive()
 	return CPropertyPage::OnSetActive();
 }
 
-SVImageClass* SVToolAdjustmentDialogThresholdPageClass::getReferenceImage(SVToolClass* pTool, SVThresholdClass* pCurrentThreshold)
-{
-	SVImageClass* pImage(nullptr);
-
-	const SVImageInfoClass* pImageInfo = pTool->getFirstImageInfo();
-	if (nullptr != pImageInfo)
-	{
-		pImageInfo->GetOwnerImage(pImage);
-	}
-	return pImage;
-}
-
 BOOL SVToolAdjustmentDialogThresholdPageClass::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
+	m_ImageController.Init();
+	m_resultImageID = getFirstResultImageId(m_ImageController);
+
 	if( m_pTool )
 	{
-		if( m_pCurrentThreshold && getReferenceImage(m_pTool, m_pCurrentThreshold) )
+		if( m_pCurrentThreshold )
 		{
 			m_dialogImage.AddTab(_T("Tool Result")); 
 			setImages();
@@ -1095,7 +1086,8 @@ BOOL SVToolAdjustmentDialogThresholdPageClass::OnMouseWheel(UINT nFlags, short z
 
 void SVToolAdjustmentDialogThresholdPageClass::setImages()
 {
-	m_dialogImage.setImage( m_pCurrentThreshold->getReferenceImage() );
+	IPictureDisp* pResultImage = m_ImageController.GetImage(m_resultImageID.ToGUID());
+	m_dialogImage.setImage(pResultImage);
 	m_dialogImage.Refresh();
 }
 

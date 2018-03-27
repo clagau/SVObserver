@@ -120,7 +120,7 @@ namespace SvOg
 		SvUl::NameGuidList::const_iterator it = std::find_if(m_availableList.begin(), m_availableList.end(), ByName(name));
 		if (it != m_availableList.end())
 		{
-			return GetImage(it->second.ToGUID());
+			return GetImage(it->second.ToGUID(), rWidth, rHeight);
 		}
 		else
 		{
@@ -244,5 +244,16 @@ namespace SvOg
 			Result = pImage->GetImageType();
 		}
 		return Result;
+	}
+
+	SVGUID getFirstResultImageId(const ImageController& rController)
+	{
+		SVGUID retID = GUID_NULL;
+		const SvUl::NameGuidList& rImageList = rController.GetResultImages();
+		if (0 < rImageList.size())
+		{
+			retID = rImageList[0].second;
+		}
+		return retID;
 	}
 } //namespace SvOg

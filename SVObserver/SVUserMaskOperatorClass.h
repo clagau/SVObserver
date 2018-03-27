@@ -59,9 +59,10 @@ public:
 
 	SVShapeMaskHelperClass* GetShapeHelper();
 
+	virtual void getSpecialImageList(SvDef::StringVector& rList) const override;
+	virtual bool getSpecialImage(const std::string& rName, SvOi::SVImageBufferHandlePtr& rImagePtr) const override;
+
 #pragma region IMask
-	virtual SvOi::SVImageBufferHandlePtr GetReferenceImage() const override;
-	virtual SvOi::SVImageBufferHandlePtr GetMaskImage() const override;
 	virtual HRESULT Import(const std::string& filename) override;
 	virtual HRESULT Export(const std::string& filename) override;
 	virtual HGLOBAL GetMaskData() const override;

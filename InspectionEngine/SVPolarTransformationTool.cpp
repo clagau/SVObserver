@@ -42,7 +42,6 @@ void SVPolarTransformationToolClass::init()
 	// Identify our input type needs
 
 	m_svToolExtent.SetTool( this );
-	m_svToolExtent.SetImageType( SvDef::SVImageTypeEnum::SVImageTypePhysical );
 	m_svToolExtent.SetTranslation( SvDef::SVExtentTranslationPolarUnwrap );
 	m_svToolExtent.SetAlwaysUpdate( true );
 

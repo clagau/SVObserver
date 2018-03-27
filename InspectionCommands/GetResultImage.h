@@ -11,6 +11,7 @@
 #include "ObjectInterfaces\ISVImage.h"
 #include "ObjectInterfaces\IObjectManager.h"
 #include "SVUtilityLibrary\NameGuidList.h"
+#include "InspectionEngine\SVImageClass.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -36,16 +37,21 @@ namespace SvCmd
 		HRESULT Execute()
 		{
 			HRESULT hr = S_OK;
-
 			SvDef::SVObjectTypeInfoStruct imageObjectInfo(SvDef::SVImageObjectType);
-			SvOi::ISVImage* pImage = SvOi::FindImageObject(m_InstanceID, imageObjectInfo);
-			if (pImage)
+			m_list.clear();
+			SVGetObjectDequeByTypeVisitor visitor(imageObjectInfo);
+			SvOi::visitElements(visitor, m_InstanceID);
+
+			for (const auto* pObject : visitor.GetObjects())
 			{
-				std::string name = pImage->getDisplayedName();
-				SvOi::IObjectClass* pObject = dynamic_cast<SvOi::IObjectClass *>(pImage);
-				m_list.push_back(std::make_pair(name, pObject->GetUniqueObjectID()));
+				const SVImageClass* pImage = dynamic_cast<const SVImageClass*>(pObject);
+				if (pImage)
+				{
+					std::string name = pImage->getDisplayedName();
+					m_list.push_back(std::make_pair(name, pObject->GetUniqueObjectID()));
+				}
 			}
-			else
+			if (m_list.empty())
 			{
 				hr = E_POINTER;
 			}

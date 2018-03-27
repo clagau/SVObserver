@@ -25,10 +25,10 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-SV_IMPLEMENT_CLASS( SVStdImageOperatorListClass, SVStdImageOperatorListClassGuid )
+SV_IMPLEMENT_CLASS(SVStdImageOperatorListClass, SVStdImageOperatorListClassGuid)
 
-SVStdImageOperatorListClass::SVStdImageOperatorListClass( SVObjectClass* POwner, int StringResourceID )
-							:SVUnaryImageOperatorListClass( POwner, StringResourceID ) 
+SVStdImageOperatorListClass::SVStdImageOperatorListClass(SVObjectClass* POwner, int StringResourceID)
+	:SVUnaryImageOperatorListClass(POwner, StringResourceID)
 {
 	init();
 }
@@ -39,48 +39,53 @@ void SVStdImageOperatorListClass::init()
 
 	// Identify our output type
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVUnaryImageOperatorListObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType	= SvDef::SVStdImageOperatorListObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVStdImageOperatorListObjectType;
 
 	// SetObjectDepth() already called in SVObjectClass Ctor
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &outputImageObject, SVOutputImageObjectGuid, IDS_OBJECTNAME_IMAGE1 );
+	RegisterEmbeddedObject(&m_OutputImage, SVOutputImageObjectGuid, IDS_OBJECTNAME_IMAGE1);
+	RegisterEmbeddedObject(&m_LogicalROIImage, SVLogicalROIImageGuid, IDS_OBJECTNAME_ROIIMAGE);
 
+	// This logical ROI image is referenced in the embedded list, but 
+	//  will be hidden from most exposure.
+	m_LogicalROIImage.InitializeImage(SvDef::SVImageTypeEnum::SVImageTypeLogical);
 	// Set Embedded defaults
-	outputImageObject.InitializeImage( SvDef::SVImageTypeEnum::SVImageTypeLogicalAndPhysical );
+	m_OutputImage.InitializeImage(SvDef::SVImageTypeEnum::SVImageTypePhysical);
 
 	// Set default inputs and outputs
 	addDefaultInputObjects();
 }
 
-SVStdImageOperatorListClass::~SVStdImageOperatorListClass() 
-{ 
+SVStdImageOperatorListClass::~SVStdImageOperatorListClass()
+{
 	CloseObject();
 }
 
-bool SVStdImageOperatorListClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
+bool SVStdImageOperatorListClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
 	// Image input must already exist, and must be created!!!
 
 	// Embedded Image output must already exist!!!
-	m_isCreated = __super::CreateObject(rCreateStructure) && ( S_OK == outputImageObject.InitializeImage( getInputImage() ) );
+	SVImageClass* pInputImage = getInputImage();
+	m_isCreated = __super::CreateObject(rCreateStructure) && (nullptr != pInputImage);
+	m_isCreated &= (S_OK == m_OutputImage.InitializeImage(pInputImage)) && (S_OK == m_LogicalROIImage.InitializeImage(pInputImage));
+
+	// We do not want the ROI image showing up as an output image.
+	m_LogicalROIImage.SetObjectAttributesAllowed(SvDef::SV_HIDDEN, SvOi::SetAttributeType::AddAttribute);
 
 	return m_isCreated;
 }
 
 bool SVStdImageOperatorListClass::CloseObject()
 {
-	bool bRetVal = true;
-	
-	if( getOutputImage() )
-	{
-		bRetVal = getOutputImage()->CloseObject() && bRetVal;
-	}
+	bool bRetVal = m_LogicalROIImage.CloseObject();
+	bRetVal = m_OutputImage.CloseObject() && bRetVal;
 
-	if ( m_isCreated )
+	if (m_isCreated)
 	{
 		m_isCreated = false;
-		
+
 		bRetVal = __super::CloseObject() && bRetVal;
 	}
 
@@ -91,12 +96,13 @@ bool SVStdImageOperatorListClass::ResetObject(SvStl::MessageContainerVector *pEr
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
-	if (outputImageObject.InitializeImage( getInputImage() ))
+	auto* pInputImage = getInputImage();
+	if ((S_OK != m_OutputImage.InitializeImage(pInputImage)) && (S_OK != m_LogicalROIImage.InitializeImage(pInputImage)))
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InitImageFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InitImageFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -104,26 +110,12 @@ bool SVStdImageOperatorListClass::ResetObject(SvStl::MessageContainerVector *pEr
 	CollectInputImageNames();
 
 	//create tmp mil buffer for operator
-	SVImageClass* pImage = getOutputImage();
-	if (nullptr != pImage)
-	{
-		SVImageInfoClass imageInfo = pImage->GetImageInfo();
-		imageInfo.setDibBufferFlag(false);
-		SVImageProcessingClass::CreateImageBuffer(imageInfo, m_milTmpImageObjectInfo1);
-		SVImageProcessingClass::CreateImageBuffer(imageInfo, m_milTmpImageObjectInfo2);
-	}
+	SVImageInfoClass imageInfo = m_LogicalROIImage.GetImageInfo();
+	imageInfo.setDibBufferFlag(false);
+	SVImageProcessingClass::CreateImageBuffer(imageInfo, m_milTmpImageObjectInfo1);
+	SVImageProcessingClass::CreateImageBuffer(imageInfo, m_milTmpImageObjectInfo2);
 
 	return Result;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : getOutputImage
-// -----------------------------------------------------------------------------
-// .Description : Returns Output Image Attribute of this class
-////////////////////////////////////////////////////////////////////////////////
-SVImageClass* SVStdImageOperatorListClass::getOutputImage()
-{
-	return &outputImageObject;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -131,72 +123,55 @@ SVImageClass* SVStdImageOperatorListClass::getOutputImage()
 // -----------------------------------------------------------------------------
 // .Description : Special routing here.
 ////////////////////////////////////////////////////////////////////////////////
-bool SVStdImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVStdImageOperatorListClass::Run(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool bRetVal = true;
 	clearRunErrorMessages();
-	
+
 	SVRunStatusClass ChildRunStatus;
-	ChildRunStatus.m_lResultDataIndex  = rRunStatus.m_lResultDataIndex;
+	ChildRunStatus.m_lResultDataIndex = rRunStatus.m_lResultDataIndex;
 	ChildRunStatus.Images = rRunStatus.Images;
 	ChildRunStatus.m_UpdateCounters = rRunStatus.m_UpdateCounters;
 
 	SVDataManagerHandle dmHandleInput;
-	
+
 	// Run yourself...
-	bRetVal = onRun( rRunStatus, &m_RunErrorMessages );
+	bRetVal = onRun(rRunStatus, &m_RunErrorMessages);
 
 	SVImageClass* pInputImage = getInputImage(true);
-	SVImageClass* pOutputImage = getOutputImage();
-	
-	if ( nullptr == pInputImage || nullptr == pOutputImage )
+
+	if (nullptr == pInputImage)
 	{
 		bRetVal = false;
-		SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 		m_RunErrorMessages.push_back(Msg);
 	}
 
-	if( bRetVal )
+	if (bRetVal)
 	{
-		if ( pOutputImage->SetImageHandleIndex( rRunStatus.Images ) )
+		if (m_OutputImage.SetImageHandleIndex(rRunStatus.Images))
 		{
 			SvOi::SVImageBufferHandlePtr input;
 			SvOi::SVImageBufferHandlePtr output;
 
-			// Check for new image type...
-			if( nullptr == pOutputImage->GetParentImage() )
+			//@TODO[MZA][8.10][12.03.2018] check if necessary.
+			SvOi::ITool* pTool = GetToolInterface();
+			if (nullptr != pTool && m_LogicalROIImage.GetLastResetTimeStamp() <= pInputImage->GetLastResetTimeStamp())
 			{
-				// Use just the image input of this unary image operator list...
-				pInputImage->GetImageHandle( input );
-			}
-			else
-			{
-				// Old image types...( i.e. 'S', used in Window Tool's Unary Image Operator List )
-				
-				// NOTE: 
-				// The old image type 'S' provided also a child layer in his derived image info!!!
-				
-				// Use the Child layer on Input Image as our input image
-
-				SvOi::ITool* pTool = GetToolInterface();
-				if( nullptr != pTool && pOutputImage->GetLastResetTimeStamp() <= pInputImage->GetLastResetTimeStamp() )
-				{
-					pTool->UpdateImageWithExtent();
-				}
-
-				pOutputImage->GetParentImageHandle( input );
+				pTool->UpdateImageWithExtent();
 			}
 
-			pOutputImage->GetImageHandle( output );
+			m_LogicalROIImage.GetImageHandle(input);
+			m_OutputImage.GetImageHandle(output);
 
-			if ( nullptr == input || nullptr == output )
+			if (nullptr == input || nullptr == output)
 			{
 				bRetVal = false;
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 				m_RunErrorMessages.push_back(Msg);
-				if(nullptr == input )
+				if (nullptr == input)
 				{
-					SVImageProcessingClass::InitBuffer( output );
+					SVImageProcessingClass::InitBuffer(output);
 
 					input = output;
 				}
@@ -205,24 +180,24 @@ bool SVStdImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::Mess
 			//set tmp variable
 			SvOi::SVImageBufferHandlePtr sourceImage = m_milTmpImageObjectInfo1;
 			SvOi::SVImageBufferHandlePtr destinationImage = m_milTmpImageObjectInfo2;
-			if ( sourceImage->empty() || destinationImage->empty() || !copyBuffer( input, sourceImage ) )
+			if (sourceImage->empty() || destinationImage->empty() || !copyBuffer(input, sourceImage))
 			{
 				bRetVal = false;
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 				m_RunErrorMessages.push_back(Msg);
 			}
 
 			if (bRetVal)
 			{
 				// Run children...
-				for( int i = 0; i < GetSize(); i++ )
+				for (int i = 0; i < GetSize(); i++)
 				{
 					ChildRunStatus.ResetRunStateAndToolSetTimes();
 
-					SVUnaryImageOperatorClass*  pOperator = ( SVUnaryImageOperatorClass* )GetAt( i );
-					if( nullptr != pOperator )
+					SVUnaryImageOperatorClass*  pOperator = (SVUnaryImageOperatorClass*)GetAt(i);
+					if (nullptr != pOperator)
 					{
-						if( pOperator->Run( true, sourceImage, destinationImage, ChildRunStatus ) )
+						if (pOperator->Run(true, sourceImage, destinationImage, ChildRunStatus))
 						{
 							//switch image buffer for next run
 							SvOi::SVImageBufferHandlePtr tmpImage = sourceImage;
@@ -242,64 +217,76 @@ bool SVStdImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::Mess
 					else
 					{
 						bRetVal = false;
-						SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 						m_RunErrorMessages.push_back(Msg);
 					}
 
 					// Update our Run Status
-					if( ChildRunStatus.IsDisabled() )
+					if (ChildRunStatus.IsDisabled())
+					{
 						rRunStatus.SetDisabled();
+					}
 
-					if( ChildRunStatus.IsDisabledByCondition() )
+					if (ChildRunStatus.IsDisabledByCondition())
+					{
 						rRunStatus.SetDisabledByCondition();
+					}
 
-					if( ChildRunStatus.IsWarned() )
+					if (ChildRunStatus.IsWarned())
+					{
 						rRunStatus.SetWarned();
+					}
 
-					if( ChildRunStatus.IsFailed() )
+					if (ChildRunStatus.IsFailed())
+					{
 						rRunStatus.SetFailed();
+					}
 
-					if( ChildRunStatus.IsPassed() )
+					if (ChildRunStatus.IsPassed())
+					{
 						rRunStatus.SetPassed();
+					}
 
-					if( ChildRunStatus.IsCriticalFailure() )
+					if (ChildRunStatus.IsCriticalFailure())
+					{
 						rRunStatus.SetCriticalFailure();
+					}
 				}
 			} // for( int i = 0; i < GetSize(); i++ )
-			
+
 			// 'no operator was running' check...
 			// RO_22Mar2000
-			
-			if( bRetVal )
+
+			if (bRetVal)
 			{
 				if (!copyBuffer(sourceImage, output))
 				{
 					bRetVal = false;
-					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 					m_RunErrorMessages.push_back(Msg);
 				}
 			} // if( bFirstFlag ) 
-		}  // if ( pOutputImage->SetImageHandleIndex( rRunStatus.Images ) )
+		}  // if ( m_OutputImage.SetImageHandleIndex( rRunStatus.Images ) )
 		else
 		{
 			bRetVal = false;
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetImageHandleIndexFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetImageHandleIndexFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 			m_RunErrorMessages.push_back(Msg);
 		}
 	}
-	
-	if( ! bRetVal )
+
+	if (!bRetVal)
 	{
 		// Something was wrong...
-		
+
 		SetInvalid();
 		rRunStatus.SetInvalid();
 	}
-	
+
 	// Get Status Color...
 	DWORD dwValue = rRunStatus.GetStatusColor();
 	m_statusColor.SetValue(dwValue);
-	
+
 	// Get Status...
 	dwValue = rRunStatus.GetState();
 	m_statusTag.SetValue(dwValue);
@@ -308,7 +295,7 @@ bool SVStdImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::Mess
 	{
 		pErrorMessages->insert(pErrorMessages->end(), m_RunErrorMessages.begin(), m_RunErrorMessages.end());
 	}
-	
+
 	return bRetVal;
 }
 
@@ -322,7 +309,7 @@ HRESULT SVStdImageOperatorListClass::CollectInputImageNames()
 	{
 		std::string Name = pInputImage->GetCompleteName();
 
-		if( pTool->SetFirstInputImageName( Name.c_str() ) )
+		if (pTool->SetFirstInputImageName(Name.c_str()))
 		{
 			hr = S_OK;
 		}
@@ -330,19 +317,19 @@ HRESULT SVStdImageOperatorListClass::CollectInputImageNames()
 	return hr;
 }
 
-bool SVStdImageOperatorListClass::copyBuffer( const SvOi::SVImageBufferHandlePtr input, SvOi::SVImageBufferHandlePtr output )
+bool SVStdImageOperatorListClass::copyBuffer(const SvOi::SVImageBufferHandlePtr input, SvOi::SVImageBufferHandlePtr output)
 {
 	bool bRetVal = true;
 
-	bRetVal = bRetVal && !( input->empty() );
-	bRetVal = bRetVal && !( output->empty() );
+	bRetVal = bRetVal && !(input->empty());
+	bRetVal = bRetVal && !(output->empty());
 
-	if( bRetVal )
+	if (bRetVal)
 	{
-		HRESULT  Code = SVMatroxBufferInterface::CopyBuffer(output->GetBuffer(), input->GetBuffer() );
+		HRESULT  Code = SVMatroxBufferInterface::CopyBuffer(output->GetBuffer(), input->GetBuffer());
 		bRetVal = (S_OK == Code);
-	}	
-	
+	}
+
 	return bRetVal;
 }
 

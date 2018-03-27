@@ -12,10 +12,13 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVTADlgColorToolPage.h"
-#include "SVValueObjectLibrary/SVValueObject.h"
 #include "ObjectInterfaces/IObjectManager.h"
 #include "ObjectInterfaces/ISVOApp_Helper.h"
 #include "SVObjectLibrary/SVClsids.h"
+#include "Definitions/TextDefineSvDef.h"
+#include "SVStatusLibrary/MessageManager.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
+#include "SVMessage/SVMessage.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -80,6 +83,7 @@ namespace SvOg
 
 		m_Images.Init();
 		m_Values.Init();
+		m_ResultImageID = getFirstResultImageId(m_Images);
 
 		m_convertToHSI = m_Values.Get<bool>(SVConvertToHSIObjectGuid);
 
@@ -145,8 +149,8 @@ namespace SvOg
 
 	void SVTADlgColorToolPage::SetImage()
 	{
-		SvDef::SVObjectTypeInfoStruct ObjectInfo{ SvDef::SVImageObjectType, SvDef::SVImageColorType };
-		m_dialogImage.setImage(SvOi::FindImageObject(m_TaskObjectID, ObjectInfo));
+		IPictureDisp* pImage = m_Images.GetImage(m_ResultImageID);
+		m_dialogImage.setImage(pImage);
 		m_dialogImage.Refresh();
 	}
 

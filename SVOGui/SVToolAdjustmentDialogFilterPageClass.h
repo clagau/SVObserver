@@ -46,9 +46,8 @@ namespace SvOg
 		//************************************
 		// Method:    setImages
 		// Description: Set image to the activeX-control. 
-		// Returns:   bool -false when image not exist
 		//************************************
-		bool setImages();
+		void setImages();
 
 	protected:
 		HRESULT SetInspectionData();

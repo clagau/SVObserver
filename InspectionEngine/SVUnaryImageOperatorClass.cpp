@@ -108,18 +108,23 @@ bool SVUnaryImageOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr 
 //				:	intermediate proc buffer,
 //				:	or pixel depth, etc.
 ////////////////////////////////////////////////////////////////////////////////
-SVImageClass* SVUnaryImageOperatorClass::getReferenceImage()
+const SVImageClass* SVUnaryImageOperatorClass::getReferenceImage() const
 {
-	if( SVStdImageOperatorListClass* pOpL = dynamic_cast<SVStdImageOperatorListClass*>(m_pCurrentUIOPL) )
+	if( nullptr != m_pCurrentUIOPL )
 	{
-		// Output image is reference...
-		return pOpL->getOutputImage();
+		return m_pCurrentUIOPL->getReferenceImage();
 	}
-	else if( SV_IS_KIND_OF( m_pCurrentUIOPL, SVInPlaceImageOperatorListClass ) )
+	
+	return nullptr;
+}
+
+const SVImageClass* SVUnaryImageOperatorClass::getOutputImage(bool bRunMode /*= false*/) const
+{
+	if (nullptr != m_pCurrentUIOPL)
 	{
-		// Input image is reference...
-		return m_pCurrentUIOPL->getInputImage();
+		return m_pCurrentUIOPL->getOutputImage(bRunMode);
 	}
+
 	return nullptr;
 }
 

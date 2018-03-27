@@ -64,6 +64,7 @@ namespace SvOg
 
 		const SVGUID m_InspectionID;
 		const SVGUID m_TaskObjectID;
+		SVGUID m_ResultImageID = GUID_NULL;
 		
 		ImageController m_Images;
 		ValueController m_Values;

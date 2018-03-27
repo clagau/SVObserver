@@ -430,7 +430,7 @@ HRESULT SVImageClass::RebuildStorage( bool p_ExcludePositionCheck, SvStl::Messag
 	return hr;
 }
 
-SVImageExtentClass SVImageClass::GetImageExtents()
+SVImageExtentClass SVImageClass::GetImageExtents() const
 {
 	return m_ImageInfo.GetExtents();
 }
@@ -516,7 +516,6 @@ HRESULT SVImageClass::UpdateFromToolInformation()
 		SVImageExtentClass TempExtent;
 
 		if( ( SvDef::SVImageTypeEnum::SVImageTypeMain != m_ImageType ) && 
-			( SvDef::SVImageTypeEnum::SVImageTypeFixed != m_ImageType ) && 
 			( SvDef::SVImageTypeEnum::SVImageTypeIndependent != m_ImageType ) && 
 			( SvDef::SVImageTypeEnum::SVImageTypeDependent != m_ImageType ) && 
 			( S_OK == pParentTask->GetImageExtent( TempExtent ) ) )
@@ -525,12 +524,11 @@ HRESULT SVImageClass::UpdateFromToolInformation()
 
 			RECT l_Rect;
 
-			if (( SvDef::SVImageTypeEnum::SVImageTypeLogicalAndPhysical == m_ImageType)|| 
-				(SvDef::SVImageTypeEnum::SVImageTypeLogical == m_ImageType))
+			if (SvDef::SVImageTypeEnum::SVImageTypeLogical == m_ImageType)
 			{
 				// @Hack
 				// It does not make sense that a logical buffer is not a 1:1 
-				// pixel correlation to its parent phisical buffer.  For this 
+				// pixel correlation to its parent physical buffer.  For this 
 				// reason the translation type will be ignored when retrieving
 				// the logical rectangle.  
 				// The usage that this is specifically excluded for is for 
@@ -553,8 +551,7 @@ HRESULT SVImageClass::UpdateFromToolInformation()
 			}
 		}
 
-		if( SvDef::SVImageTypeEnum::SVImageTypeFixed != m_ImageType && 
-			SvDef::SVImageTypeEnum::SVImageTypeIndependent != m_ImageType && 
+		if( SvDef::SVImageTypeEnum::SVImageTypeIndependent != m_ImageType && 
 			SvDef::SVImageTypeEnum::SVImageTypeDependent != m_ImageType )
 		{
 			SvOi::ITool* pTool = GetToolInterface();
@@ -776,45 +773,6 @@ HRESULT SVImageClass::RemoveChild( const SVGUID& rChildID )
 Updated method to use GetParentImage() method which validates the Parent Image pointer attribute.
 The Parent Image attribute should not be used unless it is validated first.
 */
-HRESULT SVImageClass::GetChildImageInfo( const SVGUID& rChildID, SVImageInfoClass& rImageInfo ) const
-{
-	HRESULT l_hrOk = E_FAIL;
-
-	if( SvDef::SVImageTypeEnum::SVImageTypeDependent == m_ImageType || 
-		SvDef::SVImageTypeEnum::SVImageTypeLogical == m_ImageType )
-	{
-		SVImageClass* l_pParentImage = GetParentImage();
-
-		if( nullptr != l_pParentImage && l_pParentImage != this )
-		{
-			l_hrOk = l_pParentImage->GetChildImageInfo( rChildID, rImageInfo );
-		}
-		else
-		{
-			l_hrOk = E_FAIL;
-		}
-	}
-	else
-	{
-		SVGuidImageChildMap::const_iterator l_Iter = m_ChildArrays.find( rChildID );
-
-		if( l_Iter != m_ChildArrays.end() )
-		{
-			if( nullptr != l_Iter->second.m_pImageHandles )
-			{
-				rImageInfo = l_Iter->second.m_pImageHandles->GetImageInfo();
-
-				l_hrOk = S_OK;
-			}
-		}
-	}
-	return l_hrOk;
-}
-
-/*
-Updated method to use GetParentImage() method which validates the Parent Image pointer attribute.
-The Parent Image attribute should not be used unless it is validated first.
-*/
 HRESULT SVImageClass::GetChildImageHandle( const SVGUID& rChildID, SvOi::SVImageBufferHandlePtr& rBufferHandle ) const
 {
 	HRESULT l_hrOk = E_FAIL;
@@ -937,7 +895,7 @@ HRESULT SVImageClass::GetChildImageHandle( const SVGUID& rChildID, SVImageIndexS
 Updated method to use GetParentImage() method which validates the Parent Image pointer attribute.
 The Parent Image attribute should not be used unless it is validated first.
 */
-HRESULT SVImageClass::GetParentImageHandle(SvOi::SVImageBufferHandlePtr& rBufferHandle )
+HRESULT SVImageClass::GetParentImageHandle(SvOi::SVImageBufferHandlePtr& rBufferHandle ) const
 {
 	HRESULT l_hrOk = E_FAIL;
 	SvOi::SVImageBufferHandlePtr imageStruct;
@@ -961,7 +919,7 @@ HRESULT SVImageClass::GetParentImageHandle(SvOi::SVImageBufferHandlePtr& rBuffer
 Updated method to use GetParentImage() method which validates the Parent Image pointer attribute.
 The Parent Image attribute should not be used unless it is validated first.
 */
-HRESULT SVImageClass::GetParentImageHandle( SVImageIndexStruct BufferIndex, SvOi::SVImageBufferHandlePtr& rBufferHandle )
+HRESULT SVImageClass::GetParentImageHandle( SVImageIndexStruct BufferIndex, SvOi::SVImageBufferHandlePtr& rBufferHandle ) const
 {
 	HRESULT l_hrOk = E_FAIL;
 
@@ -1123,7 +1081,7 @@ bool SVImageClass::CopyImageTo( SVImageIndexStruct svIndex )
 	return Result;
 }
 
-bool SVImageClass::GetImageHandle(SvOi::SVImageBufferHandlePtr& p_rHandlePtr )
+bool SVImageClass::GetImageHandle(SvOi::SVImageBufferHandlePtr& p_rHandlePtr ) const
 {
 	bool bOk = false;
 		
@@ -1144,7 +1102,7 @@ bool SVImageClass::GetImageHandle(SvOi::SVImageBufferHandlePtr& p_rHandlePtr )
 	return bOk;
 }
 
-bool SVImageClass::GetImageHandle( SVImageIndexStruct svIndex, SvOi::SVImageBufferHandlePtr& rHandle )
+bool SVImageClass::GetImageHandle( SVImageIndexStruct svIndex, SvOi::SVImageBufferHandlePtr& rHandle ) const
 {
 	bool bOk = false;
 		
@@ -1565,7 +1523,6 @@ HRESULT SVImageClass::UpdatePosition()
 	m_ParentImageInfo.second = dynamic_cast< SVImageClass* >( SVObjectManagerClass::Instance().GetObject( m_ParentImageInfo.first ) );
 
 	if( SvDef::SVImageTypeEnum::SVImageTypeDependent == m_ImageType || 
-		SvDef::SVImageTypeEnum::SVImageTypeLogicalAndPhysical == m_ImageType || 
 		SvDef::SVImageTypeEnum::SVImageTypeLogical == m_ImageType )
 	{
 		if( nullptr != m_ParentImageInfo.second )
@@ -1688,9 +1645,7 @@ HRESULT SVImageClass::UpdateBufferArrays( bool p_ExcludePositionCheck, SvStl::Me
 {
 	HRESULT		l_Status = S_OK;
 
-	if ((SvDef::SVImageTypeEnum::SVImageTypeLogicalAndPhysical == m_ImageType ||
-		 SvDef::SVImageTypeEnum::SVImageTypeLogical == m_ImageType) &&
-		nullptr == m_ParentImageInfo.second)
+	if ( SvDef::SVImageTypeEnum::SVImageTypeLogical == m_ImageType && nullptr == m_ParentImageInfo.second)
 	{
 		// If the image type is logical, there MUST be a parent before 
 		// attempting to set up image buffers.
@@ -1932,29 +1887,16 @@ SvOi::ISVImage* SVImageClass::GetParentImageInterface() const
 	return GetParentImage();
 }
 
-SvOi::SVImageBufferHandlePtr SVImageClass::getImageData()
+SvOi::SVImageBufferHandlePtr SVImageClass::getImageData() const
 {
 	SvOi::SVImageBufferHandlePtr dataSmartPointer;
-
-	if ((SvDef::SVImageTypeEnum::SVImageTypeLogical == m_ImageType) ||
-		(SvDef::SVImageTypeEnum::SVImageTypeDependent == m_ImageType) )
-	{
-		// For SVO Child buffers, the image data is actually allocated as 
-		// the Parent Image Child, and not as part of the SVImageObjectClass.
-		// getImageData should redirect.  
-
-		GetParentImageHandle(dataSmartPointer);
-	}
-	else
-	{
-		// For all other buffer types, images are retrieved from 
-		// SVImageObjectClass.
-		GetImageHandle(dataSmartPointer);
-	}
+	// For all other buffer types, images are retrieved from 
+	// SVImageObjectClass.
+	GetImageHandle(dataSmartPointer);
 	return dataSmartPointer;
 }
 
-SvOi::SVImageBufferHandlePtr SVImageClass::getParentImageData()
+SvOi::SVImageBufferHandlePtr SVImageClass::getParentImageData() const
 {
 	SvOi::SVImageBufferHandlePtr handle;
 
@@ -2043,21 +1985,9 @@ bool SVImageClass::ValidateImage()
 		{
 			case SvDef::SVImageTypeEnum::SVImageTypePhysical:
 			case SvDef::SVImageTypeEnum::SVImageTypeIndependent:
-			case SvDef::SVImageTypeEnum::SVImageTypeFixed:
 			{
 				m_isObjectValid = m_isObjectValid && ( nullptr != pBufferPtr );
 				m_isObjectValid = m_isObjectValid && ( m_ImageInfo == pBufferPtr->GetImageInfo() );
-
-				break;
-			}
-			case SvDef::SVImageTypeEnum::SVImageTypeLogicalAndPhysical:
-			{
-				m_isObjectValid = m_isObjectValid && ( nullptr != pBufferPtr);
-				m_isObjectValid = m_isObjectValid && ( m_ImageInfo == pBufferPtr->GetImageInfo() );
-
-				SVImageClass* pParent = GetParentImage();
-				m_isObjectValid = m_isObjectValid && ( nullptr != pParent );
-				m_isObjectValid = m_isObjectValid && ( S_OK == pParent->IsValidChild( GetUniqueObjectID(), m_ImageInfo ) );
 
 				break;
 			}

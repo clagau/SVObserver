@@ -15,6 +15,7 @@
 #include "SVMFCControls\svmaskeditor.h"
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
 #include "SVOGui\PictureDisplay.h"
+#include "SVOGui/ImageController.h"
 #include "SVMFCControls\AvailableObjectListComboBox.h"
 #include "SVMFCControls/SVEnumerateCombo.h"
 #pragma endregion Includes
@@ -53,10 +54,8 @@ protected:
 	//************************************
 	// Method:    setImages
 	// Description: Set image to the activeX-control. 
-	// Access:    public 
-	// Returns:   BOOL -FALSE when image not exist
 	//************************************
-	BOOL setImages();
+	void setImages();
 
 	//******************************************************************************
 	// Class Wizard Generated Virtual Function(s):
@@ -80,7 +79,7 @@ protected:
 	//{{AFX_DATA(SVToolAdjustmentDialogAnalyzerPageClass)
 	enum { IDD = IDD_TA_ANALYZER_DIALOG };
 	SvMc::AvailableObjectListComboBox	m_availableAnalyzerCombobox;
-	SvOg::PictureDisplay	dialogImage;
+	SvOg::PictureDisplay	m_dialogImage;
 	//}}AFX_DATA
 
 	//******************************************************************************
@@ -97,6 +96,9 @@ protected:
 	SVGUID m_additionalAnalyzerId; 
 	const SVGUID m_InspectionID;
 	const SVGUID m_TaskObjectID;
+
+	SvOg::ImageController m_ImageController;
+	SVGUID m_resultImageID = GUID_NULL;
 };
 
 //{{AFX_INSERT_LOCATION}}

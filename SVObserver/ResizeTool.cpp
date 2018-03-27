@@ -117,37 +117,13 @@ void ResizeTool::BuildInputObjectList()
 
 void ResizeTool::BuildEmbeddedObjectList()
 {
-	RegisterEmbeddedObject( &m_SourceImageNames, 
-							SVSourceImageNamesGuid, 
-							IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, 
-							false, 
-							SvOi::SVResetItemTool );
-
-	RegisterEmbeddedObject( &m_ResizeInterpolationMode, 
-							SVResizeInterpolationModeGuid, 
-							IDS_OBJECTNAME_RESIZE_INTERPOLATIONMODE, 
-							false, 
-							SvOi::SVResetItemTool );
-
-	RegisterEmbeddedObject( &m_ResizeOverscan, 
-							SVResizeOverscanGuid, 
-							IDS_OBJECTNAME_RESIZE_OVERSCAN, 
-							false, 
-							SvOi::SVResetItemTool );
-
-	RegisterEmbeddedObject( &m_ResizePerformance, 
-							SVResizePerformanceGuid, 
-							IDS_OBJECTNAME_RESIZE_PERFORMANCE, 
-							false, 
-							SvOi::SVResetItemTool );
-
-	RegisterEmbeddedObject( &m_OutputImage, 
-							SVOutputImageObjectGuid, 
-							IDS_OBJECTNAME_IMAGE1 );
-
-	RegisterEmbeddedObject( &m_LogicalROIImage, 
-							SVLogicalROIImageGuid, 
-							IDS_OBJECTNAME_IMAGE2 );
+	RegisterEmbeddedObject( &m_SourceImageNames, SVSourceImageNamesGuid, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_ResizeInterpolationMode, SVResizeInterpolationModeGuid, IDS_OBJECTNAME_RESIZE_INTERPOLATIONMODE, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_ResizeOverscan, SVResizeOverscanGuid, IDS_OBJECTNAME_RESIZE_OVERSCAN, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_ResizePerformance, SVResizePerformanceGuid, IDS_OBJECTNAME_RESIZE_PERFORMANCE, false, SvOi::SVResetItemTool );
+	
+	RegisterEmbeddedObject( &m_OutputImage, SVOutputImageObjectGuid, IDS_OBJECTNAME_IMAGE1 );
+	RegisterEmbeddedObject( &m_LogicalROIImage, SVLogicalROIImageGuid, IDS_OBJECTNAME_ROIIMAGE);
 }
 
 
@@ -223,34 +199,22 @@ bool ResizeTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure
 
 SVImageClass* ResizeTool::getInputImage(bool bRunMode /*= false*/) const
 {
-	return SvOl::getInput<SVImageClass>(m_InputImageObjectInfo, bRunMode);;
-}
-
-SVImageClass* ResizeTool::getOutputImage()
-{
-	return &m_OutputImage;
-}
-
-SVImageClass* ResizeTool::getLogicalROIImage()
-{
-	return &m_LogicalROIImage;
+	return SvOl::getInput<SVImageClass>(m_InputImageObjectInfo, bRunMode);
 }
 
 HRESULT ResizeTool::SetImageExtentToParent()
 {
-	HRESULT l_hrOk = S_OK;
 	SVImageExtentClass l_NewExtent;
+	HRESULT Result = m_svToolExtent.UpdateExtentToParentExtents( l_NewExtent );
 
-	l_hrOk = m_svToolExtent.UpdateExtentToParentExtents( l_NewExtent );
-
-	if( S_OK == l_hrOk )
+	if( S_OK == Result )
 	{
 		//@WARNING [Jim][8 July 2015] - Research this.  All tools are calling 
 		// base class which does not validate.  Should probably call the 
 		// derived tool classes explicit version.
-		l_hrOk = SVToolClass::SetImageExtent( l_NewExtent );
+		Result = SVToolClass::SetImageExtent( l_NewExtent );
 	}
-	return l_hrOk;
+	return Result;
 }
 
 HRESULT ResizeTool::SetImageExtent( const SVImageExtentClass& rImageExtent )
@@ -576,7 +540,8 @@ bool ResizeTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVec
 	{
 		// The following logic was extrapolated from the StdImageOperatorList Run method.
 		// It corrects an issue where the output image is black while running when using the toolset image.
-		if (m_LogicalROIImage.GetLastResetTimeStamp() <= getInputImage(true)->GetLastResetTimeStamp())
+		//@TODO[MZA][8.10][12.03.2018] check if necessary.
+		/*if (m_LogicalROIImage.GetLastResetTimeStamp() <= getInputImage(true)->GetLastResetTimeStamp())
 		{
 			if (S_OK != UpdateImageWithExtent())
 			{
@@ -587,7 +552,7 @@ bool ResizeTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVec
 					pErrorMessages->push_back(Msg);
 				}
 			}
-		}
+		}*/
 	}
 
 	//-----	Execute this objects run functionality. -----------------------------

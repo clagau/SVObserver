@@ -17,10 +17,10 @@ namespace SvDef
 //---------	  This image type does not create an image buffer pool?
 		SVImageTypeUnknown     = 0,
 
-//--------- SVImageTypeFixed
+//--------- SVImageTypeFixed - deprecated
 //---------   Physical (Parent) buffer.
 //---------   Does not set Tool Image within UpdateFromToolInformation().
-		SVImageTypeFixed       = 1,
+//		SVImageTypeFixed       = 1,
 
 //--------- SVImageTypeIndependent
 //---------   Physical (Parent) buffer.
@@ -30,20 +30,15 @@ namespace SvDef
 //--------- SVImageTypeDependent - Only used to define the 3 banded images of 
 //---------   a Color Tool.
 //---------
-//---------   Dependent and Virtual image types maintain a child->parent 
+//---------   Logical buffer (similar to SVImageTypeLogical)
+//---------   SVImageTypeLogicalAndPhysical, SVImageTypeLogical and SVImageTypeDependent are the 
+//---------   image types that result in a Matrox "child" buffer
+//---------   (as opposed to an SVO "child" buffer).
+//---------   Dependent image types maintain a child->parent 
 //---------   relationship at the SVImageClass level (nullptr != m_ParentImagePtr)
-//---------   but are still allocated as physical buffers.
 //---------
-//---------	  This image type does not create an image buffer pool as part of
-//---------	  the SVImageObjectClass.  Instead its buffer pool is maintained 
-//---------   as a child image of the SVImageClass parent!
-//---------
-//---------   Virtual image type can be a child of a Dependent image type?
-//---------   The only places where Virtual images and Dependent images are 
-//---------   treated differently are: 
-//---------     SVImageClass::UpdateFromToolInformation()
-//---------     SVImageClass::ValidateAgainstChildrenExtents()
-//---------   Does not set Tool Image within UpdateFromToolInformation().
+//---------	  Different between to SVImageTypeLogical is that this type have the same size as the parent and SVImageTypeLogical can be a part of the parent.
+//---------   Also this type does not set Tool Image within UpdateFromToolInformation(), but SVImageTypeLogical do.
 		SVImageTypeDependent   = 3,
 
 //--------- SVImageTypePhysical - Normal buffer type for most output images. 
@@ -54,8 +49,8 @@ namespace SvDef
 
 //--------- SVImageTypeLogicalAndPhysical (previously SVImageTypeLogical) -
 //---------   SHOULD NOT BE USED FOR NEW IMPLEMENTATIONS.
-//---------   SVImageTypeLogicalAndPhysical and SVImageTypeLogical are the 
-//---------   only two image types that result in a Matrox "child" buffer
+//---------   SVImageTypeLogicalAndPhysical, SVImageTypeLogical and SVImageTypeDependent are the 
+//---------   image types that result in a Matrox "child" buffer
 //---------   (as opposed to an SVO "child" buffer).
 //---------   SVImageTypeLogicalAndPhysical also results in allocation of 
 //---------   physical buffers.  In general I would consider this a mistake or
@@ -70,28 +65,9 @@ namespace SvDef
 //---------   Dependent and Virtual image types maintain a child->parent 
 //---------   relationship (nullptr != m_ParentImagePtr) but are still allocated 
 //---------   as physical buffers?
-		SVImageTypeLogicalAndPhysical = 5,
+//		SVImageTypeLogicalAndPhysical = 5, deprecated
 
-//--------- SVImageTypeVirtual - Not used. 
-//---------
-//---------   Dependent and Virtual image types maintain a child->parent 
-//---------   relationship (nullptr != m_ParentImagePtr) but are still allocated 
-//---------   as physical buffers?
-//---------
-//---------   Dependent and Virtual image types maintain a child->parent 
-//---------   relationship at the SVImageClass level (nullptr != m_ParentImagePtr) 
-//---------   but are still allocated as physical buffers.
-//---------
-//---------	  This image type does not create an image buffer pool as part of
-//---------	  the SVImageObjectClass.  Instead its buffer pool is maintained 
-//---------   as a child image of the SVImageClass parent!
-//---------
-//---------   Virtual image type can be a child of a Dependent image type?
-//---------   The only places where Virtual images and Dependent images are 
-//---------   treated differently are: 
-//---------     SVImageClass::UpdateFromToolInformation()
-//---------     SVImageClass::ValidateAgainstChildrenExtents()
-//		SVImageTypeVirtual     = 6,
+//		SVImageTypeVirtual     = 6, - Not used.
 
 //--------- SVImageTypeMain - only used for the MainImage.  Set by 
 //---------   SVMainImageClass constructor. 
@@ -101,12 +77,9 @@ namespace SvDef
 //		SVImageTypeRGBMain     = 8,
 
 //--------- SVImageTypeLogical -
-//---------   SVImageTypeLogicalAndPhysical and SVImageTypeLogical are the 
-//---------   only two image types that result in a Matrox "child" buffer
+//---------   SVImageTypeLogicalAndPhysical, SVImageTypeLogical and SVImageTypeDependent are the 
+//---------   image types that result in a Matrox "child" buffer
 //---------   (as opposed to an SVO "child" buffer).
-//---------   Dependent and Virtual image types maintain a child->parent 
-//---------   relationship (nullptr != m_ParentImagePtr) but are still allocated 
-//---------   as physical buffers.
 		SVImageTypeLogical = 9
 	};
 

@@ -56,4 +56,9 @@ namespace SvOg
 	private:
 		HRESULT RetrieveAvailableImageList();
 	};
+
+	/// Return the GUID of the first result image. If no result image, it return GUID_NULL.
+	/// \param rController [in]
+	/// \returns SVGUID
+	SVGUID getFirstResultImageId(const ImageController& rController);
 } //namespace SvOg

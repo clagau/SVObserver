@@ -59,6 +59,7 @@ SVToolAdjustmentDialogAnalyzerPageClass::SVToolAdjustmentDialogAnalyzerPageClass
 	, m_InspectionID(rInspectionID)
 	, m_TaskObjectID(rTaskObjectID)
 	, m_additionalAnalyzerId(GUID_NULL)
+	, m_ImageController(rInspectionID, rTaskObjectID)
 {
 	if (m_pParentDialog)
 	{
@@ -83,7 +84,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::DoDataExchange(CDataExchange* pDX)
 	CPropertyPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(SVToolAdjustmentDialogAnalyzerPageClass)
 	DDX_Control(pDX, IDC_ANALYZER_COMBO, m_availableAnalyzerCombobox);
-	DDX_Control(pDX, IDC_DIALOGIMAGE, dialogImage);
+	DDX_Control(pDX, IDC_DIALOGIMAGE, m_dialogImage);
 	//}}AFX_DATA_MAP
 }
 
@@ -101,6 +102,9 @@ BOOL SVToolAdjustmentDialogAnalyzerPageClass::OnInitDialog()
 	ASSERT(m_pTool);
 	if (m_pTool)
 	{
+		m_ImageController.Init();
+		m_resultImageID = getFirstResultImageId(m_ImageController);
+		
 		const SvDef::SVObjectTypeInfoStruct& rToolType = m_pTool->GetObjectInfo().m_ObjectTypeInfo;
 		CWnd* pWnd;
 		// Set Result/Publish button...
@@ -132,7 +136,7 @@ BOOL SVToolAdjustmentDialogAnalyzerPageClass::OnInitDialog()
 				break;
 		}
 
-		dialogImage.AddTab(_T("Tool Result"));
+		m_dialogImage.AddTab(_T("Tool Result"));
 
 		// Get the Image for this tool
 		setImages();
@@ -352,22 +356,11 @@ void SVToolAdjustmentDialogAnalyzerPageClass::DestroyAnalyzer()
 	}
 }
 
-BOOL SVToolAdjustmentDialogAnalyzerPageClass::setImages()
+void SVToolAdjustmentDialogAnalyzerPageClass::setImages()
 {
-	// Get the Image for this tool
-	const SVImageInfoClass* pImageInfo = m_pTool->getFirstImageInfo();
-	if (pImageInfo)
-	{
-		SVImageClass* l_pImage = nullptr;
-
-		pImageInfo->GetOwnerImage(l_pImage);
-
-		dialogImage.setImage(l_pImage);
-		dialogImage.Refresh();
-		return TRUE;
-	}
-	else
-		return FALSE;
+	IPictureDisp* pResultImage = m_ImageController.GetImage(m_resultImageID.ToGUID());
+	m_dialogImage.setImage(pResultImage);
+	m_dialogImage.Refresh();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

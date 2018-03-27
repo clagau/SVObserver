@@ -35,13 +35,13 @@ namespace SvOi
 		/// Return the data of the image.
 		/// \returns SVImageBufferHandlePtr
 		//************************************
-		virtual SVImageBufferHandlePtr getImageData() = 0;
+		virtual SVImageBufferHandlePtr getImageData() const = 0;
 
 		//************************************
 		/// Return the data of the parent image.
 		/// \returns SVImageBufferHandlePtr
 		//************************************
-		virtual SVImageBufferHandlePtr getParentImageData() = 0;
+		virtual SVImageBufferHandlePtr getParentImageData() const = 0;
 
 		//************************************
 		/// Return the display name the image.

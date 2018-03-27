@@ -44,9 +44,6 @@ public:
 	inline SVImageClass* GetToolImage() const;
 	inline void SetToolImage( SVImageClass* p_psvToolImage );
 
-	inline SvDef::SVImageTypeEnum GetImageType() const;
-	inline void SetImageType( SvDef::SVImageTypeEnum p_eImageType );
-
 	inline SVImageClass* GetSelectedImage() const;
 	inline void SetSelectedImage( SVImageClass* p_psvSelectedImage );
 
@@ -128,9 +125,6 @@ private:
 	SVToolClass* m_psvTool;
 
 	SVImageClass* m_psvToolImage;
-
-	// This value does not appear to get used.
-	SvDef::SVImageTypeEnum m_eImageType;
 
 	SvDef::SVExtentTranslationEnum m_eTranslation;
 	SvDef::SVExtentShapeEnum m_eShape;

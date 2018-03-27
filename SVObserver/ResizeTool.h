@@ -59,8 +59,6 @@ public:
 		long*	oldPerformance);
 		
 	SVImageClass* getInputImage(bool bRunMode = false) const;
-	SVImageClass* getLogicalROIImage();
-	SVImageClass* getOutputImage();
 
 	SVEnumerateValueObjectClass& getInterpolationMode() { return m_ResizeInterpolationMode; };
 	SVEnumerateValueObjectClass& getOverscan() { return m_ResizeOverscan; };

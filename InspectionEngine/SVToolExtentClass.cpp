@@ -155,13 +155,6 @@ HRESULT SVToolExtentClass::UpdateImageWithExtent(SVToolExtentTypeEnum p_ToolExte
 
 			if (nullptr != l_pParent)
 			{
-				if ((SvDef::SVImageTypeEnum::SVImageTypeLogicalAndPhysical == l_Type) && (SvDef::SVExtentTranslationProfile == GetTranslation()))
-				{
-					l_Type = SvDef::SVImageTypeEnum::SVImageTypePhysical;
-
-					m_psvToolImage->UpdateImage(l_Type);
-				}
-
 				if (SvDef::SVImageTypeEnum::SVImageTypeDependent == l_Type)
 				{
 					l_Extent = l_pParent->GetImageExtents();

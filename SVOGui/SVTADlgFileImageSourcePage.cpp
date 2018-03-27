@@ -145,14 +145,10 @@ namespace SvOg
 
 	void SVToolAdjustmentDialogFileImageSourcePageClass::setImages()
 	{
-		const SvUl::NameGuidList& images = m_ImageController.GetResultImages();
-		SvUl::NameGuidList::const_iterator it = images.begin();
-		if (it != images.end())
-		{
-			IPictureDisp* pImage = m_ImageController.GetImage(it->second.ToGUID());
-			m_imageCtrl.setImage(pImage, 0);
-			m_imageCtrl.Refresh();
-		}
+		SVGUID imageId = getFirstResultImageId(m_ImageController);
+		IPictureDisp* pImage = m_ImageController.GetImage(imageId);
+		m_imageCtrl.setImage(pImage, 0);
+		m_imageCtrl.Refresh();
 	}
 } //namespace SvOg
 

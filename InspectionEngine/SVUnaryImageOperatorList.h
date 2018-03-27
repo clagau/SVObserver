@@ -49,6 +49,8 @@ public:
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 
 	SVImageClass* getInputImage(bool bRunMode = false) const;
+	virtual const SVImageClass* getOutputImage(bool bRunMode = false) const = 0;
+	virtual const SVImageClass* getReferenceImage(bool bRunMode = false) const = 0;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 protected:

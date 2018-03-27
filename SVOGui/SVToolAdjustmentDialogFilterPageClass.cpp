@@ -92,21 +92,14 @@ namespace SvOg
 		return hrOk;
 	}
 		
-	bool SVToolAdjustmentDialogFilterPageClass::setImages()
+	void SVToolAdjustmentDialogFilterPageClass::setImages()
 	{
-		bool retVal = false;
-		const SvUl::NameGuidList guidList = m_ImageController.GetResultImages();
+		SVGUID imageId = getFirstResultImageId(m_ImageController);
+		IPictureDisp* pResultImage = m_ImageController.GetImage(imageId);
 
-		if (guidList.size()>0)
-		{
-			IPictureDisp* pResultImage = m_ImageController.GetImage(guidList[0].second.ToGUID());
-			// Set dialog image...
-			dialogImage.setImage(pResultImage);
-			dialogImage.Refresh();
-			retVal = true;
-		}
-
-		return retVal;
+		// Set dialog image...
+		dialogImage.setImage(pResultImage);
+		dialogImage.Refresh();
 	}
 
 	void SVToolAdjustmentDialogFilterPageClass::refresh()
@@ -184,36 +177,26 @@ namespace SvOg
 		dialogImage.AddTab(_T("Tool Result"));  
 		m_ImageController.Init();
 
-		bool res = setImages();
-		if(res)
+		setImages();
+
+		typedef SvCmd::GetCreatableObjects Command;
+		typedef std::shared_ptr<Command> CommandPtr;
+
+		SvUl::NameGuidList availableList;
+		CommandPtr commandPtr {new Command(m_UnaryImageOperatorID, SvDef::SVObjectTypeInfoStruct(SvDef::SVFilterObjectType, SvDef::SVNotSetSubObjectType))};
+		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+		if (S_OK == hr)
 		{
-			typedef SvCmd::GetCreatableObjects Command;
-			typedef std::shared_ptr<Command> CommandPtr;
-
-			SvUl::NameGuidList availableList;
-			CommandPtr commandPtr{ new Command(m_UnaryImageOperatorID, SvDef::SVObjectTypeInfoStruct(SvDef::SVFilterObjectType, SvDef::SVNotSetSubObjectType)) };
-			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-			if (S_OK == hr)
-			{
-				availableList = commandPtr->AvailableObjects();
-			}
-
-			m_availableFilterCB.Init(availableList, _T(""), Filter_NoFilterAvailable );
-
-			UpdateData( FALSE );
-
-			refresh();
-			return TRUE;
+			availableList = commandPtr->AvailableObjects();
 		}
 
-		// Not valid call...
-		if( GetParent() )
-			GetParent()->SendMessage( WM_CLOSE );
-		else
-			SendMessage( WM_CLOSE );
+		m_availableFilterCB.Init(availableList, _T(""), Filter_NoFilterAvailable);
 
-		return TRUE;  // return TRUE unless you set the focus to a control
+		UpdateData(FALSE);
+
+		refresh();
+		return TRUE;
 		// EXCEPTION: OCX-Eigenschaftenseiten sollten FALSE zurückgeben
 	}
 

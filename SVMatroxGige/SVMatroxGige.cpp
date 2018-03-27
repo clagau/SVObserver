@@ -1045,9 +1045,8 @@ HRESULT SVMatroxGige::CameraEndFrame( SVMatroxGigeDigitizer& p_rCamera, SVMatrox
 		{
 			if(nullptr != l_Buffer.m_ImageHandle && !(l_Buffer.m_ImageHandle->empty() ) )
 			{
-				HRESULT l_Code = SVMatroxBufferInterface::CopyBuffer(l_Buffer.m_ImageHandle->GetBuffer(), p_SrcBufferID );
-				hr = l_Code;
-
+				hr = SVMatroxBufferInterface::CopyBuffer(l_Buffer.m_ImageHandle->GetBuffer(), p_SrcBufferID );
+				
 				if( S_OK == hr)
 				{
 					l_Buffer.SetStartFrameTimeStamp( l_StartFrameTimeStamp );
@@ -1059,27 +1058,6 @@ HRESULT SVMatroxGige::CameraEndFrame( SVMatroxGigeDigitizer& p_rCamera, SVMatrox
 			else
 			{
 				hr = E_FAIL;
-
-				// For Mil to Non Mil Buffer copy
-				unsigned char *l_pDstBuffer = l_Buffer.GetBufferAddress();
-
-				if( nullptr != l_pDstBuffer )
-				{
-					// copy the image data
-					SVBitmapInfo bmpInfo;
-					HRESULT sc = SVMatroxBufferInterface::GetBitmapInfo(bmpInfo, p_SrcBufferID);
-					if (sc == S_OK)
-					{
-						sc = SVMatroxBufferInterface::CopyBuffer(bmpInfo, l_pDstBuffer, p_SrcBufferID);
-						if (sc == S_OK)
-						{
-							l_Buffer.SetStartFrameTimeStamp( l_StartFrameTimeStamp );
-							l_Buffer.SetEndFrameTimeStamp();
-
-							hr = p_rCamera.m_pBufferInterface->UpdateWithCompletedBuffer( l_Buffer );
-						}
-					}
-				}
 			}
 		}
 		else

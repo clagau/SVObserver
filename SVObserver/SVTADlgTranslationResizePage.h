@@ -13,6 +13,7 @@
 #include "SVRPropertyTree/SVRPropTree.h"
 #include "SVOGui/PictureDisplay.h"
 #include "SVOGui\ISVPropertyPageDialog.h"  // for QueryAllowExit()
+#include "SVOGui\ImageController.h"
 #pragma endregion Includes
 
 class ResizeTool;
@@ -52,7 +53,7 @@ protected:
 // Note:
 //	UpdateImages () ------------------------------------------------------------
 //  OnInitDialog () must be called first in order to initialize members.
-	HRESULT UpdateImages();
+	void UpdateImages();
 
 // Note:
 //	UpdatePropertyTreeData () ------------------------------------------------------------
@@ -82,6 +83,9 @@ protected:
 	long m_OutputTabHandle;
 
 	SVRPropTree	m_Tree;
+	SvOg::ImageController m_ImageController;
+	SVGUID m_ROIImageID = GUID_NULL;
+	SVGUID m_OutputImageID = GUID_NULL;
 
 	//{{AFX_DATA(SVTADlgTranslationResizePage)
 	enum { IDD = IDD_TA_RESIZE_DIALOG };
@@ -110,4 +114,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-

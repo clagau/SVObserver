@@ -16,4 +16,19 @@ namespace SvUl
 	typedef std::pair<std::string, SVGUID> NameGuidPair;
 	typedef std::deque<NameGuidPair> NameGuidList;
 	typedef std::map<std::string, NameGuidPair> InputNameGuidPairList;
+
+	template<typename T>
+	SVGUID FindGUID(const T& rList, const std::string& rName)
+	{
+		SVGUID retID = GUID_NULL;
+		T::const_iterator it = find_if(rList.begin(), rList.end(), [rName](const auto item)->bool
+		{
+			return rName == item.first;
+		});
+		if (it != rList.end())
+		{
+			retID = it->second;
+		}
+		return retID;
+	}
 } // namespace SvUl

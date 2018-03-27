@@ -66,9 +66,9 @@ bool SVMaxMinusMinFilterClass::ResetObject(SvStl::MessageContainerVector *pError
 
 	m_ProcBufferHandlePtr.reset();
 
-	if( Result && nullptr != getReferenceImage() )
+	if( Result && nullptr != getOutputImage() )
 	{
-		mProcBufferInfo = getReferenceImage()->GetImageInfo();
+		mProcBufferInfo = getOutputImage()->GetImageInfo();
 
 		mProcBufferInfo.SetOwnerImage( GUID_NULL );
 		mProcBufferInfo.SetOwner( GUID_NULL );

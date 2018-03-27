@@ -20,7 +20,6 @@
 //for image copy
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"
 #include "DisplayHelper.h"
-#include "ObjectInterfaces\ISVImage.h"
 #include "SVUtilityLibrary/BitmapHelper.h"
 #pragma endregion Includes
 
@@ -33,32 +32,6 @@ namespace SvOg
 #pragma endregion Contructor
 
 #pragma region Public Methods
-	// only called for mask and threshold - @TODO - needs to go!
-	void PictureDisplay::setImageFromParent( SvOi::ISVImage* pImage, long tabNumber )
-	{
-		if (nullptr != pImage)
-		{
-			SvOi::SVImageBufferHandlePtr data;
-			if( SvDef::SVImageTypeEnum::SVImageTypePhysical == pImage->GetImageType() )
-			{
-				data = pImage->GetParentImageInterface()->getImageData();
-			}
-			else
-			{
-				data = pImage->getParentImageData();
-			}
-			setImage( data, tabNumber );
-		}
-	}
-
-	void PictureDisplay::setImage( SvOi::ISVImage* pImage, long tabNumber )
-	{
-		if (nullptr != pImage)
-		{
-			setImage(pImage->getImageData(), tabNumber );
-		}
-	}
-
 	//@TODO - needs to go!
 	void PictureDisplay::setImage( const SvOi::SVImageBufferHandlePtr imageData, long tabNumber )
 	{

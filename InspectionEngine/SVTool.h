@@ -68,8 +68,6 @@ public:
 
 	virtual bool SetDefaultFormulas(SvStl::MessageContainerVector *pErrorMessages = nullptr);
 
-	SvDef::SVImageTypeEnum GetImageType();
-
 	HRESULT SetImageExtentProperty(SvDef::SVExtentPropertyEnum p_eProperty, SvOi::IValueObject* pValueObject);
 
 	virtual HRESULT GetImageExtent(SVImageExtentClass& rImageExtent) override;

@@ -15,6 +15,7 @@
 #include "SVMFCControls\SVHistogram.h"
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
 #include "SVOGui/PictureDisplay.h"
+#include "SVOGui/ImageController.h"
 #include "SVUtilityLibrary/SVGuid.h"
 #pragma endregion Includes
 
@@ -23,7 +24,6 @@ class SVToolClass;
 class SVUnaryImageOperatorListClass;
 class SVThresholdClass;
 class SVBoolValueObjectClass;
-class SVImageClass;
 
 // Threshold Dialog
 void AFXAPI DDX_SVThresholdText( CDataExchange* pDX, int nIDC, DWORD& Value );
@@ -64,8 +64,6 @@ class SVToolAdjustmentDialogThresholdPageClass : public CPropertyPage
 
 	void UpdateLowerThresholdFromFormula();
 	void UpdateUpperThresholdFromFoumula();
-
-	SVImageClass* getReferenceImage(SVToolClass* pTool, SVThresholdClass* pCurrentThreshold);
 
 public:
 	SVToolAdjustmentDialogThresholdPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* pParent);
@@ -141,6 +139,8 @@ private:
 	long m_upperThres;	// current slider pos...
 	long m_lowerThres;	// current slider pos...
 	long m_histState;
+	SvOg::ImageController m_ImageController;
+	SVGUID m_resultImageID = GUID_NULL;
 
 public:
 	SvMc::SVHistogram m_histogram;

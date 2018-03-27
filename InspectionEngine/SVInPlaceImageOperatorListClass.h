@@ -43,6 +43,9 @@ public:
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 	virtual bool Run( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
+	virtual const SVImageClass* getOutputImage(bool bRunMode = false) const override { return getInputImage(bRunMode); };
+	virtual const SVImageClass* getReferenceImage(bool bRunMode = false) const override { return getInputImage(bRunMode); };
+
 private:
 	void init();
 };
