@@ -280,6 +280,8 @@ bool SVArchiveTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	if ( Temp.empty() )
 	{
 		m_arrayResultsInfoObjectsToArchive.InitializeObjects( this, m_svoArchiveResultNames );
+		//next line it needed to reset the names if object have be changed because e.g. array become a single value.
+		setResultArchiveList(getResultArchiveList());
 		m_arrayResultsInfoObjectsToArchive.ValidateResultsObjects();	// makes sure the results are connected as inputs
 	}
 	else	// pre array value object way

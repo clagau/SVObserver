@@ -84,6 +84,24 @@ HRESULT SVArchiveRecordsArray::InitializeObjects(SVArchiveTool* pToolArchive, SV
 				std::string NewName = pToolArchive->GetInspection()->GetName();
 				NewName += SvUl::Mid( Name, Pos );
 				HRESULT hrGetObject = SVObjectManagerClass::Instance().GetObjectByDottedName( NewName.c_str(), ObjectRef );
+				Pos = Name.find('[');
+				if (std::string::npos != Pos)
+				{	//Array brackets found
+					if (!ObjectRef.isArray() && 0 < ObjectRef.GetObjectNameInfo().GetIndexValue())
+					{
+						//delete entry
+						continue;
+					}
+				}
+				else
+				{
+					if (ObjectRef.isArray())
+					{
+						NewName += _T("[1]");
+						ObjectRef.SetArrayIndex(0);
+					}
+				}
+
 				if( S_OK == hrGetObject )
 				{
 					if( NewName != Name )
