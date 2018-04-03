@@ -247,8 +247,6 @@ inline Json::Value MkArray(const CComVariant & items)
 SVControlCommands::SVControlCommands(NotifyFunctor p_Func, bool connectToRRS)
 	: m_ServerName(""),
 	m_CommandPort(svr::cmdPort),
-	m_RejectPort(svr::rjctPort),
-	m_RunServerPort(svr::runpgePort),
 	m_Connected(false),
 	m_RRSConnected(false),
 	m_Notifier(p_Func),
@@ -808,8 +806,6 @@ std::string trim(const std::string & str) // for debugging
 template<typename API>
 struct port;
 
-template<> struct port<SvSol::TcpApi> { enum : u_short { no = svr::rjctPort }; };
-template<> struct port<SvSol::UdpApi> { enum : u_short { no = svr::runpgePort }; };
 
 // This function sends to the Run/Reject server
 template<typename API>

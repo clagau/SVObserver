@@ -62,39 +62,7 @@ void SVFailStatusStream::FinalRelease()
 	ClearRemoteControl();
 }
 
-STDMETHODIMP SVFailStatusStream::get_RemoteCtrl(ISVRemoteCtrl** ppVal)
-{
-	HRESULT hr = S_OK;
 
-	if (nullptr != ppVal)
-	{
-		if (nullptr != *ppVal)
-		{
-			(*ppVal)->Release();
-
-			*ppVal = nullptr;
-		}
-
-		if (nullptr != m_RemoteCtrl.p)
-		{
-			hr = m_RemoteCtrl.QueryInterface(ppVal);
-			SVLOG(hr);
-		}
-	}
-	else
-	{
-		hr = E_INVALIDARG;
-		SVLOG(hr);
-	}
-	return hr;
-}
-
-STDMETHODIMP SVFailStatusStream::put_RemoteCtrl(ISVRemoteCtrl* newVal)
-{
-	HRESULT hr = AssignRemoteControl(newVal);
-	SVLOG(hr);
-	return hr;
-}
 
 STDMETHODIMP SVFailStatusStream::get_TimeoutInSeconds(long* pVal)
 {
@@ -110,113 +78,7 @@ STDMETHODIMP SVFailStatusStream::put_TimeoutInSeconds(long Val)
 	return hr;
 }
 
-STDMETHODIMP SVFailStatusStream::Start(BSTR ListName)
-{
-	HRESULT hr = S_OK;
-	_bstr_t monitorListName = ListName;
-	if (monitorListName.length() > 0)
-	{
-		if (m_Command.IsJsonCommandEmpty())
-		{
-			const std::string& JsonCommand = SVStartStopStreamJsonBuilder::BuildStartCommand(static_cast<wchar_t*>(monitorListName));
-			if (!JsonCommand.empty())
-			{
-				hr = m_Command.SetJsonCommand(JsonCommand, m_TimeoutInSeconds * milliseconds);
-				SVLOG(hr);
 
-				if (S_OK == hr)
-				{
-					hr = WriteToSocket(JsonCommand);
-					SVLOG(hr);
-
-					if (S_OK == hr)
-					{
-						hr = m_Command.WaitForRequest(m_TimeoutInSeconds * milliseconds);
-						SVLOG(hr);
-						if (S_OK == hr)
-						{
-							// get the remote status
-							hr = m_Command.ExtractStatus(SVRC::stream::status);
-							SVLOG(hr);
-						}
-					}
-					m_Command.ClearJsonCommand();
-				}
-			}
-			else
-			{
-				hr = INET_E_INVALID_REQUEST;
-				SVLOG(hr);
-			}
-		}
-		else
-		{
-			hr = INET_E_INVALID_REQUEST;
-			SVLOG(hr);
-		}
-	}
-	else
-	{
-		hr = E_INVALIDARG;
-		SVLOG(hr);
-	}
-	return hr;
-}
-
-STDMETHODIMP SVFailStatusStream::Stop(BSTR ListName)
-{
-	HRESULT hr = S_OK;
-
-	_bstr_t monitorListName = ListName;
-
-	if (monitorListName.length() > 0)
-	{
-		if (m_Command.IsJsonCommandEmpty())
-		{
-			const std::string& JsonCommand = SVStartStopStreamJsonBuilder::BuildStopCommand(static_cast<const wchar_t*>(monitorListName));
-			if (!JsonCommand.empty())
-			{
-				hr = m_Command.SetJsonCommand(JsonCommand, m_TimeoutInSeconds * milliseconds);
-				SVLOG(hr);
-
-				if (S_OK == hr)
-				{
-					hr = WriteToSocket(JsonCommand);
-					SVLOG(hr);
-
-					if (S_OK == hr)
-					{
-						hr = m_Command.WaitForRequest(m_TimeoutInSeconds * milliseconds);
-						SVLOG(hr);
-						if (S_OK == hr)
-						{
-							// get the remote status
-							hr = m_Command.ExtractStatus(SVRC::stream::status);
-							SVLOG(hr);
-						}
-					}
-					m_Command.ClearJsonCommand();
-				}
-			}
-			else
-			{
-				hr = INET_E_INVALID_REQUEST;
-				SVLOG(hr);
-			}
-		}
-		else
-		{
-			hr = INET_E_INVALID_REQUEST;
-			SVLOG(hr);
-		}
-	}
-	else
-	{
-		hr = E_INVALIDARG;
-		SVLOG(hr);
-	}
-	return hr;
-}
 
 HRESULT SVFailStatusStream::AssignRemoteControl(ISVRemoteCtrl* newVal)
 {

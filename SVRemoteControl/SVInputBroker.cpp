@@ -55,40 +55,6 @@ void SVInputBroker::FinalRelease()
 	ClearRemoteControl();
 }
 
-STDMETHODIMP SVInputBroker::get_RemoteCtrl(ISVRemoteCtrl** ppVal)
-{
-	HRESULT l_Status = S_OK;
-
-	if( ppVal != nullptr )
-	{
-		if( *ppVal != nullptr )
-		{
-			( *ppVal )->Release();
-
-			*ppVal = nullptr;
-		}
-
-		if( m_RemoteCtrl.p != nullptr )
-		{
-			l_Status = m_RemoteCtrl.QueryInterface(ppVal);
-		}
-	}
-	else
-	{
-		l_Status = E_INVALIDARG;
-	}
-
-	return l_Status;
-}
-
-STDMETHODIMP SVInputBroker::put_RemoteCtrl(ISVRemoteCtrl* newVal)
-{
-	HRESULT l_Status = S_OK;
-
-	l_Status = AssignRemoteControl( newVal );
-
-	return l_Status;
-}
 
 STDMETHODIMP SVInputBroker::get_TimeoutInSeconds(long* pVal)
 {

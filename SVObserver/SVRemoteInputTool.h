@@ -32,7 +32,6 @@ public:
 	virtual ~SVRemoteInputTool();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
-	virtual bool CloseObject() override;
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
@@ -42,9 +41,7 @@ public:
 	HRESULT ClearInputObject();
 	HRESULT SetInputObject(const std::string& rGuidName);
 
-#pragma region Methods to replace processMessage
-	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override;
-#pragma endregion Methods to replace processMessage
+
 
 protected:
 	typedef SVTQueueObject< SVObjectCommandDataJsonPtr > SVCommandQueue;

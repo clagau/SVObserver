@@ -56,12 +56,24 @@ public:
 
 	void FinalRelease();
 
-	STDMETHOD(get_RemoteCtrl)(ISVRemoteCtrl** pVal);
-	STDMETHOD(put_RemoteCtrl)(ISVRemoteCtrl* newVal);
+	STDMETHOD(get_RemoteCtrl)(ISVRemoteCtrl** pVal)
+	{
+		return E_NOTIMPL;
+	};
+	STDMETHOD(put_RemoteCtrl)(ISVRemoteCtrl* newVal)
+	{
+		return E_NOTIMPL;
+	};
 	STDMETHOD(get_TimeoutInSeconds)(long* pVal);
 	STDMETHOD(put_TimeoutInSeconds)(long Val);
-	STDMETHOD(Start)(BSTR ListName);
-	STDMETHOD(Stop)(BSTR ListName);
+	STDMETHOD(Start)(BSTR ListName)
+	{
+		return E_NOTIMPL;
+	};
+	STDMETHOD(Stop)(BSTR ListName)
+	{
+		return E_NOTIMPL;
+	};
 
 protected:
 	HRESULT AssignRemoteControl(ISVRemoteCtrl* newVal);

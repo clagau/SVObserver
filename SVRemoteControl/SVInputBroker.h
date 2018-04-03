@@ -42,11 +42,18 @@ public:
 	HRESULT FinalConstruct();
 	void FinalRelease();
 
-	STDMETHOD(get_RemoteCtrl)(ISVRemoteCtrl** pVal);
-	STDMETHOD(put_RemoteCtrl)(ISVRemoteCtrl* newVal);
+	STDMETHOD(get_RemoteCtrl)(ISVRemoteCtrl** pVal)
+	{
+		return E_NOTIMPL;
+	};
+	STDMETHOD(put_RemoteCtrl)(ISVRemoteCtrl* newVal)
+	{
+		return E_NOTIMPL;
+	};
 	STDMETHOD(get_TimeoutInSeconds)(long* pVal);
 	STDMETHOD(put_TimeoutInSeconds)(long Val);
 	STDMETHOD(QueryListNames)(SAFEARRAY** ppNames);
+
 	STDMETHOD(QueryListItems)(BSTR ListName, ISVInputMatchList** ppItems);
 	STDMETHOD(Clear)(BSTR ListName);
 	STDMETHOD(Add)(BSTR ListName, ISVInputMatchList* pItems);

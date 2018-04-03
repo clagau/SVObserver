@@ -470,7 +470,7 @@ namespace SVRemoteTest
 					if (ConnectTag == method.Name)
 					{
 						// Set up Input/Output brokers, FailStatus stream
-						SetupInterfaces();
+						//SetupInterfaces();
 						Mode_Label.Text = QueryDeviceMode();
 					}
 					else
@@ -730,7 +730,7 @@ namespace SVRemoteTest
 						m_propertiesPage.ShowComProperties(axSVRemoteCtrl1.GetType(), axSVRemoteCtrl1);
 
 						// Set up Input/Output brokers, Fail Status Stream
-						SetupInterfaces();
+						//SetupInterfaces();
 					}
 				}
 				catch (Exception exception)

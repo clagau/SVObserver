@@ -89,9 +89,8 @@ SVRemoteCtrl::SVRemoteCtrl()
 	m_VPName( L"" ),
 	m_imageScale(100),
 	m_CommandPort(svr::cmdPort),
-	m_dispatcher(new SVControlCommands( boost::bind(&SVRemoteCtrl::NotifyClient, this, _1, _2),true )),
-	m_DataPort(svr::dataPort)
-{
+	m_dispatcher(new SVControlCommands( boost::bind(&SVRemoteCtrl::NotifyClient, this, _1, _2),true ))
+	{
 	m_bWindowOnly = TRUE;
 	SvSol::SVSocketLibrary::Init();
 

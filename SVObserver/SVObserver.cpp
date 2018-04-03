@@ -865,7 +865,7 @@ void SVObserverApp::OnStop()
 		if (nullptr != pPPQ) { pPPQ->GoOffline(); }
 	}
 	// Stop the FailStatus Stream PPQ Listeners
-	SVFailStatusStreamManager::Instance().RemovePPQObservers();
+	
 
 	SetAllIPDocumentsOffline();
 
@@ -2298,10 +2298,7 @@ BOOL SVObserverApp::InitInstance()
 	m_DataValidDelay = static_cast<long> (SvimIni.GetValueInt(_T("Settings"), _T("DataValidDelay"), 0));
 
 	SVSocketRemoteCommandManager::Instance().Startup(m_RemoteCommandsPortNumber);
-	SVInputStreamManager::Instance().Startup(m_InputStreamPortNumber);
-	SVOutputStreamManager::Instance().Startup(m_OutputStreamPortNumber);
-	SVFailStatusStreamManager::Instance().Startup(m_FailStatusStreamPortNumber);
-
+	
 	if (!TheSVOLicenseManager().HasMatroxLicense())
 	{
 		SvStl::MessageMgrStd Exception(SvStl::LogAndDisplay);
@@ -2344,9 +2341,7 @@ int SVObserverApp::ExitInstance()
 	SVDirectX::Instance().clear();
 
 	SVVisionProcessorHelper::Instance().Shutdown();
-	SVFailStatusStreamManager::Instance().Shutdown();
-	SVOutputStreamManager::Instance().Shutdown();
-	SVInputStreamManager::Instance().Shutdown();
+	
 	SVSocketRemoteCommandManager::Instance().Shutdown();
 
 	SvSol::SVSocketLibrary::Destroy();
@@ -2985,12 +2980,10 @@ HRESULT SVObserverApp::DestroyConfig(bool AskForSavingOrClosing /* = true */,
 		{
 			TheSVOLicenseManager().ClearLicenseErrors();
 
-			// Disallow Client Connections
-			SVInputStreamManager::Instance().Shutdown();
-			SVOutputStreamManager::Instance().Shutdown();
-
-			// Remove all FailStatus Streams
-			SVFailStatusStreamManager::Instance().Clear();
+	
+	
+	
+	
 
 			bOk = SVSVIMStateClass::AddState(SV_STATE_UNAVAILABLE | SV_STATE_CLOSING);
 
@@ -6019,13 +6012,7 @@ HRESULT SVObserverApp::ConstructDocuments(SVTreeType& p_rTree)
 							l_Status = E_FAIL;
 						}
 					}
-
-					if (S_OK == l_Status)
-					{
-						// Allow Clients to Connect
-						SVInputStreamManager::Instance().Startup(m_InputStreamPortNumber);
-						SVOutputStreamManager::Instance().Startup(m_OutputStreamPortNumber);
-					}
+					
 				}
 				else
 				{
@@ -6115,11 +6102,7 @@ HRESULT SVObserverApp::ConstructMissingDocuments()
 		l_Status = E_FAIL;
 	}
 
-	if (S_OK == l_Status)
-	{
-		SVInputStreamManager::Instance().Startup(m_InputStreamPortNumber);
-		SVOutputStreamManager::Instance().Startup(m_OutputStreamPortNumber);
-	}
+	
 	return l_Status;
 }
 

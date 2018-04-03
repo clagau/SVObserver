@@ -106,13 +106,11 @@ void RemoteMonitorListController::SetRemoteMonitorList(const RemoteMonitorListMa
 {
 	m_list = rList;
 	HideShowViewTab();
-	SVFailStatusStreamManager::Instance().ManageFailStatus(m_list);
 }
 
 void RemoteMonitorListController::ReplaceOrAddMonitorList(const RemoteMonitorNamedList& rList)
 {
 	m_list[rList.GetName()] = rList;
-	SVFailStatusStreamManager::Instance().ManageFailStatus(m_list);
 }
 
 void RemoteMonitorListController::HideShowViewTab()
@@ -259,8 +257,6 @@ void RemoteMonitorListController::WriteMonitorListToMLContainer(const std::strin
 ////////////////////////////////////////////////////////////////////////////
 HRESULT RemoteMonitorListController::BuildPPQMonitorList(PPQMonitorList& ppqMonitorList) const
 {
-	// Setup failStatus Streaming
-	SVFailStatusStreamManager::Instance().AttachPPQObservers(m_list);
 	// combine the lists by PPQName
 	SvSml::SharedMemWriter::Instance().ClearMonitorListCpyVector();
 

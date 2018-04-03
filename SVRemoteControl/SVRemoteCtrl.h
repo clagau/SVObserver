@@ -199,7 +199,6 @@ protected:
 	_bstr_t m_servername;
 	_bstr_t m_VPName;
 	unsigned short m_CommandPort;
-	unsigned short m_DataPort;
 	SVEventThread< SVAsyncThreadFunc > m_AsyncThread;
 	SVAsyncCommandHelper m_AsyncCommandHelper;
 

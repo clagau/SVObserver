@@ -112,8 +112,6 @@ protected:
 
 	_bstr_t m_ServerName;
 	unsigned short m_CommandPort;
-	unsigned short m_RejectPort;
-	unsigned short m_RunServerPort;
 	bool m_Connected;
 	bool m_RRSConnected;
 

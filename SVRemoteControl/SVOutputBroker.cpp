@@ -61,39 +61,7 @@ void SVOutputBroker::FinalRelease()
 	ClearRemoteControl();
 }
 
-STDMETHODIMP SVOutputBroker::get_RemoteCtrl(ISVRemoteCtrl** ppVal)
-{
-	HRESULT hr = S_OK;
 
-	if (nullptr!= ppVal)
-	{
-		if (nullptr != *ppVal)
-		{
-			(*ppVal)->Release();
-			*ppVal = nullptr;
-		}
-
-		if (nullptr != m_RemoteCtrl.p)
-		{
-			hr = m_RemoteCtrl.QueryInterface(ppVal);
-			SVLOG(hr);
-		}
-	}
-	else
-	{
-		hr = E_INVALIDARG;
-		SVLOG(hr);
-	}
-	return hr;
-}
-
-STDMETHODIMP SVOutputBroker::put_RemoteCtrl(ISVRemoteCtrl* newVal)
-{
-	HRESULT hr = AssignRemoteControl(newVal);
-	SVLOG(hr);
-
-	return hr;
-}
 
 STDMETHODIMP SVOutputBroker::get_TimeoutInSeconds(long* pVal)
 {
@@ -113,59 +81,7 @@ STDMETHODIMP SVOutputBroker::put_TimeoutInSeconds(long Val)
 	return hr;
 }
 
-STDMETHODIMP SVOutputBroker::Start(BSTR ListName)
-{
-	HRESULT hr = S_OK;
 
-	_bstr_t remoteOutputListName = ListName;
-
-	if (remoteOutputListName.length() > 0)
-	{
-		if (m_Command.IsJsonCommandEmpty())
-		{
-			const std::string& JsonCommand = SVOutputBrokerJsonBuilder::BuildStartCommand(static_cast<wchar_t*>(remoteOutputListName));
-			if (!JsonCommand.empty())
-			{
-				hr = m_Command.SetJsonCommand(JsonCommand, m_TimeoutInSeconds * milliseconds);
-				SVLOG(hr);
-
-				if (S_OK == hr)
-				{
-					hr = WriteToSocket(JsonCommand);
-					SVLOG(hr);
-
-					if (S_OK == hr)
-					{
-						hr = m_Command.WaitForRequest(m_TimeoutInSeconds * milliseconds);
-						SVLOG(hr);
-					}
-					if (S_OK == hr)
-					{
-						// check for errors...
-						hr = m_Command.ExtractStatus(SVRC::stream::status);
-					}
-					m_Command.ClearJsonCommand();
-				}
-			}
-			else
-			{
-				hr = INET_E_INVALID_REQUEST;
-				SVLOG(hr);
-			}
-		}
-		else
-		{
-			hr = INET_E_INVALID_REQUEST;
-			SVLOG(hr);
-		}
-	}
-	else
-	{
-		hr = E_INVALIDARG;
-		SVLOG(hr);
-	}
-	return hr;
-}
 
 static HRESULT CheckErrors()
 {
@@ -173,59 +89,6 @@ static HRESULT CheckErrors()
 	return hr;
 }
 
-STDMETHODIMP SVOutputBroker::Stop(BSTR ListName)
-{
-	HRESULT hr = S_OK;
-
-	_bstr_t remoteOutputListName = ListName;
-
-	if (remoteOutputListName.length() > 0)
-	{
-		if (m_Command.IsJsonCommandEmpty())
-		{
-			const std::string& JsonCommand = SVOutputBrokerJsonBuilder::BuildStopCommand(static_cast<const wchar_t*>(remoteOutputListName));
-			if (!JsonCommand.empty())
-			{
-				hr = m_Command.SetJsonCommand(JsonCommand, m_TimeoutInSeconds * milliseconds);
-				SVLOG(hr);
-
-				if (S_OK == hr)
-				{
-					hr = WriteToSocket(JsonCommand);
-					SVLOG(hr);
-
-					if (S_OK == hr)
-					{
-						hr = m_Command.WaitForRequest(m_TimeoutInSeconds * milliseconds);
-						SVLOG(hr);
-					}
-					if (S_OK == hr)
-					{
-						// check for errors...
-						hr = m_Command.ExtractStatus(SVRC::stream::status);
-					}
-					m_Command.ClearJsonCommand();
-				}
-			}
-			else
-			{
-				hr = INET_E_INVALID_REQUEST;
-				SVLOG(hr);
-			}
-		}
-		else
-		{
-			hr = INET_E_INVALID_REQUEST;
-			SVLOG(hr);
-		}
-	}
-	else
-	{
-		hr = E_INVALIDARG;
-		SVLOG(hr);
-	}
-	return hr;
-}
 
 STDMETHODIMP SVOutputBroker::QueryListNames(SAFEARRAY** ppNames)
 {

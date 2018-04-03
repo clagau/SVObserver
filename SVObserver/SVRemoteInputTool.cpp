@@ -55,21 +55,12 @@ bool SVRemoteInputTool::CreateObject( const SVObjectLevelCreateStruct& rCreateSt
 {
 	bool l_Status = SVToolClass::CreateObject(rCreateStructure);
 
-	l_Status &= ( S_OK == SVInputStreamManager::Instance().InsertInputStream( GetCompleteName().c_str(), GetUniqueObjectID() ) );
+	//l_Status &= ( S_OK == SVInputStreamManager::Instance().InsertInputStream( GetCompleteName().c_str(), GetUniqueObjectID() ) );
 
 	m_isCreated = l_Status;
 
 	m_MatchedValueId.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 	m_MatchedValue.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-
-	return l_Status;
-}
-
-bool SVRemoteInputTool::CloseObject()
-{
-	bool l_Status = ( S_OK == SVInputStreamManager::Instance().EraseInputStream( GetUniqueObjectID() ) );
-		
-	l_Status &= SVToolClass::CloseObject();
 
 	return l_Status;
 }
@@ -191,12 +182,7 @@ HRESULT SVRemoteInputTool::SetInputObject(const std::string& rGuidName)
 	return l_Status;
 }
 
-void SVRemoteInputTool::OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName)
-{
-	SVInputStreamManager::Instance().EraseInputStream( GetUniqueObjectID() );
-	SVInputStreamManager::Instance().InsertInputStream( GetCompleteName().c_str(), GetUniqueObjectID() );
-	__super::OnObjectRenamed(rRenamedObject, rOldName);
-}
+
 
 SVObjectReference SVRemoteInputTool::GetInputObject() const
 {
