@@ -424,7 +424,7 @@ HRESULT SVControlCommands::GetMode(unsigned long&  rMode, SVCommandStatus& rStat
 
 		SvPb::GetDeviceModeRequest DeviceModeRequest;
 		SvPb::GetDeviceModeResponse resp =
-			SvWsl::runRequest(*m_ObsClient.m_pClientService.get(), &SvWsl::Obs_ClientService::GetDeviceMode,
+			SvWsl::runRequest(*m_ObsClient.m_pClientService.get(), &SvWsl::SVRCClientService::GetDeviceMode,
 			std::move(DeviceModeRequest)).get();
 
 		rStatus.hResult = S_OK;
@@ -474,7 +474,7 @@ HRESULT SVControlCommands::SetMode(unsigned long Mode, bool UseSyncSocket, SVCom
 		
 		SetModeRequest.set_mode(static_cast<SvPb::DeviceModeType>(Mode));
 		SvPb::SetDeviceModeResponse SetModeResponse =
-			SvWsl::runRequest(*m_ObsClient.m_pClientService.get(), &SvWsl::Obs_ClientService::SetDeviceMode,
+			SvWsl::runRequest(*m_ObsClient.m_pClientService.get(), &SvWsl::SVRCClientService::SetDeviceMode,
 			std::move(SetModeRequest)).get();
 
 		rStatus.hResult = S_OK;

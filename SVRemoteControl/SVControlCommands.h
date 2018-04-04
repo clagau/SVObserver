@@ -23,7 +23,7 @@
 #include <Thread>
 #include <boost/asio/io_service.hpp>
 #include "WebsocketLibrary/clientservice.h"
-#include "WebsocketLibrary/Obs_ClientService.h"
+#include "WebsocketLibrary/SVRCClientService.h"
 #include "SVRPCLibrary/RPCClient.h"
 #pragma endregion Includes
 
@@ -162,7 +162,7 @@ protected:
 
 
 	CompleteClient<SvWsl::ClientService>			 m_WebClient;
-	CompleteClient<SvWsl::Obs_ClientService>		 m_ObsClient;
+	CompleteClient<SvWsl::SVRCClientService>		 m_ObsClient;
 
 };
 
