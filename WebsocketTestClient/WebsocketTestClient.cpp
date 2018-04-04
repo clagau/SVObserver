@@ -24,9 +24,7 @@
 
 #include "WebsocketLibrary/ClientService.h"
 #include "WebsocketLibrary/Logging.h"
-#pragma warning (push,2)
-#include "SVPROTOBUF/RunRE.pb.h"
-#pragma warning (pop)
+#include "SVProtoBuf\SVRC.h"
 #include "SvHttpLibrary/WebsocketClientFactory.h"
 #include "SVRPCLibrary/ErrorUtil.h"
 #include "SVRPCLibrary/RPCClient.h"
@@ -252,7 +250,7 @@ private:
 
 int main(int argc, char* argv[])
 {
-
+	
 	SvWsl::LogSettings logSettings;
 	logSettings.log_level = "debug";
 	logSettings.log_to_stdout_enabled = true;
@@ -273,7 +271,7 @@ int main(int argc, char* argv[])
 	pRpcClient->waitForConnect(6000);
 
 	auto request_timeout = boost::posix_time::seconds(2);
-	auto pService = std::make_unique<SvWsl::ClientService>(*pRpcClient, request_timeout);
+	auto pService = std::make_unique<SvWsl::ClientService>(*pRpcClient);
 
 
 	BOOST_LOG_TRIVIAL(info) << "Enter a command(Ctrl-Z to stop): ";
@@ -493,7 +491,7 @@ int main(int argc, char* argv[])
 					pRpcClient.reset();
 					pRpcClient = std::make_unique<SvRpc::RPCClient>(host, port);
 					pRpcClient->waitForConnect(2000);
-					pService = std::make_unique<SvWsl::ClientService>(*pRpcClient, request_timeout);
+					pService = std::make_unique<SvWsl::ClientService>(*pRpcClient);
 				}
 			}
 			else if (words[0] == "qli")

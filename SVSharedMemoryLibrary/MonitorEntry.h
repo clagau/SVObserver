@@ -15,7 +15,7 @@
 #include "MLInspectionInfo.h"
 #include "SVMatroxLibrary\MatroxImageProps.h"
 #include "SVprotobuf/MonitorListStore.h"
-#include "SVProtobuf/RunRe.h"
+#include "SVProtobuf/SVRC.h"
 #include "Definitions\SVObjectTypeInfoStruct.h"
 
 #pragma endregion Includes

@@ -6,7 +6,7 @@
 // This class is exported from the SVObserverAccessDll.dll
 //******************************************************************************
 
-#include "SVProtoBuf\RunRe.h"
+#include "SVProtoBuf\SVRC.h"
 #include "SVProtoBuf\envelope.h"
 #include <SVSharedMemoryLibrary\ShareControl.h>
 // The following ifdef block is the standard way of creating macros which make exporting 

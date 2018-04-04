@@ -68,6 +68,7 @@ namespace Gdiplus
 	using std::min;
 	using std::max;
 }
+
 #include <afx.h>
 #include <afxwin.h>         // MFC-Kern- und -Standardkomponenten
 #include <afxctl.h>
@@ -104,6 +105,8 @@ namespace Gdiplus
 #include <direct.h>
 #include <float.h>
 #include <fstream>
+#include <functional>
+#include <future>
 #include <io.h>
 #include <iostream>
 #include <initguid.h>

@@ -12,7 +12,7 @@
 #include <boost/thread.hpp>
 
 #include "SharedMemoryAccessInterface.h"
-#include "SVProtoBuf/RunRe.h"
+#include "SVProtobuf/SVRC.h"
 #include "SVSharedMemoryLibrary/ShareControl.h"
 #include "SVRPCLibrary/Observer.h"
 #include "SVRPCLibrary/Task.h"

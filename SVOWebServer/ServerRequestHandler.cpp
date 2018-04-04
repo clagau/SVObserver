@@ -23,8 +23,8 @@ namespace SvOws
 ServerRequestHandler::ServerRequestHandler(SharedMemoryAccessInterface* sma)
 {
 	registerRequestHandler<
-		SvPb::RunRejectMessages,
-		SvPb::RunRejectMessages::kGetVersionRequest,
+		SvPb::SVRCMessages,
+		SvPb::SVRCMessages::kGetVersionRequest,
 		SvPb::GetVersionRequest,
 		SvPb::GetVersionResponse>(
 		[sma](SvPb::GetVersionRequest&& req, SvRpc::Task<SvPb::GetVersionResponse> task)
@@ -33,8 +33,8 @@ ServerRequestHandler::ServerRequestHandler(SharedMemoryAccessInterface* sma)
 	});
 
 	registerRequestHandler<
-		SvPb::RunRejectMessages,
-		SvPb::RunRejectMessages::kQueryListNameRequest,
+		SvPb::SVRCMessages,
+		SvPb::SVRCMessages::kQueryListNameRequest,
 		SvPb::QueryListNameRequest,
 		SvPb::QueryListNameResponse>(
 		[sma](SvPb::QueryListNameRequest&& req, SvRpc::Task<SvPb::QueryListNameResponse> task)
@@ -43,8 +43,8 @@ ServerRequestHandler::ServerRequestHandler(SharedMemoryAccessInterface* sma)
 	});
 
 	registerRequestHandler<
-		SvPb::RunRejectMessages,
-		SvPb::RunRejectMessages::kQueryListItemRequest,
+		SvPb::SVRCMessages,
+		SvPb::SVRCMessages::kQueryListItemRequest,
 		SvPb::QueryListItemRequest,
 		SvPb::QueryListItemResponse>(
 		[sma](SvPb::QueryListItemRequest&& req, SvRpc::Task<SvPb::QueryListItemResponse> task)
@@ -53,8 +53,8 @@ ServerRequestHandler::ServerRequestHandler(SharedMemoryAccessInterface* sma)
 	});
 
 	registerRequestHandler<
-		SvPb::RunRejectMessages,
-		SvPb::RunRejectMessages::kGetProductRequest,
+		SvPb::SVRCMessages,
+		SvPb::SVRCMessages::kGetProductRequest,
 		SvPb::GetProductRequest,
 		SvPb::GetProductResponse>(
 		[sma](SvPb::GetProductRequest&& req, SvRpc::Task<SvPb::GetProductResponse> task)
@@ -73,8 +73,8 @@ ServerRequestHandler::ServerRequestHandler(SharedMemoryAccessInterface* sma)
 	//});
 
 	registerRequestHandler<
-		SvPb::RunRejectMessages,
-		SvPb::RunRejectMessages::kGetImageFromCurIdRequest,
+		SvPb::SVRCMessages,
+		SvPb::SVRCMessages::kGetImageFromCurIdRequest,
 		SvPb::GetImageFromCurIdRequest,
 		SvPb::GetImageFromCurIdResponse>(
 		[sma](SvPb::GetImageFromCurIdRequest&& req, SvRpc::Task<SvPb::GetImageFromCurIdResponse> task)
@@ -83,8 +83,8 @@ ServerRequestHandler::ServerRequestHandler(SharedMemoryAccessInterface* sma)
 	});
 
 	registerStreamHandler<
-		SvPb::RunRejectMessages,
-		SvPb::RunRejectMessages::kGetImageStreamFromCurIdRequest,
+		SvPb::SVRCMessages,
+		SvPb::SVRCMessages::kGetImageStreamFromCurIdRequest,
 		SvPb::GetImageStreamFromCurIdRequest,
 		SvPb::GetImageStreamFromCurIdResponse>(
 		[sma](SvPb::GetImageStreamFromCurIdRequest&& req, SvRpc::Observer<SvPb::GetImageStreamFromCurIdResponse> observer, SvRpc::ServerStreamContext::Ptr ctx)
@@ -93,8 +93,8 @@ ServerRequestHandler::ServerRequestHandler(SharedMemoryAccessInterface* sma)
 	});
 
 	registerRequestHandler<
-		SvPb::RunRejectMessages,
-		SvPb::RunRejectMessages::kGetFailStatusRequest,
+		SvPb::SVRCMessages,
+		SvPb::SVRCMessages::kGetFailStatusRequest,
 		SvPb::GetFailStatusRequest,
 		SvPb::GetFailStatusResponse>(
 		[sma](SvPb::GetFailStatusRequest&& req, SvRpc::Task<SvPb::GetFailStatusResponse> task)
@@ -103,8 +103,8 @@ ServerRequestHandler::ServerRequestHandler(SharedMemoryAccessInterface* sma)
 	});
 
 	registerRequestHandler<
-		SvPb::RunRejectMessages,
-		SvPb::RunRejectMessages::kGetItemsRequest,
+		SvPb::SVRCMessages,
+		SvPb::SVRCMessages::kGetItemsRequest,
 		SvPb::GetItemsRequest,
 		SvPb::GetItemsResponse>(
 		[sma](SvPb::GetItemsRequest&& req, SvRpc::Task<SvPb::GetItemsResponse> task)
@@ -113,8 +113,8 @@ ServerRequestHandler::ServerRequestHandler(SharedMemoryAccessInterface* sma)
 	});
 
 	registerStreamHandler<
-		SvPb::RunRejectMessages,
-		SvPb::RunRejectMessages::kGetNotificationStreamRequest,
+		SvPb::SVRCMessages,
+		SvPb::SVRCMessages::kGetNotificationStreamRequest,
 		SvPb::GetNotificationStreamRequest,
 		SvPb::GetNotificationStreamResponse>(
 		[sma](SvPb::GetNotificationStreamRequest&& req, SvRpc::Observer<SvPb::GetNotificationStreamResponse> observer, SvRpc::ServerStreamContext::Ptr ctx)

@@ -41,7 +41,7 @@ static std::string GetVersionString()
 {
 	std::string verStr;
 
-	HINSTANCE hInst = (HINSTANCE) _AtlBaseModule.m_hInst;
+	HINSTANCE hInst = (HINSTANCE)_AtlBaseModule.m_hInst;
 	char moduleFilename[512];
 	::GetModuleFileNameA(hInst, moduleFilename, sizeof(moduleFilename));
 
@@ -54,7 +54,7 @@ static std::string GetVersionString()
 	{
 		VS_FIXEDFILEINFO* pFileInfo = nullptr;
 		UINT Len = 0;
-		if (::VerQueryValueA(lpData, "\\", (LPVOID *)&pFileInfo, (PUINT)&Len)) 
+		if (::VerQueryValueA(lpData, "\\", (LPVOID *)&pFileInfo, (PUINT)&Len))
 		{
 			std::stringstream buf;
 
@@ -69,1243 +69,1243 @@ static std::string GetVersionString()
 			verStr = buf.str();
 		}
 	}
-	delete [] lpData;
+	delete[] lpData;
 
-	#ifdef _DEBUG
-		verStr += "d";        // For debug builds.
-	#endif
+#ifdef _DEBUG
+	verStr += "d";        // For debug builds.
+#endif
 
 	return verStr;
 }
 
 SVRemoteCtrl::SVRemoteCtrl()
-:	m_ctlStatic( _T("Static"), this, 1 ),
-	m_cookie( 0 ), 
-	c_success( L"Success" ),
+	: m_ctlStatic(_T("Static"), this, 1),
+	m_cookie(0),
+	c_success(L"Success"),
 	c_svcontrol(L"SVControl"),
 	c_svobserver(L"SVObserver"),
-	m_device( svr::svobserver ),
-	m_servername( L"" ),
-	m_VPName( L"" ),
+	m_device(svr::svobserver),
+	m_servername(L""),
+	m_VPName(L""),
 	m_imageScale(100),
 	m_CommandPort(svr::cmdPort),
-	m_dispatcher(new SVControlCommands( boost::bind(&SVRemoteCtrl::NotifyClient, this, _1, _2),true ))
+	m_dispatcher(new SVControlCommands(boost::bind(&SVRemoteCtrl::NotifyClient, this, _1, _2)))
 	{
-	m_bWindowOnly = TRUE;
-	SvSol::SVSocketLibrary::Init();
+		m_bWindowOnly = TRUE;
+		SvSol::SVSocketLibrary::Init();
 
-	m_AsyncThread.Create(boost::bind(&SVRemoteCtrl::AsyncThreadFunc, this, _1), _T( "SVRemoteCtrl" ) );
-}
-
-LRESULT SVRemoteCtrl::OnSetFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-{
-	LRESULT lRes = CComControl<SVRemoteCtrl>::OnSetFocus(uMsg, wParam, lParam, bHandled);
-	if (m_bInPlaceActive)
-	{
-		if(!IsChild(::GetFocus()))
-			m_ctlStatic.SetFocus();
+		m_AsyncThread.Create(boost::bind(&SVRemoteCtrl::AsyncThreadFunc, this, _1), _T("SVRemoteCtrl"));
 	}
-	return lRes;
-}
 
-LRESULT SVRemoteCtrl::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
-{
-	RECT rc;
-	GetWindowRect(&rc);
-	rc.right -= rc.left;
-	rc.bottom -= rc.top;
-	rc.top = rc.left = 0;
-	m_ctlStatic.Create(m_hWnd, rc);
-	return 0;
-}
-
-STDMETHODIMP SVRemoteCtrl::SetObjectRects(LPCRECT prcPos,LPCRECT prcClip)
-{
-	IOleInPlaceObjectWindowlessImpl<SVRemoteCtrl>::SetObjectRects(prcPos, prcClip);
-	int cx, cy;
-	cx = prcPos->right - prcPos->left;
-	cy = prcPos->bottom - prcPos->top;
-	::SetWindowPos(m_ctlStatic.m_hWnd, NULL, 0,
-		0, cx, cy, SWP_NOZORDER | SWP_NOACTIVATE);
-	return S_OK;
-}
-
-// ISupportsErrorInfo
-STDMETHODIMP SVRemoteCtrl::InterfaceSupportsErrorInfo(REFIID riid)
-{
-	static const IID* arr[] =
+	LRESULT SVRemoteCtrl::OnSetFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
-		&IID_ISVRemoteCtrl,
-	};
-
-	for (int i=0; i<sizeof(arr)/sizeof(arr[0]); i++)
-	{
-		if (InlineIsEqualGUID(*arr[i], riid))
-			return S_OK;
-	}
-	return S_FALSE;
-}
-
-// IPropertyNotifySink
-STDMETHODIMP SVRemoteCtrl::OnRequestEdit(DISPID)
-{
-	return S_OK;
-}
-
-STDMETHODIMP SVRemoteCtrl::OnChanged(DISPID)
-{
-	return S_OK;
-}
-
-HRESULT SVRemoteCtrl::FinalConstruct()
-{
-	return S_OK;
-}
-
-void SVRemoteCtrl::FinalRelease()
-{
-	m_AsyncThread.Destroy();
-	SvSol::SVSocketLibrary::Destroy();
-}
-
-STDMETHODIMP SVRemoteCtrl::BeginGetConfig(BSTR fileName)
-{
-	HRESULT l_Status = S_OK;
-
-	SVCommandTemplatePtr l_CommandPtr( new SVAsyncControlCommandGetConfig( fileName ) );
-
-	l_Status = m_AsyncCommandHelper.SetCommand( l_CommandPtr, INFINITE );
-
-	if( l_Status == S_OK )
-	{
-		l_Status = m_AsyncThread.Signal();
-
-		if( l_Status != S_OK )
+		LRESULT lRes = CComControl<SVRemoteCtrl>::OnSetFocus(uMsg, wParam, lParam, bHandled);
+		if (m_bInPlaceActive)
 		{
-			m_AsyncCommandHelper.ClearCommand();
-			m_AsyncCommandHelper.NotifyRequestComplete();
-
-			SVERROR( L"Error signaling command thread to execute.", IID_ISVRemoteCtrl, l_Status );
+			if (!IsChild(::GetFocus()))
+				m_ctlStatic.SetFocus();
 		}
-	}
-	else
-	{
-		SVERROR( L"Error setting command in asynchronous helper object.", IID_ISVRemoteCtrl, l_Status );
+		return lRes;
 	}
 
-	return l_Status;
-}
-
-STDMETHODIMP SVRemoteCtrl::FinishGetConfig(LONG Timeout, VARIANT_BOOL CancelAfterTimeout)
-{
-	HRESULT l_Status = S_OK;
-
-	m_AsyncCommandHelper.SetCancel( CancelAfterTimeout != VARIANT_FALSE );
-
-	l_Status = m_AsyncCommandHelper.WaitForRequest( Timeout );
-
-	if( l_Status == S_OK )
+	LRESULT SVRemoteCtrl::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
 	{
-		SVCommandStatus l_CommandStatus = m_AsyncCommandHelper.GetStatus();
+		RECT rc;
+		GetWindowRect(&rc);
+		rc.right -= rc.left;
+		rc.bottom -= rc.top;
+		rc.top = rc.left = 0;
+		m_ctlStatic.Create(m_hWnd, rc);
+		return 0;
+	}
 
-		l_Status = l_CommandStatus.hResult;
+	STDMETHODIMP SVRemoteCtrl::SetObjectRects(LPCRECT prcPos, LPCRECT prcClip)
+	{
+		IOleInPlaceObjectWindowlessImpl<SVRemoteCtrl>::SetObjectRects(prcPos, prcClip);
+		int cx, cy;
+		cx = prcPos->right - prcPos->left;
+		cy = prcPos->bottom - prcPos->top;
+		::SetWindowPos(m_ctlStatic.m_hWnd, NULL, 0,
+			0, cx, cy, SWP_NOZORDER | SWP_NOACTIVATE);
+		return S_OK;
+	}
 
-		if( l_Status != S_OK )
+	// ISupportsErrorInfo
+	STDMETHODIMP SVRemoteCtrl::InterfaceSupportsErrorInfo(REFIID riid)
+	{
+		static const IID* arr[] =
 		{
-			SVERROR( l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult );
+			&IID_ISVRemoteCtrl,
+		};
+
+		for (int i = 0; i < sizeof(arr) / sizeof(arr[0]); i++)
+		{
+			if (InlineIsEqualGUID(*arr[i], riid))
+				return S_OK;
 		}
-	}
-	else
-	{
-		SVERROR( L"Wait for asynchronous command was not successful.", IID_ISVRemoteCtrl, l_Status );
+		return S_FALSE;
 	}
 
-	return l_Status;
-}
-
-STDMETHODIMP SVRemoteCtrl::BeginPutConfig(BSTR fileName)
-{
-	HRESULT l_Status = S_OK;
-
-	SVCommandTemplatePtr l_CommandPtr( new SVAsyncControlCommandPutConfig( fileName, "" ) );
-
-	l_Status = m_AsyncCommandHelper.SetCommand( l_CommandPtr, INFINITE );
-
-	if( l_Status == S_OK )
+	// IPropertyNotifySink
+	STDMETHODIMP SVRemoteCtrl::OnRequestEdit(DISPID)
 	{
-		l_Status = m_AsyncThread.Signal();
+		return S_OK;
+	}
 
-		if( l_Status != S_OK )
+	STDMETHODIMP SVRemoteCtrl::OnChanged(DISPID)
+	{
+		return S_OK;
+	}
+
+	HRESULT SVRemoteCtrl::FinalConstruct()
+	{
+		return S_OK;
+	}
+
+	void SVRemoteCtrl::FinalRelease()
+	{
+		m_AsyncThread.Destroy();
+		SvSol::SVSocketLibrary::Destroy();
+	}
+
+	STDMETHODIMP SVRemoteCtrl::BeginGetConfig(BSTR fileName)
+	{
+		HRESULT l_Status = S_OK;
+
+		SVCommandTemplatePtr l_CommandPtr(new SVAsyncControlCommandGetConfig(fileName));
+
+		l_Status = m_AsyncCommandHelper.SetCommand(l_CommandPtr, INFINITE);
+
+		if (l_Status == S_OK)
 		{
-			m_AsyncCommandHelper.ClearCommand();
-			m_AsyncCommandHelper.NotifyRequestComplete();
+			l_Status = m_AsyncThread.Signal();
 
-			SVERROR( L"Error signaling command thread to execute.", IID_ISVRemoteCtrl, l_Status );
-		}
-	}
-	else
-	{
-		SVERROR( L"Error setting command in asynchronous helper object.", IID_ISVRemoteCtrl, l_Status );
-	}
+			if (l_Status != S_OK)
+			{
+				m_AsyncCommandHelper.ClearCommand();
+				m_AsyncCommandHelper.NotifyRequestComplete();
 
-	return l_Status;
-}
-
-STDMETHODIMP SVRemoteCtrl::FinishPutConfig(LONG Timeout, VARIANT_BOOL CancelAfterTimeout)
-{
-	HRESULT l_Status = S_OK;
-
-	m_AsyncCommandHelper.SetCancel( CancelAfterTimeout != VARIANT_FALSE );
-
-	l_Status = m_AsyncCommandHelper.WaitForRequest( Timeout );
-
-	if( l_Status == S_OK )
-	{
-		SVCommandStatus l_CommandStatus = m_AsyncCommandHelper.GetStatus();
-
-		l_Status = l_CommandStatus.hResult;
-
-		if( l_Status != S_OK )
-		{
-			SVERROR( l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult );
-		}
-	}
-	else
-	{
-		SVERROR( L"Wait for asynchronous command was not successful.", IID_ISVRemoteCtrl, l_Status );
-	}
-
-	return l_Status;
-}
-
-STDMETHODIMP SVRemoteCtrl::BeginPutDeviceFile(BSTR sourcePath, BSTR destinationPath)
-{
-	HRESULT l_Status = S_OK;
-
-	SVCommandTemplatePtr l_CommandPtr( new SVAsyncControlCommandPutFile( sourcePath, destinationPath ) );
-
-	l_Status = m_AsyncCommandHelper.SetCommand( l_CommandPtr, INFINITE );
-
-	if( l_Status == S_OK )
-	{
-		l_Status = m_AsyncThread.Signal();
-
-		if( l_Status != S_OK )
-		{
-			m_AsyncCommandHelper.ClearCommand();
-			m_AsyncCommandHelper.NotifyRequestComplete();
-
-			SVERROR( L"Error signaling command thread to execute.", IID_ISVRemoteCtrl, l_Status );
-		}
-	}
-	else
-	{
-		SVERROR( L"Error setting command in asynchronous helper object.", IID_ISVRemoteCtrl, l_Status );
-	}
-
-	return l_Status;
-}
-
-STDMETHODIMP SVRemoteCtrl::FinishPutDeviceFile(LONG Timeout, VARIANT_BOOL CancelAfterTimeout)
-{
-	HRESULT l_Status = S_OK;
-
-	m_AsyncCommandHelper.SetCancel( CancelAfterTimeout != VARIANT_FALSE );
-
-	l_Status = m_AsyncCommandHelper.WaitForRequest( Timeout );
-
-	if( l_Status == S_OK )
-	{
-		SVCommandStatus l_CommandStatus = m_AsyncCommandHelper.GetStatus();
-
-		l_Status = l_CommandStatus.hResult;
-
-		if( l_Status != S_OK )
-		{
-			SVERROR( l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult );
-		}
-	}
-	else
-	{
-		SVERROR( L"Wait for asynchronous command was not successful.", IID_ISVRemoteCtrl, l_Status );
-	}
-
-	return l_Status;
-}
-
-STDMETHODIMP SVRemoteCtrl::BeginSetDeviceMode(SVObserverModesEnum desiredMode)
-{
-	HRESULT l_Status = S_OK;
-
-	SVCommandTemplatePtr l_CommandPtr( new SVAsyncControlCommandSetMode( desiredMode ) );
-
-	l_Status = m_AsyncCommandHelper.SetCommand( l_CommandPtr, INFINITE );
-
-	if( l_Status == S_OK )
-	{
-		l_Status = m_AsyncThread.Signal();
-
-		if( l_Status != S_OK )
-		{
-			m_AsyncCommandHelper.ClearCommand();
-			m_AsyncCommandHelper.NotifyRequestComplete();
-
-			SVERROR( L"Error signaling command thread to execute.", IID_ISVRemoteCtrl, l_Status );
-		}
-	}
-	else
-	{
-		SVERROR( L"Error setting command in asynchronous helper object.", IID_ISVRemoteCtrl, l_Status );
-	}
-
-	return l_Status;
-}
-
-STDMETHODIMP SVRemoteCtrl::FinishSetDeviceMode(LONG Timeout, VARIANT_BOOL CancelAfterTimeout)
-{
-	HRESULT l_Status = S_OK;
-
-	m_AsyncCommandHelper.SetCancel( CancelAfterTimeout != VARIANT_FALSE );
-
-	l_Status = m_AsyncCommandHelper.WaitForRequest( Timeout );
-
-	if( l_Status == S_OK )
-	{
-		SVCommandStatus l_CommandStatus = m_AsyncCommandHelper.GetStatus();
-
-		l_Status = l_CommandStatus.hResult;
-
-		if( l_Status != S_OK )
-		{
-			SVERROR( l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult );
-		}
-	}
-	else
-	{
-		SVERROR( L"Wait for asynchronous command was not successful.", IID_ISVRemoteCtrl, l_Status );
-	}
-
-	return l_Status;
-}
-
-STDMETHODIMP SVRemoteCtrl::GetConfig(BSTR filePath)
-{
-	HRESULT l_Status = S_OK;
-	SVCommandStatus l_CommandStatus;
-
-	long l_Cancel = 0;
-
-	l_Status = m_dispatcher->GetConfig( filePath, l_Cancel, true, l_CommandStatus );
-
-	if( l_Status != S_OK )
-	{
-		SVERROR( l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult );
-	}
-
-	return l_Status;
-}
-
-STDMETHODIMP SVRemoteCtrl::GetDeviceConfigReport(BSTR* report)
-{
-	HRESULT l_Status = S_OK;
-
-	if( report != NULL )
-	{
-		SVCommandStatus l_CommandStatus;
-
-		if( ( *report ) != NULL )
-		{
-			::SysFreeString( *report );
-
-			( *report ) = NULL;
-		}
-
-		l_Status = m_dispatcher->GetConfigReport( *report, l_CommandStatus );
-
-		if( l_Status != S_OK )
-		{
-			SVERROR( l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult );
-		}
-	}
-	else
-	{
-		l_Status = E_INVALIDARG;
-
-		SVERROR( L"Report parameter is invalid.", IID_ISVRemoteCtrl, l_Status );
-	}
-
-	return l_Status;
-}
-
-
-STDMETHODIMP SVRemoteCtrl::GetDeviceMode(LONG* mode)
-{
-	HRESULT l_Status = S_OK;
-
-	if( mode != NULL )
-	{
-		SVCommandStatus l_CommandStatus;
-
-		*mode = 0;
-
-		unsigned long l_Mode = 0;
-
-		l_Status = m_dispatcher->GetMode( l_Mode, l_CommandStatus );
-
-		if( l_Status != S_OK )
-		{
-			SVERROR( l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult );
+				SVERROR(L"Error signaling command thread to execute.", IID_ISVRemoteCtrl, l_Status);
+			}
 		}
 		else
 		{
-			*mode = l_Mode;
+			SVERROR(L"Error setting command in asynchronous helper object.", IID_ISVRemoteCtrl, l_Status);
 		}
-	}
-	else
-	{
-		l_Status = E_INVALIDARG;
 
-		SVERROR( L"Mode parameter is invalid.", IID_ISVRemoteCtrl, l_Status );
+		return l_Status;
 	}
 
-	return l_Status;
-}
-
-STDMETHODIMP SVRemoteCtrl::GetDeviceOfflineCount(LONG* count)
-{
-	HRESULT l_Status = S_OK;
-
-	if( count != NULL )
+	STDMETHODIMP SVRemoteCtrl::FinishGetConfig(LONG Timeout, VARIANT_BOOL CancelAfterTimeout)
 	{
-		SVCommandStatus l_CommandStatus;
+		HRESULT l_Status = S_OK;
 
-		*count = 0;
+		m_AsyncCommandHelper.SetCancel(CancelAfterTimeout != VARIANT_FALSE);
 
-		unsigned long l_Count = 0;
+		l_Status = m_AsyncCommandHelper.WaitForRequest(Timeout);
 
-		l_Status = m_dispatcher->GetOfflineCount( l_Count, l_CommandStatus );
-
-		if( l_Status == S_OK )
+		if (l_Status == S_OK)
 		{
-			*count = static_cast< long >( l_Count );
+			SVCommandStatus l_CommandStatus = m_AsyncCommandHelper.GetStatus();
+
+			l_Status = l_CommandStatus.hResult;
+
+			if (l_Status != S_OK)
+			{
+				SVERROR(l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult);
+			}
 		}
 		else
 		{
-			SVERROR( l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult );
+			SVERROR(L"Wait for asynchronous command was not successful.", IID_ISVRemoteCtrl, l_Status);
 		}
-	}
-	else
-	{
-		l_Status = E_INVALIDARG;
 
-		SVERROR( L"Count parameter is invalid.", IID_ISVRemoteCtrl, l_Status );
+		return l_Status;
 	}
 
-	return l_Status;
-}
-
-STDMETHODIMP SVRemoteCtrl::GetItems(VARIANT itemNames, ISVProductItems** items)
-{
-	HRESULT l_Status = S_OK;
-
-	if( items != NULL )
+	STDMETHODIMP SVRemoteCtrl::BeginPutConfig(BSTR fileName)
 	{
-		if( *items != NULL )
+		HRESULT l_Status = S_OK;
+
+		SVCommandTemplatePtr l_CommandPtr(new SVAsyncControlCommandPutConfig(fileName, ""));
+
+		l_Status = m_AsyncCommandHelper.SetCommand(l_CommandPtr, INFINITE);
+
+		if (l_Status == S_OK)
 		{
-			( *items )->Release();
-			( *items ) = NULL;
-		}
-	}
-	else
-	{
-		l_Status = E_INVALIDARG;
+			l_Status = m_AsyncThread.Signal();
 
-		SVERROR( L"Items parameter is invalid.", IID_ISVRemoteCtrl, l_Status );
-	}
+			if (l_Status != S_OK)
+			{
+				m_AsyncCommandHelper.ClearCommand();
+				m_AsyncCommandHelper.NotifyRequestComplete();
 
-	if( l_Status == S_OK && itemNames.vt != (VT_ARRAY | VT_BSTR ))
-	{
-		l_Status = E_INVALIDARG;
-
-		SVERROR( L"Item names parameter is invalid.", IID_ISVRemoteCtrl, l_Status );
-	}
-
-	if( l_Status == S_OK )
-	{
-		SVCommandStatus l_CommandStatus;
-
-		l_Status = m_dispatcher->GetItems( itemNames, items, m_imageScale, l_CommandStatus );
-
-		if( !SUCCEEDED(l_Status) )
-		{
-			SVERROR( l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult );
-		}
-	}
-
-	return l_Status;
-}
-
-STDMETHODIMP SVRemoteCtrl::GetState(LONG* state)
-{
-	HRESULT l_Status = S_OK;
-
-	if( state != NULL )
-	{
-		SVCommandStatus l_CommandStatus;
-
-		*state = 0;
-
-		unsigned long l_State = 0;
-
-		l_Status = m_dispatcher->GetState( l_State, l_CommandStatus );
-
-		if( l_Status == S_OK )
-		{
-			*state = static_cast< long >( l_State );
+				SVERROR(L"Error signaling command thread to execute.", IID_ISVRemoteCtrl, l_Status);
+			}
 		}
 		else
 		{
-			SVERROR( l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult );
+			SVERROR(L"Error setting command in asynchronous helper object.", IID_ISVRemoteCtrl, l_Status);
 		}
-	}
-	else
-	{
-		l_Status = E_INVALIDARG;
 
-		SVERROR( L"State parameter is invalid.", IID_ISVRemoteCtrl, l_Status );
+		return l_Status;
 	}
 
-	return l_Status;
-}
-
-STDMETHODIMP SVRemoteCtrl::PutConfig(BSTR filePath, LONG Timeout)
-{
-	HRESULT l_Status = S_OK;
-
-	l_Status = BeginPutConfig( filePath );
-
-	if( l_Status == S_OK )
+	STDMETHODIMP SVRemoteCtrl::FinishPutConfig(LONG Timeout, VARIANT_BOOL CancelAfterTimeout)
 	{
-		l_Status = FinishPutConfig( Timeout, VARIANT_TRUE );
-	}
+		HRESULT l_Status = S_OK;
 
-	return l_Status;
-}
+		m_AsyncCommandHelper.SetCancel(CancelAfterTimeout != VARIANT_FALSE);
 
-STDMETHODIMP SVRemoteCtrl::GetVersion(BSTR* svobserver_ver, BSTR* svremotecontrol_ver, BSTR* runrejectserver_ver)
-{
-	HRESULT l_Status = S_OK;
+		l_Status = m_AsyncCommandHelper.WaitForRequest(Timeout);
 
-	if (nullptr != svobserver_ver)
-	{
-		if (nullptr != (*svobserver_ver))
+		if (l_Status == S_OK)
 		{
-			::SysFreeString(*svobserver_ver);
-			(*svobserver_ver) = nullptr;
-		}
-	}
-	else
-	{
-		l_Status = E_INVALIDARG;
-		SVERROR(L"SVObserver version parameter is invalid.", IID_ISVRemoteCtrl, l_Status);
-	}
+			SVCommandStatus l_CommandStatus = m_AsyncCommandHelper.GetStatus();
 
-	if (nullptr != svremotecontrol_ver)
-	{
-		if (nullptr != (*svremotecontrol_ver))
-		{
-			::SysFreeString(*svremotecontrol_ver);
-			(*svremotecontrol_ver) = nullptr;
-		}
-	}
-	else if (S_OK == l_Status)
-	{
-		l_Status = E_INVALIDARG;
-		SVERROR(L"SVRemoteControl version parameter is invalid.", IID_ISVRemoteCtrl, l_Status);
-	}
+			l_Status = l_CommandStatus.hResult;
 
-	if (nullptr != runrejectserver_ver)
-	{
-		if (nullptr != (*runrejectserver_ver))
-		{
-			::SysFreeString(*runrejectserver_ver);
-			(*runrejectserver_ver) = nullptr;
-		}
-	}
-	else if (S_OK == l_Status)
-	{
-		l_Status = E_INVALIDARG;
-		SVERROR(L"Run/Reject server version parameter is invalid.", IID_ISVRemoteCtrl, l_Status);
-	}
-	if (S_OK == l_Status)
-	{
-		SVCommandStatus l_CommandStatus;
-
-		_bstr_t l_SVObserverVersion = L"";
-		_bstr_t l_SVRemoteControlVersion = L"";
-		_bstr_t l_RunRejectServerVersion = L"";
-
-		std::wstring ov = SVStringConversions::to_utf16(GetVersionString());
-		l_SVRemoteControlVersion = ov.c_str();
-		(*svremotecontrol_ver) = l_SVRemoteControlVersion.Detach();
-
-		l_Status = m_dispatcher->GetVersion(l_SVObserverVersion, l_RunRejectServerVersion, l_CommandStatus);
-
-		if (S_OK == l_Status)
-		{
-			(*svobserver_ver) = l_SVObserverVersion.Detach();
-			//( *SVC_ver ) = _bstr_t(L"3.0 \u03B2 7").Detach();
-			(*runrejectserver_ver) = l_RunRejectServerVersion.Detach();
+			if (l_Status != S_OK)
+			{
+				SVERROR(l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult);
+			}
 		}
 		else
+		{
+			SVERROR(L"Wait for asynchronous command was not successful.", IID_ISVRemoteCtrl, l_Status);
+		}
+
+		return l_Status;
+	}
+
+	STDMETHODIMP SVRemoteCtrl::BeginPutDeviceFile(BSTR sourcePath, BSTR destinationPath)
+	{
+		HRESULT l_Status = S_OK;
+
+		SVCommandTemplatePtr l_CommandPtr(new SVAsyncControlCommandPutFile(sourcePath, destinationPath));
+
+		l_Status = m_AsyncCommandHelper.SetCommand(l_CommandPtr, INFINITE);
+
+		if (l_Status == S_OK)
+		{
+			l_Status = m_AsyncThread.Signal();
+
+			if (l_Status != S_OK)
+			{
+				m_AsyncCommandHelper.ClearCommand();
+				m_AsyncCommandHelper.NotifyRequestComplete();
+
+				SVERROR(L"Error signaling command thread to execute.", IID_ISVRemoteCtrl, l_Status);
+			}
+		}
+		else
+		{
+			SVERROR(L"Error setting command in asynchronous helper object.", IID_ISVRemoteCtrl, l_Status);
+		}
+
+		return l_Status;
+	}
+
+	STDMETHODIMP SVRemoteCtrl::FinishPutDeviceFile(LONG Timeout, VARIANT_BOOL CancelAfterTimeout)
+	{
+		HRESULT l_Status = S_OK;
+
+		m_AsyncCommandHelper.SetCancel(CancelAfterTimeout != VARIANT_FALSE);
+
+		l_Status = m_AsyncCommandHelper.WaitForRequest(Timeout);
+
+		if (l_Status == S_OK)
+		{
+			SVCommandStatus l_CommandStatus = m_AsyncCommandHelper.GetStatus();
+
+			l_Status = l_CommandStatus.hResult;
+
+			if (l_Status != S_OK)
+			{
+				SVERROR(l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult);
+			}
+		}
+		else
+		{
+			SVERROR(L"Wait for asynchronous command was not successful.", IID_ISVRemoteCtrl, l_Status);
+		}
+
+		return l_Status;
+	}
+
+	STDMETHODIMP SVRemoteCtrl::BeginSetDeviceMode(SVObserverModesEnum desiredMode)
+	{
+		HRESULT l_Status = S_OK;
+
+		SVCommandTemplatePtr l_CommandPtr(new SVAsyncControlCommandSetMode(desiredMode));
+
+		l_Status = m_AsyncCommandHelper.SetCommand(l_CommandPtr, INFINITE);
+
+		if (l_Status == S_OK)
+		{
+			l_Status = m_AsyncThread.Signal();
+
+			if (l_Status != S_OK)
+			{
+				m_AsyncCommandHelper.ClearCommand();
+				m_AsyncCommandHelper.NotifyRequestComplete();
+
+				SVERROR(L"Error signaling command thread to execute.", IID_ISVRemoteCtrl, l_Status);
+			}
+		}
+		else
+		{
+			SVERROR(L"Error setting command in asynchronous helper object.", IID_ISVRemoteCtrl, l_Status);
+		}
+
+		return l_Status;
+	}
+
+	STDMETHODIMP SVRemoteCtrl::FinishSetDeviceMode(LONG Timeout, VARIANT_BOOL CancelAfterTimeout)
+	{
+		HRESULT l_Status = S_OK;
+
+		m_AsyncCommandHelper.SetCancel(CancelAfterTimeout != VARIANT_FALSE);
+
+		l_Status = m_AsyncCommandHelper.WaitForRequest(Timeout);
+
+		if (l_Status == S_OK)
+		{
+			SVCommandStatus l_CommandStatus = m_AsyncCommandHelper.GetStatus();
+
+			l_Status = l_CommandStatus.hResult;
+
+			if (l_Status != S_OK)
+			{
+				SVERROR(l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult);
+			}
+		}
+		else
+		{
+			SVERROR(L"Wait for asynchronous command was not successful.", IID_ISVRemoteCtrl, l_Status);
+		}
+
+		return l_Status;
+	}
+
+	STDMETHODIMP SVRemoteCtrl::GetConfig(BSTR filePath)
+	{
+		HRESULT l_Status = S_OK;
+		SVCommandStatus l_CommandStatus;
+
+		long l_Cancel = 0;
+
+		l_Status = m_dispatcher->GetConfig(filePath, l_Cancel, true, l_CommandStatus);
+
+		if (l_Status != S_OK)
 		{
 			SVERROR(l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult);
 		}
-	}
-	return l_Status;
-}
 
-STDMETHODIMP SVRemoteCtrl::PutDeviceFile(BSTR sourcePath, BSTR destinationPath)
-{
-	HRESULT l_Status = S_OK;
-	SVCommandStatus l_CommandStatus;
-
-	long l_Cancel = 0;
-
-	l_Status = m_dispatcher->PutFile( sourcePath, destinationPath, l_Cancel, true, l_CommandStatus );
-
-	if( l_Status != S_OK )
-	{
-		SVERROR( l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult );
+		return l_Status;
 	}
 
-	return l_Status;
-}
-
-STDMETHODIMP SVRemoteCtrl::SetDeviceMode(SVObserverModesEnum desiredMode)
-{
-	HRESULT l_Status = S_OK;
-	SVCommandStatus l_CommandStatus;
-
-	l_Status = m_dispatcher->SetMode( desiredMode, true, l_CommandStatus );
-
-	if( l_Status != S_OK )
+	STDMETHODIMP SVRemoteCtrl::GetDeviceConfigReport(BSTR* report)
 	{
-		SVERROR( l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult );
-	}
+		HRESULT l_Status = S_OK;
 
-	return l_Status;
-}
-
-STDMETHODIMP SVRemoteCtrl::SetItems(ISVProductItems* items, ISVProductItems ** faults)
-{
-	HRESULT l_Status = S_OK;
-	SVCommandStatus l_CommandStatus;
-
-	l_Status = m_dispatcher->SetItems( items, faults, true, l_CommandStatus );
-
-	if( !SUCCEEDED(l_Status) )
-	{
-		SVERROR( l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult );
-	}
-
-	return l_Status;
-}
-
-STDMETHODIMP SVRemoteCtrl::get_ServerAddress(BSTR* pVal)
-{
-	HRESULT l_Status = S_OK;
-
-	if( pVal != NULL )
-	{
-		if( ( *pVal ) != NULL )
+		if (report != NULL)
 		{
-			::SysFreeString( *pVal );
+			SVCommandStatus l_CommandStatus;
 
-			( *pVal ) = NULL;
-		}
+			if ((*report) != NULL)
+			{
+				::SysFreeString(*report);
 
-		( *pVal ) = m_servername.copy();
-	}
-	else
-	{
-		l_Status = E_INVALIDARG;
+				(*report) = NULL;
+			}
 
-		SVERROR( L"Value parameter is invalid.", IID_ISVRemoteCtrl, l_Status );
-	}
+			l_Status = m_dispatcher->GetConfigReport(*report, l_CommandStatus);
 
-	return l_Status;
-}
-
-STDMETHODIMP SVRemoteCtrl::get_VPAddress(BSTR* pVal)
-{
-	HRESULT l_Status = S_OK;
-
-	if( pVal != NULL )
-	{
-		if( ( *pVal ) != NULL )
-		{
-			::SysFreeString( *pVal );
-
-			( *pVal ) = NULL;
-		}
-
-		( *pVal ) = m_VPName.copy();
-	}
-	else
-	{
-		l_Status = E_INVALIDARG;
-
-		SVERROR( L"Value parameter is invalid.", IID_ISVRemoteCtrl, l_Status );
-	}
-
-	return l_Status;
-}
-
-STDMETHODIMP SVRemoteCtrl::get_Connected(VARIANT_BOOL* pVal)
-{
-	*pVal = m_dispatcher->isConnected();
-	return S_OK;
-}
-
-STDMETHODIMP SVRemoteCtrl::get_ServerType(BSTR* pVal)
-{
-	HRESULT l_Status = S_OK;
-
-	if( pVal != NULL )
-	{
-		if( ( *pVal ) != NULL )
-		{
-			::SysFreeString( *pVal );
-
-			( *pVal ) = NULL;
-		}
-
-		( *pVal ) = (m_device == svr::svcontrol)?c_svcontrol.Copy():c_svobserver.Copy();
-	}
-	else
-	{
-		l_Status = E_INVALIDARG;
-
-		SVERROR( L"Value parameter is invalid.", IID_ISVRemoteCtrl, l_Status );
-	}
-
-	return l_Status;
-}
-
-void SVRemoteCtrl::AsyncThreadFunc( bool& p_rWaitForEvent )
-{
-	SVCommandTemplatePtr l_CommandPtr;
-
-	m_AsyncCommandHelper.SetCommandActive();
-
-	if( ( m_AsyncCommandHelper.GetCommand( l_CommandPtr, INFINITE ) == S_OK ) && ( l_CommandPtr.get() != NULL ) )
-	{
-		try
-		{
-			l_CommandPtr->Execute(m_dispatcher);
-
-			m_AsyncCommandHelper.SetStatus( l_CommandPtr->GetStatus() );
-		}
-		catch( ... )
-		{
-			m_AsyncCommandHelper.SetStatus( SVCommandStatus( E_UNEXPECTED, L"Unknown exception when executing asynchronous command." ) );
-		}
-
-		m_AsyncCommandHelper.NotifyRequestComplete();
-	}
-
-	m_AsyncCommandHelper.SetCommandComplete();
-}
-
-HRESULT SVRemoteCtrl::SetControlServer( SVCommandStatus& p_rStatus )
-{
-	HRESULT l_Status = S_OK;
-
-	if( 0 < m_servername.length() )
-	{
-		m_VPName = m_servername;
-	}
-	else
-	{
-		m_VPName = L"";
-	}
-
-	return l_Status;
-}
-
-HRESULT SVRemoteCtrl::SetObserverServer( SVCommandStatus& p_rStatus )
-{
-	HRESULT l_Status = S_OK;
-
-	m_VPName = m_servername;
-
-	l_Status = m_dispatcher->SetConnectionData( L"", m_CommandPort, 10000 );
-
-	p_rStatus.hResult = l_Status;
-
-	if( l_Status != S_OK )
-	{
-		p_rStatus.errorText = L"Unknown connection error";
-
-		m_VPName = L"";
-	}
-
-	return l_Status;
-}
-
-STDMETHODIMP SVRemoteCtrl::Disconnect(void)
-{
-	m_dispatcher->SetConnectionData( "", m_CommandPort, 10000 );
-
-	m_servername = _T( "" );
-	m_VPName = _T( "" );
-
-	return S_OK;
-}
-
-STDMETHODIMP SVRemoteCtrl::Connect(BSTR address, LONG Timeout)
-{
-	
-	SVCommandStatus l_CommandStatus;
-	
-	HRESULT l_Status = m_dispatcher->SetConnectionData(address, m_CommandPort, Timeout);
-
-	if( l_Status == S_OK )
-	{
-		m_servername = address;
-
-		l_Status = SetControlServer( l_CommandStatus );
-
-		if( l_Status != NULL )
-		{
-			SVERROR( l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult );
-		}
-
-	}
-
-	return l_Status;
-}
-
-STDMETHODIMP SVRemoteCtrl::get_ImageScale(LONG* pVal)
-{
-	*pVal = m_imageScale;
-	return S_OK;
-}
-
-STDMETHODIMP SVRemoteCtrl::put_ImageScale(LONG newVal)
-{
-	m_imageScale = (0 < newVal && newVal <= 100)?newVal:100;
-	return S_OK;
-}
-
-void SVRemoteCtrl::NotifyClient( _variant_t& p_Data, SVNotificationTypesEnum p_Type )
-{
-	Fire_OnNotify( p_Data, p_Type );
-}
-
-STDMETHODIMP SVRemoteCtrl::RegisterMonitorList(BSTR listName, BSTR ppqName, int rejectDepth, VARIANT productItemList, 
-											   VARIANT rejectCondList, VARIANT failStatusList, ISVErrorObjectList ** errors)
-{
-	HRESULT l_Status = S_OK;
-	SVCommandStatus l_CommandStatus;
-
-	if( errors != NULL )
-	{
-		if( *errors != NULL )
-		{
-			( *errors )->Release();
-			( *errors ) = NULL;
-		}
-	}
-	else
-	{
-		l_Status = E_INVALIDARG;
-
-		SVERROR( L"Errors parameter is invalid.", IID_ISVRemoteCtrl, l_Status );
-	}
-
-	l_Status = m_dispatcher->RegisterMonitorList(listName, ppqName, rejectDepth, productItemList, rejectCondList, failStatusList, errors, l_CommandStatus);
-
-	if( !SUCCEEDED(l_Status) )
-	{
-		SVERROR( l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult );
-	}
-
-	return l_Status;
-}
-
-
-STDMETHODIMP SVRemoteCtrl::QueryProductList(BSTR listName, VARIANT* itemNames)
-{
-	HRESULT l_Status = S_OK;
-	SVCommandStatus l_CommandStatus;
-	CComVariant result;
-	VariantClear(itemNames);
-
-	l_Status = m_dispatcher->QueryProductList(listName, SVRC::cmdName::qryProd, result, l_CommandStatus);
-
-	if( !SUCCEEDED(l_Status) )
-	{
-		SVERROR( l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult );
-	}
-	else
-	{
-		result.Detach(itemNames);
-	}
-
-	return l_Status;
-}
-
-
-STDMETHODIMP SVRemoteCtrl::QueryRejectCondList(BSTR listName, VARIANT* itemNames)
-{
-	HRESULT l_Status = S_OK;
-	SVCommandStatus l_CommandStatus;
-	CComVariant result;
-	VariantClear(itemNames);
-
-	l_Status = m_dispatcher->QueryProductList(listName, SVRC::cmdName::qryRjct, result, l_CommandStatus);
-
-	if( !SUCCEEDED(l_Status) )
-	{
-		SVERROR( l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult );
-	}
-	else
-	{
-		result.Detach(itemNames);
-	}
-
-	return l_Status;
-}
-
-
-STDMETHODIMP SVRemoteCtrl::QueryFailStatusList(BSTR listName, VARIANT* itemNames)
-{
-	HRESULT l_Status = S_OK;
-	SVCommandStatus l_CommandStatus;
-	CComVariant result;
-
-	if (nullptr != itemNames && VT_EMPTY != itemNames->vt )
-	{
-		VariantClear(itemNames);
-	}
-
-	l_Status = m_dispatcher->QueryProductList(listName, SVRC::cmdName::qryFail, result, l_CommandStatus);
-
-	if( !SUCCEEDED(l_Status) )
-	{
-		SVERROR( l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult );
-	}
-	else
-	{
-		result.Detach(itemNames);
-	}
-
-	return l_Status;
-}
-
-
-STDMETHODIMP SVRemoteCtrl::GetProduct(BSTR listName, LONG triggerCount, LONG imageScale, ISVProductItems** currentViewItems)
-{
-	HRESULT l_Status = S_OK;
-
-	if( currentViewItems != NULL )
-	{
-		if( *currentViewItems != NULL )
-		{
-			( *currentViewItems )->Release();
-			( *currentViewItems ) = NULL;
-		}
-	}
-	else
-	{
-		l_Status = E_INVALIDARG;
-
-		SVERROR( L"Items parameter is invalid.", IID_ISVRemoteCtrl, l_Status );
-	}
-
-	if( l_Status == S_OK )
-	{
-		SVCommandStatus l_CommandStatus;
-
-		l_Status = m_dispatcher->GetProduct( listName, triggerCount, imageScale, currentViewItems, l_CommandStatus );
-
-		if( !SUCCEEDED(l_Status) )
-		{
-			SVERROR( l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult );
-		}
-	}
-
-	return l_Status;
-}
-
-
-STDMETHODIMP SVRemoteCtrl::GetReject(BSTR listName, LONG triggerCount, LONG imageScale, ISVProductItems** currentViewItems)
-{
-	HRESULT l_Status = S_OK;
-
-	if( currentViewItems != NULL )
-	{
-		if( *currentViewItems != NULL )
-		{
-			( *currentViewItems )->Release();
-			( *currentViewItems ) = NULL;
-		}
-	}
-	else
-	{
-		l_Status = E_INVALIDARG;
-
-		SVERROR( L"Items parameter is invalid.", IID_ISVRemoteCtrl, l_Status );
-	}
-
-	if( l_Status == S_OK )
-	{
-		SVCommandStatus l_CommandStatus;
-
-		l_Status = m_dispatcher->GetRejects( listName, triggerCount, imageScale, currentViewItems, l_CommandStatus );
-
-		if( !SUCCEEDED(l_Status) )
-		{
-			SVERROR( l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult );
-		}
-	}
-
-	return l_Status;
-}
-
-STDMETHODIMP SVRemoteCtrl::GetDataDefinitionList(BSTR inspectionName, SVDataDefinitionListTypeEnum listType, ISVDataDefObjectList** entries)
-{
-	HRESULT l_Status = S_OK;
-
-	if(  NULL != entries )
-	{
-		if( NULL != *entries )
-		{
-			( *entries )->Release();
-			( *entries ) = NULL;
-		}
-	}
-	else
-	{
-		l_Status = E_INVALIDARG;
-
-		SVERROR( L"Items parameter is invalid.", IID_ISVRemoteCtrl, l_Status );
-	}
-
-	if( l_Status == S_OK )
-	{
-		SVCommandStatus l_CommandStatus;
-
-		l_Status = m_dispatcher->GetDataDefinitionList( inspectionName, listType, entries, l_CommandStatus );
-
-		if( !SUCCEEDED(l_Status) )
-		{
-			SVERROR( l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult );
-		}
-	}
-
-	return l_Status;
-}
-
-STDMETHODIMP SVRemoteCtrl::ActivateMonitorList(BSTR listName)
-{
-	HRESULT l_Status = S_OK;
-	SVCommandStatus l_CommandStatus;
-
-	l_Status = m_dispatcher->ActivateMonitorList(listName, true, l_CommandStatus);
-
-	if( !SUCCEEDED(l_Status) )
-	{
-		SVERROR( l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult );
-	}
-	return l_Status;
-}
-
-STDMETHODIMP SVRemoteCtrl::DeactivateMonitorList(BSTR listName)
-{
-	HRESULT l_Status = S_OK;
-	SVCommandStatus l_CommandStatus;
-
-	l_Status = m_dispatcher->ActivateMonitorList(listName, false, l_CommandStatus);
-
-	if( !SUCCEEDED(l_Status) )
-	{
-		SVERROR( l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult );
-	}
-	return l_Status;
-}
-
-STDMETHODIMP SVRemoteCtrl::GetFailStatus(BSTR listName, VARIANT* values)
-{
-	HRESULT l_Status = S_OK;
-	SVCommandStatus l_CommandStatus;
-	CComVariant result;
-
-	if (nullptr != values && VT_EMPTY != values->vt )
-	{
-		VariantClear(values);
-	}
-
-	l_Status = m_dispatcher->GetFailStatus(listName, result, l_CommandStatus);
-
-	if( !SUCCEEDED(l_Status) )
-	{
-		SVERROR( l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult );
-	}
-	else
-	{
-		result.Detach(values);
-	}
-
-	return l_Status;
-}
-
-//TODO: This global parameter is just for the dummy
-long g_productFilterMode = LastInspected;
-
-STDMETHODIMP SVRemoteCtrl::GetProductFilter(BSTR listName, LONG * pFilter)
-{
-	HRESULT l_Status = S_OK;
-
-	if( pFilter != nullptr )
-	{
-		SVCommandStatus l_CommandStatus;
-		*pFilter = LastInspected;
-		unsigned long l_Filter = LastInspected;
-
-		l_Status = m_dispatcher->GetProductFilter(listName,  l_Filter, l_CommandStatus );
-		if( S_OK != l_Status )
-		{
-			SVERROR( l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult );
+			if (l_Status != S_OK)
+			{
+				SVERROR(l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult);
+			}
 		}
 		else
 		{
-			*pFilter = l_Filter;
+			l_Status = E_INVALIDARG;
+
+			SVERROR(L"Report parameter is invalid.", IID_ISVRemoteCtrl, l_Status);
 		}
-	}
-	else
-	{
-		l_Status = E_INVALIDARG;
 
-		SVERROR( L"Filter parameter is invalid.", IID_ISVRemoteCtrl, l_Status );
-	}
-	return l_Status;
-}
-
-STDMETHODIMP SVRemoteCtrl::SetProductFilter(BSTR listName, SVProductFilterModesEnum filter)
-{
-	HRESULT l_Status = S_OK;
-	SVCommandStatus l_CommandStatus;
-
-	l_Status = m_dispatcher->SetProductFilter( listName, filter, l_CommandStatus );
-	if( S_OK != l_Status )
-	{
-		SVERROR( l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult );
-	}
-	return l_Status;
-}
-
-STDMETHODIMP SVRemoteCtrl::Shutdown(SVShutdownOptionsEnum options)
-{
-	HRESULT status = S_OK;
-	SVCommandStatus commandStatus;
-
-	status = m_dispatcher->ShutDown( options, commandStatus );
-
-	if( status != S_OK )
-	{
-		SVERROR( commandStatus.errorText.c_str(), IID_ISVRemoteCtrl, commandStatus.hResult );
+		return l_Status;
 	}
 
-	return status;
-}
 
-STDMETHODIMP SVRemoteCtrl::GetInspectionNames(VARIANT* listNames)
-{
-	HRESULT l_Status = S_OK;
-	SVCommandStatus l_CommandStatus;
-	CComVariant result;
-
-	if (nullptr != listNames && VT_EMPTY != listNames->vt )
+	STDMETHODIMP SVRemoteCtrl::GetDeviceMode(LONG* mode)
 	{
-		VariantClear(listNames);
+		HRESULT l_Status = S_OK;
+
+		if (mode != NULL)
+		{
+			SVCommandStatus l_CommandStatus;
+
+			*mode = 0;
+
+			unsigned long l_Mode = 0;
+
+			l_Status = m_dispatcher->GetMode(l_Mode, l_CommandStatus);
+
+			if (l_Status != S_OK)
+			{
+				SVERROR(l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult);
+			}
+			else
+			{
+				*mode = l_Mode;
+			}
+		}
+		else
+		{
+			l_Status = E_INVALIDARG;
+
+			SVERROR(L"Mode parameter is invalid.", IID_ISVRemoteCtrl, l_Status);
+		}
+
+		return l_Status;
 	}
 
-	l_Status = m_dispatcher->GetInspectionNames(result, l_CommandStatus);
-
-	if( !SUCCEEDED(l_Status) )
+	STDMETHODIMP SVRemoteCtrl::GetDeviceOfflineCount(LONG* count)
 	{
-		SVERROR( l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult );
+		HRESULT l_Status = S_OK;
+
+		if (count != NULL)
+		{
+			SVCommandStatus l_CommandStatus;
+
+			*count = 0;
+
+			unsigned long l_Count = 0;
+
+			l_Status = m_dispatcher->GetOfflineCount(l_Count, l_CommandStatus);
+
+			if (l_Status == S_OK)
+			{
+				*count = static_cast<long>(l_Count);
+			}
+			else
+			{
+				SVERROR(l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult);
+			}
+		}
+		else
+		{
+			l_Status = E_INVALIDARG;
+
+			SVERROR(L"Count parameter is invalid.", IID_ISVRemoteCtrl, l_Status);
+		}
+
+		return l_Status;
 	}
-	else
+
+	STDMETHODIMP SVRemoteCtrl::GetItems(VARIANT itemNames, ISVProductItems** items)
 	{
-		result.Detach(listNames);
+		HRESULT l_Status = S_OK;
+
+		if (items != NULL)
+		{
+			if (*items != NULL)
+			{
+				(*items)->Release();
+				(*items) = NULL;
+			}
+		}
+		else
+		{
+			l_Status = E_INVALIDARG;
+
+			SVERROR(L"Items parameter is invalid.", IID_ISVRemoteCtrl, l_Status);
+		}
+
+		if (l_Status == S_OK && itemNames.vt != (VT_ARRAY | VT_BSTR))
+		{
+			l_Status = E_INVALIDARG;
+
+			SVERROR(L"Item names parameter is invalid.", IID_ISVRemoteCtrl, l_Status);
+		}
+
+		if (l_Status == S_OK)
+		{
+			SVCommandStatus l_CommandStatus;
+
+			l_Status = m_dispatcher->GetItems(itemNames, items, m_imageScale, l_CommandStatus);
+
+			if (!SUCCEEDED(l_Status))
+			{
+				SVERROR(l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult);
+			}
+		}
+
+		return l_Status;
 	}
 
-	return l_Status;
-}
-
-STDMETHODIMP SVRemoteCtrl::QueryMonitorListNames(VARIANT* listNames)
-{
-	HRESULT l_Status = S_OK;
-	SVCommandStatus l_CommandStatus;
-	CComVariant result;
-
-	if (nullptr != listNames && VT_EMPTY != listNames->vt )
+	STDMETHODIMP SVRemoteCtrl::GetState(LONG* state)
 	{
-		VariantClear(listNames);
+		HRESULT l_Status = S_OK;
+
+		if (state != NULL)
+		{
+			SVCommandStatus l_CommandStatus;
+
+			*state = 0;
+
+			unsigned long l_State = 0;
+
+			l_Status = m_dispatcher->GetState(l_State, l_CommandStatus);
+
+			if (l_Status == S_OK)
+			{
+				*state = static_cast<long>(l_State);
+			}
+			else
+			{
+				SVERROR(l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult);
+			}
+		}
+		else
+		{
+			l_Status = E_INVALIDARG;
+
+			SVERROR(L"State parameter is invalid.", IID_ISVRemoteCtrl, l_Status);
+		}
+
+		return l_Status;
 	}
 
-	l_Status = m_dispatcher->QueryMonitorListNames(result, l_CommandStatus);
+	STDMETHODIMP SVRemoteCtrl::PutConfig(BSTR filePath, LONG Timeout)
+	{
+		HRESULT l_Status = S_OK;
 
-	if( !SUCCEEDED(l_Status) )
-	{
-		SVERROR( l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult );
-	}
-	else
-	{
-		result.Detach(listNames);
-	}
-	return l_Status;
-}
+		l_Status = BeginPutConfig(filePath);
 
-STDMETHODIMP SVRemoteCtrl::GetMonitorListProperties(  BSTR listName, LONG* RejectDepth, VARIANT_BOOL* isActive, BSTR* ppqName)
-{
-	HRESULT Status = S_OK;
-	SVCommandStatus l_CommandStatus;
-	if(nullptr == RejectDepth || nullptr == isActive || nullptr == ppqName )
+		if (l_Status == S_OK)
+		{
+			l_Status = FinishPutConfig(Timeout, VARIANT_TRUE);
+		}
+
+		return l_Status;
+	}
+
+	STDMETHODIMP SVRemoteCtrl::GetVersion(BSTR* svobserver_ver, BSTR* svremotecontrol_ver, BSTR* runrejectserver_ver)
 	{
-		Status = E_INVALIDARG;
-		SVERROR(L"Invalid Parameter.", IID_ISVRemoteCtrl, Status);
+		HRESULT l_Status = S_OK;
+
+		if (nullptr != svobserver_ver)
+		{
+			if (nullptr != (*svobserver_ver))
+			{
+				::SysFreeString(*svobserver_ver);
+				(*svobserver_ver) = nullptr;
+			}
+		}
+		else
+		{
+			l_Status = E_INVALIDARG;
+			SVERROR(L"SVObserver version parameter is invalid.", IID_ISVRemoteCtrl, l_Status);
+		}
+
+		if (nullptr != svremotecontrol_ver)
+		{
+			if (nullptr != (*svremotecontrol_ver))
+			{
+				::SysFreeString(*svremotecontrol_ver);
+				(*svremotecontrol_ver) = nullptr;
+			}
+		}
+		else if (S_OK == l_Status)
+		{
+			l_Status = E_INVALIDARG;
+			SVERROR(L"SVRemoteControl version parameter is invalid.", IID_ISVRemoteCtrl, l_Status);
+		}
+
+		if (nullptr != runrejectserver_ver)
+		{
+			if (nullptr != (*runrejectserver_ver))
+			{
+				::SysFreeString(*runrejectserver_ver);
+				(*runrejectserver_ver) = nullptr;
+			}
+		}
+		else if (S_OK == l_Status)
+		{
+			l_Status = E_INVALIDARG;
+			SVERROR(L"Run/Reject server version parameter is invalid.", IID_ISVRemoteCtrl, l_Status);
+		}
+		if (S_OK == l_Status)
+		{
+			SVCommandStatus l_CommandStatus;
+
+			_bstr_t l_SVObserverVersion = L"";
+			_bstr_t l_SVRemoteControlVersion = L"";
+			_bstr_t l_RunRejectServerVersion = L"";
+
+			std::wstring ov = SVStringConversions::to_utf16(GetVersionString());
+			l_SVRemoteControlVersion = ov.c_str();
+			(*svremotecontrol_ver) = l_SVRemoteControlVersion.Detach();
+
+			l_Status = m_dispatcher->GetVersion(l_SVObserverVersion, l_RunRejectServerVersion, l_CommandStatus);
+
+			if (S_OK == l_Status)
+			{
+				(*svobserver_ver) = l_SVObserverVersion.Detach();
+				//( *SVC_ver ) = _bstr_t(L"3.0 \u03B2 7").Detach();
+				(*runrejectserver_ver) = l_RunRejectServerVersion.Detach();
+			}
+			else
+			{
+				SVERROR(l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult);
+			}
+		}
+		return l_Status;
+	}
+
+	STDMETHODIMP SVRemoteCtrl::PutDeviceFile(BSTR sourcePath, BSTR destinationPath)
+	{
+		HRESULT l_Status = S_OK;
+		SVCommandStatus l_CommandStatus;
+
+		long l_Cancel = 0;
+
+		l_Status = m_dispatcher->PutFile(sourcePath, destinationPath, l_Cancel, true, l_CommandStatus);
+
+		if (l_Status != S_OK)
+		{
+			SVERROR(l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult);
+		}
+
+		return l_Status;
+	}
+
+	STDMETHODIMP SVRemoteCtrl::SetDeviceMode(SVObserverModesEnum desiredMode)
+	{
+		HRESULT l_Status = S_OK;
+		SVCommandStatus l_CommandStatus;
+
+		l_Status = m_dispatcher->SetMode(desiredMode, true, l_CommandStatus);
+
+		if (l_Status != S_OK)
+		{
+			SVERROR(l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult);
+		}
+
+		return l_Status;
+	}
+
+	STDMETHODIMP SVRemoteCtrl::SetItems(ISVProductItems* items, ISVProductItems ** faults)
+	{
+		HRESULT l_Status = S_OK;
+		SVCommandStatus l_CommandStatus;
+
+		l_Status = m_dispatcher->SetItems(items, faults, true, l_CommandStatus);
+
+		if (!SUCCEEDED(l_Status))
+		{
+			SVERROR(l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult);
+		}
+
+		return l_Status;
+	}
+
+	STDMETHODIMP SVRemoteCtrl::get_ServerAddress(BSTR* pVal)
+	{
+		HRESULT l_Status = S_OK;
+
+		if (pVal != NULL)
+		{
+			if ((*pVal) != NULL)
+			{
+				::SysFreeString(*pVal);
+
+				(*pVal) = NULL;
+			}
+
+			(*pVal) = m_servername.copy();
+		}
+		else
+		{
+			l_Status = E_INVALIDARG;
+
+			SVERROR(L"Value parameter is invalid.", IID_ISVRemoteCtrl, l_Status);
+		}
+
+		return l_Status;
+	}
+
+	STDMETHODIMP SVRemoteCtrl::get_VPAddress(BSTR* pVal)
+	{
+		HRESULT l_Status = S_OK;
+
+		if (pVal != NULL)
+		{
+			if ((*pVal) != NULL)
+			{
+				::SysFreeString(*pVal);
+
+				(*pVal) = NULL;
+			}
+
+			(*pVal) = m_VPName.copy();
+		}
+		else
+		{
+			l_Status = E_INVALIDARG;
+
+			SVERROR(L"Value parameter is invalid.", IID_ISVRemoteCtrl, l_Status);
+		}
+
+		return l_Status;
+	}
+
+	STDMETHODIMP SVRemoteCtrl::get_Connected(VARIANT_BOOL* pVal)
+	{
+		*pVal = m_dispatcher->isConnected();
+		return S_OK;
+	}
+
+	STDMETHODIMP SVRemoteCtrl::get_ServerType(BSTR* pVal)
+	{
+		HRESULT l_Status = S_OK;
+
+		if (pVal != NULL)
+		{
+			if ((*pVal) != NULL)
+			{
+				::SysFreeString(*pVal);
+
+				(*pVal) = NULL;
+			}
+
+			(*pVal) = (m_device == svr::svcontrol) ? c_svcontrol.Copy() : c_svobserver.Copy();
+		}
+		else
+		{
+			l_Status = E_INVALIDARG;
+
+			SVERROR(L"Value parameter is invalid.", IID_ISVRemoteCtrl, l_Status);
+		}
+
+		return l_Status;
+	}
+
+	void SVRemoteCtrl::AsyncThreadFunc(bool& p_rWaitForEvent)
+	{
+		SVCommandTemplatePtr l_CommandPtr;
+
+		m_AsyncCommandHelper.SetCommandActive();
+
+		if ((m_AsyncCommandHelper.GetCommand(l_CommandPtr, INFINITE) == S_OK) && (l_CommandPtr.get() != NULL))
+		{
+			try
+			{
+				l_CommandPtr->Execute(m_dispatcher);
+
+				m_AsyncCommandHelper.SetStatus(l_CommandPtr->GetStatus());
+			}
+			catch (...)
+			{
+				m_AsyncCommandHelper.SetStatus(SVCommandStatus(E_UNEXPECTED, L"Unknown exception when executing asynchronous command."));
+			}
+
+			m_AsyncCommandHelper.NotifyRequestComplete();
+		}
+
+		m_AsyncCommandHelper.SetCommandComplete();
+	}
+
+	HRESULT SVRemoteCtrl::SetControlServer(SVCommandStatus& p_rStatus)
+	{
+		HRESULT l_Status = S_OK;
+
+		if (0 < m_servername.length())
+		{
+			m_VPName = m_servername;
+		}
+		else
+		{
+			m_VPName = L"";
+		}
+
+		return l_Status;
+	}
+
+	HRESULT SVRemoteCtrl::SetObserverServer(SVCommandStatus& p_rStatus)
+	{
+		HRESULT l_Status = S_OK;
+
+		m_VPName = m_servername;
+
+		l_Status = m_dispatcher->SetConnectionData(L"", m_CommandPort, 10000);
+
+		p_rStatus.hResult = l_Status;
+
+		if (l_Status != S_OK)
+		{
+			p_rStatus.errorText = L"Unknown connection error";
+
+			m_VPName = L"";
+		}
+
+		return l_Status;
+	}
+
+	STDMETHODIMP SVRemoteCtrl::Disconnect(void)
+	{
+		m_dispatcher->SetConnectionData("", m_CommandPort, 10000);
+
+		m_servername = _T("");
+		m_VPName = _T("");
+
+		return S_OK;
+	}
+
+	STDMETHODIMP SVRemoteCtrl::Connect(BSTR address, LONG Timeout)
+	{
+
+		SVCommandStatus l_CommandStatus;
+
+		HRESULT l_Status = m_dispatcher->SetConnectionData(address, m_CommandPort, Timeout);
+
+		if (l_Status == S_OK)
+		{
+			m_servername = address;
+
+			l_Status = SetControlServer(l_CommandStatus);
+
+			if (l_Status != NULL)
+			{
+				SVERROR(l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult);
+			}
+
+		}
+
+		return l_Status;
+	}
+
+	STDMETHODIMP SVRemoteCtrl::get_ImageScale(LONG* pVal)
+	{
+		*pVal = m_imageScale;
+		return S_OK;
+	}
+
+	STDMETHODIMP SVRemoteCtrl::put_ImageScale(LONG newVal)
+	{
+		m_imageScale = (0 < newVal && newVal <= 100) ? newVal : 100;
+		return S_OK;
+	}
+
+	void SVRemoteCtrl::NotifyClient(_variant_t& p_Data, SVNotificationTypesEnum p_Type)
+	{
+		Fire_OnNotify(p_Data, p_Type);
+	}
+
+	STDMETHODIMP SVRemoteCtrl::RegisterMonitorList(BSTR listName, BSTR ppqName, int rejectDepth, VARIANT productItemList,
+		VARIANT rejectCondList, VARIANT failStatusList, ISVErrorObjectList ** errors)
+	{
+		HRESULT l_Status = S_OK;
+		SVCommandStatus l_CommandStatus;
+
+		if (errors != NULL)
+		{
+			if (*errors != NULL)
+			{
+				(*errors)->Release();
+				(*errors) = NULL;
+			}
+		}
+		else
+		{
+			l_Status = E_INVALIDARG;
+
+			SVERROR(L"Errors parameter is invalid.", IID_ISVRemoteCtrl, l_Status);
+		}
+
+		l_Status = m_dispatcher->RegisterMonitorList(listName, ppqName, rejectDepth, productItemList, rejectCondList, failStatusList, errors, l_CommandStatus);
+
+		if (!SUCCEEDED(l_Status))
+		{
+			SVERROR(l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult);
+		}
+
+		return l_Status;
+	}
+
+
+	STDMETHODIMP SVRemoteCtrl::QueryProductList(BSTR listName, VARIANT* itemNames)
+	{
+		HRESULT l_Status = S_OK;
+		SVCommandStatus l_CommandStatus;
+		CComVariant result;
+		VariantClear(itemNames);
+
+		l_Status = m_dispatcher->QueryProductList(listName, SVRC::cmdName::qryProd, result, l_CommandStatus);
+
+		if (!SUCCEEDED(l_Status))
+		{
+			SVERROR(l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult);
+		}
+		else
+		{
+			result.Detach(itemNames);
+		}
+
+		return l_Status;
+	}
+
+
+	STDMETHODIMP SVRemoteCtrl::QueryRejectCondList(BSTR listName, VARIANT* itemNames)
+	{
+		HRESULT l_Status = S_OK;
+		SVCommandStatus l_CommandStatus;
+		CComVariant result;
+		VariantClear(itemNames);
+
+		l_Status = m_dispatcher->QueryProductList(listName, SVRC::cmdName::qryRjct, result, l_CommandStatus);
+
+		if (!SUCCEEDED(l_Status))
+		{
+			SVERROR(l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult);
+		}
+		else
+		{
+			result.Detach(itemNames);
+		}
+
+		return l_Status;
+	}
+
+
+	STDMETHODIMP SVRemoteCtrl::QueryFailStatusList(BSTR listName, VARIANT* itemNames)
+	{
+		HRESULT l_Status = S_OK;
+		SVCommandStatus l_CommandStatus;
+		CComVariant result;
+
+		if (nullptr != itemNames && VT_EMPTY != itemNames->vt)
+		{
+			VariantClear(itemNames);
+		}
+
+		l_Status = m_dispatcher->QueryProductList(listName, SVRC::cmdName::qryFail, result, l_CommandStatus);
+
+		if (!SUCCEEDED(l_Status))
+		{
+			SVERROR(l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult);
+		}
+		else
+		{
+			result.Detach(itemNames);
+		}
+
+		return l_Status;
+	}
+
+
+	STDMETHODIMP SVRemoteCtrl::GetProduct(BSTR listName, LONG triggerCount, LONG imageScale, ISVProductItems** currentViewItems)
+	{
+		HRESULT l_Status = S_OK;
+
+		if (currentViewItems != NULL)
+		{
+			if (*currentViewItems != NULL)
+			{
+				(*currentViewItems)->Release();
+				(*currentViewItems) = NULL;
+			}
+		}
+		else
+		{
+			l_Status = E_INVALIDARG;
+
+			SVERROR(L"Items parameter is invalid.", IID_ISVRemoteCtrl, l_Status);
+		}
+
+		if (l_Status == S_OK)
+		{
+			SVCommandStatus l_CommandStatus;
+
+			l_Status = m_dispatcher->GetProduct(listName, triggerCount, imageScale, currentViewItems, l_CommandStatus);
+
+			if (!SUCCEEDED(l_Status))
+			{
+				SVERROR(l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult);
+			}
+		}
+
+		return l_Status;
+	}
+
+
+	STDMETHODIMP SVRemoteCtrl::GetReject(BSTR listName, LONG triggerCount, LONG imageScale, ISVProductItems** currentViewItems)
+	{
+		HRESULT l_Status = S_OK;
+
+		if (currentViewItems != NULL)
+		{
+			if (*currentViewItems != NULL)
+			{
+				(*currentViewItems)->Release();
+				(*currentViewItems) = NULL;
+			}
+		}
+		else
+		{
+			l_Status = E_INVALIDARG;
+
+			SVERROR(L"Items parameter is invalid.", IID_ISVRemoteCtrl, l_Status);
+		}
+
+		if (l_Status == S_OK)
+		{
+			SVCommandStatus l_CommandStatus;
+
+			l_Status = m_dispatcher->GetRejects(listName, triggerCount, imageScale, currentViewItems, l_CommandStatus);
+
+			if (!SUCCEEDED(l_Status))
+			{
+				SVERROR(l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult);
+			}
+		}
+
+		return l_Status;
+	}
+
+	STDMETHODIMP SVRemoteCtrl::GetDataDefinitionList(BSTR inspectionName, SVDataDefinitionListTypeEnum listType, ISVDataDefObjectList** entries)
+	{
+		HRESULT l_Status = S_OK;
+
+		if (NULL != entries)
+		{
+			if (NULL != *entries)
+			{
+				(*entries)->Release();
+				(*entries) = NULL;
+			}
+		}
+		else
+		{
+			l_Status = E_INVALIDARG;
+
+			SVERROR(L"Items parameter is invalid.", IID_ISVRemoteCtrl, l_Status);
+		}
+
+		if (l_Status == S_OK)
+		{
+			SVCommandStatus l_CommandStatus;
+
+			l_Status = m_dispatcher->GetDataDefinitionList(inspectionName, listType, entries, l_CommandStatus);
+
+			if (!SUCCEEDED(l_Status))
+			{
+				SVERROR(l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult);
+			}
+		}
+
+		return l_Status;
+	}
+
+	STDMETHODIMP SVRemoteCtrl::ActivateMonitorList(BSTR listName)
+	{
+		HRESULT l_Status = S_OK;
+		SVCommandStatus l_CommandStatus;
+
+		l_Status = m_dispatcher->ActivateMonitorList(listName, true, l_CommandStatus);
+
+		if (!SUCCEEDED(l_Status))
+		{
+			SVERROR(l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult);
+		}
+		return l_Status;
+	}
+
+	STDMETHODIMP SVRemoteCtrl::DeactivateMonitorList(BSTR listName)
+	{
+		HRESULT l_Status = S_OK;
+		SVCommandStatus l_CommandStatus;
+
+		l_Status = m_dispatcher->ActivateMonitorList(listName, false, l_CommandStatus);
+
+		if (!SUCCEEDED(l_Status))
+		{
+			SVERROR(l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult);
+		}
+		return l_Status;
+	}
+
+	STDMETHODIMP SVRemoteCtrl::GetFailStatus(BSTR listName, VARIANT* values)
+	{
+		HRESULT l_Status = S_OK;
+		SVCommandStatus l_CommandStatus;
+		CComVariant result;
+
+		if (nullptr != values && VT_EMPTY != values->vt)
+		{
+			VariantClear(values);
+		}
+
+		l_Status = m_dispatcher->GetFailStatus(listName, result, l_CommandStatus);
+
+		if (!SUCCEEDED(l_Status))
+		{
+			SVERROR(l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult);
+		}
+		else
+		{
+			result.Detach(values);
+		}
+
+		return l_Status;
+	}
+
+	//TODO: This global parameter is just for the dummy
+	long g_productFilterMode = LastInspected;
+
+	STDMETHODIMP SVRemoteCtrl::GetProductFilter(BSTR listName, LONG * pFilter)
+	{
+		HRESULT l_Status = S_OK;
+
+		if (pFilter != nullptr)
+		{
+			SVCommandStatus l_CommandStatus;
+			*pFilter = LastInspected;
+			unsigned long l_Filter = LastInspected;
+
+			l_Status = m_dispatcher->GetProductFilter(listName, l_Filter, l_CommandStatus);
+			if (S_OK != l_Status)
+			{
+				SVERROR(l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult);
+			}
+			else
+			{
+				*pFilter = l_Filter;
+			}
+		}
+		else
+		{
+			l_Status = E_INVALIDARG;
+
+			SVERROR(L"Filter parameter is invalid.", IID_ISVRemoteCtrl, l_Status);
+		}
+		return l_Status;
+	}
+
+	STDMETHODIMP SVRemoteCtrl::SetProductFilter(BSTR listName, SVProductFilterModesEnum filter)
+	{
+		HRESULT l_Status = S_OK;
+		SVCommandStatus l_CommandStatus;
+
+		l_Status = m_dispatcher->SetProductFilter(listName, filter, l_CommandStatus);
+		if (S_OK != l_Status)
+		{
+			SVERROR(l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult);
+		}
+		return l_Status;
+	}
+
+	STDMETHODIMP SVRemoteCtrl::Shutdown(SVShutdownOptionsEnum options)
+	{
+		HRESULT status = S_OK;
+		SVCommandStatus commandStatus;
+
+		status = m_dispatcher->ShutDown(options, commandStatus);
+
+		if (status != S_OK)
+		{
+			SVERROR(commandStatus.errorText.c_str(), IID_ISVRemoteCtrl, commandStatus.hResult);
+		}
+
+		return status;
+	}
+
+	STDMETHODIMP SVRemoteCtrl::GetInspectionNames(VARIANT* listNames)
+	{
+		HRESULT l_Status = S_OK;
+		SVCommandStatus l_CommandStatus;
+		CComVariant result;
+
+		if (nullptr != listNames && VT_EMPTY != listNames->vt)
+		{
+			VariantClear(listNames);
+		}
+
+		l_Status = m_dispatcher->GetInspectionNames(result, l_CommandStatus);
+
+		if (!SUCCEEDED(l_Status))
+		{
+			SVERROR(l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult);
+		}
+		else
+		{
+			result.Detach(listNames);
+		}
+
+		return l_Status;
+	}
+
+	STDMETHODIMP SVRemoteCtrl::QueryMonitorListNames(VARIANT* listNames)
+	{
+		HRESULT l_Status = S_OK;
+		SVCommandStatus l_CommandStatus;
+		CComVariant result;
+
+		if (nullptr != listNames && VT_EMPTY != listNames->vt)
+		{
+			VariantClear(listNames);
+		}
+
+		l_Status = m_dispatcher->QueryMonitorListNames(result, l_CommandStatus);
+
+		if (!SUCCEEDED(l_Status))
+		{
+			SVERROR(l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult);
+		}
+		else
+		{
+			result.Detach(listNames);
+		}
+		return l_Status;
+	}
+
+	STDMETHODIMP SVRemoteCtrl::GetMonitorListProperties(BSTR listName, LONG* RejectDepth, VARIANT_BOOL* isActive, BSTR* ppqName)
+	{
+		HRESULT Status = S_OK;
+		SVCommandStatus l_CommandStatus;
+		if (nullptr == RejectDepth || nullptr == isActive || nullptr == ppqName)
+		{
+			Status = E_INVALIDARG;
+			SVERROR(L"Invalid Parameter.", IID_ISVRemoteCtrl, Status);
+			return Status;
+		}
+
+		if (nullptr != (*ppqName))
+		{
+			::SysFreeString(*ppqName);
+			(*ppqName) = nullptr;
+		}
+		bool bIsactive = *isActive ? true : false;
+		Status = m_dispatcher->GetMonitorListProperties(listName, *RejectDepth, bIsactive, *ppqName, l_CommandStatus);
+		*isActive = static_cast<VARIANT_BOOL>(bIsactive);
 		return Status;
 	}
-	
-	if (nullptr != (*ppqName))
-	{
-		::SysFreeString(*ppqName);
-		(*ppqName) = nullptr;
-	}
-	bool bIsactive  = *isActive ? true : false;
-	Status = m_dispatcher->GetMonitorListProperties(listName,*RejectDepth,bIsactive,*ppqName,l_CommandStatus); 
-	*isActive =  static_cast<VARIANT_BOOL>(bIsactive);
-	return Status;
-}
 
-STDMETHODIMP SVRemoteCtrl::GetMaxRejectQeueDepth( LONG* MaxRejectDepth)
-{
-	HRESULT Status = S_OK;
-	SVCommandStatus CommandStatus;
-	if(nullptr == MaxRejectDepth )
+	STDMETHODIMP SVRemoteCtrl::GetMaxRejectQeueDepth(LONG* MaxRejectDepth)
 	{
-		Status = E_INVALIDARG;
-		SVERROR(L"Invalid Parameter.", IID_ISVRemoteCtrl, Status);
+		HRESULT Status = S_OK;
+		SVCommandStatus CommandStatus;
+		if (nullptr == MaxRejectDepth)
+		{
+			Status = E_INVALIDARG;
+			SVERROR(L"Invalid Parameter.", IID_ISVRemoteCtrl, Status);
+			return Status;
+		}
+		*MaxRejectDepth = 0;
+		unsigned long Depth;
+		Status = m_dispatcher->GetMaxRejectQeueDepth(Depth, CommandStatus);
+		*MaxRejectDepth = static_cast<long>(Depth);
 		return Status;
 	}
-	*MaxRejectDepth =0;
-	unsigned long Depth;
-	Status = m_dispatcher->GetMaxRejectQeueDepth(Depth,CommandStatus);
-	*MaxRejectDepth = static_cast< long >(Depth);
-	return Status;
-}

@@ -76,14 +76,14 @@ public:
 
 			promise->set_value(std::move(res));
 		},
-			[promise](const Error& err) { promise->set_exception(errorToExceptionPtr(err)); }),
+			[promise](const SvPenv::Error& err) { promise->set_exception(errorToExceptionPtr(err)); }),
 			timeout
 		);
 
 		return promise->get_future();
 	}
 
-	ClientStreamContext stream(TReq&& Request, Observer<TRes> observer)
+	SvRpc::ClientStreamContext stream(TReq&& Request, Observer<TRes> observer)
 	{
 		SvPenv::Envelope Envelope;
 		m_ReqWrapper.wrap(Envelope, std::move(Request));

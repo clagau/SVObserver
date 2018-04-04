@@ -1,13 +1,9 @@
+//*****************************************************************************
+/// \copyright (c) 2018,2018 by Seidenader Maschinenbau GmbH
+/// \file AutoBuild.h
+/// All Rights Reserved 
+//*****************************************************************************
 //******************************************************************************
-/// \copyright (c) 2012,2018 by Seidenader Maschinenbau GmbH
-/// \file LastResponseData.h
-/// All Rights Reserved
-//******************************************************************************
-/// PLEASE
-/// ENTER
-/// A DESCRIPTION
-//******************************************************************************
-
 #pragma once
 
 // change the FALSE to TRUE for autoincrement of build number

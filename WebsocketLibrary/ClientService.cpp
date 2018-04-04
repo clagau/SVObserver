@@ -12,9 +12,8 @@
 #pragma once
 
 #include "stdafx.h"
-
 #include "ClientService.h"
-#include "SVProtoBuf/RunRe.h"
+#include "SVProtobuf/SVRC.h"
 
 using time_duration = boost::posix_time::time_duration;
 
@@ -23,9 +22,8 @@ const  time_duration FourSeconds = boost::posix_time::seconds(4);
 
 namespace SvWsl
 {
-ClientService::ClientService(SvRpc::RPCClient& rpc_client, boost::posix_time::time_duration request_timeout)
-	: m_request_timeout(request_timeout), 
-	m_get_version_client(rpc_client), 
+ClientService::ClientService(SvRpc::RPCClient& rpc_client)
+	: m_get_version_client(rpc_client), 
 	m_query_list_name_client(rpc_client),
 	m_query_list_item_client(rpc_client),
 	m_get_product_client(rpc_client),
@@ -33,7 +31,6 @@ ClientService::ClientService(SvRpc::RPCClient& rpc_client, boost::posix_time::ti
 	m_get_image_stream_from_cur_id_client(rpc_client),
 	m_get_fail_status_client(rpc_client),
 	m_get_items_client(rpc_client),
-	m_set_mode_client(rpc_client),
 	m_notification_stream_client(rpc_client)
 {
 }
@@ -79,10 +76,6 @@ void ClientService::getItems(SvPb::GetItemsRequest&& req, SvRpc::Task<SvPb::GetI
 	m_get_items_client.request(std::move(req), task, FourSeconds);
 }
 
-void ClientService::setMode(SvPb::SetModeRequest&& req, SvRpc::Task<SvPb::SetModeResponse> task)
-{
-	m_set_mode_client.request(std::move(req), task, FourSeconds);
-}
 
 SvRpc::ClientStreamContext ClientService::getNotificationStream(SvPb::GetNotificationStreamRequest&& req,
 	SvRpc::Observer<SvPb::GetNotificationStreamResponse> observer)

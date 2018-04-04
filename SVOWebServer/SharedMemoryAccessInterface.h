@@ -8,7 +8,7 @@
 //******************************************************************************
 
 #pragma once
-#include "SVProtoBuf/RunRe.h"
+#include "SVProtobuf/SVRC.h"
 #include "SVRPCLibrary/Observer.h"
 #include "SVRPCLibrary/ServerStreamContext.h"
 #include "SVRPCLibrary/Task.h"

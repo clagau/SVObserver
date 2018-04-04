@@ -118,6 +118,9 @@
 #include "SVSharedMemoryLibrary\ShareEvents.h"
 #include "SVSharedMemoryLibrary\MLPPQInfo.h"
 #include "InspectionCommands\CommandFunctionHelper.h"
+#include "SVRCWebsocketServer.h"
+#include "SVRCCommand.h"
+#include "WebsocketLibrary\Definition.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -2297,6 +2300,13 @@ BOOL SVObserverApp::InitInstance()
 
 	m_DataValidDelay = static_cast<long> (SvimIni.GetValueInt(_T("Settings"), _T("DataValidDelay"), 0));
 
+	std::shared_ptr<SvHttp::WebsocketServerSettings>  pSettings = std::make_shared<SvHttp::WebsocketServerSettings>();
+	pSettings->Host = "0.0.0.0";
+	pSettings->Port = SvWsl::Default_SecondPort;
+	std::shared_ptr<SVRCCommand> pSVRCCommand = std::make_shared<SVRCCommand>();
+	SVRCWebsocketServer::Instance()->Start(pSVRCCommand, pSettings);
+	
+	//@Todo[MEC][8.00] [09.03.2018] Replace the with http Websocketserver
 	SVSocketRemoteCommandManager::Instance().Startup(m_RemoteCommandsPortNumber);
 	
 	if (!TheSVOLicenseManager().HasMatroxLicense())
@@ -2343,6 +2353,7 @@ int SVObserverApp::ExitInstance()
 	SVVisionProcessorHelper::Instance().Shutdown();
 	
 	SVSocketRemoteCommandManager::Instance().Shutdown();
+	SVRCWebsocketServer::Instance()->Stop();
 
 	SvSol::SVSocketLibrary::Destroy();
 	SvSml::ShareEvents::GetInstance().QuiesceSharedMemory();

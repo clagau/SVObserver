@@ -172,10 +172,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BasicStructure.pb.cc">
-      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
-      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TurnOffAllWarnings</WarningLevel>
-      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
-      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Level2</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Level2</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Level2</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Level2</WarningLevel>
     </ClCompile>
     <ClCompile Include="BasicStructureHelper.cpp" />
     <ClCompile Include="envelope.pb.cc">
@@ -185,10 +185,10 @@
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Level2</WarningLevel>
     </ClCompile>
     <ClCompile Include="InspectionCommands.pb.cc">
-      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
-      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TurnOffAllWarnings</WarningLevel>
-      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
-      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Level2</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Level2</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Level2</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Level2</WarningLevel>
     </ClCompile>
     <ClCompile Include="MonitorListStore.pb.cc">
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Level2</WarningLevel>
@@ -196,13 +196,8 @@
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Level2</WarningLevel>
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Level2</WarningLevel>
     </ClCompile>
-    <ClCompile Include="RunRe.pb.cc">
-      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Level2</WarningLevel>
-      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Level2</WarningLevel>
-      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Level2</WarningLevel>
-      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Level2</WarningLevel>
-    </ClCompile>
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="SVRC.pb.cc" />
     <ClCompile Include="TriggerRecordController.pb.cc">
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TurnOffAllWarnings</WarningLevel>
@@ -226,8 +221,7 @@
     <ClInclude Include="InspectionCommands.pb.h" />
     <ClInclude Include="MonitorListStore.h" />
     <ClInclude Include="MonitorListStore.pb.h" />
-    <ClInclude Include="RunRe.h" />
-    <ClInclude Include="RunRe.pb.h" />
+    <ClInclude Include="SVRC.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TriggerRecordController.h" />
     <ClInclude Include="TriggerRecordController.pb.h" />
@@ -300,7 +294,7 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="RunRe.proto">
+    <CustomBuild Include="SVRC.proto">
       <FileType>Document</FileType>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>

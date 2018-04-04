@@ -33,13 +33,13 @@
     <ClCompile Include="MonitorListStore.pb.cc">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="RunRe.pb.cc">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="variant.pb.cc">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="envelope.pb.cc">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVRC.pb.cc">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -56,13 +56,13 @@
     <CustomBuild Include="TriggerRecordController.proto">
       <Filter>Ressourcendateien</Filter>
     </CustomBuild>
-    <CustomBuild Include="RunRe.proto">
-      <Filter>Ressourcendateien</Filter>
-    </CustomBuild>
     <CustomBuild Include="variant.proto">
       <Filter>Ressourcendateien</Filter>
     </CustomBuild>
     <CustomBuild Include="Envelope.proto">
+      <Filter>Ressourcendateien</Filter>
+    </CustomBuild>
+    <CustomBuild Include="SVRC.proto">
       <Filter>Ressourcendateien</Filter>
     </CustomBuild>
   </ItemGroup>
@@ -85,9 +85,6 @@
     <ClInclude Include="MonitorListStore.pb.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="RunRe.pb.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="variant.pb.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -103,9 +100,6 @@
     <ClInclude Include="MonitorListStore.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="RunRe.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="TriggerRecordController.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -113,6 +107,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="InspectionCommands.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVRC.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

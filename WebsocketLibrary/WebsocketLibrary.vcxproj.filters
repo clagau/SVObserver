@@ -10,6 +10,9 @@
     <ClCompile Include="ClientService.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="SVRCClientService.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -24,6 +27,7 @@
     <ClInclude Include="Definition.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="SVRCClientService.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Ressourcendateien">

@@ -4,12 +4,10 @@ package SvPb;
 import "variant.proto";
 
 
-message RunRejectMessages
+message SVRCMessages
 {
 	oneof message
 	{
-		SetModeRequest setModeRequest = 1;
-		SetModeResponse setModeResponse = 2;
 		GetVersionRequest getVersionRequest = 3;
 		GetVersionResponse getVersionResponse = 4;
 		QueryListNameRequest queryListNameRequest = 5;
@@ -29,6 +27,10 @@ message RunRejectMessages
 		GetImageStreamRequest getImageStreanRequest = 19;
 		GetNotificationStreamRequest getNotificationStreamRequest = 20;
 		GetNotificationStreamResponse getNotificationStreamResponse = 21;
+		SetDeviceModeRequest setDeviceModeRequest = 22;
+		SetDeviceModeResponse setDeviceModeResponse = 23;
+		GetDeviceModeRequest getDeviceModeRequest = 24;
+		GetDeviceModeResponse getDeviceModeResponse = 25;
 	}
 }
 
@@ -62,15 +64,6 @@ message GetVersionResponse
 	string version = 1;
 }
 
-message SetModeRequest 
-{
-	int32 mode = 1;
-}
-message SetModeResponse 
-{
-	int32 old_mode = 1;
-	int32 new_mode = 2;
-}
 
 //query active monitorlist 
 message QueryListNameRequest
@@ -236,4 +229,35 @@ message GetNotificationStreamResponse
 	uint64 Id = 1;
 	string Type = 2;
 	string Message = 3;
+}
+
+enum DeviceModeType
+{
+	Available	= 0; //unknown
+	RunMode	= 1;  //online
+	StopMode	= 2; //offline
+	RegressionMode	= 3;
+	TestMode	= 4;
+	EditMode	= 5;
+	ModeChanging =6;
+}
+
+
+message SetDeviceModeRequest 
+{
+	DeviceModeType mode = 1;
+}
+message SetDeviceModeResponse 
+{
+	DeviceModeType old_mode = 1;
+	DeviceModeType new_mode = 2;
+}
+
+message GetDeviceModeRequest 
+{
+	;
+}
+message GetDeviceModeResponse 
+{
+	DeviceModeType mode = 1;
 }

@@ -3,16 +3,13 @@
 /// \file RunRequest.inl
 /// All Rights Reserved 
 //*****************************************************************************
-/// PLEASE 
-/// ENTER 
-/// A DESCRIPTION
+/// Util for client to to start an reequest
 //******************************************************************************
 #pragma once
 namespace SvWsl
 {
-template <class TReq, class TRes>
-std::future<TRes>
-runRequest(ClientService& client, void (ClientService::*getter)(TReq&&, SvRpc::Task<TRes>), TReq&& req)
+template <class TClientService ,class TReq, class TRes>
+std::future<TRes> runRequest(TClientService& client, void (TClientService::*getter)(TReq&&, SvRpc::Task<TRes>), TReq&& req)
 {
 	auto promise = std::make_shared<std::promise<TRes>>();
 	auto task = SvRpc::Task<TRes>(
@@ -22,9 +19,9 @@ runRequest(ClientService& client, void (ClientService::*getter)(TReq&&, SvRpc::T
 	return promise->get_future();
 }
 
-template <class TReq, class TRes>
-std::future<TRes> runStream(ClientService& client,
-	void (ClientService::*getter)(TReq&&, SvRpc::Observer<TRes>),
+template <class TClientService, class TReq, class TRes>
+std::future<TRes> runStream(TClientService& client,
+	void (TClientService::*getter)(TReq&&, SvRpc::Observer<TRes>),
 	TReq&& req,
 	double& volume)
 {

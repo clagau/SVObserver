@@ -10,7 +10,7 @@
 #pragma once
 #include "SVRemoteControl.h"
 #include <atlcomcli.h>
-#include "SVProtobuf/RunRe.h"
+#include "SVProtobuf/SVRC.h"
 #include "WebsocketLibrary/clientservice.h"
 
 

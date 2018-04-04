@@ -14,7 +14,7 @@
 #include "SVProductFilterEnum.h"
 #include "MLInspectionInfo.h"
 #include "MLPPQInfo.h"
-#include "SVProtoBuf/RunRe.h"
+#include "SVProtobuf/SVRC.h"
 #pragma endregion Includes
 
 namespace SvSml

@@ -42,35 +42,35 @@ catch (std::invalid_argument & e)\
 Status = E_INVALIDARG; \
 CmdStatus.hResult = E_INVALIDARG; \
 CmdStatus.errorText = SVStringConversions::to_utf16(e.what()); \
-SVLOG(p_rStatus.errorText.c_str()); \
+SVLOG(CmdStatus.errorText.c_str()); \
 }\
 catch (boost::system::system_error &e)\
 {\
 Status = E_FAIL; \
 CmdStatus.hResult = E_FAIL; \
 CmdStatus.errorText = SVStringConversions::to_utf16(e.what()); \
-SVLOG(p_rStatus.errorText.c_str()); \
+SVLOG(CmdStatus.errorText.c_str()); \
 }\
 catch (std::exception & e)\
 {\
 Status = E_UNEXPECTED; \
 CmdStatus.hResult = E_UNEXPECTED; \
 CmdStatus.errorText = SVStringConversions::to_utf16(e.what()); \
-SVLOG(p_rStatus.errorText.c_str()); \
+SVLOG(CmdStatus.errorText.c_str()); \
 }\
 catch (ATL::CAtlException & e)\
 {\
 Status = e.m_hr; \
 CmdStatus.hResult = e.m_hr; \
 CmdStatus.errorText = L"ATL exception"; \
-SVLOG(p_rStatus.errorText.c_str()); \
+SVLOG(CmdStatus.errorText.c_str()); \
 }\
 catch (...)\
 {\
 Status = E_UNEXPECTED; \
 CmdStatus.hResult = E_UNEXPECTED; \
 CmdStatus.errorText = L"Unknown exception"; \
-SVLOG(p_rStatus.errorText.c_str()); \
+SVLOG(CmdStatus.errorText.c_str()); \
 }
 
 
@@ -244,15 +244,12 @@ inline Json::Value MkArray(const CComVariant & items)
 	return arr;
 }
 
-SVControlCommands::SVControlCommands(NotifyFunctor p_Func, bool connectToRRS)
+SVControlCommands::SVControlCommands(NotifyFunctor p_Func)
 	: m_ServerName(""),
 	m_CommandPort(svr::cmdPort),
 	m_Connected(false),
-	m_RRSConnected(false),
-	m_Notifier(p_Func),
-	m_bConnectToRRS(connectToRRS),
-	m_RequestTimeout(2)
-{
+	m_Notifier(p_Func)
+	{
 	m_ClientSocket.SetConnectionStatusCallback(boost::bind(&SVControlCommands::OnConnectionStatus, this, _1));
 	m_ClientSocket.SetDataReceivedCallback(boost::bind(&SVControlCommands::OnControlDataReceived, this, _1));
 }
@@ -268,35 +265,24 @@ HRESULT SVControlCommands::SetConnectionData(const _bstr_t& p_rServerName, unsig
 {
 	HRESULT hr = S_OK;
 	m_ClientSocket.Disconnect();
-	m_pClientService.release();
-	m_pRpcClient.release();
-	m_RRSConnected = false;
+	m_WebClient.release();
+	m_ObsClient.release();
 	m_Connected = false;
 	m_ServerName = p_rServerName;
 	m_CommandPort = p_CommandPort;
 
 	if (0 < m_ServerName.length())
 	{
-		if (m_bConnectToRRS)
-		{
-			m_pRpcClient = std::make_unique<SvRpc::RPCClient>(static_cast<char*>(m_ServerName), SvWsl::Default_Port);
-			m_pClientService = std::make_unique<SvWsl::ClientService>(*m_pRpcClient, m_RequestTimeout);
-		}
 
+		std::string host(m_ServerName);
+		m_WebClient.SetConnectionData(host, SvWsl::Default_Port);
+		m_ObsClient.SetConnectionData(host, SvWsl::Default_SecondPort);
+	
 		SvSol::SVSocketError::ErrorEnum err = SvSol::SVSocketError::Success;
 		if ((err = m_ClientSocket.BuildConnection(m_ServerName, svr::cmdPort, timeout)) == SvSol::SVSocketError::Success)
 		{
-			if (m_pRpcClient.get())
-			{
-				m_pRpcClient->waitForConnect(timeout);
-				m_RRSConnected = true;
-				if (false == m_pRpcClient->isConnected())
-				{
-					m_RRSConnected = false;
-					m_pClientService.release();
-					m_pRpcClient.release();
-				}
-			}
+			m_WebClient.WaitForConnect(timeout);
+			m_ObsClient.WaitForConnect(timeout);
 			m_Connected = true;
 		}
 		else
@@ -358,11 +344,11 @@ HRESULT SVControlCommands::GetVersion(_bstr_t& p_rSVObserverVersion, _bstr_t& p_
 		if (m_ClientSocket.IsConnected())
 		{
 			p_rRunRejectServerVersion = _bstr_t(L"N/A");
-			if (m_pClientService.get() && m_pRpcClient.get()&&  m_pRpcClient->isConnected())
+			if (m_WebClient.isConnected())
 			{
 				SvPb::GetVersionRequest req;
 				req.set_trigger_timeout(true);
-				auto version = SvWsl::runRequest(*m_pClientService.get(), &SvWsl::ClientService::getVersion, std::move(req)).get();
+				auto version = SvWsl::runRequest(*m_WebClient.m_pClientService.get(), &SvWsl::ClientService::getVersion, std::move(req)).get();
 				p_rRunRejectServerVersion = _bstr_t(version.version().c_str());
 
 			}
@@ -425,7 +411,33 @@ HRESULT SVControlCommands::GetConfigReport(BSTR& p_rReport, SVCommandStatus& p_r
 
 		return l_Status;
 }
+#ifdef   USE_WEBSOCKET
+HRESULT SVControlCommands::GetMode(unsigned long&  rMode, SVCommandStatus& rStatus)
+{
+	HRESULT Status = S_OK;
+	try
+	{
+		if (false == m_ObsClient.isConnected())
+		{
+			throw std::invalid_argument("Not connected To SVObserver");
+		}
 
+		SvPb::GetDeviceModeRequest DeviceModeRequest;
+		SvPb::GetDeviceModeResponse resp =
+			SvWsl::runRequest(*m_ObsClient.m_pClientService.get(), &SvWsl::Obs_ClientService::GetDeviceMode,
+			std::move(DeviceModeRequest)).get();
+
+		rStatus.hResult = S_OK;
+		auto ProtoMode = resp.mode();
+		//@Todo[MEC][8.00] [16.03.2018] make a function to conver enums
+		rMode = static_cast<unsigned long>(ProtoMode);
+		SVLOG(Status);
+	}
+	HANDLE_EXCEPTION(Status, rStatus)
+	return Status;
+}
+
+#else
 HRESULT SVControlCommands::GetMode(unsigned long& p_rMode, SVCommandStatus& p_rStatus)
 {
 	HRESULT l_Status = S_OK;
@@ -442,6 +454,41 @@ HRESULT SVControlCommands::GetMode(unsigned long& p_rMode, SVCommandStatus& p_rS
 
 		return l_Status;
 }
+#endif
+#ifdef   USE_WEBSOCKET
+HRESULT SVControlCommands::SetMode(unsigned long Mode, bool UseSyncSocket, SVCommandStatus& rStatus)
+{
+	HRESULT Status = S_OK;
+	try
+	{
+		if (false == m_ObsClient.isConnected())
+		{
+			throw std::invalid_argument("Not connected To SVObserver");
+		}
+
+		SvPb::SetDeviceModeRequest SetModeRequest;
+		if (false == SvPb::DeviceModeType_IsValid(Mode))
+		{
+			throw std::invalid_argument("Invalid SVObserver mode");
+		}
+		
+		SetModeRequest.set_mode(static_cast<SvPb::DeviceModeType>(Mode));
+		SvPb::SetDeviceModeResponse SetModeResponse =
+			SvWsl::runRequest(*m_ObsClient.m_pClientService.get(), &SvWsl::Obs_ClientService::SetDeviceMode,
+			std::move(SetModeRequest)).get();
+
+		rStatus.hResult = S_OK;
+		auto ProtoMode = SetModeResponse.new_mode();
+		SVLOG(Status);
+	}
+	HANDLE_EXCEPTION(Status, rStatus)
+	return Status;
+}
+
+
+
+
+#else
 
 HRESULT SVControlCommands::SetMode(unsigned long p_Mode, bool p_UseSyncSocket, SVCommandStatus& p_rStatus)
 {
@@ -470,8 +517,8 @@ HRESULT SVControlCommands::SetMode(unsigned long p_Mode, bool p_UseSyncSocket, S
 	HANDLE_EXCEPTION(l_Status, p_rStatus)
 
 		return l_Status;
-}
-
+	}
+#endif 
 HRESULT SVControlCommands::GetItems(CComVariant p_pItemNames, ISVProductItems** p_ppItems, LONG p_scale, SVCommandStatus& p_rStatus)
 {
 	HRESULT l_Status = S_OK;
@@ -1595,7 +1642,8 @@ HRESULT SVControlCommands::GetProduct(bool bGetReject, const _bstr_t & listName,
 		{
 			throw std::invalid_argument("missing Monitorlistname");
 		}
-		if (0 == m_pRpcClient.get() || false == m_pRpcClient->isConnected())
+		//if (0 == m_pRpcClient.get() || false == m_pRpcClient->isConnected())
+		if (false == m_WebClient.isConnected())
 		{
 			throw std::invalid_argument("Not connected To RRServer");
 		}
@@ -1608,13 +1656,13 @@ HRESULT SVControlCommands::GetProduct(bool bGetReject, const _bstr_t & listName,
 
 		ProductRequest.set_nameinresponse(true);
 		SvPb::GetProductResponse resp =
-			SvWsl::runRequest(*m_pClientService.get(), &SvWsl::ClientService::getProduct, std::move(ProductRequest)).get();
+			SvWsl::runRequest(*m_WebClient.m_pClientService.get(), &SvWsl::ClientService::getProduct, std::move(ProductRequest)).get();
 
 		p_rStatus.hResult = (HRESULT)resp.product().status();
 		if (resp.product().status() == SvPb::IsValid)
 		{
 			Status = S_OK;
-			GetProductPtr( m_pClientService, resp.product())->QueryInterface(IID_ISVProductItems, reinterpret_cast<void**>(currentViewItems));
+			GetProductPtr(m_WebClient.m_pClientService, resp.product())->QueryInterface(IID_ISVProductItems, reinterpret_cast<void**>(currentViewItems));
 		}
 		else
 		{
@@ -1670,7 +1718,8 @@ HRESULT SVControlCommands::GetFailStatus(const _bstr_t & listName, CComVariant &
 		{
 			throw std::invalid_argument("missing Monitorlistname");
 		}
-		if (0 == m_pRpcClient.get() || false == m_pRpcClient->isConnected())
+		//if (0 == m_pRpcClient.get() || false == m_pRpcClient->isConnected())
+		if (false == m_WebClient.isConnected())
 		{
 			throw std::invalid_argument("Not connected To RRServer");
 		}
@@ -1680,13 +1729,13 @@ HRESULT SVControlCommands::GetFailStatus(const _bstr_t & listName, CComVariant &
 
 		FailstatusRequest.set_nameinresponse(true);
 		SvPb::GetFailStatusResponse resp
-			= SvWsl::runRequest(*m_pClientService.get(), &SvWsl::ClientService::getFailStatus, std::move(FailstatusRequest)).get();
+			= SvWsl::runRequest(*m_WebClient.m_pClientService.get(), &SvWsl::ClientService::getFailStatus, std::move(FailstatusRequest)).get();
 
 		p_rStatus.hResult = (HRESULT)resp.status();
 		if (resp.status() == SvPb::IsValid)
 		{
 			Status = S_OK;
-			CComVariant variant = GetFailList(m_pClientService, resp);
+			CComVariant variant = GetFailList(m_WebClient.m_pClientService, resp);
 			values.Attach(&variant);
 		}
 		else

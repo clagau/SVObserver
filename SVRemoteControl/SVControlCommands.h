@@ -23,6 +23,7 @@
 #include <Thread>
 #include <boost/asio/io_service.hpp>
 #include "WebsocketLibrary/clientservice.h"
+#include "WebsocketLibrary/Obs_ClientService.h"
 #include "SVRPCLibrary/RPCClient.h"
 #pragma endregion Includes
 
@@ -41,14 +42,13 @@ typedef boost::function< void(_variant_t&, SVNotificationTypesEnum) > NotifyFunc
 
 typedef SvSol::SVRCClientSocket<SvSol::UdpApi> SVRCRunpageSocket;
 
-
+#define USE_WEBSOCKET TRUE
 
 class SVControlCommands
 {
 public:
 	virtual ~SVControlCommands();
-	//! Connect to RRS only when connectToRRS is true
-	SVControlCommands(NotifyFunctor p_Func, bool connectToRRS);
+	SVControlCommands(NotifyFunctor p_Func);
 
 	HRESULT SetConnectionData(const _bstr_t& p_rServerName, unsigned short p_CommandPort, long timeout);
 
@@ -113,17 +113,56 @@ protected:
 	_bstr_t m_ServerName;
 	unsigned short m_CommandPort;
 	bool m_Connected;
-	bool m_RRSConnected;
 
 	SVRCClientSocket m_ClientSocket; // TCP socket to SVObserver
-
 	SVJsonCommandHelper m_Command;
 	NotifyFunctor m_Notifier;
-	bool m_bConnectToRRS;
-	std::unique_ptr<SvRpc::RPCClient> m_pRpcClient;
-	std::unique_ptr<SvWsl::ClientService> m_pClientService;
-	boost::posix_time::seconds m_RequestTimeout;
 
+
+
+	template <typename TClientService>  struct CompleteClient
+	{
+		//using pTClientService = std::make_unique<SvPb::TClientService>
+		void SetConnectionData(const std::string& host, int port)
+		{
+			m_pRpcClient = std::make_unique<SvRpc::RPCClient>(host, port);
+			m_pClientService = std::make_unique<TClientService>(*m_pRpcClient);
+		}
+		bool  WaitForConnect(int timeout)
+		{
+			bool isConnected(false);
+			if (m_pRpcClient.get())
+			{
+				m_pRpcClient->waitForConnect(timeout);
+
+				isConnected = m_pRpcClient->isConnected();
+
+				if (false == isConnected)
+				{
+					m_pClientService.release();
+					m_pRpcClient.release();
+				}
+			}
+			return isConnected;
+		}
+		void release()
+		{
+			m_pClientService.release();
+			m_pRpcClient.release();
+		}
+
+		bool isConnected()
+		{
+			return  m_pClientService.get() && m_pRpcClient.get() && m_pRpcClient->isConnected();
+		}
+
+	std::unique_ptr<SvRpc::RPCClient> m_pRpcClient;
+		std::unique_ptr<TClientService> m_pClientService;
+	};
+
+
+	CompleteClient<SvWsl::ClientService>			 m_WebClient;
+	CompleteClient<SvWsl::Obs_ClientService>		 m_ObsClient;
 
 };
 

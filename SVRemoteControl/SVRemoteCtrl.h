@@ -30,6 +30,8 @@
 namespace svr
 {
 	enum dev { unknown, svobserver, svcontrol, any };
+	//@Todo[MEC][8.00] [09.03.2018] remove unused ports 
+
 	enum port { cmdPort = 28960, dataPort = 28961, imgPort = 28963, rjctPort = 28965, runpgePort = 28967, failStatusPort = 28969, notifyPort = 32101 };
 }
 

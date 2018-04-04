@@ -9,7 +9,7 @@
 
 #include "SharedMemReader.h"
 #include "LastResponseData.h"
-#include "SVProtoBuf/RunRe.h"
+#include "SVProtobuf/SVRC.h"
 
 namespace SvSml
 {

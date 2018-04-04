@@ -831,6 +831,15 @@
     <ClCompile Include="TableAddColumnAnalyzer.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="SVRCCommand.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVRCRequestHandler.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVRCWebsocketServer.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="SVObserver.odl">
@@ -1700,6 +1709,15 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="TableAddColumnAnalyzer.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVRCCommand.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVRCWebsocketServer.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVRCCommandInterface.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

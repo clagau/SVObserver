@@ -10,7 +10,7 @@
 //******************************************************************************
 
 #pragma once
-
+//@Todo[MEC][8.00] [13.03.2018] use scoped enum class svModeEnum 
 enum svModeEnum
 {
 	SVIM_MODE_UNKNOWN = 0,

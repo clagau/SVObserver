@@ -11,7 +11,7 @@
 #include "SVSocketLibrary/SVClientSocket.h"
 #include <boost/shared_array.hpp>
 #include "WebsocketLibrary/clientservice.h"
-#include "SVProtobuf/RunRe.h"
+#include "SVProtobuf/SVRC.h"
 #pragma endregion Includes
 
 
