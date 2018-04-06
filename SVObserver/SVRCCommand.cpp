@@ -2,6 +2,7 @@
 #include "SVRCCommand.h"
 #include "SVVisionProcessorHelper.h"
 #include "SVStatusLibrary\SVSVIMStateClass.h"
+#include "SVProtoBuf\envelope.pb.h"
 
 
 SVRCCommand::SVRCCommand()

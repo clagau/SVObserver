@@ -1,22 +1,33 @@
 #include "stdafx.h"
 #include "SVRCRequestHandler.h"
-#include "SVRCCommandInterface.h"
+#include "SVRCCommand.h"
 #include "SVProtoBuf\SVRC.h"
-#include <boost\asio\strand.hpp>
+#include <functional>
 
-SVRCRequestHandler::SVRCRequestHandler(SVRCCommandInterface* pCommandInterface, std::shared_ptr<boost::asio::io_service::strand> pstrand)
+
+SVRCRequestHandler::~SVRCRequestHandler()
+{ 
+	m_io_service.stop();
+	if (m_io_thread.joinable())
+	{
+		m_io_thread.join();
+	}
+}
+
+
+SVRCRequestHandler::SVRCRequestHandler(SVRCCommand* pCommand)//, std::shared_ptr<boost::asio::io_service::strand> pstrand)
+	: m_io_service(),
+	m_io_work(m_io_service),
+	m_io_thread(boost::bind(&boost::asio::io_service::run, &m_io_service))
 {
-	
-	m_pstrand = pstrand;
 	registerRequestHandler<
 		SvPb::SVRCMessages,
 		SvPb::SVRCMessages::kGetDeviceModeRequest,
 		SvPb::GetDeviceModeRequest,
 		SvPb::GetDeviceModeResponse>(
-		[pCommandInterface, this](SvPb::GetDeviceModeRequest&& req, SvRpc::Task<SvPb::GetDeviceModeResponse> task)
+		[pCommand, this](SvPb::GetDeviceModeRequest&& req, SvRpc::Task<SvPb::GetDeviceModeResponse> task)
 	{
-		//pCommandInterface->GetDeviceMode(req, task);
-		this->m_pstrand->post([req, task, pCommandInterface]() { pCommandInterface->GetDeviceMode(req, task); });
+		m_io_service.post([=]() { pCommand->GetDeviceMode(req, task); });
 	});
 
 	registerRequestHandler<
@@ -24,11 +35,11 @@ SVRCRequestHandler::SVRCRequestHandler(SVRCCommandInterface* pCommandInterface, 
 		SvPb::SVRCMessages::kSetDeviceModeRequest,
 		SvPb::SetDeviceModeRequest,
 		SvPb::SetDeviceModeResponse>(
-		[pCommandInterface,this](SvPb::SetDeviceModeRequest&& req, SvRpc::Task<SvPb::SetDeviceModeResponse> task)
+		[pCommand,this](SvPb::SetDeviceModeRequest&& req, SvRpc::Task<SvPb::SetDeviceModeResponse> task)
 	{
-		//pCommandInterface->SetDeviceMode(req, task);
-		this->m_pstrand->post([req, task, pCommandInterface]() { pCommandInterface->SetDeviceMode(req, task); });
-		
+		m_io_service.post([=]() { pCommand->SetDeviceMode(req, task); }
+		);
+
 	});
 }
 

@@ -6,16 +6,17 @@
 /// Mapping from incoming RPC requests to SVObserver
 //******************************************************************************
 #pragma once
-#include "SVRCCommandInterface.h"
-class SVRCCommand :public SVRCCommandInterface
+#include "SVProtoBuf/SVRC.h"
+#include "SVRPCLibrary/RPCServer.h"
+class SVRCCommand 
 {
 public:
 	SVRCCommand();
 	~SVRCCommand();
-	virtual void GetDeviceMode(const SvPb::GetDeviceModeRequest&, SvRpc::Task<SvPb::GetDeviceModeResponse>)override;
-	virtual void SetDeviceMode(const SvPb::SetDeviceModeRequest&, SvRpc::Task<SvPb::SetDeviceModeResponse>)override;
+	void GetDeviceMode(const SvPb::GetDeviceModeRequest&, SvRpc::Task<SvPb::GetDeviceModeResponse>);
+	void SetDeviceMode(const SvPb::SetDeviceModeRequest&, SvRpc::Task<SvPb::SetDeviceModeResponse>);
 private:
 	bool GetDeviceMode(const SvPb::GetDeviceModeRequest& request,SvPb::GetDeviceModeResponse& resp, SvPenv::Error& err);
-	bool SetDeviceMode(const SvPb::SetDeviceModeRequest& request,SvPb::SetDeviceModeResponse& response, SvPenv::Error& err);
+	bool  SetDeviceMode(const SvPb::SetDeviceModeRequest& request,SvPb::SetDeviceModeResponse& response, SvPenv::Error& err);
 };
 

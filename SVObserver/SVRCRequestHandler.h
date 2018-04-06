@@ -10,13 +10,21 @@
 #pragma once
 #include "SVRPCLibrary/RequestHandler.h"
 #include <boost\asio\strand.hpp>
+#include <boost/asio/io_service.hpp>
+#include <boost/thread.hpp>
+#include "SVRCCommand.h"
+
 class SVRCCommandInterface;
 class SVRCRequestHandler :public SvRpc::RequestHandler
 {
 public:
-	SVRCRequestHandler(SVRCCommandInterface* pCommandInterface, std::shared_ptr<boost::asio::io_service::strand> pstrand);
-protected:
-	std::shared_ptr<boost::asio::io_service::strand> m_pstrand;
+	SVRCRequestHandler(SVRCCommand* pCommand);
+	~SVRCRequestHandler();
+private:
+	boost::asio::io_service m_io_service;
+	boost::asio::io_service::work m_io_work;
+	boost::thread m_io_thread;
+
 	
 };
 
