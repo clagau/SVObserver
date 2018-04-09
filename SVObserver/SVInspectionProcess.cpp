@@ -1149,6 +1149,8 @@ bool SVInspectionProcess::RebuildInspectionInputList()
 		}// end if
 
 		// We now store whether or not these PPQ inputs were viewed
+		//@TODO[gra][8.00][09.04.2018]: This seems no longer to be required due to the result picker having a separate list
+		//This should be removed and has not been removed yet due to the release phase
 		bFound = false;
 		lSize = static_cast<long>(m_arViewedInputNames.size());
 		for (l = 0; l < lSize; l++)
@@ -1156,7 +1158,7 @@ bool SVInspectionProcess::RebuildInspectionInputList()
 			if (nullptr != m_PPQInputs[iList].m_IOEntryPtr->getObject() &&
 				m_PPQInputs[iList].m_IOEntryPtr->getObject()->GetCompleteName() == m_arViewedInputNames[l])
 			{
-				m_PPQInputs[iList].m_IOEntryPtr->getObject()->SetObjectAttributesAllowed(SvDef::SV_VIEWABLE, SvOi::SetAttributeType::AddAttribute);
+				m_PPQInputs[iList].m_IOEntryPtr->getObject()->SetObjectAttributesSet(SvDef::SV_VIEWABLE, SvOi::SetAttributeType::AddAttribute);
 				bFound = true;
 				break;
 			}// end if
@@ -1164,7 +1166,7 @@ bool SVInspectionProcess::RebuildInspectionInputList()
 
 		if (!bFound || !m_PPQInputs[iList].m_IOEntryPtr->m_Enabled)
 		{
-			m_PPQInputs[iList].m_IOEntryPtr->getObject()->SetObjectAttributesAllowed(SvDef::SV_VIEWABLE, SvOi::SetAttributeType::RemoveAttribute);
+			m_PPQInputs[iList].m_IOEntryPtr->getObject()->SetObjectAttributesSet(SvDef::SV_VIEWABLE, SvOi::SetAttributeType::RemoveAttribute);
 		}// end if
 
 		SvOi::SetAttributeType AddRemoveType = m_PPQInputs[iList].m_IOEntryPtr->m_Enabled ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
