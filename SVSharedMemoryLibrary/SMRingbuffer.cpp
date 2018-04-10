@@ -12,11 +12,9 @@
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SMRingbuffer.h"
-#include "SVStatusLibrary\ErrorNumbers.h"
-#include "SVStatusLibrary\MessageManager.h"
-#include "SVStatusLibrary\MessageTextEnum.h"
-#include "SVMessage\SVMessage.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SMParameterStruct.h"
+#include "MesManHelper.h"
 
 
 #pragma endregion Includes
@@ -87,7 +85,7 @@ namespace SvSml
 		}
 		if (m_hMapFile == NULL || m_hMapFile == INVALID_HANDLE_VALUE)
 		{
-			ThrowCreateFileMappingFailed(SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16237);
+			MesManHelper::ThrowCreateFileMappingFailed( m_FileName.c_str(),SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16237);
 		}
 		MapViewOfFileWriteInfos();
 	}
@@ -97,13 +95,13 @@ namespace SvSml
 		m_pRingBufferInfos = (RingbufferInfos*)MapViewOfFile(m_hMapFile, FILE_MAP_ALL_ACCESS, 0, 0,m_InfoSize);
 		if (m_pRingBufferInfos == NULL)
 		{
-			ThrowMapViewOfFileFailedFailed(SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16238);
+			MesManHelper::ThrowMapViewOfFileFailed(m_FileName.c_str(),SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16238);
 		}
 		memset(m_pRingBufferInfos, 0, m_InfoSize);
 		m_pRingBufferLast = (BufferElement*)MapViewOfFile(m_hMapFile, FILE_MAP_ALL_ACCESS, 0,m_MatchedInfoSize, EntrySize);
 		if (m_pRingBufferLast == NULL)
 		{
-			ThrowMapViewOfFileFailedFailed(SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16239);
+			MesManHelper::ThrowMapViewOfFileFailed(m_FileName.c_str(),SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16239);
 		}
 
 		memset(m_pRingBufferLast, 0, EntrySize);
@@ -138,7 +136,7 @@ namespace SvSml
 		m_hMapFile = OpenFileMapping(FILE_MAP_ALL_ACCESS, FALSE, m_FileName.c_str());
 		if (m_hMapFile == nullptr)
 		{
-			ThrowCreateFileMappingFailed(SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16240);
+			MesManHelper::ThrowCreateFileMappingFailed(m_FileName.c_str(),SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16240);
 		}
 		
 		// Map to the file
@@ -162,7 +160,7 @@ namespace SvSml
 		m_pRingBufferLast = (BufferElement*)MapViewOfFile(m_hMapFile, FILE_MAP_ALL_ACCESS, 0, m_MatchedInfoSize, EntrySize);
 		if (m_pRingBufferLast == NULL)
 		{
-			ThrowCreateFileMappingFailed(SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16241);
+			MesManHelper::ThrowCreateFileMappingFailed( m_FileName.c_str(),SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16241);
 		}
 		m_pRingBufferReject = m_pRingBufferLast + m_TotalSlotCount;
 	}
@@ -481,26 +479,6 @@ namespace SvSml
 		return success;
 	}
 
-	void SMRingBuffer::ThrowCreateFileMappingFailed(SvStl::SourceFileParams& FileParams, DWORD Programmcode)
-	{
-		std::string LastError = SvUl::Format(_T("%s LastError:  %i"), m_FileName.c_str(), GetLastError());
-		SvDef::StringVector msgList;
-		msgList.push_back(LastError);
-
-		SvStl::MessageMgrStd MesMan(SvStl::LogOnly);
-		MesMan.setMessage(SVMSG_SVO_5080_CREATEFILEMAPPINGFAILED, SvStl::Tid_Default, msgList, FileParams, Programmcode);
-		MesMan.Throw();
-	}
-
-	void SMRingBuffer::ThrowMapViewOfFileFailedFailed(SvStl::SourceFileParams& FileParams, DWORD Programmcode)
-	{
-		std::string LastError = SvUl::Format(_T("%s LastError:  %i"), m_FileName.c_str(), GetLastError());
-		SvDef::StringVector msgList;
-		msgList.push_back(LastError);
-
-		SvStl::MessageMgrStd MesMan(SvStl::LogOnly);
-		MesMan.setMessage(SVMSG_SVO_5081_MAPVIEWOFFileFAILED, SvStl::Tid_Default, msgList, FileParams, Programmcode);
-		MesMan.Throw();
-	}
+	
 }
 

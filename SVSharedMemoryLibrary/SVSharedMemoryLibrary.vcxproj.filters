@@ -46,6 +46,9 @@
     <ClCompile Include="ShareControl.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="MesManHelper.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -115,6 +118,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="ShareControl.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="MesManHelper.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

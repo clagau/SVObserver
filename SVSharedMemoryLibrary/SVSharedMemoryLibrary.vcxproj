@@ -83,6 +83,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="MesManHelper.cpp" />
     <ClCompile Include="MLCpyContainer.cpp" />
     <ClCompile Include="MLProduct.cpp" />
     <ClCompile Include="MonitorEntry.cpp" />
@@ -104,6 +105,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LastResponseData.h" />
+    <ClInclude Include="MesManHelper.h" />
     <ClInclude Include="MonitorListStore.h" />
     <ClInclude Include="ShareControl.h" />
     <ClInclude Include="SMParameterStruct.h" />
