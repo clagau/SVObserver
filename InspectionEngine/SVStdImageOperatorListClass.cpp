@@ -154,11 +154,12 @@ bool SVStdImageOperatorListClass::Run(SVRunStatusClass& rRunStatus, SvStl::Messa
 			SvOi::SVImageBufferHandlePtr input;
 			SvOi::SVImageBufferHandlePtr output;
 
-			//@TODO[MZA][8.10][12.03.2018] check if necessary.
-			SvOi::ITool* pTool = GetToolInterface();
-			if (nullptr != pTool && m_LogicalROIImage.GetLastResetTimeStamp() <= pInputImage->GetLastResetTimeStamp())
+			// The camera images will be restored after resetObject (in start-process of camera). 
+			//If camera image is source of a child image, the child image will be show to an old buffer. For this reason a rebuild is required.
+			//@TODO[MZA][8.10][12.03.2018] Should be changed, that RebuildStorage is not need in runMode.
+			if (m_LogicalROIImage.GetLastResetTimeStamp() <= pInputImage->GetLastResetTimeStamp())
 			{
-				pTool->UpdateImageWithExtent();
+				m_LogicalROIImage.RebuildStorage(true);
 			}
 
 			m_LogicalROIImage.GetImageHandle(input);

@@ -256,10 +256,13 @@ bool SVColorToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContain
 		SVImageClass* pInputImage = SvOl::getInput<SVImageClass>(m_InputImageObjectInfo, true);
 		if (nullptr != pInputImage)
 		{
-			//@TODO[MZA][8.10][12.03.2018] check if necessary.
+			// The camera images will be restored after resetObject (in start-process of camera). 
+			//If camera image is source of a child image, the child image will be show to an old buffer. For this reason a rebuild is required.
+			//@TODO[MZA][8.10][12.03.2018] Should be changed, that RebuildStorage is not need in runMode.
 			if (m_LogicalROIImage.GetLastResetTimeStamp() <= pInputImage->GetLastResetTimeStamp())
 			{
-				UpdateImageWithExtent();
+				m_LogicalROIImage.RebuildStorage(true);
+				//UpdateImageWithExtent();
 			}
 			SvOi::SVImageBufferHandlePtr inputImageHandle;
 			m_LogicalROIImage.GetImageHandle(inputImageHandle);

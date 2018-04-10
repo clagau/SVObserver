@@ -538,21 +538,13 @@ bool ResizeTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVec
 	SvOi::SVImageBufferHandlePtr	roiImageHandle;
 	if (Result)
 	{
-		// The following logic was extrapolated from the StdImageOperatorList Run method.
-		// It corrects an issue where the output image is black while running when using the toolset image.
-		//@TODO[MZA][8.10][12.03.2018] check if necessary.
-		/*if (m_LogicalROIImage.GetLastResetTimeStamp() <= getInputImage(true)->GetLastResetTimeStamp())
-		{
-			if (S_OK != UpdateImageWithExtent())
-			{
-				Result = false;
-				if (nullptr != pErrorMessages)
-				{
-					SvStl::MessageContainer Msg(SVMSG_SVO_5022_UPDATEIMAGEEXTENTSFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
-					pErrorMessages->push_back(Msg);
-				}
-			}
-		}*/
+		// The camera images will be restored after resetObject (in start-process of camera). 
+		//If camera image is source of a child image, the child image will be show to an old buffer. For this reason a rebuild is required.
+		//@TODO[MZA][8.10][12.03.2018] Should be changed, that RebuildStorage is not need in runMode.
+		if (m_LogicalROIImage.GetLastResetTimeStamp() <= getInputImage(true)->GetLastResetTimeStamp())
+		{	
+			m_LogicalROIImage.RebuildStorage(true);
+		}
 	}
 
 	//-----	Execute this objects run functionality. -----------------------------
