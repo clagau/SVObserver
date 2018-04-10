@@ -500,9 +500,9 @@ namespace SvXml
 	void SaxXMLHandler<TreeType>::VectorClear(const wchar_t *pName)
 	{
 		m_ArrayName = pName;
-		m_spIntVector.release();
-		m_spUINTVector.release();
-		m_spWstringVector.release();
+		m_spIntVector.reset();
+		m_spUINTVector.reset();
+		m_spWstringVector.reset();
 	}
 
 	template<typename TreeType>

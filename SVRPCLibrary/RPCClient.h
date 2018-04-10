@@ -45,6 +45,7 @@ namespace SvRpc
 class RPCClient : public SvHttp::WebsocketClient::EventHandler
 {
 public:
+	RPCClient() = delete;
 	RPCClient(std::string host, uint16_t port);
 	~RPCClient();
 

@@ -267,6 +267,7 @@ int main(int argc, char* argv[])
 		stPort = argv[2];
 		port = atoi(stPort.c_str());
 	}
+	
 	auto pRpcClient = std::make_unique<SvRpc::RPCClient>(host,port);
 	pRpcClient->waitForConnect(6000);
 
@@ -290,10 +291,13 @@ int main(int argc, char* argv[])
 			{
 				break;
 			}
+
+			
 			else if (words[0] == "v")
 			{
 				try
 				{
+
 					SvPb::GetVersionRequest req;
 					req.set_trigger_timeout(true);
 					auto version = runRequest(*pService, &SvWsl::ClientService::getVersion, std::move(req)).get();
@@ -316,7 +320,7 @@ int main(int argc, char* argv[])
 					BOOST_LOG_TRIVIAL(error) << "Unable to get notifications: " << e.what();
 				}
 			}
-			else if ( pRpcClient->isConnected() && words[0] == "m" )
+			else if (pRpcClient && pRpcClient->isConnected() && words[0] == "m" )
 			{
 
 				auto Listnames = runRequest(*pService, &SvWsl::ClientService::queryListName, SvPb::QueryListNameRequest()).get();
@@ -473,8 +477,14 @@ int main(int argc, char* argv[])
 			}
 			else  if (words[0] == "dis") 
 			{
-				pService.reset();
-				pRpcClient.reset();
+				if (pService)
+				{
+					pService.reset();
+				}
+				if (pRpcClient)
+				{
+					pRpcClient.reset();
+				}
 			}
 			else if (words[0] == "con")
 			{
@@ -486,7 +496,7 @@ int main(int argc, char* argv[])
 						port = atoi(words[2].c_str());
 					}
 					std::string ipAdress = words[1];
-
+			
 					pService.reset();
 					pRpcClient.reset();
 					pRpcClient = std::make_unique<SvRpc::RPCClient>(host, port);

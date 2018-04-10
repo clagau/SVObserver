@@ -44,11 +44,14 @@ typedef SvSol::SVRCClientSocket<SvSol::UdpApi> SVRCRunpageSocket;
 
 #define USE_WEBSOCKET TRUE
 
+
+
 class SVControlCommands
 {
 public:
 	virtual ~SVControlCommands();
 	SVControlCommands(NotifyFunctor p_Func);
+	SVControlCommands() = delete;
 
 	HRESULT SetConnectionData(const _bstr_t& p_rServerName, unsigned short p_CommandPort, long timeout);
 
@@ -120,6 +123,9 @@ protected:
 
 
 
+
+
+
 	template <typename TClientService>  struct CompleteClient
 	{
 		//using pTClientService = std::make_unique<SvPb::TClientService>
@@ -135,20 +141,20 @@ protected:
 			{
 				m_pRpcClient->waitForConnect(timeout);
 
-				isConnected = m_pRpcClient->isConnected();
+			isConnected = m_pRpcClient->isConnected();
 
-				if (false == isConnected)
-				{
-					m_pClientService.release();
-					m_pRpcClient.release();
+			if (false == isConnected)
+			{
+					m_pClientService.reset();
+					m_pRpcClient.reset();
 				}
 			}
 			return isConnected;
 		}
-		void release()
+		void reset()
 		{
-			m_pClientService.release();
-			m_pRpcClient.release();
+			m_pClientService.reset();
+			m_pRpcClient.reset();
 		}
 
 		bool isConnected()

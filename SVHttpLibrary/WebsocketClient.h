@@ -35,6 +35,8 @@ class WebsocketClient
 public:
 	class EventHandler
 	{
+	public:	
+		virtual ~EventHandler() {};
 	protected:
 		friend class WebsocketClient;
 		virtual void onConnect() = 0;

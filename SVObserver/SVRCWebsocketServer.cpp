@@ -9,7 +9,7 @@
 #include "SVRCWebsocketServer.h"
 
 SVRCWebsocketServer::SVRCWebsocketServer()
-	:m_io_service {SVRCWebsocketServer::ThreadCount}
+	:m_io_service {1}
 {
 
 }

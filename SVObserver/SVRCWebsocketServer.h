@@ -16,22 +16,20 @@
 
 class SVRCWebsocketServer
 {
-public:	
+public:
 	static SVRCWebsocketServer* Instance();
 	~SVRCWebsocketServer();
 	void Start(std::shared_ptr<SVRCCommand> pCmd, std::shared_ptr<SvHttp::WebsocketServerSettings>  pSettings);
 	void Stop();
-	static const int ThreadCount = 1;
-
 private:
 	SVRCWebsocketServer();
-	SVRCWebsocketServer(const SVRCWebsocketServer& )= delete;
+	SVRCWebsocketServer(const SVRCWebsocketServer&) = delete;
 	std::shared_ptr<SVRCCommand>   m_pCommand;
 	std::unique_ptr<SVRCRequestHandler> m_pRequestHandler;
 	std::unique_ptr<SvRpc::RPCServer>    m_pRpcServer;
 	std::shared_ptr<SvHttp::WebsocketServerSettings> m_pSettings;
-	
-	
+
+
 	boost::asio::io_service m_io_service;
 	std::unique_ptr<SvHttp::WebsocketServer> m_pWebsocketserver;
 	std::unique_ptr<std::thread> m_pThread;

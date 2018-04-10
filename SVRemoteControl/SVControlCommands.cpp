@@ -265,8 +265,8 @@ HRESULT SVControlCommands::SetConnectionData(const _bstr_t& p_rServerName, unsig
 {
 	HRESULT hr = S_OK;
 	m_ClientSocket.Disconnect();
-	m_WebClient.release();
-	m_ObsClient.release();
+	m_WebClient.reset();
+	m_ObsClient.reset();
 	m_Connected = false;
 	m_ServerName = p_rServerName;
 	m_CommandPort = p_CommandPort;
