@@ -34,15 +34,18 @@ RPCClient::~RPCClient()
 
 void RPCClient::stop()
 {
-	if (m_IsStopped.load())
+	auto IsAlreadyStopping = m_IsStopping.exchange(true);
+	if (IsAlreadyStopping)
 	{
 		return;
 	}
 
 	BOOST_LOG_TRIVIAL(debug) << "Shut down of rpc client started";
-	if (m_IsConnected && m_WebsocketClient)
+	// capture shared_ptr in local copy to avoid races
+	auto client = m_WebsocketClient;
+	if (m_IsConnected && client)
 	{
-		m_WebsocketClient->disconnect();
+		client->disconnect();
 	}
 	m_IoWork.reset();
 	if (!m_IoService.stopped())
@@ -53,7 +56,6 @@ void RPCClient::stop()
 	{
 		m_IoThread.join();
 	}
-	m_IsStopped.store(true);
 	BOOST_LOG_TRIVIAL(debug) << "Shut down of rpc client completed";
 }
 
@@ -200,6 +202,10 @@ void RPCClient::onBinaryMessage(const std::vector<char>& buf)
 
 void RPCClient::schedule_reconnect(boost::posix_time::time_duration timeout)
 {
+	if (m_IsStopping.load())
+	{
+		return;
+	}
 	BOOST_LOG_TRIVIAL(debug) << "Scheduling reconnect in " << timeout.seconds() << " seconds.";
 	m_ReconnectTimer.expires_from_now(timeout);
 	m_ReconnectTimer.async_wait(std::bind(&RPCClient::on_reconnect, this, std::placeholders::_1));
@@ -360,7 +366,16 @@ void RPCClient::send_envelope(SvPenv::Envelope&& Envelope)
 	buf.resize(reqSize);
 	Envelope.SerializeToArray(buf.data(), reqSize);
 
-	m_WebsocketClient->sendBinaryMessage(buf);
+	// capture shared_ptr in local copy to avoid races
+	auto client = m_WebsocketClient;
+	if (client)
+	{
+		client->sendBinaryMessage(buf);
+	}
+	else
+	{
+		// TODO: check whether reconnecting right now and enqueue current envelope
+	}
 }
 
 } // namespace SvRpc

@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package SVRPC.Example;
+package SvRpc.Example;
 
 message ApplicationMessages
 {

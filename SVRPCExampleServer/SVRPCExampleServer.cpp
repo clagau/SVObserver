@@ -48,7 +48,14 @@ static void counter_async(const boost::system::error_code& ec,
 
 	GetCounterStreamResponse resp;
 	resp.set_counter(i);
-	observer.onNext(std::move(resp));
+	try
+	{
+		observer.onNext(std::move(resp));
+	}
+	catch (const ConnectionLostException&)
+	{
+		return;
+	}
 
 	timer = std::make_shared<boost::asio::deadline_timer>(io_service);
 	timer->expires_from_now(boost::posix_time::milliseconds(100));

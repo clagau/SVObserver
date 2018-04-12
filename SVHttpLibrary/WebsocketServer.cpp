@@ -46,8 +46,7 @@ void WebsocketServer::stop()
 
 void WebsocketServer::start_accept()
 {
-	auto connection =
-		std::make_shared<WebsocketServerConnection>(m_rSettings, m_rIoService, ++m_NextConnectionId, m_pEventHandler);
+	auto connection = WebsocketServerConnection::create(m_rSettings, m_rIoService, ++m_NextConnectionId, m_pEventHandler);
 	m_Acceptor.async_accept(connection->socket(),
 		std::bind(&WebsocketServer::handle_accept, this, connection, std::placeholders::_1));
 }

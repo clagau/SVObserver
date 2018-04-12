@@ -33,6 +33,15 @@ WebsocketServerConnection::WebsocketServerConnection(const WebsocketServerSettin
 {
 }
 
+std::shared_ptr<WebsocketServerConnection> WebsocketServerConnection::create(
+	const WebsocketServerSettings& rSettings,
+	boost::asio::io_service& rIoService,
+	int ConnectionId,
+	EventHandler* pEventHandler)
+{
+	return std::shared_ptr<WebsocketServerConnection>(new WebsocketServerConnection(rSettings, rIoService, ConnectionId, pEventHandler));
+}
+
 bool WebsocketServerConnection::isOpen() const
 {
 	return m_Socket.is_open();
@@ -56,7 +65,7 @@ void WebsocketServerConnection::read_handshake()
 		boost::asio::buffer(m_Buf),
 		boost::asio::transfer_at_least(1),
 		std::bind(
-		&WebsocketServerConnection::handle_handshake_read, this, std::placeholders::_1, std::placeholders::_2));
+		&WebsocketServerConnection::handle_handshake_read, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
 }
 
 void WebsocketServerConnection::handle_handshake_read(const boost::system::error_code& error, size_t bytes_read)
@@ -94,7 +103,7 @@ void WebsocketServerConnection::send_handshake_response()
 		m_Socket,
 		boost::asio::buffer(m_Buf),
 		std::bind(
-		&WebsocketServerConnection::handle_handshake_sent, this, std::placeholders::_1, std::placeholders::_2));
+		&WebsocketServerConnection::handle_handshake_sent, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
 }
 
 void WebsocketServerConnection::handle_handshake_sent(const boost::system::error_code& error, size_t bytes_read)
@@ -118,7 +127,7 @@ void WebsocketServerConnection::read_buffer()
 		boost::asio::buffer(m_Buf),
 		boost::asio::transfer_at_least(1),
 		std::bind(&WebsocketServerConnection::handle_read_buffer,
-		this,
+		shared_from_this(),
 		std::placeholders::_1,
 		std::placeholders::_2,
 		std::ref(m_Buf)));
@@ -268,7 +277,7 @@ void WebsocketServerConnection::send_next_frame()
 	boost::asio::async_write(
 		m_Socket,
 		boost::asio::buffer(pendingFrame.Frame),
-		std::bind(&WebsocketServerConnection::handle_frame_sent, this, std::placeholders::_1, std::placeholders::_2));
+		std::bind(&WebsocketServerConnection::handle_frame_sent, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
 }
 
 void WebsocketServerConnection::handle_frame_sent(const boost::system::error_code& error, size_t bytes_sent)
@@ -302,7 +311,7 @@ void WebsocketServerConnection::schedule_ping()
 	}
 
 	m_PingTimer.expires_from_now(boost::posix_time::seconds(m_rSettings.PingIntervalSec));
-	m_PingTimer.async_wait(std::bind(&WebsocketServerConnection::on_ping_interval, this, std::placeholders::_1));
+	m_PingTimer.async_wait(std::bind(&WebsocketServerConnection::on_ping_interval, shared_from_this(), std::placeholders::_1));
 }
 
 void WebsocketServerConnection::on_ping_interval(const boost::system::error_code& error)

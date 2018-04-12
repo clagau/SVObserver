@@ -89,9 +89,9 @@ private:
 	boost::asio::io_service m_IoService;
 	std::unique_ptr<boost::asio::io_service::work> m_IoWork;
 	std::thread m_IoThread;
-	std::atomic_bool m_IsStopped {false};
+	std::atomic_bool m_IsStopping {false};
 	SvHttp::WebsocketClientFactory m_WebsocketClientFactory;
-	std::unique_ptr<SvHttp::WebsocketClient> m_WebsocketClient;
+	std::shared_ptr<SvHttp::WebsocketClient> m_WebsocketClient;
 	std::mutex m_ConnectMutex;
 	std::condition_variable m_ConnectCV;
 	std::atomic_bool m_IsConnected {false};

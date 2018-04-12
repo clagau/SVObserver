@@ -173,9 +173,7 @@ std::future<void> RPCServer::send_envelope(int id, const SvPenv::Envelope& rEnve
 	if (it == m_Connections.end())
 	{
 		BOOST_LOG_TRIVIAL(error) << "Can not send envelope to connection " << id << ". not found.";
-		std::promise<void> promise;
-		promise.set_exception(std::make_exception_ptr(std::runtime_error("Connection lost")));
-		return promise.get_future();
+		throw ConnectionLostException("Connection lost");
 	}
 
 	auto resSize = rEnvelope.ByteSize();

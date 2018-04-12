@@ -30,7 +30,7 @@
 
 namespace SvHttp
 {
-class WebsocketClient
+class WebsocketClient : public std::enable_shared_from_this<WebsocketClient>
 {
 public:
 	class EventHandler
@@ -45,8 +45,11 @@ public:
 		virtual void onBinaryMessage(const std::vector<char>&) = 0;
 	};
 
-public:
+private:
 	WebsocketClient(boost::asio::io_service& rIoService, EventHandler*);
+
+public:
+	static std::shared_ptr<WebsocketClient> create(boost::asio::io_service& rIoService, EventHandler*);
 
 	boost::future<void> connect(std::string host, uint16_t port);
 	void disconnect();

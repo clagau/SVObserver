@@ -17,8 +17,9 @@
 
 using time_duration = boost::posix_time::time_duration;
 
-const time_duration TwoSeconds = boost::posix_time::seconds(1);
+const time_duration TwoSeconds = boost::posix_time::seconds(2);
 const  time_duration FourSeconds = boost::posix_time::seconds(4);
+const  time_duration TenSeconds = boost::posix_time::seconds(10);
 
 namespace SvWsl
 {
@@ -68,7 +69,7 @@ void ClientService::getImageStreamFromCurId(SvPb::GetImageStreamFromCurIdRequest
 
 void ClientService::getFailStatus(SvPb::GetFailStatusRequest&& req, SvRpc::Task<SvPb::GetFailStatusResponse> task)
 {
-	m_get_fail_status_client.request(std::move(req), task, FourSeconds);
+	m_get_fail_status_client.request(std::move(req), task, TenSeconds);
 }
 
 void ClientService::getItems(SvPb::GetItemsRequest&& req, SvRpc::Task<SvPb::GetItemsResponse> task)

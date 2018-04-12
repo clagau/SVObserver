@@ -32,7 +32,7 @@
 
 namespace SvHttp
 {
-class WebsocketServerConnection : std::enable_shared_from_this<WebsocketServerConnection>
+class WebsocketServerConnection : public std::enable_shared_from_this<WebsocketServerConnection>
 {
 public:
 	class EventHandler
@@ -45,7 +45,15 @@ public:
 		virtual void onDisconnect(int id) = 0;
 	};
 
+private:
 	WebsocketServerConnection(const WebsocketServerSettings& rSettings,
+		boost::asio::io_service& rIoService,
+		int ConnectionId,
+		EventHandler* pEventHandler);
+
+public:
+	static std::shared_ptr<WebsocketServerConnection> create(
+		const WebsocketServerSettings& rSettings,
 		boost::asio::io_service& rIoService,
 		int ConnectionId,
 		EventHandler* pEventHandler);

@@ -18,12 +18,12 @@ WebsocketClientFactory::WebsocketClientFactory(std::string host, uint16_t port)
 {
 }
 
-std::unique_ptr<WebsocketClient> WebsocketClientFactory::create(
+std::shared_ptr<WebsocketClient> WebsocketClientFactory::create(
 	boost::asio::io_service& rIoService,
 	WebsocketClient::EventHandler* pHandler,
 	bool bWaitForConnect)
 {
-	auto client = std::make_unique<WebsocketClient>(rIoService, pHandler);
+	auto client = WebsocketClient::create(rIoService, pHandler);
 	auto future = client->connect(m_Host, m_Port);
 	if (bWaitForConnect)
 	{
