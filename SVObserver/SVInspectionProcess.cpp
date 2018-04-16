@@ -99,41 +99,41 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed, SVProductInfoSt
 					{
 						switch (pInEntry.m_IOEntryPtr->m_ObjectType)
 						{
-						case IO_DIGITAL_INPUT:
-						{
-							_variant_t Value;
-
-							if (nullptr != pInEntry.m_IOEntryPtr->getValueObject())
+							case IO_DIGITAL_INPUT:
 							{
-								pInEntry.m_IOEntryPtr->getValueObject()->getValue(Value, -1, rProduct.oPPQInfo.m_ResultDataDMIndexHandle.GetIndex());
+								_variant_t Value;
+
+								if (nullptr != pInEntry.m_IOEntryPtr->getValueObject())
+								{
+									pInEntry.m_IOEntryPtr->getValueObject()->getValue(Value, -1, rProduct.oPPQInfo.m_ResultDataDMIndexHandle.GetIndex());
+								}
+								if (nullptr != pListEntry.m_IOEntryPtr->getValueObject())
+								{
+									pListEntry.m_IOEntryPtr->getValueObject()->setValue(Value);
+								}
+
+								++l_InputXferCount;
+
+								break;
 							}
-							if (nullptr != pListEntry.m_IOEntryPtr->getValueObject())
+							case IO_REMOTE_INPUT:
+							default:
 							{
-								pListEntry.m_IOEntryPtr->getValueObject()->setValue(Value);
+								_variant_t Value;
+
+								if (nullptr != pInEntry.m_IOEntryPtr->getValueObject())
+								{
+									pInEntry.m_IOEntryPtr->getValueObject()->getValue(Value, -1, rProduct.oPPQInfo.m_ResultDataDMIndexHandle.GetIndex());
+								}
+								if (nullptr != pListEntry.m_IOEntryPtr->getValueObject())
+								{
+									pListEntry.m_IOEntryPtr->getValueObject()->setValue(Value);
+								}
+
+								++l_InputXferCount;
+
+								break;
 							}
-
-							++l_InputXferCount;
-
-							break;
-						}
-						case IO_REMOTE_INPUT:
-						default:
-						{
-							_variant_t Value;
-
-							if (nullptr != pInEntry.m_IOEntryPtr->getValueObject())
-							{
-								pInEntry.m_IOEntryPtr->getValueObject()->getValue(Value, -1, rProduct.oPPQInfo.m_ResultDataDMIndexHandle.GetIndex());
-							}
-							if (nullptr != pListEntry.m_IOEntryPtr->getValueObject())
-							{
-								pListEntry.m_IOEntryPtr->getValueObject()->setValue(Value);
-							}
-
-							++l_InputXferCount;
-
-							break;
-						}
 						}
 					}
 					else
@@ -358,6 +358,15 @@ HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected(bool& p_rProcessed, 
 						GetSlotmanager()->SetToReject(slotindex);
 					}
 				}
+				else
+				{
+					ASSERT("Error in getting next Slot");
+					SvDef::StringVector msgList;
+					msgList.push_back("Error in getting next Slot");
+					SvStl::MessageMgrStd Exception(SvStl::LogOnly);
+					Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ErrorProcessNotifyLastInspected, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15023);
+				
+				}
 
 			}
 			catch (const std::exception& e)
@@ -432,7 +441,7 @@ void SVInspectionProcess::Init()
 {
 	// Set up your type...
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVInspectionObjectType;
-	m_LastRunLockPtr = SVCriticalSectionPtr{ new SVCriticalSection };
+	m_LastRunLockPtr = SVCriticalSectionPtr {new SVCriticalSection};
 	m_LastRunProductNULL = false;
 	m_pCurrentToolset = nullptr;
 	m_PPQId.clear();
@@ -1106,29 +1115,29 @@ bool SVInspectionProcess::RebuildInspectionInputList()
 
 			switch (pNewEntry->m_ObjectType)
 			{
-			case IO_DIGITAL_INPUT:
-			{
-				SVBoolValueObjectClass* pIOObject = new SVBoolValueObjectClass(this);
-				pIOObject->setResetOptions(false, SvOi::SVResetItemNone);
-				pObject = dynamic_cast<SVObjectClass*> (pIOObject);
-				pObject->SetObjectAttributesAllowed(SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute);
-				break;
-			}
-			case IO_REMOTE_INPUT:
-			{
-				SVVariantValueObjectClass* pIOObject = new SVVariantValueObjectClass(this);
-				pIOObject->setResetOptions(false, SvOi::SVResetItemNone);
-				pObject = dynamic_cast<SVObjectClass*> (pIOObject);
-				pObject->SetObjectAttributesAllowed(SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute);
-				break;
-			}
-			default:
-			{
-				SVVariantValueObjectClass* pIOObject = new SVVariantValueObjectClass(this);
-				pIOObject->setResetOptions(false, SvOi::SVResetItemNone);
-				pObject = dynamic_cast<SVObjectClass*> (pIOObject);
-				break;
-			}
+				case IO_DIGITAL_INPUT:
+				{
+					SVBoolValueObjectClass* pIOObject = new SVBoolValueObjectClass(this);
+					pIOObject->setResetOptions(false, SvOi::SVResetItemNone);
+					pObject = dynamic_cast<SVObjectClass*> (pIOObject);
+					pObject->SetObjectAttributesAllowed(SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute);
+					break;
+				}
+				case IO_REMOTE_INPUT:
+				{
+					SVVariantValueObjectClass* pIOObject = new SVVariantValueObjectClass(this);
+					pIOObject->setResetOptions(false, SvOi::SVResetItemNone);
+					pObject = dynamic_cast<SVObjectClass*> (pIOObject);
+					pObject->SetObjectAttributesAllowed(SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute);
+					break;
+				}
+				default:
+				{
+					SVVariantValueObjectClass* pIOObject = new SVVariantValueObjectClass(this);
+					pIOObject->setResetOptions(false, SvOi::SVResetItemNone);
+					pObject = dynamic_cast<SVObjectClass*> (pIOObject);
+					break;
+				}
 			}
 
 			pObject->SetName(l_pObject->GetName());
@@ -1139,7 +1148,7 @@ bool SVInspectionProcess::RebuildInspectionInputList()
 
 			CreateChildObject(pObject);
 
-			pIOEntry.m_IOEntryPtr = SVIOEntryHostStructPtr{ new SVIOEntryHostStruct };
+			pIOEntry.m_IOEntryPtr = SVIOEntryHostStructPtr {new SVIOEntryHostStruct};
 			pIOEntry.m_IOEntryPtr->setObject(pObject);
 			pIOEntry.m_IOEntryPtr->m_ObjectType = pNewEntry->m_ObjectType;
 			pIOEntry.m_IOEntryPtr->m_IOId = pNewEntry->m_IOId;
@@ -1190,7 +1199,7 @@ bool SVInspectionProcess::AddInputRequest(const SVObjectReference& rObjectRef, c
 
 	try
 	{
-		SVInputRequestInfoStructPtr pInRequest{ new SVInputRequestInfoStruct(rObjectRef, rValue) };
+		SVInputRequestInfoStructPtr pInRequest {new SVInputRequestInfoStruct(rObjectRef, rValue)};
 
 		//add request to inspection process
 		Result = AddInputRequest(pInRequest);
@@ -1263,7 +1272,7 @@ HRESULT SVInspectionProcess::AddInputImageRequest(SVImageClass* p_psvImage, BSTR
 
 		try
 		{
-			SVInputImageRequestInfoStructPtr l_pInRequest{ new SVInputImageRequestInfoStruct };
+			SVInputImageRequestInfoStructPtr l_pInRequest {new SVInputImageRequestInfoStruct};
 
 			try
 			{
@@ -1319,7 +1328,7 @@ HRESULT SVInspectionProcess::AddInputImageFileNameRequest(SVImageClass* p_psvIma
 
 		try
 		{
-			SVInputImageRequestInfoStructPtr l_pInRequest{ new SVInputImageRequestInfoStruct };
+			SVInputImageRequestInfoStructPtr l_pInRequest {new SVInputImageRequestInfoStruct};
 
 			SVCameraImageTemplate* l_psvMainImage = dynamic_cast<SVCameraImageTemplate*> (p_psvImage);
 
@@ -2540,7 +2549,7 @@ HRESULT SVInspectionProcess::AddInputImageRequestByCameraName(const std::string&
 	SVInputImageRequestInfoStructPtr l_pInRequest;
 	try
 	{
-		l_pInRequest = SVInputImageRequestInfoStructPtr{ new SVInputImageRequestInfoStruct };
+		l_pInRequest = SVInputImageRequestInfoStructPtr {new SVInputImageRequestInfoStruct};
 	}
 	catch (...)
 	{
@@ -3682,7 +3691,7 @@ long  SVInspectionProcess::GetResultDataIndex() const
 #pragma region IInspectionProcess methods
 SvCl::SelectorItemVectorPtr SVInspectionProcess::GetPPQSelectorList(const UINT Attribute) const
 {
-	SvCl::SelectorItemVectorPtr pResult{ new SvCl::SelectorItemVector() };
+	SvCl::SelectorItemVectorPtr pResult {new SvCl::SelectorItemVector()};
 
 	SVPPQObject *pPPQ = GetPPQ();
 	if (nullptr != pPPQ)
@@ -4159,7 +4168,7 @@ SvOi::IFormulaControllerPtr SVInspectionProcess::getRegressionTestPlayConditionC
 {
 	if (nullptr == m_pRegressionTestPlayEquationController)
 	{
-		m_pRegressionTestPlayEquationController = SvOi::IFormulaControllerPtr{ new SvOg::FormulaController(GetUniqueObjectID(), GetUniqueObjectID(), static_cast<GUID>(m_RegressionTestPlayEquation.GetUniqueObjectID())) };
+		m_pRegressionTestPlayEquationController = SvOi::IFormulaControllerPtr {new SvOg::FormulaController(GetUniqueObjectID(), GetUniqueObjectID(), static_cast<GUID>(m_RegressionTestPlayEquation.GetUniqueObjectID()))};
 	}
 	return m_pRegressionTestPlayEquationController;
 }

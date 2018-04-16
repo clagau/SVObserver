@@ -178,7 +178,7 @@ bool SharedMemReader::GetFailStatusData(LPCTSTR Monitorlist, int  TriggerNumber,
 {
 	GetProdPar par;
 	par.reject = false;
-	par.releaseTrigger = false;
+	par.releaseTrigger = true;
 	par.failstatus = true;
 	return (sucess == _GetProduct(par, Monitorlist, TriggerNumber, pProduct, nullptr));
 }
