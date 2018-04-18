@@ -22,8 +22,13 @@
 #include "SVStatusLibrary/MessageManager.h"
 #pragma endregion Includes
 
+#if SV_DESIRED_MIL_VERSION == 0x0900
 static const long MATROX_FILTER_EVENT = 2622995;
 static const long MATROX_FILTER_EVENT_STATUS_CODE = 4455;
+#else
+static const long MATROX_FILTER_EVENT = 525843;
+static const long MATROX_FILTER_EVENT_STATUS_CODE = 5901;
+#endif
 static const long MATROX_FILTER_EVENT_SUBCODE_COUNT = 3;
 
 SVMatroxInt _stdcall SVMatroxApplicationInterface::SVMatroxHookHandler( SVMatroxInt HookType, SVMatroxIdentifier EventId, void* UserDataPtr )
