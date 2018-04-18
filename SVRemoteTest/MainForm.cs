@@ -34,45 +34,13 @@ namespace SVRemoteTest
 			m_continualResultPage = new ContinualResultForm(m_test);
 			InitializeComponent();
 
-			try
-			{
-				m_inputBroker = new SVInputBrokerClass();
-			}
-			catch (Exception e)
-			{
-				MessageBox.Show(e.Message, "InputBroker Creation Error");
-				Application.Exit();
-			}
-
-			try
-			{
-				m_outputBroker = new SVOutputBrokerClass();
-				m_outputBroker.OnDataArrive += OnDataArrive;
-			}
-			catch (Exception e)
-			{
-				MessageBox.Show(e.Message, "OutputBroker Creation Error");
-				Application.Exit();
-			}
-
-			try
-			{
-				m_failStatusStream = new SVFailStatusStreamClass();
-				m_failStatusStream.OnDataArrive += OnFailStatusDataArrive;
-			}
-			catch (Exception e)
-			{
-				MessageBox.Show(e.Message, "FailStatusStream Creation Error");
-				Application.Exit();
-			}
+		
 
 			AddTabPages();
 		}
 		#endregion
 
 		#region Data Arrived Delegate and Event
-		public delegate void DataArrivedEventHandler(object sender, StreamingDataEventArgs args);
-		private event DataArrivedEventHandler m_DataArrivedEvent; // This is an internal event
 		#endregion
 
 		#region public methods
@@ -125,20 +93,7 @@ namespace SVRemoteTest
 					method = m_remoteCmdForm.SelectedItem;
 					break;
 
-				case 1: // fail status
-					objectType = m_failStatusStream.GetType();
-					method = m_failStatusCmdForm.SelectedItem;
-					break;
-
-				case 2: // input broker
-					objectType = m_inputBroker.GetType();
-					method = m_inputCmdForm.SelectedItem;
-					break;
-
-				case 3: // output broker
-					objectType = m_outputBroker.GetType();
-					method = m_outputCmdForm.SelectedItem;
-					break;
+	
 			}
 			if (objectType != null & method != null)
 			{
@@ -160,33 +115,7 @@ namespace SVRemoteTest
 				{
 					Invoke(new SetupInterfacesHandler(SetupInterfaces));
 				}
-				else
-				{
-					try
-					{
-						m_inputBroker.RemoteCtrl = axSVRemoteCtrl1.GetOcx() as SVRemoteControlLib.SVRemoteCtrl;
-					}
-					catch (Exception e)
-					{
-						MessageBox.Show(e.Message, "InputBroker Setup Error");
-					}
-					try
-					{
-						m_outputBroker.RemoteCtrl = axSVRemoteCtrl1.GetOcx() as SVRemoteControlLib.SVRemoteCtrl;
-					}
-					catch (Exception e)
-					{
-						MessageBox.Show(e.Message, "OutputBroker Setup Error");
-					}
-					try
-					{
-						m_failStatusStream.RemoteCtrl = axSVRemoteCtrl1.GetOcx() as SVRemoteControlLib.SVRemoteCtrl;
-					}
-					catch (Exception e)
-					{
-						MessageBox.Show(e.Message, "FailStatusStream Setup Error");
-					}
-				}
+			
 			}
 			catch (Exception e)
 			{
@@ -275,21 +204,7 @@ namespace SVRemoteTest
 			m_remoteCmdForm.SetCommandList(axSVRemoteCtrl1.GetType());
 			m_remoteCmdForm.m_CommandEvent += OnRemoteCommandSelected;
 			m_remoteCmdForm.Visible = true;
-			m_inputCmdForm.TopLevel = false;
-			m_inputCmdForm.Parent = InputBrokerTabPage;
-			m_inputCmdForm.SetCommandList(m_inputBroker.GetType());
-			m_inputCmdForm.m_CommandEvent += OnInputBrokerCommandSelected;
-			m_inputCmdForm.Visible = true;
-			m_outputCmdForm.TopLevel = false;
-			m_outputCmdForm.SetCommandList(m_outputBroker.GetType());
-			m_outputCmdForm.m_CommandEvent += OnOutputBrokerCommandSelected;
-			m_outputCmdForm.Parent = OutputBrokerTabPage;
-			m_outputCmdForm.Visible = true;
-			m_failStatusCmdForm.TopLevel = false;
-			m_failStatusCmdForm.SetCommandList(m_failStatusStream.GetType());
-			m_failStatusCmdForm.m_CommandEvent += OnFailStatusStreamCommandSelected;
-			m_failStatusCmdForm.Parent = FailStatusStreamTabPage;
-			m_failStatusCmdForm.Visible = true;
+		
 
 			m_propertiesPage.TopLevel = false;
 			m_propertiesPage.Parent = Panel_Properties;
@@ -306,80 +221,10 @@ namespace SVRemoteTest
 			setPropertyTabs();
 
 			// wire up delegate for data arrived event (internal event)
-			m_DataArrivedEvent += OnDataArrivedEventHandler;
+		//	m_DataArrivedEvent += OnDataArrivedEventHandler;
 		}
 
-		private void OnDataArrivedEventHandler(object sender, StreamingDataEventArgs args)
-		{
-			if (DisplayTabControl.TabPages.Contains(ContinualResultsPage) && m_continualResultPage.ShowingRejects)
-			{
-				if (m_continualResultPage.UseRemoteOutputs)
-				{
-					if (m_streamingDataForm.OutputBrokerGroupTag == args.EventType)
-					{
-						m_continualResultPage.CheckRejects(args.Values);
-					}
-				}
-				else // use Fail Status stream
-				{
-					if (m_streamingDataForm.FailStatusGroupTag == args.EventType)
-					{
-						m_continualResultPage.CheckRejects(args.Values);
-					}
-				}
-			}
-			m_streamingDataForm.UpdateStreamingData(args.Values, args.EventType);
-			args = null;
-
-			// Must call GC.Collect twice...
-			GC.Collect();
-			//GC.WaitForPendingFinalizers(); // Do not call GC.WaitForPendingFinalizers(), it will hang occassionally
-			GC.Collect();
-			//GC.WaitForPendingFinalizers(); // Do not call GC.WaitForPendingFinalizers(), it will hang occassionally
-		}
-
-		private void OnDataArrive(SVProductItems items)
-		{
-			List<SVValue> values = new List<SVValue>();
-			foreach (SVRemoteControlLib.ISVValueObject v in items.Values)
-			{
-				SVValue value = new SVValue();
-				value.Name = v.Name;
-				value.TriggerCount = v.TriggerCount;
-				value.Status = v.Status;
-				foreach (object item in v)
-				{
-					value.Array.Add(item.ToString());
-				}
-				values.Add(value);
-			}
-			items = null;
-
-			// Raise an Event
-			m_DataArrivedEvent(this, new StreamingDataEventArgs(values, m_streamingDataForm.OutputBrokerGroupTag));
-		}
-
-		private void OnFailStatusDataArrive(SVProductItems items)
-		{
-			List<SVValue> values = new List<SVValue>();
-			foreach (SVRemoteControlLib.ISVValueObject v in items.Values)
-			{
-				SVValue value = new SVValue();
-				value.Name = v.Name;
-				value.TriggerCount = v.TriggerCount;
-				value.Status = v.Status;
-				foreach (object item in v)
-				{
-					value.Array.Add(item.ToString());
-				}
-				values.Add(value);
-			}
-			items = null;
-
-			// Raise an Event
-			m_DataArrivedEvent(this, new StreamingDataEventArgs(values, m_streamingDataForm.FailStatusGroupTag));
-		}
-
+	
 		private void OnRemoteCommandSelected(object sender, EventArgs e)
 		{
 			Type objectType = this.axSVRemoteCtrl1.GetType();
@@ -393,42 +238,7 @@ namespace SVRemoteTest
 			setPropertyTabs();
 		}
 
-		private void OnInputBrokerCommandSelected(object sender, EventArgs e)
-		{
-			Type objectType = m_inputBroker.GetType();
-			MethodInfo method = m_inputCmdForm.SelectedItem;
-			if (method != null)
-			{
-				PopulatePopertyGrid(objectType, method);
-			}
-			// Clear Status
-			statusTextBox.Text = string.Empty;
-		}
-
-		private void OnOutputBrokerCommandSelected(object sender, EventArgs e)
-		{
-			Type objectType = m_outputBroker.GetType();
-			MethodInfo method = m_outputCmdForm.SelectedItem;
-			if (method != null)
-			{
-				PopulatePopertyGrid(objectType, method);
-			}
-			// Clear Status
-			statusTextBox.Text = string.Empty;
-		}
-
-		private void OnFailStatusStreamCommandSelected(object sender, EventArgs e)
-		{
-			Type objectType = m_failStatusStream.GetType();
-			MethodInfo method = m_failStatusCmdForm.SelectedItem;
-			if (method != null)
-			{
-				PopulatePopertyGrid(objectType, method);
-			}
-			// Clear Status
-			statusTextBox.Text = string.Empty;
-		}
-
+	
 		private void ExecCommand(Type objectType, object obj, MethodInfo method)
 		{
 			statusTextBox.Text = "Executing " + method.Name;
@@ -476,67 +286,6 @@ namespace SVRemoteTest
 					else
 					{
 						Mode_Label.Text = m_unknownMode;
-					}
-				}
-			}
-			else if (this.tabControl.SelectedTab == this.InputBrokerTabPage)
-			{
-				MethodInfo method = m_inputCmdForm.SelectedItem;
-				if (method != null)
-				{
-					Type objectType = this.m_inputBroker.GetType();
-					ExecCommand(objectType, m_inputBroker, method);
-				}
-			}
-			else if (this.tabControl.SelectedTab == this.OutputBrokerTabPage)
-			{
-				MethodInfo method = m_outputCmdForm.SelectedItem;
-				if (method != null)
-				{
-					Type objectType = this.m_outputBroker.GetType();
-					ExecCommand(objectType, m_outputBroker, method);
-				}
-			}
-			else if (this.tabControl.SelectedTab == this.FailStatusStreamTabPage)
-			{
-				MethodInfo method = m_failStatusCmdForm.SelectedItem;
-				if (null != method)
-				{
-					Type objectType = this.m_failStatusStream.GetType();
-					ExecCommand(objectType, m_failStatusStream, method);
-					if (StartTag == method.Name)
-					{
-						string name = m_test.GetListName();
-						if (name.Length > 0)
-						{
-							List<string> list = QueryFailStatusList(name);
-							if (null != list && list.Count > 0)
-							{
-								m_streamingDataForm.AddFailStatusList(list);
-							}
-							list = QueryRejectCondList(name);
-							if (null != list && list.Count > 0)
-							{
-								m_continualResultPage.SetRejectCondList(list);
-							}
-						}
-					}
-					else if (StopTag == method.Name)
-					{
-						string name = m_test.GetListName();
-						if (name.Length > 0)
-						{
-							List<string> list = QueryFailStatusList(name);
-							if (null != list && list.Count > 0)
-							{
-								m_streamingDataForm.RemoveFailStatusList(list);
-							}
-							list = QueryRejectCondList(name);
-							if (null != list && list.Count > 0)
-							{
-								m_continualResultPage.RemoveRejectCondList(list);
-							}
-						}
 					}
 				}
 			}
@@ -608,7 +357,7 @@ namespace SVRemoteTest
 		private void MainForm_Shown(object sender, EventArgs e)
 		{
 			m_test.LoadUserEnteredValues();
-			m_streamingDataForm.Show(this);
+	
 			// Show Properties for SVRemoteControlLib.SVRemoteCtrl
 			m_propertiesPage.ShowComProperties(axSVRemoteCtrl1.GetType(), axSVRemoteCtrl1);
 		}
@@ -636,54 +385,6 @@ namespace SVRemoteTest
 				}
 				// Show Properties for SVRemoteControlLib.SVRemoteCtrl
 				m_propertiesPage.ShowComProperties(axSVRemoteCtrl1.GetType(), axSVRemoteCtrl1);
-			}
-			else if (e.TabPage == this.InputBrokerTabPage)
-			{
-				Type objectType = m_inputBroker.GetType();
-				MethodInfo method = m_inputCmdForm.SelectedItem;
-				if (method != null)
-				{
-					PopulatePopertyGrid(objectType, method);
-				}
-				else
-				{
-					m_propertiesPage.ClearPropertyGrid();
-					m_continualResultPage.ClearPropertyGrid();
-				}
-				// Show Properties for SVRemoteControlLib.SVInputBroker
-				m_propertiesPage.ShowComProperties(m_inputBroker.GetType(), m_inputBroker);
-			}
-			else if (e.TabPage == this.OutputBrokerTabPage)
-			{
-				Type objectType = m_outputBroker.GetType();
-				MethodInfo method = m_outputCmdForm.SelectedItem;
-				if (method != null)
-				{
-					PopulatePopertyGrid(objectType, method);
-				}
-				else
-				{
-					m_propertiesPage.ClearPropertyGrid();
-					m_continualResultPage.ClearPropertyGrid();
-				}
-				// Show Properties for SVRemoteControlLib.SVOutputBroker
-				m_propertiesPage.ShowComProperties(m_outputBroker.GetType(), m_outputBroker);
-			}
-			else if (e.TabPage == this.FailStatusStreamTabPage)
-			{
-				Type objectType = m_failStatusStream.GetType();
-				MethodInfo method = m_failStatusCmdForm.SelectedItem;
-				if (method != null)
-				{
-					PopulatePopertyGrid(objectType, method);
-				}
-				else
-				{
-					m_propertiesPage.ClearPropertyGrid();
-					m_continualResultPage.ClearPropertyGrid();
-				}
-				// Show Properties for SVRemoteControlLib.SVFailStatusStream
-				m_propertiesPage.ShowComProperties(m_failStatusStream.GetType(), m_failStatusStream);
 			}
 			setPropertyTabs();
 		}
@@ -738,55 +439,16 @@ namespace SVRemoteTest
 					System.Diagnostics.Trace.WriteLine(exception.Message);
 				}
 			}
-			else if (tabControl.SelectedTab == this.InputBrokerTabPage)
-			{
-				try
-				{
-					SetComProperty(m_inputBroker.GetType(), m_inputBroker, e.ChangedItem.Value, e.ChangedItem.PropertyDescriptor);
-				}
-				catch (Exception exception)
-				{
-					System.Diagnostics.Trace.WriteLine(exception.Message);
-				}
-			}
-			else if (tabControl.SelectedTab == this.OutputBrokerTabPage)
-			{
-				try
-				{
-					SetComProperty(m_outputBroker.GetType(), m_outputBroker, e.ChangedItem.Value, e.ChangedItem.PropertyDescriptor);
-				}
-				catch (Exception exception)
-				{
-					System.Diagnostics.Trace.WriteLine(exception.Message);
-				}
-			}
-			else if (tabControl.SelectedTab == this.FailStatusStreamTabPage)
-			{
-				try
-				{
-					SetComProperty(m_failStatusStream.GetType(), m_failStatusStream, e.ChangedItem.Value, e.ChangedItem.PropertyDescriptor);
-				}
-				catch (Exception exception)
-				{
-					System.Diagnostics.Trace.WriteLine(exception.Message);
-				}
-			}
 			setPropertyTabs();
 		}
 
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
-			m_outputBroker.OnDataArrive -= OnDataArrive;
-			m_failStatusStream.OnDataArrive -= OnFailStatusDataArrive;
-			m_DataArrivedEvent -= OnDataArrivedEventHandler;
-
+	
 			// Get the last Settings
 			RememberUserValues(m_selectedTabIndex);
 
-			m_inputBroker = null;
-			m_outputBroker = null;
-			m_failStatusStream = null;
-
+	
 			// Persist the User Entered Values
 			m_test.SaveUserEnteredValues();
 		}
@@ -1012,16 +674,9 @@ namespace SVRemoteTest
 
 		#region Member Variables
 		private CommandForm m_remoteCmdForm = new CommandForm();
-		private CommandForm m_inputCmdForm = new CommandForm();
-		private CommandForm m_outputCmdForm = new CommandForm();
-		private CommandForm m_failStatusCmdForm = new CommandForm();
 		private SVRemoteTestHelper m_test = new SVRemoteTestHelper();
 		private PropertiesPage m_propertiesPage = null;
 		private ContinualResultForm m_continualResultPage = null;
-		private SVInputBrokerClass m_inputBroker = null;
-		private SVOutputBrokerClass m_outputBroker = null;
-		private SVFailStatusStreamClass m_failStatusStream = null;
-		private StreamingDataForm m_streamingDataForm = new StreamingDataForm();
 		private String m_defaultAddress = "localhost";
 		private int m_selectedTabIndex = 0;
 		private readonly String m_unknownMode = "UnknownMode";

@@ -43,9 +43,6 @@ namespace SVRemoteTest
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.tabControl = new System.Windows.Forms.TabControl();
             this.RemoteTabPage = new System.Windows.Forms.TabPage();
-            this.FailStatusStreamTabPage = new System.Windows.Forms.TabPage();
-            this.InputBrokerTabPage = new System.Windows.Forms.TabPage();
-            this.OutputBrokerTabPage = new System.Windows.Forms.TabPage();
             this.ExecButton = new System.Windows.Forms.Button();
             this.panel3 = new System.Windows.Forms.Panel();
             this.tableLayoutPanelNotify = new System.Windows.Forms.TableLayoutPanel();
@@ -98,9 +95,6 @@ namespace SVRemoteTest
             // 
             this.tabControl.Alignment = System.Windows.Forms.TabAlignment.Bottom;
             this.tabControl.Controls.Add(this.RemoteTabPage);
-            this.tabControl.Controls.Add(this.FailStatusStreamTabPage);
-            this.tabControl.Controls.Add(this.InputBrokerTabPage);
-            this.tabControl.Controls.Add(this.OutputBrokerTabPage);
             this.tabControl.Location = new System.Drawing.Point(3, 3);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
@@ -117,35 +111,8 @@ namespace SVRemoteTest
             this.RemoteTabPage.TabIndex = 0;
             this.RemoteTabPage.Text = "Remote";
             this.RemoteTabPage.UseVisualStyleBackColor = true;
-            // 
-            // FailStatusStreamTabPage
-            // 
-            this.FailStatusStreamTabPage.Location = new System.Drawing.Point(4, 4);
-            this.FailStatusStreamTabPage.Name = "FailStatusStreamTabPage";
-            this.FailStatusStreamTabPage.Size = new System.Drawing.Size(192, 500);
-            this.FailStatusStreamTabPage.TabIndex = 1;
-            this.FailStatusStreamTabPage.Text = "Fail Status";
-            this.FailStatusStreamTabPage.UseVisualStyleBackColor = true;
-            // 
-            // InputBrokerTabPage
-            // 
-            this.InputBrokerTabPage.Location = new System.Drawing.Point(4, 4);
-            this.InputBrokerTabPage.Name = "InputBrokerTabPage";
-            this.InputBrokerTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.InputBrokerTabPage.Size = new System.Drawing.Size(192, 500);
-            this.InputBrokerTabPage.TabIndex = 2;
-            this.InputBrokerTabPage.Text = "Input Broker";
-            this.InputBrokerTabPage.UseVisualStyleBackColor = true;
-            // 
-            // OutputBrokerTabPage
-            // 
-            this.OutputBrokerTabPage.Location = new System.Drawing.Point(4, 4);
-            this.OutputBrokerTabPage.Name = "OutputBrokerTabPage";
-            this.OutputBrokerTabPage.Size = new System.Drawing.Size(192, 500);
-            this.OutputBrokerTabPage.TabIndex = 3;
-            this.OutputBrokerTabPage.Text = "Output Broker";
-            this.OutputBrokerTabPage.UseVisualStyleBackColor = true;
-            // 
+        
+            //// 
             // ExecButton
             // 
             this.ExecButton.Location = new System.Drawing.Point(60, 542);
@@ -389,9 +356,7 @@ namespace SVRemoteTest
         private System.Windows.Forms.TextBox statusTextBox;
 		private System.Windows.Forms.TabControl tabControl;
 		private System.Windows.Forms.TabPage RemoteTabPage;
-		private System.Windows.Forms.TabPage InputBrokerTabPage;
-        private System.Windows.Forms.TabPage OutputBrokerTabPage;
-        private System.Windows.Forms.TabPage FailStatusStreamTabPage;
+	
 		private System.Windows.Forms.Button ExecButton;
         private System.Windows.Forms.Label Label_LastModified;
         private System.Windows.Forms.TextBox TextBox_LastModified;
