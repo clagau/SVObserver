@@ -4,6 +4,13 @@
 /// All Rights Reserved 
 //*****************************************************************************
 //******************************************************************************
+/// \copyright (c) 2012,2018 by Seidenader Maschinenbau GmbH
+/// \file Autobuild.h
+/// All Rights Reserved
+//******************************************************************************
+/// The version for SVO Web Server application
+//******************************************************************************
+
 #pragma once
 
 // change the FALSE to TRUE for autoincrement of build number

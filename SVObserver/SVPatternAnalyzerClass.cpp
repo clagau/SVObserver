@@ -1380,6 +1380,13 @@ bool SVPatternAnalyzerClass::validateNewDontCareFileName(const SvOi::SetValueStr
 	}
 	else
 	{
+		std::string FileName;
+		m_DontCareImageFile.GetValue(FileName);
+		if (FileName.empty())
+		{
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_DontCareInvalidFilename, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			rMessages.push_back(Msg);
+		}
 		m_dontCareWidth.GetValue(rDontCareWidth);
 		m_dontCareHeight.GetValue(rDontCareHeight);
 	}

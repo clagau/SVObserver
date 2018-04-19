@@ -47,23 +47,23 @@ SVBarCodeGeneralDialog::SVBarCodeGeneralDialog(CWnd* pParent /*=nullptr*/)
 	m_lInitialBarCodeType = SVDataMatrix;
 	m_bUnEvenGrid = false;
 
-	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct( SVDataMatrix, _T("Data Matrix"), SVValueAny, SVValueAny )); // 2D
-	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct( SVEan13, _T("EAN-13"), SVValueEncNum, SVValueEccCheckDigit ));
-	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct( SVCode39, _T("3 of 9"), SVValueEncStandard, SVValueEccNone ));
-	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct( SVInterleaved25, _T("Interleaved 2 of 5"), SVValueEncNum, SVValueEccNone ));
-	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct( SVCode128, _T("Code 128"), SVValueEncAscii, SVValueEccCheckDigit ));
+	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct(SVDataMatrix, _T("Data Matrix"), SVValueAny, SVValueAny)); // 2D
+	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct(SVEan13, _T("EAN-13"), SVValueEncNum, SVValueEccCheckDigit));
+	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct(SVCode39, _T("3 of 9"), SVValueEncStandard, SVValueEccNone));
+	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct(SVInterleaved25, _T("Interleaved 2 of 5"), SVValueEncNum, SVValueEccNone));
+	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct(SVCode128, _T("Code 128"), SVValueEncAscii, SVValueEccCheckDigit));
 
 	// Added for SVObserver 4.20
-	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct( SVPDF417, _T("PDF417"), SVValueEncStandard, SVValueAny ));	// 2D
-	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct( SVBC412, _T("BC412"), SVValueEncStandard, SVValueEccNone ));
-	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct( SVCodeABar, _T("Codabar"), SVValueEncStandard, SVValueEccNone ));
-	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct( SVMaxiCode, _T("Maxicode"), SVValueEncMode2, SVValueEccReedSolomon ));	// 2D
-	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct( SVPostNet, _T("Postnet"), SVValueEncStandard, SVValueAny ));
-	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct( SVPlanet, _T("Planet"), SVValueEncStandard, SVValueAny ));
-	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct( SVUpcA, _T("UPC-A"), SVValueEncStandard, SVValueAny ));
-	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct( SVUpcE, _T("UPC-E"), SVValueEncStandard, SVValueAny ));
-	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct( SVPharmaCode, _T("Pharmacode"), SVValueEncStandard, SVValueAny ));
-	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct( SVRssCode, _T("RSS"), SVValueEncRss14, SVValueAny ));
+	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct(SVPDF417, _T("PDF417"), SVValueEncStandard, SVValueAny));	// 2D
+	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct(SVBC412, _T("BC412"), SVValueEncStandard, SVValueEccNone));
+	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct(SVCodeABar, _T("Codabar"), SVValueEncStandard, SVValueEccNone));
+	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct(SVMaxiCode, _T("Maxicode"), SVValueEncMode2, SVValueEccReedSolomon));	// 2D
+	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct(SVPostNet, _T("Postnet"), SVValueEncStandard, SVValueAny));
+	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct(SVPlanet, _T("Planet"), SVValueEncStandard, SVValueAny));
+	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct(SVUpcA, _T("UPC-A"), SVValueEncStandard, SVValueAny));
+	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct(SVUpcE, _T("UPC-E"), SVValueEncStandard, SVValueAny));
+	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct(SVPharmaCode, _T("Pharmacode"), SVValueEncStandard, SVValueAny));
+	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct(SVRssCode, _T("RSS"), SVValueEncRss14, SVValueAny));
 	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct(SVQRCode, _T("QR Code"), SVValueAny, SVValueAny)); // 2D
 }
 
@@ -126,277 +126,279 @@ END_MESSAGE_MAP()
 
 long SVBarCodeGeneralDialog::GetBarCodeType()
 {
-	
-	long lMil=CB_ERR;
-	
-	if ( m_iBarCodeType != CB_ERR )
+
+	long lMil = CB_ERR;
+
+	if (m_iBarCodeType != CB_ERR)
 	{
-		const SVBarCodeInfoStruct* pInfo = GetInfoByIndex( m_iBarCodeType );
-		ASSERT( pInfo );
-		if ( pInfo )
+		const SVBarCodeInfoStruct* pInfo = GetInfoByIndex(m_iBarCodeType);
+		ASSERT(pInfo);
+		if (pInfo)
 			lMil = pInfo->lMil;
 	}
-	
-	if ( lMil == CB_ERR )
+
+	if (lMil == CB_ERR)
 		lMil = 0;
-	
+
 	return lMil;
-	
+
 }
 
-long SVBarCodeGeneralDialog::SetBarCodeType(SVLongValueObjectClass& svlBarCodeType)
+long SVBarCodeGeneralDialog::SetBarCodeType(SVLongValueObjectClass& rBarCodeType)
 {
 	long lBarCodeType;
-	
-	svlBarCodeType.GetValue(lBarCodeType);
+
+	rBarCodeType.GetValue(lBarCodeType);
 
 	m_lInitialBarCodeType = lBarCodeType;
-	const SVBarCodeInfoStruct* pInfo = GetInfoByMilID( lBarCodeType );
-	ASSERT( pInfo );
-	if ( pInfo )
+	const SVBarCodeInfoStruct* pInfo = GetInfoByMilID(lBarCodeType);
+	ASSERT(pInfo);
+	if (pInfo)
 	{
 		m_iBarCodeType = pInfo->iIndex;
 	}
-	
+
 	return lBarCodeType;
 }
 
 double SVBarCodeGeneralDialog::GetBarCodeStringSize()
 {
-  if (!m_szStringSize.Compare(_T("<Any>")))
-    return (double) SVValueDefault;
-  return (double) atol (m_szStringSize);
+	if (!m_szStringSize.Compare(_T("<Any>")))
+		return (double)SVValueDefault;
+	return (double)atol(m_szStringSize);
 }
 
-double SVBarCodeGeneralDialog::SetBarCodeStringSize(SVDoubleValueObjectClass& svdStringSize)
+double SVBarCodeGeneralDialog::SetBarCodeStringSize(SVDoubleValueObjectClass& rStringSize)
 {
-  double dStringSize;
+	double dStringSize;
 
-  svdStringSize.GetValue(dStringSize);
-  if (dStringSize == (double) SVValueDefault)
-    m_szStringSize = _T("<Any>");
-  else
-    m_szStringSize.Format(_T("%d"), (int) dStringSize);
+	rStringSize.GetValue(dStringSize);
+	if (dStringSize == (double)SVValueDefault)
+		m_szStringSize = _T("<Any>");
+	else
+		m_szStringSize.Format(_T("%d"), (int)dStringSize);
 
-  return dStringSize;
+	return dStringSize;
 }
 
 double SVBarCodeGeneralDialog::GetBarCodeSearchSpeed()
 {
-  switch (m_iSearchSpeed)
-  {
-  case 0 :
-    return (double) SVValueVeryLow;
-    break;
+	switch (m_iSearchSpeed)
+	{
+		case 0:
+			return (double)SVValueVeryLow;
+			break;
 
-  case 1 :
-    return (double) SVValueLow;
-    break;
+		case 1:
+			return (double)SVValueLow;
+			break;
 
-  case 2 :
-    return (double) SVValueMedium;
-    break;
+		case 2:
+			return (double)SVValueMedium;
+			break;
 
-  case 3 :
-    return (double) SVValueHigh;
-    break;
+		case 3:
+			return (double)SVValueHigh;
+			break;
 
-  case 4 :
-    return (double) SVValueVeryHigh;
-    break;
+		case 4:
+			return (double)SVValueVeryHigh;
+			break;
 
-  default :
-    return 0.0;
-    break;
+		default:
+			return 0.0;
+			break;
 
-  }
+	}
 }
 
-double SVBarCodeGeneralDialog::SetBarCodeSearchSpeed(SVDoubleValueObjectClass& svdSearchSpeed)
+double SVBarCodeGeneralDialog::SetBarCodeSearchSpeed(SVDoubleValueObjectClass& rSearchSpeed)
 {
-  double dSearchSpeed;
+	double dSearchSpeed;
 
-  svdSearchSpeed.GetValue (dSearchSpeed);
+	rSearchSpeed.GetValue(dSearchSpeed);
 
-  switch ((long) dSearchSpeed)
-  {
-  case  SVValueVeryLow :
-    m_iSearchSpeed = 0;
-    break;
+	switch ((long)dSearchSpeed)
+	{
+		case  SVValueVeryLow:
+			m_iSearchSpeed = 0;
+			break;
 
-  case SVValueLow :
-    m_iSearchSpeed = 1;
-    break;
+		case SVValueLow:
+			m_iSearchSpeed = 1;
+			break;
 
-  case SVValueMedium :
-    m_iSearchSpeed = 2;
-    break;
+		case SVValueMedium:
+			m_iSearchSpeed = 2;
+			break;
 
-  case SVValueHigh :
-    m_iSearchSpeed = 3;
-    break;
+		case SVValueHigh:
+			m_iSearchSpeed = 3;
+			break;
 
-  case SVValueVeryHigh :
-    m_iSearchSpeed = 4;
-    break;
+		case SVValueVeryHigh:
+			m_iSearchSpeed = 4;
+			break;
 
-  default :
-    break;
-  }
-  return dSearchSpeed;
+		default:
+			break;
+	}
+	return dSearchSpeed;
 }
 
 double SVBarCodeGeneralDialog::GetForegroundColor()
 {
-  switch (m_iBarCodeColor)
-  {
-    case 0 :
-      return (double) SVValueForegroundBlack;
-      break;
+	switch (m_iBarCodeColor)
+	{
+		case 0:
+			return (double)SVValueForegroundBlack;
+			break;
 
-    case 1 :
-      return (double) SVValueForegroundWhite;
-      break;
+		case 1:
+			return (double)SVValueForegroundWhite;
+			break;
 
-    default :
-      return (double) SVValueForegroundBlack;
-      break;
-  }
+		default:
+			return (double)SVValueForegroundBlack;
+			break;
+	}
 }
 
-double SVBarCodeGeneralDialog::SetForegroundColor(SVDoubleValueObjectClass& svdForegroundColor)
+double SVBarCodeGeneralDialog::SetForegroundColor(SVDoubleValueObjectClass& rForegroundColor)
 {
-  double dBarCodeColor;
+	double dBarCodeColor;
 
-  svdForegroundColor.GetValue (dBarCodeColor);
+	rForegroundColor.GetValue(dBarCodeColor);
 
-  switch ((long) dBarCodeColor)
-  {
-	case SVValueForegroundBlack:
-      m_iBarCodeColor = 0;
-      break;
+	switch ((long)dBarCodeColor)
+	{
+		case SVValueForegroundBlack:
+			m_iBarCodeColor = 0;
+			break;
 
-	case SVValueForegroundWhite:
-      m_iBarCodeColor = 1;
-      break;
+		case SVValueForegroundWhite:
+			m_iBarCodeColor = 1;
+			break;
 
-    default :
-      m_iBarCodeColor = 0;
-      break;
-  }
-  return dBarCodeColor;
+		default:
+			m_iBarCodeColor = 0;
+			break;
+	}
+	return dBarCodeColor;
 }
 
 double SVBarCodeGeneralDialog::GetOrientation()
 {
-  return (double) m_iOrientation;
+	return (double)m_iOrientation;
 }
 
-double SVBarCodeGeneralDialog::SetOrientation(SVDoubleValueObjectClass &svdOrientation)
+double SVBarCodeGeneralDialog::SetOrientation(SVDoubleValueObjectClass &rOrientation)
 {
-  double dOrientation;
+	double dOrientation;
 
-  svdOrientation.GetValue(dOrientation);
-  if (dOrientation == SVValueDefault)
-    dOrientation = 0.0;
+	rOrientation.GetValue(dOrientation);
+	if (dOrientation == SVValueDefault)
+	{
+		dOrientation = 0.0;
+	}
 
-  m_iOrientation = (int) dOrientation;
-  m_szOrientation.Format("%d", (int) dOrientation);
-  return dOrientation;
+	m_iOrientation = (int)dOrientation;
+	m_szOrientation.Format("%d", (int)dOrientation);
+	return dOrientation;
 }
 
 double SVBarCodeGeneralDialog::GetSkewNegative()
 {
-  return (double) m_iSkewNegative;
+	return (double)m_iSkewNegative;
 }
 
-double SVBarCodeGeneralDialog::SetSkewNegative(SVDoubleValueObjectClass &svdSkewNegative)
+double SVBarCodeGeneralDialog::SetSkewNegative(SVDoubleValueObjectClass &rSkewNegative)
 {
-  double dSkewNegative;
+	double dSkewNegative;
 
-  svdSkewNegative.GetValue(dSkewNegative);
-  if (dSkewNegative == SVValueDefault)
-    dSkewNegative = 0.0;
+	rSkewNegative.GetValue(dSkewNegative);
+	if (dSkewNegative == SVValueDefault)
+	{
+		dSkewNegative = 0.0;
+	}
 
-  m_iSkewNegative = (int) dSkewNegative;
-  m_szSkewNegative.Format("%d", (int) dSkewNegative);
-  return dSkewNegative;
+	m_iSkewNegative = (int)dSkewNegative;
+	m_szSkewNegative.Format("%d", (int)dSkewNegative);
+	return dSkewNegative;
 }
 
 double SVBarCodeGeneralDialog::GetSkewPositive()
 {
-  return (double) m_iSkewPositive;
+	return (double)m_iSkewPositive;
 }
 
-double SVBarCodeGeneralDialog::SetSkewPositive(SVDoubleValueObjectClass &svdSkewPositive)
+double SVBarCodeGeneralDialog::SetSkewPositive(SVDoubleValueObjectClass &rSkewPositive)
 {
-  double dSkewPositive;
+	double dSkewPositive;
 
-  svdSkewPositive.GetValue(dSkewPositive);
-  if (dSkewPositive == SVValueDefault)
-    dSkewPositive = 0.0;
+	rSkewPositive.GetValue(dSkewPositive);
+	if (dSkewPositive == SVValueDefault)
+	{
+		dSkewPositive = 0.0;
+	}
 
-  m_iSkewPositive = (int) dSkewPositive;
-  m_szSkewPositive.Format("%d", (int) dSkewPositive);
-  return dSkewPositive;
+	m_iSkewPositive = (int)dSkewPositive;
+	m_szSkewPositive.Format("%d", (int)dSkewPositive);
+	return dSkewPositive;
 }
 
 double SVBarCodeGeneralDialog::GetThreshold()
 {
-  return (double) m_iThreshold;
+	return (double)m_iThreshold;
 }
 
-double SVBarCodeGeneralDialog::SetThreshold(SVDoubleValueObjectClass &svdThreshold)
+double SVBarCodeGeneralDialog::SetThreshold(SVDoubleValueObjectClass &rThreshold)
 {
-  double dThreshold;
+	double dThreshold;
 
-  svdThreshold.GetValue(dThreshold);
-  if (dThreshold == SVValueDefault)
-    dThreshold = 0.0;
+	rThreshold.GetValue(dThreshold);
+	if (dThreshold == SVValueDefault)
+	{
+		dThreshold = 0.0;
+	}
 
-  m_iThreshold = (int) dThreshold;
-  m_szThreshold.Format("%d", (int) dThreshold);
-  return dThreshold;
+	m_iThreshold = (int)dThreshold;
+	m_szThreshold.Format("%d", (int)dThreshold);
+	return dThreshold;
 }
 
-bool SVBarCodeGeneralDialog::SetBarcodeStringFormat( SVEnumerateValueObjectClass& p_sveStringFormat )
+bool SVBarCodeGeneralDialog::SetBarcodeStringFormat(SVEnumerateValueObjectClass& rStringFormat)
 {
-	const SvOi::NameValueVector& rStringFormatList = p_sveStringFormat.GetEnumVector();
-	m_StringFormatCombo.SetEnumTypes(rStringFormatList);
-	long Value;
-	bool l_bRet = S_OK == p_sveStringFormat.GetValue( Value );
-	m_StringFormatCombo.SetCurSelItemData(Value);
-	m_StringFormatCombo.GetLBText(Value, m_StringFormat);
-
-	return l_bRet;
+	m_pStringFormat = &rStringFormat;
+	return true;
 }
 
-CString SVBarCodeGeneralDialog::GetBarcodeStringFormat( )
+CString SVBarCodeGeneralDialog::GetBarcodeStringFormat()
 {
 	return m_StringFormat;
 }
 
-bool SVBarCodeGeneralDialog::SetBarcodeThresholdType( SVLongValueObjectClass& p_svlThresholdType )
+bool SVBarCodeGeneralDialog::SetBarcodeThresholdType(SVLongValueObjectClass& rThresholdType)
 {
 	long l_lType = 0;
-	bool l_bRet = S_OK == p_svlThresholdType.GetValue( l_lType );
-	if( l_lType > SVBCThresholdAdaptive )
+	bool l_bRet = S_OK == rThresholdType.GetValue(l_lType);
+	if (l_lType > SVBCThresholdAdaptive)
 	{
-		l_lType = SVBCThresholdNormal ;
+		l_lType = SVBCThresholdNormal;
 	}
 	m_iThresholdRadio = l_lType;
 	return l_bRet;
 }
-int SVBarCodeGeneralDialog::GetBarcodeThresholdType( )
+int SVBarCodeGeneralDialog::GetBarcodeThresholdType()
 {
 	return m_iThresholdRadio;
 }
 
-bool SVBarCodeGeneralDialog::SetUnEvenGrid(SVBoolValueObjectClass p_svbUnEvenGrid)
+bool SVBarCodeGeneralDialog::SetUnEvenGrid(SVBoolValueObjectClass& rUnEvenGrid)
 {
 	BOOL Value;
-	bool l_bRet = S_OK == p_svbUnEvenGrid.GetValue( Value );
-	
+	bool l_bRet = S_OK == rUnEvenGrid.GetValue(Value);
+
 	m_bUnEvenGrid = Value ? true : false;
 	return l_bRet;
 }
@@ -406,209 +408,219 @@ BOOL SVBarCodeGeneralDialog::GetUnEvenGrid()
 	return m_bUnEvenGrid;
 }
 
-BOOL SVBarCodeGeneralDialog::OnInitDialog() 
+BOOL SVBarCodeGeneralDialog::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
+
+	if(nullptr != m_pStringFormat)
+	{
+		const SvOi::NameValueVector& rStringFormatList = m_pStringFormat->GetEnumVector();
+		m_StringFormatCombo.SetEnumTypes(rStringFormatList);
+		long Value;
+		m_pStringFormat->GetValue(Value);
+		m_StringFormatCombo.SetCurSelItemData(Value);
+		m_StringFormatCombo.GetLBText(Value, m_StringFormat);
+	}
 
 	for (int i = 0; i < m_aBarCodeInfo.size(); i++)
 	{
 		SVBarCodeInfoStruct& rInfo = m_aBarCodeInfo.at(i);
-		int iIndex = m_cbBarcodeType.AddString( rInfo.strName );
-		m_cbBarcodeType.SetItemData( iIndex, static_cast<DWORD_PTR>(rInfo.lMil) );
+		int iIndex = m_cbBarcodeType.AddString(rInfo.strName);
+		m_cbBarcodeType.SetItemData(iIndex, static_cast<DWORD_PTR>(rInfo.lMil));
 		rInfo.iIndex = iIndex;
 	}
 
-	const SVBarCodeInfoStruct* pInfo = GetInfoByMilID( m_lInitialBarCodeType );
-	ASSERT( pInfo );
-	if ( pInfo )
+	const SVBarCodeInfoStruct* pInfo = GetInfoByMilID(m_lInitialBarCodeType);
+	ASSERT(pInfo);
+	if (pInfo)
 	{
 		m_iBarCodeType = pInfo->iIndex;
 	}
 
 	CSliderCtrl *pControl;
-	
-	pControl = (CSliderCtrl *) GetDlgItem (IDC_BARCODE_ORIENTATION);
-	pControl->SetRangeMin (0, FALSE);
-	pControl->SetRangeMax (360, TRUE);
-	
-	pControl = (CSliderCtrl *) GetDlgItem (IDC_BARCODE_SKEWNEGATIVE);
-	pControl->SetRangeMin (0, FALSE);
-	pControl->SetRangeMax (180, TRUE);
-	
-	pControl = (CSliderCtrl *) GetDlgItem (IDC_BARCODE_SKEWPOSITIVE);
-	pControl->SetRangeMin (0, FALSE);
-	pControl->SetRangeMax (180, TRUE);
+
+	pControl = (CSliderCtrl *)GetDlgItem(IDC_BARCODE_ORIENTATION);
+	pControl->SetRangeMin(0, FALSE);
+	pControl->SetRangeMax(360, TRUE);
+
+	pControl = (CSliderCtrl *)GetDlgItem(IDC_BARCODE_SKEWNEGATIVE);
+	pControl->SetRangeMin(0, FALSE);
+	pControl->SetRangeMax(180, TRUE);
+
+	pControl = (CSliderCtrl *)GetDlgItem(IDC_BARCODE_SKEWPOSITIVE);
+	pControl->SetRangeMin(0, FALSE);
+	pControl->SetRangeMax(180, TRUE);
 
 	// Threshold...
-	pControl = (CSliderCtrl *) GetDlgItem (IDC_BARCODE_THRESHOLD);
-	pControl->SetRangeMin (0, FALSE);
-	pControl->SetRangeMax (255, TRUE);
+	pControl = (CSliderCtrl *)GetDlgItem(IDC_BARCODE_THRESHOLD);
+	pControl->SetRangeMin(0, FALSE);
+	pControl->SetRangeMax(255, TRUE);
 
 	m_spnTimeout.SetBuddy(GetWindow(IDC_EDT_TIMEOUT));
-	
-	UpdateData (FALSE);
+
+	UpdateData(FALSE);
 
 	OnBnClickedThresholdNormalRadio(0);
 
- 	UpdateUnEvenGrid();
-	
-	return TRUE;  
+	UpdateUnEvenGrid();
+
+	return TRUE;
 }
 
-void SVBarCodeGeneralDialog::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
+void SVBarCodeGeneralDialog::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	CPropertyPage::OnHScroll(nSBCode, nPos, pScrollBar);
 
-  CSliderCtrl *pSlider = (CSliderCtrl *) pScrollBar;
-  int iNewPos;
+	CSliderCtrl *pSlider = (CSliderCtrl *)pScrollBar;
+	int iNewPos;
 
-  iNewPos = pSlider->GetPos ();
+	iNewPos = pSlider->GetPos();
 
-  switch (nSBCode)
-  {
-    case SB_LEFT :
-      iNewPos = pSlider->GetRangeMin();
-      break;
+	switch (nSBCode)
+	{
+		case SB_LEFT:
+			iNewPos = pSlider->GetRangeMin();
+			break;
 
-    case SB_ENDSCROLL :
-      break;
+		case SB_ENDSCROLL:
+			break;
 
-    case SB_LINELEFT :
-      iNewPos--;
-      break;
+		case SB_LINELEFT:
+			iNewPos--;
+			break;
 
-    case SB_LINERIGHT :
-      iNewPos++;
-      break;
+		case SB_LINERIGHT:
+			iNewPos++;
+			break;
 
-    case SB_PAGELEFT :
-      iNewPos -= 10;
-      break;
+		case SB_PAGELEFT:
+			iNewPos -= 10;
+			break;
 
-    case SB_PAGERIGHT :
-      iNewPos += 10;
-      break;
+		case SB_PAGERIGHT:
+			iNewPos += 10;
+			break;
 
-    case SB_RIGHT :
-      iNewPos = pSlider->GetRangeMax();
-      break;
+		case SB_RIGHT:
+			iNewPos = pSlider->GetRangeMax();
+			break;
 
-    case SB_THUMBPOSITION :
-      iNewPos = nPos;
-      break;
+		case SB_THUMBPOSITION:
+			iNewPos = nPos;
+			break;
 
-    case SB_THUMBTRACK :
-      iNewPos = nPos;
-      break;
-  }
-  if (iNewPos < pSlider->GetRangeMin())
-    iNewPos = pSlider->GetRangeMin();
+		case SB_THUMBTRACK:
+			iNewPos = nPos;
+			break;
+	}
+	if (iNewPos < pSlider->GetRangeMin())
+		iNewPos = pSlider->GetRangeMin();
 
-  if (iNewPos > pSlider->GetRangeMax())
-    iNewPos = pSlider->GetRangeMax();
+	if (iNewPos > pSlider->GetRangeMax())
+		iNewPos = pSlider->GetRangeMax();
 
-  switch (pSlider->GetDlgCtrlID())
-  {
-  case IDC_BARCODE_ORIENTATION :
-    m_iOrientation = iNewPos;
-    m_szOrientation.Format(_T("%d"), m_iOrientation);
-    break;
+	switch (pSlider->GetDlgCtrlID())
+	{
+		case IDC_BARCODE_ORIENTATION:
+			m_iOrientation = iNewPos;
+			m_szOrientation.Format(_T("%d"), m_iOrientation);
+			break;
 
-  case IDC_BARCODE_SKEWNEGATIVE :
-    m_iSkewNegative = iNewPos;
-    m_szSkewNegative.Format(_T("%d"), m_iSkewNegative);
-    break;
+		case IDC_BARCODE_SKEWNEGATIVE:
+			m_iSkewNegative = iNewPos;
+			m_szSkewNegative.Format(_T("%d"), m_iSkewNegative);
+			break;
 
-  case IDC_BARCODE_SKEWPOSITIVE :
-    m_iSkewPositive = iNewPos;
-    m_szSkewPositive.Format(_T("%d"), m_iSkewPositive);
-    break;
+		case IDC_BARCODE_SKEWPOSITIVE:
+			m_iSkewPositive = iNewPos;
+			m_szSkewPositive.Format(_T("%d"), m_iSkewPositive);
+			break;
 
-  case IDC_BARCODE_THRESHOLD :
-    m_iThreshold = iNewPos;
-    m_szThreshold.Format(_T("%d"), m_iThreshold);
-    break;
-  }
+		case IDC_BARCODE_THRESHOLD:
+			m_iThreshold = iNewPos;
+			m_szThreshold.Format(_T("%d"), m_iThreshold);
+			break;
+	}
 
-  UpdateData (FALSE);
+	UpdateData(FALSE);
 }
 
-void SVBarCodeGeneralDialog::OnUpdateBarcodeOrientationEdit() 
+void SVBarCodeGeneralDialog::OnUpdateBarcodeOrientationEdit()
 {
-	UpdateData (TRUE);
-  m_iOrientation = atoi (m_szOrientation);
-  if (m_iOrientation < 0)
-  {
-    m_iOrientation = 0;
-    m_szOrientation = _T("0");
-  }
-  if (m_iOrientation > 360)
-  {
-    m_iOrientation = 360;
-    m_szOrientation = _T("360");
-  }
-  UpdateData (FALSE);
+	UpdateData(TRUE);
+	m_iOrientation = atoi(m_szOrientation);
+	if (m_iOrientation < 0)
+	{
+		m_iOrientation = 0;
+		m_szOrientation = _T("0");
+	}
+	if (m_iOrientation > 360)
+	{
+		m_iOrientation = 360;
+		m_szOrientation = _T("360");
+	}
+	UpdateData(FALSE);
 }
 
-void SVBarCodeGeneralDialog::OnUpdateBarcodeSkewNegativeEdit() 
+void SVBarCodeGeneralDialog::OnUpdateBarcodeSkewNegativeEdit()
 {
-	UpdateData (TRUE);
-  m_iSkewNegative = atoi (m_szSkewNegative);
-  if (m_iSkewNegative > 180)
-  {
-    m_iSkewNegative = 180;
-    m_szSkewNegative = _T("180");
-  }
-  if (m_iSkewNegative < 0)
-  {
-    m_iSkewNegative = 0;
-    m_szSkewNegative = _T("0");
-  }
-  UpdateData (FALSE);	
+	UpdateData(TRUE);
+	m_iSkewNegative = atoi(m_szSkewNegative);
+	if (m_iSkewNegative > 180)
+	{
+		m_iSkewNegative = 180;
+		m_szSkewNegative = _T("180");
+	}
+	if (m_iSkewNegative < 0)
+	{
+		m_iSkewNegative = 0;
+		m_szSkewNegative = _T("0");
+	}
+	UpdateData(FALSE);
 }
 
-void SVBarCodeGeneralDialog::OnUpdateBarcodeSkewPositiveEdit() 
+void SVBarCodeGeneralDialog::OnUpdateBarcodeSkewPositiveEdit()
 {
-	UpdateData (TRUE);
-  m_iSkewPositive = atoi (m_szSkewPositive);
-  if (m_iSkewPositive > 180)
-  {
-    m_iSkewPositive = 180;
-    m_szSkewPositive = _T("180");
-  }
-  if (m_iSkewPositive < 0)
-  {
-    m_iSkewPositive = 0;
-    m_szSkewPositive = _T("0");
-  }
-  UpdateData (FALSE);	
+	UpdateData(TRUE);
+	m_iSkewPositive = atoi(m_szSkewPositive);
+	if (m_iSkewPositive > 180)
+	{
+		m_iSkewPositive = 180;
+		m_szSkewPositive = _T("180");
+	}
+	if (m_iSkewPositive < 0)
+	{
+		m_iSkewPositive = 0;
+		m_szSkewPositive = _T("0");
+	}
+	UpdateData(FALSE);
 }
 
-void SVBarCodeGeneralDialog::OnUpdateBarcodeThresholdEdit() 
+void SVBarCodeGeneralDialog::OnUpdateBarcodeThresholdEdit()
 {
-	UpdateData (TRUE);
-  m_iThreshold = atoi (m_szThreshold);
-  if (m_iThreshold > 255)
-  {
-    m_iThreshold = 255;
-    m_szThreshold = _T("255");
-  }
-  if (m_iThreshold < 0)
-  {
-    m_iThreshold = 0;
-    m_szThreshold = _T("0");
-  }
-  UpdateData (FALSE);	
+	UpdateData(TRUE);
+	m_iThreshold = atoi(m_szThreshold);
+	if (m_iThreshold > 255)
+	{
+		m_iThreshold = 255;
+		m_szThreshold = _T("255");
+	}
+	if (m_iThreshold < 0)
+	{
+		m_iThreshold = 0;
+		m_szThreshold = _T("0");
+	}
+	UpdateData(FALSE);
 }
 
-void SVBarCodeGeneralDialog::OnEditChangeBarCodeStringSize() 
+void SVBarCodeGeneralDialog::OnEditChangeBarCodeStringSize()
 {
-	UpdateData (TRUE);
+	UpdateData(TRUE);
 }
 
-void SVBarCodeGeneralDialog::OnSelChangeBarCodeStringSize() 
+void SVBarCodeGeneralDialog::OnSelChangeBarCodeStringSize()
 {
-  UpdateData (TRUE);	
+	UpdateData(TRUE);
 }
 
 void SVBarCodeGeneralDialog::OnSelChangeStringFormat()
@@ -622,27 +634,27 @@ void SVBarCodeGeneralDialog::OnSelChangeStringFormat()
 
 void SVBarCodeGeneralDialog::OnSelChangeBarCodeColor()
 {
-	UpdateData (TRUE);
+	UpdateData(TRUE);
 }
 
-void SVBarCodeGeneralDialog::OnSelChangeSearchSpeed() 
+void SVBarCodeGeneralDialog::OnSelChangeSearchSpeed()
 {
-	UpdateData (TRUE);	
+	UpdateData(TRUE);
 }
 
-void SVBarCodeGeneralDialog::OnSelChangeBarCodeType() 
+void SVBarCodeGeneralDialog::OnSelChangeBarCodeType()
 {
 	SVBarCodeProperties* pPropPage;
-	DWORD dwEncoding=0;
-	DWORD dwErrCorrection=0;
-	
-	UpdateData (TRUE);
-	
-	pPropPage = (SVBarCodeProperties*) GetParent();
-	
-	const SVBarCodeInfoStruct* pInfo = GetInfoByMilID( GetBarCodeType() );
-	ASSERT( pInfo );
-	if ( pInfo )
+	DWORD dwEncoding = 0;
+	DWORD dwErrCorrection = 0;
+
+	UpdateData(TRUE);
+
+	pPropPage = (SVBarCodeProperties*)GetParent();
+
+	const SVBarCodeInfoStruct* pInfo = GetInfoByMilID(GetBarCodeType());
+	ASSERT(pInfo);
+	if (pInfo)
 	{
 		dwEncoding = pInfo->lDefaultEncoding;
 		dwErrCorrection = pInfo->lDefaultErrorCorrection;
@@ -665,34 +677,34 @@ void SVBarCodeGeneralDialog::OnSelChangeBarCodeType()
 
 
 	// Threshold options limited depending on code.
-	if( (GetBarCodeType() == SVPostNet) || (GetBarCodeType() == SVPlanet) )
+	if ((GetBarCodeType() == SVPostNet) || (GetBarCodeType() == SVPlanet))
 	{
-		switch( m_iThresholdRadio )
+		switch (m_iThresholdRadio)
 		{	// Adaptive does not work for postnet or planet.
 			case SVBCThresholdAdaptive:
 			{
-				m_iThresholdRadio = SVBCThresholdAuto ;
+				m_iThresholdRadio = SVBCThresholdAuto;
 			}
 			case SVBCThresholdAuto:
 			{
-				GetDlgItem( IDC_BARCODE_THRESHOLD )->EnableWindow( FALSE );
-				GetDlgItem( IDC_BARCODE_THRESHOLD_EDIT )->EnableWindow( FALSE );
+				GetDlgItem(IDC_BARCODE_THRESHOLD)->EnableWindow(FALSE);
+				GetDlgItem(IDC_BARCODE_THRESHOLD_EDIT)->EnableWindow(FALSE);
 				break;
 			}
 			case SVBCThresholdNormal:
 			{
-				GetDlgItem( IDC_BARCODE_THRESHOLD )->EnableWindow( TRUE );
-				GetDlgItem( IDC_BARCODE_THRESHOLD_EDIT )->EnableWindow( TRUE );
+				GetDlgItem(IDC_BARCODE_THRESHOLD)->EnableWindow(TRUE);
+				GetDlgItem(IDC_BARCODE_THRESHOLD_EDIT)->EnableWindow(TRUE);
 				break;
 			}
 		}
 
-		GetDlgItem( IDC_THRESHOLD_ADAPTIVE_RADIO )->EnableWindow( FALSE );
+		GetDlgItem(IDC_THRESHOLD_ADAPTIVE_RADIO)->EnableWindow(FALSE);
 		UpdateData(FALSE);
 	}
 	else
 	{
-		GetDlgItem( IDC_THRESHOLD_ADAPTIVE_RADIO )->EnableWindow( TRUE );
+		GetDlgItem(IDC_THRESHOLD_ADAPTIVE_RADIO)->EnableWindow(TRUE);
 	}
 
 }
@@ -707,14 +719,14 @@ BOOL SVBarCodeGeneralDialog::GetWarnedOnFail()
 	return m_bWarnOnFail;
 }
 
-long SVBarCodeGeneralDialog::SetTimeout( SVLongValueObjectClass &svlTimeout )
+long SVBarCodeGeneralDialog::SetTimeout(SVLongValueObjectClass &svlTimeout)
 {
-  long l_lTimeout;
+	long l_lTimeout;
 
-  svlTimeout.GetValue(l_lTimeout);
+	svlTimeout.GetValue(l_lTimeout);
 
-  m_lTimeout = (int) l_lTimeout;
-  return l_lTimeout;
+	m_lTimeout = (int)l_lTimeout;
+	return l_lTimeout;
 }
 
 long SVBarCodeGeneralDialog::GetTimeout()
@@ -726,50 +738,50 @@ long SVBarCodeGeneralDialog::GetTimeout()
 	return lValue;
 }
 
-void SVBarCodeGeneralDialog::OnDeltaposSpinTimeout(NMHDR* pNMHDR, LRESULT* pResult) 
+void SVBarCodeGeneralDialog::OnDeltaposSpinTimeout(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	NM_UPDOWN* pNMUpDown = (NM_UPDOWN*)pNMHDR;
 
 	UpdateData(TRUE);
 
-	m_lTimeout = m_lTimeout + ( -1 * pNMUpDown->iDelta );
-	
+	m_lTimeout = m_lTimeout + (-1 * pNMUpDown->iDelta);
+
 	// check to make sure value does not drop below 0
-	if ( m_lTimeout < 1 )
+	if (m_lTimeout < 1)
 	{
 		m_lTimeout = 1;
 	}
 
-	if ( m_lTimeout > 10000 )
+	if (m_lTimeout > 10000)
 	{
 		m_lTimeout = 10000;
 	}
 
 	//set the data in IPDoc.
 
-	UpdateData(FALSE);	
+	UpdateData(FALSE);
 	*pResult = 0;
 }
 
 
-void SVBarCodeGeneralDialog::OnBnClickedThresholdNormalRadio( UINT nID )
+void SVBarCodeGeneralDialog::OnBnClickedThresholdNormalRadio(UINT nID)
 {
 	UpdateData();
-	switch( m_iThresholdRadio )
+	switch (m_iThresholdRadio)
 	{
 		case SVBCThresholdNormal:
 		{
 			// Enable slider
-			GetDlgItem( IDC_BARCODE_THRESHOLD )->EnableWindow( TRUE );
-			GetDlgItem( IDC_BARCODE_THRESHOLD_EDIT )->EnableWindow( TRUE );
+			GetDlgItem(IDC_BARCODE_THRESHOLD)->EnableWindow(TRUE);
+			GetDlgItem(IDC_BARCODE_THRESHOLD_EDIT)->EnableWindow(TRUE);
 			break;
 		}
 		case SVBCThresholdAuto:
 		case SVBCThresholdAdaptive:
 		{
 			// Disable slider
-			GetDlgItem( IDC_BARCODE_THRESHOLD )->EnableWindow( FALSE );
-			GetDlgItem( IDC_BARCODE_THRESHOLD_EDIT )->EnableWindow( FALSE );
+			GetDlgItem(IDC_BARCODE_THRESHOLD)->EnableWindow(FALSE);
+			GetDlgItem(IDC_BARCODE_THRESHOLD_EDIT)->EnableWindow(FALSE);
 			break;
 		}
 		default:
@@ -801,8 +813,8 @@ void SVBarCodeGeneralDialog::UpdateUnEvenGrid()
 
 const SVBarCodeGeneralDialog::SVBarCodeInfoStruct* SVBarCodeGeneralDialog::GetInfoByIndex(int Index)
 {
-	SVBarCodeInfoStruct* pResult{nullptr};
-	for ( auto& rElement : m_aBarCodeInfo)
+	SVBarCodeInfoStruct* pResult {nullptr};
+	for (auto& rElement : m_aBarCodeInfo)
 	{
 		if (Index == rElement.iIndex)
 		{
@@ -815,8 +827,8 @@ const SVBarCodeGeneralDialog::SVBarCodeInfoStruct* SVBarCodeGeneralDialog::GetIn
 
 const SVBarCodeGeneralDialog::SVBarCodeInfoStruct* SVBarCodeGeneralDialog::GetInfoByMilID(long MilID)
 {
-	SVBarCodeInfoStruct* pResult{nullptr};
-	for ( auto& rElement : m_aBarCodeInfo)
+	SVBarCodeInfoStruct* pResult {nullptr};
+	for (auto& rElement : m_aBarCodeInfo)
 	{
 		if (MilID == rElement.lMil)
 		{

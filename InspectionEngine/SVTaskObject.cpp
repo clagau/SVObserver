@@ -518,6 +518,11 @@ SvStl::MessageContainerVector SVTaskObjectClass::validateAndSetEmbeddedValues(co
 			{
 				rEntry.m_pValueObject->validateValue( rEntry.m_Value );
 			}
+			else
+			{
+				SvStl::MessageContainer Msg(SVMSG_SVO_NULL_POINTER, SvStl::Tid_Default, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				throw Msg;
+			}
 		}
 		catch ( const SvStl::MessageContainer& rSvE )
 		{
@@ -534,6 +539,10 @@ SvStl::MessageContainerVector SVTaskObjectClass::validateAndSetEmbeddedValues(co
 			if (nullptr != rEntry.m_pValueObject)
 			{
 				Result = rEntry.m_pValueObject->setValue(rEntry.m_Value, rEntry.m_ArrayIndex);
+			}
+			else
+			{
+				Result = E_POINTER;
 			}
 			if (S_OK != Result)
 			{
@@ -554,7 +563,6 @@ SvStl::MessageContainerVector SVTaskObjectClass::validateAndSetEmbeddedValues(co
 					Msg.setMessage( Result, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 				}
 				messages.push_back(Msg.getMessageContainer());
-				break;
 			}
 		}
 	}
@@ -572,6 +580,10 @@ SvStl::MessageContainerVector SVTaskObjectClass::setEmbeddedDefaultValues(const 
 		if (nullptr != rEntry.m_pValueObject)
 		{
 			Result = rEntry.m_pValueObject->setDefaultValue(rEntry.m_Value);
+		}
+		else
+		{
+			Result = E_POINTER;
 		}
 		if (S_OK != Result)
 		{
@@ -592,7 +604,6 @@ SvStl::MessageContainerVector SVTaskObjectClass::setEmbeddedDefaultValues(const 
 				Msg.setMessage(Result, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 			}
 			messages.push_back(Msg.getMessageContainer());
-			break;
 		}
 	}
 

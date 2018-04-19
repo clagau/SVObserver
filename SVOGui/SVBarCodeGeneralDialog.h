@@ -31,35 +31,35 @@ class SVBarCodeGeneralDialog : public CPropertyPage
 {
 // Construction
 public:
-	double SetThreshold (SVDoubleValueObjectClass& svdThreshold);
+	double SetThreshold (SVDoubleValueObjectClass& rThreshold);
 	double GetThreshold ();
-	double SetSkewPositive (SVDoubleValueObjectClass& svdSkewPositive);
+	double SetSkewPositive (SVDoubleValueObjectClass& rSkewPositive);
 	double GetSkewPositive ();
-	double SetSkewNegative (SVDoubleValueObjectClass& svdSkewNegative);
+	double SetSkewNegative (SVDoubleValueObjectClass& rSkewNegative);
 	double GetSkewNegative ();
-	double SetOrientation (SVDoubleValueObjectClass& svdOrientation);
+	double SetOrientation (SVDoubleValueObjectClass& rOrientation);
 	double GetOrientation ();
-	double SetForegroundColor (SVDoubleValueObjectClass& svdForegroundColor);
+	double SetForegroundColor (SVDoubleValueObjectClass& rForegroundColor);
 	double GetForegroundColor ();
-	double SetBarCodeSearchSpeed (SVDoubleValueObjectClass& svdSearchSpeed);
+	double SetBarCodeSearchSpeed (SVDoubleValueObjectClass& rSearchSpeed);
 	double GetBarCodeSearchSpeed ();
-	double SetBarCodeStringSize (SVDoubleValueObjectClass& svdStringSize);
+	double SetBarCodeStringSize (SVDoubleValueObjectClass& rStringSize);
 	double GetBarCodeStringSize ();
 
-	bool SetBarcodeStringFormat( SVEnumerateValueObjectClass& p_sveStringFormat );
+	bool SetBarcodeStringFormat( SVEnumerateValueObjectClass& rStringFormat );
 	CString GetBarcodeStringFormat( );
 
-	bool SetBarcodeThresholdType( SVLongValueObjectClass& p_svThresholdType );
+	bool SetBarcodeThresholdType( SVLongValueObjectClass& rThresholdType );
 	int GetBarcodeThresholdType( );
 
-	long SetBarCodeType (SVLongValueObjectClass& svlBarCodeType);
+	long SetBarCodeType (SVLongValueObjectClass& rBarCodeType);
 	long GetBarCodeType();
 	BOOL GetWarnedOnFail();
 	void SetWarnOnFail( BOOL bWarnOnFail );
 	long SetTimeout( SVLongValueObjectClass &svlTimeout );
 	long GetTimeout();
 
-	bool SetUnEvenGrid( SVBoolValueObjectClass p_svbUnEvenGrid );
+	bool SetUnEvenGrid( SVBoolValueObjectClass& rUnEvenGrid );
 	BOOL GetUnEvenGrid ();
 
 	void UpdateUnEvenGrid();
@@ -150,8 +150,8 @@ public:
 	SVBarCodeInfoVector m_aBarCodeInfo;
 	long m_lInitialBarCodeType;
 	SvMc::SVEnumerateComboClass m_StringFormatCombo;
+	SVEnumerateValueObjectClass* m_pStringFormat{nullptr};
 	CString m_StringFormat;
-	SvOi::NameValueVector m_EnumVect;
 
 	bool  m_bUnEvenGrid;
 
