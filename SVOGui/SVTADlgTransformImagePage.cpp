@@ -49,25 +49,14 @@ namespace SvOg
 
 		UpdateData(true); // get data from dialog
 
-		SetData();
+		m_Values.Set<bool>(SVUseExtentsOnlyObjectGuid, m_useExtentsOnly ? true : false);
 		hr = m_Values.Commit();
-		GetData();
 
 		UpdateData(false);
 	
 		return hr;
 	}
 
-	void SVToolAdjustmentDialogTransformImagePageClass::GetData()
-	{
-		m_useExtentsOnly = m_Values.Get<bool>(SVUseExtentsOnlyObjectGuid);
-	}
-
-	void SVToolAdjustmentDialogTransformImagePageClass::SetData()
-	{
-		m_Values.Set<bool>(SVUseExtentsOnlyObjectGuid, m_useExtentsOnly ? true : false);
-	}
-		
 	void SVToolAdjustmentDialogTransformImagePageClass::CheckSourceImage()
 	{
 		const SvUl::InputNameGuidPairList& images = getImageController().GetConnectedImageList();
@@ -103,7 +92,7 @@ namespace SvOg
 		if (rc)
 		{
 			m_Values.Init();
-			GetData();
+			m_useExtentsOnly = m_Values.Get<bool>(SVUseExtentsOnlyObjectGuid);
 			CheckSourceImage();
 			UpdateData(false);
 		}

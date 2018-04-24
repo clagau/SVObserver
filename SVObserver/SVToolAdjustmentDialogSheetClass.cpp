@@ -145,6 +145,10 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 	ObjectInfo.SubType = SvDef::SVMathEquationObjectType;
 	SvOi::IObjectClass* pMathEquation = GetTool()->getFirstObject(ObjectInfo);
 
+	ObjectInfo.ObjectType = SvDef::SVTransformObjectType;
+	ObjectInfo.SubType = SvDef::SVImageTransformObjectType;
+	SvOi::IObjectClass* pImageTransform = GetTool()->getFirstObject(ObjectInfo);
+
 	bool bHasSize = false;
 	ObjectInfo.ObjectType = SvDef::SVToolSizeAdjustTaskType;
 	ObjectInfo.SubType = SvDef::SVNotSetSubObjectType;
@@ -282,7 +286,10 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 			break;
 
 		case SvDef::SVTransformationToolObjectType:
-			AddPage( new SvOg::SVToolAdjustmentDialogTransformImagePageClass( m_InspectionID, m_TaskObjectID ) );
+			if(nullptr != pImageTransform)
+			{
+				AddPage(new SvOg::SVToolAdjustmentDialogTransformImagePageClass(m_InspectionID, pImageTransform->GetUniqueObjectID()));
+			}
 			AddPage( new SVToolAdjustmentDialogTranslationPageClass(m_InspectionID, m_TaskObjectID) );
 			AddPage( new SVToolAdjustmentDialogRotationPageClass(m_InspectionID, m_TaskObjectID) );
 			AddPage( new SVToolAdjustmentDialogTransformationLearnPageClass( m_InspectionID, m_TaskObjectID, this ) );

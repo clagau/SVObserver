@@ -21,10 +21,6 @@ namespace SvOg
 {
 	class SVToolAdjustmentDialogTransformImagePageClass : public SVToolAdjustmentDialogImagePageClass
 	{
-		typedef SvOg::ValuesAccessor<SvOg::BoundValues> Values;
-		typedef SvOg::DataController<Values, Values::value_type> ValuesController;
-		ValuesController m_Values;
-
 		//{{AFX_VIRTUAL(SVToolAdjustmentDialogTransformImagePageClass)
 	protected:
 		virtual BOOL OnInitDialog() override;
@@ -43,13 +39,16 @@ namespace SvOg
 		BOOL m_useExtentsOnly;
 		//}}AFX_DATA
 
-		void GetData();
-		void SetData();
 		void CheckSourceImage();
 
 	public:
 		SVToolAdjustmentDialogTransformImagePageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SvDef::SVObjectSubTypeEnum SubType = SvDef::SVImageMonoType, int id = IDD);
 		virtual ~SVToolAdjustmentDialogTransformImagePageClass();
 		HRESULT SetInspectionData();
+
+	private:
+		typedef SvOg::ValuesAccessor<SvOg::BoundValues> Values;
+		typedef SvOg::DataController<Values, Values::value_type> ValuesController;
+		ValuesController m_Values;
 	};
 } //namespace SvOg
