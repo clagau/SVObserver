@@ -150,7 +150,7 @@
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Level2</WarningLevel>
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Level2</WarningLevel>
     </ClCompile>
-    <ClCompile Include="BasicStructureHelper.cpp" />
+    <ClCompile Include="ConverterHelper.cpp" />
     <ClCompile Include="Envelope.pb.cc">
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Level2</WarningLevel>
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Level2</WarningLevel>
@@ -182,7 +182,7 @@
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">TurnOffAllWarnings</WarningLevel>
     </ClCompile>
-    <ClCompile Include="variant.pb.cc">
+    <ClCompile Include="Variant.pb.cc">
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Level2</WarningLevel>
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Level2</WarningLevel>
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Level2</WarningLevel>
@@ -192,7 +192,7 @@
   <ItemGroup>
     <ClInclude Include="BasicStructure.h" />
     <ClInclude Include="BasicStructure.pb.h" />
-    <ClInclude Include="BasicStructureHelper.h" />
+    <ClInclude Include="ConverterHelper.h" />
     <ClInclude Include="Envelope.h" />
     <ClInclude Include="Envelope.pb.h" />
     <ClInclude Include="InspectionCommands.h" />
@@ -204,8 +204,8 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TriggerRecordController.h" />
     <ClInclude Include="TriggerRecordController.pb.h" />
-    <ClInclude Include="variant.h" />
-    <ClInclude Include="variant.pb.h" />
+    <ClInclude Include="Variant.h" />
+    <ClInclude Include="Variant.pb.h" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="BasicStructure.proto">
@@ -298,7 +298,7 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).pb.cc;%(Filename).pb.h</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).pb.cc;%(Filename).pb.h</Outputs>
     </CustomBuild>
-    <CustomBuild Include="variant.proto">
+    <CustomBuild Include="Variant.proto">
       <FileType>Document</FileType>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>

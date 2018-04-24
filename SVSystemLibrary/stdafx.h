@@ -56,6 +56,7 @@
 #include <deque>
 #include <direct.h>
 #include <exception>
+#include <fstream>
 #include <io.h>
 #include <iomanip>
 #include <iterator>

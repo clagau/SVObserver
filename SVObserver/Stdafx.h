@@ -128,12 +128,15 @@ namespace Gdiplus
 #include <typeinfo.h>
 #include <utility>
 #include <vector>
+#include <thread>
 #include <winsock2.h>		//Used by static library
 #include <ws2tcpip.h>		//Used by static library
 
 #include <boost\algorithm\string.hpp>
 #include <boost\algorithm\string\replace.hpp>
 #include <boost/any.hpp>
+#include <boost/asio.hpp>
+#include <boost/asio/io_service.hpp>
 #include <boost/bind.hpp>
 #include <boost/circular_buffer.hpp>
 #include <boost/config.hpp>

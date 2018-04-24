@@ -42,9 +42,6 @@ namespace SVRemoteTest
 
 		#region Method Lookup Tables
 		private Dictionary<string, ISVComObjectView> m_remoteMethodLookup = new Dictionary<string, ISVComObjectView>();
-        private Dictionary<string, ISVComObjectView> m_failStatusMethodLookup = new Dictionary<string, ISVComObjectView>();
-		private Dictionary<string, ISVComObjectView> m_inputMethodLookup = new Dictionary<string, ISVComObjectView>();
-		private Dictionary<string, ISVComObjectView> m_outputMethodLookup = new Dictionary<string, ISVComObjectView>();
 		// List of Lists
 		private Dictionary<string, Dictionary<string, ISVComObjectView>> m_methodLookup = new Dictionary<string, Dictionary<string, ISVComObjectView>>();
 		#endregion
@@ -125,13 +122,7 @@ namespace SVRemoteTest
             m_remoteMethodLookup.Add("ActivateMonitorList", new SVRemoteCtrlActivateMonitorList()); //So all forms that have a MonitorList name property share the same value
             m_remoteMethodLookup.Add("DeactivateMonitorList", new SVRemoteCtrlDeactivateMonitorList()); //So all forms that have a MonitorList name property share the same value
 
-			m_inputMethodLookup.Add("Add", new SVInputBrokerAddItemView());
-			m_inputMethodLookup.Add("QueryListItems", new SVInputBrokerQueryListItemsView());
-
 			m_methodLookup.Add("AxSVRemoteControlLib.AxSVRemoteCtrl", m_remoteMethodLookup);
-            m_methodLookup.Add("SVRemoteControlLib.SVFailStatusStreamClass", m_failStatusMethodLookup);
-			m_methodLookup.Add("SVRemoteControlLib.SVInputBrokerClass", m_inputMethodLookup);
-			m_methodLookup.Add("SVRemoteControlLib.SVOutputBrokerClass", m_outputMethodLookup);
 		}
 		#endregion
 
@@ -218,33 +209,6 @@ namespace SVRemoteTest
                             UpdateViewProperties(m_remoteMethodLookup[methodName], properties);
                         }
                     }
-                    // Update the Fail Status View(s)
-                    foreach (String methodName in m_failStatusMethodLookup.Keys)
-                    {
-                        SVDynamicPropertyCollection properties = m_userEnteredValues.GetFailStatusStreamInputProperties(methodName);
-                        if (properties != null)
-                        {
-                            UpdateViewProperties(m_failStatusMethodLookup[methodName], properties);
-                        }
-                    }
-                    // Update the Input Broker View(s)
-                    foreach (String methodName in m_inputMethodLookup.Keys)
-                    {
-                        SVDynamicPropertyCollection properties = m_userEnteredValues.GetInputBrokerInputProperties(methodName);
-                        if (properties != null)
-                        {
-                            UpdateViewProperties(m_inputMethodLookup[methodName], properties);
-                        }
-                    }
-                    // Update the Output Broker View(s)
-                    foreach (String methodName in m_outputMethodLookup.Keys)
-                    {
-                        SVDynamicPropertyCollection properties = m_userEnteredValues.GetOutputBrokerInputProperties(methodName);
-                        if (properties != null)
-                        {
-                            UpdateViewProperties(m_inputMethodLookup[methodName], properties);
-                        }
-                    }
                 }
                 catch (System.Xml.XmlException e)
                 {
@@ -281,42 +245,6 @@ namespace SVRemoteTest
                             try
                             {
                                 m_userEnteredValues.SaveRemoteViewProperties(key, m_remoteMethodLookup[key]);
-                            }
-                            catch (System.Exception e)
-                            {
-                                System.Diagnostics.Trace.WriteLine(e.Message);
-                            }
-                        }
-                        // Convert the view properties to the SVDynamicPropertyCollection
-                        foreach (string key in m_failStatusMethodLookup.Keys)
-                        {
-                            try
-                            {
-                                m_userEnteredValues.SaveFailStatusStreamViewProperties(key, m_failStatusMethodLookup[key]);
-                            }
-                            catch (System.Exception e)
-                            {
-                                System.Diagnostics.Trace.WriteLine(e.Message);
-                            }
-                        }
-                        // Convert the view properties to the SVDynamicPropertyCollection
-                        foreach (string key in m_inputMethodLookup.Keys)
-                        {
-                            try
-                            {
-                                m_userEnteredValues.SaveInputBrokerViewProperties(key, m_inputMethodLookup[key]);
-                            }
-                            catch (System.Exception e)
-                            {
-                                System.Diagnostics.Trace.WriteLine(e.Message);
-                            }
-                        }
-                        // Convert the view properties to the SVDynamicPropertyCollection
-                        foreach (string key in m_outputMethodLookup.Keys)
-                        {
-                            try
-                            {
-                                m_userEnteredValues.SaveOutputBrokerViewProperties(key, m_outputMethodLookup[key]);
                             }
                             catch (System.Exception e)
                             {

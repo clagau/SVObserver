@@ -104,12 +104,12 @@ ServerRequestHandler::ServerRequestHandler(SharedMemoryAccessInterface* sma)
 
 	registerRequestHandler<
 		SvPb::SVRCMessages,
-		SvPb::SVRCMessages::kGetItemsRequest,
-		SvPb::GetItemsRequest,
-		SvPb::GetItemsResponse>(
-		[sma](SvPb::GetItemsRequest&& req, SvRpc::Task<SvPb::GetItemsResponse> task)
+		SvPb::SVRCMessages::kGetTriggerItemsRequest,
+		SvPb::GetTriggerItemsRequest,
+		SvPb::GetTriggerItemsResponse>(
+		[sma](SvPb::GetTriggerItemsRequest&& req, SvRpc::Task<SvPb::GetTriggerItemsResponse> task)
 	{
-		sma->GetItems(req, task);
+		sma->GetTriggerItems(req, task);
 	});
 
 	registerStreamHandler<

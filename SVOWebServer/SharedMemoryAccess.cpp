@@ -100,12 +100,13 @@ void SharedMemoryAccess::GetImageStreamFromCurId(const SvPb::GetImageStreamFromC
 	err.set_error_code(SvPenv::ErrorCode::NotImplemented);
 	observer.error(err);
 }
-void SharedMemoryAccess::GetItems(const SvPb::GetItemsRequest&, SvRpc::Task<SvPb::GetItemsResponse> task)
+void SharedMemoryAccess::GetTriggerItems(const SvPb::GetTriggerItemsRequest&, SvRpc::Task<SvPb::GetTriggerItemsResponse> task)
 {
 	SvPenv::Error err;
 	err.set_error_code(SvPenv::ErrorCode::NotImplemented);
 	task.error(err);
 }
+
 void SharedMemoryAccess::QueryListName(const SvPb::QueryListNameRequest& request, SvRpc::Task<SvPb::QueryListNameResponse> task)
 {
 	SvPb::QueryListNameResponse resp;

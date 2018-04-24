@@ -15,7 +15,6 @@
 #include "SVObjectManagerClass.h"
 #include "SVObserverTemplate.h"
 #include "SVObjectClass.h"
-#include "SVObjectNotifyTemplate.h"
 #include "Definitions/GlobalConst.h"
 #include "ObjectInterfaces/IObjectManager.h"
 #pragma endregion Includes
@@ -90,26 +89,6 @@ template< typename SVObjectTypeName >
 HRESULT SVObjectManagerClass::GetConfigurationObject( SVObjectTypeName*& rpObject )
 {
 	return GetRootChildObject( rpObject, SvDef::FqnConfiguration );
-}
-
-template< typename SVNotifyData >
-HRESULT SVObjectManagerClass::Notify( const SVGUID& rObjectID, SVNotifyData& rData )
-{
-	HRESULT Result = E_FAIL;
-
-	SVObjectClass* pObject = GetObject( rObjectID );
-
-	if( nullptr != pObject )
-	{
-		SVObjectNotifyTemplate< SVNotifyData >* pCommand = dynamic_cast< SVObjectNotifyTemplate< SVNotifyData >* >( pObject );
-
-		if( nullptr != pCommand )
-		{
-			Result = pCommand->ProcessNotifyData( rData );
-		}
-	}
-
-	return Result;
 }
 
 template< typename ObjectVisitor>

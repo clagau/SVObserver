@@ -1,14 +1,15 @@
 //*****************************************************************************
 /// \copyright COPYRIGHT (c) 2017 by Seidenader Maschinenbau GmbH
-/// \file BasicStructureHelper.h
+/// \file ConverterHelper.h
 /// All Rights Reserved
 //*****************************************************************************
-/// This file contains the helper function for the extern use.
+/// Converter helper functions between protobuf and other data types
 //******************************************************************************
 #pragma once
 
 #pragma region Includes
-#include "BasicStructure.h"
+#include "Definitions/StringTypeDef.h"
+#include "Variant.h"
 #pragma endregion Includes
 
 namespace SvPb
@@ -22,4 +23,9 @@ void GetGuidFromProtoBytes(const std::string& strguid, GUID& rGuid);
 //!GUID From protobufmessage 
 GUID GetGuidFromProtoBytes(const std::string& strguid);
 
+HRESULT ConvertVariantToProtobuf(const _variant_t& rPbVariant, int& rCount, SvPb::Variant* pVariant);
+HRESULT ConvertProtobufToVariant(const SvPb::Variant& rPbVariant, int Count, _variant_t& rVariant);
+
+// Converts a list into a protobuf Variant by generating a semicolon separated string (The list should not contain any ;)
+int ConvertStringListToProtobuf(const SvDef::StringSet& rList, SvPb::Variant* pVariant);
 } //namespace SvPb

@@ -14,7 +14,6 @@
 
 #include "SVRemoteControl.h"
 
-#include "SVSocketLibrary/SVSocketLibrary.h"
 #include "dlldatax.h"
 #include <google/protobuf/stubs/common.h>
 
@@ -53,11 +52,9 @@ extern "C" BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpRes
 	{
 		if( dwReason == DLL_PROCESS_ATTACH )
 		{
-			l_Status = (SvSol::SVSocketLibrary::Init() == SvSol::SVSocketError::Success );
 		}
 		else if( dwReason == DLL_PROCESS_DETACH )
 		{
-			SvSol::SVSocketLibrary::Destroy();
 			google::protobuf::ShutdownProtobufLibrary();
 		}
 	}

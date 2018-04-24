@@ -4378,7 +4378,7 @@ bool SVConfigurationObject::RenameOutputListInspectionNames(LPCTSTR OldInspectio
 	return m_pOutputObjectList->RenameInspection(OldInspectionName, NewInspectionName);
 }
 
-HRESULT SVConfigurationObject::GetInspectionItems(const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems) const
+HRESULT SVConfigurationObject::GetInspectionItems(const SvDef::StringSet& rNames, SVNameStorageResultMap& rItems) const
 {
 	typedef std::map<std::string, SVInspectionProcess*> SVInspectionMap;
 	typedef std::map<std::string, SVCommandInspectionGetItems::SVNameObjectSet> SVInspectionNameItemNameMap;
@@ -4387,18 +4387,18 @@ HRESULT SVConfigurationObject::GetInspectionItems(const SVNameSet& p_rNames, SVN
 
 	HRESULT l_Status = S_OK;
 
-	p_rItems.clear();
+	rItems.clear();
 
-	if (!(p_rNames.empty()))
+	if (!(rNames.empty()))
 	{
 		SVInspectionMap l_Inspections;
-		SVInspectionNameItemNameMap l_InspectionItems;
+		SVInspectionNameItemNameMap InspectionItems;
 
-		for (SVNameSet::const_iterator l_Iter = p_rNames.begin(); l_Iter != p_rNames.end(); ++l_Iter)
+		for (const auto&  rEntry : rNames)
 		{
 			SVObjectNameInfo l_Info;
 
-			SVObjectNameInfo::ParseObjectName(l_Info, *l_Iter);
+			SVObjectNameInfo::ParseObjectName(l_Info, rEntry);
 
 			if (std::string(SvDef::FqnInspections) == l_Info.m_NameArray[0])
 			{
@@ -4414,12 +4414,12 @@ HRESULT SVConfigurationObject::GetInspectionItems(const SVNameSet& p_rNames, SVN
 					if (nullptr != pInspection)
 					{
 						l_Inspections[pInspection->GetName()] = pInspection;
-						SVCommandInspectionGetItems::SVFullNameObjectPair newPair(*l_Iter, ObjectRef);
-						l_InspectionItems[pInspection->GetName()].insert(newPair);
+						SVCommandInspectionGetItems::SVFullNameObjectPair newPair(rEntry, ObjectRef);
+						InspectionItems[pInspection->GetName()].insert(newPair);
 					}
 					else
 					{
-						p_rItems[*l_Iter] = SVStorageResult(SVStorage(), SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST, 0);
+						rItems[rEntry] = SVStorageResult(SVStorage(), SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST, 0);
 
 						if (S_OK == l_Status)
 						{
@@ -4429,7 +4429,7 @@ HRESULT SVConfigurationObject::GetInspectionItems(const SVNameSet& p_rNames, SVN
 				}
 				else
 				{
-					p_rItems[*l_Iter] = SVStorageResult(SVStorage(), SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST, 0);
+					rItems[rEntry] = SVStorageResult(SVStorage(), SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST, 0);
 
 					if (S_OK == l_Status)
 					{
@@ -4439,7 +4439,7 @@ HRESULT SVConfigurationObject::GetInspectionItems(const SVNameSet& p_rNames, SVN
 			}
 			else
 			{
-				p_rItems[*l_Iter] = SVStorageResult(SVStorage(), SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST, 0);
+				rItems[rEntry] = SVStorageResult(SVStorage(), SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST, 0);
 
 				if (S_OK == l_Status)
 				{
@@ -4450,7 +4450,7 @@ HRESULT SVConfigurationObject::GetInspectionItems(const SVNameSet& p_rNames, SVN
 
 		SVAsyncCommandDeque l_AsyncCommands;
 
-		for (SVInspectionNameItemNameMap::const_iterator l_InspectionIter = l_InspectionItems.begin(); l_InspectionIter != l_InspectionItems.end(); ++l_InspectionIter)
+		for (SVInspectionNameItemNameMap::const_iterator l_InspectionIter = InspectionItems.begin(); l_InspectionIter != InspectionItems.end(); ++l_InspectionIter)
 		{
 			SVInspectionMap::iterator l_ProcessIter = l_Inspections.find(l_InspectionIter->first);
 
@@ -4474,7 +4474,7 @@ HRESULT SVConfigurationObject::GetInspectionItems(const SVNameSet& p_rNames, SVN
 				{
 					l_Status = l_CommandStatus;
 
-					p_rItems.clear();
+					rItems.clear();
 
 					break;
 				}
@@ -4483,7 +4483,7 @@ HRESULT SVConfigurationObject::GetInspectionItems(const SVNameSet& p_rNames, SVN
 			{
 				l_Status = E_UNEXPECTED;
 
-				p_rItems.clear();
+				rItems.clear();
 
 				break;
 			}
@@ -4505,7 +4505,7 @@ HRESULT SVConfigurationObject::GetInspectionItems(const SVNameSet& p_rNames, SVN
 					{
 						if (S_OK == l_CommandStatus)
 						{
-							p_rItems.insert(l_AsyncIter->GetCommandPtr()->GetResultItems().begin(), l_AsyncIter->GetCommandPtr()->GetResultItems().end());
+							rItems.insert(l_AsyncIter->GetCommandPtr()->GetResultItems().begin(), l_AsyncIter->GetCommandPtr()->GetResultItems().end());
 
 							if (S_OK == l_Status)
 							{
@@ -4523,7 +4523,7 @@ HRESULT SVConfigurationObject::GetInspectionItems(const SVNameSet& p_rNames, SVN
 					{
 						l_Status = l_CommandStatus;
 
-						p_rItems.clear();
+						rItems.clear();
 
 						l_AsyncCommands.clear();
 					}
@@ -4544,19 +4544,19 @@ HRESULT SVConfigurationObject::GetInspectionItems(const SVNameSet& p_rNames, SVN
 	return l_Status;
 }
 
-HRESULT SVConfigurationObject::GetRemoteInputItems(const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems) const
+HRESULT SVConfigurationObject::GetRemoteInputItems(const SvDef::StringSet& rNames, SVNameStorageResultMap& rItems) const
 {
 	HRESULT l_Status = S_OK;
 
-	p_rItems.clear();
+	rItems.clear();
 
-	if (!(p_rNames.empty()))
+	if (!(rNames.empty()))
 	{
-		for (SVNameSet::const_iterator l_Iter = p_rNames.begin(); l_Iter != p_rNames.end(); ++l_Iter)
+		for (const auto& rEntry : rNames)
 		{
 			SVObjectNameInfo l_Info;
 
-			SVObjectNameInfo::ParseObjectName(l_Info, *l_Iter);
+			SVObjectNameInfo::ParseObjectName(l_Info, rEntry);
 
 			if (std::string(SvDef::FqnRemoteInputs) == l_Info.m_NameArray[0])
 			{
@@ -4572,11 +4572,11 @@ HRESULT SVConfigurationObject::GetRemoteInputItems(const SVNameSet& p_rNames, SV
 
 					if (S_OK == l_TempStatus)
 					{
-						p_rItems[*l_Iter] = SVStorageResult(SVStorage(SVVisionProcessor::SVStorageValue, l_Value), S_OK, 0);
+						rItems[rEntry] = SVStorageResult(SVStorage(SVVisionProcessor::SVStorageValue, l_Value), S_OK, 0);
 					}
 					else
 					{
-						p_rItems[*l_Iter] = SVStorageResult(SVStorage(), E_INVALIDARG, 0);
+						rItems[rEntry] = SVStorageResult(SVStorage(), E_INVALIDARG, 0);
 
 						if (S_OK == l_Status)
 						{
@@ -4586,7 +4586,7 @@ HRESULT SVConfigurationObject::GetRemoteInputItems(const SVNameSet& p_rNames, SV
 				}
 				else
 				{
-					p_rItems[*l_Iter] = SVStorageResult(SVStorage(), SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST, 0);
+					rItems[rEntry] = SVStorageResult(SVStorage(), SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST, 0);
 
 					if (S_OK == l_Status)
 					{
@@ -4596,7 +4596,7 @@ HRESULT SVConfigurationObject::GetRemoteInputItems(const SVNameSet& p_rNames, SV
 			}
 			else
 			{
-				p_rItems[*l_Iter] = SVStorageResult(SVStorage(), SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST, 0);
+				rItems[rEntry] = SVStorageResult(SVStorage(), SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST, 0);
 
 				if (S_OK == l_Status)
 				{

@@ -61,10 +61,10 @@ message ResetObjectResponse
 message CreateModelRequest
 {
 	bytes patternAnalyzerID = 1; //GUID of the pattern-analyzer
-	int32 posX = 2; //x-Pos in the source image.
-	int32 posY = 3; //y-Pos in the source image.
-	int32 modelWidth = 4; //wanted model width.
-	int32 modelHeight = 5; //wanted model height.
+	sint32 posX = 2; //x-Pos in the source image.
+	sint32 posY = 3; //y-Pos in the source image.
+	sint32 modelWidth = 4; //wanted model width.
+	sint32 modelHeight = 5; //wanted model height.
 	string FileName = 6; //filename where the model should be saved.
 }
 
@@ -110,7 +110,7 @@ message ValidateAndSetEquationRequest
 // This is the message response-message from ValidateAndSetEquationRequest
 message ValidateAndSetEquationResponse
 {
-	int32 validateStatus = 1; //return validateSuccessful if text is valid, else it return the position of the first error in the text.
+	sint32 validateStatus = 1; //return validateSuccessful if text is valid, else it return the position of the first error in the text.
 	double result = 2; //if validateStatus is validateSuccessful, this variable contain the result of the equation. 
 	MessageContainerVector Messages = 3;  //list of error messages
 }

@@ -12,23 +12,17 @@
 #pragma once
 
 #pragma region Includes
-#include "SVObjectLibrary/SVObjectNotifyTemplate.h"
-#include "SVObjectLibrary/SVObserverTemplate.h"
 #include "SVSystemLibrary/SVCriticalSection.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVUtilityLibrary/SVGUID.h"
 
 #include "SVInfoStructs.h"
-#include "SVObjectCommandDataJson.h"
 #include "SVRemoteOutputObject.h"
 #include "SVXMLLibrary\SVObjectXMLWriter.h"
 
 #pragma endregion Includes
 
-class SVRemoteOutputGroup : 
-	public SVObjectClass,
-	public SVObjectNotifyTemplate< SVObjectCommandDataJsonPtr >,
-	public SVObserverTemplate< SVProductInfoStruct >
+class SVRemoteOutputGroup : public SVObjectClass
 {
 public:
 	SV_DECLARE_CLASS( SVRemoteOutputGroup );
@@ -38,13 +32,9 @@ public:
 
 	virtual ~SVRemoteOutputGroup();
 
-	virtual HRESULT ProcessNotifyData( SVObjectCommandDataJsonPtr& p_rDataPtr ) override;
-	virtual HRESULT ObserverUpdate( const SVProductInfoStruct& p_rData ) override;
-
 	BOOL Destroy();
 	BOOL Create();
 	BOOL Clear();
-	BOOL AttachStreamManager();
 
 	typedef SvXml::SVXMLMaterialsTree SVTreeType;
 
@@ -81,8 +71,6 @@ protected:
 	SVGUID m_PPQObjectId;
 
 	SVRemoteOutputObjectList m_RemoteOutputs;
-
-	long m_StreamDataItems;
 
 private:
 	SVRemoteOutputGroup( const SVRemoteOutputGroup& p_rhs );

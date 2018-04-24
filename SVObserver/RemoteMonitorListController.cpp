@@ -27,7 +27,6 @@
 #include "RemoteMonitorListHelper.h"
 #include "SVToolSet.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVFailStatusStreamManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"

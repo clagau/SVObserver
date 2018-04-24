@@ -44,8 +44,6 @@
 #include "SVInspectionProcess.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVInputObjectList.h"
-#include "SVStreamCommandFactory.h"
-#include "SVInputStreamManager.h"
 #include "InspectionEngine/SVTool.h"
 #include "SVCommandStreamManager.h"
 #include "SVCommandInspectionCollectImageData.h"
@@ -2831,7 +2829,7 @@ STDMETHODIMP CSVCommand::SVSetInputs(SAFEARRAY* psaNames, SAFEARRAY* psaValues, 
 		return Result;
 	}
 
-	SVNameSet				ParameterNames;
+	SvDef::StringSet		ParameterNames;
 	SVNameStorageMap		ParameterObjects;
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
@@ -4961,11 +4959,6 @@ STDMETHODIMP CSVCommand::SVConstructCommand(long p_CommandType, ISVRemoteCommand
 		if (nullptr == l_CommandPtr)
 		{
 			l_CommandPtr = SVFileSystemCommandFactorySingleton::Instance().CreateCommand(p_CommandType);
-		}
-
-		if (nullptr == l_CommandPtr)
-		{
-			l_CommandPtr = SVStreamCommandFactorySingleton::Instance().CreateCommand(p_CommandType);
 		}
 
 		if (nullptr != l_CommandPtr)

@@ -2,6 +2,8 @@
 //
 
 #include "stdafx.h"
+
+#include "SVHttpLibrary/WebsocketClient.h"
 #include "SVProtobuf/SVRC.h"
 #include "SVRPCLibrary/RPCClient.h"
 #include "SVRPCLibrary/SimpleClient.h"
@@ -13,7 +15,6 @@
 #include <boost/log/trivial.hpp>
 #include <boost/thread.hpp>
 #include "WebsocketLibrary\Definition.h"
-
 
 int main(int argc, char* argv[])
 {
@@ -57,29 +58,49 @@ int main(int argc, char* argv[])
 			{
 				break;
 			}
-			else if (words[0] == "g")
+			else if (words[0] == "m")
 			{
 				///GetMode
 				SvPb::GetDeviceModeRequest request;
 				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetDeviceModeRequest, SvPb::GetDeviceModeResponse> client(*pRpcClient);
 				auto res = client.request(std::move(request), Timeout).get();
 				BOOST_LOG_TRIVIAL(info) << res.DebugString();
+			}
+			else if (words[0] == "c")
+			{
+				///GetConfig
+				SvPb::GetConfigRequest request;
+				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetConfigRequest, SvPb::GetConfigResponse> client(*pRpcClient);
+				auto res = client.request(std::move(request), Timeout).get();
+				BOOST_LOG_TRIVIAL(info) << res.DebugString();
+				if (S_OK == res.hresult())
+				{
+					std::ofstream FileStream;
 
+					FileStream.open(_T("D:\\Temp\\Test.pac"), std::ofstream::out | std::ofstream::binary | std::ofstream::ate);
+					if (FileStream.is_open())
+					{
+						FileStream.write(res.filedata().c_str(), res.filedata().length());
+						FileStream.close();
+					}
+				}
 			}
 			else if (words[0] == "e" || words[0] == "r")
 			{
 			
 				SvPb::SetDeviceModeRequest request;
 				if(words[0] == "e")
-				request.set_mode(SvPb::EditMode);
+				{
+					request.set_mode(SvPb::EditMode);
+				}
 				else
+				{
 					request.set_mode(SvPb::RunMode);
+				}
 
-				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::SetDeviceModeRequest, SvPb::SetDeviceModeResponse> client(*pRpcClient);
+				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::SetDeviceModeRequest, SvPb::StandardResponse> client(*pRpcClient);
 				auto res = client.request(std::move(request), Timeout).get();
 				BOOST_LOG_TRIVIAL(info) << res.DebugString();
-			
-			
 			}
 		}
 

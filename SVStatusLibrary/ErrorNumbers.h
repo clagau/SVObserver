@@ -590,7 +590,6 @@ namespace SvStl
 	static const int Err_25015_GlobalNameAlreadyUsed = Gra_ErrorBase + 15;
 	static const int Err_25016_GlobalNameInvalid = Gra_ErrorBase + 16;
 	static const int Err_25017_RootChildCreate = Gra_ErrorBase + 17;
-	static const int Err_25018_Json_GetConfig = Gra_ErrorBase + 18;
 	static const int Err_25019_Json_PutConfig = Gra_ErrorBase + 19;
 	static const int Err_25020_MatroxLibraryNone = Gra_ErrorBase + 20;
 	static const int Err_25021_MatroxLibraryFatal = Gra_ErrorBase + 21;

@@ -683,8 +683,6 @@ namespace SVRemoteTest
 		private readonly String ConnectTag = "Connect";
 		private readonly String DisconnectTag = "Disconnect";
 		private readonly String AddressTag = "address";
-		private readonly String StartTag = "Start";
-		private readonly String StopTag = "Stop";
 		private readonly String GetProductTag = "GetProduct";
 		private readonly String GetRejectTag = "GetReject";
 		private readonly String ServerAddressTag = "ServerAddress";

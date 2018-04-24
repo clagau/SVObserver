@@ -3,9 +3,7 @@
 /// \file ProtoBufGetter.cpp
 /// All Rights Reserved 
 //*****************************************************************************
-/// PLEASE 
-/// ENTER 
-/// A DESCRIPTION
+/// Converts ProtoBuf values to the corresponding Com interfaces
 //******************************************************************************
 #include "stdafx.h"
 #include "ProtoBufGetter.h"
@@ -13,74 +11,83 @@
 #include "SVRemoteControl.h"
 #include "SVValueObject.h"
 #include "SVImageObject.h"
-#include "WebsocketLibrary/clientservice.h"
+#include "SVErrorObject.h"
+#include "SVErrorObjectList.h"
+#include "SVDataDefObject.h"
+#include "SVDataDefObjectList.h"
 #include "WebsocketLibrary/RunRequest.inl"
 #include "SVValueObjectList.h"
+#include "SVProtoBuf/ConverterHelper.h"
 
-CComVariant  GetComVariant(const SvPb::Variant& var)
+CComVariant  GetComVariant(const SvPb::Variant& rPbVariant, ULONG Elements /*= 0L*/)
 {
-	CComVariant comvar;
-	switch (var.value_case())
-	{
-		case SvPb::Variant::kBoolValue:
-		{
-			comvar.boolVal = static_cast<BOOL>(var.bool_value());
-			comvar.vt = VT_BOOL;
-			return comvar;
-		}
-		case SvPb::Variant::kInt32Value:
-		{
-			comvar.intVal = var.int32_value();
-			comvar.vt = VT_I4;
-			return comvar;
-		}
-		case SvPb::Variant::kUint32Value:
-		{
-			comvar.uintVal = var.uint32_value();
-			comvar.vt = VT_UI4;
-			return comvar;
-		}
-		case SvPb::Variant::kInt64Value:
-		{
-			comvar.llVal = var.int64_value();
-			comvar.vt = VT_I8;
-			return comvar;
-		}
-		case SvPb::Variant::kUint64Value:
-		{
-			comvar.ullVal = var.uint64_value();
-			comvar.vt = VT_UI8;
-			return comvar;
-		}
-		case SvPb::Variant::kStringValue:
-		{
-			_bstr_t bstr(var.string_value().c_str());
-			comvar.bstrVal = bstr.Detach();
-			comvar.vt = VT_BSTR;
-			return comvar;
-		}
-		case SvPb::Variant::kDoubleValue:
-		{
-			comvar.dblVal = var.double_value();
-			comvar.vt = VT_R8;
-			return comvar;
-		}
-		case SvPb::Variant::kFloatValue:
-		{
-			comvar.fltVal = var.float_value();
-			comvar.vt = VT_R4;
-			return comvar;
-		}
-	}
-	return comvar;
+	CComVariant Result;
+
+	_variant_t Variant;
+	SvPb::ConvertProtobufToVariant(rPbVariant, Elements, Variant);
+	Result = Variant;
+
+	return Result;
 }
 
-CComPtr<ISVImageObject> GetImageObjectPtr(int trigger, const std::string& name, const SvPb::CurImageId &imId, SvWsl::ClientServicePointer& rClientServicePointer)
+ValuePtr GetValueObjectPtr(int Count, const std::string& rName, const SvPb::Variant& rValue)
 {
-	CComObject<SVImageObject> *pImageObject(0);
+	CComObject<SVValueObject>* pValueObject{nullptr};
+	CComObject<SVValueObject>::CreateInstance(&pValueObject);
+	ValuePtr pvo(pValueObject);
+
+	_bstr_t bname(rName.c_str());
+	bool isArray = VT_ARRAY == (rValue.type() & VT_ARRAY);
+	pValueObject->put_Name(bname);
+	pValueObject->put_Status(0);
+	//If not array then Count is trigger count
+	pValueObject->put_TriggerCount(isArray ? 0 : Count);
+	//If array then Count is array size count
+	pValueObject->Add(GetComVariant(rValue, isArray ? Count : 0));
+	return pvo;
+}
+
+ErrorPtr GetErrorObjectPtr(LONG Status, const std::string& rName, const SvPb::Variant& rValue)
+{
+	CComObject<SVErrorObject>* pErrorObject{nullptr};
+	CComObject<SVErrorObject>::CreateInstance(&pErrorObject);
+	ErrorPtr pErrorObjectPtr(pErrorObject);
+
+	_bstr_t bName(rName.c_str());
+	pErrorObject->put_Name(bName);
+	pErrorObject->put_Status(Status);
+	return pErrorObjectPtr;
+}
+
+DataDefPtr GetDataDefPtr(const SvPb::DataDefinition& rDataDef)
+{
+	CComObject<SVDataDefObject>* pDataDef{nullptr};
+	CComObject<SVDataDefObject>::CreateInstance(&pDataDef);
+	DataDefPtr pDataDefPtr(pDataDef);
+
+	_bstr_t bName(rDataDef.name().c_str());
+	pDataDefPtr->put_Name(bName);
+	pDataDefPtr->put_Writable(rDataDef.writable());
+	pDataDefPtr->put_Published(rDataDef.published());
+	_bstr_t bType(rDataDef.type().c_str());
+	pDataDefPtr->put_DataType(bType);
+	for(int i=0; i < rDataDef.additionalinfo_size(); i++)
+	{
+		CComVariant Value;
+		Value.vt = VT_BSTR;
+		_bstr_t bTemp(rDataDef.additionalinfo(i).c_str());
+		Value.bstrVal = bTemp;
+		pDataDefPtr->Add(Value);
+	}
+	
+	return pDataDefPtr;
+}
+
+ImagePtr GetImageObjectPtr(int trigger, const std::string& name, const SvPb::CurImageId &imId, SvWsl::ClientServicePointer& rClientServicePointer)
+{
+	CComObject<SVImageObject> *pImageObject{nullptr};
 	CComObject<SVImageObject>::CreateInstance(&pImageObject);
-	CComPtr<ISVImageObject> pio(pImageObject);
-	pImageObject->SetImageSok(nullptr);
+	ImagePtr pio(pImageObject);
 	_bstr_t bname(name.c_str());
 	pImageObject->put_Name(bname);
 	pImageObject->put_TriggerCount(trigger);
@@ -89,22 +96,22 @@ CComPtr<ISVImageObject> GetImageObjectPtr(int trigger, const std::string& name, 
 	return pio;
 }
 
-CComPtr<ISVImageObject> GetImageObjectPtr(int trigger, const std::string& name, const SvPb::GetImageFromCurIdResponse& resp)
+ImagePtr GetImageObjectPtr(int Trigger, const std::string& rName, const std::string& rData)
 {
-	CComObject<SVImageObject> *pImageObject(0);
+	CComObject<SVImageObject> *pImageObject{nullptr};
 	CComObject<SVImageObject>::CreateInstance(&pImageObject);
-	CComPtr<ISVImageObject> pio(pImageObject);
-	pImageObject->SetImageSok(nullptr);
-	_bstr_t bname(name.c_str());
-	pImageObject->put_Name(bname);
-	pImageObject->put_TriggerCount(trigger);
+	ImagePtr pImageObjectPtr(pImageObject);
+
+	_bstr_t bName(rName.c_str());
+	pImageObject->put_Name(bName);
+	pImageObject->put_TriggerCount(Trigger);
 	//@Todo[MEC][8.00] [10.11.2017] avoid copying ??
-	if (resp.imagedata().rgb().length() > 0)
+	if (rData.length() > 0)
 	{
-		BYTE *buff = new BYTE[resp.imagedata().rgb().length()];
-		memcpy(buff, resp.imagedata().rgb().c_str(), resp.imagedata().rgb().length());
-		boost::shared_array<BYTE> b(buff);
-		pImageObject->SetLen((ULONG)resp.imagedata().rgb().length());
+		BYTE* pBuffer = new BYTE[rData.length()];
+		memcpy(pBuffer, rData.c_str(), rData.length());
+		boost::shared_array<BYTE> b(pBuffer);
+		pImageObject->SetLen(static_cast<ULONG> (rData.length()));
 		pImageObject->SetDIB(b);
 	}
 
@@ -113,35 +120,21 @@ CComPtr<ISVImageObject> GetImageObjectPtr(int trigger, const std::string& name, 
 		pImageObject->SetLen(0);
 	}
 
-
-	return pio;
-
-}
-CComPtr<ISVValueObject> GetValueObjectPtr(int trigger, const std::string& name, const SvPb::Variant& var)
-{
-	CComObject<SVValueObject>* pValueObject(0);
-	CComObject<SVValueObject>::CreateInstance(&pValueObject);
-	CComPtr<ISVValueObject> pvo(pValueObject);
-	_bstr_t bname(name.c_str());
-	pValueObject->put_Name(bname);
-	pValueObject->put_Status(0);
-	pValueObject->put_TriggerCount(trigger);
-	pValueObject->Add(GetComVariant(var));
-	return pvo;
+	return pImageObjectPtr;
 }
 
-
-CComPtr<ISVProductItems> GetProductPtr(SvWsl::ClientServicePointer& rClientServicePointer, const SvPb::Product &rResp)
+ProductPtr GetProductPtr(SvWsl::ClientServicePointer& rClientServicePointer, const SvPb::Product &rResp)
 {
-	CComObject<SVProductItems> *pProd = 0;
-	CComObject<SVProductItems>::CreateInstance(&pProd);
-	CComPtr<ISVProductItems> ppi(pProd);
+	CComObject<SVProductItems> *pProdItems = 0;
+	CComObject<SVProductItems>::CreateInstance(&pProdItems);
+	ProductPtr pProdItemsPtr(pProdItems);
+
 	bool bpImageName = rResp.images_size() == rResp.imagenames_size();
 	bool bpValueName = rResp.values_size() == rResp.valuenames_size();
 
 	for (int v = 0; v < rResp.values_size(); v++)
 	{
-		pProd->AddValue(GetValueObjectPtr(rResp.trigger(), rResp.valuenames(v), rResp.values(v)));
+		pProdItems->AddValue(GetValueObjectPtr(rResp.trigger(), rResp.valuenames(v), rResp.values(v)));
 	}
 	for (int i = 0; i < rResp.images_size(); i++)
 	{
@@ -154,17 +147,15 @@ CComPtr<ISVProductItems> GetProductPtr(SvWsl::ClientServicePointer& rClientServi
 			request.mutable_id()->set_slotindex(rResp.images(i).slotindex());
 			SvPb::GetImageFromCurIdResponse Imageresp = SvWsl::runRequest(*rClientServicePointer, &SvWsl::ClientService::getImageFromCurId, std::move(request)).get();
 
-			pProd->AddImage(GetImageObjectPtr(rResp.trigger(), rResp.imagenames(i), Imageresp));
+			pProdItems->AddImage(GetImageObjectPtr(rResp.trigger(), rResp.imagenames(i), Imageresp.imagedata().rgb()));
 		}
 		else
 		{
-			pProd->AddImage(
-				GetImageObjectPtr(rResp.trigger(), rResp.imagenames(i), rResp.images(i), rClientServicePointer)
-			);
+			pProdItems->AddImage(GetImageObjectPtr(rResp.trigger(), rResp.imagenames(i), rResp.images(i), rClientServicePointer));
 		}
 
 	}
-	return ppi;
+	return pProdItemsPtr;
 
 
 }
@@ -177,28 +168,103 @@ FailList GetFailList(SvWsl::ClientServicePointer& rClientServicePointer, const S
 	for (int i = 0; i < TriggerCount; i++)
 	{
 		list[i] = GetValueObjectListPtr(resp.products(i));
-	
 	}
+
 	return list;
 }
 
-CComPtr<ISVValueObjectList> GetValueObjectListPtr(const SvPb::Product& rProduct)
+ValueListPtr GetValueObjectListPtr(const SvPb::Product& rProduct)
 {
-	CComObject<SVValueObjectList> *vl = 0;
-	CComObject<SVValueObjectList>::CreateInstance(&vl);
-	CComPtr<ISVValueObjectList> vlp(vl);
+	CComObject<SVValueObjectList>* pValueList{nullptr};
+	CComObject<SVValueObjectList>::CreateInstance(&pValueList);
+	ValueListPtr pValueListPtr(pValueList);
+
 	if (rProduct.status() != SvPb::IsValid)
 	{
-			return vlp;
+			return pValueListPtr;
 		
 	}
 	for (int v = 0; v < rProduct.values_size() && v < rProduct.valuenames_size(); v++)
 	{
-		vl->Add(GetValueObjectPtr(rProduct.trigger(), rProduct.valuenames(v), rProduct.values(v)));
+		pValueList->Add(GetValueObjectPtr(rProduct.trigger(), rProduct.valuenames(v), rProduct.values(v)));
 	}
-	return vlp;
+	return pValueListPtr;
 }
 
 
+ProductPtr GetItemsPtr(const SvPb::GetItemsResponse& rResponse)
+{
+	CComObject<SVProductItems>* pProdItems{nullptr};
+	CComObject<SVProductItems>::CreateInstance(&pProdItems);
+	ProductPtr pProdItemsPtr(pProdItems);
 
+	for (int i=0; i < rResponse.valuelist_size(); i++)
+	{
+		const SvPb::Value& rValue = rResponse.valuelist(i);
+		pProdItems->AddValue(GetValueObjectPtr(rValue.count(),  rValue.name(), rValue.item()));
+	}
 
+	for (int i = 0; i < rResponse.imagelist_size(); i++)
+	{
+		const SvPb::Value& rValue = rResponse.imagelist(i);
+		if((VT_UI1 | VT_ARRAY) == rValue.item().type())
+		{
+			pProdItems->AddImage( GetImageObjectPtr(rValue.count(), rValue.name(), rValue.item().bytesval()));
+		}
+	}
+
+	for (int i = 0; i < rResponse.errorlist_size(); i++)
+	{
+		const SvPb::Value& rValue = rResponse.errorlist(i);
+		pProdItems->AddError(GetErrorObjectPtr(rValue.status(), rValue.name(), rValue.item()));
+	}
+	return pProdItemsPtr;
+}
+
+ProductPtr GetItemsPtr(const ::google::protobuf::RepeatedPtrField<::SvPb::Value>* pErrorList)
+{
+	CComObject<SVProductItems>* pProdItems {nullptr};
+	CComObject<SVProductItems>::CreateInstance(&pProdItems);
+	ProductPtr pProdItemsPtr(pProdItems);
+
+	if(nullptr != pErrorList)
+	{
+		for (int i = 0; i < pErrorList->size(); i++)
+		{
+			const SvPb::Value& rValue = pErrorList->Get(i);
+			pProdItems->AddError(GetErrorObjectPtr(rValue.status(), rValue.name(), rValue.item()));
+		}
+	}
+	return pProdItemsPtr;
+}
+
+ErrorListPtr GetErrorListPtr(const ::google::protobuf::RepeatedPtrField<::SvPb::Value>* pErrorProtoList)
+{
+	CComObject<SVErrorObjectList>* pErrorList{nullptr};
+	CComObject<SVErrorObjectList>::CreateInstance(&pErrorList);
+	ErrorListPtr pErrorListPtr(pErrorList);
+
+	if (nullptr != pErrorProtoList)
+	{
+		for (int i = 0; i < pErrorProtoList->size(); i++)
+		{
+			const SvPb::Value& rValue = pErrorProtoList->Get(i);
+			pErrorListPtr->Add(GetErrorObjectPtr(rValue.status(), rValue.name(), rValue.item()));
+		}
+	}
+	return pErrorListPtr;
+}
+
+DataDefListPtr GetDataDefList(const SvPb::GetDataDefinitionListResponse& rResponse)
+{
+	CComObject<SVDataDefObjectList>* pDataDefList {nullptr};
+	CComObject<SVDataDefObjectList>::CreateInstance(&pDataDefList);
+	DataDefListPtr pDataDefListPtr(pDataDefList);
+
+	for (int i = 0; i < rResponse.list_size(); i++)
+	{
+		pDataDefListPtr->Add(GetDataDefPtr(rResponse.list(i)));
+	}
+
+	return pDataDefListPtr;
+}

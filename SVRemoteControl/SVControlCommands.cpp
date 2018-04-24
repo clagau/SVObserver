@@ -12,17 +12,15 @@
 #include "stdafx.h"
 #include <atlenc.h>
 
-#pragma warning(push)
-#pragma warning(disable: 4482)
+//Moved to precompiled header: #include <fstream>
 
 #include "SVControlCommands.h"
 #include "SVStringConversions.h"
-#include "SVJsonCmdBuilder.h"
-#include "SVJsonValueGetter.h"
+#include "SVProductItems.h"
+#include "SVValueObject.h"
 #include "Logging.h"
-#include "SVJsonParser.h"
-#include "JsonDataHelper.h"
 #include "ProtoBufGetter.h"
+#include "ProtoBufSetter.h"
 #include "WebsocketLibrary\RunRequest.inl"
 #include "WebsocketLibrary\Definition.h"
 #pragma endregion Includes
@@ -73,200 +71,24 @@ CmdStatus.errorText = L"Unknown exception"; \
 SVLOG(CmdStatus.errorText.c_str()); \
 }
 
-
-typedef Json::FastWriter JsonWriter;
-template<>
-Json::Value SVJsonCmdBuilder::MkJson<CComVariant>(const CComVariant & var)
-{
-	switch (var.vt)
-	{
-		case VT_BSTR:
-			return Json::Value(SVStringConversions::to_utf8(_bstr_t(var.bstrVal)));
-		case VT_I4:
-			return Json::Value(var.iVal);
-		case VT_UI4:
-			return Json::Value(var.uiVal);
-		case VT_BOOL:
-			return Json::Value(static_cast<bool>(var.boolVal != VARIANT_FALSE));
-		case VT_R8:
-			return Json::Value(var.dblVal);
-		default:
-			return Json::Value();
-	}
-}
-
-template<>
-Json::Value SVJsonCmdBuilder::MkJson<ValueObjectPtr>(const ValueObjectPtr & ptr)
-{
-	Json::Value val(Json::objectValue);
-	_bstr_t name;
-	ptr->get_Name(name.GetAddress());
-	val[SVRC::vo::name] = SVStringConversions::to_utf8(name);
-	long status;
-	ptr->get_Status(&status);
-	val[SVRC::vo::status] = status;
-	ptr->get_TriggerCount(&status);
-	val[SVRC::vo::count] = status;
-	Json::Value arr(Json::arrayValue);
-	ptr->get_Count(&status);
-	for (long i = 0; i < status; ++i)
-	{
-		CComVariant var;
-		CComVariant idx = i;
-		ptr->get_Item(idx, &var);
-		arr.append(MkJson(var));
-	}
-
-	val[SVRC::vo::array] = arr;
-	return val;
-}
-
-template<>
-Json::Value SVJsonCmdBuilder::MkJson<ValueListPtr>(const ValueListPtr & ptr)
-{
-	Json::Value val(Json::arrayValue);
-	long count;
-	ptr->get_Count(&count);
-	for (long i = 0; i < count; ++i)
-	{
-		CComVariant idx = i;
-		CComVariant var;
-		ptr->get_Item(idx, &var);
-		ValueObjectPtr vptr((ISVValueObject*)var.pdispVal);
-		val.append(MkJson(vptr));
-	}
-	return val;
-}
-
-template<>
-Json::Value SVJsonCmdBuilder::MkJson<ImageObjectPtr>(const ImageObjectPtr & ptr)
-{
-	Json::Value val(Json::objectValue);
-	_bstr_t name;
-	ptr->get_Name(name.GetAddress());
-	val[SVRC::io::name] = SVStringConversions::to_utf8(name);
-	long status;
-	ptr->get_Status(&status);
-	val[SVRC::io::status] = status;
-	ptr->get_TriggerCount(&status);
-	val[SVRC::io::count] = status;
-
-	CComVariant l_TempImage;
-
-	ptr->GetImage(false, 1.0, BMP, &l_TempImage);
-
-	LONG len = 0;
-	::SafeArrayGetUBound(l_TempImage.parray, 1, &len);
-	len++;
-	BYTE * src = 0;
-	::SafeArrayAccessData(l_TempImage.parray, reinterpret_cast<void**>(&src));
-	int enc_len = ::Base64EncodeGetRequiredLength(len, ATL_BASE64_FLAG_NOCRLF);
-	boost::scoped_array<char>  enc_buff(new char[enc_len + 1]);
-	enc_buff[enc_len] = '\0';
-	::Base64Encode(src, len, enc_buff.get(), &enc_len, ATL_BASE64_FLAG_NOCRLF);
-	::SafeArrayUnaccessData(l_TempImage.parray);
-
-	val[SVRC::io::image] = enc_buff.get();
-
-	return val;
-}
-
-template<>
-Json::Value SVJsonCmdBuilder::MkJson<ImageListPtr>(const ImageListPtr & ptr)
-{
-	Json::Value val(Json::arrayValue);
-	long count;
-	ptr->get_Count(&count);
-	for (long i = 0; i < count; ++i)
-	{
-		CComVariant idx = i;
-		CComVariant var;
-		ptr->get_Item(idx, &var);
-		ImageObjectPtr vptr((ISVImageObject *)var.pdispVal);
-		val.append(MkJson(vptr));
-	}
-	return val;
-}
-
-template<>
-Json::Value SVJsonCmdBuilder::MkJson<ProductPtr>(const ProductPtr & ptr)
-{
-	Json::Value val(Json::objectValue);
-	ISVImageObjectList* pImageList(nullptr);
-	ptr->get_Images(&pImageList); // will call AddRef
-	ImageListPtr ilist(pImageList); // will call AddRef
-	val[SVRC::arg::images] = MkJson(ilist);
-	// Release the pointer obtained via get_Images
-	if (pImageList)
-	{
-		pImageList->Release();
-	}
-
-	ISVValueObjectList* pValueList(nullptr);
-	ptr->get_Values(&pValueList); // will call AddRef
-	ValueListPtr vlist(pValueList); // will call AddRef
-	val[SVRC::arg::values] = MkJson(vlist);
-	// Release the pointer obtained via get_Values
-	if (pValueList)
-	{
-		pValueList->Release();
-	}
-	return val;
-}
-
-inline Json::Value MkArray(const CComVariant & items)
-{
-	LONG l, u;
-	Json::Value arr(Json::arrayValue);
-	if (items.vt == VT_BSTR)
-	{
-		arr.append(SVStringConversions::to_utf8(_bstr_t(items.bstrVal, FALSE)));
-	}
-	else if (items.vt == (VT_ARRAY | VT_BSTR))
-	{
-		SAFEARRAY * p_array = items.parray;
-		::SafeArrayGetLBound(p_array, 1, &l);
-		::SafeArrayGetUBound(p_array, 1, &u);
-		BSTR * data;
-		::SafeArrayAccessData(p_array, (void**)&data);
-		for (LONG i = l; i <= u; ++i)
-		{
-			_bstr_t b(data[i], FALSE);
-			arr.append(SVStringConversions::to_utf8(b));
-			b.Detach();
-		}
-		::SafeArrayUnaccessData(p_array);
-	}
-	else
-	{
-		throw CAtlException(OLE_E_CANTCONVERT);
-	}
-	return arr;
-}
-
 SVControlCommands::SVControlCommands(NotifyFunctor p_Func)
 	: m_ServerName(""),
 	m_CommandPort(svr::cmdPort),
 	m_Connected(false),
 	m_Notifier(p_Func)
-	{
-	m_ClientSocket.SetConnectionStatusCallback(boost::bind(&SVControlCommands::OnConnectionStatus, this, _1));
-	m_ClientSocket.SetDataReceivedCallback(boost::bind(&SVControlCommands::OnControlDataReceived, this, _1));
+{
 }
 
 
 SVControlCommands::~SVControlCommands()
 {
-	m_ClientSocket.Disconnect();
-
 }
 
 HRESULT SVControlCommands::SetConnectionData(const _bstr_t& p_rServerName, unsigned short p_CommandPort, long timeout)
 {
 	HRESULT hr = S_OK;
-	m_ClientSocket.Disconnect();
 	m_WebClient.reset();
-	m_ObsClient.reset();
+	m_SvrcClient.reset();
 	m_Connected = false;
 	m_ServerName = p_rServerName;
 	m_CommandPort = p_CommandPort;
@@ -276,26 +98,17 @@ HRESULT SVControlCommands::SetConnectionData(const _bstr_t& p_rServerName, unsig
 
 		std::string host(m_ServerName);
 		m_WebClient.SetConnectionData(host, SvWsl::Default_Port);
-		m_ObsClient.SetConnectionData(host, SvWsl::Default_SecondPort);
+		m_SvrcClient.SetConnectionData(host, SvWsl::Default_SecondPort);
 	
-		SvSol::SVSocketError::ErrorEnum err = SvSol::SVSocketError::Success;
-		if ((err = m_ClientSocket.BuildConnection(m_ServerName, svr::cmdPort, timeout)) == SvSol::SVSocketError::Success)
+		//m_Connected represent only the client socket connection state 
+		m_Connected = true;
+		m_WebClient.WaitForConnect(timeout);
+		m_SvrcClient.WaitForConnect(timeout);
+		bool Connected = m_WebClient.isConnected() && m_SvrcClient.isConnected();
+		if (!Connected)
 		{
-			//m_Connected represent only the client socket connection state 
-			m_Connected = true;
-			m_WebClient.WaitForConnect(timeout);
-			m_ObsClient.WaitForConnect(timeout);
-			bool Connected = m_WebClient.isConnected() && m_ObsClient.isConnected();
-			if (!Connected)
-			{
-				HRESULT h = SvSol::SVSocketError::ConnectionTimeout;
-				SVLOG(h);
-			}
-		}
-		else
-		{
-			hr = SvSol::SVSocketError::HrFromSocketError(err);
-			SVLOG(hr);
+			HRESULT h = RPC_E_TIMEOUT;
+			SVLOG(h);
 		}
 	}
 	else
@@ -306,293 +119,255 @@ HRESULT SVControlCommands::SetConnectionData(const _bstr_t& p_rServerName, unsig
 	return hr;
 }
 
-HRESULT SVControlCommands::GetVPName(_bstr_t& p_rVPName, SVCommandStatus& p_rStatus)
+HRESULT SVControlCommands::GetVersion(_bstr_t& rSVObserverVersion, _bstr_t& rWebServerVersion, SVCommandStatus& rStatus)
 {
-	HRESULT l_Status = S_OK;
+	HRESULT Result{S_OK};
 
 	try
 	{
-		SVJsonCmdBuilder builder(SVRC::cmdName::getVPName);
-		SVControlResponse rsp = SendCommand(m_ClientSocket, builder.Value(), FiveSeconds);
-		p_rVPName = rsp.results[SVRC::result::name].bstrVal;
-		p_rStatus = rsp.m_Status;
-		SVLOG((l_Status = p_rStatus.hResult));
-	}
-	HANDLE_EXCEPTION(l_Status, p_rStatus)
-
-		return l_Status;
-}
-
-HRESULT SVControlCommands::GetVersion(_bstr_t& p_rSVObserverVersion, _bstr_t& p_rRunRejectServerVersion, SVCommandStatus& p_rStatus)
-{
-	HRESULT l_Status = S_OK;
-
-	try
-	{
-		SVJsonCmdBuilder builder(SVRC::cmdName::getVersion);
-		SVControlResponse rsp;
-		if (m_ClientSocket.IsConnected())
+		rSVObserverVersion = _bstr_t(L"N/A");
+		if (m_SvrcClient.isConnected())
 		{
-			CComVariant vrnt;
+			SvPb::GetVersionRequest Request;
+			SvPb::GetVersionResponse Response = SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(),
+																&SvWsl::SVRCClientService::GetVersion,
+																std::move(Request)).get();
 
-			rsp = SendCommand(m_ClientSocket, builder.Value(), FiveSeconds);
-			vrnt = rsp.results[SVRC::result::SVO_ver];
-			if (S_OK == vrnt.ChangeType(VT_BSTR))
-			{
-				p_rSVObserverVersion = vrnt.bstrVal;
-			}
+			rSVObserverVersion = _bstr_t(Response.version().c_str());
 		}
-		else
+
+		rWebServerVersion = _bstr_t(L"N/A");
+		if (m_WebClient.isConnected())
 		{
-			rsp.m_Status.hResult = E_ACCESSDENIED;
-			rsp.m_Status.errorText = NotConnectedToSVobserver;
+			SvPb::GetVersionRequest Request;
+			auto Response = SvWsl::runRequest(*m_WebClient.m_pClientService.get(), 
+											  &SvWsl::ClientService::getVersion, 
+											  std::move(Request)).get();
+			rWebServerVersion = _bstr_t(Response.version().c_str());
 		}
-		// get version from run reject server
-		if (m_ClientSocket.IsConnected())
+
+		SVLOG((Result = rStatus.hResult));
+	}
+	HANDLE_EXCEPTION(Result, rStatus)
+
+	return Result;
+}
+
+HRESULT SVControlCommands::GetState(unsigned long& rState, SVCommandStatus& rStatus)
+{
+	HRESULT Result{S_OK};
+
+	try
+	{
+		if (false == m_SvrcClient.isConnected())
 		{
-			p_rRunRejectServerVersion = _bstr_t(L"N/A");
-			if (m_WebClient.isConnected())
-			{
-				SvPb::GetVersionRequest req;
-				req.set_trigger_timeout(true);
-				auto version = SvWsl::runRequest(*m_WebClient.m_pClientService.get(), &SvWsl::ClientService::getVersion, std::move(req)).get();
-				p_rRunRejectServerVersion = _bstr_t(version.version().c_str());
-
-			}
+			throw std::invalid_argument("Not connected To SVObserver");
 		}
-		p_rStatus = rsp.m_Status;
-		SVLOG((l_Status = p_rStatus.hResult));
-	}
-	HANDLE_EXCEPTION(l_Status, p_rStatus)
 
-		return l_Status;
+		SvPb::GetStateRequest Request;
+		SvPb::GetStateResponse Response = SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(),
+															&SvWsl::SVRCClientService::GetState,
+															std::move(Request)).get();
+
+		rState = Response.state();
+	}
+	HANDLE_EXCEPTION(Result, rStatus)
+
+	return Result;
 }
 
-HRESULT SVControlCommands::GetState(unsigned long& p_rState, SVCommandStatus& p_rStatus)
+HRESULT SVControlCommands::GetOfflineCount(unsigned long& rCount, SVCommandStatus& rStatus)
 {
-	HRESULT l_Status = S_OK;
+	HRESULT Result{S_OK};
 
 	try
 	{
-		SVJsonCmdBuilder builder(SVRC::cmdName::getState);
-		SVControlResponse rsp = SendCommand(m_ClientSocket, builder.Value(), FiveSeconds);
-		p_rState = rsp.results[SVRC::result::state].lVal;
-		p_rStatus = rsp.m_Status;
-		SVLOG((l_Status = p_rStatus.hResult));
-	}
-	HANDLE_EXCEPTION(l_Status, p_rStatus)
+		if (false == m_SvrcClient.isConnected())
+		{
+			throw std::invalid_argument("Not connected To SVObserver");
+		}
 
-		return l_Status;
+		SvPb::GetOfflineCountRequest Request;
+		SvPb::GetOfflineCountResponse Response = SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(),
+															&SvWsl::SVRCClientService::GetOfflineCount,
+															std::move(Request)).get();
+		rCount = Response.count();
+	}
+	HANDLE_EXCEPTION(Result, rStatus)
+
+	return Result;
 }
 
-HRESULT SVControlCommands::GetOfflineCount(unsigned long& p_rCount, SVCommandStatus& p_rStatus)
+HRESULT SVControlCommands::GetConfigReport(BSTR& rReport, SVCommandStatus& rStatus)
 {
-	HRESULT l_Status = S_OK;
+	HRESULT Result{S_OK};
 
 	try
 	{
-		SVJsonCmdBuilder builder(SVRC::cmdName::getOLCount);
-		SVControlResponse rsp = SendCommand(m_ClientSocket, builder.Value(), FiveSeconds);
-		p_rCount = rsp.results[SVRC::result::count].lVal;
-		p_rStatus = rsp.m_Status;
-		SVLOG((l_Status = p_rStatus.hResult));
-	}
-	HANDLE_EXCEPTION(l_Status, p_rStatus)
+		if (!m_SvrcClient.isConnected())
+		{
+			throw std::invalid_argument("Not connected To SVObserver");
+		}
 
-		return l_Status;
+		SvPb::GetConfigReportRequest Request;
+		SvPb::GetConfigReportResponse Response = SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(),
+																 &SvWsl::SVRCClientService::GetConfigReport,
+																   std::move(Request)).get();
+
+		rReport = _bstr_t(Response.report().c_str()).Detach();
+		Result = Response.hresult();
+
+		SVLOG((Result = rStatus.hResult));
+	}
+	HANDLE_EXCEPTION(Result, rStatus)
+
+	return Result;
 }
 
-HRESULT SVControlCommands::GetConfigReport(BSTR& p_rReport, SVCommandStatus& p_rStatus)
-{
-	HRESULT l_Status = S_OK;
-
-	try
-	{
-		SVJsonCmdBuilder builder(SVRC::cmdName::getReport);
-		SVControlResponse rsp = SendCommand(m_ClientSocket, builder.Value(), FifteenSeconds);
-		p_rReport = ::SysAllocString(rsp.results[SVRC::result::report].bstrVal);
-		p_rStatus = rsp.m_Status;
-		SVLOG((l_Status = p_rStatus.hResult));
-	}
-	HANDLE_EXCEPTION(l_Status, p_rStatus)
-
-		return l_Status;
-}
-#ifdef   USE_WEBSOCKET
 HRESULT SVControlCommands::GetMode(unsigned long&  rMode, SVCommandStatus& rStatus)
 {
-	HRESULT Status = S_OK;
+	HRESULT Result{S_OK};
 	try
 	{
-		if (false == m_ObsClient.isConnected())
+		if (!m_SvrcClient.isConnected())
 		{
 			throw std::invalid_argument("Not connected To SVObserver");
 		}
 
-		SvPb::GetDeviceModeRequest DeviceModeRequest;
-		SvPb::GetDeviceModeResponse resp =
-			SvWsl::runRequest(*m_ObsClient.m_pClientService.get(), &SvWsl::SVRCClientService::GetDeviceMode,
-			std::move(DeviceModeRequest)).get();
+		SvPb::GetDeviceModeRequest Request;
+		SvPb::GetDeviceModeResponse Response = SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(), 
+																 &SvWsl::SVRCClientService::GetDeviceMode,
+																 std::move(Request)).get();
 
 		rStatus.hResult = S_OK;
-		auto ProtoMode = resp.mode();
+		auto ProtoMode = Response.mode();
 		//@Todo[MEC][8.00] [16.03.2018] make a function to conver enums
-		rMode = static_cast<unsigned long>(ProtoMode);
-		SVLOG(Status);
+		rMode = static_cast<unsigned long> (ProtoMode);
+		SVLOG(Result);
 	}
-	HANDLE_EXCEPTION(Status, rStatus)
-	return Status;
+	HANDLE_EXCEPTION(Result, rStatus)
+	return Result;
 }
 
-#else
-HRESULT SVControlCommands::GetMode(unsigned long& p_rMode, SVCommandStatus& p_rStatus)
+HRESULT SVControlCommands::SetMode(unsigned long Mode, SVCommandStatus& rStatus)
 {
-	HRESULT l_Status = S_OK;
-
+	HRESULT Result{S_OK};
 	try
 	{
-		SVJsonCmdBuilder builder(SVRC::cmdName::getMode);
-		SVControlResponse rsp = SendCommand(m_ClientSocket, builder.Value(), FiveSeconds);
-		p_rMode = rsp.results[SVRC::result::mode].lVal;
-		p_rStatus = rsp.m_Status;
-		SVLOG((l_Status = p_rStatus.hResult));
-	}
-	HANDLE_EXCEPTION(l_Status, p_rStatus)
-
-		return l_Status;
-}
-#endif
-#ifdef   USE_WEBSOCKET
-HRESULT SVControlCommands::SetMode(unsigned long Mode, bool UseSyncSocket, SVCommandStatus& rStatus)
-{
-	HRESULT Status = S_OK;
-	try
-	{
-		if (false == m_ObsClient.isConnected())
+		if (!m_SvrcClient.isConnected())
 		{
 			throw std::invalid_argument("Not connected To SVObserver");
 		}
 
-		SvPb::SetDeviceModeRequest SetModeRequest;
 		if (false == SvPb::DeviceModeType_IsValid(Mode))
 		{
 			throw std::invalid_argument("Invalid SVObserver mode");
 		}
 		
-		SetModeRequest.set_mode(static_cast<SvPb::DeviceModeType>(Mode));
-		SvPb::SetDeviceModeResponse SetModeResponse =
-			SvWsl::runRequest(*m_ObsClient.m_pClientService.get(), &SvWsl::SVRCClientService::SetDeviceMode,
-			std::move(SetModeRequest)).get();
+		SvPb::SetDeviceModeRequest Request;
+		Request.set_mode(static_cast<SvPb::DeviceModeType> (Mode));
+		SvPb::StandardResponse Response =
+			SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(), &SvWsl::SVRCClientService::SetDeviceMode,
+			std::move(Request)).get();
 
-		rStatus.hResult = S_OK;
-		auto ProtoMode = SetModeResponse.new_mode();
-		SVLOG(Status);
+		Result =  Response.hresult();
+		rStatus.hResult = Result;
+		SVLOG(Result);
 	}
-	HANDLE_EXCEPTION(Status, rStatus)
-	return Status;
+	HANDLE_EXCEPTION(Result, rStatus)
+	return Result;
 }
 
-
-
-
-#else
-
-HRESULT SVControlCommands::SetMode(unsigned long p_Mode, bool p_UseSyncSocket, SVCommandStatus& p_rStatus)
+HRESULT SVControlCommands::GetItems(CComVariant ItemNames, ISVProductItems** ppItems, SVCommandStatus& rStatus)
 {
-	HRESULT l_Status = S_OK;
+	HRESULT Result{S_OK};
 
 	try
 	{
-		SVControlResponse rsp;
-		if (m_ClientSocket.IsConnected())
+		if (!m_SvrcClient.isConnected())
 		{
-			SVLogDebug(L"DEBUG: Start SetMode");
-			SVJsonCmdBuilder builder(SVRC::cmdName::setMode);
-			builder.Argument(SVRC::arg::desiredMode, static_cast<long>(p_Mode));
-			rsp = SendCommand(m_ClientSocket, builder.Value(), TwoMinutes);
-			SVLogDebug(L"DEBUG: End SetMode");
+			throw std::invalid_argument("Not connected To SVObserver");
+		}
+
+		SvPb::GetItemsRequest Request;
+
+		if (ItemNames.vt == VT_BSTR)
+		{
+			std::string* pName = Request.add_itemnamelist();
+			*pName = SVStringConversions::to_utf8(_bstr_t(ItemNames.bstrVal, false));
+		}
+		else if (ItemNames.vt == (VT_ARRAY | VT_BSTR))
+		{
+			SAFEARRAY* pArray = ItemNames.parray;
+			LONG LowerBound;
+			LONG UpperBound;
+
+			::SafeArrayGetLBound(pArray, 1, &LowerBound);
+			::SafeArrayGetUBound(pArray, 1, &UpperBound);
+			BSTR* pData;
+			::SafeArrayAccessData(pArray, reinterpret_cast<void**> (&pData));
+			for (LONG i = LowerBound; i <= UpperBound; i++)
+			{
+				_bstr_t bString(pData[i], false);
+
+				std::string* pName = Request.add_itemnamelist();
+				*pName = SVStringConversions::to_utf8(bString);
+				bString.Detach();
+			}
+			::SafeArrayUnaccessData(pArray);
 		}
 		else
 		{
-			rsp.m_Status.hResult = E_ACCESSDENIED;
-			rsp.m_Status.errorText = NotConnectedToSVobserver;
-		}
-		p_rStatus = rsp.m_Status;
-		SVLOG((l_Status = p_rStatus.hResult));
-
-	}
-	HANDLE_EXCEPTION(l_Status, p_rStatus)
-
-		return l_Status;
-	}
-#endif 
-HRESULT SVControlCommands::GetItems(CComVariant p_pItemNames, ISVProductItems** p_ppItems, LONG p_scale, SVCommandStatus& p_rStatus)
-{
-	HRESULT l_Status = S_OK;
-
-	try
-	{
-		SVJsonCmdBuilder builder(SVRC::cmdName::getItems);
-		builder.Argument(SVRC::arg::item_names, MkArray(p_pItemNames));
-		builder.Argument(SVRC::arg::scale, Json::Value(p_scale));
-
-		SVControlResponse rsp = SendCommand(m_ClientSocket, builder.Value(), ThirtySeconds);
-		if (SUCCEEDED(rsp.m_Status.hResult))
-		{
-			if (rsp.results[SVRC::result::items].vt == VT_DISPATCH && rsp.results[SVRC::result::items].pdispVal)
-			{
-				l_Status = rsp.results[SVRC::result::items].pdispVal->QueryInterface(IID_ISVProductItems, reinterpret_cast<void**>(p_ppItems));
-			}
-			else
-			{
-				l_Status = E_POINTER;
-				SVLOG(l_Status);
-			}
+			throw CAtlException(OLE_E_CANTCONVERT);
 		}
 
-		p_rStatus = rsp.m_Status;
+		SvPb::GetItemsResponse Response = SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(), 
+															&SvWsl::SVRCClientService::GetItems, std::move(Request)).get();
 
-		if (l_Status == S_OK)
-		{
-			l_Status = rsp.m_Status.hResult;
-			SVLOG(l_Status);
-		}
+		GetItemsPtr(Response)->QueryInterface(IID_ISVProductItems, reinterpret_cast<void**>(ppItems));
+
+		Result = Response.hresult();
+		rStatus.hResult = Result;
+		SVLOG(Result);
 	}
-	HANDLE_EXCEPTION(l_Status, p_rStatus)
+	HANDLE_EXCEPTION(Result, rStatus)
 
-		return l_Status;
+	return Result;
 }
 
-HRESULT SVControlCommands::SetItems(ISVProductItems* p_pItems, ISVProductItems ** faults, bool p_UseSyncSocket, SVCommandStatus& p_rStatus)
+HRESULT SVControlCommands::SetItems(ISVProductItems* pItems, ISVProductItems ** ppErrors, SVCommandStatus& rStatus)
 {
-	HRESULT l_Status = S_OK;
-	SVLogDebug(L"DEBUG: Start of SetItems");
+	HRESULT Result{S_OK};
 
 	try
 	{
-		SVJsonCmdBuilder builder(SVRC::cmdName::setItems);
-		builder.Argument(SVRC::arg::item_names, builder.MkJson(ProductPtr(p_pItems)));
-		SVControlResponse rsp = SendCommand(m_ClientSocket, builder.Value(), 30);
-		if (SUCCEEDED(rsp.m_Status.hResult))
+		if (!m_SvrcClient.isConnected())
 		{
-			typedef CComObject<SVProductItems> Product;
-			Product * pi = 0;
-			rsp.m_Status.hResult = Product::CreateInstance(&pi);
-			if (VT_DISPATCH == rsp.results[SVRC::result::faults].vt && rsp.results[SVRC::result::faults].pdispVal)
-			{
-				pi->AddRef();
-				pi->put_Errors((ISVErrorObjectList *)rsp.results[SVRC::result::faults].pdispVal);
-				*faults = pi;
-			}
+			throw std::invalid_argument("Not connected To SVObserver");
 		}
-		l_Status = rsp.m_Status.hResult;
-		SVLOG(l_Status);
-		p_rStatus = rsp.m_Status;
-		SVLogDebug(L"DEBUG: End of SetItems");
-	}
-	HANDLE_EXCEPTION(l_Status, p_rStatus)
 
-		return l_Status;
+		if(nullptr != pItems)
+		{
+			SvPb::SetItemsRequest Request;
+			SetItemsRequest(ProductPtr(pItems), &Request);
+			SvPb::SetItemsResponse Response = SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(),
+																&SvWsl::SVRCClientService::SetItems, std::move(Request)).get();
+
+			GetItemsPtr(Response.mutable_errorlist())->QueryInterface(IID_ISVProductItems, reinterpret_cast<void**>(ppErrors));
+
+			Result = Response.hresult();
+		}
+		else
+		{
+			Result = E_POINTER;
+		}
+
+		rStatus.hResult = Result;
+		SVLOG(Result);
+	}
+	HANDLE_EXCEPTION(Result, rStatus)
+
+	return Result;
 }
 
 static bool IsValidFilePath(const std::string& rFilePath)
@@ -609,1043 +384,342 @@ static bool IsValidFilePath(const std::string& rFilePath)
 	return bRetVal;
 }
 
-HRESULT SVControlCommands::GetConfig(const _bstr_t& p_rFilePath, long& p_rCancelFlag, bool p_UseSyncSocket, SVCommandStatus& p_rStatus)
+HRESULT SVControlCommands::GetConfig(const _bstr_t& rFilePath, SVCommandStatus& rStatus)
 {
-	HRESULT l_Status = S_OK;
+	HRESULT Result{S_OK};
 
 	try
 	{
-		std::string fPath = SVStringConversions::to_utf8(p_rFilePath);
+		if (!m_SvrcClient.isConnected())
+		{
+			throw std::invalid_argument("Not connected To SVObserver");
+		}
+
+		std::string fPath = SVStringConversions::to_utf8(rFilePath);
 		if (IsValidFilePath(fPath))
 		{
-			SVJsonCmdBuilder builder(SVRC::cmdName::getConfig);
-			builder.Argument(SVRC::arg::filePath, fPath);
-			SVControlResponse rsp = SendCommand(m_ClientSocket, builder.Value());
-			if (rsp.m_Status.hResult == S_OK)
+			SvPb::GetConfigRequest Request;
+			Request.set_filename(fPath.c_str());
+			SvPb::GetConfigResponse Response = SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(),
+																&SvWsl::SVRCClientService::GetConfig,
+																std::move(Request)).get();
+			Result = Response.hresult();
+			if (S_OK == Result)
 			{
-				if (rsp.results[SVRC::result::contents].vt == (VT_I1 | VT_BYREF) && rsp.results[SVRC::result::contents].pcVal)
-				{
-					char* contents = rsp.results[SVRC::result::contents].pcVal;
-					int str_sz = static_cast<int>(::strlen(contents));
+				std::ofstream FileStream;
 
-					int buff_len = ::Base64DecodeGetRequiredLength(str_sz);
-					HANDLE hFile = ::CreateFile(p_rFilePath, GENERIC_WRITE | GENERIC_READ, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-					if (INVALID_HANDLE_VALUE != hFile)
-					{
-						HANDLE hMapping = ::CreateFileMapping(hFile, NULL, PAGE_READWRITE, 0, buff_len, NULL);
-						BYTE* buff = 0;
-						if (hMapping && (buff = (BYTE *)::MapViewOfFile(hMapping, FILE_MAP_WRITE, 0, 0, buff_len)) != 0)
-						{
-							::Base64Decode(contents, str_sz, buff, &buff_len);
-							::UnmapViewOfFile(buff);
-						}
-						else
-						{
-							l_Status = ::GetLastError();
-							SVLOG(l_Status);
-						}
-						::CloseHandle(hMapping);
-						::SetFilePointer(hFile, buff_len, NULL, FILE_BEGIN);
-						::SetEndOfFile(hFile);
-						::CloseHandle(hFile);
-					}
-					else
-					{
-						l_Status = ::GetLastError();
-						SVLOG(l_Status);
-					}
-					::free(contents);
+				FileStream.open(fPath.c_str(), std::ofstream::out | std::ofstream::binary | std::ofstream::trunc);
+				if (FileStream.is_open())
+				{
+					FileStream.write(Response.filedata().c_str(), Response.filedata().length());
+					FileStream.close();
 				}
-				rsp.results[SVRC::result::contents].Clear();
 			}
 			else
 			{
-				l_Status = rsp.m_Status.hResult;
-				SVLOG(l_Status);
+				SVLOG(Result);
 			}
-			p_rStatus = rsp.m_Status;
 		}
 		else
 		{
-			l_Status = E_INVALIDARG;
-			SVLOG(l_Status);
+			Result = E_INVALIDARG;
+			SVLOG(Result);
 
-			p_rStatus.hResult = l_Status;
-			p_rStatus.errorText = L"Invalid File Path";
+			rStatus.hResult = Result;
+			rStatus.errorText = L"Invalid File Path";
 		}
 	}
-	HANDLE_EXCEPTION(l_Status, p_rStatus)
+	HANDLE_EXCEPTION(Result, rStatus)
 
-		return l_Status;
+	return Result;
 }
 
-HRESULT SVControlCommands::PutConfig(const _bstr_t& p_rFilePath, const _bstr_t& p_rProductName, long& p_rCancelFlag, bool p_UseSyncSocket, SVCommandStatus& p_rStatus)
+HRESULT SVControlCommands::PutConfig(const _bstr_t& rFilePath, SVCommandStatus& rStatus)
 {
-	HRESULT l_Status = S_OK;
+	HRESULT Result {S_OK};
 
 	try
 	{
-		HANDLE hFile = ::CreateFile(p_rFilePath, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-		if (hFile == INVALID_HANDLE_VALUE)
+		if (!m_SvrcClient.isConnected())
 		{
-			l_Status = E_INVALIDARG;
-			SVControlResponse rsp;
-			rsp.m_Status.hResult = l_Status;
-			rsp.m_Status.errorText = L"File Not Found - ";
-			rsp.m_Status.errorText += p_rFilePath;
-			SVLOG(l_Status);
-			p_rStatus = rsp.m_Status;
+			throw std::invalid_argument("Not connected To SVObserver");
 		}
-		else
+
+		std::string fPath = SVStringConversions::to_utf8(rFilePath);
+		if (IsValidFilePath(fPath))
 		{
-			::CloseHandle(hFile);
-			std::string fPath = SVStringConversions::to_utf8(p_rFilePath);
-			std::string productName = SVStringConversions::to_utf8(p_rProductName);
-			SVJsonCmdBuilder builder(SVRC::cmdName::putConfig);
-			builder.Argument(SVRC::arg::filePath, fPath);
-			builder.Argument(SVRC::arg::productName, productName);
-			builder.Argument(SVRC::arg::contents, "");
-			SVControlResponse rsp = SendCommandWithFile(m_ClientSocket, builder.Value(), p_rFilePath);
-			l_Status = rsp.m_Status.hResult;
-			SVLOG(l_Status);
-			p_rStatus = rsp.m_Status;
-		}
-	}
-	HANDLE_EXCEPTION(l_Status, p_rStatus)
+			std::ifstream FileStream;
 
-		return l_Status;
-}
-
-HRESULT SVControlCommands::GetFile(const _bstr_t& p_rSourcePath, const _bstr_t& p_rDestinationPath, long& p_rCancelFlag, bool p_UseSyncSocket, SVCommandStatus& p_rStatus)
-{
-	HRESULT l_Status = S_OK;
-
-	try
-	{
-		std::string fSourcePath = SVStringConversions::to_utf8(p_rSourcePath);
-		std::string fDestPath = SVStringConversions::to_utf8(p_rDestinationPath);
-		SVJsonCmdBuilder builder(SVRC::cmdName::getFile);
-		builder.Argument(SVRC::arg::sourcePath, fSourcePath);
-		builder.Argument(SVRC::arg::destinationPath, fDestPath);
-		SVControlResponse rsp = SendCommand(m_ClientSocket, builder.Value(), 600);
-		if (rsp.m_Status.hResult == S_OK)
-		{
-			CHAR * contents = rsp.results[SVRC::result::contents].pcVal;
-			int str_sz = static_cast<int>(::strlen(contents));
-
-			int buff_len = ::Base64DecodeGetRequiredLength(str_sz);
-			HANDLE hFile = ::CreateFile(p_rDestinationPath, GENERIC_WRITE | GENERIC_READ, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-			HANDLE hMapping = ::CreateFileMapping(hFile, NULL, PAGE_READWRITE, 0, buff_len, NULL);
-			BYTE * buff = 0;
-			if (hMapping && (buff = (BYTE *)::MapViewOfFile(hMapping, FILE_MAP_WRITE, 0, 0, buff_len)) != 0)
+			FileStream.open(fPath.c_str(), std::ifstream::in | std::ifstream::binary | std::ifstream::ate);
+			if (FileStream.is_open())
 			{
-				::Base64Decode(contents, str_sz, buff, &buff_len);
-				::UnmapViewOfFile(buff);
-			}
-			else
-			{
-				l_Status = ::GetLastError();
-				SVLOG(l_Status);
-			}
-			::CloseHandle(hMapping);
-			::SetFilePointer(hFile, buff_len, NULL, FILE_BEGIN);
-			::SetEndOfFile(hFile);
-			::CloseHandle(hFile);
-		}
-		else
-		{
-			l_Status = rsp.m_Status.hResult;
-			SVLOG(l_Status);
-		}
-		p_rStatus = rsp.m_Status;
-	}
-	HANDLE_EXCEPTION(l_Status, p_rStatus)
-
-		return l_Status;
-}
-
-HRESULT SVControlCommands::PutFile(const _bstr_t& p_rSourcePath, const _bstr_t& p_rDestinationPath, long& p_rCancelFlag, bool p_UseSyncSocket, SVCommandStatus& p_rStatus)
-{
-	HRESULT l_Status = S_OK;
-
-	try
-	{
-		std::string fSourcePath = SVStringConversions::to_utf8(p_rSourcePath);
-		std::string fDestPath = SVStringConversions::to_utf8(p_rDestinationPath);
-		SVJsonCmdBuilder builder(SVRC::cmdName::putFile);
-		builder.Argument(SVRC::arg::sourcePath, fSourcePath);
-		builder.Argument(SVRC::arg::destinationPath, fDestPath);
-		HANDLE hFile = ::CreateFile(p_rSourcePath, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-		if (hFile == INVALID_HANDLE_VALUE)
-		{
-			l_Status = E_INVALIDARG;
-			SVLOG(l_Status);
-		}
-		else
-		{
-			DWORD file_sz;
-			file_sz = ::GetFileSize(hFile, NULL);
-			HANDLE hMapping = ::CreateFileMapping(hFile, NULL, PAGE_READONLY, 0, file_sz, NULL);
-			BYTE * buff = (BYTE *)::MapViewOfFile(hMapping, FILE_MAP_READ, 0, 0, file_sz);
-			int enc_len = ::Base64EncodeGetRequiredLength(file_sz, ATL_BASE64_FLAG_NOCRLF);
-			boost::scoped_array<char> enc_buff(new char[enc_len + 1]);
-			enc_buff[enc_len] = '\0';
-			::Base64Encode(buff, file_sz, enc_buff.get(), &enc_len, ATL_BASE64_FLAG_NOCRLF);
-
-			::UnmapViewOfFile(buff);
-			::CloseHandle(hMapping);
-			::CloseHandle(hFile);
-
-			builder.Argument(SVRC::arg::contents, enc_buff.get());
-			SVControlResponse rsp = SendCommand(m_ClientSocket, builder.Value(), 600);
-			l_Status = rsp.m_Status.hResult;
-			SVLOG(l_Status);
-			p_rStatus = rsp.m_Status;
-		}
-	}
-	HANDLE_EXCEPTION(l_Status, p_rStatus)
-
-		return l_Status;
-}
-
-HRESULT SVControlCommands::GetDataDefinitionList(const _bstr_t& p_rInspectionName, long p_ListType, ISVDataDefObjectList** p_ppEntries, SVCommandStatus& p_rStatus)
-{
-	HRESULT l_Status = S_OK;
-
-	try
-	{
-		SVJsonCmdBuilder builder(SVRC::cmdName::getDefList);
-
-		std::string l_InspectionName = SVStringConversions::to_utf8(p_rInspectionName);
-		builder.Argument(SVRC::arg::inspectionName, l_InspectionName);
-		builder.Argument(SVRC::arg::listType, Json::Value(p_ListType));
-
-		SVControlResponse rsp = SendCommand(m_ClientSocket, builder.Value(), 30);
-		if (SUCCEEDED(rsp.m_Status.hResult))
-		{
-			if (rsp.results[SVRC::result::items].vt == VT_DISPATCH && rsp.results[SVRC::result::items].pdispVal)
-			{
-				l_Status = rsp.results[SVRC::result::items].pdispVal->QueryInterface(IID_ISVDataDefObjectList, reinterpret_cast<void**>(p_ppEntries));
-			}
-			else
-			{
-				l_Status = E_POINTER;
-				SVLOG(l_Status);
-			}
-		}
-
-		p_rStatus = rsp.m_Status;
-
-		if (l_Status == S_OK)
-		{
-			l_Status = rsp.m_Status.hResult;
-			SVLOG(l_Status);
-		}
-	}
-	HANDLE_EXCEPTION(l_Status, p_rStatus)
-
-		return l_Status;
-}
-
-
-std::string trim(const std::string & str) // for debugging 
-{
-	if (str.length() < 250)
-	{
-		return str;
-	}
-	return str.substr(0, 60) + " ... " + str.substr(str.length() - 140);
-}
-
-template<typename API>
-struct port;
-
-
-// This function sends to the Run/Reject server
-template<typename API>
-SVControlResponse SVControlCommands::SendRequest(SvSol::SVClientSocket<API> & sock, const Json::Value & req, unsigned long timeout)
-{
-	SVControlResponse rsp;
-	JsonWriter writer;
-	typedef SvSol::Err Err;
-	Err error = Err::Success;
-	bytes buff;
-	u_long sz = 0;
-	if (!sock.IsConnected())
-	{
-		short portNo = port<API>::no;
-		error = sock.Connect(m_ServerName, portNo);
-	}
-	if (Err::Success == error
-		&& Err::Success == (error = sock.Write(writer.write(req), true))
-		&& Err::Success == (error = sock.ReadAll(buff, sz, true)))
-	{
-		if (sz > 0)
-		{
-			Json::Reader reader;
-			Json::Value val;
-			char * buf_start = reinterpret_cast<char *>(buff.get());
-			reader.parse(buf_start, buf_start + sz, val, false);
-			///The getter set the imagesocket in imageobject
-			SVJsonValueGetter<SVControlResponse> getter(this);
-			rsp = getter(val);
-		}
-		else
-		{
-			error = Err::NoData;
-			rsp.m_Status.hResult = SvSol::SVSocketError::HrFromSocketError(error);
-			SVLOG((rsp.m_Status.errorText = SVStringConversions::to_utf16(SvSol::SVSocketError::GetErrorText(error))).c_str());
-		}
-	}
-	else
-	{
-		rsp.m_Status.hResult = SvSol::SVSocketError::HrFromSocketError(error);
-		SVLOG((rsp.m_Status.errorText = SVStringConversions::to_utf16(SvSol::SVSocketError::GetErrorText(error))).c_str());
-	}
-	sock.Disconnect();
-	return rsp;
-}
-
-// This function sends to SVObserver
-template<typename API>
-SVControlResponse SVControlCommands::SendCommand(SvSol::SVRCClientSocket<API> & p_rSocket, const Json::Value & p_cmd, unsigned long p_TimeoutInSeconds)
-{
-	SVControlResponse l_Status;
-
-	if (m_Command.IsJsonCommandEmpty())
-	{
-		JsonWriter writer;
-		std::string cmd = writer.write(p_cmd);
-
-		if (!cmd.empty())
-		{
-			try
-			{
-				l_Status.m_Status.hResult = m_Command.SetJsonCommand(cmd, p_TimeoutInSeconds * 1000);
-
-				if (l_Status.m_Status.hResult == S_OK)
+				size_t FileSize(0);
+				FileSize = static_cast<size_t> (FileStream.tellg());
+				std::vector<char> FileData;
+				if(0 != FileSize)
 				{
-					SVLOG((l_Status.m_Status.hResult = WriteToSocket(cmd, p_rSocket)));
+					FileData.resize(FileSize);
+					FileStream.seekg(0, std::ios::beg);
+					FileStream.read(&FileData.at(0), FileSize);
+					FileStream.close();
 
-					if (l_Status.m_Status.hResult == S_OK)
-					{
-						SVLOG((l_Status.m_Status.hResult = m_Command.WaitForRequest(p_TimeoutInSeconds * 1000)));
-
-						if (l_Status.m_Status.hResult == S_OK)
-						{
-							const Json::Value& val = m_Command.GetJsonResults();
-							SVJsonValueGetter<SVControlResponse> rspGetter(this);
-							l_Status = rspGetter(val);
-						}
-					}
-				}
-				if (l_Status.m_Status.errorText.empty())
-				{
-					l_Status.m_Status.FormatMessage();
-				}
-			}
-			catch (std::exception & ex)
-			{
-				SVLOG((l_Status.m_Status.hResult = E_UNEXPECTED));
-				l_Status.m_Status.errorText = SVStringConversions::to_utf16(ex.what());
-			}
-
-			m_Command.ClearJsonCommand();
-		}
-		else
-		{
-			SVLOG((l_Status.m_Status.hResult = E_INVALIDARG));
-			l_Status.m_Status.errorText = L"Command string empty.";
-		}
-	}
-	else
-	{
-		SVLOG((l_Status.m_Status.hResult = STG_E_INUSE));
-		l_Status.m_Status.errorText = L"System busy.";
-	}
-
-	return l_Status;
-}
-
-static void findToken(const SVJson::Parser::TokenList& tokens, std::istream& is, const std::string& tokenName, std::string& value)
-{
-	is.clear(); // clear error/eof bits
-
-	for (SVJson::Parser::TokenList::const_iterator it = tokens.begin(); it != tokens.end(); ++it)
-	{
-		const SVJson::jsontok_t& rToken = (*it);
-		if (SVJson::JSON_STRING == rToken.type)
-		{
-			int len = rToken.end - rToken.start;
-			if (len == tokenName.length())
-			{
-				char key[80];
-				// read the key
-				is.seekg(rToken.start, std::ios_base::beg);
-				is.read(key, len);
-				int amtRead = static_cast<int>(is.gcount());
-				if (amtRead == len)
-				{
-					key[len] = 0;
-					if (tokenName == key)
-					{
-						++it;
-						const SVJson::jsontok_t& rToken = (*it);
-						if (rToken.type == SVJson::JSON_STRING)
-						{
-							int len = rToken.end - rToken.start;
-							boost::scoped_array<char> buff(new char[len + 1]);
-							if (buff.get())
-							{
-								char* ptr = buff.get();
-								is.seekg(rToken.start, std::ios_base::beg);
-								is.read(ptr, len);
-								int amtRead = static_cast<int>(is.gcount());
-								if (amtRead == len)
-								{
-									ptr[len] = 0;
-									value = ptr;
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-}
-
-static void findToken(const SVJson::Parser::TokenList& tokens, std::istream& is, const std::string& tokenName, POINT& pos)
-{
-	is.clear(); // clear error/eof bits
-
-	for (SVJson::Parser::TokenList::const_iterator it = tokens.begin(); it != tokens.end(); ++it)
-	{
-		const SVJson::jsontok_t& rToken = (*it);
-		if (SVJson::JSON_STRING == rToken.type)
-		{
-			int len = rToken.end - rToken.start;
-			if (len == tokenName.length())
-			{
-				char key[80];
-				// read the key
-				is.seekg(rToken.start, std::ios_base::beg);
-				is.read(key, len);
-				int amtRead = static_cast<int>(is.gcount());
-				if (amtRead == len)
-				{
-					key[len] = 0;
-					if (tokenName == key)
-					{
-						++it;
-						const SVJson::jsontok_t& rToken = (*it);
-						if (rToken.type == SVJson::JSON_STRING)
-						{
-							pos.x = rToken.start;
-							pos.y = rToken.end;
-						}
-					}
-				}
-			}
-		}
-	}
-}
-
-// This method will decode the base64 encoded stream and write it to a file
-static HRESULT ExtractBase64Contents(std::istream& is, std::stringstream& ss)
-{
-	HRESULT hr = S_FALSE;
-	SVJson::Parser parser;
-	SVJson::jsonerr_t rc = parser.Parse(SVJson::ParseStreamAdapter(is));
-	if (rc == SVJson::JSON_SUCCESS)
-	{
-		const SVJson::Parser::TokenList& tokens = parser.GetTokens();
-
-		// check the HResult first
-		std::string status;
-		findToken(tokens, is, SVRC::cmd::hr, status);
-		if (!status.empty())
-		{
-			if ("0" != status)
-			{
-				return hr;
-			}
-		}
-		POINT contentsPos = {-1, -1};
-		std::string filename;
-		findToken(tokens, is, SVRC::result::contents, contentsPos);
-		findToken(tokens, is, SVRC::result::filePath, filename);
-
-		if (!filename.empty() && (-1 != contentsPos.x && -1 != contentsPos.y) && contentsPos.y > contentsPos.x)
-		{
-			hr = S_OK;
-			// Decode Base64 to file
-			const size_t enc_len = 1024 * 1024;	// base64 encoded data
-			int amtToWrite = (enc_len / 4) * 3; // unencoded data
-
-			try
-			{
-				boost::scoped_array<char> enc_buff(new char[enc_len + 1]);
-				boost::scoped_array<unsigned char> file_buff(new unsigned char[amtToWrite + 1]);
-				char* src = enc_buff.get();
-				unsigned char* dst = file_buff.get();
-				if (src && dst)
-				{
-					is.clear(); // clear any errors/eof bits...
-					is.seekg(contentsPos.x, std::ios_base::beg);
-
-					std::ofstream os;
-					os.open(filename.c_str(), std::ios::out | std::ios::binary);
-					if (os.is_open())
-					{
-						int len = contentsPos.y - contentsPos.x;
-						while (!is.eof() && len > 0 && S_OK == hr)
-						{
-							is.read(src, (len < enc_len) ? len : enc_len);
-							int amt_read = static_cast<int>(is.gcount());
-							if (amt_read)
-							{
-								::Base64Decode(src, amt_read, dst, &amtToWrite);
-								dst[amtToWrite] = '\0';
-								os.write(reinterpret_cast<char *>(dst), amtToWrite);
-								// Check for write failure
-								if (os.fail() || os.bad())
-								{
-									hr = HRESULT_FROM_WIN32(ERROR_WRITE_FAULT);
-								}
-								len -= amt_read;
-							}
-							else
-							{
-								break;
-							}
-						}
-						os.close();
-						// Reset the input stream to the beginning
-						is.clear();
-						is.seekg(0, std::ios_base::beg);
-
-						if (S_OK == hr)
-						{
-							// Reassamble Json removing Base64 contents
-							for (long i = 0; i < contentsPos.x; i++)
-							{
-								ss.put(is.get());
-							}
-							is.seekg(contentsPos.y, std::ios_base::beg);
-							while (!is.eof())
-							{
-								ss.put(is.get());
-							}
-						}
-					}
-					else
-					{
-						hr = HRESULT_FROM_WIN32(ERROR_OPEN_FAILED); // can't open file
-					}
+					SvPb::PutConfigRequest PutConfigRequest;
+					PutConfigRequest.set_filename(fPath.c_str());
+					PutConfigRequest.set_filedata(&FileData[0], FileSize);
+					SvPb::StandardResponse Response = SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(),
+																		&SvWsl::SVRCClientService::PutConfig,
+																		std::move(PutConfigRequest)).get();
+					Result = Response.hresult();
 				}
 				else
 				{
-					hr = E_POINTER; // can't get memory
+					FileStream.close();
+					Result = E_INVALIDARG;
 				}
 			}
-			catch (std::bad_alloc& badAllocException)
+			else
 			{
-				std::cout << badAllocException.what() << std::endl;
-				hr = E_POINTER;
+				Result = E_UNEXPECTED;
 			}
-			catch (...)
-			{
-				hr = E_POINTER;
-			}
+
+			SVLOG(Result);
+		}
+		else
+		{
+			Result = E_INVALIDARG;
+			SVLOG(Result);
+
+			rStatus.hResult = Result;
+			rStatus.errorText = L"Invalid File Path";
 		}
 	}
-	return hr;
+	HANDLE_EXCEPTION(Result, rStatus)
+
+	return Result;
 }
 
-// This method will base64 encode the file and send it over the socket
-template<typename API>
-HRESULT SVControlCommands::SendFile(SvSol::SVRCClientSocket<API>& rSocket, std::istream& is)
+HRESULT SVControlCommands::GetFile(const _bstr_t& rSourcePath, const _bstr_t& rDestinationPath, SVCommandStatus& rStatus)
 {
-	HRESULT hr = S_OK;
-
-	int enc_len = 64 * 1024;  // base64 encoded data
-	const size_t amtToRead = (enc_len / 4) * 3; // unencoded file data
+	HRESULT Result{S_OK};
 
 	try
 	{
-		boost::scoped_array<unsigned char> file_buff(new unsigned char[amtToRead]);
-		boost::scoped_array<char> enc_buff(new char[enc_len + 1]);
-
-		unsigned char* src = file_buff.get();
-		char* dst = enc_buff.get();
-		if (src && dst)
+		if (!m_SvrcClient.isConnected())
 		{
-			while (!is.eof() && S_OK == hr)
+			throw std::invalid_argument("Not connected To SVObserver");
+		}
+		std::string DestinationPath = SVStringConversions::to_utf8(rDestinationPath);
+		if (IsValidFilePath(DestinationPath))
+		{
+
+			SvPb::GetFileRequest Request;
+			Request.set_sourcepath(SVStringConversions::to_utf8(rSourcePath));
+			SvPb::GetFileResponse Response = SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(),
+																 &SvWsl::SVRCClientService::GetFile,
+																 std::move(Request)).get();
+			Result = Response.hresult();
+			if (S_OK == Result)
 			{
-				is.read(reinterpret_cast<char *>(src), amtToRead);
-				int amt_read = static_cast<int>(is.gcount());
-				if (amt_read)
+				std::ofstream FileStream;
+
+				FileStream.open(DestinationPath.c_str(), std::ofstream::out | std::ofstream::binary | std::ofstream::trunc);
+				if (FileStream.is_open())
 				{
-					::Base64Encode(src, amt_read, dst, &enc_len, ATL_BASE64_FLAG_NOCRLF);
-					dst[enc_len] = '\0';
-					hr = WriteToSocket(dst, rSocket);
+					FileStream.write(Response.filedata().c_str(), Response.filedata().length());
+					FileStream.close();
+				}
+			}
+			else
+			{
+				SVLOG(Result);
+			}
+		}
+		else
+		{
+			Result = E_INVALIDARG;
+			SVLOG(Result);
+
+			rStatus.hResult = Result;
+			rStatus.errorText = L"Invalid File Path";
+		}
+		rStatus.hResult = Result;
+	}
+	HANDLE_EXCEPTION(Result, rStatus)
+
+	return Result;
+}
+
+HRESULT SVControlCommands::PutFile(const _bstr_t& rSourcePath, const _bstr_t& rDestinationPath, SVCommandStatus& rStatus)
+{
+	HRESULT Result{S_OK};
+
+	try
+	{
+		if (!m_SvrcClient.isConnected())
+		{
+			throw std::invalid_argument("Not connected To SVObserver");
+		}
+
+		std::string SourcePath = SVStringConversions::to_utf8(rSourcePath);
+		std::string DestinationPath = SVStringConversions::to_utf8(rDestinationPath);
+		if (IsValidFilePath(SourcePath))
+		{
+			std::ifstream FileStream;
+
+			FileStream.open(SourcePath.c_str(), std::ifstream::in | std::ifstream::binary | std::ifstream::ate);
+			if (FileStream.is_open())
+			{
+				size_t FileSize(0);
+				FileSize = static_cast<size_t> (FileStream.tellg());
+				std::vector<char> FileData;
+				if (0 != FileSize)
+				{
+					FileData.resize(FileSize);
+					FileStream.seekg(0, std::ios::beg);
+					FileStream.read(&FileData.at(0), FileSize);
+					FileStream.close();
+
+					SvPb::PutFileRequest Request;
+					Request.set_destinationpath(DestinationPath);
+					Request.set_filedata(&FileData[0], FileSize);
+					SvPb::StandardResponse Response = SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(),
+																		&SvWsl::SVRCClientService::PutFile,
+																		std::move(Request)).get();
+					Result = Response.hresult();
 				}
 				else
 				{
-					break;
+					FileStream.close();
+					Result = E_INVALIDARG;
 				}
-			}
-		}
-		else
-		{
-			hr = E_POINTER;
-		}
-	}
-	catch (std::bad_alloc& badAllocException)
-	{
-		std::wstring msg(L"SendFile");
-		msg += SVStringConversions::to_utf16(badAllocException.what());
-		SVLOG(msg.c_str());
-		hr = E_POINTER;
-	}
-	catch (...)
-	{
-		hr = E_POINTER;
-	}
-	return hr;
-}
-
-static HRESULT SplitCmd(const std::string& rToken, const std::string& cmd, std::string& cmdPart1, std::string& cmdPart2)
-{
-	size_t pos = cmd.find(rToken);
-	if (pos != std::string::npos)
-	{
-		pos = cmd.find('\"', pos + rToken.length());
-		if (pos != std::string::npos)
-		{
-			pos = cmd.find(':', pos + 1);
-			if (pos != std::string::npos)
-			{
-				pos = cmd.find('\"', pos + 1);
-				if (pos != std::string::npos)
-				{
-					cmdPart1 = cmd.substr(0, pos + 1);
-					cmdPart2 = cmd.substr(pos + 1);
-				}
-			}
-		}
-	}
-	return (!cmdPart1.empty() && !cmdPart2.empty()) ? S_OK : E_INVALIDARG;
-}
-
-template<typename API>
-SVControlResponse SVControlCommands::SendCommandWithFile(SvSol::SVRCClientSocket<API> & p_rSocket, const Json::Value & p_cmd, _bstr_t filepath, unsigned long p_TimeoutInSeconds)
-{
-	SVControlResponse l_Status;
-
-	if (m_Command.IsJsonCommandEmpty())
-	{
-		JsonWriter writer;
-		std::string cmd = writer.write(p_cmd);
-
-		if (!cmd.empty())
-		{
-			std::string fPath = SVStringConversions::to_utf8(filepath);
-			std::ifstream is;
-			is.open(fPath, std::ios::in | std::ios::binary);
-			if (is.is_open())
-			{
-				p_rSocket.SetBlocking();
-				try
-				{
-					l_Status.m_Status.hResult = m_Command.SetJsonCommand(cmd, p_TimeoutInSeconds * 1000);
-
-					if (S_OK == l_Status.m_Status.hResult)
-					{
-						std::string cmdPart1;
-						std::string cmdPart2;
-						SVLOG((l_Status.m_Status.hResult = SplitCmd(SVRC::arg::contents, cmd, cmdPart1, cmdPart2)));
-						if (S_OK == l_Status.m_Status.hResult)
-						{
-							// send 1st part of the Json (stop just after contents: ")
-							SVLOG((l_Status.m_Status.hResult = WriteToSocket(cmdPart1, p_rSocket)));
-						}
-						if (S_OK == l_Status.m_Status.hResult)
-						{
-							SVLOG((l_Status.m_Status.hResult = SendFile(p_rSocket, is)));
-						}
-						if (S_OK == l_Status.m_Status.hResult)
-						{
-							// send remaining Json
-							SVLOG((l_Status.m_Status.hResult = WriteToSocket(cmdPart2, p_rSocket)));
-						}
-						if (S_OK == l_Status.m_Status.hResult)
-						{
-							SVLOG((l_Status.m_Status.hResult = m_Command.WaitForRequest(p_TimeoutInSeconds * 1000)));
-
-							if (S_OK == l_Status.m_Status.hResult)
-							{
-								const Json::Value& val = m_Command.GetJsonResults();
-
-								SVJsonValueGetter<SVControlResponse> rspGetter(this);
-
-								l_Status = rspGetter(val);
-							}
-						}
-					}
-					l_Status.m_Status.FormatMessage();
-				}
-				catch (std::exception & ex)
-				{
-					SVLOG((l_Status.m_Status.hResult = E_UNEXPECTED));
-					l_Status.m_Status.errorText = SVStringConversions::to_utf16(ex.what());
-				}
-				catch (...)
-				{
-					SVLOG((l_Status.m_Status.hResult = E_UNEXPECTED));
-					l_Status.m_Status.errorText = L"Unknown Error occurred";
-				}
-				p_rSocket.SetNonBlocking();
-				is.close();
 			}
 			else
 			{
-				SVLOG((l_Status.m_Status.hResult = E_INVALIDARG));
-				l_Status.m_Status.errorText = L"Unable to open file.";
+				Result = E_UNEXPECTED;
 			}
-			m_Command.ClearJsonCommand();
+
+			SVLOG(Result);
 		}
 		else
 		{
-			SVLOG((l_Status.m_Status.hResult = E_INVALIDARG));
-			l_Status.m_Status.errorText = L"Command string empty.";
+			Result = E_INVALIDARG;
+			SVLOG(Result);
+
+			rStatus.hResult = Result;
+			rStatus.errorText = L"Invalid File Path";
 		}
 	}
-	else
-	{
-		SVLOG((l_Status.m_Status.hResult = STG_E_INUSE));
-		l_Status.m_Status.errorText = L"System busy.";
-	}
-	return l_Status;
+	HANDLE_EXCEPTION(Result, rStatus)
+
+	return Result;
 }
 
-HRESULT SVControlCommands::CheckSocketConnection()
+HRESULT SVControlCommands::GetDataDefinitionList(const _bstr_t& rInspectionName, long ListType, ISVDataDefObjectList** ppEntries, SVCommandStatus& rStatus)
 {
-	HRESULT l_Status = S_OK;
-	SvSol::SVSocketError::ErrorEnum err = SvSol::SVSocketError::Success;
-	if (!(m_ClientSocket.IsConnected()))
-	{
-		if (0 < m_ServerName.length())
-		{
-			l_Status = SvSol::SVSocketError::HrFromSocketError(m_ClientSocket.BuildConnection(m_ServerName, m_CommandPort, 1000));
-		}
-		else
-		{
-			l_Status = INET_E_INVALID_URL;
-		}
-		SVLOG(l_Status);
-	}
-
-
-
-	m_Connected = l_Status == S_OK;
-	return l_Status;
-}
-
-void SVControlCommands::OnConnectionStatus(SvSol::ConnectionState state)
-{
-	if (state == SvSol::Disconnected)
-	{
-		m_Connected = false;
-		Json::Value notify(Json::objectValue);
-		notify[SVRC::cmd::notfctn] = SVNotificationTypes::Disconnected;
-		notify[SVRC::cmd::dataItems] = Json::Value(Json::objectValue);
-		Notify(notify);
-		SVLogDebug(L"Connection Disconnected");
-	}
-	else if (state == SvSol::Connected)
-	{
-		m_Connected = true;
-	}
-}
-
-// check to see if the current command is GetConfig and handle the response.
-// This method will extract the base64 contents from the stream and write it to disk.
-static HRESULT HandleGetCommandWithContents(std::istream& is, SVJsonCommandHelper& rCommand, const std::string& commandName)
-{
-	HRESULT hr = S_FALSE;
-
-	std::string jsonCommand;
-	if (S_OK == rCommand.GetJsonCommand(jsonCommand, INFINITE))
-	{
-		Json::Reader reader;
-		Json::Value jsonValues;
-		Json::Value jsonCommandValues;
-
-		if (reader.parse(jsonCommand, jsonCommandValues, false))
-		{
-			if (jsonCommandValues[SVRC::cmd::name] == commandName)
-			{
-				std::stringstream ss;
-				hr = ExtractBase64Contents(is, ss);
-				if (S_OK == hr)
-				{
-					if (reader.parse(ss, jsonValues, false))
-					{
-						bool bNotify = JsonDataHelper::DoesCommandMatchResponseWithID(jsonCommandValues, jsonValues);
-
-						if (bNotify)
-						{
-							bNotify = (S_OK == rCommand.SetJsonResults(jsonValues));
-						}
-
-						if (bNotify)
-						{
-							rCommand.NotifyRequestComplete();
-						}
-					}
-				}
-				else
-				{
-					is.seekg(0, std::ios_base::beg);
-				}
-			}
-		}
-	}
-	return hr;
-}
-
-void SVControlCommands::OnControlDataReceived(std::istream& is)
-{
-	// check for GetConfig for now...
-	HRESULT hr = HandleGetCommandWithContents(is, m_Command, SVRC::cmdName::getConfig);
-
-	if (S_FALSE == hr)
-	{
-		// parse the json
-		Json::Reader l_Reader;
-		Json::Value l_JsonValues;
-		if (l_Reader.parse(is, l_JsonValues, false))
-		{
-			if (JsonDataHelper::IsNotification(l_JsonValues))
-			{
-				HRESULT hr = Notify(l_JsonValues);
-			}
-			else
-			{
-				std::string l_JsonCommand;
-
-				if (m_Command.GetJsonCommand(l_JsonCommand, INFINITE) == S_OK)
-				{
-					Json::Value l_JsonCommandValues;
-
-					if (l_Reader.parse(l_JsonCommand, l_JsonCommandValues, false))
-					{
-						bool l_Notify = JsonDataHelper::DoesCommandMatchResponseWithID(l_JsonCommandValues, l_JsonValues);
-
-						if (l_Notify)
-						{
-							l_Notify = (m_Command.SetJsonResults(l_JsonValues) == S_OK);
-						}
-
-						if (l_Notify)
-						{
-							m_Command.NotifyRequestComplete();
-						}
-					}
-				}
-			}
-		}
-	}
-	else if (S_OK != hr)
-	{
-		// Build error response
-		Json::Reader l_Reader;
-		std::string l_JsonCommand;
-		Json::Value l_JsonValues;
-
-		if (S_OK == m_Command.GetJsonCommand(l_JsonCommand, INFINITE))
-		{
-			Json::Value l_JsonCommandValues;
-			if (l_Reader.parse(l_JsonCommand, l_JsonCommandValues, false))
-			{
-				l_JsonValues = l_JsonCommandValues;
-			}
-		}
-		if (!l_JsonValues.isObject())
-		{
-			l_JsonValues = Json::Value(Json::objectValue);
-			l_JsonValues[SVRC::cmd::name] = SVRC::cmdName::getConfig;
-			l_JsonValues[SVRC::cmd::id] = 0;
-		}
-		l_JsonValues[SVRC::cmd::hr] = hr;
-
-		if (S_OK == m_Command.SetJsonResults(l_JsonValues))
-		{
-			m_Command.NotifyRequestComplete();
-		}
-	}
-}
-
-HRESULT SVControlCommands::Notify(const Json::Value& p_JsonValues)
-{
-	CComBSTR l_Output;
-	SVNotificationTypesEnum l_Type;
-
-	HRESULT hr = BuildDatagram(l_Output, p_JsonValues, l_Type);
-	SVLOG(hr);
-
-	if (hr == S_OK)
-	{
-		_variant_t l_Data(l_Output.Detach());
-		m_Notifier(l_Data, l_Type);
-	}
-
-	return hr;
-}
-
-HRESULT SVControlCommands::BuildDatagram(CComBSTR& p_BSTR, const Json::Value& p_JsonValue, SVNotificationTypesEnum& p_Type)
-{
-	HRESULT hr = S_OK;
-
-	Json::FastWriter writer;
-#ifdef SEND_JSON
-	p_BSTR = writer.write(p_JsonValue).c_str();
-#else
-	// Put the JSON source into a stringstream to use with property_tree.
-	std::stringstream l_InStream;
-	l_InStream << writer.write(p_JsonValue).c_str();
-
-	// Populate the property_tree
-	boost::property_tree::ptree l_Tree;
-	boost::property_tree::read_json(l_InStream, l_Tree);
-	boost::property_tree::ptree l_NewTree;
-	l_NewTree.put("SVRC", "");
-	l_NewTree.put_child("SVRC", l_Tree);
-	std::string l_NotificationNode = l_Tree.get< std::string >(SVRC::cmd::notfctn);
+	HRESULT Result{S_OK};
 
 	try
 	{
-		if (0 == l_NotificationNode.compare(SVRC::notification::lastmodified))
+		if (!m_SvrcClient.isConnected())
 		{
-			p_Type = LastModified;
-		}
-		else if (0 == l_NotificationNode.compare(SVRC::notification::currentmode))
-		{
-			p_Type = CurrentMode;
-		}
-		else if (0 == l_NotificationNode.compare(SVRC::notification::MessageNotification))
-		{
-			p_Type = MessageNotification;
+			throw std::invalid_argument("Not connected To SVObserver");
 		}
 
+		SvPb::GetDataDefinitionListRequest Request;
+		Request.set_inspectionname(SVStringConversions::to_utf8(rInspectionName));
+		Request.set_type(static_cast<SvPb::DataDefinitionListType> (ListType));
+		SvPb::GetDataDefinitionListResponse Response = SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(),
+															&SvWsl::SVRCClientService::GetDataDefinitionList,
+															std::move(Request)).get();
+
+		GetDataDefList(Response)->QueryInterface(IID_ISVDataDefObjectList, reinterpret_cast<void**> (ppEntries));
+
+		Result = Response.hresult();
+		SVLOG(Result);
+	}
+	HANDLE_EXCEPTION(Result, rStatus)
+
+	return Result;
+}
+
+HRESULT SVControlCommands::RegisterMonitorList(const _bstr_t& rListName, const _bstr_t& rPpqName, int rejectDepth,
+	const CComVariant& rProductItemList, const CComVariant& rRejectCondList,
+	const CComVariant& rFailStatusList, ISVErrorObjectList** ppErrors, SVCommandStatus& rStatus)
+{
+	HRESULT Result{S_OK};
+
+	try
+	{
+		if (!m_SvrcClient.isConnected())
+		{
+			throw std::invalid_argument("Not connected To SVObserver");
+		}
+
+		SvPb::RegisterMonitorListRequest Request;
+		Request.set_name(SVStringConversions::to_utf8(rListName));
+		Request.set_ppqname(SVStringConversions::to_utf8(rPpqName));
+		Request.set_rejectdepth(rejectDepth);
+		SetStringList(rProductItemList, Request.mutable_productitemlist());
+		SetStringList(rRejectCondList, Request.mutable_rejectconditionlist());
+		SetStringList(rFailStatusList, Request.mutable_failstatuslist());
+		SvPb::RegisterMonitorListResponse Response = SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(),
+																 &SvWsl::SVRCClientService::RegisterMonitorList,
+																 std::move(Request)).get();
+
+		GetErrorListPtr(Response.mutable_errorlist())->QueryInterface(IID_ISVErrorObjectList, reinterpret_cast<void**> (ppErrors));
+
+		Result = Response.hresult();
+		rStatus.hResult = Result;
+		SVLOG(Result);
+	}
+	HANDLE_EXCEPTION(Result, rStatus)
+
+	return Result;
+}
+
+HRESULT SVControlCommands::QueryMonitorList(const _bstr_t& rListName, SvPb::ListType Type, CComVariant& rItemNames, SVCommandStatus& rStatus)
+{
+	HRESULT Result {S_OK};
+
+	try
+	{
+		if (!m_SvrcClient.isConnected())
+		{
+			throw std::invalid_argument("Not connected To SVObserver");
+		}
+
+		SvPb::QueryMonitorListRequest Request;
+		Request.set_listname(SVStringConversions::to_utf8(rListName));
+		Request.set_type(Type);
+		SvPb::NamesResponse Response = SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(),
+														 &SvWsl::SVRCClientService::QueryMonitorList, std::move(Request)).get();
+
+		Result = Response.hresult();
+
+		if (S_OK == Result)
+		{
+			SvPb::Value* pValue = Response.mutable_names();
+			rItemNames = GetComVariant(*pValue->mutable_item(), pValue->count());
+		}
 		else
 		{
-			int l_Type = 0;
-			std::stringstream l_Convert(l_NotificationNode);
-			l_Convert >> l_Type;
-			p_Type = static_cast<SVNotificationTypesEnum>(l_Type);
+			rItemNames = CComVariant();
 		}
-	}
-	catch (...)
-	{
-		// Unable to parse the type.
-		p_Type = UnknownNotificationType;
-	}
 
-	// Create the XML from the property_tree.
-	std::stringstream l_OutStream;
-	boost::property_tree::xml_writer_settings< boost::property_tree::ptree::key_type > l_Settings(' ', 4);
-	boost::property_tree::write_xml(l_OutStream, l_NewTree, l_Settings);
-	p_BSTR = l_OutStream.str().c_str();
-#endif
-	return hr;
+		rStatus.hResult = Result;
+		SVLOG(Result);
+	}
+	HANDLE_EXCEPTION(Result, rStatus)
+
+	return Result;
 }
 
-HRESULT SVControlCommands::RegisterMonitorList(const _bstr_t & listName, const _bstr_t & ppqName, int rejectDepth,
-	const CComVariant & productItemList, const CComVariant & rejectCondList,
-	const CComVariant & failStatusList, ISVErrorObjectList ** errors, SVCommandStatus& p_rStatus)
-{
-	HRESULT l_Status = S_OK;
-
-	try
-	{
-		SVJsonCmdBuilder builder(SVRC::cmdName::regMon);
-
-		builder.Argument(SVRC::arg::listName, Json::Value(SVStringConversions::to_utf8(listName)));
-		builder.Argument(SVRC::arg::ppqName, Json::Value(SVStringConversions::to_utf8(ppqName)));
-		builder.Argument(SVRC::arg::rejectDepth, Json::Value(rejectDepth));
-		builder.Argument(SVRC::arg::prodList, MkArray(productItemList));
-		builder.Argument(SVRC::arg::rjctList, MkArray(rejectCondList));
-		builder.Argument(SVRC::arg::failList, MkArray(failStatusList));
-
-		SVControlResponse rsp = SendCommand(m_ClientSocket, builder.Value(), FiveSeconds);
-
-		if (SUCCEEDED(rsp.m_Status.hResult))
-		{
-			if (rsp.results[SVRC::result::faults].vt == VT_DISPATCH && rsp.results[SVRC::result::faults].pdispVal)
-			{
-				l_Status = rsp.results[SVRC::result::faults].pdispVal->QueryInterface(IID_ISVErrorObjectList, reinterpret_cast<void**>(errors));
-			}
-			else
-			{
-				l_Status = E_POINTER;
-			}
-			SVLOG(l_Status);
-		}
-
-		p_rStatus = rsp.m_Status;
-
-		if (l_Status == S_OK)
-		{
-			l_Status = rsp.m_Status.hResult;
-		}
-	}
-	HANDLE_EXCEPTION(l_Status, p_rStatus)
-
-		return l_Status;
-}
-
-HRESULT SVControlCommands::QueryProductList(const _bstr_t & listName, const std::string & cmd, CComVariant & itemNames, SVCommandStatus& p_rStatus)
-{
-	HRESULT l_Status = S_OK;
-
-	try
-	{
-		SVJsonCmdBuilder builder(cmd);
-
-		builder.Argument(SVRC::arg::listName, Json::Value(SVStringConversions::to_utf8(listName)));
-
-		SVControlResponse rsp = SendCommand(m_ClientSocket, builder.Value(), FiveSeconds);
-		if (SUCCEEDED(rsp.m_Status.hResult))
-		{
-			std::map<std::string, CComVariant>::iterator it = rsp.results.find(SVRC::result::names);
-			if (it != rsp.results.end())
-			{
-				itemNames.Attach(&(it->second));
-			}
-			else
-			{
-				itemNames = CComVariant();
-			}
-		}
-
-		p_rStatus = rsp.m_Status;
-		l_Status = rsp.m_Status.hResult;
-		SVLOG(l_Status);
-	}
-	HANDLE_EXCEPTION(l_Status, p_rStatus)
-
-		return l_Status;
-}
-
-HRESULT SVControlCommands::GetProduct(bool bGetReject, const _bstr_t & listName, long triggerCount, long imageScale, ISVProductItems ** currentViewItems, SVCommandStatus& p_rStatus)
+HRESULT SVControlCommands::GetProduct(bool bGetReject, const _bstr_t& rListName, long TriggerCount, long ImageScale, ISVProductItems** ppViewItems, SVCommandStatus& rStatus)
 {
 	HRESULT Status = E_FAIL;
 	try
 	{
-		if (0 == listName.length())
+		if (0 == rListName.length())
 		{
 			throw std::invalid_argument("missing Monitorlistname");
 		}
@@ -1656,8 +730,8 @@ HRESULT SVControlCommands::GetProduct(bool bGetReject, const _bstr_t & listName,
 		}
 
 		SvPb::GetProductRequest ProductRequest;
-		ProductRequest.set_name(static_cast<const char*>(listName));
-		ProductRequest.set_trigger((-1 < triggerCount) ? triggerCount : -1);
+		ProductRequest.set_name(static_cast<const char*>(rListName));
+		ProductRequest.set_trigger((-1 < TriggerCount) ? TriggerCount : -1);
 		ProductRequest.set_pevioustrigger(-1);
 		ProductRequest.set_breject(bGetReject);
 
@@ -1665,258 +739,304 @@ HRESULT SVControlCommands::GetProduct(bool bGetReject, const _bstr_t & listName,
 		SvPb::GetProductResponse resp =
 			SvWsl::runRequest(*m_WebClient.m_pClientService.get(), &SvWsl::ClientService::getProduct, std::move(ProductRequest)).get();
 
-		p_rStatus.hResult = (HRESULT)resp.product().status();
+		rStatus.hResult = (HRESULT)resp.product().status();
 		if (resp.product().status() == SvPb::IsValid)
 		{
 			Status = S_OK;
-			GetProductPtr(m_WebClient.m_pClientService, resp.product())->QueryInterface(IID_ISVProductItems, reinterpret_cast<void**>(currentViewItems));
+			GetProductPtr(m_WebClient.m_pClientService, resp.product())->QueryInterface(IID_ISVProductItems, reinterpret_cast<void**>(ppViewItems));
 		}
 		else
 		{
-			p_rStatus.errorText = SVStringConversions::to_utf16(SvPb::State_Name(resp.product().status()));
+			rStatus.errorText = SVStringConversions::to_utf16(SvPb::State_Name(resp.product().status()));
 		}
 
 		SVLOG(Status);
 	}
-	HANDLE_EXCEPTION(Status, p_rStatus)
+	HANDLE_EXCEPTION(Status, rStatus)
 
 
 		return Status;
 }
-HRESULT SVControlCommands::GetProduct(const _bstr_t & listName, long triggerCount, long imageScale, ISVProductItems ** currentViewItems, SVCommandStatus& p_rStatus)
+HRESULT SVControlCommands::GetProduct(const _bstr_t& rListName, long TriggerCount, long ImageScale, ISVProductItems** ppViewItems, SVCommandStatus& rStatus)
 {
-	return GetProduct(false, listName, triggerCount, imageScale, currentViewItems, p_rStatus);
+	return GetProduct(false, rListName, TriggerCount, ImageScale, ppViewItems, rStatus);
 }
-HRESULT SVControlCommands::GetRejects(const _bstr_t & listName, long triggerCount, long imageScale, ISVProductItems ** currentViewItems, SVCommandStatus& p_rStatus)
+HRESULT SVControlCommands::GetRejects(const _bstr_t& rListName, long TriggerCount, long ImageScale, ISVProductItems** ppViewItems, SVCommandStatus& rStatus)
 {
-	return GetProduct(true, listName, triggerCount, imageScale, currentViewItems, p_rStatus);
+	return GetProduct(true, rListName, TriggerCount, ImageScale, ppViewItems, rStatus);
 
 }
 
-HRESULT SVControlCommands::ActivateMonitorList(const _bstr_t & listName, bool activ, SVCommandStatus& p_rStatus)
+HRESULT SVControlCommands::ActivateMonitorList(const _bstr_t& rListName, bool Active, SVCommandStatus& rStatus)
 {
-	HRESULT l_Status = S_OK;
+	HRESULT Result{S_OK};
 
 	try
 	{
-		SVJsonCmdBuilder builder(SVRC::cmdName::actvMonList);
+		if (false == m_SvrcClient.isConnected())
+		{
+			throw std::invalid_argument("Not connected To SVObserver");
+		}
 
-		builder.Argument(SVRC::arg::listName, Json::Value(SVStringConversions::to_utf8(listName)));
-		builder.Argument(SVRC::arg::active, Json::Value(activ));
-
-		SVControlResponse rsp = SendCommand(m_ClientSocket, builder.Value(), FiveSeconds);
-
-		p_rStatus = rsp.m_Status;
-		l_Status = rsp.m_Status.hResult;
-		SVLOG(l_Status);
+		SvPb::ActivateMonitorListRequest Request;
+		Request.set_listname(SVStringConversions::to_utf8(rListName));
+		Request.set_activate(Active);
+		SvPb::StandardResponse Response = SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(),
+																   &SvWsl::SVRCClientService::ActivateMonitorList,
+																   std::move(Request)).get();
+		Result = Response.hresult();
+		rStatus.hResult = Result;
+		SVLOG(Result);
 	}
-	HANDLE_EXCEPTION(l_Status, p_rStatus)
+	HANDLE_EXCEPTION(Result, rStatus)
 
-		return l_Status;
+	return Result;
 }
 
-HRESULT SVControlCommands::GetFailStatus(const _bstr_t & listName, CComVariant & values, SVCommandStatus& p_rStatus)
+HRESULT SVControlCommands::GetFailStatus(const _bstr_t& rListName, CComVariant& rValues, SVCommandStatus& rStatus)
 {
-	HRESULT Status = S_OK;
+	HRESULT Result = S_OK;
 	try
 	{
 
-		if (0 == listName.length())
+		if (0 == rListName.length())
 		{
 			throw std::invalid_argument("missing Monitorlistname");
 		}
-		//if (0 == m_pRpcClient.get() || false == m_pRpcClient->isConnected())
 		if (false == m_WebClient.isConnected())
 		{
 			throw std::invalid_argument("Not connected To RRServer");
 		}
 
 		SvPb::GetFailStatusRequest FailstatusRequest;
-		FailstatusRequest.set_name(static_cast<const char*>(listName));
+		FailstatusRequest.set_name(static_cast<const char*>(rListName));
 
 		FailstatusRequest.set_nameinresponse(true);
 		SvPb::GetFailStatusResponse resp
 			= SvWsl::runRequest(*m_WebClient.m_pClientService.get(), &SvWsl::ClientService::getFailStatus, std::move(FailstatusRequest)).get();
 
-		p_rStatus.hResult = (HRESULT)resp.status();
+		rStatus.hResult = (HRESULT)resp.status();
 		if (resp.status() == SvPb::IsValid)
 		{
-			Status = S_OK;
+			Result = S_OK;
 			CComVariant variant = GetFailList(m_WebClient.m_pClientService, resp);
-			values.Attach(&variant);
+			rValues.Attach(&variant);
 		}
 		else
 		{
-			p_rStatus.errorText = SVStringConversions::to_utf16(SvPb::State_Name(resp.status()));
+			rStatus.errorText = SVStringConversions::to_utf16(SvPb::State_Name(resp.status()));
 		}
 
 
-		SVLOG(Status);
+		SVLOG(Result);
 	}
-	HANDLE_EXCEPTION(Status, p_rStatus)
-		return Status;
+	HANDLE_EXCEPTION(Result, rStatus)
+		return Result;
 }
 
 
 
-HRESULT SVControlCommands::ShutDown(SVShutdownOptionsEnum options, SVCommandStatus& p_rStatus)
+HRESULT SVControlCommands::ShutDown(SVShutdownOptionsEnum Options, SVCommandStatus& rStatus)
 {
-	HRESULT l_Status = S_OK;
+	HRESULT Result {S_OK};
 
 	try
 	{
-		SVJsonCmdBuilder builder(SVRC::cmdName::shutdownSVIM);
-		builder.Argument(SVRC::arg::options, static_cast<long>(options));
-		SVControlResponse rsp = SendCommand(m_ClientSocket, builder.Value(), FiveSeconds);
-		p_rStatus = rsp.m_Status;
-		l_Status = p_rStatus.hResult;
-		SVLOG(l_Status);
-	}
-	HANDLE_EXCEPTION(l_Status, p_rStatus)
-
-		return l_Status;
-}
-
-
-
-HRESULT SVControlCommands::GetInspectionNames(CComVariant & listNames, SVCommandStatus& p_rStatus)
-{
-	HRESULT l_Status = S_OK;
-
-	try
-	{
-		SVJsonCmdBuilder builder(SVRC::cmdName::getInspectionNames);
-
-		SVControlResponse rsp = SendCommand(m_ClientSocket, builder.Value(), FiveSeconds);
-		if (SUCCEEDED(rsp.m_Status.hResult))
+		if (!m_SvrcClient.isConnected())
 		{
-			std::map<std::string, CComVariant>::iterator it = rsp.results.find(SVRC::result::names);
-			if (it != rsp.results.end())
-			{
-				listNames.Attach(&(it->second));
-			}
-			else
-			{
-				listNames = CComVariant();
-			}
+			throw std::invalid_argument("Not connected To SVObserver");
 		}
 
-		p_rStatus = rsp.m_Status;
-		l_Status = rsp.m_Status.hResult;
-		SVLOG(l_Status);
-	}
-	HANDLE_EXCEPTION(l_Status, p_rStatus)
+		SvPb::ShutdownRequest Request;
+		Request.set_options(static_cast<long> (Options));
+		SvPb::StandardResponse Response = SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(),
+															&SvWsl::SVRCClientService::Shutdown, std::move(Request)).get();
 
-		return l_Status;
+		Result = Response.hresult();
+
+		rStatus.hResult = Result;
+		SVLOG(Result);
+	}
+	HANDLE_EXCEPTION(Result, rStatus)
+
+	return Result;
 }
 
 
-HRESULT SVControlCommands::QueryMonitorListNames(CComVariant & listNames, SVCommandStatus& p_rStatus)
+
+HRESULT SVControlCommands::GetInspectionNames(CComVariant& rNames, SVCommandStatus& rStatus)
 {
-	HRESULT l_Status = S_OK;
+	HRESULT Result{S_OK};
 
 	try
 	{
-		SVJsonCmdBuilder builder(SVRC::cmdName::qryMonListNames);
-
-		SVControlResponse rsp = SendCommand(m_ClientSocket, builder.Value(), FiveSeconds);
-		if (SUCCEEDED(rsp.m_Status.hResult))
+		if (!m_SvrcClient.isConnected())
 		{
-			std::map<std::string, CComVariant>::iterator it = rsp.results.find(SVRC::result::names);
-			if (it != rsp.results.end())
-			{
-				listNames.Attach(&(it->second));
-			}
-			else
-			{
-				listNames = CComVariant();
-			}
+			throw std::invalid_argument("Not connected To SVObserver");
 		}
 
-		p_rStatus = rsp.m_Status;
-		l_Status = rsp.m_Status.hResult;
-		SVLOG(l_Status);
-	}
-	HANDLE_EXCEPTION(l_Status, p_rStatus)
+		SvPb::GetInspectionNamesRequest Request;
+		SvPb::NamesResponse Response = SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(),
+															&SvWsl::SVRCClientService::GetInspectionNames, std::move(Request)).get();
 
-		return l_Status;
-}
+		Result = Response.hresult();
 
-HRESULT SVControlCommands::GetMonitorListProperties(const _bstr_t & rListName, long&  RejectDepth, bool& IsActive, BSTR&  ppqName, SVCommandStatus& p_rStatus)
-{
-	HRESULT l_Status = S_OK;
-	try
-	{
-		SVJsonCmdBuilder builder(SVRC::cmdName::getMonitorListPropCmd);
-		builder.Argument(SVRC::arg::listName, Json::Value(SVStringConversions::to_utf8(rListName)));
-		SVControlResponse rsp = SendCommand(m_ClientSocket, builder.Value(), TwoMinutes);
-		if (rsp.m_Status.hResult == S_OK)
+		if(S_OK == Result)
 		{
-			RejectDepth = rsp.results[SVRC::result::rejectDepth].lVal;
-			IsActive = rsp.results[SVRC::result::active].boolVal ? true : false;
-			ppqName = ::SysAllocString(rsp.results[SVRC::result::ppqName].bstrVal);
+			SvPb::Value* pValue = Response.mutable_names();
+			rNames = GetComVariant(*pValue->mutable_item(), pValue->count());
+		}
+		else
+		{
+			rNames = CComVariant();
 		}
 
-		l_Status = rsp.m_Status.hResult;
-		SVLOG(l_Status);
+		rStatus.hResult = Result;
+		SVLOG(Result);
 	}
-	HANDLE_EXCEPTION(l_Status, p_rStatus)
-		return l_Status;
+	HANDLE_EXCEPTION(Result, rStatus)
 
+	return Result;
 }
 
-HRESULT SVControlCommands::GetMaxRejectQeueDepth(unsigned long& p_rState, SVCommandStatus& p_rStatus)
+
+HRESULT SVControlCommands::QueryMonitorListNames(CComVariant& rListName, SVCommandStatus& rStatus)
 {
-	HRESULT l_Status = S_OK;
+	HRESULT Result{S_OK};
 
 	try
 	{
-		SVJsonCmdBuilder builder(SVRC::cmdName::getMaxRejectDeptCmd);
-		SVControlResponse rsp = SendCommand(m_ClientSocket, builder.Value(), FiveSeconds);
-		p_rState = rsp.results[SVRC::result::maxRejectDepth].lVal;
-		p_rStatus = rsp.m_Status;
-		SVLOG((l_Status = p_rStatus.hResult));
+		if (!m_SvrcClient.isConnected())
+		{
+			throw std::invalid_argument("Not connected To SVObserver");
+		}
+
+		SvPb::QueryMonitorListNamesRequest Request;
+		SvPb::NamesResponse Response = SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(),
+														 &SvWsl::SVRCClientService::QueryMonitorListNames, std::move(Request)).get();
+
+		Result = Response.hresult();
+
+		if (S_OK == Result)
+		{
+			SvPb::Value* pValue = Response.mutable_names();
+			rListName = GetComVariant(*pValue->mutable_item(), pValue->count());
+		}
+		else
+		{
+			rListName = CComVariant();
+		}
+
+		rStatus.hResult = Result;
+		SVLOG(Result);
 	}
-	HANDLE_EXCEPTION(l_Status, p_rStatus)
-		return l_Status;
+	HANDLE_EXCEPTION(Result, rStatus)
+
+	return Result;
 }
 
-
-
-HRESULT SVControlCommands::GetProductFilter(const _bstr_t& rListName, unsigned long& rFilter, SVCommandStatus& p_rStatus)
+HRESULT SVControlCommands::GetMonitorListProperties(const _bstr_t & rListName, long&  rRejectDepth, bool& rIsActive, BSTR&  rPpqName, SVCommandStatus& rStatus)
 {
-	HRESULT l_Status = S_OK;
+	HRESULT Result = S_OK;
+	try
+	{
+
+		if (!m_SvrcClient.isConnected())
+		{
+			throw std::invalid_argument("Not connected To SVObserver");
+		}
+
+		SvPb::GetMonitorListPropertiesRequest Request;
+		Request.set_listname(SVStringConversions::to_utf8(rListName));
+		SvPb::GetMonitorListPropertiesResponse Response = SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(),
+																 &SvWsl::SVRCClientService::GetMonitorListProperties,
+																 std::move(Request)).get();
+
+		rRejectDepth = Response.rejectdepth();
+		rIsActive = Response.active();
+		rPpqName = _bstr_t(Response.ppqname().c_str()).Detach();
+
+		Result = Response.hresult();
+		rStatus.hResult = Result;
+		SVLOG(Result);
+	}
+	HANDLE_EXCEPTION(Result, rStatus)
+
+	return Result;
+}
+
+HRESULT SVControlCommands::GetMaxRejectQeueDepth(unsigned long& rDepth, SVCommandStatus& rStatus)
+{
+	HRESULT Result{S_OK};
 
 	try
 	{
-		SVJsonCmdBuilder builder(SVRC::cmdName::getProductFilter);
-		builder.Argument(SVRC::arg::listName, Json::Value(SVStringConversions::to_utf8(rListName)));
-		SVControlResponse rsp = SendCommand(m_ClientSocket, builder.Value(), FiveSeconds);
-		rFilter = rsp.results[SVRC::result::filter].lVal;
-		p_rStatus = rsp.m_Status;
-		SVLOG((l_Status = p_rStatus.hResult));
-	}
-	HANDLE_EXCEPTION(l_Status, p_rStatus)
+		if (!m_SvrcClient.isConnected())
+		{
+			throw std::invalid_argument("Not connected To SVObserver");
+		}
 
-		return l_Status;
+		SvPb::GetMaxRejectDepthRequest Request;
+		SvPb::GetMaxRejectDepthResponse Response = SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(),
+																			&SvWsl::SVRCClientService::GetMaxRejectDepth,
+																			std::move(Request)).get();
+		rDepth = Response.maxrejectdepth();
+		SVLOG(Result);
+	}
+	HANDLE_EXCEPTION(Result, rStatus)
+	return Result;
 }
 
-HRESULT SVControlCommands::SetProductFilter(const _bstr_t& rListName, unsigned long filter, SVCommandStatus& p_rStatus)
+
+
+HRESULT SVControlCommands::GetProductFilter(const _bstr_t& rListName, unsigned long& rFilter, SVCommandStatus& rStatus)
 {
-	HRESULT l_Status = S_OK;
+	HRESULT Result{S_OK};
 
 	try
 	{
-		SVJsonCmdBuilder builder(SVRC::cmdName::setProductFilter);
-		builder.Argument(SVRC::arg::listName, Json::Value(SVStringConversions::to_utf8(rListName)));
-		builder.Argument(SVRC::arg::filter, static_cast<long>(filter));
-		SVControlResponse rsp = SendCommand(m_ClientSocket, builder.Value(), FiveSeconds);
-		p_rStatus = rsp.m_Status;
-		SVLOG((l_Status = p_rStatus.hResult));
-	}
-	HANDLE_EXCEPTION(l_Status, p_rStatus)
+		if (false == m_SvrcClient.isConnected())
+		{
+			throw std::invalid_argument("Not connected To SVObserver");
+		}
 
-		return l_Status;
+		SvPb::GetProductFilterRequest Request;
+		Request.set_listname(SVStringConversions::to_utf8(rListName));
+		SvPb::GetProductFilterResponse Response = SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(),
+															&SvWsl::SVRCClientService::GetProductFilter,
+															std::move(Request)).get();
+		Result = Response.hresult();
+		rFilter = static_cast<unsigned long> (Response.filter());
+		rStatus.hResult = Result;
+		SVLOG(Result);
+	}
+	HANDLE_EXCEPTION(Result, rStatus)
+
+	return Result;
 }
 
-#pragma warning(pop)
+HRESULT SVControlCommands::SetProductFilter(const _bstr_t& rListName, unsigned long Filter, SVCommandStatus& rStatus)
+{
+	HRESULT Result{S_OK};
+
+	try
+	{
+		if (false == m_SvrcClient.isConnected())
+		{
+			throw std::invalid_argument("Not connected To SVObserver");
+		}
+
+		SvPb::SetProductFilterRequest Request;
+		Request.set_listname(SVStringConversions::to_utf8(rListName));
+		Request.set_filter(static_cast<SvPb::ProductFilterEnum> (Filter));
+		SvPb::StandardResponse Response = SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(),
+																	&SvWsl::SVRCClientService::SetProductFilter,
+																	std::move(Request)).get();
+		Result = Response.hresult();
+		rStatus.hResult = Result;
+		SVLOG(Result);
+	}
+	HANDLE_EXCEPTION(Result, rStatus)
+
+	return Result;
+}

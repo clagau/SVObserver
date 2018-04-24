@@ -92,7 +92,6 @@ SVRemoteCtrl::SVRemoteCtrl()
 	m_dispatcher(new SVControlCommands(boost::bind(&SVRemoteCtrl::NotifyClient, this, _1, _2)))
 	{
 		m_bWindowOnly = TRUE;
-		SvSol::SVSocketLibrary::Init();
 
 		m_AsyncThread.Create(boost::bind(&SVRemoteCtrl::AsyncThreadFunc, this, _1), _T("SVRemoteCtrl"));
 	}
@@ -165,7 +164,6 @@ SVRemoteCtrl::SVRemoteCtrl()
 	void SVRemoteCtrl::FinalRelease()
 	{
 		m_AsyncThread.Destroy();
-		SvSol::SVSocketLibrary::Destroy();
 	}
 
 	STDMETHODIMP SVRemoteCtrl::BeginGetConfig(BSTR fileName)
@@ -391,15 +389,13 @@ SVRemoteCtrl::SVRemoteCtrl()
 	STDMETHODIMP SVRemoteCtrl::GetConfig(BSTR filePath)
 	{
 		HRESULT l_Status = S_OK;
-		SVCommandStatus l_CommandStatus;
+		SVCommandStatus CommandStatus;
 
-		long l_Cancel = 0;
-
-		l_Status = m_dispatcher->GetConfig(filePath, l_Cancel, true, l_CommandStatus);
+		l_Status = m_dispatcher->GetConfig(filePath, CommandStatus);
 
 		if (l_Status != S_OK)
 		{
-			SVERROR(l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult);
+			SVERROR(CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, CommandStatus.hResult);
 		}
 
 		return l_Status;
@@ -532,13 +528,13 @@ SVRemoteCtrl::SVRemoteCtrl()
 
 		if (l_Status == S_OK)
 		{
-			SVCommandStatus l_CommandStatus;
+			SVCommandStatus CommandStatus;
 
-			l_Status = m_dispatcher->GetItems(itemNames, items, m_imageScale, l_CommandStatus);
+			l_Status = m_dispatcher->GetItems(itemNames, items, CommandStatus);
 
 			if (!SUCCEEDED(l_Status))
 			{
-				SVERROR(l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult);
+				SVERROR(CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, CommandStatus.hResult);
 			}
 		}
 
@@ -668,15 +664,15 @@ SVRemoteCtrl::SVRemoteCtrl()
 	STDMETHODIMP SVRemoteCtrl::PutDeviceFile(BSTR sourcePath, BSTR destinationPath)
 	{
 		HRESULT l_Status = S_OK;
-		SVCommandStatus l_CommandStatus;
+		SVCommandStatus CommandStatus;
 
 		long l_Cancel = 0;
 
-		l_Status = m_dispatcher->PutFile(sourcePath, destinationPath, l_Cancel, true, l_CommandStatus);
+		l_Status = m_dispatcher->PutFile(sourcePath, destinationPath, CommandStatus);
 
 		if (l_Status != S_OK)
 		{
-			SVERROR(l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult);
+			SVERROR(CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, CommandStatus.hResult);
 		}
 
 		return l_Status;
@@ -685,28 +681,28 @@ SVRemoteCtrl::SVRemoteCtrl()
 	STDMETHODIMP SVRemoteCtrl::SetDeviceMode(SVObserverModesEnum desiredMode)
 	{
 		HRESULT l_Status = S_OK;
-		SVCommandStatus l_CommandStatus;
+		SVCommandStatus CommandStatus;
 
-		l_Status = m_dispatcher->SetMode(desiredMode, true, l_CommandStatus);
+		l_Status = m_dispatcher->SetMode(desiredMode, CommandStatus);
 
 		if (l_Status != S_OK)
 		{
-			SVERROR(l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult);
+			SVERROR(CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, CommandStatus.hResult);
 		}
 
 		return l_Status;
 	}
 
-	STDMETHODIMP SVRemoteCtrl::SetItems(ISVProductItems* items, ISVProductItems ** faults)
+	STDMETHODIMP SVRemoteCtrl::SetItems(ISVProductItems* pItems, ISVProductItems ** ppErrors)
 	{
 		HRESULT l_Status = S_OK;
-		SVCommandStatus l_CommandStatus;
+		SVCommandStatus CommandStatus;
 
-		l_Status = m_dispatcher->SetItems(items, faults, true, l_CommandStatus);
+		l_Status = m_dispatcher->SetItems(pItems, ppErrors, CommandStatus);
 
 		if (!SUCCEEDED(l_Status))
 		{
-			SVERROR(l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult);
+			SVERROR(CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, CommandStatus.hResult);
 		}
 
 		return l_Status;
@@ -943,7 +939,7 @@ SVRemoteCtrl::SVRemoteCtrl()
 		CComVariant result;
 		VariantClear(itemNames);
 
-		l_Status = m_dispatcher->QueryProductList(listName, SVRC::cmdName::qryProd, result, l_CommandStatus);
+		l_Status = m_dispatcher->QueryMonitorList(listName, SvPb::ListType::ProductItem, result, l_CommandStatus);
 
 		if (!SUCCEEDED(l_Status))
 		{
@@ -965,7 +961,7 @@ SVRemoteCtrl::SVRemoteCtrl()
 		CComVariant result;
 		VariantClear(itemNames);
 
-		l_Status = m_dispatcher->QueryProductList(listName, SVRC::cmdName::qryRjct, result, l_CommandStatus);
+		l_Status = m_dispatcher->QueryMonitorList(listName, SvPb::ListType::RejectCondition, result, l_CommandStatus);
 
 		if (!SUCCEEDED(l_Status))
 		{
@@ -991,7 +987,7 @@ SVRemoteCtrl::SVRemoteCtrl()
 			VariantClear(itemNames);
 		}
 
-		l_Status = m_dispatcher->QueryProductList(listName, SVRC::cmdName::qryFail, result, l_CommandStatus);
+		l_Status = m_dispatcher->QueryMonitorList(listName, SvPb::ListType::FailStatus, result, l_CommandStatus);
 
 		if (!SUCCEEDED(l_Status))
 		{

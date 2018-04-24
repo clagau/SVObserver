@@ -1,36 +1,80 @@
+//*****************************************************************************
+/// \copyright (c) 2018,2018 by Seidenader Maschinenbau GmbH
+/// \file SVRC.proto
+/// All Rights Reserved 
+//*****************************************************************************
+/// Protobuf file for all SVRC commands and Shraed Memory access
+//******************************************************************************
+
 syntax = "proto3";
 package SvPb;
 
-import "variant.proto";
+import "Variant.proto";
 
 
 message SVRCMessages
 {
 	oneof message
 	{
+		StandardResponse standardResponse = 1;
+		NamesResponse namesResponse = 2;
 		GetVersionRequest getVersionRequest = 3;
 		GetVersionResponse getVersionResponse = 4;
-		QueryListNameRequest queryListNameRequest = 5;
-		QueryListNameResponse queryListNameResponse = 6;
-		QueryListItemRequest queryListItemRequest = 7;
-		QueryListItemResponse queryListItemResponse = 8;
-		GetProductRequest getProductRequest = 9;
-		GetProductResponse getProductResponse = 10;
-		GetImageFromCurIdRequest getImageFromCurIdRequest = 11;
-		GetImageFromCurIdResponse getImageFromCurIdResponse = 12;
-		GetImageStreamFromCurIdRequest getImageStreamFromCurIdRequest = 13;
-		GetImageStreamFromCurIdResponse getImageStreamFromCurIdResponse = 14;
-		GetFailStatusRequest getFailStatusRequest = 15;
-		GetFailStatusResponse getFailStatusResponse = 16;
-		GetItemsRequest getItemsRequest = 17;
-		GetItemsResponse getItemsResponse = 18;
-		GetImageStreamRequest getImageStreanRequest = 19;
-		GetNotificationStreamRequest getNotificationStreamRequest = 20;
-		GetNotificationStreamResponse getNotificationStreamResponse = 21;
-		SetDeviceModeRequest setDeviceModeRequest = 22;
-		SetDeviceModeResponse setDeviceModeResponse = 23;
-		GetDeviceModeRequest getDeviceModeRequest = 24;
-		GetDeviceModeResponse getDeviceModeResponse = 25;
+		//SVObserver Access commands
+		QueryListNameRequest queryListNameRequest = 1000;
+		QueryListNameResponse queryListNameResponse = 1001;
+		QueryListItemRequest queryListItemRequest = 1002;
+		QueryListItemResponse queryListItemResponse = 1003;
+		GetProductRequest getProductRequest = 1004;
+		GetProductResponse getProductResponse = 1005;
+		GetImageFromCurIdRequest getImageFromCurIdRequest = 1006;
+		GetImageFromCurIdResponse getImageFromCurIdResponse = 1007;
+		GetImageStreamFromCurIdRequest getImageStreamFromCurIdRequest = 1008;
+		GetImageStreamFromCurIdResponse getImageStreamFromCurIdResponse = 1009;
+		GetFailStatusRequest getFailStatusRequest = 1010;
+		GetFailStatusResponse getFailStatusResponse = 1011;
+		GetTriggerItemsRequest getTriggerItemsRequest = 1012;
+		GetTriggerItemsResponse getTriggerItemsResponse = 1013;
+		GetImageStreamRequest getImageStreanRequest = 1014;
+		GetNotificationStreamRequest getNotificationStreamRequest = 1015;
+		GetNotificationStreamResponse getNotificationStreamResponse = 1016;
+		
+		//SVObserver commands
+		SetDeviceModeRequest setDeviceModeRequest = 2000;
+		GetDeviceModeRequest getDeviceModeRequest = 2001;
+		GetDeviceModeResponse getDeviceModeResponse = 2002;
+		GetStateRequest getStateRequest = 2003;
+		GetStateResponse getStateResponse = 2004;
+		GetConfigRequest getConfigRequest = 2005;
+		GetConfigResponse getConfigResponse = 2006;
+		PutConfigRequest putConfigRequest = 2007;
+		GetOfflineCountRequest getOfflineCountRequest = 2008;
+		GetOfflineCountResponse getOfflineCountResponse = 2009;
+		ActivateMonitorListRequest activateMontorListRequest = 2010;
+		SetProductFilterRequest setProductFilterRequest = 2011;
+		GetProductFilterRequest getProductFilterRequest = 2012;
+		GetProductFilterResponse getProductFilterResponse = 2013;
+		GetItemsRequest getItemsRequest = 2014;
+		GetItemsResponse getItemsResponse = 2015;
+		SetItemsRequest setItemsRequest = 2016;
+		SetItemsResponse setItemsResponse = 2017;
+		GetFileRequest getFileRequest = 2018;
+		GetFileResponse getFileResponse = 2019;
+		PutFileRequest putFileRequest = 2020;
+		RegisterMonitorListRequest registerMonitorListRequest = 2021;
+		RegisterMonitorListResponse registerMonitorListResponse = 2022;
+		GetInspectionNamesRequest getInspectionNamesRequest = 2023;
+		ShutdownRequest shutdownRequest = 2024;
+		GetMonitorListPropertiesRequest getMonitorListPropertiesRequest = 2025;
+		GetMonitorListPropertiesResponse getMonitorListPropertiesResponse = 2026;
+		GetMaxRejectDepthRequest getMaxRejectDepthRequest = 2027;
+		GetMaxRejectDepthResponse getMaxRejectDepthResponse = 2028;
+		GetConfigReportRequest getConfigReportRequest = 2029;
+		GetConfigReportResponse getConfigReportResponse = 2030;
+		GetDataDefinitionListRequest getDataDefinitionListRequest = 2031;
+		GetDataDefinitionListResponse getDataDefinitionListResponse = 2032;
+		QueryMonitorListRequest queryMonitorListRequest = 2033;
+		QueryMonitorListNamesRequest queryMonitorListNamesRequest = 2034;
 	}
 }
 
@@ -53,10 +97,41 @@ enum State
 	Unchanged =2;
 } 
 
+enum DataDefinitionListType
+{
+	UnknownDataDefinition			= 0;
+	SelectedValues					= 1;
+	SelectedImages					= 2;
+	SelectedValuesAndSelectedImages = 3;
+	AllValues						= 4;
+	AllValuesAndSelectedImages		= 6;
+	AllImages						= 8;
+	SelectedValuesAndAllImages		= 9;
+	AllValuesAndAllImages			= 12;
+}
+
+message DataDefinition
+{
+	string Name = 1;
+	bool Writable = 2;
+	bool Published = 3;
+	string Type = 4;
+	repeated string AdditionalInfo = 5;
+}
+
+
+message Value
+{
+	string Name = 1;
+	sint32 Status = 2;
+	sint32 Count = 3;
+
+	Variant Item = 4;
+}
 
 message GetVersionRequest 
 {
-	bool trigger_timeout = 1;
+	;
 }
 
 message GetVersionResponse 
@@ -82,21 +157,20 @@ message QueryListNameResponse
 //there is a 1:1 relationship between name and (offset, image Store).  
 //Therefore, if this message is used as a parameter in a request, only the name or the IDs must be filled in. 
 //type and size are additional information 
-message ListValueItemDefinition
+message ValueItem
 {
 	 string name =1;
-	 int32 type =2;
-	 int32 size =3;
+	 sint32 type =2;
+	 sint32 size =3;
 	 uint32 StoreId=4;
 	 uint32 Offset=5;
 }
 
-//one Item in the list for Images
-message ListImageItemDefinition
+message ImageItem
 {
 	string name =1;
-	int32 sizeX =2;
-	int32 sizeY =3;  
+	sint32 sizeX =2;
+	sint32 sizeY =3;  
 	uint32 StoreId=4;
 	uint32 ImageId=5;
 }
@@ -112,15 +186,15 @@ message QueryListItemRequest
 
 message QueryListItemResponse
 {
-	repeated ListValueItemDefinition  ValueDefinition = 2;
-	repeated ListImageItemDefinition  ImageDefinition = 3;
+	repeated ValueItem  ValueDefList = 2;
+	repeated ImageItem  ImageDefList = 3;
 }
 
 message CurImageId
 {
-	int32 ImageStore = 1;
-	int32 ImageIndex = 2;
-	int32 SlotIndex = 3 ;
+	sint32 ImageStore = 1;
+	sint32 ImageIndex = 2;
+	sint32 SlotIndex = 3 ;
 }
 
 message Product
@@ -139,8 +213,8 @@ message Product
 //and no values are retrieved 
 message GetProductRequest
 {
-	int32 Trigger = 1;
-	int32 PeviousTrigger = 2;
+	sint32 Trigger = 1;
+	sint32 PeviousTrigger = 2;
 	string Name =3;
 	bool NameInResponse = 4;
 	bool bReject =5;
@@ -193,18 +267,18 @@ message GetFailStatusResponse
 	State Status =2;
 }
 
-///Request Values or Images for triggercount =-1 the last value is retrived 
+///Request Values or Images for triggercount =-1 the last value is retrieved 
 //If the Response would be the values from LastTriggercount
 //the response has the state unchanged 
-message GetItemsRequest
+message GetTriggerItemsRequest
 {
 	uint32 Trigger = 1;
-	uint32 PreviousTrigger=2; 
-	repeated ListValueItemDefinition  valueDefs=3;
-	repeated ListImageItemDefinition  imageDefs= 4;
+	uint32 PreviousTrigger = 2; 
+	repeated ValueItem  ValueList = 3;
+	repeated ImageItem  ImageList = 4;
 }
 
-message GetItemsResponse
+message GetTriggerItemsResponse
 {
 	uint32 triggercount = 1;
 	repeated Variant Values = 2;
@@ -214,7 +288,7 @@ message GetItemsResponse
 message GetImageStreamRequest
 {
 	 uint32 count = 1;
-	 ListImageItemDefinition imageDef =2;
+	 ImageItem imageDef =2;
 }
 
 message GetNotificationStreamRequest
@@ -247,17 +321,216 @@ message SetDeviceModeRequest
 {
 	DeviceModeType mode = 1;
 }
-message SetDeviceModeResponse 
-{
-	DeviceModeType old_mode = 1;
-	DeviceModeType new_mode = 2;
-}
 
 message GetDeviceModeRequest 
 {
 	;
 }
+
 message GetDeviceModeResponse 
 {
 	DeviceModeType mode = 1;
+}
+
+message GetStateRequest 
+{
+	;
+}
+
+message GetStateResponse
+{
+	 uint32 State = 1;
+}
+
+message GetConfigRequest
+{
+	string FileName = 1;
+}
+
+message GetConfigResponse
+{
+	sint32 hResult = 1;
+	bytes FileData = 2;
+}
+
+message PutConfigRequest
+{
+	string FileName = 1;
+	bytes FileData = 2;
+}
+
+message GetOfflineCountRequest
+{
+	;
+}
+
+message GetOfflineCountResponse
+{
+	uint32 Count = 1;
+}
+
+message ActivateMonitorListRequest
+{
+	string ListName = 1;
+	bool Activate = 2;
+}
+
+enum ProductFilterEnum
+{
+	NoFilter = 0;
+	LastInspectedFilter = 1;
+	LastRejectFilter = 2;
+};
+
+message GetProductFilterRequest
+{
+	string ListName = 1;
+}
+
+message GetProductFilterResponse
+{
+	sint32 hResult = 1;
+	ProductFilterEnum Filter = 2;
+}
+
+message SetProductFilterRequest
+{
+	string ListName = 1;
+	ProductFilterEnum Filter = 2;
+}
+
+message GetItemsRequest
+{
+	repeated string ItemNameList = 1;
+}
+
+message GetItemsResponse
+{
+	sint32 hResult = 1;
+	repeated Value ValueList = 2;
+	repeated Value ImageList = 3;
+	repeated Value ErrorList = 4;
+}
+
+message SetItemsRequest
+{
+	repeated Value ValueList = 1;
+	repeated Value ImageList = 2;
+}
+
+message SetItemsResponse
+{
+	sint32 hResult = 1;
+	repeated Value ErrorList = 2;
+}
+
+message GetFileRequest
+{
+	string SourcePath = 1;
+}
+
+message GetFileResponse
+{
+	sint32 hResult = 1;
+	bytes FileData = 2;
+}
+
+message PutFileRequest
+{
+	string DestinationPath = 1;
+	bytes FileData = 2;
+}
+
+message RegisterMonitorListRequest
+{
+	string Name = 1;
+	string PpqName = 2;
+	sint32 RejectDepth = 3;
+	repeated string ProductItemList = 4;
+	repeated string RejectConditionList = 5;
+	repeated string FailStatusList = 6;
+}
+
+message RegisterMonitorListResponse
+{
+	sint32 hResult = 1;
+	repeated Value ErrorList = 2;
+}
+
+message GetInspectionNamesRequest
+{
+	;
+}
+
+message ShutdownRequest
+{
+	sint32 Options = 1;
+}
+
+message GetMonitorListPropertiesRequest
+{
+	string ListName = 1;
+}
+
+message GetMonitorListPropertiesResponse
+{
+	sint32 hResult = 1;
+	sint32 RejectDepth = 2;
+	bool Active = 3;
+	string PpqName = 4;
+}
+
+message GetMaxRejectDepthRequest
+{
+	;
+}
+
+message GetMaxRejectDepthResponse
+{
+	sint32 MaxRejectDepth = 1;
+}
+
+message GetConfigReportRequest
+{
+	;
+}
+
+message GetConfigReportResponse
+{
+	sint32 hResult = 1;
+	string Report = 2;
+}
+
+message GetDataDefinitionListRequest
+{
+	string InspectionName = 1;
+	DataDefinitionListType Type = 2;
+}
+
+message GetDataDefinitionListResponse
+{
+	sint32 hResult = 1;
+	repeated DataDefinition List = 2;
+}
+
+message QueryMonitorListRequest
+{
+	string ListName = 1;
+	ListType Type = 2;
+}
+
+message QueryMonitorListNamesRequest
+{
+	;
+}
+
+message NamesResponse
+{
+	sint32 hResult = 1;
+	Value Names = 2;
+}
+
+message StandardResponse
+{
+	sint32 hResult = 1;
 }

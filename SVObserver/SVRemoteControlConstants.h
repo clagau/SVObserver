@@ -21,7 +21,7 @@ namespace SVRC
 		const std::string hr = "HResult";
 		const std::string err = "ErrorText";
 		const std::string arg = "Arguments";
-		const std::string reslts = "Results";
+		const std::string results = "Results";
 		const std::string notfctn = "Notification";
 		const std::string dataItems = "DataItems";
 		const std::string command = "Command";

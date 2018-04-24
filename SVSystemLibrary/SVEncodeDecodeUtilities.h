@@ -11,17 +11,21 @@
 
 #pragma once
 
+//Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <string>
 
 
 namespace SVEncodeDecodeUtilities
 {
-	HRESULT Base64EncodeToByteBufferFromByteBuffer( int& p_rOutputBufferSize, char* p_pOutput, size_t p_InputBufferSize, const unsigned char* p_pInput );
-	HRESULT Base64EncodeToStringFromByteBuffer( std::string& p_rOutput, size_t p_InputBufferSize, const unsigned char* p_pInput );
-	HRESULT Base64EncodeToStringFromString( std::string& p_rOutput, const std::string& p_rInput );
-	HRESULT Base64EncodeToStringFromFile( std::string& p_rOutput, const std::string& p_rFileName );
+HRESULT FileToCharVector(const std::string& rFileName, std::vector<char>& rFileData);
+HRESULT StringContentToFile(const std::string& rFileName, const std::string& rFileData);
 
-	HRESULT Base64DecodeToByteBufferFromString( int& p_rOutputBufferSize, unsigned char* p_pOutput, const std::string& p_rInput );
-	HRESULT Base64DecodeToFileFromString( const std::string& p_rFileName, const std::string& p_rInput );
+HRESULT Base64EncodeToByteBufferFromByteBuffer(int& p_rOutputBufferSize, char* p_pOutput, size_t p_InputBufferSize, const unsigned char* p_pInput);
+HRESULT Base64EncodeToStringFromByteBuffer(std::string& p_rOutput, size_t p_InputBufferSize, const unsigned char* p_pInput);
+HRESULT Base64EncodeToStringFromString(std::string& p_rOutput, const std::string& p_rInput);
+HRESULT Base64EncodeToStringFromFile(std::string& p_rOutput, const std::string& p_rFileName);
+
+HRESULT Base64DecodeToByteBufferFromString(int& p_rOutputBufferSize, unsigned char* p_pOutput, const std::string& p_rInput);
+HRESULT Base64DecodeToFileFromString(const std::string& p_rFileName, const std::string& p_rInput);
 }
 

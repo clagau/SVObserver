@@ -15,15 +15,13 @@
 #include "FreeImage\FreeImage.h"
 #include "SVImageConvertorGDI.h"
 #include "Logging.h"
-#include "SVSocketLibrary/SVSocketError.h"
 #include "WebsocketLibrary/RunRequest.inl"
 #pragma endregion Includes
 
 #pragma comment(lib,"gdiplus")
 
-
-using namespace  SvSol;
-
+#define INET_E_NO_SESSION		_HRESULT_TYPEDEF_(0x800C0003L)
+#define INET_E_NO_IMAGE_SOCKET 	_HRESULT_TYPEDEF_(0x83760006L)
 
 STDMETHODIMP SVImageObject::get_Image(IPictureDisp** pVal)
 {

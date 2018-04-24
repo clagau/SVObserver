@@ -39,38 +39,38 @@ void PrintCurImage(const SvPb::CurImageId& rCurrentImage)
 }
 void PrintVariant(const SvPb::Variant& var)
 {
-	switch (var.value_case())
+	switch (var.data_case())
 	{
-		case SvPb::Variant::kBoolValue:
-			BOOST_LOG_TRIVIAL(info) << "value: " << var.bool_value();
+		case SvPb::Variant::kBVal:
+			BOOST_LOG_TRIVIAL(info) << "value: " << var.bval();
 			break;
 
-		case SvPb::Variant::kInt32Value:
-			BOOST_LOG_TRIVIAL(info) << "value: " << var.int32_value();
+		case SvPb::Variant::kLVal:
+			BOOST_LOG_TRIVIAL(info) << "value: " << var.lval();
 			break;
 
-		case SvPb::Variant::kInt64Value:
-			BOOST_LOG_TRIVIAL(info) << "value: " << var.int64_value();
+		case SvPb::Variant::kLlVal:
+			BOOST_LOG_TRIVIAL(info) << "value: " << var.llval();
 			break;
 
-		case SvPb::Variant::kUint32Value:
-			BOOST_LOG_TRIVIAL(info) << "value: " << var.uint32_value();
+		case SvPb::Variant::kUlVal:
+			BOOST_LOG_TRIVIAL(info) << "value: " << var.ulval();
 			break;
 
-		case SvPb::Variant::kUint64Value:
-			BOOST_LOG_TRIVIAL(info) << "value: " << var.uint64_value();
+		case SvPb::Variant::kUllVal:
+			BOOST_LOG_TRIVIAL(info) << "value: " << var.ullval();
 			break;
 
-		case SvPb::Variant::kDoubleValue:
-			BOOST_LOG_TRIVIAL(info) << "value: " << var.double_value();
+		case SvPb::Variant::kDblVal:
+			BOOST_LOG_TRIVIAL(info) << "value: " << var.dblval();
 			break;
 
-		case SvPb::Variant::kFloatValue:
-			BOOST_LOG_TRIVIAL(info) << "value: " << var.float_value();
+		case SvPb::Variant::kFltVal:
+			BOOST_LOG_TRIVIAL(info) << "value: " << var.fltval();
 			break;
 
-		case SvPb::Variant::kStringValue:
-			BOOST_LOG_TRIVIAL(info) << "value: " << var.string_value();
+		case SvPb::Variant::kStrVal:
+			BOOST_LOG_TRIVIAL(info) << "value: " << var.strval();
 			break;
 
 		default:
@@ -337,7 +337,6 @@ int main(int argc, char* argv[])
 				{
 
 					SvPb::GetVersionRequest req;
-					req.set_trigger_timeout(true);
 					auto version = runRequest(*pService, &SvWsl::ClientService::getVersion, std::move(req)).get();
 					BOOST_LOG_TRIVIAL(info) << "Version: ";
 					BOOST_LOG_TRIVIAL(info) << " RunReWebsocketServer: " << version.version();

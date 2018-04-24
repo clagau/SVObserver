@@ -10,7 +10,7 @@
 #pragma region Includes
 #include "TriggerRecord.h"
 #include "ImageBufferController.h"
-#include "SVProtoBuf\BasicStructureHelper.h"
+#include "SVProtoBuf\ConverterHelper.h"
 #include "ResetLocker.h"
 #pragma endregion Includes
 

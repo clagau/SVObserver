@@ -4,7 +4,7 @@
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "SVMatroxLibrary\MatroxImageProps.h"
 
-#include "SVProtoBuf\BasicStructureHelper.h"
+#include "SVProtoBuf\ConverterHelper.h"
 
 #pragma endregion Includes
 
@@ -277,16 +277,16 @@ namespace SvSml
 	{
 		if (IsImage())
 		{
-			auto pImDef = resp.add_imagedefinition();
-			pImDef->set_name(name.c_str());
-			pImDef->set_sizex(static_cast<INT32>(data.sizeX));
-			pImDef->set_sizey(static_cast<INT32>(data.sizeY));
-			pImDef->set_storeid(data.InspectionStoreId);
-			pImDef->set_imageid(data.ItemId);
+			auto pImageDef = resp.add_imagedeflist();
+			pImageDef->set_name(name.c_str());
+			pImageDef->set_sizex(static_cast<INT32>(data.sizeX));
+			pImageDef->set_sizey(static_cast<INT32>(data.sizeY));
+			pImageDef->set_storeid(data.InspectionStoreId);
+			pImageDef->set_imageid(data.ItemId);
 		}
 		else
 		{
-			auto pValueDef = resp.add_valuedefinition();
+			auto pValueDef = resp.add_valuedeflist();
 			pValueDef->set_name(name.c_str());
 			pValueDef->set_type(data.variant_type);
 			pValueDef->set_size (static_cast<INT32>(data.ByteSize));

@@ -179,8 +179,8 @@ bool  ShareControl::SetProductResponse(bool nameInResponse, const SvSml::MLProdu
 	{
 		auto pval = rProductMsg.add_values();
 		//@Todo[MEC][8.00] [19.10.2017] use variant 
-		pval->set_string_value(pProduct->m_data[i]->c_str());
-		pval->set_varianttype(VT_BSTR);
+		pval->set_strval(pProduct->m_data[i]->c_str());
+		pval->set_type(VT_BSTR);
 		if (nameInResponse)
 		{
 			*(rProductMsg.add_valuenames()) = (pProduct->m_dataEntries[i]->name);

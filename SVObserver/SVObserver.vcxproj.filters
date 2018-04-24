@@ -354,9 +354,6 @@
     <ClCompile Include="SVOutputObjectList.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVOutputStreamManager.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVParserProgressDialog.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -498,9 +495,6 @@
     <ClCompile Include="SVStatTool.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVStreamCommandFactory.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVTADlgAcquisitionSourcePage.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -598,12 +592,6 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVStorage.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVSocketRemoteCommandManager.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVInputStreamManager.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVCommandInspectionGetItems.cpp">
@@ -709,12 +697,6 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVCommandInspectionExtentUpdater.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVFailStatusStream.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVFailStatusStreamManager.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="ResizeTool.cpp">
@@ -1207,9 +1189,6 @@
     <ClInclude Include="SVOutputObjectList.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVOutputStreamManager.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVParserProgressDialog.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -1357,9 +1336,6 @@
     <ClInclude Include="SVStatTool.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVStreamCommandFactory.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVTADlgAcquisitionSourcePage.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -1456,13 +1432,7 @@
     <ClInclude Include="SVCommandInspectionGetItems.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVInputStreamManager.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVRemoteControlConstants.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVSocketRemoteCommandManager.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVStorage.h">
@@ -1577,12 +1547,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVCommandInspectionExtentUpdater.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVFailStatusStream.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVFailStatusStreamManager.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="TextDefinesSvO.h">
@@ -1715,6 +1679,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVRCWebsocketServer.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVRCRequestHandler.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

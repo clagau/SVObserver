@@ -14,7 +14,7 @@
 #include "ITriggerRecordControllerRW.h"
 #include "ITriggerRecordRW.h"
 #include "TriggerRecordController.h"
-#include "SVProtoBuf\BasicStructureHelper.h"
+#include "SVProtoBuf\ConverterHelper.h"
 #include "ImageBufferController.h"
 #include "SVMatroxLibrary\SVMatroxBufferCreateStruct.h"
 #pragma endregion Includes

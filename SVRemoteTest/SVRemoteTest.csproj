@@ -122,7 +122,6 @@
       <DependentUpon>PropertiesPage.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StreamingDataEventArgs.cs" />
     <Compile Include="SVObserverMessage.cs" />
     <Compile Include="SVRemoteCtrlActivateMonitorList.cs">
       <SubType>Code</SubType>
@@ -154,10 +153,6 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="StreamingDataForm.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>StreamingDataForm.cs</DependentUpon>
-    </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
@@ -173,12 +168,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="StreamingDataForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="StreamingDataForm.Designer.cs">
-      <DependentUpon>StreamingDataForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="SVArrayPresenter.cs" />
     <Compile Include="SVDataDefinition.cs" />
     <Compile Include="SVDataDefinitionListProperties.cs" />
@@ -193,8 +182,6 @@
     <Compile Include="SVRemoteCtrlGetFailStatusView.cs" />
     <Compile Include="SVRemoteCtrlGetProductView.cs" />
     <Compile Include="SVImage.cs" />
-    <Compile Include="SVInputBrokerAddItemView.cs" />
-    <Compile Include="SVInputBrokerQueryListItemsView.cs" />
     <Compile Include="SVInputMatchItemWrapper.cs" />
     <Compile Include="SVMemoryStream.cs" />
     <Compile Include="SVPictureConvertor.cs" />

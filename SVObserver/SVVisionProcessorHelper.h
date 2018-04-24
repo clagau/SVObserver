@@ -19,6 +19,7 @@
 //Moved to precompiled header: #include <boost/function.hpp>
 #include "SVSystemLibrary/SVAsyncProcedure.h"
 
+#include "Definitions/StringTypeDef.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVSharedMemoryLibrary/SVProductFilterEnum.h"
 #include "SVUtilityLibrary/SVGUID.h"
@@ -48,10 +49,10 @@ enum SVDataDefinitionListType
 	AllValuesAndAllImages			= 12,
 };
 
-struct MonitorlistPropeties
+struct MonitorlistProperties
 {
 	
-	MonitorlistPropeties():RejectQueDepth(0), isActive(false)
+	MonitorlistProperties():RejectQueDepth(0), isActive(false)
 	{};
 	int RejectQueDepth;
 	bool isActive;
@@ -84,7 +85,7 @@ public:
 
 	HRESULT GetConfigurationPrintReport( std::string& rReport ) const;
 
-	HRESULT GetDataDefinitionList( const std::string& rInspectionName, const SVDataDefinitionListType& rListType, SVDataDefinitionStructArray& rDataDefinitionArray) const;
+	HRESULT GetDataDefinitionList( const std::string& rInspectionName, const SVDataDefinitionListType& rListType, SVDataDefinitionStructVector& rDataDefinitionArray) const;
 
 	//************************************
 	//! Get Items value for the Item in NameSet to the SVNameStorageResultMap 
@@ -92,7 +93,7 @@ public:
 	//! \param rItems [out]
 	//! \returns HRESULT
 	//************************************
-	HRESULT GetItems( const SVNameSet& rNames, SVNameStorageResultMap& rItems) const;
+	HRESULT GetItems( const SvDef::StringSet& rNames, SVNameStorageResultMap& rItems) const;
 	
 	//************************************
 	//! Set the item values in SVnameStorage map Result are in SVNameStatusMap 
@@ -111,15 +112,15 @@ public:
 	//! \returns HRESULT
 	//************************************
 	HRESULT FireNotification( int Type, int MesssageNumber, LPCTSTR MessageText );
-	HRESULT QueryProductList( const std::string& rListName, SVNameSet& rNames ) const;
-	HRESULT QueryRejectCondList( const std::string& rListName, SVNameSet& rNames ) const;
-	HRESULT QueryFailStatusList( const std::string& rListName, SVNameSet& rNames ) const;
+	HRESULT QueryProductList( const std::string& rListName, SvDef::StringSet& rNames ) const;
+	HRESULT QueryRejectCondList( const std::string& rListName, SvDef::StringSet& rNames ) const;
+	HRESULT QueryFailStatusList( const std::string& rListName, SvDef::StringSet& rNames ) const;
 	HRESULT ActivateMonitorList( const std::string& rListName, bool bActivate );
-	HRESULT QueryMonitorListNames( SVNameSet& rNames ) const;
-	HRESULT GetInspectionNames( SVNameSet& rNames ) const;
+	HRESULT QueryMonitorListNames( SvDef::StringSet& rNames ) const;
+	HRESULT GetInspectionNames( SvDef::StringSet& rNames ) const;
 	HRESULT SetProductFilter( const std::string& rListName, SvSml::SVProductFilterEnum filter );
 	HRESULT GetProductFilter( const std::string& rListName, SvSml::SVProductFilterEnum& filter ) const;
-	HRESULT RegisterMonitorList( const std::string& rListName, const std::string& rPPQName, int rejectDepth, const SVNameSet& rProdList, const SVNameSet& rRejectCondList, const SVNameSet& rFailStatusList, SVNameStatusMap& rStatusOfItemsWithError );
+	HRESULT RegisterMonitorList( const std::string& rListName, const std::string& rPPQName, int rejectDepth, const SvDef::StringSet& rProdList, const SvDef::StringSet& rRejectCondList, const SvDef::StringSet& rFailStatusList, SVNameStatusMap& rStatusOfItemsWithError );
 	
 	
 	//! Give the Properties of an existing Monitorlist
@@ -128,25 +129,19 @@ public:
 	//! \param RejectQueDepth [out]
 	//! \param isActive [out]
 	//! \returns HRESULT
-	HRESULT GetMonitorListProperties(const std::string& rListName, MonitorlistPropeties& properties);
+	HRESULT GetMonitorListProperties(const std::string& rListName, MonitorlistProperties& properties);
 	
-	// These two (2) methods, Startup, Shutdown are only meant to be called by the main application class and no other
-	// They used to be protected and a friend class declaration was used, but that was a bad design as the friend was declares in another project
-	// So for now the restriction is made manually, just don't call these methods anywhere else, and described via this comment
-	void Startup(); // This method is only meant to be called by the main application class
-	void Shutdown();						 // This method is only meant to be called by the main application certain class
-
 protected:
-	typedef boost::function< HRESULT ( const SVNameSet&, SVNameStorageResultMap& ) > SVGetItemsFunctor;
+	typedef boost::function< HRESULT ( const SvDef::StringSet&, SVNameStorageResultMap& ) > SVGetItemsFunctor;
 	typedef boost::function< HRESULT ( const SVNameStorageMap&, SVNameStatusMap&, bool RunOnce ) > SVSetItemsFunctor;
 	typedef std::map<std::string, SVGetItemsFunctor> SVGetItemsFunctorMap;
 	typedef std::map<std::string, SVSetItemsFunctor> SVSetItemsFunctorMap;
 
 	static void CALLBACK APCThreadProcess( DWORD_PTR dwParam );
 
-	HRESULT GetStandardItems( const SVNameSet& rNames, SVNameStorageResultMap& rItems ) const;
-	HRESULT GetInspectionItems( const SVNameSet& rNames, SVNameStorageResultMap& rItems ) const;
-	HRESULT GetRemoteInputItems( const SVNameSet& rNames, SVNameStorageResultMap& rItems ) const;
+	HRESULT GetStandardItems( const SvDef::StringSet& rNames, SVNameStorageResultMap& rItems ) const;
+	HRESULT GetInspectionItems( const SvDef::StringSet& rNames, SVNameStorageResultMap& rItems ) const;
+	HRESULT GetRemoteInputItems( const SvDef::StringSet& rNames, SVNameStorageResultMap& rItems ) const;
 
 	HRESULT SetStandardItems(const SVNameStorageMap& rItems, SVNameStatusMap& rStatus, bool RunOnce);
 	HRESULT SetInspectionItems(const SVNameStorageMap& rItems, SVNameStatusMap& rStatus, bool RunOnce);
@@ -181,15 +176,11 @@ private:
 	// Parameter: HRESULT & hr [in/out] Change the result value only if an error happens. If no error happens input is equal output.
 	// Returns:   void
 	//************************************
-	void SetValuesOrImagesMonitoredObjectLists( const SVNameSet& rObjectNameList, const SVPPQObject& pPPQ, MonitoredObjectList &rMonitoredValueObjectList, MonitoredObjectList *pMonitoredImageObjectList, SVNameStatusMap &rStatus, HRESULT &hr );
+	void SetValuesOrImagesMonitoredObjectLists( const SvDef::StringSet& rObjectNameList, const SVPPQObject& pPPQ, MonitoredObjectList &rMonitoredValueObjectList, MonitoredObjectList *pMonitoredImageObjectList, SVNameStatusMap &rStatus, HRESULT &hr );
 #pragma endregion Private Methods
 
 #pragma region Private Members
 private:   //Data
-	typedef void (CALLBACK * SVAPCSignalHandler)(DWORD_PTR);
-	typedef boost::function<void(bool&)> SVThreadProcessHandler;
-
-	SVAsyncProcedure< SVAPCSignalHandler, SVThreadProcessHandler > m_AsyncProcedure;
 
 	SvStl::MessageNotification m_MessageNotification;
 #pragma endregion Private Members

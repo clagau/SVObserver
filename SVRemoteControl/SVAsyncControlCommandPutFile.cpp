@@ -25,7 +25,7 @@ SVAsyncControlCommandPutFile::~SVAsyncControlCommandPutFile()
 
 HRESULT SVAsyncControlCommandPutFile::Execute(CommandDispatcher disp)
 {
-	return disp->PutFile( m_SourcePath, m_DestinationPath, m_Cancel, false, m_Status );
+	return disp->PutFile( m_SourcePath, m_DestinationPath, m_Status );
 }
 
 HRESULT SVAsyncControlCommandPutFile::Cancel()

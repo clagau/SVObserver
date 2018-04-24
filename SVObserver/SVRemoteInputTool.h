@@ -11,19 +11,14 @@
 #pragma once
 
 #pragma region Includes
-#include "SVCommandLibrary/SVCommandTemplate.h"
 #include "SVContainerLibrary/SVBiUniqueMap.h"
-#include "SVObjectLibrary/SVObjectNotifyTemplate.h"
 #include "SVOLibrary/SVQueueObject.h"
-#include "SVObjectCommandDataJson.h"
 #include "InspectionEngine/SVTool.h"
 #include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
 
 #pragma endregion Includes
 
-class SVRemoteInputTool : 
-	public SVToolClass,
-	public SVObjectNotifyTemplate< SVObjectCommandDataJsonPtr >
+class SVRemoteInputTool : public SVToolClass
 {
 	SV_DECLARE_CLASS( SVRemoteInputTool )
 
@@ -35,33 +30,11 @@ public:
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	virtual HRESULT ProcessNotifyData( SVObjectCommandDataJsonPtr& p_rDataPtr ) override;
-
 	SVObjectReference GetInputObject() const;
 	HRESULT ClearInputObject();
 	HRESULT SetInputObject(const std::string& rGuidName);
 
-
-
 protected:
-	typedef SVTQueueObject< SVObjectCommandDataJsonPtr > SVCommandQueue;
-
-	class SVCommandQueueElement : public SVCommandTemplate
-	{
-	public:
-		SVCommandQueueElement( const SVGUID& p_rObjectId, SVObjectCommandDataJsonPtr& p_rJsonCommandPtr );
-
-		virtual ~SVCommandQueueElement();
-
-		virtual HRESULT Execute() override;
-
-	private:
-		SVCommandQueueElement();
-
-		SVGUID m_ObjectId;
-		SVObjectCommandDataJsonPtr m_JsonCommandPtr;
-	};
-
 	struct SVDataElement
 	{
 		SVDataElement();
@@ -83,8 +56,6 @@ protected:
 
 	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
-	HRESULT ProcessCommandQueue();
-
 	bool ValidateLocal(SvStl::MessageContainerVector *pErrorMessages=nullptr) const;
 
 	SvOl::SVInObjectInfoStruct m_InputObjectInfo;
@@ -93,7 +64,6 @@ protected:
 	SVVariantValueObjectClass m_MatchedValue;
 
 	long m_ElementIdentifier;
-	SVCommandQueue m_Commands;
 	SVDataContainer m_Elements;
 };
 

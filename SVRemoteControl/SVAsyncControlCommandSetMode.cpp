@@ -25,7 +25,7 @@ SVAsyncControlCommandSetMode::~SVAsyncControlCommandSetMode()
 
 HRESULT SVAsyncControlCommandSetMode::Execute(CommandDispatcher disp)
 {
-	return disp->SetMode( m_NewMode, false, m_Status );
+	return disp->SetMode( m_NewMode, m_Status );
 }
 
 HRESULT SVAsyncControlCommandSetMode::Cancel()

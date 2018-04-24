@@ -8,7 +8,6 @@
 #pragma region Includes
 #include "resource.h"       // main symbols
 #include "SVRemoteControl.h"
-#include "SVSocketLibrary/SVClientSocket.h"
 #include <boost/shared_array.hpp>
 #include "WebsocketLibrary/clientservice.h"
 #include "SVProtobuf/SVRC.h"
@@ -25,9 +24,6 @@ typedef boost::shared_array<BYTE> bytes;
 
 namespace gdi = Gdiplus;
 
-#pragma warning(push)
-#pragma warning(disable: 4482)
-
 // SVImageObject
 
 class ATL_NO_VTABLE SVImageObject :
@@ -36,10 +32,7 @@ class ATL_NO_VTABLE SVImageObject :
 	public IDispatchImpl<ISVImageObject, &IID_ISVImageObject, &LIBID_SVRemoteControlLib, /*wMajor =*/ 1, /*wMinor =*/ 0>
 {
 public:
-	SVImageObject()
-	{
-		m_pImageSok = nullptr;
-	}
+	SVImageObject(){}
 
 	DECLARE_REGISTRY_RESOURCEID(IDR_SVIMAGEOBJECT)
 
@@ -88,10 +81,6 @@ public:
 
 	const std::string & GetUrl() const { return url; }
 	void SetUrl(const std::string & u) { url = u; }
-	void SetImageSok(SvSol::SVClientSocket<SvSol::UdpApi>*  sok)
-	{
-		m_pImageSok = sok;
-	}
 	void SetClientService(SvWsl::ClientServicePointer&   rpClientService);
 	void SetImageId(const SvPb::CurImageId& CurImageId);
 private:
@@ -112,15 +101,9 @@ private:
 	LONG trigger = 0;
 	ULONG len = 0;
 	SVImageFormatsEnum format = BMP;
-	SvSol::SVClientSocket<SvSol::UdpApi>*  m_pImageSok = nullptr;
 	SvPb::CurImageId m_CurImId;
 	SvWsl::ClientServicePointer*  m_pClientService = nullptr;
-
-
-
 };
-
-#pragma warning(pop)
 
 OBJECT_ENTRY_AUTO(__uuidof(SVImageObject), SVImageObject)
 

@@ -14,6 +14,7 @@ namespace SvSml
 {
 	enum SVProductFilterEnum
 	{
+		NoFilter = 0,
 		LastInspectedFilter = 1,
 		LastRejectFilter = 2
 	};

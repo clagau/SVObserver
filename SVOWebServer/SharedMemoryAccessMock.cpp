@@ -71,12 +71,6 @@ SharedMemoryAccessMock::~SharedMemoryAccessMock() {}
 
 void SharedMemoryAccessMock::GetVersion(const SvPb::GetVersionRequest& req, SvRpc::Task<SvPb::GetVersionResponse> task)
 {
-	// trigger timeout by not calling task.finish()
-	if (req.trigger_timeout())
-	{
-		return;
-	}
-
 	SvPb::GetVersionResponse resp;
 	resp.set_version("Mock Version");
 	task.finish(std::move(resp));
@@ -114,7 +108,7 @@ void SharedMemoryAccessMock::GetImageStreamFromCurId(const SvPb::GetImageStreamF
 		std::bind(&SharedMemoryAccessMock::getImageStreamFromCurIdStep, this, req.count(), req.id(), observer, ctx));
 }
 
-void SharedMemoryAccessMock::GetItems(const SvPb::GetItemsRequest&, SvRpc::Task<SvPb::GetItemsResponse> task)
+void SharedMemoryAccessMock::GetTriggerItems(const SvPb::GetTriggerItemsRequest&, SvRpc::Task<SvPb::GetTriggerItemsResponse> task)
 {
 	SvPenv::Error err;
 	err.set_error_code(SvPenv::ErrorCode::NotImplemented);
@@ -147,7 +141,7 @@ void SharedMemoryAccessMock::GetNotificationStream(const SvPb::GetNotificationSt
 void SharedMemoryAccessMock::getProduct(SvPb::Product& product, bool name_in_response)
 {
 	product.set_trigger(123);
-	product.add_values()->set_string_value("TestValue");
+	product.add_values()->set_strval("TestValue");
 	if (name_in_response)
 	{
 		(*product.add_valuenames()) = "TestValueName";

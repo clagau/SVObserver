@@ -38,5 +38,5 @@ private:
 };
 #pragma pack (pop)
 
-typedef std::vector<SVDataDefinitionStruct> SVDataDefinitionStructArray;
+typedef std::vector<SVDataDefinitionStruct> SVDataDefinitionStructVector;
 

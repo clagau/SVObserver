@@ -1,0 +1,29 @@
+//*****************************************************************************
+/// \copyright (c) 2018,2018 by Seidenader Maschinenbau GmbH
+/// \file Variant.proto
+/// All Rights Reserved 
+//*****************************************************************************
+/// Protobuf file for the Variant values
+//******************************************************************************
+
+syntax = "proto3";
+package SvPb;
+
+message Variant 
+{
+	//The Variant type VT
+	uint32 Type = 1;
+
+	oneof data 
+	{
+		bool bVal = 2;
+		sint32 lVal = 3;
+		sint64 llVal = 4;
+		uint32 ulVal = 5;
+		uint64 ullVal = 6;
+		double dblVal = 7;
+		float fltVal = 8;
+		string strVal = 9;
+		bytes bytesVal = 10;	//This is used to tranfer arrays and binary data (e.g. files)
+	}
+}

@@ -68,6 +68,8 @@ public:
 
 	HRESULT Add( const _variant_t& p_rData );
 
+	SAFEARRAY* getSafeArray() { return m_pSafeArray; }
+
 protected:
 	HRESULT UpdateVariant( VARTYPE p_Type, const void* p_pData, _variant_t &p_rVariant ) const;
 	HRESULT GetGeneralVoidAddress( const _variant_t &p_rVariant, void*& p_rpData ) const;

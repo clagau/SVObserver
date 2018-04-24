@@ -406,11 +406,6 @@ private:
 	HMENU m_hAddMenu;
 	HANDLE m_hEvent;
 
-	unsigned short m_InputStreamPortNumber;
-	unsigned short m_OutputStreamPortNumber;
-	unsigned short m_RemoteCommandsPortNumber;
-	unsigned short m_FailStatusStreamPortNumber;
-
 	long m_DataValidDelay;
 
 	InitialInformationHandler m_IniInfoHandler;

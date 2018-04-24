@@ -9,6 +9,7 @@
 
 #include <stdio.h>
 #include <tchar.h>
+#include <fstream>
 #include <functional>
 #include <future>
 #include <memory>

@@ -13,9 +13,76 @@
 //Moved to precompiled header: #include <atlenc.h>
 //Moved to precompiled header: #include <boost/config.hpp>
 //Moved to precompiled header: #include <boost/scoped_array.hpp>
+//Moved to precompiled header: #include <fstream>
+//Moved to precompiled header: #include <io.h>
 #include "SVEncodeDecodeUtilities.h"
 
-HRESULT SVEncodeDecodeUtilities::Base64EncodeToByteBufferFromByteBuffer( int& p_rOutputBufferSize, char* p_pOutput, size_t p_InputBufferSize, const unsigned char* p_pInput )
+namespace SVEncodeDecodeUtilities
+{
+HRESULT FileToCharVector(const std::string& rFileName, std::vector<char>& rFileData)
+{
+	HRESULT Result{S_OK};
+
+	if (!rFileName.empty())
+	{
+		std::ifstream FileStream;
+
+		FileStream.open(rFileName.c_str(), std::ifstream::in | std::ifstream::binary | std::ifstream::ate);
+		if (FileStream.is_open())
+		{
+			size_t FileSize(0);
+			FileSize = static_cast<size_t> (FileStream.tellg());
+			if(0 != FileSize)
+			{
+				rFileData.resize(FileSize);
+				FileStream.seekg(0, std::ios::beg);
+				FileStream.read(&rFileData[0], FileSize);
+			}
+			else
+			{
+				Result = E_INVALIDARG;
+			}
+			FileStream.close();
+		}
+		else
+		{
+			Result = E_UNEXPECTED;
+		}
+	}
+	else
+	{
+		Result = E_INVALIDARG;
+	}
+	return Result;
+}
+
+HRESULT StringContentToFile(const std::string& rFileName, const std::string& rFileData)
+{
+	HRESULT Result {S_OK};
+
+	if (!rFileName.empty())
+	{
+		std::ofstream FileStream;
+
+		FileStream.open(rFileName.c_str(), std::ofstream::out | std::ofstream::binary | std::ofstream::trunc);
+		if (FileStream.is_open())
+		{
+			FileStream.write(rFileData.c_str(), rFileData.size());
+			FileStream.close();
+		}
+		else
+		{
+			Result = E_UNEXPECTED;
+		}
+	}
+	else
+	{
+		Result = E_INVALIDARG;
+	}
+	return Result;
+}
+
+HRESULT Base64EncodeToByteBufferFromByteBuffer( int& p_rOutputBufferSize, char* p_pOutput, size_t p_InputBufferSize, const unsigned char* p_pInput )
 {
 	HRESULT l_Status = S_OK;
 
@@ -54,7 +121,7 @@ HRESULT SVEncodeDecodeUtilities::Base64EncodeToByteBufferFromByteBuffer( int& p_
 	return l_Status;
 }
 
-HRESULT SVEncodeDecodeUtilities::Base64EncodeToStringFromByteBuffer( std::string& p_rOutput, size_t p_InputBufferSize, const unsigned char* p_pInput )
+HRESULT Base64EncodeToStringFromByteBuffer( std::string& p_rOutput, size_t p_InputBufferSize, const unsigned char* p_pInput )
 {
 	HRESULT l_Status = S_OK;
 
@@ -80,7 +147,7 @@ HRESULT SVEncodeDecodeUtilities::Base64EncodeToStringFromByteBuffer( std::string
 	return l_Status;
 }
 
-HRESULT SVEncodeDecodeUtilities::Base64EncodeToStringFromString( std::string& p_rOutput, const std::string& p_rInput )
+HRESULT Base64EncodeToStringFromString( std::string& p_rOutput, const std::string& p_rInput )
 {
 	HRESULT l_Status = S_OK;
 
@@ -143,7 +210,7 @@ HRESULT SVEncodeDecodeUtilities::Base64EncodeToStringFromFile( std::string& p_rO
 	return l_Status;
 }
 
-HRESULT SVEncodeDecodeUtilities::Base64DecodeToByteBufferFromString( int& p_rOutputBufferSize, unsigned char* p_pOutput, const std::string& p_rInput )
+HRESULT Base64DecodeToByteBufferFromString( int& p_rOutputBufferSize, unsigned char* p_pOutput, const std::string& p_rInput )
 {
 	HRESULT l_Status = S_OK;
 
@@ -164,7 +231,7 @@ HRESULT SVEncodeDecodeUtilities::Base64DecodeToByteBufferFromString( int& p_rOut
 	return l_Status;
 }
 
-HRESULT SVEncodeDecodeUtilities::Base64DecodeToFileFromString( const std::string& p_rFileName, const std::string& p_rInput )
+HRESULT Base64DecodeToFileFromString( const std::string& p_rFileName, const std::string& p_rInput )
 {
 	HRESULT l_Status = S_OK;
 
@@ -206,3 +273,4 @@ HRESULT SVEncodeDecodeUtilities::Base64DecodeToFileFromString( const std::string
 	return l_Status;
 }
 
+} //namespace SVEncodeDecodeUtilities

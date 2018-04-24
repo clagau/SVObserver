@@ -14,7 +14,6 @@
 #pragma region Includes
 //Moved to precompiled header: #include <map>
 #include "svobjectlibrary\svobjectclass.h"
-#include "SVObjectLibrary/SVObjectNotifyTemplate.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVObjectCommandDataJson.h"
 #include "SVRemoteOutputGroup.h"
@@ -26,9 +25,7 @@
 struct SVProductInfoStruct;
 class SVConfigurationObject;
 
-class SVRemoteOutputDataController : 
-	public SVObjectClass,
-	public SVObjectNotifyTemplate< SVObjectCommandDataJsonPtr >
+class SVRemoteOutputDataController : public SVObjectClass
 {
 	SV_DECLARE_CLASS( SVRemoteOutputDataController );
 
@@ -37,8 +34,6 @@ public:
 	SVRemoteOutputDataController( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVREMOTEOUTPUTCONTROLLER );
 
 	virtual ~SVRemoteOutputDataController();
-
-	virtual HRESULT ProcessNotifyData( SVObjectCommandDataJsonPtr& rDataPtr ) override;
 
 	HRESULT AddItem( const std::string& rRemoteGroupId, SVRemoteOutputObject*& pNewOutput, GUID InputObjectID, const std::string& rPPQ );
 

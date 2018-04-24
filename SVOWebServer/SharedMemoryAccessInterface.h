@@ -28,7 +28,7 @@ public:
 	virtual void GetImageFromCurId(const SvPb::GetImageFromCurIdRequest&, SvRpc::Task<SvPb::GetImageFromCurIdResponse>) = 0;
 	virtual void GetImageStreamFromCurId(const SvPb::GetImageStreamFromCurIdRequest&,
 		SvRpc::Observer<SvPb::GetImageStreamFromCurIdResponse>, SvRpc::ServerStreamContext::Ptr) = 0;
-	virtual void GetItems(const SvPb::GetItemsRequest&, SvRpc::Task<SvPb::GetItemsResponse>) = 0;
+	virtual void GetTriggerItems(const SvPb::GetTriggerItemsRequest&, SvRpc::Task<SvPb::GetTriggerItemsResponse>) = 0;
 	virtual void QueryListName(const SvPb::QueryListNameRequest&, SvRpc::Task<SvPb::QueryListNameResponse>) = 0;
 	virtual void QueryListItem(const SvPb::QueryListItemRequest&, SvRpc::Task<SvPb::QueryListItemResponse>) = 0;
 	virtual void GetNotificationStream(const SvPb::GetNotificationStreamRequest&,

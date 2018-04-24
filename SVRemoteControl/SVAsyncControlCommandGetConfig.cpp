@@ -25,7 +25,7 @@ SVAsyncControlCommandGetConfig::~SVAsyncControlCommandGetConfig()
 
 HRESULT SVAsyncControlCommandGetConfig::Execute(CommandDispatcher disp)
 {
-	return disp->GetConfig( m_FileName, m_Cancel, false, m_Status );
+	return disp->GetConfig( m_FileName, m_Status );
 }
 
 HRESULT SVAsyncControlCommandGetConfig::Cancel()

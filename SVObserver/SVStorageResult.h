@@ -11,7 +11,7 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <set>
+//Moved to precompiled header: #include <map>
 #include "SVStorage.h"
 #pragma endregion Includes
 
@@ -25,5 +25,4 @@ struct SVStorageResult
 	unsigned long m_TriggerCount;
 };
 
-typedef std::set<std::string> SVNameSet;
 typedef std::map<std::string, SVStorageResult> SVNameStorageResultMap;

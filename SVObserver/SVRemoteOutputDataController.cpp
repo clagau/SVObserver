@@ -16,7 +16,6 @@
 //Moved to precompiled header: #include <iterator>
 #include "SVRemoteOutputDataController.h"
 
-#include "JsonLib/include/json.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVUtilityLibrary/SVGUID.h"
@@ -25,7 +24,6 @@
 #include "SVIODoc.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVObserver.h"
-#include "SVOutputStreamManager.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "Definitions/StringTypeDef.h"
@@ -36,28 +34,16 @@ SV_IMPLEMENT_CLASS( SVRemoteOutputDataController, SVRemoteOutputDataControllerGU
 SVRemoteOutputDataController::SVRemoteOutputDataController( LPCTSTR ObjectName )
 : SVObjectClass( ObjectName )
 {
-	SVOutputStreamManager::Instance().InsertOutputController( GetUniqueObjectID() );
 }
 
 SVRemoteOutputDataController::SVRemoteOutputDataController( SVObjectClass *pOwner, int StringResourceID )
 : SVObjectClass( pOwner, StringResourceID )
 {
-	SVOutputStreamManager::Instance().InsertOutputController( GetUniqueObjectID() );
 }
 
 SVRemoteOutputDataController::~SVRemoteOutputDataController()
 {
-	SVOutputStreamManager::Instance().EraseOutputController();
-
 	Destroy();
-}
-
-//SEJ - What is this for???
-HRESULT SVRemoteOutputDataController::ProcessNotifyData( SVObjectCommandDataJsonPtr& p_rDataPtr )
-{
-	HRESULT l_Status = E_FAIL;
-	
-	return l_Status;
 }
 
 // Destroy iterates through the remote group parameters map and destroys all remote group parameters 
@@ -203,7 +189,6 @@ BOOL SVRemoteOutputDataController::SetParameters( SVTreeType& p_rTree, SVTreeTyp
 		bOk = SvXml::SVNavigateTree::GetItem( p_rTree, SvXml::CTAG_UNIQUE_REFERENCE_ID, htiIORemoteOutput, svVariant );
 		if ( bOk )
 		{
-			SVOutputStreamManager::Instance().EraseOutputController();
 
 			SVGUID UniqueID( svVariant );
 
@@ -212,8 +197,6 @@ BOOL SVRemoteOutputDataController::SetParameters( SVTreeType& p_rTree, SVTreeTyp
 			m_outObjectInfo.GetObjectReference().setGuid(UniqueID);
 
 			SVObjectManagerClass::Instance().OpenUniqueObjectID( this );
-
-			SVOutputStreamManager::Instance().InsertOutputController( GetUniqueObjectID() );
 		}
 
 		// Remote Output Parameters
@@ -242,7 +225,6 @@ BOOL SVRemoteOutputDataController::SetParameters( SVTreeType& p_rTree, SVTreeTyp
 					{
 						m_RemoteGroupParameters[ GroupID ] = l_ControlParameter;
 					}
-					l_ControlParameter->AttachStreamManager();
 				}
 			}
 		}
@@ -589,7 +571,6 @@ void SVRemoteOutputDataController::SetupRemoteOutputGroup(SVConfigurationObject*
 		for(SvDef::StringPairVector::iterator l_it = RenamedItems.begin() ; l_it != RenamedItems.end() ; ++l_it )
 		{
 			RenameGroup( l_it->first, l_it->second );
-			SVOutputStreamManager::Instance().Rename( l_it->first.c_str(), l_it->second.c_str() );
 		}
 
 		// Add New Output Groups

@@ -27,9 +27,6 @@
     <ClCompile Include="TriggerRecordController.pb.cc">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="BasicStructureHelper.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="MonitorListStore.pb.cc">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -40,6 +37,9 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVRC.pb.cc">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="ConverterHelper.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -56,10 +56,10 @@
     <CustomBuild Include="TriggerRecordController.proto">
       <Filter>Ressourcendateien</Filter>
     </CustomBuild>
-    <CustomBuild Include="variant.proto">
+    <CustomBuild Include="Envelope.proto">
       <Filter>Ressourcendateien</Filter>
     </CustomBuild>
-    <CustomBuild Include="Envelope.proto">
+    <CustomBuild Include="Variant.proto">
       <Filter>Ressourcendateien</Filter>
     </CustomBuild>
     <CustomBuild Include="SVRC.proto">
@@ -77,9 +77,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="TriggerRecordController.pb.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="BasicStructureHelper.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="MonitorListStore.pb.h">
@@ -103,13 +100,19 @@
     <ClInclude Include="TriggerRecordController.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="variant.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="InspectionCommands.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVRC.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Svrc.pb.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Variant.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ConverterHelper.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

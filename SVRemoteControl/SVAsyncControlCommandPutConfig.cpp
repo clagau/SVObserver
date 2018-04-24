@@ -27,7 +27,7 @@ HRESULT SVAsyncControlCommandPutConfig::Execute(CommandDispatcher disp)
 {
 	HRESULT l_Status = S_OK;
 
-	l_Status = disp->PutConfig( m_FileName, m_ProductName, m_Cancel, false, m_Status );
+	l_Status = disp->PutConfig( m_FileName, m_Status );
 
 	return l_Status;
 }

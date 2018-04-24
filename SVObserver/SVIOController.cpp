@@ -23,7 +23,6 @@
 #include "SVInfoStructs.h"
 #include "SVObserver.h"
 #include "SVOutputObjectList.h"
-#include "SVOutputStreamManager.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "TextDefinesSvO.h"

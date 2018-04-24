@@ -10,7 +10,7 @@
 #pragma region Includes
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVUtilityLibrary\SVGUID.h"
-#include "SVProtoBuf\BasicStructureHelper.h"
+#include "SVProtoBuf\ConverterHelper.h"
 #include "SVProtoBuf/InspectionCommands.h"
 #pragma endregion Includes
 

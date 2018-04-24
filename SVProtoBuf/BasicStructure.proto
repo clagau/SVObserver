@@ -3,13 +3,13 @@ package SvPb;
 
 message MessageContainer //structure for a (error/warning/info-)message 
 {
-	int32 MessageCode = 1;
-	int32 AdditionalTextId = 2;
+	sint32 MessageCode = 1;
+	sint32 AdditionalTextId = 2;
 	repeated string AdditionalTextList = 3;
 	string CompileDate = 4;
 	string CompileTime = 5;
 	string FileName = 6;
-	int32 FileLine = 7;
+	sint32 FileLine = 7;
 	string FileDateTime = 8;
 	bytes ObjectId = 9;
 }

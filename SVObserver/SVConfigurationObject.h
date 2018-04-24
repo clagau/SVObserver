@@ -167,8 +167,8 @@ public:
 	//************************************
 	bool LoadPPQ(SVTreeType& rTree );
 
-	HRESULT GetInspectionItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems ) const;
-	HRESULT GetRemoteInputItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems ) const;
+	HRESULT GetInspectionItems( const SvDef::StringSet& rNames, SVNameStorageResultMap& rItems ) const;
+	HRESULT GetRemoteInputItems( const SvDef::StringSet& rNames, SVNameStorageResultMap& rItems ) const;
 
 	HRESULT SetInspectionItems(const SVNameStorageMap& p_rItems, SVNameStatusMap& p_rStatus, bool RunOnce);
 	HRESULT SetRemoteInputItems( const SVNameStorageMap& p_rItems, SVNameStatusMap& p_rStatus );

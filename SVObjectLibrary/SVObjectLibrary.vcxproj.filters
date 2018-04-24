@@ -122,9 +122,6 @@
     <ClInclude Include="SVObjectNameInfo.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVObjectNotifyTemplate.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVObjectReference.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>

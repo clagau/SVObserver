@@ -99,9 +99,6 @@ public:
 	HRESULT SubmitCommand( const SVGUID& rObjectID, const SVCommandTemplatePtr& rCommandPtr );
 	HRESULT SubmitCommand( SVObjectClass& rObject, const SVCommandTemplatePtr& rCommandPtr );
 
-	template< typename SVNotifyData >
-	HRESULT Notify( const SVGUID& rObjectID, SVNotifyData& rData );
-
 	template< typename ObjectVisitor >
 	HRESULT VisitElements( ObjectVisitor& rVisitor, const SVGUID& rStartingObjectID=GUID_NULL );
 

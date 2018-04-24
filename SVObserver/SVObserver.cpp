@@ -83,16 +83,11 @@
 #include "TriggerInformation/SVHardwareManifest.h"
 #include "TriggerInformation/SVTriggerProcessingClass.h"
 #include "SVDigitizerProcessingClass.h"
-#include "SVSocketLibrary\SVSocketLibrary.h"
-#include "SVInputStreamManager.h"
-#include "SVOutputStreamManager.h"
 #include "SVCommandStreamManager.h"
-#include "SVFailStatusStreamManager.h"
 #include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
 #include "SVSystemLibrary\SVVersionInfo.h"
 #include "SVConfigurationTreeWriter.h"
 #include "SVOLicenseManager.h"
-#include "SVSocketRemoteCommandManager.h"
 #include "SVImportedInspectionInfo.h"
 #include "SVIPDocInfoImporter.h"
 #include "SVVisionProcessorHelper.h"
@@ -137,23 +132,6 @@ static const double	cNormalNonPageMemoryUsage = 80.0;		 //Value as a percentage 
 #pragma endregion Declarations
 
 
-enum PortNumbers : uint16_t
-{
-	InputStreamPortNumber = 32100,
-	OutputStreamPortNumber = 32101,
-	FailStatusStreamPortNumber = 28969,
-	RemoteCommandsPortNumber = 28960
-};
-
-
-/**
-@SVObjectName SVObserver COM Module
-
-@SVObjectOverview This object is the SVObserver COM Module used to interface the SVObserver application to the COM server.  You may derive a class from CAtlMfcModule and use it if you want to override something, but do not change the name of default _Module variable name.
-
-@SVObjectOperations This object presents all of the functionality of the SVObserver Application object.
-
-*/
 class CSVObserverModule : public CAtlMfcModule
 {
 public:
@@ -315,13 +293,9 @@ BEGIN_MESSAGE_MAP(SVObserverApp, CWinApp)
 END_MESSAGE_MAP()
 
 #pragma region Constructor
-SVObserverApp::SVObserverApp()
-	: m_InputStreamPortNumber(InputStreamPortNumber)
-	, m_OutputStreamPortNumber(OutputStreamPortNumber)
-	, m_FailStatusStreamPortNumber(FailStatusStreamPortNumber)
-	, m_RemoteCommandsPortNumber(RemoteCommandsPortNumber)
-	, m_DataValidDelay(0)
-	, m_rInitialInfo(m_IniInfoHandler.GetInitialInfo())
+SVObserverApp::SVObserverApp() :
+	m_DataValidDelay(0),
+	m_rInitialInfo(m_IniInfoHandler.GetInitialInfo())
 {
 	free((void*)m_pszHelpFilePath);
 
@@ -1954,9 +1928,6 @@ BOOL SVObserverApp::InitInstance()
 		return false;
 	}
 
-	//Initializing  must be before first use of  MessageNotification::FireNotify which is i.e called from CheckDrive 
-	SVVisionProcessorHelper::Instance().Startup();
-
 	// Check for proper setup of V: for SVRemoteControl
 	if (S_OK != CheckDrive(_T("v:\\")))
 	{
@@ -2253,8 +2224,6 @@ BOOL SVObserverApp::InitInstance()
 
 	SVDirectX::Instance().Initialize();
 
-	SvSol::SVSocketLibrary::Init();
-
 	int AutoSaveValue = SvimIni.GetValueInt(_T("Settings"), _T("EnableAutosave"), 0); //Arvid accept a number: non-zero enables
 
 	std::string AutoSaveValueString = SvimIni.GetValueString(_T("Settings"), _T("EnableAutosave"), _T("FALSE")); //Arvid accept a string
@@ -2266,37 +2235,6 @@ BOOL SVObserverApp::InitInstance()
 
 	ExtrasEngine::Instance().SetEnabled(AutoSaveValue != 0);
 	unsigned short defaultPortNo = -1;
-	m_RemoteCommandsPortNumber = SvimIni.GetValueInt(_T("Settings"), _T("RemoteCommandsPortNumber"), defaultPortNo);
-	if (m_RemoteCommandsPortNumber == defaultPortNo)
-	{
-		m_RemoteCommandsPortNumber = RemoteCommandsPortNumber;
-
-		SvimIni.SetValueInt(_T("Settings"), _T("RemoteCommandsPortNumber"), m_RemoteCommandsPortNumber);
-	}
-
-	m_InputStreamPortNumber = SvimIni.GetValueInt(_T("Settings"), _T("InputStreamPortNumber"), defaultPortNo);
-	if (m_InputStreamPortNumber == defaultPortNo)
-	{
-		m_InputStreamPortNumber = InputStreamPortNumber;
-
-		SvimIni.SetValueInt(_T("Settings"), _T("InputStreamPortNumber"), m_InputStreamPortNumber);
-	}
-
-	m_OutputStreamPortNumber = SvimIni.GetValueInt(_T("Settings"), _T("OutputStreamPortNumber"), defaultPortNo);
-	if (m_OutputStreamPortNumber == defaultPortNo)
-	{
-		m_OutputStreamPortNumber = OutputStreamPortNumber;
-
-		SvimIni.SetValueInt(_T("Settings"), _T("OutputStreamPortNumber"), m_OutputStreamPortNumber);
-	}
-
-	m_FailStatusStreamPortNumber = SvimIni.GetValueInt(_T("Settings"), _T("FailStatusStreamPortNumber"), defaultPortNo);
-	if (m_FailStatusStreamPortNumber == defaultPortNo)
-	{
-		m_FailStatusStreamPortNumber = FailStatusStreamPortNumber;
-
-		SvimIni.SetValueInt(_T("Settings"), _T("FailStatusStreamPortNumber"), m_FailStatusStreamPortNumber);
-	}
 
 	m_DataValidDelay = static_cast<long> (SvimIni.GetValueInt(_T("Settings"), _T("DataValidDelay"), 0));
 
@@ -2305,9 +2243,6 @@ BOOL SVObserverApp::InitInstance()
 	pSettings->Port = SvWsl::Default_SecondPort;
 	std::shared_ptr<SVRCCommand> pSVRCCommand = std::make_shared<SVRCCommand>();
 	SVRCWebsocketServer::Instance()->Start(pSVRCCommand, pSettings);
-	
-	//@Todo[MEC][8.00] [09.03.2018] Replace the with http Websocketserver
-	SVSocketRemoteCommandManager::Instance().Startup(m_RemoteCommandsPortNumber);
 	
 	if (!TheSVOLicenseManager().HasMatroxLicense())
 	{
@@ -2350,12 +2285,8 @@ int SVObserverApp::ExitInstance()
 {
 	SVDirectX::Instance().clear();
 
-	SVVisionProcessorHelper::Instance().Shutdown();
-	
-	SVSocketRemoteCommandManager::Instance().Shutdown();
 	SVRCWebsocketServer::Instance()->Stop();
 
-	SvSol::SVSocketLibrary::Destroy();
 	SvSml::ShareEvents::GetInstance().QuiesceSharedMemory();
 	SvSml::SharedMemWriter::Instance().Destroy();
 	ValidateMRUList();

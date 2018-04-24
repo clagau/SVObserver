@@ -38,11 +38,13 @@
 #define _ATL_NO_AUTOMATIC_NAMESPACE
 
 #define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS	// some CString constructors will be explicit
+#pragma warning( disable: 4482 )	//! Disables warning with enum name being used
 
 #pragma region Precompiled Headers
 #include "resource.h"
 #include <atlbase.h>
 #include <atlcom.h>
+#include <atlcomcli.h>
 #include <atlsafe.h>
 #include <comutil.h>
 #include <GdiPlus.h>
