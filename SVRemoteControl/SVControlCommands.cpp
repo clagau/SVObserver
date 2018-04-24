@@ -281,9 +281,16 @@ HRESULT SVControlCommands::SetConnectionData(const _bstr_t& p_rServerName, unsig
 		SvSol::SVSocketError::ErrorEnum err = SvSol::SVSocketError::Success;
 		if ((err = m_ClientSocket.BuildConnection(m_ServerName, svr::cmdPort, timeout)) == SvSol::SVSocketError::Success)
 		{
+			//m_Connected represent only the client socket connection state 
+			m_Connected = true;
 			m_WebClient.WaitForConnect(timeout);
 			m_ObsClient.WaitForConnect(timeout);
-			m_Connected = true;
+			bool Connected = m_WebClient.isConnected() && m_ObsClient.isConnected();
+			if (!Connected)
+			{
+				HRESULT h = SvSol::SVSocketError::ConnectionTimeout;
+				SVLOG(h);
+			}
 		}
 		else
 		{

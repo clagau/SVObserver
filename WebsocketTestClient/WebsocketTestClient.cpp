@@ -291,8 +291,46 @@ int main(int argc, char* argv[])
 			{
 				break;
 			}
+			else if (words[0] == "con")
+			{
+				if (wordsize > 1)
+				{
+					uint16_t port = SvWsl::Default_Port;
+					if (wordsize > 2)
+					{
+						port = atoi(words[2].c_str());
+					}
+					std::string ipAdress = words[1];
 
-			
+					pService.reset();
+					pRpcClient.reset();
+					pRpcClient = std::make_unique<SvRpc::RPCClient>(host, port);
+					pRpcClient->waitForConnect(2000);
+					pService = std::make_unique<SvWsl::ClientService>(*pRpcClient);
+				}
+			}
+			else if (words[0] == "h" || words[0] == "H")
+			{
+				BOOST_LOG_TRIVIAL(info) << "commands: " << std::endl
+					<< "  q  quit" << std::endl
+					<< "  h  Hilfe" << std::endl
+					<< "  v  (Version)" << std::endl
+					<< "  n  notification" << std::endl
+					<< "  m  (Monitorlist)" << std::endl
+					<< "  p  name triggercount (GetProdukt)" << std::endl
+					<< "  i  StoreNr  imageNr slotNr (GetImage)" << std::endl
+					<< "  r  name triggercount (GetRejekt)" << std::endl
+					<< "  f  name  (GetFailstatus)" << std::endl
+					<< "  b1 [iterations=1000] [repeats=1] (Benchmark 1)" << std::endl
+					<< "  b2 [image_width=200] [iterations=1000] [repeats=1] (Benchmark 2)" << std::endl;
+				std::cout << "dis disconnect" << std::endl;
+				std::cout << "con  connect [ip adress] [portnr  = 8080] " << std::endl;
+				std::cout << "qli [monitorlistname] [p,r,f,a] [Image=1]  [val=1]" << std::endl;
+			}
+			else if (!pRpcClient ||  !pRpcClient->isConnected() )
+			{
+				BOOST_LOG_TRIVIAL(info) << "Nicht verbunde!!!" << std::endl;
+			}
 			else if (words[0] == "v")
 			{
 				try
@@ -307,6 +345,10 @@ int main(int argc, char* argv[])
 				catch (const std::exception& e)
 				{
 					BOOST_LOG_TRIVIAL(error) << "Unable to get version: " << e.what();
+				}
+				catch( ... )
+				{
+					BOOST_LOG_TRIVIAL(error) << "Unable to get version" << std::endl;
 				}
 			}
 			else if (words[0] == "n")
@@ -486,24 +528,7 @@ int main(int argc, char* argv[])
 					pRpcClient.reset();
 				}
 			}
-			else if (words[0] == "con")
-			{
-				if (wordsize > 1)
-				{
-					uint16_t port = SvWsl::Default_Port;
-					if (wordsize > 2)
-					{
-						port = atoi(words[2].c_str());
-					}
-					std::string ipAdress = words[1];
 			
-					pService.reset();
-					pRpcClient.reset();
-					pRpcClient = std::make_unique<SvRpc::RPCClient>(host, port);
-					pRpcClient->waitForConnect(2000);
-					pService = std::make_unique<SvWsl::ClientService>(*pRpcClient);
-				}
-			}
 			else if (words[0] == "qli")
 			{
 				std::string monitorlistname;
@@ -554,24 +579,7 @@ int main(int argc, char* argv[])
 
 
 			}
-			else if (words[0] == "h" || words[0] == "H")
-			{
-				BOOST_LOG_TRIVIAL(info) << "commands: " << std::endl 
-					<< "  q  quit" << std::endl 
-					<< "  h  Hilfe" << std::endl 
-					<< "  v  (Version)" << std::endl 
-					<< "  n  notification" << std::endl
-					<< "  m  (Monitorlist)" << std::endl
-					<< "  p  name triggercount (GetProdukt)" << std::endl 
-					<< "  i  StoreNr  imageNr slotNr (GetImage)" << std::endl 
-					<< "  r  name triggercount (GetRejekt)" << std::endl 
-					<< "  f  name  (GetFailstatus)" << std::endl 
-					<< "  b1 [iterations=1000] [repeats=1] (Benchmark 1)" << std::endl
-					<< "  b2 [image_width=200] [iterations=1000] [repeats=1] (Benchmark 2)" << std::endl;
-				std::cout << "dis disconnect" << std::endl;
-				std::cout << "con  connect [ip adress] [portnr  = 8080] " << std::endl;
-				std::cout << "qli [monitorlistname] [p,r,f,a] [Image=1]  [val=1]" << std::endl;
-			}
+			
 		}
 
 		catch (std::exception& e)

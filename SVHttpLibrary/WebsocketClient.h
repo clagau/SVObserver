@@ -18,6 +18,7 @@
 #pragma once
 
 #include <memory>
+#include <thread>
 #include <vector>
 
 #include <boost/array.hpp>
@@ -30,13 +31,13 @@
 
 namespace SvHttp
 {
-class WebsocketClient : public std::enable_shared_from_this<WebsocketClient>
+class WebsocketClient
 {
 public:
 	class EventHandler
 	{
-	public:	
-		virtual ~EventHandler() {};
+	public:
+		virtual ~EventHandler() {}
 	protected:
 		friend class WebsocketClient;
 		virtual void onConnect() = 0;
@@ -46,12 +47,14 @@ public:
 	};
 
 private:
-	WebsocketClient(boost::asio::io_service& rIoService, EventHandler*);
+	WebsocketClient(EventHandler*);
+	WebsocketClient() = delete;
 
 public:
-	static std::shared_ptr<WebsocketClient> create(boost::asio::io_service& rIoService, EventHandler*);
+	virtual ~WebsocketClient();
+	static std::shared_ptr<WebsocketClient> create(EventHandler*);
 
-	boost::future<void> connect(std::string host, uint16_t port);
+	void connect(std::string host, uint16_t port);
 	void disconnect();
 
 	void sendTextMessage(const std::vector<char>&);
@@ -79,9 +82,10 @@ private:
 	void send_pong();
 
 private:
-	boost::asio::io_service& m_rIoService;
+	boost::asio::io_service m_IoService;
+	std::unique_ptr<boost::asio::io_service::work> m_IoWork;
+	std::thread m_IoThread;
 	boost::asio::ip::tcp::socket m_Socket;
-	boost::promise<void> m_ConnectPromise;
 	Handshake m_Handshake;
 	EventHandler* m_pEventHandler;
 	bool m_IsDisconnectEventSent {false};

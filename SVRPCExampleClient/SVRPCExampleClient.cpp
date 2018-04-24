@@ -20,7 +20,6 @@
 #include <boost/log/trivial.hpp>
 #include <boost/thread.hpp>
 
-#include "SVHttpLibrary/WebsocketClient.h"
 #include "SVRPCExampleLibrary/format.h"
 #include "SVRPCLibrary/RPCClient.h"
 #include "SVRPCLibrary/SimpleClient.h"

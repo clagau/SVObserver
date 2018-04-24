@@ -47,7 +47,7 @@ class RPCClient : public SvHttp::WebsocketClient::EventHandler
 public:
 	RPCClient() = delete;
 	RPCClient(std::string host, uint16_t port);
-	~RPCClient();
+	virtual ~RPCClient();
 
 	void stop();
 	bool isConnected();
@@ -64,6 +64,11 @@ protected:
 	void onBinaryMessage(const std::vector<char>&) override;
 
 private:
+	void on_connect();
+	void on_disconnect();
+	void on_text_message();
+	void on_binary_message(std::shared_ptr<std::vector<char>>);
+
 	void request_impl(SvPenv::Envelope&& request, Task<SvPenv::Envelope>, uint64_t);
 
 	void schedule_reconnect(boost::posix_time::time_duration);
@@ -86,6 +91,7 @@ private:
 	void send_envelope(SvPenv::Envelope&&);
 
 private:
+	// TODO: switch to boost::asio::thread_pool when upgrading to boost 1.66.0
 	boost::asio::io_service m_IoService;
 	std::unique_ptr<boost::asio::io_service::work> m_IoWork;
 	std::thread m_IoThread;

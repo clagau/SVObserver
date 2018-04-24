@@ -104,7 +104,10 @@ int main()
 
 		auto thread = std::thread([&io_service]() { io_service.run(); });
 		
-		std::this_thread::sleep_for(std::chrono::seconds(5));
+		while (true)
+		{
+			std::this_thread::sleep_for(std::chrono::seconds(5));
+		}
 		
 		server->stop();
 		io_service.stop();

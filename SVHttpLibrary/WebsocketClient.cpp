@@ -21,33 +21,60 @@
 
 namespace SvHttp
 {
-WebsocketClient::WebsocketClient(boost::asio::io_service& rIoService, EventHandler* pEventHandler)
-	: m_rIoService(rIoService), m_Socket(rIoService), m_Handshake(), m_pEventHandler(pEventHandler)
+WebsocketClient::WebsocketClient(EventHandler* pEventHandler)
+	: m_IoService(1)
+	, m_IoWork(std::make_unique<boost::asio::io_service::work>(m_IoService))
+	, m_Socket(m_IoService)
+	, m_Handshake()
+	, m_pEventHandler(pEventHandler)
 {
 	if (!m_pEventHandler)
 	{
 		throw new std::runtime_error("WebsocketClient: no message handler provided!");
 	}
+	m_IoThread = std::thread([this]() { m_IoService.run(); });
 }
 
-std::shared_ptr<WebsocketClient> WebsocketClient::create(boost::asio::io_service& rIoService, EventHandler* pEventHandler)
+WebsocketClient::~WebsocketClient()
 {
-	return std::shared_ptr<WebsocketClient>(new WebsocketClient(rIoService, pEventHandler));
+	disconnect();
+	if (m_IoThread.joinable())
+	{
+		m_IoThread.join();
+	}
 }
 
-boost::future<void> WebsocketClient::connect(std::string host, uint16_t port)
+std::shared_ptr<WebsocketClient> WebsocketClient::create(EventHandler* pEventHandler)
+{
+	return std::shared_ptr<WebsocketClient>(new WebsocketClient(pEventHandler));
+}
+
+void WebsocketClient::connect(std::string host, uint16_t port)
 {
 	BOOST_LOG_TRIVIAL(debug) << "Websocket client connecting to ws://" << host << ":" << port << "/";
 	auto address = boost::asio::ip::address_v4::from_string(host);
 	auto endpoint = boost::asio::ip::tcp::endpoint(address, port);
-	m_Socket.async_connect(endpoint, std::bind(&WebsocketClient::handle_connect, shared_from_this(), std::placeholders::_1));
-	return m_ConnectPromise.get_future();
+	m_Socket.async_connect(endpoint, std::bind(&WebsocketClient::handle_connect, this, std::placeholders::_1));
 }
 
 void WebsocketClient::disconnect()
 {
+	if (m_IsShuttingDown)
+	{
+		return;
+	}
+
 	m_IsShuttingDown = true;
 	m_Socket.close();
+	m_IoWork.reset();
+	if (!m_IoService.stopped())
+	{
+		m_IoService.stop();
+	}
+	if (m_IoThread.joinable())
+	{
+		m_IoThread.join();
+	}
 }
 
 void WebsocketClient::handle_connect(const boost::system::error_code& ec)
@@ -87,7 +114,6 @@ void WebsocketClient::handle_connection_error(const boost::system::error_code& e
 
 void WebsocketClient::handle_connection_success()
 {
-	m_ConnectPromise.set_value();
 	m_pEventHandler->onConnect();
 }
 
@@ -111,7 +137,7 @@ void WebsocketClient::send_handshake()
 	boost::asio::async_write(
 		m_Socket,
 		boost::asio::buffer(m_Buf),
-		std::bind(&WebsocketClient::handle_handshake_sent, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
+		std::bind(&WebsocketClient::handle_handshake_sent, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 void WebsocketClient::handle_handshake_sent(const boost::system::error_code& error, size_t bytes_sent)
@@ -133,7 +159,7 @@ void WebsocketClient::read_handshake_response()
 		m_Socket,
 		boost::asio::buffer(m_Buf),
 		boost::asio::transfer_at_least(1),
-		std::bind(&WebsocketClient::handle_handshake_response, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
+		std::bind(&WebsocketClient::handle_handshake_response, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 void WebsocketClient::handle_handshake_response(const boost::system::error_code& error, size_t bytes_read)
@@ -175,7 +201,7 @@ void WebsocketClient::sendTextMessage(const std::vector<char>& buf)
 		m_Socket,
 		boost::asio::buffer(*res_frame),
 		std::bind(
-		&WebsocketClient::handle_request_sent, shared_from_this(), std::placeholders::_1, std::placeholders::_2, res_frame));
+		&WebsocketClient::handle_request_sent, this, std::placeholders::_1, std::placeholders::_2, res_frame));
 }
 
 void WebsocketClient::sendBinaryMessage(const std::vector<char>& buf)
@@ -187,7 +213,7 @@ void WebsocketClient::sendBinaryMessage(const std::vector<char>& buf)
 		m_Socket,
 		boost::asio::buffer(*res_frame),
 		std::bind(
-		&WebsocketClient::handle_request_sent, shared_from_this(), std::placeholders::_1, std::placeholders::_2, res_frame));
+		&WebsocketClient::handle_request_sent, this, std::placeholders::_1, std::placeholders::_2, res_frame));
 }
 
 void WebsocketClient::handle_request_sent(const boost::system::error_code& error,
@@ -209,7 +235,7 @@ void WebsocketClient::read_buffer()
 		m_Socket,
 		boost::asio::buffer(m_Buf),
 		boost::asio::transfer_at_least(1),
-		std::bind(&WebsocketClient::handle_read_buffer, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
+		std::bind(&WebsocketClient::handle_read_buffer, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 void WebsocketClient::handle_read_buffer(const boost::system::error_code& error, size_t bytes_read)
@@ -294,7 +320,7 @@ void WebsocketClient::send_pong()
 		m_Socket,
 		boost::asio::buffer(*res_frame),
 		std::bind(
-		&WebsocketClient::handle_request_sent, shared_from_this(), std::placeholders::_1, std::placeholders::_2, res_frame));
+		&WebsocketClient::handle_request_sent, this, std::placeholders::_1, std::placeholders::_2, res_frame));
 }
 
 } // namespace SvHttp

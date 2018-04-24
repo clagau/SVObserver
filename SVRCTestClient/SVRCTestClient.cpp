@@ -2,12 +2,9 @@
 //
 
 #include "stdafx.h"
-#include "SVHttpLibrary/WebsocketClient.h"
 #include "SVProtobuf/SVRC.h"
 #include "SVRPCLibrary/RPCClient.h"
 #include "SVRPCLibrary/SimpleClient.h"
-
-
 
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>

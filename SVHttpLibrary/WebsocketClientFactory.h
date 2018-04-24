@@ -21,10 +21,7 @@ class WebsocketClientFactory
 public:
 	WebsocketClientFactory(std::string host, uint16_t port);
 
-	std::shared_ptr<WebsocketClient> create(
-		boost::asio::io_service& rIoService,
-		WebsocketClient::EventHandler*,
-		bool waitForConnect = false);
+	std::shared_ptr<WebsocketClient> create(WebsocketClient::EventHandler*);
 
 private:
 	std::string m_Host;

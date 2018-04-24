@@ -50,7 +50,7 @@ private:
 	boost::asio::deadline_timer m_CleanupTimer;
 	boost::asio::ip::tcp::acceptor m_Acceptor;
 	int m_NextConnectionId;
-	WebsocketServerConnection::EventHandler* m_pEventHandler;
+	WebsocketServerConnection::EventHandler* m_pEventHandler {nullptr};
 	std::vector<std::shared_ptr<WebsocketServerConnection>> m_Connections;
 	std::vector<std::shared_ptr<WebsocketServerConnection>> m_ConnectionsMarkedForDeletion;
 };

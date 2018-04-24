@@ -24,7 +24,7 @@ RPCClient::RPCClient(std::string host, uint16_t port)
 	, m_ReconnectTimer(m_IoService)
 {
 	m_IoThread = std::thread([this]() { m_IoService.run(); });
-	m_WebsocketClient = m_WebsocketClientFactory.create(m_IoService, this);
+	m_WebsocketClient = m_WebsocketClientFactory.create(this);
 }
 
 RPCClient::~RPCClient()
@@ -41,12 +41,15 @@ void RPCClient::stop()
 	}
 
 	BOOST_LOG_TRIVIAL(debug) << "Shut down of rpc client started";
-	// capture shared_ptr in local copy to avoid races
-	auto client = m_WebsocketClient;
-	if (m_IsConnected && client)
-	{
-		client->disconnect();
+
+	{ // capture shared_ptr in local copy to avoid races
+		auto client = m_WebsocketClient;
+		if (m_IsConnected && client)
+		{
+			client->disconnect();
+		}
 	}
+	m_WebsocketClient.reset();
 	m_IoWork.reset();
 	if (!m_IoService.stopped())
 	{
@@ -138,6 +141,11 @@ ClientStreamContext RPCClient::stream(SvPenv::Envelope&& Request, Observer<SvPen
 
 void RPCClient::onConnect()
 {
+	m_IoService.dispatch(std::bind(&RPCClient::on_connect, this));
+}
+
+void RPCClient::on_connect()
+{
 	{
 		std::lock_guard<std::mutex> lk(m_ConnectMutex);
 		m_IsConnected.store(true);
@@ -146,6 +154,11 @@ void RPCClient::onConnect()
 }
 
 void RPCClient::onDisconnect()
+{
+	m_IoService.dispatch(std::bind(&RPCClient::on_disconnect, this));
+}
+
+void RPCClient::on_disconnect()
 {
 	m_IsConnected.store(false);
 	BOOST_LOG_TRIVIAL(info) << "RPCClient received disconnect event. Trying to reconnect.";
@@ -156,11 +169,23 @@ void RPCClient::onDisconnect()
 
 void RPCClient::onTextMessage(const std::vector<char>&)
 {
+	m_IoService.dispatch(std::bind(&RPCClient::on_text_message, this));
+}
+
+void RPCClient::on_text_message()
+{
 	throw std::runtime_error("only binary messages expected!");
 }
 
 void RPCClient::onBinaryMessage(const std::vector<char>& buf)
 {
+	auto ptr = std::make_shared<std::vector<char>>(std::move(buf));
+	m_IoService.dispatch(std::bind(&RPCClient::on_binary_message, this, ptr));
+}
+
+void RPCClient::on_binary_message(std::shared_ptr<std::vector<char>> ptr)
+{
+	const auto& buf = *ptr;
 	if (buf.size() > static_cast<size_t>(std::numeric_limits<int>::max()))
 	{
 		BOOST_LOG_TRIVIAL(error) << "Message too large " << buf.size() << ". Must not be larger than "
@@ -225,7 +250,7 @@ void RPCClient::on_reconnect(const boost::system::error_code& error)
 	}
 
 	BOOST_LOG_TRIVIAL(info) << "Trying to reconnect.";
-	m_WebsocketClient = m_WebsocketClientFactory.create(m_IoService, this);
+	m_WebsocketClient = m_WebsocketClientFactory.create(this);
 }
 
 void RPCClient::on_request_timeout(const boost::system::error_code& error, uint64_t tx_id)
