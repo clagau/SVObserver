@@ -36,7 +36,6 @@ SharedMemoryAccess::~SharedMemoryAccess()
 	{
 		m_io_thread.join();
 	}
-	SvOa::Finish();
 }
 
 void SharedMemoryAccess::GetVersion(const SvPb::GetVersionRequest& req, SvRpc::Task<SvPb::GetVersionResponse> task)

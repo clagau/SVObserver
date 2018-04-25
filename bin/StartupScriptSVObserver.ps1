@@ -1,5 +1,5 @@
 $MTXsrvName = "Matrox GigE Vision Assistant Service"
-$SVOWebSrvName = "SVO Web Server"
+$SVOWebSrvName = "SVO Gateway"
 $waitLoop=0
 $maxLoop=30
 $WaitTimeMs=500

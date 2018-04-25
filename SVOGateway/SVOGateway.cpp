@@ -24,7 +24,7 @@
 #include "SettingsLoader.h"
 #include "SvHttpLibrary/WebsocketServer.h"
 #include "SVRPCLibrary/RPCServer.h"
-#include "SVOWebServerService.h"
+#include "SVOGatewayService.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 

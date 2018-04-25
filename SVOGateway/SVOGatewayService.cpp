@@ -8,7 +8,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVOWebServerService.h"
+#include "SVOGatewayService.h"
 #include "SVMessage\SVMessage.h"
 #include "SVStatusLibrary\MessageManager.h"
 #pragma endregion Includes
