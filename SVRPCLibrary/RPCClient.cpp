@@ -17,11 +17,12 @@
 
 namespace SvRpc
 {
-RPCClient::RPCClient(std::string host, uint16_t port)
+RPCClient::RPCClient(std::string host, uint16_t port, std::function<void(ClientStatus)> StatusCallback)
 	: m_IoService(1)
 	, m_IoWork(std::make_unique<boost::asio::io_service::work>(m_IoService))
 	, m_WebsocketClientFactory(host, port)
 	, m_ReconnectTimer(m_IoService)
+	, m_pStatusCallback(StatusCallback)
 {
 	m_IoThread = std::thread([this]() { m_IoService.run(); });
 	m_WebsocketClient = m_WebsocketClientFactory.create(this);
@@ -151,6 +152,11 @@ void RPCClient::on_connect()
 		m_IsConnected.store(true);
 	}
 	m_ConnectCV.notify_all();
+
+	if(nullptr != m_pStatusCallback)
+	{
+		m_pStatusCallback(ClientStatus::Connected);
+	}
 }
 
 void RPCClient::onDisconnect()
@@ -165,6 +171,11 @@ void RPCClient::on_disconnect()
 	cancel_all_pending();
 	m_WebsocketClient.reset();
 	schedule_reconnect(boost::posix_time::seconds(1));
+
+	if (nullptr != m_pStatusCallback)
+	{
+		m_pStatusCallback(ClientStatus::Disconnected);
+	}
 }
 
 void RPCClient::onTextMessage(const std::vector<char>&)

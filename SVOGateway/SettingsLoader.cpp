@@ -16,7 +16,7 @@
 #define RRWS_KEY HKEY_LOCAL_MACHINE
 #define RRWS_SUBKEY "Software\\Seidenader\\WebsocketServer\\"
 
-namespace SvOws
+namespace SvOgw
 {
 static void RegGetStringIfExists(std::string& dst, const std::string& name)
 {
@@ -78,4 +78,4 @@ void SettingsLoader::loadFromRegistry(Settings& settings)
 	RegGetIntIfExists(settings.websocketSettings.ConnectionCleanupIntervalSec, "WebsocketConnectionCleanupIntervalSec");
 	RegGetIntIfExists(settings.websocketSettings.SplitLargePayload, "WebsocketSplitLargePayload");
 }
-} // namespace RRWS
+}// namespace SvOgw

@@ -11,7 +11,7 @@
 #include "WebsocketLibrary/Logging.h"
 #include "SvHttpLibrary/WebsocketServerSettings.h"
 
-namespace SvOws
+namespace SvOgw
 {
 struct Settings
 {
@@ -19,4 +19,4 @@ struct Settings
 	SvWsl::LogSettings logSettings;
 	SvHttp::WebsocketServerSettings websocketSettings;
 };
-} // namespace RRWS
+}// namespace SvOgw

@@ -42,11 +42,17 @@
 
 namespace SvRpc
 {
+enum class ClientStatus
+{
+	Disconnected,
+	Connected
+};
+
 class RPCClient : public SvHttp::WebsocketClient::EventHandler
 {
 public:
 	RPCClient() = delete;
-	RPCClient(std::string host, uint16_t port);
+	RPCClient(std::string host, uint16_t port, std::function<void(ClientStatus)> = nullptr);
 	virtual ~RPCClient();
 
 	void stop();
@@ -108,6 +114,7 @@ private:
 	using DeadlineTimerPtr = std::shared_ptr<boost::asio::deadline_timer>;
 	std::map<uint64_t, DeadlineTimerPtr> m_PendingRequestsTimer;
 	std::map<uint64_t, Observer<SvPenv::Envelope>> m_PendingStreams;
+	std::function<void(ClientStatus)> m_pStatusCallback;
 };
 
 } // namespace SvRpc

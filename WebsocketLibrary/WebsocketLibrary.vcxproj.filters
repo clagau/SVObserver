@@ -7,9 +7,6 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="ClientService.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVRCClientService.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -19,9 +16,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="Logging.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="ClientService.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="Definition.h">

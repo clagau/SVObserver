@@ -20,7 +20,7 @@ public:
 	SVRCCommand();
 	~SVRCCommand();
 
-	void GetVersion(const SvPb::GetVersionRequest&, SvRpc::Task<SvPb::GetVersionResponse>);
+	void GetVersion(const SvPb::GetSVObserverVersionRequest&, SvRpc::Task<SvPb::GetVersionResponse>);
 	void GetDeviceMode(const SvPb::GetDeviceModeRequest&, SvRpc::Task<SvPb::GetDeviceModeResponse>);
 	void SetDeviceMode(const SvPb::SetDeviceModeRequest&, SvRpc::Task<SvPb::StandardResponse>);
 	void GetState(const SvPb::GetStateRequest&, SvRpc::Task<SvPb::GetStateResponse>);

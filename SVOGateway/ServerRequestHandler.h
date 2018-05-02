@@ -11,9 +11,12 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVRPCLibrary/RequestHandler.h"
+#include "SVRPCLibrary/RPCClient.h"
+#pragma endregion Includes
 
-namespace SvOws
+namespace SvOgw
 {
 
 class SharedMemoryAccessInterface;
@@ -23,4 +26,4 @@ class ServerRequestHandler : public SvRpc::RequestHandler
 public:
 	ServerRequestHandler(SharedMemoryAccessInterface* service);
 };
-}
+}// namespace SvOgw

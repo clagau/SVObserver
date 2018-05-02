@@ -9,7 +9,7 @@
 #include "resource.h"       // main symbols
 #include "SVRemoteControl.h"
 #include <boost/shared_array.hpp>
-#include "WebsocketLibrary/clientservice.h"
+#include "WebsocketLibrary/SVRCClientService.h"
 #include "SVProtobuf/SVRC.h"
 #pragma endregion Includes
 
@@ -81,7 +81,7 @@ public:
 
 	const std::string & GetUrl() const { return url; }
 	void SetUrl(const std::string & u) { url = u; }
-	void SetClientService(SvWsl::ClientServicePointer&   rpClientService);
+	void SetClientService(SvWsl::SVRCClientServicePtr& rpSvrcClientService);
 	void SetImageId(const SvPb::CurImageId& CurImageId);
 private:
 	STDMETHOD(get_Image)(IPictureDisp** pVal);
@@ -102,7 +102,7 @@ private:
 	ULONG len = 0;
 	SVImageFormatsEnum format = BMP;
 	SvPb::CurImageId m_CurImId;
-	SvWsl::ClientServicePointer*  m_pClientService = nullptr;
+	SvWsl::SVRCClientServicePtr*  m_pClientService = nullptr;
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(SVImageObject), SVImageObject)

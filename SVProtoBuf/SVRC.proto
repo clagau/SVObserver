@@ -18,8 +18,9 @@ message SVRCMessages
 	{
 		StandardResponse standardResponse = 1;
 		NamesResponse namesResponse = 2;
-		GetVersionRequest getVersionRequest = 3;
-		GetVersionResponse getVersionResponse = 4;
+		GetGatewayVersionRequest getGatewayVersionRequest = 3;
+		GetSVObserverVersionRequest getSVObserverVersionRequest = 4;
+		GetVersionResponse getVersionResponse = 5;
 		//SVObserver Access commands
 		QueryListNameRequest queryListNameRequest = 1000;
 		QueryListNameResponse queryListNameResponse = 1001;
@@ -35,7 +36,7 @@ message SVRCMessages
 		GetFailStatusResponse getFailStatusResponse = 1011;
 		GetTriggerItemsRequest getTriggerItemsRequest = 1012;
 		GetTriggerItemsResponse getTriggerItemsResponse = 1013;
-		GetImageStreamRequest getImageStreanRequest = 1014;
+		GetImageStreamRequest getImageStreamRequest = 1014;
 		GetNotificationStreamRequest getNotificationStreamRequest = 1015;
 		GetNotificationStreamResponse getNotificationStreamResponse = 1016;
 		
@@ -129,7 +130,12 @@ message Value
 	Variant Item = 4;
 }
 
-message GetVersionRequest 
+message GetGatewayVersionRequest 
+{
+	;
+}
+
+message GetSVObserverVersionRequest 
 {
 	;
 }

@@ -83,7 +83,7 @@ DataDefPtr GetDataDefPtr(const SvPb::DataDefinition& rDataDef)
 	return pDataDefPtr;
 }
 
-ImagePtr GetImageObjectPtr(int trigger, const std::string& name, const SvPb::CurImageId &imId, SvWsl::ClientServicePointer& rClientServicePointer)
+ImagePtr GetImageObjectPtr(int trigger, const std::string& name, const SvPb::CurImageId &imId, SvWsl::SVRCClientServicePtr& rpSvrcClientService)
 {
 	CComObject<SVImageObject> *pImageObject{nullptr};
 	CComObject<SVImageObject>::CreateInstance(&pImageObject);
@@ -91,7 +91,7 @@ ImagePtr GetImageObjectPtr(int trigger, const std::string& name, const SvPb::Cur
 	_bstr_t bname(name.c_str());
 	pImageObject->put_Name(bname);
 	pImageObject->put_TriggerCount(trigger);
-	pImageObject->SetClientService(rClientServicePointer);
+	pImageObject->SetClientService(rpSvrcClientService);
 	pImageObject->SetImageId(imId);
 	return pio;
 }
@@ -123,7 +123,7 @@ ImagePtr GetImageObjectPtr(int Trigger, const std::string& rName, const std::str
 	return pImageObjectPtr;
 }
 
-ProductPtr GetProductPtr(SvWsl::ClientServicePointer& rClientServicePointer, const SvPb::Product &rResp)
+ProductPtr GetProductPtr(SvWsl::SVRCClientServicePtr& rpSvrcClientService, const SvPb::Product &rResp)
 {
 	CComObject<SVProductItems> *pProdItems = 0;
 	CComObject<SVProductItems>::CreateInstance(&pProdItems);
@@ -145,13 +145,13 @@ ProductPtr GetProductPtr(SvWsl::ClientServicePointer& rClientServicePointer, con
 			request.mutable_id()->set_imagestore(rResp.images(i).imagestore());
 			request.mutable_id()->set_imageindex(rResp.images(i).imageindex());
 			request.mutable_id()->set_slotindex(rResp.images(i).slotindex());
-			SvPb::GetImageFromCurIdResponse Imageresp = SvWsl::runRequest(*rClientServicePointer, &SvWsl::ClientService::getImageFromCurId, std::move(request)).get();
+			SvPb::GetImageFromCurIdResponse Imageresp = SvWsl::runRequest(*rpSvrcClientService, &SvWsl::SVRCClientService::GetImageFromCurId, std::move(request)).get();
 
 			pProdItems->AddImage(GetImageObjectPtr(rResp.trigger(), rResp.imagenames(i), Imageresp.imagedata().rgb()));
 		}
 		else
 		{
-			pProdItems->AddImage(GetImageObjectPtr(rResp.trigger(), rResp.imagenames(i), rResp.images(i), rClientServicePointer));
+			pProdItems->AddImage(GetImageObjectPtr(rResp.trigger(), rResp.imagenames(i), rResp.images(i), rpSvrcClientService));
 		}
 
 	}
@@ -160,7 +160,7 @@ ProductPtr GetProductPtr(SvWsl::ClientServicePointer& rClientServicePointer, con
 
 }
 
-FailList GetFailList(SvWsl::ClientServicePointer& rClientServicePointer, const SvPb::GetFailStatusResponse& resp)
+FailList GetFailList(SvWsl::SVRCClientServicePtr& rpSvrcClientService, const SvPb::GetFailStatusResponse& resp)
 {
 	FailList list;
 	int TriggerCount = resp.products_size();

@@ -12,10 +12,12 @@
 
 #pragma once
 
+#pragma region Includes
 #include "Observer.h"
 #include "ServerStreamContext.h"
 #include "Task.h"
 #include "SVProtoBuf/Envelope.h"
+#pragma endregion Includes
 
 namespace SvRpc
 {

@@ -18,27 +18,18 @@
 #include <mil.h>
 
 #include "WebsocketLibrary/Logging.h"
+#include "WebsocketLibrary/Definition.h"
 #include "SharedMemoryAccess.h"
-#include "SharedMemoryAccessMock.h"
 #include "ServerRequestHandler.h"
 #include "SettingsLoader.h"
 #include "SvHttpLibrary/WebsocketServer.h"
+#include "SVRPCLibrary/Router.h"
 #include "SVRPCLibrary/RPCServer.h"
 #include "SVOGatewayService.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 
-static std::unique_ptr<SvOws::SharedMemoryAccessInterface> createSharedMemoryAccess(bool dummy)
-{
-	if (dummy)
-	{
-		return std::make_unique<SvOws::SharedMemoryAccessMock>();
-	}
-	else
-	{
-		return std::make_unique<SvOws::SharedMemoryAccess>();
-	}
-}
+static const std::string cLocalHost(_T("127.0.0.1"));
 
 bool CheckCommandLineArgs(int argc, _TCHAR* argv[], LPCTSTR option)
 {
@@ -63,8 +54,8 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 	Exception.setMessage(SVMSG_SVWebSrv_2_GENERAL_INFORMATIONAL, SvStl::Tid_Started, SvStl::SourceFileParams(StdMessageParams));
 	try
 	{
-		SvOws::Settings settings;
-		SvOws::SettingsLoader settingsLoader;
+		SvOgw::Settings settings;
+		SvOgw::SettingsLoader settingsLoader;
 		settingsLoader.loadFromRegistry(settings);
 		//@Todo[MEC][8.00] [08.03.2018] could also be in Registry
 		settings.websocketSettings.Host = "0.0.0.0";
@@ -80,8 +71,9 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 			throw std::exception("MapAlloc failed");
 		}
 
-		auto sharedMemoryAccess = createSharedMemoryAccess(settings.dummySharedMemory);
-		SvOws::ServerRequestHandler requestHandler(sharedMemoryAccess.get());
+		auto sharedMemoryAccess = std::make_unique<SvOgw::SharedMemoryAccess>();
+		SvOgw::ServerRequestHandler requestHandler(sharedMemoryAccess.get());
+		SvRpc::Router SVObserverRouter{cLocalHost, SvWsl::Default_SecondPort, &requestHandler};
 		SvRpc::RPCServer rpcServer(&requestHandler);
 		boost::asio::io_service IoService {1};
 
@@ -91,6 +83,8 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 
 		//Wait until service should stop
 		::WaitForSingleObject(gServiceStopEvent, INFINITE);
+		::CloseHandle(gServiceStopEvent);
+		gServiceStopEvent = nullptr;
 
 		Server.stop();
 		IoService.stop();

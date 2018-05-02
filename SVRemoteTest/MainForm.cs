@@ -133,14 +133,14 @@ namespace SVRemoteTest
 			{
 				if (!IsDisposed)
 				{
-					if (this.InvokeRequired)
-					{
-						// this gets called from a thread so we have to invoke to get into the Form's thread
-						NotificationEventHandler d = new NotificationEventHandler(axSVRemoteCtrl1_OnNotification);
-						this.Invoke(d, new object[] { sender, e });
-					}
-					else
-					{
+                    if (this.InvokeRequired)
+                    {
+                        // this gets called from a thread so we have to invoke to get into the Form's thread
+                        NotificationEventHandler d = new NotificationEventHandler(axSVRemoteCtrl1_OnNotification);
+                        this.BeginInvoke(d, new object[] { sender, e });
+                    }
+                    else
+                    {
 						switch (e.type)
 						{
 							case SVNotificationTypesEnum.LastModified:

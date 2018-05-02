@@ -14,7 +14,7 @@
 
 #include "SharedMemoryAccessInterface.h"
 
-namespace SvOws
+namespace SvOgw
 {
 
 class SharedMemoryAccessMock : public SharedMemoryAccessInterface
@@ -23,7 +23,7 @@ public:
 	SharedMemoryAccessMock();
 	virtual ~SharedMemoryAccessMock();
 
-	void GetVersion(const SvPb::GetVersionRequest&, SvRpc::Task<SvPb::GetVersionResponse>) override;
+	void GetVersion(const SvPb::GetGatewayVersionRequest&, SvRpc::Task<SvPb::GetVersionResponse>) override;
 	void GetProduct(const SvPb::GetProductRequest&, SvRpc::Task<SvPb::GetProductResponse>) override;
 	void GetFailstatus(const SvPb::GetFailStatusRequest&, SvRpc::Task<SvPb::GetFailStatusResponse>) override;
 	void GetImageFromCurId(const SvPb::GetImageFromCurIdRequest&, SvRpc::Task<SvPb::GetImageFromCurIdResponse>) override;
@@ -51,4 +51,4 @@ private:
 	boost::asio::io_service::work m_io_work;
 	boost::thread m_io_thread;
 };
-}
+}// namespace SvOgw

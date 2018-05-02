@@ -387,64 +387,6 @@ interface ISVRemoteCtrl : IDispatch{
 };
 
 [
-	object,
-	uuid(F5F4EB9E-EC1A-4E7C-914E-4BA064F11740),
-	dual,
-	nonextensible,
-	helpstring("ISVInputBroker Interface"),
-	pointer_default(unique)
-]
-interface ISVInputBroker : IDispatch{
-	[propget, id(1), helpstring("property RemoteCtrl")] HRESULT RemoteCtrl([out, retval] ISVRemoteCtrl** pVal);
-	[propput, id(1), helpstring("property RemoteCtrl")] HRESULT RemoteCtrl([in] ISVRemoteCtrl* newVal);
-	[propget, id(2), helpstring("property Timeout In Seconds")] HRESULT TimeoutInSeconds([out, retval] long* pVal);
-	[propput, id(2), helpstring("property Timeout In Seconds")] HRESULT TimeoutInSeconds([in] long newVal);
-
-	[id(32), helpstring("method Query List Names")] HRESULT QueryListNames([out, retval]SAFEARRAY(BSTR)* ppNames);
-	[id(33), helpstring("method Query List Items")] HRESULT QueryListItems([in]BSTR ListName, [out, retval]ISVInputMatchList** ppItems);
-	[id(34), helpstring("method Clear")] HRESULT Clear([in]BSTR ListName);
-	[id(35), helpstring("method Add")] HRESULT Add([in]BSTR ListName, [in]ISVInputMatchList* pItems);
-};
-
-[
-	object,
-	uuid(C1C8780A-1C0C-4DE9-B54C-A5014046792D),
-	dual,
-	nonextensible,
-	helpstring("ISVOutputBroker Interface"),
-	pointer_default(unique)
-]
-interface ISVOutputBroker : IDispatch{
-	[propget, id(1), helpstring("property RemoteCtrl")] HRESULT RemoteCtrl([out, retval] ISVRemoteCtrl** pVal);
-	[propput, id(1), helpstring("property RemoteCtrl")] HRESULT RemoteCtrl([in] ISVRemoteCtrl* newVal);
-	[propget, id(2), helpstring("property Timeout In Seconds")] HRESULT TimeoutInSeconds([out, retval] long* pVal);
-	[propput, id(2), helpstring("property Timeout In Seconds")] HRESULT TimeoutInSeconds([in] long newVal);
-
-	[id(32), helpstring("method Start")] HRESULT Start([in]BSTR ListName);
-	[id(33), helpstring("method Stop")] HRESULT Stop([in]BSTR ListName);
-	[id(34), helpstring("method Query List Names")] HRESULT QueryListNames([out, retval]SAFEARRAY(BSTR)* ppNames);
-	[id(35), helpstring("method Query List Items")] HRESULT QueryListItems([in]BSTR ListName, [out, retval]SAFEARRAY(BSTR)* ppNames);
-};
-
-[
-	object,
-	uuid(7D5743E5-6576-455C-B7AD-2189B4A28ACD),
-	dual,
-	nonextensible,
-	helpstring("ISVFailStatusStream Interface"),
-	pointer_default(unique)
-]
-interface ISVFailStatusStream : IDispatch{
-	[propget, id(1), helpstring("property RemoteCtrl")] HRESULT RemoteCtrl([out, retval] ISVRemoteCtrl** pVal);
-	[propput, id(1), helpstring("property RemoteCtrl")] HRESULT RemoteCtrl([in] ISVRemoteCtrl* newVal);
-	[propget, id(2), helpstring("property Timeout In Seconds")] HRESULT TimeoutInSeconds([out, retval] long* pVal);
-	[propput, id(2), helpstring("property Timeout In Seconds")] HRESULT TimeoutInSeconds([in] long newVal);
-
-	[id(32), helpstring("method Start")] HRESULT Start([in]BSTR ListName);
-	[id(33), helpstring("method Stop")] HRESULT Stop([in]BSTR ListName);
-};
-
-[
 	uuid(46406B18-E3C7-449D-898F-E857B6A9D945),
 	version(1.0),
 	helpstring("SVRemoteControl 1.0 Type Library")
@@ -452,28 +394,6 @@ interface ISVFailStatusStream : IDispatch{
 library SVRemoteControlLib
 {
 	importlib("stdole2.tlb");
-
-	[
-		uuid(13801904-F3B5-43C7-98E5-AF28EE3A7155),
-		helpstring("_ISVFailStatusStreamEvents Interface")
-	]
-	dispinterface _ISVFailStatusStreamEvents
-	{
-		properties:
-		methods:
-			[id(1), helpstring("method OnDataArrive")] HRESULT OnDataArrive([in] ISVProductItems* items);
-	};
-
-	[
-		uuid(19A3CAAF-348F-4A47-98D7-1382FB67FAD7),
-		helpstring("_ISVOutputBrokerEvents Interface")
-	]
-	dispinterface _ISVOutputBrokerEvents
-	{
-		properties:
-		methods:
-			[id(1), helpstring("method OnDataArrive")] HRESULT OnDataArrive([in] ISVProductItems* items);
-	};
 
 	[
 		uuid(89A7446B-ACCE-483B-8C2A-19B882C23011),
@@ -577,35 +497,6 @@ library SVRemoteControlLib
 	coclass SVInputMatchList
 	{
 		[default] interface ISVInputMatchList;
-	};
-
-	[
-		uuid(66C35D87-850D-4D2D-87F4-8F341D0527CF),
-		helpstring("SVInputBroker Class")
-	]
-	coclass SVInputBroker
-	{
-		[default] interface ISVInputBroker;
-	};
-
-	[
-		uuid(63DB739C-8E97-4207-887D-BCE9CEC3023C),
-		helpstring("SVOutputBroker Class")
-	]
-	coclass SVOutputBroker
-	{
-		[default] interface ISVOutputBroker;
-		[default, source] dispinterface _ISVOutputBrokerEvents;
-	};
-
-	[
-		uuid(3F460BC8-ADBA-470F-8844-5D5A8BA5C62D),
-		helpstring("SVFailStatusStream Class")
-	]
-	coclass SVFailStatusStream
-	{
-		[default] interface ISVFailStatusStream;
-		[default, source] dispinterface _ISVFailStatusStreamEvents;
 	};
 
 	[

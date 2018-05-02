@@ -21,7 +21,15 @@ namespace SvWsl
 {
 
 SVRCClientService::SVRCClientService(SvRpc::RPCClient& rRpcClient) :
-	m_GetVersionClient(rRpcClient),
+	m_GetGatewayVersionClient(rRpcClient),
+	m_GetProductClient(rRpcClient),
+	m_GetFailStatusClient(rRpcClient),
+	m_GetImageFromCurIdClient(rRpcClient),
+	m_GetImageStreamFromCurIdClient(rRpcClient),
+	m_QueryListNameClient(rRpcClient),
+	m_QueryListItemClient(rRpcClient),
+	m_GetNotificationStreamClient(rRpcClient),
+	m_GetSVObserverVersionClient(rRpcClient),
 	m_GetDeviceModeClient(rRpcClient),
 	m_SetDeviceModeClient(rRpcClient),
 	m_GetStateClient(rRpcClient),
@@ -44,7 +52,7 @@ SVRCClientService::SVRCClientService(SvRpc::RPCClient& rRpcClient) :
 	m_GetDataDefinitionListClient(rRpcClient),
 	m_QueryMonitorListClient(rRpcClient),
 	m_QueryMonitorListNamesClient(rRpcClient)
-	{
+{
 
 }
 
@@ -53,10 +61,50 @@ SVRCClientService::~SVRCClientService()
 {
 }
 
-
-void SVRCClientService::GetVersion(SvPb::GetVersionRequest&& Request, SvRpc::Task<SvPb::GetVersionResponse> task)
+void SVRCClientService::GetGatewayVersion(SvPb::GetGatewayVersionRequest&& req, SvRpc::Task<SvPb::GetVersionResponse> task)
 {
-	m_GetVersionClient.request(std::move(Request), task, cSixSeconds);
+	m_GetGatewayVersionClient.request(std::move(req), task, cSixSeconds);
+}
+
+void SVRCClientService::GetProduct(SvPb::GetProductRequest&& req, SvRpc::Task<SvPb::GetProductResponse> task)
+{
+	m_GetProductClient.request(std::move(req), task, cSixSeconds);
+}
+
+void SVRCClientService::GetFailStatus(SvPb::GetFailStatusRequest&& req, SvRpc::Task<SvPb::GetFailStatusResponse> task)
+{
+	m_GetFailStatusClient.request(std::move(req), task, cSixSeconds);
+}
+
+void SVRCClientService::GetImageFromCurId(SvPb::GetImageFromCurIdRequest&& req, SvRpc::Task<SvPb::GetImageFromCurIdResponse> task)
+{
+	m_GetImageFromCurIdClient.request(std::move(req), task, cSixSeconds);
+}
+
+void SVRCClientService::GetImageStreamFromCurId(SvPb::GetImageStreamFromCurIdRequest&& req, SvRpc::Observer<SvPb::GetImageStreamFromCurIdResponse> observer)
+{
+	m_GetImageStreamFromCurIdClient.stream(std::move(req), observer);
+}
+
+void SVRCClientService::QueryListName(SvPb::QueryListNameRequest&& req, SvRpc::Task<SvPb::QueryListNameResponse> task)
+{
+	m_QueryListNameClient.request(std::move(req), task, cSixSeconds);
+}
+
+void SVRCClientService::QueryListItem(SvPb::QueryListItemRequest&& req, SvRpc::Task<SvPb::QueryListItemResponse> task)
+{
+	m_QueryListItemClient.request(std::move(req), task, cSixSeconds);
+}
+
+SvRpc::ClientStreamContext SVRCClientService::GetNotificationStream(SvPb::GetNotificationStreamRequest&& req, SvRpc::Observer<SvPb::GetNotificationStreamResponse> observer)
+{
+	return m_GetNotificationStreamClient.stream(std::move(req), observer);
+}
+
+
+void SVRCClientService::GetSVObserverVersion(SvPb::GetSVObserverVersionRequest&& Request, SvRpc::Task<SvPb::GetVersionResponse> task)
+{
+	m_GetSVObserverVersionClient.request(std::move(Request), task, cSixSeconds);
 }
 
 void SVRCClientService::GetDeviceMode(SvPb::GetDeviceModeRequest&& Request, SvRpc::Task<SvPb::GetDeviceModeResponse> task)

@@ -17,7 +17,7 @@
 #include "SVRPCLibrary/Observer.h"
 #include "SVRPCLibrary/Task.h"
 
-namespace SvOws
+namespace SvOgw
 {
 class SharedMemoryAccess : public SharedMemoryAccessInterface
 {
@@ -26,7 +26,7 @@ public:
 	~SharedMemoryAccess();
 
 public:
-	void GetVersion(const SvPb::GetVersionRequest&, SvRpc::Task<SvPb::GetVersionResponse>) override;
+	void GetVersion(const SvPb::GetGatewayVersionRequest&, SvRpc::Task<SvPb::GetVersionResponse>) override;
 	void GetProduct(const SvPb::GetProductRequest&, SvRpc::Task<SvPb::GetProductResponse>) override;
 	void GetFailstatus(const SvPb::GetFailStatusRequest&, SvRpc::Task<SvPb::GetFailStatusResponse>) override;
 	void GetImageFromCurId(const SvPb::GetImageFromCurIdRequest&, SvRpc::Task<SvPb::GetImageFromCurIdResponse>) override;
@@ -46,4 +46,4 @@ private:
 	std::unique_ptr<SvSml::ShareControl> m_pShareControlInstance;
 	
 };
-}
+}// namespace SvOgw

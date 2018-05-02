@@ -32,7 +32,7 @@ static const unsigned long TwentySeconds = 20;
 static const unsigned long ThirtySeconds = 30;
 static const unsigned long SixtySeconds = 60;
 static const unsigned long TwoMinutes = 120;
-static const WCHAR* const NotConnectedToSVobserver = L"Not Connected to SVObserver";
+static const WCHAR* const NotConnectedToSVobserver = L"Not connected to neither SVOGateway nor SVObserver";
 
 #define HANDLE_EXCEPTION(Status, CmdStatus )\
 catch (std::invalid_argument & e)\
@@ -87,8 +87,8 @@ SVControlCommands::~SVControlCommands()
 HRESULT SVControlCommands::SetConnectionData(const _bstr_t& p_rServerName, unsigned short p_CommandPort, long timeout)
 {
 	HRESULT hr = S_OK;
-	m_WebClient.reset();
-	m_SvrcClient.reset();
+	m_pRpcClient.reset();
+	m_pSvrcClientService.reset();
 	m_Connected = false;
 	m_ServerName = p_rServerName;
 	m_CommandPort = p_CommandPort;
@@ -97,19 +97,32 @@ HRESULT SVControlCommands::SetConnectionData(const _bstr_t& p_rServerName, unsig
 	{
 
 		std::string host(m_ServerName);
-		m_WebClient.SetConnectionData(host, SvWsl::Default_Port);
-		m_SvrcClient.SetConnectionData(host, SvWsl::Default_SecondPort);
-	
+
+		//First try to connect to Gateway
+		m_pRpcClient = std::make_unique<SvRpc::RPCClient>(host, SvWsl::Default_Port, std::bind(&SVControlCommands::OnConnectionStatus, this, std::placeholders::_1));
+		if(nullptr != m_pRpcClient)
+		{
+			m_pSvrcClientService = std::make_unique<SvWsl::SVRCClientService>(*m_pRpcClient);
+			m_pRpcClient->waitForConnect(timeout);
+
+			if(!m_pRpcClient->isConnected())
+			{
+				m_pRpcClient = std::make_unique<SvRpc::RPCClient>(host, SvWsl::Default_SecondPort, std::bind(&SVControlCommands::OnConnectionStatus, this, std::placeholders::_1));
+				m_pSvrcClientService = std::make_unique<SvWsl::SVRCClientService>(*m_pRpcClient);
+				m_pRpcClient->waitForConnect(timeout);
+			}
+		}
+		if (nullptr != m_pRpcClient)
+		{
+			if (!m_pRpcClient->isConnected())
+			{
+				HRESULT h = RPC_E_TIMEOUT;
+				SVLOG(h);
+			}
+		}
+
 		//m_Connected represent only the client socket connection state 
 		m_Connected = true;
-		m_WebClient.WaitForConnect(timeout);
-		m_SvrcClient.WaitForConnect(timeout);
-		bool Connected = m_WebClient.isConnected() && m_SvrcClient.isConnected();
-		if (!Connected)
-		{
-			HRESULT h = RPC_E_TIMEOUT;
-			SVLOG(h);
-		}
 	}
 	else
 	{
@@ -119,31 +132,42 @@ HRESULT SVControlCommands::SetConnectionData(const _bstr_t& p_rServerName, unsig
 	return hr;
 }
 
-HRESULT SVControlCommands::GetVersion(_bstr_t& rSVObserverVersion, _bstr_t& rWebServerVersion, SVCommandStatus& rStatus)
+HRESULT SVControlCommands::GetVersion(_bstr_t& rSVObserverVersion, _bstr_t& rGatewayServerVersion, SVCommandStatus& rStatus)
 {
 	HRESULT Result{S_OK};
 
 	try
 	{
 		rSVObserverVersion = _bstr_t(L"N/A");
-		if (m_SvrcClient.isConnected())
+		rGatewayServerVersion = _bstr_t(L"N/A");
+		if (nullptr != m_pRpcClient && nullptr != m_pSvrcClientService && m_pRpcClient->isConnected())
 		{
-			SvPb::GetVersionRequest Request;
-			SvPb::GetVersionResponse Response = SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(),
-																&SvWsl::SVRCClientService::GetVersion,
-																std::move(Request)).get();
+			SvPb::GetSVObserverVersionRequest SvoRequest;
+			try
+			{
+				SvPb::GetVersionResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
+																	  &SvWsl::SVRCClientService::GetSVObserverVersion,
+																	  std::move(SvoRequest)).get();
 
-			rSVObserverVersion = _bstr_t(Response.version().c_str());
-		}
-
-		rWebServerVersion = _bstr_t(L"N/A");
-		if (m_WebClient.isConnected())
-		{
-			SvPb::GetVersionRequest Request;
-			auto Response = SvWsl::runRequest(*m_WebClient.m_pClientService.get(), 
-											  &SvWsl::ClientService::getVersion, 
-											  std::move(Request)).get();
-			rWebServerVersion = _bstr_t(Response.version().c_str());
+				rSVObserverVersion = _bstr_t(Response.version().c_str());
+			}
+			catch (std::exception&)
+			{
+				//Catch exceptions to be able to call both versions
+			}
+	
+			try
+			{
+				SvPb::GetGatewayVersionRequest GatewayRequest;
+				SvPb::GetVersionResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
+												  &SvWsl::SVRCClientService::GetGatewayVersion,
+												  std::move(GatewayRequest)).get();
+				rGatewayServerVersion = _bstr_t(Response.version().c_str());
+			}
+			catch (std::exception&)
+			{
+				//Catch exceptions to be able to call both versions
+			}
 		}
 
 		SVLOG((Result = rStatus.hResult));
@@ -159,13 +183,13 @@ HRESULT SVControlCommands::GetState(unsigned long& rState, SVCommandStatus& rSta
 
 	try
 	{
-		if (false == m_SvrcClient.isConnected())
+		if (nullptr == m_pRpcClient || nullptr == m_pSvrcClientService || !m_pRpcClient->isConnected())
 		{
-			throw std::invalid_argument("Not connected To SVObserver");
+			throw std::invalid_argument("Not connected to neither SVOGateway nor SVObserver");
 		}
 
 		SvPb::GetStateRequest Request;
-		SvPb::GetStateResponse Response = SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(),
+		SvPb::GetStateResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
 															&SvWsl::SVRCClientService::GetState,
 															std::move(Request)).get();
 
@@ -182,13 +206,13 @@ HRESULT SVControlCommands::GetOfflineCount(unsigned long& rCount, SVCommandStatu
 
 	try
 	{
-		if (false == m_SvrcClient.isConnected())
+		if (nullptr == m_pRpcClient || nullptr == m_pSvrcClientService || !m_pRpcClient->isConnected())
 		{
-			throw std::invalid_argument("Not connected To SVObserver");
+			throw std::invalid_argument("Not connected to neither SVOGateway nor SVObserver");
 		}
 
 		SvPb::GetOfflineCountRequest Request;
-		SvPb::GetOfflineCountResponse Response = SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(),
+		SvPb::GetOfflineCountResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
 															&SvWsl::SVRCClientService::GetOfflineCount,
 															std::move(Request)).get();
 		rCount = Response.count();
@@ -204,13 +228,13 @@ HRESULT SVControlCommands::GetConfigReport(BSTR& rReport, SVCommandStatus& rStat
 
 	try
 	{
-		if (!m_SvrcClient.isConnected())
+		if (nullptr == m_pRpcClient || nullptr == m_pSvrcClientService || !m_pRpcClient->isConnected())
 		{
-			throw std::invalid_argument("Not connected To SVObserver");
+			throw std::invalid_argument("Not connected to neither SVOGateway nor SVObserver");
 		}
 
 		SvPb::GetConfigReportRequest Request;
-		SvPb::GetConfigReportResponse Response = SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(),
+		SvPb::GetConfigReportResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
 																 &SvWsl::SVRCClientService::GetConfigReport,
 																   std::move(Request)).get();
 
@@ -229,13 +253,13 @@ HRESULT SVControlCommands::GetMode(unsigned long&  rMode, SVCommandStatus& rStat
 	HRESULT Result{S_OK};
 	try
 	{
-		if (!m_SvrcClient.isConnected())
+		if (nullptr == m_pRpcClient || nullptr == m_pSvrcClientService || !m_pRpcClient->isConnected())
 		{
-			throw std::invalid_argument("Not connected To SVObserver");
+			throw std::invalid_argument("Not connected to neither SVOGateway nor SVObserver");
 		}
 
 		SvPb::GetDeviceModeRequest Request;
-		SvPb::GetDeviceModeResponse Response = SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(), 
+		SvPb::GetDeviceModeResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
 																 &SvWsl::SVRCClientService::GetDeviceMode,
 																 std::move(Request)).get();
 
@@ -254,9 +278,9 @@ HRESULT SVControlCommands::SetMode(unsigned long Mode, SVCommandStatus& rStatus)
 	HRESULT Result{S_OK};
 	try
 	{
-		if (!m_SvrcClient.isConnected())
+		if (nullptr == m_pRpcClient || nullptr == m_pSvrcClientService || !m_pRpcClient->isConnected())
 		{
-			throw std::invalid_argument("Not connected To SVObserver");
+			throw std::invalid_argument("Not connected to neither SVOGateway nor SVObserver");
 		}
 
 		if (false == SvPb::DeviceModeType_IsValid(Mode))
@@ -266,9 +290,9 @@ HRESULT SVControlCommands::SetMode(unsigned long Mode, SVCommandStatus& rStatus)
 		
 		SvPb::SetDeviceModeRequest Request;
 		Request.set_mode(static_cast<SvPb::DeviceModeType> (Mode));
-		SvPb::StandardResponse Response =
-			SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(), &SvWsl::SVRCClientService::SetDeviceMode,
-			std::move(Request)).get();
+		SvPb::StandardResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(), 
+															&SvWsl::SVRCClientService::SetDeviceMode, 
+															std::move(Request)).get();
 
 		Result =  Response.hresult();
 		rStatus.hResult = Result;
@@ -284,9 +308,9 @@ HRESULT SVControlCommands::GetItems(CComVariant ItemNames, ISVProductItems** ppI
 
 	try
 	{
-		if (!m_SvrcClient.isConnected())
+		if (nullptr == m_pRpcClient || nullptr == m_pSvrcClientService || !m_pRpcClient->isConnected())
 		{
-			throw std::invalid_argument("Not connected To SVObserver");
+			throw std::invalid_argument("Not connected to neither SVOGateway nor SVObserver");
 		}
 
 		SvPb::GetItemsRequest Request;
@@ -321,8 +345,9 @@ HRESULT SVControlCommands::GetItems(CComVariant ItemNames, ISVProductItems** ppI
 			throw CAtlException(OLE_E_CANTCONVERT);
 		}
 
-		SvPb::GetItemsResponse Response = SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(), 
-															&SvWsl::SVRCClientService::GetItems, std::move(Request)).get();
+		SvPb::GetItemsResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
+															&SvWsl::SVRCClientService::GetItems, 
+															std::move(Request)).get();
 
 		GetItemsPtr(Response)->QueryInterface(IID_ISVProductItems, reinterpret_cast<void**>(ppItems));
 
@@ -341,17 +366,18 @@ HRESULT SVControlCommands::SetItems(ISVProductItems* pItems, ISVProductItems ** 
 
 	try
 	{
-		if (!m_SvrcClient.isConnected())
+		if (nullptr == m_pRpcClient || nullptr == m_pSvrcClientService || !m_pRpcClient->isConnected())
 		{
-			throw std::invalid_argument("Not connected To SVObserver");
+			throw std::invalid_argument("Not connected to neither SVOGateway nor SVObserver");
 		}
 
 		if(nullptr != pItems)
 		{
 			SvPb::SetItemsRequest Request;
 			SetItemsRequest(ProductPtr(pItems), &Request);
-			SvPb::SetItemsResponse Response = SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(),
-																&SvWsl::SVRCClientService::SetItems, std::move(Request)).get();
+			SvPb::SetItemsResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
+																&SvWsl::SVRCClientService::SetItems, 
+																std::move(Request)).get();
 
 			GetItemsPtr(Response.mutable_errorlist())->QueryInterface(IID_ISVProductItems, reinterpret_cast<void**>(ppErrors));
 
@@ -390,9 +416,9 @@ HRESULT SVControlCommands::GetConfig(const _bstr_t& rFilePath, SVCommandStatus& 
 
 	try
 	{
-		if (!m_SvrcClient.isConnected())
+		if (nullptr == m_pRpcClient || nullptr == m_pSvrcClientService || !m_pRpcClient->isConnected())
 		{
-			throw std::invalid_argument("Not connected To SVObserver");
+			throw std::invalid_argument("Not connected to neither SVOGateway nor SVObserver");
 		}
 
 		std::string fPath = SVStringConversions::to_utf8(rFilePath);
@@ -400,7 +426,7 @@ HRESULT SVControlCommands::GetConfig(const _bstr_t& rFilePath, SVCommandStatus& 
 		{
 			SvPb::GetConfigRequest Request;
 			Request.set_filename(fPath.c_str());
-			SvPb::GetConfigResponse Response = SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(),
+			SvPb::GetConfigResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
 																&SvWsl::SVRCClientService::GetConfig,
 																std::move(Request)).get();
 			Result = Response.hresult();
@@ -440,9 +466,9 @@ HRESULT SVControlCommands::PutConfig(const _bstr_t& rFilePath, SVCommandStatus& 
 
 	try
 	{
-		if (!m_SvrcClient.isConnected())
+		if (nullptr == m_pRpcClient || nullptr == m_pSvrcClientService || !m_pRpcClient->isConnected())
 		{
-			throw std::invalid_argument("Not connected To SVObserver");
+			throw std::invalid_argument("Not connected to neither SVOGateway nor SVObserver");
 		}
 
 		std::string fPath = SVStringConversions::to_utf8(rFilePath);
@@ -466,7 +492,7 @@ HRESULT SVControlCommands::PutConfig(const _bstr_t& rFilePath, SVCommandStatus& 
 					SvPb::PutConfigRequest PutConfigRequest;
 					PutConfigRequest.set_filename(fPath.c_str());
 					PutConfigRequest.set_filedata(&FileData[0], FileSize);
-					SvPb::StandardResponse Response = SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(),
+					SvPb::StandardResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
 																		&SvWsl::SVRCClientService::PutConfig,
 																		std::move(PutConfigRequest)).get();
 					Result = Response.hresult();
@@ -504,17 +530,18 @@ HRESULT SVControlCommands::GetFile(const _bstr_t& rSourcePath, const _bstr_t& rD
 
 	try
 	{
-		if (!m_SvrcClient.isConnected())
+		if (nullptr == m_pRpcClient || nullptr == m_pSvrcClientService || !m_pRpcClient->isConnected())
 		{
-			throw std::invalid_argument("Not connected To SVObserver");
+			throw std::invalid_argument("Not connected to neither SVOGateway nor SVObserver");
 		}
+
 		std::string DestinationPath = SVStringConversions::to_utf8(rDestinationPath);
 		if (IsValidFilePath(DestinationPath))
 		{
 
 			SvPb::GetFileRequest Request;
 			Request.set_sourcepath(SVStringConversions::to_utf8(rSourcePath));
-			SvPb::GetFileResponse Response = SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(),
+			SvPb::GetFileResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
 																 &SvWsl::SVRCClientService::GetFile,
 																 std::move(Request)).get();
 			Result = Response.hresult();
@@ -555,9 +582,9 @@ HRESULT SVControlCommands::PutFile(const _bstr_t& rSourcePath, const _bstr_t& rD
 
 	try
 	{
-		if (!m_SvrcClient.isConnected())
+		if (nullptr == m_pRpcClient || nullptr == m_pSvrcClientService || !m_pRpcClient->isConnected())
 		{
-			throw std::invalid_argument("Not connected To SVObserver");
+			throw std::invalid_argument("Not connected to neither SVOGateway nor SVObserver");
 		}
 
 		std::string SourcePath = SVStringConversions::to_utf8(rSourcePath);
@@ -582,7 +609,7 @@ HRESULT SVControlCommands::PutFile(const _bstr_t& rSourcePath, const _bstr_t& rD
 					SvPb::PutFileRequest Request;
 					Request.set_destinationpath(DestinationPath);
 					Request.set_filedata(&FileData[0], FileSize);
-					SvPb::StandardResponse Response = SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(),
+					SvPb::StandardResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
 																		&SvWsl::SVRCClientService::PutFile,
 																		std::move(Request)).get();
 					Result = Response.hresult();
@@ -620,15 +647,15 @@ HRESULT SVControlCommands::GetDataDefinitionList(const _bstr_t& rInspectionName,
 
 	try
 	{
-		if (!m_SvrcClient.isConnected())
+		if (nullptr == m_pRpcClient || nullptr == m_pSvrcClientService || !m_pRpcClient->isConnected())
 		{
-			throw std::invalid_argument("Not connected To SVObserver");
+			throw std::invalid_argument("Not connected to neither SVOGateway nor SVObserver");
 		}
 
 		SvPb::GetDataDefinitionListRequest Request;
 		Request.set_inspectionname(SVStringConversions::to_utf8(rInspectionName));
 		Request.set_type(static_cast<SvPb::DataDefinitionListType> (ListType));
-		SvPb::GetDataDefinitionListResponse Response = SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(),
+		SvPb::GetDataDefinitionListResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
 															&SvWsl::SVRCClientService::GetDataDefinitionList,
 															std::move(Request)).get();
 
@@ -650,9 +677,9 @@ HRESULT SVControlCommands::RegisterMonitorList(const _bstr_t& rListName, const _
 
 	try
 	{
-		if (!m_SvrcClient.isConnected())
+		if (nullptr == m_pRpcClient || nullptr == m_pSvrcClientService || !m_pRpcClient->isConnected())
 		{
-			throw std::invalid_argument("Not connected To SVObserver");
+			throw std::invalid_argument("Not connected to neither SVOGateway nor SVObserver");
 		}
 
 		SvPb::RegisterMonitorListRequest Request;
@@ -662,7 +689,7 @@ HRESULT SVControlCommands::RegisterMonitorList(const _bstr_t& rListName, const _
 		SetStringList(rProductItemList, Request.mutable_productitemlist());
 		SetStringList(rRejectCondList, Request.mutable_rejectconditionlist());
 		SetStringList(rFailStatusList, Request.mutable_failstatuslist());
-		SvPb::RegisterMonitorListResponse Response = SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(),
+		SvPb::RegisterMonitorListResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
 																 &SvWsl::SVRCClientService::RegisterMonitorList,
 																 std::move(Request)).get();
 
@@ -683,16 +710,17 @@ HRESULT SVControlCommands::QueryMonitorList(const _bstr_t& rListName, SvPb::List
 
 	try
 	{
-		if (!m_SvrcClient.isConnected())
+		if (nullptr == m_pRpcClient || nullptr == m_pSvrcClientService || !m_pRpcClient->isConnected())
 		{
-			throw std::invalid_argument("Not connected To SVObserver");
+			throw std::invalid_argument("Not connected to neither SVOGateway nor SVObserver");
 		}
 
 		SvPb::QueryMonitorListRequest Request;
 		Request.set_listname(SVStringConversions::to_utf8(rListName));
 		Request.set_type(Type);
-		SvPb::NamesResponse Response = SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(),
-														 &SvWsl::SVRCClientService::QueryMonitorList, std::move(Request)).get();
+		SvPb::NamesResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
+														 &SvWsl::SVRCClientService::QueryMonitorList,
+														 std::move(Request)).get();
 
 		Result = Response.hresult();
 
@@ -723,10 +751,9 @@ HRESULT SVControlCommands::GetProduct(bool bGetReject, const _bstr_t& rListName,
 		{
 			throw std::invalid_argument("missing Monitorlistname");
 		}
-		//if (0 == m_pRpcClient.get() || false == m_pRpcClient->isConnected())
-		if (false == m_WebClient.isConnected())
+		if (nullptr == m_pRpcClient || nullptr == m_pSvrcClientService || !m_pRpcClient->isConnected())
 		{
-			throw std::invalid_argument("Not connected To RRServer");
+			throw std::invalid_argument("Not connected to neither SVOGateway nor SVObserver");
 		}
 
 		SvPb::GetProductRequest ProductRequest;
@@ -737,13 +764,13 @@ HRESULT SVControlCommands::GetProduct(bool bGetReject, const _bstr_t& rListName,
 
 		ProductRequest.set_nameinresponse(true);
 		SvPb::GetProductResponse resp =
-			SvWsl::runRequest(*m_WebClient.m_pClientService.get(), &SvWsl::ClientService::getProduct, std::move(ProductRequest)).get();
+			SvWsl::runRequest(*m_pSvrcClientService.get(), &SvWsl::SVRCClientService::GetProduct, std::move(ProductRequest)).get();
 
 		rStatus.hResult = (HRESULT)resp.product().status();
 		if (resp.product().status() == SvPb::IsValid)
 		{
 			Status = S_OK;
-			GetProductPtr(m_WebClient.m_pClientService, resp.product())->QueryInterface(IID_ISVProductItems, reinterpret_cast<void**>(ppViewItems));
+			GetProductPtr(m_pSvrcClientService, resp.product())->QueryInterface(IID_ISVProductItems, reinterpret_cast<void**>(ppViewItems));
 		}
 		else
 		{
@@ -773,17 +800,17 @@ HRESULT SVControlCommands::ActivateMonitorList(const _bstr_t& rListName, bool Ac
 
 	try
 	{
-		if (false == m_SvrcClient.isConnected())
+		if (nullptr == m_pRpcClient || nullptr == m_pSvrcClientService || !m_pRpcClient->isConnected())
 		{
-			throw std::invalid_argument("Not connected To SVObserver");
+			throw std::invalid_argument("Not connected to neither SVOGateway nor SVObserver");
 		}
 
 		SvPb::ActivateMonitorListRequest Request;
 		Request.set_listname(SVStringConversions::to_utf8(rListName));
 		Request.set_activate(Active);
-		SvPb::StandardResponse Response = SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(),
-																   &SvWsl::SVRCClientService::ActivateMonitorList,
-																   std::move(Request)).get();
+		SvPb::StandardResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
+															&SvWsl::SVRCClientService::ActivateMonitorList,
+															std::move(Request)).get();
 		Result = Response.hresult();
 		rStatus.hResult = Result;
 		SVLOG(Result);
@@ -803,28 +830,29 @@ HRESULT SVControlCommands::GetFailStatus(const _bstr_t& rListName, CComVariant& 
 		{
 			throw std::invalid_argument("missing Monitorlistname");
 		}
-		if (false == m_WebClient.isConnected())
+		if (nullptr == m_pRpcClient || nullptr == m_pSvrcClientService || !m_pRpcClient->isConnected())
 		{
-			throw std::invalid_argument("Not connected To RRServer");
+			throw std::invalid_argument("Not connected to neither SVOGateway nor SVObserver");
 		}
 
 		SvPb::GetFailStatusRequest FailstatusRequest;
 		FailstatusRequest.set_name(static_cast<const char*>(rListName));
 
 		FailstatusRequest.set_nameinresponse(true);
-		SvPb::GetFailStatusResponse resp
-			= SvWsl::runRequest(*m_WebClient.m_pClientService.get(), &SvWsl::ClientService::getFailStatus, std::move(FailstatusRequest)).get();
+		SvPb::GetFailStatusResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(), 
+																 &SvWsl::SVRCClientService::GetFailStatus,
+																 std::move(FailstatusRequest)).get();
 
-		rStatus.hResult = (HRESULT)resp.status();
-		if (resp.status() == SvPb::IsValid)
+		rStatus.hResult = (HRESULT)Response.status();
+		if (Response.status() == SvPb::IsValid)
 		{
 			Result = S_OK;
-			CComVariant variant = GetFailList(m_WebClient.m_pClientService, resp);
+			CComVariant variant = GetFailList(m_pSvrcClientService, Response);
 			rValues.Attach(&variant);
 		}
 		else
 		{
-			rStatus.errorText = SVStringConversions::to_utf16(SvPb::State_Name(resp.status()));
+			rStatus.errorText = SVStringConversions::to_utf16(SvPb::State_Name(Response.status()));
 		}
 
 
@@ -842,15 +870,16 @@ HRESULT SVControlCommands::ShutDown(SVShutdownOptionsEnum Options, SVCommandStat
 
 	try
 	{
-		if (!m_SvrcClient.isConnected())
+		if (nullptr == m_pRpcClient || nullptr == m_pSvrcClientService || !m_pRpcClient->isConnected())
 		{
-			throw std::invalid_argument("Not connected To SVObserver");
+			throw std::invalid_argument("Not connected to neither SVOGateway nor SVObserver");
 		}
 
 		SvPb::ShutdownRequest Request;
 		Request.set_options(static_cast<long> (Options));
-		SvPb::StandardResponse Response = SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(),
-															&SvWsl::SVRCClientService::Shutdown, std::move(Request)).get();
+		SvPb::StandardResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
+															&SvWsl::SVRCClientService::Shutdown,
+															std::move(Request)).get();
 
 		Result = Response.hresult();
 
@@ -870,14 +899,15 @@ HRESULT SVControlCommands::GetInspectionNames(CComVariant& rNames, SVCommandStat
 
 	try
 	{
-		if (!m_SvrcClient.isConnected())
+		if (nullptr == m_pRpcClient || nullptr == m_pSvrcClientService || !m_pRpcClient->isConnected())
 		{
-			throw std::invalid_argument("Not connected To SVObserver");
+			throw std::invalid_argument("Not connected to neither SVOGateway nor SVObserver");
 		}
 
 		SvPb::GetInspectionNamesRequest Request;
-		SvPb::NamesResponse Response = SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(),
-															&SvWsl::SVRCClientService::GetInspectionNames, std::move(Request)).get();
+		SvPb::NamesResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
+														 &SvWsl::SVRCClientService::GetInspectionNames,
+														 std::move(Request)).get();
 
 		Result = Response.hresult();
 
@@ -906,14 +936,15 @@ HRESULT SVControlCommands::QueryMonitorListNames(CComVariant& rListName, SVComma
 
 	try
 	{
-		if (!m_SvrcClient.isConnected())
+		if (nullptr == m_pRpcClient || nullptr == m_pSvrcClientService || !m_pRpcClient->isConnected())
 		{
-			throw std::invalid_argument("Not connected To SVObserver");
+			throw std::invalid_argument("Not connected to neither SVOGateway nor SVObserver");
 		}
 
 		SvPb::QueryMonitorListNamesRequest Request;
-		SvPb::NamesResponse Response = SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(),
-														 &SvWsl::SVRCClientService::QueryMonitorListNames, std::move(Request)).get();
+		SvPb::NamesResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
+														 &SvWsl::SVRCClientService::QueryMonitorListNames,
+														 std::move(Request)).get();
 
 		Result = Response.hresult();
 
@@ -940,15 +971,14 @@ HRESULT SVControlCommands::GetMonitorListProperties(const _bstr_t & rListName, l
 	HRESULT Result = S_OK;
 	try
 	{
-
-		if (!m_SvrcClient.isConnected())
+		if (nullptr == m_pRpcClient || nullptr == m_pSvrcClientService || !m_pRpcClient->isConnected())
 		{
-			throw std::invalid_argument("Not connected To SVObserver");
+			throw std::invalid_argument("Not connected to neither SVOGateway nor SVObserver");
 		}
 
 		SvPb::GetMonitorListPropertiesRequest Request;
 		Request.set_listname(SVStringConversions::to_utf8(rListName));
-		SvPb::GetMonitorListPropertiesResponse Response = SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(),
+		SvPb::GetMonitorListPropertiesResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
 																 &SvWsl::SVRCClientService::GetMonitorListProperties,
 																 std::move(Request)).get();
 
@@ -971,15 +1001,15 @@ HRESULT SVControlCommands::GetMaxRejectQeueDepth(unsigned long& rDepth, SVComman
 
 	try
 	{
-		if (!m_SvrcClient.isConnected())
+		if (nullptr == m_pRpcClient || nullptr == m_pSvrcClientService || !m_pRpcClient->isConnected())
 		{
-			throw std::invalid_argument("Not connected To SVObserver");
+			throw std::invalid_argument("Not connected to neither SVOGateway nor SVObserver");
 		}
 
 		SvPb::GetMaxRejectDepthRequest Request;
-		SvPb::GetMaxRejectDepthResponse Response = SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(),
-																			&SvWsl::SVRCClientService::GetMaxRejectDepth,
-																			std::move(Request)).get();
+		SvPb::GetMaxRejectDepthResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
+																	 &SvWsl::SVRCClientService::GetMaxRejectDepth,
+																	 std::move(Request)).get();
 		rDepth = Response.maxrejectdepth();
 		SVLOG(Result);
 	}
@@ -995,16 +1025,16 @@ HRESULT SVControlCommands::GetProductFilter(const _bstr_t& rListName, unsigned l
 
 	try
 	{
-		if (false == m_SvrcClient.isConnected())
+		if (nullptr == m_pRpcClient || nullptr == m_pSvrcClientService || !m_pRpcClient->isConnected())
 		{
-			throw std::invalid_argument("Not connected To SVObserver");
+			throw std::invalid_argument("Not connected to neither SVOGateway nor SVObserver");
 		}
 
 		SvPb::GetProductFilterRequest Request;
 		Request.set_listname(SVStringConversions::to_utf8(rListName));
-		SvPb::GetProductFilterResponse Response = SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(),
-															&SvWsl::SVRCClientService::GetProductFilter,
-															std::move(Request)).get();
+		SvPb::GetProductFilterResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
+																	&SvWsl::SVRCClientService::GetProductFilter,
+																	std::move(Request)).get();
 		Result = Response.hresult();
 		rFilter = static_cast<unsigned long> (Response.filter());
 		rStatus.hResult = Result;
@@ -1021,17 +1051,17 @@ HRESULT SVControlCommands::SetProductFilter(const _bstr_t& rListName, unsigned l
 
 	try
 	{
-		if (false == m_SvrcClient.isConnected())
+		if (nullptr == m_pRpcClient || nullptr == m_pSvrcClientService || !m_pRpcClient->isConnected())
 		{
-			throw std::invalid_argument("Not connected To SVObserver");
+			throw std::invalid_argument("Not connected to neither SVOGateway nor SVObserver");
 		}
 
 		SvPb::SetProductFilterRequest Request;
 		Request.set_listname(SVStringConversions::to_utf8(rListName));
 		Request.set_filter(static_cast<SvPb::ProductFilterEnum> (Filter));
-		SvPb::StandardResponse Response = SvWsl::runRequest(*m_SvrcClient.m_pClientService.get(),
-																	&SvWsl::SVRCClientService::SetProductFilter,
-																	std::move(Request)).get();
+		SvPb::StandardResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
+															&SvWsl::SVRCClientService::SetProductFilter,
+															std::move(Request)).get();
 		Result = Response.hresult();
 		rStatus.hResult = Result;
 		SVLOG(Result);
@@ -1039,4 +1069,18 @@ HRESULT SVControlCommands::SetProductFilter(const _bstr_t& rListName, unsigned l
 	HANDLE_EXCEPTION(Result, rStatus)
 
 	return Result;
+}
+
+void SVControlCommands::OnConnectionStatus(SvRpc::ClientStatus Status)
+{
+
+	switch(Status)
+	{
+		case SvRpc::ClientStatus::Connected:
+			m_Notifier(_variant_t(_T("Conneted")), SVNotificationTypesEnum::Connected);
+			break;
+		case SvRpc::ClientStatus::Disconnected:
+			m_Notifier(_variant_t(_T("Disconneted")), SVNotificationTypesEnum::Disconnected);
+			break;
+	}
 }

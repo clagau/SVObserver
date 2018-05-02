@@ -31,7 +31,7 @@ SVRCCommand::~SVRCCommand()
 {
 }
 
-void SVRCCommand::GetVersion(const SvPb::GetVersionRequest& rRequest, SvRpc::Task<SvPb::GetVersionResponse> task)
+void SVRCCommand::GetVersion(const SvPb::GetSVObserverVersionRequest& rRequest, SvRpc::Task<SvPb::GetVersionResponse> task)
 {
 	SvPb::GetVersionResponse Response;
 	

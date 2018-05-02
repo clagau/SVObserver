@@ -12,12 +12,12 @@
 #pragma endregion Includes
 
 #pragma region Declarations
-#define cServiceName _T("SVO Web Server")
+#define cServiceName _T("SVO Gateway")
 typedef void (*ServiceWorkerFunction)( DWORD argc, LPTSTR  *argv );
 #pragma endregion Declarations
 
 void WINAPI ServiceMain( DWORD argc, LPTSTR *argv );
-void WINAPI ControlHandler( DWORD ControlCode );
+DWORD WINAPI ControlHandler(DWORD ControlCode, DWORD eventType, void *pEventData, void *pContext);
 
 extern HANDLE gServiceStopEvent;
 extern ServiceWorkerFunction gpStartThread;

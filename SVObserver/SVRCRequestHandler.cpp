@@ -31,10 +31,10 @@ SVRCRequestHandler::SVRCRequestHandler(SVRCCommand* pCommand) :
 {
 	registerRequestHandler<
 		SvPb::SVRCMessages,
-		SvPb::SVRCMessages::kGetVersionRequest,
-		SvPb::GetVersionRequest,
+		SvPb::SVRCMessages::kGetSVObserverVersionRequest,
+		SvPb::GetSVObserverVersionRequest,
 		SvPb::GetVersionResponse>(
-		[this, pCommand](SvPb::GetVersionRequest&& req, SvRpc::Task<SvPb::GetVersionResponse> task)
+		[this, pCommand](SvPb::GetSVObserverVersionRequest&& req, SvRpc::Task<SvPb::GetVersionResponse> task)
 	{
 		m_IoRunService.post([req, task, pCommand]() { pCommand->GetVersion(req, task); });
 	});

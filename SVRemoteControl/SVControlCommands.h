@@ -17,7 +17,6 @@
 #include "SVRemoteCtrl.h"
 #include <Thread>
 #include <boost/asio/io_service.hpp>
-#include "WebsocketLibrary/clientservice.h"
 #include "WebsocketLibrary/SVRCClientService.h"
 #include "SVRPCLibrary/RPCClient.h"
 #pragma endregion Includes
@@ -66,6 +65,7 @@ public:
 	bool isConnected() const { return m_Connected; }
 
 private:
+	void OnConnectionStatus(SvRpc::ClientStatus Status);
 
 	_bstr_t m_ServerName;
 	unsigned short m_CommandPort;
@@ -73,50 +73,7 @@ private:
 
 	NotifyFunctor m_Notifier;
 
-	template <typename TClientService>  struct CompleteClient
-	{
-		//using pTClientService = std::make_unique<SvPb::TClientService>
-		void SetConnectionData(const std::string& host, int port)
-		{
-			m_pRpcClient = std::make_unique<SvRpc::RPCClient>(host, port);
-			m_pClientService = std::make_unique<TClientService>(*m_pRpcClient);
-		}
-		
-		bool  WaitForConnect(int timeout)
-		{
-			bool isConnected(false);
-			if (m_pRpcClient.get())
-			{
-				m_pRpcClient->waitForConnect(timeout);
-
-				isConnected = m_pRpcClient->isConnected();
-
-				if (false == isConnected)
-				{
-					m_pClientService.reset();
-					m_pRpcClient.reset();
-				}
-			}
-			return isConnected;
-		}
-		void reset()
-		{
-			m_pClientService.reset();
-			m_pRpcClient.reset();
-		}
-
-		bool isConnected()
-		{
-			return  m_pClientService.get() && m_pRpcClient.get() && m_pRpcClient->isConnected();
-		}
-
-		std::unique_ptr<SvRpc::RPCClient> m_pRpcClient;
-		std::unique_ptr<TClientService> m_pClientService;
-	};
-
-
-	CompleteClient<SvWsl::ClientService>			 m_WebClient;
-	CompleteClient<SvWsl::SVRCClientService>		 m_SvrcClient;
-
+	std::unique_ptr<SvRpc::RPCClient> m_pRpcClient;
+	std::unique_ptr<SvWsl::SVRCClientService> m_pSvrcClientService;
 };
 

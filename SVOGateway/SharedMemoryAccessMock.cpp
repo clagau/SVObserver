@@ -15,7 +15,7 @@
 #include <future>
 #include <queue>
 
-namespace SvOws
+namespace SvOgw
 {
 
 std::string loadBitmap(const char* filename)
@@ -69,7 +69,7 @@ SharedMemoryAccessMock::SharedMemoryAccessMock()
 
 SharedMemoryAccessMock::~SharedMemoryAccessMock() {}
 
-void SharedMemoryAccessMock::GetVersion(const SvPb::GetVersionRequest& req, SvRpc::Task<SvPb::GetVersionResponse> task)
+void SharedMemoryAccessMock::GetVersion(const SvPb::GetGatewayVersionRequest& req, SvRpc::Task<SvPb::GetVersionResponse> task)
 {
 	SvPb::GetVersionResponse resp;
 	resp.set_version("Mock Version");
@@ -234,4 +234,4 @@ void SharedMemoryAccessMock::getNotificationStreamImpl(
 	}
 	observer.m_OnFinish();
 }
-}
+}// namespace SvOgw

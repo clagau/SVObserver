@@ -30,11 +30,11 @@
 
 #include "Settings.h"
 
-namespace SvOws
+namespace SvOgw
 {
 class SettingsLoader
 {
 public:
 	void loadFromRegistry(Settings&);
 };
-} // namespace RRWS
+}// namespace SvOgw

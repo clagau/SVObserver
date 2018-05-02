@@ -17,7 +17,7 @@
 #include "SVSystemLibrary/SVVersionInfo.h"
 #include "SVUtilityLibrary/SVBitmapInfo.h"
 #include "SVObserverAccess/SVObserverAccess.h"
-namespace SvOws
+namespace SvOgw
 {
 SharedMemoryAccess::SharedMemoryAccess()
 	: m_io_service(), m_io_work(m_io_service), m_io_thread(boost::bind(&boost::asio::io_service::run, &m_io_service))
@@ -38,7 +38,7 @@ SharedMemoryAccess::~SharedMemoryAccess()
 	}
 }
 
-void SharedMemoryAccess::GetVersion(const SvPb::GetVersionRequest& req, SvRpc::Task<SvPb::GetVersionResponse> task)
+void SharedMemoryAccess::GetVersion(const SvPb::GetGatewayVersionRequest& req, SvRpc::Task<SvPb::GetVersionResponse> task)
 {
 	SvPb::GetVersionResponse resp;
 	resp.set_version(SvSyl::SVVersionInfo::GetVersion());
@@ -141,4 +141,4 @@ void SharedMemoryAccess::GetNotificationStream(const SvPb::GetNotificationStream
 	err.set_error_code(SvPenv::ErrorCode::NotImplemented);
 	observer.error(err);
 }
-}
+}// namespace SvOgw

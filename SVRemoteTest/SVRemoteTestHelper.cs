@@ -662,7 +662,7 @@ namespace SVRemoteTest
         #region CheckErrorList
         bool CheckErrorList(SVRemoteControlLib.ISVErrorObjectList errorList)
         {
-            return (errorList != null && errorList.Count > 0);
+            return (errorList != null && errorList.count > 0);
         }
         #endregion
 

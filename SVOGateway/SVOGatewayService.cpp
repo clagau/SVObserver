@@ -29,7 +29,7 @@ void WINAPI ServiceMain( DWORD argc, LPTSTR *argv )
 {
     DWORD Status( E_FAIL );
 
-    gStatusHandle = RegisterServiceCtrlHandler( cServiceName, ControlHandler );
+    gStatusHandle = RegisterServiceCtrlHandlerEx(cServiceName, ControlHandler, nullptr);
 
     if( nullptr != gStatusHandle )
 	{
@@ -37,7 +37,7 @@ void WINAPI ServiceMain( DWORD argc, LPTSTR *argv )
 		// Tell the service controller we are starting
 		ZeroMemory( &gServiceStatus, sizeof( gServiceStatus ) );
 		gServiceStatus.dwServiceType = SERVICE_WIN32_OWN_PROCESS;
-		gServiceStatus.dwControlsAccepted = 0;
+		gServiceStatus.dwControlsAccepted = SERVICE_ACCEPT_STOP | SERVICE_ACCEPT_PRESHUTDOWN;
 		gServiceStatus.dwCurrentState = SERVICE_START_PENDING;
 		gServiceStatus.dwWin32ExitCode = 0;
 		gServiceStatus.dwServiceSpecificExitCode = 0;
@@ -54,7 +54,6 @@ void WINAPI ServiceMain( DWORD argc, LPTSTR *argv )
 		{
 			SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 			Exception.setMessage(SVMSG_SVWebSrv_0_GENERAL_ERROR, SvStl::Tid_Error_CreateEvent, SvStl::SourceFileParams(StdMessageParams));
-			gServiceStatus.dwControlsAccepted = 0;
 			gServiceStatus.dwCurrentState = SERVICE_STOPPED;
 			gServiceStatus.dwWin32ExitCode = GetLastError();
 			gServiceStatus.dwCheckPoint = 1;
@@ -66,10 +65,9 @@ void WINAPI ServiceMain( DWORD argc, LPTSTR *argv )
 		}
 
 		// Tell the service controller we have started
-		gServiceStatus.dwControlsAccepted = SERVICE_ACCEPT_STOP;
+		gServiceStatus.dwControlsAccepted |= (SERVICE_ACCEPT_STOP | SERVICE_ACCEPT_PRESHUTDOWN);
 		gServiceStatus.dwCurrentState = SERVICE_RUNNING;
-		gServiceStatus.dwWin32ExitCode = 0;
-		gServiceStatus.dwCheckPoint = 0;
+		gServiceStatus.dwCheckPoint = 2;
 
 		if( !::SetServiceStatus( gStatusHandle, &gServiceStatus ) )
 		{
@@ -83,9 +81,8 @@ void WINAPI ServiceMain( DWORD argc, LPTSTR *argv )
 			gpStartThread( argc, argv	);
 		}
     
-		gServiceStatus.dwControlsAccepted = 0;
+		gServiceStatus.dwControlsAccepted &= ~(SERVICE_ACCEPT_STOP | SERVICE_ACCEPT_PRESHUTDOWN);
 		gServiceStatus.dwCurrentState = SERVICE_STOPPED;
-		gServiceStatus.dwWin32ExitCode = 0;
 		gServiceStatus.dwCheckPoint = 3;
 
 		if( !::SetServiceStatus( gStatusHandle, &gServiceStatus ) )
@@ -101,32 +98,31 @@ void WINAPI ServiceMain( DWORD argc, LPTSTR *argv )
 	}
 }
 
-void WINAPI ControlHandler( DWORD ControlCode )
+DWORD WINAPI ControlHandler(DWORD ControlCode, DWORD eventType, void *pEventData, void *pContext)
 {
     switch( ControlCode ) 
 	{
-	case SERVICE_CONTROL_STOP :
+		case SERVICE_CONTROL_INTERROGATE:
+			break;
+
+		case SERVICE_CONTROL_PRESHUTDOWN:
+		case SERVICE_CONTROL_STOP:
 		{
-			if( SERVICE_RUNNING == gServiceStatus.dwCurrentState )
+			gServiceStatus.dwCurrentState = SERVICE_STOP_PENDING;
+			gServiceStatus.dwCheckPoint = 4;
+
+			if( !::SetServiceStatus( gStatusHandle, &gServiceStatus ) )
 			{
-				gServiceStatus.dwControlsAccepted = 0;
-				gServiceStatus.dwCurrentState = SERVICE_STOP_PENDING;
-				gServiceStatus.dwWin32ExitCode = 0;
-				gServiceStatus.dwCheckPoint = 4;
-
-				if( !::SetServiceStatus( gStatusHandle, &gServiceStatus ) )
-				{
-					SvStl::MessageMgrStd Exception(SvStl::LogOnly);
-					Exception.setMessage(SVMSG_SVWebSrv_0_GENERAL_ERROR, SvStl::Tid_Error_SetServiceStatus, SvStl::SourceFileParams(StdMessageParams));
-				}
-
-				// This will signal the worker thread to start shutting down
-				::SetEvent(gServiceStopEvent);
+				SvStl::MessageMgrStd Exception(SvStl::LogOnly);
+				Exception.setMessage(SVMSG_SVWebSrv_0_GENERAL_ERROR, SvStl::Tid_Error_SetServiceStatus, SvStl::SourceFileParams(StdMessageParams));
 			}
+			::SetEvent(gServiceStopEvent);
+			break;
 		}
-		break;
 
-     default:
-         break;
+		default:
+			::SetServiceStatus(gStatusHandle, &gServiceStatus);
+			break;
     }
+	return NO_ERROR;
 }

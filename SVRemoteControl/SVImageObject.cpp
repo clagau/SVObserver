@@ -385,7 +385,7 @@ HRESULT SVImageObject::FetchImage()
 			request.mutable_id()->set_imageindex(m_CurImId.imageindex());
 			request.mutable_id()->set_slotindex(m_CurImId.slotindex());
 
-			auto resp = SvWsl::runRequest(*(m_pClientService->get()), &SvWsl::ClientService::getImageFromCurId, std::move(request)).get();
+			auto resp = SvWsl::runRequest(*(m_pClientService->get()), &SvWsl::SVRCClientService::GetImageFromCurId, std::move(request)).get();
 
 
 			if (resp.imagedata().rgb().length() > 0)
@@ -423,9 +423,9 @@ void SVImageObject::SetOverlays(VARIANT bsOverlays)
 
 }
 
-void SVImageObject::SetClientService(SvWsl::ClientServicePointer&   rpClientService)
+void SVImageObject::SetClientService(SvWsl::SVRCClientServicePtr& rpSvrcClientService)
 {
-	m_pClientService = &rpClientService;
+	m_pClientService = &rpSvrcClientService;
 }
 void SVImageObject::SetImageId(const SvPb::CurImageId& CurImageId)
 {

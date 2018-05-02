@@ -14,7 +14,7 @@
 #include "SVRPCLibrary/Task.h"
 #include "SVSharedMemoryLibrary/ShareControl.h"
 
-namespace SvOws
+namespace SvOgw
 {
 
 class SharedMemoryAccessInterface
@@ -22,7 +22,7 @@ class SharedMemoryAccessInterface
 public:
 	virtual ~SharedMemoryAccessInterface() {}
 
-	virtual void GetVersion(const SvPb::GetVersionRequest&, SvRpc::Task<SvPb::GetVersionResponse>) = 0;
+	virtual void GetVersion(const SvPb::GetGatewayVersionRequest&, SvRpc::Task<SvPb::GetVersionResponse>) = 0;
 	virtual void GetProduct(const SvPb::GetProductRequest&, SvRpc::Task<SvPb::GetProductResponse>) = 0;
 	virtual void GetFailstatus(const SvPb::GetFailStatusRequest&, SvRpc::Task<SvPb::GetFailStatusResponse>) = 0;
 	virtual void GetImageFromCurId(const SvPb::GetImageFromCurIdRequest&, SvRpc::Task<SvPb::GetImageFromCurIdResponse>) = 0;
@@ -34,4 +34,4 @@ public:
 	virtual void GetNotificationStream(const SvPb::GetNotificationStreamRequest&,
 		SvRpc::Observer<SvPb::GetNotificationStreamResponse>, SvRpc::ServerStreamContext::Ptr) = 0;
 };
-}
+}// namespace SvOgw

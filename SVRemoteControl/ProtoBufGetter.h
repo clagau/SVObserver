@@ -8,7 +8,7 @@
 #pragma once
 #include "SVRemoteControl.h"
 #include "SVProtobuf/SVRC.h"
-#include "WebsocketLibrary/clientservice.h"
+#include "WebsocketLibrary/SVRCClientService.h"
 
 typedef CComPtr<ISVErrorObject> ErrorPtr;
 typedef CComPtr<ISVErrorObjectList> ErrorListPtr;
@@ -24,16 +24,16 @@ typedef CComPtr<ISVDataDefObjectList> DataDefListPtr;
 
 
 CComVariant  GetComVariant(const SvPb::Variant& rValue, ULONG Elements=0L);
-ProductPtr GetProductPtr(SvWsl::ClientServicePointer& rClientServicePointer, const SvPb::Product& resp);
+ProductPtr GetProductPtr(SvWsl::SVRCClientServicePtr& rpSvrcClientService, const SvPb::Product& resp);
 ValuePtr GetValueObjectPtr(int Count, const std::string& rName, const SvPb::Variant& rValue);
 ErrorPtr GetErrorObjectPtr(LONG Status, const std::string& rName, const SvPb::Variant& rValue);
 DataDefPtr GetDataDefPtr(const SvPb::DataDefinition& rDataDef);
 /// Function return an ImageObject with a bitmap
 ImagePtr GetImageObjectPtr(int Trigger, const std::string& rName, const std::string& rData);
 /// Function return an ImageObject with a Bitmap ID
-ImagePtr GetImageObjectPtr(int trigger, const std::string& name, const SvPb::CurImageId &imId, SvWsl::ClientServicePointer& rClientServicePointer);
+ImagePtr GetImageObjectPtr(int trigger, const std::string& name, const SvPb::CurImageId &imId, SvWsl::SVRCClientServicePtr& rpSvrcClientService);
 
-FailList GetFailList(SvWsl::ClientServicePointer& rClientServicePointer, const SvPb::GetFailStatusResponse& resp);
+FailList GetFailList(SvWsl::SVRCClientServicePtr& rpSvrcClientService, const SvPb::GetFailStatusResponse& resp);
 ValueListPtr GetValueObjectListPtr(const SvPb::Product &productResp);
 ProductPtr GetItemsPtr(const SvPb::GetItemsResponse& rResponse);
 ProductPtr GetItemsPtr(const ::google::protobuf::RepeatedPtrField<::SvPb::Value>* pErrorList);

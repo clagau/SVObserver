@@ -7,6 +7,8 @@
 //******************************************************************************
 
 #pragma once
+
+#pragma region Includes
 #include "SVProtobuf/SVRC.h"
 #include "SVRPCLibrary/Observer.h"
 #include "SVRPCLibrary/RPCCLient.h"
@@ -21,7 +23,18 @@ class SVRCClientService
 public:
 	SVRCClientService(SvRpc::RPCClient& rRpcClient);
 	~SVRCClientService();
-	void GetVersion(SvPb::GetVersionRequest&&, SvRpc::Task<SvPb::GetVersionResponse> task);
+
+	void GetGatewayVersion(SvPb::GetGatewayVersionRequest&& req, SvRpc::Task<SvPb::GetVersionResponse> task);
+	void GetProduct(SvPb::GetProductRequest&& req, SvRpc::Task<SvPb::GetProductResponse> task);
+	void GetFailStatus(SvPb::GetFailStatusRequest&& req, SvRpc::Task<SvPb::GetFailStatusResponse> task);
+	void GetImageFromCurId(SvPb::GetImageFromCurIdRequest&& req, SvRpc::Task<SvPb::GetImageFromCurIdResponse> task);
+	void GetImageStreamFromCurId(SvPb::GetImageStreamFromCurIdRequest&& req, SvRpc::Observer<SvPb::GetImageStreamFromCurIdResponse> observer);
+	void QueryListName(SvPb::QueryListNameRequest&& req, SvRpc::Task<SvPb::QueryListNameResponse> task);
+	void QueryListItem(SvPb::QueryListItemRequest&& req, SvRpc::Task<SvPb::QueryListItemResponse> task);
+	SvRpc::ClientStreamContext GetNotificationStream(SvPb::GetNotificationStreamRequest&& req,
+													 SvRpc::Observer<SvPb::GetNotificationStreamResponse> observer);
+
+	void GetSVObserverVersion(SvPb::GetSVObserverVersionRequest&&, SvRpc::Task<SvPb::GetVersionResponse> task);
 	void GetDeviceMode(SvPb::GetDeviceModeRequest&&, SvRpc::Task<SvPb::GetDeviceModeResponse> task);
 	void SetDeviceMode(SvPb::SetDeviceModeRequest&&, SvRpc::Task<SvPb::StandardResponse> task);
 	void GetState(SvPb::GetStateRequest&&, SvRpc::Task<SvPb::GetStateResponse> task);
@@ -46,7 +59,16 @@ public:
 	void QueryMonitorListNames(SvPb::QueryMonitorListNamesRequest&&, SvRpc::Task<SvPb::NamesResponse> task);
 
 private:
-	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetVersionRequest, SvPb::GetVersionResponse> m_GetVersionClient;
+	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetGatewayVersionRequest, SvPb::GetVersionResponse> m_GetGatewayVersionClient;
+	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::QueryListNameRequest, SvPb::QueryListNameResponse> m_QueryListNameClient;
+	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::QueryListItemRequest, SvPb::QueryListItemResponse> m_QueryListItemClient;
+	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetProductRequest, SvPb::GetProductResponse> m_GetProductClient;
+	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetImageFromCurIdRequest, SvPb::GetImageFromCurIdResponse> m_GetImageFromCurIdClient;
+	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetImageStreamFromCurIdRequest, SvPb::GetImageStreamFromCurIdResponse> m_GetImageStreamFromCurIdClient;
+	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetFailStatusRequest, SvPb::GetFailStatusResponse> m_GetFailStatusClient;
+	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetNotificationStreamRequest, SvPb::GetNotificationStreamResponse> m_GetNotificationStreamClient;
+
+	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetSVObserverVersionRequest, SvPb::GetVersionResponse> m_GetSVObserverVersionClient;
 	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetDeviceModeRequest, SvPb::GetDeviceModeResponse> m_GetDeviceModeClient;
 	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::SetDeviceModeRequest, SvPb::StandardResponse> m_SetDeviceModeClient;
 	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetStateRequest, SvPb::GetStateResponse> m_GetStateClient;
@@ -70,5 +92,7 @@ private:
 	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::QueryMonitorListRequest, SvPb::NamesResponse> m_QueryMonitorListClient;
 	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::QueryMonitorListNamesRequest, SvPb::NamesResponse> m_QueryMonitorListNamesClient;
 };
+
+using SVRCClientServicePtr = std::unique_ptr<SvWsl::SVRCClientService>;
 
 }//namespace SvWsl
