@@ -18,6 +18,7 @@
 #include "SVOGui/DisplayHelper.h"
 #include "SVOGui/ImageController.h"
 #include "InspectionEngine/SVTool.h"
+#include "InspectionEngine/SVAnalyzer.h"
 #include "SVLinearEdgeProcessingClass.h"
 #pragma endregion Includes
 
@@ -94,22 +95,26 @@ BOOL SVProfileEdgeMarkerAdjustmentPageClass::OnInitDialog()
 {
 	SVEdgeMarkerAdjustmentPageClass::OnInitDialog();
 
-	GetInspectionData();
-	
 	m_pEdge = dynamic_cast<SVLinearEdgeProcessingClass*> (SvOi::getObject(m_rTaskObjectID));
 	m_pTool = (m_pEdge == nullptr ) ? nullptr : dynamic_cast<SVToolClass*> (m_pEdge->GetAncestorInterface(SvDef::SVToolObjectType));
+	m_pAnalyzer = (m_pEdge == nullptr) ? nullptr : dynamic_cast<SVAnalyzerClass*> (m_pEdge->GetAncestorInterface(SvDef::SVAnalyzerObjectType));
+
+	GetInspectionData();
+
 	if (nullptr != m_pTool)
 	{
-		SvOg::ImageController Images{ m_rInspectionID, m_pTool->GetUniqueObjectID() };
-		// This requires that the input name sorts in descending natural order
-		// and that the images we are concerned with are first in the list
-		const SvUl::InputNameGuidPairList& rImageList = Images.GetConnectedImageList();
-		if (0 < rImageList.size())
+		// Get the Image for this tool
+		const SVImageInfoClass* pImageInfo = m_pTool->getFirstImageInfo();
+		if (nullptr != pImageInfo)
 		{
-			IPictureDisp* pImage = Images.GetImage(rImageList.begin()->second.second);
-			m_dialogImage.AddTab("Image");
-			m_dialogImage.setImage(pImage, 0);
-			m_dialogImage.Refresh();
+			SVImageClass* pImage = nullptr;
+			pImageInfo->GetOwnerImage(pImage);
+			if(nullptr != pImage)
+			{
+				m_dialogImage.AddTab("Image");
+				m_dialogImage.setImage(pImage->getImageData(), 0);
+				m_dialogImage.Refresh();
+			}
 		}
 	}
 
@@ -748,11 +753,11 @@ void SVProfileEdgeMarkerAdjustmentPageClass::updateGraphDisplay()
 	// Remove old points
 	m_dialogImage.RemoveAllOverlays(0);
 
-	if (nullptr != m_pTool && nullptr != m_pEdge)
+	if (nullptr != m_pAnalyzer)
 	{
 		//check if graphic vertical
 		SVImageExtentClass svAnalyzerExtents;
-		m_pTool->GetImageExtent(svAnalyzerExtents);
+		m_pAnalyzer->GetImageExtent(svAnalyzerExtents);
 		double rotationAngle = 0;
 		svAnalyzerExtents.GetPosition().GetExtentProperty(SvDef::SVExtentPropertyRotationAngle, rotationAngle);
 		bool bVertical = (90 == rotationAngle);

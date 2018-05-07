@@ -22,6 +22,7 @@
 #pragma region Declarations
 //@TODO[gra][8.00][25.01.2018]: This class should move to SVOGui
 class SVToolClass;
+class SVAnalyzerClass;
 class SVLinearEdgeProcessingClass;
 #pragma endregion Declarations
 
@@ -116,6 +117,7 @@ private:
 
 	//@TODO[gra][8.00][25.01.2018]: This should be changed when access is possible through Inspection commands
 	SVToolClass* m_pTool{ nullptr };
+	SVAnalyzerClass* m_pAnalyzer {nullptr};
 	SVLinearEdgeProcessingClass* m_pEdge{ nullptr };
 #pragma endregion Member variables
 };
