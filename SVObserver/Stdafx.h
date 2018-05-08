@@ -118,6 +118,7 @@ namespace Gdiplus
 #include <math.h>
 #include <memory>
 #include <Mmsystem.h>
+#include <mutex>
 #include <numeric>
 #include <Objidl.h>
 #include <sequential_tree.h>

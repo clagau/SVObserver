@@ -10,6 +10,8 @@
 //Moved to precompiled header: #include <concrt.h>
 #include "MessageManager.h"
 #pragma endregion Includes
+#include <mutex>
+
 
 namespace SvStl
 {
@@ -30,14 +32,15 @@ namespace SvStl
 		void setProcessed( bool Processed ) { m_IsProcessed = Processed; };
 
 		bool isProcessed() const { return m_IsProcessed; };
-		Concurrency::critical_section& getLock() { return m_Lock; };
+		std::mutex& getLock() { return m_mutex; };
 		const SvStl::NotificationEnum& getType() const { return m_Type; };
 		const int& getMessageNumber() const { return m_MessageNumber; };
 		LPCTSTR getMessageText() const { return m_MessageText.c_str(); };
 
 	protected:
 		bool m_IsProcessed;
-		Concurrency::critical_section m_Lock;
+		///Concurrency::critical_section m_Lock;
+		std::mutex m_mutex;
 		SvStl::NotificationEnum m_Type;
 		int m_MessageNumber;
 		std::string m_MessageText;

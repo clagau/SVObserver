@@ -29,7 +29,8 @@ namespace SvStl
 
 	void MessageNotification::SetNotification( SvStl::NotificationEnum Type, int MessageNumber, LPCTSTR MessageText )
 	{
-		Concurrency::critical_section::scoped_lock   scopedLock( m_Lock );
+		//Concurrency::critical_section::scoped_lock   scopedLock( m_Lock );
+		std::lock_guard<std::mutex> lock(m_mutex);
 		m_Type = Type;
 		m_MessageNumber = MessageNumber;
 		m_MessageText = (nullptr != MessageText) ? MessageText : std::string();

@@ -133,12 +133,5 @@ void SharedMemoryAccess::QueryListItem(const SvPb::QueryListItemRequest& request
 		task.error(err);
 	}
 }
-void SharedMemoryAccess::GetNotificationStream(const SvPb::GetNotificationStreamRequest& request,
-	SvRpc::Observer<SvPb::GetNotificationStreamResponse> observer,
-	SvRpc::ServerStreamContext::Ptr ctx)
-{
-	SvPenv::Error err;
-	err.set_error_code(SvPenv::ErrorCode::NotImplemented);
-	observer.error(err);
-}
+
 }// namespace SvOgw

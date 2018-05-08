@@ -1066,3 +1066,16 @@ HRESULT SVRCCommand::AddImagesToStorageItems(const SvPb::SetItemsRequest& rReque
 	return Result;
 }
 
+void SVRCCommand::RegisterNotificationStream(boost::asio::io_service* pIoService, 
+	const SvPb::GetNotificationStreamRequest& request,
+	SvRpc::Observer<SvPb::GetNotificationStreamResponse> &observer,
+	SvRpc::ServerStreamContext::Ptr ctx)
+{
+	
+	SVVisionProcessorHelper::Instance().RegisterNotificationStream(pIoService, request, observer, ctx);
+	
+	//SvPenv::Error err;
+	//err.set_error_code(SvPenv::ErrorCode::NotImplemented);
+	//observer.error(err);
+}
+

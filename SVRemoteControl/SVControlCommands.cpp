@@ -23,6 +23,7 @@
 #include "ProtoBufSetter.h"
 #include "WebsocketLibrary\RunRequest.inl"
 #include "WebsocketLibrary\Definition.h"
+#include "NotificationHandler.h"
 #pragma endregion Includes
 
 static const unsigned long FiveSeconds = 5;
@@ -75,7 +76,8 @@ SVControlCommands::SVControlCommands(NotifyFunctor p_Func)
 	: m_ServerName(""),
 	m_CommandPort(svr::cmdPort),
 	m_Connected(false),
-	m_Notifier(p_Func)
+	m_Notifier(p_Func),
+	m_notificationHandler(this)
 {
 }
 
@@ -123,6 +125,7 @@ HRESULT SVControlCommands::SetConnectionData(const _bstr_t& p_rServerName, unsig
 
 		//m_Connected represent only the client socket connection state 
 		m_Connected = true;
+		StartNotificationStreaming();
 	}
 	else
 	{
@@ -131,6 +134,23 @@ HRESULT SVControlCommands::SetConnectionData(const _bstr_t& p_rServerName, unsig
 	}
 	return hr;
 }
+
+void SVControlCommands::StartNotificationStreaming()
+{
+	SvRpc::Observer<SvPb::GetNotificationStreamResponse> NotifikationObserver(boost::bind(&NotificationHandler::OnNext, &m_notificationHandler, _1),
+		boost::bind(&NotificationHandler::OnFinish, &m_notificationHandler),
+		boost::bind(&NotificationHandler::OnError, &m_notificationHandler, _1));
+	
+	m_csx =  m_pSvrcClientService->GetNotificationStream(SvPb::GetNotificationStreamRequest() , NotifikationObserver);
+	
+}
+
+void  SVControlCommands::StopNotificationStreaming()
+{
+	m_csx.cancel();
+	
+}
+
 
 HRESULT SVControlCommands::GetVersion(_bstr_t& rSVObserverVersion, _bstr_t& rGatewayServerVersion, SVCommandStatus& rStatus)
 {

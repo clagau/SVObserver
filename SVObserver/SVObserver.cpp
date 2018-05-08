@@ -1928,6 +1928,8 @@ BOOL SVObserverApp::InitInstance()
 		return false;
 	}
 
+	//Initializing  must be before first use of  MessageNotification::FireNotify which is i.e called from CheckDrive 
+	SVVisionProcessorHelper::Instance().Startup();
 	// Check for proper setup of V: for SVRemoteControl
 	if (S_OK != CheckDrive(_T("v:\\")))
 	{
@@ -2284,7 +2286,7 @@ void SVObserverApp::Serialize(CArchive& ar)
 int SVObserverApp::ExitInstance()
 {
 	SVDirectX::Instance().clear();
-
+	SVVisionProcessorHelper::Instance().Shutdown();
 	SVRCWebsocketServer::Instance()->Stop();
 
 	SvSml::ShareEvents::GetInstance().QuiesceSharedMemory();

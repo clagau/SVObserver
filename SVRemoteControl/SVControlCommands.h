@@ -19,6 +19,7 @@
 #include <boost/asio/io_service.hpp>
 #include "WebsocketLibrary/SVRCClientService.h"
 #include "SVRPCLibrary/RPCClient.h"
+#include "NotificationHandler.h"
 #pragma endregion Includes
 
 typedef boost::function< void(_variant_t&, SVNotificationTypesEnum) > NotifyFunctor;
@@ -31,6 +32,9 @@ public:
 	SVControlCommands() = delete;
 
 	HRESULT SetConnectionData(const _bstr_t& p_rServerName, unsigned short p_CommandPort, long timeout);
+	void  StartNotificationStreaming();
+	void  StopNotificationStreaming();
+
 
 	HRESULT GetVersion(_bstr_t& rSVObserverVersion, _bstr_t& rRunRejectServerVersion, SVCommandStatus& rStatus);
 	HRESULT GetState(unsigned long& rState, SVCommandStatus& rStatus);
@@ -63,7 +67,7 @@ public:
 	HRESULT GetProductFilter(const _bstr_t& rListName, unsigned long& rFilter, SVCommandStatus& p_rStatus);
 	HRESULT SetProductFilter(const _bstr_t& rListName, unsigned long filter, SVCommandStatus& p_rStatus);
 	bool isConnected() const { return m_Connected; }
-
+	friend class NotificationHandler;
 private:
 	void OnConnectionStatus(SvRpc::ClientStatus Status);
 
@@ -73,6 +77,8 @@ private:
 
 	NotifyFunctor m_Notifier;
 
+	SvRpc::ClientStreamContext m_csx {nullptr};
+	NotificationHandler m_notificationHandler;
 	std::unique_ptr<SvRpc::RPCClient> m_pRpcClient;
 	std::unique_ptr<SvWsl::SVRCClientService> m_pSvrcClientService;
 };

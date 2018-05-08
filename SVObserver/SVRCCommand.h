@@ -44,6 +44,10 @@ public:
 	void QueryMonitorList(const SvPb::QueryMonitorListRequest&, SvRpc::Task<SvPb::NamesResponse>);
 	void QueryMonitorListNames(const SvPb::QueryMonitorListNamesRequest&, SvRpc::Task<SvPb::NamesResponse>);
 
+	void RegisterNotificationStream(boost::asio::io_service* pIoservice,  const SvPb::GetNotificationStreamRequest& request,
+		SvRpc::Observer<SvPb::GetNotificationStreamResponse>& observer,
+		SvRpc::ServerStreamContext::Ptr ctx);
+	
 private:
 	HRESULT GetFileNameFromFilePath(std::string& rFileName, const std::string& rFilePath);
 	HRESULT GetTempFileNameFromFilePath(std::string& rTempFileName, const std::string& rFilePath);

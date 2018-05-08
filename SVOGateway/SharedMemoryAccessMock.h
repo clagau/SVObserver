@@ -32,8 +32,6 @@ public:
 	void GetTriggerItems(const SvPb::GetTriggerItemsRequest&, SvRpc::Task<SvPb::GetTriggerItemsResponse>) override;
 	void QueryListName(const SvPb::QueryListNameRequest&, SvRpc::Task<SvPb::QueryListNameResponse>) override;
 	void QueryListItem(const SvPb::QueryListItemRequest&, SvRpc::Task<SvPb::QueryListItemResponse>) override;
-	void GetNotificationStream(const SvPb::GetNotificationStreamRequest&,
-		SvRpc::Observer<SvPb::GetNotificationStreamResponse>, SvRpc::ServerStreamContext::Ptr) override;
 
 private:
 	void getProduct(SvPb::Product& product, bool name_in_response);
@@ -41,9 +39,6 @@ private:
 	void getImageStreamFromCurIdStep(int iterations,
 		const SvPb::CurImageId& id,
 		SvRpc::Observer<SvPb::GetImageStreamFromCurIdResponse> observer,
-		SvRpc::ServerStreamContext::Ptr ctx);
-	void getNotificationStreamImpl(
-		SvRpc::Observer<SvPb::GetNotificationStreamResponse> observer,
 		SvRpc::ServerStreamContext::Ptr ctx);
 
 private:

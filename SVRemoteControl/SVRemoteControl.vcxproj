@@ -291,6 +291,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="NotificationHandler.cpp" />
     <ClCompile Include="ProtoBufGetter.cpp" />
     <ClCompile Include="ProtoBufSetter.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -372,6 +373,7 @@
   <ItemGroup>
     <ClInclude Include="AutoBuild.h" />
     <ClInclude Include="Logging.h" />
+    <ClInclude Include="NotificationHandler.h" />
     <ClInclude Include="ProtoBufGetter.h" />
     <ClInclude Include="ProtoBufSetter.h" />
     <ClInclude Include="SVDataDefObject.h" />

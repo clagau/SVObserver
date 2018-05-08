@@ -279,6 +279,16 @@ SVRCRequestHandler::SVRCRequestHandler(SVRCCommand* pCommand) :
 		m_IoRunService.post([req, task, pCommand]() { pCommand->QueryMonitorListNames(req, task); });
 
 	});
+
+	registerStreamHandler<
+		SvPb::SVRCMessages,
+		SvPb::SVRCMessages::kGetNotificationStreamRequest,
+		SvPb::GetNotificationStreamRequest,
+		SvPb::GetNotificationStreamResponse>(
+		[this,pCommand](SvPb::GetNotificationStreamRequest&& req, SvRpc::Observer<SvPb::GetNotificationStreamResponse> observer, SvRpc::ServerStreamContext::Ptr ctx)
+	{
+		pCommand->RegisterNotificationStream(&m_IoRunService,req, observer,ctx);
+	});
 }
 
 

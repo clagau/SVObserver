@@ -15,7 +15,7 @@
 namespace SvRpc
 {
 static const int cTwoSeconds = 2000;
-
+//@Todo[MEC][8.00] [04.05.2018] ADD Router for StreamHandler
 Router::Router(RPCClient& rClient, RequestHandler* pRequestHandler)
 {
 	if(nullptr != pRequestHandler)

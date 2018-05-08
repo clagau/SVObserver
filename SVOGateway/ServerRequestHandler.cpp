@@ -100,15 +100,7 @@ ServerRequestHandler::ServerRequestHandler(SharedMemoryAccessInterface* sma)
 		sma->GetTriggerItems(req, task);
 	});
 
-	registerStreamHandler<
-		SvPb::SVRCMessages,
-		SvPb::SVRCMessages::kGetNotificationStreamRequest,
-		SvPb::GetNotificationStreamRequest,
-		SvPb::GetNotificationStreamResponse>(
-		[sma](SvPb::GetNotificationStreamRequest&& req, SvRpc::Observer<SvPb::GetNotificationStreamResponse> observer, SvRpc::ServerStreamContext::Ptr ctx)
-	{
-		sma->GetNotificationStream(req, observer, ctx);
-	});
+
 }
 
 }

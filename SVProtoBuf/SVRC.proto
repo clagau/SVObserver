@@ -297,18 +297,45 @@ message GetImageStreamRequest
 	 ImageItem imageDef =2;
 }
 
+enum NotificationType
+{
+	unknownNotification =0;
+	ModeNotification =1;
+	LastModifiedNotification=2;
+	ConnectedNotification =3;
+	DisconnectedNotification =4;
+	MessageNotification =5;
+}
+enum MessageType
+{
+	unknown=0;
+	StartMsgBox=1;
+	EndMsgBox=2;
+	MsgLog=3;
+}
+
 message GetNotificationStreamRequest
 {
-	repeated string Types = 1;
-	uint64 StartId = 2;
-	uint64 MaxCcount = 3;
+	repeated NotificationType Types = 1;
+	uint64 MaxCcount = 2;
+}
+
+
+message MsgNotification
+{
+	MessageType type=1;
+	string messagetext =2;
+	int32 errorNumber =3;
 }
 
 message GetNotificationStreamResponse
 {
-	uint64 Id = 1;
-	string Type = 2;
-	string Message = 3;
+	oneof message
+	{
+		DeviceModeType currentMode = 1;
+		uint32		lastModified=2;
+		MsgNotification msgNotification =3;
+	}
 }
 
 enum DeviceModeType
@@ -540,3 +567,4 @@ message StandardResponse
 {
 	sint32 hResult = 1;
 }
+

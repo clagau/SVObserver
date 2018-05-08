@@ -131,12 +131,6 @@ void SharedMemoryAccessMock::QueryListItem(const SvPb::QueryListItemRequest&, Sv
 	task.error(err);
 }
 
-void SharedMemoryAccessMock::GetNotificationStream(const SvPb::GetNotificationStreamRequest& request,
-	SvRpc::Observer<SvPb::GetNotificationStreamResponse> observer,
-	SvRpc::ServerStreamContext::Ptr ctx)
-{
-	m_io_service.post(std::bind(&SharedMemoryAccessMock::getNotificationStreamImpl, this, observer, ctx));
-}
 
 void SharedMemoryAccessMock::getProduct(SvPb::Product& product, bool name_in_response)
 {
@@ -218,20 +212,5 @@ void SharedMemoryAccessMock::getImageStreamFromCurIdStep(int iterations,
 	observer.finish();
 }
 
-void SharedMemoryAccessMock::getNotificationStreamImpl(
-	SvRpc::Observer<SvPb::GetNotificationStreamResponse> observer,
-	SvRpc::ServerStreamContext::Ptr ctx)
-{
-	uint64_t notification_id = 0;
-	while (!ctx->isCancelled())
-	{
-		SvPb::GetNotificationStreamResponse res;
-		res.set_id(++notification_id);
-		res.set_type("info");
-		res.set_message("hello");
-		observer.onNext(std::move(res));
-		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-	}
-	observer.m_OnFinish();
-}
+
 }// namespace SvOgw

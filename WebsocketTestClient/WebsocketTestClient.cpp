@@ -85,7 +85,9 @@ static void GetNotifications(SvWsl::SVRCClientService& client)
 	auto ctx = client.GetNotificationStream(std::move(req), SvRpc::Observer<SvPb::GetNotificationStreamResponse>(
 		[](SvPb::GetNotificationStreamResponse&& res) -> std::future<void>
 	{
-		BOOST_LOG_TRIVIAL(info) << "Received notification " << res.id() << " " << res.type() << " " << res.message();
+		//BOOST_LOG_TRIVIAL(info) << "Received notification " << res.id() << " " << res.type() << " " << res.message();
+		
+		BOOST_LOG_TRIVIAL(info) << "Received notification Debug string " << res.DebugString() << std::endl;
 		return std::future<void>();
 	},
 		[]()
