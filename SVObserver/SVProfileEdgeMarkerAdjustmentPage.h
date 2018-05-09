@@ -115,9 +115,13 @@ private:
 	int		m_upperThresholdOption;
 	SvOg::PictureDisplay m_dialogImage;
 
+	bool m_InitialShowEdgeAOverlays {false};
+	bool m_InitialShowEdgeBOverlays {false};
+
 	//@TODO[gra][8.00][25.01.2018]: This should be changed when access is possible through Inspection commands
 	SVToolClass* m_pTool{ nullptr };
 	SVAnalyzerClass* m_pAnalyzer {nullptr};
 	SVLinearEdgeProcessingClass* m_pEdge{ nullptr };
+	std::shared_ptr<Controller> m_pAnalyzerValues;
 #pragma endregion Member variables
 };

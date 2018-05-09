@@ -48,6 +48,13 @@ SVProfileEdgeMarkerAdjustmentPageClass::SVProfileEdgeMarkerAdjustmentPageClass(c
 
 SVProfileEdgeMarkerAdjustmentPageClass::~SVProfileEdgeMarkerAdjustmentPageClass()
 {
+	if (nullptr != m_pAnalyzerValues)
+	{
+		// Set the values to the original values before the page was displayed
+		m_pAnalyzerValues->Set<bool>(SVShowAllEdgeAOverlaysGuid, m_InitialShowEdgeAOverlays);
+		m_pAnalyzerValues->Set<bool>(SVShowAllEdgeBOverlaysGuid, m_InitialShowEdgeBOverlays);
+		m_pAnalyzerValues->Commit();
+	}
 }
 #pragma endregion Constructor
 
@@ -98,6 +105,13 @@ BOOL SVProfileEdgeMarkerAdjustmentPageClass::OnInitDialog()
 	m_pEdge = dynamic_cast<SVLinearEdgeProcessingClass*> (SvOi::getObject(m_rTaskObjectID));
 	m_pTool = (m_pEdge == nullptr ) ? nullptr : dynamic_cast<SVToolClass*> (m_pEdge->GetAncestorInterface(SvDef::SVToolObjectType));
 	m_pAnalyzer = (m_pEdge == nullptr) ? nullptr : dynamic_cast<SVAnalyzerClass*> (m_pEdge->GetAncestorInterface(SvDef::SVAnalyzerObjectType));
+	if (nullptr != m_pAnalyzer)
+	{
+		m_pAnalyzerValues = std::shared_ptr<Controller> {new Controller {SvOg::BoundValues {m_rInspectionID, m_pAnalyzer->GetUniqueObjectID()}}};
+		m_pAnalyzerValues->Init();
+		m_InitialShowEdgeAOverlays = m_pAnalyzerValues->Get<bool>(SVShowAllEdgeAOverlaysGuid);
+		m_InitialShowEdgeBOverlays = m_pAnalyzerValues->Get<bool>(SVShowAllEdgeBOverlaysGuid);
+	}
 
 	GetInspectionData();
 
@@ -591,15 +605,19 @@ HRESULT SVProfileEdgeMarkerAdjustmentPageClass::SetInspectionData()
 		}
 	}
 
-	if( m_bEdgeA )
+	if (nullptr != m_pAnalyzerValues)
 	{
-		m_Values.Set<bool>(SVShowAllEdgeAOverlaysGuid, true);
-		m_Values.Set<bool>(SVShowAllEdgeBOverlaysGuid, false);
-	}
-	else
-	{
-		m_Values.Set<bool>(SVShowAllEdgeAOverlaysGuid, false);
-		m_Values.Set<bool>(SVShowAllEdgeBOverlaysGuid, true);
+		if (m_bEdgeA)
+		{
+			m_pAnalyzerValues->Set<bool>(SVShowAllEdgeAOverlaysGuid, true);
+			m_pAnalyzerValues->Set<bool>(SVShowAllEdgeBOverlaysGuid, false);
+		}
+		else
+		{
+			m_pAnalyzerValues->Set<bool>(SVShowAllEdgeAOverlaysGuid, false);
+			m_pAnalyzerValues->Set<bool>(SVShowAllEdgeBOverlaysGuid, true);
+		}
+		m_pAnalyzerValues->Commit();
 	}
 
 	//Note in the base class the values commit function is called
