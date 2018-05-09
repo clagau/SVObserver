@@ -102,30 +102,32 @@ HRESULT SVControlCommands::SetConnectionData(const _bstr_t& p_rServerName, unsig
 
 		//First try to connect to Gateway
 		m_pRpcClient = std::make_unique<SvRpc::RPCClient>(host, SvWsl::Default_Port, std::bind(&SVControlCommands::OnConnectionStatus, this, std::placeholders::_1));
-		if(nullptr != m_pRpcClient)
+		if (nullptr != m_pRpcClient)
 		{
 			m_pSvrcClientService = std::make_unique<SvWsl::SVRCClientService>(*m_pRpcClient);
 			m_pRpcClient->waitForConnect(timeout);
 
-			if(!m_pRpcClient->isConnected())
+			if (!m_pRpcClient->isConnected())
 			{
 				m_pRpcClient = std::make_unique<SvRpc::RPCClient>(host, SvWsl::Default_SecondPort, std::bind(&SVControlCommands::OnConnectionStatus, this, std::placeholders::_1));
 				m_pSvrcClientService = std::make_unique<SvWsl::SVRCClientService>(*m_pRpcClient);
 				m_pRpcClient->waitForConnect(timeout);
 			}
-		}
-		if (nullptr != m_pRpcClient)
-		{
-			if (!m_pRpcClient->isConnected())
-			{
-				HRESULT h = RPC_E_TIMEOUT;
-				SVLOG(h);
-			}
-		}
 
-		//m_Connected represent only the client socket connection state 
-		m_Connected = true;
-		StartNotificationStreaming();
+		}
+		if (nullptr != m_pRpcClient && m_pRpcClient->isConnected())
+		{
+			m_Connected = true;
+			StartNotificationStreaming();
+			
+		}
+		else
+		{
+			hr = RPC_E_TIMEOUT;
+			SVLOG(hr);
+			m_pSvrcClientService.reset();
+			m_pRpcClient.reset();
+		}
 	}
 	else
 	{
@@ -140,21 +142,21 @@ void SVControlCommands::StartNotificationStreaming()
 	SvRpc::Observer<SvPb::GetNotificationStreamResponse> NotifikationObserver(boost::bind(&NotificationHandler::OnNext, &m_notificationHandler, _1),
 		boost::bind(&NotificationHandler::OnFinish, &m_notificationHandler),
 		boost::bind(&NotificationHandler::OnError, &m_notificationHandler, _1));
-	
-	m_csx =  m_pSvrcClientService->GetNotificationStream(SvPb::GetNotificationStreamRequest() , NotifikationObserver);
-	
+
+	m_csx = m_pSvrcClientService->GetNotificationStream(SvPb::GetNotificationStreamRequest(), NotifikationObserver);
+
 }
 
 void  SVControlCommands::StopNotificationStreaming()
 {
 	m_csx.cancel();
-	
+
 }
 
 
 HRESULT SVControlCommands::GetVersion(_bstr_t& rSVObserverVersion, _bstr_t& rGatewayServerVersion, SVCommandStatus& rStatus)
 {
-	HRESULT Result{S_OK};
+	HRESULT Result {S_OK};
 
 	try
 	{
@@ -166,8 +168,8 @@ HRESULT SVControlCommands::GetVersion(_bstr_t& rSVObserverVersion, _bstr_t& rGat
 			try
 			{
 				SvPb::GetVersionResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
-																	  &SvWsl::SVRCClientService::GetSVObserverVersion,
-																	  std::move(SvoRequest)).get();
+					&SvWsl::SVRCClientService::GetSVObserverVersion,
+					std::move(SvoRequest)).get();
 
 				rSVObserverVersion = _bstr_t(Response.version().c_str());
 			}
@@ -175,13 +177,13 @@ HRESULT SVControlCommands::GetVersion(_bstr_t& rSVObserverVersion, _bstr_t& rGat
 			{
 				//Catch exceptions to be able to call both versions
 			}
-	
+
 			try
 			{
 				SvPb::GetGatewayVersionRequest GatewayRequest;
 				SvPb::GetVersionResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
-												  &SvWsl::SVRCClientService::GetGatewayVersion,
-												  std::move(GatewayRequest)).get();
+					&SvWsl::SVRCClientService::GetGatewayVersion,
+					std::move(GatewayRequest)).get();
 				rGatewayServerVersion = _bstr_t(Response.version().c_str());
 			}
 			catch (std::exception&)
@@ -194,12 +196,12 @@ HRESULT SVControlCommands::GetVersion(_bstr_t& rSVObserverVersion, _bstr_t& rGat
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
 
-	return Result;
+		return Result;
 }
 
 HRESULT SVControlCommands::GetState(unsigned long& rState, SVCommandStatus& rStatus)
 {
-	HRESULT Result{S_OK};
+	HRESULT Result {S_OK};
 
 	try
 	{
@@ -210,19 +212,19 @@ HRESULT SVControlCommands::GetState(unsigned long& rState, SVCommandStatus& rSta
 
 		SvPb::GetStateRequest Request;
 		SvPb::GetStateResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
-															&SvWsl::SVRCClientService::GetState,
-															std::move(Request)).get();
+			&SvWsl::SVRCClientService::GetState,
+			std::move(Request)).get();
 
 		rState = Response.state();
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
 
-	return Result;
+		return Result;
 }
 
 HRESULT SVControlCommands::GetOfflineCount(unsigned long& rCount, SVCommandStatus& rStatus)
 {
-	HRESULT Result{S_OK};
+	HRESULT Result {S_OK};
 
 	try
 	{
@@ -233,18 +235,18 @@ HRESULT SVControlCommands::GetOfflineCount(unsigned long& rCount, SVCommandStatu
 
 		SvPb::GetOfflineCountRequest Request;
 		SvPb::GetOfflineCountResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
-															&SvWsl::SVRCClientService::GetOfflineCount,
-															std::move(Request)).get();
+			&SvWsl::SVRCClientService::GetOfflineCount,
+			std::move(Request)).get();
 		rCount = Response.count();
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
 
-	return Result;
+		return Result;
 }
 
 HRESULT SVControlCommands::GetConfigReport(BSTR& rReport, SVCommandStatus& rStatus)
 {
-	HRESULT Result{S_OK};
+	HRESULT Result {S_OK};
 
 	try
 	{
@@ -255,8 +257,8 @@ HRESULT SVControlCommands::GetConfigReport(BSTR& rReport, SVCommandStatus& rStat
 
 		SvPb::GetConfigReportRequest Request;
 		SvPb::GetConfigReportResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
-																 &SvWsl::SVRCClientService::GetConfigReport,
-																   std::move(Request)).get();
+			&SvWsl::SVRCClientService::GetConfigReport,
+			std::move(Request)).get();
 
 		rReport = _bstr_t(Response.report().c_str()).Detach();
 		Result = Response.hresult();
@@ -265,12 +267,12 @@ HRESULT SVControlCommands::GetConfigReport(BSTR& rReport, SVCommandStatus& rStat
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
 
-	return Result;
+		return Result;
 }
 
 HRESULT SVControlCommands::GetMode(unsigned long&  rMode, SVCommandStatus& rStatus)
 {
-	HRESULT Result{S_OK};
+	HRESULT Result {S_OK};
 	try
 	{
 		if (nullptr == m_pRpcClient || nullptr == m_pSvrcClientService || !m_pRpcClient->isConnected())
@@ -280,8 +282,8 @@ HRESULT SVControlCommands::GetMode(unsigned long&  rMode, SVCommandStatus& rStat
 
 		SvPb::GetDeviceModeRequest Request;
 		SvPb::GetDeviceModeResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
-																 &SvWsl::SVRCClientService::GetDeviceMode,
-																 std::move(Request)).get();
+			&SvWsl::SVRCClientService::GetDeviceMode,
+			std::move(Request)).get();
 
 		rStatus.hResult = S_OK;
 		auto ProtoMode = Response.mode();
@@ -290,12 +292,12 @@ HRESULT SVControlCommands::GetMode(unsigned long&  rMode, SVCommandStatus& rStat
 		SVLOG(Result);
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
-	return Result;
+		return Result;
 }
 
 HRESULT SVControlCommands::SetMode(unsigned long Mode, SVCommandStatus& rStatus)
 {
-	HRESULT Result{S_OK};
+	HRESULT Result {S_OK};
 	try
 	{
 		if (nullptr == m_pRpcClient || nullptr == m_pSvrcClientService || !m_pRpcClient->isConnected())
@@ -307,24 +309,24 @@ HRESULT SVControlCommands::SetMode(unsigned long Mode, SVCommandStatus& rStatus)
 		{
 			throw std::invalid_argument("Invalid SVObserver mode");
 		}
-		
+
 		SvPb::SetDeviceModeRequest Request;
 		Request.set_mode(static_cast<SvPb::DeviceModeType> (Mode));
-		SvPb::StandardResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(), 
-															&SvWsl::SVRCClientService::SetDeviceMode, 
-															std::move(Request)).get();
+		SvPb::StandardResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
+			&SvWsl::SVRCClientService::SetDeviceMode,
+			std::move(Request)).get();
 
-		Result =  Response.hresult();
+		Result = Response.hresult();
 		rStatus.hResult = Result;
 		SVLOG(Result);
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
-	return Result;
+		return Result;
 }
 
 HRESULT SVControlCommands::GetItems(CComVariant ItemNames, ISVProductItems** ppItems, SVCommandStatus& rStatus)
 {
-	HRESULT Result{S_OK};
+	HRESULT Result {S_OK};
 
 	try
 	{
@@ -366,8 +368,8 @@ HRESULT SVControlCommands::GetItems(CComVariant ItemNames, ISVProductItems** ppI
 		}
 
 		SvPb::GetItemsResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
-															&SvWsl::SVRCClientService::GetItems, 
-															std::move(Request)).get();
+			&SvWsl::SVRCClientService::GetItems,
+			std::move(Request)).get();
 
 		GetItemsPtr(Response)->QueryInterface(IID_ISVProductItems, reinterpret_cast<void**>(ppItems));
 
@@ -377,12 +379,12 @@ HRESULT SVControlCommands::GetItems(CComVariant ItemNames, ISVProductItems** ppI
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
 
-	return Result;
+		return Result;
 }
 
 HRESULT SVControlCommands::SetItems(ISVProductItems* pItems, ISVProductItems ** ppErrors, SVCommandStatus& rStatus)
 {
-	HRESULT Result{S_OK};
+	HRESULT Result {S_OK};
 
 	try
 	{
@@ -391,13 +393,13 @@ HRESULT SVControlCommands::SetItems(ISVProductItems* pItems, ISVProductItems ** 
 			throw std::invalid_argument("Not connected to neither SVOGateway nor SVObserver");
 		}
 
-		if(nullptr != pItems)
+		if (nullptr != pItems)
 		{
 			SvPb::SetItemsRequest Request;
 			SetItemsRequest(ProductPtr(pItems), &Request);
 			SvPb::SetItemsResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
-																&SvWsl::SVRCClientService::SetItems, 
-																std::move(Request)).get();
+				&SvWsl::SVRCClientService::SetItems,
+				std::move(Request)).get();
 
 			GetItemsPtr(Response.mutable_errorlist())->QueryInterface(IID_ISVProductItems, reinterpret_cast<void**>(ppErrors));
 
@@ -413,7 +415,7 @@ HRESULT SVControlCommands::SetItems(ISVProductItems* pItems, ISVProductItems ** 
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
 
-	return Result;
+		return Result;
 }
 
 static bool IsValidFilePath(const std::string& rFilePath)
@@ -432,7 +434,7 @@ static bool IsValidFilePath(const std::string& rFilePath)
 
 HRESULT SVControlCommands::GetConfig(const _bstr_t& rFilePath, SVCommandStatus& rStatus)
 {
-	HRESULT Result{S_OK};
+	HRESULT Result {S_OK};
 
 	try
 	{
@@ -447,8 +449,8 @@ HRESULT SVControlCommands::GetConfig(const _bstr_t& rFilePath, SVCommandStatus& 
 			SvPb::GetConfigRequest Request;
 			Request.set_filename(fPath.c_str());
 			SvPb::GetConfigResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
-																&SvWsl::SVRCClientService::GetConfig,
-																std::move(Request)).get();
+				&SvWsl::SVRCClientService::GetConfig,
+				std::move(Request)).get();
 			Result = Response.hresult();
 			if (S_OK == Result)
 			{
@@ -477,7 +479,7 @@ HRESULT SVControlCommands::GetConfig(const _bstr_t& rFilePath, SVCommandStatus& 
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
 
-	return Result;
+		return Result;
 }
 
 HRESULT SVControlCommands::PutConfig(const _bstr_t& rFilePath, SVCommandStatus& rStatus)
@@ -502,7 +504,7 @@ HRESULT SVControlCommands::PutConfig(const _bstr_t& rFilePath, SVCommandStatus& 
 				size_t FileSize(0);
 				FileSize = static_cast<size_t> (FileStream.tellg());
 				std::vector<char> FileData;
-				if(0 != FileSize)
+				if (0 != FileSize)
 				{
 					FileData.resize(FileSize);
 					FileStream.seekg(0, std::ios::beg);
@@ -513,8 +515,8 @@ HRESULT SVControlCommands::PutConfig(const _bstr_t& rFilePath, SVCommandStatus& 
 					PutConfigRequest.set_filename(fPath.c_str());
 					PutConfigRequest.set_filedata(&FileData[0], FileSize);
 					SvPb::StandardResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
-																		&SvWsl::SVRCClientService::PutConfig,
-																		std::move(PutConfigRequest)).get();
+						&SvWsl::SVRCClientService::PutConfig,
+						std::move(PutConfigRequest)).get();
 					Result = Response.hresult();
 				}
 				else
@@ -541,12 +543,12 @@ HRESULT SVControlCommands::PutConfig(const _bstr_t& rFilePath, SVCommandStatus& 
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
 
-	return Result;
+		return Result;
 }
 
 HRESULT SVControlCommands::GetFile(const _bstr_t& rSourcePath, const _bstr_t& rDestinationPath, SVCommandStatus& rStatus)
 {
-	HRESULT Result{S_OK};
+	HRESULT Result {S_OK};
 
 	try
 	{
@@ -562,8 +564,8 @@ HRESULT SVControlCommands::GetFile(const _bstr_t& rSourcePath, const _bstr_t& rD
 			SvPb::GetFileRequest Request;
 			Request.set_sourcepath(SVStringConversions::to_utf8(rSourcePath));
 			SvPb::GetFileResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
-																 &SvWsl::SVRCClientService::GetFile,
-																 std::move(Request)).get();
+				&SvWsl::SVRCClientService::GetFile,
+				std::move(Request)).get();
 			Result = Response.hresult();
 			if (S_OK == Result)
 			{
@@ -593,12 +595,12 @@ HRESULT SVControlCommands::GetFile(const _bstr_t& rSourcePath, const _bstr_t& rD
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
 
-	return Result;
+		return Result;
 }
 
 HRESULT SVControlCommands::PutFile(const _bstr_t& rSourcePath, const _bstr_t& rDestinationPath, SVCommandStatus& rStatus)
 {
-	HRESULT Result{S_OK};
+	HRESULT Result {S_OK};
 
 	try
 	{
@@ -630,8 +632,8 @@ HRESULT SVControlCommands::PutFile(const _bstr_t& rSourcePath, const _bstr_t& rD
 					Request.set_destinationpath(DestinationPath);
 					Request.set_filedata(&FileData[0], FileSize);
 					SvPb::StandardResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
-																		&SvWsl::SVRCClientService::PutFile,
-																		std::move(Request)).get();
+						&SvWsl::SVRCClientService::PutFile,
+						std::move(Request)).get();
 					Result = Response.hresult();
 				}
 				else
@@ -658,12 +660,12 @@ HRESULT SVControlCommands::PutFile(const _bstr_t& rSourcePath, const _bstr_t& rD
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
 
-	return Result;
+		return Result;
 }
 
 HRESULT SVControlCommands::GetDataDefinitionList(const _bstr_t& rInspectionName, long ListType, ISVDataDefObjectList** ppEntries, SVCommandStatus& rStatus)
 {
-	HRESULT Result{S_OK};
+	HRESULT Result {S_OK};
 
 	try
 	{
@@ -676,8 +678,8 @@ HRESULT SVControlCommands::GetDataDefinitionList(const _bstr_t& rInspectionName,
 		Request.set_inspectionname(SVStringConversions::to_utf8(rInspectionName));
 		Request.set_type(static_cast<SvPb::DataDefinitionListType> (ListType));
 		SvPb::GetDataDefinitionListResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
-															&SvWsl::SVRCClientService::GetDataDefinitionList,
-															std::move(Request)).get();
+			&SvWsl::SVRCClientService::GetDataDefinitionList,
+			std::move(Request)).get();
 
 		GetDataDefList(Response)->QueryInterface(IID_ISVDataDefObjectList, reinterpret_cast<void**> (ppEntries));
 
@@ -686,14 +688,14 @@ HRESULT SVControlCommands::GetDataDefinitionList(const _bstr_t& rInspectionName,
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
 
-	return Result;
+		return Result;
 }
 
 HRESULT SVControlCommands::RegisterMonitorList(const _bstr_t& rListName, const _bstr_t& rPpqName, int rejectDepth,
 	const CComVariant& rProductItemList, const CComVariant& rRejectCondList,
 	const CComVariant& rFailStatusList, ISVErrorObjectList** ppErrors, SVCommandStatus& rStatus)
 {
-	HRESULT Result{S_OK};
+	HRESULT Result {S_OK};
 
 	try
 	{
@@ -710,8 +712,8 @@ HRESULT SVControlCommands::RegisterMonitorList(const _bstr_t& rListName, const _
 		SetStringList(rRejectCondList, Request.mutable_rejectconditionlist());
 		SetStringList(rFailStatusList, Request.mutable_failstatuslist());
 		SvPb::RegisterMonitorListResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
-																 &SvWsl::SVRCClientService::RegisterMonitorList,
-																 std::move(Request)).get();
+			&SvWsl::SVRCClientService::RegisterMonitorList,
+			std::move(Request)).get();
 
 		GetErrorListPtr(Response.mutable_errorlist())->QueryInterface(IID_ISVErrorObjectList, reinterpret_cast<void**> (ppErrors));
 
@@ -721,7 +723,7 @@ HRESULT SVControlCommands::RegisterMonitorList(const _bstr_t& rListName, const _
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
 
-	return Result;
+		return Result;
 }
 
 HRESULT SVControlCommands::QueryMonitorList(const _bstr_t& rListName, SvPb::ListType Type, CComVariant& rItemNames, SVCommandStatus& rStatus)
@@ -739,8 +741,8 @@ HRESULT SVControlCommands::QueryMonitorList(const _bstr_t& rListName, SvPb::List
 		Request.set_listname(SVStringConversions::to_utf8(rListName));
 		Request.set_type(Type);
 		SvPb::NamesResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
-														 &SvWsl::SVRCClientService::QueryMonitorList,
-														 std::move(Request)).get();
+			&SvWsl::SVRCClientService::QueryMonitorList,
+			std::move(Request)).get();
 
 		Result = Response.hresult();
 
@@ -759,7 +761,7 @@ HRESULT SVControlCommands::QueryMonitorList(const _bstr_t& rListName, SvPb::List
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
 
-	return Result;
+		return Result;
 }
 
 HRESULT SVControlCommands::GetProduct(bool bGetReject, const _bstr_t& rListName, long TriggerCount, long ImageScale, ISVProductItems** ppViewItems, SVCommandStatus& rStatus)
@@ -816,7 +818,7 @@ HRESULT SVControlCommands::GetRejects(const _bstr_t& rListName, long TriggerCoun
 
 HRESULT SVControlCommands::ActivateMonitorList(const _bstr_t& rListName, bool Active, SVCommandStatus& rStatus)
 {
-	HRESULT Result{S_OK};
+	HRESULT Result {S_OK};
 
 	try
 	{
@@ -829,15 +831,15 @@ HRESULT SVControlCommands::ActivateMonitorList(const _bstr_t& rListName, bool Ac
 		Request.set_listname(SVStringConversions::to_utf8(rListName));
 		Request.set_activate(Active);
 		SvPb::StandardResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
-															&SvWsl::SVRCClientService::ActivateMonitorList,
-															std::move(Request)).get();
+			&SvWsl::SVRCClientService::ActivateMonitorList,
+			std::move(Request)).get();
 		Result = Response.hresult();
 		rStatus.hResult = Result;
 		SVLOG(Result);
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
 
-	return Result;
+		return Result;
 }
 
 HRESULT SVControlCommands::GetFailStatus(const _bstr_t& rListName, CComVariant& rValues, SVCommandStatus& rStatus)
@@ -859,9 +861,9 @@ HRESULT SVControlCommands::GetFailStatus(const _bstr_t& rListName, CComVariant& 
 		FailstatusRequest.set_name(static_cast<const char*>(rListName));
 
 		FailstatusRequest.set_nameinresponse(true);
-		SvPb::GetFailStatusResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(), 
-																 &SvWsl::SVRCClientService::GetFailStatus,
-																 std::move(FailstatusRequest)).get();
+		SvPb::GetFailStatusResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
+			&SvWsl::SVRCClientService::GetFailStatus,
+			std::move(FailstatusRequest)).get();
 
 		rStatus.hResult = (HRESULT)Response.status();
 		if (Response.status() == SvPb::IsValid)
@@ -898,8 +900,8 @@ HRESULT SVControlCommands::ShutDown(SVShutdownOptionsEnum Options, SVCommandStat
 		SvPb::ShutdownRequest Request;
 		Request.set_options(static_cast<long> (Options));
 		SvPb::StandardResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
-															&SvWsl::SVRCClientService::Shutdown,
-															std::move(Request)).get();
+			&SvWsl::SVRCClientService::Shutdown,
+			std::move(Request)).get();
 
 		Result = Response.hresult();
 
@@ -908,14 +910,14 @@ HRESULT SVControlCommands::ShutDown(SVShutdownOptionsEnum Options, SVCommandStat
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
 
-	return Result;
+		return Result;
 }
 
 
 
 HRESULT SVControlCommands::GetInspectionNames(CComVariant& rNames, SVCommandStatus& rStatus)
 {
-	HRESULT Result{S_OK};
+	HRESULT Result {S_OK};
 
 	try
 	{
@@ -926,12 +928,12 @@ HRESULT SVControlCommands::GetInspectionNames(CComVariant& rNames, SVCommandStat
 
 		SvPb::GetInspectionNamesRequest Request;
 		SvPb::NamesResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
-														 &SvWsl::SVRCClientService::GetInspectionNames,
-														 std::move(Request)).get();
+			&SvWsl::SVRCClientService::GetInspectionNames,
+			std::move(Request)).get();
 
 		Result = Response.hresult();
 
-		if(S_OK == Result)
+		if (S_OK == Result)
 		{
 			SvPb::Value* pValue = Response.mutable_names();
 			rNames = GetComVariant(*pValue->mutable_item(), pValue->count());
@@ -946,13 +948,13 @@ HRESULT SVControlCommands::GetInspectionNames(CComVariant& rNames, SVCommandStat
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
 
-	return Result;
+		return Result;
 }
 
 
 HRESULT SVControlCommands::QueryMonitorListNames(CComVariant& rListName, SVCommandStatus& rStatus)
 {
-	HRESULT Result{S_OK};
+	HRESULT Result {S_OK};
 
 	try
 	{
@@ -963,8 +965,8 @@ HRESULT SVControlCommands::QueryMonitorListNames(CComVariant& rListName, SVComma
 
 		SvPb::QueryMonitorListNamesRequest Request;
 		SvPb::NamesResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
-														 &SvWsl::SVRCClientService::QueryMonitorListNames,
-														 std::move(Request)).get();
+			&SvWsl::SVRCClientService::QueryMonitorListNames,
+			std::move(Request)).get();
 
 		Result = Response.hresult();
 
@@ -983,7 +985,7 @@ HRESULT SVControlCommands::QueryMonitorListNames(CComVariant& rListName, SVComma
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
 
-	return Result;
+		return Result;
 }
 
 HRESULT SVControlCommands::GetMonitorListProperties(const _bstr_t & rListName, long&  rRejectDepth, bool& rIsActive, BSTR&  rPpqName, SVCommandStatus& rStatus)
@@ -999,8 +1001,8 @@ HRESULT SVControlCommands::GetMonitorListProperties(const _bstr_t & rListName, l
 		SvPb::GetMonitorListPropertiesRequest Request;
 		Request.set_listname(SVStringConversions::to_utf8(rListName));
 		SvPb::GetMonitorListPropertiesResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
-																 &SvWsl::SVRCClientService::GetMonitorListProperties,
-																 std::move(Request)).get();
+			&SvWsl::SVRCClientService::GetMonitorListProperties,
+			std::move(Request)).get();
 
 		rRejectDepth = Response.rejectdepth();
 		rIsActive = Response.active();
@@ -1012,12 +1014,12 @@ HRESULT SVControlCommands::GetMonitorListProperties(const _bstr_t & rListName, l
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
 
-	return Result;
+		return Result;
 }
 
 HRESULT SVControlCommands::GetMaxRejectQeueDepth(unsigned long& rDepth, SVCommandStatus& rStatus)
 {
-	HRESULT Result{S_OK};
+	HRESULT Result {S_OK};
 
 	try
 	{
@@ -1028,20 +1030,20 @@ HRESULT SVControlCommands::GetMaxRejectQeueDepth(unsigned long& rDepth, SVComman
 
 		SvPb::GetMaxRejectDepthRequest Request;
 		SvPb::GetMaxRejectDepthResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
-																	 &SvWsl::SVRCClientService::GetMaxRejectDepth,
-																	 std::move(Request)).get();
+			&SvWsl::SVRCClientService::GetMaxRejectDepth,
+			std::move(Request)).get();
 		rDepth = Response.maxrejectdepth();
 		SVLOG(Result);
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
-	return Result;
+		return Result;
 }
 
 
 
 HRESULT SVControlCommands::GetProductFilter(const _bstr_t& rListName, unsigned long& rFilter, SVCommandStatus& rStatus)
 {
-	HRESULT Result{S_OK};
+	HRESULT Result {S_OK};
 
 	try
 	{
@@ -1053,8 +1055,8 @@ HRESULT SVControlCommands::GetProductFilter(const _bstr_t& rListName, unsigned l
 		SvPb::GetProductFilterRequest Request;
 		Request.set_listname(SVStringConversions::to_utf8(rListName));
 		SvPb::GetProductFilterResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
-																	&SvWsl::SVRCClientService::GetProductFilter,
-																	std::move(Request)).get();
+			&SvWsl::SVRCClientService::GetProductFilter,
+			std::move(Request)).get();
 		Result = Response.hresult();
 		rFilter = static_cast<unsigned long> (Response.filter());
 		rStatus.hResult = Result;
@@ -1062,12 +1064,12 @@ HRESULT SVControlCommands::GetProductFilter(const _bstr_t& rListName, unsigned l
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
 
-	return Result;
+		return Result;
 }
 
 HRESULT SVControlCommands::SetProductFilter(const _bstr_t& rListName, unsigned long Filter, SVCommandStatus& rStatus)
 {
-	HRESULT Result{S_OK};
+	HRESULT Result {S_OK};
 
 	try
 	{
@@ -1080,21 +1082,21 @@ HRESULT SVControlCommands::SetProductFilter(const _bstr_t& rListName, unsigned l
 		Request.set_listname(SVStringConversions::to_utf8(rListName));
 		Request.set_filter(static_cast<SvPb::ProductFilterEnum> (Filter));
 		SvPb::StandardResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
-															&SvWsl::SVRCClientService::SetProductFilter,
-															std::move(Request)).get();
+			&SvWsl::SVRCClientService::SetProductFilter,
+			std::move(Request)).get();
 		Result = Response.hresult();
 		rStatus.hResult = Result;
 		SVLOG(Result);
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
 
-	return Result;
+		return Result;
 }
 
 void SVControlCommands::OnConnectionStatus(SvRpc::ClientStatus Status)
 {
 
-	switch(Status)
+	switch (Status)
 	{
 		case SvRpc::ClientStatus::Connected:
 			m_Notifier(_variant_t(_T("Conneted")), SVNotificationTypesEnum::Connected);

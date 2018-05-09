@@ -10,20 +10,7 @@
 //******************************************************************************
 
 #pragma once
-//@Todo[MEC][8.00] [13.03.2018] use scoped enum class svModeEnum 
-enum svModeEnum
-{
-	SVIM_MODE_UNKNOWN = 0,
-	SVIM_MODE_ONLINE,
-	SVIM_MODE_OFFLINE,
-	SVIM_MODE_REGRESSION,
-	SVIM_MODE_TEST,
-	SVIM_MODE_EDIT,
-	SVIM_MODE_CHANGING = 100,
-	SVIM_MODE_REMOVE = 0x8000,
-};
-
-
+#include "svModeEnum.h"
 
 #define SV_STATE_UNKNOWN		0x00000000
 

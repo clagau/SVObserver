@@ -116,6 +116,9 @@
     <ClInclude Include="SVSVIMStateClass.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="svModeEnum.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="MessageManager.inl">

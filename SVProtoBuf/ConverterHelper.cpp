@@ -106,7 +106,7 @@ HRESULT ConvertVariantToProtobuf(const _variant_t& rVariant, int& rCount, SvPb::
 		else
 		{
 			VARTYPE Type = rVariant.vt & ~VT_ARRAY;
-			if(nullptr != rVariant.parray && 1 == rVariant.parray->cDims)
+			if (nullptr != rVariant.parray && 1 == rVariant.parray->cDims)
 			{
 				rCount = rVariant.parray->rgsabound[0].cElements;
 				//For string lists we will generate a semicolon separated string (no semicolons are allowed in the list)
@@ -197,7 +197,7 @@ HRESULT ConvertProtobufToVariant(const SvPb::Variant& rPbVariant, int Count, _va
 	{
 		VARTYPE Type = rPbVariant.type() & ~VT_ARRAY;
 		SAFEARRAY* pSafeArray = ::SafeArrayCreateVector(Type, 0, Count);
-		if(nullptr != pSafeArray)
+		if (nullptr != pSafeArray)
 		{
 			if (VT_BSTR == Type)
 			{
@@ -216,7 +216,7 @@ HRESULT ConvertProtobufToVariant(const SvPb::Variant& rPbVariant, int Count, _va
 				{
 					_bstr_t Text {rEntry.c_str()};
 					Result = ::SafeArrayPutElement(pSafeArray, &Index, static_cast<void*> (Text.Detach()));
-					if(S_OK != Result)
+					if (S_OK != Result)
 					{
 						break;
 					}
@@ -227,7 +227,7 @@ HRESULT ConvertProtobufToVariant(const SvPb::Variant& rPbVariant, int Count, _va
 			{
 				void* pData {nullptr};
 				Result = ::SafeArrayAccessData(pSafeArray, &pData);
-				if(S_OK == Result)
+				if (S_OK == Result)
 				{
 					memcpy(pData, rPbVariant.bytesval().c_str(), rPbVariant.bytesval().length());
 					::SafeArrayUnaccessData(pSafeArray);
@@ -247,9 +247,9 @@ HRESULT ConvertProtobufToVariant(const SvPb::Variant& rPbVariant, int Count, _va
 
 int ConvertStringListToProtobuf(const SvDef::StringSet& rList, SvPb::Variant* pVariant)
 {
-	int Result{0};
+	int Result {0};
 
-	if(nullptr != pVariant)
+	if (nullptr != pVariant)
 	{
 		std::string Text;
 		//For protobuf we shall converts string sets to a semicolon separated string (The List should not contain any semicolons)
@@ -271,4 +271,63 @@ int ConvertStringListToProtobuf(const SvDef::StringSet& rList, SvPb::Variant* pV
 	}
 	return Result;
 }
+
+svModeEnum PbDeviceMode_2_SVIMMode(SvPb::DeviceModeType type)
+{
+	svModeEnum res {SVIM_MODE_UNKNOWN};
+	switch (type)
+	{
+		case SvPb::DeviceModeType::RunMode:
+			res = SVIM_MODE_ONLINE;
+			break;
+		case SvPb::DeviceModeType::StopMode:
+			res = SVIM_MODE_OFFLINE;
+			break;
+		case SvPb::DeviceModeType::RegressionMode:
+			res = SVIM_MODE_REGRESSION;
+			break;
+		case SvPb::DeviceModeType::TestMode:
+			res = SVIM_MODE_TEST;
+			break;
+		case SvPb::DeviceModeType::EditMode:
+			res = SVIM_MODE_EDIT;
+			break;
+		default:
+			res = SVIM_MODE_UNKNOWN;
+			break;
+	}
+	return res;
+}
+
+SvPb::DeviceModeType  SVIMMode_2_PbDeviceMode(unsigned long Mode)
+{
+	switch (Mode)
+	{
+		case SVIM_MODE_ONLINE:
+			return  SvPb::DeviceModeType::RunMode;
+			break;
+		case SVIM_MODE_OFFLINE:
+			return   SvPb::DeviceModeType::StopMode;
+			break;
+		case SVIM_MODE_REGRESSION:
+			return   SvPb::DeviceModeType::RegressionMode;
+			break;
+		case SVIM_MODE_TEST:
+			return SvPb::DeviceModeType::TestMode;
+			break;
+		case SVIM_MODE_EDIT:
+
+			return SvPb::DeviceModeType::EditMode;
+			break;
+		case SVIM_MODE_CHANGING:
+			return SvPb::DeviceModeType::ModeChanging;
+			break;
+		case SVIM_MODE_UNKNOWN:
+		default:
+			return SvPb::DeviceModeType::Available;
+			break;
+	}
+}
+
+
 } //namespace SvPB

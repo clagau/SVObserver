@@ -24,8 +24,7 @@ public:
 	Router::Router(const std::string& rServerAddress, unsigned short ServerPort, RequestHandler* pRequestHandler);
 
 private:
-	void RouteRequest(SvPenv::Envelope&&, SvRpc::Task<SvPenv::Envelope>);
-
+	bool Router::ConnectToRouter();
 	std::string m_ServerAddress;
 	unsigned short m_ServerPort{0};
 	std::unique_ptr<SvRpc::RPCClient> m_pClientRouter {nullptr};

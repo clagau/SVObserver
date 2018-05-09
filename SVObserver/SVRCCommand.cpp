@@ -34,7 +34,7 @@ SVRCCommand::~SVRCCommand()
 void SVRCCommand::GetVersion(const SvPb::GetSVObserverVersionRequest& rRequest, SvRpc::Task<SvPb::GetVersionResponse> task)
 {
 	SvPb::GetVersionResponse Response;
-	
+
 	SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
 	Response.set_version(SvSyl::SVVersionInfo::GetShortTitleVersion());
 	SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
@@ -42,68 +42,25 @@ void SVRCCommand::GetVersion(const SvPb::GetSVObserverVersionRequest& rRequest, 
 	task.finish(std::move(Response));
 }
 
-void SVRCCommand::GetDeviceMode(const SvPb::GetDeviceModeRequest& rRequest , SvRpc::Task<SvPb::GetDeviceModeResponse> task)
+
+
+void SVRCCommand::GetDeviceMode(const SvPb::GetDeviceModeRequest& rRequest, SvRpc::Task<SvPb::GetDeviceModeResponse> task)
 {
 	SvPb::GetDeviceModeResponse Response;
-
 	unsigned long Mode = SVIM_MODE_UNKNOWN;
-
 	SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
 	SVVisionProcessorHelper::Instance().GetConfigurationMode(Mode);
 	SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
-	switch (Mode)
-	{
-
-		case SVIM_MODE_ONLINE:
-			Response.set_mode(SvPb::DeviceModeType::RunMode);
-			break;
-		case SVIM_MODE_OFFLINE:
-			Response.set_mode(SvPb::DeviceModeType::StopMode);
-			break;
-		case SVIM_MODE_REGRESSION:
-			Response.set_mode(SvPb::DeviceModeType::RegressionMode);
-			break;
-		case SVIM_MODE_TEST:
-			Response.set_mode(SvPb::DeviceModeType::TestMode);
-			break;
-		case SVIM_MODE_EDIT:
-			Response.set_mode(SvPb::DeviceModeType::EditMode);
-			break;
-		case SVIM_MODE_CHANGING:
-			Response.set_mode(SvPb::DeviceModeType::ModeChanging);
-			break;
-		case SVIM_MODE_UNKNOWN:
-		default:
-			Response.set_mode(SvPb::DeviceModeType::Available);
-			break;
-	}
+	Response.set_mode(SvPb::SVIMMode_2_PbDeviceMode(Mode));
 	task.finish(std::move(Response));
 }
 
+
+
+
 void SVRCCommand::SetDeviceMode(const SvPb::SetDeviceModeRequest& rRequest, SvRpc::Task<SvPb::StandardResponse> task)
 {
-	unsigned long DesiredMode = SVIM_MODE_UNKNOWN;
-	switch (rRequest.mode())
-	{
-		case SvPb::DeviceModeType::RunMode:
-			DesiredMode = SVIM_MODE_ONLINE;
-			break;
-		case SvPb::DeviceModeType::StopMode:
-			DesiredMode = SVIM_MODE_OFFLINE;
-			break;
-		case SvPb::DeviceModeType::RegressionMode:
-			DesiredMode = SVIM_MODE_REGRESSION;
-			break;
-		case SvPb::DeviceModeType::TestMode:
-			DesiredMode = SVIM_MODE_TEST;
-			break;
-		case SvPb::DeviceModeType::EditMode:
-			DesiredMode = SVIM_MODE_EDIT;
-			break;
-		default:
-			DesiredMode = SVIM_MODE_UNKNOWN;
-			break;
-	}
+	unsigned long DesiredMode = static_cast<unsigned long>(PbDeviceMode_2_SVIMMode(rRequest.mode()));
 
 	HRESULT Status {E_INVALIDARG};
 
@@ -154,7 +111,7 @@ void SVRCCommand::GetState(const SvPb::GetStateRequest& rRequest, SvRpc::Task<Sv
 
 void SVRCCommand::GetConfig(const SvPb::GetConfigRequest& rRequest, SvRpc::Task<SvPb::GetConfigResponse> task)
 {
-	HRESULT Result{S_OK};
+	HRESULT Result {S_OK};
 	SvPb::GetConfigResponse Response;
 
 	DWORD notAllowedStates = SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING |
@@ -162,7 +119,7 @@ void SVRCCommand::GetConfig(const SvPb::GetConfigRequest& rRequest, SvRpc::Task<
 
 	if (SVSVIMStateClass::CheckState(notAllowedStates))
 	{
-		Result =  SVMSG_SVO_ACCESS_DENIED;
+		Result = SVMSG_SVO_ACCESS_DENIED;
 	}
 
 	SVConfigurationObject* pConfig = nullptr;
@@ -173,7 +130,7 @@ void SVRCCommand::GetConfig(const SvPb::GetConfigRequest& rRequest, SvRpc::Task<
 		Result = SVMSG_CONFIGURATION_NOT_LOADED;
 	}
 
-	if(S_OK == Result)
+	if (S_OK == Result)
 	{
 		std::string RemoteFilePath = rRequest.filename();
 
@@ -266,10 +223,10 @@ void SVRCCommand::PutConfig(const SvPb::PutConfigRequest& rRequest, SvRpc::Task<
 
 		std::string TempFileName;
 		Result = GetTempFileNameFromFilePath(TempFileName, RemoteFilePath);
-		if(0 != rRequest.filedata().length())
+		if (0 != rRequest.filedata().length())
 		{
 			Result = SVEncodeDecodeUtilities::StringContentToFile(TempFileName, rRequest.filedata());
-			if(S_OK == Result)
+			if (S_OK == Result)
 			{
 				SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
 				Result = TheSVObserverApp.LoadPackedConfiguration(TempFileName);
@@ -307,7 +264,7 @@ void SVRCCommand::ActivateMonitorList(const SvPb::ActivateMonitorListRequest& rR
 	DWORD notAllowedStates = SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION |
 		SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING |
 		SV_STATE_CREATING | SV_STATE_LOADING | SV_STATE_SAVING | SV_STATE_CLOSING;
-	
+
 	if (!SVSVIMStateClass::CheckState(notAllowedStates) && SVSVIMStateClass::CheckState(SV_STATE_READY))
 	{
 		SVConfigurationObject* pConfig = nullptr;
@@ -351,8 +308,8 @@ void SVRCCommand::GetProductFilter(const SvPb::GetProductFilterRequest& rRequest
 		SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
 		Result = pConfig->GetRemoteMonitorListProductFilter(ListName, ProductFilter);
 		SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
-		
-		switch(ProductFilter)
+
+		switch (ProductFilter)
 		{
 			case SvSml::SVProductFilterEnum::LastInspectedFilter:
 				Response.set_filter(SvPb::ProductFilterEnum::LastInspectedFilter);
@@ -382,15 +339,15 @@ void SVRCCommand::SetProductFilter(const SvPb::SetProductFilterRequest& rRequest
 	DWORD notAllowedStates = SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION |
 		SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING |
 		SV_STATE_CREATING | SV_STATE_LOADING | SV_STATE_SAVING | SV_STATE_CLOSING;
-	
+
 	if (!SVSVIMStateClass::CheckState(notAllowedStates))
 	{
 		SVConfigurationObject* pConfig = nullptr;
 		SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 		if (nullptr != pConfig)
 		{
-			SvSml::SVProductFilterEnum ProductFilter{SvSml::SVProductFilterEnum::NoFilter};
-			switch(rRequest.filter())
+			SvSml::SVProductFilterEnum ProductFilter {SvSml::SVProductFilterEnum::NoFilter};
+			switch (rRequest.filter())
 			{
 				case SvPb::ProductFilterEnum::LastInspectedFilter:
 					ProductFilter = SvSml::SVProductFilterEnum::LastInspectedFilter;
@@ -571,7 +528,7 @@ void SVRCCommand::SetItems(const SvPb::SetItemsRequest& rRequest, SvRpc::Task<Sv
 	for (const auto& rEntry : Items)
 	{
 		SVNameStatusMap::const_iterator StatusIter = ItemResults.find(rEntry.first);
-		HRESULT Status{S_OK};
+		HRESULT Status {S_OK};
 
 		if (ItemResults.end() == StatusIter)
 		{
@@ -584,7 +541,7 @@ void SVRCCommand::SetItems(const SvPb::SetItemsRequest& rRequest, SvRpc::Task<Sv
 			Status = StatusIter->second;
 		}
 
-		if(S_OK != Status)
+		if (S_OK != Status)
 		{
 			SvPb::Value* pValue = Response.add_errorlist();
 			if (nullptr != pValue)
@@ -610,7 +567,7 @@ void SVRCCommand::GetFile(const SvPb::GetFileRequest& rRequest, SvRpc::Task<SvPb
 	{
 		std::vector<char> FileData;
 		Result = SVEncodeDecodeUtilities::FileToCharVector(SourcePath, FileData);
-		if(S_OK == Result && 0 != FileData.size())
+		if (S_OK == Result && 0 != FileData.size())
 		{
 			Response.set_filedata(&FileData[0], FileData.size());
 		}
@@ -753,7 +710,7 @@ void SVRCCommand::GetMonitorListProperties(const SvPb::GetMonitorListPropertiesR
 	SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
 	Result = SVVisionProcessorHelper::Instance().GetMonitorListProperties(rRequest.listname(), MonitorListProp);
 	SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
-	
+
 	Response.set_rejectdepth(MonitorListProp.RejectQueDepth);
 	Response.set_active(MonitorListProp.isActive);
 	Response.set_ppqname(MonitorListProp.ppqName);
@@ -796,7 +753,7 @@ void SVRCCommand::GetDataDefinitionList(const SvPb::GetDataDefinitionListRequest
 	SvPb::GetDataDefinitionListResponse Response;
 
 	SVDataDefinitionStructVector DataDefinitionList;
-	
+
 	std::string InspectionName = rRequest.inspectionname();
 	SVDataDefinitionListType DataDefinitionType = static_cast<SVDataDefinitionListType> (rRequest.type());
 
@@ -804,19 +761,19 @@ void SVRCCommand::GetDataDefinitionList(const SvPb::GetDataDefinitionListRequest
 	Result = SVVisionProcessorHelper::Instance().GetDataDefinitionList(InspectionName, DataDefinitionType, DataDefinitionList);
 	SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 
-	for(const auto& rEntry : DataDefinitionList)
+	for (const auto& rEntry : DataDefinitionList)
 	{
 		SvPb::DataDefinition* pDataDefinition = Response.add_list();
-		if(nullptr != pDataDefinition)
+		if (nullptr != pDataDefinition)
 		{
 			pDataDefinition->set_name(rEntry.m_Name);
 			pDataDefinition->set_writable(rEntry.m_Writable);
 			pDataDefinition->set_published(rEntry.m_Published);
 			pDataDefinition->set_type(rEntry.m_Type);
-			for(const auto& rAddInfo : rEntry.m_AdditionalInfo)
+			for (const auto& rAddInfo : rEntry.m_AdditionalInfo)
 			{
 				std::string* pAddInfo = pDataDefinition->add_additionalinfo();
-				if(nullptr != pAddInfo)
+				if (nullptr != pAddInfo)
 				{
 					*pAddInfo = rAddInfo;
 				}
@@ -836,7 +793,7 @@ void SVRCCommand::QueryMonitorList(const SvPb::QueryMonitorListRequest& rRequest
 
 	SvDef::StringSet Items;
 	SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-	switch(rRequest.type())
+	switch (rRequest.type())
 	{
 		case SvPb::ListType::ProductItem:
 		{
@@ -952,7 +909,7 @@ HRESULT SVRCCommand::ConvertStorageValueToProtobuf(const std::string& rName, con
 		HRESULT ItemStatus = rStorage.m_Status;
 		if (S_OK == rStorage.m_Status)
 		{
-			int Count{0};
+			int Count {0};
 			ItemStatus = SvPb::ConvertVariantToProtobuf(rStorage.m_Storage.m_Variant, Count, pValue->mutable_item());
 		}
 		pValue->set_status(ItemStatus);
@@ -1066,16 +1023,11 @@ HRESULT SVRCCommand::AddImagesToStorageItems(const SvPb::SetItemsRequest& rReque
 	return Result;
 }
 
-void SVRCCommand::RegisterNotificationStream(boost::asio::io_service* pIoService, 
+void SVRCCommand::RegisterNotificationStream(boost::asio::io_service* pIoService,
 	const SvPb::GetNotificationStreamRequest& request,
 	SvRpc::Observer<SvPb::GetNotificationStreamResponse> &observer,
 	SvRpc::ServerStreamContext::Ptr ctx)
 {
-	
 	SVVisionProcessorHelper::Instance().RegisterNotificationStream(pIoService, request, observer, ctx);
-	
-	//SvPenv::Error err;
-	//err.set_error_code(SvPenv::ErrorCode::NotImplemented);
-	//observer.error(err);
 }
 

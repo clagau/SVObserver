@@ -8,9 +8,10 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <concrt.h>
+//Moved to precompiled header: #include <mutex>
 #include "MessageManager.h"
 #pragma endregion Includes
-#include <mutex>
+
 
 
 namespace SvStl

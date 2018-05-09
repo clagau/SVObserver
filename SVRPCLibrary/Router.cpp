@@ -15,16 +15,15 @@
 namespace SvRpc
 {
 static const int cTwoSeconds = 2000;
-//@Todo[MEC][8.00] [04.05.2018] ADD Router for StreamHandler
 Router::Router(RPCClient& rClient, RequestHandler* pRequestHandler)
 {
-	if(nullptr != pRequestHandler)
+	if (nullptr != pRequestHandler)
 	{
 		pRequestHandler->registerDefaultRequestHandler([&rClient](SvPenv::Envelope&& Request, Task<SvPenv::Envelope> Task)
 		{
 			rClient.request(std::move(Request), std::move(Task));
 		});
-		
+
 		pRequestHandler->registerDefaultStreamHandler([&rClient](SvPenv::Envelope&& Request, Observer<SvPenv::Envelope> Observer, ServerStreamContext::Ptr pServerContext)
 		{
 			auto client_ctx = rClient.stream(std::move(Request), std::move(Observer));
@@ -36,42 +35,73 @@ Router::Router(RPCClient& rClient, RequestHandler* pRequestHandler)
 	}
 }
 
+
 Router::Router(const std::string& rServerAddress, unsigned short ServerPort, RequestHandler* pRequestHandler) :
-	m_ServerAddress{rServerAddress},
-	m_ServerPort{ServerPort}
+	m_ServerAddress {rServerAddress},
+	m_ServerPort {ServerPort}
 {
 	if (nullptr != pRequestHandler)
 	{
-		pRequestHandler->registerDefaultRequestHandler(std::bind(&Router::RouteRequest, this, std::placeholders::_1, std::placeholders::_2));
+		pRequestHandler->registerDefaultRequestHandler([this](SvPenv::Envelope&& Request, Task<SvPenv::Envelope> Task)
+		{
+			if (ConnectToRouter())
+			{
+				m_pClientRouter->request(std::move(Request), std::move(Task));
+			}
+			else
+			{
+				Task.error(SvRpc::build_error(SvPenv::ErrorCode::BadGateway, _T("No connection to SVObserver")));
+			}
+
+		});
+
+		pRequestHandler->registerDefaultStreamHandler([this](SvPenv::Envelope&& Request, Observer<SvPenv::Envelope> Observer, ServerStreamContext::Ptr pServerContext)
+		{
+			if (ConnectToRouter())
+			{
+				auto client_ctx = m_pClientRouter->stream(std::move(Request), std::move(Observer));
+				pServerContext->registerOnCancelHandler([client_ctx]() mutable
+				{
+					client_ctx.cancel();
+				});
+			}
+			else
+			{
+				Observer.error(SvRpc::build_error(SvPenv::ErrorCode::BadGateway, _T("No connection to SVObserver")));
+			}
+		});
 	}
 }
 
-void Router::RouteRequest(SvPenv::Envelope&& Request, SvRpc::Task<SvPenv::Envelope> Task)
+
+
+bool Router::ConnectToRouter()
 {
+	if (m_pClientRouter && m_pClientRouter->isConnected())
+	{
+		return true;
+	}
 	if (nullptr == m_pClientRouter)
 	{
 		m_pClientRouter = std::make_unique<SvRpc::RPCClient>(m_ServerAddress, m_ServerPort);
 	}
-	if (nullptr != m_pClientRouter)
+	if (!m_pClientRouter->isConnected())
 	{
-		if (!m_pClientRouter->isConnected())
-		{
-			m_pClientRouter->waitForConnect(cTwoSeconds);
-		}
-		if (m_pClientRouter->isConnected())
-		{
-			//This routes the request further to SVObserver
-			m_pClientRouter->request(std::move(Request), std::move(Task));
-		}
-		else
-		{
-			Task.error(SvRpc::build_error(SvPenv::ErrorCode::BadGateway, _T("No connection to SVObsrver")));
-		}
+		m_pClientRouter->waitForConnect(cTwoSeconds);
+	}
+	if (m_pClientRouter->isConnected())
+	{
+		return true;
 	}
 	else
 	{
-		Task.error(SvRpc::build_error(SvPenv::ErrorCode::BadGateway, _T("No connection to SVObsrver")));
+		m_pClientRouter.reset();
+		return false;
 	}
+
 }
+
+
+
 
 } // namespace SvRpc

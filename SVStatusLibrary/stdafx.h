@@ -61,6 +61,7 @@
 #include <list>
 #include <locale>
 #include <map>
+#include <mutex>
 #include <set>					//Used by static library
 #include <string>				//Used by static library
 #include <tchar.h>

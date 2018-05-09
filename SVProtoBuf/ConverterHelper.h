@@ -10,7 +10,10 @@
 #pragma region Includes
 #include "Definitions/StringTypeDef.h"
 #include "Variant.h"
+#include "SVRC.h"
+#include "SVStatusLibrary/svModeEnum.h"
 #pragma endregion Includes
+
 
 namespace SvPb
 {
@@ -28,4 +31,10 @@ HRESULT ConvertProtobufToVariant(const SvPb::Variant& rPbVariant, int Count, _va
 
 // Converts a list into a protobuf Variant by generating a semicolon separated string (The list should not contain any ;)
 int ConvertStringListToProtobuf(const SvDef::StringSet& rList, SvPb::Variant* pVariant);
+
+
+svModeEnum PbDeviceMode_2_SVIMMode(DeviceModeType type);
+
+DeviceModeType  SVIMMode_2_PbDeviceMode(unsigned long Mode);
+
 } //namespace SvPb
