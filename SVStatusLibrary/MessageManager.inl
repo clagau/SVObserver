@@ -164,8 +164,16 @@ INT_PTR MessageManager<M_Container, M_Data>::Display( const UINT MsgBoxType ) co
 {
 	INT_PTR Result( IDCANCEL );
 
+	MsgTypeEnum Type{m_Type};
+
+	//If Remote state command is active then only log the message do not display it!
+	if(LogAndDisplay == Type &&  SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD))
+	{
+		Type = LogOnly;
+	}
+
 	//If the message has already been displayed do not display again
-	if( nullptr != m_pShowDisplay && !m_pShowDisplay->empty() && LogAndDisplay == m_Type  && !m_MessageHandler.getMessage().m_Displayed )
+	if( nullptr != m_pShowDisplay && !m_pShowDisplay->empty() && LogAndDisplay == Type  && !m_MessageHandler.getMessage().m_Displayed )
 	{
 		std::string Msg;
 		std::string MsgDetails;

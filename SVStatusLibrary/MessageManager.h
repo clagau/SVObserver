@@ -10,7 +10,7 @@
  
 #pragma region Includes
 #include "MessageContainer.h"
-
+#include "SVSVIMStateClass.h"
 #pragma endregion Includes
 
 namespace SvStl

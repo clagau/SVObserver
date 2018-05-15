@@ -1867,8 +1867,8 @@ bool SVConfigurationObject::LoadInspection(SVTreeType& rTree)
 		_variant_t Value;
 		std::string IPName;
 		std::string ToolsetName;
-		long NewDisableMethod;
-		long EnableAuxiliaryExtent;
+		long NewDisableMethod{0L};
+		long EnableAuxiliaryExtent{-1L};
 
 		pInspection->SetName(ItemName.c_str());
 
@@ -1942,7 +1942,10 @@ bool SVConfigurationObject::LoadInspection(SVTreeType& rTree)
 			if (bOk)
 			{
 				pInspection->SetNewDisableMethod(1 == NewDisableMethod);
-				pInspection->SetEnableAuxiliaryExtent(EnableAuxiliaryExtent);
+				if(-1 != EnableAuxiliaryExtent)
+				{
+					pInspection->setEnableAuxiliaryExtent(1 == EnableAuxiliaryExtent);
+				}
 
 				SVTreeType::SVBranchHandle hDataChild(nullptr);
 
@@ -2433,7 +2436,7 @@ void SVConfigurationObject::UpgradeConfiguration()
 	}
 	if (ConfigChanged)
 	{
-		SvStl::MsgTypeEnum  MsgType = SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD) ? SvStl::LogOnly : SvStl::LogAndDisplay;
+		SvStl::MsgTypeEnum  MsgType{SvStl::LogAndDisplay};
 		SvStl::MessageMgrStd Exception(MsgType);
 		Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ColorToolExtentsChanged, SvStl::SourceFileParams(StdMessageParams));
 	}
@@ -5399,7 +5402,7 @@ HRESULT SVConfigurationObject::LoadMonitoredObjectList(SVTreeType& rTree, SVTree
 			}
 			else
 			{
-				SvStl::MsgTypeEnum  MsgType = SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD) ? SvStl::LogOnly : SvStl::LogAndDisplay;
+				SvStl::MsgTypeEnum  MsgType{SvStl::LogAndDisplay};
 				SvStl::MessageMgrStd Exception(MsgType);
 				SvDef::StringVector msgList;
 				msgList.push_back(Name);

@@ -43,7 +43,8 @@ public:
 	HRESULT GetMode(unsigned long& rMode, SVCommandStatus& rStatus);
 	HRESULT SetMode(unsigned long Mode, SVCommandStatus& rStatus);
 	HRESULT GetItems(CComVariant ItemNames, ISVProductItems** ppItems, SVCommandStatus& rStatus);
-	HRESULT SetItems(ISVProductItems* pItems, ISVProductItems** ppErrors, SVCommandStatus& rStatus);
+	HRESULT SetItems(ISVProductItems* pItems, bool RunOnce, ISVProductItems** ppErrors, SVCommandStatus& rStatus);
+	HRESULT RunOnce(const _bstr_t& rInspectionName, SVCommandStatus& rStatus);
 	HRESULT GetConfig(const _bstr_t& rFilePath, SVCommandStatus& rStatus);
 	HRESULT PutConfig(const _bstr_t& rFilePath, SVCommandStatus& rStatus);
 	HRESULT PutFile(const _bstr_t& rSourcePath, const _bstr_t& rDestinationPath, SVCommandStatus& rStatus);

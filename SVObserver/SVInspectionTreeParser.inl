@@ -617,9 +617,6 @@ HRESULT SVInspectionTreeParser< SVTreeType >::CreateInspectionObject(GUID& inspe
 	SvXml::SVNavigateTree::GetItem(p_rTree, SvXml::CTAG_INSPECTION_NEW_DISABLE_METHOD, hItem, newDisableMethod);
 	SvXml::SVNavigateTree::GetItem(p_rTree, SvXml::CTAG_INSPECTION_ENABLE_AUXILIARY_EXTENT, hItem, enableAuxiliaryExtent);
 
-	std::string sNewDisableMethod = SvUl::createStdString(newDisableMethod);
-	std::string sEnableAuxiliaryExtent = SvUl::createStdString(enableAuxiliaryExtent);
-
 	hr = SVObjectBuilder::CreateObject(SVGUID(classID), SVGUID(uniqueID), name, SvUl::createStdString(objectName), ownerGuid);
 	if (S_OK == hr)
 	{
@@ -631,8 +628,14 @@ HRESULT SVInspectionTreeParser< SVTreeType >::CreateInspectionObject(GUID& inspe
 		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(pObject);
 		if ( nullptr != pInspection )
 		{
-			pInspection->SetNewDisableMethod( sNewDisableMethod == _T("1") );
-			pInspection->SetEnableAuxiliaryExtent( sEnableAuxiliaryExtent == _T("1") );
+			if(VT_I4 == newDisableMethod.vt)
+			{
+				pInspection->SetNewDisableMethod(1 == newDisableMethod.lVal);
+			}
+			if (VT_I4 == enableAuxiliaryExtent.vt)
+			{
+				pInspection->setEnableAuxiliaryExtent(1 == enableAuxiliaryExtent.lVal);
+			}
 		}
 		else
 		{

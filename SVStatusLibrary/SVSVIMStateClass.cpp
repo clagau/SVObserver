@@ -11,10 +11,8 @@
 
 #include "stdafx.h"
 //Moved to precompiled header: #include <intrin.h>
-//Moved to precompiled header: #include <list>
 #include "SVSVIMStateClass.h"
 #include "Definitions/GlobalConst.h"
-#include "ObjectInterfaces/IRootObject.h"
 
 #pragma intrinsic(_InterlockedAnd)
 #pragma intrinsic(_InterlockedOr)
@@ -22,10 +20,10 @@
 long SVSVIMStateClass::m_SVIMState = SV_STATE_AVAILABLE;
 
 bool SVSVIMStateClass::m_AutoSaveRequired = false; ///< should an autosave be performed at the next appropriate time?
-__time32_t SVSVIMStateClass::m_LastModifiedTime = 0;
-__time32_t SVSVIMStateClass::m_PrevModifiedTime = 0;
-svModeEnum SVSVIMStateClass::m_prevMode = SVIM_MODE_UNKNOWN;
-svModeEnum SVSVIMStateClass::m_lastMode = SVIM_MODE_UNKNOWN;
+volatile __time32_t SVSVIMStateClass::m_PreviousModifiedTime{0L};
+volatile __time32_t SVSVIMStateClass::m_CurrentModifiedTime{0L};
+volatile svModeEnum SVSVIMStateClass::m_PreviousMode = SVIM_MODE_UNKNOWN;
+volatile svModeEnum SVSVIMStateClass::m_CurrentMode = SVIM_MODE_UNKNOWN;
 NotifyFunctor SVSVIMStateClass::m_Notify;
 
 SVSVIMStateClass::SVSVIMStateClass()
@@ -45,18 +43,14 @@ bool SVSVIMStateClass::AddState( DWORD dwState )
 		SetLastModifiedTime();
 		SetAutoSaveRequired(true);
 	}
-	svModeEnum mode = GetMode();
-	CheckModeNotify(mode);
-	setEnvironmentParameters(mode);
+	CheckModeNotify();
 	return true;
 }
 
 bool SVSVIMStateClass::RemoveState( DWORD dwState )
 {
 	::_InterlockedAnd( &m_SVIMState, ~dwState );
-	svModeEnum mode = GetMode();
-	CheckModeNotify(mode);
-	setEnvironmentParameters(mode);
+	CheckModeNotify();
 
 	return true;
 }
@@ -119,37 +113,37 @@ void SVSVIMStateClass::setNotificationFunction(NotifyFunctor Notify)
 	m_Notify = Notify;
 }
 
-void SVSVIMStateClass::CheckModeNotify(svModeEnum mode)
+void SVSVIMStateClass::setPreviousToCurrentMode()
 {
-	static svModeEnum currentMode = SVIM_MODE_UNKNOWN;
-	if (mode != currentMode)
+	svModeEnum NewMode {m_CurrentMode};
+	::InterlockedExchange(reinterpret_cast<volatile long*> (&m_PreviousMode), NewMode);
+}
+
+void SVSVIMStateClass::setPreviousToCurrentTime()
+{
+	__time32_t NewTime {m_CurrentModifiedTime};
+	::InterlockedExchange(&m_PreviousModifiedTime, NewTime);
+}
+
+void SVSVIMStateClass::CheckModeNotify()
+{
+	svModeEnum NewMode = GetMode();
+
+	if (NewMode != m_CurrentMode)
 	{
-		currentMode = mode;
-		FireModeChanged(mode);
+		::InterlockedExchange(reinterpret_cast<volatile long*> (&m_CurrentMode), NewMode);
+		FireModeChanged();
 	}
 }
-
-void SVSVIMStateClass::setEnvironmentParameters(svModeEnum mode)
-{
-	long modeValue = static_cast<long>(mode);
-
-	SvOi::setRootChildValue( SvDef::FqnEnvironmentModeValue, modeValue );
-	SvOi::setRootChildValue( SvDef::FqnEnvironmentModeIsRun, ( SVIM_MODE_ONLINE == mode ) );
-	SvOi::setRootChildValue( SvDef::FqnEnvironmentModeIsStop, ( SVIM_MODE_OFFLINE == mode ) );
-	SvOi::setRootChildValue( SvDef::FqnEnvironmentModeIsRegressionTest, ( SVIM_MODE_REGRESSION == mode ) );
-	SvOi::setRootChildValue( SvDef::FqnEnvironmentModeIsTest, ( SVIM_MODE_TEST == mode ) );
-	SvOi::setRootChildValue( SvDef::FqnEnvironmentModeIsEdit, ( SVIM_MODE_EDIT == mode ) );
-}
-
 
 HRESULT SVSVIMStateClass::SetLastModifiedTime()
 {
 	HRESULT Result( S_OK );
-	__time32_t l_LastModifiedTime = SVSVIMStateClass::m_LastModifiedTime;
+	__time32_t LastModifiedTime = SVSVIMStateClass::m_CurrentModifiedTime;
 
-	::InterlockedExchange(&SVSVIMStateClass::m_LastModifiedTime, ::_time32(nullptr));
+	::InterlockedExchange(&SVSVIMStateClass::m_CurrentModifiedTime, ::_time32(nullptr));
 
-	if (l_LastModifiedTime != SVSVIMStateClass::m_LastModifiedTime)
+	if (LastModifiedTime != SVSVIMStateClass::m_CurrentModifiedTime)
 	{
 		if (!m_Notify.empty())
 		{
@@ -161,11 +155,9 @@ HRESULT SVSVIMStateClass::SetLastModifiedTime()
 }
 
 
-HRESULT SVSVIMStateClass::FireModeChanged(svModeEnum mode)
+HRESULT SVSVIMStateClass::FireModeChanged()
 {
 	HRESULT Result(S_OK);
-
-	::InterlockedExchange((long *)&m_lastMode, mode);
 
 	if (!m_Notify.empty())
 	{

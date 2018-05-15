@@ -70,6 +70,9 @@ public:
 
 	SVConditionalClass* GetToolSetConditional() const;
 
+	bool getEnableAuxiliaryExtents() { BOOL Enabled{false}; m_EnableAuxiliaryExtents.GetValue(Enabled); return Enabled ? true : false; }
+	void setEnableAuxiliaryExtents(bool Enabled) { m_EnableAuxiliaryExtents.SetValue(BOOL(Enabled));}
+
 	template<typename SvGuidInserter>
 	void GetToolIds(SvGuidInserter Inserter) const
 	{
@@ -147,6 +150,8 @@ protected:
 	SVBoolValueObjectClass m_Failed;
 	// Failed, if TRUE ( Reset Value: FALSE )
 	SVBoolValueObjectClass m_ExplicitFailed;
+
+	SVBoolValueObjectClass m_EnableAuxiliaryExtents;
 
 	SVLongValueObjectClass m_PassedCount;
 	SVLongValueObjectClass m_FailedCount;

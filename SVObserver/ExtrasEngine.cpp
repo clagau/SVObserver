@@ -11,6 +11,7 @@
 #include "stdafx.h"
 #include "Definitions/SVUserMessage.h"
 #include "TextDefinesSvO.h"
+#include "Definitions/GlobalConst.h"
 #include "Definitions/TextDefineSVDef.h"
 #include "SVObserver.h" //needed only for one call to SVObserverApp::fileSaveAsSVX()
 #include "SVMainFrm.h"
@@ -23,6 +24,7 @@
 #include "SVStatusLibrary/GlobalPath.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "RootObject.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -44,9 +46,9 @@ const TCHAR* const FbwfDisableBatchName=
 
 #pragma region Constructor
 
-ExtrasEngine::ExtrasEngine():m_lastAutoSaveTimestamp(0), m_AutoSaveEnabled(true), 
+ExtrasEngine::ExtrasEngine():m_lastAutoSaveTimestamp(0), 
 	m_AutoSaveDeltaTime_s(ms_defaultDeltaTimeInMinutes*SvTl::c_secondsPerMinute),
-	m_FbwfAvailable(false), m_IsFbwfSelected(false), m_FbwfActive(false), m_FbwfActiveChanging(false)
+	m_FbwfAvailable(false), m_FbwfActive(false), m_FbwfActiveChanging(false)
 {
 
 	if (ms_FbwfDllInstance)
@@ -55,8 +57,6 @@ ExtrasEngine::ExtrasEngine():m_lastAutoSaveTimestamp(0), m_AutoSaveEnabled(true)
 	}
 
 	ResetAutoSaveInformation();
-
-	ReadCurrentFbwfSettings(true); //FWBF Settings not to be read too often: here and after selection has been changed in GUI should suffice
 }
 
 #pragma endregion Constructor
@@ -71,7 +71,7 @@ ExtrasEngine& ExtrasEngine::Instance()
 
 void ExtrasEngine::ExecuteAutoSaveIfAppropriate(bool always)
 {
-	if(!(IsEnabled() && SVSVIMStateClass::IsAutoSaveRequired()))
+	if(!(IsAutoSaveEnabled() && SVSVIMStateClass::IsAutoSaveRequired()))
 	{
 		return; //not enabled by user (or configuration not modified):do nothing
 	}
@@ -128,62 +128,92 @@ void ExtrasEngine::CopyDirectoryToTempDirectory(LPCTSTR SourceDir ) const
 	CopyFilesInDirectory( SourceDir, SvStl::GlobalPath::Inst().GetAutoSaveTempPath().c_str() );
 }
 
-
-void ExtrasEngine::ToggleEnableFbwf()
+void ExtrasEngine::ToggleEnableAutoSave()
 {
-	m_IsFbwfSelected = !m_IsFbwfSelected;
+	_variant_t Value;
+	RootObject::getRootChildValue(SvDef::FqnEnvironmentAutoSave, Value);
+	//Set the value with inverted state
+	RootObject::setRootChildValue(SvDef::FqnEnvironmentAutoSave, Value ? false : true);
+}
 
-	m_FbwfActiveChanging = (m_FbwfActive != m_IsFbwfSelected);
+bool ExtrasEngine::IsAutoSaveEnabled() const
+{
+	_variant_t Value;
+	RootObject::getRootChildValue(SvDef::FqnEnvironmentAutoSave, Value);
+	return Value ? true : false;
+}
 
-	std::string RequiredBatchFileName(SvO::NoneString);
-	SvStl::MessageTextEnum msgId = SvStl::Tid_Empty;
-	SvDef::StringVector msgList;
+void ExtrasEngine::SetAutoSaveEnabled(bool enabled)
+{
+	RootObject::setRootChildValue(SvDef::FqnEnvironmentAutoSave, enabled);
+}
 
-	if(m_IsFbwfSelected)
+void ExtrasEngine::ChangeFbwfState()
+{
+	//Avoid recursive calls to ChangeFbwfState
+	static bool ChangeStateActive{false};
+
+	if(!ChangeStateActive)
 	{
-		RequiredBatchFileName = FbwfEnableBatchName;
-		if(m_FbwfActiveChanging)
+		ChangeStateActive = true;
+		bool IsFbwfSelected{false};
+		RootObject::getRootChildValue(SvDef::FqnEnvironmentDiskProtection, IsFbwfSelected);
+
+		m_FbwfActiveChanging = (m_FbwfActive != IsFbwfSelected);
+
+		std::string RequiredBatchFileName(SvO::NoneString);
+		SvStl::MessageTextEnum msgId = SvStl::Tid_Empty;
+		SvDef::StringVector msgList;
+
+		if(IsFbwfSelected)
 		{
-			msgId = SvStl::Tid_ActivatingDiskProtection;
+			RequiredBatchFileName = FbwfEnableBatchName;
+			if(m_FbwfActiveChanging)
+			{
+				msgId = SvStl::Tid_ActivatingDiskProtection;
+			}
+			else
+			{
+				msgId = SvStl::Tid_DiskProtectionRemainsActive;
+			}
 		}
 		else
 		{
-			msgId = SvStl::Tid_DiskProtectionRemainsActive;
+			RequiredBatchFileName = FbwfDisableBatchName;
+			if(m_FbwfActiveChanging)
+			{
+				msgId = SvStl::Tid_DeactivatingDiskProtection;
+			}
+			else
+			{
+				msgId = SvStl::Tid_DiskProtectionRemainsInactive;
+			}
 		}
-	}
-	else
-	{
-		RequiredBatchFileName = FbwfDisableBatchName;
-		if(m_FbwfActiveChanging)
+
+		std::string BatchfilePath = SvUl::Format( _T("\"%s\\%s\""), SvStl::GlobalPath::Inst().GetBinPath().c_str(), RequiredBatchFileName.c_str());
+		auto ret = system( BatchfilePath.c_str() );
+		if(ret)
 		{
-			msgId = SvStl::Tid_DeactivatingDiskProtection;
+			msgId = SvStl::Tid_CouldNotExecuteFormatString;
+			msgList.push_back( BatchfilePath );
+			// undo selection in this case
+			IsFbwfSelected = !IsFbwfSelected;
+			m_FbwfActiveChanging = (m_FbwfActive != IsFbwfSelected);
+			RootObject::setRootChildValue(SvDef::FqnEnvironmentAutoSave, IsFbwfSelected);
 		}
-		else
-		{
-			msgId = SvStl::Tid_DiskProtectionRemainsInactive;
-		}
+
+		SvStl::MessageMgrStd toggleFbwfMessage( SvStl::LogAndDisplay );
+		toggleFbwfMessage.setMessage( (ret ? SVMSG_SVO_86_FBWF_CHANGE_ERROR : SVMSG_SVO_85_FBWF_CHANGE), msgId, msgList, SvStl::SourceFileParams(StdMessageParams) );
+
+		ReadCurrentFbwfSettings();
+		ChangeStateActive = false;
 	}
-
-	std::string BatchfilePath = SvUl::Format( _T("\"%s\\%s\""), SvStl::GlobalPath::Inst().GetBinPath().c_str(), RequiredBatchFileName.c_str());
-	auto ret = system( BatchfilePath.c_str() );
-	if(ret)
-	{
-		msgId = SvStl::Tid_CouldNotExecuteFormatString;
-		msgList.push_back( BatchfilePath );
-		// undo selection in this case
-		m_IsFbwfSelected = !m_IsFbwfSelected; 
-		m_FbwfActiveChanging = (m_FbwfActive != m_IsFbwfSelected);
-	}
-
-	SvStl::MessageMgrStd toggleFbwfMessage( SvStl::LogAndDisplay );
-	toggleFbwfMessage.setMessage( (ret ? SVMSG_SVO_86_FBWF_CHANGE_ERROR : SVMSG_SVO_85_FBWF_CHANGE), msgId, msgList, SvStl::SourceFileParams(StdMessageParams) );
-
-	ReadCurrentFbwfSettings();
 } 
 
 
-void ExtrasEngine::ReadCurrentFbwfSettings(bool onStart)
+bool ExtrasEngine::ReadCurrentFbwfSettings()
 {
+	bool Result{false};
 	ULONG current = 0, next = 0;
 
 	if (nullptr == m_pfnFbwfIsFilterEnabled )
@@ -200,16 +230,19 @@ void ExtrasEngine::ReadCurrentFbwfSettings(bool onStart)
 	if(m_FbwfAvailable)
 	{
 		m_FbwfActive = (current != 0);
-		if(onStart)
-		{// on initialization: set selection to FBWF status that will be present after next bootup
-			m_IsFbwfSelected = (next != 0);
-		}
+		Result = (next != 0);
 		m_FbwfActiveChanging = (current != next);
 	}
 
-} 
+	return Result;
+}
 
-
+bool ExtrasEngine::IsFbwfSelected()  const
+{
+	_variant_t Value;
+	RootObject::getRootChildValue(SvDef::FqnEnvironmentDiskProtection, Value);
+	return Value ? true : false;
+}
 #pragma endregion Public Methods
 
 #pragma region Private Methods

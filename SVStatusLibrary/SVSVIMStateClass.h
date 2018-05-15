@@ -73,12 +73,11 @@ public:
 	//whether there is at least one bit (state) matching.
 	static bool CheckState( DWORD dwState );
 
-	//************************************
-	// Method:    GetMode
-	// Description:  Get the value of the mode
-	// Returns:   svModeEnum Enum of the mode
-	//************************************
-	static svModeEnum GetMode();
+	static svModeEnum getCurrentMode() { return m_CurrentMode; }
+	static svModeEnum getPreviousMode() { return m_PreviousMode; }
+
+	static __time32_t getCurrentTime() { return m_CurrentModifiedTime; }
+	static __time32_t getPreviousTime() { return m_PreviousModifiedTime; }
 
 	//************************************
 	//! Sets the notification function
@@ -86,33 +85,29 @@ public:
 	//************************************
 	static void setNotificationFunction(NotifyFunctor Notify);
 
+	static void setPreviousToCurrentMode();
+	static void setPreviousToCurrentTime();
+
 	static bool IsAutoSaveRequired() { return m_AutoSaveRequired; }
 	static void SetAutoSaveRequired(bool required) { m_AutoSaveRequired = required; }
-
-	static __time32_t m_LastModifiedTime;
-	static __time32_t m_PrevModifiedTime;
-	static svModeEnum m_prevMode;
-	static svModeEnum m_lastMode;
 
 private:
 	//************************************
 	// Method: CheckModeNotify
 	// Description: Determine if the mode has changed and fire the notification.
-	// param: svModeEnum  - the current mode
 	// Returns: void
 	//************************************
-	static void CheckModeNotify(svModeEnum mode);
+	static void CheckModeNotify();
 
 	//************************************
-	// Method:    setEnvironmentParameters
-	// Description:  Set all Environment.Mode parameter.
-	// param: svModeEnum - the current mode
-	// Returns:   void
+	// Method:    GetMode
+	// Description:  Get the value of the mode
+	// Returns:   svModeEnum Enum of the mode
 	//************************************
-	static void setEnvironmentParameters(svModeEnum mode);
+	static svModeEnum GetMode();
 
 	static HRESULT SetLastModifiedTime();
-	static HRESULT FireModeChanged(svModeEnum mode);
+	static HRESULT FireModeChanged();
 
 	//This constructor does nothing.
 	SVSVIMStateClass();
@@ -124,6 +119,12 @@ private:
 
 	//This attribute contain the SVIM state value.
 	static long m_SVIMState;
+
+	static volatile svModeEnum m_PreviousMode;
+	static volatile svModeEnum m_CurrentMode;
+
+	static volatile __time32_t m_PreviousModifiedTime;
+	static volatile __time32_t m_CurrentModifiedTime;
 
 	static bool m_AutoSaveRequired; ///< should an autosave be performed at the next appropriate time?
 };

@@ -22,6 +22,7 @@ namespace SVRemoteTest
 	public class SVRemoteCtrlSetItemsView : ISVComObjectView
     {
         #region Member Variables
+        private bool m_RunOnce = true;
         private List<SVValue> m_valueItems = new List<SVValue>();
         private List<SVInputImage> m_imageItems = new List<SVInputImage>();
         private List<SVError> m_errorFaultItems = new List<SVError>();
@@ -44,6 +45,14 @@ namespace SVRemoteTest
         {
             get { return m_imageItems; }
             set { m_imageItems = value; }
+        }
+
+        [Category("Input Parameters")]
+        [Description("Run Once")]
+        public bool RunOnce 
+        {
+            get { return m_RunOnce; }
+            set { m_RunOnce = value; }
         }
 
         [Category("Error Results")]
@@ -95,6 +104,7 @@ namespace SVRemoteTest
                 }
             }
             items.Add(productItems);
+            items.Add(m_RunOnce);
 		}
 
 		public void SetOutput(String name, object value)

@@ -39,11 +39,13 @@
 #pragma region Precompiled Headers
 
 #include <comutil.h>
+#include <fstream>
 #include <functional>
 #include <future>
 #include <iostream>
 #include <map>
 #include <memory>
+#include <queue>
 #include <set>
 #include <stdio.h>
 #include <string>

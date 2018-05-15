@@ -23,6 +23,7 @@
 #include "ObjectInterfaces\IRootObject.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVContainerLibrary/SelectorItem.h"
+#include "ExtrasEngine.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -69,16 +70,29 @@ HRESULT RootObject::RefreshObject( const SVObjectClass* const pSender, RefreshOb
 {
 	HRESULT Result = S_OK;
 
-	if( PostRefresh == Type )
+	if (!m_Initialize && PostRefresh == Type)
 	{
 		//When it is of type Global Constant we need to update the IO view
-		if( SvDef::SVGlobalConstantObjectType == pSender->GetObjectInfo().m_ObjectTypeInfo.SubType )
+		if (SvDef::SVGlobalConstantObjectType == pSender->GetObjectInfo().m_ObjectTypeInfo.SubType)
 		{
 			SVIODoc* pIODoc = TheSVObserverApp.GetIODoc();
 			if(nullptr != pIODoc )
 			{
 				pIODoc->updateGlobalConstantsView();
 			}
+		}
+
+		//When certain objects are changed need to do post processing
+		if (EnvironmentDiskProtectionUidGuid == pSender->GetUniqueObjectID())
+		{
+			ExtrasEngine::Instance().ChangeFbwfState();
+		}
+		else if (EnvironmentStartLastConfigUidGuid == pSender->GetUniqueObjectID())
+		{
+			//Save Start Last Configuration in registry
+			double Value {0.0};
+			pSender->getValue(Value);
+			TheSVObserverApp.WriteProfileInt(_T("Settings"), _T("Run Last Configuration Automatically"), static_cast<int> (Value));
 		}
 	}
 
@@ -98,7 +112,7 @@ bool RootObject::createConfigurationObject()
 	pValueObject = m_RootChildren.setValue( SvDef::FqnEnvironmentImageUpdate, Update );
 	if(nullptr != pValueObject)
 	{
-		//Need to set the attributes to settable remotely and online for the Image Update object but should not be selectable
+		//Need to set the attributes to settable remotely and online but should not be selectable
 		pValueObject->SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute );
 		pValueObject->SetObjectAttributesAllowed( SvDef::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
 	}
@@ -106,7 +120,7 @@ bool RootObject::createConfigurationObject()
 	pValueObject = m_RootChildren.setValue( SvDef::FqnEnvironmentResultUpdate, Update );
 	if(nullptr != pValueObject)
 	{
-		//Need to set the attributes to settable remotely and online for the Result Update object but should not be selectable
+		//Need to set the attributes to settable remotely and online but should not be selectable
 		pValueObject->SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute );
 		pValueObject->SetObjectAttributesAllowed( SvDef::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
 	}
@@ -206,12 +220,14 @@ bool RootObject::Initialize()
 {
 	bool Result(true);
 
+	m_Initialize = true;
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType =  SvDef::SVRootObjectType;
 	SVObjectManagerClass::Instance().ChangeUniqueObjectID(this, RootUidGuid);
 	//The Root object should have an empty name
 	SetName(_T(""));
 
 	Result = createRootChildren();
+	m_Initialize = false;
 
 	return Result;
 }
@@ -223,6 +239,14 @@ bool RootObject::createRootChildren()
 	Result = createRootChild( SvDef::FqnEnvironment, SvDef::SVEnvironmentObjectType );
 	if( Result )
 	{
+		//Default values for the mode
+		m_RootChildren.setValue(SvDef::FqnEnvironmentModeValue, 0L);
+		m_RootChildren.setValue(SvDef::FqnEnvironmentModeIsRun, false);
+		m_RootChildren.setValue(SvDef::FqnEnvironmentModeIsStop, false);
+		m_RootChildren.setValue(SvDef::FqnEnvironmentModeIsRegressionTest, false);
+		m_RootChildren.setValue(SvDef::FqnEnvironmentModeIsTest, false);
+		m_RootChildren.setValue(SvDef::FqnEnvironmentModeIsEdit, false);
+
 		//When Environment created then create the following variables to set their attributes
 		BasicValueObjectPtr pValueObject( nullptr );
 		pValueObject = m_RootChildren.setValue( SvDef::FqnEnvironmentModelNumber, _T("") );
@@ -239,6 +263,38 @@ bool RootObject::createRootChildren()
 		if (nullptr != pValueObject)
 		{
 			pValueObject->SetObjectAttributesAllowed( SvDef::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
+		}
+		pValueObject = m_RootChildren.setValue(SvDef::FqnEnvironmentAutoSave, true);
+		if (nullptr != pValueObject)
+		{
+			//Need to set the attributes to settable remotely and online but should not be selectable
+			pValueObject->SetObjectAttributesAllowed(SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute);
+			pValueObject->SetObjectAttributesAllowed(SvDef::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute);
+		}
+		bool DiskProtectionEnabled = ExtrasEngine::Instance().ReadCurrentFbwfSettings();
+		pValueObject = m_RootChildren.setValue(SvDef::FqnEnvironmentDiskProtection, DiskProtectionEnabled);
+		if (nullptr != pValueObject)
+		{
+			//Need to set the attributes to settable remotely but should not be selectable
+			pValueObject->SetObjectAttributesAllowed(SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute);
+			pValueObject->SetObjectAttributesAllowed(SvDef::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute);
+		}
+		// Load special profile settings
+		bool StartLastConfiguration(false);
+		if (TheSVObserverApp.GetProfileInt(_T("Settings"), _T("Run Last Configuration Automatically"), 0))
+		{
+			StartLastConfiguration = true;
+		}
+		else
+		{
+			StartLastConfiguration = false;
+		}
+		pValueObject = m_RootChildren.setValue(SvDef::FqnEnvironmentStartLastConfig, StartLastConfiguration);
+		if (nullptr != pValueObject)
+		{
+			//Need to set the attributes to settable remotely but should not be selectable
+			pValueObject->SetObjectAttributesAllowed(SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute);
+			pValueObject->SetObjectAttributesAllowed(SvDef::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute);
 		}
 
 		Result = createRootChild( SvDef::FqnGlobal, SvDef::SVGlobalConstantObjectType );
@@ -311,14 +367,5 @@ void SvOi::addRootChildObjects(SVOutputInfoListClass& rList)
 		rList.Add( &((*iter)->GetObjectOutputInfo()) );
 	}
 }
-
-
-template <typename ELEMENT_TYPE> 
-void SvOi::setRootChildValue(LPCTSTR DottedName, const ELEMENT_TYPE& rValue)
-{
-	RootObject::setRootChildValue<ELEMENT_TYPE>(DottedName, rValue);
-}
-
-
 #pragma endregion IRootObject-function
 

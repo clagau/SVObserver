@@ -8,15 +8,15 @@
 
 #include "stdafx.h"
 
-#include <future>
-#include <queue>
+//Moved to precompiled header: #include <future>
+//Moved to precompiled header: #include <queue>
 
 #include "SharedMemoryAccess.h"
 
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVSystemLibrary/SVVersionInfo.h"
 #include "SVUtilityLibrary/SVBitmapInfo.h"
-#include "SVObserverAccess/SVObserverAccess.h"
+
 namespace SvOgw
 {
 SharedMemoryAccess::SharedMemoryAccess()

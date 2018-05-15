@@ -339,7 +339,7 @@ HRESULT SVToolClass::GetDrawInfo( SVExtentMultiLineStruct& rMultiLine )
 
 void SVToolClass::UpdateAuxiliaryExtents()
 {
-	if( GetInspectionInterface()->GetEnableAuxiliaryExtent() )
+	if( GetInspectionInterface()->getEnableAuxiliaryExtent() )
 	{
 		BOOL l_bUpdateSourceExtents = false;
 
@@ -494,7 +494,7 @@ bool SVToolClass::Run( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVect
 	}// end else
 
 	//
-	if( GetInspectionInterface()->GetEnableAuxiliaryExtent() )
+	if( GetInspectionInterface()->getEnableAuxiliaryExtent() )
 	{
 		UpdateAuxiliaryExtents();
 	}
@@ -762,7 +762,7 @@ bool SVToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	BOOL bValue( false );
 	const UINT cAttributes = SvDef::SV_VIEWABLE | SvDef::SV_ARCHIVABLE | SvDef::SV_SELECTABLE_FOR_EQUATION | SvDef::SV_SELECTABLE_FOR_STATISTICS | SvDef::SV_PUBLISHABLE;
 	
-	if( GetInspectionInterface()->GetEnableAuxiliaryExtent() )
+	if( GetInspectionInterface()->getEnableAuxiliaryExtent() )
 	{
 		m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 		m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::RemoveAttribute );
@@ -1037,8 +1037,7 @@ bool SVToolClass::areAuxExtentsAvailable() const
 {
 	bool bRetVal = true;
 	// check inspection, and has image input!
-	if (nullptr == GetToolImage() || 
-		0 == GetInspectionInterface()->GetEnableAuxiliaryExtent())
+	if (nullptr == GetToolImage() || GetInspectionInterface()->getEnableAuxiliaryExtent())
 	{
 		bRetVal = false;
 	}

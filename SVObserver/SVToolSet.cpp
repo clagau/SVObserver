@@ -49,7 +49,8 @@ void SVToolSetClass::init()
 	RegisterEmbeddedObject( &m_Passed, SVPassedObjectGuid, IDS_OBJECTNAME_PASSED, false, SvOi::SVResetItemNone );
 	RegisterEmbeddedObject( &m_Failed, SVFailedObjectGuid, IDS_OBJECTNAME_FAILED, false, SvOi::SVResetItemNone );
 	RegisterEmbeddedObject( &m_Warned, SVWarnedObjectGuid, IDS_OBJECTNAME_WARNED, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_ExplicitFailed, SVExplicitFailedObjectGuid, IDS_OBJECTNAME_EXPLICIT_FAILED, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject(&m_ExplicitFailed, SVExplicitFailedObjectGuid, IDS_OBJECTNAME_EXPLICIT_FAILED, false, SvOi::SVResetItemNone);
+	
 
 	RegisterEmbeddedObject( &m_PassedCount, SVPassedCountObjectGuid, IDS_OBJECTNAME_PASSED_COUNT, false, SvOi::SVResetItemNone );
 	RegisterEmbeddedObject( &m_FailedCount, SVFailedCountObjectGuid, IDS_OBJECTNAME_FAILED_COUNT, false, SvOi::SVResetItemNone );
@@ -73,7 +74,9 @@ void SVToolSetClass::init()
 	RegisterEmbeddedObject( &m_LastTriggerToStart, SVLastTriggerToStartGuid, IDS_TRIGGER_TO_START_TIME, false, SvOi::SVResetItemNone );
 	RegisterEmbeddedObject( &m_Width, SVExtentWidthObjectGuid, IDS_OBJECTNAME_EXTENT_WIDTH, false, SvOi::SVResetItemTool );
 	RegisterEmbeddedObject( &m_Height, SVExtentHeightObjectGuid, IDS_OBJECTNAME_EXTENT_HEIGHT, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject(&m_EnableAuxiliaryExtents, EnableAuxiliaryExtentsObjectGuid, IDS_OBJECTNAME_AUXILIARYEXTENTS, false, SvOi::SVResetItemNone);
 	
+	m_EnableAuxiliaryExtents.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE | SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute);
 
 	// Set Embedded defaults
 	m_Enabled.SetDefaultValue( BOOL(true) );
@@ -127,6 +130,8 @@ void SVToolSetClass::init()
 
 	m_Width.SetDefaultValue( 0.0 );
 	m_Height.SetDefaultValue( 0.0 );
+
+	m_EnableAuxiliaryExtents.SetDefaultValue(BOOL(false));
 
 	// Set local defaults
 	m_StartTime = 0.0;

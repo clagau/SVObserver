@@ -41,20 +41,21 @@ public:
 	//************************************
 	/// toggles the enable status
 	//************************************
-	void ToggleEnable(){m_AutoSaveEnabled=!m_AutoSaveEnabled;}
-	bool IsEnabled() const {return m_AutoSaveEnabled;}
-	void SetEnabled(bool enabled){m_AutoSaveEnabled = enabled;}
+	void ToggleEnableAutoSave();
+	bool IsAutoSaveEnabled() const;
+	void SetAutoSaveEnabled(bool enabled);
 
-	/// toggles the FBWF status that will be active after the next reboot (and displays appropriate message boxes)
-	void ToggleEnableFbwf();
+	/// Changes the FBWF status that will be active after the next reboot (and displays appropriate message boxes)
+	void ChangeFbwfState();
 
-	/// toggles the FBWF status (current and after reboot) using the fbwf api function FbwfIsFilterEnabled()
-	void ReadCurrentFbwfSettings(bool onStart = false);
+	//! Reads the current Fbwf settings
+	//! \returns true if Fbwf is active
+	bool ReadCurrentFbwfSettings();
 
-	bool IsFbwfAvailable() const {return m_FbwfAvailable;}		//AB simple getter 
-	bool IsFbwfActive()    const {return m_FbwfActive;}			//AB simple getter 
-	bool IsFbwfSelected()  const {return m_IsFbwfSelected;}		//AB simple getter 
-	bool IsFbwfChanging()  const {return m_FbwfActiveChanging;} //AB simple getter 
+	bool IsFbwfAvailable() const {return m_FbwfAvailable;}
+	bool IsFbwfActive()    const {return m_FbwfActive;}
+	bool IsFbwfSelected()  const;
+	bool IsFbwfChanging()  const {return m_FbwfActiveChanging;}
 
 	//************************************
 	/// performs an automatic configuration backup if enabled and required (when always is false, 
@@ -97,10 +98,8 @@ private:
 	FbwfIsFilterEnabledPtr m_pfnFbwfIsFilterEnabled; ///< the function pointer modelled on FbwfIsFilterEnabled() in fbwfapi.h
 	double m_AutoSaveDeltaTime_s; ///< the minimum (for most purposes) autosave interval in seconds
 	time_t  m_lastAutoSaveTimestamp; ///< when was the latest automatic configuration backup done?
-	bool m_AutoSaveEnabled; ///< is automatic saving of configurations enabled?
 
 	bool m_FbwfAvailable;		///< is FBWF functionality available (i..e installed and DLL found)? 
-	bool m_IsFbwfSelected;		///< is FBWF functionality selected to be available after the next bootup
 	bool m_FbwfActive;			///< is FBWF functionality currently active?
 	bool m_FbwfActiveChanging;	///< will FBWF functionality be active after the next reboot?
 

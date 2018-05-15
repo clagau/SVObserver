@@ -10,6 +10,7 @@
 #include "stdafx.h"
 #include "SVRCCommand.h"
 #include "SVConfigurationObject.h"
+#include "SVInspectionProcess.h"
 #include "SVObserver.h"
 #include "SVVisionProcessorHelper.h"
 #include "SVRemoteControlConstants.h"
@@ -21,6 +22,7 @@
 #include "SVSystemLibrary/SVVersionInfo.h"
 #include "SVStorageResult.h"
 #include "SVProtoBuf/ConverterHelper.h"
+#include "InspectionCommands/CommandFunctionHelper.h"
 #pragma endregion Includes
 
 SVRCCommand::SVRCCommand()
@@ -516,7 +518,7 @@ void SVRCCommand::SetItems(const SvPb::SetItemsRequest& rRequest, SvRpc::Task<Sv
 		if (!Items.empty())
 		{
 			SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-			Result = SVVisionProcessorHelper::Instance().SetItems(Items, ItemResults, true);
+			Result = SVVisionProcessorHelper::Instance().SetItems(Items, ItemResults, rRequest.runonce());
 			SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 		}
 		else
@@ -842,6 +844,47 @@ void SVRCCommand::QueryMonitorListNames(const SvPb::QueryMonitorListNamesRequest
 	{
 		int Count = SvPb::ConvertStringListToProtobuf(Items, pValue->mutable_item());
 		pValue->set_count(Count);
+	}
+
+	Response.set_hresult(Result);
+	task.finish(std::move(Response));
+}
+
+void SVRCCommand::RunOnce(const SvPb::RunOnceRequest& rRequest, SvRpc::Task<SvPb::StandardResponse> task)
+{
+	HRESULT Result {S_OK};
+	SvPb::StandardResponse Response;
+
+	if(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
+	{
+
+		SVConfigurationObject* pConfig{nullptr};
+		SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+		if(nullptr != pConfig)
+		{
+			SVInspectionProcess* pInspection{nullptr};
+			pConfig->GetInspection(rRequest.inspectionname().c_str(), pInspection);
+			if(nullptr != pInspection)
+			{
+				SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
+				SvPb::InspectionRunOnceRequest requestMessage;
+				SvPb::SetGuidInProtoBytes(requestMessage.mutable_inspectionid(), pInspection->GetUniqueObjectID());
+				SvCmd::InspectionCommandsSynchronous(pInspection->GetUniqueObjectID(), &requestMessage, nullptr);
+				SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
+			}
+			else
+			{
+				Result = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;
+			}
+		}
+		else
+		{
+			Result = SVMSG_CONFIGURATION_NOT_LOADED;
+		}
+	}
+	else
+	{
+		Result = SVMSG_63_SVIM_IN_WRONG_MODE;
 	}
 
 	Response.set_hresult(Result);

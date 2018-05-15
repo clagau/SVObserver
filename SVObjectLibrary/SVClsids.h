@@ -132,6 +132,7 @@ extern /*const*/ GUID SVLastTriggerToPPQCompletionGuid;
 extern /*const*/ GUID SVLastTriggerToStartGuid;
 extern /*const*/ GUID ToolsetWidthGuid;
 extern /*const*/ GUID ToolsetHeightGuid;
+extern /*const*/ GUID EnableAuxiliaryExtentsObjectGuid;
 
 // GUID for the SVWindowToolClass
 extern /*const*/ GUID SVWindowToolClassGuid;
@@ -1189,6 +1190,9 @@ extern /*const*/ GUID EnvironmentModeIsTestUidGuid;
 extern /*const*/ GUID EnvironmentModeIsEditUidGuid;
 extern /*const*/ GUID EnvironmentModeValueUidGuid;
 extern /*const*/ GUID EnvironmentModeUidGuid;
+extern /*const*/ GUID EnvironmentAutoSaveUidGuid;
+extern /*const*/ GUID EnvironmentDiskProtectionUidGuid;
+extern /*const*/ GUID EnvironmentStartLastConfigUidGuid;
 // Unique base ID GUID for Camera variables always have 0x100 GUIDS free after the base GUID
 extern /*const*/ GUID CameraBaseSerialNumberUidGuid;
 extern /*const*/ GUID CameraBaseGainUidGuid;

@@ -169,8 +169,8 @@ public:
 	bool IsNewDisableMethodSet() override;
 	void SetNewDisableMethod( bool bNewDisableMethod ); 
 
-	virtual long GetEnableAuxiliaryExtent() const override;
-	virtual void SetEnableAuxiliaryExtent( long p_lEnableAuxiliaryExtents ) override;
+	virtual bool getEnableAuxiliaryExtent() const override;
+	virtual void setEnableAuxiliaryExtent(bool Enabled) override;
 
 	//new GetOverlay method for use with the ActiveX
 	HRESULT CollectOverlays(SVImageClass* p_pImage, SVExtentMultiLineStructVector& p_rMultiLineArray);
@@ -464,7 +464,6 @@ private:
 	SVProductInfoStruct m_svLastRunProduct;
 
 	bool                m_bNewDisableMethod;
-	long                m_lEnableAuxiliaryExtents;
 
 	DWORD               m_dwThreadId;
 

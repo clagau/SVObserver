@@ -401,6 +401,21 @@ SVRemoteCtrl::SVRemoteCtrl()
 		return l_Status;
 	}
 
+	STDMETHODIMP SVRemoteCtrl::RunOnce(BSTR InspectionName)
+	{
+		HRESULT l_Status = S_OK;
+		SVCommandStatus CommandStatus;
+
+		l_Status = m_dispatcher->RunOnce(InspectionName, CommandStatus);
+
+		if (l_Status != S_OK)
+		{
+			SVERROR(CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, CommandStatus.hResult);
+		}
+
+		return l_Status;
+	}
+
 	STDMETHODIMP SVRemoteCtrl::GetDeviceConfigReport(BSTR* report)
 	{
 		HRESULT l_Status = S_OK;
@@ -693,12 +708,12 @@ SVRemoteCtrl::SVRemoteCtrl()
 		return l_Status;
 	}
 
-	STDMETHODIMP SVRemoteCtrl::SetItems(ISVProductItems* pItems, ISVProductItems ** ppErrors)
+	STDMETHODIMP SVRemoteCtrl::SetItems(ISVProductItems* pItems, VARIANT_BOOL RunOnce, ISVProductItems ** ppErrors)
 	{
 		HRESULT l_Status = S_OK;
 		SVCommandStatus CommandStatus;
 
-		l_Status = m_dispatcher->SetItems(pItems, ppErrors, CommandStatus);
+		l_Status = m_dispatcher->SetItems(pItems, RunOnce, ppErrors, CommandStatus);
 
 		if (!SUCCEEDED(l_Status))
 		{

@@ -30,6 +30,7 @@
 #include "SVObjectLibrary\SVObjectLibrary.h"
 #include "Definitions/SVUserMessage.h"
 #include "Definitions/StringTypeDef.h"
+#include "SVProtoBuf/ConverterHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -209,7 +210,7 @@ HRESULT SVVisionProcessorHelper::GetConfigurationMode(unsigned long& rMode) cons
 {
 	HRESULT l_Status = S_OK;
 
-	rMode = SVSVIMStateClass::GetMode();
+	rMode = SVSVIMStateClass::getCurrentMode();
 
 	return l_Status;
 }
@@ -1239,6 +1240,20 @@ void SVVisionProcessorHelper::Shutdown()
 }
 HRESULT SVVisionProcessorHelper::FireNotification(int Type, int MessageNumber, LPCTSTR MessageText)
 {
+	HRESULT Result{S_OK};
+
+	//Check to see if mode has changed
+	svModeEnum CurrentMode = SVSVIMStateClass::getCurrentMode();
+	if (SVSVIMStateClass::getPreviousMode() != CurrentMode)
+	{
+		RootObject::setRootChildValue(SvDef::FqnEnvironmentModeValue, static_cast<long> (CurrentMode));
+		RootObject::setRootChildValue(SvDef::FqnEnvironmentModeIsRun, (SVIM_MODE_ONLINE == CurrentMode));
+		RootObject::setRootChildValue(SvDef::FqnEnvironmentModeIsStop, (SVIM_MODE_OFFLINE == CurrentMode));
+		RootObject::setRootChildValue(SvDef::FqnEnvironmentModeIsRegressionTest, (SVIM_MODE_REGRESSION == CurrentMode));
+		RootObject::setRootChildValue(SvDef::FqnEnvironmentModeIsTest, (SVIM_MODE_TEST == CurrentMode));
+		RootObject::setRootChildValue(SvDef::FqnEnvironmentModeIsEdit, (SVIM_MODE_EDIT == CurrentMode));
+	}
+
 	SvStl::NotificationEnum NotificationType(SvStl::NotificationEnum::MsgUknown);
 	NotificationType = static_cast<SvStl::NotificationEnum> (Type);
 	if (SvStl::NotificationEnum::MsgUknown != NotificationType)
@@ -1248,13 +1263,18 @@ HRESULT SVVisionProcessorHelper::FireNotification(int Type, int MessageNumber, L
 	if (m_pIoService)
 	{
 		m_pIoService->post([this] { ProcessNotifications(); });
-		return S_OK;
 	}
 	else
 	{
-		return E_FAIL;
+		Result = E_FAIL;
 	}
 
+	if (SVSVIMStateClass::getPreviousMode() != CurrentMode)
+	{
+		SVSVIMStateClass::setPreviousToCurrentMode();
+	}
+
+	return Result;
 }
 
 
@@ -1285,10 +1305,10 @@ void SVVisionProcessorHelper::ProcessLastModified()
 {
 	if (m_bNotify.load() == false)
 		return;
-	if (m_NotificationObserver.m_OnNext && SVSVIMStateClass::m_PrevModifiedTime != SVSVIMStateClass::m_LastModifiedTime)
+	if (m_NotificationObserver.m_OnNext && SVSVIMStateClass::getPreviousTime() != SVSVIMStateClass::getCurrentTime())
 	{
 		SvPb::GetNotificationStreamResponse resp;
-		resp.set_lastmodified(SVSVIMStateClass::m_LastModifiedTime);
+		resp.set_lastmodified(SVSVIMStateClass::getCurrentTime());
 		try
 		{
 			m_NotificationObserver.onNext(std::move(resp));
@@ -1297,7 +1317,7 @@ void SVVisionProcessorHelper::ProcessLastModified()
 		{
 			return;
 		}
-		SVSVIMStateClass::m_PrevModifiedTime = SVSVIMStateClass::m_LastModifiedTime;
+		SVSVIMStateClass::setPreviousToCurrentTime();
 	}
 }
 
@@ -1324,7 +1344,6 @@ void SVVisionProcessorHelper::ProcessMsgNotification()
 		}
 		m_MessageNotification.setProcessed(true);
 	}
-
 }
 
 void SVVisionProcessorHelper::NotifyModeChanged()
@@ -1333,47 +1352,20 @@ void SVVisionProcessorHelper::NotifyModeChanged()
 	{
 		return;
 	}
-	if (SVSVIMStateClass::m_prevMode != SVSVIMStateClass::m_lastMode)
+	if (SVSVIMStateClass::getPreviousMode() != SVSVIMStateClass::getCurrentMode())
 	{
-		SvPb::GetNotificationStreamResponse resp;
-
-		switch (SVSVIMStateClass::m_lastMode)
-		{
-
-			case SVIM_MODE_ONLINE:
-				resp.set_currentmode(SvPb::DeviceModeType::RunMode);
-				break;
-			case SVIM_MODE_OFFLINE:
-				resp.set_currentmode(SvPb::DeviceModeType::StopMode);
-				break;
-			case SVIM_MODE_REGRESSION:
-				resp.set_currentmode(SvPb::DeviceModeType::RegressionMode);
-				break;
-			case SVIM_MODE_TEST:
-				resp.set_currentmode(SvPb::DeviceModeType::TestMode);
-				break;
-			case SVIM_MODE_EDIT:
-				resp.set_currentmode(SvPb::DeviceModeType::EditMode);
-				break;
-			case SVIM_MODE_CHANGING:
-				resp.set_currentmode(SvPb::DeviceModeType::ModeChanging);
-				break;
-			case SVIM_MODE_UNKNOWN:
-			default:
-				resp.set_currentmode(SvPb::DeviceModeType::Available);
-				break;
-		}
+		SvPb::GetNotificationStreamResponse Response;
+		Response.set_currentmode(SvPb::SVIMMode_2_PbDeviceMode(static_cast<long> (SVSVIMStateClass::getCurrentMode())));
 		if (m_NotificationObserver.m_OnNext)
 		{
 			try
 			{
-				m_NotificationObserver.onNext(std::move(resp));
+				m_NotificationObserver.onNext(std::move(Response));
 			}
 			catch (const SvRpc::ConnectionLostException&)
 			{
 				return;
 			}
-			SVSVIMStateClass::m_prevMode = SVSVIMStateClass::m_lastMode;
 		}
 	}
 }

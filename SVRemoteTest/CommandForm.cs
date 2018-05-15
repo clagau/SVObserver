@@ -57,7 +57,18 @@ namespace SVRemoteTest
 				// filter out event (Advisor)
 				if (!mf.Name.StartsWith("get_") && !mf.Name.StartsWith("set_") && !mf.Name.StartsWith("add_") && !mf.Name.StartsWith("remove_"))
 				{
-                    m_MethodList.Add(mf);
+                    if(mf.Name == "SetItems")
+                    {
+                        //With SetItems we only want to add the Method with 2 Parameters
+                        if (mf.GetParameters().GetLength(0) == 2)
+                        {
+                            m_MethodList.Add(mf);
+                        }
+                    }
+                    else
+                    {
+                        m_MethodList.Add(mf);
+                    }
                 }
 			}
             m_MethodList.Sort(CompareMethodInfo);

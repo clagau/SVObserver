@@ -163,6 +163,7 @@ private:
 #pragma region Member Variables
 	RootChildren				m_RootChildren;						//The tree for all root children
 	SVConfigurationObjectPtr	m_pConfigurationObject;				//The main node configuration pointer object
+	bool m_Initialize{false};
 #pragma endregion Member Variables
 };
 

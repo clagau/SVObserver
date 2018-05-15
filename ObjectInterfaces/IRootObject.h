@@ -40,10 +40,4 @@ namespace SvOi
 	/// \param rList [in] SVOutputInfoListClass to receive objects from the root tree
 	//************************************
 	void addRootChildObjects(SVOutputInfoListClass& rList);
-
-	template <typename ELEMENT_TYPE>
-	void setRootChildValue(LPCTSTR DottedName, const ELEMENT_TYPE& rValue);
-
-	template void setRootChildValue(LPCTSTR DottedName, const bool& rValue);
-	template void setRootChildValue(LPCTSTR DottedName, const long& rValue);
 } //namespace SvOi

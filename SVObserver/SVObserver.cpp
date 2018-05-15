@@ -33,7 +33,6 @@
 #include "SVCommand.h"
 #include "SVAboutDialogClass.h"
 #include "SVConfigurationPrint.h"
-#include "SVEnvironmentSettingsDialog.h"
 #include "SVFileSystemLibrary/SVFileNameManagerClass.h"
 #include "SVImageViewScroll.h"
 #include "SVIPChildFrm.h"
@@ -204,7 +203,6 @@ BEGIN_MESSAGE_MAP(SVObserverApp, CWinApp)
 	ON_COMMAND(ID_EXTRAS_LOGIN, OnExtrasLogin)
 	ON_COMMAND(ID_EXTRAS_UTILITIES_EDIT, OnExtrasUtilitiesEdit)
 	ON_COMMAND(ID_EXTRAS_SECURITY_SETUP, OnExtrasSecuritySetup)
-	ON_COMMAND(ID_EXTRAS_ENVIRONMENTSETTINGS, OnEnvironmentSettings)
 	ON_COMMAND(ID_EXTRAS_THREAD_AFFINITY, OnThreadAffinitySetup)
 	ON_COMMAND_RANGE(ID_EXTRAS_UTILITIES_BASE, ID_EXTRAS_UTILITIES_LIMIT, OnRunUtility)
 
@@ -269,7 +267,6 @@ BEGIN_MESSAGE_MAP(SVObserverApp, CWinApp)
 	ON_UPDATE_COMMAND_UI(ID_WINDOW_TILE_VERT, OnUpdateWindowTileVert)
 	ON_UPDATE_COMMAND_UI(ID_APP_ABOUT, OnUpdateAppAbout)
 	ON_UPDATE_COMMAND_UI(ID_EXTRAS_LOGIN, OnUpdateExtrasLogin)
-	ON_UPDATE_COMMAND_UI(ID_EXTRAS_ENVIRONMENTSETTINGS, OnUpdateExtrasAdditionalEnvironmentSettings)
 	ON_UPDATE_COMMAND_UI(ID_EXTRAS_LOGOUT, OnUpdateExtrasLogout)
 	ON_UPDATE_COMMAND_UI(ID_EXTRAS_UTILITIES_EDIT, OnUpdateExtrasUtilitiesEdit)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_EXTRAS_UTILITIES_BASE, ID_EXTRAS_UTILITIES_LIMIT, OnUpdateExtraUtilities)
@@ -319,7 +316,6 @@ SVObserverApp::SVObserverApp() :
 	m_LastValidConfigPNVariableValue = _T("");
 
 	m_OfflineCount = 0;
-	m_ShouldRunLastEnvironmentAutomatically = false;
 	m_AutoRunDelayTime = 1000;
 
 	m_CurrentVersion = SvSyl::SVVersionInfo::GetLongVersion();
@@ -557,35 +553,6 @@ void SVObserverApp::OnStopTestMode()
 	}
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnEnvironmentSettings
-// -----------------------------------------------------------------------------
-// .Description : ...
-////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::OnEnvironmentSettings()
-{
-	bool l_bShowDDETabs = false;
-
-	SVSVIMStateClass::AddState(SV_STATE_EDITING); /// do this before calling validate for security as it may display a logon dialog!
-	if (S_OK == m_svSecurityMgr.SVValidate(SECURITY_POINT_EXTRAS_MENU_ADDITIONAL_ENVIRON))
-	{
-		SVEnvironmentSettingsDialogClass cfdDlg;
-
-		cfdDlg.StartLastAutomatically = m_ShouldRunLastEnvironmentAutomatically;
-
-		if (IDOK == cfdDlg.DoModal())
-		{
-			m_ShouldRunLastEnvironmentAutomatically = cfdDlg.StartLastAutomatically ? true : false;
-
-			WriteProfileInt(_T("Settings"),
-				_T("Run Last Configuration Automatically"),
-				m_ShouldRunLastEnvironmentAutomatically ? 1 : 0
-			);
-		}
-	}
-	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
-}
-
 void SVObserverApp::OnUpdateThreadAffinitySetup(CCmdUI* PCmdUI)
 {
 	long lPipeCount = 0;
@@ -760,12 +727,6 @@ void SVObserverApp::OnUpdateFileSaveImage(CCmdUI* PCmdUI)
 void SVObserverApp::OnUpdateFileUpdate(CCmdUI* PCmdUI)
 {
 	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION));
-}
-
-void SVObserverApp::OnUpdateExtrasAdditionalEnvironmentSettings(CCmdUI* PCmdUI)
-{
-	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION)
-		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_EXTRAS_MENU_ADDITIONAL_ENVIRON) && (TheSVOLicenseManager().HasMatroxLicense()));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -2057,16 +2018,6 @@ BOOL SVObserverApp::InitInstance()
 	InitPath(m_LastValidConfigPNVariableValue.c_str(), true, false);
 	SetEnvironmentVariable(m_LastValidConfigPNVariableName, m_LastValidConfigPNVariableValue.c_str());
 
-	// Load special profile settings
-	if (GetProfileInt(_T("Settings"), _T("Run Last Configuration Automatically"), 0))
-	{
-		m_ShouldRunLastEnvironmentAutomatically = true;
-	}
-	else
-	{
-		m_ShouldRunLastEnvironmentAutomatically = false;
-	}
-
 	// Get AutoRunDelay from Registry...
 	m_AutoRunDelayTime = GetProfileInt(_T("Settings"), _T("Auto Run Delay Time"), m_AutoRunDelayTime);
 	WriteProfileInt(_T("Settings"), _T("Auto Run Delay Time"), m_AutoRunDelayTime);
@@ -2203,8 +2154,10 @@ BOOL SVObserverApp::InitInstance()
 		SVSVIMStateClass::RemoveState(SV_STATE_RAID_FAILURE);
 	}
 
+	bool StartLastConfiguration = false;
+	RootObject::getRootChildValue(SvDef::FqnEnvironmentStartLastConfig, StartLastConfiguration);
 	// Load last loaded configuration, if necessary...
-	if (m_ShouldRunLastEnvironmentAutomatically)
+	if (StartLastConfiguration)
 	{
 		// Delay Auto Run to allow other applications to start...
 		Sleep(m_AutoRunDelayTime);
@@ -2235,7 +2188,7 @@ BOOL SVObserverApp::InitInstance()
 		AutoSaveValue = 1;
 	}
 
-	ExtrasEngine::Instance().SetEnabled(AutoSaveValue != 0);
+	ExtrasEngine::Instance().SetAutoSaveEnabled(AutoSaveValue != 0);
 	unsigned short defaultPortNo = -1;
 
 	m_DataValidDelay = static_cast<long> (SvimIni.GetValueInt(_T("Settings"), _T("DataValidDelay"), 0));
@@ -2451,7 +2404,7 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 				}
 				catch (const SvStl::MessageContainer& rExp)
 				{
-					SvStl::MsgTypeEnum  MsgType = SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD) ? SvStl::LogOnly : SvStl::LogAndDisplay;
+					SvStl::MsgTypeEnum  MsgType{SvStl::LogAndDisplay};
 					SvStl::MessageMgrStd Exception(MsgType);
 					Exception.setMessage(rExp.getMessage());
 					hr = E_FAIL;
@@ -2467,7 +2420,7 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 				hr = SvXml::CheckObsoleteItems(XMLTree, configVer, itemType, errorCode);
 				if (hr & SV_ERROR_CONDITION)
 				{
-					SvStl::MsgTypeEnum  MsgType = SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD) ? SvStl::LogOnly : SvStl::LogAndDisplay;
+					SvStl::MsgTypeEnum  MsgType{SvStl::LogAndDisplay};
 					SvStl::MessageMgrStd Exception(MsgType);
 					Exception.setMessage(SVMSG_SVO_76_CONFIGURATION_HAS_OBSOLETE_ITEMS, itemType.c_str(), SvStl::SourceFileParams(StdMessageParams), errorCode);
 					break;

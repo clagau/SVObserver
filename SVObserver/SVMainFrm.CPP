@@ -83,10 +83,11 @@ BEGIN_MESSAGE_MAP(SVMainFrame, CMDIFrameWnd)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_IMAGE_DISPLAY_UPDATE, OnUpdateViewImageDisplayUpdate)
 	ON_COMMAND(ID_VIEW_RESULT_DISPLAY_UPDATE, OnViewResultDisplayUpdate)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_RESULT_DISPLAY_UPDATE, OnUpdateViewResultDisplayUpdate)
+	ON_COMMAND(ID_EXTRAS_START_LAST_CONFIG, OnExtrasStartLastConfiguration)
+	ON_UPDATE_COMMAND_UI(ID_EXTRAS_START_LAST_CONFIG, OnUpdateExtrasStartLastConfiguration)
 	ON_COMMAND(ID_EXTRAS_ENABLEAUTOSAVE, OnExtrasEnableAutoSave)
-	ON_COMMAND(ID_EXTRAS_ENABLEDISKPROTECTION , OnExtrasEnableFbwf)
-	
 	ON_UPDATE_COMMAND_UI(ID_EXTRAS_ENABLEAUTOSAVE, OnUpdateExtrasEnableAutoSave)
+	ON_COMMAND(ID_EXTRAS_ENABLEDISKPROTECTION , OnExtrasEnableFbwf)
 	ON_UPDATE_COMMAND_UI(ID_EXTRAS_ENABLEDISKPROTECTION, OnUpdateExtrasEnableFbwf)
 	
 	ON_WM_SIZE()
@@ -1105,8 +1106,9 @@ void SVMainFrame::OnConfigurationFinishedInitializing()
 	// or a GoOnline command was received from SVFocusNT,
 	// then start the toolset, i.e. go 'online'.
 	//
-	if ( TheSVObserverApp.getShouldRunLastEnvironmentAutomatically() ||
-		SVSVIMStateClass::CheckState( SV_STATE_START_PENDING ) )
+	bool StartLastConfiguration(false);
+	RootObject::getRootChildValue(SvDef::FqnEnvironmentStartLastConfig, StartLastConfiguration);
+	if ( StartLastConfiguration || SVSVIMStateClass::CheckState( SV_STATE_START_PENDING ) )
 	{
 		PostMessage ( WM_COMMAND, MAKEWPARAM (ID_MODE_RUN, 0), 0 );
 	}
@@ -1334,15 +1336,38 @@ void SVMainFrame::OnUpdateViewResultDisplayUpdate( CCmdUI* pCmdUI )
 	pCmdUI->SetCheck( ResultOnline );
 }
 
+void SVMainFrame::OnExtrasStartLastConfiguration()
+{
+	SVSVIMStateClass::AddState(SV_STATE_EDITING); /// do this before calling validate for security as it may display a logon dialog!
+	if (S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_EXTRAS_MENU_ADDITIONAL_ENVIRON))
+	{
+		bool StartLastConfiguration(false);
+		RootObject::getRootChildValue(SvDef::FqnEnvironmentStartLastConfig, StartLastConfiguration);
+		StartLastConfiguration = !StartLastConfiguration;
+		RootObject::setRootChildValue(SvDef::FqnEnvironmentStartLastConfig, StartLastConfiguration);
+	}
+	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
+}
+
+void SVMainFrame::OnUpdateExtrasStartLastConfiguration(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION)
+				   && TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_EXTRAS_MENU_ADDITIONAL_ENVIRON) 
+				   && (TheSVOLicenseManager().HasMatroxLicense()));
+
+	bool StartLastConfiguration(false);
+	RootObject::getRootChildValue(SvDef::FqnEnvironmentStartLastConfig, StartLastConfiguration);
+	pCmdUI->SetCheck(StartLastConfiguration);
+}
+
 void SVMainFrame::OnExtrasEnableAutoSave()
 {
-	if( S_OK != TheSVObserverApp.m_svSecurityMgr.SVValidate(
-		SECURITY_POINT_EXTRAS_MENU_AUTOSAVE_CONFIGURATION) )
+	if (S_OK != TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_EXTRAS_MENU_AUTOSAVE_CONFIGURATION))
 	{
 		return; //Arvid: not validated:do nothing
 	}
 
-	ExtrasEngine::Instance().ToggleEnable();
+	ExtrasEngine::Instance().ToggleEnableAutoSave();
 }
 
 void SVMainFrame::OnUpdateExtrasEnableAutoSave(CCmdUI *pCmdUI)
@@ -1350,27 +1375,26 @@ void SVMainFrame::OnUpdateExtrasEnableAutoSave(CCmdUI *pCmdUI)
 	BOOL bEnable = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_EXTRAS_MENU_AUTOSAVE_CONFIGURATION );
 
 	pCmdUI->Enable( bEnable );
-	pCmdUI->SetCheck( ExtrasEngine::Instance().IsEnabled() == TRUE );
+	pCmdUI->SetCheck( ExtrasEngine::Instance().IsAutoSaveEnabled());
 }
 
 void SVMainFrame::OnExtrasEnableFbwf()
 {
-	if( S_OK != TheSVObserverApp.m_svSecurityMgr.SVValidate(
-		SECURITY_POINT_EXTRAS_MENU_FBWF_CONFIGURATION) )
+	if( S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_EXTRAS_MENU_FBWF_CONFIGURATION) )
 	{
-		return; //Arvid: not validated:do nothing
+		bool Value {false};
+		RootObject::getRootChildValue(SvDef::FqnEnvironmentDiskProtection, Value);
+		RootObject::setRootChildValue(SvDef::FqnEnvironmentDiskProtection, !Value);
 	}
-
-	ExtrasEngine::Instance().ToggleEnableFbwf();
 }
 
 void SVMainFrame::OnUpdateExtrasEnableFbwf(CCmdUI *pCmdUI)
 {
 	BOOL bEnable = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_EXTRAS_MENU_FBWF_CONFIGURATION );
 
-	pCmdUI->Enable(FALSE); //Arvid temporarily disabled as per SVO-1084. Parameter was: (ExtrasEngine::Instance().IsFbwfAvailable()==true)
+	pCmdUI->Enable(false); //Arvid temporarily disabled as per SVO-1084. Parameter was: (ExtrasEngine::Instance().IsFbwfAvailable()==true)
 
-	pCmdUI->SetCheck( ExtrasEngine::Instance().IsFbwfSelected()==true);
+	pCmdUI->SetCheck( ExtrasEngine::Instance().IsFbwfSelected());
 }
 
 BOOL SVMainFrame::VerifyBarStates(LPCTSTR lpszProfileName)

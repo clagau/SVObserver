@@ -289,7 +289,6 @@ echo %time%
     <ClCompile Include="SVDPointXResult.cpp" />
     <ClCompile Include="SVDPointYResult.cpp" />
     <ClCompile Include="SVDrawObject.cpp" />
-    <ClCompile Include="SVEnvironmentSettingsDialog.cpp" />
     <ClCompile Include="SVExternalTool.cpp" />
     <ClCompile Include="SVExternalToolDetailsSheet.cpp" />
     <ClCompile Include="SVExternalToolDlg.cpp" />
@@ -597,7 +596,6 @@ echo %time%
     <ClInclude Include="SVDPointXResult.h" />
     <ClInclude Include="SVDPointYResult.h" />
     <ClInclude Include="SVDrawObject.h" />
-    <ClInclude Include="SVEnvironmentSettingsDialog.h" />
     <ClInclude Include="SVExternalTool.h" />
     <ClInclude Include="SVExternalToolDetailsSheet.h" />
     <ClInclude Include="SVExternalToolDlg.h" />

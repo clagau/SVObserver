@@ -2679,9 +2679,8 @@ HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, S
 							}
 							ItemNotFound = true;
 						}// else invalid or out of range index
-						else	// some generic error; currently should not get here
+						else
 						{
-							ASSERT(false);
 							Status = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
 							// did not get value.  set value to -1
 							Value = _T("-1");

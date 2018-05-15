@@ -105,9 +105,16 @@ HRESULT GlobalRCSetMode( unsigned long p_lNewMode )
 	return static_cast<HRESULT>(SendMessage( AfxGetApp()->m_pMainWnd->m_hWnd, SV_SET_MODE, 0, ( LPARAM )p_lNewMode ));
 }
 
-HRESULT GlobalRCGetMode( unsigned long* p_plMode )
+HRESULT GlobalRCGetMode( unsigned long* pMode )
 {
-	*p_plMode = SVSVIMStateClass::GetMode();
+	if(nullptr != pMode)
+	{
+		*pMode = SVSVIMStateClass::getCurrentMode();
+	}
+	else
+	{
+		return E_POINTER;
+	}
 
 	return S_OK;
 }

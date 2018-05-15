@@ -80,6 +80,9 @@ namespace SvDef
 	const TCHAR* const FqnEnvironmentModelNumber = _T("Environment.Model Number");
 	const TCHAR* const FqnEnvironmentSerialNumber = _T("Environment.Serial Number");
 	const TCHAR* const FqnEnvironmentWinKey = _T("Environment.Windows.Win Key");
+	const TCHAR* const FqnEnvironmentAutoSave = _T("Environment.Auto Save");
+	const TCHAR* const FqnEnvironmentDiskProtection = _T("Environment.Disk Protection");
+	const TCHAR* const FqnEnvironmentStartLastConfig = _T("Environment.Start Last Configuration");
 	const TCHAR* const FqnEnvironmentImageUpdate = _T("Environment.View.Image Display Update");
 	const TCHAR* const FqnEnvironmentResultUpdate = _T("Environment.View.Result Display Update");
 	const TCHAR* const FqnEnvironmentMode = _T("Environment.Mode");

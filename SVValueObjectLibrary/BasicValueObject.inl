@@ -19,7 +19,6 @@ HRESULT BasicValueObject::setValue(const ELEMENT_TYPE Value )
 	VariantValue = Value;
 	Result = setValue( VariantValue );
 
-	RefreshOwner( SVObjectClass::PostRefresh );
 	return Result;
 }
 

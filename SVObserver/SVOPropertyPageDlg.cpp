@@ -780,7 +780,7 @@ void CSVOPropertyPageDlg::SetupInspection()
 			if (pCombo)
 			{ 
 				pCombo->SetCtrlID(PROP_INS_ENABLE_AUX_EXTENT); //PROP_INS_NEW_DISABLE_METHOD);
-				pCombo->SetLabelText(_T("Auxiliary Extent"));
+				pCombo->SetLabelText(_T("Auxiliary Extents"));
 				pCombo->SetInfoText(_T("This allows the inspection to support Auxiliary Extents (Enabling this will perform auxiliary extent calculations that could add additional time to the tool set.)"));
 				pCombo->CreateComboBoxBool();
 				

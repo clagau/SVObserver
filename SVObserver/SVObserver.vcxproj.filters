@@ -120,9 +120,6 @@
     <ClCompile Include="SVDrawObject.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVEnvironmentSettingsDialog.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVExternalTool.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -938,9 +935,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVDrawObject.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVEnvironmentSettingsDialog.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVExternalTool.h">

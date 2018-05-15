@@ -62,25 +62,11 @@ private:
 	afx_msg LRESULT OnDisplayChange(WPARAM p_p1, LPARAM p_p2);
 	afx_msg LRESULT OnSetMode( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnLoadConfiguration( WPARAM wParam, LPARAM lParam );
-
-	//************************************
-	/// called by the MFC framework when automatic 
-	/// configuration backups are enabled by the user
-	//************************************
+	afx_msg void OnExtrasStartLastConfiguration();
+	afx_msg void OnUpdateExtrasStartLastConfiguration(CCmdUI* PCmdUI);
 	afx_msg void OnExtrasEnableAutoSave();
-
-	/// called by the MFC framework when file based write filter is enabled or disabled by the user
-	afx_msg void OnExtrasEnableFbwf();
-
-
-	//************************************
-	/// called by the MFC framework
-	/// \param pCmdUI [in]
-	//************************************
 	afx_msg void OnUpdateExtrasEnableAutoSave(CCmdUI *pCmdUI);
-
-	/// updates the FBWT menu entry. called by the MFC framework when the corresponding drop-down menu is drawn.
-	/// \param pCmdUI [in]
+	afx_msg void OnExtrasEnableFbwf();
 	afx_msg void OnUpdateExtrasEnableFbwf(CCmdUI *pCmdUI);
 
 

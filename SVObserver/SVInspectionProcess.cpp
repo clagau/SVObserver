@@ -446,7 +446,6 @@ void SVInspectionProcess::Init()
 	m_pCurrentToolset = nullptr;
 	m_PPQId.clear();
 	m_bNewDisableMethod = false;
-	m_lEnableAuxiliaryExtents = 0;
 	m_lInputRequestMarkerCount = 0L;
 	m_bInspecting = false;
 	m_dwThreadId = 0;
@@ -461,10 +460,6 @@ SVInspectionProcess::~SVInspectionProcess()
 {
 	DestroyInspection();
 	m_PPQId.clear();
-	m_pCurrentToolset = nullptr;
-	m_bNewDisableMethod = false;
-	m_lEnableAuxiliaryExtents = 0;
-	m_lInputRequestMarkerCount = 0L;
 	m_WatchListImages.clear();
 	m_WatchListDatas.clear();
 	m_SlotManager.reset();
@@ -1529,7 +1524,7 @@ HRESULT SVInspectionProcess::RebuildInspection()
 	{
 		//Configuration has changed need to set the modified flag
 		SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
-		SvStl::MsgTypeEnum  MsgType = SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD) ? SvStl::LogOnly : SvStl::LogAndDisplay;
+		SvStl::MsgTypeEnum  MsgType{SvStl::LogAndDisplay};
 		SvStl::MessageMgrStd Exception(MsgType);
 		Exception.setMessage(SVMSG_SVO_CONDITIONAL_HISTORY, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 	}
@@ -2510,14 +2505,22 @@ void SVInspectionProcess::SetNewDisableMethod(bool bNewDisableMethod)
 	m_bNewDisableMethod = bNewDisableMethod;
 }
 
-long SVInspectionProcess::GetEnableAuxiliaryExtent() const
+bool SVInspectionProcess::getEnableAuxiliaryExtent() const
 {
-	return m_lEnableAuxiliaryExtents;
+	if (nullptr != m_pCurrentToolset)
+	{
+		return m_pCurrentToolset->getEnableAuxiliaryExtents();
+	}
+
+	return false;
 }
 
-void SVInspectionProcess::SetEnableAuxiliaryExtent(long p_lEnableAuxiliaryExtents)
+void SVInspectionProcess::setEnableAuxiliaryExtent(bool Enabled)
 {
-	m_lEnableAuxiliaryExtents = p_lEnableAuxiliaryExtents;
+	if (nullptr != m_pCurrentToolset)
+	{
+		return m_pCurrentToolset->setEnableAuxiliaryExtents(Enabled);
+	}
 }
 
 HRESULT SVInspectionProcess::CollectOverlays(SVImageClass* p_pImage, SVExtentMultiLineStructVector& p_rMultiLineArray)
@@ -3658,11 +3661,6 @@ void SVInspectionProcess::Persist(SvOi::IObjectWriter& rWriter)
 	value.ChangeType(VT_I4); // was VT_INT...
 	value.lVal = static_cast<BOOL>(IsNewDisableMethodSet());
 	rWriter.WriteAttribute(SvXml::CTAG_INSPECTION_NEW_DISABLE_METHOD, value);
-	value.Clear();
-
-	// Save EnableAuxillaryExtents
-	value = GetEnableAuxiliaryExtent();
-	rWriter.WriteAttribute(SvXml::CTAG_INSPECTION_ENABLE_AUXILIARY_EXTENT, value);
 	value.Clear();
 
 	// Save the Toolset

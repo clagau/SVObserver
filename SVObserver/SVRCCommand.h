@@ -43,6 +43,7 @@ public:
 	void GetDataDefinitionList(const SvPb::GetDataDefinitionListRequest&, SvRpc::Task<SvPb::GetDataDefinitionListResponse>);
 	void QueryMonitorList(const SvPb::QueryMonitorListRequest&, SvRpc::Task<SvPb::NamesResponse>);
 	void QueryMonitorListNames(const SvPb::QueryMonitorListNamesRequest&, SvRpc::Task<SvPb::NamesResponse>);
+	void RunOnce(const SvPb::RunOnceRequest&, SvRpc::Task<SvPb::StandardResponse>);
 
 	void RegisterNotificationStream(boost::asio::io_service* pIoservice,  const SvPb::GetNotificationStreamRequest& request,
 		SvRpc::Observer<SvPb::GetNotificationStreamResponse>& observer,

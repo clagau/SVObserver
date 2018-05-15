@@ -75,7 +75,6 @@ public:
 	afx_msg void OnModeTestBtn();
 	afx_msg void OnRunMode();
 	afx_msg void OnStopTestMode();
-	afx_msg void OnEnvironmentSettings();
 	afx_msg void OnThreadAffinitySetup();
 	afx_msg void OnUpdateThreadAffinitySetup(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateModeRun(CCmdUI* PCmdUI);
@@ -95,7 +94,6 @@ public:
 	afx_msg void OnUpdateFileSaveCopyAs(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateFileSaveImage(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateFileUpdate(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateExtrasAdditionalEnvironmentSettings(CCmdUI* PCmdUI);
 	afx_msg void OnStop();
 	afx_msg void OnUpdateEditDelete(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateEditEditTool(CCmdUI* PCmdUI);
@@ -291,7 +289,6 @@ public:
 	long getOfflineCount() const { return m_OfflineCount; }
 	SVIPDoc* getCurrentDocument() const { return m_pCurrentDocument; }
 	void setCurrentDocument(SVIPDoc* pIPDoc) { m_pCurrentDocument = pIPDoc; }
-	bool getShouldRunLastEnvironmentAutomatically() const { return m_ShouldRunLastEnvironmentAutomatically; }
 	DWORD getCurrentVersion() const { return m_CurrentVersion; }
 	DWORD getLoadingVersion() const { return m_LoadingVersion; }
 	void setLoadingVersion(DWORD version) { m_LoadingVersion = version; }
@@ -362,7 +359,6 @@ private:
 
 	SVIPDoc* m_pCurrentDocument;
 	long m_OfflineCount;
-	bool m_ShouldRunLastEnvironmentAutomatically;
 	DWORD m_AutoRunDelayTime;
 
 	// Version numbering code:

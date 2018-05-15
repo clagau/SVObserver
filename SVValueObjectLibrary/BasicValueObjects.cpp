@@ -26,19 +26,22 @@ static char THIS_FILE[] = __FILE__;
 const BasicValueObjects::DottedNameGuidMap BasicValueObjects::m_StaticUniqueIDMap
 {
 	// Dotted name,												static unique ID
-	{std::string(SvDef::FqnGlobal),								SVGUID( GlobalUidGuid)},
-	{std::string(SvDef::FqnEnvironment),						SVGUID( EnvironmentUidGuid)},
-	{std::string(SvDef::FqnEnvironmentModelNumber),				SVGUID( EnvironmentModelNumberUidGuid)},
-	{std::string(SvDef::FqnEnvironmentWinKey),					SVGUID( EnvironmentWinKeyUidGuid)},
-	{std::string(SvDef::FqnEnvironmentImageUpdate),				SVGUID( EnvironmentImageUpdateUidGuid)},
-	{std::string(SvDef::FqnEnvironmentResultUpdate),			SVGUID( EnvironmentResultUpdateUidGuid)},
-	{std::string(SvDef::FqnEnvironmentMode),					SVGUID( EnvironmentModeUidGuid)},
-	{std::string(SvDef::FqnEnvironmentModeIsRun),				SVGUID( EnvironmentModeIsRunUidGuid)},
-	{std::string(SvDef::FqnEnvironmentModeIsStop),				SVGUID( EnvironmentModeIsStopUidGuid)},
-	{std::string(SvDef::FqnEnvironmentModeIsRegressionTest),	SVGUID( EnvironmentModeIsRegressionTestUidGuid)},
-	{std::string(SvDef::FqnEnvironmentModeIsTest),				SVGUID( EnvironmentModeIsTestUidGuid)},
-	{std::string(SvDef::FqnEnvironmentModeIsEdit),				SVGUID( EnvironmentModeIsEditUidGuid)},
-	{std::string(SvDef::FqnEnvironmentModeValue),				SVGUID( EnvironmentModeValueUidGuid)}
+	{std::string(SvDef::FqnGlobal),								SVGUID(GlobalUidGuid)},
+	{std::string(SvDef::FqnEnvironment),						SVGUID(EnvironmentUidGuid)},
+	{std::string(SvDef::FqnEnvironmentModelNumber),				SVGUID(EnvironmentModelNumberUidGuid)},
+	{std::string(SvDef::FqnEnvironmentWinKey),					SVGUID(EnvironmentWinKeyUidGuid)},
+	{std::string(SvDef::FqnEnvironmentImageUpdate),				SVGUID(EnvironmentImageUpdateUidGuid)},
+	{std::string(SvDef::FqnEnvironmentResultUpdate),			SVGUID(EnvironmentResultUpdateUidGuid)},
+	{std::string(SvDef::FqnEnvironmentMode),					SVGUID(EnvironmentModeUidGuid)},
+	{std::string(SvDef::FqnEnvironmentModeIsRun),				SVGUID(EnvironmentModeIsRunUidGuid)},
+	{std::string(SvDef::FqnEnvironmentModeIsStop),				SVGUID(EnvironmentModeIsStopUidGuid)},
+	{std::string(SvDef::FqnEnvironmentModeIsRegressionTest),	SVGUID(EnvironmentModeIsRegressionTestUidGuid)},
+	{std::string(SvDef::FqnEnvironmentModeIsTest),				SVGUID(EnvironmentModeIsTestUidGuid)},
+	{std::string(SvDef::FqnEnvironmentModeIsEdit),				SVGUID(EnvironmentModeIsEditUidGuid)},
+	{std::string(SvDef::FqnEnvironmentModeValue),				SVGUID(EnvironmentModeValueUidGuid)},
+	{std::string(SvDef::FqnEnvironmentAutoSave),				SVGUID(EnvironmentAutoSaveUidGuid)},
+	{std::string(SvDef::FqnEnvironmentDiskProtection),			SVGUID(EnvironmentDiskProtectionUidGuid)},
+	{std::string(SvDef::FqnEnvironmentStartLastConfig),			SVGUID(EnvironmentStartLastConfigUidGuid)}
 };
 #pragma endregion Declarations
 
@@ -53,81 +56,81 @@ BasicValueObjects::~BasicValueObjects()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-BasicValueObjectPtr BasicValueObjects::getValueObject( LPCTSTR DottedName ) const
+BasicValueObjectPtr BasicValueObjects::getValueObject(LPCTSTR DottedName) const
 {
-	BasicValueObjectPtr pValue( nullptr );
-	vt_const_iterator ValueIter = findValueObject( DottedName );
-	if ( m_Tree.end() != ValueIter )
+	BasicValueObjectPtr pValue(nullptr);
+	vt_const_iterator ValueIter = findValueObject(DottedName);
+	if (m_Tree.end() != ValueIter)
 	{
 		pValue = *ValueIter;
 	}
 	return pValue;
 }
 
-void BasicValueObjects::getValueList( ValueVector& rObjectList, LPCTSTR DottedBranch,  UINT AttributesAllowedFilter ) const
+void BasicValueObjects::getValueList(ValueVector& rObjectList, LPCTSTR DottedBranch, UINT AttributesAllowedFilter) const
 {
 	//Do not clear the reference object list as this method could be called multiple times
-	vt_const_pre_order_iterator BranchStartIter( m_Tree.pre_order_begin() );
-	vt_const_pre_order_iterator BranchEndIter( m_Tree.pre_order_end() );
+	vt_const_pre_order_iterator BranchStartIter(m_Tree.pre_order_begin());
+	vt_const_pre_order_iterator BranchEndIter(m_Tree.pre_order_end());
 
-	if( !std::string(DottedBranch).empty() )
+	if (!std::string(DottedBranch).empty())
 	{
-		vt_const_iterator ParentIter = findValueObject( DottedBranch );
-		if( m_Tree.end() != ParentIter )
+		vt_const_iterator ParentIter = findValueObject(DottedBranch);
+		if (m_Tree.end() != ParentIter)
 		{
 			BranchStartIter = ParentIter.node()->pre_order_begin();
 			BranchEndIter = ParentIter.node()->pre_order_end();
 		}
 	}
 
-	vt_const_pre_order_iterator Iter( BranchStartIter );
-	while( BranchEndIter != Iter )
+	vt_const_pre_order_iterator Iter(BranchStartIter);
+	while (BranchEndIter != Iter)
 	{
 		BasicValueObjectPtr ObjPtr = *Iter;
 
 		//Only leafs are of interest no nodes
-		if(nullptr != *Iter && !(*Iter)->isNode() )
+		if (nullptr != *Iter && !(*Iter)->isNode())
 		{
-			if( ((*Iter)->ObjectAttributesAllowed() & AttributesAllowedFilter) == AttributesAllowedFilter )
+			if (((*Iter)->ObjectAttributesAllowed() & AttributesAllowedFilter) == AttributesAllowedFilter)
 			{
-				rObjectList.push_back( (*Iter) );
+				rObjectList.push_back((*Iter));
 			}
 		}
 		++Iter;
 	}
 }
 
-HRESULT BasicValueObjects::deleteValueObject( LPCTSTR DottedName )
+HRESULT BasicValueObjects::deleteValueObject(LPCTSTR DottedName)
 {
-	HRESULT Result( S_FALSE );
-	vt_iterator Iter( m_Tree.end() );
+	HRESULT Result(S_FALSE);
+	vt_iterator Iter(m_Tree.end());
 
 	SVObjectNameInfo ParsedName;
 	std::string RootChildName;
 
-	ParsedName.ParseObjectName( DottedName );
-	if( 0 < ParsedName.m_NameArray.size() )
+	ParsedName.ParseObjectName(DottedName);
+	if (0 < ParsedName.m_NameArray.size())
 	{
 		RootChildName = ParsedName.m_NameArray[0];
 	}
 
-	Iter = findValueObject( ParsedName );
-	if( m_Tree.end() != Iter && nullptr != *Iter )
+	Iter = findValueObject(ParsedName);
+	if (m_Tree.end() != Iter && nullptr != *Iter)
 	{
 		Result = S_OK;
-		Iter.node()->parent()->erase( Iter );
+		Iter.node()->parent()->erase(Iter);
 
 		//If the branch is a node and no other children then delete the node
 		ParsedName.RemoveBottomName();
-		Iter = findValueObject( ParsedName );
-		while( m_Tree.end() != Iter && nullptr != *Iter)
+		Iter = findValueObject(ParsedName);
+		while (m_Tree.end() != Iter && nullptr != *Iter)
 		{
 			bool isDeleteableEmptyNode = (*Iter)->isNode() && 0 == Iter.node()->size() && RootChildName != ParsedName.GetObjectName();
-			if( isDeleteableEmptyNode )
+			if (isDeleteableEmptyNode)
 			{
-				Iter.node()->parent()->erase( Iter );
+				Iter.node()->parent()->erase(Iter);
 				ParsedName.RemoveBottomName();
-				Iter = findValueObject( ParsedName );
+				Iter = findValueObject(ParsedName);
 			}
 			else
 			{
@@ -141,28 +144,28 @@ HRESULT BasicValueObjects::deleteValueObject( LPCTSTR DottedName )
 
 #pragma endregion Public Methods
 
-BasicValueObjects::vt_const_iterator BasicValueObjects::findValueObject( LPCTSTR DottedName ) const
+BasicValueObjects::vt_const_iterator BasicValueObjects::findValueObject(LPCTSTR DottedName) const
 {
 	SVObjectNameInfo ParsedName;
 
-	ParsedName.ParseObjectName( DottedName );
+	ParsedName.ParseObjectName(DottedName);
 
-	return findValueObject( ParsedName );
+	return findValueObject(ParsedName);
 }
 
-BasicValueObjects::vt_const_iterator BasicValueObjects::findValueObject( const SVObjectNameInfo& rParsedName ) const
+BasicValueObjects::vt_const_iterator BasicValueObjects::findValueObject(const SVObjectNameInfo& rParsedName) const
 {
-	vt_const_iterator Iter( m_Tree.end() );
-	vt_const_iterator IterParent( m_Tree.end() );
-	vt_const_iterator IterStart( m_Tree.begin() );
-	vt_const_iterator IterEnd( m_Tree.end() );
+	vt_const_iterator Iter(m_Tree.end());
+	vt_const_iterator IterParent(m_Tree.end());
+	vt_const_iterator IterStart(m_Tree.begin());
+	vt_const_iterator IterEnd(m_Tree.end());
 
-	for( std::string::size_type Index(0); Index < rParsedName.m_NameArray.size(); ++Index )
+	for (std::string::size_type Index(0); Index < rParsedName.m_NameArray.size(); ++Index)
 	{
 		std::string Name = rParsedName.m_NameArray[Index];
-		Iter = findChildObject( IterStart, IterEnd, Name.c_str() );
+		Iter = findChildObject(IterStart, IterEnd, Name.c_str());
 
-		if( IterEnd != Iter &&   nullptr != *Iter)
+		if (IterEnd != Iter &&   nullptr != *Iter)
 		{
 			IterParent = Iter;
 			IterStart = Iter.node()->begin();
@@ -178,24 +181,24 @@ BasicValueObjects::vt_const_iterator BasicValueObjects::findValueObject( const S
 	return Iter;
 }
 
-BasicValueObjects::vt_iterator BasicValueObjects::findValueObject( const SVObjectNameInfo& rParsedName )
+BasicValueObjects::vt_iterator BasicValueObjects::findValueObject(const SVObjectNameInfo& rParsedName)
 {
-	vt_iterator Iter( m_Tree.end() );
-	vt_iterator IterParent( m_Tree.end() );
-	vt_iterator IterStart( m_Tree.begin() );
-	vt_iterator IterEnd( m_Tree.end() );
+	vt_iterator Iter(m_Tree.end());
+	vt_iterator IterParent(m_Tree.end());
+	vt_iterator IterStart(m_Tree.begin());
+	vt_iterator IterEnd(m_Tree.end());
 
-	for( std::string::size_type Index(0); Index < rParsedName.m_NameArray.size(); ++Index )
+	for (std::string::size_type Index(0); Index < rParsedName.m_NameArray.size(); ++Index)
 	{
 		std::string Name = rParsedName.m_NameArray[Index];
 
-		vt_const_iterator IterConst( IterEnd );
-		IterConst = findChildObject( IterStart, IterEnd, Name.c_str() );
+		vt_const_iterator IterConst(IterEnd);
+		IterConst = findChildObject(IterStart, IterEnd, Name.c_str());
 
-		if( IterEnd != IterConst && nullptr != *IterConst )
+		if (IterEnd != IterConst && nullptr != *IterConst)
 		{
 			Iter = IterStart;
-			std::advance ( Iter, std::distance<vt_const_iterator>( IterStart, IterConst ) );
+			std::advance(Iter, std::distance<vt_const_iterator>(IterStart, IterConst));
 			IterParent = Iter;
 			IterStart = Iter.node()->begin();
 			IterEnd = Iter.node()->end();
@@ -210,14 +213,14 @@ BasicValueObjects::vt_iterator BasicValueObjects::findValueObject( const SVObjec
 	return Iter;
 }
 
-BasicValueObjects::vt_const_iterator BasicValueObjects::findChildObject( const vt_const_iterator& rStartIter, const vt_const_iterator& rEndIter, LPCTSTR ChildName ) const
+BasicValueObjects::vt_const_iterator BasicValueObjects::findChildObject(const vt_const_iterator& rStartIter, const vt_const_iterator& rEndIter, LPCTSTR ChildName) const
 {
-	vt_const_iterator Iter( rStartIter );
-	std::string SearchName( ChildName );
+	vt_const_iterator Iter(rStartIter);
+	std::string SearchName(ChildName);
 
-	while( rEndIter != Iter )
+	while (rEndIter != Iter)
 	{
-		if( nullptr != *Iter && SearchName  == (*Iter)->GetName() )
+		if (nullptr != *Iter && SearchName == (*Iter)->GetName())
 		{
 			break;
 		}

@@ -2004,7 +2004,7 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 		std::string FileName;
 		std::string ToolsetImage;
 		std::string NewDisableMethod;
-		long lEnableAuxiliaryExtent;
+		bool EnableAuxiliaryExtent;
 
 		for ( int i = 0; i < iInsCnt; i++ )
 		{
@@ -2015,7 +2015,7 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 				FileName = pInspectionObj->GetInspectionName();
 				ToolsetImage = pInspectionObj->GetToolsetImage();
 				NewDisableMethod = pInspectionObj->GetNewDisableMethodString();
-				lEnableAuxiliaryExtent = pInspectionObj->GetEnableAuxiliaryExtent();
+				EnableAuxiliaryExtent = (1 == pInspectionObj->GetEnableAuxiliaryExtent());
 
 				lCfgInsCnt = pConfig->GetInspectionCount();
 
@@ -2079,7 +2079,7 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 
 									bool bNewDisableMethod = pInspection->IsNewDisableMethodSet();
 									NewDisableMethod = (bNewDisableMethod) ? _T( "Method 2" ): _T( "Method 1" );
-									lEnableAuxiliaryExtent = pInspection->GetEnableAuxiliaryExtent();
+									EnableAuxiliaryExtent = pInspection->getEnableAuxiliaryExtent();
 								}
 							}
 							resolveGlobalConflicts( importer.GlobalConflicts );
@@ -2122,9 +2122,9 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 
 					pInspection->SetNewDisableMethod( NewDisableMethod == _T( "Method 2" ) );
 
-					long l_lPrevEnable = pInspection->GetEnableAuxiliaryExtent();
-					pInspection->SetEnableAuxiliaryExtent( lEnableAuxiliaryExtent );
-					if( l_lPrevEnable && lEnableAuxiliaryExtent == 0 )
+					bool PrevEnable = pInspection->getEnableAuxiliaryExtent();
+					pInspection->setEnableAuxiliaryExtent( EnableAuxiliaryExtent );
+					if (PrevEnable && !EnableAuxiliaryExtent)
 					{
 						pInspection->resetAllObjects();
 					}
@@ -2731,7 +2731,7 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 
 			// Enable Auxiliary Extent
 			long l_lEnable = 0;
-			if( pcfgInspection->GetEnableAuxiliaryExtent() )
+			if( pcfgInspection->getEnableAuxiliaryExtent() )
 			{
 				l_lEnable = 1;
 			}

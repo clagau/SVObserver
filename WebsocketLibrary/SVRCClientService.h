@@ -57,6 +57,7 @@ public:
 	void GetDataDefinitionList(SvPb::GetDataDefinitionListRequest&&, SvRpc::Task<SvPb::GetDataDefinitionListResponse> task);
 	void QueryMonitorList(SvPb::QueryMonitorListRequest&&, SvRpc::Task<SvPb::NamesResponse> task);
 	void QueryMonitorListNames(SvPb::QueryMonitorListNamesRequest&&, SvRpc::Task<SvPb::NamesResponse> task);
+	void RunOnce(SvPb::RunOnceRequest&&, SvRpc::Task<SvPb::StandardResponse> task);
 
 private:
 	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetGatewayVersionRequest, SvPb::GetVersionResponse> m_GetGatewayVersionClient;
@@ -91,6 +92,7 @@ private:
 	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetDataDefinitionListRequest, SvPb::GetDataDefinitionListResponse> m_GetDataDefinitionListClient;
 	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::QueryMonitorListRequest, SvPb::NamesResponse> m_QueryMonitorListClient;
 	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::QueryMonitorListNamesRequest, SvPb::NamesResponse> m_QueryMonitorListNamesClient;
+	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::RunOnceRequest, SvPb::StandardResponse> m_RunOnceClient;
 };
 
 using SVRCClientServicePtr = std::unique_ptr<SvWsl::SVRCClientService>;

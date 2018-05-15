@@ -21,7 +21,7 @@ message SVRCMessages
 		GetGatewayVersionRequest getGatewayVersionRequest = 3;
 		GetSVObserverVersionRequest getSVObserverVersionRequest = 4;
 		GetVersionResponse getVersionResponse = 5;
-		//SVObserver Access commands
+		//SVGateway commands
 		QueryListNameRequest queryListNameRequest = 1000;
 		QueryListNameResponse queryListNameResponse = 1001;
 		QueryListItemRequest queryListItemRequest = 1002;
@@ -76,6 +76,7 @@ message SVRCMessages
 		GetDataDefinitionListResponse getDataDefinitionListResponse = 2032;
 		QueryMonitorListRequest queryMonitorListRequest = 2033;
 		QueryMonitorListNamesRequest queryMonitorListNamesRequest = 2034;
+		RunOnceRequest runOnceRequest = 2035;
 	}
 }
 
@@ -86,7 +87,7 @@ enum ListType
 	ProductItem = 0;
 	RejectCondition = 1;
 	FailStatus = 2;
-	All =3;
+	All = 3;
 }
 
 ///General errors should be reportete by the errorcode
@@ -94,8 +95,8 @@ enum ListType
 enum State
 {
 	IsValid = 0;
-	NotFound =1;
-	Unchanged =2;
+	NotFound = 1;
+	Unchanged = 2;
 } 
 
 enum DataDefinitionListType
@@ -109,6 +110,17 @@ enum DataDefinitionListType
 	AllImages						= 8;
 	SelectedValuesAndAllImages		= 9;
 	AllValuesAndAllImages			= 12;
+}
+
+enum DeviceModeType
+{
+	Available	= 0; //unknown
+	RunMode	= 1;  //online
+	StopMode	= 2; //offline
+	RegressionMode	= 3;
+	TestMode	= 4;
+	EditMode	= 5;
+	ModeChanging = 6;
 }
 
 message DataDefinition
@@ -174,20 +186,20 @@ message ValueItem
 
 message ImageItem
 {
-	string name =1;
-	sint32 sizeX =2;
-	sint32 sizeY =3;  
-	uint32 StoreId=4;
-	uint32 ImageId=5;
+	string name = 1;
+	sint32 sizeX = 2;
+	sint32 sizeY = 3;  
+	uint32 StoreId = 4;
+	uint32 ImageId = 5;
 }
 
 //Query the Definition of the list.If name is empty, the response is from all active Monitorlist
 message QueryListItemRequest
 {
-	string name =1;
-	ListType type =2;
+	string name = 1;
+	ListType type = 2;
 	bool queryImages = 3;
-	bool  queryValues =4;
+	bool  queryValues = 4;
 }
 
 message QueryListItemResponse
@@ -205,12 +217,12 @@ message CurImageId
 
 message Product
 {
-	uint32 Trigger=1;
+	uint32 Trigger = 1;
 	repeated Variant Values = 2;
-	repeated CurImageId Images =3;
+	repeated CurImageId Images = 3;
 	repeated string ImageNames = 4;
-	repeated string ValueNames =5; 
-	State Status =6;
+	repeated string ValueNames = 5; 
+	State Status = 6;
 }
 
 //Name is the Monitorlistname. 
@@ -221,9 +233,9 @@ message GetProductRequest
 {
 	sint32 Trigger = 1;
 	sint32 PeviousTrigger = 2;
-	string Name =3;
+	string Name = 3;
 	bool NameInResponse = 4;
-	bool bReject =5;
+	bool bReject = 5;
 }
 
 // In product response are an array of image ids
@@ -265,12 +277,12 @@ message GetFailStatusRequest
 {
 	string name = 1;
 	bool NameInResponse = 2;
-	repeated int32 PreviousRejects =3;
+	repeated int32 PreviousRejects = 3;
 }
 message GetFailStatusResponse
 {
 	repeated Product products = 1;
-	State Status =2;
+	State Status = 2;
 }
 
 ///Request Values or Images for triggercount =-1 the last value is retrieved 
@@ -337,18 +349,6 @@ message GetNotificationStreamResponse
 		MsgNotification msgNotification =3;
 	}
 }
-
-enum DeviceModeType
-{
-	Available	= 0; //unknown
-	RunMode	= 1;  //online
-	StopMode	= 2; //offline
-	RegressionMode	= 3;
-	TestMode	= 4;
-	EditMode	= 5;
-	ModeChanging =6;
-}
-
 
 message SetDeviceModeRequest 
 {
@@ -449,6 +449,7 @@ message SetItemsRequest
 {
 	repeated Value ValueList = 1;
 	repeated Value ImageList = 2;
+	bool RunOnce = 3;
 }
 
 message SetItemsResponse
@@ -555,6 +556,11 @@ message QueryMonitorListRequest
 message QueryMonitorListNamesRequest
 {
 	;
+}
+
+message RunOnceRequest
+{
+	string InspectionName = 5;
 }
 
 message NamesResponse

@@ -110,16 +110,6 @@ bool SVRemoteInputTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageConta
 	long l_MatchedStringId = 0;
 	long l_Identifier = 0;
 
-	if (Result)
-	{
-		Result = false;
-		if (nullptr != pErrorMessages)
-		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ProcessCommandQueueFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
-			pErrorMessages->push_back(Msg);
-		}
-	}
-
 	Result = Result && ValidateLocal(pErrorMessages);
 
 	if( Result )

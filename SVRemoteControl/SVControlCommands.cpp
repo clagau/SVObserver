@@ -382,7 +382,7 @@ HRESULT SVControlCommands::GetItems(CComVariant ItemNames, ISVProductItems** ppI
 		return Result;
 }
 
-HRESULT SVControlCommands::SetItems(ISVProductItems* pItems, ISVProductItems ** ppErrors, SVCommandStatus& rStatus)
+HRESULT SVControlCommands::SetItems(ISVProductItems* pItems, bool RunOnce, ISVProductItems ** ppErrors, SVCommandStatus& rStatus)
 {
 	HRESULT Result {S_OK};
 
@@ -396,6 +396,7 @@ HRESULT SVControlCommands::SetItems(ISVProductItems* pItems, ISVProductItems ** 
 		if (nullptr != pItems)
 		{
 			SvPb::SetItemsRequest Request;
+			Request.set_runonce(RunOnce);
 			SetItemsRequest(ProductPtr(pItems), &Request);
 			SvPb::SetItemsResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
 				&SvWsl::SVRCClientService::SetItems,
@@ -430,6 +431,43 @@ static bool IsValidFilePath(const std::string& rFilePath)
 		bRetVal = true;
 	}
 	return bRetVal;
+}
+
+HRESULT SVControlCommands::RunOnce(const _bstr_t& rInspectionName, SVCommandStatus& rStatus)
+{
+	HRESULT Result {S_OK};
+
+	try
+	{
+		if (nullptr == m_pRpcClient || nullptr == m_pSvrcClientService || !m_pRpcClient->isConnected())
+		{
+			throw std::invalid_argument("Not connected to neither SVOGateway nor SVObserver");
+		}
+
+		std::string Inspection = SVStringConversions::to_utf8(rInspectionName);
+		
+		if(!Inspection.empty())
+		{
+			SvPb::RunOnceRequest Request;
+			Request.set_inspectionname(Inspection);
+			SvPb::StandardResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
+																	&SvWsl::SVRCClientService::RunOnce,
+																	std::move(Request)).get();
+			Result = Response.hresult();
+			rStatus.hResult = Result;
+		}
+		else
+		{
+			Result = E_INVALIDARG;
+			rStatus.hResult = Result;
+			rStatus.errorText = L"Inspection name missing";
+		}
+
+		SVLOG(Result);
+	}
+	HANDLE_EXCEPTION(Result, rStatus)
+
+	return Result;
 }
 
 HRESULT SVControlCommands::GetConfig(const _bstr_t& rFilePath, SVCommandStatus& rStatus)

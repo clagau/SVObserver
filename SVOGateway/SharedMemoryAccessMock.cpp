@@ -8,12 +8,12 @@
 
 #include "stdafx.h"
 
+//Moved to precompiled header: #include <fstream>
+//Moved to precompiled header: #include <future>
+//Moved to precompiled header: #include <queue>
+
 #include "SharedMemoryAccessInterface.h"
 #include "SharedMemoryAccessMock.h"
-
-#include <fstream>
-#include <future>
-#include <queue>
 
 namespace SvOgw
 {

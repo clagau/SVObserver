@@ -39,14 +39,14 @@ namespace SvOi
 		virtual ITaskObject* GetToolSetInterface() const = 0;
 
 		/***********
-		This method gets the enable state for the AuxiliaryExtent (which is not a value object)
+		This method gets the enable state for the AuxiliaryExtent
 		***********/
-		virtual long GetEnableAuxiliaryExtent() const = 0;
+		virtual bool getEnableAuxiliaryExtent() const = 0;
 
 		/***********
-		This method sets the enable state for the AuxiliaryExtent (which is not a value object)
+		This method sets the enable state for the AuxiliaryExtent
 		***********/
-		virtual void SetEnableAuxiliaryExtent(long enabled) = 0;
+		virtual void setEnableAuxiliaryExtent(bool Enabled) = 0;
 
 		virtual HRESULT RunOnce(ITaskObject* pTask) = 0;
 
