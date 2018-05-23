@@ -98,8 +98,8 @@ private:
 
 private:
 	// TODO: switch to boost::asio::thread_pool when upgrading to boost 1.66.0
-	boost::asio::io_service m_IoService;
-	std::unique_ptr<boost::asio::io_service::work> m_IoWork;
+	boost::asio::io_context m_IoContex;
+	std::unique_ptr<boost::asio::io_context::work> m_IoWork;
 	std::thread m_IoThread;
 	std::atomic_bool m_IsStopping {false};
 	SvHttp::WebsocketClientFactory m_WebsocketClientFactory;

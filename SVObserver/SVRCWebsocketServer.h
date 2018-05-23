@@ -28,7 +28,7 @@ private:
 	std::unique_ptr<SvRpc::RPCServer> m_pRpcServer;
 	std::shared_ptr<SvHttp::WebsocketServerSettings> m_pSettings;
 	
-	boost::asio::io_service m_io_service;
+	boost::asio::io_context m_io_service;
 	std::unique_ptr<SvHttp::WebsocketServer> m_pWebsocketserver;
 	std::unique_ptr<std::thread> m_pThread;
 };

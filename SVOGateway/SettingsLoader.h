@@ -19,9 +19,9 @@
 ///   WebsocketHost = websocketSettings.host
 ///   WebsocketPort = websocketSettings.port
 ///   WebsocketReadBufferSize = websocketSettings.read_buffer_size
+///   WebsocketWriteBufferSize = websocketSettings.write_buffer_size
 ///   WebsocketPingIntervalSec = websocketSettings.ping_interval_sec
 ///   WebsocketPingTimeoutCount = websocketSettings.ping_timeout_count
-///   WebsocketSplitLargePayload = websocketSettings.split_large_payload
 ///   WebsocketConnectionCleanupIntervalSec =
 ///     websocketSettings.connection_cleanup_interval_sec
 //******************************************************************************

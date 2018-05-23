@@ -40,6 +40,7 @@
 #define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS	// some CString constructors will be explicit
 #pragma warning( disable: 4482 )	//! Disables warning with enum name being used
 
+#define WINDOWS_EVENT_LOG_BACKEND
 #pragma region Precompiled Headers
 #include "resource.h"
 #include <atlbase.h>
@@ -66,7 +67,13 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <list>
+#include <boost/log/trivial.hpp>
+#include <boost/array.hpp>
+#include <boost/asio.hpp>
+#include <boost/asio/deadline_timer.hpp>
+#include <boost/asio/io_service.hpp>
 #include <boost/bind.hpp>
+#include <boost/chrono/duration.hpp>
 #include <boost/config.hpp>
 #include <boost/function.hpp>
 #include <boost/shared_array.hpp>

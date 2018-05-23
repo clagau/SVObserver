@@ -49,6 +49,7 @@
 
 #include <boost/array.hpp>
 #include <boost/asio.hpp>
+#include <boost/asio/deadline_timer.hpp>
 #include <boost/asio/io_service.hpp>
 #include <boost/chrono/duration.hpp>
 #pragma endregion Precompiled Headers

@@ -19,27 +19,38 @@
 #include <boost/asio.hpp>
 #include <boost/log/trivial.hpp>
 
-#include "SvHttpLibrary/Handshake.h"
-#include "SvHttpLibrary/WebsocketServerConnection.h"
-
+#include "WebsocketServerConnection.h"
+#include "defines.h"
 namespace SvHttp
 {
 WebsocketServerConnection::WebsocketServerConnection(const WebsocketServerSettings& rSettings,
-	boost::asio::io_service& rIoService,
+	boost::asio::io_context& rIoContext,
+	boost::asio::ip::tcp::socket Socket,
 	int ConnectionId,
 	EventHandler* pEventHandler)
-	: m_ConnectionId(ConnectionId), m_rSettings(rSettings), m_rIoService(rIoService), m_Socket(rIoService),
-	m_PingTimer(rIoService), m_PingTimeoutCount(0), m_Handshake(), m_pEventHandler(pEventHandler)
+	: m_ConnectionId(ConnectionId)
+	, m_rSettings(rSettings)
+	, m_rIoContext(rIoContext)
+	, m_Socket(std::move(Socket))
+	, m_PingTimer(rIoContext)
+	, m_PingTimeoutCount(0)
+	, m_ControlCommand(std::bind(&WebsocketServerConnection::handle_control_command, this, std::placeholders::_1, std::placeholders::_2))
+	, m_pEventHandler(pEventHandler)
 {
+	// m_Socket will store a reference only. we have to make sure the callback instance will live as long as required.
+	m_Socket.control_callback(m_ControlCommand);
+	m_Socket.read_message_max(MAX_MESSAGE_SIZE);
+	m_Socket.write_buffer_size(rSettings.WriteBufferSize);
 }
 
 std::shared_ptr<WebsocketServerConnection> WebsocketServerConnection::create(
 	const WebsocketServerSettings& rSettings,
-	boost::asio::io_service& rIoService,
+	boost::asio::io_context& rIoContext,
+	boost::asio::ip::tcp::socket Socket,
 	int ConnectionId,
 	EventHandler* pEventHandler)
 {
-	return std::shared_ptr<WebsocketServerConnection>(new WebsocketServerConnection(rSettings, rIoService, ConnectionId, pEventHandler));
+	return std::shared_ptr<WebsocketServerConnection>(new WebsocketServerConnection(rSettings, rIoContext, std::move(Socket), ConnectionId, pEventHandler));
 }
 
 bool WebsocketServerConnection::isOpen() const
@@ -47,66 +58,12 @@ bool WebsocketServerConnection::isOpen() const
 	return m_Socket.is_open();
 }
 
-boost::asio::ip::tcp::socket& WebsocketServerConnection::socket()
-{
-	return m_Socket;
-}
-
 void WebsocketServerConnection::start()
 {
-	read_handshake();
+	m_Socket.async_accept(std::bind(&WebsocketServerConnection::handle_handshake_done, shared_from_this(), std::placeholders::_1));
 }
 
-void WebsocketServerConnection::read_handshake()
-{
-	m_Buf.assign(m_rSettings.ReadBufferSize, '\0');
-	boost::asio::async_read(
-		m_Socket,
-		boost::asio::buffer(m_Buf),
-		boost::asio::transfer_at_least(1),
-		std::bind(
-		&WebsocketServerConnection::handle_handshake_read, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
-}
-
-void WebsocketServerConnection::handle_handshake_read(const boost::system::error_code& error, size_t bytes_read)
-{
-	if (error)
-	{
-		handle_error(error);
-		return;
-	}
-
-	auto state = m_Handshake.parseClientRequest(m_Buf.data(), bytes_read);
-	switch (state)
-	{
-		case Handshake::PS_INCOMPLETE:
-			read_handshake();
-			break;
-
-		case Handshake::PS_SUCCESS:
-			send_handshake_response();
-			break;
-
-		case Handshake::PS_ERROR:
-		case Handshake::PS_INVALID:
-			BOOST_LOG_TRIVIAL(error) << "Received unknown handshake request from client.";
-			m_Socket.close();
-			break;
-	}
-}
-
-void WebsocketServerConnection::send_handshake_response()
-{
-	auto response = m_Handshake.generateServerResponse();
-	m_Buf = std::vector<char> {response.begin(), response.end()};
-	boost::asio::async_write(
-		m_Socket,
-		boost::asio::buffer(m_Buf),
-		std::bind(
-		&WebsocketServerConnection::handle_handshake_sent, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
-}
-
-void WebsocketServerConnection::handle_handshake_sent(const boost::system::error_code& error, size_t bytes_read)
+void WebsocketServerConnection::handle_handshake_done(const boost::system::error_code& error)
 {
 	if (error)
 	{
@@ -129,31 +86,42 @@ void WebsocketServerConnection::read_buffer()
 		std::bind(&WebsocketServerConnection::handle_read_buffer,
 		shared_from_this(),
 		std::placeholders::_1,
-		std::placeholders::_2,
-		std::ref(m_Buf)));
+		std::placeholders::_2));
 }
 
-void WebsocketServerConnection::handle_read_buffer(const boost::system::error_code& error,
-	size_t bytes_read,
-	std::vector<char>& buf)
+void WebsocketServerConnection::handle_read_buffer(const boost::system::error_code& error, size_t bytes_read)
 {
 	if (error)
 	{
 		handle_error(error);
 		if (m_Socket.is_open())
 		{
-			m_Socket.close();
+			boost::system::error_code ec;
+			m_Socket.next_layer().close(ec);
+			if (ec)
+			{
+				BOOST_LOG_TRIVIAL(warning) << "Error while closing websocket connection: " << ec;
+			}
 		}
 		return;
 	}
 
-	auto prev_size = m_Frames.size();
-	m_Frames.reserve(prev_size + bytes_read + 1);
-	m_Frames.insert(m_Frames.end(), buf.data(), buf.data() + bytes_read);
+	auto prev_size = m_Payload.size();
+	m_Payload.reserve(prev_size + bytes_read + 1);
+	m_Payload.insert(m_Payload.end(), m_Buf.data(), m_Buf.data() + bytes_read);
+	m_Buf.clear();
 
-	while (process_frame(m_Frames, m_Payload))
+	if (m_Socket.is_message_done())
 	{
-		;
+		if (m_Socket.got_binary())
+		{
+			m_pEventHandler->onBinaryMessage(m_ConnectionId, m_Payload);
+		}
+		else
+		{
+			m_pEventHandler->onTextMessage(m_ConnectionId, m_Payload);
+		}
+		m_Payload.clear();
 	}
 
 	if (m_Socket.is_open())
@@ -162,106 +130,28 @@ void WebsocketServerConnection::handle_read_buffer(const boost::system::error_co
 	}
 }
 
-bool WebsocketServerConnection::process_frame(std::vector<char>& frames, std::vector<char>& payload)
-{
-	size_t frame_len = 0;
-	auto frame_type = m_WebsocketParser.parseFrame(
-		reinterpret_cast<unsigned char*>(frames.data()), frames.size(), frame_len, payload);
-
-	switch (frame_type)
-	{
-		case WebSocketParser::ERROR_FRAME:
-			BOOST_LOG_TRIVIAL(error) << "Error while parsing incoming websocket message! Closing connection.";
-			m_Socket.close();
-			return false;
-
-		case WebSocketParser::CLOSING_FRAME:
-			m_Socket.close();
-			return false;
-
-		case WebSocketParser::TEXT_FRAME:
-			m_pEventHandler->onTextMessage(m_ConnectionId, payload);
-			payload.clear();
-			frames.erase(frames.begin(), frames.begin() + frame_len);
-			return true;
-
-		case WebSocketParser::BINARY_FRAME:
-			m_pEventHandler->onBinaryMessage(m_ConnectionId, payload);
-			payload.clear();
-			frames.erase(frames.begin(), frames.begin() + frame_len);
-			return true;
-
-		case WebSocketParser::PING_FRAME:
-			BOOST_LOG_TRIVIAL(warning) << "server should not receive ping message!";
-			frames.erase(frames.begin(), frames.begin() + frame_len);
-			return true;
-
-		case WebSocketParser::PONG_FRAME:
-			m_PingTimeoutCount = 0;
-			// TODO: really clear frames? according to RFC, we must be able to handle
-			//       control frames in the middle of a fragmented message.
-			frames.erase(frames.begin(), frames.begin() + frame_len);
-			return true;
-
-		case WebSocketParser::CONTINUATION_FRAME:
-			frames.erase(frames.begin(), frames.begin() + frame_len);
-			return true;
-
-		case WebSocketParser::INCOMPLETE_FRAME:
-			return false;
-
-		default:
-			BOOST_LOG_TRIVIAL(error) << "Received unknown WebSocket frame " << frame_type;
-			m_Socket.close();
-			return false;
-	}
-}
-
 std::future<void> WebsocketServerConnection::sendTextMessage(const std::vector<char>& buf)
 {
-	return send_message_impl(buf, WebSocketParser::TEXT_FRAME);
+	return send_message_impl(buf, false);
 }
 
 std::future<void> WebsocketServerConnection::sendBinaryMessage(const std::vector<char>& buf)
 {
-	return send_message_impl(buf, WebSocketParser::BINARY_FRAME);
+	return send_message_impl(buf, true);
 }
 
-std::future<void> WebsocketServerConnection::send_message_impl(const std::vector<char>& buf,
-	WebSocketParser::FrameType type)
+std::future<void> WebsocketServerConnection::send_message_impl(const std::vector<char>& buf, bool is_binary)
 {
 	auto promise = std::make_shared<std::promise<void>>();
-	if (m_rSettings.SplitLargePayload)
+	m_rIoContext.dispatch([this, buf, is_binary, promise]()
 	{
-		std::vector<std::vector<char>> frames;
-		m_WebsocketParser.makeFrames(frames, type, buf.data(), buf.size());
-		m_rIoService.dispatch([this, frames = std::move(frames), promise]() {
-			for (size_t i = 0; i < frames.size(); ++i)
-			{
-				PendingFrame pendingFrame;
-				pendingFrame.Frame = std::move(frames[i]);
-				// fullfill promise after last write only
-				if (i + 1 == frames.size())
-				{
-					pendingFrame.Promise = promise;
-				}
-				m_FrameQueue.emplace(std::move(pendingFrame));
-			}
-			send_next_frame();
-		});
-	}
-	else
-	{
-		std::vector<char> frame;
-		m_WebsocketParser.makeFrame(frame, WebSocketParser::BINARY_FRAME, buf.data(), buf.size());
-		m_rIoService.dispatch([this, frame = std::move(frame), promise]() {
-			PendingFrame pendingFrame;
-			pendingFrame.Frame = std::move(frame);
-			pendingFrame.Promise = promise;
-			m_FrameQueue.emplace(std::move(pendingFrame));
-			send_next_frame();
-		});
-	}
+		PendingFrame pendingFrame;
+		pendingFrame.IsBinary = is_binary;
+		pendingFrame.Frame = std::move(buf);
+		pendingFrame.Promise = promise;
+		m_FrameQueue.emplace(std::move(pendingFrame));
+		send_next_frame();
+	});
 	return promise->get_future();
 }
 
@@ -274,8 +164,8 @@ void WebsocketServerConnection::send_next_frame()
 
 	m_IsSendingFrame = true;
 	auto& pendingFrame = m_FrameQueue.front();
-	boost::asio::async_write(
-		m_Socket,
+	m_Socket.binary(pendingFrame.IsBinary);
+	m_Socket.async_write(
 		boost::asio::buffer(pendingFrame.Frame),
 		std::bind(&WebsocketServerConnection::handle_frame_sent, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
 }
@@ -295,12 +185,40 @@ void WebsocketServerConnection::handle_frame_sent(const boost::system::error_cod
 		handle_error(error);
 		if (m_Socket.is_open())
 		{
-			m_Socket.close();
+			boost::system::error_code ec;
+			m_Socket.next_layer().close(ec);
+			if (ec)
+			{
+				BOOST_LOG_TRIVIAL(warning) << "Error while closing websocket connection: " << ec;
+			}
 		}
 		return;
 	}
 
 	send_next_frame();
+}
+
+void WebsocketServerConnection::handle_error(const boost::system::error_code& error)
+{
+	if (!error)
+	{
+		return;
+	}
+
+	if (error == boost::asio::error::eof || error == boost::asio::error::connection_reset ||
+		error == boost::asio::error::connection_aborted ||
+		error.value() == WSAEBADF) // bad file descriptor, when connection already closed
+	{
+		if (!m_IsDisconnectErrorHandled)
+		{
+			BOOST_LOG_TRIVIAL(info) << "Client disconnected";
+			m_pEventHandler->onDisconnect(m_ConnectionId);
+		}
+		m_IsDisconnectErrorHandled = true;
+		return;
+	}
+
+	BOOST_LOG_TRIVIAL(warning) << "client connection error: " << error;
 }
 
 void WebsocketServerConnection::schedule_ping()
@@ -329,39 +247,35 @@ void WebsocketServerConnection::on_ping_interval(const boost::system::error_code
 	if (m_rSettings.PingTimeoutCount > 0 && m_PingTimeoutCount > m_rSettings.PingTimeoutCount)
 	{
 		BOOST_LOG_TRIVIAL(info) << "Client did not respond to ping messages. Closing connection.";
-		m_Socket.close();
+		m_Socket.next_layer().close();
 		return;
 	}
 
-	PendingFrame pendingFrame;
-	m_WebsocketParser.makeFrame(pendingFrame.Frame, WebSocketParser::PING_FRAME, nullptr, 0);
-	m_FrameQueue.emplace(std::move(pendingFrame));
-	send_next_frame();
+	m_Socket.async_ping(boost::beast::websocket::ping_data(),
+		std::bind(&WebsocketServerConnection::handle_ping_sent, shared_from_this(), std::placeholders::_1));
 
 	schedule_ping();
 }
 
-void WebsocketServerConnection::handle_error(const boost::system::error_code& error)
+void WebsocketServerConnection::handle_ping_sent(const boost::system::error_code& error)
 {
-	if (!error)
+	if (error)
 	{
+		handle_error(error);
 		return;
 	}
+}
 
-	if (error == boost::asio::error::eof || error == boost::asio::error::connection_reset ||
-		error == boost::asio::error::connection_aborted ||
-		error.value() == WSAEBADF) // bad file descriptor, when connection already closed
+void WebsocketServerConnection::handle_control_command(boost::beast::websocket::frame_type frame_type, boost::beast::string_view)
+{
+	switch (frame_type)
 	{
-		if (!m_IsDisconnectErrorHandled)
-		{
-			BOOST_LOG_TRIVIAL(info) << "Client disconnected";
-			m_pEventHandler->onDisconnect(m_ConnectionId);
-		}
-		m_IsDisconnectErrorHandled = true;
-		return;
+		case boost::beast::websocket::frame_type::pong:
+			m_PingTimeoutCount = 0;
+			break;
+		default:
+			break;
 	}
-
-	BOOST_LOG_TRIVIAL(warning) << "client connection error: " << error;
 }
 
 } // namespace SvHttp

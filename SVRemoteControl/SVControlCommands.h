@@ -16,7 +16,6 @@
 #include "SVControlResponse.h"
 #include "SVRemoteCtrl.h"
 #include <Thread>
-#include <boost/asio/io_service.hpp>
 #include "WebsocketLibrary/SVRCClientService.h"
 #include "SVRPCLibrary/RPCClient.h"
 #include "NotificationHandler.h"

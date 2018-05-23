@@ -22,12 +22,12 @@
 #include <memory>
 #include <queue>
 
-#include <boost/array.hpp>
-#include <boost/asio/io_service.hpp>
+#include <boost/asio/deadline_timer.hpp>
+#include <boost/asio/io_context.hpp>
 #include <boost/asio/ip/tcp.hpp>
+#include <boost/beast/core.hpp>
+#include <boost/beast/websocket.hpp>
 
-#include "SvHttpLibrary/Handshake.h"
-#include "SvHttpLibrary/WebSocketParser.h"
 #include "SvHttpLibrary/WebSocketServerSettings.h"
 
 namespace SvHttp
@@ -47,19 +47,20 @@ public:
 
 private:
 	WebsocketServerConnection(const WebsocketServerSettings& rSettings,
-		boost::asio::io_service& rIoService,
+		boost::asio::io_context& rIoContext,
+		boost::asio::ip::tcp::socket Socket,
 		int ConnectionId,
 		EventHandler* pEventHandler);
 
 public:
 	static std::shared_ptr<WebsocketServerConnection> create(
 		const WebsocketServerSettings& rSettings,
-		boost::asio::io_service& rIoService,
+		boost::asio::io_context& rIoContext,
+		boost::asio::ip::tcp::socket Socket, 
 		int ConnectionId,
 		EventHandler* pEventHandler);
 
 	bool isOpen() const;
-	boost::asio::ip::tcp::socket& socket();
 
 	void start();
 
@@ -67,40 +68,39 @@ public:
 	std::future<void> sendBinaryMessage(const std::vector<char>&);
 
 private:
-	void read_handshake();
-	void handle_handshake_read(const boost::system::error_code& error, size_t bytes_sent);
-	void send_handshake_response();
-	void handle_handshake_sent(const boost::system::error_code& error, size_t bytes_read);
+	void handle_handshake_done(const boost::system::error_code& error);
 
 	void read_buffer();
-	void handle_read_buffer(const boost::system::error_code& error, size_t bytes_read, std::vector<char>& buf);
-	bool process_frame(std::vector<char>& frames, std::vector<char>& payload);
+	void handle_read_buffer(const boost::system::error_code& error, size_t bytes_read);
 
-	std::future<void> send_message_impl(const std::vector<char>&, WebSocketParser::FrameType);
+	std::future<void> send_message_impl(const std::vector<char>&, bool is_binary);
 	void send_next_frame();
 	void handle_frame_sent(const boost::system::error_code& error, size_t bytes_sent);
 
+	void handle_error(const boost::system::error_code& error);
+
 	void schedule_ping();
 	void on_ping_interval(const boost::system::error_code& error);
-
-	void handle_error(const boost::system::error_code& error);
+	void handle_ping_sent(const boost::system::error_code& error);
+	void handle_control_command(boost::beast::websocket::frame_type, boost::beast::string_view);
+	using TControlCommand = std::function<void(boost::beast::websocket::frame_type, boost::beast::string_view)>;
 
 private:
 	int m_ConnectionId;
 	const WebsocketServerSettings& m_rSettings;
-	boost::asio::io_service& m_rIoService;
-	boost::asio::ip::tcp::socket m_Socket;
+	boost::asio::io_context& m_rIoContext;
+	boost::beast::websocket::stream<boost::asio::ip::tcp::socket> m_Socket;
 	boost::asio::deadline_timer m_PingTimer;
 	uint32_t m_PingTimeoutCount;
-	Handshake m_Handshake;
+	TControlCommand m_ControlCommand;
 	EventHandler* m_pEventHandler;
-	WebSocketParser m_WebsocketParser;
 	std::vector<char> m_Buf;
 	std::vector<char> m_Frames;
 	std::vector<char> m_Payload;
 	bool m_IsSendingFrame {false};
 	struct PendingFrame
 	{
+		bool IsBinary;
 		std::vector<char> Frame;
 		std::shared_ptr<std::promise<void>> Promise;
 	};

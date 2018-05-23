@@ -12,7 +12,7 @@
 /// MessageHandler interface. Outgoing messages can be sent using the
 /// sendTextMessage and sendBinaryMessage methods.
 ///
-/// The provided boost::asio::io_service must be single-threaded.
+/// The provided boost::asioio_context must be single-threaded.
 //******************************************************************************
 
 #pragma once
@@ -21,16 +21,16 @@
 #include <thread>
 #include <vector>
 
-#include <boost/array.hpp>
-#include <boost/asio/io_service.hpp>
+#include <boost/asio/io_context.hpp>
+#include <boost/asio/connect.hpp>
 #include <boost/asio/ip/tcp.hpp>
+#include <boost/beast/core.hpp>
+#include <boost/beast/websocket.hpp>
 #include <boost/thread/future.hpp>
-
-#include "SvHttpLibrary/Handshake.h"
-#include "SvHttpLibrary/WebSocketParser.h"
 
 namespace SvHttp
 {
+
 class WebsocketClient
 {
 public:
@@ -54,22 +54,21 @@ public:
 	virtual ~WebsocketClient();
 	static std::shared_ptr<WebsocketClient> create(EventHandler*);
 
-	void connect(std::string host, uint16_t port);
+	void connect(std::string host, uint16_t port, std::string path = "/");
 	void disconnect();
 
 	void sendTextMessage(const std::vector<char>&);
 	void sendBinaryMessage(const std::vector<char>&);
 
 private:
+	void handle_resolve(const boost::system::error_code& ec, boost::asio::ip::tcp::resolver::results_type);
 	void handle_connect(const boost::system::error_code& ec);
 	void handle_connection_error(const boost::system::error_code& ec);
 	void handle_connection_success();
 	void close_connection();
 
 	void send_handshake();
-	void handle_handshake_sent(const boost::system::error_code& error, size_t bytes_sent);
-	void read_handshake_response();
-	void handle_handshake_response(const boost::system::error_code& error, size_t bytes_read);
+	void handle_handshake_response(const boost::system::error_code& error);
 
 	void handle_request_sent(const boost::system::error_code& error,
 		size_t bytes_sent,
@@ -77,22 +76,20 @@ private:
 
 	void read_buffer();
 	void handle_read_buffer(const boost::system::error_code& error, size_t bytes_read);
-	bool process_frame(std::vector<char>& frames, std::vector<char>& payload);
-
-	void send_pong();
 
 private:
-	boost::asio::io_service m_IoService;
-	std::unique_ptr<boost::asio::io_service::work> m_IoWork;
+	std::string m_Host;
+	uint16_t m_Port;
+	std::string m_Path;
+	boost::asio::io_context m_IoContext;
+	std::unique_ptr<boost::asio::io_context::work> m_IoWork;
 	std::thread m_IoThread;
-	boost::asio::ip::tcp::socket m_Socket;
-	Handshake m_Handshake;
+	boost::asio::ip::tcp::resolver m_Resolver;
+	boost::beast::websocket::stream<boost::asio::ip::tcp::socket> m_Socket;
 	EventHandler* m_pEventHandler;
 	bool m_IsDisconnectEventSent {false};
 	bool m_IsShuttingDown {false};
-	WebSocketParser m_WebsocketParser;
 	std::vector<char> m_Buf;
-	std::vector<char> m_Frames;
 	std::vector<char> m_Payload;
 };
 

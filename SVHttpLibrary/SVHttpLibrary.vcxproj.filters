@@ -27,19 +27,13 @@
     <ClInclude Include="WebsocketClient.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="WebsocketParser.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="Handshake.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="http_parser.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="WebsocketServerSettings.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="WebsocketClientFactory.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Defines.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
@@ -54,15 +48,6 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="WebsocketClient.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="Handshake.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="WebsocketParser.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="http_parser.c">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="WebsocketClientFactory.cpp">

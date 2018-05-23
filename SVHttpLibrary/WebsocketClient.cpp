@@ -14,25 +14,28 @@
 
 #include <boost/log/trivial.hpp>
 
-#include "SvHttpLibrary/Handshake.h"
-#include "SvHttpLibrary/WebsocketClient.h"
+#include "WebsocketClient.h"
+#include "Defines.h"
 
 #define BUF_SIZE (64 * 1024)
 
 namespace SvHttp
 {
 WebsocketClient::WebsocketClient(EventHandler* pEventHandler)
-	: m_IoService(1)
-	, m_IoWork(std::make_unique<boost::asio::io_service::work>(m_IoService))
-	, m_Socket(m_IoService)
-	, m_Handshake()
+	: m_IoContext(1)
+	, m_IoWork(std::make_unique<boost::asio::io_context::work>(m_IoContext))
+	, m_Resolver(m_IoContext)
+	, m_Socket(m_IoContext)
 	, m_pEventHandler(pEventHandler)
 {
 	if (!m_pEventHandler)
 	{
 		throw new std::runtime_error("WebsocketClient: no message handler provided!");
 	}
-	m_IoThread = std::thread([this]() { m_IoService.run(); });
+
+	m_Socket.read_message_max(MAX_MESSAGE_SIZE);
+	m_Socket.write_buffer_size(BUF_SIZE);
+	m_IoThread = std::thread([this]() { m_IoContext.run(); });
 }
 
 WebsocketClient::~WebsocketClient()
@@ -49,12 +52,14 @@ std::shared_ptr<WebsocketClient> WebsocketClient::create(EventHandler* pEventHan
 	return std::shared_ptr<WebsocketClient>(new WebsocketClient(pEventHandler));
 }
 
-void WebsocketClient::connect(std::string host, uint16_t port)
+void WebsocketClient::connect(std::string host, uint16_t port, std::string path)
 {
+	m_Host = host;
+	m_Port = port;
+	m_Path = path;
 	BOOST_LOG_TRIVIAL(debug) << "Websocket client connecting to ws://" << host << ":" << port << "/";
-	auto address = boost::asio::ip::address_v4::from_string(host);
-	auto endpoint = boost::asio::ip::tcp::endpoint(address, port);
-	m_Socket.async_connect(endpoint, std::bind(&WebsocketClient::handle_connect, this, std::placeholders::_1));
+	auto query = boost::asio::ip::tcp::resolver::query(host, std::to_string(port));
+	m_Resolver.async_resolve(query, std::bind(&WebsocketClient::handle_resolve, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 void WebsocketClient::disconnect()
@@ -65,16 +70,31 @@ void WebsocketClient::disconnect()
 	}
 
 	m_IsShuttingDown = true;
-	m_Socket.close();
-	m_IoWork.reset();
-	if (!m_IoService.stopped())
+	if (m_Socket.is_open())
 	{
-		m_IoService.stop();
+		boost::system::error_code ec;
+		m_Socket.next_layer().close(ec);
+		if (ec)
+		{
+			BOOST_LOG_TRIVIAL(warning) << "Error while closing websocket connection: " << ec;
+		}
+	}
+	m_IoWork.reset();
+	if (!m_IoContext.stopped())
+	{
+		m_IoContext.stop();
 	}
 	if (m_IoThread.joinable())
 	{
 		m_IoThread.join();
 	}
+}
+
+void WebsocketClient::handle_resolve(const boost::system::error_code& ec,
+	boost::asio::ip::tcp::resolver::results_type results)
+{
+	boost::asio::async_connect(m_Socket.next_layer(), results.begin(), results.end(),
+		std::bind(&WebsocketClient::handle_connect, this, std::placeholders::_1));
 }
 
 void WebsocketClient::handle_connect(const boost::system::error_code& ec)
@@ -121,7 +141,12 @@ void WebsocketClient::close_connection()
 {
 	if (m_Socket.is_open())
 	{
-		m_Socket.close();
+		boost::system::error_code ec;
+		m_Socket.next_layer().close(ec);
+		if (ec)
+		{
+			BOOST_LOG_TRIVIAL(warning) << "Error while closing websocket connection: " << ec;
+		}
 	}
 	if (!m_IsDisconnectEventSent && !m_IsShuttingDown)
 	{
@@ -132,15 +157,10 @@ void WebsocketClient::close_connection()
 
 void WebsocketClient::send_handshake()
 {
-	auto request = m_Handshake.generateClienRequest();
-	m_Buf = std::vector<char> {request.begin(), request.end()};
-	boost::asio::async_write(
-		m_Socket,
-		boost::asio::buffer(m_Buf),
-		std::bind(&WebsocketClient::handle_handshake_sent, this, std::placeholders::_1, std::placeholders::_2));
+	m_Socket.async_handshake(m_Host, m_Path, std::bind(&WebsocketClient::handle_handshake_response, this, std::placeholders::_1));
 }
 
-void WebsocketClient::handle_handshake_sent(const boost::system::error_code& error, size_t bytes_sent)
+void WebsocketClient::handle_handshake_response(const boost::system::error_code& error)
 {
 	if (error)
 	{
@@ -148,72 +168,28 @@ void WebsocketClient::handle_handshake_sent(const boost::system::error_code& err
 		return;
 	}
 
-	read_handshake_response();
-}
-
-void WebsocketClient::read_handshake_response()
-{
-	m_Buf.clear();
-	m_Buf.resize(BUF_SIZE);
-	boost::asio::async_read(
-		m_Socket,
-		boost::asio::buffer(m_Buf),
-		boost::asio::transfer_at_least(1),
-		std::bind(&WebsocketClient::handle_handshake_response, this, std::placeholders::_1, std::placeholders::_2));
-}
-
-void WebsocketClient::handle_handshake_response(const boost::system::error_code& error, size_t bytes_read)
-{
-	if (error)
-	{
-		handle_connection_error(error);
-		return;
-	}
-
-	auto state = m_Handshake.parseServerResponse(m_Buf.data(), bytes_read);
-	switch (state)
-	{
-		case Handshake::PS_INCOMPLETE:
-			read_handshake_response();
-			break;
-
-		case Handshake::PS_SUCCESS:
-			read_buffer();
-			// connect is done now
-			BOOST_LOG_TRIVIAL(debug) << "Websocket client successfully connected";
-			handle_connection_success();
-			break;
-
-		case Handshake::PS_ERROR:
-		case Handshake::PS_INVALID:
-			BOOST_LOG_TRIVIAL(error) << "Received unknown handshake response from server.";
-			close_connection();
-			break;
-	}
+	read_buffer();
+	// connect is done now
+	BOOST_LOG_TRIVIAL(debug) << "Websocket client successfully connected";
+	handle_connection_success();
 }
 
 void WebsocketClient::sendTextMessage(const std::vector<char>& buf)
 {
-	auto res_frame = std::make_shared<std::vector<char>>();
-	m_WebsocketParser.makeFrame(*res_frame, WebSocketParser::TEXT_FRAME, buf.data(), buf.size());
-
-	boost::asio::async_write(
-		m_Socket,
+	auto res_frame = std::make_shared<std::vector<char>>(buf);
+	m_Socket.text(true);
+	m_Socket.async_write(
 		boost::asio::buffer(*res_frame),
-		std::bind(
-		&WebsocketClient::handle_request_sent, this, std::placeholders::_1, std::placeholders::_2, res_frame));
+		std::bind(&WebsocketClient::handle_request_sent, this, std::placeholders::_1, std::placeholders::_2, res_frame));
 }
 
 void WebsocketClient::sendBinaryMessage(const std::vector<char>& buf)
 {
-	auto res_frame = std::make_shared<std::vector<char>>();
-	m_WebsocketParser.makeFrame(*res_frame, WebSocketParser::BINARY_FRAME, buf.data(), buf.size());
-
-	boost::asio::async_write(
-		m_Socket,
+	auto res_frame = std::make_shared<std::vector<char>>(buf);
+	m_Socket.binary(true);
+	m_Socket.async_write(
 		boost::asio::buffer(*res_frame),
-		std::bind(
-		&WebsocketClient::handle_request_sent, this, std::placeholders::_1, std::placeholders::_2, res_frame));
+		std::bind(&WebsocketClient::handle_request_sent, this, std::placeholders::_1, std::placeholders::_2, res_frame));
 }
 
 void WebsocketClient::handle_request_sent(const boost::system::error_code& error,
@@ -246,81 +222,28 @@ void WebsocketClient::handle_read_buffer(const boost::system::error_code& error,
 		return;
 	}
 
-	m_Frames.insert(m_Frames.end(), m_Buf.begin(), m_Buf.begin() + bytes_read);
+	auto prev_size = m_Payload.size();
+	m_Payload.reserve(prev_size + bytes_read + 1);
+	m_Payload.insert(m_Payload.end(), m_Buf.data(), m_Buf.data() + bytes_read);
+	m_Buf.clear();
 
-	while (process_frame(m_Frames, m_Payload))
+	if (m_Socket.is_message_done())
 	{
-		;
+		if (m_Socket.got_binary())
+		{
+			m_pEventHandler->onBinaryMessage(m_Payload);
+		}
+		else
+		{
+			m_pEventHandler->onTextMessage(m_Payload);
+		}
+		m_Payload.clear();
 	}
 
 	if (m_Socket.is_open())
 	{
 		read_buffer();
 	}
-}
-
-bool WebsocketClient::process_frame(std::vector<char>& frames, std::vector<char>& payload)
-{
-	size_t frame_len = 0;
-	auto frame_type = m_WebsocketParser.parseFrame(
-		reinterpret_cast<unsigned char*>(frames.data()), frames.size(), frame_len, payload);
-	switch (frame_type)
-	{
-		case WebSocketParser::ERROR_FRAME:
-			BOOST_LOG_TRIVIAL(error) << "Error while parsing incoming websocket message! Closing connection.";
-			close_connection();
-			return false;
-
-		case WebSocketParser::CLOSING_FRAME:
-			close_connection();
-			return false;
-
-		case WebSocketParser::TEXT_FRAME:
-			m_pEventHandler->onTextMessage(payload);
-			payload.clear();
-			frames.erase(frames.begin(), frames.begin() + frame_len);
-			return true;
-
-		case WebSocketParser::BINARY_FRAME:
-			m_pEventHandler->onBinaryMessage(payload);
-			payload.clear();
-			frames.erase(frames.begin(), frames.begin() + frame_len);
-			return true;
-
-		case WebSocketParser::PING_FRAME:
-			send_pong();
-			frames.erase(frames.begin(), frames.begin() + frame_len);
-			return true;
-
-		case WebSocketParser::PONG_FRAME:
-			// ignore pong messages sent from server
-			frames.erase(frames.begin(), frames.begin() + frame_len);
-			return true;
-
-		case WebSocketParser::CONTINUATION_FRAME:
-			frames.erase(frames.begin(), frames.begin() + frame_len);
-			return true;
-
-		case WebSocketParser::INCOMPLETE_FRAME:
-			return false;
-
-		default:
-			BOOST_LOG_TRIVIAL(error) << "Received unknown WebSocket frame: " << frame_type;
-			close_connection();
-			return false;
-	}
-}
-
-void WebsocketClient::send_pong()
-{
-	auto res_frame = std::make_shared<std::vector<char>>();
-	m_WebsocketParser.makeFrame(*res_frame, WebSocketParser::PONG_FRAME, NULL, 0);
-
-	boost::asio::async_write(
-		m_Socket,
-		boost::asio::buffer(*res_frame),
-		std::bind(
-		&WebsocketClient::handle_request_sent, this, std::placeholders::_1, std::placeholders::_2, res_frame));
 }
 
 } // namespace SvHttp

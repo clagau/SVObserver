@@ -10,8 +10,6 @@
 
 #include <memory>
 
-#include <boost/asio/io_service.hpp>
-
 #include "SvHttpLibrary/WebSocketClient.h"
 
 namespace SvHttp

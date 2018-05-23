@@ -73,9 +73,9 @@ void SettingsLoader::loadFromRegistry(Settings& settings)
 	RegGetStringIfExists(settings.websocketSettings.Host, "WebsocketHost");
 	RegGetIntIfExists(settings.websocketSettings.Port, "WebsocketPort");
 	RegGetIntIfExists(settings.websocketSettings.ReadBufferSize, "WebsocketReadBufferSize");
+	RegGetIntIfExists(settings.websocketSettings.WriteBufferSize, "WebsocketWriteBufferSize");
 	RegGetIntIfExists(settings.websocketSettings.PingIntervalSec, "WebsocketPingIntervalSec");
 	RegGetIntIfExists(settings.websocketSettings.PingTimeoutCount, "WebsocketPingTimeoutCount");
 	RegGetIntIfExists(settings.websocketSettings.ConnectionCleanupIntervalSec, "WebsocketConnectionCleanupIntervalSec");
-	RegGetIntIfExists(settings.websocketSettings.SplitLargePayload, "WebsocketSplitLargePayload");
 }
 }// namespace SvOgw

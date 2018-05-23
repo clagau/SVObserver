@@ -115,6 +115,7 @@
 #include "SVRCWebsocketServer.h"
 #include "SVRCCommand.h"
 #include "WebsocketLibrary\Definition.h"
+#include "WebsocketLibrary\Logging.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -2194,8 +2195,18 @@ BOOL SVObserverApp::InitInstance()
 	m_DataValidDelay = static_cast<long> (SvimIni.GetValueInt(_T("Settings"), _T("DataValidDelay"), 0));
 
 	std::shared_ptr<SvHttp::WebsocketServerSettings>  pSettings = std::make_shared<SvHttp::WebsocketServerSettings>();
+	
+	//@Todo[MEC][8.00] [15.05.2018] Settings should be in ini file
 	pSettings->Host = "0.0.0.0";
 	pSettings->Port = SvWsl::Default_SecondPort;
+	//pSettings->PingIntervalSec = 10;
+	//pSettings->PingTimeoutCount = 10;
+	SvWsl::LogSettings logSettings;
+	logSettings.log_to_stdout_enabled = true;
+	logSettings.windows_event_log_source = "SVObserver";
+	logSettings.windows_event_log_enabled = true;
+	init_logging(logSettings);
+
 	std::shared_ptr<SVRCCommand> pSVRCCommand = std::make_shared<SVRCCommand>();
 	SVRCWebsocketServer::Instance()->Start(pSVRCCommand, pSettings);
 	

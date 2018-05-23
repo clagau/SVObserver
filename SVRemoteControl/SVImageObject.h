@@ -8,7 +8,6 @@
 #pragma region Includes
 #include "resource.h"       // main symbols
 #include "SVRemoteControl.h"
-#include <boost/shared_array.hpp>
 #include "WebsocketLibrary/SVRCClientService.h"
 #include "SVProtobuf/SVRC.h"
 #pragma endregion Includes

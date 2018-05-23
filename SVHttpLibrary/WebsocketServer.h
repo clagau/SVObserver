@@ -19,7 +19,7 @@
 #include <memory>
 #include <vector>
 
-#include <boost/asio/io_service.hpp>
+#include <boost/asio/io_context.hpp>
 #include <boost/asio/ip/tcp.hpp>
 
 #include "SvHttpLibrary/WebsocketServerConnection.h"
@@ -27,11 +27,12 @@
 
 namespace SvHttp
 {
+
 class WebsocketServer
 {
 public:
 	WebsocketServer(const WebsocketServerSettings& rSettings,
-		boost::asio::io_service& rIoService,
+		boost::asio::io_context& rIoContext,
 		WebsocketServerConnection::EventHandler* pEventHandler);
 
 	void start();
@@ -39,16 +40,17 @@ public:
 
 private:
 	void start_accept();
-	void handle_accept(std::shared_ptr<WebsocketServerConnection> conn, const boost::system::error_code& error);
+	void handle_accept(const boost::system::error_code& error);
 
 	void schedule_cleanup();
 	void do_cleanup(const boost::system::error_code& error);
 
 private:
 	const WebsocketServerSettings& m_rSettings;
-	boost::asio::io_service& m_rIoService;
+	boost::asio::io_context& m_rIoContext;
 	boost::asio::deadline_timer m_CleanupTimer;
 	boost::asio::ip::tcp::acceptor m_Acceptor;
+	boost::asio::ip::tcp::socket m_Socket;
 	int m_NextConnectionId;
 	WebsocketServerConnection::EventHandler* m_pEventHandler {nullptr};
 	std::vector<std::shared_ptr<WebsocketServerConnection>> m_Connections;

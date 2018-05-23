@@ -57,7 +57,7 @@ SVRCRequestHandler::SVRCRequestHandler(SVRCCommand* pCommand) :
 		[this, pCommand](SvPb::SetDeviceModeRequest&& req, SvRpc::Task<SvPb::StandardResponse> task)
 	{
 		m_IoRunService.post([req, task, pCommand]() { pCommand->SetDeviceMode(req, task); });
-		
+
 	});
 
 	registerRequestHandler<

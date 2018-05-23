@@ -25,10 +25,10 @@ static boost::asio::ip::tcp::endpoint build_endpoint(const WebsocketServerSettin
 }
 
 WebsocketServer::WebsocketServer(const WebsocketServerSettings& rSettings,
-	boost::asio::io_service& rIoService,
+	boost::asio::io_context& rIoContext,
 	WebsocketServerConnection::EventHandler* pEventHandler)
-	: m_rSettings(rSettings), m_rIoService(rIoService), m_CleanupTimer(rIoService),
-	m_Acceptor(rIoService, build_endpoint(rSettings)), m_pEventHandler(pEventHandler), m_NextConnectionId(0)
+	: m_rSettings(rSettings), m_rIoContext(rIoContext), m_CleanupTimer(rIoContext),
+	m_Acceptor(rIoContext, build_endpoint(rSettings)), m_Socket(rIoContext), m_pEventHandler(pEventHandler), m_NextConnectionId(0)
 {
 }
 
@@ -46,13 +46,11 @@ void WebsocketServer::stop()
 
 void WebsocketServer::start_accept()
 {
-	auto connection = WebsocketServerConnection::create(m_rSettings, m_rIoService, ++m_NextConnectionId, m_pEventHandler);
-	m_Acceptor.async_accept(connection->socket(),
-		std::bind(&WebsocketServer::handle_accept, this, connection, std::placeholders::_1));
+	m_Acceptor.async_accept(m_Socket,
+		std::bind(&WebsocketServer::handle_accept, this, std::placeholders::_1));
 }
 
-void WebsocketServer::handle_accept(std::shared_ptr<WebsocketServerConnection> connection,
-	const boost::system::error_code& ec)
+void WebsocketServer::handle_accept(const boost::system::error_code& ec)
 {
 	if (ec == boost::asio::error::operation_aborted)
 	{
@@ -63,6 +61,8 @@ void WebsocketServer::handle_accept(std::shared_ptr<WebsocketServerConnection> c
 		BOOST_LOG_TRIVIAL(error) << "Error while accepting connection: " << ec;
 		return;
 	}
+
+	auto connection = WebsocketServerConnection::create(m_rSettings, m_rIoContext, std::move(m_Socket), ++m_NextConnectionId, m_pEventHandler);
 
 	connection->start();
 

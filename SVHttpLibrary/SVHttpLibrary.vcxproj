@@ -165,24 +165,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Handshake.h" />
-    <ClInclude Include="http_parser.h" />
+    <ClInclude Include="Defines.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="WebsocketClient.h" />
     <ClInclude Include="WebsocketClientFactory.h" />
-    <ClInclude Include="WebsocketParser.h" />
     <ClInclude Include="WebsocketServer.h" />
     <ClInclude Include="WebsocketServerConnection.h" />
     <ClInclude Include="WebsocketServerSettings.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Handshake.cpp" />
-    <ClCompile Include="http_parser.c">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -191,7 +182,6 @@
     </ClCompile>
     <ClCompile Include="WebsocketClient.cpp" />
     <ClCompile Include="WebsocketClientFactory.cpp" />
-    <ClCompile Include="WebsocketParser.cpp" />
     <ClCompile Include="WebsocketServer.cpp" />
     <ClCompile Include="WebsocketServerConnection.cpp" />
   </ItemGroup>

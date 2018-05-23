@@ -18,13 +18,13 @@
 namespace SvRpc
 {
 RPCClient::RPCClient(std::string host, uint16_t port, std::function<void(ClientStatus)> StatusCallback)
-	: m_IoService(1)
-	, m_IoWork(std::make_unique<boost::asio::io_service::work>(m_IoService))
+	: m_IoContex(1)
+	, m_IoWork(std::make_unique<boost::asio::io_context::work>(m_IoContex))
 	, m_WebsocketClientFactory(host, port)
-	, m_ReconnectTimer(m_IoService)
+	, m_ReconnectTimer(m_IoContex)
 	, m_pStatusCallback(StatusCallback)
 {
-	m_IoThread = std::thread([this]() { m_IoService.run(); });
+	m_IoThread = std::thread([this]() { m_IoContex.run(); });
 	m_WebsocketClient = m_WebsocketClientFactory.create(this);
 }
 
@@ -52,9 +52,9 @@ void RPCClient::stop()
 	}
 	m_WebsocketClient.reset();
 	m_IoWork.reset();
-	if (!m_IoService.stopped())
+	if (!m_IoContex.stopped())
 	{
-		m_IoService.stop();
+		m_IoContex.stop();
 	}
 	if (m_IoThread.joinable())
 	{
@@ -116,7 +116,7 @@ void RPCClient::request_impl(SvPenv::Envelope&& Request, Task<SvPenv::Envelope> 
 void RPCClient::schedule_timeout(uint64_t tx_id, boost::posix_time::time_duration timeout)
 {
 	// use shared_ptr because boost::asio::deadline_timer is neither movable nor copyable
-	auto timer = std::make_shared<boost::asio::deadline_timer>(m_IoService);
+	auto timer = std::make_shared<boost::asio::deadline_timer>(m_IoContex);
 	timer->expires_from_now(timeout);
 	timer->async_wait(std::bind(&RPCClient::on_request_timeout, this, std::placeholders::_1, tx_id));
 	m_PendingRequestsTimer.emplace(tx_id, timer);
@@ -142,7 +142,7 @@ ClientStreamContext RPCClient::stream(SvPenv::Envelope&& Request, Observer<SvPen
 
 void RPCClient::onConnect()
 {
-	m_IoService.dispatch(std::bind(&RPCClient::on_connect, this));
+	m_IoContex.dispatch(std::bind(&RPCClient::on_connect, this));
 }
 
 void RPCClient::on_connect()
@@ -161,7 +161,7 @@ void RPCClient::on_connect()
 
 void RPCClient::onDisconnect()
 {
-	m_IoService.dispatch(std::bind(&RPCClient::on_disconnect, this));
+	m_IoContex.dispatch(std::bind(&RPCClient::on_disconnect, this));
 }
 
 void RPCClient::on_disconnect()
@@ -180,7 +180,7 @@ void RPCClient::on_disconnect()
 
 void RPCClient::onTextMessage(const std::vector<char>&)
 {
-	m_IoService.dispatch(std::bind(&RPCClient::on_text_message, this));
+	m_IoContex.dispatch(std::bind(&RPCClient::on_text_message, this));
 }
 
 void RPCClient::on_text_message()
@@ -191,7 +191,7 @@ void RPCClient::on_text_message()
 void RPCClient::onBinaryMessage(const std::vector<char>& buf)
 {
 	auto ptr = std::make_shared<std::vector<char>>(std::move(buf));
-	m_IoService.dispatch(std::bind(&RPCClient::on_binary_message, this, ptr));
+	m_IoContex.dispatch(std::bind(&RPCClient::on_binary_message, this, ptr));
 }
 
 void RPCClient::on_binary_message(std::shared_ptr<std::vector<char>> ptr)
