@@ -57,17 +57,23 @@ Router::Router(const std::string& rServerAddress, unsigned short ServerPort, Req
 
 		pRequestHandler->registerDefaultStreamHandler([this](SvPenv::Envelope&& Request, Observer<SvPenv::Envelope> Observer, ServerStreamContext::Ptr pServerContext)
 		{
-			if (ConnectToRouter())
+			try
 			{
-				auto client_ctx = m_pClientRouter->stream(std::move(Request), std::move(Observer));
-				pServerContext->registerOnCancelHandler([client_ctx]() mutable
+				if (ConnectToRouter())
 				{
-					client_ctx.cancel();
-				});
+					auto client_ctx = m_pClientRouter->stream(std::move(Request), std::move(Observer));
+					pServerContext->registerOnCancelHandler([client_ctx]() mutable
+					{
+						client_ctx.cancel();
+					});
+				}
+				else
+				{
+					Observer.error(SvRpc::build_error(SvPenv::ErrorCode::BadGateway, _T("No connection to SVObserver")));
+				}
 			}
-			else
+			catch (const std::exception&)
 			{
-				Observer.error(SvRpc::build_error(SvPenv::ErrorCode::BadGateway, _T("No connection to SVObserver")));
 			}
 		});
 	}

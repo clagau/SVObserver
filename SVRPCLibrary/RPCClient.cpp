@@ -308,51 +308,79 @@ void RPCClient::cancel_all_pending()
 
 void RPCClient::cancel_all_pending_requests()
 {
-	while (!m_PendingRequests.empty())
+	//We catch the exception and remove it as clients may have disconnected in the mean time
+	try
 	{
-		auto it = m_PendingRequests.begin();
-		auto tx_id = it->first;
-		cancel_request_timeout(tx_id);
-		auto& task = it->second;
-		task.error(build_error(SvPenv::ErrorCode::ServiceUnavailable, "Connection lost. Please retry."));
-		m_PendingRequests.erase(it);
+		while (!m_PendingRequests.empty())
+		{
+			auto it = m_PendingRequests.begin();
+			auto tx_id = it->first;
+			cancel_request_timeout(tx_id);
+			auto& task = it->second;
+			task.error(build_error(SvPenv::ErrorCode::ServiceUnavailable, "Connection lost. Please retry."));
+			m_PendingRequests.erase(it);
+		}
+	}
+	catch (const std::exception&)
+	{
 	}
 }
 
 void RPCClient::cancel_all_pending_streams()
 {
-	while (!m_PendingStreams.empty())
+	//We catch the exception and remove it as clients may have disconnected in the mean time
+	try
 	{
-		auto it = m_PendingStreams.begin();
-		auto& observer = it->second;
-		observer.error(build_error(SvPenv::ErrorCode::ServiceUnavailable, "Connection lost. Please retry."));
-		m_PendingStreams.erase(it);
+		while (!m_PendingStreams.empty())
+		{
+			auto it = m_PendingStreams.begin();
+			auto& observer = it->second;
+			observer.error(build_error(SvPenv::ErrorCode::ServiceUnavailable, "Connection lost. Please retry."));
+			m_PendingStreams.erase(it);
+		}
+	}
+	catch(const std::exception&)
+	{
 	}
 }
 
 void RPCClient::on_response(SvPenv::Envelope&& Response)
 {
-	auto tx_id = Response.transaction_id();
-	cancel_request_timeout(tx_id);
-	auto it = m_PendingRequests.find(tx_id);
-	if (it != m_PendingRequests.end())
+	//We catch the exception and remove it as clients may have disconnected in the mean time
+	try
 	{
-		auto cb = it->second;
-		m_PendingRequests.erase(it);
-		cb.finish(std::move(Response));
+		auto tx_id = Response.transaction_id();
+		cancel_request_timeout(tx_id);
+		auto it = m_PendingRequests.find(tx_id);
+		if (it != m_PendingRequests.end())
+		{
+			auto cb = it->second;
+			m_PendingRequests.erase(it);
+			cb.finish(std::move(Response));
+		}
+	}
+	catch (const std::exception&)
+	{
 	}
 }
 
 void RPCClient::on_error_response(SvPenv::Envelope&& Response)
 {
-	auto tx_id = Response.transaction_id();
-	cancel_request_timeout(tx_id);
-	auto it = m_PendingRequests.find(tx_id);
-	if (it != m_PendingRequests.end())
+	//We catch the exception and remove it as clients may have disconnected in the mean time
+	try
 	{
-		auto cb = it->second;
-		m_PendingRequests.erase(it);
-		cb.error(Response.error());
+		auto tx_id = Response.transaction_id();
+		cancel_request_timeout(tx_id);
+		auto it = m_PendingRequests.find(tx_id);
+		if (it != m_PendingRequests.end())
+		{
+			auto cb = it->second;
+			m_PendingRequests.erase(it);
+			cb.error(Response.error());
+		}
+	}
+	catch (const std::exception&)
+	{
 	}
 }
 
@@ -361,7 +389,14 @@ void RPCClient::on_stream_response(SvPenv::Envelope&& Response)
 	auto it = m_PendingStreams.find(Response.transaction_id());
 	if (it != m_PendingStreams.end())
 	{
-		it->second.onNext(std::move(Response));
+		//We catch the exception and remove it as clients may have disconnected in the mean time
+		try
+		{
+			it->second.onNext(std::move(Response));
+		}
+		catch (const std::exception&)
+		{
+		}
 	}
 }
 
@@ -370,9 +405,16 @@ void RPCClient::on_stream_error_response(SvPenv::Envelope&& Response)
 	auto it = m_PendingStreams.find(Response.transaction_id());
 	if (it != m_PendingStreams.end())
 	{
-		auto cb = it->second;
-		m_PendingStreams.erase(it);
-		cb.error(Response.error());
+		//We catch the exception and remove it as clients may have disconnected in the mean time
+		try
+		{
+			auto cb = it->second;
+			m_PendingStreams.erase(it);
+			cb.error(Response.error());
+		}
+		catch (const std::exception&)
+		{
+		}
 	}
 }
 
@@ -381,9 +423,16 @@ void RPCClient::on_stream_finish(SvPenv::Envelope&& Response)
 	auto it = m_PendingStreams.find(Response.transaction_id());
 	if (it != m_PendingStreams.end())
 	{
-		auto cb = it->second;
-		m_PendingStreams.erase(it);
-		cb.finish();
+		//We catch the exception and remove it as clients may have disconnected in the mean time
+		try
+		{
+			auto cb = it->second;
+			m_PendingStreams.erase(it);
+			cb.finish();
+		}
+		catch (const std::exception&)
+		{
+		}
 	}
 }
 

@@ -9,6 +9,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVRCCommand.h"
+#include "RemoteCommand.h"
 #include "SVConfigurationObject.h"
 #include "SVInspectionProcess.h"
 #include "SVObserver.h"
@@ -17,6 +18,7 @@
 #include "Definitions/StringTypeDef.h"
 #include "Definitions/SVIMCommand.h"
 #include "Definitions/SVUserMessage.h"
+#include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVSystemLibrary/SVEncodeDecodeUtilities.h"
 #include "SVSystemLibrary/SVVersionInfo.h"
@@ -891,6 +893,91 @@ void SVRCCommand::RunOnce(const SvPb::RunOnceRequest& rRequest, SvRpc::Task<SvPb
 	task.finish(std::move(Response));
 }
 
+void SVRCCommand::LoadConfig(const SvPb::LoadConfigRequest& rRequest, SvRpc::Task<SvPb::StandardResponse> task)
+{
+	HRESULT Result {S_OK};
+	SvPb::StandardResponse Response;
+
+	if (!SVSVIMStateClass::CheckState(SV_STATE_TEST | SV_STATE_REGRESSION))
+	{
+
+		TCHAR szDrive[_MAX_DRIVE];
+		TCHAR szDir[_MAX_DIR];
+		TCHAR szFile[_MAX_FNAME];
+		TCHAR szExt[_MAX_EXT];
+		TCHAR szPath[_MAX_PATH];
+		bool bSuccess{false};
+
+		SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
+		std::string ConfigFile = rRequest.filename();
+
+		_tsplitpath(ConfigFile.c_str(), szDrive, szDir, szFile, szExt);
+
+		if (!_tcscmp(szDrive, _T("")))
+		{ //just the file name, search the run directory for the filename
+			if (0 == _tcscmp(szExt, _T(".svx")) || 0 == _tcscmp(szExt, _T("")))
+			{
+				ConfigFile = SvStl::GlobalPath::Inst().GetRunPath() + _T("\\");
+				ConfigFile += szFile;
+				ConfigFile += _T(".svx");
+				//check for existence of file first
+				bSuccess = (0 == _access(ConfigFile.c_str(), 0));
+
+				if (bSuccess)
+				{
+					//global function to close config and clean up c:\run dir
+					GlobalRCCloseAndCleanConfiguration();
+				}
+			}
+			else
+			{
+				bSuccess = false;
+			}
+		}
+		else if (0 == _tcscmp(szExt, _T(".svx"))) //fully qualified path with svx extension
+		{
+			//check for existence of file first
+			bSuccess = (0 == _access(ConfigFile.c_str(), 0));
+
+			if (bSuccess)
+			{
+				//global function to close config and clean up c:\run dir
+				GlobalRCCloseAndCleanConfiguration();
+			}
+		}
+		else
+		{
+			bSuccess = false;
+		}
+
+		if (bSuccess)
+		{
+			bSuccess = GlobalRCOpenConfiguration(ConfigFile.c_str());
+		}
+		else
+		{
+			Result = SVMSG_CMDCOMCTRL_FILE_ERROR;
+		}
+
+		SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
+	}
+	else
+	{
+		Result = SVMSG_63_SVIM_IN_WRONG_MODE;
+	}
+
+	Response.set_hresult(Result);
+	task.finish(std::move(Response));
+}
+
+void SVRCCommand::RegisterNotificationStream(boost::asio::io_service* pIoService,
+											 const SvPb::GetNotificationStreamRequest& request,
+											 SvRpc::Observer<SvPb::GetNotificationStreamResponse> &observer,
+											 SvRpc::ServerStreamContext::Ptr ctx)
+{
+	SVVisionProcessorHelper::Instance().RegisterNotificationStream(pIoService, request, observer, ctx);
+}
+
 HRESULT SVRCCommand::GetFileNameFromFilePath(std::string& rFileName, const std::string& rFilePath)
 {
 	HRESULT Result {S_OK};
@@ -1065,12 +1152,3 @@ HRESULT SVRCCommand::AddImagesToStorageItems(const SvPb::SetItemsRequest& rReque
 
 	return Result;
 }
-
-void SVRCCommand::RegisterNotificationStream(boost::asio::io_service* pIoService,
-	const SvPb::GetNotificationStreamRequest& request,
-	SvRpc::Observer<SvPb::GetNotificationStreamResponse> &observer,
-	SvRpc::ServerStreamContext::Ptr ctx)
-{
-	SVVisionProcessorHelper::Instance().RegisterNotificationStream(pIoService, request, observer, ctx);
-}
-

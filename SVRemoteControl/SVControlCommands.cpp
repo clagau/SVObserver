@@ -261,8 +261,10 @@ HRESULT SVControlCommands::GetConfigReport(BSTR& rReport, SVCommandStatus& rStat
 			std::move(Request)).get();
 
 		rReport = _bstr_t(Response.report().c_str()).Detach();
+		
 		Result = Response.hresult();
-
+		rStatus.hResult = Result;
+		rStatus.errorText = ConvertResult(Result);
 		SVLOG((Result = rStatus.hResult));
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
@@ -318,6 +320,7 @@ HRESULT SVControlCommands::SetMode(unsigned long Mode, SVCommandStatus& rStatus)
 
 		Result = Response.hresult();
 		rStatus.hResult = Result;
+		rStatus.errorText = ConvertResult(Result);
 		SVLOG(Result);
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
@@ -375,6 +378,7 @@ HRESULT SVControlCommands::GetItems(CComVariant ItemNames, ISVProductItems** ppI
 
 		Result = Response.hresult();
 		rStatus.hResult = Result;
+		rStatus.errorText = ConvertResult(Result);
 		SVLOG(Result);
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
@@ -412,6 +416,7 @@ HRESULT SVControlCommands::SetItems(ISVProductItems* pItems, bool RunOnce, ISVPr
 		}
 
 		rStatus.hResult = Result;
+		rStatus.errorText = ConvertResult(Result);
 		SVLOG(Result);
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
@@ -455,6 +460,7 @@ HRESULT SVControlCommands::RunOnce(const _bstr_t& rInspectionName, SVCommandStat
 																	std::move(Request)).get();
 			Result = Response.hresult();
 			rStatus.hResult = Result;
+			rStatus.errorText = ConvertResult(Result);
 		}
 		else
 		{
@@ -489,7 +495,11 @@ HRESULT SVControlCommands::GetConfig(const _bstr_t& rFilePath, SVCommandStatus& 
 			SvPb::GetConfigResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
 				&SvWsl::SVRCClientService::GetConfig,
 				std::move(Request)).get();
+
 			Result = Response.hresult();
+			rStatus.hResult = Result;
+			rStatus.errorText = ConvertResult(Result);
+
 			if (S_OK == Result)
 			{
 				std::ofstream FileStream;
@@ -568,6 +578,8 @@ HRESULT SVControlCommands::PutConfig(const _bstr_t& rFilePath, SVCommandStatus& 
 				Result = E_UNEXPECTED;
 			}
 
+			rStatus.hResult = Result;
+			rStatus.errorText = ConvertResult(Result);
 			SVLOG(Result);
 		}
 		else
@@ -581,7 +593,45 @@ HRESULT SVControlCommands::PutConfig(const _bstr_t& rFilePath, SVCommandStatus& 
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
 
-		return Result;
+	return Result;
+}
+
+HRESULT SVControlCommands::LoadConfig(const _bstr_t& rFilePath, SVCommandStatus& rStatus)
+{
+	HRESULT Result {S_OK};
+
+	try
+	{
+		if (nullptr == m_pRpcClient || nullptr == m_pSvrcClientService || !m_pRpcClient->isConnected())
+		{
+			throw std::invalid_argument("Not connected to neither SVOGateway nor SVObserver");
+		}
+
+		std::string fPath = SVStringConversions::to_utf8(rFilePath);
+		if(!fPath.empty())
+		{
+			SvPb::LoadConfigRequest Request;
+			Request.set_filename(fPath.c_str());
+			SvPb::StandardResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
+																&SvWsl::SVRCClientService::LoadConfig,
+																std::move(Request)).get();
+			Result = Response.hresult();
+			rStatus.hResult = Result;
+			rStatus.errorText = ConvertResult(Result);
+			SVLOG(Result);
+		}
+		else
+		{
+			Result = E_INVALIDARG;
+			SVLOG(Result);
+
+			rStatus.hResult = Result;
+			rStatus.errorText = L"Invalid File Path";
+		}
+	}
+	HANDLE_EXCEPTION(Result, rStatus)
+
+	return Result;
 }
 
 HRESULT SVControlCommands::GetFile(const _bstr_t& rSourcePath, const _bstr_t& rDestinationPath, SVCommandStatus& rStatus)
@@ -604,7 +654,11 @@ HRESULT SVControlCommands::GetFile(const _bstr_t& rSourcePath, const _bstr_t& rD
 			SvPb::GetFileResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
 				&SvWsl::SVRCClientService::GetFile,
 				std::move(Request)).get();
+
 			Result = Response.hresult();
+			rStatus.hResult = Result;
+			rStatus.errorText = ConvertResult(Result);
+
 			if (S_OK == Result)
 			{
 				std::ofstream FileStream;
@@ -685,13 +739,15 @@ HRESULT SVControlCommands::PutFile(const _bstr_t& rSourcePath, const _bstr_t& rD
 				Result = E_UNEXPECTED;
 			}
 
+			rStatus.hResult = Result;
+			rStatus.errorText = ConvertResult(Result);
 			SVLOG(Result);
 		}
 		else
 		{
 			Result = E_INVALIDARG;
 			SVLOG(Result);
-
+ 
 			rStatus.hResult = Result;
 			rStatus.errorText = L"Invalid File Path";
 		}
@@ -722,7 +778,9 @@ HRESULT SVControlCommands::GetDataDefinitionList(const _bstr_t& rInspectionName,
 		GetDataDefList(Response)->QueryInterface(IID_ISVDataDefObjectList, reinterpret_cast<void**> (ppEntries));
 
 		Result = Response.hresult();
-		SVLOG(Result);
+		rStatus.hResult = Result;
+		rStatus.errorText = ConvertResult(Result);
+ 		SVLOG(Result);
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
 
@@ -757,11 +815,12 @@ HRESULT SVControlCommands::RegisterMonitorList(const _bstr_t& rListName, const _
 
 		Result = Response.hresult();
 		rStatus.hResult = Result;
-		SVLOG(Result);
+		rStatus.errorText = ConvertResult(Result);
+ 		SVLOG(Result);
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
 
-		return Result;
+	return Result;
 }
 
 HRESULT SVControlCommands::QueryMonitorList(const _bstr_t& rListName, SvPb::ListType Type, CComVariant& rItemNames, SVCommandStatus& rStatus)
@@ -783,8 +842,7 @@ HRESULT SVControlCommands::QueryMonitorList(const _bstr_t& rListName, SvPb::List
 			std::move(Request)).get();
 
 		Result = Response.hresult();
-
-		if (S_OK == Result)
+ 		if (S_OK == Result)
 		{
 			SvPb::Value* pValue = Response.mutable_names();
 			rItemNames = GetComVariant(*pValue->mutable_item(), pValue->count());
@@ -795,6 +853,7 @@ HRESULT SVControlCommands::QueryMonitorList(const _bstr_t& rListName, SvPb::List
 		}
 
 		rStatus.hResult = Result;
+		rStatus.errorText = ConvertResult(Result);
 		SVLOG(Result);
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
@@ -804,7 +863,7 @@ HRESULT SVControlCommands::QueryMonitorList(const _bstr_t& rListName, SvPb::List
 
 HRESULT SVControlCommands::GetProduct(bool bGetReject, const _bstr_t& rListName, long TriggerCount, long ImageScale, ISVProductItems** ppViewItems, SVCommandStatus& rStatus)
 {
-	HRESULT Status = E_FAIL;
+	HRESULT Result{E_FAIL};
 	try
 	{
 		if (0 == rListName.length())
@@ -826,10 +885,10 @@ HRESULT SVControlCommands::GetProduct(bool bGetReject, const _bstr_t& rListName,
 		SvPb::GetProductResponse resp =
 			SvWsl::runRequest(*m_pSvrcClientService.get(), &SvWsl::SVRCClientService::GetProduct, std::move(ProductRequest)).get();
 
-		rStatus.hResult = (HRESULT)resp.product().status();
+		Result = static_cast<HRESULT> (resp.product().status());
 		if (resp.product().status() == SvPb::IsValid)
 		{
-			Status = S_OK;
+			Result = S_OK;
 			GetProductPtr(m_pSvrcClientService, resp.product())->QueryInterface(IID_ISVProductItems, reinterpret_cast<void**>(ppViewItems));
 		}
 		else
@@ -837,12 +896,13 @@ HRESULT SVControlCommands::GetProduct(bool bGetReject, const _bstr_t& rListName,
 			rStatus.errorText = SVStringConversions::to_utf16(SvPb::State_Name(resp.product().status()));
 		}
 
-		SVLOG(Status);
+		rStatus.hResult = Result;
+		rStatus.errorText = ConvertResult(Result);
+		SVLOG(Result);
 	}
-	HANDLE_EXCEPTION(Status, rStatus)
+	HANDLE_EXCEPTION(Result, rStatus)
 
-
-		return Status;
+	return Result;
 }
 HRESULT SVControlCommands::GetProduct(const _bstr_t& rListName, long TriggerCount, long ImageScale, ISVProductItems** ppViewItems, SVCommandStatus& rStatus)
 {
@@ -871,8 +931,10 @@ HRESULT SVControlCommands::ActivateMonitorList(const _bstr_t& rListName, bool Ac
 		SvPb::StandardResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
 			&SvWsl::SVRCClientService::ActivateMonitorList,
 			std::move(Request)).get();
+
 		Result = Response.hresult();
 		rStatus.hResult = Result;
+		rStatus.errorText = ConvertResult(Result);
 		SVLOG(Result);
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
@@ -903,7 +965,7 @@ HRESULT SVControlCommands::GetFailStatus(const _bstr_t& rListName, CComVariant& 
 			&SvWsl::SVRCClientService::GetFailStatus,
 			std::move(FailstatusRequest)).get();
 
-		rStatus.hResult = (HRESULT)Response.status();
+		Result = static_cast<HRESULT> (Response.status());
 		if (Response.status() == SvPb::IsValid)
 		{
 			Result = S_OK;
@@ -915,11 +977,12 @@ HRESULT SVControlCommands::GetFailStatus(const _bstr_t& rListName, CComVariant& 
 			rStatus.errorText = SVStringConversions::to_utf16(SvPb::State_Name(Response.status()));
 		}
 
-
+		rStatus.hResult = Result;
+		rStatus.errorText = ConvertResult(Result);
 		SVLOG(Result);
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
-		return Result;
+	return Result;
 }
 
 
@@ -944,11 +1007,12 @@ HRESULT SVControlCommands::ShutDown(SVShutdownOptionsEnum Options, SVCommandStat
 		Result = Response.hresult();
 
 		rStatus.hResult = Result;
+		rStatus.errorText = ConvertResult(Result);
 		SVLOG(Result);
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
 
-		return Result;
+	return Result;
 }
 
 
@@ -982,11 +1046,12 @@ HRESULT SVControlCommands::GetInspectionNames(CComVariant& rNames, SVCommandStat
 		}
 
 		rStatus.hResult = Result;
+		rStatus.errorText = ConvertResult(Result);
 		SVLOG(Result);
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
 
-		return Result;
+	return Result;
 }
 
 
@@ -1019,6 +1084,7 @@ HRESULT SVControlCommands::QueryMonitorListNames(CComVariant& rListName, SVComma
 		}
 
 		rStatus.hResult = Result;
+		rStatus.errorText = ConvertResult(Result);
 		SVLOG(Result);
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
@@ -1048,11 +1114,12 @@ HRESULT SVControlCommands::GetMonitorListProperties(const _bstr_t & rListName, l
 
 		Result = Response.hresult();
 		rStatus.hResult = Result;
+		rStatus.errorText = ConvertResult(Result);
 		SVLOG(Result);
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
 
-		return Result;
+	return Result;
 }
 
 HRESULT SVControlCommands::GetMaxRejectQeueDepth(unsigned long& rDepth, SVCommandStatus& rStatus)
@@ -1071,13 +1138,12 @@ HRESULT SVControlCommands::GetMaxRejectQeueDepth(unsigned long& rDepth, SVComman
 			&SvWsl::SVRCClientService::GetMaxRejectDepth,
 			std::move(Request)).get();
 		rDepth = Response.maxrejectdepth();
+
 		SVLOG(Result);
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
-		return Result;
+	return Result;
 }
-
-
 
 HRESULT SVControlCommands::GetProductFilter(const _bstr_t& rListName, unsigned long& rFilter, SVCommandStatus& rStatus)
 {
@@ -1095,14 +1161,16 @@ HRESULT SVControlCommands::GetProductFilter(const _bstr_t& rListName, unsigned l
 		SvPb::GetProductFilterResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
 			&SvWsl::SVRCClientService::GetProductFilter,
 			std::move(Request)).get();
-		Result = Response.hresult();
 		rFilter = static_cast<unsigned long> (Response.filter());
+
+		Result = Response.hresult();
 		rStatus.hResult = Result;
+		rStatus.errorText = ConvertResult(Result);
 		SVLOG(Result);
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
 
-		return Result;
+	return Result;
 }
 
 HRESULT SVControlCommands::SetProductFilter(const _bstr_t& rListName, unsigned long Filter, SVCommandStatus& rStatus)
@@ -1122,8 +1190,10 @@ HRESULT SVControlCommands::SetProductFilter(const _bstr_t& rListName, unsigned l
 		SvPb::StandardResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
 			&SvWsl::SVRCClientService::SetProductFilter,
 			std::move(Request)).get();
+
 		Result = Response.hresult();
 		rStatus.hResult = Result;
+		rStatus.errorText = ConvertResult(Result);
 		SVLOG(Result);
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
@@ -1143,4 +1213,18 @@ void SVControlCommands::OnConnectionStatus(SvRpc::ClientStatus Status)
 			m_Notifier(_variant_t(_T("Disconneted")), SVNotificationTypesEnum::Disconnected);
 			break;
 	}
+}
+
+std::wstring SVControlCommands::ConvertResult(HRESULT hResult)
+{
+	std::wstring ResultText;
+
+	if(S_OK != hResult)
+	{
+		wchar_t Text[50];
+		swprintf_s(Text, 50, L"Fehlernummer: 0X%08X", hResult);
+		ResultText = Text;
+	}
+
+	return ResultText;
 }

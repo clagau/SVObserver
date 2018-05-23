@@ -11,7 +11,7 @@ package SvPb;
 
 import "Variant.proto";
 
-
+/// This is the list of all request and response messages for SVRC
 message SVRCMessages
 {
 	oneof message
@@ -77,6 +77,7 @@ message SVRCMessages
 		QueryMonitorListRequest queryMonitorListRequest = 2033;
 		QueryMonitorListNamesRequest queryMonitorListNamesRequest = 2034;
 		RunOnceRequest runOnceRequest = 2035;
+		LoadConfigRequest loadConfigRequest = 2036;
 	}
 }
 
@@ -99,6 +100,7 @@ enum State
 	Unchanged = 2;
 } 
 
+///This type defines which items are returned when calling the Data Definition SVRC function
 enum DataDefinitionListType
 {
 	UnknownDataDefinition			= 0;
@@ -112,6 +114,7 @@ enum DataDefinitionListType
 	AllValuesAndAllImages			= 12;
 }
 
+///The possible device modes for SVObserver
 enum DeviceModeType
 {
 	Available	= 0; //unknown
@@ -123,6 +126,7 @@ enum DeviceModeType
 	ModeChanging = 6;
 }
 
+///This is the Data Definition structure returned for each item in the list
 message DataDefinition
 {
 	string Name = 1;
@@ -132,7 +136,7 @@ message DataDefinition
 	repeated string AdditionalInfo = 5;
 }
 
-
+///This is the Value structure used for each item when calling GetItems or SetItems
 message Value
 {
 	string Name = 1;
@@ -309,6 +313,7 @@ message GetImageStreamRequest
 	 ImageItem imageDef =2;
 }
 
+///Notification type for the notification stream received from SVObserver
 enum NotificationType
 {
 	unknownNotification =0;
@@ -318,6 +323,8 @@ enum NotificationType
 	DisconnectedNotification =4;
 	MessageNotification =5;
 }
+
+///The message type for the message notification when SVObserver displays or logs a message
 enum MessageType
 {
 	unknown=0;
@@ -329,7 +336,6 @@ enum MessageType
 message GetNotificationStreamRequest
 {
 	repeated NotificationType Types = 1;
-	uint64 MaxCcount = 2;
 }
 
 
@@ -350,11 +356,13 @@ message GetNotificationStreamResponse
 	}
 }
 
-message SetDeviceModeRequest 
+///Sets the SVObserver device mode
+message SetDeviceModeRequest
 {
 	DeviceModeType mode = 1;
 }
 
+///Gets the current SVObserver device mode
 message GetDeviceModeRequest 
 {
 	;
@@ -365,6 +373,7 @@ message GetDeviceModeResponse
 	DeviceModeType mode = 1;
 }
 
+///Gets the current SVObserver state
 message GetStateRequest 
 {
 	;
@@ -375,6 +384,7 @@ message GetStateResponse
 	 uint32 State = 1;
 }
 
+///Gets the currently loaded configuration from SVObserver and saves it in the file name (locally)
 message GetConfigRequest
 {
 	string FileName = 1;
@@ -386,12 +396,14 @@ message GetConfigResponse
 	bytes FileData = 2;
 }
 
+///Transfers a configuration given a client file name to SVObserver and loads it as the current configuration
 message PutConfigRequest
 {
 	string FileName = 1;
 	bytes FileData = 2;
 }
 
+///Gets the current offline counter value
 message GetOfflineCountRequest
 {
 	;
@@ -402,12 +414,14 @@ message GetOfflineCountResponse
 	uint32 Count = 1;
 }
 
+///Activates or deactivates the given monitor list name
 message ActivateMonitorListRequest
 {
 	string ListName = 1;
 	bool Activate = 2;
 }
 
+///Product filter types
 enum ProductFilterEnum
 {
 	NoFilter = 0;
@@ -415,6 +429,7 @@ enum ProductFilterEnum
 	LastRejectFilter = 2;
 };
 
+///Gets the filter type for the given product name
 message GetProductFilterRequest
 {
 	string ListName = 1;
@@ -426,12 +441,14 @@ message GetProductFilterResponse
 	ProductFilterEnum Filter = 2;
 }
 
+///Sets the filter type for the given product name
 message SetProductFilterRequest
 {
 	string ListName = 1;
 	ProductFilterEnum Filter = 2;
 }
 
+///Gets the item values for the given name list
 message GetItemsRequest
 {
 	repeated string ItemNameList = 1;
@@ -445,6 +462,8 @@ message GetItemsResponse
 	repeated Value ErrorList = 4;
 }
 
+///Sets the item for the given value and image name list
+///If RunOnce is true then for all changed inspections a runonce is executed after changing all the values
 message SetItemsRequest
 {
 	repeated Value ValueList = 1;
@@ -458,6 +477,7 @@ message SetItemsResponse
 	repeated Value ErrorList = 2;
 }
 
+///Gets the given source file on the SVIM
 message GetFileRequest
 {
 	string SourcePath = 1;
@@ -469,12 +489,14 @@ message GetFileResponse
 	bytes FileData = 2;
 }
 
+///Transfers the given file to SVObserver and saves it to the given file path
 message PutFileRequest
 {
 	string DestinationPath = 1;
 	bytes FileData = 2;
 }
 
+///Registers the given Monitor list into the currently loaded configuration in SVObserver
 message RegisterMonitorListRequest
 {
 	string Name = 1;
@@ -496,11 +518,13 @@ message GetInspectionNamesRequest
 	;
 }
 
+///Sends a shutdown request to the SVIM with the optional parameter
 message ShutdownRequest
 {
 	sint32 Options = 1;
 }
 
+///Gets the monitor list properties with the given name from SVObserver
 message GetMonitorListPropertiesRequest
 {
 	string ListName = 1;
@@ -514,6 +538,7 @@ message GetMonitorListPropertiesResponse
 	string PpqName = 4;
 }
 
+///Gets the maximum reject depth of the currently loaded configuration
 message GetMaxRejectDepthRequest
 {
 	;
@@ -529,12 +554,15 @@ message GetConfigReportRequest
 	;
 }
 
+///Gets the report of the currently loaded configuration
 message GetConfigReportResponse
 {
 	sint32 hResult = 1;
 	string Report = 2;
 }
 
+///Gets the data definition list of the currently loaded configuration with the given inspection name
+///The items returned depends on the Data Definition List type
 message GetDataDefinitionListRequest
 {
 	string InspectionName = 1;
@@ -547,6 +575,7 @@ message GetDataDefinitionListResponse
 	repeated DataDefinition List = 2;
 }
 
+///Queries the Monitor List with the given name and type
 message QueryMonitorListRequest
 {
 	string ListName = 1;
@@ -558,17 +587,26 @@ message QueryMonitorListNamesRequest
 	;
 }
 
+///Causes a runonce for the currently loaded configuration with the given inspection name to be executed
 message RunOnceRequest
 {
 	string InspectionName = 5;
 }
 
+///Loads a configuration given a local file name into SVObserver as the current configuration
+message LoadConfigRequest
+{
+	string FileName = 1;
+}
+
+///Standard responce for requests that only return names
 message NamesResponse
 {
 	sint32 hResult = 1;
 	Value Names = 2;
 }
 
+///Standard responce for requests that only return an hResult
 message StandardResponse
 {
 	sint32 hResult = 1;

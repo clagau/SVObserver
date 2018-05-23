@@ -52,7 +52,8 @@ SVRCClientService::SVRCClientService(SvRpc::RPCClient& rRpcClient) :
 	m_GetDataDefinitionListClient(rRpcClient),
 	m_QueryMonitorListClient(rRpcClient),
 	m_QueryMonitorListNamesClient(rRpcClient),
-	m_RunOnceClient(rRpcClient)
+	m_RunOnceClient(rRpcClient),
+	m_LoadConfigClient(rRpcClient)
 {
 
 }
@@ -221,5 +222,10 @@ void SVRCClientService::QueryMonitorListNames(SvPb::QueryMonitorListNamesRequest
 void SVRCClientService::RunOnce(SvPb::RunOnceRequest&& Request, SvRpc::Task<SvPb::StandardResponse> task)
 {
 	m_RunOnceClient.request(std::move(Request), task, cSixSeconds);
+}
+
+void SVRCClientService::LoadConfig(SvPb::LoadConfigRequest&& Request, SvRpc::Task<SvPb::StandardResponse> task)
+{
+	m_LoadConfigClient.request(std::move(Request), task, cFiveMinutes);
 }
 }//namespace SvWsl

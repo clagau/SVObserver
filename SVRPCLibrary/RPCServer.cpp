@@ -86,40 +86,17 @@ void RPCServer::on_stream(int id, SvPenv::Envelope&& Request)
 		Observer<SvPenv::Envelope>(
 		[this, ctx, id, txId](SvPenv::Envelope&& Response) -> std::future<void>
 	{
-		//@TODO [gra][8.10][16.05.2018] Temporary resolution to avoid SVOGateaway crashes
-		std::future<void> Result;
-		try
-		{
-			Result = send_stream_response(id, txId, std::move(Response));
-		}
-		catch (const std::exception&)
-		{
-		}
-		return Result;
+		return send_stream_response(id, txId, std::move(Response));
 	},
 		[this, ctx, id, txId]()
 	{
-		//@TODO [gra][8.10][16.05.2018] Temporary resolution to avoid SVOGateaway crashes
-		try
-		{
 			send_stream_finish(id, txId);
 			remove_stream_context(id, txId);
-		}
-		catch (const std::exception&)
-		{
-		}
 	},
 		[this, ctx, id, txId](const SvPenv::Error& err)
 	{
-		//@TODO [gra][8.10][16.05.2018] Temporary resolution to avoid SVOGateaway crashes
-		try
-		{
 			send_stream_error_response(id, txId, err);
 			remove_stream_context(id, txId);
-		}
-		catch (const std::exception&)
-		{
-		}
 	}),
 		ctx);
 }

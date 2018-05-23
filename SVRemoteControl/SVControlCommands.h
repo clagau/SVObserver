@@ -47,6 +47,7 @@ public:
 	HRESULT RunOnce(const _bstr_t& rInspectionName, SVCommandStatus& rStatus);
 	HRESULT GetConfig(const _bstr_t& rFilePath, SVCommandStatus& rStatus);
 	HRESULT PutConfig(const _bstr_t& rFilePath, SVCommandStatus& rStatus);
+	HRESULT LoadConfig(const _bstr_t& rFilePath, SVCommandStatus& rStatus);
 	HRESULT PutFile(const _bstr_t& rSourcePath, const _bstr_t& rDestinationPath, SVCommandStatus& rStatus);
 	HRESULT GetFile(const _bstr_t& rSourcePath, const _bstr_t& rDestinationPath, SVCommandStatus& rStatus);
 	HRESULT GetDataDefinitionList(const _bstr_t& p_rInspectionName, long p_ListType, ISVDataDefObjectList** p_ppEntries, SVCommandStatus& p_rStatus);
@@ -71,6 +72,8 @@ public:
 	friend class NotificationHandler;
 private:
 	void OnConnectionStatus(SvRpc::ClientStatus Status);
+
+	std::wstring ConvertResult(HRESULT hResult);
 
 	_bstr_t m_ServerName;
 	unsigned short m_CommandPort;

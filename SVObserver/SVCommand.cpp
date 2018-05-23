@@ -700,7 +700,7 @@ STDMETHODIMP CSVCommand::SVLoadSVIMConfig(BSTR bstrConfigFilename)
 			{
 				_tmakepath(szPath, _T("C"), _T("\\Run\\"), szFile, _T("svx"));
 				//check for existence of file first
-				bSuccess = (0 == _access(szPath, 0));
+				bSuccess = (0 == _access(szPath, 0));		    
 
 				if (bSuccess)
 				{

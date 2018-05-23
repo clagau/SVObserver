@@ -355,6 +355,7 @@ interface ISVRemoteCtrl : IDispatch{
 	[id(518), helpstring("Starts Set Device Mode")] HRESULT BeginSetDeviceMode([in] SVObserverModesEnum desiredMode);
 	[id(519), helpstring("Waits for Set Device Mode to finish.")] HRESULT FinishSetDeviceMode([in] LONG Timeout, [in] VARIANT_BOOL CancelAfterTimeout);
 	[id(520), helpstring("Run Once")] HRESULT RunOnce([in] BSTR InspectionName);
+	[id(521), helpstring("Load Configuration")] HRESULT LoadConfig([in] BSTR filePath);
 	[id(522), helpstring("Get Configuration")] HRESULT GetConfig([in] BSTR filePath);
 	[id(523), helpstring("Get Device Configuration Report")] HRESULT GetDeviceConfigReport([out,retval] BSTR* report);
 	[id(524), helpstring("Get Device Mode")] HRESULT GetDeviceMode([out,retval] LONG* mode);

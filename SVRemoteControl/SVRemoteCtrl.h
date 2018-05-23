@@ -155,6 +155,7 @@ public:
 	STDMETHOD(BeginSetDeviceMode)(SVObserverModesEnum desiredMode);
 	STDMETHOD(FinishSetDeviceMode)(LONG Timeout, VARIANT_BOOL CancelAfterTimeout);
 	STDMETHOD(RunOnce)(BSTR InspectionName);
+	STDMETHOD(LoadConfig)(BSTR filePath);
 	STDMETHOD(GetConfig)(BSTR filePath);
 	STDMETHOD(GetDeviceConfigReport)(BSTR* report);
 	STDMETHOD(GetDeviceMode)(LONG* mode);
