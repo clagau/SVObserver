@@ -4,6 +4,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <IncludePath>C:\Program Files (x86)\Visual Leak Detector\include;$(PATH_3RDPARTY)\Matrox\MIL10_64bit\Include;$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\include;$(PATH_3RDPARTY)\boost_1_66_0;$(PATH_3RDPARTY)\tcl_5.3.1;$(IncludePath)</IncludePath>
+    <OutDir>$(SolutionDir)$(Configuration)\$(Platform)\bin\</OutDir>
+    <IntDir>$(SolutionDir)$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
