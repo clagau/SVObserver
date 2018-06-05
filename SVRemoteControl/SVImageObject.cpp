@@ -380,20 +380,20 @@ HRESULT SVImageObject::FetchImage()
 	{
 		if (nullptr != m_pClientService && m_pClientService->get())
 		{
-			SvPb::GetImageFromCurIdRequest request;
-			request.mutable_id()->set_imagestore(m_CurImId.imagestore());
-			request.mutable_id()->set_imageindex(m_CurImId.imageindex());
-			request.mutable_id()->set_slotindex(m_CurImId.slotindex());
+			SvPb::GetImageFromIdRequest request;
+			request.mutable_id()->set_imagestore(m_CurrentImageId.imagestore());
+			request.mutable_id()->set_imageindex(m_CurrentImageId.imageindex());
+			request.mutable_id()->set_slotindex(m_CurrentImageId.slotindex());
 
-			auto resp = SvWsl::runRequest(*(m_pClientService->get()), &SvWsl::SVRCClientService::GetImageFromCurId, std::move(request)).get();
+			auto resp = SvWsl::runRequest(*(m_pClientService->get()), &SvWsl::SVRCClientService::GetImageFromId, std::move(request)).get();
 
 
-			if (resp.imagedata().rgb().length() > 0)
+			if (resp.imagedata().rgb_data().length() > 0)
 			{
-				BYTE *buff = new BYTE[resp.imagedata().rgb().length()];
-				memcpy(buff, resp.imagedata().rgb().c_str(), resp.imagedata().rgb().length());
+				BYTE *buff = new BYTE[resp.imagedata().rgb_data().length()];
+				memcpy(buff, resp.imagedata().rgb_data().c_str(), resp.imagedata().rgb_data().length());
 				boost::shared_array<BYTE> b(buff);
-				SetLen((ULONG)resp.imagedata().rgb().length());
+				SetLen((ULONG)resp.imagedata().rgb_data().length());
 				SetDIB(b);
 				hr = S_OK;
 			}
@@ -427,7 +427,7 @@ void SVImageObject::SetClientService(SvWsl::SVRCClientServicePtr& rpSvrcClientSe
 {
 	m_pClientService = &rpSvrcClientService;
 }
-void SVImageObject::SetImageId(const SvPb::CurImageId& CurImageId)
+void SVImageObject::SetImageId(const SvPb::ImageId& CurImageId)
 {
-	m_CurImId = CurImageId;
+	m_CurrentImageId = CurImageId;
 }

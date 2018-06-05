@@ -26,9 +26,10 @@ public:
 
 	void GetGatewayVersion(SvPb::GetGatewayVersionRequest&& req, SvRpc::Task<SvPb::GetVersionResponse> task);
 	void GetProduct(SvPb::GetProductRequest&& req, SvRpc::Task<SvPb::GetProductResponse> task);
+	void GetReject(SvPb::GetRejectRequest&& req, SvRpc::Task<SvPb::GetRejectResponse> task);
 	void GetFailStatus(SvPb::GetFailStatusRequest&& req, SvRpc::Task<SvPb::GetFailStatusResponse> task);
-	void GetImageFromCurId(SvPb::GetImageFromCurIdRequest&& req, SvRpc::Task<SvPb::GetImageFromCurIdResponse> task);
-	void GetImageStreamFromCurId(SvPb::GetImageStreamFromCurIdRequest&& req, SvRpc::Observer<SvPb::GetImageStreamFromCurIdResponse> observer);
+	void GetImageFromId(SvPb::GetImageFromIdRequest&& req, SvRpc::Task<SvPb::GetImageFromIdResponse> task);
+	void GetImageStreamFromId(SvPb::GetImageStreamFromIdRequest&& req, SvRpc::Observer<SvPb::GetImageStreamFromIdResponse> observer);
 	void QueryListName(SvPb::QueryListNameRequest&& req, SvRpc::Task<SvPb::QueryListNameResponse> task);
 	void QueryListItem(SvPb::QueryListItemRequest&& req, SvRpc::Task<SvPb::QueryListItemResponse> task);
 	SvRpc::ClientStreamContext GetNotificationStream(SvPb::GetNotificationStreamRequest&& req,
@@ -65,8 +66,9 @@ private:
 	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::QueryListNameRequest, SvPb::QueryListNameResponse> m_QueryListNameClient;
 	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::QueryListItemRequest, SvPb::QueryListItemResponse> m_QueryListItemClient;
 	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetProductRequest, SvPb::GetProductResponse> m_GetProductClient;
-	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetImageFromCurIdRequest, SvPb::GetImageFromCurIdResponse> m_GetImageFromCurIdClient;
-	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetImageStreamFromCurIdRequest, SvPb::GetImageStreamFromCurIdResponse> m_GetImageStreamFromCurIdClient;
+	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetRejectRequest, SvPb::GetRejectResponse> m_GetRejectClient;
+	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetImageFromIdRequest, SvPb::GetImageFromIdResponse> m_GetImageFromIdClient;
+	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetImageStreamFromIdRequest, SvPb::GetImageStreamFromIdResponse> m_GetImageStreamFromIdClient;
 	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetFailStatusRequest, SvPb::GetFailStatusResponse> m_GetFailStatusClient;
 	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetNotificationStreamRequest, SvPb::GetNotificationStreamResponse> m_GetNotificationStreamClient;
 

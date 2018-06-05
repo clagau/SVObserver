@@ -16,11 +16,14 @@ message SVRCMessages
 {
 	oneof message
 	{
+		/// The first parameter is the message type which is declared in this file below the second parameter is the variable
+		/// Genaral commands
 		StandardResponse standardResponse = 1;
 		NamesResponse namesResponse = 2;
 		GetGatewayVersionRequest getGatewayVersionRequest = 3;
 		GetSVObserverVersionRequest getSVObserverVersionRequest = 4;
 		GetVersionResponse getVersionResponse = 5;
+		
 		//SVGateway commands
 		QueryListNameRequest queryListNameRequest = 1000;
 		QueryListNameResponse queryListNameResponse = 1001;
@@ -28,10 +31,10 @@ message SVRCMessages
 		QueryListItemResponse queryListItemResponse = 1003;
 		GetProductRequest getProductRequest = 1004;
 		GetProductResponse getProductResponse = 1005;
-		GetImageFromCurIdRequest getImageFromCurIdRequest = 1006;
-		GetImageFromCurIdResponse getImageFromCurIdResponse = 1007;
-		GetImageStreamFromCurIdRequest getImageStreamFromCurIdRequest = 1008;
-		GetImageStreamFromCurIdResponse getImageStreamFromCurIdResponse = 1009;
+		GetImageFromIdRequest getImageFromIdRequest = 1006;
+		GetImageFromIdResponse getImageFromIdResponse = 1007;
+		GetImageStreamFromIdRequest getImageStreamFromIdRequest = 1008;
+		GetImageStreamFromIdResponse getImageStreamFromIdResponse = 1009;
 		GetFailStatusRequest getFailStatusRequest = 1010;
 		GetFailStatusResponse getFailStatusResponse = 1011;
 		GetTriggerItemsRequest getTriggerItemsRequest = 1012;
@@ -39,6 +42,8 @@ message SVRCMessages
 		GetImageStreamRequest getImageStreamRequest = 1014;
 		GetNotificationStreamRequest getNotificationStreamRequest = 1015;
 		GetNotificationStreamResponse getNotificationStreamResponse = 1016;
+		GetRejectRequest getRejectRequest = 1017;
+		GetRejectResponse getRejectResponse = 1018;
 		
 		//SVObserver commands
 		SetDeviceModeRequest setDeviceModeRequest = 2000;
@@ -91,7 +96,7 @@ enum ListType
 	All = 3;
 }
 
-///General errors should be reportete by the errorcode
+///General errors should be reporteted by the errorcode
 //State is usefull for states wich are not errors, or if only a part of bigger message is not valid 
 enum State
 {
@@ -104,444 +109,473 @@ enum State
 enum DataDefinitionListType
 {
 	UnknownDataDefinition			= 0;
-	SelectedValues					= 1;
-	SelectedImages					= 2;
-	SelectedValuesAndSelectedImages = 3;
-	AllValues						= 4;
-	AllValuesAndSelectedImages		= 6;
-	AllImages						= 8;
-	SelectedValuesAndAllImages		= 9;
-	AllValuesAndAllImages			= 12;
+	SelectedValues					= 1;	//This will return all values which have been selected in the Data Definition list on the SVObserver
+	SelectedImages					= 2;	//This will return all images which have been selected in the Data Definition list on the SVObserver
+	SelectedValuesAndSelectedImages = 3;	//This will return all values and images which have been selected in the Data Definition list on the SVObserver
+	AllValues						= 4;	//This will return all values of the inspection
+	AllValuesAndSelectedImages		= 6;	//This will return all values and selected images of the inspection
+	AllImages						= 8;	//This will return all images of the inspection
+	SelectedValuesAndAllImages		= 9;	//This will return selected values and all images of the inspection
+	AllValuesAndAllImages			= 12;	//This will return all values and all images of the inspection
 }
 
-///The possible device modes for SVObserver
+/// These are the possible device mode types for SVObserver
 enum DeviceModeType
 {
-	Available	= 0; //unknown
-	RunMode	= 1;  //online
-	StopMode	= 2; //offline
-	RegressionMode	= 3;
+	Available	= 0;				//This is the mode when no configuration is loaded
+	RunMode	= 1;					//This is the mode when SVObserver is in production mode (Online)
+	StopMode	= 2;				//This is the mode when SVObserver is in stop mode (Offline)
+	RegressionMode	= 3;			//This is a special mode to verify configuration settings
 	TestMode	= 4;
-	EditMode	= 5;
-	ModeChanging = 6;
-}
-
-///This is the Data Definition structure returned for each item in the list
-message DataDefinition
-{
-	string Name = 1;
-	bool Writable = 2;
-	bool Published = 3;
-	string Type = 4;
-	repeated string AdditionalInfo = 5;
-}
-
-///This is the Value structure used for each item when calling GetItems or SetItems
-message Value
-{
-	string Name = 1;
-	sint32 Status = 2;
-	sint32 Count = 3;
-
-	Variant Item = 4;
-}
-
-message GetGatewayVersionRequest 
-{
-	;
-}
-
-message GetSVObserverVersionRequest 
-{
-	;
-}
-
-message GetVersionResponse 
-{
-	string version = 1;
-}
-
-
-//query active monitorlist 
-message QueryListNameRequest
-{
-}
-
-//a list with all active monitorlist.
-//The monitor lists contain all metadata for the existing data and images in the shared memory.
-// There can be a maximum of one monitor list per PPQ. 
-message QueryListNameResponse
-{
-	repeated string ListName = 1;
-}
-
-//one Item in the list 
-//there is a 1:1 relationship between name and (offset, image Store).  
-//Therefore, if this message is used as a parameter in a request, only the name or the IDs must be filled in. 
-//type and size are additional information 
-message ValueItem
-{
-	 string name =1;
-	 sint32 type =2;
-	 sint32 size =3;
-	 uint32 StoreId=4;
-	 uint32 Offset=5;
-}
-
-message ImageItem
-{
-	string name = 1;
-	sint32 sizeX = 2;
-	sint32 sizeY = 3;  
-	uint32 StoreId = 4;
-	uint32 ImageId = 5;
-}
-
-//Query the Definition of the list.If name is empty, the response is from all active Monitorlist
-message QueryListItemRequest
-{
-	string name = 1;
-	ListType type = 2;
-	bool queryImages = 3;
-	bool  queryValues = 4;
-}
-
-message QueryListItemResponse
-{
-	repeated ValueItem  ValueDefList = 2;
-	repeated ImageItem  ImageDefList = 3;
-}
-
-message CurImageId
-{
-	sint32 ImageStore = 1;
-	sint32 ImageIndex = 2;
-	sint32 SlotIndex = 3 ;
-}
-
-message Product
-{
-	uint32 Trigger = 1;
-	repeated Variant Values = 2;
-	repeated CurImageId Images = 3;
-	repeated string ImageNames = 4;
-	repeated string ValueNames = 5; 
-	State Status = 6;
-}
-
-//Name is the Monitorlistname. 
-//if the Trigger is -1, the values for the last trigger are returned
-//if  Triggercount = -1 and the last trigger is the PreviousTrigger the status in the response is unchanged
-//and no values are retrieved 
-message GetProductRequest
-{
-	sint32 Trigger = 1;
-	sint32 PeviousTrigger = 2;
-	string Name = 3;
-	bool NameInResponse = 4;
-	bool bReject = 5;
-}
-
-// In product response are an array of image ids
-// it is ensured that these images are available at least until GetProduct is called again 
-message GetProductResponse
-{
-	Product product = 1;
-} 
-
-message Image
-{
-	bytes rgb = 1;	
-	uint32 w = 2;
-	uint32 h = 3;
-} 
-//request the image for an Id from GetProduct or GetRejectResponse 
-message GetImageFromCurIdRequest
-{
-	CurImageId Id = 1;
-}
-message GetImageFromCurIdResponse
-{
-	Image ImageData = 1;
-}
-
-message GetImageStreamFromCurIdRequest
-{
-	uint32 count = 1;
-	CurImageId Id = 2;
-}
-message GetImageStreamFromCurIdResponse
-{
-	Image ImageData = 1;
-}
-
-//If the Response would be the values from LastRejectTriggers
-//the response has the state unchanged 
-message GetFailStatusRequest
-{
-	string name = 1;
-	bool NameInResponse = 2;
-	repeated int32 PreviousRejects = 3;
-}
-message GetFailStatusResponse
-{
-	repeated Product products = 1;
-	State Status = 2;
-}
-
-///Request Values or Images for triggercount =-1 the last value is retrieved 
-//If the Response would be the values from LastTriggercount
-//the response has the state unchanged 
-message GetTriggerItemsRequest
-{
-	uint32 Trigger = 1;
-	uint32 PreviousTrigger = 2; 
-	repeated ValueItem  ValueList = 3;
-	repeated ImageItem  ImageList = 4;
-}
-
-message GetTriggerItemsResponse
-{
-	uint32 triggercount = 1;
-	repeated Variant Values = 2;
-	repeated Image Images = 3;
-}
-
-message GetImageStreamRequest
-{
-	 uint32 count = 1;
-	 ImageItem imageDef =2;
+	EditMode	= 5;				//The general edit mode to be able to change values in the configuration
+	ModeChanging = 6;				//This indicates that the mode is in transition to another mode
 }
 
 ///Notification type for the notification stream received from SVObserver
 enum NotificationType
 {
-	unknownNotification =0;
-	ModeNotification =1;
-	LastModifiedNotification=2;
-	ConnectedNotification =3;
-	DisconnectedNotification =4;
-	MessageNotification =5;
+	unknownNotification = 0;
+	ModeNotification = 1;			//Sent when SVObserver changes device modes
+	LastModifiedNotification = 2;	//Sent when SVObserver saves a configuration
+	ConnectedNotification = 3;		//Sent when SVObserver connection made
+	DisconnectedNotification = 4;	//Sent when SVObserver disconnects
+	MessageNotification = 5;		//Sent when SVObserver displays a modal message dialog
 }
 
 ///The message type for the message notification when SVObserver displays or logs a message
 enum MessageType
 {
 	unknown=0;
-	StartMsgBox=1;
-	EndMsgBox=2;
-	MsgLog=3;
-}
-
-message GetNotificationStreamRequest
-{
-	repeated NotificationType Types = 1;
-}
-
-
-message MsgNotification
-{
-	MessageType type=1;
-	string messagetext =2;
-	int32 errorNumber =3;
-}
-
-message GetNotificationStreamResponse
-{
-	oneof message
-	{
-		DeviceModeType currentMode = 1;
-		uint32		lastModified=2;
-		MsgNotification msgNotification =3;
-	}
-}
-
-///Sets the SVObserver device mode
-message SetDeviceModeRequest
-{
-	DeviceModeType mode = 1;
-}
-
-///Gets the current SVObserver device mode
-message GetDeviceModeRequest 
-{
-	;
-}
-
-message GetDeviceModeResponse 
-{
-	DeviceModeType mode = 1;
-}
-
-///Gets the current SVObserver state
-message GetStateRequest 
-{
-	;
-}
-
-message GetStateResponse
-{
-	 uint32 State = 1;
-}
-
-///Gets the currently loaded configuration from SVObserver and saves it in the file name (locally)
-message GetConfigRequest
-{
-	string FileName = 1;
-}
-
-message GetConfigResponse
-{
-	sint32 hResult = 1;
-	bytes FileData = 2;
-}
-
-///Transfers a configuration given a client file name to SVObserver and loads it as the current configuration
-message PutConfigRequest
-{
-	string FileName = 1;
-	bytes FileData = 2;
-}
-
-///Gets the current offline counter value
-message GetOfflineCountRequest
-{
-	;
-}
-
-message GetOfflineCountResponse
-{
-	uint32 Count = 1;
-}
-
-///Activates or deactivates the given monitor list name
-message ActivateMonitorListRequest
-{
-	string ListName = 1;
-	bool Activate = 2;
+	StartMsgBox=1;					//Dialog is currently being displayed on the SVObserver
+	EndMsgBox=2;					//Dialog that was open has been closed on the SVObserver
+	MsgLog=3;						//A message has been logged into the event log on the SVObserver
 }
 
 ///Product filter types
 enum ProductFilterEnum
 {
 	NoFilter = 0;
-	LastInspectedFilter = 1;
-	LastRejectFilter = 2;
+	LastInspectedFilter = 1;		//Filters the last inspected products 
+	LastRejectFilter = 2;			//Filters the last rejected products
 };
+
+///This is the Data Definition structure returned for each item in the list
+message DataDefinition
+{
+	string Name = 1;				//Name of value or image object
+	bool Writable = 2;				//True if object is writable
+	bool Published = 3;				//True if object has been published 
+	string Type = 4;				//The object type (int, double etc..)
+	repeated string AdditionalInfo = 5;	//List of additional information
+}
+
+///This is the Value structure used for each item when calling GetItems or SetItems
+message Value
+{
+	string Name = 1;				//The name of the value item
+	sint32 Status = 2;				//The status for this value item
+	sint32 Count = 3;				//For arrays the number of elements otherwise it has the trigger count
+
+	Variant Item = 4;				//The value item as a variant
+}
+
+//Retrieves the Gateway version
+message GetGatewayVersionRequest 
+{
+}
+
+//Retrieves the SVObserver version
+message GetSVObserverVersionRequest 
+{
+}
+
+message GetVersionResponse 
+{
+	string Version = 1;				//The version number as string
+}
+
+
+//Queries all active monitorlist
+message QueryListNameRequest
+{
+}
+
+//a list with all active monitorlist.
+//The monitor lists contain all metadata for the existing data and images in the shared memory.
+//There can be a maximum of one active monitor list per PPQ. 
+message QueryListNameResponse
+{
+	repeated string ListName = 1;	//The list of active montor names
+}
+
+//one Item in the list 
+//there is a 1:1 relationship between name and (offset, image Store).  
+//Therefore, if this message is used as a parameter in a request, only the name or the IDs must be filled in. 
+//type and size are additional information
+//Value product item structure
+message ValueItem
+{
+	 string Name = 1;				//The value name
+	 sint32 Type = 2;				//The value type
+	 sint32 Size = 3;				//The value size
+	 uint32 StoreId = 4;			//The store ID location
+	 uint32 Offset = 5;				//The value offset
+}
+
+//Image product item structure
+message ImageItem
+{
+	string Name = 1;				//The image name
+	sint32 Height = 2;				//The image height
+	sint32 Width = 3;				//The image width
+	uint32 StoreId = 4;				//The store ID location
+	uint32 ImageId = 5;				//The image ID
+}
+
+//Query the Definition of the list.
+message QueryListItemRequest
+{
+	string ListName = 1;			//The monitor list name (if empty all active monitor list names shall be returned)
+	ListType Type = 2;				//The monitor list type
+	bool QueryImages = 3;			//True to query images
+	bool QueryValues = 4;			//True to query values
+}
+
+message QueryListItemResponse
+{
+	repeated ValueItem  ValueDefList = 1;	//The value list returned
+	repeated ImageItem  ImageDefList = 2;	//The image list returned
+}
+
+//This structure stores the position of an image in shared memory
+message ImageId
+{
+	sint32 ImageStore = 1;			//The image store value
+	sint32 ImageIndex = 2;			//The image index value
+	sint32 SlotIndex = 3;			//The image slot index value
+}
+
+message Product
+{
+	uint32 Trigger = 1;				//The trigger count value
+	repeated Variant Values = 2;	//The list of values
+	repeated ImageId Images = 3;	//The list of images
+	repeated string ImageNames = 4;	//The list of image names
+	repeated string ValueNames = 5;	//The list of value names
+	State Status = 6;				//The status of the product (error number)
+}
+
+//if the Trigger is -1, the values for the last trigger are returned
+//if  TriggerCount = -1 and the last trigger is the PreviousTrigger the status in the response is unchanged
+//and no values are retrieved 
+message GetProductRequest
+{
+	sint32 TriggerCount = 1;		//The trigger counter value
+	sint32 PeviousTrigger = 2;		//The previous trigger 
+	string ListName = 3;			//The monitor list name
+	bool NameInResponse = 4;		//True to retrieve the item names in the response
+}
+
+// In product response is an array of image ids
+// It is ensured that these images are available at least until GetProduct is called again 
+message GetProductResponse
+{
+	Product ProductItem = 1;		//The product to be retrieved
+} 
+
+//Similar to GetProductRequest for rejects
+message GetRejectRequest
+{
+	sint32 TriggerCount = 1;		//The trigger counter value
+	sint32 PeviousTrigger = 2;		//The previous trigger 
+	string ListName = 3;			//The monitor list name
+	bool NameInResponse = 4;		//True to retrieve the item names in the response
+}
+
+message GetRejectResponse
+{
+	Product ProductItem = 1;		//The product to be retrieved
+} 
+
+message Image
+{
+	bytes RGB_Data = 1;				//The raw RGB image data as a byte array
+	uint32 Width = 2;				//The width of the image
+	uint32 Height = 3;				//The height of the image
+} 
+
+//request the image for an Id from GetProduct or GetRejectResponse 
+message GetImageFromIdRequest
+{
+	ImageId Id = 1;					//The image ID
+}
+
+message GetImageFromIdResponse
+{
+	Image ImageData = 1;			//The image data retrieved
+}
+
+message GetImageStreamFromIdRequest
+{
+	uint32 Count = 1;
+	ImageId Id = 2;					//The image ID
+}
+
+message GetImageStreamFromIdResponse
+{
+	Image ImageData = 1;			//The image data retrieved
+}
+
+//If the Response are values from the LastRejectTriggers
+//the response has the state unchanged 
+message GetFailStatusRequest
+{
+	string ListName = 1;				//The monitor list name
+	bool NameInResponse = 2;
+	repeated int32 PreviousRejects = 3;	//The previous reject ID's
+}
+
+message GetFailStatusResponse
+{
+	repeated Product Products = 1;	//The list of fail status products
+	State Status = 2;				//The status of the request
+}
+
+///Request Values or Images for triggercount =-1 the last value is retrieved 
+//If the Response are values from the LastTriggercount
+//the response has the state unchanged 
+message GetTriggerItemsRequest
+{
+	uint32 Trigger = 1;
+	uint32 PreviousTrigger = 2;
+	repeated ValueItem  ValueList = 3;
+	repeated ImageItem  ImageList = 4;
+}
+
+message GetTriggerItemsResponse
+{
+	uint32 TriggerCount = 1;
+	repeated Variant Values = 2;
+	repeated Image Images = 3;
+}
+
+message GetImageStreamRequest
+{
+	 uint32 Count = 1;
+	 ImageItem Image = 2;
+}
+
+//This registers which notifications are streamed by SVObserver
+message GetNotificationStreamRequest
+{
+	repeated NotificationType Types = 1;	//A list of the types of notifications to be streamed
+}
+
+//This structure is sent for message notifications
+message MsgNotification
+{
+	MessageType Type = 1;			//The message type start end or log
+	string MessageText = 2;			//The message text being displayed
+	int32 ErrorNumber = 3;			//The error number being displayed
+}
+
+//The notification response is one of the values depending which notification type is being streamed
+message GetNotificationStreamResponse
+{
+	oneof message
+	{
+		DeviceModeType CurrentMode = 1;			//The current SVObserver device mode
+		uint32 LastModified = 2;				//The last modified time stamp
+		MsgNotification MsgNotification = 3;	//The message notification structure
+	}
+}
+
+//Sets the SVObserver device mode
+message SetDeviceModeRequest
+{
+	DeviceModeType Mode = 1;		//The SVObserver device mode to set to
+}
+
+//Gets the current SVObserver device mode
+message GetDeviceModeRequest 
+{
+}
+
+message GetDeviceModeResponse 
+{
+	DeviceModeType Mode = 1;		//The current SVObserver device mode
+}
+
+///Gets the current SVObserver state
+message GetStateRequest 
+{
+}
+
+message GetStateResponse
+{
+	 uint32 State = 1;				//The current SVObserver state which is a combination of the below possible states
+	//The state is a combination of the following bit flags
+	// SVIM_CONFIG_LOADING =	0x0001; SVObserver is busy loading a configuration
+	// SVIM_CONFIG_LOADED =		0x0002; SVObserver has loaded a configuration
+	// SVIM_ONLINE_PENDING =	0x0004; SVObserver is busy going online
+	// SVIM_ONLINE =			0x0008;	SVObserver is online
+	// SVIM_RUNNING_TEST =		0x0010; SVObserver is running test mode
+	// SVIM_RUNNING =			0x0020; SVObserver is running
+	// SVIM_REGRESSION_TEST =	0x0040; SVObserver is running regression test mode
+	// SVIM_SETUPMODE =			0x0080; SVObserver is in edit mode
+	// SVIM_SAVING_CONFIG =		0x0100;	SVObserver is busy saving a configuration
+	// SVIM_STOPPING =			0x0200;	SVObserver is busy stopping the configuration
+	// SVIM_RAID_FAILURE =		0x0400; SVObserver has a raid failure
+}
+
+///Gets the currently loaded configuration from SVObserver and saves it in the file name (locally)
+message GetConfigRequest
+{
+	string FileName = 1;			//The name of the file to save the configuration
+}
+
+message GetConfigResponse
+{
+	sint32 hResult = 1;				//The result of the request
+	bytes FileData = 2;				//The file data retrieved as a byte array
+}
+
+///Transfers a configuration given a client file name to SVObserver and loads it as the current configuration
+message PutConfigRequest
+{
+	string FileName = 1;			//The name of the configuration file
+	bytes FileData = 2;				//The file data to send as a byte array
+}
+
+///Gets the current offline counter value
+message GetOfflineCountRequest
+{
+}
+
+message GetOfflineCountResponse
+{
+	uint32 Count = 1;				//The number of times SVObserver has been set to offline
+}
+
+///Activates or deactivates the given monitor list name
+message ActivateMonitorListRequest
+{
+	string ListName = 1;			//The monitor list name
+	bool Activate = 2;				//True if the montor list should become active
+}
 
 ///Gets the filter type for the given product name
 message GetProductFilterRequest
 {
-	string ListName = 1;
+	string ListName = 1;			//The monitor list name
 }
 
 message GetProductFilterResponse
 {
-	sint32 hResult = 1;
-	ProductFilterEnum Filter = 2;
+	sint32 hResult = 1;				//The request result (0 = no error)
+	ProductFilterEnum Filter = 2;	//The filter setting
 }
 
 ///Sets the filter type for the given product name
 message SetProductFilterRequest
 {
-	string ListName = 1;
-	ProductFilterEnum Filter = 2;
+	string ListName = 1;			//The monitor list name
+	ProductFilterEnum Filter = 2;	//The filter setting
 }
 
 ///Gets the item values for the given name list
 message GetItemsRequest
 {
-	repeated string ItemNameList = 1;
+	repeated string ItemNameList = 1;	//The list of item names to retrieve
 }
 
 message GetItemsResponse
 {
-	sint32 hResult = 1;
-	repeated Value ValueList = 2;
-	repeated Value ImageList = 3;
-	repeated Value ErrorList = 4;
+	sint32 hResult = 1;				//The total result of the request (0 = no error)
+	repeated Value ValueList = 2;	//The list of values retrieved
+	repeated Value ImageList = 3;	//The list of images retrieved
+	repeated Value ErrorList = 4;	//The list of errors retrieved
 }
 
 ///Sets the item for the given value and image name list
 ///If RunOnce is true then for all changed inspections a runonce is executed after changing all the values
 message SetItemsRequest
 {
-	repeated Value ValueList = 1;
-	repeated Value ImageList = 2;
-	bool RunOnce = 3;
+	repeated Value ValueList = 1;	//The list of values to set
+	repeated Value ImageList = 2;	//The list of images to set
+	bool RunOnce = 3;				//True if after setting the values and images a run once is executed
 }
 
 message SetItemsResponse
 {
-	sint32 hResult = 1;
-	repeated Value ErrorList = 2;
+	sint32 hResult = 1;				//The total result of the request
+	repeated Value ErrorList = 2;	//The list of errors retrieved
 }
 
 ///Gets the given source file on the SVIM
 message GetFileRequest
 {
-	string SourcePath = 1;
+	string SourcePath = 1;			//The path to the file to retrieve from the SVIM
 }
 
 message GetFileResponse
 {
-	sint32 hResult = 1;
-	bytes FileData = 2;
+	sint32 hResult = 1;				//The request result
+	bytes FileData = 2;				//The file data as a byte array
 }
 
 ///Transfers the given file to SVObserver and saves it to the given file path
 message PutFileRequest
 {
-	string DestinationPath = 1;
-	bytes FileData = 2;
+	string DestinationPath = 1;		//The destination path of the file on the SVIM
+	bytes FileData = 2;				//The file data as a byte array
 }
 
 ///Registers the given Monitor list into the currently loaded configuration in SVObserver
 message RegisterMonitorListRequest
 {
-	string Name = 1;
-	string PpqName = 2;
-	sint32 RejectDepth = 3;
-	repeated string ProductItemList = 4;
-	repeated string RejectConditionList = 5;
-	repeated string FailStatusList = 6;
+	string ListName = 1;						//The monitor list name to register on the SVObserver
+	string PpqName = 2;							//The PPQ name to register it to
+	sint32 RejectDepth = 3;						//The amount of maximum rejects to support
+	repeated string ProductItemList = 4;		//The list of product items
+	repeated string RejectConditionList = 5;	//The list of conditional reject items
+	repeated string FailStatusList = 6;			//The list of fail status items
 }
 
 message RegisterMonitorListResponse
 {
-	sint32 hResult = 1;
-	repeated Value ErrorList = 2;
+	sint32 hResult = 1;				//The request result (0 = no error)
+	repeated Value ErrorList = 2;	//The list of errors for the request
 }
 
+//Retrieves the inspection names of the currently loaded configuration on the SVIM
 message GetInspectionNamesRequest
 {
-	;
 }
 
-///Sends a shutdown request to the SVIM with the optional parameter
+///Sends a shutdown request to the SVIM with an optional parameter
 message ShutdownRequest
 {
-	sint32 Options = 1;
+	sint32 Options = 1;				//Option 0=Shutdown SVObserver; 1=Shutdown SVObserver & Windows; 2=Shutdown SVObserver Restart Windows
 }
 
 ///Gets the monitor list properties with the given name from SVObserver
 message GetMonitorListPropertiesRequest
 {
-	string ListName = 1;
+	string ListName = 1;			//The monitor list name
 }
 
 message GetMonitorListPropertiesResponse
 {
-	sint32 hResult = 1;
-	sint32 RejectDepth = 2;
-	bool Active = 3;
-	string PpqName = 4;
+	sint32 hResult = 1;				//The request result (0 = no error)
+	sint32 RejectDepth = 2;			//The reject depth value
+	bool Active = 3;				//True if the monitor list is active
+	string PpqName = 4;				//The PPQ name of the moitor list
 }
 
 ///Gets the maximum reject depth of the currently loaded configuration
 message GetMaxRejectDepthRequest
 {
-	;
 }
 
 message GetMaxRejectDepthResponse
@@ -551,64 +585,62 @@ message GetMaxRejectDepthResponse
 
 message GetConfigReportRequest
 {
-	;
 }
 
 ///Gets the report of the currently loaded configuration
 message GetConfigReportResponse
 {
-	sint32 hResult = 1;
-	string Report = 2;
+	sint32 hResult = 1;				//The request result (0 = no error)
+	string Report = 2;				//The complete configuration report as a string
 }
 
 ///Gets the data definition list of the currently loaded configuration with the given inspection name
 ///The items returned depends on the Data Definition List type
 message GetDataDefinitionListRequest
 {
-	string InspectionName = 1;
-	DataDefinitionListType Type = 2;
+	string InspectionName = 1;			//The inspection name to query
+	DataDefinitionListType Type = 2;	//The type of data definitions to return
 }
 
 message GetDataDefinitionListResponse
 {
-	sint32 hResult = 1;
-	repeated DataDefinition List = 2;
+	sint32 hResult = 1;					//The request result (0 = no error)
+	repeated DataDefinition List = 2;	//The list of data definition values
 }
 
 ///Queries the Monitor List with the given name and type
 message QueryMonitorListRequest
 {
-	string ListName = 1;
-	ListType Type = 2;
+	string ListName = 1;			//The monitor list name
+	ListType Type = 2;				//The monitor list type
 }
 
 message QueryMonitorListNamesRequest
 {
-	;
 }
 
 ///Causes a runonce for the currently loaded configuration with the given inspection name to be executed
 message RunOnceRequest
 {
-	string InspectionName = 5;
+	string InspectionName = 1;		//The inspection name to execute a runonce
 }
 
 ///Loads a configuration given a local file name into SVObserver as the current configuration
 message LoadConfigRequest
 {
-	string FileName = 1;
+	string FileName = 1;			//The configuration file name to load 
 }
 
 ///Standard responce for requests that only return names
 message NamesResponse
 {
-	sint32 hResult = 1;
-	Value Names = 2;
+	sint32 hResult = 1;				//The request result (0 = no error)
+	Value Names = 2;				//The result names of the request
 }
 
 ///Standard responce for requests that only return an hResult
 message StandardResponse
 {
-	sint32 hResult = 1;
+	sint32 hResult = 1;				//The request result (0 = no error)
 }
 

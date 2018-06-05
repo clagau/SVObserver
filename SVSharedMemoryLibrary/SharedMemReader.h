@@ -19,7 +19,9 @@ public:
 	///return values for member functions 
 	enum retvalues
 	{
-		fail = 0, sucess, last
+		fail = 0,
+		success,
+		last
 	};
 	SharedMemReader(void);
 	~SharedMemReader(void);

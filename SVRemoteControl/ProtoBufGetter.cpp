@@ -83,16 +83,16 @@ DataDefPtr GetDataDefPtr(const SvPb::DataDefinition& rDataDef)
 	return pDataDefPtr;
 }
 
-ImagePtr GetImageObjectPtr(int trigger, const std::string& name, const SvPb::CurImageId &imId, SvWsl::SVRCClientServicePtr& rpSvrcClientService)
+ImagePtr GetImageObjectPtr(int trigger, const std::string& rName, const SvPb::ImageId& rImageID, SvWsl::SVRCClientServicePtr& rpSvrcClientService)
 {
 	CComObject<SVImageObject> *pImageObject{nullptr};
 	CComObject<SVImageObject>::CreateInstance(&pImageObject);
 	ImagePtr pio(pImageObject);
-	_bstr_t bname(name.c_str());
+	_bstr_t bname(rName.c_str());
 	pImageObject->put_Name(bname);
 	pImageObject->put_TriggerCount(trigger);
 	pImageObject->SetClientService(rpSvrcClientService);
-	pImageObject->SetImageId(imId);
+	pImageObject->SetImageId(rImageID);
 	return pio;
 }
 
@@ -141,13 +141,13 @@ ProductPtr GetProductPtr(SvWsl::SVRCClientServicePtr& rpSvrcClientService, const
 		bool InsertAllBitmapNow(false);
 		if (InsertAllBitmapNow)
 		{
-			SvPb::GetImageFromCurIdRequest request;
-			request.mutable_id()->set_imagestore(rResp.images(i).imagestore());
-			request.mutable_id()->set_imageindex(rResp.images(i).imageindex());
-			request.mutable_id()->set_slotindex(rResp.images(i).slotindex());
-			SvPb::GetImageFromCurIdResponse Imageresp = SvWsl::runRequest(*rpSvrcClientService, &SvWsl::SVRCClientService::GetImageFromCurId, std::move(request)).get();
+			SvPb::GetImageFromIdRequest Request;
+			Request.mutable_id()->set_imagestore(rResp.images(i).imagestore());
+			Request.mutable_id()->set_imageindex(rResp.images(i).imageindex());
+			Request.mutable_id()->set_slotindex(rResp.images(i).slotindex());
+			SvPb::GetImageFromIdResponse Response = SvWsl::runRequest(*rpSvrcClientService, &SvWsl::SVRCClientService::GetImageFromId, std::move(Request)).get();
 
-			pProdItems->AddImage(GetImageObjectPtr(rResp.trigger(), rResp.imagenames(i), Imageresp.imagedata().rgb()));
+			pProdItems->AddImage(GetImageObjectPtr(rResp.trigger(), rResp.imagenames(i), Response.imagedata().rgb_data()));
 		}
 		else
 		{

@@ -42,6 +42,16 @@ ServerRequestHandler::ServerRequestHandler(SharedMemoryAccessInterface* sma)
 
 	registerRequestHandler<
 		SvPb::SVRCMessages,
+		SvPb::SVRCMessages::kGetRejectRequest,
+		SvPb::GetRejectRequest,
+		SvPb::GetRejectResponse>(
+		[sma](SvPb::GetRejectRequest&& req, SvRpc::Task<SvPb::GetRejectResponse> task)
+	{
+		sma->GetReject(req, task);
+	});
+
+	registerRequestHandler<
+		SvPb::SVRCMessages,
 		SvPb::SVRCMessages::kGetFailStatusRequest,
 		SvPb::GetFailStatusRequest,
 		SvPb::GetFailStatusResponse>(
@@ -52,22 +62,22 @@ ServerRequestHandler::ServerRequestHandler(SharedMemoryAccessInterface* sma)
 
 	registerRequestHandler<
 		SvPb::SVRCMessages,
-		SvPb::SVRCMessages::kGetImageFromCurIdRequest,
-		SvPb::GetImageFromCurIdRequest,
-		SvPb::GetImageFromCurIdResponse>(
-		[sma](SvPb::GetImageFromCurIdRequest&& req, SvRpc::Task<SvPb::GetImageFromCurIdResponse> task)
+		SvPb::SVRCMessages::kGetImageFromIdRequest,
+		SvPb::GetImageFromIdRequest,
+		SvPb::GetImageFromIdResponse>(
+		[sma](SvPb::GetImageFromIdRequest&& req, SvRpc::Task<SvPb::GetImageFromIdResponse> task)
 	{
-		sma->GetImageFromCurId(req, task);
+		sma->GetImageFromId(req, task);
 	});
 
 	registerStreamHandler<
 		SvPb::SVRCMessages,
-		SvPb::SVRCMessages::kGetImageStreamFromCurIdRequest,
-		SvPb::GetImageStreamFromCurIdRequest,
-		SvPb::GetImageStreamFromCurIdResponse>(
-		[sma](SvPb::GetImageStreamFromCurIdRequest&& req, SvRpc::Observer<SvPb::GetImageStreamFromCurIdResponse> observer, SvRpc::ServerStreamContext::Ptr ctx)
+		SvPb::SVRCMessages::kGetImageStreamFromIdRequest,
+		SvPb::GetImageStreamFromIdRequest,
+		SvPb::GetImageStreamFromIdResponse>(
+		[sma](SvPb::GetImageStreamFromIdRequest&& req, SvRpc::Observer<SvPb::GetImageStreamFromIdResponse> observer, SvRpc::ServerStreamContext::Ptr ctx)
 	{
-		sma->GetImageStreamFromCurId(req, observer, ctx);
+		sma->GetImageStreamFromId(req, observer, ctx);
 	});
 
 	registerRequestHandler<

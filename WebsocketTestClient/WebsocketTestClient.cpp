@@ -32,7 +32,7 @@
 #include "WebsocketLibrary/Definition.h"
 
 
-void PrintCurImage(const SvPb::CurImageId& rCurrentImage)
+void PrintCurImage(const SvPb::ImageId& rCurrentImage)
 {
 	BOOST_LOG_TRIVIAL(info) << "StoreIndex: " << rCurrentImage.imagestore() << " ImageIndex: " << rCurrentImage.imageindex()
 		<< " SlotIndex: " << rCurrentImage.slotindex();
@@ -102,21 +102,21 @@ static void GetNotifications(SvWsl::SVRCClientService& client)
 	ctx.cancel();
 }
 
-static bool GetImageId(SvWsl::SVRCClientService& client, int imageWidth, SvPb::CurImageId& rImageIdOut)
+static bool GetImageId(SvWsl::SVRCClientService& client, int imageWidth, SvPb::ImageId& rImageIdOut)
 {
 	SvPb::QueryListNameRequest mListReq;
 	auto mListRes = runRequest(client, &SvWsl::SVRCClientService::QueryListName, std::move(mListReq)).get();
 	for (const auto& listname : *mListRes.mutable_listname())
 	{
 		SvPb::GetProductRequest prodReq;
-		prodReq.set_name(listname);
+		prodReq.set_listname(listname);
 		auto prodRes = runRequest(client, &SvWsl::SVRCClientService::GetProduct, std::move(prodReq)).get();
-		for (const auto& imgId : prodRes.product().images())
+		for (const auto& imgId : prodRes.productitem().images())
 		{
-			SvPb::GetImageFromCurIdRequest imgReq;
+			SvPb::GetImageFromIdRequest imgReq;
 			*imgReq.mutable_id() = imgId;
-			auto imgRes = runRequest(client, &SvWsl::SVRCClientService::GetImageFromCurId, std::move(imgReq)).get();
-			if (imgRes.imagedata().w() == imageWidth)
+			auto imgRes = runRequest(client, &SvWsl::SVRCClientService::GetImageFromId, std::move(imgReq)).get();
+			if (imgRes.imagedata().width() == imageWidth)
 			{
 				rImageIdOut = imgId;
 				return true;
@@ -127,7 +127,7 @@ static bool GetImageId(SvWsl::SVRCClientService& client, int imageWidth, SvPb::C
 }
 static void RunBenchmark2(SvWsl::SVRCClientService& rClient, int iterations, int imageWitdh, bool use_streaming)
 {
-	SvPb::CurImageId ImageId;
+	SvPb::ImageId ImageId;
 	if (!GetImageId(rClient, imageWitdh, ImageId))
 	{
 		BOOST_LOG_TRIVIAL(error) << "Unable to find image for request width " << imageWitdh;
@@ -137,18 +137,18 @@ static void RunBenchmark2(SvWsl::SVRCClientService& rClient, int iterations, int
 	auto start = std::chrono::steady_clock::now();
 	if (use_streaming)
 	{
-		SvPb::GetImageStreamFromCurIdRequest request;
+		SvPb::GetImageStreamFromIdRequest request;
 		request.set_count(iterations);
 		*request.mutable_id() = ImageId;
-		auto response = runStream(rClient, &SvWsl::SVRCClientService::GetImageStreamFromCurId, std::move(request), volume).get();
+		auto response = runStream(rClient, &SvWsl::SVRCClientService::GetImageStreamFromId, std::move(request), volume).get();
 	}
 	else
 	{
 		for (int i = 0; i < iterations; ++i)
 		{
-			SvPb::GetImageFromCurIdRequest Request;
+			SvPb::GetImageFromIdRequest Request;
 			*Request.mutable_id() = ImageId;
-			auto resp = runRequest(rClient, &SvWsl::SVRCClientService::GetImageFromCurId, std::move(Request)).get();
+			auto resp = runRequest(rClient, &SvWsl::SVRCClientService::GetImageFromId, std::move(Request)).get();
 			volume += resp.ByteSize() / (1024.0 * 1024.0);
 		}
 	}
@@ -227,23 +227,23 @@ private:
 	{
 		for (auto i = 0; i < num_iterations; ++i)
 		{
-			SvPb::GetImageFromCurIdRequest request;
+			SvPb::GetImageFromIdRequest request;
 			request.mutable_id()->set_slotindex(0); // TODO: slotindex should be product-index
 			request.mutable_id()->set_imageindex(0);
 			request.mutable_id()->set_imagestore(0); // TODO: what is this? MonitorList?
-			auto response = runRequest(rClient, &SvWsl::SVRCClientService::GetImageFromCurId, std::move(request)).get();
+			auto response = runRequest(rClient, &SvWsl::SVRCClientService::GetImageFromId, std::move(request)).get();
 		}
 	}
 
 	void doImageStreamBenchmark(SvWsl::SVRCClientService& rClient, int num_iterations)
 	{
-		SvPb::GetImageStreamFromCurIdRequest request;
+		SvPb::GetImageStreamFromIdRequest request;
 		request.set_count(num_iterations);
 		request.mutable_id()->set_slotindex(0); // TODO: slotindex should be product-index
 		request.mutable_id()->set_imageindex(0);
 		request.mutable_id()->set_imagestore(0); // TODO: what is this? MonitorList?
 		double volume = 0;
-		auto response = runStream(rClient, &SvWsl::SVRCClientService::GetImageStreamFromCurId, std::move(request), volume).get();
+		auto response = runStream(rClient, &SvWsl::SVRCClientService::GetImageStreamFromId, std::move(request), volume).get();
 	}
 
 private:
@@ -380,7 +380,7 @@ int main(int argc, char* argv[])
 				SvPb::GetFailStatusRequest FailstatusRequest;
 				if (wordsize > 1)
 				{
-					FailstatusRequest.set_name(words[1].c_str());
+					FailstatusRequest.set_listname(words[1].c_str());
 				}
 				else
 				{
@@ -419,18 +419,30 @@ int main(int argc, char* argv[])
 
 				bool bReject = words[0] == "r";
 
-				SvPb::GetProductRequest ProductRequest;
-				ProductRequest.set_name(name);
-				ProductRequest.set_trigger(trigger);
-				ProductRequest.set_nameinresponse(true);
-				ProductRequest.set_breject(bReject);
-				ProductRequest.set_pevioustrigger(-1);
+				if(bReject)
+				{
+					SvPb::GetRejectRequest Request;
+					Request.set_listname(name);
+					Request.set_triggercount(trigger);
+					Request.set_nameinresponse(true);
+					Request.set_pevioustrigger(-1);
 
-				SvPb::GetProductResponse resp;
-				resp = runRequest(*pService, &SvWsl::SVRCClientService::GetProduct, std::move(ProductRequest)).get();
-				PrintProductResponse(resp.product());
+					SvPb::GetRejectResponse Response;
+					Response = runRequest(*pService, &SvWsl::SVRCClientService::GetReject, std::move(Request)).get();
+					PrintProductResponse(Response.productitem());
+				}
+				else
+				{
+					SvPb::GetProductRequest Request;
+					Request.set_listname(name);
+					Request.set_triggercount(trigger);
+					Request.set_nameinresponse(true);
+					Request.set_pevioustrigger(-1);
 
-
+					SvPb::GetProductResponse Response;
+					Response = runRequest(*pService, &SvWsl::SVRCClientService::GetProduct, std::move(Request)).get();
+					PrintProductResponse(Response.productitem());
+				}
 			}
 			else if (words[0] == "i")
 			{
@@ -440,20 +452,20 @@ int main(int argc, char* argv[])
 					continue;
 				}
 
-				SvPb::GetImageFromCurIdRequest request;
+				SvPb::GetImageFromIdRequest request;
 				request.mutable_id()->set_imagestore(atoi(words[1].c_str()));
 				request.mutable_id()->set_imageindex(atoi(words[2].c_str()));
 				request.mutable_id()->set_slotindex(atoi(words[3].c_str()));
-				auto resp = runRequest(*pService, &SvWsl::SVRCClientService::GetImageFromCurId, std::move(request)).get();
+				auto resp = runRequest(*pService, &SvWsl::SVRCClientService::GetImageFromId, std::move(request)).get();
 
-				BOOST_LOG_TRIVIAL(info) << "Image (Width ,Height) " << resp.imagedata().w() << "x"
-					<< resp.imagedata().h();
+				BOOST_LOG_TRIVIAL(info) << "Image (Width ,Height) " << resp.imagedata().width() << "x"
+					<< resp.imagedata().height();
 				std::string filename = "D:\\Temp\\Images\\";
 				filename += words[1] + "_" + words[2] + "_" + words[3] + "_";
 				static int debug_image_count = 0;
 				filename += std::to_string(debug_image_count++) + ".bmp";
 				std::ofstream os(filename, std::ios_base::binary);
-				os.write((char*)resp.imagedata().rgb().data(), resp.imagedata().rgb().size());
+				os.write((char*)resp.imagedata().rgb_data().data(), resp.imagedata().rgb_data().size());
 				os.close();
 				// os.write((char *)iarray, sizeof(iarray));
 			}
@@ -567,7 +579,7 @@ int main(int argc, char* argv[])
 					bValues = temp > 0;
 				}
 				SvPb::QueryListItemRequest  request;
-				request.set_name(monitorlistname.c_str());
+				request.set_listname(monitorlistname.c_str());
 				request.set_type(t);
 				request.set_queryimages(bImage);
 				request.set_queryvalues(bValues) ;

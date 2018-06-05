@@ -52,6 +52,13 @@ std::string RemoteMonitorListHelper::GetNameFromMonitoredObject(const MonitoredO
 			Result = ObjectRef.GetCompleteName();
 		}
 	}
+
+	if(!Result.empty() && 0 != Result.find(SvDef::FqnInspections))
+	{
+		std::string InspectionsPrefix(SvDef::FqnInspections);
+		InspectionsPrefix += _T(".");
+		Result = InspectionsPrefix + Result;
+	}
 	return Result;
 }
 
@@ -102,29 +109,22 @@ MonitoredObject RemoteMonitorListHelper::GetMonitoredObjectFromName(const std::s
 	MonitoredObject Result;
 
 	std::string sObjectName;
-	size_t iLength = name.size();
-	//Check to see if first part of name is Inspections. if so remove it.
-	if ( iLength >= 12 && name.substr(0, 12) == "Inspections." )
-	{
-		sObjectName = SvUl::Right(name, iLength - 12);
-	}
-	else
-	{
-		sObjectName = name;
-	}
-
-	Result.guid = SVObjectManagerClass::Instance().GetObjectIdFromCompleteName(sObjectName.c_str());
 	SVObjectNameInfo nameInfo;
 	SVObjectNameInfo::ParseObjectName(nameInfo, name.c_str());
-	
-	SVObjectReference ObjectRef(  SVObjectManagerClass::Instance().GetObject( Result.guid ), nameInfo );
-	if( nullptr != ObjectRef.getValueObject() )
+	//Check to see that first part of name is Inspections
+	if (std::string(SvDef::FqnInspections) == nameInfo.m_NameArray[0])
 	{
-		Result.isArray = ObjectRef.getValueObject()->isArray();
-		Result.wholeArray = ObjectRef.isEntireArray();
-		if( Result.isArray )
+		SVObjectReference ObjectRef;
+		SVObjectManagerClass::Instance().GetObjectByDottedName(nameInfo.GetObjectArrayName(0), ObjectRef);
+		Result.guid = (nullptr != ObjectRef.getObject()) ? ObjectRef.getObject()->GetUniqueObjectID() : GUID_NULL;
+		if (nullptr != ObjectRef.getValueObject())
 		{
-			Result.arrayIndex = ObjectRef.ArrayIndex();
+			Result.isArray = ObjectRef.getValueObject()->isArray();
+			Result.wholeArray = ObjectRef.isEntireArray();
+			if (Result.isArray)
+			{
+				Result.arrayIndex = ObjectRef.ArrayIndex();
+			}
 		}
 	}
 	return Result;

@@ -614,7 +614,7 @@ void SVRCCommand::RegisterMonitorList(const SvPb::RegisterMonitorListRequest& rR
 	SvDef::StringSet rejectCondList;
 	SvDef::StringSet failStatusList;
 
-	std::string MonitorListName = rRequest.name();
+	std::string MonitorListName = rRequest.listname();
 	std::string PpqName = rRequest.ppqname();
 	int rejectDepth = rRequest.rejectdepth();
 	for (int i = 0; i < rRequest.productitemlist_size(); i++)

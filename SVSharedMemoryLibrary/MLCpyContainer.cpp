@@ -9,6 +9,7 @@
 #include "MLcpyContainer.h"
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "Definitions/StringTypeDef.h"
+#include "Definitions/GlobalConst.h"
 
 
 namespace SvSml
@@ -165,12 +166,19 @@ namespace SvSml
 			for (; MEMIt != MLCPyIt->second->m_EntriesMap.end(); ++MEMIt)
 			{
 				assert(MEMIt->second.get());
-				std::string inspectionName;
-				std::size_t pos = MEMIt->first.find_first_of('.');
+				std::string inspectionName {MEMIt->first};
+				std::string Inspections {SvDef::FqnInspections};
+				Inspections += _T('.');
+				if (0 == inspectionName.find(Inspections))
+				{
+					inspectionName = inspectionName.substr(Inspections.size(), inspectionName.size() - Inspections.size());
+				}
+
+				std::size_t pos = inspectionName.find_first_of('.');
 				if (pos != std::string::npos)
-					inspectionName = MEMIt->first.substr(0, pos);
-				else
-					inspectionName = MEMIt->first;
+				{
+					inspectionName = inspectionName.substr(0, pos);
+				}
 
 				assert(m_InspectionInfoMap.find(inspectionName) != m_InspectionInfoMap.end());
 				assert(MEMIt->second->name == MEMIt->first);
@@ -241,7 +249,7 @@ namespace SvSml
 	{
 		
 		bool result {true};
-		if (0 == request.name().size())
+		if (0 == request.listname().size())
 		{
 			for (const auto& pair : m_MonitorListCpyMap)
 			{
@@ -254,7 +262,7 @@ namespace SvSml
 		else
 		{
 			MonitorListCpyMap::const_iterator it;
-			it = m_MonitorListCpyMap.find(request.name());
+			it = m_MonitorListCpyMap.find(request.listname());
 			if (it != m_MonitorListCpyMap.end() && it->second->GetIsActive())
 			{
 				it->second->QueryListItem( request, resp);

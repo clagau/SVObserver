@@ -4,6 +4,7 @@
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
+#include "Definitions/GlobalConst.h"
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #pragma warning (push ,2)
 #include "SVPRotobuf\MonitorListStore.pb.h"
@@ -189,12 +190,19 @@ namespace SvSml
 			assert(it->second.get());
 			assert(it->first == it->second->name);
 
-			std::string inspectionName;
-			std::size_t pos = it->first.find_first_of('.');
+			std::string inspectionName{it->first};
+			std::string Inspections{SvDef::FqnInspections};
+			Inspections += _T('.');
+			if(0 == inspectionName.find(Inspections))
+			{
+				inspectionName = inspectionName.substr(Inspections.size(), inspectionName.size() - Inspections.size());
+			}
+
+			std::size_t pos = inspectionName.find_first_of('.');
 			if (pos != std::string::npos)
-				inspectionName = it->first.substr(0, pos);
-			else
-				inspectionName = it->first;
+			{
+				inspectionName = inspectionName.substr(0, pos);
+			}
 
 			if (inspectionInfoMap.find(inspectionName) == inspectionInfoMap.end())
 			{

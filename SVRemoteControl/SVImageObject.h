@@ -81,7 +81,7 @@ public:
 	const std::string & GetUrl() const { return url; }
 	void SetUrl(const std::string & u) { url = u; }
 	void SetClientService(SvWsl::SVRCClientServicePtr& rpSvrcClientService);
-	void SetImageId(const SvPb::CurImageId& CurImageId);
+	void SetImageId(const SvPb::ImageId& CurImageId);
 private:
 	STDMETHOD(get_Image)(IPictureDisp** pVal);
 	STDMETHOD(put_Image)(IPictureDisp * newVal);
@@ -100,7 +100,7 @@ private:
 	LONG trigger = 0;
 	ULONG len = 0;
 	SVImageFormatsEnum format = BMP;
-	SvPb::CurImageId m_CurImId;
+	SvPb::ImageId m_CurrentImageId;
 	SvWsl::SVRCClientServicePtr*  m_pClientService = nullptr;
 };
 

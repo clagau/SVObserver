@@ -54,7 +54,6 @@ public:
 		const CComVariant& rRejectCondList, const CComVariant& rFailStatusList, ISVErrorObjectList** ppErrors, SVCommandStatus& rStatus);
 	HRESULT QueryMonitorList(const _bstr_t& rListName, SvPb::ListType Type, CComVariant& rItemNames, SVCommandStatus& rStatus);
 
-	HRESULT GetProduct(bool bGetReject, const _bstr_t& rListName, long TriggerCount, long ImageScale, ISVProductItems** ppViewItems, SVCommandStatus& rStatus);
 	HRESULT GetProduct(const _bstr_t& rListName, long TriggerCount, long ImageScale, ISVProductItems** ppViewItems, SVCommandStatus& rStatus);
 	HRESULT GetRejects(const _bstr_t& rListName, long TriggerCount, long ImageScale, ISVProductItems** ppViewItems, SVCommandStatus& rStatus);
 	HRESULT ActivateMonitorList(const _bstr_t& rListName, bool Active, SVCommandStatus& rStatus);

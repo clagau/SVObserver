@@ -817,7 +817,7 @@ HRESULT SVControlCommands::RegisterMonitorList(const _bstr_t& rListName, const _
 		}
 
 		SvPb::RegisterMonitorListRequest Request;
-		Request.set_name(SVStringConversions::to_utf8(rListName));
+		Request.set_listname(SVStringConversions::to_utf8(rListName));
 		Request.set_ppqname(SVStringConversions::to_utf8(rPpqName));
 		Request.set_rejectdepth(rejectDepth);
 		SetStringList(rProductItemList, Request.mutable_productitemlist());
@@ -877,9 +877,9 @@ HRESULT SVControlCommands::QueryMonitorList(const _bstr_t& rListName, SvPb::List
 		return Result;
 }
 
-HRESULT SVControlCommands::GetProduct(bool bGetReject, const _bstr_t& rListName, long TriggerCount, long ImageScale, ISVProductItems** ppViewItems, SVCommandStatus& rStatus)
+HRESULT SVControlCommands::GetProduct(const _bstr_t& rListName, long TriggerCount, long ImageScale, ISVProductItems** ppViewItems, SVCommandStatus& rStatus)
 {
-	HRESULT Result{E_FAIL};
+	HRESULT Result {E_FAIL};
 	try
 	{
 		if (0 == rListName.length())
@@ -891,25 +891,23 @@ HRESULT SVControlCommands::GetProduct(bool bGetReject, const _bstr_t& rListName,
 			throw std::invalid_argument("Not connected to neither SVOGateway nor SVObserver");
 		}
 
-		SvPb::GetProductRequest ProductRequest;
-		ProductRequest.set_name(static_cast<const char*>(rListName));
-		ProductRequest.set_trigger((-1 < TriggerCount) ? TriggerCount : -1);
-		ProductRequest.set_pevioustrigger(-1);
-		ProductRequest.set_breject(bGetReject);
+		SvPb::GetProductRequest Request;
+		Request.set_listname(static_cast<const char*>(rListName));
+		Request.set_triggercount((-1 < TriggerCount) ? TriggerCount : -1);
+		Request.set_pevioustrigger(-1);
 
-		ProductRequest.set_nameinresponse(true);
-		SvPb::GetProductResponse resp =
-			SvWsl::runRequest(*m_pSvrcClientService.get(), &SvWsl::SVRCClientService::GetProduct, std::move(ProductRequest)).get();
+		Request.set_nameinresponse(true);
+		SvPb::GetProductResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(), &SvWsl::SVRCClientService::GetProduct, std::move(Request)).get();
 
-		Result = static_cast<HRESULT> (resp.product().status());
-		if (resp.product().status() == SvPb::IsValid)
+		Result = static_cast<HRESULT> (Response.productitem().status());
+		if (Response.productitem().status() == SvPb::IsValid)
 		{
 			Result = S_OK;
-			GetProductPtr(m_pSvrcClientService, resp.product())->QueryInterface(IID_ISVProductItems, reinterpret_cast<void**>(ppViewItems));
+			GetProductPtr(m_pSvrcClientService, Response.productitem())->QueryInterface(IID_ISVProductItems, reinterpret_cast<void**>(ppViewItems));
 		}
 		else
 		{
-			rStatus.errorText = SVStringConversions::to_utf16(SvPb::State_Name(resp.product().status()));
+			rStatus.errorText = SVStringConversions::to_utf16(SvPb::State_Name(Response.productitem().status()));
 		}
 
 		rStatus.hResult = Result;
@@ -920,14 +918,46 @@ HRESULT SVControlCommands::GetProduct(bool bGetReject, const _bstr_t& rListName,
 
 	return Result;
 }
-HRESULT SVControlCommands::GetProduct(const _bstr_t& rListName, long TriggerCount, long ImageScale, ISVProductItems** ppViewItems, SVCommandStatus& rStatus)
-{
-	return GetProduct(false, rListName, TriggerCount, ImageScale, ppViewItems, rStatus);
-}
 HRESULT SVControlCommands::GetRejects(const _bstr_t& rListName, long TriggerCount, long ImageScale, ISVProductItems** ppViewItems, SVCommandStatus& rStatus)
 {
-	return GetProduct(true, rListName, TriggerCount, ImageScale, ppViewItems, rStatus);
+	HRESULT Result {E_FAIL};
+	try
+	{
+		if (0 == rListName.length())
+		{
+			throw std::invalid_argument("missing Monitorlistname");
+		}
+		if (nullptr == m_pRpcClient || nullptr == m_pSvrcClientService || !m_pRpcClient->isConnected())
+		{
+			throw std::invalid_argument("Not connected to neither SVOGateway nor SVObserver");
+		}
 
+		SvPb::GetRejectRequest Request;
+		Request.set_listname(static_cast<const char*>(rListName));
+		Request.set_triggercount((-1 < TriggerCount) ? TriggerCount : -1);
+		Request.set_pevioustrigger(-1);
+
+		Request.set_nameinresponse(true);
+		SvPb::GetRejectResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(), &SvWsl::SVRCClientService::GetReject, std::move(Request)).get();
+
+		Result = static_cast<HRESULT> (Response.productitem().status());
+		if (Response.productitem().status() == SvPb::IsValid)
+		{
+			Result = S_OK;
+			GetProductPtr(m_pSvrcClientService, Response.productitem())->QueryInterface(IID_ISVProductItems, reinterpret_cast<void**>(ppViewItems));
+		}
+		else
+		{
+			rStatus.errorText = SVStringConversions::to_utf16(SvPb::State_Name(Response.productitem().status()));
+		}
+
+		rStatus.hResult = Result;
+		rStatus.errorText = ConvertResult(Result);
+		SVLOG(Result);
+	}
+	HANDLE_EXCEPTION(Result, rStatus)
+
+	return Result;
 }
 
 HRESULT SVControlCommands::ActivateMonitorList(const _bstr_t& rListName, bool Active, SVCommandStatus& rStatus)
@@ -974,7 +1004,7 @@ HRESULT SVControlCommands::GetFailStatus(const _bstr_t& rListName, CComVariant& 
 		}
 
 		SvPb::GetFailStatusRequest FailstatusRequest;
-		FailstatusRequest.set_name(static_cast<const char*>(rListName));
+		FailstatusRequest.set_listname(static_cast<const char*>(rListName));
 
 		FailstatusRequest.set_nameinresponse(true);
 		SvPb::GetFailStatusResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),

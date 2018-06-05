@@ -638,20 +638,26 @@ HRESULT SVInspectionProcess::GetInspectionValueObject(LPCTSTR Name, SVObjectRefe
 {
 	HRESULT hr = S_FALSE;
 
-	SVObjectNameInfo l_NameInfo;
+	SVObjectNameInfo NameInfo;
 
 	SVObjectClass* pObject(nullptr);
 
-	hr = l_NameInfo.ParseObjectName(Name);
+	hr = NameInfo.ParseObjectName(Name);
 
 	if (S_OK == hr)
 	{
-		if (0 < l_NameInfo.m_NameArray.size() && l_NameInfo.m_NameArray[0] != GetName())
+		//If Inspections prefix is present remove it
+		if (std::string(SvDef::FqnInspections) == NameInfo.m_NameArray[0])
 		{
-			l_NameInfo.m_NameArray.push_front(GetName());
+			NameInfo.RemoveTopName();
 		}
 
-		const std::string& l_ObjectName = l_NameInfo.GetObjectName();
+		if (0 < NameInfo.m_NameArray.size() && NameInfo.m_NameArray[0] != GetName())
+		{
+			NameInfo.m_NameArray.push_front(GetName());
+		}
+
+		const std::string& l_ObjectName = NameInfo.GetObjectName();
 
 		SVValueObjectMap::index_const_iterator< from >::type l_Iter;
 
@@ -665,7 +671,7 @@ HRESULT SVInspectionProcess::GetInspectionValueObject(LPCTSTR Name, SVObjectRefe
 
 	if (nullptr != pObject)
 	{
-		rObjectRef = SVObjectReference(pObject, l_NameInfo);
+		rObjectRef = SVObjectReference(pObject, NameInfo);
 		hr = S_OK;
 	}
 	else
@@ -3550,11 +3556,20 @@ HRESULT SVInspectionProcess::GetInspectionImage(LPCTSTR Name, SVImageClass*& p_r
 
 	SVGetObjectDequeByTypeVisitor::SVObjectPtrDeque::const_iterator l_Iter;
 
+	std::string ImageName{Name};
+	std::string Inspections{SvDef::FqnInspections};
+	Inspections += '.';
+	//If Inspections prefix is present remove it
+	if(0 == ImageName.find(Inspections))
+	{
+		ImageName = ImageName.substr(Inspections.size(), ImageName.size()-Inspections.size());
+	}
+
 	for (l_Iter = l_Visitor.GetObjects().begin(); l_Iter != l_Visitor.GetObjects().end(); ++l_Iter)
 	{
 		SVImageClass* pImage = dynamic_cast<SVImageClass*>(const_cast<SVObjectClass*>(*l_Iter));
 
-		if (pImage->GetCompleteName() == Name)
+		if (pImage->GetCompleteName() == ImageName)
 		{
 			// We found the image by name
 			p_rRefObject = pImage;

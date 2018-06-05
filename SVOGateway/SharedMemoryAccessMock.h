@@ -26,19 +26,19 @@ public:
 	void GetVersion(const SvPb::GetGatewayVersionRequest&, SvRpc::Task<SvPb::GetVersionResponse>) override;
 	void GetProduct(const SvPb::GetProductRequest&, SvRpc::Task<SvPb::GetProductResponse>) override;
 	void GetFailstatus(const SvPb::GetFailStatusRequest&, SvRpc::Task<SvPb::GetFailStatusResponse>) override;
-	void GetImageFromCurId(const SvPb::GetImageFromCurIdRequest&, SvRpc::Task<SvPb::GetImageFromCurIdResponse>) override;
-	void GetImageStreamFromCurId(const SvPb::GetImageStreamFromCurIdRequest&,
-		SvRpc::Observer<SvPb::GetImageStreamFromCurIdResponse>, SvRpc::ServerStreamContext::Ptr) override;
+	void GetImageFromId(const SvPb::GetImageFromIdRequest&, SvRpc::Task<SvPb::GetImageFromIdResponse>) override;
+	void GetImageStreamFromId(const SvPb::GetImageStreamFromIdRequest&,
+		SvRpc::Observer<SvPb::GetImageStreamFromIdResponse>, SvRpc::ServerStreamContext::Ptr) override;
 	void GetTriggerItems(const SvPb::GetTriggerItemsRequest&, SvRpc::Task<SvPb::GetTriggerItemsResponse>) override;
 	void QueryListName(const SvPb::QueryListNameRequest&, SvRpc::Task<SvPb::QueryListNameResponse>) override;
 	void QueryListItem(const SvPb::QueryListItemRequest&, SvRpc::Task<SvPb::QueryListItemResponse>) override;
 
 private:
 	void getProduct(SvPb::Product& product, bool name_in_response);
-	void getImageById(SvPb::Image& img, const SvPb::CurImageId& imageId, bool rotated = false);
-	void getImageStreamFromCurIdStep(int iterations,
-		const SvPb::CurImageId& id,
-		SvRpc::Observer<SvPb::GetImageStreamFromCurIdResponse> observer,
+	void getImageById(SvPb::Image& img, const SvPb::ImageId& imageId, bool rotated = false);
+	void getImageStreamFromIdStep(int iterations,
+		const SvPb::ImageId& id,
+		SvRpc::Observer<SvPb::GetImageStreamFromIdResponse> observer,
 		SvRpc::ServerStreamContext::Ptr ctx);
 
 private:

@@ -168,7 +168,7 @@ SharedMemReader::retvalues  SharedMemReader::_GetProduct(const GetProdPar& par, 
 	{
 		rBp->ReleaseReaderSlot(slot);
 	}
-	return sucess;
+	return success;
 
 }
 
@@ -180,7 +180,7 @@ bool SharedMemReader::GetFailStatusData(LPCTSTR Monitorlist, int  TriggerNumber,
 	par.reject = false;
 	par.releaseTrigger = true;
 	par.failstatus = true;
-	return (sucess == _GetProduct(par, Monitorlist, TriggerNumber, pProduct, nullptr));
+	return (success == _GetProduct(par, Monitorlist, TriggerNumber, pProduct, nullptr));
 }
 
 SVMatroxBuffer& SharedMemReader::GetImageBuffer(DWORD  SlotIndex, DWORD storeIndex, DWORD ImageIndex)
@@ -249,7 +249,7 @@ SharedMemReader::retvalues SharedMemReader::GetFailstatus(LPCTSTR Monitorlist, v
 			productPtr.reset();
 		}
 	}
-	return sucess;
+	return success;
 }
 
 SharedMemReader::retvalues SharedMemReader::GetRejectData(LPCTSTR Monitorlist, int TriggerNumber, MLProduct* pProduct, const MLProduct* pLastProduct, bool releaseSlot)

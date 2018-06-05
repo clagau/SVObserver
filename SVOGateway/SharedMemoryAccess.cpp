@@ -38,99 +38,114 @@ SharedMemoryAccess::~SharedMemoryAccess()
 	}
 }
 
-void SharedMemoryAccess::GetVersion(const SvPb::GetGatewayVersionRequest& req, SvRpc::Task<SvPb::GetVersionResponse> task)
+void SharedMemoryAccess::GetVersion(const SvPb::GetGatewayVersionRequest& rRequest, SvRpc::Task<SvPb::GetVersionResponse> task)
 {
-	SvPb::GetVersionResponse resp;
-	resp.set_version(SvSyl::SVVersionInfo::GetVersion());
-	task.finish(std::move(resp));
+	SvPb::GetVersionResponse Response;
+	Response.set_version(SvSyl::SVVersionInfo::GetVersion());
+	task.finish(std::move(Response));
 }
 
-void SharedMemoryAccess::GetProduct(const SvPb::GetProductRequest& request, SvRpc::Task<SvPb::GetProductResponse> task)
+void SharedMemoryAccess::GetProduct(const SvPb::GetProductRequest& rRequest, SvRpc::Task<SvPb::GetProductResponse> task)
 {
-	SvPenv::Error err;
-	SvPb::GetProductResponse resp;
+	SvPenv::Error Error;
+	SvPb::GetProductResponse Response;
 
-	if (m_pShareControlInstance->GetProductOrReject(request, resp, err))
+	if (m_pShareControlInstance->GetProduct(rRequest, Response, Error))
 	{
-		task.finish(std::move(resp));
+		task.finish(std::move(Response));
 	}
 	else
 	{
-		task.error(err);
+		task.error(Error);
 	}
 }
 
-void SharedMemoryAccess::GetFailstatus(const SvPb::GetFailStatusRequest& request, SvRpc::Task<SvPb::GetFailStatusResponse> task)
+void SharedMemoryAccess::GetReject(const SvPb::GetRejectRequest& rRequest, SvRpc::Task<SvPb::GetRejectResponse> task)
 {
-	SvPenv::Error err;
-	SvPb::GetFailStatusResponse resp;
-	if (m_pShareControlInstance->GetFailstatus(request, resp, err))
+	SvPenv::Error Error;
+	SvPb::GetRejectResponse Response;
+
+	if (m_pShareControlInstance->GetReject(rRequest, Response, Error))
 	{
-		task.finish(std::move(resp));
+		task.finish(std::move(Response));
 	}
 	else
 	{
-		task.error(err);
+		task.error(Error);
 	}
-
 }
 
-void SharedMemoryAccess::GetImageFromCurId(const SvPb::GetImageFromCurIdRequest& request,
-	SvRpc::Task<SvPb::GetImageFromCurIdResponse> task)
+void SharedMemoryAccess::GetFailstatus(const SvPb::GetFailStatusRequest& rRequest, SvRpc::Task<SvPb::GetFailStatusResponse> task)
 {
-	SvPb::GetImageFromCurIdResponse resp;
-	SvPenv::Error err;
-
-	if (m_pShareControlInstance->GetImageFromCurId(request, resp, err))
+	SvPenv::Error Error;
+	SvPb::GetFailStatusResponse Response;
+	if (m_pShareControlInstance->GetFailstatus(rRequest, Response, Error))
 	{
-		task.finish(std::move(resp));
+		task.finish(std::move(Response));
 	}
 	else
 	{
-		task.error(err);
+		task.error(Error);
 	}
 
 }
-void SharedMemoryAccess::GetImageStreamFromCurId(const SvPb::GetImageStreamFromCurIdRequest& req,
-	SvRpc::Observer<SvPb::GetImageStreamFromCurIdResponse> observer,
+
+void SharedMemoryAccess::GetImageFromId(const SvPb::GetImageFromIdRequest& rRequest,
+	SvRpc::Task<SvPb::GetImageFromIdResponse> task)
+{
+	SvPb::GetImageFromIdResponse Response;
+	SvPenv::Error Error;
+
+	if (m_pShareControlInstance->GetImageFromId(rRequest, Response, Error))
+	{
+		task.finish(std::move(Response));
+	}
+	else
+	{
+		task.error(Error);
+	}
+
+}
+void SharedMemoryAccess::GetImageStreamFromId(const SvPb::GetImageStreamFromIdRequest& rRequest,
+	SvRpc::Observer<SvPb::GetImageStreamFromIdResponse> observer,
 	SvRpc::ServerStreamContext::Ptr ctx)
 {
-	SvPenv::Error err;
-	err.set_error_code(SvPenv::ErrorCode::NotImplemented);
-	observer.error(err);
+	SvPenv::Error Error;
+	Error.set_error_code(SvPenv::ErrorCode::NotImplemented);
+	observer.error(Error);
 }
 void SharedMemoryAccess::GetTriggerItems(const SvPb::GetTriggerItemsRequest&, SvRpc::Task<SvPb::GetTriggerItemsResponse> task)
 {
-	SvPenv::Error err;
-	err.set_error_code(SvPenv::ErrorCode::NotImplemented);
-	task.error(err);
+	SvPenv::Error Error;
+	Error.set_error_code(SvPenv::ErrorCode::NotImplemented);
+	task.error(Error);
 }
 
-void SharedMemoryAccess::QueryListName(const SvPb::QueryListNameRequest& request, SvRpc::Task<SvPb::QueryListNameResponse> task)
+void SharedMemoryAccess::QueryListName(const SvPb::QueryListNameRequest& rRequest, SvRpc::Task<SvPb::QueryListNameResponse> task)
 {
-	SvPb::QueryListNameResponse resp;
-	SvPenv::Error err;
+	SvPb::QueryListNameResponse Response;
+	SvPenv::Error Error;
 
-	if (m_pShareControlInstance->QueryListName(request, resp, err))
+	if (m_pShareControlInstance->QueryListName(rRequest, Response, Error))
 	{
-		task.finish(std::move(resp));
+		task.finish(std::move(Response));
 	}
 	else
 	{
-		task.error(err);
+		task.error(Error);
 	}
 }
-void SharedMemoryAccess::QueryListItem(const SvPb::QueryListItemRequest& request, SvRpc::Task<SvPb::QueryListItemResponse> task)
+void SharedMemoryAccess::QueryListItem(const SvPb::QueryListItemRequest& rRequest, SvRpc::Task<SvPb::QueryListItemResponse> task)
 {
-	SvPb::QueryListItemResponse Resp;
-	SvPenv::Error err;
-	if (m_pShareControlInstance->QueryListItem(request, Resp, err))
+	SvPb::QueryListItemResponse Response;
+	SvPenv::Error Error;
+	if (m_pShareControlInstance->QueryListItem(rRequest, Response, Error))
 	{
-		task.finish(std::move(Resp));
+		task.finish(std::move(Response));
 	}
 	else
 	{
-		task.error(err);
+		task.error(Error);
 	}
 }
 

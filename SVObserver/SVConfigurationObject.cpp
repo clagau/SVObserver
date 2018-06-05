@@ -5393,6 +5393,12 @@ HRESULT SVConfigurationObject::LoadMonitoredObjectList(SVTreeType& rTree, SVTree
 		while (S_OK == retValue && rTree.isValidLeaf(hChild, hLeaf))
 		{
 			std::string Name(rTree.getLeafName(hLeaf));
+			if(0 != Name.find(SvDef::FqnInspections))
+			{
+				std::string InspectionsPrefix(SvDef::FqnInspections);
+				InspectionsPrefix += _T(".");
+				Name = InspectionsPrefix + Name;
+			}
 
 			const MonitoredObject& rObj = RemoteMonitorListHelper::GetMonitoredObjectFromName(Name);
 			if (!rObj.guid.empty())

@@ -31,7 +31,7 @@ DataDefPtr GetDataDefPtr(const SvPb::DataDefinition& rDataDef);
 /// Function return an ImageObject with a bitmap
 ImagePtr GetImageObjectPtr(int Trigger, const std::string& rName, const std::string& rData);
 /// Function return an ImageObject with a Bitmap ID
-ImagePtr GetImageObjectPtr(int trigger, const std::string& name, const SvPb::CurImageId &imId, SvWsl::SVRCClientServicePtr& rpSvrcClientService);
+ImagePtr GetImageObjectPtr(int trigger, const std::string& rName, const SvPb::ImageId& rImageID, SvWsl::SVRCClientServicePtr& rpSvrcClientService);
 
 FailList GetFailList(SvWsl::SVRCClientServicePtr& rpSvrcClientService, const SvPb::GetFailStatusResponse& resp);
 ValueListPtr GetValueObjectListPtr(const SvPb::Product &productResp);

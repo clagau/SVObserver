@@ -21,16 +21,17 @@ public:
 	ShareControl();
 	~ShareControl();
 	bool EventHandler(DWORD event);
-	bool QueryListName(const SvPb::QueryListNameRequest& req, SvPb::QueryListNameResponse& resp, SvPenv::Error& err);
-	bool  QueryListItem(const SvPb::QueryListItemRequest& req, SvPb::QueryListItemResponse& resp, SvPenv::Error& err);
-	bool GetProductOrReject(const SvPb::GetProductRequest& request, SvPb::GetProductResponse& resp, SvPenv::Error& err);
-	bool GetFailstatus(const SvPb::GetFailStatusRequest& request, SvPb::GetFailStatusResponse& resp, SvPenv::Error& err);
-	bool  GetImageFromCurId(const  SvPb::GetImageFromCurIdRequest& req, SvPb::GetImageFromCurIdResponse& resp, SvPenv::Error& err);
+	bool QueryListName(const SvPb::QueryListNameRequest& rRequest, SvPb::QueryListNameResponse& rResponse, SvPenv::Error& rError);
+	bool QueryListItem(const SvPb::QueryListItemRequest& rRequest, SvPb::QueryListItemResponse& rResponse, SvPenv::Error& rError);
+	bool GetProduct(const SvPb::GetProductRequest& rRequest, SvPb::GetProductResponse& rResponse, SvPenv::Error& rError);
+	bool GetReject(const SvPb::GetRejectRequest& rRequest, SvPb::GetRejectResponse& rResponse, SvPenv::Error& rError);
+	bool GetFailstatus(const SvPb::GetFailStatusRequest& rRequest, SvPb::GetFailStatusResponse& rResponse, SvPenv::Error& rError);
+	bool GetImageFromId(const  SvPb::GetImageFromIdRequest& rRequest, SvPb::GetImageFromIdResponse& rResponse, SvPenv::Error& rError);
 private:
-	bool GetProduct(SvSml::MLProduct* pProduct, bool nameInResponse, SvPb::Product* pProdMsg, SvPenv::Error& err);
-	bool SetProductResponse(bool nameInResponse, const SvSml::MLProduct* pProduct, SvPb::Product& rProduct, SvPenv::Error& err);
-	bool GetFailstatus(SvSml::vecpProd* pFailstatus, const SvPb::GetFailStatusRequest& request, SvPb::GetFailStatusResponse& resp, SvPenv::Error& err);
-
+	bool isReady(SvPenv::Error& rError);
+	bool isMonitorListActive(const std::string& rListName, SvPenv::Error& rError);
+	bool SetProductResponse(bool nameInResponse, const SvSml::MLProduct* pProduct, SvPb::Product* pProductMsg, SvPenv::Error& rError);
+	bool GetFailstatus(SvSml::vecpProd* pFailstatus, const SvPb::GetFailStatusRequest& rRequest, SvPb::GetFailStatusResponse& rResponse, SvPenv::Error& rError);
 private:
 	SvSml::SharedMemReader   m_MemReader;
 	std::unique_ptr<LastResponseData> m_pLastResponseData;

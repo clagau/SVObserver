@@ -279,8 +279,8 @@ namespace SvSml
 		{
 			auto pImageDef = resp.add_imagedeflist();
 			pImageDef->set_name(name.c_str());
-			pImageDef->set_sizex(static_cast<INT32>(data.sizeX));
-			pImageDef->set_sizey(static_cast<INT32>(data.sizeY));
+			pImageDef->set_width(static_cast<INT32>(data.sizeX));
+			pImageDef->set_height(static_cast<INT32>(data.sizeY));
 			pImageDef->set_storeid(data.InspectionStoreId);
 			pImageDef->set_imageid(data.ItemId);
 		}

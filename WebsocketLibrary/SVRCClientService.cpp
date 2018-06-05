@@ -23,9 +23,10 @@ namespace SvWsl
 SVRCClientService::SVRCClientService(SvRpc::RPCClient& rRpcClient) :
 	m_GetGatewayVersionClient(rRpcClient),
 	m_GetProductClient(rRpcClient),
+	m_GetRejectClient(rRpcClient),
 	m_GetFailStatusClient(rRpcClient),
-	m_GetImageFromCurIdClient(rRpcClient),
-	m_GetImageStreamFromCurIdClient(rRpcClient),
+	m_GetImageFromIdClient(rRpcClient),
+	m_GetImageStreamFromIdClient(rRpcClient),
 	m_QueryListNameClient(rRpcClient),
 	m_QueryListItemClient(rRpcClient),
 	m_GetNotificationStreamClient(rRpcClient),
@@ -73,19 +74,24 @@ void SVRCClientService::GetProduct(SvPb::GetProductRequest&& req, SvRpc::Task<Sv
 	m_GetProductClient.request(std::move(req), task, cSixSeconds);
 }
 
+void SVRCClientService::GetReject(SvPb::GetRejectRequest&& req, SvRpc::Task<SvPb::GetRejectResponse> task)
+{
+	m_GetRejectClient.request(std::move(req), task, cSixSeconds);
+}
+
 void SVRCClientService::GetFailStatus(SvPb::GetFailStatusRequest&& req, SvRpc::Task<SvPb::GetFailStatusResponse> task)
 {
 	m_GetFailStatusClient.request(std::move(req), task, cSixSeconds);
 }
 
-void SVRCClientService::GetImageFromCurId(SvPb::GetImageFromCurIdRequest&& req, SvRpc::Task<SvPb::GetImageFromCurIdResponse> task)
+void SVRCClientService::GetImageFromId(SvPb::GetImageFromIdRequest&& req, SvRpc::Task<SvPb::GetImageFromIdResponse> task)
 {
-	m_GetImageFromCurIdClient.request(std::move(req), task, cSixSeconds);
+	m_GetImageFromIdClient.request(std::move(req), task, cSixSeconds);
 }
 
-void SVRCClientService::GetImageStreamFromCurId(SvPb::GetImageStreamFromCurIdRequest&& req, SvRpc::Observer<SvPb::GetImageStreamFromCurIdResponse> observer)
+void SVRCClientService::GetImageStreamFromId(SvPb::GetImageStreamFromIdRequest&& req, SvRpc::Observer<SvPb::GetImageStreamFromIdResponse> observer)
 {
-	m_GetImageStreamFromCurIdClient.stream(std::move(req), observer);
+	m_GetImageStreamFromIdClient.stream(std::move(req), observer);
 }
 
 void SVRCClientService::QueryListName(SvPb::QueryListNameRequest&& req, SvRpc::Task<SvPb::QueryListNameResponse> task)

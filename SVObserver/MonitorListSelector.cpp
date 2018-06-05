@@ -210,7 +210,9 @@ MonitoredObjectList MonitorlistSelector::GetMonitoredObjectList(const SvCl::Sele
 	MonitoredObjectList monitoredObjectList;
 	for (auto const& rEntry : rList)
 	{
-			const MonitoredObject& monitoredObj = RemoteMonitorListHelper::GetMonitoredObjectFromName(rEntry.m_Location);
+			std::string ObjectName(SvDef::FqnInspections);
+			ObjectName += _T(".") + rEntry.m_Location;
+			const MonitoredObject& monitoredObj = RemoteMonitorListHelper::GetMonitoredObjectFromName(ObjectName);
 			if (!monitoredObj.guid.empty())
 			{
 				monitoredObjectList.push_back(monitoredObj);

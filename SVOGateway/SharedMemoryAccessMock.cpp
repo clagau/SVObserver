@@ -79,7 +79,7 @@ void SharedMemoryAccessMock::GetVersion(const SvPb::GetGatewayVersionRequest& re
 void SharedMemoryAccessMock::GetProduct(const SvPb::GetProductRequest& request, SvRpc::Task<SvPb::GetProductResponse> task)
 {
 	SvPb::GetProductResponse resp;
-	getProduct(*resp.mutable_product(), request.nameinresponse());
+	getProduct(*resp.mutable_productitem(), request.nameinresponse());
 	task.finish(std::move(resp));
 }
 
@@ -92,20 +92,20 @@ void SharedMemoryAccessMock::GetFailstatus(const SvPb::GetFailStatusRequest&, Sv
 	task.error(err);
 }
 
-void SharedMemoryAccessMock::GetImageFromCurId(const SvPb::GetImageFromCurIdRequest& request,
-	SvRpc::Task<SvPb::GetImageFromCurIdResponse> task)
+void SharedMemoryAccessMock::GetImageFromId(const SvPb::GetImageFromIdRequest& request,
+	SvRpc::Task<SvPb::GetImageFromIdResponse> task)
 {
-	SvPb::GetImageFromCurIdResponse resp;
+	SvPb::GetImageFromIdResponse resp;
 	this->getImageById(*resp.mutable_imagedata(), request.id());
 	task.finish(std::move(resp));
 }
 
-void SharedMemoryAccessMock::GetImageStreamFromCurId(const SvPb::GetImageStreamFromCurIdRequest& req,
-	SvRpc::Observer<SvPb::GetImageStreamFromCurIdResponse> observer,
+void SharedMemoryAccessMock::GetImageStreamFromId(const SvPb::GetImageStreamFromIdRequest& req,
+	SvRpc::Observer<SvPb::GetImageStreamFromIdResponse> observer,
 	SvRpc::ServerStreamContext::Ptr ctx)
 {
 	m_io_service.post(
-		std::bind(&SharedMemoryAccessMock::getImageStreamFromCurIdStep, this, req.count(), req.id(), observer, ctx));
+		std::bind(&SharedMemoryAccessMock::getImageStreamFromIdStep, this, req.count(), req.id(), observer, ctx));
 }
 
 void SharedMemoryAccessMock::GetTriggerItems(const SvPb::GetTriggerItemsRequest&, SvRpc::Task<SvPb::GetTriggerItemsResponse> task)
@@ -163,31 +163,31 @@ void SharedMemoryAccessMock::getProduct(SvPb::Product& product, bool name_in_res
 	}
 }
 
-void SharedMemoryAccessMock::getImageById(SvPb::Image& img, const SvPb::CurImageId& imageId, bool rotated)
+void SharedMemoryAccessMock::getImageById(SvPb::Image& img, const SvPb::ImageId& imageId, bool rotated)
 {
 	switch (imageId.slotindex())
 	{
 		case 0:
-			img.set_w(std::get<1>(getBitmap(200)));
-			img.set_h(std::get<2>(getBitmap(200)));
-			*(img.mutable_rgb()) = std::get<0>(getBitmap(200, rotated));
+			img.set_width(std::get<1>(getBitmap(200)));
+			img.set_height(std::get<2>(getBitmap(200)));
+			*(img.mutable_rgb_data()) = std::get<0>(getBitmap(200, rotated));
 			break;
 		case 1:
-			img.set_w(std::get<1>(getBitmap(300)));
-			img.set_h(std::get<2>(getBitmap(300)));
-			*(img.mutable_rgb()) = std::get<0>(getBitmap(300, rotated));
+			img.set_width(std::get<1>(getBitmap(300)));
+			img.set_height(std::get<2>(getBitmap(300)));
+			*(img.mutable_rgb_data()) = std::get<0>(getBitmap(300, rotated));
 			break;
 		case 2:
-			img.set_w(std::get<1>(getBitmap(2048)));
-			img.set_h(std::get<2>(getBitmap(2048)));
-			*(img.mutable_rgb()) = std::get<0>(getBitmap(200, rotated));
+			img.set_width(std::get<1>(getBitmap(2048)));
+			img.set_height(std::get<2>(getBitmap(2048)));
+			*(img.mutable_rgb_data()) = std::get<0>(getBitmap(200, rotated));
 			break;
 	}
 }
 
-void SharedMemoryAccessMock::getImageStreamFromCurIdStep(int iterations,
-	const SvPb::CurImageId& id,
-	SvRpc::Observer<SvPb::GetImageStreamFromCurIdResponse> observer,
+void SharedMemoryAccessMock::getImageStreamFromIdStep(int iterations,
+	const SvPb::ImageId& id,
+	SvRpc::Observer<SvPb::GetImageStreamFromIdResponse> observer,
 	SvRpc::ServerStreamContext::Ptr ctx)
 {
 	static const auto MAX_PENDING_RESPONSES = 20;
@@ -202,7 +202,7 @@ void SharedMemoryAccessMock::getImageStreamFromCurIdStep(int iterations,
 			futures.pop();
 		}
 
-		SvPb::GetImageStreamFromCurIdResponse resp;
+		SvPb::GetImageStreamFromIdResponse resp;
 		this->getImageById(*resp.mutable_imagedata(), id, even);
 
 		auto future = observer.onNext(std::move(resp));
