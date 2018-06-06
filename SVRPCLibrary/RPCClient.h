@@ -52,12 +52,12 @@ class RPCClient : public SvHttp::WebsocketClient::EventHandler
 {
 public:
 	RPCClient() = delete;
-	RPCClient(std::string host, uint16_t port, std::function<void(ClientStatus)> = nullptr);
+	RPCClient(SvHttp::WebsocketClientSettings&, std::function<void(ClientStatus)> = nullptr);
 	virtual ~RPCClient();
 
 	void stop();
 	bool isConnected();
-	bool waitForConnect(int time_in_ms);
+	bool waitForConnect(boost::posix_time::time_duration timeout);
 
 	void request(SvPenv::Envelope&& Request, Task<SvPenv::Envelope>);
 	void request(SvPenv::Envelope&& Request, Task<SvPenv::Envelope>, boost::posix_time::time_duration);

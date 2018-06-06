@@ -165,10 +165,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Defines.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="WebsocketClient.h" />
     <ClInclude Include="WebsocketClientFactory.h" />
+    <ClInclude Include="WebsocketClientSettings.h" />
     <ClInclude Include="WebsocketServer.h" />
     <ClInclude Include="WebsocketServerConnection.h" />
     <ClInclude Include="WebsocketServerSettings.h" />

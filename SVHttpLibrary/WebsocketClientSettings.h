@@ -1,9 +1,9 @@
 //******************************************************************************
 /// \copyright (c) 2017,2018 by Seidenader Maschinenbau GmbH
-/// \file WebsocketServer.h
+/// \file WebsocketClientSettings.h
 /// All Rights Reserved
 //******************************************************************************
-/// Use these settings to congiure the Websocket server.
+/// Use these settings to congiure the Websocket client.
 ///
 /// See inline comments for details about each setting.
 //******************************************************************************
@@ -15,17 +15,16 @@
 
 namespace SvHttp
 {
-struct WebsocketServerSettings
+struct WebsocketClientSettings
 {
-	/// Host the tcp server binds to. Use "127.0.0.1" to list locally only
-	/// and use "0.0.0.0" on all public interfaces (including localhost).
-	/// Or use a specific IP of one of your network interfaces to bind to
-	/// a particular interface only.
+	/// Host of the WebSocket server to connect to.
 	std::string Host {"127.0.0.1"};
 
-	/// Port the tcp server binds to. Make sure you start the service with
-	/// an administrative account when binding to ports <1024.
+	/// Port of the WebSocket server to connect to.
 	uint16_t Port {8080};
+
+	/// Path of the WebSocket server to connect to.
+	std::string Path {"/"};
 
 	/// Size of the read buffer in bytes. Tweak to get an optimal trade-off
 	/// between memory usage and throughput. A value between 2k and 64k is
@@ -42,11 +41,13 @@ struct WebsocketServerSettings
 	/// from running out of memory.
 	uint32_t MaxMessageSize {256 * 1024 * 1024};
 
-	/// The server will do regular clean up of closed connections. Choose
-	/// a small values like 1 second if you have many short-lived
-	/// connections. Use a higher value like something between 5 or 10 to
-	/// have a lower load.
-	uint32_t ConnectionCleanupIntervalSec {1};
+	/// The interval in seconds of how often to send a ping request to the
+	/// server.
+	uint32_t PingIntervalSec {2};
+
+	/// The number of ping messages without a pong response after which the
+	/// client will automatically disconnect.
+	uint32_t PingTimeoutCount {3};
 };
 
 } // namespace SvHttp

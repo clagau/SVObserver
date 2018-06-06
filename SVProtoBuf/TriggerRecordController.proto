@@ -17,7 +17,7 @@ message ImageStructData
 {
 	bytes type = 1; //should from struct SVMatroxBufferCreateStruct
 	int32 structID = 2;
-	int32 numberOfBuffersRequired = 3;  //number of required buffers
+	int32 numberOfBuffersRequired = 3; //number of required buffers
 	int32 numberOfBuffers = 4; //number of buffer avaiable
 	int32 offset = 5;
 }

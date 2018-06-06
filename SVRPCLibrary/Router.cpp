@@ -14,7 +14,7 @@
 
 namespace SvRpc
 {
-static const int cTwoSeconds = 2000;
+static const boost::posix_time::seconds cConnectTimeout{2};
 Router::Router(RPCClient& rClient, RequestHandler* pRequestHandler)
 {
 	if (nullptr != pRequestHandler)
@@ -36,10 +36,10 @@ Router::Router(RPCClient& rClient, RequestHandler* pRequestHandler)
 }
 
 
-Router::Router(const std::string& rServerAddress, unsigned short ServerPort, RequestHandler* pRequestHandler) :
-	m_ServerAddress {rServerAddress},
-	m_ServerPort {ServerPort}
+Router::Router(const std::string& rServerAddress, unsigned short ServerPort, RequestHandler* pRequestHandler)
 {
+	m_Settings.Host = rServerAddress;
+	m_Settings.Port = ServerPort;
 	if (nullptr != pRequestHandler)
 	{
 		pRequestHandler->registerDefaultRequestHandler([this](SvPenv::Envelope&& Request, Task<SvPenv::Envelope> Task)
@@ -89,11 +89,11 @@ bool Router::ConnectToRouter()
 	}
 	if (nullptr == m_pClientRouter)
 	{
-		m_pClientRouter = std::make_unique<SvRpc::RPCClient>(m_ServerAddress, m_ServerPort);
+		m_pClientRouter = std::make_unique<SvRpc::RPCClient>(m_Settings);
 	}
 	if (!m_pClientRouter->isConnected())
 	{
-		m_pClientRouter->waitForConnect(cTwoSeconds);
+		m_pClientRouter->waitForConnect(cConnectTimeout);
 	}
 	if (m_pClientRouter->isConnected())
 	{
@@ -104,7 +104,6 @@ bool Router::ConnectToRouter()
 		m_pClientRouter.reset();
 		return false;
 	}
-
 }
 
 

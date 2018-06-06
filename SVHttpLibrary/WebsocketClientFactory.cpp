@@ -13,16 +13,16 @@
 namespace SvHttp
 {
 
-WebsocketClientFactory::WebsocketClientFactory(std::string host, uint16_t port)
-	: m_Host(host), m_Port(port)
+WebsocketClientFactory::WebsocketClientFactory(WebsocketClientSettings& rSettings)
+	: m_rSettings(rSettings)
 {
 }
 
 std::shared_ptr<WebsocketClient> WebsocketClientFactory::create(
 	WebsocketClient::EventHandler* pHandler)
 {
-	auto client = WebsocketClient::create(pHandler);
-	client->connect(m_Host, m_Port);
+	auto client = WebsocketClient::create(m_rSettings, pHandler);
+	client->connect();
 	return client;
 }
 

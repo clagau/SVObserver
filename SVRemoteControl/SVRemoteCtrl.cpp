@@ -125,7 +125,7 @@ STDMETHODIMP SVRemoteCtrl::SetObjectRects(LPCRECT prcPos, LPCRECT prcClip)
 	cx = prcPos->right - prcPos->left;
 	cy = prcPos->bottom - prcPos->top;
 	::SetWindowPos(m_ctlStatic.m_hWnd, NULL, 0,
-				   0, cx, cy, SWP_NOZORDER | SWP_NOACTIVATE);
+		0, cx, cy, SWP_NOZORDER | SWP_NOACTIVATE);
 	return S_OK;
 }
 
@@ -866,7 +866,7 @@ HRESULT SVRemoteCtrl::SetObserverServer(SVCommandStatus& p_rStatus)
 
 	m_VPName = m_servername;
 
-	l_Status = m_dispatcher->SetConnectionData(L"", m_CommandPort, 10000);
+	l_Status = m_dispatcher->SetConnectionData(L"", m_CommandPort, boost::posix_time::seconds(10));
 
 	p_rStatus.hResult = l_Status;
 
@@ -882,7 +882,7 @@ HRESULT SVRemoteCtrl::SetObserverServer(SVCommandStatus& p_rStatus)
 
 STDMETHODIMP SVRemoteCtrl::Disconnect(void)
 {
-	m_dispatcher->SetConnectionData("", m_CommandPort, 10000);
+	m_dispatcher->SetConnectionData("", m_CommandPort, boost::posix_time::seconds(10));
 
 	m_servername = _T("");
 	m_VPName = _T("");
@@ -894,8 +894,7 @@ STDMETHODIMP SVRemoteCtrl::Connect(BSTR address, LONG Timeout)
 {
 
 	SVCommandStatus l_CommandStatus;
-
-	HRESULT l_Status = m_dispatcher->SetConnectionData(address, m_CommandPort, Timeout);
+	HRESULT l_Status = m_dispatcher->SetConnectionData(address, m_CommandPort, boost::posix_time::milliseconds(Timeout));
 
 	if (l_Status == S_OK)
 	{
@@ -931,7 +930,7 @@ void SVRemoteCtrl::NotifyClient(_variant_t& p_Data, SVNotificationTypesEnum p_Ty
 }
 
 STDMETHODIMP SVRemoteCtrl::RegisterMonitorList(BSTR listName, BSTR ppqName, int rejectDepth, VARIANT productItemList,
-											   VARIANT rejectCondList, VARIANT failStatusList, ISVErrorObjectList ** errors)
+	VARIANT rejectCondList, VARIANT failStatusList, ISVErrorObjectList ** errors)
 {
 	HRESULT l_Status = S_OK;
 	SVCommandStatus l_CommandStatus;

@@ -11,19 +11,19 @@
 #include <memory>
 
 #include "SvHttpLibrary/WebSocketClient.h"
+#include "SvHttpLibrary/WebsocketClientSettings.h"
 
 namespace SvHttp
 {
 class WebsocketClientFactory
 {
 public:
-	WebsocketClientFactory(std::string host, uint16_t port);
+	WebsocketClientFactory(WebsocketClientSettings&);
 
 	std::shared_ptr<WebsocketClient> create(WebsocketClient::EventHandler*);
 
 private:
-	std::string m_Host;
-	uint16_t m_Port;
+	WebsocketClientSettings& m_rSettings;
 };
 
 } // namespace SvHttp

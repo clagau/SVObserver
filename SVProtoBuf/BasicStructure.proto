@@ -1,7 +1,7 @@
 syntax = "proto3";
 package SvPb;
 
-message MessageContainer //structure for a (error/warning/info-)message 
+message MessageContainer //structure for a (error/warning/info-)message
 {
 	sint32 MessageCode = 1;
 	sint32 AdditionalTextId = 2;
@@ -16,5 +16,5 @@ message MessageContainer //structure for a (error/warning/info-)message
 
 message MessageContainerVector
 {
-	repeated MessageContainer Messages = 1;  //list of messages
+	repeated MessageContainer Messages = 1; //list of messages
 }

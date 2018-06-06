@@ -79,20 +79,11 @@ private:
 
 	void handle_error(const boost::system::error_code& error);
 
-	void schedule_ping();
-	void on_ping_interval(const boost::system::error_code& error);
-	void handle_ping_sent(const boost::system::error_code& error);
-	void handle_control_command(boost::beast::websocket::frame_type, boost::beast::string_view);
-	using TControlCommand = std::function<void(boost::beast::websocket::frame_type, boost::beast::string_view)>;
-
 private:
 	int m_ConnectionId;
 	const WebsocketServerSettings& m_rSettings;
 	boost::asio::io_context& m_rIoContext;
 	boost::beast::websocket::stream<boost::asio::ip::tcp::socket> m_Socket;
-	boost::asio::deadline_timer m_PingTimer;
-	uint32_t m_PingTimeoutCount;
-	TControlCommand m_ControlCommand;
 	EventHandler* m_pEventHandler;
 	std::vector<char> m_Buf;
 	std::vector<char> m_Frames;

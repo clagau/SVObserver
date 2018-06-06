@@ -32,14 +32,18 @@ int main()
 {
 	try
 	{
-		auto Timeout = boost::posix_time::seconds(5);
-		auto pRpcClient = std::make_unique<RPCClient>("127.0.0.1", 8081);
-		pRpcClient->waitForConnect(6000);
+		SvHttp::WebsocketClientSettings Settings;
+		Settings.Host = "127.0.0.1";
+		Settings.Port = 8081;
+		auto pRpcClient = std::make_unique<RPCClient>(Settings);
+		auto ConnectTimeout = boost::posix_time::seconds(6);
+		pRpcClient->waitForConnect(ConnectTimeout);
+		auto RequestTimeout = boost::posix_time::seconds(5);
 		{
 			HelloWorldReq req;
 			req.set_name("Homer Simpson");
 			SimpleClient<ApplicationMessages, HelloWorldReq, HelloWorldRes> client(*pRpcClient);
-			auto res = client.request(std::move(req), Timeout).get();
+			auto res = client.request(std::move(req), RequestTimeout).get();
 			BOOST_LOG_TRIVIAL(info) << res.message();
 		}
 		
@@ -52,7 +56,7 @@ int main()
 			auto ErrorFkt = [&promise](const Error& err) { promise->set_exception(errorToExceptionPtr(err)); };
 			auto task = Task<HelloWorldRes>(FinishFkt, ErrorFkt);
 			SimpleClient<ApplicationMessages, HelloWorldReq, HelloWorldRes> client2(*pRpcClient);
-			client2.request(std::move(req), task,Timeout);
+			client2.request(std::move(req), task, RequestTimeout);
 			HelloWorldRes res2 = (promise->get_future()).get();
 			BOOST_LOG_TRIVIAL(info) << res2.message();
 		}
@@ -61,7 +65,7 @@ int main()
 			HelloRouterReq req;
 			req.set_name("Bart Simpson");
 			SimpleClient<ApplicationMessages, HelloRouterReq, HelloRouterRes> client(*pRpcClient);
-			auto res = client.request(std::move(req), Timeout).get();
+			auto res = client.request(std::move(req), RequestTimeout).get();
 			BOOST_LOG_TRIVIAL(info) << res.message();
 		}
 		/// Streaming

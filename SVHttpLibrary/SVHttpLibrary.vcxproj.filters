@@ -33,7 +33,7 @@
     <ClInclude Include="WebsocketClientFactory.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="Defines.h">
+    <ClInclude Include="WebsocketClientSettings.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

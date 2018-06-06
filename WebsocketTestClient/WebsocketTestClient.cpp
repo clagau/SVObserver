@@ -259,19 +259,18 @@ int main(int argc, char* argv[])
 	logSettings.windows_event_log_enabled = false;
 	init_logging(logSettings);
 
-	std::string host("127.0.0.1");
-	std::string stPort("8080");
-	uint16_t port(SvWsl::Default_Port);
+	SvHttp::WebsocketClientSettings clientSettings;
+	clientSettings.Host = "127.0.0.1";
+	clientSettings.Port = SvWsl::Default_Port;
 	if (argc > 1)
-		host = argv[1];
+		clientSettings.Host = argv[1];
 	if (argc > 2)
 	{
-		stPort = argv[2];
-		port = atoi(stPort.c_str());
+		clientSettings.Port = atoi(argv[2]);
 	}
 	
-	auto pRpcClient = std::make_unique<SvRpc::RPCClient>(host,port);
-	pRpcClient->waitForConnect(6000);
+	auto pRpcClient = std::make_unique<SvRpc::RPCClient>(clientSettings);
+	pRpcClient->waitForConnect(boost::posix_time::seconds(6));
 
 	auto request_timeout = boost::posix_time::seconds(2);
 	auto pService = std::make_unique<SvWsl::SVRCClientService>(*pRpcClient);
@@ -306,8 +305,8 @@ int main(int argc, char* argv[])
 
 					pService.reset();
 					pRpcClient.reset();
-					pRpcClient = std::make_unique<SvRpc::RPCClient>(host, port);
-					pRpcClient->waitForConnect(2000);
+					pRpcClient = std::make_unique<SvRpc::RPCClient>(clientSettings);
+					pRpcClient->waitForConnect(boost::posix_time::seconds(2));
 					pService = std::make_unique<SvWsl::SVRCClientService>(*pRpcClient);
 				}
 			}

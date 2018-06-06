@@ -7,7 +7,7 @@ import "BasicStructure.proto";
 // InspectionCommands - can be send with method InspectionCommandsSynchronous
 //***************************************************************************
 // This message do a runOnce for an inspection or taskObject
-message InspectionRunOnceRequest 
+message InspectionRunOnceRequest
 {
 	bytes inspectionID = 1; //GUID of the inspection.
 	bytes taskID = 2; //GUID of the taskObject on which the runOnce should be done. If this field empty the whole inspection will run.
@@ -16,7 +16,7 @@ message InspectionRunOnceRequest
 // This is the message for Destroy child object.
 message DestroyChildRequest
 {
-	bytes taskObjectListID = 1;  //GUID of the task-object-list-object.
+	bytes taskObjectListID = 1; //GUID of the task-object-list-object.
 	bytes objectID = 2; //GUID of the object which should be destroyed.
 
 	enum FlagEnum
@@ -34,26 +34,26 @@ message DestroyChildRequest
 // This is the message to get the last (Error)MessageList from an taskObject
 message GetMessageListRequest
 {
-	bytes objectId = 1;  //GUID of the task-object.
+	bytes objectId = 1; //GUID of the task-object.
 }
 
 // This is the message response-message from GetMessageListRequest
 message GetMessageListResponse
 {
-	MessageContainerVector Messages = 1;  //list of messages
+	MessageContainerVector Messages = 1; //list of messages
 }
 
 
 // This is the message to reset an object
 message ResetObjectRequest
 {
-	bytes objectId = 1;  //GUID of the task-object.
+	bytes objectId = 1; //GUID of the task-object.
 }
 
 // This is the message response-message from ResetObjectRequest
 message ResetObjectResponse
 {
-	MessageContainerVector Messages = 1;  //list of messages
+	MessageContainerVector Messages = 1; //list of messages
 }
 
 
@@ -71,39 +71,39 @@ message CreateModelRequest
 // This is the message response-message from CreateModelRequest
 message CreateModelResponse
 {
-	MessageContainerVector Messages = 1;  //list of messages
+	MessageContainerVector Messages = 1; //list of messages
 }
 
 // This is the message to return the state if an object is valid
 message IsValidRequest
 {
-	bytes objectId = 1;  //GUID of the object.
+	bytes objectId = 1; //GUID of the object.
 }
 
 // This is the message response-message from IsValidRequest
 message IsValidResponse
 {
-	bool IsValid = 1;  //flag if valid
+	bool IsValid = 1; //flag if valid
 }
 
 
 // This is the message to return the equation string
 message GetEquationRequest
 {
-	bytes objectId = 1;  //GUID of the equation-object.
+	bytes objectId = 1; //GUID of the equation-object.
 }
 
 // This is the message response-message from GetEquationRequest
 message GetEquationResponse
 {
-	string equationText = 1;  //string of the equation
+	string equationText = 1; //string of the equation
 }
 
 //This message validate and if required set an equation
 message ValidateAndSetEquationRequest
 {
-	bytes objectId = 1;  //GUID of the equation-object.
-	string equationText = 2;  //string of the equation.
+	bytes objectId = 1; //GUID of the equation-object.
+	string equationText = 2; //string of the equation.
 	bool bSetValue = 3; //flag if value should be set.
 }
 
@@ -111,6 +111,6 @@ message ValidateAndSetEquationRequest
 message ValidateAndSetEquationResponse
 {
 	sint32 validateStatus = 1; //return validateSuccessful if text is valid, else it return the position of the first error in the text.
-	double result = 2; //if validateStatus is validateSuccessful, this variable contain the result of the equation. 
-	MessageContainerVector Messages = 3;  //list of error messages
+	double result = 2; //if validateStatus is validateSuccessful, this variable contain the result of the equation.
+	MessageContainerVector Messages = 3; //list of error messages
 }

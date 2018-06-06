@@ -25,8 +25,7 @@ public:
 
 private:
 	bool Router::ConnectToRouter();
-	std::string m_ServerAddress;
-	unsigned short m_ServerPort{0};
+	SvHttp::WebsocketClientSettings m_Settings;
 	std::unique_ptr<SvRpc::RPCClient> m_pClientRouter {nullptr};
 };
 

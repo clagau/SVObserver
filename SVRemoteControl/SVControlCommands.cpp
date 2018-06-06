@@ -27,13 +27,7 @@
 #include "WebsocketLibrary\Logging.h"
 #pragma endregion Includes
 
-static const unsigned long FiveSeconds = 5;
-static const unsigned long TenSeconds = 10;
-static const unsigned long FifteenSeconds = 15;
-static const unsigned long TwentySeconds = 20;
-static const unsigned long ThirtySeconds = 30;
-static const unsigned long SixtySeconds = 60;
-static const unsigned long TwoMinutes = 120;
+
 static const WCHAR* const NotConnectedToSVobserver = L"Not connected to neither SVOGateway nor SVObserver";
 
 #define HANDLE_EXCEPTION(Status, CmdStatus )\
@@ -102,7 +96,7 @@ SVControlCommands::~SVControlCommands()
 {
 }
 
-HRESULT SVControlCommands::SetConnectionData(const _bstr_t& p_rServerName, unsigned short p_CommandPort, long timeout)
+HRESULT SVControlCommands::SetConnectionData(const _bstr_t& p_rServerName, unsigned short p_CommandPort, boost::posix_time::time_duration timeout)
 {
 	HRESULT hr = S_OK;
 	m_pRpcClient.reset();
@@ -117,7 +111,9 @@ HRESULT SVControlCommands::SetConnectionData(const _bstr_t& p_rServerName, unsig
 		std::string host(m_ServerName);
 
 		//First try to connect to Gateway
-		m_pRpcClient = std::make_unique<SvRpc::RPCClient>(host, SvWsl::Default_Port, std::bind(&SVControlCommands::OnConnectionStatus, this, std::placeholders::_1));
+		m_ClientSettings.Host = host;
+		m_ClientSettings.Port = SvWsl::Default_Port;
+		m_pRpcClient = std::make_unique<SvRpc::RPCClient>(m_ClientSettings, std::bind(&SVControlCommands::OnConnectionStatus, this, std::placeholders::_1));
 		if (nullptr != m_pRpcClient)
 		{
 			m_pSvrcClientService = std::make_unique<SvWsl::SVRCClientService>(*m_pRpcClient);
@@ -125,7 +121,7 @@ HRESULT SVControlCommands::SetConnectionData(const _bstr_t& p_rServerName, unsig
 
 			if (!m_pRpcClient->isConnected())
 			{
-				m_pRpcClient = std::make_unique<SvRpc::RPCClient>(host, SvWsl::Default_SecondPort, std::bind(&SVControlCommands::OnConnectionStatus, this, std::placeholders::_1));
+				m_pRpcClient = std::make_unique<SvRpc::RPCClient>(m_ClientSettings, std::bind(&SVControlCommands::OnConnectionStatus, this, std::placeholders::_1));
 				m_pSvrcClientService = std::make_unique<SvWsl::SVRCClientService>(*m_pRpcClient);
 				m_pRpcClient->waitForConnect(timeout);
 			}

@@ -17,10 +17,10 @@
 
 namespace SvRpc
 {
-RPCClient::RPCClient(std::string host, uint16_t port, std::function<void(ClientStatus)> StatusCallback)
+RPCClient::RPCClient(SvHttp::WebsocketClientSettings& rSettings, std::function<void(ClientStatus)> StatusCallback)
 	: m_IoContex(1)
 	, m_IoWork(std::make_unique<boost::asio::io_context::work>(m_IoContex))
-	, m_WebsocketClientFactory(host, port)
+	, m_WebsocketClientFactory(rSettings)
 	, m_ReconnectTimer(m_IoContex)
 	, m_pStatusCallback(StatusCallback)
 {
@@ -68,15 +68,15 @@ bool RPCClient::isConnected()
 	return m_IsConnected.load();
 }
 
-bool RPCClient::waitForConnect(int time_in_ms)
+bool RPCClient::waitForConnect(boost::posix_time::time_duration posix_timeout)
 {
 	if (isConnected())
 	{
 		return true;
 	}
-	std::chrono::milliseconds time(time_in_ms);
 	std::unique_lock<std::mutex> lk(m_ConnectMutex);
-	m_ConnectCV.wait_for(lk, time, [this] { return m_IsConnected.load(); });
+	std::chrono::milliseconds timeout(posix_timeout.total_milliseconds());
+	m_ConnectCV.wait_for(lk, timeout, [this] { return m_IsConnected.load(); });
 	return isConnected();
 }
 

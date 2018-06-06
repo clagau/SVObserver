@@ -44,22 +44,27 @@ int main()
 			task.finish(std::move(res));
 		});
 
+		WebsocketClientSettings clientSettings;
+		clientSettings.Host = "127.0.0.1";
+		clientSettings.Port = 8080;
+
 		// first connect to upstream server
-		RPCClient rpcClient("127.0.0.1", 8080);
-		rpcClient.waitForConnect(6000);
+		RPCClient rpcClient(clientSettings);
+		rpcClient.waitForConnect(boost::posix_time::seconds(6));
 
 		// router will forward unhandled messages to upstream server via given client
 		Router rpcRouter(rpcClient, &requestHandler);
 
 		// the server (incl underlying websocket server) other clients can connect to
 		RPCServer rpcServer(&requestHandler);
-		WebsocketServerSettings settings;
-		settings.Port = 8081;
+		WebsocketServerSettings serverSettings;
+		serverSettings.Host = "127.0.0.1";
+		serverSettings.Port = 8081;
 		boost::asio::io_service io_service;
-		WebsocketServer server(settings, io_service, &rpcServer);
+		WebsocketServer server(serverSettings, io_service, &rpcServer);
 		server.start();
 
-		BOOST_LOG_TRIVIAL(info) << "Router running on ws://" << settings.Host << ":" << settings.Port << "/";
+		BOOST_LOG_TRIVIAL(info) << "Router running on ws://" << serverSettings.Host << ":" << serverSettings.Port << "/";
 
 		io_service.run();
 	}

@@ -15,11 +15,14 @@
 #include "SVCommandStatus.h"
 #include "SVControlResponse.h"
 #include "SVRemoteCtrl.h"
+
 #include <Thread>
+#include <boost/chrono/duration.hpp>
 #include "WebsocketLibrary/SVRCClientService.h"
 #include "SVRPCLibrary/RPCClient.h"
 #include "NotificationHandler.h"
 #pragma endregion Includes
+
 
 typedef boost::function< void(_variant_t&, SVNotificationTypesEnum) > NotifyFunctor;
 
@@ -30,7 +33,7 @@ public:
 	SVControlCommands(NotifyFunctor p_Func);
 	SVControlCommands() = delete;
 
-	HRESULT SetConnectionData(const _bstr_t& p_rServerName, unsigned short p_CommandPort, long timeout);
+	HRESULT SetConnectionData(const _bstr_t& p_rServerName, unsigned short p_CommandPort, boost::posix_time::time_duration timeout);
 	void  StartNotificationStreaming();
 	void  StopNotificationStreaming();
 
@@ -81,6 +84,7 @@ private:
 
 	SvRpc::ClientStreamContext m_csx {nullptr};
 	NotificationHandler m_notificationHandler;
+	SvHttp::WebsocketClientSettings m_ClientSettings;
 	std::unique_ptr<SvRpc::RPCClient> m_pRpcClient;
 	std::unique_ptr<SvWsl::SVRCClientService> m_pSvrcClientService;
 };

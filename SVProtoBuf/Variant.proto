@@ -1,7 +1,7 @@
 //*****************************************************************************
 /// \copyright (c) 2018,2018 by Seidenader Maschinenbau GmbH
 /// \file Variant.proto
-/// All Rights Reserved 
+/// All Rights Reserved
 //*****************************************************************************
 /// Protobuf file for the Variant values
 //******************************************************************************
@@ -9,12 +9,12 @@
 syntax = "proto3";
 package SvPb;
 
-message Variant 
+message Variant
 {
 	//The Variant type VT
 	uint32 Type = 1;
 
-	oneof data 
+	oneof data
 	{
 		bool bVal = 2;
 		sint32 lVal = 3;

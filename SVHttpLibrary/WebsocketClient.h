@@ -28,6 +28,8 @@
 #include <boost/beast/websocket.hpp>
 #include <boost/thread/future.hpp>
 
+#include "SVHttpLibrary/WebsocketClientSettings.h"
+
 namespace SvHttp
 {
 
@@ -47,14 +49,14 @@ public:
 	};
 
 private:
-	WebsocketClient(EventHandler*);
+	WebsocketClient(WebsocketClientSettings&, EventHandler*);
 	WebsocketClient() = delete;
 
 public:
 	virtual ~WebsocketClient();
-	static std::shared_ptr<WebsocketClient> create(EventHandler*);
+	static std::shared_ptr<WebsocketClient> create(WebsocketClientSettings&, EventHandler*);
 
-	void connect(std::string host, uint16_t port, std::string path = "/");
+	void connect();
 	void disconnect();
 
 	void sendTextMessage(const std::vector<char>&);
@@ -77,15 +79,21 @@ private:
 	void read_buffer();
 	void handle_read_buffer(const boost::system::error_code& error, size_t bytes_read);
 
+	void schedule_ping();
+	void on_ping_interval(const boost::system::error_code& error);
+	void handle_ping_sent(const boost::system::error_code& error);
+	void handle_control_command(boost::beast::websocket::frame_type, boost::beast::string_view);
+
 private:
-	std::string m_Host;
-	uint16_t m_Port;
-	std::string m_Path;
+	WebsocketClientSettings& m_rSettings;
 	boost::asio::io_context m_IoContext;
 	std::unique_ptr<boost::asio::io_context::work> m_IoWork;
 	std::thread m_IoThread;
 	boost::asio::ip::tcp::resolver m_Resolver;
 	boost::beast::websocket::stream<boost::asio::ip::tcp::socket> m_Socket;
+	std::function<void(boost::beast::websocket::frame_type, boost::beast::string_view)> m_ControlCommand;
+	boost::asio::deadline_timer m_PingTimer;
+	uint32_t m_PingTimeoutCount;
 	EventHandler* m_pEventHandler;
 	bool m_IsDisconnectEventSent {false};
 	bool m_IsShuttingDown {false};

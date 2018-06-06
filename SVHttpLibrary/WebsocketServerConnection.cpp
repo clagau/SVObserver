@@ -20,7 +20,6 @@
 #include <boost/log/trivial.hpp>
 
 #include "WebsocketServerConnection.h"
-#include "defines.h"
 namespace SvHttp
 {
 WebsocketServerConnection::WebsocketServerConnection(const WebsocketServerSettings& rSettings,
@@ -32,14 +31,9 @@ WebsocketServerConnection::WebsocketServerConnection(const WebsocketServerSettin
 	, m_rSettings(rSettings)
 	, m_rIoContext(rIoContext)
 	, m_Socket(std::move(Socket))
-	, m_PingTimer(rIoContext)
-	, m_PingTimeoutCount(0)
-	, m_ControlCommand(std::bind(&WebsocketServerConnection::handle_control_command, this, std::placeholders::_1, std::placeholders::_2))
 	, m_pEventHandler(pEventHandler)
 {
-	// m_Socket will store a reference only. we have to make sure the callback instance will live as long as required.
-	m_Socket.control_callback(m_ControlCommand);
-	m_Socket.read_message_max(MAX_MESSAGE_SIZE);
+	m_Socket.read_message_max(rSettings.MaxMessageSize);
 	m_Socket.write_buffer_size(rSettings.WriteBufferSize);
 }
 
@@ -74,7 +68,6 @@ void WebsocketServerConnection::handle_handshake_done(const boost::system::error
 	m_pEventHandler->onConnect(m_ConnectionId, *this);
 
 	read_buffer();
-	schedule_ping();
 }
 
 void WebsocketServerConnection::read_buffer()
@@ -219,63 +212,6 @@ void WebsocketServerConnection::handle_error(const boost::system::error_code& er
 	}
 
 	BOOST_LOG_TRIVIAL(warning) << "client connection error: " << error;
-}
-
-void WebsocketServerConnection::schedule_ping()
-{
-	if (!m_Socket.is_open())
-	{
-		return;
-	}
-
-	m_PingTimer.expires_from_now(boost::posix_time::seconds(m_rSettings.PingIntervalSec));
-	m_PingTimer.async_wait(std::bind(&WebsocketServerConnection::on_ping_interval, shared_from_this(), std::placeholders::_1));
-}
-
-void WebsocketServerConnection::on_ping_interval(const boost::system::error_code& error)
-{
-	if (error)
-	{
-		if (error != boost::asio::error::operation_aborted)
-		{
-			BOOST_LOG_TRIVIAL(error) << "Ping schedule error: " << error;
-		}
-		return;
-	}
-
-	++m_PingTimeoutCount;
-	if (m_rSettings.PingTimeoutCount > 0 && m_PingTimeoutCount > m_rSettings.PingTimeoutCount)
-	{
-		BOOST_LOG_TRIVIAL(info) << "Client did not respond to ping messages. Closing connection.";
-		m_Socket.next_layer().close();
-		return;
-	}
-
-	m_Socket.async_ping(boost::beast::websocket::ping_data(),
-		std::bind(&WebsocketServerConnection::handle_ping_sent, shared_from_this(), std::placeholders::_1));
-
-	schedule_ping();
-}
-
-void WebsocketServerConnection::handle_ping_sent(const boost::system::error_code& error)
-{
-	if (error)
-	{
-		handle_error(error);
-		return;
-	}
-}
-
-void WebsocketServerConnection::handle_control_command(boost::beast::websocket::frame_type frame_type, boost::beast::string_view)
-{
-	switch (frame_type)
-	{
-		case boost::beast::websocket::frame_type::pong:
-			m_PingTimeoutCount = 0;
-			break;
-		default:
-			break;
-	}
 }
 
 } // namespace SvHttp

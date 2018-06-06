@@ -73,16 +73,14 @@ static void GetNotifications(SvWsl::SVRCClientService& client)
 
 int main(int argc, char* argv[])
 {
-	std::string host("127.0.0.1");
-	std::string stPort("9000");
-	uint16_t port(SvWsl::Default_SecondPort);
+	SvHttp::WebsocketClientSettings ClientSettings;
+	ClientSettings.Host = "127.0.0.1";
+	ClientSettings.Port = SvWsl::Default_SecondPort;
 	if (argc > 1)
-		host = argv[1];
+		ClientSettings.Host = argv[1];
 	if (argc > 2)
-	{
-		stPort = argv[2];
-		port = atoi(stPort.c_str());
-	}
+		ClientSettings.Port = atoi(argv[2]);
+
 	NotificationHandler Handler;
 
 	SvRpc::Observer<SvPb::GetNotificationStreamResponse> NotifikationObserver(boost::bind(&NotificationHandler::OnNext, &Handler, _1),
@@ -94,8 +92,8 @@ int main(int argc, char* argv[])
 	std::unique_ptr< SvRpc::RPCClient> pRpcClient;
 	try
 	{
-		pRpcClient = std::make_unique<SvRpc::RPCClient>(host, port);
-		pRpcClient->waitForConnect(6000);
+		pRpcClient = std::make_unique<SvRpc::RPCClient>(ClientSettings);
+		pRpcClient->waitForConnect(boost::posix_time::seconds(6));
 	}
 
 	catch (std::exception&  e)
