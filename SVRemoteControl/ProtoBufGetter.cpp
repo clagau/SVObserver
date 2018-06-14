@@ -147,7 +147,7 @@ ProductPtr GetProductPtr(SvWsl::SVRCClientServicePtr& rpSvrcClientService, const
 			Request.mutable_id()->set_slotindex(rResp.images(i).slotindex());
 			SvPb::GetImageFromIdResponse Response = SvWsl::runRequest(*rpSvrcClientService, &SvWsl::SVRCClientService::GetImageFromId, std::move(Request)).get();
 
-			pProdItems->AddImage(GetImageObjectPtr(rResp.trigger(), rResp.imagenames(i), Response.imagedata().rgb_data()));
+			pProdItems->AddImage(GetImageObjectPtr(rResp.trigger(), rResp.imagenames(i), Response.imagedata().rgbdata()));
 		}
 		else
 		{
@@ -179,7 +179,7 @@ ValueListPtr GetValueObjectListPtr(const SvPb::Product& rProduct)
 	CComObject<SVValueObjectList>::CreateInstance(&pValueList);
 	ValueListPtr pValueListPtr(pValueList);
 
-	if (rProduct.status() != SvPb::IsValid)
+	if (rProduct.status() != SvPb::State::isValid)
 	{
 			return pValueListPtr;
 		

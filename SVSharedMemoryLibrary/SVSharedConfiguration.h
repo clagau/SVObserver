@@ -21,7 +21,7 @@ namespace SvSml
 	{
 	public:
 		static const double SharedDriveMinSize;// = 0.5;
-		static const std::string GetSharedDrive(); //<return "V:";
+		static const std::string GetSharedDrive();
 		static const std::string GetShareName(); //<return "SVSharedMemory";
 		static const std::string GetMonitorListName(); //< return "monitor_list";
 		static const std::string GetSharedMemoryDirectoryName();

@@ -96,7 +96,7 @@ HRESULT ToolClipboard::writeToClipboard( const SVGUID& rToolGuid ) const
 
 						if( nullptr == ::SetClipboardData( ClipboardFormat, ClipboardData ) )
 						{
-							Result = S_FALSE;
+							Result = E_FAIL;
 							SvStl::MessageMgrStd e( SvStl::DataOnly );
 							e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_SetClipboardDataFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25000_SetClipboardData );
 							e.Throw();
@@ -104,7 +104,7 @@ HRESULT ToolClipboard::writeToClipboard( const SVGUID& rToolGuid ) const
 					}
 					else
 					{
-						Result = S_FALSE;
+						Result = E_FAIL;
 						SvStl::MessageMgrStd e( SvStl::DataOnly );
 						e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardMemoryFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25001_ClipboardMemory );
 						e.Throw();
@@ -143,8 +143,13 @@ HRESULT ToolClipboard::readFromClipboard( int ToolListindex, SVGUID& rToolGuid )
 			FileName += SvO::ZipExtension;
 			writeStringToFile( FileName, ClipboardData, false );
 
-			SvDef::StringSet ZippedFiles;
-			ZipHelper::unzipAll( FileName, std::string( SvStl::GlobalPath::Inst().GetTempPath().c_str()  ), ZippedFiles );
+			SvDef::StringVector ZippedFiles;
+			if(!SvUl::unzipAll(FileName, SvStl::GlobalPath::Inst().GetTempPath(), ZippedFiles))
+			{
+				SvStl::MessageMgrStd e(SvStl::DataOnly);
+				e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardUnzipFailed, SvStl::SourceFileParams(StdMessageParams));
+				e.Throw();
+			}
 			::DeleteFile( FileName.c_str() );
 			updateDependencyFiles( ZippedFiles );
 			
@@ -225,7 +230,7 @@ HRESULT ToolClipboard::streamToolToZip( const std::string rFileName, const SVGUI
 
 	if( nullptr == pTool)
 	{
-		Result = S_FALSE;
+		Result = E_FAIL;
 		SvStl::MessageMgrStd e( SvStl::DataOnly );
 		e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ToolInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25002_ToolInvalid );
 		e.Throw();
@@ -246,17 +251,30 @@ HRESULT ToolClipboard::streamToolToZip( const std::string rFileName, const SVGUI
 
 		XmlWriter.EndAllElements();
 
-		SvDef::StringSet FileNames;
+		SvDef::StringVector FileNames;
 		findDependencyFiles( MemoryStream.str(), FileNames );
 
 		std::string XmlFileName( rFileName );
 		XmlFileName += SvO::XmlExtension;
-		FileNames.insert( XmlFileName );
+		FileNames.emplace_back(XmlFileName);
 		writeStringToFile( XmlFileName, MemoryStream.str(), true );
 
 		std::string ZipFileName( rFileName );
 		ZipFileName += SvO::ZipExtension;
-		ZipHelper::makeZipFile( ZipFileName, FileNames, false );
+
+		std::string PrefixFolder;
+		std::string::size_type Pos = rFileName.rfind('\\');
+		if (std::string::npos != Pos)
+		{
+			PrefixFolder = SvUl::Left(rFileName, Pos);
+		}
+		if (!SvUl::makeZipFile(ZipFileName, FileNames, PrefixFolder, true))
+		{
+			SvStl::MessageMgrStd e(SvStl::DataOnly);
+			e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardZipFailed, SvStl::SourceFileParams(StdMessageParams));
+			e.Throw();
+			Result = E_FAIL;
+		}
 	}
 
 	return Result;
@@ -319,7 +337,7 @@ void ToolClipboard::writeSourceGuids(SvXml::SVObjectXMLWriter& rXmlWriter, SVToo
 	rXmlWriter.WriteAttribute(SvXml::ToolImageTag, Value );
 }
 
-void ToolClipboard::findDependencyFiles( const std::string& rToolXmlString, SvDef::StringSet& rDependencyFiles ) const
+void ToolClipboard::findDependencyFiles( const std::string& rToolXmlString, SvDef::StringVector& rDependencyFiles ) const
 {
 	size_t StartPos( 0 );
 	size_t EndPos( 0 );
@@ -334,7 +352,7 @@ void ToolClipboard::findDependencyFiles( const std::string& rToolXmlString, SvDe
 		{
 			std::string FileName;
 			FileName = rToolXmlString.substr( StartPos, EndPos-StartPos );
-			rDependencyFiles.insert( FileName );
+			rDependencyFiles.emplace_back( FileName );
 
 			StartPos = rToolXmlString.find( SearchString.c_str(), EndPos );
 		}
@@ -345,20 +363,19 @@ void ToolClipboard::findDependencyFiles( const std::string& rToolXmlString, SvDe
 	}
 }
 
-void ToolClipboard::updateDependencyFiles( const SvDef::StringSet& rDependencyFiles ) const
+void ToolClipboard::updateDependencyFiles( const SvDef::StringVector& rDependencyFiles ) const
 {
 	std::string XmlFileName( SvO::ClipboardFileName );
 	XmlFileName += SvO::XmlExtension;
 
-	SvDef::StringSet::const_iterator Iter( rDependencyFiles.begin() );
-	while( rDependencyFiles.end() != Iter )
+	for(const auto& rEntry : rDependencyFiles)
 	{
 		//We need to ignore the XML file it is not a dependency file
-		if( std::string::npos == Iter->find( XmlFileName.c_str() ) )
+		if( std::string::npos == rEntry.find( XmlFileName.c_str() ) )
 		{
 			_TCHAR Name[_MAX_FNAME];
 			_TCHAR Extension[_MAX_EXT];
-			_splitpath( Iter->c_str(), nullptr, nullptr, Name, Extension );
+			_splitpath(rEntry.c_str(), nullptr, nullptr, Name, Extension );
 
 			std::string DestinationFile( SvStl::GlobalPath::Inst().GetRunPath().c_str());
 			DestinationFile += _T("\\");
@@ -368,14 +385,13 @@ void ToolClipboard::updateDependencyFiles( const SvDef::StringSet& rDependencyFi
 			if( 0 == ::_access_s( DestinationFile.c_str(), 0 ) )
 			{
 
-				::DeleteFile( Iter->c_str() );
+				::DeleteFile(rEntry.c_str());
 			}
 			else
 			{
-				::MoveFile( Iter->c_str(), DestinationFile.c_str() );
+				::MoveFile(rEntry.c_str(), DestinationFile.c_str());
 			}
 		}
-		++Iter;
 	}
 }
 
@@ -392,7 +408,7 @@ HRESULT ToolClipboard::convertClipboardDataToString( std::string& rClipboardData
 		{
 			::CloseClipboard();
 
-			Result = S_FALSE;
+			Result = E_FAIL;
 			SvStl::MessageMgrStd e( SvStl::DataOnly );
 			e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_GetClipboardDataFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25003_GetClipboardData );
 			e.Throw();
@@ -463,7 +479,7 @@ HRESULT ToolClipboard::convertXmlToTree( const std::string& rXmlData, SVTreeType
 
 HRESULT ToolClipboard::checkVersion( SVTreeType& rTree ) const
 {
-	HRESULT Result( S_FALSE );
+	HRESULT Result( E_FAIL );
 
 	SVTreeType::SVBranchHandle EnvironmentItem = nullptr;
 
@@ -515,7 +531,7 @@ HRESULT ToolClipboard::validateGuids( std::string& rXmlData, SVTreeType& rTree, 
 			//Color tool can not be inserted into a IPD without color images
 			if (SVColorToolClassGuid == ToolTypeGuid && !pDoc->isImageAvailable(SvDef::SVImageColorType))
 			{
-				Result = S_FALSE;
+				Result = E_FAIL;
 				SvStl::MessageMgrStd e( SvStl::DataOnly );
 				e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ColorToolInsertFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25006_ColorToolInsert );
 				e.Throw();
@@ -523,7 +539,7 @@ HRESULT ToolClipboard::validateGuids( std::string& rXmlData, SVTreeType& rTree, 
 			//Only color tools are allowed to be the first tool in a color system
 			else if( 0 == ToolListindex && SVColorToolClassGuid != ToolTypeGuid && m_rInspection.IsColorCamera() )
 			{
-				Result = S_FALSE;
+				Result = E_FAIL;
 				SvStl::MessageMgrStd e( SvStl::DataOnly );
 				e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_NonColorToolInsertFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25007_NonColorToolInsert );
 				e.Throw();
@@ -587,7 +603,7 @@ HRESULT ToolClipboard::validateGuids( std::string& rXmlData, SVTreeType& rTree, 
 	}
 	else
 	{
-		Result = S_FALSE;
+		Result = E_FAIL;
 		SvStl::MessageMgrStd e( SvStl::DataOnly );
 		e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardDataConverionFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25008_ClipboardDataConversion );
 		e.Throw();
@@ -598,7 +614,7 @@ HRESULT ToolClipboard::validateGuids( std::string& rXmlData, SVTreeType& rTree, 
 
 HRESULT ToolClipboard::replaceToolName( std::string& rXmlData, SVTreeType& rTree ) const
 {
-	HRESULT Result( S_FALSE );
+	HRESULT Result( E_FAIL );
 
 	SVTreeType::SVBranchHandle ToolsItem( nullptr );
 
@@ -642,7 +658,7 @@ HRESULT ToolClipboard::replaceToolName( std::string& rXmlData, SVTreeType& rTree
 
 HRESULT ToolClipboard::replaceUniqueGuids( std::string& rXmlData, SVTreeType& rTree ) const
 {
-	HRESULT Result( S_FALSE );
+	HRESULT Result( E_FAIL );
 
 	SVTreeType::SVBranchHandle ToolsItem = nullptr;
 
@@ -666,7 +682,7 @@ HRESULT ToolClipboard::replaceUniqueGuids( std::string& rXmlData, SVTreeType& rT
 	}
 	else
 	{
-		Result = S_FALSE;
+		Result = E_FAIL;
 		SvStl::MessageMgrStd e( SvStl::DataOnly );
 		e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardDataConverionFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25010_ClipboardDataConversion );
 		e.Throw();
@@ -677,7 +693,7 @@ HRESULT ToolClipboard::replaceUniqueGuids( std::string& rXmlData, SVTreeType& rT
 
 HRESULT ToolClipboard::parseTreeToTool( SVTreeType& rTree, SVGUID& rToolGuid )
 {
-	HRESULT Result( S_FALSE );
+	HRESULT Result( E_FAIL );
 
 	SVTreeType::SVBranchHandle ToolsItem( nullptr );
 

@@ -103,14 +103,32 @@ bool CopyFilesInDirectory(LPCTSTR sourceDirectory, LPCTSTR destinationDirectory)
 }
 
 
-void moveContainedDirectory( LPCTSTR containingDirectoryPath, LPCTSTR sourceDirectory, LPCTSTR destinationDirectory)
+std::vector<std::string> findFiles(LPCTSTR folder)
 {
-	std::string sourcePath = containingDirectoryPath + std::string( _T("\\") ) + sourceDirectory;
-	std::string destinationPath=containingDirectoryPath + std::string( _T("\\") ) +destinationDirectory;
+	std::vector<std::string> fileList;
 
-	deleteTree( destinationPath.c_str() );
+	std::string searchFolder{folder};
+	size_t Size = searchFolder.size();
+	if(0 < Size && '\\' != searchFolder[Size-1])
+	{
+		searchFolder += '\\';
+	}
+	searchFolder += _T("*.*");
 
-	MoveFile( sourcePath.c_str(), destinationPath.c_str() ); //Arvid: this should work for directories: https://msdn.microsoft.com/en-us/library/aa365239(VS.85).aspx
+	CFileFind		Finder;
+	BOOL bFileFound = Finder.FindFile(searchFolder.c_str());
+
+	while (bFileFound)
+	{
+		bFileFound = Finder.FindNextFile();
+
+		if (!Finder.IsDirectory())
+		{
+			fileList.emplace_back(Finder.GetFilePath());
+		}
+	}
+
+	return fileList;
 }
 
 

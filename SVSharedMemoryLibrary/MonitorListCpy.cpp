@@ -278,16 +278,18 @@ namespace SvSml
 		const MonitorEntries*  pMonitorEntriesImages{ nullptr };
 		switch (request.type())
 		{
-		case SvPb::ProductItem:
+			case SvPb::ListType::productItem:
 			pMonitorEntries =  &(m_MonitorEntries[ListType::productItemsData]);
 			pMonitorEntriesImages = &(m_MonitorEntries[ListType::productItemsImage]);
 			break;
-		case SvPb::RejectCondition:
+		case SvPb::ListType::rejectCondition:
 			pMonitorEntries = &(m_MonitorEntries[ListType::rejectCondition]);
 			break;
 
-		case SvPb::FailStatus:
+		case SvPb::ListType::failStatus:
 			pMonitorEntries = &(m_MonitorEntries[ListType::failStatus]);
+			break;
+		default:
 			break;
 		}
 		if (nullptr !=  pMonitorEntries  && request.queryvalues())

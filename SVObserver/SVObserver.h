@@ -41,15 +41,6 @@ namespace SvOi
 	class IObjectWriter;
 }
 
-enum SVConfigFileActionsEnums
-{
-	LOAD_CONFIG = TRUE,
-	SAVE_CONFIG = FALSE,
-	RENAME = 2,
-	RENAME_CONFIG = RENAME,
-	NUM_CONFIG_FILE_ACTIONS
-};
-
 typedef SvXml::SVXMLMaterialsTree SVTreeType;
 #pragma endregion Declarations
 
@@ -79,7 +70,6 @@ public:
 	afx_msg void OnUpdateThreadAffinitySetup(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateModeRun(CCmdUI* PCmdUI);
 	afx_msg void OnFileCloseConfig();
-	afx_msg void OnFileOpen();
 	afx_msg void OnFileSaveAll();
 	afx_msg void OnEditIOList();
 	afx_msg void OnUpdateEditEnvironment(CCmdUI* PCmdUI);
@@ -88,7 +78,6 @@ public:
 	afx_msg void OnUpdateFileNew(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateFileOpen(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateFileOpenSVC(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateFileSave(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateFileSaveAll(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateFileSaveAs(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateFileSaveCopyAs(CCmdUI* PCmdUI);
@@ -185,14 +174,14 @@ public:
 
 public:
 	
-	HRESULT OpenSVXFile( LPCTSTR PathName );
-	SVIODoc* NewSVIODoc( LPCTSTR DocName, SVIOController& Controller );	
+	HRESULT OpenFile(LPCTSTR PathName);
+	HRESULT OpenSVXFile(LPCTSTR PathName);
+	SVIODoc* NewSVIODoc( LPCTSTR DocName, SVIOController& Controller );
 	SVIPDoc* NewSVIPDoc( LPCTSTR DocName, SVInspectionProcess& Inspection );
 
 	HRESULT  LoadConfiguration( unsigned long& ulSVOConfigVersion, BSTR bstrFileName, SVTreeType& p_rTree);
 
-	std::string GetConfigurationName() const;
-	
+
 	HRESULT LoadPackedConfiguration( const std::string& p_rPackedFileName );
 	HRESULT SavePackedConfiguration( const std::string& p_rPackedFileName );
 
@@ -227,7 +216,7 @@ public:
 	const std::string& getConfigPathName() const;
 	const std::string& getConfigFileName() const;
 	const std::string& getConfigFullFileName() const;
-	bool setConfigFullFileName(LPCTSTR csFullFileName, DWORD bLoadFile = TRUE);
+	bool setConfigFullFileName(LPCTSTR csFullFileName, bool bLoadFile);
 
 	SVIPDoc* GetIPDoc( const SVGUID& rInspectionID ) const;
 	SVIPDoc* GetIPDoc( LPCTSTR StrIPDocPathName ) const;
@@ -278,10 +267,8 @@ public:
 	void UpdateRemoteInputTabs();
 
 	HRESULT CheckDrive(const std::string& p_strDrive) const;
-	//Arvid 150202: made this public because it is needed by ExtrasEngine
-	//Arvid 150206: added parameter resetModifiedState so the main Modify flag is not changed when called during auto save
-	//Arvid 150610: isRegularSave is currently false only for AutoSaves
-	void fileSaveAsSVX( std::string StrSaveAsPathName = _T( "" ) ,bool isAutoSave=false );
+
+	void fileSaveAsSVX(const std::string& rFileName = std::string(), bool makeZipFile = true, bool isAutoSave=false);
 
 
 #pragma region Encapsulation Methods
@@ -333,7 +320,7 @@ private:
 	static int FindMenuItem(CMenu* Menu, LPCTSTR MenuString);
 
 	bool DetermineConfigurationSaveName(); ///< determines the name under which a configuration is to be changed
-	void SaveConfigurationAndRelatedFiles(bool isAutoSave); ///< saves the configuration and additional files
+	void SaveConfigurationAndRelatedFiles(bool makeZipFile, bool isAutoSave);
 
 
 #pragma endregion Private Methods

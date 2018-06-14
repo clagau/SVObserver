@@ -28,7 +28,7 @@ template <typename TPayload, typename TReq, typename TRes> class SimpleClient
 public:
 	SimpleClient(RPCClient& rClient)
 		: m_rClient(rClient)
-		, m_UnwrapError(build_error(SvPenv::ErrorCode::InternalError, "Error while unwrapping envelope!"))
+		, m_UnwrapError(build_error(SvPenv::ErrorCode::internalError, "Error while unwrapping envelope!"))
 	{
 	}
 

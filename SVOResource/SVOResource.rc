@@ -5271,7 +5271,6 @@ BEGIN
     ID_FILE_OPEN_SVC        "Select/Open an existing configuration\nSelect/Open Configuration"
     ID_VIEW_PPQ_BAR         "Show or hide the PPQ bar\nToggle PPQ Bar"
     ID_FILE_SAVE_ALL        "Save current configuration files\nSave Configuration"
-    ID_FILE_SAVE_SVC        "Save the active configuration\nSave Configuration"
     ID_FILE_CLOSE_SVC       "Close the active configuration\nClose Configuration"
     ID_FILE_SAVE_AS_SVC     "Save the active configuration with a new name\nSave Configuration As..."
     ID_EDIT_ADJUSTLIGHTREFERENCE "Adjust Light Reference Dialog"

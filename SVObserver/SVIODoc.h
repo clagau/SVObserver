@@ -37,13 +37,9 @@ public:
 
 	//{{AFX_VIRTUAL(SVIODoc)
 public:
-	virtual BOOL OnNewDocument() override;
-	virtual void SetPathName(LPCTSTR lpszPathName, BOOL bAddToMRU = TRUE) override;
 	virtual void OnCloseDocument() override;
 	virtual BOOL CanCloseFrame(CFrameWnd* pFrame) override;
 	virtual void SetTitle(LPCTSTR lpszTitle) override;
-	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName) override;
-	virtual BOOL OnSaveDocument(LPCTSTR lpszPathName) override;
 	virtual CFile* GetFile( LPCTSTR lpszFileName, UINT nOpenFlags, CFileException* pError ) override;
 	protected:
 	virtual BOOL SaveModified() override;
@@ -70,7 +66,6 @@ protected:
 private:
 	void InitMenu();
 
-	SVFileNameClass msvFileName;
 	SVIOController* m_pIOController;
 };
 

@@ -896,7 +896,7 @@ HRESULT SVControlCommands::GetProduct(const _bstr_t& rListName, long TriggerCoun
 		SvPb::GetProductResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(), &SvWsl::SVRCClientService::GetProduct, std::move(Request)).get();
 
 		Result = static_cast<HRESULT> (Response.productitem().status());
-		if (Response.productitem().status() == SvPb::IsValid)
+		if (Response.productitem().status() == SvPb::State::isValid)
 		{
 			Result = S_OK;
 			GetProductPtr(m_pSvrcClientService, Response.productitem())->QueryInterface(IID_ISVProductItems, reinterpret_cast<void**>(ppViewItems));
@@ -937,7 +937,7 @@ HRESULT SVControlCommands::GetRejects(const _bstr_t& rListName, long TriggerCoun
 		SvPb::GetRejectResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(), &SvWsl::SVRCClientService::GetReject, std::move(Request)).get();
 
 		Result = static_cast<HRESULT> (Response.productitem().status());
-		if (Response.productitem().status() == SvPb::IsValid)
+		if (Response.productitem().status() == SvPb::State::isValid)
 		{
 			Result = S_OK;
 			GetProductPtr(m_pSvrcClientService, Response.productitem())->QueryInterface(IID_ISVProductItems, reinterpret_cast<void**>(ppViewItems));
@@ -1008,7 +1008,7 @@ HRESULT SVControlCommands::GetFailStatus(const _bstr_t& rListName, CComVariant& 
 			std::move(FailstatusRequest)).get();
 
 		Result = static_cast<HRESULT> (Response.status());
-		if (Response.status() == SvPb::IsValid)
+		if (Response.status() == SvPb::State::isValid)
 		{
 			Result = S_OK;
 			CComVariant variant = GetFailList(m_pSvrcClientService, Response);
@@ -1029,7 +1029,7 @@ HRESULT SVControlCommands::GetFailStatus(const _bstr_t& rListName, CComVariant& 
 
 
 
-HRESULT SVControlCommands::ShutDown(SVShutdownOptionsEnum Options, SVCommandStatus& rStatus)
+HRESULT SVControlCommands::ShutDown(SVShutdownOptionsEnum Option, SVCommandStatus& rStatus)
 {
 	HRESULT Result {S_OK};
 
@@ -1041,7 +1041,7 @@ HRESULT SVControlCommands::ShutDown(SVShutdownOptionsEnum Options, SVCommandStat
 		}
 
 		SvPb::ShutdownRequest Request;
-		Request.set_options(static_cast<long> (Options));
+		Request.set_option(static_cast<long> (Option));
 		SvPb::StandardResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
 			&SvWsl::SVRCClientService::Shutdown,
 			std::move(Request)).get();

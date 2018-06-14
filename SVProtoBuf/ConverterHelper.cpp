@@ -277,19 +277,19 @@ svModeEnum PbDeviceMode_2_SVIMMode(SvPb::DeviceModeType type)
 	svModeEnum res {SVIM_MODE_UNKNOWN};
 	switch (type)
 	{
-		case SvPb::DeviceModeType::RunMode:
+		case SvPb::DeviceModeType::runMode:
 			res = SVIM_MODE_ONLINE;
 			break;
-		case SvPb::DeviceModeType::StopMode:
+		case SvPb::DeviceModeType::stopMode:
 			res = SVIM_MODE_OFFLINE;
 			break;
-		case SvPb::DeviceModeType::RegressionMode:
+		case SvPb::DeviceModeType::regressionMode:
 			res = SVIM_MODE_REGRESSION;
 			break;
-		case SvPb::DeviceModeType::TestMode:
+		case SvPb::DeviceModeType::testMode:
 			res = SVIM_MODE_TEST;
 			break;
-		case SvPb::DeviceModeType::EditMode:
+		case SvPb::DeviceModeType::editMode:
 			res = SVIM_MODE_EDIT;
 			break;
 		default:
@@ -304,27 +304,27 @@ SvPb::DeviceModeType  SVIMMode_2_PbDeviceMode(unsigned long Mode)
 	switch (Mode)
 	{
 		case SVIM_MODE_ONLINE:
-			return  SvPb::DeviceModeType::RunMode;
+			return  SvPb::DeviceModeType::runMode;
 			break;
 		case SVIM_MODE_OFFLINE:
-			return   SvPb::DeviceModeType::StopMode;
+			return   SvPb::DeviceModeType::stopMode;
 			break;
 		case SVIM_MODE_REGRESSION:
-			return   SvPb::DeviceModeType::RegressionMode;
+			return   SvPb::DeviceModeType::regressionMode;
 			break;
 		case SVIM_MODE_TEST:
-			return SvPb::DeviceModeType::TestMode;
+			return SvPb::DeviceModeType::testMode;
 			break;
 		case SVIM_MODE_EDIT:
 
-			return SvPb::DeviceModeType::EditMode;
+			return SvPb::DeviceModeType::editMode;
 			break;
 		case SVIM_MODE_CHANGING:
-			return SvPb::DeviceModeType::ModeChanging;
+			return SvPb::DeviceModeType::modeChanging;
 			break;
 		case SVIM_MODE_UNKNOWN:
 		default:
-			return SvPb::DeviceModeType::Available;
+			return SvPb::DeviceModeType::available;
 			break;
 	}
 }

@@ -77,7 +77,7 @@ bool ShareControl::GetProduct(const SvPb::GetProductRequest& rRequest, SvPb::Get
 					if (index < 0)
 					{
 						//@Todo[MEC][8.00] [19.10.2017] log errors 
-						rError.set_error_code(SvPenv::ErrorCode::InternalError);
+						rError.set_errorcode(SvPenv::ErrorCode::internalError);
 						rError.set_message("Unable to get slot for requested MonitorList");
 						return false;
 					}
@@ -100,7 +100,7 @@ bool ShareControl::GetProduct(const SvPb::GetProductRequest& rRequest, SvPb::Get
 			{
 				if (rRequest.pevioustrigger() == pLastProduct->m_trigger)
 				{
-					rResponse.mutable_productitem()->set_status(SvPb::State::Unchanged);
+					rResponse.mutable_productitem()->set_status(SvPb::State::unchanged);
 				}
 				else
 				{
@@ -114,13 +114,13 @@ bool ShareControl::GetProduct(const SvPb::GetProductRequest& rRequest, SvPb::Get
 			break;
 			case SvSml::SharedMemReader::fail:
 			{
-				rError.set_error_code(SvPenv::ErrorCode::NotFound);
+				rError.set_errorcode(SvPenv::ErrorCode::notFound);
 				return false;
 			}
 			break;
 			default:
 			{
-				rError.set_error_code(SvPenv::ErrorCode::InternalError);
+				rError.set_errorcode(SvPenv::ErrorCode::internalError);
 				return false;
 			}
 			break;
@@ -165,7 +165,7 @@ bool ShareControl::GetReject(const SvPb::GetRejectRequest& rRequest, SvPb::GetRe
 					if (index < 0)
 					{
 						//@Todo[MEC][8.00] [19.10.2017] log errors 
-						rError.set_error_code(SvPenv::ErrorCode::InternalError);
+						rError.set_errorcode(SvPenv::ErrorCode::internalError);
 						rError.set_message("Unable to get slot for requested MonitorList");
 						return false;
 					}
@@ -188,7 +188,7 @@ bool ShareControl::GetReject(const SvPb::GetRejectRequest& rRequest, SvPb::GetRe
 			{
 				if (rRequest.pevioustrigger() == pLastProduct->m_trigger)
 				{
-					rResponse.mutable_productitem()->set_status(SvPb::State::Unchanged);
+					rResponse.mutable_productitem()->set_status(SvPb::State::unchanged);
 				}
 				else
 				{
@@ -202,13 +202,13 @@ bool ShareControl::GetReject(const SvPb::GetRejectRequest& rRequest, SvPb::GetRe
 			break;
 			case SvSml::SharedMemReader::fail:
 			{
-				rError.set_error_code(SvPenv::ErrorCode::NotFound);
+				rError.set_errorcode(SvPenv::ErrorCode::notFound);
 				return false;
 			}
 			break;
 			default:
 			{
-				rError.set_error_code(SvPenv::ErrorCode::InternalError);
+				rError.set_errorcode(SvPenv::ErrorCode::internalError);
 				return false;
 			}
 			break;
@@ -233,7 +233,7 @@ bool  ShareControl::GetFailstatus(const SvPb::GetFailStatusRequest& rRequest, Sv
 	if (!bValid)
 	{
 		SvPenv::Error err;
-		err.set_error_code(SvPenv::ErrorCode::BadRequest);
+		err.set_errorcode(SvPenv::ErrorCode::badRequest);
 		err.set_message("MonitorList with given name does not exist or is not active");
 		return false;
 	}
@@ -271,7 +271,7 @@ bool  ShareControl::GetFailstatus(const SvPb::GetFailStatusRequest& rRequest, Sv
 			case SvSml::SharedMemReader::fail:
 			{
 				SvPenv::Error err;
-				err.set_error_code(SvPenv::ErrorCode::InternalError);
+				err.set_errorcode(SvPenv::ErrorCode::internalError);
 				return false;
 			}
 			break;
@@ -285,7 +285,7 @@ bool ShareControl::GetImageFromId(const  SvPb::GetImageFromIdRequest& req, SvPb:
 	bool isready = SvSml::ShareEvents::GetInstance().GetIsReady();
 	if (!isready)
 	{
-		err.set_error_code(SvPenv::ErrorCode::Locked);
+		err.set_errorcode(SvPenv::ErrorCode::locked);
 		err.set_message("Shared Memory is blocked");
 		return false;
 	}
@@ -298,7 +298,7 @@ bool ShareControl::GetImageFromId(const  SvPb::GetImageFromIdRequest& req, SvPb:
 	const SVMatroxBuffer& rFromId =
 		m_MemReader.m_DataContainer.GetImageBuffer(slotindex, storeindex, Imageindex);
 	//@Todo[MEC][8.00] [22.11.2017] true is for testscript for binary compare  false is faster 
-	SVMatroxBufferInterface::CopyBufferToFileDIB(*(pData->mutable_rgb_data()), bitmapInfo, rFromId, 0, true);
+	SVMatroxBufferInterface::CopyBufferToFileDIB(*(pData->mutable_rgbdata()), bitmapInfo, rFromId, 0, true);
 	pData->set_width(std::abs(bitmapInfo.GetWidth()));
 	pData->set_height(std::abs(bitmapInfo.GetHeight()));
 	return true;
@@ -321,7 +321,7 @@ bool ShareControl::EventHandler(DWORD event)
 				SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 				SvDef::StringVector msgList;
 				msgList.push_back(rExp.what());
-				Exception.setMessage(SVMSG_SVWebSrv_0_GENERAL_ERROR, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams));
+				Exception.setMessage(SVMSG_SVGateway_0_GENERAL_ERROR, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams));
 			}
 			break;
 		case SvSml::ShareEvents::Ready:
@@ -338,7 +338,7 @@ bool ShareControl::EventHandler(DWORD event)
 				SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 				SvDef::StringVector msgList;
 				msgList.push_back(rExp.what());
-				Exception.setMessage(SVMSG_SVWebSrv_0_GENERAL_ERROR, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams));
+				Exception.setMessage(SVMSG_SVGateway_0_GENERAL_ERROR, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams));
 			}
 			break;
 		}
@@ -352,7 +352,7 @@ bool ShareControl::isReady(SvPenv::Error& rError)
 {
 	if (!SvSml::ShareEvents::GetInstance().GetIsReady())
 	{
-		rError.set_error_code(SvPenv::ErrorCode::Locked);
+		rError.set_errorcode(SvPenv::ErrorCode::locked);
 		rError.set_message("Shared Memory is blocked");
 		return false;
 	}
@@ -370,7 +370,7 @@ bool ShareControl::isMonitorListActive(const std::string& rListName, SvPenv::Err
 
 	if (!Result)
 	{
-		rError.set_error_code(SvPenv::ErrorCode::BadRequest);
+		rError.set_errorcode(SvPenv::ErrorCode::badRequest);
 		rError.set_message("MonitorList with given name does not exist or is not active");
 	}
 	return Result;
@@ -380,12 +380,12 @@ bool  ShareControl::SetProductResponse(bool nameInResponse, const SvSml::MLProdu
 {
 	if (nullptr == pProduct || nullptr == pProductMsg)
 	{
-		rError.set_error_code(SvPenv::ErrorCode::NotFound);
+		rError.set_errorcode(SvPenv::ErrorCode::notFound);
 		return false;
 	}
 
 	pProductMsg->set_trigger((int)pProduct->m_trigger);
-	pProductMsg->set_status(SvPb::State::IsValid);
+	pProductMsg->set_status(SvPb::State::isValid);
 
 	for (int i = 0; i < pProduct->m_data.size(); i++)
 	{
@@ -423,7 +423,7 @@ bool ShareControl::GetFailstatus(SvSml::vecpProd* pFailstatus, const SvPb::GetFa
 {
 	if (nullptr == pFailstatus)
 	{
-		rError.set_error_code(SvPenv::ErrorCode::InternalError);
+		rError.set_errorcode(SvPenv::ErrorCode::internalError);
 		return false;
 	}
 

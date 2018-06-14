@@ -44,15 +44,15 @@ void RPCServer::onBinaryMessage(int id, const std::vector<char>& buf)
 	auto type = Request.type();
 	switch (type)
 	{
-		case SvPenv::MessageType::Request:
+		case SvPenv::MessageType::request:
 			on_request(id, std::move(Request));
 			break;
 
-		case SvPenv::MessageType::StreamRequest:
+		case SvPenv::MessageType::streamRequest:
 			on_stream(id, std::move(Request));
 			break;
 
-		case SvPenv::MessageType::StreamCancel:
+		case SvPenv::MessageType::streamCancel:
 			on_stream_cancel(id, std::move(Request));
 			break;
 
@@ -70,7 +70,7 @@ void RPCServer::onDisconnect(int id)
 
 void RPCServer::on_request(int id, SvPenv::Envelope&& Request)
 {
-	auto txId = Request.transaction_id();
+	auto txId = Request.transactionid();
 	m_pRequestHandler->onRequest(
 		std::move(Request),
 		Task<SvPenv::Envelope>([this, id, txId](SvPenv::Envelope&& Response) { send_response(id, txId, std::move(Response)); },
@@ -79,7 +79,7 @@ void RPCServer::on_request(int id, SvPenv::Envelope&& Request)
 
 void RPCServer::on_stream(int id, SvPenv::Envelope&& Request)
 {
-	auto txId = Request.transaction_id();
+	auto txId = Request.transactionid();
 	auto ctx = std::make_shared<ServerStreamContext>();
 	m_ServerStreamContexts[id].insert({txId, ctx});
 	m_pRequestHandler->onStream(std::move(Request),
@@ -106,7 +106,7 @@ void RPCServer::on_stream_cancel(int id, SvPenv::Envelope&& Request)
 	auto it = m_ServerStreamContexts.find(id);
 	if (it != m_ServerStreamContexts.end())
 	{
-		auto txId = Request.transaction_id();
+		auto txId = Request.transactionid();
 		auto ctxIt = it->second.find(txId);
 		if (ctxIt != it->second.end())
 		{
@@ -129,8 +129,8 @@ void RPCServer::remove_stream_context(int id, uint64_t txId)
 
 std::future<void> RPCServer::send_response(int id, uint64_t txId, SvPenv::Envelope&& Response)
 {
-	Response.set_transaction_id(txId);
-	Response.set_type(SvPenv::MessageType::Response);
+	Response.set_transactionid(txId);
+	Response.set_type(SvPenv::MessageType::response);
 	return send_envelope(id, Response);
 }
 
@@ -138,15 +138,15 @@ std::future<void> RPCServer::send_error_response(int id, uint64_t txId, const Sv
 {
 	SvPenv::Envelope response;
 	*response.mutable_error() = rError;
-	response.set_transaction_id(txId);
-	response.set_type(SvPenv::MessageType::ErrorResponse);
+	response.set_transactionid(txId);
+	response.set_type(SvPenv::MessageType::errorResponse);
 	return send_envelope(id, response);
 }
 
 std::future<void> RPCServer::send_stream_response(int id, uint64_t txId, SvPenv::Envelope&& Response)
 {
-	Response.set_transaction_id(txId);
-	Response.set_type(SvPenv::MessageType::StreamResponse);
+	Response.set_transactionid(txId);
+	Response.set_type(SvPenv::MessageType::streamResponse);
 	return send_envelope(id, Response);
 }
 
@@ -154,16 +154,16 @@ std::future<void> RPCServer::send_stream_error_response(int id, uint64_t txId, c
 {
 	SvPenv::Envelope Response;
 	*Response.mutable_error() = rError;
-	Response.set_transaction_id(txId);
-	Response.set_type(SvPenv::MessageType::StreamErrorResponse);
+	Response.set_transactionid(txId);
+	Response.set_type(SvPenv::MessageType::streamErrorResponse);
 	return send_envelope(id, Response);
 }
 
 std::future<void> RPCServer::send_stream_finish(int id, uint64_t txId)
 {
 	SvPenv::Envelope Response;
-	Response.set_transaction_id(txId);
-	Response.set_type(SvPenv::MessageType::StreamFinish);
+	Response.set_transactionid(txId);
+	Response.set_type(SvPenv::MessageType::streamFinish);
 	return send_envelope(id, Response);
 }
 

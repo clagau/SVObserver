@@ -284,8 +284,6 @@ void SVIPDoc::SetInspectionID(const SVGUID& p_InspectionID)
 
 void SVIPDoc::init()
 {
-	SVFileNameManagerClass::Instance().AddItem(&msvFileName);
-
 	mbInitImagesByName = false;
 
 	IsNew = true;
@@ -312,8 +310,6 @@ SVIPDoc::~SVIPDoc()
 	m_oDisplay.SetIPDocDisplayComplete();
 
 	m_oDisplay.Destroy();
-
-	SVFileNameManagerClass::Instance().RemoveItem(&msvFileName);
 
 	ClearRegressionTestStructures();
 
@@ -554,23 +550,6 @@ bool SVIPDoc::AddToolGrouping(bool bStartGroup)
 void SVIPDoc::SetTitle(LPCTSTR LPSZTitle)
 {
 	CDocument::SetTitle(LPSZTitle);
-}
-
-void SVIPDoc::SetPathName(LPCTSTR LPSZPathName, BOOL bAddToMRU)
-{
-	BOOL bMod = GetPathName().CollateNoCase(LPSZPathName) != 0;
-
-	if (bMod)
-	{
-		msvFileName.SetFullFileName(LPSZPathName);
-
-		SVFileNameManagerClass::Instance().LoadItem(&msvFileName);
-
-		SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
-	}
-
-	// Never Add To MRU !!!
-	CDocument::SetPathName(msvFileName.GetFullFileName().c_str(), FALSE);
 }
 
 CView* SVIPDoc::getView() const
@@ -2303,54 +2282,6 @@ CFile* SVIPDoc::GetFile(LPCTSTR lpszFileName, UINT nOpenFlags, CFileException* p
 		CFile::shareDenyNone;
 
 	return CDocument::GetFile(lpszFileName, nNewFlags, pError);
-}
-
-BOOL SVIPDoc::OnOpenDocument(LPCTSTR lpszPathName)
-{
-	if (lpszPathName)
-	{
-		msvFileName.SetFullFileName(lpszPathName);
-	}
-	else
-	{
-		msvFileName.SetFullFileName(GetPathName());
-	}
-
-	BOOL bOk = SVFileNameManagerClass::Instance().LoadItem(&msvFileName);
-
-	if (bOk)
-	{
-		bOk = CDocument::OnOpenDocument(msvFileName.GetFullFileName().c_str());
-	}
-
-	return bOk;
-}
-
-BOOL SVIPDoc::OnSaveDocument(LPCTSTR lpszPathName)
-{
-	msvFileName.SetFullFileName(lpszPathName);
-	if (0 != SvUl::CompareNoCase(msvFileName.GetPathName(), SVFileNameManagerClass::Instance().GetRunPathName()))
-	{
-		msvFileName.SetPathName(SVFileNameManagerClass::Instance().GetRunPathName().c_str());
-	}
-
-	if (0 != SvUl::CompareNoCase(msvFileName.GetExtension(), std::string(_T(".ipd"))))
-	{
-		msvFileName.SetExtension(_T(".ipd"));
-	}
-
-	BOOL bOk = CDocument::OnSaveDocument(msvFileName.GetFullFileName().c_str());
-	if (bOk)
-	{
-		bOk = SVFileNameManagerClass::Instance().SaveItem(&msvFileName);
-
-		if (bOk)
-		{
-			CDocument::SetPathName(msvFileName.GetFullFileName().c_str(), FALSE);
-		}
-	}
-
-	return bOk;
 }
 
 bool SVIPDoc::IsColorInspectionDocument() const

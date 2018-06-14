@@ -464,7 +464,7 @@ int main(int argc, char* argv[])
 				static int debug_image_count = 0;
 				filename += std::to_string(debug_image_count++) + ".bmp";
 				std::ofstream os(filename, std::ios_base::binary);
-				os.write((char*)resp.imagedata().rgb_data().data(), resp.imagedata().rgb_data().size());
+				os.write((char*)resp.imagedata().rgbdata().data(), resp.imagedata().rgbdata().size());
 				os.close();
 				// os.write((char *)iarray, sizeof(iarray));
 			}
@@ -544,7 +544,7 @@ int main(int argc, char* argv[])
 			else if (words[0] == "qli")
 			{
 				std::string monitorlistname;
-				SvPb::ListType  t{SvPb::All };
+				SvPb::ListType  t{SvPb::ListType::all };
 				bool bImage{ true };
 				bool bValues{ true };
 				if (wordsize >= 2)
@@ -555,15 +555,15 @@ int main(int argc, char* argv[])
 				{
 					if (words[2] == "p")
 					{
-						t = SvPb::ProductItem;
+						t = SvPb::ListType::productItem;
 					}
 					else if (words[2] == "r")
 					{
-						t = SvPb::RejectCondition;
+						t = SvPb::ListType::rejectCondition;
 					}
 					else if (words[2] == "f")
 					{
-						t = SvPb::FailStatus;
+						t = SvPb::ListType::failStatus;
 					}
 
 				}

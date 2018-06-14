@@ -48,7 +48,7 @@ public:
 		if (!m_ReqUnwrapper.unwrap(req, std::move(envelope)))
 		{
 			BOOST_LOG_TRIVIAL(warning) << "Envelope with unknown payload!";
-			observer.error(build_error(SvPenv::ErrorCode::InternalError, "Unknown payload"));
+			observer.error(build_error(SvPenv::ErrorCode::internalError, "Unknown payload"));
 			return;
 		}
 

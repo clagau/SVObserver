@@ -163,11 +163,11 @@ int main(int argc, char* argv[])
 				SvPb::SetDeviceModeRequest request;
 				if (words[0] == "e")
 				{
-					request.set_mode(SvPb::EditMode);
+					request.set_mode(SvPb::DeviceModeType::editMode);
 				}
 				else
 				{
-					request.set_mode(SvPb::RunMode);
+					request.set_mode(SvPb::DeviceModeType::runMode);
 				}
 
 				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::SetDeviceModeRequest, SvPb::StandardResponse> client(*pRpcClient);

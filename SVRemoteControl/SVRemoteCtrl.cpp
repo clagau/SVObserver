@@ -168,11 +168,9 @@ void SVRemoteCtrl::FinalRelease()
 
 STDMETHODIMP SVRemoteCtrl::BeginGetConfig(BSTR fileName)
 {
-	HRESULT l_Status = S_OK;
-
 	SVCommandTemplatePtr l_CommandPtr(new SVAsyncControlCommandGetConfig(fileName));
 
-	l_Status = m_AsyncCommandHelper.SetCommand(l_CommandPtr, INFINITE);
+	HRESULT l_Status = m_AsyncCommandHelper.SetCommand(l_CommandPtr, INFINITE);
 
 	if (l_Status == S_OK)
 	{
@@ -196,11 +194,9 @@ STDMETHODIMP SVRemoteCtrl::BeginGetConfig(BSTR fileName)
 
 STDMETHODIMP SVRemoteCtrl::FinishGetConfig(LONG Timeout, VARIANT_BOOL CancelAfterTimeout)
 {
-	HRESULT l_Status = S_OK;
-
 	m_AsyncCommandHelper.SetCancel(CancelAfterTimeout != VARIANT_FALSE);
 
-	l_Status = m_AsyncCommandHelper.WaitForRequest(Timeout);
+	HRESULT l_Status = m_AsyncCommandHelper.WaitForRequest(Timeout);
 
 	if (l_Status == S_OK)
 	{
@@ -223,11 +219,9 @@ STDMETHODIMP SVRemoteCtrl::FinishGetConfig(LONG Timeout, VARIANT_BOOL CancelAfte
 
 STDMETHODIMP SVRemoteCtrl::BeginPutConfig(BSTR fileName)
 {
-	HRESULT l_Status = S_OK;
-
 	SVCommandTemplatePtr l_CommandPtr(new SVAsyncControlCommandPutConfig(fileName, ""));
 
-	l_Status = m_AsyncCommandHelper.SetCommand(l_CommandPtr, INFINITE);
+	HRESULT l_Status = m_AsyncCommandHelper.SetCommand(l_CommandPtr, INFINITE);
 
 	if (l_Status == S_OK)
 	{
@@ -251,11 +245,9 @@ STDMETHODIMP SVRemoteCtrl::BeginPutConfig(BSTR fileName)
 
 STDMETHODIMP SVRemoteCtrl::FinishPutConfig(LONG Timeout, VARIANT_BOOL CancelAfterTimeout)
 {
-	HRESULT l_Status = S_OK;
-
 	m_AsyncCommandHelper.SetCancel(CancelAfterTimeout != VARIANT_FALSE);
 
-	l_Status = m_AsyncCommandHelper.WaitForRequest(Timeout);
+	HRESULT l_Status = m_AsyncCommandHelper.WaitForRequest(Timeout);
 
 	if (l_Status == S_OK)
 	{
@@ -278,11 +270,9 @@ STDMETHODIMP SVRemoteCtrl::FinishPutConfig(LONG Timeout, VARIANT_BOOL CancelAfte
 
 STDMETHODIMP SVRemoteCtrl::BeginPutDeviceFile(BSTR sourcePath, BSTR destinationPath)
 {
-	HRESULT l_Status = S_OK;
-
 	SVCommandTemplatePtr l_CommandPtr(new SVAsyncControlCommandPutFile(sourcePath, destinationPath));
 
-	l_Status = m_AsyncCommandHelper.SetCommand(l_CommandPtr, INFINITE);
+	HRESULT l_Status = m_AsyncCommandHelper.SetCommand(l_CommandPtr, INFINITE);
 
 	if (l_Status == S_OK)
 	{
@@ -306,11 +296,9 @@ STDMETHODIMP SVRemoteCtrl::BeginPutDeviceFile(BSTR sourcePath, BSTR destinationP
 
 STDMETHODIMP SVRemoteCtrl::FinishPutDeviceFile(LONG Timeout, VARIANT_BOOL CancelAfterTimeout)
 {
-	HRESULT l_Status = S_OK;
-
 	m_AsyncCommandHelper.SetCancel(CancelAfterTimeout != VARIANT_FALSE);
 
-	l_Status = m_AsyncCommandHelper.WaitForRequest(Timeout);
+	HRESULT l_Status = m_AsyncCommandHelper.WaitForRequest(Timeout);
 
 	if (l_Status == S_OK)
 	{
@@ -333,11 +321,9 @@ STDMETHODIMP SVRemoteCtrl::FinishPutDeviceFile(LONG Timeout, VARIANT_BOOL Cancel
 
 STDMETHODIMP SVRemoteCtrl::BeginSetDeviceMode(SVObserverModesEnum desiredMode)
 {
-	HRESULT l_Status = S_OK;
-
 	SVCommandTemplatePtr l_CommandPtr(new SVAsyncControlCommandSetMode(desiredMode));
 
-	l_Status = m_AsyncCommandHelper.SetCommand(l_CommandPtr, INFINITE);
+	HRESULT l_Status = m_AsyncCommandHelper.SetCommand(l_CommandPtr, INFINITE);
 
 	if (l_Status == S_OK)
 	{
@@ -361,11 +347,9 @@ STDMETHODIMP SVRemoteCtrl::BeginSetDeviceMode(SVObserverModesEnum desiredMode)
 
 STDMETHODIMP SVRemoteCtrl::FinishSetDeviceMode(LONG Timeout, VARIANT_BOOL CancelAfterTimeout)
 {
-	HRESULT l_Status = S_OK;
-
 	m_AsyncCommandHelper.SetCancel(CancelAfterTimeout != VARIANT_FALSE);
 
-	l_Status = m_AsyncCommandHelper.WaitForRequest(Timeout);
+	HRESULT l_Status = m_AsyncCommandHelper.WaitForRequest(Timeout);
 
 	if (l_Status == S_OK)
 	{
@@ -388,10 +372,9 @@ STDMETHODIMP SVRemoteCtrl::FinishSetDeviceMode(LONG Timeout, VARIANT_BOOL Cancel
 
 STDMETHODIMP SVRemoteCtrl::LoadConfig(BSTR filePath)
 {
-	HRESULT l_Status = S_OK;
 	SVCommandStatus CommandStatus;
 
-	l_Status = m_dispatcher->LoadConfig(filePath, CommandStatus);
+	HRESULT l_Status = m_dispatcher->LoadConfig(filePath, CommandStatus);
 
 	if (l_Status != S_OK)
 	{
@@ -403,10 +386,9 @@ STDMETHODIMP SVRemoteCtrl::LoadConfig(BSTR filePath)
 
 STDMETHODIMP SVRemoteCtrl::GetConfig(BSTR filePath)
 {
-	HRESULT l_Status = S_OK;
 	SVCommandStatus CommandStatus;
 
-	l_Status = m_dispatcher->GetConfig(filePath, CommandStatus);
+	HRESULT l_Status = m_dispatcher->GetConfig(filePath, CommandStatus);
 
 	if (l_Status != S_OK)
 	{
@@ -418,10 +400,9 @@ STDMETHODIMP SVRemoteCtrl::GetConfig(BSTR filePath)
 
 STDMETHODIMP SVRemoteCtrl::RunOnce(BSTR InspectionName)
 {
-	HRESULT l_Status = S_OK;
 	SVCommandStatus CommandStatus;
 
-	l_Status = m_dispatcher->RunOnce(InspectionName, CommandStatus);
+	HRESULT l_Status = m_dispatcher->RunOnce(InspectionName, CommandStatus);
 
 	if (l_Status != S_OK)
 	{
@@ -606,9 +587,7 @@ STDMETHODIMP SVRemoteCtrl::GetState(LONG* state)
 
 STDMETHODIMP SVRemoteCtrl::PutConfig(BSTR filePath, LONG Timeout)
 {
-	HRESULT l_Status = S_OK;
-
-	l_Status = BeginPutConfig(filePath);
+	HRESULT l_Status = BeginPutConfig(filePath);
 
 	if (l_Status == S_OK)
 	{
@@ -693,12 +672,9 @@ STDMETHODIMP SVRemoteCtrl::GetVersion(BSTR* svobserver_ver, BSTR* svremotecontro
 
 STDMETHODIMP SVRemoteCtrl::PutDeviceFile(BSTR sourcePath, BSTR destinationPath)
 {
-	HRESULT l_Status = S_OK;
 	SVCommandStatus CommandStatus;
 
-	long l_Cancel = 0;
-
-	l_Status = m_dispatcher->PutFile(sourcePath, destinationPath, CommandStatus);
+	HRESULT l_Status = m_dispatcher->PutFile(sourcePath, destinationPath, CommandStatus);
 
 	if (l_Status != S_OK)
 	{
@@ -710,10 +686,9 @@ STDMETHODIMP SVRemoteCtrl::PutDeviceFile(BSTR sourcePath, BSTR destinationPath)
 
 STDMETHODIMP SVRemoteCtrl::SetDeviceMode(SVObserverModesEnum desiredMode)
 {
-	HRESULT l_Status = S_OK;
 	SVCommandStatus CommandStatus;
 
-	l_Status = m_dispatcher->SetMode(desiredMode, CommandStatus);
+	HRESULT l_Status = m_dispatcher->SetMode(desiredMode, CommandStatus);
 
 	if (l_Status != S_OK)
 	{
@@ -725,10 +700,9 @@ STDMETHODIMP SVRemoteCtrl::SetDeviceMode(SVObserverModesEnum desiredMode)
 
 STDMETHODIMP SVRemoteCtrl::SetItems(ISVProductItems* pItems, VARIANT_BOOL RunOnce, ISVProductItems ** ppErrors)
 {
-	HRESULT l_Status = S_OK;
 	SVCommandStatus CommandStatus;
 
-	l_Status = m_dispatcher->SetItems(pItems, RunOnce, ppErrors, CommandStatus);
+	HRESULT l_Status = m_dispatcher->SetItems(pItems, RunOnce, ppErrors, CommandStatus);
 
 	if (!SUCCEEDED(l_Status))
 	{
@@ -860,26 +834,6 @@ HRESULT SVRemoteCtrl::SetControlServer(SVCommandStatus& p_rStatus)
 	return l_Status;
 }
 
-HRESULT SVRemoteCtrl::SetObserverServer(SVCommandStatus& p_rStatus)
-{
-	HRESULT l_Status = S_OK;
-
-	m_VPName = m_servername;
-
-	l_Status = m_dispatcher->SetConnectionData(L"", m_CommandPort, boost::posix_time::seconds(10));
-
-	p_rStatus.hResult = l_Status;
-
-	if (l_Status != S_OK)
-	{
-		p_rStatus.errorText = L"Unknown connection error";
-
-		m_VPName = L"";
-	}
-
-	return l_Status;
-}
-
 STDMETHODIMP SVRemoteCtrl::Disconnect(void)
 {
 	m_dispatcher->SetConnectionData("", m_CommandPort, boost::posix_time::seconds(10));
@@ -963,12 +917,11 @@ STDMETHODIMP SVRemoteCtrl::RegisterMonitorList(BSTR listName, BSTR ppqName, int 
 
 STDMETHODIMP SVRemoteCtrl::QueryProductList(BSTR listName, VARIANT* itemNames)
 {
-	HRESULT l_Status = S_OK;
 	SVCommandStatus l_CommandStatus;
 	CComVariant result;
 	VariantClear(itemNames);
 
-	l_Status = m_dispatcher->QueryMonitorList(listName, SvPb::ListType::ProductItem, result, l_CommandStatus);
+	HRESULT l_Status = m_dispatcher->QueryMonitorList(listName, SvPb::ListType::productItem, result, l_CommandStatus);
 
 	if (!SUCCEEDED(l_Status))
 	{
@@ -985,12 +938,11 @@ STDMETHODIMP SVRemoteCtrl::QueryProductList(BSTR listName, VARIANT* itemNames)
 
 STDMETHODIMP SVRemoteCtrl::QueryRejectCondList(BSTR listName, VARIANT* itemNames)
 {
-	HRESULT l_Status = S_OK;
 	SVCommandStatus l_CommandStatus;
 	CComVariant result;
 	VariantClear(itemNames);
 
-	l_Status = m_dispatcher->QueryMonitorList(listName, SvPb::ListType::RejectCondition, result, l_CommandStatus);
+	HRESULT l_Status = m_dispatcher->QueryMonitorList(listName, SvPb::ListType::rejectCondition, result, l_CommandStatus);
 
 	if (!SUCCEEDED(l_Status))
 	{
@@ -1007,7 +959,6 @@ STDMETHODIMP SVRemoteCtrl::QueryRejectCondList(BSTR listName, VARIANT* itemNames
 
 STDMETHODIMP SVRemoteCtrl::QueryFailStatusList(BSTR listName, VARIANT* itemNames)
 {
-	HRESULT l_Status = S_OK;
 	SVCommandStatus l_CommandStatus;
 	CComVariant result;
 
@@ -1016,7 +967,7 @@ STDMETHODIMP SVRemoteCtrl::QueryFailStatusList(BSTR listName, VARIANT* itemNames
 		VariantClear(itemNames);
 	}
 
-	l_Status = m_dispatcher->QueryMonitorList(listName, SvPb::ListType::FailStatus, result, l_CommandStatus);
+	HRESULT l_Status = m_dispatcher->QueryMonitorList(listName, SvPb::ListType::failStatus, result, l_CommandStatus);
 
 	if (!SUCCEEDED(l_Status))
 	{
@@ -1136,10 +1087,9 @@ STDMETHODIMP SVRemoteCtrl::GetDataDefinitionList(BSTR inspectionName, SVDataDefi
 
 STDMETHODIMP SVRemoteCtrl::ActivateMonitorList(BSTR listName)
 {
-	HRESULT l_Status = S_OK;
 	SVCommandStatus l_CommandStatus;
 
-	l_Status = m_dispatcher->ActivateMonitorList(listName, true, l_CommandStatus);
+	HRESULT l_Status = m_dispatcher->ActivateMonitorList(listName, true, l_CommandStatus);
 
 	if (!SUCCEEDED(l_Status))
 	{
@@ -1150,10 +1100,9 @@ STDMETHODIMP SVRemoteCtrl::ActivateMonitorList(BSTR listName)
 
 STDMETHODIMP SVRemoteCtrl::DeactivateMonitorList(BSTR listName)
 {
-	HRESULT l_Status = S_OK;
 	SVCommandStatus l_CommandStatus;
 
-	l_Status = m_dispatcher->ActivateMonitorList(listName, false, l_CommandStatus);
+	HRESULT l_Status = m_dispatcher->ActivateMonitorList(listName, false, l_CommandStatus);
 
 	if (!SUCCEEDED(l_Status))
 	{
@@ -1164,7 +1113,6 @@ STDMETHODIMP SVRemoteCtrl::DeactivateMonitorList(BSTR listName)
 
 STDMETHODIMP SVRemoteCtrl::GetFailStatus(BSTR listName, VARIANT* values)
 {
-	HRESULT l_Status = S_OK;
 	SVCommandStatus l_CommandStatus;
 	CComVariant result;
 
@@ -1173,7 +1121,7 @@ STDMETHODIMP SVRemoteCtrl::GetFailStatus(BSTR listName, VARIANT* values)
 		VariantClear(values);
 	}
 
-	l_Status = m_dispatcher->GetFailStatus(listName, result, l_CommandStatus);
+	HRESULT l_Status = m_dispatcher->GetFailStatus(listName, result, l_CommandStatus);
 
 	if (!SUCCEEDED(l_Status))
 	{
@@ -1221,10 +1169,9 @@ STDMETHODIMP SVRemoteCtrl::GetProductFilter(BSTR listName, LONG * pFilter)
 
 STDMETHODIMP SVRemoteCtrl::SetProductFilter(BSTR listName, SVProductFilterModesEnum filter)
 {
-	HRESULT l_Status = S_OK;
 	SVCommandStatus l_CommandStatus;
 
-	l_Status = m_dispatcher->SetProductFilter(listName, filter, l_CommandStatus);
+	HRESULT l_Status = m_dispatcher->SetProductFilter(listName, filter, l_CommandStatus);
 	if (S_OK != l_Status)
 	{
 		SVERROR(l_CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, l_CommandStatus.hResult);
@@ -1234,10 +1181,9 @@ STDMETHODIMP SVRemoteCtrl::SetProductFilter(BSTR listName, SVProductFilterModesE
 
 STDMETHODIMP SVRemoteCtrl::Shutdown(SVShutdownOptionsEnum options)
 {
-	HRESULT status = S_OK;
 	SVCommandStatus commandStatus;
 
-	status = m_dispatcher->ShutDown(options, commandStatus);
+	HRESULT status = m_dispatcher->ShutDown(options, commandStatus);
 
 	if (status != S_OK)
 	{
@@ -1249,7 +1195,6 @@ STDMETHODIMP SVRemoteCtrl::Shutdown(SVShutdownOptionsEnum options)
 
 STDMETHODIMP SVRemoteCtrl::GetInspectionNames(VARIANT* listNames)
 {
-	HRESULT l_Status = S_OK;
 	SVCommandStatus l_CommandStatus;
 	CComVariant result;
 
@@ -1258,7 +1203,7 @@ STDMETHODIMP SVRemoteCtrl::GetInspectionNames(VARIANT* listNames)
 		VariantClear(listNames);
 	}
 
-	l_Status = m_dispatcher->GetInspectionNames(result, l_CommandStatus);
+	HRESULT l_Status = m_dispatcher->GetInspectionNames(result, l_CommandStatus);
 
 	if (!SUCCEEDED(l_Status))
 	{
@@ -1274,7 +1219,6 @@ STDMETHODIMP SVRemoteCtrl::GetInspectionNames(VARIANT* listNames)
 
 STDMETHODIMP SVRemoteCtrl::QueryMonitorListNames(VARIANT* listNames)
 {
-	HRESULT l_Status = S_OK;
 	SVCommandStatus l_CommandStatus;
 	CComVariant result;
 
@@ -1283,7 +1227,7 @@ STDMETHODIMP SVRemoteCtrl::QueryMonitorListNames(VARIANT* listNames)
 		VariantClear(listNames);
 	}
 
-	l_Status = m_dispatcher->QueryMonitorListNames(result, l_CommandStatus);
+	HRESULT l_Status = m_dispatcher->QueryMonitorListNames(result, l_CommandStatus);
 
 	if (!SUCCEEDED(l_Status))
 	{

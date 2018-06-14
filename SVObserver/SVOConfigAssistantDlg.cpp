@@ -1122,7 +1122,7 @@ void CSVOConfigAssistantDlg::OnOK()
 
 	CString sTmp = m_ConfigurationName.Right(4);
 	//check configuration name.  do not allow name to have extension
-	if ( ( sTmp.CompareNoCase( ".svx" ) == 0) )
+	if ( ( sTmp.CompareNoCase(SvDef::cConfigExtension) == 0) )
 	{
 		int iLen = m_ConfigurationName.GetLength();
 		sTmp = m_ConfigurationName.Left(iLen-4);
@@ -1524,6 +1524,7 @@ BOOL CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 					// save the camera file (for future simulation mode)
 					svFile.SetFullFileName( pCameraObj->GetCameraFile().c_str() );
 			
+
 					if ( 0 == SvUl::CompareNoCase(std::string(svFile.GetExtension()), std::string(cGigeCameraFileDefExt)) )
 					{
 						svFiles.push_back(svFile);

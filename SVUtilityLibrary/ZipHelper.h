@@ -14,45 +14,41 @@
 #pragma once
 
 #pragma region Includes
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
-class ZipHelper
+namespace SvUl
 {
-public:
-#pragma region Declarations
-	typedef std::set<std::string> StringSet;
-#pragma endregion Declarations
 
-public:
-#pragma region Constructor
-	//************************************
-	// Description: The class constructor
-	//************************************
-	ZipHelper();
-
-	//************************************
-	// Description: The class destructor
-	//************************************
-	virtual ~ZipHelper();
-#pragma endregion Constructor
-
-public:
-#pragma region Public Methods
-	//************************************
-	// Description: This method makes the zip file
-	// Parameter: rZipFileName <in> Reference to the zip file name
-	// Parameter: rZipFiles <in> Reference to the set of zip files
-	// Parameter: DeleteSourceFiles <in> If true deletes the source files after zipping file
-	//************************************
-	static void makeZipFile( const std::string& rZipFileName, const StringSet& rZipFiles, bool DeleteSourceFiles );
-
-	//************************************
-	// Description: This method unzips all the files
-	// Parameter: rZipFileName <in> Reference to the zip file name
-	// Parameter: rDestinationFolder <in> Reference to the zip file name
-	// Parameter: rUnzippedFiles <out> Reference to the files that have been unzipped
-	//************************************
-	static void unzipAll( const std::string& rZipFileName, const std::string& rDestinationFolder, StringSet& rUnzippedFiles );
-#pragma endregion Public Methods
+enum CompressionFormat
+{
+	Unknown,
+	SevenZip,
+	Zip,
+	GZip,
+	BZip2,
+	Rar,
+	Tar,
+	Iso,
+	Cab,
+	Lzma,
+	Lzma86
 };
 
+typedef UINT32(WINAPI* CreateObjectFunc)(const GUID* clsID, const GUID* interfaceID, void** outObject);
+
+/// This method creates a 7 zip file
+/// \param rZipFileName [in] Reference to the zip file name
+/// \param rZipFiles [in] Reference to the set of zip files
+/// \param rFolderPrefix [in] Reference to the folder prefix which is not inserted into the zip file
+/// \param DeleteSourceFiles [in] If true deletes all the source files after successful zip file 
+/// \returns true on success
+bool makeZipFile( const std::string& rZipFileName, const SvDef::StringVector& rZipFiles, const std::string& rFolderPrefix, bool DeleteSourceFiles );
+
+/// This method unzips all files to a folder
+/// \param rZipFileName [in] Reference to the zip file name
+/// \param rDestinationFolder [in] Reference to the destination folder
+/// \param rUnzippedFiles [out] Reference to the files that have been unzipped
+/// \returns true on success
+bool unzipAll( const std::string& rZipFileName, const std::string& rDestinationFolder, SvDef::StringVector& rUnzippedFiles );
+} // namespace SvUl

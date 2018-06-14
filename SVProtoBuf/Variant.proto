@@ -12,7 +12,7 @@ package SvPb;
 message Variant
 {
 	//The Variant type VT
-	uint32 Type = 1;
+	uint32 type = 1;
 
 	oneof data
 	{

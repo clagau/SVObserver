@@ -390,6 +390,8 @@ namespace SvStl
 		{Tid_ClipboardDataConverionFailed, _T( "The clipboard data conversion failed." )},
 		{Tid_ClipboardMemoryFailed, _T( "Clipboard memory allocation failed." )},
 		{Tid_GetClipboardDataFailed, _T( "Failed to retrieve the clipboard data." )},
+		{Tid_ClipboardZipFailed, _T("Failed to zip clipboard data.")},
+		{Tid_ClipboardUnzipFailed, _T("Failed to unzip clipboard data.")},
 		{Tid_ToolInvalid, _T( "The tool to be copied is invalid." )},
 		{Tid_Clipboard_VersionMismatch, _T( "The current SVObserver Version does not match the version coming from the clipboard." )},
 		{Tid_ColorToolInsertFailed, _T( "A color tool cannot be inserted into a non-color system." )},
@@ -529,5 +531,7 @@ namespace SvStl
 		{Tid_Error_SetServiceStatus, _T("SetServiceStatus returned error")},
 		{Tid_Error_RegisterServiceHandler, _T("RegisterServiceCtrlHandler returned error")},
 		{Tid_Error_CreateEvent, _T("Could not create the Event Handler")},
+		{Tid_ZipFileFailed, _T("Failed to create %s zip file.")},
+		{Tid_UnzipFileFailed, _T("Failed to unzip %s file.")},
 	};
 } //namespace SvStl

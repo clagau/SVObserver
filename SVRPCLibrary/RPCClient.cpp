@@ -84,7 +84,7 @@ void RPCClient::request(SvPenv::Envelope&& Request, Task<SvPenv::Envelope> Task)
 {
 	if (!isConnected())
 	{
-		Task.error(build_error(SvPenv::ErrorCode::ServiceUnavailable));
+		Task.error(build_error(SvPenv::ErrorCode::serviceUnavailable));
 		return;
 	}
 	auto tx_id = ++m_NextTransactionId;
@@ -95,7 +95,7 @@ void RPCClient::request(SvPenv::Envelope&& request, Task<SvPenv::Envelope> task,
 {
 	if (!isConnected())
 	{
-		task.error(build_error(SvPenv::ErrorCode::ServiceUnavailable));
+		task.error(build_error(SvPenv::ErrorCode::serviceUnavailable));
 		return;
 	}
 	auto tx_id = ++m_NextTransactionId;
@@ -105,8 +105,8 @@ void RPCClient::request(SvPenv::Envelope&& request, Task<SvPenv::Envelope> task,
 
 void RPCClient::request_impl(SvPenv::Envelope&& Request, Task<SvPenv::Envelope> Task, uint64_t tx_id)
 {
-	Request.set_transaction_id(tx_id);
-	Request.set_type(SvPenv::MessageType::Request);
+	Request.set_transactionid(tx_id);
+	Request.set_type(SvPenv::MessageType::request);
 
 	m_PendingRequests.insert({tx_id, Task});
 
@@ -126,18 +126,18 @@ ClientStreamContext RPCClient::stream(SvPenv::Envelope&& Request, Observer<SvPen
 {
 	if (!isConnected())
 	{
-		Observer.error(build_error(SvPenv::ErrorCode::ServiceUnavailable));
+		Observer.error(build_error(SvPenv::ErrorCode::serviceUnavailable));
 		return ClientStreamContext(nullptr);
 	}
-	auto tx_id = ++m_NextTransactionId;
-	Request.set_transaction_id(tx_id);
-	Request.set_type(SvPenv::MessageType::StreamRequest);
+	auto txId = ++m_NextTransactionId;
+	Request.set_transactionid(txId);
+	Request.set_type(SvPenv::MessageType::streamRequest);
 
-	m_PendingStreams.insert({tx_id, Observer});
+	m_PendingStreams.insert({txId, Observer});
 
 	send_envelope(std::move(Request));
 
-	return ClientStreamContext(std::bind(&RPCClient::cancel_stream, this, tx_id));
+	return ClientStreamContext(std::bind(&RPCClient::cancel_stream, this, txId));
 }
 
 void RPCClient::onConnect()
@@ -210,23 +210,23 @@ void RPCClient::on_binary_message(std::shared_ptr<std::vector<char>> ptr)
 	auto type = Response.type();
 	switch (type)
 	{
-		case SvPenv::MessageType::Response:
+		case SvPenv::MessageType::response:
 			on_response(std::move(Response));
 			break;
 
-		case SvPenv::MessageType::ErrorResponse:
+		case SvPenv::MessageType::errorResponse:
 			on_error_response(std::move(Response));
 			break;
 
-		case SvPenv::MessageType::StreamResponse:
+		case SvPenv::MessageType::streamResponse:
 			on_stream_response(std::move(Response));
 			break;
 
-		case SvPenv::MessageType::StreamErrorResponse:
+		case SvPenv::MessageType::streamErrorResponse:
 			on_stream_error_response(std::move(Response));
 			break;
 
-		case SvPenv::MessageType::StreamFinish:
+		case SvPenv::MessageType::streamFinish:
 			on_stream_finish(std::move(Response));
 			break;
 
@@ -285,7 +285,7 @@ void RPCClient::on_request_timeout(const boost::system::error_code& error, uint6
 		auto cb = it->second;
 		m_PendingRequests.erase(it);
 
-		cb.error(build_error(SvPenv::ErrorCode::Timeout));
+		cb.error(build_error(SvPenv::ErrorCode::timeout));
 	}
 }
 
@@ -317,7 +317,7 @@ void RPCClient::cancel_all_pending_requests()
 			auto tx_id = it->first;
 			cancel_request_timeout(tx_id);
 			auto& task = it->second;
-			task.error(build_error(SvPenv::ErrorCode::ServiceUnavailable, "Connection lost. Please retry."));
+			task.error(build_error(SvPenv::ErrorCode::serviceUnavailable, "Connection lost. Please retry."));
 			m_PendingRequests.erase(it);
 		}
 	}
@@ -335,7 +335,7 @@ void RPCClient::cancel_all_pending_streams()
 		{
 			auto it = m_PendingStreams.begin();
 			auto& observer = it->second;
-			observer.error(build_error(SvPenv::ErrorCode::ServiceUnavailable, "Connection lost. Please retry."));
+			observer.error(build_error(SvPenv::ErrorCode::serviceUnavailable, "Connection lost. Please retry."));
 			m_PendingStreams.erase(it);
 		}
 	}
@@ -349,9 +349,9 @@ void RPCClient::on_response(SvPenv::Envelope&& Response)
 	//We catch the exception and remove it as clients may have disconnected in the mean time
 	try
 	{
-		auto tx_id = Response.transaction_id();
-		cancel_request_timeout(tx_id);
-		auto it = m_PendingRequests.find(tx_id);
+		auto txId = Response.transactionid();
+		cancel_request_timeout(txId);
+		auto it = m_PendingRequests.find(txId);
 		if (it != m_PendingRequests.end())
 		{
 			auto cb = it->second;
@@ -369,9 +369,9 @@ void RPCClient::on_error_response(SvPenv::Envelope&& Response)
 	//We catch the exception and remove it as clients may have disconnected in the mean time
 	try
 	{
-		auto tx_id = Response.transaction_id();
-		cancel_request_timeout(tx_id);
-		auto it = m_PendingRequests.find(tx_id);
+		auto txId = Response.transactionid();
+		cancel_request_timeout(txId);
+		auto it = m_PendingRequests.find(txId);
 		if (it != m_PendingRequests.end())
 		{
 			auto cb = it->second;
@@ -386,7 +386,7 @@ void RPCClient::on_error_response(SvPenv::Envelope&& Response)
 
 void RPCClient::on_stream_response(SvPenv::Envelope&& Response)
 {
-	auto it = m_PendingStreams.find(Response.transaction_id());
+	auto it = m_PendingStreams.find(Response.transactionid());
 	if (it != m_PendingStreams.end())
 	{
 		//We catch the exception and remove it as clients may have disconnected in the mean time
@@ -402,7 +402,7 @@ void RPCClient::on_stream_response(SvPenv::Envelope&& Response)
 
 void RPCClient::on_stream_error_response(SvPenv::Envelope&& Response)
 {
-	auto it = m_PendingStreams.find(Response.transaction_id());
+	auto it = m_PendingStreams.find(Response.transactionid());
 	if (it != m_PendingStreams.end())
 	{
 		//We catch the exception and remove it as clients may have disconnected in the mean time
@@ -420,7 +420,7 @@ void RPCClient::on_stream_error_response(SvPenv::Envelope&& Response)
 
 void RPCClient::on_stream_finish(SvPenv::Envelope&& Response)
 {
-	auto it = m_PendingStreams.find(Response.transaction_id());
+	auto it = m_PendingStreams.find(Response.transactionid());
 	if (it != m_PendingStreams.end())
 	{
 		//We catch the exception and remove it as clients may have disconnected in the mean time
@@ -439,8 +439,8 @@ void RPCClient::on_stream_finish(SvPenv::Envelope&& Response)
 void RPCClient::cancel_stream(uint64_t txId)
 {
 	SvPenv::Envelope Request;
-	Request.set_transaction_id(txId);
-	Request.set_type(SvPenv::MessageType::StreamCancel);
+	Request.set_transactionid(txId);
+	Request.set_type(SvPenv::MessageType::streamCancel);
 	send_envelope(std::move(Request));
 }
 

@@ -46,21 +46,21 @@ void WINAPI ServiceMain( DWORD argc, LPTSTR *argv )
 		if( !::SetServiceStatus( gStatusHandle, &gServiceStatus ) ) 
 		{
 			SvStl::MessageMgrStd Exception(SvStl::LogOnly);
-			Exception.setMessage(SVMSG_SVWebSrv_0_GENERAL_ERROR, SvStl::Tid_Error_SetServiceStatus, SvStl::SourceFileParams(StdMessageParams));
+			Exception.setMessage(SVMSG_SVGateway_0_GENERAL_ERROR, SvStl::Tid_Error_SetServiceStatus, SvStl::SourceFileParams(StdMessageParams));
 		}
 
 		gServiceStopEvent = ::CreateEvent(nullptr, true, false, nullptr);
 		if (nullptr == gServiceStopEvent)
 		{
 			SvStl::MessageMgrStd Exception(SvStl::LogOnly);
-			Exception.setMessage(SVMSG_SVWebSrv_0_GENERAL_ERROR, SvStl::Tid_Error_CreateEvent, SvStl::SourceFileParams(StdMessageParams));
+			Exception.setMessage(SVMSG_SVGateway_0_GENERAL_ERROR, SvStl::Tid_Error_CreateEvent, SvStl::SourceFileParams(StdMessageParams));
 			gServiceStatus.dwCurrentState = SERVICE_STOPPED;
 			gServiceStatus.dwWin32ExitCode = GetLastError();
 			gServiceStatus.dwCheckPoint = 1;
 
 			if (!::SetServiceStatus(gStatusHandle, &gServiceStatus))
 			{
-				Exception.setMessage(SVMSG_SVWebSrv_0_GENERAL_ERROR, SvStl::Tid_Error_SetServiceStatus, SvStl::SourceFileParams(StdMessageParams));
+				Exception.setMessage(SVMSG_SVGateway_0_GENERAL_ERROR, SvStl::Tid_Error_SetServiceStatus, SvStl::SourceFileParams(StdMessageParams));
 			}
 		}
 
@@ -72,7 +72,7 @@ void WINAPI ServiceMain( DWORD argc, LPTSTR *argv )
 		if( !::SetServiceStatus( gStatusHandle, &gServiceStatus ) )
 		{
 			SvStl::MessageMgrStd Exception(SvStl::LogOnly);
-			Exception.setMessage(SVMSG_SVWebSrv_0_GENERAL_ERROR, SvStl::Tid_Error_SetServiceStatus, SvStl::SourceFileParams(StdMessageParams));
+			Exception.setMessage(SVMSG_SVGateway_0_GENERAL_ERROR, SvStl::Tid_Error_SetServiceStatus, SvStl::SourceFileParams(StdMessageParams));
 		}
 
 		// Start the worker threads
@@ -88,13 +88,13 @@ void WINAPI ServiceMain( DWORD argc, LPTSTR *argv )
 		if( !::SetServiceStatus( gStatusHandle, &gServiceStatus ) )
 		{
 			SvStl::MessageMgrStd Exception(SvStl::LogOnly);
-			Exception.setMessage(SVMSG_SVWebSrv_0_GENERAL_ERROR, SvStl::Tid_Error_SetServiceStatus, SvStl::SourceFileParams(StdMessageParams));
+			Exception.setMessage(SVMSG_SVGateway_0_GENERAL_ERROR, SvStl::Tid_Error_SetServiceStatus, SvStl::SourceFileParams(StdMessageParams));
 		}
 	}
 	else
 	{
 		SvStl::MessageMgrStd Exception(SvStl::LogOnly);
-		Exception.setMessage(SVMSG_SVWebSrv_0_GENERAL_ERROR, SvStl::Tid_Error_RegisterServiceHandler, SvStl::SourceFileParams(StdMessageParams));
+		Exception.setMessage(SVMSG_SVGateway_0_GENERAL_ERROR, SvStl::Tid_Error_RegisterServiceHandler, SvStl::SourceFileParams(StdMessageParams));
 	}
 }
 
@@ -114,7 +114,7 @@ DWORD WINAPI ControlHandler(DWORD ControlCode, DWORD eventType, void *pEventData
 			if( !::SetServiceStatus( gStatusHandle, &gServiceStatus ) )
 			{
 				SvStl::MessageMgrStd Exception(SvStl::LogOnly);
-				Exception.setMessage(SVMSG_SVWebSrv_0_GENERAL_ERROR, SvStl::Tid_Error_SetServiceStatus, SvStl::SourceFileParams(StdMessageParams));
+				Exception.setMessage(SVMSG_SVGateway_0_GENERAL_ERROR, SvStl::Tid_Error_SetServiceStatus, SvStl::SourceFileParams(StdMessageParams));
 			}
 			::SetEvent(gServiceStopEvent);
 			break;

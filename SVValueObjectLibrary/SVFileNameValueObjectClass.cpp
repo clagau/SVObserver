@@ -60,13 +60,6 @@ SVFileNameValueObjectClass::~SVFileNameValueObjectClass()
 	SVFileNameManagerClass::Instance().RemoveItem(&m_FileName);
 }
 
-void SVFileNameValueObjectClass::Persist(SvOi::IObjectWriter& rWriter)
-{
-	SVFileNameManagerClass::Instance().SaveItem(&m_FileName);
-	
-	__super::Persist( rWriter );
-}
-
 HRESULT SVFileNameValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataObject)
 {
 	HRESULT Result( E_FAIL );

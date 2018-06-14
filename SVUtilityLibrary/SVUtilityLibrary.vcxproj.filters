@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
     </Filter>
+    <Filter Include="Quelldateien\7Zip">
+      <UniqueIdentifier>{f786246b-9a33-4e21-aadc-7a88b0f23f1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headerdateien\7Zip">
+      <UniqueIdentifier>{27137971-8b45-4617-8b2d-60b6ef830949}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -36,12 +42,6 @@
     <ClCompile Include="SVUtilityGlobals.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="Unzip.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="Zip.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVDottedName.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -62,6 +62,21 @@
     </ClCompile>
     <ClCompile Include="BitmapHelper.cpp">
       <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="ArchiveExtractCallback.cpp">
+      <Filter>Quelldateien\7Zip</Filter>
+    </ClCompile>
+    <ClCompile Include="ArchiveUpdateCallback.cpp">
+      <Filter>Quelldateien\7Zip</Filter>
+    </ClCompile>
+    <ClCompile Include="InStreamWrapper.cpp">
+      <Filter>Quelldateien\7Zip</Filter>
+    </ClCompile>
+    <ClCompile Include="OutStreamWrapper.cpp">
+      <Filter>Quelldateien\7Zip</Filter>
+    </ClCompile>
+    <ClCompile Include="PropVariant.cpp">
+      <Filter>Quelldateien\7Zip</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -116,13 +131,7 @@
     <ClInclude Include="SVVariantList.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="Unzip.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="XMLWriter.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="Zip.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVWinHandle.h">
@@ -163,6 +172,48 @@
     </ClInclude>
     <ClInclude Include="BitmapHelper.h">
       <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ArchiveExtractCallback.h">
+      <Filter>Headerdateien\7Zip</Filter>
+    </ClInclude>
+    <ClInclude Include="ArchiveUpdateCallback.h">
+      <Filter>Headerdateien\7Zip</Filter>
+    </ClInclude>
+    <ClInclude Include="IArchive.h">
+      <Filter>Headerdateien\7Zip</Filter>
+    </ClInclude>
+    <ClInclude Include="ICoder.h">
+      <Filter>Headerdateien\7Zip</Filter>
+    </ClInclude>
+    <ClInclude Include="IDecl.h">
+      <Filter>Headerdateien\7Zip</Filter>
+    </ClInclude>
+    <ClInclude Include="InStreamWrapper.h">
+      <Filter>Headerdateien\7Zip</Filter>
+    </ClInclude>
+    <ClInclude Include="IPassword.h">
+      <Filter>Headerdateien\7Zip</Filter>
+    </ClInclude>
+    <ClInclude Include="IProgress.h">
+      <Filter>Headerdateien\7Zip</Filter>
+    </ClInclude>
+    <ClInclude Include="IStream.h">
+      <Filter>Headerdateien\7Zip</Filter>
+    </ClInclude>
+    <ClInclude Include="OutStreamWrapper.h">
+      <Filter>Headerdateien\7Zip</Filter>
+    </ClInclude>
+    <ClInclude Include="ProgressCallback.h">
+      <Filter>Headerdateien\7Zip</Filter>
+    </ClInclude>
+    <ClInclude Include="PropID.h">
+      <Filter>Headerdateien\7Zip</Filter>
+    </ClInclude>
+    <ClInclude Include="PropVariant.h">
+      <Filter>Headerdateien\7Zip</Filter>
+    </ClInclude>
+    <ClInclude Include="7zTypes.h">
+      <Filter>Headerdateien\7Zip</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

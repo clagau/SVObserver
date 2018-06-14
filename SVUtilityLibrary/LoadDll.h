@@ -21,8 +21,9 @@ namespace SvUl
 	#pragma region Declarations
 		//Loadable Dlls
 		const TCHAR			SVOResourceDll[]	= _T("SVOResource.dll");
-		const TCHAR			ScintillaDll[]	= _T("SciLexer.dll");
-	#pragma endregion Declarations
+		const TCHAR			ScintillaDll[] = _T("SciLexer.dll");
+		const TCHAR			ZipDll[] = _T("7z.dll");
+#pragma endregion Declarations
 
 	class LoadDll
 	{

@@ -2189,7 +2189,6 @@
 #define ID_FILE_OPEN_SVC                20053
 #define ID_VIEW_PPQ_BAR                 20054
 #define ID_FILE_SAVE_ALL                20055
-#define ID_FILE_SAVE_SVC                20056
 #define ID_FILE_CLOSE_SVC               20057
 #define ID_FILE_SAVE_AS_SVC             20058
 #define ID_EDIT_EDITIOLIST              20059

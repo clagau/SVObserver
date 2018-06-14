@@ -270,7 +270,7 @@ namespace SvSml
 			else
 			{
 				SvPenv::Error err;
-				err.set_error_code(SvPenv::ErrorCode::NotFound);
+				err.set_errorcode(SvPenv::ErrorCode::notFound);
 				err.set_message("MonitorList with given name does not exist or is not active");
 				result = false;
 			}

@@ -35,13 +35,14 @@ namespace SvStl
 	static const TCHAR* const DefaultExternalToolPath = _T( "C:\\SVObserver\\ExternalTool" );	
 	static const TCHAR* const DefaultObserverPath = _T( "C:\\SVObserver" );	
 	static const TCHAR* const DefaultSecondObserverPath = _T( "D:\\SVObserver" );	
+	static const TCHAR* const DefaultRamDrive = _T("V:");
 
 	///subdirectories and sub-subdirectories of DefaultSecondObserverPath 
 	static const TCHAR* const AutoSaveRelativePath = _T( "Autosave" );	
 	const TCHAR* const AutoSaveTempRelativePath = _T("Temp");///< the "temporary" autosave temp directory name
-	const TCHAR* const AutoSaveTemp1RelativePath = _T("Temp1MostRecent");///< the first autosave temp directory name
-	const TCHAR* const AutoSaveTemp2RelativePath = _T("Temp2");///< the second autosave temp directory name
-	const TCHAR* const AutoSaveTemp3RelativePath = _T("Temp3");///< the third autosave temp directory name
+	const TCHAR* const AutoSaveTemp1FileName = _T("Temp1MostRecent.svz");///< the first autosave temp file name
+	const TCHAR* const AutoSaveTemp2FileName = _T("Temp2.svz");///< the second autosave temp file name
+	const TCHAR* const AutoSaveTemp3FileName = _T("Temp3.svz");///< the third autosave temp file name
 
 	///TAGS 
 	static const TCHAR* const SVIMDirectorySectionTag = _T("SVIM Directories");
@@ -52,41 +53,28 @@ namespace SvStl
 	static const TCHAR* const SVIMSVObserverPath = _T("ObserverPath");
 	static const TCHAR* const SVIMSVObserverSecondPath = _T("ObserverSecondPath");
 	static const TCHAR* const SVIMSVObserverLastValidPath = _T("LastValidPath");
+	static const TCHAR* const SVIMRamDrive = _T("RamDrive");
 
 
 	GlobalPath::GlobalPath():
-		m_IsInitializedIni(false),
-		m_IsInitilizedPath(false),
-		m_AutosaveTempDirectoryName(AutoSaveTempRelativePath),
-		m_AutosaveTempDirectory1Name(AutoSaveTemp1RelativePath),
-		m_AutosaveTempDirectory2Name(AutoSaveTemp2RelativePath),
-		m_AutosaveTempDirectory3Name(AutoSaveTemp3RelativePath)
+		m_IsInitializedIni{false},
+		m_IsInitilizedPath{false},
+		m_SVObserverBinFolder{DefaultObserverBinPath},
+		m_SVObserverRunFolder{DefaultRunFolder},
+		m_TempFolder{DefaultTempFolder},
+		m_SVObserverExternalToolFolder{DefaultExternalToolPath},
+		m_AutosaveTempDirectoryName{AutoSaveTempRelativePath},
+		m_AutosaveTemp1FileName{AutoSaveTemp1FileName},
+		m_AutosaveTemp2FileName{AutoSaveTemp2FileName},
+		m_AutosaveTemp3FileName{AutoSaveTemp3FileName}
 	{
-		m_IniFolder = _T("");
-		m_SVIM_ini = _T("");
-		m_Hardware_ini = _T("");
-		m_Utility_ini = _T("");
-		m_SVObserverBinFolder =  DefaultObserverBinPath;
-		m_SVObserverRunFolder =  DefaultRunFolder;
-		m_TempFolder =   DefaultTempFolder;
-		m_SVObserverExternalToolFolder = DefaultExternalToolPath;
 	}
-
-
-	GlobalPath::GlobalPath( const GlobalPath& )
-	{
-		;
-	}
-
 
 	GlobalPath& GlobalPath::Inst()
 	{
 		static GlobalPath Instance;
 		return Instance;
 	}
-
-
-
 
 	void GlobalPath::InitializeIniFolder()
 	{
@@ -116,109 +104,81 @@ namespace SvStl
 		InitializeIniFolder();
 		return m_Utility_ini.c_str();
 	}
+
 	LPCTSTR GlobalPath::GetSVIMIniPath()
 	{
 		InitializeIniFolder();
 		return m_SVIM_ini.c_str();
 	}
+
 	LPCTSTR GlobalPath::GetHardwareIniPath()
 	{
 		InitializeIniFolder();
 		return m_Hardware_ini.c_str();
 	}
 
-
-	void AppendFilename(LPCTSTR filename, std::string& rpath )
-	{
-		if(nullptr != filename)
-		{
-			if(filename[0] !=  '\\')
-			{
-				rpath.append("\\");
-			}
-			rpath.append(filename);
-		}
-	}
-
-
 	std::string GlobalPath::GetExternalToolPath(LPCTSTR filename)
 	{
 		InitializePath();
-		std::string ret =  m_SVObserverExternalToolFolder;
-		AppendFilename(filename,ret );
-
-		return ret;
+		return AppendFilename(m_SVObserverExternalToolFolder, filename);
 	}
 
 
 	std::string GlobalPath::GetRunPath(LPCTSTR filename )
 	{
 		InitializePath();
-		std::string ret =  m_SVObserverRunFolder;
-		AppendFilename(filename,ret );
-		return ret;
+		return AppendFilename(m_SVObserverRunFolder, filename);
 	}
 
 
 	std::string GlobalPath::GetBinPath(LPCTSTR filename)
 	{
 		InitializePath();
-		std::string ret =  m_SVObserverBinFolder;
-		AppendFilename(filename,ret );
-		return ret;
+		return AppendFilename(m_SVObserverBinFolder, filename);
 	}
 
 
 	std::string GlobalPath::GetTempPath(LPCTSTR filename )
 	{
 		InitializePath();
-		std::string ret =  m_TempFolder;
-		AppendFilename(filename,ret );
-		return ret;
+		return AppendFilename(m_TempFolder, filename);
 	}
 
 
 	std::string GlobalPath::GetObserverPath(LPCTSTR filename )
 	{
 		InitializePath();
-		std::string ret =  m_SVObserverFolder;
-		AppendFilename(filename,ret );
-		return ret;
+		return AppendFilename(m_SVObserverFolder, filename);
 	}
 
 
 	std::string GlobalPath::GetSecondObserverPath(LPCTSTR filename )
 	{
 		InitializePath();
-		std::string ret =  m_SVSecondObserverFolder;
-		AppendFilename(filename, ret);
-		return ret;
+		return AppendFilename(m_SVSecondObserverFolder, filename);
 	}
-
 
 	std::string GlobalPath::GetAutoSaveRootPath(LPCTSTR filename)
 	{
-		std::string ret =  GetSecondObserverPath(AutoSaveRelativePath);
-		AppendFilename(filename, ret);
-		return ret;
+		return AppendFilename(GetSecondObserverPath(AutoSaveRelativePath), filename);
 	}
-
 
 	std::string GlobalPath::GetAutoSaveTempPath(LPCTSTR filename)
 	{
-		std::string ret =  GetAutoSaveRootPath(AutoSaveTempRelativePath);
-		AppendFilename(filename, ret);
-		return ret;
+		return AppendFilename(GetAutoSaveRootPath(AutoSaveTempRelativePath), filename);
 	}
-
 
 	std::string  GlobalPath::GetLastValidPath(LPCTSTR filename )
 	{
 
 		InitializePath();
-		std::string ret =  m_LastValidFolder;
-		AppendFilename(filename,ret );
-		return ret;
+		return AppendFilename(m_LastValidFolder, filename);
+	}
+
+	std::string GlobalPath::GetRamDrive(LPCTSTR filename)
+	{
+		InitializePath();
+		return AppendFilename(m_SvimRamDrive, filename);
 	}
 
 
@@ -236,27 +196,20 @@ namespace SvStl
 
 		return sValue;
 	}
-
-
-
-
-
+  
 	void GlobalPath::InitializePath()
 	{
 		if(false == m_IsInitilizedPath)
 		{
 			m_SVObserverBinFolder  = GetValueString(SVIMDirectorySectionTag,SVIMObserverBinPathTag, DefaultObserverBinPath,GetSVIMIniPath());
 			::WritePrivateProfileString( SVIMDirectorySectionTag, SVIMObserverBinPathTag,  m_SVObserverBinFolder.c_str() , GetSVIMIniPath() );
-
-
+  
 			m_SVObserverExternalToolFolder = GetValueString(SVIMDirectorySectionTag,SVIMObserverExternalToolPathTag,DefaultExternalToolPath,GetSVIMIniPath());
 			::WritePrivateProfileString( SVIMDirectorySectionTag, SVIMObserverExternalToolPathTag, m_SVObserverExternalToolFolder.c_str(), GetSVIMIniPath() );
-
-
+  
 			m_SVObserverRunFolder = GetValueString(SVIMDirectorySectionTag,SVIMSVObserverRunPathTag,DefaultRunFolder,GetSVIMIniPath());
 			::WritePrivateProfileString( SVIMDirectorySectionTag, SVIMSVObserverRunPathTag, m_SVObserverRunFolder.c_str(), GetSVIMIniPath() );
-
-
+  
 			m_TempFolder  =  GetValueString(SVIMDirectorySectionTag,SVIMSVObserverTempPath,DefaultTempFolder,GetSVIMIniPath());
 			::WritePrivateProfileString( SVIMDirectorySectionTag, SVIMSVObserverTempPath, m_TempFolder.c_str(), GetSVIMIniPath());
 
@@ -269,8 +222,28 @@ namespace SvStl
 			m_LastValidFolder =  GetValueString(SVIMDirectorySectionTag,SVIMSVObserverLastValidPath,DefaultLastValidFolder,GetSVIMIniPath());
 			::WritePrivateProfileString( SVIMDirectorySectionTag, SVIMSVObserverLastValidPath, m_LastValidFolder.c_str(), GetSVIMIniPath());
 
+			m_SvimRamDrive = GetValueString(SVIMDirectorySectionTag, SVIMRamDrive, DefaultRamDrive, GetSVIMIniPath());
+			::WritePrivateProfileString(SVIMDirectorySectionTag, SVIMSVObserverLastValidPath, m_LastValidFolder.c_str(), GetSVIMIniPath());
+
 			m_IsInitilizedPath = true;
 		}
 
 	}
+
+	std::string GlobalPath::AppendFilename(const std::string& rPath, LPCTSTR filename)
+	{
+		std::string Result{rPath};
+
+		if (nullptr != filename)
+		{
+			if (filename[0] != '\\' && Result.size() > 0 && Result[Result.size() - 1] != '\\')
+			{
+				Result.append("\\");
+			}
+			Result.append(filename);
+		}
+
+		return Result;
+	}
+
 } //namespace SvStl

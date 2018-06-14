@@ -76,27 +76,11 @@ SVIODoc::SVIODoc()
 : CDocument()
 {
 	m_pIOController = nullptr;
-
-	SVFileNameManagerClass::Instance().AddItem( &msvFileName );
 }
 
 SVIODoc::~SVIODoc()
 {
-	SVFileNameManagerClass::Instance().RemoveItem( &msvFileName );
-
 	m_pIOController = nullptr;
-}
-
-BOOL SVIODoc::OnNewDocument()
-{
-	BOOL bOk = CDocument::OnNewDocument();
-
-	if ( bOk )
-	{
-		SetPathName( "unknown.iod" );
-	}
-
-	return bOk;
 }
 
 void SVIODoc::OnCloseDocument()
@@ -144,19 +128,6 @@ void SVIODoc::Dump(CDumpContext& dc) const
 	CDocument::Dump(dc);
 }
 #endif //_DEBUG
-
-/////////////////////////////////////////////////////////////////////////////
-// SVIODoc Befehle
-
-void SVIODoc::SetPathName( LPCTSTR lpszPathName, BOOL bAddToMRU )
-{
-	msvFileName.SetFullFileName( lpszPathName );
-
-	SVFileNameManagerClass::Instance().LoadItem( &msvFileName );
-
-	// Never add to MRU file list! 
-	CDocument::SetPathName( msvFileName.GetFullFileName().c_str(), FALSE );
-}
 
 void SVIODoc::SetTitle(LPCTSTR lpszTitle)
 {
@@ -405,56 +376,6 @@ CFile* SVIODoc::GetFile( LPCTSTR lpszFileName, UINT nOpenFlags, CFileException* 
 	                              CFile::shareDenyNone;
 
 	return CDocument::GetFile( lpszFileName, nNewFlags, pError );
-}
-
-BOOL SVIODoc::OnOpenDocument(LPCTSTR lpszPathName)
-{
-	if ( lpszPathName )
-	{
-		msvFileName.SetFullFileName( lpszPathName );
-	}
-	else
-	{
-		msvFileName.SetFullFileName( GetPathName() );
-	}
-
-	BOOL bOk = SVFileNameManagerClass::Instance().LoadItem( &msvFileName );
-
-	if ( bOk )
-	{
-		bOk = CDocument::OnOpenDocument( msvFileName.GetFullFileName().c_str() );
-	}
-
-	return bOk;
-}
-
-BOOL SVIODoc::OnSaveDocument(LPCTSTR lpszPathName)
-{
-
-	msvFileName.SetFullFileName( lpszPathName );
-
-	if ( 0 != SvUl::CompareNoCase( msvFileName.GetPathName(),SVFileNameManagerClass::Instance().GetRunPathName() ) )
-	{
-		msvFileName.SetPathName( SVFileNameManagerClass::Instance().GetRunPathName().c_str() );
-	}
-
-	if ( 0 != SvUl::CompareNoCase( msvFileName.GetExtension(), std::string(_T(".iod") ) ) )
-	{
-		msvFileName.SetExtension( _T(".iod") );
-	}
-	
-	BOOL bOk = CDocument::OnSaveDocument( msvFileName.GetFullFileName().c_str() );
-	if ( bOk )
-	{
-		bOk = SVFileNameManagerClass::Instance().SaveItem( &msvFileName );
-
-		if ( bOk )
-		{
-			CDocument::SetPathName( msvFileName.GetFullFileName().c_str(), FALSE );
-		}
-	}
-
-	return bOk;
 }
 
 SVIOController* SVIODoc::GetIOController() const

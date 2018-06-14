@@ -19,6 +19,7 @@
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/GlobalPath.h"
+#include "Definitions/GlobalConst.h"
 #pragma endregion Includes
 
 SVFileNameClass::SVFileNameClass()
@@ -292,12 +293,12 @@ bool SVFileNameClass::SetFileType(DWORD dwFileType)
 		{
 			SetFileSelectDialogTitle( _T("Select Configuration File") );
 			SetFileSaveDialogTitle( _T( "Save Configuration File" ) );
-			SetDefaultFileExtension( _T(".svx") );
+			SetDefaultFileExtension(SvDef::cConfigExtension);
 			SetDefaultFileName( _T("") );
 			SetDefaultPathName( SvStl::GlobalPath::Inst().GetRunPath().c_str());
 			SetFileSelectFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileSaveFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
-			SetFileExtensionFilterList( _T( "SVResearch Configuration Files (*.svx)|*.svx||" ) );
+			SetFileExtensionFilterList( _T( "SVResearch Configuration Files (*.svz)|*.svz;*.svx||" ) );
 
 			bOk = true;
 			break;
@@ -620,15 +621,13 @@ bool SVFileNameClass::SaveFile()
 			{
 				std::string csNewFullFileName = GetPathName();
 				//! Make sure for configurations the extension is svx
-				SetExtension( _T( ".svx" ) );
+				SetExtension(SvDef::cConfigExtension);
 
 				bDone = (0 == SvUl::CompareNoCase(csNewFullFileName, SvStl::GlobalPath::Inst().GetRunPath() ) ) ||
 				        ( 0 == _access( GetFullFileName().c_str(), 0 ) );
 
 				if ( ! bDone )
 				{
-					csNewFullFileName += _T( "\\" );
-					csNewFullFileName += GetFileNameOnly();
 					csNewFullFileName += _T( "\\" );
 					csNewFullFileName += GetFileName();
 

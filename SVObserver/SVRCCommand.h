@@ -51,8 +51,8 @@ public:
 		SvRpc::ServerStreamContext::Ptr ctx);
 	
 private:
-	HRESULT GetFileNameFromFilePath(std::string& rFileName, const std::string& rFilePath);
-	HRESULT GetTempFileNameFromFilePath(std::string& rTempFileName, const std::string& rFilePath);
+	std::string GetFileNameFromFilePath(const std::string& rFilePath);
+	std::string GetTempFileNameFromFilePath(const std::string& rFilePath);
 	HRESULT ConvertStorageValueToProtobuf(const std::string& rName, const SVStorageResult& rStorage, SvPb::Value* pValue);
 	HRESULT ConvertStorageImageToProtobuf(const std::string& rName, const SVStorageResult& rStorage, SvPb::Value* pValue);
 	HRESULT AddValuesToStorageItems(const SvPb::SetItemsRequest& rRequest, SVNameStorageMap& rItems);

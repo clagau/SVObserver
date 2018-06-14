@@ -51,7 +51,7 @@ bool CheckCommandLineArgs(int argc, _TCHAR* argv[], LPCTSTR option)
 void StartWebServer(DWORD argc, LPTSTR  *argv)
 {
 	SvStl::MessageMgrStd Exception(SvStl::LogOnly);
-	Exception.setMessage(SVMSG_SVWebSrv_2_GENERAL_INFORMATIONAL, SvStl::Tid_Started, SvStl::SourceFileParams(StdMessageParams));
+	Exception.setMessage(SVMSG_SVGateway_2_GENERAL_INFORMATIONAL, SvStl::Tid_Started, SvStl::SourceFileParams(StdMessageParams));
 	try
 	{
 		SvOgw::Settings settings;
@@ -101,14 +101,14 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 	{
 		BOOST_LOG_TRIVIAL(error) << e.what();
 	}
-	Exception.setMessage(SVMSG_SVWebSrv_2_GENERAL_INFORMATIONAL, SvStl::Tid_Stopped, SvStl::SourceFileParams(StdMessageParams));
+	Exception.setMessage(SVMSG_SVGateway_2_GENERAL_INFORMATIONAL, SvStl::Tid_Stopped, SvStl::SourceFileParams(StdMessageParams));
 }
 
 int main(int argc, _TCHAR* argv[])
 {
 	int Result{0};
 	SvStl::MessageMgrStd Exception(SvStl::LogOnly);
-	Exception.setMessage(SVMSG_SVWebSrv_2_GENERAL_INFORMATIONAL, SvStl::Tid_Started, SvStl::SourceFileParams(StdMessageParams));
+	Exception.setMessage(SVMSG_SVGateway_2_GENERAL_INFORMATIONAL, SvStl::Tid_Started, SvStl::SourceFileParams(StdMessageParams));
 
 	if(CheckCommandLineArgs(argc, argv, _T("/cmd")))
 	{
@@ -139,6 +139,6 @@ int main(int argc, _TCHAR* argv[])
 		}
 	}
 
-	Exception.setMessage(SVMSG_SVWebSrv_2_GENERAL_INFORMATIONAL, SvStl::Tid_Stopped, SvStl::SourceFileParams(StdMessageParams));
+	Exception.setMessage(SVMSG_SVGateway_2_GENERAL_INFORMATIONAL, SvStl::Tid_Stopped, SvStl::SourceFileParams(StdMessageParams));
 	return Result;
 }

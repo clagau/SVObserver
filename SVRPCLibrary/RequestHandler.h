@@ -59,8 +59,8 @@ public:
 protected:
 	void onRequest(SvPenv::Envelope&& Envelope, Task<SvPenv::Envelope> Task) override
 	{
-		auto payload_type = Envelope.payload_type();
-		auto it = m_RequestHandler.find(payload_type);
+		auto payloadType = Envelope.payloadtype();
+		auto it = m_RequestHandler.find(payloadType);
 		if (it != m_RequestHandler.end())
 		{
 			(*it->second)(std::move(Envelope), std::move(Task));
@@ -73,14 +73,14 @@ protected:
 			return;
 		}
 
-		BOOST_LOG_TRIVIAL(warning) << "No request handler for payload type " << payload_type;
-		Task.error(build_error(SvPenv::ErrorCode::NotImplemented, "No handler for given payload type."));
+		BOOST_LOG_TRIVIAL(warning) << "No request handler for payload type " << payloadType;
+		Task.error(build_error(SvPenv::ErrorCode::notImplemented, "No handler for given payload type."));
 	}
 
 	void onStream(SvPenv::Envelope&& Envelope, Observer<SvPenv::Envelope> Observer, ServerStreamContext::Ptr Context) override
 	{
-		auto payload_type = Envelope.payload_type();
-		auto it = m_StreamHandler.find(payload_type);
+		auto payloadType = Envelope.payloadtype();
+		auto it = m_StreamHandler.find(payloadType);
 		if (it != m_StreamHandler.end())
 		{
 			(*it->second)(std::move(Envelope), std::move(Observer), Context);
@@ -93,8 +93,8 @@ protected:
 			return;
 		}
 
-		BOOST_LOG_TRIVIAL(warning) << "No request handler for payload type " << payload_type;
-		Observer.error(build_error(SvPenv::ErrorCode::NotImplemented, "No handler for given payload type."));
+		BOOST_LOG_TRIVIAL(warning) << "No request handler for payload type " << payloadType;
+		Observer.error(build_error(SvPenv::ErrorCode::notImplemented, "No handler for given payload type."));
 	}
 
 private:

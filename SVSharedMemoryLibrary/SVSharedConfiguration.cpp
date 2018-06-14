@@ -14,6 +14,7 @@
 //Moved to precompiled header: #include <winioctl.h>
 #include "SVSharedConfiguration.h"
 #include "SVShared.h"
+#include "SVStatusLibrary/GlobalPath.h"
 #pragma endregion Includes
 
 // Uncommnet to enable logging
@@ -41,7 +42,7 @@ namespace SvSml
 	// return only the Drive letter (do not append the root dir "\\")
 	const std::string SVSharedConfiguration::GetSharedDrive()
 	{
-		return "V:";
+		return SvStl::GlobalPath::Inst().GetRamDrive();
 	}
 
 	void SVSharedConfiguration::Log(const std::string & msg)

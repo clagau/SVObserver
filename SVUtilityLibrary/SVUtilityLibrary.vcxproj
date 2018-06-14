@@ -83,8 +83,13 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ArchiveExtractCallback.cpp" />
+    <ClCompile Include="ArchiveUpdateCallback.cpp" />
     <ClCompile Include="BitmapHelper.cpp" />
+    <ClCompile Include="InStreamWrapper.cpp" />
     <ClCompile Include="LoadDll.cpp" />
+    <ClCompile Include="OutStreamWrapper.cpp" />
+    <ClCompile Include="PropVariant.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -99,16 +104,28 @@
     <ClCompile Include="SVSafeArray.cpp" />
     <ClCompile Include="StringHelper.cpp" />
     <ClCompile Include="SVUtilityGlobals.cpp" />
-    <ClCompile Include="Unzip.cpp" />
-    <ClCompile Include="Zip.cpp" />
     <ClCompile Include="ZipHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="7zTypes.h" />
+    <ClInclude Include="ArchiveExtractCallback.h" />
+    <ClInclude Include="ArchiveUpdateCallback.h" />
     <ClInclude Include="BitmapHelper.h" />
+    <ClInclude Include="IArchive.h" />
+    <ClInclude Include="ICoder.h" />
+    <ClInclude Include="IDecl.h" />
+    <ClInclude Include="InStreamWrapper.h" />
+    <ClInclude Include="IPassword.h" />
+    <ClInclude Include="IProgress.h" />
+    <ClInclude Include="IStream.h" />
     <ClInclude Include="LoadDll.h" />
     <ClInclude Include="NameGuidList.h" />
     <ClInclude Include="NameSelectionList.h" />
     <ClInclude Include="NaturalStringCompare.h" />
+    <ClInclude Include="OutStreamWrapper.h" />
+    <ClInclude Include="ProgressCallback.h" />
+    <ClInclude Include="PropID.h" />
+    <ClInclude Include="PropVariant.h" />
     <ClInclude Include="SetBits.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StringToEnum.h" />
@@ -133,9 +150,7 @@
     <ClInclude Include="SVUtilityGlobals.h" />
     <ClInclude Include="SVVariantList.h" />
     <ClInclude Include="SVWinHandle.h" />
-    <ClInclude Include="Unzip.h" />
     <ClInclude Include="XMLWriter.h" />
-    <ClInclude Include="Zip.h" />
     <ClInclude Include="ZipHelper.h" />
   </ItemGroup>
   <ItemGroup>

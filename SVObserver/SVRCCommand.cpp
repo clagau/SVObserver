@@ -15,6 +15,7 @@
 #include "SVObserver.h"
 #include "SVVisionProcessorHelper.h"
 #include "SVRemoteControlConstants.h"
+#include "Definitions/GlobalConst.h"
 #include "Definitions/StringTypeDef.h"
 #include "Definitions/SVIMCommand.h"
 #include "Definitions/SVUserMessage.h"
@@ -26,6 +27,8 @@
 #include "SVProtoBuf/ConverterHelper.h"
 #include "InspectionCommands/CommandFunctionHelper.h"
 #pragma endregion Includes
+
+static const TCHAR* const DefaultConfigurationName = _T("Configuration");
 
 SVRCCommand::SVRCCommand()
 {
@@ -46,21 +49,15 @@ void SVRCCommand::GetVersion(const SvPb::GetSVObserverVersionRequest& rRequest, 
 	task.finish(std::move(Response));
 }
 
-
-
 void SVRCCommand::GetDeviceMode(const SvPb::GetDeviceModeRequest& rRequest, SvRpc::Task<SvPb::GetDeviceModeResponse> task)
 {
 	SvPb::GetDeviceModeResponse Response;
-	unsigned long Mode = SVIM_MODE_UNKNOWN;
 	SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-	SVVisionProcessorHelper::Instance().GetConfigurationMode(Mode);
+	unsigned long Mode = SVSVIMStateClass::getCurrentMode();
 	SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 	Response.set_mode(SvPb::SVIMMode_2_PbDeviceMode(Mode));
 	task.finish(std::move(Response));
 }
-
-
-
 
 void SVRCCommand::SetDeviceMode(const SvPb::SetDeviceModeRequest& rRequest, SvRpc::Task<SvPb::StandardResponse> task)
 {
@@ -71,7 +68,18 @@ void SVRCCommand::SetDeviceMode(const SvPb::SetDeviceModeRequest& rRequest, SvRp
 	if (SVIM_MODE_UNKNOWN != DesiredMode)
 	{
 		SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-		Status = SVVisionProcessorHelper::Instance().SetConfigurationMode(DesiredMode);
+
+		SVConfigurationObject* pConfig(nullptr);
+		SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+		if (nullptr != pConfig)
+		{
+			//Note this needs to be done using SendMessage due to this being a worker thread
+			Status = static_cast<HRESULT>(SendMessage(AfxGetApp()->m_pMainWnd->m_hWnd, SV_SET_MODE, 0, (LPARAM) DesiredMode));
+		}
+		else
+		{
+			Status = SVMSG_SVO_95_NO_CONFIGURATION_OBJECT;
+		}
 		SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 	}
 
@@ -140,30 +148,28 @@ void SVRCCommand::GetConfig(const SvPb::GetConfigRequest& rRequest, SvRpc::Task<
 
 		if (RemoteFilePath.empty())
 		{
-			RemoteFilePath = _T("Configuration.svp");
+			RemoteFilePath = DefaultConfigurationName;
+			RemoteFilePath += SvDef::cPackedConfigExtension;
 		}
-		std::string errText;
-		std::string TempFileName;
+		std::string TempFileName = GetTempFileNameFromFilePath(RemoteFilePath);
 
-		Result = GetTempFileNameFromFilePath(TempFileName, RemoteFilePath);
-
-		if (!TempFileName.empty())
+		//Old .pac file extension is no longer valid!
+		if (!TempFileName.empty() && std::string::npos == TempFileName.find(_T(".pac")))
 		{
 			try
 			{
 				SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-				Result = TheSVObserverApp.SavePackedConfiguration(TempFileName.c_str());
+				Result = TheSVObserverApp.SavePackedConfiguration(TempFileName);
 				SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 			}
 			catch (const SvStl::MessageContainer& rSvE)
 			{
 				Result = static_cast<HRESULT> (rSvE.getMessage().m_MessageCode);
-				errText = rSvE.what();
 			}
 		}
-		else if (S_OK == Result)
+		else
 		{
-			Result = E_UNEXPECTED;
+			Result = E_INVALIDARG;
 		}
 
 		std::vector<char> FileData;
@@ -183,11 +189,6 @@ void SVRCCommand::GetConfig(const SvPb::GetConfigRequest& rRequest, SvRpc::Task<
 			// Log Exception (in case no one else did...)
 			SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 			Exception.setMessage(Result, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
-
-			if (errText.empty())
-			{
-				errText = Exception.getMessageContainer().what();
-			}
 		}
 	}
 
@@ -222,18 +223,26 @@ void SVRCCommand::PutConfig(const SvPb::PutConfigRequest& rRequest, SvRpc::Task<
 
 		if (RemoteFilePath.empty())
 		{
-			RemoteFilePath = _T("Configuration.svp");
+			RemoteFilePath = DefaultConfigurationName;
+			RemoteFilePath += SvDef::cPackedConfigExtension;
 		}
 
-		std::string TempFileName;
-		Result = GetTempFileNameFromFilePath(TempFileName, RemoteFilePath);
-		if (0 != rRequest.filedata().length())
+		std::string TempFileName = GetTempFileNameFromFilePath(RemoteFilePath);
+		if (0 != rRequest.filedata().length() && !TempFileName.empty())
 		{
+			//For old .pac file format the first 4 bytes are always 1
+			DWORD FileVersion = (rRequest.filedata().length() > sizeof(DWORD)) ? *(reinterpret_cast<const DWORD*> (rRequest.filedata().c_str())) : 0;
+			if (1 == FileVersion)
+			{
+				//If old file format then make sure it has .pac extension
+				SvUl::searchAndReplace(TempFileName, SvDef::cPackedConfigExtension, _T(".pac"));
+			}
 			Result = SVEncodeDecodeUtilities::StringContentToFile(TempFileName, rRequest.filedata());
 			if (S_OK == Result)
 			{
 				SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
 				Result = TheSVObserverApp.LoadPackedConfiguration(TempFileName);
+				::remove(TempFileName.c_str());
 				SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 			}
 		}
@@ -316,13 +325,13 @@ void SVRCCommand::GetProductFilter(const SvPb::GetProductFilterRequest& rRequest
 		switch (ProductFilter)
 		{
 			case SvSml::SVProductFilterEnum::LastInspectedFilter:
-				Response.set_filter(SvPb::ProductFilterEnum::LastInspectedFilter);
+				Response.set_filter(SvPb::ProductFilterEnum::lastInspectedFilter);
 				break;
 			case SvSml::SVProductFilterEnum::LastRejectFilter:
-				Response.set_filter(SvPb::ProductFilterEnum::LastRejectFilter);
+				Response.set_filter(SvPb::ProductFilterEnum::lastRejectFilter);
 				break;
 			default:
-				Response.set_filter(SvPb::ProductFilterEnum::NoFilter);
+				Response.set_filter(SvPb::ProductFilterEnum::noFilter);
 				break;
 		}
 	}
@@ -353,10 +362,10 @@ void SVRCCommand::SetProductFilter(const SvPb::SetProductFilterRequest& rRequest
 			SvSml::SVProductFilterEnum ProductFilter {SvSml::SVProductFilterEnum::NoFilter};
 			switch (rRequest.filter())
 			{
-				case SvPb::ProductFilterEnum::LastInspectedFilter:
+				case SvPb::ProductFilterEnum::lastInspectedFilter:
 					ProductFilter = SvSml::SVProductFilterEnum::LastInspectedFilter;
 					break;
-				case SvPb::ProductFilterEnum::LastRejectFilter:
+				case SvPb::ProductFilterEnum::lastRejectFilter:
 					ProductFilter = SvSml::SVProductFilterEnum::LastRejectFilter;
 					break;
 				default:
@@ -679,14 +688,14 @@ void SVRCCommand::Shutdown(const SvPb::ShutdownRequest& rRequest, SvRpc::Task<Sv
 
 	HRESULT Result {S_OK};
 
-	long shutdownOption = rRequest.options();
+	long shutdownOption = rRequest.option();
 
 	try
 	{
 		//check if shutdown.exe exists. If not, the shutdown won't be called
 		std::ifstream dllfile("SVShutdown.exe", std::ios::binary);
 		CWnd* pWnd = AfxGetApp()->m_pMainWnd;
-		if (0 > shutdownOption && !dllfile && nullptr != pWnd)
+		if (0 > shutdownOption && !dllfile && nullptr == pWnd)
 		{
 			Result = E_FAIL;
 		}
@@ -724,8 +733,6 @@ void SVRCCommand::GetMonitorListProperties(const SvPb::GetMonitorListPropertiesR
 
 void SVRCCommand::GetMaxRejectDepth(const SvPb::GetMaxRejectDepthRequest& rRequest, SvRpc::Task<SvPb::GetMaxRejectDepthResponse> task)
 {
-	HRESULT Result {S_OK};
-
 	SvPb::GetMaxRejectDepthResponse Response;
 
 	Response.set_maxrejectdepth(RemoteMonitorNamedList::GetMaxRejectQueueDepth());
@@ -735,10 +742,7 @@ void SVRCCommand::GetMaxRejectDepth(const SvPb::GetMaxRejectDepthRequest& rReque
 void SVRCCommand::GetConfigReport(const SvPb::GetConfigReportRequest& rRequest, SvRpc::Task<SvPb::GetConfigReportResponse> task)
 {
 	HRESULT Result {S_OK};
-
 	SvPb::GetConfigReportResponse Response;
-
-
 	std::string Report;
 
 	SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
@@ -799,17 +803,17 @@ void SVRCCommand::QueryMonitorList(const SvPb::QueryMonitorListRequest& rRequest
 	SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
 	switch (rRequest.type())
 	{
-		case SvPb::ListType::ProductItem:
+		case SvPb::ListType::productItem:
 		{
 			Result = SVVisionProcessorHelper::Instance().QueryProductList(rRequest.listname(), Items);
 			break;
 		}
-		case SvPb::ListType::RejectCondition:
+		case SvPb::ListType::rejectCondition:
 		{
 			Result = SVVisionProcessorHelper::Instance().QueryRejectCondList(rRequest.listname(), Items);
 			break;
 		}
-		case SvPb::ListType::FailStatus:
+		case SvPb::ListType::failStatus:
 		{
 			Result = SVVisionProcessorHelper::Instance().QueryFailStatusList(rRequest.listname(), Items);
 			break;
@@ -897,74 +901,11 @@ void SVRCCommand::LoadConfig(const SvPb::LoadConfigRequest& rRequest, SvRpc::Tas
 {
 	HRESULT Result {S_OK};
 	SvPb::StandardResponse Response;
+	std::string ConfigFile = rRequest.filename();
 
-	if (!SVSVIMStateClass::CheckState(SV_STATE_TEST | SV_STATE_REGRESSION))
-	{
-
-		TCHAR szDrive[_MAX_DRIVE];
-		TCHAR szDir[_MAX_DIR];
-		TCHAR szFile[_MAX_FNAME];
-		TCHAR szExt[_MAX_EXT];
-		TCHAR szPath[_MAX_PATH];
-		bool bSuccess{false};
-
-		SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-		std::string ConfigFile = rRequest.filename();
-
-		_tsplitpath(ConfigFile.c_str(), szDrive, szDir, szFile, szExt);
-
-		if (!_tcscmp(szDrive, _T("")))
-		{ //just the file name, search the run directory for the filename
-			if (0 == _tcscmp(szExt, _T(".svx")) || 0 == _tcscmp(szExt, _T("")))
-			{
-				ConfigFile = SvStl::GlobalPath::Inst().GetRunPath() + _T("\\");
-				ConfigFile += szFile;
-				ConfigFile += _T(".svx");
-				//check for existence of file first
-				bSuccess = (0 == _access(ConfigFile.c_str(), 0));
-
-				if (bSuccess)
-				{
-					//global function to close config and clean up c:\run dir
-					GlobalRCCloseAndCleanConfiguration();
-				}
-			}
-			else
-			{
-				bSuccess = false;
-			}
-		}
-		else if (0 == _tcscmp(szExt, _T(".svx"))) //fully qualified path with svx extension
-		{
-			//check for existence of file first
-			bSuccess = (0 == _access(ConfigFile.c_str(), 0));
-
-			if (bSuccess)
-			{
-				//global function to close config and clean up c:\run dir
-				GlobalRCCloseAndCleanConfiguration();
-			}
-		}
-		else
-		{
-			bSuccess = false;
-		}
-
-		if (bSuccess)
-		{
-			bSuccess = GlobalRCOpenConfiguration(ConfigFile.c_str());
-		}
-		else
-		{
-			Result = SVMSG_CMDCOMCTRL_FILE_ERROR;
-		}
-
-		SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
-	}
-	else
-	{
-		Result = SVMSG_63_SVIM_IN_WRONG_MODE;
-	}
+	SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
+	Result = SVVisionProcessorHelper::Instance().LoadConfiguration(ConfigFile);
+	SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 
 	Response.set_hresult(Result);
 	task.finish(std::move(Response));
@@ -978,11 +919,9 @@ void SVRCCommand::RegisterNotificationStream(boost::asio::io_service* pIoService
 	SVVisionProcessorHelper::Instance().RegisterNotificationStream(pIoService, request, observer, ctx);
 }
 
-HRESULT SVRCCommand::GetFileNameFromFilePath(std::string& rFileName, const std::string& rFilePath)
+std::string SVRCCommand::GetFileNameFromFilePath(const std::string& rFilePath)
 {
-	HRESULT Result {S_OK};
-
-	rFileName.clear();
+	std::string Result;
 
 	if (!rFilePath.empty())
 	{
@@ -991,41 +930,26 @@ HRESULT SVRCCommand::GetFileNameFromFilePath(std::string& rFileName, const std::
 
 		_splitpath(rFilePath.c_str(), nullptr, nullptr, fname, ext);
 
-		rFileName += fname;
-		rFileName += ext;
-	}
-	else
-	{
-		Result = E_INVALIDARG;
+		Result = fname;
+		Result += ext;
 	}
 
 	return Result;
 }
 
-HRESULT SVRCCommand::GetTempFileNameFromFilePath(std::string& rTempFileName, const std::string& rFilePath)
+std::string SVRCCommand::GetTempFileNameFromFilePath(const std::string& rFilePath)
 {
-	std::string FileName;
-	HRESULT l_Status = GetFileNameFromFilePath(FileName, rFilePath);
+	std::string Result = GetFileNameFromFilePath(rFilePath);
 
-	rTempFileName.clear();
-
-	if (!FileName.empty())
+	if (!Result.empty())
 	{
 		__int64 TimeStamp = static_cast<__int64>(SvTl::GetTimeStamp());
+ 		std::string Temp = SvUl::Format("%I64d-%s", TimeStamp, Result.c_str());
 
-		std::string TempString = SvUl::Format("%I64d", TimeStamp);
-
-		rTempFileName += "V:\\";
-		rTempFileName += TempString.c_str();
-		rTempFileName += "-";
-		rTempFileName += FileName;
-	}
-	else
-	{
-		l_Status = E_INVALIDARG;
+		Result = SvStl::GlobalPath::Inst().GetRamDrive(Temp.c_str());
 	}
 
-	return l_Status;
+	return Result;
 }
 
 HRESULT SVRCCommand::ConvertStorageValueToProtobuf(const std::string& rName, const SVStorageResult& rStorage, SvPb::Value* pValue)
@@ -1130,15 +1054,15 @@ HRESULT SVRCCommand::AddImagesToStorageItems(const SvPb::SetItemsRequest& rReque
 			const std::string& rContent = rImage.item().bytesval();
 			std::string FileName {Name};
 			FileName += _T(".bmp");
-			Result = GetTempFileNameFromFilePath(FilePath, FileName);
-			if (S_OK == Result)
+			FilePath = GetTempFileNameFromFilePath(FileName);
+			if (!FilePath.empty())
 			{
 				Result = SVEncodeDecodeUtilities::StringContentToFile(FilePath, rContent);
 			}
 		}
 		else if (rImage.item().type() == VT_BSTR)
 		{
-			FilePath = _T("V:\\") + rImage.item().strval();
+			FilePath = SvStl::GlobalPath::Inst().GetRamDrive(rImage.item().strval().c_str());
 		}
 
 		if (S_OK == Result)

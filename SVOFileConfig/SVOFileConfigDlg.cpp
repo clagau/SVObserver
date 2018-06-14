@@ -211,7 +211,7 @@ void SVOFileConfigDlg::OnButtonloadSvx()
 
 	while (1)
 	{
-		CFileDialog dlg( TRUE, _T(".svx"), NULL, 
+		CFileDialog dlg( TRUE, SvDef::cConfigExtension, NULL, 
 										 OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | 
 										 OFN_ENABLESIZING | OFN_EXPLORER,
 										 _T("SVObserver Environment Configuration Files (*.svx)|*.svx||"), this );
@@ -253,7 +253,7 @@ void SVOFileConfigDlg::OnButtonloadSvx()
 void SVOFileConfigDlg::OnButtonsaveSvx() 
 {
 	
-	CFileDialog dlg( TRUE, _T(".svx"), NULL, 
+	CFileDialog dlg( TRUE, SvDef::cConfigExtension, NULL, 
 		OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | 
 		OFN_ENABLESIZING | OFN_EXPLORER,
 		_T("SVObserver Environment Configuration Files (*.svx)|*.svx||"), this );

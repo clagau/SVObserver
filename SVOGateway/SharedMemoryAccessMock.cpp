@@ -88,7 +88,7 @@ void SharedMemoryAccessMock::GetProduct(const SvPb::GetProductRequest& request, 
 void SharedMemoryAccessMock::GetFailstatus(const SvPb::GetFailStatusRequest&, SvRpc::Task<SvPb::GetFailStatusResponse> task)
 {
 	SvPenv::Error err;
-	err.set_error_code(SvPenv::ErrorCode::NotImplemented);
+	err.set_errorcode(SvPenv::ErrorCode::notImplemented);
 	task.error(err);
 }
 
@@ -111,7 +111,7 @@ void SharedMemoryAccessMock::GetImageStreamFromId(const SvPb::GetImageStreamFrom
 void SharedMemoryAccessMock::GetTriggerItems(const SvPb::GetTriggerItemsRequest&, SvRpc::Task<SvPb::GetTriggerItemsResponse> task)
 {
 	SvPenv::Error err;
-	err.set_error_code(SvPenv::ErrorCode::NotImplemented);
+	err.set_errorcode(SvPenv::ErrorCode::notImplemented);
 	task.error(err);
 }
 
@@ -127,7 +127,7 @@ void SharedMemoryAccessMock::QueryListName(const SvPb::QueryListNameRequest&, Sv
 void SharedMemoryAccessMock::QueryListItem(const SvPb::QueryListItemRequest&, SvRpc::Task<SvPb::QueryListItemResponse> task)
 {
 	SvPenv::Error err;
-	err.set_error_code(SvPenv::ErrorCode::NotImplemented);
+	err.set_errorcode(SvPenv::ErrorCode::notImplemented);
 	task.error(err);
 }
 
@@ -170,17 +170,17 @@ void SharedMemoryAccessMock::getImageById(SvPb::Image& img, const SvPb::ImageId&
 		case 0:
 			img.set_width(std::get<1>(getBitmap(200)));
 			img.set_height(std::get<2>(getBitmap(200)));
-			*(img.mutable_rgb_data()) = std::get<0>(getBitmap(200, rotated));
+			*(img.mutable_rgbdata()) = std::get<0>(getBitmap(200, rotated));
 			break;
 		case 1:
 			img.set_width(std::get<1>(getBitmap(300)));
 			img.set_height(std::get<2>(getBitmap(300)));
-			*(img.mutable_rgb_data()) = std::get<0>(getBitmap(300, rotated));
+			*(img.mutable_rgbdata()) = std::get<0>(getBitmap(300, rotated));
 			break;
 		case 2:
 			img.set_width(std::get<1>(getBitmap(2048)));
 			img.set_height(std::get<2>(getBitmap(2048)));
-			*(img.mutable_rgb_data()) = std::get<0>(getBitmap(200, rotated));
+			*(img.mutable_rgbdata()) = std::get<0>(getBitmap(200, rotated));
 			break;
 	}
 }

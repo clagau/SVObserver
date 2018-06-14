@@ -18,11 +18,13 @@
 #include "Definitions/SVIMCommand.h"
 #include "SVSystemLibrary/SVVersionInfo.h"
 
+#include "RemoteCommand.h"
 #include "SVConfigurationObject.h"
 #include "SVConfigXMLPrint.h"
 #include "SVGlobal.h"
 #include "SVObserver.h"
 #include "SVRemoteControlConstants.h"
+#include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVValueObjectLibrary/BasicValueObject.h"
 #include "RemoteMonitorListHelper.h"
@@ -74,177 +76,73 @@ SVVisionProcessorHelper::~SVVisionProcessorHelper()
 }
 #pragma endregion Constructor
 
-HRESULT SVVisionProcessorHelper::GetVersion(unsigned long& rVersion) const
+HRESULT SVVisionProcessorHelper::LoadConfiguration(std::string& rFileName) const
 {
-	HRESULT l_Status = S_OK;
+	HRESULT Result{S_OK};
 
-	rVersion = SvSyl::SVVersionInfo::GetLongVersion();
-
-	return l_Status;
-}
-
-HRESULT SVVisionProcessorHelper::GetVersion(std::string& rVersion) const
-{
-	HRESULT l_Status = S_OK;
-
-	rVersion = SvSyl::SVVersionInfo::GetShortTitleVersion();
-
-	return l_Status;
-}
-
-HRESULT SVVisionProcessorHelper::GetState(unsigned long& rState) const
-{
-	HRESULT l_Status = S_OK;
-
-	rState = 0;
-
-	if (SVSVIMStateClass::CheckState(SV_STATE_READY))
+	if (!SVSVIMStateClass::CheckState(SV_STATE_TEST | SV_STATE_REGRESSION))
 	{
-		rState |= SvDef::SVIM_CONFIG_LOADED;
-	}
+		TCHAR szDrive[_MAX_DRIVE];
+		TCHAR szDir[_MAX_DIR];
+		TCHAR szFile[_MAX_FNAME];
+		TCHAR szExt[_MAX_EXT];
+		bool bSuccess {false};
 
-	if (SVSVIMStateClass::CheckState(SV_STATE_SAVING))
-	{
-		rState |= SvDef::SVIM_SAVING_CONFIG;
-	}
+		_tsplitpath(rFileName.c_str(), szDrive, szDir, szFile, szExt);
+		
+		std::string ConfigFile{rFileName};
+		if (!_tcscmp(szDrive, _T("")))
+		{ //just the file name, search the run directory for the filename
+			if (0 == _tcscmp(szExt, SvDef::cConfigExtension) || 0 == _tcscmp(szExt, _T("")))
+			{
+				ConfigFile = SvStl::GlobalPath::Inst().GetRunPath() + _T("\\");
+				ConfigFile += szFile;
+				ConfigFile += SvDef::cConfigExtension;
+				//check for existence of file first
+				bSuccess = (0 == _access(ConfigFile.c_str(), 0));
 
-	if (SVSVIMStateClass::CheckState(SV_STATE_LOADING))
-	{
-		rState |= SvDef::SVIM_CONFIG_LOADING;
-	}
-
-	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
-	{
-		rState |= SvDef::SVIM_ONLINE;
-
-		if (!SVSVIMStateClass::CheckState(SV_STATE_TEST)) // testing (but not regression testing) sets the running flag
-		{
-			rState |= SvDef::SVIM_RUNNING;
+				if (bSuccess)
+				{
+					//global function to close config and clean up c:\run dir
+					GlobalRCCloseAndCleanConfiguration();
+				}
+			}
+			else
+			{
+				bSuccess = false;
+			}
 		}
-	}
+		else if (0 == _tcscmp(szExt, SvDef::cConfigExtension) || 0 == _tcscmp(szExt, SvDef::cPackedConfigExtension))
+		{
+			//check for existence of file first
+			bSuccess = (0 == _access(ConfigFile.c_str(), 0));
 
-	if (SVSVIMStateClass::CheckState(SV_STATE_REGRESSION))
-	{
-		rState |= SvDef::SVIM_REGRESSION_TEST;
-	}
-	else if (SVSVIMStateClass::CheckState(SV_STATE_TEST))// can be testing without regression testing, but can't be regression testing without testing
-	{
-		rState |= SvDef::SVIM_RUNNING_TEST;
-	}
+			if (bSuccess)
+			{
+				//global function to close config and clean up c:\run dir
+				GlobalRCCloseAndCleanConfiguration();
+			}
+		}
+		else
+		{
+			bSuccess = false;
+		}
 
-	if (SVSVIMStateClass::CheckState(SV_STATE_EDIT))
-	{
-		rState |= SvDef::SVIM_SETUPMODE;
-	}
-
-	if (SVSVIMStateClass::CheckState(SV_STATE_CLOSING))
-	{
-		rState |= SvDef::SVIM_STOPPING;
-	}
-
-	if (SVSVIMStateClass::CheckState(SV_STATE_START_PENDING))
-	{
-		rState |= SvDef::SVIM_ONLINE_PENDING;
-	}
-
-	if (SVSVIMStateClass::CheckState(SV_STATE_RAID_FAILURE))
-	{
-		rState |= SvDef::SVIM_RAID_FAILURE;
-	}
-
-	return l_Status;
-}
-
-HRESULT SVVisionProcessorHelper::GetOfflineCount(unsigned long& rCount) const
-{
-	HRESULT l_Status = S_OK;
-
-	rCount = TheSVObserverApp.getOfflineCount();
-
-	return l_Status;
-}
-
-HRESULT SVVisionProcessorHelper::LoadConfiguration(const std::string& rPackFileName)
-{
-	DWORD notAllowedStates = SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING |
-		SV_STATE_CREATING | SV_STATE_LOADING | SV_STATE_SAVING | SV_STATE_CLOSING;
-
-	if (SVSVIMStateClass::CheckState(notAllowedStates))
-	{
-		return SVMSG_SVO_ACCESS_DENIED;
-	}
-
-	// Check if we are in an allowed state first
-	// Not allowed to perform if in Regression or Test
-	if (SVSVIMStateClass::CheckState(SV_STATE_TEST | SV_STATE_REGRESSION))
-	{
-		return SVMSG_63_SVIM_IN_WRONG_MODE;
-	}
-	HRESULT l_Status = TheSVObserverApp.LoadPackedConfiguration(rPackFileName.c_str());
-
-	return l_Status;
-}
-
-HRESULT SVVisionProcessorHelper::SaveConfiguration(const std::string& rPackFileName) const
-{
-	DWORD notAllowedStates = SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING |
-		SV_STATE_CREATING | SV_STATE_LOADING | SV_STATE_SAVING | SV_STATE_CLOSING;
-
-	if (SVSVIMStateClass::CheckState(notAllowedStates))
-	{
-		return SVMSG_SVO_ACCESS_DENIED;
-	}
-
-	SVConfigurationObject* pConfig = nullptr;
-	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-
-	if (nullptr == pConfig || !pConfig->IsConfigurationLoaded())
-	{
-		return SVMSG_CONFIGURATION_NOT_LOADED;
-	}
-	HRESULT l_Status = TheSVObserverApp.SavePackedConfiguration(rPackFileName.c_str());
-	return l_Status;
-}
-
-HRESULT SVVisionProcessorHelper::GetConfigurationMode(unsigned long& rMode) const
-{
-	HRESULT l_Status = S_OK;
-
-	rMode = SVSVIMStateClass::getCurrentMode();
-
-	return l_Status;
-}
-
-HRESULT SVVisionProcessorHelper::SetConfigurationMode(unsigned long p_Mode)
-{
-	HRESULT l_Status = S_OK;
-
-	// Check if we are in an allowed state first
-	// Not allowed to transition to or from Regression or Test
-	if (p_Mode & (SV_STATE_TEST | SV_STATE_REGRESSION))
-	{
-		return SVMSG_64_SVIM_MODE_NOT_REMOTELY_SETABLE;
-	}
-	if (SVSVIMStateClass::CheckState(SV_STATE_TEST | SV_STATE_REGRESSION))
-	{
-		return SVMSG_63_SVIM_IN_WRONG_MODE;
-	}
-
-	SVConfigurationObject* pConfig(nullptr);
-
-	l_Status = SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-
-	if (nullptr != pConfig)
-	{
-		//Note this needs to be done using SendMessage due to this being a worker thread
-		l_Status = static_cast<HRESULT>(SendMessage(AfxGetApp()->m_pMainWnd->m_hWnd, SV_SET_MODE, 0, (LPARAM)p_Mode));
+		if (bSuccess)
+		{
+			GlobalRCOpenConfiguration(ConfigFile.c_str());
+		}
+		else
+		{
+			Result = SVMSG_CMDCOMCTRL_FILE_ERROR;
+		}
 	}
 	else
 	{
-		l_Status = SVMSG_SVO_95_NO_CONFIGURATION_OBJECT;
+		Result = SVMSG_63_SVIM_IN_WRONG_MODE;
 	}
 
-	return l_Status;
+	return Result;
 }
 
 HRESULT SVVisionProcessorHelper::GetConfigurationPrintReport(std::string& rReport) const

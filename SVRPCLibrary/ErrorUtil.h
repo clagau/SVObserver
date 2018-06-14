@@ -19,7 +19,7 @@ namespace std
 static std::string to_string(const SvPenv::Error& err)
 {
 	std::stringstream ss;
-	ss << "Error " << err.error_code() << " " << SvPenv::ErrorCode_Name(err.error_code());
+	ss << "Error " << err.errorcode() << " " << SvPenv::ErrorCode_Name(err.errorcode());
 	if (!err.message().empty())
 	{
 		ss << ": " << err.message();
@@ -44,7 +44,7 @@ static std::exception_ptr errorToExceptionPtr(const SvPenv::Error& err)
 static SvPenv::Error build_error(SvPenv::ErrorCode ErrorCode, const char* pMsg = nullptr)
 {
 	SvPenv::Error Result;
-	Result.set_error_code(ErrorCode);
+	Result.set_errorcode(ErrorCode);
 	if (nullptr != pMsg)
 	{
 		Result.set_message(pMsg);

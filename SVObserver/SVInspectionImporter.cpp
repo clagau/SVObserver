@@ -337,8 +337,8 @@ HRESULT LoadInspectionXml(const std::string& filename, const std::string& zipFil
 		rProgress.UpdateText(_T("Importing Dependent Files..."));
 		rProgress.UpdateProgress(++currentOp, numOperations);
 
-		SvDef::StringSet Files;
-		ZipHelper::unzipAll( zipFilename, std::string( SvStl::GlobalPath::Inst().GetRunPath().c_str() ), Files );
+		SvDef::StringVector Files;
+		SvUl::unzipAll( zipFilename, SvStl::GlobalPath::Inst().GetRunPath(), Files );
 
 		rProgress.UpdateText(_T("Importing PPQ Inputs..."));
 		rProgress.UpdateProgress(++currentOp, numOperations);
@@ -448,11 +448,11 @@ HRESULT LoadInspectionXml(const std::string& filename, const std::string& zipFil
 
 HRESULT SVInspectionImporter::Import(const std::string& filename, const std::string& inspectionName, const std::string& cameraName, SVImportedInspectionInfo& inspectionInfo, SvDef::GlobalConflictPairVector& rGlobalConflicts, SVIProgress& rProgress)
 {
-	HRESULT hr = S_OK;
+	HRESULT result = S_OK;
 	::CoInitialize(nullptr);
 
-	std::string inFilename = filename;
-	std::string zipFilename = GetFilenameWithoutExt(inFilename);
+	std::string inFileName = filename;
+	std::string zipFilename = GetFilenameWithoutExt(inFileName);
 	zipFilename += scDependentsZipExt;
 
 	std::string outFilename = SvStl::GlobalPath::Inst().GetRunPath().c_str();
@@ -464,31 +464,37 @@ HRESULT SVInspectionImporter::Import(const std::string& filename, const std::str
 	int numOperations = 10;
 	rProgress.UpdateProgress(++currentOp, numOperations);
 
-	SvDef::StringSet list;
+	SvDef::StringVector FileList;
 
 	// Deal with single zip file
-	if (isExportFile(inFilename))
+	if (isExportFile(inFileName))
 	{
-		ZipHelper::unzipAll( inFilename, std::string( SvStl::GlobalPath::Inst().GetRunPath().c_str() ), list );
-		for (SvDef::StringSet::const_iterator it = list.begin();it != list.end();++it)
+		if (SvUl::unzipAll(inFileName, SvStl::GlobalPath::Inst().GetRunPath(), FileList))
 		{
-			if (isXMLFile(*it))
+			for (const auto rEntry : FileList)
 			{
-				inFilename = (*it);
+				if (isXMLFile(rEntry))
+				{
+					inFileName = rEntry;
+				}
+				else if (isZipFile(rEntry))
+				{
+					zipFilename = rEntry;
+				}
 			}
-			else if (isZipFile(*it))
-			{
-				zipFilename = (*it);
-			}
+		}
+		else
+		{
+			result = E_FAIL;
 		}
 	}
 	rProgress.UpdateText(_T("Transforming Inspection..."));
 
-	int rc = LaunchTransform(inFilename.c_str(), outFilename.c_str(), inspectionName.c_str());
+	int rc = LaunchTransform(inFileName.c_str(), outFilename.c_str(), inspectionName.c_str());
 	if (rc == 0)
 	{
 		rProgress.UpdateProgress(++currentOp, numOperations);
-		hr = LoadInspectionXml(outFilename, zipFilename, inspectionName, cameraName, inspectionInfo, rGlobalConflicts, rProgress, currentOp, numOperations);
+		result = LoadInspectionXml(outFilename, zipFilename, inspectionName, cameraName, inspectionInfo, rGlobalConflicts, rProgress, currentOp, numOperations);
 		//
 		::DeleteFile(outFilename.c_str());
 
@@ -497,65 +503,63 @@ HRESULT SVInspectionImporter::Import(const std::string& filename, const std::str
 	}
 	else
 	{
-		hr = -SvStl::Err_15017;
+		result = -SvStl::Err_15017;
 	}
 
-	// Deal with single zip file..
-	if (0 != list.size())
+	// cleanup
+	for (const auto rEntry : FileList)
 	{
-		// cleanup
-		for (SvDef::StringSet::const_iterator it = list.begin();it != list.end();++it)
-		{
-			::DeleteFile(it->c_str());
-		}
+		::DeleteFile(rEntry.c_str());
 	}
 	::CoUninitialize();
-	return hr;
+	return result;
 }
 
 
 
 HRESULT SVInspectionImporter::GetProperties(const std::string& rFileName, long& rNewDisableMethod, long& rEnableAuxExtents, unsigned long& rVersionNumber)
 {
-	HRESULT hr = S_OK;
+	HRESULT Result = S_OK;
 	::CoInitialize(nullptr);
 
 	std::string inFileName = rFileName;
 	std::string zipFilename = GetFilenameWithoutExt(rFileName);
 	zipFilename += scDependentsZipExt;
 
-	SvDef::StringSet list;
+	SvDef::StringVector FileList;
 
 	// Deal with single zip file
 	if (isExportFile(inFileName))
 	{
-		ZipHelper::unzipAll( inFileName, std::string( SvStl::GlobalPath::Inst().GetRunPath().c_str() ), list );
-		for (SvDef::StringSet::const_iterator it = list.begin();it != list.end();++it)
+		if(SvUl::unzipAll( inFileName, SvStl::GlobalPath::Inst().GetRunPath(), FileList))
 		{
-			if (isXMLFile(*it))
+			for (const auto rFile : FileList)
 			{
-				inFileName = (*it);
+				if (isXMLFile(rFile))
+				{
+					inFileName = rFile;
+				}
+				else if (isZipFile(rFile))
+				{
+					zipFilename = rFile;
+				}
 			}
-			else if (isZipFile(*it))
-			{
-				zipFilename = (*it);
-			}
+		}
+		else
+		{
+			Result = E_FAIL;
 		}
 	}
 	
 	SvXml::SaxExtractPropertiesHandler   SaxExtractHandler;
-	hr =   SaxExtractHandler.ExtractProperties(inFileName.c_str(), rNewDisableMethod, rEnableAuxExtents, rVersionNumber);
+	Result =   SaxExtractHandler.ExtractProperties(inFileName.c_str(), rNewDisableMethod, rEnableAuxExtents, rVersionNumber);
 
-	// Deal with single zip file..
-	if( 0 != list.size())
+	// cleanup
+	for (const auto rEntry : FileList)
 	{
-		// cleanup
-		for (SvDef::StringSet::const_iterator it = list.begin();it != list.end();++it)
-		{
-			::DeleteFile(it->c_str());
-		}
+		::DeleteFile(rEntry.c_str());
 	}
 	::CoUninitialize();
-	return hr;
+	return Result;
 }
 

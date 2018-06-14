@@ -24,6 +24,7 @@
 #include "SVStatusLibrary/GlobalPath.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "SVUtilityLibrary/ZipHelper.h"
 #include "RootObject.h"
 #pragma endregion Includes
 
@@ -96,22 +97,28 @@ void ExtrasEngine::ExecuteAutoSaveIfAppropriate(bool always)
 
 	SvStl::GlobalPath& rGlobalPath = SvStl::GlobalPath::Inst();
 	//ensure that the autosave directory exists: create it step by step
-	CreateDirectory(rGlobalPath.GetSecondObserverPath().c_str(), nullptr); //this will fail if the directory already exists, but so what?
+	::CreateDirectory(rGlobalPath.GetSecondObserverPath().c_str(), nullptr); //this will fail if the directory already exists, but so what?
 	std::string  AutosavePath = rGlobalPath.GetAutoSaveRootPath();
-	CreateDirectory(AutosavePath.c_str(), nullptr); //this will fail if the directory already exists, but so what?
+	::CreateDirectory(AutosavePath.c_str(), nullptr); //this will fail if the directory already exists, but so what?
 
-	//now move the temporary directories around (if they exist already)
-	
-	moveContainedDirectory(AutosavePath.c_str(), rGlobalPath.GetAutosaveTempDirectory2Name().c_str(), rGlobalPath.GetAutosaveTempDirectory3Name().c_str());
-	moveContainedDirectory(AutosavePath.c_str(), rGlobalPath.GetAutosaveTempDirectory1Name().c_str(), rGlobalPath.GetAutosaveTempDirectory2Name().c_str());
+	//now move the temporary files around (if they exist already)
+	std::string Temp1Name {rGlobalPath.GetAutoSaveRootPath(rGlobalPath.GetAutosaveTemp1FileName().c_str())};
+	std::string Temp2Name {rGlobalPath.GetAutoSaveRootPath(rGlobalPath.GetAutosaveTemp2FileName().c_str())};
+	std::string Temp3Name {rGlobalPath.GetAutoSaveRootPath(rGlobalPath.GetAutosaveTemp3FileName().c_str())};
 
-	CreateDirectory(SvStl::GlobalPath::Inst().GetAutoSaveTempPath().c_str(), nullptr);
+	::remove(Temp3Name.c_str());
+	::MoveFile(Temp2Name.c_str(), Temp3Name.c_str());
+	::MoveFile(Temp1Name.c_str(), Temp2Name.c_str());
+
+	CreateDirectory(rGlobalPath.GetAutoSaveTempPath().c_str(), nullptr);
 
 	//save the current configuration in the AutoSave Directory
-	TheSVObserverApp.fileSaveAsSVX(_T(""), true);
+	TheSVObserverApp.fileSaveAsSVX(_T(""), false, true);
 
-	moveContainedDirectory(AutosavePath.c_str(), rGlobalPath.GetAutosaveTempDirectoryName().c_str(), rGlobalPath.GetAutosaveTempDirectory1Name().c_str());
+	SvDef::StringVector fileNameList = findFiles(rGlobalPath.GetAutoSaveTempPath().c_str());
 
+	SvUl::makeZipFile(Temp1Name, fileNameList, rGlobalPath.GetAutoSaveTempPath(), true);
+ 
 	autosavePopupDialog.DestroyWindow();
 }
 

@@ -209,7 +209,6 @@ protected:
 	void AsyncThreadFunc( bool& p_rWaitForEvent );
 
 	HRESULT SetControlServer( SVCommandStatus& p_rStatus );
-	HRESULT SetObserverServer( SVCommandStatus& p_rStatus );
 
 private:
 	void NotifyClient( _variant_t& p_Data, SVNotificationTypesEnum p_Type );

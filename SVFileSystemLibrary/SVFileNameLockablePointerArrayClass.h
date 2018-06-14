@@ -13,7 +13,7 @@
 
 //Moved to precompiled header: #include <vector>
 #include "SVSystemLibrary/SVLockableClass.h"
-
+#include "Definitions/StringTypeDef.h"
 
 class SVFileNameClass;
 
@@ -62,9 +62,8 @@ public:
 
 	void clear() { m_FileNamePtrVector.clear(); };
 
-	//This operator will create a semicolon separated string 
-	//list of file names contained within the array.
-	LPCTSTR GetFileNameList() const;
+	//list of file names contained within the vector.
+	SvDef::StringVector GetFileNameList() const;
 
 	//This operator locks the object.
 	bool Lock();
@@ -79,8 +78,4 @@ private:
 
 	//This attribute is the shared lock for the object.
 	SvSyl::SVLockableClass mcmArrayLock;
-
-	//This is a temporary storage container for the string 
-	//defining the list of file names contained in the array.
-	mutable std::string mcsFileList;
 };

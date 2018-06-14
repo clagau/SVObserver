@@ -388,12 +388,12 @@ HRESULT SVImageObject::FetchImage()
 			auto resp = SvWsl::runRequest(*(m_pClientService->get()), &SvWsl::SVRCClientService::GetImageFromId, std::move(request)).get();
 
 
-			if (resp.imagedata().rgb_data().length() > 0)
+			if (resp.imagedata().rgbdata().length() > 0)
 			{
-				BYTE *buff = new BYTE[resp.imagedata().rgb_data().length()];
-				memcpy(buff, resp.imagedata().rgb_data().c_str(), resp.imagedata().rgb_data().length());
+				BYTE *buff = new BYTE[resp.imagedata().rgbdata().length()];
+				memcpy(buff, resp.imagedata().rgbdata().c_str(), resp.imagedata().rgbdata().length());
 				boost::shared_array<BYTE> b(buff);
-				SetLen((ULONG)resp.imagedata().rgb_data().length());
+				SetLen((ULONG)resp.imagedata().rgbdata().length());
 				SetDIB(b);
 				hr = S_OK;
 			}

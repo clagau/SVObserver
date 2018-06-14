@@ -15,7 +15,7 @@
 
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
-
+#include "SVStatusLibrary/GlobalPath.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVInfoStructs.h"
 #include "SVInspectionProcess.h"
@@ -132,7 +132,8 @@ HRESULT SVCommandInspectionGetItems::UpdateResultsWithImageData(const std::strin
 
 		if (nullptr != ImageHandlePtr)
 		{
-			std::string FileName = SvUl::Format(_T("V:\\%ld-%s.bmp"), TriggerCount, pImage->GetUniqueObjectID().ToString().c_str());
+			std::string Temp = SvUl::Format(_T("%ld-%s.bmp"), TriggerCount, pImage->GetUniqueObjectID().ToString().c_str());
+			std::string FileName = SvStl::GlobalPath::Inst().GetRamDrive(Temp.c_str());
 
 			GetStatus = SVImageProcessingClass::SaveImageBuffer(FileName.c_str(),SVMatroxFileTypeEnum::SVFileBitmap , ImageHandlePtr);
 

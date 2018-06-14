@@ -23,11 +23,6 @@ public:
 	virtual ~SVPackedFile();
 
 	const std::string& getConfigFilePath() const { return m_configFilePath; };
-	//Adds the file(s) specified by szFile to the packed file 
-	//specified by PackedFileName. The szFile parameter may 
-	//specify one file or may contain wildcard characters to 
-	//specify multiple files.
-	bool PackFiles( LPCTSTR Files, LPCTSTR PackedFileName );
 
 	//Extracts the files contained in szPackedFile.
 	bool UnPackFiles( LPCTSTR PackedFileName, LPCTSTR UnPackDir = nullptr );

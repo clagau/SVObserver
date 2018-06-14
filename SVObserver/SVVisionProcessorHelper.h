@@ -72,19 +72,7 @@ public:
 
 	virtual ~SVVisionProcessorHelper();
 
-	HRESULT GetVersion(unsigned long& rVersion) const;
-	HRESULT GetVersion(std::string& rVersion) const;
-
-	HRESULT GetState(unsigned long& rState) const;
-
-	HRESULT GetOfflineCount(unsigned long& rCount) const;
-
-	HRESULT LoadConfiguration(const std::string& rPackFileName);
-
-	HRESULT SaveConfiguration(const std::string& rPackFileName) const;
-
-	HRESULT GetConfigurationMode(unsigned long& rMode) const;
-	HRESULT SetConfigurationMode(unsigned long Mode);
+	HRESULT LoadConfiguration(std::string& rFileName) const;
 
 	HRESULT GetConfigurationPrintReport(std::string& rReport) const;
 

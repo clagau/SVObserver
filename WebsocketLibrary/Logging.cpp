@@ -197,17 +197,17 @@ private:
 			case trivial::trace:
 			case trivial::debug:
 			case trivial::info:
-				return SVMSG_SVWebSrv_2_GENERAL_INFORMATIONAL;
+				return SVMSG_SVGateway_2_GENERAL_INFORMATIONAL;
 
 			case trivial::warning:
-				return SVMSG_SVWebSrv_1_GENERAL_WARNING;
+				return SVMSG_SVGateway_1_GENERAL_WARNING;
 
 			case trivial::error:
 			case trivial::fatal:
-				return SVMSG_SVWebSrv_0_GENERAL_ERROR;
+				return SVMSG_SVGateway_0_GENERAL_ERROR;
 
 			default:
-				return SVMSG_SVWebSrv_2_GENERAL_INFORMATIONAL;
+				return SVMSG_SVGateway_2_GENERAL_INFORMATIONAL;
 		}
 	}
 

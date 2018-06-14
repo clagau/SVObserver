@@ -230,9 +230,6 @@ public:
 	virtual BOOL CanCloseFrame(CFrameWnd* pFrame) override;
 	virtual void OnCloseDocument() override;
 	virtual void SetTitle(LPCTSTR lpszTitle) override;
-	virtual void SetPathName(LPCTSTR lpszPathName, BOOL bAddToMRU = TRUE) override;
-	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName) override;
-	virtual BOOL OnSaveDocument(LPCTSTR lpszPathName) override;
 	virtual CFile* GetFile( LPCTSTR lpszFileName, UINT nOpenFlags, CFileException* pError ) override;
 	virtual void SetModifiedFlag(BOOL bModified = TRUE) override;
 
@@ -376,8 +373,6 @@ private:
 	SvOi::IFormulaControllerPtr m_pRegressionTestPlayEquationController;
 	std::string m_RegressionTestLoadEquationText;
 	bool m_bRegressionTestInitEquationText;
-
-	SVFileNameClass msvFileName;
 
 	SVGUID m_InspectionID;
 	SVDisplayObject m_oDisplay;

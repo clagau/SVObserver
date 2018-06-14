@@ -12,7 +12,7 @@ namespace SvO
 {
 	const TCHAR* const ToolClipboardFormat = _T( "SVO-Tool" );
 	const TCHAR* const ClipboardFileName = _T( "ClipboardFile" );
-	const TCHAR* const ZipExtension = _T( ".zip" );
+	const TCHAR* const ZipExtension = _T( ".7z" );
 	const TCHAR* const XmlExtension = _T( ".xml" );
 	const TCHAR* const XmlNameSpace = _T( "xmlns" );
 	const TCHAR* const SvrNameSpace = _T( "x-schema:#SVR00001" );

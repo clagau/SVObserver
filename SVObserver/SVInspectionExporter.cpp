@@ -35,10 +35,10 @@
 #include "SVToolSet.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "Definitions/StringTypeDef.h"
+#include "Definitions/GlobalConst.h"
 #pragma endregion Includes
 
 #pragma region Declarations
-static LPCTSTR scSVXConfigExt = _T(".svx");
 static LPCTSTR scDependentsZipExt = _T(".dependents.zip");
 static LPCTSTR scXmlExt = _T(".xml");
 static LPCTSTR scExportExt = _T(".bxp");
@@ -173,7 +173,7 @@ static void WriteDependentFileList(SvXml::SVObjectXMLWriter& rWriter, const std:
 
 	if (hFind != INVALID_HANDLE_VALUE) 
 	{
-		SvDef::StringSet DependencyFileNames;
+		SvDef::StringVector DependencyFileNames;
 
 		rWriter.StartElement(SvXml::CTAG_DEPENDENT_FILES);
 		do
@@ -191,7 +191,7 @@ static void WriteDependentFileList(SvXml::SVObjectXMLWriter& rWriter, const std:
 				std::string lowercaseExt = ext;
 				SvUl::MakeLower(lowercaseExt);
 
-				if (lowercaseExt != scSVXConfigExt)
+				if (lowercaseExt != SvDef::cConfigExtension)
 				{
 					_variant_t value;
 					value.SetString(findFileData.cFileName);
@@ -200,7 +200,7 @@ static void WriteDependentFileList(SvXml::SVObjectXMLWriter& rWriter, const std:
 					std::string srcFile = SvStl::GlobalPath::Inst().GetRunPath().c_str();
 					srcFile += "\\";
 					srcFile += findFileData.cFileName;
-					DependencyFileNames.insert( srcFile );
+					DependencyFileNames.emplace_back(srcFile);
 				}
 			}
 		} while (::FindNextFile(hFind, &findFileData) != 0);
@@ -208,7 +208,7 @@ static void WriteDependentFileList(SvXml::SVObjectXMLWriter& rWriter, const std:
 
 		rWriter.EndElement();
 		
-		ZipHelper::makeZipFile( dstZipFile, DependencyFileNames, false );
+		SvUl::makeZipFile( dstZipFile, DependencyFileNames, SvStl::GlobalPath::Inst().GetRunPath(), false );
 	}
 }
 
@@ -257,21 +257,21 @@ static void PersistDocument(const SVGUID& inspectionGuid, SvOi::IObjectWriter& r
 }
 
 #pragma region Public Methods
-HRESULT SVInspectionExporter::Export(const std::string& filename, const std::string& inspectionName, unsigned long p_version, bool bColor)
+HRESULT SVInspectionExporter::Export(const std::string& rFileName, const std::string& rInspectionName, unsigned long p_version, bool bColor)
 {
-	HRESULT hr = S_OK;
+	HRESULT result = S_OK;
 	try
 	{
 		// Write out the SVObserver version - will be checked against when importing
 		SVObjectClass* pObject;
-		hr = SVObjectManagerClass::Instance().GetObjectByDottedName(inspectionName.c_str(), pObject);
-		if (S_OK == hr)
+		result = SVObjectManagerClass::Instance().GetObjectByDottedName(rInspectionName.c_str(), pObject);
+		if (S_OK == result)
 		{
-			std::string dstXmlFile = GetFilenameWithoutExt(filename);
+			std::string dstXmlFile = GetFilenameWithoutExt(rFileName);
 			dstXmlFile += scXmlExt;
-			std::string dstDependencyZipFile = GetFilenameWithoutExt(filename);
+			std::string dstDependencyZipFile = GetFilenameWithoutExt(rFileName);
 			dstDependencyZipFile += scDependentsZipExt;
-			std::string dstZipFile = GetFilenameWithoutExt(filename);
+			std::string dstZipFile = GetFilenameWithoutExt(rFileName);
 			dstZipFile += (bColor) ? scColorExportExt : scExportExt;
 
 			std::ofstream os;
@@ -302,23 +302,32 @@ HRESULT SVInspectionExporter::Export(const std::string& filename, const std::str
 				os.close();
 			}
 
-			SvDef::StringSet FileNames;
-			FileNames.insert( dstXmlFile );
-			FileNames.insert( dstDependencyZipFile );
-
-			ZipHelper::makeZipFile( dstZipFile, FileNames, true );
+			SvDef::StringVector FileNames;
+			FileNames.emplace_back(dstXmlFile);
+			FileNames.emplace_back(dstDependencyZipFile);
+			
+			std::string PrefixFolder;
+			std::string::size_type Pos = rFileName.rfind('\\');
+			if (std::string::npos != Pos)
+			{
+				PrefixFolder = SvUl::Left(rFileName, Pos);
+			}
+			if(!SvUl::makeZipFile( dstZipFile, FileNames, PrefixFolder, true))
+			{
+				result = E_FAIL;
+			}
 		}
 		else
 		{
-			hr = E_NOINTERFACE;
+			result = E_NOINTERFACE;
 		}
 	}
 	catch (...)
 	{
-		hr = S_FALSE;
+		result = E_FAIL;
 	}
 	
-	return hr;
+	return result;
 }
 #pragma endregion Public Methods
 

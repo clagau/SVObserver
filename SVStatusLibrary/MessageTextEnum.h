@@ -355,6 +355,8 @@ enum MessageTextEnum
 	Tid_ClipboardDataConverionFailed,
 	Tid_ClipboardMemoryFailed,
 	Tid_GetClipboardDataFailed,
+	Tid_ClipboardZipFailed,
+	Tid_ClipboardUnzipFailed,
 	Tid_ToolInvalid,
 	Tid_Clipboard_VersionMismatch,
 	Tid_ColorToolInsertFailed,
@@ -493,5 +495,7 @@ enum MessageTextEnum
 	Tid_Error_SetServiceStatus,
 	Tid_Error_RegisterServiceHandler,
 	Tid_Error_CreateEvent,
+	Tid_ZipFileFailed,
+	Tid_UnzipFileFailed,
 };
 } //namespace SvStl

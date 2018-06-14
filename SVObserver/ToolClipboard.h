@@ -99,13 +99,13 @@ protected:
 	// Parameter: rToolXmlString <in> Reference to the tool XML string to search
 	// Parameter: rDependencyFiles <out> Reference to the set of dependency files
 	//************************************
-	void findDependencyFiles( const std::string& rToolXmlString, SvDef::StringSet& rDependencyFiles ) const;
+	void findDependencyFiles( const std::string& rToolXmlString, SvDef::StringVector& rDependencyFiles ) const;
 
 	//************************************
 	// Description: This method updates dependency files if required
 	// Parameter: rDependencyFiles <in> Reference to the set of dependency files
 	//************************************
-	void updateDependencyFiles( const SvDef::StringSet& rDependencyFiles ) const;
+	void updateDependencyFiles( const SvDef::StringVector& rDependencyFiles ) const;
 
 	//************************************
 	// Description: This method gets the clipboard data and converts it into a string

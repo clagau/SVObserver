@@ -103,6 +103,9 @@ namespace SvDef
 	const TCHAR* const FqnRemoteInput = _T(".Remote Input");
 	const TCHAR* const FqnDioInput = _T(".DIO.Input");
 
+	const TCHAR* const cConfigExtension = _T(".svx");
+	const TCHAR* const cPackedConfigExtension = _T(".svz");
+
 	static const LCID LCID_USA = MAKELCID(MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), SORT_DEFAULT);
 #pragma endregion Declarations
 } //namespace SvDef

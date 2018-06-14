@@ -35,21 +35,24 @@ const SVFileNameLockablePointerArrayClass SVFileNameLockablePointerArrayClass::o
 	return *this;
 }
 
-LPCTSTR SVFileNameLockablePointerArrayClass::GetFileNameList() const
+SvDef::StringVector SVFileNameLockablePointerArrayClass::GetFileNameList() const
 {
-	mcsFileList.clear();
+	SvDef::StringVector FileNameList;
 
-	for (int i = 0; i < static_cast<int> (m_FileNamePtrVector.size()); i++)
+	for (const auto& rFile : m_FileNamePtrVector)
 	{
-		if ( i )
+		std::string FileName{rFile->GetFullFileName()};
+		if (0 == _access(FileName.c_str(), 0))
 		{
-			mcsFileList += ";";
+			//Don't place filenames already in list
+			if(FileNameList.end() == std::find(FileNameList.begin(), FileNameList.end(), FileName))
+			{
+				FileNameList.emplace_back(FileName);
+			}
 		}
-
-		mcsFileList += m_FileNamePtrVector[i]->GetFullFileName();
 	}
 
-	return mcsFileList.c_str();
+	return FileNameList;
 }
 
 bool SVFileNameLockablePointerArrayClass::Lock()

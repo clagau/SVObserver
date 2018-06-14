@@ -50,7 +50,7 @@ Router::Router(const std::string& rServerAddress, unsigned short ServerPort, Req
 			}
 			else
 			{
-				Task.error(SvRpc::build_error(SvPenv::ErrorCode::BadGateway, _T("No connection to SVObserver")));
+				Task.error(SvRpc::build_error(SvPenv::ErrorCode::badGateway, _T("No connection to SVObserver")));
 			}
 
 		});
@@ -69,7 +69,7 @@ Router::Router(const std::string& rServerAddress, unsigned short ServerPort, Req
 				}
 				else
 				{
-					Observer.error(SvRpc::build_error(SvPenv::ErrorCode::BadGateway, _T("No connection to SVObserver")));
+					Observer.error(SvRpc::build_error(SvPenv::ErrorCode::badGateway, _T("No connection to SVObserver")));
 				}
 			}
 			catch (const std::exception&)

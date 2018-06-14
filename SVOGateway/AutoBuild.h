@@ -8,7 +8,7 @@
 /// \file Autobuild.h
 /// All Rights Reserved
 //******************************************************************************
-/// The version for SVO Web Server application
+/// The version for SVO Gateway application
 //******************************************************************************
 
 #pragma once

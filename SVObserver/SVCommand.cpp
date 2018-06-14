@@ -23,7 +23,6 @@
 #include "SVDataManagerLibrary/DataManager.h"
 #include "SVCommandLibrary/SVFileSystemCommandFactory.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "SVLibrary/SVPackedFile.h"
 #include "SVMatroxLibrary/SVMatroxCommandFactory.h"
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVMessage/SVMessage.h"
@@ -235,7 +234,6 @@ STDMETHODIMP CSVCommand::SVGetSVIMConfig(long lOffset, long *lBlockSize, BSTR *b
 {
 	std::string PackedFileName;
 	std::string ConfigName;
-	SVPackedFile PackedFile;
 	CFile binFile;
 	CFileStatus Status;
 	long lSize = 0;
@@ -254,7 +252,7 @@ STDMETHODIMP CSVCommand::SVGetSVIMConfig(long lOffset, long *lBlockSize, BSTR *b
 		bSuccess = !ConfigName.empty();
 		if (bSuccess)
 		{
-			PackedFileName = ConfigName + _T(".svf");
+			PackedFileName = ConfigName + SvDef::cPackedConfigExtension;
 		}
 
 		// check offset: if zero then it is first time in
@@ -265,8 +263,7 @@ STDMETHODIMP CSVCommand::SVGetSVIMConfig(long lOffset, long *lBlockSize, BSTR *b
 
 			if (bSuccess)
 			{
-				GlobalRCSaveConfiguration();
-				bSuccess = PackedFile.PackFiles(ConfigName.c_str(), PackedFileName.c_str());
+				bSuccess = S_OK == TheSVObserverApp.SavePackedConfiguration(PackedFileName);
 			}
 		}//offset < 1  end of the fist time
 
@@ -346,11 +343,13 @@ STDMETHODIMP CSVCommand::SVGetSVIMConfig(long lOffset, long *lBlockSize, BSTR *b
 	return hrResult;
 }// end SVGetSVIMConfig
 
-STDMETHODIMP CSVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR *bstrFileData, BOOL bLastFlag)
+STDMETHODIMP CSVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR* pFileData, BOOL bLastFlag)
 {
+	//PackedFileName is static due to SVPutConfig which can be called multiple times for each data block sent
+	//The file name is set only when the first block is sent (lOffset == 0) but is needed when the following blocks are sent
+	//After the last block the file name is cleared
+	static std::string PackedFileName;
 	std::string configFileName;
-	std::string PackedFileName;
-	SVPackedFile svPackedFile;
 	HRESULT hrResult = S_OK;
 	CFile binFile;
 	bool bRet = false;
@@ -372,10 +371,20 @@ STDMETHODIMP CSVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR *bs
 	{
 		if (CreateDirPath(SvStl::GlobalPath::Inst().GetTempPath().c_str()))
 		{
-			PackedFileName = SvStl::GlobalPath::Inst().GetTempPath(_T("temp.svf"));
 			ex = new CFileException;
 			if (lOffset < 1)
 			{
+				PackedFileName = SvStl::GlobalPath::Inst().GetTempPath(_T("Temp"));
+				//For old .pac file format the first 4 bytes are always 1
+				DWORD FileVersion = (lBlockSize > sizeof(DWORD)) ? *(reinterpret_cast<DWORD*> (*pFileData)) : 0;
+				if(1 == FileVersion)
+				{
+					PackedFileName += _T(".pac");
+				}
+				else
+				{
+					PackedFileName += SvDef::cPackedConfigExtension;
+				}
 				if (binFile.Open(PackedFileName.c_str(), CFile::shareDenyNone | CFile::modeWrite | CFile::modeCreate | CFile::typeBinary, ex))
 				{
 					bRet = true;
@@ -400,7 +409,7 @@ STDMETHODIMP CSVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR *bs
 			if (bRet)
 			{
 				binFile.Seek(lOffset, CFile::begin);
-				binFile.Write(*bstrFileData, lBlockSize);
+				binFile.Write(*pFileData, lBlockSize);
 				binFile.Close();
 				ex->Delete();
 				bSuccess = true;
@@ -409,43 +418,8 @@ STDMETHODIMP CSVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR *bs
 
 		if (bLastFlag)
 		{
-			// make sure file exists
-			bSuccess = (0 == _access(PackedFileName.c_str(), 0));
-
-			// global function to close config and clean up c:\run dir
-			GlobalRCCloseAndCleanConfiguration();
-
-			if (bSuccess)
-			{
-				//unpack the files in the c:\run directory
-				bSuccess = svPackedFile.UnPackFiles(PackedFileName.c_str(), SvStl::GlobalPath::Inst().GetRunPath().c_str());
-				if (!bSuccess)
-				{
-					hrResult = SVMSG_CMDCOMSRV_PACKEDFILE_ERROR;
-					bHrSet = true;
-					SvStl::MessageMgrStd Exception(SvStl::LogOnly);
-					Exception.setMessage(hrResult, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
-				}
-			}
-
-			if (bSuccess)
-			{
-				// check for a good path on the config in the packed file
-				configFileName = svPackedFile.getConfigFilePath();
-				bSuccess = !(configFileName.empty());
-			}
-
-			if (bSuccess)
-			{
-				// make sure file exists
-				bSuccess = (0 == _access(configFileName.c_str(), 0));
-			}
-
-			if (bSuccess)
-			{
-				//load the config
-				bSuccess = GlobalRCOpenConfiguration(configFileName.c_str());
-			}
+			bSuccess = S_OK == TheSVObserverApp.LoadPackedConfiguration(PackedFileName);
+			PackedFileName.clear();
 		}
 	}
 	catch (CFileException *theEx)
@@ -477,7 +451,7 @@ STDMETHODIMP CSVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR *bs
 	return hrResult;
 }// end SVPutSVIMConfig
 
-STDMETHODIMP CSVCommand::SVGetSVIMFile(BSTR bstrSourceFile, long lOffset, long *lBlockSize, BSTR *bstrFileData, long *lLastPacketFlag)
+STDMETHODIMP CSVCommand::SVGetSVIMFile(BSTR bstrSourceFile, long lOffset, long *lBlockSize, BSTR *pFileData, long *lLastPacketFlag)
 {
 	HRESULT hrResult = S_OK;
 
@@ -518,8 +492,8 @@ STDMETHODIMP CSVCommand::SVGetSVIMFile(BSTR bstrSourceFile, long lOffset, long *
 					*lLastPacketFlag = true;
 				}
 
-				*bstrFileData = SysAllocStringByteLen(nullptr, *lBlockSize);
-				if (nullptr == *bstrFileData)
+				*pFileData = SysAllocStringByteLen(nullptr, *lBlockSize);
+				if (nullptr == *pFileData)
 				{
 					AfxThrowMemoryException();
 				}
@@ -527,7 +501,7 @@ STDMETHODIMP CSVCommand::SVGetSVIMFile(BSTR bstrSourceFile, long lOffset, long *
 				// Transfer the file data into the buffer
 				binFile.Seek(lOffset, CFile::begin);
 
-				binFile.Read(*bstrFileData, *lBlockSize);
+				binFile.Read(*pFileData, *lBlockSize);
 
 				// Close the file
 				binFile.Close();
@@ -582,7 +556,7 @@ STDMETHODIMP CSVCommand::SVGetSVIMFile(BSTR bstrSourceFile, long lOffset, long *
 	return hrResult;
 }
 
-STDMETHODIMP CSVCommand::SVPutSVIMFile(BSTR bstrDestFile, long lOffset, long lBlockSize, BSTR *bstrFileData)
+STDMETHODIMP CSVCommand::SVPutSVIMFile(BSTR bstrDestFile, long lOffset, long lBlockSize, BSTR *pFileData)
 {
 	HRESULT hrResult = S_OK;
 
@@ -630,7 +604,7 @@ STDMETHODIMP CSVCommand::SVPutSVIMFile(BSTR bstrDestFile, long lOffset, long lBl
 		{
 			binFile.Seek(lOffset, CFile::begin);
 
-			binFile.Write(*bstrFileData, lBlockSize);
+			binFile.Write(*pFileData, lBlockSize);
 		}
 		catch (CFileException *theEx)
 		{
@@ -666,100 +640,13 @@ STDMETHODIMP CSVCommand::SVPutSVIMFile(BSTR bstrDestFile, long lOffset, long lBl
 
 STDMETHODIMP CSVCommand::SVLoadSVIMConfig(BSTR bstrConfigFilename)
 {
-	SvStl::MessageMgrStd Exception(SvStl::LogOnly);
-	std::string ConfigFile;
-	TCHAR szDrive[_MAX_DRIVE];
-	TCHAR szDir[_MAX_DIR];
-	TCHAR szFile[_MAX_FNAME];
-	TCHAR szExt[_MAX_EXT];
-	TCHAR szPath[_MAX_PATH];
-	CFileException ex;
-
-	// Check the mode first - Not allowed to perform if Mode is Regression or Test
-	if (SVSVIMStateClass::CheckState(SV_STATE_TEST | SV_STATE_REGRESSION))
-	{
-		return SVMSG_63_SVIM_IN_WRONG_MODE;
-	}
+	std::string ConfigFile = SvUl::createStdString(_bstr_t(bstrConfigFilename));
 
 	SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-
-	bool bHrSet = false;
-	HRESULT hrResult = S_OK;
-	bool bSuccess = false;
-
-	try
-	{
-		ConfigFile = SvUl::createStdString(_bstr_t(bstrConfigFilename));
-
-		//split filename into peices
-		_tsplitpath(ConfigFile.c_str(), szDrive, szDir, szFile, szExt);
-
-		if (!_tcscmp(szDrive, _T("")))
-		{ //just the file name, search the run directory for the filename
-			if (0 == _tcscmp(szExt, _T(".svx")) || 0 == _tcscmp(szExt, _T("")))
-			{
-				_tmakepath(szPath, _T("C"), _T("\\Run\\"), szFile, _T("svx"));
-				//check for existence of file first
-				bSuccess = (0 == _access(szPath, 0));		    
-
-				if (bSuccess)
-				{
-					ConfigFile = szPath;
-					//global function to close config and clean up c:\run dir
-					GlobalRCCloseAndCleanConfiguration();
-				}
-			}
-			else
-			{
-				bSuccess = false;
-			}
-		}
-		else if (0 == _tcscmp(szExt, _T(".svx"))) //fully qualified path with svx extension
-		{
-			//check for existence of file first
-			bSuccess = (0 == _access(ConfigFile.c_str(), 0));
-
-			if (bSuccess)
-			{
-				//global function to close config and clean up c:\run dir
-				GlobalRCCloseAndCleanConfiguration();
-			}
-			else
-			{
-				throw ((CFileException*)(&ex));
-			}
-		}
-		else
-		{
-			bSuccess = false;
-		}
-
-		if (bSuccess)
-		{
-			bSuccess = GlobalRCOpenConfiguration(ConfigFile.c_str());
-		}
-	}
-	catch (CFileException* &theEx)
-	{
-		hrResult = SVMSG_CMDCOMCTRL_FILE_ERROR;
-		bHrSet = true;
-		Exception.setMessage(hrResult, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
-		theEx->Delete();
-	}
-	catch (...)
-	{
-		bSuccess = false;
-	}
-
-	if ((!bSuccess) && (!bHrSet))
-	{
-		Exception.setMessage(SVMSG_CMDCOMSRV_ERROR, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
-		hrResult = S_FALSE;
-	}
-
+	HRESULT Result = SVVisionProcessorHelper::Instance().LoadConfiguration(ConfigFile);
 	SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 
-	return hrResult;
+	return Result;
 }
 
 

@@ -35,10 +35,11 @@ namespace SvStl
 		std::string GetSecondObserverPath(LPCTSTR filename = nullptr);
 		std::string GetAutoSaveRootPath(LPCTSTR filename = nullptr);
 		std::string GetAutoSaveTempPath(LPCTSTR filename = nullptr);
+		std::string GetRamDrive(LPCTSTR filename = nullptr);
 		std::string GetAutosaveTempDirectoryName(){return m_AutosaveTempDirectoryName;}
-		std::string GetAutosaveTempDirectory1Name(){return m_AutosaveTempDirectory1Name;}
-		std::string GetAutosaveTempDirectory2Name(){return m_AutosaveTempDirectory2Name;}
-		std::string GetAutosaveTempDirectory3Name(){return m_AutosaveTempDirectory3Name;}
+		std::string GetAutosaveTemp1FileName(){return m_AutosaveTemp1FileName;}
+		std::string GetAutosaveTemp2FileName(){return m_AutosaveTemp2FileName;}
+		std::string GetAutosaveTemp3FileName(){return m_AutosaveTemp3FileName;}
 
 #pragma endregion public functions 
 
@@ -46,12 +47,12 @@ namespace SvStl
 
 #pragma region private  constructors 
 		GlobalPath();
-		GlobalPath( const GlobalPath& );
 #pragma endregion private  constructors 
 
 #pragma region private  functions
 		void InitializeIniFolder();
 		void InitializePath();
+		std::string AppendFilename(const std::string& rPath, LPCTSTR filename);
 #pragma endregion private  functions
 
 #pragma region private members  
@@ -71,11 +72,12 @@ namespace SvStl
 		std::string m_SVObserverRunFolder;
 		std::string m_TempFolder;
 		std::string m_LastValidFolder;
+		std::string m_SvimRamDrive;
 
 		std::string m_AutosaveTempDirectoryName;
-		std::string m_AutosaveTempDirectory1Name;
-		std::string m_AutosaveTempDirectory2Name;
-		std::string m_AutosaveTempDirectory3Name;
+		std::string m_AutosaveTemp1FileName;
+		std::string m_AutosaveTemp2FileName;
+		std::string m_AutosaveTemp3FileName;
 #pragma endregion private members
 	};
 } //namespace SvStl

@@ -27,23 +27,13 @@ private:
 public:
 	static SVFileNameManagerClass& Instance();
 
-	//This operator will create a semicolon separated string 
-	//list of file names contained within the array.
-	LPCTSTR GetFileNameList();
-
-	//This operator copies the file from the selected 
-	//location to the configuration and run directory as 
-	//necessary.
-	bool SaveItem(SVFileNameClass* pFileName);
+	//list of file names contained within the vector.
+	SvDef::StringVector GetFileNameList();
 
 	//This operator copies the file from the selected 
 	//location to the configuration and run directory as 
 	//necessary.
 	bool LoadItem(SVFileNameClass* pFileName);
-
-	//This operator renames the file from the selected 
-	//location to the run directory as necessary.
-	bool RenameItem(SVFileNameClass* pFileName);
 
 	//This operator exposes the string contained in the 
 	//gcsConfigurationPathName application attribute.
@@ -87,16 +77,10 @@ public:
 	//exist.
 	bool CreatePath(LPCTSTR PathName);
 
-	//This operator copies all the files contained in the 
-	//application array from the selected location to the 
-	//configuration and run directory as necessary.
-	bool SaveItems();
-
-	bool RemoveUnusedFiles(bool bCleanConfigDir = true);
+	bool RemoveUnusedFiles();
 
 private:
 	bool RemoveUnusedFiles(const std::string& rPath);
-	bool CopyFileToPath(const std::string& rPath ,SVFileNameClass* pFileName) const;
 
 	std::string m_ConfigurationPathName; // Configuration Path Name variable
 	std::string m_RunPathName; // Run Path Name variable

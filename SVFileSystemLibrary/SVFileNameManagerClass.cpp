@@ -351,72 +351,16 @@ bool SVFileNameManagerClass::LoadItem(SVFileNameClass* pFileName)
 	return Result;
 }
 
-bool SVFileNameManagerClass::SaveItem( SVFileNameClass* pFileName )
-{
-	bool Result( true );
-
-	if ( !std::string( pFileName->GetFileName() ).empty() )
-	{
-		Result = CopyFileToPath( GetRunPathName(), pFileName );
-		if ( Result )
-		{
-			pFileName->SetPathName( GetRunPathName().c_str() );
-		}
-
-		if ( Result )
-		{
-			Result = CopyFileToPath( GetConfigurationPathName(), pFileName );
-		}
-	}
-
-	return Result;
-}
-
-bool SVFileNameManagerClass::RenameItem(SVFileNameClass* pFileName)
-{
-	if ( !std::string( pFileName->GetFileName() ).empty() )
-	{
-		pFileName->SetPathName( GetRunPathName().c_str() );
-	}
-
-	return true;
-}
-
-bool SVFileNameManagerClass::SaveItems()
-{
-	bool Result = false;
-
-	if ( m_svFileNameList.Lock() )
-	{
-		Result = true;
-
-		for ( auto const& pFileName : m_svFileNameList)
-		{
-			Result = SaveItem( pFileName ) && Result;
-		}
-
-		m_svFileNameList.Unlock();
-	}
-
-	return Result;
-}
-
-LPCTSTR SVFileNameManagerClass::GetFileNameList()
+SvDef::StringVector SVFileNameManagerClass::GetFileNameList()
 {
 	return m_svFileNameList.GetFileNameList();
 }
 
-bool SVFileNameManagerClass::RemoveUnusedFiles(bool bCleanConfigDir)
+bool SVFileNameManagerClass::RemoveUnusedFiles()
 {
 	bool Result( true );
 
 	Result = RemoveUnusedFiles( GetRunPathName() );
-	if ( bCleanConfigDir && Result )
-	{
-		Result = RemoveUnusedFiles( GetConfigurationPathName() );
-
-	}
-
 	return Result;
 }
 
@@ -467,27 +411,3 @@ bool SVFileNameManagerClass::RemoveUnusedFiles( const std::string& rPath )
 	return Result;
 }
 
-bool SVFileNameManagerClass::CopyFileToPath( const std::string& rPath, SVFileNameClass* pFileName ) const
-{
-	bool Result( true );
-	
-	if( !rPath.empty() )
-	{
-		std::string RunFullName = rPath + _T("\\") + pFileName->GetFileName();
-
-		SvUl::searchAndReplace( RunFullName, _T("/"), _T("\\") );
-
-		if ( SvUl::CompareNoCase( RunFullName, pFileName->GetFullFileName() ) )
-		{
-			Result = _access( pFileName->GetFullFileName().c_str(), 0 ) != 0;
-
-			if( !Result )
-			{
-				Result = CopyFile( pFileName->GetFullFileName().c_str(), RunFullName.c_str(), false ) ? true : false;
-				_chmod( RunFullName.c_str(), _S_IREAD | _S_IWRITE );
-			}
-		}
-	}
-
-	return Result;
-}

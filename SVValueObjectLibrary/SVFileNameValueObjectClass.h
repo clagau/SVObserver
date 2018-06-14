@@ -32,8 +32,6 @@ public:
 
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject ) override;
 
-	virtual void Persist(SvOi::IObjectWriter& rWriter) override;
-
 	virtual HRESULT SetValue( const std::string& rValue, int Index = -1 ) override;
 	HRESULT SetDefaultValue( const std::string& rValue, bool bResetAll = true ) override;
 

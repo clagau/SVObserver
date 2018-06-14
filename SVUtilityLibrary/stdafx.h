@@ -49,6 +49,7 @@
 #pragma region Precompiled Headers
 #include <windows.h>
 #include <atltypes.h>
+#include <atlbase.h>
 
 #include <algorithm>
 #include <assert.h>
