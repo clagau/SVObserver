@@ -282,6 +282,7 @@ void RingBufferTool::BuildEmbeddedObjectList ()
 	m_BufferDepth.SetDefaultValue( cDefaultRingBufferDepth, true );
 
 	RegisterEmbeddedObject( &m_FlagOfOutputImage, RingBuffer_FlagOfOutputImagesGuid, IDS_OBJECTNAME_RINGBUFFER_FLAG, false, SvOi::SVResetItemNone );
+	m_FlagOfOutputImage.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
 	m_FlagOfOutputImage.SetDefaultValue( 0, true );
 	m_FlagOfOutputImage.setSaveValueFlag(false);
 
