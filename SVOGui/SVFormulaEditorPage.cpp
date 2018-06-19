@@ -121,9 +121,8 @@ namespace SvOg
 		HINSTANCE ScintillaInstance( nullptr );
 
 		
-		std::string scintillaPath = SvStl::GlobalPath::Inst( ).GetBinPath(SvUl::ScintillaDll).c_str();
 		//Load Scintilla dll explicitly
-		HRESULT hOK = SvUl::LoadDll::Instance().getDll( scintillaPath, ScintillaInstance );
+		HRESULT hOK = SvUl::LoadDll::Instance().getDll(SvUl::ScintillaDll, ScintillaInstance);
 		if (S_OK != hOK || nullptr == ScintillaInstance)
 		{
 			SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );

@@ -1942,6 +1942,8 @@ BOOL SVObserverApp::InitInstance()
 
 	SvLib::SVOINIClass SvimIni(SvStl::GlobalPath::Inst().GetSVIMIniPath());
 
+	SvUl::LoadDll::Instance().setDefaultPath(SvStl::GlobalPath::Inst().GetBinPath(_T("\\")));
+
 	ValidateMRUList();
 
 	// Get SourceImageDepth

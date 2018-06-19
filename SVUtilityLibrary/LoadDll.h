@@ -57,18 +57,21 @@ namespace SvUl
 			The method returns the Dll instance loads it if necessary
 			\return S_OK on success
 		***********/
-		HRESULT getDll( const std::string& DllName, HINSTANCE& Instance );
+		HRESULT getDll( const std::string& rDllName, HINSTANCE& Instance );
 
 		/**********
 			The method free all loaded Dlls
 		***********/
 		void freeDlls();
+
+		void setDefaultPath(const std::string& rDefaultPath) {m_DefaultPath = rDefaultPath;}
 	#pragma endregion Public Methods
 
 	private:
 	#pragma region Member Variables
-			DllMap m_DllsLoaded;						//The list of Dlls loaded
-	#pragma endregion Member Variables
+		DllMap m_DllsLoaded;						//The list of Dlls loaded
+		std::string m_DefaultPath;					//The default path to the dlls
+#pragma endregion Member Variables
 	};
 } // namespace SvUl
 

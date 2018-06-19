@@ -44,22 +44,27 @@ namespace SvUl
 		return Object;
 	}
 
-	HRESULT LoadDll::getDll( const std::string& DllName, HINSTANCE& Instance )
+	HRESULT LoadDll::getDll( const std::string& rDllName, HINSTANCE& Instance )
 	{
 		HRESULT Result = S_OK;
 		Instance = nullptr;
-		Instance = m_DllsLoaded[DllName];
+		Instance = m_DllsLoaded[rDllName];
 		if( nullptr == Instance )
 		{
-			Instance = ::LoadLibrary( DllName.c_str() );
+			Instance = ::LoadLibrary( rDllName.c_str() );
+			if(nullptr == Instance && !m_DefaultPath.empty())
+			{
+				std::string filePath{m_DefaultPath + rDllName};
+				Instance = ::LoadLibrary(filePath.c_str());
+			}
 			Sleep(0);
 			if( nullptr != Instance )
 			{
-				m_DllsLoaded[DllName] = Instance;
+				m_DllsLoaded[rDllName] = Instance;
 			}
 			else
 			{
-				Result = S_FALSE;
+				Result = E_FAIL;
 			}
 		}
 	

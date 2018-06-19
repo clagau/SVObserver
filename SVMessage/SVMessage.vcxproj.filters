@@ -39,6 +39,8 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="SVMessage.mc" />
+    <CustomBuild Include="SVMessage.mc">
+      <Filter>Ressourcendateien</Filter>
+    </CustomBuild>
   </ItemGroup>
 </Project>
