@@ -12,7 +12,7 @@
 //Moved to precompiled header: #include <boost/noncopyable.hpp>
 //Moved to precompiled header: #include <string>
 //Moved to precompiled header: #include <comdef.h>
-#include "SVOGui\ImageController.h"
+#include "ImageController.h"
 
 #pragma endregion Includes
 

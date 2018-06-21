@@ -11,7 +11,7 @@
 
 #include "stdafx.h"
 #include "CameraLibrary/SVDeviceParams.h"
-#include "TriggerHandling/SVDigitizerLoadLibraryClass.h"
+#include "SVDigitizerLoadLibraryClass.h"
 #include "SVAcquisitionInitiator.h"
 
 namespace SvTh

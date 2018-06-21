@@ -22,7 +22,7 @@
 #include "SharedMemoryAccess.h"
 #include "ServerRequestHandler.h"
 #include "SettingsLoader.h"
-#include "SvHttpLibrary/WebsocketServer.h"
+#include "SVHttpLibrary/WebsocketServer.h"
 #include "SVRPCLibrary/Router.h"
 #include "SVRPCLibrary/RPCServer.h"
 #include "SVOGatewayService.h"

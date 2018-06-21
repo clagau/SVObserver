@@ -9,7 +9,7 @@
 #pragma once
 
 #include "WebsocketLibrary/Logging.h"
-#include "SvHttpLibrary/WebsocketServerSettings.h"
+#include "SVHttpLibrary/WebsocketServerSettings.h"
 
 namespace SvOgw
 {

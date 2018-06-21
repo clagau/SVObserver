@@ -55,6 +55,7 @@
 #pragma warning( disable: 4786 )	// identifier truncation 255 chars
 #pragma warning( 4: 4786 )
 #pragma warning( disable: 4250 )	// disable warning for dominance of inherits (need e.g. for ISVObjectClass)
+#pragma warning( disable: 4172 )	//Disable returning address warning for boost graphs
 
 #define OEMRESOURCE	// OEM resource to use nicer cursors...
 

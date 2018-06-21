@@ -10,8 +10,8 @@
 
 #include <memory>
 
-#include "SvHttpLibrary/WebSocketClient.h"
-#include "SvHttpLibrary/WebsocketClientSettings.h"
+#include "WebSocketClient.h"
+#include "WebsocketClientSettings.h"
 
 namespace SvHttp
 {

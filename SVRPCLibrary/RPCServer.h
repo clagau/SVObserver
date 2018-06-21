@@ -19,7 +19,7 @@
 //Moved to precompiled header: #include <memory>
 //Moved to precompiled header: #include <vector>
 
-#include "SvHttpLibrary/WebsocketServerConnection.h"
+#include "SVHttpLibrary/WebsocketServerConnection.h"
 #include "RequestHandlerBase.h"
 #include "SVProtoBuf/envelope.h"
 

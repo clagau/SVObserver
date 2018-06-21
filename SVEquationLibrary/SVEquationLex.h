@@ -11,11 +11,10 @@
 
 #pragma once
 
-#include "SVPARSERSCRIPTS/FlexLexer.h"
-
+#include "SVParserScripts/FlexLexer.h"
 #ifndef Y_TAB_H
 #define Y_TAB_H
-	#include "SVPARSERSCRIPTS/y.tab.h"
+	#include "SVParserScripts/y.tab.h"
 #endif // #ifndef Y_TAB_H
 
 class SVEquationBase;

@@ -28,7 +28,7 @@
 #include <boost/beast/core.hpp>
 #include <boost/beast/websocket.hpp>
 
-#include "SvHttpLibrary/WebSocketServerSettings.h"
+#include "WebSocketServerSettings.h"
 
 namespace SvHttp
 {

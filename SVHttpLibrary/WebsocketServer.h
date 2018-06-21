@@ -22,8 +22,8 @@
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/ip/tcp.hpp>
 
-#include "SvHttpLibrary/WebsocketServerConnection.h"
-#include "SvHttpLibrary/WebsocketServerSettings.h"
+#include "WebsocketServerConnection.h"
+#include "WebsocketServerSettings.h"
 
 namespace SvHttp
 {

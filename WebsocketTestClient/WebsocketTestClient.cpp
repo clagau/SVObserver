@@ -25,7 +25,7 @@
 #include "WebsocketLibrary/SVRCClientService.h"
 #include "WebsocketLibrary/Logging.h"
 #include "SVProtoBuf\SVRC.h"
-#include "SvHttpLibrary/WebsocketClientFactory.h"
+#include "SVHttpLibrary/WebsocketClientFactory.h"
 #include "SVRPCLibrary/ErrorUtil.h"
 #include "SVRPCLibrary/RPCClient.h"
 #include "WebsocketLibrary/RunRequest.inl"

@@ -31,6 +31,7 @@
 
 #pragma warning( disable: 4786 )	// identifier truncation 255 chars
 #pragma warning( disable: 4482 )
+#pragma warning( disable: 4172 )	//Disable returning address warning for boost graphs
 
 #define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
 

@@ -8,7 +8,7 @@
 
 #include "stdafx.h"
 
-#include "WebsocketLibrary/Logging.h"
+#include "Logging.h"
 
 #include <iostream>
 #include <set>

@@ -11,6 +11,7 @@
 #include <mil.h>
 #include "SVMatroxLibrary\SVMatroxBufferCreateStruct.h"
 #include "SVMatroxLibrary\SVMatroxBuffer.h"
+#pragma warning( disable: 4244 )	//Disable warning for conversion
 #include "SVProtoBuf/TriggerRecordController.h"
 #include "IImage.h"
 #pragma endregion Includes

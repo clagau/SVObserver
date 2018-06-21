@@ -16,11 +16,9 @@
 //Moved to precompiled header: #include <iostream>
 // Using namespace is required for the lex.yy.cc
 using namespace std;
-
 #pragma warning( push )
 #pragma warning( disable : 4102 4013 4244 ) 
-
-#include "SVPARSERSCRIPTS/lex.yy.cc"
+#include "SVParserScripts/lex.yy.cc"
 
 SVEquationLexClass::SVEquationLexClass()
 {

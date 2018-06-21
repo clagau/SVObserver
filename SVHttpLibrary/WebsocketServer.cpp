@@ -14,7 +14,7 @@
 
 #include <boost/log/trivial.hpp>
 
-#include "SvHttpLibrary/WebsocketServer.h"
+#include "WebsocketServer.h"
 
 namespace SvHttp
 {

@@ -13,7 +13,7 @@
 
 #ifndef Y_TAB_H
 #define Y_TAB_H
-	#include "SVPARSERSCRIPTS/y.tab.h"
+	#include "SVParserScripts/y.tab.h"
 #endif // #ifndef Y_TAB_H
 
 #ifdef YYSTACKSIZE
