@@ -1035,13 +1035,7 @@ const SVImageInfoClass* SVToolClass::getFirstImageInfo() const
 #pragma region ITool methods
 bool SVToolClass::areAuxExtentsAvailable() const
 {
-	bool bRetVal = true;
-	// check inspection, and has image input!
-	if (nullptr == GetToolImage() || GetInspectionInterface()->getEnableAuxiliaryExtent())
-	{
-		bRetVal = false;
-	}
-	return bRetVal;
+	return (nullptr != GetToolImage()) ? GetInspectionInterface()->getEnableAuxiliaryExtent() : false;
 }
 
 SvUl::NameGuidList SVToolClass::getAvailableAuxSourceImages() const
