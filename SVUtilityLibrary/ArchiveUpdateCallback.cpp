@@ -14,11 +14,11 @@
 //   ./CPP/7zip/UI/Client7z/Client7z.cpp
 #include "StdAfx.h"
 #include <sys/types.h>
-#include <sys/stat.h>
 #include "ArchiveUpdateCallback.h"
 #include "PropVariant.h"
 #include "InStreamWrapper.h"
 
+static const LONGLONG cTimeConvertOffset = 116444736000000000;
 
 ArchiveUpdateCallback::ArchiveUpdateCallback(const std::vector<std::string>& rFiles, const std::string& rFolderPrefix)
 	: m_rFiles {rFiles}
@@ -129,18 +129,14 @@ STDMETHODIMP ArchiveUpdateCallback::GetProperty(UInt32 index, PROPID propID, PRO
 		return S_OK;
 	}
 
-	if (index >= m_rFiles.size())
+	checkFileInfoList();
+
+	if (index >= m_rFiles.size() || index >= m_FileInfoVector.size())
 	{
 		return E_INVALIDARG;
 	}
-
 	const std::string& rFile = m_rFiles.at(index);
-
-	struct _stat FileInfo;
-	if(0 != _stat(rFile.c_str(), &FileInfo))
-	{
-		return E_FAIL;
-	}
+	const struct _stat& rFileInfo = m_FileInfoVector.at(index);
 
 	switch (propID)
 	{
@@ -159,23 +155,22 @@ STDMETHODIMP ArchiveUpdateCallback::GetProperty(UInt32 index, PROPID propID, PRO
 			break;
 		}
 		case kpidIsDir:
-			prop = (FileInfo.st_mode & _S_IFDIR) ? true : false;
+			prop = (rFileInfo.st_mode & _S_IFDIR) ? true : false;
 			break;
 		case kpidSize:
-			prop = static_cast<unsigned long long> (FileInfo.st_size);
+			prop = static_cast<unsigned long long> (rFileInfo.st_size);
 			break;
 		case kpidAttrib:
 			//No attributes
 			break;
 		case kpidCTime:
-			 
-			prop = *(reinterpret_cast<FILETIME*> (&FileInfo.st_ctime));
+			prop = ConvertTime(rFileInfo.st_ctime);
 			break;
 		case kpidATime:
-			prop = *(reinterpret_cast<FILETIME*> (&FileInfo.st_atime));
+			prop = ConvertTime(rFileInfo.st_atime);
 			break;
 		case kpidMTime:
-			prop = *(reinterpret_cast<FILETIME*> (&FileInfo.st_mtime));
+			prop = ConvertTime(rFileInfo.st_mtime);
 			break;
 	}
 
@@ -233,4 +228,33 @@ STDMETHODIMP ArchiveUpdateCallback::CryptoGetTextPassword2(Int32* passwordIsDefi
 STDMETHODIMP ArchiveUpdateCallback::SetRatioInfo(const UInt64* inSize, const UInt64* outSize)
 {
 	return S_OK;
+}
+
+void ArchiveUpdateCallback::checkFileInfoList()
+{
+	if (m_rFiles.size() != m_FileInfoVector.size())
+	{
+		m_FileInfoVector.clear();
+		m_FileInfoVector.reserve(m_rFiles.size());
+
+		for (const auto& rFileName : m_rFiles)
+		{
+			struct _stat FileInfo;
+			if (0 == _stat(rFileName.c_str(), &FileInfo))
+			{
+				m_FileInfoVector.emplace_back(FileInfo);
+			}
+		}
+	}
+}
+
+FILETIME ArchiveUpdateCallback::ConvertTime(const __time64_t& rTime)
+{
+	FILETIME fileTime;
+
+	LONGLONG llDate = Int32x32To64(rTime, 10000000) + cTimeConvertOffset;
+	fileTime.dwLowDateTime = static_cast<DWORD> (llDate);
+	fileTime.dwHighDateTime = static_cast<DWORD> (llDate >> 32);
+
+	return fileTime;
 }

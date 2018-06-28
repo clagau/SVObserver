@@ -16,6 +16,7 @@
 
 #include <string>
 #include <vector>
+#include <sys/stat.h>
 #include "IArchive.h"
 #include "ICoder.h"
 #include "IPassword.h"
@@ -48,8 +49,11 @@ public:
 	STDMETHOD(SetRatioInfo)( const UInt64* inSize, const UInt64* outSize );
 
 private:
+	void checkFileInfoList();
+	FILETIME ConvertTime(const __time64_t& rTime);
 
 	long m_refCount{0};
 	std::string m_FolderPrefix;
 	const std::vector<std::string>& m_rFiles;
+	std::vector<struct _stat> m_FileInfoVector;
 };

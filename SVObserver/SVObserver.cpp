@@ -2350,7 +2350,7 @@ HRESULT SVObserverApp::OpenFile(LPCTSTR PathName)
 			SvDef::StringVector msgList;
 			msgList.emplace_back(FileName);
 			SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
-			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnzipFileFailed, SvStl::SourceFileParams(StdMessageParams));
+			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnzipFileFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 			return E_FAIL;
 		}
 	}
@@ -5586,7 +5586,7 @@ void SVObserverApp::SaveConfigurationAndRelatedFiles(bool makeZipFile, bool isAu
 				SvDef::StringVector msgList;
 				msgList.emplace_back(filePath);
 				SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
-				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ZipFileFailed, SvStl::SourceFileParams(StdMessageParams));
+				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ZipFileFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 				return;
 			}
 
