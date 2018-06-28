@@ -25,9 +25,9 @@ public:
 
 	SVCommandAbstractFactoryTemplatePtr GetAbstractFactory() const;
 
-	bool IsValidCommandType( unsigned long p_CommandType ) const;
+	bool IsValidCommandType(unsigned long CommandType) const;
 
-	SVCommandTemplatePtr CreateCommand( unsigned long p_CommandType ) const;
+	SvOi::ICommandPtr CreateCommand(unsigned long CommandType) const;
 
 protected:
 	SVCommandAbstractFactoryTemplatePtr m_pAbstractFactory;

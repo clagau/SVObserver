@@ -1,0 +1,110 @@
+//*****************************************************************************
+/// \copyright (c) 2018,2018 by Seidenader Maschinenbau GmbH
+/// \file SVRC-Enum.proto
+/// All Rights Reserved 
+//*****************************************************************************
+/// Protobuf file for the Enums used by SVRC
+//******************************************************************************
+
+syntax = "proto3";
+package SvPb;
+
+///The entries in the monitor list can belong to one or more of the following groups:
+/// there are also free entries that do not belong to Productitem RejectCondition and FailstatusList
+enum ListType
+{
+	productItem = 0;
+	rejectCondition = 1;
+	failStatus = 2;
+	all = 3;
+}
+
+///General errors should be reporteted by the errorcode
+//State is usefull for states wich are not errors, or if only a part of bigger message is not valid 
+enum State
+{
+	isValid = 0;
+	notFound = 1;
+	unchanged = 2;
+} 
+
+///This type defines which items are returned when calling the Data Definition SVRC function
+enum DataDefinitionListType
+{
+	unknownDataDefinition			= 0;
+	selectedValues					= 1;	//This will return all values which have been selected in the Data Definition list on the SVObserver
+	selectedImages					= 2;	//This will return all images which have been selected in the Data Definition list on the SVObserver
+	selectedValuesAndSelectedImages = 3;	//This will return all values and images which have been selected in the Data Definition list on the SVObserver
+	allValues						= 4;	//This will return all values of the inspection
+	allValuesAndSelectedImages		= 6;	//This will return all values and selected images of the inspection
+	allImages						= 8;	//This will return all images of the inspection
+	selectedValuesAndAllImages		= 9;	//This will return selected values and all images of the inspection
+	allValuesAndAllImages			= 12;	//This will return all values and all images of the inspection
+}
+
+/// These are the possible device mode types for SVObserver
+enum DeviceModeType
+{
+	available	= 0;				//This is the mode when no configuration is loaded
+	runMode	= 1;					//This is the mode when SVObserver is in production mode (Online)
+	stopMode	= 2;				//This is the mode when SVObserver is in stop mode (Offline)
+	regressionMode	= 3;			//This is a special mode to verify configuration settings
+	testMode	= 4;
+	editMode	= 5;				//The general edit mode to be able to change values in the configuration
+	modeChanging = 6;				//This indicates that the mode is in transition to another mode
+}
+
+///Notification type for the notification stream received from SVObserver
+enum NotificationType
+{
+	unknownNotification = 0;
+	modeNotification = 1;			//Sent when SVObserver changes device modes
+	lastModifiedNotification = 2;	//Sent when SVObserver saves a configuration
+	connectedNotification = 3;		//Sent when SVObserver connection made
+	disconnectedNotification = 4;	//Sent when SVObserver disconnects
+	messageNotification = 5;		//Sent when SVObserver displays a modal message dialog
+}
+
+///The message type for the message notification when SVObserver displays or logs a message
+enum MessageType
+{
+	unknown=0;
+	startMsgBox=1;					//Dialog is currently being displayed on the SVObserver
+	endMsgBox=2;					//Dialog that was open has been closed on the SVObserver
+	msgLog=3;						//A message has been logged into the event log on the SVObserver
+}
+
+///Product filter types
+enum ProductFilterEnum
+{
+	noFilter = 0;
+	lastInspectedFilter = 1;		//Filters the last inspected products 
+	lastRejectFilter = 2;			//Filters the last rejected products
+};
+
+///Object selector types
+enum ObjectSelectorType
+{
+	toolsetItems = 0;				//Inspection toolset items
+	globalConstantItems = 1;		//Global constant items
+	ppqItems = 2;					//PPQ variable items
+};
+
+///SVObserver object attributes
+enum ObjectAttributes
+{
+	noAttributes = 0;				//None
+	viewable = 1;					//Object is viewable in object selector
+	publishable = 2;				//Object value can be published
+	archivable = 3;					//Object value is displayed in the object selector when used for archiving
+	selectableForEquation = 4;		//Object is displayed in the object selector when used for equations
+	embedable = 5; 					//Object is an embedded value
+	selectableForStatistics = 6;	//Object is displayed in the object selector when used for statistics tool
+	archivable_image = 7;			//Object image is displayed in the object selector when used for archiving
+	printable = 8;					//Object is printed in the configuration report
+	remotely_setable = 9;			//Object can be set remotely
+	setable_online = 10;			//Object can be set when SVObserver is Online
+	extent_object = 11;				//Object is an extent value object
+	hidden = 12;					//Object is not displayed in the object selector irrelevant of the other settings
+	publish_result_image = 13;		//Object result image can be published
+};

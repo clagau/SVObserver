@@ -13,8 +13,8 @@
 #include "stdafx.h"
 #include "SVDataDefinitionSheet.h"
 #include "SelectedObjectsPage.h"
-#include "SVOGui/ToolSetItemSelector.h"
 #include "SVIPDoc.h"
+#include "InspectionCommands/BuildSelectableItems.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -117,14 +117,9 @@ void SVDataDefinitionSheet::initSelectedList( SvCl::SelectorItemVector* pList, U
 {
 	if( nullptr != pList )
 	{
-		SvOsl::SelectorOptions BuildOptions( m_InspectionID, Attribute );
-		SvOg::ToolSetItemSelector<SvCmd::AttributesSetFilterType> toolsetItemSelector;
-		SvCl::SelectorItemVectorPtr pToolsetList =  toolsetItemSelector( BuildOptions );
-		//Copy list to member variable for easier use
-		if( nullptr != pToolsetList )
-		{
-			pList->swap(*pToolsetList);
-		}
+		pList->clear();
+		SvCmd::SelectorOptions BuildOptions {{SvCmd::ObjectSelectorType::toolsetItems}, m_InspectionID, Attribute};
+		SvCmd::BuildSelectableItems(BuildOptions, std::back_inserter(*pList), SvCmd::AttributesSetFilterType);
 	}
 }
 

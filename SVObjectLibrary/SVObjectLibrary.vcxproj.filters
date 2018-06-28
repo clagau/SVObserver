@@ -104,9 +104,6 @@
     <ClInclude Include="SVObjectClass.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVObjectCommandWrapperTemplate.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVObjectInfoStruct.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -128,15 +125,6 @@
     <ClInclude Include="SVObjectScriptEnums.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVObjectSubmitCommandFacade.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVObjectSynchronousCommandTemplate.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVObjectThreadCommandTemplate.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVObserverNotificationFunctor.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -147,9 +135,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVOutputInfoListClass.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVObjectAsynchronousCommandTemplate.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVToolsetScriptTags.h">
@@ -190,22 +175,10 @@
     <None Include="SVObjectClass.inl">
       <Filter>Headerdateien</Filter>
     </None>
-    <None Include="SVObjectCommandWrapperTemplate.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
     <None Include="SVObjectManagerClass.inl">
       <Filter>Headerdateien</Filter>
     </None>
     <None Include="SVObjectReference.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
-    <None Include="SVObjectSynchronousCommandTemplate.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
-    <None Include="SVObjectThreadCommandTemplate.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
-    <None Include="SVObjectAsynchronousCommandTemplate.inl">
       <Filter>Headerdateien</Filter>
     </None>
   </ItemGroup>

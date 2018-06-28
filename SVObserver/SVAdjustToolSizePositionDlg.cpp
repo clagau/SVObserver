@@ -15,7 +15,7 @@
 //Moved to precompiled header: #include <array>
 //Moved to precompiled header: #include <functional>
 #include "SVAdjustToolSizePositionDlg.h"
-#include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
+#include "SVCommandLibrary/SVObjectSynchronousCommandTemplate.h"
 #include "svobserver.h"
 #include "InspectionEngine/SVTaskObject.h"
 #include "SVInspectionProcess.h"

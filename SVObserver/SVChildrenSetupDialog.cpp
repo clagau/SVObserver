@@ -13,13 +13,12 @@
 #include "stdafx.h"
 #include "SVChildrenSetupDialog.h"
 #include "InspectionEngine/SVTaskObjectList.h"
+#include "InspectionCommands/BuildSelectableItems.h"
 #include "SVInspectionProcess.h"
 #include "SVIPDoc.h"
 #include "SVOGui/SVShowDependentsDialog.h"
 #include "SVSetupDialogManager.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
-#include "SVOGui/NoSelector.h"
-#include "SVOGui/ToolSetItemSelector.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -323,8 +322,10 @@ void SVChildrenSetupDialogClass::OnPublishButton()
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, std::string(m_pParentOwner->GetCompleteName()), std::string( _T("") ) );
 
-	SvOsl::SelectorOptions BuildOptions( m_pDocument->GetInspectionID(), SvDef::SV_PUBLISHABLE, m_pParentObject->GetUniqueObjectID() );
-	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
+	SvCmd::SelectorOptions BuildOptions {{SvCmd::ObjectSelectorType::toolsetItems}, m_pDocument->GetInspectionID(), SvDef::SV_PUBLISHABLE, m_pParentObject->GetUniqueObjectID()};
+	SvCl::SelectorItemVector SelectorItems;
+	SvCmd::BuildSelectableItems(BuildOptions, std::back_inserter(SelectorItems));
+	SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(SelectorItems);
 
 	std::string PublishableResults = SvUl::LoadStdString( IDS_PUBLISHABLE_RESULTS );
 	std::string Title = SvUl::Format( _T("%s - %s"), PublishableResults.c_str(), m_pParentOwner->GetName() );

@@ -15,10 +15,7 @@
 #include "InspectionCommands\GetPPQObjectName.h"
 #include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
 #include "SVObjectLibrary\SVClsIds.h"
-#include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
-#include "GlobalSelector.h"
-#include "NoSelector.h"
-#include "ToolSetItemSelector.h"
+#include "SVCommandLibrary\SVObjectSynchronousCommandTemplate.h"
 #include "RangeValidator.h"
 #pragma endregion Includes
 

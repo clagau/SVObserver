@@ -15,7 +15,6 @@
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <set>
 //Moved to precompiled header: #include <memory>
-#include "SVCommandLibrary/SVCommandTemplate.h"
 #include "SVSystemLibrary/SVCriticalSection.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVObjectReference.h"
@@ -95,9 +94,6 @@ public:
 	void getObjectsOfType(SVObjectPtrVectorInserter Inserter, SvDef::SVObjectTypeEnum ObjectType, SvDef::SVObjectSubTypeEnum ObjectSubType=SvDef::SVNotSetSubObjectType) const;
 
 	std::string GetCompleteObjectName( const SVGUID& rGuid );
-
-	HRESULT SubmitCommand( const SVGUID& rObjectID, const SVCommandTemplatePtr& rCommandPtr );
-	HRESULT SubmitCommand( SVObjectClass& rObject, const SVCommandTemplatePtr& rCommandPtr );
 
 	template< typename ObjectVisitor >
 	HRESULT VisitElements( ObjectVisitor& rVisitor, const SVGUID& rStartingObjectID=GUID_NULL );

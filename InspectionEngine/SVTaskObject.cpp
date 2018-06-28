@@ -350,17 +350,15 @@ HRESULT SVTaskObjectClass::GetChildObject( SVObjectClass*& rpObject, const SVObj
 }
 	
 #pragma region virtual method (ITaskObject)
-SvCl::SelectorItemVectorPtr SVTaskObjectClass::GetSelectorList(SvOi::IsObjectInfoAllowed isAllowed, UINT Attribute, bool WholeArray) const
+void SVTaskObjectClass::GetSelectorList(SvOi::IsObjectInfoAllowed isAllowed, SvCl::SelectorItemInserter inserter, UINT Attribute, bool WholeArray) const
 {
-	SvCl::SelectorItemVectorPtr pResult{ new SvCl::SelectorItemVector() };
-
 	if (isAllowed)
 	{
 		SVOutputInfoListClass OutputList;
 		GetOutputList( OutputList );
 
 		// Filter the list
-		std::for_each(OutputList.begin(), OutputList.end(), [&pResult, &isAllowed, &Attribute, &WholeArray](SVOutputInfoListClass::value_type info)->void
+		std::for_each(OutputList.begin(), OutputList.end(), [&inserter, &isAllowed, &Attribute, &WholeArray](SVOutputInfoListClass::value_type info)->void
 		{
 			SVObjectReference ObjectRef = info->GetObjectReference();
 			if( ObjectRef.isArray() || isAllowed(info->getObject(), Attribute, -1) )
@@ -368,7 +366,7 @@ SvCl::SelectorItemVectorPtr SVTaskObjectClass::GetSelectorList(SvOi::IsObjectInf
 				SvCl::SelectorItem InsertItem;
 				
 				InsertItem.m_Name = ObjectRef.GetName();
-				InsertItem.m_ItemKey = ObjectRef.getObject()->GetUniqueObjectID().ToVARIANT();
+				InsertItem.m_ItemKey = ObjectRef.getObject()->GetUniqueObjectID().ToString();
 
 				SvOi::IValueObject* pValueObject = ObjectRef.getValueObject();
 				if ( nullptr != pValueObject )
@@ -387,7 +385,7 @@ SvCl::SelectorItemVectorPtr SVTaskObjectClass::GetSelectorList(SvOi::IsObjectInf
 						InsertItem.m_ArrayIndex = -1;
 						InsertItem.m_Array = true;
 						InsertItem.m_Selected = (AttributesSet & Attribute) == Attribute;
-						pResult->push_back( InsertItem );
+						inserter = InsertItem;
 					}
 
 					// add array elements
@@ -402,7 +400,7 @@ SvCl::SelectorItemVectorPtr SVTaskObjectClass::GetSelectorList(SvOi::IsObjectInf
 							InsertItem.m_Array = true;
 							InsertItem.m_ArrayIndex = i;
 							InsertItem.m_Selected = (AttributesSet & Attribute) == Attribute;
-							pResult->push_back( InsertItem );
+							inserter = InsertItem;
 						}
 					}
 				}
@@ -411,7 +409,7 @@ SvCl::SelectorItemVectorPtr SVTaskObjectClass::GetSelectorList(SvOi::IsObjectInf
 					UINT AttributesSet = ObjectRef.ObjectAttributesSet();
 					InsertItem.m_Location = ObjectRef.GetCompleteName(true);
 					InsertItem.m_Selected = (AttributesSet & Attribute) == Attribute;
-					pResult->push_back( InsertItem );
+					inserter = InsertItem;
 				}
 			}
 		});
@@ -423,7 +421,6 @@ SvCl::SelectorItemVectorPtr SVTaskObjectClass::GetSelectorList(SvOi::IsObjectInf
 		::OutputDebugString(_T("SVTaskObjectClass::SelectorList - empty functor"));
 #endif
 	}
-	return pResult;
 }
 
 void SVTaskObjectClass::GetConnectedImages(SvUl::InputNameGuidPairList& rList, int maxEntries)

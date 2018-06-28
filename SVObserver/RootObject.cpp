@@ -333,28 +333,22 @@ void SvOi::getRootChildNameList( SvDef::StringVector& rObjectNameList, LPCTSTR P
 	RootObject::getRootChildNameList( rObjectNameList, Path, AttributesAllowedFilter );
 }
 
-SvCl::SelectorItemVectorPtr SvOi::getRootChildSelectorList( LPCTSTR Path, UINT AttributesAllowedFilter )
+void SvOi::getRootChildSelectorList(SvCl::SelectorItemInserter Inserter, LPCTSTR Path, UINT AttributesAllowedFilter)
 {
-	SvCl::SelectorItemVectorPtr pResult{ new SvCl::SelectorItemVector() };
 	BasicValueObjects::ValueVector ObjectList;
 	
 	//To have the function available without knowing the class RootObject
 	RootObject::getRootChildObjectList( ObjectList, Path, AttributesAllowedFilter );
-	BasicValueObjects::ValueVector::const_iterator Iter;
-	for( Iter = ObjectList.begin(); ObjectList.end() != Iter; ++Iter )
+	for(const auto rpObject : ObjectList)
 	{
 		SvCl::SelectorItem InsertItem;
 
-		InsertItem.m_Name = (*Iter)->GetName();
-		InsertItem.m_Location = (*Iter)->GetCompleteName();
-		InsertItem.m_ItemKey = (*Iter)->GetUniqueObjectID().ToVARIANT();
-		InsertItem.m_ItemTypeName = (*Iter)->getTypeName().c_str();
-
-		pResult->push_back( InsertItem );
-
+		InsertItem.m_Name = rpObject->GetName();
+		InsertItem.m_Location = rpObject->GetCompleteName();
+		InsertItem.m_ItemKey = rpObject->GetUniqueObjectID();
+		InsertItem.m_ItemTypeName = rpObject->getTypeName().c_str();
+		Inserter = InsertItem;
 	}
-
-	return pResult;
 }
 
 void SvOi::addRootChildObjects(SVOutputInfoListClass& rList)

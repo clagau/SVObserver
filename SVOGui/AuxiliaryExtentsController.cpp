@@ -12,7 +12,7 @@
 #include "InspectionCommands\GetAvailableAuxSourceImages.h"
 #include "InspectionCommands\GetAuxSourceImage.h"
 #include "InspectionCommands\SetAuxSourceImage.h"
-#include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
+#include "SVCommandLibrary\SVObjectSynchronousCommandTemplate.h"
 #include "SVObjectLibrary\SVClsids.h"
 #include "InspectionCommands\CommandFunctionHelper.h"
 #pragma endregion Includes

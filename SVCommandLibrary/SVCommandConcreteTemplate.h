@@ -15,33 +15,34 @@
 //Moved to precompiled header: #include <boost/config.hpp>
 //Moved to precompiled header: #include <boost/function.hpp>
 #include "SVCommandAttributesTemplate.h"
-#include "SVCommandTemplate.h"
+#include "ObjectInterfaces/ICommand.h"
 #include "SVCommandDataHolder.h"
 #include "SVCommandResultsTemplate.h"
 #pragma endregion Includes
 
 typedef boost::function< HRESULT ( const SVCommandDataHolder&, SVCommandDataHolder& ) > SVCommandExecuteFunctor;
 
-template< unsigned long p_CommandType >
+template<unsigned long CommandType>
 class SVCommandConcreteTemplate : 
-	public SVCommandTemplate,
-	public SVCommandAttributesTemplate< p_CommandType, SVCommandDataHolder, SVCommandDataHolder::SVNameDataMap >,
+	public SvOi::ICommand,
+	public SVCommandAttributesTemplate< CommandType, SVCommandDataHolder, SVCommandDataHolder::SVNameDataMap >,
 	public SVCommandResultsTemplate< SVCommandDataHolder >
 {
 public:
-	typedef SVCommandAttributesTemplate< p_CommandType, SVCommandDataHolder, SVCommandDataHolder::SVNameDataMap > SVCommandAttributes;
+	typedef SVCommandAttributesTemplate< CommandType, SVCommandDataHolder, SVCommandDataHolder::SVNameDataMap > SVCommandAttributes;
 	typedef SVCommandResultsTemplate< SVCommandDataHolder > SVCommandResults;
 
 	static unsigned long GetStaticCommandType();
 
-	SVCommandConcreteTemplate( SVCommandExecuteFunctor p_ExecuteFunctor );
+	SVCommandConcreteTemplate( SVCommandExecuteFunctor ExecuteFunctor );
 	virtual ~SVCommandConcreteTemplate();
 
+	virtual unsigned long GetCommandType() const override {return m_CommandType;}
 	virtual HRESULT Execute() override;
 
 protected:
 	SVCommandExecuteFunctor m_ExecuteFunctor;
-
+	unsigned long m_CommandType{0UL};
 };
 
 #include "SVCommandConcreteTemplate.inl"

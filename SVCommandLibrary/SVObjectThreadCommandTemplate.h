@@ -11,20 +11,21 @@
 
 #pragma once
 
-#include "SVCommandLibrary/SVCommandTemplate.h"
+#include "ObjectInterfaces/ICommand.h"
 
-template< typename SVCommandPtr >
-class SVObjectThreadCommandTemplate : public SVCommandTemplate
+template<typename CommandPtr>
+class SVObjectThreadCommandTemplate : public SvOi::ICommand
 {
 public:
-	SVObjectThreadCommandTemplate( const SVCommandPtr& p_rCommandPtr );
+	SVObjectThreadCommandTemplate(const CommandPtr& rpCommand);
 
 	virtual ~SVObjectThreadCommandTemplate();
 
+	virtual unsigned long GetCommandType() const override {return 1UL;}
 	virtual HRESULT Execute() override;
 
 private:
-	SVCommandPtr m_CommandPtr;
+	CommandPtr m_pCommand;
 
 };
 

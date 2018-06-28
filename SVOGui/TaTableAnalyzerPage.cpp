@@ -9,8 +9,10 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "TaTableAnalyzerPage.h"
+#include "Definitions/GlobalConst.h"
 #include "Definitions/ObjectDefines.h"
-#include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVCommandLibrary/SVObjectSynchronousCommandTemplate.h"
 #include "TextDefinesSvOg.h"
 #include "InspectionCommands/GetCreatableObjects.h"
 #include "InspectionCommands/GetAvailableObjects.h"
@@ -22,8 +24,6 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
 #include "SVObjectLibrary/SVClsids.h"
-#include "ToolSetItemSelector.h"
-#include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "InspectionCommands/CommandFunctionHelper.h"
 #include "FormulaController.h"
@@ -277,7 +277,7 @@ void TaTableAnalyzerPage::OnButtonClickExcludeHigh()
 	m_EditExcludeHigh.GetWindowText(Temp);
 	std::string Value = Temp;
 	std::string Title = SvUl::LoadStdString(IDS_OBJECTNAME_TABLEANALYZEREXCLUDE_HIGHVALUE);
-	if (m_objectSelector.Show<ToolSetItemSelector<>>(Value, Title, this))
+	if (m_objectSelector.Show(Value, Title, this))
 	{
 		m_EditExcludeHigh.SetWindowText(Value.c_str());
 	}
@@ -290,7 +290,7 @@ void TaTableAnalyzerPage::OnButtonClickExcludeLow()
 	m_EditExcludeLow.GetWindowText(Temp);
 	std::string Value = Temp;
 	std::string Title = SvUl::LoadStdString(IDS_OBJECTNAME_TABLEANALYZEREXCLUDE_LOWVALUE);
-	if (m_objectSelector.Show<ToolSetItemSelector<>>(Value, Title, this))
+	if (m_objectSelector.Show(Value, Title, this))
 	{
 		m_EditExcludeLow.SetWindowText(Value.c_str());
 	}
@@ -303,7 +303,7 @@ void TaTableAnalyzerPage::OnButtonClickLimitValue()
 	m_EditLimitValue.GetWindowText(Temp);
 	std::string Value = Temp;
 	std::string Title = SvUl::LoadStdString(IDS_OBJECTNAME_TABLEANALYZERLIMIT_VALUE);
-	if (m_objectSelector.Show<ToolSetItemSelector<>>(Value, Title, this))
+	if (m_objectSelector.Show(Value, Title, this))
 	{
 		m_EditLimitValue.SetWindowText(Value.c_str());
 	}

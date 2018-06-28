@@ -18,7 +18,7 @@
 #include "TextDefinesSvO.h"
 #include "InspectionCommands/CommandFunctionHelper.h"
 #include "InspectionCommands\GetTaskObjects.h"
-#include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
+#include "SVCommandLibrary\SVObjectSynchronousCommandTemplate.h"
 #include "SVOResource\ConstGlobalSvOr.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"

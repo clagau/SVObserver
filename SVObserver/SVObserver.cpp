@@ -17,7 +17,7 @@
 
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVLibrary\SVPackedFile.h"
-#include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
+#include "SVCommandLibrary\SVObjectSynchronousCommandTemplate.h"
 #include "CameraLibrary\SVDeviceParam.h"
 #include "CameraLibrary\SVDeviceParams.h"
 #include "CameraLibrary\SVLongValueDeviceParam.h"

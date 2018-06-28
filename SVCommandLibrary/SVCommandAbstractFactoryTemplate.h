@@ -21,24 +21,21 @@ class SVCommandAbstractFactoryTemplate
 public:
 	typedef std::map< unsigned long, SVCommandFactoryTemplatePtr > SVCommandFactoryMap;
 
+	SVCommandAbstractFactoryTemplate() = delete;
+	SVCommandAbstractFactoryTemplate(const SVCommandAbstractFactoryTemplate& rObject) = delete;
+
+	const SVCommandAbstractFactoryTemplate& operator=(const SVCommandAbstractFactoryTemplate& p_rObject) = delete;
 	virtual ~SVCommandAbstractFactoryTemplate();
 
 	virtual bool IsValidCommandType( unsigned long p_CommandType ) const;
 
-	virtual SVCommandTemplatePtr CreateCommand( unsigned long p_CommandType ) const;
+	virtual SvOi::ICommandPtr CreateCommand( unsigned long p_CommandType ) const;
 
 protected:
-	SVCommandAbstractFactoryTemplate( const SVCommandFactoryMap& p_rObject );
+	SVCommandAbstractFactoryTemplate(const SVCommandFactoryMap& rObject);
 
 	SVCommandFactoryMap m_Factories;
-
-private:
-	SVCommandAbstractFactoryTemplate();
-	SVCommandAbstractFactoryTemplate( const SVCommandAbstractFactoryTemplate& p_rObject );
-
-	const SVCommandAbstractFactoryTemplate& operator=( const SVCommandAbstractFactoryTemplate& p_rObject );
-
 };
 
-typedef std::shared_ptr< SVCommandAbstractFactoryTemplate > SVCommandAbstractFactoryTemplatePtr;
+typedef std::shared_ptr<SVCommandAbstractFactoryTemplate> SVCommandAbstractFactoryTemplatePtr;
 

@@ -90,5 +90,8 @@
     <ClInclude Include="NameValueVector.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="ICommand.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

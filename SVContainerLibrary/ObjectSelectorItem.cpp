@@ -35,7 +35,7 @@ namespace SvCl
 		m_DisplayLocation = _T("");
 		m_ItemTypeName = _T("");
 		m_TreeItem = nullptr;
-		m_ItemKey = _T("");
+		m_ItemKey = GUID_NULL;
 		m_Attribute = AttributeNone;
 		m_IconNumber = 0;
 		m_ArrayIndex = -1;

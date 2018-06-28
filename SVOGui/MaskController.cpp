@@ -11,7 +11,7 @@
 #include "InspectionCommands\ExportMask.h"
 #include "InspectionCommands\GetMaskData.h"
 #include "InspectionCommands\SetMaskData.h"
-#include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
+#include "SVCommandLibrary\SVObjectSynchronousCommandTemplate.h"
 #include "Definitions\TextDefineSvDef.h"
 #pragma endregion Includes
 

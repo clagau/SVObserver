@@ -257,15 +257,6 @@
     <ClInclude Include="ValuesAccessor.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="GlobalSelector.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="NoSelector.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="ToolSetItemSelector.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVFormulaEditorPage.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -324,9 +315,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="Scintilla.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="PPQSelector.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVTextEditDialog.h">
@@ -425,10 +413,5 @@
     <ClInclude Include="SVPatternAnalyzerModelPage.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ObjectSelectorController.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
   </ItemGroup>
 </Project>

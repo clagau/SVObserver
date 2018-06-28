@@ -1,0 +1,213 @@
+//*****************************************************************************
+/// \copyright (c) 2018,2018 by Seidenader Maschinenbau GmbH
+/// \file SVRC-SVOGateway.proto
+/// All Rights Reserved 
+//*****************************************************************************
+/// Protobuf file for all SVRC commands handled by the SVOGateway
+//******************************************************************************
+
+syntax = "proto3";
+package SvPb;
+
+import "Variant.proto";
+import "SVRC-Enum.proto";
+
+//Retrieves the Gateway version
+message GetGatewayVersionRequest 
+{
+}
+
+//one Item in the list 
+//there is a 1:1 relationship between name and (offset, image Store).  
+//Therefore, if this message is used as a parameter in a request, only the name or the IDs must be filled in. 
+//type and size are additional information
+//Value product item structure
+message ValueItem
+{
+	 string name = 1;				//The value name
+	 sint32 type = 2;				//The value type
+	 sint32 size = 3;				//The value size
+	 uint32 storeId = 4;			//The store ID location
+	 uint32 offset = 5;				//The value offset
+}
+
+//Image product item structure
+message ImageItem
+{
+	string name = 1;				//The image name
+	sint32 height = 2;				//The image height
+	sint32 width = 3;				//The image width
+	uint32 storeId = 4;				//The store ID location
+	uint32 imageId = 5;				//The image ID
+}
+
+//This structure stores the position of an image in shared memory
+message ImageId
+{
+	sint32 imageStore = 1;			//The image store value
+	sint32 imageIndex = 2;			//The image index value
+	sint32 slotIndex = 3;			//The image slot index value
+}
+
+message Image
+{
+	bytes rgbData = 1;				//The raw RGB image data as a byte array
+	uint32 width = 2;				//The width of the image
+	uint32 height = 3;				//The height of the image
+} 
+
+message Product
+{
+	uint32 trigger = 1;				//The trigger count value
+	repeated Variant values = 2;	//The list of values
+	repeated ImageId images = 3;	//The list of images
+	repeated string imageNames = 4;	//The list of image names
+	repeated string valueNames = 5;	//The list of value names
+	State status = 6;				//The status of the product (error number)
+}
+
+//This structure is sent for message notifications
+message MsgNotification
+{
+	MessageType type = 1;			//The message type start end or log
+	string messageText = 2;			//The message text being displayed
+	int32 errorNumber = 3;			//The error number being displayed
+}
+
+//Queries all active monitorlist
+message QueryListNameRequest
+{
+}
+
+//a list with all active monitorlist.
+//The monitor lists contain all metadata for the existing data and images in the shared memory.
+//There can be a maximum of one active monitor list per PPQ. 
+message QueryListNameResponse
+{
+	repeated string listName = 1;	//The list of active montor names
+}
+
+//Query the Definition of the list.
+message QueryListItemRequest
+{
+	string listName = 1;			//The monitor list name (if empty all active monitor list names shall be returned)
+	ListType type = 2;				//The monitor list type
+	bool queryImages = 3;			//True to query images
+	bool queryValues = 4;			//True to query values
+}
+
+message QueryListItemResponse
+{
+	repeated ValueItem  valueDefList = 1;	//The value list returned
+	repeated ImageItem  imageDefList = 2;	//The image list returned
+}
+
+//if the Trigger is -1, the values for the last trigger are returned
+//if  TriggerCount = -1 and the last trigger is the PreviousTrigger the status in the response is unchanged
+//and no values are retrieved 
+message GetProductRequest
+{
+	sint32 triggerCount = 1;		//The trigger counter value
+	sint32 peviousTrigger = 2;		//The previous trigger 
+	string listName = 3;			//The monitor list name
+	bool nameInResponse = 4;		//True to retrieve the item names in the response
+}
+
+// In product response is an array of image ids
+// It is ensured that these images are available at least until GetProduct is called again 
+message GetProductResponse
+{
+	Product productItem = 1;		//The product to be retrieved
+} 
+
+//request the image for an Id from GetProduct or GetRejectResponse 
+message GetImageFromIdRequest
+{
+	ImageId id = 1;					//The image ID
+}
+
+message GetImageFromIdResponse
+{
+	Image imageData = 1;			//The image data retrieved
+}
+
+message GetImageStreamFromIdRequest
+{
+	uint32 count = 1;
+	ImageId id = 2;					//The image ID
+}
+
+message GetImageStreamFromIdResponse
+{
+	Image imageData = 1;			//The image data retrieved
+}
+
+//If the Response are values from the LastRejectTriggers
+//the response has the state unchanged 
+message GetFailStatusRequest
+{
+	string listName = 1;				//The monitor list name
+	bool nameInResponse = 2;			//When true returns the names in the reponse
+	repeated int32 previousRejects = 3;	//The previous reject ID's
+}
+
+message GetFailStatusResponse
+{
+	repeated Product products = 1;	//The list of fail status products
+	State status = 2;				//The status of the request
+}
+
+///Request Values or Images for triggercount =-1 the last value is retrieved 
+//If the Response are values from the LastTriggercount
+//the response has the state unchanged 
+message GetTriggerItemsRequest
+{
+	uint32 trigger = 1;
+	uint32 previousTrigger = 2;
+	repeated ValueItem  valueList = 3;
+	repeated ImageItem  imageList = 4;
+}
+
+message GetTriggerItemsResponse
+{
+	uint32 triggerCount = 1;
+	repeated Variant values = 2;
+	repeated Image images = 3;
+}
+
+message GetImageStreamRequest
+{
+	 uint32 count = 1;
+	 ImageItem image = 2;
+}
+
+//This registers which notifications are streamed by SVObserver
+message GetNotificationStreamRequest
+{
+	repeated NotificationType types = 1;	//A list of the types of notifications to be streamed
+}
+
+//The notification response is one of the values depending which notification type is being streamed
+message GetNotificationStreamResponse
+{
+	oneof message
+	{
+		DeviceModeType currentMode = 1;			//The current SVObserver device mode
+		uint32 lastModified = 2;				//The last modified time stamp
+		MsgNotification msgNotification = 3;	//The message notification structure
+	}
+}
+
+//Similar to GetProductRequest for rejects
+message GetRejectRequest
+{
+	sint32 triggerCount = 1;		//The trigger counter value
+	sint32 peviousTrigger = 2;		//The previous trigger 
+	string listName = 3;			//The monitor list name
+	bool nameInResponse = 4;		//True to retrieve the item names in the response
+}
+
+message GetRejectResponse
+{
+	Product productItem = 1;		//The product to be retrieved
+} 

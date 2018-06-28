@@ -14,7 +14,7 @@
 #include "SVSetupDialogManager.h"
 #include "SVObserver.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
+#include "SVCommandLibrary/SVObjectSynchronousCommandTemplate.h"
 
 #include "InspectionEngine/SVAnalyzer.h"
 #include "SVOGui/ValuesAccessor.h"

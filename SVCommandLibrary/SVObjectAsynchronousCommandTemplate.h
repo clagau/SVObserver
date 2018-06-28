@@ -11,15 +11,19 @@
 
 #pragma once
 
+#include "SVUtilityLibrary/SVGUID.h"
+#include "ObjectInterfaces/IObjectManager.h"
+#include "ObjectInterfaces/IInspectionProcess.h"
 #include "SVObjectCommandWrapperTemplate.h"
+#include "SVObjectAsynchronousCommandTemplate.h"
+#include "SVObjectThreadCommandTemplate.h"
 
-template< typename SVCommandPtr >
+template<typename CommandPtr>
 class SVObjectAsynchronousCommandTemplate
 {
 public:
-	SVObjectAsynchronousCommandTemplate();
-	SVObjectAsynchronousCommandTemplate( const SVObjectAsynchronousCommandTemplate& p_rObject );
-	SVObjectAsynchronousCommandTemplate( SVObjectClass& p_rObject, const SVCommandPtr& p_rCommandPtr );
+	SVObjectAsynchronousCommandTemplate(const SVObjectAsynchronousCommandTemplate& rObject);
+	SVObjectAsynchronousCommandTemplate(const SVGUID& rObjectID, const CommandPtr& rpCommand);
 
 	virtual ~SVObjectAsynchronousCommandTemplate();
 
@@ -27,14 +31,14 @@ public:
 	HRESULT IsCommandComplete();
 	HRESULT WaitForCommandToComplete( DWORD p_TimeoutInMilliseconds );
 
-	const SVCommandPtr& GetCommandPtr() const;
+	const CommandPtr& GetCommandPtr() const;
 
 private:
-	typedef typename SVObjectCommandWrapperTemplate< SVCommandPtr >::SVObjectCommandWrapperPtr SVObjectCommandWrapperPtr;
+	typedef typename SVObjectCommandWrapperTemplate<CommandPtr>::SVObjectCommandWrapperPtr SVObjectCommandWrapperPtr;
 
-	SVObjectClass *m_Object;
-	SVCommandPtr m_CommandPtr;
-	SVObjectCommandWrapperPtr m_WrapperPtr;
+	SVGUID m_ObjectID;
+	CommandPtr m_pCommand;
+	SVObjectCommandWrapperPtr m_pWrapper;
 
 };
 

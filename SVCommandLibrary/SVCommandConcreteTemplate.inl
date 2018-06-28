@@ -9,36 +9,31 @@
 //* .Check In Date   : $Date:   18 Apr 2013 18:30:26  $
 //******************************************************************************
 
-#ifndef SVCOMMANDCONCRETETEMPLATE_INL
-#define SVCOMMANDCONCRETETEMPLATE_INL
-
-#include "SVCommandConcreteTemplate.h"
-
-template< unsigned long p_CommandType >
-unsigned long SVCommandConcreteTemplate< p_CommandType >::GetStaticCommandType()
+template<unsigned long CommandType>
+unsigned long SVCommandConcreteTemplate<CommandType>::GetStaticCommandType()
 {
-	return p_CommandType;
+	return CommandType;
 }
 
-template< unsigned long p_CommandType >
-SVCommandConcreteTemplate< p_CommandType >::SVCommandConcreteTemplate( SVCommandExecuteFunctor p_ExecuteFunctor )
-: SVCommandTemplate( p_CommandType )
+template<unsigned long CommandType>
+SVCommandConcreteTemplate<CommandType>::SVCommandConcreteTemplate( SVCommandExecuteFunctor ExecuteFunctor ) : 
+	SvOi::ICommand()
 , SVCommandAttributes()
 , SVCommandResults()
-, m_ExecuteFunctor( p_ExecuteFunctor )
+, m_CommandType{CommandType}
+, m_ExecuteFunctor( ExecuteFunctor )
 {
 }
 
-template< unsigned long p_CommandType >
-SVCommandConcreteTemplate< p_CommandType >::~SVCommandConcreteTemplate()
+template<unsigned long CommandType>
+SVCommandConcreteTemplate<CommandType>::~SVCommandConcreteTemplate()
 {
 }
 
-template< unsigned long p_CommandType >
-HRESULT SVCommandConcreteTemplate< p_CommandType >::Execute()
+template<unsigned long CommandType>
+HRESULT SVCommandConcreteTemplate<CommandType>::Execute()
 {
-	return m_ExecuteFunctor( m_Attributes, m_Results );
+	return m_ExecuteFunctor(m_Attributes, m_Results);
 }
 
-#endif
 

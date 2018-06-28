@@ -45,9 +45,10 @@ public:
 	void QueryMonitorListNames(const SvPb::QueryMonitorListNamesRequest&, SvRpc::Task<SvPb::NamesResponse>);
 	void RunOnce(const SvPb::RunOnceRequest&, SvRpc::Task<SvPb::StandardResponse>);
 	void LoadConfig(const SvPb::LoadConfigRequest&, SvRpc::Task<SvPb::StandardResponse>);
+	void GetObjectSelectorItems(const SvPb::GetObjectSelectorItemsRequest&, SvRpc::Task<SvPb::GetObjectSelectorItemsResponse>);
 
-	void RegisterNotificationStream(boost::asio::io_service* pIoservice,  const SvPb::GetNotificationStreamRequest& request,
-		SvRpc::Observer<SvPb::GetNotificationStreamResponse>& observer,
+	void RegisterNotificationStream(boost::asio::io_service* pIoservice,  const SvPb::GetNotificationStreamRequest& rRequest,
+		SvRpc::Observer<SvPb::GetNotificationStreamResponse>& rObserver,
 		SvRpc::ServerStreamContext::Ptr ctx);
 	
 private:

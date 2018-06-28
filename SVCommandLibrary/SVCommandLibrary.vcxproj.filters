@@ -30,9 +30,6 @@
     <ClCompile Include="SVCommandFactoryTemplate.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVCommandTemplate.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVFileSystemCommandFactory.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -95,10 +92,19 @@
     <ClInclude Include="SVCommandResultsTemplate.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVCommandTemplate.h">
+    <ClInclude Include="SVFileSystemCommandFactory.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVFileSystemCommandFactory.h">
+    <ClInclude Include="SVObjectAsynchronousCommandTemplate.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVObjectCommandWrapperTemplate.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVObjectSynchronousCommandTemplate.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVObjectThreadCommandTemplate.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
@@ -122,6 +128,18 @@
       <Filter>Headerdateien</Filter>
     </None>
     <None Include="SVCommandResultsTemplate.inl">
+      <Filter>Headerdateien</Filter>
+    </None>
+    <None Include="SVObjectAsynchronousCommandTemplate.inl">
+      <Filter>Headerdateien</Filter>
+    </None>
+    <None Include="SVObjectCommandWrapperTemplate.inl">
+      <Filter>Headerdateien</Filter>
+    </None>
+    <None Include="SVObjectSynchronousCommandTemplate.inl">
+      <Filter>Headerdateien</Filter>
+    </None>
+    <None Include="SVObjectThreadCommandTemplate.inl">
       <Filter>Headerdateien</Filter>
     </None>
   </ItemGroup>

@@ -118,7 +118,7 @@ public:
 	void setSkipFirstFriendFromRun() { m_bSkipFirstFriend = true; };
 
 #pragma region virtual method (ITaskObject)
-	virtual SvCl::SelectorItemVectorPtr GetSelectorList(SvOi::IsObjectInfoAllowed func, UINT Attribute, bool WholeArray) const override;
+	virtual void GetSelectorList(SvOi::IsObjectInfoAllowed func, SvCl::SelectorItemInserter Inserter, UINT Attribute, bool WholeArray) const override;
 	virtual void GetConnectedImages(SvUl::InputNameGuidPairList& rList, int maxEntries) override;
 	virtual void GetInputs(SvUl::InputNameGuidPairList& rList, const SvDef::SVObjectTypeInfoStruct& typeInfo = SvDef::SVObjectTypeInfoStruct(SvDef::SVNotSetObjectType), SvDef::SVObjectTypeEnum objectTypeToInclude = SvDef::SVNotSetObjectType) override;
 	virtual HRESULT ConnectToObject(const std::string& rInputName, const SVGUID& rNewID, SvDef::SVObjectTypeEnum objectType = SvDef::SVNotSetObjectType) override;

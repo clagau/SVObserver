@@ -44,8 +44,10 @@
     <ClInclude Include="InspectionCommand_protoBuf.h" />
     <ClInclude Include="MLRejectValueFilter.h" />
     <ClInclude Include="MoveFriendObject.h" />
+    <ClInclude Include="BuildSelectableItems.h" />
     <ClInclude Include="RangeSelectorFilter.h" />
     <ClInclude Include="SaveImage.h" />
+    <ClInclude Include="SelectorOptions.h" />
     <ClInclude Include="SetAuxSourceImage.h" />
     <ClInclude Include="SetDefaultInputs.h" />
     <ClInclude Include="SetMaskData.h" />

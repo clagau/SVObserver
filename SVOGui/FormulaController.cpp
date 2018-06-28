@@ -14,24 +14,22 @@
 
 #pragma region Includes
 #include "Stdafx.h"
+//Moved to precompiled header: #include <iterator>
 //Moved to precompiled header: #include <string>
 #include "FormulaController.h"
 #include "InspectionCommands/GetInstanceIDByTypeInfo.h"
 #include "InspectionCommands/GetObjectName.h"
 #include "InspectionCommands/GetObjectTypeInfo.h"
 #include "InspectionCommands/GetPPQObjectName.h"
-#include "InspectionCommands/GetPPQSelectorList.h"
+#include "InspectionCommands/BuildSelectableItems.h"
 #include "InspectionCommands/TaskObjectGetEmbeddedValues.h"
 #include "InspectionCommands/TaskObjectSetEmbeddedValues.h"
 #include "InspectionCommands/SetDefaultInputs.h"
 #include "InspectionCommands/SetObjectName.h"
 #include "SVObjectLibrary\SVClsIds.h"
 #include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
-#include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
+#include "SVCommandLibrary\SVObjectSynchronousCommandTemplate.h"
 #include "BoundValue.h"
-#include "GlobalSelector.h"
-#include "PPQSelector.h"
-#include "ToolSetItemSelector.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
 #include "Definitions/StringTypeDef.h"
@@ -163,8 +161,11 @@ HRESULT FormulaController::SetEquationName(const std::string& rNewName)
 
 void FormulaController::BuildSelectableItems()
 {
-	SvOsl::SelectorOptions BuildOptions(m_InspectionID, SvDef::SV_SELECTABLE_FOR_EQUATION, m_InspectionID, true);
-	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::GlobalSelector, SvOg::PPQSelector, SvOg::ToolSetItemSelector<>>(BuildOptions);
+	SvCmd::SelectorOptions BuildOptions({SvCmd::ObjectSelectorType::globalConstantItems, SvCmd::ObjectSelectorType::ppqItems, SvCmd::ObjectSelectorType::toolsetItems},
+										m_InspectionID, SvDef::SV_SELECTABLE_FOR_EQUATION, m_InspectionID, true);
+	SvCl::SelectorItemVector SelectorItems;
+	SvCmd::BuildSelectableItems(BuildOptions, std::back_inserter(SelectorItems));
+	SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(SelectorItems);
 }
 
 HRESULT FormulaController::IsOwnerAndEquationEnabled(bool& ownerEnabled, bool& equationEnabled) const

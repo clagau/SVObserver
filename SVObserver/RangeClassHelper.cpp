@@ -14,11 +14,12 @@
 #include "SVRange.h"
 #include "RangeClassHelper.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
-#include "SVObjectLibrary\SVObjectAsynchronousCommandTemplate.h"
-#include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
+#include "SVCommandLibrary/SVObjectAsynchronousCommandTemplate.h"
+#include "SVCommandLibrary/SVObjectSynchronousCommandTemplate.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVInspectionProcess.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
+#include "InspectionCommands/BuildSelectableItems.h"
 #include "InspectionEngine/SVTaskObjectList.h"
 #include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
 #include "Definitions/GlobalConst.h"
@@ -27,9 +28,6 @@
 #include "SVPPQObject.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
-#include "SVOGui/GlobalSelector.h"
-#include "SVOGui/NoSelector.h"
-#include "SVOGui/ToolSetItemSelector.h"
 #include "SVOGui/ValuesAccessor.h"
 #include "SVOGui/DataController.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -455,8 +453,12 @@ bool RangeClassHelper::FillObjectSelector()
 				SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterOutput, PPQName, std::string( _T("")  ));
 				SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject );
 
-				SvOsl::SelectorOptions BuildOptions( pInspection->GetUniqueObjectID(), SvDef::SV_SELECTABLE_FOR_EQUATION, m_pRange->GetUniqueObjectID() );
-				SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::GlobalSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<SvCmd::RangeSelectorFilterType>>( BuildOptions );
+				SvCmd::SelectorOptions BuildOptions {{SvCmd::ObjectSelectorType::globalConstantItems, SvCmd::ObjectSelectorType::toolsetItems}, 
+					pInspection->GetUniqueObjectID(), SvDef::SV_SELECTABLE_FOR_EQUATION, m_pRange->GetUniqueObjectID()};
+				SvCl::SelectorItemVector SelectorItems;
+				SvCmd::BuildSelectableItems(BuildOptions, std::back_inserter(SelectorItems), SvCmd::RangeSelectorFilterType);
+				SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(SelectorItems);
+
 				bRetVal = true;
 			}//@TODO return meaningful error on else
 		}//@TODO return meaningful error on else

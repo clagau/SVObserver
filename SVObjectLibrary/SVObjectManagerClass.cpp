@@ -20,7 +20,6 @@
 #include "SVSystemLibrary/SVAutoLockAndReleaseTemplate.h"
 #include "SVClassRegisterListClass.h"
 #include "SVObjectLibrary.h"
-#include "SVObjectSubmitCommandFacade.h"
 #include "TextDefinesSvOl.h"
 #include "SVMessage\SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
@@ -697,32 +696,6 @@ std::string SVObjectManagerClass::GetCompleteObjectName( const SVGUID& rGuid )
 	if( nullptr != pObject )
 	{
 		Result = pObject->GetCompleteName();
-	}
-
-	return Result;
-}
-
-HRESULT SVObjectManagerClass::SubmitCommand( const SVGUID& rObjectID, const SVCommandTemplatePtr& rCommandPtr )
-{
-	HRESULT Result = E_FAIL;
-	SVObjectClass* pObject = GetObject( rObjectID );
-
-	if( nullptr != pObject )
-	{
-		Result = SubmitCommand( *pObject, rCommandPtr );
-	}
-
-	return Result;
-}
-
-HRESULT SVObjectManagerClass::SubmitCommand( SVObjectClass& rObject, const SVCommandTemplatePtr& rCommandPtr )
-{
-	HRESULT Result = E_FAIL;
-	SVObjectSubmitCommandFacade* pCommandTarget = dynamic_cast< SVObjectSubmitCommandFacade* >( &rObject );
-
-	if( nullptr != pCommandTarget )
-	{
-		Result = pCommandTarget->SubmitCommand( rCommandPtr );
 	}
 
 	return Result;

@@ -21,8 +21,8 @@ unsigned long SVCommandFactoryTemplate::GetCommandType() const
 	return m_CommandType;
 }
 
-SVCommandFactoryTemplate::SVCommandFactoryTemplate( unsigned long p_CommandType )
-: m_CommandType( p_CommandType )
+SVCommandFactoryTemplate::SVCommandFactoryTemplate( unsigned long CommandType )
+: m_CommandType( CommandType )
 {
 }
 

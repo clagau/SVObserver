@@ -302,6 +302,17 @@ SVRCRequestHandler::SVRCRequestHandler(SVRCCommand* pCommand) :
 
 	});
 
+	registerRequestHandler<
+		SvPb::SVRCMessages,
+		SvPb::SVRCMessages::kGetObjectSelectorItemsRequest,
+		SvPb::GetObjectSelectorItemsRequest,
+		SvPb::GetObjectSelectorItemsResponse>(
+		[this, pCommand](SvPb::GetObjectSelectorItemsRequest&& req, SvRpc::Task<SvPb::GetObjectSelectorItemsResponse> task)
+	{
+		m_IoRunService.post([req, task, pCommand]() { pCommand->GetObjectSelectorItems(req, task); });
+
+	});
+
 	registerStreamHandler<
 		SvPb::SVRCMessages,
 		SvPb::SVRCMessages::kGetNotificationStreamRequest,

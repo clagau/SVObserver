@@ -28,7 +28,7 @@
 #include "SVMessage/SVMessage.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVObjectNameInfo.h"
-#include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
+#include "SVCommandLibrary/SVObjectSynchronousCommandTemplate.h"
 #include "SVStatusLibrary/MessageContainer.h"
 #include "SVStatusLibrary/MessageManager.h"
 
@@ -57,6 +57,7 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "InspectionCommands/CommandFunctionHelper.h"
+#include "ObjectInterfaces/ICommand.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -4827,33 +4828,33 @@ STDMETHODIMP CSVCommand::SVGetTransferImageDefinitionList(BSTR bstrInspectionNam
 	return hr;
 }
 
-STDMETHODIMP CSVCommand::SVConstructCommand(long p_CommandType, ISVRemoteCommand **p_ppCommand)
+STDMETHODIMP CSVCommand::SVConstructCommand(long CommandType, ISVRemoteCommand **ppCommand)
 {
 	HRESULT l_Status = S_OK;
 
-	if (nullptr != p_ppCommand)
+	if (nullptr != ppCommand)
 	{
-		if (nullptr != *p_ppCommand)
+		if (nullptr != *ppCommand)
 		{
-			(*p_ppCommand)->Release();
+			(*ppCommand)->Release();
 
-			*p_ppCommand = nullptr;
+			*ppCommand = nullptr;
 		}
 
-		SVCommandTemplatePtr l_CommandPtr = SVMatroxCommandFactorySingleton::Instance().CreateCommand(p_CommandType);
+		SvOi::ICommandPtr pCommand = SVMatroxCommandFactorySingleton::Instance().CreateCommand(CommandType);
 
-		if (nullptr == l_CommandPtr)
+		if (nullptr == pCommand)
 		{
-			l_CommandPtr = SVFileSystemCommandFactorySingleton::Instance().CreateCommand(p_CommandType);
+			pCommand = SVFileSystemCommandFactorySingleton::Instance().CreateCommand(CommandType);
 		}
 
-		if (nullptr != l_CommandPtr)
+		if (nullptr != pCommand)
 		{
-			CComPtr< ISVRemoteCommand > l_RemoteCommandPtr;
+			CComPtr< ISVRemoteCommand > pRemoteCommandPtr;
 
-			l_Status = l_RemoteCommandPtr.CoCreateInstance(__uuidof(SVRemoteCommand));
+			l_Status = pRemoteCommandPtr.CoCreateInstance(__uuidof(SVRemoteCommand));
 
-			if (nullptr == l_RemoteCommandPtr.p)
+			if (nullptr == pRemoteCommandPtr.p)
 			{
 				if (S_OK == l_Status)
 				{
@@ -4864,11 +4865,11 @@ STDMETHODIMP CSVCommand::SVConstructCommand(long p_CommandType, ISVRemoteCommand
 			if (S_OK == l_Status)
 			{
 				// This has issues when using _ATL_DEBUG_INTERFACES...
-				SVRemoteCommand* l_pRemoteCommand = dynamic_cast<SVRemoteCommand*>(l_RemoteCommandPtr.p);
+				SVRemoteCommand* l_pRemoteCommand = dynamic_cast<SVRemoteCommand*>(pRemoteCommandPtr.p);
 
 				if (nullptr != l_pRemoteCommand)
 				{
-					l_pRemoteCommand->SetCommand(l_CommandPtr);
+					l_pRemoteCommand->SetCommand(pCommand);
 				}
 				else
 				{
@@ -4878,7 +4879,7 @@ STDMETHODIMP CSVCommand::SVConstructCommand(long p_CommandType, ISVRemoteCommand
 
 			if (S_OK == l_Status)
 			{
-				l_Status = l_RemoteCommandPtr.QueryInterface(p_ppCommand);
+				l_Status = pRemoteCommandPtr.QueryInterface(ppCommand);
 			}
 		}
 		else

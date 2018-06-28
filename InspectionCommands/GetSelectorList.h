@@ -41,11 +41,12 @@ namespace SvCmd
 		GetSelectorList(const GetSelectorList&) = delete;
 		GetSelectorList& operator=(const GetSelectorList&) = delete;
 
-		GetSelectorList(const SVGUID& rInstanceID, SelectorFilterTypeEnum filterType, UINT Attribute, bool WholeArray)
-			: m_InstanceID(rInstanceID)
-			, m_filterType(filterType)
-			, m_Attribute(Attribute)
-			, m_WholeArray(WholeArray)
+		GetSelectorList(SvCl::SelectorItemInserter inserter, const SVGUID& rInstanceID, SelectorFilterTypeEnum filterType, UINT attribute, bool wholeArray)
+			: m_selectorInserter{inserter}
+			, m_instanceID{rInstanceID}
+			, m_filterType{filterType}
+			, m_attribute{attribute}
+			, m_wholeArray{wholeArray}
 		{};
 
 		virtual ~GetSelectorList() {};
@@ -57,7 +58,7 @@ namespace SvCmd
 		{
 			HRESULT hr = E_POINTER;
 
-			SvOi::IObjectClass* pObject = SvOi::getObject(m_InstanceID);
+			SvOi::IObjectClass* pObject = SvOi::getObject(m_instanceID);
 			if (pObject)
 			{
 				SvOi::ITaskObject* pTaskObject = dynamic_cast<SvOi::ITaskObject *>(pObject);
@@ -90,7 +91,7 @@ namespace SvCmd
 						{
 							RangeSelectorFilter filter(name);
 							SvOi::IsObjectInfoAllowed func = boost::bind(&RangeSelectorFilter::operator(), &filter, _1, _2, _3);
-							m_SelectedList = pTaskObject->GetSelectorList(func, m_Attribute, m_WholeArray);
+							pTaskObject->GetSelectorList(func, m_selectorInserter, m_attribute, m_wholeArray);
 							hr = S_OK;
 						}
 					}
@@ -100,7 +101,7 @@ namespace SvCmd
 					{
 						AttributesAllowedFilter filter;
 						SvOi::IsObjectInfoAllowed func = boost::bind(&AttributesAllowedFilter::operator(), &filter, _1, _2, _3);
-						m_SelectedList = pTaskObject->GetSelectorList(func, m_Attribute, m_WholeArray);
+						pTaskObject->GetSelectorList(func, m_selectorInserter, m_attribute, m_wholeArray);
 						hr = S_OK;
 					}
 					break;
@@ -109,7 +110,7 @@ namespace SvCmd
 					{
 						AttributesSetFilter filter;
 						SvOi::IsObjectInfoAllowed func = boost::bind(&AttributesSetFilter::operator(), &filter, _1, _2, _3);
-						m_SelectedList = pTaskObject->GetSelectorList(func, m_Attribute, m_WholeArray);
+						pTaskObject->GetSelectorList(func, m_selectorInserter, m_attribute, m_wholeArray);
 						hr = S_OK;
 					}
 					break;
@@ -117,7 +118,7 @@ namespace SvCmd
 					{
 						MLRejectValueFilter filter;
 						SvOi::IsObjectInfoAllowed func = boost::bind(&MLRejectValueFilter::operator(), &filter, _1, _2, _3);
-						m_SelectedList = pTaskObject->GetSelectorList(func, m_Attribute, m_WholeArray);
+						pTaskObject->GetSelectorList(func, m_selectorInserter, m_attribute, m_wholeArray);
 						hr = S_OK;
 					}
 					break;
@@ -132,14 +133,13 @@ namespace SvCmd
 			return hr;
 		}
 		bool empty() const { return false; }
-		const SvCl::SelectorItemVectorPtr& GetResults() const { return m_SelectedList; }
 
 	private:
-		SVGUID m_InstanceID;
+		SVGUID m_instanceID;
 		SelectorFilterTypeEnum m_filterType;
-		UINT m_Attribute;
-		bool m_WholeArray;
-		SvCl::SelectorItemVectorPtr m_SelectedList;
+		UINT m_attribute;
+		bool m_wholeArray;
+		SvCl::SelectorItemInserter m_selectorInserter;
 	};
 } //namespace SvCmd
 

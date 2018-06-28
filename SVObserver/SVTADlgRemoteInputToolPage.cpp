@@ -19,9 +19,7 @@
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVToolset.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
-#include "SVOGui/GlobalSelector.h"
-#include "SVOGui/NoSelector.h"
-#include "SVOGui/ToolSetItemSelector.h"
+#include "InspectionCommands/BuildSelectableItems.h"
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
@@ -107,8 +105,11 @@ void SVTADlgRemoteInputToolPage::OnBnClickedSelectInputButton()
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject );
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, std::string( _T("") ) );
 
-	SvOsl::SelectorOptions BuildOptions( pToolSet->GetInspection()->GetUniqueObjectID(), SvDef::SV_ARCHIVABLE, pToolSet->GetUniqueObjectID() );
-	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::GlobalSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
+	SvCmd::SelectorOptions BuildOptions {{SvCmd::ObjectSelectorType::globalConstantItems, SvCmd::ObjectSelectorType::toolsetItems},
+		pToolSet->GetInspection()->GetUniqueObjectID(), SvDef::SV_ARCHIVABLE, pToolSet->GetUniqueObjectID()};
+	SvCl::SelectorItemVector SelectorItems;
+	SvCmd::BuildSelectableItems(BuildOptions, std::back_inserter(SelectorItems));
+	SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(SelectorItems);
 
 	SVObjectReference ObjectRef(m_pTool->GetInputObject());
 

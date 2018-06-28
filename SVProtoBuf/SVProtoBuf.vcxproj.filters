@@ -42,6 +42,15 @@
     <ClCompile Include="ConverterHelper.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="SVRC-Enum.pb.cc">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVRC-SVObserver.pb.cc">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVRC-SVOGateway.pb.cc">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="BasicStructure.proto">
@@ -63,6 +72,15 @@
       <Filter>Ressourcendateien</Filter>
     </CustomBuild>
     <CustomBuild Include="SVRC.proto">
+      <Filter>Ressourcendateien</Filter>
+    </CustomBuild>
+    <CustomBuild Include="SVRC-SVOGateway.proto">
+      <Filter>Ressourcendateien</Filter>
+    </CustomBuild>
+    <CustomBuild Include="SVRC-Enum.proto">
+      <Filter>Ressourcendateien</Filter>
+    </CustomBuild>
+    <CustomBuild Include="SVRC-SVObserver.proto">
       <Filter>Ressourcendateien</Filter>
     </CustomBuild>
   </ItemGroup>
@@ -113,6 +131,15 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="ConverterHelper.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVRC-Enum.pb.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVRC-SVObserver.pb.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVRC-SVOGateway.pb.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

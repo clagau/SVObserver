@@ -16,10 +16,8 @@
 #include "SVContainerLibrary/SelectorItem.h"
 #include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
 #include "SVOGui\TADialogTableParameterPage.h"
-#include "SVOGui\NoSelector.h"
-#include "SVOGui\ToolSetItemSelector.h"
 #include "RemoteMonitorListHelper.h"
-#include "InspectionCommands\GetSelectorList.h"
+#include "InspectionCommands\BuildSelectableItems.h"
 
 
 
@@ -91,24 +89,23 @@ int  MonitorlistSelector::DisplayDialog()
 		pPPQ->GetInspection(inspIndex, pInspection);
 		if (nullptr != pInspection)
 		{
+			SvCl::SelectorItemVector SelectorItems;
 			if (m_bImage == TRUE && m_eListType == PRODUCT_OBJECT_LIST)
 			{
-				SvOsl::SelectorOptions BuildOptions(pInspection->GetUniqueObjectID(), SvDef::SV_ARCHIVABLE_IMAGE);
-				SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>(BuildOptions);
+				SvCmd::SelectorOptions BuildOptions{{SvCmd::ObjectSelectorType::toolsetItems}, pInspection->GetUniqueObjectID(), SvDef::SV_ARCHIVABLE_IMAGE};
+				SvCmd::BuildSelectableItems(BuildOptions, std::back_inserter(SelectorItems));
 			}
 			else if(m_eListType == PRODUCT_OBJECT_LIST)
 			{
-				SvOsl::SelectorOptions BuildOptions(pInspection->GetUniqueObjectID(), SvDef::SV_VIEWABLE);
-				SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>(BuildOptions);
+				SvCmd::SelectorOptions BuildOptions{{SvCmd::ObjectSelectorType::toolsetItems}, pInspection->GetUniqueObjectID(), SvDef::SV_VIEWABLE};
+				SvCmd::BuildSelectableItems(BuildOptions, std::back_inserter(SelectorItems));
 			}
 			else
 			{
-				SvOsl::SelectorOptions BuildOptions(pInspection->GetUniqueObjectID(), SvDef::SV_VIEWABLE);
-				SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<SvCmd::MLRejectValueFilterType>>(BuildOptions);
+				SvCmd::SelectorOptions BuildOptions{{SvCmd::ObjectSelectorType::toolsetItems}, pInspection->GetUniqueObjectID(), SvDef::SV_VIEWABLE};
+				SvCmd::BuildSelectableItems(BuildOptions, std::back_inserter(SelectorItems), SvCmd::MLRejectValueFilterType);
 			}
-
-
-			
+			SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(SelectorItems);
 		}
 	}
 	BuildCheckItems();

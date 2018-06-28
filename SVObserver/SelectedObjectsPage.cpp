@@ -9,8 +9,8 @@
 #include "stdafx.h"
 #include "SelectedObjectsPage.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
-#include "SVOGui/NoSelector.h"
-#include "SVOGui/ToolSetItemSelector.h"
+#include "InspectionCommands/BuildSelectableItems.h"
+#include "Definitions/ObjectDefines.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVOResource\ConstGlobalSvOr.h"
@@ -184,8 +184,10 @@ void SelectedObjectsPage::ShowObjectSelector()
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject );
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, std::string( _T("") ) );
 
-	SvOsl::SelectorOptions BuildOptions( InspectionGuid, AttributeFilters );
-	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
+	SvCmd::SelectorOptions BuildOptions {{SvCmd::ObjectSelectorType::toolsetItems}, InspectionGuid, AttributeFilters};
+	SvCl::SelectorItemVector SelectorItems;
+	SvCmd::BuildSelectableItems(BuildOptions, std::back_inserter(SelectorItems));
+	SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(SelectorItems);
 
 	SvDef::StringSet CheckItems;
 	for (auto const rEntry : m_List)

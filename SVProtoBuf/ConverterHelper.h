@@ -37,4 +37,5 @@ svModeEnum PbDeviceMode_2_SVIMMode(DeviceModeType type);
 
 DeviceModeType  SVIMMode_2_PbDeviceMode(unsigned long Mode);
 
+UINT PbObjectAttributes2Attributes(const SvPb::ObjectAttributes& rAttributes);
 } //namespace SvPb

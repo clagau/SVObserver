@@ -91,7 +91,6 @@
     <ClCompile Include="SVCommandDataFacade.cpp" />
     <ClCompile Include="SVCommandDataHolder.cpp" />
     <ClCompile Include="SVCommandFactoryTemplate.cpp" />
-    <ClCompile Include="SVCommandTemplate.cpp" />
     <ClCompile Include="SVFileSystemCommandFactory.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -114,8 +113,11 @@
     <ClInclude Include="SVCommandLibraryEnums.h" />
     <ClInclude Include="SVCommandResultsFacade.h" />
     <ClInclude Include="SVCommandResultsTemplate.h" />
-    <ClInclude Include="SVCommandTemplate.h" />
     <ClInclude Include="SVFileSystemCommandFactory.h" />
+    <ClInclude Include="SVObjectAsynchronousCommandTemplate.h" />
+    <ClInclude Include="SVObjectCommandWrapperTemplate.h" />
+    <ClInclude Include="SVObjectSynchronousCommandTemplate.h" />
+    <ClInclude Include="SVObjectThreadCommandTemplate.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SVCommandAbstractFactorySingleton.inl" />
@@ -125,6 +127,10 @@
     <None Include="SVCommandDataTemplate.inl" />
     <None Include="SVCommandDataTemplateFacade.inl" />
     <None Include="SVCommandResultsTemplate.inl" />
+    <None Include="SVObjectAsynchronousCommandTemplate.inl" />
+    <None Include="SVObjectCommandWrapperTemplate.inl" />
+    <None Include="SVObjectSynchronousCommandTemplate.inl" />
+    <None Include="SVObjectThreadCommandTemplate.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

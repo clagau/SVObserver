@@ -39,22 +39,5 @@ namespace SvOsl
 		m_LeafCount = 0;
 	}
 
-	template <typename GlobalSelector, typename PPQSelector, typename ToolsetItemSelector>
-	void ObjectTreeGenerator::BuildSelectableItems( const SelectorOptions& rOptions )
-	{
-		GlobalSelector globalSelector;
-		PPQSelector ppqSelector;
-		ToolsetItemSelector toolsetItemSelector;
-
-		m_AttributesFilter = rOptions.getAttributesFilter();
-		SvCl::SelectorItemVectorPtr pGlobalList = globalSelector( m_AttributesFilter );
-		insertTreeObjects(pGlobalList);
-
-		SvCl::SelectorItemVectorPtr pPpqList = ppqSelector( rOptions.getInspectionID(), m_AttributesFilter );
-		insertTreeObjects(pPpqList);
-
-		SvCl::SelectorItemVectorPtr pToolsetList = toolsetItemSelector( rOptions );
-		insertTreeObjects(pToolsetList);
-	}
 	#pragma endregion Public Methods
 } //namespace SvOsl

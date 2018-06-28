@@ -48,9 +48,6 @@
     <ClInclude Include="TextDefinesSvOsl.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SelectorOptions.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ObjectTreeGenerator.inl">

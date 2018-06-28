@@ -15,7 +15,7 @@
 //Moved to precompiled header: #include <algorithm>
 #include "SVIPDoc.h"
 
-#include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
+#include "SVCommandLibrary/SVObjectSynchronousCommandTemplate.h"
 #include "ObjectInterfaces/IObjectWriter.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -89,13 +89,10 @@
 #include "TextDefinesSvO.h"
 #include "SVShiftTool.h"
 #include "RingBufferTool.h"
-#include "SVOGui/NoSelector.h"
-#include "SVOGui/GlobalSelector.h"
-#include "SVOGui/PPQSelector.h"
-#include "SVOGui/ToolSetItemSelector.h"
 #include "TableTool.h"
 #include "TableAnalyzerTool.h"
 #include "SVOGui/ResultTableSelectionDlg.h"
+#include "InspectionCommands/BuildSelectableItems.h"
 #include "InspectionCommands/CommandFunctionHelper.h"
 #include "InspectionCommands/GetAvailableObjects.h"
 #include "InspectionCommands/GetAllowedImageList.h"
@@ -1584,8 +1581,11 @@ void SVIPDoc::OnResultsPicker()
 			SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject);
 			SvOsl::ObjectTreeGenerator::Instance().setLocationFilter(SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, std::string(_T("")));
 
-			SvOsl::SelectorOptions BuildOptions(GetInspectionID(), SvDef::SV_VIEWABLE, GUID_NULL, true);
-			SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::GlobalSelector, SvOg::PPQSelector, SvOg::ToolSetItemSelector<>>(BuildOptions);
+			SvCmd::SelectorOptions BuildOptions {{SvCmd::ObjectSelectorType::globalConstantItems, SvCmd::ObjectSelectorType::ppqItems, SvCmd::ObjectSelectorType::toolsetItems},
+				GetInspectionID(), SvDef::SV_VIEWABLE, GUID_NULL, true};
+			SvCl::SelectorItemVector SelectorItems;
+			SvCmd::BuildSelectableItems(BuildOptions, std::back_inserter(SelectorItems));
+			SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(SelectorItems);
 
 			const SVObjectReferenceVector& rSelectedObjects(pResultList->GetSelectedObjects());
 
@@ -1853,8 +1853,10 @@ void SVIPDoc::OnPublishedResultsPicker()
 		SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes);
 		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter(SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, std::string(_T("")));
 
-		SvOsl::SelectorOptions BuildOptions(GetInspectionID(), SvDef::SV_PUBLISHABLE);
-		SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>(BuildOptions);
+		SvCmd::SelectorOptions BuildOptions {{SvCmd::ObjectSelectorType::toolsetItems}, GetInspectionID(), SvDef::SV_PUBLISHABLE};
+		SvCl::SelectorItemVector SelectorItems;
+		SvCmd::BuildSelectableItems(BuildOptions, std::back_inserter(SelectorItems));
+		SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(SelectorItems);
 
 		std::string PublishableResults = SvUl::LoadStdString(IDS_PUBLISHABLE_RESULTS);
 		std::string Title = SvUl::Format(_T("%s - %s"), PublishableResults.c_str(), InspectionName.c_str());
@@ -1907,8 +1909,10 @@ void SVIPDoc::OnPublishedResultImagesPicker()
 		std::string RootName = SvUl::LoadStdString(IDS_CLASSNAME_ROOTOBJECT);
 		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter(SvOsl::ObjectTreeGenerator::FilterInput, RootName, std::string(_T("")));
 
-		SvOsl::SelectorOptions BuildOptions(GetInspectionID(), SvDef::SV_PUBLISH_RESULT_IMAGE);
-		SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>(BuildOptions);
+		SvCmd::SelectorOptions BuildOptions {{SvCmd::ObjectSelectorType::toolsetItems}, GetInspectionID(), SvDef::SV_PUBLISH_RESULT_IMAGE};
+		SvCl::SelectorItemVector SelectorItems;
+		SvCmd::BuildSelectableItems(BuildOptions, std::back_inserter(SelectorItems));
+		SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(SelectorItems);
 
 		std::string PublishableImages = SvUl::LoadStdString(IDS_PUBLISHABLE_RESULT_IMAGES);
 		std::string Title = SvUl::Format(_T("%s - %s"), PublishableImages.c_str(), InspectionName.c_str());

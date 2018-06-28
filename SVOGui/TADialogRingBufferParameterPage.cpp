@@ -17,12 +17,9 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
 #include "TextDefinesSvOg.h"
-#include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
+#include "SVCommandLibrary/SVObjectSynchronousCommandTemplate.h"
 #include "SVObjectLibrary/SVClsids.h"
 
-#include "GlobalSelector.h"
-#include "NoSelector.h"
-#include "ToolSetItemSelector.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
@@ -129,7 +126,7 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 		m_EditImageIndex[ButtonIndex].GetWindowText( Temp );
 		std::string Value = Temp;
 		std::string Title = SvUl::LoadStdString( IDS_OBJECTNAME_RINGBUFFER_INDEX1 + ButtonIndex	 );
-		if (m_objectSelector.Show<ToolSetItemSelector<>>( Value, Title, this ))
+		if (m_objectSelector.Show( Value, Title, this ))
 		{
 			m_EditImageIndex[ButtonIndex].SetWindowText( Value.c_str() );
 		}

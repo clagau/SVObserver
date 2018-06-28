@@ -18,7 +18,7 @@
 #pragma endregion Includes
 
 SVRemoteCommand::SVRemoteCommand()
-: m_Command()
+: m_pCommand()
 {
 }
 
@@ -26,24 +26,24 @@ SVRemoteCommand::~SVRemoteCommand()
 {
 }
 
-void SVRemoteCommand::SetCommand( SVCommandTemplatePtr p_Command )
+void SVRemoteCommand::SetCommand(SvOi::ICommandPtr pCommand)
 {
-	m_Command = p_Command;
+	m_pCommand = pCommand;
 }
 
-STDMETHODIMP SVRemoteCommand::GetCommandType(long* p_CommandType)
+STDMETHODIMP SVRemoteCommand::GetCommandType(long* pCommandType)
 {
 	HRESULT l_Status = S_OK;
 
-	if( nullptr != p_CommandType )
+	if( nullptr != pCommandType )
 	{
-		if(nullptr != m_Command)
+		if(nullptr != m_pCommand)
 		{
-			*p_CommandType = m_Command->GetCommandType();
+			*pCommandType = m_pCommand->GetCommandType();
 		}
 		else
 		{
-			*p_CommandType = SV_COMMAND_TYPE_UNKNOWN;
+			*pCommandType = SV_COMMAND_TYPE_UNKNOWN;
 
 			l_Status = E_FAIL;
 		}
@@ -56,17 +56,17 @@ STDMETHODIMP SVRemoteCommand::GetCommandType(long* p_CommandType)
 	return l_Status;
 }
 
-STDMETHODIMP SVRemoteCommand::ConstructCommandData( ISVRemoteCommandData **p_ppCommandData )
+STDMETHODIMP SVRemoteCommand::ConstructCommandData( ISVRemoteCommandData **ppCommandData )
 {
 	HRESULT l_Status = S_OK;
 
-	if( nullptr != p_ppCommandData )
+	if( nullptr != ppCommandData )
 	{
-		if( nullptr != *p_ppCommandData )
+		if( nullptr != *ppCommandData )
 		{
-			( *p_ppCommandData )->Release();
+			( *ppCommandData )->Release();
 
-			*p_ppCommandData = nullptr;
+			*ppCommandData = nullptr;
 		}
 
 		CComPtr< ISVRemoteCommandData > l_RemoteCommandDataPtr;
@@ -83,7 +83,7 @@ STDMETHODIMP SVRemoteCommand::ConstructCommandData( ISVRemoteCommandData **p_ppC
 
 		if( S_OK == l_Status )
 		{
-			l_Status = l_RemoteCommandDataPtr.QueryInterface( p_ppCommandData );
+			l_Status = l_RemoteCommandDataPtr.QueryInterface( ppCommandData );
 		}
 	}
 	else
@@ -94,22 +94,22 @@ STDMETHODIMP SVRemoteCommand::ConstructCommandData( ISVRemoteCommandData **p_ppC
 	return l_Status;
 }
 
-STDMETHODIMP SVRemoteCommand::GetAttributes(ISVRemoteCommandData** p_ppAttributes)
+STDMETHODIMP SVRemoteCommand::GetAttributes(ISVRemoteCommandData** ppAttributes)
 {
 	HRESULT l_Status = S_OK;
 
-	if( nullptr != p_ppAttributes )
+	if( nullptr != ppAttributes )
 	{
-		if( nullptr != *p_ppAttributes )
+		if( nullptr != *ppAttributes )
 		{
-			( *p_ppAttributes )->Release();
+			( *ppAttributes )->Release();
 
-			*p_ppAttributes = nullptr;
+			*ppAttributes = nullptr;
 		}
 
-		if(nullptr != m_Command)
+		if(nullptr != m_pCommand)
 		{
-			SVCommandDataHolder::SVCommandAttributes* l_Attr = dynamic_cast< SVCommandDataHolder::SVCommandAttributes* >( m_Command.get() );
+			SVCommandDataHolder::SVCommandAttributes* l_Attr = dynamic_cast< SVCommandDataHolder::SVCommandAttributes* >( m_pCommand.get() );
 
 			if( nullptr != l_Attr )
 			{
@@ -142,7 +142,7 @@ STDMETHODIMP SVRemoteCommand::GetAttributes(ISVRemoteCommandData** p_ppAttribute
 
 				if( S_OK == l_Status )
 				{
-					l_Status = l_CommandDataPtr.QueryInterface( p_ppAttributes );
+					l_Status = l_CommandDataPtr.QueryInterface( ppAttributes );
 				}
 			}
 			else
@@ -163,20 +163,20 @@ STDMETHODIMP SVRemoteCommand::GetAttributes(ISVRemoteCommandData** p_ppAttribute
 	return l_Status;
 }
 
-STDMETHODIMP SVRemoteCommand::SetAttributes(ISVRemoteCommandData* p_pAttributes)
+STDMETHODIMP SVRemoteCommand::SetAttributes(ISVRemoteCommandData* pAttributes)
 {
 	HRESULT l_Status = S_OK;
 
-	if( nullptr != p_pAttributes )
+	if( nullptr != pAttributes )
 	{
-		if(nullptr != m_Command)
+		if(nullptr != m_pCommand)
 		{
-			SVCommandDataHolder::SVCommandAttributes* l_Attr = dynamic_cast< SVCommandDataHolder::SVCommandAttributes* >( m_Command.get() );
+			SVCommandDataHolder::SVCommandAttributes* l_Attr = dynamic_cast< SVCommandDataHolder::SVCommandAttributes* >( m_pCommand.get() );
 
 			if( nullptr != l_Attr )
 			{
 				// This has issues when using _ATL_DEBUG_INTERFACES...
-				SVRemoteCommandData* l_pCommandData = dynamic_cast< SVRemoteCommandData* >( p_pAttributes );
+				SVRemoteCommandData* l_pCommandData = dynamic_cast< SVRemoteCommandData* >( pAttributes );
 
 				if( nullptr != l_pCommandData )
 				{
@@ -209,9 +209,9 @@ STDMETHODIMP SVRemoteCommand::Execute()
 {
 	HRESULT l_Status = S_OK;
 
-	if(nullptr != m_Command)
+	if(nullptr != m_pCommand)
 	{
-		l_Status = m_Command->Execute();
+		l_Status = m_pCommand->Execute();
 	}
 	else
 	{
@@ -221,22 +221,22 @@ STDMETHODIMP SVRemoteCommand::Execute()
 	return l_Status;
 }
 
-STDMETHODIMP SVRemoteCommand::GetResults(ISVRemoteCommandData** p_ppResults)
+STDMETHODIMP SVRemoteCommand::GetResults(ISVRemoteCommandData** ppResults)
 {
 	HRESULT l_Status = S_OK;
 
-	if( nullptr != p_ppResults )
+	if( nullptr != ppResults )
 	{
-		if( nullptr != *p_ppResults )
+		if( nullptr != *ppResults )
 		{
-			( *p_ppResults )->Release();
+			( *ppResults )->Release();
 
-			*p_ppResults = nullptr;
+			*ppResults = nullptr;
 		}
 
-		if(nullptr != m_Command)
+		if(nullptr != m_pCommand)
 		{
-			SVCommandDataHolder::SVCommandResults* l_Results = dynamic_cast< SVCommandDataHolder::SVCommandResults* >( m_Command.get() );
+			SVCommandDataHolder::SVCommandResults* l_Results = dynamic_cast< SVCommandDataHolder::SVCommandResults* >( m_pCommand.get() );
 
 			if( nullptr != l_Results )
 			{
@@ -269,7 +269,7 @@ STDMETHODIMP SVRemoteCommand::GetResults(ISVRemoteCommandData** p_ppResults)
 
 				if( S_OK == l_Status )
 				{
-					l_Status = l_CommandDataPtr.QueryInterface( p_ppResults );
+					l_Status = l_CommandDataPtr.QueryInterface( ppResults );
 				}
 			}
 			else

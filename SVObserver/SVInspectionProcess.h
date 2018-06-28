@@ -22,12 +22,10 @@
 #include "ObjectInterfaces/IToolSet.h"
 #include "Definitions/SVResetStruct.h"
 #include "ObjectInterfaces/IFormulaController.h"
-#include "SVCommandLibrary/SVCommandTemplate.h"
 #include "SVContainerLibrary/SVBiUniqueMap.h"
 #include "SVDataManagerLibrary/DataManager.h"
 #include "SVDataManagerLibrary/SVDataManagerIndexArrayHandle.h"
 #include "SVObjectLibrary/SVObjectClass.h"
-#include "SVObjectLibrary/SVObjectSubmitCommandFacade.h"
 #include "SVObjectLibrary/SVObserverTemplate.h"
 #include "SVOLibrary/SVQueueObject.h"
 #include "SVStatusLibrary/SVImageIndexStruct.h"
@@ -64,7 +62,6 @@ class SVResultListClass;
 
 class SVInspectionProcess : 
 	public SVObjectClass,
-	public SVObjectSubmitCommandFacade,
 	public SVObserverTemplate< SVAddTool >,
 	public SVObserverTemplate< SVDeleteTool >,
 	public SvOi::IInspectionProcess
@@ -119,10 +116,11 @@ public:
 #pragma region virtual method (IInspectionProcess)
 	virtual SvOi::IObjectClass* GetPPQInterface() const override;
 	virtual void SetDefaultInputs() override;
-	virtual SvCl::SelectorItemVectorPtr GetPPQSelectorList( const UINT Attribute ) const override;
+	virtual void GetPPQSelectorList(SvCl::SelectorItemInserter Inserter, const UINT Attribute ) const override;
 	virtual SvOi::ITaskObject* GetToolSetInterface() const override;
 	virtual HRESULT RunOnce(SvOi::ITaskObject* pTask) override;
 	virtual long GetLastIndex() const  override;
+	virtual HRESULT SubmitCommand(const SvOi::ICommandPtr& rCommandPtr) override;
 #pragma endregion virtual method (IInspectionProcess)
 
 	bool IsCameraInInspection( const std::string& rCameraName ) const;
@@ -350,15 +348,13 @@ protected:
 	typedef void ( CALLBACK * SVAPCSignalHandler )( DWORD_PTR );
 	typedef boost::function<void ( bool& )> SVThreadProcessHandler;
 
-	typedef SVTQueueObject< SVCommandTemplatePtr > SVCommandQueue;
-	typedef SVTQueueObject< SVMonitorList > SVMonitorListQueue;
-	typedef SVTQueueObject< SVMonitorItemList > SVImageNameDequeQueue;
-	typedef SVTQueueObject< SVInputRequestInfoStructPtr > SVInputRequestQueue;
-	typedef SVTQueueObject< SVInputImageRequestInfoStructPtr > SVInputImageRequestQueue;
-	typedef SVTQueueObject< SVProductInfoStruct > SVProductQueue;
+	typedef SVTQueueObject<SvOi::ICommandPtr> SVCommandQueue;
+	typedef SVTQueueObject<SVMonitorList> SVMonitorListQueue;
+	typedef SVTQueueObject<SVMonitorItemList> SVImageNameDequeQueue;
+	typedef SVTQueueObject<SVInputRequestInfoStructPtr> SVInputRequestQueue;
+	typedef SVTQueueObject<SVInputImageRequestInfoStructPtr> SVInputImageRequestQueue;
+	typedef SVTQueueObject<SVProductInfoStruct> SVProductQueue;
 	
-	virtual HRESULT SubmitCommand( const SVCommandTemplatePtr& p_rCommandPtr ) override;
-
 	virtual SVObjectPtrDeque GetPreProcessObjects() const override;
 	virtual SVObjectPtrDeque GetPostProcessObjects() const override;
 

@@ -12,7 +12,7 @@
 
 #pragma region Includes
 #include "SVCommandLibrary/SVCommandLibraryEnums.h"
-#include "SVCommandLibrary/SVCommandTemplate.h"
+#include "ObjectInterfaces/ICommand.h"
 #pragma endregion Includes
 
 class ATL_NO_VTABLE SVRemoteCommand
@@ -34,21 +34,21 @@ public:
 	SVRemoteCommand();
 	virtual ~SVRemoteCommand();
 
-	void SetCommand( SVCommandTemplatePtr p_Command );
+	void SetCommand(SvOi::ICommandPtr pCommand);
 
-	STDMETHOD (GetCommandType)(long* p_CommandType);
+	STDMETHOD (GetCommandType)(long* pCommandType);
 
-  STDMETHOD (ConstructCommandData)(ISVRemoteCommandData** p_ppCommandData);
+  STDMETHOD (ConstructCommandData)(ISVRemoteCommandData** ppCommandData);
 
-	STDMETHOD (GetAttributes)(ISVRemoteCommandData** p_ppAttributes);
-	STDMETHOD (SetAttributes)(ISVRemoteCommandData* p_pAttributes);
+	STDMETHOD (GetAttributes)(ISVRemoteCommandData** ppAttributes);
+	STDMETHOD (SetAttributes)(ISVRemoteCommandData* pAttributes);
 
 	STDMETHOD (Execute)();
 
-	STDMETHOD (GetResults)(ISVRemoteCommandData** p_ppResults);
+	STDMETHOD (GetResults)(ISVRemoteCommandData** ppResults);
 
 protected:
-	SVCommandTemplatePtr m_Command;
+	SvOi::ICommandPtr m_pCommand;
 };
 
 OBJECT_ENTRY_AUTO( __uuidof( SVRemoteCommand ), SVRemoteCommand ) 

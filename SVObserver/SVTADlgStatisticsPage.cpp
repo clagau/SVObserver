@@ -22,8 +22,7 @@
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "ObjectInterfaces\IObjectManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
-#include "SVOGui/NoSelector.h"
-#include "SVOGui/ToolSetItemSelector.h"
+#include "InspectionCommands/BuildSelectableItems.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
@@ -291,8 +290,10 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnPublishButton()
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, std::string(pInspection->GetToolSet()->GetCompleteName()), std::string( _T("") ) );
 
-	SvOsl::SelectorOptions BuildOptions( pInspection->GetUniqueObjectID(), SvDef::SV_PUBLISHABLE, m_pTool->GetUniqueObjectID() );
-	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>(BuildOptions);
+	SvCmd::SelectorOptions BuildOptions {{SvCmd::ObjectSelectorType::toolsetItems}, pInspection->GetUniqueObjectID(), SvDef::SV_PUBLISHABLE, m_pTool->GetUniqueObjectID()};
+	SvCl::SelectorItemVector SelectorItems;
+	SvCmd::BuildSelectableItems(BuildOptions, std::back_inserter(SelectorItems));
+	SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(SelectorItems);
 
 	std::string PublishableResults = SvUl::LoadStdString( IDS_PUBLISHABLE_RESULTS );
 	std::string Title = SvUl::Format( _T("%s - %s"), PublishableResults.c_str(), m_pTool->GetName() );
@@ -328,8 +329,10 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnBtnObjectPicker()
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject);
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, std::string( _T("") ) );
 
-	SvOsl::SelectorOptions BuildOptions( pInspection->GetUniqueObjectID(), SvDef::SV_SELECTABLE_FOR_STATISTICS, m_pToolSet->GetUniqueObjectID() );
-	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
+	SvCmd::SelectorOptions BuildOptions {{SvCmd::ObjectSelectorType::toolsetItems}, pInspection->GetUniqueObjectID(), SvDef::SV_SELECTABLE_FOR_STATISTICS, m_pToolSet->GetUniqueObjectID()};
+	SvCl::SelectorItemVector SelectorItems;
+	SvCmd::BuildSelectableItems(BuildOptions, std::back_inserter(SelectorItems));
+	SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(SelectorItems);
 
 	SVObjectReference ObjectRef(m_pTool->GetVariableSelected());
 	if (nullptr != ObjectRef.getObject())

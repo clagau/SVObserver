@@ -9,30 +9,25 @@
 //* .Check In Date   : $Date:   22 Apr 2013 17:01:14  $
 //******************************************************************************
 
-#ifndef SVOBJECTTHREADCOMMANDTEMPLATE_INL
-#define SVOBJECTTHREADCOMMANDTEMPLATE_INL
-
-#include "SVObjectThreadCommandTemplate.h"
-
-template< typename SVCommandPtr >
-SVObjectThreadCommandTemplate< SVCommandPtr >::SVObjectThreadCommandTemplate( const SVCommandPtr& p_rCommandPtr )
-: SVCommandTemplate( 1 ), m_CommandPtr( p_rCommandPtr )
+template<typename CommandPtr>
+SVObjectThreadCommandTemplate<CommandPtr>::SVObjectThreadCommandTemplate(const CommandPtr& rpCommand) : SvOi::ICommand()
+	,m_pCommand(rpCommand)
 {
 }
 
-template< typename SVCommandPtr >
-SVObjectThreadCommandTemplate< SVCommandPtr >::~SVObjectThreadCommandTemplate()
+template<typename CommandPtr>
+SVObjectThreadCommandTemplate<CommandPtr>::~SVObjectThreadCommandTemplate()
 {
 }
 
-template< typename SVCommandPtr >
-HRESULT SVObjectThreadCommandTemplate< SVCommandPtr >::Execute()
+template<typename CommandPtr>
+HRESULT SVObjectThreadCommandTemplate<CommandPtr>::Execute()
 {
 	HRESULT l_Status = S_OK;
 
-	if(nullptr != m_CommandPtr )
+	if(nullptr != m_pCommand )
 	{
-		m_CommandPtr->Execute();
+		m_pCommand->Execute();
 	}
 	else
 	{
@@ -41,6 +36,4 @@ HRESULT SVObjectThreadCommandTemplate< SVCommandPtr >::Execute()
 
 	return l_Status;
 }
-
-#endif
 

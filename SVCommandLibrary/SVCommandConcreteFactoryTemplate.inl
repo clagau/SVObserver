@@ -9,33 +9,26 @@
 //* .Check In Date   : $Date:   18 Apr 2013 18:24:16  $
 //******************************************************************************
 
-#ifndef SVCOMMANDFACTORYTEMPLATE_INL
-#define SVCOMMANDFACTORYTEMPLATE_INL
-
-#include "SVCommandConcreteFactoryTemplate.h"
-
-template< typename SVCommandObject >
-unsigned long SVCommandConcreteFactoryTemplate< SVCommandObject >::GetStaticCommandType()
+template<typename CommandObject>
+unsigned long SVCommandConcreteFactoryTemplate<CommandObject>::GetStaticCommandType()
 {
-	return SVCommandObject::GetStaticCommandType();
+	return CommandObject::GetStaticCommandType();
 }
 
-template< typename SVCommandObject >
-SVCommandConcreteFactoryTemplate< SVCommandObject >::SVCommandConcreteFactoryTemplate( SVCommandExecuteFunctor p_ExecuteFunctor )
-: SVCommandFactoryTemplate( SVCommandObject::GetStaticCommandType() ), m_ExecuteFunctor( p_ExecuteFunctor )
+template<typename CommandObject>
+SVCommandConcreteFactoryTemplate< CommandObject >::SVCommandConcreteFactoryTemplate( SVCommandExecuteFunctor ExecuteFunctor )
+: SVCommandFactoryTemplate(CommandObject::GetStaticCommandType()), m_ExecuteFunctor( ExecuteFunctor )
 {
 }
 
-template< typename SVCommandObject >
-SVCommandConcreteFactoryTemplate< SVCommandObject >::~SVCommandConcreteFactoryTemplate()
+template<typename CommandObject>
+SVCommandConcreteFactoryTemplate<CommandObject>::~SVCommandConcreteFactoryTemplate()
 {
 }
 
-template< typename SVCommandObject >
-SVCommandTemplatePtr SVCommandConcreteFactoryTemplate< SVCommandObject >::CreateCommand() const
+template<typename CommandObject>
+SvOi::ICommandPtr SVCommandConcreteFactoryTemplate<CommandObject>::CreateCommand() const
 {
-	return SVCommandTemplatePtr{ new SVCommandObject(m_ExecuteFunctor) };
+	return std::make_shared<CommandObject>(m_ExecuteFunctor);
 }
-
-#endif
 

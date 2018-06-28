@@ -24,11 +24,8 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #include "RootObject.h"
 #include "SVOGui/BoundValue.h"
-#include "SVOGui/GlobalSelector.h"
-#include "SVOGui/PPQSelector.h"
-#include "SVOGui/ToolSetItemSelector.h"
-#include "SVOGui/NoSelector.h"
 #include "TextDefinesSvO.h"
+#include "InspectionCommands/BuildSelectableItems.h"
 #include "InspectionCommands/GetObjectName.h"
 #include "InspectionCommands/GetInstanceIDByTypeInfo.h"
 #pragma endregion Includes
@@ -268,8 +265,11 @@ int SVExternalToolInputSelectPage::SelectObject( std::string& rObjectName, SVRPr
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject );
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, std::string( _T("") ) );
 
-	SvOsl::SelectorOptions BuildOptions( m_InspectionID, SvDef::SV_ARCHIVABLE, GetToolSetGUID() );
-	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::GlobalSelector, SvOg::PPQSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
+	SvCmd::SelectorOptions BuildOptions {{SvCmd::ObjectSelectorType::globalConstantItems, SvCmd::ObjectSelectorType::ppqItems, SvCmd::ObjectSelectorType::toolsetItems}, 
+		m_InspectionID, SvDef::SV_ARCHIVABLE, GetToolSetGUID()};
+	SvCl::SelectorItemVector SelectorItems;
+	SvCmd::BuildSelectableItems(BuildOptions, std::back_inserter(SelectorItems));
+	SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(SelectorItems);
 
 	SvDef::StringSet Items;
 

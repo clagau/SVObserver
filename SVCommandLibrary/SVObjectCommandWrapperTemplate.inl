@@ -9,20 +9,15 @@
 //* .Check In Date   : $Date:   22 Apr 2013 16:47:22  $
 //******************************************************************************
 
-#ifndef SVOBJECTCOMMANDWRAPPERTEMPLATE_INL
-#define SVOBJECTCOMMANDWRAPPERTEMPLATE_INL
-
-#include "SVObjectCommandWrapperTemplate.h"
-
-template< typename SVCommandPtr >
-SVObjectCommandWrapperTemplate< SVCommandPtr >::SVObjectCommandWrapperTemplate( const SVCommandPtr& p_rCommandPtr )
-: m_CommandPtr( p_rCommandPtr ), m_WaitHandle( nullptr ), m_Status( E_FAIL )
+template<typename CommandPtr>
+SVObjectCommandWrapperTemplate<CommandPtr>::SVObjectCommandWrapperTemplate( const CommandPtr& rpCommand)
+: m_pCommand(rpCommand), m_WaitHandle( nullptr ), m_Status( E_FAIL )
 {
 	m_WaitHandle = ::CreateEvent( nullptr, true, false, nullptr );
 }
 
-template< typename SVCommandPtr >
-SVObjectCommandWrapperTemplate< SVCommandPtr >::~SVObjectCommandWrapperTemplate()
+template<typename CommandPtr>
+SVObjectCommandWrapperTemplate<CommandPtr>::~SVObjectCommandWrapperTemplate()
 {
 	if( nullptr != m_WaitHandle )
 	{
@@ -32,14 +27,14 @@ SVObjectCommandWrapperTemplate< SVCommandPtr >::~SVObjectCommandWrapperTemplate(
 	}
 }
 
-template< typename SVCommandPtr >
-HRESULT SVObjectCommandWrapperTemplate< SVCommandPtr >::Execute()
+template<typename CommandPtr >
+HRESULT SVObjectCommandWrapperTemplate<CommandPtr>::Execute()
 {
 	HRESULT l_Status = S_OK;
 
-	if(nullptr != m_CommandPtr)
+	if(nullptr != m_pCommand)
 	{
-		m_Status = m_CommandPtr->Execute();
+		m_Status = m_pCommand->Execute();
 
 		NotifyRequestComplete();
 	}
@@ -51,8 +46,8 @@ HRESULT SVObjectCommandWrapperTemplate< SVCommandPtr >::Execute()
 	return l_Status;
 }
 
-template< typename SVCommandPtr >
-HRESULT SVObjectCommandWrapperTemplate< SVCommandPtr >::NotifyRequestComplete() const
+template<typename CommandPtr>
+HRESULT SVObjectCommandWrapperTemplate<CommandPtr>::NotifyRequestComplete() const
 {
 	HRESULT l_Status = S_OK;
 
@@ -68,8 +63,8 @@ HRESULT SVObjectCommandWrapperTemplate< SVCommandPtr >::NotifyRequestComplete() 
 	return l_Status;
 }
 
-template< typename SVCommandPtr >
-HRESULT SVObjectCommandWrapperTemplate< SVCommandPtr >::IsRequestComplete() const
+template<typename CommandPtr>
+HRESULT SVObjectCommandWrapperTemplate<CommandPtr>::IsRequestComplete() const
 {
 	HRESULT l_Status = S_OK;
 
@@ -106,14 +101,14 @@ HRESULT SVObjectCommandWrapperTemplate< SVCommandPtr >::IsRequestComplete() cons
 	return l_Status;
 }
 
-template< typename SVCommandPtr >
-HRESULT SVObjectCommandWrapperTemplate< SVCommandPtr >::WaitForRequest( DWORD p_TimeoutInMilliseconds ) const
+template<typename CommandPtr>
+HRESULT SVObjectCommandWrapperTemplate<CommandPtr>::WaitForRequest(DWORD p_TimeoutInMilliseconds) const
 {
 	HRESULT l_Status = S_OK;
 
 	if( nullptr != m_WaitHandle )
 	{
-		if( ::WaitForSingleObject( m_WaitHandle, p_TimeoutInMilliseconds ) != WAIT_OBJECT_0 )
+		if(WAIT_OBJECT_0 != ::WaitForSingleObject(m_WaitHandle, p_TimeoutInMilliseconds))
 		{
 			l_Status = E_FAIL;
 		}
@@ -126,11 +121,9 @@ HRESULT SVObjectCommandWrapperTemplate< SVCommandPtr >::WaitForRequest( DWORD p_
 	return l_Status;
 }
 
-template< typename SVCommandPtr >
-HRESULT SVObjectCommandWrapperTemplate< SVCommandPtr >::GetStatus() const
+template<typename CommandPtr>
+HRESULT SVObjectCommandWrapperTemplate<CommandPtr>::GetStatus() const
 {
 	return m_Status;
 }
-
-#endif
 

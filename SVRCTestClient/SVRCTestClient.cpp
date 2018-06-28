@@ -69,6 +69,14 @@ static void GetNotifications(SvWsl::SVRCClientService& client)
 	ctx.cancel();
 }
 
+void PrintTreeItems(const SvPb::TreeItem& rTreeItem, std::string& rData, const std::string& rSpacing)
+{
+	for(int i=0; i < rTreeItem.children_size(); i++)
+	{
+		rData += rSpacing + rTreeItem.children(i).name() + _T("\n");
+		PrintTreeItems(rTreeItem.children(i), rData, rSpacing + _T("\t"));
+	}
+}
 
 
 int main(int argc, char* argv[])
@@ -128,7 +136,8 @@ int main(int argc, char* argv[])
 					<< "  n  notification" << std::endl
 					<< "  e  (editmode)" << std::endl
 					<< "  r  rummode" << std::endl
-					<< "  c getconfig" << std::endl;
+					<< "  c getconfig" << std::endl
+					<< "  o getobjectselector" << std::endl;
 			}
 			else if (words[0] == "m")
 			{
@@ -153,6 +162,32 @@ int main(int argc, char* argv[])
 					if (FileStream.is_open())
 					{
 						FileStream.write(res.filedata().c_str(), res.filedata().length());
+						FileStream.close();
+					}
+				}
+			}
+			else if (words[0] == "o")
+			{
+				///GetObjectSelector
+				SvPb::GetObjectSelectorItemsRequest request;
+				request.set_inspectionid(_T("Inspection_1"));
+				request.add_types(SvPb::ObjectSelectorType::globalConstantItems);
+				request.add_types(SvPb::ObjectSelectorType::ppqItems);
+				request.add_types(SvPb::ObjectSelectorType::toolsetItems);
+				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetObjectSelectorItemsRequest, SvPb::GetObjectSelectorItemsResponse> client(*pRpcClient);
+				auto res = client.request(std::move(request), Timeout).get();
+				BOOST_LOG_TRIVIAL(info) << res.DebugString();
+				if (0 != res.tree().children_size())
+				{
+					std::string Data;
+					PrintTreeItems(res.tree(), Data, _T(""));
+
+					std::ofstream FileStream;
+					FileStream.open(_T("D:\\Temp\\ObjectSelector.txt"), std::ofstream::out | std::ofstream::trunc);
+					if (FileStream.is_open())
+					{
+
+						FileStream.write(Data.c_str(), Data.length());
 						FileStream.close();
 					}
 				}

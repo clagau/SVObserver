@@ -14,11 +14,6 @@
 #include "SVContainerLibrary/SelectorItem.h"
 #pragma endregion Includes
 
-#pragma region Declarations
-//! Declaration is in SVUtilityLibrary\SVGUID.h
-class SVGUID;
-#pragma endregion Declarations
-
 namespace SvCmd
 {
 	class GetPPQSelectorList
@@ -27,7 +22,10 @@ namespace SvCmd
 		GetPPQSelectorList(const GetPPQSelectorList&) = delete;
 		GetPPQSelectorList& operator=(const GetPPQSelectorList&) = delete;
 
-		GetPPQSelectorList(const SVGUID& rInstanceID, UINT Attribute) : m_InstanceID(rInstanceID), m_Attribute(Attribute) {};
+		GetPPQSelectorList(SvCl::SelectorItemInserter Inserter, const GUID& rInstanceID, UINT Attribute) 
+			: m_selectorInserter{Inserter}
+			, m_instanceID(rInstanceID)
+			, m_attribute(Attribute) {};
 
 		virtual ~GetPPQSelectorList() {};
 
@@ -38,19 +36,18 @@ namespace SvCmd
 		{
 			HRESULT hr = S_OK;
 
-			SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*>(SvOi::getObject(m_InstanceID));
+			SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*>(SvOi::getObject(m_instanceID));
 			if (pInspection)
 			{
-				m_SelectorList = pInspection->GetPPQSelectorList( m_Attribute );
+				pInspection->GetPPQSelectorList(m_selectorInserter,  m_attribute);
 			}
 			return hr;
 		}
 		bool empty() const { return false; }
-		SvCl::SelectorItemVectorPtr GetResults() const { return m_SelectorList; }
 
 	private:
-		SVGUID m_InstanceID;
-		UINT m_Attribute;
-		SvCl::SelectorItemVectorPtr m_SelectorList;
+		GUID m_instanceID;
+		UINT m_attribute;
+		SvCl::SelectorItemInserter m_selectorInserter;
 	};
 } //namespace SvCmd

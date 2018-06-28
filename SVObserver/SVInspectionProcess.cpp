@@ -405,13 +405,13 @@ HRESULT SVInspectionProcess::ProcessCommandQueue(bool& p_rProcessed)
 #ifdef EnableTracking
 		m_InspectionTracking.EventStart(_T("Process Command Queue"));
 #endif
-		SVCommandTemplatePtr l_CommandPtr;
+		SvOi::ICommandPtr pCommand;
 
-		if (m_CommandQueue.RemoveHead(&l_CommandPtr))
+		if (m_CommandQueue.RemoveHead(&pCommand))
 		{
-			if (nullptr != l_CommandPtr)
+			if (nullptr != pCommand)
 			{
-				l_Status = l_CommandPtr->Execute();
+				l_Status = pCommand->Execute();
 			}
 		}
 
@@ -892,22 +892,6 @@ bool SVInspectionProcess::GoOffline()
 	}
 	return true;
 }// end GoOffline
-
-HRESULT SVInspectionProcess::SubmitCommand(const SVCommandTemplatePtr& p_rCommandPtr)
-{
-	HRESULT Result = S_OK;
-
-	if (m_CommandQueue.AddTail(p_rCommandPtr))
-	{
-		Result = m_AsyncProcedure.Signal(nullptr);
-	}
-	else
-	{
-		Result = E_FAIL;
-	}
-
-	return Result;
-}
 
 bool SVInspectionProcess::CanProcess(SVProductInfoStruct *pProduct)
 {
@@ -3702,10 +3686,8 @@ long  SVInspectionProcess::GetResultDataIndex() const
 }
 
 #pragma region IInspectionProcess methods
-SvCl::SelectorItemVectorPtr SVInspectionProcess::GetPPQSelectorList(const UINT Attribute) const
+void SVInspectionProcess::GetPPQSelectorList(SvCl::SelectorItemInserter Inserter, const UINT Attribute) const
 {
-	SvCl::SelectorItemVectorPtr pResult {new SvCl::SelectorItemVector()};
-
 	SVPPQObject *pPPQ = GetPPQ();
 	if (nullptr != pPPQ)
 	{
@@ -3714,12 +3696,12 @@ SvCl::SelectorItemVectorPtr SVInspectionProcess::GetPPQSelectorList(const UINT A
 		SVObjectReferenceVector ObjectList;
 		SVObjectManagerClass::Instance().getTreeList(PpqName, ObjectList, Attribute);
 
-		std::for_each(ObjectList.begin(), ObjectList.end(), [&pResult](const SVObjectReference& rObjectRef)->void
+		std::for_each(ObjectList.begin(), ObjectList.end(), [&Inserter](const SVObjectReference& rObjectRef)->void
 		{
 			SvCl::SelectorItem InsertItem;
 
 			InsertItem.m_Name = rObjectRef.GetName().c_str();
-			InsertItem.m_ItemKey = rObjectRef.getObject()->GetUniqueObjectID().ToVARIANT();
+			InsertItem.m_ItemKey = rObjectRef.getObject()->GetUniqueObjectID();
 			if (nullptr != rObjectRef.getValueObject())
 			{
 				InsertItem.m_ItemTypeName = rObjectRef.getValueObject()->getTypeName();
@@ -3736,13 +3718,13 @@ SvCl::SelectorItemVectorPtr SVInspectionProcess::GetPPQSelectorList(const UINT A
 					InsertItem.m_Location = ArrayObjectRef.GetCompleteName(true);
 					InsertItem.m_ArrayIndex = i;
 					InsertItem.m_Array = true;
-					pResult->push_back(InsertItem);
+					Inserter = InsertItem;
 				}
 			}
 			else
 			{
 				InsertItem.m_Location = rObjectRef.GetCompleteName(true);
-				pResult->push_back(InsertItem);
+				Inserter = InsertItem;
 			}
 		});
 	}
@@ -3752,7 +3734,7 @@ SvCl::SelectorItemVectorPtr SVInspectionProcess::GetPPQSelectorList(const UINT A
 
 	SVObjectPtrVector PpqVariables;
 	PpqVariables = getPPQVariables();
-	std::for_each(PpqVariables.begin(), PpqVariables.end(), [&pResult, &InspectionName, &Attribute](SVObjectClass* pObject)->void
+	std::for_each(PpqVariables.begin(), PpqVariables.end(), [&Inserter, &InspectionName, &Attribute](SVObjectClass* pObject)->void
 	{
 		if (nullptr != pObject)
 		{
@@ -3769,18 +3751,16 @@ SvCl::SelectorItemVectorPtr SVInspectionProcess::GetPPQSelectorList(const UINT A
 				// Only DIO and Remote Input, but is all that is in this list?
 				SvUl::searchAndReplace(Location, InspectionName.c_str(), SvDef::FqnPPQVariables);
 				InsertItem.m_DisplayLocation = Location;
-				InsertItem.m_ItemKey = ObjectRef.getObject()->GetUniqueObjectID().ToVARIANT();
+				InsertItem.m_ItemKey = ObjectRef.getObject()->GetUniqueObjectID();
 				if (nullptr != ObjectRef.getValueObject())
 				{
 					InsertItem.m_ItemTypeName = ObjectRef.getValueObject()->getTypeName();
 				}
 
-				pResult->push_back(InsertItem);
+				Inserter = InsertItem;
 			}
 		}
 	});
-
-	return pResult;
 }
 
 SvOi::ITaskObject* SVInspectionProcess::GetToolSetInterface() const
@@ -3807,6 +3787,23 @@ long SVInspectionProcess::GetLastIndex() const
 	}
 	return lastIndex;
 }
+
+HRESULT SVInspectionProcess::SubmitCommand(const SvOi::ICommandPtr& rCommandPtr)
+{
+	HRESULT Result = S_OK;
+
+	if (m_CommandQueue.AddTail(rCommandPtr))
+	{
+		Result = m_AsyncProcedure.Signal(nullptr);
+	}
+	else
+	{
+		Result = E_FAIL;
+	}
+
+	return Result;
+}
+
 
 bool SVInspectionProcess::AddInputRequestMarker()
 {

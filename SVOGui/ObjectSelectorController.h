@@ -10,11 +10,7 @@
 #pragma region Includes
 #include "SVUtilityLibrary\SVGUID.h"
 #include "SVOResource/resource.h"
-#include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
-#include "GlobalSelector.h"
-#include "NoSelector.h"
-#include "ToolSetItemSelector.h"
-#include "ObjectSelectorController.h"
+#include "InspectionCommands/GetSelectorList.h"
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
@@ -36,9 +32,9 @@ namespace SvOg
 		/// \param Title [in] The title of the object selector.
 		/// \param pParent [in] The parent control
 		/// \param rInstanceId [in] 
+		/// \param rInstanceId [in] 
 		/// \returns bool True if selector was closed by OK-button.
-		template <typename ToolsetSelector>
-		bool Show( std::string& rName, const std::string& rTitle, CWnd* pParent, const SVGUID& rInstanceId = GUID_NULL );
+		bool Show( std::string& rName, const std::string& rTitle, CWnd* pParent, const SVGUID& rInstanceId = GUID_NULL, SvCmd::SelectorFilterTypeEnum FilterType = SvCmd::SelectorFilterTypeEnum::AttributesAllowedFilterType);
 #pragma endregion Public Methods
 
 #pragma endregion Private Methods
@@ -56,7 +52,3 @@ namespace SvOg
 #pragma region Member Variables
 	};
 } //namespace SvOg
-
-#pragma region Inline
-#include "ObjectSelectorController.inl"
-#pragma endregion Inline

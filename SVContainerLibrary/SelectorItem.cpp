@@ -21,7 +21,7 @@ namespace SvCl
 		m_Location = _T("");
 		m_DisplayLocation = _T("");
 		m_ItemTypeName = _T("");
-		m_ItemKey = _T("");
+		m_ItemKey = GUID_NULL;
 		m_Array = false;
 		m_ArrayIndex = -1;
 		m_Selected = false;

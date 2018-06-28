@@ -12,11 +12,12 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "InspectionCommands\GetInstanceIDByDottedName.h"
 #include "InspectionCommands\GetAttributesAllowed.h"
-#include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
+#include "SVCommandLibrary\SVObjectSynchronousCommandTemplate.h"
 #include "TextDefinesSvOg.h"
 #include "SVStatusLibrary/MessageTextEnum.h"
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVMessage\SVMessage.h"
+#include "Definitions/ObjectDefines.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes

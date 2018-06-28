@@ -16,7 +16,7 @@
 #include "InspectionCommands\GetResultImage.h"
 #include "InspectionCommands\SaveImage.h"
 #include "Definitions/SVObjectTypeInfoStruct.h"
-#include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
+#include "SVCommandLibrary\SVObjectSynchronousCommandTemplate.h"
 #include "ObjectInterfaces\IObjectManager.h"
 #include "ObjectInterfaces\ISVImage.h"
 #include "InspectionCommands\CommandFunctionHelper.h"

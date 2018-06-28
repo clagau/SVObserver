@@ -12,30 +12,28 @@
 #pragma once
 
 #pragma region Includes
-#include "SVCommandTemplate.h"
+#include "ObjectInterfaces/ICommand.h"
 #pragma endregion Includes
 
 class SVCommandFactoryTemplate
 {
 public:
+	SVCommandFactoryTemplate() = delete;
+	SVCommandFactoryTemplate(const SVCommandFactoryTemplate& p_rObject) =delete;
+
+	const SVCommandFactoryTemplate& operator=(const SVCommandFactoryTemplate& p_rObject) =delete;
+
 	virtual ~SVCommandFactoryTemplate();
 
-	unsigned long GetCommandType() const;
+	virtual unsigned long GetCommandType() const;
 
-	virtual SVCommandTemplatePtr CreateCommand() const = 0;
+	virtual SvOi::ICommandPtr CreateCommand() const = 0;
 
 protected:
-	SVCommandFactoryTemplate( unsigned long p_CommandType );
+	SVCommandFactoryTemplate(unsigned long CommandType);
 
 	const unsigned long m_CommandType;
-
-private:
-	SVCommandFactoryTemplate();
-	SVCommandFactoryTemplate( const SVCommandFactoryTemplate& p_rObject );
-
-	const SVCommandFactoryTemplate& operator=( const SVCommandFactoryTemplate& p_rObject );
-
 };
 
-typedef std::shared_ptr< SVCommandFactoryTemplate > SVCommandFactoryTemplatePtr;
+typedef std::shared_ptr<SVCommandFactoryTemplate> SVCommandFactoryTemplatePtr;
 

@@ -7,6 +7,7 @@
 #pragma once
 
 #pragma region Includes
+#include "ICommand.h"
 #include "IObjectClass.h"
 #include "ITaskObject.h"
 #include "SVContainerLibrary/SelectorItem.h"
@@ -31,7 +32,7 @@ namespace SvOi
 		/***********
 		This method gets the PPQ Variables selector list
 		***********/
-		virtual SvCl::SelectorItemVectorPtr GetPPQSelectorList( const UINT Attribute ) const = 0;
+		virtual void GetPPQSelectorList(SvCl::SelectorItemInserter Inserter, const UINT Attribute) const = 0;
 
 		/***********
 		This method gets the Interface to the Tool Set
@@ -71,5 +72,9 @@ namespace SvOi
 
 		/// is the new disable method set?
 		virtual bool IsNewDisableMethodSet() = 0;
+
+		///Calls a command in the inspection thread
+		virtual HRESULT SubmitCommand(const ICommandPtr& rCommandPtr) = 0;
+
 	};
 } //namespace SvOi

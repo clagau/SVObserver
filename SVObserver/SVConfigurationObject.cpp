@@ -17,8 +17,8 @@
 #include "SVConfigurationObject.h"
 
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
-#include "SVObjectLibrary/SVObjectAsynchronousCommandTemplate.h"
-#include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
+#include "SVCommandLibrary/SVObjectAsynchronousCommandTemplate.h"
+#include "SVCommandLibrary/SVObjectSynchronousCommandTemplate.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
 #include "SVUtilityLibrary/SVGUID.h"
@@ -4460,7 +4460,7 @@ HRESULT SVConfigurationObject::GetInspectionItems(const SvDef::StringSet& rNames
 			if (l_ProcessIter != l_Inspections.end() && nullptr != l_ProcessIter->second)
 			{
 				SVCommandInspectionGetItemsPtr l_DataPtr {new SVCommandInspectionGetItems(*l_ProcessIter->second, l_InspectionIter->second)};
-				SVObjectAsynchronousCommandTemplate< SVCommandInspectionGetItemsPtr > l_Command(*l_ProcessIter->second, l_DataPtr);
+				SVObjectAsynchronousCommandTemplate<SVCommandInspectionGetItemsPtr> l_Command(l_ProcessIter->second->GetUniqueObjectID(), l_DataPtr);
 
 				HRESULT l_CommandStatus = l_Command.SubmitCommand();
 

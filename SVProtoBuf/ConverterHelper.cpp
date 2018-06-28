@@ -8,6 +8,7 @@
 #pragma region Includes
 #include "StdAfx.h"
 #include "ConverterHelper.h"
+#include "Definitions/ObjectDefines.h"
 #pragma endregion Includes
 
 namespace SvPb
@@ -15,7 +16,7 @@ namespace SvPb
 
 void SetGuidInProtoBytes(std::string  *pString, const GUID& guid)
 {
-	if (pString)
+	if (nullptr != pString)
 	{
 		pString->assign(reinterpret_cast<const char*>(&guid), sizeof(GUID));
 	}
@@ -23,7 +24,7 @@ void SetGuidInProtoBytes(std::string  *pString, const GUID& guid)
 
 void GetGuidFromProtoBytes(const std::string& strguid, GUID& rGuid)
 {
-	if (strguid.size() == sizeof(GUID))
+	if (sizeof(GUID) == strguid.size())
 	{
 		rGuid = *(reinterpret_cast<const GUID*>(strguid.data()));
 	}
@@ -329,5 +330,58 @@ SvPb::DeviceModeType  SVIMMode_2_PbDeviceMode(unsigned long Mode)
 	}
 }
 
+UINT PbObjectAttributes2Attributes(const SvPb::ObjectAttributes& rAttributes)
+{
+	UINT Result{SvDef::SV_NO_ATTRIBUTES};
+
+	switch(rAttributes)
+	{
+		case SvPb::ObjectAttributes::noAttributes:
+			Result = SvDef::SV_NO_ATTRIBUTES;
+			break;
+		case SvPb::ObjectAttributes::viewable:
+			Result = SvDef::SV_VIEWABLE;
+			break;
+		case SvPb::ObjectAttributes::publishable:
+			Result = SvDef::SV_PUBLISHABLE;
+			break;
+		case SvPb::ObjectAttributes::archivable:
+			Result = SvDef::SV_ARCHIVABLE;
+			break;
+		case SvPb::ObjectAttributes::selectableForEquation:
+			Result = SvDef::SV_SELECTABLE_FOR_EQUATION;
+			break;
+		case SvPb::ObjectAttributes::embedable:
+			Result = SvDef::SV_EMBEDABLE;
+			break;
+		case SvPb::ObjectAttributes::selectableForStatistics:
+			Result = SvDef::SV_SELECTABLE_FOR_STATISTICS;
+			break;
+		case SvPb::ObjectAttributes::archivable_image:
+			Result = SvDef::SV_ARCHIVABLE_IMAGE;
+			break;
+		case SvPb::ObjectAttributes::printable:
+			Result = SvDef::SV_PRINTABLE;
+			break;
+		case SvPb::ObjectAttributes::remotely_setable:
+			Result = SvDef::SV_REMOTELY_SETABLE;
+			break;
+		case SvPb::ObjectAttributes::setable_online:
+			Result = SvDef::SV_SETABLE_ONLINE;
+			break;
+		case SvPb::ObjectAttributes::extent_object:
+			Result = SvDef::SV_EXTENT_OBJECT;
+			break;
+		case SvPb::ObjectAttributes::hidden:
+			Result = SvDef::SV_HIDDEN;
+			break;
+		case SvPb::ObjectAttributes::publish_result_image:
+			Result = SvDef::SV_PUBLISH_RESULT_IMAGE;
+			break;
+		default:
+			break;
+	}
+	return Result;
+}
 
 } //namespace SvPB

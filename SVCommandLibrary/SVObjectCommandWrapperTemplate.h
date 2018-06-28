@@ -14,13 +14,13 @@
 //Moved to precompiled header: #include <memory>
 #pragma endregion Includes
 
-template< typename SVCommandPtr >
+template<typename CommandPtr>
 class SVObjectCommandWrapperTemplate
 {
 public:
-	typedef std::shared_ptr< SVObjectCommandWrapperTemplate > SVObjectCommandWrapperPtr;
+	typedef std::shared_ptr<SVObjectCommandWrapperTemplate> SVObjectCommandWrapperPtr;
 
-	SVObjectCommandWrapperTemplate( const SVCommandPtr& p_rCommandPtr );
+	SVObjectCommandWrapperTemplate(const CommandPtr& rpCommand);
 
 	virtual ~SVObjectCommandWrapperTemplate();
 
@@ -33,7 +33,7 @@ public:
 	HRESULT GetStatus() const;
 
 private:
-	SVCommandPtr m_CommandPtr;
+	CommandPtr m_pCommand;
 
 	HANDLE m_WaitHandle;
 	HRESULT m_Status;

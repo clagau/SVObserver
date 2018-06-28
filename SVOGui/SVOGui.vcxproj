@@ -185,17 +185,14 @@
     <ClInclude Include="CDSVPictureDisplay.h" />
     <ClInclude Include="Custom2FilterDlg.h" />
     <ClInclude Include="FormulaController.h" />
-    <ClInclude Include="GlobalSelector.h" />
     <ClInclude Include="DataController.h" />
     <ClInclude Include="GlobalConstantConflictDlg.h" />
     <ClInclude Include="GlobalConstantDlg.h" />
     <ClInclude Include="ImageController.h" />
     <ClInclude Include="ISVPropertyPageDialog.h" />
     <ClInclude Include="MaskController.h" />
-    <ClInclude Include="NoSelector.h" />
     <ClInclude Include="ObjectSelectorController.h" />
     <ClInclude Include="PictureDisplay.h" />
-    <ClInclude Include="PPQSelector.h" />
     <ClInclude Include="RangeController.h" />
     <ClInclude Include="RangeValidator.h" />
     <ClInclude Include="ResultTableSelectionDlg.h" />
@@ -249,12 +246,8 @@
     <ClInclude Include="TATableAnalyzerPage.h" />
     <ClInclude Include="TATableSourcePage.h" />
     <ClInclude Include="TextDefinesSvOg.h" />
-    <ClInclude Include="ToolSetItemSelector.h" />
     <ClInclude Include="ValuesAccessor.h" />
     <ClInclude Include="ZoomHelper.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ObjectSelectorController.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

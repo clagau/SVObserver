@@ -11,7 +11,7 @@
 #include "TATableSourcePage.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage\SVMessage.h"
-#include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
+#include "SVCommandLibrary\SVObjectSynchronousCommandTemplate.h"
 #include "InspectionCommands\GetAvailableObjects.h"
 #include "InspectionCommands\ConnectToObject.h"
 #include "InspectionCommands\GetInputs.h"

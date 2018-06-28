@@ -26,6 +26,7 @@
 #include "SVStorageResult.h"
 #include "SVProtoBuf/ConverterHelper.h"
 #include "InspectionCommands/CommandFunctionHelper.h"
+#include "InspectionCommands/BuildSelectableItems.h"
 #pragma endregion Includes
 
 static const TCHAR* const DefaultConfigurationName = _T("Configuration");
@@ -911,12 +912,111 @@ void SVRCCommand::LoadConfig(const SvPb::LoadConfigRequest& rRequest, SvRpc::Tas
 	task.finish(std::move(Response));
 }
 
+void SVRCCommand::GetObjectSelectorItems(const SvPb::GetObjectSelectorItemsRequest& rRequest, SvRpc::Task<SvPb::GetObjectSelectorItemsResponse> task)
+{
+	HRESULT Result {S_OK};
+	SvPb::GetObjectSelectorItemsResponse Response;
+
+
+	GUID inspectionID = SvPb::GetGuidFromProtoBytes(rRequest.inspectionid());
+	GUID instanceID = SvPb::GetGuidFromProtoBytes(rRequest.instanceid());
+	std::string inspectionName;
+
+	//If not a GUID check if it is the inspection name
+	if(GUID_NULL == inspectionID)
+	{
+		inspectionName = rRequest.inspectionid();
+		std::string ObjectName{SvDef::FqnInspections};
+		ObjectName += '.';
+		ObjectName += inspectionName;
+		SvOi::IObjectClass* pObject = SvOi::getObjectByDottedName(ObjectName);
+		inspectionID = (nullptr != pObject) ? pObject->GetUniqueObjectID() : GUID_NULL;
+	}
+	else
+	{
+		SvOi::IObjectClass* pObject = SvOi::getObject(inspectionID);
+		inspectionName = (nullptr != pObject) ? pObject->GetName() : _T("");
+	}
+
+	SvCmd::SelectorOptions BuildOptions {{}, inspectionID, PbObjectAttributes2Attributes(rRequest.filter()), instanceID, rRequest.wholearray()};
+	for(int i=0; i < rRequest.types_size(); i++)
+	{
+		switch(rRequest.types(i))
+		{
+			case SvPb::ObjectSelectorType::globalConstantItems:
+			{
+				BuildOptions.m_ItemTypes.emplace_back(SvCmd::ObjectSelectorType::globalConstantItems);
+				break;
+			}
+			case SvPb::ObjectSelectorType::ppqItems:
+			{
+				BuildOptions.m_ItemTypes.emplace_back(SvCmd::ObjectSelectorType::ppqItems);
+				break;
+			}
+			case SvPb::ObjectSelectorType::toolsetItems:
+			{
+				BuildOptions.m_ItemTypes.emplace_back(SvCmd::ObjectSelectorType::toolsetItems);
+				break;
+			}
+			default:
+				break;
+		}
+	}
+	
+	SvCl::SelectorItemVector SelectorItems;
+	SvCmd::BuildSelectableItems(BuildOptions, std::back_inserter(SelectorItems));
+
+	for(const auto& rItem : SelectorItems)
+	{
+		SVObjectNameInfo nameInfo;
+		SVObjectNameInfo::ParseObjectName(nameInfo, rItem.m_Location);
+		if(nameInfo.m_NameArray.size() > 0 && nameInfo.m_NameArray[0] == inspectionName)
+		{
+			nameInfo.RemoveTopName();
+		}
+		//If object is array then place an additional level with the array group name
+		if (rItem.m_Array && nameInfo.m_NameArray.size() > 0)
+		{
+			std::string ObjectName{nameInfo.m_NameArray[nameInfo.m_NameArray.size() - 1]};
+			//Set the group name
+			nameInfo.m_NameArray[nameInfo.m_NameArray.size() - 1] = rItem.m_Name;
+			//Set the object name at the end of the list
+			nameInfo.m_NameArray.emplace_back(ObjectName);
+		}
+		SvPb::TreeItem* pTreeItem = Response.mutable_tree();
+		for(int i=0; i < nameInfo.m_NameArray.size(); i++)
+		{
+			bool bFound{false};
+			for(int j=0; j < pTreeItem->children_size(); j++)
+			{
+				if(pTreeItem->children(j).name() == nameInfo.m_NameArray[i])
+				{
+					bFound = true;
+					pTreeItem = pTreeItem->mutable_children(j);
+				}
+			}
+			if(!bFound)
+			{
+				pTreeItem = pTreeItem->add_children();
+				pTreeItem->set_name(nameInfo.m_NameArray[i]);
+				//If it is the object name then add the ObjectID
+				if(i == nameInfo.m_NameArray.size() -1 )
+				{
+					SvPb::SetGuidInProtoBytes(pTreeItem->mutable_objectid(), rItem.m_ItemKey.ToGUID());
+				}
+			}
+		}
+	}
+
+	task.finish(std::move(Response));
+}
+
 void SVRCCommand::RegisterNotificationStream(boost::asio::io_service* pIoService,
-											 const SvPb::GetNotificationStreamRequest& request,
-											 SvRpc::Observer<SvPb::GetNotificationStreamResponse> &observer,
+											 const SvPb::GetNotificationStreamRequest& rRequest,
+											 SvRpc::Observer<SvPb::GetNotificationStreamResponse>& rObserver,
 											 SvRpc::ServerStreamContext::Ptr ctx)
 {
-	SVVisionProcessorHelper::Instance().RegisterNotificationStream(pIoService, request, observer, ctx);
+	SVVisionProcessorHelper::Instance().RegisterNotificationStream(pIoService, rRequest, rObserver, ctx);
 }
 
 std::string SVRCCommand::GetFileNameFromFilePath(const std::string& rFilePath)

@@ -15,7 +15,7 @@
 #include "SVGuiExtentUpdater.h"
 #include "SVInspectionProcess.h"
 #include "InspectionEngine/SVTool.h"
-#include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
+#include "SVCommandLibrary/SVObjectSynchronousCommandTemplate.h"
 #include "SVCommandInspectionExtentUpdater.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #pragma endregion Includes

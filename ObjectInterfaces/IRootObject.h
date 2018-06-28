@@ -29,11 +29,11 @@ namespace SvOi
 
 	//************************************
 	/// Get the Root child selector list from a path and specified filter.
+	/// \param Inserter [out] standard to inserter the objects into the list
 	/// \param Path [in] Path of the root child desired. Default = "", this means all objects.
 	/// \param AttributesAllowedFilter [in] Filter of the environment which are wanted. Default = 0, this means all objects.
-	/// \return rObjectNameList [out] The returned object name list.
 	//************************************
-	SvCl::SelectorItemVectorPtr getRootChildSelectorList(LPCTSTR Path = _T(""), UINT AttributesAllowedFilter = 0);
+	void getRootChildSelectorList(SvCl::SelectorItemInserter Inserter, LPCTSTR Path = _T(""), UINT AttributesAllowedFilter = 0);
 
 	//************************************
 	/// Add the Root child objects

@@ -43,11 +43,11 @@ namespace SvOi
 		//************************************
 		/// Return the output list of this task object, filtered by functor.
 		/// /param func <in> functor to check the attribute
+		/// /param inserter <in> to fill the object item list
 		/// /param Attribute <in> attribute
 		/// /param WholeArray <in> flag determines if whole arrays are used
-		/// \returns SelectorItemVectorPtr
 		//************************************
-		virtual SvCl::SelectorItemVectorPtr GetSelectorList(IsObjectInfoAllowed func, UINT Attribute, bool WholeArray) const = 0;
+		virtual void GetSelectorList(IsObjectInfoAllowed func, SvCl::SelectorItemInserter Inserter, UINT Attribute, bool WholeArray) const = 0;
 
 		/// Get the List of Images connected to this Task Object.
 		/// /param rList <in> The List to be populated.

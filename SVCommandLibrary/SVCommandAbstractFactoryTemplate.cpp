@@ -12,8 +12,8 @@
 #include "stdafx.h"
 #include "SVCommandAbstractFactoryTemplate.h"
 
-SVCommandAbstractFactoryTemplate::SVCommandAbstractFactoryTemplate( const SVCommandFactoryMap& p_rObject )
-: m_Factories( p_rObject )
+SVCommandAbstractFactoryTemplate::SVCommandAbstractFactoryTemplate( const SVCommandFactoryMap& rObject )
+: m_Factories(rObject)
 {
 }
 
@@ -28,9 +28,9 @@ bool SVCommandAbstractFactoryTemplate::IsValidCommandType( unsigned long p_Comma
 	return ( l_Iter != m_Factories.end() );
 }
 
-SVCommandTemplatePtr SVCommandAbstractFactoryTemplate::CreateCommand( unsigned long p_CommandType ) const
+SvOi::ICommandPtr SVCommandAbstractFactoryTemplate::CreateCommand( unsigned long p_CommandType ) const
 {
-	SVCommandTemplatePtr l_pCommand;
+	SvOi::ICommandPtr pCommand;
 
 	SVCommandFactoryMap::const_iterator l_Iter = m_Factories.find( p_CommandType );
 
@@ -38,10 +38,10 @@ SVCommandTemplatePtr SVCommandAbstractFactoryTemplate::CreateCommand( unsigned l
 	{
 		if( nullptr != l_Iter->second )
 		{
-			l_pCommand = l_Iter->second->CreateCommand();
+			pCommand = l_Iter->second->CreateCommand();
 		}
 	}
 
-	return l_pCommand;
+	return pCommand;
 }
 

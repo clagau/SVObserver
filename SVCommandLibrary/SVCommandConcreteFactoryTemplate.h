@@ -16,20 +16,19 @@
 #include "SVCommandConcreteTemplate.h"
 #pragma endregion Includes
 
-template< typename SVCommandObject >
+template<typename CommandObject>
 class SVCommandConcreteFactoryTemplate : public SVCommandFactoryTemplate
 {
 public:
 	static unsigned long GetStaticCommandType();
 
-	SVCommandConcreteFactoryTemplate( SVCommandExecuteFunctor p_ExecuteFunctor );
+	SVCommandConcreteFactoryTemplate(SVCommandExecuteFunctor ExecuteFunctor);
 	virtual ~SVCommandConcreteFactoryTemplate();
 
-	virtual SVCommandTemplatePtr CreateCommand() const override;
+	virtual SvOi::ICommandPtr CreateCommand() const override;
 
 protected:
 	SVCommandExecuteFunctor m_ExecuteFunctor;
-
 };
 
 #include "SVCommandConcreteFactoryTemplate.inl"

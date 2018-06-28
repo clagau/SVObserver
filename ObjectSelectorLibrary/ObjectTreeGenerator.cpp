@@ -76,16 +76,13 @@ namespace SvOsl
 		m_AttributesFilter = SvDef::SV_NO_ATTRIBUTES;
 	}
 		
-	void ObjectTreeGenerator::insertTreeObjects( const SvCl::SelectorItemVectorPtr pSelectorItems )
+	void ObjectTreeGenerator::insertTreeObjects( const SvCl::SelectorItemVector& rSelectorItems )
 	{
-		if (nullptr != pSelectorItems)
+		for (auto const& rEntry : rSelectorItems)
 		{
-			for (auto const& rEntry : *pSelectorItems)
-			{
-				insertTreeObject(rEntry);
-			}
-			m_TreeContainer.clearBranchMap();
+			insertTreeObject(rEntry);
 		}
+		m_TreeContainer.clearBranchMap();
 	}
 
 	INT_PTR ObjectTreeGenerator::showDialog( LPCTSTR title, LPCTSTR mainTabTitle, LPCTSTR filterTabTitle, CWnd* pParent )

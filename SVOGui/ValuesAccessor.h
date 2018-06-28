@@ -11,7 +11,7 @@
 //Moved to precompiled header: #include <guiddef.h>
 #include "BoundValue.h"
 #include "ObjectInterfaces/NameValueVector.h"
-#include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
+#include "SVCommandLibrary/SVObjectSynchronousCommandTemplate.h"
 #include "InspectionCommands/TaskObjectGetEmbeddedValues.h"
 #include "InspectionCommands/TaskObjectSetEmbeddedValues.h"
 #include "InspectionCommands/ValueObjectGetEnums.h"

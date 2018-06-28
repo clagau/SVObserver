@@ -148,11 +148,9 @@
     <ClInclude Include="SVInObjectInfoStruct.h" />
     <ClInclude Include="SVInputInfoListClass.h" />
     <ClInclude Include="SVIOEntryHostStruct.h" />
-    <ClInclude Include="SVObjectAsynchronousCommandTemplate.h" />
     <ClInclude Include="SVObjectAttributeClass.h" />
     <ClInclude Include="SVObjectBuilder.h" />
     <ClInclude Include="SVObjectClass.h" />
-    <ClInclude Include="SVObjectCommandWrapperTemplate.h" />
     <ClInclude Include="SVObjectInfoArrayClass.h" />
     <ClInclude Include="SVObjectInfoStruct.h" />
     <ClInclude Include="SVObjectLevelCreateStruct.h" />
@@ -161,9 +159,6 @@
     <ClInclude Include="SVObjectNameInfo.h" />
     <ClInclude Include="SVObjectReference.h" />
     <ClInclude Include="SVObjectScriptEnums.h" />
-    <ClInclude Include="SVObjectSubmitCommandFacade.h" />
-    <ClInclude Include="SVObjectSynchronousCommandTemplate.h" />
-    <ClInclude Include="SVObjectThreadCommandTemplate.h" />
     <ClInclude Include="SVObserverNotificationFunctor.h" />
     <ClInclude Include="SVObserverTemplate.h" />
     <ClInclude Include="SVOutObjectInfoStruct.h" />
@@ -173,13 +168,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="SVGetObjectListVisitor.inl" />
-    <None Include="SVObjectAsynchronousCommandTemplate.inl" />
     <None Include="SVObjectClass.inl" />
-    <None Include="SVObjectCommandWrapperTemplate.inl" />
     <None Include="SVObjectManagerClass.inl" />
     <None Include="SVObjectReference.inl" />
-    <None Include="SVObjectSynchronousCommandTemplate.inl" />
-    <None Include="SVObjectThreadCommandTemplate.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

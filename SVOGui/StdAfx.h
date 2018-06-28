@@ -64,6 +64,7 @@
 #include <ctime>			//Used by static library
 #include <functional>
 #include <guiddef.h>
+#include <iterator>
 #include <limits.h>
 #include <map>
 #include <memory>

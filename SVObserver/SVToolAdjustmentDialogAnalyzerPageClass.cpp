@@ -14,7 +14,7 @@
 #include "SVToolAdjustmentDialogAnalyzerPageClass.h"
 
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
+#include "SVCommandLibrary/SVObjectSynchronousCommandTemplate.h"
 
 #include "InspectionEngine/SVAnalyzer.h"
 #include "SVChildrenSetupDialog.h"
@@ -26,8 +26,7 @@
 #include "SVToolSet.h"
 #include "SVSetupDialogManager.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
-#include "SVOGui/NoSelector.h"
-#include "SVOGui/ToolSetItemSelector.h"
+#include "InspectionCommands/BuildSelectableItems.h"
 #include "InspectionCommands/GetCreatableObjects.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "TextDefinesSvO.h"
@@ -444,8 +443,10 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnPublishButton()
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes);
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter(SvOsl::ObjectTreeGenerator::FilterInput, std::string(m_pTool->GetCompleteName()), std::string(_T("")));
 
-	SvOsl::SelectorOptions BuildOptions(pInspection->GetUniqueObjectID(), SvDef::SV_PUBLISHABLE, m_pCurrentAnalyzer->GetUniqueObjectID());
-	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>(BuildOptions);
+	SvCmd::SelectorOptions BuildOptions {{SvCmd::ObjectSelectorType::toolsetItems}, pInspection->GetUniqueObjectID(), SvDef::SV_PUBLISHABLE, m_pCurrentAnalyzer->GetUniqueObjectID()};
+	SvCl::SelectorItemVector SelectorItems;
+	SvCmd::BuildSelectableItems(BuildOptions, std::back_inserter(SelectorItems));
+	SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(SelectorItems);
 
 	std::string PublishableResults = SvUl::LoadStdString(IDS_PUBLISHABLE_RESULTS);
 	std::string Title = SvUl::Format(_T("%s - %s"), PublishableResults.c_str(), m_pTool->GetName());

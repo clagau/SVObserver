@@ -105,7 +105,6 @@
     <ClInclude Include="ObjectSelectorPpg.h" />
     <ClInclude Include="ObjectTreeCtrl.h" />
     <ClInclude Include="ObjectTreeGenerator.h" />
-    <ClInclude Include="SelectorOptions.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TextDefinesSvOsl.h" />
   </ItemGroup>

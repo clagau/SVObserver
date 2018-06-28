@@ -19,7 +19,6 @@
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVContainerLibrary/SelectorItem.h"
 #include "SVContainerLibrary/SelectorItem.h"
-#include "SelectorOptions.h"
 #pragma endregion Includes
 
 namespace SvOsl
@@ -72,16 +71,9 @@ namespace SvOsl
 
 		//************************************
 		//! The method inserts tree items
-		//! \param rSelectedItems <in> const reference to a list of selector items
+		//! \param rSelectorItems <in> const reference to a list of selector items
 		//************************************
-		void insertTreeObjects( const SvCl::SelectorItemVectorPtr pSelectorItems );
-
-		//************************************
-		//! This method builds the selectable items to insert into the tree
-		//! \param rOptions <in> reference to the Selector options
-		//************************************
-		template <typename GlobalSelector, typename PPQSelector, typename ToolsetSelector>
-		void BuildSelectableItems( const SelectorOptions& rOptions );
+		void insertTreeObjects(const SvCl::SelectorItemVector& rSelectorItems);
 
 		//************************************
 		//! The method displays the object selector dialog

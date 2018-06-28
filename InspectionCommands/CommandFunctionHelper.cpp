@@ -7,7 +7,7 @@
 //******************************************************************************
 #pragma region Includes
 #include "StdAfx.h"
-#include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
+#include "SVCommandLibrary/SVObjectSynchronousCommandTemplate.h"
 #include "CommandFunctionHelper.h"
 #include "InspectionCommand_protoBuf.h"
 #pragma endregion Includes
@@ -17,7 +17,7 @@ namespace SvCmd
 	HRESULT InspectionCommandsSynchronous(const SVGUID& rInspectionID, const google::protobuf::Message* pRequest, google::protobuf::Message* pResponse)
 	{
 		InspectionCommands_protoBufPtr CommandPtr = InspectionCommands_protoBufPtr(new InspectionCommands_protoBuf(pRequest, pResponse));
-		SVObjectSynchronousCommandTemplate< InspectionCommands_protoBufPtr > Command(rInspectionID, CommandPtr);
+		SVObjectSynchronousCommandTemplate<InspectionCommands_protoBufPtr> Command(rInspectionID, CommandPtr);
 
 		HRESULT Result = Command.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		return Result;

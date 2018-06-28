@@ -12,21 +12,25 @@
 #pragma once
 
 #include "SVUtilityLibrary/SVGUID.h"
-template< typename SVCommandPtr >
+#include "ObjectInterfaces/IObjectManager.h"
+#include "ObjectInterfaces/IInspectionProcess.h"
+#include "SVObjectCommandWrapperTemplate.h"
+#include "SVObjectThreadCommandTemplate.h"
+
+template<typename CommandPtr>
 class SVObjectSynchronousCommandTemplate
 {
 public:
-	SVObjectSynchronousCommandTemplate( const SVGUID& p_rObjectID, const SVCommandPtr& p_rCommandPtr );
+	SVObjectSynchronousCommandTemplate() = delete;
+	SVObjectSynchronousCommandTemplate(const SVGUID& rObjectID, const CommandPtr& rpCommand);
 
 	virtual ~SVObjectSynchronousCommandTemplate();
 
 	HRESULT Execute( DWORD p_TimeoutInMilliseconds );
 
 private:
-	SVObjectSynchronousCommandTemplate();
-
 	SVGUID m_ObjectID;
-	SVCommandPtr m_CommandPtr;
+	CommandPtr m_pCommand;
 };
 
 enum 

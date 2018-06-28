@@ -14,7 +14,7 @@
 #include "SVDlgImage.h"
 #include "InspectionCommands/GetImage.h"
 #include "InspectionCommands/GetOutputRectangle.h"
-#include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
+#include "SVCommandLibrary/SVObjectSynchronousCommandTemplate.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

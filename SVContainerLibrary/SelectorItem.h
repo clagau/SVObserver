@@ -9,8 +9,9 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
-//Moved to precompiled header: #include <memory>
+//Moved to precompiled header: #include <iterator>
 //Moved to precompiled header: #include <comdef.h>
+#include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
 namespace SvCl
@@ -61,12 +62,12 @@ namespace SvCl
 		std::string			m_Location;					//The location of the item
 		std::string			m_DisplayLocation;			//The display location of the item
 		std::string			m_ItemTypeName;				//The name of the data type of the item
-		_variant_t			m_ItemKey;					//The item key
+		SVGUID				m_ItemKey;					//The item key
 		bool				m_Selected{ false };		//Item selected
 		bool				m_Array{ false };			//Is array
 		int					m_ArrayIndex{ -1 };			//The array index
 	#pragma endregion Member Variables
 	};
 	typedef std::vector<SelectorItem> SelectorItemVector;
-	typedef std::shared_ptr<SelectorItemVector> SelectorItemVectorPtr;
+	typedef std::back_insert_iterator<SelectorItemVector> SelectorItemInserter;
 } //namespace SvCl
