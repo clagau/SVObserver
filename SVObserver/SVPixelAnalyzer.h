@@ -1,14 +1,10 @@
-//******************************************************************************
-//* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
-//* All Rights Reserved
-//******************************************************************************
-//* .Module Name     : PixelAnalyzer
-//* .File Name       : $Workfile:   SVPixelAnalyzer.h  $
-//* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 13:22:46  $
-//******************************************************************************
-
+//*****************************************************************************
+/// \copyright (c) 2003,2018 by Seidenader Maschinenbau GmbH
+/// \file SVPixelAnalyzer.h
+/// All Rights Reserved 
+//*****************************************************************************
+/// This class is the TaskObjectList-Implementation of the PixelAnalyzer 
+//*****************************************************************************
 #pragma once
 
 #pragma region Includes
@@ -42,15 +38,14 @@ private:
 // Data Element(s):
 //******************************************************************************
 public:
-	long m_svlHistValueArraySize;
 	SVLongValueObjectClass m_pixelCount;
 	SVByteValueObjectClass m_pixelCountColor;
 
 protected:
 	virtual bool onRun(SVRunStatusClass &rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	SVMatroxIdentifier		m_histResultID = M_NULL;
-	SVMatroxLongArray		m_alHistValues;
+	SVMatroxIdentifier		m_contextID = M_NULL;
+	SVMatroxIdentifier		m_ResultID = M_NULL;
 };
 
 

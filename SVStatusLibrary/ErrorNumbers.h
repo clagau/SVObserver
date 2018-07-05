@@ -399,10 +399,6 @@ namespace SvStl
 	static const int 	Err_16118  =  Mec_ErrorBase + 118;
 	static const int 	Err_16119  =  Mec_ErrorBase + 119;
 	static const int 	Err_16120  =  Mec_ErrorBase + 120;
-	static const int 	Err_16121  =  Mec_ErrorBase + 121;
-	static const int 	Err_16122  =  Mec_ErrorBase + 122;
-	static const int 	Err_16123  =  Mec_ErrorBase + 123;
-	static const int 	Err_16124  =  Mec_ErrorBase + 124;
 	static const int 	Err_16125  =  Mec_ErrorBase + 125;
 	static const int 	Err_16126  =  Mec_ErrorBase + 126;
 	static const int 	Err_16127  =  Mec_ErrorBase + 127;
@@ -462,18 +458,12 @@ namespace SvStl
 	static const int 	Err_16184  =  Mec_ErrorBase + 184;
 	static const int 	Err_16185  =  Mec_ErrorBase + 185;
 	static const int 	Err_16186  =  Mec_ErrorBase + 186;
-	static const int 	Err_16187  =  Mec_ErrorBase + 187;
-	static const int 	Err_16188  =  Mec_ErrorBase + 188;
-	static const int 	Err_16189  =  Mec_ErrorBase + 189;	
-	static const int 	Err_16190  =  Mec_ErrorBase + 190;
-	static const int 	Err_16191  =  Mec_ErrorBase + 191;
 	static const int 	Err_16192  =  Mec_ErrorBase + 192;
 	static const int 	Err_16193  =  Mec_ErrorBase + 193;
 	static const int 	Err_16194  =  Mec_ErrorBase + 194;
 	static const int 	Err_16195  =  Mec_ErrorBase + 195;
 	static const int 	Err_16196  =  Mec_ErrorBase + 196;
 	static const int 	Err_16197  =  Mec_ErrorBase + 197;
-	static const int 	Err_16198  =  Mec_ErrorBase + 198;
 	static const int 	Err_16199  =  Mec_ErrorBase + 199;	
 
 	static const int 	Err_16200  =  Mec_ErrorBase + 200;
