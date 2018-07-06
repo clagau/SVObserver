@@ -57,13 +57,13 @@ SVBarCodeGeneralDialog::SVBarCodeGeneralDialog(CWnd* pParent /*=nullptr*/)
 	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct(SVPDF417, _T("PDF417"), SVValueEncStandard, SVValueAny));	// 2D
 	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct(SVBC412, _T("BC412"), SVValueEncStandard, SVValueEccNone));
 	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct(SVCodeABar, _T("Codabar"), SVValueEncStandard, SVValueEccNone));
-	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct(SVMaxiCode, _T("Maxicode"), SVValueEncMode2, SVValueEccReedSolomon));	// 2D
-	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct(SVPostNet, _T("Postnet"), SVValueEncStandard, SVValueAny));
-	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct(SVPlanet, _T("Planet"), SVValueEncStandard, SVValueAny));
-	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct(SVUpcA, _T("UPC-A"), SVValueEncStandard, SVValueAny));
-	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct(SVUpcE, _T("UPC-E"), SVValueEncStandard, SVValueAny));
-	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct(SVPharmaCode, _T("Pharmacode"), SVValueEncStandard, SVValueAny));
-	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct(SVRssCode, _T("RSS"), SVValueEncRss14, SVValueAny));
+	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct(SVMaxiCode, _T("Maxicode"), SVValueAny, SVValueEccReedSolomon));	// 2D
+	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct(SVPostNet, _T("Postnet"), SVValueEncNum, SVValueEccCheckDigit));
+	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct(SVPlanet, _T("Planet"), SVValueEncNum, SVValueEccCheckDigit));
+	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct(SVUpcA, _T("UPC-A"), SVValueEncNum, SVValueEccCheckDigit));
+	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct(SVUpcE, _T("UPC-E"), SVValueEncNum, SVValueEccCheckDigit));
+	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct(SVPharmaCode, _T("Pharmacode"), SVValueEncNum, SVValueEccNone));
+	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct(SVRssCode, _T("RSS"), SVValueEncRss14, SVValueEccCheckDigit));
 	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct(SVQRCode, _T("QR Code"), SVValueAny, SVValueAny)); // 2D
 }
 

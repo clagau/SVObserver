@@ -106,8 +106,8 @@ void SVBarCodeAnalyzerClass::init()
 	msv_dSpeed.SetDefaultValue(SVValueMedium);
 	msv_dThreshold.SetDefaultValue(SVValueDefault);
 	msv_dStringSize.SetDefaultValue(SVValueDefault);
-	msv_dErrorCorrection.SetDefaultValue(SVValueAny);
-	msv_dEncoding.SetDefaultValue(SVValueAny);
+	msv_dErrorCorrection.SetDefaultValue(SVValueDefault);
+	msv_dEncoding.SetDefaultValue(SVValueDefault);
 	msv_dForegroundColor.SetDefaultValue(SVValueForegroundBlack);
 	msv_bSaveStringInFile.SetDefaultValue( BOOL(false));
 	msv_szStringFileName.SetDefaultValue(_T("BCRegExp.txt"));

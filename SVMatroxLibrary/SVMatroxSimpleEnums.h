@@ -162,14 +162,16 @@ enum SVMatroxBufferValues
 	SVValueEncNum						= 0,			// M_ENC_NUM
 	SVValueEncAscii						= 4,			// M_ENC_ASCII
 	SVValueEncMode2						= 6,			// M_ENC_MODE2
+	SVValueEncUpcAAddOn					= M_ENC_UPCA_ADDON, 
+	SVValueEncUpcEAddOn					= M_ENC_UPCE_ADDON,
 	SVValueEncRss14						= 0x00000400,	// M_ENC_RSS14
 	SVValueEncStandard					= 11,			// M_ENC_STANDARD
 	SVValueEncQRCodeModel1				= 0x00200000,	// M_ENC_QRCODE_MODEL1
 	SVValueEncQRCodeModel2				= 0x00400000,	// M_ENC_QRCODE_MODEL2
 	SVValueEccNone						= 4,			// M_ECC_NONE
 	SVValueEccCheckDigit				= 5,			// M_ECC_CHECK_DIGIT
-	SVValueEccReedSolomon				= 19,			// M_ECC_REED_SOLOMON
-
+	SVValueEccReedSolomon				= M_ECC_REED_SOLOMON,
+	
 	SVValueEcc050						= 0,			// M_ECC_050
 	SVValueEcc080						= 1,			// M_ECC_080
 	SVValueEcc100						= 2,			// M_ECC_100
@@ -193,18 +195,18 @@ enum SVMatroxBufferValues
 	SVValueENCAlphaNumPunc				= 2,			// M_ENC_ALPHANUM_PUNC
 	SVValueENCAscii						= 4,			// M_ENC_ASCII
 	SVValueENCIso8						= 5,			// M_ENC_ISO8
-	SVValueENCMode2						= 6,			// M_ENC_MODE2
-	SVValueENCMode3						= SVValueENCMode2 + 1,	// M_ENC_MODE3
-	SVValueENCMode4						= SVValueENCMode2 + 2,	// M_ENC_MODE4
-	SVValueENCMode5						= SVValueENCMode2 + 3,	// M_ENC_MODE5
-	SVValueENCMode6						= SVValueENCMode2 + 4,	// M_ENC_MODE6
-	SVValueENCRss14						= 0x00000400,	// M_ENC_RSS14
-	SVValueENCRss14Trunc				= 0x00000800,	// M_ENC_RSS14_TRUNCATED
-	SVValueENCRssLimited				= 0x00001000,	// M_ENC_RSS_LIMITED
-	SVValueENCRssExpanded				= 0x00002000,	// M_ENC_RSS_EXPANDED
-	SVValueENCRss14Stacked				= 0x00004000,	// M_ENC_RSS14_STACKED
-	SVValueENCRss14StackedOmni			= 0x00008000,	// M_ENC_RSS14_STACKED_OMNI
-	SVValueENCRssExpandedStacked		= 0x00010000,	// M_ENC_RSS_EXPANDED_STACKED
+	SVValueENCMode2						= M_ENC_MODE2,
+	SVValueENCMode3						= M_ENC_MODE3,
+	SVValueENCMode4						= M_ENC_MODE4,
+	SVValueENCMode5						= M_ENC_MODE5,
+	SVValueENCMode6						= M_ENC_MODE6,
+	SVValueENCRss14						= M_ENC_GS1_DATABAR_OMNI,
+	SVValueENCRss14Trunc				= M_ENC_GS1_DATABAR_TRUNCATED,
+	SVValueENCRssLimited				= M_ENC_GS1_DATABAR_LIMITED,
+	SVValueENCRssExpanded				= M_ENC_GS1_DATABAR_EXPANDED,
+	SVValueENCRss14Stacked				= M_ENC_GS1_DATABAR_STACKED,
+	SVValueENCRss14StackedOmni			= M_ENC_GS1_DATABAR_STACKED_OMNI,
+	SVValueENCRssExpandedStacked		= M_ENC_GS1_DATABAR_EXPANDED_STACKED,
 };
 
 // Used with MbufInquire / MbufControl "Get / Set"
