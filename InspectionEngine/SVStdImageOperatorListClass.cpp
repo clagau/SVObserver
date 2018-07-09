@@ -97,7 +97,7 @@ bool SVStdImageOperatorListClass::ResetObject(SvStl::MessageContainerVector *pEr
 	bool Result = __super::ResetObject(pErrorMessages);
 
 	auto* pInputImage = getInputImage();
-	if ((S_OK != m_OutputImage.InitializeImage(pInputImage)) && (S_OK != m_LogicalROIImage.InitializeImage(pInputImage)))
+	if ((S_OK != m_OutputImage.InitializeImage(pInputImage)) || (S_OK != m_LogicalROIImage.InitializeImage(pInputImage)))
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
