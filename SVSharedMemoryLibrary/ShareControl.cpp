@@ -127,7 +127,7 @@ bool ShareControl::GetProduct(const SvPb::GetProductRequest& rRequest, SvPb::Get
 		}
 	}
 }
-
+//@Todo[MEC][8.10] [11.07.2018] GetReject and GetProduct should usethe same code 
 bool ShareControl::GetReject(const SvPb::GetRejectRequest& rRequest, SvPb::GetRejectResponse& rResponse, SvPenv::Error& rError)
 {
 	if (!isReady(rError))
@@ -174,7 +174,7 @@ bool ShareControl::GetReject(const SvPb::GetRejectRequest& rRequest, SvPb::GetRe
 
 				if (SetProductResponse(rRequest.nameinresponse(), new_productPtr.get(), rResponse.mutable_productitem(), rError))
 				{
-					m_pLastResponseData->m_LastProduct[rRequest.listname()] = std::move(new_productPtr);
+					m_pLastResponseData->m_LastReject[rRequest.listname()] = std::move(new_productPtr);
 				}
 				else
 				{
