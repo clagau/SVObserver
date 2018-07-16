@@ -1387,6 +1387,7 @@ void SVIPDoc::OnEditPaste()
 			pInspection->createAllObjects(createObjStruct);
 			//Reset only the inserted tool
 			pTool->resetAllObjects();
+			pToolSet->updateToolPosition();
 
 			RunOnce();
 			UpdateAllViews(nullptr);
