@@ -956,14 +956,10 @@ inline void SVConfigXMLPrint::WriteValueObject( Writer writer, SVObjectClass* pO
 
 inline void SVConfigXMLPrint::WriteTool(Writer writer, SVToolClass * ts) const
 {
-	wchar_t buff[64];
 	if (ts)
 	{
-		SvOl::SVInputInfoListClass    toolInputList;
 		SVImageClass*           pCurrentSourceImage = nullptr;
-		SvOl::SVInObjectInfoStruct*   pImageInputInfo = nullptr;
 		SVToolClass*            pTool = ts;
-		
 		SvOl::SVInObjectInfoStruct* l_psvImageInfo = nullptr;
 		SvOl::SVInObjectInfoStruct* l_psvLastImageInfo = nullptr;
 
@@ -971,8 +967,6 @@ inline void SVConfigXMLPrint::WriteTool(Writer writer, SVToolClass * ts) const
 		{
 			if( nullptr != l_psvImageInfo )
 			{
-				pImageInputInfo = l_psvImageInfo;
-
 				if( l_psvImageInfo->IsConnected() )
 				{
 					pCurrentSourceImage = dynamic_cast <SVImageClass*> (l_psvImageInfo->GetInputObjectInfo().getObject());
@@ -986,38 +980,6 @@ inline void SVConfigXMLPrint::WriteTool(Writer writer, SVToolClass * ts) const
 				l_psvImageInfo = nullptr;
 			}
 		}
-
-		const SVImageInfoClass* pImageInfo = pTool->getFirstImageInfo();
-		if (pImageInfo)
-		{
-			POINT l_oPoint;
-			POINT l_oOutputPoint;
-			std::string sLabel;
-			std::string sValue;
-
-			long l_lWidth = 0;
-			long l_lHeight = 0;
-
-			if ( S_OK == pImageInfo->GetExtentProperty( SvDef::SVExtentPropertyPositionPoint, l_oPoint ) &&
-				 S_OK == pImageInfo->GetExtentProperty( SvDef::SVExtentPropertyOutputPositionPoint, l_oOutputPoint ) &&
-				 S_OK == pImageInfo->GetExtentProperty( SvDef::SVExtentPropertyWidth, l_lWidth ) &&
-				 S_OK == pImageInfo->GetExtentProperty( SvDef::SVExtentPropertyHeight, l_lHeight ) )
-			{
-				sLabel = SvUl::LoadStdString(IDS_TOOL_LENGTH_STRING);
-				WriteValueObject(writer,  L"Property", utf16(sLabel), _itow(l_lWidth, buff, 10));
-				
-				sLabel = SvUl::LoadStdString(IDS_TOOL_HEIGHT_STRING);
-				WriteValueObject(writer,  L"Property", utf16(sLabel), _itow(l_lHeight, buff, 10));
-				
-				sLabel = SvUl::LoadStdString(IDS_ABSOLUTE_POS_STRING);
-				sValue = SvUl::Format("(%d, %d)", l_oPoint.x, l_oPoint.y);
-				WriteValueObject(writer,  L"Property", utf16(sLabel), utf16(sValue));
-				
-				sLabel = SvUl::LoadStdString(IDS_RELATIVE_POS_STRING);
-				sValue = SvUl::Format("(%d, %d)", l_oOutputPoint.x, l_oOutputPoint.y);
-				WriteValueObject(writer,  L"Property", utf16(sLabel), utf16(sValue));
-			}
-		} // End, if( pImageInfo )
 	}
 }
 

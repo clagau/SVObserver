@@ -724,6 +724,10 @@ HRESULT SVToolClass::EnableAuxiliaryExtents( bool p_bEnable )
 	m_svAuxiliaryDrawType.SetObjectAttributesAllowed(SvDef::SV_HIDDEN, AllowedAttribute);
 	m_svAuxiliarySourceImageName.SetObjectAttributesAllowed(SvDef::SV_HIDDEN, AllowedAttribute);
 
+	m_svAuxiliarySourceX.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
+	m_svAuxiliarySourceY.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
+	m_svAuxiliarySourceAngle.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
+
 	return S_OK;
 }
 

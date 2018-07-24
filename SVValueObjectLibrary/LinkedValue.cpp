@@ -97,12 +97,14 @@ void LinkedValue::UpdateLinkedName()
 	{
 		m_LinkedName.SetValue( m_LinkedObjectRef.GetCompleteName(true) );
 		m_LinkedName.SetObjectAttributesAllowed( SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute );
+		SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
 	}
 	else
 	{
 		std::string Value = m_LinkedName.GetDefaultValue();
 		m_LinkedName.SetValue( Value );
 		m_LinkedName.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+		SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute);
 	}
 }
 

@@ -754,10 +754,7 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 			{
 				bPrintToolExtents = FALSE;
 				
-				SvOl::SVInputInfoListClass    toolInputList;
 				SVImageClass*           pCurrentSourceImage = nullptr;
-				SvOl::SVInObjectInfoStruct*   pImageInputInfo = nullptr;
-				
 				SvOl::SVInObjectInfoStruct* l_psvImageInfo = nullptr;
 				SvOl::SVInObjectInfoStruct* l_psvLastImageInfo = nullptr;
 
@@ -765,8 +762,6 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 				{
 					if( nullptr != l_psvImageInfo )
 					{
-						pImageInputInfo = l_psvImageInfo;
-
 						if( l_psvImageInfo->IsConnected() )
 						{
 							pCurrentSourceImage = dynamic_cast<SVImageClass*> (l_psvImageInfo->GetInputObjectInfo().getObject());
@@ -780,39 +775,6 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 						l_psvImageInfo = nullptr;
 					}
 				}
-
-				const SVImageInfoClass* pImageInfo = pTool->getFirstImageInfo();
-				if (pImageInfo)
-				{
-					POINT l_oPoint;
-					POINT l_oOutputPoint;
-
-					long l_lWidth = 0;
-					long l_lHeight = 0;
-
-					if ( S_OK == pImageInfo->GetExtentProperty( SvDef::SVExtentPropertyPositionPoint, l_oPoint ) &&
-						 S_OK == pImageInfo->GetExtentProperty( SvDef::SVExtentPropertyOutputPositionPoint, l_oOutputPoint ) &&
-						 S_OK == pImageInfo->GetExtentProperty( SvDef::SVExtentPropertyWidth, l_lWidth ) &&
-						 S_OK == pImageInfo->GetExtentProperty( SvDef::SVExtentPropertyHeight, l_lHeight ) )
-					{
-						sLabel = SvUl::LoadStdString(IDS_TOOL_LENGTH_STRING) + _T(":");
-						sValue = SvUl::Format( _T("%d"), l_lWidth );
-						ptCurPos.x   = nIndentLevel * m_shortTabPixels;
-						PrintValueObject(pDC, ptCurPos, sLabel.c_str(), sValue.c_str());
-						
-						sLabel = SvUl::LoadStdString(IDS_TOOL_HEIGHT_STRING) + _T(":");
-						sValue = SvUl::Format( _T("%d"), l_lHeight );
-						PrintValueObject(pDC, ptCurPos, sLabel.c_str(), sValue.c_str());
-						
-						sLabel = SvUl::LoadStdString(IDS_ABSOLUTE_POS_STRING) + _T(":");
-						sValue = SvUl::Format( _T("(%d, %d)"), l_oPoint.x, l_oPoint.y );
-						PrintValueObject(pDC, ptCurPos, sLabel.c_str(), sValue.c_str());
-						
-						sLabel = SvUl::LoadStdString(IDS_RELATIVE_POS_STRING) + _T(":");
-						sValue = SvUl::Format( _T("(%d, %d)"), l_oOutputPoint.x, l_oOutputPoint.y);
-						PrintValueObject(pDC, ptCurPos, sLabel.c_str(), sValue.c_str());
-					}
-				} // End, if( pImageInfo )
 			} // End, if(bPrintToolExtents && ( nullptr != pTool ))
 			SVArchiveTool* pArchiveTool = dynamic_cast <SVArchiveTool*> (pObject);
 			if( nullptr != pArchiveTool )

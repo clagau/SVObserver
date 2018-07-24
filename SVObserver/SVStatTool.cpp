@@ -125,6 +125,7 @@ void SVStatisticsToolClass::init(void)
 	SetObjectDepth (2);	
 
 	// Save default attributes
+	m_Value[SV_STATS_MIN_VALUE].SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
 	m_DefaultAttributes = m_Value [ SV_STATS_MIN_VALUE ].ObjectAttributesAllowed();
 
 	TCHAR szFeaturesEnabled[SV_NUMBER_OF_STAT_FEATURES + 1];
@@ -161,11 +162,6 @@ SVStatisticsToolClass::~SVStatisticsToolClass()
 bool SVStatisticsToolClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure )
 {
 	m_isCreated = SVToolClass::CreateObject(rCreateStructure);
-
-	for ( int i = 0; i < SV_NUMBER_OF_STAT_FEATURES; i++ )
-	{
-		m_Value[i].SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	}
 
 	m_OccurenceValue.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 	m_PersistantFeaturesEnabled.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );

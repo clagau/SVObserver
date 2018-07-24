@@ -136,6 +136,13 @@ bool SVLUTOperatorClass::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 
 	m_bForceLUTRecalc = m_bForceLUTRecalc || Result;
 
+	long lLutMode = 0;
+	if (S_OK == m_lutMode.GetValue(lLutMode))
+	{
+		bool isVectorPrint = (4 /*Formula*/ != lLutMode);
+		m_lutVector.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, isVectorPrint ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute);
+	}
+
 	return Result;
 }
 ////////////////////////////////////////////////////////////////////////////////

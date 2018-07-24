@@ -175,9 +175,11 @@ bool SVRangeClass::InitReferencesAndInputs(SvStl::MessageContainerVector *pError
 
 	for(int i = 0; i < RangeEnum::ER_COUNT; i++)
 	{
+		auto& rRangeDirectValue = GetRange(static_cast<RangeEnum::ERange>(i));
 		ValueIndirect.clear();
 		m_ValueObjectReferences[i] = SVObjectReference();
 		m_ValueIndirect[i].SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+		rRangeDirectValue.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute);
 		m_ValueIndirect[i].GetValue( ValueIndirect );
 		if( !ValueIndirect.empty() )
 		{
@@ -219,6 +221,7 @@ bool SVRangeClass::InitReferencesAndInputs(SvStl::MessageContainerVector *pError
 			else
 			{
 				m_ValueIndirect[i].SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+				rRangeDirectValue.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
 			}
 		}
 	}
