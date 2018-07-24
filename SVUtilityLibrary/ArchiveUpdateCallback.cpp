@@ -143,11 +143,24 @@ STDMETHODIMP ArchiveUpdateCallback::GetProperty(UInt32 index, PROPID propID, PRO
 		case kpidPath:
 		{
 			std::string RelativePath;
-			if (m_FolderPrefix.size() < rFile.size())
+			//When no folder prefix then zip only the files with no path
+			if(m_FolderPrefix.empty())
 			{
-				if (m_FolderPrefix == rFile.substr(0, m_FolderPrefix.size()))
+				std::string::size_type Pos = rFile.rfind('\\');
+				if (std::string::npos != Pos)
 				{
-					RelativePath = rFile.substr(m_FolderPrefix.size(), rFile.size() - m_FolderPrefix.size());
+					Pos++;
+					RelativePath = rFile.substr(Pos, rFile.size() - Pos);
+				}
+			}
+			else
+			{
+				if (m_FolderPrefix.size() < rFile.size())
+				{
+					if (m_FolderPrefix == rFile.substr(0, m_FolderPrefix.size()))
+					{
+						RelativePath = rFile.substr(m_FolderPrefix.size(), rFile.size() - m_FolderPrefix.size());
+					}
 				}
 			}
 

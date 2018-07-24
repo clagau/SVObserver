@@ -160,8 +160,10 @@ static bool ShouldExcludeFile(LPCTSTR filename)
 	return bRetVal;
 }
 
-static void WriteDependentFileList(SvXml::SVObjectXMLWriter& rWriter, const std::string& dstZipFile)
+static bool WriteDependentFileList(SvXml::SVObjectXMLWriter& rWriter, const std::string& dstZipFile)
 {
+	bool Result{false};
+
 	// remove existing file
 	if (::_access(dstZipFile.c_str(), 0) == 0)
 	{
@@ -208,8 +210,14 @@ static void WriteDependentFileList(SvXml::SVObjectXMLWriter& rWriter, const std:
 
 		rWriter.EndElement();
 		
-		SvUl::makeZipFile( dstZipFile, DependencyFileNames, SvStl::GlobalPath::Inst().GetRunPath(), false );
+		Result = 0 < DependencyFileNames.size();
+		if(Result)
+		{
+			SvUl::makeZipFile( dstZipFile, DependencyFileNames, _T(""), false );
+		}
 	}
+
+	return Result;
 }
 
 static std::string GetFilenameWithoutExt(const std::string& filename)
@@ -274,6 +282,7 @@ HRESULT SVInspectionExporter::Export(const std::string& rFileName, const std::st
 			std::string dstZipFile = GetFilenameWithoutExt(rFileName);
 			dstZipFile += (bColor) ? scColorExportExt : scExportExt;
 
+			bool hasDependentFiles{false};
 			std::ofstream os;
 			os.open( dstXmlFile.c_str() );
 			if (os.is_open())
@@ -289,7 +298,7 @@ HRESULT SVInspectionExporter::Export(const std::string& rFileName, const std::st
 
 				WriteGlobalConstants(writer, pObject);
 
-				WriteDependentFileList(writer, dstDependencyZipFile);
+				hasDependentFiles = WriteDependentFileList(writer, dstDependencyZipFile);
 
 				pObject->Persist(writer);
 
@@ -304,15 +313,12 @@ HRESULT SVInspectionExporter::Export(const std::string& rFileName, const std::st
 
 			SvDef::StringVector FileNames;
 			FileNames.emplace_back(dstXmlFile);
-			FileNames.emplace_back(dstDependencyZipFile);
-			
-			std::string PrefixFolder;
-			std::string::size_type Pos = rFileName.rfind('\\');
-			if (std::string::npos != Pos)
+			if(hasDependentFiles)
 			{
-				PrefixFolder = SvUl::Left(rFileName, Pos);
+				FileNames.emplace_back(dstDependencyZipFile);
 			}
-			if(!SvUl::makeZipFile( dstZipFile, FileNames, PrefixFolder, true))
+			
+			if(!SvUl::makeZipFile( dstZipFile, FileNames, _T(""), true))
 			{
 				result = E_FAIL;
 			}

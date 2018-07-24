@@ -117,7 +117,7 @@ void ExtrasEngine::ExecuteAutoSaveIfAppropriate(bool always)
 
 	SvDef::StringVector fileNameList = findFiles(rGlobalPath.GetAutoSaveTempPath().c_str());
 
-	SvUl::makeZipFile(Temp1Name, fileNameList, rGlobalPath.GetAutoSaveTempPath(), true);
+	SvUl::makeZipFile(Temp1Name, fileNameList, _T(""), true);
  
 	autosavePopupDialog.DestroyWindow();
 }

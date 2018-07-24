@@ -2782,7 +2782,7 @@ HRESULT SVObserverApp::SavePackedConfiguration(const std::string& rPackedFileNam
 	SendMessage(m_pMainWnd->m_hWnd, WM_COMMAND, MAKEWPARAM(ID_RC_SAVE_ALL_AND_GET_CONFIG, 0), 0);
 
 	SvDef::StringVector FileNameList = SVFileNameManagerClass::Instance().GetFileNameList();
-	if (!SvUl::makeZipFile(rPackedFileName, FileNameList, SvStl::GlobalPath::Inst().GetRunPath(), false))
+	if (!SvUl::makeZipFile(rPackedFileName, FileNameList, _T(""), false))
 	{
 	   Result = E_UNEXPECTED;
 	}
@@ -5581,7 +5581,7 @@ void SVObserverApp::SaveConfigurationAndRelatedFiles(bool makeZipFile, bool isAu
 			filePath = m_ConfigFileName.GetFullFileName();
 			//When saving all files into 7 zip file replace ending to .svz
 			SvUl::searchAndReplace(filePath, SvDef::cConfigExtension, SvDef::cPackedConfigExtension);
-			if(!SvUl::makeZipFile(filePath, FileNameList, SvStl::GlobalPath::Inst().GetRunPath(), false))
+			if(!SvUl::makeZipFile(filePath, FileNameList, _T(""), false))
 			{
 				SvDef::StringVector msgList;
 				msgList.emplace_back(filePath);

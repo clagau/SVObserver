@@ -262,19 +262,14 @@ HRESULT ToolClipboard::streamToolToZip( const std::string rFileName, const SVGUI
 		std::string ZipFileName( rFileName );
 		ZipFileName += SvO::ZipExtension;
 
-		std::string PrefixFolder;
-		std::string::size_type Pos = rFileName.rfind('\\');
-		if (std::string::npos != Pos)
-		{
-			PrefixFolder = SvUl::Left(rFileName, Pos);
-		}
-		if (!SvUl::makeZipFile(ZipFileName, FileNames, PrefixFolder, true))
+		if (!SvUl::makeZipFile(ZipFileName, FileNames, _T(""), false))
 		{
 			SvStl::MessageMgrStd e(SvStl::DataOnly);
 			e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardZipFailed, SvStl::SourceFileParams(StdMessageParams));
 			e.Throw();
 			Result = E_FAIL;
 		}
+		::DeleteFile(XmlFileName.c_str());
 	}
 
 	return Result;
