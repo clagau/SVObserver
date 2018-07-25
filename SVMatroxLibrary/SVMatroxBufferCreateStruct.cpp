@@ -16,39 +16,52 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-SVMatroxBufferCreateStruct::SVMatroxBufferCreateStruct()
+bool SVMatroxBufferCreateStruct::operator ==(const SVMatroxBufferCreateStruct& other) const
 {
-	m_lSizeBand		= 1;
-	m_lSizeX		= 10;
-	m_lSizeY		= 10;
-	m_eType			= SVUnknownBufferType;
-	m_eAttribute	= SVBufAttUnknown;
-
+	return m_lSizeBand == other.m_lSizeBand && m_lSizeX == other.m_lSizeX && m_lSizeY == other.m_lSizeY	&& m_eType == other.m_eType && m_eAttribute == other.m_eAttribute;
 }
 
-SVMatroxBufferCreateStruct::~SVMatroxBufferCreateStruct()
+bool SVMatroxBufferCreateStruct::operator <(const SVMatroxBufferCreateStruct& other) const
 {
+	bool retValue = m_lSizeBand < other.m_lSizeBand;
+	if (m_lSizeBand == other.m_lSizeBand)
+	{
+		retValue = m_lSizeX < other.m_lSizeX;
+		if (m_lSizeX == other.m_lSizeX)
+		{
+			retValue = m_lSizeY < other.m_lSizeY;
+			if (m_lSizeY == other.m_lSizeY)
+			{
+				retValue = m_eType < other.m_eType;
+				if (m_eType == other.m_eType)
+				{
+					retValue = m_eAttribute < other.m_eAttribute;
+				}
+			}
+		}
+	}
 
+	return retValue;
 }
 
-bool SVMatroxBufferCreateStruct::SetImageDepth( long p_lDepth)
+bool SetImageDepth(SVMatroxBufferCreateStruct& rBuffer, long p_lDepth)
 {
 	bool l_bRet = true;
 	if( p_lDepth == 1 )
 	{
-		m_eType = SV1BitUnsigned;
+		rBuffer.m_eType = SV1BitUnsigned;
 	}
 	else if( p_lDepth <= 8 )
 	{
-		m_eType = SV8BitUnsigned;
+		rBuffer.m_eType = SV8BitUnsigned;
 	}
 	else if( p_lDepth <= 16 )
 	{
-		m_eType = SV16BitUnsigned;
+		rBuffer.m_eType = SV16BitUnsigned;
 	}
 	else if( p_lDepth <= 32 )
 	{
-		m_eType = SV32BitUnsigned;
+		rBuffer.m_eType = SV32BitUnsigned;
 	}
 	else
 	{
@@ -57,7 +70,8 @@ bool SVMatroxBufferCreateStruct::SetImageDepth( long p_lDepth)
 	return l_bRet;
 }
 
-bool SVMatroxBufferCreateStruct::operator ==(const SVMatroxBufferCreateStruct& other) const
+int getBufferSize(const SVMatroxBufferCreateStruct& rBuffer)
 {
-	return m_lSizeBand == other.m_lSizeBand && m_lSizeX == other.m_lSizeX && m_lSizeY == other.m_lSizeY	&& m_eType == other.m_eType && m_eAttribute == other.m_eAttribute;
+	return rBuffer.m_lSizeBand * rBuffer.m_lSizeX * rBuffer.m_lSizeY;
 }
+

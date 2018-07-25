@@ -10,6 +10,7 @@
 #pragma region Includes
 #include "SVMatroxLibrary\SVMatroxBufferCreateStruct.h"
 #include "TriggerRecordController\ITriggerRecordRW.h"
+#include "TriggerRecordController\ITriggerRecordControllerRW.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -21,6 +22,7 @@ namespace SvTrcT
 #pragma region Constructor
 	public:
 		ToolObject(GUID guid) : m_guid(guid) {};
+		virtual ~ToolObject() = default;
 
 #pragma endregion Constructor
 
@@ -29,7 +31,7 @@ namespace SvTrcT
 		/// This method reset the tool to the new condition. It set the position and the input buffer struct and reset the output buffer struct.
 		/// \param pos [in] Position of the tool in the tool set.
 		/// \param bufferStructIn [in] Input buffer struct.
-		virtual void reset(int pos, const SVMatroxBufferCreateStruct& bufferStructIn) { m_pos = pos, m_bufferStructIn = bufferStructIn; };
+		virtual void reset(const GUID& sourceGuid, const SVMatroxBufferCreateStruct& bufferStructIn, SvTrc::ITriggerRecordControllerRW& recordController) { m_sourceGuid = sourceGuid; m_bufferStructIn = bufferStructIn; };
 		const GUID& getGuid() const { return m_guid; };
 		const SVMatroxBufferCreateStruct& getBufferIn() const { return m_bufferStructIn; };
 		const SVMatroxBufferCreateStruct& getBufferOut() const { return m_bufferStructOut; };
@@ -38,7 +40,7 @@ namespace SvTrcT
 		/// After an trigger, this method will run the operation of the tool.
 		/// \param pTriggerRecord [in] The current record.
 		/// \returns bool
-		virtual bool run(SvTrc::ITriggerRecordRWPtr pTriggerRecord) = 0;
+		virtual bool run(const SvTrc::ITriggerRecordRWPtr& pTriggerRecord) = 0;
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -54,7 +56,7 @@ namespace SvTrcT
 #pragma region Member Variables
 	protected:
 		GUID m_guid;
-		int m_pos;
+		GUID m_sourceGuid;
 		SVMatroxBufferCreateStruct m_bufferStructIn;
 		SVMatroxBufferCreateStruct m_bufferStructOut;
 #pragma endregion Member Variables

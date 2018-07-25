@@ -17,7 +17,6 @@
 #include "SVFileAcquisitionDevice.h"
 #include "SVFileAcquisitionDeviceParamEnum.h"
 #include "SVImageLibrary/SVAcquisitionBufferInterface.h"
-#include "SVImageLibrary/SVImageBufferInterface.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage/SVMessage.h"
 #include "Definitions/SVImageFormatEnum.h"
@@ -601,22 +600,19 @@ HRESULT SVFileAcquisitionDevice::CameraProcessEndFrame( unsigned long p_ulIndex 
 			{
 				DoAcquisitionTrigger(rCamera);
 			}
-			SVImageBufferInterface l_Buffer;
+			SvTrc::IImagePtr pImage = rCamera.m_pBufferInterface->GetNextBuffer();
 			
-			if( S_OK == rCamera.m_pBufferInterface->GetNextBuffer( l_Buffer ) )
+			if( nullptr != pImage && nullptr != pImage->getHandle() )
 			{
-				l_Buffer.SetStartFrameTimeStamp( rCamera.m_StartTimeStamp );
-				l_Buffer.SetEndFrameTimeStamp( rCamera.m_pBufferInterface->GetTimeStamp() );
+				unsigned char *pBuffer = pImage->getHandle()->GetBufferAddress();
 
-				unsigned char *l_pBuffer = l_Buffer.GetBufferAddress();
-
-				if( nullptr != l_pBuffer )
+				if( nullptr != pBuffer )
 				{
-					l_hrOk = rCamera.CopyImage( l_pBuffer );
+					l_hrOk = rCamera.CopyImage( pBuffer );
 
 					if( S_OK == l_hrOk )
 					{
-						rCamera.m_pBufferInterface->UpdateWithCompletedBuffer( l_Buffer );
+						rCamera.m_pBufferInterface->UpdateWithCompletedBuffer(pImage, rCamera.m_StartTimeStamp, rCamera.m_pBufferInterface->GetTimeStamp());
 					}
 					else
 					{

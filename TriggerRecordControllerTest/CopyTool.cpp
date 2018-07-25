@@ -25,26 +25,27 @@ namespace SvTrcT
 #pragma endregion Constructor
 
 #pragma region Public Methods
-	void CopyTool::reset(int pos, const SVMatroxBufferCreateStruct& bufferStructIn)
+void CopyTool::reset(const GUID& sourceGuid, const SVMatroxBufferCreateStruct& bufferStructIn, SvTrc::ITriggerRecordControllerRW& recordController)
+{
+	ToolObject::reset(sourceGuid, bufferStructIn, recordController);
+	m_bufferStructOut = m_bufferStructIn;
+	recordController.addOrChangeImage(getGuid(), m_bufferStructOut);
+};
+
+bool CopyTool::run(const SvTrc::ITriggerRecordRWPtr& pTriggerRecord)
+{
+	bool retValue = false;
+	const auto pSourceImage = pTriggerRecord->getImage(m_sourceGuid);
+	auto pDestinationImage = pTriggerRecord->createNewImageHandle(m_guid);
+
+	if (nullptr != pSourceImage && nullptr != pSourceImage->getHandle() && nullptr != pDestinationImage && nullptr != pDestinationImage->getHandle())
 	{
-		ToolObject::reset(pos, bufferStructIn);
-		m_bufferStructOut = m_bufferStructIn;
-	};
-
-	bool CopyTool::run(SvTrc::ITriggerRecordRWPtr pTriggerRecord)
-	{
-		bool retValue = false;
-		const auto pSourceImage = pTriggerRecord->getImage(m_pos);
-		auto pDestinationImage = pTriggerRecord->createNewImageHandle(m_pos + 1);
-
-		if (nullptr != pSourceImage && nullptr != pSourceImage->getHandle() && nullptr != pDestinationImage && nullptr != pDestinationImage->getHandle())
-		{
-			HRESULT hr = SVMatroxBufferInterface::CopyBuffer(pDestinationImage->getHandle()->GetBuffer(), pSourceImage->getHandle()->GetBuffer());
-			retValue = (S_OK == hr);
-		}
-
-		return retValue;
+		HRESULT hr = SVMatroxBufferInterface::CopyBuffer(pDestinationImage->getHandle()->GetBuffer(), pSourceImage->getHandle()->GetBuffer());
+		retValue = (S_OK == hr);
 	}
+
+	return retValue;
+}
 #pragma endregion Public Methods
 
 #pragma region Protected Methods

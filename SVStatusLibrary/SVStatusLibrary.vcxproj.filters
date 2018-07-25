@@ -107,9 +107,6 @@
     <ClInclude Include="ProductWorkloadInformation.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVImageIndexStruct.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVRunStatus.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>

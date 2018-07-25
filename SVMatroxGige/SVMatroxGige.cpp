@@ -1039,20 +1039,17 @@ HRESULT SVMatroxGige::CameraEndFrame( SVMatroxGigeDigitizer& p_rCamera, SVMatrox
 
 	if ( 1 == p_rCamera.m_lIsStarted && nullptr != p_rCamera.m_pBufferInterface  )
 	{
-		SVImageBufferInterface l_Buffer;
-		
-		if( S_OK == p_rCamera.m_pBufferInterface->GetNextBuffer( l_Buffer ) )
+		SvTrc::IImagePtr pImage = p_rCamera.m_pBufferInterface->GetNextBuffer();
+		if (nullptr != pImage )
 		{
-			if(nullptr != l_Buffer.m_ImageHandle && !(l_Buffer.m_ImageHandle->empty() ) )
+			auto pImageHandle = pImage->getHandle();
+			if(nullptr != pImageHandle && !(pImageHandle->empty() ) )
 			{
-				hr = SVMatroxBufferInterface::CopyBuffer(l_Buffer.m_ImageHandle->GetBuffer(), p_SrcBufferID );
+				hr = SVMatroxBufferInterface::CopyBuffer(pImageHandle->GetBuffer(), p_SrcBufferID );
 				
 				if( S_OK == hr)
 				{
-					l_Buffer.SetStartFrameTimeStamp( l_StartFrameTimeStamp );
-					l_Buffer.SetEndFrameTimeStamp();
-
-					hr = p_rCamera.m_pBufferInterface->UpdateWithCompletedBuffer( l_Buffer );
+					hr = p_rCamera.m_pBufferInterface->UpdateWithCompletedBuffer(pImage, l_StartFrameTimeStamp, SvTl::GetTimeStamp());
 				}
 			}
 			else

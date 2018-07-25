@@ -19,7 +19,6 @@
 #include "CameraLibrary/SVDeviceParams.h"
 
 #include "SVDigitizerProcessingClass.h"
-#include "InspectionEngine/SVImageObjectClass.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"

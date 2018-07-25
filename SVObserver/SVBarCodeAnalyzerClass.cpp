@@ -377,8 +377,6 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::Message
 	msv_szBarCodeValue.SetValue(std::string());
 	if (SVImageAnalyzerClass::onRun (rRunStatus, pErrorMessages))
 	{
-		SvOi::SVImageBufferHandlePtr ImageHandle;
-		
 		if (nullptr == m_pBarCodeResult)
 		{
 			if (nullptr != pErrorMessages)
@@ -395,11 +393,12 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::Message
 		m_pBarCodeResult->m_bFailedToRead = bWarnOnFailedRead != FALSE;// Preset flag to failed condition..
 
 		SVImageClass* pInputImage = getInputImage(true);
-		if (pInputImage->GetImageHandle( ImageHandle ) && nullptr != ImageHandle)
+		SvTrc::IImagePtr pImageBuffer = pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord);
+		if (nullptr != pImageBuffer && !pImageBuffer->isEmpty())
 		{
 			try
 			{
-				SVMatroxBuffer ImageBufId = ImageHandle->GetBuffer();
+				SVMatroxBuffer ImageBufId = pImageBuffer->getHandle()->GetBuffer();
 
 				bool Result = SVMatroxBarCodeInterface::Execute( m_MilCodeId, ImageBufId, pErrorMessages );
 

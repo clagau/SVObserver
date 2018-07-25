@@ -51,16 +51,9 @@ HRESULT SVCommandInspectionCollectImageData::Execute()
 
 	if( nullptr != pInspection )
 	{
-		SVProductInfoStruct l_Product = pInspection->LastProductGet( SV_DISPLAY );
+		SVProductInfoStruct l_Product = pInspection->LastProductGet( );
 
 		SVInspectionInfoStruct& l_rIPInfo = l_Product.m_svInspectionInfos[ GetInspectionId() ];
-		SVGuidSVCameraInfoStructMap& l_rCameraInfos = l_Product.m_svCameraInfos;
-		SVDataManagerHandle l_Handle = l_Product.oPPQInfo.m_ResultDataDMIndexHandle;
-		long l_ResultDataIndex = l_Handle.GetIndex();
-		SVImageIndexStruct l_ResultImageIndex;
-
-		l_ResultImageIndex.m_ResultDMIndexHandle.Assign( l_rIPInfo.m_ResultImageDMIndexHandle, SV_DISPLAY );
-		l_ResultImageIndex.m_PublishedResultDMIndexHandle.Assign( l_Product.oPPQInfo.m_ResultImagePublishedDMIndexHandle, SV_DISPLAY );
 
 		double l_TriggerDistance = 0.0f;
 		double l_ToolSetTime = 0.0f;
@@ -98,7 +91,7 @@ HRESULT SVCommandInspectionCollectImageData::Execute()
 
 				::Sleep( 0 );
 
-				if( S_OK == UpdateBuffer( l_ImageId, l_rCameraInfos, l_ResultImageIndex, l_ResultDataIndex, l_ImageData.m_ImageDIB , l_ImageData.m_OverlayData ) )
+				if( S_OK == UpdateBuffer( l_ImageId, l_rIPInfo.m_triggerRecordComplete, l_ImageData.m_ImageDIB , l_ImageData.m_OverlayData ) )
 				{
 					::Sleep( 0 );
 
@@ -163,46 +156,17 @@ HRESULT SVCommandInspectionCollectImageData::UpdateResults( SVInspectionProcess*
 	return hRet;
 }
 
-HRESULT SVCommandInspectionCollectImageData::UpdateBuffer(const SVGUID& rImageId, SVGuidSVCameraInfoStructMap& rCameraInfos,
-										 SVImageIndexStruct ResultImageIndex, long ResultDataIndex,
-										 SVByteVector& rImageDIB, SVExtentMultiLineStructVector& rMultiLineArray)
+HRESULT SVCommandInspectionCollectImageData::UpdateBuffer(const SVGUID& rImageId, const SvTrc::ITriggerRecordRPtr& pTriggerRecord, SVByteVector& rImageDIB, SVExtentMultiLineStructVector& rMultiLineArray)
 {
 	HRESULT l_Status = S_OK;
 
 	SVImageClass* pImage = dynamic_cast<SVImageClass*> ( SVObjectManagerClass::Instance().GetObject( rImageId.ToGUID() ) );
 
-	if( nullptr != pImage )
+	if( nullptr != pImage && nullptr != pTriggerRecord )
 	{
-		SVDataManagerHandle	l_SourceImageDMIndexHandle;
+		SvTrc::IImagePtr pImageBuffer = pImage->getImageReadOnly(pTriggerRecord);
 
-		SVImageIndexStruct svResultImageIndex = ResultImageIndex;
-
-		SVCameraImageTemplate* pMainImage = dynamic_cast<SVCameraImageTemplate*> (pImage);
-
-		if( nullptr == pMainImage)
-		{
-			pMainImage = dynamic_cast<SVCameraImageTemplate*> ( pImage->GetParentImage() );
-		}
-
-		if( nullptr != pMainImage && nullptr != pMainImage->GetCamera())
-		{
-			SVGuidSVCameraInfoStructMap::const_iterator l_svIter;
-
-			l_svIter = rCameraInfos.find( pMainImage->GetCamera()->GetUniqueObjectID() );
-
-			if( l_svIter != rCameraInfos.end() )
-			{
-				l_SourceImageDMIndexHandle.Assign( l_svIter->second.GetSourceImageDMIndexHandle(), SV_DISPLAY );
-			}
-		}
-
-		svResultImageIndex.m_CameraDMIndexHandle.Assign( l_SourceImageDMIndexHandle, SV_DISPLAY );
-
-		SvOi::SVImageBufferHandlePtr ImageBuffer;
-
-		pImage->GetImageHandle( svResultImageIndex, ImageBuffer );
-
-		if(nullptr != ImageBuffer)
+		if(nullptr != pImageBuffer && !pImageBuffer->isEmpty())
 		{
 			SVBitmapInfo BitmapInfo;
 
@@ -210,13 +174,13 @@ HRESULT SVCommandInspectionCollectImageData::UpdateBuffer(const SVGUID& rImageId
 
 			BitmapInfo.Assign( l_Header.biWidth, l_Header.biHeight, l_Header.biBitCount, SVBitmapInfo::GetDefaultColorTable( l_Header.biBitCount ) );
 
-			if( BitmapInfo == ImageBuffer->GetBitmapInfo() )
+			if( BitmapInfo == pImageBuffer->getHandle()->GetBitmapInfo() )
 			{
-				l_Status = SVImageProcessingClass::CopyImageBuffer( rImageDIB, ImageBuffer );
+				l_Status = SVImageProcessingClass::CopyImageBuffer( rImageDIB, pImageBuffer->getHandle());
 			}
 			else
 			{
-				l_Status = SVImageProcessingClass::CopyImageBuffer( rImageDIB, BitmapInfo, ImageBuffer );
+				l_Status = SVImageProcessingClass::CopyImageBuffer( rImageDIB, BitmapInfo, pImageBuffer->getHandle());
 			}
 		}
 		else

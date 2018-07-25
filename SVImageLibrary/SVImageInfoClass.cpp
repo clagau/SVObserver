@@ -406,11 +406,6 @@ HRESULT SVImageInfoClass::GetOwnerImage( SVObjectClass*& p_rpObject ) const
 	return l_Status;
 }
 
-const SVGUID& SVImageInfoClass::GetOwnerImageID() const
-{
-	return m_OwnerImageID;
-}
-
 void SVImageInfoClass::SetOwnerImage( const GUID& p_rObjectID )
 {
 	m_OwnerImageID = p_rObjectID;

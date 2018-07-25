@@ -63,15 +63,14 @@ private:
 	//************************************
 	void BuildEmbeddedObjectList();
 
-	//************************************
 	/// Copy the image from ringbuffer to a output image.
 	/// \param outputIndex [in] the index of the output image.
 	/// \param imageIndex [in] the required index of the image in the ringbuffer.
 	/// \param maxIndexPos [in] the maximum index which is valid in the ringbuffer. If ringbuffer full, maxIndexPos == ringBufferDepth -1
 	/// \param ringBufferDepth [in] the depth of the ringbuffer.
+	/// \param pTriggerRecord [in,out] pointer to the trigger record.
 	/// \returns int if the set bit to 1 if outputIndex is set (outputIndex == 1 => 1, outputIndex == 2 => 2, outputIndex == 3 => 4), else the return value is 0.
-	//************************************
-	int SetOutputImage( int outputIndex, int imageIndex, int maxIndexPos, long ringBufferDepth );
+	int SetOutputImage( int outputIndex, int imageIndex, int maxIndexPos, long ringBufferDepth, const SvTrc::ITriggerRecordRWPtr& pTriggerRecord );
 
 	//************************************
 	/// Set the tool ROI extent to the full size of the input image.

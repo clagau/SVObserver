@@ -24,7 +24,6 @@
 #include "InspectionEngine/SVConditional.h"
 #include "SVFileSystemLibrary/SVFileNameManagerClass.h"
 #include "SVGlobal.h"
-#include "SVImageArchive.h"
 #include "SVImageViewScroll.h"
 #include "SVImageView.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
@@ -1373,7 +1372,6 @@ void SVIPDoc::OnEditPaste()
 			}
 
 			pTool->SetObjectDepthWithIndex(pInspection->GetObjectDepth(), 1);
-			pTool->SetImageDepth(pInspection->GetImageDepth());
 
 			SVObjectLevelCreateStruct createStruct;
 			createStruct.OwnerObjectInfo.SetObject(pInspection);
@@ -2015,9 +2013,6 @@ void SVIPDoc::RunRegressionTest()
 
 	if (pInspection->CanRegressionGoOnline())
 	{
-		SVImageArchiveClass svImageArchive;
-		SVCameraImageTemplate* pMainImage = nullptr;
-
 		bool l_bAllowAccess = false;
 
 		if (l_bWasRunMode)

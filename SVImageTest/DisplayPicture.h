@@ -14,8 +14,6 @@
 
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 
-struct SVImageBufferInterface;
-
 class CDisplayPicture : public CStatic
 {
 public:
@@ -34,8 +32,6 @@ public:
 	CDisplayPicture();
 
 	bool UpdateDisplayBufferInfo( long bufWidth, long bufHeight, int iFormat );
-
-	HRESULT GetNextBuffer( SVImageBufferInterface& p_rBuffer );
 
 	long m_BufferInUse;
 	SvOi::SVImageBufferHandlePtr m_pImage;

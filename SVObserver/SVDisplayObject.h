@@ -11,7 +11,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVStatusLibrary/SVImageIndexStruct.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectLibrary/SVObserverTemplate.h"
 #include "SVUtilityLibrary/SVGUID.h"

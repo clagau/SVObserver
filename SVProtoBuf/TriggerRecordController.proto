@@ -8,9 +8,18 @@ message ImageDefinition
 	int32 structID = 3;
 }
 
+message ChildImageDefinition
+{
+	bytes imageID = 1; //GUID of the image.
+	bytes type = 2; ////should from struct SVMatroxBufferCreateChildStruct
+	int32 structID = 3; //not used yet
+	bytes parentImageID = 4; //GUID of the parent image.
+}
+
 message ImageList
 {
 	repeated ImageDefinition list = 1;
+	repeated ChildImageDefinition childList = 2;
 }
 
 message ImageStructData
@@ -29,5 +38,11 @@ message ImageStructList
 
 message InspectionList
 {
-	repeated bytes InspectionID = 1;
+	repeated Inspection list = 1;
+}
+
+message Inspection
+{
+	bytes id = 1;
+	int32 numberOfRecords = 2;
 }

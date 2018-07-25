@@ -38,7 +38,7 @@ struct SVCommandInspectionGetItems
 	const SVNameStorageResultMap& GetResultItems() const;
 
 protected:
-	HRESULT UpdateResultsWithImageData(const std::string& rItemName, const SVObjectReference& rImageRef, unsigned long TriggerCount);
+	HRESULT UpdateResultsWithImageData(const std::string& rItemName, const SVObjectReference& rImageRef, unsigned long TriggerCount, const SvTrc::ITriggerRecordRPtr pTriggerRecord);
 	HRESULT UpdateResultsWithValueData(const std::string& rItemName, const SVObjectReference& rValueRef, unsigned long TriggerCount);
 	HRESULT UpdateResultsWithErrorData(const std::string& rItemName, HRESULT errorStatus, unsigned long TriggerCount);
 

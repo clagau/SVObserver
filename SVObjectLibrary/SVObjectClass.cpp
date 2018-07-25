@@ -85,7 +85,6 @@ If this Object is NOT valid, the validationReferenceID refers to the object on t
 void SVObjectClass::init()
 {
 	m_isCreated	  = false;
-	m_lImageDepth = 0;
 	m_objectDepth = 0;	// Standard Depth
 
 	m_isObjectValid		  = false;
@@ -695,16 +694,6 @@ Set the object data depth. ( Data Table )  Should be overridden and must be call
 void SVObjectClass::SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex )
 {
 	m_objectDepth = NewObjectDepth;
-}
-
-/*
-Set the object image depth.  Should be overridden and must be called in derived classes...
-*/
-bool SVObjectClass::SetImageDepth( long lDepth )
-{
-	m_lImageDepth = lDepth;
-	
-	return true;
 }
 
 /*

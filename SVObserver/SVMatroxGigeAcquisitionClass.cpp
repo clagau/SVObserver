@@ -22,7 +22,6 @@
 #include "Definitions/SVGigeEnums.h"
 #include "SVMatroxGigeCameraProxy.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
-#include "InspectionEngine/SVImageObjectClass.h"
 #include "SVObserver.h"
 #include "SVDigitizerProcessingClass.h"
 #include "InspectionEngine/SVImageProcessingClass.h"

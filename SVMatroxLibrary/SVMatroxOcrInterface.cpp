@@ -1335,14 +1335,14 @@ HRESULT SVMatroxOcrInterface::CharacterThickness( const SVCommandDataHolder& p_r
 				{
 					// create child buffer around character
 					SVMatroxBufferCreateChildStruct l_CreateStruct(l_ThresholdImage.m_Buffer);
-					l_CreateStruct.m_lBand = 0;
-					l_CreateStruct.m_lOffX = l_rBlob.boundingRect.left - 1 >= 0 ? l_rBlob.boundingRect.left - 1 : l_rBlob.boundingRect.left;
-					l_CreateStruct.m_lOffY = l_rBlob.boundingRect.top - 1 >= 0 ? l_rBlob.boundingRect.top - 1 : l_rBlob.boundingRect.top;
+					l_CreateStruct.m_data.m_lBand = 0;
+					l_CreateStruct.m_data.m_lOffX = l_rBlob.boundingRect.left - 1 >= 0 ? l_rBlob.boundingRect.left - 1 : l_rBlob.boundingRect.left;
+					l_CreateStruct.m_data.m_lOffY = l_rBlob.boundingRect.top - 1 >= 0 ? l_rBlob.boundingRect.top - 1 : l_rBlob.boundingRect.top;
 					long lNewSize = l_rBlob.boundingRect.right - l_rBlob.boundingRect.left + 3;
-					l_CreateStruct.m_lSizeX = lNewSize < lSizeX - l_CreateStruct.m_lOffX ? lNewSize : l_rBlob.boundingRect.right - l_rBlob.boundingRect.left + 1;
+					l_CreateStruct.m_data.m_lSizeX = lNewSize < lSizeX - l_CreateStruct.m_data.m_lOffX ? lNewSize : l_rBlob.boundingRect.right - l_rBlob.boundingRect.left + 1;
 					lNewSize = l_rBlob.boundingRect.bottom - l_rBlob.boundingRect.top + 3;
-					l_CreateStruct.m_lSizeY = lNewSize < lSizeY - l_CreateStruct.m_lOffY ? lNewSize : l_rBlob.boundingRect.bottom - l_rBlob.boundingRect.top + 1;
-					l_CreateStruct.m_lParentBandCount = 1;
+					l_CreateStruct.m_data.m_lSizeY = lNewSize < lSizeY - l_CreateStruct.m_data.m_lOffY ? lNewSize : l_rBlob.boundingRect.bottom - l_rBlob.boundingRect.top + 1;
+					l_CreateStruct.m_data.m_lParentBandCount = 1;
 
 					SVMatroxBuffer ROIBuf;
 					HRESULT l_Code = SVMatroxBufferInterface::Create( ROIBuf, l_CreateStruct);
@@ -2849,7 +2849,7 @@ HRESULT SVMatroxOcrInterface::UpdateCharacterListFromFontId( const SVMatroxOcr& 
 		l_BufferInfo.m_lSizeX = static_cast< long >( dCharBoxSizeX );
 		l_BufferInfo.m_lSizeY = static_cast< long >( dCharBoxSizeY );
 		l_BufferInfo.m_lSizeBand = 1;
-		l_BufferInfo.SetImageDepth( 8 );
+		SetImageDepth(l_BufferInfo, 8 );
 
 		l_Status = SVMatroxBufferInterface::Create( l_CharHandle, l_BufferInfo ); 
 

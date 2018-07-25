@@ -47,7 +47,7 @@ HRESULT SVCommandInspectionGetItems::Execute()
 
 	if (nullptr != m_Inspection)
 	{
-		SVProductInfoStruct Product = m_Inspection->LastProductGet(SV_OTHER);
+		SVProductInfoStruct Product = m_Inspection->LastProductGet();
 		unsigned long TriggerCount = Product.ProcessCount();
 
 		for (SVNameObjectSet::const_iterator Iter = m_ItemNames.begin(); SUCCEEDED(Status) && Iter != m_ItemNames.end(); ++Iter)
@@ -61,13 +61,14 @@ HRESULT SVCommandInspectionGetItems::Execute()
 				// Check if it's a ValueObject or an ImageObject
 				// as these are the only items that can be gotten from the inspection remotely, currently
 				SVObjectClass* pObject = rObjRef.getObject();
+				SVImageClass* pImage = nullptr;
 				if (nullptr != rObjRef.getValueObject())
 				{
 					TempStatus = UpdateResultsWithValueData(Iter->first, rObjRef, TriggerCount);
 				}
-				else if( nullptr != dynamic_cast<SVImageClass*> (pObject) )
+				else if( nullptr != (pImage = dynamic_cast<SVImageClass*> (pObject)) )
 				{
-					TempStatus = UpdateResultsWithImageData(Iter->first, rObjRef, TriggerCount);
+					TempStatus = UpdateResultsWithImageData(Iter->first, rObjRef, TriggerCount, Product.m_svInspectionInfos[pImage->GetInspection()->GetUniqueObjectID()].m_triggerRecordComplete);
 				}
 				else
 				{
@@ -114,7 +115,7 @@ const SVNameStorageResultMap& SVCommandInspectionGetItems::GetResultItems() cons
 	return m_ResultItems;
 }
 
-HRESULT SVCommandInspectionGetItems::UpdateResultsWithImageData(const std::string& rItemName, const SVObjectReference& rImageRef, unsigned long TriggerCnt)
+HRESULT SVCommandInspectionGetItems::UpdateResultsWithImageData(const std::string& rItemName, const SVObjectReference& rImageRef, unsigned long TriggerCnt, const SvTrc::ITriggerRecordRPtr pTriggerRecord)
 {
 	HRESULT Status = S_OK;
 
@@ -125,17 +126,15 @@ HRESULT SVCommandInspectionGetItems::UpdateResultsWithImageData(const std::strin
 		HRESULT GetStatus = S_OK;
 
 		SVStorage Storage;
-		SvOi::SVImageBufferHandlePtr ImageHandlePtr;
 		unsigned long TriggerCount = TriggerCnt;
-
-		pImage->GetImageHandle(ImageHandlePtr);
-
-		if (nullptr != ImageHandlePtr)
+		SvTrc::IImagePtr pImageBuffer = pImage->getImageReadOnly(pTriggerRecord);
+		
+		if (nullptr != pImageBuffer && !pImageBuffer->isEmpty())
 		{
 			std::string Temp = SvUl::Format(_T("%ld-%s.bmp"), TriggerCount, pImage->GetUniqueObjectID().ToString().c_str());
 			std::string FileName = SvStl::GlobalPath::Inst().GetRamDrive(Temp.c_str());
 
-			GetStatus = SVImageProcessingClass::SaveImageBuffer(FileName.c_str(),SVMatroxFileTypeEnum::SVFileBitmap , ImageHandlePtr);
+			GetStatus = SVImageProcessingClass::SaveImageBuffer(FileName.c_str(),SVMatroxFileTypeEnum::SVFileBitmap , pImageBuffer->getHandle());
 
 			if (S_OK == GetStatus)
 			{

@@ -17,13 +17,12 @@
 This constructor initializes the local attributes.
 */
 SVODataResponseClass::SVODataResponseClass()
-: mDMHandle()
-, mbIsValid( false )
+: mbIsValid( false )
 , mbIsComplete( false )
 , mpvOwner( nullptr )
 , m_StartTick( 0.0 )
 , m_EndTick( 0.0 )
-
+, m_image(nullptr)
 {
 	m_StartTick = SvTl::GetTimeStamp();
 	m_EndTick = SvTl::GetTimeStamp();
@@ -33,13 +32,12 @@ SVODataResponseClass::SVODataResponseClass()
 This constructor initializes the local attributes.
 */
 SVODataResponseClass::SVODataResponseClass(const SVODataResponseClass& rResponse)
-: mDMHandle( rResponse.mDMHandle )
-, mbIsValid( rResponse.mbIsValid )
+: mbIsValid( rResponse.mbIsValid )
 , mbIsComplete( rResponse.mbIsComplete )
 , mpvOwner( rResponse.mpvOwner )
 , m_StartTick( rResponse.m_StartTick )
 , m_EndTick( rResponse.m_EndTick )
-
+, m_image ( rResponse.m_image )
 {
 }
 
@@ -73,8 +71,7 @@ HRESULT SVODataResponseClass::Reset()
 {
 	HRESULT hrOk = S_OK;
 
-	mDMHandle.clear();
-
+	m_image.reset();
 	mbIsValid = false;
 	mbIsComplete = false;
 

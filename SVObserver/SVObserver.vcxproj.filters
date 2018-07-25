@@ -159,9 +159,6 @@
     <ClCompile Include="SVHistogramAnalyzerSetup.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVImageArchive.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVImageArithmetic.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -974,9 +971,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVHistogramAnalyzerSetup.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVImageArchive.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVImageArithmetic.h">

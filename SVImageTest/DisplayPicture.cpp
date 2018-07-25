@@ -11,7 +11,6 @@
 
 #include "stdafx.h"
 #include "DisplayPicture.h"
-#include "SVImageLibrary/SVImageBufferInterface.h"
 #include "SVDisplayImageBufferClass.h"
 
 #ifdef _DEBUG
@@ -75,22 +74,3 @@ void CDisplayPicture::OnPaint()
 	::InterlockedExchange( &m_BufferInUse, 0 );
 	// Do not call CStatic::OnPaint() for painting messages
 }
-
-HRESULT CDisplayPicture::GetNextBuffer( SVImageBufferInterface& p_rBuffer )
-{
-	HRESULT l_Status = S_OK;
-
-	if( ::InterlockedExchange( &m_BufferInUse, 1 ) == 0 )
-	{
-		p_rBuffer.Assign( m_pImage, SVDataManagerHandle() );
-	}
-	else
-	{
-		l_Status = E_FAIL;
-
-		p_rBuffer.clear();
-	}
-	
-	return l_Status;
-}
-

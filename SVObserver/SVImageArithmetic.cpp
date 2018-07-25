@@ -183,18 +183,6 @@ bool SVImageArithmeticClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Message
 		assert(pArithOperator);
 		assert(pOutputImage);
 
-		if ( ! pOutputImage->SetImageHandleIndex( rRunStatus.Images ) )
-		{
-			if (nullptr != pErrorMessages)
-			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
-				pErrorMessages->push_back(Msg);
-			}
-			SetInvalid();
-			rRunStatus.SetInvalid();
-			return false;
-		}
-
 		BOOL bEnableOffsetA;
 		if( S_OK != pEnableOffsetA->GetValue( bEnableOffsetA ) )
 		{
@@ -260,14 +248,13 @@ bool SVImageArithmeticClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Message
 			return false;
 		}
 
-		SvOi::SVImageBufferHandlePtr HandleA;
-		SvOi::SVImageBufferHandlePtr HandleB;
-		SvOi::SVImageBufferHandlePtr Output;
+		SvTrc::IImagePtr pImageBufferA = pImageA->getImageReadOnly(rRunStatus.m_triggerRecord);
+		SvTrc::IImagePtr pImageBufferB = pImageB->getImageReadOnly(rRunStatus.m_triggerRecord);
+		SvTrc::IImagePtr pOutputImageBuffer = pOutputImage->getImageToWrite(rRunStatus.m_triggerRecord);
 
-		if ( pImageA->GetImageHandle( HandleA ) && nullptr != HandleA &&
-			pImageB->GetImageHandle( HandleB ) && nullptr != HandleB &&
-			pOutputImage->GetImageHandle( Output ) && nullptr != Output &&
-			!(HandleA->empty() ) &&  !(HandleB->empty() ) && !(Output->empty() ) )
+		if ( nullptr != pImageBufferA && !pImageBufferA->isEmpty() &&
+			nullptr != pImageBufferB && !pImageBufferB->isEmpty() &&
+			nullptr != pOutputImageBuffer && !pOutputImageBuffer->isEmpty())
 		{
 			HRESULT l_Code;
 
@@ -278,7 +265,7 @@ bool SVImageArithmeticClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Message
 			case SvDef::SVImageOperatorAverage:
 				{
 
-					l_Code = SVMatroxImageInterface::Arithmetic(Output->GetBuffer(), HandleA->GetBuffer(), HandleB->GetBuffer(), SVImageMultipleAccumulate );
+					l_Code = SVMatroxImageInterface::Arithmetic(pOutputImageBuffer->getHandle()->GetBuffer(), pImageBufferA->getHandle()->GetBuffer(), pImageBufferB->getHandle()->GetBuffer(), SVImageMultipleAccumulate );
 					// Build average of two input images and store resulting image in output image...
 					// NOTE: 
 					//		 M_MULTIPLY_ACCUMULATE_2 
@@ -296,27 +283,33 @@ bool SVImageArithmeticClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Message
 
 			case SvDef::SVImageOperatorFlipVertical:
 				{
-					l_Code = SVMatroxImageInterface::Flip(Output->GetBuffer(), HandleA->GetBuffer(), SVImageFlipVertical );
+					l_Code = SVMatroxImageInterface::Flip(pOutputImageBuffer->getHandle()->GetBuffer(), pImageBufferA->getHandle()->GetBuffer(), SVImageFlipVertical );
 				}
 				break;
 
 			case SvDef::SVImageOperatorFlipHorizontal:
 				{
-					l_Code = SVMatroxImageInterface::Flip(Output->GetBuffer(), HandleA->GetBuffer(), SVImageFlipHorizontal );
+					l_Code = SVMatroxImageInterface::Flip(pOutputImageBuffer->getHandle()->GetBuffer(), pImageBufferA->getHandle()->GetBuffer(), SVImageFlipHorizontal );
 				}
 				break;
 
 
 			case SvDef::SVImageOperatorDoubleHeight:
 				{
-					ScaleWithAveraging( pImageA, pOutputImage );
+					RECT inputRect;
+					RECT outputRect;
+
+					if (S_OK == pImageA->GetImageInfo().GetOutputRectangle(inputRect) && S_OK == pOutputImage->GetImageInfo().GetOutputRectangle(outputRect))
+					{
+						ScaleWithAveraging(pImageBufferA, inputRect, pOutputImageBuffer, outputRect);
+					}
 				}
 				break;
 
 
 			default:
 				// Default Operation,,,
-				l_Code = SVMatroxImageInterface::Arithmetic(Output->GetBuffer(), HandleA->GetBuffer(), HandleB->GetBuffer(),
+				l_Code = SVMatroxImageInterface::Arithmetic(pOutputImageBuffer->getHandle()->GetBuffer(), pImageBufferA->getHandle()->GetBuffer(), pImageBufferB->getHandle()->GetBuffer(),
 					static_cast<SVImageOperationTypeEnum>(lOperator) );
 			}
 
@@ -335,58 +328,34 @@ bool SVImageArithmeticClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Message
 	return false;
 }
 
-void SVImageArithmeticClass::ScaleWithAveraging( SVImageClass* pInputImage, SVImageClass* pOutputImage )
+void SVImageArithmeticClass::ScaleWithAveraging(SvTrc::IImagePtr pInputImageBuffer, const RECT& rInputRect, SvTrc::IImagePtr pOutputImageBuffer, const RECT& rOutputRect)
 {
-	if( pInputImage && pOutputImage )
+	if(nullptr != pInputImageBuffer && !pInputImageBuffer->isEmpty() && nullptr != pOutputImageBuffer && !pOutputImageBuffer->isEmpty())
 	{
-		LPVOID pSrcHostBuffer = nullptr;
-		LPVOID pDstHostBuffer = nullptr;
-		unsigned char *srcLinePtr,*srcLinePtr1,*dstLinePtr;
-	
-		long srcPitch = 0;
-		long dstPitch = 0;
-		int row = 0;
-		int col = 0;
-
-		SVImageInfoClass InputImageInfo = pInputImage->GetImageInfo();
-		SVImageInfoClass OutputImageInfo = pOutputImage->GetImageInfo();
-
-		SvOi::SVImageBufferHandlePtr InputImageBufferHandle;
-		SvOi::SVImageBufferHandlePtr OutputImageBufferHandle;
-
-		RECT l_oInputRect;
-		RECT l_oOutputRect;
+		LPVOID pSrcHostBuffer = pInputImageBuffer->getHandle()->GetBufferAddress();
+		LPVOID pDstHostBuffer = pOutputImageBuffer->getHandle()->GetBufferAddress();
 		
-		if( pInputImage->GetImageHandle( InputImageBufferHandle ) && nullptr != InputImageBufferHandle &&
-			pOutputImage->GetImageHandle( OutputImageBufferHandle ) && nullptr != OutputImageBufferHandle &&
-			S_OK == InputImageInfo.GetOutputRectangle( l_oInputRect ) &&
-			S_OK == OutputImageInfo.GetOutputRectangle( l_oOutputRect ) )
+		if( pSrcHostBuffer && pDstHostBuffer )
 		{
-			pSrcHostBuffer = InputImageBufferHandle->GetBufferAddress();
-			pDstHostBuffer = OutputImageBufferHandle->GetBufferAddress();
-		}
-		
-		if( pSrcHostBuffer && pDstHostBuffer && !(InputImageBufferHandle->empty() ) && !(OutputImageBufferHandle->empty() ) )
-		{
-			HRESULT l_Code;
-			
-			if( l_oOutputRect.bottom && l_oInputRect.bottom )
+			if(rOutputRect.bottom && rInputRect.bottom )
 			{
-				l_Code = SVMatroxBufferInterface::Get(InputImageBufferHandle->GetBuffer(), SVPitch, srcPitch );
-				l_Code = SVMatroxBufferInterface::Get(OutputImageBufferHandle->GetBuffer(), SVPitch, dstPitch );
+				long srcPitch = 0;
+				long dstPitch = 0;
+				HRESULT l_Code = SVMatroxBufferInterface::Get(pInputImageBuffer->getHandle()->GetBuffer(), SVPitch, srcPitch );
+				l_Code = SVMatroxBufferInterface::Get(pOutputImageBuffer->getHandle()->GetBuffer(), SVPitch, dstPitch );
 				
-				srcLinePtr = ( unsigned char * )pSrcHostBuffer;
-				srcLinePtr1 = ( unsigned char * )pSrcHostBuffer + srcPitch;
+				unsigned char* srcLinePtr = ( unsigned char * )pSrcHostBuffer;
+				unsigned char* srcLinePtr1 = ( unsigned char * )pSrcHostBuffer + srcPitch;
 				
-				dstLinePtr = ( unsigned char * )pDstHostBuffer;
+				unsigned char* dstLinePtr = ( unsigned char * )pDstHostBuffer;
 				
 				///////////////////////////////////////////////////////
 				// if the input image is the same as the output image
 				// just clear the Image...
 				///////////////////////////////////////////////////////
-				if( pInputImage == pOutputImage )
+				if(pInputImageBuffer->getHandle() == pOutputImageBuffer->getHandle())
 				{
-					memset( dstLinePtr, '\0', dstPitch * l_oOutputRect.bottom );
+					memset( dstLinePtr, '\0', dstPitch * rOutputRect.bottom );
 					return;
 				}
 				
@@ -397,26 +366,26 @@ void SVImageArithmeticClass::ScaleWithAveraging( SVImageClass* pInputImage, SVIm
 				/////////////////////////////////////////////////////////////////
 				
 				// Copy Lines...
-				int numRows = ( l_oOutputRect.bottom / 2 );
+				int numRows = (rOutputRect.bottom / 2 );
 				
 				// check if odd number of lines
-				if( !( l_oOutputRect.bottom % 2 ) )
+				if( !(rOutputRect.bottom % 2 ) )
 					numRows -= 1;
 				
 				// check if source image has enough rows
-				if( l_oInputRect.bottom <= numRows )
-					numRows = l_oInputRect.bottom - 1;
+				if(rInputRect.bottom <= numRows )
+					numRows = rInputRect.bottom - 1;
 				
 				int numCols = std::min( srcPitch, dstPitch );
 				
 				// see if a fill is needed
-				if( srcPitch < dstPitch || l_oInputRect.bottom < ( l_oOutputRect.bottom / 2 ) )
-					memset( dstLinePtr, '\0', dstPitch * l_oOutputRect.bottom );
+				if( srcPitch < dstPitch || rInputRect.bottom < (rOutputRect.bottom / 2 ) )
+					memset( dstLinePtr, '\0', dstPitch * rOutputRect.bottom );
 				
-				if( l_oOutputRect.bottom > 1 && l_oInputRect.bottom > 1)
+				if(rOutputRect.bottom > 1 && rInputRect.bottom > 1)
 				{
 					// process the rows of pixels
-					for( row = 0;row < numRows;row++ )
+					for( int row = 0;row < numRows;row++ )
 					{
 						// Copy the Line
 						memcpy( dstLinePtr, srcLinePtr, numCols );
@@ -425,7 +394,7 @@ void SVImageArithmeticClass::ScaleWithAveraging( SVImageClass* pInputImage, SVIm
 						dstLinePtr += dstPitch;
 						
 						// Fill in the next line with the average pixel
-						for( col = 0;col < numCols;col++ )
+						for(int col = 0;col < numCols;col++ )
 						{
 							dstLinePtr[col] = ( srcLinePtr[col] + srcLinePtr1[col] ) / 2;
 						}

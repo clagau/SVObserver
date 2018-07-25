@@ -28,7 +28,6 @@
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectLibrary/SVObserverTemplate.h"
 #include "SVOLibrary/SVQueueObject.h"
-#include "SVStatusLibrary/SVImageIndexStruct.h"
 #include "SVStatusLibrary/SVRunStatus.h"
 #include "SVSystemLibrary/SVCriticalSection.h"
 #include "Definitions/StringTypeDef.h"
@@ -88,7 +87,6 @@ public:
 	
 	virtual void SetObjectDepth( int NewObjectDepth ) override;
 	virtual void SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex ) override;
-	virtual bool SetImageDepth( long lDepth ) override;
 
 	virtual void ResetName() override;
 	virtual void SetName( LPCTSTR StrString ) override;
@@ -173,14 +171,10 @@ public:
 	//new GetOverlay method for use with the ActiveX
 	HRESULT CollectOverlays(SVImageClass* p_pImage, SVExtentMultiLineStructVector& p_rMultiLineArray);
 
-	SVProductInfoStruct LastProductGet( SVDataManagerLockTypeEnum p_LockType ) const;
+	SVProductInfoStruct LastProductGet() const;
 	HRESULT LastProductUpdate( SVProductInfoStruct *p_psvProduct );
 
 	HRESULT LastProductNotify();
-
-	HRESULT GetNextAvailableIndexes( SVInspectionInfoStruct& p_rInspectionInfo, SVDataManagerLockTypeEnum p_LockType ) const;
-
-	void DumpDMInfo( LPCTSTR p_szName ) const;
 
 	SVToolSetClass* GetToolSet() const;
 
@@ -189,7 +183,7 @@ public:
 	virtual void SetInvalid() override;
 
 	HRESULT RebuildInspection();
-	void ValidateAndInitialize( bool p_Validate, bool p_IsNew );
+	void ValidateAndInitialize( bool p_Validate );
 	void ClearResetCounts();
 	void SetResetCounts( );
 
@@ -198,7 +192,10 @@ public:
 	LPCTSTR GetDeviceName() const;
 	void SetDeviceName( LPCTSTR p_szDeviceName );
 
-	int UpdateMainImagesByProduct( SVProductInfoStruct* p_psvProduct );
+	/// Update the main image of this product.
+	/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer.
+	/// \param p_psvProduct [in,out] The product
+	void UpdateMainImagesByProduct( SVProductInfoStruct* p_psvProduct );
 	virtual bool IsColorCamera() const override;
 
 	LPCTSTR GetToolsetImage();
@@ -220,8 +217,6 @@ public:
 	HRESULT RemoveImage(SVImageClass* pImage);
 
 	virtual void Persist(SvOi::IObjectWriter& rWriter) override;
-
-	long GetResultDataIndex() const;
 
 	//************************************
 	//! Get all active ppqVariables for the used inspection.
@@ -361,7 +356,7 @@ protected:
 	virtual SVObjectClass* UpdateObject( const GUID &friendGuid, SVObjectClass *p_psvObject, SVObjectClass *p_psvNewOwner ) override;
 
 	bool RunOnce( SVToolClass* p_psvTool = nullptr );
-	bool RunInspection( long lResultDataIndex, SVImageIndexStruct svResultImageIndex, SVProductInfoStruct *pProduct, bool p_UpdateCounts = true );
+	bool RunInspection( long lResultDataIndex, SVProductInfoStruct *pProduct, bool p_UpdateCounts = true );
 
 	void DestroyInspection();
 
@@ -377,13 +372,9 @@ protected:
 	bool ProcessInputRequests( SvOi::SVResetItemEnum& rResetItem, SVStdMapSVToolClassPtrSVInspectionProcessResetStruct &rToolMap );
 	bool ProcessInputImageRequests( SVProductInfoStruct *p_psvProduct );
 
-	HRESULT ReserveNextResultImage( SVProductInfoStruct *p_pProduct, SVDataManagerLockTypeEnum p_eLockType, bool p_ClearOtherInspections = false );
+	void ClearIndexesOfOtherInspections( SVProductInfoStruct *p_pProduct, SVDataManagerLockTypeEnum p_eLockType);
 
 	HRESULT LastProductCopySourceImagesTo( SVProductInfoStruct *p_psvProduct );
-
-	HRESULT SetSourceImagesTo( SVProductInfoStruct *p_psvProduct );
-
-	HRESULT RestoreCameraImages();
 
 	template<typename T>
 	HRESULT SetObjectArrayValues(SVObjectReference& rObjectRef, const std::string& rValues, bool & reset);
@@ -391,8 +382,6 @@ protected:
 	void SingleRunModeLoop( bool p_Refresh = false );
 
 	HRESULT CopyForward( SVRunStatusClass& rRunStatus );
-
-	HRESULT CreateResultImageIndexManager() const;
 
 	static void CALLBACK APCThreadProcess( DWORD_PTR dwParam );
 
@@ -408,9 +397,6 @@ protected:
 	void  BuildWatchlist();
 	
 	SVGUID m_PPQId;
-
-	// DataManager index handles
-	mutable SVSmartIndexArrayHandlePtr m_pResultImageCircleBuffer;
 
 	mutable SVAsyncProcedure< SVAPCSignalHandler, SVThreadProcessHandler > m_AsyncProcedure;
 	long m_NotifyWithLastInspected;
@@ -441,8 +427,7 @@ protected:
 	SvDef::SVResetStruct m_svReset;
 
 	SvOi::IValueObjectPtrSet m_ValueObjectSet;
-	SVImageClassPtrSet m_ImageObjectSet;
-
+	
 	std::string m_ToolSetCameraName;
 	std::string m_DeviceName;
 

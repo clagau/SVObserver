@@ -16,7 +16,6 @@
 #include "SVUtilityLibrary/SVGUID.h"
 
 #include "InspectionEngine/SVImageClass.h"
-#include "InspectionEngine/SVImageObjectClass.h"
 #pragma endregion Includes
 
 class SVInspectionProcess;
@@ -34,7 +33,6 @@ public:
 	HRESULT UpdateCameraImage( const SVGUID& p_CameraID );
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
-	virtual bool SetImageDepth( long lDepth ) override;
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
@@ -50,30 +48,15 @@ public:
 
 	virtual void Persist(SvOi::IObjectWriter& rWriter) override;
 
-	void ResetImageIndex();
-
-	virtual SVImageIndexStruct GetSourceImageIndex( SVDataManagerHandle* pHandle, const SVGuidSVCameraInfoStructMap& rGuidCameraMap ) override;
-	virtual bool GetImageHandleIndex( SVImageIndexStruct& rlIndex ) const override;
-
-	HRESULT RestoreMainImage( SVInspectionProcess* p_psvInspection );
-
 protected:
-	virtual bool CreateBuffers( const SVImageInfoClass& p_rImageInfo, SVImageObjectClassPtr p_ImageArrayPtr ) = 0;
+	virtual bool CreateBuffers(const SVImageInfoClass& p_rImageInfo) = 0;
 
 	virtual bool DestroyImage() override;
-
-	virtual HRESULT GetImageIndex( SVDataManagerHandle& p_rHandle, const SVImageIndexStruct& rIndex ) const override;
-
-	SVImageObjectClassPtr GetCameraBufferArrayPtr() const;
-
-	virtual HRESULT RegisterAsSubObject() override;
-	virtual HRESULT UnregisterAsSubObject() override;
 
 	HRESULT RebuildCameraImage();
 
 	SVVirtualCamera* mpCamera;
 	SVGUID digitizerObjectID;
-	SVImageIndexStruct m_CurrentIndex;
 };
 
 typedef std::set< SVCameraImageTemplate* > SVCameraImagePtrSet;

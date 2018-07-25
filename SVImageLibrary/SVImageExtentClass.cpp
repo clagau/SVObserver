@@ -14,6 +14,9 @@
 //Moved to precompiled header: #include <map>
 #include "SVImageExtentClass.h"
 #include "SVGeometryClass.h"
+#include "SVFileSystemLibrary\SVFileNameClass.h"
+#include "SVMatroxLibrary\SVMatroxImageInterface.h"
+#include "SVMatroxLibrary\SVMatroxBufferInterface.h"
 
 struct ExtentPropertyMapInit
 {
@@ -3783,6 +3786,40 @@ HRESULT SVImageExtentClass::UpdateSourceOffset( SVExtentOffsetStruct& p_rsvOffse
 	}// end switch( m_eTranslation )
 
 	return l_hrOk;
+}
+
+HRESULT SVImageExtentClass::SetDataFromFile(LPCTSTR pFileName)
+{
+	HRESULT hrOk = E_FAIL;
+	HRESULT Code = E_FAIL;
+	long Width(0), Height(0);
+
+	if (0 < strlen(pFileName))
+	{
+		SVFileNameClass	svfncImageFile(pFileName);
+		SVMatroxFileTypeEnum fileformatID = SVMatroxImageInterface::getFileType(svfncImageFile.GetExtension().c_str());
+
+		if (fileformatID != SVFileUnknown && ::SVFileExists(pFileName))
+		{
+
+			std::string strFile(pFileName);
+
+			Code = SVMatroxBufferInterface::GetImageSize(strFile, Width, Height);
+		}
+
+	}
+
+	if (Code == S_OK)
+	{
+		SetExtentProperty(SvDef::SVExtentPropertyEnum::SVExtentPropertyWidth, Width);
+		SetExtentProperty(SvDef::SVExtentPropertyEnum::SVExtentPropertyHeight, Height);
+		SetExtentProperty(SvDef::SVExtentPropertyEnum::SVExtentPropertyPositionPointX, 0);
+		SetExtentProperty(SvDef::SVExtentPropertyEnum::SVExtentPropertyPositionPointY, 0);
+		SetTranslation(SvDef::SVExtentTranslationNone);
+		UpdateData();
+		hrOk = S_OK;
+	}
+	return hrOk;
 }
 
 HRESULT SVImageExtentClass::UpdatePolarFromOutputSpace( SvDef::SVExtentLocationPropertyEnum p_eLocation, long p_dX, long p_dY )

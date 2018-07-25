@@ -111,7 +111,7 @@ SVMatroxBuffer SVBitmapToMilBuffer( HBITMAP HBM )
 	l_Create.m_eAttribute = SVBufAttImageProcDispDib;
 	l_Create.m_lSizeX = bmInfo.bmWidth;
 	l_Create.m_lSizeY = bmInfo.bmHeight;
-	l_Create.SetImageDepth( bmInfo.bmBitsPixel );
+	SetImageDepth(l_Create, bmInfo.bmBitsPixel );
 	l_Create.m_lSizeBand = bmInfo.bmPlanes;
 	l_Code = l_BufIntf.Create( l_MilBuffer, l_Create );
 

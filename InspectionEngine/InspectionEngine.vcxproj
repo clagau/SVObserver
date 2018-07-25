@@ -60,6 +60,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalOptions>/Zm300 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Lib>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -79,6 +80,7 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalOptions>/Zm300 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Lib>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -115,9 +117,7 @@
     <ClInclude Include="SVExtentPropertiesInfoStruct.h" />
     <ClInclude Include="SVGlobalHandles.h" />
     <ClInclude Include="SVImageBuffer.h" />
-    <ClInclude Include="SVImageChildStruct.h" />
     <ClInclude Include="SVImageClass.h" />
-    <ClInclude Include="SVImageObjectClass.h" />
     <ClInclude Include="SVImagePolarTransform.h" />
     <ClInclude Include="SVImageProcessingClass.h" />
     <ClInclude Include="SVImageTransform.h" />
@@ -182,9 +182,7 @@
     <ClCompile Include="SVEvaluateTranslationXClass.cpp" />
     <ClCompile Include="SVEvaluateTranslationYClass.cpp" />
     <ClCompile Include="SVImageBuffer.cpp" />
-    <ClCompile Include="SVImageChildStruct.cpp" />
     <ClCompile Include="SVImageClass.cpp" />
-    <ClCompile Include="SVImageObjectClass.cpp" />
     <ClCompile Include="SVImagePolarTransform.cpp" />
     <ClCompile Include="SVImageProcessingClass.cpp" />
     <ClCompile Include="SVImageTransform.cpp" />

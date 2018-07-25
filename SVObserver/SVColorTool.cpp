@@ -250,32 +250,23 @@ bool SVColorToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContain
 
 	m_convertToHSI.GetValue(convertToHSI);
 
-	SvOi::SVImageBufferHandlePtr OutputImageHandle;
-	if (m_OutputImage.SetImageHandleIndex(rRunStatus.Images) && m_OutputImage.GetImageHandle(OutputImageHandle))
+	SvTrc::IImagePtr pOutputImageBuffer = m_OutputImage.getImageToWrite(rRunStatus.m_triggerRecord);
+	if (nullptr != pOutputImageBuffer && !pOutputImageBuffer->isEmpty())
 	{
 		SVImageClass* pInputImage = SvOl::getInput<SVImageClass>(m_InputImageObjectInfo, true);
 		if (nullptr != pInputImage)
 		{
-			// The camera images will be restored after resetObject (in start-process of camera). 
-			//If camera image is source of a child image, the child image will be show to an old buffer. For this reason a rebuild is required.
-			//@TODO[MZA][8.10][12.03.2018] Should be changed, that RebuildStorage is not need in runMode.
-			if (m_LogicalROIImage.GetLastResetTimeStamp() <= pInputImage->GetLastResetTimeStamp())
-			{
-				m_LogicalROIImage.RebuildStorage(true);
-				//UpdateImageWithExtent();
-			}
-			SvOi::SVImageBufferHandlePtr inputImageHandle;
-			m_LogicalROIImage.GetImageHandle(inputImageHandle);
-			if (!OutputImageHandle->empty() && nullptr != inputImageHandle && !inputImageHandle->empty())
+			SvTrc::IImagePtr pInputImageBuffer = m_LogicalROIImage.getImageReadOnly(rRunStatus.m_triggerRecord);
+			if (nullptr != pInputImageBuffer && !pInputImageBuffer->isEmpty())
 			{
 				HRESULT MatroxCode(S_OK);
 				if (convertToHSI)
 				{
-					MatroxCode = SVMatroxImageInterface::Convert(OutputImageHandle->GetBuffer(), inputImageHandle->GetBuffer(), SVImageRGBToHLS);
+					MatroxCode = SVMatroxImageInterface::Convert(pOutputImageBuffer->getHandle()->GetBuffer(), pInputImageBuffer->getHandle()->GetBuffer(), SVImageRGBToHLS);
 				}
 				else
 				{
-					MatroxCode = SVMatroxBufferInterface::CopyBuffer(OutputImageHandle->GetBuffer(), inputImageHandle->GetBuffer());
+					MatroxCode = SVMatroxBufferInterface::CopyBuffer(pOutputImageBuffer->getHandle()->GetBuffer(), pInputImageBuffer->getHandle()->GetBuffer());
 				}
 				if (S_OK != MatroxCode)
 				{
@@ -299,14 +290,6 @@ bool SVColorToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContain
 		}
 	}
 
-	for (BandEnum Band : BandList)
-	{
-		//@TODO[MZA][8.10][12.03.2018] check if necessary.
-		//if (m_bandImage[Band].GetLastResetTimeStamp() <= m_OutputImage.GetLastResetTimeStamp())
-		//{
-		//	Result &= m_bandImage[Band].ResetObject();
-		//}
-	}
 	Result &= __super::onRun(rRunStatus, pErrorMessages);
 	
 	return Result;

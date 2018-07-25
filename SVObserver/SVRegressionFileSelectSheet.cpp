@@ -14,7 +14,6 @@
 #include "svobserver.h"
 #include "SVRegressionFileSelectSheet.h"
 #include "SVRegressionFileSelectDlg.h"
-#include "SVCameraImageTemplate.h"
 #include "SVVirtualCamera.h"
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary\MessageManager.h"

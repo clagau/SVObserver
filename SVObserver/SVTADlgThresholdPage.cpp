@@ -243,11 +243,11 @@ void SVToolAdjustmentDialogThresholdPageClass::initThreshold()
 				histResultID = svData.HBuffer.milResult;
 			}
 
-			SvOi::SVImageBufferHandlePtr ImageHandle;
+			SvTrc::IImagePtr pImageBuffer = m_pCurrentThreshold->getOutputImage()->getLastImage();
 
-			if ( m_pCurrentThreshold->getOutputImage()->GetImageHandle( ImageHandle ) && nullptr != ImageHandle)
+			if ( nullptr != pImageBuffer && !pImageBuffer->isEmpty())
 			{
-				HRESULT l_Code = SVMatroxImageInterface::Histogram( histResultID, ImageHandle->GetBuffer() );
+				HRESULT l_Code = SVMatroxImageInterface::Histogram( histResultID, pImageBuffer->getHandle()->GetBuffer() );
 				l_Code = SVMatroxImageInterface::GetResult( histResultID, l_alHistValues );
 				l_Code = SVMatroxImageInterface::Destroy( histResultID );
 

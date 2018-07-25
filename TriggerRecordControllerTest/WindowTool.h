@@ -20,17 +20,18 @@ namespace SvTrcT
 	{
 #pragma region Constructor
 	public:
-		WindowTool(GUID guid) : ToolObject(guid) {};
+		WindowTool(GUID guid);
+		virtual ~WindowTool() = default;
 
 #pragma endregion Constructor
 
 #pragma region Public Methods
 	public:
-		virtual void reset(int pos, const SVMatroxBufferCreateStruct& bufferStructIn) override;
+		virtual void reset(const GUID& sourceGuid, const SVMatroxBufferCreateStruct& bufferStructIn, SvTrc::ITriggerRecordControllerRW& recordController) override;
 		virtual CString getName() const override{ return _T("Window Tool"); };
 		static CString getDescription() { return _T("Copy a part of the input image (10 pixel smaller on all sides)."); };
 
-		virtual bool run(SvTrc::ITriggerRecordRWPtr pTriggerRecord) override;
+		virtual bool run(const SvTrc::ITriggerRecordRWPtr& pTriggerRecord) override;
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -47,6 +48,7 @@ namespace SvTrcT
 	protected:
 		int m_offsetX = 10;
 		int m_offsetY = 10;
+		GUID m_childGuid;
 #pragma endregion Member Variables
 	};
 } //namespace SvTrcT

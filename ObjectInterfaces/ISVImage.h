@@ -38,12 +38,6 @@ namespace SvOi
 		virtual SVImageBufferHandlePtr getImageData() const = 0;
 
 		//************************************
-		/// Return the data of the parent image.
-		/// \returns SVImageBufferHandlePtr
-		//************************************
-		virtual SVImageBufferHandlePtr getParentImageData() const = 0;
-
-		//************************************
 		/// Return the display name the image.
 		/// \returns std::string
 		//************************************

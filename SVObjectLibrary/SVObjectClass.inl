@@ -78,14 +78,6 @@ inline SVOutObjectInfoStruct& SVObjectClass::GetObjectOutputInfo()
 }
 
 /*
-This method returns the object's image depth.
-*/
-inline long SVObjectClass::GetImageDepth() const
-{
-	return m_lImageDepth;
-}
-
-/*
 This method return the object's data depth.
 */
 inline int SVObjectClass::GetObjectDepth() const

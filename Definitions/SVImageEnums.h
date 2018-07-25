@@ -62,9 +62,6 @@ namespace SvDef
 //---------   buffer, and the physical portions should be replaced with the 
 //---------   SVImageTypePhysical buffer.  This type should be obsoleted and
 //---------   removed.
-//---------   Dependent and Virtual image types maintain a child->parent 
-//---------   relationship (nullptr != m_ParentImagePtr) but are still allocated 
-//---------   as physical buffers?
 //		SVImageTypeLogicalAndPhysical = 5, deprecated
 
 //		SVImageTypeVirtual     = 6, - Not used.

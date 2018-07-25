@@ -40,86 +40,15 @@ SVMainImageClass::~SVMainImageClass()
 {
 }
 
-bool SVMainImageClass::SetImageHandleIndex( SVImageIndexStruct svIndex )
+bool SVMainImageClass::CreateBuffers( const SVImageInfoClass& p_rImageInfo)
 {
-	bool Result( true );
+	// Get Basic image info from ACB...
+	m_ImageInfo = p_rImageInfo;
 
-	m_CurrentIndex = svIndex;
+	// Set up necessary main image info...
+	m_ImageInfo.SetOwnerImage( GetUniqueObjectID() );
 
-	SVGuidImageChildMap::iterator l_Iter = m_ChildArrays.begin();
-
-	while( l_Iter != m_ChildArrays.end() )
-	{
-		if( nullptr != l_Iter->second.m_pImageHandles )
-		{
-			Result &= l_Iter->second.m_pImageHandles->SetCurrentIndex( svIndex.m_CameraDMIndexHandle );
-		}
-
-		++l_Iter;
-	}
-	
-	return Result;
+	m_LastUpdate = SvTl::GetTimeStamp();
+     
+	return true;
 }
-
-bool SVMainImageClass::CopyImageTo( SVImageIndexStruct svIndex )
-{
-	return false;
-}
-
-bool SVMainImageClass::GetImageHandle(SvOi::SVImageBufferHandlePtr& p_rHandlePtr ) const
-{
-	bool bOk = nullptr != GetCameraBufferArrayPtr();
-	
-	if ( bOk )
-	{
-		bOk = GetCameraBufferArrayPtr()->GetImageHandle( m_CurrentIndex.m_CameraDMIndexHandle.GetIndex(), p_rHandlePtr );
-	}
-	
-	return bOk;
-}
-
-bool SVMainImageClass::GetImageHandle( SVImageIndexStruct svIndex, SvOi::SVImageBufferHandlePtr& rHandle ) const
-{
-	bool bOk = nullptr != GetCameraBufferArrayPtr();
-	
-	if ( bOk )
-	{
-		bOk = GetCameraBufferArrayPtr()->GetImageHandle( svIndex.m_CameraDMIndexHandle.GetIndex(), rHandle );
-	}
-	
-	return bOk;
-}
-
-const SvTl::SVTimeStamp& SVMainImageClass::GetLastResetTimeStamp() const
-{
-	if( nullptr != GetCameraBufferArrayPtr() )
-	{
-		m_LastReset = std::max( m_LastReset, GetCameraBufferArrayPtr()->GetLastResetTimeStamp() );
-	}
-
-	return SVCameraImageTemplate::GetLastResetTimeStamp();
-}
-	
-bool SVMainImageClass::CreateBuffers( const SVImageInfoClass& p_rImageInfo, SVImageObjectClassPtr p_ImageArrayPtr )
-{
-	bool bOk = (nullptr != p_ImageArrayPtr);
-
-	if ( bOk )
-	{
-		// Get Basic image info from ACB...
-		m_ImageInfo = p_rImageInfo;
-
-		// Set up necessary main image info...
-		m_ImageInfo.SetOwnerImage( GetUniqueObjectID() );
-
-		m_LastUpdate = SvTl::GetTimeStamp();
-	}
-
-	return bOk;      
-}
-
-SVImageObjectClassPtr SVMainImageClass::GetBufferArrayPtr() const
-{
-	return GetCameraBufferArrayPtr();
-}
-

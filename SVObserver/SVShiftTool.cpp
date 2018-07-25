@@ -184,12 +184,10 @@ bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 
 	if (Result)
 	{
-		SvOi::SVImageBufferHandlePtr OutImageHandle;
-
-		if (m_OutputImage.SetImageHandleIndex(rRunStatus.Images) && m_OutputImage.GetImageHandle(OutImageHandle) &&
-			nullptr != OutImageHandle && !OutImageHandle->empty())
+		SvTrc::IImagePtr pOutputImageBuffer = m_OutputImage.getImageToWrite(rRunStatus.m_triggerRecord);
+		if (nullptr != pOutputImageBuffer && !pOutputImageBuffer->isEmpty())
 		{
-			SVMatroxBufferInterface::ClearBuffer(OutImageHandle->GetBuffer(), 0);
+			SVMatroxBufferInterface::ClearBuffer(pOutputImageBuffer->getHandle()->GetBuffer(), 0);
 		}
 		else
 		{
@@ -308,9 +306,8 @@ bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 
 		if (Result)
 		{
-			SvOi::SVImageBufferHandlePtr InImageHandle;
-
 			SVImageClass* pImageInput = SvOl::getInput<SVImageClass>(m_ImageInput, true);
+			SvTrc::IImagePtr pInputImageBuffer = pImageInput->getImageReadOnly(rRunStatus.m_triggerRecord);
 
 			double l_OffsetX = 0.0;
 			double l_OffsetY = 0.0;
@@ -318,9 +315,8 @@ bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 			Result = Result && (S_OK == m_LeftResult.GetValue(l_OffsetX));
 			Result = Result && (S_OK == m_TopResult.GetValue(l_OffsetY));
 			Result = Result && (nullptr != pImageInput);
-			Result = Result && (pImageInput->GetImageHandle(InImageHandle));
-			Result = Result && (nullptr != InImageHandle);
-			Result = Result && !(InImageHandle->empty());
+			Result = Result && (nullptr != pInputImageBuffer);
+			Result = Result && !(pInputImageBuffer->isEmpty());
 
 			if (Result)
 			{
@@ -330,7 +326,7 @@ bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 					m_OutputImage.SetTranslationOffset(l_OffsetX, l_OffsetY);
 				}
 
-				HRESULT MatroxCode = SVMatroxBufferInterface::CopyBuffer(OutImageHandle->GetBuffer(), InImageHandle->GetBuffer(), static_cast<long>(-l_OffsetX), static_cast<long>(-l_OffsetY));
+				HRESULT MatroxCode = SVMatroxBufferInterface::CopyBuffer(pOutputImageBuffer->getHandle()->GetBuffer(), pInputImageBuffer->getHandle()->GetBuffer(), static_cast<long>(-l_OffsetX), static_cast<long>(-l_OffsetY));
 
 				if (S_OK != MatroxCode)
 				{

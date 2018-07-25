@@ -742,6 +742,7 @@ void SVObserverApp::OnStop()
 	}
 
 	SVSVIMStateClass::AddState(SV_STATE_UNAVAILABLE | SV_STATE_STOPING);
+	SvTrc::getTriggerRecordControllerRWInstance().unlockReset();
 	SVSVIMStateClass::RemoveState(SV_STATE_READY | SV_STATE_RUNNING | SV_STATE_STOP_PENDING);
 
 	SVObjectManagerClass::Instance().SetState(SVObjectManagerClass::ReadWrite);
@@ -761,8 +762,6 @@ void SVObserverApp::OnStop()
 
 	// Increment Offline Count
 	m_OfflineCount++;
-
-	SVDigitizerProcessingClass::Instance().RestoreLastCameraImage();
 
 	SVPPQObject* pPPQ(nullptr);
 	long lSize = pConfig->GetPPQCount();
@@ -1955,15 +1954,6 @@ BOOL SVObserverApp::InitInstance()
 		m_lSouceImageDepth = SvDef::cDefaultSourceImageDepth;
 	}
 
-	// Get SourceImageDepth
-	m_lResultImageDepth = GetProfileInt(_T("Settings"), _T("Result Image Depth"), -1);
-	if (m_lResultImageDepth == -1)
-	{
-		WriteProfileInt(_T("Settings"), _T("Result Image Depth"), SvDef::cDefaultResultImageDepth);
-
-		m_lResultImageDepth = SvDef::cDefaultResultImageDepth;
-	}
-
 	// Get LogDataManager
 	m_LogDataManager = UpdateAndGetLogDataManager();
 
@@ -2918,7 +2908,7 @@ HRESULT SVObserverApp::DestroyConfig(bool AskForSavingOrClosing /* = true */,
 				wait.Restore();
 
 				// First remove all ActiveX server things associated with this config
-				CSVCommand::ResetStreamingDataAndLockedImages();
+				CSVCommand::ResetStreamingData();
 
 				wait.Restore();
 
@@ -2962,7 +2952,7 @@ HRESULT SVObserverApp::DestroyConfig(bool AskForSavingOrClosing /* = true */,
 	else
 	{
 		// First remove all ActiveX server things associated with this config
-		CSVCommand::ResetStreamingDataAndLockedImages();
+		CSVCommand::ResetStreamingData();
 
 		SVConfigurationObject* pConfig(nullptr);
 		SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
@@ -4258,11 +4248,6 @@ long SVObserverApp::GetMaxPPQLength() const
 	return m_lSouceImageDepth;
 }
 
-long SVObserverApp::GetResultImageDepth() const
-{
-	return m_lResultImageDepth;
-}
-
 long SVObserverApp::GetLogDataManager() const
 {
 	return m_LogDataManager;
@@ -5077,11 +5062,7 @@ void SVObserverApp::Start()
 		throw Exception;
 	}
 
-	SVPPQObject* pPPQ(nullptr);
-
-	SVDigitizerProcessingClass::Instance().StoreLastCameraImage();
 	long lSize = pConfig->GetPPQCount();
-
 	try
 	{
 		DisconnectCameras();
@@ -5143,13 +5124,11 @@ void SVObserverApp::Start()
 		}
 		//create image and data stores create slot ringbuffer;
 		SvSml::SharedMemWriter::Instance().CreateManagmentAndStores();
-
-
-
+		
 		///In this loop the ImageStores are created 
 		for (long l = 0; S_OK == Result && l < lSize; l++)
 		{
-			pPPQ = pConfig->GetPPQ(l);
+			auto* pPPQ = pConfig->GetPPQ(l);
 			//Returns true when pointer valid
 			if (nullptr != pPPQ)
 			{
@@ -5216,7 +5195,7 @@ void SVObserverApp::Start()
 		{
 			for (long l = 0; l < lSize; l++)
 			{
-				pPPQ = pConfig->GetPPQ(l);
+				auto* pPPQ = pConfig->GetPPQ(l);
 				if (nullptr != pPPQ)
 				{
 					pPPQ->GoOnline();
@@ -5228,7 +5207,7 @@ void SVObserverApp::Start()
 			//cleanup goOnline, after fail, before exception leave this method
 			for (long l = 0; l < lSize; l++)
 			{
-				pPPQ = pConfig->GetPPQ(l);
+				auto* pPPQ = pConfig->GetPPQ(l);
 				if (nullptr != pPPQ)
 				{
 					pPPQ->GoOffline();
@@ -5249,7 +5228,7 @@ void SVObserverApp::Start()
 		SVSVIMStateClass::RemoveState(SV_STATE_READY | SV_STATE_START_PENDING);
 
 		SetPriorityClass(GetCurrentProcess(), REALTIME_PRIORITY_CLASS);
-
+		SvTrc::getTriggerRecordControllerRWInstance().lockReset();
 		SVSVIMStateClass::AddState(SV_STATE_RUNNING);
 
 		SVCommandStreamManager::Instance().RebuildCommandObserver();
@@ -6008,6 +5987,7 @@ void SVObserverApp::OnStopAll()
 			SVSVIMStateClass::RemoveState(SV_STATE_TEST);
 		}
 
+		SvTrc::getTriggerRecordControllerRWInstance().unlockReset();
 		SVSVIMStateClass::RemoveState(SV_STATE_RUNNING);
 
 		SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS);

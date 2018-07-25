@@ -45,7 +45,8 @@
 #include <memory>
 #include <set>
 #include <vector>
-#include <time.h>
+#include <ctime>				//Used by static library
+#include <tchar.h>
 #include <WinBase.h>
 
 #include <boost/function.hpp>

@@ -72,14 +72,13 @@ public:
 
 	HRESULT createHistogramImage();
 
-	HRESULT paintHistogramImage();
+	HRESULT paintHistogramImage(const SvTrc::ITriggerRecordRWPtr& pTriggerRecord);
 
 	const SVMatroxLongArray & GetHistogram() const
 	{
 		return msvplHistValues;
 	}
 
-	bool calcHistogram();
 	void DisconnectImages();
 
 private:

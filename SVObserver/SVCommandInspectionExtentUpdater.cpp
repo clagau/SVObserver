@@ -79,7 +79,7 @@ HRESULT SVCommandInspectionExtentUpdater::Execute()
 
 	if( nullptr != pInspection && nullptr != pTool)
 	{
-		SVProductInfoStruct svProduct = pInspection->LastProductGet(SV_DISPLAY);
+		SVProductInfoStruct svProduct = pInspection->LastProductGet();
 
 		SVDataManagerHandle dMIndexHandle;
 

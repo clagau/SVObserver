@@ -865,8 +865,6 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 
 	do
 	{
-		SvOi::SVImageBufferHandlePtr ImageHandle;
-
 		if(!__super::onRun(rRunStatus, pErrorMessages))
 		{
 			Result = false;
@@ -889,34 +887,35 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 			break;
 		}
 
-		if ( !pInputImage->GetImageHandle( ImageHandle ) || nullptr == ImageHandle )
-		{
-			ASSERT( false );
-			Result = false;
-			if (nullptr != pErrorMessages)
+			SvTrc::IImagePtr pImageBuffer = pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord);
+			if (nullptr == pImageBuffer)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16136, GetUniqueObjectID() );
-				pErrorMessages->push_back(Msg);
+				ASSERT(false);
+				Result = false;
+				if (nullptr != pErrorMessages)
+				{
+					SvStl::MessageContainer Msg(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16136, GetUniqueObjectID());
+					pErrorMessages->push_back(Msg);
+				}
+				break;
 			}
-			break;
-		}
 
-		if (ImageHandle->empty() )
-		{
-			ASSERT( false );
-			Result = false;
-			if (nullptr != pErrorMessages)
+			if (pImageBuffer->isEmpty())
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16137, GetUniqueObjectID() );
-				pErrorMessages->push_back(Msg);
+				ASSERT(false);
+				Result = false;
+				if (nullptr != pErrorMessages)
+				{
+					SvStl::MessageContainer Msg(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16137, GetUniqueObjectID());
+					pErrorMessages->push_back(Msg);
+				}
+				break;
 			}
-			break;
-		}
 
 		//
 		// Analyze the image for blobs and features of blobs.
 		//
-		MatroxCode = SVMatroxBlobInterface::Execute( m_ResultBufferID, ImageHandle->GetBuffer(), m_BlobContextID );
+		MatroxCode = SVMatroxBlobInterface::Execute( m_ResultBufferID, pImageBuffer->getHandle()->GetBuffer(), m_BlobContextID );
 
 		if( S_OK != MatroxCode )
 		{
@@ -1352,7 +1351,7 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 				}
 			}// end switch( l_lType )
 
-			MatroxCode = SVMatroxBlobInterface::BlobFill( m_ResultBufferID, ImageHandle->GetBuffer(), eCriterion, Color);
+			MatroxCode = SVMatroxBlobInterface::BlobFill( m_ResultBufferID, pImageBuffer->getHandle()->GetBuffer(), eCriterion, Color);
 		}// end if
 	} while ( false );
 

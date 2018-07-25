@@ -11,7 +11,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVCylindricalWarpTool.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVImageLibrary/SVImageExtentClass.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -369,21 +368,16 @@ bool SVCylindricalWarpToolClass::onRun( SVRunStatusClass& p_rRunStatus, SvStl::M
 			l_bOk = ResetObject(pErrorMessages) && l_bOk;
 		}
 
-		if ( nullptr != pInputImage &&
-			   m_OutputImage.SetImageHandleIndex( p_rRunStatus.Images ) )
+		if ( nullptr != pInputImage )
 		{
-			SvOi::SVImageBufferHandlePtr l_InputHandle;
-			SvOi::SVImageBufferHandlePtr l_OutputHandle;
+			SvTrc::IImagePtr pInputImageBuffer = pInputImage->getImageReadOnly(p_rRunStatus.m_triggerRecord);
+			SvTrc::IImagePtr pOutputImageBuffer = m_OutputImage.getImageToWrite(p_rRunStatus.m_triggerRecord);
 
-			SVImageBufferHandleImage l_InMilHandle;
-			SVImageBufferHandleImage l_OutMilHandle;
-
-			if ( pInputImage->GetImageHandle( l_InputHandle ) && nullptr != l_InputHandle &&
-				m_OutputImage.GetImageHandle( l_OutputHandle ) && nullptr != l_OutputHandle &&
-				!(l_InputHandle->empty() ) && !(l_OutputHandle->empty() ) )
+			if ( nullptr != pInputImageBuffer && !pInputImageBuffer->isEmpty() &&
+				nullptr != pOutputImageBuffer && !pOutputImageBuffer->isEmpty())
 			{
-				MatroxCode = SVMatroxImageInterface::Warp(l_OutputHandle->GetBuffer(),
-					l_InputHandle->GetBuffer(),
+				MatroxCode = SVMatroxImageInterface::Warp(pOutputImageBuffer->getHandle()->GetBuffer(),
+					pInputImageBuffer->getHandle()->GetBuffer(),
 					m_LutX, 
 					m_LutY,
 					static_cast<SVImageOperationTypeEnum>(Interpolation));

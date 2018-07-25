@@ -25,17 +25,16 @@
 class SVMatroxBufferCreateStruct  
 {
 public:
-	SVMatroxBufferCreateStruct();
-	virtual ~SVMatroxBufferCreateStruct();
+	long						m_lSizeBand = 1;
+	long						m_lSizeX = 10;
+	long						m_lSizeY = 10;
+	SVMatroxBufferTypeEnum		m_eType = SVUnknownBufferType;
+	SVMatroxBufferAttributeEnum	m_eAttribute = SVBufAttUnknown;
 
-	// See help on MbufAllocColor.
-	long						m_lSizeBand;
-	long						m_lSizeX;
-	long						m_lSizeY;
-	SVMatroxBufferTypeEnum		m_eType;
-	SVMatroxBufferAttributeEnum	m_eAttribute;
-	bool SetImageDepth( long p_lDepth);
 	bool operator ==(const SVMatroxBufferCreateStruct& other) const;
+	bool operator <(const SVMatroxBufferCreateStruct& other) const;
 };
 
+bool SetImageDepth(SVMatroxBufferCreateStruct& rBuffer, long p_lDepth);
 
+int getBufferSize(const SVMatroxBufferCreateStruct& rBuffer);

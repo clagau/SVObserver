@@ -90,18 +90,6 @@ bool SVVirtualCamera::GetImageInfo(SVImageInfoClass *pImageInfo)
 	return bOk;
 }
 
-long SVVirtualCamera::GetImageDepth() const
-{
-	long l_Depth = 0;
-
-	if(nullptr != mpsvDevice )
-	{
-		l_Depth = mpsvDevice->GetCircleBufferSize();
-	}
-
-	return l_Depth;
-}
-
 HRESULT SVVirtualCamera::RefreshObject( const SVObjectClass* const pSender, RefreshObjectType Type )
 {
 	HRESULT Result = S_OK;
@@ -492,90 +480,14 @@ HRESULT SVVirtualCamera::GetLut( SVLut& lut ) const
 	return hr;
 }
 
-HRESULT SVVirtualCamera::GetSourceImageIndex( SVDataManagerHandle* pHandle, const SVGuidSVCameraInfoStructMap& rGuidCameraMap ) const
+SvTrc::IImagePtr SVVirtualCamera::ReserveNextImageHandle(  ) const
 {
-	HRESULT Result( E_FAIL );
-
-	if( nullptr != pHandle )
+	if(nullptr != mpsvDevice)
 	{
-		SVGuidSVCameraInfoStructMap::const_iterator Iter( rGuidCameraMap.find( GetUniqueObjectID() ) );
-
-		if( rGuidCameraMap.end() != Iter   )
-		{
-			Result = pHandle->Assign( Iter->second.GetSourceImageDMIndexHandle(), Iter->second.GetSourceImageDMIndexHandle().GetLockType() );
-		}
-		else
-		{
-			pHandle->clear();
-		}
+		return mpsvDevice->GetNextBuffer();
 	}
 
-	return Result;
-}
-
-HRESULT SVVirtualCamera::ReserveNextImageHandleIndex( SVDataManagerHandle& p_rDMIndexHandle, SVDataManagerLockTypeEnum p_LockType ) const
-{
-	HRESULT l_Status = S_OK;
-
-	if(nullptr != mpsvDevice && nullptr != mpsvDevice)
-	{
-		SVDataManagerHandle	l_DMIndexHandle;
-		l_Status = mpsvDevice->GetNextIndex( l_DMIndexHandle );
-
-		if( S_OK == l_Status )
-		{
-			if( ReserveImageHandleIndex( l_DMIndexHandle ) )
-			{
-				l_Status = p_rDMIndexHandle.Assign( l_DMIndexHandle, p_LockType );
-			}
-			else
-			{
-				l_Status = E_FAIL;
-			}
-		}
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	return l_Status;
-}
-
-bool SVVirtualCamera::ReserveImageHandleIndex( const SVDataManagerHandle& p_rDMIndexHandle ) const
-{
-	bool Result = (nullptr != mpsvDevice);
-
-	if( Result )
-	{
-		if( -1 < p_rDMIndexHandle.GetIndex() )
-		{
-			Result = mpsvDevice->GetCircleBuffer()->SetCurrentIndex( p_rDMIndexHandle );
-		}
-	}
-
-	return Result;
-}
-
-bool SVVirtualCamera::CopyValue( const SVDataManagerHandle& p_From, const SVDataManagerHandle& p_To )
-{
-	bool Result( false );
-
-	SVImageObjectClassPtr imagePtr = mpsvDevice->GetCircleBuffer();
-	if (nullptr != imagePtr)
-	{
-		Result = imagePtr->CopyValue( p_From, p_To );
-	}
-
-	return Result;
-}
-
-void SVVirtualCamera::DumpDMInfo( LPCTSTR p_szName ) const
-{
-	if( nullptr != mpsvDevice )
-	{
-		mpsvDevice->DumpDMInfo( p_szName );
-	}
+	return nullptr;
 }
 
 bool SVVirtualCamera::IsFileAcquisition() const

@@ -89,7 +89,7 @@ bool SVInPlaceImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::
 
 	SVRunStatusClass ChildRunStatus;
 	ChildRunStatus.m_lResultDataIndex  = rRunStatus.m_lResultDataIndex;
-	ChildRunStatus.Images = rRunStatus.Images;
+	ChildRunStatus.m_triggerRecord = rRunStatus.m_triggerRecord;
 	ChildRunStatus.m_UpdateCounters = rRunStatus.m_UpdateCounters;
 
 	// Run yourself...
@@ -105,15 +105,15 @@ bool SVInPlaceImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::
 
 	if( bRetVal )
 	{
-		SvOi::SVImageBufferHandlePtr input;
-		SvOi::SVImageBufferHandlePtr output;
-		// Use input image for in- and output.
-		// Image must be a Physical type!!! ( Is already checked in ResetObject() )
-		getInputImage(true)->GetImageHandle( input );
-		getInputImage(true)->GetImageHandle( output );
-		
+		//The input image will be needed but will be overridden, because in SVImageArithmeticClass it was already called the write-method and this image will be used for both task as output.
+		SvTrc::IImagePtr pImageBuffer = getInputImage(true)->getImageReadOnly(rRunStatus.m_triggerRecord);
+		SvOi::SVImageBufferHandlePtr imageHandle;
+		if (nullptr != pImageBuffer && !pImageBuffer->isEmpty())
+		{
+			imageHandle = pImageBuffer->getHandle();
+		}
+	
 		bool bFirstFlag = true;
-
 		// Run children...
 		for( int i = 0; i < GetSize(); i++ )
 		{
@@ -126,7 +126,7 @@ bool SVInPlaceImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::
 
 			if( pOperator )
 			{
-				if( pOperator->Run( bFirstFlag, input, output, ChildRunStatus, &m_RunErrorMessages ) )
+				if( pOperator->Run( bFirstFlag, imageHandle, imageHandle, ChildRunStatus, &m_RunErrorMessages ) )
 				{
 					// Switch first flag off ( FALSE )...
 					bFirstFlag = false;

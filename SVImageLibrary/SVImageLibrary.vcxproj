@@ -129,7 +129,6 @@
     <ClCompile Include="SVExtentSizeStruct.cpp" />
     <ClCompile Include="SVGeometryClass.cpp" />
     <ClCompile Include="SVImageBufferHandleImage.cpp" />
-    <ClCompile Include="SVImageBufferInterface.cpp" />
     <ClCompile Include="SVImageExtentClass.cpp" />
     <ClCompile Include="SVImageInfoClass.cpp" />
     <ClCompile Include="SVImagePropertiesClass.cpp" />
@@ -154,7 +153,6 @@
     <ClInclude Include="SVExtentSizeStruct.h" />
     <ClInclude Include="SVGeometryClass.h" />
     <ClInclude Include="SVImageBufferHandleImage.h" />
-    <ClInclude Include="SVImageBufferInterface.h" />
     <ClInclude Include="SVImageExtentClass.h" />
     <ClInclude Include="SVImageInfoClass.h" />
     <ClInclude Include="SVImagePropertiesClass.h" />

@@ -13,7 +13,6 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
-#include "SVStatusLibrary/SVImageIndexStruct.h"
 #include "SVActiveXLockStruct.h"	// Added by ClassView
 #include "SVInfoStructs.h"
 #include "Definitions/StringTypeDef.h"
@@ -550,10 +549,10 @@ public:
   STDMETHOD(SVIsAvailiable)();
 
 public:
-	static void ResetStreamingDataAndLockedImages();
+	static void ResetStreamingData();
 
 	static HRESULT ImageToBSTR( SVImageInfoClass &rImageInfo, SvOi::SVImageBufferHandlePtr ImageHandle, BSTR *pbstr);
-	static HRESULT SafeImageToBSTR( SVImageClass *p_pImage, SVImageIndexStruct p_svIndex, BSTR *pbstr);
+	static HRESULT SafeImageToBSTR( SVImageClass *p_pImage, const SvTrc::ITriggerRecordRPtr pTriggerRecord, BSTR *pbstr);
 
 	static SVMatroxBuffer CreateImageFromBSTR( BSTR bstrImage );
 
@@ -574,7 +573,6 @@ protected:
     IStream *m_pStream;
 
 private:
-	static std::vector<SVActiveXLockStruct> m_aSVActXLock;
 	static std::vector<StreamDataStruct*> m_arStreamList;
 	static std::vector<ProductDataStruct*> m_arProductList;
 	static SvDef::StringVector m_InspectionNames;

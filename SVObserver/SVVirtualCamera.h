@@ -47,8 +47,6 @@ public:
 #pragma region Public Methods
 	bool GetImageInfo( SVImageInfoClass *pImageInfo );
 
-	virtual long GetImageDepth() const override;
-
 	//************************************
 	//! This method is used to synchronize parameters mirrored in the object manager
 	//! \param pSender <in> pointer from the object which sent the notification
@@ -75,15 +73,9 @@ public:
 	HRESULT SetLut( const SVLut& lut );
 	HRESULT GetLut( SVLut& lut ) const;
 
-	HRESULT GetSourceImageIndex( SVDataManagerHandle* pHandle, const SVGuidSVCameraInfoStructMap& rGuidCameraMap ) const;
 	virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0 ) const override;
 
-	HRESULT ReserveNextImageHandleIndex( SVDataManagerHandle& p_rDMIndexHandle, SVDataManagerLockTypeEnum p_LockType = SV_ACQUISITION ) const;
-	bool ReserveImageHandleIndex( const SVDataManagerHandle& p_rDMIndexHandle ) const;
-
-	bool CopyValue( const SVDataManagerHandle& p_From, const SVDataManagerHandle& p_To );
-
-	void DumpDMInfo( LPCTSTR p_szName ) const;
+	SvTrc::IImagePtr ReserveNextImageHandle( ) const;
 
 	SVAcquisitionClassPtr mpsvDevice;
 	SVCallbackClassPtrQueue m_CallbackList;

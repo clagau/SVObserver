@@ -231,7 +231,6 @@ public:
 	long GetSourceImageDepth() const;
 	long GetMaxPPQLength() const;
 
-	long GetResultImageDepth() const;
 	long GetLogDataManager() const;
 	long UpdateAndGetLogDataManager();
 
@@ -377,7 +376,6 @@ private:
 	std::string m_LastValidConfigPNVariableValue;
 
 	long m_lSouceImageDepth;
-	long m_lResultImageDepth;
 	long m_LogDataManager;
 
 	SVMessageWindowClass* m_pMessageWindow;

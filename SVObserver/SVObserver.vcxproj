@@ -82,7 +82,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ShowIncludes>false</ShowIncludes>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalOptions>/Zm300 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/Zm350 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -93,7 +93,7 @@
       <Command>copy ..\XmlLite\$(Platform)\xmllite.lib "$(OutDir)"</Command>
     </PreLinkEvent>
     <Link>
-      <AdditionalDependencies>CameraLibrary.lib;FilterOperators.lib;GridCtrlLibrary.lib;InspectionCommands.lib;InspectionEngine.lib;ObjectSelectorLibrary.lib;SVCommandLibrary.lib;SVContainerLibrary.lib;SVDataManagerLibrary.lib;SVEquationLibrary.lib;SVFileSystemLibrary.lib;SVGigeCameraFileLibrary.lib;SVHBitmapUtilitiesLibrary.lib;SVHttpLibrary.lib;SVImageLibrary.lib;SVIOLibrary.lib;SVLibrary.lib;SVMatroxLibrary.lib;SVMFCControls.lib;SVObjectLibrary.lib;SVOGui.lib;SVOLibrary.lib;SvProtoBuf.lib;SVRPCLibrary.lib;SVRPropertyTree.lib;SVSecurity.lib;SVSharedMemoryLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;SVValueObjectLibrary.lib;SVXMLLibrary.lib;TriggerHandling.lib;TriggerInformation.lib;WebsocketLibrary.lib;ddraw.lib;dxguid.lib;libprotobufd.lib;Rpcrt4.lib;Winmm.lib;xmllite.lib</AdditionalDependencies>
+      <AdditionalDependencies>CameraLibrary.lib;FilterOperators.lib;GridCtrlLibrary.lib;InspectionCommands.lib;InspectionEngine.lib;ObjectSelectorLibrary.lib;SVCommandLibrary.lib;SVContainerLibrary.lib;SVDataManagerLibrary.lib;SVEquationLibrary.lib;SVFileSystemLibrary.lib;SVGigeCameraFileLibrary.lib;SVHBitmapUtilitiesLibrary.lib;SVHttpLibrary.lib;SVImageLibrary.lib;SVIOLibrary.lib;SVLibrary.lib;SVMatroxLibrary.lib;SVMFCControls.lib;SVObjectLibrary.lib;SVOGui.lib;SVOLibrary.lib;SvProtoBuf.lib;SVRPCLibrary.lib;SVRPropertyTree.lib;SVSecurity.lib;SVSharedMemoryLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;SVValueObjectLibrary.lib;SVXMLLibrary.lib;TriggerHandling.lib;TriggerInformation.lib;TriggerRecordController.lib;WebsocketLibrary.lib;ddraw.lib;dxguid.lib;libprotobufd.lib;Rpcrt4.lib;Winmm.lib;xmllite.lib</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(OutDir);$(ProgramFiles)\Microsoft DirectX 9.0 SDK (April 2005)\Lib\x64;$(ProgramFiles)\Microsoft SDKs\Windows\v7.0A\Lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -142,7 +142,7 @@ echo %time%
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <DisableSpecificWarnings>4101;</DisableSpecificWarnings>
-      <AdditionalOptions>/Zm300 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/Zm350 %(AdditionalOptions)</AdditionalOptions>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
     </ClCompile>
     <ResourceCompile>
@@ -154,7 +154,7 @@ echo %time%
       <Command>copy ..\XmlLite\$(Platform)\xmllite.lib "$(OutDir)"</Command>
     </PreLinkEvent>
     <Link>
-      <AdditionalDependencies>CameraLibrary.lib;FilterOperators.lib;GridCtrlLibrary.lib;InspectionCommands.lib;InspectionEngine.lib;ObjectSelectorLibrary.lib;SVCommandLibrary.lib;SVContainerLibrary.lib;SVDataManagerLibrary.lib;SVEquationLibrary.lib;SVFileSystemLibrary.lib;SVGigeCameraFileLibrary.lib;SVHBitmapUtilitiesLibrary.lib;SVHttpLibrary.lib;SVImageLibrary.lib;SVIOLibrary.lib;SVLibrary.lib;SVMatroxLibrary.lib;SVMFCControls.lib;SVObjectLibrary.lib;SVOGui.lib;SVOLibrary.lib;SvProtoBuf.lib;SVRPCLibrary.lib;SVRPropertyTree.lib;SVSecurity.lib;SVSharedMemoryLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;SVValueObjectLibrary.lib;SVXMLLibrary.lib;TriggerHandling.lib;TriggerInformation.lib;WebsocketLibrary.lib;ddraw.lib;dxguid.lib;libprotobuf.lib;Rpcrt4.lib;Winmm.lib;xmllite.lib</AdditionalDependencies>
+      <AdditionalDependencies>CameraLibrary.lib;FilterOperators.lib;GridCtrlLibrary.lib;InspectionCommands.lib;InspectionEngine.lib;TriggerRecordController.lib;ObjectSelectorLibrary.lib;SVCommandLibrary.lib;SVContainerLibrary.lib;SVDataManagerLibrary.lib;SVEquationLibrary.lib;SVFileSystemLibrary.lib;SVGigeCameraFileLibrary.lib;SVHBitmapUtilitiesLibrary.lib;SVHttpLibrary.lib;SVImageLibrary.lib;SVIOLibrary.lib;SVLibrary.lib;SVMatroxLibrary.lib;SVMFCControls.lib;SVObjectLibrary.lib;SVOGui.lib;SVOLibrary.lib;SvProtoBuf.lib;SVRPCLibrary.lib;SVRPropertyTree.lib;SVSecurity.lib;SVSharedMemoryLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;SVValueObjectLibrary.lib;SVXMLLibrary.lib;TriggerHandling.lib;TriggerInformation.lib;WebsocketLibrary.lib;ddraw.lib;dxguid.lib;libprotobuf.lib;Rpcrt4.lib;Winmm.lib;xmllite.lib</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(OutDir);$(ProgramFiles)\Microsoft DirectX 9.0 SDK (April 2005)\Lib\x64;$(ProgramFiles)\Microsoft SDKs\Windows\v7.0A\Lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -302,7 +302,6 @@ echo %time%
     <ClCompile Include="SVGuiExtentUpdater.cpp" />
     <ClCompile Include="SVHistogramAnalyzer.cpp" />
     <ClCompile Include="SVHistogramAnalyzerSetup.cpp" />
-    <ClCompile Include="SVImageArchive.cpp" />
     <ClCompile Include="SVImageArithmetic.cpp" />
     <ClCompile Include="SVImageView.cpp" />
     <ClCompile Include="SVImageViewScroll.cpp" />
@@ -609,7 +608,6 @@ echo %time%
     <ClInclude Include="SVGuiExtentUpdater.h" />
     <ClInclude Include="SVHistogramAnalyzer.h" />
     <ClInclude Include="SVHistogramAnalyzerSetup.h" />
-    <ClInclude Include="SVImageArchive.h" />
     <ClInclude Include="SVImageArithmetic.h" />
     <ClInclude Include="SVImageView.h" />
     <ClInclude Include="SVImageViewScroll.h" />

@@ -374,7 +374,7 @@ protected:
 
 	bool RecycleProductInfo( SVProductInfoStruct *pProduct );
 
-	void RebuildProductInfoStructs();
+	void RebuildProductCameraInfoStructs();
 
 	//************************************
 	/// Processes a single camera queue event
@@ -433,7 +433,6 @@ protected:
 
 	// DataManager index handles
 	SVSmartIndexArrayHandlePtr m_pResultDataCircleBuffer;
-	SVSmartIndexArrayHandlePtr m_pResultImagePublishedCircleBuffer;
 
 	// Value Objects used by the PPQ
 	SVBoolValueObjectClass  m_voTriggerToggle;	
@@ -512,6 +511,8 @@ private:
 	void ResetOutputValueObjects(long DataIndex);
 	void ReleaseSharedMemory(SVProductInfoStruct& rProduct);
 	void CommitSharedMemory( SVProductInfoStruct& rProduct);
+
+	void SetupProductInfoStructs();
 
 	BasicValueObjects	m_PpqValues;
 	SvDef::SVPPQOutputModeEnum m_oOutputMode;

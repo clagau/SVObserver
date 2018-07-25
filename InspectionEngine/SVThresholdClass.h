@@ -12,6 +12,7 @@
 #pragma once
 
 #pragma region Incudes
+#include <mil.h>
 #include "SVUnaryImageOperatorClass.h"
 #include "SVMatroxLibrary/SVMatroxTypedefs.h"
 #pragma endregion Incudes

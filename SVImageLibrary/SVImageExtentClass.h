@@ -117,6 +117,11 @@ public:
 
 	HRESULT UpdateSourceOffset( SVExtentOffsetStruct& p_rsvOffsetData );
 
+	/// Set the image extent data depending of an image file.
+	/// \param pFileName [in] Filename of the image.
+	/// \returns HRESULT S_OK on success.
+	HRESULT SetDataFromFile(LPCTSTR pFileName);
+
 protected:
 	HRESULT UpdateLine( SvDef::SVExtentLocationPropertyEnum p_eLocation, SVExtentPointStruct p_svStart, SVExtentPointStruct p_svEnd );
 	HRESULT UpdatePolar( SvDef::SVExtentLocationPropertyEnum p_eLocation, SVExtentPointStruct p_svStart, SVExtentPointStruct p_svEnd );

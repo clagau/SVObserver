@@ -143,12 +143,8 @@ int SVHistogramAnalyzerSetupClass::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CDialog::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
-	if (m_pAnalyzer->calcHistogram())
-	{
-		const SVMatroxLongArray & l_arr = m_pAnalyzer->GetHistogram();
-		m_histogram.SetPixelCounts(l_arr.begin(), l_arr.end());
-	}
-
+	const SVMatroxLongArray & l_arr = m_pAnalyzer->GetHistogram();
+	m_histogram.SetPixelCounts(l_arr.begin(), l_arr.end());
 	m_firstSquare.SetColor(SvDef::DarkGreen);
 	m_secondSquare.SetColor(SvDef::Crimson);
 	m_valleySquare.SetColor(SvDef::Plum);

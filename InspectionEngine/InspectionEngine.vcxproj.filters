@@ -36,13 +36,7 @@
     <ClInclude Include="SVImageProcessingClass.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVImageChildStruct.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVImageClass.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVImageObjectClass.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVTaskObject.h">
@@ -227,13 +221,7 @@
     <ClCompile Include="SVImageProcessingClass.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVImageChildStruct.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVImageClass.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVImageObjectClass.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVTaskObject.cpp">

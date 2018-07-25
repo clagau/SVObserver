@@ -25,20 +25,9 @@ public:
 	SVMainImageClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVMAINIMAGE );
 
 	virtual ~SVMainImageClass();
-
-	virtual bool SetImageHandleIndex( SVImageIndexStruct lIndex ) override;
-
-	virtual bool CopyImageTo( SVImageIndexStruct lIndex ) override;
-
-	virtual bool GetImageHandle(SvOi::SVImageBufferHandlePtr& p_rHandlePtr ) const override;
-	virtual bool GetImageHandle( SVImageIndexStruct svIndex, SvOi::SVImageBufferHandlePtr& rHandle ) const override;
-
-	virtual const SvTl::SVTimeStamp& GetLastResetTimeStamp() const override;
 	
 protected:
-	virtual bool CreateBuffers( const SVImageInfoClass& p_rImageInfo, SVImageObjectClassPtr p_ImageArrayPtr ) override;
-
-	virtual SVImageObjectClassPtr GetBufferArrayPtr() const override;
+	virtual bool CreateBuffers( const SVImageInfoClass& p_rImageInfo) override;
 
 private:
 	void init();

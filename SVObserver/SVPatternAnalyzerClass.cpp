@@ -267,9 +267,6 @@ bool SVPatternAnalyzerClass::UpdateModelFromInputImage(long posX, long posY)
 		// Destroy and Recreate Model Image Buffer
 		CreateModelBuffer();
 
-		SvOi::SVImageBufferHandlePtr l_ImageHandle;
-		l_pInputImage->GetImageHandle( l_ImageHandle );
-
 		SVImageInfoClass imageInfo = l_pInputImage->GetImageInfo();
 		
 		// Copy Source Image into Model Image
@@ -288,17 +285,26 @@ bool SVPatternAnalyzerClass::UpdateModelFromInputImage(long posX, long posY)
 		m_lpatModelHeight.GetValue(tmp);
 		childImageInfo.SetExtentProperty( SvDef::SVExtentPropertyHeight, tmp );
 
-		HRESULT hr = SVImageProcessingClass::CreateImageChildBuffer(imageInfo, l_ImageHandle, childImageInfo, childImageHandle);
-		if (S_OK == hr && nullptr != childImageHandle && nullptr != m_patBufferHandlePtr )
-		{
-			// Copy from source child to Model Image buffer
-			l_Code = SVMatroxBufferInterface::CopyBuffer(m_patBufferHandlePtr->GetBuffer(), childImageHandle->GetBuffer() );
+		SvTrc::IImagePtr pImageBuffer = l_pInputImage->getLastImage(true);
 
-			// free child buffer
-			childImageHandle.reset();
-			
-			// Create the Model Pattern
-			bOk = UpdateModelFromBuffer();
+		if (nullptr != pImageBuffer && !pImageBuffer->isEmpty())
+		{
+			HRESULT hr = SVImageProcessingClass::CreateImageChildBuffer(imageInfo, pImageBuffer->getHandle(), childImageInfo, childImageHandle);
+			if (S_OK == hr && nullptr != childImageHandle && nullptr != m_patBufferHandlePtr)
+			{
+				// Copy from source child to Model Image buffer
+				l_Code = SVMatroxBufferInterface::CopyBuffer(m_patBufferHandlePtr->GetBuffer(), childImageHandle->GetBuffer());
+
+				// free child buffer
+				childImageHandle.reset();
+
+				// Create the Model Pattern
+				bOk = UpdateModelFromBuffer();
+			}
+			else
+			{
+				bOk = false;
+			}
 		}
 		else
 		{
@@ -413,13 +419,12 @@ bool SVPatternAnalyzerClass::SetSearchParameters ()
 
 			msv_lpatMaxOccurances.GetValue(lParam);
 
-			SvOi::SVImageBufferHandlePtr ImageHandle;
-			pSVImage->GetImageHandle( ImageHandle );
+			SvTrc::IImagePtr pImageBuffer = pSVImage->getLastImage(true);
 
 			SVMatroxBuffer ImageBufId;
-			if(nullptr !=  ImageHandle)
+			if(nullptr !=  pImageBuffer && !pImageBuffer->isEmpty())
 			{
-				ImageBufId = ImageHandle->GetBuffer();
+				ImageBufId = pImageBuffer->getHandle()->GetBuffer();
 			}
 
 			long modelWidth = 0;
@@ -746,14 +751,10 @@ bool SVPatternAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::Message
 		if (Result)
 		{
 			SVImageClass* pInputImage = getInputImage(true);
-			SvOi::SVImageBufferHandlePtr ImageHandle;
-			if( nullptr != pInputImage && pInputImage->GetImageHandle( ImageHandle ) )
+			SvTrc::IImagePtr pImageBuffer = (nullptr!=pInputImage)?pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord):nullptr;
+			if( nullptr != pImageBuffer && !pImageBuffer->isEmpty())
 			{
-				SVMatroxBuffer ImageBufId;
-				if(nullptr != ImageHandle)
-				{
-					ImageBufId = ImageHandle->GetBuffer();
-				}
+				SVMatroxBuffer ImageBufId = pImageBuffer->getHandle()->GetBuffer();
 				HRESULT MatroxCode = executePatternAndSetResults(ImageBufId);
 
 				// check if one of the matrox calls failed

@@ -52,9 +52,6 @@ public:
 
 	HRESULT ScanForCameras();
 
-	HRESULT StoreLastCameraImage();
-	HRESULT RestoreLastCameraImage();
-
 	//************************************
 	//! The method is used to set the digitizer color settings
 	//! \param DigitizerName <in> The name of the digitizer

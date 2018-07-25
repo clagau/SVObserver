@@ -61,31 +61,13 @@ int SVTestAcquisitionClass::GetBufferFormat() const
 	return l_Format;
 }
 
-HRESULT SVTestAcquisitionClass::GetNextBuffer( SVImageBufferInterface& p_rBuffer )
+HRESULT SVTestAcquisitionClass::UpdateWithCompletedBuffer(const SvTrc::IImagePtr& rImage, const SvTl::SVTimeStamp StartTick, const SvTl::SVTimeStamp StopTick)
 {
 	HRESULT l_Status = S_OK;
 
 	if( nullptr != m_pDisplay )
 	{
-		l_Status = m_pDisplay->GetNextBuffer( p_rBuffer );
-	}
-	else
-	{
-		l_Status = E_FAIL;
-
-		p_rBuffer.clear();
-	}
-
-	return l_Status;
-}
-
-HRESULT SVTestAcquisitionClass::UpdateWithCompletedBuffer( const SVImageBufferInterface& p_rBuffer )
-{
-	HRESULT l_Status = S_OK;
-
-	if( nullptr != m_pDisplay )
-	{
-		l_Status = m_pDisplay->UpdateWithCompletedBuffer( p_rBuffer );
+		l_Status = m_pDisplay->UpdateWithCompletedBuffer(rImage);
 	}
 	else
 	{

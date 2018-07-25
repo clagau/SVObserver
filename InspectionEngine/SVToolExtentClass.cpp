@@ -82,7 +82,7 @@ HRESULT SVToolExtentClass::UpdateExtentToParentExtents(SVImageExtentClass& rNewE
 		{
 			if (rNewExtent != m_psvToolImage->GetImageExtents())
 			{
-				l_Status = m_psvToolImage->UpdateImage(rNewExtent);
+				l_Status = m_psvToolImage->UpdateImage(rNewExtent, true);
 			}
 		}
 	}
@@ -226,7 +226,7 @@ HRESULT SVToolExtentClass::UpdateImageWithExtent(SVToolExtentTypeEnum p_ToolExte
 			{
 				if (l_Extent != m_psvToolImage->GetImageExtents())
 				{
-					l_Status = m_psvToolImage->UpdateImage(l_Extent);
+					l_Status = m_psvToolImage->UpdateImage(l_Extent, true);
 				}
 			}
 

@@ -137,7 +137,8 @@ namespace SvTrcT
 
 		// TODO: Hier zusätzliche Initialisierung einfügen
 		SvPb::InspectionList inspList;
-		inspList.add_inspectionid();
+		auto insp = inspList.add_list();
+		insp->set_numberofrecords(m_trNumbers);
 		m_recordController.setInspections(inspList);
 		resetController();
 		updateControls();
@@ -281,21 +282,30 @@ namespace SvTrcT
 			return;
 		}
 
-		int lastTRid = m_recordController.getLastTRId(m_inspectionPos);
-		auto& lastTriggerRecord = m_recordController.CreateTriggerRecordObject(m_inspectionPos, lastTRid);
-		auto& triggerRecord = m_recordController.CreateTriggerRecordObjectToWrite(m_inspectionPos);
-		if (m_isCopyTR && nullptr != lastTriggerRecord)
+		SvTrc::IImagePtr pMainImage = LoadMainImage(dlg.GetPathName());
+		if (nullptr != pMainImage)
 		{
-			triggerRecord->setImages(*(lastTriggerRecord.get()));
-		}
-		bool bOk = LoadMainImage(triggerRecord, dlg.GetPathName());
-		if (bOk)
-		{
+			int lastTRid = m_recordController.getLastTRId(m_inspectionPos);
+			auto& lastTriggerRecord = m_recordController.createTriggerRecordObject(m_inspectionPos, lastTRid);
+			auto& triggerRecord = m_recordController.createTriggerRecordObjectToWrite(m_inspectionPos);
+			if (m_isCopyTR && nullptr != lastTriggerRecord)
+			{
+				triggerRecord->setImages(*(lastTriggerRecord.get()));
+			}
+			try
+			{
+				triggerRecord->setImage(0, pMainImage);
+			}
+			catch (...)
+			{	
+				assert(false);
+			}
+
+			pMainImage.reset();
 			int pos = 0;
 			for (const auto& tool : m_toolList)
 			{
-				bOk = tool->run(triggerRecord);
-				if (!bOk)
+				if (!tool->run(triggerRecord))
 				{
 					CString text;
 					text.Format("Trigger: Tool %s (%d) failed!", tool->getName(), pos);
@@ -322,10 +332,22 @@ namespace SvTrcT
 		{
 			id = m_recordController.getLastTRId(m_inspectionPos);
 		}
-		auto triggerRecord = m_recordController.CreateTriggerRecordObject(m_inspectionPos, id);
-		if (nullptr != triggerRecord && triggerRecord->getImage(m_ImageCombo.GetCurSel()))
+		auto imageGuid = m_mainGuid;
+		auto comboPos = m_ImageCombo.GetCurSel();
+		if (0 < comboPos && m_toolList.size() >= comboPos)
 		{
-			m_dialogImage.setImage(triggerRecord->getImage(m_ImageCombo.GetCurSel())->getHandle());
+			imageGuid = m_toolList[comboPos - 1]->getGuid();
+		}
+		auto triggerRecord = m_recordController.createTriggerRecordObject(m_inspectionPos, id); 
+		SvTrc::IImagePtr image;
+		if (nullptr != triggerRecord)
+		{
+			image = triggerRecord->getImage(imageGuid);
+		}
+
+		if (nullptr != image)
+		{
+			m_dialogImage.setImage(image->getHandle());
 			m_dialogImage.Refresh();
 		}
 		else
@@ -367,21 +389,30 @@ namespace SvTrcT
 
 	void CTriggerRecordControllerTestDlg::resetController()
 	{
+		auto InspList = m_recordController.getInspections();
+		InspList.mutable_list(0)->set_numberofrecords(m_trNumbers);
+		m_recordController.setInspections(InspList);
+
 		SVMatroxBufferCreateStruct bufferStruct;
 		bufferStruct.m_lSizeX = m_mainWidth;
 		bufferStruct.m_lSizeY = m_mainHeigth;
 		bufferStruct.m_eAttribute = SVBufAttImageProcDib;
 		bufferStruct.m_eType = SV8BitUnsigned;
-		m_recordController.StartResetTriggerRecordStructure(m_inspectionPos, m_trNumbers);
-		m_recordController.AddImage2TriggerRecordStructure(m_mainGuid, bufferStruct);
-		int pos = 0;
+		m_recordController.startResetTriggerRecordStructure();
+		m_recordController.removeAllImageBuffer(m_mainGuid);
+		m_recordController.addImageBuffer(m_mainGuid, bufferStruct, 1);
+		m_recordController.finishResetTriggerRecordStructure();
+
+		m_recordController.startResetTriggerRecordStructure(m_inspectionPos);
+		m_recordController.addOrChangeImage(m_mainGuid, bufferStruct);
+		GUID sourceImage = m_mainGuid;
 		for (const auto& tool : m_toolList)
 		{
-			tool->reset(pos++, bufferStruct);
+			tool->reset(sourceImage, bufferStruct, m_recordController);
+			sourceImage = tool->getGuid();
 			bufferStruct = tool->getBufferOut();
-			m_recordController.AddImage2TriggerRecordStructure(tool->getGuid(), bufferStruct);
 		}
-		m_recordController.FinishResetTriggerRecordStructure();
+		m_recordController.finishResetTriggerRecordStructure();
 		m_lastID.Format("%d", m_recordController.getLastTRId(m_inspectionPos));
 	}
 
@@ -415,21 +446,24 @@ namespace SvTrcT
 		GetDlgItem(IDC_BUTTON_TRIGGER)->EnableWindow(!m_isEdit);
 	}
 
-	bool CTriggerRecordControllerTestDlg::LoadMainImage(SvTrc::ITriggerRecordRWPtr triggerRecord, const CString& rPath)
+	SvTrc::IImagePtr CTriggerRecordControllerTestDlg::LoadMainImage(const CString& rPath)
 	{
-		bool retValue = false;
-		auto& main_image = triggerRecord->createNewImageHandle(0);
-		if (nullptr != main_image)
+		SVMatroxBufferCreateStruct bufferStruct;
+		bufferStruct.m_lSizeX = m_mainWidth;
+		bufferStruct.m_lSizeY = m_mainHeigth;
+		bufferStruct.m_eAttribute = SVBufAttImageProcDib;
+		bufferStruct.m_eType = SV8BitUnsigned;
+		SvTrc::IImagePtr pImage = m_recordController.getImageBuffer(bufferStruct);
+		if (nullptr != pImage)
 		{
-			auto& imageHandle = main_image->getHandle();
+			auto& imageHandle = pImage->getHandle();
 			if (nullptr != imageHandle)
 			{
 				HRESULT hr = SVMatroxBufferInterface::Import(imageHandle->GetBuffer(), std::string(rPath), SVFileBitmap, false);
 				assert(S_OK == hr);
-				retValue = (S_OK == hr);
 			}
 		}
-		return retValue;
+		return pImage;
 	}
 
 } // namespace SvTrcT

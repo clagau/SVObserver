@@ -64,7 +64,6 @@ public:
 	HRESULT GetOwnerImage( SV_OBJECT_TYPE*& p_rpObject ) const;
 
 	HRESULT GetOwnerImage( SVObjectClass*& p_rpObject ) const;
-	const SVGUID& GetOwnerImageID() const;
 	void SetOwnerImage( const GUID& p_rObjectID );
 
 	SVObjectClass* GetOwner() const;

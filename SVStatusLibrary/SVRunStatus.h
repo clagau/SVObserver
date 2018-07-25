@@ -12,9 +12,9 @@
 #pragma once
 
 //Moved to precompiled header: #include <deque>
-#include "SVImageIndexStruct.h"
 #include "ProductWorkloadInformation.h"
 #include "SVUtilityLibrary/SVGUID.h"
+#include "TriggerRecordController/ITriggerRecordRW.h"
 
 class SVRunStatusClass
 {
@@ -72,7 +72,6 @@ public:
 	DWORD GetStatusColor() const;
 
 	long m_lResultDataIndex;
-	SVImageIndexStruct Images;
 	long m_lTriggerCount;	// TB
 	bool m_UpdateCounters;
 
@@ -81,6 +80,7 @@ public:
 
 	double m_PreviousTriggerTime; ///< time stamp at which the previous Inspection was started
 	double m_CurrentTriggerTime; ///< time stamp at which the current Inspection was started
+	SvTrc::ITriggerRecordRWPtr m_triggerRecord = nullptr;
 
 	ProductWorkloadInformation m_WorkloadInfoRsc; ///< workload information for the most recently completed product 
 };

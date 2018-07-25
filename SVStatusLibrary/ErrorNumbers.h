@@ -467,10 +467,6 @@ namespace SvStl
 	static const int 	Err_16199  =  Mec_ErrorBase + 199;	
 
 	static const int 	Err_16200  =  Mec_ErrorBase + 200;
-	static const int 	Err_16201  =  Mec_ErrorBase + 201;
-	static const int 	Err_16202  =  Mec_ErrorBase + 202;
-	static const int 	Err_16203  =  Mec_ErrorBase + 203;
-	static const int 	Err_16204  =  Mec_ErrorBase + 204;
 	static const int 	Err_16205  =  Mec_ErrorBase + 205;
 	static const int 	Err_16206  =  Mec_ErrorBase + 206;
 	static const int 	Err_16207  =  Mec_ErrorBase + 207;
@@ -591,11 +587,6 @@ namespace SvStl
 	static const int Err_25039_AsyncProcedure = Gra_ErrorBase + 39;
 	static const int Err_25040_AsyncProcedure = Gra_ErrorBase + 40;
 	static const int Err_25041_AsyncProcedure = Gra_ErrorBase + 41;
-	static const int Err_25042_SetImageHandleIndex = Gra_ErrorBase + 42;
-	static const int Err_25043_InvalidSourceIndex = Gra_ErrorBase + 43;
-	static const int Err_25044_CameraNotFound = Gra_ErrorBase + 44;
-	static const int Err_25045_InvalidCamera = Gra_ErrorBase + 45;
-	static const int Err_25046_InvalidImage = Gra_ErrorBase + 46;
 	static const int Err_25047_LoadFileFailed = Gra_ErrorBase + 47;
 	static const int Err_25048_NoMatroxService = Gra_ErrorBase + 48;
 	static const int Err_25049_DottedName = Gra_ErrorBase + 49;

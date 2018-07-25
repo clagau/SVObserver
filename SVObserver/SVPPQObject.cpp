@@ -54,6 +54,9 @@
 #include "SVSharedMemoryLibrary\MLPPQInfo.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "SVProtoBuf/ConverterHelper.h"
+#include "TriggerRecordController/ITriggerRecordControllerRW.h"
+#include "SVProtoBuf/TriggerRecordController.pb.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -63,7 +66,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-const long g_lPPQExtraBufferSize = 50;
+const long g_lPPQExtraBufferSize = 5;
 static const double TwentyPercent = .20;
 static const long cPpqDefaultIndex = 1L;
 
@@ -440,15 +443,10 @@ HRESULT SVPPQObject::ObserverUpdate(const SVInspectionCompleteInfoStruct& p_rDat
 
 	if (l_Iter != p_rData.m_ProductInfo.m_svInspectionInfos.end())
 	{
-		SVInspectionInfoStruct l_InspectInfo = l_Iter->second;
-
-		l_InspectInfo.m_CallbackReceived = SvTl::GetTimeStamp();
-
-		l_InspectInfo.ClearIndexes();
-
-		SVInspectionInfoPair l_Info(p_rData.m_ProductInfo.ProcessCount(), l_InspectInfo);
-
-		m_oInspectionQueue.AddTail(l_Info);
+		SVInspectionInfoPair infoPair(p_rData.m_ProductInfo.ProcessCount(), l_Iter->second);
+		infoPair.second.m_CallbackReceived = SvTl::GetTimeStamp();
+		infoPair.second.ClearIndexes();
+		m_oInspectionQueue.AddTail(infoPair);
 
 		m_AsyncProcedure.Signal(nullptr);
 	}
@@ -470,11 +468,6 @@ bool SVPPQObject::Create()
 	hr = TheSVDataManager.CreateManagedIndexArray(m_pResultDataCircleBuffer, bName, GetPPQLength() + g_lPPQExtraBufferSize);
 	if (S_OK != hr) { return false; }
 
-	bName = _T("PPQ Result Image Published");
-
-	hr = TheSVDataManager.CreateManagedIndexArray(m_pResultImagePublishedCircleBuffer, bName, TheSVObserverApp.GetSourceImageDepth());
-	if (S_OK != hr) { return false; }
-
 	for (i = 0; i < static_cast<long>(m_ppPPQPositions.size()); ++i)
 	{
 		RecycleProductInfo(m_ppPPQPositions.GetProductAt(i));
@@ -488,50 +481,7 @@ bool SVPPQObject::Create()
 	// Create a set of ProductInfoStructs to use
 	if (!m_qAvailableProductInfos.Create()) { return false; }
 
-	SVGuidSVCameraInfoStructMap l_CameraInfos;
-
-	BuildCameraInfos(l_CameraInfos);
-
-	// Set up all the ProductInfo Structs
-	m_pMasterProductInfos = new SVProductInfoStruct[GetPPQLength() + g_lPPQExtraBufferSize];
-	for (int j = 0; j < GetPPQLength() + g_lPPQExtraBufferSize; j++)
-	{
-		m_pMasterProductInfos[j].oPPQInfo.pPPQ = this;
-		m_pMasterProductInfos[j].oTriggerInfo.pTrigger = m_pTrigger;
-		m_pMasterProductInfos[j].m_svCameraInfos = l_CameraInfos;
-		m_pMasterProductInfos[j].m_svInspectionInfos.clear();
-
-		for (auto pInspection : m_arInspections)
-		{
-			SVInspectionInfoStruct l_svInspectionStruct;
-
-			l_svInspectionStruct.pInspection = pInspection;
-
-			m_pMasterProductInfos[j].m_svInspectionInfos[pInspection->GetUniqueObjectID()] = l_svInspectionStruct;
-		}// end for
-
-		m_qAvailableProductInfos.AddTail(&m_pMasterProductInfos[j]);
-	}// end for
-
-	SVProductInfoStruct* l_pProduct = nullptr;
-
-	if (m_qAvailableProductInfos.RemoveHead(&l_pProduct) && nullptr != l_pProduct)
-	{
-		if (S_OK == m_ppPPQPositions.SetProductAt(0, l_pProduct))
-		{
-			l_pProduct->InitProductInfo();
-			l_pProduct->GetNextAvailableIndexes(SV_PPQ);
-
-			for (auto pInspection : m_arInspections)
-			{
-				pInspection->LastProductUpdate(l_pProduct);
-			}
-		}
-		else
-		{
-			m_qAvailableProductInfos.AddTail(l_pProduct);
-		}
-	}
+	SetupProductInfoStructs();
 
 	m_isCreated = true;
 
@@ -574,7 +524,6 @@ bool SVPPQObject::Create()
 
 bool SVPPQObject::Rebuild()
 {
-	int j;
 	_bstr_t bName;
 	HRESULT hr;
 
@@ -596,58 +545,10 @@ bool SVPPQObject::Rebuild()
 	hr = TheSVDataManager.CreateManagedIndexArray(m_pResultDataCircleBuffer, bName, GetPPQLength() + g_lPPQExtraBufferSize);
 	if (S_OK != hr) { return false; }
 
-	bName = _T("PPQ Result Image Published");
-
-	hr = TheSVDataManager.CreateManagedIndexArray(m_pResultImagePublishedCircleBuffer, bName, TheSVObserverApp.GetSourceImageDepth());
-	if (S_OK != hr) { return false; }
-
-
-	SVGuidSVCameraInfoStructMap l_CameraInfos;
-
-	BuildCameraInfos(l_CameraInfos);
-
 	// Create buckets for the PPQ positions
 	m_ppPPQPositions.resize(GetPPQLength());
 
-	// Set up all the ProductInfo Structs
-	m_pMasterProductInfos = new SVProductInfoStruct[GetPPQLength() + g_lPPQExtraBufferSize];
-	for (j = 0; j < GetPPQLength() + g_lPPQExtraBufferSize; j++)
-	{
-		m_pMasterProductInfos[j].oPPQInfo.pPPQ = this;
-		m_pMasterProductInfos[j].oTriggerInfo.pTrigger = m_pTrigger;
-		m_pMasterProductInfos[j].m_svCameraInfos = l_CameraInfos;
-		m_pMasterProductInfos[j].m_svInspectionInfos.clear();
-
-		for (auto pInspection : m_arInspections)
-		{
-			SVInspectionInfoStruct l_svInspectionStruct;
-			l_svInspectionStruct.pInspection = pInspection;
-
-			m_pMasterProductInfos[j].m_svInspectionInfos[pInspection->GetUniqueObjectID()] = l_svInspectionStruct;
-		}// end for
-
-		m_qAvailableProductInfos.AddTail(&m_pMasterProductInfos[j]);
-	}// end for
-
-	SVProductInfoStruct* l_pProduct = nullptr;
-
-	if (m_qAvailableProductInfos.RemoveHead(&l_pProduct) && nullptr != l_pProduct)
-	{
-		if (S_OK == m_ppPPQPositions.SetProductAt(0, l_pProduct))
-		{
-			l_pProduct->InitProductInfo();
-			l_pProduct->GetNextAvailableIndexes(SV_PPQ);
-
-			for (auto pInspection : m_arInspections)
-			{
-				pInspection->LastProductUpdate(l_pProduct);
-			}
-		}
-		else
-		{
-			m_qAvailableProductInfos.AddTail(l_pProduct);
-		}
-	}
+	SetupProductInfoStructs();
 
 	// Force the Inspections to rebuild as well
 	for (auto pInspection : m_arInspections)
@@ -719,7 +620,6 @@ void SVPPQObject::Destroy()
 
 	// Destroy the managed index for the input circle buffer
 	m_pResultDataCircleBuffer.reset();
-	m_pResultImagePublishedCircleBuffer.reset();
 
 	m_isCreated = false;
 }// end Destroy
@@ -870,7 +770,7 @@ bool SVPPQObject::AttachCamera(SVVirtualCamera* pCamera, long lPosition, bool p_
 		m_Cameras[pCamera].m_CameraPPQIndex = lPosition;
 		m_Cameras[pCamera].m_ToggleState = true;
 
-		RebuildProductInfoStructs();
+		RebuildProductCameraInfoStructs();
 
 		l_bOk &= pCamera->RegisterFinishProcess(this, SVFinishCameraCallback);
 	}
@@ -927,7 +827,7 @@ bool SVPPQObject::DetachCamera(SVVirtualCamera* pCamera, bool bRemoveDepends/*=f
 		}
 	}
 
-	RebuildProductInfoStructs();
+	RebuildProductCameraInfoStructs();
 
 	return l_Status;
 }// end DetachCamera
@@ -1097,7 +997,7 @@ bool SVPPQObject::GetCameraPPQPosition(long &lPosition, SVVirtualCamera* pCamera
 	return true;
 }// end GetCameraPPQPosition
 
-void SVPPQObject::RebuildProductInfoStructs()
+void SVPPQObject::RebuildProductCameraInfoStructs()
 {
 	SVGuidSVCameraInfoStructMap l_CameraInfos;
 
@@ -1625,21 +1525,12 @@ bool SVPPQObject::GoOffline()
 
 	m_bOnline = false;
 
-	unsigned long l_ClearCount = 0;
-
-	for (long i = static_cast<long>(m_ppPPQPositions.size()) - 1; l_ClearCount < 5 && 0 < i; --i)
+	for (long i = static_cast<long>(m_ppPPQPositions.size()) - 1; /*l_ClearCount < 5 && */0 < i; --i)
 	{
 		SVProductInfoStruct* l_pProduct = m_ppPPQPositions.GetProductAt(i);
 
 		if (nullptr != l_pProduct)
 		{
-			if (!l_pProduct->oPPQInfo.m_ResultImagePublishedDMIndexHandle.empty())
-			{
-				l_pProduct->oPPQInfo.m_ResultImagePublishedDMIndexHandle.clear();
-
-				++l_ClearCount;
-			}
-
 			l_pProduct->SetProductComplete();
 		}
 	}
@@ -2243,11 +2134,6 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct *pProduct)
 		if (bWriteOutputs)
 		{
 			bRet = m_pOutputList->WriteOutputs(m_UsedOutputs, DataIndex, bACK ? true : false, bNAK ? true : false);
-
-			SVConfigurationObject* pConfig(nullptr);
-			SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-
-
 			BOOL bValue = false;
 			m_voDataValid.GetValue(bValue, -1, DataIndex);
 			if (0 == m_DataValidDelay)
@@ -2730,6 +2616,11 @@ void SVPPQObject::InitializeProduct(SVProductInfoStruct* p_pNewProduct, const SV
 	// Get Next available indexes from THE Data Manager
 	hr = GetNextAvailableIndexes(p_pNewProduct->oPPQInfo, SV_PPQ);
 
+	for (auto& rInspection : p_pNewProduct->m_svInspectionInfos)
+	{
+		rInspection.second.setNextTriggerRecord();
+	}
+	
 	// ************************************************************************
 	// Now we need to get the IO ready for this Product. Make sure that all locks are set
 	// and that all indexes are set correctly
@@ -2741,7 +2632,7 @@ void SVPPQObject::InitializeProduct(SVProductInfoStruct* p_pNewProduct, const SV
 	// End preparing the IO
 	// ************************************************************************
 
-
+	
 	// ************************************************************************
 	// Now we need to read the inputs. Make sure that we record the timestamps
 	// Begin reading the inputs
@@ -3272,8 +3163,6 @@ bool SVPPQObject::SetProductComplete(SVProductInfoStruct& p_rProduct)
 		{
 			Iter->second.ClearCameraInfo();
 		}
-
-		p_rProduct.oPPQInfo.m_ResultImagePublishedDMIndexHandle.clear();
 	}
 
 	p_rProduct.SetProductComplete();
@@ -3313,8 +3202,6 @@ bool SVPPQObject::SetProductIncomplete(SVProductInfoStruct& p_rProduct)
 		Iter->second.ClearCameraInfo();
 	}
 
-	p_rProduct.oPPQInfo.m_ResultImagePublishedDMIndexHandle.clear();
-
 	p_rProduct.SetProductComplete();
 
 	p_rProduct.m_ProductState += _T("|INCOMPLETE");
@@ -3348,7 +3235,7 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& p_rElemen
 {
 	HRESULT l_Status = S_OK;
 
-	if ((nullptr != p_rElement.m_pCamera) && (0 <= p_rElement.m_Data.mDMHandle.GetIndex()))
+	if ((nullptr != p_rElement.m_pCamera) && (nullptr != p_rElement.m_Data.GetImage()))
 	{
 		SvTl::SVTimeStamp l_StartTick = 0;
 		size_t l_CameraPositionOnPPQ = -1;
@@ -3435,7 +3322,7 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& p_rElemen
 
 					if (p_rElement.m_Data.IsComplete())
 					{
-						IterCamera->second.Assign(l_StartTick, iEF, p_rElement.m_Data.mDMHandle, SV_PPQ);
+						IterCamera->second.Assign(l_StartTick, iEF, p_rElement.m_Data.GetImage());
 					}
 					else
 					{
@@ -3445,7 +3332,7 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& p_rElemen
 					l_pProduct->m_ProductState += _T("|");
 					l_pProduct->m_ProductState += p_rElement.m_pCamera->GetName();
 
-					if (IterCamera->second.GetIndex() < 0)
+					if (nullptr != IterCamera->second.getImage())
 					{
 						l_pProduct->m_ProductState += _T("=NAK");
 
@@ -3549,7 +3436,7 @@ HRESULT SVPPQObject::BuildCameraInfos(SVGuidSVCameraInfoStructMap& p_rCameraInfo
 		if (-1 != Iter->second.m_CameraPPQIndex)
 		{
 			const SVGUID& rCameraID(Iter->first->GetUniqueObjectID());
-			p_rCameraInfos[rCameraID].setCamera(rCameraID, boost::bind(&SVVirtualCamera::ReserveNextImageHandleIndex, Iter->first, _1, _2));
+			p_rCameraInfos[rCameraID].setCamera(rCameraID, boost::bind(&SVVirtualCamera::ReserveNextImageHandle, Iter->first));
 		}
 	}
 
@@ -3558,7 +3445,7 @@ HRESULT SVPPQObject::BuildCameraInfos(SVGuidSVCameraInfoStructMap& p_rCameraInfo
 
 bool SVPPQObject::FinishCamera(void *pCaller, SVODataResponseClass *pResponse)
 {
-	bool l_Status = (m_bOnline && (nullptr != pCaller) && (nullptr != pResponse) && (0 <= pResponse->mDMHandle.GetIndex()));
+	bool l_Status = (m_bOnline && (nullptr != pCaller) && (nullptr != pResponse) && (nullptr != pResponse->GetImage()));
 
 	if (l_Status)
 	{
@@ -3631,22 +3518,7 @@ bool SVPPQObject::IsProductAlive(long p_ProductCount) const
 
 HRESULT SVPPQObject::GetNextAvailableIndexes(SVPPQInfoStruct& p_rPPQInfo, SVDataManagerLockTypeEnum p_LockType) const
 {
-	HRESULT l_Status = S_OK;
-	HRESULT l_Temp = S_OK;
-
-	l_Temp = TheSVDataManager.GetNextAvailableBufferIndex(m_pResultDataCircleBuffer, p_LockType, p_rPPQInfo.m_ResultDataDMIndexHandle);
-
-	if (S_OK == l_Status)
-	{
-		l_Status = l_Temp;
-	}
-
-	l_Temp = TheSVDataManager.GetNextAvailableBufferIndex(m_pResultImagePublishedCircleBuffer, p_LockType, p_rPPQInfo.m_ResultImagePublishedDMIndexHandle);
-
-	if (S_OK == l_Status)
-	{
-		l_Status = l_Temp;
-	}
+	HRESULT l_Status = TheSVDataManager.GetNextAvailableBufferIndex(m_pResultDataCircleBuffer, p_LockType, p_rPPQInfo.m_ResultDataDMIndexHandle);
 
 	return l_Status;
 }
@@ -3713,32 +3585,26 @@ HRESULT SVPPQObject::GetProductInfoStruct(SVProductInfoStruct*& p_rpProduct, SvT
 
 bool SVPPQObject::ReserveNextRunOnceProductInfoStruct(SVProductInfoStruct& p_rsvProduct, SVDataManagerLockTypeEnum p_LockType)
 {
-	bool l_bOk = true;
+	p_rsvProduct.oPPQInfo.pPPQ = this;
+	p_rsvProduct.oTriggerInfo.pTrigger = m_pTrigger;
 
-	SVProductInfoStruct l_svProduct;
+	BuildCameraInfos(p_rsvProduct.m_svCameraInfos);
 
-	l_svProduct.oPPQInfo.pPPQ = this;
-
-	l_svProduct.oTriggerInfo.pTrigger = m_pTrigger;
-
-	BuildCameraInfos(l_svProduct.m_svCameraInfos);
-
-	l_svProduct.m_svInspectionInfos.clear();
+	p_rsvProduct.m_svInspectionInfos.clear();
 
 	for (auto pInspection : m_arInspections)
 	{
-		SVInspectionInfoStruct l_svInspectionStruct;
+		SVInspectionInfoStruct& rInspectionStruct = p_rsvProduct.m_svInspectionInfos[pInspection->GetUniqueObjectID()];
 
-		l_svInspectionStruct.pInspection = pInspection;
-
-		l_svProduct.m_svInspectionInfos[pInspection->GetUniqueObjectID()] = l_svInspectionStruct;
+		rInspectionStruct.pInspection = pInspection;
+		rInspectionStruct.m_inspectionPosInTrc = SvTrc::getInspectionPos(pInspection->GetUniqueObjectID());
 	}
 
-	l_bOk = (S_OK == l_svProduct.GetNextAvailableIndexes(p_LockType));
+	bool l_bOk = (S_OK == p_rsvProduct.GetNextAvailableIndexes(p_LockType));
 
-	if (l_bOk)
+	if (!l_bOk)
 	{
-		p_rsvProduct = l_svProduct;
+		p_rsvProduct.Reset();
 	}
 
 	return l_bOk;
@@ -3779,31 +3645,9 @@ bool SVPPQObject::IsProductExpired(const SVProductInfoStruct* pProduct) const
 
 void SVPPQObject::DumpDMInfo(LPCTSTR p_szName) const
 {
-	// Camera Info Struct - Source Image Circle Buffer Just the first Camera....
-	SVCameraInfoMap::const_iterator l_Iter;
-
-	l_Iter = m_Cameras.begin();
-
-	while (l_Iter != m_Cameras.end())
-	{
-		l_Iter->first->DumpDMInfo(p_szName);
-
-		++l_Iter;
-	}
-
 	if (nullptr != m_pResultDataCircleBuffer)
 	{
 		m_pResultDataCircleBuffer->Dump(p_szName);
-	}
-
-	if (nullptr != m_pResultImagePublishedCircleBuffer)
-	{
-		m_pResultImagePublishedCircleBuffer->Dump(p_szName);
-	}
-
-	for (auto pInspection : m_arInspections)
-	{
-		pInspection->DumpDMInfo(p_szName);
 	}
 }
 
@@ -3830,15 +3674,12 @@ HRESULT SVPPQObject::MarkProductInspectionsMissingAcquisiton(SVProductInfoStruct
 		{
 			if (nullptr != pInspection && pInspection->IsCameraInInspection(pCamera->GetName()))
 			{
-				SVInspectionInfoStruct l_InspectInfo = p_rProduct.m_svInspectionInfos[pInspection->GetUniqueObjectID()];
+				SVInspectionInfoPair l_Info(p_rProduct.ProcessCount(), p_rProduct.m_svInspectionInfos[pInspection->GetUniqueObjectID()]);
 
-				l_InspectInfo.oInspectedState = PRODUCT_NOT_INSPECTED;
-				l_InspectInfo.m_CanProcess = false;
-				l_InspectInfo.m_InProcess = true;
-
-				l_InspectInfo.m_EndInspection = SvTl::GetTimeStamp();
-
-				SVInspectionInfoPair l_Info(p_rProduct.ProcessCount(), l_InspectInfo);
+				l_Info.second.oInspectedState = PRODUCT_NOT_INSPECTED;
+				l_Info.second.m_CanProcess = false;
+				l_Info.second.m_InProcess = true;
+				l_Info.second.m_EndInspection = SvTl::GetTimeStamp();
 
 				p_rProduct.m_ProductState += _T("|MC=");
 				p_rProduct.m_ProductState += pInspection->GetName();
@@ -4463,7 +4304,7 @@ HRESULT SVPPQObject::ProcessCameraInputs( bool& rProcessed )
 
 					for (; pProduct->m_svCameraInfos.end() != Iter; ++Iter)
 					{
-						pProduct->bFinishAcquisition &= (Iter->second.GetIndex() != -1);
+						pProduct->bFinishAcquisition = pProduct->bFinishAcquisition && (nullptr != Iter->second.getImage());
 					}
 				}
 
@@ -5139,4 +4980,56 @@ void SVPPQObject::SetNAKMode(SvDef::NakGeneration nakMode, int NAKPar)
 {
 	m_NAKMode = nakMode;
 	m_NAKParameter = NAKPar;
+}
+
+void SVPPQObject::SetupProductInfoStructs()
+{
+	SVConfigurationObject* pConfig(nullptr);
+	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+	SvPb::InspectionList inspListMessage = pConfig->GetInspectionList4TRC();
+	auto* pInspList = inspListMessage.mutable_list();
+	for (auto pInspection : m_arInspections)
+	{
+		std::string tmpGuid;
+		SvPb::SetGuidInProtoBytes(&tmpGuid, pInspection->GetUniqueObjectID());
+		auto pInspPB = std::find_if(pInspList->begin(), pInspList->end(), [tmpGuid](auto data)->bool
+		{
+			return (0 == data.id().compare(tmpGuid));
+		});
+
+		assert(pInspList->end() != pInspPB);
+		if (pInspList->end() != pInspPB)
+		{
+			pInspPB->set_numberofrecords(GetPPQLength() + g_lPPQExtraBufferSize);
+		}
+	}
+	SvTrc::getTriggerRecordControllerRWInstance().setInspections(inspListMessage);
+	pConfig->UpdateInspectionList4TRC();
+
+	// Set up all the ProductInfo Structs
+	SVGuidSVCameraInfoStructMap l_CameraInfos;
+	BuildCameraInfos(l_CameraInfos);
+	m_pMasterProductInfos = new SVProductInfoStruct[GetPPQLength() + g_lPPQExtraBufferSize];
+	
+	std::vector<int> inspPosVec;
+	for (auto pInspection : m_arInspections)
+	{
+		inspPosVec.push_back(SvTrc::getInspectionPos(pInspection->GetUniqueObjectID()));
+	}
+	for (int j = 0; j < GetPPQLength() + g_lPPQExtraBufferSize; j++)
+	{
+		m_pMasterProductInfos[j].oPPQInfo.pPPQ = this;
+		m_pMasterProductInfos[j].oTriggerInfo.pTrigger = m_pTrigger;
+		m_pMasterProductInfos[j].m_svCameraInfos = l_CameraInfos;
+		m_pMasterProductInfos[j].m_svInspectionInfos.clear();
+
+		for (int i= 0; i< m_arInspections.size(); i++)
+		{
+			SVInspectionInfoStruct& rInspectionStruct = m_pMasterProductInfos[j].m_svInspectionInfos[m_arInspections[i]->GetUniqueObjectID()];
+			rInspectionStruct.pInspection = m_arInspections[i];
+			rInspectionStruct.m_inspectionPosInTrc = inspPosVec[i];
+		}// end for
+
+		m_qAvailableProductInfos.AddTail(&m_pMasterProductInfos[j]);
+	}// end for
 }

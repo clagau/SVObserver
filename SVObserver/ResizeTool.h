@@ -11,6 +11,7 @@
 
 #pragma region Includes
 #include "InspectionEngine/SVTool.h"  // SVToolClass
+#include "SVMatroxLibrary/SVMatroxEnums.h"
 #include "SVValueObjectLibrary/SVStringValueObjectClass.h"
 #pragma endregion
 

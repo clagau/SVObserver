@@ -16,10 +16,11 @@
 #include "SVDataManagerLibrary/SVDataManagerHandle.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVTimerLibrary/SVClock.h"
+#include "TriggerRecordController/IImage.h"
 #pragma endregion Includes
 
 #pragma region Declarations
-typedef boost::function<HRESULT (SVDataManagerHandle&, SVDataManagerLockTypeEnum)> NextImageHandleIndexFunctor;
+typedef boost::function<SvTrc::IImagePtr ()> NextImageHandleFunctor;
 #pragma endregion Declarations
 
 struct SVCameraInfoStruct 
@@ -34,18 +35,18 @@ public:
 
 #pragma region Public Methods
 public:
-	HRESULT Assign( const SVCameraInfoStruct& rCameraInfo, SVDataManagerLockTypeEnum LockType );
-	HRESULT Assign( SvTl::SVTimeStamp p_StartFrameTS, SvTl::SVTimeStamp p_EndFrameTS, const SVDataManagerHandle& p_rIndexHandle, SVDataManagerLockTypeEnum p_LockType );
+	HRESULT Assign( const SVCameraInfoStruct& rCameraInfo );
+	HRESULT Assign( SvTl::SVTimeStamp p_StartFrameTS, SvTl::SVTimeStamp p_EndFrameTS, const SvTrc::IImagePtr pImage );
 
 	void Reset();
 	void ClearInfo();
 	void ClearCameraInfo();
 
-	HRESULT GetNextAvailableIndexes( SVDataManagerLockTypeEnum LockType );
-	long GetIndex() const;
-	const SVDataManagerHandle& GetSourceImageDMIndexHandle() const;
-	const void setCamera( const SVGUID& rCameraGuid, NextImageHandleIndexFunctor NextImageHandleIndex );
+	const SvTrc::IImagePtr GetNextImage();
+	const void setCamera( const SVGUID& rCameraGuid, NextImageHandleFunctor NextImageHandleFunctor );
 	const SVGUID& getCameraGuid() const { return m_CameraGuid; };
+	const SvTrc::IImagePtr getImage() const { return m_pImage; };
+	void setImage(SvTrc::IImagePtr pImage) { m_pImage = pImage; };
 
 	SvTl::SVTimeStamp m_StartFrameTimeStamp;
 	SvTl::SVTimeStamp m_EndFrameTimeStamp;
@@ -60,9 +61,9 @@ private:
 
 #pragma region Member Variables
 private:
-	NextImageHandleIndexFunctor m_NextImageHandleIndex;
-	SVDataManagerHandle m_SourceImageDMIndexHandle;
+	NextImageHandleFunctor m_NextImageFunctor;
 	SVGUID m_CameraGuid;
+	SvTrc::IImagePtr m_pImage;
 #pragma endregion Member Variables
 };
 

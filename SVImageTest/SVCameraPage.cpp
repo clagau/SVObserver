@@ -76,15 +76,7 @@ BEGIN_MESSAGE_MAP(SVCameraPage, CPropertyPage)
 	ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
-HRESULT SVCameraPage::GetNextBuffer( SVImageBufferInterface& p_rBuffer )
-{
-	m_lStartCount++;
-	m_lEndCount++;
-
-	return m_CameraImage.GetNextBuffer( p_rBuffer );
-}
-
-HRESULT SVCameraPage::UpdateWithCompletedBuffer( const SVImageBufferInterface& p_rBuffer )
+HRESULT SVCameraPage::UpdateWithCompletedBuffer( const SvTrc::IImagePtr& rImage)
 {
 	std::string Count;
 

@@ -17,7 +17,6 @@
 
 #include "SVMatroxLibrary\SVMatroxBuffer.h"
 #include "InspectionEngine/SVTool.h"
-#include "InspectionEngine/SVImageObjectClass.h"
 #include "ArchiveMethodEnum.h"
 #include "ArchiveToolHelper.h"
 #include "SVArchiveRecord.h"
@@ -135,6 +134,9 @@ private:
 
 	CFile m_fileArchive;       // The file for archived results.
 	UINT m_uiValidateCount;
+
+	BufferStructCountMap m_lastBufferMap;
+	DWORD m_lastMaxImages = 0;
 };
 
 

@@ -347,21 +347,6 @@ void SVTaskObjectListClass::SetObjectDepthWithIndex(int NewObjectDepth, int NewL
 	SVTaskObjectClass::SetObjectDepthWithIndex(NewObjectDepth, NewLastSetIndex);
 }
 
-bool SVTaskObjectListClass::SetImageDepth(long lDepth)
-{
-	// Set object depth of members here...
-
-	// Set object depth of all task list members...
-	for (int j = 0; j < static_cast<int> (m_TaskObjectVector.size()); ++ j)
-	{
-		if (m_TaskObjectVector[j])
-		{
-			m_TaskObjectVector[j]->SetImageDepth(lDepth);
-		}
-	}
-	return SVTaskObjectClass::SetImageDepth(lDepth);
-}
-
 void SVTaskObjectListClass::SetInvalid()
 {
 	// Set this object and all own embedded objects to invalid
@@ -919,7 +904,7 @@ bool SVTaskObjectListClass::Run(SVRunStatusClass& rRunStatus, SvStl::MessageCont
 	clearRunErrorMessages();
 	SVRunStatusClass ChildRunStatus;
 	ChildRunStatus.m_lResultDataIndex  = rRunStatus.m_lResultDataIndex;
-	ChildRunStatus.Images = rRunStatus.Images;
+	ChildRunStatus.m_triggerRecord = rRunStatus.m_triggerRecord;
 	ChildRunStatus.m_UpdateCounters = rRunStatus.m_UpdateCounters;
 
 	// Run yourself...

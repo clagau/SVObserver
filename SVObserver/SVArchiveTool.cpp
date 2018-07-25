@@ -32,6 +32,8 @@
 #include "TextDefinesSvO.h"
 #include "ObjectInterfaces/IValueObject.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "SVLibrary/SVOINIClass.h"
+#include "SVStatusLibrary/GlobalPath.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -41,6 +43,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+static const int cAsyncDefaultBufferNumber = 5;
 #pragma endregion Declarations
 
 
@@ -311,6 +314,8 @@ bool SVArchiveTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 SVArchiveTool::~SVArchiveTool()
 {
 	TheSVArchiveImageThreadClass().GoOffline();
+	TheSVMemoryManager().ReleasePoolMemory(SvO::ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, this);
+	TheSVMemoryManager().ReleasePoolMemory(SvO::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, this);
 }
 
 // Should be overridden and must be called in derived classes...
@@ -622,14 +627,104 @@ bool SVArchiveTool::initializeOnRun(SvStl::MessageContainerVector *pErrorMessage
 
 bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector *pErrorMessages)
 {
+	TheSVMemoryManager().ReleasePoolMemory(SvO::ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, this);
+	TheSVMemoryManager().ReleasePoolMemory(SvO::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, this);
 	if ( m_eArchiveMethod == SVArchiveGoOffline || m_eArchiveMethod == SVArchiveAsynchronous )
 	{
 		// async doesn't really allocate any buffers but it does preparation work (initm_ImageInfo)
 		DWORD dwMaxImages;
 		m_dwArchiveMaxImagesCount.GetValue( dwMaxImages );
-		HRESULT hrAllocate = m_arrayImagesInfoObjectsToArchive.AllocateBuffers( dwMaxImages );
+		if (m_eArchiveMethod == SVArchiveAsynchronous)
+		{
+			SvLib::SVOINIClass SvimIni(SvStl::GlobalPath::Inst().GetSVIMIniPath());
+			DWORD asyncBufferNumber = SvimIni.GetValueInt(_T("Settings"), _T("ArchiveToolAsyncBufferNumber"), cAsyncDefaultBufferNumber);
+			dwMaxImages = std::min(dwMaxImages, asyncBufferNumber);
+		}
+		BufferStructCountMap bufferMap;
+		HRESULT hrAllocate = m_arrayImagesInfoObjectsToArchive.AllocateBuffers(dwMaxImages, bufferMap);
+
 		ASSERT( S_OK == hrAllocate );
-		if ( S_OK != hrAllocate )
+		if (S_OK == hrAllocate)
+		{
+			if (m_lastBufferMap != bufferMap || m_lastMaxImages != dwMaxImages)
+			{
+				try
+				{
+					SvTrc::ITriggerRecordControllerRW& rTRController = SvTrc::getTriggerRecordControllerRWInstance();
+					bool mustRestartStart = !rTRController.isResetStarted();
+					if (mustRestartStart)
+					{
+						rTRController.startResetTriggerRecordStructure();
+					}
+					rTRController.removeAllImageBuffer(GetUniqueObjectID());
+					if (m_eArchiveMethod == SVArchiveAsynchronous)
+					{
+						for (const auto& iter : bufferMap)
+						{
+							long bufferNumber = iter.second*dwMaxImages;
+							__int64 l_lImageBufferSize = getBufferSize(iter.first) * bufferNumber;
+							hrAllocate = TheSVMemoryManager().ReservePoolMemory(SvO::ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, this, l_lImageBufferSize);
+							if (S_OK != hrAllocate)
+							{
+								if (nullptr != pErrorMessages)
+								{
+									SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ArchiveTool_NotEnoughBuffer, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+									pErrorMessages->push_back(Msg);
+								}
+								if (mustRestartStart)
+								{
+									rTRController.finishResetTriggerRecordStructure();
+								}
+								m_lastBufferMap.clear();
+								return false;
+							}
+							rTRController.addImageBuffer(GetUniqueObjectID(), iter.first, bufferNumber);
+
+						}
+					}
+					else
+					{
+						for (const auto& iter : bufferMap)
+						{
+							long bufferNumber = iter.second*dwMaxImages;
+							__int64 l_lImageBufferSize = getBufferSize(iter.first) * bufferNumber;
+							hrAllocate = TheSVMemoryManager().ReservePoolMemory(SvO::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, this, l_lImageBufferSize);
+							if (S_OK != hrAllocate)
+							{
+								if (nullptr != pErrorMessages)
+								{
+									SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ArchiveTool_NotEnoughBuffer, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+									pErrorMessages->push_back(Msg);
+								}
+								if (mustRestartStart)
+								{
+									rTRController.finishResetTriggerRecordStructure();
+								}
+								m_lastBufferMap.clear();
+								return false;
+							}
+
+							rTRController.addImageBuffer(GetUniqueObjectID(), iter.first, iter.second*dwMaxImages);
+						}
+					}
+					if (mustRestartStart)
+					{
+						rTRController.finishResetTriggerRecordStructure();
+					}
+					m_lastBufferMap = bufferMap;
+					m_lastMaxImages = dwMaxImages;
+				}
+				catch (const SvStl::MessageContainer& rExp)
+				{
+					if (nullptr != pErrorMessages)
+					{
+						pErrorMessages->push_back(rExp);
+					}
+					return false;
+				}
+			}
+		}
+		else
 		{
 			if (nullptr != pErrorMessages)
 			{
@@ -730,7 +825,7 @@ bool SVArchiveTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainer
 		//
 		// Iterate the list of images to archive.
 		//
-		m_arrayImagesInfoObjectsToArchive.WriteArchiveImageFiles();
+		m_arrayImagesInfoObjectsToArchive.WriteArchiveImageFiles(rRunStatus.m_triggerRecord);
 
 		rRunStatus.SetPassed();
 
@@ -1043,6 +1138,7 @@ bool SVArchiveTool::ValidateImageSpace( bool shouldFullCheck, SvStl::MessageCont
 				ImagePath = athImage.TranslatePath( ImagePath.c_str() );
 				m_ImageTranslatedPath = ImagePath;
 				m_ArchiveImagePathUsingKW = true;
+				m_arrayImagesInfoObjectsToArchive.BuildArchiveImageFilePaths();
 			}
 			if ( _access( ImagePath.c_str(), 0 ) != 0 )
 			{

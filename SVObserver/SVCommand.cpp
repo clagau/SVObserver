@@ -75,7 +75,6 @@ volatile HANDLE CSVCommand::m_hStopStreamEvent = nullptr;
 volatile HANDLE CSVCommand::m_hStreamingThread = nullptr;
 SvDef::StringVector CSVCommand::m_InspectionNames;
 
-std::vector<SVActiveXLockStruct> CSVCommand::m_aSVActXLock;
 std::vector<StreamDataStruct*> CSVCommand::m_arStreamList;
 std::vector<ProductDataStruct*> CSVCommand::m_arProductList;
 #pragma endregion Declarations
@@ -2067,17 +2066,9 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 						SVImageClass* pImage = ImageObjects[l];
 						if (nullptr != pImage)
 						{
-							SVImageInfoClass svImageInfo;
-							SvOi::SVImageBufferHandlePtr svImageHandle;
-							BSTR bstrImage = nullptr;
-
-							// this works for Source Images (SVMainImageClass) and Published Result images
-							SVImageIndexStruct svIndex(pImage->GetSourceImageIndex(&ProductInfo.oPPQInfo.m_ResultImagePublishedDMIndexHandle, ProductInfo.m_svCameraInfos));
-
 							// put image in return array
 							BSTR bstrTemp = nullptr;
-
-							HRESULT hr = SafeImageToBSTR(pImage, svIndex, &bstrTemp);
+							HRESULT hr = SafeImageToBSTR(pImage, ProductInfo.m_svInspectionInfos[aInspections[l]->GetUniqueObjectID()].m_triggerRecordComplete, &bstrTemp);
 
 							if (SUCCEEDED(hr))
 							{
@@ -2391,7 +2382,7 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo, SvOi::SVImageBuff
 	return hr;
 }
 
-HRESULT CSVCommand::SafeImageToBSTR(SVImageClass *p_pImage, SVImageIndexStruct p_svIndex, BSTR *pbstr)
+HRESULT CSVCommand::SafeImageToBSTR(SVImageClass *p_pImage, const SvTrc::ITriggerRecordRPtr pTriggerRecord, BSTR *pbstr)
 {
 	HRESULT hr = S_OK;
 
@@ -2403,7 +2394,7 @@ HRESULT CSVCommand::SafeImageToBSTR(SVImageClass *p_pImage, SVImageIndexStruct p
 
 		SVImageProcessingClass::CreateImageBuffer(oChildInfo, oChildHandle);
 
-		p_pImage->SafeImageCopyToHandle(p_svIndex, oChildHandle);
+		p_pImage->SafeImageCopyToHandle(oChildHandle, pTriggerRecord);
 
 		hr = ImageToBSTR(oChildInfo, oChildHandle, pbstr);
 	}
@@ -2544,7 +2535,7 @@ HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, S
 
 				if (nullptr != ObjectRef.getObject())
 				{
-					ProcessCount = pInspection->LastProductGet(SV_OTHER).ProcessCount();
+					ProcessCount = pInspection->LastProductGet().ProcessCount();
 
 					if (!ObjectRef.isEntireArray())
 					{
@@ -2986,215 +2977,22 @@ HRESULT CSVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVa
 
 HRESULT CSVCommand::SVLockImage(long ProcessCount, long Index, BSTR bName)
 {
-	HRESULT hr = S_OK;
-
-	SVConfigurationObject* pConfig(nullptr);
-	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-
-	if (nullptr == pConfig || !pConfig->IsConfigurationLoaded())
-	{
-		hr = SVMSG_CONFIGURATION_NOT_LOADED;
-		return hr;
-	}
-
-	// 1) Inspection exists
-	// 2) Requested data item exists
-	// 3) all data items are on the same PPQ
-	SVActiveXLockStruct SVaxls;
-
-	if (Index < m_aSVActXLock.size())	// Check Lock Structure.
-	{
-
-		SVaxls = m_aSVActXLock[Index];
-
-		if (SVaxls.Valid())	// Image is Locked so Release
-		{
-			SVaxls.clear();
-			m_aSVActXLock[Index] = SVaxls;
-		}
-	}
-
-	SVImageClass* pImage = nullptr;
-	SVImageIndexStruct l_svImageIndex;
-	SVDataManagerHandle l_DMImageIndexHandle;
-
-	SVInspectionProcess* pInspection = nullptr;
-
-	std::string TmpName = SvUl::createStdString(_bstr_t(bName));
-	//GetInspectionObject is only true if the pointer is valid
-	if (nullptr != pConfig && pConfig->GetInspectionObject(TmpName.c_str(), &pInspection))
-	{
-		if (S_OK == SVObjectManagerClass::Instance().GetObjectByDottedName(TmpName.c_str(), pImage))
-		{
-			SVPPQObject* pPPQ = pInspection->GetPPQ();	// inspection can be part of only one PPQ
-
-			if (nullptr != pPPQ)
-			{
-				SVProductInfoStruct ProductInfo;
-
-				if (S_OK == pPPQ->GetProduct(ProductInfo, ProcessCount))
-				{
-					SVaxls.m_Name = TmpName;
-					SVaxls.m_ProcessCount = ProcessCount;
-					if (SVCameraImageTemplate* pMainImage = dynamic_cast<SVCameraImageTemplate*>(pImage))
-					{
-						l_svImageIndex = pMainImage->GetSourceImageIndex(&ProductInfo.oPPQInfo.m_ResultImagePublishedDMIndexHandle, ProductInfo.m_svCameraInfos);
-						l_DMImageIndexHandle.Assign(l_svImageIndex.m_CameraDMIndexHandle, SV_DCOM);
-					}
-					else if (pImage->ObjectAttributesSet() & SvDef::SV_PUBLISH_RESULT_IMAGE)
-					{
-						l_svImageIndex = pImage->GetSourceImageIndex(&ProductInfo.oPPQInfo.m_ResultImagePublishedDMIndexHandle, ProductInfo.m_svCameraInfos);
-						l_DMImageIndexHandle.Assign(l_svImageIndex.m_PublishedResultDMIndexHandle, SV_DCOM);
-					}
-					else	// locking not supported on regular images
-					{
-						hr = SVMSG_REQUESTED_OBJECTS_UNAVAILABLE;
-					}// end else
-				}// end if (pPPQ->GetProductInfoStruct(lProcessCount, &pProductInfoStruct))
-				else
-				{
-					hr = SVMSG_PRODUCT_NO_LONGER_AVAILABLE;	// product no longer alive
-				}
-			}// end if( nullptr != pPPQ )
-			else
-			{
-				hr = SVMSG_NO_PPQ_FOUND;
-			}
-		}
-		else	// couldn't find data object
-		{
-			hr = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
-		}
-	}
-	else	// couldn't find inspection
-	{
-		hr = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;
-	}
-
-	// Call Lock Image
-	if (S_OK == hr)
-	{
-		if (nullptr != pImage && !l_svImageIndex.IsNull())
-		{
-			SVImageInfoClass l_svImageInfo = pImage->GetImageInfo();
-			SvOi::SVImageBufferHandlePtr l_svImageHandle;
-
-			if (pImage->GetImageHandle(l_svImageIndex, l_svImageHandle) && nullptr != l_svImageHandle)
-			{
-				SVImageInfoClass l_ImageInfo = l_svImageInfo;
-
-				if (S_OK == SVImageProcessingClass::CreateImageBuffer(l_ImageInfo, SVaxls.m_ImageHandlePtr) && nullptr != SVaxls.m_ImageHandlePtr)
-				{
-					HRESULT l_Code = SVMatroxBufferInterface::CopyBuffer(SVaxls.m_ImageHandlePtr->GetBuffer(), l_svImageHandle->GetBuffer());
-
-					// Add locked image to Lock array
-					if (Index >= static_cast<long> (m_aSVActXLock.size()))
-					{
-						m_aSVActXLock.resize(Index + 1);
-					}
-					m_aSVActXLock[Index] = SVaxls;// Store Info in lock array
-				}
-				else
-				{
-					hr = SVMSG_REQUESTED_OBJECTS_UNAVAILABLE;
-				}
-			}
-			else
-			{
-				hr = SVMSG_REQUESTED_OBJECTS_UNAVAILABLE;
-			}
-		}
-		else
-		{
-			hr = SVMSG_REQUESTED_OBJECTS_UNAVAILABLE;
-		}
-	}
-
-	return hr;
+	return E_FAIL;
 }
 
 HRESULT CSVCommand::SVGetLockedImage(long Index, long Compression, BSTR* bstrImage, BSTR* bstrOverlay)
 {
-	SVActiveXLockStruct SVaxls;
-	HRESULT hr = S_FALSE;
-
-	do
-	{
-		SVConfigurationObject* pConfig(nullptr);
-		SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-
-		if (nullptr == pConfig || !pConfig->IsConfigurationLoaded())
-		{
-			hr = SVMSG_CONFIGURATION_NOT_LOADED;
-			break;
-		}
-
-		if (Index >= static_cast<long> (m_aSVActXLock.size()))
-		{
-			hr = SVMSG_IMAGE_NOT_LOCKED;
-			break;
-		}
-
-		SVaxls = m_aSVActXLock[Index];
-		if (!SVaxls.Valid())
-		{
-			hr = SVMSG_IMAGE_NOT_LOCKED;
-			break;
-		}
-
-		// for right now locked image will not have overlays
-		// this is because the overlay data is not bucketized
-		*bstrOverlay = nullptr;
-
-		// Verify that the values are still alive on the PPQ (it has a TriggerCount that matches the specified ProcessCount)
-		// Product is still valid; 
-		// Build the output images from the result data index in the product and the source images by name  (?)
-
-		SVImageInfoClass l_ImageInfo;
-
-		// put image in return array
-		hr = ImageToBSTR(l_ImageInfo, SVaxls.m_ImageHandlePtr, bstrImage);
-
-		break;
-	} while (false);
-
-	return hr;
+	return E_FAIL;
 }
 
 HRESULT CSVCommand::SVUnlockImage(long Index)
 {
-	HRESULT hres = S_OK;
-	if (Index < static_cast<long> (m_aSVActXLock.size()))
-	{
-		SVActiveXLockStruct SVaxls;
-
-		SVaxls = m_aSVActXLock[Index];
-		if (!SVaxls.Valid())
-		{
-			return SVMSG_IMAGE_NOT_LOCKED;
-		}
-
-		SVaxls.clear();
-		m_aSVActXLock[Index] = SVaxls;
-	}
-
-	return hres;
+	return E_FAIL;
 }
 
 HRESULT CSVCommand::SVUnlockAllImages()
 {
-	HRESULT hr = S_OK;
-
-	for (int x = static_cast<int>(m_aSVActXLock.size() - 1); x > -1; x--)
-	{
-		SVActiveXLockStruct& rSVaxls = m_aSVActXLock[x];
-		if (rSVaxls.Valid())
-		{
-			rSVaxls.clear();
-		}
-	}
-
-	return hr;
+	return E_FAIL;
 }
 
 STDMETHODIMP CSVCommand::SVGetRemoteInputCount(long *lCount)
@@ -4078,10 +3876,10 @@ STDMETHODIMP CSVCommand::SVAddCharacter(long lFontIdentifier, long lXPosition, l
 
 				SVMatroxBuffer milTmpID;
 				SVMatroxBufferCreateChildStruct l_Create(milFontImage);
-				l_Create.m_lOffX = lXPosition;
-				l_Create.m_lOffY = lYPosition;
-				l_Create.m_lSizeX = lWidth;
-				l_Create.m_lSizeY = lHeight;
+				l_Create.m_data.m_lOffX = lXPosition;
+				l_Create.m_data.m_lOffY = lYPosition;
+				l_Create.m_data.m_lSizeX = lWidth;
+				l_Create.m_data.m_lSizeY = lHeight;
 
 				SVMatroxBufferInterface::Create(milTmpID, l_Create);
 				if (!milTmpID.empty())
@@ -4473,18 +4271,8 @@ HRESULT CSVCommand::RebuildStreamingDataList()
 	return hr;
 }
 
-void CSVCommand::ResetStreamingDataAndLockedImages()
+void CSVCommand::ResetStreamingData()
 {
-	// Do what CSVCommand::SVUnlockAllImages does
-	for (int x = static_cast<int> (m_aSVActXLock.size() - 1); x > -1; x--)
-	{
-		SVActiveXLockStruct& rSVaxls = m_aSVActXLock[x];
-		if (rSVaxls.Valid())
-		{
-			rSVaxls.clear();
-		}// end if
-	}// end for
-
 	// Do what CSVCommand::SVUnRegisterStream does
 	if (m_hStopStreamEvent)
 	{

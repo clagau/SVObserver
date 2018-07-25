@@ -47,7 +47,7 @@ namespace SvTrcT
 		void OnSetImage();
 		void OnToolTypeChanged();
 
-		bool LoadMainImage(SvTrc::ITriggerRecordRWPtr triggerRecord, const CString& Path);
+		SvTrc::IImagePtr LoadMainImage(const CString& Path);
 
 		void updateControls();
 

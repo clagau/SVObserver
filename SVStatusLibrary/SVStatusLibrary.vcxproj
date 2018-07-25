@@ -116,7 +116,6 @@
     <ClInclude Include="SVEventLogClass.h" />
     <ClInclude Include="SVEventRecordStruct.h" />
     <ClInclude Include="MessageContainer.h" />
-    <ClInclude Include="SVImageIndexStruct.h" />
     <ClInclude Include="svModeEnum.h" />
     <ClInclude Include="SVOIntelRAIDStatusClass.h" />
     <ClInclude Include="SVRegistry.h" />

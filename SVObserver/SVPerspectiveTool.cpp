@@ -300,41 +300,17 @@ bool SVPerspectiveToolClass::onRun( SVRunStatusClass &p_rRunStatus, SvStl::Messa
 	{
 		SVImageClass *pInputImage = SvOl::getInput<SVImageClass>(m_InputImageObjectInfo, true);
 
-		SVImageExtentClass l_svToolExtents;
-		l_bOk = S_OK == GetImageExtent(l_svToolExtents);
-
-		SVImageExtentClass InputExtents = (nullptr != pInputImage) ? pInputImage->GetImageExtents() : SVImageExtentClass();
-		long l_dInputWidth, l_dToolWidth, l_dInputHeight, l_dToolHeight;
-
-		long Interpolation;
-		m_svInterpolationMode.GetValue(Interpolation);
-
-		l_bOk = ( S_OK ==  InputExtents.GetExtentProperty( SvDef::SVExtentPropertyOutputWidth, l_dInputWidth ) ) && l_bOk;
-		l_bOk = ( S_OK == l_svToolExtents.GetExtentProperty( SvDef::SVExtentPropertyWidth, l_dToolWidth ) ) && l_bOk;
-		l_bOk = ( S_OK == InputExtents.GetExtentProperty( SvDef::SVExtentPropertyOutputHeight, l_dInputHeight ) ) && l_bOk;
-		l_bOk = ( S_OK == l_svToolExtents.GetExtentProperty( SvDef::SVExtentPropertyHeight, l_dToolHeight ) ) && l_bOk;
-
-		if (!l_bOk && nullptr != pErrorMessages)
+		if ( nullptr != pInputImage )
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
-			pErrorMessages->push_back(Msg);
-		}
-
-		if( (l_dInputWidth != l_dToolWidth) || (l_dInputHeight != l_dToolHeight) )
-		{
-			l_bOk = ResetObject(pErrorMessages) && l_bOk;
-		}
-
-		if ( nullptr != pInputImage && m_OutputImage.SetImageHandleIndex( p_rRunStatus.Images ) )
-		{
-			SvOi::SVImageBufferHandlePtr l_InputHandle;
-			SvOi::SVImageBufferHandlePtr l_OutputHandle;
-
-			if ( pInputImage->GetImageHandle( l_InputHandle ) && nullptr != l_InputHandle &&
-				   m_OutputImage.GetImageHandle( l_OutputHandle ) && nullptr != l_OutputHandle)
+			long Interpolation;
+			m_svInterpolationMode.GetValue(Interpolation);
+			SvTrc::IImagePtr pOutputImageBuffer = m_OutputImage.getImageToWrite(p_rRunStatus.m_triggerRecord);
+			SvTrc::IImagePtr pInputImageBuffer = pInputImage->getImageReadOnly(p_rRunStatus.m_triggerRecord);
+			if (nullptr != pOutputImageBuffer && !pOutputImageBuffer->isEmpty() &&
+				nullptr != pInputImageBuffer && !pInputImageBuffer->isEmpty())
 			{
-				HRESULT l_Code = SVMatroxImageInterface::Warp(l_OutputHandle->GetBuffer(),
-					l_InputHandle->GetBuffer(), m_LutX, m_LutY, static_cast<SVImageOperationTypeEnum>(Interpolation) );
+				HRESULT l_Code = SVMatroxImageInterface::Warp(pOutputImageBuffer->getHandle()->GetBuffer(),
+					pInputImageBuffer->getHandle()->GetBuffer(), m_LutX, m_LutY, static_cast<SVImageOperationTypeEnum>(Interpolation) );
 
 			}
 			else

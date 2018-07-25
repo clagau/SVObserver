@@ -16,20 +16,21 @@
 #pragma endregion Declarations
 namespace SvTrcT
 {
-	class CopyTool : public ToolObject
-	{
+class CopyTool : public ToolObject
+{
 #pragma region Constructor
-	public:
-		CopyTool(GUID guid) : ToolObject(guid) {};
+public:
+	CopyTool(GUID guid) : ToolObject(guid) {};
+	virtual ~CopyTool() = default;
 
 #pragma endregion Constructor
 
 #pragma region Public Methods
 	public:
-		virtual void reset(int pos, const SVMatroxBufferCreateStruct& bufferStructIn) override;
+		virtual void reset(const GUID& sourceGuid, const SVMatroxBufferCreateStruct& bufferStructIn, SvTrc::ITriggerRecordControllerRW& recordController) override;
 		virtual CString getName() const override { return _T("Copy Tool"); };
 		static CString getDescription() { return _T("Copy the whole input image."); };
-		virtual bool run(SvTrc::ITriggerRecordRWPtr pTriggerRecord) override;
+		virtual bool run(const SvTrc::ITriggerRecordRWPtr& pTriggerRecord) override;
 #pragma endregion Public Methods
 
 #pragma region Protected Methods

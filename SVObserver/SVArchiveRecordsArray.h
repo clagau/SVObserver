@@ -8,7 +8,9 @@
 #pragma region Includes
 #include "SVValueObjectLibrary/SVStringValueObjectClass.h"
 #include "ArchiveMethodEnum.h"
+#include "SVArchiveRecord.h"
 #include "Definitions/StringTypeDef.h"
+#include "TriggerRecordController/ITriggerRecordR.h"
 #pragma endregion Includes
 
 class SVArchiveTool;
@@ -32,12 +34,13 @@ public:
 	SvDef::StringVector RemoveDisconnectedObject(const SVObjectInfoStruct& p_rInfoObject);
 	void ValidateImageObjects();
 
-	HRESULT AllocateBuffers( long lBufferSize );
+	HRESULT AllocateBuffers(long bufferNumber, BufferStructCountMap& rBufferMap);
 
-	bool WriteArchiveImageFiles( );
+	bool WriteArchiveImageFiles(const SvTrc::ITriggerRecordRPtr& pTriggerRecord);
 	HRESULT WriteImageQueue();
 
 	int ValidateResultsObjects();
+	void BuildArchiveImageFilePaths();
 	std::string BuildResultsArchiveString();
 	void DisconnectAllResultObjects();
 

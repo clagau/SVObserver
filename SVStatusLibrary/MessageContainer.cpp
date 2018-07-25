@@ -52,7 +52,7 @@ static const TCHAR* const CategoryApplication = _T("Application");
 static const TCHAR* const TaskCategory[CategoryNr]= { 
 	_T("Unused01"),
 	_T("SVGateway"),  
-	_T("Unused03"), 
+	_T("TriggerRecordController"), 
 	_T("Unused04"), 
 	_T("Unused05"),
 	_T("SVIMCommand"),

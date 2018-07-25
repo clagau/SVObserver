@@ -14,6 +14,34 @@
 #include "SVMatroxBuffer.h"
 
 
+
+struct MatroxBufferChildDataStruct
+{
+	// Specifies the color band of the parent data buffer from which to allocate 
+	// the child data buffer. The specified color band should be valid in the 
+	// parent buffer. 
+	long m_lBand = 0;
+
+	// Specifies the number of bands of the child buffer to create.
+	long m_lParentBandCount = 1;
+
+	// Specifies the horizontal offset of the child buffer, relative to the 
+	// parent buffer's top-left pixel. The offset must be within the width of 
+	// the parent buffer
+	long m_lOffX = 0;
+
+	// Specifies the vertical offset of the child buffer, relative to the parent 
+	// buffer's top-left pixel. The offset must be within the height of the 
+	// parent buffer.
+	long m_lOffY = 0;
+
+	// Specifies the width of the child buffer. 
+	long m_lSizeX = 10;
+
+	// Specifies the height of the child buffer.
+	long m_lSizeY = 10;
+};
+
 /**
 @SVObjectName Matrox Buffer Create Child Struct
 
@@ -25,35 +53,13 @@
 class SVMatroxBufferCreateChildStruct  
 {
 public:
-	SVMatroxBufferCreateChildStruct(const SVMatroxBuffer& p_rBuf);
+	SVMatroxBufferCreateChildStruct(const SVMatroxBuffer& rBuf);
 	virtual ~SVMatroxBufferCreateChildStruct();
 
 	// Specifies the identifier of the parent buffer.
-	const SVMatroxBuffer& m_ParentBufId;
+	const SVMatroxBuffer& m_rParentBufId;
 
-	// Specifies the color band of the parent data buffer from which to allocate 
-	// the child data buffer. The specified color band should be valid in the 
-	// parent buffer. 
-	long m_lBand;
-
-	// Specifies the number of bands of the child buffer to create.
-	long m_lParentBandCount;
-
-	// Specifies the horizontal offset of the child buffer, relative to the 
-	// parent buffer's top-left pixel. The offset must be within the width of 
-	// the parent buffer
-	long m_lOffX;
-
-	// Specifies the vertical offset of the child buffer, relative to the parent 
-	// buffer's top-left pixel. The offset must be within the height of the 
-	// parent buffer.
-	long m_lOffY; 
-
-	// Specifies the width of the child buffer. 
-	long m_lSizeX; 
-
-	// Specifies the height of the child buffer.
-	long m_lSizeY; 
+	MatroxBufferChildDataStruct m_data;
 
 };
 

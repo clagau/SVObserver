@@ -8,7 +8,6 @@
 #include "SVArchiveImageThreadClass.h"
 #include "SVArchiveTool.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "SVMemoryManager.h"
 #include "SVSystemLibrary/SVThreadManager.h"
 #include "TextDefinesSvO.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
@@ -96,16 +95,9 @@ HRESULT SVArchiveImageThreadClass::QueueImage( BufferInfo p_BufferInfo )
 		{
 			BufferInfo& rBufferInfo = *iter;
 			// must do the copy with the queue locked
-			// ** COPY BUFFER **
-			SvOi::SVImageBufferHandlePtr l_DestHandle;
-			rBufferInfo.pImageObject->GetImageHandle( 0, l_DestHandle );
-
-			if(nullptr != l_DestHandle && !l_DestHandle->empty() )
+			if(nullptr != p_BufferInfo.m_pImageBuffer && !p_BufferInfo.m_pImageBuffer->isEmpty() )
 			{
-				SVMatroxBufferInterface::CopyBuffer(l_DestHandle->GetBuffer(), p_BufferInfo.id);
-				// at this point, p_BufferInfo.id is the source buffer
-
-				rBufferInfo.id = l_DestHandle->GetBuffer();	// switch over to copy
+				rBufferInfo.m_pImageBuffer = p_BufferInfo.m_pImageBuffer;
 
 				// update timestamp
 				rBufferInfo.m_Timestamp = SvTl::GetTimeStamp();
@@ -113,86 +105,33 @@ HRESULT SVArchiveImageThreadClass::QueueImage( BufferInfo p_BufferInfo )
 		}// end if ( iter != m_Queue.end() )	// found filename
 		else
 		{
-			HRESULT hrAllocate = TheSVMemoryManager().ReservePoolMemory(SvO::ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, this, p_BufferInfo.lBufferSize );
-			if ( S_OK == hrAllocate )	// if enough memory in queue
+			if (p_BufferInfo.m_MaxNumberOfBuffer4Async > m_Queue.size())
 			{
-				lock.Unlock();	// do the least possible amount of work with this locked
-
-				// ** CREATE BUFFER **
-				SVImageObjectClassPtr pImageObject{ new SVImageObjectClass };
-				if(nullptr != pImageObject)
-				{
-					pImageObject->SetImageInfo( p_BufferInfo.info );
-					pImageObject->resize( 1 );
-
-					SvStl::MessageContainerVector errorMessages;
-					pImageObject->ResetObject(&errorMessages);
-					if (!errorMessages.empty())
-					{
-						Result = errorMessages[0].getMessage().m_MessageCode;
-					}
-				}
-				else
-				{
-					Result = E_FAIL;
-				}
-
-				if ( S_OK == Result )
-				{
-					p_BufferInfo.pImageObject = pImageObject;
-
-					// ** COPY BUFFER **
-					SvOi::SVImageBufferHandlePtr l_DestHandle;
-					pImageObject->GetImageHandle( 0, l_DestHandle );
-
-					if(nullptr != l_DestHandle && !l_DestHandle->empty() )
-					{
-						// at this point, p_BufferInfo.id is the source buffer
-						SVMatroxBufferInterface::CopyBuffer(l_DestHandle->GetBuffer(), p_BufferInfo.id);
-						p_BufferInfo.id = l_DestHandle->GetBuffer();	// switch over to copy
-
-
-						// ** ADD NEW BUFFER TO QUEUE **
-						p_BufferInfo.m_Timestamp = SvTl::GetTimeStamp();
-						lock.Lock();
-						m_Queue.push_back(p_BufferInfo);
-						lock.Unlock();
-					}
-				}
-
-			}// if enough memory in queue
+				// ** ADD NEW BUFFER TO QUEUE **
+				p_BufferInfo.m_Timestamp = SvTl::GetTimeStamp();
+				m_Queue.push_back(p_BufferInfo);
+			}
 			else	// not enough room on queue
 			{
 				// find oldest entry from source AT
 				SvTl::SVTimeStamp iOldest = SvTl::GetTimeStamp();
 				QueueType::iterator iterOldest = m_Queue.end();
-				for ( iter = m_Queue.begin(); iter != m_Queue.end(); ++iter )
+				for (iter = m_Queue.begin(); iter != m_Queue.end(); ++iter)
 				{
-					if ( iter->pRecord == p_BufferInfo.pRecord && iter->m_Timestamp < iOldest )
+					if (iter->pRecord == p_BufferInfo.pRecord && iter->m_Timestamp < iOldest)
 					{
 						iOldest = iter->m_Timestamp;
 						iterOldest = iter;
 					}
 				}
 
-				if ( iterOldest != m_Queue.end() )	// if found another entry by the same archive record
+				if (iterOldest != m_Queue.end())	// if found another entry by the same archive record
 				{
-					// assume if it came from the same archive record that the
-					// image size, info, etc. is identical, therefore, just copy over current MIL buffer.
 					BufferInfo& rBufferInfo = *iterOldest;
+					rBufferInfo.m_pImageBuffer = p_BufferInfo.m_pImageBuffer;
 
-					// must do the copy with the queue locked
-					SvOi::SVImageBufferHandlePtr l_DestHandle;
-					iterOldest->pImageObject->GetImageHandle( 0, l_DestHandle );
-
-					if(nullptr != l_DestHandle && !l_DestHandle->empty() )
-					{
-						// at this point, p_BufferInfo.id is the source buffer
-						SVMatroxBufferInterface::CopyBuffer(l_DestHandle->GetBuffer(), p_BufferInfo.id);
-						rBufferInfo.id = l_DestHandle->GetBuffer();	// switch over to copy
-						// update timestamp
-						rBufferInfo.m_Timestamp = SvTl::GetTimeStamp();
-					}
+					// update timestamp
+					rBufferInfo.m_Timestamp = SvTl::GetTimeStamp();
 				}
 			}// end else not enough room on queue
 		}// end if not found filename in queue else
@@ -258,12 +197,14 @@ HRESULT SVArchiveImageThreadClass::PopAndWrite()
 		{
 			BufferInfo info = m_Queue.front();
 			m_Queue.pop_front();
-			HRESULT hrAllocate = TheSVMemoryManager().ReleasePoolMemory(SvO::ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, this, info.lBufferSize );
 			lock.Unlock();
-			SVArchiveRecord::WriteImage( info.id, info.m_FileName );
+			SVMatroxBuffer buf;
+			if (nullptr != info.m_pImageBuffer && !info.m_pImageBuffer->isEmpty())
+			{
+				buf = info.m_pImageBuffer->getHandle()->GetBuffer();
+			}
+			SVArchiveRecord::WriteImage(buf, info.m_FileName );
 
-			info.pImageObject.reset();
-			//TheSVDataManager.ReleaseBufferIndex( info.lDMBuffer, info.lDMIndex, SV_ARCHIVE );
 		}
 	}// end lock scope block
 

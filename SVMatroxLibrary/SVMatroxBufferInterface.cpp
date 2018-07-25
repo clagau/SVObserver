@@ -698,7 +698,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rNewBuffer, const SVMa
 	try
 #endif
 	{
-		if (!p_CreateChildStruct.m_ParentBufId.empty())
+		if ( !p_CreateChildStruct.m_rParentBufId.empty())
 		{
 			SVMatroxResourceMonitor::SVAutoLock l_AutoLock;
 
@@ -707,9 +707,9 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rNewBuffer, const SVMa
 			if (S_OK == l_Code)
 			{
 				MIL_ID childBufID(M_NULL);
-				MIL_ID parentBufID = p_CreateChildStruct.m_ParentBufId.GetIdentifier();
+				MIL_ID parentBufID = p_CreateChildStruct.m_rParentBufId.GetIdentifier();
 
-				if (p_CreateChildStruct.m_lParentBandCount > 1)
+				if (p_CreateChildStruct.m_data.m_lParentBandCount > 1)
 				{
 					// From the Matrox Imaging Library Help file for MbufChildColor2d, the Band parameter specifies the index of the band to use. 
 					// Valid index values are from 0 to (number of bands of the buffer - 1). 
@@ -717,20 +717,20 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rNewBuffer, const SVMa
 					// Band 1 corresponds to: the green band (for RGB parent buffers), the saturation band (for HSL parent buffers), and the U band (for YUV parent buffers). 
 					// Band 2 corresponds to: the blue band (for RGB parent buffers), the luminance band (for HSL parent buffers), and the V band (for YUV parent buffers). 
 					childBufID = MbufChildColor2d(parentBufID,
-						p_CreateChildStruct.m_lBand,
-						p_CreateChildStruct.m_lOffX,
-						p_CreateChildStruct.m_lOffY,
-						p_CreateChildStruct.m_lSizeX,
-						p_CreateChildStruct.m_lSizeY,
+						p_CreateChildStruct.m_data.m_lBand,
+						p_CreateChildStruct.m_data.m_lOffX,
+						p_CreateChildStruct.m_data.m_lOffY,
+						p_CreateChildStruct.m_data.m_lSizeX,
+						p_CreateChildStruct.m_data.m_lSizeY,
 						M_NULL);
 				}
 				else
 				{
 					childBufID = MbufChild2d(parentBufID,
-						p_CreateChildStruct.m_lOffX,
-						p_CreateChildStruct.m_lOffY,
-						p_CreateChildStruct.m_lSizeX,
-						p_CreateChildStruct.m_lSizeY,
+						p_CreateChildStruct.m_data.m_lOffX,
+						p_CreateChildStruct.m_data.m_lOffY,
+						p_CreateChildStruct.m_data.m_lSizeX,
+						p_CreateChildStruct.m_data.m_lSizeY,
 						M_NULL);
 				}
 
@@ -738,7 +738,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rNewBuffer, const SVMa
 
 				if (S_OK == l_Code)
 				{
-					p_rNewBuffer.m_BufferPtr = SVMatroxBufferPtr{ new SVMatroxImageChildBuffer(p_CreateChildStruct.m_ParentBufId.m_BufferPtr, childBufID, "SVMatroxBufferInterface::Create-CreateChildBuffer") };
+					p_rNewBuffer.m_BufferPtr = SVMatroxBufferPtr{ new SVMatroxImageChildBuffer(p_CreateChildStruct.m_rParentBufId.m_BufferPtr, childBufID, "SVMatroxBufferInterface::Create-CreateChildBuffer") };
 				}
 			}
 		}

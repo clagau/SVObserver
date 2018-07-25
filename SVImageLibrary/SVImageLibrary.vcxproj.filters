@@ -54,9 +54,6 @@
     <ClCompile Include="SVImageBufferHandleImage.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVImageBufferInterface.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVImageExtentClass.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -123,9 +120,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVImageBufferHandleImage.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVImageBufferInterface.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVImageExtentClass.h">

@@ -77,7 +77,6 @@ void RemoteMonitorListHelper::GetPropertiesFromMonitoredObject(const MonitoredOb
 	data.arrayIndex = rMonitoredObject.arrayIndex;
 	data.ObjectType = ObjectRef.getObject()->GetObjectType();
 	
-	SVImageClass* pImageObject(nullptr);
 	SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*>  (ObjectRef.getObject());
 	if (pValueObject)
 	{
@@ -86,19 +85,16 @@ void RemoteMonitorListHelper::GetPropertiesFromMonitoredObject(const MonitoredOb
 	}
 	else
 	{
-		pImageObject = dynamic_cast<SVImageClass*>(ObjectRef.getObject());
-	}
-	
-	if (nullptr != pImageObject)
-	{
-		SvOi::SVImageBufferHandlePtr imageHandlePtr;
-		// Special check for Color Tool's RGBMainImage which is HSI ???
-		pImageObject->GetImageHandle(imageHandlePtr);
-		if (nullptr != imageHandlePtr)
+		SVImageClass* pImageObject = dynamic_cast<SVImageClass*>(ObjectRef.getObject());
+		if (nullptr != pImageObject)
 		{
-			MatroxImageProps Imageprops;
-			SVMatroxBufferInterface::InquireBufferProperties(imageHandlePtr->GetBuffer(), Imageprops);
-			data.SetMatroxImageProps(Imageprops);
+			SvTrc::IImagePtr pImageBuffer = pImageObject->getLastImage(true);
+			if (nullptr != pImageBuffer && !pImageBuffer->isEmpty())
+			{
+				MatroxImageProps Imageprops;
+				SVMatroxBufferInterface::InquireBufferProperties(pImageBuffer->getHandle()->GetBuffer(), Imageprops);
+				data.SetMatroxImageProps(Imageprops);
+			}
 		}
 	}
 }

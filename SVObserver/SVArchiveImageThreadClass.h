@@ -10,7 +10,7 @@
 //Moved to precompiled header: #include <vector>
 #include "InspectionEngine/SVImageClass.h"
 #include "SVMatroxLibrary\SVMatroxBuffer.h"
-#include "SVMemoryManager.h"
+#include "SVLibrary\SVTemplate.h"
 
 #pragma endregion Includes
 
@@ -23,23 +23,22 @@ public:
 	struct BufferInfo
 	{
 		// passed into the thread class
-		SVMatroxBuffer id;
+		SvTrc::IImagePtr m_pImageBuffer;
 		std::string m_FileName;
-		long lBufferSize;
+		long m_MaxNumberOfBuffer4Async;
 		SVImageInfoClass info;
 		SVArchiveRecord* pRecord;
 
 		// maintained by the thread class
 		SvTl::SVTimeStamp m_Timestamp;
-		SVImageObjectClassPtr pImageObject;
 
-		BufferInfo() : lBufferSize(0), m_Timestamp(0), pRecord(nullptr), pImageObject(nullptr) {}
+		BufferInfo() : m_MaxNumberOfBuffer4Async(0), m_Timestamp(0), pRecord(nullptr) {}
 		BufferInfo( const BufferInfo& rhs )
-			: id(rhs.id), m_FileName(rhs.m_FileName), lBufferSize(rhs.lBufferSize), m_Timestamp(rhs.m_Timestamp), info(rhs.info), pImageObject(rhs.pImageObject), pRecord(rhs.pRecord) {}
-		BufferInfo( SVMatroxBuffer p_id, const std::string& rFileName, long p_lBufferSize, SVImageInfoClass p_info, SVArchiveRecord* p_pRecord )
-			: id(p_id), m_FileName(rFileName), lBufferSize(p_lBufferSize), info(p_info), pRecord(p_pRecord) {}
+			: m_pImageBuffer(rhs.m_pImageBuffer), m_FileName(rhs.m_FileName), m_MaxNumberOfBuffer4Async(rhs.m_MaxNumberOfBuffer4Async), m_Timestamp(rhs.m_Timestamp), info(rhs.info), pRecord(rhs.pRecord) {}
+		BufferInfo(SvTrc::IImagePtr pImageBuffer, const std::string& rFileName, long maxNumberOfBuffer4Async, SVImageInfoClass p_info, SVArchiveRecord* p_pRecord )
+			: m_pImageBuffer(pImageBuffer), m_FileName(rFileName), m_MaxNumberOfBuffer4Async(maxNumberOfBuffer4Async), info(p_info), pRecord(p_pRecord) {}
 		const BufferInfo& operator = ( const BufferInfo& rhs )
-			{ if ( this != &rhs ) {id = rhs.id; m_FileName = rhs.m_FileName; lBufferSize = rhs.lBufferSize; m_Timestamp = rhs.m_Timestamp; info = rhs.info; pImageObject = rhs.pImageObject; pRecord = rhs.pRecord; } return *this; }
+			{ if ( this != &rhs ) { m_pImageBuffer = rhs.m_pImageBuffer; m_FileName = rhs.m_FileName; m_MaxNumberOfBuffer4Async = rhs.m_MaxNumberOfBuffer4Async; m_Timestamp = rhs.m_Timestamp; info = rhs.info; pRecord = rhs.pRecord; } return *this; }
 	};
 
 #pragma region Constructor

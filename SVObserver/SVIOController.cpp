@@ -231,16 +231,6 @@ void SVIOController::SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSet
 	}
 }
 
-bool SVIOController::SetImageDepth( long lDepth )
-{
-	bool l_bOk = SVObjectClass::SetImageDepth( lDepth );
-
-	l_bOk &= nullptr != m_pModuleReady && m_pModuleReady->getObject()->SetImageDepth( lDepth );
-	l_bOk &= nullptr != m_pRaidErrorBit && m_pRaidErrorBit->getObject()->SetImageDepth( lDepth );
-
-	return l_bOk;
-}
-
 void SVIOController::ResetName()
 {
 	SVObjectClass::ResetName();

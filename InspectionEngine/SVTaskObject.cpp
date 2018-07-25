@@ -1249,34 +1249,6 @@ void SVTaskObjectClass::SetObjectDepthWithIndex(int NewObjectDepth, int NewLastS
 	SVObjectAppClass::SetObjectDepthWithIndex(NewObjectDepth, NewLastSetIndex);
 }
 
-bool SVTaskObjectClass::SetImageDepth(long lDepth)
-{
-	// Set object depth of members here...
-	
-	// Set Depth of our Friends...
-	for (size_t i = 0; i < m_friendList.size(); ++ i)
-	{
-		const SVObjectInfoStruct& rFriend = m_friendList[i];
-		// Check if Friend is alive...
-		SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.getUniqueObjectID());
-		if (pFriend)
-		{
-			pFriend->SetImageDepth(lDepth);
-		}
-	}
-
-	for( SVObjectPtrVector::iterator Iter = m_embeddedList.begin(); m_embeddedList.end() != Iter; ++Iter )
-	{
-		SVObjectClass* pObject = *Iter;
-		if( nullptr != pObject )
-		{
-			pObject->SetImageDepth(lDepth);
-		}
-	}
-	
-	return SVObjectAppClass::SetImageDepth(lDepth);
-}
-
 void SVTaskObjectClass::addDefaultInputObjects(SvOl::SVInputInfoListClass* PInputListToFill)
 {
 	int l_iCount = static_cast<int> (m_inputInterfaceList.size());

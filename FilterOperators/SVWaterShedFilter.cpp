@@ -96,8 +96,6 @@ bool SVWatershedFilterClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rIn
 	m_lvoMinVariation.GetValue(lMinVariation);
 	m_lvoControlFlag.GetValue(lControlFlag);
 
-	SvOi::SVImageBufferHandlePtr ImageHandle;
-
 	if( m_pCurrentUIOPL && nullptr != rInputImageHandle && nullptr != rOutputImageHandle)
 	{
 		HRESULT l_Code;
@@ -106,12 +104,12 @@ bool SVWatershedFilterClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rIn
 			SVImageClass* pInputImage = SvOl::getInput<SVImageClass>(m_MarkerImageInfo, true);
 			if( pInputImage )
 			{
-				pInputImage->GetImageHandle( ImageHandle );
+				SvTrc::IImagePtr pMarkerBuffer = pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord);
 				
 				SVMatroxBuffer milBuffer;
-				if( nullptr != ImageHandle )
+				if( nullptr != pMarkerBuffer && !pMarkerBuffer->isEmpty())
 				{
-					milBuffer = ImageHandle->GetBuffer();
+					milBuffer = pMarkerBuffer->getHandle()->GetBuffer();
 				}
 
 				l_Code = SVMatroxImageInterface::Watershed(rOutputImageHandle->GetBuffer(),

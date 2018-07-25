@@ -91,7 +91,6 @@ bool SVObjectAppClass::CreateChildObject( SVObjectClass* pChildObject, DWORD con
 
 		// Set first object depth...
 		pChildObject->SetObjectDepthWithIndex( m_objectDepth, l_LastIndex );
-		pChildObject->SetImageDepth( m_lImageDepth );
 
 		bool Result = createAllObjectsFromChild( *pChildObject );
 

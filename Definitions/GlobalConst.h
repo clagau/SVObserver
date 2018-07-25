@@ -33,7 +33,6 @@ namespace SvDef
 
 	// Default image settings...
 	const long			cDefaultSourceImageDepth = 15L;
-	const long			cDefaultResultImageDepth = 5L;
 	const long			cDefaultCameraImageWidth = 640L;
 	const long			cDefaultCameraImageHeight = 480L;
 	const long			cDefaultImageViewWidth = cDefaultCameraImageWidth;

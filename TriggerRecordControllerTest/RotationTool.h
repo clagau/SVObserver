@@ -21,16 +21,17 @@ namespace SvTrcT
 #pragma region Constructor
 	public:
 		RotationTool(GUID guid) : ToolObject(guid) {};
+		virtual ~RotationTool() = default;
 
 #pragma endregion Constructor
 
 #pragma region Public Methods
 	public:
-		virtual void reset(int pos, const SVMatroxBufferCreateStruct& bufferStructIn) override;
+		virtual void reset(const GUID& sourceGuid, const SVMatroxBufferCreateStruct& bufferStructIn, SvTrc::ITriggerRecordControllerRW& recordController) override;
 		virtual CString getName() const override { return _T("Rotation Tool"); };
 		static CString getDescription() { return _T("Rotated the input image (by 45°)."); };
 
-		virtual bool run(SvTrc::ITriggerRecordRWPtr pTriggerRecord) override;
+		virtual bool run(const SvTrc::ITriggerRecordRWPtr& pTriggerRecord) override;
 #pragma endregion Public Methods
 
 #pragma region Protected Methods

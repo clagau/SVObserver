@@ -14,6 +14,7 @@
 #pragma region Includes
 #include "DisplayPicture.h"
 #pragma endregion Includes
+#include "TriggerRecordController\IImage.h"
 
 class SVCameraPage;
 
@@ -39,8 +40,7 @@ class SVCameraPage : public CPropertyPage
 	DECLARE_DYNCREATE(SVCameraPage)
 
 	public:
-	HRESULT GetNextBuffer( SVImageBufferInterface& p_rBuffer );
-	HRESULT UpdateWithCompletedBuffer( const SVImageBufferInterface& p_rBuffer );
+	HRESULT UpdateWithCompletedBuffer( const SvTrc::IImagePtr& rImage);
 
 	//{{AFX_DATA(SVCameraPage)
 	enum { IDD = IDD_CAMERA_PAGE };

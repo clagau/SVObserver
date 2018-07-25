@@ -34,10 +34,7 @@ void SVArchiveRecordsArray::ResetImageCounts()
 		SVArchiveRecord* pRecord = m_vecRecords.at(i);
 		if (pRecord)
 		{
-			//
-			// Reset the first image 'index' to 1.
-			//
-			pRecord->m_lCountImages = 1L;
+			pRecord->m_lCountImages = 0L;
 		}
 	}
 }
@@ -252,7 +249,7 @@ void SVArchiveRecordsArray::SetArchiveTool( SVArchiveTool* pTool )
 	}
 }
 
-bool SVArchiveRecordsArray::WriteArchiveImageFiles( )
+bool SVArchiveRecordsArray::WriteArchiveImageFiles(const SvTrc::ITriggerRecordRPtr& pTriggerRecord )
 {
 	ASSERT( nullptr != m_pArchiveTool );
 	bool bOk = true;
@@ -263,7 +260,7 @@ bool SVArchiveRecordsArray::WriteArchiveImageFiles( )
 	for ( int i = 0; bOk && i < nCount; i++ )
 	{
 		SVArchiveRecord* pImageRecord = m_vecRecords.at(i);
-		bOk = bOk && (S_OK == pImageRecord->WriteImage());
+		bOk = bOk && (S_OK == pImageRecord->WriteImage(pTriggerRecord));
 	}// end for ( int i = 0; bOk && i < nCount; i++ )
 	
 	return bOk;
@@ -319,6 +316,17 @@ int SVArchiveRecordsArray::ValidateResultsObjects()
 	// return the count of objects to archive.
 	//
 	return static_cast<int> (m_vecRecords.size());
+}
+
+void SVArchiveRecordsArray::BuildArchiveImageFilePaths()
+{
+	for (auto pRecord : m_vecRecords)
+	{
+		if (nullptr != pRecord)
+		{
+			pRecord->BuildArchiveImageFilePaths();
+		}
+	}
 }
 
 std::string SVArchiveRecordsArray::BuildResultsArchiveString()
@@ -377,14 +385,14 @@ void SVArchiveRecordsArray::DisconnectAllResultObjects()
 	}
 }
 
-HRESULT SVArchiveRecordsArray::AllocateBuffers( long lBufferSize )
+HRESULT SVArchiveRecordsArray::AllocateBuffers(long bufferNumber, BufferStructCountMap& rBufferMap)
 {
 	HRESULT hr = S_OK;
 	int nCount = static_cast< int >( m_vecRecords.size() );
 	for (int i = 0; i < nCount; i++)
 	{
 		SVArchiveRecord* pResultRecord = m_vecRecords.at(i);
-		HRESULT hrRecord = pResultRecord->AllocateBuffers( lBufferSize );
+		HRESULT hrRecord = pResultRecord->AllocateBuffers(bufferNumber, rBufferMap);
 		if ( S_OK == hr )
 		{
 			hr = hrRecord;

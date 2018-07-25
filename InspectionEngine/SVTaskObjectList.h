@@ -64,7 +64,6 @@ public:
 
 	virtual void SetObjectDepth( int NewObjectDepth ) override;
 	virtual void SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex ) override;
-	virtual bool SetImageDepth( long lDepth ) override;
 
 	virtual void SetInvalid() override;
 	virtual void SetDisabled() override;

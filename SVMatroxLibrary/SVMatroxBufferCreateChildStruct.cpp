@@ -17,8 +17,8 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-SVMatroxBufferCreateChildStruct::SVMatroxBufferCreateChildStruct(const SVMatroxBuffer& p_rBuf)
-: m_lBand(0), m_lParentBandCount(1),	m_lOffX(0), m_lOffY(0), m_lSizeX(10), m_lSizeY(10), m_ParentBufId( p_rBuf )
+SVMatroxBufferCreateChildStruct::SVMatroxBufferCreateChildStruct(const SVMatroxBuffer& rBuf)
+	: m_rParentBufId(rBuf)
 {
 
 }

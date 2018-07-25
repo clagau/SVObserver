@@ -8,15 +8,18 @@
 #pragma region Includes
 #include "SVObjectLibrary/SVObjectReference.h"
 #include "SVMatroxLibrary\SVMatroxBuffer.h"
+#include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
 #include "ArchiveMethodEnum.h"
-#include "SVDataManagerLibrary/DataManager.h"
 #include "InspectionEngine/SVTool.h"
-#include "InspectionEngine/SVImageObjectClass.h"
+#include "TriggerRecordController/ITriggerRecordR.h"
+#include "TriggerRecordController/IImage.h"
 #pragma endregion Includes
 
 
 class SVArchiveTool;
 class SVImageClass;
+
+typedef std::map<SVMatroxBufferCreateStruct, long > BufferStructCountMap;
 
 class SVArchiveRecord
 {
@@ -33,50 +36,42 @@ public:
 			SVObjectReference refObject    // a reference to an object required
 		);
 
-	HRESULT	BuildArchiveImageFilePath(std::string& rImageFile);  // For images only
+	void BuildArchiveImageFilePaths();
+	HRESULT	GetNextFileName(std::string& rImageFile);  // For images only
 	void BuildFileName();                 // For images only
 	void ConnectInputObject();
 	void DisconnectInputObject();
 
-	HRESULT AllocateBuffers( long lBufferSize );
-	HRESULT QueueImage( SVMatroxBuffer& buf, const std::string& rFileName );
+	HRESULT AllocateBuffers(long lBufferNumber, BufferStructCountMap& rBufferMap);
+	HRESULT QueueImage(SvTrc::IImagePtr& rImage, const std::string& rFileName );
 	HRESULT WriteImageQueue();
-	HRESULT WriteImage( );
+	HRESULT WriteImage(const SvTrc::ITriggerRecordRPtr pTriggerRecord);
 	static HRESULT WriteImage( SVMatroxBuffer& buf, const std::string& rFileName );
 
 	void Init( SVArchiveTool* pArchiveTool );
 
 	SVImageClass* GetImage();
 
-	long                    GetImageMemorySize() { return m_lImageSize; }
 	const std::string&         GetImageObjectName() { return m_ImageObjectName; }
 	SVObjectReference&      GetObjectReference() { return m_svObjectReference; }
 #pragma endregion Public Methods
 
 private:
 #pragma region Private Members
-	typedef std::pair<std::string, SVDataManagerHandle> SVFileNameIndexHandlePair;
-	typedef std::deque<SVFileNameIndexHandlePair> SVFileNameIndexHandleDeque;
-
 	SVObjectReference   m_svObjectReference;
 	std::string            m_ImageObjectName;           // images only
 	std::string            m_FileNameImage;             // images only
 	long                m_lCountImages;                // images only
-	SVImageObjectClassPtr  m_ImageBufferPtr;                 // images only
+	std::vector<std::string> m_FileNames;
+	std::vector<SvTrc::IImagePtr>	m_ImageStoreVector;
 	SVImageInfoClass    m_ImageInfo;                   // images only
 	long                m_lLastIndex;
 	long                m_lMaxIndex;
-	SVFileNameIndexHandleDeque m_aFileNames;
-	long                m_lImageSize;
-	long                m_lDMBuffer;
-
+	long                m_MaxNumberOfBuffer4Async;
 
 	//Attributes
 	SVArchiveMethodEnum m_eArchiveMethod;
 	SVArchiveTool*      m_pArchiveTool;
-
-	SVDataManagerHandle m_LastIndexHandle;
-	SVSmartIndexArrayHandlePtr m_pImageCircleBuffer;
 
 	friend class SVArchiveRecordsArray;
 #pragma endregion Private Members

@@ -22,6 +22,7 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVOGui/ValuesAccessor.h"
 #include "SVOGui/DataController.h"
+#include "SVMatroxLibrary/SVMatroxEnums.h"
 #pragma endregion Includes
 
 #pragma region Properry Tree Items Enum

@@ -53,8 +53,8 @@ public:
 
 protected:
 
-	SVImageClass m_LogicalROIImage; // Embedded
-	SVImageClass m_OutputImage;	// Embedded
+	HRESULT CollectInputImageNames();
+	bool RunLocal(SVRunStatusClass &rRunStatus, SvTrc::IImagePtr pInputImageBuffer, SvTrc::IImagePtr pOutputImageBuffer);
 	
 private:
 	void init();
@@ -67,6 +67,7 @@ private:
 	//************************************
 	bool copyBuffer( const SvOi::SVImageBufferHandlePtr input, SvOi::SVImageBufferHandlePtr output );
 
-public:
-	HRESULT CollectInputImageNames();
+protected:
+	SVImageClass m_LogicalROIImage; // Embedded
+	SVImageClass m_OutputImage;	// Embedded
 };

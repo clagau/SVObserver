@@ -25,34 +25,35 @@ namespace SvTrcT
 #pragma endregion Constructor
 
 #pragma region Public Methods
-	void DeactivedTool::reset(int pos, const SVMatroxBufferCreateStruct& bufferStructIn)
-	{
-		ToolObject::reset(pos, bufferStructIn);
-		m_bufferStructOut = m_bufferStructIn;
-	};
+void DeactivedTool::reset(const GUID& sourceGuid, const SVMatroxBufferCreateStruct& bufferStructIn, SvTrc::ITriggerRecordControllerRW& recordController)
+{
+	ToolObject::reset(sourceGuid, bufferStructIn, recordController);
+	m_bufferStructOut = m_bufferStructIn;
+	recordController.addOrChangeImage(getGuid(), m_bufferStructOut);
+};
 
-	bool DeactivedTool::run(SvTrc::ITriggerRecordRWPtr pTriggerRecord)
+bool DeactivedTool::run(const SvTrc::ITriggerRecordRWPtr& pTriggerRecord)
+{
+	bool retValue = false;
+	m_isActive = !m_isActive;
+	if (m_isActive)
 	{
-		bool retValue = false;
-		m_isActive = !m_isActive;
-		if (m_isActive)
+		const auto pSourceImage = pTriggerRecord->getImage(m_sourceGuid);
+		auto pDestinationImage = pTriggerRecord->createNewImageHandle(m_guid);
+
+		if (nullptr != pSourceImage && nullptr != pSourceImage->getHandle() && nullptr != pDestinationImage && nullptr != pDestinationImage->getHandle())
 		{
-			const auto pSourceImage = pTriggerRecord->getImage(m_pos);
-			auto pDestinationImage = pTriggerRecord->createNewImageHandle(m_pos + 1);
-
-			if (nullptr != pSourceImage && nullptr != pSourceImage->getHandle() && nullptr != pDestinationImage && nullptr != pDestinationImage->getHandle())
-			{
-				HRESULT hr = SVMatroxBufferInterface::CopyBuffer(pDestinationImage->getHandle()->GetBuffer(), pSourceImage->getHandle()->GetBuffer());
-				retValue = (S_OK == hr);
-			}
+			HRESULT hr = SVMatroxBufferInterface::CopyBuffer(pDestinationImage->getHandle()->GetBuffer(), pSourceImage->getHandle()->GetBuffer());
+			retValue = (S_OK == hr);
 		}
-		else
-		{ //do nothing
-			retValue = true;
-		}
-
-		return retValue;
 	}
+	else
+	{ //do nothing
+		retValue = true;
+	}
+
+	return retValue;
+}
 #pragma endregion Public Methods
 
 #pragma region Protected Methods

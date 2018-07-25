@@ -122,7 +122,6 @@ public:
 #pragma endregion Methods to replace processMessage
 
 protected:
-	HRESULT ConnectInputImages();
 	HRESULT Uninitialize();
 	HRESULT ClearData();
 	HRESULT SetDefaultValues();
@@ -157,8 +156,8 @@ private:
 	SVImageClass             m_aResultImages[SVExternalToolTaskData::NUM_RESULT_IMAGES];
 
 	// Temperary Images to run slower and safer..........
-	SVImageClass             m_aResultImagesCopy[SVExternalToolTaskData::NUM_RESULT_IMAGES];
-	SVImageClass             m_aInputImagesCopy[SVExternalToolTaskData::NUM_INPUT_IMAGES];
+	SvOi::SVImageBufferHandlePtr             m_aResultImagesCopy[SVExternalToolTaskData::NUM_RESULT_IMAGES];
+	SvOi::SVImageBufferHandlePtr             m_aInputImagesCopy[SVExternalToolTaskData::NUM_INPUT_IMAGES];
 	bool                     m_bUseImageCopies;
 	
 private:

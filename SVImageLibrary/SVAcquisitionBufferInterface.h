@@ -12,7 +12,7 @@
 #pragma once
 
 #include "SVTimerLibrary/SVClock.h"
-#include "SVImageBufferInterface.h"
+#include "TriggerRecordController/IImage.h"
 
 class SVAcquisitionBufferInterface  
 {
@@ -25,8 +25,8 @@ public:
 	virtual unsigned long GetBufferHeight() const = 0;
 	virtual int GetBufferFormat() const = 0;
 
-	virtual HRESULT GetNextBuffer( SVImageBufferInterface& p_rBuffer ) = 0;
-	virtual HRESULT UpdateWithCompletedBuffer( const SVImageBufferInterface& p_rBuffer ) = 0;
+	virtual SvTrc::IImagePtr GetNextBuffer() = 0;
+	virtual HRESULT UpdateWithCompletedBuffer(const SvTrc::IImagePtr& rImage, const SvTl::SVTimeStamp StartTick, const SvTl::SVTimeStamp StopTick) = 0;
 
 };
 

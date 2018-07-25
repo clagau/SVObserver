@@ -269,8 +269,8 @@ bool SVUserMaskOperatorClass::getSpecialImage(const std::string& rName, SvOi::SV
 				rImagePtr = pImage->GetParentImageInterface()->getImageData();
 			}
 			else
-			{
-				rImagePtr = pImage->getParentImageData();
+			{ 
+				rImagePtr = pImage->getImageData();
 			}
 			return true;
 		}
@@ -753,12 +753,12 @@ bool SVUserMaskOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rI
 				{
 					SVExtentPointStruct l_svPoint;
 
-					SvOi::SVImageBufferHandlePtr l_MaskInputBuffer;
+					SvTrc::IImagePtr pMaskBuffer = l_pMaskInputImage->getImageReadOnly(rRunStatus.m_triggerRecord);
 
 					SVImageExtentClass l_svExtents = l_pRefImage->GetImageExtents();
 
 					if ( S_OK == l_svExtents.GetExtentProperty( SvDef::SVExtentPropertyPositionPoint, l_svPoint ) &&
-						l_pMaskInputImage->GetImageHandle( l_MaskInputBuffer ) && nullptr != l_MaskInputBuffer )
+						nullptr != pMaskBuffer && !pMaskBuffer->isEmpty() )
 					{
 						if ( S_OK != l_pMaskInputImage->ValidateAgainstOutputExtents( l_svExtents ) )
 						{
@@ -778,7 +778,7 @@ bool SVUserMaskOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rI
 							}
 						}
 
-						MatroxCode = SVMatroxBufferInterface::CopyBuffer(m_MaskBufferHandlePtr->GetBuffer(), l_MaskInputBuffer->GetBuffer(), (long)-l_svPoint.m_dPositionX, (long)-l_svPoint.m_dPositionY );
+						MatroxCode = SVMatroxBufferInterface::CopyBuffer(m_MaskBufferHandlePtr->GetBuffer(), pMaskBuffer->getHandle()->GetBuffer(), (long)-l_svPoint.m_dPositionX, (long)-l_svPoint.m_dPositionY );
 
 						if (S_OK != MatroxCode)
 						{

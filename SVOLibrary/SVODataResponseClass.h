@@ -13,8 +13,8 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
-#include "SVDataManagerLibrary/SVDataManagerHandle.h"
 #include "SVTimerLibrary/SVClock.h"
+#include "TriggerRecordController/IImage.h"
 #pragma endregion Includes
 
 /*
@@ -48,11 +48,8 @@ public:
 	HRESULT GetEndTick( SvTl::SVTimeStamp& p_rTick ) const;
 	HRESULT SetEndTick( const SvTl::SVTimeStamp& p_rTick );
 
-
-
-
-	//This attribute holds the Data Manager index of the associated data element.
-	SVDataManagerHandle mDMHandle;
+	const SvTrc::IImagePtr& GetImage() const { return m_image; };
+	void SetImage(const SvTrc::IImagePtr& image) { m_image = image; };
 
 private:
 	//This attribute holds a pointer to the owner of the response.
@@ -63,10 +60,11 @@ private:
 	//This attribute holds a pointer to the owner of the response.
 	void *mpvOwner;
 
+	SvTrc::IImagePtr m_image;
+
 	//This attribute holds the start time stamp the response.
 	SvTl::SVTimeStamp m_StartTick;
 	//This attribute holds the end time stamp the response.
 	SvTl::SVTimeStamp m_EndTick;
-
 };
 

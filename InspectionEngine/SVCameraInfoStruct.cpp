@@ -23,21 +23,21 @@ static char THIS_FILE[] = __FILE__;
 #pragma region Constructor
 SVCameraInfoStruct::SVCameraInfoStruct() :
  m_CameraGuid( GUID_NULL )
-,m_SourceImageDMIndexHandle()
 ,m_StartFrameTimeStamp( 0 )
 ,m_EndFrameTimeStamp( 0 )
 ,m_CallbackTimeStamp( 0 )
+,m_pImage(nullptr)
 {
 }
 
 SVCameraInfoStruct::SVCameraInfoStruct( const SVCameraInfoStruct &rRhs ) :
 m_CameraGuid( GUID_NULL )
-,m_SourceImageDMIndexHandle()
 ,m_StartFrameTimeStamp( 0 )
 ,m_EndFrameTimeStamp( 0 )
 ,m_CallbackTimeStamp( 0 )
+,m_pImage(nullptr)
 {
-	Assign( rRhs, rRhs.m_SourceImageDMIndexHandle.GetLockType() );
+	Assign( rRhs );
 }
 
 SVCameraInfoStruct::~SVCameraInfoStruct()
@@ -50,12 +50,11 @@ const SVCameraInfoStruct &SVCameraInfoStruct::operator=( const SVCameraInfoStruc
 	if( this != &rRhs )
 	{
 		m_CameraGuid = rRhs.getCameraGuid();
-		m_NextImageHandleIndex = rRhs.m_NextImageHandleIndex;
+		m_NextImageFunctor = rRhs.m_NextImageFunctor;
 		m_StartFrameTimeStamp = rRhs.m_StartFrameTimeStamp;
 		m_EndFrameTimeStamp = rRhs.m_EndFrameTimeStamp;
 		m_CallbackTimeStamp = rRhs.m_CallbackTimeStamp;
-
-		m_SourceImageDMIndexHandle.Assign( rRhs.m_SourceImageDMIndexHandle, rRhs.m_SourceImageDMIndexHandle.GetLockType() );
+		m_pImage = rRhs.m_pImage;
 	}
 
 	return *this;
@@ -63,46 +62,32 @@ const SVCameraInfoStruct &SVCameraInfoStruct::operator=( const SVCameraInfoStruc
 #pragma endregion Constructor
 
 #pragma region Public Methods
-HRESULT SVCameraInfoStruct::Assign( const SVCameraInfoStruct &rCameraInfo, SVDataManagerLockTypeEnum LockType )
+HRESULT SVCameraInfoStruct::Assign( const SVCameraInfoStruct &rCameraInfo )
 {
 	HRESULT l_Status = S_OK;
 
 	if( this != &rCameraInfo )
 	{
 		m_CameraGuid = rCameraInfo.getCameraGuid();
-		m_NextImageHandleIndex = rCameraInfo.m_NextImageHandleIndex;
+		m_NextImageFunctor = rCameraInfo.m_NextImageFunctor;
 		m_StartFrameTimeStamp = rCameraInfo.m_StartFrameTimeStamp;
 		m_EndFrameTimeStamp = rCameraInfo.m_EndFrameTimeStamp;
 		m_CallbackTimeStamp = rCameraInfo.m_CallbackTimeStamp;
-
-		l_Status = m_SourceImageDMIndexHandle.Assign( rCameraInfo.m_SourceImageDMIndexHandle, LockType );
-
-		if( m_SourceImageDMIndexHandle.GetIndex() != rCameraInfo.m_SourceImageDMIndexHandle.GetIndex() )
-		{
-			l_Status = E_FAIL;
-		}
+		m_pImage = rCameraInfo.m_pImage;
 	}
 
 	return l_Status;
 }
 
-HRESULT SVCameraInfoStruct::Assign( SvTl::SVTimeStamp p_StartFrameTS, SvTl::SVTimeStamp p_EndFrameTS, const SVDataManagerHandle& p_rIndexHandle, SVDataManagerLockTypeEnum p_LockType )
+HRESULT SVCameraInfoStruct::Assign( SvTl::SVTimeStamp p_StartFrameTS, SvTl::SVTimeStamp p_EndFrameTS, const SvTrc::IImagePtr pImage)
 {
 	HRESULT l_Status = S_OK;
-
-	assert( m_SourceImageDMIndexHandle.GetIndex() < 0 || ( 0 <= m_SourceImageDMIndexHandle.GetIndex() && 0 <= p_rIndexHandle.GetIndex() ) );
 
 	m_StartFrameTimeStamp = p_StartFrameTS;
 	m_EndFrameTimeStamp = p_EndFrameTS;
 
 	m_CallbackTimeStamp = SvTl::GetTimeStamp();
-
-	l_Status = m_SourceImageDMIndexHandle.Assign( p_rIndexHandle, p_LockType );
-
-	if( m_SourceImageDMIndexHandle.GetIndex() != p_rIndexHandle.GetIndex() )
-	{
-		l_Status = E_FAIL;
-	}
+	m_pImage = pImage;
 
 	return l_Status;
 }
@@ -137,42 +122,29 @@ void SVCameraInfoStruct::ClearCameraInfo()
 	ClearIndexes();
 }
 
-HRESULT SVCameraInfoStruct::GetNextAvailableIndexes( SVDataManagerLockTypeEnum LockType )
+const SvTrc::IImagePtr SVCameraInfoStruct::GetNextImage()
 {
-	HRESULT Result( S_OK );
-
-	if( !m_NextImageHandleIndex.empty() )
+	if (!m_NextImageFunctor.empty())
 	{
-		Result = m_NextImageHandleIndex( m_SourceImageDMIndexHandle, LockType );
+		m_pImage = m_NextImageFunctor();
 	}
 	else
 	{
-		Result = E_FAIL;
+		m_pImage = nullptr;
 	}
-
-	return Result;
+	return m_pImage;
 }
 
-long SVCameraInfoStruct::GetIndex() const
-{
-	return m_SourceImageDMIndexHandle.GetIndex();
-}
-
-const SVDataManagerHandle& SVCameraInfoStruct::GetSourceImageDMIndexHandle() const
-{
-	return m_SourceImageDMIndexHandle;
-}
-
-const void SVCameraInfoStruct::setCamera( const SVGUID& rCameraGuid, NextImageHandleIndexFunctor NextImageHandleIndex )
+const void SVCameraInfoStruct::setCamera( const SVGUID& rCameraGuid, NextImageHandleFunctor NextImageHandleFunctor )
 {
 	m_CameraGuid = rCameraGuid;
-	m_NextImageHandleIndex = NextImageHandleIndex;
+	m_NextImageFunctor = NextImageHandleFunctor;
 }
 #pragma endregion Public Methods
 
 #pragma region Private Methods
 void SVCameraInfoStruct::ClearIndexes()
 {
-	m_SourceImageDMIndexHandle.clear();
+	m_pImage = nullptr;
 }
 #pragma endregion Private Methods

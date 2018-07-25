@@ -621,6 +621,13 @@ bool SVConfigurationObject::AddInspection(SVInspectionProcess* pInspection)
 	if (nullptr != pInspection)
 	{
 		m_arInspectionArray.push_back(pInspection);
+		assert(m_arInspectionArray.end() != std::find_if(m_arInspectionArray.begin(), m_arInspectionArray.end(), [pInspection](auto data)->bool
+		{
+			return (data == pInspection);
+		})); 
+		auto inspId = m_inspList4TRC.add_list();
+		SvPb::SetGuidInProtoBytes(inspId->mutable_id(), pInspection->GetUniqueObjectID());
+
 		Result = true;
 	}
 
@@ -640,6 +647,7 @@ bool SVConfigurationObject::RemoveInspection(SVInspectionProcess* pInspection)
 		if (pInspection == m_arInspectionArray[i])
 		{
 			m_arInspectionArray.erase(m_arInspectionArray.begin() + i);
+			m_inspList4TRC.mutable_list()->erase(m_inspList4TRC.list().begin()+i);
 			break;
 		}
 	}
@@ -2716,6 +2724,9 @@ bool SVConfigurationObject::DestroyConfiguration()
 
 	SVThreadManager::Instance().Clear();
 
+	SvTrc::getTriggerRecordControllerRWInstance().unlockReset();
+	SvTrc::getTriggerRecordControllerRWInstance().clearAll();
+
 	return bOk;
 }
 
@@ -3824,7 +3835,7 @@ bool SVConfigurationObject::FinishIPDoc(SVInspectionProcess* pInspection)
 			pInspection->RebuildInspection();
 
 			// Init Document
-			pInspection->ValidateAndInitialize(true, false);
+			pInspection->ValidateAndInitialize(true);
 
 			bOk = true;
 		}
@@ -3864,6 +3875,17 @@ bool SVConfigurationObject::RebuildInputOutputLists()
 		if (nullptr != pInspection)
 		{
 			bOk = FinishIPDoc(pInspection) && bOk;
+		}
+	}
+
+	for (auto pInspection : m_arInspectionArray)
+	{
+		if (nullptr != pInspection)
+		{
+			SVSVIMStateClass::AddState(SV_STATE_INTERNAL_RUN);
+			SvOi::ITaskObject* tmp = nullptr;
+			pInspection->RunOnce(tmp);
+			SVSVIMStateClass::RemoveState(SV_STATE_INTERNAL_RUN);
 		}
 	}
 
@@ -5099,6 +5121,11 @@ bool SVConfigurationObject::HasCameraTrigger(SVPPQObject* pCameraPPQ) const
 		}
 	}
 	return bRetVal;
+}
+
+void SVConfigurationObject::UpdateInspectionList4TRC()
+{
+	m_inspList4TRC = SvTrc::getTriggerRecordControllerRInstance().getInspections();
 }
 
 void SVConfigurationObject::updateConfTreeToNewestVersion(SVTreeType &rTree, SVTreeType::SVBranchHandle &rToolset)

@@ -280,7 +280,7 @@ bool SVThresholdClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputIma
 			SVRunStatusClass runStatus;
 
 			runStatus.m_lResultDataIndex  = rRunStatus.m_lResultDataIndex;
-			runStatus.Images = rRunStatus.Images;
+			runStatus.m_triggerRecord = rRunStatus.m_triggerRecord;
 			runStatus.m_UpdateCounters = rRunStatus.m_UpdateCounters;
 
 			runFriends( runStatus );

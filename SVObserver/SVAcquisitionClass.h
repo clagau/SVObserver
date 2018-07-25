@@ -13,17 +13,16 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <memory>
-#include "SVDataManagerLibrary/SVDataManagerHandle.h"
-#include "SVDataManagerLibrary/SVDataManagerIndexArrayHandle.h"
 #include "SVImageLibrary/SVAcquisitionBufferInterface.h"
 #include "SVImageLibrary/SVLightReference.h"
 #include "SVImageLibrary/SVLut.h"
+#include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVOLibrary/SVODataDeviceClass.h"
 #include "SVOLibrary/SVODeviceClass.h"
 #include "CameraLibrary/SVDeviceParamCollection.h"
 #include "TriggerInformation/SVAcquisitionConstructParams.h"
 #include "SVFileSystemLibrary/SVFileNameArrayClass.h"
-#include "InspectionEngine/SVImageObjectClass.h"
+#include "TriggerRecordController/ITriggerRecordControllerRW.h"
 #pragma endregion Includes
 
 /**
@@ -85,12 +84,6 @@ public:
 
 	virtual HRESULT GetImageInfo( SVImageInfoClass* pImageInfo ) const;
 
-	SVImageObjectClassPtr GetCircleBuffer();
-	long GetCircleBufferSize() const;
-
-	HRESULT GetNextIndex( SVDataManagerHandle &rDMHandle ) const;
-	HRESULT GetNextIndex( SVDataManagerHandle &rDMHandle, SVDataManagerLockTypeEnum p_LockType ) const;
-
 	inline std::string DeviceName() const { return m_DeviceName; }
 	inline std::string DigName() const { return m_DigName; }
 	inline int Channel() const { return miChannel; }
@@ -125,22 +118,14 @@ public:
 
 	virtual HRESULT SingleGrab(SvOi::SVImageBufferHandlePtr p_SingleGrabHandle );
 
-	virtual bool SetCurrentIndex( const SVDataManagerHandle& rDMIndexHandle );
-	virtual bool SetCurrentIndex( const SVDataManagerHandle& rDMIndexHandle, SVDataManagerLockTypeEnum p_LockType );
-	
-	void DumpDMInfo( LPCTSTR p_szName ) const;
-
 	virtual SvTl::SVTimeStamp GetTimeStamp() const override;
 
 	virtual unsigned long GetBufferWidth() const override;
 	virtual unsigned long GetBufferHeight() const override;
 	virtual int GetBufferFormat() const override;
 
-	virtual HRESULT GetNextBuffer( SVImageBufferInterface& p_rBuffer ) override;
-	virtual HRESULT UpdateWithCompletedBuffer( const SVImageBufferInterface& p_rBuffer ) override;
-
-	HRESULT StoreLastImage();
-	HRESULT RestoreLastImage();
+	virtual SvTrc::IImagePtr GetNextBuffer() override;
+	virtual HRESULT UpdateWithCompletedBuffer( const SvTrc::IImagePtr& rImage, const SvTl::SVTimeStamp StartTick, const SvTl::SVTimeStamp StopTick) override;
 
 	SVHANDLE m_hDigitizer;
 	BSTR m_LastImage;
@@ -161,12 +146,9 @@ protected:
 	virtual HRESULT SetLutImpl( const SVLut& lut );
 
 	virtual HRESULT StartDigitizer();
-
-	SVSmartIndexArrayHandlePtr m_pDataManagerHandle;
 	
 	SVImageInfoClass msvImageInfo;
-	SVImageObjectClassPtr m_AcquisitionBuffersPtr;
-
+	
 	SVDeviceParamCollection m_DeviceParams;
 	SVDeviceParamCollection m_CameraFileDeviceParams;
 	SVLut& Lut();
@@ -193,6 +175,9 @@ private:
 	unsigned long mulSize;
 	bool m_ImageAquired;
 	bool m_LUTAndLRSet;
+	SvTrc::ITriggerRecordControllerRW& m_rTRController = SvTrc::getTriggerRecordControllerRWInstance();
+	SVMatroxBufferCreateStruct m_bufferStruct;
+	SVGUID m_guid = GUID_NULL;
 };
 
 typedef std::shared_ptr< SVAcquisitionClass > SVAcquisitionClassPtr;

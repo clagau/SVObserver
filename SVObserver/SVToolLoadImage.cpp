@@ -132,9 +132,9 @@ bool SVLoadImageToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCon
 			return false;
 		}
 
-		if (bReload || m_bResetFileImage)
+		if (bReload || 0 < m_ReloadFileImage || nullptr == m_fileImage.getImageReadOnly(rRunStatus.m_triggerRecord))
 		{
-			if (S_OK != m_fileImage.LoadImage(ImagePathName.c_str(), rRunStatus.Images))
+			if (S_OK != m_fileImage.LoadImage(ImagePathName.c_str(), rRunStatus.m_triggerRecord))
 			{
 				if (nullptr != pErrorMessages)
 				{
@@ -146,22 +146,7 @@ bool SVLoadImageToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCon
 				return false;
 			}
 
-			m_bResetFileImage = false;
-		}
-		else
-		{
-			//copy forward
-			if (!m_fileImage.CopyImageTo(rRunStatus.Images))
-			{
-				if (nullptr != pErrorMessages)
-				{
-					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
-					pErrorMessages->push_back(Msg);
-				}
-				rRunStatus.SetInvalid();
-				SetInvalid();
-				return false;
-			}
+			m_ReloadFileImage--;
 		}
 		
 		return true;
@@ -175,7 +160,7 @@ bool SVLoadImageToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMess
 {
 	bool Result = SVToolClass::ResetObject(pErrorMessages);
 	
-	m_bResetFileImage = Result;
+	m_ReloadFileImage = 2; //Must be 2 because if this reset done by the ResetAllObject before go to RunMode, the triggerRecord from the first RunOnce (initialize) will not be saved and for the first real run we have to load the image (else it will be an empty image).
 
 	UpdateImageWithExtent();
 
@@ -254,7 +239,7 @@ HRESULT SVLoadImageToolClass::SetImageExtentToParent()
 
 	if (S_OK == l_hrOk)
 	{
-		l_hrOk = m_fileImage.LoadImageFullSize(ImagePathName.c_str(), NewExtent);
+		l_hrOk = NewExtent.SetDataFromFile(ImagePathName.c_str());
 	}
 
 	if (S_OK == l_hrOk)
@@ -274,7 +259,7 @@ HRESULT SVLoadImageToolClass::GetParentExtent( SVImageExtentClass& rParentExtent
 	}
 	if( S_OK == hr )
 	{
-		hr = SVImageObjectClass::GetImageExtentFromFile( ImagePathName.c_str(), rParentExtent );
+		hr = rParentExtent.SetDataFromFile(ImagePathName.c_str());
 	}
 	return hr;
 }

@@ -670,9 +670,9 @@ bool SVHistogramAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 			break;
 		}
 
-		SvOi::SVImageBufferHandlePtr ImageHandle;
+		SvTrc::IImagePtr pImageBuffer = pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord);
 
-		if( ! pInputImage->GetImageHandle( ImageHandle ) || nullptr == ImageHandle)
+		if( nullptr == pImageBuffer)
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)
@@ -685,7 +685,7 @@ bool SVHistogramAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 
 		SVMatroxImageInterface l_lImageIntf;
 
-		if(ImageHandle->empty() )
+		if(pImageBuffer->isEmpty() )
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)
@@ -696,7 +696,7 @@ bool SVHistogramAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 			break;
 		}
 
-		MatroxCode = l_lImageIntf.Histogram(m_HistResultID, ImageHandle->GetBuffer() );
+		MatroxCode = l_lImageIntf.Histogram(m_HistResultID, pImageBuffer->getHandle()->GetBuffer() );
 		if (S_OK != MatroxCode)
 		{
 			Result = false;
@@ -1042,7 +1042,7 @@ bool SVHistogramAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 			}
 		}
 
-		if (S_OK != paintHistogramImage())
+		if (S_OK != paintHistogramImage(rRunStatus.m_triggerRecord))
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)
@@ -1063,65 +1063,6 @@ bool SVHistogramAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 	}
 
 	return Result;
-}
-
-bool SVHistogramAnalyzerClass::calcHistogram()
-{
-	bool LastError(false);
-	SVImageClass     *pInputImage(nullptr);
-	HRESULT MatroxCode(S_OK);
-
-	pInputImage = getInputImage();
-	if(nullptr== pInputImage)
-	{
-		LastError = true;
-	}
-
-	SvOi::SVImageBufferHandlePtr ImageHandle;
-	if(!LastError)
-	{
-		if( ! pInputImage->GetImageHandle( ImageHandle ) || nullptr == ImageHandle)
-		{
-			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16201);
-			LastError = true;
-
-		}
-	}
-	SVMatroxImageInterface l_lImageIntf;
-
-	if(!LastError)
-	{
-		if(ImageHandle->empty() )
-		{
-			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16202);
-			LastError = true;
-		}
-	}
-
-	if(!LastError)
-	{
-		MatroxCode = l_lImageIntf.Histogram(m_HistResultID, ImageHandle->GetBuffer() );
-		if (S_OK != MatroxCode)
-		{
-			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16203);
-			LastError = true;
-		}
-	}
-
-	if(!LastError)
-	{
-		MatroxCode = l_lImageIntf.GetResult(m_HistResultID,  msvplHistValues );
-		if (S_OK != MatroxCode)
-		{
-			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16204);
-			LastError = true;
-		}
-	}
-	return (false == LastError);
 }
 
 HRESULT SVHistogramAnalyzerClass::createHistogramImage()
@@ -1157,11 +1098,11 @@ HRESULT SVHistogramAnalyzerClass::createHistogramImage()
 	return hr;
 }
 
-HRESULT SVHistogramAnalyzerClass::paintHistogramImage()
+HRESULT SVHistogramAnalyzerClass::paintHistogramImage(const SvTrc::ITriggerRecordRWPtr& pTriggerRecord)
 {
 	HRESULT hr = S_OK;
-	SvOi::SVImageBufferHandlePtr l_handle;
-	if (!m_histogramImage.GetImageHandle(l_handle) || nullptr == l_handle)
+	SvTrc::IImagePtr pImageBuffer = m_histogramImage.getImageToWrite(pTriggerRecord);
+	if (nullptr == pImageBuffer || pImageBuffer->isEmpty())
 	{
 		return Err_GetImageHandle;
 	}
@@ -1170,7 +1111,7 @@ HRESULT SVHistogramAnalyzerClass::paintHistogramImage()
 	m_histogramImage.GetImageExtents().GetRectangle(l_client);
 	
 	m_histogram.SetClient(l_client);
-	MILCanvas canvas(l_handle->GetBuffer());
+	MILCanvas canvas(pImageBuffer->getHandle()->GetBuffer());
 	m_histogram.DrawHistogram(canvas);
 
 	return hr;

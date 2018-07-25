@@ -412,62 +412,6 @@ HRESULT SVDigitizerProcessingClass::ScanForCameras()
 	return l_Status;
 }
 
-HRESULT SVDigitizerProcessingClass::StoreLastCameraImage()
-{
-	HRESULT l_Status = S_OK;
-
-	SVNameDigitizerMap::const_iterator l_Iter = m_Digitizers.begin();
-
-	while( l_Iter != m_Digitizers.end() )
-	{
-		HRESULT l_Temp = S_OK;
-
-		SVAcquisitionClassPtr l_AcqDevicePtr = l_Iter->second;
-
-		if(nullptr != l_AcqDevicePtr && 0 < l_AcqDevicePtr->m_hDigitizer )
-		{
-			l_Temp = l_AcqDevicePtr->StoreLastImage();
-		}
-
-		if( S_OK != l_Temp && S_OK == l_Status )
-		{
-			l_Status = l_Temp;
-		}
-
-		++l_Iter;
-	}
-
-	return l_Status;
-}
-
-HRESULT SVDigitizerProcessingClass::RestoreLastCameraImage()
-{
-	HRESULT l_Status = S_OK;
-
-	SVNameDigitizerMap::const_iterator l_Iter = m_Digitizers.begin();
-
-	while( l_Iter != m_Digitizers.end() )
-	{
-		HRESULT l_Temp = S_OK;
-
-		SVAcquisitionClassPtr l_AcqDevicePtr = l_Iter->second;
-
-		if(nullptr != l_AcqDevicePtr && 0 != l_AcqDevicePtr->m_hDigitizer )
-		{
-			l_Temp = l_AcqDevicePtr->RestoreLastImage();
-		}
-
-		if( S_OK != l_Temp && S_OK == l_Status )
-		{
-			l_Status = l_Temp;
-		}
-
-		++l_Iter;
-	}
-
-	return l_Status;
-}
-
 HRESULT SVDigitizerProcessingClass::AddDigitizer( LPCTSTR Name, LPCTSTR AcquisitionName, SvTh::SVDigitizerLoadLibraryClass* pDigitizerSubsystem, unsigned long p_Handle )
 {
 	HRESULT Result( S_OK );

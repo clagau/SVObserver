@@ -128,13 +128,6 @@ bool SVStdImageOperatorListClass::Run(SVRunStatusClass& rRunStatus, SvStl::Messa
 	bool bRetVal = true;
 	clearRunErrorMessages();
 
-	SVRunStatusClass ChildRunStatus;
-	ChildRunStatus.m_lResultDataIndex = rRunStatus.m_lResultDataIndex;
-	ChildRunStatus.Images = rRunStatus.Images;
-	ChildRunStatus.m_UpdateCounters = rRunStatus.m_UpdateCounters;
-
-	SVDataManagerHandle dmHandleInput;
-
 	// Run yourself...
 	bRetVal = onRun(rRunStatus, &m_RunErrorMessages);
 
@@ -149,131 +142,9 @@ bool SVStdImageOperatorListClass::Run(SVRunStatusClass& rRunStatus, SvStl::Messa
 
 	if (bRetVal)
 	{
-		if (m_OutputImage.SetImageHandleIndex(rRunStatus.Images))
-		{
-			SvOi::SVImageBufferHandlePtr input;
-			SvOi::SVImageBufferHandlePtr output;
-
-			// The camera images will be restored after resetObject (in start-process of camera). 
-			//If camera image is source of a child image, the child image will be show to an old buffer. For this reason a rebuild is required.
-			//@TODO[MZA][8.10][12.03.2018] Should be changed, that RebuildStorage is not need in runMode.
-			if (m_LogicalROIImage.GetLastResetTimeStamp() <= pInputImage->GetLastResetTimeStamp())
-			{
-				m_LogicalROIImage.RebuildStorage(true);
-			}
-
-			m_LogicalROIImage.GetImageHandle(input);
-			m_OutputImage.GetImageHandle(output);
-
-			if (nullptr == input || nullptr == output)
-			{
-				bRetVal = false;
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
-				m_RunErrorMessages.push_back(Msg);
-				if (nullptr == input)
-				{
-					SVImageProcessingClass::InitBuffer(output);
-
-					input = output;
-				}
-			}
-
-			//set tmp variable
-			SvOi::SVImageBufferHandlePtr sourceImage = m_milTmpImageObjectInfo1;
-			SvOi::SVImageBufferHandlePtr destinationImage = m_milTmpImageObjectInfo2;
-			if (sourceImage->empty() || destinationImage->empty() || !copyBuffer(input, sourceImage))
-			{
-				bRetVal = false;
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
-				m_RunErrorMessages.push_back(Msg);
-			}
-
-			if (bRetVal)
-			{
-				// Run children...
-				for (int i = 0; i < GetSize(); i++)
-				{
-					ChildRunStatus.ResetRunStateAndToolSetTimes();
-
-					SVUnaryImageOperatorClass*  pOperator = (SVUnaryImageOperatorClass*)GetAt(i);
-					if (nullptr != pOperator)
-					{
-						if (pOperator->Run(true, sourceImage, destinationImage, ChildRunStatus))
-						{
-							//switch image buffer for next run
-							SvOi::SVImageBufferHandlePtr tmpImage = sourceImage;
-							sourceImage = destinationImage;
-							destinationImage = tmpImage;
-						}
-						// NOTE:
-						// If operator returns FALSE, he was not running ( may be deactivated )
-						// So, don't switch first flag off, so that a following operator knows
-						// he is the first one or the 'no operator was running' check can do his job!!!
-						// RO_22Mar2000
-
-						// WARNING:
-						// Do not set bRetVal automatically to FALSE, if operator was not running !!!
-						// ChildRunStatus keeps information about, if an error occurred while running !!!
-					}
-					else
-					{
-						bRetVal = false;
-						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
-						m_RunErrorMessages.push_back(Msg);
-					}
-
-					// Update our Run Status
-					if (ChildRunStatus.IsDisabled())
-					{
-						rRunStatus.SetDisabled();
-					}
-
-					if (ChildRunStatus.IsDisabledByCondition())
-					{
-						rRunStatus.SetDisabledByCondition();
-					}
-
-					if (ChildRunStatus.IsWarned())
-					{
-						rRunStatus.SetWarned();
-					}
-
-					if (ChildRunStatus.IsFailed())
-					{
-						rRunStatus.SetFailed();
-					}
-
-					if (ChildRunStatus.IsPassed())
-					{
-						rRunStatus.SetPassed();
-					}
-
-					if (ChildRunStatus.IsCriticalFailure())
-					{
-						rRunStatus.SetCriticalFailure();
-					}
-				}
-			} // for( int i = 0; i < GetSize(); i++ )
-
-			// 'no operator was running' check...
-			// RO_22Mar2000
-
-			if (bRetVal)
-			{
-				if (!copyBuffer(sourceImage, output))
-				{
-					bRetVal = false;
-					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
-					m_RunErrorMessages.push_back(Msg);
-				}
-			} // if( bFirstFlag ) 
-		}  // if ( m_OutputImage.SetImageHandleIndex( rRunStatus.Images ) )
-		else
-		{
-			bRetVal = false;
-			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetImageHandleIndexFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
-			m_RunErrorMessages.push_back(Msg);
-		}
+		SvTrc::IImagePtr pOutputImageBuffer = m_OutputImage.getImageToWrite(rRunStatus.m_triggerRecord);
+		SvTrc::IImagePtr pInputImageBuffer = m_LogicalROIImage.getImageReadOnly(rRunStatus.m_triggerRecord);
+		bRetVal = RunLocal(rRunStatus, pInputImageBuffer, pOutputImageBuffer);
 	}
 
 	if (!bRetVal)
@@ -318,6 +189,131 @@ HRESULT SVStdImageOperatorListClass::CollectInputImageNames()
 	return hr;
 }
 
+bool SVStdImageOperatorListClass::RunLocal(SVRunStatusClass &rRunStatus, SvTrc::IImagePtr pInputImageBuffer, SvTrc::IImagePtr pOutputImageBuffer)
+{
+	bool bRetVal = true;
+	if (nullptr != pOutputImageBuffer && !pOutputImageBuffer->isEmpty())
+	{
+		SVRunStatusClass ChildRunStatus;
+		ChildRunStatus.m_lResultDataIndex = rRunStatus.m_lResultDataIndex;
+		ChildRunStatus.m_triggerRecord = rRunStatus.m_triggerRecord;
+		ChildRunStatus.m_UpdateCounters = rRunStatus.m_UpdateCounters;
+
+		SvOi::SVImageBufferHandlePtr input = (nullptr != pInputImageBuffer) ? pInputImageBuffer->getHandle() : nullptr;
+		SvOi::SVImageBufferHandlePtr output = pOutputImageBuffer->getHandle();
+
+		if (nullptr == input || nullptr == output)
+		{
+			bRetVal = false;
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			m_RunErrorMessages.push_back(Msg);
+			if (nullptr == input)
+			{
+				SVImageProcessingClass::InitBuffer(output);
+
+				input = output;
+			}
+		}
+
+		//set tmp variable
+		SvOi::SVImageBufferHandlePtr sourceImage = m_milTmpImageObjectInfo1;
+		SvOi::SVImageBufferHandlePtr destinationImage = m_milTmpImageObjectInfo2;
+		if (sourceImage->empty() || destinationImage->empty() || !copyBuffer(input, sourceImage))
+		{
+			bRetVal = false;
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			m_RunErrorMessages.push_back(Msg);
+		}
+
+		if (bRetVal)
+		{
+			// Run children...
+			for (int i = 0; i < GetSize(); i++)
+			{
+				ChildRunStatus.ResetRunStateAndToolSetTimes();
+
+				SVUnaryImageOperatorClass*  pOperator = (SVUnaryImageOperatorClass*)GetAt(i);
+				if (nullptr != pOperator)
+				{
+					if (pOperator->Run(true, sourceImage, destinationImage, ChildRunStatus))
+					{
+						//switch image buffer for next run
+						SvOi::SVImageBufferHandlePtr tmpImage = sourceImage;
+						sourceImage = destinationImage;
+						destinationImage = tmpImage;
+					}
+					// NOTE:
+					// If operator returns FALSE, he was not running ( may be deactivated )
+					// So, don't switch first flag off, so that a following operator knows
+					// he is the first one or the 'no operator was running' check can do his job!!!
+					// RO_22Mar2000
+
+					// WARNING:
+					// Do not set bRetVal automatically to FALSE, if operator was not running !!!
+					// ChildRunStatus keeps information about, if an error occurred while running !!!
+				}
+				else
+				{
+					bRetVal = false;
+					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+					m_RunErrorMessages.push_back(Msg);
+				}
+
+				// Update our Run Status
+				if (ChildRunStatus.IsDisabled())
+				{
+					rRunStatus.SetDisabled();
+				}
+
+				if (ChildRunStatus.IsDisabledByCondition())
+				{
+					rRunStatus.SetDisabledByCondition();
+				}
+
+				if (ChildRunStatus.IsWarned())
+				{
+					rRunStatus.SetWarned();
+				}
+
+				if (ChildRunStatus.IsFailed())
+				{
+					rRunStatus.SetFailed();
+				}
+
+				if (ChildRunStatus.IsPassed())
+				{
+					rRunStatus.SetPassed();
+				}
+
+				if (ChildRunStatus.IsCriticalFailure())
+				{
+					rRunStatus.SetCriticalFailure();
+				}
+			}
+		} // for( int i = 0; i < GetSize(); i++ )
+
+		// 'no operator was running' check...
+		// RO_22Mar2000
+
+		if (bRetVal)
+		{
+			if (!copyBuffer(sourceImage, output))
+			{
+				bRetVal = false;
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				m_RunErrorMessages.push_back(Msg);
+			}
+		} // if( bFirstFlag ) 
+	}  // if ( get output image buffer )
+	else
+	{
+		bRetVal = false;
+		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_GetImageBufferToWriteFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+		m_RunErrorMessages.push_back(Msg);
+	}	
+	return bRetVal;
+}
+
 bool SVStdImageOperatorListClass::copyBuffer(const SvOi::SVImageBufferHandlePtr input, SvOi::SVImageBufferHandlePtr output)
 {
 	bool bRetVal = true;
@@ -333,4 +329,3 @@ bool SVStdImageOperatorListClass::copyBuffer(const SvOi::SVImageBufferHandlePtr 
 
 	return bRetVal;
 }
-

@@ -565,7 +565,7 @@ bool SVRemoteFontManager::CopyFont( SVMatroxOcr& p_CurrentFont, SVMatroxOcr& p_N
 		
 
 		l_Create.m_eAttribute = SVBufAttImageProc;
-		l_Create.SetImageDepth( 8 );
+		SetImageDepth(l_Create, 8 );
 		l_Create.m_lSizeX = (long)dCharBoxSizeX;
 		l_Create.m_lSizeY = (long)dCharBoxSizeY;
 

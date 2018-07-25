@@ -261,10 +261,8 @@ bool SVImageTransformClass::onRun( SVRunStatusClass& runStatus, SvStl::MessageCo
 
 	if( bRetVal )
 	{
-		SvOi::SVImageBufferHandlePtr InImageHandle;
-		SvOi::SVImageBufferHandlePtr OutImageHandle;
-
-		if ( !pInputImage->GetImageHandle( InImageHandle ) || nullptr == InImageHandle )
+		SvTrc::IImagePtr pInputImageBuffer = pInputImage->getImageReadOnly(runStatus.m_triggerRecord);
+		if ( nullptr == pInputImageBuffer || pInputImageBuffer->isEmpty())
 		{
 			bRetVal = false;
 			if (nullptr != pErrorMessages)
@@ -287,15 +285,16 @@ bool SVImageTransformClass::onRun( SVRunStatusClass& runStatus, SvStl::MessageCo
 			if( S_OK == InImageInfo.GetExtentProperty( SvDef::SVExtentPropertyPositionPoint, l_oPoint ) )
 			{
 				// Get Root Image from our Input Image
-				SVImageClass* l_psvRootImage = dynamic_cast<SVImageClass*>( pInputImage->GetRootImage() );
-				if( nullptr != l_psvRootImage )
+				auto pRootImage = pInputImage->GetRootImage();
+				if( nullptr != pRootImage)
 				{
 					interpolationType = SVImageDefault; // M_DEFAULT;
 				}
 			}
 		}
 
-		if (bRetVal && (!m_outputImageObject.SetImageHandleIndex( runStatus.Images ) || !m_outputImageObject.GetImageHandle( OutImageHandle ) || nullptr == OutImageHandle ))
+		SvTrc::IImagePtr pOutputImageBuffer = m_outputImageObject.getImageToWrite(runStatus.m_triggerRecord);
+		if (bRetVal && (nullptr == pOutputImageBuffer || pOutputImageBuffer->isEmpty()))
 		{
 			bRetVal = false;
 			if (nullptr != pErrorMessages)
@@ -305,24 +304,14 @@ bool SVImageTransformClass::onRun( SVRunStatusClass& runStatus, SvStl::MessageCo
 			}
 		}
 
-		if( bRetVal && nullptr != OutImageHandle->GetBufferAddress() )
+		if( bRetVal && nullptr != pOutputImageBuffer->getHandle()->GetBufferAddress() )
 		{
-			memset( OutImageHandle->GetBufferAddress(), 0, static_cast<size_t>(width * height) );
-		}
-
-		if( bRetVal && ( InImageHandle->empty() || OutImageHandle->empty() ))
-		{
-			bRetVal = false;
-			if (nullptr != pErrorMessages)
-		{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
-				pErrorMessages->push_back(Msg);
-		}
+			memset(pOutputImageBuffer->getHandle()->GetBufferAddress(), 0, static_cast<size_t>(width * height) );
 		}
 
 		if( bRetVal )
 		{
-			SVMatroxImageRotateStruct l_Rotate(InImageHandle->GetBuffer());
+			SVMatroxImageRotateStruct l_Rotate(pInputImageBuffer->getHandle()->GetBuffer());
 			l_Rotate.m_dAngle = angle;
 			l_Rotate.m_dSrcCenX = srcX + xDisplacement;
 			l_Rotate.m_dSrcCenY = srcY + yDisplacement;
@@ -332,7 +321,7 @@ bool SVImageTransformClass::onRun( SVRunStatusClass& runStatus, SvStl::MessageCo
 
 			// Use MimRotate to Rotate, Translate or Copy buffer
 			// Rotate...( and translate image )
-			HRESULT MatroxCode = SVMatroxImageInterface::Rotate(OutImageHandle->GetBuffer(), l_Rotate );
+			HRESULT MatroxCode = SVMatroxImageInterface::Rotate(pOutputImageBuffer->getHandle()->GetBuffer(), l_Rotate );
 
 			if (S_OK != MatroxCode)
 			{
@@ -489,7 +478,7 @@ HRESULT SVImageTransformClass::UpdateTransformData( )
 		::KeepPrevError( l_hrOk, m_outputImageObject.InitializeImage(pInputImage) );
 
 		// Return code for UpdateImageWithExtend not being checked because it may not be valid the first time.
-		pTool->UpdateImageWithExtent();
+		pTool->UpdateImageWithExtent(); 
 	}
 	else
 	{

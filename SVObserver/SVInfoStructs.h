@@ -24,12 +24,12 @@
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "InspectionEngine/SVCameraInfoStruct.h"
-#include "SVStatusLibrary/SVImageIndexStruct.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVObjectLibrary/SVIOEntryHostStruct.h"
 #include "SVStatusLibrary/ProductWorkloadInformation.h" 
 #include "TriggerInformation/SVTriggerObject.h"
 #include "TriggerInformation/SVTriggerInfoStruct.h"
+#include "TriggerRecordController/ITriggerRecordRW.h"
 #pragma endregion Includes
 
 class SVToolClass;
@@ -130,7 +130,7 @@ struct SVPPQInfoStruct
 
 	virtual ~SVPPQInfoStruct();
 
-	HRESULT Assign( const SVPPQInfoStruct &p_rsvObject, SVDataManagerLockTypeEnum p_LockType );
+	HRESULT Assign( const SVPPQInfoStruct &p_rsvObject );
 
 	void Reset();
 	void InitPPQInfo();
@@ -141,7 +141,6 @@ struct SVPPQInfoStruct
 	SVPPQObject* pPPQ;
 
 	SVDataManagerHandle m_ResultDataDMIndexHandle;
-	SVDataManagerHandle m_ResultImagePublishedDMIndexHandle;
 
 	SVIOEntryStructVector m_InputData;
 };
@@ -154,18 +153,20 @@ struct SVInspectionInfoStruct
 
 	const SVInspectionInfoStruct &operator=( const SVInspectionInfoStruct &p_rsvData );
 
-	HRESULT Assign( const SVInspectionInfoStruct &p_rsvData, SVDataManagerLockTypeEnum p_LockType );
+	HRESULT Assign( const SVInspectionInfoStruct &p_rsvData );
 
 	void Reset();
 	void Init();
 	void ClearIndexes();
 
-	HRESULT GetNextAvailableIndexes( SVDataManagerLockTypeEnum p_LockType );
+	HRESULT GetNextAvailableIndexes( );
 
+	void setNextTriggerRecord();
+
+	void SetProductComplete();
+	
 	SVInspectionProcess* pInspection;
 	SVProductInspectedState oInspectedState;
-	
-	SVDataManagerHandle m_ResultImageDMIndexHandle;
 
 	bool m_CanProcess;
 	bool m_InProcess;
@@ -176,6 +177,10 @@ struct SVInspectionInfoStruct
 	SvTl::SVTimeStamp m_BeginToolset;
 	SvTl::SVTimeStamp m_EndToolset;
 	SvTl::SVTimeStamp m_CallbackReceived;
+	
+	int m_inspectionPosInTrc = -1; //position of the inspection in triggerRecordController
+	SvTrc::ITriggerRecordRWPtr m_triggerRecordWrite = nullptr;
+	SvTrc::ITriggerRecordRPtr  m_triggerRecordComplete = nullptr;
 
 	double m_ToolSetEndTime;
 	double m_ToolSetAvgTime;
@@ -194,7 +199,7 @@ struct SVProductInfoStruct
 
 	const SVProductInfoStruct &operator=( const SVProductInfoStruct &p_rsvData );
 
-	HRESULT Assign( const SVProductInfoStruct &p_rsvData, SVDataManagerLockTypeEnum p_LockType );
+	HRESULT Assign( const SVProductInfoStruct &p_rsvData );
 
 	bool empty() const;
 
@@ -212,7 +217,6 @@ struct SVProductInfoStruct
 	void DumpIndexInfo( std::string& p_rData );
 
 	HRESULT GetResultDataIndex( SVDataManagerHandle& p_rHandle ) const;
-	HRESULT GetResultImageIndex( SVImageIndexStruct& p_rIndex, const SVGUID& p_rInspectionID ) const;
 
 	bool IsProductActive() const;
 	void SetProductActive();
@@ -252,13 +256,8 @@ struct SVInspectionCompleteInfoStruct
 
 	virtual ~SVInspectionCompleteInfoStruct();
 
-	HRESULT Assign( const SVGUID& p_rInspectionID, const SVProductInfoStruct& p_rProductInfo, SVDataManagerLockTypeEnum p_LockType );
-	HRESULT Assign( const SVInspectionCompleteInfoStruct& p_rObject, SVDataManagerLockTypeEnum p_LockType );
-
 	bool empty() const;
 	void clear();
-
-	void ClearExtraInspectionIndexes();
 
 	SVGUID m_InspectionID;
 	SVProductInfoStruct m_ProductInfo;

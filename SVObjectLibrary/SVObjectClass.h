@@ -79,9 +79,6 @@ public:
 	virtual void SetObjectDepth( int NewObjectDepth );
 	virtual void SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex );
 
-	virtual long GetImageDepth() const;
-	virtual bool SetImageDepth( long lDepth );
-
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure );
 	virtual void ConnectObject( const SVObjectLevelCreateStruct& rCreateStructure );
 	virtual bool CloseObject();
@@ -245,9 +242,6 @@ protected:
 
 	//This attribute holds the data depth of the embedded data elements.
 	int m_objectDepth;
-
-	//This attribute holds the image depth of the embedded image elements.
-	long m_lImageDepth;
 
 	//This attribute holds the validity state of the object.
 	mutable bool m_isObjectValid;

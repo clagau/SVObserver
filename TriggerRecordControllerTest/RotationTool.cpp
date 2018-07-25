@@ -27,17 +27,18 @@ namespace SvTrcT
 #pragma endregion Constructor
 
 #pragma region Public Methods
-	void RotationTool::reset(int pos, const SVMatroxBufferCreateStruct& bufferStructIn)
+	void RotationTool::reset(const GUID& sourceGuid, const SVMatroxBufferCreateStruct& bufferStructIn, SvTrc::ITriggerRecordControllerRW& recordController)
 	{
-		ToolObject::reset(pos, bufferStructIn);
+		ToolObject::reset(sourceGuid, bufferStructIn, recordController);
 		m_bufferStructOut = m_bufferStructIn;
+		recordController.addOrChangeImage(getGuid(), m_bufferStructOut);
 	};
 
-	bool RotationTool::run(SvTrc::ITriggerRecordRWPtr pTriggerRecord)
+	bool RotationTool::run(const SvTrc::ITriggerRecordRWPtr& pTriggerRecord)
 	{
 		bool retValue = false;
-		const auto pSourceImage = pTriggerRecord->getImage(m_pos);
-		auto pDestinationImage = pTriggerRecord->createNewImageHandle(m_pos + 1);
+		const auto pSourceImage = pTriggerRecord->getImage(m_sourceGuid);
+		auto pDestinationImage = pTriggerRecord->createNewImageHandle(m_guid);
 
 		if (nullptr != pSourceImage && nullptr != pSourceImage->getHandle() && nullptr != pDestinationImage && nullptr != pDestinationImage->getHandle())
 		{

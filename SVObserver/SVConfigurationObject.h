@@ -34,6 +34,7 @@
 #include "SVXMLLibrary\SVObjectXMLWriter.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "SVProtoBuf/TriggerRecordController.pb.h"
 #pragma endregion Includes
 
 
@@ -338,6 +339,9 @@ public:
 
 	bool HasCameraTrigger(SVPPQObject* p_pPPQ) const;
 
+	SvPb::InspectionList GetInspectionList4TRC() const { return m_inspList4TRC; };
+	void UpdateInspectionList4TRC();
+
 	//************************************
 	/// Update a toolset of a configuration tree and change older version to fit to the newer application. 
 	/// (e.g. if LUT Equation Clip is missing, it add them with the value false)
@@ -452,6 +456,7 @@ private:
 	volatile bool               m_bConfigurationValid;
 
 	SVAcquisitionDeviceMap m_AcquisitionDeviceMap;
+	SvPb::InspectionList m_inspList4TRC;
 };
 
 typedef std::shared_ptr< SVConfigurationObject > SVConfigurationObjectPtr;

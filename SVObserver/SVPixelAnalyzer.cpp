@@ -136,8 +136,6 @@ bool SVPixelAnalyzerClass::onRun(SVRunStatusClass &rRunStatus, SvStl::MessageCon
 	bool Result{true};
 	while (1)
 	{
-		SvOi::SVImageBufferHandlePtr ImageHandle;
-
 		SVImageClass* pInputImage = getInputImage(true);
 
 		if( ! pInputImage )
@@ -151,7 +149,8 @@ bool SVPixelAnalyzerClass::onRun(SVRunStatusClass &rRunStatus, SvStl::MessageCon
 			break;
 		}
 
-		if ( ! pInputImage->GetImageHandle( ImageHandle ) || nullptr == ImageHandle )
+		SvTrc::IImagePtr pImageBuffer = pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord);
+		if ( nullptr == pImageBuffer || pImageBuffer->isEmpty())
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)
@@ -162,12 +161,12 @@ bool SVPixelAnalyzerClass::onRun(SVRunStatusClass &rRunStatus, SvStl::MessageCon
 			break;
 		}
 
-		MimStatCalculate(m_contextID, ImageHandle->GetBuffer().GetIdentifier(), m_ResultID, M_DEFAULT);
+		MimStatCalculate(m_contextID, pImageBuffer->getHandle()->GetBuffer().GetIdentifier(), m_ResultID, M_DEFAULT);
 		MIL_INT32 NumerOfPixels = 0;
 		MimGetResult(m_ResultID, M_STAT_NUMBER+ M_TYPE_MIL_INT32, &NumerOfPixels);
 		m_pixelCount.SetValue(NumerOfPixels);
-		break;
-	}
+			break;
+		}
 
 	if (!Result)
 	{

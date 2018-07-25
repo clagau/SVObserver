@@ -46,12 +46,12 @@ SVImagePolarTransformClass::SVImagePolarTransformClass( SVObjectClass* POwner, i
 	RegisterInputObject( &m_inputImageObjectInfo, _T( "ImagePolarTransformImage" ) );
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &m_centerX, SVOutputCenterXObjectGuid, IDS_OBJECTNAME_CENTER_X, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_centerY, SVOutputCenterYObjectGuid, IDS_OBJECTNAME_CENTER_Y, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_startRadius, SVOutputStartRadiusObjectGuid, IDS_OBJECTNAME_START_RADIUS, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_endRadius, SVOutputEndRadiusObjectGuid, IDS_OBJECTNAME_END_RADIUS, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_startAngle, SVOutputStartAngleObjectGuid, IDS_OBJECTNAME_START_ANGLE, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_endAngle, SVOutputEndAngleObjectGuid, IDS_OBJECTNAME_END_ANGLE, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_centerX, SVOutputCenterXObjectGuid, IDS_OBJECTNAME_CENTER_X, false, SvOi::SVResetItemTool);
+	RegisterEmbeddedObject( &m_centerY, SVOutputCenterYObjectGuid, IDS_OBJECTNAME_CENTER_Y, false, SvOi::SVResetItemTool);
+	RegisterEmbeddedObject( &m_startRadius, SVOutputStartRadiusObjectGuid, IDS_OBJECTNAME_START_RADIUS, false, SvOi::SVResetItemTool);
+	RegisterEmbeddedObject( &m_endRadius, SVOutputEndRadiusObjectGuid, IDS_OBJECTNAME_END_RADIUS, false, SvOi::SVResetItemTool);
+	RegisterEmbeddedObject( &m_startAngle, SVOutputStartAngleObjectGuid, IDS_OBJECTNAME_START_ANGLE, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_endAngle, SVOutputEndAngleObjectGuid, IDS_OBJECTNAME_END_ANGLE, false, SvOi::SVResetItemTool);
 	RegisterEmbeddedObject( &m_interpolationMode, SVOutputInterpolationModeObjectGuid, IDS_OBJECTNAME_INTERPOLATION_MODE, false, SvOi::SVResetItemNone );
 
 	RegisterEmbeddedObject( &m_useFormulaInput, SVOutputUseFormulaObjectGuid, IDS_OBJECTNAME_USE_FORMULA, false, SvOi::SVResetItemTool );
@@ -552,22 +552,19 @@ bool SVImagePolarTransformClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Mes
 	{
 		SVImageExtentClass l_svExtents;
 
-		SvOi::SVImageBufferHandlePtr l_svInputHandle;
-		SvOi::SVImageBufferHandlePtr l_svOutputHandle;
-
 		SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
 		l_bOk = l_bOk && (nullptr != pTool) && (S_OK == pTool->GetImageExtent( l_svExtents ));
-
-		l_bOk = l_bOk && outputImageObject.SetImageHandleIndex( rRunStatus.Images );
 
 		//added "true" to the call of UpdateImage - if the tool only changes position the output image does not need to be re-created
 		l_bOk = l_bOk && S_OK == outputImageObject.UpdateImage( l_svExtents, true );
 
+		SvTrc::IImagePtr pOutputImageBuffer = outputImageObject.getImageToWrite(rRunStatus.m_triggerRecord);
+		l_bOk = l_bOk && nullptr != pOutputImageBuffer && !pOutputImageBuffer->isEmpty();
+
 		l_svExtents = outputImageObject.GetImageExtents( );
 
-		l_bOk = l_bOk && outputImageObject.GetImageHandle( l_svOutputHandle ) && (nullptr != l_svOutputHandle);
-
-		l_bOk = l_bOk && SvOl::getInput<SVImageClass>(m_inputImageObjectInfo, true)->GetImageHandle( l_svInputHandle ) && (nullptr != l_svInputHandle);
+		SvTrc::IImagePtr pInputImageBuffer = SvOl::getInput<SVImageClass>(m_inputImageObjectInfo, true)->getImageReadOnly(rRunStatus.m_triggerRecord);
+		l_bOk = l_bOk && nullptr != pInputImageBuffer && !pInputImageBuffer->isEmpty();
 
 		if (!l_bOk && nullptr != pErrorMessages)
 		{
@@ -636,7 +633,7 @@ bool SVImagePolarTransformClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Mes
 					AnglesTo360(l_dTmpStartAngle, l_dTmpEndAngle);
 
 
-					SVMatroxPolarTransformStruct l_Polar(l_svInputHandle->GetBuffer());
+					SVMatroxPolarTransformStruct l_Polar(pInputImageBuffer->getHandle()->GetBuffer());
 					l_Polar.m_dCenterX = dCenterX;
 					l_Polar.m_dCenterY = dCenterY;
 					l_Polar.m_dStartRadius = dStartRadius;
@@ -646,7 +643,7 @@ bool SVImagePolarTransformClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Mes
 					l_Polar.m_eInterpMode = static_cast<SVImageOperationTypeEnum>(l_lInterpolationMode);
 					l_Polar.m_eOpMode = SVRectToPolar;
 
-					MatroxCode = SVMatroxImageInterface::PolarTransform(l_svOutputHandle->GetBuffer(), l_Polar );
+					MatroxCode = SVMatroxImageInterface::PolarTransform(pOutputImageBuffer->getHandle()->GetBuffer(), l_Polar );
 
 
 
@@ -657,7 +654,7 @@ bool SVImagePolarTransformClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Mes
 
 						if( l_dPartialWidth >= 1.0 )
 						{
-							MatroxCode = SVMatroxBufferInterface::CopyBuffer(l_svOutputHandle->GetBuffer(), l_svOutputHandle->GetBuffer(), (long) l_Polar.m_dDestSizeX,  0L);
+							MatroxCode = SVMatroxBufferInterface::CopyBuffer(pOutputImageBuffer->getHandle()->GetBuffer(), pOutputImageBuffer->getHandle()->GetBuffer(), (long) l_Polar.m_dDestSizeX,  0L);
 						}
 					}
 

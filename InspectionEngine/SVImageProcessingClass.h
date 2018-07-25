@@ -54,6 +54,15 @@ public:
 	static HRESULT ResizeDataBuffer( SVDataBufferInfoClass* pDataInfo, long lNewLength );
 	
 	static HRESULT CreateBarCodeBuffer( SVBarCodeBufferInfoClass* pDataInfo );
+
+	static HRESULT FillBufferStructFromInfo(const SVImageInfoClass& rInfo, SVMatroxBufferCreateStruct& bufferStruct);
+
+	/// Fill a childBufferStruct with the information from the image information. (but not the parent-handle)
+	/// \param rParentInfo [in] Parent imageInfo.
+	/// \param rChildInfo [in,out] Child imageInfo. If childInfo will not fit to rParentInfo, it will be fitted. 
+	/// \param rChildBufferStruct [in,out] The changed childBufferStruct. It will only be changed if return value is S_OK.
+	/// \returns HRESULT
+	static HRESULT FillChildBufferStructFromInfo(const SVImageInfoClass& rParentInfo, SVImageInfoClass& rChildInfo, MatroxBufferChildDataStruct& rChildBufferStruct);
 private:
 	static HRESULT GetOutputImageCreateData( const SVImageInfoClass &p_rsvInfo,
 															      SvDef::SVImageFormatEnum &p_reFormat,
@@ -72,16 +81,6 @@ private:
 															     long &p_rlHeight );
 	
 
-	//************************************
-	//! Create a image buffer
-	//! \param pixelDepth [in] 
-	//! \param bandNumber [in]
-	//! \param width [in]
-	//! \param height [in]
-	//! \param format [in]
-	//! \param rHandle [out] handle to the new image buffer
-	//! \returns HRESULT
-	//************************************
-	static HRESULT CreateImageBuffer( int pixelDepth, int bandNumber, long width, long height, SVMatroxBufferAttributeEnum format, SvOi::SVImageBufferHandlePtr &rHandle );
+	static HRESULT CreateImageBuffer(SVMatroxBufferCreateStruct& bufferStruct, SvOi::SVImageBufferHandlePtr &rHandle);
 };
 

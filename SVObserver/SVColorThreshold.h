@@ -11,6 +11,7 @@
 #pragma once
 
 #pragma region Includes
+#include <mil.h>
 #include "SVColorTool.h"
 #include "SVDrawObject.h"
 #include "InspectionEngine/SVImageClass.h"
@@ -75,8 +76,8 @@ private:
 	bool createOutputImage(SVImageClass* pInputImage, SVImageClass* pOutputImage);
 	bool createHistogramImage(SVImageClass* pInputImage, SVImageClass* pOutputImage);
 
-	bool Binarize(long Lower, long Upper, BOOL Exclude, BandEnum Band);
-	bool getHistogram(BandEnum Band);
+	bool Binarize(long Lower, long Upper, BOOL Exclude, SvTrc::IImagePtr pInputImage, SvTrc::IImagePtr pOutputImage);
+	bool getHistogram(BandEnum Band, SvTrc::IImagePtr pImage);
 	bool updateThresholdBars(long lMinThresholdValue, long lMaxThresholdValue, BandEnum Band);
 	bool ValidateLocal() const;
 

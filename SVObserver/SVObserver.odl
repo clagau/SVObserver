@@ -303,13 +303,13 @@ library SVObserver
 
 		[id(0x60020021), helpstring("method SVSetToolParameterList")] HRESULT SVSetToolParameterList([in] SAFEARRAY(BSTR) saNames, [in] SAFEARRAY(BSTR) saValues, [in,out] SAFEARRAY(long)* psaStatus);
 
-		[id(0x60020022), helpstring("method SVLockImage")] HRESULT SVLockImage([in] long lindex, [in] long lProcessCount, [in] BSTR strName);
+		[id(0x60020022), helpstring("method SVLockImage (out of order)")] HRESULT SVLockImage([in] long lindex, [in] long lProcessCount, [in] BSTR strName);
 
-		[id(0x60020023), helpstring("method SVGetLockedImage")] HRESULT SVGetLockedImage([in] long lindex, [in] long lCompression, [in,out] BSTR *bsImage, [in,out] BSTR *bsOverlay);
+		[id(0x60020023), helpstring("method SVGetLockedImage (out of order)")] HRESULT SVGetLockedImage([in] long lindex, [in] long lCompression, [in,out] BSTR *bsImage, [in,out] BSTR *bsOverlay);
 
-		[id(0x60020024), helpstring("method SVUnlockImage")] HRESULT SVUnlockImage([in] long lindex);
+		[id(0x60020024), helpstring("method SVUnlockImage (out of order)")] HRESULT SVUnlockImage([in] long lindex);
 
-		[id(0x60020025), helpstring("method SVUnlockAllImages")] HRESULT SVUnlockAllImages();
+		[id(0x60020025), helpstring("method SVUnlockAllImages (out of order)")] HRESULT SVUnlockAllImages();
 
 		//Retrieves a count of the number of Remote Inputs that are available
 		//

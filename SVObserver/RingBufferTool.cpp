@@ -206,25 +206,25 @@ bool RingBufferTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContaine
 			m_ImageIndexManager[i].GetValue( depthVariant );
 			if (cVarType_imageIndex == depthVariant.vt && 0 < depthVariant.lVal && ringBufferDepth >= depthVariant.lVal) //imageIndex invalid -> output image deactivated.
 			{
-				imageOutputFlag |= SetOutputImage(i, depthVariant.lVal, maxIndexPos, ringBufferDepth);
+				imageOutputFlag |= SetOutputImage(i, depthVariant.lVal, maxIndexPos, ringBufferDepth, rRunStatus.m_triggerRecord);
 			}
 		}
 
 		//copy input image to ring buffer
 		SvOi::SVImageBufferHandlePtr milHandleTo;
-		SvOi::SVImageBufferHandlePtr inputImageBuffer;
 		if( static_cast<int>(m_ringBuffer.size()) > m_nextBufferPos && nullptr != m_ringBuffer[m_nextBufferPos] )
 		{
 			milHandleTo = m_ringBuffer[m_nextBufferPos];
 		}
 		SVImageClass* pInputImage = SvOl::getInput<SVImageClass>(m_InputImageObjectInfo, true);
+		SvTrc::IImagePtr pInputImageBuffer;
 		if (nullptr != pInputImage)
 		{
-			pInputImage->GetImageHandle(inputImageBuffer);
+			pInputImageBuffer = pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord);
 		}
-		if (nullptr != milHandleTo.get() && !milHandleTo->empty() && nullptr != inputImageBuffer.get() && !inputImageBuffer->empty())
+		if (nullptr != milHandleTo.get() && !milHandleTo->empty() && nullptr != pInputImageBuffer && !pInputImageBuffer->isEmpty())
 		{
-			SVMatroxBufferInterface::CopyBuffer( milHandleTo->GetBuffer(), inputImageBuffer->GetBuffer());
+			SVMatroxBufferInterface::CopyBuffer( milHandleTo->GetBuffer(), pInputImageBuffer->getHandle()->GetBuffer());
 		}
 
 		//calculate next image pos
@@ -306,7 +306,7 @@ void RingBufferTool::BuildEmbeddedObjectList ()
 	}
 }
 
-int RingBufferTool::SetOutputImage( int outputIndex, int imageIndex, int maxIndexPos, long ringBufferDepth )
+int RingBufferTool::SetOutputImage( int outputIndex, int imageIndex, int maxIndexPos, long ringBufferDepth, const SvTrc::ITriggerRecordRWPtr& pTriggerRecord)
 {
 	int retValue = 0;
 	int pos = (m_nextBufferPos + imageIndex - 1)%ringBufferDepth;
@@ -315,11 +315,10 @@ int RingBufferTool::SetOutputImage( int outputIndex, int imageIndex, int maxInde
 	{
 		if (static_cast<int>(m_ringBuffer.size()) > pos && nullptr != m_ringBuffer[pos])
 		{
-			SvOi::SVImageBufferHandlePtr outputImageBuffer;
-			m_OutputImages[outputIndex].GetImageHandle(outputImageBuffer);
-			if (nullptr != outputImageBuffer && !outputImageBuffer->empty() && !m_ringBuffer[pos]->empty())
+			SvTrc::IImagePtr image = m_OutputImages[outputIndex].getImageToWrite(pTriggerRecord);
+			if (nullptr != image && !image->isEmpty())
 			{
-				HRESULT statusCode = SVMatroxBufferInterface::CopyBuffer(outputImageBuffer->GetBuffer(), m_ringBuffer[pos]->GetBuffer());
+				HRESULT statusCode = SVMatroxBufferInterface::CopyBuffer(image->getHandle()->GetBuffer(), m_ringBuffer[pos]->GetBuffer());
 				if (S_OK == statusCode)
 				{
 					retValue = 1 << outputIndex;

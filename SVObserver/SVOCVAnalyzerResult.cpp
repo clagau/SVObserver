@@ -690,11 +690,11 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 		}
 		else
 		{
-			SvOi::SVImageBufferHandlePtr ImageHandle;
+			SvTrc::IImagePtr pInputBuffer = pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord);
 
-			if( pInputImage->GetImageHandle( ImageHandle ) && nullptr != ImageHandle)
+			if( nullptr != pInputBuffer && ! pInputBuffer->isEmpty())
 			{
-				l_milImageID = ImageHandle->GetBuffer();
+				l_milImageID = pInputBuffer->getHandle()->GetBuffer();
 
 				//
 				// Get the Mil buffer host pointer ( address in the process address space )

@@ -193,7 +193,6 @@ void SVOutputsInfoStruct::Init()
 SVPPQInfoStruct::SVPPQInfoStruct()
 : pPPQ()
 , m_ResultDataDMIndexHandle()
-, m_ResultImagePublishedDMIndexHandle()
 ,	m_InputData()
 {
 }
@@ -201,11 +200,9 @@ SVPPQInfoStruct::SVPPQInfoStruct()
 SVPPQInfoStruct::SVPPQInfoStruct( const SVPPQInfoStruct& p_rsvObject )
 : pPPQ( p_rsvObject.pPPQ )
 , m_ResultDataDMIndexHandle()
-, m_ResultImagePublishedDMIndexHandle()
 ,	m_InputData( p_rsvObject.m_InputData )
 {
 	m_ResultDataDMIndexHandle.Assign( p_rsvObject.m_ResultDataDMIndexHandle, p_rsvObject.m_ResultDataDMIndexHandle.GetLockType() );
-	m_ResultImagePublishedDMIndexHandle.Assign( p_rsvObject.m_ResultImagePublishedDMIndexHandle, p_rsvObject.m_ResultImagePublishedDMIndexHandle.GetLockType() );
 }
 
 SVPPQInfoStruct::~SVPPQInfoStruct()
@@ -213,31 +210,17 @@ SVPPQInfoStruct::~SVPPQInfoStruct()
 	Reset();
 }
 
-HRESULT SVPPQInfoStruct::Assign( const SVPPQInfoStruct &p_rsvObject, SVDataManagerLockTypeEnum p_LockType )
+HRESULT SVPPQInfoStruct::Assign( const SVPPQInfoStruct &p_rsvObject )
 {
 	HRESULT l_Status = S_OK;
 
 	if( this != &p_rsvObject )
 	{
-		HRESULT l_Temp = S_OK;
-
 		pPPQ = p_rsvObject.pPPQ;
 
 		m_InputData = p_rsvObject.m_InputData;
 
-		l_Temp = m_ResultDataDMIndexHandle.Assign( p_rsvObject.m_ResultDataDMIndexHandle, p_rsvObject.m_ResultDataDMIndexHandle.GetLockType() );
-
-		if( S_OK == l_Status )
-		{
-			l_Status = l_Temp;
-		}
-
-		l_Temp = m_ResultImagePublishedDMIndexHandle.Assign( p_rsvObject.m_ResultImagePublishedDMIndexHandle, p_rsvObject.m_ResultImagePublishedDMIndexHandle.GetLockType() );
-	
-		if( S_OK == l_Status )
-		{
-			l_Status = l_Temp;
-		}
+		l_Status = m_ResultDataDMIndexHandle.Assign( p_rsvObject.m_ResultDataDMIndexHandle, p_rsvObject.m_ResultDataDMIndexHandle.GetLockType() );
 	}
 	
 	return l_Status;
@@ -267,7 +250,6 @@ void SVPPQInfoStruct::InitPPQInfo()
 void SVPPQInfoStruct::ClearIndexes()
 {
 	m_ResultDataDMIndexHandle.clear();
-	m_ResultImagePublishedDMIndexHandle.clear();
 }
 
 HRESULT SVPPQInfoStruct::GetNextAvailableIndexes( SVDataManagerLockTypeEnum p_LockType )
@@ -290,7 +272,6 @@ HRESULT SVPPQInfoStruct::GetNextAvailableIndexes( SVDataManagerLockTypeEnum p_Lo
 SVInspectionInfoStruct::SVInspectionInfoStruct()
 :	pInspection( nullptr ),
 	oInspectedState(PRODUCT_NOT_INSPECTED),
-	m_ResultImageDMIndexHandle(),
 	m_CanProcess( false ),
 	m_InProcess( false ),
 	m_HasBeenQueued( false ),
@@ -308,7 +289,6 @@ SVInspectionInfoStruct::SVInspectionInfoStruct()
 SVInspectionInfoStruct::SVInspectionInfoStruct( const SVInspectionInfoStruct &p_rsvData )
 :	pInspection( nullptr ),
 	oInspectedState(),
-	m_ResultImageDMIndexHandle(),
 	m_CanProcess( false ),
 	m_InProcess( false ),
 	m_HasBeenQueued( false ),
@@ -321,7 +301,7 @@ SVInspectionInfoStruct::SVInspectionInfoStruct( const SVInspectionInfoStruct &p_
 	m_ToolSetAvgTime( 0.0 ),
 	m_lastInspectedSlot(-1)
 {
-	Assign( p_rsvData, p_rsvData.m_ResultImageDMIndexHandle.GetLockType() );
+	Assign( p_rsvData );
 }
 
 SVInspectionInfoStruct::~SVInspectionInfoStruct()
@@ -331,22 +311,16 @@ SVInspectionInfoStruct::~SVInspectionInfoStruct()
 
 const SVInspectionInfoStruct &SVInspectionInfoStruct::operator=( const SVInspectionInfoStruct &p_rsvData )
 {
-	if( this != &p_rsvData )
-	{
-		Assign( p_rsvData, p_rsvData.m_ResultImageDMIndexHandle.GetLockType() );
-	}
-
+	Assign( p_rsvData );
 	return *this;
 }
 
-HRESULT SVInspectionInfoStruct::Assign( const SVInspectionInfoStruct &p_rsvData, SVDataManagerLockTypeEnum p_LockType )
+HRESULT SVInspectionInfoStruct::Assign( const SVInspectionInfoStruct &p_rsvData )
 {
 	HRESULT l_Status = S_OK;
 
 	if( this != &p_rsvData )
 	{
-		HRESULT l_Temp = S_OK;
-
 		pInspection = p_rsvData.pInspection;
 		oInspectedState = p_rsvData.oInspectedState;
 		m_CanProcess = p_rsvData.m_CanProcess;
@@ -361,13 +335,9 @@ HRESULT SVInspectionInfoStruct::Assign( const SVInspectionInfoStruct &p_rsvData,
 		m_ToolSetEndTime = p_rsvData.m_ToolSetEndTime;
 		m_ToolSetAvgTime = p_rsvData.m_ToolSetAvgTime;
 		m_lastInspectedSlot = p_rsvData.m_lastInspectedSlot;
-
-		l_Temp = m_ResultImageDMIndexHandle.Assign( p_rsvData.m_ResultImageDMIndexHandle, p_LockType );
-
-		if( S_OK == l_Status )
-		{
-			l_Status = l_Temp;
-		}
+		m_triggerRecordWrite = p_rsvData.m_triggerRecordWrite;
+		m_triggerRecordComplete = p_rsvData.m_triggerRecordComplete;
+		m_inspectionPosInTrc = p_rsvData.m_inspectionPosInTrc;
 	}
 	
 	return l_Status;
@@ -394,6 +364,8 @@ void SVInspectionInfoStruct::Reset()
 	m_ToolSetEndTime = 0.0;
 	m_ToolSetAvgTime = 0.0;
 
+	m_triggerRecordWrite = nullptr;
+	m_triggerRecordComplete = nullptr;
 	m_lastInspectedSlot = -1;
 	ClearIndexes();
 }// end Reset
@@ -418,6 +390,8 @@ void SVInspectionInfoStruct::Init()
 	m_ToolSetEndTime = 0.0;
 	m_ToolSetAvgTime = 0.0;
 
+	m_triggerRecordWrite = nullptr;
+	m_triggerRecordComplete = nullptr;
 	m_lastInspectedSlot = -1;
 
 	ClearIndexes();
@@ -427,17 +401,15 @@ void SVInspectionInfoStruct::ClearIndexes()
 {
 	m_CanProcess = false;
 	m_InProcess = false;
-
-	m_ResultImageDMIndexHandle.clear();
 }
 
-HRESULT SVInspectionInfoStruct::GetNextAvailableIndexes( SVDataManagerLockTypeEnum p_LockType )
+HRESULT SVInspectionInfoStruct::GetNextAvailableIndexes( )
 {
 	HRESULT l_Status = S_OK;
 
 	if( nullptr != pInspection )
 	{
-		pInspection->GetNextAvailableIndexes( *this, p_LockType );
+		setNextTriggerRecord();
 	}
 	else
 	{
@@ -445,6 +417,23 @@ HRESULT SVInspectionInfoStruct::GetNextAvailableIndexes( SVDataManagerLockTypeEn
 	}
 
 	return l_Status;
+}
+
+void SVInspectionInfoStruct::setNextTriggerRecord()
+{
+	m_triggerRecordWrite = SvTrc::getTriggerRecordControllerRWInstance().createTriggerRecordObjectToWrite(m_inspectionPosInTrc);
+	m_triggerRecordComplete = nullptr;
+}
+
+void SVInspectionInfoStruct::SetProductComplete()
+{
+	m_CanProcess = false;
+	m_InProcess = false;
+
+	if (nullptr != m_triggerRecordWrite)
+	{
+		m_triggerRecordComplete = SvTrc::getTriggerRecordControllerRWInstance().closeWriteAndOpenReadTriggerRecordObject(m_triggerRecordWrite);
+	}
 }
 
 SVProductInfoStruct::SVProductInfoStruct()
@@ -509,7 +498,7 @@ const SVProductInfoStruct &SVProductInfoStruct::operator=( const SVProductInfoSt
 		m_svInspectionInfos = p_rsvData.m_svInspectionInfos;
 		m_lastInspectedSlot = p_rsvData.m_lastInspectedSlot;
 		if( p_rsvData.IsProductActive() )
-		{
+{
 			SetProductActive();
 		}
 	}
@@ -517,7 +506,7 @@ const SVProductInfoStruct &SVProductInfoStruct::operator=( const SVProductInfoSt
 	return *this;
 }
 
-HRESULT SVProductInfoStruct::Assign( const SVProductInfoStruct &p_rsvData, SVDataManagerLockTypeEnum p_LockType )
+HRESULT SVProductInfoStruct::Assign( const SVProductInfoStruct &p_rsvData )
 {
 	HRESULT l_Status = S_OK;
 
@@ -539,7 +528,7 @@ HRESULT SVProductInfoStruct::Assign( const SVProductInfoStruct &p_rsvData, SVDat
 		oInputsInfo = p_rsvData.oInputsInfo;
 		oOutputsInfo = p_rsvData.oOutputsInfo;
 
-		l_Status = oPPQInfo.Assign( p_rsvData.oPPQInfo, p_LockType );
+		l_Status = oPPQInfo.Assign( p_rsvData.oPPQInfo );
 
 		m_lastInspectedSlot = p_rsvData.m_lastInspectedSlot;
 		SVGuidSVCameraInfoStructMap::iterator l_Iter;
@@ -565,7 +554,7 @@ HRESULT SVProductInfoStruct::Assign( const SVProductInfoStruct &p_rsvData, SVDat
 
 		while( l_RightIter != p_rsvData.m_svCameraInfos.end() )
 		{
-			HRESULT l_Temp = m_svCameraInfos[ l_RightIter->first ].Assign( l_RightIter->second, p_LockType );
+			HRESULT l_Temp = m_svCameraInfos[ l_RightIter->first ].Assign( l_RightIter->second );
 
 			if( S_OK == l_Status )
 			{
@@ -581,7 +570,7 @@ HRESULT SVProductInfoStruct::Assign( const SVProductInfoStruct &p_rsvData, SVDat
 
 		while( l_InspectIter != p_rsvData.m_svInspectionInfos.end() )
 		{
-			HRESULT l_Temp = m_svInspectionInfos[ l_InspectIter->first ].Assign( l_InspectIter->second, p_LockType );
+			HRESULT l_Temp = m_svInspectionInfos[ l_InspectIter->first ].Assign( l_InspectIter->second );
 
 			if( S_OK == l_Status )
 			{
@@ -710,10 +699,10 @@ HRESULT SVProductInfoStruct::GetNextAvailableIndexes( SVDataManagerLockTypeEnum 
 
 	for( ;m_svCameraInfos.end() != CameraIter; ++CameraIter )
 	{
-		HRESULT l_Temp = CameraIter->second.GetNextAvailableIndexes( p_LockType );
-		if( S_OK == l_Status )
+		SvTrc::IImagePtr pImage = CameraIter->second.GetNextImage();
+		if( S_OK == l_Status && nullptr == pImage )
 		{
-			l_Status = l_Temp;
+			l_Status = E_FAIL;
 		}
 	}
 
@@ -721,7 +710,7 @@ HRESULT SVProductInfoStruct::GetNextAvailableIndexes( SVDataManagerLockTypeEnum 
 
 	while( l_svInspectionIter != m_svInspectionInfos.end() )
 	{
-		HRESULT l_Temp = l_svInspectionIter->second.GetNextAvailableIndexes( p_LockType );
+		HRESULT l_Temp = l_svInspectionIter->second.GetNextAvailableIndexes( );
 
 		if( S_OK == l_Status )
 		{
@@ -748,11 +737,10 @@ bool SVProductInfoStruct::IsAlive() const
 
 void SVProductInfoStruct::DumpIndexInfo( std::string& rData )
 {
-	rData = SvUl::Format( _T( "TriggerCount=%ld-DataComplete=%s-ResultDataIndex=%ld-PublishedImageIndex=%ld" ),
+	rData = SvUl::Format( _T( "TriggerCount=%ld-DataComplete=%s-ResultDataIndex=%ld" ),
 		ProcessCount(),
 		( bDataComplete ) ? _T( "T" ) : _T( "F" ),
-		oPPQInfo.m_ResultDataDMIndexHandle.GetIndex(), 
-		oPPQInfo.m_ResultImagePublishedDMIndexHandle.GetIndex() );
+		oPPQInfo.m_ResultDataDMIndexHandle.GetIndex() );
 
 	SVGuidSVCameraInfoStructMap::const_iterator CamIter = m_svCameraInfos.begin();
 
@@ -768,7 +756,8 @@ void SVProductInfoStruct::DumpIndexInfo( std::string& rData )
 				CameraName = pCamera->GetName();
 			}
 
-			rData += SvUl::Format( _T( " : %s-Index=%ld" ), CameraName.c_str(), CamIter->second.GetIndex() );
+			SvTrc::IImagePtr pImage = CamIter->second.getImage();
+			rData += SvUl::Format( _T( " : %s-Index=%ld" ), CameraName.c_str(), (nullptr != pImage) ? pImage->getBufferPos() : -1);
 		}
 	}
 
@@ -776,10 +765,9 @@ void SVProductInfoStruct::DumpIndexInfo( std::string& rData )
 
 	while( l_InspectIter != m_svInspectionInfos.end() )
 	{
-		std::string l_Temp = SvUl::Format( _T( " : %s-State=0x%x-Index=%ld" ), 
+		std::string l_Temp = SvUl::Format( _T( " : %s-State=0x%x" ), 
 			( nullptr != l_InspectIter->second.pInspection ) ? l_InspectIter->second.pInspection->GetName() : _T( "(null)" ), 
-			l_InspectIter->second.oInspectedState,
-			l_InspectIter->second.m_ResultImageDMIndexHandle.GetIndex() );
+			l_InspectIter->second.oInspectedState );
 
 		rData += l_Temp;
 
@@ -789,36 +777,9 @@ void SVProductInfoStruct::DumpIndexInfo( std::string& rData )
 
 HRESULT SVProductInfoStruct::GetResultDataIndex( SVDataManagerHandle& p_rHandle ) const
 {
-	HRESULT l_Status = S_OK;
-
 	const SVDataManagerHandle& l_rTemp = oPPQInfo.m_ResultDataDMIndexHandle;
 
-	l_Status = p_rHandle.Assign( l_rTemp, l_rTemp.GetLockType() );
-
-	return l_Status;
-}
-
-HRESULT SVProductInfoStruct::GetResultImageIndex( SVImageIndexStruct& p_rIndex, const SVGUID& p_rInspectionID ) const
-{
-	HRESULT l_Status = S_OK;
-
-	SVGUIDSVInspectionInfoStructMap::const_iterator l_Iter = m_svInspectionInfos.find( p_rInspectionID );
-
-	if( l_Iter != m_svInspectionInfos.end() )
-	{
-		HRESULT l_Temp = S_OK;
-
-		l_Status = p_rIndex.m_ResultDMIndexHandle.Assign( l_Iter->second.m_ResultImageDMIndexHandle, 
-			l_Iter->second.m_ResultImageDMIndexHandle.GetLockType() );
-
-		l_Temp = p_rIndex.m_PublishedResultDMIndexHandle.Assign( oPPQInfo.m_ResultImagePublishedDMIndexHandle, 
-			oPPQInfo.m_ResultImagePublishedDMIndexHandle.GetLockType() );
-
-		if( S_OK == l_Status )
-		{
-			l_Status = l_Temp;
-		}
-	}
+	HRESULT l_Status = p_rHandle.Assign( l_rTemp, l_rTemp.GetLockType() );
 
 	return l_Status;
 }
@@ -850,9 +811,7 @@ void SVProductInfoStruct::SetProductComplete()
 	
 	while( l_svInspectionIter != m_svInspectionInfos.end() )
 	{
-		l_svInspectionIter->second.m_CanProcess = false;
-		l_svInspectionIter->second.m_InProcess = false;
-
+		l_svInspectionIter->second.SetProductComplete();
 		++l_svInspectionIter;
 	}
 }
@@ -865,41 +824,15 @@ SVInspectionCompleteInfoStruct::SVInspectionCompleteInfoStruct()
 SVInspectionCompleteInfoStruct::SVInspectionCompleteInfoStruct( const SVGUID& p_rInspectionID, const SVProductInfoStruct& p_rProductInfo )
 : m_InspectionID( p_rInspectionID ), m_ProductInfo( p_rProductInfo )
 {
-	ClearExtraInspectionIndexes();
 }
 
 SVInspectionCompleteInfoStruct::SVInspectionCompleteInfoStruct( const SVInspectionCompleteInfoStruct& p_rObject )
 : m_InspectionID( p_rObject.m_InspectionID ), m_ProductInfo( p_rObject.m_ProductInfo )
 {
-	ClearExtraInspectionIndexes();
 }
 
 SVInspectionCompleteInfoStruct::~SVInspectionCompleteInfoStruct()
 {
-}
-
-HRESULT SVInspectionCompleteInfoStruct::Assign( const SVGUID& p_rInspectionID, const SVProductInfoStruct& p_rProductInfo, SVDataManagerLockTypeEnum p_LockType )
-{
-	HRESULT l_Status = S_OK;
-
-	m_InspectionID = p_rInspectionID;
-
-	l_Status = m_ProductInfo.Assign( p_rProductInfo, p_LockType );
-
-	ClearExtraInspectionIndexes();
-
-	return l_Status;
-}
-
-HRESULT SVInspectionCompleteInfoStruct::Assign( const SVInspectionCompleteInfoStruct& p_rObject, SVDataManagerLockTypeEnum p_LockType )
-{
-	HRESULT l_Status = S_OK;
-
-	l_Status = Assign( p_rObject.m_InspectionID, p_rObject.m_ProductInfo, p_LockType );
-
-	ClearExtraInspectionIndexes();
-
-	return l_Status;
 }
 
 bool SVInspectionCompleteInfoStruct::empty() const
@@ -916,21 +849,6 @@ void SVInspectionCompleteInfoStruct::clear()
 {
 	m_InspectionID.clear();
 	m_ProductInfo.Reset();
-}
-
-void SVInspectionCompleteInfoStruct::ClearExtraInspectionIndexes()
-{
-	SVGUIDSVInspectionInfoStructMap::iterator l_Iter( m_ProductInfo.m_svInspectionInfos.begin() );
-
-	while( l_Iter != m_ProductInfo.m_svInspectionInfos.end() )
-	{
-		if( m_InspectionID != l_Iter->first )
-		{
-			l_Iter->second.m_ResultImageDMIndexHandle.clear();
-		}
-
-		++l_Iter;
-	}
 }
 
 SVInspectionNameUpdate::SVInspectionNameUpdate()
