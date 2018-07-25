@@ -20,7 +20,6 @@ namespace SvLib
 	const int MaxTriggers = 4;
 	#pragma endregion Declarations
 
-
 	class SVOIniLoader
 	{
 
@@ -58,4 +57,8 @@ namespace SvLib
 		std::string m_Opto22OutputInvert;
 	};
 
+	/// Read SerialNumber from BIOS and if it a valid (8 oder 9 character) the return true
+	/// \param serialNumber [in]
+	/// \returns bool True if serialNumber could be read and it have (after trim) 8 oder 9 character.
+	bool readSerialNumberFromSystem(std::string& serialNumber);
 } //namespace SvLib

@@ -41,14 +41,14 @@ static char THIS_FILE[] = __FILE__;
 #define SERIALNUMBER_SIZE	20
 #define MODELNUMBER_SIZE	8
 
-static const TCHAR g_tszSVOUpdateFirmware[] = _T( "Software\\SVR Gesellschaft für Bildverarbeitung mbH\\SVObserver\\Utilities\\Update Firmware" );
-static const TCHAR g_tszSVOSettings[] = _T( "Software\\SVR Gesellschaft für Bildverarbeitung mbH\\SVObserver\\Settings" );
-static const TCHAR productIdLocation[] = _T( "Software\\Microsoft\\Windows NT\\CurrentVersion" );
-static const TCHAR oemSection[] = _T( "OEMSpecific" );
-static const TCHAR generalSection[] = _T( "general" );
-static const TCHAR UserDataSection[] = _T( "UserData" );
+static const TCHAR g_tszSVOUpdateFirmware[] = _T("Software\\SVR Gesellschaft für Bildverarbeitung mbH\\SVObserver\\Utilities\\Update Firmware");
+static const TCHAR g_tszSVOSettings[] = _T("Software\\SVR Gesellschaft für Bildverarbeitung mbH\\SVObserver\\Settings");
+static const TCHAR productIdLocation[] = _T("Software\\Microsoft\\Windows NT\\CurrentVersion");
+static const TCHAR oemSection[] = _T("OEMSpecific");
+static const TCHAR generalSection[] = _T("general");
+static const TCHAR UserDataSection[] = _T("UserData");
 
-static const TCHAR g_tszWindowsRunOnce[] = _T( "Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce" );
+static const TCHAR g_tszWindowsRunOnce[] = _T("Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce");
 
 static const TCHAR g_bootIniFilepath[] = _T("C:\\boot.ini");
 static const TCHAR g_bootIniBackupFilepath[] = _T("C:\\boot.%03d");
@@ -120,85 +120,85 @@ void DisplayLastSystemError();
 class CAboutDlg : public CDialog
 {
 public:
-    CAboutDlg();
-    
-    // Dialog Data
-    //{{AFX_DATA(CAboutDlg)
-    enum { IDD = IDD_ABOUTBOX };
-    //}}AFX_DATA
-    
-    // ClassWizard generated virtual function overrides
-    //{{AFX_VIRTUAL(CAboutDlg)
+	CAboutDlg();
+
+	// Dialog Data
+	//{{AFX_DATA(CAboutDlg)
+	enum { IDD = IDD_ABOUTBOX };
+	//}}AFX_DATA
+
+	// ClassWizard generated virtual function overrides
+	//{{AFX_VIRTUAL(CAboutDlg)
 protected:
-    virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
-    //}}AFX_VIRTUAL
-    
-    // Implementation
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
+	//}}AFX_VIRTUAL
+
+	// Implementation
 protected:
-    //{{AFX_MSG(CAboutDlg)
-    //}}AFX_MSG
-    DECLARE_MESSAGE_MAP()
+	//{{AFX_MSG(CAboutDlg)
+	//}}AFX_MSG
+	DECLARE_MESSAGE_MAP()
 };
 
 CAboutDlg::CAboutDlg() : CDialog(CAboutDlg::IDD)
 {
-    //{{AFX_DATA_INIT(CAboutDlg)
-    //}}AFX_DATA_INIT
+	//{{AFX_DATA_INIT(CAboutDlg)
+	//}}AFX_DATA_INIT
 }
 
 void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 {
-    CDialog::DoDataExchange(pDX);
-    //{{AFX_DATA_MAP(CAboutDlg)
-    //}}AFX_DATA_MAP
+	CDialog::DoDataExchange(pDX);
+	//{{AFX_DATA_MAP(CAboutDlg)
+	//}}AFX_DATA_MAP
 }
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialog)
-//{{AFX_MSG_MAP(CAboutDlg)
-// No message handlers
-//}}AFX_MSG_MAP
+	//{{AFX_MSG_MAP(CAboutDlg)
+	// No message handlers
+	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // SVDriveInitDlg dialog
 
 SVDriveInitDlg::SVDriveInitDlg(CWnd* pParent /*=nullptr*/)
-: CDialog(SVDriveInitDlg::IDD, pParent)
+	: CDialog(SVDriveInitDlg::IDD, pParent)
 {
-    //{{AFX_DATA_INIT(SVDriveInitDlg)
-    //}}AFX_DATA_INIT
-    m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+	//{{AFX_DATA_INIT(SVDriveInitDlg)
+	//}}AFX_DATA_INIT
+	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 
 void SVDriveInitDlg::DoDataExchange(CDataExchange* pDX)
 {
-    CDialog::DoDataExchange(pDX);
-    //{{AFX_DATA_MAP(SVDriveInitDlg)
+	CDialog::DoDataExchange(pDX);
+	//{{AFX_DATA_MAP(SVDriveInitDlg)
 	DDX_Control(pDX, IDC_SINGLECAMERA_CHECK, m_SingleCamera);
-    DDX_Control(pDX, ID_MODEL_NUMBER, m_model_number);
-    DDX_Control(pDX, IDC_TYPE, m_type);
-    DDX_Control(pDX, ID_CDKEY5, m_cdkey5);
-    DDX_Control(pDX, ID_CDKEY4, m_cdkey4);
-    DDX_Control(pDX, ID_CDKEY3, m_cdkey3);
-    DDX_Control(pDX, ID_CDKEY2, m_cdkey2);
-    DDX_Control(pDX, ID_CDKEY1, m_cdkey1);
-    DDX_Control(pDX, ID_DATE, m_date);
-    DDX_Control(pDX, ID_SERVICED_BY, m_serviced_by);
-    DDX_Control(pDX, ID_SERIAL_NUMBER, m_serial_number);
+	DDX_Control(pDX, ID_MODEL_NUMBER, m_model_number);
+	DDX_Control(pDX, IDC_TYPE, m_type);
+	DDX_Control(pDX, ID_CDKEY5, m_cdkey5);
+	DDX_Control(pDX, ID_CDKEY4, m_cdkey4);
+	DDX_Control(pDX, ID_CDKEY3, m_cdkey3);
+	DDX_Control(pDX, ID_CDKEY2, m_cdkey2);
+	DDX_Control(pDX, ID_CDKEY1, m_cdkey1);
+	DDX_Control(pDX, ID_DATE, m_date);
+	DDX_Control(pDX, ID_SERVICED_BY, m_serviced_by);
+	DDX_Control(pDX, ID_SERIAL_NUMBER, m_serial_number);
 	//}}AFX_DATA_MAP
 }
 
 BEGIN_MESSAGE_MAP(SVDriveInitDlg, CDialog)
-//{{AFX_MSG_MAP(SVDriveInitDlg)
-ON_WM_SYSCOMMAND()
-ON_WM_PAINT()
-ON_WM_QUERYDRAGICON()
-ON_EN_CHANGE(ID_CDKEY1, OnChangeCdkey1)
-ON_EN_CHANGE(ID_CDKEY2, OnChangeCdkey2)
-ON_EN_CHANGE(ID_CDKEY3, OnChangeCdkey3)
-ON_EN_CHANGE(ID_CDKEY4, OnChangeCdkey4)
-ON_EN_CHANGE(ID_CDKEY5, OnChangeCdkey5)
-//}}AFX_MSG_MAP
+	//{{AFX_MSG_MAP(SVDriveInitDlg)
+	ON_WM_SYSCOMMAND()
+	ON_WM_PAINT()
+	ON_WM_QUERYDRAGICON()
+	ON_EN_CHANGE(ID_CDKEY1, OnChangeCdkey1)
+	ON_EN_CHANGE(ID_CDKEY2, OnChangeCdkey2)
+	ON_EN_CHANGE(ID_CDKEY3, OnChangeCdkey3)
+	ON_EN_CHANGE(ID_CDKEY4, OnChangeCdkey4)
+	ON_EN_CHANGE(ID_CDKEY5, OnChangeCdkey5)
+	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -206,74 +206,74 @@ END_MESSAGE_MAP()
 
 BOOL SVDriveInitDlg::OnInitDialog()
 {
-    CDialog::OnInitDialog();
-    
-    // Add "About..." menu item to system menu.
-    
-    // IDM_ABOUTBOX must be in the system command range.
-    ASSERT((IDM_ABOUTBOX & 0xFFF0) == IDM_ABOUTBOX);
-    ASSERT(IDM_ABOUTBOX < 0xF000);
-    
-    CMenu* pSysMenu = GetSystemMenu(false);
-    if (nullptr != pSysMenu)
-    {
-        CString strAboutMenu;
-        strAboutMenu.LoadString(IDS_ABOUTBOX);
-        if (!strAboutMenu.IsEmpty())
-        {
-            pSysMenu->AppendMenu(MF_SEPARATOR);
-            pSysMenu->AppendMenu(MF_STRING, IDM_ABOUTBOX, strAboutMenu);
-        }
-    }
-    
-    SetIcon(m_hIcon, true);			// Set big icon
-    SetIcon(m_hIcon, false);		// Set small icon
-    
-#ifndef _DEBUG
-    CCPassDlg dlg;
-   	BOOL blValidPassword = false;
-    
-    INT_PTR nResponse = dlg.DoModal();
-    if (IDOK == nResponse)
-    {
-    }
-    else if (IDCANCEL == nResponse)
-    {
-        exit(1);
-    }
-#endif
-    
-    // Set Limits on Fields
-    m_cdkey1.SetLimitText(PRODUCTID_PART_SIZE);
-    m_cdkey2.SetLimitText(PRODUCTID_PART_SIZE);
-    m_cdkey3.SetLimitText(PRODUCTID_PART_SIZE);
-    m_cdkey4.SetLimitText(PRODUCTID_PART_SIZE);
-    m_cdkey5.SetLimitText(PRODUCTID_PART_SIZE);
-    
-    m_serial_number.SetLimitText(SERIALNUMBER_SIZE);
-    m_date.SetLimitText(8);
-    m_serviced_by.SetLimitText(OEMINFO_SIZE);
-    
-    // Get the Windows Directory
-    ::GetSystemDirectory(oeminfoFileName, sizeof(oeminfoFileName));
-    _tcscat(oeminfoFileName, _T("\\oeminfo.ini"));
-    
-    ::GetWindowsDirectory(windowsDriverPath, sizeof(windowsDriverPath));
-    _tcscat(windowsDriverPath, _T("\\System32\\drivers"));
+	CDialog::OnInitDialog();
 
-    //get the file attributes
-    DWORD dwAttr = GetFileAttributes(oeminfoFileName);
-    
-    //clear the read only flag
-    dwAttr = dwAttr & ~FILE_ATTRIBUTE_READONLY;
-    
-    //set the file to read only
-    SetFileAttributes(oeminfoFileName, dwAttr);
-    
-    GetSysPrepInfo();
-    
-    // Get Info from OEMINFO.ini
-    GetOEMInfo();
+	// Add "About..." menu item to system menu.
+
+	// IDM_ABOUTBOX must be in the system command range.
+	ASSERT((IDM_ABOUTBOX & 0xFFF0) == IDM_ABOUTBOX);
+	ASSERT(IDM_ABOUTBOX < 0xF000);
+
+	CMenu* pSysMenu = GetSystemMenu(false);
+	if (nullptr != pSysMenu)
+	{
+		CString strAboutMenu;
+		strAboutMenu.LoadString(IDS_ABOUTBOX);
+		if (!strAboutMenu.IsEmpty())
+		{
+			pSysMenu->AppendMenu(MF_SEPARATOR);
+			pSysMenu->AppendMenu(MF_STRING, IDM_ABOUTBOX, strAboutMenu);
+		}
+	}
+
+	SetIcon(m_hIcon, true);			// Set big icon
+	SetIcon(m_hIcon, false);		// Set small icon
+
+#ifndef _DEBUG
+	CCPassDlg dlg;
+	BOOL blValidPassword = false;
+
+	INT_PTR nResponse = dlg.DoModal();
+	if (IDOK == nResponse)
+	{
+	}
+	else if (IDCANCEL == nResponse)
+	{
+		exit(1);
+	}
+#endif
+
+	// Set Limits on Fields
+	m_cdkey1.SetLimitText(PRODUCTID_PART_SIZE);
+	m_cdkey2.SetLimitText(PRODUCTID_PART_SIZE);
+	m_cdkey3.SetLimitText(PRODUCTID_PART_SIZE);
+	m_cdkey4.SetLimitText(PRODUCTID_PART_SIZE);
+	m_cdkey5.SetLimitText(PRODUCTID_PART_SIZE);
+
+	m_serial_number.SetLimitText(SERIALNUMBER_SIZE);
+	m_date.SetLimitText(8);
+	m_serviced_by.SetLimitText(OEMINFO_SIZE);
+
+	// Get the Windows Directory
+	::GetSystemDirectory(oeminfoFileName, sizeof(oeminfoFileName));
+	_tcscat(oeminfoFileName, _T("\\oeminfo.ini"));
+
+	::GetWindowsDirectory(windowsDriverPath, sizeof(windowsDriverPath));
+	_tcscat(windowsDriverPath, _T("\\System32\\drivers"));
+
+	//get the file attributes
+	DWORD dwAttr = GetFileAttributes(oeminfoFileName);
+
+	//clear the read only flag
+	dwAttr = dwAttr & ~FILE_ATTRIBUTE_READONLY;
+
+	//set the file to read only
+	SetFileAttributes(oeminfoFileName, dwAttr);
+
+	GetSysPrepInfo();
+
+	// Get Info from OEMINFO.ini
+	GetOEMInfo();
 
 	bool rc = IsValidModelNumber();
 	if (!rc)
@@ -282,61 +282,61 @@ BOOL SVDriveInitDlg::OnInitDialog()
 		GetWindowText(title);
 		MessageBox(g_ModelNumberNotValidMsg, title, MB_ICONINFORMATION);
 	}
-    return true;  // return TRUE  unless you set the focus to a control
+	return true;  // return TRUE  unless you set the focus to a control
 }
 
 void SVDriveInitDlg::OnSysCommand(UINT nID, LPARAM lParam)
 {
-    if (IDM_ABOUTBOX == (nID & 0xFFF0))
-    {
-        CAboutDlg dlgAbout;
-        dlgAbout.DoModal();
-    }
-    else
-    {
-        CDialog::OnSysCommand(nID, lParam);
-    }
+	if (IDM_ABOUTBOX == (nID & 0xFFF0))
+	{
+		CAboutDlg dlgAbout;
+		dlgAbout.DoModal();
+	}
+	else
+	{
+		CDialog::OnSysCommand(nID, lParam);
+	}
 }
 
 // If you add a minimize button to your dialog, you will need the code below
 //  to draw the icon.  For MFC applications using the document/view model,
 //  this is automatically done for you by the framework.
 
-void SVDriveInitDlg::OnPaint() 
+void SVDriveInitDlg::OnPaint()
 {
-    if (IsIconic())
-    {
-        CPaintDC dc(this); // device context for painting
-        
-        SendMessage(WM_ICONERASEBKGND, (WPARAM) dc.GetSafeHdc(), 0);
-        
-        // Center icon in client rectangle
-        int cxIcon = GetSystemMetrics(SM_CXICON);
-        int cyIcon = GetSystemMetrics(SM_CYICON);
-        CRect rect;
-        GetClientRect(&rect);
-        int x = (rect.Width() - cxIcon + 1) / 2;
-        int y = (rect.Height() - cyIcon + 1) / 2;
-        
-        // Draw the icon
-        dc.DrawIcon(x, y, m_hIcon);
-    }
-    else
-    {
-        CDialog::OnPaint();
-    }
+	if (IsIconic())
+	{
+		CPaintDC dc(this); // device context for painting
+
+		SendMessage(WM_ICONERASEBKGND, (WPARAM)dc.GetSafeHdc(), 0);
+
+		// Center icon in client rectangle
+		int cxIcon = GetSystemMetrics(SM_CXICON);
+		int cyIcon = GetSystemMetrics(SM_CYICON);
+		CRect rect;
+		GetClientRect(&rect);
+		int x = (rect.Width() - cxIcon + 1) / 2;
+		int y = (rect.Height() - cyIcon + 1) / 2;
+
+		// Draw the icon
+		dc.DrawIcon(x, y, m_hIcon);
+	}
+	else
+	{
+		CDialog::OnPaint();
+	}
 }
 
 HCURSOR SVDriveInitDlg::OnQueryDragIcon()
 {
-    return (HCURSOR) m_hIcon;
+	return (HCURSOR)m_hIcon;
 }
 
-void SVDriveInitDlg::OnOK() 
+void SVDriveInitDlg::OnOK()
 {
-    CString title;
-    GetWindowText(title);
-    
+	CString title;
+	GetWindowText(title);
+
 	bool rc = IsValidModelNumber();
 	if (!rc)
 	{
@@ -347,51 +347,51 @@ void SVDriveInitDlg::OnOK()
 		}
 	}
 	rc = UpdateSysPrepInfo();
-    if (!rc)
-    {
-        MessageBox(g_SysprepUpdatefailedMsg, title, MB_ICONINFORMATION);
-        return;
-    }
-    
-    rc = UpdateOEMInfo();
-    if (!rc)
-    {
-        MessageBox(g_OEMUpdateFailedMsg, title, MB_ICONINFORMATION);
-        return;
-    }
-    
-    rc = UpdateSVIMInfo();
-    if (!rc)
-    {
-        MessageBox(g_SvimInfoUpdateFailedMsg, title, MB_ICONINFORMATION);
-        return;
-    }
-    
-    rc = UpdateRegistryInfo();
-    if (!rc)
-    {
-        MessageBox(g_RegistryInfoUpdateFailedMsg, title, MB_ICONINFORMATION);
-        return;
-    }
- 
+	if (!rc)
+	{
+		MessageBox(g_SysprepUpdatefailedMsg, title, MB_ICONINFORMATION);
+		return;
+	}
+
+	rc = UpdateOEMInfo();
+	if (!rc)
+	{
+		MessageBox(g_OEMUpdateFailedMsg, title, MB_ICONINFORMATION);
+		return;
+	}
+
+	rc = UpdateSVIMInfo();
+	if (!rc)
+	{
+		MessageBox(g_SvimInfoUpdateFailedMsg, title, MB_ICONINFORMATION);
+		return;
+	}
+
+	rc = UpdateRegistryInfo();
+	if (!rc)
+	{
+		MessageBox(g_RegistryInfoUpdateFailedMsg, title, MB_ICONINFORMATION);
+		return;
+	}
+
 	//get the file attributes
-    DWORD dwAttr = GetFileAttributes(oeminfoFileName);
-    
-    //set the read only flag
-    dwAttr = dwAttr | FILE_ATTRIBUTE_READONLY;
-    
+	DWORD dwAttr = GetFileAttributes(oeminfoFileName);
+
+	//set the read only flag
+	dwAttr = dwAttr | FILE_ATTRIBUTE_READONLY;
+
 	if (!m_CDKey.UpdateProductId())
 	{
-      DisplayLastSystemError();
-      MessageBox(g_CreateProcessFailedMsg, title, MB_ICONINFORMATION);
-      rc = false;
-      return;
-    }
+		DisplayLastSystemError();
+		MessageBox(g_CreateProcessFailedMsg, title, MB_ICONINFORMATION);
+		rc = false;
+		return;
+	}
 
 	//set the file to read only
-    SetFileAttributes(oeminfoFileName, dwAttr);
+	SetFileAttributes(oeminfoFileName, dwAttr);
 
-    if (rc) 
+	if (rc)
 	{
 		OnCancel();
 	}
@@ -406,7 +406,7 @@ bool SVDriveInitDlg::IsValidModelNumber() const
 	CString Model;
 	m_model_number.GetWindowText(Model);
 	Model.MakeUpper();
-	
+
 	HRESULT hr = iniLoader.DecodeModelNumber(static_cast<LPCTSTR> (Model));
 	if (S_OK == hr)
 	{
@@ -435,41 +435,50 @@ bool SVDriveInitDlg::IsValidModelNumber() const
 ////////////////////////////////////////////////////////////////////////////////////////
 bool SVDriveInitDlg::GetOEMInfo()
 {
-    bool rc = false;
-    
-    TCHAR tmp[OEMINFO_SIZE + 1];
-    
-    DWORD cnt = GetPrivateProfileString(oemSection, g_SerialNoTag, _T(""), tmp, sizeof(tmp), oeminfoFileName);
-    if (cnt)
-    {
-        m_serial_number.SetWindowText(tmp);
-        m_serial_number.SetModify(false);
-        rc = true;
-    }
-    
-    cnt = GetPrivateProfileString(oemSection, g_ModelNoTag, _T(""), tmp, sizeof(tmp), oeminfoFileName);
-    if (cnt)
-    {
-        m_model_number.SetWindowText(tmp);
-        m_model_number.SetModify(false);
-        rc = true;
-    }
-    
-    cnt = GetPrivateProfileString(oemSection, g_DateTag, _T(""), tmp, sizeof(tmp), oeminfoFileName);
-    if (cnt)
-    {
-        m_date.SetWindowText(tmp);
-        m_date.SetModify(false);
-        rc = true;
-    }
+	bool rc = false;
 
-    cnt = GetPrivateProfileString(oemSection, g_ServicedByTag, _T(""), tmp, sizeof(tmp), oeminfoFileName);
-    if (cnt)
-    {
-        m_serviced_by.SetWindowText(tmp);
-        m_serviced_by.SetModify(false);
-        rc = true;
-    }
+	TCHAR tmp[OEMINFO_SIZE + 1];
+	std::string serialNumber;
+	DWORD cnt = GetPrivateProfileString(oemSection, g_SerialNoTag, _T(""), tmp, sizeof(tmp), oeminfoFileName);
+	if (SvLib::readSerialNumberFromSystem(serialNumber))
+	{
+		cnt = static_cast<DWORD>(serialNumber.size());
+		if (0 < cnt && OEMINFO_SIZE > cnt)
+		{
+			strcpy_s(tmp, serialNumber.c_str());
+		}
+		m_serial_number.SetReadOnly(true);
+	}
+	if (cnt)
+	{
+		m_serial_number.SetWindowText(tmp);
+		m_serial_number.SetModify(false);
+		rc = true;
+	}
+
+	cnt = GetPrivateProfileString(oemSection, g_ModelNoTag, _T(""), tmp, sizeof(tmp), oeminfoFileName);
+	if (cnt)
+	{
+		m_model_number.SetWindowText(tmp);
+		m_model_number.SetModify(false);
+		rc = true;
+	}
+
+	cnt = GetPrivateProfileString(oemSection, g_DateTag, _T(""), tmp, sizeof(tmp), oeminfoFileName);
+	if (cnt)
+	{
+		m_date.SetWindowText(tmp);
+		m_date.SetModify(false);
+		rc = true;
+	}
+
+	cnt = GetPrivateProfileString(oemSection, g_ServicedByTag, _T(""), tmp, sizeof(tmp), oeminfoFileName);
+	if (cnt)
+	{
+		m_serviced_by.SetWindowText(tmp);
+		m_serviced_by.SetModify(false);
+		rc = true;
+	}
 
 	cnt = GetPrivateProfileString(oemSection, g_SingleCameraTag, _T(""), tmp, sizeof(tmp), oeminfoFileName);
 	if (cnt)
@@ -480,30 +489,30 @@ bool SVDriveInitDlg::GetOEMInfo()
 		rc = true;
 	}
 
-    cnt = GetPrivateProfileString(generalSection, g_ModelTag, _T(""), tmp, sizeof(tmp), oeminfoFileName);
-    if (cnt)
-    {
-        CString szTemp;
-        szTemp = tmp;
-        
-        if (szTemp.Left(4) == g_SVIMTag)
-        {
-            m_type.SetCurSel(0);
-        }
-        else if (szTemp.Left(4) == g_SVPCTag)
-        {
-            m_type.SetCurSel(1);
-        }
-        else
-        {
-            m_type.SetCurSel(-1);
-        }
-        
-        //		m_serviced_by.SetModify(false);
-        rc = true;
-    }
+	cnt = GetPrivateProfileString(generalSection, g_ModelTag, _T(""), tmp, sizeof(tmp), oeminfoFileName);
+	if (cnt)
+	{
+		CString szTemp;
+		szTemp = tmp;
 
-    return rc;
+		if (szTemp.Left(4) == g_SVIMTag)
+		{
+			m_type.SetCurSel(0);
+		}
+		else if (szTemp.Left(4) == g_SVPCTag)
+		{
+			m_type.SetCurSel(1);
+		}
+		else
+		{
+			m_type.SetCurSel(-1);
+		}
+
+		//		m_serviced_by.SetModify(false);
+		rc = true;
+	}
+
+	return rc;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -537,24 +546,24 @@ bool SVDriveInitDlg::GetSysPrepInfo()
 bool SVDriveInitDlg::UpdateRegistryInfo()
 {
 	bool l_bOk = true;
-	
+
 	// Check if model number has been entered
 	if (m_model_number.GetModify())
 	{
 		CString l_csModel;
-		
+
 		CString l_csFrameGrabber;
 		CString l_csIOBoard;
-		
+
 		m_model_number.GetWindowText(l_csModel);
-		
+
 		l_csModel.MakeUpper();
-		
+
 		for (int i = 0, j = 0; i < l_csModel.GetLength() && j < 7; i++)
 		{
-			if (::isalnum( l_csModel[i]))
+			if (::isalnum(l_csModel[i]))
 			{
-				switch ( ++j )
+				switch (++j)
 				{
 					case 3:
 					case 4:
@@ -581,12 +590,12 @@ bool SVDriveInitDlg::UpdateRegistryInfo()
 		{
 			CString l_csFrameGrabberDLL;
 			TCHAR *l_pszDLL = l_csFrameGrabberDLL.GetBuffer(TmpBufSize);
-			GetPrivateProfileString( l_csFrameGrabberName, g_DigitizerDLLTag, _T(""), l_pszDLL, TmpBufSize, SvStl::GlobalPath::Inst().GetHardwareIniPath());
+			GetPrivateProfileString(l_csFrameGrabberName, g_DigitizerDLLTag, _T(""), l_pszDLL, TmpBufSize, SvStl::GlobalPath::Inst().GetHardwareIniPath());
 			l_csFrameGrabberDLL.ReleaseBuffer();
 
 			l_bOk = (S_OK == UpdateMatrox(l_csFrameGrabberName));
-			
-			if (l_csFrameGrabberDLL.CompareNoCase( g_SVMatroxGigeDLLTag) >= 0)
+
+			if (l_csFrameGrabberDLL.CompareNoCase(g_SVMatroxGigeDLLTag) >= 0)
 			{
 				AddCommandBeforeSVObserver(g_NetStartMatroxGigECmd, false);
 			}
@@ -619,80 +628,80 @@ bool SVDriveInitDlg::UpdateRegistryInfo()
 ////////////////////////////////////////////////////////////////////////////////////////
 bool SVDriveInitDlg::UpdateOEMInfo()
 {
-    bool rc = true;
-    TCHAR tmp[81];
-    BOOL retCode;
-    CString szTemp, szModel, szSerial,szType;
-        
-    // Check if Serial number has been entered
-    if (m_serial_number.GetModify())
-    {
-        m_serial_number.GetWindowText(tmp, sizeof(tmp));
-        retCode = WritePrivateProfileString(oemSection, g_SerialNoTag, tmp, oeminfoFileName);
-        if (!retCode)
-        {
-            rc = false;
-        }
-    }
-    
-    // Check if Date Shipped has been entered
-    if( m_date.GetModify() )
-    {
-        m_date.GetWindowText( tmp, sizeof( tmp ) );
-        retCode = WritePrivateProfileString(oemSection, g_DateTag, tmp, oeminfoFileName);
-        if( !retCode )
-        {
-            rc = false;
-        }
-    }
-    
-    // Check if model number has been entered
-    if (m_model_number.GetModify())
-    {
-        m_model_number.GetWindowText(tmp, sizeof(tmp));
-        retCode = WritePrivateProfileString(oemSection, g_ModelNoTag, tmp, oeminfoFileName);
-        if (!retCode)
-        {
-            retCode = false;
-        }
-    }
-    
-    // Check if Serviced By has been entered
-    if (m_serviced_by.GetModify())
-    {
-        m_serviced_by.GetWindowText(tmp, sizeof(tmp));
-        retCode = WritePrivateProfileString(oemSection, g_ServicedByTag, tmp, oeminfoFileName);
-        if (!retCode)
-        {
-            rc = false;
-        }
-    }
+	bool rc = true;
+	TCHAR tmp[81];
+	BOOL retCode;
+	CString szTemp, szModel, szSerial, szType;
 
-    retCode = WritePrivateProfileString(oemSection, g_SingleCameraTag, (BST_CHECKED == m_SingleCamera.GetCheck()) ? _T("Y") : _T("N"), oeminfoFileName);
-    if (!retCode)
-    {
-        rc = false;
-    }
+	// Check if Serial number has been entered
+	if (m_serial_number.GetModify())
+	{
+		m_serial_number.GetWindowText(tmp, sizeof(tmp));
+		retCode = WritePrivateProfileString(oemSection, g_SerialNoTag, tmp, oeminfoFileName);
+		if (!retCode)
+		{
+			rc = false;
+		}
+	}
 
-    m_type.GetWindowText(szType);
-    m_serial_number.GetWindowText(szSerial);
-    m_model_number.GetWindowText(szModel);
-    
-    szTemp = szType + _T(" ") + szSerial + _T(" ") + szModel;
-    retCode = WritePrivateProfileString(generalSection, g_ModelTag, szTemp, oeminfoFileName);
-    if (!retCode)
-    {
-        rc = false;
-    }
-    return rc;
+	// Check if Date Shipped has been entered
+	if (m_date.GetModify())
+	{
+		m_date.GetWindowText(tmp, sizeof(tmp));
+		retCode = WritePrivateProfileString(oemSection, g_DateTag, tmp, oeminfoFileName);
+		if (!retCode)
+		{
+			rc = false;
+		}
+	}
+
+	// Check if model number has been entered
+	if (m_model_number.GetModify())
+	{
+		m_model_number.GetWindowText(tmp, sizeof(tmp));
+		retCode = WritePrivateProfileString(oemSection, g_ModelNoTag, tmp, oeminfoFileName);
+		if (!retCode)
+		{
+			retCode = false;
+		}
+	}
+
+	// Check if Serviced By has been entered
+	if (m_serviced_by.GetModify())
+	{
+		m_serviced_by.GetWindowText(tmp, sizeof(tmp));
+		retCode = WritePrivateProfileString(oemSection, g_ServicedByTag, tmp, oeminfoFileName);
+		if (!retCode)
+		{
+			rc = false;
+		}
+	}
+
+	retCode = WritePrivateProfileString(oemSection, g_SingleCameraTag, (BST_CHECKED == m_SingleCamera.GetCheck()) ? _T("Y") : _T("N"), oeminfoFileName);
+	if (!retCode)
+	{
+		rc = false;
+	}
+
+	m_type.GetWindowText(szType);
+	m_serial_number.GetWindowText(szSerial);
+	m_model_number.GetWindowText(szModel);
+
+	szTemp = szType + _T(" ") + szSerial + _T(" ") + szModel;
+	retCode = WritePrivateProfileString(generalSection, g_ModelTag, szTemp, oeminfoFileName);
+	if (!retCode)
+	{
+		rc = false;
+	}
+	return rc;
 }
 
 bool SVDriveInitDlg::UpdateSVIMInfo()
 {
-//	TCHAR tmp[SVIMINFO_SIZE + 1];
-    bool rc = true;
-    
-    return rc;
+	//	TCHAR tmp[SVIMINFO_SIZE + 1];
+	bool rc = true;
+
+	return rc;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -726,49 +735,49 @@ bool SVDriveInitDlg::UpdateSysPrepInfo()
 	return rc;
 }
 
-void SVDriveInitDlg::OnCancel() 
+void SVDriveInitDlg::OnCancel()
 {
-    CDialog::OnCancel();
+	CDialog::OnCancel();
 }
 
-void SVDriveInitDlg::OnChangeCdkey(CEdit& rEdit) 
+void SVDriveInitDlg::OnChangeCdkey(CEdit& rEdit)
 {
 	int nStartChar(0);
 	int nEndChar(0);
-    
-    rEdit.GetSel(nStartChar, nEndChar);
-    
-    CWnd* pWnd = GetNextDlgTabItem(reinterpret_cast<CWnd*>(&rEdit), false);
-    if (pWnd && (PRODUCTID_PART_SIZE == nStartChar) && (PRODUCTID_PART_SIZE == nEndChar))
-    {
-        pWnd->SetFocus();
-        reinterpret_cast<CEdit*>(pWnd)->SetSel(0, -1);
-    }
+
+	rEdit.GetSel(nStartChar, nEndChar);
+
+	CWnd* pWnd = GetNextDlgTabItem(reinterpret_cast<CWnd*>(&rEdit), false);
+	if (pWnd && (PRODUCTID_PART_SIZE == nStartChar) && (PRODUCTID_PART_SIZE == nEndChar))
+	{
+		pWnd->SetFocus();
+		reinterpret_cast<CEdit*>(pWnd)->SetSel(0, -1);
+	}
 }
 
-void SVDriveInitDlg::OnChangeCdkey1() 
+void SVDriveInitDlg::OnChangeCdkey1()
 {
-    OnChangeCdkey(m_cdkey1);
+	OnChangeCdkey(m_cdkey1);
 }
 
-void SVDriveInitDlg::OnChangeCdkey2() 
+void SVDriveInitDlg::OnChangeCdkey2()
 {
 	OnChangeCdkey(m_cdkey2);
 }
 
-void SVDriveInitDlg::OnChangeCdkey3() 
+void SVDriveInitDlg::OnChangeCdkey3()
 {
 	OnChangeCdkey(m_cdkey3);
 }
 
-void SVDriveInitDlg::OnChangeCdkey4() 
+void SVDriveInitDlg::OnChangeCdkey4()
 {
-    OnChangeCdkey(m_cdkey4);
+	OnChangeCdkey(m_cdkey4);
 }
 
-void SVDriveInitDlg::OnChangeCdkey5() 
+void SVDriveInitDlg::OnChangeCdkey5()
 {
-    OnChangeCdkey(m_cdkey5);
+	OnChangeCdkey(m_cdkey5);
 }
 
 HRESULT SVDriveInitDlg::BackupBootIni()
@@ -784,14 +793,14 @@ HRESULT SVDriveInitDlg::BackupBootIni()
 		{
 			//get the file attributes
 			DWORD l_Attr = GetFileAttributes(l_NewBootName);
-	    
+
 			//remove the read only flag
 			l_Attr = l_Attr & ~FILE_ATTRIBUTE_READONLY;
-	    
+
 			//set the file to read only
 			SetFileAttributes(l_NewBootName, l_Attr);
 
-			if( i < 1 || 9 < i)
+			if (i < 1 || 9 < i)
 			{
 				::remove(l_NewBootName);
 			}
@@ -812,14 +821,14 @@ HRESULT SVDriveInitDlg::BackupBootIni()
 		}
 	}
 
-  //copy boot.ini -> boot.xxx
-  CopyFile(g_bootIniFilepath, l_NewBootName, false);
+	//copy boot.ini -> boot.xxx
+	CopyFile(g_bootIniFilepath, l_NewBootName, false);
 
 	DWORD l_Attr = GetFileAttributes(l_NewBootName);
-  
+
 	//remove the read only flag
 	l_Attr = l_Attr & ~FILE_ATTRIBUTE_READONLY;
-  
+
 	//set the file to read only
 	SetFileAttributes(l_NewBootName, l_Attr);
 
@@ -904,7 +913,7 @@ HRESULT SVDriveInitDlg::UpdateMatrox(LPCTSTR p_szDigitizer)
 {
 	HRESULT l_Status = S_OK;
 
-	int l_Size = GetPrivateProfileInt( p_szDigitizer, g_MatroxReserveMemorySizeTag, 0, SvStl::GlobalPath::Inst().GetHardwareIniPath());
+	int l_Size = GetPrivateProfileInt(p_szDigitizer, g_MatroxReserveMemorySizeTag, 0, SvStl::GlobalPath::Inst().GetHardwareIniPath());
 
 	if (0 < l_Size)
 	{
@@ -914,9 +923,9 @@ HRESULT SVDriveInitDlg::UpdateMatrox(LPCTSTR p_szDigitizer)
 		l_From.Format(g_mtxgigeSVR, windowsDriverPath);
 		l_To.Format(g_mtxgigeSYS, windowsDriverPath);
 
-		if (-1 == ::_access(l_To, 0) )
+		if (-1 == ::_access(l_To, 0))
 		{
-			::rename(l_From, l_To); 
+			::rename(l_From, l_To);
 		}
 
 		l_From.Format(g_mtxgigefilterSVR, windowsDriverPath);
@@ -924,7 +933,7 @@ HRESULT SVDriveInitDlg::UpdateMatrox(LPCTSTR p_szDigitizer)
 
 		if (-1 == ::_access(l_To, 0))
 		{
-			::rename(l_From, l_To); 
+			::rename(l_From, l_To);
 		}
 	}
 	else
@@ -939,7 +948,7 @@ HRESULT SVDriveInitDlg::UpdateMatrox(LPCTSTR p_szDigitizer)
 
 		if (0 == ::_access(l_From, 0))
 		{
-			::rename(l_From, l_To); 
+			::rename(l_From, l_To);
 		}
 
 		l_From.Format(g_mtxgigefilterSYS, windowsDriverPath);
@@ -947,7 +956,7 @@ HRESULT SVDriveInitDlg::UpdateMatrox(LPCTSTR p_szDigitizer)
 
 		if (0 == ::_access(l_From, 0))
 		{
-			::rename(l_From, l_To); 
+			::rename(l_From, l_To);
 		}
 	}
 	return l_Status;
@@ -959,9 +968,9 @@ HRESULT SVDriveInitDlg::UpdateMatroxRegistryMaxMem(size_t& p_rMaxSize, size_t p_
 
 	HKEY l_hKey = nullptr;
 	size_t l_MaxSize = 0;
-	
+
 	l_Status = RegOpenKeyEx(HKEY_LOCAL_MACHINE, g_MtxDmaParamRegKey, 0, KEY_ALL_ACCESS, &l_hKey);
-	
+
 	if (ERROR_SUCCESS == l_Status)
 	{
 		DWORD l_Size = 0;
@@ -989,22 +998,22 @@ HRESULT SVDriveInitDlg::UpdateMatroxRegistryMaxMem(size_t& p_rMaxSize, size_t p_
 		size_t l_SizeInMB = p_MILSize << 20;
 
 		HRESULT l_Temp = RegSetValueEx(l_hKey, g_DmaBufferSizeTag, 0, REG_DWORD, reinterpret_cast<unsigned char *>(&p_MILSize), sizeof(p_MILSize));
-		
+
 		l_Status = RegSetValueEx(l_hKey, g_HighMemoryAreaReservedSizeTag, 0, REG_DWORD, reinterpret_cast<unsigned char *>(&l_SizeInMB), sizeof(l_SizeInMB));
 
 		if (ERROR_SUCCESS != l_Temp)
 		{
 			l_Status = l_Temp;
 		}
-		
-		RegFlushKey (l_hKey);
+
+		RegFlushKey(l_hKey);
 		RegCloseKey(l_hKey);
-		
+
 		l_hKey = nullptr;
 
 		l_MaxSize -= l_SizeInMB;
 	}
-	
+
 	if (ERROR_SUCCESS == l_Status)
 	{
 		p_rMaxSize = l_MaxSize >> 20;
@@ -1021,13 +1030,13 @@ HRESULT SVDriveInitDlg::RemoveMatroxBootIniMaxMem()
 {
 	HRESULT l_Status = BackupBootIni();
 
-	if( S_OK == l_Status )
+	if (S_OK == l_Status)
 	{
 		DWORD l_Attr = GetFileAttributes(g_bootIniFilepath);
-	  
+
 		//remove the read only flag
 		l_Attr = l_Attr & ~FILE_ATTRIBUTE_READONLY;
-	  
+
 		//set the file to read only
 		SetFileAttributes(g_bootIniFilepath, l_Attr);
 
@@ -1089,7 +1098,7 @@ HRESULT SVDriveInitDlg::RemoveMatroxBootIniMaxMem()
 						{
 							if (l_MaxMemEndSpacePos < l_MaxMemEndSlashPos)
 							{
-								l_NewOption.Format( _T("%s\"%s"), l_Option.Left(l_MemoryPos), l_Option.Mid(l_MaxMemEndSpacePos));
+								l_NewOption.Format(_T("%s\"%s"), l_Option.Left(l_MemoryPos), l_Option.Mid(l_MaxMemEndSpacePos));
 							}
 							else
 							{
@@ -1118,17 +1127,17 @@ HRESULT SVDriveInitDlg::RemoveMatroxBootIniMaxMem()
 		}
 
 		l_Attr = GetFileAttributes(g_bootIniFilepath);
-	  
+
 		//remove the read only flag
 		l_Attr = l_Attr | FILE_ATTRIBUTE_READONLY;
-	  
+
 		//set the file to read only
 		SetFileAttributes(g_bootIniFilepath, l_Attr);
 	}
 	return l_Status;
 }
 
-HRESULT SVDriveInitDlg::AddCommandBeforeSVObserver(LPCTSTR p_strNewCommand, bool p_bRemove=false)
+HRESULT SVDriveInitDlg::AddCommandBeforeSVObserver(LPCTSTR p_strNewCommand, bool p_bRemove = false)
 {
 	HRESULT l_Status = S_OK;
 
@@ -1222,7 +1231,7 @@ DWORD GetLastSystemErrorText(CString & szMsg)
 HRESULT GetSystemErrorText(DWORD dwError, CString & szMsg)
 {
 	LPVOID lpMsgBuf;
-	if (0 == FormatMessage( 
+	if (0 == FormatMessage(
 		FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
 		nullptr,
 		dwError,
