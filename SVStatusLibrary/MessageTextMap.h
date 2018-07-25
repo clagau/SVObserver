@@ -534,6 +534,7 @@ namespace SvStl
 		{Tid_ZipFileFailed, _T("Failed to create %s zip file.")},
 		{Tid_UnzipFileFailed, _T("Failed to unzip %s file.")},
 		{Tid_GetImageFailed_NoTR, _T("Get image failed, because there is no trigger record")},
+		{Tid_SM_SlotNotFound, _T("Shared memory slot with the MonitorList name: %s not found")},
 
 		{Tid_TRC_Error_ResetLocker, _T("Error with reference count in TriggerRecordController::ResetLocker")},
 		{Tid_TRC_Error_ImageRefCount, _T("Error with reference count in ImageController")},

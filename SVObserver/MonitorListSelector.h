@@ -40,8 +40,8 @@ private:
 	/// Builds the main caption for the object selector
 	void BuildCaption(std::string &rCaption);
 	
-	///fills m_CheckItems with the objects in the monitorobjectlist from m_MonitorList
-	void BuildCheckItems();
+	///fills CheckItems with the objects in the monitorobjectlist from m_MonitorList
+	SvDef::StringSet BuildCheckItems();
 	
 	///Gets a Monitorobjectlist for the selected items 
 	MonitoredObjectList  GetMonitoredObjectList(const SvCl::SelectorItemVector& rList);
@@ -56,6 +56,5 @@ private:
 	MonitorListType m_eListType;
 	RemoteMonitorNamedList m_MonitorList;
 	CWnd*  m_ParentWindow;
-	SvDef::StringSet m_CheckItems; 
 };
 

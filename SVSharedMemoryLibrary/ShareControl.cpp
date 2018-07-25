@@ -42,178 +42,12 @@ bool  ShareControl::QueryListItem(const SvPb::QueryListItemRequest& rRequest, Sv
 
 bool ShareControl::GetProduct(const SvPb::GetProductRequest& rRequest, SvPb::GetProductResponse& rResponse, SvPenv::Error& rError)
 {
-	if(!isReady(rError))
-	{
-		return false;
-	}
-
-	if(!isMonitorListActive(rRequest.listname(), rError))
-	{
-		return false;
-	}
-
-	SvSml::MLProduct* pLastProduct{nullptr};
-	SvSml::pProd new_productPtr(new SvSml::MLProduct());
-	{
-		std::lock_guard<std::mutex> guard(m_pLastResponseData->m_ProtectLastProduct);
-
-		auto& it = m_pLastResponseData->m_LastProduct.find(rRequest.listname());
-		if (m_pLastResponseData->m_LastProduct.end() != it)
-		{
-			pLastProduct = it->second.get();
-		}
-
-		SvSml::SharedMemReader::retvalues ret(SvSml::SharedMemReader::fail);
-		ret = m_MemReader.GetProductData(rRequest.listname().c_str(), rRequest.triggercount(), new_productPtr.get(), pLastProduct, false);
-
-		switch (ret)
-		{
-			case SvSml::SharedMemReader::success:
-			{
-				DWORD index = m_MemReader.GetSlotManagerIndexForMonitorList(rRequest.listname().c_str());
-				if (nullptr != pLastProduct)
-				{
-					///release Readerslot for last product
-					if (index < 0)
-					{
-						//@Todo[MEC][8.00] [19.10.2017] log errors 
-						rError.set_errorcode(SvPenv::ErrorCode::internalError);
-						rError.set_message("Unable to get slot for requested MonitorList");
-						return false;
-					}
-					m_MemReader.GetSlotManager(index)->ReleaseReaderSlot(pLastProduct->m_slot);
-				}
-
-				if (SetProductResponse(rRequest.nameinresponse(), new_productPtr.get(), rResponse.mutable_productitem(), rError))
-				{
-					m_pLastResponseData->m_LastProduct[rRequest.listname()] = std::move(new_productPtr);
-				}
-				else
-				{
-					return false;
-				}
-
-				return true;
-			}
-			break;
-			case SvSml::SharedMemReader::last:
-			{
-				if (rRequest.pevioustrigger() == pLastProduct->m_trigger)
-				{
-					rResponse.mutable_productitem()->set_status(SvPb::State::unchanged);
-				}
-				else
-				{
-					if (!SetProductResponse(rRequest.nameinresponse(), pLastProduct, rResponse.mutable_productitem(), rError))
-					{
-						return false;
-					}
-				}
-				return true;
-			}
-			break;
-			case SvSml::SharedMemReader::fail:
-			{
-				rError.set_errorcode(SvPenv::ErrorCode::notFound);
-				return false;
-			}
-			break;
-			default:
-			{
-				rError.set_errorcode(SvPenv::ErrorCode::internalError);
-				return false;
-			}
-			break;
-		}
-	}
+	return GetProductItem(false, rRequest.triggercount(), rRequest.pevioustrigger(), rRequest.listname(), rRequest.nameinresponse(), rResponse.mutable_productitem(), rError);
 }
-//@Todo[MEC][8.10] [11.07.2018] GetReject and GetProduct should usethe same code 
+
 bool ShareControl::GetReject(const SvPb::GetRejectRequest& rRequest, SvPb::GetRejectResponse& rResponse, SvPenv::Error& rError)
 {
-	if (!isReady(rError))
-	{
-		return false;
-	}
-
-	if (!isMonitorListActive(rRequest.listname(), rError))
-	{
-		return false;
-	}
-
-	SvSml::MLProduct* pLastProduct {nullptr};
-	SvSml::pProd new_productPtr(new SvSml::MLProduct());
-	{
-		std::lock_guard<std::mutex> guard(m_pLastResponseData->m_ProtectLastReject);
-
-		auto& it = m_pLastResponseData->m_LastReject.find(rRequest.listname());
-		if (m_pLastResponseData->m_LastReject.end() != it)
-		{
-			pLastProduct = it->second.get();
-		}
-
-		SvSml::SharedMemReader::retvalues ret(SvSml::SharedMemReader::fail);
-		ret = m_MemReader.GetRejectData(rRequest.listname().c_str(), rRequest.triggercount(), new_productPtr.get(), pLastProduct, false);
-		
-		switch (ret)
-		{
-			case SvSml::SharedMemReader::success:
-			{
-				DWORD index = m_MemReader.GetSlotManagerIndexForMonitorList(rRequest.listname().c_str());
-				if (nullptr != pLastProduct)
-				{
-					///release Readerslot for last product
-					if (index < 0)
-					{
-						//@Todo[MEC][8.00] [19.10.2017] log errors 
-						rError.set_errorcode(SvPenv::ErrorCode::internalError);
-						rError.set_message("Unable to get slot for requested MonitorList");
-						return false;
-					}
-					m_MemReader.GetSlotManager(index)->ReleaseReaderSlot(pLastProduct->m_slot);
-				}
-
-				if (SetProductResponse(rRequest.nameinresponse(), new_productPtr.get(), rResponse.mutable_productitem(), rError))
-				{
-					m_pLastResponseData->m_LastReject[rRequest.listname()] = std::move(new_productPtr);
-				}
-				else
-				{
-					return false;
-				}
-
-				return true;
-			}
-			break;
-			case SvSml::SharedMemReader::last:
-			{
-				if (rRequest.pevioustrigger() == pLastProduct->m_trigger)
-				{
-					rResponse.mutable_productitem()->set_status(SvPb::State::unchanged);
-				}
-				else
-				{
-					if (!SetProductResponse(rRequest.nameinresponse(), pLastProduct, rResponse.mutable_productitem(), rError))
-					{
-						return false;
-					}
-				}
-				return true;
-			}
-			break;
-			case SvSml::SharedMemReader::fail:
-			{
-				rError.set_errorcode(SvPenv::ErrorCode::notFound);
-				return false;
-			}
-			break;
-			default:
-			{
-				rError.set_errorcode(SvPenv::ErrorCode::internalError);
-				return false;
-			}
-			break;
-		}
-	}
+	return GetProductItem(true, rRequest.triggercount(), rRequest.pevioustrigger(), rRequest.listname(), rRequest.nameinresponse(), rResponse.mutable_productitem(), rError);
 }
 
 bool  ShareControl::GetFailstatus(const SvPb::GetFailStatusRequest& rRequest, SvPb::GetFailStatusResponse& rResponse, SvPenv::Error& rError)
@@ -374,6 +208,108 @@ bool ShareControl::isMonitorListActive(const std::string& rListName, SvPenv::Err
 		rError.set_message("MonitorList with given name does not exist or is not active");
 	}
 	return Result;
+}
+
+bool ShareControl::GetProductItem(bool isReject, int triggerCount, int peviousTrigger, const std::string& rListName, bool nameInResponse, SvPb::Product* pProductMsg, SvPenv::Error& rError)
+{
+	if (!isReady(rError))
+	{
+		return false;
+	}
+
+	if (!isMonitorListActive(rListName, rError))
+	{
+		return false;
+	}
+
+	const SvSml::MLProduct* pLastProduct {nullptr};
+	SvSml::pProd new_productPtr(new SvSml::MLProduct());
+	{
+		std::mutex& rProtectLast = isReject ? m_pLastResponseData->m_ProtectLastReject : m_pLastResponseData->m_ProtectLastProduct;
+		std::map<std::string, SvSml::pProd>& rLastMap = isReject ? m_pLastResponseData->m_LastReject : m_pLastResponseData->m_LastProduct;
+
+		std::lock_guard<std::mutex> guard(rProtectLast);
+
+		auto& it = rLastMap.find(rListName);
+		if (rLastMap.end() != it)
+		{
+			pLastProduct = it->second.get();
+		}
+
+		SvSml::SharedMemReader::retvalues ret(SvSml::SharedMemReader::fail);
+		if(isReject)
+		{
+			ret = m_MemReader.GetRejectData(rListName.c_str(), triggerCount, new_productPtr.get(), pLastProduct, false);
+		}
+		else
+		{
+			ret = m_MemReader.GetProductData(rListName.c_str(), triggerCount, new_productPtr.get(), pLastProduct, false);
+		}
+
+		switch (ret)
+		{
+			case SvSml::SharedMemReader::success:
+			{
+				DWORD index = m_MemReader.GetSlotManagerIndexForMonitorList(rListName.c_str());
+				if (nullptr != pLastProduct)
+				{
+					///release Readerslot for last product
+					if (index < 0)
+					{
+						SvStl::MessageMgrStd exception(SvStl::LogOnly);
+						SvDef::StringVector msgList;
+						msgList.emplace_back(rListName);
+						exception.setMessage(SVMSG_SVGateway_0_GENERAL_ERROR, SvStl::Tid_SM_SlotNotFound, msgList, SvStl::SourceFileParams(StdMessageParams));
+
+						rError.set_errorcode(SvPenv::ErrorCode::internalError);
+						rError.set_message(exception.getMessageContainer().what());
+						return false;
+					}
+					m_MemReader.GetSlotManager(index)->ReleaseReaderSlot(pLastProduct->m_slot);
+				}
+
+				if (SetProductResponse(nameInResponse, new_productPtr.get(), pProductMsg, rError))
+				{
+					rLastMap[rListName] = std::move(new_productPtr);
+				}
+				else
+				{
+					return false;
+				}
+
+				return true;
+			}
+			break;
+			case SvSml::SharedMemReader::last:
+			{
+				if (peviousTrigger == pLastProduct->m_trigger)
+				{
+					pProductMsg->set_status(SvPb::State::unchanged);
+				}
+				else
+				{
+					if (!SetProductResponse(nameInResponse, pLastProduct, pProductMsg, rError))
+					{
+						return false;
+					}
+				}
+				return true;
+			}
+			break;
+			case SvSml::SharedMemReader::fail:
+			{
+				rError.set_errorcode(SvPenv::ErrorCode::notFound);
+				return false;
+			}
+			break;
+			default:
+			{
+				rError.set_errorcode(SvPenv::ErrorCode::internalError);
+				return false;
+			}
+			break;
+		}
+	}
 }
 
 bool  ShareControl::SetProductResponse(bool nameInResponse, const SvSml::MLProduct* pProduct, SvPb::Product* pProductMsg, SvPenv::Error& rError)

@@ -30,6 +30,7 @@ public:
 private:
 	bool isReady(SvPenv::Error& rError);
 	bool isMonitorListActive(const std::string& rListName, SvPenv::Error& rError);
+	bool GetProductItem(bool isReject, int triggerCount, int peviousTrigger, const std::string& rListName, bool nameInResponse, SvPb::Product* pProductItem, SvPenv::Error& rError);
 	bool SetProductResponse(bool nameInResponse, const SvSml::MLProduct* pProduct, SvPb::Product* pProductMsg, SvPenv::Error& rError);
 	bool GetFailstatus(SvSml::vecpProd* pFailstatus, const SvPb::GetFailStatusRequest& rRequest, SvPb::GetFailStatusResponse& rResponse, SvPenv::Error& rError);
 private:

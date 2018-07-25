@@ -108,8 +108,7 @@ int  MonitorlistSelector::DisplayDialog()
 			SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(SelectorItems);
 		}
 	}
-	BuildCheckItems();
-	SvOsl::ObjectTreeGenerator::Instance().setCheckItems(m_CheckItems);
+	SvOsl::ObjectTreeGenerator::Instance().setCheckItems(BuildCheckItems());
 	
 	std::string Caption;
 	BuildCaption(Caption);
@@ -159,9 +158,10 @@ const RemoteMonitorNamedList& MonitorlistSelector::GetMonitorList() const
 	return m_MonitorList;
 }
 
-void MonitorlistSelector::BuildCheckItems()
+SvDef::StringSet MonitorlistSelector::BuildCheckItems()
 {
-	m_CheckItems.clear();
+	SvDef::StringSet Result;
+
 	const MonitoredObjectList* pMonitorObjectList(nullptr);
 	switch (m_eListType)
 	{
@@ -191,15 +191,16 @@ void MonitorlistSelector::BuildCheckItems()
 	}
 	if (!pMonitorObjectList)
 	{
-		return;
+		return Result;
 	}
 	for (auto& it : *pMonitorObjectList)
 	{
-		const std::string& name = RemoteMonitorListHelper::GetNameFromMonitoredObject(it);
-		m_CheckItems.insert(name);
+		std::string name = RemoteMonitorListHelper::GetNameFromMonitoredObject(it);
+		//Remove the base name "Inspections." which is not required for the checked items
+		name = name.substr(std::string(SvDef::FqnInspections).size()+1);
+		Result.insert(name);
 	}
-
-
+	return Result;
 }
 
 MonitoredObjectList MonitorlistSelector::GetMonitoredObjectList(const SvCl::SelectorItemVector& rList)
