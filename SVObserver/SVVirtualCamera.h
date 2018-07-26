@@ -156,3 +156,7 @@ private:
 #pragma endregion Member Variables
 };
 
+inline bool isLessByName(SVVirtualCamera* lhs, SVVirtualCamera* rhs)
+{
+	return std::string(lhs->GetName()) < std::string(rhs->GetName());
+}

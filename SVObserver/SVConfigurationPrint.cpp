@@ -1903,26 +1903,19 @@ void SVConfigurationPrint::PrintPPQSummary(CDC* pDC, CPoint& ptCurPos, int nInde
 			ptTemp      = ptCurPos;
 			ptCurPos.y += PrintString(pDC, ptTemp, _T("Camera:"));
 			
-			std::deque< SVVirtualCamera* > l_Cameras;
-
-			pPPQ->GetCameraList( l_Cameras );
-
-			std::deque< SVVirtualCamera* >::iterator l_Iter = l_Cameras.begin();
-
-			while( l_Iter != l_Cameras.end() )
+			std::deque< SVVirtualCamera* > cameras;
+			pPPQ->GetCameraList(cameras);
+			std::sort(cameras.begin(), cameras.end(), isLessByName);
+			for (auto* pCamera : cameras)
 			{
-				SVVirtualCamera* pCamera = ( *l_Iter );
-				
-				if ( nullptr != pCamera )
+				if (nullptr != pCamera)
 				{
-					ptCurPos.x  = (nIndentLevel + 2) * m_shortTabPixels;
-					ptTemp      = ptCurPos;
+					ptCurPos.x = (nIndentLevel + 2) * m_shortTabPixels;
+					ptTemp = ptCurPos;
 					ptCurPos.y += PrintString(pDC, ptTemp, pCamera->GetName());
 				}
-
-				++l_Iter;
 			}
-			
+
 			ptCurPos.x  = (nIndentLevel + 1) * m_shortTabPixels;
 			ptTemp      = ptCurPos;
 			ptCurPos.y += PrintString(pDC, ptTemp, _T("Inspection:"));
@@ -1983,16 +1976,12 @@ void SVConfigurationPrint::PrintPPQBarSection(CDC* pDC, CPoint& ptCurPos, int nI
 		for (int intPPQPos = 0; intPPQPos < lPPQLength; intPPQPos++)
 		{
 			bool bPosPrint = false;
-			std::deque< SVVirtualCamera* > l_Cameras;
-
-			pPPQ->GetCameraList( l_Cameras );
-
-			std::deque< SVVirtualCamera* >::iterator l_Iter = l_Cameras.begin();
-
-			while( l_Iter != l_Cameras.end() )
+			std::deque< SVVirtualCamera* > cameras;
+			pPPQ->GetCameraList( cameras );
+			std::sort(cameras.begin(), cameras.end(), isLessByName);
+			
+			for (auto* pCamera : cameras)
 			{
-				SVVirtualCamera* pCamera = ( *l_Iter );
-				
 				if ( nullptr != pCamera )
 				{
 					long lPos = -1;
@@ -2015,8 +2004,6 @@ void SVConfigurationPrint::PrintPPQBarSection(CDC* pDC, CPoint& ptCurPos, int nI
 						ptCurPos.y += PrintString(pDC, ptTemp, pCamera->GetName());
 					}
 				}
-
-				++l_Iter;
 			}
 
 			long lIOEntries;

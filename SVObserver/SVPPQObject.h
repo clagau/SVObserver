@@ -93,7 +93,7 @@ public:
 	void GetInspectionCount( long &lSize ) const;
 
 	size_t GetCameraCount() const;
-	HRESULT GetCameraList( std::deque< SVVirtualCamera* >& p_rCameras ) const;
+	void GetCameraList( std::deque< SVVirtualCamera* >& p_rCameras ) const;
 	HRESULT GetVirtualCameras( SVVirtualCameraMap& p_rCameras ) const;
 
 	void GetTrigger( SvTi::SVTriggerObject*& ppTrigger );

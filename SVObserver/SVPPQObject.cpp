@@ -897,10 +897,8 @@ size_t SVPPQObject::GetCameraCount() const
 	return m_Cameras.size();
 }
 
-HRESULT SVPPQObject::GetCameraList(std::deque< SVVirtualCamera* >& p_rCameras) const
+void SVPPQObject::GetCameraList(std::deque< SVVirtualCamera* >& p_rCameras) const
 {
-	HRESULT l_Status = S_OK;
-
 	p_rCameras.clear();
 
 	SVCameraInfoMap::const_iterator l_svIter;
@@ -913,8 +911,6 @@ HRESULT SVPPQObject::GetCameraList(std::deque< SVVirtualCamera* >& p_rCameras) c
 
 		++l_svIter;
 	}
-
-	return l_Status;
 }
 
 HRESULT SVPPQObject::GetVirtualCameras(SVVirtualCameraMap& p_rCameras) const
