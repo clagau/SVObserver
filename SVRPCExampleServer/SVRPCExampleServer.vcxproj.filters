@@ -24,7 +24,13 @@
     <ClInclude Include="AutoBuild.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="format.pb.h">
+    <ClInclude Include="SeidenaderLogo200px.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SeidenaderLogo300px.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SeidenaderLogo100px.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
@@ -33,9 +39,6 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVRPCExampleServer.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="format.pb.cc">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -48,10 +51,5 @@
     <None Include="SVRPCExampleServer.rc2">
       <Filter>Ressourcendateien</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <CustomBuild Include="format.proto">
-      <Filter>Ressourcendateien</Filter>
-    </CustomBuild>
   </ItemGroup>
 </Project>

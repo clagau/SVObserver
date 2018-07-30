@@ -24,7 +24,8 @@ message SVRCMessages
 		GetGatewayVersionRequest getGatewayVersionRequest = 3;
 		GetSVObserverVersionRequest getSVObserverVersionRequest = 4;
 		GetVersionResponse getVersionResponse = 5;
-		
+		EmptyResponse emptyResponse = 6;
+
 		//SVGateway commands
 		QueryListNameRequest queryListNameRequest = 1000;
 		QueryListNameResponse queryListNameResponse = 1001;
@@ -45,6 +46,11 @@ message SVRCMessages
 		GetNotificationStreamResponse getNotificationStreamResponse = 1016;
 		GetRejectRequest getRejectRequest = 1017;
 		GetRejectResponse getRejectResponse = 1018;
+		SaveClientChunkRequest saveClientChunkRequest = 1019;
+		SaveClientChunkResponse saveClientChunkResponse = 1020;
+		LoadClientChunkRequest loadClientChunkRequest = 1021;
+		LoadClientChunkResponse loadClientChunkResponse = 1022;
+		StoreClientLogsRequest storeClientLogsRequest = 1023;
 		
 		//SVObserver commands
 		SetDeviceModeRequest setDeviceModeRequest = 2000;
@@ -94,16 +100,9 @@ message GetVersionResponse
 	string version = 1;				//The version number as string
 }
 
-///Standard responce for requests that only return names
-message NamesResponse
+// Intentionally left blank.
+message EmptyResponse
 {
-	sint32 hResult = 1;				//The request result (0 = no error)
-	Value names = 2;				//The result names of the request
 }
 
-///Standard responce for requests that only return an hResult
-message StandardResponse
-{
-	sint32 hResult = 1;				//The request result (0 = no error)
-}
 

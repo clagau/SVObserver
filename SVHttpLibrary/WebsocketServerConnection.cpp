@@ -20,6 +20,7 @@
 #include <boost/log/trivial.hpp>
 
 #include "WebsocketServerConnection.h"
+
 namespace SvHttp
 {
 WebsocketServerConnection::WebsocketServerConnection(const WebsocketServerSettings& rSettings,
@@ -54,7 +55,15 @@ bool WebsocketServerConnection::isOpen() const
 
 void WebsocketServerConnection::start()
 {
-	m_Socket.async_accept(std::bind(&WebsocketServerConnection::handle_handshake_done, shared_from_this(), std::placeholders::_1));
+	m_Socket.async_accept_ex(
+		std::bind(&WebsocketServerConnection::handle_response_decoration, shared_from_this(), std::placeholders::_1),
+		std::bind(&WebsocketServerConnection::handle_handshake_done, shared_from_this(), std::placeholders::_1)
+	);
+}
+
+void WebsocketServerConnection::handle_response_decoration(boost::beast::websocket::response_type& m)
+{
+	m.insert(boost::beast::http::field::server, "SVObserver");
 }
 
 void WebsocketServerConnection::handle_handshake_done(const boost::system::error_code& error)

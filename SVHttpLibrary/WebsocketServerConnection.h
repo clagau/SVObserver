@@ -68,6 +68,7 @@ public:
 	std::future<void> sendBinaryMessage(const std::vector<char>&);
 
 private:
+	void handle_response_decoration(boost::beast::websocket::response_type& m);
 	void handle_handshake_done(const boost::system::error_code& error);
 
 	void read_buffer();

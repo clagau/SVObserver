@@ -21,7 +21,10 @@
 //Moved to precompiled header: #include <functional>
 //Moved to precompiled header: #include <memory>
 
+#include <boost/log/trivial.hpp>
+
 #include "EnvelopeUtil.h"
+#include "ErrorUtil.h"
 #include "Observer.h"
 #include "OneOfUtil.h"
 #include "ServerStreamContext.h"
