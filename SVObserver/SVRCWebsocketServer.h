@@ -9,15 +9,15 @@
 //Moved to precompiled header: #include <boost/asio.hpp>
 #include "SVRCRequestHandler.h"
 #include "SVRPCLibrary\RPCServer.h"
-#include "SVHttpLibrary\WebsocketServer.h"
-#include "SVHttpLibrary\WebsocketServerSettings.h"
+#include "SVHttpLibrary\HttpServer.h"
+#include "SVHttpLibrary\HttpServerSettings.h"
 
 class SVRCWebsocketServer
 {
 public:
 	static SVRCWebsocketServer* Instance();
 	~SVRCWebsocketServer();
-	void Start(std::shared_ptr<SVRCCommand> pCmd, std::shared_ptr<SvHttp::WebsocketServerSettings>  pSettings);
+	void Start(std::shared_ptr<SVRCCommand> pCmd, std::shared_ptr<SvHttp::HttpServerSettings>  pSettings);
 	void Stop();
 
 private:
@@ -26,9 +26,9 @@ private:
 	std::shared_ptr<SVRCCommand> m_pCommand;
 	std::unique_ptr<SVRCRequestHandler> m_pRequestHandler;
 	std::unique_ptr<SvRpc::RPCServer> m_pRpcServer;
-	std::shared_ptr<SvHttp::WebsocketServerSettings> m_pSettings;
+	std::shared_ptr<SvHttp::HttpServerSettings> m_pSettings;
 	
 	boost::asio::io_context m_io_service;
-	std::unique_ptr<SvHttp::WebsocketServer> m_pWebsocketserver;
+	std::unique_ptr<SvHttp::HttpServer> m_pHttpserver;
 	std::unique_ptr<std::thread> m_pThread;
 };

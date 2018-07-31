@@ -25,6 +25,7 @@ class RequestHandlerBase
 {
 public:
 	virtual ~RequestHandlerBase() {}
+	virtual bool onHandshake(const std::string& token) = 0;
 	virtual void onRequest(SvPenv::Envelope&& request, Task<SvPenv::Envelope> handler) = 0;
 	virtual void onStream(SvPenv::Envelope&& request, Observer<SvPenv::Envelope> observer, ServerStreamContext::Ptr ctx) = 0;
 };

@@ -1,6 +1,6 @@
 //******************************************************************************
 /// \copyright (c) 2017,2018 by Seidenader Maschinenbau GmbH
-/// \file WebsocketServer.cpp
+/// \file HttpServer.cpp
 /// All Rights Reserved
 //******************************************************************************
 /// Not much to see here. The actual handling of the connection to the client
@@ -14,43 +14,45 @@
 
 #include <boost/log/trivial.hpp>
 
-#include "WebsocketServer.h"
+#include "HttpServer.h"
 
 namespace SvHttp
 {
-static boost::asio::ip::tcp::endpoint build_endpoint(const WebsocketServerSettings& settings)
+static boost::asio::ip::tcp::endpoint build_endpoint(const HttpServerSettings& settings)
 {
-	using namespace boost::asio::ip;
-	return tcp::endpoint(address_v4::from_string(settings.Host), settings.Port);
+	const auto addr = boost::asio::ip::address_v4::from_string(settings.Host);
+	return boost::asio::ip::tcp::endpoint(addr, settings.Port);
 }
 
-WebsocketServer::WebsocketServer(const WebsocketServerSettings& rSettings,
-	boost::asio::io_context& rIoContext,
-	WebsocketServerConnection::EventHandler* pEventHandler)
-	: m_rSettings(rSettings), m_rIoContext(rIoContext), m_CleanupTimer(rIoContext),
-	m_Acceptor(rIoContext, build_endpoint(rSettings)), m_Socket(rIoContext), m_pEventHandler(pEventHandler), m_NextConnectionId(0)
+HttpServer::HttpServer(const HttpServerSettings& rSettings, boost::asio::io_context& rIoContext)
+	: m_rSettings(rSettings)
+	, m_rIoContext(rIoContext)
+	, m_CleanupTimer(rIoContext)
+	, m_Acceptor(rIoContext, build_endpoint(rSettings))
+	, m_Socket(rIoContext)
+	, m_NextConnectionId(0)
 {
 }
 
-void WebsocketServer::start()
+void HttpServer::start()
 {
 	start_accept();
 	schedule_cleanup();
 }
 
-void WebsocketServer::stop()
+void HttpServer::stop()
 {
 	m_Acceptor.cancel();
 	m_CleanupTimer.cancel();
 }
 
-void WebsocketServer::start_accept()
+void HttpServer::start_accept()
 {
 	m_Acceptor.async_accept(m_Socket,
-		std::bind(&WebsocketServer::handle_accept, this, std::placeholders::_1));
+		std::bind(&HttpServer::handle_accept, this, std::placeholders::_1));
 }
 
-void WebsocketServer::handle_accept(const boost::system::error_code& ec)
+void HttpServer::handle_accept(const boost::system::error_code& ec)
 {
 	if (ec == boost::asio::error::operation_aborted)
 	{
@@ -62,7 +64,7 @@ void WebsocketServer::handle_accept(const boost::system::error_code& ec)
 		return;
 	}
 
-	auto connection = WebsocketServerConnection::create(m_rSettings, m_rIoContext, std::move(m_Socket), ++m_NextConnectionId, m_pEventHandler);
+	auto connection = HttpServerConnection::create(m_rSettings, m_rIoContext, std::move(m_Socket), ++m_NextConnectionId);
 
 	connection->start();
 
@@ -71,13 +73,13 @@ void WebsocketServer::handle_accept(const boost::system::error_code& ec)
 	start_accept();
 }
 
-void WebsocketServer::schedule_cleanup()
+void HttpServer::schedule_cleanup()
 {
 	m_CleanupTimer.expires_from_now(boost::posix_time::seconds(m_rSettings.ConnectionCleanupIntervalSec));
-	m_CleanupTimer.async_wait(std::bind(&WebsocketServer::do_cleanup, this, std::placeholders::_1));
+	m_CleanupTimer.async_wait(std::bind(&HttpServer::do_cleanup, this, std::placeholders::_1));
 }
 
-void WebsocketServer::do_cleanup(const boost::system::error_code& error)
+void HttpServer::do_cleanup(const boost::system::error_code& error)
 {
 	if (error == boost::asio::error::operation_aborted)
 	{
@@ -95,7 +97,7 @@ void WebsocketServer::do_cleanup(const boost::system::error_code& error)
 	for (auto it = m_Connections.begin(); it != m_Connections.end();)
 	{
 		auto conn = *it;
-		if (!conn->isOpen())
+		if (false && !conn->isOpen())
 		{
 			BOOST_LOG_TRIVIAL(debug) << "Marking connection for deletion";
 			it = m_Connections.erase(it);

@@ -34,6 +34,11 @@ class RequestHandler : public RequestHandlerBase
 public:
 	~RequestHandler() override {}
 
+	void registerAuthHandler(std::function<bool(const std::string&)> AuthHandler)
+	{
+		m_AuthHandler = std::move(AuthHandler);
+	}
+
 	template <typename TPayload, int MessageCase, typename TReq, typename TRes>
 	void registerRequestHandler(std::function<void(TReq&&, Task<TRes>)> Handler)
 	{
@@ -57,6 +62,16 @@ public:
 	}
 
 protected:
+	virtual bool onHandshake(const std::string& token) override
+	{
+		if (!m_AuthHandler)
+		{
+			return true;
+		}
+
+		return m_AuthHandler(token);
+	}
+
 	void onRequest(SvPenv::Envelope&& Envelope, Task<SvPenv::Envelope> Task) override
 	{
 		auto payloadType = Envelope.payloadtype();
@@ -98,6 +113,7 @@ protected:
 	}
 
 private:
+	std::function<bool(const std::string&)> m_AuthHandler;
 	std::map<int, std::shared_ptr<TaskWrapperBase>> m_RequestHandler;
 	std::map<int, std::shared_ptr<ObserverWrapperBase>> m_StreamHandler;
 	std::function<void(SvPenv::Envelope&&, Task<SvPenv::Envelope>)> m_DefaultRequestHandler;

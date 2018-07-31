@@ -29,6 +29,17 @@ static void RegGetStringIfExists(std::string& dst, const std::string& name)
 	{
 	}
 }
+static void RegGetPathIfExists(std::experimental::filesystem::path& dst, const std::string& name)
+{
+	try
+	{
+		auto v = win32::RegGetString(RRWS_KEY, _T(RRWS_SUBKEY), name);
+		dst = std::experimental::filesystem::path(v);
+	}
+	catch (const win32::RegistryError&)
+	{
+	}
+}
 template <typename T> static void RegGetIntIfExists(T& dst, const std::string& name)
 {
 	try
@@ -70,12 +81,14 @@ void SettingsLoader::loadFromRegistry(Settings& settings)
 	RegGetStringIfExists(settings.logSettings.windows_event_log_source, "EventLogSource");
 	RegGetStringIfExists(settings.logSettings.windows_event_log_level, "EventLogLevel");
 
-	RegGetStringIfExists(settings.websocketSettings.Host, "WebsocketHost");
-	RegGetIntIfExists(settings.websocketSettings.Port, "WebsocketPort");
-	RegGetIntIfExists(settings.websocketSettings.ReadBufferSize, "WebsocketReadBufferSize");
-	RegGetIntIfExists(settings.websocketSettings.WriteBufferSize, "WebsocketWriteBufferSize");
-	//RegGetIntIfExists(settings.websocketSettings.PingIntervalSec, "WebsocketPingIntervalSec");
-	//RegGetIntIfExists(settings.websocketSettings.PingTimeoutCount, "WebsocketPingTimeoutCount");
-	RegGetIntIfExists(settings.websocketSettings.ConnectionCleanupIntervalSec, "WebsocketConnectionCleanupIntervalSec");
+	RegGetStringIfExists(settings.httpSettings.Host, "WebsocketHost");
+	RegGetIntIfExists(settings.httpSettings.Port, "WebsocketPort");
+	RegGetIntIfExists(settings.httpSettings.ReadBufferSize, "WebsocketReadBufferSize");
+	RegGetIntIfExists(settings.httpSettings.WriteBufferSize, "WebsocketWriteBufferSize");
+	RegGetIntIfExists(settings.httpSettings.ConnectionCleanupIntervalSec, "WebsocketConnectionCleanupIntervalSec");
+	RegGetIntIfExists(settings.httpSettings.bEnableFileServing, "WebsocketEnableFileServing");
+	RegGetPathIfExists(settings.httpSettings.DataDir, "WebsocketDataDir");
+	RegGetStringIfExists(settings.httpSettings.DefaultIndexHtmlFile, "WebsocketDefaultIndexHtmlFile");
+	RegGetStringIfExists(settings.httpSettings.DefaultErrorHtmlFile, "WebsocketDefaultErrorHtmlFile");
 }
 }// namespace SvOgw

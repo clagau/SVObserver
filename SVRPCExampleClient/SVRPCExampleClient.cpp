@@ -34,7 +34,7 @@ int main()
 	{
 		SvHttp::WebsocketClientSettings Settings;
 		Settings.Host = "127.0.0.1";
-		Settings.Port = 8081;
+		Settings.Port = 8080;
 		auto pRpcClient = std::make_unique<RPCClient>(Settings);
 		auto ConnectTimeout = boost::posix_time::seconds(6);
 		pRpcClient->waitForConnect(ConnectTimeout);
@@ -62,11 +62,11 @@ int main()
 		}
 		/// Request answered by Router
 		{
-			HelloRouterReq req;
+			/*HelloRouterReq req;
 			req.set_name("Bart Simpson");
 			SimpleClient<ApplicationMessages, HelloRouterReq, HelloRouterRes> client(*pRpcClient);
 			auto res = client.request(std::move(req), RequestTimeout).get();
-			BOOST_LOG_TRIVIAL(info) << res.message();
+			BOOST_LOG_TRIVIAL(info) << res.message();*/
 		}
 		/// Streaming
 		{

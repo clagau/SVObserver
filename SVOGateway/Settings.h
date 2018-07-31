@@ -9,7 +9,7 @@
 #pragma once
 
 #include "WebsocketLibrary/Logging.h"
-#include "SVHttpLibrary/WebsocketServerSettings.h"
+#include "SVHttpLibrary/HttpServerSettings.h"
 
 namespace SvOgw
 {
@@ -17,6 +17,6 @@ struct Settings
 {
 	bool dummySharedMemory {false};
 	SvWsl::LogSettings logSettings;
-	SvHttp::WebsocketServerSettings websocketSettings;
+	SvHttp::HttpServerSettings httpSettings;
 };
 }// namespace SvOgw

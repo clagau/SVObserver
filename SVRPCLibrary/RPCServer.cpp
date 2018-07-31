@@ -4,7 +4,7 @@
 /// All Rights Reserved
 //******************************************************************************
 /// The RPCServer is a thin wrapper around the WebsocketServer. It implements
-/// WebsocketServerConnection's MessageHandler interface for receiving all
+/// HttpServerConnection's MessageHandler interface for receiving all
 /// incoming websocket messages. It assumes they are binary envelopes only.
 //******************************************************************************
 
@@ -18,10 +18,15 @@ namespace SvRpc
 {
 RPCServer::RPCServer(RequestHandlerBase* pRequestHandler) : m_pRequestHandler(pRequestHandler) {}
 
-void RPCServer::onConnect(int id, SvHttp::WebsocketServerConnection& rConnection)
+void RPCServer::onConnect(int id, SvHttp::HttpServerConnection& rConnection)
 {
 	m_Connections[id] = &rConnection;
 	m_ServerStreamContexts[id] = {};
+}
+
+bool RPCServer::onHandshake(int id, const std::string& token)
+{
+	return m_pRequestHandler->onHandshake(token);
 }
 
 void RPCServer::onTextMessage(int id, const std::vector<char>&)

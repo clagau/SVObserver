@@ -72,7 +72,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>libprotobufd.lib;Rpcrt4.lib;SVHttpLibrary.lib;SVProtobuf.lib;SVRPCExampleLibrary.lib;SVRPCLibrary.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libprotobufd.lib;Rpcrt4.lib;SVHttpLibrary.lib;SVProtobuf.lib;SVRPCExampleLibrary.lib;SVRPCLibrary.lib;SVSystemLibrary.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration)\$(Platform)\bin\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <ResourceCompile>
@@ -106,7 +106,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration)\$(Platform)\bin\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libprotobuf.lib;Rpcrt4.lib;SVHttpLibrary.lib;SVProtobuf.lib;SVRPCExampleLibrary.lib;SVRPCLibrary.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libprotobuf.lib;Rpcrt4.lib;SVHttpLibrary.lib;SVProtobuf.lib;SVRPCExampleLibrary.lib;SVRPCLibrary.lib;SVSystemLibrary.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ResourceCompile>
       <AdditionalIncludeDirectories>..</AdditionalIncludeDirectories>

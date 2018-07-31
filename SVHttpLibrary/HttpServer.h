@@ -1,12 +1,12 @@
 //******************************************************************************
 /// \copyright (c) 2017,2018 by Seidenader Maschinenbau GmbH
-/// \file WebsocketServer.h
+/// \file HttpServer.h
 /// All Rights Reserved
 //******************************************************************************
-/// Use this class to create a Websocket server.
+/// Use this class to create a Http server.
 ///
 /// Just call start and it will bind a TCP socket on the host and port
-/// specified in the WebsocketServerSettings. For each new client connection, a
+/// specified in the HttpServerSettings. For each new client connection, a
 /// new WebsocketServerConnection is created. The provided MessageHandler
 /// instance will be passed to each connection.
 ///
@@ -22,18 +22,16 @@
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/ip/tcp.hpp>
 
-#include "WebsocketServerConnection.h"
-#include "WebsocketServerSettings.h"
+#include "HttpServerConnection.h"
+#include "HttpServerSettings.h"
 
 namespace SvHttp
 {
 
-class WebsocketServer
+class HttpServer
 {
 public:
-	WebsocketServer(const WebsocketServerSettings& rSettings,
-		boost::asio::io_context& rIoContext,
-		WebsocketServerConnection::EventHandler* pEventHandler);
+	HttpServer(const HttpServerSettings& rSettings, boost::asio::io_context& rIoContext);
 
 	void start();
 	void stop();
@@ -46,15 +44,14 @@ private:
 	void do_cleanup(const boost::system::error_code& error);
 
 private:
-	const WebsocketServerSettings& m_rSettings;
+	const HttpServerSettings& m_rSettings;
 	boost::asio::io_context& m_rIoContext;
 	boost::asio::deadline_timer m_CleanupTimer;
 	boost::asio::ip::tcp::acceptor m_Acceptor;
 	boost::asio::ip::tcp::socket m_Socket;
 	int m_NextConnectionId;
-	WebsocketServerConnection::EventHandler* m_pEventHandler {nullptr};
-	std::vector<std::shared_ptr<WebsocketServerConnection>> m_Connections;
-	std::vector<std::shared_ptr<WebsocketServerConnection>> m_ConnectionsMarkedForDeletion;
+	std::vector<std::shared_ptr<HttpServerConnection>> m_Connections;
+	std::vector<std::shared_ptr<HttpServerConnection>> m_ConnectionsMarkedForDeletion;
 };
 
 } // namespace SvHttp

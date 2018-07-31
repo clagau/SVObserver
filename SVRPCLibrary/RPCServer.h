@@ -4,7 +4,7 @@
 /// All Rights Reserved
 //******************************************************************************
 /// The RPCServer implements our protobuf-based RPC protocol using a Websocket
-/// server. It implements the  WebsocketServerConnection's MessageHandler
+/// server. It implements the  HttpServerConnection's MessageHandler
 /// interface for receiving all incoming websocket messages.
 ///
 /// It assumes all incoming messages are binary protobuf envelopes. It
@@ -19,7 +19,7 @@
 //Moved to precompiled header: #include <memory>
 //Moved to precompiled header: #include <vector>
 
-#include "SVHttpLibrary/WebsocketServerConnection.h"
+#include "SvHttpLibrary/HttpServerConnection.h"
 #include "RequestHandlerBase.h"
 #include "SVProtoBuf/envelope.h"
 
@@ -35,13 +35,14 @@ struct ConnectionLostException : public std::runtime_error
 	}
 };
 
-class RPCServer : public SvHttp::WebsocketServerConnection::EventHandler
+class RPCServer : public SvHttp::EventHandler
 {
 public:
 	RPCServer(RequestHandlerBase* request_handler);
 
 protected:
-	virtual void onConnect(int id, SvHttp::WebsocketServerConnection&) override;
+	virtual bool onHandshake(int id, const std::string&) override;
+	virtual void onConnect(int id, SvHttp::HttpServerConnection&) override;
 	virtual void onTextMessage(int id, const std::vector<char>&) override;
 	virtual void onBinaryMessage(int id, const std::vector<char>&) override;
 	virtual void onDisconnect(int id) override;
@@ -62,7 +63,7 @@ private:
 
 private:
 	RequestHandlerBase* m_pRequestHandler;
-	std::map<int, SvHttp::WebsocketServerConnection*> m_Connections;
+	std::map<int, SvHttp::HttpServerConnection*> m_Connections;
 	std::map<int, std::map<uint64_t, std::weak_ptr<ServerStreamContext>>> m_ServerStreamContexts;
 };
 

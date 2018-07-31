@@ -34,7 +34,7 @@
 //Moved to precompiled header: #include <boost/asio/io_service.hpp>
 //Moved to precompiled header: #include <boost/chrono/duration.hpp>
 
-#include "SVHttpLibrary/WebsocketClientFactory.h"
+#include "SvHttpLibrary/WebsocketClientFactory.h"
 #include "ClientStreamContext.h"
 #include "Observer.h"
 #include "Task.h"

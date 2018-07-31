@@ -170,6 +170,12 @@
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Level2</WarningLevel>
     </ClCompile>
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="SVAuth.pb.cc">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
+    </ClCompile>
     <ClCompile Include="SVRC-Enum.pb.cc">
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TurnOffAllWarnings</WarningLevel>
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">TurnOffAllWarnings</WarningLevel>
@@ -217,6 +223,9 @@
     <ClInclude Include="InspectionCommands.pb.h" />
     <ClInclude Include="MonitorListStore.h" />
     <ClInclude Include="MonitorListStore.pb.h" />
+    <ClInclude Include="Protobuf2Rapidjson.h" />
+    <ClInclude Include="SVAuth.h" />
+    <ClInclude Include="SVAuth.pb.h" />
     <ClInclude Include="SVRC-Enum.pb.h" />
     <ClInclude Include="SVRC-SVObserver.pb.h" />
     <ClInclude Include="SVRC-SVOGateway.pb.h" />
@@ -334,8 +343,6 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).pb.cc;%(Filename).pb.h</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).pb.cc;%(Filename).pb.h</Outputs>
     </CustomBuild>
-  </ItemGroup>
-  <ItemGroup>
     <CustomBuild Include="SVRC-Enum.proto">
       <FileType>Document</FileType>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
@@ -381,6 +388,24 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).pb.cc;%(Filename).pb.h</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).pb.cc;%(Filename).pb.h</Outputs>
     </CustomBuild>
+    <CustomBuild Include="SVAuth.proto">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating c++ code from %(Identity)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating c++ code from %(Identity)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating c++ code from %(Identity)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating c++ code from %(Identity)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename).pb.cc;%(Filename).pb.h</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).pb.cc;%(Filename).pb.h</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).pb.cc;%(Filename).pb.h</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).pb.cc;%(Filename).pb.h</Outputs>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SVAuth.proto" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

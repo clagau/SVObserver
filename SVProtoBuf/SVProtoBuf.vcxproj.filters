@@ -51,6 +51,9 @@
     <ClCompile Include="SVRC-SVOGateway.pb.cc">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="SVAuth.pb.cc">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="BasicStructure.proto">
@@ -81,6 +84,9 @@
       <Filter>Ressourcendateien</Filter>
     </CustomBuild>
     <CustomBuild Include="SVRC-SVObserver.proto">
+      <Filter>Ressourcendateien</Filter>
+    </CustomBuild>
+    <CustomBuild Include="SVAuth.proto">
       <Filter>Ressourcendateien</Filter>
     </CustomBuild>
   </ItemGroup>
@@ -133,6 +139,12 @@
     <ClInclude Include="ConverterHelper.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="SVAuth.pb.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVAuth.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
     <ClInclude Include="SVRC-Enum.pb.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -140,6 +152,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVRC-SVOGateway.pb.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Protobuf2Rapidjson.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

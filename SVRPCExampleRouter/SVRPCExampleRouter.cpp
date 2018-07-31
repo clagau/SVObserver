@@ -13,7 +13,7 @@
 #include <boost/asio.hpp>
 #include <boost/log/trivial.hpp>
 
-#include "SVHttpLibrary/WebsocketServer.h"
+#include "SVHttpLibrary/HttpServer.h"
 #include "SVRPCExampleLibrary/format.h"
 #include "SVRPCLibrary/Router.h"
 #include "SVRPCLibrary/RPCClient.h"
@@ -57,11 +57,12 @@ int main()
 
 		// the server (incl underlying websocket server) other clients can connect to
 		RPCServer rpcServer(&requestHandler);
-		WebsocketServerSettings serverSettings;
+		HttpServerSettings serverSettings;
 		serverSettings.Host = "127.0.0.1";
 		serverSettings.Port = 8081;
+		serverSettings.pEventHandler = &rpcServer;
 		boost::asio::io_service io_service;
-		WebsocketServer server(serverSettings, io_service, &rpcServer);
+		HttpServer server(serverSettings, io_service);
 		server.start();
 
 		BOOST_LOG_TRIVIAL(info) << "Router running on ws://" << serverSettings.Host << ":" << serverSettings.Port << "/";

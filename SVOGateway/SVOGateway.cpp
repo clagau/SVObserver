@@ -22,7 +22,7 @@
 #include "SharedMemoryAccess.h"
 #include "ServerRequestHandler.h"
 #include "SettingsLoader.h"
-#include "SVHttpLibrary/WebsocketServer.h"
+#include "SVHttpLibrary/HttpServer.h"
 #include "SVRPCLibrary/Router.h"
 #include "SVRPCLibrary/RPCServer.h"
 #include "SVOGatewayService.h"
@@ -58,7 +58,7 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 		SvOgw::SettingsLoader settingsLoader;
 		settingsLoader.loadFromRegistry(settings);
 		//@Todo[MEC][8.00] [08.03.2018] could also be in Registry
-		settings.websocketSettings.Host = "0.0.0.0";
+		settings.httpSettings.Host = "0.0.0.0";
 		init_logging(settings.logSettings);
 		BOOST_LOG_TRIVIAL(info) << "WebsocketServer is starting";
 
@@ -75,9 +75,10 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 		SvOgw::ServerRequestHandler requestHandler(sharedMemoryAccess.get());
 		SvRpc::Router SVObserverRouter{cLocalHost, SvWsl::Default_SecondPort, &requestHandler};
 		SvRpc::RPCServer rpcServer(&requestHandler);
+		settings.httpSettings.pEventHandler = &rpcServer;
 		boost::asio::io_service IoService {1};
 
-		SvHttp::WebsocketServer Server(settings.websocketSettings, IoService, &rpcServer);
+		SvHttp::HttpServer Server(settings.httpSettings, IoService);
 		Server.start();
 		std::thread ServerThread([&] { IoService.run(); });
 

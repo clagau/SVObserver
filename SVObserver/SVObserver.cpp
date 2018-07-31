@@ -2154,7 +2154,7 @@ BOOL SVObserverApp::InitInstance()
 
 	m_DataValidDelay = static_cast<long> (SvimIni.GetValueInt(_T("Settings"), _T("DataValidDelay"), 0));
 
-	std::shared_ptr<SvHttp::WebsocketServerSettings>  pSettings = std::make_shared<SvHttp::WebsocketServerSettings>();
+	std::shared_ptr<SvHttp::HttpServerSettings>  pSettings = std::make_shared<SvHttp::HttpServerSettings>();
 	
 	//@Todo[MEC][8.00] [15.05.2018] Settings should be in ini file
 	pSettings->Host = "0.0.0.0";

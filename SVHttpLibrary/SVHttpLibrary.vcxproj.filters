@@ -18,16 +18,13 @@
     <ClInclude Include="stdafx.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="WebsocketServer.h">
+    <ClInclude Include="HttpServer.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="WebsocketServerConnection.h">
+    <ClInclude Include="HttpServerSettings.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="WebsocketClient.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="WebsocketServerSettings.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="WebsocketClientFactory.h">
@@ -36,21 +33,42 @@
     <ClInclude Include="WebsocketClientSettings.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="HttpServerConnection.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="url.hpp">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="HttpRequest.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="HttpResponse.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="MediaType.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="WebsocketServer.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="WebsocketServerConnection.cpp">
+    <ClCompile Include="HttpServer.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="WebsocketClient.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="WebsocketClientFactory.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="HttpServerConnection.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="url.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="MediaType.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>

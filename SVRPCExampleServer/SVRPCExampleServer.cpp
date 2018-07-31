@@ -17,7 +17,11 @@
 #include <boost/asio.hpp>
 #include <boost/log/trivial.hpp>
 
-#include "SVHttpLibrary/WebsocketServer.h"
+#include "SVHttpLibrary/HttpServer.h"
+#include "SvHttpLibrary/HttpRequest.h"
+#include "SvHttpLibrary/HttpResponse.h"
+#include "SVProtoBuf/Protobuf2Rapidjson.h"
+#include "SVProtoBuf/SVAuth.h"
 #include "SVProtoBuf/SVRC.h"
 #include "SVRPCExampleLibrary/format.h"
 #include "SVRPCExampleServer/SeidenaderLogo100px.h"
@@ -39,6 +43,57 @@ struct ClientChunk
 
 static std::map<std::string, ClientChunk> s_clientChunks = {};
 static const auto s_emptyChunk = std::string {""};
+
+void register_auth_handler(RequestHandler& requestHandler)
+{
+	requestHandler.registerAuthHandler([](const std::string& token) -> bool
+	{
+		if (!token.empty())
+		{
+			BOOST_LOG_TRIVIAL(info) << "Incoming request with token: " << token;
+		}
+		return true;
+	});
+}
+
+bool on_http_request(const SvHttp::HttpRequest& req, SvHttp::HttpResponse& res)
+{
+	if (req.Method == boost::beast::http::verb::post &&
+		req.Url.path() == "/auth")
+	{
+		if (req.Body.size() < 2)
+		{
+			res.Status = boost::beast::http::status::bad_request;
+			return true;
+		}
+
+		std::string error;
+		SvAuth::LoginRequest loginRequest;
+		if (!Protobuf2Rapidjson::decode_from_cstring(req.Body.data(), req.Body.size(), &loginRequest, &error))
+		{
+			res.Status = boost::beast::http::status::bad_request;
+			res.Body = error;
+			return true;
+		}
+
+		if (loginRequest.username() != "admin@seidenader.de" || loginRequest.password() != "seidenader")
+		{
+			res.Status = boost::beast::http::status::unauthorized;
+			return true;
+		}
+
+		SvAuth::LoginResponse resMsg;
+		resMsg.mutable_data()->set_name("Administrator");
+		resMsg.mutable_data()->set_token("eyJuYW1lIjoiY2Jhc3R1Y2siLCJ0b2tlbiI6MTIzNDV9");
+
+		res.Status = boost::beast::http::status::ok;
+		res.ContentType = "application/json";
+		res.Body = Protobuf2Rapidjson::encode_to_string(resMsg);
+		return true;
+	}
+
+	return false;
+}
 
 static void counter_async(const boost::system::error_code& ec,
 	std::shared_ptr<boost::asio::deadline_timer> timer,
@@ -407,6 +462,7 @@ int main()
 	{
 		boost::asio::io_service io_service {1};
 		RequestHandler requestHandler;
+		register_auth_handler(requestHandler);
 		register_example_handler(requestHandler, io_service);
 		register_dummy_handler(requestHandler);
 		register_client_chunk_handler(requestHandler);
@@ -414,9 +470,15 @@ int main()
 		
 		auto rpcServer = std::make_unique<RPCServer>(&requestHandler);
 
-		WebsocketServerSettings settings;
+		HttpServerSettings settings;
 		settings.Port = 8080;
-		auto server = std::make_unique<WebsocketServer>(settings, io_service, rpcServer.get());
+		settings.pEventHandler = rpcServer.get();
+		settings.bEnableFileServing = true;
+		settings.DataDir = std::experimental::filesystem::path(".") / ".." / ".." / "seidenader-prototype" / "frontend" / "build";
+		settings.DefaultIndexHtmlFile = "index.html";
+		settings.DefaultErrorHtmlFile = "index.html"; // enables SPA
+		settings.HttpRequestHandler = std::bind(&on_http_request, std::placeholders::_1, std::placeholders::_2);
+		auto server = std::make_unique<HttpServer>(settings, io_service);
 		server->start();
 
 		BOOST_LOG_TRIVIAL(info) << "Server running on ws://" << settings.Host << ":" << settings.Port << "/";

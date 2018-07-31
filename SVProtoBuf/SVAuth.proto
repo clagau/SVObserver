@@ -1,0 +1,27 @@
+//*****************************************************************************
+/// \copyright (c) 2018,2018 by Seidenader Maschinenbau GmbH
+/// \file SVAuth.proto
+/// All Rights Reserved 
+//*****************************************************************************
+/// Protobuf file for all authentication related messages
+//******************************************************************************
+
+syntax = "proto3";
+package SvAuth;
+
+message LoginRequest
+{
+	string username = 1;
+	string password = 2;
+}
+
+message LoginResponseData
+{
+	string name = 1;
+	string token = 2;
+}
+
+message LoginResponse
+{
+	LoginResponseData data = 1;
+}
