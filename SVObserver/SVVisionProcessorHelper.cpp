@@ -1155,10 +1155,6 @@ HRESULT SVVisionProcessorHelper::FireNotification(int Type, int MessageNumber, L
 		Result = E_FAIL;
 	}
 
-	if (SVSVIMStateClass::getPreviousMode() != CurrentMode)
-	{
-		SVSVIMStateClass::setPreviousToCurrentMode();
-	}
 
 	return Result;
 }
@@ -1166,7 +1162,7 @@ HRESULT SVVisionProcessorHelper::FireNotification(int Type, int MessageNumber, L
 
 void SVVisionProcessorHelper::ProcessNotifications()
 {
-	if (m_bNotify.load() == false)
+	if (!m_bNotify.load())
 	{
 		return;
 	}
@@ -1189,8 +1185,11 @@ void SVVisionProcessorHelper::ProcessNotifications()
 
 void SVVisionProcessorHelper::ProcessLastModified()
 {
-	if (m_bNotify.load() == false)
+	if (!m_bNotify.load())
+	{
 		return;
+	}
+
 	if (m_NotificationObserver.m_OnNext && SVSVIMStateClass::getPreviousTime() != SVSVIMStateClass::getCurrentTime())
 	{
 		SvPb::GetNotificationStreamResponse resp;
@@ -1198,19 +1197,21 @@ void SVVisionProcessorHelper::ProcessLastModified()
 		try
 		{
 			m_NotificationObserver.onNext(std::move(resp));
+			SVSVIMStateClass::setPreviousToCurrentTime();
 		}
 		catch (const SvRpc::ConnectionLostException&)
 		{
 			return;
 		}
-		SVSVIMStateClass::setPreviousToCurrentTime();
 	}
 }
 
 void SVVisionProcessorHelper::ProcessMsgNotification()
 {
-	if (m_bNotify.load() == false)
+	if (!m_bNotify.load())
+	{
 		return;
+	}
 	std::lock_guard<std::mutex> lock(m_MessageNotification.getLock());
 	if (m_NotificationObserver.m_OnNext && !m_MessageNotification.isProcessed())
 	{
@@ -1247,6 +1248,7 @@ void SVVisionProcessorHelper::NotifyModeChanged()
 			try
 			{
 				m_NotificationObserver.onNext(std::move(Response));
+				SVSVIMStateClass::setPreviousToCurrentMode();
 			}
 			catch (const SvRpc::ConnectionLostException&)
 			{
