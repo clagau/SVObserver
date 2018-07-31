@@ -80,7 +80,7 @@ namespace SvStl
 		//************************************
 		//! Throws the data container as an message
 		//************************************
-		void Throw();
+		__declspec(noreturn) void Throw();
 
 		//************************************
 		//! Processes the message that has already been set
