@@ -150,6 +150,7 @@ void SVImageClass::init()
 	m_ImageType = SvDef::SVImageTypeEnum::SVImageTypeUnknown;
 
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVImageObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVImageMonoType;
 
 	// derived classes that are not result images (i.e. SVMainImageClass)
 	// need to remove the PUBLISH attribute.
