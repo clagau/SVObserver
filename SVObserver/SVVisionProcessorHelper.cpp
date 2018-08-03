@@ -1129,15 +1129,17 @@ HRESULT SVVisionProcessorHelper::FireNotification(int Type, int MessageNumber, L
 	HRESULT Result{S_OK};
 
 	//Check to see if mode has changed
-	svModeEnum CurrentMode = SVSVIMStateClass::getCurrentMode();
-	if (SVSVIMStateClass::getPreviousMode() != CurrentMode)
+	svModeEnum currentMode = SVSVIMStateClass::getCurrentMode();
+	svModeEnum previousMode = SVSVIMStateClass::getPreviousMode();
+	if (previousMode != currentMode)
 	{
-		RootObject::setRootChildValue(SvDef::FqnEnvironmentModeValue, static_cast<long> (CurrentMode));
-		RootObject::setRootChildValue(SvDef::FqnEnvironmentModeIsRun, (SVIM_MODE_ONLINE == CurrentMode));
-		RootObject::setRootChildValue(SvDef::FqnEnvironmentModeIsStop, (SVIM_MODE_OFFLINE == CurrentMode));
-		RootObject::setRootChildValue(SvDef::FqnEnvironmentModeIsRegressionTest, (SVIM_MODE_REGRESSION == CurrentMode));
-		RootObject::setRootChildValue(SvDef::FqnEnvironmentModeIsTest, (SVIM_MODE_TEST == CurrentMode));
-		RootObject::setRootChildValue(SvDef::FqnEnvironmentModeIsEdit, (SVIM_MODE_EDIT == CurrentMode));
+		RootObject::setRootChildValue(SvDef::FqnEnvironmentModeValue, static_cast<long> (currentMode));
+		RootObject::setRootChildValue(SvDef::FqnEnvironmentModeIsRun, (SVIM_MODE_ONLINE == currentMode));
+		RootObject::setRootChildValue(SvDef::FqnEnvironmentModeIsStop, (SVIM_MODE_OFFLINE == currentMode));
+		RootObject::setRootChildValue(SvDef::FqnEnvironmentModeIsRegressionTest, (SVIM_MODE_REGRESSION == currentMode));
+		RootObject::setRootChildValue(SvDef::FqnEnvironmentModeIsTest, (SVIM_MODE_TEST == currentMode));
+		RootObject::setRootChildValue(SvDef::FqnEnvironmentModeIsEdit, (SVIM_MODE_EDIT == currentMode));
+		SVSVIMStateClass::setPreviousToCurrentMode();
 	}
 
 	SvStl::NotificationEnum NotificationType(SvStl::NotificationEnum::MsgUknown);
@@ -1148,12 +1150,11 @@ HRESULT SVVisionProcessorHelper::FireNotification(int Type, int MessageNumber, L
 	}
 	if (m_pIoService)
 	{
-		m_pIoService->post([this] { ProcessNotifications(); });
+		//The previous mode is passed as a parameter due to ProcessNotifications being called at a later stage
+		m_pIoService->post([this, previousMode] { ProcessNotifications(previousMode); });
 	}
 	else
 	{
-		//This is required when no message notification is registered but the previous mode needs to be set for the Environment Mode
-		SVSVIMStateClass::setPreviousToCurrentMode();
 		Result = E_FAIL;
 	}
 
@@ -1162,7 +1163,7 @@ HRESULT SVVisionProcessorHelper::FireNotification(int Type, int MessageNumber, L
 }
 
 
-void SVVisionProcessorHelper::ProcessNotifications()
+void SVVisionProcessorHelper::ProcessNotifications(svModeEnum previousMode)
 {
 	if (!m_bNotify.load())
 	{
@@ -1180,18 +1181,13 @@ void SVVisionProcessorHelper::ProcessNotifications()
 		return;
 	}
 	ProcessLastModified();
-	NotifyModeChanged();
+	NotifyModeChanged(previousMode);
 	ProcessMsgNotification();
 
 }
 
 void SVVisionProcessorHelper::ProcessLastModified()
 {
-	if (!m_bNotify.load())
-	{
-		return;
-	}
-
 	if (m_NotificationObserver.m_OnNext && SVSVIMStateClass::getPreviousTime() != SVSVIMStateClass::getCurrentTime())
 	{
 		SvPb::GetNotificationStreamResponse resp;
@@ -1210,10 +1206,6 @@ void SVVisionProcessorHelper::ProcessLastModified()
 
 void SVVisionProcessorHelper::ProcessMsgNotification()
 {
-	if (!m_bNotify.load())
-	{
-		return;
-	}
 	std::lock_guard<std::mutex> lock(m_MessageNotification.getLock());
 	if (m_NotificationObserver.m_OnNext && !m_MessageNotification.isProcessed())
 	{
@@ -1235,25 +1227,21 @@ void SVVisionProcessorHelper::ProcessMsgNotification()
 	}
 }
 
-void SVVisionProcessorHelper::NotifyModeChanged()
+void SVVisionProcessorHelper::NotifyModeChanged(svModeEnum previousMode)
 {
-	if (SVSVIMStateClass::getPreviousMode() != SVSVIMStateClass::getCurrentMode())
+	if (previousMode != SVSVIMStateClass::getCurrentMode())
 	{
-		SVSVIMStateClass::setPreviousToCurrentMode();
-		if (m_bNotify.load())
+		SvPb::GetNotificationStreamResponse Response;
+		Response.set_currentmode(SvPb::SVIMMode_2_PbDeviceMode(static_cast<long> (SVSVIMStateClass::getCurrentMode())));
+		if (m_NotificationObserver.m_OnNext)
 		{
-			SvPb::GetNotificationStreamResponse Response;
-			Response.set_currentmode(SvPb::SVIMMode_2_PbDeviceMode(static_cast<long> (SVSVIMStateClass::getCurrentMode())));
-			if (m_NotificationObserver.m_OnNext)
+			try
 			{
-				try
-				{
-					m_NotificationObserver.onNext(std::move(Response));
-				}
-				catch (const SvRpc::ConnectionLostException&)
-				{
-					return;
-				}
+				m_NotificationObserver.onNext(std::move(Response));
+			}
+			catch (const SvRpc::ConnectionLostException&)
+			{
+				return;
 			}
 		}
 	}

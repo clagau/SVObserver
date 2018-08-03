@@ -148,11 +148,11 @@ private:
 	HRESULT GetObjectDefinition(const SVObjectClass& rObj, const long p_Filter, SVDataDefinitionStruct& rDataDef) const;
 
 
-	void ProcessNotifications();
+	void ProcessNotifications(svModeEnum previousMode);
 
 	void ProcessLastModified();
 	void ProcessMsgNotification();
-	void NotifyModeChanged();
+	void NotifyModeChanged(svModeEnum previousMode);
 
 	SVGetItemsFunctorMap m_GetItemsFunctors;
 	SVSetItemsFunctorMap m_SetItemsFunctors;
