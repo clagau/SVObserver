@@ -1152,6 +1152,8 @@ HRESULT SVVisionProcessorHelper::FireNotification(int Type, int MessageNumber, L
 	}
 	else
 	{
+		//This is required when no message notification is registered but the previous mode needs to be set for the Environment Mode
+		SVSVIMStateClass::setPreviousToCurrentMode();
 		Result = E_FAIL;
 	}
 
@@ -1235,24 +1237,23 @@ void SVVisionProcessorHelper::ProcessMsgNotification()
 
 void SVVisionProcessorHelper::NotifyModeChanged()
 {
-	if (m_bNotify.load() == false)
-	{
-		return;
-	}
 	if (SVSVIMStateClass::getPreviousMode() != SVSVIMStateClass::getCurrentMode())
 	{
-		SvPb::GetNotificationStreamResponse Response;
-		Response.set_currentmode(SvPb::SVIMMode_2_PbDeviceMode(static_cast<long> (SVSVIMStateClass::getCurrentMode())));
-		if (m_NotificationObserver.m_OnNext)
+		SVSVIMStateClass::setPreviousToCurrentMode();
+		if (m_bNotify.load())
 		{
-			try
+			SvPb::GetNotificationStreamResponse Response;
+			Response.set_currentmode(SvPb::SVIMMode_2_PbDeviceMode(static_cast<long> (SVSVIMStateClass::getCurrentMode())));
+			if (m_NotificationObserver.m_OnNext)
 			{
-				m_NotificationObserver.onNext(std::move(Response));
-				SVSVIMStateClass::setPreviousToCurrentMode();
-			}
-			catch (const SvRpc::ConnectionLostException&)
-			{
-				return;
+				try
+				{
+					m_NotificationObserver.onNext(std::move(Response));
+				}
+				catch (const SvRpc::ConnectionLostException&)
+				{
+					return;
+				}
 			}
 		}
 	}
