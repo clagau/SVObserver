@@ -1,47 +1,65 @@
-Notable changes from 7.55 to 7.56
+Notable changes from 7.56 to 8.00
 
 Known new Bugs:
-+ None
+	None
 
 Compatible Changes:
-+ None
+	SVO-781 Acquisition Tool for Color Cameras
+	SVO-142 Save result page data to csv
+	SVO-1417 Table Analyzer: Add and recalculate new columns
+	SVO-1653 Ring buffer should support color Image
+	SVO-1761 Implement a "fit to width" and "fit to height" in the image view
 
 Incompatible Changes:
-+ SVO-1753: Fixed problem with "MaximumBlobDataArraySize" > 1 in Blob Analyzer is incompatible to SVObserver 7.50 and 7.55
-+ SVO-1756: Fixed problem with "Max Number of Model" > 1 in pattern match is incompatible to SVObserver 7.50 and 7.55
+	SVO-1587 MIL 10 Support may change results
+	SVO-1640 Set MIL to use Multiprocessor
+	SVO-1800 Disable or Remove streaming in SVObserver
+	SVO-1802 Archive Tool: Wrong result data for the first member of an array
 
 Fixed Bugs:
-+ See Incompatible Changes
+	SVO-1409 Table tool / result Picker / Select toolset output dialog - inconsistent order in column name lists
+	SVO-1795 SVObserver crash if you want to delete an invalid external tool
+	SVO-1803 SVRC: GetFailStatus don't provide the latest rejected Products
+	SVO-1233 A non-existent camera file name can lead to a SVObserver crash
+	SVO-1299 Sporadic fail results from Histogram Analyzer.Second Peak
+	SVO-1907 Unexpected Audit Trail Entries
+	SVO-1908 SVObserver-Abstürze, wenn SAMI verbunden ist
 
 Notable SVIM Image Changes:
-+ None
+	SVO-1726 New Model Nummer A0 51 22 14, Support for X2C SVIM
 
-Image Name: Z7R0756A
+Image Name: X2B0800C
 
 SOFTWARE VERSIONS:
 
-Seidenader Vision Inc. SVObserver version 7.56
-
-SVRC Version 7.50
+SVObserver version 8.00
+SVRC Version 8.00
 SIAC Version 7.50
+SVOGateway Version 8.00
 
 SVLpt version 7.0.0.0 (11)
 
-Matrox Imaging Library version 9.0 R2
-Matrox 9.00 Processing Pack 2
-Matrox Update M900U56B7
-Matrox Update M900U20B02 
-Matrox Update M900U33B04 
-Matrox Update M900U45B1072 
-Matrox Update M900U53B06
-Matrox Update M900U49B18 
-Matrox Update M900U32B19 
-Matrox Update M900U52B32
-Matrox Update M900U70B03
-Matrox Engineering Fix M900R2EF68B04
-Matrox Engineering Fix M900R2EF38B01
-Matrox Engineering Fix M900R2EF116B01
-Matrox Engineering Fix M900R2EF104B04
+MIL 10.00 R2 (build 2995) 64-bit
+[10.00.2995]
+[Full]
+[Service Packs:  M10PP2B425]
+Updates Installed: 
+MIL 10 Update               7     Build 81       Matrox RadientPro
+MIL 10 Update              20     Build 15       Intellicam
+MIL 10 Update              21     Build 59       Matrox Radient eV-CLHS
+MIL 10 Update              24     Build 627      Footage for 3D imaging examples
+MIL 10 Update              25     Build 49       GigE Vision
+MIL 10 Update              27     Build 51       Matrox Radient eV-CL
+MIL 10 Update              28     Build 88       Iris GTR
+MIL 10 Update              30     Build 46       USB3 Vision
+MIL 10 Update              34     Build 55       GenTL Consumer
+MIL 10 Update              43     Build 29       MIL 10 R2 miscellaneous fixes
+MIL 10 Update              44     Build 243      MIL CoPilot
+MIL 10 Update              50     Build 26       Industrial Communication
+MIL 10 Update              53     Build 21       Matrox Indio
+MIL 10 Update              63     Build 633      SureDotOCR™ update
+MIL 10 Engineering Fix    566 F   Build 01       Genicam v3_0 XML
+MIL 10 Engineering Fix    569 F   Build 05       License dongle firmware update
 
 Microsoft Internet Explorer version 8.0
 
