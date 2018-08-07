@@ -32,9 +32,10 @@ namespace SvOsl
 		return SvCl::SelectorItem();
 	}
 
-	inline void ObjectTreeGenerator::setSelectorType( const SelectorTypeEnum& rSelectorType )
+	inline void ObjectTreeGenerator::setSelectorType(const SelectorTypeEnum& rSelectorType, UINT attribute)
 	{
 		m_SelectorType = rSelectorType;
+		m_AttributesFilter = attribute;
 		//Reset the leaf count here as this method is called at the start of inserting the objects into the selector
 		m_LeafCount = 0;
 	}

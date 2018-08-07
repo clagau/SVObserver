@@ -128,8 +128,9 @@ namespace SvOsl
 		//************************************
 		//! The method sets the selector type
 		//! \param rSelectorType <in> reference to the object selector type
+		//! \param Attribute <in> the attribute filter
 		//************************************
-		inline void setSelectorType( const SelectorTypeEnum& rSelectorType );
+		inline void setSelectorType( const SelectorTypeEnum& rSelectorType, UINT attributeFilter = 0);
 
 	#pragma endregion Public Methods
 

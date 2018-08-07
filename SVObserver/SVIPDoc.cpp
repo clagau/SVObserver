@@ -1849,7 +1849,7 @@ void SVIPDoc::OnPublishedResultsPicker()
 		SVSVIMStateClass::AddState(SV_STATE_EDITING);
 		std::string InspectionName(pInspection->GetName());
 
-		SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes);
+		SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes, SvDef::SV_PUBLISHABLE);
 		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter(SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, std::string(_T("")));
 
 		SvCmd::SelectorOptions BuildOptions {{SvCmd::ObjectSelectorType::toolsetItems}, GetInspectionID(), SvDef::SV_PUBLISHABLE};
@@ -1903,7 +1903,7 @@ void SVIPDoc::OnPublishedResultImagesPicker()
 
 		std::string InspectionName(pInspection->GetName());
 
-		SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes);
+		SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes, SvDef::SV_PUBLISH_RESULT_IMAGE);
 
 		std::string RootName = SvUl::LoadStdString(IDS_CLASSNAME_ROOTOBJECT);
 		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter(SvOsl::ObjectTreeGenerator::FilterInput, RootName, std::string(_T("")));
