@@ -1975,33 +1975,25 @@ struct local
 HRESULT SVTaskObjectClass::DisconnectInputsOutputs(SVObjectPtrVector& rListOfObjects)
 {
 	SVOutputInfoListClass l_OutputInfoList;
-
 	GetOutputList( l_OutputInfoList );
 
-	SVObjectPtrVector::const_iterator iterList;
-	SvOl::SVInputInfoListClass::iterator iterInput;
-	SVOutputInfoListClass::iterator iterOutput;
-	SVObjectPtrVector::iterator iterEmbedded;
-
-	// code borrowed from ::Disconnect and ::CloseObject
-	for ( iterList = rListOfObjects.begin(); iterList != rListOfObjects.end(); ++iterList)
+	for ( auto* pObject : rListOfObjects)
 	{
 		// check inputs
-		if ( (iterInput = std::find_if(m_InputObjectList.begin(), m_InputObjectList.end(), local::IsInput(*iterList) )) != m_InputObjectList.end() )
+		SvOl::SVInputInfoListClass::iterator iterInput = std::find_if(m_InputObjectList.begin(), m_InputObjectList.end(), local::IsInput(pObject));
+		if ( iterInput != m_InputObjectList.end() )
 		{
 			SvOl::SVInObjectInfoStruct* pInObjectInfo = *iterInput;
-			if (pInObjectInfo)
+			if( nullptr != pInObjectInfo && pInObjectInfo->IsConnected() && GUID_NULL != pInObjectInfo->getUniqueObjectID())
 			{
-				if( pInObjectInfo->IsConnected() && GUID_NULL != pInObjectInfo->getUniqueObjectID())
-				{
-					// Send to the Object we are using
-					SVObjectManagerClass::Instance().DisconnectObjectInput( pInObjectInfo->GetInputObjectInfo().getUniqueObjectID(), pInObjectInfo );
-				}
+				// Send to the Object we are using
+				SVObjectManagerClass::Instance().DisconnectObjectInput( pInObjectInfo->GetInputObjectInfo().getUniqueObjectID(), pInObjectInfo );
 			}
 		}
 		
 		// check outputs
-		if ( (iterOutput = std::find_if(l_OutputInfoList.begin(), l_OutputInfoList.end(), local::IsOutput(*iterList) )) != l_OutputInfoList.end() )
+		SVOutputInfoListClass::iterator iterOutput = std::find_if(l_OutputInfoList.begin(), l_OutputInfoList.end(), local::IsOutput(pObject));
+		if ( iterOutput != l_OutputInfoList.end() )
 		{
 			SVOutObjectInfoStruct* pOutObjectInfo = *iterOutput;
 			if (pOutObjectInfo)
@@ -2010,19 +2002,6 @@ HRESULT SVTaskObjectClass::DisconnectInputsOutputs(SVObjectPtrVector& rListOfObj
 			}
 			l_OutputInfoList.erase(iterOutput);
 		}
-
-		// check embeddeds
-		if ( (iterEmbedded = std::find(m_embeddedList.begin(), m_embeddedList.end(), *iterList )) != m_embeddedList.end() )
-		{
-			SVObjectClass* pObject = *iterEmbedded;
-			if (pObject && pObject->IsCreated())
-			{
-				pObject->CloseObject();
-			}
-			m_embeddedList.erase(iterEmbedded);
-		}
-
-		// check friend list??
 	}
 
 	return S_OK;
