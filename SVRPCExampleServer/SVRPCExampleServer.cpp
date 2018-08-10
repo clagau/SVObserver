@@ -458,7 +458,7 @@ int main()
 		settings.Port = 8080;
 		settings.pEventHandler = rpcServer.get();
 		settings.bEnableFileServing = true;
-		settings.DataDir = std::experimental::filesystem::path(".") / ".." / ".." / "seidenader-prototype" / "frontend" / "build";
+		settings.DataDir = std::experimental::filesystem::path(".") / ".." / ".." / "seidenader-prototype" / "frontend" / "dist";
 		settings.DefaultIndexHtmlFile = "index.html";
 		settings.DefaultErrorHtmlFile = "index.html"; // enables SPA
 		settings.HttpRequestHandler = std::bind(&on_http_request, std::ref(restHandler), std::placeholders::_1, std::placeholders::_2);
