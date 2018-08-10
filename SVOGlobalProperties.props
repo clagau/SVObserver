@@ -3,7 +3,7 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <IncludePath>C:\Program Files (x86)\Visual Leak Detector\include;$(PATH_3RDPARTY)\Matrox\MIL10_64bit\Include;$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\include;$(PATH_3RDPARTY)\boost_1_66_0;$(PATH_3RDPARTY)\tcl_5.3.1;$(PATH_3RDPARTY)\rapidjson-1.1.0\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Program Files (x86)\Visual Leak Detector\include;$(PATH_3RDPARTY)\Matrox\MIL10_64bit\Include;$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\include;$(PATH_3RDPARTY)\boost_1_66_0;$(PATH_3RDPARTY)\tcl_5.3.1;$(PATH_3RDPARTY)\rapidjson-1.1.0\include;$(PATH_3RDPARTY)\openssl-1.0.2o\include;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)$(Configuration)\$(Platform)\bin\</OutDir>
     <IntDir>$(SolutionDir)$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
@@ -12,7 +12,7 @@
       <PreprocessorDefinitions>TRACE_FAILURE;SV_DESIRED_MIL_VERSION#0x1000;BOOST_THREAD_VERSION=4;_WIN32_WINNT=0x600;RAPIDJSON_HAS_STDSTRING=1;RAPIDJSON_SSE2=1;RAPIDJSON_SSE42=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(PATH_3RDPARTY)\boost_1_66_0\stage\x64\lib;C:\Program Files (x86)\Visual Leak Detector\lib\win64;$(PATH_3RDPARTY)\Matrox\MIL10_64bit\Lib;$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(PATH_3RDPARTY)\boost_1_66_0\stage\x64\lib;C:\Program Files (x86)\Visual Leak Detector\lib\win64;$(PATH_3RDPARTY)\Matrox\MIL10_64bit\Lib;$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\Lib;$(PATH_3RDPARTY)\openssl-1.0.2o\lib\debug\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -20,12 +20,12 @@
       <PreprocessorDefinitions>SV_DESIRED_MIL_VERSION#0x1000;BOOST_THREAD_VERSION=4;_WIN32_WINNT=0x600;RAPIDJSON_HAS_STDSTRING=1;RAPIDJSON_SSE2=1;RAPIDJSON_SSE42=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(PATH_3RDPARTY)\boost_1_66_0\stage\x64\lib;$(PATH_3RDPARTY)\Matrox\MIL10_64bit\Lib;$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(PATH_3RDPARTY)\boost_1_66_0\stage\x64\lib;$(PATH_3RDPARTY)\Matrox\MIL10_64bit\Lib;$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\Lib;$(PATH_3RDPARTY)\openssl-1.0.2o\lib\release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Link>
-      <AdditionalLibraryDirectories>$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\lib32;$(PATH_3RDPARTY)\boost_1_66_0\stage\win32;$(LibraryPath)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\lib32;$(PATH_3RDPARTY)\boost_1_66_0\stage\win32;$(PATH_3RDPARTY)\openssl-1.0.2o\lib\release\win32;$(LibraryPath)</AdditionalLibraryDirectories>
     </Link>
     <ClCompile>
       <PreprocessorDefinitions>TRACE_FAILURE;SV_DESIRED_MIL_VERSION#0x1000;BOOST_THREAD_VERSION=4;_WIN32_WINNT=0x600;RAPIDJSON_HAS_STDSTRING=1;RAPIDJSON_SSE2=1;RAPIDJSON_SSE42=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -33,7 +33,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Link>
-      <AdditionalLibraryDirectories>$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\lib32;$(PATH_3RDPARTY)\boost_1_66_0\stage\win32;$(LibraryPath)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\lib32;$(PATH_3RDPARTY)\boost_1_66_0\stage\win32;$(PATH_3RDPARTY)\openssl-1.0.2o\lib\debug\win32;$(LibraryPath)</AdditionalLibraryDirectories>
     </Link>
     <ClCompile>
       <PreprocessorDefinitions>TRACE_FAILURE;SV_DESIRED_MIL_VERSION#0x1000;BOOST_THREAD_VERSION=4;_WIN32_WINNT=0x600;RAPIDJSON_HAS_STDSTRING=1;RAPIDJSON_SSE2=1;RAPIDJSON_SSE42=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>

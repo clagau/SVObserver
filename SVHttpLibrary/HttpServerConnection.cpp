@@ -69,7 +69,7 @@ std::future<void> HttpServerConnection::sendBinaryMessage(const std::vector<char
 
 void HttpServerConnection::http_do_read()
 {
-	m_Request.clear();
+	m_Request = {};
 	boost::beast::http::async_read(
 		m_Socket,
 		m_Buf,

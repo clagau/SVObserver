@@ -404,9 +404,6 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).pb.cc;%(Filename).pb.h</Outputs>
     </CustomBuild>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="SVAuth.proto" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

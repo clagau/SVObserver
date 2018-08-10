@@ -17,11 +17,11 @@
 #include <boost/asio.hpp>
 #include <boost/log/trivial.hpp>
 
+#include "SVAuth/AuthManager.h"
+#include "SVAuth/RestHandler.h"
 #include "SVHttpLibrary/HttpServer.h"
 #include "SvHttpLibrary/HttpRequest.h"
 #include "SvHttpLibrary/HttpResponse.h"
-#include "SVProtoBuf/Protobuf2Rapidjson.h"
-#include "SVProtoBuf/SVAuth.h"
 #include "SVProtoBuf/SVRC.h"
 #include "SVRPCExampleLibrary/format.h"
 #include "SVRPCExampleServer/SeidenaderLogo100px.h"
@@ -56,39 +56,10 @@ void register_auth_handler(RequestHandler& requestHandler)
 	});
 }
 
-bool on_http_request(const SvHttp::HttpRequest& req, SvHttp::HttpResponse& res)
+bool on_http_request(SvAuth::RestHandler& rRestHandler, const SvHttp::HttpRequest& req, SvHttp::HttpResponse& res)
 {
-	if (req.Method == boost::beast::http::verb::post &&
-		req.Url.path() == "/auth")
+	if (rRestHandler.onRestRequest(req, res))
 	{
-		if (req.Body.size() < 2)
-		{
-			res.Status = boost::beast::http::status::bad_request;
-			return true;
-		}
-
-		std::string error;
-		SvAuth::LoginRequest loginRequest;
-		if (!Protobuf2Rapidjson::decode_from_cstring(req.Body.data(), req.Body.size(), &loginRequest, &error))
-		{
-			res.Status = boost::beast::http::status::bad_request;
-			res.Body = error;
-			return true;
-		}
-
-		if (loginRequest.username() != "admin@seidenader.de" || loginRequest.password() != "seidenader")
-		{
-			res.Status = boost::beast::http::status::unauthorized;
-			return true;
-		}
-
-		SvAuth::LoginResponse resMsg;
-		resMsg.mutable_data()->set_name("Administrator");
-		resMsg.mutable_data()->set_token("eyJuYW1lIjoiY2Jhc3R1Y2siLCJ0b2tlbiI6MTIzNDV9");
-
-		res.Status = boost::beast::http::status::ok;
-		res.ContentType = "application/json";
-		res.Body = Protobuf2Rapidjson::encode_to_string(resMsg);
 		return true;
 	}
 
@@ -186,13 +157,21 @@ static void getImageForId(Image& img, const ImageId& id)
 	}
 }
 
-static void addValueToProduct(Product& prod)
+static void addValueToProduct(Product& prod, const std::string& listname, bool withValueNames = true)
 {
-	*prod.add_valuenames() = "weight";
+	std::string inspection = (listname == "monitorlist1") ? "inspection1" : "inspection2";
+	if (withValueNames)
+	{
+		*prod.add_valuenames() = inspection + ".weight";
+	}
 	auto& weight = *prod.add_values();
 	weight.set_type(Variant::DataCase::kFltVal);
-	weight.set_fltval(42.23f);
-	*prod.add_valuenames() = "place";
+	static int v = 0;
+	weight.set_fltval(++v + 0.23f);
+	if (withValueNames)
+	{
+		*prod.add_valuenames() = inspection + ".place";
+	}
 	auto& place = *prod.add_values();
 	place.set_type(Variant::DataCase::kStrVal);
 	place.set_strval("Munich");
@@ -233,7 +212,8 @@ static void register_dummy_handler(RequestHandler& requestHandler)
 	{
 		BOOST_LOG_TRIVIAL(info) << "QueryListNameRequest";
 		QueryListNameResponse res;
-		res.add_listname("name1");
+		res.add_listname("monitorlist1");
+		res.add_listname("monitorlist2");
 		task.finish(std::move(res));
 	});
 	requestHandler.registerRequestHandler<
@@ -248,7 +228,7 @@ static void register_dummy_handler(RequestHandler& requestHandler)
 		Product& prod = *res.mutable_productitem();
 		prod.set_trigger(0);
 		prod.set_status(State::isValid);
-		addValueToProduct(prod);
+		addValueToProduct(prod, req.listname(), req.nameinresponse());
 		ImageId& imgId200px = *prod.add_images();
 		imgId200px.set_imageindex(200);
 		imgId200px.set_imagestore(200);
@@ -271,14 +251,15 @@ static void register_dummy_handler(RequestHandler& requestHandler)
 		BOOST_LOG_TRIVIAL(info) << "GetRejectRequest";
 		GetRejectResponse res;
 		Product& prod = *res.mutable_productitem();
-		prod.set_trigger(0);
+		static uint32_t trigger_count = 0;
+		prod.set_trigger(++trigger_count / 4);
 		prod.set_status(State::isValid);
-		addValueToProduct(prod);
+		addValueToProduct(prod, req.listname(), req.nameinresponse());
 		prod.add_imagenames("rejected image");
 		ImageId& imgId = *prod.add_images();
-		imgId.set_imageindex(100);
-		imgId.set_imagestore(100);
-		imgId.set_slotindex(100);
+		imgId.set_imageindex(300);
+		imgId.set_imagestore(300);
+		imgId.set_slotindex(300);
 		task.finish(std::move(res));
 	});
 	requestHandler.registerRequestHandler<
@@ -467,8 +448,11 @@ int main()
 		register_dummy_handler(requestHandler);
 		register_client_chunk_handler(requestHandler);
 		register_log_handler(requestHandler);
-		
+
 		auto rpcServer = std::make_unique<RPCServer>(&requestHandler);
+
+		SvAuth::AuthManager authManager;
+		SvAuth::RestHandler restHandler(authManager);
 
 		HttpServerSettings settings;
 		settings.Port = 8080;
@@ -477,7 +461,7 @@ int main()
 		settings.DataDir = std::experimental::filesystem::path(".") / ".." / ".." / "seidenader-prototype" / "frontend" / "build";
 		settings.DefaultIndexHtmlFile = "index.html";
 		settings.DefaultErrorHtmlFile = "index.html"; // enables SPA
-		settings.HttpRequestHandler = std::bind(&on_http_request, std::placeholders::_1, std::placeholders::_2);
+		settings.HttpRequestHandler = std::bind(&on_http_request, std::ref(restHandler), std::placeholders::_1, std::placeholders::_2);
 		auto server = std::make_unique<HttpServer>(settings, io_service);
 		server->start();
 

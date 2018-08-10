@@ -22,6 +22,8 @@
 #include "SharedMemoryAccess.h"
 #include "ServerRequestHandler.h"
 #include "SettingsLoader.h"
+#include "SVAuth/AuthManager.h"
+#include "SVAuth/RestHandler.h"
 #include "SVHttpLibrary/HttpServer.h"
 #include "SVRPCLibrary/Router.h"
 #include "SVRPCLibrary/RPCServer.h"
@@ -47,6 +49,15 @@ bool CheckCommandLineArgs(int argc, _TCHAR* argv[], LPCTSTR option)
 	return bFound;
 }
 
+bool on_http_request(SvAuth::RestHandler& rRestHandler, const SvHttp::HttpRequest& req, SvHttp::HttpResponse& res)
+{
+	if (rRestHandler.onRestRequest(req, res))
+	{
+		return true;
+	}
+
+	return false;
+}
 
 void StartWebServer(DWORD argc, LPTSTR  *argv)
 {
@@ -71,11 +82,15 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 			throw std::exception("MapAlloc failed");
 		}
 
+		SvAuth::AuthManager authManager;
+		SvAuth::RestHandler restHandler(authManager);
+
 		auto sharedMemoryAccess = std::make_unique<SvOgw::SharedMemoryAccess>();
 		SvOgw::ServerRequestHandler requestHandler(sharedMemoryAccess.get());
-		SvRpc::Router SVObserverRouter{cLocalHost, SvWsl::Default_SecondPort, &requestHandler};
+		SvRpc::Router SVObserverRouter {cLocalHost, SvWsl::Default_SecondPort, &requestHandler};
 		SvRpc::RPCServer rpcServer(&requestHandler);
 		settings.httpSettings.pEventHandler = &rpcServer;
+		settings.httpSettings.HttpRequestHandler = std::bind(&on_http_request, std::ref(restHandler), std::placeholders::_1, std::placeholders::_2);
 		boost::asio::io_service IoService {1};
 
 		SvHttp::HttpServer Server(settings.httpSettings, IoService);
@@ -107,11 +122,11 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 
 int main(int argc, _TCHAR* argv[])
 {
-	int Result{0};
+	int Result {0};
 	SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 	Exception.setMessage(SVMSG_SVGateway_2_GENERAL_INFORMATIONAL, SvStl::Tid_Started, SvStl::SourceFileParams(StdMessageParams));
 
-	if(CheckCommandLineArgs(argc, argv, _T("/cmd")))
+	if (CheckCommandLineArgs(argc, argv, _T("/cmd")))
 	{
 		StartWebServer(argc, argv);
 	}
@@ -128,9 +143,9 @@ int main(int argc, _TCHAR* argv[])
 
 		if (!StartServiceCtrlDispatcher(ServiceTable))
 		{
-	#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)	
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)	
 			OutputDebugString(_T("StartServiceCtrlDispatcher returned error"));
-	#endif		
+#endif		
 			Result = GetLastError();
 			// running as console (for Debug?)
 			if (ERROR_FAILED_SERVICE_CONTROLLER_CONNECT == Result)
