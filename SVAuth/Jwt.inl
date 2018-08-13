@@ -7,7 +7,7 @@
 //******************************************************************************
 
 #include <string>
-#include <SVProtoBuf/SVAuth.h>
+#include "SVProtoBuf/SVAuth.h"
 
 namespace SvAuth
 {

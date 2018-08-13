@@ -10,7 +10,7 @@
 
 #include <map>
 
-#include <SVProtoBuf/SVAuth.h>
+#include "SVProtoBuf/SVAuth.h"
 
 namespace SvAuth
 {

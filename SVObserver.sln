@@ -660,6 +660,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TriggerRecordControllerUnit
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVAuth", "SVAuth\SVAuth.vcxproj", "{E7DFC94C-271B-42E0-B86A-F39CCE1A50FF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2F3FD18D-3FDE-414C-8AF5-4A872B1519FF} = {2F3FD18D-3FDE-414C-8AF5-4A872B1519FF}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

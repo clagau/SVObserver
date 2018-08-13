@@ -10,9 +10,9 @@
 
 #include <string>
 
-#include <SVAuth/Crypto.h>
-#include <SVAuth/Jwt.h>
-#include <SVProtoBuf/SVAuth.h>
+#include "Crypto.h"
+#include "Jwt.h"
+#include "SVProtoBuf/SVAuth.h"
 
 namespace google
 {

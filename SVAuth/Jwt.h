@@ -10,8 +10,8 @@
 
 #include <string>
 
-#include <SVAuth/Crypto.h>
-#include <SVProtoBuf/SVAuth.h>
+#include "Crypto.h"
+#include "SVProtoBuf/SVAuth.h"
 
 namespace SvAuth
 {
