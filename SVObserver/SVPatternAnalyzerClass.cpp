@@ -933,6 +933,14 @@ SvStl::MessageContainerVector SVPatternAnalyzerClass::validateAndSetEmbeddedValu
 	return messages;
 }
 
+void SVPatternAnalyzerClass::addParameterForMonitorList(SvStl::MessageContainerVector& rMessages, std::back_insert_iterator<SvOi::ParametersForML> inserter) const
+{
+	inserter = SvOi::ParameterPairForML(msv_dpatResultX.GetCompleteName(), msv_dpatResultX.GetUniqueObjectID());
+	inserter = SvOi::ParameterPairForML(msv_dpatResultY.GetCompleteName(), msv_dpatResultY.GetUniqueObjectID());
+	inserter = SvOi::ParameterPairForML(msv_dpatResultMatchScore.GetCompleteName(), msv_dpatResultMatchScore.GetUniqueObjectID());
+	inserter = SvOi::ParameterPairForML(msv_lpatNumFoundOccurances.GetCompleteName(), msv_lpatNumFoundOccurances.GetUniqueObjectID());
+}
+
 HRESULT SVPatternAnalyzerClass::onCollectOverlays(SVImageClass* p_pImage, SVExtentMultiLineStructVector& p_rMultiLineArray )
 {
 	// only if ToolSet/Tool was not Disabled

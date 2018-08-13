@@ -13,6 +13,7 @@
 #include "stdafx.h"
 #include "SVLinearToolClass.h"
 #include "InspectionEngine/SVAnalyzer.h"
+#include "InspectionEngine/SVConditional.h"
 #include "SVInspectionProcess.h"
 #include "SVLinearImageOperatorList.h"
 #include "InspectionEngine/SVThresholdClass.h"
@@ -237,6 +238,63 @@ EAutoSize SVLinearToolClass::GetAutoSizeEnabled()
 SVStringValueObjectClass* SVLinearToolClass::GetInputImageNames()
 {
 	return &m_SourceImageNames;
+}
+
+SvOi::ParametersForML SVLinearToolClass::getParameterForMonitorList(SvStl::MessageContainerVector& rMessages) const
+{
+	bool isNoError = true;
+	bool isAuxNoError = true;
+	SvOi::ParametersForML retList;
+	retList.push_back(SvOi::ParameterPairForML(m_statusColor.GetCompleteName(), m_statusColor.GetUniqueObjectID()));
+	if (nullptr != m_pToolConditional)
+	{
+		retList.push_back(m_pToolConditional->getResultData());
+	}
+	else
+	{
+		isNoError = false;
+	}
+	isNoError = addEntryToMonitorList(retList, SVExtentWidthObjectGuid) && isNoError;
+	isNoError = addEntryToMonitorList(retList, SVExtentHeightObjectGuid) && isNoError;
+	isAuxNoError = addEntryToMonitorList(retList, SVAuxiliarySourceXObjectGuid);
+	isAuxNoError = addEntryToMonitorList(retList, SVAuxiliarySourceYObjectGuid) && isAuxNoError;
+
+	SvOl::SVInObjectInfoStruct* pImageInfo = nullptr;
+	if (S_OK == FindNextInputImageInfo(pImageInfo))
+	{
+		if (nullptr != pImageInfo && pImageInfo->IsConnected())
+		{
+			const SVImageClass* pSourceImage = dynamic_cast<SVImageClass*> (pImageInfo->GetInputObjectInfo().getObject());
+			if (nullptr != pSourceImage)
+			{
+				auto* pSourceTool = dynamic_cast<SVToolClass*>(pSourceImage->GetAncestor(SvDef::SVToolObjectType));
+				if (nullptr != pSourceTool)
+				{
+					isAuxNoError = pSourceTool->addEntryToMonitorList(retList, SVAuxiliarySourceXObjectGuid) && isAuxNoError;
+					isAuxNoError = pSourceTool->addEntryToMonitorList(retList, SVAuxiliarySourceYObjectGuid) && isAuxNoError;
+				}
+			}
+		}
+	}
+
+	if (!isAuxNoError)
+	{
+		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetAuxiliaryParameterToMonitorListFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+		rMessages.push_back(Msg);
+	}
+	else if (!isNoError)
+	{
+		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetParameterToMonitorListFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+		rMessages.push_back(Msg);
+	}
+
+	SVAnalyzerClass* pCurrentAnalyzer = dynamic_cast<SVAnalyzerClass *>(getFirstObject(SvDef::SVObjectTypeInfoStruct(SvDef::SVAnalyzerObjectType)));
+	if (nullptr != pCurrentAnalyzer)
+	{
+		pCurrentAnalyzer->addParameterForMonitorList(rMessages, std::back_inserter(retList));
+	}
+
+	return retList;
 }
 #pragma endregion Public Methods
 

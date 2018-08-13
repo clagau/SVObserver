@@ -524,5 +524,8 @@ enum MessageTextEnum
 
 	Tid_RunInspection_ResetTR,
 	Tid_RunInspection_TRFailed,
+	Tid_SetParameterToMonitorListFailed,
+	Tid_SetAuxiliaryParameterToMonitorListFailed,
+	Tid_SetResultParameterToMonitorListFailed,
 };
 } //namespace SvStl

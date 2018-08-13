@@ -94,10 +94,10 @@ public:
 
 	HRESULT GetNonToolsetOutputList(SVOutputInfoListClass& p_rOutputInfoList) const;
 
-	virtual HRESULT IsAuxInputImage(const SvOl::SVInObjectInfoStruct* p_psvInfo);
+	virtual HRESULT IsAuxInputImage(const SvOl::SVInObjectInfoStruct* p_psvInfo) const;
 
 	virtual HRESULT GetChildObject(SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0) const override;
-	HRESULT FindNextInputImageInfo(SvOl::SVInObjectInfoStruct*& p_rpsvFoundInfo, const SvOl::SVInObjectInfoStruct* p_psvLastInfo = nullptr);
+	HRESULT FindNextInputImageInfo(SvOl::SVInObjectInfoStruct*& p_rpsvFoundInfo, const SvOl::SVInObjectInfoStruct* p_psvLastInfo = nullptr) const;
 
 	//************************************
 	//! Clears the task set message list 
@@ -147,9 +147,6 @@ public:
 #pragma endregion Methods to replace processMessage
 
 protected:
-	SvOl::SVInputInfoListClass m_svToolInputList;
-	long m_lLastToolInputListIndex;
-
 	bool RegisterEmbeddedObjectAsClass(SVObjectClass* PEmbeddedObject, const GUID& REmbeddedID, LPCTSTR newObjectName);
 
 	/// This method return true if method ConnectAllObject has to ask friends to connect this input info
@@ -252,5 +249,10 @@ protected:
 
 	SvStl::MessageContainerVector m_ResetErrorMessages;  ///The list of task messages
 	SvStl::MessageContainerVector m_RunErrorMessages;  ///The list of task messages
+
+private:
+	//The next two parameter are used only for the method FindNextInputImageInfo to save the input-list to avoid to rebuild it every run.
+	mutable SvOl::SVInputInfoListClass m_svToolInputList;
+	mutable long m_lLastToolInputListIndex = -1;
 };	// end class SVTaskObjectClass
 

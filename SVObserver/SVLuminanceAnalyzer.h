@@ -34,6 +34,7 @@ public:
 	virtual bool CloseObject() override;
 
 	 virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
+	 virtual void addParameterForMonitorList(SvStl::MessageContainerVector& rMessages, std::back_insert_iterator<SvOi::ParametersForML> inserter) const override;
 
 public:
 	long msvlHistValueArraySize;

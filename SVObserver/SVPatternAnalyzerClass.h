@@ -53,6 +53,7 @@ public:
 	virtual void getSpecialImageList(SvDef::StringVector& rList) const override;
 	virtual bool getSpecialImage(const std::string& rName, SvOi::SVImageBufferHandlePtr& rImagePtr) const override;
 	virtual SvStl::MessageContainerVector validateAndSetEmbeddedValues(const SvOi::SetValueStructVector& rValueVector, bool shouldSet) override;
+	virtual void addParameterForMonitorList(SvStl::MessageContainerVector& rMessages, std::back_insert_iterator<SvOi::ParametersForML> inserter) const override;
 	
 protected:
 	/// Reload model from file and restore the pattern.

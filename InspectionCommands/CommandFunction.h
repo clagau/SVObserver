@@ -57,4 +57,10 @@ namespace SvCmd
 	/// \param rResponseMessage [in,out] The response-protoBuf-message.
 	/// \returns HRESULT
 	HRESULT ValidateAndSetEquation(const SvPb::ValidateAndSetEquationRequest& rRequestMessage, SvPb::ValidateAndSetEquationResponse& rResponseMessage);
+
+	/// Return a list of object which should be added to the monitor list (e.g. HMI purpose)
+	/// \param rRequestMessage [in] The request-protoBuf-message.
+	/// \param rResponseMessage [in,out] The response-protoBuf-message.
+	/// \returns HRESULT
+	HRESULT getObjectsForMonitorList(const SvPb::GetObjectsForMonitorListRequest& rRequestMessage, SvPb::GetObjectsForMonitorListResponse& rResponseMessage);
 } //namespace SvCmd

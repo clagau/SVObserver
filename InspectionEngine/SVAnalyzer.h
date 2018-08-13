@@ -32,6 +32,8 @@ public:
 	virtual void DisplayAnalyzerResult(){};
 // End. Sri
 
+	virtual void addParameterForMonitorList(SvStl::MessageContainerVector& rMessages, std::back_insert_iterator<SvOi::ParametersForML> inserter) const {};
+
 protected:
 	virtual bool createAllObjectsFromChild( SVObjectClass& rChildObject ) override;
 

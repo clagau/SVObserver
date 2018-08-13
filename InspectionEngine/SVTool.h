@@ -96,7 +96,7 @@ public:
 	HRESULT GetSourceImages(SVImageClassPtrVector* p_psvImageList) const;
 	HRESULT SetAuxSourceImage(SVImageClass* p_psvImage);
 
-	virtual HRESULT IsAuxInputImage(const SvOl::SVInObjectInfoStruct* p_psvInfo) override;
+	virtual HRESULT IsAuxInputImage(const SvOl::SVInObjectInfoStruct* p_psvInfo) const override;
 
 	const SvOl::SVInObjectInfoStruct* GetAuxInputImageInfo() const { return &m_AuxSourceImageObjectInfo;}
 
@@ -132,6 +132,11 @@ public:
 	// 26 Jan 2000 - frb.
 	//
 	const SVImageInfoClass* getFirstImageInfo() const;
+	
+	/// Search an object with the embeddedId and add it to the ParameterList for the needed in monitor list.
+	/// \param retList [in,out] The ParameterList
+	/// \param rEmbeddedId [in] The EmbeddedId of the object
+	bool addEntryToMonitorList(SvOi::ParametersForML &retList, const SVGUID& rEmbeddedId) const;
 
 #pragma region ITool methods
 	virtual bool areAuxExtentsAvailable() const override;
@@ -141,6 +146,7 @@ public:
 	virtual void SetToolImage(const SVGUID& rObjectID) override;
 	virtual long getToolPosition() const override;
 	virtual HRESULT getExtentProperty(const SvDef::SVExtentPropertyEnum& rExtentProperty, double& rValue) override;
+	virtual SvOi::ParametersForML getParameterForMonitorList(SvStl::MessageContainerVector& rMessages) const override;
 #pragma endregion ITool methods
 
 protected:

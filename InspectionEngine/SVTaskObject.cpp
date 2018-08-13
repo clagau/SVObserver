@@ -79,8 +79,6 @@ HRESULT SVTaskObjectClass::LocalInitialize()
 	// Add out Default Inputs and Outputs
 	addDefaultInputObjects();
 
-	m_lLastToolInputListIndex = -1;
-
 	return l_hrOk;
 }
 
@@ -221,12 +219,12 @@ HRESULT SVTaskObjectClass::GetNonToolsetOutputList( SVOutputInfoListClass& rOutp
 	return Result;
 }
 
-HRESULT SVTaskObjectClass::IsAuxInputImage( const SvOl::SVInObjectInfoStruct* p_psvInfo )
+HRESULT SVTaskObjectClass::IsAuxInputImage( const SvOl::SVInObjectInfoStruct* p_psvInfo ) const
 {
 	return S_FALSE;
 }
 
-HRESULT SVTaskObjectClass::FindNextInputImageInfo(SvOl::SVInObjectInfoStruct*& p_rpsvFoundInfo, const SvOl::SVInObjectInfoStruct* p_psvLastInfo )
+HRESULT SVTaskObjectClass::FindNextInputImageInfo(SvOl::SVInObjectInfoStruct*& p_rpsvFoundInfo, const SvOl::SVInObjectInfoStruct* p_psvLastInfo ) const
 {
 	HRESULT l_svOk = S_FALSE;
 

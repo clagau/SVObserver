@@ -157,6 +157,10 @@ public:
 	afx_msg void OnUpdateEditPaste( CCmdUI* PCmdUI );
 	afx_msg void OnShowFirstError();
 	afx_msg void OnUpdateShowFirstError( CCmdUI* PCmdUI );
+	afx_msg void OnAddParameterToMonitorList();
+	afx_msg void OnUpdateAddParameterToMonitorList(CCmdUI* PCmdUI);
+	afx_msg void OnRemoveParameterToMonitorList();
+	afx_msg void OnUpdateRemoveParameterToMonitorList(CCmdUI* PCmdUI);
 	afx_msg void OnEditDelete();
 	afx_msg void OnAdjustLightReference();
 	afx_msg void OnAdjustLut();

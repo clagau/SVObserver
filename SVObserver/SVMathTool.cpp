@@ -13,10 +13,12 @@
 #include "stdafx.h"
 #include "SVMathTool.h"
 #include "SVGlobal.h"
+#include "InspectionEngine/SVConditional.h"
 #include "InspectionEngine/SVMathEquation.h"
 #include "SVResultDouble.h"
 #include "SVInspectionProcess.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "SVRange.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -116,4 +118,37 @@ bool SVMathToolClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStruc
 	m_svAuxiliaryDrawType.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
 
 	return m_isCreated;
+}
+
+SvOi::ParametersForML SVMathToolClass::getParameterForMonitorList(SvStl::MessageContainerVector& rMessages) const
+{
+	bool isNoError = true;
+	SvOi::ParametersForML retList;
+	retList.push_back(SvOi::ParameterPairForML(m_statusColor.GetCompleteName(), m_statusColor.GetUniqueObjectID()));
+	if (nullptr != m_pToolConditional)
+	{
+		retList.push_back(m_pToolConditional->getResultData());
+	}
+	else
+	{
+		isNoError = false;
+	}
+	isNoError = addEntryToMonitorList(retList, SVValueObjectGuid) && isNoError;
+	SVRangeClass* pRangeObject = dynamic_cast<SVRangeClass*>(getFirstObject(SvDef::SVObjectTypeInfoStruct(SvDef::SVObjectTypeEnum::SVRangeObjectType)));
+	if (nullptr != pRangeObject)
+	{
+		pRangeObject->addEntriesToMonitorList(std::back_inserter(retList));
+	}
+	else
+	{
+		isNoError = false;
+	}
+
+	if (!isNoError)
+	{
+		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetParameterToMonitorListFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+		rMessages.push_back(Msg);
+	}
+
+	return retList;
 }

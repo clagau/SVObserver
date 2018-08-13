@@ -66,6 +66,7 @@
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "Definitions/GlobalConst.h"
+#include "Definitions/SVObjectTypeInfoStruct.h"
 #include "TextDefinesSvO.h"
 #include "SVColorTool.h"
 #include "InspectionCommands/CommandFunctionHelper.h"
@@ -624,7 +625,7 @@ bool SVConfigurationObject::AddInspection(SVInspectionProcess* pInspection)
 		assert(m_arInspectionArray.end() != std::find_if(m_arInspectionArray.begin(), m_arInspectionArray.end(), [pInspection](auto data)->bool
 		{
 			return (data == pInspection);
-		})); 
+		}));
 		auto inspId = m_inspList4TRC.add_list();
 		SvPb::SetGuidInProtoBytes(inspId->mutable_id(), pInspection->GetUniqueObjectID());
 
@@ -647,7 +648,7 @@ bool SVConfigurationObject::RemoveInspection(SVInspectionProcess* pInspection)
 		if (pInspection == m_arInspectionArray[i])
 		{
 			m_arInspectionArray.erase(m_arInspectionArray.begin() + i);
-			m_inspList4TRC.mutable_list()->erase(m_inspList4TRC.list().begin()+i);
+			m_inspList4TRC.mutable_list()->erase(m_inspList4TRC.list().begin() + i);
 			break;
 		}
 	}
@@ -1875,8 +1876,8 @@ bool SVConfigurationObject::LoadInspection(SVTreeType& rTree)
 		_variant_t Value;
 		std::string IPName;
 		std::string ToolsetName;
-		long NewDisableMethod{0L};
-		long EnableAuxiliaryExtent{-1L};
+		long NewDisableMethod {0L};
+		long EnableAuxiliaryExtent {-1L};
 
 		pInspection->SetName(ItemName.c_str());
 
@@ -1950,7 +1951,7 @@ bool SVConfigurationObject::LoadInspection(SVTreeType& rTree)
 			if (bOk)
 			{
 				pInspection->SetNewDisableMethod(1 == NewDisableMethod);
-				if(-1 != EnableAuxiliaryExtent)
+				if (-1 != EnableAuxiliaryExtent)
 				{
 					pInspection->setEnableAuxiliaryExtent(1 == EnableAuxiliaryExtent);
 				}
@@ -2444,7 +2445,7 @@ void SVConfigurationObject::UpgradeConfiguration()
 	}
 	if (ConfigChanged)
 	{
-		SvStl::MsgTypeEnum  MsgType{SvStl::LogAndDisplay};
+		SvStl::MsgTypeEnum  MsgType {SvStl::LogAndDisplay};
 		SvStl::MessageMgrStd Exception(MsgType);
 		Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ColorToolExtentsChanged, SvStl::SourceFileParams(StdMessageParams));
 	}
@@ -4419,7 +4420,7 @@ HRESULT SVConfigurationObject::GetInspectionItems(const SvDef::StringSet& rNames
 		SVInspectionMap l_Inspections;
 		SVInspectionNameItemNameMap InspectionItems;
 
-		for (const auto&  rEntry : rNames)
+		for (const auto& rEntry : rNames)
 		{
 			SVObjectNameInfo l_Info;
 
@@ -5168,6 +5169,179 @@ void SVConfigurationObject::updateConfTreeToNewestVersion(SVTreeType &rTree, SVT
 	}
 }
 
+bool SVConfigurationObject::isAddParameter2MonitorListPossible(LPCTSTR ppqName, const SVGUID& rToolId) const
+{
+	bool retVal = false;
+	RemoteMonitorListMap monitorList = GetRemoteMonitorList();
+	auto iter = find_if(monitorList.begin(), monitorList.end(), [ppqName](const auto item)->bool
+	{
+		return item.second.GetPPQName() == ppqName && item.second.IsActive();
+	});
+	if (iter != monitorList.end())
+	{
+		SvPb::GetObjectsForMonitorListResponse responseMessage;
+		retVal = getObjectsForMonitorList(rToolId, responseMessage);
+
+		if (retVal)
+		{
+			retVal = responseMessage.list_size() > 0;
+		}
+	}
+	return retVal;
+}
+
+bool SVConfigurationObject::isRemoveParameter2MonitorListPossible(LPCTSTR ppqName, const SVGUID& rToolId) const
+{
+	bool retVal = false;
+	RemoteMonitorListMap monitorList = GetRemoteMonitorList();
+	auto iter = find_if(monitorList.begin(), monitorList.end(), [ppqName](const auto item)->bool
+	{
+		return item.second.GetPPQName() == ppqName && item.second.IsActive();
+	});
+	if (iter != monitorList.end())
+	{
+		SvPb::GetObjectsForMonitorListResponse responseMessage;
+		retVal = getObjectsForMonitorList(rToolId, responseMessage);
+
+		if (retVal)
+		{
+			retVal = responseMessage.list_size() > 0;
+		}
+	}
+	return retVal;
+}
+
+bool SVConfigurationObject::areParametersInMonitorList(LPCTSTR ppqName, const SVGUID& rToolId) const
+{
+	bool retVal = false;
+	RemoteMonitorListMap monitorList = GetRemoteMonitorList();
+	auto iter = find_if(monitorList.begin(), monitorList.end(), [ppqName](const auto item)->bool
+	{
+		return item.second.GetPPQName() == ppqName && item.second.IsActive();
+	});
+	if (iter != monitorList.end())
+	{
+		SvPb::GetObjectsForMonitorListResponse responseMessage;
+		retVal = getObjectsForMonitorList(rToolId, responseMessage);
+		retVal &= responseMessage.list_size() > 0;
+		if (retVal)
+		{
+			MonitoredObjectList productList = iter->second.GetProductValuesList();
+			for (auto const& rEntry : responseMessage.list())
+			{
+				std::string ObjectName(SvDef::FqnInspections);
+				ObjectName += _T(".") + rEntry.objectname();
+				const MonitoredObject& monitoredObj = RemoteMonitorListHelper::GetMonitoredObjectFromName(ObjectName);
+				if (monitoredObj.guid.empty())
+				{
+					retVal = false;
+				}
+				else
+				{
+					auto& findIter = find(productList.begin(), productList.end(), monitoredObj);
+					if (productList.end() == findIter)
+					{
+						retVal = false;
+					}
+				}
+
+				if (!retVal)
+				{
+					break;
+				}
+			}
+
+			SvStl::MessageContainerVector messages = SvCmd::setMessageContainerFromMessagePB(responseMessage.messages());
+			retVal &= (0 == messages.size());
+		}
+	}
+	return retVal;
+}
+
+SvStl::MessageContainerVector SVConfigurationObject::addParameter2MonitorList(LPCTSTR ppqName, const SVGUID& rToolId)
+{
+	SvStl::MessageContainerVector messages;
+	RemoteMonitorListMap monitorList = GetRemoteMonitorList();
+	auto iter = find_if(monitorList.begin(), monitorList.end(), [ppqName](const auto item)->bool
+	{
+		return item.second.GetPPQName() == ppqName && item.second.IsActive();
+	});
+	if (iter != monitorList.end())
+	{
+		SvPb::GetObjectsForMonitorListResponse responseMessage;
+		bool isOk = getObjectsForMonitorList(rToolId, responseMessage);
+		if (isOk)
+		{
+			MonitoredObjectList productList = iter->second.GetProductValuesList();
+			for (auto const& rEntry : responseMessage.list())
+			{
+				std::string ObjectName(SvDef::FqnInspections);
+				ObjectName += _T(".") + rEntry.objectname();
+				const MonitoredObject& monitoredObj = RemoteMonitorListHelper::GetMonitoredObjectFromName(ObjectName);
+				if (!monitoredObj.guid.empty())
+				{
+					auto& findIter = find(productList.begin(), productList.end(), monitoredObj);
+					if (productList.end() == findIter)
+					{
+						productList.push_back(monitoredObj);
+					}
+				}
+			}
+			iter->second.SetProductValuesList(productList);
+			SetRemoteMonitorList(monitorList);
+			messages = SvCmd::setMessageContainerFromMessagePB(responseMessage.messages());
+		}
+		else
+		{
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetParameterToMonitorListFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			messages.push_back(Msg);
+		}
+	}
+	return messages;
+}
+
+SvStl::MessageContainerVector SVConfigurationObject::removeParameter2MonitorList(LPCTSTR ppqName, const SVGUID& rToolId)
+{
+	SvStl::MessageContainerVector messages;
+	RemoteMonitorListMap monitorList = GetRemoteMonitorList();
+	auto iter = find_if(monitorList.begin(), monitorList.end(), [ppqName](const auto item)->bool
+	{
+		return item.second.GetPPQName() == ppqName && item.second.IsActive();
+	});
+	if (iter != monitorList.end())
+	{
+		SvPb::GetObjectsForMonitorListResponse responseMessage;
+		bool isOk = getObjectsForMonitorList(rToolId, responseMessage);
+		if (isOk)
+		{
+			MonitoredObjectList productList = iter->second.GetProductValuesList();
+			for (auto const& rEntry : responseMessage.list())
+			{
+				std::string ObjectName(SvDef::FqnInspections);
+				ObjectName += _T(".") + rEntry.objectname();
+				const MonitoredObject& monitoredObj = RemoteMonitorListHelper::GetMonitoredObjectFromName(ObjectName);
+				if (!monitoredObj.guid.empty())
+				{
+					auto& findIter = find(productList.begin(), productList.end(), monitoredObj);
+					if (productList.end() != findIter)
+					{
+						productList.erase(findIter);
+					}
+				}
+			}
+			iter->second.SetProductValuesList(productList);
+			SetRemoteMonitorList(monitorList);
+			messages = SvCmd::setMessageContainerFromMessagePB(responseMessage.messages());
+		}
+		else
+		{
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetParameterToMonitorListFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			messages.push_back(Msg);
+		}
+	}
+	return messages;
+}
+
 void SVConfigurationObject::OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName)
 {
 	SVOutputObjectList *pOutputs = GetOutputObjectList();
@@ -5420,7 +5594,7 @@ HRESULT SVConfigurationObject::LoadMonitoredObjectList(SVTreeType& rTree, SVTree
 		while (S_OK == retValue && rTree.isValidLeaf(hChild, hLeaf))
 		{
 			std::string Name(rTree.getLeafName(hLeaf));
-			if(0 != Name.find(SvDef::FqnInspections))
+			if (0 != Name.find(SvDef::FqnInspections))
 			{
 				std::string InspectionsPrefix(SvDef::FqnInspections);
 				InspectionsPrefix += _T(".");
@@ -5435,7 +5609,7 @@ HRESULT SVConfigurationObject::LoadMonitoredObjectList(SVTreeType& rTree, SVTree
 			}
 			else
 			{
-				SvStl::MsgTypeEnum  MsgType{SvStl::LogAndDisplay};
+				SvStl::MsgTypeEnum  MsgType {SvStl::LogAndDisplay};
 				SvStl::MessageMgrStd Exception(MsgType);
 				SvDef::StringVector msgList;
 				msgList.push_back(Name);
@@ -5643,5 +5817,25 @@ HRESULT SVConfigurationObject::LoadObjectAttributesSet(SVTreeType& rTree)
 	}
 
 	return Result;
+}
+
+bool SVConfigurationObject::getObjectsForMonitorList(const SVGUID& rToolId, SvPb::GetObjectsForMonitorListResponse& rResponseMessage) const
+{
+	SVObjectClass* pObject = nullptr;
+	SVObjectManagerClass::Instance().GetObjectByIdentifier(rToolId, pObject);
+	if (nullptr == pObject)
+	{
+		return false;
+	}
+	auto* pInspection = pObject->GetAncestorInterface(SvDef::SVObjectTypeEnum::SVInspectionObjectType);
+	if (nullptr == pInspection)
+	{
+		return false;
+	}
+
+	SvPb::GetObjectsForMonitorListRequest requestMessage;
+	SvPb::SetGuidInProtoBytes(requestMessage.mutable_objectid(), rToolId);
+
+	return S_OK == SvCmd::InspectionCommandsSynchronous(pInspection->GetUniqueObjectID(), &requestMessage, &rResponseMessage);
 }
 

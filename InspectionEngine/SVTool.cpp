@@ -896,7 +896,7 @@ HRESULT SVToolClass::SetAuxSourceImage(SVImageClass* pImage)
 	return l_hr;
 }
 
-HRESULT SVToolClass::IsAuxInputImage(const SvOl::SVInObjectInfoStruct* p_psvInfo)
+HRESULT SVToolClass::IsAuxInputImage(const SvOl::SVInObjectInfoStruct* p_psvInfo) const
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -919,6 +919,20 @@ const SVImageInfoClass* SVToolClass::getFirstImageInfo() const
 	}
 
 	return pRetVal;
+}
+
+bool SVToolClass::addEntryToMonitorList(SvOi::ParametersForML &retList, const SVGUID& rEmbeddedId) const
+{
+	auto* pResultObject = getFirstObject(SvDef::SVObjectTypeInfoStruct(SvDef::SVObjectTypeEnum::SVNotSetObjectType, SvDef::SVObjectSubTypeEnum::SVNotSetSubObjectType, rEmbeddedId));
+	if (nullptr != pResultObject)
+	{
+		if (0 == (pResultObject->ObjectAttributesAllowed() &  SvDef::SV_HIDDEN))
+		{
+			retList.push_back(SvOi::ParameterPairForML(pResultObject->GetCompleteName(), pResultObject->GetUniqueObjectID()));
+			return true;
+		}
+	}
+	return false;
 }
 
 #pragma region ITool methods
@@ -990,6 +1004,10 @@ HRESULT SVToolClass::getExtentProperty(const SvDef::SVExtentPropertyEnum& rExten
 	return Result;
 };
 
+SvOi::ParametersForML SVToolClass::getParameterForMonitorList(SvStl::MessageContainerVector& rMessages) const
+{
+	return SvOi::ParametersForML();
+}
 #pragma endregion ITool methods
 
 SVStringValueObjectClass* SVToolClass::GetInputImageNames()

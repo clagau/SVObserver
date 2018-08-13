@@ -285,6 +285,14 @@ void   SVRangeClass::UpdateRange(RangeEnum::ERange  range )
 	}
 }
 
+void SVRangeClass::addEntriesToMonitorList(std::back_insert_iterator<SvOi::ParametersForML> inserter) const
+{
+	inserter = SvOi::ParameterPairForML(FailLow.GetCompleteName(), FailLow.GetUniqueObjectID());
+	inserter = SvOi::ParameterPairForML(FailHigh.GetCompleteName(), FailHigh.GetUniqueObjectID());
+	inserter = SvOi::ParameterPairForML(WarnLow.GetCompleteName(), WarnLow.GetUniqueObjectID());
+	inserter = SvOi::ParameterPairForML(WarnHigh.GetCompleteName(), WarnHigh.GetUniqueObjectID());
+}
+
 bool SVRangeClass::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo )
 {
 // This Message occurs for two scenarios

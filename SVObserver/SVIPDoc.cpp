@@ -139,6 +139,10 @@ BEGIN_MESSAGE_MAP(SVIPDoc, CDocument)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_PASTE, OnUpdateEditPaste)
 	ON_COMMAND(ID_SHOW_FIRST_ERROR, OnShowFirstError)
 	ON_UPDATE_COMMAND_UI(ID_SHOW_FIRST_ERROR, OnUpdateShowFirstError)
+	ON_COMMAND(ID_ADD_TOOL_PARA_TO_MONITORLIST, OnAddParameterToMonitorList)
+	ON_UPDATE_COMMAND_UI(ID_ADD_TOOL_PARA_TO_MONITORLIST, OnUpdateAddParameterToMonitorList)
+	ON_COMMAND(ID_REMOVE_TOOL_PARA_TO_MONITORLIST, OnRemoveParameterToMonitorList)
+	ON_UPDATE_COMMAND_UI(ID_REMOVE_TOOL_PARA_TO_MONITORLIST, OnUpdateRemoveParameterToMonitorList)
 	ON_COMMAND(ID_EDIT_DELETE, OnEditDelete)
 	ON_COMMAND(ID_EDIT_ADJUSTLIGHTREFERENCE, OnAdjustLightReference)
 	ON_COMMAND(ID_EDIT_ADJUSTLUT, OnAdjustLut)
@@ -1432,6 +1436,52 @@ void SVIPDoc::OnUpdateShowFirstError(CCmdUI* pCmdUI)
 	BOOL Enabled = false;
 	ToolSetView* pToolSetView = GetToolSetView();
 	if (nullptr != pToolSetView && pToolSetView->hasCurrentToolErrors())
+	{
+		Enabled = true;
+	}
+
+	pCmdUI->Enable(Enabled);
+}
+
+void SVIPDoc::OnAddParameterToMonitorList()
+{
+	ToolSetView* pToolSetView = GetToolSetView();
+	std::string ppqName = GetInspectionProcess()->GetPPQ()->GetName();
+	if (nullptr != pToolSetView)
+	{
+		pToolSetView->addParameter2MonitorList(ppqName.c_str());
+	}
+}
+
+void SVIPDoc::OnUpdateAddParameterToMonitorList(CCmdUI* pCmdUI)
+{
+	BOOL Enabled = false;
+	ToolSetView* pToolSetView = GetToolSetView();
+	std::string ppqName = GetInspectionProcess()->GetPPQ()->GetName();
+	if (nullptr != pToolSetView && pToolSetView->isAddParameter2MonitorListPossible(ppqName.c_str()))
+	{
+		Enabled = true;
+	}
+
+	pCmdUI->Enable(Enabled);
+}
+
+void SVIPDoc::OnRemoveParameterToMonitorList()
+{
+	ToolSetView* pToolSetView = GetToolSetView();
+	std::string ppqName = GetInspectionProcess()->GetPPQ()->GetName();
+	if (nullptr != pToolSetView)
+	{
+		pToolSetView->removeParameter2MonitorList(ppqName.c_str());
+	}
+}
+
+void SVIPDoc::OnUpdateRemoveParameterToMonitorList(CCmdUI* pCmdUI)
+{
+	BOOL Enabled = false;
+	ToolSetView* pToolSetView = GetToolSetView();
+	std::string ppqName = GetInspectionProcess()->GetPPQ()->GetName();
+	if (nullptr != pToolSetView && pToolSetView->isRemoveParameter2MonitorListPossible(ppqName.c_str()))
 	{
 		Enabled = true;
 	}

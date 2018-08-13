@@ -99,6 +99,7 @@ protected:
 	int m_iNone;
 	int m_iInvalid;
 	int m_expandState;
+	int m_fullParameterinML;
 	int m_collapseState;
 	int m_iTopIndex;
 

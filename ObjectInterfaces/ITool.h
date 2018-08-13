@@ -14,25 +14,34 @@
 #pragma region Declarations
 //! Declaration is in #include "SVUtilityLibrary\SVGUID.h"
 class SVGUID;
+namespace SvStl
+{
+class MessageContainer;
+typedef std::vector<MessageContainer> MessageContainerVector;
+}
 #pragma endregion Declarations
 
 namespace SvOi
 {
-	//this class is a interface. It should only have pure virtual public method and no member variables
-	class ITool
-	{
-	public:
-		virtual ~ITool() {}
+typedef std::pair<std::string, SVGUID> ParameterPairForML;
+typedef std::vector<ParameterPairForML> ParametersForML;
 
-		virtual bool areAuxExtentsAvailable() const = 0;
-		virtual SvUl::NameGuidList getAvailableAuxSourceImages() const = 0;
-		virtual SvUl::NameGuidPair getAuxSourceImage() const = 0;
-		virtual HRESULT setAuxSourceImage(const SVGUID& rObjectID) = 0;
-		virtual void SetToolImage( const SVGUID& rObjectID ) = 0;
-		virtual HRESULT UpdateImageWithExtent() = 0;
-		virtual bool SetFirstInputImageName( LPCTSTR FirstName) = 0;
-		virtual long getToolPosition() const = 0;
-		// getExtentProperty cannot be const because GetImageExtents is not const
-		virtual HRESULT getExtentProperty(const SvDef::SVExtentPropertyEnum& rExtentProperty, double& rValue) = 0;
-	};
+//this class is a interface. It should only have pure virtual public method and no member variables
+class ITool
+{
+public:
+	virtual ~ITool() {}
+
+	virtual bool areAuxExtentsAvailable() const = 0;
+	virtual SvUl::NameGuidList getAvailableAuxSourceImages() const = 0;
+	virtual SvUl::NameGuidPair getAuxSourceImage() const = 0;
+	virtual HRESULT setAuxSourceImage(const SVGUID& rObjectID) = 0;
+	virtual void SetToolImage(const SVGUID& rObjectID) = 0;
+	virtual HRESULT UpdateImageWithExtent() = 0;
+	virtual bool SetFirstInputImageName(LPCTSTR FirstName) = 0;
+	virtual long getToolPosition() const = 0;
+	// getExtentProperty cannot be const because GetImageExtents is not const
+	virtual HRESULT getExtentProperty(const SvDef::SVExtentPropertyEnum& rExtentProperty, double& rValue) = 0;
+	virtual ParametersForML getParameterForMonitorList(SvStl::MessageContainerVector& rMessages) const = 0;
+};
 } //namespace SvOi

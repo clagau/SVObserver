@@ -114,3 +114,22 @@ message ValidateAndSetEquationResponse
 	double result = 2; //if validateStatus is validateSuccessful, this variable contain the result of the equation.
 	MessageContainerVector Messages = 3; //list of error messages
 }
+
+// This is the message to get a list of object which should be added to the monitorlist.
+message GetObjectsForMonitorListRequest
+{
+	bytes objectId = 1; //GUID of the tool.
+}
+
+message ObjectNameGuidPair
+{
+	bytes objectId = 1; //GUID of the object.
+	bytes objectName = 2; //name of the object.
+}
+
+// This is the message response-message from GetObjectsForMonitorListRequest
+message GetObjectsForMonitorListResponse
+{
+	repeated ObjectNameGuidPair list = 1;
+	MessageContainerVector Messages = 2; //list of messages
+}

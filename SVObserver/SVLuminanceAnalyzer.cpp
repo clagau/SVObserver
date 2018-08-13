@@ -20,6 +20,7 @@
 #include "SVResultLong.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
+#include "SVRange.h"
 
 #pragma endregion Includes
 
@@ -227,6 +228,28 @@ bool SVLuminanceAnalyzerClass::CloseObject()
 	SVImageAnalyzerClass::CloseObject ();
 
 	return true;
+}
+
+void SVLuminanceAnalyzerClass::addParameterForMonitorList(SvStl::MessageContainerVector& rMessages, std::back_insert_iterator<SvOi::ParametersForML> inserter) const
+{
+	bool isNoError = true;
+
+	inserter = SvOi::ParameterPairForML(msvLuminanceValue.GetCompleteName(), msvLuminanceValue.GetUniqueObjectID());
+	SVRangeClass* pRangeObject = dynamic_cast<SVRangeClass*>(getFirstObject(SvDef::SVObjectTypeInfoStruct(SvDef::SVObjectTypeEnum::SVRangeObjectType)));
+	if (nullptr != pRangeObject)
+	{
+		pRangeObject->addEntriesToMonitorList(inserter);
+	}
+	else
+	{
+		isNoError = false;
+	}
+
+	if (!isNoError)
+	{
+		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetParameterToMonitorListFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+		rMessages.push_back(Msg);
+	}
 }
 
 bool SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )

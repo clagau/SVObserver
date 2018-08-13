@@ -267,5 +267,8 @@
     <Image Include="res\Tree.bmp">
       <Filter>Ressourcendateien</Filter>
     </Image>
+    <Image Include="res\HMI.ico">
+      <Filter>Ressourcendateien</Filter>
+    </Image>
   </ItemGroup>
 </Project>

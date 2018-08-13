@@ -117,6 +117,7 @@ public:
 
 	virtual bool IsPtOverResult( const POINT& rPoint ) override;
 	virtual	void DisplayAnalyzerResult() override;
+	virtual void addParameterForMonitorList(SvStl::MessageContainerVector& rMessages, std::back_insert_iterator<SvOi::ParametersForML> inserter) const override;
 
 	SVLongResultClass*           m_pResultBlob;
 	SVStringValueObjectClass     m_PersistantFeaturesEnabled;

@@ -70,6 +70,25 @@ public:
 	/// Display the first error of the current selected tool, if a tool is selected and it has an error.
 	void displayFirstCurrentToolError();
 
+	/// Return true, if adding of parameters of a tool from the active monitor list possible.
+	/// \param ppqName [in] PPQ-name.
+	/// \param rToolId [in] Tool ID.
+	/// \returns bool
+	bool isAddParameter2MonitorListPossible(LPCTSTR ppqName) const;
+	/// Return true, if removing of parameters of a tool from the active monitor list possible.
+	/// \param ppqName [in] PPQ-name.
+	/// \param rToolId [in] Tool ID.
+	/// \returns bool
+	bool isRemoveParameter2MonitorListPossible(LPCTSTR ppqName) const;
+
+	/// Return true, if all requested parameter of a tool in the active monitor list.
+	/// \param ppqName [in] PPQ-name.
+	/// \param rToolId [in] Tool ID.
+	/// \returns bool
+	bool areParametersInMonitorList(LPCTSTR ppqName, const SVGUID& rToolId) const;
+	void addParameter2MonitorList(LPCTSTR ppqName);
+	void removeParameter2MonitorList(LPCTSTR ppqName);
+
 protected:
 	DECLARE_DYNCREATE(ToolSetView)
 	enum { IDD = IDD_TOOLSET_VIEW };

@@ -16,6 +16,7 @@
 #include "ObjectInterfaces\ISVImage.h"
 #include "ObjectInterfaces\ITaskObject.h"
 #include "ObjectInterfaces\ITaskObjectListClass.h"
+#include "ObjectInterfaces\ITool.h"
 #include "ObjectInterfaces\IObjectManager.h"
 #include "ObjectInterfaces\IPatternAnalyzer.h"
 #include "Definitions\ObjectDefines.h"
@@ -214,7 +215,7 @@ HRESULT GetEquation(const SvPb::GetEquationRequest& rRequestMessage, SvPb::GetEq
 
 HRESULT ValidateAndSetEquation(const SvPb::ValidateAndSetEquationRequest& rRequestMessage, SvPb::ValidateAndSetEquationResponse& rResponseMessage)
 {
-	HRESULT hr = S_OK;
+	HRESULT hr = E_FAIL;
 
 	SvOi::IEquation* pEquation = dynamic_cast<SvOi::IEquation *>(SvOi::getObject(SvPb::GetGuidFromProtoBytes(rRequestMessage.objectid())));
 	if (pEquation)
@@ -242,7 +243,29 @@ HRESULT ValidateAndSetEquation(const SvPb::ValidateAndSetEquationRequest& rReque
 			//reset old string
 			pEquation->SetEquationText(oldString);
 		}
+		hr = S_OK;
 	}
+	return hr;
+}
+
+HRESULT getObjectsForMonitorList(const SvPb::GetObjectsForMonitorListRequest& rRequestMessage, SvPb::GetObjectsForMonitorListResponse& rResponseMessage)
+{
+	HRESULT hr = E_FAIL;
+	SvOi::ITool* pTool = dynamic_cast<SvOi::ITool *>(SvOi::getObject(SvPb::GetGuidFromProtoBytes(rRequestMessage.objectid())));
+	if (nullptr != pTool)
+	{
+		SvStl::MessageContainerVector messages;
+		SvOi::ParametersForML paramList = pTool->getParameterForMonitorList(messages);
+		rResponseMessage.mutable_messages()->CopyFrom(setMessageContainerToMessagePB(messages));
+		for (auto& item : paramList)
+		{
+			auto* pEntry = rResponseMessage.add_list();
+			pEntry->set_objectname(item.first.c_str());
+			SvPb::SetGuidInProtoBytes(pEntry->mutable_objectid(), item.second);
+		}
+		hr = S_OK;
+	}
+
 	return hr;
 }
 } //namespace SvCmd

@@ -18,6 +18,7 @@
 #include "SVResultLong.h"   // Required by SVLongResultClass
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
+#include "SVRange.h"
 #pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVPixelAnalyzerClass, SVPixelAnalyzerClassGuid );
@@ -196,4 +197,26 @@ bool SVPixelAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMess
 	MimControl(m_contextID, M_COND_LOW, byIndex);
 
 	return Result;
+}
+
+void SVPixelAnalyzerClass::addParameterForMonitorList(SvStl::MessageContainerVector& rMessages, std::back_insert_iterator<SvOi::ParametersForML> inserter) const
+{
+	bool isNoError = true;
+
+	inserter = SvOi::ParameterPairForML(m_pixelCount.GetCompleteName(), m_pixelCount.GetUniqueObjectID());
+	SVRangeClass* pRangeObject = dynamic_cast<SVRangeClass*>(getFirstObject(SvDef::SVObjectTypeInfoStruct(SvDef::SVObjectTypeEnum::SVRangeObjectType)));
+	if (nullptr != pRangeObject)
+	{
+		pRangeObject->addEntriesToMonitorList(inserter);
+	}
+	else
+	{
+		isNoError = false;
+	}
+
+	if (!isNoError)
+	{
+		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetParameterToMonitorListFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+		rMessages.push_back(Msg);
+	}
 }

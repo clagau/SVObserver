@@ -49,6 +49,8 @@ public:
 	virtual EAutoSize GetAutoSizeEnabled() override;
 
 	virtual SVStringValueObjectClass* GetInputImageNames() override;
+
+	virtual SvOi::ParametersForML getParameterForMonitorList(SvStl::MessageContainerVector& rMessages) const override;
 #pragma endregion Public Methods
 
 protected:

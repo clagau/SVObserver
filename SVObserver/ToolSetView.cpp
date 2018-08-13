@@ -38,6 +38,7 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVOGui/ValuesAccessor.h"
 #include "SVOGui/DataController.h"
+#include "SVInspectionProcess.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -977,6 +978,73 @@ void ToolSetView::displayFirstCurrentToolError()
 	if (!rGuid .empty())
 	{
 		m_toolSetListCtrl.displayErrorBox(rGuid);
+	}
+}
+
+bool ToolSetView::isAddParameter2MonitorListPossible(LPCTSTR ppqName) const
+{
+	const SVGUID& rGuid = m_toolSetListCtrl.GetSelectedTool();
+	SVConfigurationObject* pConfig(nullptr);
+	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+
+	if (nullptr != pConfig && !rGuid.empty())
+	{
+		return pConfig->isAddParameter2MonitorListPossible(ppqName, rGuid);
+	}
+	return false;
+}
+
+bool ToolSetView::isRemoveParameter2MonitorListPossible(LPCTSTR ppqName) const
+{
+	const SVGUID& rGuid = m_toolSetListCtrl.GetSelectedTool();
+	SVConfigurationObject* pConfig(nullptr);
+	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+
+	if (nullptr != pConfig && !rGuid.empty())
+	{
+		return pConfig->isRemoveParameter2MonitorListPossible(ppqName, rGuid);
+	}
+	return false;
+}
+
+bool ToolSetView::areParametersInMonitorList(LPCTSTR ppqName, const SVGUID& rToolId) const
+{
+	SVConfigurationObject* pConfig(nullptr);
+	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+
+	if (nullptr != pConfig && !rToolId.empty())
+	{
+		return pConfig->areParametersInMonitorList(ppqName, rToolId);
+	}
+	return false;
+}
+
+void ToolSetView::addParameter2MonitorList(LPCTSTR ppqName)
+{
+	const SVGUID& rGuid = m_toolSetListCtrl.GetSelectedTool();
+	SVConfigurationObject* pConfig(nullptr);
+	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+
+	if (nullptr != pConfig && !rGuid.empty())
+	{
+		SvStl::MessageContainerVector messages = pConfig->addParameter2MonitorList(ppqName, rGuid);
+		if (messages.size())
+		{
+			SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+			Msg.setMessage(messages[0].getMessage());
+		}
+	}
+}
+
+void ToolSetView::removeParameter2MonitorList(LPCTSTR ppqName)
+{
+	const SVGUID& rGuid = m_toolSetListCtrl.GetSelectedTool();
+	SVConfigurationObject* pConfig(nullptr);
+	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+
+	if (nullptr != pConfig && !rGuid.empty())
+	{
+		pConfig->removeParameter2MonitorList(ppqName, rGuid);
 	}
 }
 

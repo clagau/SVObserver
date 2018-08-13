@@ -446,3 +446,18 @@ bool SVLinearAnalyzerClass::ValidateEdgeB(SvStl::MessageContainerVector *pErrorM
 	}
 	return true;
 }
+
+bool SVLinearAnalyzerClass::setParameterToList(const std::string& rName, std::back_insert_iterator<SvOi::ParametersForML> inserter) const
+{
+	SVObjectClass* pObject = nullptr;
+	SVObjectManagerClass::Instance().GetObjectByDottedName(rName, pObject);
+	if (nullptr != pObject && 0 == (pObject->ObjectAttributesAllowed() &  SvDef::SV_HIDDEN))
+	{
+		inserter = SvOi::ParameterPairForML(pObject->GetCompleteName(), pObject->GetUniqueObjectID());
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}

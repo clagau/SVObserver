@@ -27,6 +27,8 @@ public:
 
 	virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure ) override;
 
+	virtual SvOi::ParametersForML getParameterForMonitorList(SvStl::MessageContainerVector& rMessages) const override;
+
 private:
 	void init(void);
 

@@ -54,6 +54,12 @@ protected:
 	bool ValidateEdgeA(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 	bool ValidateEdgeB(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 
+	/// Set the parameter to the list, if available and valid.
+	/// \param rName [in] Full dotted name of the parameter.
+	/// \param inserter [in] backinsert iterator to added the parameter.
+	/// \returns bool True if successfully.
+	bool setParameterToList(const std::string& rName, std::back_insert_iterator<SvOi::ParametersForML> inserter) const;
+
 	SvOl::SVInObjectInfoStruct m_InputImageObjectInfo;
 	SvOl::SVInObjectInfoStruct m_InputProfileOrientation;
 	SvOl::SVInObjectInfoStruct m_InputUseRotationAngle;

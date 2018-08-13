@@ -66,6 +66,10 @@ namespace SvCmd
 			{
 				hr = ValidateAndSetEquation(*static_cast<const SvPb::ValidateAndSetEquationRequest*>(m_pRequest), *static_cast<SvPb::ValidateAndSetEquationResponse*>(m_pResponse));
 			}
+			else if (nullptr != dynamic_cast<const SvPb::GetObjectsForMonitorListRequest*>(m_pRequest) && nullptr != dynamic_cast<SvPb::GetObjectsForMonitorListResponse*>(m_pResponse))
+			{
+				hr = getObjectsForMonitorList(*static_cast<const SvPb::GetObjectsForMonitorListRequest*>(m_pRequest), *static_cast<SvPb::GetObjectsForMonitorListResponse*>(m_pResponse));
+			}
 
 			return hr;
 		}

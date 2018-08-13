@@ -1593,6 +1593,31 @@ void SVBlobAnalyzerClass::DisplayAnalyzerResult()
 	dlg.DoModal();
 }
 
+void SVBlobAnalyzerClass::addParameterForMonitorList(SvStl::MessageContainerVector& rMessages, std::back_insert_iterator<SvOi::ParametersForML> inserter) const
+{
+	std::string FeaturesEnabled;
+	m_PersistantFeaturesEnabled.getValue(FeaturesEnabled);
+	assert(SvOi::SV_NUMBER_OF_BLOB_FEATURES == FeaturesEnabled.size());
+
+	for (int i = 0; i < SvOi::SV_NUMBER_OF_BLOB_FEATURES; i++)
+	{
+		if (_T('1') == FeaturesEnabled[i])
+		{
+			inserter = SvOi::ParameterPairForML(m_Value[i].GetCompleteName(), m_Value[i].GetUniqueObjectID());
+		}
+	}
+
+	auto* pResultObject = SVObjectManagerClass::Instance().GetObject(m_guidResults[SvOi::SV_AREA]);
+	if (nullptr != pResultObject)
+	{
+		SVRangeClass* pRangeObject = dynamic_cast<SVRangeClass*>(pResultObject->getFirstObject(SvDef::SVObjectTypeInfoStruct(SvDef::SVObjectTypeEnum::SVRangeObjectType)));
+		if (nullptr != pRangeObject)
+		{
+			pRangeObject->addEntriesToMonitorList(inserter);
+		}
+	}
+}
+
 void SVBlobAnalyzerClass::CreateArray()
 {
 	m_lvoBlobSampleSize.GetValue(m_lBlobSampleSize);

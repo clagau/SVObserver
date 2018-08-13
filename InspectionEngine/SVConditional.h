@@ -30,6 +30,8 @@ public:
 
 	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
+	SvOi::ParameterPairForML getResultData() const { return SvOi::ParameterPairForML {result.GetCompleteName(), result.GetUniqueObjectID()}; };
+
 protected:
 	void init();
 

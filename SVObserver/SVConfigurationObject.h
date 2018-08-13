@@ -35,6 +35,7 @@
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVProtoBuf/TriggerRecordController.pb.h"
+#include "InspectionCommands/CommandFunctionHelper.h"
 #pragma endregion Includes
 
 
@@ -350,6 +351,26 @@ public:
 	//************************************
 	static void updateConfTreeToNewestVersion(SVTreeType &rTree, SVTreeType::SVBranchHandle &rToolset);
 
+	/// Return true, if adding of parameters of a tool from the active monitor list possible.
+	/// \param ppqName [in] PPQ-name.
+	/// \param rToolId [in] Tool ID.
+	/// \returns bool
+	bool isAddParameter2MonitorListPossible(LPCTSTR ppqName, const SVGUID& rToolId) const;
+	/// Return true, if removing of parameters of a tool from the active monitor list possible.
+	/// \param ppqName [in] PPQ-name.
+	/// \param rToolId [in] Tool ID.
+	/// \returns bool
+	bool isRemoveParameter2MonitorListPossible(LPCTSTR ppqName, const SVGUID& rToolId) const;
+
+	/// Return true, if all requested parameter of a tool in the active monitor list.
+	/// \param ppqName [in] PPQ-name.
+	/// \param rToolId [in] Tool ID.
+	/// \returns bool
+	bool areParametersInMonitorList(LPCTSTR ppqName, const SVGUID& rToolId) const;
+
+	SvStl::MessageContainerVector addParameter2MonitorList(LPCTSTR ppqName, const SVGUID& rToolId);
+	SvStl::MessageContainerVector removeParameter2MonitorList(LPCTSTR ppqName, const SVGUID& rToolId);
+
 #pragma region Methods to replace processMessage
 	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override;
 #pragma endregion Methods to replace processMessage
@@ -446,6 +467,8 @@ private:
 	// Returns:   HRESULT S_OK, if loading successful.
 	//************************************
 	HRESULT LoadMonitoredObjectList( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent, const std::string& listName, MonitoredObjectList& rList );
+
+	bool getObjectsForMonitorList(const SVGUID& rToolId, SvPb::GetObjectsForMonitorListResponse& rResponseMessage) const;
 
 	SvTi::SVTriggerObjectPtrVector  m_arTriggerArray;
 	SVPPQObjectPtrVector            m_arPPQArray;

@@ -17,6 +17,7 @@
 #include "ObjectInterfaces\ISVOApp_Helper.h"
 #include "TextDefinesSvO.h"
 #include "InspectionCommands/CommandFunctionHelper.h"
+#include "InspectionCommands/GetPPQObjectName.h"
 #include "InspectionCommands\GetTaskObjects.h"
 #include "SVCommandLibrary\SVObjectSynchronousCommandTemplate.h"
 #include "SVOResource\ConstGlobalSvOr.h"
@@ -39,6 +40,7 @@ SVToolSetListCtrl::SVToolSetListCtrl()
 : CListCtrl()
 , m_iNone(-1)
 , m_iInvalid(-1)
+, m_fullParameterinML(-1)
 , m_iTopIndex(0)
 , m_expandState(-1)
 , m_collapseState(-1)
@@ -333,6 +335,13 @@ void SVToolSetListCtrl::RebuildImages()
 
 	int l_iCount = GetItemCount();
 
+	SvCmd::GetPPQObjectName cmd(m_InspectionId);
+	std::string ppqName;
+	if (S_OK == cmd.Execute())
+	{
+		ppqName = cmd.GetName();
+	}
+
 	LVITEM item;
 	memset(&item, 0, sizeof(item));
 	item.mask = LVIF_IMAGE;
@@ -346,9 +355,17 @@ void SVToolSetListCtrl::RebuildImages()
 		{
 			bool bValid = isToolValid(toolId);
 			
-			if (!bValid)
+			if (bValid)
 			{
-				img  = m_iInvalid;
+				auto* pView = GetView();
+				if (0 < ppqName.size() && nullptr != pView && pView->areParametersInMonitorList(ppqName.c_str(), toolId))
+				{
+					img = m_fullParameterinML;
+				}
+			}
+			else
+			{
+				img = m_iInvalid;
 			}
 		}
 		else
@@ -638,6 +655,7 @@ void SVToolSetListCtrl::CreateImageLists()
 	{
 		m_iNone = m_ImageList.Add(pApp->LoadIcon(IDI_STATUS_NONE));
 		m_iInvalid = m_ImageList.Add(pApp->LoadIcon(IDI_STATUS_BLACK));
+		m_fullParameterinML = m_ImageList.Add(pApp->LoadIcon(IDI_HMI_ICON));
 		m_collapseState = m_ImageList.Add(pApp->LoadIcon(IDI_COLLAPSE));
 		m_expandState = m_ImageList.Add(pApp->LoadIcon(IDI_EXPAND));
 	}

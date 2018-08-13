@@ -137,6 +137,10 @@ public:
 	//************************************
 	void   UpdateRange(RangeEnum::ERange  range );
 
+	/// Add the Range-Values to the ParameterList for the needed in monitor list.
+	/// \param retList [in,out] The ParameterList
+	void addEntriesToMonitorList(std::back_insert_iterator<SvOi::ParametersForML> inserter) const;
+
 #pragma region Methods to replace processMessage
 	virtual bool DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo) override;
 	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override;
