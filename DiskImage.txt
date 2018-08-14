@@ -1,7 +1,7 @@
-Notable changes from 7.56 to 8.00
+﻿Notable changes from 7.56 to 8.00
 
 Known new Bugs:
-	None
+	Matrox can not be uninstalled on X2C image
 
 Compatible Changes:
 	SVO-781 Acquisition Tool for Color Cameras
@@ -15,6 +15,8 @@ Incompatible Changes:
 	SVO-1640 Set MIL to use Multiprocessor
 	SVO-1800 Disable or Remove streaming in SVObserver
 	SVO-1802 Archive Tool: Wrong result data for the first member of an array
+	SVO-1908 SVObserver crash when connected with SAMI - (Changed loading sequence can cause problems when going online)
+	SVO-1907 Unexpected Audit Trail Entries in SVO 7.56 (statistics tool, blob analyzer) - The change does not affect the inspection only the generated audit trail
 
 Fixed Bugs:
 	SVO-1409 Table tool / result Picker / Select toolset output dialog - inconsistent order in column name lists
@@ -27,6 +29,12 @@ Fixed Bugs:
 
 Notable SVIM Image Changes:
 	SVO-1726 New Model Nummer A0 51 22 14, Support for X2C SVIM
+	Matrox can not be uninstalled on X2C image
+	New mainboard driver on X2C image
+	Updated network card driver on X2C image
+	Updated network graphics card driver on X2C image
+	Updated BIOS settings fo X2C
+	RAID deactivated for X2C
 
 Image Name: X2B0800C
 
