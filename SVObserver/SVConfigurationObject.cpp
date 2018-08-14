@@ -5238,7 +5238,10 @@ bool SVConfigurationObject::areParametersInMonitorList(LPCTSTR ppqName, const SV
 				}
 				else
 				{
-					auto& findIter = find(productList.begin(), productList.end(), monitoredObj);
+					auto& findIter = find_if(productList.begin(), productList.end(), [monitoredObj](const auto& item)->bool
+					{
+						return monitoredObj.isSimilar(item);
+					});
 					if (productList.end() == findIter)
 					{
 						retVal = false;
@@ -5280,7 +5283,10 @@ SvStl::MessageContainerVector SVConfigurationObject::addParameter2MonitorList(LP
 				const MonitoredObject& monitoredObj = RemoteMonitorListHelper::GetMonitoredObjectFromName(ObjectName);
 				if (!monitoredObj.guid.empty())
 				{
-					auto& findIter = find(productList.begin(), productList.end(), monitoredObj);
+					auto& findIter = find_if(productList.begin(), productList.end(), [monitoredObj](const auto& item)->bool
+					{
+						return monitoredObj.isSimilar(item);
+					});
 					if (productList.end() == findIter)
 					{
 						productList.push_back(monitoredObj);
@@ -5322,7 +5328,10 @@ SvStl::MessageContainerVector SVConfigurationObject::removeParameter2MonitorList
 				const MonitoredObject& monitoredObj = RemoteMonitorListHelper::GetMonitoredObjectFromName(ObjectName);
 				if (!monitoredObj.guid.empty())
 				{
-					auto& findIter = find(productList.begin(), productList.end(), monitoredObj);
+					auto& findIter = find_if(productList.begin(), productList.end(), [monitoredObj](const auto& item)->bool
+					{
+						return monitoredObj.isSimilar(item);
+					});
 					if (productList.end() != findIter)
 					{
 						productList.erase(findIter);

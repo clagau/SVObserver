@@ -1603,7 +1603,12 @@ void SVBlobAnalyzerClass::addParameterForMonitorList(SvStl::MessageContainerVect
 	{
 		if (_T('1') == FeaturesEnabled[i])
 		{
-			inserter = SvOi::ParameterPairForML(m_Value[i].GetCompleteName(), m_Value[i].GetUniqueObjectID());
+			std::string tmp = m_Value[i].GetCompleteName();
+			if (1 < m_Value[i].getArraySize())
+			{
+				tmp += "[1]";
+			}
+			inserter = SvOi::ParameterPairForML(tmp, m_Value[i].GetUniqueObjectID());
 		}
 	}
 

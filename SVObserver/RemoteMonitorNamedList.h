@@ -27,6 +27,11 @@ struct MonitoredObject
 
 	MonitoredObject() : isArray(false), wholeArray(false), arrayIndex(-1) {}
 	bool operator==(const MonitoredObject& rhs) { return (guid == rhs.guid && isArray == rhs.isArray && wholeArray == rhs.wholeArray && arrayIndex == rhs.arrayIndex); }
+
+	bool isSimilar(const MonitoredObject& rhs) const
+	{
+		return (guid == rhs.guid && (!isArray || (wholeArray == rhs.wholeArray && arrayIndex == rhs.arrayIndex)));
+	}
 };
 
 /// deque of MonitorObjects 
@@ -94,7 +99,5 @@ private:
 	bool m_bActive;
 	SvSml::SVProductFilterEnum m_filter;
 #pragma endregion PrivateData
-
-
 };
 
