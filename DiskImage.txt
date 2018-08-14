@@ -24,9 +24,7 @@ Fixed Bugs:
 	SVO-1803 SVRC: GetFailStatus don't provide the latest rejected Products
 	SVO-1233 A non-existent camera file name can lead to a SVObserver crash
 	SVO-1299 Sporadic fail results from Histogram Analyzer.Second Peak
-	SVO-1907 Unexpected Audit Trail Entries
-	SVO-1908 SVObserver-Abstürze, wenn SAMI verbunden ist
-
+	
 Notable SVIM Image Changes:
 	SVO-1726 New Model Nummer A0 51 22 14, Support for X2C SVIM
 	Matrox can not be uninstalled on X2C image
@@ -36,7 +34,9 @@ Notable SVIM Image Changes:
 	Updated BIOS settings fo X2C
 	RAID deactivated for X2C
 
-Image Name: X2B0800C
+Image Name: 
+	X2B0800C
+	X2C0800A
 
 SOFTWARE VERSIONS:
 
