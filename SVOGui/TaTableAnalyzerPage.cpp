@@ -168,11 +168,12 @@ void TaTableAnalyzerPage::OnButtonClearAll()
 		if (GUID_NULL != analyzerGUID)
 		{
 			// Close, Disconnect and Delete it
-			SvPb::DestroyChildRequest requestMessage;
-			requestMessage.set_flag(SvPb::DestroyChildRequest::Flag_None);
-			SvPb::SetGuidInProtoBytes(requestMessage.mutable_taskobjectlistid(), m_TaskObjectID);
-			SvPb::SetGuidInProtoBytes(requestMessage.mutable_objectid(), analyzerGUID);
-			SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, nullptr);
+			SvPb::InspectionCmdMsgs Request,Response;
+			SvPb::DestroyChildRequest* pDestroyChildRequest = Request.mutable_destroychildrequest(); ;
+			pDestroyChildRequest->set_flag(SvPb::DestroyChildRequest::Flag_None);
+			SvPb::SetGuidInProtoBytes(pDestroyChildRequest->mutable_taskobjectlistid(), m_TaskObjectID);
+			SvPb::SetGuidInProtoBytes(pDestroyChildRequest->mutable_objectid(), analyzerGUID);
+			SvCmd::InspectionCommandsSynchronous(m_InspectionID, &Request, &Response);
 		}
 	}
 
@@ -187,10 +188,11 @@ void TaTableAnalyzerPage::OnButtonDeleteCurrentAnalyzer()
 	if (GUID_NULL != m_selectedAnalyzerID)
 	{
 		// Close, Disconnect and Delete it
-		SvPb::DestroyChildRequest requestMessage;
-		SvPb::SetGuidInProtoBytes(requestMessage.mutable_taskobjectlistid(), m_TaskObjectID);
-		SvPb::SetGuidInProtoBytes(requestMessage.mutable_objectid(), m_selectedAnalyzerID);
-		SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, nullptr);
+		SvPb::InspectionCmdMsgs Request,Response;
+		SvPb::DestroyChildRequest* pDestroyChildRequest = Request.mutable_destroychildrequest(); ;
+		SvPb::SetGuidInProtoBytes(pDestroyChildRequest->mutable_taskobjectlistid(), m_TaskObjectID);
+		SvPb::SetGuidInProtoBytes(pDestroyChildRequest->mutable_objectid(), m_selectedAnalyzerID);
+		SvCmd::InspectionCommandsSynchronous(m_InspectionID, &Request, &Response);
 		m_selectedAnalyzerID = GUID_NULL;
 		m_selectedSubType = SvDef::SVNotSetSubObjectType;
 
@@ -390,8 +392,8 @@ HRESULT TaTableAnalyzerPage::SetInspectionData()
 	{
 		if (0 < errorMessageList.size())
 		{
-				SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
-				Msg.setMessage(errorMessageList[0].getMessage());
+			SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+			Msg.setMessage(errorMessageList[0].getMessage());
 		}
 		else
 		{
@@ -637,14 +639,13 @@ HRESULT TaTableAnalyzerPage::checkAllAnaylzer()
 		if (GUID_NULL != analyzerGUID && analyzerGUID != m_selectedAnalyzerID)
 		{
 			// Do a reset of the analyzer
-			SvPb::ResetObjectRequest requestMessage;
-			SvPb::ResetObjectResponse responseMessage;
-			SvPb::SetGuidInProtoBytes(requestMessage.mutable_objectid(), analyzerGUID);
-
-			hrOk = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, &responseMessage);
-			if (S_OK != hrOk)
+			SvPb::InspectionCmdMsgs Request, Response;
+			SvPb::ResetObjectRequest* pResetObjectRequest = Request.mutable_resetobjectrequest();
+			SvPb::SetGuidInProtoBytes(pResetObjectRequest->mutable_objectid(), analyzerGUID);
+			hrOk = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &Request, &Response);
+			if (S_OK != hrOk && Response.has_resetobjectresponse())
 			{
-				SvStl::MessageContainerVector errorMessageList = SvCmd::setMessageContainerFromMessagePB(responseMessage.messages());
+				SvStl::MessageContainerVector errorMessageList = SvCmd::setMessageContainerFromMessagePB(Response.resetobjectresponse().messages());
 				SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
 				if (0 < errorMessageList.size())
 				{
@@ -689,52 +690,56 @@ HRESULT TaTableAnalyzerPage::SetAddAnalyzerData(SvStl::MessageContainerVector &r
 			if (!newName.empty() && !CheckOnlySpaces.empty())
 			{
 				hrOk = m_pSelectedAddEquationFormula->SetEquationName(newName);
-		if (S_OK != hrOk)
-		{
-			SvDef::StringVector msgList;
-			msgList.push_back(SvUl::Format(_T("%d"), hrOk));
-			SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_SetTableAnalyzerData, msgList, SvStl::SourceFileParams(StdMessageParams));
-			rErrorMessageList.push_back(Msg);
-			return E_FAIL;
-		}
-
-		// Do a reset of the analyzer
-		SvPb::ResetObjectRequest requestResetMessage;
-		SvPb::ResetObjectResponse responseResetMessage;
-		SvPb::SetGuidInProtoBytes(requestResetMessage.mutable_objectid(), m_TaskObjectID);
-
-		hrOk = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestResetMessage, &responseResetMessage);
-		if (S_OK != hrOk)
-		{
-			SvStl::MessageContainerVector taskResetMessageList = SvCmd::setMessageContainerFromMessagePB(responseResetMessage.messages());
-			for (const auto& rMessage : taskResetMessageList)
-			{
-				const auto& rMessageData = rMessage.getMessage();
-				if (SvStl::Tid_TableColumnName_NotUnique == rMessageData.m_AdditionalTextId &&
-					0 < rMessageData.m_AdditionalTextList.size() && 0 == columnName.Compare(rMessageData.m_AdditionalTextList[0].c_str()))
+				if (S_OK != hrOk)
 				{
-					rErrorMessageList.push_back(rMessage);
+					SvDef::StringVector msgList;
+					msgList.push_back(SvUl::Format(_T("%d"), hrOk));
+					SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_SetTableAnalyzerData, msgList, SvStl::SourceFileParams(StdMessageParams));
+					rErrorMessageList.push_back(Msg);
+					return E_FAIL;
 				}
-			}
 
-			if (0 == rErrorMessageList.size())
-			{	//if error found, but no name error with this analyzer, check if this analyzer have an error
-				SvPb::GetMessageListRequest requestGetMessageList;
-				SvPb::GetMessageListResponse responseGetMessageList;
-				SvPb::SetGuidInProtoBytes(requestGetMessageList.mutable_objectid(), m_selectedAnalyzerID);
-				SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestGetMessageList, &responseGetMessageList);
-				rErrorMessageList = SvCmd::setMessageContainerFromMessagePB(responseGetMessageList.messages());
-				if (0 < rErrorMessageList.size())
+
+				SvPb::InspectionCmdMsgs Request, Response;
+				SvPb::ResetObjectRequest* pResetObjectRequest = Request.mutable_resetobjectrequest();
+				SvPb::SetGuidInProtoBytes(pResetObjectRequest->mutable_objectid(), m_TaskObjectID);
+				hrOk = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &Request, &Response);
+				if (S_OK != hrOk && Response.has_resetobjectresponse())
 				{
-					SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
-					Msg.setMessage(rErrorMessageList[0].getMessage());
+					SvStl::MessageContainerVector taskResetMessageList = SvCmd::setMessageContainerFromMessagePB(Response.resetobjectresponse().messages());
+					for (const auto& rMessage : taskResetMessageList)
+					{
+						const auto& rMessageData = rMessage.getMessage();
+						if (SvStl::Tid_TableColumnName_NotUnique == rMessageData.m_AdditionalTextId &&
+							0 < rMessageData.m_AdditionalTextList.size() && 0 == columnName.Compare(rMessageData.m_AdditionalTextList[0].c_str()))
+						{
+							rErrorMessageList.push_back(rMessage);
+						}
+					}
+
+					if (0 == rErrorMessageList.size())
+					{	//if error found, but no name error with this analyzer, check if this analyzer have an error
+
+						SvPb::InspectionCmdMsgs Request, Response;
+						SvPb::GetMessageListRequest* pGetMessageListRequest = Request.mutable_getmessagelistrequest();
+						SvPb::SetGuidInProtoBytes(pGetMessageListRequest->mutable_objectid(), m_selectedAnalyzerID);
+						HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &Request, &Response);
+
+						if (hr == S_OK && Response.has_getmessagelistresponse())
+						{
+							rErrorMessageList = SvCmd::setMessageContainerFromMessagePB(Response.getmessagelistresponse().messages());
+						}
+						if (0 < rErrorMessageList.size())
+						{
+							SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+							Msg.setMessage(rErrorMessageList[0].getMessage());
+						}
+						else
+						{
+							hrOk = S_OK;
+						}
+					}
 				}
-				else
-				{
-					hrOk = S_OK;
-				}
-			}
-		}
 			}
 			else
 			{

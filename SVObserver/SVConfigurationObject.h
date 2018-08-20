@@ -468,7 +468,7 @@ private:
 	//************************************
 	HRESULT LoadMonitoredObjectList( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent, const std::string& listName, MonitoredObjectList& rList );
 
-	bool getObjectsForMonitorList(const SVGUID& rToolId, SvPb::GetObjectsForMonitorListResponse& rResponseMessage) const;
+	bool getObjectsForMonitorList(const SVGUID& rToolId, SvPb::InspectionCmdMsgs &rResponse) const;
 
 	SvTi::SVTriggerObjectPtrVector  m_arTriggerArray;
 	SVPPQObjectPtrVector            m_arPPQArray;

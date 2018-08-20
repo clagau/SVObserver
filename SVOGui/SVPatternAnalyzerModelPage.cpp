@@ -232,15 +232,16 @@ namespace SvOg
 
 		if ( GetModelFile( false, m_strModelName ) ) // false parameter is mode for save file.
 		{
-			SvPb::CreateModelRequest requestMessage;
-			SvPb::CreateModelResponse responseMessage;
-			SvPb::SetGuidInProtoBytes(requestMessage.mutable_patternanalyzerid(), m_rAnalyzerID);
-			requestMessage.set_posx(m_nXPos);
-			requestMessage.set_posy(m_nYPos);
-			requestMessage.set_modelwidth(m_lModelWidth);
-			requestMessage.set_modelheight(m_lModelHeight);
-			requestMessage.set_filename(m_strModelName);
-			HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_rInspectionID, &requestMessage, &responseMessage);
+			SvPb::InspectionCmdMsgs Request,Response;
+			SvPb::CreateModelRequest* pCreateModelRequest= Request.mutable_createmodelrequest();
+
+			SvPb::SetGuidInProtoBytes(pCreateModelRequest->mutable_patternanalyzerid(), m_rAnalyzerID);
+			pCreateModelRequest->set_posx(m_nXPos);
+			pCreateModelRequest->set_posy(m_nYPos);
+			pCreateModelRequest->set_modelwidth(m_lModelWidth);
+			pCreateModelRequest->set_modelheight(m_lModelHeight);
+			pCreateModelRequest->set_filename(m_strModelName);
+			HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_rInspectionID, &Request, &Response);
 			if (S_OK == hr)
 			{
 				SvStl::MessageContainerVector ErrorMessages;
@@ -251,9 +252,9 @@ namespace SvOg
 					Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_PatAllocModelFailed, SvStl::SourceFileParams(StdMessageParams), 0, m_rAnalyzerID );
 				}
 			}
-			else
+			else if (Response.has_createmodelresponse())
 			{
-				SvStl::MessageContainerVector ErrorMessages = SvCmd::setMessageContainerFromMessagePB(responseMessage.messages());
+				SvStl::MessageContainerVector ErrorMessages = SvCmd::setMessageContainerFromMessagePB(Response.createmodelresponse().messages());
 				if (!ErrorMessages.empty())
 				{
 					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );

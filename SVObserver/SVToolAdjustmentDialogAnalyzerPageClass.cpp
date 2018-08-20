@@ -221,12 +221,9 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnButtonDetails()
 				{
 					l_ToolId = m_pTool->GetUniqueObjectID();
 				}
-
-				SvPb::InspectionRunOnceRequest requestMessage;
-				SvPb::SetGuidInProtoBytes(requestMessage.mutable_inspectionid(), pInspection->GetUniqueObjectID());
-				SvPb::SetGuidInProtoBytes(requestMessage.mutable_taskid(), l_ToolId);
-				SvCmd::InspectionCommandsSynchronous(pInspection->GetUniqueObjectID(), &requestMessage, nullptr);
+				SvCmd::RunOnceSynchronous(pInspection->GetUniqueObjectID(), l_ToolId);
 			}
+
 		}
 	}
 	else
@@ -324,10 +321,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 				l_ToolId = m_pTool->GetUniqueObjectID();
 			}
 
-			SvPb::InspectionRunOnceRequest requestMessage;
-			SvPb::SetGuidInProtoBytes(requestMessage.mutable_inspectionid(), pInspection->GetUniqueObjectID());
-			SvPb::SetGuidInProtoBytes(requestMessage.mutable_taskid(), l_ToolId);
-			SvCmd::InspectionCommandsSynchronous(pInspection->GetUniqueObjectID(), &requestMessage, nullptr);
+			SvCmd::RunOnceSynchronous(pInspection->GetUniqueObjectID(), l_ToolId);
 		}
 	}
 

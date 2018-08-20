@@ -3855,10 +3855,7 @@ bool SVConfigurationObject::Activate()
 	for (long l = lSize - 1; -1 < l; l--)
 	{
 		SVInspectionProcess* pInspection = m_arInspectionArray[l];
-
-		SvPb::InspectionRunOnceRequest requestMessage;
-		SvPb::SetGuidInProtoBytes(requestMessage.mutable_inspectionid(), pInspection->GetUniqueObjectID());
-		SvCmd::InspectionCommandsSynchronous(pInspection->GetUniqueObjectID(), &requestMessage, nullptr);
+		SvCmd::RunOnceSynchronous(pInspection->GetUniqueObjectID(), SVGUID(GUID_NULL));
 	}
 
 	return bOk;
@@ -4825,9 +4822,7 @@ HRESULT SVConfigurationObject::SetInspectionItems(const SVNameStorageMap& p_rIte
 
 				if (nullptr != pInspection)
 				{
-					SvPb::InspectionRunOnceRequest requestMessage;
-					SvPb::SetGuidInProtoBytes(requestMessage.mutable_inspectionid(), pInspection->GetUniqueObjectID());
-					SvCmd::InspectionCommandsSynchronous(pInspection->GetUniqueObjectID(), &requestMessage, nullptr);
+					SvCmd::RunOnceSynchronous(pInspection->GetUniqueObjectID(), SVGUID(GUID_NULL));
 				}
 			}
 		}
@@ -4958,9 +4953,7 @@ HRESULT SVConfigurationObject::SetRemoteInputItems(const SVNameStorageMap& p_rIt
 
 				if (nullptr != pInspection)
 				{
-					SvPb::InspectionRunOnceRequest requestMessage;
-					SvPb::SetGuidInProtoBytes(requestMessage.mutable_inspectionid(), pInspection->GetUniqueObjectID());
-					SvCmd::InspectionCommandsSynchronous(pInspection->GetUniqueObjectID(), &requestMessage, nullptr);
+					SvCmd::RunOnceSynchronous(pInspection->GetUniqueObjectID(), SVGUID(GUID_NULL));
 				}
 			}
 		}
@@ -5179,13 +5172,11 @@ bool SVConfigurationObject::isAddParameter2MonitorListPossible(LPCTSTR ppqName, 
 	});
 	if (iter != monitorList.end())
 	{
-		SvPb::GetObjectsForMonitorListResponse responseMessage;
-		retVal = getObjectsForMonitorList(rToolId, responseMessage);
-
-		if (retVal)
-		{
-			retVal = responseMessage.list_size() > 0;
-		}
+		SvPb::InspectionCmdMsgs Response;
+		retVal = getObjectsForMonitorList(rToolId, Response);
+		retVal = retVal && Response.has_getobjectsformonitorlistresponse();
+		retVal = retVal && (Response.getobjectsformonitorlistresponse().list_size() > 0);
+		
 	}
 	return retVal;
 }
@@ -5200,13 +5191,11 @@ bool SVConfigurationObject::isRemoveParameter2MonitorListPossible(LPCTSTR ppqNam
 	});
 	if (iter != monitorList.end())
 	{
-		SvPb::GetObjectsForMonitorListResponse responseMessage;
-		retVal = getObjectsForMonitorList(rToolId, responseMessage);
+		SvPb::InspectionCmdMsgs Response;
+		retVal = getObjectsForMonitorList(rToolId, Response);
+		retVal = retVal && Response.has_getobjectsformonitorlistresponse();
+		retVal = retVal && (Response.getobjectsformonitorlistresponse().list_size() > 0);
 
-		if (retVal)
-		{
-			retVal = responseMessage.list_size() > 0;
-		}
 	}
 	return retVal;
 }
@@ -5221,13 +5210,15 @@ bool SVConfigurationObject::areParametersInMonitorList(LPCTSTR ppqName, const SV
 	});
 	if (iter != monitorList.end())
 	{
-		SvPb::GetObjectsForMonitorListResponse responseMessage;
-		retVal = getObjectsForMonitorList(rToolId, responseMessage);
-		retVal &= responseMessage.list_size() > 0;
+		SvPb::InspectionCmdMsgs Response;
+		retVal = getObjectsForMonitorList(rToolId, Response);
+		retVal  = retVal && Response.has_getobjectsformonitorlistresponse();
+		retVal = retVal && (Response.getobjectsformonitorlistresponse().list_size() > 0);
+		
 		if (retVal)
 		{
 			MonitoredObjectList productList = iter->second.GetProductValuesList();
-			for (auto const& rEntry : responseMessage.list())
+			for (auto const& rEntry : Response.getobjectsformonitorlistresponse().list())
 			{
 				std::string ObjectName(SvDef::FqnInspections);
 				ObjectName += _T(".") + rEntry.objectname();
@@ -5254,7 +5245,7 @@ bool SVConfigurationObject::areParametersInMonitorList(LPCTSTR ppqName, const SV
 				}
 			}
 
-			SvStl::MessageContainerVector messages = SvCmd::setMessageContainerFromMessagePB(responseMessage.messages());
+			SvStl::MessageContainerVector messages = SvCmd::setMessageContainerFromMessagePB(Response.getobjectsformonitorlistresponse().messages());
 			retVal &= (0 == messages.size());
 		}
 	}
@@ -5271,12 +5262,15 @@ SvStl::MessageContainerVector SVConfigurationObject::addParameter2MonitorList(LP
 	});
 	if (iter != monitorList.end())
 	{
-		SvPb::GetObjectsForMonitorListResponse responseMessage;
-		bool isOk = getObjectsForMonitorList(rToolId, responseMessage);
+		
+		SvPb::InspectionCmdMsgs Response;
+		bool isOk =  getObjectsForMonitorList(rToolId, Response);
+		isOk = isOk && Response.has_getobjectsformonitorlistresponse();
+
 		if (isOk)
 		{
 			MonitoredObjectList productList = iter->second.GetProductValuesList();
-			for (auto const& rEntry : responseMessage.list())
+			for (auto const& rEntry : Response.getobjectsformonitorlistresponse().list())
 			{
 				std::string ObjectName(SvDef::FqnInspections);
 				ObjectName += _T(".") + rEntry.objectname();
@@ -5295,7 +5289,7 @@ SvStl::MessageContainerVector SVConfigurationObject::addParameter2MonitorList(LP
 			}
 			iter->second.SetProductValuesList(productList);
 			SetRemoteMonitorList(monitorList);
-			messages = SvCmd::setMessageContainerFromMessagePB(responseMessage.messages());
+			messages = SvCmd::setMessageContainerFromMessagePB(Response.getobjectsformonitorlistresponse().messages());
 		}
 		else
 		{
@@ -5316,12 +5310,15 @@ SvStl::MessageContainerVector SVConfigurationObject::removeParameter2MonitorList
 	});
 	if (iter != monitorList.end())
 	{
-		SvPb::GetObjectsForMonitorListResponse responseMessage;
-		bool isOk = getObjectsForMonitorList(rToolId, responseMessage);
+		
+		SvPb::InspectionCmdMsgs Response;
+		bool isOk = getObjectsForMonitorList(rToolId, Response);
+		isOk = isOk && Response.has_getobjectsformonitorlistresponse();
+
 		if (isOk)
 		{
 			MonitoredObjectList productList = iter->second.GetProductValuesList();
-			for (auto const& rEntry : responseMessage.list())
+			for (auto const& rEntry : Response.getobjectsformonitorlistresponse().list())
 			{
 				std::string ObjectName(SvDef::FqnInspections);
 				ObjectName += _T(".") + rEntry.objectname();
@@ -5340,7 +5337,7 @@ SvStl::MessageContainerVector SVConfigurationObject::removeParameter2MonitorList
 			}
 			iter->second.SetProductValuesList(productList);
 			SetRemoteMonitorList(monitorList);
-			messages = SvCmd::setMessageContainerFromMessagePB(responseMessage.messages());
+			messages = SvCmd::setMessageContainerFromMessagePB(Response.getobjectsformonitorlistresponse().messages());
 		}
 		else
 		{
@@ -5828,7 +5825,7 @@ HRESULT SVConfigurationObject::LoadObjectAttributesSet(SVTreeType& rTree)
 	return Result;
 }
 
-bool SVConfigurationObject::getObjectsForMonitorList(const SVGUID& rToolId, SvPb::GetObjectsForMonitorListResponse& rResponseMessage) const
+bool SVConfigurationObject::getObjectsForMonitorList(const SVGUID& rToolId, SvPb::InspectionCmdMsgs& rResponse) const
 {
 	SVObjectClass* pObject = nullptr;
 	SVObjectManagerClass::Instance().GetObjectByIdentifier(rToolId, pObject);
@@ -5842,9 +5839,10 @@ bool SVConfigurationObject::getObjectsForMonitorList(const SVGUID& rToolId, SvPb
 		return false;
 	}
 
-	SvPb::GetObjectsForMonitorListRequest requestMessage;
-	SvPb::SetGuidInProtoBytes(requestMessage.mutable_objectid(), rToolId);
+	SvPb::InspectionCmdMsgs Request;
+	SvPb::GetObjectsForMonitorListRequest* pGetObjectsForMonitorListRequest = Request.mutable_getobjectsformonitorlistrequest();
+	SvPb::SetGuidInProtoBytes(pGetObjectsForMonitorListRequest->mutable_objectid(), rToolId);
 
-	return S_OK == SvCmd::InspectionCommandsSynchronous(pInspection->GetUniqueObjectID(), &requestMessage, &rResponseMessage);
+	return S_OK == SvCmd::InspectionCommandsSynchronous(pInspection->GetUniqueObjectID(), &Request, &rResponse);
 }
 

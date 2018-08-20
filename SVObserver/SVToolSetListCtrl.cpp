@@ -284,11 +284,17 @@ bool SVToolSetListCtrl::IsEmptyStringPlaceHolder( const std::string& rName ) con
 
 bool SVToolSetListCtrl::displayErrorBox(const SVGUID& rGuid) const
 {
-	SvPb::GetMessageListRequest requestMessageList;
-	SvPb::GetMessageListResponse responseMessageList;
-	SvPb::SetGuidInProtoBytes(requestMessageList.mutable_objectid(), rGuid);
-	SvCmd::InspectionCommandsSynchronous(m_InspectionId, &requestMessageList, &responseMessageList);
-	SvStl::MessageContainerVector messageList = SvCmd::setMessageContainerFromMessagePB(responseMessageList.messages());
+	
+	SvPb::InspectionCmdMsgs Request, Response;
+	SvPb::GetMessageListRequest* pGetMessageListRequest= Request.mutable_getmessagelistrequest();
+	SvPb::SetGuidInProtoBytes(pGetMessageListRequest->mutable_objectid(), rGuid);
+	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionId, &Request, &Response);
+	SvStl::MessageContainerVector messageList;
+	if(hr == S_OK && Response.has_getmessagelistresponse())
+	{ 
+		messageList = SvCmd::setMessageContainerFromMessagePB(Response.getmessagelistresponse().messages());
+	}
+	
 	if (0 < messageList.size())
 	{
 		SvStl::MessageMgrStd Exception(SvStl::LogAndDisplay);
@@ -301,14 +307,14 @@ bool SVToolSetListCtrl::displayErrorBox(const SVGUID& rGuid) const
 bool SVToolSetListCtrl::isToolValid(const SVGUID& tool) const
 {
 	bool isToolValid = false;
-	SvPb::IsValidRequest requestMessageList;
-	SvPb::IsValidResponse responseMessageList;
-	SvPb::SetGuidInProtoBytes(requestMessageList.mutable_objectid(), tool);
+	SvPb::InspectionCmdMsgs Request, Response;
+	SvPb::IsValidRequest* pIsValidRequest = Request.mutable_isvalidrequest();
+	SvPb::SetGuidInProtoBytes(pIsValidRequest->mutable_objectid(), tool);
 	
-	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionId, &requestMessageList, &responseMessageList);
-	if (S_OK == hr)
+	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionId, &Request, &Response);
+	if (S_OK == hr && Response.has_isvalidresponse())
 	{
-		isToolValid = responseMessageList.isvalid();
+		isToolValid = Response.isvalidresponse().isvalid();
 	}
 	return isToolValid;
 }

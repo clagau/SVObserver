@@ -206,33 +206,37 @@ namespace SvOg
 	bool ImageController::IsToolValid() const
 	{
 		bool bIsValid = false;
-		SvPb::IsValidRequest requestMessageList;
-		SvPb::IsValidResponse responseMessageList;
-		SvPb::SetGuidInProtoBytes(requestMessageList.mutable_objectid(), m_TaskObjectID);
-		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessageList, &responseMessageList);
-		if (S_OK == hr)
+		SvPb::InspectionCmdMsgs Request, Response; 
+		SvPb::IsValidRequest* pIsValidRequest = Request.mutable_isvalidrequest();
+		
+		SvPb::SetGuidInProtoBytes(pIsValidRequest->mutable_objectid(), m_TaskObjectID);
+		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &Request, &Response);
+		if (S_OK == hr && Response.has_isvalidresponse())
 		{
-			bIsValid = responseMessageList.isvalid();
+			bIsValid = Response.isvalidresponse().isvalid();
 		}
 		return bIsValid;
 	}
 
 	HRESULT ImageController::ResetTask(SvStl::MessageContainerVector& messages) const
 	{
-		SvPb::ResetObjectRequest requestMessage;
-		SvPb::ResetObjectResponse responseMessage;
-		SvPb::SetGuidInProtoBytes(requestMessage.mutable_objectid(), m_TaskObjectID);
-		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, &responseMessage);
-		messages = SvCmd::setMessageContainerFromMessagePB(responseMessage.messages());
+		SvPb::InspectionCmdMsgs Request;
+		SvPb::InspectionCmdMsgs Response;
+
+		SvPb::ResetObjectRequest* requestMessage = Request.mutable_resetobjectrequest();
+		SvPb::ResetObjectResponse* responseMessage = Response.mutable_resetobjectresponse();
+		SvPb::SetGuidInProtoBytes(requestMessage->mutable_objectid(), m_TaskObjectID);
+		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &Request, &Response);
+		if (hr == S_OK && responseMessage->has_messages())
+		{
+			messages = SvCmd::setMessageContainerFromMessagePB(responseMessage->messages());
+		}
 		return hr;
 	}
 
 	HRESULT ImageController::ToolRunOnce()
 	{
-		SvPb::InspectionRunOnceRequest requestMessage;
-		SvPb::SetGuidInProtoBytes(requestMessage.mutable_inspectionid(), m_InspectionID);
-		SvPb::SetGuidInProtoBytes(requestMessage.mutable_taskid(), m_TaskObjectID);
-		return SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, nullptr);
+		return SvCmd::RunOnceSynchronous(m_InspectionID, m_TaskObjectID);
 	}
 
 	SvDef::SVImageTypeEnum ImageController::GetImageType(const GUID& rImageID) const

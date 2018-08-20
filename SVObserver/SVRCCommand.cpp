@@ -874,9 +874,7 @@ void SVRCCommand::RunOnce(const SvPb::RunOnceRequest& rRequest, SvRpc::Task<SvPb
 			if(nullptr != pInspection)
 			{
 				SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-				SvPb::InspectionRunOnceRequest requestMessage;
-				SvPb::SetGuidInProtoBytes(requestMessage.mutable_inspectionid(), pInspection->GetUniqueObjectID());
-				SvCmd::InspectionCommandsSynchronous(pInspection->GetUniqueObjectID(), &requestMessage, nullptr);
+				SvCmd::RunOnceSynchronous(pInspection->GetUniqueObjectID(), SVGUID(GUID_NULL));
 				SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 			}
 			else

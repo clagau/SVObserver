@@ -275,10 +275,7 @@ void SVAdjustToolSizePositionDlg::OnOK()
 		if (nullptr != m_pToolTask && nullptr != m_pToolTask->GetInspection())
 		{
 			const SVGUID& rInspectionId = m_pToolTask->GetInspection()->GetUniqueObjectID();
-			SvPb::InspectionRunOnceRequest requestMessage;
-
-			SvPb::SetGuidInProtoBytes(requestMessage.mutable_inspectionid(), rInspectionId);
-			SvCmd::InspectionCommandsSynchronous(rInspectionId, &requestMessage, nullptr);
+			SvCmd::RunOnceSynchronous(rInspectionId, SVGUID(GUID_NULL));
 		}
 	}
 	CDialog::OnOK();

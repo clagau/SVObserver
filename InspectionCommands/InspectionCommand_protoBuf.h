@@ -8,6 +8,7 @@
 #pragma once
 
 #pragma region Includes
+#include "SVProtoBuf/InspectionCommands.h"
 #include "CommandFunction.h"
 #pragma endregion Includes
 
@@ -19,70 +20,71 @@ class SVGUID;
 
 namespace SvCmd
 {
-	class InspectionCommands_protoBuf
+class InspectionCommands_protoBuf
+{
+public:
+	InspectionCommands_protoBuf(const InspectionCommands_protoBuf&) = delete;
+	InspectionCommands_protoBuf& operator=(const InspectionCommands_protoBuf&) = delete;
+InspectionCommands_protoBuf( SvPb::InspectionCmdMsgs* pRequest, SvPb::InspectionCmdMsgs* pResponse)
+		: m_pRequest(pRequest), m_pResponse(pResponse)
 	{
-	public:
-		InspectionCommands_protoBuf(const InspectionCommands_protoBuf&) = delete;
-		InspectionCommands_protoBuf& operator=(const InspectionCommands_protoBuf&) = delete;
+	};
 
-		InspectionCommands_protoBuf(const google::protobuf::Message* pRequest, google::protobuf::Message* pResponse)
-			: m_pRequest(pRequest), m_pResponse(pResponse) {};
+	virtual ~InspectionCommands_protoBuf() {};
 
-		virtual ~InspectionCommands_protoBuf() {};
-
-		HRESULT Execute()
+	HRESULT Execute()
+	{
+		HRESULT hr = E_POINTER;
+		if (!m_pRequest)
 		{
-			HRESULT hr = E_POINTER;
-
-			if (nullptr != dynamic_cast<const SvPb::InspectionRunOnceRequest*>(m_pRequest))
-			{
-				hr = InspectionRunOnce(*static_cast<const SvPb::InspectionRunOnceRequest*>(m_pRequest));
-			}
-			else if (nullptr != dynamic_cast<const SvPb::DestroyChildRequest*>(m_pRequest))
-			{
-				hr = DestroyChildObject(*static_cast<const SvPb::DestroyChildRequest*>(m_pRequest));
-			}
-			else if (nullptr != dynamic_cast<const SvPb::GetMessageListRequest*>(m_pRequest) && nullptr != dynamic_cast<SvPb::GetMessageListResponse*>(m_pResponse))
-			{
-				hr = GetMessageList(*static_cast<const SvPb::GetMessageListRequest*>(m_pRequest), *static_cast<SvPb::GetMessageListResponse*>(m_pResponse));
-			}
-			else if (nullptr != dynamic_cast<const SvPb::ResetObjectRequest*>(m_pRequest))
-			{
-				hr = ResetObject(*static_cast<const SvPb::ResetObjectRequest*>(m_pRequest), dynamic_cast<SvPb::ResetObjectResponse*>(m_pResponse));
-			}
-			else if (nullptr != dynamic_cast<const SvPb::CreateModelRequest*>(m_pRequest) && nullptr != dynamic_cast<SvPb::CreateModelResponse*>(m_pResponse))
-			{
-				hr = CreateModel(*static_cast<const SvPb::CreateModelRequest*>(m_pRequest), *static_cast<SvPb::CreateModelResponse*>(m_pResponse));
-			}
-			else if (nullptr != dynamic_cast<const SvPb::IsValidRequest*>(m_pRequest) && nullptr != dynamic_cast<SvPb::IsValidResponse*>(m_pResponse))
-			{
-				hr = IsValid(*static_cast<const SvPb::IsValidRequest*>(m_pRequest), *static_cast<SvPb::IsValidResponse*>(m_pResponse));
-			}
-			else if (nullptr != dynamic_cast<const SvPb::GetEquationRequest*>(m_pRequest) && nullptr != dynamic_cast<SvPb::GetEquationResponse*>(m_pResponse))
-			{
-				hr = GetEquation(*static_cast<const SvPb::GetEquationRequest*>(m_pRequest), *static_cast<SvPb::GetEquationResponse*>(m_pResponse));
-			}
-			else if (nullptr != dynamic_cast<const SvPb::ValidateAndSetEquationRequest*>(m_pRequest) && nullptr != dynamic_cast<SvPb::ValidateAndSetEquationResponse*>(m_pResponse))
-			{
-				hr = ValidateAndSetEquation(*static_cast<const SvPb::ValidateAndSetEquationRequest*>(m_pRequest), *static_cast<SvPb::ValidateAndSetEquationResponse*>(m_pResponse));
-			}
-			else if (nullptr != dynamic_cast<const SvPb::GetObjectsForMonitorListRequest*>(m_pRequest) && nullptr != dynamic_cast<SvPb::GetObjectsForMonitorListResponse*>(m_pResponse))
-			{
-				hr = getObjectsForMonitorList(*static_cast<const SvPb::GetObjectsForMonitorListRequest*>(m_pRequest), *static_cast<SvPb::GetObjectsForMonitorListResponse*>(m_pResponse));
-			}
-
 			return hr;
 		}
-
-		bool empty() const
+		switch (m_pRequest->message_case())
 		{
-			return true;
-		}
+			case SvPb::InspectionCmdMsgs::kInspectionRunOnceRequest:
+				hr = InspectionRunOnce(m_pRequest->inspectionrunoncerequest());
+				break;
+			case SvPb::InspectionCmdMsgs::kDestroyChildRequest:
+				hr = DestroyChildObject(m_pRequest->destroychildrequest());
+				break;
+			case SvPb::InspectionCmdMsgs::kGetMessageListRequest:
+				hr = GetMessageList(m_pRequest->getmessagelistrequest(), *(m_pResponse->mutable_getmessagelistresponse()));
+				break;
+			case SvPb::InspectionCmdMsgs::kResetObjectRequest:
+				hr = ResetObject(m_pRequest->resetobjectrequest(), m_pResponse->mutable_resetobjectresponse());
+				break;
+			case SvPb::InspectionCmdMsgs::kCreateModelRequest:
+				hr = hr = CreateModel(m_pRequest->createmodelrequest(), *m_pResponse->mutable_createmodelresponse());
+				break;
+			case SvPb::InspectionCmdMsgs::kIsValidRequest:
+				hr = IsValid(m_pRequest->isvalidrequest(), *m_pResponse->mutable_isvalidresponse());
+				break;
 
-	private:
-		const google::protobuf::Message* m_pRequest;
-		google::protobuf::Message* m_pResponse;
-	};
-	typedef std::shared_ptr<InspectionCommands_protoBuf> InspectionCommands_protoBufPtr;
+			case SvPb::InspectionCmdMsgs::kGetEquationRequest:
+				hr = GetEquation(m_pRequest->getequationrequest(), *m_pResponse->mutable_getequationresponse());
+				break;
+		
+			case SvPb::InspectionCmdMsgs::kValidateAndSetEquationRequest:
+				hr = ValidateAndSetEquation(m_pRequest->validateandsetequationrequest(),*m_pResponse->mutable_validateandsetequationresponse());
+				break;
+			case SvPb::InspectionCmdMsgs::kGetObjectsForMonitorListRequest:
+				hr = getObjectsForMonitorList(m_pRequest->getobjectsformonitorlistrequest(), *m_pResponse->mutable_getobjectsformonitorlistresponse());
+				break;
+			default:;
+		}
+		
+		return hr;
+	}
+
+	bool empty() const
+	{
+		return true;
+	}
+
+private:
+	SvPb::InspectionCmdMsgs* m_pRequest;
+	SvPb::InspectionCmdMsgs* m_pResponse;
+};
+typedef std::shared_ptr<InspectionCommands_protoBuf> InspectionCommands_protoBufPtr;
 } //namespace SvCmd
 

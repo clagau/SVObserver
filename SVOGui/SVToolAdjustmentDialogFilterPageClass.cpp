@@ -81,11 +81,7 @@ namespace SvOg
 	HRESULT SVToolAdjustmentDialogFilterPageClass::SetInspectionData()
 	{
 		UpdateData( TRUE ); // get data from dialog
-
-		SvPb::InspectionRunOnceRequest requestMessage;
-		SvPb::SetGuidInProtoBytes(requestMessage.mutable_inspectionid(), m_InspectionID);
-		SvPb::SetGuidInProtoBytes(requestMessage.mutable_taskid(), m_TaskObjectID);
-		HRESULT hrOk = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, nullptr);
+		HRESULT hrOk = SvCmd::RunOnceSynchronous(m_InspectionID, m_TaskObjectID);
 
 		UpdateData( FALSE );
 
@@ -260,6 +256,7 @@ namespace SvOg
 
 		// remove all filter items (instantiated)
 		size_t listSize = availableList.size();
+		
 		for (int i=0; i<listSize; ++i)
 		{
 			SVGUID filterGUID = availableList[i].second;
@@ -271,18 +268,19 @@ namespace SvOg
 				SVObjectSynchronousCommandTemplate<ResetCommandPtr> resetCmd(m_InspectionID, resetCommandPtr);
 				HRESULT hr = resetCmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 				bReset |= resetCommandPtr->shouldResetInspection();
-
+				
+				SvPb::InspectionCmdMsgs Request, Response;
 				// Close, Disconnect and Delete it
-				SvPb::DestroyChildRequest requestMessage;
+				SvPb::DestroyChildRequest* pDestroyChildRequest = Request.mutable_destroychildrequest();
 				//if last object and it should be reset, set flag
 				if (bReset && listSize - 1 == i)
 				{
-					requestMessage.set_flag(SvPb::DestroyChildRequest::Flag_SetDefaultInputs_And_ResetInspection);
+					pDestroyChildRequest->set_flag(SvPb::DestroyChildRequest::Flag_SetDefaultInputs_And_ResetInspection);
 				}
 				
-				SvPb::SetGuidInProtoBytes(requestMessage.mutable_taskobjectlistid(), m_UnaryImageOperatorID);
-				SvPb::SetGuidInProtoBytes(requestMessage.mutable_objectid(), filterGUID);
-				SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, nullptr);
+				SvPb::SetGuidInProtoBytes(pDestroyChildRequest->mutable_taskobjectlistid(), m_UnaryImageOperatorID);
+				SvPb::SetGuidInProtoBytes(pDestroyChildRequest->mutable_objectid(), filterGUID);
+				SvCmd::InspectionCommandsSynchronous(m_InspectionID, &Request, &Response);
 			}
 		}
 
@@ -311,15 +309,16 @@ namespace SvOg
 
 			if( S_OK == hr )
 			{
-				SvPb::DestroyChildRequest requestMessage;
+				SvPb::InspectionCmdMsgs Request,Response;
+				SvPb::DestroyChildRequest* pDestroyChildRequest = Request.mutable_destroychildrequest(); ;
 				//if last object and it should be reset, set flag
 				if (resetCommandPtr->shouldResetInspection())
 				{
-					requestMessage.set_flag(SvPb::DestroyChildRequest::Flag_SetDefaultInputs_And_ResetInspection);
+					pDestroyChildRequest->set_flag(SvPb::DestroyChildRequest::Flag_SetDefaultInputs_And_ResetInspection);
 				}
-				SvPb::SetGuidInProtoBytes(requestMessage.mutable_taskobjectlistid(), m_UnaryImageOperatorID);
-				SvPb::SetGuidInProtoBytes(requestMessage.mutable_objectid(), filterGUID);
-				SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, nullptr);
+				SvPb::SetGuidInProtoBytes(pDestroyChildRequest->mutable_taskobjectlistid(), m_UnaryImageOperatorID);
+				SvPb::SetGuidInProtoBytes(pDestroyChildRequest->mutable_objectid(), filterGUID);
+				SvCmd::InspectionCommandsSynchronous(m_InspectionID, &Request, &Response);
 			}
 
 			// Refresh Dialog...

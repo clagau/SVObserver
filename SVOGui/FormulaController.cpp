@@ -115,13 +115,13 @@ std::string FormulaController::GetPPQName() const
 std::string FormulaController::GetEquationText() const
 {
 	std::string equationText;
-	SvPb::GetEquationRequest requestMessage;
-	SvPb::GetEquationResponse responseMessage;
-	SvPb::SetGuidInProtoBytes(requestMessage.mutable_objectid(), m_EquationID);
-	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, &responseMessage);
-	if (S_OK == hr)
+	SvPb::InspectionCmdMsgs Request, Response;
+	SvPb::GetEquationRequest* pEquationRequest = Request.mutable_getequationrequest();
+	SvPb::SetGuidInProtoBytes(pEquationRequest->mutable_objectid(), m_EquationID);
+	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &Request, &Response);
+	if (S_OK == hr&& Response.has_getequationresponse() )
 	{
-		equationText = responseMessage.equationtext();
+		equationText = Response.getequationresponse().equationtext();
 	}
 	else
 	{
@@ -200,25 +200,27 @@ HRESULT FormulaController::SetOwnerAndEquationEnabled(bool ownerEnabled, bool eq
 int FormulaController::ValidateEquation(const std::string& equationString, double& result, bool bSetValue, SvStl::MessageContainerVector& rErrorMessages) const
 {
 	int retValue = validateSuccessful;
-	SvPb::ValidateAndSetEquationRequest requestEquationMessage;
-	SvPb::ValidateAndSetEquationResponse responseEquationMessage;
-
-	SvPb::SetGuidInProtoBytes(requestEquationMessage.mutable_objectid(), m_EquationID);
-
-	requestEquationMessage.set_equationtext(equationString);
-	requestEquationMessage.set_bsetvalue(bSetValue);
-	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestEquationMessage, &responseEquationMessage);
-	if (S_OK == hr)
+	SvPb::InspectionCmdMsgs requestMessage;
+	SvPb::InspectionCmdMsgs responseMessage;
+	
+	SvPb::ValidateAndSetEquationRequest* pRequest = requestMessage.mutable_validateandsetequationrequest();
+	
+	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_EquationID);
+	pRequest->set_equationtext(equationString);
+	pRequest->set_bsetvalue(bSetValue);
+	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, &responseMessage);
+	if (S_OK == hr && responseMessage.has_validateandsetequationresponse())
 	{
-		retValue = responseEquationMessage.validatestatus();
-		result = responseEquationMessage.result();
-		rErrorMessages = SvCmd::setMessageContainerFromMessagePB(responseEquationMessage.messages());;
+		retValue = responseMessage.validateandsetequationresponse().validatestatus();
+		result = responseMessage.validateandsetequationresponse().result();
+		rErrorMessages = SvCmd::setMessageContainerFromMessagePB(responseMessage.validateandsetequationresponse().messages());;
 
 		if (validateSuccessful == retValue && bSetValue)
 		{
-			SvPb::ResetObjectRequest requestResetMessage;
-			SvPb::SetGuidInProtoBytes(requestResetMessage.mutable_objectid(), m_TaskObjectID);
-			hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestResetMessage);
+			SvPb::InspectionCmdMsgs Request, Response;
+			SvPb::ResetObjectRequest* pResetObjectRequest = Request.mutable_resetobjectrequest();
+			SvPb::SetGuidInProtoBytes(pResetObjectRequest->mutable_objectid(), m_TaskObjectID);
+			hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &Request, &Response);
 			if (S_OK != hr)
 			{
 				retValue = resetFailed;

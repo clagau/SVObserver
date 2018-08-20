@@ -6,6 +6,9 @@ import "BasicStructure.proto";
 //***************************************************************************
 // InspectionCommands - can be send with method InspectionCommandsSynchronous
 //***************************************************************************
+
+
+
 // This message do a runOnce for an inspection or taskObject
 message InspectionRunOnceRequest
 {
@@ -133,3 +136,28 @@ message GetObjectsForMonitorListResponse
 	repeated ObjectNameGuidPair list = 1;
 	MessageContainerVector Messages = 2; //list of messages
 }
+
+
+message InspectionCmdMsgs
+{
+	oneof message
+	{
+		InspectionRunOnceRequest inspectionRunOnceRequest=1;
+		DestroyChildRequest destroyChildRequest =2;
+		GetMessageListRequest  getMessageListRequest =3;
+		GetMessageListResponse getMessageListResponse =4;
+		ResetObjectRequest  resetObjectRequest =5;
+		ResetObjectResponse resetObjectResponse =6;
+		CreateModelRequest  createModelRequest =7;
+		CreateModelResponse createModelResponse =8;
+		IsValidRequest  isValidRequest = 9;
+		IsValidResponse isValidResponse  =10;
+		GetEquationRequest getEquationRequest = 11;
+		GetEquationResponse  getEquationResponse=12; 
+		ValidateAndSetEquationRequest  validateAndSetEquationRequest =13;
+		ValidateAndSetEquationResponse  validateAndSetEquationResponse =14;
+		GetObjectsForMonitorListRequest getObjectsForMonitorListRequest =15;
+		GetObjectsForMonitorListResponse getObjectsForMonitorListResponse = 16;
+	}
+}
+

@@ -115,11 +115,12 @@ void TADialogTableDefinesPage::OnBnClickedButtonRemove()
 		{
 			if (m_Grid.IsCellSelected(i, j))
 			{
-				SvPb::DestroyChildRequest requestMessage;
-				requestMessage.set_flag(SvPb::DestroyChildRequest::Flag_ResetInspection);
-				SvPb::SetGuidInProtoBytes(requestMessage.mutable_taskobjectlistid(), m_TaskObjectID);
-				SvPb::SetGuidInProtoBytes(requestMessage.mutable_objectid(), m_gridList[i - 1].second);
-				HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, nullptr);
+				SvPb::InspectionCmdMsgs Request, Response;
+				SvPb::DestroyChildRequest* pDestroyChildRequest= Request.mutable_destroychildrequest();
+				pDestroyChildRequest->set_flag(SvPb::DestroyChildRequest::Flag_ResetInspection);
+				SvPb::SetGuidInProtoBytes(pDestroyChildRequest->mutable_taskobjectlistid(), m_TaskObjectID);
+				SvPb::SetGuidInProtoBytes(pDestroyChildRequest->mutable_objectid(), m_gridList[i - 1].second);
+				HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &Request, &Response);
 				if (S_OK != hr)
 				{
 					SvDef::StringVector msgList;
@@ -323,17 +324,20 @@ HRESULT TADialogTableDefinesPage::ValidateData()
 	UpdateData(TRUE);
 	HRESULT hResult = S_OK;
 	// Do a reset of the Tool
-	SvPb::ResetObjectRequest requestMessage;
-	SvPb::ResetObjectResponse responseMessage;
-	SvPb::SetGuidInProtoBytes(requestMessage.mutable_objectid(), m_TaskObjectID);
-	hResult = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, &responseMessage);
-	SvStl::MessageContainerVector errorMessageList = SvCmd::setMessageContainerFromMessagePB(responseMessage.messages());
-	if (0 < errorMessageList.size())
+	SvPb::InspectionCmdMsgs Request, Response;
+	SvPb::ResetObjectRequest* pResetObjectRequest = Request.mutable_resetobjectrequest();
+	SvPb::SetGuidInProtoBytes(pResetObjectRequest->mutable_objectid(), m_TaskObjectID);
+	hResult = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &Request, &Response);
+	
+	if (hResult == S_OK && Response.has_resetobjectresponse())
 	{
-		SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
-		Msg.setMessage(errorMessageList[0].getMessage());
+		SvStl::MessageContainerVector errorMessageList = SvCmd::setMessageContainerFromMessagePB(Response.resetobjectresponse().messages());
+		if (0 < errorMessageList.size())
+		{
+			SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+			Msg.setMessage(errorMessageList[0].getMessage());
+		}
 	}
-
 	return hResult;
 }
 

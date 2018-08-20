@@ -12,55 +12,69 @@
 #include "InspectionCommand_protoBuf.h"
 #pragma endregion Includes
 
+
 namespace SvCmd
 {
-	HRESULT InspectionCommandsSynchronous(const SVGUID& rInspectionID, const google::protobuf::Message* pRequest, google::protobuf::Message* pResponse)
-	{
-		InspectionCommands_protoBufPtr CommandPtr = InspectionCommands_protoBufPtr(new InspectionCommands_protoBuf(pRequest, pResponse));
-		SVObjectSynchronousCommandTemplate<InspectionCommands_protoBufPtr> Command(rInspectionID, CommandPtr);
 
-		HRESULT Result = Command.Execute(TWO_MINUTE_CMD_TIMEOUT);
-		return Result;
-	}
+HRESULT InspectionCommandsSynchronous(const SVGUID& rInspectionID, SvPb::InspectionCmdMsgs* pRequest, SvPb::InspectionCmdMsgs* pResponse)
+{
+	InspectionCommands_protoBufPtr CommandPtr = InspectionCommands_protoBufPtr(new InspectionCommands_protoBuf(pRequest, pResponse));
+	SVObjectSynchronousCommandTemplate<InspectionCommands_protoBufPtr> Command(rInspectionID, CommandPtr);
 
-	SvPb::MessageContainerVector setMessageContainerToMessagePB(const SvStl::MessageContainerVector& messageContainers)
+	HRESULT Result = Command.Execute(TWO_MINUTE_CMD_TIMEOUT);
+	return Result;
+}
+
+HRESULT RunOnceSynchronous(const SVGUID& rInspectionID, const SVGUID& rTaskIdID)
+{
+	SvPb::InspectionCmdMsgs Request;
+	SvPb::InspectionRunOnceRequest* pInspectionRunOnceRequest = Request.mutable_inspectionrunoncerequest();
+
+	SvPb::SetGuidInProtoBytes(pInspectionRunOnceRequest->mutable_inspectionid(), rInspectionID);
+	SvPb::SetGuidInProtoBytes(pInspectionRunOnceRequest->mutable_taskid(), rTaskIdID);
+	return SvCmd::InspectionCommandsSynchronous(rInspectionID, &Request, nullptr);
+
+}
+
+
+SvPb::MessageContainerVector setMessageContainerToMessagePB(const SvStl::MessageContainerVector& messageContainers)
+{
+	SvPb::MessageContainerVector messagePB;
+	for (auto messageContainer : messageContainers)
 	{
-		SvPb::MessageContainerVector messagePB;
-		for (auto messageContainer : messageContainers)
+		auto messageData = messageContainer.getMessage();
+		SvPb::MessageContainer* pMessageContainerPB = messagePB.add_messages();
+		pMessageContainerPB->set_messagecode(messageData.m_MessageCode);
+		pMessageContainerPB->set_additionaltextid(messageData.m_AdditionalTextId);
+		for (auto text : messageData.m_AdditionalTextList)
 		{
-			auto messageData = messageContainer.getMessage();
-			SvPb::MessageContainer* pMessageContainerPB = messagePB.add_messages();
-			pMessageContainerPB->set_messagecode(messageData.m_MessageCode);
-			pMessageContainerPB->set_additionaltextid(messageData.m_AdditionalTextId);
-			for (auto text : messageData.m_AdditionalTextList)
-			{
-				pMessageContainerPB->add_additionaltextlist(text);
-			}
-			pMessageContainerPB->set_compiledate(messageData.m_SourceFile.m_CompileDate);
-			pMessageContainerPB->set_compiletime(messageData.m_SourceFile.m_CompileTime);
-			pMessageContainerPB->set_filename(messageData.m_SourceFile.m_FileName);
-			pMessageContainerPB->set_fileline(messageData.m_SourceFile.m_Line);
-			pMessageContainerPB->set_filedatetime(messageData.m_SourceFile.m_FileDateTime);
-			SvPb::SetGuidInProtoBytes(pMessageContainerPB->mutable_objectid(), messageContainer.getObjectId());
+			pMessageContainerPB->add_additionaltextlist(text);
 		}
-		return messagePB;
+		pMessageContainerPB->set_compiledate(messageData.m_SourceFile.m_CompileDate);
+		pMessageContainerPB->set_compiletime(messageData.m_SourceFile.m_CompileTime);
+		pMessageContainerPB->set_filename(messageData.m_SourceFile.m_FileName);
+		pMessageContainerPB->set_fileline(messageData.m_SourceFile.m_Line);
+		pMessageContainerPB->set_filedatetime(messageData.m_SourceFile.m_FileDateTime);
+		SvPb::SetGuidInProtoBytes(pMessageContainerPB->mutable_objectid(), messageContainer.getObjectId());
 	}
+	return messagePB;
+}
 
-	SvStl::MessageContainerVector setMessageContainerFromMessagePB(const SvPb::MessageContainerVector& messagesPB)
+SvStl::MessageContainerVector setMessageContainerFromMessagePB(const SvPb::MessageContainerVector& messagesPB)
+{
+	SvStl::MessageContainerVector messageContainerVector;
+	for (auto messagePB : messagesPB.messages())
 	{
-		SvStl::MessageContainerVector messageContainerVector;
-		for (auto messagePB : messagesPB.messages())
+		SvStl::SourceFileParams fileParam(messagePB.compiledate().c_str(), messagePB.compiletime().c_str(), messagePB.filename().c_str(), messagePB.fileline(), messagePB.filedatetime().c_str());
+		SvDef::StringVector AdditionalTextList;
+		for (auto text : messagePB.additionaltextlist())
 		{
-			SvStl::SourceFileParams fileParam(messagePB.compiledate().c_str(), messagePB.compiletime().c_str(), messagePB.filename().c_str(), messagePB.fileline(), messagePB.filedatetime().c_str());
-			SvDef::StringVector AdditionalTextList;
-			for (auto text : messagePB.additionaltextlist())
-			{
-				AdditionalTextList.push_back(text);
-			}
-			SvStl::MessageContainer messageContainer(messagePB.messagecode(), static_cast<SvStl::MessageTextEnum>(messagePB.additionaltextid()), AdditionalTextList, fileParam, 0, SvPb::GetGuidFromProtoBytes(messagePB.objectid()));
-			messageContainerVector.push_back(messageContainer);
+			AdditionalTextList.push_back(text);
 		}
-
-		return messageContainerVector;
+		SvStl::MessageContainer messageContainer(messagePB.messagecode(), static_cast<SvStl::MessageTextEnum>(messagePB.additionaltextid()), AdditionalTextList, fileParam, 0, SvPb::GetGuidFromProtoBytes(messagePB.objectid()));
+		messageContainerVector.push_back(messageContainer);
 	}
+
+	return messageContainerVector;
+}
 } //namespace SvCmd

@@ -922,11 +922,7 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 	if (extentChanged || embeddedChanged)
 	{
 		SVGUID InspectionID = m_pTool->GetInspection()->GetUniqueObjectID();
-		SvPb::InspectionRunOnceRequest requestMessage;
-
-		SvPb::SetGuidInProtoBytes(requestMessage.mutable_inspectionid(), InspectionID);
-		SvPb::SetGuidInProtoBytes(requestMessage.mutable_taskid(), (m_pTool->GetUniqueObjectID()));
-		SvCmd::InspectionCommandsSynchronous(InspectionID, &requestMessage, nullptr);
+		SvCmd::RunOnceSynchronous(InspectionID, m_pTool->GetUniqueObjectID());
 		UpdateImages();
 		m_pTool->BackupInspectionParameters();
 	}
@@ -979,11 +975,7 @@ HRESULT	SVTADlgTranslationResizePage::ExitTabValidation()
 	if (SUCCEEDED(message.getMessage().m_MessageCode))
 	{
 		SVGUID InspectionID = m_pTool->GetInspection()->GetUniqueObjectID();
-		SvPb::InspectionRunOnceRequest requestMessage;
-
-		SvPb::SetGuidInProtoBytes(requestMessage.mutable_inspectionid(), InspectionID);
-		SvPb::SetGuidInProtoBytes(requestMessage.mutable_taskid(), (m_pTool->GetUniqueObjectID()));
-		SvCmd::InspectionCommandsSynchronous(InspectionID, &requestMessage, nullptr);
+		SvCmd::RunOnceSynchronous(InspectionID, m_pTool->GetUniqueObjectID());
 	}
 
 	if (!SUCCEEDED(message.getMessage().m_MessageCode))
