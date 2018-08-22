@@ -1612,10 +1612,9 @@ void SVIPDoc::Dump(CDumpContext& dc) const
 
 void SVIPDoc::OnResultsPicker()
 {
-	//@TODO [gra][7.50][06.09.2017] This is a work around for the situation when in run mode and the Result Picker is called that
-	//this causes the mode to change to SVIM_MODE_CHANGING which means it is no longer in Run mode, which could cause the Inspection to not work properly!
-	//This needs to be looked into so that when in run mode no other state can change it
-	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
+	//This shall change the state to editing only when previously in edit mode
+	//This will avoid changing the modes while in Run, Regression or Test mode
+	if (SVSVIMStateClass::CheckState(SV_STATE_EDIT))
 	{
 		SVSVIMStateClass::AddState(SV_STATE_EDITING); /// do this before calling validate for security as it may display a logon dialog!
 	}
@@ -1663,7 +1662,7 @@ void SVIPDoc::OnResultsPicker()
 		}
 	}
 
-	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
+	if (SVSVIMStateClass::CheckState(SV_STATE_EDIT))
 	{
 		SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 	}
@@ -1671,10 +1670,9 @@ void SVIPDoc::OnResultsPicker()
 
 void SVIPDoc::OnResultsTablePicker()
 {
-	//@TODO [gra][7.50][06.09.2017] This is a work around for the situation when in run mode and the Result Table Picker is called that
-	//this causes the mode to change to SVIM_MODE_CHANGING which means it is no longer in Run mode, which could cause the Inspection to not work properly!
-	//This needs to be looked into so that when in run mode no other state can change it
-	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
+	//This shall change the state to editing only when previously in edit mode
+	//This will avoid changing the modes while in Run, Regression or Test mode
+	if (SVSVIMStateClass::CheckState(SV_STATE_EDIT))
 	{
 		SVSVIMStateClass::AddState(SV_STATE_EDITING); /// do this before calling validate for security as it may display a logon dialog!
 	}
@@ -1717,7 +1715,7 @@ void SVIPDoc::OnResultsTablePicker()
 		}
 	}
 
-	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
+	if(SVSVIMStateClass::CheckState(SV_STATE_EDIT))
 	{
 		SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 	}
