@@ -95,8 +95,7 @@ svModeEnum SVSVIMStateClass::GetMode()
 	{
 		retVal = SVIM_MODE_TEST;
 	}
-	else if( SVSVIMStateClass::CheckState( SV_STATE_READY ) &&
-		!SVSVIMStateClass::CheckState( SV_STATE_EDIT ) )
+	else if( SVSVIMStateClass::CheckState( SV_STATE_STOP ) )
 	{
 		retVal = SVIM_MODE_OFFLINE;
 	}

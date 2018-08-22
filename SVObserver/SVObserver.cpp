@@ -800,10 +800,8 @@ void SVObserverApp::OnStop()
 	SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 	Exception.setMessage(SVMSG_SVO_28_SVOBSERVER_GO_OFFLINE, TriggerCounts.c_str(), SvStl::SourceFileParams(StdMessageParams));
 
-	SVSVIMStateClass::AddState(SV_STATE_READY);
-	SVSVIMStateClass::RemoveState(SV_STATE_UNAVAILABLE | SV_STATE_STOPING);
-	SVSVIMStateClass::RemoveState(SV_STATE_TEST);
-	SVSVIMStateClass::RemoveState(SV_STATE_REGRESSION);
+	SVSVIMStateClass::RemoveState(SV_STATE_UNAVAILABLE | SV_STATE_STOPING | SV_STATE_TEST | SV_STATE_REGRESSION);
+	SVSVIMStateClass::AddState(SV_STATE_READY | SV_STATE_STOP);
 
 	SVCommandStreamManager::Instance().DisableAllInspections();
 
@@ -3023,8 +3021,6 @@ SVIODoc* SVObserverApp::GetIODoc() const
 
 bool SVObserverApp::Logout(bool bForceLogout)
 {
-	SVSVIMStateClass::RemoveState(SV_STATE_SECURED);
-
 	// We need to deselect any tool that might be set for operator move.
 	SVMainFrame* pWndMain = (SVMainFrame*)GetMainWnd();
 	if (pWndMain)
@@ -3580,11 +3576,7 @@ HRESULT SVObserverApp::SetMode(unsigned long p_lNewMode)
 			OnStop();
 		}
 
-		// Cancel edit mode
-		if (SVSVIMStateClass::CheckState(SV_STATE_EDIT))
-		{
-			SetModeEdit(false);
-		}
+		SetModeEdit(false);
 	}
 	else if (l_svMode == SVIM_MODE_TEST)
 	{
@@ -4494,13 +4486,13 @@ HRESULT SVObserverApp::SetModeEdit(bool p_bState)
 	HRESULT l_hr = S_OK;
 	if (p_bState)
 	{
+		SVSVIMStateClass::RemoveState(SV_STATE_STOP);
 		SVSVIMStateClass::AddState(SV_STATE_EDIT);
-		SVSVIMStateClass::AddState(SV_STATE_SECURED);
 	}
 	else
 	{
 		SVSVIMStateClass::RemoveState(SV_STATE_EDIT);
-		SVSVIMStateClass::RemoveState(SV_STATE_SECURED);
+		SVSVIMStateClass::AddState(SV_STATE_STOP);
 		//
 		// We need to deselect any tool that might be set for operator move.
 		//
@@ -5226,7 +5218,6 @@ void SVObserverApp::Start()
 
 		SetPriorityClass(GetCurrentProcess(), REALTIME_PRIORITY_CLASS);
 		SvTrc::getTriggerRecordControllerRWInstance().lockReset();
-		SVSVIMStateClass::AddState(SV_STATE_RUNNING);
 
 		SVCommandStreamManager::Instance().RebuildCommandObserver();
 		m_mgrRemoteFonts.GoOnline();
@@ -5284,8 +5275,6 @@ void SVObserverApp::Start()
 		SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 		Exception.setMessage(SVMSG_SVO_27_SVOBSERVER_GO_ONLINE, SvStl::Tid_GoOnlineTime, msgList, SvStl::SourceFileParams(StdMessageParams));
 
-		SVSVIMStateClass::RemoveState(SV_STATE_UNAVAILABLE | SV_STATE_STARTING);
-
 		if (SVSoftwareTriggerDlg::Instance().HasTriggers())
 		{
 			EnableTriggerSettings();
@@ -5294,6 +5283,9 @@ void SVObserverApp::Start()
 		{
 			DisableTriggerSettings();
 		}
+
+		SVSVIMStateClass::RemoveState(SV_STATE_UNAVAILABLE | SV_STATE_STARTING);
+		SVSVIMStateClass::AddState(SV_STATE_RUNNING);
 
 		SetThreadPriority(THREAD_PRIORITY_BELOW_NORMAL);
 	}// end if
@@ -5980,12 +5972,10 @@ void SVObserverApp::OnStopAll()
 				pMainMenu->ModifyMenu(ID_MODE_STOPTEST, MF_BYCOMMAND | MF_STRING,
 					ID_MODE_TEST, _T("&Test"));
 			}
-
-			SVSVIMStateClass::RemoveState(SV_STATE_TEST);
 		}
 
 		SvTrc::getTriggerRecordControllerRWInstance().unlockReset();
-		SVSVIMStateClass::RemoveState(SV_STATE_RUNNING);
+		SVSVIMStateClass::RemoveState(SV_STATE_RUNNING | SV_STATE_TEST);
 
 		SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS);
 
