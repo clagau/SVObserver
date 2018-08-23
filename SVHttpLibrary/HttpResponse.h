@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include <map>
+
 #include <boost/beast/http.hpp>
 
 namespace SvHttp
@@ -16,6 +18,7 @@ class HttpResponse
 {
 public:
 	boost::beast::http::status Status = boost::beast::http::status::ok;
+	std::map<boost::beast::http::field, std::string> Headers = {};
 	std::string ContentType = {"text/html"};
 	std::string Body;
 };

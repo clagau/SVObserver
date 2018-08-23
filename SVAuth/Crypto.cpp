@@ -8,8 +8,10 @@
 
 #include "stdafx.h"
 
-#pragma comment (lib, "libeay32.lib")
-#pragma comment (lib, "ssleay32.lib")
+#pragma comment (lib, "crypt32.lib")
+#pragma comment (lib, "libcrypto.lib")
+#pragma comment (lib, "libssl.lib")
+
 #include <openssl/bio.h>
 #include <openssl/err.h>
 #include <openssl/evp.h>
@@ -70,22 +72,17 @@ Crypto::Crypto()
 
 std::string Crypto::hmac(const std::string& msg, const std::string& key, ALG_ID alg)
 {
-	std::string hash;
-
 	unsigned int res_len = SHA256_DIGEST_LENGTH;
 	unsigned char result[SHA256_DIGEST_LENGTH];
 	unsigned char* data = reinterpret_cast<unsigned char*>(const_cast<char*>(msg.data()));
 
-	HMAC_CTX ctx;
-	HMAC_CTX_init(&ctx);
-	HMAC_Init_ex(&ctx, key.data(), static_cast<int>(key.size()), EVP_sha256(), NULL);
-	HMAC_Update(&ctx, data, msg.size());
-	HMAC_Final(&ctx, result, &res_len);
-	HMAC_CTX_cleanup(&ctx);
+	auto pCtx = HMAC_CTX_new();
+	HMAC_Init_ex(pCtx, key.data(), static_cast<int>(key.size()), EVP_sha256(), NULL);
+	HMAC_Update(pCtx, data, msg.size());
+	HMAC_Final(pCtx, result, &res_len);
+	HMAC_CTX_free(pCtx);
 
-	hash = std::string(result, result + res_len);
-
-	return hash;
+	return std::string(result, result + res_len);
 }
 
 std::string Crypto::rsaSign(const std::string& payload, const std::string& privateKey)

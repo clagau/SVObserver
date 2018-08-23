@@ -324,6 +324,10 @@ bool HttpServerConnection::http_custom_request_handler(const Url& rUrl)
 	Request.Method = m_Request.method();
 	Request.Url = rUrl;
 	Request.Body = m_Request.body();
+	for (const auto& field : m_Request)
+	{
+		Request.Headers.emplace(field.name(), field.value());
+	}
 
 	HttpResponse Response;
 	if (m_rSettings.HttpRequestHandler(Request, Response))
@@ -334,6 +338,10 @@ bool HttpServerConnection::http_custom_request_handler(const Url& rUrl)
 		};
 		res.set(boost::beast::http::field::server, m_rSettings.ServerVersionString);
 		res.set(boost::beast::http::field::content_type, Response.ContentType);
+		for (const auto& it : Response.Headers)
+		{
+			res.set(it.first, it.second);
+		}
 		res.keep_alive(m_Request.keep_alive());
 		res.body() = Response.Body;
 		res.prepare_payload();

@@ -12,6 +12,9 @@
 #include "SVProtoBuf/Protobuf2Rapidjson.h"
 
 using namespace Protobuf2Rapidjson;
+using boost::beast::http::field;
+using boost::beast::http::status;
+using boost::beast::http::verb;
 
 namespace SvAuth
 {
@@ -23,13 +26,28 @@ RestHandler::RestHandler(AuthManager& rAuthManager)
 
 bool RestHandler::onRestRequest(const SvHttp::HttpRequest& req, SvHttp::HttpResponse& res)
 {
-	if (req.Method == boost::beast::http::verb::post && req.Url.path() == "/login")
+	const auto& path = req.Url.path();
+	const auto& method = req.Method;
+
+	if (method == verb::options && (path == "/login" || path == "/auth"))
+	{
+		res.Status = status::ok;
+		res.ContentType = "application/json";
+		res.Body = "";
+		res.Headers[field::access_control_allow_origin] = "*";
+		res.Headers[field::access_control_allow_methods] = "POST, GET";
+		res.Headers[field::access_control_allow_headers] = "Access-Control-Allow-Headers, Origin, X-Requested-With, Content-Type, Accept";
+		return true;
+	}
+
+	if (method == verb::post && path == "/login")
 	{
 		DecodeContext ctx;
 		LoginRequest loginReq;
-		if (!Protobuf2Rapidjson::decode_from_cstring(req.Body.data(), req.Body.size(), &loginReq, ctx))
+		if (!decode_from_cstring(req.Body.data(), req.Body.size(), &loginReq, ctx))
 		{
-			res.Status = boost::beast::http::status::bad_request;
+			res.Status = status::bad_request;
+			res.Headers[field::access_control_allow_origin] = "*";
 			res.Body = ctx.error;
 			return true;
 		}
@@ -37,23 +55,26 @@ bool RestHandler::onRestRequest(const SvHttp::HttpRequest& req, SvHttp::HttpResp
 		LoginResponse loginRes;
 		if (!m_rAuthManager.login(loginReq, loginRes))
 		{
-			res.Status = boost::beast::http::status::unauthorized;
+			res.Status = status::unauthorized;
+			res.Headers[field::access_control_allow_origin] = "*";
 			return true;
 		}
 
-		res.Status = boost::beast::http::status::ok;
+		res.Status = status::ok;
+		res.Headers[field::access_control_allow_origin] = "*";
 		res.ContentType = "application/json";
-		res.Body = Protobuf2Rapidjson::encode_to_string(loginRes);
+		res.Body = encode_to_string(loginRes);
 		return true;
 	}
 
-	if (req.Method == boost::beast::http::verb::post && req.Url.path() == "/auth")
+	if (method == verb::post && path == "/auth")
 	{
 		DecodeContext ctx;
 		AuthRequest authReq;
-		if (!Protobuf2Rapidjson::decode_from_cstring(req.Body.data(), req.Body.size(), &authReq, ctx))
+		if (!decode_from_cstring(req.Body.data(), req.Body.size(), &authReq, ctx))
 		{
-			res.Status = boost::beast::http::status::bad_request;
+			res.Status = status::bad_request;
+			res.Headers[field::access_control_allow_origin] = "*";
 			res.Body = ctx.error;
 			return true;
 		}
@@ -61,23 +82,26 @@ bool RestHandler::onRestRequest(const SvHttp::HttpRequest& req, SvHttp::HttpResp
 		AuthResponse authRes;
 		if (!m_rAuthManager.auth(authReq, authRes))
 		{
-			res.Status = boost::beast::http::status::unauthorized;
+			res.Status = status::unauthorized;
+			res.Headers[field::access_control_allow_origin] = "*";
 			return true;
 		}
 
-		res.Status = boost::beast::http::status::ok;
+		res.Status = status::ok;
+		res.Headers[field::access_control_allow_origin] = "*";
 		res.ContentType = "application/json";
-		res.Body = Protobuf2Rapidjson::encode_to_string(authRes);
+		res.Body = encode_to_string(authRes);
 		return true;
 	}
 
-	if (req.Method == boost::beast::http::verb::get && req.Url.path() == "/.well-known/jwks.json")
+	if (method == verb::get && path == "/.well-known/jwks.json")
 	{
 		const auto jwks = m_rAuthManager.getJsonWebKeySet();
 
-		res.Status = boost::beast::http::status::ok;
+		res.Status = status::ok;
 		res.ContentType = "application/json";
-		res.Body = Protobuf2Rapidjson::encode_to_string(jwks);
+		res.Headers[field::access_control_allow_origin] = "*";
+		res.Body = encode_to_string(jwks);
 		return true;
 	}
 
