@@ -1422,14 +1422,18 @@ HRESULT SVMatroxDigitizerInterface::GetFeature(const SVMatroxDigitizer& Digitize
 
 				case VT_BOOL:	// Bool
 					{
-						bool value;
-						MdigInquireFeature(DigitizerID.m_DigitizerIdentifier, cFeatureControlType, featureNameStr, l_matroxFeatureType, &value);
-						l_Code =  SVMatroxApplicationInterface::GetLastStatus();
-						if (l_Code == S_OK)
-						{
-							FeatureValue.boolVal = value;
-						}
+#if SV_DESIRED_MIL_VERSION == 0x0900
+						bool value {false};
+#else
+						MIL_BOOL value {0L};
+#endif
+					MdigInquireFeature(DigitizerID.m_DigitizerIdentifier, cFeatureControlType, featureNameStr, l_matroxFeatureType, &value);
+					l_Code = SVMatroxApplicationInterface::GetLastStatus();
+					if (l_Code == S_OK)
+					{
+						FeatureValue.boolVal = value ? true : false;
 					}
+				}
 					break;
 
 				default:
@@ -1558,7 +1562,11 @@ HRESULT SVMatroxDigitizerInterface::SetFeature(const SVMatroxDigitizer& Digitize
 
 				case VT_BOOL:	// Bool
 					{
+#if SV_DESIRED_MIL_VERSION == 0x0900
 						bool value = (FeatureValue.boolVal) ? true : false;
+#else
+						MIL_BOOL value = (FeatureValue.boolVal) ? 1L : 0L;
+#endif
 						MdigControlFeature(DigitizerID.m_DigitizerIdentifier, controlType, featureNameStr, l_matroxFeatureType, &value);
 						l_Code =  SVMatroxApplicationInterface::GetLastStatus();
 					}
