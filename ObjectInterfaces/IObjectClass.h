@@ -60,6 +60,9 @@ namespace SvOi
 		***********/
 		virtual std::string GetObjectNameToObjectType(SvDef::SVObjectTypeEnum objectTypeToInclude) const = 0;
 
+		//Get the complete object name before selected SvDef::SVObjectTypeEnum value.
+		virtual std::string GetObjectNameBeforeObjectType(SvDef::SVObjectTypeEnum objectTypeToInclude) const = 0;
+
 		/**********
 			The method gets the type of this object.
 		***********/

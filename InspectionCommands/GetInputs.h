@@ -31,9 +31,10 @@ namespace SvCmd
 		/// \param rObjectID [in] Object Id to the task object.
 		/// \param typeInfo [in] Type of the requested inputs. SvDef::SVNotSetObjectType return all inputs
 		/// \param objectTypeToInclude [in] Object type until the name of the connected object will set. SvDef::SVNotSetObjectType means only object name and e.g. SvDef::SVToolSetObjectType means "Tool Set.Window Tool....". This parameter will not used for image objects.
+		/// \param shouldExcludeFirstObjectType [in] Remove first object name. (If objectTypeToInclude == SvDef::SVNotsetObjectType this parameter will not used) e.g. SvDef::SVToolSetObjectType means "Window Tool....". This parameter will not used for image objects.
 		/// \param func [in]
-		GetInputs(const SVGUID& rObjectID, const SvDef::SVObjectTypeInfoStruct& typeInfo = SvDef::SVObjectTypeInfoStruct(SvDef::SVNotSetObjectType), SvDef::SVObjectTypeEnum objectTypeToInclude = SvDef::SVNotSetObjectType)
-			: m_InstanceID(rObjectID), m_typeInfo(typeInfo), m_objectTypeToInclude(objectTypeToInclude) {};
+		GetInputs(const SVGUID& rObjectID, const SvDef::SVObjectTypeInfoStruct& typeInfo = SvDef::SVObjectTypeInfoStruct(SvDef::SVNotSetObjectType), SvDef::SVObjectTypeEnum objectTypeToInclude = SvDef::SVNotSetObjectType, bool shouldExcludeFirstObjectName = false)
+			: m_InstanceID(rObjectID), m_typeInfo(typeInfo), m_objectTypeToInclude(objectTypeToInclude), m_shouldExcludeFirstObjectName(shouldExcludeFirstObjectName) {};
 
 
 		virtual ~GetInputs() {}
@@ -48,7 +49,7 @@ namespace SvCmd
 			SvOi::ITaskObject* pTaskObject = dynamic_cast<SvOi::ITaskObject *>(SvOi::getObject(m_InstanceID));
 			if (nullptr != pTaskObject)
 			{
-				pTaskObject->GetInputs(m_list, m_typeInfo, m_objectTypeToInclude);
+				pTaskObject->GetInputs(m_list, m_typeInfo, m_objectTypeToInclude, m_shouldExcludeFirstObjectName);
 			}
 			else
 			{
@@ -63,6 +64,7 @@ namespace SvCmd
 		SvDef::SVObjectTypeInfoStruct m_typeInfo;
 		SvUl::InputNameGuidPairList m_list;
 		SvDef::SVObjectTypeEnum m_objectTypeToInclude;
+		bool m_shouldExcludeFirstObjectName;
 		SVGUID m_InstanceID;
 	};
 } //namespace SvCmd

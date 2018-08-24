@@ -63,4 +63,12 @@ namespace SvCmd
 	/// \param rResponseMessage [in,out] The response-protoBuf-message.
 	/// \returns HRESULT
 	HRESULT getObjectsForMonitorList(const SvPb::GetObjectsForMonitorListRequest& rRequestMessage, SvPb::GetObjectsForMonitorListResponse& rResponseMessage);
+
+	/// Moved a taskObject to a new position in the taskObjectList.
+	/// \param rRequestMessage [in] The request-protoBuf-message.
+	/// \returns HRESULT
+	HRESULT MoveTaskObject(const SvPb::MoveTaskObjectRequest& rRequestMessage);
+
+	/// Get Definitions for all Taskobject in taskobjectlist
+	HRESULT GetTaskObjectsList(const SvPb::TaskObjectListRequest& rRequest, SvPb::TaskObjectListResponse &rResponse);
 } //namespace SvCmd

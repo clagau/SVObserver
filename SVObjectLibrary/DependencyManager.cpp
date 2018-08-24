@@ -94,9 +94,14 @@ namespace SvOl
 			SVObjectClass* pSupplier = SVObjectManagerClass::Instance().GetObject(IterDependency->first);
 			SVObjectClass* pClient = SVObjectManagerClass::Instance().GetObject(IterDependency->second);
 			if (nullptr != pSupplier && nullptr != pClient)
-			{
-				std::string SupplierName = pSupplier->GetObjectNameToObjectType(nameToObjectType);
-				std::string ClientName = pClient->GetObjectNameToObjectType(nameToObjectType);
+			{//To add also add the parent tool e.g. LoopTool if available
+				std::string SupplierName = pSupplier->GetObjectNameBeforeObjectType(SvDef::SVToolSetObjectType);
+				std::string ClientName = pClient->GetObjectNameBeforeObjectType(SvDef::SVToolSetObjectType);
+				if (SvDef::SVToolObjectType != nameToObjectType)
+				{
+					SupplierName = pSupplier->GetObjectNameToObjectType(nameToObjectType);
+					ClientName = pClient->GetObjectNameToObjectType(nameToObjectType);
+				}
 
 				Inserter = SvDef::StringPair(SupplierName, ClientName);
 

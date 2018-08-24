@@ -20,7 +20,8 @@ namespace SvO
 	const TCHAR* const InsertingTool = _T( "Inserting Tool ..." );
 	const TCHAR* const LoadingResourceDllFailed = _T( "Could not load resource dll.\nThe program will terminated." );
 
-	const TCHAR* const EndListDelimiter = _T( "-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------" );
+	const TCHAR* const EndListDelimiter	  = _T("-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------" );
+	const TCHAR* const LoopToolDelimiter = EndListDelimiter;
 	const TCHAR* const SVTOOLPARAMETERLIST_MARKER = _T( "** SVSetToolParameterList MARKER **" );
 	const TCHAR* const SizeAdjustTextNone = _T( "Manual" );
 	const TCHAR* const SizeAdjustTextFormula = _T( "Formula" );

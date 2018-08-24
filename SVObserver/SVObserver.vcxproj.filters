@@ -816,6 +816,9 @@
     <ClCompile Include="SVRCWebsocketServer.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="LoopTool.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="SVObserver.odl">
@@ -1670,6 +1673,12 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVRCRequestHandler.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="NavigatorElement.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="LoopTool.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

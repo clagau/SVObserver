@@ -48,11 +48,6 @@ public:
 	HRESULT ResetCounts();
 	HRESULT ClearResetCounts();
 
-	//! Description: This moves a tool to the desired index
-	//! Parameter: NewIndex <in> The new index for the tool
-	//! Parameter: pTool <in> Pointer to the tool
-	void moveTool( int NewIndex, SVToolClass* pTool );
-
 	//! Update the tool position
 	void updateToolPosition();
 
@@ -63,8 +58,6 @@ public:
 	SVImageClass* getCurrentImage();////@TODO[Arvid][7.50][08.05.2017] all occurrences of this function should be replaced by getCurrentImageInterface() when possible
 
 	SvOi::ISVImage* getCurrentImageInterface() override;
-
-	int GetIndex( SVToolClass* PTool );
 
 	SVEnumerateValueObjectClass* GetDrawFlagObject();
 

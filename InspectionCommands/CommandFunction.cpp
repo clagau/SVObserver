@@ -268,4 +268,30 @@ HRESULT getObjectsForMonitorList(const SvPb::GetObjectsForMonitorListRequest& rR
 
 	return hr;
 }
+
+HRESULT MoveTaskObject(const SvPb::MoveTaskObjectRequest& rRequestMessage)
+{
+	SvOi::ITaskObjectListClass* pObject = dynamic_cast<SvOi::ITaskObjectListClass*>(SvOi::getObject(SvPb::GetGuidFromProtoBytes(rRequestMessage.parentid())));
+	if (nullptr != pObject)
+	{
+		pObject->moveTaskObject(SvPb::GetGuidFromProtoBytes(rRequestMessage.taskobjectid()), SvPb::GetGuidFromProtoBytes(rRequestMessage.movepreid()));
+		return S_OK;
+	}
+	else
+	{
+		return E_FAIL;
+	}
+}
+
+HRESULT GetTaskObjectsList(const SvPb::TaskObjectListRequest& rRequest, SvPb::TaskObjectListResponse &rResponse)
+{
+	SvOi::ITaskObjectListClass* pTaskObjectList = dynamic_cast<SvOi::ITaskObjectListClass*>(SvOi::getObject(SvPb::GetGuidFromProtoBytes(rRequest.taskobjectid())));
+	if (nullptr == pTaskObjectList)
+	{
+		return E_FAIL;
+	}
+	SvOi::ObjectInfoVector  m_ObjectInfoVector;
+	pTaskObjectList->GetTaskObjectListInfo(rResponse);
+	return S_OK;
+}
 } //namespace SvCmd

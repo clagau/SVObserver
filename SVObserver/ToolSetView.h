@@ -40,22 +40,21 @@ public:
 	SVIPDoc* GetIPDoc() const;
 	void GetParameters(SvOi::IObjectWriter& rWriter);
 	const SVToolGrouping& GetToolGroupings() const;
-
 	typedef SvXml::SVXMLMaterialsTree SVTreeType;
-
 	bool SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent);
 	bool CheckParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent);
-
 	void SetViewSize(CSize &Size);
 	bool IsLabelEditing() const;
-
 	void SetSelectedTool(const SVGUID& rGuid);
 	SVGUID GetSelectedTool() const;
-
-	ToolListSelectionInfo GetToolListSelectionInfo() const;
+	
+	///Get Navigator Element Pointer for the Selected Element in the ListCtrl
+	//pSelectedIndex gets the selected Index
+	PtrNavigatorElement GetSelectedNavigatorElement(int* pSelectedIndex = nullptr) const;
+	///Get Navigator Element Pointer for the index in the ListCtrl
+	PtrNavigatorElement GetNavigatorElement(int index) const;
 	void HandleExpandCollapse(const std::string& rName, bool bCollapse);
 	bool IsEndToolGroupAllowed() const;
-
 	SVToolSetListCtrl& getListCtrl() { return m_toolSetListCtrl; };
 	//************************************
 	/// Open TA-dialog for tools and comment-page for ToolGrouping.
@@ -89,7 +88,11 @@ public:
 	void addParameter2MonitorList(LPCTSTR ppqName);
 	void removeParameter2MonitorList(LPCTSTR ppqName);
 
+	///return true if a subtool or subtoolDeleimiter is selected
+	bool IsLoopToolSelected() const;
 protected:
+	/// opens a dialog for the selected Tool 
+	void EditToolComment(SVGUID& rguid);
 	DECLARE_DYNCREATE(ToolSetView)
 	enum { IDD = IDD_TOOLSET_VIEW };
 
@@ -102,7 +105,6 @@ protected:
 	afx_msg void OnRightClickToolSetList(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnEditLabelEnds();
 	afx_msg void OnSelectComment();
-	afx_msg void OnSelectToolComment();
 	afx_msg void OnSelectToolSetReference();
 	afx_msg void OnSelectToolNormalize();
 	afx_msg void OnEditToolName();
@@ -122,7 +124,8 @@ protected:
 	virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
 
 	void ValidateLabelText( std::string& rNewText );
-	void RenameItem(int item, const std::string& rOldName, const std::string& rNewName);
+	void RenameItem();
+
 	void ToggleExpandCollapse(int item);
 	//************************************
 	//! Searches the name in the list of all tool and group names case insensitive 
@@ -131,7 +134,9 @@ protected:
 	//! \returns bool  bool true if the name is unique 
 	//************************************
 	bool CheckName(const std::string& rName, LPCTSTR lpExclude = nullptr) const;
-	bool EditToolGroupingComment();
+	/// Editing the comment of grouping start or grouping end
+	bool EditToolGroupingComment(const std::string& groupingName);
+
 
 private:
 #pragma region Private Methods

@@ -10,6 +10,7 @@
 #include "SVCommandLibrary/SVObjectSynchronousCommandTemplate.h"
 #include "CommandFunctionHelper.h"
 #include "InspectionCommand_protoBuf.h"
+#include "ObjectInterfaces/ObjectInfo.h"
 #pragma endregion Includes
 
 
@@ -74,7 +75,28 @@ SvStl::MessageContainerVector setMessageContainerFromMessagePB(const SvPb::Messa
 		SvStl::MessageContainer messageContainer(messagePB.messagecode(), static_cast<SvStl::MessageTextEnum>(messagePB.additionaltextid()), AdditionalTextList, fileParam, 0, SvPb::GetGuidFromProtoBytes(messagePB.objectid()));
 		messageContainerVector.push_back(messageContainer);
 	}
-
 	return messageContainerVector;
 }
+
+bool ResponseToObjectInfo(const SvPb::InspectionCmdMsgs& rResponse, SvOi::ObjectInfoVector&  rToolSetInfos)
+{
+	if (false == rResponse.has_taskobjectlistresponse())
+	{
+		return false;
+	}
+
+	for (int t = 0; t < rResponse.taskobjectlistresponse().taskobjectinfos_size(); t++)
+	{
+		auto rTOI = rResponse.taskobjectlistresponse().taskobjectinfos(t);
+		SvOi::ObjectInfo objectInfo;
+		objectInfo.DisplayName = rTOI.displayname().c_str();
+		SvPb::GetGuidFromProtoBytes(rTOI.taskobjectid(), objectInfo.guid);
+		objectInfo.isValid = rTOI.isvalid();
+		objectInfo.ObjectSubType = SvDef::SVObjectSubTypeEnum(rTOI.objectsubtype());
+		objectInfo.ObjectType = SvDef::SVObjectTypeEnum(rTOI.objecttype());
+		rToolSetInfos.push_back(objectInfo);
+	}
+	return true;
+}
+
 } //namespace SvCmd

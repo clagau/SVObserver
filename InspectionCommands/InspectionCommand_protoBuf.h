@@ -25,7 +25,7 @@ class InspectionCommands_protoBuf
 public:
 	InspectionCommands_protoBuf(const InspectionCommands_protoBuf&) = delete;
 	InspectionCommands_protoBuf& operator=(const InspectionCommands_protoBuf&) = delete;
-InspectionCommands_protoBuf( SvPb::InspectionCmdMsgs* pRequest, SvPb::InspectionCmdMsgs* pResponse)
+	InspectionCommands_protoBuf(SvPb::InspectionCmdMsgs* pRequest, SvPb::InspectionCmdMsgs* pResponse)
 		: m_pRequest(pRequest), m_pResponse(pResponse)
 	{
 	};
@@ -63,16 +63,24 @@ InspectionCommands_protoBuf( SvPb::InspectionCmdMsgs* pRequest, SvPb::Inspection
 			case SvPb::InspectionCmdMsgs::kGetEquationRequest:
 				hr = GetEquation(m_pRequest->getequationrequest(), *m_pResponse->mutable_getequationresponse());
 				break;
-		
+
 			case SvPb::InspectionCmdMsgs::kValidateAndSetEquationRequest:
-				hr = ValidateAndSetEquation(m_pRequest->validateandsetequationrequest(),*m_pResponse->mutable_validateandsetequationresponse());
+				hr = ValidateAndSetEquation(m_pRequest->validateandsetequationrequest(), *m_pResponse->mutable_validateandsetequationresponse());
 				break;
 			case SvPb::InspectionCmdMsgs::kGetObjectsForMonitorListRequest:
 				hr = getObjectsForMonitorList(m_pRequest->getobjectsformonitorlistrequest(), *m_pResponse->mutable_getobjectsformonitorlistresponse());
 				break;
+			case SvPb::InspectionCmdMsgs::kMoveTaskObjectRequest:
+				hr = MoveTaskObject(m_pRequest->movetaskobjectrequest());
+				break;
+
+			case SvPb::InspectionCmdMsgs::kTaskObjectListRequest:
+				hr = GetTaskObjectsList(m_pRequest->taskobjectlistrequest(), *m_pResponse->mutable_taskobjectlistresponse());
+					break;
+
 			default:;
 		}
-		
+
 		return hr;
 	}
 

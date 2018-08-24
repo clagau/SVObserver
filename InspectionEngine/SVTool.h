@@ -121,7 +121,12 @@ public:
 
 	//! Sets the tool position index (One based)
 	//! \param Position
-	void setToolPosition(long ToolPosition) { m_ToolPosition.SetValue(ToolPosition); };
+	//! Return value is next Tool Position 
+	virtual long  setToolPosition(long ToolPosition) 
+	{ 
+		m_ToolPosition.SetValue(ToolPosition); 
+		return (ToolPosition +1);
+	};
 
 	//! Check if tool can be resized to parent extents
 	//! \returns true if tool can resize to parent
@@ -132,7 +137,7 @@ public:
 	// 26 Jan 2000 - frb.
 	//
 	const SVImageInfoClass* getFirstImageInfo() const;
-	
+
 	/// Search an object with the embeddedId and add it to the ParameterList for the needed in monitor list.
 	/// \param retList [in,out] The ParameterList
 	/// \param rEmbeddedId [in] The EmbeddedId of the object
@@ -147,12 +152,15 @@ public:
 	virtual long getToolPosition() const override;
 	virtual HRESULT getExtentProperty(const SvDef::SVExtentPropertyEnum& rExtentProperty, double& rValue) override;
 	virtual SvOi::ParametersForML getParameterForMonitorList(SvStl::MessageContainerVector& rMessages) const override;
+	virtual void finishAddTool() override;
 #pragma endregion ITool methods
 
 protected:
 	void UpdateAuxiliaryExtents();
 	virtual bool Run(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
 
+	//Set the counter and State is called in Run()
+	inline  virtual void  UpdateStateAndCounter(SVRunStatusClass& rRunStatus);
 	HRESULT UpdateOffsetDataToImage(SVExtentOffsetStruct& p_rsvOffsetData, SVImageClass* p_svToolImage);
 
 	// Remove Embedded Extents

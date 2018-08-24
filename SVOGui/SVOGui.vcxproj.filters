@@ -198,6 +198,9 @@
     <ClCompile Include="SVPatternAnalyzerModelPage.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="TADialogLoopToolParameterPage.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdAfx.h">
@@ -411,6 +414,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVPatternAnalyzerModelPage.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="TADialogLoopToolParameterPage.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

@@ -40,16 +40,16 @@ namespace  SvXml
 
 		if ( !Result )
 		{
-			Result = AddItem( rTree, pParent, szName, rVariant, &l_Leaf );
+			Result = AddItem( rTree, pParent, Name, rVariant, &pLeaf );
 		}
 		else
 		{
-			Result = S_OK == rTree.setLeafData( l_Leaf, rVariant );
+			Result = S_OK == rTree.setLeafData( pLeaf, rVariant );
 		}
 
 		if( nullptr != ppItem )
 		{
-			*ppItem = l_Leaf;
+			*ppItem = pLeaf;
 		}
 
 		return Result;

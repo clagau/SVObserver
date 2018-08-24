@@ -182,6 +182,7 @@ echo %time%
     <ClCompile Include="Custom2Filter_ImportExport.cpp" />
     <ClCompile Include="ExtrasEngine.cpp" />
     <ClCompile Include="GlobalConstantView.cpp" />
+    <ClCompile Include="LoopTool.cpp" />
     <ClCompile Include="InitialInformationHandler.cpp" />
     <ClCompile Include="MonitorListSelector.cpp" />
     <ClCompile Include="SVRCCommand.cpp" />
@@ -482,8 +483,10 @@ echo %time%
     <ClInclude Include="ArchiveToolHelper.h" />
     <ClInclude Include="ExtrasEngine.h" />
     <ClInclude Include="GlobalConstantView.h" />
+    <ClInclude Include="LoopTool.h" />
     <ClInclude Include="InitialInformationHandler.h" />
     <ClInclude Include="MonitorListSelector.h" />
+    <ClInclude Include="NavigatorElement.h" />
     <ClInclude Include="SVRCCommand.h" />
     <ClInclude Include="RangeClassHelper.h" />
     <ClInclude Include="RangeXDialogClass.h" />

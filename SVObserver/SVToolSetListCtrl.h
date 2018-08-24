@@ -14,22 +14,14 @@
 #pragma region Includes
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/NameGuidList.h"
+#include "ObjectInterfaces/ObjectInfo.h"
+#include "NavigatorElement.h"
 #pragma endregion Includes
 
 #pragma region Declarations
 class ToolSetView;
 #pragma endregion Declarations
 
-struct ToolListSelectionInfo
-{
-public:
-	const int m_listIndex;
-	const std::string m_Selection;
-
-	ToolListSelectionInfo(int listIndex, const std::string& Selection)
-	: m_listIndex( listIndex )
-	, m_Selection( Selection ) {}
-};
 
 class SVToolSetListCtrl : public CListCtrl
 {
@@ -54,24 +46,29 @@ public:
 	virtual BOOL PreTranslateMessage(MSG* pMsg) override;
 
 	void Rebuild();
+	///Updates Images for valid invalid Tools. Valid and Invalid LoopTools have the same 
+	///images because the valid status of looptool is not always actual.
 	void RebuildImages();
 
 	void SetSingleSelect();
 	void setObjectIds(const SVGUID& toolsetId, const SVGUID& inspectionId);
-	
-	SVGUID getToolGuid(int index) const;
+
+	///Get Navigator Element Pointer for the Selected Element in the ListCtrl
+	//pSelectedIndex gets the selected Index
+	PtrNavigatorElement GetSelectedNavigatorElement(int* pSelectedIndex = nullptr) const;
+
+	///Get Navigator Element Pointer for the index in the ListCtrl
+	PtrNavigatorElement GetNavigatorElement(int index) const;
+
 	SVGUID GetSelectedTool() const;
 	void SetSelectedTool(const SVGUID& rGuid);
 
-	ToolListSelectionInfo GetToolListSelectionInfo() const;
 	void GetSelectedItemScreenPosition(POINT& rPoint) const;
 
 	void SaveScrollPos();
 	void RestoreScrollPos();
 
 	bool AllowedToEdit() const;
-	bool IsEndListDelimiter( const std::string& rName ) const;
-	bool IsEmptyStringPlaceHolder( const std::string& rName ) const;
 
 	/// Display an error message box with the first error, if the tool has errors.
 	/// \param rGuid [in] Guid of the tool.
@@ -79,33 +76,42 @@ public:
 	bool displayErrorBox(const SVGUID& rGuid) const;
 
 	bool isToolValid(const SVGUID& tool) const;
-
 protected:
 	ToolSetView* GetView();
 	const ToolSetView* GetView() const;
+	///Images for valid and not valid LoopTools are the same 
 	void CreateImageLists();
-	int InsertStartGroup(int itemNo, const std::string& rStartName, bool bCollapsed);
-	int InsertEndGroup(int itemNo, const std::string& rEndName, bool bCollapsed);
-	int InsertTool(int itemNo, int listIndex, bool bCollapsed, int indent);
-	void AddEndDelimiter();
-	void InsertEmptyString(int itemNo);
+
+	int InsertElement(int itemNo, int Indend, PtrNavigatorElement &rpNavigatorElement);
+
+	///Insert Delimiter ItemNo is firstIndex in Listcontrol
+	/// indent is indentation 
+	///rOwnerGuid is Guid for the ownwer 
+	int  InsertDelimiter(int itemNo, int Indend, NavElementType type, const GUID& rOwnerGuid);
+
+	///Insert all Subtools ItemNo is firstIndex in Listcontrol
+	/// indent is indentation 
+	///rGuid is Guid for the LoopTool
+	int InsertSubTools(int itemNo, int indent, const GUID& rGuid);
 
 	void CollapseItem(int item);
 	void ExpandItem(int item);
-	bool IsStartGrouping(int index, bool& bState) const;
 
 	CImageList m_ImageList;
-
 	int m_iNone;
 	int m_iInvalid;
 	int m_expandState;
 	int m_fullParameterinML;
 	int m_collapseState;
 	int m_iTopIndex;
+	int m_expandStateLoopToolValid = 0;
+	int m_collapseStateLoopToolValid = 0;
+	int m_expandStateLoopToolInvalid = 0;
+	int m_collapseStateLoopToolInvalid = 0;
 
-	SvUl::NameGuidList m_taskList;
 	SVGUID m_ToolSetId;
 	SVGUID m_InspectionId;
+	std::vector<std::shared_ptr<NavigatorElement>> m_NavigatorElementVector;
 };
 
 /////////////////////////////////////////////////////////////////////////////

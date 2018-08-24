@@ -429,7 +429,7 @@ HRESULT SVSetupDialogManager::SVColorToolClassSetupDialog(const SVGUID& p_rObjec
 		std::string Title = SvUl::LoadStdString(IDS_ADJUSTMENT_STRING);
 
 		// Get Complete Name up to the tool level...
-		Title = l_pTool->GetObjectNameToObjectType(SvDef::SVToolObjectType) + _T(" ") + Title;
+		Title = l_pTool->GetObjectNameBeforeObjectType(SvDef::SVToolSetObjectType) + _T(" ") + Title;
 
 		SVObjectClass* pInspection(l_pTool->GetInspection());
 
@@ -536,7 +536,7 @@ HRESULT SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog(const SVGUID& rOb
 	{
 		std::string Title = SvUl::LoadStdString(IDS_ADJUSTMENT_STRING);
 		// Get Complete Name up to the tool level...
-		Title = pAnalyzer->GetObjectNameToObjectType(SvDef::SVToolObjectType) + _T(" ") + Title;
+		Title = pAnalyzer->GetObjectNameBeforeObjectType(SvDef::SVToolSetObjectType) + _T(" ") + Title;
 
 		SVIPDoc* pIPDoc = TheSVObserverApp.GetIPDoc(pInspection->GetUniqueObjectID());
 

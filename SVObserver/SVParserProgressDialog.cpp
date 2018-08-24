@@ -141,12 +141,6 @@ BOOL SVParserProgressDialog::AddParser( unsigned long parserHandle, SVObjectScri
 			Temp = pParser->GetOwnerObject()->GetName();
 		}
 
-		if( SVInspectionProcess* pInspection = dynamic_cast< SVInspectionProcess* >( pParser->GetOwnerObject() ) )
-		{
-			// Get the Document Name...
-			Temp = pInspection->GetName();
-		}
-
 		// Add to Total Size
 		parserControl.TotalSize = pParser->GetTotal();
 

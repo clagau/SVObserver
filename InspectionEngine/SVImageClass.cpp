@@ -1262,7 +1262,7 @@ std::string SVImageClass::getDisplayedName() const
 		SVImageInfoClass imageInfo = GetImageInfo();
 		if (imageInfo.GetOwner())
 		{
-			strName = GetObjectNameToObjectType(SvDef::SVToolObjectType);
+			strName = GetObjectNameBeforeObjectType(SvDef::SVToolSetObjectType);
 		}
 	}
 	return strName;

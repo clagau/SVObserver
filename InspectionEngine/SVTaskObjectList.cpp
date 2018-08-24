@@ -22,6 +22,10 @@
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "ObjectInterfaces/ObjectInfo.h"
+#include "SVProtoBuf/SVRC.h"
+#include "SVProtoBuf/InspectionCommands.h"
+#include "SVProtoBuf/ConverterHelper.h"
 #pragma endregion
 
 #ifdef _DEBUG
@@ -244,26 +248,44 @@ void SVTaskObjectListClass::InsertAt(int Index, SVTaskObjectClass* pTaskObject, 
 
 	m_LastListUpdateTimestamp = SvTl::GetTimeStamp();
 }
-
-// Use this if You want to set list entry to nullptr!
-// And to replace an entyr with a new pointer after it was deleted!!!
-void SVTaskObjectListClass::SetAt(int nIndex, SVTaskObjectClass* pTaskObject)
+int  SVTaskObjectListClass::InsertAfter(const SVGUID& rGuid, SVTaskObjectClass* pTaskObject)
 {
-	if (pTaskObject)
+	int Result(-1);
+	if (nullptr == pTaskObject)
 	{
-		// Check for Unique names
-		const std::string NewName( checkName( pTaskObject->GetName() ) );
-		if( NewName != pTaskObject->GetName() )
-		{
-			pTaskObject->SetName( NewName.c_str() );
-		}
-		
-		pTaskObject->SetObjectOwner(this);
+		assert(false);
+		return -1;
 	}
-	
-	m_TaskObjectVector[nIndex] = pTaskObject;
 
+	// Check for Unique names ??
+	const std::string NewName(checkName(pTaskObject->GetName()));
+	if (NewName != pTaskObject->GetName())
+	{
+		pTaskObject->SetName(NewName.c_str());
+	}
+
+	pTaskObject->SetObjectOwner(this);
+	if (rGuid.empty())
+	{
+		m_TaskObjectVector.push_back(pTaskObject);
+		Result =  static_cast<int>( m_TaskObjectVector.size()) -1;
+	}
+	else
+	{
+		auto it = std::find_if(m_TaskObjectVector.begin(), m_TaskObjectVector.end(),
+			[&rGuid](SVTaskObjectClass* pObject)
+		{
+			if (pObject == nullptr || pObject->GetUniqueObjectID() == rGuid)
+				return true;
+			else
+				return false;
+		});
+
+		auto it2 = m_TaskObjectVector.insert(it, pTaskObject);
+		Result =  static_cast<int>(std::distance(m_TaskObjectVector.begin(), it2));
+	}
 	m_LastListUpdateTimestamp = SvTl::GetTimeStamp();
+	return Result;
 }
 
 SVTaskObjectClass* SVTaskObjectListClass::GetAt( int nIndex ) const 
@@ -380,6 +402,27 @@ void SVTaskObjectListClass::SetDisabled()
 		}
 	}
 }
+bool SVTaskObjectListClass::IsNameUnique(LPCSTR  pName, LPCTSTR pExclude) const
+{
+	bool bRetVal = std::none_of(m_TaskObjectVector.begin(), m_TaskObjectVector.end(),
+		[pName, pExclude](SVTaskObjectClass* pTaskObj)->bool
+	{
+		if (nullptr == pTaskObj)
+		{
+			return false;
+		}
+		if (nullptr != pExclude)
+		{
+			if (0 == _stricmp(pExclude, pTaskObj->GetName()))
+			{
+				return  false;
+			}
+		}
+		return (0 == _stricmp(pName, pTaskObj->GetName()));
+	});
+
+	return bRetVal;
+}
 
 const std::string SVTaskObjectListClass::checkName( LPCTSTR ToolName ) const
 {
@@ -495,6 +538,7 @@ bool SVTaskObjectListClass::DestroyChildObject( SVTaskObjectClass* pTaskObject, 
 				if (SvDef::SVMFResetInspection == (context & SvDef::SVMFResetInspection))
 				{
 					GetInspection()->resetAllObjects();
+					pInspection->BuildValueObjectMap();
 				}
 			}
 			return true;
@@ -523,6 +567,23 @@ SvUl::NameGuidList SVTaskObjectListClass::GetTaskObjectList( ) const
 	return list;
 }
 
+void   SVTaskObjectListClass::GetTaskObjectListInfo(SvPb::TaskObjectListResponse &rResponse) const
+{
+	
+	for (auto pTaskObj : m_TaskObjectVector)
+	{
+		if (pTaskObj)
+		{
+			auto pInfo = rResponse.add_taskobjectinfos();
+			pInfo->set_displayname(pTaskObj->GetName());
+			pInfo->set_isvalid(pTaskObj->IsValid());
+			pInfo->set_objectsubtype(pTaskObj->GetObjectSubType());
+			pInfo->set_objecttype(pTaskObj->GetObjectType());
+			SvPb::SetGuidInProtoBytes(pInfo->mutable_taskobjectid(), pTaskObj->GetUniqueObjectID());
+		}
+	}
+}
+
 void SVTaskObjectListClass::Delete(const SVGUID& rObjectID)
 {
 	SVTaskObjectClass* pTaskObject = dynamic_cast<SVTaskObjectClass*>(SVObjectManagerClass::Instance().GetObject(rObjectID));
@@ -543,6 +604,12 @@ void SVTaskObjectListClass::InsertAt(int index, SvOi::ITaskObject& rObject, int 
 {
 	SVTaskObjectClass* pObject = dynamic_cast<SVTaskObjectClass*>(&rObject);
 	InsertAt(index, pObject, Count);
+}
+
+void SVTaskObjectListClass::InsertAfter(const SVGUID& rPostObjectId, ITaskObject& rObject)
+{
+	SVTaskObjectClass* pObject = dynamic_cast<SVTaskObjectClass*>(&rObject);
+	InsertAfter(rPostObjectId, pObject);
 }
 
 bool SVTaskObjectListClass::DestroyChild(SvOi::ITaskObject& rObject, DWORD context)
@@ -567,6 +634,59 @@ SvUl::NameGuidList SVTaskObjectListClass::GetCreatableObjects(const SvDef::SVObj
 		}
 	}
 	return list;
+}
+
+void SVTaskObjectListClass::moveTaskObject(const SVGUID& objectToMoveId, const SVGUID& preObjectId)
+{
+	int currentPos = -1;
+	int newPos = -1;
+	SVGUID currentGuid = GUID_NULL;
+	for (int i = 0; i < m_TaskObjectVector.size(); i++)
+	{
+		if (nullptr != m_TaskObjectVector[i])
+		{
+			currentGuid = m_TaskObjectVector[i]->GetUniqueObjectID();
+		}
+		else
+		{
+			continue;
+		}
+
+		if (currentGuid == objectToMoveId)
+		{
+			currentPos = i;
+		}
+		if (currentGuid == preObjectId)
+		{
+			newPos = i;
+		}
+	}
+
+	if (0 <= currentPos && m_TaskObjectVector.size() > currentPos)
+	{
+		auto pObject = m_TaskObjectVector[currentPos];
+
+		if (0 <= newPos && m_TaskObjectVector.size() > newPos)
+		{
+			//change first object which is later in the list.
+			if (currentPos > newPos)
+			{
+				m_TaskObjectVector.erase(m_TaskObjectVector.begin() + currentPos);
+				m_TaskObjectVector.insert(m_TaskObjectVector.begin() + newPos, pObject);
+			}
+			else
+			{
+				m_TaskObjectVector.insert(m_TaskObjectVector.begin() + newPos, pObject);
+				m_TaskObjectVector.erase(m_TaskObjectVector.begin() + currentPos);
+			}
+		}
+		else
+		{
+			m_TaskObjectVector.erase(m_TaskObjectVector.begin() + currentPos);
+			m_TaskObjectVector.push_back(pObject);
+		}
+	}
+	m_LastListUpdateTimestamp = SvTl::GetTimeStamp();
 }
 #pragma endregion virtual method (ITaskObjectListClass)
 

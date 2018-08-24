@@ -155,6 +155,8 @@ public:
 	virtual std::string GetCompleteName() const override;
 	virtual HRESULT GetCompleteNameToType(SvDef::SVObjectTypeEnum objectType, std::string& rName) const override;
 	virtual std::string GetObjectNameToObjectType(SvDef::SVObjectTypeEnum objectTypeToInclude = SvDef::SVToolSetObjectType) const override;
+	//Get the complete object name before selected SvDef::SVObjectTypeEnum value.
+	virtual std::string GetObjectNameBeforeObjectType(SvDef::SVObjectTypeEnum objectTypeToInclude) const override; 
 	virtual const SvDef::SVObjectTypeEnum& GetObjectType() const override;
 	virtual SvDef::SVObjectSubTypeEnum GetObjectSubType() const override;
 	virtual const SVGUID& GetParentID() const override;

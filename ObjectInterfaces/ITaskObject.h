@@ -58,7 +58,8 @@ namespace SvOi
 		/// \param rList [in,out] The List to be populated.
 		/// \param typeInfo [in] Type of the requested inputs. SvDef::SVNotSetObjectType return all inputs.
 		/// \param objectTypeToInclude [in] Object type until the name of the connected object will set. SvDef::SVNotSetObjectType means only object name and e.g. SvDef::SVToolSetObjectType means "Tool Set.Window Tool....". This parameter will not used for image objects.
-		virtual void GetInputs(SvUl::InputNameGuidPairList& rList, const SvDef::SVObjectTypeInfoStruct& typeInfo = SvDef::SVObjectTypeInfoStruct(SvDef::SVNotSetObjectType), SvDef::SVObjectTypeEnum objectTypeToInclude = SvDef::SVNotSetObjectType) = 0;
+		/// \param shouldExcludeFirstObjectType [in] Remove first object name. (If objectTypeToInclude == SvDef::SVNotsetObjectType this parameter will not used) e.g. SvDef::SVToolSetObjectType means "Window Tool....". This parameter will not used for image objects.
+		virtual void GetInputs(SvUl::InputNameGuidPairList& rList, const SvDef::SVObjectTypeInfoStruct& typeInfo = SvDef::SVObjectTypeInfoStruct(SvDef::SVNotSetObjectType), SvDef::SVObjectTypeEnum objectTypeToInclude = SvDef::SVNotSetObjectType, bool shouldExcludeFirstObjectName = false) = 0;
 
 		/// Connects an input to an object.
 		/// \param rInputName [in] Name of the input.

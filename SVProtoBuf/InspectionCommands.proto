@@ -136,7 +136,34 @@ message GetObjectsForMonitorListResponse
 	repeated ObjectNameGuidPair list = 1;
 	MessageContainerVector Messages = 2; //list of messages
 }
+// This message moved a taskObject in a taskObjectList to another position.
+message MoveTaskObjectRequest
+{
+	bytes parentId = 1; //GUID of the parent object, which contain the taskObject-list (must be a ITaskObjectList-Object)
+	bytes taskObjectId = 2; //GUID of the object, which should be moved (must be a taskObject)
+	bytes movePreId = 3; //GUID of the object, before which the other object should be moved. If it is GUID_NULL, the object will be moved to the end.
+}
 
+// Request TaskObjectInfo for all taskobject in the taskobjectlist
+message TaskObjectListRequest
+{
+	bytes taskObjectId = 1;  //GUID of the object
+}
+
+//info for one taskobject 
+message TaskObjectInfo
+{
+	string displayname =1;
+	bytes  taskObjectId = 2;  //GUID of the object
+	sint32 objecttype = 3; //SvDef::SVObjectTypeEnum
+	sint32 objectsubtype = 4; //SvDef::SVObjectSubTypeEnum
+	bool isvalid = 5; 
+} 
+
+message TaskObjectListResponse
+{
+	repeated TaskObjectInfo taskobjectinfos = 1; 
+}
 
 message InspectionCmdMsgs
 {
@@ -158,6 +185,10 @@ message InspectionCmdMsgs
 		ValidateAndSetEquationResponse  validateAndSetEquationResponse =14;
 		GetObjectsForMonitorListRequest getObjectsForMonitorListRequest =15;
 		GetObjectsForMonitorListResponse getObjectsForMonitorListResponse = 16;
+		MoveTaskObjectRequest moveTaskObjectRequest =17;
+		TaskObjectListRequest taskObjectListRequest = 18;
+		TaskObjectListResponse taskObjectListResponse = 19;
+
 	}
 }
 

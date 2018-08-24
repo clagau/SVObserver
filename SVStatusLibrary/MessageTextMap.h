@@ -393,6 +393,7 @@ namespace SvStl
 		{Tid_ToolInvalid, _T( "The tool to be copied is invalid." )},
 		{Tid_Clipboard_VersionMismatch, _T( "The current SVObserver Version does not match the version coming from the clipboard." )},
 		{Tid_ColorToolInsertFailed, _T( "A color tool cannot be inserted into a non-color system." )},
+		{Tid_LoopToolInsertLoopToolFailed, _T("A loop tool cannot be insert into a loop tool.")},
 		{Tid_NonColorToolInsertFailed, _T( "A color tool must always be the first tool in a color system." )},
 		{Tid_RenameError_DuplicateName, _T("A duplicate name was found for the item being renamed\n%s")},
 		{Tid_ErrorInReset, _T("Error in Reset")},

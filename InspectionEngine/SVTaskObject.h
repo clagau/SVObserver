@@ -34,10 +34,10 @@ class SVTaskObjectClass : public SVObjectAppClass, public SvOi::ITaskObject
 {
 	SV_DECLARE_CLASS(SVTaskObjectClass)
 
-		friend class SVTaskObjectListClass; // For access to Run()
+	friend class SVTaskObjectListClass; // For access to Run()
 	friend class SVToolClass; // For access to Run()
 	friend class SVToolSetClass; // For access to Run()
-
+	friend class LoopTool; // For access to Run()
 public:
 	SVTaskObjectClass(LPCSTR LPSZObjectName);
 	SVTaskObjectClass(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTASKOBJECT);
@@ -119,7 +119,7 @@ public:
 #pragma region virtual method (ITaskObject)
 	virtual void GetSelectorList(SvOi::IsObjectInfoAllowed func, SvCl::SelectorItemInserter Inserter, UINT Attribute, bool WholeArray) const override;
 	virtual void GetConnectedImages(SvUl::InputNameGuidPairList& rList, int maxEntries) override;
-	virtual void GetInputs(SvUl::InputNameGuidPairList& rList, const SvDef::SVObjectTypeInfoStruct& typeInfo = SvDef::SVObjectTypeInfoStruct(SvDef::SVNotSetObjectType), SvDef::SVObjectTypeEnum objectTypeToInclude = SvDef::SVNotSetObjectType) override;
+	virtual void GetInputs(SvUl::InputNameGuidPairList& rList, const SvDef::SVObjectTypeInfoStruct& typeInfo = SvDef::SVObjectTypeInfoStruct(SvDef::SVNotSetObjectType), SvDef::SVObjectTypeEnum objectTypeToInclude = SvDef::SVNotSetObjectType, bool shouldExcludeFirstObjectName = false) override;
 	virtual HRESULT ConnectToObject(const std::string& rInputName, const SVGUID& rNewID, SvDef::SVObjectTypeEnum objectType = SvDef::SVNotSetObjectType) override;
 	virtual bool IsObjectValid() const override;
 	virtual const SvStl::MessageContainerVector& getResetErrorMessages() const override { return m_ResetErrorMessages; };

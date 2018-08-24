@@ -103,8 +103,8 @@ namespace SvCmd
 		/// \param typeInfo [in] Type of the available objects
 		/// \param objectTypeToInclude [in] Object type until the name of the available object will set. SvDef::SVNotSetObjectType means only object name and e.g. SvDef::SVToolSetObjectType means "Tool Set.Window Tool....". This parameter will not used for image objects.
 		/// \param func [in]
-		GetAvailableObjects(const SVGUID& rObjectID, const SvDef::SVObjectTypeInfoStruct& typeInfo, IsAllowedFunc func = IsValidObject(), SvDef::SVObjectTypeEnum objectTypeToInclude = SvDef::SVNotSetObjectType )
-			: m_InstanceID(rObjectID), m_typeInfo(typeInfo), IsAllowed(func), m_objectTypeToInclude(objectTypeToInclude) {}
+		GetAvailableObjects(const SVGUID& rObjectID, const SvDef::SVObjectTypeInfoStruct& typeInfo, IsAllowedFunc func = IsValidObject(), SvDef::SVObjectTypeEnum objectTypeToInclude = SvDef::SVNotSetObjectType, bool shouldExcludeFirstObjectName = false)
+			: m_InstanceID(rObjectID), m_typeInfo(typeInfo), IsAllowed(func), m_objectTypeToInclude(objectTypeToInclude), m_shouldExcludeFirstObjectName(shouldExcludeFirstObjectName) {}
 		
 		virtual ~GetAvailableObjects() { };
 
@@ -152,7 +152,14 @@ namespace SvCmd
 									}
 									else
 									{
-										name = pObject->GetObjectNameToObjectType(m_objectTypeToInclude);
+										if (m_shouldExcludeFirstObjectName)
+										{
+											name = pObject->GetObjectNameBeforeObjectType(m_objectTypeToInclude);
+										}
+										else
+										{
+											name = pObject->GetObjectNameToObjectType(m_objectTypeToInclude);
+										}
 									}
 									if (!name.empty())
 									{
@@ -180,6 +187,7 @@ namespace SvCmd
 		SvUl::NameGuidList m_list;
 		SVGUID m_InstanceID;
 		SvDef::SVObjectTypeEnum m_objectTypeToInclude;
+		bool m_shouldExcludeFirstObjectName;
 		IsAllowedFunc IsAllowed;
 	};
 } //namespace SvCmd

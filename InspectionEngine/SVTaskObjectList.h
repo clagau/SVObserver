@@ -11,12 +11,16 @@
 #pragma once
 
 #pragma region Includes
+#include "ObjectInterfaces/ObjectInfo.h"
 #include "ObjectInterfaces/ITaskObjectListClass.h"
 #include "SVStatusLibrary/SVRunStatus.h"
 #include "SVValueObjectLibrary/SVValueObject.h"
 #include "SVClassInfoStruct.h"
 #include "SVTaskObject.h"
 #pragma endregion Includes
+#include "SVProtoBuf/SVRC.h"
+#include "SVProtoBuf/InspectionCommands.h"
+
 
 class SVTaskObjectListClass : public SVTaskObjectClass, public SvOi::ITaskObjectListClass
 {
@@ -53,7 +57,9 @@ public:
 
 	int GetSize() const;
 	void InsertAt( int nIndex, SVTaskObjectClass* pTaskObject, int Count = 1 );
-	void SetAt( int nIndex, SVTaskObjectClass* pTaskObject );
+	//Add a task Object to the taskObject list after the object with rGuid.
+	//return the index of the new element 
+	virtual int  InsertAfter(const SVGUID& rGuid, SVTaskObjectClass* pTaskObject);
 	SVTaskObjectClass* GetAt( int nIndex ) const;
 	void RemoveAt( int nIndex);
 	/// Add a task object to the task object list
@@ -69,6 +75,8 @@ public:
 	virtual void SetDisabled() override;
 
 	const std::string checkName( LPCTSTR ToolName ) const;
+	//insensitive compare with name in m_TaskObjectVector
+	bool SVTaskObjectListClass::IsNameUnique(LPCSTR  pName, LPCTSTR pExclude) const;
 
 	virtual HRESULT CollectOverlays( SVImageClass* p_Image, SVExtentMultiLineStructVector &p_MultiLineArray ) override;
 
@@ -82,8 +90,11 @@ public:
 	virtual SvUl::NameGuidList GetTaskObjectList( ) const override;
 	virtual void Delete(const SVGUID& rObjectID) override;
 	virtual void InsertAt(int index, SvOi::ITaskObject& rObject, int Count = 1) override;
+	virtual void InsertAfter(const SVGUID& rPostObjectId, ITaskObject& rObject) override;
 	virtual bool DestroyChild(SvOi::ITaskObject& rObject, DWORD context) override;
 	virtual SvUl::NameGuidList GetCreatableObjects(const SvDef::SVObjectTypeInfoStruct& pObjectTypeInfo) const override;
+	virtual void moveTaskObject(const SVGUID& objectToMoveId, const SVGUID& preObjectId = GUID_NULL) override;
+	virtual void GetTaskObjectListInfo(SvPb::TaskObjectListResponse &rResponse) const override;
 #pragma endregion virtual methods (ITaskObjectListClass)
 
 #pragma region Methods to replace processMessage

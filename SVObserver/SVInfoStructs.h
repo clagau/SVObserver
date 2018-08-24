@@ -33,7 +33,7 @@
 #pragma endregion Includes
 
 class SVToolClass;
-
+//class LoopTool;
 enum SVProductInspectedState
 {
 	PRODUCT_NOT_INSPECTED       = 0x8001,	// 1000 0000 0000 0001
@@ -273,31 +273,6 @@ struct SVInspectionNameUpdate
 	virtual ~SVInspectionNameUpdate();
 
 	std::string m_InspectionName;
-
-};
-
-struct SVAddTool
-{
-	SVAddTool();
-	SVAddTool( SVToolClass* p_pTool, int p_Index );
-	SVAddTool( const SVAddTool& p_rObject );
-
-	virtual ~SVAddTool();
-
-	SVToolClass* m_pTool;
-	int m_Index;
-
-};
-
-struct SVDeleteTool
-{
-	SVDeleteTool();
-	SVDeleteTool( SVToolClass* p_pTool );
-	SVDeleteTool( const SVDeleteTool& p_rObject );
-
-	virtual ~SVDeleteTool();
-
-	SVToolClass* m_pTool;
 
 };
 

@@ -769,6 +769,31 @@ std::string SVObjectClass::GetObjectNameToObjectType(SvDef::SVObjectTypeEnum obj
 }
 
 /*
+Get the complete object name before selected SvDef::SVObjectTypeEnum value.
+*/
+std::string SVObjectClass::GetObjectNameBeforeObjectType(SvDef::SVObjectTypeEnum objectTypeToInclude) const
+{
+	std::string Result;
+
+	SvDef::SVObjectTypeEnum objectType = GetObjectType();
+	if (objectType != objectTypeToInclude)
+	{
+		SVObjectClass* pObject = m_ownerObjectInfo.getObject();
+		if (nullptr != pObject && pObject != this && pObject->GetObjectType() != objectTypeToInclude)
+		{
+			Result = pObject->GetObjectNameBeforeObjectType(objectTypeToInclude);
+		}
+	}
+	if (!Result.empty())
+	{
+		Result += _T(".");
+	}
+	Result += GetName();
+
+	return Result;
+}
+
+/*
 This method returns a reference to the friends list attribute of this object.
 */
 const SVObjectInfoArrayClass& SVObjectClass::GetFriendList() const

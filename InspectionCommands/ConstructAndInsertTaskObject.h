@@ -28,7 +28,10 @@ namespace SvCmd
 		ConstructAndInsertTaskObject& operator=(const ConstructAndInsertTaskObject&) = delete;
 
 		ConstructAndInsertTaskObject(const SVGUID& rTaskObjectID, const SVGUID& rClassID, int pos)
-			: m_InstanceID(rTaskObjectID), m_ClassID(rClassID), m_pos(pos) {};
+			: m_InstanceID(rTaskObjectID), m_ClassID(rClassID), m_pos(pos), m_isPos(true), m_postObjectID(GUID_NULL) {};
+
+		ConstructAndInsertTaskObject(const SVGUID& rTaskObjectID, const SVGUID& rClassID, const SVGUID& rPostObjectId)
+			: m_InstanceID(rTaskObjectID), m_ClassID(rClassID), m_pos(-1), m_isPos(false), m_postObjectID(rPostObjectId) {};
 
 		virtual ~ConstructAndInsertTaskObject() {};
 
@@ -47,7 +50,14 @@ namespace SvCmd
 			
 			if( nullptr != pTaskObjectList && nullptr != pTaskObject && nullptr != pObjectApp && nullptr != pObject)
 			{
-				pTaskObjectList->InsertAt( m_pos, *pTaskObject );
+				if (m_isPos)
+				{
+					pTaskObjectList->InsertAt(m_pos, *pTaskObject);
+				}
+				else
+				{
+					pTaskObjectList->InsertAfter(m_postObjectID, *pTaskObject);
+				}
 
 				// And last - Create (initialize) it
 				if( ! pObject->is_Created() )
@@ -68,6 +78,22 @@ namespace SvCmd
 							delete pTaskObject;
 						}
 					}
+					else
+					{
+						m_createdID = pObject->GetUniqueObjectID();
+						m_Name = pObject->GetName();
+
+						SvOi::ITool* pTool = dynamic_cast<SvOi::ITool*>(pObject);
+						if (nullptr != pTool)
+						{
+							pTool->finishAddTool();
+						}
+					}
+				}
+				else
+				{
+					m_createdID = pObject->GetUniqueObjectID();
+					m_Name = pObject->GetName();
 				}
 			}
 			else
@@ -77,10 +103,16 @@ namespace SvCmd
 			return hr;
 		}
 		bool empty() const { return false; }
+		const GUID& createdId() const { return m_createdID; }
+		const std::string& getName() const { return m_Name; }
 
 	private:
 		SVGUID m_InstanceID;
 		SVGUID m_ClassID;
 		int m_pos;
+		bool m_isPos;
+		SVGUID m_postObjectID;
+		SVGUID m_createdID = GUID_NULL;
+		std::string m_Name;
 	};
 } //namespace SvCmd

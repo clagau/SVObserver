@@ -61,8 +61,6 @@ class SVResultListClass;
 
 class SVInspectionProcess : 
 	public SVObjectClass,
-	public SVObserverTemplate< SVAddTool >,
-	public SVObserverTemplate< SVDeleteTool >,
 	public SvOi::IInspectionProcess
 {
 	friend class SVCommandInspectionExtentUpdater; // For access to RunOnce()
@@ -99,9 +97,6 @@ public:
 
 	bool Run( SVRunStatusClass& rRunStatus );
 
-	virtual HRESULT ObserverUpdate( const SVAddTool& p_rData ) override;
-	virtual HRESULT ObserverUpdate( const SVDeleteTool& p_rData ) override;
-
 	void SetPPQIdentifier( const SVGUID& p_rPPQId );
 	const SVGUID& GetPPQIdentifier() const;
 	SVPPQObject* GetPPQ() const;
@@ -119,6 +114,7 @@ public:
 	virtual HRESULT RunOnce(SvOi::ITaskObject* pTask) override;
 	virtual long GetLastIndex() const  override;
 	virtual HRESULT SubmitCommand(const SvOi::ICommandPtr& rCommandPtr) override;
+	virtual void BuildValueObjectMap() override;
 #pragma endregion virtual method (IInspectionProcess)
 
 	bool IsCameraInInspection( const std::string& rCameraName ) const;
@@ -361,8 +357,6 @@ protected:
 	void DestroyInspection();
 
 	HRESULT InitializeRunOnce();
-
-	HRESULT BuildValueObjectMap();
 
 	HRESULT GetInspectionValueObject( LPCTSTR Name, SVObjectReference& rObjectRef );
 	HRESULT GetInspectionImage( LPCTSTR Name, SVImageClass*& p_rRefObject );

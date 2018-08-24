@@ -119,6 +119,7 @@ namespace SvDef
 			SVRingBufferToolObjectType					= 0x0000002a,
 			SVTableToolObjectType						= 0x0000002b,
 			SVTableAnalyzerToolObjectType				= 0x0000002c,
+			LoopToolObjectType							= 0x0000002d,
 
 			SVEnvironmentObjectType						= 0x00000062,
 			SVCameraObjectType							= 0x00000063,

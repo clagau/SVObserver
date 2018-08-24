@@ -870,44 +870,6 @@ SVInspectionNameUpdate::~SVInspectionNameUpdate()
 {
 }
 
-SVAddTool::SVAddTool()
-: m_pTool( nullptr ), m_Index( -1 )
-{
-}
-
-SVAddTool::SVAddTool( SVToolClass* p_pTool, int p_Index )
-: m_pTool( p_pTool ), m_Index( p_Index )
-{
-}
-
-SVAddTool::SVAddTool( const SVAddTool& p_rObject )
-: m_pTool( p_rObject.m_pTool ), m_Index( p_rObject.m_Index )
-{
-}
-
-SVAddTool::~SVAddTool()
-{
-}
-
-SVDeleteTool::SVDeleteTool()
-: m_pTool( nullptr )
-{
-}
-
-SVDeleteTool::SVDeleteTool( SVToolClass* p_pTool )
-: m_pTool( p_pTool )
-{
-}
-
-SVDeleteTool::SVDeleteTool( const SVDeleteTool& p_rObject )
-: m_pTool( p_rObject.m_pTool )
-{
-}
-
-SVDeleteTool::~SVDeleteTool()
-{
-}
-
 SVRemoveImages::SVRemoveImages()
 : m_Images()
 {

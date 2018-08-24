@@ -21,6 +21,7 @@
 //Forward declarations
 class SVGUID;
 class SVInspectionProcess;
+class SVObjectClass;
 class SVToolClass;
 namespace SvXml
 {
@@ -62,7 +63,7 @@ public:
 	// Parameter: rToolGuid <out> Reference to the tool GUID generated from reading the clipboard
 	// Return: S_OK on success
 	//************************************
-	HRESULT readFromClipboard( int ToolListindex, SVGUID& rToolGuid );
+	HRESULT readFromClipboard(const SVGUID& rPostGuid, const SVGUID& rOwnerGuid, SVGUID& rToolGuid );
 
 	//************************************
 	// Description: Checks to see if the clipboard data is valid
@@ -144,21 +145,21 @@ protected:
 	//************************************
 	HRESULT checkVersion( SVTreeType& rTree ) const;
 
-	//************************************
-	// Description: This method validates Guids and replaces the image if required
-	// Parameter: rXmlData <in, out> Reference to the XML data to search and replace
-	// Parameter: rTree <in> Reference to the tree generated from the clipboard
-	// Return: S_OK on success
-	//************************************
-	HRESULT validateGuids( std::string& rXmlData, SVTreeType& rTree, int ToolListindex ) const;
+	/// This method validates Guids and replaces the image if required
+	/// \param rXmlData [in,out] Reference to the XML data to search and replace
+	/// \param rTree [in] Reference to the tree generated from the clipboard
+	/// \param rPostGuid [in] The Guid of the object before the new object should be insert.
+	/// \param rOwnerClassId [in] The Guid of the owner of the new object.
+	/// \returns HRESULT S_OK on success
+	HRESULT validateGuids( std::string& rXmlData, SVTreeType& rTree, const SVGUID& rPostGuid, const SVGUID& rOwnerClassId) const;
 
 	//************************************
-	// Description: This method replaces the tool name
-	// Parameter: rXmlData <in, out> Reference to the XML data to search and replace
-	// Parameter: rTree <in> Reference to the tree generated from the clipboard
-	// Return: S_OK on success
-	//************************************
-	HRESULT replaceToolName( std::string& rXmlData, SVTreeType& rTree ) const;
+	/// This method replaces the tool name and the dotted name (e.g. in Equation)
+	/// \param rXmlData [in,out] Reference to the XML data to search and replace
+	/// \param rTree [in] Reference to the tree generated from the clipboard
+	/// \param pOwner [in] The owner of the new object.
+	/// \returns HRESULT S_OK on success
+	HRESULT replaceToolName( std::string& rXmlData, SVTreeType& rTree, const SVObjectClass* pOwner ) const;
 
 	//************************************
 	// Description: This method replaces all the unique Guids
@@ -174,7 +175,7 @@ protected:
 	// Parameter: rToolGuid <out> Reference to the tool GUID generated
 	// Return: S_OK on success
 	//************************************
-	HRESULT parseTreeToTool( SVTreeType& rTree, SVGUID& rToolGuid );
+	HRESULT parseTreeToTool( SVTreeType& rTree, SVObjectClass* pOwner, SVGUID& rToolGuid);
 
 #pragma endregion Protected Methods
 

@@ -76,5 +76,6 @@ namespace SvOi
 		///Calls a command in the inspection thread
 		virtual HRESULT SubmitCommand(const ICommandPtr& rCommandPtr) = 0;
 
+		virtual void BuildValueObjectMap() = 0;
 	};
 } //namespace SvOi

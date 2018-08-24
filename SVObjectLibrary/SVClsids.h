@@ -1223,6 +1223,15 @@ extern /*const*/ GUID TableAnaylzerExcludeLowGuid;
 extern /*const*/ GUID TableAnaylzerExcludeLow_LinkGuid;
 extern /*const*/ GUID TableAnaylzerLimitValueGuid;
 extern /*const*/ GUID TableAnaylzerLimitValue_LinkGuid;
+// GUID for the LoopToolClass
+extern /*const*/ GUID LoopToolClassGuid;
+extern /*const*/ GUID MaxLoopsGuid; 
+extern /*const*/ GUID LoopCounterGuid;
+extern /*const*/ GUID LinkedLoopsGuid;
+extern /*const*/ GUID  LinkedLoops_LinkedGuid;
+extern /*const*/ GUID  LoopBreakGuid;
+extern /*const*/ GUID LoopBreak_LinkedGuid;
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Insert new GUIDs immediately before the previous line.

@@ -27,7 +27,9 @@
 #include "SVValueObjectLibrary/SVValueObject.h"
 #include "SVToolGrouping.h"
 #include "ObjectInterfaces/IFormulaController.h"
+#include "NavigatorElement.h"
 #pragma endregion Includes
+
 
 #pragma region Declarations
 class SVConditionalClass;
@@ -59,6 +61,7 @@ public:
 	{
 		RefreshView = 0x00000001,
 		ItemRenamed = 0x00000002,
+		RefreshDelete = 0x4
 	};
 
 	enum
@@ -127,7 +130,8 @@ public:
 
 	const SVToolGrouping& GetToolGroupings() const;
 	SVToolGrouping& GetToolGroupings();
-	int GetSelectedToolIndex(const std::string& rToolName) const;
+	
+	//Returns an index of the ToolsetList. The new Tool should be insert after this tool
 	int GetToolToInsertBefore(const std::string& rName, int listIndex) const;
 
 	CList< RegressionTestStruct*, RegressionTestStruct* > m_listRegCameras; // @WARNING:  bad practice making members public
@@ -192,6 +196,7 @@ public:
 	afx_msg void OnEditAdjustToolPosition();
 	afx_msg void OnUpdateEditAdjustToolPosition(CCmdUI* pCmdUI);
 	afx_msg void OnAddPerspectiveTool();
+	afx_msg void OnAddLoopTool();
 	afx_msg void OnViewResetAllCounts();
 	afx_msg void OnViewResetCountsCurrentIP();
 	afx_msg void OnUpdateViewResetCountsAllIPs(CCmdUI* pCmdUI);
@@ -217,6 +222,8 @@ public:
 	afx_msg void OnUpdateAddCylindricalWarpTool(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateAddTransformationTool(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateAddColorTool(CCmdUI* PCmdUI);
+	afx_msg void OnUpdateAddLoopTool(CCmdUI* PCmdUI);
+	
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP() // Contains "protected:"
@@ -287,8 +294,8 @@ protected:
 	CMDIChildWnd* GetMDIChild();
 	void SetMDIChild( CMDIChildWnd* p_pMDIChildWnd );
 
-	bool AddTool( SVToolClass* PTool );
-	HRESULT DeleteTool(SVTaskObjectClass* pTaskObject);
+	bool AddTool(const SVGUID& rClassId);
+	bool deleteTool(NavigatorElement* pNaviElement);
 
 	bool AddToolGrouping(bool bStartGroup = true);
 
@@ -364,6 +371,8 @@ private:
 	//! \returns the selected string set of object names
 	SvDef::StringSet TranslateSelectedObjects(const SVObjectReferenceVector& rSelectedObjects, const std::string& rInspectionName) const;
 
+	//!if not all tools from the toolset are in toolGrouping, tool grouping is cleared. 
+	void correctToolGrouping();
 #pragma endregion Private Methods
 
 	RegressionRunModeEnum m_regtestRunMode;

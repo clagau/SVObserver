@@ -97,6 +97,7 @@ public:
 	//************************************
 	void SetComment(const std::string& rName, const std::string& rComment);
 
+	void clear() { m_list.clear(); }
 private:
 	HRESULT LoadTools(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent, SVToolGrouping& rGroupings);
 };

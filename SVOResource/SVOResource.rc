@@ -68,6 +68,7 @@ END
 //
 
 IDB_START               BITMAP                  "Res\\Start.bmp"
+
 #endif    // German (Germany) resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -85,25 +86,45 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 //
 
 IDR_TOOLBAR_ZOOM        BITMAP                  "res\\toolbarZoom.bmp"
+
 IDR_MAINFRAME           BITMAP                  "res\\Toolbar.bmp"
+
 IDR_SVOBSERVER_IPDOCTYPE BITMAP                  "res\\svobserv.bmp"
+
 IDR_MATH_CONDITIONAL_TOOLBAR BITMAP                  "res\\ToolbarConditional.bmp"
+
 IDR_MATH_LOGICAL_TOOLBAR BITMAP                  "res\\ToolbarLogical.bmp"
+
 IDR_MATH_BASIC_TOOLBAR  BITMAP                  "res\\ToolbarBasic.bmp"
+
 IDR_MATH_TRIGONOMETRIC_TOOLBAR BITMAP                  "res\\ToolbarTrig.bmp"
+
 IDR_MATH_MISC_TOOLBAR   BITMAP                  "res\\ToolbarMisc.bmp"
+
 IDR_MATH_STATISTICS_TOOLBAR BITMAP                  "res\\ToolbarStat.bmp"
+
 IDR_MATH_PUNCTUATION_TOOLBAR BITMAP                  "res\\toolbarPunctuation.bmp"
+
 IDB_DOWNARROW           BITMAP                  "RES\\downarrow.bmp"
+
 IDB_UPARROW             BITMAP                  "RES\\uparrow.bmp"
+
 IDR_FORMULA_CURSOR_TOOLBAR BITMAP                  "res\\formulaCursor.bmp"
+
 IDR_FORMULA_VALIDATE_TOOLBAR BITMAP                  "res\\bmp00001.bmp"
+
 IDB_KNOB_FACE           BITMAP                  "RES\\SVKnob.bmp"
+
 IDB_KNOB_MASK           BITMAP                  "RES\\SVKnob_mask.bmp"
+
 IDB_SVDOT_FACE          BITMAP                  "RES\\SVKnobDot.bmp"
+
 IDB_SVDOT_MASK          BITMAP                  "RES\\SVKnobDot_mask.bmp"
+
 IDB_KOERBER             BITMAP                  "res\\Korber.bmp"
+
 IDB_TREE                BITMAP                  "res\\Tree.bmp"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -113,50 +134,99 @@ IDB_TREE                BITMAP                  "res\\Tree.bmp"
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDR_MAINFRAME           ICON                    "res\\icon1.ico"
+
 IDR_SVOBSERVER_IPDOCTYPE ICON                    "res\\SVIPDoc.ico"
+
 IDI_ICON_CAMERA         ICON                    "res\\icon_cam.ico"
+
 IDI_OUTPUT_ICON         ICON                    "res\\output_i.ico"
+
 IDI_IOITEM_ICON         ICON                    "res\\ioitem_i.ico"
+
 IDI_INPUT_ICON          ICON                    "res\\input_ic.ico"
+
 IDR_SVOBSERVER_IODOCTYPE ICON                    "res\\SVIODoc.ico"
+
 IDI_NOIOITEM_ICON       ICON                    "res\\noioitem.ico"
+
 IDI_ICON_EXIST          ICON                    "res\\icon_exi.ico"
+
 IDI_ICON_NOTEXIST       ICON                    "res\\icon_not.ico"
+
 IDI_ARROW_COUNTERCLOCKWISE ICON                    "RES\\arrow_counterclockwise.ico"
+
 IDI_ARROW_CLOCKWISE     ICON                    "res\\arrow_clockwise.ico"
+
 IDI_ARROW_DOWN          ICON                    "res\\arrow_down.ico"
+
 IDI_ARROW_LEFT          ICON                    "res\\arrow_left.ico"
+
 IDI_ARROW_RIGHT         ICON                    "res\\arrow_right.ico"
+
 IDI_ARROW_UP            ICON                    "res\\arrow_up.ico"
+
 IDI_ICON_BEGINNING      ICON                    "res\\beginning.ico"
+
 IDI_ICON_FRAMEBACK      ICON                    "res\\frame_back.ico"
+
 IDI_ICON_FRAMEUP        ICON                    "res\\frame_up.ico"
+
 IDI_ICON_MODE_CONTINUE  ICON                    "res\\mode_continue.ico"
+
 IDI_ICON_MODE_RUNTOEND  ICON                    "res\\mode_runtoend.ico"
+
 IDI_ICON_PAUSE          ICON                    "res\\pause.ico"
+
 IDI_ICON_PLAY           ICON                    "res\\play.ico"
+
 IDI_ICON_STOP           ICON                    "res\\stop.ico"
+
 IDI_STATUS_BLACK        ICON                    "res\\ico_status_black.ico"
+
 IDI_STATUS_NONE         ICON                    "res\\ico_status_none.ico"
+
 IDI_ICON_WARNING        ICON                    "res\\W95MBX03.ICO"
+
 IDI_ICON_EXIST1         ICON                    "res\\icon_exist1.ico"
+
 IDI_PPQ_ICON            ICON                    "res\\ico00001.ico"
+
 IDI_REMOTE_OUTPUT_ICON  ICON                    "res\\ico00002.ico"
+
 IDI_EXPAND              ICON                    "res\\ico00003.ico"
+
+IDI_EXPAND_LOOPTOOL     ICON                    "res\\ExpandLoop.ico"
+
 IDI_COLLAPSE            ICON                    "res\\icon2.ico"
+
+IDI_COLLAPSE_LOOPTOOL   ICON                    "res\\CollapseLoop.ico"
+
 IDI_ARROW_ROTATE        ICON                    "res\\arrow_rotate.ico"
+
 IDI_EMPTY_ENABLED       ICON                    "res\\empty_enabled.ico"
+
 IDI_UNCHECKED_ENABLED   ICON                    "res\\unchecked_enabled.ico"
+
 IDI_CHECKED_ENABLED     ICON                    "res\\checked_enabled.ico"
+
 IDI_TRI_STATE_ENABLED   ICON                    "res\\tri_state_enabled.ico"
+
 IDI_EMPTY_DISABLED      ICON                    "res\\empty_disabled.ico"
+
 IDI_UNCHECKED_DISABLED  ICON                    "res\\unchecked_disabled.ico"
+
 IDI_CHECKED_DISABLED    ICON                    "res\\checked_disabled.ico"
+
 IDI_TRI_STATE_DISABLED  ICON                    "res\\tri_state_disabled.ico"
+
 IDI_DOT_ENABLED         ICON                    "res\\dot_enabled.ico"
+
 IDI_DOT_DISABLED        ICON                    "res\\dot_disabled.ico"
+
 IDI_GLOBAL_CONSTANT     ICON                    "res\\global_constant.ico"
+
 IDI_HMI_ICON            ICON                    "res\\HMI.ico"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -740,7 +810,7 @@ CAPTION "Archive Image"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     LTEXT           "Selected Objects:",IDC_STATIC,7,7,60,8
-    CONTROL         "",IDC_LIST_SELECTED,"SysListView32",LVS_REPORT | LVS_NOCOLUMNHEADER | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,7,15,440,200
+    CONTROL         "",IDC_LIST_SELECTED,"SysListView32",LVS_REPORT | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,7,15,440,200
     PUSHBUTTON      "",IDC_SELECT_BUTTON,7,220,30,25,BS_BITMAP
     LTEXT           "Image File Path Root:  ",IDC_STATIC,60,220,70,12,SS_CENTERIMAGE
     EDITTEXT        IDC_ARCHIVE_IMAGE_FILEROOT,60,235,340,12,ES_AUTOHSCROLL
@@ -2052,7 +2122,8 @@ FONT 8, "MS Sans Serif"
 BEGIN
     CONTROL         "Use list of files",IDC_RADIO_REG_LIST,"Button",BS_AUTORADIOBUTTON | WS_GROUP,7,12,61,10
     CONTROL         "Use single file",IDC_RADIO_REG_SINGLE,"Button",BS_AUTORADIOBUTTON,7,25,59,10
-    CONTROL         "Use all files in directory",IDC_RADIO_REG_DIRECTORY,"Button",BS_AUTORADIOBUTTON,7,38,100,10
+    CONTROL         "Use all files in directory",IDC_RADIO_REG_DIRECTORY,
+                    "Button",BS_AUTORADIOBUTTON,7,38,100,10
     CONTROL         "Select directory",IDC_RADIO_REG_SUB_DIRECTORIES,"Button",BS_AUTORADIOBUTTON,7,51,100,10
     CONTROL         "No files",IDC_RADIO_REG_NONE,"Button",BS_AUTORADIOBUTTON,7,64,39,10
     LTEXT           "Selected File",IDC_STATIC,7,90,124,8
@@ -2128,7 +2199,7 @@ STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Selected Objects"
 FONT 8, "MS Sans Serif"
 BEGIN
-    CONTROL         "",IDC_LIST_SELECTED,"SysListView32",LVS_REPORT | LVS_NOCOLUMNHEADER | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,7,20,385,175
+    CONTROL         "",IDC_LIST_SELECTED,"SysListView32",LVS_REPORT | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,7,20,385,175
     LTEXT           "Selected Objects:",IDC_STATIC,7,7,58,8
     PUSHBUTTON      "",IDC_SELECT_BUTTON,7,200,30,25,BS_BITMAP
     PUSHBUTTON      "Remove",IDC_BTN_CLEAR,244,200,50,14
@@ -2533,6 +2604,22 @@ BEGIN
     PUSHBUTTON      "Move Up",IDC_BUTTON_MOVEUP,7,245,92,12
     PUSHBUTTON      "Move Down",IDC_BUTTON_MOVEDOWN,109,245,92,12
 END
+
+IDD_TA_LOOPTOOL_PARAMETER_DIALOG DIALOGEX 0, 0, 453, 264
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Loop Condition"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    CONTROL         "Maximum Loops:",IDC_STATIC,"Static",SS_LEFTNOWORDWRAP | SS_CENTERIMAGE | WS_GROUP,29,20,91,13
+    EDITTEXT        IDC_EDIT_MAX_LOOPS,27,41,85,13,ES_AUTOHSCROLL | ES_NUMBER,WS_EX_CLIENTEDGE | WS_EX_STATICEDGE
+    LTEXT           "Loops:",IDC_STATIC,30,92,80,8
+    EDITTEXT        IDC_EDIT_LINKED_LOOPS,29,116,201,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "!",IDC_BUTTON_LINKED_LOOPS,268,117,12,14,BS_BITMAP
+    LTEXT           "Break Condition Variable:",IDC_STATIC,30,147,80,8
+    EDITTEXT        IDC_EDIT_BREAK_CONDITION,29,171,201,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "!",IDC_BUTTON_LINKED_BREAK_CONDITION,268,172,12,14,BS_BITMAP
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -3129,7 +3216,6 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 176
         TOPMARGIN, 7
-        BOTTOMMARGIN, 122
     END
 
     IDD_DIALOG_REGRESSIONTEST_RUN, DIALOG
@@ -3358,6 +3444,14 @@ BEGIN
         RIGHTMARGIN, 446
         TOPMARGIN, 7
         BOTTOMMARGIN, 257
+    END
+
+    IDD_TA_LOOPTOOL_PARAMETER_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 446
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 251
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -3676,6 +3770,8 @@ BEGIN
         MENUITEM "Start Tool Grouping\tCtrl+Alt+G", ID_ADD_STARTTOOLGROUPING,MFT_STRING,MFS_ENABLED
         MENUITEM "End Tool Grouping\tCtrl+Alt+X", ID_ADD_ENDTOOLGROUPING,MFT_STRING,MFS_ENABLED
         MENUITEM MFT_SEPARATOR
+        MENUITEM "Loo&p Tool\tCtrl+Alt+P",      ID_ADD_LOOPTOOL,MFT_STRING,MFS_ENABLED
+        MENUITEM MFT_SEPARATOR
         MENUITEM "Ac&quisition Tool",           ID_ADD_ACQUISITIONTOOL,MFT_STRING,MFS_ENABLED
         MENUITEM MFT_SEPARATOR
         MENUITEM "S&hift Tool\tCtrl+Alt+H",     ID_ADD_SHIFTTOOL,MFT_STRING,MFS_ENABLED
@@ -3844,8 +3940,8 @@ BEGIN
         MENUITEM "Paste Tool",                  ID_EDIT_PASTE
         MENUITEM "Adjust Tool Size and Position", ID_EDIT_ADJUSTTOOLPOSITION
         MENUITEM "Show First Error",            ID_SHOW_FIRST_ERROR
-        MENUITEM "Add to monitorlist"           ID_ADD_TOOL_PARA_TO_MONITORLIST
-        MENUITEM "Remove from monitorlist"      ID_REMOVE_TOOL_PARA_TO_MONITORLIST
+        MENUITEM "Add to monitorlist",          ID_ADD_TOOL_PARA_TO_MONITORLIST
+        MENUITEM "Remove from monitorlist",     ID_REMOVE_TOOL_PARA_TO_MONITORLIST
         MENUITEM SEPARATOR
         MENUITEM "Dependencies",                ID_SHOW_RELATIONS
     END
@@ -3992,6 +4088,7 @@ BEGIN
     END
 END
 
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // Accelerator
@@ -4007,7 +4104,7 @@ BEGIN
     "C",            ID_ADD_COLORTOOL,       VIRTKEY, CONTROL, ALT, NOINVERT
     "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
     "D",            ID_MODE_EDIT,           VIRTKEY, CONTROL, NOINVERT
-    "D",            ID_TOOL_DEPENDENCIES,   VIRTKEY, CONTROL, SHIFT, NOINVERT
+    "D",            ID_TOOL_DEPENDENCIES,   VIRTKEY, SHIFT, CONTROL, NOINVERT
     "E",            ID_EDIT_EDITENVIRONMENT, VIRTKEY, CONTROL, NOINVERT
     "E",            ID_ADD_EXTERNAL_TOOL,   VIRTKEY, CONTROL, ALT, NOINVERT
     "F",            ID_GO_OFFLINE,          VIRTKEY, CONTROL, NOINVERT
@@ -4025,6 +4122,7 @@ BEGIN
     "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL, NOINVERT
     "O",            ID_ADD_TABLETOOL,       VIRTKEY, CONTROL, ALT, NOINVERT
     "P",            ID_FILE_PRINT_CONFIG,   VIRTKEY, CONTROL, NOINVERT
+    "P",            ID_ADD_LOOPTOOL,        VIRTKEY, CONTROL, ALT, NOINVERT
     "R",            ID_RUN_REGRESSIONTEST,  VIRTKEY, CONTROL, NOINVERT
     "R",            ID_ADD_REMOTEINPUTTOOL, VIRTKEY, CONTROL, ALT, NOINVERT
     "S",            ID_FILE_SAVE_ALL,       VIRTKEY, CONTROL, NOINVERT
@@ -4298,10 +4396,15 @@ END
 //
 
 IDR_SVOBSERVER          REGISTRY                "SVObserver.rgs"
+
 IDR_SVOBSERVER_DEBUG    REGISTRY                "SVObserverd.rgs"
+
 IDR_SVCOMMAND           REGISTRY                "SVCommand.rgs"
+
 IDR_SV_REMOTE_COMMAND_DATA REGISTRY                "SVRemoteCommandData.rgs"
+
 IDR_SV_REMOTE_COMMAND   REGISTRY                "SVRemoteCommand.rgs"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -4309,6 +4412,11 @@ IDR_SV_REMOTE_COMMAND   REGISTRY                "SVRemoteCommand.rgs"
 //
 
 IDD_PAT_SETUP_MODEL AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_TA_LOOPTOOL_PARAMETER_DIALOG AFX_DIALOG_LAYOUT
 BEGIN
     0
 END
@@ -4495,6 +4603,7 @@ BEGIN
                             "Linear Maximum Background Object Analyzer"
     IDS_CLASSNAME_SVLINEARMAXIMUMOBJECTLINEANALYZER 
                             "Linear Maximum Object Analyzer"
+    IDS_OBJECTNAME_HAS_ROI  "Has ROI"
     IDS_CLASSNAME_SVCYLINDRICALTOOL "Cylindrical Warp Tool"
 END
 
@@ -4605,6 +4714,7 @@ END
 
 STRINGTABLE
 BEGIN
+    IDS_OBJECTNAME_PAT_USE_DONT_CARE "Use Dont Care Area"
     IDS_CLASSNAME_SVREMOTEOUTPUTCONTROLLER "Remote Output Controller"
     IDS_CLASSNAME_SVREMOTEOUTPUTGROUP "Remote Output Group"
     IDS_RESULT_PICKER       "Result Picker"
@@ -4619,6 +4729,7 @@ BEGIN
     IDS_WARN_LOW            "Warn Low"
     IDS_IS_LESS_THAN        "ERROR:\n%1\nis less than\n%2"
     IDS_ISANINVALID_REFERENCE "ERROR:\n%1: %2\nis an invalid reference."
+    IDS_OBJECTNAME_PAT_MODELCENTERX "Model Center X"
 END
 
 STRINGTABLE
@@ -4667,6 +4778,7 @@ BEGIN
     IDS_BLOB_FEATURE_DEFAULT_VALUE "Default Value"
     IDS_REGTEST_SETTING     "Settings [S]"
     ID_INDICATOR_FBWF       "FBWF"
+    IDS_LATEST_PPQ_INDEX_AT_COMPLETION "PPQ Position at Completion"
 END
 
 STRINGTABLE
@@ -4826,6 +4938,7 @@ BEGIN
     IDS_CLASSNAME_SVOUTPUTOBJECTLIST "Output Object List"
     IDS_CLASSNAME_SVINPUTOBJECT "Input Object"
     IDS_CLASSNAME_SVOUTPUTOBJECT "Output Object"
+    IDS_OBJECTNAME_OUTPUT_THRESHOLDENABLED "Output Threshold Enabled"
     IDS_CLASSNAME_SVREMOTEINPUTOBJECT "Remote Input Object"
     IDS_CLASSNAME_SVCONFIGURATIONOBJECT "Configuration Object"
     IDS_OBJECTNAME_BC_MATCH_STRING_FILE_NAME "Match String File Name"
@@ -4915,13 +5028,33 @@ BEGIN
     IDS_OBJECTNAME_BAND0_THRESHOLDEXCLUDE "Band 0 Threshold Exclude"
     IDS_OBJECTNAME_BAND1_THRESHOLDEXCLUDE "Band 1 Threshold Exclude"
     IDS_OBJECTNAME_BAND2_THRESHOLDEXCLUDE "Band 2 Threshold Exclude"
+    IDS_OBJECTNAME_CONVERT_TO_HSI "Convert to HSI"
+    IDS_OBJECTNAME_ARCHIVE_FILEPATH "Archive File Path"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_OBJECTNAME_USEUPPERTHRESHOLD_MAXMINUSOFFSET_B 
+                            "EdgeB Use Upper Threshold Max Minus Offset"
+    IDS_OBJECTNAME_USEUPPERTHRESHOLD_MINPLUSOFFSET_B 
+                            "EdgeB Use Upper Threshold Min Plus Offset"
+    IDS_OBJECTNAME_UPPERTHRESHOLD_PERCENTDIFF_B 
+                            "EdgeB Upper Threshold Percent Difference"
+    IDS_OBJECTNAME_UPPERTHRESHOLD_MAXOFFSET_B 
+                            "EdgeB Upper Threshold Max Offset"
+    IDS_OBJECTNAME_UPPERTHRESHOLD_MINOFFSET_B 
+                            "EdgeB Upper Threshold Min Offset"
     IDS_OBJECTNAME_BAND0_THRESHOLDENABLED "Band 0 Threshold Enabled"
     IDS_OBJECTNAME_BAND1_THRESHOLDENABLED "Band 1 Threshold Enabled"
     IDS_OBJECTNAME_BAND2_THRESHOLDENABLED "Band 2 Threshold Enabled"
-    IDS_OBJECTNAME_OUTPUT_THRESHOLDENABLED "Output Threshold Enabled"
-    IDS_OBJECTNAME_CONVERT_TO_HSI "Convert to HSI"
-    IDS_OBJECTNAME_HAS_ROI "Has ROI"
-    IDS_OBJECTNAME_ARCHIVE_FILEPATH "Archive File Path"
+    IDS_OBJECTNAME_BLOB_COMPACTNESS "Blob Compactness"
+    IDS_OBJECTNAME_NUMBER_OF_RUNS "Number of Runs"
+    IDS_OBJECTNAME_XMIN_AT_YMIN "X Min at Y Min"
+    IDS_OBJECTNAME_XMAX_AT_YMAX "X Max at Y Max"
+    IDS_OBJECTNAME_YMIN_AT_XMAX "Y Min at X Max"
+    IDS_OBJECTNAME_YMAX_AT_XMIN "Y Max at X Min"
+    IDS_OBJECTNAME_BLOB_ELONGATION "Elongation"
+    IDS_OBJECTNAME_BLOB_INTERCEPT0 "Intercept 0"
 END
 
 STRINGTABLE
@@ -4963,8 +5096,10 @@ BEGIN
     IDS_OBJECTNAME_PAT_NBRFOUNDOCCURANCES "Number of Found Occurrences"
     IDS_OBJECTNAME_PAT_MODELWIDTH "Model Width"
     IDS_OBJECTNAME_PAT_MODELHEIGHT "Model Height"
-    IDS_OBJECTNAME_PAT_USE_DONT_CARE "Use Dont Care Area"
-    IDS_OBJECTNAME_PAT_MODELCENTERX "Model Center X"
+END
+
+STRINGTABLE
+BEGIN
     IDS_OBJECTNAME_PAT_MODELCENTERY "Model Center Y"
     IDS_OBJECTNAME_PAT_DONTCAREWIDTH "Dont Care Width"
     IDS_OBJECTNAME_PAT_DONTCAREHEIGHT "Dont Care Height"
@@ -5081,6 +5216,9 @@ END
 
 STRINGTABLE
 BEGIN
+    ID_ZOOM_FIT_ALL         "Zoom fit\nZoom []"
+    ID_ZOOM_FIT_WIDTH       "Zoom fit Width\nZoom fit Width"
+    ID_ZOOM_FIT_HEIGHT      "Zoom fit Height\nZoom fit Height"
     ID_ADD_TRANSFORMATIONTOOL 
                             "Insert a blank Transformation Tool!\nAdd Transformation Tool"
     ID_ADD_POLARUNWRAPTOOL  "Insert a blank Polar Unwrap Tool!\nAdd Polar Unwrap Tool"
@@ -5170,12 +5308,17 @@ END
 
 STRINGTABLE
 BEGIN
-    ID_ZOOM_MINUS           "Zoom minus\nZoom -"
-    ID_ZOOM_PLUS            "Zoom plus\nZoom +"
+    ID_RESULTS_PICKER       "Results Picker\nResults Picker"
+    ID_PUBLISHED_RESULTS_PICKER "Select Published Results\nPublished Results"
+    ID_ADD_LOADIMAGETOOL    "Insert a blank Load Image Tool!\nAdd Load Image Tool"
+    ID_ADD_ACQUISITIONTOOL  "Insert a blank Acquisition Tool!\nAdd a Acquisition Tool"
     ID_ZOOM_NORMAL          "Zoom one\nZoom 1:1"
-    ID_ZOOM_FIT_ALL         "Zoom fit\nZoom []"
-    ID_ZOOM_FIT_WIDTH       "Zoom fit Width\nZoom fit Width"
-    ID_ZOOM_FIT_HEIGHT      "Zoom fit Height\nZoom fit Height"
+    ID_ZOOM_PLUS            "Zoom plus\nZoom +"
+    ID_ZOOM_MINUS           "Zoom minus\nZoom -"
+END
+
+STRINGTABLE
+BEGIN
     ID_TOOLBAR_STANDARD     "Show or hide the tool bar\nToggle Tool Bar"
 END
 
@@ -5321,18 +5464,10 @@ BEGIN
     ID_EXTRAS_TESTOUTPUTS   "Test Outputs"
     ID_EDIT_EDITTOOLSETCONDITION 
                             "Edit Tool Set Conditional ( Enable/Disable )"
-    ID_ADD_MATHTOOL         "Insert a blank Math Tool!\nAdd a Math Tool"
-    ID_ADD_ARCHIVETOOL      "Insert an Archive Tool!\nAdd Archive Tool"
-END
-
-STRINGTABLE
-BEGIN
-    ID_RESULTS_PICKER       "Results Picker\nResults Picker"
     ID_SAVE_RESULTS_TO_FILE "Results Picker\nSave Results to File"
     ID_SAVE_RESULTSTABLE_TO_FILE "Results Picker\nSave Table Results to File"
-    ID_PUBLISHED_RESULTS_PICKER "Select Published Results\nPublished Results"
-    ID_ADD_LOADIMAGETOOL    "Insert a blank Load Image Tool!\nAdd Load Image Tool"
-    ID_ADD_ACQUISITIONTOOL  "Insert a blank Acquisition Tool!\nAdd a Acquisition Tool"
+    ID_ADD_MATHTOOL         "Insert a blank Math Tool!\nAdd a Math Tool"
+    ID_ADD_ARCHIVETOOL      "Insert an Archive Tool!\nAdd Archive Tool"
 END
 
 STRINGTABLE
@@ -5439,28 +5574,6 @@ BEGIN
                             "EdgeB Upper Threshold Selectable"
     IDS_OBJECTNAME_USEUPPERTHRESHOLD_MAXMINUSPERCENTDIFF_B 
                             "EdgeB Use Upper Threshold Max Minus Percent Difference"
-END
-
-STRINGTABLE
-BEGIN
-    IDS_OBJECTNAME_USEUPPERTHRESHOLD_MAXMINUSOFFSET_B 
-                            "EdgeB Use Upper Threshold Max Minus Offset"
-    IDS_OBJECTNAME_USEUPPERTHRESHOLD_MINPLUSOFFSET_B 
-                            "EdgeB Use Upper Threshold Min Plus Offset"
-    IDS_OBJECTNAME_UPPERTHRESHOLD_PERCENTDIFF_B 
-                            "EdgeB Upper Threshold Percent Difference"
-    IDS_OBJECTNAME_UPPERTHRESHOLD_MAXOFFSET_B 
-                            "EdgeB Upper Threshold Max Offset"
-    IDS_OBJECTNAME_UPPERTHRESHOLD_MINOFFSET_B 
-                            "EdgeB Upper Threshold Min Offset"
-    IDS_OBJECTNAME_BLOB_COMPACTNESS "Blob Compactness"
-    IDS_OBJECTNAME_NUMBER_OF_RUNS "Number of Runs"
-    IDS_OBJECTNAME_XMIN_AT_YMIN "X Min at Y Min"
-    IDS_OBJECTNAME_XMAX_AT_YMAX "X Max at Y Max"
-    IDS_OBJECTNAME_YMIN_AT_XMAX "Y Min at X Max"
-    IDS_OBJECTNAME_YMAX_AT_XMIN "Y Max at X Min"
-    IDS_OBJECTNAME_BLOB_ELONGATION "Elongation"
-    IDS_OBJECTNAME_BLOB_INTERCEPT0 "Intercept 0"
 END
 
 STRINGTABLE
@@ -6020,12 +6133,20 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_LATEST_PPQ_INDEX_AT_COMPLETION "PPQ Position at Completion"
     IDS_TRIGGER_DELTA       "Trigger Delta"
     IDS_TRIGGER_TO_COMPLETION_TIME "Trigger To Completion Time"
     IDS_TRIGGER_TO_START_TIME "Trigger To Start Time"
 END
 
+STRINGTABLE
+BEGIN
+    IDS_CLASSNAME_LOOPTOOL  "LoopTool"
+    IDS_OBJECTNAME_LOOPTOOL_COLLAPS "LoopToolCollaps"
+    IDS_OBJECTNAME_LOOPTOOL_MAXLOOPS "MaximumLoops"
+    IDS_OBJECTNAME_LOOPTOOL_LOOPCOUNTER "LoopCounter"
+    IDS_OBJECTNAME_LOOPTOOL_LINKEDLOOPS "Loops"
+    IDS_OBJECTNAME_LOOPTOOL_BREAK "Break"
+END
 
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////

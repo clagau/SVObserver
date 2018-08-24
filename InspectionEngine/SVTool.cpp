@@ -381,20 +381,66 @@ void SVToolClass::UpdateAuxiliaryExtents()
 	}
 }
 
+inline  void SVToolClass::UpdateStateAndCounter(SVRunStatusClass& rRunStatus)
+{
+	// if disabled or disabled by condition
+	// leave in previous state
+	if (!rRunStatus.IsDisabled() && !rRunStatus.IsDisabledByCondition())
+	{
+		if (rRunStatus.m_UpdateCounters)
+		{
+			// Set Enabled Count...
+			long lCount = 0;
+			m_EnabledCount.GetValue(lCount);
+			m_EnabledCount.SetValue(++lCount);
+		}
+
+		// set our state according to the runStatus
+		m_Passed.SetValue(BOOL(rRunStatus.IsPassed()));
+		m_Failed.SetValue(BOOL(rRunStatus.IsFailed()));
+		m_ExplicitFailed.SetValue(BOOL(rRunStatus.IsFailed()));
+		m_Warned.SetValue(BOOL(rRunStatus.IsWarned()));
+
+		if (rRunStatus.m_UpdateCounters)
+		{
+			// Set Counts...
+			long lCount = 0;
+			if (rRunStatus.IsPassed())
+			{
+				m_PassedCount.GetValue(lCount);
+				m_PassedCount.SetValue(++lCount);
+			}
+			lCount = 0;
+			if (rRunStatus.IsFailed())
+			{
+				m_FailedCount.GetValue(lCount);
+				m_FailedCount.SetValue(++lCount);
+			}
+			lCount = 0;
+			if (rRunStatus.IsWarned())
+			{
+				m_WarnedCount.GetValue(lCount);
+				m_WarnedCount.SetValue(++lCount);
+			}
+		}
+	}
+
+	// Get Status Color...
+	DWORD dwValue = rRunStatus.GetStatusColor();
+	m_statusColor.SetValue(dwValue);
+
+	// Get Status...
+	dwValue = rRunStatus.GetState();
+	m_statusTag.SetValue(dwValue);
+}
+
 bool SVToolClass::Run(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool retVal = true;
-	long lCount;
-	BOOL bIsValid(false);
-
 	clearRunErrorMessages();
-
 	m_ToolTime.Start();
-
 	if (IsEnabled())
 	{
-		SVImageClassPtrSet::iterator l_oImageIter;
-
 		if (rRunStatus.m_UpdateCounters)
 		{
 			// Set Processed Count...
@@ -430,63 +476,12 @@ bool SVToolClass::Run(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVecto
 	else
 	{
 		retVal = !(rRunStatus.m_UpdateCounters);
-
 		rRunStatus.SetDisabled();
 		// To set disabled color for any part of this tool ( embeddeds, children, etc. )
 		SetDisabled();
 	}
+	UpdateStateAndCounter(rRunStatus);
 
-	// if disabled or disabled by condition
-	// leave in previous state
-	if (!rRunStatus.IsDisabled() && !rRunStatus.IsDisabledByCondition())
-	{
-		if (rRunStatus.m_UpdateCounters)
-		{
-			// Set Enabled Count...
-			long lCount = 0;
-			m_EnabledCount.GetValue(lCount);
-			m_EnabledCount.SetValue(++lCount);
-		}
-
-		// set our state according to the runStatus
-		m_Passed.SetValue(BOOL(rRunStatus.IsPassed()));
-		m_Failed.SetValue(BOOL(rRunStatus.IsFailed()));
-		m_ExplicitFailed.SetValue(BOOL(rRunStatus.IsFailed()));
-		m_Warned.SetValue(BOOL(rRunStatus.IsWarned()));
-
-		if (rRunStatus.m_UpdateCounters)
-		{
-			// Set Counts...
-			lCount = 0;
-			if (rRunStatus.IsPassed())
-			{
-				m_PassedCount.GetValue(lCount);
-				m_PassedCount.SetValue(++lCount);
-			}
-			lCount = 0;
-			if (rRunStatus.IsFailed())
-			{
-				m_FailedCount.GetValue(lCount);
-				m_FailedCount.SetValue(++lCount);
-			}
-			lCount = 0;
-			if (rRunStatus.IsWarned())
-			{
-				m_WarnedCount.GetValue(lCount);
-				m_WarnedCount.SetValue(++lCount);
-			}
-		}
-	}
-
-	// Get Status Color...
-	DWORD dwValue = rRunStatus.GetStatusColor();
-	m_statusColor.SetValue(dwValue);
-
-	// Get Status...
-	dwValue = rRunStatus.GetState();
-	m_statusTag.SetValue(dwValue);
-
-	//
 	if (GetInspectionInterface()->getEnableAuxiliaryExtent())
 	{
 		UpdateAuxiliaryExtents();
@@ -1007,6 +1002,23 @@ HRESULT SVToolClass::getExtentProperty(const SvDef::SVExtentPropertyEnum& rExten
 SvOi::ParametersForML SVToolClass::getParameterForMonitorList(SvStl::MessageContainerVector& rMessages) const
 {
 	return SvOi::ParametersForML();
+}
+void SVToolClass::finishAddTool()
+{
+	SvOi::IInspectionProcess* pInspection = GetInspectionInterface();
+	if (nullptr != pInspection)
+	{
+		pInspection->BuildValueObjectMap();
+	}
+
+	// Set default formulas in newly instantiated tool...
+	SvStl::MessageContainerVector ErrorMessages;
+	SetDefaultFormulas(&ErrorMessages);
+	for (SvStl::MessageContainerVector::iterator iter = ErrorMessages.begin(); ErrorMessages.end() != iter; ++iter)
+	{
+		SvStl::MessageMgrStd message(SvStl::LogAndDisplay);
+		message.setMessage(iter->getMessage());
+	}
 }
 #pragma endregion ITool methods
 

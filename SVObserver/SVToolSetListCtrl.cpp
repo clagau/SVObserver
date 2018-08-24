@@ -23,6 +23,8 @@
 #include "SVOResource\ConstGlobalSvOr.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "NavigatorElement.h"
+#include "ObjectInterfaces/ObjectInfo.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -37,15 +39,15 @@ IMPLEMENT_DYNCREATE(SVToolSetListCtrl, CListCtrl)
 
 #pragma region Constructor
 SVToolSetListCtrl::SVToolSetListCtrl()
-: CListCtrl()
-, m_iNone(-1)
-, m_iInvalid(-1)
-, m_fullParameterinML(-1)
-, m_iTopIndex(0)
-, m_expandState(-1)
-, m_collapseState(-1)
-, m_ToolSetId(GUID_NULL)
-, m_InspectionId(GUID_NULL)
+	: CListCtrl()
+	, m_iNone(-1)
+	, m_iInvalid(-1)
+	, m_fullParameterinML(-1)
+	, m_iTopIndex(0)
+	, m_expandState(-1)
+	, m_collapseState(-1)
+	, m_ToolSetId(GUID_NULL)
+	, m_InspectionId(GUID_NULL)
 {
 }
 
@@ -91,14 +93,41 @@ void SVToolSetListCtrl::setObjectIds(const SVGUID& toolsetId, const SVGUID& insp
 
 ToolSetView* SVToolSetListCtrl::GetView()
 {
-	return dynamic_cast< ToolSetView* >( GetParent() );
+	return dynamic_cast<ToolSetView*>(GetParent());
 }
 
 const ToolSetView* SVToolSetListCtrl::GetView() const
 {
-	return dynamic_cast< ToolSetView* >( GetParent() );
+	return dynamic_cast<ToolSetView*>(GetParent());
 }
 
+int SVToolSetListCtrl::InsertSubTools(int itemNo, int indent, const GUID& rGuidToolId)
+{
+	SvPb::InspectionCmdMsgs Request, Response;
+	SvPb::TaskObjectListRequest*  pTaskObjectListRequest = Request.mutable_taskobjectlistrequest();
+	SvPb::SetGuidInProtoBytes(pTaskObjectListRequest->mutable_taskobjectid(), rGuidToolId);
+	SvCmd::InspectionCommandsSynchronous(m_InspectionId, &Request, &Response);
+	SvOi::ObjectInfoVector  ObjectInfos;
+	SvCmd::ResponseToObjectInfo(Response, ObjectInfos);
+
+	for (auto &ObjectInfo : ObjectInfos)
+	{
+		if (ObjectInfo.ObjectType == SvDef::SVToolObjectType)
+		{
+			auto pNavElement = std::make_shared<NavigatorElement>(ObjectInfo.DisplayName.c_str());
+			pNavElement->m_Collapsed = false;
+			pNavElement->m_OwnerGuid = rGuidToolId;
+			pNavElement->m_Guid = ObjectInfo.guid;
+			pNavElement->m_Valid = ObjectInfo.isValid;
+			pNavElement->m_Type = ObjectInfo.ObjectSubType == SvDef::LoopToolObjectType ?
+				NavElementType::SubLoopTool : NavElementType::SubTool;
+			itemNo = InsertElement(itemNo, indent, pNavElement);
+			//if loopTool would be allowed in a LoopTool this has to be insert here.
+		}
+	}
+	itemNo = InsertDelimiter(itemNo, indent, NavElementType::EndDelimiterLoopTool, rGuidToolId);
+	return itemNo;
+}
 void SVToolSetListCtrl::Rebuild()
 {
 	ToolSetView* pView = GetView();
@@ -110,191 +139,206 @@ void SVToolSetListCtrl::Rebuild()
 		{
 			CreateImageLists();
 		}
-
 		DeleteAllItems();
+		m_NavigatorElementVector.clear();
 
-		typedef SvCmd::GetTaskObjects Command;
-		typedef std::shared_ptr<Command> CommandPtr;
+		SvPb::InspectionCmdMsgs Request, Response;
+		SvPb::TaskObjectListRequest*  pTaskObjectListRequest = Request.mutable_taskobjectlistrequest();
+		SvPb::SetGuidInProtoBytes(pTaskObjectListRequest->mutable_taskobjectid(), m_ToolSetId);
+		SvCmd::InspectionCommandsSynchronous(m_InspectionId, &Request, &Response);
+		SvOi::ObjectInfoVector  ToolSetInfos;
+		SvCmd::ResponseToObjectInfo(Response, ToolSetInfos);
 
-		CommandPtr commandPtr{ new Command(m_ToolSetId) };
-		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionId, commandPtr);
-		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-		if (S_OK == hr)
+
+		int itemNo {0};
+		bool bGroupingCollapsed {false};
+		int indent {0};
+
+		for (SVToolGrouping::const_iterator GroupingIt = groupings.begin(); GroupingIt != groupings.end(); ++GroupingIt)
 		{
-			m_taskList = commandPtr->TaskObjects();
-		}
-
-		int itemNo = 0;
-		bool bCollapsed = false;
-		int indent = 0;
-		for (SVToolGrouping::const_iterator it = groupings.begin(); it != groupings.end();++it)
-		{
-			if (it->second.m_type == ToolGroupData::StartOfGroup)
+			auto pNavElement = std::make_shared<NavigatorElement>(GroupingIt->first.c_str());
+			switch (GroupingIt->second.m_type)
 			{
-				bCollapsed = it->second.m_bCollapsed;
-				itemNo = InsertStartGroup(itemNo, it->first.c_str(), bCollapsed);
-				indent = 1;
-			}
-			else if (it->second.m_type == ToolGroupData::EndOfGroup)
-			{
-				itemNo = InsertEndGroup(itemNo, it->first.c_str(), bCollapsed);
-				bCollapsed = false;
-				indent = 0;
-			}
-			else
-			{
-				int index = -1;
-				for (int i=0; i < m_taskList.size(); i++)
+				case ToolGroupData::StartOfGroup:
 				{
-					if (!m_taskList[i].first.empty() && 0 == m_taskList[i].first.compare(it->first.c_str()))
+					pNavElement->m_Type = NavElementType::StartGrouping;
+					pNavElement->m_Comment = GroupingIt->second.m_comment;
+					pNavElement->m_Collapsed = GroupingIt->second.m_bCollapsed;
+					itemNo = InsertElement(itemNo, 0, pNavElement);
+					bGroupingCollapsed = GroupingIt->second.m_bCollapsed;
+					indent = 1;
+					break;
+				}
+				case ToolGroupData::EndOfGroup:
+				{
+					pNavElement->m_Type = NavElementType::EndGrouping;
+					pNavElement->m_Comment = GroupingIt->second.m_comment;
+					pNavElement->m_Collapsed = false;
+					if (bGroupingCollapsed == false)
 					{
-						index = i;
-						break;
+						itemNo = InsertElement(itemNo, indent, pNavElement);
 					}
+					bGroupingCollapsed = false;
+					indent = 0;
+					break;
 				}
 
-				if (-1 < index)
+				case  ToolGroupData::Tool:
 				{
-					itemNo = InsertTool(itemNo, index, bCollapsed, indent);
+					if (bGroupingCollapsed == true)
+						continue;
+					auto ToolSetIt = std::find_if(ToolSetInfos.begin(), ToolSetInfos.end(),
+						[&](SvOi::ObjectInfo& objInfo)
+					{
+						return objInfo.DisplayName == pNavElement->m_DisplayName;
+					});
+					if (ToolSetIt == ToolSetInfos.end() || ToolSetIt->ObjectType != SvDef::SVToolObjectType)
+					{
+						//object kein tool oder nicht im toolset
+						continue;
+					}
+
+					if (ToolSetIt->ObjectSubType == SvDef::LoopToolObjectType)
+					{
+						pNavElement->m_Type = NavElementType::LoopTool;
+					}
+					else
+					{
+						pNavElement->m_Type = NavElementType::Tool;
+					}
+					pNavElement->m_Collapsed = GroupingIt->second.m_bCollapsed;
+					pNavElement->m_Valid = ToolSetIt->isValid;
+					pNavElement->m_Guid = ToolSetIt->guid;
+					itemNo = InsertElement(itemNo, indent, pNavElement);
+					if (pNavElement->m_Type == NavElementType::LoopTool&& pNavElement->m_Collapsed == false)
+					{
+						indent++;
+						itemNo = InsertSubTools(itemNo, indent, pNavElement->m_Guid);
+						indent--;
+					}
 				}
 			}
 		}
 		if (!GetItemCount())
 		{
-			InsertEmptyString(itemNo);
+			itemNo = InsertDelimiter(itemNo, 0, NavElementType::Empty, m_ToolSetId);
 		}
 		else
 		{
-			AddEndDelimiter();
+			itemNo = InsertDelimiter(itemNo, 0, NavElementType::EndDelimiterToolSet, m_ToolSetId);
 		}
-		RebuildImages();
 	}
 }
 
-int SVToolSetListCtrl::InsertStartGroup(int itemNo, const std::string& rStartName, bool bCollapsed)
+int SVToolSetListCtrl::InsertElement(int itemNo, int Indend, PtrNavigatorElement& rpNaviElement)
 {
-	int index = itemNo;
-	int img = (bCollapsed) ? m_expandState : m_collapseState;
+	int img = m_iNone;
+	switch (rpNaviElement->m_Type)
+	{
+		case NavElementType::StartGrouping:
+			img = (rpNaviElement->m_Collapsed) ? m_expandState : m_collapseState;
+			break;
+		case NavElementType::EndGrouping:
+			if (rpNaviElement->m_DisplayName.empty())
+			{
+				return itemNo;////don t show empty end group 
+			}
+			break;
+		case NavElementType::LoopTool:
+			if (rpNaviElement->m_Valid)
+			{
+				img = (rpNaviElement->m_Collapsed) ? m_expandStateLoopToolValid : m_collapseStateLoopToolValid;
+			}
+			else
+			{
+				img = (rpNaviElement->m_Collapsed) ? m_expandStateLoopToolInvalid : m_collapseStateLoopToolInvalid;
+			}
+
+			break;
+		case NavElementType::Tool:
+		case NavElementType::SubTool:
+			img = (rpNaviElement->m_Valid) ? m_iNone : m_iInvalid;
+			break;
+	}
+	m_NavigatorElementVector.push_back(rpNaviElement);
 	LVITEM item;
 	memset(&item, 0, sizeof(item));
 	item.mask = LVIF_IMAGE | LVIF_INDENT | LVIF_PARAM;
-	item.iItem = index;
+	item.iItem = itemNo;
 	item.iSubItem = 0;
 	item.iImage = img;
-	item.iIndent = 0;
-	item.lParam = -1;  //no Tool entry
-	index = InsertItem( &item );
-	SetItemText( index, 0, rStartName.c_str() );
-
-	index++;
-
-	return index;
-}
-
-int SVToolSetListCtrl::InsertEndGroup(int itemNo, const std::string& rEndName, bool bCollapsed)
-{
-	int index = itemNo;
-	if (!rEndName.empty() && !bCollapsed)
-	{
-		LVITEM item;
-		memset(&item, 0, sizeof(item));
-		item.mask = LVIF_IMAGE | LVIF_INDENT | LVIF_PARAM;
-		item.iItem = index;
-		item.iSubItem = 0;
-		item.iIndent = 1;
-		item.lParam = -1; //no Tool entry
-		item.iImage = m_iNone;
-		index = InsertItem( &item );
-		SetItemText( index, 0, rEndName.c_str() );
-	}
-	index++;
-
-	return index;
-}
-
-int SVToolSetListCtrl::InsertTool(int itemNo, int listIndex, bool bCollapsed, int indent)
-{
-	int index = itemNo;
-	if (!bCollapsed)
-	{
-		int img = m_iNone;
-		bool bValid = isToolValid(m_taskList[listIndex].second); 
-
-		if (!bValid)
-		{
-			img = m_iInvalid;
-		}
-
-		LVITEM item;
-		memset(&item, 0, sizeof(item));
-		item.iItem = index;
-		item.iSubItem = 0;
-		item.mask = LVIF_IMAGE | LVIF_INDENT | LVIF_PARAM;
-		item.iIndent = indent;
-		item.lParam = listIndex; //Tool, index in the m_taskList.
-		item.iImage = img;
-		index = InsertItem(&item);
-		SetItemText(index, 0, m_taskList[listIndex].first.c_str());
-		index++;
-	}
-	return index;
-}
-
-void SVToolSetListCtrl::AddEndDelimiter()
-{
-	int itemNo = GetItemCount();
-	LVITEM item;
-	memset(&item, 0, sizeof(item));
-	item.mask = LVIF_IMAGE | LVIF_INDENT | LVIF_PARAM;
-	item.iItem = itemNo;
-	item.iSubItem = 0;
-	item.iIndent = 0;
-	item.lParam = -1; //no Tool entry
-	item.iImage = m_iNone;
-
+	item.iIndent = Indend;
+	item.lParam = LPARAM(m_NavigatorElementVector.size() - 1);//Index ;
 	int index = InsertItem(&item);
-	SetItemText(index, 0, SvO::EndListDelimiter);
+	SetItemText(index, 0, rpNaviElement->m_DisplayName.c_str());
+
+	return ++index;
 }
 
-void SVToolSetListCtrl::InsertEmptyString(int itemNo)
+
+int  SVToolSetListCtrl::InsertDelimiter(int itemNo, int Indend, NavElementType type, const GUID& rOwnerGuid)
 {
+
+	PtrNavigatorElement pNavElement;
+	std::string Delimiter(SvO::EndListDelimiter);
+	std::string LoopToolDelimiter(SvO::LoopToolDelimiter);
 	std::string Empty = SvUl::LoadStdString(IDS_EMPTY_STRING);
+
+
+	switch (type)
+	{
+		case NavElementType::Empty:
+			pNavElement = std::make_shared<NavigatorElement>(Empty.c_str());
+			pNavElement->m_Type = NavElementType::Empty;
+			Indend = 0;
+			break;
+		case NavElementType::EndDelimiterLoopTool:
+			pNavElement = std::make_shared<NavigatorElement>(LoopToolDelimiter.c_str());
+			pNavElement->m_Type = NavElementType::EndDelimiterLoopTool;
+			pNavElement->m_OwnerGuid = rOwnerGuid;
+			break;
+		case NavElementType::EndDelimiterToolSet:
+			pNavElement = std::make_shared<NavigatorElement>(Delimiter.c_str());
+			pNavElement->m_Type = NavElementType::EndDelimiterToolSet;
+			Indend = 0;
+			break;
+		default:
+			return itemNo;
+			break;
+	}
+	if (!pNavElement)
+		return itemNo;
+
+	m_NavigatorElementVector.push_back(pNavElement);
+
+
 	LVITEM item;
 	memset(&item, 0, sizeof(item));
 	item.mask = LVIF_IMAGE | LVIF_INDENT | LVIF_PARAM;
 	item.iItem = itemNo;
 	item.iSubItem = 0;
+	item.iIndent = Indend;
+	item.lParam = LPARAM(m_NavigatorElementVector.size() - 1);//Index 
 	item.iImage = m_iNone;
-	item.iIndent = 0;
-	item.lParam = -1; //no Tool entry
 	int index = InsertItem(&item);
-	SetItemText(index, 0, Empty.c_str());
-}
+	SetItemText(index, 0, pNavElement->m_DisplayName.c_str());
 
-bool SVToolSetListCtrl::IsEndListDelimiter( const std::string& rName ) const
-{
-	return (rName == SvO::EndListDelimiter);
-}
-
-bool SVToolSetListCtrl::IsEmptyStringPlaceHolder( const std::string& rName ) const
-{
-	std::string EmptyString = SvUl::LoadStdString(IDS_EMPTY_STRING);
-	return (rName == EmptyString);
+	return ++index;
 }
 
 bool SVToolSetListCtrl::displayErrorBox(const SVGUID& rGuid) const
 {
-	
+
 	SvPb::InspectionCmdMsgs Request, Response;
-	SvPb::GetMessageListRequest* pGetMessageListRequest= Request.mutable_getmessagelistrequest();
+	SvPb::GetMessageListRequest* pGetMessageListRequest = Request.mutable_getmessagelistrequest();
 	SvPb::SetGuidInProtoBytes(pGetMessageListRequest->mutable_objectid(), rGuid);
 	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionId, &Request, &Response);
 	SvStl::MessageContainerVector messageList;
-	if(hr == S_OK && Response.has_getmessagelistresponse())
-	{ 
+	if (hr == S_OK && Response.has_getmessagelistresponse())
+	{
 		messageList = SvCmd::setMessageContainerFromMessagePB(Response.getmessagelistresponse().messages());
 	}
-	
+
 	if (0 < messageList.size())
 	{
 		SvStl::MessageMgrStd Exception(SvStl::LogAndDisplay);
@@ -310,7 +354,7 @@ bool SVToolSetListCtrl::isToolValid(const SVGUID& tool) const
 	SvPb::InspectionCmdMsgs Request, Response;
 	SvPb::IsValidRequest* pIsValidRequest = Request.mutable_isvalidrequest();
 	SvPb::SetGuidInProtoBytes(pIsValidRequest->mutable_objectid(), tool);
-	
+
 	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionId, &Request, &Response);
 	if (S_OK == hr && Response.has_isvalidresponse())
 	{
@@ -319,27 +363,16 @@ bool SVToolSetListCtrl::isToolValid(const SVGUID& tool) const
 	return isToolValid;
 }
 
-bool SVToolSetListCtrl::IsStartGrouping(int index, bool& bState) const
-{
-	bool bRetVal = false;
-	const ToolSetView* pView = GetView();
-	if (pView)
-	{
-		std::string Name = GetItemText(index, 0);
-		const SVToolGrouping& groups = pView->GetToolGroupings();
-		bRetVal = groups.IsStartTag(Name.c_str(), bState);
-	}
-	return bRetVal;
-}
-
 void SVToolSetListCtrl::RebuildImages()
 {
+	//	This function is not efficient because we have a lot 
+	// function call to isToolValid
 	if (!m_ImageList.GetSafeHandle())
 	{
 		CreateImageLists();
 	}
 
-	int l_iCount = GetItemCount();
+	int ItemCount = GetItemCount();
 
 	SvCmd::GetPPQObjectName cmd(m_InspectionId);
 	std::string ppqName;
@@ -351,53 +384,68 @@ void SVToolSetListCtrl::RebuildImages()
 	LVITEM item;
 	memset(&item, 0, sizeof(item));
 	item.mask = LVIF_IMAGE;
-	for (int i = 0;i < l_iCount; i++)
+	for (int i = 0; i < ItemCount; i++)
 	{
 		int img = m_iNone;
-		item.iItem = i;	
-		SVGUID toolId = getToolGuid(i);
+		item.iItem = i;
+		auto NavElement = GetNavigatorElement(i);
+		if (!NavElement)
+		{
+			break;
+		}
+		bool isLoopTool(false);
+		switch (NavElement->m_Type)
+		{
+			case NavElementType::LoopTool:
+			case NavElementType::SubLoopTool:
+				isLoopTool = true;
+				//fall thru;
+			case NavElementType::SubTool:
+			case NavElementType::Tool:
+			{
+				GUID guid(NavElement->m_Guid);
+				if (GUID_NULL != guid)
+				{
+					NavElement->m_Valid = isToolValid(guid);
+					if (isLoopTool)
+					{
+						if (NavElement->m_Collapsed)
+						{
+							img = NavElement->m_Valid ? m_expandStateLoopToolValid : m_expandStateLoopToolInvalid;
+						}
+						else
+						{
+							img = NavElement->m_Valid ? m_collapseStateLoopToolValid : m_collapseStateLoopToolInvalid;
+						}
+					}
+					else
+					{
+						if (NavElement->m_Valid)
+						{
+							auto* pView = GetView();
+							if (0 < ppqName.size() && nullptr != pView && pView->areParametersInMonitorList(ppqName.c_str(), guid))
+							{
+								img = m_fullParameterinML;
+							}
+						}
+						else
+						{
+							img = m_iInvalid;
+						}
+					}
 
-		if (GUID_NULL != toolId)
-		{
-			bool bValid = isToolValid(toolId);
-			
-			if (bValid)
-			{
-				auto* pView = GetView();
-				if (0 < ppqName.size() && nullptr != pView && pView->areParametersInMonitorList(ppqName.c_str(), toolId))
-				{
-					img = m_fullParameterinML;
+
+					item.iImage = img;
+					SetItem(&item);
 				}
+
+				break;
 			}
-			else
-			{
-				img = m_iInvalid;
-			}
+			default:
+				continue;
 		}
-		else
-		{
-			// check for Group (Start or End)
-			// if start Group add +/- depending on collapsed state
-			bool bState;
-			if (IsStartGrouping(i, bState))
-			{
-				if (bState) 
-				{
-					// show + (plus)
-					img = m_expandState;
-				}
-				else
-				{
-					// show - (minus)
-					img = m_collapseState;
-				}
-			}
-		}
-		item.iImage = img;
-		SetItem(&item); 
 	}
 }
-
 // OnKeyDown added to handle down arrow and up arrow, tool selection and scroll bars. 
 void SVToolSetListCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
@@ -457,7 +505,7 @@ void SVToolSetListCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			SetItemState(l_iNext, LVIS_SELECTED, LVIS_SELECTED); // select
 			EnsureVisible(l_iNext, false);
 
-			if ( SvOi::isOkToEdit() )
+			if (SvOi::isOkToEdit())
 			{
 				l_pParent->PostMessage(WM_COMMAND, ID_RUN_ONCE);
 			}
@@ -477,57 +525,73 @@ void SVToolSetListCtrl::RestoreScrollPos()
 {
 	if (m_iTopIndex > 0)
 	{
-		EnsureVisible(GetItemCount() -1, false);
+		EnsureVisible(GetItemCount() - 1, false);
 		EnsureVisible(m_iTopIndex, false);
 	}
 }
 
-SVGUID SVToolSetListCtrl::getToolGuid(int index) const
+PtrNavigatorElement SVToolSetListCtrl::GetNavigatorElement(int index) const
 {
-	SVGUID guid = GUID_NULL;
-	if (-1 < index )
-	{
-		LVITEM item;
-		memset(&item, '\0', sizeof(LVITEM));
-		item.mask = LVIF_PARAM;
-		item.iItem = index;
+	LVITEM item;
+	memset(&item, '\0', sizeof(LVITEM));
+	item.mask = LVIF_PARAM;
+	item.iItem = index;
 
-		if (GetItem(&item))
+	if (0 <= index &&  index < GetItemCount() && GetItem(&item))
+	{
+		int NavIndex = static_cast<int>(item.lParam); //index of the m_NavigatorElementVector
+		if (0 <= NavIndex && m_NavigatorElementVector.size() > NavIndex)
 		{
-			int listIndex = static_cast<int>(item.lParam); //index of the m_taskList, else -1
-			if (-1 < listIndex && m_taskList.size() > listIndex)
-			{
-				guid = m_taskList[listIndex].second;
-			}
+			return m_NavigatorElementVector[NavIndex];
 		}
 	}
-	return guid;
+	return PtrNavigatorElement(nullptr);
+}
+
+PtrNavigatorElement SVToolSetListCtrl::GetSelectedNavigatorElement(int* pSelectedElement) const
+{
+	int index = GetNextItem(-1, LVNI_SELECTED);
+	if (pSelectedElement)
+	{
+		*pSelectedElement = index;
+	}
+	return GetNavigatorElement(index);
 }
 
 SVGUID SVToolSetListCtrl::GetSelectedTool() const
 {
-	SVGUID guid = GUID_NULL;
-	int index = GetNextItem(-1, LVNI_SELECTED);
-	
+	auto element = GetSelectedNavigatorElement();
+	if (!element)
 	{
-		guid = getToolGuid(index);
+		return GUID_NULL;
 	}
-	return guid;
+	else
+	{
+		return element->m_Guid;
+	}
 }
 
 bool SVToolSetListCtrl::AllowedToEdit() const
 {
-	bool bRetVal = false;
-	int index = GetNextItem(-1, LVNI_SELECTED);
-	if (index != -1)
+	auto element = GetSelectedNavigatorElement();
+	if (!element)
 	{
-		std::string Text = GetItemText(index, 0);
-		if (!IsEndListDelimiter( Text ) && !IsEmptyStringPlaceHolder( Text ))
-		{
-			bRetVal = true;
-		}
+		return false;
 	}
-	return bRetVal;
+
+	switch (element->m_Type)
+	{
+		case NavElementType::StartGrouping:
+		case NavElementType::EndGrouping:
+		case NavElementType::SubTool:
+		case NavElementType::Tool:
+		case NavElementType::LoopTool:
+			return true;
+			break;
+		default:
+			return false;
+	}
+	return false;
 }
 
 void SVToolSetListCtrl::SetSelectedTool(const SVGUID& rGuid)
@@ -542,9 +606,9 @@ void SVToolSetListCtrl::SetSelectedTool(const SVGUID& rGuid)
 		if (GetItem(&item))
 		{
 			int index = static_cast<int>(item.lParam); //index of the m_taskList, else -1
-			if ( -1 < index && m_taskList.size() > index )
+			if (-1 < index && m_NavigatorElementVector.size() > index)
 			{
-				if (!rGuid.empty() && rGuid == m_taskList[index].second)
+				if (!rGuid.empty() && rGuid == m_NavigatorElementVector[index]->m_Guid)
 				{
 					SetItemState(i, LVIS_SELECTED, LVIS_SELECTED);
 				}
@@ -558,20 +622,7 @@ void SVToolSetListCtrl::SetSelectedTool(const SVGUID& rGuid)
 	Invalidate(); // cause WM_PAINT to refresh list control.
 }
 
-ToolListSelectionInfo SVToolSetListCtrl::GetToolListSelectionInfo() const
-{
-	std::string itemText; 
-	int listIndex = GetNextItem(-1, LVNI_SELECTED);
-	if (-1 != listIndex)
-	{
-		itemText = GetItemText(listIndex, 0);
-	}
-	if (IsEndListDelimiter( itemText ) || IsEmptyStringPlaceHolder( itemText ))
-	{
-		itemText.clear();
-	}
-	return ToolListSelectionInfo( listIndex, itemText );
-}
+
 
 void SVToolSetListCtrl::GetSelectedItemScreenPosition(POINT& rPoint) const
 {
@@ -627,7 +678,7 @@ BOOL SVToolSetListCtrl::PreTranslateMessage(MSG* pMsg)
 {
 	if (WM_KEYDOWN == pMsg->message)
 	{
-		if( VK_RETURN == pMsg->wParam )
+		if (VK_RETURN == pMsg->wParam)
 		{
 			return GetView()->enterSelectedEntry();
 		}
@@ -637,12 +688,12 @@ BOOL SVToolSetListCtrl::PreTranslateMessage(MSG* pMsg)
 		// To allow our control to process some important messages we need to override the PreTranslateMessage() function. 
 		// In the code below, we allow the control key combinations to go through to the control. 
 		// This allows copy, cut and paste using the control key combinations.
-		if (GetEditControl() && 
+		if (GetEditControl() &&
 			(VK_DELETE == pMsg->wParam ||
-				VK_F2 == pMsg->wParam ||
-				VK_RETURN == pMsg->wParam ||
-				VK_ESCAPE == pMsg->wParam ||
-				GetKeyState(VK_CONTROL)))
+			VK_F2 == pMsg->wParam ||
+			VK_RETURN == pMsg->wParam ||
+			VK_ESCAPE == pMsg->wParam ||
+			GetKeyState(VK_CONTROL)))
 		{
 			::TranslateMessage(pMsg);
 			::DispatchMessage(pMsg);
@@ -654,7 +705,7 @@ BOOL SVToolSetListCtrl::PreTranslateMessage(MSG* pMsg)
 
 void SVToolSetListCtrl::CreateImageLists()
 {
-	m_ImageList.Create( SvOr::IconSize, SvOr::IconSize, ILC_COLOR | ILC_MASK, 4, 1 );
+	m_ImageList.Create(SvOr::IconSize, SvOr::IconSize, ILC_COLOR | ILC_MASK, 4, 1);
 
 	CWinApp* pApp = AfxGetApp();
 	if (pApp)
@@ -664,6 +715,10 @@ void SVToolSetListCtrl::CreateImageLists()
 		m_fullParameterinML = m_ImageList.Add(pApp->LoadIcon(IDI_HMI_ICON));
 		m_collapseState = m_ImageList.Add(pApp->LoadIcon(IDI_COLLAPSE));
 		m_expandState = m_ImageList.Add(pApp->LoadIcon(IDI_EXPAND));
+		m_expandStateLoopToolValid = m_expandState; 
+		m_collapseStateLoopToolValid = m_collapseState;
+		m_expandStateLoopToolInvalid = m_expandState; 
+		m_collapseStateLoopToolInvalid = m_collapseState;
 	}
 	SetImageList(&m_ImageList, LVSIL_SMALL);
 }
@@ -681,7 +736,7 @@ void SVToolSetListCtrl::CollapseItem(int item)
 	ToolSetView* pView = GetView();
 	if (pView)
 	{
-		pView->HandleExpandCollapse( Name, true );
+		pView->HandleExpandCollapse(Name, true);
 	}
 }
 
@@ -698,6 +753,6 @@ void SVToolSetListCtrl::ExpandItem(int item)
 	ToolSetView* pView = GetView();
 	if (pView)
 	{
-		pView->HandleExpandCollapse( Name, false );
+		pView->HandleExpandCollapse(Name, false);
 	}
 }

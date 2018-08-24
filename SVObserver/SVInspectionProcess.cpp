@@ -574,24 +574,6 @@ void SVInspectionProcess::DestroyInspection()
 	}
 }// end Destroy
 
-HRESULT SVInspectionProcess::BuildValueObjectMap()
-{
-	HRESULT l_hrOk = S_OK;
-	SVIOEntryStruct pListEntry;
-
-	m_mapValueObjects.clear();
-
-	SvOi::IValueObjectPtrSet::iterator Iter(m_ValueObjectSet.begin());
-
-	for (; m_ValueObjectSet.end() != Iter; ++Iter)
-	{
-		SVObjectClass* pObject = dynamic_cast<SVObjectClass*> (*Iter);
-		m_mapValueObjects.insert(SVValueObjectMap::value_type(pObject->GetCompleteName().c_str(), pObject));
-	}
-
-	return l_hrOk;
-}// end BuildValueObjectMap
-
 HRESULT SVInspectionProcess::GetInspectionValueObject(LPCTSTR Name, SVObjectReference& rObjectRef)
 {
 	HRESULT hr = S_FALSE;
@@ -706,10 +688,7 @@ bool SVInspectionProcess::GoOnline()
 
 	m_AsyncProcedure.SetPriority(THREAD_PRIORITY_NORMAL);
 
-	if (S_OK != BuildValueObjectMap())
-	{
-		return false;
-	}
+	BuildValueObjectMap();
 
 	try
 	{
@@ -1660,75 +1639,6 @@ HRESULT SVInspectionProcess::GetChildObject(SVObjectClass*& rpObject, const SVOb
 	return l_Status;
 }
 
-HRESULT SVInspectionProcess::ObserverUpdate(const SVAddTool& p_rData)
-{
-	HRESULT l_Status = S_OK;
-
-	if (nullptr != p_rData.m_pTool)
-	{
-		// Insert tool in GetToolSet()...
-		GetToolSet()->InsertAt(p_rData.m_Index, p_rData.m_pTool);
-
-		// And finally try to create the object...
-		if (GetToolSet()->CreateChildObject(p_rData.m_pTool, SvDef::SVMFResetObject))
-		{
-			BuildValueObjectMap();
-
-			// Set default formulas in newly instantiated tool...
-			SvStl::MessageContainerVector ErrorMessages;
-			p_rData.m_pTool->SetDefaultFormulas(&ErrorMessages);
-			for (SvStl::MessageContainerVector::iterator iter = ErrorMessages.begin(); ErrorMessages.end() != iter; iter++)
-			{
-				SvStl::MessageMgrStd message(SvStl::LogAndDisplay);
-				message.setMessage(iter->getMessage());
-			}
-
-			RunOnce();
-		}
-		else
-		{
-			GetToolSet()->RemoveAt(p_rData.m_Index);
-
-			l_Status = E_FAIL;
-		}
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	return l_Status;
-}
-
-HRESULT SVInspectionProcess::ObserverUpdate(const SVDeleteTool& p_rData)
-{
-	HRESULT l_Status = S_OK;
-
-	if (nullptr != p_rData.m_pTool)
-	{
-		// Delete the Tool Object
-		GetToolSet()->DestroyChildObject(p_rData.m_pTool);
-
-		// Refresh Lists ( inputs,outputs,results,published )
-		SetDefaultInputs();
-
-		//@WARNING[MZA][7.50][02.11.2016] I think to call the next comment is not necessary and do nothing by deleting a tool.
-		//Create Child closed object
-		SVObjectLevelCreateStruct createStruct;
-		createAllObjects(createStruct);
-
-		// Reset all objects
-		resetAllObjects();
-		BuildValueObjectMap();
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	return l_Status;
-}
-
 void SVInspectionProcess::SetPPQIdentifier(const SVGUID& p_rPPQId)
 {
 	if (!(m_PPQId.empty()) && (m_PPQId != p_rPPQId))
@@ -1828,7 +1738,7 @@ HRESULT SVInspectionProcess::InitializeRunOnce()
 		}
 
 		ClearIndexesOfOtherInspections(&l_svProduct, SV_INSPECTION);
-		
+
 		HRESULT l_Temp = l_svProduct.GetResultDataIndex(l_ResultDataDMIndexHandle);
 
 		if (S_OK == l_Status) { l_Status = l_Temp; }
@@ -3680,6 +3590,21 @@ HRESULT SVInspectionProcess::SubmitCommand(const SvOi::ICommandPtr& rCommandPtr)
 
 	return Result;
 }
+
+void SVInspectionProcess::BuildValueObjectMap()
+{
+	SVIOEntryStruct pListEntry;
+
+	m_mapValueObjects.clear();
+
+	SvOi::IValueObjectPtrSet::iterator Iter(m_ValueObjectSet.begin());
+
+	for (; m_ValueObjectSet.end() != Iter; ++Iter)
+	{
+		SVObjectClass* pObject = dynamic_cast<SVObjectClass*> (*Iter);
+		m_mapValueObjects.insert(SVValueObjectMap::value_type(pObject->GetCompleteName().c_str(), pObject));
+	}
+}// end BuildValueObjectMap
 
 
 bool SVInspectionProcess::AddInputRequestMarker()

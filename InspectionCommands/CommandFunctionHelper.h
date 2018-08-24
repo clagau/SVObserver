@@ -12,7 +12,9 @@
 #include "SVUtilityLibrary\SVGUID.h"
 #include "SVProtoBuf\ConverterHelper.h"
 #include "SVProtoBuf/InspectionCommands.h"
+#include "ObjectInterfaces/ObjectInfo.h"
 #pragma endregion Includes
+
 
 namespace SvCmd
 {
@@ -33,4 +35,8 @@ SvPb::MessageContainerVector setMessageContainerToMessagePB(const SvStl::Message
 /// \param messagesPB [in] The protobuf-structure.
 /// \returns SvStl::MessageContainerVector The messages
 SvStl::MessageContainerVector setMessageContainerFromMessagePB(const SvPb::MessageContainerVector& messagesPB);
+
+///convert protobuf message to a vector of objectinfos
+bool ResponseToObjectInfo(const SvPb::InspectionCmdMsgs& rResponse, SvOi::ObjectInfoVector&  rToolSetInfos);
+
 } //namespace SvCmd
