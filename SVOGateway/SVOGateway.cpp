@@ -16,6 +16,7 @@
 #include <boost/log/trivial.hpp>
 
 #include <mil.h>
+#include <conio.h>
 
 #include "WebsocketLibrary/Logging.h"
 #include "WebsocketLibrary/Definition.h"
@@ -97,10 +98,24 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 		Server.start();
 		std::thread ServerThread([&] { IoService.run(); });
 
-		//Wait until service should stop
-		::WaitForSingleObject(gServiceStopEvent, INFINITE);
-		::CloseHandle(gServiceStopEvent);
-		gServiceStopEvent = nullptr;
+		if (CheckCommandLineArgs(argc, argv, _T("/cmd")))
+		{
+			bool exit {false};
+			while(!exit)
+			{
+				exit = ::WaitForSingleObject(gServiceStopEvent, 0) == WAIT_OBJECT_0;
+				if(_kbhit())
+				{
+					exit = (_getch() == 'x');
+				}
+				Sleep(100);
+			}
+		}
+		else
+		{
+			//Wait until service should stop
+			::WaitForSingleObject(gServiceStopEvent, INFINITE);
+		}
 
 		Server.stop();
 		IoService.stop();

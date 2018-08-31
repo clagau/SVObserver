@@ -22,13 +22,11 @@ public:
 	friend class SVMatroxBufferInterface;
 
 	SVMatroxImageChildBuffer();
+	SVMatroxImageChildBuffer(SVMatroxBufferPtr p_ParentPtr, SVMatroxIdentifier p_Identifier, const std::string& p_rCreatorName);
 
 	virtual ~SVMatroxImageChildBuffer();
 
 protected:
-	SVMatroxImageChildBuffer( SVMatroxBufferPtr p_ParentPtr, SVMatroxIdentifier p_Identifier, const std::string& p_rCreatorName );
-
 	SVMatroxBufferPtr m_ParentPtr;
-
 };
 

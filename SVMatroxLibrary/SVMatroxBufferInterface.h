@@ -184,6 +184,7 @@ protected:
 	static HRESULT CopyBuffer( const SVBitmapInfo& dstInfo, unsigned char* p_rTo, const SVMatroxBuffer& p_rFrom );
 	static HRESULT CopyBuffer( const SVBitmapInfo& dstInfo, unsigned char* p_rTo, const SVMatroxIdentifier& p_rFrom );
 
+	static void createImageBufferPtr(SVMatroxBuffer& rBuffer, SVMatroxIdentifier MatroxID, const std::string& rCreatorName);
 private:
 	static __int64 Convert2MatroxType( SVMatroxBufferAttributeEnum p_eType );
 	static long Convert2MatroxType   ( SVMatroxBufferTypeEnum p_eType );

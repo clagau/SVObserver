@@ -397,7 +397,7 @@ long SVMatroxBufferInterface::Convert2MatroxType(SVMatroxBufferInfoEnum p_eType)
 @SVOperationDescription This function creates a Matrox buffer using a SVMatroxBufferCreateLineStruct.
 
 */
-HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rBuffer, const SVMatroxBufferCreateLineStruct& p_CreateLineStruct)
+HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, const SVMatroxBufferCreateLineStruct& p_CreateLineStruct)
 {
 	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
@@ -415,7 +415,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rBuffer, const SVMatro
 
 			if (S_OK == l_Code)
 			{
-				MIL_ID l_NewBuf = MbufAlloc1d(M_DEFAULT_HOST,
+				MIL_ID l_NewID = MbufAlloc1d(M_DEFAULT_HOST,
 					p_CreateLineStruct.m_lSizeX,
 					l_lType,
 					l_lAttrib,
@@ -424,7 +424,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rBuffer, const SVMatro
 
 				if (S_OK == l_Code)
 				{
-					p_rBuffer.m_BufferPtr = SVMatroxBufferPtr{ new SVMatroxImageBuffer(l_NewBuf, "SVMatroxBufferInterface::Create-CreateLine") };
+					createImageBufferPtr(rBuffer, l_NewID, std::string(_T("SVMatroxBufferInterface::Create-CreateLine")));
 				}
 			}
 		}
@@ -450,7 +450,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rBuffer, const SVMatro
 @SVOperationDescription This function creates a Matrox buffer using a LPBITMAPINFO, it does not copy any pixels.
 
 */
-HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rBuffer, const LPBITMAPINFO p_pBitmapInfo)
+HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, const LPBITMAPINFO p_pBitmapInfo)
 {
 	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
@@ -505,7 +505,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rBuffer, const LPBITMA
 
 				if (S_OK == l_Code)
 				{
-					p_rBuffer.m_BufferPtr = SVMatroxBufferPtr{ new SVMatroxImageBuffer(l_NewID, "SVMatroxBufferInterface::Create-LPBITMAPINFO") };
+					createImageBufferPtr(rBuffer, l_NewID, std::string(_T("SVMatroxBufferInterface::Create-LPBITMAPINFO")));
 				}
 			}
 		}// end if (nullptr != p_pBitmapInfo)
@@ -532,7 +532,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rBuffer, const LPBITMA
 @SVOperationDescription This function creates a Matrox buffer using a SVMatroxSystem and a SVMatroxBufferCreateStruct.
 
 */
-HRESULT SVMatroxBufferInterface::Create(const SVMatroxSystem& p_rSystem, SVMatroxBuffer& p_rBuffer, const SVMatroxBufferCreateStruct& p_CreateStruct)
+HRESULT SVMatroxBufferInterface::Create(const SVMatroxSystem& p_rSystem, SVMatroxBuffer& rBuffer, const SVMatroxBufferCreateStruct& p_CreateStruct)
 {
 	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
@@ -551,7 +551,7 @@ HRESULT SVMatroxBufferInterface::Create(const SVMatroxSystem& p_rSystem, SVMatro
 			if (S_OK == l_Code)
 			{
 				MIL_ID MilSystemID = p_rSystem.empty() ? M_DEFAULT_HOST : p_rSystem.m_SystemIdentifier;
-				MIL_ID l_NewBuf = M_NULL;
+				MIL_ID l_NewID = M_NULL;
 				if (MaxColorBands == p_CreateStruct.m_lSizeBand)
 				{
 					if (M_LUT == (l_lAttrib & M_LUT))	// Mil help states that LUT must be stored in planar format.
@@ -569,7 +569,7 @@ HRESULT SVMatroxBufferInterface::Create(const SVMatroxSystem& p_rSystem, SVMatro
 						l_lAttrib |= M_PACKED + M_BGR32;
 					}
 
-					l_NewBuf = MbufAllocColor(MilSystemID,
+					l_NewID = MbufAllocColor(MilSystemID,
 						p_CreateStruct.m_lSizeBand,
 						p_CreateStruct.m_lSizeX,
 						p_CreateStruct.m_lSizeY,
@@ -579,7 +579,7 @@ HRESULT SVMatroxBufferInterface::Create(const SVMatroxSystem& p_rSystem, SVMatro
 				}
 				else
 				{
-					l_NewBuf = MbufAlloc2d(MilSystemID,
+					l_NewID = MbufAlloc2d(MilSystemID,
 						p_CreateStruct.m_lSizeX,
 						p_CreateStruct.m_lSizeY,
 						l_lType,
@@ -590,7 +590,7 @@ HRESULT SVMatroxBufferInterface::Create(const SVMatroxSystem& p_rSystem, SVMatro
 
 				if (S_OK == l_Code)
 				{
-					p_rBuffer.m_BufferPtr = SVMatroxBufferPtr{ new SVMatroxImageBuffer(l_NewBuf, "SVMatroxBufferInterface::Create-SystemID,BufferCreate") };
+					createImageBufferPtr(rBuffer, l_NewID, std::string(_T("SVMatroxBufferInterface::Create-SystemID,BufferCreate")));
 				}
 			}
 		}
@@ -616,7 +616,7 @@ HRESULT SVMatroxBufferInterface::Create(const SVMatroxSystem& p_rSystem, SVMatro
 @SVOperationDescription This function creates a Matrox buffer using a SVMatroxBufferCreateStruct.
 
 */
-HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rBuffer, const SVMatroxBufferCreateStruct& p_CreateStruct)
+HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, const SVMatroxBufferCreateStruct& p_CreateStruct)
 {
 	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
@@ -634,7 +634,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rBuffer, const SVMatro
 
 			if (S_OK == l_Code)
 			{
-				MIL_ID l_NewBuf = M_NULL;
+				MIL_ID l_NewID = M_NULL;
 				if (MaxColorBands == p_CreateStruct.m_lSizeBand)
 				{
 					if (M_LUT == (l_lAttrib & M_LUT))	// Mil help states that LUT must be stored in planar format.
@@ -643,7 +643,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rBuffer, const SVMatro
 						// Planar cannot be used with DIB
 						l_lAttrib &= ~M_DIB;
 					}
-					l_NewBuf = MbufAllocColor(M_DEFAULT_HOST,
+					l_NewID = MbufAllocColor(M_DEFAULT_HOST,
 						p_CreateStruct.m_lSizeBand,
 						p_CreateStruct.m_lSizeX,
 						p_CreateStruct.m_lSizeY,
@@ -653,7 +653,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rBuffer, const SVMatro
 				}
 				else
 				{
-					l_NewBuf = MbufAlloc2d(M_DEFAULT_HOST,
+					l_NewID = MbufAlloc2d(M_DEFAULT_HOST,
 						p_CreateStruct.m_lSizeX,
 						p_CreateStruct.m_lSizeY,
 						l_lType,
@@ -664,7 +664,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rBuffer, const SVMatro
 
 				if (S_OK == l_Code)
 				{
-					p_rBuffer.m_BufferPtr = SVMatroxBufferPtr{ new SVMatroxImageBuffer(l_NewBuf, "SVMatroxBufferInterface::Create-BufferCreate") };
+					createImageBufferPtr(rBuffer, l_NewID, std::string(_T("SVMatroxBufferInterface::Create-BufferCreate")));
 				}
 			}
 		}
@@ -691,7 +691,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rBuffer, const SVMatro
 @SVOperationDescription This function creates a Matrox child buffer using a SVMatroxBufferCreateChildStruct.
 
 */
-HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rNewBuffer, const SVMatroxBufferCreateChildStruct& p_CreateChildStruct)
+HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, const SVMatroxBufferCreateChildStruct& p_CreateChildStruct)
 {
 	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
@@ -738,7 +738,11 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rNewBuffer, const SVMa
 
 				if (S_OK == l_Code)
 				{
-					p_rNewBuffer.m_BufferPtr = SVMatroxBufferPtr{ new SVMatroxImageChildBuffer(p_CreateChildStruct.m_rParentBufId.m_BufferPtr, childBufID, "SVMatroxBufferInterface::Create-CreateChildBuffer") };
+					if (!rBuffer.empty())
+					{
+						rBuffer.clear();
+					}
+					rBuffer.m_BufferPtr = SVMatroxBufferPtr{std::make_shared<SVMatroxImageChildBuffer>(p_CreateChildStruct.m_rParentBufId.m_BufferPtr, childBufID, "SVMatroxBufferInterface::Create-CreateChildBuffer") };
 				}
 			}
 		}
@@ -766,7 +770,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rNewBuffer, const SVMa
 
 */
 // MbufCreateColor -  Caution	 : Uses external data buffer that you must manage.
-HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rBuffer, SVMatroxBufferCreateExtStruct p_CreateColorStruct)
+HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, SVMatroxBufferCreateExtStruct p_CreateColorStruct)
 {
 	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
@@ -784,10 +788,10 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rBuffer, SVMatroxBuffe
 
 			if (S_OK == l_Code)
 			{
-				MIL_ID l_NewBuf = M_NULL;
+				MIL_ID l_NewID = M_NULL;
 				if (p_CreateColorStruct.m_lSizeBand > 1)
 				{
-					l_NewBuf = MbufCreateColor(M_DEFAULT_HOST,
+					l_NewID = MbufCreateColor(M_DEFAULT_HOST,
 						p_CreateColorStruct.m_lSizeBand,
 						p_CreateColorStruct.m_lSizeX,
 						p_CreateColorStruct.m_lSizeY,
@@ -805,7 +809,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rBuffer, SVMatroxBuffe
 					{
 						l_lAttrib &= ~0xff00;  // remove rgb or bgr attribute
 					}
-					l_NewBuf = MbufCreate2d(M_DEFAULT_HOST,
+					l_NewID = MbufCreate2d(M_DEFAULT_HOST,
 						p_CreateColorStruct.m_lSizeX,
 						p_CreateColorStruct.m_lSizeY,
 						l_lType,
@@ -820,7 +824,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rBuffer, SVMatroxBuffe
 
 				if (S_OK == l_Code)
 				{
-					p_rBuffer.m_BufferPtr = SVMatroxBufferPtr{ new SVMatroxImageBuffer(l_NewBuf, "SVMatroxBufferInterface::Create-BufferCreateExt") };
+					createImageBufferPtr(rBuffer, l_NewID, std::string(_T("SVMatroxBufferInterface::Create-BufferCreateExt")));
 				}
 			}
 		}
@@ -847,7 +851,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rBuffer, SVMatroxBuffe
 @SVOperationDescription This function creates a Matrox buffer using a SVMatroxBuffer.
 
 */
-HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rNewBuffer, const SVMatroxBuffer& p_CreateFrom)
+HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, const SVMatroxBuffer& p_CreateFrom)
 {
 	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
@@ -878,10 +882,10 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rNewBuffer, const SVMa
 
 			if (S_OK == l_Code)
 			{
-				MIL_ID l_NewBuf = M_NULL;
+				MIL_ID l_NewID = M_NULL;
 				if (MaxColorBands == l_lBandSize)
 				{
-					l_NewBuf = MbufAllocColor(M_DEFAULT_HOST,
+					l_NewID = MbufAllocColor(M_DEFAULT_HOST,
 						l_lBandSize,
 						l_lSizeX,
 						l_lSizeY,
@@ -896,7 +900,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rNewBuffer, const SVMa
 					{
 						l_lAttrib &= ~0xff00;  // remove rgb or bgr attribute
 					}
-					l_NewBuf = MbufAlloc2d(M_DEFAULT_HOST,
+					l_NewID = MbufAlloc2d(M_DEFAULT_HOST,
 						l_lSizeX,
 						l_lSizeY,
 						l_lType,
@@ -908,7 +912,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rNewBuffer, const SVMa
 
 				if (S_OK == l_Code)
 				{
-					p_rNewBuffer.m_BufferPtr = SVMatroxBufferPtr{ new SVMatroxImageBuffer(l_NewBuf, "SVMatroxBufferInterface::Create-MatroxBuffer") };
+					createImageBufferPtr(rBuffer, l_NewID, std::string(_T("SVMatroxBufferInterface::Create-MatroxBuffer")));
 				}
 			}
 		}
@@ -931,7 +935,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rNewBuffer, const SVMa
 @SVOperationDescription This function creates a SVMatroxBuffer from a HBitmap.
 
 */
-HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rNewMilId, HBITMAP& p_rHbm)
+HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, HBITMAP& p_rHbm)
 {
 	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
@@ -1003,7 +1007,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rNewMilId, HBITMAP& p_
 
 			if (S_OK == l_Code)
 			{
-				MIL_ID l_NewBuf = M_NULL;
+				MIL_ID l_NewID = M_NULL;
 
 				// Allocate a multi or single band image buffer
 				MbufAllocColor(M_DEFAULT_HOST,
@@ -1012,18 +1016,18 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rNewMilId, HBITMAP& p_
 								l_Height, 
 								type,
 								lAttrib,
-								&l_NewBuf);
+								&l_NewID);
 
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
 
-				l_Code = (l_NewBuf != M_NULL) ? S_OK : S_FALSE;
+				l_Code = (l_NewID != M_NULL) ? S_OK : S_FALSE;
 
 				if (S_OK == l_Code)
 				{
 					LPVOID pHostBuffer = nullptr;
-					pHostBuffer = (LPVOID) MbufInquire(l_NewBuf, M_HOST_ADDRESS, M_NULL);
+					pHostBuffer = (LPVOID) MbufInquire(l_NewID, M_HOST_ADDRESS, M_NULL);
 
-					p_rNewMilId.m_BufferPtr = SVMatroxBufferPtr{ new SVMatroxImageBuffer(l_NewBuf, "SVMatroxBufferInterface::Create-HBITMAP") };
+					createImageBufferPtr(rBuffer, l_NewID, std::string(_T("SVMatroxBufferInterface::Create-HBITMAP")));
 
 					// Set the bits of our new bitmap
 					if (dib.dsBm.bmBits)
@@ -1629,7 +1633,7 @@ HRESULT  SVMatroxBufferInterface::InquireBufferProperties(const SVMatroxBuffer& 
 	return Code;
 }
 
-HRESULT SVMatroxBufferInterface::CreateBuffer(SVMatroxBuffer& p_rBuffer, MatroxImageProps& rImageProps , void *pMemory)
+HRESULT SVMatroxBufferInterface::CreateBuffer(SVMatroxBuffer& rBuffer, MatroxImageProps& rImageProps , void *pMemory)
 {
 
 	HRESULT Code(S_OK); 
@@ -1645,7 +1649,7 @@ HRESULT SVMatroxBufferInterface::CreateBuffer(SVMatroxBuffer& p_rBuffer, MatroxI
 	bool RGB = M_IS_FORMAT_RGB_BGR(rImageProps.Attrib);
 	bool yuv = M_IS_FORMAT_YUV(rImageProps.Attrib);
 	int mi = M_BIT_FIELD_FORMAT(rImageProps.Attrib);
-	MIL_ID NewBuf = M_NULL;
+	MIL_ID NewID = M_NULL;
 	if (MaxColorBands == rImageProps.Bandsize  || RGB || yuv)
 	{
 		assert(rImageProps.Attrib & M_PACKED);
@@ -1654,7 +1658,7 @@ HRESULT SVMatroxBufferInterface::CreateBuffer(SVMatroxBuffer& p_rBuffer, MatroxI
 		pa[1] = nullptr;
 		pa[2] = nullptr;
 
-		NewBuf = MbufCreateColor(M_DEFAULT_HOST,
+		NewID = MbufCreateColor(M_DEFAULT_HOST,
 			MaxColorBands
 			, rImageProps.sizeX,
 			rImageProps.sizeY,
@@ -1667,7 +1671,7 @@ HRESULT SVMatroxBufferInterface::CreateBuffer(SVMatroxBuffer& p_rBuffer, MatroxI
 	}
 	else
 	{
-		NewBuf = MbufCreate2d(M_DEFAULT_HOST
+		NewID = MbufCreate2d(M_DEFAULT_HOST
 			, rImageProps.sizeX,
 			rImageProps.sizeY,
 			rImageProps.Matrox_type,
@@ -1681,7 +1685,7 @@ HRESULT SVMatroxBufferInterface::CreateBuffer(SVMatroxBuffer& p_rBuffer, MatroxI
 
 	if (S_OK == Code)
 	{
-		p_rBuffer.m_BufferPtr = SVMatroxBufferPtr{ new SVMatroxImageBuffer(NewBuf, "SVMatroxBufferInterface::CreateBuffer") };
+		createImageBufferPtr(rBuffer, NewID, std::string(_T("SVMatroxBufferInterface::CreateBuffer")));
 	}
 	else
 	{
@@ -2136,11 +2140,8 @@ HRESULT SVMatroxBufferInterface::CopyBufferToFileDIB(SVByteVector& rToDIB, const
 {
 	HRESULT l_Code(S_OK);
 	MIL_ID MilId = rFromId.GetIdentifier();
-	if (IsColorBuffer(rFromId))
-	{
+
 		//This assumes we have attribute M_PACKED 
-		MbufChildColor(rFromId.GetIdentifier(), 0, &MilId);
-	}
 	SVBitmapInfo l_Info;
 	rToDIB.clear();
 	l_Code = GetBitmapInfo(l_Info, rFromId);
@@ -2206,13 +2207,8 @@ HRESULT SVMatroxBufferInterface::CopyBufferToFileDIB(std::string& rTo,  SVBitmap
 {
 	HRESULT Hres(S_OK);
 	MIL_ID MilId = rFromId.GetIdentifier();
-	if (IsColorBuffer(rFromId))
-	{
 		//This assumes we have attribute M_PACKED 
-		MbufChildColor(rFromId.GetIdentifier(), 0, &MilId);
-	}
 	
-	rTo.clear();
 	Hres = GetBitmapInfo(rBitMapInfo, rFromId);
 	if (S_OK == Hres)
 	{
@@ -2795,7 +2791,7 @@ HRESULT SVMatroxBufferInterface::GetImageSize(const std::string& rFileName, long
 @SVOperationDescription This function imports data from a file into an existing or automatically allocated MIL data buffer. 
 
 */
-HRESULT SVMatroxBufferInterface::Import(SVMatroxBuffer& p_rBuf, 
+HRESULT SVMatroxBufferInterface::Import(SVMatroxBuffer& rBuffer, 
 																	  const std::string& p_rFileName, 
 																	  SVMatroxFileTypeEnum p_eFileType,
 																	  bool p_bRestore)
@@ -2842,23 +2838,23 @@ HRESULT SVMatroxBufferInterface::Import(SVMatroxBuffer& p_rBuf,
 		{
 			if (p_bRestore)
 			{	// Restore Operation creates a new Mil handle.
-				MIL_ID l_NewId = M_NULL;
+				MIL_ID l_NewID = M_NULL;
 				MbufImport(const_cast<MIL_TEXT_CHAR*>(p_rFileName.c_str()), 
 					l_lFileFormat,
 					l_lOperation,
 					M_DEFAULT_HOST,
-					&l_NewId);
+					&l_NewID);
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
 				if (S_OK == l_Code)
 				{
-					p_rBuf.m_BufferPtr = SVMatroxBufferPtr{ new SVMatroxImageBuffer(l_NewId, "SVMatroxBufferInterface::Import") };
+					createImageBufferPtr(rBuffer, l_NewID, std::string(_T("SVMatroxBufferInterface::Import")));
 				}
 			}
 			else
 			{	// Load fills a previously created Mil handle.
-				if (!p_rBuf.empty())
+				if (!rBuffer.empty())
 				{
-					MIL_ID l_NewId = p_rBuf.GetIdentifier();
+					MIL_ID l_NewId = rBuffer.GetIdentifier();
 					MbufImport(const_cast<MIL_TEXT_CHAR*>(p_rFileName.c_str()), 
 						l_lFileFormat,
 						l_lOperation,
@@ -2932,3 +2928,11 @@ HRESULT SVMatroxBufferInterface::Export(const SVMatroxBuffer& rBuffer,
 	return l_Code;
 }
 
+void SVMatroxBufferInterface::createImageBufferPtr(SVMatroxBuffer& rBuffer, SVMatroxIdentifier MatroxID, const std::string& rCreatorName)
+{
+	if (!rBuffer.empty())
+	{
+		rBuffer.clear();
+	}
+	rBuffer.m_BufferPtr = SVMatroxBufferPtr {std::make_shared<SVMatroxImageBuffer>(MatroxID, rCreatorName)};
+}

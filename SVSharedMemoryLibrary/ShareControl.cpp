@@ -129,10 +129,11 @@ bool ShareControl::GetImageFromId(const  SvPb::GetImageFromIdRequest& req, SvPb:
 
 	SVBitmapInfo bitmapInfo;
 	auto pData = resp.mutable_imagedata();
-	const SVMatroxBuffer& rFromId =
-		m_MemReader.m_DataContainer.GetImageBuffer(slotindex, storeindex, Imageindex);
+	const SVMatroxBuffer& rFromId = m_MemReader.m_DataContainer.GetImageBuffer(slotindex, storeindex, Imageindex);
 	//@Todo[MEC][8.00] [22.11.2017] true is for testscript for binary compare  false is faster 
-	SVMatroxBufferInterface::CopyBufferToFileDIB(*(pData->mutable_rgbdata()), bitmapInfo, rFromId, 0, true);
+	std::string ImageBuffer;
+	SVMatroxBufferInterface::CopyBufferToFileDIB(ImageBuffer, bitmapInfo, rFromId, 0, true);
+	pData->mutable_rgbdata()->swap(ImageBuffer);
 	pData->set_width(std::abs(bitmapInfo.GetWidth()));
 	pData->set_height(std::abs(bitmapInfo.GetHeight()));
 	return true;
@@ -270,6 +271,7 @@ bool ShareControl::GetProductItem(bool isReject, int triggerCount, int peviousTr
 
 				if (SetProductResponse(nameInResponse, new_productPtr.get(), pProductMsg, rError))
 				{
+					rLastMap[rListName].reset();
 					rLastMap[rListName] = std::move(new_productPtr);
 				}
 				else

@@ -6,7 +6,7 @@
 ///// Class encapsulate function to open  and read from the  shared Memory
 //******************************************************************************
 #pragma once
-
+#include <mutex>
 #include "SharedDataContainer.h"
 #include "MonitorListStore.h"
 
@@ -92,6 +92,7 @@ public:
 	/// map contains monitorlist name Slotmanager index 
 	std::map<std::string, int> m_SlotManagerIndexMap;
 private:
+	std::mutex m_ProtectReader;
 
 	///parameter for GetProduct
 	struct GetProdPar
