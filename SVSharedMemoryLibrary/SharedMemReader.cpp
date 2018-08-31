@@ -207,7 +207,6 @@ int SharedMemReader::GetSlotManagerIndexForMonitorList(LPCTSTR Monitorlist)
 
 SharedMemReader::retvalues SharedMemReader::GetFailstatus(LPCTSTR Monitorlist, vecpProd* pFailstatus, vecpProd*  pLastFailstatus)
 {
-	std::lock_guard<std::mutex> guard(m_ProtectReader);
 	int SlotManagerIndex = GetSlotManagerIndexForMonitorList(Monitorlist);
 	if (nullptr == pFailstatus || SlotManagerIndex < 0)
 	{
