@@ -103,12 +103,11 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 			bool exit {false};
 			while(!exit)
 			{
-				exit = ::WaitForSingleObject(gServiceStopEvent, 0) == WAIT_OBJECT_0;
+				exit = ::WaitForSingleObject(gServiceStopEvent, 100) == WAIT_OBJECT_0;
 				if(_kbhit())
 				{
-					exit = (_getch() == 'x');
+					exit = ('x' == _getch());
 				}
-				Sleep(100);
 			}
 		}
 		else
