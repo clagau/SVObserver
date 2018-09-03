@@ -65,7 +65,7 @@ bool SVColorToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStr
 			{
 				//! We do not want the Logical ROI image showing up as an output image.
 				m_LogicalROIImage.InitializeImage(pInputImage);
-				m_LogicalROIImage.SetObjectAttributesAllowed(SvDef::SV_HIDDEN, SvOi::SetAttributeType::AddAttribute);
+				m_LogicalROIImage.SetObjectAttributesAllowed(SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute);
 				m_OutputImage.InitializeImage(pInputImage);
 
 				BOOL hasROI(false);
