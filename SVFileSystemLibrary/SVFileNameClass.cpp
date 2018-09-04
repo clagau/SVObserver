@@ -289,11 +289,11 @@ bool SVFileNameClass::SetFileType(DWORD dwFileType)
 			bOk = true;
 			break;
 		}
-		case SV_SVX_CONFIGURATION_FILE_TYPE:
+		case SV_SVZ_CONFIGURATION_FILE_TYPE:
 		{
 			SetFileSelectDialogTitle( _T("Select Configuration File") );
 			SetFileSaveDialogTitle( _T( "Save Configuration File" ) );
-			SetDefaultFileExtension(SvDef::cConfigExtension);
+			SetDefaultFileExtension(SvDef::cPackedConfigExtension);
 			SetDefaultFileName( _T("") );
 			SetDefaultPathName( SvStl::GlobalPath::Inst().GetRunPath().c_str());
 			SetFileSelectFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
@@ -615,13 +615,13 @@ bool SVFileNameClass::SaveFile()
 			SetFullFileName( PathName.c_str() );
 			SetDefaultFullFileName( PathName.c_str() );
 
-			bDone = GetFileType() != SV_SVX_CONFIGURATION_FILE_TYPE ;
+			bDone = GetFileType() != SV_SVZ_CONFIGURATION_FILE_TYPE ;
 
 			if ( ! bDone )
 			{
 				std::string csNewFullFileName = GetPathName();
-				//! Make sure for configurations the extension is svx
-				SetExtension(SvDef::cConfigExtension);
+				//! Make sure for configurations the extension is svz
+				SetExtension(SvDef::cPackedConfigExtension);
 
 				bDone = (0 == SvUl::CompareNoCase(csNewFullFileName, SvStl::GlobalPath::Inst().GetRunPath() ) ) ||
 				        ( 0 == _access( GetFullFileName().c_str(), 0 ) );

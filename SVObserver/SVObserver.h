@@ -175,7 +175,7 @@ public:
 public:
 	
 	HRESULT OpenFile(LPCTSTR PathName);
-	HRESULT OpenSVXFile(LPCTSTR PathName);
+	HRESULT OpenSVXFile();
 	SVIODoc* NewSVIODoc( LPCTSTR DocName, SVIOController& Controller );
 	SVIPDoc* NewSVIPDoc( LPCTSTR DocName, SVInspectionProcess& Inspection );
 
@@ -382,7 +382,8 @@ private:
 
 	bool m_ATLInited;
 
-	mutable SVFileNameClass m_ConfigFileName;	// JMS - Added for File Management
+	mutable SVFileNameClass m_ConfigFileName;
+	SVFileNameClass m_SvxFileName;
 
 	HMENU m_hAddMenu;
 	HANDLE m_hEvent;

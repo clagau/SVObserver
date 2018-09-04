@@ -323,17 +323,17 @@ SVObserverApp::SVObserverApp() :
 	m_pCurrentDocument = nullptr;	// Set by current Document!!!
 	m_pMessageWindow = nullptr;
 
-	m_ConfigFileName.SetFileType(SV_SVX_CONFIGURATION_FILE_TYPE);
+	m_ConfigFileName.SetFileType(SV_SVZ_CONFIGURATION_FILE_TYPE);
 	m_ConfigFileName.setExcludeCharacters(SvDef::cExcludeCharsConfigName);
 
-	SVFileNameManagerClass::Instance().AddItem(&m_ConfigFileName);
+	SVFileNameManagerClass::Instance().AddItem(&m_SvxFileName);
 
 }// end SVObserver ctor
 
 SVObserverApp::~SVObserverApp()
 {
 	// File management for config file.
-	SVFileNameManagerClass::Instance().RemoveItem(&m_ConfigFileName);
+	SVFileNameManagerClass::Instance().RemoveItem(&m_SvxFileName);
 
 	// Optional:  Delete all global objects allocated by libprotobuf.
 	google::protobuf::ShutdownProtobufLibrary();
@@ -450,7 +450,7 @@ void SVObserverApp::OnFileOpenSVC()
 	{
 		SVFileNameClass svFileName;
 
-		svFileName.SetFileType(SV_SVX_CONFIGURATION_FILE_TYPE);
+		svFileName.SetFileType(SV_SVZ_CONFIGURATION_FILE_TYPE);
 		//
 		// Try to read the current image file path name from registry...
 		//
@@ -2328,7 +2328,7 @@ HRESULT SVObserverApp::OpenFile(LPCTSTR PathName)
 				Extension = szExt;
 				if (0 == SvUl::CompareNoCase(Extension, std::string(SvDef::cConfigExtension)))
 				{
-					FileName = rFile;
+					m_SvxFileName.SetFullFileName(rFile.c_str());
 					break;
 				}
 			}
@@ -2342,10 +2342,19 @@ HRESULT SVObserverApp::OpenFile(LPCTSTR PathName)
 			return E_FAIL;
 		}
 	}
+	else if (0 == SvUl::CompareNoCase(Extension, std::string(SvDef::cConfigExtension)))
+	{
+		m_SvxFileName.SetFullFileName(FileName.c_str());
+		SVFileNameManagerClass::Instance().LoadItem(&m_SvxFileName);
+		//In the future we want to use the new file format
+		SvUl::searchAndReplace(FileName, SvDef::cConfigExtension, SvDef::cPackedConfigExtension);
+	}
 
 	if (0 == SvUl::CompareNoCase(Extension, std::string(SvDef::cConfigExtension)))
 	{
-		l_Status = OpenSVXFile(FileName.c_str());
+		setConfigFullFileName(FileName.c_str(), true);
+		SVRCSetSVCPathName(getConfigFullFileName().c_str());
+		l_Status = OpenSVXFile();
 	}
 	else
 	{
@@ -2355,7 +2364,7 @@ HRESULT SVObserverApp::OpenFile(LPCTSTR PathName)
 	return l_Status;
 }
 
-HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
+HRESULT SVObserverApp::OpenSVXFile()
 {
 	CWaitCursor wait;
 
@@ -2396,13 +2405,11 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 			break;
 		}
 
-		SVFileNameClass svFileName(PathName);
-
 		//
 		// Check if we tried to load the SVC from 
 		// Execution path...("C:\RUN\")
 		//
-		if (0 != SvUl::CompareNoCase(std::string(svFileName.GetPathName()), SVFileNameManagerClass::Instance().GetRunPathName()))
+		if (0 != SvUl::CompareNoCase(std::string(m_SvxFileName.GetPathName()), SVFileNameManagerClass::Instance().GetRunPathName()))
 		{
 			// Clean up Execution Directory...
 			// Check path, create if necessary and delete contents...
@@ -2413,17 +2420,12 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 		{
 			unsigned long configVer = 0;
 
-			setConfigFullFileName(PathName, true);
-
-			std::string FullFileName(getConfigFullFileName());
-			SVRCSetSVCPathName(FullFileName.c_str());
-
 			while (1)
 			{
 				SVTreeType XMLTree;
 				try
 				{
-					hr = SvXml::SVOCMLoadConfiguration(configVer, FullFileName.c_str(), XMLTree);
+					hr = SvXml::SVOCMLoadConfiguration(configVer, m_SvxFileName.GetFullFileName().c_str(), XMLTree);
 				}
 				catch (const SvStl::MessageContainer& rExp)
 				{
@@ -2555,7 +2557,7 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 				long l_lTime = static_cast<long>(l_FinishLoad - l_StartLoading);
 
 				SvDef::StringVector msgList;
-				msgList.push_back(PathName);
+				msgList.push_back(m_SvxFileName.GetFullFileName());
 				msgList.push_back(SvUl::Format(_T("%d"), l_lTime));
 
 				SvStl::MessageMgrStd Exception(SvStl::LogOnly);
@@ -2588,11 +2590,15 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 			std::string FileName = SVFileNameManagerClass::Instance().GetConfigurationPathName();
 			if (FileName.empty())
 			{
-				AddToRecentFileList(getConfigFullFileName().c_str());
+				FileName = getConfigFullFileName();
 			}
 			else
 			{
-				AddToRecentFileList(std::string(FileName + _T("\\") + getConfigFileName()).c_str());
+				FileName += _T("\\") + getConfigFileName();
+			}
+			if(0 == _access(FileName.c_str(), 0))
+			{
+				AddToRecentFileList(FileName.c_str());
 			}
 		} // try
 
@@ -3778,11 +3784,6 @@ bool SVObserverApp::setConfigFullFileName(LPCTSTR csFullFileName, bool bLoadFile
 				Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_UnableConfig, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10132);
 			}
 		}
-	}
-
-	if (bOk && bLoadFile)
-	{
-		bOk = SVFileNameManagerClass::Instance().LoadItem(&m_ConfigFileName);
 	}
 
 	if (bOk)
@@ -5457,7 +5458,7 @@ void SVObserverApp::fileSaveAsSVX(const std::string& rFileName /*= std::string()
 			bOk = setConfigFullFileName(rFileName.c_str(), false);
 		}
 	}
-	if (bOk && !SvUl::CompareNoCase(m_ConfigFileName.GetExtension(), std::string(SvDef::cConfigExtension)))
+	if (bOk && !SvUl::CompareNoCase(m_ConfigFileName.GetExtension(), std::string(SvDef::cPackedConfigExtension)))
 	{
 		SaveConfigurationAndRelatedFiles(makeZipFile, isAutoSave);
 	}
@@ -5473,8 +5474,9 @@ void SVObserverApp::fileSaveAsSVX(const std::string& rFileName /*= std::string()
 bool SVObserverApp::DetermineConfigurationSaveName()
 {
 	SVFileNameClass svFileName = m_ConfigFileName;
-
-	svFileName.SetFileType(SV_SVX_CONFIGURATION_FILE_TYPE);
+	svFileName.SetFileType(SV_SVZ_CONFIGURATION_FILE_TYPE);
+	//Need to remove the *.svx files being visible
+	svFileName.SetFileExtensionFilterList(_T("SVResearch Configuration Files (*.svz)|*.svz||"));
 
 	if (getConfigPathName().empty() ||
 		0 == SvUl::CompareNoCase(getConfigPathName(), SvStl::GlobalPath::Inst().GetRunPath()))
@@ -5527,8 +5529,10 @@ void SVObserverApp::SaveConfigurationAndRelatedFiles(bool makeZipFile, bool isAu
 		}
 		else
 		{
-			m_ConfigFileName.SetPathName(SVFileNameManagerClass::Instance().GetRunPathName().c_str());
-			filePath = m_ConfigFileName.GetFullFileName();
+			m_SvxFileName.SetFileName(m_ConfigFileName.GetFileNameOnly().c_str());
+			m_SvxFileName.SetPathName(SVFileNameManagerClass::Instance().GetRunPathName().c_str());
+			m_SvxFileName.SetExtension(SvDef::cConfigExtension);
+			filePath = m_SvxFileName.GetFullFileName();
 		}
 		
 		//Before saving the configuration we need to first change the ending for the configuration file
@@ -5545,10 +5549,7 @@ void SVObserverApp::SaveConfigurationAndRelatedFiles(bool makeZipFile, bool isAu
 		if (makeZipFile && !isAutoSave)
 		{
 			SvDef::StringVector FileNameList = SVFileNameManagerClass::Instance().GetFileNameList();
-			m_ConfigFileName.SetPathName(SVFileNameManagerClass::Instance().GetConfigurationPathName().c_str());
 			filePath = m_ConfigFileName.GetFullFileName();
-			//When saving all files into 7 zip file replace ending to .svz
-			SvUl::searchAndReplace(filePath, SvDef::cConfigExtension, SvDef::cPackedConfigExtension);
 			if(!SvUl::makeZipFile(filePath, FileNameList, _T(""), false))
 			{
 				SvDef::StringVector msgList;
