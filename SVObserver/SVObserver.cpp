@@ -2315,6 +2315,14 @@ HRESULT SVObserverApp::OpenFile(LPCTSTR PathName)
 	std::string Extension = szExt;
 	std::string FileName{PathName};
 
+	// If not loading from the run path then delete all files in that path
+	if (0 != SvUl::CompareNoCase(std::string(PathName), SVFileNameManagerClass::Instance().GetRunPathName()))
+	{
+		// Clean up Execution Directory...
+		// Check path, create if necessary and delete contents...
+		InitPath(std::string(SVFileNameManagerClass::Instance().GetRunPathName() + "\\").c_str(), true, true);
+	}
+
 	//Is the file of type packed config then we need to first unzip the file into the run folder
 	if (0 == SvUl::CompareNoCase(Extension, std::string(SvDef::cPackedConfigExtension)))
 	{
@@ -2403,17 +2411,6 @@ HRESULT SVObserverApp::OpenSVXFile()
 		if (!bOk)
 		{
 			break;
-		}
-
-		//
-		// Check if we tried to load the SVC from 
-		// Execution path...("C:\RUN\")
-		//
-		if (0 != SvUl::CompareNoCase(std::string(m_SvxFileName.GetPathName()), SVFileNameManagerClass::Instance().GetRunPathName()))
-		{
-			// Clean up Execution Directory...
-			// Check path, create if necessary and delete contents...
-			InitPath(std::string(SVFileNameManagerClass::Instance().GetRunPathName() + "\\").c_str(), TRUE, TRUE);
 		}
 
 		try
