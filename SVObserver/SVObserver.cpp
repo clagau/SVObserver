@@ -2314,9 +2314,11 @@ HRESULT SVObserverApp::OpenFile(LPCTSTR PathName)
 	_tsplitpath(PathName, szDrive, szDir, szFile, szExt);
 	std::string Extension = szExt;
 	std::string FileName{PathName};
+	std::string loadPath {szDrive};
+	loadPath += szDir;
 
 	// If not loading from the run path then delete all files in that path
-	if (0 != SvUl::CompareNoCase(std::string(PathName), SVFileNameManagerClass::Instance().GetRunPathName()))
+	if (0 != SvUl::CompareNoCase(loadPath, std::string(SVFileNameManagerClass::Instance().GetRunPathName() + "\\")))
 	{
 		// Clean up Execution Directory...
 		// Check path, create if necessary and delete contents...
