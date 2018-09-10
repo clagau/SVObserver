@@ -163,7 +163,7 @@ struct SVInspectionInfoStruct
 
 	void setNextTriggerRecord();
 
-	void SetProductComplete();
+	void setTriggerRecordCompleted();
 	
 	SVInspectionProcess* pInspection;
 	SVProductInspectedState oInspectedState;
@@ -205,6 +205,11 @@ struct SVProductInfoStruct
 
 	void InitProductInfo();
 	void Reset();
+
+	/// Reset inspection info, except of the inspection with the GUID.
+	/// \param rExceptIPGuid [in] The inspection with this GUID will not be reset.
+	void resetIPInfos(const GUID& rExceptIPGuid);
+
 	void ClearIndexes();
 
 	HRESULT GetNextAvailableIndexes( SVDataManagerLockTypeEnum p_LockType );
@@ -221,6 +226,10 @@ struct SVProductInfoStruct
 	bool IsProductActive() const;
 	void SetProductActive();
 	void SetProductComplete();
+	
+	/// Set the TriggerRecord from write to readOnly for the required IP.
+	/// \param rIPGuid [in] Guid of the IP. If GUID_NULL then for inspection will done the action.
+	void setInspectionTriggerRecordComplete(const SVGUID& rIPGuid);
 
 	ProductWorkloadInformation GetWorkloadInformation(){return m_WorkloadInfo;}
 

@@ -160,6 +160,7 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed, SVProductInfoSt
 				pIPInfo->oInspectedState = GetToolSet()->GetResultList()->GetInspectionState();
 
 				pIPInfo->m_EndInspection = SvTl::GetTimeStamp();
+				pIPInfo->setTriggerRecordCompleted();
 
 #ifdef _DEBUG
 				//					std::string l_TempStateString = SvUl::Format( _T( "SVInspectionProcess::ProcessInspection|%s|TRI=%ld\n" ),
@@ -912,12 +913,14 @@ HRESULT SVInspectionProcess::StartProcess(SVProductInfoStruct *pProduct)
 		l_rIPInfo.m_CanProcess = false;
 		l_rIPInfo.m_InProcess = true;
 
-		SVProductInfoStruct l_TempProduct;
+		SVProductInfoStruct tempProduct;
 
-		hr = l_TempProduct.Assign(*pProduct);
+		hr = tempProduct.Assign(*pProduct);
+		//This copy of the product should not have the inspection infos of the other inspection. Otherwise it will be block the write-version of this TRs.
+		tempProduct.resetIPInfos(GetUniqueObjectID());
 		//The triggerRecord must be free here, because the Inspection has to decide when write-mode of this is TR is finished and close the instance to open an read version.
 		l_rIPInfo.m_triggerRecordWrite = nullptr;
-
+		
 		SVCameraImagePtrSet::iterator l_ImageIter = m_CameraImages.begin();
 
 		while (l_ImageIter != m_CameraImages.end())
@@ -944,9 +947,9 @@ HRESULT SVInspectionProcess::StartProcess(SVProductInfoStruct *pProduct)
 
 		// Set the flag in the Temp product because it gets reset when copying from the
 		// pProduct->m_svInspectionInfos to the Temp product. And that get put in the m_qInspectionsQueue.
-		l_TempProduct.m_svInspectionInfos[GetUniqueObjectID()].m_HasBeenQueued = true;
+		tempProduct.m_svInspectionInfos[GetUniqueObjectID()].m_HasBeenQueued = true;
 
-		if (S_OK == hr && m_qInspectionsQueue.AddTail(l_TempProduct))
+		if (S_OK == hr && m_qInspectionsQueue.AddTail(tempProduct))
 		{
 			SVObjectManagerClass::Instance().IncrementInspectionIndicator();
 
@@ -1348,6 +1351,7 @@ HRESULT SVInspectionProcess::RebuildInspection()
 		if (l_Product.empty())
 		{
 			ClearIndexesOfOtherInspections(&l_Product, SV_INSPECTION);
+			l_Product.setInspectionTriggerRecordComplete(GetUniqueObjectID());
 			LastProductUpdate(&l_Product);
 		}
 
@@ -1512,6 +1516,7 @@ void SVInspectionProcess::SingleRunModeLoop(bool p_Refresh)
 	l_svProduct.GetResultDataIndex(l_ResultDataDMIndexHandle);
 
 	RunInspection(l_ResultDataDMIndexHandle.GetIndex(), &l_svProduct);
+	l_svProduct.setInspectionTriggerRecordComplete(GetUniqueObjectID());
 
 	LastProductUpdate(&l_svProduct);
 
@@ -1708,7 +1713,7 @@ bool SVInspectionProcess::RunOnce(SVToolClass *p_psvTool)
 
 			p_psvTool->Run(runStatus);
 
-			l_Product.m_svInspectionInfos[GetUniqueObjectID()].SetProductComplete();
+			l_Product.m_svInspectionInfos[GetUniqueObjectID()].setTriggerRecordCompleted();
 
 			LastProductNotify();
 		}
@@ -1747,6 +1752,7 @@ HRESULT SVInspectionProcess::InitializeRunOnce()
 		{
 			l_Status = E_FAIL;
 		}
+		l_svProduct.setInspectionTriggerRecordComplete(GetUniqueObjectID());
 
 		l_Temp = LastProductUpdate(&l_svProduct);
 

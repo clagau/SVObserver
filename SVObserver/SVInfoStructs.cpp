@@ -425,11 +425,8 @@ void SVInspectionInfoStruct::setNextTriggerRecord()
 	m_triggerRecordComplete = nullptr;
 }
 
-void SVInspectionInfoStruct::SetProductComplete()
+void SVInspectionInfoStruct::setTriggerRecordCompleted()
 {
-	m_CanProcess = false;
-	m_InProcess = false;
-
 	if (nullptr != m_triggerRecordWrite)
 	{
 		m_triggerRecordComplete = SvTrc::getTriggerRecordControllerRWInstance().closeWriteAndOpenReadTriggerRecordObject(m_triggerRecordWrite);
@@ -471,6 +468,7 @@ SVProductInfoStruct::SVProductInfoStruct( const SVProductInfoStruct &p_rsvData )
 SVProductInfoStruct::~SVProductInfoStruct()
 {
 	SetProductComplete();
+	Reset();
 }
 
 const SVProductInfoStruct &SVProductInfoStruct::operator=( const SVProductInfoStruct &p_rsvData )
@@ -668,6 +666,17 @@ void SVProductInfoStruct::Reset()
 	}
 }// end Reset
 
+void SVProductInfoStruct::resetIPInfos(const GUID& rExceptIPGuid)
+{
+	for (auto& rIPPair : m_svInspectionInfos)
+	{
+		if (rExceptIPGuid != rIPPair.first)
+		{
+			rIPPair.second.Reset();
+		}
+	}
+}
+
 void SVProductInfoStruct::ClearIndexes()
 {
 	oPPQInfo.ClearIndexes();
@@ -807,12 +816,29 @@ void SVProductInfoStruct::SetProductComplete()
 		::InterlockedExchange( &m_ProductActive, 0 );
 	}
 
-	SVGUIDSVInspectionInfoStructMap::iterator l_svInspectionIter = m_svInspectionInfos.begin();
-	
-	while( l_svInspectionIter != m_svInspectionInfos.end() )
+	for(auto& rIpInfoPair: m_svInspectionInfos)
 	{
-		l_svInspectionIter->second.SetProductComplete();
-		++l_svInspectionIter;
+		rIpInfoPair.second.m_CanProcess = false;
+		rIpInfoPair.second.m_InProcess = false;
+	}
+}
+
+void SVProductInfoStruct::setInspectionTriggerRecordComplete(const SVGUID& rIPGuid)
+{
+	if (GUID_NULL != rIPGuid)
+	{
+		auto iter = m_svInspectionInfos.find(rIPGuid);
+		if (m_svInspectionInfos.end() != iter)
+		{
+			iter->second.setTriggerRecordCompleted();
+		}
+	}
+	else
+	{
+		for (auto& rIPInfoPair : m_svInspectionInfos)
+		{
+			rIPInfoPair.second.setTriggerRecordCompleted();
+		}
 	}
 }
 

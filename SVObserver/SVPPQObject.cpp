@@ -3160,7 +3160,7 @@ bool SVPPQObject::SetProductComplete(SVProductInfoStruct& p_rProduct)
 			Iter->second.ClearCameraInfo();
 		}
 	}
-
+	p_rProduct.setInspectionTriggerRecordComplete(GUID_NULL);
 	p_rProduct.SetProductComplete();
 
 	p_rProduct.m_ProductState += _T("|COMPLETE");
@@ -3197,7 +3197,7 @@ bool SVPPQObject::SetProductIncomplete(SVProductInfoStruct& p_rProduct)
 	{
 		Iter->second.ClearCameraInfo();
 	}
-
+	p_rProduct.setInspectionTriggerRecordComplete(GUID_NULL);
 	p_rProduct.SetProductComplete();
 
 	p_rProduct.m_ProductState += _T("|INCOMPLETE");
