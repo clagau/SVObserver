@@ -1544,7 +1544,7 @@ bool SVConfigurationObject::LoadAcquisitionDevice(SVTreeType& rTree, std::string
 								MsgCont.setMessage(SVMSG_SVO_IGNORE_EXCEPTION, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 								throw MsgCont;
 							}
-							else if (S_OK != CameraFileResult)
+							else if (S_OK != CameraFileResult && ERROR_FILE_NOT_FOUND != CameraFileResult)
 							{
 								SvStl::MessageContainer MsgCont;
 								SvDef::StringVector msgList;

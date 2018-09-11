@@ -154,7 +154,7 @@ HRESULT SVGigeCameraFileReader::ReadCameraFileImpl( SVDeviceParamCollection &rPa
 	else
 	{
 		// couldn't open file
-		hr = E_FAIL;
+		hr = ERROR_FILE_NOT_FOUND;
 	}
 	return hr;
 }
