@@ -7,9 +7,9 @@
 /// MonitorLIstDlg dialog  to Display Entries of one Monitorlist 
 //******************************************************************************
 #include "stdafx.h"
-#include "RRSView.h"
+#include "SMView.h"
 #include "MonitorLIstDlg.h"
-#include "RRSViewDlg.h"
+#include "SMViewDlg.h"
 #include "SVSharedMemoryLibrary\MonitorListCpy.h"
 #include "MonEntryDlg.h"
 #include "Definitions\SVObjectTypeInfoStruct.h"
@@ -61,7 +61,7 @@ void MonitorListDlg::DoDataExchange(CDataExchange* pDX)
 
 void MonitorListDlg::FillControl()
 {
-	CRRSViewDlg *pView = dynamic_cast<CRRSViewDlg *>(AfxGetMainWnd());
+	CSMViewDlg *pView = dynamic_cast<CSMViewDlg *>(AfxGetMainWnd());
 	if(!pView)
 	{
 		return;
@@ -120,7 +120,7 @@ void MonitorListDlg::OnBnClickedButtonProperties()
 	CString objectName = m_ListCtrl.GetItemText(sel,1); 
 	std::string name = objectName.GetString();
 
-	CRRSViewDlg *pView = dynamic_cast<CRRSViewDlg *>(AfxGetMainWnd());
+	CSMViewDlg *pView = dynamic_cast<CSMViewDlg *>(AfxGetMainWnd());
 	if(!pView)
 	{
 		return;

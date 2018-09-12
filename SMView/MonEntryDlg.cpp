@@ -7,7 +7,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include "RRSView.h"
+#include "SMView.h"
 #include "MonEntryDlg.h"
 #include "afxdialogex.h"
 

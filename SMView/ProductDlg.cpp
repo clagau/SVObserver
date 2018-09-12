@@ -7,7 +7,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include "RRSView.h"
+#include "SMView.h"
 #include "ProductDlg.h"
 #include "afxdialogex.h"
 #include "SVSharedMemoryLibrary\MLProduct.h"

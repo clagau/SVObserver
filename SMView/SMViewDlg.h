@@ -1,6 +1,6 @@
 //*****************************************************************************
 /// \copyright COPYRIGHT (c) 2017,2017 by Seidenader Maschinenbau GmbH
-/// \file RRSViewDlg.h 
+/// \file SMViewDlg.h 
 /// All Rights Reserved 
 //*****************************************************************************
 
@@ -21,14 +21,14 @@ class MonitorListMap;
 enum CallBackType;
 
 //! CShareViewDlg dialog application's main dialog
-class CRRSViewDlg : public CDialogEx
+class CSMViewDlg : public CDialogEx
 {
 // Construction
 public:
-	CRRSViewDlg(CWnd* pParent = NULL);	// standard constructor
+	CSMViewDlg(CWnd* pParent = NULL);	// standard constructor
 
 // Dialog Data
-	enum { IDD = IDD_RRSVIEW_DIALOG };
+	enum { IDD = IDD_SMView_DIALOG };
 
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support

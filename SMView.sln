@@ -3,10 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVSocketLibrary", "SVSocketLibrary\SVSocketLibrary.vcxproj", "{3275BAC6-AC2C-4D44-BCE3-6A7131D0F59D}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JsonLib", "JsonLib\JsonLib.vcxproj", "{C16749CD-4A36-46CF-BD75-9BCABB510A70}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVSharedMemoryLibrary", "SVSharedMemoryLibrary\SVSharedMemoryLibrary.vcxproj", "{B479E2E3-2B4F-4E2C-A6AD-A0A03579FE59}"
 	ProjectSection(ProjectDependencies) = postProject
 		{B022279A-59CD-41C3-9EA5-F9721FECAFDD} = {B022279A-59CD-41C3-9EA5-F9721FECAFDD}
@@ -28,7 +24,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVStatusLibrary", "SVStatus
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVMatroxLibrary", "SVMatroxLibrary\SVMatroxLibrary.vcxproj", "{91C2B904-B670-4ED1-A991-8418EF11E26B}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RRSView", "RRSView\RRSView.vcxproj", "{9BEE5F0D-27E9-4A2B-879A-FC084EA8FB15}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SMView", "SMView\SMView.vcxproj", "{9BEE5F0D-27E9-4A2B-879A-FC084EA8FB15}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,22 +34,6 @@ Global
 		Unicode Release|x64 = Unicode Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{3275BAC6-AC2C-4D44-BCE3-6A7131D0F59D}.Debug|x64.ActiveCfg = Debug|x64
-		{3275BAC6-AC2C-4D44-BCE3-6A7131D0F59D}.Debug|x64.Build.0 = Debug|x64
-		{3275BAC6-AC2C-4D44-BCE3-6A7131D0F59D}.Release|x64.ActiveCfg = Release|x64
-		{3275BAC6-AC2C-4D44-BCE3-6A7131D0F59D}.Release|x64.Build.0 = Release|x64
-		{3275BAC6-AC2C-4D44-BCE3-6A7131D0F59D}.Unicode Debug|x64.ActiveCfg = Debug|x64
-		{3275BAC6-AC2C-4D44-BCE3-6A7131D0F59D}.Unicode Debug|x64.Build.0 = Debug|x64
-		{3275BAC6-AC2C-4D44-BCE3-6A7131D0F59D}.Unicode Release|x64.ActiveCfg = Release|x64
-		{3275BAC6-AC2C-4D44-BCE3-6A7131D0F59D}.Unicode Release|x64.Build.0 = Release|x64
-		{C16749CD-4A36-46CF-BD75-9BCABB510A70}.Debug|x64.ActiveCfg = Debug|x64
-		{C16749CD-4A36-46CF-BD75-9BCABB510A70}.Debug|x64.Build.0 = Debug|x64
-		{C16749CD-4A36-46CF-BD75-9BCABB510A70}.Release|x64.ActiveCfg = Release|x64
-		{C16749CD-4A36-46CF-BD75-9BCABB510A70}.Release|x64.Build.0 = Release|x64
-		{C16749CD-4A36-46CF-BD75-9BCABB510A70}.Unicode Debug|x64.ActiveCfg = Debug|x64
-		{C16749CD-4A36-46CF-BD75-9BCABB510A70}.Unicode Debug|x64.Build.0 = Debug|x64
-		{C16749CD-4A36-46CF-BD75-9BCABB510A70}.Unicode Release|x64.ActiveCfg = Release|x64
-		{C16749CD-4A36-46CF-BD75-9BCABB510A70}.Unicode Release|x64.Build.0 = Release|x64
 		{B479E2E3-2B4F-4E2C-A6AD-A0A03579FE59}.Debug|x64.ActiveCfg = Debug|x64
 		{B479E2E3-2B4F-4E2C-A6AD-A0A03579FE59}.Debug|x64.Build.0 = Debug|x64
 		{B479E2E3-2B4F-4E2C-A6AD-A0A03579FE59}.Release|x64.ActiveCfg = Release|x64

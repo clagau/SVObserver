@@ -1,7 +1,7 @@
 
 //*****************************************************************************
 /// \copyright COPYRIGHT (c) 2017,2017 by Seidenader Maschinenbau GmbH
-/// \file RRSView.cpp 
+/// \file SMView.cpp 
 /// All Rights Reserved 
 //*****************************************************************************
 
@@ -11,8 +11,8 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include "RRSView.h"
-#include "RRSViewDlg.h"
+#include "SMView.h"
+#include "SMViewDlg.h"
 #define M_MIL_USE_SAFE_TYPE 0
 #include <mil.h>
 
@@ -23,14 +23,14 @@
 
 // CShareViewApp
 
-BEGIN_MESSAGE_MAP(CRRSViewApp, CWinApp)
+BEGIN_MESSAGE_MAP(CSMViewApp, CWinApp)
 	ON_COMMAND(ID_HELP, &CWinApp::OnHelp)
 END_MESSAGE_MAP()
 
 
 // CShareViewApp construction
 
-CRRSViewApp::CRRSViewApp()
+CSMViewApp::CSMViewApp()
 {
 	// TODO: add construction code here,
 	// Place all significant initialization in InitInstance
@@ -39,12 +39,12 @@ CRRSViewApp::CRRSViewApp()
 
 // The one and only CShareViewApp object
 
-CRRSViewApp theApp;
+CSMViewApp theApp;
 
 
 // CShareViewApp initialization
 
-BOOL CRRSViewApp::InitInstance()
+BOOL CSMViewApp::InitInstance()
 {
 	// InitCommonControlsEx() is required on Windows XP if an application
 	// manifest specifies use of ComCtl32.dll version 6 or later to enable
@@ -60,7 +60,7 @@ BOOL CRRSViewApp::InitInstance()
 	SVMatroxInt AppId = MappAlloc(M_DEFAULT, M_NULL);
 	if (AppId == M_NULL)
 	{
-		AfxMessageBox(_T("Mil System could not be allocated. RRSView will be closed"));
+		AfxMessageBox(_T("Mil System could not be allocated. SMView will be closed"));
 		return FALSE;
 	}
 
@@ -82,7 +82,7 @@ BOOL CRRSViewApp::InitInstance()
 	// such as the name of your company or organization
 	SetRegistryKey(_T("Local AppWizard-Generated Applications"));
 
-	CRRSViewDlg dlg;
+	CSMViewDlg dlg;
 	m_pMainWnd = &dlg;
 	INT_PTR nResponse = dlg.DoModal();
 	if (nResponse == IDOK)

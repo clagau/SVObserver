@@ -1,6 +1,6 @@
 //*****************************************************************************
 /// \copyright COPYRIGHT (c) 2017,2017 by Seidenader Maschinenbau GmbH
-/// \file RRSViewDlg.cpp 
+/// \file SMViewDlg.cpp 
 /// All Rights Reserved 
 //*****************************************************************************
 
@@ -10,8 +10,8 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include "RRSView.h"
-#include "RRSViewDlg.h"
+#include "SMView.h"
+#include "SMViewDlg.h"
 #include "SVSharedMemoryLibrary\ShareEvents.h"
 #include "SVSharedMemoryLibrary\MonitorListCpy.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -63,13 +63,13 @@ END_MESSAGE_MAP()
 
 
 
-CRRSViewDlg::CRRSViewDlg(CWnd* pParent /*=NULL*/)
-	: CDialogEx(CRRSViewDlg::IDD, pParent)
+CSMViewDlg::CSMViewDlg(CWnd* pParent /*=NULL*/)
+	: CDialogEx(CSMViewDlg::IDD, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 
-void CRRSViewDlg::DoDataExchange(CDataExchange* pDX)
+void CSMViewDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_READY_VALUE, m_ReadyValueCtrl);
@@ -77,31 +77,31 @@ void CRRSViewDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT_TRIGGER, m_EditTrigger);
 }
 
-BEGIN_MESSAGE_MAP(CRRSViewDlg, CDialogEx)
+BEGIN_MESSAGE_MAP(CSMViewDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_MESSAGE(WM_REFRESH, OnRefresh)
 
-	ON_BN_CLICKED(IDC_BUTTON_SHOW, &CRRSViewDlg::OnBnClickedButtonShow)
-	ON_BN_CLICKED(IDC_BUTTON_EXIT, &CRRSViewDlg::OnBnClickedButtonExit)
-	ON_BN_CLICKED(IDC_BUT_GETPRODUCT, &CRRSViewDlg::OnBnClickedButGetproduct)
-	ON_BN_CLICKED(IDC_BUT_GETFAILSTATUS, &CRRSViewDlg::OnBnClickedButGetfailstatus)
-	ON_BN_CLICKED(IDC_BUT_REJECT, &CRRSViewDlg::OnBnClickedButReject)
+	ON_BN_CLICKED(IDC_BUTTON_SHOW, &CSMViewDlg::OnBnClickedButtonShow)
+	ON_BN_CLICKED(IDC_BUTTON_EXIT, &CSMViewDlg::OnBnClickedButtonExit)
+	ON_BN_CLICKED(IDC_BUT_GETPRODUCT, &CSMViewDlg::OnBnClickedButGetproduct)
+	ON_BN_CLICKED(IDC_BUT_GETFAILSTATUS, &CSMViewDlg::OnBnClickedButGetfailstatus)
+	ON_BN_CLICKED(IDC_BUT_REJECT, &CSMViewDlg::OnBnClickedButReject)
 END_MESSAGE_MAP()
 
 //enum ECOL { eName = 0, ePPQ, eIsActive, eRejectDepth, eProductDepth, eProductFilter, eImageCount, ePcount, };
-LPCTSTR CRRSViewDlg::ColHeader[] = { _T("Name"),_T("PPQ"), _T("IsActive"), _T("RejectDepth"), _T("ProductDepth"), _T("Filter"), _T("ImCount")};
+LPCTSTR CSMViewDlg::ColHeader[] = { _T("Name"),_T("PPQ"), _T("IsActive"), _T("RejectDepth"), _T("ProductDepth"), _T("Filter"), _T("ImCount")};
 // CShareViewDlg message handlers
 
-bool  CRRSViewDlg::PostRefresh(DWORD par)
+bool  CSMViewDlg::PostRefresh(DWORD par)
 {
 	PostMessage(WM_REFRESH, par, 0);
 	return true;
 
 }
 
-BOOL CRRSViewDlg::OnInitDialog()
+BOOL CSMViewDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
@@ -126,7 +126,7 @@ BOOL CRRSViewDlg::OnInitDialog()
 	}
 
 	m_EditTrigger.SetWindowText("-1");
-	boost::function<bool(DWORD)> f = boost::bind(&CRRSViewDlg::PostRefresh, this, _1);
+	boost::function<bool(DWORD)> f = boost::bind(&CSMViewDlg::PostRefresh, this, _1);
 	SvSml::ShareEvents::GetInstance().SetCallbackFunction(f);
 	SvSml::ShareEvents::GetInstance().StartWatch();
 
@@ -143,7 +143,7 @@ BOOL CRRSViewDlg::OnInitDialog()
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
-void CRRSViewDlg::OnSysCommand(UINT nID, LPARAM lParam)
+void CSMViewDlg::OnSysCommand(UINT nID, LPARAM lParam)
 {
 	if ((nID & 0xFFF0) == IDM_ABOUTBOX)
 	{
@@ -160,7 +160,7 @@ void CRRSViewDlg::OnSysCommand(UINT nID, LPARAM lParam)
 //  to draw the icon.  For MFC applications using the document/view model,
 //  this is automatically done for you by the framework.
 
-void CRRSViewDlg::OnPaint()
+void CSMViewDlg::OnPaint()
 {
 	if (IsIconic())
 	{
@@ -187,12 +187,12 @@ void CRRSViewDlg::OnPaint()
 
 // The system calls this function to obtain the cursor to display while the user drags
 //  the minimized window.
-HCURSOR CRRSViewDlg::OnQueryDragIcon()
+HCURSOR CSMViewDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-void CRRSViewDlg::UpdateControls(bool isready)
+void CSMViewDlg::UpdateControls(bool isready)
 {
 	if (isready)
 	{
@@ -233,7 +233,7 @@ void CRRSViewDlg::UpdateControls(bool isready)
 
 
 }
-LRESULT  CRRSViewDlg::OnRefresh(WPARAM wParam, LPARAM lParam)
+LRESULT  CSMViewDlg::OnRefresh(WPARAM wParam, LPARAM lParam)
 {
 
 	UNREFERENCED_PARAMETER(lParam);
@@ -264,7 +264,7 @@ LRESULT  CRRSViewDlg::OnRefresh(WPARAM wParam, LPARAM lParam)
 }
 
 
-void CRRSViewDlg::OnBnClickedButtonShow()
+void CSMViewDlg::OnBnClickedButtonShow()
 {
 
 	if (m_MonListsCtrl.GetItemCount() > 0)
@@ -275,22 +275,22 @@ void CRRSViewDlg::OnBnClickedButtonShow()
 
 }
 
-void CRRSViewDlg::OnBnClickedButtonExit()
+void CSMViewDlg::OnBnClickedButtonExit()
 {
 
 	EndDialog(0);
 }
-void CRRSViewDlg::OnBnClickedButGetproduct()
+void CSMViewDlg::OnBnClickedButGetproduct()
 {
 	DisplayProduct(false);
 }
-void CRRSViewDlg::OnBnClickedButReject()
+void CSMViewDlg::OnBnClickedButReject()
 {
 	DisplayProduct(true);
 }
 
 
-void CRRSViewDlg::DisplayProduct(bool isreject)
+void CSMViewDlg::DisplayProduct(bool isreject)
 {
 	int sel = m_MonListsCtrl.GetSelectionMark();
 	if (sel < 0 || sel >= m_MonListsCtrl.GetItemCount())
@@ -317,7 +317,7 @@ void CRRSViewDlg::DisplayProduct(bool isreject)
 }
 
 
-void CRRSViewDlg::OnBnClickedButGetfailstatus()
+void CSMViewDlg::OnBnClickedButGetfailstatus()
 {
 	int sel = m_MonListsCtrl.GetSelectionMark();
 	if (sel < 0 || sel >= m_MonListsCtrl.GetItemCount())
