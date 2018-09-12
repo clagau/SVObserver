@@ -25,6 +25,7 @@
 #include "EnvelopeUtil.h"
 #include "OneOfUtil.h"
 #include "Task.h"
+#include "SVLogLibrary/Logging.h"
 #include "SVProtoBuf/envelope.h"
 
 namespace SvRpc
@@ -49,7 +50,7 @@ public:
 		TReq req;
 		if (!m_ReqUnwrapper.unwrap(req, std::move(envelope)))
 		{
-			BOOST_LOG_TRIVIAL(warning) << "Envelope with unknown payload!";
+			SV_LOG_GLOBAL(warning) << "Envelope with unknown payload!";
 			task.error(build_error(SvPenv::ErrorCode::internalError, "Unknown payload"));
 			return;
 		}

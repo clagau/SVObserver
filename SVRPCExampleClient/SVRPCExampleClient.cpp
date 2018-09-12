@@ -17,9 +17,9 @@
 #include <thread>
 
 #include <boost/asio.hpp>
-#include <boost/log/trivial.hpp>
 #include <boost/thread.hpp>
 
+#include "SVLogLibrary/Logging.h"
 #include "SVRPCExampleLibrary/format.h"
 #include "SVRPCLibrary/RPCClient.h"
 #include "SVRPCLibrary/SimpleClient.h"
@@ -44,7 +44,7 @@ int main()
 			req.set_name("Homer Simpson");
 			SimpleClient<ApplicationMessages, HelloWorldReq, HelloWorldRes> client(*pRpcClient);
 			auto res = client.request(std::move(req), RequestTimeout).get();
-			BOOST_LOG_TRIVIAL(info) << res.message();
+			SV_LOG_GLOBAL(info) << res.message();
 		}
 		
 		/// Alternative
@@ -58,7 +58,7 @@ int main()
 			SimpleClient<ApplicationMessages, HelloWorldReq, HelloWorldRes> client2(*pRpcClient);
 			client2.request(std::move(req), task, RequestTimeout);
 			HelloWorldRes res2 = (promise->get_future()).get();
-			BOOST_LOG_TRIVIAL(info) << res2.message();
+			SV_LOG_GLOBAL(info) << res2.message();
 		}
 		/// Request answered by Router
 		{
@@ -66,7 +66,7 @@ int main()
 			req.set_name("Bart Simpson");
 			SimpleClient<ApplicationMessages, HelloRouterReq, HelloRouterRes> client(*pRpcClient);
 			auto res = client.request(std::move(req), RequestTimeout).get();
-			BOOST_LOG_TRIVIAL(info) << res.message();*/
+			SV_LOG_GLOBAL(info) << res.message();*/
 		}
 		/// Streaming
 		{
@@ -75,7 +75,7 @@ int main()
 			auto nextFkt = [&lastcounter](GetCounterStreamResponse&& resp)-> std::future<void>
 			{
 				lastcounter = resp.counter();
-				BOOST_LOG_TRIVIAL(info) << resp.counter();
+				SV_LOG_GLOBAL(info) << resp.counter();
 				return std::future<void>();
 			};
 			auto FinishFkt = [CounterPromise, &lastcounter]()
@@ -97,12 +97,12 @@ int main()
 			ctx.cancel();
 
 			auto res = CounterPromise->get_future().get();
-			BOOST_LOG_TRIVIAL(info) << "Finish last counter was " << res;
+			SV_LOG_GLOBAL(info) << "Finish last counter was " << res;
 		}
 	}
 	catch (std::exception& e)
 	{
-		BOOST_LOG_TRIVIAL(error) << e.what();
+		SV_LOG_GLOBAL(error) << e.what();
 	}
 	system("pause");
 	return 0;

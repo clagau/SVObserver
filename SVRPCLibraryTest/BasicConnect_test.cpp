@@ -1,7 +1,6 @@
 #include "stdafx.h"
 
 #include <boost/asio.hpp>
-#include <boost/log/trivial.hpp>
 #include <boost/test/unit_test.hpp>
 
 #include <SVHttpLibrary/HttpServer.h>

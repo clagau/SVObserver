@@ -8,15 +8,17 @@
 
 #pragma once
 
-#include "WebsocketLibrary/Logging.h"
+#include "SVAuthLibrary/AuthManagerSettings.h"
 #include "SVHttpLibrary/HttpServerSettings.h"
+#include "SVLogLibrary/LogSettings.h"
 
 namespace SvOgw
 {
 struct Settings
 {
 	bool dummySharedMemory {false};
-	SvWsl::LogSettings logSettings;
+	SvLog::LogSettings logSettings;
 	SvHttp::HttpServerSettings httpSettings;
+	SvAuth::AuthManagerSettings authSettings;
 };
 }// namespace SvOgw

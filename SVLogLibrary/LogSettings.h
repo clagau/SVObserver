@@ -1,17 +1,16 @@
 //******************************************************************************
 /// \copyright (c) 2017,2017 by Seidenader Maschinenbau GmbH
-/// \file Logging.h
+/// \file LogSettings.h
 /// All Rights Reserved
 //******************************************************************************
-/// Helper for initializing the global Boost.Log V2 logger.
-///
-/// When initialized, you can use the common boost log macros, e.g.
-///   BOOST_LOG_TRIVIAL(info) << "hello world";
+/// Settings for the global logger
 //******************************************************************************
 
 #pragma once
 
-namespace SvWsl
+#include <string>
+
+namespace SvLog
 {
 struct LogSettings
 {
@@ -40,6 +39,5 @@ struct LogSettings
 	/// The source used for the Event Log events.
 	std::string windows_event_log_source {""};
 };
-
-extern void init_logging(const LogSettings& settings);
-} // namespace SvWsl
+} // namespace SvLog
+  

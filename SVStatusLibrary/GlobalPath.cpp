@@ -87,6 +87,8 @@ namespace SvStl
 			m_Hardware_ini.append(_T("\\Hardware.ini"));
 			m_Utility_ini = m_IniFolder;
 			m_Utility_ini.append(_T("\\SVUtility.ini"));
+			m_SVOGateway_ini = m_IniFolder;
+			m_SVOGateway_ini.append(_T("\\SVOGateway.ini"));
 
 			m_IsInitializedIni = true;
 		}
@@ -109,6 +111,12 @@ namespace SvStl
 	{
 		InitializeIniFolder();
 		return m_SVIM_ini.c_str();
+	}
+
+	LPCTSTR GlobalPath::GetSVOGatewayIniPath()
+	{
+		InitializeIniFolder();
+		return m_SVOGateway_ini.c_str();
 	}
 
 	LPCTSTR GlobalPath::GetHardwareIniPath()

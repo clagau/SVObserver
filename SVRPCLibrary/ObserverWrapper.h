@@ -21,13 +21,12 @@
 //Moved to precompiled header: #include <functional>
 //Moved to precompiled header: #include <memory>
 
-#include <boost/log/trivial.hpp>
-
 #include "EnvelopeUtil.h"
 #include "ErrorUtil.h"
 #include "Observer.h"
 #include "OneOfUtil.h"
 #include "ServerStreamContext.h"
+#include "SVLogLibrary/Logging.h"
 #include "SVProtoBuf/envelope.h"
 
 namespace SvRpc
@@ -50,7 +49,7 @@ public:
 		TReq req;
 		if (!m_ReqUnwrapper.unwrap(req, std::move(envelope)))
 		{
-			BOOST_LOG_TRIVIAL(warning) << "Envelope with unknown payload!";
+			SV_LOG_GLOBAL(warning) << "Envelope with unknown payload!";
 			observer.error(build_error(SvPenv::ErrorCode::internalError, "Unknown payload"));
 			return;
 		}

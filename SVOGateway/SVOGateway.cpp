@@ -18,13 +18,13 @@
 #include <mil.h>
 #include <conio.h>
 
-#include "WebsocketLibrary/Logging.h"
+#include "SVLogLibrary/Logging.h"
 #include "WebsocketLibrary/Definition.h"
 #include "SharedMemoryAccess.h"
 #include "ServerRequestHandler.h"
 #include "SettingsLoader.h"
-#include "SVAuth/AuthManager.h"
-#include "SVAuth/RestHandler.h"
+#include "SVAuthLibrary/AuthManager.h"
+#include "SVAuthLibrary/RestHandler.h"
 #include "SVHttpLibrary/HttpServer.h"
 #include "SVRPCLibrary/Router.h"
 #include "SVRPCLibrary/RPCServer.h"
@@ -62,28 +62,30 @@ bool on_http_request(SvAuth::RestHandler& rRestHandler, const SvHttp::HttpReques
 
 void StartWebServer(DWORD argc, LPTSTR  *argv)
 {
+	SvLog::bootstrap_logging();
+
 	SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 	Exception.setMessage(SVMSG_SVGateway_2_GENERAL_INFORMATIONAL, SvStl::Tid_Started, SvStl::SourceFileParams(StdMessageParams));
 	try
 	{
 		SvOgw::Settings settings;
 		SvOgw::SettingsLoader settingsLoader;
-		settingsLoader.loadFromRegistry(settings);
+		settingsLoader.loadFromIni(settings);
 		//@Todo[MEC][8.00] [08.03.2018] could also be in Registry
 		settings.httpSettings.Host = "0.0.0.0";
-		init_logging(settings.logSettings);
-		BOOST_LOG_TRIVIAL(info) << "WebsocketServer is starting";
+		SvLog::init_logging(settings.logSettings);
+		SV_LOG_GLOBAL(info) << "WebsocketServer is starting";
 
-		BOOST_LOG_TRIVIAL(debug) << "Initializing Matrox Image Library";
+		SV_LOG_GLOBAL(debug) << "Initializing Matrox Image Library";
 		// Allocate MilSystem
 		MIL_ID MilId = MappAlloc(M_DEFAULT, M_NULL);
-		BOOST_LOG_TRIVIAL(debug) << "Matrox Image library was successfully initialized";
+		SV_LOG_GLOBAL(debug) << "Matrox Image library was successfully initialized";
 		if (M_NULL == MilId)
 		{
 			throw std::exception("MapAlloc failed");
 		}
 
-		SvAuth::AuthManager authManager;
+		SvAuth::AuthManager authManager(settings.authSettings);
 		SvAuth::RestHandler restHandler(authManager);
 
 		auto sharedMemoryAccess = std::make_unique<SvOgw::SharedMemoryAccess>();
@@ -129,7 +131,7 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 	}
 	catch (std::exception& e)
 	{
-		BOOST_LOG_TRIVIAL(error) << e.what();
+		SV_LOG_GLOBAL(error) << e.what();
 	}
 	Exception.setMessage(SVMSG_SVGateway_2_GENERAL_INFORMATIONAL, SvStl::Tid_Stopped, SvStl::SourceFileParams(StdMessageParams));
 }

@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{E7DFC94C-271B-42E0-B86A-F39CCE1A50FF}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>SVAuth</RootNamespace>
+    <RootNamespace>SVAuthLibrary</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -166,12 +166,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="AuthManager.h" />
+    <ClInclude Include="AuthManagerSettings.h" />
     <ClInclude Include="Crypto.h" />
     <ClInclude Include="Jwt.h" />
     <ClInclude Include="JwtFactory.h" />
     <ClInclude Include="RestHandler.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="UserDatabase.h" />
+    <ClInclude Include="UserDatabaseLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AuthManager.cpp" />
@@ -185,6 +187,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="UserDatabase.cpp" />
+    <ClCompile Include="UserDatabaseLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Jwt.inl" />

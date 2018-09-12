@@ -68,7 +68,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVOGateway", "SVOGateway\SV
 		{B479E2E3-2B4F-4E2C-A6AD-A0A03579FE59} = {B479E2E3-2B4F-4E2C-A6AD-A0A03579FE59}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVAuth", "SVAuth\SVAuth.vcxproj", "{E7DFC94C-271B-42E0-B86A-F39CCE1A50FF}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVAuthLibrary", "SVAuthLibrary\SVAuthLibrary.vcxproj", "{E7DFC94C-271B-42E0-B86A-F39CCE1A50FF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

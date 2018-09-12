@@ -15,13 +15,13 @@
 #include <thread>
 
 #include <boost/asio.hpp>
-#include <boost/log/trivial.hpp>
 
-#include "SVAuth/AuthManager.h"
-#include "SVAuth/RestHandler.h"
+#include "SVAuthLibrary/AuthManager.h"
+#include "SVAuthLibrary/RestHandler.h"
 #include "SVHttpLibrary/HttpServer.h"
 #include "SvHttpLibrary/HttpRequest.h"
 #include "SvHttpLibrary/HttpResponse.h"
+#include "SVLogLibrary/Logging.h"
 #include "SVProtoBuf/SVRC.h"
 #include "SVRPCExampleLibrary/format.h"
 #include "SVRPCExampleServer/SeidenaderLogo100px.h"
@@ -50,7 +50,7 @@ void register_auth_handler(RequestHandler& requestHandler)
 	{
 		if (!token.empty())
 		{
-			BOOST_LOG_TRIVIAL(info) << "Incoming request with token: " << token;
+			SV_LOG_GLOBAL(info) << "Incoming request with token: " << token;
 		}
 		return true;
 	});
@@ -186,7 +186,7 @@ static void register_dummy_handler(RequestHandler& requestHandler)
 		GetVersionResponse>(
 		[](GetGatewayVersionRequest&& req, Task<GetVersionResponse> task)
 	{
-		BOOST_LOG_TRIVIAL(info) << "GetGatewayVersionRequest";
+		SV_LOG_GLOBAL(info) << "GetGatewayVersionRequest";
 		GetVersionResponse res;
 		res.set_version("1.0.0");
 		task.finish(std::move(res));
@@ -198,7 +198,7 @@ static void register_dummy_handler(RequestHandler& requestHandler)
 		GetVersionResponse>(
 		[](GetSVObserverVersionRequest&& req, Task<GetVersionResponse> task)
 	{
-		BOOST_LOG_TRIVIAL(info) << "GetSVObserverVersionRequest";
+		SV_LOG_GLOBAL(info) << "GetSVObserverVersionRequest";
 		GetVersionResponse res;
 		res.set_version("1.0.0");
 		task.finish(std::move(res));
@@ -210,7 +210,7 @@ static void register_dummy_handler(RequestHandler& requestHandler)
 		QueryListNameResponse>(
 		[](QueryListNameRequest&& req, Task<QueryListNameResponse> task)
 	{
-		BOOST_LOG_TRIVIAL(info) << "QueryListNameRequest";
+		SV_LOG_GLOBAL(info) << "QueryListNameRequest";
 		QueryListNameResponse res;
 		res.add_listname("monitorlist1");
 		res.add_listname("monitorlist2");
@@ -223,7 +223,7 @@ static void register_dummy_handler(RequestHandler& requestHandler)
 		GetProductResponse>(
 		[](GetProductRequest&& req, Task<GetProductResponse> task)
 	{
-		BOOST_LOG_TRIVIAL(info) << "GetProductRequest";
+		SV_LOG_GLOBAL(info) << "GetProductRequest";
 		GetProductResponse res;
 		Product& prod = *res.mutable_productitem();
 		prod.set_trigger(0);
@@ -248,7 +248,7 @@ static void register_dummy_handler(RequestHandler& requestHandler)
 		GetRejectResponse>(
 		[](GetRejectRequest&& req, Task<GetRejectResponse> task)
 	{
-		BOOST_LOG_TRIVIAL(info) << "GetRejectRequest";
+		SV_LOG_GLOBAL(info) << "GetRejectRequest";
 		GetRejectResponse res;
 		Product& prod = *res.mutable_productitem();
 		static uint32_t trigger_count = 0;
@@ -269,7 +269,7 @@ static void register_dummy_handler(RequestHandler& requestHandler)
 		GetImageFromIdResponse>(
 		[](GetImageFromIdRequest&& req, Task<GetImageFromIdResponse> task)
 	{
-		BOOST_LOG_TRIVIAL(info) << "GetImageFromIdRequest";
+		SV_LOG_GLOBAL(info) << "GetImageFromIdRequest";
 		GetImageFromIdResponse res;
 		auto& image = *res.mutable_imagedata();
 		getImageForId(image, req.id());
@@ -282,7 +282,7 @@ static void register_dummy_handler(RequestHandler& requestHandler)
 		GetImageStreamFromIdResponse>(
 		[](GetImageStreamFromIdRequest&& req, Observer<GetImageStreamFromIdResponse> observer, std::shared_ptr<ServerStreamContext> ctx)
 	{
-		BOOST_LOG_TRIVIAL(info) << "GetImageStreamFromIdRequest";
+		SV_LOG_GLOBAL(info) << "GetImageStreamFromIdRequest";
 		for (auto i = 0u; i < req.count() && !ctx->isCancelled(); ++i)
 		{
 			GetImageStreamFromIdResponse res;
@@ -304,7 +304,7 @@ static void register_client_chunk_handler(RequestHandler& requestHandler)
 		SaveClientChunkResponse>(
 		[](SaveClientChunkRequest&& req, Task<SaveClientChunkResponse> task)
 	{
-		BOOST_LOG_TRIVIAL(info) << "SaveClientChunkRequest";
+		SV_LOG_GLOBAL(info) << "SaveClientChunkRequest";
 		const auto& user = req.user();
 		const auto& oldRevision = req.revision();
 		const auto newRevision = oldRevision + 1;
@@ -314,7 +314,7 @@ static void register_client_chunk_handler(RequestHandler& requestHandler)
 			auto& hdl = it->second;
 			if (hdl.revision != oldRevision)
 			{
-				BOOST_LOG_TRIVIAL(warning)
+				SV_LOG_GLOBAL(warning)
 					<< "Revision in SaveClientChunkRequest does not match: "
 					<< oldRevision << " != " << hdl.revision;
 				auto error = build_error(SvPenv::badRequest, "Provided revision does not match");
@@ -333,7 +333,7 @@ static void register_client_chunk_handler(RequestHandler& requestHandler)
 		{
 			if (oldRevision != 0)
 			{
-				BOOST_LOG_TRIVIAL(warning)
+				SV_LOG_GLOBAL(warning)
 					<< "Revision in SaveClientChunkRequest is not zero for initial save.";
 				task.error(build_error(SvPenv::badRequest, "Initial save must use revision 0"));
 				return;
@@ -356,7 +356,7 @@ static void register_client_chunk_handler(RequestHandler& requestHandler)
 		LoadClientChunkResponse>(
 		[](LoadClientChunkRequest&& req, Task<LoadClientChunkResponse> task)
 	{
-		BOOST_LOG_TRIVIAL(info) << "LoadClientChunkRequest";
+		SV_LOG_GLOBAL(info) << "LoadClientChunkRequest";
 		const auto& user = req.user();
 		const auto& revision = req.revision();
 		auto it = s_clientChunks.find(user);
@@ -365,7 +365,7 @@ static void register_client_chunk_handler(RequestHandler& requestHandler)
 			auto& hdl = it->second;
 			if (revision > 0 && revision != hdl.revision)
 			{
-				BOOST_LOG_TRIVIAL(warning)
+				SV_LOG_GLOBAL(warning)
 					<< "Revision in LoadClientChunkRequest does not match: "
 					<< revision << " != " << hdl.revision;
 				task.error(build_error(SvPenv::badRequest, "Provided revision does not match"));
@@ -378,7 +378,7 @@ static void register_client_chunk_handler(RequestHandler& requestHandler)
 		}
 		else
 		{
-			BOOST_LOG_TRIVIAL(info) << "Request load for unknown user. Returning empty chunk.";
+			SV_LOG_GLOBAL(info) << "Request load for unknown user. Returning empty chunk.";
 			LoadClientChunkResponse res;
 			res.set_revision(0);
 			res.set_chunk(s_emptyChunk);
@@ -427,7 +427,7 @@ static void register_log_handler(RequestHandler& requestHandler)
 		EmptyResponse>(
 		[](StoreClientLogsRequest&& req, Task<EmptyResponse> task)
 	{
-		BOOST_LOG_TRIVIAL(info) << "StoreClientLogsRequest";
+		SV_LOG_GLOBAL(info) << "StoreClientLogsRequest";
 		const auto& client = req.client();
 		for (const auto& logEntry : req.logs())
 		{
@@ -451,7 +451,8 @@ int main()
 
 		auto rpcServer = std::make_unique<RPCServer>(&requestHandler);
 
-		SvAuth::AuthManager authManager;
+		SvAuth::AuthManagerSettings authManagerSettings;
+		SvAuth::AuthManager authManager(authManagerSettings);
 		SvAuth::RestHandler restHandler(authManager);
 
 		HttpServerSettings settings;
@@ -465,7 +466,7 @@ int main()
 		auto server = std::make_unique<HttpServer>(settings, io_service);
 		server->start();
 
-		BOOST_LOG_TRIVIAL(info) << "Server running on ws://" << settings.Host << ":" << settings.Port << "/";
+		SV_LOG_GLOBAL(info) << "Server running on ws://" << settings.Host << ":" << settings.Port << "/";
 
 		auto thread = std::thread([&io_service]() { io_service.run(); });
 
@@ -483,7 +484,7 @@ int main()
 	}
 	catch (std::exception& e)
 	{
-		BOOST_LOG_TRIVIAL(error) << e.what();
+		SV_LOG_GLOBAL(error) << e.what();
 	}
 	system("pause");
 	return 0;

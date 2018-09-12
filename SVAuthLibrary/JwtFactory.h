@@ -10,9 +10,9 @@
 
 #include <string>
 
-#include "Crypto.h"
-#include "Jwt.h"
-#include "SVProtoBuf/SVAuth.h"
+#include <SVAuthLibrary/Crypto.h>
+#include <SVAuthLibrary/Jwt.h>
+#include <SVProtoBuf/SVAuth.h>
 
 namespace google
 {
@@ -69,4 +69,4 @@ private:
 
 } // namespace SvAuth
 
-#include <SVAuth/JwtFactory.inl>
+#include <SVAuthLibrary/JwtFactory.inl>

@@ -19,9 +19,8 @@
 #include <openssl/pem.h>
 #include <openssl/rsa.h>
 
-#include <boost/log/trivial.hpp>
-
-#include "SVAuth/Crypto.h"
+#include "SVAuthLibrary/Crypto.h"
+#include "SVLogLibrary/Logging.h"
 
 namespace
 {
@@ -136,7 +135,7 @@ std::string Crypto::rsaSign(const std::string& payload, const std::string& priva
 		auto errorTrack = ERR_get_error();
 		char *errorChar = new char[120];
 		errorChar = ERR_error_string(errorTrack, errorChar);
-		BOOST_LOG_TRIVIAL(error) << "RSA signing failed: " << errorChar;
+		SV_LOG_GLOBAL(error) << "RSA signing failed: " << errorChar;
 		goto cleanup;
 	}
 

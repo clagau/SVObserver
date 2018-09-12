@@ -12,12 +12,11 @@
 #include <boost/algorithm/string/split.hpp>
 #include <boost/array.hpp>
 #include <boost/asio.hpp>
-#include <boost/log/trivial.hpp>
 #include <boost/thread.hpp>
 #include "WebsocketLibrary/SVRCClientService.h"
-#include "WebsocketLibrary/Logging.h"
 #include "WebsocketLibrary\Definition.h"
 #include "WebsocketLibrary\RunRequest.inl"
+#include "SVLogLibrary/Logging.h"
 
 
 
@@ -27,13 +26,13 @@ struct NotificationHandler
 	std::future<void>  OnNext(SvPb::GetNotificationStreamResponse& resp)
 	{
 
-		BOOST_LOG_TRIVIAL(info) << "Get New Notification: " <<
+		SV_LOG_GLOBAL(info) << "Get New Notification: " <<
 			resp.message_case() << " DEBUGSTRING: " << resp.DebugString() << std::endl;
 		return std::future<void>();
 	}
 	void OnFinish()
 	{
-		BOOST_LOG_TRIVIAL(info) << "Last Notification" << std::endl;
+		SV_LOG_GLOBAL(info) << "Last Notification" << std::endl;
 		return;
 	}
 	void OnError(const SvPenv::Error& er)
@@ -52,18 +51,18 @@ static void GetNotifications(SvWsl::SVRCClientService& client)
 	auto ctx = client.GetNotificationStream(std::move(req), SvRpc::Observer<SvPb::GetNotificationStreamResponse>(
 		[](SvPb::GetNotificationStreamResponse&& res) -> std::future<void>
 	{
-		//BOOST_LOG_TRIVIAL(info) << "Received notification " << res.id() << " " << res.type() << " " << res.message();
+		//SV_LOG_GLOBAL(info) << "Received notification " << res.id() << " " << res.type() << " " << res.message();
 
-		BOOST_LOG_TRIVIAL(info) << "Received notification Debug string " << res.DebugString() << std::endl;
+		SV_LOG_GLOBAL(info) << "Received notification Debug string " << res.DebugString() << std::endl;
 		return std::future<void>();
 	},
 		[]()
 	{
-		BOOST_LOG_TRIVIAL(info) << "Finished receiving notifications";
+		SV_LOG_GLOBAL(info) << "Finished receiving notifications";
 	},
 		[](const SvPenv::Error& err)
 	{
-		BOOST_LOG_TRIVIAL(info) << "Error while receiving notifications: " << err.message();
+		SV_LOG_GLOBAL(info) << "Error while receiving notifications: " << err.message();
 	}));
 	std::this_thread::sleep_for(std::chrono::seconds(300));
 	ctx.cancel();
@@ -106,11 +105,11 @@ int main(int argc, char* argv[])
 
 	catch (std::exception&  e)
 	{
-		BOOST_LOG_TRIVIAL(error) << e.what();
+		SV_LOG_GLOBAL(error) << e.what();
 	}
 	auto pService = std::make_unique<SvWsl::SVRCClientService>(*pRpcClient);
 
-	BOOST_LOG_TRIVIAL(info) << "Enter a command(Ctrl-Z to stop): ";
+	SV_LOG_GLOBAL(info) << "Enter a command(Ctrl-Z to stop): ";
 	std::string input;
 	while (std::getline(std::cin, input))
 	{
@@ -129,7 +128,7 @@ int main(int argc, char* argv[])
 			}
 			else if (words[0] == "h" || words[0] == "H")
 			{
-				BOOST_LOG_TRIVIAL(info) << "commands: " << std::endl
+				SV_LOG_GLOBAL(info) << "commands: " << std::endl
 					<< "  q  quit" << std::endl
 					<< "  h  Hilfe" << std::endl
 					<< "  m  (GetMode)" << std::endl
@@ -145,7 +144,7 @@ int main(int argc, char* argv[])
 				SvPb::GetDeviceModeRequest request;
 				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetDeviceModeRequest, SvPb::GetDeviceModeResponse> client(*pRpcClient);
 				auto res = client.request(std::move(request), Timeout).get();
-				BOOST_LOG_TRIVIAL(info) << res.mode() << " DEBUGSTRING: " << res.DebugString();
+				SV_LOG_GLOBAL(info) << res.mode() << " DEBUGSTRING: " << res.DebugString();
 			}
 			else if (words[0] == "c")
 			{
@@ -153,7 +152,7 @@ int main(int argc, char* argv[])
 				SvPb::GetConfigRequest request;
 				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetConfigRequest, SvPb::GetConfigResponse> client(*pRpcClient);
 				auto res = client.request(std::move(request), Timeout).get();
-				BOOST_LOG_TRIVIAL(info) << res.DebugString();
+				SV_LOG_GLOBAL(info) << res.DebugString();
 				if (S_OK == res.hresult())
 				{
 					std::ofstream FileStream;
@@ -176,7 +175,7 @@ int main(int argc, char* argv[])
 				request.add_types(SvPb::ObjectSelectorType::toolsetItems);
 				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetObjectSelectorItemsRequest, SvPb::GetObjectSelectorItemsResponse> client(*pRpcClient);
 				auto res = client.request(std::move(request), Timeout).get();
-				BOOST_LOG_TRIVIAL(info) << res.DebugString();
+				SV_LOG_GLOBAL(info) << res.DebugString();
 				if (0 != res.tree().children_size())
 				{
 					std::string Data;
@@ -207,7 +206,7 @@ int main(int argc, char* argv[])
 
 				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::SetDeviceModeRequest, SvPb::StandardResponse> client(*pRpcClient);
 				auto res = client.request(std::move(request), Timeout).get();
-				BOOST_LOG_TRIVIAL(info) << res.DebugString();
+				SV_LOG_GLOBAL(info) << res.DebugString();
 			}
 			else if (words[0] == "gn")
 			{
@@ -217,7 +216,7 @@ int main(int argc, char* argv[])
 				}
 				catch (const std::exception& e)
 				{
-					BOOST_LOG_TRIVIAL(error) << "Unable to get notifications: " << e.what();
+					SV_LOG_GLOBAL(error) << "Unable to get notifications: " << e.what();
 				}
 			}
 
@@ -244,7 +243,7 @@ int main(int argc, char* argv[])
 
 		catch (std::exception& e)
 		{
-			BOOST_LOG_TRIVIAL(error) << e.what();
+			SV_LOG_GLOBAL(error) << e.what();
 		}
 	}
 

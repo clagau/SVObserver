@@ -13,10 +13,10 @@
 
 #include <boost/asio.hpp>
 #include <boost/beast/websocket.hpp>
-#include <boost/log/trivial.hpp>
 
 #include "url.hpp"
 #include "SVSystemLibrary/SVEncodeDecodeUtilities.h"
+#include "SVLogLibrary/Logging.h"
 
 #include "HttpRequest.h"
 #include "HttpResponse.h"
@@ -185,7 +185,7 @@ void HttpServerConnection::http_on_write(const boost::system::error_code& error,
 
 	if (close)
 	{
-		BOOST_LOG_TRIVIAL(debug) << "No keep-alive connection. Closing...";
+		SV_LOG_GLOBAL(debug) << "No keep-alive connection. Closing...";
 		return http_do_close();
 	}
 
@@ -208,7 +208,7 @@ void HttpServerConnection::http_on_error(const boost::system::error_code& error)
 	{
 		if (!m_IsDisconnectErrorHandled)
 		{
-			BOOST_LOG_TRIVIAL(info) << "[http] Client disconnected";
+			SV_LOG_GLOBAL(info) << "[http] Client disconnected";
 			if (m_rSettings.pEventHandler)
 			{
 				m_rSettings.pEventHandler->onDisconnect(m_ConnectionId);
@@ -218,12 +218,12 @@ void HttpServerConnection::http_on_error(const boost::system::error_code& error)
 		return;
 	}
 
-	BOOST_LOG_TRIVIAL(warning) << "client connection error: " << error;
+	SV_LOG_GLOBAL(warning) << "client connection error: " << error;
 }
 
 void HttpServerConnection::http_do_close()
 {
-	BOOST_LOG_TRIVIAL(debug) << "Closing connection";
+	SV_LOG_GLOBAL(debug) << "Closing connection";
 	if (!m_Socket.is_open())
 	{
 		return;
@@ -233,7 +233,7 @@ void HttpServerConnection::http_do_close()
 	m_Socket.shutdown(boost::asio::ip::tcp::socket::shutdown_send, ec);
 	if (ec)
 	{
-		BOOST_LOG_TRIVIAL(warning) << "Error while closing http connection: " << ec;
+		SV_LOG_GLOBAL(warning) << "Error while closing http connection: " << ec;
 	}
 }
 
@@ -292,7 +292,7 @@ void HttpServerConnection::http_access_log(const boost::beast::http::response<Bo
 		return std::string("\"") + str + "\"";
 	};
 
-	BOOST_LOG_TRIVIAL(debug)
+	SV_LOG_GLOBAL(debug)
 		// remote host, usually the client's ip
 		<< m_Socket.remote_endpoint().address().to_string() << " "
 		// client identity, ignored
@@ -563,7 +563,7 @@ void HttpServerConnection::ws_on_read(const boost::system::error_code& error, si
 			m_WsSocket.next_layer().close(ec);
 			if (ec)
 			{
-				BOOST_LOG_TRIVIAL(warning) << "Error while closing websocket connection: " << ec;
+				SV_LOG_GLOBAL(warning) << "Error while closing websocket connection: " << ec;
 			}
 		}
 		return;
@@ -648,7 +648,7 @@ void HttpServerConnection::ws_on_frame_sent(const boost::system::error_code& err
 			m_WsSocket.next_layer().close(ec);
 			if (ec)
 			{
-				BOOST_LOG_TRIVIAL(warning) << "Error while closing websocket connection: " << ec;
+				SV_LOG_GLOBAL(warning) << "Error while closing websocket connection: " << ec;
 			}
 		}
 		return;
@@ -670,7 +670,7 @@ void HttpServerConnection::ws_on_error(const boost::system::error_code& error)
 	{
 		if (!m_IsDisconnectErrorHandled)
 		{
-			BOOST_LOG_TRIVIAL(info) << "[ws] Client disconnected";
+			SV_LOG_GLOBAL(info) << "[ws] Client disconnected";
 			if (m_rSettings.pEventHandler)
 			{
 				m_rSettings.pEventHandler->onDisconnect(m_ConnectionId);
@@ -680,7 +680,7 @@ void HttpServerConnection::ws_on_error(const boost::system::error_code& error)
 		return;
 	}
 
-	BOOST_LOG_TRIVIAL(warning) << "client connection error: " << error;
+	SV_LOG_GLOBAL(warning) << "client connection error: " << error;
 }
 
 bool HttpServerConnection::base64decode(std::string& out, const boost::beast::string_view& in)

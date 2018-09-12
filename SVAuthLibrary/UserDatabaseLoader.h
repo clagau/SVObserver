@@ -1,29 +1,24 @@
 //******************************************************************************
 /// \copyright (c) 2017,2018 by Seidenader Maschinenbau GmbH
-/// \file RestHandler.h
+/// \file UserDatabaseLoader.h
 /// All Rights Reserved
 //******************************************************************************
-/// Central class for handling authentication and authorization requests.
+/// User database loader.
 //******************************************************************************
 
 #pragma once
 
-#include "SVAuth/AuthManager.h"
-#include "SvHttpLibrary/HttpRequest.h"
-#include "SvHttpLibrary/HttpResponse.h"
+#include <filesystem>
+
+#include <SVAuthLibrary/UserDatabase.h>
 
 namespace SvAuth
 {
 
-class RestHandler
+class UserDatabaseLoader
 {
 public:
-	RestHandler(AuthManager&);
-
-	bool onRestRequest(const SvHttp::HttpRequest& req, SvHttp::HttpResponse& res);
-
-private:
-	AuthManager& m_rAuthManager;
+	static UserDatabase load(std::experimental::filesystem::path);
 };
 
 } // namespace SvAuth

@@ -12,7 +12,7 @@
 
 #include <iostream>
 
-#include <boost/log/trivial.hpp>
+#include "SVLogLibrary/Logging.h"
 
 #include "WebsocketClient.h"
 
@@ -56,7 +56,7 @@ std::shared_ptr<WebsocketClient> WebsocketClient::create(WebsocketClientSettings
 
 void WebsocketClient::connect()
 {
-	BOOST_LOG_TRIVIAL(debug) << "Websocket client connecting to ws://" << m_rSettings.Host << ":" << m_rSettings.Port << m_rSettings.Path;
+	SV_LOG_GLOBAL(debug) << "Websocket client connecting to ws://" << m_rSettings.Host << ":" << m_rSettings.Port << m_rSettings.Path;
 	auto query = boost::asio::ip::tcp::resolver::query(m_rSettings.Host, std::to_string(m_rSettings.Port));
 	m_Resolver.async_resolve(query, std::bind(&WebsocketClient::handle_resolve, this, std::placeholders::_1, std::placeholders::_2));
 }
@@ -75,7 +75,7 @@ void WebsocketClient::disconnect()
 		m_Socket.next_layer().close(ec);
 		if (ec)
 		{
-			BOOST_LOG_TRIVIAL(warning) << "Error while closing websocket connection: " << ec;
+			SV_LOG_GLOBAL(warning) << "Error while closing websocket connection: " << ec;
 		}
 	}
 	m_IoWork.reset();
@@ -124,11 +124,11 @@ void WebsocketClient::handle_connection_error(const boost::system::error_code& e
 		ec == boost::asio::error::connection_aborted ||
 		ec.value() == WSAEBADF) // bad file descriptor, when connection already closed
 	{
-		BOOST_LOG_TRIVIAL(info) << "server disconnected :(";
+		SV_LOG_GLOBAL(info) << "server disconnected :(";
 	}
 	else
 	{
-		BOOST_LOG_TRIVIAL(error) << "server connection error: " << ec;
+		SV_LOG_GLOBAL(error) << "server connection error: " << ec;
 	}
 
 	close_connection();
@@ -147,13 +147,13 @@ void WebsocketClient::close_connection()
 		m_Socket.next_layer().close(ec);
 		if (ec)
 		{
-			BOOST_LOG_TRIVIAL(warning) << "Error while closing websocket connection: " << ec;
+			SV_LOG_GLOBAL(warning) << "Error while closing websocket connection: " << ec;
 		}
 	}
 	if (!m_IsDisconnectEventSent && !m_IsShuttingDown)
 	{
 		m_IsDisconnectEventSent = true;
-		BOOST_LOG_TRIVIAL(info) << "Server disconnected";
+		SV_LOG_GLOBAL(info) << "Server disconnected";
 		m_pEventHandler->onDisconnect();
 	}
 }
@@ -173,7 +173,7 @@ void WebsocketClient::handle_handshake_response(const boost::system::error_code&
 
 	read_buffer();
 	// connect is done now
-	BOOST_LOG_TRIVIAL(debug) << "Websocket client successfully connected";
+	SV_LOG_GLOBAL(debug) << "Websocket client successfully connected";
 	handle_connection_success();
 	schedule_ping();
 }
@@ -267,7 +267,7 @@ void WebsocketClient::on_ping_interval(const boost::system::error_code& error)
 	{
 		if (error != boost::asio::error::operation_aborted)
 		{
-			BOOST_LOG_TRIVIAL(error) << "Ping schedule error: " << error;
+			SV_LOG_GLOBAL(error) << "Ping schedule error: " << error;
 		}
 		return;
 	}
@@ -275,7 +275,7 @@ void WebsocketClient::on_ping_interval(const boost::system::error_code& error)
 	++m_PingTimeoutCount;
 	if (m_rSettings.PingTimeoutCount > 0 && m_PingTimeoutCount > m_rSettings.PingTimeoutCount)
 	{
-		BOOST_LOG_TRIVIAL(info) << "Client did not respond to ping messages. Closing connection.";
+		SV_LOG_GLOBAL(info) << "Client did not respond to ping messages. Closing connection.";
 		m_Socket.next_layer().close();
 		return;
 	}

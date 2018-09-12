@@ -17,7 +17,6 @@
 
 #include <comdef.h>
 #include <tchar.h>
-#define WINDOWS_EVENT_LOG_BACKEND
 
 // ptime and posix time_duration use different types (uint32 vs int64) for storing the hours
 #pragma warning(push)
@@ -27,136 +26,59 @@
 
 #include <boost/core/null_deleter.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
+#include <boost/filesystem.hpp>
+#include <boost/function.hpp>
 #include <boost/log/core.hpp>
 #include <boost/log/expressions.hpp>
 #include <boost/log/sinks/sync_frontend.hpp>
 #include <boost/log/sinks/text_ostream_backend.hpp>
 #include <boost/log/sources/record_ostream.hpp>
-#include <boost/log/trivial.hpp>
 #include <boost/log/utility/setup/common_attributes.hpp>
 
-
 #include "Definitions/StringTypeDef.h"
-#ifndef WINDOWS_EVENT_LOG_BACKEND
+
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageTextEnum.h"
 #include "SVStatusLibrary/MessageManager.h"
-#endif 
 
 using namespace boost::log;
 using namespace boost::log::sinks;
 using boost::log::trivial::severity_level;
 
-namespace SvWsl
+namespace SvLog
 {
 namespace
 {
-#define WINDOWS_EVENT_LOG_BACKEND
-#ifdef WINDOWS_EVENT_LOG_BACKEND
-/// There is already a Windows Event Log backend in Boost.Log, but it requires dynmiac linking
-/// of the boost_log library (because it exports some log source details via its dll interface).
-/// But we do not need this functionality, so we have this simple backend for writing logs to
-/// the Windows Event Log.
-class windows_event_log_backend
-	: public basic_formatted_sink_backend<char, combine_requirements<synchronized_feeding>::type>
+
+static std::string extract_file(record_view const& rec)
 {
-public:
-	BOOST_LOG_API windows_event_log_backend(const std::string& source, trivial::severity_level level)
-		: m_hdl(RegisterEventSource(NULL, source.c_str())), m_level(level)
+	static const auto default_file = "<unknown_file>";
+	auto file_attr = rec["File"];
+	if (!file_attr)
 	{
-		if (!m_hdl)
-		{
-			auto err = get_last_error_as_string();
-			auto msg = "Unable to register event source: " + err;
-			throw std::runtime_error(msg.c_str());
-		}
+		return default_file;
 	}
 
-	BOOST_LOG_API ~windows_event_log_backend()
+	const auto fullpath = file_attr.extract_or_default<std::string, void, std::string>(default_file);
+	if (fullpath == default_file)
 	{
-		DeregisterEventSource(m_hdl);
+		return default_file;
 	}
 
-	BOOST_LOG_API void consume(record_view const& rec, const std::string& formatted_record)
+	return boost::filesystem::path(fullpath).filename().string();
+}
+
+static int extract_line(record_view const& rec)
+{
+	static const auto default_line = 0;
+	auto line_attr = rec["Line"];
+	if (!line_attr)
 	{
-		auto event_id = 1000;
-		auto severity = extract_severity(rec);
-		if (severity >= m_level)
-		{
-			auto type = map_to_type(severity);
-			log_impl(m_hdl, event_id, type, formatted_record);
-		}
+		return default_line;
 	}
+	return line_attr.extract_or_default<int, void, int>(default_line);
+}
 
-private:
-	trivial::severity_level extract_severity(record_view const& rec)
-	{
-		auto default_severity = trivial::info;
-		auto severity_attr = rec["Severity"];
-		if (!severity_attr)
-		{
-			return default_severity;
-		}
-		return severity_attr.extract_or_default<trivial::severity_level, void, trivial::severity_level>(
-			default_severity);
-	}
-
-	WORD map_to_type(trivial::severity_level severity_level)
-	{
-		switch (severity_level)
-		{
-			case trivial::trace:
-			case trivial::debug:
-			case trivial::info:
-				return EVENTLOG_INFORMATION_TYPE;
-
-			case trivial::warning:
-				return EVENTLOG_WARNING_TYPE;
-
-			case trivial::error:
-			case trivial::fatal:
-				return EVENTLOG_ERROR_TYPE;
-
-			default:
-				return EVENTLOG_INFORMATION_TYPE;
-		}
-	}
-
-	bool log_impl(HANDLE hdl, DWORD eventId, WORD type, const std::string& message)
-	{
-		WORD category = 0;     // no category
-		PSID user = NULL;      // use process' user
-		DWORD binDataSize = 0; // no additional binary data provided
-		LPVOID binData = NULL;
-		const WORD numStrings = 1; // we just log the provided message
-		LPCTSTR strings[numStrings];
-		strings[0] = message.c_str();
-		return (TRUE == ReportEvent(hdl, type, category, eventId, user, numStrings, binDataSize, strings, binData));
-	}
-
-	std::string get_last_error_as_string()
-	{
-		DWORD errorMessageID = ::GetLastError();
-		if (errorMessageID == 0)
-		{
-			return std::string();
-		}
-
-		DWORD flags = FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS;
-		DWORD languageId = MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT);
-		LPSTR messageBuffer = NULL;
-		size_t size = FormatMessageA(flags, NULL, errorMessageID, languageId, (LPSTR)&messageBuffer, 0, NULL);
-
-		std::string message(messageBuffer, size);
-		LocalFree(messageBuffer);
-		return message;
-	}
-
-private:
-	trivial::severity_level m_level;
-	HANDLE m_hdl;
-};
-#else 
 /// Log backend that uses SVMessage and SVStatusLibrary for logging.
 class sv_message_log_backend
 	: public basic_formatted_sink_backend<char, combine_requirements<synchronized_feeding>::type>
@@ -173,8 +95,10 @@ public:
 		auto severity = extract_severity(rec);
 		if (severity >= m_MinSeverity)
 		{
-			auto type = map_to_type(severity);
-			log_impl(type, formatted_record);
+			const auto type = map_to_type(severity);
+			const auto file = extract_file(rec);
+			const auto line = extract_line(rec);
+			log_impl(type, file, line, formatted_record);
 		}
 	}
 
@@ -211,12 +135,13 @@ private:
 		}
 	}
 
-	void log_impl(DWORD type, const std::string& Message)
+	void log_impl(DWORD type, const std::string& file, int line, const std::string& Message)
 	{
 		SvDef::StringVector MessageParams;
 		MessageParams.push_back(Message);
-		// TODO add file name and line number to logger, see https://stackoverflow.com/a/31160870
 		SvStl::SourceFileParams SourceFileParams(StdMessageParams);
+		SourceFileParams.m_FileName = file;
+		SourceFileParams.m_Line = line;
 		m_MessageManager.setMessage(type, SvStl::Tid_Default, MessageParams, SourceFileParams);
 	}
 
@@ -224,7 +149,6 @@ private:
 	trivial::severity_level m_MinSeverity;
 	SvStl::MessageMgrStd m_MessageManager;
 };
-#endif 
 }
 
 static std::map<std::string, trivial::severity_level> severity_level_name_map()
@@ -252,6 +176,30 @@ static bool parse_severity(const std::string& str, trivial::severity_level& leve
 	return true;
 }
 
+void log_formatter(record_view const& rec, formatting_ostream& strm)
+{
+	strm
+		<< expressions::format_date_time<boost::posix_time::ptime>("TimeStamp", "%Y-%m-%dT%H:%M:%S.%f")(rec)
+		<< " "
+		<< rec[trivial::severity]
+		<< " "
+		<< rec[expressions::smessage];
+}
+
+void bootstrap_logging()
+{
+	core::get()->set_filter(trivial::severity >= trivial::debug);
+	core::get()->remove_all_sinks(); // remove all default sinks
+
+	typedef sinks::synchronous_sink<sinks::text_ostream_backend> text_sink;
+	boost::shared_ptr<text_sink> sink = boost::make_shared<text_sink>();
+	boost::shared_ptr<std::ostream> stream(&std::clog, boost::null_deleter());
+	sink->locked_backend()->add_stream(stream);
+	add_common_attributes(); // adds common log attributes like timestamp
+	sink->set_formatter(&log_formatter);
+	core::get()->add_sink(sink);
+}
+
 void init_logging(const LogSettings& settings)
 {
 	auto log_level = trivial::info;
@@ -272,9 +220,7 @@ void init_logging(const LogSettings& settings)
 		boost::shared_ptr<std::ostream> stream(&std::clog, boost::null_deleter());
 		sink->locked_backend()->add_stream(stream);
 		add_common_attributes(); // adds common log attributes like timestamp
-		sink->set_formatter(expressions::stream << expressions::format_date_time<boost::posix_time::ptime>(
-			"TimeStamp", "%Y-%m-%dT%H:%M:%S.%f")
-			<< " " << trivial::severity << " " << expressions::smessage);
+		sink->set_formatter(&log_formatter);
 		core::get()->add_sink(sink);
 	}
 
@@ -293,16 +239,9 @@ void init_logging(const LogSettings& settings)
 				throw std::runtime_error(msg.c_str());
 			}
 		}
-#ifdef WINDOWS_EVENT_LOG_BACKEND
-		auto backend =
-			boost::make_shared<windows_event_log_backend>(settings.windows_event_log_source, event_log_level);
-		core::get()->add_sink(boost::make_shared<synchronous_sink<windows_event_log_backend>>(backend));
-#else
-		auto backend =
-			boost::make_shared<sv_message_log_backend>(event_log_level);
+		auto backend = boost::make_shared<sv_message_log_backend>(event_log_level);
 		core::get()->add_sink(boost::make_shared<synchronous_sink<sv_message_log_backend>>(backend));
-#endif 
 	}
 }
 
-} // namespace SvWsl
+} // namespace SvLog

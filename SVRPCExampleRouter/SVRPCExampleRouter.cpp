@@ -11,9 +11,9 @@
 #include <sstream>
 
 #include <boost/asio.hpp>
-#include <boost/log/trivial.hpp>
 
 #include "SVHttpLibrary/HttpServer.h"
+#include "SVLogLibrary/Logging.h"
 #include "SVRPCExampleLibrary/format.h"
 #include "SVRPCLibrary/Router.h"
 #include "SVRPCLibrary/RPCClient.h"
@@ -65,13 +65,13 @@ int main()
 		HttpServer server(serverSettings, io_service);
 		server.start();
 
-		BOOST_LOG_TRIVIAL(info) << "Router running on ws://" << serverSettings.Host << ":" << serverSettings.Port << "/";
+		SV_LOG_GLOBAL(info) << "Router running on ws://" << serverSettings.Host << ":" << serverSettings.Port << "/";
 
 		io_service.run();
 	}
 	catch (std::exception& e)
 	{
-		BOOST_LOG_TRIVIAL(error) << e.what();
+		SV_LOG_GLOBAL(error) << e.what();
 	}
 	system("pause");
 	return 0;

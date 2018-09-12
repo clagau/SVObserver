@@ -16,7 +16,6 @@
 
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <memory>
-#include <boost/log/trivial.hpp>
 
 #include "EnvelopeUtil.h"
 #include "ErrorUtil.h"
@@ -26,6 +25,7 @@
 #include "RequestHandlerBase.h"
 #include "Task.h"
 #include "TaskWrapper.h"
+#include "SVLogLibrary/Logging.h"
 
 namespace SvRpc
 {
@@ -88,7 +88,7 @@ protected:
 			return;
 		}
 
-		BOOST_LOG_TRIVIAL(warning) << "No request handler for payload type " << payloadType;
+		SV_LOG_GLOBAL(warning) << "No request handler for payload type " << payloadType;
 		Task.error(build_error(SvPenv::ErrorCode::notImplemented, "No handler for given payload type."));
 	}
 
@@ -108,7 +108,7 @@ protected:
 			return;
 		}
 
-		BOOST_LOG_TRIVIAL(warning) << "No request handler for payload type " << payloadType;
+		SV_LOG_GLOBAL(warning) << "No request handler for payload type " << payloadType;
 		Observer.error(build_error(SvPenv::ErrorCode::notImplemented, "No handler for given payload type."));
 	}
 

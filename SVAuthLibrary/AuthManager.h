@@ -8,8 +8,9 @@
 
 #pragma once
 
-#include "SVAuth/JwtFactory.h"
-#include "SVAuth/UserDatabase.h"
+#include "SVAuthLibrary/AuthManagerSettings.h"
+#include "SVAuthLibrary/JwtFactory.h"
+#include "SVAuthLibrary/UserDatabase.h"
 #include "SVProtoBuf/SVAuth.h"
 
 namespace SvAuth
@@ -18,7 +19,7 @@ namespace SvAuth
 class AuthManager
 {
 public:
-	AuthManager();
+	AuthManager(const AuthManagerSettings&);
 
 	Jwks getJsonWebKeySet() const;
 
@@ -28,8 +29,10 @@ public:
 private:
 	bool generateAccessToken(const std::string& username, std::string& token);
 	bool generateAuthToken(const std::string& username, std::string& token);
+	std::string getShortPublicKey() const;
 
 private:
+	const AuthManagerSettings& m_rSettings;
 	const UserDatabase m_UserDatabase;
 	JwtFactory::SignatureContext m_SecurityContext;
 	JwtFactory m_JwtFactory;

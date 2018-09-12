@@ -19,22 +19,21 @@
 #include <boost/algorithm/string/split.hpp>
 #include <boost/array.hpp>
 #include <boost/asio.hpp>
-#include <boost/log/trivial.hpp>
 #include <boost/thread.hpp>
 
 #include "WebsocketLibrary/SVRCClientService.h"
-#include "WebsocketLibrary/Logging.h"
 #include "SVProtoBuf\SVRC.h"
 #include "SVHttpLibrary/WebsocketClientFactory.h"
 #include "SVRPCLibrary/ErrorUtil.h"
 #include "SVRPCLibrary/RPCClient.h"
+#include "SVLogLibrary/Logging.h"
 #include "WebsocketLibrary/RunRequest.inl"
 #include "WebsocketLibrary/Definition.h"
 
 
 void PrintCurImage(const SvPb::ImageId& rCurrentImage)
 {
-	BOOST_LOG_TRIVIAL(info) << "StoreIndex: " << rCurrentImage.imagestore() << " ImageIndex: " << rCurrentImage.imageindex()
+	SV_LOG_GLOBAL(info) << "StoreIndex: " << rCurrentImage.imagestore() << " ImageIndex: " << rCurrentImage.imageindex()
 		<< " SlotIndex: " << rCurrentImage.slotindex();
 }
 void PrintVariant(const SvPb::Variant& var)
@@ -42,39 +41,39 @@ void PrintVariant(const SvPb::Variant& var)
 	switch (var.data_case())
 	{
 		case SvPb::Variant::kBVal:
-			BOOST_LOG_TRIVIAL(info) << "value: " << var.bval();
+			SV_LOG_GLOBAL(info) << "value: " << var.bval();
 			break;
 
 		case SvPb::Variant::kLVal:
-			BOOST_LOG_TRIVIAL(info) << "value: " << var.lval();
+			SV_LOG_GLOBAL(info) << "value: " << var.lval();
 			break;
 
 		case SvPb::Variant::kLlVal:
-			BOOST_LOG_TRIVIAL(info) << "value: " << var.llval();
+			SV_LOG_GLOBAL(info) << "value: " << var.llval();
 			break;
 
 		case SvPb::Variant::kUlVal:
-			BOOST_LOG_TRIVIAL(info) << "value: " << var.ulval();
+			SV_LOG_GLOBAL(info) << "value: " << var.ulval();
 			break;
 
 		case SvPb::Variant::kUllVal:
-			BOOST_LOG_TRIVIAL(info) << "value: " << var.ullval();
+			SV_LOG_GLOBAL(info) << "value: " << var.ullval();
 			break;
 
 		case SvPb::Variant::kDblVal:
-			BOOST_LOG_TRIVIAL(info) << "value: " << var.dblval();
+			SV_LOG_GLOBAL(info) << "value: " << var.dblval();
 			break;
 
 		case SvPb::Variant::kFltVal:
-			BOOST_LOG_TRIVIAL(info) << "value: " << var.fltval();
+			SV_LOG_GLOBAL(info) << "value: " << var.fltval();
 			break;
 
 		case SvPb::Variant::kStrVal:
-			BOOST_LOG_TRIVIAL(info) << "value: " << var.strval();
+			SV_LOG_GLOBAL(info) << "value: " << var.strval();
 			break;
 
 		default:
-			BOOST_LOG_TRIVIAL(warning) << "Unknown variant value";
+			SV_LOG_GLOBAL(warning) << "Unknown variant value";
 			break;
 	}
 }
@@ -85,18 +84,18 @@ static void GetNotifications(SvWsl::SVRCClientService& client)
 	auto ctx = client.GetNotificationStream(std::move(req), SvRpc::Observer<SvPb::GetNotificationStreamResponse>(
 		[](SvPb::GetNotificationStreamResponse&& res) -> std::future<void>
 	{
-		//BOOST_LOG_TRIVIAL(info) << "Received notification " << res.id() << " " << res.type() << " " << res.message();
+		//SV_LOG_GLOBAL(info) << "Received notification " << res.id() << " " << res.type() << " " << res.message();
 		
-		BOOST_LOG_TRIVIAL(info) << "Received notification Debug string " << res.DebugString() << std::endl;
+		SV_LOG_GLOBAL(info) << "Received notification Debug string " << res.DebugString() << std::endl;
 		return std::future<void>();
 	},
 		[]()
 	{
-		BOOST_LOG_TRIVIAL(info) << "Finished receiving notifications";
+		SV_LOG_GLOBAL(info) << "Finished receiving notifications";
 	},
 		[](const SvPenv::Error& err)
 	{
-		BOOST_LOG_TRIVIAL(info) << "Error while receiving notifications: " << err.message();
+		SV_LOG_GLOBAL(info) << "Error while receiving notifications: " << err.message();
 	}));
 	std::this_thread::sleep_for(std::chrono::seconds(2));
 	ctx.cancel();
@@ -130,7 +129,7 @@ static void RunBenchmark2(SvWsl::SVRCClientService& rClient, int iterations, int
 	SvPb::ImageId ImageId;
 	if (!GetImageId(rClient, imageWitdh, ImageId))
 	{
-		BOOST_LOG_TRIVIAL(error) << "Unable to find image for request width " << imageWitdh;
+		SV_LOG_GLOBAL(error) << "Unable to find image for request width " << imageWitdh;
 		return;
 	}
 	double volume = 0;
@@ -154,12 +153,12 @@ static void RunBenchmark2(SvWsl::SVRCClientService& rClient, int iterations, int
 	}
 	auto finish = std::chrono::steady_clock::now();
 	auto duration = std::chrono::duration_cast<std::chrono::duration<double>>(finish - start).count();
-	BOOST_LOG_TRIVIAL(info) << "Benchmark2: iterations=" << iterations << " duration=" << duration
+	SV_LOG_GLOBAL(info) << "Benchmark2: iterations=" << iterations << " duration=" << duration
 		<< " volume=" << volume;
 }
 void PrintProductResponse(const SvPb::Product& rProduct)
 {
-	BOOST_LOG_TRIVIAL(info) << "Product for Trigger: " << rProduct.trigger();
+	SV_LOG_GLOBAL(info) << "Product for Trigger: " << rProduct.trigger();
 	bool bpImageName = rProduct.images_size() == rProduct.imagenames_size();
 	bool bpValueName = rProduct.values_size() == rProduct.valuenames_size();
 
@@ -167,7 +166,7 @@ void PrintProductResponse(const SvPb::Product& rProduct)
 	{
 		if (bpImageName)
 		{
-			BOOST_LOG_TRIVIAL(info) << rProduct.imagenames(i);
+			SV_LOG_GLOBAL(info) << rProduct.imagenames(i);
 		}
 		PrintCurImage(rProduct.images(i));
 	}
@@ -175,7 +174,7 @@ void PrintProductResponse(const SvPb::Product& rProduct)
 	{
 		if (bpValueName)
 		{
-			BOOST_LOG_TRIVIAL(info) << rProduct.valuenames(v);
+			SV_LOG_GLOBAL(info) << rProduct.valuenames(v);
 		}
 		PrintVariant(rProduct.values(v));
 	}
@@ -210,7 +209,7 @@ public:
 		}
 		auto finish = std::chrono::steady_clock::now();
 		auto duration = std::chrono::duration_cast<std::chrono::duration<double>>(finish - start).count();
-		BOOST_LOG_TRIVIAL(info) << "Benchmark1: iterations=" << num_iterations << " duration=" << duration << "sec";
+		SV_LOG_GLOBAL(info) << "Benchmark1: iterations=" << num_iterations << " duration=" << duration << "sec";
 	}
 
 private:
@@ -252,12 +251,12 @@ private:
 
 int main(int argc, char* argv[])
 {
-	
-	SvWsl::LogSettings logSettings;
+	SvLog::bootstrap_logging();
+	SvLog::LogSettings logSettings;
 	logSettings.log_level = "debug";
 	logSettings.log_to_stdout_enabled = true;
 	logSettings.windows_event_log_enabled = false;
-	init_logging(logSettings);
+	SvLog::init_logging(logSettings);
 
 	SvHttp::WebsocketClientSettings clientSettings;
 	clientSettings.Host = "127.0.0.1";
@@ -276,7 +275,7 @@ int main(int argc, char* argv[])
 	auto pService = std::make_unique<SvWsl::SVRCClientService>(*pRpcClient);
 
 
-	BOOST_LOG_TRIVIAL(info) << "Enter a command(Ctrl-Z to stop): ";
+	SV_LOG_GLOBAL(info) << "Enter a command(Ctrl-Z to stop): ";
 	std::string input;
 	while (std::getline(std::cin, input))
 	{
@@ -312,7 +311,7 @@ int main(int argc, char* argv[])
 			}
 			else if (words[0] == "h" || words[0] == "H")
 			{
-				BOOST_LOG_TRIVIAL(info) << "commands: " << std::endl
+				SV_LOG_GLOBAL(info) << "commands: " << std::endl
 					<< "  q  quit" << std::endl
 					<< "  h  Hilfe" << std::endl
 					<< "  v  (Version)" << std::endl
@@ -330,7 +329,7 @@ int main(int argc, char* argv[])
 			}
 			else if (!pRpcClient ||  !pRpcClient->isConnected() )
 			{
-				BOOST_LOG_TRIVIAL(info) << "Nicht verbunde!!!" << std::endl;
+				SV_LOG_GLOBAL(info) << "Nicht verbunde!!!" << std::endl;
 			}
 			else if (words[0] == "v")
 			{
@@ -339,16 +338,16 @@ int main(int argc, char* argv[])
 
 					SvPb::GetGatewayVersionRequest req;
 					auto version = runRequest(*pService, &SvWsl::SVRCClientService::GetGatewayVersion, std::move(req)).get();
-					BOOST_LOG_TRIVIAL(info) << "Version: ";
-					BOOST_LOG_TRIVIAL(info) << " RunReWebsocketServer: " << version.version();
+					SV_LOG_GLOBAL(info) << "Version: ";
+					SV_LOG_GLOBAL(info) << " RunReWebsocketServer: " << version.version();
 				}
 				catch (const std::exception& e)
 				{
-					BOOST_LOG_TRIVIAL(error) << "Unable to get version: " << e.what();
+					SV_LOG_GLOBAL(error) << "Unable to get version: " << e.what();
 				}
 				catch( ... )
 				{
-					BOOST_LOG_TRIVIAL(error) << "Unable to get version" << std::endl;
+					SV_LOG_GLOBAL(error) << "Unable to get version" << std::endl;
 				}
 			}
 			else if (words[0] == "n")
@@ -359,19 +358,19 @@ int main(int argc, char* argv[])
 				}
 				catch (const std::exception& e)
 				{
-					BOOST_LOG_TRIVIAL(error) << "Unable to get notifications: " << e.what();
+					SV_LOG_GLOBAL(error) << "Unable to get notifications: " << e.what();
 				}
 			}
 			else if (pRpcClient && pRpcClient->isConnected() && words[0] == "m" )
 			{
 
 				auto Listnames = runRequest(*pService, &SvWsl::SVRCClientService::QueryListName, SvPb::QueryListNameRequest()).get();
-				// BOOST_LOG_TRIVIAL(info) << "QueryListNameResponse.DebugString: ";
-				// BOOST_LOG_TRIVIAL(info) << Listnames.DebugString();
-				BOOST_LOG_TRIVIAL(info) << "MonitorlistNamen: ";
+				// SV_LOG_GLOBAL(info) << "QueryListNameResponse.DebugString: ";
+				// SV_LOG_GLOBAL(info) << Listnames.DebugString();
+				SV_LOG_GLOBAL(info) << "MonitorlistNamen: ";
 				for (int i = 0; i < Listnames.listname_size(); i++)
 				{
-					BOOST_LOG_TRIVIAL(info) << Listnames.listname(i);
+					SV_LOG_GLOBAL(info) << Listnames.listname(i);
 				}
 			}
 			else if (words[0] == "f")
@@ -383,7 +382,7 @@ int main(int argc, char* argv[])
 				}
 				else
 				{
-					BOOST_LOG_TRIVIAL(error) << "monitorname  notwendig ";
+					SV_LOG_GLOBAL(error) << "monitorname  notwendig ";
 					continue;
 				}
 				FailstatusRequest.set_nameinresponse(true);
@@ -403,7 +402,7 @@ int main(int argc, char* argv[])
 				}
 				else
 				{
-					BOOST_LOG_TRIVIAL(error) << "monitorname notwendig ";
+					SV_LOG_GLOBAL(error) << "monitorname notwendig ";
 					continue;
 				}
 				if (wordsize > 2)
@@ -447,7 +446,7 @@ int main(int argc, char* argv[])
 			{
 				if (wordsize <= 3)
 				{
-					BOOST_LOG_TRIVIAL(error) << "StoreNr imageNr slotNr Eingeben";
+					SV_LOG_GLOBAL(error) << "StoreNr imageNr slotNr Eingeben";
 					continue;
 				}
 
@@ -457,7 +456,7 @@ int main(int argc, char* argv[])
 				request.mutable_id()->set_slotindex(atoi(words[3].c_str()));
 				auto resp = runRequest(*pService, &SvWsl::SVRCClientService::GetImageFromId, std::move(request)).get();
 
-				BOOST_LOG_TRIVIAL(info) << "Image (Width ,Height) " << resp.imagedata().width() << "x"
+				SV_LOG_GLOBAL(info) << "Image (Width ,Height) " << resp.imagedata().width() << "x"
 					<< resp.imagedata().height();
 				std::string filename = "D:\\Temp\\Images\\";
 				filename += words[1] + "_" + words[2] + "_" + words[3] + "_";
@@ -596,7 +595,7 @@ int main(int argc, char* argv[])
 
 		catch (std::exception& e)
 		{
-			BOOST_LOG_TRIVIAL(error) << e.what();
+			SV_LOG_GLOBAL(error) << e.what();
 		}
 	}
 

@@ -10,9 +10,7 @@
 
 #include <chrono>
 
-#include <boost/log/trivial.hpp>
-
-#include "SVAuth/JwtFactory.h"
+#include "SVAuthLibrary/JwtFactory.h"
 #include "SVProtoBuf/Protobuf2Rapidjson.h"
 
 using namespace Protobuf2Rapidjson;

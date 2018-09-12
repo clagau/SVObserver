@@ -8,7 +8,7 @@
 
 #include "stdafx.h"
 
-#include "SVAuth/RestHandler.h"
+#include "SVAuthLibrary/RestHandler.h"
 #include "SVProtoBuf/Protobuf2Rapidjson.h"
 
 using namespace Protobuf2Rapidjson;

@@ -12,7 +12,7 @@
 
 #include <memory>
 
-#include <boost/log/trivial.hpp>
+#include "SVLogLibrary/Logging.h"
 
 #include "HttpServer.h"
 
@@ -60,7 +60,7 @@ void HttpServer::handle_accept(const boost::system::error_code& ec)
 	}
 	if (ec)
 	{
-		BOOST_LOG_TRIVIAL(error) << "Error while accepting connection: " << ec;
+		SV_LOG_GLOBAL(error) << "Error while accepting connection: " << ec;
 		return;
 	}
 
@@ -87,7 +87,7 @@ void HttpServer::do_cleanup(const boost::system::error_code& error)
 	}
 	if (error)
 	{
-		BOOST_LOG_TRIVIAL(error) << "Cleanup schedule error: " << error;
+		SV_LOG_GLOBAL(error) << "Cleanup schedule error: " << error;
 		return;
 	}
 
@@ -99,7 +99,7 @@ void HttpServer::do_cleanup(const boost::system::error_code& error)
 		auto conn = *it;
 		if (false && !conn->isOpen())
 		{
-			BOOST_LOG_TRIVIAL(debug) << "Marking connection for deletion";
+			SV_LOG_GLOBAL(debug) << "Marking connection for deletion";
 			it = m_Connections.erase(it);
 			m_ConnectionsMarkedForDeletion.push_back(conn);
 		}

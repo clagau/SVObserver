@@ -10,85 +10,94 @@
 
 #include "stdafx.h"
 
-#include "Registry.h"
-#include "SettingsLoader.h"
+#include <algorithm>
+#include <string>
 
-#define RRWS_KEY HKEY_LOCAL_MACHINE
-#define RRWS_SUBKEY "Software\\Seidenader\\WebsocketServer\\"
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/ini_parser.hpp>
+
+#include "SVStatusLibrary/GlobalPath.h"
+#include "SVLogLibrary/Logging.h"
+
+#include "SettingsLoader.h"
 
 namespace SvOgw
 {
-static void RegGetStringIfExists(std::string& dst, const std::string& name)
+static void RegGetStringIfExists(const boost::property_tree::ptree& pt, std::string& dst, const std::string& path)
 {
-	try
+	const auto v = pt.get_optional<std::string>(path);
+	if (v)
 	{
-		auto v = win32::RegGetString(RRWS_KEY, _T(RRWS_SUBKEY), name);
-		dst = v;
-	}
-	catch (const win32::RegistryError&)
-	{
+		dst = *v;
 	}
 }
-static void RegGetPathIfExists(std::experimental::filesystem::path& dst, const std::string& name)
+
+static void RegGetPathIfExists(const boost::property_tree::ptree& pt, std::experimental::filesystem::path& dst, const std::string& path)
 {
-	try
+	const auto v = pt.get_optional<std::string>(path);
+	if (v)
 	{
-		auto v = win32::RegGetString(RRWS_KEY, _T(RRWS_SUBKEY), name);
-		dst = std::experimental::filesystem::path(v);
-	}
-	catch (const win32::RegistryError&)
-	{
+		dst = std::experimental::filesystem::path(*v);
 	}
 }
-template <typename T> static void RegGetIntIfExists(T& dst, const std::string& name)
+
+template <typename T> static void RegGetIntIfExists(const boost::property_tree::ptree& pt, T& dst, const std::string& path)
 {
-	try
+	const auto v = pt.get_optional<T>(path);
+	if (v)
 	{
-		auto v = win32::RegGetDword(RRWS_KEY, _T(RRWS_SUBKEY), name);
-		dst = static_cast<T>(v);
-	}
-	catch (const win32::RegistryError&)
-	{
+		dst = *v;
 	}
 }
-template <> static void RegGetIntIfExists(bool& dst, const std::string& name)
+
+static void RegGetBoolIfExists(const boost::property_tree::ptree& pt, bool& dst, const std::string& path)
 {
-	try
+
+	const auto v = pt.get_optional<std::string>(path);
+	if (v)
 	{
-		auto v = win32::RegGetDword(RRWS_KEY, _T(RRWS_SUBKEY), name);
-		dst = v != 0;
-	}
-	catch (const win32::RegistryError&)
-	{
+		std::string str = *v;
+		std::transform(str.begin(), str.end(), str.begin(), ::tolower);
+		dst = (str == "1" || str == "true");
 	}
 }
-void SettingsLoader::loadFromRegistry(Settings& settings)
+
+void SettingsLoader::loadFromIni(Settings& settings)
 {
+	boost::property_tree::ptree pt;
+
+	const auto path = SvStl::GlobalPath::Inst().GetSVOGatewayIniPath();
 	try
 	{
-		win32::RegOpenKey(RRWS_KEY, RRWS_SUBKEY, KEY_READ);
+		boost::property_tree::ini_parser::read_ini(path, pt);
 	}
-	catch (const win32::RegistryError&)
+	catch (...)
 	{
-		return; // registry key does not exist. stick to defaults.
+		SV_LOG_GLOBAL(warning) << "The ini file at " << path << " does not exists. Using default settings.";
+		return;
 	}
 
-	RegGetIntIfExists(settings.dummySharedMemory, "DummySharedMemory");
+	RegGetIntIfExists(pt, settings.dummySharedMemory, "SharedMemory.Dummy");
 
-	RegGetStringIfExists(settings.logSettings.log_level, "LogLevel");
-	RegGetIntIfExists(settings.logSettings.log_to_stdout_enabled, "LogToStdoutEnabled");
-	RegGetIntIfExists(settings.logSettings.windows_event_log_enabled, "EventLogEnabled");
-	RegGetStringIfExists(settings.logSettings.windows_event_log_source, "EventLogSource");
-	RegGetStringIfExists(settings.logSettings.windows_event_log_level, "EventLogLevel");
+	RegGetStringIfExists(pt, settings.logSettings.log_level, "Logger.LogLevel");
+	RegGetIntIfExists(pt, settings.logSettings.log_to_stdout_enabled, "Logger.LogToStdoutEnabled");
+	RegGetIntIfExists(pt, settings.logSettings.windows_event_log_enabled, "Logger.WindowsEventLogEnabled");
+	RegGetStringIfExists(pt, settings.logSettings.windows_event_log_source, "Logger.WindowsEventLogSource");
+	RegGetStringIfExists(pt, settings.logSettings.windows_event_log_level, "Logger.WindowsEventLogLevel");
 
-	RegGetStringIfExists(settings.httpSettings.Host, "WebsocketHost");
-	RegGetIntIfExists(settings.httpSettings.Port, "WebsocketPort");
-	RegGetIntIfExists(settings.httpSettings.ReadBufferSize, "WebsocketReadBufferSize");
-	RegGetIntIfExists(settings.httpSettings.WriteBufferSize, "WebsocketWriteBufferSize");
-	RegGetIntIfExists(settings.httpSettings.ConnectionCleanupIntervalSec, "WebsocketConnectionCleanupIntervalSec");
-	RegGetIntIfExists(settings.httpSettings.bEnableFileServing, "WebsocketEnableFileServing");
-	RegGetPathIfExists(settings.httpSettings.DataDir, "WebsocketDataDir");
-	RegGetStringIfExists(settings.httpSettings.DefaultIndexHtmlFile, "WebsocketDefaultIndexHtmlFile");
-	RegGetStringIfExists(settings.httpSettings.DefaultErrorHtmlFile, "WebsocketDefaultErrorHtmlFile");
+	RegGetStringIfExists(pt, settings.httpSettings.Host, "Http.Host");
+	RegGetIntIfExists(pt, settings.httpSettings.Port, "Http.Port");
+	RegGetIntIfExists(pt, settings.httpSettings.ReadBufferSize, "Http.ReadBufferSize");
+	RegGetIntIfExists(pt, settings.httpSettings.WriteBufferSize, "Http.WriteBufferSize");
+	RegGetIntIfExists(pt, settings.httpSettings.ConnectionCleanupIntervalSec, "Http.ConnectionCleanupIntervalSec");
+	RegGetIntIfExists(pt, settings.httpSettings.bEnableFileServing, "Http.EnableFileServing");
+	RegGetPathIfExists(pt, settings.httpSettings.DataDir, "Http.DataDir");
+	RegGetStringIfExists(pt, settings.httpSettings.DefaultIndexHtmlFile, "Http.DefaultIndexHtmlFile");
+	RegGetStringIfExists(pt, settings.httpSettings.DefaultErrorHtmlFile, "Http.DefaultErrorHtmlFile");
+
+	RegGetStringIfExists(pt, settings.authSettings.UserSettingsFile, "Auth.UserSettingsFile");
+	RegGetStringIfExists(pt, settings.authSettings.JwtHmacSecret, "Auth.JwtHmacSecret");
+	RegGetStringIfExists(pt, settings.authSettings.JwtRsaPublicKeyFile, "Auth.JwtRsaPublicKeyFile");
+	RegGetStringIfExists(pt, settings.authSettings.JwtRsaPrivateKeyFile, "Auth.JwtRsaPrivateKeyFile");
 }
 }// namespace SvOgw

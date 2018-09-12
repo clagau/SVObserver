@@ -9,11 +9,11 @@
 
 #include "stdafx.h"
 
+#include "SVLogLibrary/Logging.h"
+
 #include "ClientStreamContext.h"
 #include "ErrorUtil.h"
 #include "RPCClient.h"
-
-#include <boost/log/trivial.hpp>
 
 namespace SvRpc
 {
@@ -41,7 +41,7 @@ void RPCClient::stop()
 		return;
 	}
 
-	BOOST_LOG_TRIVIAL(debug) << "Shut down of rpc client started";
+	SV_LOG_GLOBAL(debug) << "Shut down of rpc client started";
 
 	{ // capture shared_ptr in local copy to avoid races
 		auto client = m_WebsocketClient;
@@ -60,7 +60,7 @@ void RPCClient::stop()
 	{
 		m_IoThread.join();
 	}
-	BOOST_LOG_TRIVIAL(debug) << "Shut down of rpc client completed";
+	SV_LOG_GLOBAL(debug) << "Shut down of rpc client completed";
 }
 
 bool RPCClient::isConnected()
@@ -167,7 +167,7 @@ void RPCClient::onDisconnect()
 void RPCClient::on_disconnect()
 {
 	m_IsConnected.store(false);
-	BOOST_LOG_TRIVIAL(info) << "RPCClient received disconnect event. Trying to reconnect.";
+	SV_LOG_GLOBAL(info) << "RPCClient received disconnect event. Trying to reconnect.";
 	cancel_all_pending();
 	m_WebsocketClient.reset();
 	schedule_reconnect(boost::posix_time::seconds(1));
@@ -199,7 +199,7 @@ void RPCClient::on_binary_message(std::shared_ptr<std::vector<char>> ptr)
 	const auto& buf = *ptr;
 	if (buf.size() > static_cast<size_t>(std::numeric_limits<int>::max()))
 	{
-		BOOST_LOG_TRIVIAL(error) << "Message too large " << buf.size() << ". Must not be larger than "
+		SV_LOG_GLOBAL(error) << "Message too large " << buf.size() << ". Must not be larger than "
 			<< std::numeric_limits<int>::max() << ".";
 		return;
 	}
@@ -231,7 +231,7 @@ void RPCClient::on_binary_message(std::shared_ptr<std::vector<char>> ptr)
 			break;
 
 		default:
-			BOOST_LOG_TRIVIAL(error) << "Invalid message type " << type;
+			SV_LOG_GLOBAL(error) << "Invalid message type " << type;
 			break;
 	}
 }
@@ -242,7 +242,7 @@ void RPCClient::schedule_reconnect(boost::posix_time::time_duration timeout)
 	{
 		return;
 	}
-	BOOST_LOG_TRIVIAL(debug) << "Scheduling reconnect in " << timeout.seconds() << " seconds.";
+	SV_LOG_GLOBAL(debug) << "Scheduling reconnect in " << timeout.seconds() << " seconds.";
 	m_ReconnectTimer.expires_from_now(timeout);
 	m_ReconnectTimer.async_wait(std::bind(&RPCClient::on_reconnect, this, std::placeholders::_1));
 }
@@ -256,11 +256,11 @@ void RPCClient::on_reconnect(const boost::system::error_code& error)
 
 	if (error)
 	{
-		BOOST_LOG_TRIVIAL(warning) << error;
+		SV_LOG_GLOBAL(warning) << error;
 		return;
 	}
 
-	BOOST_LOG_TRIVIAL(info) << "Trying to reconnect.";
+	SV_LOG_GLOBAL(info) << "Trying to reconnect.";
 	m_WebsocketClient = m_WebsocketClientFactory.create(this);
 }
 
@@ -273,7 +273,7 @@ void RPCClient::on_request_timeout(const boost::system::error_code& error, uint6
 
 	if (error)
 	{
-		BOOST_LOG_TRIVIAL(warning) << error;
+		SV_LOG_GLOBAL(warning) << error;
 		return;
 	}
 

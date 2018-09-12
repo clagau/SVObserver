@@ -10,8 +10,8 @@
 
 #include <string>
 
-#include "Crypto.h"
-#include "SVProtoBuf/SVAuth.h"
+#include <SVAuthLibrary/Crypto.h>
+#include <SVProtoBuf/SVAuth.h>
 
 namespace SvAuth
 {
@@ -36,4 +36,4 @@ private:
 
 } // namespace SvAuth
 
-#include "SVAuth/Jwt.inl"
+#include "SVAuthLibrary/Jwt.inl"

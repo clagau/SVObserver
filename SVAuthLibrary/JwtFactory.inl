@@ -14,8 +14,8 @@
 
 #include <rapidjson/document.h>
 
-#include "Crypto.h"
-#include "SVProtoBuf/SVAuth.h"
+#include <SVAuthLibrary/Crypto.h>
+#include <SVProtoBuf/SVAuth.h>
 
 namespace SvAuth
 {

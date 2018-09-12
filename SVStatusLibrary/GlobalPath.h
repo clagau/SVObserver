@@ -25,6 +25,7 @@ namespace SvStl
 		LPCTSTR GetIniFolder();
 		LPCTSTR GetSVUtilityIniPath();
 		LPCTSTR GetSVIMIniPath();
+		LPCTSTR GetSVOGatewayIniPath();
 		LPCTSTR GetHardwareIniPath();
 		std::string GetExternalToolPath(LPCTSTR filename = nullptr);
 		std::string GetRunPath(LPCTSTR filename = nullptr);
@@ -60,6 +61,7 @@ namespace SvStl
 		///Ini Files 
 		std::string m_IniFolder;
 		std::string  m_SVIM_ini;
+		std::string  m_SVOGateway_ini;
 		std::string  m_Hardware_ini;
 		std::string  m_Utility_ini;
 
