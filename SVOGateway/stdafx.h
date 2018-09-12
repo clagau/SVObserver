@@ -38,6 +38,7 @@
 //************************************
 #pragma region Precompiled Headers
 
+#include <afx.h>
 #include <comutil.h>
 #include <fstream>
 #include <functional>
