@@ -67,7 +67,6 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <list>
-#include <boost/log/trivial.hpp>
 #include <boost/array.hpp>
 #include <boost/asio.hpp>
 #include <boost/asio/deadline_timer.hpp>

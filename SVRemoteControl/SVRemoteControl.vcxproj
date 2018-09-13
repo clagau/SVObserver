@@ -130,7 +130,7 @@
     </ResourceCompile>
     <Link>
       <RegisterOutput>true</RegisterOutput>
-      <AdditionalDependencies>SVHttpLibrary.lib;SVProtobuf.lib;SVRPCLibrary.lib;WebsocketLibrary.lib;$(SolutionDir)FreeImage\$(Platform)\FreeImage.lib;gdiplus.lib;libprotobufd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SVHttpLibrary.lib;SVProtobuf.lib;SVRPCLibrary.lib;WebsocketLibrary.lib;$(SolutionDir)FreeImage\$(Platform)\FreeImage.lib;gdiplus.lib;libprotobufd.lib;SVLogLibrary.lib;SVStatusLibrary.lib;SVUtilityLibrary.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).ocx</OutputFile>
       <ModuleDefinitionFile>.\SVRemoteControl.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -175,7 +175,7 @@
     </ResourceCompile>
     <Link>
       <RegisterOutput>true</RegisterOutput>
-      <AdditionalDependencies>SVHttpLibrary.lib;SVProtobuf.lib;SVRPCLibrary.lib;WebsocketLibrary.lib;$(SolutionDir)FreeImage\$(Platform)\FreeImage.lib;gdiplus.lib;libprotobufd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SVHttpLibrary.lib;SVProtobuf.lib;SVRPCLibrary.lib;WebsocketLibrary.lib;$(SolutionDir)FreeImage\$(Platform)\FreeImage.lib;gdiplus.lib;libprotobufd.lib;SVLogLibrary.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).ocx</OutputFile>
       <ModuleDefinitionFile>.\SVRemoteControl.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -227,7 +227,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalDependencies>SVHttpLibrary.lib;SVProtobuf.lib;SVRPCLibrary.lib;WebsocketLibrary.lib;$(SolutionDir)FreeImage\$(Platform)\FreeImage.lib;gdiplus.lib;libprotobuf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SVHttpLibrary.lib;SVProtobuf.lib;SVRPCLibrary.lib;WebsocketLibrary.lib;$(SolutionDir)FreeImage\$(Platform)\FreeImage.lib;gdiplus.lib;libprotobuf.lib;SVStatusLibrary.lib;SVLogLibrary.lib;SVUtilityLibrary.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration)\$(Platform)\bin\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <Version>
       </Version>
@@ -273,7 +273,7 @@
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <AdditionalDependencies>SVHttpLibrary.lib;SVProtobuf.lib;SVRPCLibrary.lib;WebsocketLibrary.lib;$(SolutionDir)FreeImage\$(Platform)\FreeImage.lib;gdiplus.lib;libprotobuf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SVHttpLibrary.lib;SVProtobuf.lib;SVRPCLibrary.lib;WebsocketLibrary.lib;$(SolutionDir)FreeImage\$(Platform)\FreeImage.lib;gdiplus.lib;libprotobuf.lib;SVLogLibrary.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration)\$(Platform)\bin\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>

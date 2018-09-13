@@ -53,7 +53,7 @@ std::future<void>  NotificationHandler::OnNext(SvPb::GetNotificationStreamRespon
 }
 void NotificationHandler::OnFinish()
 {
-	/*BOOST_LOG_TRIVIAL(info) << "Last Notification" << std::endl;
+	/*SV_LOG_GLOBAL(info) << "Last Notification" << std::endl;
 	return;*/
 }
 void NotificationHandler::OnError(const SvPenv::Error& er)

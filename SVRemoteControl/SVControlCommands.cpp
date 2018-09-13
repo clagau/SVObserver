@@ -24,7 +24,7 @@
 #include "WebsocketLibrary\RunRequest.inl"
 #include "WebsocketLibrary\Definition.h"
 #include "NotificationHandler.h"
-#include "WebsocketLibrary\Logging.h"
+#include "SVLogLibrary/Logging.h"
 #pragma endregion Includes
 
 
@@ -37,7 +37,7 @@ Status = E_INVALIDARG; \
 CmdStatus.hResult = E_INVALIDARG; \
 CmdStatus.errorText = SVStringConversions::to_utf16(e.what()); \
 SVLOG(CmdStatus.errorText.c_str()); \
-BOOST_LOG_TRIVIAL(error) << e.what()  << std::endl; \
+SV_LOG_GLOBAL(error) << e.what()  << std::endl; \
 }\
 catch (boost::system::system_error &e)\
 {\
@@ -45,7 +45,7 @@ Status = E_FAIL; \
 CmdStatus.hResult = E_FAIL; \
 CmdStatus.errorText = SVStringConversions::to_utf16(e.what()); \
 SVLOG(CmdStatus.errorText.c_str()); \
-BOOST_LOG_TRIVIAL(error) << e.what()  << std::endl; \
+SV_LOG_GLOBAL(error) << e.what()  << std::endl; \
 }\
 catch (std::exception & e)\
 {\
@@ -53,7 +53,7 @@ Status = E_UNEXPECTED; \
 CmdStatus.hResult = E_UNEXPECTED; \
 CmdStatus.errorText = SVStringConversions::to_utf16(e.what()); \
 SVLOG(CmdStatus.errorText.c_str()); \
-BOOST_LOG_TRIVIAL(error) << e.what()  << std::endl; \
+SV_LOG_GLOBAL(error) << e.what()  << std::endl; \
 }\
 catch (ATL::CAtlException & e)\
 {\
@@ -61,7 +61,7 @@ Status = e.m_hr; \
 CmdStatus.hResult = e.m_hr; \
 CmdStatus.errorText = L"ATL exception"; \
 SVLOG(CmdStatus.errorText.c_str()); \
-BOOST_LOG_TRIVIAL(error) << "ATL exception"  << std::endl; \
+SV_LOG_GLOBAL(error) << "ATL exception"  << std::endl; \
 }\
 catch (...)\
 {\
@@ -69,7 +69,7 @@ Status = E_UNEXPECTED; \
 CmdStatus.hResult = E_UNEXPECTED; \
 CmdStatus.errorText = L"Unknown exception"; \
 SVLOG(CmdStatus.errorText.c_str()); \
-BOOST_LOG_TRIVIAL(error) << "Unknown exception"  << std::endl; \
+SV_LOG_GLOBAL(error) << "Unknown exception"  << std::endl; \
 }
 
 SVControlCommands::SVControlCommands(NotifyFunctor p_Func)
@@ -80,12 +80,15 @@ SVControlCommands::SVControlCommands(NotifyFunctor p_Func)
 	m_notificationHandler(this)
 {
 	//@Todo[MEC][8.00] [15.05.2018] Settings should be in ini file
-	SvWsl::LogSettings logSettings;
+	//SvWsl::LogSettings logSettings;
+	
+	SvLog::LogSettings logSettings;
+	logSettings.log_to_stdout_enabled = true;
 	logSettings.windows_event_log_source = "SVRemoteControl";
 	logSettings.log_level = "debug";
 	logSettings.log_to_stdout_enabled = true;
 	logSettings.windows_event_log_enabled = true;
-	init_logging(logSettings);
+	SvLog::init_logging(logSettings);
 
 
 

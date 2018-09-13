@@ -38,7 +38,7 @@
 //************************************
 #pragma region Precompiled Headers
 
-#include <afx.h>
+#include <afx.h> //avoid linker error in DEBUG build
 #include <comutil.h>
 #include <fstream>
 #include <functional>
