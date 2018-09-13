@@ -713,7 +713,7 @@ void SVObserverApp::OnStop()
 
 	DisableTriggerSettings();
 
-	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST))
+	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_EDIT))
 	{
 		return;
 	}
@@ -800,7 +800,7 @@ void SVObserverApp::OnStop()
 	SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 	Exception.setMessage(SVMSG_SVO_28_SVOBSERVER_GO_OFFLINE, TriggerCounts.c_str(), SvStl::SourceFileParams(StdMessageParams));
 
-	SVSVIMStateClass::RemoveState(SV_STATE_UNAVAILABLE | SV_STATE_STOPING | SV_STATE_TEST | SV_STATE_REGRESSION);
+	SVSVIMStateClass::RemoveState(SV_STATE_UNAVAILABLE | SV_STATE_STOPING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT);
 	SVSVIMStateClass::AddState(SV_STATE_READY | SV_STATE_STOP);
 
 	SVCommandStreamManager::Instance().DisableAllInspections();
@@ -1136,8 +1136,6 @@ void SVObserverApp::OnGoOffline()
 		return;
 	}
 
-	SVSVIMStateClass::RemoveState(SV_STATE_EDIT);
-
 	DeselectTool();
 
 	GetMainFrame()->SetStatusInfoText(_T(""));
@@ -1158,10 +1156,7 @@ void SVObserverApp::OnGoOffline()
 			StopRegression();
 		}
 
-		if (SVSVIMStateClass::CheckState(SV_STATE_TEST))
-		{
-			OnStop();
-		}
+		OnStop();
 
 	}// end if ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
 }
