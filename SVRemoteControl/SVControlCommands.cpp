@@ -705,7 +705,7 @@ HRESULT SVControlCommands::GetFile(const _bstr_t& rSourcePath, const _bstr_t& rD
 		return Result;
 }
 
-HRESULT SVControlCommands::PutFile(const _bstr_t& rSourcePath, const _bstr_t& rDestinationPath, SVCommandStatus& rStatus)
+HRESULT SVControlCommands::PutFile(const _bstr_t& rSourcePath, const _bstr_t& rDestinationPath, bool saveInConfig, SVCommandStatus& rStatus)
 {
 	HRESULT Result {S_OK};
 
@@ -738,6 +738,7 @@ HRESULT SVControlCommands::PutFile(const _bstr_t& rSourcePath, const _bstr_t& rD
 					SvPb::PutFileRequest Request;
 					Request.set_destinationpath(DestinationPath);
 					Request.set_filedata(&FileData[0], FileSize);
+					Request.set_saveinconfig(saveInConfig);
 					SvPb::StandardResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
 						&SvWsl::SVRCClientService::PutFile,
 						std::move(Request)).get();

@@ -23,7 +23,6 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVSharedMemoryLibrary/SVProductFilterEnum.h"
 #include "SVUtilityLibrary/SVGUID.h"
-#include "SVStatusLibrary/MessageNotification.h"
 #include "SVSystemLibrary/SVAsyncProcedure.h"
 #include "SVStorage.h"
 #include "SVStorageResult.h"
@@ -31,9 +30,10 @@
 #include "SVDataDefinitionStruct.h"
 #include "RemoteMonitorNamedList.h"
 #include "SVPPQObject.h"
-#pragma endregion Includes
 #include "SVRPCLibrary/RPCServer.h"
 #include "SVRPCLibrary/ServerStreamContext.h"
+#include "SVStatusLibrary/NotificationTypeEnum.h"
+#pragma endregion Includes
 
 #pragma region Declarations
 enum svModeEnum;
@@ -97,12 +97,10 @@ public:
 
 	//************************************
 	//! Starts an Message notification via SVRC
-	//! \param type 
-	//! \param ErrorNumber 
-	//! \param errormessage 
+	//! \param rResponse notification response message
 	//! \returns HRESULT
 	//************************************
-	HRESULT FireNotification(int Type, int MesssageNumber, LPCTSTR MessageText);
+	HRESULT FireNotification(long notifyType, long value, long msgNr, LPCTSTR msg);
 	HRESULT QueryProductList(const std::string& rListName, SvDef::StringSet& rNames) const;
 	HRESULT QueryRejectCondList(const std::string& rListName, SvDef::StringSet& rNames) const;
 	HRESULT QueryFailStatusList(const std::string& rListName, SvDef::StringSet& rNames) const;
@@ -148,11 +146,7 @@ private:
 	HRESULT GetObjectDefinition(const SVObjectClass& rObj, const long p_Filter, SVDataDefinitionStruct& rDataDef) const;
 
 
-	void ProcessNotifications(svModeEnum previousMode);
-
-	void ProcessLastModified();
-	void ProcessMsgNotification();
-	void NotifyModeChanged(svModeEnum previousMode);
+	void ProcessNotifications(SvStl::NotificationType notifyType, long value, long msgNr, std::string msg);
 
 	SVGetItemsFunctorMap m_GetItemsFunctors;
 	SVSetItemsFunctorMap m_SetItemsFunctors;
@@ -180,7 +174,6 @@ private:
 private:
 
 	std::atomic<bool> m_bNotify {false};
-	SvStl::MessageNotification m_MessageNotification;
 	boost::asio::io_service* m_pIoService {nullptr};
 	SvRpc::Observer<SvPb::GetNotificationStreamResponse>  m_NotificationObserver {NULL,NULL,NULL};
 	SvRpc::ServerStreamContext::Ptr m_spServerStreamContex;

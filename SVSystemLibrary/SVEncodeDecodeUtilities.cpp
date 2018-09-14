@@ -46,7 +46,7 @@ HRESULT FileToCharVector(const std::string& rFileName, std::vector<char>& rFileD
 		}
 		else
 		{
-			Result = E_UNEXPECTED;
+			Result = ERROR_FILE_NOT_FOUND;
 		}
 	}
 	else

@@ -184,7 +184,6 @@ message GetImageStreamRequest
 //This registers which notifications are streamed by SVObserver
 message GetNotificationStreamRequest
 {
-	repeated NotificationType types = 1;	//A list of the types of notifications to be streamed
 }
 
 //The notification response is one of the values depending which notification type is being streamed
@@ -195,6 +194,7 @@ message GetNotificationStreamResponse
 		DeviceModeType currentMode = 1;			//The current SVObserver device mode
 		uint32 lastModified = 2;				//The last modified time stamp
 		MsgNotification msgNotification = 3;	//The message notification structure
+		string configFileLoaded = 4;			//The path to the loaded configuration file 
 	}
 }
 

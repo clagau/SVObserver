@@ -50,7 +50,7 @@ public:
 	HRESULT GetConfig(const _bstr_t& rFilePath, SVCommandStatus& rStatus);
 	HRESULT PutConfig(const _bstr_t& rFilePath, SVCommandStatus& rStatus);
 	HRESULT LoadConfig(const _bstr_t& rFilePath, SVCommandStatus& rStatus);
-	HRESULT PutFile(const _bstr_t& rSourcePath, const _bstr_t& rDestinationPath, SVCommandStatus& rStatus);
+	HRESULT PutFile(const _bstr_t& rSourcePath, const _bstr_t& rDestinationPath, bool saveInConfig, SVCommandStatus& rStatus);
 	HRESULT GetFile(const _bstr_t& rSourcePath, const _bstr_t& rDestinationPath, SVCommandStatus& rStatus);
 	HRESULT GetDataDefinitionList(const _bstr_t& p_rInspectionName, long p_ListType, ISVDataDefObjectList** p_ppEntries, SVCommandStatus& p_rStatus);
 	HRESULT RegisterMonitorList(const _bstr_t & rListName, const _bstr_t& rPpqName, int RejectDepth, const CComVariant& rProductItemList,

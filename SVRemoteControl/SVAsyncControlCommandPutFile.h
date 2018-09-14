@@ -18,7 +18,7 @@
 class SVAsyncControlCommandPutFile : public SVCommandTemplate
 {
 public:
-	SVAsyncControlCommandPutFile( const _bstr_t& p_rSourcePath, const _bstr_t& p_rDestinationPath );
+	SVAsyncControlCommandPutFile( const _bstr_t& rSourcePath, const _bstr_t& rDestinationPath, bool saveInConfig );
 	virtual ~SVAsyncControlCommandPutFile();
 
 	virtual HRESULT Execute(CommandDispatcher disp);
@@ -27,6 +27,7 @@ public:
 protected:
 	_bstr_t m_SourcePath;
 	_bstr_t m_DestinationPath;
+	bool m_saveInConfig;
 
 	long m_Cancel;
 };

@@ -87,7 +87,7 @@ public:
 
 	//This operator exposed the strings contained in the 
 	//mcsPathName, mcsFileName and mcsExtension attributes.
-	const std::string& GetFullFileName() const;
+	const std::string GetFullFileName() const;
 
 	//This operator exposes the string contained in the 
 	//mcsFileSelectDialogTitle attribute.
@@ -229,11 +229,6 @@ private:
 	//This attribute defines which kind of file is desired to 
 	//be held within this object.
 	DWORD m_FileType;
-
-	//This is a temporary storage container for the string 
-	//defining the fully qualified file name.  This name 
-	//include the path, name, and the extension.
-	mutable std::string m_FullFileName;
 
 	//This attribute defines the path name attached to this 
 	//object.

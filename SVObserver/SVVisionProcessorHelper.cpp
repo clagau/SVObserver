@@ -33,6 +33,7 @@
 #include "Definitions/SVUserMessage.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVProtoBuf/ConverterHelper.h"
+#include "SVProtoBuf/SVRC.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -1113,8 +1114,8 @@ HRESULT SVVisionProcessorHelper::RegisterMonitorList(const std::string& rListNam
 
 void SVVisionProcessorHelper::Startup()
 {
-	SvStl::MessageMgrStd::setNotificationFunction(boost::bind(&SVVisionProcessorHelper::FireNotification, this, _1, _2, _3));
-	SVSVIMStateClass::setNotificationFunction(boost::bind(&SVVisionProcessorHelper::FireNotification, this, _1, _2, _3));
+	SvStl::MessageMgrStd::setNotificationFunction(boost::bind(&SVVisionProcessorHelper::FireNotification, this, _1, _2, _3, _4));
+	SVSVIMStateClass::setNotificationFunction(boost::bind(&SVVisionProcessorHelper::FireNotification, this, _1, _2, _3, _4));
 }
 
 void SVVisionProcessorHelper::Shutdown()
@@ -1124,34 +1125,28 @@ void SVVisionProcessorHelper::Shutdown()
 
 
 }
-HRESULT SVVisionProcessorHelper::FireNotification(int Type, int MessageNumber, LPCTSTR MessageText)
+HRESULT SVVisionProcessorHelper::FireNotification(long notifyType, long value, long msgNr, LPCTSTR msg)
 {
 	HRESULT Result{S_OK};
 
-	//Check to see if mode has changed
-	svModeEnum currentMode = SVSVIMStateClass::getCurrentMode();
-	svModeEnum previousMode = SVSVIMStateClass::getPreviousMode();
-	if (previousMode != currentMode)
+	SvStl::NotificationType fireNotifyType = static_cast<SvStl::NotificationType> (notifyType);
+	if (SvStl::NotificationType::mode == fireNotifyType)
 	{
+		svModeEnum currentMode = static_cast<svModeEnum> (value);
 		RootObject::setRootChildValue(SvDef::FqnEnvironmentModeValue, static_cast<long> (currentMode));
 		RootObject::setRootChildValue(SvDef::FqnEnvironmentModeIsRun, (SVIM_MODE_ONLINE == currentMode));
 		RootObject::setRootChildValue(SvDef::FqnEnvironmentModeIsStop, (SVIM_MODE_OFFLINE == currentMode));
 		RootObject::setRootChildValue(SvDef::FqnEnvironmentModeIsRegressionTest, (SVIM_MODE_REGRESSION == currentMode));
 		RootObject::setRootChildValue(SvDef::FqnEnvironmentModeIsTest, (SVIM_MODE_TEST == currentMode));
 		RootObject::setRootChildValue(SvDef::FqnEnvironmentModeIsEdit, (SVIM_MODE_EDIT == currentMode));
-		SVSVIMStateClass::setPreviousToCurrentMode();
 	}
 
-	SvStl::NotificationEnum NotificationType(SvStl::NotificationEnum::MsgUknown);
-	NotificationType = static_cast<SvStl::NotificationEnum> (Type);
-	if (SvStl::NotificationEnum::MsgUknown != NotificationType)
+	if (nullptr != m_pIoService)
 	{
-		m_MessageNotification.SetNotification(NotificationType, MessageNumber, MessageText);
-	}
-	if (m_pIoService)
-	{
-		//The previous mode is passed as a parameter due to ProcessNotifications being called at a later stage
-		m_pIoService->post([this, previousMode] { ProcessNotifications(previousMode); });
+		//We need to place the message in a std::string due to the post call
+		std::string msgString {(nullptr != msg) ? msg : std::string()};
+		//All the parameters are passed by value because the function is called at a later stage
+		m_pIoService->post([this, fireNotifyType, value, msgNr, msgString] { ProcessNotifications(fireNotifyType, value, msgNr, msgString); });
 	}
 	else
 	{
@@ -1163,7 +1158,7 @@ HRESULT SVVisionProcessorHelper::FireNotification(int Type, int MessageNumber, L
 }
 
 
-void SVVisionProcessorHelper::ProcessNotifications(svModeEnum previousMode)
+void SVVisionProcessorHelper::ProcessNotifications(SvStl::NotificationType notifyType, long value, long msgNr, std::string msg)
 {
 	if (!m_bNotify.load())
 	{
@@ -1180,69 +1175,44 @@ void SVVisionProcessorHelper::ProcessNotifications(svModeEnum previousMode)
 		//TODO release 
 		return;
 	}
-	ProcessLastModified();
-	NotifyModeChanged(previousMode);
-	ProcessMsgNotification();
-
-}
-
-void SVVisionProcessorHelper::ProcessLastModified()
-{
-	if (m_NotificationObserver.m_OnNext && SVSVIMStateClass::getPreviousTime() != SVSVIMStateClass::getCurrentTime())
+	if (m_NotificationObserver.m_OnNext)
 	{
-		SvPb::GetNotificationStreamResponse resp;
-		resp.set_lastmodified(SVSVIMStateClass::getCurrentTime());
-		try
+		SvPb::GetNotificationStreamResponse response;
+		switch (notifyType)
 		{
-			m_NotificationObserver.onNext(std::move(resp));
-			SVSVIMStateClass::setPreviousToCurrentTime();
-		}
-		catch (const SvRpc::ConnectionLostException&)
-		{
-			return;
-		}
-	}
-}
-
-void SVVisionProcessorHelper::ProcessMsgNotification()
-{
-	std::lock_guard<std::mutex> lock(m_MessageNotification.getLock());
-	if (m_NotificationObserver.m_OnNext && !m_MessageNotification.isProcessed())
-	{
-		SvPb::GetNotificationStreamResponse resp;
-		auto msg = resp.mutable_msgnotification();
-		msg->set_errornumber(m_MessageNotification.getMessageNumber());
-		msg->set_messagetext(m_MessageNotification.getMessageText());
-		msg->set_type(static_cast<SvPb::MessageType>(m_MessageNotification.getType()));
-
-		try
-		{
-			m_NotificationObserver.onNext(std::move(resp));
-		}
-		catch (const SvRpc::ConnectionLostException&)
-		{
-			return;
-		}
-		m_MessageNotification.setProcessed(true);
-	}
-}
-
-void SVVisionProcessorHelper::NotifyModeChanged(svModeEnum previousMode)
-{
-	if (previousMode != SVSVIMStateClass::getCurrentMode())
-	{
-		SvPb::GetNotificationStreamResponse Response;
-		Response.set_currentmode(SvPb::SVIMMode_2_PbDeviceMode(static_cast<long> (SVSVIMStateClass::getCurrentMode())));
-		if (m_NotificationObserver.m_OnNext)
-		{
-			try
+			case SvStl::NotificationType::mode:
 			{
-				m_NotificationObserver.onNext(std::move(Response));
+				response.set_currentmode(SvPb::SVIMMode_2_PbDeviceMode(value));
+				break;
 			}
-			catch (const SvRpc::ConnectionLostException&)
+			case SvStl::NotificationType::lastModified:
 			{
+				response.set_lastmodified(value);
+				break;
+			}
+			case SvStl::NotificationType::message:
+			{
+				auto pMsgNotify = response.mutable_msgnotification();
+				pMsgNotify->set_type(static_cast<SvPb::MessageType>(value));
+				pMsgNotify->set_errornumber(msgNr);
+				pMsgNotify->set_messagetext(msg);
+				break;
+			}
+			case SvStl::NotificationType::loadConfig:
+			{
+				response.set_configfileloaded(msg);
+				break;
+			}
+			default:
 				return;
-			}
+		}
+		try
+		{
+			m_NotificationObserver.onNext(std::move(response));
+		}
+		catch (const SvRpc::ConnectionLostException&)
+		{
+			return;
 		}
 	}
 }

@@ -2298,6 +2298,26 @@ int SVObserverApp::Run()
 
 
 #pragma region virtual
+void SVObserverApp::AddAdditionalFile(LPCTSTR FilePath)
+{
+	SVConfigurationObject* pConfig(nullptr);
+	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+
+	if (nullptr != pConfig)
+	{
+		for (const auto& rFile : pConfig->getAdditionalFiles())
+		{
+			if(FilePath == rFile.GetFullFileName())
+			{
+				//File is already in additional file list
+				return;
+			}
+		}
+		pConfig->getAdditionalFiles().emplace_back(SVFileNameClass{FilePath});
+		SVFileNameManagerClass::Instance().AddItem(&pConfig->getAdditionalFiles().back());
+		SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+	}
+}
 
 HRESULT SVObserverApp::OpenFile(LPCTSTR PathName)
 {
@@ -2596,8 +2616,11 @@ HRESULT SVObserverApp::OpenSVXFile()
 			{
 				AddToRecentFileList(FileName.c_str());
 			}
-		} // try
 
+			//Finished loading notify load
+			long loadConfigNotify {static_cast<long> (SvStl::NotificationType::loadConfig)};
+			SVVisionProcessorHelper::Instance().FireNotification(loadConfigNotify, 0L, 0L, m_SvxFileName.GetFullFileName().c_str());
+		} // try
 		catch (CUserException* pUE)
 		{
 			delete pUE;
@@ -3746,7 +3769,7 @@ const std::string& SVObserverApp::getConfigFileName() const
 	return m_ConfigFileName.GetFileName();
 }
 
-const std::string& SVObserverApp::getConfigFullFileName() const
+const std::string SVObserverApp::getConfigFullFileName() const
 {
 	return m_ConfigFileName.GetFullFileName();
 }

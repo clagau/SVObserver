@@ -173,7 +173,7 @@ public:
 	//}}AFX_DATA
 
 public:
-	
+	void AddAdditionalFile(LPCTSTR FilePath);
 	HRESULT OpenFile(LPCTSTR PathName);
 	HRESULT OpenSVXFile();
 	SVIODoc* NewSVIODoc( LPCTSTR DocName, SVIOController& Controller );
@@ -215,7 +215,7 @@ public:
 	const std::string& getConfigFileNameOnly() const;
 	const std::string& getConfigPathName() const;
 	const std::string& getConfigFileName() const;
-	const std::string& getConfigFullFileName() const;
+	const std::string getConfigFullFileName() const;
 	bool setConfigFullFileName(LPCTSTR csFullFileName, bool bLoadFile);
 
 	SVIPDoc* GetIPDoc( const SVGUID& rInspectionID ) const;

@@ -121,7 +121,7 @@ BEGIN_MESSAGE_MAP(SVMainFrame, CMDIFrameWnd)
 	ON_COMMAND(ID_TOOLBAR_ZOOM, &SVMainFrame::OnToolbarZoom)
 	ON_UPDATE_COMMAND_UI(ID_TOOLBAR_ZOOM, &SVMainFrame::OnUpdateToolbarZoom)
 	ON_MESSAGE(SV_REGISTER_MONITOR_LIST, &SVMainFrame::RemoteRegisterMonitorList)
-
+	ON_MESSAGE(SV_ADD_FILE_TO_CONFIG, &SVMainFrame::onAddFileToConfig)
 END_MESSAGE_MAP()
 
 #pragma region Constructor
@@ -738,6 +738,13 @@ LRESULT SVMainFrame::InvalidateStatusBar( WPARAM wParam, LPARAM lParam )
 LRESULT SVMainFrame::RemoteRegisterMonitorList( WPARAM wParam, LPARAM lParam )
 {
 	TheSVObserverApp.GetIODoc()->GetIOController()->ShowMonitorListTab();
+	return 0;
+}
+
+LRESULT SVMainFrame::onAddFileToConfig(WPARAM wParam, LPARAM lParam)
+{
+	LPCTSTR pFileName = reinterpret_cast<LPCTSTR> (lParam);
+	TheSVObserverApp.AddAdditionalFile(pFileName);
 	return 0;
 }
 

@@ -748,12 +748,18 @@ namespace SVRemoteTest
 							List<string> list = prop.Value as List<string>;
 							items.Add(list.ToArray());
 						}
-						else if (prop.TypeName == typeof(Int32).FullName)
-						{
-							Int32Converter converter = new Int32Converter();
-							Int32 iVal = (Int32)converter.ConvertFromString(prop.Value.ToString());
-							items.Add(iVal);
-						}
+                        else if (prop.TypeName == typeof(Int32).FullName)
+                        {
+                            Int32Converter converter = new Int32Converter();
+                            Int32 iVal = (Int32)converter.ConvertFromString(prop.Value.ToString());
+                            items.Add(iVal);
+                        }
+                        else if (prop.TypeName == typeof(Boolean).FullName)
+                        {
+                            BooleanConverter converter = new BooleanConverter();
+                            Boolean bVal = (Boolean)converter.ConvertFromString(prop.Value.ToString());
+                            items.Add(bVal);
+                        }
                         else if (prop.ConverterTypeName == typeof(SVComEnumConverter).FullName)
                         {
                             Type EnumType = Type.GetType(prop.TypeName);

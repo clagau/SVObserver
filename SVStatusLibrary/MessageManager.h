@@ -11,28 +11,29 @@
 #pragma region Includes
 #include "MessageContainer.h"
 #include "SVSVIMStateClass.h"
+#include "NotificationTypeEnum.h"
 #pragma endregion Includes
 
 namespace SvStl
 {
 	#pragma region Declarations
-		/**********
-			The message type enumeration
-		***********/
-		enum MsgTypeEnum
-		{
-			DataOnly,
-			LogOnly,
-			LogAndDisplay
-		};
+	/**********
+		The message type enumeration
+	***********/
+	enum MsgTypeEnum
+	{
+		DataOnly,
+		LogOnly,
+		LogAndDisplay
+	};
 
-		enum NotificationEnum
-		{
-				MsgUknown		=0,
-				StartMsgBox		=1,
-				EndMsgBox		=2,
-				MsgLog			=3
-		};
+	enum NotificationMsgEnum
+	{
+			MsgUknown		=0,
+			StartMsgBox		=1,
+			EndMsgBox		=2,
+			MsgLog			=3
+	};
 	
 	#pragma endregion Declarations
 

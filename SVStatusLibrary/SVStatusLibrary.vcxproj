@@ -153,7 +153,6 @@
     <ClCompile Include="CommandLineArgs.cpp" />
     <ClCompile Include="GlobalPath.cpp" />
     <ClCompile Include="MessageData.cpp" />
-    <ClCompile Include="MessageNotification.cpp" />
     <ClCompile Include="MessageTextGenerator.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -175,10 +174,10 @@
     <ClInclude Include="GlobalPath.h" />
     <ClInclude Include="MessageManager.h" />
     <ClInclude Include="MessageData.h" />
-    <ClInclude Include="MessageNotification.h" />
     <ClInclude Include="MessageTextEnum.h" />
     <ClInclude Include="MessageTextGenerator.h" />
     <ClInclude Include="MessageTextMap.h" />
+    <ClInclude Include="NotificationTypeEnum.h" />
     <ClInclude Include="ProductWorkloadInformation.h" />
     <ClInclude Include="SourceFileParams.h" />
     <ClInclude Include="stdafx.h" />

@@ -184,6 +184,8 @@ public:
 	void SetInputObjectList( SVInputObjectList* pInputObjectList );
 	SVInputObjectList* GetInputObjectList( ) const;
 
+	std::vector<SVFileNameClass>& getAdditionalFiles() {return m_AdditionalFiles;}
+
 	void SetOutputObjectList( SVOutputObjectList* pOutputObjectList );
 	SVOutputObjectList* GetOutputObjectList( ) const;
 	HRESULT RebuildOutputObjectList();
@@ -338,6 +340,13 @@ public:
 	//************************************
 	HRESULT LoadObjectAttributesSet(SVTreeType& rTree);
 
+	//************************************
+	//! The method loads the Additional File list
+	//! \param rTree <in> a reference to the XML-tree which it will be loaded from
+	//! \returns S_OK, if loading successful
+	//************************************
+	HRESULT LoadAdditionalFiles(SVTreeType& rTree);
+
 	bool HasCameraTrigger(SVPPQObject* p_pPPQ) const;
 
 	SvPb::InspectionList GetInspectionList4TRC() const { return m_inspList4TRC; };
@@ -429,6 +438,12 @@ private:
 	void SaveObjectAttributesSet(SvXml::SVObjectXMLWriter& rWriter, const AttributesSetMap& rAttributesSetMap) const;
 
 	//************************************
+	//! The method saves the Additional file list
+	//! \param rWriter <in> a reference to the xml-writer
+	//************************************
+	void SaveAdditionalFiles(SvXml::SVObjectXMLWriter& rWriter) const;
+
+	//************************************
 	//! The method gets Object Attributes for the inspection
 	//! \param pInspection <in> a pointer to the inspection
 	//! \param rAttributesSetMap <in> a reference to attribute set map
@@ -470,6 +485,7 @@ private:
 
 	bool getObjectsForMonitorList(const SVGUID& rToolId, SvPb::InspectionCmdMsgs &rResponse) const;
 
+	std::vector<SVFileNameClass>    m_AdditionalFiles;
 	SvTi::SVTriggerObjectPtrVector  m_arTriggerArray;
 	SVPPQObjectPtrVector            m_arPPQArray;
 	SVVirtualCameraPtrVector        m_arCameraArray;

@@ -268,9 +268,9 @@ STDMETHODIMP SVRemoteCtrl::FinishPutConfig(LONG Timeout, VARIANT_BOOL CancelAfte
 	return l_Status;
 }
 
-STDMETHODIMP SVRemoteCtrl::BeginPutDeviceFile(BSTR sourcePath, BSTR destinationPath)
+STDMETHODIMP SVRemoteCtrl::BeginPutDeviceFile(BSTR sourcePath, BSTR destinationPath, VARIANT_BOOL saveInConfig)
 {
-	SVCommandTemplatePtr l_CommandPtr(new SVAsyncControlCommandPutFile(sourcePath, destinationPath));
+	SVCommandTemplatePtr l_CommandPtr(new SVAsyncControlCommandPutFile(sourcePath, destinationPath, saveInConfig));
 
 	HRESULT l_Status = m_AsyncCommandHelper.SetCommand(l_CommandPtr, INFINITE);
 
@@ -670,11 +670,11 @@ STDMETHODIMP SVRemoteCtrl::GetVersion(BSTR* svobserver_ver, BSTR* svremotecontro
 	return l_Status;
 }
 
-STDMETHODIMP SVRemoteCtrl::PutDeviceFile(BSTR sourcePath, BSTR destinationPath)
+STDMETHODIMP SVRemoteCtrl::PutDeviceFile(BSTR sourcePath, BSTR destinationPath, VARIANT_BOOL saveInConfig)
 {
 	SVCommandStatus CommandStatus;
 
-	HRESULT l_Status = m_dispatcher->PutFile(sourcePath, destinationPath, CommandStatus);
+	HRESULT l_Status = m_dispatcher->PutFile(sourcePath, destinationPath, saveInConfig, CommandStatus);
 
 	if (l_Status != S_OK)
 	{

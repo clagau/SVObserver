@@ -170,19 +170,25 @@ namespace SVRemoteTest
 									Mode_Label.Text = m_unknownMode;
 									break;
 								}
-							case SVNotificationTypesEnum.MessageNotification:
-								{
-									SVObserverMessage SVError = ExtractErrorFromXML(e.data.ToString()); ;
-									label_ErrorNr.Text = SVError.Number.ToString();
-									label_ErrorType.Text = SVError.Type.ToString();
-									label_ErrorText.Text = SVError.Text;
+                            case SVNotificationTypesEnum.MessageNotification:
+                                {
+                                    SVObserverMessage SVError = ExtractErrorFromXML(e.data.ToString()); ;
+                                    label_ErrorNr.Text = SVError.Number.ToString();
+                                    label_ErrorType.Text = SVError.Type.ToString();
+                                    label_ErrorText.Text = SVError.Text;
+                                    break;
+                                }
 
+                            case SVNotificationTypesEnum.LoadConfig:
+                                {
+                                    SVObserverMessage SVError = ExtractErrorFromXML(e.data.ToString()); ;
+                                    label_ErrorNr.Text = "";
+                                    label_ErrorType.Text = "";
+                                    label_ErrorText.Text = SVError.Text;
+                                    break;
+                                }
 
-
-									break;
-								}
-
-							default:
+                            default:
 								{
 									// Do nothing.
 									break;
@@ -465,7 +471,7 @@ namespace SVRemoteTest
 				StringReader stream = new StringReader(p_Data);
 				XmlReaderSettings settings = new XmlReaderSettings();
 				settings.IgnoreComments = true;
-				settings.ValidationType = ValidationType.Auto;
+				settings.ValidationType = ValidationType.Schema;
 				settings.ConformanceLevel = ConformanceLevel.Document;
 
 				XmlReader l_Reader = XmlReader.Create(stream, settings);
@@ -515,7 +521,7 @@ namespace SVRemoteTest
 				StringReader stream = new StringReader(data);
 				XmlReaderSettings settings = new XmlReaderSettings();
 				settings.IgnoreComments = true;
-				settings.ValidationType = ValidationType.Auto;
+				settings.ValidationType = ValidationType.Schema;
 				settings.ConformanceLevel = ConformanceLevel.Document;
 
 				XmlReader reader = XmlReader.Create(stream, settings);
@@ -583,7 +589,7 @@ namespace SVRemoteTest
 				StringReader stream = new StringReader(data);
 				XmlReaderSettings settings = new XmlReaderSettings();
 				settings.IgnoreComments = true;
-				settings.ValidationType = ValidationType.Auto;
+				settings.ValidationType = ValidationType.Schema;
 				settings.ConformanceLevel = ConformanceLevel.Document;
 
 				XmlReader reader = XmlReader.Create(stream, settings);

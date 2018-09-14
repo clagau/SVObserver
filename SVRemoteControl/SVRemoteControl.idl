@@ -99,6 +99,7 @@ typedef enum SVNotificationTypes
 	[helpstring("Connected")] Connected = 3,
 	[helpstring("Disconnected")] Disconnected = 4,
 	[helpstring("MessageNotification")] MessageNotification = 5,
+	[helpstring("Load Configuration")] LoadConfig = 6,
 } SVNotificationTypesEnum;
 
 [
@@ -350,7 +351,7 @@ interface ISVRemoteCtrl : IDispatch{
 	[id(513), helpstring("Waits for Get Configuartion to finish.")] HRESULT FinishGetConfig([in] LONG Timeout, [in] VARIANT_BOOL CancelAfterTimeout);
 	[id(514), helpstring("Starts Put Configuration")] HRESULT BeginPutConfig([in] BSTR fileName);
 	[id(515), helpstring("Waits for Put Configuration to finish.")] HRESULT FinishPutConfig([in] LONG Timeout, [in] VARIANT_BOOL CancelAfterTimeout);
-	[id(516), helpstring("Starts Put Device File")] HRESULT BeginPutDeviceFile([in] BSTR sourcePath, [in] BSTR destinationPath);
+	[id(516), helpstring("Starts Put Device File")] HRESULT BeginPutDeviceFile([in] BSTR sourcePath, [in] BSTR destinationPath, [in, defaultvalue(0)] VARIANT_BOOL saveInConfig);
 	[id(517), helpstring("Waits for Put Device File to finish.")] HRESULT FinishPutDeviceFile([in] LONG Timeout, [in] VARIANT_BOOL CancelAfterTimeout);
 	[id(518), helpstring("Starts Set Device Mode")] HRESULT BeginSetDeviceMode([in] SVObserverModesEnum desiredMode);
 	[id(519), helpstring("Waits for Set Device Mode to finish.")] HRESULT FinishSetDeviceMode([in] LONG Timeout, [in] VARIANT_BOOL CancelAfterTimeout);
@@ -364,7 +365,7 @@ interface ISVRemoteCtrl : IDispatch{
 	[id(527), helpstring("Get State")] HRESULT GetState([out,retval] LONG* state);
 	[id(528), helpstring("Put Configuration")] HRESULT PutConfig([in] BSTR filePath, [in] LONG Timeout);
 	[id(529), helpstring("Get Version")] HRESULT GetVersion([out] BSTR* svobserver_ver, [out] BSTR* svremotecontrol_ver, [out] BSTR* runrejectserver_ver);
-	[id(530), helpstring("Put Device File")] HRESULT PutDeviceFile([in] BSTR sourcePath, [in] BSTR destinationPath);
+	[id(530), helpstring("Put Device File")] HRESULT PutDeviceFile([in] BSTR sourcePath, [in] BSTR destinationPath, [in, defaultvalue(0)] VARIANT_BOOL saveInConfig);
 	[id(531), helpstring("Set Device Mode")] HRESULT SetDeviceMode([in] SVObserverModesEnum desiredMode);
 	[id(532), helpstring("Set Items")] HRESULT SetItems([in] ISVProductItems* items, [in, defaultvalue(-1)] VARIANT_BOOL RunOnce,[out, retval] ISVProductItems ** faults);
 	[id(536), helpstring("Disconnects from the server.")] HRESULT Disconnect(void);

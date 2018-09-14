@@ -190,7 +190,9 @@ namespace  SvXml
 	LPCTSTR const CTAG_USE_PLAY_CONDITION = _T("UsePlayCondition");
 	LPCTSTR const CTAG_PLAY_CONDITION_EQUATION = _T("PlayConditionEquation");
 
-	LPCTSTR const CTAG_OBJECT_ATTRIBUTES_SET		  = _T("ObjectAttributesSet");
+	LPCTSTR const CTAG_OBJECT_ATTRIBUTES_SET = _T("ObjectAttributesSet");
+
+	LPCTSTR const CTAG_ADDITIONAL_CONFIG_FILES = _T("AdditionalConfigFiles");
 
 	/// These are tool copy / paste tags
 	const TCHAR* const ToolCopyTag = _T( "Tool-Copy" );

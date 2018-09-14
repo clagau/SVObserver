@@ -8,38 +8,47 @@ NotificationHandler::NotificationHandler(SVControlCommands* pControlCommands) :m
 {
 }
 
-std::future<void>  NotificationHandler::OnNext(SvPb::GetNotificationStreamResponse& resp)
+std::future<void>  NotificationHandler::OnNext(SvPb::GetNotificationStreamResponse& rResponse)
 {
 
 	SVNotificationTypes type = UnknownNotificationType;
 
 	boost::property_tree::ptree propTree;
-	switch (resp.message_case())
+	switch (rResponse.message_case())
 	{
 
 		case SvPb::GetNotificationStreamResponse::kCurrentMode:
 		{
-			svModeEnum svMode = SvPb::PbDeviceMode_2_SVIMMode(resp.currentmode());
-			propTree.put("SVRC.DataItems.Mode", (int)svMode);
+			svModeEnum svMode = SvPb::PbDeviceMode_2_SVIMMode(rResponse.currentmode());
 			propTree.put("SVRC.Notification", "CurrentMode");
+			propTree.put("SVRC.DataItems.Mode", (int)svMode);
 			type = SVNotificationTypes::CurrentMode;
 			break;
 		}
 		case SvPb::GetNotificationStreamResponse::kLastModified:
 		{
 			type = SVNotificationTypes::LastModified;
-			unsigned int  timestamp = resp.lastmodified();
-			propTree.put("SVRC.DataItems.TimeStamp", timestamp);
+			unsigned int  timestamp = rResponse.lastmodified();
 			propTree.put("SVRC.Notification", "LastModified");
+			propTree.put("SVRC.DataItems.TimeStamp", timestamp);
 			break;
 		}
 		case SvPb::GetNotificationStreamResponse::kMsgNotification:
 		{
 			type = SVNotificationTypes::MessageNotification;
 			propTree.put("SVRC.Notification", "MessageNotification");
-			propTree.put("SVRC.DataItems.MessageText", resp.msgnotification().messagetext());
-			propTree.put("SVRC.DataItems.MessageType", resp.msgnotification().type());
-			propTree.put("SVRC.DataItems.MessageNumber", resp.msgnotification().errornumber());
+			propTree.put("SVRC.DataItems.MessageText", rResponse.msgnotification().messagetext());
+			propTree.put("SVRC.DataItems.MessageType", rResponse.msgnotification().type());
+			propTree.put("SVRC.DataItems.MessageNumber", rResponse.msgnotification().errornumber());
+			break;
+		}
+		case SvPb::GetNotificationStreamResponse::kConfigFileLoaded:
+		{
+			type = SVNotificationTypes::LoadConfig;
+			std::string loadText{_T("The following configuration has been loaded:\n")};
+			loadText += rResponse.configfileloaded();
+			propTree.put("SVRC.Notification", "loadConfigNotification");
+			propTree.put("SVRC.DataItems.MessageText", loadText);
 			break;
 		}
 		default:

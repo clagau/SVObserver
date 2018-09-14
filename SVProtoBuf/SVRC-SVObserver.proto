@@ -185,6 +185,7 @@ message PutFileRequest
 {
 	string destinationPath = 1;		//The destination path of the file on the SVIM
 	bytes fileData = 2;				//The file data as a byte array
+	bool saveInConfig = 3;			//The file is marked to be saved in the configuration file
 }
 
 ///Registers the given Monitor list into the currently loaded configuration in SVObserver

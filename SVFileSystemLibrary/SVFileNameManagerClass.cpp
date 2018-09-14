@@ -100,7 +100,7 @@ bool SVFileNameManagerClass::SetConfigurationPathName(LPCTSTR szPathName)
 	return Result;
 }
 
-bool SVFileNameManagerClass::FindItem(SVFileNameClass* svpFileNameClass)
+bool SVFileNameManagerClass::FindItem(const SVFileNameClass* const svpFileNameClass)
 {
 	bool bOk = false;
 
@@ -164,7 +164,7 @@ bool SVFileNameManagerClass::AddItem(SVFileNameClass* pFileName)
 	return Result;
 }
 
-bool SVFileNameManagerClass::RemoveItem(SVFileNameClass* pFileName)
+bool SVFileNameManagerClass::RemoveItem(const SVFileNameClass* const pFileName)
 {
 	bool Result = false;
 

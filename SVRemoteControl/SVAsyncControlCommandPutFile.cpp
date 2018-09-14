@@ -14,8 +14,11 @@
 #include "SVControlCommands.h"
 #pragma endregion Includes
 
-SVAsyncControlCommandPutFile::SVAsyncControlCommandPutFile( const _bstr_t& p_rSourcePath, const _bstr_t& p_rDestinationPath )
-: SVCommandTemplate(), m_SourcePath( p_rSourcePath ), m_DestinationPath( p_rDestinationPath ), m_Cancel( 0 )
+SVAsyncControlCommandPutFile::SVAsyncControlCommandPutFile(const _bstr_t& rSourcePath, const _bstr_t& rDestinationPath, bool saveInConfig) : SVCommandTemplate()
+, m_SourcePath{rSourcePath}
+, m_DestinationPath{rDestinationPath}
+, m_saveInConfig{saveInConfig}
+, m_Cancel( 0 )
 {
 }
 
@@ -25,7 +28,7 @@ SVAsyncControlCommandPutFile::~SVAsyncControlCommandPutFile()
 
 HRESULT SVAsyncControlCommandPutFile::Execute(CommandDispatcher disp)
 {
-	return disp->PutFile( m_SourcePath, m_DestinationPath, m_Status );
+	return disp->PutFile( m_SourcePath, m_DestinationPath, m_saveInConfig, m_Status );
 }
 
 HRESULT SVAsyncControlCommandPutFile::Cancel()

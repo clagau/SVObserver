@@ -42,9 +42,6 @@
     <ClCompile Include="CommandLineArgs.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="MessageNotification.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVOIntelRAIDStatusClass.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -92,9 +89,6 @@
     <ClInclude Include="SourceFileParams.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="MessageNotification.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVOIntelRAIDStatusClass.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -114,6 +108,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="svModeEnum.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="NotificationTypeEnum.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

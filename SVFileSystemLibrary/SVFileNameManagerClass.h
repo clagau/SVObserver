@@ -62,12 +62,12 @@ public:
 	//SVFileNameClass object from the application file list.  
 	//The miCurrentItem index will be set to the proceeding 
 	//element.
-	bool RemoveItem(SVFileNameClass* pFileName);
+	bool RemoveItem(const SVFileNameClass* const pFileName);
 
 	//This operator will search the global application list 
 	//for a match for the pointer address.  It will reset the 
 	//array index pointer to the appropriate array element.
-	static bool FindItem(SVFileNameClass* pFileName);
+	static bool FindItem(const SVFileNameClass* const pFileName);
 
 	//This operator will return the pointer address to the 
 	//appropriate file object at the current array index.

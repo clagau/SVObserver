@@ -10,7 +10,9 @@
 //******************************************************************************
 
 #pragma once
+#pragma region Includes
 #include "svModeEnum.h"
+#pragma endregion Includes
 
 #define SV_STATE_UNKNOWN		0x00000000
 
@@ -43,7 +45,7 @@
 #define SV_STATE_MODIFIED		0x00000001
 #define SV_STATE_REMOTE_CMD		0x00000002
 
-typedef boost::function<HRESULT(int, int, LPCTSTR)> NotifyFunctor;
+typedef boost::function<HRESULT(long, long, long, LPCTSTR)> NotifyFunctor;
 
 //This class manages the state variable and uses a lock to 
 //
@@ -74,19 +76,14 @@ public:
 	static bool CheckState( DWORD dwState );
 
 	static svModeEnum getCurrentMode() { return m_CurrentMode; }
-	static svModeEnum getPreviousMode() { return m_PreviousMode; }
 
 	static __time32_t getCurrentTime() { return m_CurrentModifiedTime; }
-	static __time32_t getPreviousTime() { return m_PreviousModifiedTime; }
 
 	//************************************
 	//! Sets the notification function
 	//! \param  [in] pointer to the notification function
 	//************************************
 	static void setNotificationFunction(NotifyFunctor Notify);
-
-	static void setPreviousToCurrentMode();
-	static void setPreviousToCurrentTime();
 
 	static bool IsAutoSaveRequired() { return m_AutoSaveRequired; }
 	static void SetAutoSaveRequired(bool required) { m_AutoSaveRequired = required; }
@@ -106,8 +103,7 @@ private:
 	//************************************
 	static svModeEnum GetMode();
 
-	static HRESULT SetLastModifiedTime();
-	static HRESULT FireModeChanged();
+	static void SetLastModifiedTime();
 
 	//This constructor does nothing.
 	SVSVIMStateClass();
@@ -120,10 +116,8 @@ private:
 	//This attribute contain the SVIM state value.
 	static long m_SVIMState;
 
-	static volatile svModeEnum m_PreviousMode;
 	static volatile svModeEnum m_CurrentMode;
 
-	static volatile __time32_t m_PreviousModifiedTime;
 	static volatile __time32_t m_CurrentModifiedTime;
 
 	static bool m_AutoSaveRequired; ///< should an autosave be performed at the next appropriate time?

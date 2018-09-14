@@ -12,6 +12,7 @@
 #include "Variant.h"
 #include "SVRC.h"
 #include "SVStatusLibrary/svModeEnum.h"
+#include "SVStatusLibrary/NotificationTypeEnum.h"
 #pragma endregion Includes
 
 
@@ -32,9 +33,7 @@ HRESULT ConvertProtobufToVariant(const SvPb::Variant& rPbVariant, int Count, _va
 // Converts a list into a protobuf Variant by generating a semicolon separated string (The list should not contain any ;)
 int ConvertStringListToProtobuf(const SvDef::StringSet& rList, SvPb::Variant* pVariant);
 
-
 svModeEnum PbDeviceMode_2_SVIMMode(DeviceModeType type);
-
 DeviceModeType  SVIMMode_2_PbDeviceMode(unsigned long Mode);
 
 UINT PbObjectAttributes2Attributes(const SvPb::ObjectAttributes& rAttributes);

@@ -152,8 +152,10 @@ void MessageManager<M_Container, M_Data>::Log()
 			{
 				std::string Msg;
 				m_MessageHandler.Format( Msg );
-				int MsgCode = (0 != m_MessageHandler.getMessage().m_ProgramCode) ? m_MessageHandler.getMessage().m_ProgramCode : m_MessageHandler.getMessage().m_MessageCode;
-				(*m_pNotify)( SvStl::MsgLog, MsgCode, Msg.c_str() );
+				long MsgCode = (0 != m_MessageHandler.getMessage().m_ProgramCode) ? m_MessageHandler.getMessage().m_ProgramCode : m_MessageHandler.getMessage().m_MessageCode;
+				long msgNotify{static_cast<long> (NotificationType::message)};
+				long logMsgBox{static_cast<long> (NotificationMsgEnum::MsgLog)};
+				(*m_pNotify)(msgNotify, logMsgBox, MsgCode, Msg.c_str());
 			}
 		}
 	}
@@ -188,14 +190,18 @@ INT_PTR MessageManager<M_Container, M_Data>::Display( const UINT MsgBoxType ) co
 
 		if( nullptr != m_pNotify && !m_pNotify->empty() )
 		{
-			(*m_pNotify)( SvStl::StartMsgBox, MsgCode ,Msg.c_str() );
+			long msgNotify{static_cast<long> (NotificationType::message)};
+			long startMsgBox{static_cast<long> (NotificationMsgEnum::StartMsgBox)};
+			(*m_pNotify)(msgNotify, startMsgBox, MsgCode ,Msg.c_str() );
 		}
 		Result = (*m_pShowDisplay)( nullptr, Msg.c_str(), MsgDetails.c_str(), Type );
 		//Message has been displayed do not display again
 		m_MessageHandler.getMessage().m_Displayed = true;
 		if( nullptr != m_pNotify && !m_pNotify->empty() )
 		{
-			(*m_pNotify)( SvStl::EndMsgBox, MsgCode ,Msg.c_str() );
+			long msgNotify{static_cast<long> (NotificationType::message)};
+			long endMsgBox{static_cast<long> (NotificationMsgEnum::EndMsgBox)};
+			(*m_pNotify)(msgNotify, endMsgBox, MsgCode ,Msg.c_str() );
 		}
 	}
 	

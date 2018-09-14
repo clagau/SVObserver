@@ -9,10 +9,13 @@
 //* .Check In Date   : $Date:   09 Dec 2014 10:12:44  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <intrin.h>
 #include "SVSVIMStateClass.h"
+#include "NotificationTypeEnum.h"
 #include "Definitions/GlobalConst.h"
+#pragma endregion Includes
 
 #pragma intrinsic(_InterlockedAnd)
 #pragma intrinsic(_InterlockedOr)
@@ -20,9 +23,7 @@
 long SVSVIMStateClass::m_SVIMState = SV_STATE_AVAILABLE;
 
 bool SVSVIMStateClass::m_AutoSaveRequired = false; ///< should an autosave be performed at the next appropriate time?
-volatile __time32_t SVSVIMStateClass::m_PreviousModifiedTime{0L};
 volatile __time32_t SVSVIMStateClass::m_CurrentModifiedTime{0L};
-volatile svModeEnum SVSVIMStateClass::m_PreviousMode = SVIM_MODE_UNKNOWN;
 volatile svModeEnum SVSVIMStateClass::m_CurrentMode = SVIM_MODE_UNKNOWN;
 NotifyFunctor SVSVIMStateClass::m_Notify;
 
@@ -112,18 +113,6 @@ void SVSVIMStateClass::setNotificationFunction(NotifyFunctor Notify)
 	m_Notify = Notify;
 }
 
-void SVSVIMStateClass::setPreviousToCurrentMode()
-{
-	svModeEnum NewMode {m_CurrentMode};
-	::InterlockedExchange(reinterpret_cast<volatile long*> (&m_PreviousMode), NewMode);
-}
-
-void SVSVIMStateClass::setPreviousToCurrentTime()
-{
-	__time32_t NewTime {m_CurrentModifiedTime};
-	::InterlockedExchange(&m_PreviousModifiedTime, NewTime);
-}
-
 void SVSVIMStateClass::CheckModeNotify()
 {
 	svModeEnum NewMode = GetMode();
@@ -131,37 +120,21 @@ void SVSVIMStateClass::CheckModeNotify()
 	if (NewMode != m_CurrentMode)
 	{
 		::InterlockedExchange(reinterpret_cast<volatile long*> (&m_CurrentMode), NewMode);
-		FireModeChanged();
-	}
-}
 
-HRESULT SVSVIMStateClass::SetLastModifiedTime()
-{
-	HRESULT Result( S_OK );
-	__time32_t LastModifiedTime = SVSVIMStateClass::m_CurrentModifiedTime;
-
-	::InterlockedExchange(&SVSVIMStateClass::m_CurrentModifiedTime, ::_time32(nullptr));
-
-	if (LastModifiedTime != SVSVIMStateClass::m_CurrentModifiedTime)
-	{
 		if (!m_Notify.empty())
 		{
-			//! Notify shall only signal the notify thread with Type=0
-			Result = (m_Notify)(0, 0, nullptr);
+			(m_Notify)(static_cast<long> (SvStl::NotificationType::mode), static_cast<long> (m_CurrentMode), 0L, nullptr);
 		}
 	}
-	return Result;
 }
 
-
-HRESULT SVSVIMStateClass::FireModeChanged()
+void SVSVIMStateClass::SetLastModifiedTime()
 {
-	HRESULT Result(S_OK);
+	::InterlockedExchange(&SVSVIMStateClass::m_CurrentModifiedTime, ::_time32(nullptr));
 
 	if (!m_Notify.empty())
 	{
-		//! Notify shall only signal the notify thread with Type=0
-		Result = (m_Notify)(0, 0, nullptr);
+		(m_Notify)(static_cast<long> (SvStl::NotificationType::lastModified), static_cast<long> (SVSVIMStateClass::getCurrentTime()), 0L, nullptr);
 	}
-	return Result;
 }
+

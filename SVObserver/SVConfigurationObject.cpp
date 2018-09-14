@@ -70,6 +70,7 @@
 #include "TextDefinesSvO.h"
 #include "SVColorTool.h"
 #include "InspectionCommands/CommandFunctionHelper.h"
+#include "SVFileSystemLibrary/SVFileNameManagerClass.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -2383,6 +2384,7 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 		LoadTrigger(rTree);
 		LoadInspection(rTree);
 		LoadPPQ(rTree);
+		LoadAdditionalFiles(rTree);
 		// EB 20031203
 		// a temp solution
 		// the better solution is to have the acqs subscribe and the triggers provide
@@ -2727,6 +2729,11 @@ bool SVConfigurationObject::DestroyConfiguration()
 
 	SvTrc::getTriggerRecordControllerRWInstance().unlockReset();
 	SvTrc::getTriggerRecordControllerRWInstance().clearAll();
+
+	for(const auto& rFile : m_AdditionalFiles)
+	{
+		SVFileNameManagerClass::Instance().RemoveItem(&rFile);
+	}
 
 	return bOk;
 }
@@ -3643,6 +3650,22 @@ void SVConfigurationObject::SaveObjectAttributesSet(SvXml::SVObjectXMLWriter &rW
 	rWriter.EndElement(); //SvXml::CTAG_OBJECT_ATTRIBUTES_SET
 }
 
+void SVConfigurationObject::SaveAdditionalFiles(SvXml::SVObjectXMLWriter &rWriter) const
+{
+	if(m_AdditionalFiles.size() > 0)
+	{
+		rWriter.StartElement(SvXml::CTAG_ADDITIONAL_CONFIG_FILES);
+		for(const auto& rFile : m_AdditionalFiles)
+		{
+			_variant_t Value{rFile.GetFullFileName().c_str()};
+			rWriter.WriteAttribute(SvXml::CTAG_FILENAME, Value);
+			Value.Clear();
+		}
+
+		rWriter.EndElement(); //SvXml::CTAG_ADDITIONAL_CONFIG_FILES
+	}
+}
+
 void SVConfigurationObject::getInspectionObjectAttributesSet(const SVInspectionProcess* pInspection, AttributesSetMap& rAttributesSetMap) const
 {
 	if (nullptr != pInspection)
@@ -3699,6 +3722,7 @@ void SVConfigurationObject::SaveConfiguration(SvXml::SVObjectXMLWriter& rWriter)
 	SaveRemoteMonitorList(rWriter);
 	SaveGlobalConstants(rWriter);
 	SaveObjectAttributesSet(rWriter, AttributeSetPairVector);
+	SaveAdditionalFiles(rWriter);
 
 	rWriter.EndElement(); // end of BaseNode
 	rWriter.EndElement(); // end of Root Element
@@ -5804,6 +5828,33 @@ HRESULT SVConfigurationObject::LoadObjectAttributesSet(SVTreeType& rTree)
 			hChild = rTree.getNextBranch(hBranch, hChild);
 		}
 	}
+	return Result;
+}
+
+HRESULT SVConfigurationObject::LoadAdditionalFiles(SVTreeType& rTree)
+{
+	HRESULT Result = S_OK;
+	SVTreeType::SVBranchHandle hBranch(nullptr);
+	if (SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::CTAG_ADDITIONAL_CONFIG_FILES, nullptr, hBranch))
+	{
+		SVTreeType::SVLeafHandle hLeaf(rTree.getFirstLeaf(hBranch));
+
+		while (S_OK == Result && rTree.isValidLeaf(hBranch, hLeaf))
+		{
+			if (SvXml::CTAG_FILENAME == rTree.getLeafName(hLeaf))
+			{
+				_variant_t Value;
+				if (S_OK == rTree.getLeafData(hLeaf, Value) && VT_BSTR == Value.vt)
+				{
+					std::string FilePath{SvUl::createStdString(Value.bstrVal)};
+					m_AdditionalFiles.emplace_back(SVFileNameClass{FilePath.c_str()});
+					SVFileNameManagerClass::Instance().AddItem(&m_AdditionalFiles.back());
+				}
+			}
+			hLeaf = rTree.getNextLeaf(hBranch, hLeaf);
+		}
+	}
+
 	return Result;
 }
 

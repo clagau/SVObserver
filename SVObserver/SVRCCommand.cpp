@@ -604,7 +604,19 @@ void SVRCCommand::PutFile(const SvPb::PutFileRequest& rRequest, SvRpc::Task<SvPb
 
 	if (!DestinationPath.empty())
 	{
+		//If only file name then add default path which is Run path
+		if(std::string::npos == DestinationPath.find('\\'))
+		{
+			DestinationPath = SvStl::GlobalPath::Inst().GetRunPath(DestinationPath.c_str());
+		}
 		Result = SVEncodeDecodeUtilities::StringContentToFile(DestinationPath, rRequest.filedata());
+		
+		if(S_OK == Result && rRequest.saveinconfig())
+		{
+			//Note this needs to be done using SendMessage due to this being a worker thread
+			Result = static_cast<HRESULT>(SendMessage(AfxGetApp()->m_pMainWnd->m_hWnd, SV_ADD_FILE_TO_CONFIG, 0, reinterpret_cast<LPARAM> (DestinationPath.c_str())));
+		}
+
 	}
 	else
 	{

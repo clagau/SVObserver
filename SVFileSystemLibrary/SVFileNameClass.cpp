@@ -101,18 +101,18 @@ const std::string& SVFileNameClass::GetExtension() const
 	return m_Extension;
 }
 
-const std::string& SVFileNameClass::GetFullFileName() const
+const std::string SVFileNameClass::GetFullFileName() const
 {
-	m_FullFileName.clear();
+	std::string result;
 	
-	m_FullFileName = GetFileName();
+	result = GetFileName();
 
-	if ( !m_PathName.empty() )
+	if (!m_PathName.empty())
 	{
-		m_FullFileName = m_PathName + "\\" + m_FullFileName;
+		result = m_PathName + "\\" + result;
 	}
 
-	return m_FullFileName;
+	return result;
 }
 
 const std::string& SVFileNameClass::GetFileSelectDialogTitle() const
@@ -653,7 +653,6 @@ bool SVFileNameClass::SaveFile()
 void SVFileNameClass::Init()
 {
 	m_FileType = 0;
-	m_FullFileName.clear();
 	m_PathName.clear();
 	m_FileName.clear();
 	m_FileNameOnly.clear();

@@ -150,7 +150,7 @@ public:
 	STDMETHOD(FinishGetConfig)(LONG Timeout, VARIANT_BOOL CancelAfterTimeout);
 	STDMETHOD(BeginPutConfig)(BSTR fileName);
 	STDMETHOD(FinishPutConfig)(LONG Timeout, VARIANT_BOOL CancelAfterTimeout);
-	STDMETHOD(BeginPutDeviceFile)(BSTR sourcePath, BSTR destinationPath);
+	STDMETHOD(BeginPutDeviceFile)(BSTR sourcePath, BSTR destinationPath, VARIANT_BOOL saveInConfig);
 	STDMETHOD(FinishPutDeviceFile)(LONG Timeout, VARIANT_BOOL CancelAfterTimeout);
 	STDMETHOD(BeginSetDeviceMode)(SVObserverModesEnum desiredMode);
 	STDMETHOD(FinishSetDeviceMode)(LONG Timeout, VARIANT_BOOL CancelAfterTimeout);
@@ -164,7 +164,7 @@ public:
 	STDMETHOD(GetState)(LONG* state);
 	STDMETHOD(PutConfig)(BSTR filePath, LONG Timeout);
 	STDMETHOD(GetVersion)(BSTR* svobserver_ver, BSTR* svremotecontrol_ver, BSTR* runrejectserver_ver);
-	STDMETHOD(PutDeviceFile)(BSTR sourcePath, BSTR destinationPath);
+	STDMETHOD(PutDeviceFile)(BSTR sourcePath, BSTR destinationPath, VARIANT_BOOL saveInConfig);
 	STDMETHOD(SetDeviceMode)(SVObserverModesEnum desiredMode);
 	STDMETHOD(SetItems)(ISVProductItems* items, VARIANT_BOOL RunOnce, ISVProductItems ** faults);
 	STDMETHOD(get_ServerAddress)(BSTR* pVal);

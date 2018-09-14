@@ -54,17 +54,6 @@ enum DeviceModeType
 	modeChanging = 6;				//This indicates that the mode is in transition to another mode
 }
 
-///Notification type for the notification stream received from SVObserver
-enum NotificationType
-{
-	unknownNotification = 0;
-	modeNotification = 1;			//Sent when SVObserver changes device modes
-	lastModifiedNotification = 2;	//Sent when SVObserver saves a configuration
-	connectedNotification = 3;		//Sent when SVObserver connection made
-	disconnectedNotification = 4;	//Sent when SVObserver disconnects
-	messageNotification = 5;		//Sent when SVObserver displays a modal message dialog
-}
-
 ///The message type for the message notification when SVObserver displays or logs a message
 enum MessageType
 {

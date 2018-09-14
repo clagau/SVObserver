@@ -86,7 +86,9 @@ public:
 
 	afx_msg LRESULT OnHideIOViewTab( WPARAM p_wParam, LPARAM p_lParam );
 
-	afx_msg LRESULT RemoteRegisterMonitorList( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT RemoteRegisterMonitorList(WPARAM wParam, LPARAM lParam);
+
+	afx_msg LRESULT onAddFileToConfig(WPARAM wParam, LPARAM lParam);
 	// Toolbar Methods
 	afx_msg void OnToolbarZoom();
 	afx_msg void OnUpdateToolbarZoom(CCmdUI *pCmdUI);

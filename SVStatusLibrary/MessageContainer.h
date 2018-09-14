@@ -19,7 +19,7 @@
 namespace SvStl
 {
 	typedef boost::function<INT_PTR ( HWND, LPCTSTR, LPCTSTR, UINT )> ShowDisplayFunctor;
-	typedef boost::function<HRESULT ( int, int, LPCTSTR )> NotifyFunctor;
+	typedef boost::function<HRESULT (long, long, long, LPCTSTR)> NotifyFunctor;
 
 	class MessageContainer : public std::exception
 	{
