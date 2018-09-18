@@ -14,6 +14,7 @@
 #include "SVObjectAttributeClass.h"
 #include "Definitions/TextDefineSVDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "Definitions/GlobalConst.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -364,7 +365,7 @@ bool SVObjectAttributeClass::GetData(SvCl::SVObjectStdStringArrayClass& rData)
 				std::string Temp;
 
 				VARIANT vtTemp = m_VariantArray[i];
-				HRESULT hr = ::VariantChangeType( &vtTemp, &vtTemp, VARIANT_ALPHABOOL, VT_BSTR);
+				HRESULT hr = ::VariantChangeTypeEx( &vtTemp, &vtTemp, SvDef::LCID_USA, VARIANT_ALPHABOOL, VT_BSTR);
 				if( S_OK == hr )
 				{
 					Temp = SvUl::createStdString( _bstr_t( vtTemp.bstrVal ) );

@@ -24,18 +24,17 @@ namespace SvOg
 		typedef SvOg::DataController<Values, Values::value_type> Controller;
 
 	public:
-		RangeController(const GUID& rInspectionID, const GUID& rTaskObjectID);
+		RangeController(const GUID& rInspectionID, const GUID& rTaskObjectID, const GUID& rRangeID = GUID_NULL);
 		virtual ~RangeController();
 
 		void Init();
-		void Commit();
+		HRESULT Commit();
 	
 		std::string Get(const std::string& rName) const;
 		void Set(const std::string& rName, const std::string& rValue);
 
 		std::string GetOwnerName() const;
 		void IsFieldValid(SvStl::MessageTextEnum fieldName, const std::string& rValue);
-		void Validate();
 
 		static const std::string FailHigh;
 		static const std::string FailLow;
@@ -45,15 +44,13 @@ namespace SvOg
 	private:
 		std::string GetIndirectValue(const GUID& rEmbeddedID) const;
 		std::string GetDirectValue(const GUID& rEmbeddedID) const;
-		void SetIndirectValue(const GUID& rEmbeddedID, const std::string& rValue);
-		void SetDirectValue(const GUID& rEmbeddedID, const std::string& rValue);
 
 		std::string GetInspectionName() const;
 		std::string GetPPQName() const;
-		std::string GetToolName() const;
 
 		const GUID& m_rInspectionID;
 		const GUID& m_rTaskObjectID;
+		GUID m_RangeID;
 		Controller m_RangeValues;
 	};
 } //namespace SvOg

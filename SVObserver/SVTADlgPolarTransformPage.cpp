@@ -66,10 +66,8 @@ SVToolAdjustmentDialogPolarTransformPageClass::~SVToolAdjustmentDialogPolarTrans
 {
 }
 
-HRESULT SVToolAdjustmentDialogPolarTransformPageClass::SetInspectionData()
+void SVToolAdjustmentDialogPolarTransformPageClass::SetInspectionData()
 {
-	HRESULT Result{ E_FAIL };
-
 	if( nullptr != m_pTool )
 	{
 		UpdateData( true ); // get data from dialog
@@ -88,7 +86,7 @@ HRESULT SVToolAdjustmentDialogPolarTransformPageClass::SetInspectionData()
 			long lValue = static_cast<long> (interpolationComboCtrl.GetItemData( sel ));
 			PolarTransformValues.Set<long>(m_pInterpolationMode->GetEmbeddedID(), lValue);
 		}
-		Result = PolarTransformValues.Commit();
+		PolarTransformValues.Commit();
 
 		sel = m_AngularMethodCombo.GetCurSel();
 		if (0 <= sel)
@@ -102,8 +100,6 @@ HRESULT SVToolAdjustmentDialogPolarTransformPageClass::SetInspectionData()
 			Values.Commit();
 		}
 	}
-
-	return Result;
 }
 
 

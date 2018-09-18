@@ -282,23 +282,6 @@ namespace SvStl
 
 	//Marcus Eichengrün error base
 	static const int Mec_ErrorBase = 16000;
-	//RangeHelper
-	static const int Err_16012 = Mec_ErrorBase + 12;
-	static const int Err_16013 = Mec_ErrorBase + 13;
-	static const int Err_16014 = Mec_ErrorBase + 14;
-	static const int Err_16015 = Mec_ErrorBase + 15;
-	static const int Err_16016 = Mec_ErrorBase + 16;
-	static const int Err_16017 = Mec_ErrorBase + 17;
-	static const int Err_16018 = Mec_ErrorBase + 18;
-	static const int Err_16019 = Mec_ErrorBase + 19;
-	static const int Err_16020 = Mec_ErrorBase + 20;
-	static const int Err_16021 = Mec_ErrorBase + 21;
-	static const int Err_16022 = Mec_ErrorBase + 22;
-	static const int Err_16023 = Mec_ErrorBase + 23;
-	static const int Err_16024 = Mec_ErrorBase + 24;
-	static const int Err_16025 = Mec_ErrorBase + 25;
-	static const int Err_16026 = Mec_ErrorBase + 26;
-	
 
 	////Errornumbers for Adjust ToolsSize 
 	static const int FirstErrorAdjustTool  = Mec_ErrorBase + 27;

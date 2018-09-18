@@ -27,7 +27,7 @@ namespace SvOg
 		SVPerspectiveWarpPage( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, int id = IDD );
 		virtual ~SVPerspectiveWarpPage();
 
-		HRESULT SetInspectionData();
+		void SetInspectionData();
 
 		enum { IDD = IDD_TA_PERSPECTIVE_TOOL_DIALOG };
 		SvMc::SVEnumerateComboClass	m_FunctionCombo;

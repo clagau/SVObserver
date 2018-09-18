@@ -43,7 +43,7 @@ protected:
 	afx_msg void OnSelChangeInterpolationModeCombo();
 	DECLARE_MESSAGE_MAP()
 #pragma endregion MFC Methods
-	HRESULT SetInspectionData();
+	void SetInspectionData();
 	void refresh();
 #pragma endregion
 

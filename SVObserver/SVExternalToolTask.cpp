@@ -479,7 +479,7 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 				//But this method will called also in Create-process and there is not a reset called before.
 				rInputValue.resetAllObjects();
 
-				::VariantChangeType(&m_aInspectionInputValues[i], &m_aInspectionInputValues[i], 0, static_cast<VARTYPE>(paInputValueDefs[i].m_VT) );
+				::VariantChangeTypeEx(&m_aInspectionInputValues[i], &m_aInspectionInputValues[i], SvDef::LCID_USA, 0, static_cast<VARTYPE>(paInputValueDefs[i].m_VT) );
 
 				m_Data.m_aInputValueDefinitions[i] = paInputValueDefs[i];
 
@@ -795,7 +795,7 @@ bool SVExternalToolTask::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 			for ( i=0; i < m_Data.m_lNumInputValues; i++)
 			{
 				m_Data.m_aInputObjects[i].GetValue(m_aInspectionInputValues[i]);
-				HRESULT hrChangeType = ::VariantChangeType(&m_aInspectionInputValues[i], &m_aInspectionInputValues[i], 0, static_cast<VARTYPE>(m_Data.m_aInputValueDefinitions[i].m_VT) );
+				HRESULT hrChangeType = ::VariantChangeTypeEx(&m_aInspectionInputValues[i], &m_aInspectionInputValues[i], SvDef::LCID_USA, 0, static_cast<VARTYPE>(m_Data.m_aInputValueDefinitions[i].m_VT) );
 				if ( S_OK != hrChangeType )
 				{
 					m_aInspectionInputValues[i].Clear();
@@ -1234,7 +1234,7 @@ HRESULT SVExternalToolTask::InspectionInputsToVariantArray()
 		HRESULT hrChangeType = S_OK;
 		if( rVT.vt != Value.vt )
 		{
-			hrChangeType = ::VariantChangeType(&Value, &Value, 0, rVT.vt);
+			hrChangeType = ::VariantChangeTypeEx(&Value, &Value, SvDef::LCID_USA, 0, rVT.vt);
 		}
 		if( S_OK == hrChangeType )
 		{

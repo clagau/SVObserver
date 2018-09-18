@@ -63,7 +63,7 @@ namespace SvOg
 	}
 	#pragma endregion Public Methods
 
-	void SVToolAdjustmentDialogPassFailPageClass::SetInspectionData()
+	HRESULT SVToolAdjustmentDialogPassFailPageClass::SetInspectionData()
 	{
 		UpdateData(true); // get data from dialog
 
@@ -78,7 +78,7 @@ namespace SvOg
 		Set(WarnHigh, static_cast<LPCSTR>(m_WarnHigh));
 		Set(WarnLow, static_cast<LPCSTR>(m_WarnLow));
 
-		Commit();
+		return Commit();
 	}
 
 	#pragma region Protected Methods
@@ -107,8 +107,11 @@ namespace SvOg
 			m_WarnHigh = Get(WarnHigh).c_str();
 			m_WarnLow  = Get(WarnLow).c_str();
 		}
-		catch (...) // find out what to catch here...
+		catch (...)
 		{
+			assert(false);
+			SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Init_RangeControlFailed, SvStl::SourceFileParams(StdMessageParams));
 		}
 	}
 
@@ -201,8 +204,7 @@ namespace SvOg
 
 		try
 		{
-			SetInspectionData();
-			Validate();
+			bRetVal = (S_OK == SetInspectionData());
 		}
 		catch (const SvStl::MessageContainer& rSvE)
 		{

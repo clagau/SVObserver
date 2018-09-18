@@ -24,7 +24,7 @@ class SVPixelAnalyzerDlg : public CDialog
 public:
 	SVPixelAnalyzerDlg(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, CWnd* pParent = nullptr);
 	virtual ~SVPixelAnalyzerDlg();
-	HRESULT SetInspectionData();
+	void SetInspectionData();
 
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support

@@ -192,11 +192,8 @@ SVObjectClass* SVPatternAnalyzerClass::CreateResult()
 
 	Add(pResult);
 			
-	pRange->FailLow.SetDefaultValue(1.0);
-	pRange->WarnLow.SetDefaultValue(1.0);
-
-	pRange->FailLow.SetValue(1.0);
-	pRange->WarnLow.SetValue(1.0);
+	pRange->setDefaultLowValues(1.0, 1.0);
+	pRange->setLowValues(1.0, 1.0);
 
 	return pResult;
 }

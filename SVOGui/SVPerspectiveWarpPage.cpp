@@ -45,10 +45,8 @@ namespace SvOg
 	{
 	}
 
-	HRESULT SVPerspectiveWarpPage::SetInspectionData()
+	void SVPerspectiveWarpPage::SetInspectionData()
 	{
-		HRESULT Result = S_OK;
-
 		UpdateData(true); // get data from dialog
 
 		int CurrentSelection = m_FunctionCombo.GetCurSel();
@@ -65,8 +63,7 @@ namespace SvOg
 			m_Values.Set<long>(SVOutputInterpolationModeObjectGuid, Value);
 		}
 
-		Result = m_Values.Commit();
-		return Result;
+		m_Values.Commit();
 	}
 
 

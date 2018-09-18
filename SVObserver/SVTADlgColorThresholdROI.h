@@ -28,7 +28,7 @@ public:
 	SVTADlgColorThresholdROI();
 	virtual ~SVTADlgColorThresholdROI();
 
-	HRESULT SetInspectionData();
+	void SetInspectionData();
 
 // Dialog Data
 	//{{AFX_DATA(SVTADlgColorThresholdROI)

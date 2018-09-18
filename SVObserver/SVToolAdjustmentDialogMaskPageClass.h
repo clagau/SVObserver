@@ -45,7 +45,7 @@ protected:
 	};
 
 	void initMask();
-	HRESULT SetInspectionData();
+	void SetInspectionData();
 
 	// Generated message map functions
 	//{{AFX_MSG(SVToolAdjustmentDialogMaskPageClass)

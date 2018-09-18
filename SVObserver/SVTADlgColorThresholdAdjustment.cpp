@@ -64,10 +64,8 @@ SVTADlgColorThresholdAdjustment::~SVTADlgColorThresholdAdjustment()
 {
 }
 
-HRESULT SVTADlgColorThresholdAdjustment::SetInspectionData()
+void SVTADlgColorThresholdAdjustment::SetInspectionData()
 {
-	HRESULT Result{ E_FAIL };
-
 	m_Values.Set<long>(m_pLowerThreshold->GetEmbeddedID(), static_cast<long> (m_lowerThreshold));
 	m_Values.Set<long>(m_pUpperThreshold->GetEmbeddedID(), static_cast<long> (m_upperThreshold));
 	m_Values.Set<bool>(m_pExclude->GetEmbeddedID(), m_exclude ? true : false);
@@ -76,9 +74,7 @@ HRESULT SVTADlgColorThresholdAdjustment::SetInspectionData()
 	m_Values.Set<double>(m_pExtentTop->GetEmbeddedID(), static_cast<double> (m_pSheet->m_rectROI.top));
 	m_Values.Set<double>(m_pExtentWidth->GetEmbeddedID(), static_cast<double> (m_pSheet->m_rectROI.Width()));
 	m_Values.Set<double>(m_pExtentHeight->GetEmbeddedID(), static_cast<double> (m_pSheet->m_rectROI.Height()));
-	Result = m_Values.Commit();
-
-	return Result;
+	m_Values.Commit();
 }
 
 void SVTADlgColorThresholdAdjustment::DoDataExchange(CDataExchange* pDX)

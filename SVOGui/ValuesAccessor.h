@@ -17,6 +17,8 @@
 #include "InspectionCommands/ValueObjectGetEnums.h"
 #include "InspectionCommands/GetObjectName.h"
 #include "InspectionCommands/CommandFunctionHelper.h"
+#include "SVMessage/SVMessage.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -56,7 +58,7 @@ public:
 		return hr;
 	}
 
-	HRESULT SetValues(const SvOg::BoundValues& rValues, PostAction doAction)
+	void SetValues(const SvOg::BoundValues& rValues, PostAction doAction)
 	{
 		m_MessageFailList.clear();
 		const GUID& rTaskID = rValues.GetTaskID();
@@ -101,14 +103,29 @@ public:
 			if (bReset)
 			{
 				// Do a reset of the Tool
-				hr = ResetObject(rInspectionID, rTaskID);
+				ResetObject(rInspectionID, rTaskID);
 			}
 			if (S_OK == hr && bRunOnce)
 			{
 				hr = RunOnce(rInspectionID, rTaskID);
+				if(S_OK != hr)
+				{
+					SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_CannotRunOnce, SvStl::SourceFileParams(StdMessageParams), 0, rTaskID);
+					m_MessageFailList.push_back(message);
+				}
 			}
 		}
-		return hr;
+		if (S_OK != hr && 0 == m_MessageFailList.size())
+		{
+			SvDef::StringVector msgList;
+			msgList.push_back(SvUl::Format(_T("%d"),hr));
+			SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommitError, msgList, SvStl::SourceFileParams(StdMessageParams), 0, rTaskID);
+			m_MessageFailList.push_back(message);
+		}
+		if (0 < m_MessageFailList.size())
+		{
+			throw m_MessageFailList;
+		}
 	}
 
 	SvOi::NameValueVector GetEnums(const GUID& rInspectionID, const GUID& rObjectID) const
@@ -143,7 +160,7 @@ public:
 		return std::string();
 	}
 
-	HRESULT ResetObject(const GUID& rInspectionID, const GUID& rObjectID)
+	void ResetObject(const GUID& rInspectionID, const GUID& rObjectID)
 	{
 		m_MessageFailList.clear();
 		SvPb::InspectionCmdMsgs requestMessage;
@@ -152,11 +169,19 @@ public:
 		SvPb::ResetObjectRequest* pRequest = requestMessage.mutable_resetobjectrequest();
 		SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), rObjectID);
 		HRESULT hr = SvCmd::InspectionCommandsSynchronous(rInspectionID, &requestMessage, &responseMessage);
-		if (hr == S_OK && responseMessage.has_resetobjectresponse())
+		if (responseMessage.has_resetobjectresponse())
 		{
 			m_MessageFailList = SvCmd::setMessageContainerFromMessagePB(responseMessage.resetobjectresponse().messages());
 		}
-		return hr;
+		if (S_OK != hr && 0 < m_MessageFailList.size())
+		{
+			SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorInReset, SvStl::SourceFileParams(StdMessageParams), 0, rObjectID);
+			m_MessageFailList.push_back(message);
+		}
+		if (0 < m_MessageFailList.size())
+		{
+			throw m_MessageFailList;
+		}
 	}
 
 	HRESULT RunOnce(const GUID& rInspectionID, const GUID& rObjectID)

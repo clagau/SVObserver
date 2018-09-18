@@ -28,9 +28,10 @@ namespace SvOg
 	const std::string RangeController::WarnLow = "WarnLow";
 #pragma endregion Declarations
 
-	RangeController::RangeController(const GUID& rInspectionID, const GUID& rTaskObjectID)
+	RangeController::RangeController(const GUID& rInspectionID, const GUID& rTaskObjectID, const GUID& rRangeID)
 		: m_rInspectionID(rInspectionID)
 		, m_rTaskObjectID(rTaskObjectID)
+		, m_RangeID(rRangeID)
 		//TaskID is set later
 		, m_RangeValues{SvOg::BoundValues{rInspectionID, GUID_NULL}}
 	{
@@ -42,24 +43,29 @@ namespace SvOg
 
 	void RangeController::Init()
 	{
-		SvDef::SVObjectTypeInfoStruct ObjectInfo;
-		ObjectInfo.ObjectType = SvDef::SVRangeObjectType;
-		ObjectInfo.SubType = SvDef::SVNotSetSubObjectType;
-		SvOi::IObjectClass* pTool = SvOi::getObject(m_rTaskObjectID);
-		if (nullptr != pTool)
+		if (GUID_NULL == m_RangeID)
 		{
-			SvOi::IObjectClass* pRange = pTool->getFirstObject(ObjectInfo);
-			if (nullptr != pRange)
+			SvDef::SVObjectTypeInfoStruct ObjectInfo;
+			ObjectInfo.ObjectType = SvDef::SVRangeObjectType;
+			ObjectInfo.SubType = SvDef::SVNotSetSubObjectType;
+			SvOi::IObjectClass* pTool = SvOi::getObject(m_rTaskObjectID);
+			if (nullptr != pTool)
 			{
-				m_RangeValues.SetTaskID(pRange->GetUniqueObjectID());
-				m_RangeValues.Init();
+				SvOi::IObjectClass* pRange = pTool->getFirstObject(ObjectInfo);
+				if (nullptr != pRange)
+				{
+					m_RangeID = pRange->GetUniqueObjectID();
+				}
 			}
 		}
+		
+		m_RangeValues.SetTaskID(m_RangeID);
+		m_RangeValues.Init();
 	}
 
-	void RangeController::Commit()
+	HRESULT RangeController::Commit()
 	{
-		m_RangeValues.Commit(SvOg::doResetRunOnce);
+		return m_RangeValues.Commit(SvOg::doResetRunOnce, true);
 	}
 
 	std::string RangeController::Get(const std::string& rName) const
@@ -105,60 +111,23 @@ namespace SvOg
 		return value;
 	}
 
-	static bool isNumeric(const std::string& rValue)
-	{
-	   return !rValue.empty() && std::string::npos == rValue.find_first_not_of("-.0123456789");
-	}
-
 	void RangeController::Set(const std::string& rName, const std::string& rValue)
 	{
 		if (rName == FailHigh)
 		{
-			if (isNumeric(rValue))
-			{
-				SetIndirectValue(SVRangeClassFailHighIndirectObjectGuid, std::string());
-				SetDirectValue(SVRangeClassFailHighObjectGuid, rValue);
-			}
-			else
-			{
-				SetIndirectValue(SVRangeClassFailHighIndirectObjectGuid, rValue);
-			}
+			m_RangeValues.Set<CString>(SVRangeClassFailHighObjectGuid, rValue.c_str());
 		}
 		else if (rName == FailLow)
 		{
-			if (isNumeric(rValue))
-			{
-				SetIndirectValue(SVRangeClassFailLowIndirectObjectGuid, std::string());
-				SetDirectValue(SVRangeClassFailLowObjectGuid, rValue);
-			}
-			else
-			{
-				SetIndirectValue(SVRangeClassFailLowIndirectObjectGuid, rValue);
-			}
+			m_RangeValues.Set<CString>(SVRangeClassFailLowObjectGuid, rValue.c_str());
 		}
 		else if (rName == WarnHigh)
 		{
-			if (isNumeric(rValue))
-			{
-				SetIndirectValue(SVRangeClassWarnHighIndirectObjectGuid, std::string());
-				SetDirectValue(SVRangeClassWarnHighObjectGuid, rValue);
-			}
-			else
-			{
-				SetIndirectValue(SVRangeClassWarnHighIndirectObjectGuid, rValue);
-			}
+			m_RangeValues.Set<CString>(SVRangeClassWarnHighObjectGuid, rValue.c_str());
 		}
 		else if (rName == WarnLow)
 		{
-			if (isNumeric(rValue))
-			{
-				SetIndirectValue(SVRangeClassWarnLowIndirectObjectGuid, std::string());
-				SetDirectValue(SVRangeClassWarnLowObjectGuid, rValue);
-			}
-			else
-			{
-				SetIndirectValue(SVRangeClassWarnLowIndirectObjectGuid, rValue);
-			}
+			m_RangeValues.Set<CString>(SVRangeClassWarnLowObjectGuid, rValue.c_str());
 		}
 		else
 		{
@@ -179,17 +148,6 @@ namespace SvOg
 		ss.precision(6);
 		ss << std::fixed << value;
 		return ss.str();
-	}
-
-	void RangeController::SetIndirectValue(const GUID& rEmbeddedID, const std::string& rValue)
-	{
-		m_RangeValues.Set<LPCSTR>(rEmbeddedID, rValue.c_str());
-	}
-
-	void RangeController::SetDirectValue(const GUID& rEmbeddedID, const std::string& rValue)
-	{
-		double value = boost::lexical_cast<double>(rValue);
-		m_RangeValues.Set<double>(rEmbeddedID, value);
 	}
 
 	std::string RangeController::GetOwnerName() const
@@ -244,21 +202,5 @@ namespace SvOg
 	void RangeController::IsFieldValid(SvStl::MessageTextEnum fieldName, const std::string& rValue)
 	{
 		RangeValidator::IsFieldValid(fieldName, rValue);
-	}
-
-	void RangeController::Validate()
-	{
-		std::string InspectionName = GetInspectionName();
-
-		const std::string& FailHighIndirectValue = GetIndirectValue(SVRangeClassFailHighIndirectObjectGuid);
-		const std::string& FailLowIndirectValue = GetIndirectValue(SVRangeClassFailLowIndirectObjectGuid);
-		const std::string& WarnHighIndirectValue = GetIndirectValue(SVRangeClassWarnHighIndirectObjectGuid);
-		const std::string& WarnLowIndirectValue = GetIndirectValue(SVRangeClassWarnLowIndirectObjectGuid);
-		double FailHighValue = m_RangeValues.Get<double>(SVRangeClassFailHighObjectGuid);
-		double FailLowValue = m_RangeValues.Get<double>(SVRangeClassFailLowObjectGuid);
-		double WarnHighValue = m_RangeValues.Get<double>(SVRangeClassWarnHighObjectGuid);
-		double WarnLowValue = m_RangeValues.Get<double>(SVRangeClassWarnLowObjectGuid);
-
-		RangeValidator::Validate(InspectionName, FailHighIndirectValue, FailLowIndirectValue, WarnHighIndirectValue, WarnLowIndirectValue, FailHighValue, FailLowValue, WarnHighValue, WarnLowValue, m_rInspectionID);
 	}
 } //namespace SvOg

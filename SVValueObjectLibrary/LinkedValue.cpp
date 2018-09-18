@@ -71,7 +71,7 @@ HRESULT LinkedValue::GetValue(_variant_t& rValue, int Index /*= -1*/,  int Bucke
 			{
 				rValue.boolVal = abs(rValue.boolVal);
 			}
-			if (S_OK != ::VariantChangeType( &rValue, &rValue, VARIANT_ALPHABOOL, GetDefaultType() ) )
+			if (S_OK != ::VariantChangeTypeEx( &rValue, &rValue, SvDef::LCID_USA, VARIANT_ALPHABOOL, GetDefaultType() ) )
 			{
 				//empty value if variant can not be converted in the right type
 				::VariantClear( &rValue );
@@ -95,7 +95,7 @@ void LinkedValue::UpdateLinkedName()
 {
 	if( nullptr != m_LinkedObjectRef.getObject() )
 	{
-		m_LinkedName.SetValue( m_LinkedObjectRef.GetCompleteName(true) );
+		m_LinkedName.SetValue(m_LinkedObjectRef.GetObjectNameToObjectType(SvDef::SVObjectTypeEnum::SVToolSetObjectType, true));
 		m_LinkedName.SetObjectAttributesAllowed( SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute );
 		SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
 	}
@@ -149,7 +149,7 @@ _variant_t LinkedValue::ConvertString2Type( const std::string& rValue ) const
 
 		if( GetDefaultValue().vt != VT_EMPTY )
 		{
-			if ( S_OK != ::VariantChangeType(&vtTemp, &vtTemp, 0, GetDefaultValue().vt))
+			if ( S_OK != ::VariantChangeTypeEx(&vtTemp, &vtTemp, SvDef::LCID_USA, 0, GetDefaultValue().vt))
 			{
 				SvDef::StringVector msgList;
 				msgList.push_back(GetName());

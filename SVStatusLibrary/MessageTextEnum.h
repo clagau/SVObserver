@@ -83,6 +83,7 @@ enum MessageTextEnum
 	//RangeValue
 	Tid_RangeValue_EmptyString,
 	Tid_RangeValue_WrongRange,
+	Tid_Init_RangeControlFailed,
 	Tid_ErrorUnknownEnum,
 	Tid_FailHigh,
 	Tid_FailLow,
@@ -480,7 +481,6 @@ enum MessageTextEnum
 	Tid_RunImagePolarFailed,
 	Tid_UnknownException,
 	Tid_EmptyValueList,
-	Tid_InvalidRange,
 	Tid_RunLinearEdgeFailed,
 	Tid_ProcessCommandQueueFailed,
 	Tid_ArchiveTool_InitFlagFalse,

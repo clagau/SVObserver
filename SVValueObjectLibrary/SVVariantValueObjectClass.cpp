@@ -176,7 +176,7 @@ HRESULT SVVariantValueObjectClass::SetValueKeepType(LPCTSTR Value, int Index)
 
 	if( VT_EMPTY != DefaultValue().vt )
 	{
-		hr = ::VariantChangeType( &vtTemp, &vtTemp, 0, DefaultValue().vt );
+		hr = ::VariantChangeTypeEx( &vtTemp, &vtTemp, SvDef::LCID_USA, 0, DefaultValue().vt );
 	}
 
 	if( S_OK == hr)
@@ -298,7 +298,7 @@ _variant_t SVVariantValueObjectClass::ConvertString2Type( const std::string& rVa
 
 	if (VT_EMPTY != GetDefaultType())
 	{
-		if (S_OK != ::VariantChangeType(&Result, &Result, 0, GetDefaultType()))
+		if (S_OK != ::VariantChangeTypeEx(&Result, &Result, SvDef::LCID_USA, 0, GetDefaultType()))
 		{
 			SvDef::StringVector msgList;
 			msgList.push_back(GetName());
@@ -324,7 +324,7 @@ std::string SVVariantValueObjectClass::ConvertType2String( const _variant_t& rVa
 	default:
 		{
 			_variant_t Value;
-			if ( S_OK == ::VariantChangeType(&Value, &rValue, VARIANT_ALPHABOOL, VT_BSTR) )
+			if ( S_OK == ::VariantChangeTypeEx(&Value, &rValue, SvDef::LCID_USA, VARIANT_ALPHABOOL, VT_BSTR) )
 			{
 				Result = SvUl::createStdString( Value );
 				if( VT_BOOL == rValue.vt )

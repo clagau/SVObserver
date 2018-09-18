@@ -122,10 +122,8 @@ void SVToolAdjustmentDialogMaskPageClass::SetupDrawCriteriaCombo()
 	m_DrawCriteriaCombo.SetCurSelItemData(CurrentSelection);
 }
 
-HRESULT SVToolAdjustmentDialogMaskPageClass::SetInspectionData()
+void SVToolAdjustmentDialogMaskPageClass::SetInspectionData()
 {
-	HRESULT Result{ S_OK };
-
 	UpdateData(true);
 	m_Values.Set<bool>(SVMaskEnabledObjectGuid, m_bActivateMask ? true : false);
 	m_Values.Set<DWORD>(SVMaskUseImageMaskGuid, m_iMaskType);
@@ -152,8 +150,7 @@ HRESULT SVToolAdjustmentDialogMaskPageClass::SetInspectionData()
 		m_Values.Set<long>(SVDrawCriteriaObjectGuid, Value);
 	}
 
-	Result = m_Values.Commit(SvOg::doResetRunOnce);
-	return Result;
+	m_Values.Commit(SvOg::doResetRunOnce);
 }
 
 void SVToolAdjustmentDialogMaskPageClass::DoDataExchange(CDataExchange* pDX)

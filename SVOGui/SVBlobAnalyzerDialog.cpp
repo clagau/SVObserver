@@ -372,12 +372,26 @@ namespace SvOg
 		SetInspectionData();
 
 		//Reset the tool
-		m_Values.ResetObject(m_rInspectionID, m_rTaskObjectID);
-		const SvStl::MessageContainerVector& rMessages = m_Values.getFailedMessageList();
-		if (rMessages.size() > 0 && 0 != rMessages[0].getMessage().m_MessageCode)
+		SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+		try
 		{
-			SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
-			Msg.setMessage(rMessages[0].getMessage());
+			m_Values.ResetObject(m_rInspectionID, m_rTaskObjectID);
+			const SvStl::MessageContainerVector& rMessages = m_Values.getFailedMessageList();
+			if (rMessages.size() > 0 && 0 != rMessages[0].getMessage().m_MessageCode)
+			{
+				Msg.setMessage(rMessages[0].getMessage());
+			}
+		}
+		catch (const SvStl::MessageContainerVector& rSvE)
+		{
+			if (0 < rSvE.size())
+			{
+				Msg.setMessage(rSvE[0].getMessage());
+			}
+		}
+		catch (const SvStl::MessageContainer& rSvE)
+		{
+			Msg.setMessage(rSvE.getMessage());
 		}
 
 		CDialog::OnOK();

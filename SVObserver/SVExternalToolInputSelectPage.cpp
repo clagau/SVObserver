@@ -412,7 +412,7 @@ HRESULT SVExternalToolInputSelectPage::ValidateItem(SVRPropertyItem* pItem)
 	_variant_t  vtItem( Value.c_str() );
 	_variant_t  vtNew;
 
-	hr = ::VariantChangeType( &vtNew, &vtItem, VARIANT_ALPHABOOL, vt );
+	hr = ::VariantChangeTypeEx( &vtNew, &vtItem, SvDef::LCID_USA, VARIANT_ALPHABOOL, vt );
 
 	if ( S_OK != hr )
 	{

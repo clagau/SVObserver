@@ -36,7 +36,7 @@ public:
 	SVTADlgColorThresholdAdjustment();
 	virtual ~SVTADlgColorThresholdAdjustment();
 
-	HRESULT SetInspectionData();
+	void SetInspectionData();
 
 // Dialog Data
 	//{{AFX_DATA(SVTADlgColorThresholdAdjustment)

@@ -44,7 +44,8 @@ private:
 	{
 		bool bSame = false;
 		size_t len = excludedPath.size();
-		if (len > 0)
+		//After the exclude path name must have a '.' for it to match
+		if (len > 0 && name.size() > len && '.' == name[len])
 		{
 			bSame = (0 == name.substr(0, len).compare(excludedPath));
 		}

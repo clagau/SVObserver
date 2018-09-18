@@ -11,6 +11,7 @@
 #include "BoundValue.h"
 #include "ObjectInterfaces\NameValueVector.h"
 #include "SVStatusLibrary\MessageContainer.h"
+#include "SVStatusLibrary\MessageManager.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -70,9 +71,32 @@ namespace SvOg
 			return GetObjectName(m_Data.GetInspectionID(), m_Data.GetObjectID(rEmbeddedID));
 		}
 
-		HRESULT Commit(PostAction doAction = doRunOnce)
+		HRESULT Commit(PostAction doAction = doRunOnce, bool shouldDisplayErrors = false)
 		{
-			return SetValues(m_Data, doAction);
+			try
+			{
+				SetValues(m_Data, doAction);
+			}
+			catch (const SvStl::MessageContainerVector& rSvE)
+			{
+				if (shouldDisplayErrors && 0<rSvE.size())
+				{
+					SvStl::MessageMgrStd e(SvStl::LogAndDisplay);
+					e.setMessage(rSvE[0].getMessage());
+				}
+				return E_FAIL;
+			}
+			catch (const SvStl::MessageContainer& rSvE)
+			{
+				if (shouldDisplayErrors)
+				{
+					SvStl::MessageMgrStd e(SvStl::LogAndDisplay);
+					e.setMessage(rSvE.getMessage());
+				}
+				return E_FAIL;
+			}
+			return S_OK;
+
 		}
 
 		void SetTaskID(const GUID& rTaskID) { return m_Data.SetTaskID(rTaskID); }

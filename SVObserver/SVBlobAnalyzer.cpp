@@ -704,8 +704,8 @@ bool SVBlobAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateS
 					break; // Break out of for loop 
 				}
 				
-				pRange->FailHigh.SetValue(Range_defaults::highDef); // Set some high values, so that it doesn't fail
-				pRange->WarnHigh.SetValue(Range_defaults::highDef);
+				// Set some high values, so that it doesn't fail
+				pRange->setHighValues(Range_defaults::highDef, Range_defaults::highDef);
 			}
 		}
 		m_PersistantFeaturesEnabled.SetValue(FeaturesEnabled);
@@ -743,10 +743,8 @@ bool SVBlobAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateS
 				Result = false;
 				break; 
 			}
-			pRange->FailLow.SetValue(m_defaultResultNumberOfBlobsLowFail);
-			pRange->WarnLow.SetValue(m_defaultResultNumberOfBlobsLowWarn);
-			pRange->FailHigh.SetValue(m_defaultResultNumberOfBlobsHighFail); 
-			pRange->WarnHigh.SetValue(m_defaultResultNumberOfBlobsHighWarn);
+			pRange->setLowValues(m_defaultResultNumberOfBlobsLowFail, m_defaultResultNumberOfBlobsLowWarn);
+			pRange->setHighValues(m_defaultResultNumberOfBlobsHighFail, m_defaultResultNumberOfBlobsHighWarn);
 		}
 		// End. Sri
 		double Value = m_Value[0].GetDefaultValue ();
@@ -976,11 +974,8 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 					}
 
 					double dLow(0), dHigh(0);
-					pRange->getUpdatedRange(RangeEnum::ER_FailHigh).GetValue(dHigh);
-					pRange->getUpdatedRange(RangeEnum::ER_FailLow).GetValue(dLow);
-
-					pRange->getUpdatedRange(RangeEnum::ER_WarnLow);
-					pRange->getUpdatedRange(RangeEnum::ER_WarnHigh);
+					pRange->getValue(RangeEnum::ER_FailHigh, dHigh);
+					pRange->getValue(RangeEnum::ER_FailLow, dLow);
 
 					// Now that we have indirect high and low ranges it is possible that dLow is larger than dHigh.
 					// This would cause the MIL function to return an error.  To avoid this exception, we set both to 0.

@@ -206,9 +206,8 @@ void SVTADlgColorThresholdROI::UpdateToolFigure()
 	UpdateData(FALSE);
 }
 
-HRESULT SVTADlgColorThresholdROI::SetInspectionData()
+void SVTADlgColorThresholdROI::SetInspectionData()
 {
-	HRESULT Result{ E_FAIL };
 	UpdateData(true);
 
 	if (nullptr != m_pThreshold)
@@ -223,9 +222,7 @@ HRESULT SVTADlgColorThresholdROI::SetInspectionData()
 		Values.Set<double>(m_pExtentTop->GetEmbeddedID(), static_cast<double> (m_pSheet->m_rectROI.top));
 		Values.Set<double>(m_pExtentWidth->GetEmbeddedID(), static_cast<double> (m_pSheet->m_rectROI.Width()));
 		Values.Set<double>(m_pExtentHeight->GetEmbeddedID(), static_cast<double> (m_pSheet->m_rectROI.Height()));
-		Result = Values.Commit();
+		Values.Commit();
 	};
-
-	return Result;
 }
 

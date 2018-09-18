@@ -12,9 +12,10 @@
 #pragma once
 
 #pragma region Includes
+#include "Definitions/RangeEnum.h"
 #include "InspectionEngine/SVTaskObject.h"
 #include "SVLibrary/ISVCancel.h"
-#include "Definitions/RangeEnum.h"
+#include "SVValueObjectLibrary/LinkedValue.h"
 #pragma endregion Includes
 
 enum Range_defaults
@@ -22,6 +23,7 @@ enum Range_defaults
 	lowDef = 0, // Warn/Fail Low Default
 	highDef = 9999999 // Warn/Fail High Default
 };
+static const VARTYPE cVarType_Value = VT_R8;
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : Class SVRangeClass
@@ -39,111 +41,30 @@ public:
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	//************************************
-	// Description:  Disconnect Inputs and call base class 
-	// Returns:  bool:  true if succesful
-	//************************************
-	virtual bool CloseObject() override;
-
 	// ISVCancel interface
 	virtual bool CanCancel() override;
 	virtual HRESULT GetCancelData(SVCancelData*& rpData) override;
 	virtual HRESULT SetCancelData(SVCancelData* pData) override;
 
-	//************************************
-	// Description:  Recalculate Reference Object for indirect range Variables.
-	//               Mark reference object as Input.
-	// Returns:  true if references are valid
-	//************************************
-	bool InitReferencesAndInputs(SvStl::MessageContainerVector *pErrorMessages=nullptr);
+	virtual HRESULT SetValuesForAnObject(const GUID& rAimObjectID, SVObjectAttributeClass* pDataObject) override;
 
-	//************************************
-	// Description:  Calculate Reference
-	// Parameter: IN LPCTSTR dottedName
-	// Parameter: OUT SVObjectReference & ValueObjectReference
-	// Returns:  bool:  true if valid reference
-	//************************************
-	static bool SetReference(LPCTSTR dottedName, SVObjectReference &ObjectReference);
+	void setHighValues(double failHigh, double warnHigh);
+	void setLowValues(double failLow, double warnLow);
+	void setDefaultLowValues(double failLow, double warnLow);
 
-	//************************************
-	// Description:  Connect all references as inputs.
-	//************************************
-	void ConnectAllInputObjects();
-
-	//************************************
-	// Description:  Disconnect all input references.
-	//************************************
-	void DisconnectAllInputObjects();
-
-	//************************************
-	// Description:  Retrieve the indirect value string for the specified ERange object
-	// Parameter:  ra <in>:  specifies which range object to retrieve
-	// Parameter:  ref <out>:  the returned indirect value string
-	// Returns:  HRESULT:  S_OK if successful
-	//************************************
-	HRESULT GetIndirectValue( RangeEnum::ERange ra, std::string& rValue );
-
-	//************************************
-	// Description:  True if an indirect value exist.
-	// Parameter: enum ERange ra
-	// Returns:   bool
-	//************************************
-	bool HasIndirectValue(RangeEnum::ERange ra);
-	
 	//************************************
 	// Description:  retrieve the direct value string for Erange
 	// Parameter: enum ERange
 	// Parameter: double rValue reference to the value 
 	// Returns:  HRESULT:  S_OK if successful
 	//************************************
-	HRESULT GetValue(RangeEnum::ERange, double& rValue);
+	HRESULT getValue(RangeEnum::ERange, double& rValue);
 	
-	//************************************
-	// Description:  retrieve the indirect object for ERange
-	// Parameter: enum ERange
-	// Returns:   SVStringValueObjectClass*
-	//************************************
-	SVStringValueObjectClass* GetIndirectObject(RangeEnum::ERange ra);
-
-	//************************************
-	// Description:  Set m_isValidRange to false.
-	// Returns:   void
-	//************************************
-	void InvalidateRange();
-
-	//************************************
-	// Description:  Gets the updated Fail Low object
-	// Returns:  const SVDoubleValueObjectClass&:  const reference to the Fail Low object
-	//************************************
-	const SVDoubleValueObjectClass& getUpdatedFailLow();
-
-	//************************************
-	// Description:  Gets the value of the updated Fail High object
-	// Returns:  const SVDoubleValueObjectClass&:  const reference to the Fail High object
-	//************************************
-	const SVDoubleValueObjectClass& getUpdatedFailHigh();
-
-	//************************************
-	// Description:  Gets the value of the selected Range  object
-	// Parameter RangeEnum::ERange ra the selected range object 
-	// Returns:  const SVDoubleValueObjectClass&:  const reference to the Fail High object
-	//************************************
-	const SVDoubleValueObjectClass& SVRangeClass::getUpdatedRange( RangeEnum::ERange ra);
-
-	//************************************
-	//! Updates the range value with the value from the indirect value if an indirect value exist.
-	//! \param range [in ]  enum ERange
-	//! \returns void
-	//************************************
-	void   UpdateRange(RangeEnum::ERange  range );
-
 	/// Add the Range-Values to the ParameterList for the needed in monitor list.
 	/// \param retList [in,out] The ParameterList
 	void addEntriesToMonitorList(std::back_insert_iterator<SvOi::ParametersForML> inserter) const;
 
 #pragma region Methods to replace processMessage
-	virtual bool DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo) override;
-	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override;
 #pragma endregion Methods to replace processMessage
 	
 protected:
@@ -151,25 +72,11 @@ protected:
 	bool getInputValue( double& RVal );
 	virtual bool onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	//************************************
-	//! return a reference to the range value 
-	//! \param range [in] enum ERange
-	//! \returns SVDoubleValueObjectClass&
-	//************************************
-	SVDoubleValueObjectClass&  GetRange(RangeEnum::ERange range);
-
-public: // Bad
-	SVDoubleValueObjectClass FailLow;
-	SVDoubleValueObjectClass FailHigh;
-	SVDoubleValueObjectClass WarnLow;
-	SVDoubleValueObjectClass WarnHigh;
+	bool checkLinkedValues(RangeEnum::ERange firstType, RangeEnum::ERange secondType, SvStl::MessageContainerVector * pErrorMessages);
 
 protected:
 	
-	SVStringValueObjectClass m_ValueIndirect[RangeEnum::ER_COUNT];
-	bool m_IsConnectedInput[RangeEnum::ER_COUNT];
-	SVObjectReference m_ValueObjectReferences[RangeEnum::ER_COUNT];
-	bool m_isValidRange;
+	LinkedValue m_LinkedValues[RangeEnum::ER_COUNT];
 	SvOl::SVInObjectInfoStruct m_inputObjectInfo;
 };
 

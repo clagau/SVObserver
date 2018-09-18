@@ -52,7 +52,6 @@
 #include "SVValueObjectLibrary/BasicValueObject.h"
 #include "SVStorageResult.h"
 #include "SVVisionProcessorHelper.h"
-#include "RangeClassHelper.h"
 #include "TextDefinesSvO.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVStatusLibrary/GlobalPath.h"

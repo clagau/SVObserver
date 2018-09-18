@@ -195,10 +195,8 @@ void SVToolAdjustmentDialogRotationPageClass::OnSelChangeInterpolationModeCombo(
 }
 #pragma endregion MFC Methods
 
-HRESULT SVToolAdjustmentDialogRotationPageClass::SetInspectionData()
+void SVToolAdjustmentDialogRotationPageClass::SetInspectionData()
 {
-	HRESULT Result{ E_FAIL };
-
 	UpdateData(true); // get data from dialog
 
 	m_Values.Set<bool>(SVPerformRotationObjectGuid, m_performRotation ? true : false);
@@ -210,9 +208,7 @@ HRESULT SVToolAdjustmentDialogRotationPageClass::SetInspectionData()
 		m_Values.Set<long>(SVOutputInterpolationModeObjectGuid, lValue);
 	}
 
-	Result = m_Values.Commit();
-
-	return Result;
+	m_Values.Commit();
 }
 
 void SVToolAdjustmentDialogRotationPageClass::refresh()

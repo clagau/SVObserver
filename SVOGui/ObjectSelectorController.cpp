@@ -57,7 +57,7 @@ bool ObjectSelectorController::Show(std::string& rName, const std::string& rTitl
 	SvCmd::SelectorOptions BuildOptions {{SvCmd::ObjectSelectorType::globalConstantItems, SvCmd::ObjectSelectorType::toolsetItems},
 		m_InspectionID, SvDef::SV_SELECTABLE_FOR_EQUATION, InstanceGuid};
 	SvCl::SelectorItemVector SelectorItems;
-	SvCmd::BuildSelectableItems(BuildOptions, std::back_inserter(SelectorItems));
+	SvCmd::BuildSelectableItems(BuildOptions, std::back_inserter(SelectorItems), FilterType);
 	SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(SelectorItems);
 
 	if (!rName.empty())

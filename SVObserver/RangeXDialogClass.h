@@ -12,21 +12,17 @@
 #pragma once
 
 #pragma region Includes
-#include "InspectionEngine/SVTaskObjectList.h"
-#include "RangeClassHelper.h"
+#include "Definitions/RangeEnum.h"
+#include "SVOGui/RangeController.h"
+#include "SVOGui/ObjectSelectorController.h"
 #pragma endregion Includes
-
-class SVRangeClass;
-class RangeClassHelper;
-class SVIPDoc;
-
 
 class RangeXDialogClass : public CDialog
 {
 	DECLARE_DYNAMIC(RangeXDialogClass)
 
 public:
-	RangeXDialogClass(SVRangeClass* range, CWnd* parent = nullptr);
+	RangeXDialogClass(const GUID& rInspectionID, const GUID& rTaskObjectID, const GUID& rRangeID, CWnd* parent = nullptr);
 	virtual ~RangeXDialogClass();
 
 	//************************************
@@ -35,17 +31,13 @@ public:
 	//************************************
 	void SetDlgData();
 
-	//************************************
-	// Description:  Get the values from the Dialog and set them to the RangeHelper
-	// Returns:  bool:  
-	//************************************
-	bool GetDlgData();
-
 	// Dialogfelddaten
 	enum { IDD = IDD_RANGE_X_DIALOG };
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV-Unterstützung
+
+	HRESULT SetInspectionData();
 
 	DECLARE_MESSAGE_MAP()
 public:
@@ -54,7 +46,7 @@ public:
 	// Parameter:  name<in/out>:  previous and new name of object
 	// Returns:   bool:  true if a new object was selected
 	//************************************
-	bool ShowObjectSelector(std::string& rName);
+	bool ShowObjectSelector(std::string& rName, RangeEnum::ERange fieldEnum);
 
 	afx_msg void OnBnClickedOk();
 	afx_msg void OnBnClickedCancel();
@@ -65,18 +57,17 @@ public:
 	afx_msg void OnBnClickedFailedLowIndirect();
 
 protected:
-	RangeEnum::ERange m_LastSelected;
-
-	CEdit m_EditFailHigh;
-	CEdit m_EditWarnHigh;
-	CEdit m_EditWarnLow;
-	CEdit m_EditFailLow;
+	CString m_FailHigh;
+	CString m_FailLow;
+	CString m_WarnHigh;
+	CString m_WarnLow;
 	CButton m_ButtonFailHigh;
 	CButton m_ButtonWarnHigh;
 	CButton m_ButtonWarnLow;
 	CButton m_ButtonFailLow;
 	CBitmap m_downArrowBitmap;
 
-	RangeClassHelper m_RangeClassHelper;
+	SvOg::RangeController m_rangeController;
+	SvOg::ObjectSelectorController m_objectSelector;
 };
 

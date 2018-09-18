@@ -52,14 +52,10 @@ SVPixelAnalyzerDlg::~SVPixelAnalyzerDlg()
 {
 }
 
-HRESULT SVPixelAnalyzerDlg::SetInspectionData()
+void SVPixelAnalyzerDlg::SetInspectionData()
 {
-	HRESULT Result{ E_FAIL };
-
 	m_Values.Set<BYTE>(SVPixelColorIndexObjectGuid, static_cast<BYTE> (m_GrayscaleToCount));
-	Result = m_Values.Commit();
-
-	return Result;
+	m_Values.Commit();
 }
 
 void SVPixelAnalyzerDlg::DoDataExchange(CDataExchange* pDX)

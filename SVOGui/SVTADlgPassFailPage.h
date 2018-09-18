@@ -79,7 +79,7 @@ namespace SvOg
 		//}}AFX_DATA
 
 	private:
-		void SetInspectionData();
+		HRESULT SetInspectionData();
 		bool UpdateRangeValues();
 		void InitData();
 

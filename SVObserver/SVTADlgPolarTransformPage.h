@@ -34,7 +34,7 @@ class SVToolAdjustmentDialogPolarTransformPageClass : public CPropertyPage
 public:
 	SVToolAdjustmentDialogPolarTransformPageClass( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent );
 	virtual ~SVToolAdjustmentDialogPolarTransformPageClass();
-	HRESULT SetInspectionData();
+	void SetInspectionData();
 
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(SVToolAdjustmentDialogPolarTransformPageClass)

@@ -896,7 +896,7 @@ HRESULT SVSetupDialogManager::SVResultClassSetupDialog(const SVGUID& rObjectId, 
 		SVRangeClass* pRange = l_pResult->GetResultRange();
 		if (pRange)
 		{
-			RangeXDialogClass dlg(pRange, pParentWnd);
+			RangeXDialogClass dlg(pRange->GetInspection()->GetUniqueObjectID(), pRange->GetParent()->GetUniqueObjectID(), pRange->GetUniqueObjectID(), pParentWnd);
 			if (IDOK != dlg.DoModal())
 			{
 				l_Status = S_FALSE;

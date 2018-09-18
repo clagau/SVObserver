@@ -160,10 +160,8 @@ void SVToolAdjustmentDialogTranslationPageClass::OnSelChangeInterpolationModeCom
 }
 #pragma endregion MFC Methods
 
-HRESULT SVToolAdjustmentDialogTranslationPageClass::SetInspectionData()
+void SVToolAdjustmentDialogTranslationPageClass::SetInspectionData()
 {
-	HRESULT Result{ E_FAIL };
-
 	UpdateData( true ); // get data from dialog
 
 	m_Values.Set<bool>(SVPerformTranslationObjectGuid, m_performTranslation ? true : false);
@@ -174,9 +172,7 @@ HRESULT SVToolAdjustmentDialogTranslationPageClass::SetInspectionData()
 		long lValue = static_cast<long> (m_cbInterpolation.GetItemData(CurrentSelection));
 		m_Values.Set<long>(SVOutputInterpolationModeObjectGuid, lValue);
 	}
-	Result = m_Values.Commit();
-
-	return Result;
+	 m_Values.Commit();
 }
 
 void SVToolAdjustmentDialogTranslationPageClass::refresh()
