@@ -27,6 +27,7 @@ namespace SvStl
 		LPCTSTR GetSVIMIniPath();
 		LPCTSTR GetSVOGatewayIniPath();
 		LPCTSTR GetHardwareIniPath();
+		LPCTSTR GetSVObserverIniPath();
 		std::string GetExternalToolPath(LPCTSTR filename = nullptr);
 		std::string GetRunPath(LPCTSTR filename = nullptr);
 		std::string GetBinPath(LPCTSTR filename = nullptr);
@@ -62,6 +63,7 @@ namespace SvStl
 		std::string m_IniFolder;
 		std::string  m_SVIM_ini;
 		std::string  m_SVOGateway_ini;
+		std::string m_SVObserver_ini;
 		std::string  m_Hardware_ini;
 		std::string  m_Utility_ini;
 

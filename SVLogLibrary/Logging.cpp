@@ -226,10 +226,6 @@ void init_logging(const LogSettings& settings)
 
 	if (settings.windows_event_log_enabled)
 	{
-		if (settings.windows_event_log_source.empty())
-		{
-			throw std::runtime_error("You must provide a source name when enabling Windows EventLog");
-		}
 		auto event_log_level = trivial::info;
 		if (!settings.windows_event_log_level.empty())
 		{

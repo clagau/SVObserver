@@ -21,7 +21,7 @@ namespace SvLog
 
 #define SV_LOG_GLOBAL(sev) \
 	BOOST_LOG_SEV(::boost::log::trivial::logger::get(), ::boost::log::trivial::sev) \
-		<< ::boost::log::add_value("Line", __LINE__)      \
+		<< ::boost::log::add_value("Line", static_cast<int>(__LINE__))      \
 		<< ::boost::log::add_value("File", __FILE__)       \
 		<< ::boost::log::add_value("Function", BOOST_CURRENT_FUNCTION)
 

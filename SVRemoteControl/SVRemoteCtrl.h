@@ -30,9 +30,6 @@
 namespace svr
 {
 	enum dev { unknown, svobserver, svcontrol, any };
-	//@Todo[MEC][8.00] [09.03.2018] remove unused ports 
-
-	enum port { cmdPort = 28960, dataPort = 28961, imgPort = 28963, rjctPort = 28965, runpgePort = 28967, failStatusPort = 28969, notifyPort = 32101 };
 }
 
 // SVRemoteCtrl
@@ -202,7 +199,6 @@ protected:
 	svr::dev m_device;
 	_bstr_t m_servername;
 	_bstr_t m_VPName;
-	unsigned short m_CommandPort;
 	SVEventThread< SVAsyncThreadFunc > m_AsyncThread;
 	SVAsyncCommandHelper m_AsyncCommandHelper;
 

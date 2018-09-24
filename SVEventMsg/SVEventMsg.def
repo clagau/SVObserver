@@ -1,4 +1,0 @@
-; SVEventMsg.def : Declares the module parameters for the DLL.
-EXPORTS
-	DllRegisterServer @1
-	DllUnregisterServer @2

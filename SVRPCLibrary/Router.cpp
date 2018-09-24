@@ -35,11 +35,9 @@ Router::Router(RPCClient& rClient, RequestHandler* pRequestHandler)
 	}
 }
 
-
-Router::Router(const std::string& rServerAddress, unsigned short ServerPort, RequestHandler* pRequestHandler)
+Router::Router(const SvHttp::WebsocketClientSettings& rClientSettings, RequestHandler* pRequestHandler)
 {
-	m_Settings.Host = rServerAddress;
-	m_Settings.Port = ServerPort;
+	m_Settings  = rClientSettings;
 	if (nullptr != pRequestHandler)
 	{
 		pRequestHandler->registerDefaultRequestHandler([this](SvPenv::Envelope&& Request, Task<SvPenv::Envelope> Task)
@@ -78,7 +76,6 @@ Router::Router(const std::string& rServerAddress, unsigned short ServerPort, Req
 		});
 	}
 }
-
 
 
 bool Router::ConnectToRouter()

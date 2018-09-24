@@ -23,7 +23,7 @@
 #include "SVProductItems.h"
 #include "SVValueObject.h"
 #include "SVValueObjectList.h"
-#include "Logging.h"
+#include "EventLog.h"
 #include "SVStringConversions.h"
 
 #pragma endregion Includes
@@ -88,8 +88,7 @@ SVRemoteCtrl::SVRemoteCtrl()
 	m_servername(L""),
 	m_VPName(L""),
 	m_imageScale(100),
-	m_CommandPort(svr::cmdPort),
-	m_dispatcher(new SVControlCommands(boost::bind(&SVRemoteCtrl::NotifyClient, this, _1, _2)))
+m_dispatcher(new SVControlCommands(boost::bind(&SVRemoteCtrl::NotifyClient, this, _1, _2)))
 {
 	m_bWindowOnly = TRUE;
 
@@ -836,7 +835,7 @@ HRESULT SVRemoteCtrl::SetControlServer(SVCommandStatus& p_rStatus)
 
 STDMETHODIMP SVRemoteCtrl::Disconnect(void)
 {
-	m_dispatcher->SetConnectionData("", m_CommandPort, boost::posix_time::seconds(10));
+	m_dispatcher->SetConnectionData("",  boost::posix_time::seconds(10));
 
 	m_servername = _T("");
 	m_VPName = _T("");
@@ -848,7 +847,7 @@ STDMETHODIMP SVRemoteCtrl::Connect(BSTR address, LONG Timeout)
 {
 
 	SVCommandStatus l_CommandStatus;
-	HRESULT l_Status = m_dispatcher->SetConnectionData(address, m_CommandPort, boost::posix_time::milliseconds(Timeout));
+	HRESULT l_Status = m_dispatcher->SetConnectionData(address,  boost::posix_time::milliseconds(Timeout));
 
 	if (l_Status == S_OK)
 	{

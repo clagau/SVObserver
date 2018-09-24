@@ -1,0 +1,102 @@
+//*****************************************************************************
+/// \copyright (c) 2018,2018 by Seidenader Maschinenbau GmbH
+/// \file WebSocketSettingsLoader.cpp
+/// All Rights Reserved 
+//*****************************************************************************
+/// PLEASE 
+/// ENTER 
+/// A DESCRIPTION
+//******************************************************************************
+#include "stdafx.h"
+
+#include <algorithm>
+#include <string>
+
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/ini_parser.hpp>
+
+#include "SVStatusLibrary/GlobalPath.h"
+#include "SVLogLibrary/Logging.h"
+
+#include "RCSettingsLoader.h"
+#include <filesystem>
+
+
+
+
+static void RegGetStringIfExists(const boost::property_tree::ptree& pt, std::string& dst, const std::string& path)
+{
+	const auto v = pt.get_optional<std::string>(path);
+	if (v)
+	{
+		dst = *v;
+	}
+}
+
+static void RegGetPathIfExists(const boost::property_tree::ptree& pt, std::experimental::filesystem::path& dst, const std::string& path)
+{
+	const auto v = pt.get_optional<std::string>(path);
+	if (v)
+	{
+		dst = std::experimental::filesystem::path(*v);
+	}
+}
+
+template <typename T> static void RegGetIntIfExists(const boost::property_tree::ptree& pt, T& dst, const std::string& path)
+{
+	const auto v = pt.get_optional<T>(path);
+	if (v)
+	{
+		dst = *v;
+	}
+}
+
+static void RegGetBoolIfExists(const boost::property_tree::ptree& pt, bool& dst, const std::string& path)
+{
+
+	const auto v = pt.get_optional<std::string>(path);
+	if (v)
+	{
+		std::string str = *v;
+		std::transform(str.begin(), str.end(), str.begin(), ::tolower);
+		dst = (str == "1" || str == "true");
+	}
+}
+
+void RCSettingsLoader::loadFromIni(LPCSTR IniPath, RCSettings& settings)
+{
+	
+	
+	boost::property_tree::ptree pt;
+
+	try
+	{
+		boost::property_tree::ini_parser::read_ini(IniPath, pt);
+	}
+	catch (boost::property_tree::ini_parser_error &e)
+	{
+		SV_LOG_GLOBAL(warning) << "The ini file at " << e.filename() << " could not be read.  Reason : " << e.message() << "Line: " << e.line() << "Using default settings. ";
+		return;
+	}
+	catch (...)
+	{
+		SV_LOG_GLOBAL(warning) << "The ini file at " << IniPath << " does not exists. Using default settings.";
+		return;
+	}
+
+
+	RegGetStringIfExists(pt, settings.logSettings.log_level, "Logger.LogLevel");
+	RegGetIntIfExists(pt, settings.logSettings.log_to_stdout_enabled, "Logger.LogToStdoutEnabled");
+	RegGetIntIfExists(pt, settings.logSettings.windows_event_log_enabled, "Logger.WindowsEventLogEnabled");
+	RegGetStringIfExists(pt, settings.logSettings.windows_event_log_source, "Logger.WindowsEventLogSource");
+	RegGetStringIfExists(pt, settings.logSettings.windows_event_log_level, "Logger.WindowsEventLogLevel");
+
+	RegGetStringIfExists(pt, settings.httpClientSettings.Host, "Http.Host");
+	RegGetIntIfExists(pt, settings.httpClientSettings.Port, "Http.Port");
+	RegGetIntIfExists(pt, settings.httpClientSettings.ReadBufferSize, "Http.ReadBufferSize");
+	RegGetIntIfExists(pt, settings.httpClientSettings.WriteBufferSize, "Http.WriteBufferSize");
+	RegGetIntIfExists(pt, settings.httpClientSettings.MaxMessageSize, "Http.MaxMessageSize");
+	RegGetIntIfExists(pt, settings.httpClientSettings.PingIntervalSec, "Http.PingIntervalSec");
+	RegGetIntIfExists(pt, settings.httpClientSettings.PingTimeoutCount, "Http.PingTimeoutCount");
+
+}

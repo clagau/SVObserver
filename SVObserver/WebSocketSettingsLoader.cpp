@@ -1,13 +1,10 @@
+//*****************************************************************************
+/// \copyright (c) 2018,2018 by Seidenader Maschinenbau GmbH
+/// \file WebSocketSettingsLoader.cpp
+/// All Rights Reserved 
+//*****************************************************************************
+/// Log and http Settings are loaded  from SVObserverIni with WebsocketSettingsLoader 
 //******************************************************************************
-/// \copyright (c) 2017,2018 by Seidenader Maschinenbau GmbH
-/// \file SettingsLoader.cpp
-/// All Rights Reserved
-//******************************************************************************
-/// Read settings from the Windows Registry. It does not use the raw Windows
-/// API functions for access the registry, but uses some C++ wrapper you can
-/// find the Registry.h file.
-//******************************************************************************
-
 #include "stdafx.h"
 
 #include <algorithm>
@@ -19,9 +16,9 @@
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVLogLibrary/Logging.h"
 
-#include "SettingsLoader.h"
-namespace SvOgw
-{
+#include "WebSocketSettingsLoader.h"
+
+
 static void RegGetStringIfExists(const boost::property_tree::ptree& pt, std::string& dst, const std::string& path)
 {
 	const auto v = pt.get_optional<std::string>(path);
@@ -61,11 +58,10 @@ static void RegGetBoolIfExists(const boost::property_tree::ptree& pt, bool& dst,
 	}
 }
 
-void SettingsLoader::loadFromIni(Settings& settings)
+void WebSocketSettingsLoader::loadFromIni(WebSocketSettings& settings)
 {
 	boost::property_tree::ptree pt;
-
-	const auto path = SvStl::GlobalPath::Inst().GetSVOGatewayIniPath();
+	const auto path = SvStl::GlobalPath::Inst().GetSVObserverIniPath();
 	try
 	{
 		boost::property_tree::ini_parser::read_ini(path, pt);
@@ -75,27 +71,17 @@ void SettingsLoader::loadFromIni(Settings& settings)
 		SV_LOG_GLOBAL(warning) << "The ini file at " << e.filename() << " could not be read.  Reason : " << e.message() << "Line: " << e.line() << "Using default settings. ";
 		return;
 	}
-
 	catch (...)
 	{
 		SV_LOG_GLOBAL(warning) << "The ini file at " << path << " does not exists. Using default settings.";
 		return;
 	}
 
-	RegGetIntIfExists(pt, settings.observerSetting.Port, "Observer.Port");
-	RegGetStringIfExists(pt, settings.observerSetting.Host, "Observer.Host");
-	RegGetIntIfExists(pt, settings.observerSetting.MaxMessageSize, "Observer.MaxMessagesSize");
-	RegGetIntIfExists(pt, settings.observerSetting.ReadBufferSize, "Observer.ReadBufferSize");
-	RegGetIntIfExists(pt, settings.observerSetting.WriteBufferSize, "Observer.WriteBufferSize");
-	RegGetIntIfExists(pt, settings.observerSetting.PingIntervalSec, "Observer.PingIntervalSec");
-	RegGetIntIfExists(pt, settings.observerSetting.PingTimeoutCount, "Observer.PingTimeoutCount");
-
-
-	RegGetIntIfExists(pt, settings.dummySharedMemory, "SharedMemory.Dummy");
 
 	RegGetStringIfExists(pt, settings.logSettings.log_level, "Logger.LogLevel");
 	RegGetIntIfExists(pt, settings.logSettings.log_to_stdout_enabled, "Logger.LogToStdoutEnabled");
 	RegGetIntIfExists(pt, settings.logSettings.windows_event_log_enabled, "Logger.WindowsEventLogEnabled");
+	RegGetStringIfExists(pt, settings.logSettings.windows_event_log_source, "Logger.WindowsEventLogSource");
 	RegGetStringIfExists(pt, settings.logSettings.windows_event_log_level, "Logger.WindowsEventLogLevel");
 
 	RegGetStringIfExists(pt, settings.httpSettings.Host, "Http.Host");
@@ -107,11 +93,4 @@ void SettingsLoader::loadFromIni(Settings& settings)
 	RegGetPathIfExists(pt, settings.httpSettings.DataDir, "Http.DataDir");
 	RegGetStringIfExists(pt, settings.httpSettings.DefaultIndexHtmlFile, "Http.DefaultIndexHtmlFile");
 	RegGetStringIfExists(pt, settings.httpSettings.DefaultErrorHtmlFile, "Http.DefaultErrorHtmlFile");
-
-	RegGetStringIfExists(pt, settings.authSettings.UserSettingsFile, "Auth.UserSettingsFile");
-	RegGetStringIfExists(pt, settings.authSettings.JwtHmacSecret, "Auth.JwtHmacSecret");
-	RegGetStringIfExists(pt, settings.authSettings.JwtRsaPublicKeyFile, "Auth.JwtRsaPublicKeyFile");
-	RegGetStringIfExists(pt, settings.authSettings.JwtRsaPrivateKeyFile, "Auth.JwtRsaPrivateKeyFile");
-}
-
 }

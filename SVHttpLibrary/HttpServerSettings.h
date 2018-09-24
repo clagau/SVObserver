@@ -89,10 +89,10 @@ struct HttpServerSettings
 	std::function<bool(const HttpRequest& req, HttpResponse& res)> HttpRequestHandler;
 
 	/// Event Handler for all WebSocket events.
-	EventHandler* pEventHandler;
+	EventHandler* pEventHandler {nullptr};
 
 	/// Enable serving of static files, i.e. act as a WebServer.
-	bool bEnableFileServing;
+	bool bEnableFileServing {false};
 
 	/// Data dir that is used for serving.
 	std::experimental::filesystem::path DataDir = {"."};

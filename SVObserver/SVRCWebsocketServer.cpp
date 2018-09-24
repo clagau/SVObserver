@@ -15,14 +15,15 @@ SVRCWebsocketServer::SVRCWebsocketServer()
 {
 
 }
-void SVRCWebsocketServer::Start(std::shared_ptr<SVRCCommand> pCmd, std::shared_ptr<SvHttp::HttpServerSettings>  pSettings)
+
+void SVRCWebsocketServer::Start(std::shared_ptr<SVRCCommand> pCmd, std::unique_ptr<SvHttp::HttpServerSettings>&&  rpSettings)
 {
-	m_pSettings = pSettings;
+	m_pSettings = std::move(rpSettings);
 	m_pCommand = pCmd;
 	m_pRequestHandler = std::make_unique<SVRCRequestHandler>(m_pCommand.get());
 	m_pRpcServer = std::make_unique<SvRpc::RPCServer>(m_pRequestHandler.get());
-	pSettings->pEventHandler = m_pRpcServer.get();
-	m_pHttpserver = std::make_unique<SvHttp::HttpServer>(*pSettings, m_io_service);
+	m_pSettings->pEventHandler = m_pRpcServer.get();
+	m_pHttpserver = std::make_unique<SvHttp::HttpServer>(*m_pSettings.get(), m_io_service);
 	m_pHttpserver->start();
 
 	m_pThread.reset(new std::thread([this]()

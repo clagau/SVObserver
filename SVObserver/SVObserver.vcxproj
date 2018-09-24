@@ -463,6 +463,7 @@ echo %time%
     <ClCompile Include="ToolClipboard.cpp" />
     <ClCompile Include="ToolSetView.cpp" />
     <ClCompile Include="ToolSizeAdjustTask.cpp" />
+    <ClCompile Include="WebSocketSettingsLoader.cpp" />
     <ClCompile Include="ZoomToolBar.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -762,6 +763,8 @@ echo %time%
     <ClInclude Include="ToolClipboard.h" />
     <ClInclude Include="ToolSizeAdjustTask.h" />
     <ClInclude Include="TraceWin.h" />
+    <ClInclude Include="WebSocketSettingsLoader.h" />
+    <ClInclude Include="WebsocketSettings.h" />
     <ClInclude Include="ZoomToolBar.h" />
   </ItemGroup>
   <ItemGroup>

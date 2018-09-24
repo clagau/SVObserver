@@ -819,6 +819,9 @@
     <ClCompile Include="LoopTool.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="WebSocketSettingsLoader.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="SVObserver.odl">
@@ -1679,6 +1682,12 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="LoopTool.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="WebsocketSettings.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="WebSocketSettingsLoader.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

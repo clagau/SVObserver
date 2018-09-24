@@ -14,7 +14,7 @@
 #include "SVImageObject.h"
 #include "FreeImage\FreeImage.h"
 #include "SVImageConvertorGDI.h"
-#include "Logging.h"
+#include "EventLog.h"
 #include "WebsocketLibrary/RunRequest.inl"
 #pragma endregion Includes
 

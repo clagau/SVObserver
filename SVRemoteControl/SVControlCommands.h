@@ -33,7 +33,7 @@ public:
 	SVControlCommands(NotifyFunctor p_Func);
 	SVControlCommands() = delete;
 
-	HRESULT SetConnectionData(const _bstr_t& p_rServerName, unsigned short p_CommandPort, boost::posix_time::time_duration timeout);
+	HRESULT SetConnectionData(const _bstr_t& p_rServerName, boost::posix_time::time_duration timeout);
 	void  StartNotificationStreaming();
 	void  StopNotificationStreaming();
 
@@ -75,11 +75,8 @@ private:
 	void OnConnectionStatus(SvRpc::ClientStatus Status);
 
 	std::wstring ConvertResult(HRESULT hResult);
-
-	_bstr_t m_ServerName;
-	unsigned short m_CommandPort;
-	bool m_Connected;
-
+	
+	bool m_Connected {false};
 	NotifyFunctor m_Notifier;
 
 	SvRpc::ClientStreamContext m_csx {nullptr};

@@ -294,6 +294,7 @@
     <ClCompile Include="NotificationHandler.cpp" />
     <ClCompile Include="ProtoBufGetter.cpp" />
     <ClCompile Include="ProtoBufSetter.cpp" />
+    <ClCompile Include="RCSettingsLoader.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -372,10 +373,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AutoBuild.h" />
-    <ClInclude Include="Logging.h" />
+    <ClInclude Include="EventLog.h" />
     <ClInclude Include="NotificationHandler.h" />
     <ClInclude Include="ProtoBufGetter.h" />
     <ClInclude Include="ProtoBufSetter.h" />
+    <ClInclude Include="RCSettings.h" />
+    <ClInclude Include="RCSettingsLoader.h" />
     <ClInclude Include="SVDataDefObject.h" />
     <ClInclude Include="SVDataDefObjectList.h" />
     <ClInclude Include="SVErrorObject.h" />

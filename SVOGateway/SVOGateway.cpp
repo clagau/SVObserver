@@ -1,6 +1,6 @@
 //******************************************************************************
 /// \copyright (c) 2017,2018 by Seidenader Maschinenbau GmbH
-/// \file RunReWebsocketServer.cpp
+/// \file SVOGateway.cpp
 /// All Rights Reserved
 //******************************************************************************
 /// Main entry point that
@@ -31,6 +31,7 @@
 #include "SVOGatewayService.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
+#include "SVSystemLibrary/SVVersionInfo.h"
 
 static const std::string cLocalHost(_T("127.0.0.1"));
 
@@ -71,7 +72,7 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 		SvOgw::Settings settings;
 		SvOgw::SettingsLoader settingsLoader;
 		settingsLoader.loadFromIni(settings);
-		//@Todo[MEC][8.00] [08.03.2018] could also be in Registry
+		settings.httpSettings.ServerVersionString = SvSyl::SVVersionInfo::GetVersion();
 		settings.httpSettings.Host = "0.0.0.0";
 		SvLog::init_logging(settings.logSettings);
 		SV_LOG_GLOBAL(info) << "WebsocketServer is starting";
@@ -90,7 +91,7 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 
 		auto sharedMemoryAccess = std::make_unique<SvOgw::SharedMemoryAccess>();
 		SvOgw::ServerRequestHandler requestHandler(sharedMemoryAccess.get());
-		SvRpc::Router SVObserverRouter {cLocalHost, SvWsl::Default_SecondPort, &requestHandler};
+		SvRpc::Router SVObserverRouter {settings.observerSetting, &requestHandler};
 		SvRpc::RPCServer rpcServer(&requestHandler);
 		settings.httpSettings.pEventHandler = &rpcServer;
 		settings.httpSettings.HttpRequestHandler = std::bind(&on_http_request, std::ref(restHandler), std::placeholders::_1, std::placeholders::_2);
@@ -103,10 +104,10 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 		if (CheckCommandLineArgs(argc, argv, _T("/cmd")))
 		{
 			bool exit {false};
-			while(!exit)
+			while (!exit)
 			{
 				exit = ::WaitForSingleObject(gServiceStopEvent, 100) == WAIT_OBJECT_0;
-				if(_kbhit())
+				if (_kbhit())
 				{
 					exit = ('x' == _getch());
 				}

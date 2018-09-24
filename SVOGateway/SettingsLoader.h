@@ -10,7 +10,6 @@
 #pragma once
 
 #include "Settings.h"
-
 namespace SvOgw
 {
 class SettingsLoader
@@ -18,4 +17,5 @@ class SettingsLoader
 public:
 	void loadFromIni(Settings&);
 };
-}// namespace SvOgw
+
+}

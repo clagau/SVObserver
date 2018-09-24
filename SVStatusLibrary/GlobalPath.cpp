@@ -89,7 +89,8 @@ namespace SvStl
 			m_Utility_ini.append(_T("\\SVUtility.ini"));
 			m_SVOGateway_ini = m_IniFolder;
 			m_SVOGateway_ini.append(_T("\\SVOGateway.ini"));
-
+			m_SVObserver_ini = m_IniFolder;
+			m_SVObserver_ini.append(_T("\\SVOBserver.ini"));
 			m_IsInitializedIni = true;
 		}
 	}
@@ -123,6 +124,11 @@ namespace SvStl
 	{
 		InitializeIniFolder();
 		return m_Hardware_ini.c_str();
+	}
+	LPCTSTR GlobalPath::GetSVObserverIniPath()
+	{
+		InitializeIniFolder();
+		return m_SVObserver_ini.c_str();
 	}
 
 	std::string GlobalPath::GetExternalToolPath(LPCTSTR filename)

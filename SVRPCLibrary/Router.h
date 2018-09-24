@@ -21,7 +21,7 @@ class Router
 {
 public:
 	Router::Router(RPCClient& rClient, RequestHandler* pRequestHandler);
-	Router::Router(const std::string& rServerAddress, unsigned short ServerPort, RequestHandler* pRequestHandler);
+	Router::Router(const SvHttp::WebsocketClientSettings& rClientSettings, RequestHandler* pRequestHandler);
 
 private:
 	bool Router::ConnectToRouter();

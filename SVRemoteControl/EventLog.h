@@ -14,65 +14,13 @@
 #pragma region Includes
 #include <winnt.h>
 #include <sstream>
-#include "SVEventMsg/SVEventMsg.h"
 #include "SVStringConversions.h"
 #include "SVCriticalSection.h"
 #include "SVAutoLockAndReleaseTemplate.h"
 #include "SVStringConversions.h"
+#include "SVLogLibrary/Logging.h"
 #pragma endregion Includes
 
-
-class EventLog
-{
-private:
-	EventLog();
-	~EventLog();
-
-public:
-	static void Write(DWORD errorCode, const std::wstring& errorData, WORD severity = EVENTLOG_ERROR_TYPE, WORD category = 0)
-	{
-		static const std::wstring EventSource = L"SVRemoteControl";
-		static SVCriticalSection l_CriticalSection;
-		SVAutoLockAndReleaseTemplate< SVCriticalSection > l_AutoLock;
-
-		if (l_AutoLock.Assign(&l_CriticalSection, 50))
-		{
-			HANDLE hEventLog = RegisterEventSourceW(nullptr, EventSource.c_str());
-			if (hEventLog)
-			{
-				DWORD eventID = MSG_INFO_1;
-				if (S_OK == errorCode)
-				{
-					eventID = MSG_SUCCESS_1;
-				}
-				else if (IS_ERROR(errorCode))
-				{
-					eventID = MSG_ERROR_1;
-				}
-				LPCWSTR pMsg = errorData.c_str();
-				ReportEventW(hEventLog, severity, category, eventID, nullptr, 1, 0, &pMsg, nullptr);
-				DeregisterEventSource(hEventLog);
-			}
-		}
-	}
-	static void WriteDebug(const std::wstring& errorData, WORD severity = EVENTLOG_INFORMATION_TYPE, WORD category = 0)
-	{
-		static const std::wstring EventSource = L"SVRemoteControl";
-		static SVCriticalSection l_CriticalSection;
-		SVAutoLockAndReleaseTemplate< SVCriticalSection > l_AutoLock;
-
-		if (l_AutoLock.Assign(&l_CriticalSection, 50))
-		{
-			HANDLE hEventLog = RegisterEventSourceW(nullptr, EventSource.c_str());
-			if (hEventLog)
-			{
-				LPCWSTR pMsg = errorData.c_str();
-				ReportEventW(hEventLog, severity, category, MSG_INFO_1, nullptr, 1, 0, &pMsg, nullptr);
-				DeregisterEventSource(hEventLog);
-			}
-		}
-	}
-};
 
 inline void SVLog(HRESULT hr, const wchar_t * file, long line)
 {
@@ -98,8 +46,15 @@ inline void SVLog(HRESULT hr, const wchar_t * file, long line)
 			hr_ws << std::hex << hr;
 			ws << hr_ws.str().c_str() << separator << file << separator << line;
 		}
-		EventLog::Write(hr, ws.str());
-
+		
+		if (hr == S_OK)
+		{
+			SV_LOG_GLOBAL(info) << ws.str();
+		}
+		else
+		{
+			SV_LOG_GLOBAL(error) << ws.str();
+		}
 		ws << std::endl;
 		::OutputDebugStringW(ws.str().c_str());
 	}
@@ -110,9 +65,7 @@ inline void SVLog(const wchar_t * msg, const wchar_t * file, long line)
 	std::wstringstream ws;
 	const std::wstring separator = L" ";
 	ws << msg << separator << file << separator << line;
-
-	EventLog::Write(E_FAIL, ws.str());
-
+	SV_LOG_GLOBAL(error) << ws.str();
 	ws << std::endl;
 	::OutputDebugStringW(ws.str().c_str());
 }
@@ -122,9 +75,7 @@ inline void SVLogDebug(const wchar_t * msg)
 	std::wstringstream ws;
 	const std::wstring separator = L" ";
 	ws << msg;
-
-	EventLog::WriteDebug(ws.str());
-
+	SV_LOG_GLOBAL(info) << ws.str();
 	ws << std::endl;
 	::OutputDebugStringW(ws.str().c_str());
 }

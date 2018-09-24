@@ -1,0 +1,322 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="SVRemoteControl_i.c" />
+    <ClCompile Include="ProtoBufSetter.cpp">
+      <Filter>Headerdateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVFile.cpp">
+      <Filter>Headerdateien</Filter>
+    </ClCompile>
+    <ClCompile Include="dlldatax.c">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="NotificationHandler.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="ProtoBufGetter.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="RCSettingsLoader.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVAsyncCommandHelper.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVAsyncControlCommandGetConfig.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVAsyncControlCommandPutConfig.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVAsyncControlCommandPutFile.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVAsyncControlCommandSetMode.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVCommandTemplate.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVControlCommands.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVCriticalSection.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVDataDefObject.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVDataDefObjectList.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVErrorObject.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVErrorObjectList.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVImageConvertorGDI.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVImageObject.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVImageObjectList.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVInputMatchItem.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVInputMatchList.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVProductItems.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVRemoteControl.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVWaitFuncs.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVValueObjectList.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVValueObject.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVRemoteCtrl.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="SVRemoteControl.h" />
+    <ClInclude Include="AutoBuild.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="_ISVRemoteCtrlEvents_CP.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="dlldatax.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="EventLog.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="NotificationHandler.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ProtoBufGetter.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ProtoBufSetter.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="RCSettings.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="RCSettingsLoader.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVAsyncCommandHelper.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVAsyncControlCommandGetConfig.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVAsyncControlCommandPutConfig.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVAsyncControlCommandPutFile.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVAsyncControlCommandSetMode.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVAutoLockAndReleaseTemplate.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVCollection.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVCommandStatus.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVCommandTemplate.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVControlCommands.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVControlResponse.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVCriticalSection.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVDataDefObject.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVDataDefObjectList.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVErrorObject.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVErrorObjectList.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVEventThread.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVWaitFuncs.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVValueObjectList.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVValueObject.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVStringConversions.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVRemoteCtrl.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVProductItems.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVMatchStruct.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVInputMatchList.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVInputMatchItem.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVImageObjectList.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVImageObject.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVImageBuffer.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVFile.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVImageConvertorGDI.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVRemoteControlConstants.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Midl Include="SVRemoteControl.idl" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SVRemoteControl.def" />
+    <None Include="SVAutoLockAndReleaseTemplate.inl">
+      <Filter>Headerdateien</Filter>
+    </None>
+    <None Include="SVDataDefObject.rgs">
+      <Filter>Regsettings</Filter>
+    </None>
+    <None Include="SVDataDefObjectList.rgs">
+      <Filter>Regsettings</Filter>
+    </None>
+    <None Include="SVErrorObject.rgs">
+      <Filter>Regsettings</Filter>
+    </None>
+    <None Include="SVErrorObjectList.rgs">
+      <Filter>Regsettings</Filter>
+    </None>
+    <None Include="SVFailStatusStream.rgs">
+      <Filter>Regsettings</Filter>
+    </None>
+    <None Include="SVImageObject.rgs">
+      <Filter>Regsettings</Filter>
+    </None>
+    <None Include="SVImageObjectList.rgs">
+      <Filter>Regsettings</Filter>
+    </None>
+    <None Include="SVInputBroker.rgs">
+      <Filter>Regsettings</Filter>
+    </None>
+    <None Include="SVInputMatchItem.rgs">
+      <Filter>Regsettings</Filter>
+    </None>
+    <None Include="SVInputMatchList.rgs">
+      <Filter>Regsettings</Filter>
+    </None>
+    <None Include="SVOutputBroker.rgs">
+      <Filter>Regsettings</Filter>
+    </None>
+    <None Include="SVProductItems.rgs">
+      <Filter>Regsettings</Filter>
+    </None>
+    <None Include="SVRemoteControl.rgs">
+      <Filter>Regsettings</Filter>
+    </None>
+    <None Include="SVRemoteControl.rc2">
+      <Filter>Resourcendateien</Filter>
+    </None>
+    <None Include="SVValueObjectList.rgs">
+      <Filter>Regsettings</Filter>
+    </None>
+    <None Include="SVValueObject.rgs">
+      <Filter>Regsettings</Filter>
+    </None>
+    <None Include="SVRemoteCtrl.rgs">
+      <Filter>Regsettings</Filter>
+    </None>
+    <None Include="SVEventThread.inl">
+      <Filter>Quelldateien</Filter>
+    </None>
+    <None Include="SVStringConversions.inl">
+      <Filter>Quelldateien</Filter>
+    </None>
+    <None Include="SVRemoteCtrl.bmp">
+      <Filter>Resourcendateien</Filter>
+    </None>
+    <None Include="SVRemoteCtrl.htm">
+      <Filter>Resourcendateien</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Headerdateien">
+      <UniqueIdentifier>{1cfbd84d-3df5-4ef0-aa15-df597e1faabe}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Quelldateien">
+      <UniqueIdentifier>{bea871ab-3058-4b39-a431-7697a03fade5}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Resourcendateien">
+      <UniqueIdentifier>{bec41ec5-3b19-4ebf-b31b-cf76d31d7779}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Regsettings">
+      <UniqueIdentifier>{89d6edac-ac38-4e8a-9553-af6526cb242a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="SVRemoteControl.rc">
+      <Filter>Resourcendateien</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
