@@ -22,6 +22,10 @@ struct Settings
 	{
 		observerSetting.Port = SvWsl::Default_SecondPort;
 		observerSetting.Host = "127.0.0.1";
+		logSettings.FileLogEnabled = false;
+		logSettings.StdoutLogEnabled = false;
+		logSettings.WindowsEventLogEnabled = true;
+		logSettings.WindowsEventLogLevel = "info";
 	}
 	bool dummySharedMemory {false};
 	SvHttp::WebsocketClientSettings observerSetting;

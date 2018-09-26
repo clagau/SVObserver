@@ -253,13 +253,15 @@ int main(int argc, char* argv[])
 {
 	SvLog::bootstrap_logging();
 	SvLog::LogSettings logSettings;
-	logSettings.log_level = "debug";
-	logSettings.log_to_stdout_enabled = true;
-	logSettings.windows_event_log_enabled = false;
+	logSettings.StdoutLogEnabled = true;
+	logSettings.StdoutLogLevel = "debug";
+	logSettings.FileLogEnabled = false;
+	logSettings.WindowsEventLogEnabled = false;
 	SvLog::init_logging(logSettings);
 
 	SvHttp::WebsocketClientSettings clientSettings;
 	clientSettings.Host = "127.0.0.1";
+//	clientSettings.Host = "192.168.10.111";
 	clientSettings.Port = SvWsl::Default_Port;
 	if (argc > 1)
 		clientSettings.Host = argv[1];

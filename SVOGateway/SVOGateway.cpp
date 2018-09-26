@@ -90,7 +90,7 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 		SvAuth::RestHandler restHandler(authManager);
 
 		auto sharedMemoryAccess = std::make_unique<SvOgw::SharedMemoryAccess>();
-		SvOgw::ServerRequestHandler requestHandler(sharedMemoryAccess.get());
+		SvOgw::ServerRequestHandler requestHandler(sharedMemoryAccess.get(), &authManager);
 		SvRpc::Router SVObserverRouter {settings.observerSetting, &requestHandler};
 		SvRpc::RPCServer rpcServer(&requestHandler);
 		settings.httpSettings.pEventHandler = &rpcServer;

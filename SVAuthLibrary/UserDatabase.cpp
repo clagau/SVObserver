@@ -8,6 +8,7 @@
 
 #include "stdafx.h"
 
+#include "SVAuthLibrary/Crypto.h"
 #include "SVAuthLibrary/UserDatabase.h"
 
 namespace SvAuth
@@ -25,8 +26,19 @@ bool UserDatabase::checkPassword(const std::string& username, const std::string&
 		return false;
 	}
 
-	// TODO: we should use hashed & salted passwords
-	return password == entry->password();
+	const auto hash = hashPassword(password, username);
+	return hash == entry->password();
+}
+
+// You can use the following bash one-liner to manually generate hashes
+//   echo -n user:pass | md5sum | cut -f1 -d' ' | xxd -r -p | base64
+std::string UserDatabase::hashPassword(const std::string& password, const std::string& salt) const
+{
+	Crypto crypto;
+	const auto msg = salt + ":" + password;
+	const auto md5 = crypto.md5sum(msg);
+	const auto b64 = crypto.encodeBase64(md5);
+	return b64;
 }
 
 bool UserDatabase::getUserClaims(const std::string& username, AuthTokenClaims& claims) const

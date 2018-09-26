@@ -25,6 +25,8 @@ public:
 
 	bool login(const LoginRequest&, LoginResponse&);
 	bool auth(const AuthRequest&, AuthResponse&);
+	bool rpcAuth(const std::string& token);
+	void logout(const LogoutRequest&, LogoutResponse&);
 
 private:
 	bool generateAccessToken(const std::string& username, std::string& token);

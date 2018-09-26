@@ -85,11 +85,19 @@ void RCSettingsLoader::loadFromIni(LPCSTR IniPath, RCSettings& settings)
 	}
 
 
-	RegGetStringIfExists(pt, settings.logSettings.log_level, "Logger.LogLevel");
-	RegGetIntIfExists(pt, settings.logSettings.log_to_stdout_enabled, "Logger.LogToStdoutEnabled");
-	RegGetIntIfExists(pt, settings.logSettings.windows_event_log_enabled, "Logger.WindowsEventLogEnabled");
-	RegGetStringIfExists(pt, settings.logSettings.windows_event_log_source, "Logger.WindowsEventLogSource");
-	RegGetStringIfExists(pt, settings.logSettings.windows_event_log_level, "Logger.WindowsEventLogLevel");
+	
+	
+	RegGetBoolIfExists(pt, settings.logSettings.StdoutLogEnabled, "Logger.StdoutLogEnabled");
+	RegGetStringIfExists(pt, settings.logSettings.StdoutLogLevel, "Logger.StdoutLogLevel");
+	RegGetBoolIfExists(pt, settings.logSettings.FileLogEnabled, "Logger.FileLogEnabled");
+	RegGetStringIfExists(pt, settings.logSettings.FileLogLevel, "Logger.FileLogLevel");
+	RegGetStringIfExists(pt, settings.logSettings.FileLogLocation, "Logger.FileLogLocation");
+	RegGetBoolIfExists(pt, settings.logSettings.WindowsEventLogEnabled, "Logger.WindowsEventLogEnabled");
+	RegGetStringIfExists(pt, settings.logSettings.WindowsEventLogLevel, "Logger.WindowsEventLogLevel");
+
+
+
+	RegGetStringIfExists(pt, settings.logSettings.WindowsEventLogLevel, "Logger.WindowsEventLogLevel");
 
 	RegGetStringIfExists(pt, settings.httpClientSettings.Host, "Http.Host");
 	RegGetIntIfExists(pt, settings.httpClientSettings.Port, "Http.Port");

@@ -102,7 +102,8 @@ void HttpServerConnection::http_on_read(const boost::system::error_code& error, 
 	// Check for WebSocket Upgrade
 	if (boost::beast::websocket::is_upgrade(m_Request))
 	{
-		const auto token = ws_get_access_token();
+		std::string protocol;
+		const auto token = ws_get_access_token(protocol);
 		const auto handler = m_rSettings.pEventHandler;
 		if (handler && !handler->onHandshake(m_ConnectionId, token))
 		{
@@ -114,7 +115,7 @@ void HttpServerConnection::http_on_read(const boost::system::error_code& error, 
 		// TODO: shall we delay it until handshake was done?
 		ws_access_log();
 
-		return ws_do_upgrade();
+		return ws_do_upgrade(protocol);
 	}
 
 	// call custom http request handler
@@ -450,8 +451,10 @@ HttpServerConnection::http_build_file_get(const std::experimental::filesystem::p
 ///       requests can not have a body.
 /// But we add the WebSocket specific workaround as described here:
 ///   https://stackoverflow.com/a/4361358
-std::string HttpServerConnection::ws_get_access_token()
+std::string HttpServerConnection::ws_get_access_token(std::string& protocol)
 {
+	protocol = "";
+
 	const auto& auth_header = m_Request[boost::beast::http::field::authorization];
 	if (!auth_header.empty())
 	{
@@ -490,6 +493,7 @@ std::string HttpServerConnection::ws_get_access_token()
 		const auto access_token_prefix = std::string {"access_token, "};
 		if (ws_protocol.starts_with(access_token_prefix))
 		{
+			protocol = "access_token";
 			return ws_protocol.substr(access_token_prefix.size()).to_string();
 		}
 	}
@@ -499,19 +503,23 @@ std::string HttpServerConnection::ws_get_access_token()
 	return "";
 }
 
-void HttpServerConnection::ws_do_upgrade()
+void HttpServerConnection::ws_do_upgrade(std::string protocol)
 {
 	m_IsUpgraded = true;
 	m_WsSocket.async_accept_ex(
 		m_Request,
-		std::bind(&HttpServerConnection::ws_on_decorate, shared_from_this(), std::placeholders::_1),
+		std::bind(&HttpServerConnection::ws_on_decorate, shared_from_this(), std::placeholders::_1, protocol),
 		std::bind(&HttpServerConnection::ws_on_handshake, shared_from_this(), std::placeholders::_1)
 	);
 }
 
-void HttpServerConnection::ws_on_decorate(boost::beast::websocket::response_type& m)
+void HttpServerConnection::ws_on_decorate(boost::beast::websocket::response_type& m, std::string protocol)
 {
 	m.insert(boost::beast::http::field::server, "SVObserver");
+	if (!protocol.empty())
+	{
+		m.insert(boost::beast::http::field::sec_websocket_protocol, protocol);
+	}
 }
 
 void HttpServerConnection::ws_access_log()

@@ -76,14 +76,15 @@ void WebSocketSettingsLoader::loadFromIni(WebSocketSettings& settings)
 		SV_LOG_GLOBAL(warning) << "The ini file at " << path << " does not exists. Using default settings.";
 		return;
 	}
-
-
-	RegGetStringIfExists(pt, settings.logSettings.log_level, "Logger.LogLevel");
-	RegGetIntIfExists(pt, settings.logSettings.log_to_stdout_enabled, "Logger.LogToStdoutEnabled");
-	RegGetIntIfExists(pt, settings.logSettings.windows_event_log_enabled, "Logger.WindowsEventLogEnabled");
-	RegGetStringIfExists(pt, settings.logSettings.windows_event_log_source, "Logger.WindowsEventLogSource");
-	RegGetStringIfExists(pt, settings.logSettings.windows_event_log_level, "Logger.WindowsEventLogLevel");
-
+	
+	RegGetBoolIfExists(pt, settings.logSettings.StdoutLogEnabled, "Logger.StdoutLogEnabled");
+	RegGetStringIfExists(pt, settings.logSettings.StdoutLogLevel, "Logger.StdoutLogLevel");
+	RegGetBoolIfExists(pt, settings.logSettings.FileLogEnabled, "Logger.FileLogEnabled");
+	RegGetStringIfExists(pt, settings.logSettings.FileLogLevel, "Logger.FileLogLevel");
+	RegGetStringIfExists(pt, settings.logSettings.FileLogLocation, "Logger.FileLogLocation");
+	RegGetBoolIfExists(pt, settings.logSettings.WindowsEventLogEnabled, "Logger.WindowsEventLogEnabled");
+	RegGetStringIfExists(pt, settings.logSettings.WindowsEventLogLevel, "Logger.WindowsEventLogLevel");
+	
 	RegGetStringIfExists(pt, settings.httpSettings.Host, "Http.Host");
 	RegGetIntIfExists(pt, settings.httpSettings.Port, "Http.Port");
 	RegGetIntIfExists(pt, settings.httpSettings.ReadBufferSize, "Http.ReadBufferSize");

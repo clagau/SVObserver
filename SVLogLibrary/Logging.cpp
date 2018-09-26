@@ -202,41 +202,64 @@ void bootstrap_logging()
 
 void init_logging(const LogSettings& settings)
 {
-	auto log_level = trivial::info;
-	if (!settings.log_level.empty())
-	{
-		if (!parse_severity(settings.log_level, log_level))
-		{
-			auto msg = "Unknown log level " + settings.log_level;
-			throw std::runtime_error(msg.c_str());
-		}
-	}
-	core::get()->set_filter(trivial::severity >= log_level);
 	core::get()->remove_all_sinks(); // remove all default sinks
-	if (settings.log_to_stdout_enabled)
+	add_common_attributes(); // adds common log attributes like timestamp
+
+	if (settings.StdoutLogEnabled)
 	{
-		typedef sinks::synchronous_sink<sinks::text_ostream_backend> text_sink;
-		boost::shared_ptr<text_sink> sink = boost::make_shared<text_sink>();
-		boost::shared_ptr<std::ostream> stream(&std::clog, boost::null_deleter());
+		auto stdout_log_level = trivial::info;
+		if (!settings.StdoutLogLevel.empty())
+		{
+			if (!parse_severity(settings.StdoutLogLevel, stdout_log_level))
+			{
+				auto msg = "Unknown stdout log level " + settings.StdoutLogLevel;
+				throw std::runtime_error(msg.c_str());
+			}
+		}
+
+		auto sink = boost::make_shared<sinks::synchronous_sink<sinks::text_ostream_backend>>();
+		auto stream = boost::shared_ptr<std::ostream>(&std::clog, boost::null_deleter());
 		sink->locked_backend()->add_stream(stream);
-		add_common_attributes(); // adds common log attributes like timestamp
 		sink->set_formatter(&log_formatter);
+		sink->set_filter(trivial::severity >= stdout_log_level);
 		core::get()->add_sink(sink);
 	}
 
-	if (settings.windows_event_log_enabled)
+	if (settings.FileLogEnabled && !settings.FileLogLocation.empty())
+	{
+		auto file_log_level = trivial::info;
+		if (!settings.FileLogLevel.empty())
+		{
+			if (!parse_severity(settings.FileLogLevel, file_log_level))
+			{
+				auto msg = "Unknown file log level " + settings.FileLogLevel;
+				throw std::runtime_error(msg.c_str());
+			}
+		}
+
+		auto sink = boost::make_shared<sinks::synchronous_sink<sinks::text_ostream_backend>>();
+		auto stream = boost::shared_ptr<std::ostream>(new std::ofstream(settings.FileLogLocation.c_str()));
+		sink->locked_backend()->add_stream(stream);
+		sink->locked_backend()->auto_flush(true);
+		sink->set_formatter(&log_formatter);
+		sink->set_filter(trivial::severity >= file_log_level);
+		core::get()->add_sink(sink);
+	}
+
+	if (settings.WindowsEventLogEnabled)
 	{
 		auto event_log_level = trivial::info;
-		if (!settings.windows_event_log_level.empty())
+		if (!settings.WindowsEventLogLevel.empty())
 		{
-			if (!parse_severity(settings.windows_event_log_level, event_log_level))
+			if (!parse_severity(settings.WindowsEventLogLevel, event_log_level))
 			{
-				auto msg = "Unknown log level " + settings.windows_event_log_level;
+				auto msg = "Unknown event log level " + settings.WindowsEventLogLevel;
 				throw std::runtime_error(msg.c_str());
 			}
 		}
 		auto backend = boost::make_shared<sv_message_log_backend>(event_log_level);
-		core::get()->add_sink(boost::make_shared<synchronous_sink<sv_message_log_backend>>(backend));
+		auto sink = boost::make_shared<synchronous_sink<sv_message_log_backend>>(backend);
+		core::get()->add_sink(sink);
 	}
 }
 

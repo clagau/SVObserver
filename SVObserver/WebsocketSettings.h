@@ -19,6 +19,10 @@ struct WebSocketSettings
 	{
 		httpSettings.Port = SvWsl::Default_SecondPort;
 		httpSettings.Host = "127.0.0.1";
+		logSettings.FileLogEnabled = false;
+		logSettings.StdoutLogEnabled = false;
+		logSettings.WindowsEventLogEnabled = true;
+		logSettings.WindowsEventLogLevel = "info";
 	};
 	SvLog::LogSettings logSettings;
 	SvHttp::HttpServerSettings httpSettings;

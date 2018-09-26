@@ -120,6 +120,36 @@ bool AuthManager::auth(const AuthRequest& req, AuthResponse& res)
 	return true;
 }
 
+bool AuthManager::rpcAuth(const std::string& auth_token)
+{
+	//@Todo[MEC][8.10] [25.09.2018]
+	return true;
+	// enforce that client passes a token
+	if (auth_token.empty())
+	{
+		SV_LOG_GLOBAL(info) << "Rejecting Websocket connection with empty token";
+		return false;
+	}
+
+	auto jwt = Jwt<AuthTokenClaims>();
+	const auto rc = m_JwtFactory.parse(jwt, auth_token);
+	if (rc != JwtFactory::Parse_Success)
+	{
+		SV_LOG_GLOBAL(info) << "Jwt parse error " << rc;
+		return false;
+	}
+
+	// TODO: check user level
+	SV_LOG_GLOBAL(info) << "Received successful auth request on rpc connection";
+
+	return true;
+}
+
+void AuthManager::logout(const LogoutRequest&, LogoutResponse&)
+{
+	// nothing to be done here for now. later we might have to revoke the session token.
+}
+
 bool AuthManager::generateAccessToken(const std::string& username, std::string& token)
 {
 	auto jwt = Jwt<AccessTokenClaims>();

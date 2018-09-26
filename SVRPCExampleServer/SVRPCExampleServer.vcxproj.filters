@@ -33,12 +33,21 @@
     <ClInclude Include="SeidenaderLogo100px.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="..\SVOGateway\Settings.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SVOGateway\SettingsLoader.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVRPCExampleServer.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SVOGateway\SettingsLoader.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>

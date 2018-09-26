@@ -11,6 +11,7 @@
 #pragma region Includes
 #include "stdafx.h"
 
+#include "SVAuthLibrary/AuthManager.h"
 #include "SVRPCLibrary/ErrorUtil.h"
 #include "SharedMemoryAccess.h"
 #include "ServerRequestHandler.h"
@@ -18,8 +19,14 @@
 
 namespace SvOgw
 {
-ServerRequestHandler::ServerRequestHandler(SharedMemoryAccessInterface* sma)
+ServerRequestHandler::ServerRequestHandler(SharedMemoryAccessInterface* sma, SvAuth::AuthManager* am)
 {
+	registerAuthHandler(
+		[am](const std::string& token) -> bool
+	{
+		return am->rpcAuth(token);
+	});
+
 	registerRequestHandler<
 		SvPb::SVRCMessages,
 		SvPb::SVRCMessages::kGetGatewayVersionRequest,

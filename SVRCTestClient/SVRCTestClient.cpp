@@ -81,8 +81,8 @@ void PrintTreeItems(const SvPb::TreeItem& rTreeItem, std::string& rData, const s
 int main(int argc, char* argv[])
 {
 	SvHttp::WebsocketClientSettings ClientSettings;
-	ClientSettings.Host = "127.0.0.1";
-	ClientSettings.Port = SvWsl::Default_SecondPort;
+	ClientSettings.Host = "192.168.10.110";
+	ClientSettings.Port = SvWsl::Default_Port;
 	if (argc > 1)
 		ClientSettings.Host = argv[1];
 	if (argc > 2)

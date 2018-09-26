@@ -18,7 +18,7 @@ namespace SvAuth
 class Crypto
 {
 public:
-	Crypto();
+	std::string md5sum(const std::string& buf);
 
 	std::string hmac(const std::string& payload, const std::string& secret, ALG_ID alg);
 

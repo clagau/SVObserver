@@ -16,6 +16,7 @@
 #include <openssl/err.h>
 #include <openssl/evp.h>
 #include <openssl/hmac.h>
+#include <openssl/md5.h>
 #include <openssl/pem.h>
 #include <openssl/rsa.h>
 
@@ -65,8 +66,15 @@ struct base64url
 namespace SvAuth
 {
 
-Crypto::Crypto()
+std::string Crypto::md5sum(const std::string& msg)
 {
+	auto res = std::string(MD5_DIGEST_LENGTH, '\0');
+	MD5(
+		reinterpret_cast<const unsigned char*>(msg.c_str()),
+		msg.size(),
+		reinterpret_cast<unsigned char*>(const_cast<char*>(res.data()))
+	);
+	return res;
 }
 
 std::string Crypto::hmac(const std::string& msg, const std::string& key, ALG_ID alg)

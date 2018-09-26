@@ -16,6 +16,11 @@
 #include "SVRPCLibrary/RPCClient.h"
 #pragma endregion Includes
 
+namespace SvAuth
+{
+class AuthManager;
+}
+
 namespace SvOgw
 {
 
@@ -24,6 +29,6 @@ class SharedMemoryAccessInterface;
 class ServerRequestHandler : public SvRpc::RequestHandler
 {
 public:
-	ServerRequestHandler(SharedMemoryAccessInterface* service);
+	ServerRequestHandler(SharedMemoryAccessInterface* service, SvAuth::AuthManager* am);
 };
 }// namespace SvOgw

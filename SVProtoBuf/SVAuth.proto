@@ -91,6 +91,14 @@ message AuthResponse
 	string authToken = 1;
 }
 
+message LogoutRequest
+{
+}
+
+message LogoutResponse
+{
+}
+
 message UserDatabaseEntry
 {
 	string username = 1;

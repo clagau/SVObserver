@@ -29,7 +29,7 @@ bool RestHandler::onRestRequest(const SvHttp::HttpRequest& req, SvHttp::HttpResp
 	const auto& path = req.Url.path();
 	const auto& method = req.Method;
 
-	if (method == verb::options && (path == "/login" || path == "/auth"))
+	if (method == verb::options && (path == "/login" || path == "/auth" || path == "/logout"))
 	{
 		res.Status = status::ok;
 		res.ContentType = "application/json";
@@ -86,6 +86,28 @@ bool RestHandler::onRestRequest(const SvHttp::HttpRequest& req, SvHttp::HttpResp
 			res.Headers[field::access_control_allow_origin] = "*";
 			return true;
 		}
+
+		res.Status = status::ok;
+		res.Headers[field::access_control_allow_origin] = "*";
+		res.ContentType = "application/json";
+		res.Body = encode_to_string(authRes);
+		return true;
+	}
+
+	if (method == verb::post && path == "/logout")
+	{
+		DecodeContext ctx;
+		LogoutRequest authReq;
+		if (!decode_from_cstring(req.Body.data(), req.Body.size(), &authReq, ctx))
+		{
+			res.Status = status::bad_request;
+			res.Headers[field::access_control_allow_origin] = "*";
+			res.Body = ctx.error;
+			return true;
+		}
+
+		LogoutResponse authRes;
+		m_rAuthManager.logout(authReq, authRes);
 
 		res.Status = status::ok;
 		res.Headers[field::access_control_allow_origin] = "*";

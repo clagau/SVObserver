@@ -22,6 +22,7 @@
 #include "SvHttpLibrary/HttpRequest.h"
 #include "SvHttpLibrary/HttpResponse.h"
 #include "SVLogLibrary/Logging.h"
+#include "SVOGateway/SettingsLoader.h"
 #include "SVProtoBuf/SVRC.h"
 #include "SVRPCExampleLibrary/format.h"
 #include "SVRPCExampleServer/SeidenaderLogo100px.h"
@@ -30,6 +31,7 @@
 #include "SVRPCLibrary/RPCServer.h"
 #include "SVRPCLibrary/RequestHandler.h"
 
+using namespace SvAuth;
 using namespace SvHttp;
 using namespace SvPb;
 using namespace SvRpc;
@@ -43,20 +45,17 @@ struct ClientChunk
 
 static std::map<std::string, ClientChunk> s_clientChunks = {};
 static const auto s_emptyChunk = std::string {""};
+static DeviceModeType s_deviceMode = DeviceModeType::runMode;
 
-void register_auth_handler(RequestHandler& requestHandler)
+void register_auth_handler(RequestHandler& requestHandler, AuthManager* am)
 {
-	requestHandler.registerAuthHandler([](const std::string& token) -> bool
+	requestHandler.registerAuthHandler([am](const std::string& token) -> bool
 	{
-		if (!token.empty())
-		{
-			SV_LOG_GLOBAL(info) << "Incoming request with token: " << token;
-		}
-		return true;
+		return am->rpcAuth(token);
 	});
 }
 
-bool on_http_request(SvAuth::RestHandler& rRestHandler, const SvHttp::HttpRequest& req, SvHttp::HttpResponse& res)
+bool on_http_request(RestHandler& rRestHandler, const SvHttp::HttpRequest& req, SvHttp::HttpResponse& res)
 {
 	if (rRestHandler.onRestRequest(req, res))
 	{
@@ -205,6 +204,30 @@ static void register_dummy_handler(RequestHandler& requestHandler)
 	});
 	requestHandler.registerRequestHandler<
 		SVRCMessages,
+		SVRCMessages::kSetDeviceModeRequest,
+		SetDeviceModeRequest,
+		StandardResponse>(
+		[](SetDeviceModeRequest&& req, Task<StandardResponse> task)
+	{
+		SV_LOG_GLOBAL(info) << "SetDeviceModeRequest";
+		s_deviceMode = req.mode();
+		StandardResponse res;
+		task.finish(std::move(res));
+	});
+	requestHandler.registerRequestHandler<
+		SVRCMessages,
+		SVRCMessages::kGetDeviceModeRequest,
+		GetDeviceModeRequest,
+		GetDeviceModeResponse>(
+		[](GetDeviceModeRequest&& req, Task<GetDeviceModeResponse> task)
+	{
+		SV_LOG_GLOBAL(info) << "GetDeviceModeRequest";
+		GetDeviceModeResponse res;
+		res.set_mode(s_deviceMode);
+		task.finish(std::move(res));
+	});
+	requestHandler.registerRequestHandler<
+		SVRCMessages,
 		SVRCMessages::kQueryListNameRequest,
 		QueryListNameRequest,
 		QueryListNameResponse>(
@@ -214,6 +237,55 @@ static void register_dummy_handler(RequestHandler& requestHandler)
 		QueryListNameResponse res;
 		res.add_listname("monitorlist1");
 		res.add_listname("monitorlist2");
+		task.finish(std::move(res));
+	});
+	requestHandler.registerRequestHandler<
+		SVRCMessages,
+		SVRCMessages::kQueryMonitorListNamesRequest,
+		QueryMonitorListNamesRequest,
+		NamesResponse>(
+		[](QueryMonitorListNamesRequest&& req, Task<NamesResponse> task)
+	{
+		SV_LOG_GLOBAL(info) << "QueryMonitorListNamesRequest";
+		NamesResponse res;
+		res.mutable_names()->mutable_item()->set_strval("monitorlist1;monitorlist2");
+		res.mutable_names()->set_count(2);
+		task.finish(std::move(res));
+	});
+	requestHandler.registerRequestHandler<
+		SVRCMessages,
+		SVRCMessages::kGetInspectionNamesRequest,
+		GetInspectionNamesRequest,
+		NamesResponse>(
+		[](GetInspectionNamesRequest&& req, Task<NamesResponse> task)
+	{
+		SV_LOG_GLOBAL(info) << "GetInspectionNamesRequest";
+		NamesResponse res;
+		res.mutable_names()->mutable_item()->set_strval("inspection1;inspection2");
+		res.mutable_names()->set_count(2);
+		task.finish(std::move(res));
+	});
+	requestHandler.registerRequestHandler<
+		SVRCMessages,
+		SVRCMessages::kQueryListItemRequest,
+		QueryListItemRequest,
+		QueryListItemResponse>(
+		[](QueryListItemRequest&& req, Task<QueryListItemResponse> task)
+	{
+		SV_LOG_GLOBAL(info) << "QueryListItemRequest";
+		auto inspection = (req.listname() == "monitorlist1")
+			? std::string("inspection1")
+			: std::string("inspection2");
+		QueryListItemResponse res;
+		if (req.queryimages())
+		{
+			res.add_imagedeflist()->set_name(inspection + ".image");
+		}
+		if (req.queryvalues())
+		{
+			res.add_valuedeflist()->set_name(inspection + ".weight");
+			res.add_valuedeflist()->set_name(inspection + ".place");
+		}
 		task.finish(std::move(res));
 	});
 	requestHandler.registerRequestHandler<
@@ -275,6 +347,18 @@ static void register_dummy_handler(RequestHandler& requestHandler)
 		getImageForId(image, req.id());
 		task.finish(std::move(res));
 	});
+	requestHandler.registerRequestHandler<
+		SVRCMessages,
+		SVRCMessages::kGetFileRequest,
+		GetFileRequest,
+		GetFileResponse>(
+		[](GetFileRequest&& req, Task<GetFileResponse> task)
+	{
+		SV_LOG_GLOBAL(info) << "GetFileRequest";
+		GetFileResponse res;
+		res.set_hresult(1);
+		task.finish(std::move(res));
+	});
 	requestHandler.registerStreamHandler<
 		SVRCMessages,
 		SVRCMessages::kGetImageStreamFromIdRequest,
@@ -291,6 +375,16 @@ static void register_dummy_handler(RequestHandler& requestHandler)
 			auto future = observer.onNext(std::move(res));
 			future.get();
 		}
+		observer.finish();
+	});
+	requestHandler.registerStreamHandler<
+		SVRCMessages,
+		SVRCMessages::kGetNotificationStreamRequest,
+		GetNotificationStreamRequest,
+		GetNotificationStreamResponse>(
+		[](GetNotificationStreamRequest&& req, Observer<GetNotificationStreamResponse> observer, std::shared_ptr<ServerStreamContext> ctx)
+	{
+		SV_LOG_GLOBAL(info) << "GetNotificationStreamRequest";
 		observer.finish();
 	});
 }
@@ -442,8 +536,16 @@ int main()
 	try
 	{
 		boost::asio::io_service io_service {1};
+
+		SvOgw::Settings settings;
+		SvOgw::SettingsLoader settingsLoader;
+		settingsLoader.loadFromIni(settings);
+
+		AuthManager authManager(settings.authSettings);
+		RestHandler restHandler(authManager);
+
 		RequestHandler requestHandler;
-		register_auth_handler(requestHandler);
+		register_auth_handler(requestHandler, &authManager);
 		register_example_handler(requestHandler, io_service);
 		register_dummy_handler(requestHandler);
 		register_client_chunk_handler(requestHandler);
@@ -451,22 +553,14 @@ int main()
 
 		auto rpcServer = std::make_unique<RPCServer>(&requestHandler);
 
-		SvAuth::AuthManagerSettings authManagerSettings;
-		SvAuth::AuthManager authManager(authManagerSettings);
-		SvAuth::RestHandler restHandler(authManager);
-
-		HttpServerSettings settings;
-		settings.Port = 8080;
-		settings.pEventHandler = rpcServer.get();
-		settings.bEnableFileServing = true;
-		settings.DataDir = std::experimental::filesystem::path(".") / ".." / ".." / "seidenader-prototype" / "frontend" / "dist";
-		settings.DefaultIndexHtmlFile = "index.html";
-		settings.DefaultErrorHtmlFile = "index.html"; // enables SPA
-		settings.HttpRequestHandler = std::bind(&on_http_request, std::ref(restHandler), std::placeholders::_1, std::placeholders::_2);
-		auto server = std::make_unique<HttpServer>(settings, io_service);
+		auto& httpSettings = settings.httpSettings;
+		httpSettings.pEventHandler = rpcServer.get();
+		httpSettings.DataDir = std::experimental::filesystem::path(".") / ".." / ".." / "seidenader-prototype" / "frontend" / "dist";
+		httpSettings.HttpRequestHandler = std::bind(&on_http_request, std::ref(restHandler), std::placeholders::_1, std::placeholders::_2);
+		auto server = std::make_unique<HttpServer>(httpSettings, io_service);
 		server->start();
 
-		SV_LOG_GLOBAL(info) << "Server running on ws://" << settings.Host << ":" << settings.Port << "/";
+		SV_LOG_GLOBAL(info) << "Server running on ws://" << httpSettings.Host << ":" << httpSettings.Port << "/";
 
 		auto thread = std::thread([&io_service]() { io_service.run(); });
 

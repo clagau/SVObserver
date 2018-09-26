@@ -14,10 +14,11 @@ struct RCSettings
 {
 	RCSettings()
 	{
-		logSettings.log_to_stdout_enabled = false;
-		logSettings.windows_event_log_enabled = true;
-		logSettings.windows_event_log_level = "info";
-		logSettings.log_level = "debug";
+		logSettings.FileLogEnabled = false;
+		logSettings.StdoutLogEnabled = true;
+		logSettings.StdoutLogLevel = "debug";
+		logSettings.WindowsEventLogEnabled = true;
+		logSettings.WindowsEventLogLevel = "info";
 	}
 	SvLog::LogSettings logSettings;
 	SvHttp::WebsocketClientSettings httpClientSettings;

@@ -123,6 +123,8 @@
     </CustomBuild>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\SVOGateway\Settings.h" />
+    <ClInclude Include="..\SVOGateway\SettingsLoader.h" />
     <ClInclude Include="AutoBuild.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SeidenaderLogo100px.h" />
@@ -131,6 +133,7 @@
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\SVOGateway\SettingsLoader.cpp" />
     <ClCompile Include="SVRPCExampleServer.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

@@ -27,6 +27,7 @@ public:
 
 private:
 	bool findUser(const std::string& username, const UserDatabaseEntry**) const;
+	std::string hashPassword(const std::string& password, const std::string& salt) const;
 
 private:
 	friend class UserDatabaseLoader;

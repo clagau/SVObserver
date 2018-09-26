@@ -410,7 +410,7 @@ void SVObserverApp::OnFileNewConfig()
 ////////////////////////////////////////////////////////////////////////////////
 void SVObserverApp::OnFileSaveConfig()
 {
-	std::string RunTimePath {SVFileNameManagerClass::Instance().GetRunPathName()};
+	std::string RunTimePath{SVFileNameManagerClass::Instance().GetRunPathName()};
 	if (getConfigFullFileName().empty() || getConfigPathName().empty() || RunTimePath == getConfigPathName())
 	{
 		fileSaveAsSVX();
@@ -772,7 +772,7 @@ void SVObserverApp::OnStop()
 		if (nullptr != pPPQ) { pPPQ->GoOffline(); }
 	}
 	// Stop the FailStatus Stream PPQ Listeners
-
+	
 
 	SetAllIPDocumentsOffline();
 
@@ -1157,7 +1157,7 @@ void SVObserverApp::OnGoOffline()
 			StopRegression();
 		}
 
-		OnStop();
+			OnStop();
 
 	}// end if ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
 }
@@ -2160,7 +2160,7 @@ BOOL SVObserverApp::InitInstance()
 
 	std::shared_ptr<SVRCCommand> pSVRCCommand = std::make_shared<SVRCCommand>();
 	SVRCWebsocketServer::Instance()->Start(pSVRCCommand, std::move(pSettings));
-
+	
 	if (!TheSVOLicenseManager().HasMatroxLicense())
 	{
 		SvStl::MessageMgrStd Exception(SvStl::LogAndDisplay);
@@ -2326,7 +2326,7 @@ HRESULT SVObserverApp::OpenFile(LPCTSTR PathName)
 
 	_tsplitpath(PathName, szDrive, szDir, szFile, szExt);
 	std::string Extension = szExt;
-	std::string FileName {PathName};
+	std::string FileName{PathName};
 	std::string loadPath {szDrive};
 	loadPath += szDir;
 
@@ -2342,10 +2342,10 @@ HRESULT SVObserverApp::OpenFile(LPCTSTR PathName)
 	if (0 == SvUl::CompareNoCase(Extension, std::string(SvDef::cPackedConfigExtension)))
 	{
 		SvDef::StringVector RunFiles;
-		if (SvUl::unzipAll(FileName, SVFileNameManagerClass::Instance().GetRunPathName(), RunFiles))
+		if(SvUl::unzipAll(FileName, SVFileNameManagerClass::Instance().GetRunPathName(), RunFiles))
 		{
 			//Find the svx file
-			for (const auto& rFile : RunFiles)
+			for(const auto& rFile : RunFiles)
 			{
 				_tsplitpath(rFile.c_str(), szDrive, szDir, szFile, szExt);
 				Extension = szExt;
@@ -2441,7 +2441,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 				}
 				catch (const SvStl::MessageContainer& rExp)
 				{
-					SvStl::MsgTypeEnum  MsgType {SvStl::LogAndDisplay};
+					SvStl::MsgTypeEnum  MsgType{SvStl::LogAndDisplay};
 					SvStl::MessageMgrStd Exception(MsgType);
 					Exception.setMessage(rExp.getMessage());
 					hr = E_FAIL;
@@ -2457,7 +2457,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 				hr = SvXml::CheckObsoleteItems(XMLTree, configVer, itemType, errorCode);
 				if (hr & SV_ERROR_CONDITION)
 				{
-					SvStl::MsgTypeEnum  MsgType {SvStl::LogAndDisplay};
+					SvStl::MsgTypeEnum  MsgType{SvStl::LogAndDisplay};
 					SvStl::MessageMgrStd Exception(MsgType);
 					Exception.setMessage(SVMSG_SVO_76_CONFIGURATION_HAS_OBSOLETE_ITEMS, itemType.c_str(), SvStl::SourceFileParams(StdMessageParams), errorCode);
 					break;
@@ -2735,7 +2735,7 @@ SVIPDoc* SVObserverApp::NewSVIPDoc(LPCTSTR DocName, SVInspectionProcess& Inspect
 HRESULT SVObserverApp::LoadPackedConfiguration(const std::string& rPackedFileName)
 {
 	HRESULT l_Status = S_OK;
-	std::string fileName {rPackedFileName};
+	std::string fileName{rPackedFileName};
 
 	if (0 == _access(rPackedFileName.c_str(), 0))
 	{
@@ -2750,7 +2750,7 @@ HRESULT SVObserverApp::LoadPackedConfiguration(const std::string& rPackedFileNam
 
 	if (S_OK == l_Status)
 	{
-		if (std::string::npos != fileName.find(_T(".pac")))
+		if(std::string::npos != fileName.find(_T(".pac")))
 		{
 			SVPackedFile PackedFile;
 			if (PackedFile.UnPackFiles(rPackedFileName.c_str(), SvStl::GlobalPath::Inst().GetRunPath().c_str()))
@@ -2784,7 +2784,7 @@ HRESULT SVObserverApp::LoadPackedConfiguration(const std::string& rPackedFileNam
 
 HRESULT SVObserverApp::SavePackedConfiguration(const std::string& rPackedFileName)
 {
-	HRESULT Result {S_OK};
+	HRESULT Result{S_OK};
 
 	//@WARNING [gra][8.10][11.06.2018] SendMessage is used to avoid problems by accessing the SVObserverApp instance from another thread
 	//This should be changed using inspection commands
@@ -2793,7 +2793,7 @@ HRESULT SVObserverApp::SavePackedConfiguration(const std::string& rPackedFileNam
 	SvDef::StringVector FileNameList = SVFileNameManagerClass::Instance().GetFileNameList();
 	if (!SvUl::makeZipFile(rPackedFileName, FileNameList, _T(""), false))
 	{
-		Result = E_UNEXPECTED;
+	   Result = E_UNEXPECTED;
 	}
 
 	return Result;
@@ -3597,8 +3597,8 @@ HRESULT SVObserverApp::SetMode(unsigned long p_lNewMode)
 			OnStop();
 		}
 
-		SetModeEdit(false);
-	}
+			SetModeEdit(false);
+		}
 	else if (l_svMode == SVIM_MODE_TEST)
 	{
 		// If the previous mode was running then we cannot stop and 
@@ -5129,7 +5129,7 @@ void SVObserverApp::Start()
 		}
 		//create image and data stores create slot ringbuffer;
 		SvSml::SharedMemWriter::Instance().CreateManagmentAndStores();
-
+		
 		///In this loop the ImageStores are created 
 		for (long l = 0; S_OK == Result && l < lSize; l++)
 		{
@@ -5549,7 +5549,7 @@ void SVObserverApp::SaveConfigurationAndRelatedFiles(bool makeZipFile, bool isAu
 			m_SvxFileName.SetExtension(SvDef::cConfigExtension);
 			filePath = m_SvxFileName.GetFullFileName();
 		}
-
+		
 		//Before saving the configuration we need to first change the ending for the configuration file
 		pConfig->ValidateRemoteMonitorList(); // sanity check
 		std::ofstream os;
@@ -5565,7 +5565,7 @@ void SVObserverApp::SaveConfigurationAndRelatedFiles(bool makeZipFile, bool isAu
 		{
 			SvDef::StringVector FileNameList = SVFileNameManagerClass::Instance().GetFileNameList();
 			filePath = m_ConfigFileName.GetFullFileName();
-			if (!SvUl::makeZipFile(filePath, FileNameList, _T(""), false))
+			if(!SvUl::makeZipFile(filePath, FileNameList, _T(""), false))
 			{
 				SvDef::StringVector msgList;
 				msgList.emplace_back(filePath);
@@ -5847,7 +5847,7 @@ HRESULT SVObserverApp::ConstructDocuments(SVTreeType& p_rTree)
 							l_Status = E_FAIL;
 						}
 					}
-
+					
 				}
 				else
 				{
@@ -5937,7 +5937,7 @@ HRESULT SVObserverApp::ConstructMissingDocuments()
 		l_Status = E_FAIL;
 	}
 
-
+	
 	return l_Status;
 }
 
