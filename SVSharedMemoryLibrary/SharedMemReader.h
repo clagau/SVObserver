@@ -92,7 +92,7 @@ public:
 	/// map contains monitorlist name Slotmanager index 
 	std::map<std::string, int> m_SlotManagerIndexMap;
 private:
-	std::mutex m_ProtectReader;
+	
 
 	///parameter for GetProduct
 	struct GetProdPar

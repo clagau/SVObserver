@@ -17,9 +17,12 @@ namespace SvSml
 	const  DWORD ShareEvents::Delay_Before_CreateShare =  60; //SVObserver waittime after setting Change Event
 	const  DWORD ShareEvents::Delay_Before_ClearShare = 30; 
 
-	ShareEvents::ShareEvents(): m_StopEvent(NULL), m_hWatchThread(NULL),m_IsReady(false), m_IsInit(false),m_ReadyCounter(0)
+	ShareEvents::ShareEvents()
 	{
-		
+		m_isReady.store(false);
+		m_isInit.store(false);
+		m_readyCounter.store(0);
+
 		PSECURITY_DESCRIPTOR psd = (PSECURITY_DESCRIPTOR) LocalAlloc(LPTR, SECURITY_DESCRIPTOR_MIN_LENGTH); 
 		InitializeSecurityDescriptor(psd, SECURITY_DESCRIPTOR_REVISION);
 		SetSecurityDescriptorDacl(psd, TRUE, NULL, FALSE);
@@ -55,14 +58,15 @@ namespace SvSml
 	{
 		ResetEvent(m_hChangeEvent);
 		SetEvent(m_hReadyEvent);
-		m_IsReady = true;
-		m_ReadyCounter++;
+		m_isReady.store(true);
+		m_readyCounter++;
+
 		
 	}
 	void ShareEvents::SignalChangingStatus()
 	{
-		m_IsInit = false;
-		m_IsReady = false;
+		m_isReady = false;;
+		m_isInit = false;
 		ResetEvent(m_hReadyEvent);
 		SetEvent(m_hChangeEvent);
 	}
@@ -75,22 +79,22 @@ namespace SvSml
 
 	bool ShareEvents::GetIsReady()  const
 	{
-		return m_IsReady;
+		return m_isReady.load();
 	}
 	
 	long ShareEvents::GetReadyCounter() const
 	{
-		return m_ReadyCounter;
+		return m_readyCounter.load();
 	}
 
 	bool ShareEvents::GetIsInit()  const
 	{
-		return m_IsInit;
+		return m_isInit.load();
 	}
 	
 	void ShareEvents::SetIsInit()
 	{
-		m_IsInit = true;
+		m_isInit = true;
 	}
 
 
@@ -131,8 +135,8 @@ namespace SvSml
 				}
 				if (Sucess)
 				{
-					pShareEvent->m_IsReady = true;
-					pShareEvent->m_ReadyCounter++;
+					pShareEvent->m_isReady = true;
+					pShareEvent->m_readyCounter++;
 				}
 				break;
 			default:
@@ -154,8 +158,8 @@ namespace SvSml
 					break;
 				}
 			case 	WAIT_OBJECT_0 +1:
-				pShareEvent->m_IsReady = false;
-				pShareEvent->m_IsInit = false;
+				pShareEvent->m_isReady = false;
+				pShareEvent->m_isInit = false;
 				Sucess = true;
 
 				if(pShareEvent->m_CallBackFct)

@@ -21,7 +21,7 @@ SharedMemReader::~SharedMemReader(void)
 
 void SharedMemReader::Clear(void)
 {
-	std::lock_guard<std::mutex> guard(m_ProtectReader);
+	
 	m_DataContainer.CloseConnection();
 	m_MonitorListStore.CloseConnection();
 	m_MLContainer.Clear();
@@ -29,7 +29,7 @@ void SharedMemReader::Clear(void)
 
 void SharedMemReader::Reload(DWORD version)
 {
-	std::lock_guard<std::mutex> guard(m_ProtectReader);
+	
 	m_MonitorListStore.OpenMonitorStore("Monitor");
 	DWORD size = m_MonitorListStore.GetSize();
 	SvPml::MesMLCpyContainer MesMLCpyCont;
@@ -83,7 +83,7 @@ int SharedMemReader::GetSlotManagerIndexForPPQName(LPCTSTR PPQname)
 
 SharedMemReader::retvalues  SharedMemReader::_GetProduct(const GetProdPar& par, LPCTSTR Monitorlist, int trigger, MLProduct* pProduct, const MLProduct* pLastProduct)
 {
-	std::lock_guard<std::mutex> guard(m_ProtectReader);
+	
 	if (nullptr == pProduct)
 	{
 		return fail;

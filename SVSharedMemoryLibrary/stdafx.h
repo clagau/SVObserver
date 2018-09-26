@@ -44,7 +44,7 @@
 //************************************
 #pragma region Precompiled Headers
 #include <windows.h>
-
+#include <atomic>
 #include <cmath>
 #include <comdef.h>
 #include <deque>
