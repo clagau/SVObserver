@@ -71,6 +71,7 @@
 #include <boost/multi_index/ordered_index.hpp>			//Used by static library
 
 #define M_MIL_USE_SAFE_TYPE 0
+#define M_MIL_WARN_ON_DEPRECATED 0  //Disabled Deprecated warning for mil. This added because of the M_DISTORTION in SVMatroxBarCodeInterface.cpp and should removed if this solved.
 
 #include <mil.h>
 #pragma endregion Precompiled Headers
