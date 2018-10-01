@@ -12,59 +12,34 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <comdef.h>
-#include "SVTimerLibrary/SVClock.h"
+#include "EventTime.h"
 #include "TriggerRecordController/IImage.h"
 #pragma endregion Includes
 
 /*
 This object holds the data response information to a event.
 */
-class SVODataResponseClass  //@TODO[Arvid] this is similar to SVOResponseClass: combine or derive?
+class SVODataResponseClass : public EventTime
 {
 public:
-	SVODataResponseClass();
-	SVODataResponseClass(const SVODataResponseClass &rRequest);
+	SVODataResponseClass() {}
+	SVODataResponseClass(const SVODataResponseClass &rRhs) : EventTime(rRhs)
+		, m_pImage(rRhs.m_pImage)
+	{
+	}
 
-	~SVODataResponseClass();
+	virtual ~SVODataResponseClass() {}
 
-	HRESULT Reset();
+	virtual void reset()
+	{ 
+		__super::reset();
+		m_pImage.reset();
+	}
 
-	bool IsValid() const;
-	bool IsComplete() const;
-
-	HRESULT GetIsValid( bool &rbIsValid ) const;
-	HRESULT SetIsValid( bool bIsValid );
-
-	HRESULT GetIsComplete( bool &rbIsComplete ) const;
-	HRESULT SetIsComplete( bool bIsComplete );
-
-	HRESULT GetOwner( void **pvOwner ) const;
-	HRESULT SetOwner( void *pvOwner );
-
-	HRESULT GetStartTick( SvTl::SVTimeStamp& p_rTick ) const;
-	HRESULT SetStartTick( const SvTl::SVTimeStamp& p_rTick );
-
-	HRESULT GetEndTick( SvTl::SVTimeStamp& p_rTick ) const;
-	HRESULT SetEndTick( const SvTl::SVTimeStamp& p_rTick );
-
-	const SvTrc::IImagePtr& GetImage() const { return m_image; };
-	void SetImage(const SvTrc::IImagePtr& image) { m_image = image; };
+	const SvTrc::IImagePtr& getImage() const { return m_pImage; }
+	void setImage(const SvTrc::IImagePtr& pImage) { m_pImage = pImage; }
 
 private:
-	//This attribute holds a pointer to the owner of the response.
-	bool mbIsValid;
-	//This attribute holds a pointer to the parent of the response. 
-	bool mbIsComplete;
-
-	//This attribute holds a pointer to the owner of the response.
-	void *mpvOwner;
-
-	SvTrc::IImagePtr m_image;
-
-	//This attribute holds the start time stamp the response.
-	SvTl::SVTimeStamp m_StartTick;
-	//This attribute holds the end time stamp the response.
-	SvTl::SVTimeStamp m_EndTick;
+	SvTrc::IImagePtr m_pImage{nullptr};
 };
 

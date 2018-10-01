@@ -141,233 +141,70 @@ HRESULT SVPPQShiftRegister::IsProductAlive( long p_TriggerCount ) const
 	return l_Status;
 }
 
-bool SVTriggerCountLess( const SVProductInfoStruct* l_pLeft, const SVProductInfoStruct* l_pRight )
+long SVPPQShiftRegister::GetIndexByTriggerCount(long triggerCount) const
 {
-	bool l_Status = false;
+	long Result{-1};
 
-	if( nullptr != l_pLeft && nullptr != l_pRight )
+	if( 0 < triggerCount )
 	{
-		l_Status = ( l_pRight->ProcessCount() < l_pLeft->ProcessCount() );
+		for(auto iter{m_Products.cbegin()}; m_Products.cend() != iter; ++iter)
+		{
+			if(nullptr != *iter)
+			{
+				if((*iter)->ProcessCount() == triggerCount)
+				{
+					Result = static_cast<long>(std::distance(m_Products.cbegin(), iter));
+					return Result;
+				}
+			}
+		}
 	}
-#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
-	else
-	{
-		::OutputDebugString( _T( "SVTriggerCountLess - Invalid SVProductInfoStruct\n" ) );
-	}
-#endif
 
-	return l_Status;
+	return Result;
 }
 
-HRESULT SVPPQShiftRegister::GetIndexByTriggerCount( long& p_rIndex, long p_TriggerCount ) const
+SVProductInfoStruct* SVPPQShiftRegister::GetProductByTriggerCount(long triggerCount) const
 {
-	HRESULT l_Status = S_OK;
+	long index = GetIndexByTriggerCount(triggerCount);
 
-	p_rIndex = static_cast<long>(m_Products.size());
-
-	if( 0 < p_TriggerCount )
+	if (0 <= index && index < static_cast<long> (m_Products.size()))
 	{
-		SVProductVector::const_iterator l_Iter;
-		
-		SVProductInfoStruct l_Product;
-
-		l_Product.oTriggerInfo.lTriggerCount = p_TriggerCount;
-
-		l_Iter = std::lower_bound( m_Products.begin(), m_Products.end(), &l_Product, SVTriggerCountLess );
-
-		if( l_Iter != m_Products.end() && nullptr != ( *l_Iter ) )
-		{
-			if( p_TriggerCount == ( *l_Iter )->ProcessCount() )
-			{
-				p_rIndex = static_cast<long>(std::distance( m_Products.begin(), l_Iter ));
-			}
-			else if( l_Iter == m_Products.begin() && p_TriggerCount > ( *l_Iter )->ProcessCount() )
-			{
-				p_rIndex = -1;
-
-				l_Status = E_FAIL;
-			}
-			else
-			{
-				l_Status = E_FAIL;
-			}
-		}
-		else
-		{
-			l_Status = E_FAIL;
-		}
-	}
-	else
-	{
-		l_Status = E_FAIL;
+		return m_Products[index];
 	}
 
-	return l_Status;
+	return nullptr;
 }
 
-HRESULT SVPPQShiftRegister::GetProductByTriggerCount( SVProductInfoStruct*& p_rpProduct, long p_TriggerCount ) const
+long SVPPQShiftRegister::GetIndexByTriggerTimeStamp(SvTl::SVTimeStamp timeStamp, int cameraID) const
 {
-	HRESULT l_Status = S_OK;
+	long result{-1};
 
-	p_rpProduct = nullptr;
-
-	if( 0 < p_TriggerCount )
+	if(0.0 < timeStamp)
 	{
-		SVProductVector::const_iterator l_Iter;
-		
-		SVProductInfoStruct l_Product;
-
-		l_Product.oTriggerInfo.lTriggerCount = p_TriggerCount;
-
-		l_Iter = std::lower_bound( m_Products.begin(), m_Products.end(), &l_Product, SVTriggerCountLess );
-
-		if( l_Iter != m_Products.end() && nullptr != ( *l_Iter ) )
+		for(auto iter=m_Products.crbegin(); m_Products.crend() != iter; ++iter)
 		{
-			if( p_TriggerCount == ( *l_Iter )->ProcessCount() )
+			if(nullptr != *iter)
 			{
-				p_rpProduct = ( *l_Iter );
-			}
-			else
-			{
-				l_Status = E_FAIL;
-			}
-		}
-		else
-		{
-			l_Status = E_FAIL;
-		}
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	return l_Status;
-}
-
-struct SVTriggerTimeStampCompare
-{
-	SVTriggerTimeStampCompare() : m_LowerThresholdInMilliseconds( 0 ) {}
-	SVTriggerTimeStampCompare( SvTl::SVTimeStamp p_LowerThresholdInMilliseconds ) : m_LowerThresholdInMilliseconds( p_LowerThresholdInMilliseconds ) {}
-	SVTriggerTimeStampCompare( const SVTriggerTimeStampCompare& p_rObject ) : m_LowerThresholdInMilliseconds( p_rObject.m_LowerThresholdInMilliseconds ) {}
-
-	bool operator()( const SVProductInfoStruct* l_pLeft, const SVProductInfoStruct* l_pRight )
-	{
-		bool l_Status = false;
-
-		if( nullptr != l_pLeft && nullptr != l_pRight )
-		{
-			SvTl::SVTimeStamp l_RightTimeStamp = l_pRight->TimeStamp();
-			SvTl::SVTimeStamp l_LeftTimeStamp = l_pLeft->TimeStamp() + m_LowerThresholdInMilliseconds;
-			//l_Status = (l_RightTimeStamp < l_LeftTimeStamp);
-			l_Status = (l_RightTimeStamp - l_LeftTimeStamp) < 0;
-		}
-#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
-		else
-		{
-			::OutputDebugString( _T( "SVTriggerTimeStampCompare - Invalid SVProductInfoStruct\n" ) );
-		}
-#endif
-
-		return l_Status;
-	}
-
-	SvTl::SVTimeStamp m_LowerThresholdInMilliseconds;
-};
-
-HRESULT SVPPQShiftRegister::GetIndexByTriggerTimeStamp( long& p_rIndex, SvTl::SVTimeStamp p_TimeStamp, SvTl::SVTimeStamp p_LowerThresholdInMilliseconds ) const
-{
-	HRESULT l_Status = S_OK;
-
-	p_rIndex = static_cast<long>(m_Products.size());
-
-	if( 0 < p_TimeStamp )
-	{
-		SVProductVector::const_iterator l_Iter;
-		
-		SVProductInfoStruct l_Product;
-
-		l_Product.oTriggerInfo.m_BeginProcess = p_TimeStamp;
-
-		l_Iter = std::lower_bound( m_Products.begin(), m_Products.end(), &l_Product, SVTriggerTimeStampCompare( p_LowerThresholdInMilliseconds ) );
-
-		if( l_Iter != m_Products.end() && nullptr != ( *l_Iter ) )
-		{
-			SvTl::SVTimeStamp l_ProductTS = ( *l_Iter )->TimeStamp();
-
-			if( p_TimeStamp >= ( l_ProductTS + p_LowerThresholdInMilliseconds ) )
-			{
-				p_rIndex = static_cast<long>(std::distance( m_Products.begin(), l_Iter ));
-			}
-			else
-			{
-				l_Status = E_FAIL;
+				bool hasCameraImage = (cameraID >= 0 && cameraID < SvDef::cMaximumCameras) ? (*iter)->bhasCameraImage[cameraID] : false;
+				//If product already has camera image then skip
+				if(!hasCameraImage && (*iter)->bTriggered)
+				{
+					if( 0.0 < (*iter)->TimeStamp() && (*iter)->TimeStamp() - 0.5 < timeStamp)
+					{
+						result = static_cast<long>(m_Products.size() - std::distance(m_Products.crbegin(), iter) - 1);
+						break;
+					}
+				}
+				else if(m_Products.crbegin() == iter &&  (*iter)->TimeStamp() > timeStamp)
+				{
+						result = static_cast<long>(m_Products.size());
+						break;
+				}
 			}
 		}
-		else
-		{
-			l_Status = E_FAIL;
-		}
-	}
-	else
-	{
-		l_Status = E_FAIL;
 	}
 
-	return l_Status;
-}
-
-HRESULT SVPPQShiftRegister::GetIndexByTriggerTimeStamp( long& p_rIndex, SvTl::SVTimeStamp p_TimeStamp, SvTl::SVTimeStamp p_LowerThresholdInMilliseconds, SvTl::SVTimeStamp p_UpperThresholdInMilliseconds ) const
-{
-	HRESULT l_Status = S_OK;
-
-	p_rIndex = static_cast<long>(m_Products.size());
-
-	if( 0 < p_TimeStamp )
-	{
-		SVProductVector::const_iterator l_Iter;
-		SVProductInfoStruct l_Product;
-
-		SvTl::SVTimeStamp l_LowerThreshold = p_LowerThresholdInMilliseconds;
-		SvTl::SVTimeStamp l_UpperThreshold = p_UpperThresholdInMilliseconds;
-
-		l_Product.oTriggerInfo.m_BeginProcess = p_TimeStamp;
-
-		l_Iter = std::lower_bound( m_Products.begin(), m_Products.end(), &l_Product, SVTriggerTimeStampCompare( l_LowerThreshold ) );
-
-		if( l_Iter != m_Products.end() && nullptr != ( *l_Iter ) )
-		{
-			SvTl::SVTimeStamp l_ProductTS = ( *l_Iter )->TimeStamp();
-			SvTl::SVTimeStamp l_Upper = l_ProductTS + l_UpperThreshold;
-			SvTl::SVTimeStamp l_Lower = l_ProductTS + l_LowerThreshold;
-			SvTl::SVTimeStamp l_Distance = p_TimeStamp - l_ProductTS;
-
-			if( l_Iter == m_Products.begin() && p_TimeStamp > l_Upper )
-			{
-				p_rIndex = -1;
-
-				l_Status = E_FAIL;
-			}
-			else if( p_TimeStamp >= l_Lower )
-			{
-				p_rIndex = static_cast<long>(std::distance( m_Products.begin(), l_Iter ));
-			}
-			else
-			{
-				l_Status = E_FAIL;
-			}
-		}
-		else
-		{
-			l_Status = E_FAIL;
-		}
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	return l_Status;
+	return result;
 }
 
 HRESULT SVPPQShiftRegister::GetProductStates( std::string& p_rProductStates ) const

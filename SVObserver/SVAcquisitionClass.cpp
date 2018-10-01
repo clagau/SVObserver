@@ -741,12 +741,6 @@ void SVAcquisitionClass::ClearDeviceIdentifier()
 {
 }
 
-SvTl::SVTimeStamp SVAcquisitionClass::GetTimeStamp() const
-{
-	SvTl::SVTimeStamp l_TimeStamp = SvTl::GetTimeStamp();
-	return l_TimeStamp;
-}
-
 unsigned long SVAcquisitionClass::GetBufferWidth() const
 {
 	unsigned long l_Width = 0;
@@ -797,36 +791,23 @@ HRESULT SVAcquisitionClass::UpdateWithCompletedBuffer(const SvTrc::IImagePtr& rI
 		{
 			SVMatroxBufferInterface::CopyBuffer(m_SingleGrabHandle->GetBuffer(), rImage->getHandle()->GetBuffer());
 		}
-
+		//This only resets this smart pointer as another smart pointer is still alive
 		m_SingleGrabHandle.reset();
 
 		this->mbTempOnline = false;
 	}
 
 	SVODataResponseClass l_Response;
-	l_Response.SetImage(rImage);
+	l_Response.setImage(rImage);
 
 	if (S_OK == l_Status)
 	{
 		m_ImageAquired = true;
 
-		l_Status = l_Response.SetStartTick(StartTick);
-
-		if (S_OK == l_Status)
-		{
-			l_Status = l_Response.SetEndTick(StopTick);
-		}
-
-		if (S_OK == l_Status)
-		{
-			l_Status = l_Response.SetIsValid(true);
-		}
-
-		if (S_OK == l_Status)
-		{
-			l_Status = l_Response.SetIsComplete(true);
-		}
-
+		l_Response.setStartTime(StartTick);
+		l_Response.setEndTime(StopTick);
+		l_Response.setIsValid(true);
+		l_Response.setIsComplete(true);
 	}
 
 	if (S_OK == l_Status)

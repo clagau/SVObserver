@@ -25,8 +25,6 @@ SVOCallbackClass::SVOCallbackClass()
 
 	m_lRefCount = 0;
 
-	mRequestQueue.Create();
-	mResponseQueue.Create();
 }
 
 /*
@@ -40,9 +38,6 @@ SVOCallbackClass::SVOCallbackClass(const SVOCallbackClass& rData)
 
 	m_lRefCount = 0;
 
-	mRequestQueue.Create();
-	mResponseQueue.Create();
-
 	*this = rData;
 }
 
@@ -51,8 +46,6 @@ This destructor clears and destroys the two internal queues of this objects.
 */
 SVOCallbackClass::~SVOCallbackClass()
 {
-	mRequestQueue.Destroy();
-	mResponseQueue.Destroy();
 }
 
 /*
@@ -61,13 +54,10 @@ This operator copies the attributes of the provided object's values to this obje
 const SVOCallbackClass& SVOCallbackClass::operator=(const SVOCallbackClass& rData)
 {
 	mpCallback = rData.mpCallback;
-  mpvOwner = rData.mpvOwner;
-  mpvCaller = rData.mpvCaller;
+	mpvOwner = rData.mpvOwner;
+	mpvCaller = rData.mpvCaller;
 
 	m_lRefCount = rData.m_lRefCount;
-
-	mRequestQueue.RemoveAll();
-	mResponseQueue.RemoveAll();
 
 	return *this;	
 }

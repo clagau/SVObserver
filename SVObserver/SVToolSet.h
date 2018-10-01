@@ -173,6 +173,8 @@ private:
 	SVTimerValueObjectClass m_TriggerDelta; ///< The time interval between the two most recent triggers
 	SVTimerValueObjectClass m_LastTriggerToPPQCompletion; ///< for the most recently completed product: The time interval between the trigger that started the product and inspection completion in microsceconds
 	SVTimerValueObjectClass m_LastTriggerToStart; ///< for the most recently completed product: The time interval between the trigger that started the product and the start of the inspection in microsceconds
+	SVTimerValueObjectClass m_TriggerToAcquisitionStart; ///< for the most recently completed product: The time interval between the trigger that started the product and the start of image acquisition in microsceconds
+	SVTimerValueObjectClass m_AcquisitionTime; ///< for the most recently completed product: The time interval between the image acquisition start and end in microsceconds
 	SVDoubleValueObjectClass m_Width;	//! The toolset image width			
 	SVDoubleValueObjectClass m_Height;	//! The toolset image height
 #pragma endregion Member Variables

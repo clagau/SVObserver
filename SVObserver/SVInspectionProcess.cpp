@@ -829,11 +829,7 @@ bool SVInspectionProcess::GoOffline()
 
 bool SVInspectionProcess::CanProcess(SVProductInfoStruct *pProduct)
 {
-	SVIOEntryStruct pInEntry;
-	SVIOEntryStruct pListEntry;
-	int iInSize;
-	int iIn;
-	bool bReady = true;
+	bool bReady{true};
 
 	if (pProduct)
 	{
@@ -842,17 +838,17 @@ bool SVInspectionProcess::CanProcess(SVProductInfoStruct *pProduct)
 
 		for (size_t iList = 0; bReady && iList < ppqInputSize; iList++)
 		{
-			pListEntry = m_PPQInputs[iList];
-			if (pListEntry.m_IOEntryPtr->m_Enabled)
+			const SVIOEntryStruct& rListEntry = m_PPQInputs[iList];
+			if (rListEntry.m_IOEntryPtr->m_Enabled)
 			{
-				iInSize = static_cast<int>(pProduct->oPPQInfo.m_InputData.size());
+				size_t InSize = pProduct->oPPQInfo.m_InputData.size();
 
-				for (iIn = 0; bReady && iIn < iInSize; iIn++)
+				for (size_t Index = 0; bReady && Index < InSize; Index++)
 				{
-					pInEntry = pProduct->oPPQInfo.m_InputData[iIn];
-					if (pInEntry.m_IOEntryPtr->m_IOId == pListEntry.m_IOEntryPtr->m_IOId)
+					const SVIOEntryStruct& rInEntry = pProduct->oPPQInfo.m_InputData[Index];
+					if (rInEntry.m_IOEntryPtr->m_IOId == rListEntry.m_IOEntryPtr->m_IOId)
 					{
-						bReady &= pInEntry.m_EntryValid;
+						bReady &= rInEntry.m_EntryValid;
 						break;
 					}// end if
 

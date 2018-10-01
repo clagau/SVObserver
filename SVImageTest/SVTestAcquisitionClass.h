@@ -32,8 +32,6 @@ public:
 	SVTestAcquisitionClass( SVTestAcquisitionSubsystem& p_rSubsystem, unsigned long p_hDigitizer );
 	virtual ~SVTestAcquisitionClass();
 
-	virtual SvTl::SVTimeStamp GetTimeStamp() const override;
-	
 	virtual unsigned long GetBufferWidth() const override;
 	virtual unsigned long GetBufferHeight() const override;
 	virtual int GetBufferFormat() const override;

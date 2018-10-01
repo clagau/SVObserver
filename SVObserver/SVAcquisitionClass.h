@@ -118,8 +118,6 @@ public:
 
 	virtual HRESULT SingleGrab(SvOi::SVImageBufferHandlePtr p_SingleGrabHandle );
 
-	virtual SvTl::SVTimeStamp GetTimeStamp() const override;
-
 	virtual unsigned long GetBufferWidth() const override;
 	virtual unsigned long GetBufferHeight() const override;
 	virtual int GetBufferFormat() const override;

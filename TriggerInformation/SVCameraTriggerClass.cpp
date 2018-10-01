@@ -47,7 +47,7 @@ namespace SvTi
 		HRESULT hr = S_OK;
 		if (nullptr != triggerparams.m_pOwner)
 		{
-			SVOResponseClass l_Response;
+			SVOResponseClass response;
 
 			SVCameraTriggerClass *pDevice = reinterpret_cast<SVCameraTriggerClass *>(triggerparams.m_pOwner);
 			SVCameraTriggerData::NameVariantMap* pSettings = reinterpret_cast<SVCameraTriggerData::NameVariantMap*> (triggerparams.m_pData);
@@ -59,14 +59,14 @@ namespace SvTi
 			{
 				startVal = Iter->second;
 			}
-			l_Response.Reset();
-			l_Response.SetIsValid( TRUE );
-			l_Response.SetIsComplete( TRUE );
-			l_Response.SetStartTick(startVal);
+			response.reset();
+			response.setIsValid(true);
+			response.setIsComplete(true);
+			response.setStartTime(startVal);
 
 			boost::any holder(*pSettings);
-			l_Response.SetExtraData(holder);
-			hr = pDevice->Notify( l_Response );
+			response.setExtraData(holder);
+			hr = pDevice->Notify( response );
 
 
 			#ifdef SV_LOG_STATUS_INFO

@@ -21,6 +21,7 @@
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <boost/any.hpp>
 #include "SVDataManagerLibrary/SVDataManagerHandle.h"
+#include "Definitions/GlobalConst.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "InspectionEngine/SVCameraInfoStruct.h"
@@ -194,10 +195,10 @@ typedef std::vector<SVInspectionInfoStruct> SVStdVectorSVInspectionInfoStruct;
 struct SVProductInfoStruct 
 {
 	SVProductInfoStruct();
-	SVProductInfoStruct( const SVProductInfoStruct &p_rsvData );
+	SVProductInfoStruct( const SVProductInfoStruct &rRhs );
 	virtual ~SVProductInfoStruct();
 
-	const SVProductInfoStruct &operator=( const SVProductInfoStruct &p_rsvData );
+	const SVProductInfoStruct &operator=( const SVProductInfoStruct &rRhs );
 
 	HRESULT Assign( const SVProductInfoStruct &p_rsvData );
 
@@ -234,12 +235,11 @@ struct SVProductInfoStruct
 	ProductWorkloadInformation GetWorkloadInformation(){return m_WorkloadInfo;}
 
 	std::string m_ProductState;
-	BOOL bTriggered;
-	BOOL bStartAcquisition;
-	BOOL bFinishAcquisition;
-	BOOL bDelayExpired;
-	BOOL bDataComplete;
-	BOOL bStreamed;
+	bool bTriggered;
+	bool bhasCameraImage[SvDef::cMaximumCameras];
+	bool bDelayExpired;
+	bool bDataComplete;
+	bool bStreamed;
 	HRESULT hrPPQStatus;
 
 	ProductWorkloadInformation m_WorkloadInfo;

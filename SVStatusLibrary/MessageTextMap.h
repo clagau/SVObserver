@@ -554,6 +554,8 @@ namespace SvStl
 		{Tid_TRC_Error_InvalidResetState, _T("Invalid Reset-state. Action can not be done.")},
 		{Tid_TRC_Error_GetImageDefList, _T("Error in method GetImagDefList.")},
 
+		{Tid_NAK_Error_MissingEndFrame, _T("NAK! Acquisition End Frame missing for device %s [Time %s ms]")},
+
 		{Tid_UpdateMainImages_InvalidImageBuffer, _T("Invalid Image Buffer.")},
 		{Tid_UpdateMainImages_CameraNotFound, _T("Camera not found.")},
 		{Tid_UpdateMainImages_InvalidCamera, _T("Invalid Camera.")},

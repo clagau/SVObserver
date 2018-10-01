@@ -27,6 +27,8 @@
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVMatroxLibrary/SVMatroxApplicationInterface.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "SVStatusLibrary/MessageManager.h"
+#include "SVMessage/SVMessage.h"
 #pragma endregion Includes
 
 // helpers for System/Digitizer Handles
@@ -122,7 +124,7 @@ SVMatroxIdentifier SVMatroxGige::ProcessFrame( SVMatroxIdentifier HookType, SVMa
 						}
 #endif
 					}
-#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
+#if defined (TRACE_THEM_ALL) || defined (TRACE_MATROXGIGE)
 					std::string Temp = SvUl::Format( _T("Process End Frame Callback - Camera %d-%d\n"), l_pCamera->m_SystemHandle, l_pCamera->m_Handle );
 					TRACE( Temp.c_str() );
 #endif
@@ -1013,13 +1015,24 @@ HRESULT SVMatroxGige::ProcessEndFrame( SVMatroxGigeDigitizer& p_rCamera, SVMatro
 	return hr;
 }
 
-HRESULT SVMatroxGige::CameraStartFrame( SVMatroxGigeDigitizer& p_rCamera )
+HRESULT SVMatroxGige::CameraStartFrame( SVMatroxGigeDigitizer& rCamera )
 {
 	HRESULT hr = S_OK;
 
-	if ( p_rCamera.m_lIsStarted == 1 && nullptr != p_rCamera.m_pBufferInterface )
+	if ( rCamera.m_lIsStarted == 1 && nullptr != rCamera.m_pBufferInterface )
 	{
-		p_rCamera.m_StartFrameTimeStamp = p_rCamera.m_pBufferInterface->GetTimeStamp();
+		//When the time stamp is not 0 then a new start frame has been received before the last end frame!
+		//This will cause a NAK! 
+		if(0 != rCamera.m_StartFrameTimeStamp)
+		{
+			// log an exception
+			SvDef::StringVector msgList;
+			msgList.emplace_back(rCamera.m_FullName);
+			msgList.emplace_back(SvUl::Format(_T("%.3f"), (SvTl::GetTimeStamp() - rCamera.m_StartFrameTimeStamp) * SvTl::c_MicrosecondsPerMillisecond));
+			SvStl::MessageMgrStd Exception(SvStl::LogOnly);
+			Exception.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NAK_Error_MissingEndFrame, msgList, SvStl::SourceFileParams(StdMessageParams));
+		}
+		rCamera.m_StartFrameTimeStamp = SvTl::GetTimeStamp();
 	}
 	else
 	{
@@ -1033,9 +1046,11 @@ HRESULT SVMatroxGige::CameraEndFrame( SVMatroxGigeDigitizer& p_rCamera, SVMatrox
 {
 	HRESULT hr = S_OK;
 
-	SvTl::SVTimeStamp l_StartFrameTimeStamp = p_rCamera.m_StartFrameTimeStamp;
+	//Save end frame time stamp before buffer copy
+	SvTl::SVTimeStamp endFrameTimeStamp = SvTl::GetTimeStamp();
+	SvTl::SVTimeStamp startFrameTimeStamp = p_rCamera.m_StartFrameTimeStamp;
 
-	p_rCamera.m_StartFrameTimeStamp = 0;
+	p_rCamera.m_StartFrameTimeStamp = 0.0;
 
 	if ( 1 == p_rCamera.m_lIsStarted && nullptr != p_rCamera.m_pBufferInterface  )
 	{
@@ -1049,7 +1064,7 @@ HRESULT SVMatroxGige::CameraEndFrame( SVMatroxGigeDigitizer& p_rCamera, SVMatrox
 				
 				if( S_OK == hr)
 				{
-					hr = p_rCamera.m_pBufferInterface->UpdateWithCompletedBuffer(pImage, l_StartFrameTimeStamp, SvTl::GetTimeStamp());
+					hr = p_rCamera.m_pBufferInterface->UpdateWithCompletedBuffer(pImage, startFrameTimeStamp, endFrameTimeStamp);
 				}
 			}
 			else

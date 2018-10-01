@@ -28,12 +28,6 @@ SVTestAcquisitionClass::~SVTestAcquisitionClass()
 {
 }
 
-SvTl::SVTimeStamp SVTestAcquisitionClass::GetTimeStamp() const
-{
-	SvTl::SVTimeStamp l_TimeStamp = SvTl::GetTimeStamp();
-	return l_TimeStamp;
-}
-
 unsigned long SVTestAcquisitionClass::GetBufferWidth() const
 {
 	unsigned long l_Width = 0;

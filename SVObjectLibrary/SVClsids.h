@@ -130,6 +130,8 @@ extern /*const*/ GUID SVLatestCompletionPPQIndexGuid;
 extern /*const*/ GUID SVTriggerDeltaGuid;
 extern /*const*/ GUID SVLastTriggerToPPQCompletionGuid;
 extern /*const*/ GUID SVLastTriggerToStartGuid;
+extern /*const*/ GUID SVTriggerToAcquisitionStartGuid;
+extern /*const*/ GUID SVAcquisitionTimeGuid;
 extern /*const*/ GUID ToolsetWidthGuid;
 extern /*const*/ GUID ToolsetHeightGuid;
 extern /*const*/ GUID EnableAuxiliaryExtentsObjectGuid;

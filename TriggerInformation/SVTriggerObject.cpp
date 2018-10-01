@@ -189,12 +189,12 @@ namespace SvTi
 		if ( pResponse )
 		{
 			SVTriggerInfoStruct l_Info;
-			pResponse->GetExtraData(l_Info.m_Data);
+			l_Info.m_Data = pResponse->getExtraData();
 
-			pResponse->GetStartTick( l_Info.m_BeginProcess );
+			l_Info.m_BeginProcess = pResponse->getStartTime();
 
 			l_Info.lTriggerCount = ++m_lTriggerCount;
-			l_Info.bValid = pResponse->IsValid();
+			l_Info.bValid = pResponse->isValid();
 			l_Info.pTrigger = this;
 
 			if ( m_pFinishProc )

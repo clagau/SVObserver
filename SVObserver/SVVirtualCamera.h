@@ -30,7 +30,6 @@ typedef std::vector<SVVirtualCamera*> SVVirtualCameraPtrVector;
 typedef std::set<SVVirtualCamera*> SVVirtualCameraPtrSet;
 typedef std::map<std::string, SVVirtualCamera*> SVVirtualCameraMap;
 
-class SVORequestClass;
 class SVDeviceParamCollection;
 #pragma endregion Declarations
 

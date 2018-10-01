@@ -3623,7 +3623,7 @@ BEGIN
             MENUITEM MFT_SEPARATOR
         END
         MENUITEM "Start Last Configuration",    ID_EXTRAS_START_LAST_CONFIG,MFT_STRING,MFS_ENABLED
-        MENUITEM "Enable Auto Save",            ID_EXTRAS_ENABLEAUTOSAVE,MFT_STRING,MFS_ENABLED
+		MENUITEM "Enable Auto Save",            ID_EXTRAS_ENABLEAUTOSAVE,MFT_STRING,MFS_ENABLED
         MENUITEM "Enable Disk Protection",      ID_EXTRAS_ENABLEDISKPROTECTION,MFT_STRING,MFS_ENABLED
     END
     POPUP "&Help",                          65535,MFT_STRING | MFT_RIGHTJUSTIFY,MFS_ENABLED
@@ -3709,7 +3709,7 @@ BEGIN
             MENUITEM MFT_SEPARATOR
         END
         MENUITEM "Start Last Configuration",    ID_EXTRAS_START_LAST_CONFIG,MFT_STRING,MFS_ENABLED
-        MENUITEM "Enable Auto Save",            ID_EXTRAS_ENABLEAUTOSAVE,MFT_STRING,MFS_ENABLED
+		MENUITEM "Enable Auto Save",            ID_EXTRAS_ENABLEAUTOSAVE,MFT_STRING,MFS_ENABLED
         MENUITEM "Enable Disk Protection",      ID_EXTRAS_ENABLEDISKPROTECTION,MFT_STRING,MFS_ENABLED
     END
     POPUP "&Help",                          65535,MFT_STRING | MFT_RIGHTJUSTIFY,MFS_ENABLED
@@ -3815,9 +3815,9 @@ BEGIN
         MENUITEM "Reset Counts All IPs\tCtrl+0", ID_VIEW_RESETCOUNTSALLIPS,MFT_STRING,MFS_ENABLED
         POPUP "Zoom",                           65535,MFT_STRING,MFS_ENABLED
         BEGIN
-            MENUITEM "Zoom +\tCtrl+plus",           ID_ZOOM_PLUS,MFT_STRING,MFS_ENABLED
-            MENUITEM "Zoom -\tCtrl+minus",          ID_ZOOM_MINUS,MFT_STRING,MFS_ENABLED
-            MENUITEM "Zoom 1:1",                    ID_ZOOM_NORMAL,MFT_STRING,MFS_ENABLED
+            MENUITEM "Zoom +\tCtrl+plus",  ID_ZOOM_PLUS,MFT_STRING,MFS_ENABLED
+            MENUITEM "Zoom -\tCtrl+minus", ID_ZOOM_MINUS,MFT_STRING,MFS_ENABLED
+            MENUITEM "Zoom 1:1",           ID_ZOOM_NORMAL,MFT_STRING,MFS_ENABLED
             MENUITEM "Zoom []",                     ID_ZOOM_FIT_ALL,MFT_STRING,MFS_ENABLED
             MENUITEM "Zoom fit Width",              ID_ZOOM_FIT_WIDTH,MFT_STRING,MFS_ENABLED
             MENUITEM "Zoom fit Height",             ID_ZOOM_FIT_HEIGHT,MFT_STRING,MFS_ENABLED
@@ -3852,7 +3852,7 @@ BEGIN
             MENUITEM MFT_SEPARATOR
         END
         MENUITEM "Start Last Configuration",    ID_EXTRAS_START_LAST_CONFIG,MFT_STRING,MFS_ENABLED
-        MENUITEM "Enable Auto Save",            ID_EXTRAS_ENABLEAUTOSAVE,MFT_STRING,MFS_ENABLED
+		MENUITEM "Enable Auto Save",            ID_EXTRAS_ENABLEAUTOSAVE,MFT_STRING,MFS_ENABLED
         MENUITEM "Enable Disk Protection",      ID_EXTRAS_ENABLEDISKPROTECTION,MFT_STRING,MFS_ENABLED
     END
     POPUP "&Help",                          65535,MFT_STRING | MFT_RIGHTJUSTIFY,MFS_ENABLED
@@ -3869,18 +3869,18 @@ BEGIN
     BEGIN
         POPUP "Zoom"
         BEGIN
-            MENUITEM "Smaller -",                   ID_ZOOM_MINUS
-            MENUITEM "Larger +",                    ID_ZOOM_PLUS
+            MENUITEM "Smaller -",        ID_ZOOM_MINUS
+            MENUITEM "Larger +",         ID_ZOOM_PLUS
             MENUITEM SEPARATOR
-            MENUITEM "Tiny",                        ID_ZOOM_SMALLEST
-            MENUITEM "Small",                       ID_ZOOM_SMALL
-            MENUITEM "Normal 1:1",                  ID_ZOOM_NORMAL
-            MENUITEM "Large",                       ID_ZOOM_LARGE
-            MENUITEM "Extra Large",                 ID_ZOOM_LARGEST
+            MENUITEM "Tiny",             ID_ZOOM_SMALLEST
+            MENUITEM "Small",            ID_ZOOM_SMALL
+            MENUITEM "Normal 1:1",       ID_ZOOM_NORMAL
+            MENUITEM "Large",            ID_ZOOM_LARGE
+            MENUITEM "Extra Large",      ID_ZOOM_LARGEST
             MENUITEM SEPARATOR
-            MENUITEM "Zoom []",                     ID_ZOOM_FIT_ALL
-            MENUITEM "Zoom fit Width",              ID_ZOOM_FIT_WIDTH
-            MENUITEM "Zoom fit Height",             ID_ZOOM_FIT_HEIGHT
+            MENUITEM "Zoom []",          ID_ZOOM_FIT_ALL
+            MENUITEM "Zoom fit Width",   ID_ZOOM_FIT_WIDTH
+            MENUITEM "Zoom fit Height",  ID_ZOOM_FIT_HEIGHT
         END
         MENUITEM "Configure Analyzer",          ID_CONFIG_ANALYZER
         MENUITEM "Show Analyzer Result",        ID_ANALYZER_RESULT
@@ -5476,7 +5476,7 @@ BEGIN
     IDS_OBJECTNAME_PIXEL_COLOR_INDEX "Pixel Color Index"
     IDS_OBJECTNAME_LUMINANCE "Luminance"
     IDS_OBJECTNAME_RESULT   "Result"
-    IDS_OBJECTNAME_AUXILIARYEXTENTS "Auxiliary Extents"
+	IDS_OBJECTNAME_AUXILIARYEXTENTS "Auxiliary Extents"
     IDS_OBJECTNAME_PASSED   "Passed"
     IDS_PUBLISHABLE_RESULTS "Publishable Results"
     IDS_OBJECTNAME_STATUS   "State"
@@ -6135,7 +6135,9 @@ STRINGTABLE
 BEGIN
     IDS_TRIGGER_DELTA       "Trigger Delta"
     IDS_TRIGGER_TO_COMPLETION_TIME "Trigger To Completion Time"
-    IDS_TRIGGER_TO_START_TIME "Trigger To Start Time"
+	IDS_TRIGGER_TO_START_TIME "Trigger To Start Time"
+	IDS_TRIGGER_TO_ACQUISITION_START_TIME "Trigger To Acquisition Start Time"
+	IDS_ACQUISITION_TIME "Acquisition Time"
 END
 
 STRINGTABLE

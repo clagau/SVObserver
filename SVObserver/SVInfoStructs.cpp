@@ -441,25 +441,27 @@ SVProductInfoStruct::SVProductInfoStruct()
 	Reset();
 }
 
-SVProductInfoStruct::SVProductInfoStruct( const SVProductInfoStruct &p_rsvData )
-: m_ProductState( p_rsvData.m_ProductState )
-, bTriggered( p_rsvData.bTriggered )
-, bStartAcquisition( p_rsvData.bStartAcquisition )
-, bFinishAcquisition( p_rsvData.bFinishAcquisition )
-, bDelayExpired( p_rsvData.bDelayExpired )
-, bDataComplete( p_rsvData.bDataComplete )
-, bStreamed( p_rsvData.bStreamed )
-, hrPPQStatus( p_rsvData.hrPPQStatus )
-, oTriggerInfo( p_rsvData.oTriggerInfo )
-, oInputsInfo( p_rsvData.oInputsInfo )
-, oOutputsInfo( p_rsvData.oOutputsInfo )
-, oPPQInfo( p_rsvData.oPPQInfo )
-, m_svCameraInfos( p_rsvData.m_svCameraInfos )
-, m_svInspectionInfos( p_rsvData.m_svInspectionInfos )
+SVProductInfoStruct::SVProductInfoStruct( const SVProductInfoStruct &rRhs )
+: m_ProductState( rRhs.m_ProductState )
+, bTriggered( rRhs.bTriggered )
+, bDelayExpired( rRhs.bDelayExpired )
+, bDataComplete( rRhs.bDataComplete )
+, bStreamed( rRhs.bStreamed )
+, hrPPQStatus( rRhs.hrPPQStatus )
+, oTriggerInfo( rRhs.oTriggerInfo )
+, oInputsInfo( rRhs.oInputsInfo )
+, oOutputsInfo( rRhs.oOutputsInfo )
+, oPPQInfo( rRhs.oPPQInfo )
+, m_svCameraInfos( rRhs.m_svCameraInfos )
+, m_svInspectionInfos( rRhs.m_svInspectionInfos )
 , m_ProductActive( 0 )
-, m_lastInspectedSlot(p_rsvData.m_lastInspectedSlot)
+, m_lastInspectedSlot(rRhs.m_lastInspectedSlot)
 {
-	if( p_rsvData.IsProductActive() )
+	for(int i=0; i < SvDef::cMaximumCameras; ++i)
+	{
+		bhasCameraImage[i] = rRhs.bhasCameraImage[i];
+	}
+	if( rRhs.IsProductActive() )
 	{
 		SetProductActive();
 	}
@@ -471,32 +473,34 @@ SVProductInfoStruct::~SVProductInfoStruct()
 	Reset();
 }
 
-const SVProductInfoStruct &SVProductInfoStruct::operator=( const SVProductInfoStruct &p_rsvData )
+const SVProductInfoStruct &SVProductInfoStruct::operator=( const SVProductInfoStruct &rRhs )
 {
-	if( this != &p_rsvData )
+	if( this != &rRhs )
 	{
 		SetProductComplete();
 
-		m_ProductState = p_rsvData.m_ProductState;
-		bTriggered = p_rsvData.bTriggered;
+		m_ProductState = rRhs.m_ProductState;
+		bTriggered = rRhs.bTriggered;
 
-		bStartAcquisition = p_rsvData.bStartAcquisition;
-		bFinishAcquisition = p_rsvData.bFinishAcquisition;
-		bDelayExpired = p_rsvData.bDelayExpired;
-		bDataComplete = p_rsvData.bDataComplete;
-		bStreamed = p_rsvData.bStreamed;
-		hrPPQStatus = p_rsvData.hrPPQStatus;
+		for (int i = 0; i < SvDef::cMaximumCameras; ++i)
+		{
+			bhasCameraImage[i] = rRhs.bhasCameraImage[i];
+		}
+		bDelayExpired = rRhs.bDelayExpired;
+		bDataComplete = rRhs.bDataComplete;
+		bStreamed = rRhs.bStreamed;
+		hrPPQStatus = rRhs.hrPPQStatus;
 
-		oTriggerInfo = p_rsvData.oTriggerInfo;
-		oInputsInfo = p_rsvData.oInputsInfo;
-		oOutputsInfo = p_rsvData.oOutputsInfo;
-		oPPQInfo = p_rsvData.oPPQInfo;
+		oTriggerInfo = rRhs.oTriggerInfo;
+		oInputsInfo = rRhs.oInputsInfo;
+		oOutputsInfo = rRhs.oOutputsInfo;
+		oPPQInfo = rRhs.oPPQInfo;
 
-		m_svCameraInfos = p_rsvData.m_svCameraInfos;
-		m_svInspectionInfos = p_rsvData.m_svInspectionInfos;
-		m_lastInspectedSlot = p_rsvData.m_lastInspectedSlot;
-		if( p_rsvData.IsProductActive() )
-{
+		m_svCameraInfos = rRhs.m_svCameraInfos;
+		m_svInspectionInfos = rRhs.m_svInspectionInfos;
+		m_lastInspectedSlot = rRhs.m_lastInspectedSlot;
+		if( rRhs.IsProductActive() )
+		{
 			SetProductActive();
 		}
 	}
@@ -504,31 +508,33 @@ const SVProductInfoStruct &SVProductInfoStruct::operator=( const SVProductInfoSt
 	return *this;
 }
 
-HRESULT SVProductInfoStruct::Assign( const SVProductInfoStruct &p_rsvData )
+HRESULT SVProductInfoStruct::Assign( const SVProductInfoStruct &rData )
 {
 	HRESULT l_Status = S_OK;
 
-	if( this != &p_rsvData )
+	if( this != &rData )
 	{
 		SetProductComplete();
 
-		m_ProductState = p_rsvData.m_ProductState;
-		bTriggered = p_rsvData.bTriggered;
+		m_ProductState = rData.m_ProductState;
+		bTriggered = rData.bTriggered;
 
-		bStartAcquisition = p_rsvData.bStartAcquisition;
-		bFinishAcquisition = p_rsvData.bFinishAcquisition;
-		bDelayExpired = p_rsvData.bDelayExpired;
-		bDataComplete = p_rsvData.bDataComplete;
-		bStreamed = p_rsvData.bStreamed;
-		hrPPQStatus = p_rsvData.hrPPQStatus;
+		for (int i = 0; i < SvDef::cMaximumCameras; ++i)
+		{
+			bhasCameraImage[i] = rData.bhasCameraImage[i];
+		}
+		bDelayExpired = rData.bDelayExpired;
+		bDataComplete = rData.bDataComplete;
+		bStreamed = rData.bStreamed;
+		hrPPQStatus = rData.hrPPQStatus;
 
-		oTriggerInfo = p_rsvData.oTriggerInfo;
-		oInputsInfo = p_rsvData.oInputsInfo;
-		oOutputsInfo = p_rsvData.oOutputsInfo;
+		oTriggerInfo = rData.oTriggerInfo;
+		oInputsInfo = rData.oInputsInfo;
+		oOutputsInfo = rData.oOutputsInfo;
 
-		l_Status = oPPQInfo.Assign( p_rsvData.oPPQInfo );
+		l_Status = oPPQInfo.Assign( rData.oPPQInfo );
 
-		m_lastInspectedSlot = p_rsvData.m_lastInspectedSlot;
+		m_lastInspectedSlot = rData.m_lastInspectedSlot;
 		SVGuidSVCameraInfoStructMap::iterator l_Iter;
 		SVGuidSVCameraInfoStructMap::const_iterator l_RightIter;
 
@@ -536,9 +542,9 @@ HRESULT SVProductInfoStruct::Assign( const SVProductInfoStruct &p_rsvData )
 
 		while( l_Iter != m_svCameraInfos.end() )
 		{
-			l_RightIter = p_rsvData.m_svCameraInfos.find( l_Iter->first );
+			l_RightIter = rData.m_svCameraInfos.find( l_Iter->first );
 
-			if( l_RightIter == p_rsvData.m_svCameraInfos.end() )
+			if( l_RightIter == rData.m_svCameraInfos.end() )
 			{
 				l_Iter = m_svCameraInfos.erase( l_Iter );
 			}
@@ -548,9 +554,9 @@ HRESULT SVProductInfoStruct::Assign( const SVProductInfoStruct &p_rsvData )
 			}
 		}
 
-		l_RightIter = p_rsvData.m_svCameraInfos.begin();
+		l_RightIter = rData.m_svCameraInfos.begin();
 
-		while( l_RightIter != p_rsvData.m_svCameraInfos.end() )
+		while( l_RightIter != rData.m_svCameraInfos.end() )
 		{
 			HRESULT l_Temp = m_svCameraInfos[ l_RightIter->first ].Assign( l_RightIter->second );
 
@@ -564,9 +570,9 @@ HRESULT SVProductInfoStruct::Assign( const SVProductInfoStruct &p_rsvData )
 
 		m_svInspectionInfos.clear();
 
-		SVGUIDSVInspectionInfoStructMap::const_iterator l_InspectIter = p_rsvData.m_svInspectionInfos.begin();
+		SVGUIDSVInspectionInfoStructMap::const_iterator l_InspectIter = rData.m_svInspectionInfos.begin();
 
-		while( l_InspectIter != p_rsvData.m_svInspectionInfos.end() )
+		while( l_InspectIter != rData.m_svInspectionInfos.end() )
 		{
 			HRESULT l_Temp = m_svInspectionInfos[ l_InspectIter->first ].Assign( l_InspectIter->second );
 
@@ -578,7 +584,7 @@ HRESULT SVProductInfoStruct::Assign( const SVProductInfoStruct &p_rsvData )
 			++l_InspectIter;
 		}
 
-		if( p_rsvData.IsProductActive() )
+		if( rData.IsProductActive() )
 		{
 			SetProductActive();
 		}
@@ -589,7 +595,7 @@ HRESULT SVProductInfoStruct::Assign( const SVProductInfoStruct &p_rsvData )
 
 bool SVProductInfoStruct::empty() const
 {
-	return ( bTriggered == FALSE );
+	return !bTriggered;
 }
 
 void SVProductInfoStruct::InitProductInfo()
@@ -597,12 +603,14 @@ void SVProductInfoStruct::InitProductInfo()
 	SetProductComplete();
 
 	m_ProductState.clear();
-	bTriggered			= FALSE;
-	bStartAcquisition	= FALSE;
-	bFinishAcquisition	= FALSE;
-	bDelayExpired		= FALSE;
-	bDataComplete		= FALSE;
-	bStreamed           = FALSE;
+	for (int i = 0; i < SvDef::cMaximumCameras; ++i)
+	{
+		bhasCameraImage[i] = false;
+	}
+	bTriggered			= false;
+	bDelayExpired		= false;
+	bDataComplete		= false;
+	bStreamed           = false;
 	hrPPQStatus         = S_OK;
 	m_lastInspectedSlot = -1;
 	oInputsInfo.Init();
@@ -634,12 +642,14 @@ void SVProductInfoStruct::Reset()
 	SetProductComplete();
 
 	m_ProductState.clear();
-	bTriggered			= FALSE;
-	bStartAcquisition	= FALSE;
-	bFinishAcquisition	= FALSE;
-	bDelayExpired		= FALSE;
-	bDataComplete		= FALSE;
-	bStreamed           = FALSE;
+	for (int i = 0; i < SvDef::cMaximumCameras; ++i)
+	{
+		bhasCameraImage[i] = false;
+	}
+	bTriggered			= false;
+	bDelayExpired		= false;
+	bDataComplete		= false;
+	bStreamed           = false;
 	hrPPQStatus         = S_OK;
 	m_lastInspectedSlot = -1;
 	oInputsInfo.Reset();

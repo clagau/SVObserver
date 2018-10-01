@@ -85,6 +85,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="EventTime.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -92,13 +93,11 @@
     <ClCompile Include="SVContainableCriticalSection.cpp" />
     <ClCompile Include="SVOCallbackClass.cpp" />
     <ClCompile Include="SVODataDeviceClass.cpp" />
-    <ClCompile Include="SVODataResponseClass.cpp" />
     <ClCompile Include="SVODeviceClass.cpp" />
-    <ClCompile Include="SVORequestClass.cpp" />
-    <ClCompile Include="SVOResponseClass.cpp" />
     <ClCompile Include="SVQueueObject.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="EventTime.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVContainableCriticalSection.h" />
     <ClInclude Include="SVMultithread.h" />
@@ -107,7 +106,6 @@
     <ClInclude Include="SVODataResponseClass.h" />
     <ClInclude Include="SVODeviceClass.h" />
     <ClInclude Include="SVOLibrary.h" />
-    <ClInclude Include="SVORequestClass.h" />
     <ClInclude Include="SVOResponseClass.h" />
     <ClInclude Include="SVProcessFunctor.h" />
     <ClInclude Include="SVQueueObject.h" />

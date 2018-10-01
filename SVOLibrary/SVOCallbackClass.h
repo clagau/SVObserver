@@ -13,7 +13,6 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <memory>
-#include "SVORequestClass.h"
 #include "SVQueueObject.h"
 #pragma endregion Includes
 
@@ -28,9 +27,6 @@ This class is used to identify the callback requesters and holds the data to be 
 class SVOCallbackClass  
 {
 public:
-	typedef SVTQueueObject< SVORequestClass > SVRequestQueue;
-	typedef SVTQueueObject< SVOResponseClass > SVResponseQueue;
-
 	SVOCallbackClass();
 	SVOCallbackClass(const SVOCallbackClass& rData);
 	virtual ~SVOCallbackClass();
@@ -40,20 +36,15 @@ public:
 	//This attribute holds the function to call when data is available to return.
 	SVOCallbackPtr mpCallback;
 	//This attribute holds a pointer to the owner/receipent of the callback.
-  void *mpvOwner;
+	void *mpvOwner;
 	//This attribute holds a pointer to the caller of the callback function.
-  void *mpvCaller;
+	void *mpvCaller;
 
 	//This attribute holds the reference count of this object.
 	long m_lRefCount;
 
-	//This attribute holds the queue of requested data.
-	SVRequestQueue mRequestQueue;
-	//This attribute holds the queue of response data.
-	SVResponseQueue mResponseQueue;
-	
 };
 
-typedef std::shared_ptr< SVOCallbackClass > SVOCallbackClassPtr;
-typedef SVTQueueObject< SVOCallbackClassPtr > SVCallbackClassPtrQueue;
+typedef std::shared_ptr<SVOCallbackClass> SVOCallbackClassPtr;
+typedef SVTQueueObject<SVOCallbackClassPtr> SVCallbackClassPtrQueue;
 

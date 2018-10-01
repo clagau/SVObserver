@@ -25,16 +25,16 @@ namespace SvTh
 
 		if ( nullptr != triggerparams.m_pOwner)
 		{
-			SVOResponseClass l_Response;
+			SVOResponseClass response;
 
 			SVTriggerClass *pDevice = (SVTriggerClass *)(triggerparams.m_pOwner);
 
-			l_Response.Reset();
+			response.reset();
 
-			l_Response.SetIsValid( TRUE );
-			l_Response.SetIsComplete( TRUE );
+			response.setIsValid(true);
+			response.setIsComplete(true);
 
-			HRESULT hr = pDevice->Notify( l_Response );
+			HRESULT hr = pDevice->Notify( response );
 
 			#ifdef SV_LOG_STATUS_INFO
 				std::string LogEntry = SvUl::Format( _T( "FinishProcess %s - HR = 0x%X" ), pDevice->GetDeviceName(), hr );

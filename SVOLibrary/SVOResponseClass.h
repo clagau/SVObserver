@@ -11,62 +11,41 @@
 
 #pragma once
 
-//Moved to precompiled header: #include <comdef.h>
+#pragma region Includes
 //Moved to precompiled header: #include <boost/any.hpp>
-#include "SVDataManagerLibrary/SVDataManagerHandle.h"
-#include "SVTimerLibrary/SVClock.h"
+#include "EventTime.h"
+#pragma endregion Includes
 
-class SVOResponseClass  //@TODO[Arvid] this is similar to SVODataResponseClass: combine or derive?
+class SVOResponseClass : public EventTime
 {
 public:
-	SVOResponseClass();
-	SVOResponseClass(const SVOResponseClass &rResponse);
-	~SVOResponseClass();
+	SVOResponseClass() {}
+	SVOResponseClass(const SVOResponseClass &rRhs) : EventTime(rRhs)
+		, m_ExtraData {rRhs.m_ExtraData}
+	{
+	}
 
-	const SVOResponseClass &operator=(const SVOResponseClass &rResponse);
+	const SVOResponseClass& operator=(const SVOResponseClass &rRhs)
+	{
+		__super::operator =(rRhs);
+		m_ExtraData = rRhs.m_ExtraData;
+		return *this;
+	}
 
-	HRESULT Reset();
+	virtual ~SVOResponseClass() {}
 
-	bool IsValid() const;
-	bool IsComplete() const;
 
-	HRESULT GetIsValid( bool &rbIsValid ) const;
-	HRESULT SetIsValid( bool bIsValid );
+	virtual void reset()
+	{
+		__super::reset();
+		m_ExtraData.swap(boost::any());
+	}
 
-	HRESULT GetIsComplete( bool &rbIsComplete );
-	HRESULT SetIsComplete( bool bIsComplete );
-
-	HRESULT GetOwner( void **pvOwner );
-	HRESULT SetOwner( void *pvOwner );
-
-	HRESULT GetStartTick( SvTl::SVTimeStamp& p_rTick );
-	HRESULT SetStartTick( const SvTl::SVTimeStamp& p_rTick );
-
-	HRESULT GetEndTick( SvTl::SVTimeStamp& p_rTick );
-	HRESULT SetEndTick( const SvTl::SVTimeStamp& p_rTick );
-
-	HRESULT GetExtraData( boost::any& p_rExtraData );
-	HRESULT SetExtraData( const boost::any& p_rExtraData );
-
-	//This attribute holds the Data Manager index of the associated data element.
-	SVDataManagerHandle mDMHandle;
+	const boost::any& getExtraData() {return m_ExtraData;}
+	void setExtraData( const boost::any& rExtraData ) {m_ExtraData = rExtraData;}
 
 private:
-	//This attribute holds a pointer to the owner of the response.
-	bool mbIsValid;
-	//This attribute holds a pointer to the parent of the response. 
-	bool mbIsComplete;
-
-	//This attribute holds a pointer to the owner of the response.
-	void *mpvOwner;
-
-	//This attribute holds the start time stamp the response.
-	SvTl::SVTimeStamp m_StartTick;
-	//This attribute holds the end time stamp the response.
-	SvTl::SVTimeStamp m_EndTick;
-
 	//This attribute holds context data of the response. 
-	boost::any mExtraData;  //used by SVCameraTriggerClass::TriggerCallback() only
-
+	boost::any m_ExtraData;  //used by SVCameraTriggerClass::TriggerCallback() only
 };
 

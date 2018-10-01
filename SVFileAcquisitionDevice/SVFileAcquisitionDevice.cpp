@@ -573,7 +573,7 @@ HRESULT SVFileAcquisitionDevice::CameraProcessStartFrame( unsigned long p_ulInde
 
 		if ( 1 == rCamera.m_lIsStarted && nullptr != rCamera.m_pBufferInterface )
 		{
-			rCamera.m_StartTimeStamp = rCamera.m_pBufferInterface->GetTimeStamp();
+			rCamera.m_StartTimeStamp = SvTl::GetTimeStamp();
 		}
 		else
 		{
@@ -612,7 +612,7 @@ HRESULT SVFileAcquisitionDevice::CameraProcessEndFrame( unsigned long p_ulIndex 
 
 					if( S_OK == l_hrOk )
 					{
-						rCamera.m_pBufferInterface->UpdateWithCompletedBuffer(pImage, rCamera.m_StartTimeStamp, rCamera.m_pBufferInterface->GetTimeStamp());
+						rCamera.m_pBufferInterface->UpdateWithCompletedBuffer(pImage, rCamera.m_StartTimeStamp, SvTl::GetTimeStamp());
 					}
 					else
 					{

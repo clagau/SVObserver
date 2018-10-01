@@ -332,12 +332,6 @@ protected:
 	//************************************
 	HRESULT ProcessCameraResponses( bool& rProcessed );
 	//************************************
-	/// Checks whether all camera acquisitions are complete for the first item in m_oCamerasQueue. If so, moves it into m_oNotifyInspectionsSet
-	/// \param rProcessed [out] true if an item was removed from m_oCamerasQueue
-	/// \returns S_OK on success, otherwise E_FAIL
-	//************************************
-	HRESULT ProcessCameraInputs( bool& rProcessed );
-	//************************************
 	/// If all inspections for a product are done, sets the product to complete
 	/// \param rProcessed [out] true m_oTriggerQueue is empty or if a product has been set to complete
 	/// \returns S_OK on success, otherwise E_FAIL
@@ -353,10 +347,7 @@ protected:
 	HRESULT ProcessTimeDelayOutputs( SVProductInfoStruct& p_rProduct );
 	HRESULT ProcessTimeDelayAndDataCompleteOutputs( SVProductInfoStruct& p_rProduct, bool& rProcessed );
 
-	HRESULT GetProductInfoStruct( SVProductInfoStruct*& p_rpProduct, long lProcessCount ) const;
-	HRESULT GetProductInfoStruct( SVProductInfoStruct*& p_rpProduct, SvTl::SVTimeStamp p_TimeStamp ) const;
-	HRESULT GetProductIndex( long& p_rIndex, long lProcessCount ) const;
-	HRESULT GetProductIndex( long& p_rIndex, SvTl::SVTimeStamp p_TimeStamp ) const;
+	SVProductInfoStruct* GetProductInfoStruct(long processCount) const;
 
 	SVProductInfoStruct* IndexPPQ( SvTi::SVTriggerInfoStruct& p_rTriggerInfo );
 	void InitializeProduct( SVProductInfoStruct* p_pNewProduct, const SVVariantBoolVector& p_rInputValues );
@@ -398,7 +389,6 @@ protected:
 
 	// Queues for the PPQ's threads to store incoming objects to be processed
 	SVTriggerInfoQueue m_oTriggerQueue; ///< A ring buffer containing SVTriggerQueueElement s, i.e. SvTi::SVTriggerInfoStruct s and SVVariantBoolVector s
-	SVProcessCountQueue m_oCamerasQueue;
 	SVInspectionInfoQueue m_oInspectionQueue;
 	SVProcessCountQueue m_oOutputsDelayQueue;
 	SVProcessCountQueue m_oOutputsResetQueue;

@@ -517,6 +517,8 @@ enum MessageTextEnum
 	Tid_TRC_Error_ResetNotStart,
 	Tid_TRC_Error_InvalidResetState,
 	Tid_TRC_Error_GetImageDefList,
+	
+	Tid_NAK_Error_MissingEndFrame,
 
 	Tid_UpdateMainImages_InvalidImageBuffer,
 	Tid_UpdateMainImages_CameraNotFound,

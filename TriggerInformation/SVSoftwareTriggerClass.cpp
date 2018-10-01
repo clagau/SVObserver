@@ -53,13 +53,13 @@ namespace SvTi
 			{
 				SVSoftwareTriggerClass* pDevice = (SVSoftwareTriggerClass *)(triggerparams.m_pOwner);
 
-				SVOResponseClass l_Response;
+				SVOResponseClass response;
 
-				l_Response.Reset();
-				l_Response.SetIsValid( TRUE );
-				l_Response.SetIsComplete( TRUE );
+				response.reset();
+				response.setIsValid(true);
+				response.setIsComplete(true);
 
-				pDevice->Notify( l_Response );
+				pDevice->Notify( response );
 			}
 			catch ( ... )
 			{

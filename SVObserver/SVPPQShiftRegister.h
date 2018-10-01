@@ -35,11 +35,10 @@ public:
 
 	HRESULT IsProductAlive( long p_TriggerCount ) const;
 
-	HRESULT GetIndexByTriggerCount( long& p_rIndex, long p_TriggerCount ) const;
-	HRESULT GetProductByTriggerCount( SVProductInfoStruct*& p_rpProduct, long p_TriggerCount ) const;
+	long GetIndexByTriggerCount(long triggerCount) const;
+	SVProductInfoStruct* GetProductByTriggerCount(long triggerCount) const;
 
-	HRESULT GetIndexByTriggerTimeStamp( long& p_rIndex, SvTl::SVTimeStamp p_TimeStamp, SvTl::SVTimeStamp p_LowerThresholdInMilliseconds = 0.0 ) const;
-	HRESULT GetIndexByTriggerTimeStamp( long& p_rIndex, SvTl::SVTimeStamp p_TimeStamp, SvTl::SVTimeStamp p_LowerThresholdInMilliseconds, SvTl::SVTimeStamp p_UpperThresholdInMilliseconds ) const;
+	long GetIndexByTriggerTimeStamp(SvTl::SVTimeStamp timeStamp, int cameraID) const;
 
 	HRESULT GetProductStates( std::string& p_rProductStates ) const;
 
