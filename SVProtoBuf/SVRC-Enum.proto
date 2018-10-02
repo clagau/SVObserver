@@ -46,12 +46,13 @@ enum DataDefinitionListType
 enum DeviceModeType
 {
 	available	= 0;				//This is the mode when no configuration is loaded
-	runMode	= 1;					//This is the mode when SVObserver is in production mode (Online)
+	runMode		= 1;				//This is the mode when SVObserver is in production mode (Online)
 	stopMode	= 2;				//This is the mode when SVObserver is in stop mode (Offline)
-	regressionMode	= 3;			//This is a special mode to verify configuration settings
-	testMode	= 4;
+	regressionMode = 3;				//This is a special mode to verify configuration settings
+	testMode	= 4;				//This is a special test mode
 	editMode	= 5;				//The general edit mode to be able to change values in the configuration
-	modeChanging = 6;				//This indicates that the mode is in transition to another mode
+	unknownMode = 6;				//This is an unknown mode
+	modeChanging = 100;				//This indicates that the mode is in transition to another mode
 }
 
 ///The message type for the message notification when SVObserver displays or logs a message

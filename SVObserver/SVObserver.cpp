@@ -801,8 +801,8 @@ void SVObserverApp::OnStop()
 	SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 	Exception.setMessage(SVMSG_SVO_28_SVOBSERVER_GO_OFFLINE, TriggerCounts.c_str(), SvStl::SourceFileParams(StdMessageParams));
 
-	SVSVIMStateClass::RemoveState(SV_STATE_UNAVAILABLE | SV_STATE_STOPING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT);
 	SVSVIMStateClass::AddState(SV_STATE_READY | SV_STATE_STOP);
+	SVSVIMStateClass::RemoveState(SV_STATE_UNAVAILABLE | SV_STATE_STOPING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT);
 
 	SVCommandStreamManager::Instance().DisableAllInspections();
 
@@ -2917,7 +2917,7 @@ HRESULT SVObserverApp::DestroyConfig(bool AskForSavingOrClosing /* = true */,
 
 			if (bOk)
 			{
-				bOk = SVSVIMStateClass::RemoveState(SV_STATE_READY | SV_STATE_MODIFIED | SV_STATE_EDIT);
+				bOk = SVSVIMStateClass::RemoveState(SV_STATE_READY | SV_STATE_MODIFIED | SV_STATE_EDIT | SV_STATE_STOP);
 			}
 
 			if (bOk)
@@ -4502,13 +4502,13 @@ HRESULT SVObserverApp::SetModeEdit(bool p_bState)
 	HRESULT l_hr = S_OK;
 	if (p_bState)
 	{
-		SVSVIMStateClass::RemoveState(SV_STATE_STOP);
 		SVSVIMStateClass::AddState(SV_STATE_EDIT);
+		SVSVIMStateClass::RemoveState(SV_STATE_STOP);
 	}
 	else
 	{
-		SVSVIMStateClass::RemoveState(SV_STATE_EDIT);
 		SVSVIMStateClass::AddState(SV_STATE_STOP);
+		SVSVIMStateClass::RemoveState(SV_STATE_EDIT);
 		//
 		// We need to deselect any tool that might be set for operator move.
 		//

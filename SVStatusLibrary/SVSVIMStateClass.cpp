@@ -76,6 +76,7 @@ svModeEnum SVSVIMStateClass::GetMode()
 		SV_STATE_LOADING |
 		SV_STATE_SAVING |
 		SV_STATE_CLOSING |
+	    SV_STATE_UNAVAILABLE |
 		SV_STATE_EDITING ) )
 	{
 		retVal = SVIM_MODE_CHANGING;
@@ -99,6 +100,10 @@ svModeEnum SVSVIMStateClass::GetMode()
 	else if( SVSVIMStateClass::CheckState( SV_STATE_STOP ) )
 	{
 		retVal = SVIM_MODE_OFFLINE;
+	}
+	else if( SVSVIMStateClass::CheckState(SV_STATE_AVAILABLE) )
+	{
+		retVal = SVIM_MODE_AVAILABLE;
 	}
 	else
 	{

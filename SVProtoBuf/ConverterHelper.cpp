@@ -278,6 +278,9 @@ svModeEnum PbDeviceMode_2_SVIMMode(SvPb::DeviceModeType type)
 	svModeEnum res {SVIM_MODE_UNKNOWN};
 	switch (type)
 	{
+		case SvPb::DeviceModeType::available:
+			res = SVIM_MODE_AVAILABLE;
+			break;
 		case SvPb::DeviceModeType::runMode:
 			res = SVIM_MODE_ONLINE;
 			break;
@@ -293,6 +296,9 @@ svModeEnum PbDeviceMode_2_SVIMMode(SvPb::DeviceModeType type)
 		case SvPb::DeviceModeType::editMode:
 			res = SVIM_MODE_EDIT;
 			break;
+		case SvPb::DeviceModeType::modeChanging:
+			res = SVIM_MODE_CHANGING;
+			break;
 		default:
 			res = SVIM_MODE_UNKNOWN;
 			break;
@@ -304,6 +310,9 @@ SvPb::DeviceModeType  SVIMMode_2_PbDeviceMode(unsigned long Mode)
 {
 	switch (Mode)
 	{
+		case SVIM_MODE_AVAILABLE:
+			return  SvPb::DeviceModeType::available;
+			break;
 		case SVIM_MODE_ONLINE:
 			return  SvPb::DeviceModeType::runMode;
 			break;
@@ -325,7 +334,7 @@ SvPb::DeviceModeType  SVIMMode_2_PbDeviceMode(unsigned long Mode)
 			break;
 		case SVIM_MODE_UNKNOWN:
 		default:
-			return SvPb::DeviceModeType::available;
+			return SvPb::DeviceModeType::unknownMode;
 			break;
 	}
 }

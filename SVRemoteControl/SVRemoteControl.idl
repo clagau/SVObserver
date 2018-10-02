@@ -43,7 +43,7 @@ typedef enum SVObserverModes
 	[helpstring("Regression Mode")] RegressionMode = 3,
 	[helpstring("Test Mode")] TestMode = 4,
 	[helpstring("Edit Mode")] EditMode = 5,
-	[helpstring("Edit Move Mode")] EditMoveMode = 6,
+	[helpstring("Unknown Mode")] UnknownMode = 6,
 	[helpstring("Mode Changing")] ModeChanging = 100,
 } SVObserverModesEnum;
 
