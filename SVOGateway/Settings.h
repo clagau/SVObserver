@@ -26,6 +26,7 @@ struct Settings
 		logSettings.StdoutLogEnabled = false;
 		logSettings.WindowsEventLogEnabled = true;
 		logSettings.WindowsEventLogLevel = "info";
+		logSettings.eventLogFacility = SvLog::EventLogFacility::Gateway;
 	}
 	bool dummySharedMemory {false};
 	SvHttp::WebsocketClientSettings observerSetting;

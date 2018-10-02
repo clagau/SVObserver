@@ -19,6 +19,7 @@ struct RCSettings
 		logSettings.StdoutLogLevel = "debug";
 		logSettings.WindowsEventLogEnabled = true;
 		logSettings.WindowsEventLogLevel = "info";
+		logSettings.eventLogFacility = SvLog::EventLogFacility::RemoteCtrl;
 	}
 	SvLog::LogSettings logSettings;
 	SvHttp::WebsocketClientSettings httpClientSettings;

@@ -23,6 +23,7 @@ struct WebSocketSettings
 		logSettings.StdoutLogEnabled = false;
 		logSettings.WindowsEventLogEnabled = true;
 		logSettings.WindowsEventLogLevel = "info";
+		logSettings.eventLogFacility  = SvLog::EventLogFacility::Websocket;
 	};
 	SvLog::LogSettings logSettings;
 	SvHttp::HttpServerSettings httpSettings;

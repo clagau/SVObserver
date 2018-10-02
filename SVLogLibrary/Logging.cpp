@@ -84,10 +84,35 @@ class sv_message_log_backend
 	: public basic_formatted_sink_backend<char, combine_requirements<synchronized_feeding>::type>
 {
 public:
-	BOOST_LOG_API sv_message_log_backend(severity_level MinSeverity)
+	BOOST_LOG_API sv_message_log_backend(severity_level MinSeverity, SvLog::EventLogFacility facility)
 		: m_MinSeverity(MinSeverity)
 		, m_MessageManager(SvStl::LogOnly)
 	{
+		switch (facility)
+		{
+			case SvLog::EventLogFacility::Gateway:
+				m_MessageInfo = SVMSG_SVGateway_2_GENERAL_INFORMATIONAL;
+				m_MessageWarning = SVMSG_SVGateway_1_GENERAL_WARNING;
+				m_MessageError = SVMSG_SVGateway_0_GENERAL_ERROR;
+				break;
+			case SvLog::EventLogFacility::RemoteCtrl:
+				m_MessageInfo = SVMSG_REMOTECTRL_2_GENERAL_INFORMATIONAL;
+				m_MessageWarning = SVMSG_REMOTECTRL_1_GENERAL_WARNING;
+				m_MessageError = SVMSG_REMOTECTRL_0_GENERAL_ERROR;
+				break;
+			case SvLog::EventLogFacility::Websocket:
+				m_MessageInfo = SVMSG_SVO_2_GENERAL_INFORMATIONAL;
+				m_MessageWarning = SVMSG_SVO_1_GENERAL_WARNING;
+				m_MessageError = SVMSG_SVO_0_GENERAL_ERROR;
+				break;
+			default:
+				m_MessageInfo = SVMSG_SVGateway_2_GENERAL_INFORMATIONAL;
+				m_MessageWarning = SVMSG_SVGateway_1_GENERAL_WARNING;
+				m_MessageError = SVMSG_SVGateway_0_GENERAL_ERROR;
+				break;
+		}
+
+
 	}
 
 	BOOST_LOG_API void consume(record_view const& rec, const std::string& formatted_record)
@@ -121,17 +146,14 @@ private:
 			case trivial::trace:
 			case trivial::debug:
 			case trivial::info:
-				return SVMSG_SVGateway_2_GENERAL_INFORMATIONAL;
-
+				return m_MessageInfo;
 			case trivial::warning:
-				return SVMSG_SVGateway_1_GENERAL_WARNING;
-
+				return  m_MessageWarning;
 			case trivial::error:
 			case trivial::fatal:
-				return SVMSG_SVGateway_0_GENERAL_ERROR;
-
+				return m_MessageError;
 			default:
-				return SVMSG_SVGateway_2_GENERAL_INFORMATIONAL;
+				return m_MessageInfo;
 		}
 	}
 
@@ -148,6 +170,10 @@ private:
 private:
 	trivial::severity_level m_MinSeverity;
 	SvStl::MessageMgrStd m_MessageManager;
+	EventLogFacility m_EventLogFacility;
+	DWORD m_MessageInfo {SVMSG_SVGateway_2_GENERAL_INFORMATIONAL};
+	DWORD m_MessageWarning {SVMSG_SVGateway_1_GENERAL_WARNING};
+	DWORD m_MessageError {SVMSG_SVGateway_0_GENERAL_ERROR};
 };
 }
 
@@ -204,7 +230,7 @@ void init_logging(const LogSettings& settings)
 {
 	core::get()->remove_all_sinks(); // remove all default sinks
 	add_common_attributes(); // adds common log attributes like timestamp
-
+	auto min_LogLevel = trivial::info;
 	if (settings.StdoutLogEnabled)
 	{
 		auto stdout_log_level = trivial::info;
@@ -223,6 +249,7 @@ void init_logging(const LogSettings& settings)
 		sink->set_formatter(&log_formatter);
 		sink->set_filter(trivial::severity >= stdout_log_level);
 		core::get()->add_sink(sink);
+		min_LogLevel = min_LogLevel < stdout_log_level ? min_LogLevel : stdout_log_level;
 	}
 
 	if (settings.FileLogEnabled && !settings.FileLogLocation.empty())
@@ -244,6 +271,7 @@ void init_logging(const LogSettings& settings)
 		sink->set_formatter(&log_formatter);
 		sink->set_filter(trivial::severity >= file_log_level);
 		core::get()->add_sink(sink);
+		min_LogLevel = min_LogLevel < file_log_level ? min_LogLevel : file_log_level;
 	}
 
 	if (settings.WindowsEventLogEnabled)
@@ -257,10 +285,13 @@ void init_logging(const LogSettings& settings)
 				throw std::runtime_error(msg.c_str());
 			}
 		}
-		auto backend = boost::make_shared<sv_message_log_backend>(event_log_level);
+		auto facility = settings.eventLogFacility;
+		auto backend = boost::make_shared<sv_message_log_backend>(event_log_level, facility);
 		auto sink = boost::make_shared<synchronous_sink<sv_message_log_backend>>(backend);
 		core::get()->add_sink(sink);
+		min_LogLevel = min_LogLevel < event_log_level ? min_LogLevel : event_log_level;
 	}
+	core::get()->set_filter(trivial::severity >= min_LogLevel);
 }
 
 } // namespace SvLog

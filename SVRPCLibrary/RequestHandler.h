@@ -78,12 +78,17 @@ protected:
 		auto it = m_RequestHandler.find(payloadType);
 		if (it != m_RequestHandler.end())
 		{
+			SV_LOG_GLOBAL(trace) << "Request with SVRC MessageType:" << payloadType;
 			(*it->second)(std::move(Envelope), std::move(Task));
 			return;
 		}
 
 		if (m_DefaultRequestHandler)
 		{
+		
+			SV_LOG_GLOBAL(trace) << "Forward Request   with SVRC MessageType:" << payloadType;
+			
+		
 			m_DefaultRequestHandler(std::move(Envelope), std::move(Task));
 			return;
 		}

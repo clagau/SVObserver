@@ -12,6 +12,12 @@
 
 namespace SvLog
 {
+
+enum class EventLogFacility
+{
+	Gateway, RemoteCtrl, Websocket
+};
+
 struct LogSettings
 {
 	/// Set to true if you want the logs sent to stdout.
@@ -47,6 +53,9 @@ struct LogSettings
 	/// error and warning logs to the Event Log.
 	/// See stdout_log_level for available log levels.
 	std::string WindowsEventLogLevel {"info"};
+
+	///Set the facility for the eventlog
+	EventLogFacility  eventLogFacility {EventLogFacility::Gateway};
 };
 } // namespace SvLog
   
