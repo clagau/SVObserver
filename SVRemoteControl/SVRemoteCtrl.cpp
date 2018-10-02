@@ -669,6 +669,20 @@ STDMETHODIMP SVRemoteCtrl::GetVersion(BSTR* svobserver_ver, BSTR* svremotecontro
 	return l_Status;
 }
 
+STDMETHODIMP SVRemoteCtrl::GetDeviceFile(BSTR sourcePath, BSTR destinationPath)
+{
+	SVCommandStatus CommandStatus;
+
+	HRESULT l_Status = m_dispatcher->GetFile(sourcePath, destinationPath, CommandStatus);
+
+	if (l_Status != S_OK)
+	{
+		SVERROR(CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, CommandStatus.hResult);
+	}
+
+	return l_Status;
+}
+
 STDMETHODIMP SVRemoteCtrl::PutDeviceFile(BSTR sourcePath, BSTR destinationPath, VARIANT_BOOL saveInConfig)
 {
 	SVCommandStatus CommandStatus;

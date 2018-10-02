@@ -368,6 +368,7 @@ interface ISVRemoteCtrl : IDispatch{
 	[id(530), helpstring("Put Device File")] HRESULT PutDeviceFile([in] BSTR sourcePath, [in] BSTR destinationPath, [in, defaultvalue(0)] VARIANT_BOOL saveInConfig);
 	[id(531), helpstring("Set Device Mode")] HRESULT SetDeviceMode([in] SVObserverModesEnum desiredMode);
 	[id(532), helpstring("Set Items")] HRESULT SetItems([in] ISVProductItems* items, [in, defaultvalue(-1)] VARIANT_BOOL RunOnce,[out, retval] ISVProductItems ** faults);
+	[id(533), helpstring("Get Device File")] HRESULT GetDeviceFile([in] BSTR sourcePath, [in] BSTR destinationPath);
 	[id(536), helpstring("Disconnects from the server.")] HRESULT Disconnect(void);
 	[id(537), helpstring("Connects to the server at 'address', timeout in ms.")] HRESULT Connect([in] BSTR address, [in, defaultvalue(1500)] LONG Timeout);
 	[id(538), helpstring("Register product items for tracking by RunReject server.")] HRESULT RegisterMonitorList([in] BSTR listName, [in] BSTR ppqName, [in] int rejectDepth, [in] VARIANT productItemList, [in] VARIANT rejectCondList, [in] VARIANT failStatusList, [out, retval] ISVErrorObjectList ** errors);

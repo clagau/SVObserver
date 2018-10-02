@@ -161,6 +161,7 @@ public:
 	STDMETHOD(GetState)(LONG* state);
 	STDMETHOD(PutConfig)(BSTR filePath, LONG Timeout);
 	STDMETHOD(GetVersion)(BSTR* svobserver_ver, BSTR* svremotecontrol_ver, BSTR* runrejectserver_ver);
+	STDMETHOD(GetDeviceFile)(BSTR sourcePath, BSTR destinationPath);
 	STDMETHOD(PutDeviceFile)(BSTR sourcePath, BSTR destinationPath, VARIANT_BOOL saveInConfig);
 	STDMETHOD(SetDeviceMode)(SVObserverModesEnum desiredMode);
 	STDMETHOD(SetItems)(ISVProductItems* items, VARIANT_BOOL RunOnce, ISVProductItems ** faults);

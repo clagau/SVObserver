@@ -44,7 +44,7 @@ namespace SvStl
 		{
 			retString = it->second;
 			//replace %s with additionalList-strings
-			for (int i = 0; i < additionalList.size(); i++)
+			for (int i = 0; i < static_cast<int> (additionalList.size()); i++)
 			{
 				size_t pos = retString.find(_T("%s"));
 

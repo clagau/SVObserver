@@ -579,6 +579,12 @@ void SVRCCommand::GetFile(const SvPb::GetFileRequest& rRequest, SvRpc::Task<SvPb
 
 	if (!SourcePath.empty())
 	{
+		//If only file name then add default path which is Run path
+		if (std::string::npos == SourcePath.find('\\'))
+		{
+			SourcePath = SvStl::GlobalPath::Inst().GetRunPath(SourcePath.c_str());
+		}
+
 		std::vector<char> FileData;
 		Result = SVEncodeDecodeUtilities::FileToCharVector(SourcePath, FileData);
 		if (S_OK == Result && 0 != FileData.size())

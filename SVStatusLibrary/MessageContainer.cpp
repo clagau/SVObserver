@@ -41,7 +41,7 @@ static const TCHAR* const SourceCategoryEventFormat = _T("Source: %s\r\nCategory
 static const TCHAR* const ErrorLoadingDll = _T("SVException\r\nSVMessage.dll could not be loaded!\r\nError: 0x%X");
 static const TCHAR* const DefaultEventFormat = _T("Source File: %s [%d] (%s)\r\nProgramCode: %d [0X%08X]\r\nCompiled: %s %s\n");
 
-static const UINT SubstituteStringNr = 9;
+static const int SubstituteStringNr = 9;
 
 static const UINT CategoryNr = 31;
 static const UINT CategoryBase = FAC_UNUSED01;
@@ -238,7 +238,7 @@ namespace SvStl
 
 		for( int i=0; i < SubstituteStringNr; i++ )
 		{
-			if( i < SubstituteStrings.size() )
+			if(i < static_cast<int> (SubstituteStrings.size()))
 			{
 				pSubstituteString[i] = SubstituteStrings[i].c_str();
 			}
@@ -334,7 +334,7 @@ namespace SvStl
 
 			for( int i=0; i < SubstituteStringNr; i++ )
 			{
-				if( i < SubstituteStrings.size() )
+				if(i < static_cast<int> (SubstituteStrings.size()))
 				{
 					pSubstituteString[i] = SubstituteStrings[i].c_str();
 				}

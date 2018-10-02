@@ -86,7 +86,7 @@ SVControlCommands::SVControlCommands(NotifyFunctor p_Func)
 	if (bModul)
 	{
 		IniFile.append(szPath);
-		int pos = IniFile.find_last_of('\\');
+		size_t pos = IniFile.find_last_of('\\');
 		if (pos != std::string::npos)
 		{
 			IniFile.erase(pos + 1);
