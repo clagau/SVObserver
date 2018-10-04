@@ -13,6 +13,7 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <algorithm>
 #include "SVInspectionProcess.h"
+#include "SVInspectionProcessResetStruct.h"
 #include "SVImageLibrary\SVImageBufferHandleImage.h"
 #include "SVImageLibrary\SVImagingDeviceParams.h"
 #include "SVObjectLibrary\SVObjectLevelCreateStruct.h"
@@ -1483,11 +1484,9 @@ void SVInspectionProcess::ValidateAndInitialize(bool p_Validate)
 
 		m_svReset.AddState(SvDef::SVResetAutoMoveAndResize | SvDef::SVResetStateInitializeOnReset | SvDef::SVResetStateArchiveToolCreateFiles | SvDef::SVResetStateLoadFiles);
 
-		SVStdMapSVToolClassPtrSVInspectionProcessResetStruct l_svToolMap;
-
 		SvOi::SVResetItemEnum eResetItem = SvOi::SVResetItemIP;
 
-		ProcessInputRequests(eResetItem, l_svToolMap);
+		ProcessInputRequests(eResetItem);
 
 		m_svReset.RemoveState(SvDef::SVResetAutoMoveAndResize | SvDef::SVResetStateInitializeOnReset | SvDef::SVResetStateArchiveToolCreateFiles | SvDef::SVResetStateLoadFiles);
 	}
@@ -1683,11 +1682,9 @@ bool SVInspectionProcess::RunOnce(SVToolClass *p_psvTool)
 
 	l_Product.GetResultDataIndex(l_Handle);
 
-	SVStdMapSVToolClassPtrSVInspectionProcessResetStruct l_svToolMap;
-
 	SvOi::SVResetItemEnum eResetItem = SvOi::SVResetItemNone;
 
-	bRet = ProcessInputRequests(eResetItem, l_svToolMap);
+	bRet = ProcessInputRequests(eResetItem);
 
 	SvTrc::ITriggerRecordRPtr oldRecord = l_Product.m_svInspectionInfos[GetUniqueObjectID()].m_triggerRecordComplete;
 
@@ -1764,18 +1761,16 @@ HRESULT SVInspectionProcess::InitializeRunOnce()
 
 bool SVInspectionProcess::ProcessInputRequests(bool &rForceOffsetUpdate)
 {
-	SVStdMapSVToolClassPtrSVInspectionProcessResetStruct l_svToolMap;
-
 	SvOi::SVResetItemEnum eResetItem = SvOi::SVResetItemNone;
 
-	bool l_bOk = ProcessInputRequests(eResetItem, l_svToolMap);
+	bool l_bOk = ProcessInputRequests(eResetItem);
 
 	rForceOffsetUpdate |= (eResetItem < SvOi::SVResetItemNone);
 
 	return l_bOk;
 }
 
-bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem, SVStdMapSVToolClassPtrSVInspectionProcessResetStruct &rToolMap)
+bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem)
 {
 	bool bRet = true;
 	long l;
@@ -1790,6 +1785,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 		DebugBreak();
 	}
 
+	SVStdMapSVToolClassPtrSVInspectionProcessResetStruct toolMap;
 	while (m_lInputRequestMarkerCount > 0L)
 	{
 		long l_lSize = 0;
@@ -2043,7 +2039,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 
 					if (nullptr != l_psvTool)
 					{
-						SvOi::SVResetItemEnum eToolResetItem = rToolMap[l_psvTool].SetResetData(ObjectRef.getValueObject()->getResetItem(), ObjectRef.getObject());
+						SvOi::SVResetItemEnum eToolResetItem = toolMap[l_psvTool].SetResetData(ObjectRef.getValueObject()->getResetItem(), ObjectRef.getObject());
 
 						if (eToolResetItem < rResetItem)
 						{
@@ -2057,7 +2053,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 
 					if (SvOi::SVResetItemIP == rResetItem)
 					{
-						rToolMap.clear();
+						toolMap.clear();
 					}
 				}
 			}// end if object exists
@@ -2082,9 +2078,9 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 
 					if (nullptr != l_psvTool)
 					{
-						if (rToolMap.find(l_psvTool) != rToolMap.end())
+						if (toolMap.find(l_psvTool) != toolMap.end())
 						{
-							if (rToolMap[l_psvTool].m_ObjectSet.empty())
+							if (toolMap[l_psvTool].m_ObjectSet.empty())
 							{
 								bRet &= l_psvTool->resetAllObjects();
 							}
@@ -2092,9 +2088,9 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 							{
 								SVObjectPtrSet::iterator l_oIter;
 
-								l_oIter = rToolMap[l_psvTool].m_ObjectSet.begin();
+								l_oIter = toolMap[l_psvTool].m_ObjectSet.begin();
 
-								while (l_oIter != rToolMap[l_psvTool].m_ObjectSet.end())
+								while (l_oIter != toolMap[l_psvTool].m_ObjectSet.end())
 								{
 									SVObjectClass *l_psvObject = *l_oIter;
 

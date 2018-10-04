@@ -36,7 +36,6 @@
 #include "InspectionEngine/SVTaskObject.h" // For SVImageClassPtrSet
 #include "InspectionEngine/SVImageBuffer.h" //SVImageOverlayClass; used for getting overlay data for the ActiveX
 #include "SVInfoStructs.h"
-#include "SVInspectionProcessResetStruct.h"
 #include "SVPublishList.h"
 #include "SVCameraImageTemplate.h"
 #include "SVVirtualCamera.h"
@@ -363,7 +362,7 @@ protected:
 	HRESULT GetInspectionObject( LPCTSTR Name, SVObjectReference& rObjectRef );
 
 	bool ProcessInputRequests( bool &rForceOffsetUpdate );
-	bool ProcessInputRequests( SvOi::SVResetItemEnum& rResetItem, SVStdMapSVToolClassPtrSVInspectionProcessResetStruct &rToolMap );
+	bool ProcessInputRequests( SvOi::SVResetItemEnum& rResetItem );
 	bool ProcessInputImageRequests( SVProductInfoStruct *p_psvProduct );
 
 	void ClearIndexesOfOtherInspections( SVProductInfoStruct *p_pProduct, SVDataManagerLockTypeEnum p_eLockType);
