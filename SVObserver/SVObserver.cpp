@@ -83,7 +83,6 @@
 #include "TriggerInformation/SVHardwareManifest.h"
 #include "TriggerInformation/SVTriggerProcessingClass.h"
 #include "SVDigitizerProcessingClass.h"
-#include "SVCommandStreamManager.h"
 #include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
 #include "SVSystemLibrary\SVVersionInfo.h"
 #include "SVConfigurationTreeWriter.h"
@@ -803,8 +802,6 @@ void SVObserverApp::OnStop()
 
 	SVSVIMStateClass::AddState(SV_STATE_READY | SV_STATE_STOP);
 	SVSVIMStateClass::RemoveState(SV_STATE_UNAVAILABLE | SV_STATE_STOPING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT);
-
-	SVCommandStreamManager::Instance().DisableAllInspections();
 
 	if (SVSVIMStateClass::CheckState(SV_STATE_START_PENDING))
 	{
@@ -2926,12 +2923,6 @@ HRESULT SVObserverApp::DestroyConfig(bool AskForSavingOrClosing /* = true */,
 
 				wait.Restore();
 
-				// First remove all ActiveX server things associated with this config
-				CSVCommand::ResetStreamingData();
-
-				wait.Restore();
-
-
 				SVConfigurationObject* pConfig(nullptr);
 				SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 
@@ -2970,9 +2961,6 @@ HRESULT SVObserverApp::DestroyConfig(bool AskForSavingOrClosing /* = true */,
 	}// end if bOk = ! SVSVIMStateClass::CheckState( SV_STATE_READY | SV_STATE_RUNNING );
 	else
 	{
-		// First remove all ActiveX server things associated with this config
-		CSVCommand::ResetStreamingData();
-
 		SVConfigurationObject* pConfig(nullptr);
 		SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 
@@ -5235,7 +5223,6 @@ void SVObserverApp::Start()
 		SetPriorityClass(GetCurrentProcess(), REALTIME_PRIORITY_CLASS);
 		SvTrc::getTriggerRecordControllerRWInstance().lockReset();
 
-		SVCommandStreamManager::Instance().RebuildCommandObserver();
 		m_mgrRemoteFonts.GoOnline();
 
 		if (IsProductTypeRAID())

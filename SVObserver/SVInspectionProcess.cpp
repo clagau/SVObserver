@@ -30,7 +30,6 @@
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "InspectionEngine/SVConditional.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVCommandStreamManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
@@ -511,8 +510,6 @@ bool SVInspectionProcess::CreateInspection(LPCTSTR szDocName)
 		return false;
 	}
 
-	SVCommandStreamManager::Instance().InsertInspection(GetUniqueObjectID());
-
 	return true;
 }// end Create
 
@@ -545,7 +542,6 @@ void SVInspectionProcess::ThreadProcess(bool& p_WaitForEvents)
 void SVInspectionProcess::DestroyInspection()
 {
 	SVIOEntryStruct pIOEntry;
-	SVCommandStreamManager::Instance().EraseInspection(GetUniqueObjectID());
 	SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cInspectionProcessTag), GetUniqueObjectID(), SVRemoveSubjectStruct());
 	::InterlockedExchange(&m_NotifyWithLastInspected, 0);
 	::Sleep(0);

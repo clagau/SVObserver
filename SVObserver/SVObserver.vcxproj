@@ -271,7 +271,6 @@ echo %time%
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</MultiProcessorCompilation>
     </ClCompile>
     <ClCompile Include="SVCommandInspectionCollectImageData.cpp" />
-    <ClCompile Include="SVCommandStreamManager.cpp" />
     <ClCompile Include="SelectedObjectsPage.cpp" />
     <ClCompile Include="SVConfigurationObject.cpp" />
     <ClCompile Include="SVConfigurationPrint.cpp" />
@@ -578,7 +577,6 @@ echo %time%
     <ClInclude Include="SVColorTool.h" />
     <ClInclude Include="SVCommand.h" />
     <ClInclude Include="SVCommandInspectionCollectImageData.h" />
-    <ClInclude Include="SVCommandStreamManager.h" />
     <ClInclude Include="SelectedObjectsPage.h" />
     <ClInclude Include="SVConfigurationObject.h" />
     <ClInclude Include="SVConfigurationPrint.h" />

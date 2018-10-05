@@ -72,9 +72,6 @@
     <ClCompile Include="SVCommandInspectionCollectImageData.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVCommandStreamManager.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVConfigurationObject.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -884,9 +881,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVCommandInspectionCollectImageData.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVCommandStreamManager.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVConfigurationObject.h">

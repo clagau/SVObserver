@@ -29,45 +29,6 @@ enum SVIMCOMMANDSRV_VERSION
 	SIAC_VERSION_02_00
 };// end enum
 
-struct StreamDataStruct
-{
-    SVObjectClass *pValueObject;
-	SVGUID m_InspectionID;
-    std::string strValueName;
-	long arrayIndex;
-
-	StreamDataStruct()
-	: pValueObject( nullptr ), m_InspectionID(), strValueName(), arrayIndex( 0 ) {}
-};
-
-struct PacketDataStruct
-{
-    SVObjectClass *pValueObject;
-	std::string strValue;
-	long lState;
-
-	PacketDataStruct()
-	{
-		pValueObject = nullptr;
-		strValue.clear();
-		lState = PRODUCT_NOT_INSPECTED;
-	}// end ctor
-};
-
-struct ProductDataStruct
-{
-    long lProductCount;
-	long lCallbackCount;
-	std::vector<PacketDataStruct> m_PacketDataVector;
-
-	ProductDataStruct()
-	{
-		lProductCount	= -1;
-		lCallbackCount	= 0;
-		m_PacketDataVector.clear();
-	}// end ctor
-};
-
 #include "SVObserverCP.h"
 
 /**
@@ -83,32 +44,8 @@ class ATL_NO_VTABLE CSVCommand :
 	public CComCoClass<CSVCommand, &CLSID_SVCommand>,
 	public IDispatchImpl<ISVCommand, &IID_ISVCommand, &LIBID_SVObserver>,
 	public IConnectionPointContainerImpl<CSVCommand>,
-	public CProxy_ISVCommandEvents< CSVCommand >,
 	public CProxy_ISVCommandObserverEvents< CSVCommand >
 {
-
-protected:
-	//CriticalSection Singelton for use in CSVCommand
-	class CProductCriticalSection
-	{
-	public:
-		static CRITICAL_SECTION*  Get()
-		{
-			static CProductCriticalSection  instance; 
-			return &instance.m_CriticalSection;
-		}
-	
-		~CProductCriticalSection()
-		{
-			::DeleteCriticalSection( &m_CriticalSection );
-		}
-	private: 
-		CProductCriticalSection() 
-		{
-			::InitializeCriticalSection( &m_CriticalSection );
-		}
-		CRITICAL_SECTION m_CriticalSection;
-	};
 
 public:
 
@@ -126,7 +63,6 @@ BEGIN_COM_MAP(CSVCommand)
 END_COM_MAP()
 
 BEGIN_CONNECTION_POINT_MAP(CSVCommand)
-	CONNECTION_POINT_ENTRY(IID__ISVCommandEvents)
 	CONNECTION_POINT_ENTRY(IID__ISVCommandObserverEvents)
 END_CONNECTION_POINT_MAP()
 
@@ -549,8 +485,6 @@ public:
   STDMETHOD(SVIsAvailiable)();
 
 public:
-	static void ResetStreamingData();
-
 	static HRESULT ImageToBSTR( SVImageInfoClass &rImageInfo, SvOi::SVImageBufferHandlePtr ImageHandle, BSTR *pbstr);
 	static HRESULT SafeImageToBSTR( SVImageClass *p_pImage, const SvTrc::ITriggerRecordRPtr pTriggerRecord, BSTR *pbstr);
 
@@ -562,27 +496,12 @@ public:
 protected:
     static HRESULT SafeArrayGetElementPointer(SAFEARRAY* psa, long* rgIndices, void** ppv);
 
-    static DWORD WINAPI SVStreamDataThread(LPVOID lpParam);
-
 	virtual HRESULT StoreEventObserver( DWORD dwCookie, CComPtr< CSVCommand > p_pObserver ) override;
 	virtual HRESULT ReleaseEventObserver( DWORD dwCookie, CComPtr< CSVCommand > p_pObserver ) override;
-
-	HRESULT StreamingDataCallback( const SVInspectionCompleteInfoStruct& p_rData );
-	HRESULT RebuildStreamingDataList();
 
     IStream *m_pStream;
 
 private:
-	static std::vector<StreamDataStruct*> m_arStreamList;
-	static std::vector<ProductDataStruct*> m_arProductList;
-	static SvDef::StringVector m_InspectionNames;
-
-    static volatile bool m_bRunStreamData;
-    static volatile bool m_bRegisteredStream;
-    static volatile DWORD m_dwStreamDataProcessId;
-	static volatile long m_lLastStreamedProduct;
-    static volatile HANDLE m_hStopStreamEvent;
-    static volatile HANDLE m_hStreamingThread;
 };// end class CSVCommand
 
 OBJECT_ENTRY_AUTO( __uuidof(SVCommand), CSVCommand ) 

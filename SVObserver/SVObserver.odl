@@ -279,9 +279,9 @@ library SVObserver
 		//S_OK indicates success.
 		[id(0x60020015), helpstring("method SVGetImageList")] HRESULT SVGetImageList([in] SAFEARRAY(BSTR) saImageNames, [in] long lCompression, [in,out] SAFEARRAY(BSTR)* psaImages, [in,out] SAFEARRAY(BSTR)* psaOverlays, [in,out] SAFEARRAY(LONG)* psaStatus, [in,out] SAFEARRAY(LONG)* psaProcCounts);
 
-		[id(0x60020016), helpstring("method SVRegisterStream")] HRESULT SVRegisterStream([in]SAFEARRAY(BSTR) saNames, [in]VARIANT vInterface, [in,out] SAFEARRAY(long) *psaStatus);
+		[id(0x60020016), helpstring("method SVRegisterStream (out of order)")] HRESULT SVRegisterStream([in]SAFEARRAY(BSTR) saNames, [in]VARIANT vInterface, [in,out] SAFEARRAY(long) *psaStatus);
 
-		[id(0x60020017), helpstring("method SVUnRegisterStream")] HRESULT SVUnRegisterStream([in] VARIANT vInterface);
+		[id(0x60020017), helpstring("method SVUnRegisterStream (out of order)")] HRESULT SVUnRegisterStream([in] VARIANT vInterface);
 
 		[id(0x60020018), helpstring("method SVGetProductDataList")] HRESULT SVGetProductDataList([in] long lProcessCount, [in] SAFEARRAY(BSTR) saNames, [in,out] SAFEARRAY(BSTR)* psaData, [in,out] SAFEARRAY(LONG)* psaStatus);
 
