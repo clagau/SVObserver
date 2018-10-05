@@ -32,6 +32,7 @@
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVSystemLibrary/SVVersionInfo.h"
+#include "SVStatusLibrary/GlobalPath.h"
 
 static const std::string cLocalHost(_T("127.0.0.1"));
 
@@ -75,8 +76,9 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 		settings.httpSettings.ServerVersionString = SvSyl::SVVersionInfo::GetVersion();
 		settings.httpSettings.Host = "0.0.0.0";
 		SvLog::init_logging(settings.logSettings);
+		SV_LOG_GLOBAL(info) << "SVOGatewayIniPath:" << settingsLoader.GetIni();
 		SV_LOG_GLOBAL(info) << "WebsocketServer is starting";
-
+		
 		SV_LOG_GLOBAL(debug) << "Initializing Matrox Image Library";
 		// Allocate MilSystem
 		MIL_ID MilId = MappAlloc(M_DEFAULT, M_NULL);

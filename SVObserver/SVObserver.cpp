@@ -2151,6 +2151,7 @@ BOOL SVObserverApp::InitInstance()
 	WebSocketSettingsLoader settingsLoader;
 	settingsLoader.loadFromIni(Settings);
 	SvLog::init_logging(Settings.logSettings);
+	SV_LOG_GLOBAL(info) << "SVObserverIniPath:" << settingsLoader.GetIni();
 
 	std::unique_ptr<SvHttp::HttpServerSettings>  pSettings = std::make_unique<SvHttp::HttpServerSettings>();
 	*pSettings.get() = Settings.httpSettings;

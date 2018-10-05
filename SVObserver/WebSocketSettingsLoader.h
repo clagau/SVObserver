@@ -14,4 +14,8 @@ class WebSocketSettingsLoader
 {
 public:
 	void loadFromIni(WebSocketSettings&);
+	std::string GetIni();
+private:
+	std::string m_iniPath {"not loaded"};
+
 };

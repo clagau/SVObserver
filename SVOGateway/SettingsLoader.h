@@ -16,6 +16,10 @@ class SettingsLoader
 {
 public:
 	void loadFromIni(Settings&);
+	std::string GetIni();
+private:
+	std::string m_iniPath {"not loaded"};
+
 };
 
 }

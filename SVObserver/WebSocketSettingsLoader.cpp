@@ -94,4 +94,10 @@ void WebSocketSettingsLoader::loadFromIni(WebSocketSettings& settings)
 	RegGetPathIfExists(pt, settings.httpSettings.DataDir, "Http.DataDir");
 	RegGetStringIfExists(pt, settings.httpSettings.DefaultIndexHtmlFile, "Http.DefaultIndexHtmlFile");
 	RegGetStringIfExists(pt, settings.httpSettings.DefaultErrorHtmlFile, "Http.DefaultErrorHtmlFile");
+	m_iniPath = path;
+}
+
+std::string  WebSocketSettingsLoader::GetIni()
+{
+	return m_iniPath;
 }

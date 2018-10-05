@@ -27,6 +27,7 @@
 #include "SVLogLibrary/Logging.h"
 #include "RCSettings.h"
 #include "RCSettingsLoader.h"
+#include "SVStatusLibrary/CommandLineArgs.h"
 
 #pragma endregion Includes
 
@@ -80,24 +81,15 @@ SVControlCommands::SVControlCommands(NotifyFunctor p_Func)
 	m_Notifier(p_Func),
 	m_notificationHandler(this)
 {
+	
 	std::string IniFile;
-	char szPath[MAX_PATH];
-	bool bModul = GetModuleFileName(nullptr, szPath, MAX_PATH);
-	if (bModul)
-	{
-		IniFile.append(szPath);
-		size_t pos = IniFile.find_last_of('\\');
-		if (pos != std::string::npos)
-		{
-			IniFile.erase(pos + 1);
-		}
-	}
-	IniFile.append("SVRemoteCtrl.ini");
-
+	SvStl::CommandLineArgs::GetModulDirName(IniFile);
+	IniFile.append("\\SVRemoteCtrl.ini");
 	RCSettings settings;
 	RCSettingsLoader settingsLoader;
-	settingsLoader.loadFromIni("SVRemoteCtrl.ini", settings);
+	settingsLoader.loadFromIni(IniFile.c_str(), settings);
 	SvLog::init_logging(settings.logSettings);
+	SV_LOG_GLOBAL(info) << "SVRemotecontrolIniPath:" << IniFile;
 	m_ClientSettings = settings.httpClientSettings;
 }
 

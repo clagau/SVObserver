@@ -15,46 +15,49 @@
 
 namespace SvStl
 {
-	/// \briefClass for Parsing the command line 
-	class CommandLineArgs
-	{
-	public:
+/// \briefClass for Parsing the command line 
+class CommandLineArgs
+{
+public:
 #pragma region Public Methods
-		static CommandLineArgs& Inst();
+	static CommandLineArgs& Inst();
 
-		//************************************
-		//! return the  directory of the executable
-		//! \returns LPCSTR
-		//************************************
-		LPCSTR GetStartDirectory();
-		//************************************
-		//! return the  directory from the command line or Getstartdirectorx  
-		//! \returns LPCSTR
-		//************************************
-		LPCSTR GetIniDirectory();
+	//************************************
+	//! return the  directory of the executable
+	//! \returns LPCSTR
+	//************************************
+	LPCSTR GetStartDirectory();
+	//************************************
+	//! return the  directory from the command line or Getstartdirectorx  
+	//! \returns LPCSTR
+	//************************************
+	LPCSTR GetIniDirectory();
+
+	//Retrieves the ModulPath
+	static	void GetModulDirName(std::string& rDirName);
 #pragma endregion Public Methods
 
-	private: 
+private:
 #pragma region privat constructor 
-		CommandLineArgs();
-		CommandLineArgs( const CommandLineArgs& );
+	CommandLineArgs();
+	CommandLineArgs(const CommandLineArgs&);
 #pragma endregion privat constructor 
 
 #pragma region privat function 
-		void ParseCommandline();
+	void ParseCommandline();
 #pragma endregion privat function 
 
-	public:	
+public:
 #pragma region public member 
-		static const LPCTSTR  IniDirFlag ;
+	static const LPCTSTR  IniDirFlag;
 #pragma endregion public member 
-	private:
+private:
 
 #pragma region privat member 
-		bool        m_IsParsed;
-		std::string m_iniDirectory;
-		std::string m_startDirectory;
+	bool        m_IsParsed;
+	std::string m_iniDirectory;
+	std::string m_startDirectory;
 #pragma endregion privat member 
-	};
+};
 
 } //namespace SvStl
