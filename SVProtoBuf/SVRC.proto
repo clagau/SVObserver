@@ -46,12 +46,8 @@ message SVRCMessages
 		GetNotificationStreamResponse getNotificationStreamResponse = 1016;
 		GetRejectRequest getRejectRequest = 1017;
 		GetRejectResponse getRejectResponse = 1018;
-		SaveClientChunkRequest saveClientChunkRequest = 1019;
-		SaveClientChunkResponse saveClientChunkResponse = 1020;
-		LoadClientChunkRequest loadClientChunkRequest = 1021;
-		LoadClientChunkResponse loadClientChunkResponse = 1022;
 		StoreClientLogsRequest storeClientLogsRequest = 1023;
-		
+
 		//SVObserver commands
 		SetDeviceModeRequest setDeviceModeRequest = 2000;
 		GetDeviceModeRequest getDeviceModeRequest = 2001;

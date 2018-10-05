@@ -42,6 +42,9 @@
     <ClInclude Include="AuthManagerSettings.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="AuthClient.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -63,6 +66,9 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="UserDatabaseLoader.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="AuthClient.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>

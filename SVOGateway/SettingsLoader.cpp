@@ -100,7 +100,7 @@ void SettingsLoader::loadFromIni(Settings& settings)
 	RegGetBoolIfExists(pt, settings.logSettings.WindowsEventLogEnabled, "Logger.WindowsEventLogEnabled");
 	RegGetStringIfExists(pt, settings.logSettings.WindowsEventLogLevel, "Logger.WindowsEventLogLevel");
 
-
+	
 	RegGetStringIfExists(pt, settings.httpSettings.Host, "Http.Host");
 	RegGetIntIfExists(pt, settings.httpSettings.Port, "Http.Port");
 	RegGetIntIfExists(pt, settings.httpSettings.ReadBufferSize, "Http.ReadBufferSize");
@@ -115,6 +115,7 @@ void SettingsLoader::loadFromIni(Settings& settings)
 	RegGetStringIfExists(pt, settings.authSettings.JwtHmacSecret, "Auth.JwtHmacSecret");
 	RegGetStringIfExists(pt, settings.authSettings.JwtRsaPublicKeyFile, "Auth.JwtRsaPublicKeyFile");
 	RegGetStringIfExists(pt, settings.authSettings.JwtRsaPrivateKeyFile, "Auth.JwtRsaPrivateKeyFile");
+	RegGetBoolIfExists(pt, settings.authSettings.AllowUnauthorizedRpcClients, "Auth.AllowUnauthorizedRpcClients");
 
 
 	m_iniPath = path;

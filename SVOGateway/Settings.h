@@ -27,6 +27,7 @@ struct Settings
 		logSettings.WindowsEventLogEnabled = true;
 		logSettings.WindowsEventLogLevel = "info";
 		logSettings.eventLogFacility = SvLog::EventLogFacility::Gateway;
+		authSettings.AllowUnauthorizedRpcClients = true;
 	}
 	bool dummySharedMemory {false};
 	SvHttp::WebsocketClientSettings observerSetting;

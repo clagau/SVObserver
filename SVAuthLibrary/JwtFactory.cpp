@@ -23,7 +23,7 @@ JwtFactory::JwtFactory(SignatureContext ctx)
 {
 }
 
-std::string JwtFactory::encode_header(const JwtAlgorithm& alg)
+std::string JwtFactory::encode_header(JwtAlgorithm alg)
 {
 	JwtHeader header;
 	header.set_typ("JWT");
@@ -59,7 +59,7 @@ std::string JwtFactory::encode_payload(
 
 std::string JwtFactory::create_signature(
 	const std::string& header_and_payload,
-	const JwtAlgorithm& algorithm)
+	JwtAlgorithm algorithm)
 {
 	std::string signature;
 	switch (algorithm)
@@ -88,7 +88,36 @@ std::string JwtFactory::create_signature(
 	return m_Crypto.encodeBase64Jwt(signature);
 }
 
-bool JwtFactory::split_token(std::array<std::string, 3>& parts, const std::string& token)
+bool JwtFactory::verify_signature(
+	const JwtParts& parts,
+	JwtAlgorithm algorithm)
+{
+
+	switch (algorithm)
+	{
+		case JwtAlgorithm::HS256:
+		{
+			const auto signature = create_signature(parts.header_and_payload, algorithm);
+			return signature == parts.signature;
+		}
+
+		case JwtAlgorithm::RS256:
+		{
+			const auto& publicKey = m_SignatureContext.PublicKey;
+			if (publicKey.empty())
+			{
+				throw std::runtime_error("No private key configured");
+			}
+			const auto signature = m_Crypto.decodeBase64Jwt(parts.signature);
+			return m_Crypto.rsaVerify(parts.header_and_payload, signature, publicKey);
+		}
+
+		default:
+			throw std::runtime_error("Unsupported JWT algorithm");
+	}
+}
+
+bool JwtFactory::split_token(JwtParts& parts, const std::string& token)
 {
 	auto header_end = token.find('.');
 	if (header_end == std::string::npos)
@@ -100,9 +129,10 @@ bool JwtFactory::split_token(std::array<std::string, 3>& parts, const std::strin
 	{
 		return false;
 	}
-	parts[0] = token.substr(0, header_end);
-	parts[1] = token.substr(header_end + 1, payload_end - header_end - 1);
-	parts[2] = token.substr(payload_end + 1);
+	parts.header = token.substr(0, header_end);
+	parts.payload = token.substr(header_end + 1, payload_end - header_end - 1);
+	parts.header_and_payload = token.substr(0, payload_end);
+	parts.signature = token.substr(payload_end + 1);
 
 	return true;
 }

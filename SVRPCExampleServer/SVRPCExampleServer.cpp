@@ -37,14 +37,6 @@ using namespace SvPb;
 using namespace SvRpc;
 using namespace SvRpc::Example;
 
-struct ClientChunk
-{
-	uint32_t revision;
-	std::string chunk;
-};
-
-static std::map<std::string, ClientChunk> s_clientChunks = {};
-static const auto s_emptyChunk = std::string {""};
 static DeviceModeType s_deviceMode = DeviceModeType::runMode;
 
 void register_auth_handler(RequestHandler& requestHandler, AuthManager* am)
@@ -389,98 +381,6 @@ static void register_dummy_handler(RequestHandler& requestHandler)
 	});
 }
 
-static void register_client_chunk_handler(RequestHandler& requestHandler)
-{
-	requestHandler.registerRequestHandler<
-		SVRCMessages,
-		SVRCMessages::kSaveClientChunkRequest,
-		SaveClientChunkRequest,
-		SaveClientChunkResponse>(
-		[](SaveClientChunkRequest&& req, Task<SaveClientChunkResponse> task)
-	{
-		SV_LOG_GLOBAL(info) << "SaveClientChunkRequest";
-		const auto& user = req.user();
-		const auto& oldRevision = req.revision();
-		const auto newRevision = oldRevision + 1;
-		auto it = s_clientChunks.find(user);
-		if (it != s_clientChunks.end())
-		{
-			auto& hdl = it->second;
-			if (hdl.revision != oldRevision)
-			{
-				SV_LOG_GLOBAL(warning)
-					<< "Revision in SaveClientChunkRequest does not match: "
-					<< oldRevision << " != " << hdl.revision;
-				auto error = build_error(SvPenv::badRequest, "Provided revision does not match");
-				SaveClientChunkError errorDetails;
-				errorDetails.set_requestrevision(oldRevision);
-				errorDetails.set_currentrevision(hdl.revision);
-				error.mutable_payload()->PackFrom(errorDetails);
-				task.error(error);
-				return;
-			}
-
-			hdl.revision = newRevision;
-			hdl.chunk = std::move(*req.mutable_chunk());
-		}
-		else
-		{
-			if (oldRevision != 0)
-			{
-				SV_LOG_GLOBAL(warning)
-					<< "Revision in SaveClientChunkRequest is not zero for initial save.";
-				task.error(build_error(SvPenv::badRequest, "Initial save must use revision 0"));
-				return;
-			}
-
-			ClientChunk hdl;
-			hdl.revision = newRevision;
-			hdl.chunk = std::move(*req.mutable_chunk());
-			s_clientChunks.emplace(user, std::move(hdl));
-		}
-
-		SaveClientChunkResponse res;
-		res.set_revision(newRevision);
-		task.finish(std::move(res));
-	});
-	requestHandler.registerRequestHandler<
-		SVRCMessages,
-		SVRCMessages::kLoadClientChunkRequest,
-		LoadClientChunkRequest,
-		LoadClientChunkResponse>(
-		[](LoadClientChunkRequest&& req, Task<LoadClientChunkResponse> task)
-	{
-		SV_LOG_GLOBAL(info) << "LoadClientChunkRequest";
-		const auto& user = req.user();
-		const auto& revision = req.revision();
-		auto it = s_clientChunks.find(user);
-		if (it != s_clientChunks.end())
-		{
-			auto& hdl = it->second;
-			if (revision > 0 && revision != hdl.revision)
-			{
-				SV_LOG_GLOBAL(warning)
-					<< "Revision in LoadClientChunkRequest does not match: "
-					<< revision << " != " << hdl.revision;
-				task.error(build_error(SvPenv::badRequest, "Provided revision does not match"));
-				return;
-			}
-			LoadClientChunkResponse res;
-			res.set_revision(hdl.revision);
-			res.set_chunk(hdl.chunk);
-			task.finish(std::move(res));
-		}
-		else
-		{
-			SV_LOG_GLOBAL(info) << "Request load for unknown user. Returning empty chunk.";
-			LoadClientChunkResponse res;
-			res.set_revision(0);
-			res.set_chunk(s_emptyChunk);
-			task.finish(std::move(res));
-		}
-	});
-}
-
 static boost::log::trivial::severity_level
 map_to_boost_log_severity(const LogSeverity& severity)
 {
@@ -548,7 +448,6 @@ int main()
 		register_auth_handler(requestHandler, &authManager);
 		register_example_handler(requestHandler, io_service);
 		register_dummy_handler(requestHandler);
-		register_client_chunk_handler(requestHandler);
 		register_log_handler(requestHandler);
 
 		auto rpcServer = std::make_unique<RPCServer>(&requestHandler);

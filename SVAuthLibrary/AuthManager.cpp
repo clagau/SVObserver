@@ -102,18 +102,25 @@ bool AuthManager::auth(const AuthRequest& req, AuthResponse& res)
 	const auto rc = m_JwtFactory.parse(jwt, accessToken);
 	if (rc != JwtFactory::Parse_Success)
 	{
-		SV_LOG_GLOBAL(info) << "Jwt parse error " << rc;
+		SV_LOG_GLOBAL(warning) << "Jwt parse error " << rc << " for token " << accessToken;
 		return false;
 	}
 
 	const auto& username = jwt.getPayload().name();
+	if (username.empty())
+	{
+		SV_LOG_GLOBAL(warning) << "Received token with empty username: " << accessToken;
+		return false;
+	}
 
 	auto authToken = std::string();
 	if (!generateAuthToken(username, authToken))
 	{
-		SV_LOG_GLOBAL(info) << "Error while generating auth token for user " << username;
+		SV_LOG_GLOBAL(warning) << "Error while generating auth token for user " << username;
 		return false;
 	}
+
+	SV_LOG_GLOBAL(debug) << "Issued token for user " << username << ": " << authToken;
 
 	res.set_authtoken(authToken);
 
@@ -122,11 +129,13 @@ bool AuthManager::auth(const AuthRequest& req, AuthResponse& res)
 
 bool AuthManager::rpcAuth(const std::string& auth_token)
 {
-	//@Todo[MEC][8.10] [25.09.2018]
-	return true;
-	// enforce that client passes a token
 	if (auth_token.empty())
 	{
+		if (m_rSettings.AllowUnauthorizedRpcClients)
+		{
+			return true;
+		}
+
 		SV_LOG_GLOBAL(info) << "Rejecting Websocket connection with empty token";
 		return false;
 	}
@@ -135,12 +144,12 @@ bool AuthManager::rpcAuth(const std::string& auth_token)
 	const auto rc = m_JwtFactory.parse(jwt, auth_token);
 	if (rc != JwtFactory::Parse_Success)
 	{
-		SV_LOG_GLOBAL(info) << "Jwt parse error " << rc;
+		SV_LOG_GLOBAL(warning) << "Jwt parse error " << rc << " for token " << auth_token;
 		return false;
 	}
 
 	// TODO: check user level
-	SV_LOG_GLOBAL(info) << "Received successful auth request on rpc connection";
+	SV_LOG_GLOBAL(debug) << "Received successful auth request on rpc connection";
 
 	return true;
 }

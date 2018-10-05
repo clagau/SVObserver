@@ -117,7 +117,15 @@ ServerRequestHandler::ServerRequestHandler(SharedMemoryAccessInterface* sma, SvA
 		sma->GetTriggerItems(req, task);
 	});
 
-
+	registerRequestHandler<
+		SvPb::SVRCMessages,
+		SvPb::SVRCMessages::kStoreClientLogsRequest,
+		SvPb::StoreClientLogsRequest,
+		SvPb::EmptyResponse>(
+		[sma](SvPb::StoreClientLogsRequest&& req, SvRpc::Task<SvPb::EmptyResponse> task)
+	{
+		sma->StoreClientLogs(req, task);
+	});
 }
 
 }

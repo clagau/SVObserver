@@ -48,6 +48,9 @@
     <ClInclude Include="MediaType.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="HttpClient.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -71,5 +74,13 @@
     <ClCompile Include="MediaType.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="HttpClient.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="HttpClient.inl">
+      <Filter>Headerdateien</Filter>
+    </None>
   </ItemGroup>
 </Project>

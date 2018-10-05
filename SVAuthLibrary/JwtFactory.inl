@@ -23,14 +23,14 @@ namespace SvAuth
 template<class Payload>
 JwtFactory::ParseResult JwtFactory::parse(Jwt<Payload>& jwt, const std::string& token)
 {
-	std::array<std::string, 3> parts;
+	JwtParts parts;
 	if (!split_token(parts, token))
 	{
 		return Parse_InvalidFormat;
 	}
 
 	JwtHeader header;
-	if (!decode_header(header, parts[0]))
+	if (!decode_header(header, parts.header))
 	{
 		return Parse_InvalidFormat;
 	}
@@ -41,15 +41,13 @@ JwtFactory::ParseResult JwtFactory::parse(Jwt<Payload>& jwt, const std::string& 
 		return Parse_UnsupportedAlgorithm;
 	}
 
-	const auto data = parts[0] + "." + parts[1];
-	auto signature = create_signature(data, algorithm);
-	if (signature != parts[2])
+	if (!verify_signature(parts, algorithm))
 	{
 		return Parse_InvalidSignature;
 	}
-	
+
 	JwtStandardFields standardFields;
-	if (!decode_payload(standardFields, jwt.getPayload(), parts[1]))
+	if (!decode_payload(standardFields, jwt.getPayload(), parts.payload))
 	{
 		return Parse_InvalidPayload;
 	}

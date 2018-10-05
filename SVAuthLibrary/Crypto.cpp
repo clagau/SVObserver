@@ -3,7 +3,7 @@
 /// \file Crypto.cpp
 /// All Rights Reserved
 //******************************************************************************
-/// Not much to see here.
+/// JWT (JSON Web Token) helper for generating and verfiying tokens.
 //******************************************************************************
 
 #include "stdafx.h"
@@ -153,6 +153,75 @@ cleanup:
 	if (bio) BIO_free(bio);
 	if (rsa) RSA_free(rsa);
 	if (sig) free(sig);
+
+	return result;
+}
+
+bool Crypto::rsaVerify(
+	const std::string& payload,
+	const std::string& signature,
+	const std::string& publicKey)
+{
+	bool result = false;
+	BIO* bio = nullptr;
+	RSA* rsa = nullptr;
+	SHA256_CTX sha256;
+	unsigned char hash[SHA256_DIGEST_LENGTH];
+	unsigned int sig_len = static_cast<unsigned int>(signature.size());
+	unsigned char* sig =
+		reinterpret_cast<unsigned char*>(const_cast<char*>(signature.data()));
+	int rc;
+
+	bio = BIO_new_mem_buf(publicKey.data(), static_cast<int>(publicKey.size()));
+	if (!bio)
+	{
+		//@Todo[][8.10] [05.10.2018] TODO: fail
+		goto cleanup;
+	}
+
+	rsa = PEM_read_bio_RSA_PUBKEY(bio, NULL, NULL, NULL);
+	if (!rsa)
+	{
+		auto errorTrack = ERR_get_error();
+		char *errorChar = new char[120];
+		errorChar = ERR_error_string(errorTrack, errorChar);
+		SV_LOG_GLOBAL(error) << "Parsing public key failed: " << errorChar;
+		goto cleanup;
+	}
+
+	rc = SHA256_Init(&sha256);
+	if (rc == 0)
+	{
+		goto cleanup;
+	}
+
+	rc = SHA256_Update(&sha256, payload.data(), payload.size());
+	if (rc == 0)
+	{
+		goto cleanup;
+	}
+
+	rc = SHA256_Final(hash, &sha256);
+	if (rc == 0)
+	{
+		goto cleanup;
+	}
+
+	rc = RSA_verify(NID_sha256, hash, SHA256_DIGEST_LENGTH, sig, sig_len, rsa);
+	if (rc == 0)
+	{
+		auto errorTrack = ERR_get_error();
+		char *errorChar = new char[120];
+		errorChar = ERR_error_string(errorTrack, errorChar);
+		SV_LOG_GLOBAL(error) << "RSA verify failed: " << errorChar;
+		goto cleanup;
+	}
+
+	result = true;
+
+cleanup:
+	if (bio) BIO_free(bio);
+	if (rsa) RSA_free(rsa);
 
 	return result;
 }

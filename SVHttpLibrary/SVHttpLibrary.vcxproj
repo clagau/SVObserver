@@ -165,6 +165,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="HttpClient.h" />
     <ClInclude Include="HttpRequest.h" />
     <ClInclude Include="HttpResponse.h" />
     <ClInclude Include="HttpServerConnection.h" />
@@ -178,6 +179,7 @@
     <ClInclude Include="WebsocketClientSettings.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="HttpClient.cpp" />
     <ClCompile Include="HttpServerConnection.cpp" />
     <ClCompile Include="MediaType.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -190,6 +192,9 @@
     <ClCompile Include="url.cpp" />
     <ClCompile Include="WebsocketClient.cpp" />
     <ClCompile Include="WebsocketClientFactory.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="HttpClient.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

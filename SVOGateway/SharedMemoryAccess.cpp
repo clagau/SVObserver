@@ -13,6 +13,7 @@
 
 #include "SharedMemoryAccess.h"
 
+#include "SVLogLibrary/Logging.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVSystemLibrary/SVVersionInfo.h"
 #include "SVUtilityLibrary/SVBitmapInfo.h"
@@ -147,6 +148,41 @@ void SharedMemoryAccess::QueryListItem(const SvPb::QueryListItemRequest& rReques
 	{
 		task.error(Error);
 	}
+}
+void SharedMemoryAccess::StoreClientLogs(const SvPb::StoreClientLogsRequest& rRequest, SvRpc::Task<SvPb::EmptyResponse> task)
+{
+	auto map_to_boost_log_severity = [](const SvPb::LogSeverity& severity) -> boost::log::trivial::severity_level
+	{
+		switch (severity)
+		{
+			case SvPb::LogSeverity::fatal:
+				return boost::log::trivial::fatal;
+			case SvPb::LogSeverity::error:
+				return boost::log::trivial::error;
+			case SvPb::LogSeverity::warning:
+				return boost::log::trivial::warning;
+			case SvPb::LogSeverity::info:
+				return boost::log::trivial::info;
+			case SvPb::LogSeverity::debug:
+				return boost::log::trivial::debug;
+			case SvPb::LogSeverity::trace:
+				return boost::log::trivial::trace;
+			default:
+				return boost::log::trivial::error;
+		}
+	};
+
+	const auto& client = rRequest.client();
+	for (const auto& entry : rRequest.logs())
+	{
+		const auto severity = map_to_boost_log_severity(entry.severity());
+		BOOST_LOG_STREAM_WITH_PARAMS(
+			::boost::log::trivial::logger::get(),
+			(::boost::log::keywords::severity = severity)
+		) << "[" << client << "] " << entry.message();
+	}
+
+	task.finish(SvPb::EmptyResponse());
 }
 
 }// namespace SvOgw

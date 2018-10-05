@@ -171,6 +171,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AuthClient.h" />
     <ClInclude Include="AuthManager.h" />
     <ClInclude Include="AuthManagerSettings.h" />
     <ClInclude Include="Crypto.h" />
@@ -182,6 +183,7 @@
     <ClInclude Include="UserDatabaseLoader.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AuthClient.cpp" />
     <ClCompile Include="AuthManager.cpp" />
     <ClCompile Include="Crypto.cpp" />
     <ClCompile Include="JwtFactory.cpp" />

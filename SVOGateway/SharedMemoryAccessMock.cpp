@@ -12,6 +12,7 @@
 //Moved to precompiled header: #include <future>
 //Moved to precompiled header: #include <queue>
 
+#include "SVLogLibrary/Logging.h"
 #include "SharedMemoryAccessInterface.h"
 #include "SharedMemoryAccessMock.h"
 
@@ -131,6 +132,14 @@ void SharedMemoryAccessMock::QueryListItem(const SvPb::QueryListItemRequest&, Sv
 	task.error(err);
 }
 
+void SharedMemoryAccessMock::StoreClientLogs(const SvPb::StoreClientLogsRequest& rRequest, SvRpc::Task<SvPb::EmptyResponse> task)
+{
+	for (const auto& entry : rRequest.logs())
+	{
+		SV_LOG_GLOBAL(info) << "[" << rRequest.client() << "] " << entry.message();
+	}
+	task.finish(SvPb::EmptyResponse());
+}
 
 void SharedMemoryAccessMock::getProduct(SvPb::Product& product, bool name_in_response)
 {

@@ -23,6 +23,7 @@ public:
 	std::string hmac(const std::string& payload, const std::string& secret, ALG_ID alg);
 
 	std::string rsaSign(const std::string& payload, const std::string& privateKey);
+	bool rsaVerify(const std::string& payload, const std::string& signature, const std::string& publicKey);
 
 	std::string encodeBase64(const std::string&);
 	std::string decodeBase64(const std::string&);
