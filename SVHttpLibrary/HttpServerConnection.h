@@ -80,7 +80,7 @@ private:
 	void ws_send_next_frame();
 	void ws_on_frame_sent(const boost::system::error_code& error, size_t bytes_sent);
 
-	void ws_on_error(const boost::system::error_code& error);
+	void ws_on_error(const boost::system::error_code& error, const char* source);
 
 private:
 	bool base64decode(std::string&, const boost::beast::string_view&);

@@ -536,7 +536,7 @@ void HttpServerConnection::ws_on_handshake(const boost::system::error_code& erro
 {
 	if (error)
 	{
-		ws_on_error(error);
+		ws_on_error(error, "ws_on_handshake()");
 		return;
 	}
 
@@ -564,7 +564,7 @@ void HttpServerConnection::ws_on_read(const boost::system::error_code& error, si
 {
 	if (error)
 	{
-		ws_on_error(error);
+		ws_on_error(error, "ws_on_read()");
 		if (m_WsSocket.is_open())
 		{
 			boost::system::error_code ec;
@@ -649,7 +649,7 @@ void HttpServerConnection::ws_on_frame_sent(const boost::system::error_code& err
 
 	if (error)
 	{
-		ws_on_error(error);
+		ws_on_error(error, "ws_on_frame_sent()");
 		if (m_WsSocket.is_open())
 		{
 			boost::system::error_code ec;
@@ -665,7 +665,7 @@ void HttpServerConnection::ws_on_frame_sent(const boost::system::error_code& err
 	ws_send_next_frame();
 }
 
-void HttpServerConnection::ws_on_error(const boost::system::error_code& error)
+void HttpServerConnection::ws_on_error(const boost::system::error_code& error, const char* source)
 {
 	if (!error)
 	{
@@ -688,7 +688,7 @@ void HttpServerConnection::ws_on_error(const boost::system::error_code& error)
 		return;
 	}
 
-	SV_LOG_GLOBAL(warning) << "client connection error: " << error;
+	SV_LOG_GLOBAL(warning) << "client connection error in " << source << ": " << error;
 }
 
 bool HttpServerConnection::base64decode(std::string& out, const boost::beast::string_view& in)
