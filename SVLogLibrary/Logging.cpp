@@ -4,10 +4,10 @@
 /// All Rights Reserved
 //******************************************************************************
 /// Logging utils for configuring the Boost.Log V2 logger.
+//Backend to write Entries to WindowEventLog using Entries from SVMessage.dll
 //******************************************************************************
 
 #include "stdafx.h"
-
 #include "Logging.h"
 
 #include <iostream>
@@ -27,6 +27,7 @@
 #include <boost/core/null_deleter.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/format.hpp>
 #include <boost/function.hpp>
 #include <boost/log/core.hpp>
 #include <boost/log/expressions.hpp>
@@ -36,10 +37,7 @@
 #include <boost/log/utility/setup/common_attributes.hpp>
 
 #include "Definitions/StringTypeDef.h"
-
 #include "SVMessage/SVMessage.h"
-#include "SVStatusLibrary/MessageTextEnum.h"
-#include "SVStatusLibrary/MessageManager.h"
 
 using namespace boost::log;
 using namespace boost::log::sinks;
@@ -78,16 +76,21 @@ static int extract_line(record_view const& rec)
 	}
 	return line_attr.extract_or_default<int, void, int>(default_line);
 }
-
-/// Log backend that uses SVMessage and SVStatusLibrary for logging.
-class sv_message_log_backend
+/// Log backend that uses SVMessage but not  SVStatusLibrary for logging to 
+//Windows EventLog
+class windows_event_log_backend
 	: public basic_formatted_sink_backend<char, combine_requirements<synchronized_feeding>::type>
 {
 public:
-	BOOST_LOG_API sv_message_log_backend(severity_level MinSeverity, SvLog::EventLogFacility facility)
-		: m_MinSeverity(MinSeverity)
-		, m_MessageManager(SvStl::LogOnly)
+	BOOST_LOG_API windows_event_log_backend(const std::string& source, SvLog::EventLogFacility facility, severity_level MinSeverity)
+		: m_hdl(RegisterEventSource(NULL, source.c_str())), m_level(MinSeverity)
 	{
+		if (!m_hdl)
+		{
+			auto err = get_last_error_as_string();
+			auto msg = "Unable to register event source: " + err;
+			SV_LOG_GLOBAL(error) << msg;
+		}
 		switch (facility)
 		{
 			case SvLog::EventLogFacility::Gateway:
@@ -112,18 +115,24 @@ public:
 				break;
 		}
 
-
 	}
 
-	BOOST_LOG_API void consume(record_view const& rec, const std::string& formatted_record)
+	BOOST_LOG_API ~windows_event_log_backend()
 	{
+		DeregisterEventSource(m_hdl);
+	}
+
+	BOOST_LOG_API void consume(record_view const& rec, const std::string& msg)
+	{
+
 		auto severity = extract_severity(rec);
-		if (severity >= m_MinSeverity)
+		if (severity >= m_level)
 		{
-			const auto type = map_to_type(severity);
+			const auto EventId = map_to_EventId(severity);
+			auto type = map_to_type(severity);
 			const auto file = extract_file(rec);
 			const auto line = extract_line(rec);
-			log_impl(type, file, line, formatted_record);
+			log_impl(EventId, type, file, line, msg);
 		}
 	}
 
@@ -139,7 +148,7 @@ private:
 		return severity_attr.extract_or_default<severity_level, void, severity_level>(default_severity);
 	}
 
-	DWORD map_to_type(severity_level severity_level)
+	DWORD map_to_EventId(severity_level severity_level)
 	{
 		switch (severity_level)
 		{
@@ -157,23 +166,71 @@ private:
 		}
 	}
 
-	void log_impl(DWORD type, const std::string& file, int line, const std::string& Message)
+	WORD map_to_type(trivial::severity_level severity_level)
 	{
-		SvDef::StringVector MessageParams;
-		MessageParams.push_back(Message);
-		SvStl::SourceFileParams SourceFileParams(StdMessageParams);
-		SourceFileParams.m_FileName = file;
-		SourceFileParams.m_Line = line;
-		m_MessageManager.setMessage(type, SvStl::Tid_Default, MessageParams, SourceFileParams);
+		switch (severity_level)
+		{
+			case trivial::trace:
+			case trivial::debug:
+			case trivial::info:
+				return EVENTLOG_INFORMATION_TYPE;
+
+			case trivial::warning:
+				return EVENTLOG_WARNING_TYPE;
+
+			case trivial::error:
+			case trivial::fatal:
+				return EVENTLOG_ERROR_TYPE;
+
+			default:
+				return EVENTLOG_INFORMATION_TYPE;
+		}
+	}
+
+	WORD Event2Category(DWORD EventId)
+	{
+		return ((EventId & 0x0fff0000) >> 16) & 0x00ff;
+	}
+
+	bool log_impl(DWORD eventId, WORD type, const std::string& file, int line, const std::string& Message)
+	{
+		PSID user = NULL;      // use process' user
+		DWORD binDataSize = 0; // no additional binary data provided
+		LPVOID binData = NULL;
+		std::string lineStr;
+		lineStr = boost::str(boost::format("%d") % line);
+		const WORD numStrings = 9;
+		LPCTSTR strings[9] = {"\n",NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL};
+		strings[1] = file.c_str();
+		strings[2] = lineStr.c_str();
+		strings[8] = Message.c_str();
+		return (TRUE == ReportEvent(m_hdl, type, Event2Category(eventId), eventId, user, numStrings, binDataSize, strings, binData));
+	}
+
+	std::string get_last_error_as_string()
+	{
+		DWORD errorMessageID = ::GetLastError();
+		if (errorMessageID == 0)
+		{
+			return std::string();
+		}
+
+		DWORD flags = FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS;
+		DWORD languageId = MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT);
+		LPSTR messageBuffer = NULL;
+		size_t size = FormatMessageA(flags, NULL, errorMessageID, languageId, (LPSTR)&messageBuffer, 0, NULL);
+
+		std::string message(messageBuffer, size);
+		LocalFree(messageBuffer);
+		return message;
 	}
 
 private:
-	trivial::severity_level m_MinSeverity;
-	SvStl::MessageMgrStd m_MessageManager;
-	EventLogFacility m_EventLogFacility;
 	DWORD m_MessageInfo {SVMSG_SVGateway_2_GENERAL_INFORMATIONAL};
 	DWORD m_MessageWarning {SVMSG_SVGateway_1_GENERAL_WARNING};
 	DWORD m_MessageError {SVMSG_SVGateway_0_GENERAL_ERROR};
+	trivial::severity_level m_level;
+	HANDLE m_hdl;
 };
 }
 
@@ -286,8 +343,9 @@ void init_logging(const LogSettings& settings)
 			}
 		}
 		auto facility = settings.eventLogFacility;
-		auto backend = boost::make_shared<sv_message_log_backend>(event_log_level, facility);
-		auto sink = boost::make_shared<synchronous_sink<sv_message_log_backend>>(backend);
+
+		auto backend = boost::make_shared<windows_event_log_backend>("SVException", facility, event_log_level);
+		auto sink = boost::make_shared<synchronous_sink<windows_event_log_backend>>(backend);
 		core::get()->add_sink(sink);
 		min_LogLevel = min_LogLevel < event_log_level ? min_LogLevel : event_log_level;
 	}
