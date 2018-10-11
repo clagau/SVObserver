@@ -566,5 +566,9 @@ namespace SvStl
 		{Tid_SetParameterToMonitorListFailed, _T("Not all parameter could be set.")},
 		{Tid_SetAuxiliaryParameterToMonitorListFailed, _T("Not all auxiliary parameter could be set. Check if auxiliary is turn on correctly.") },
 		{Tid_SetResultParameterToMonitorListFailed, _T("Not all result parameter could be set. Check if all needed results added to the analyzer.")},
-	};
+
+		{Tid_InvalidMemoryPointer, _T("Invalid Memory Pointer")},
+		{Tid_InvalidMatroxType, _T("Invalid Matrox Type")},
+		{ Tid_InvalidMatroxAttribute, _T("Invalid Matrox Attribute") }
+};
 } //namespace SvStl

@@ -21,11 +21,12 @@
 #include "SVStatusLibrary/MessageContainer.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
+#include <boost/format.hpp>
 #pragma endregion Includes
 
 enum ImageBands
 {
-	SingleBand = 1, 
+	SingleBand = 1,
 	MaxColorBands = 3
 };
 
@@ -61,10 +62,10 @@ SVMatroxBufferInterface::SVMatroxBufferInterface()
 /**
 @SVOperationName Convert2MatroxType - SVMatroxBufferTypeEnum
 
-@SVOperationDescription This function converts the SVMatroxBufferTypeEnum to a Matrox Type. 
+@SVOperationDescription This function converts the SVMatroxBufferTypeEnum to a Matrox Type.
 
 */
-long SVMatroxBufferInterface::Convert2MatroxType(SVMatroxBufferTypeEnum p_eType)  
+long SVMatroxBufferInterface::Convert2MatroxType(SVMatroxBufferTypeEnum p_eType)
 {
 	long l_lMatroxType = 0;
 
@@ -264,10 +265,10 @@ __int64 SVMatroxBufferInterface::Convert2MatroxType(SVMatroxBufferAttributeEnum 
 /**
 @SVOperationName Convert2MatroxType - SVMatroxBufferInfoEnum
 
-@SVOperationDescription This function converts the SVMatroxBufferTypeEnum to a Matrox Type. 
+@SVOperationDescription This function converts the SVMatroxBufferTypeEnum to a Matrox Type.
 
 */
-long SVMatroxBufferInterface::Convert2MatroxType(SVMatroxBufferInfoEnum p_eType) 
+long SVMatroxBufferInterface::Convert2MatroxType(SVMatroxBufferInfoEnum p_eType)
 {
 	long l_lMatroxType = 0;
 
@@ -434,7 +435,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, const SVMatroxB
 		}
 	}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
@@ -494,12 +495,12 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, const LPBITMAPI
 			{
 				// Allocate a multi or single band image buffer
 				MIL_ID l_NewID = MbufAllocColor(M_DEFAULT_HOST,
-								pbmhInfo->biBitCount <= Pixel8 ? SingleBand : MaxColorBands,
-								pbmhInfo->biWidth, 
-								pbmhInfo->biHeight, 
-								type,
-								lAttrib,
-								M_NULL);
+					pbmhInfo->biBitCount <= Pixel8 ? SingleBand : MaxColorBands,
+					pbmhInfo->biWidth,
+					pbmhInfo->biHeight,
+					type,
+					lAttrib,
+					M_NULL);
 
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
 
@@ -516,7 +517,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, const LPBITMAPI
 
 	}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
@@ -539,8 +540,8 @@ HRESULT SVMatroxBufferInterface::Create(const SVMatroxSystem& p_rSystem, SVMatro
 	try
 #endif
 	{
-		long l_lType = Convert2MatroxType( p_CreateStruct.m_eType );
-		__int64 l_lAttrib = Convert2MatroxType( p_CreateStruct.m_eAttribute );
+		long l_lType = Convert2MatroxType(p_CreateStruct.m_eType);
+		__int64 l_lAttrib = Convert2MatroxType(p_CreateStruct.m_eAttribute);
 
 		if (0 != l_lType && 0 != l_lAttrib)
 		{
@@ -557,14 +558,14 @@ HRESULT SVMatroxBufferInterface::Create(const SVMatroxSystem& p_rSystem, SVMatro
 					if (M_LUT == (l_lAttrib & M_LUT))	// Mil help states that LUT must be stored in planar format.
 					{
 						l_lAttrib |= M_PLANAR;
-						if (M_DIB == (l_lAttrib & M_DIB)) 
+						if (M_DIB == (l_lAttrib & M_DIB))
 						{
 							// Remove M_DIB as it is not allowed with M_PLANAR
 							l_lAttrib ^= M_DIB;
 						}
 					}
 
-					if (M_DIB == (l_lAttrib & M_DIB)) 
+					if (M_DIB == (l_lAttrib & M_DIB))
 					{
 						l_lAttrib |= M_PACKED + M_BGR32;
 					}
@@ -600,7 +601,7 @@ HRESULT SVMatroxBufferInterface::Create(const SVMatroxSystem& p_rSystem, SVMatro
 		}
 	}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
@@ -675,7 +676,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, const SVMatroxB
 
 	}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
@@ -698,7 +699,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, const SVMatroxB
 	try
 #endif
 	{
-		if ( !p_CreateChildStruct.m_rParentBufId.empty())
+		if (!p_CreateChildStruct.m_rParentBufId.empty())
 		{
 			SVMatroxResourceMonitor::SVAutoLock l_AutoLock;
 
@@ -742,7 +743,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, const SVMatroxB
 					{
 						rBuffer.clear();
 					}
-					rBuffer.m_BufferPtr = SVMatroxBufferPtr{std::make_shared<SVMatroxImageChildBuffer>(p_CreateChildStruct.m_rParentBufId.m_BufferPtr, childBufID, "SVMatroxBufferInterface::Create-CreateChildBuffer") };
+					rBuffer.m_BufferPtr = SVMatroxBufferPtr {std::make_shared<SVMatroxImageChildBuffer>(p_CreateChildStruct.m_rParentBufId.m_BufferPtr, childBufID, "SVMatroxBufferInterface::Create-CreateChildBuffer")};
 				}
 			}
 		}
@@ -753,7 +754,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, const SVMatroxB
 
 	}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
@@ -804,7 +805,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, SVMatroxBufferC
 				}
 				else
 				{
-					l_lAttrib &= ~M_PACKED ;  //  Cannot have M_PACKED with a mono buffer.
+					l_lAttrib &= ~M_PACKED;  //  Cannot have M_PACKED with a mono buffer.
 					if (M_IS_FORMAT_RGB_BGR(l_lAttrib))
 					{
 						l_lAttrib &= ~0xff00;  // remove rgb or bgr attribute
@@ -818,7 +819,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, SVMatroxBufferC
 						p_CreateColorStruct.m_PitchWidth,
 						reinterpret_cast<void*>(*p_CreateColorStruct.m_ppArrayOfDataPtr),
 						M_NULL);
-				}				
+				}
 
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
 
@@ -835,7 +836,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, SVMatroxBufferC
 
 	}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
@@ -867,10 +868,10 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, const SVMatroxB
 		// Clear first error...
 		l_Code = SVMatroxApplicationInterface::GetFirstError();
 		MbufInquire(p_CreateFrom.GetIdentifier(), M_SIZE_BAND, &l_lBandSize);
-		MbufInquire(p_CreateFrom.GetIdentifier(), M_SIZE_X , &l_lSizeX);
-		MbufInquire(p_CreateFrom.GetIdentifier(), M_SIZE_Y , &l_lSizeY);
-		MbufInquire(p_CreateFrom.GetIdentifier(), M_TYPE , &l_lType);
-		MbufInquire(p_CreateFrom.GetIdentifier(), M_EXTENDED_ATTRIBUTE , &l_lAttrib);
+		MbufInquire(p_CreateFrom.GetIdentifier(), M_SIZE_X, &l_lSizeX);
+		MbufInquire(p_CreateFrom.GetIdentifier(), M_SIZE_Y, &l_lSizeY);
+		MbufInquire(p_CreateFrom.GetIdentifier(), M_TYPE, &l_lType);
+		MbufInquire(p_CreateFrom.GetIdentifier(), M_EXTENDED_ATTRIBUTE, &l_lAttrib);
 
 		l_Code = SVMatroxApplicationInterface::GetFirstError();
 
@@ -895,7 +896,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, const SVMatroxB
 				}
 				else
 				{
-					l_lAttrib &= ~M_PACKED ;  //  Cannot have M_PACKED with a mono buffer.
+					l_lAttrib &= ~M_PACKED;  //  Cannot have M_PACKED with a mono buffer.
 					if (M_IS_FORMAT_RGB_BGR(l_lAttrib))
 					{
 						l_lAttrib &= ~0xff00;  // remove rgb or bgr attribute
@@ -919,7 +920,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, const SVMatroxB
 
 	}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
@@ -987,7 +988,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, HBITMAP& p_rHbm
 
 			// we always use 8 bit per plane
 			long type = Pixel8 + M_UNSIGNED;
-			
+
 			if (Pixel32 == l_BitCount)
 			{
 				lAttrib += (M_BGR32 + M_PACKED);
@@ -1011,12 +1012,12 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, HBITMAP& p_rHbm
 
 				// Allocate a multi or single band image buffer
 				MbufAllocColor(M_DEFAULT_HOST,
-								l_BitCount <= Pixel8 ? SingleBand : MaxColorBands,
-								l_Width, 
-								l_Height, 
-								type,
-								lAttrib,
-								&l_NewID);
+					l_BitCount <= Pixel8 ? SingleBand : MaxColorBands,
+					l_Width,
+					l_Height,
+					type,
+					lAttrib,
+					&l_NewID);
 
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
 
@@ -1025,7 +1026,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, HBITMAP& p_rHbm
 				if (S_OK == l_Code)
 				{
 					LPVOID pHostBuffer = nullptr;
-					pHostBuffer = (LPVOID) MbufInquire(l_NewID, M_HOST_ADDRESS, M_NULL);
+					pHostBuffer = (LPVOID)MbufInquire(l_NewID, M_HOST_ADDRESS, M_NULL);
 
 					createImageBufferPtr(rBuffer, l_NewID, std::string(_T("SVMatroxBufferInterface::Create-HBITMAP")));
 
@@ -1043,7 +1044,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, HBITMAP& p_rHbm
 		}// end if (nullptr != p_rHbm)
 	}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
@@ -1078,22 +1079,22 @@ HRESULT SVMatroxBufferInterface::Create(HBITMAP& p_rHbm, const SVMatroxBuffer& p
 			if (pbmInfo)
 			{
 				BITMAPINFOHEADER* pbmhInfo = reinterpret_cast<LPBITMAPINFOHEADER>(&pbmInfo->bmiHeader);
-			
+
 				// Source images seem to be flipped even though MIL is not supposed to flip them
 				if (pbmhInfo->biHeight > 0)
 				{
-					pbmhInfo->biHeight =  pbmhInfo->biHeight * -1;
+					pbmhInfo->biHeight = pbmhInfo->biHeight * -1;
 				}
-			
+
 				// Calculate the absolute height
 				long lHeight = pbmhInfo->biHeight * ((pbmhInfo->biHeight < 0) ? -1 : 1);
-			
+
 				// Make sure image size is calculated
 				if (0 == pbmhInfo->biSizeImage)
 				{
 					pbmhInfo->biSizeImage = ((((pbmhInfo->biWidth * pbmhInfo->biBitCount) + 31) & ~31) >> 3) * lHeight;
 				}
-			
+
 				// Make sure color table size is calculated
 				long lNumColor = pbmhInfo->biClrUsed;
 				if (0 == lNumColor)
@@ -1104,10 +1105,10 @@ HRESULT SVMatroxBufferInterface::Create(HBITMAP& p_rHbm, const SVMatroxBuffer& p
 					}
 				}
 				long lTabSize = lNumColor * sizeof(RGBQUAD);
-			
+
 				// Calculate total size buffer needed for image
 				long lBufSize = sizeof(BITMAPINFOHEADER) + lTabSize + pbmhInfo->biSizeImage;
-		
+
 				//-------------------------------------------------------------------------------
 
 				// Get buffer from MIL 
@@ -1192,7 +1193,7 @@ HRESULT SVMatroxBufferInterface::Create(HBITMAP& p_rHbm, const SVMatroxBuffer& p
 		}
 	}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
@@ -1205,7 +1206,7 @@ HRESULT SVMatroxBufferInterface::Create(HBITMAP& p_rHbm, const SVMatroxBuffer& p
 /**
 @SVOperationName GenLutRamp
 
-@SVOperationDescription This function generates a ramp, inverse ramp, or a constant in the specified LUT buffer region (StartIndex to EndIndex). The increment between LUT entries is the difference between StartValue and EndValue, divided by the number of entries. 
+@SVOperationDescription This function generates a ramp, inverse ramp, or a constant in the specified LUT buffer region (StartIndex to EndIndex). The increment between LUT entries is the difference between StartValue and EndValue, divided by the number of entries.
 
 */
 HRESULT SVMatroxBufferInterface::GenLutRamp(SVMatroxBuffer& p_rMilId, long StartIndex, double StartValue, long EndIndex, double EndValue)
@@ -1227,7 +1228,7 @@ HRESULT SVMatroxBufferInterface::GenLutRamp(SVMatroxBuffer& p_rMilId, long Start
 
 	}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
@@ -1306,7 +1307,7 @@ HRESULT SVMatroxBufferInterface::GetPositionPoint(SVPoint& p_rPoint, const SVMat
 
 					if (S_OK == l_Status)
 					{
-						p_rPoint = SVPoint(static_cast< long >(l_OffsetX), static_cast< long >(l_OffsetY));
+						p_rPoint = SVPoint(static_cast<long>(l_OffsetX), static_cast<long>(l_OffsetY));
 					}
 				}
 				else
@@ -1370,7 +1371,7 @@ HRESULT SVMatroxBufferInterface::GetBitmapInfo(LPBITMAPINFO& p_rpBitmapInfo, SVM
 		}
 	}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
@@ -1425,19 +1426,19 @@ HRESULT SVMatroxBufferInterface::GetBitmapInfo(SVBitmapInfo& p_rBitmapInfo, cons
 
 				if (S_OK == SVMatroxBufferInterface::Get(p_rBuffer, SVDataFormat, l_DataFormat))
 				{
-						NB_OF_BITS_PER_PIXEL(l_DataFormat, l_BitCount);
+					NB_OF_BITS_PER_PIXEL(l_DataFormat, l_BitCount);
 				}
 
 				if (l_BitCount < 1)
 				{
-					l_BitCount = static_cast< unsigned short >(l_PixelDepth * l_BandSize); 
+					l_BitCount = static_cast<unsigned short>(l_PixelDepth * l_BandSize);
 				}
 			}
 		}
 
 		if (S_OK == l_Status)
 		{
-			p_rBitmapInfo = SVBitmapInfo(static_cast< long >(l_Width), static_cast< long >(-l_Height), l_BitCount, SVBitmapInfo::GetDefaultColorTable(l_BitCount));
+			p_rBitmapInfo = SVBitmapInfo(static_cast<long>(l_Width), static_cast<long>(-l_Height), l_BitCount, SVBitmapInfo::GetDefaultColorTable(l_BitCount));
 		}
 	}
 	else
@@ -1496,7 +1497,7 @@ HRESULT SVMatroxBufferInterface::GetHostAddress(LPVOID p_rpHostAddress, const SV
 		}
 	}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
@@ -1529,7 +1530,7 @@ HRESULT SVMatroxBufferInterface::GetDDSurfaceInterfacePtr(LPVOID& p_rpSurface, c
 		}
 	}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
@@ -1538,7 +1539,7 @@ HRESULT SVMatroxBufferInterface::GetDDSurfaceInterfacePtr(LPVOID& p_rpSurface, c
 	assert(S_OK == l_Code);
 	return l_Code;
 }
- 
+
 bool SVMatroxBufferInterface::IsChildBuffer(const SVMatroxBuffer& p_rBuffer)
 {
 	bool bIsChild = false;
@@ -1569,7 +1570,7 @@ bool SVMatroxBufferInterface::IsColorBuffer(const SVMatroxBuffer& p_rBuffer)
 	bool bIsColor = false;
 	long numBands = static_cast<long>(MbufInquire(p_rBuffer.GetIdentifier(), M_SIZE_BAND, M_NULL));
 	bIsColor = (MaxColorBands == numBands) ? true : false;
-	
+
 	return bIsColor;
 }
 
@@ -1604,7 +1605,7 @@ HRESULT SVMatroxBufferInterface::CopyBuffer(SVMatroxBuffer& p_rTo, const SVMatro
 		}
 	}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
@@ -1614,43 +1615,49 @@ HRESULT SVMatroxBufferInterface::CopyBuffer(SVMatroxBuffer& p_rTo, const SVMatro
 	return l_Code;
 }
 
-HRESULT  SVMatroxBufferInterface::InquireBufferProperties(const SVMatroxBuffer& rBuffer, MatroxImageProps& rImageProps )
+HRESULT  SVMatroxBufferInterface::InquireBufferProperties(const SVMatroxBuffer& rBuffer, MatroxImageProps& rImageProps)
 {
-	HRESULT Code(S_OK); 
+	HRESULT Code(S_OK);
 	Code = SVMatroxApplicationInterface::GetFirstError();
 	rImageProps.PitchByte = MbufInquire(rBuffer.GetIdentifier(), M_PITCH_BYTE, M_NULL);
 	rImageProps.Pitch = MbufInquire(rBuffer.GetIdentifier(), M_PITCH, M_NULL);
 	rImageProps.Bandsize = MbufInquire(rBuffer.GetIdentifier(), M_SIZE_BAND, M_NULL);
-	rImageProps.sizeX = MbufInquire(rBuffer.GetIdentifier(), M_SIZE_X , M_NULL);
-	rImageProps.sizeY = MbufInquire(rBuffer.GetIdentifier(), M_SIZE_Y ,M_NULL);
-	rImageProps.Matrox_type = MbufInquire(rBuffer.GetIdentifier(), M_TYPE ,M_NULL);
-	rImageProps.Attrib = MbufInquire(rBuffer.GetIdentifier(), M_EXTENDED_ATTRIBUTE , M_NULL);
+	rImageProps.sizeX = MbufInquire(rBuffer.GetIdentifier(), M_SIZE_X, M_NULL);
+	rImageProps.sizeY = MbufInquire(rBuffer.GetIdentifier(), M_SIZE_Y, M_NULL);
+	rImageProps.Matrox_type = MbufInquire(rBuffer.GetIdentifier(), M_TYPE, M_NULL);
+	MIL_INT64 ExtendedAttributes;
+	MbufInquire(rBuffer.GetIdentifier(), M_EXTENDED_ATTRIBUTE, &ExtendedAttributes);
+	rImageProps.Attrib = ExtendedAttributes;
 	rImageProps.Bytesize = MbufInquire(rBuffer.GetIdentifier(), M_SIZE_BYTE, M_NULL);
-
-	
-
 	Code = SVMatroxApplicationInterface::GetLastStatus();
 	return Code;
 }
 
-HRESULT SVMatroxBufferInterface::CreateBuffer(SVMatroxBuffer& rBuffer, MatroxImageProps& rImageProps , void *pMemory)
+HRESULT SVMatroxBufferInterface::CreateBuffer(SVMatroxBuffer& rBuffer, MatroxImageProps& rImageProps, void *pMemory)
 {
-
-	HRESULT Code(S_OK); 
-	if(pMemory == nullptr || rImageProps.Attrib == 0  || rImageProps.Matrox_type == 0)
+	HRESULT Code(S_OK);
+	if (pMemory == nullptr)
 	{
-		SvStl::MessageContainer message(SVMSG_SVO_5079_CREATEBUFFERFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16226);
+		SvStl::MessageContainer message(SVMSG_SVO_5079_CREATEBUFFERFAILED, SvStl::Tid_InvalidMemoryPointer,  SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16226);
 		throw message;
-	
 	}
-
+	else if (rImageProps.Matrox_type == 0)
+	{
+		SvStl::MessageContainer message(SVMSG_SVO_5079_CREATEBUFFERFAILED, SvStl::Tid_InvalidMatroxType,SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16226);
+		throw message;
+	}
+	else if (rImageProps.Attrib == 0)
+	{
+		SvStl::MessageContainer message(SVMSG_SVO_5079_CREATEBUFFERFAILED, SvStl::Tid_InvalidMatroxAttribute, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16226);
+		throw message;
+	}
 
 	bool mono = M_IS_FORMAT_MONO(rImageProps.Attrib);
 	bool RGB = M_IS_FORMAT_RGB_BGR(rImageProps.Attrib);
 	bool yuv = M_IS_FORMAT_YUV(rImageProps.Attrib);
 	int mi = M_BIT_FIELD_FORMAT(rImageProps.Attrib);
 	MIL_ID NewID = M_NULL;
-	if (MaxColorBands == rImageProps.Bandsize  || RGB || yuv)
+	if (MaxColorBands == rImageProps.Bandsize || RGB || yuv)
 	{
 		assert(rImageProps.Attrib & M_PACKED);
 		void* pa[3];
@@ -1689,9 +1696,10 @@ HRESULT SVMatroxBufferInterface::CreateBuffer(SVMatroxBuffer& rBuffer, MatroxIma
 	}
 	else
 	{
-		SvStl::MessageContainer message(SVMSG_SVO_5079_CREATEBUFFERFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16227);
+		SvDef::StringVector msg;
+		msg.push_back(boost::str(boost::format("Matrox Code: 0X%08X") % Code));
+		SvStl::MessageContainer message(SVMSG_SVO_5079_CREATEBUFFERFAILED, SvStl::Tid_Default, msg, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16226);
 		throw message;
-
 	}
 
 
@@ -1712,14 +1720,14 @@ HRESULT SVMatroxBufferInterface::CopyBuffer(SVMatroxBuffer& p_rTo, SVMatroxIdent
 			MbufCopy(p_From, p_rTo.GetIdentifier());
 
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
-		}
+	}
 		else
 		{
 			l_Code = SVMEE_INVALID_HANDLE;
 		}
-	}
+}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
@@ -1741,14 +1749,14 @@ HRESULT SVMatroxBufferInterface::CopyBuffer(SVMatroxIdentifier p_To, const SVMat
 			MbufCopy(p_rFrom.GetIdentifier(), p_To);
 
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
-		}
+	}
 		else
 		{
 			l_Code = SVMEE_INVALID_HANDLE;
 		}
-	}
+}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
@@ -1779,14 +1787,14 @@ HRESULT SVMatroxBufferInterface::CopyBuffer(SVMatroxBuffer& p_rTo, const SVMatro
 				p_lYOffset);
 
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
-		}
+	}
 		else
 		{
 			l_Code = SVMEE_INVALID_HANDLE;
 		}
-	}
+}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
@@ -1816,14 +1824,14 @@ HRESULT SVMatroxBufferInterface::CopyBuffer(SVMatroxBuffer& p_rTo, const SVMatro
 				p_lBand);
 
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
-		}
+	}
 		else
 		{
 			l_Code = SVMEE_INVALID_HANDLE;
 		}
-	}
+}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
@@ -1883,7 +1891,7 @@ HRESULT SVMatroxBufferInterface::CopyBuffer(SVMatroxBuffer& p_rMilId, HBITMAP& p
 			{
 				l_Code = SVImageConvertorGDI::CopyDIBits(&(dib.dsBmih), dib.dsBm.bmBits, &(pbmInfoMil->bmiHeader), pHostBuffer);
 			}
-			else 
+			else
 			{
 				// No BitmapInfo, either it wasn't created with M_DIB or it is a child buffer on a color/mono image
 				// Don't copy into a child buffer, as it will also update the parent ?
@@ -1892,7 +1900,7 @@ HRESULT SVMatroxBufferInterface::CopyBuffer(SVMatroxBuffer& p_rMilId, HBITMAP& p
 		}
 	}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
@@ -1970,7 +1978,7 @@ HRESULT SVMatroxBufferInterface::CopyBuffer(HBITMAP& p_rBitmap, SVMatroxBuffer& 
 							// Get Pitch and Pizel Size
 							long pitch = static_cast<long>(MbufInquire(p_rFromId.GetIdentifier(), M_PITCH_BYTE, M_NULL));
 							long pixelSize = static_cast<long>(MbufInquire(p_rFromId.GetIdentifier(), M_SIZE_BIT, M_NULL));
-							
+
 							// Calculate Bytes per Pixel
 							long bitCount = 0;
 							MIL_INT dataFormat = MbufInquire(p_rFromId.GetIdentifier(), M_DATA_FORMAT, M_NULL);
@@ -2008,7 +2016,7 @@ HRESULT SVMatroxBufferInterface::CopyBuffer(HBITMAP& p_rBitmap, SVMatroxBuffer& 
 		}
 	}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
@@ -2030,25 +2038,25 @@ HRESULT SVMatroxBufferInterface::CopyBuffer(SVByteVector& p_rToDIB, const SVMatr
 
 	if (S_OK == l_Code)
 	{
-		void* l_pHostBuffer = reinterpret_cast< void* >(MbufInquire(p_rFromId.GetIdentifier(), M_HOST_ADDRESS, M_NULL));
+		void* l_pHostBuffer = reinterpret_cast<void*>(MbufInquire(p_rFromId.GetIdentifier(), M_HOST_ADDRESS, M_NULL));
 
 		if (nullptr != l_pHostBuffer)
 		{
-			
+
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_MATROX_FUNCTION)			
 			TCHAR buf[1024];
 			_stprintf_s(buf, 1024, _T("copyBuffer Memory   From  %i  \n"), int(p_rFromId.GetIdentifier()));
 			::OutputDebugString(buf);
 #endif
-			
+
 			size_t l_InfoSize = l_Info.GetBitmapInfoSizeInBytes();
 			size_t l_ImageSize = l_Info.GetBitmapImageSizeInBytes();
 
 			p_rToDIB.resize(l_InfoSize + l_ImageSize, 0);
 
-			::memcpy(&(p_rToDIB[ 0 ]), l_Info.GetBitmapInfo(), l_InfoSize);
-			::memcpy(&(p_rToDIB[ l_InfoSize ]), l_pHostBuffer, l_ImageSize);
+			::memcpy(&(p_rToDIB[0]), l_Info.GetBitmapInfo(), l_InfoSize);
+			::memcpy(&(p_rToDIB[l_InfoSize]), l_pHostBuffer, l_ImageSize);
 		}
 		else
 		{
@@ -2056,7 +2064,7 @@ HRESULT SVMatroxBufferInterface::CopyBuffer(SVByteVector& p_rToDIB, const SVMatr
 
 			l_Code = Create(l_ToId, p_rFromId);
 
-			void* l_pNewHostBuffer = reinterpret_cast< void* >(MbufInquire(l_ToId.GetIdentifier(), M_HOST_ADDRESS, M_NULL));
+			void* l_pNewHostBuffer = reinterpret_cast<void*>(MbufInquire(l_ToId.GetIdentifier(), M_HOST_ADDRESS, M_NULL));
 
 			if (nullptr != l_pNewHostBuffer)
 			{
@@ -2083,9 +2091,9 @@ HRESULT SVMatroxBufferInterface::CopyBuffer(SVByteVector& p_rToDIB, const SVBitm
 
 	SVMatroxBuffer l_ToId;
 
-	l_Code = Create(l_ToId, const_cast< LPBITMAPINFO >(p_rToBitmapInfo.GetBitmapInfo()));
+	l_Code = Create(l_ToId, const_cast<LPBITMAPINFO>(p_rToBitmapInfo.GetBitmapInfo()));
 
-	void* l_pNewHostBuffer = reinterpret_cast< void* >(MbufInquire(l_ToId.GetIdentifier(), M_HOST_ADDRESS, M_NULL));
+	void* l_pNewHostBuffer = reinterpret_cast<void*>(MbufInquire(l_ToId.GetIdentifier(), M_HOST_ADDRESS, M_NULL));
 
 	if (nullptr != l_pNewHostBuffer)
 	{
@@ -2119,7 +2127,7 @@ HRESULT SVMatroxBufferInterface::CopyBuffer(const SVBitmapInfo& dstInfo, unsigne
 
 	if (S_OK == l_Code)
 	{
-		void* l_pHostBuffer = reinterpret_cast< void* >(MbufInquire(p_rFromId, M_HOST_ADDRESS, M_NULL));
+		void* l_pHostBuffer = reinterpret_cast<void*>(MbufInquire(p_rFromId, M_HOST_ADDRESS, M_NULL));
 
 		if (nullptr != l_pHostBuffer)
 		{
@@ -2141,13 +2149,13 @@ HRESULT SVMatroxBufferInterface::CopyBufferToFileDIB(SVByteVector& rToDIB, const
 	HRESULT l_Code(S_OK);
 	MIL_ID MilId = rFromId.GetIdentifier();
 
-		//This assumes we have attribute M_PACKED 
+	//This assumes we have attribute M_PACKED 
 	SVBitmapInfo l_Info;
 	rToDIB.clear();
 	l_Code = GetBitmapInfo(l_Info, rFromId);
 	if (S_OK == l_Code)
 	{
-		void* l_pHostBuffer = reinterpret_cast< void* >(MbufInquire(MilId, M_HOST_ADDRESS, M_NULL));
+		void* l_pHostBuffer = reinterpret_cast<void*>(MbufInquire(MilId, M_HOST_ADDRESS, M_NULL));
 		if (nullptr != l_pHostBuffer)
 		{
 			size_t l_InfoSize = l_Info.GetBitmapInfoSizeInBytes();
@@ -2156,31 +2164,31 @@ HRESULT SVMatroxBufferInterface::CopyBufferToFileDIB(SVByteVector& rToDIB, const
 			BITMAPFILEHEADER hdr;
 
 			hdr.bfType = 0x4d42;        // 0x42 = "B" 0x4d = "M"  
-			hdr.bfSize = static_cast< DWORD >(sizeof(BITMAPFILEHEADER) + l_InfoSize + l_ImageSize);
-			hdr.bfReserved1 = 0; 
-			hdr.bfReserved2 = 0; 
-			hdr.bfOffBits = static_cast< DWORD >(sizeof(BITMAPFILEHEADER) + l_InfoSize);
+			hdr.bfSize = static_cast<DWORD>(sizeof(BITMAPFILEHEADER) + l_InfoSize + l_ImageSize);
+			hdr.bfReserved1 = 0;
+			hdr.bfReserved2 = 0;
+			hdr.bfOffBits = static_cast<DWORD>(sizeof(BITMAPFILEHEADER) + l_InfoSize);
 
-			rToDIB.resize(hdr.bfSize +offset);
+			rToDIB.resize(hdr.bfSize + offset);
 
-			::memcpy(&(rToDIB[ offset ]), &hdr, sizeof(BITMAPFILEHEADER));
-			::memcpy(&(rToDIB[ offset + sizeof(BITMAPFILEHEADER) ]), l_Info.GetBitmapInfo(), l_InfoSize);
+			::memcpy(&(rToDIB[offset]), &hdr, sizeof(BITMAPFILEHEADER));
+			::memcpy(&(rToDIB[offset + sizeof(BITMAPFILEHEADER)]), l_Info.GetBitmapInfo(), l_InfoSize);
 
-			BITMAPINFO* l_pBitmapInfo = reinterpret_cast< BITMAPINFO* >(&(rToDIB[ offset + sizeof(BITMAPFILEHEADER) ]));
+			BITMAPINFO* l_pBitmapInfo = reinterpret_cast<BITMAPINFO*>(&(rToDIB[offset + sizeof(BITMAPFILEHEADER)]));
 
 			if (normalize_y && l_pBitmapInfo->bmiHeader.biHeight < 0)
 			{
 				size_t l_Stride = l_Info.GetBitmapImageStrideInBytes();
 
-				unsigned char* l_pFrom = reinterpret_cast< unsigned char* >(l_pHostBuffer);
-				unsigned char* l_pTo = reinterpret_cast< unsigned char* >(&(rToDIB[offset + sizeof(BITMAPFILEHEADER) + l_InfoSize ]));
+				unsigned char* l_pFrom = reinterpret_cast<unsigned char*>(l_pHostBuffer);
+				unsigned char* l_pTo = reinterpret_cast<unsigned char*>(&(rToDIB[offset + sizeof(BITMAPFILEHEADER) + l_InfoSize]));
 
 				l_pBitmapInfo->bmiHeader.biHeight = ::labs(l_pBitmapInfo->bmiHeader.biHeight);
 				l_pBitmapInfo->bmiHeader.biXPelsPerMeter = 0;
 				l_pBitmapInfo->bmiHeader.biYPelsPerMeter = 0;
 				l_pBitmapInfo->bmiHeader.biClrImportant = 0;
 
-				for(size_t i = 0; i < static_cast< size_t >(l_pBitmapInfo->bmiHeader.biHeight); ++i)
+				for (size_t i = 0; i < static_cast<size_t>(l_pBitmapInfo->bmiHeader.biHeight); ++i)
 				{
 					unsigned char* l_pToRow = l_pTo + (i * l_Stride);
 					unsigned char* l_pFromRow = l_pFrom + ((l_pBitmapInfo->bmiHeader.biHeight - 1 - i) * l_Stride);
@@ -2190,7 +2198,7 @@ HRESULT SVMatroxBufferInterface::CopyBufferToFileDIB(SVByteVector& rToDIB, const
 			}
 			else
 			{
-				::memcpy(&(rToDIB[offset + sizeof(BITMAPFILEHEADER) + l_InfoSize ]), l_pHostBuffer, l_ImageSize);
+				::memcpy(&(rToDIB[offset + sizeof(BITMAPFILEHEADER) + l_InfoSize]), l_pHostBuffer, l_ImageSize);
 			}
 		}
 		else
@@ -2203,12 +2211,12 @@ HRESULT SVMatroxBufferInterface::CopyBufferToFileDIB(SVByteVector& rToDIB, const
 }
 
 
-HRESULT SVMatroxBufferInterface::CopyBufferToFileDIB(std::string& rTo,  SVBitmapInfo& rBitMapInfo,  const SVMatroxBuffer& rFromId,const  DWORD  offset, bool normalize_y)
+HRESULT SVMatroxBufferInterface::CopyBufferToFileDIB(std::string& rTo, SVBitmapInfo& rBitMapInfo, const SVMatroxBuffer& rFromId, const  DWORD  offset, bool normalize_y)
 {
 	HRESULT Hres(S_OK);
 	MIL_ID MilId = rFromId.GetIdentifier();
-		//This assumes we have attribute M_PACKED 
-	
+	//This assumes we have attribute M_PACKED 
+
 	Hres = GetBitmapInfo(rBitMapInfo, rFromId);
 	if (S_OK == Hres)
 	{
@@ -2274,7 +2282,7 @@ HRESULT SVMatroxBufferInterface::CopyDIBBufferToMemory(SVImageCopyUtility& p_rIm
 	HRESULT l_Status = SVMatroxBufferInterface::GetBitmapInfo(l_Info, p_rFromId);
 	if (S_OK == l_Status)
 	{
-		void* l_pHostBuffer = reinterpret_cast< void* >(MbufInquire(p_rFromId.GetIdentifier(), M_HOST_ADDRESS, M_NULL));
+		void* l_pHostBuffer = reinterpret_cast<void*>(MbufInquire(p_rFromId.GetIdentifier(), M_HOST_ADDRESS, M_NULL));
 
 		if (nullptr != l_pHostBuffer)
 		{
@@ -2294,8 +2302,8 @@ HRESULT SVMatroxBufferInterface::CopyDIBBufferToMemory(SVImageCopyUtility& p_rIm
 @SVOperationDescription This function copies the data from a user array to a MatroxBuffer.
 
 */
-HRESULT SVMatroxBufferInterface::PutBuffer(SVMatroxBuffer& p_rTo, 
-																		 const unsigned char* p_pcArrayData)
+HRESULT SVMatroxBufferInterface::PutBuffer(SVMatroxBuffer& p_rTo,
+	const unsigned char* p_pcArrayData)
 {
 	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
@@ -2308,14 +2316,14 @@ HRESULT SVMatroxBufferInterface::PutBuffer(SVMatroxBuffer& p_rTo,
 				const_cast<unsigned char*>(p_pcArrayData));
 
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
-		}
+	}
 		else
 		{
 			l_Code = SVMEE_INVALID_HANDLE;
 		}
-	}
+}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
@@ -2344,14 +2352,14 @@ HRESULT SVMatroxBufferInterface::PutBuffer(SVMatroxBuffer& p_rTo, const long* p_
 				const_cast<long*>(p_plArrayData));
 
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
-		}
+	}
 		else
 		{
 			l_Code = SVMEE_INVALID_HANDLE;
 		}
-	}
+}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
@@ -2368,8 +2376,8 @@ HRESULT SVMatroxBufferInterface::PutBuffer(SVMatroxBuffer& p_rTo, const long* p_
 @SVOperationDescription This function copies the data from a user array to a MatroxBuffer.
 
 */
-HRESULT SVMatroxBufferInterface::PutColor(SVMatroxBuffer& p_rTo, 
-																		const unsigned char* p_pArrayData)
+HRESULT SVMatroxBufferInterface::PutColor(SVMatroxBuffer& p_rTo,
+	const unsigned char* p_pArrayData)
 {
 	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
@@ -2379,19 +2387,19 @@ HRESULT SVMatroxBufferInterface::PutColor(SVMatroxBuffer& p_rTo,
 		if (!p_rTo.empty())
 		{
 			MbufPutColor(p_rTo.GetIdentifier(),
-				M_RGB24+M_PACKED,
+				M_RGB24 + M_PACKED,
 				M_ALL_BAND,
 				const_cast<unsigned char*>(p_pArrayData));
 
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
-		}
+	}
 		else
 		{
 			l_Code = SVMEE_INVALID_HANDLE;
 		}
-	}
+}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
@@ -2407,9 +2415,9 @@ HRESULT SVMatroxBufferInterface::PutColor(SVMatroxBuffer& p_rTo,
 @SVOperationDescription This function copies the data from a user array to a MatroxBuffer.
 
 */
-HRESULT SVMatroxBufferInterface::PutLine(SVMatroxBuffer& p_rTo, 
-																	   long p_lCount, 
-																	   const unsigned char* p_pArrayData)
+HRESULT SVMatroxBufferInterface::PutLine(SVMatroxBuffer& p_rTo,
+	long p_lCount,
+	const unsigned char* p_pArrayData)
 {
 	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
@@ -2424,15 +2432,15 @@ HRESULT SVMatroxBufferInterface::PutLine(SVMatroxBuffer& p_rTo,
 				const_cast<unsigned char*>(p_pArrayData));
 
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
-		}
+	}
 		else
 		{
 			l_Code = SVMEE_INVALID_HANDLE;
 		}
 
-	}
+}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
@@ -2445,16 +2453,16 @@ HRESULT SVMatroxBufferInterface::PutLine(SVMatroxBuffer& p_rTo,
 /**
 @SVOperationName GetLine
 
-@SVOperationDescription This function reads the series of pixels along a theoretical line (defined by coordinates) from an image and stores their values in a user-defined array. 
+@SVOperationDescription This function reads the series of pixels along a theoretical line (defined by coordinates) from an image and stores their values in a user-defined array.
 
 */
-HRESULT SVMatroxBufferInterface::GetLine(SVMatroxBuffer& p_rBuf, 
-																	   SVMatroxInt p_lXStart, 
-																	   SVMatroxInt p_lYStart, 
-																	   SVMatroxInt p_lXEnd, 
-																	   SVMatroxInt p_lYEnd, 
-																	   SVMatroxInt& p_rlNbrPixels, 
-																	   void* p_pUserArray)
+HRESULT SVMatroxBufferInterface::GetLine(SVMatroxBuffer& p_rBuf,
+	SVMatroxInt p_lXStart,
+	SVMatroxInt p_lYStart,
+	SVMatroxInt p_lXEnd,
+	SVMatroxInt p_lYEnd,
+	SVMatroxInt& p_rlNbrPixels,
+	void* p_pUserArray)
 {
 	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
@@ -2464,19 +2472,19 @@ HRESULT SVMatroxBufferInterface::GetLine(SVMatroxBuffer& p_rBuf,
 		HRESULT l_Code;
 		if (!p_rBuf.empty())
 		{
-	//		long l_lLength;
-	//		MbufGetLine(p_rBuf.m_BufferIdentifier,
-	//			p_lXStart,
-	//			p_lYStart,
-	//			p_lXEnd,
-	//			p_lYEnd,
-	//			M_DEFAULT,
-	//			&l_lLength,
-	//			M_NULL);
-	//		if (p_pUserArray.size() < l_lLength)
-	//		{
-	//			p_pUserArray.resize(l_lLength);
-	//		}
+			//		long l_lLength;
+			//		MbufGetLine(p_rBuf.m_BufferIdentifier,
+			//			p_lXStart,
+			//			p_lYStart,
+			//			p_lXEnd,
+			//			p_lYEnd,
+			//			M_DEFAULT,
+			//			&l_lLength,
+			//			M_NULL);
+			//		if (p_pUserArray.size() < l_lLength)
+			//		{
+			//			p_pUserArray.resize(l_lLength);
+			//		}
 
 			MbufGetLine(p_rBuf.GetIdentifier(),
 				p_lXStart,
@@ -2495,7 +2503,7 @@ HRESULT SVMatroxBufferInterface::GetLine(SVMatroxBuffer& p_rBuf,
 		}
 	}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
@@ -2511,7 +2519,7 @@ HRESULT SVMatroxBufferInterface::GetLine(SVMatroxBuffer& p_rBuf,
 @SVOperationDescription This function uses MbufInquire to get information about a SVMatroxBuffer and stores it in a double.
 
 */
-HRESULT SVMatroxBufferInterface::Get(const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, double& rResult) 
+HRESULT SVMatroxBufferInterface::Get(const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, double& rResult)
 {
 	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
@@ -2544,14 +2552,14 @@ HRESULT SVMatroxBufferInterface::Get(const SVMatroxBuffer& p_rBuf, SVMatroxBuffe
 			{
 				l_Code = SVMEE_INVALID_PARAMETER;
 			}
-		}
+	}
 		else
 		{
 			l_Code = SVMEE_INVALID_HANDLE;
 		}
-	}
+}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
@@ -2567,7 +2575,7 @@ HRESULT SVMatroxBufferInterface::Get(const SVMatroxBuffer& p_rBuf, SVMatroxBuffe
 @SVOperationDescription This function uses MbufInquire to get information about a SVMatroxBuffer and stores it in a LONGLONG.
 
 */
-HRESULT SVMatroxBufferInterface::Get(const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, LONGLONG& rResult)  
+HRESULT SVMatroxBufferInterface::Get(const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, LONGLONG& rResult)
 {
 	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
@@ -2591,14 +2599,14 @@ HRESULT SVMatroxBufferInterface::Get(const SVMatroxBuffer& p_rBuf, SVMatroxBuffe
 			{
 				l_Code = SVMEE_INVALID_PARAMETER;
 			}
-		}
+	}
 		else
 		{
 			l_Code = SVMEE_INVALID_HANDLE;
 		}
-	}
+}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
@@ -2609,14 +2617,14 @@ HRESULT SVMatroxBufferInterface::Get(const SVMatroxBuffer& p_rBuf, SVMatroxBuffe
 }
 
 //! This method is required for backward compatibility the LONGLONG version is required when getting the hDC
-HRESULT SVMatroxBufferInterface::Get(const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, long& rResult)  
+HRESULT SVMatroxBufferInterface::Get(const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, long& rResult)
 {
 	HRESULT l_Code(S_OK);
 
 	LONGLONG Value;
-	
-	l_Code = SVMatroxBufferInterface::Get( p_rBuf, p_eWhat, Value );
-	rResult = static_cast<long> ( Value );
+
+	l_Code = SVMatroxBufferInterface::Get(p_rBuf, p_eWhat, Value);
+	rResult = static_cast<long> (Value);
 
 	return l_Code;
 }
@@ -2624,12 +2632,12 @@ HRESULT SVMatroxBufferInterface::Get(const SVMatroxBuffer& p_rBuf, SVMatroxBuffe
 /**
 @SVOperationName Set - double
 
-@SVOperationDescription This function allows you to control a specified data buffer settings with a supplied double. 
+@SVOperationDescription This function allows you to control a specified data buffer settings with a supplied double.
 
 */
-HRESULT SVMatroxBufferInterface::Set(const SVMatroxBuffer& p_rBuf, 
-																   SVMatroxBufferInfoEnum p_eWhat, 
-																   const double p_rdValue)
+HRESULT SVMatroxBufferInterface::Set(const SVMatroxBuffer& p_rBuf,
+	SVMatroxBufferInfoEnum p_eWhat,
+	const double p_rdValue)
 {
 	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
@@ -2651,14 +2659,14 @@ HRESULT SVMatroxBufferInterface::Set(const SVMatroxBuffer& p_rBuf,
 			{
 				l_Code = SVMEE_INVALID_PARAMETER;
 			}
-		}
+	}
 		else
 		{
 			l_Code = SVMEE_INVALID_HANDLE;
 		}
-	}
+}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
@@ -2671,25 +2679,25 @@ HRESULT SVMatroxBufferInterface::Set(const SVMatroxBuffer& p_rBuf,
 /**
 @SVOperationName Set - long
 
-@SVOperationDescription This function allows you to control a specified data buffer settings with a supplied long. 
+@SVOperationDescription This function allows you to control a specified data buffer settings with a supplied long.
 
 */
-HRESULT SVMatroxBufferInterface::Set(const SVMatroxBuffer& p_rBuf, 
-																   SVMatroxBufferInfoEnum p_eWhat, 
-																   const SVMatroxInt p_rlValue)
+HRESULT SVMatroxBufferInterface::Set(const SVMatroxBuffer& p_rBuf,
+	SVMatroxBufferInfoEnum p_eWhat,
+	const SVMatroxInt p_rlValue)
 {
-	return Set(p_rBuf, p_eWhat, static_cast< const double >(p_rlValue));
+	return Set(p_rBuf, p_eWhat, static_cast<const double>(p_rlValue));
 }
 
 /**
 @SVOperationName ControlNeighborhood
 
-@SVOperationDescription This function changes the setting of an operation control type of the specified kernel buffer or structuring element buffer. 
+@SVOperationDescription This function changes the setting of an operation control type of the specified kernel buffer or structuring element buffer.
 
 */
-HRESULT SVMatroxBufferInterface::ControlNeighborhood(SVMatroxBuffer& p_rBuf, 
-																				   SVMatroxBufferInfoEnum p_eWhat, 
-																				   long p_lValue)
+HRESULT SVMatroxBufferInterface::ControlNeighborhood(SVMatroxBuffer& p_rBuf,
+	SVMatroxBufferInfoEnum p_eWhat,
+	long p_lValue)
 {
 	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
@@ -2711,14 +2719,14 @@ HRESULT SVMatroxBufferInterface::ControlNeighborhood(SVMatroxBuffer& p_rBuf,
 			{
 				l_Code = SVMEE_INVALID_PARAMETER;
 			}
-		}
+	}
 		else
 		{
 			l_Code = SVMEE_INVALID_HANDLE;
 		}
-	}
+}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
@@ -2734,8 +2742,8 @@ HRESULT SVMatroxBufferInterface::ControlNeighborhood(SVMatroxBuffer& p_rBuf,
 @SVOperationDescription This function clears the entire specified buffer to the specified color.
 
 */
-HRESULT SVMatroxBufferInterface::ClearBuffer(SVMatroxBuffer& p_rBuffer, 
-																		   double p_dColor)
+HRESULT SVMatroxBufferInterface::ClearBuffer(SVMatroxBuffer& p_rBuffer,
+	double p_dColor)
 {
 	HRESULT l_Code;
 #ifdef USE_TRY_BLOCKS
@@ -2747,14 +2755,14 @@ HRESULT SVMatroxBufferInterface::ClearBuffer(SVMatroxBuffer& p_rBuffer,
 			MbufClear(p_rBuffer.GetIdentifier(), p_dColor);
 
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
-		}
+	}
 		else
 		{
 			l_Code = SVMEE_INVALID_HANDLE;
 		}
-	}
+}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
@@ -2763,19 +2771,19 @@ HRESULT SVMatroxBufferInterface::ClearBuffer(SVMatroxBuffer& p_rBuffer,
 	assert(S_OK == l_Code);
 	return l_Code;
 
-}
+	}
 
 HRESULT SVMatroxBufferInterface::GetImageSize(const std::string& rFileName, long &rWidth, long &rHeight)
 {
 	MIL_INT  M_Width(0), M_Height(0);
 	HRESULT  Code(S_OK);
-	if (M_INVALID == MbufDiskInquire(const_cast<MIL_TEXT_CHAR*>(rFileName.c_str()), M_SIZE_X,  &M_Width))
+	if (M_INVALID == MbufDiskInquire(const_cast<MIL_TEXT_CHAR*>(rFileName.c_str()), M_SIZE_X, &M_Width))
 	{
-		Code = M_INVALID; 
+		Code = M_INVALID;
 	}
-	if (M_INVALID == MbufDiskInquire(const_cast<MIL_TEXT_CHAR*>(rFileName.c_str()), M_SIZE_Y,  &M_Height))
+	if (M_INVALID == MbufDiskInquire(const_cast<MIL_TEXT_CHAR*>(rFileName.c_str()), M_SIZE_Y, &M_Height))
 	{
-		Code = M_INVALID; 
+		Code = M_INVALID;
 	}
 	if (S_OK == Code)
 	{
@@ -2788,13 +2796,13 @@ HRESULT SVMatroxBufferInterface::GetImageSize(const std::string& rFileName, long
 /**
 @SVOperationName Import
 
-@SVOperationDescription This function imports data from a file into an existing or automatically allocated MIL data buffer. 
+@SVOperationDescription This function imports data from a file into an existing or automatically allocated MIL data buffer.
 
 */
-HRESULT SVMatroxBufferInterface::Import(SVMatroxBuffer& rBuffer, 
-																	  const std::string& p_rFileName, 
-																	  SVMatroxFileTypeEnum p_eFileType,
-																	  bool p_bRestore)
+HRESULT SVMatroxBufferInterface::Import(SVMatroxBuffer& rBuffer,
+	const std::string& p_rFileName,
+	SVMatroxFileTypeEnum p_eFileType,
+	bool p_bRestore)
 {
 	long l_lFileFormat = 0;
 	long l_lOperation = 0;
@@ -2839,7 +2847,7 @@ HRESULT SVMatroxBufferInterface::Import(SVMatroxBuffer& rBuffer,
 			if (p_bRestore)
 			{	// Restore Operation creates a new Mil handle.
 				MIL_ID l_NewID = M_NULL;
-				MbufImport(const_cast<MIL_TEXT_CHAR*>(p_rFileName.c_str()), 
+				MbufImport(const_cast<MIL_TEXT_CHAR*>(p_rFileName.c_str()),
 					l_lFileFormat,
 					l_lOperation,
 					M_DEFAULT_HOST,
@@ -2855,7 +2863,7 @@ HRESULT SVMatroxBufferInterface::Import(SVMatroxBuffer& rBuffer,
 				if (!rBuffer.empty())
 				{
 					MIL_ID l_NewId = rBuffer.GetIdentifier();
-					MbufImport(const_cast<MIL_TEXT_CHAR*>(p_rFileName.c_str()), 
+					MbufImport(const_cast<MIL_TEXT_CHAR*>(p_rFileName.c_str()),
 						l_lFileFormat,
 						l_lOperation,
 						M_DEFAULT_HOST,
@@ -2870,7 +2878,7 @@ HRESULT SVMatroxBufferInterface::Import(SVMatroxBuffer& rBuffer,
 		}
 	}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
@@ -2883,12 +2891,12 @@ HRESULT SVMatroxBufferInterface::Import(SVMatroxBuffer& rBuffer,
 /**
 @SVOperationName Export
 
-@SVOperationDescription This function exports a data buffer to a file, in the specified output file format. 
+@SVOperationDescription This function exports a data buffer to a file, in the specified output file format.
 
 */
-HRESULT SVMatroxBufferInterface::Export(const SVMatroxBuffer& rBuffer, 
-																	  const std::string& rFileName, 
-																	  SVMatroxFileTypeEnum p_eFileType)
+HRESULT SVMatroxBufferInterface::Export(const SVMatroxBuffer& rBuffer,
+	const std::string& rFileName,
+	SVMatroxFileTypeEnum p_eFileType)
 {
 	long l_lFileFormat = 0;
 
@@ -2906,19 +2914,19 @@ HRESULT SVMatroxBufferInterface::Export(const SVMatroxBuffer& rBuffer,
 	{
 		if (!rBuffer.empty())
 		{
-			MbufExport(rFileName.c_str(), 
+			MbufExport(rFileName.c_str(),
 				l_lFileFormat,
 				rBuffer.GetIdentifier());
 
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
-		}
+	}
 		else
 		{
 			l_Code = SVMEE_INVALID_HANDLE;
 		}
-	}
+}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();

@@ -504,7 +504,7 @@ enum MessageTextEnum
 	Tid_TRC_Error_ResetLocker,
 	Tid_TRC_Error_ImageRefCount,
 	Tid_TRC_Error_SetImage_InvalidType,
-	Tid_TRC_Error_SetImage_TypeNotFit, 
+	Tid_TRC_Error_SetImage_TypeNotFit,
 	Tid_TRC_Error_SetImage_InvalidPos,
 	Tid_TRC_Error_SetImages_SourceTROutOfData,
 	Tid_TRC_Error_NoBufferFree,
@@ -517,7 +517,7 @@ enum MessageTextEnum
 	Tid_TRC_Error_ResetNotStart,
 	Tid_TRC_Error_InvalidResetState,
 	Tid_TRC_Error_GetImageDefList,
-	
+
 	Tid_NAK_Error_MissingEndFrame,
 
 	Tid_UpdateMainImages_InvalidImageBuffer,
@@ -530,5 +530,10 @@ enum MessageTextEnum
 	Tid_SetParameterToMonitorListFailed,
 	Tid_SetAuxiliaryParameterToMonitorListFailed,
 	Tid_SetResultParameterToMonitorListFailed,
+
+	Tid_InvalidMemoryPointer,
+	Tid_InvalidMatroxType,
+	Tid_InvalidMatroxAttribute
+
 };
 } //namespace SvStl
