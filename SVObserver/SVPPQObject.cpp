@@ -3870,8 +3870,7 @@ HRESULT SVPPQObject::ProcessNotifyInspections( bool& rProcessed )
 
 		// Currently, 
 		// SVPPQOjbect::AssignInputs () - called from ProcessTrigger (),
-		// SVPPQOjbect::ProcessTrigger (), and
-		// SVPPQOjbect::ProcessCameraInputs ()
+		// SVPPQOjbect::ProcessTrigger ()
 		// can add items to m_oNotifyInspectionSet.
 		rProcessed = ( 0 < m_oNotifyInspectionsSet.size() );
 
@@ -4158,7 +4157,7 @@ HRESULT SVPPQObject::ProcessCameraResponses( bool& rProcessed )
 		while( S_OK == l_Status  && l_CameraIter != m_Cameras.end() && !rProcessed )
 		{
 			// stop processing camera responses if there is an element on the trigger queue.
-			if (0 == m_oTriggerQueue.size())
+			if (0 >= m_oTriggerQueue.size())
 			{
 				SVPendingCameraResponseMap::iterator l_PendingIter = m_PendingCameraResponses.find(l_CameraIter->first);
 
@@ -4184,7 +4183,8 @@ HRESULT SVPPQObject::ProcessCameraResponses( bool& rProcessed )
 
 	while( S_OK == l_Status  && 0 < m_CameraResponseQueue.GetCount() && !rProcessed)
 	{
-		if (0 == m_oTriggerQueue.size())
+		rProcessed = 0 < m_oTriggerQueue.size();
+		if (0 >= m_oTriggerQueue.size())
 		{
 			SVCameraQueueElement l_Data;
 			if (m_CameraResponseQueue.RemoveHead(&l_Data))
