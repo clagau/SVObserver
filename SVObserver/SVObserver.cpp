@@ -2315,8 +2315,6 @@ void SVObserverApp::AddAdditionalFile(LPCTSTR FilePath)
 
 HRESULT SVObserverApp::OpenFile(LPCTSTR PathName)
 {
-	HRESULT l_Status = S_OK;
-
 	TCHAR szDrive[_MAX_DRIVE];
 	TCHAR szDir[_MAX_DIR];
 	TCHAR szFile[_MAX_FNAME];
@@ -2327,6 +2325,14 @@ HRESULT SVObserverApp::OpenFile(LPCTSTR PathName)
 	std::string FileName{PathName};
 	std::string loadPath {szDrive};
 	loadPath += szDir;
+
+	// @Note: [SEJ] If DestroyConfig doesn't return S_OK, the MRU is updated incorrectly
+	// The file to be loaded, if it was in the MRU, will be removed from the MRU !
+	HRESULT result = DestroyConfig();
+	if (S_OK != result)
+	{
+		return result;	//keep the cancel state so it does not remove from MRU
+	}
 
 	// If not loading from the run path then delete all files in that path
 	if (0 != SvUl::CompareNoCase(loadPath, std::string(SVFileNameManagerClass::Instance().GetRunPathName() + "\\")))
@@ -2375,14 +2381,14 @@ HRESULT SVObserverApp::OpenFile(LPCTSTR PathName)
 	{
 		setConfigFullFileName(FileName.c_str(), true);
 		SVRCSetSVCPathName(getConfigFullFileName().c_str());
-		l_Status = OpenSVXFile();
+		result = OpenSVXFile();
 	}
 	else
 	{
-		l_Status = E_INVALIDARG;
+		result = E_INVALIDARG;
 	}
 
-	return l_Status;
+	return result;
 }
 
 HRESULT SVObserverApp::OpenSVXFile()
@@ -2390,26 +2396,15 @@ HRESULT SVObserverApp::OpenSVXFile()
 	CWaitCursor wait;
 
 	HRESULT hr;
-	HRESULT	hrDestroyed;
 	SvTl::SVTimeStamp l_StartLoading;
 	SvTl::SVTimeStamp l_FinishLoad;
 
 	bool bOk = false;
 
 	hr = S_OK;
-	hrDestroyed = S_OK;
 
 	while (1)
 	{
-		// @Note: [SEJ] If DestroyConfig doesn't return S_OK, the MRU is updated incorrectly
-		// The file to be loaded, if it was in the MRU, will be removed from the MRU !
-		hrDestroyed = DestroyConfig();
-		if (S_OK != hrDestroyed)
-		{
-			hr = hrDestroyed; //keep the cancel state so it does not remove from MRU
-			break;
-		}
-
 		TheSVOLicenseManager().ClearLicenseErrors();
 
 		bOk = SVSVIMStateClass::AddState(SV_STATE_UNAVAILABLE | SV_STATE_LOADING);
@@ -2634,7 +2629,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 		break;
 	} // while (1)
 
-	if (!bOk && S_OK == hrDestroyed)
+	if (!bOk)
 	{
 		setConfigFullFileName(nullptr, true);
 
@@ -5532,7 +5527,7 @@ void SVObserverApp::SaveConfigurationAndRelatedFiles(bool makeZipFile, bool isAu
 		}
 		else
 		{
-			m_SvxFileName.SetFileName(m_ConfigFileName.GetFileNameOnly().c_str());
+			m_SvxFileName.SetFileName(m_ConfigFileName.GetFileName().c_str());
 			m_SvxFileName.SetPathName(SVFileNameManagerClass::Instance().GetRunPathName().c_str());
 			m_SvxFileName.SetExtension(SvDef::cConfigExtension);
 			filePath = m_SvxFileName.GetFullFileName();
