@@ -20,6 +20,7 @@ RPCServer::RPCServer(RequestHandlerBase* pRequestHandler) : m_pRequestHandler(pR
 
 void RPCServer::onConnect(int id, SvHttp::HttpServerConnection& rConnection)
 {
+	SV_LOG_GLOBAL(info) << "[http] Client connected id: " << id;
 	m_Connections[id] = &rConnection;
 	m_ServerStreamContexts[id] = {};
 }
@@ -177,7 +178,7 @@ std::future<void> RPCServer::send_envelope(int id, const SvPenv::Envelope& rEnve
 	auto it = m_Connections.find(id);
 	if (it == m_Connections.end())
 	{
-		SV_LOG_GLOBAL(error) << "Can not send envelope to connection " << id << ". not found.";
+		SV_LOG_GLOBAL(error) << "Can not send envelope to connection " << id << ". not found. PayloadType: " << rEnvelope.payloadtype();
 		throw ConnectionLostException("Connection lost");
 	}
 
