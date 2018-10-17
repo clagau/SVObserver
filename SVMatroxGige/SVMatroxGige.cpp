@@ -1061,11 +1061,6 @@ HRESULT SVMatroxGige::CameraEndFrame( SVMatroxGigeDigitizer& p_rCamera, SVMatrox
 			if(nullptr != pImageHandle && !(pImageHandle->empty() ) )
 			{
 				hr = SVMatroxBufferInterface::CopyBuffer(pImageHandle->GetBuffer(), p_SrcBufferID );
-				
-				if( S_OK == hr)
-				{
-					hr = p_rCamera.m_pBufferInterface->UpdateWithCompletedBuffer(pImage, startFrameTimeStamp, endFrameTimeStamp);
-				}
 			}
 			else
 			{
@@ -1075,6 +1070,13 @@ HRESULT SVMatroxGige::CameraEndFrame( SVMatroxGigeDigitizer& p_rCamera, SVMatrox
 		else
 		{
 			hr = E_FAIL;
+		}
+
+		//Send this command also if buffer failed to trigger the PPQ-Thread to give it a change for cleanup.
+		HRESULT tmpHr = p_rCamera.m_pBufferInterface->UpdateWithCompletedBuffer(pImage, startFrameTimeStamp, endFrameTimeStamp);
+		if (S_OK == hr)
+		{
+			hr = tmpHr;
 		}
 	}
 	else

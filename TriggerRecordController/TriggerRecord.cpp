@@ -16,6 +16,7 @@
 #include "SVMatroxLibrary\SVMatroxBufferCreateChildStruct.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary\MessageTextEnum.h"
+#include "SVUtilityLibrary\StringHelper.h"
 #pragma endregion Includes
 
 namespace SvTrc
@@ -90,6 +91,10 @@ IImagePtr TriggerRecord::getImage(int pos, bool lockImage) const
 				if (nullptr == pImage || pImage->isEmpty())
 				{
 					pImagePos[pos] = -1;
+					SvDef::StringVector msgList;
+					msgList.push_back(SvUl::Format(_T("%d"), pos));
+					SvStl::MessageMgrStd e(SvStl::LogOnly);
+					e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_NewBufferFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 				}
 				else
 				{
@@ -157,6 +162,13 @@ void TriggerRecord::initImages()
 		if (-1 == pImagePos[i])
 		{
 			IImagePtr pImage = rImageController.createNewImageHandle(rImageList[i].structid(), pImagePos[i], m_ResetId, false);
+			if (nullptr == pImage)
+			{
+				SvDef::StringVector msgList;
+				msgList.push_back(SvUl::Format(_T("%d"), pImagePos[i]));
+				SvStl::MessageMgrStd e(SvStl::LogOnly);
+				e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_NewBufferFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
+			}
 		}
 	}
 }
@@ -185,6 +197,13 @@ void TriggerRecord::setImages(const ITriggerRecordR& rDestTR)
 				if (-1 == pImagePos[i])
 				{
 					IImagePtr pImage = rImageController.createNewImageHandle(rImageList[i].structid(), pImagePos[i], m_ResetId, false);
+					if (nullptr == pImage)
+					{
+						SvDef::StringVector msgList;
+						msgList.push_back(SvUl::Format(_T("%d"), pImagePos[i]));
+						SvStl::MessageMgrStd e(SvStl::LogOnly);
+						e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_NewBufferFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
+					}
 				}
 			}
 		}
@@ -293,6 +312,10 @@ IImagePtr TriggerRecord::createNewImageHandle(int pos)
 		if (nullptr == pImage)
 		{
 			pImagePos[pos] = -1;
+			SvDef::StringVector msgList;
+			msgList.push_back(SvUl::Format(_T("%d"), pos));
+			SvStl::MessageMgrStd e(SvStl::LogOnly);
+			e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_NewBufferFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 		}
 	}
 	return pImage;

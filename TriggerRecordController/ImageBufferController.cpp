@@ -268,13 +268,17 @@ IImagePtr ImageBufferController::createNewImageHandle(int structId, int& rImageP
 			}
 		}
 
+		SvDef::StringVector msgList;
+		msgList.push_back(SvUl::Format(_T("%d"), structId));
 		SvStl::MessageMgrStd e(SvStl::LogOnly);
-		e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_NoBufferFree, SvStl::SourceFileParams(StdMessageParams));
+		e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_NoBufferFree, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}
 	else
 	{
+		SvDef::StringVector msgList;
+		msgList.push_back(SvUl::Format(_T("%d"), structId));
 		SvStl::MessageMgrStd e(SvStl::LogOnly);
-		e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_UnknownStructID, SvStl::SourceFileParams(StdMessageParams));
+		e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_UnknownStructID, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}
 	return nullptr;
 }

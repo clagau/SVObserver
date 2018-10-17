@@ -610,11 +610,7 @@ HRESULT SVFileAcquisitionDevice::CameraProcessEndFrame( unsigned long p_ulIndex 
 				{
 					l_hrOk = rCamera.CopyImage( pBuffer );
 
-					if( S_OK == l_hrOk )
-					{
-						rCamera.m_pBufferInterface->UpdateWithCompletedBuffer(pImage, rCamera.m_StartTimeStamp, SvTl::GetTimeStamp());
-					}
-					else
+					if( S_OK != l_hrOk )
 					{
 						wsprintf(l_szbuf, "FileAcquisition::CopyImage - Error in Format");
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
@@ -630,9 +626,21 @@ HRESULT SVFileAcquisitionDevice::CameraProcessEndFrame( unsigned long p_ulIndex 
 				{
 					wsprintf(l_szbuf,"Error In BufferGetAddress" );
 					TRACE( "%s\n", l_szbuf );
+					l_hrOk = E_FAIL;
 				}
 #endif
 			}
+			else
+			{
+				SvDef::StringVector msgList;
+				msgList.push_back(rCamera.GetName()+" : "+rCamera.GetFileName());
+				SvStl::MessageMgrStd Exception(SvStl::LogOnly);
+				Exception.setMessage(SVMSG_IMAGE_FORMAT_ERROR, SvStl::Tid_CameraEndFrame_GetNextBufferFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
+				l_hrOk = E_FAIL;
+			}
+			
+			//Send this command also if buffer failed to trigger the PPQ-Thread to give it a change for cleanup.
+			rCamera.m_pBufferInterface->UpdateWithCompletedBuffer(pImage, rCamera.m_StartTimeStamp, SvTl::GetTimeStamp());
 		}
 #if defined (TRACE_THEM_ALL) || defined (TRACE_ACQDEVICE)
 		else

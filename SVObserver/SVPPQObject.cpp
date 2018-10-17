@@ -3468,11 +3468,12 @@ bool SVPPQObject::FinishCamera(void *pCaller, SVODataResponseClass *pResponse)
 	{
 		SVVirtualCamera* pCamera = reinterpret_cast<SVVirtualCamera*>(pCaller);
 
-		if (nullptr != pCamera && m_CameraResponseQueue.AddTail(SVCameraQueueElement(pCamera, *pResponse)))
+		if (nullptr != pCamera)
 		{
-			m_AsyncProcedure.Signal(nullptr);
+			m_CameraResponseQueue.AddTail(SVCameraQueueElement(pCamera, *pResponse));
 		}
 	}
+	m_AsyncProcedure.Signal(nullptr);
 
 	return l_Status;
 }

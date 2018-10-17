@@ -171,7 +171,6 @@ private:
 	SVAcquisitionClass();
 
 	unsigned long mulSize;
-	bool m_ImageAquired;
 	bool m_LUTAndLRSet;
 	SvTrc::ITriggerRecordControllerRW& m_rTRController = SvTrc::getTriggerRecordControllerRWInstance();
 	SVMatroxBufferCreateStruct m_bufferStruct;

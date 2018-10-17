@@ -44,7 +44,6 @@ SVAcquisitionClass::SVAcquisitionClass(const SvTi::SVAcquisitionConstructParams&
 	UuidCreateSequential(&m_guid);
 	mbIsBufferCreated = false;
 	mbTempOnline = false;
-	m_ImageAquired = false;
 	m_LastImage = nullptr;
 	mulSize = 0;
 
@@ -153,9 +152,7 @@ HRESULT SVAcquisitionClass::Start()
 {
 	HRESULT hrOk = SVODataDeviceClass::Start();
 
-	m_ImageAquired = false;
 	mlStartFrameIndex = -1;
-
 
 	if (S_OK == hrOk)
 	{
@@ -783,8 +780,6 @@ SvTrc::IImagePtr SVAcquisitionClass::GetNextBuffer()
 
 HRESULT SVAcquisitionClass::UpdateWithCompletedBuffer(const SvTrc::IImagePtr& rImage, const SvTl::SVTimeStamp StartTick, const SvTl::SVTimeStamp StopTick)
 {
-	HRESULT l_Status = S_OK;
-
 	if (nullptr != m_SingleGrabHandle)
 	{
 		if (!(rImage->getHandle()->empty()) && !(m_SingleGrabHandle->empty()))
@@ -799,23 +794,12 @@ HRESULT SVAcquisitionClass::UpdateWithCompletedBuffer(const SvTrc::IImagePtr& rI
 
 	SVODataResponseClass l_Response;
 	l_Response.setImage(rImage);
+	l_Response.setStartTime(StartTick);
+	l_Response.setEndTime(StopTick);
+	l_Response.setIsValid(true);
+	l_Response.setIsComplete(true);
 
-	if (S_OK == l_Status)
-	{
-		m_ImageAquired = true;
-
-		l_Response.setStartTime(StartTick);
-		l_Response.setEndTime(StopTick);
-		l_Response.setIsValid(true);
-		l_Response.setIsComplete(true);
-	}
-
-	if (S_OK == l_Status)
-	{
-		l_Status = Notify(l_Response);
-	}
-
-	return l_Status;
+	return Notify(l_Response);
 }
 
 HRESULT SVAcquisitionClass::StartDigitizer()

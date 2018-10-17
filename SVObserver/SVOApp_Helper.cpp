@@ -21,11 +21,6 @@ bool SvOi::isOkToEdit()
 	return TheSVObserverApp.OkToEdit();
 }
 
-long SvOi::GetSourceImageDepth()
-{
-	return TheSVObserverApp.GetSourceImageDepth();
-}
-
 INT_PTR SvOi::OpenSVFileDialog(bool bOpenFileDialog, LPCTSTR Extention, std::string& FileName, DWORD Flags, LPCTSTR Filter, std::string& Path, LPCTSTR Title)
 {
 	bool FullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
