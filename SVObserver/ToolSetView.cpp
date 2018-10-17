@@ -222,6 +222,7 @@ void ToolSetView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 				SVGUID selectedToolID = GetSelectedTool();
 				m_toolSetListCtrl.setObjectIds(pCurrentDocument->GetToolSet()->GetUniqueObjectID(), pCurrentDocument->GetToolSet()->GetInspection()->GetUniqueObjectID());
 				SetSelectedTool(selectedToolID);
+				m_toolSetListCtrl.RebuildImages();
 			}
 			else if (ExpandCollapseHint == lHint)
 			{
