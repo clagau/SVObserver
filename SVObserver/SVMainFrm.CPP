@@ -595,7 +595,7 @@ void SVMainFrame::OnUpdateStatusInfo( CCmdUI *pCmdUI )
 			GlobalRCGetMode( &l_lMode );
 			switch( l_lMode )
 			{
-				case SVIM_MODE_UNKNOWN:
+				case SVIM_MODE_AVAILABLE:
 				{
 					m_wndStatusBar.m_lModeBKColor = SvDef::KoerberGray;
 					m_wndStatusBar.m_lModeForeColor = SvDef::Black;
@@ -645,6 +645,8 @@ void SVMainFrame::OnUpdateStatusInfo( CCmdUI *pCmdUI )
 				}
 				default:
 				{
+					m_wndStatusBar.m_lModeBKColor = SvDef::KoerberGray;
+					m_wndStatusBar.m_lModeForeColor = SvDef::Black;
 					Mode += _T("Undefined");
 				}
 			}

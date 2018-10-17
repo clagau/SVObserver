@@ -1139,6 +1139,7 @@ HRESULT SVVisionProcessorHelper::FireNotification(long notifyType, long value, l
 		RootObject::setRootChildValue(SvDef::FqnEnvironmentModeIsRegressionTest, (SVIM_MODE_REGRESSION == currentMode));
 		RootObject::setRootChildValue(SvDef::FqnEnvironmentModeIsTest, (SVIM_MODE_TEST == currentMode));
 		RootObject::setRootChildValue(SvDef::FqnEnvironmentModeIsEdit, (SVIM_MODE_EDIT == currentMode));
+		::PostMessage(AfxGetMainWnd()->m_hWnd, SV_REFRESH_STATUS_BAR, 0, 0);
 	}
 
 	if (nullptr != m_pIoService)
