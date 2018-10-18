@@ -1,9 +1,9 @@
 //******************************************************************************
 /// \copyright (c) 2018 by Seidenader Maschinenbau GmbH
-/// \file RunRe.h
+/// \file SVRC.h
 /// All Rights Reserved
 //******************************************************************************
-/// Include-wrapper to simplify suppressing compiler warings.
+/// Include-wrapper to simplify suppressing compiler warnings.
 //******************************************************************************
 
 #pragma once

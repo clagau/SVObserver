@@ -463,7 +463,7 @@ void SVObserverApp::OnFileOpenSVC()
 			AfxGetApp()->WriteProfileString(_T("Settings"), _T("SVCFilePath"), svFileName.GetPathName().c_str());
 
 			TheSVOLicenseManager().ClearLicenseErrors();
-			if (S_OK == OpenFile(svFileName.GetFullFileName().c_str()))
+			if (S_OK == OpenFile(svFileName.GetFullFileName().c_str(), true))
 			{
 				if (TheSVOLicenseManager().HasToolErrors())
 				{
@@ -471,11 +471,6 @@ void SVObserverApp::OnFileOpenSVC()
 				}
 				ExtrasEngine::Instance().ResetAutoSaveInformation(); //Arvid: reset autosave timestamp after configuration was loaded
 			}
-			if (!m_svSecurityMgr.SVIsSecured(SECURITY_POINT_MODE_MENU_EDIT_TOOLSET))
-			{
-				SetModeEdit(true); // Set Edit mode
-			}
-
 		}// end if ( svFileName.SelectFile() )
 	}// end if ( S_OK == m_svSecurityMgr.Validate( SECURITY_POINT_FILE_MENU_SELECT_CONFIGURATION) )
 	// Update Remote Inputs Tab
@@ -1520,7 +1515,7 @@ void SVObserverApp::OnRCGoOnline()
 {
 	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
 	{
-		SetMode(SVIM_MODE_ONLINE);
+		SetMode(static_cast<long> (SvPb::DeviceModeType::runMode));
 	}
 }
 
@@ -2313,7 +2308,7 @@ void SVObserverApp::AddAdditionalFile(LPCTSTR FilePath)
 	}
 }
 
-HRESULT SVObserverApp::OpenFile(LPCTSTR PathName)
+HRESULT SVObserverApp::OpenFile(LPCTSTR PathName, bool editMode /*= false*/)
 {
 	TCHAR szDrive[_MAX_DRIVE];
 	TCHAR szDir[_MAX_DIR];
@@ -2386,6 +2381,18 @@ HRESULT SVObserverApp::OpenFile(LPCTSTR PathName)
 	else
 	{
 		result = E_INVALIDARG;
+	}
+
+	if(S_OK == result)
+	{
+		if(editMode && !m_svSecurityMgr.SVIsSecured(SECURITY_POINT_MODE_MENU_EDIT_TOOLSET))
+		{
+			SetModeEdit(true);
+		}
+		else
+		{
+			SetModeEdit(false);
+		}
 	}
 
 	return result;
@@ -3524,11 +3531,11 @@ bool SVObserverApp::RemoveMenu(
 	return bSuccess;
 }
 
-HRESULT SVObserverApp::SetMode(unsigned long p_lNewMode)
+HRESULT SVObserverApp::SetMode(unsigned long lNewMode)
 {
 	HRESULT l_hr = S_OK;
 
-	svModeEnum l_svMode = (svModeEnum)p_lNewMode;
+	SvPb::DeviceModeType Mode = SvPb::DeviceModeType_IsValid(lNewMode) ? static_cast<SvPb::DeviceModeType> (lNewMode) : SvPb::DeviceModeType::unknownMode;
 
 	if (SVSVIMStateClass::CheckState(SV_STATE_START_PENDING |
 		SV_STATE_STARTING |
@@ -3545,7 +3552,7 @@ HRESULT SVObserverApp::SetMode(unsigned long p_lNewMode)
 	{
 		l_hr = SVMSG_52_MODE_GUI_IN_USE_ERROR;
 	}
-	else if (l_svMode == SVIM_MODE_ONLINE)
+	else if (SvPb::DeviceModeType::runMode == Mode)
 	{
 		if (SVSVIMStateClass::CheckState(SV_STATE_TEST) ||
 			SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
@@ -3572,7 +3579,7 @@ HRESULT SVObserverApp::SetMode(unsigned long p_lNewMode)
 			l_hr = SVMSG_SVIMCMD_GO_ONLINE_FAILED;
 		}
 	}
-	else if (l_svMode == SVIM_MODE_OFFLINE)
+	else if (SvPb::DeviceModeType::stopMode == Mode)
 	{
 		// Go offline
 		if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING) ||
@@ -3583,7 +3590,7 @@ HRESULT SVObserverApp::SetMode(unsigned long p_lNewMode)
 
 			SetModeEdit(false);
 		}
-	else if (l_svMode == SVIM_MODE_TEST)
+	else if (SvPb::DeviceModeType::testMode == Mode)
 	{
 		// If the previous mode was running then we cannot stop and 
 		// go straight into test mode.  This has caused a crash in testing 
@@ -3609,12 +3616,12 @@ HRESULT SVObserverApp::SetMode(unsigned long p_lNewMode)
 			l_hr = SVMSG_SVIMCMD_REQUEST_REJECTED;
 		}
 	}
-	else if (l_svMode == SVIM_MODE_REGRESSION)
+	else if (SvPb::DeviceModeType::regressionMode == Mode)
 	{
 		// Later Currently not supported through the Control
 		l_hr = SVMSG_SVIMCMD_REQUEST_REJECTED;
 	}
-	else if (l_svMode == SVIM_MODE_EDIT)
+	else if (SvPb::DeviceModeType::editMode == Mode)
 	{
 		if (SVSVIMStateClass::CheckState(SV_STATE_TEST) ||
 			SVSVIMStateClass::CheckState(SV_STATE_RUNNING))

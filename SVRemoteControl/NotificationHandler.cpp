@@ -2,7 +2,6 @@
 #include "SVControlCommands.h"
 #include "NotificationHandler.h"
 #include <iosfwd>
-#include "SVProtoBuf\ConverterHelper.h"
 
 NotificationHandler::NotificationHandler(SVControlCommands* pControlCommands) :m_pControlCommands(pControlCommands)
 {
@@ -19,9 +18,8 @@ std::future<void>  NotificationHandler::OnNext(SvPb::GetNotificationStreamRespon
 
 		case SvPb::GetNotificationStreamResponse::kCurrentMode:
 		{
-			svModeEnum svMode = SvPb::PbDeviceMode_2_SVIMMode(rResponse.currentmode());
 			propTree.put("SVRC.Notification", "CurrentMode");
-			propTree.put("SVRC.DataItems.Mode", (int)svMode);
+			propTree.put("SVRC.DataItems.Mode", static_cast<int> (rResponse.currentmode()));
 			type = SVNotificationTypes::CurrentMode;
 			break;
 		}

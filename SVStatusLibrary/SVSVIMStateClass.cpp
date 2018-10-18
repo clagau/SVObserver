@@ -17,14 +17,11 @@
 #include "Definitions/GlobalConst.h"
 #pragma endregion Includes
 
-#pragma intrinsic(_InterlockedAnd)
-#pragma intrinsic(_InterlockedOr)
+std::atomic_long SVSVIMStateClass::m_SVIMState{SV_STATE_AVAILABLE};
 
-long SVSVIMStateClass::m_SVIMState = SV_STATE_AVAILABLE;
-
-bool SVSVIMStateClass::m_AutoSaveRequired = false; ///< should an autosave be performed at the next appropriate time?
-volatile __time32_t SVSVIMStateClass::m_CurrentModifiedTime{0L};
-volatile svModeEnum SVSVIMStateClass::m_CurrentMode = SVIM_MODE_UNKNOWN;
+bool SVSVIMStateClass::m_AutoSaveRequired{false};
+std::atomic<__time32_t> SVSVIMStateClass::m_CurrentModifiedTime{0L};
+std::atomic<SvPb::DeviceModeType> SVSVIMStateClass::m_CurrentMode{SvPb::DeviceModeType::unknownMode};
 NotifyFunctor SVSVIMStateClass::m_Notify;
 
 SVSVIMStateClass::SVSVIMStateClass()
@@ -37,7 +34,7 @@ SVSVIMStateClass::~SVSVIMStateClass()
 
 bool SVSVIMStateClass::AddState( DWORD dwState )
 {
-	::_InterlockedOr( &m_SVIMState, dwState );
+	m_SVIMState |= dwState;
 
 	if( dwState & SV_STATE_MODIFIED )
 	{
@@ -50,7 +47,7 @@ bool SVSVIMStateClass::AddState( DWORD dwState )
 
 bool SVSVIMStateClass::RemoveState( DWORD dwState )
 {
-	::_InterlockedAnd( &m_SVIMState, ~dwState );
+	m_SVIMState &= ~dwState;
 	CheckModeNotify();
 
 	return true;
@@ -63,9 +60,9 @@ bool SVSVIMStateClass::CheckState( DWORD dwState )
 	return l_Status;
 }
 
-svModeEnum SVSVIMStateClass::GetMode()
+SvPb::DeviceModeType SVSVIMStateClass::GetMode()
 {
-	svModeEnum retVal = SVIM_MODE_UNKNOWN;
+	SvPb::DeviceModeType result{SvPb::DeviceModeType::unknownMode};
 
 	// Pending conditions...
 	if( SVSVIMStateClass::CheckState( SV_STATE_START_PENDING |
@@ -79,38 +76,38 @@ svModeEnum SVSVIMStateClass::GetMode()
 	    SV_STATE_UNAVAILABLE |
 		SV_STATE_EDITING ) )
 	{
-		retVal = SVIM_MODE_CHANGING;
+		result = SvPb::DeviceModeType::modeChanging;
 	}
 	else if( SVSVIMStateClass::CheckState( SV_STATE_EDIT ) )
 	{
-		retVal = SVIM_MODE_EDIT;
+		result = SvPb::DeviceModeType::editMode;
 	}
 	else if( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
 	{
-		retVal = SVIM_MODE_ONLINE;
+		result = SvPb::DeviceModeType::runMode;
 	}
 	else if( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) )
 	{
-		retVal = SVIM_MODE_REGRESSION;
+		result = SvPb::DeviceModeType::regressionMode;
 	}
 	else if( SVSVIMStateClass::CheckState( SV_STATE_TEST ) )
 	{
-		retVal = SVIM_MODE_TEST;
+		result = SvPb::DeviceModeType::testMode;
 	}
 	else if( SVSVIMStateClass::CheckState( SV_STATE_STOP ) )
 	{
-		retVal = SVIM_MODE_OFFLINE;
+		result = SvPb::DeviceModeType::stopMode;
 	}
 	else if( SVSVIMStateClass::CheckState(SV_STATE_AVAILABLE) )
 	{
-		retVal = SVIM_MODE_AVAILABLE;
+		result = SvPb::DeviceModeType::available;
 	}
 	else
 	{
-		retVal = SVIM_MODE_UNKNOWN;
+		result = SvPb::DeviceModeType::unknownMode;
 	}
 
-	return retVal;
+	return result;
 }
 
 void SVSVIMStateClass::setNotificationFunction(NotifyFunctor Notify)
@@ -120,11 +117,11 @@ void SVSVIMStateClass::setNotificationFunction(NotifyFunctor Notify)
 
 void SVSVIMStateClass::CheckModeNotify()
 {
-	svModeEnum NewMode = GetMode();
+	SvPb::DeviceModeType NewMode = GetMode();
 
 	if (NewMode != m_CurrentMode)
 	{
-		::InterlockedExchange(reinterpret_cast<volatile long*> (&m_CurrentMode), NewMode);
+		m_CurrentMode = NewMode;
 
 		if (!m_Notify.empty())
 		{
@@ -135,7 +132,7 @@ void SVSVIMStateClass::CheckModeNotify()
 
 void SVSVIMStateClass::SetLastModifiedTime()
 {
-	::InterlockedExchange(&SVSVIMStateClass::m_CurrentModifiedTime, ::_time32(nullptr));
+	m_CurrentModifiedTime = ::_time32(nullptr);
 
 	if (!m_Notify.empty())
 	{

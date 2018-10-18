@@ -56,7 +56,7 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVProtoBuf/ConverterHelper.h"
 #include "TriggerRecordController/ITriggerRecordControllerRW.h"
-#include "SVProtoBuf/TriggerRecordController.pb.h"
+#include "SVProtoBuf/TriggerRecordController.h"
 #pragma endregion Includes
 
 #pragma region Declarations

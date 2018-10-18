@@ -60,6 +60,7 @@
 #include <afxtempl.h>
 #include <afxdlgs.h>
 
+#include <atomic>			//Used by static library
 #include <comutil.h>		//Used by static library
 #include <ctime>			//Used by static library
 #include <lm.h>

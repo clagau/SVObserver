@@ -50,6 +50,7 @@
 #include <winnt.h>
 
 #include <atltime.h>
+#include <atomic>
 #include <concrt.h>
 #include <codecvt>
 #include <ctime>

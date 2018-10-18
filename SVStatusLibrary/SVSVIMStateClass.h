@@ -11,7 +11,8 @@
 
 #pragma once
 #pragma region Includes
-#include "svModeEnum.h"
+//Moved to precompiled header: #include <atomic>
+#include "SVProtobuf/SVRC-Enum.h"
 #pragma endregion Includes
 
 #define SV_STATE_UNKNOWN		0x00000000
@@ -75,7 +76,7 @@ public:
 	//whether there is at least one bit (state) matching.
 	static bool CheckState( DWORD dwState );
 
-	static svModeEnum getCurrentMode() { return m_CurrentMode; }
+	static SvPb::DeviceModeType getCurrentMode() { return m_CurrentMode; }
 
 	static __time32_t getCurrentTime() { return m_CurrentModifiedTime; }
 
@@ -101,7 +102,7 @@ private:
 	// Description:  Get the value of the mode
 	// Returns:   svModeEnum Enum of the mode
 	//************************************
-	static svModeEnum GetMode();
+	static SvPb::DeviceModeType GetMode();
 
 	static void SetLastModifiedTime();
 
@@ -114,11 +115,11 @@ private:
 	static NotifyFunctor m_Notify;	//! Notify functor when state changes
 
 	//This attribute contain the SVIM state value.
-	static long m_SVIMState;
+	static std::atomic_long m_SVIMState;
 
-	static volatile svModeEnum m_CurrentMode;
+	static std::atomic<SvPb::DeviceModeType> m_CurrentMode;
 
-	static volatile __time32_t m_CurrentModifiedTime;
+	static std::atomic<__time32_t> m_CurrentModifiedTime;
 
 	static bool m_AutoSaveRequired; ///< should an autosave be performed at the next appropriate time?
 };

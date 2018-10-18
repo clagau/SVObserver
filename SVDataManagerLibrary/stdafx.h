@@ -50,6 +50,7 @@
 //************************************
 #pragma region Precompiled Headers
 
+#include <atomic>			//Used by static library
 #include <comutil.h>		//Used by static library
 #include <ctime>			//Used by static library
 #include <iterator>			//Used by static library

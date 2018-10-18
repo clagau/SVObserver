@@ -19,6 +19,7 @@
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVSharedMemoryLibrary/SVProductFilterEnum.h"
 
+#pragma warning( disable: 4244 )	//Disable warning for prototype conversion
 #include "SVFileSystemLibrary/SVFileNameArrayClass.h"
 #include "SVInfoStructs.h"
 #include "SVInspectionProcess.h"
@@ -34,7 +35,7 @@
 #include "SVXMLLibrary\SVObjectXMLWriter.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVProtoBuf/TriggerRecordController.pb.h"
+#include "SVProtoBuf/TriggerRecordController.h"
 #include "InspectionCommands/CommandFunctionHelper.h"
 #pragma endregion Includes
 

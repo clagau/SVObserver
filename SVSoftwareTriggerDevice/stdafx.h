@@ -49,6 +49,7 @@
 #include <windows.h>
 
 #include <algorithm>
+#include <atomic>			//Used by static library
 #include <comdef.h>
 #include <comutil.h>		//Used by static library
 #include <ctime>			//Used by static library

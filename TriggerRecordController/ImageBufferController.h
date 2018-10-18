@@ -12,7 +12,7 @@
 #include "SVMatroxLibrary\SVMatroxBufferCreateStruct.h"
 #include "SVMatroxLibrary/SVMatroxBufferCreateChildStruct.h"
 #include "SVMatroxLibrary\SVMatroxBuffer.h"
-#pragma warning( disable: 4244 )	//Disable warning for conversion
+#pragma warning( disable: 4244 )	//Disable warning for prototype conversion
 #include "SVProtoBuf/TriggerRecordController.h"
 #include "IImage.h"
 #pragma endregion Includes

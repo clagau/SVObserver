@@ -226,6 +226,7 @@
     <ClInclude Include="Protobuf2Rapidjson.h" />
     <ClInclude Include="SVAuth.h" />
     <ClInclude Include="SVAuth.pb.h" />
+    <ClInclude Include="SVRC-Enum.h" />
     <ClInclude Include="SVRC-Enum.pb.h" />
     <ClInclude Include="SVRC-SVObserver.pb.h" />
     <ClInclude Include="SVRC-SVOGateway.pb.h" />

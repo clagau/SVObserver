@@ -50,6 +50,7 @@
 
 #include <algorithm>
 #include <assert.h>
+#include <atomic>			//Used by static library
 #include <comutil.h>		//Used by static library
 #include <ctime>			//Used by static library
 #include <functional>

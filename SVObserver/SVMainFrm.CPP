@@ -595,48 +595,48 @@ void SVMainFrame::OnUpdateStatusInfo( CCmdUI *pCmdUI )
 			GlobalRCGetMode( &l_lMode );
 			switch( l_lMode )
 			{
-				case SVIM_MODE_AVAILABLE:
+				case SvPb::DeviceModeType::available:
 				{
 					m_wndStatusBar.m_lModeBKColor = SvDef::KoerberGray;
 					m_wndStatusBar.m_lModeForeColor = SvDef::Black;
 					break;
 				}
-				case SVIM_MODE_ONLINE:
+				case SvPb::DeviceModeType::runMode:
 				{
 					m_wndStatusBar.m_lModeBKColor = RGB( 100, 255, 100 );
 					m_wndStatusBar.m_lModeForeColor = SvDef::Black;
 					Mode += _T("Run ");
 					break;
 				}
-				case SVIM_MODE_OFFLINE:
+				case SvPb::DeviceModeType::stopMode:
 				{
 					m_wndStatusBar.m_lModeBKColor = RGB( 255, 128, 128 );
 					m_wndStatusBar.m_lModeForeColor = SvDef::Black;
 					Mode += _T("Stop ");
 					break;
 				}
-				case SVIM_MODE_REGRESSION:
+				case SvPb::DeviceModeType::regressionMode:
 				{
 					m_wndStatusBar.m_lModeBKColor = SvDef::Fuchsia;
 					m_wndStatusBar.m_lModeForeColor = SvDef::Black;
 					Mode += _T("Regression ");
 					break;
 				}
-				case SVIM_MODE_TEST:
+				case SvPb::DeviceModeType::testMode:
 				{
 					m_wndStatusBar.m_lModeBKColor = SvDef::DarkBlue;
 					m_wndStatusBar.m_lModeForeColor = SvDef::White;
 					Mode += _T("Test ");
 					break;
 				}
-				case SVIM_MODE_EDIT:
+				case SvPb::DeviceModeType::editMode:
 				{
 					m_wndStatusBar.m_lModeBKColor = SvDef::PaleYellow;
 					m_wndStatusBar.m_lModeForeColor = SvDef::Black;
 					Mode += _T("Edit ");
 					break;
 				}
-				case SVIM_MODE_CHANGING:
+				case SvPb::DeviceModeType::modeChanging:
 				{
 					m_wndStatusBar.m_lModeBKColor = SvDef::White;
 					m_wndStatusBar.m_lModeForeColor = SvDef::Black;

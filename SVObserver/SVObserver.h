@@ -174,7 +174,7 @@ public:
 
 public:
 	void AddAdditionalFile(LPCTSTR FilePath);
-	HRESULT OpenFile(LPCTSTR PathName);
+	HRESULT OpenFile(LPCTSTR PathName, bool editMode = false);
 	HRESULT OpenSVXFile();
 	SVIODoc* NewSVIODoc( LPCTSTR DocName, SVIOController& Controller );
 	SVIPDoc* NewSVIPDoc( LPCTSTR DocName, SVInspectionProcess& Inspection );

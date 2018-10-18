@@ -54,19 +54,18 @@ void SVRCCommand::GetDeviceMode(const SvPb::GetDeviceModeRequest& rRequest, SvRp
 {
 	SvPb::GetDeviceModeResponse Response;
 	SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-	unsigned long Mode = SVSVIMStateClass::getCurrentMode();
 	SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
-	Response.set_mode(SvPb::SVIMMode_2_PbDeviceMode(Mode));
+	Response.set_mode(SVSVIMStateClass::getCurrentMode());
 	task.finish(std::move(Response));
 }
 
 void SVRCCommand::SetDeviceMode(const SvPb::SetDeviceModeRequest& rRequest, SvRpc::Task<SvPb::StandardResponse> task)
 {
-	unsigned long DesiredMode = static_cast<unsigned long>(PbDeviceMode_2_SVIMMode(rRequest.mode()));
+	SvPb::DeviceModeType DesiredMode = rRequest.mode();
 
 	HRESULT Status {E_INVALIDARG};
 
-	if (SVIM_MODE_UNKNOWN != DesiredMode)
+	if (SvPb::DeviceModeType::unknownMode != DesiredMode)
 	{
 		SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
 
@@ -75,7 +74,7 @@ void SVRCCommand::SetDeviceMode(const SvPb::SetDeviceModeRequest& rRequest, SvRp
 		if (nullptr != pConfig)
 		{
 			//Note this needs to be done using SendMessage due to this being a worker thread
-			Status = static_cast<HRESULT>(SendMessage(AfxGetApp()->m_pMainWnd->m_hWnd, SV_SET_MODE, 0, (LPARAM) DesiredMode));
+			Status = static_cast<HRESULT>(SendMessage(AfxGetApp()->m_pMainWnd->m_hWnd, SV_SET_MODE, 0, static_cast<LPARAM> (DesiredMode)));
 		}
 		else
 		{

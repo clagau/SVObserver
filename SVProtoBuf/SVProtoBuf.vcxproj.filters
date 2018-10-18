@@ -157,5 +157,8 @@
     <ClInclude Include="Protobuf2Rapidjson.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="SVRC-Enum.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

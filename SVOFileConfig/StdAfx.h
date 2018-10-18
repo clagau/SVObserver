@@ -55,6 +55,7 @@
 
 #include <algorithm>
 #include <assert.h>
+#include <atomic>			//Used by static library
 #include <comdef.h>
 #include <crtdbg.h>
 #include <comutil.h>		//Used by static library

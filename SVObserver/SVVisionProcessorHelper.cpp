@@ -1134,11 +1134,11 @@ HRESULT SVVisionProcessorHelper::FireNotification(long notifyType, long value, l
 	{
 		svModeEnum currentMode = static_cast<svModeEnum> (value);
 		RootObject::setRootChildValue(SvDef::FqnEnvironmentModeValue, static_cast<long> (currentMode));
-		RootObject::setRootChildValue(SvDef::FqnEnvironmentModeIsRun, (SVIM_MODE_ONLINE == currentMode));
-		RootObject::setRootChildValue(SvDef::FqnEnvironmentModeIsStop, (SVIM_MODE_OFFLINE == currentMode));
-		RootObject::setRootChildValue(SvDef::FqnEnvironmentModeIsRegressionTest, (SVIM_MODE_REGRESSION == currentMode));
-		RootObject::setRootChildValue(SvDef::FqnEnvironmentModeIsTest, (SVIM_MODE_TEST == currentMode));
-		RootObject::setRootChildValue(SvDef::FqnEnvironmentModeIsEdit, (SVIM_MODE_EDIT == currentMode));
+		RootObject::setRootChildValue(SvDef::FqnEnvironmentModeIsRun, (SvPb::DeviceModeType::runMode == currentMode));
+		RootObject::setRootChildValue(SvDef::FqnEnvironmentModeIsStop, (SvPb::DeviceModeType::stopMode == currentMode));
+		RootObject::setRootChildValue(SvDef::FqnEnvironmentModeIsRegressionTest, (SvPb::DeviceModeType::regressionMode == currentMode));
+		RootObject::setRootChildValue(SvDef::FqnEnvironmentModeIsTest, (SvPb::DeviceModeType::testMode == currentMode));
+		RootObject::setRootChildValue(SvDef::FqnEnvironmentModeIsEdit, (SvPb::DeviceModeType::editMode == currentMode));
 		::PostMessage(AfxGetMainWnd()->m_hWnd, SV_REFRESH_STATUS_BAR, 0, 0);
 	}
 
@@ -1183,7 +1183,10 @@ void SVVisionProcessorHelper::ProcessNotifications(SvStl::NotificationType notif
 		{
 			case SvStl::NotificationType::mode:
 			{
-				response.set_currentmode(SvPb::SVIMMode_2_PbDeviceMode(value));
+				if(SvPb::DeviceModeType_IsValid(value))
+				{
+					response.set_currentmode(static_cast<SvPb::DeviceModeType> (value));
+				}
 				break;
 			}
 			case SvStl::NotificationType::lastModified:

@@ -13,9 +13,7 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <comdef.h>
 
-
 #include "SVConfigurationObject.h"
-
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVCommandLibrary/SVObjectAsynchronousCommandTemplate.h"
 #include "SVCommandLibrary/SVObjectSynchronousCommandTemplate.h"

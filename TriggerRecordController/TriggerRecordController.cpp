@@ -474,7 +474,7 @@ int TriggerRecordController::addOrChangeImage(const GUID& rImageId, const SVMatr
 	SvPb::ImageDefinition* pImageDefinition = nullptr;
 	if (pList->end() != pImageIter)
 	{
-		imagePos = std::distance(pList->begin(), pImageIter);
+		imagePos = static_cast<int> (std::distance(pList->begin(), pImageIter));
 		pImageDefinition = &(*pImageIter);
 		if (pImageDefinition->type() == typeStr)
 		{ //it this the same type, nothing to do
@@ -541,7 +541,7 @@ int TriggerRecordController::addOrChangeChildImage(const GUID& rImageId, const G
 	if (pList->end() != imageIter)
 	{
 		pImageDefinition = &(*imageIter);
-		imagePos = std::distance(pList->begin(), imageIter);
+		imagePos = static_cast<int> (std::distance(pList->begin(), imageIter));
 	}
 	else
 	{

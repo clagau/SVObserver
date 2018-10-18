@@ -54,7 +54,8 @@
 
 #include <assert.h>
 #include <algorithm>
-#include <ctime>				//Used by static library
+#include <atomic>			//Used by static library
+#include <ctime>			//Used by static library
 #include <comdef.h>
 #include <comutil.h>
 #include <fstream>
@@ -65,7 +66,7 @@
 #include <sequential_tree.h>
 #include <sstream>
 #include <string>
-#include <tchar.h>				//Used by static library
+#include <tchar.h>			//Used by static library
 #include <typeinfo>
 
 

@@ -3,7 +3,7 @@
 /// \file TriggerRecordController.h
 /// All Rights Reserved
 //******************************************************************************
-/// Include-wrapper to simplify suppressing compiler warings.
+/// Include-wrapper to simplify suppressing compiler warnings.
 //******************************************************************************
 
 #pragma once
