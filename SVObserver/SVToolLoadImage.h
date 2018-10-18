@@ -53,7 +53,7 @@ protected:
 	SVImageClass                    m_fileImage;
 	SVFileNameValueObjectClass      m_currentPathName;
 	SVBoolValueObjectClass          m_continuousReload;
-	int                             m_ReloadFileImage;
+	bool                            m_ReloadFileImage;
 
 };
 

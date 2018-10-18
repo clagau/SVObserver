@@ -132,7 +132,7 @@ bool SVLoadImageToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCon
 			return false;
 		}
 
-		if (bReload || 0 < m_ReloadFileImage || nullptr == m_fileImage.getImageReadOnly(rRunStatus.m_triggerRecord))
+		if (bReload || m_ReloadFileImage || nullptr == m_fileImage.getImageReadOnly(rRunStatus.m_triggerRecord))
 		{
 			if (S_OK != m_fileImage.LoadImage(ImagePathName.c_str(), rRunStatus.m_triggerRecord))
 			{
@@ -146,9 +146,15 @@ bool SVLoadImageToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCon
 				return false;
 			}
 
-			m_ReloadFileImage--;
+			m_ReloadFileImage = false;
 		}
 		
+		if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
+		{
+			//If not in runMode reload always, because outside of runMode it is not sure if the last image still valid.
+			m_ReloadFileImage = true;
+		}
+
 		return true;
 	}
 
@@ -160,7 +166,7 @@ bool SVLoadImageToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMess
 {
 	bool Result = SVToolClass::ResetObject(pErrorMessages);
 	
-	m_ReloadFileImage = 2; //Must be 2 because if this reset done by the ResetAllObject before go to RunMode, the triggerRecord from the first RunOnce (initialize) will not be saved and for the first real run we have to load the image (else it will be an empty image).
+	m_ReloadFileImage = true;
 
 	UpdateImageWithExtent();
 
