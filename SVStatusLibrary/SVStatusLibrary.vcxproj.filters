@@ -107,9 +107,6 @@
     <ClInclude Include="SVSVIMStateClass.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="svModeEnum.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="NotificationTypeEnum.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
