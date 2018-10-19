@@ -4030,7 +4030,7 @@ bool SVObserverApp::ShowConfigurationAssistant(int Page /*= 3*/,
 		if (bFileNewConfiguration)
 		{
 			m_ConfigFileName.SetFileNameOnly(NewName.c_str());
-			m_ConfigFileName.SetExtension(SvDef::cConfigExtension);
+			m_ConfigFileName.SetExtension(SvDef::cPackedConfigExtension);
 
 			SVDigitalInputObject* pInput = nullptr;
 			SVPPQObject* pPPQ = nullptr;
