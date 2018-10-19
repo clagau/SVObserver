@@ -208,6 +208,13 @@ bool SVToolSetClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStruc
 
 	m_MainImageObject.SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
 
+	//This is only required to be able to read old configurations with auxiliary extents set in the old format
+	SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(GetInspection());
+	if (nullptr != pInspection)
+	{
+		m_EnableAuxiliaryExtents.SetValue(BOOL(pInspection->getInitialAuxiliaryExtents()));
+	}
+
 	m_isCreated = bOk;
 
 	return bOk;

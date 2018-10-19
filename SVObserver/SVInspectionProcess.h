@@ -256,6 +256,8 @@ public:
 	/// will global extent data be forced to update?
 	bool IsOffsetUpdateForced() override { return m_bForceOffsetUpdate; }
 
+	bool getInitialAuxiliaryExtents() {return m_initialAuxiliaryExtents;}
+
 #pragma region Methods to replace processMessage
 	virtual bool createAllObjects( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual bool CreateChildObject( SVObjectClass* pChildObject, DWORD context = 0 ) override;
@@ -437,7 +439,8 @@ private:
 	bool m_LastRunProductNULL;
 	SVProductInfoStruct m_svLastRunProduct;
 
-	bool                m_bNewDisableMethod;
+	bool m_bNewDisableMethod;
+	bool m_initialAuxiliaryExtents {false}; //This is only required to be able to read old configuration files with extents set
 
 	DWORD               m_dwThreadId;
 

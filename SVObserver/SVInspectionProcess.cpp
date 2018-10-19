@@ -2344,6 +2344,9 @@ bool SVInspectionProcess::getEnableAuxiliaryExtent() const
 
 void SVInspectionProcess::setEnableAuxiliaryExtent(bool Enabled)
 {
+	//This variable is only required to be able to read old configurations with auxiliary extents set in the old format
+	//Due to the tool set being created new at a later stage this is overwritten so we need to store it
+	m_initialAuxiliaryExtents = Enabled;
 	if (nullptr != m_pCurrentToolset)
 	{
 		return m_pCurrentToolset->setEnableAuxiliaryExtents(Enabled);
