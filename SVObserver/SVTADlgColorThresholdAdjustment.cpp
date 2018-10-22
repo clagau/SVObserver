@@ -267,7 +267,7 @@ void SVTADlgColorThresholdAdjustment::updateGraphDisplay()
 	{
 		m_pTool->resetAllObjects();
 
-		m_Values.RunOnce(m_pTool->GetInspection()->GetUniqueObjectID(), m_pTool->GetUniqueObjectID());
+		m_Values.RunOnce(m_pTool->GetInspection()->GetUniqueObjectID());
 
 		m_svDlgImage.ClearOverlayPoints();
 

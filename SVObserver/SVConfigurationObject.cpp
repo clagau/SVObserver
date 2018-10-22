@@ -3877,7 +3877,7 @@ bool SVConfigurationObject::Activate()
 	for (long l = lSize - 1; -1 < l; l--)
 	{
 		SVInspectionProcess* pInspection = m_arInspectionArray[l];
-		SvCmd::RunOnceSynchronous(pInspection->GetUniqueObjectID(), SVGUID(GUID_NULL));
+		SvCmd::RunOnceSynchronous(pInspection->GetUniqueObjectID());
 	}
 
 	return bOk;
@@ -3903,8 +3903,7 @@ bool SVConfigurationObject::RebuildInputOutputLists()
 		if (nullptr != pInspection)
 		{
 			SVSVIMStateClass::AddState(SV_STATE_INTERNAL_RUN);
-			SvOi::ITaskObject* tmp = nullptr;
-			pInspection->RunOnce(tmp);
+			pInspection->RunOnce();
 			SVSVIMStateClass::RemoveState(SV_STATE_INTERNAL_RUN);
 		}
 	}
@@ -4844,7 +4843,7 @@ HRESULT SVConfigurationObject::SetInspectionItems(const SVNameStorageMap& p_rIte
 
 				if (nullptr != pInspection)
 				{
-					SvCmd::RunOnceSynchronous(pInspection->GetUniqueObjectID(), SVGUID(GUID_NULL));
+					SvCmd::RunOnceSynchronous(pInspection->GetUniqueObjectID());
 				}
 			}
 		}
@@ -4975,7 +4974,7 @@ HRESULT SVConfigurationObject::SetRemoteInputItems(const SVNameStorageMap& p_rIt
 
 				if (nullptr != pInspection)
 				{
-					SvCmd::RunOnceSynchronous(pInspection->GetUniqueObjectID(), SVGUID(GUID_NULL));
+					SvCmd::RunOnceSynchronous(pInspection->GetUniqueObjectID());
 				}
 			}
 		}

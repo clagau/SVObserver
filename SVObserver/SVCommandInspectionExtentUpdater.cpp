@@ -120,7 +120,6 @@ HRESULT SVCommandInspectionExtentUpdater::Execute()
 				pInspection->AddResetState( SvDef::SVResetAutoMoveAndResize );
 			}
 			
-			SVToolClass* pToolRun(nullptr); 
 			bool result(false); 
 			if(m_ResetMode == ResetMode_Inspection )
 			{
@@ -146,7 +145,6 @@ HRESULT SVCommandInspectionExtentUpdater::Execute()
 			}
 			else
 			{
-				pToolRun = pTool;
 				SVObjectClass*  pResetObject =  dynamic_cast<SVObjectClass*>  (pTool);
 				if (nullptr != pResetObject)
 				{
@@ -156,7 +154,7 @@ HRESULT SVCommandInspectionExtentUpdater::Execute()
 
 			if ( result )
 			{
-				retVal = pInspection->RunOnce( pToolRun ) ? S_OK : SvStl::Err_10006_SVCommandInspectionExtentUpdater_RunOnce;
+				retVal = pInspection->RunOnce() ? S_OK : SvStl::Err_10006_SVCommandInspectionExtentUpdater_RunOnce;
 				
 			}
 			else

@@ -1999,7 +1999,7 @@ STDMETHODIMP CSVCommand::SVRunOnce(BSTR bstrName)
 	{
 		if (SVConfigurationObject::GetInspection(W2T(bstrName), pInspection))
 		{
-			hrResult =  SvCmd::RunOnceSynchronous(pInspection->GetUniqueObjectID(), SVGUID(GUID_NULL));
+			hrResult =  SvCmd::RunOnceSynchronous(pInspection->GetUniqueObjectID());
 		}
 	}// end if
 	else

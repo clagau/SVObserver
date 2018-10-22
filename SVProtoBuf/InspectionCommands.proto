@@ -13,7 +13,6 @@ import "BasicStructure.proto";
 message InspectionRunOnceRequest
 {
 	bytes inspectionID = 1; //GUID of the inspection.
-	bytes taskID = 2; //GUID of the taskObject on which the runOnce should be done. If this field empty the whole inspection will run.
 }
 
 // This is the message for Destroy child object.

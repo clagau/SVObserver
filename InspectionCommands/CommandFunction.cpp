@@ -37,17 +37,11 @@ HRESULT InspectionRunOnce(const SvPb::InspectionRunOnceRequest &rMessage)
 	HRESULT hr = S_OK;
 
 	SVGUID InspectionID = SvPb::GetGuidFromProtoBytes(rMessage.inspectionid());
-	SVGUID ToolID = SvPb::GetGuidFromProtoBytes(rMessage.taskid());
 
 	SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess *>(SvOi::getObject(InspectionID));
 	if (nullptr != pInspection)
 	{
-		SvOi::ITaskObject* pTool(nullptr);
-		if (GUID_NULL != ToolID)
-		{
-			pTool = dynamic_cast<SvOi::ITaskObject *>(SvOi::getObject(ToolID));
-		}
-		hr = pInspection->RunOnce(pTool);
+		hr = pInspection->RunOnce();
 	}
 	else
 	{

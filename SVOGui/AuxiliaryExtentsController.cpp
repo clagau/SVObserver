@@ -144,6 +144,6 @@ namespace SvOg
 	
 	HRESULT AuxiliaryExtentsController::RunOnce()
 	{
-		return SvCmd::RunOnceSynchronous(m_InspectionID, m_TaskObjectID);
+		return SvCmd::RunOnceSynchronous(m_InspectionID);
 	}
 } //namespace SvOg

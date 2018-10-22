@@ -215,13 +215,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnButtonDetails()
 
 			if (nullptr != pInspection)
 			{
-				SVGUID l_ToolId;
-
-				if (nullptr != m_pTool)
-				{
-					l_ToolId = m_pTool->GetUniqueObjectID();
-				}
-				SvCmd::RunOnceSynchronous(pInspection->GetUniqueObjectID(), l_ToolId);
+				SvCmd::RunOnceSynchronous(pInspection->GetUniqueObjectID());
 			}
 
 		}
@@ -314,14 +308,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 
 		if (nullptr != pInspection)
 		{
-			SVGUID l_ToolId;
-
-			if (nullptr != m_pTool)
-			{
-				l_ToolId = m_pTool->GetUniqueObjectID();
-			}
-
-			SvCmd::RunOnceSynchronous(pInspection->GetUniqueObjectID(), l_ToolId);
+			SvCmd::RunOnceSynchronous(pInspection->GetUniqueObjectID());
 		}
 	}
 

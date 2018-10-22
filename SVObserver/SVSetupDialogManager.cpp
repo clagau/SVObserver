@@ -686,7 +686,7 @@ HRESULT SVSetupDialogManager::SVOCVAnalyzerClassSetupDialog(const SVGUID& rObjec
 						bool bOk = pInspection->GetToolSet()->resetAllObjects();
 						if (bOk)
 						{
-							l_Status =  SvCmd::RunOnceSynchronous(pInspection->GetUniqueObjectID(),SVGUID(GUID_NULL));
+							l_Status =  SvCmd::RunOnceSynchronous(pInspection->GetUniqueObjectID());
 						}
 						else
 						{

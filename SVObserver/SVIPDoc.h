@@ -109,7 +109,7 @@ public:
 	HRESULT GetCameras( SVVirtualCameraPtrSet& p_rCameras ) const;
 
 	HRESULT UpdateWithLastProduct();
-	bool RunOnce( SVToolClass* p_pTool = nullptr );
+	bool RunOnce();
 
 	
 	//Regression Test Methods

@@ -49,7 +49,7 @@ namespace SvOi
 		***********/
 		virtual void setEnableAuxiliaryExtent(bool Enabled) = 0;
 
-		virtual HRESULT RunOnce(ITaskObject* pTask) = 0;
+		virtual HRESULT RunOnce() = 0;
 
 		/***********
 		This method gets the last product index

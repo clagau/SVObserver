@@ -25,7 +25,7 @@ namespace SvCmd
 /// \returns HRESULT ErrorCode.
 HRESULT InspectionCommandsSynchronous(const SVGUID& rInspectionID, SvPb::InspectionCmdMsgs* pRequest, SvPb::InspectionCmdMsgs* pResponse );
 
-HRESULT RunOnceSynchronous(const SVGUID& rInspectionID, const SVGUID& rTaskIdID);
+HRESULT RunOnceSynchronous(const SVGUID& rInspectionID);
 
 /// Set messages from SVObserver to a protobuf-structure.
 /// \param messageContainers [in] Messages

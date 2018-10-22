@@ -110,7 +110,7 @@ public:
 	virtual void SetDefaultInputs() override;
 	virtual void GetPPQSelectorList(SvCl::SelectorItemInserter Inserter, const UINT Attribute ) const override;
 	virtual SvOi::ITaskObject* GetToolSetInterface() const override;
-	virtual HRESULT RunOnce(SvOi::ITaskObject* pTask) override;
+	virtual HRESULT RunOnce() override;
 	virtual long GetLastIndex() const  override;
 	virtual HRESULT SubmitCommand(const SvOi::ICommandPtr& rCommandPtr) override;
 	virtual void BuildValueObjectMap() override;
@@ -352,7 +352,6 @@ protected:
 
 	virtual SVObjectClass* UpdateObject( const GUID &friendGuid, SVObjectClass *p_psvObject, SVObjectClass *p_psvNewOwner ) override;
 
-	bool RunOnce( SVToolClass* p_psvTool = nullptr );
 	bool RunInspection( long lResultDataIndex, SVProductInfoStruct *pProduct, bool p_UpdateCounts = true );
 
 	void DestroyInspection();

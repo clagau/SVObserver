@@ -236,7 +236,7 @@ namespace SvOg
 
 	HRESULT ImageController::ToolRunOnce()
 	{
-		return SvCmd::RunOnceSynchronous(m_InspectionID, m_TaskObjectID);
+		return SvCmd::RunOnceSynchronous(m_InspectionID);
 	}
 
 	SvDef::SVImageTypeEnum ImageController::GetImageType(const GUID& rImageID) const

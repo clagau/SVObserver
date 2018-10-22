@@ -107,7 +107,7 @@ public:
 			}
 			if (S_OK == hr && bRunOnce)
 			{
-				hr = RunOnce(rInspectionID, rTaskID);
+				hr = RunOnce(rInspectionID);
 				if(S_OK != hr)
 				{
 					SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_CannotRunOnce, SvStl::SourceFileParams(StdMessageParams), 0, rTaskID);
@@ -184,10 +184,10 @@ public:
 		}
 	}
 
-	HRESULT RunOnce(const GUID& rInspectionID, const GUID& rObjectID)
+	HRESULT RunOnce(const GUID& rInspectionID)
 	{
-		// Do a run once of the Tool/Inspection ?
-		return SvCmd::RunOnceSynchronous(rInspectionID, rObjectID);
+		// Do a run once of the whole Inspection
+		return SvCmd::RunOnceSynchronous(rInspectionID);
 	}
 
 	const SvStl::MessageContainerVector& getFailedMessageList() { return m_MessageFailList; };

@@ -1668,53 +1668,6 @@ SvOi::IObjectClass* SVInspectionProcess::GetPPQInterface() const
 	return GetPPQ();
 }
 
-bool SVInspectionProcess::RunOnce(SVToolClass *p_psvTool)
-{
-	bool bRet(true);
-
-	SVDataManagerHandle l_Handle;
-
-	SVProductInfoStruct l_Product = LastProductGet();
-
-	l_Product.GetResultDataIndex(l_Handle);
-
-	SvOi::SVResetItemEnum eResetItem = SvOi::SVResetItemNone;
-
-	bRet = ProcessInputRequests(eResetItem);
-
-	SvTrc::ITriggerRecordRPtr oldRecord = l_Product.m_svInspectionInfos[GetUniqueObjectID()].m_triggerRecordComplete;
-
-	if (SvOi::SVResetItemIP < eResetItem && nullptr != p_psvTool && nullptr != oldRecord)
-	{
-		bRet = p_psvTool->GetInspection() == this;
-
-		if (bRet)
-		{
-			l_Product.m_svInspectionInfos[GetUniqueObjectID()].setNextTriggerRecord();
-
-			SVRunStatusClass runStatus;
-			runStatus.m_triggerRecord = l_Product.m_svInspectionInfos[GetUniqueObjectID()].m_triggerRecordWrite;
-			assert(nullptr != runStatus.m_triggerRecord);
-			runStatus.m_triggerRecord->setImages(*oldRecord);
-			runStatus.m_lResultDataIndex = l_Handle.GetIndex();
-
-			m_bForceOffsetUpdate = true;
-
-			p_psvTool->Run(runStatus);
-
-			l_Product.m_svInspectionInfos[GetUniqueObjectID()].setTriggerRecordCompleted();
-
-			LastProductNotify();
-		}
-	}
-	else
-	{
-		SingleRunModeLoop(true);
-	}
-
-	return bRet;
-}
-
 HRESULT SVInspectionProcess::InitializeRunOnce()
 {
 	HRESULT l_Status = S_OK;
@@ -3553,9 +3506,14 @@ SvOi::ITaskObject* SVInspectionProcess::GetToolSetInterface() const
 }
 
 
-HRESULT SVInspectionProcess::RunOnce(SvOi::ITaskObject* pTask)
+HRESULT SVInspectionProcess::RunOnce()
 {
-	return RunOnce(dynamic_cast<SVToolClass *>(pTask)) ? S_OK : E_FAIL;
+	SvOi::SVResetItemEnum eResetItem = SvOi::SVResetItemNone;
+	bool bRet = ProcessInputRequests(eResetItem);
+
+	SingleRunModeLoop(true);
+
+	return bRet ? S_OK : E_FAIL;
 }
 
 long SVInspectionProcess::GetLastIndex() const

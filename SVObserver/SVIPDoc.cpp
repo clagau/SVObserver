@@ -4393,19 +4393,14 @@ HRESULT SVIPDoc::UpdateWithLastProduct()
 	return l_Status;
 }
 
-bool SVIPDoc::RunOnce(SVToolClass* pTool)
+bool SVIPDoc::RunOnce()
 {
 	SVInspectionProcess* pInspection = GetInspectionProcess();
 	bool l_Status = (nullptr != pInspection);
 
 	if (l_Status)
 	{
-		SVGUID ToolGuid(GUID_NULL);
-		if (nullptr != pTool)
-		{
-			ToolGuid = pTool->GetUniqueObjectID();
-		}
-		l_Status = (S_OK == SvCmd::RunOnceSynchronous(pInspection->GetUniqueObjectID(), ToolGuid));
+		l_Status = (S_OK == SvCmd::RunOnceSynchronous(pInspection->GetUniqueObjectID()));
 	}
 
 	return l_Status;

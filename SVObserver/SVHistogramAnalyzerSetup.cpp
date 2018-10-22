@@ -127,9 +127,8 @@ END_MESSAGE_MAP()
 HRESULT SVHistogramAnalyzerSetupClass::SetInspectionData()
 {
 	const SVGUID& rInspectionID = m_pAnalyzer->GetInspection()->GetUniqueObjectID();
-	const SVGUID& rToolID = m_pAnalyzer->GetTool()->GetUniqueObjectID();
 	
-	HRESULT Result = SvCmd::RunOnceSynchronous(rInspectionID, rToolID);
+	HRESULT Result = SvCmd::RunOnceSynchronous(rInspectionID);
 
 	return Result;
 }

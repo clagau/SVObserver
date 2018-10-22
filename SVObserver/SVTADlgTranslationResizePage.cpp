@@ -922,7 +922,7 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 	if (extentChanged || embeddedChanged)
 	{
 		SVGUID InspectionID = m_pTool->GetInspection()->GetUniqueObjectID();
-		SvCmd::RunOnceSynchronous(InspectionID, m_pTool->GetUniqueObjectID());
+		SvCmd::RunOnceSynchronous(InspectionID);
 		UpdateImages();
 		m_pTool->BackupInspectionParameters();
 	}
@@ -975,7 +975,7 @@ HRESULT	SVTADlgTranslationResizePage::ExitTabValidation()
 	if (SUCCEEDED(message.getMessage().m_MessageCode))
 	{
 		SVGUID InspectionID = m_pTool->GetInspection()->GetUniqueObjectID();
-		SvCmd::RunOnceSynchronous(InspectionID, m_pTool->GetUniqueObjectID());
+		SvCmd::RunOnceSynchronous(InspectionID);
 	}
 
 	if (!SUCCEEDED(message.getMessage().m_MessageCode))

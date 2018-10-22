@@ -26,13 +26,12 @@ HRESULT InspectionCommandsSynchronous(const SVGUID& rInspectionID, SvPb::Inspect
 	return Result;
 }
 
-HRESULT RunOnceSynchronous(const SVGUID& rInspectionID, const SVGUID& rTaskIdID)
+HRESULT RunOnceSynchronous(const SVGUID& rInspectionID)
 {
 	SvPb::InspectionCmdMsgs Request;
 	SvPb::InspectionRunOnceRequest* pInspectionRunOnceRequest = Request.mutable_inspectionrunoncerequest();
 
 	SvPb::SetGuidInProtoBytes(pInspectionRunOnceRequest->mutable_inspectionid(), rInspectionID);
-	SvPb::SetGuidInProtoBytes(pInspectionRunOnceRequest->mutable_taskid(), rTaskIdID);
 	return SvCmd::InspectionCommandsSynchronous(rInspectionID, &Request, nullptr);
 
 }

@@ -3239,7 +3239,7 @@ void SVObserverApp::ResetAllCounts()
 			SVInspectionProcess* pInspection = pConfig->GetInspection(l);
 			if (nullptr != pInspection)
 			{
-				SvCmd::RunOnceSynchronous(pInspection->GetUniqueObjectID(), SVGUID(GUID_NULL));
+				SvCmd::RunOnceSynchronous(pInspection->GetUniqueObjectID());
 			}
 
 		}

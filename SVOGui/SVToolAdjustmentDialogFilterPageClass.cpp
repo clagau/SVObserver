@@ -81,7 +81,7 @@ namespace SvOg
 	HRESULT SVToolAdjustmentDialogFilterPageClass::SetInspectionData()
 	{
 		UpdateData( TRUE ); // get data from dialog
-		HRESULT hrOk = SvCmd::RunOnceSynchronous(m_InspectionID, m_TaskObjectID);
+		HRESULT hrOk = SvCmd::RunOnceSynchronous(m_InspectionID);
 
 		UpdateData( FALSE );
 
