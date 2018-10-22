@@ -35,8 +35,11 @@ void SVRCWebsocketServer::Start(std::shared_ptr<SVRCCommand> pCmd, std::unique_p
 
 void SVRCWebsocketServer::Stop()
 {
-	m_pHttpserver->stop();
-	m_io_service.stop();
+	if(nullptr != m_pHttpserver.get())
+	{
+		m_pHttpserver->stop();
+		m_io_service.stop();
+	}
 
 	if (m_pThread.get() && m_pThread->joinable())
 	{
