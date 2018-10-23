@@ -349,7 +349,7 @@ HRESULT SVImageConvertorGDI::CopyDIBits(BITMAPINFOHEADER* pSrcInfo, void* pSrcBi
 
 			for (int row = 0; row < abs(pSrcInfo->biHeight); row++)
 			{
-				memcpy(pDst, pSrc, srcPitch);
+				memcpy(pDst, pSrc, dstPitch);
 				pSrc += srcPitch;
 				pDst += dstPitch;
 			}
