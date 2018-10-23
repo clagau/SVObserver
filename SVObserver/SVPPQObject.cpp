@@ -3253,7 +3253,7 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& rElement)
 
 	if ((nullptr != rElement.m_pCamera) && (nullptr != rElement.m_Data.getImage()))
 	{
-		size_t l_CameraPositionOnPPQ = -1;
+		long l_CameraPositionOnPPQ = 0;
 		size_t l_ProductIndex = -1;
 		SVProductInfoStruct* pProduct = nullptr;
 		SVCameraInfoMap::iterator l_svIter;
@@ -3281,22 +3281,17 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& rElement)
 			long position = m_ppPPQPositions.GetIndexByTriggerTimeStamp(startTime, cameraID);
 
 			// If trigger has not occurred yet, l_Position will equal -1.
-			if (0 <= position && position < ppqSize)
+			if (l_CameraPositionOnPPQ <= position && position < ppqSize)
 			{
-				size_t l_Index = position + l_CameraPositionOnPPQ;
-
-				if (l_Index < ppqSize)
+				l_ProductIndex = position;
+				pProduct = m_ppPPQPositions.GetProductAt(l_ProductIndex);
+				if(cameraID >= 0 && cameraID < SvDef::cMaximumCameras)
 				{
-					l_ProductIndex = l_Index;
-					pProduct = m_ppPPQPositions.GetProductAt(l_Index);
-					if(cameraID >= 0 && cameraID < SvDef::cMaximumCameras)
-					{
-						pProduct->bhasCameraImage[cameraID] = true;
-					}
+					pProduct->bhasCameraImage[cameraID] = true;
+				}
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
 					::OutputDebugString(SvUl::Format(_T("Camera %s | TRI=%d\n"), rElement.m_pCamera->GetName(), pProduct->ProcessCount()).c_str());
 #endif
-				}
 			}
 			else if (position < 0 && !notPending)
 			{

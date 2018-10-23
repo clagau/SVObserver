@@ -177,6 +177,8 @@ SVProductInfoStruct* SVPPQShiftRegister::GetProductByTriggerCount(long triggerCo
 
 long SVPPQShiftRegister::GetIndexByTriggerTimeStamp(SvTl::SVTimeStamp timeStamp, int cameraID) const
 {
+	static const double cPreTriggerTimeWindow = 0.5;	//This is a to compensate that the trigger may be recorded after the start frame (in milli seconds)
+
 	long result{-1};
 
 	if(0.0 < timeStamp)
@@ -189,12 +191,14 @@ long SVPPQShiftRegister::GetIndexByTriggerTimeStamp(SvTl::SVTimeStamp timeStamp,
 				//If product already has camera image then skip
 				if(!hasCameraImage && (*iter)->bTriggered)
 				{
-					if( 0.0 < (*iter)->TimeStamp() && (*iter)->TimeStamp() - 0.5 < timeStamp)
+					if( 0.0 < (*iter)->TimeStamp() && (*iter)->TimeStamp() - cPreTriggerTimeWindow < timeStamp)
 					{
 						result = static_cast<long>(m_Products.size() - std::distance(m_Products.crbegin(), iter) - 1);
 						break;
 					}
 				}
+				//When we have reached the first position of the PPQ and have no match is it still possible to obtain a match ?
+				//When the oldest trigger is older then the acquisition time stamp then acquisition can no longer be correlated
 				else if(m_Products.crbegin() == iter &&  (*iter)->TimeStamp() > timeStamp)
 				{
 						result = static_cast<long>(m_Products.size());
