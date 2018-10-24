@@ -164,30 +164,30 @@ void RangeXDialogClass::OnBnClickedFailHighIndirect()
 
 void RangeXDialogClass::OnBnClickedWarnlHighIndirect()
 {
-	std::string Value(m_FailHigh);
+	std::string Value(m_WarnHigh);
 	if (ShowObjectSelector(Value, RangeEnum::ER_WarnHigh))
 	{
-		m_FailHigh = Value.c_str();
+		m_WarnHigh = Value.c_str();
 		UpdateData(false);
 	}
 }
 
 void RangeXDialogClass::OnBnClickedWarnLowIndirect()
 {
-	std::string Value(m_FailHigh);
+	std::string Value(m_WarnLow);
 	if (ShowObjectSelector(Value, RangeEnum::ER_WarnLow))
 	{
-		m_FailHigh = Value.c_str();
+		m_WarnLow = Value.c_str();
 		UpdateData(false);
 	}
 }
 
 void RangeXDialogClass::OnBnClickedFailedLowIndirect()
 {
-	std::string Value(m_FailHigh);
+	std::string Value(m_FailLow);
 	if (ShowObjectSelector(Value, RangeEnum::ER_FailLow))
 	{
-		m_FailHigh = Value.c_str();
+		m_FailLow = Value.c_str();
 		UpdateData(false);
 	}
 }
