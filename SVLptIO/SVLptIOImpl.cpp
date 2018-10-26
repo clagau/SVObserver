@@ -114,7 +114,7 @@ HRESULT SVLptIOImpl::Initialize(bool bInit)
 		{
 			if (S_OK != WriteUnlockString())
 			{
-				SvStl::MessageMgrStd Exception( SvStl::LogOnly );
+				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log );
 				Exception.setMessage( SVMSG_LPTIO_INITIALIZATION_FAILED, SvStl::Tid_Empty , SvStl::SourceFileParams(StdMessageParams) );
 				return SVMSG_LPTIO_INITIALIZATION_FAILED;
 			}
@@ -147,7 +147,7 @@ HRESULT SVLptIOImpl::Initialize(bool bInit)
 				//! Board Version 0 means invalid version
 				if( 0 == m_lBoardVersion )
 				{
-					SvStl::MessageMgrStd Exception( SvStl::LogOnly );
+					SvStl::MessageMgrStd Exception(SvStl::MsgType::Log );
 					Exception.setMessage( SVMSG_IO_BOARD_VERSION, SvUl::Format( _T("%d"), m_lBoardVersion).c_str() , SvStl::SourceFileParams(StdMessageParams) );
 					return SVMSG_IO_BOARD_VERSION;
 				}
@@ -190,7 +190,7 @@ HRESULT SVLptIOImpl::Initialize(bool bInit)
 		{
 			if (S_OK != WriteLockString())
 			{
-				SvStl::MessageMgrStd Exception( SvStl::LogOnly );
+				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log );
 				Exception.setMessage( SVMSG_LPTIO_INITIALIZATION_FAILED, SvStl::Tid_Empty , SvStl::SourceFileParams(StdMessageParams) );
 				return SVMSG_LPTIO_INITIALIZATION_FAILED;
 			}
@@ -1381,7 +1381,7 @@ HRESULT SVLptIOImpl::SVReadWriteLpt(unsigned long& rlValue, long prevControl, lo
 		{
 			if (0 != (nPrevControl & 0xf))
 			{
-				SvStl::MessageMgrStd Exception( SvStl::LogOnly );
+				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log );
 				Exception.setMessage( SVMSG_INVALID_LINE_STATE, SvStl::Tid_Lpt_WrongState, SvStl::SourceFileParams(StdMessageParams) );
 			}
 			// Get Value of control port interrupt Bit 

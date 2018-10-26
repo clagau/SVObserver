@@ -7,7 +7,7 @@
 //******************************************************************************
 
 #pragma once
- 
+
 #pragma region Includes
 #include "MessageContainer.h"
 #include "SVSVIMStateClass.h"
@@ -16,172 +16,185 @@
 
 namespace SvStl
 {
-	#pragma region Declarations
-	/**********
-		The message type enumeration
-	***********/
-	enum MsgTypeEnum
-	{
-		DataOnly,
-		LogOnly,
-		LogAndDisplay
-	};
+#pragma region Declarations
+/**********
+	The message type enumeration
+***********/
 
-	enum NotificationMsgEnum
-	{
-			MsgUknown		=0,
-			StartMsgBox		=1,
-			EndMsgBox		=2,
-			MsgLog			=3
-	};
-	
-	#pragma endregion Declarations
+
+enum class MsgType : unsigned int
+{
+	Data = 0,
+	Log = 1 << 0,
+	Display = 1 << 1,
+	Notify = 1 << 2
+};
+
+inline constexpr MsgType operator|(MsgType lhs, MsgType rhs)
+{
+	return static_cast<MsgType>(static_cast<unsigned int>(lhs) | static_cast<unsigned int>(rhs));
+}
+
+inline constexpr bool operator&(MsgType lhs, MsgType  rhs)
+{
+	return (static_cast<unsigned int>(lhs) & static_cast<unsigned int>(rhs)) != 0;
+}
+
+enum NotificationMsgEnum
+{
+	MsgUknown = 0,
+	StartMsgBox = 1,
+	EndMsgBox = 2,
+	MsgLog = 3
+};
+
+#pragma endregion Declarations
+
+//************************************
+//! This is the message manager template class
+//! \param M_Container [in] the message data container which stores and logs the information
+//! \param M_Data [in] the message data structure
+//************************************
+template <typename M_Container, typename M_Data>
+class MessageManager
+{
+#pragma region Constructor
+public:
+	//No default constructor
 
 	//************************************
-	//! This is the message manager template class
-	//! \param M_Container [in] the message data container which stores and logs the information
-	//! \param M_Data [in] the message data structure
+	//! Constructor which sets the message type 
+	//! \param Type [in] Determines if the message is logged, or displayed and logged
 	//************************************
-	template <typename M_Container, typename M_Data>
-	class MessageManager
-	{
-	#pragma region Constructor
-	public:
-		//No default constructor
+	MessageManager(MsgType Type);
 
-		//************************************
-		//! Constructor which sets the message type 
-		//! \param Type [in] Determines if the message is logged, or displayed and logged
-		//************************************
-		MessageManager( const MsgTypeEnum Type );
+	virtual ~MessageManager();
+#pragma endregion Constructor
 
-		virtual ~MessageManager();
-	#pragma endregion Constructor
+#pragma region Public Methods
+public:
+	//************************************
+	//! Sets the show display function
+	//! \param  [in] pointer to the display functor
+	//************************************
+	static void setShowDisplayFunction(ShowDisplayFunctor ShowDisplay);
 
-	#pragma region Public Methods
-	public:
-		//************************************
-		//! Sets the show display function
-		//! \param  [in] pointer to the display functor
-		//************************************
-		static void setShowDisplayFunction( ShowDisplayFunctor ShowDisplay );
+	//************************************
+	//! Sets the notification function
+	//! \param  [in] pointer to the notification function
+	//************************************
+	static void setNotificationFunction(NotifyFunctor Notify);
 
-		//************************************
-		//! Sets the notification function
-		//! \param  [in] pointer to the notification function
-		//************************************
-		static void setNotificationFunction( NotifyFunctor Notify );
+	//************************************
+	//! Sets the message type
+	//! \param Type [in] Determines if the message is logged, or displayed and logged
+	//************************************
+	//void setType( const MsgTypeEnum Type );
 
-		//************************************
-		//! Sets the message type
-		//! \param Type [in] Determines if the message is logged, or displayed and logged
-		//************************************
-		void setType( const MsgTypeEnum Type );
+	//************************************
+	//! Throws the data container as an message
+	//************************************
+	__declspec(noreturn) void Throw();
 
-		//************************************
-		//! Throws the data container as an message
-		//************************************
-		__declspec(noreturn) void Throw();
+	//************************************
+	//! Processes the message that has already been set
+	//! \param MsgBoxType [in] is the display message box type
+	//! \returns the result of the message box or IDCANCEL if not displayed
+	//************************************
+	INT_PTR Process(const UINT MsgBoxType = MB_OK);
 
-		//************************************
-		//! Processes the message that has already been set
-		//! \param MsgBoxType [in] is the display message box type
-		//! \returns the result of the message box or IDCANCEL if not displayed
-		//************************************
-		INT_PTR Process( const UINT MsgBoxType = MB_OK );
+	//************************************
+	//! Sets the message data
+	//! \param MessageCode [in] is the unique message number
+	//! \param AdditionalText [in] the additional text to the message code
+	//! \param SourceFile <in> the source file standard parameters in which the code set
+	//! \param ProgramCode [in] is the unique program error number
+	//! \param rObjectId <in> reference to the unique object ID of the message owner
+	//! \param MsgBoxType [in] is the display message box type
+	//! \returns the result of the message box or IDCANCEL if not displayed
+	//************************************
+	INT_PTR setMessage(DWORD MessageCode, LPCTSTR sAdditionalText, SourceFileParams SourceFile, DWORD ProgramCode = 0, const GUID& rObjectId = GUID_NULL, const UINT MsgBoxType = MB_OK);
 
-		//************************************
-		//! Sets the message data
-		//! \param MessageCode [in] is the unique message number
-		//! \param AdditionalText [in] the additional text to the message code
-		//! \param SourceFile <in> the source file standard parameters in which the code set
-		//! \param ProgramCode [in] is the unique program error number
-		//! \param rObjectId <in> reference to the unique object ID of the message owner
-		//! \param MsgBoxType [in] is the display message box type
-		//! \returns the result of the message box or IDCANCEL if not displayed
-		//************************************
-		INT_PTR setMessage( DWORD MessageCode, LPCTSTR sAdditionalText, SourceFileParams SourceFile, DWORD ProgramCode = 0, const GUID& rObjectId=GUID_NULL, const UINT MsgBoxType = MB_OK );
+	//************************************
+	//! Sets the message data
+	//! \param MessageCode [in] is the unique message number
+	//! \param AdditionalTextId <in> Id for the additional text to the message code (without AdditionalTextList)
+	//! \param SourceFile <in> the source file standard parameters in which the code set
+	//! \param ProgramCode [in] is the unique program error number
+	//! \param rObjectId <in> reference to the unique object ID of the message owner
+	//! \param MsgBoxType [in] is the display message box type
+	//! \returns the result of the message box or IDCANCEL if not displayed
+	//************************************
+	INT_PTR setMessage(DWORD MessageCode, MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, DWORD ProgramCode = 0, const GUID& rObjectId = GUID_NULL, const UINT MsgBoxType = MB_OK);
 
-		//************************************
-		//! Sets the message data
-		//! \param MessageCode [in] is the unique message number
-		//! \param AdditionalTextId <in> Id for the additional text to the message code (without AdditionalTextList)
-		//! \param SourceFile <in> the source file standard parameters in which the code set
-		//! \param ProgramCode [in] is the unique program error number
-		//! \param rObjectId <in> reference to the unique object ID of the message owner
-		//! \param MsgBoxType [in] is the display message box type
-		//! \returns the result of the message box or IDCANCEL if not displayed
-		//************************************
-		INT_PTR setMessage( DWORD MessageCode, MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, DWORD ProgramCode = 0, const GUID& rObjectId=GUID_NULL, const UINT MsgBoxType = MB_OK );
+	//************************************
+	//! Sets the message data
+	//! \param MessageCode [in] is the unique message number
+	//! \param AdditionalTextId <in> Id for the additional text to the message code
+	//! \param rAdditionalTextList <in> reference to list of strings for the additional text to the message code
+	//! \param SourceFile <in> the source file standard parameters in which the code set
+	//! \param ProgramCode [in] is the unique program error number
+	//! \param rObjectId <in> reference to the unique object ID of the message owner
+	//! \param MsgBoxType [in] is the display message box type
+	//! \returns the result of the message box or IDCANCEL if not displayed
+	//************************************
+	INT_PTR setMessage(DWORD MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode = 0, const GUID& rObjectId = GUID_NULL, const UINT MsgBoxType = MB_OK);
 
-		//************************************
-		//! Sets the message data
-		//! \param MessageCode [in] is the unique message number
-		//! \param AdditionalTextId <in> Id for the additional text to the message code
-		//! \param rAdditionalTextList <in> reference to list of strings for the additional text to the message code
-		//! \param SourceFile <in> the source file standard parameters in which the code set
-		//! \param ProgramCode [in] is the unique program error number
-		//! \param rObjectId <in> reference to the unique object ID of the message owner
-		//! \param MsgBoxType [in] is the display message box type
-		//! \returns the result of the message box or IDCANCEL if not displayed
-		//************************************
-		INT_PTR setMessage( DWORD MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode = 0, const GUID& rObjectId=GUID_NULL, const UINT MsgBoxType = MB_OK );
+	//************************************
+	//! Sets the message data
+	//! \param rData[in] reference to the message data
+	//! \param rObjectId <in> reference to the unique object ID of the message owner
+	//! \param MsgBoxType [in] is the display message box type
+	//! \returns the result of the message box or IDCANCEL if not displayed
+	//************************************
+	INT_PTR setMessage(const M_Data& rData, const GUID& rObjectId = GUID_NULL, const UINT MsgBoxType = MB_OK);
 
-		//************************************
-		//! Sets the message data
-		//! \param rData[in] reference to the message data
-		//! \param rObjectId <in> reference to the unique object ID of the message owner
-		//! \param MsgBoxType [in] is the display message box type
-		//! \returns the result of the message box or IDCANCEL if not displayed
-		//************************************
-		INT_PTR setMessage( const M_Data& rData, const GUID& rObjectId=GUID_NULL, const UINT MsgBoxType = MB_OK );
+	//************************************
+	//! Gets the message container
+	//! \returns a reference to the container
+	//************************************
+	M_Container& getMessageContainer();
+#pragma endregion Public Methods
 
-		//************************************
-		//! Gets the message container
-		//! \returns a reference to the container
-		//************************************
-		M_Container& getMessageContainer();
-	#pragma endregion Public Methods
+#pragma region Private Methods
+private:
+	static void Initialize();
 
-	#pragma region Private Methods
-	private:
-		static void Initialize();
+	//************************************
+	//! Logs the message if the type is set to be logged
+	//************************************
+	void Log();
 
-		//************************************
-		//! Logs the message if the type is set to be logged
-		//************************************
-		void Log();
+	//************************************
+	//! Displays the message if the type is set to be displayed
+	//! \param MsgBoxType [in] is the display message box type
+	//! \returns the result of the message box or IDCANCEL if not displayed
+	//************************************
+	INT_PTR Display(const UINT MsgBoxType) const;
 
-		//************************************
-		//! Displays the message if the type is set to be displayed
-		//! \param MsgBoxType [in] is the display message box type
-		//! \returns the result of the message box or IDCANCEL if not displayed
-		//************************************
-		INT_PTR Display( const UINT MsgBoxType ) const;
+#pragma endregion Private Methods
 
-	#pragma endregion Private Methods
+#pragma region Member variables
+private:
+	MsgType m_Type {MsgType::Data};
+	M_Container m_MessageHandler;				//! The message handler
 
-	#pragma region Member variables
-	private:
-		M_Container m_MessageHandler;				//! The message handler
-		MsgTypeEnum m_Type;							//! The message type
-		static ShowDisplayFunctor* m_pShowDisplay;
-		static NotifyFunctor* m_pNotify;
-	#pragma endregion Member variables
-	};
+	static ShowDisplayFunctor* m_pShowDisplay;
+	static NotifyFunctor* m_pNotify;
+#pragma endregion Member variables
+};
 
-	#pragma region Inline
-	#include "MessageManager.inl"
-	#pragma endregion Inline
+#pragma region Inline
+#include "MessageManager.inl"
+#pragma endregion Inline
 
-	#pragma region Declarations
-	//This declares message manager standard which uses MessageContainer, MessageData as the template parameters
-	typedef MessageManager<MessageContainer, MessageData> MessageMgrStd;
+#pragma region Declarations
+//This declares message manager standard which uses MessageContainer, MessageData as the template parameters
+typedef MessageManager<MessageContainer, MessageData> MessageMgrStd;
 
-	//! The static functor as pointers so that different instances ( exe dlls can still use one common functor)
-	ShowDisplayFunctor* MessageMgrStd::m_pShowDisplay( nullptr );
-	NotifyFunctor* MessageMgrStd::m_pNotify( nullptr );
-	#pragma endregion Declarations
+//! The static functor as pointers so that different instances ( exe dlls can still use one common functor)
+ShowDisplayFunctor* MessageMgrStd::m_pShowDisplay(nullptr);
+NotifyFunctor* MessageMgrStd::m_pNotify(nullptr);
+#pragma endregion Declarations
 
 } //namespace SvStl
- 

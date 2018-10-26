@@ -92,7 +92,7 @@ const SvPb::ImageList& TriggerRecordController::getImageDefList(int inspectionPo
 	}
 
 	assert(false);
-	SvStl::MessageMgrStd Exception(SvStl::DataOnly);
+	SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
 	Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_GetImageDefList, SvStl::SourceFileParams(StdMessageParams));
 	Exception.Throw();
 }
@@ -322,7 +322,7 @@ void TriggerRecordController::startResetTriggerRecordStructure(int inspectionPos
 	if (m_isResetLocked)
 	{
 		assert(false);
-		SvStl::MessageMgrStd Exception(SvStl::DataOnly);
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_ResetLocked, SvStl::SourceFileParams(StdMessageParams));
 		Exception.Throw();
 	}
@@ -333,7 +333,7 @@ void TriggerRecordController::startResetTriggerRecordStructure(int inspectionPos
 		SvDef::StringVector msgList;
 		msgList.push_back(SvUl::Format(_T("%d"), m_resetStarted4IP));
 		msgList.push_back(SvUl::Format(_T("%d"), inspectionPos));
-		SvStl::MessageMgrStd Exception(SvStl::DataOnly);
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_ResetAllReadyStarted, msgList, SvStl::SourceFileParams(StdMessageParams));
 		Exception.Throw();
 	}
@@ -344,7 +344,7 @@ void TriggerRecordController::startResetTriggerRecordStructure(int inspectionPos
 		SvDef::StringVector msgList;
 		msgList.push_back(SvUl::Format(_T("%d"), inspectionPos));
 		msgList.push_back(SvUl::Format(_T("%d"), m_inspectionList.list_size()));
-		SvStl::MessageMgrStd Exception(SvStl::DataOnly);
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_ResetWrongInspectionId, msgList, SvStl::SourceFileParams(StdMessageParams));
 		Exception.Throw();
 	}
@@ -358,7 +358,7 @@ void TriggerRecordController::startResetTriggerRecordStructure(int inspectionPos
 			SvDef::StringVector msgList;
 			msgList.push_back(SvUl::Format(_T("%d"), TriggerRecordSize));
 			msgList.push_back(SvUl::Format(_T("%d"), m_maxTriggerRecords));
-			SvStl::MessageMgrStd Exception(SvStl::DataOnly);
+			SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
 			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_TriggerRecordSize2Big, msgList, SvStl::SourceFileParams(StdMessageParams));
 			Exception.Throw();
 		}
@@ -406,7 +406,7 @@ void TriggerRecordController::finishResetTriggerRecordStructure()
 	if (-1 == m_resetStarted4IP)
 	{   //stop of reset is not allowed if reset is not started.
 		assert(false);
-		SvStl::MessageMgrStd Exception(SvStl::DataOnly);
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_ResetNotStart, SvStl::SourceFileParams(StdMessageParams));
 		Exception.Throw();
 	}
@@ -420,7 +420,7 @@ int TriggerRecordController::addOrChangeImage(const GUID& rImageId, const SVMatr
 	if (ResetEnum::Invalid == resetEnum)
 	{   //Not possible to add and change image.
 		assert(false);
-		SvStl::MessageMgrStd Exception(SvStl::DataOnly);
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_InvalidResetState, SvStl::SourceFileParams(StdMessageParams));
 		Exception.Throw();
 	}
@@ -431,7 +431,7 @@ int TriggerRecordController::addOrChangeImage(const GUID& rImageId, const SVMatr
 		if (0 >= TriggerRecordSize || m_maxTriggerRecords < TriggerRecordSize)
 		{
 			assert(false);
-			SvStl::MessageMgrStd Exception(SvStl::DataOnly);
+			SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
 			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_TriggerRecordSize2Big, SvStl::SourceFileParams(StdMessageParams));
 			Exception.Throw();
 		}
@@ -513,7 +513,7 @@ int TriggerRecordController::addOrChangeChildImage(const GUID& rImageId, const G
 	if (ResetEnum::Invalid == resetEnum)
 	{   //Not possible to add and change image.
 		assert(false);
-		SvStl::MessageMgrStd Exception(SvStl::DataOnly);
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_InvalidResetState, SvStl::SourceFileParams(StdMessageParams));
 		Exception.Throw();
 	}
@@ -784,7 +784,7 @@ void TriggerRecordController::ResetTriggerRecordStructure()
 	{
 		m_resetStarted4IP = -1;
 		//This is the topmost catch for MessageContainer exceptions
-		SvStl::MessageMgrStd Exception(SvStl::DataOnly);
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
 		//SvStl::MessageData Msg(rExp.getMessage());
 		//Msg.m_MessageCode = SVMSG_SVO_40_INFO_UPDATE_MAINIMAGE_FAILED;
 		Exception.setMessage(rSvE.getMessage());

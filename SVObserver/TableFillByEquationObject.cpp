@@ -82,7 +82,7 @@ void TableFillByEquationObject::setColumnValueObjects(const std::vector<TableCol
 				SVGUID newGuid = getNextFreeEmbeddedColumGUID();
 				if (GUID_NULL == newGuid)
 				{
-					SvStl::MessageMgrStd e(SvStl::LogOnly);
+					SvStl::MessageMgrStd e(SvStl::MsgType::Log);
 					e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_columnValue_NoFreeGUID, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 					e.Throw();
 				}

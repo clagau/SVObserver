@@ -548,7 +548,7 @@ SvStl::MessageContainerVector SVTaskObjectClass::validateAndSetEmbeddedValues(co
 			}
 			if (S_OK != Result)
 			{
-				SvStl::MessageMgrStd Msg(SvStl::LogOnly);
+				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log);
 				SvDef::StringVector msgList;
 				SvOi::IObjectClass* pObject = dynamic_cast<SvOi::IObjectClass*> (rEntry.m_pValueObject);
 				if (nullptr != pObject)
@@ -589,7 +589,7 @@ SvStl::MessageContainerVector SVTaskObjectClass::setEmbeddedDefaultValues(const 
 		}
 		if (S_OK != Result)
 		{
-			SvStl::MessageMgrStd Msg(SvStl::LogOnly);
+			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log);
 			SvDef::StringVector msgList;
 			SvOi::IObjectClass* pObject = dynamic_cast<SvOi::IObjectClass*> (rEntry.m_pValueObject);
 			if (nullptr != pObject)
@@ -1110,7 +1110,7 @@ HRESULT SVTaskObjectClass::ConnectToObject(SvOl::SVInObjectInfoStruct* p_psvInpu
 					msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_UnknownString));
 				}
 				// Should we really be doing this here?
-				SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 				Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CriticalUnableToConnectTo, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10203);
 
 				// Try to recover old state...
@@ -1342,7 +1342,7 @@ bool SVTaskObjectClass::RegisterEmbeddedObjectAsClass(SVObjectClass* pEmbeddedOb
 			{
 				if (rGuidEmbeddedID == pObject->GetEmbeddedID())
 				{
-					SvStl::MessageMgrStd Msg(SvStl::LogOnly);
+					SvStl::MessageMgrStd Msg(SvStl::MsgType::Log);
 					Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_DuplicateEmbeddedId, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10204);
 					assert(false);
 					return false;

@@ -318,7 +318,7 @@ bool RootObject::createRootChild( LPCTSTR ChildName, SvDef::SVObjectSubTypeEnum 
 	}
 	else
 	{
-		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log );
 		Exception.setMessage( SVMSG_SVO_67_MAIN_BRANCH_NOT_CREATED, ChildName, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25017_RootChildCreate, GetUniqueObjectID() );
 	}
 	

@@ -108,7 +108,7 @@ namespace SvOg
 					SvDef::StringVector msgList;
 					msgList.push_back(m_inputName);
 					msgList.push_back(std::string(tableName));
-					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
+					SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ConnectTableSourceFailed, msgList, SvStl::SourceFileParams(StdMessageParams) );
 				}
 			}

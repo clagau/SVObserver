@@ -113,7 +113,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnButtonAdd()
 		}
 		catch (const SvStl::MessageContainer& rExp)
 		{
-			SvStl::MessageMgrStd Exception(SvStl::LogAndDisplay);
+			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 			Exception.setMessage(rExp.getMessage());
 		}
 
@@ -265,7 +265,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnSetRange()
 
 			if (nullptr == pResult)
 			{
-				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+				SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16089);
 				
 
@@ -273,7 +273,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnSetRange()
 			else if (S_OK != SVSetupDialogManager::Instance().SetupDialog( pResult->GetClassID(), pResult->GetUniqueObjectID(), this ))
 			{
 				
-				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+				SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16090);
 			}
     }

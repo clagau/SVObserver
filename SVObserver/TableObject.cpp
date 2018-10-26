@@ -107,7 +107,7 @@ DoubleSortValuePtr TableObject::updateOrCreateColumn(const GUID& rEmbeddedId, in
 			}
 			catch (const SvStl::MessageContainer& rSvE)
 			{
-				SvStl::MessageMgrStd e(SvStl::LogOnly);
+				SvStl::MessageMgrStd e(SvStl::MsgType::Log);
 				e.setMessage(rSvE.getMessage());
 			}
 		}
@@ -131,7 +131,7 @@ DoubleSortValuePtr TableObject::updateOrCreateColumn(const GUID& rEmbeddedId, in
 		}
 		catch (const SvStl::MessageContainer& rSvE)
 		{
-			SvStl::MessageMgrStd e(SvStl::LogOnly);
+			SvStl::MessageMgrStd e(SvStl::MsgType::Log);
 			e.setMessage(rSvE.getMessage());
 		}
 	}
@@ -216,7 +216,7 @@ DoubleSortValuePtr TableObject::createColumnObject(SVGUID embeddedID, LPCTSTR na
 		delete pObject;
 		pObject = nullptr;
 		ASSERT(FALSE);
-		SvStl::MessageMgrStd e( SvStl::DataOnly );
+		SvStl::MessageMgrStd e( SvStl::MsgType::Data);
 		e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_createColumnValueObjectFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 		e.Throw();
 	}
@@ -240,7 +240,7 @@ void TableObject::UpdateColumnValueObject(int pos, std::string objectName, int m
 	}
 	else
 	{
-		SvStl::MessageMgrStd e(SvStl::DataOnly);
+		SvStl::MessageMgrStd e(SvStl::MsgType::Data);
 		e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_columnValueMapInvalid, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 		e.Throw();
 	}

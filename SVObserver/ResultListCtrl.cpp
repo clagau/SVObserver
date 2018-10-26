@@ -65,7 +65,7 @@ void ResultListCtrl::updateList(class SVIPDoc* pDoc)
 {
 	if (nullptr == pDoc)
 	{
-		SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ResultView_InitFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10197);
 		return;
 	}
@@ -391,7 +391,7 @@ void ResultListCtrl::DrawItem( LPDRAWITEMSTRUCT lpDrawItemStruct )
 	}
 	else
 	{
-		SvStl::MessageMgrStd Msg( SvStl::LogOnly );
+		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log );
 		Msg.setMessage( SVMSG_SVO_NULL_POINTER, SvStl::Tid_Unknown, SvStl::SourceFileParams(StdMessageParams) ); 
 	}
 }

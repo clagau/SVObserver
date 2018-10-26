@@ -131,7 +131,7 @@ HRESULT TADialogLoopToolParameterPage::SetPageData()
 			SvStl::MessageContainerVector messages = m_Values.getFailedMessageList();
 			if (messages.size() > 0 && 0 != messages[0].getMessage().m_MessageCode)
 			{
-				SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 				Msg.setMessage(messages[0].getMessage());
 			}
 			else
@@ -164,7 +164,7 @@ void TADialogLoopToolParameterPage::resetInspection()
 
 	if (messages.size() > 0 && 0 != messages[0].getMessage().m_MessageCode)
 	{
-		SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Msg.setMessage(messages[0].getMessage());
 	}
 }

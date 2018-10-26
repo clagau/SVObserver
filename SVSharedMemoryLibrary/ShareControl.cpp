@@ -153,7 +153,7 @@ bool ShareControl::EventHandler(DWORD event)
 			}
 			catch (std::exception& rExp)
 			{
-				SvStl::MessageMgrStd Exception(SvStl::LogOnly);
+				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
 				SvDef::StringVector msgList;
 				msgList.push_back(rExp.what());
 				Exception.setMessage(SVMSG_SVGateway_0_GENERAL_ERROR, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams));
@@ -170,7 +170,7 @@ bool ShareControl::EventHandler(DWORD event)
 			}
 			catch (std::exception& rExp)
 			{
-				SvStl::MessageMgrStd Exception(SvStl::LogOnly);
+				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
 				SvDef::StringVector msgList;
 				msgList.push_back(rExp.what());
 				Exception.setMessage(SVMSG_SVGateway_0_GENERAL_ERROR, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams));
@@ -257,7 +257,7 @@ bool ShareControl::GetProductItem(bool isReject, int triggerCount, int peviousTr
 					///release Readerslot for last product
 					if (index < 0)
 					{
-						SvStl::MessageMgrStd exception(SvStl::LogOnly);
+						SvStl::MessageMgrStd exception(SvStl::MsgType::Log);
 						SvDef::StringVector msgList;
 						msgList.emplace_back(rListName);
 						exception.setMessage(SVMSG_SVGateway_0_GENERAL_ERROR, SvStl::Tid_SM_SlotNotFound, msgList, SvStl::SourceFileParams(StdMessageParams));

@@ -734,7 +734,7 @@ bool ToolSetView::ShowDuplicateNameMessage(const std::string& rName) const
 {
 	SvDef::StringVector msgList;
 	msgList.push_back(rName);
-	SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+	SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 	INT_PTR res = Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RenameError_DuplicateName, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10221, GUID_NULL, MB_RETRYCANCEL);
 	return (IDRETRY == res);
 }
@@ -1194,7 +1194,7 @@ void ToolSetView::addParameter2MonitorList(LPCTSTR ppqName)
 		SvStl::MessageContainerVector messages = pConfig->addParameter2MonitorList(ppqName, rGuid);
 		if (messages.size())
 		{
-			SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 			Msg.setMessage(messages[0].getMessage());
 		}
 	}

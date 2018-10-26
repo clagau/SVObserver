@@ -133,7 +133,7 @@ namespace SvOg
 		{
 			if (cRotationAngle_90 == Angle)
 			{
-				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
+				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 				INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_LinearSpecial_OrientationVertical, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10213, GUID_NULL, MB_YESNO );
 				bUpdateRotation = (IDYES == result);
 
@@ -149,7 +149,7 @@ namespace SvOg
 			{
 				if (bIsRotated)
 				{
-					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
+					SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 					INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_LinearSpecial_IsRotated, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10214, GUID_NULL, MB_YESNO );
 					bUpdateRotation = (IDYES == result);
 					if(!bUpdateRotation)

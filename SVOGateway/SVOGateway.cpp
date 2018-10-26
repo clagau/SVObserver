@@ -66,7 +66,7 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 {
 	SvLog::bootstrap_logging();
 
-	SvStl::MessageMgrStd Exception(SvStl::LogOnly);
+	SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
 	Exception.setMessage(SVMSG_SVGateway_2_GENERAL_INFORMATIONAL, SvStl::Tid_Started, SvStl::SourceFileParams(StdMessageParams));
 	try
 	{
@@ -142,7 +142,7 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 int main(int argc, _TCHAR* argv[])
 {
 	int Result {0};
-	SvStl::MessageMgrStd Exception(SvStl::LogOnly);
+	SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
 	Exception.setMessage(SVMSG_SVGateway_2_GENERAL_INFORMATIONAL, SvStl::Tid_Started, SvStl::SourceFileParams(StdMessageParams));
 
 	if (CheckCommandLineArgs(argc, argv, _T("/cmd")))

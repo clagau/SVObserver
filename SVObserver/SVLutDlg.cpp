@@ -73,7 +73,7 @@ bool SVLutDlg::Create( SVVirtualCameraPtrSet& setCameras, SVLutMap& raLut )
 
 	if( GetPageCount() < 1 )
 	{
-		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
+		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_LUT_NotAvailable, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10060 );
 
 		DestroyAllPages();
@@ -927,7 +927,7 @@ void SVLutDlgPage::OnColorBandRed()
 void SVLutDlgPage::OnColorBandSync() 
 {
 	// we will have to adjust this once we implement the "All" option... All -> Sync??? disable Sync if all is selected
-	SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
+	SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 	INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_LUT_ShouldOverwriteAllBands, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10235, GUID_NULL, MB_YESNO );
 	if (IDYES == result )
 	{

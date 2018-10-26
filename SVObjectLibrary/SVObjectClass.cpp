@@ -810,7 +810,7 @@ bool SVObjectClass::createAllObjects(const SVObjectLevelCreateStruct& rCreateStr
 		SvDef::StringVector msgList;
 		msgList.push_back( GetName() );
 		msgList.push_back( GetCompleteName() );
-		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
+		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CreationOf2Failed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10209 );
 
 		return false;

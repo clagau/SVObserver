@@ -125,7 +125,7 @@ void TADialogTableDefinesPage::OnBnClickedButtonRemove()
 				{
 					SvDef::StringVector msgList;
 					msgList.push_back(SvUl::Format(_T("%d"), hr));
-					SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+					SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 					Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TableColumn_RemovingFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 				}
 				break;
@@ -265,7 +265,7 @@ void TADialogTableDefinesPage::OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pRes
 							bAcceptChange = false;
 							SvDef::StringVector msgList;
 							msgList.push_back(SvUl::Format(_T("%d"), hr));
-							SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+							SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 							Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TableColumn_RenamingFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 						}
 						else
@@ -295,14 +295,14 @@ void TADialogTableDefinesPage::OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pRes
 					bAcceptChange = false;
 					SvDef::StringVector msgList;
 					msgList.push_back(newName);
-					SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+					SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 					Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TableColumnName_NotUnique, msgList, SvStl::SourceFileParams(StdMessageParams));
 				}
 			}
 			else
 			{
 				bAcceptChange = false;
-				SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 				Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TableColumnName_Empty, SvStl::SourceFileParams(StdMessageParams));
 			}
 		}
@@ -334,7 +334,7 @@ HRESULT TADialogTableDefinesPage::ValidateData()
 		SvStl::MessageContainerVector errorMessageList = SvCmd::setMessageContainerFromMessagePB(Response.resetobjectresponse().messages());
 		if (0 < errorMessageList.size())
 		{
-			SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 			Msg.setMessage(errorMessageList[0].getMessage());
 		}
 	}
@@ -450,7 +450,7 @@ void TADialogTableDefinesPage::MoveColumn(SVGUID moveGuid, SVGUID preGuid)
 	{
 		SvDef::StringVector msgList;
 		msgList.push_back(SvUl::Format(_T("%d"), hr));
-		SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TableColumn_MovingFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}
 }
@@ -492,7 +492,7 @@ HRESULT TADialogTableDefinesPage::AddColumn(const std::string& rName, SVGUID add
 	{
 		SvDef::StringVector msgList;
 		msgList.push_back(SvUl::Format(_T("%d"), hr));
-		SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TableColumn_AddingFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}
 	return hr;

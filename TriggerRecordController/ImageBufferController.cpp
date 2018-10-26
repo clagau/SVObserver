@@ -106,7 +106,7 @@ std::vector<std::pair<int, int>> ImageBufferController::reset(const SvPb::ImageS
 					clearAll();
 					SvDef::StringVector msgList;
 					msgList.push_back(SvUl::Format(_T("%X"), errCode));
-					SvStl::MessageMgrStd Exception(SvStl::LogOnly);
+					SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
 					Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_CreateBuffer, msgList, SvStl::SourceFileParams(StdMessageParams));
 					Exception.Throw();
 				}
@@ -183,7 +183,7 @@ bool ImageBufferController::decreaseRefCounter(int pos)
 		if (0 > value)
 		{
 			assert(false);
-			SvStl::MessageMgrStd e(SvStl::LogOnly);
+			SvStl::MessageMgrStd e(SvStl::MsgType::Log);
 			e.setMessage(SVMSG_TRC_GENERAL_WARNING, SvStl::Tid_TRC_Error_ImageRefCount, SvStl::SourceFileParams(StdMessageParams));
 			InterlockedExchange(&m_imageRefCountArray[pos], 0);
 			return false;
@@ -270,14 +270,14 @@ IImagePtr ImageBufferController::createNewImageHandle(int structId, int& rImageP
 
 		SvDef::StringVector msgList;
 		msgList.push_back(SvUl::Format(_T("%d"), structId));
-		SvStl::MessageMgrStd e(SvStl::LogOnly);
+		SvStl::MessageMgrStd e(SvStl::MsgType::Log);
 		e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_NoBufferFree, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}
 	else
 	{
 		SvDef::StringVector msgList;
 		msgList.push_back(SvUl::Format(_T("%d"), structId));
-		SvStl::MessageMgrStd e(SvStl::LogOnly);
+		SvStl::MessageMgrStd e(SvStl::MsgType::Log);
 		e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_UnknownStructID, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}
 	return nullptr;

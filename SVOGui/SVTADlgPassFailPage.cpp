@@ -110,7 +110,7 @@ namespace SvOg
 		catch (...)
 		{
 			assert(false);
-			SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Init_RangeControlFailed, SvStl::SourceFileParams(StdMessageParams));
 		}
 	}
@@ -208,7 +208,7 @@ namespace SvOg
 		}
 		catch (const SvStl::MessageContainer& rSvE)
 		{
-			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
+			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 			Msg.setMessage( rSvE.getMessage() );
 			bRetVal = false;
 		}

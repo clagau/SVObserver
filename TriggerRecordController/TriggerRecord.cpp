@@ -93,7 +93,7 @@ IImagePtr TriggerRecord::getImage(int pos, bool lockImage) const
 					pImagePos[pos] = -1;
 					SvDef::StringVector msgList;
 					msgList.push_back(SvUl::Format(_T("%d"), pos));
-					SvStl::MessageMgrStd e(SvStl::LogOnly);
+					SvStl::MessageMgrStd e(SvStl::MsgType::Log);
 					e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_NewBufferFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 				}
 				else
@@ -166,7 +166,7 @@ void TriggerRecord::initImages()
 			{
 				SvDef::StringVector msgList;
 				msgList.push_back(SvUl::Format(_T("%d"), pImagePos[i]));
-				SvStl::MessageMgrStd e(SvStl::LogOnly);
+				SvStl::MessageMgrStd e(SvStl::MsgType::Log);
 				e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_NewBufferFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 			}
 		}
@@ -201,7 +201,7 @@ void TriggerRecord::setImages(const ITriggerRecordR& rDestTR)
 					{
 						SvDef::StringVector msgList;
 						msgList.push_back(SvUl::Format(_T("%d"), pImagePos[i]));
-						SvStl::MessageMgrStd e(SvStl::LogOnly);
+						SvStl::MessageMgrStd e(SvStl::MsgType::Log);
 						e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_NewBufferFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 					}
 				}
@@ -210,7 +210,7 @@ void TriggerRecord::setImages(const ITriggerRecordR& rDestTR)
 	}
 	else
 	{
-		SvStl::MessageMgrStd Exception(SvStl::LogOnly);
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_TRC_GENERAL_WARNING, SvStl::Tid_TRC_Error_SetImages_SourceTROutOfData, SvStl::SourceFileParams(StdMessageParams));
 		initImages();
 	}
@@ -263,7 +263,7 @@ void TriggerRecord::setImage(int pos, int bufferPos)
 				rImageController.decreaseRefCounter(pImagePos[pos]);
 				pImagePos[pos] = -1;
 				assert(false);
-				SvStl::MessageMgrStd Exception(SvStl::DataOnly);
+				SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
 				Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_SetImage_TypeNotFit, SvStl::SourceFileParams(StdMessageParams));
 				Exception.Throw();
 			}
@@ -271,7 +271,7 @@ void TriggerRecord::setImage(int pos, int bufferPos)
 		else
 		{
 			assert(false);
-			SvStl::MessageMgrStd Exception(SvStl::DataOnly);
+			SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
 			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_SetImage_InvalidType, SvStl::SourceFileParams(StdMessageParams));
 			Exception.Throw();
 		}
@@ -279,7 +279,7 @@ void TriggerRecord::setImage(int pos, int bufferPos)
 	else
 	{
 		assert(false);
-		SvStl::MessageMgrStd Exception(SvStl::DataOnly);
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_SetImage_InvalidPos, SvStl::SourceFileParams(StdMessageParams));
 		Exception.Throw();
 	}
@@ -314,7 +314,7 @@ IImagePtr TriggerRecord::createNewImageHandle(int pos)
 			pImagePos[pos] = -1;
 			SvDef::StringVector msgList;
 			msgList.push_back(SvUl::Format(_T("%d"), pos));
-			SvStl::MessageMgrStd e(SvStl::LogOnly);
+			SvStl::MessageMgrStd e(SvStl::MsgType::Log);
 			e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_NewBufferFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 		}
 	}

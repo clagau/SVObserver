@@ -108,13 +108,13 @@ namespace SvOg
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK != hr)
 		{
-			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16090);
 		}
 		else  if ( S_OK != SvOi::SetupDialogManager(SVLongResultClassGuid, commandPtr->GetInstanceID(), GetSafeHwnd()))
 		{
 		
-			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16091);
 		}
 

@@ -575,7 +575,7 @@ void SVImageViewClass::SaveViewOrImageToDisk(bool ViewOnly, bool showOverlays)
 
 	if (nullptr == pCurrentImage)
 	{
-		SvStl::MessageMgrStd NullImageWarning( SvStl::LogAndDisplay );
+		SvStl::MessageMgrStd NullImageWarning(SvStl::MsgType::Log | SvStl::MsgType::Display );
 		NullImageWarning.setMessage(SVMSG_SVO_5018_NULLIMAGE, SvStl::Tid_DisplayedImageIsUnavailable, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_30000_NullImageOnSave);
 		return;
 	}

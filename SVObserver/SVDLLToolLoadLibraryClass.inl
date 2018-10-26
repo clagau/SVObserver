@@ -437,7 +437,7 @@ inline HRESULT SVDLLToolLoadLibraryClass::RunTool (GUID tool, long* plStatus)
 			SvDef::StringVector msgList;
 			msgList.push_back(SvUl::Format(_T("%d"), l_hrOk));
 
-			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
+			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log );
 			Exception.setMessage( static_cast<DWORD> (l_hrOk), SvStl::Tid_RunTool_Exception, msgList, SvStl::SourceFileParams(StdMessageParams) );
 		}
 	}
@@ -503,7 +503,7 @@ inline HRESULT SVDLLToolLoadLibraryClass::InitializeRun ( GUID tool, long lImage
 			ASSERT (0);
 			SvDef::StringVector msgList;
 			msgList.push_back(SvUl::Format(_T("%d"), l_hrOk));
-			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
+			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log );
 			Exception.setMessage( static_cast<DWORD> (l_hrOk), SvStl::Tid_SVInitializeRun_Exception, msgList, SvStl::SourceFileParams(StdMessageParams) );
 		}
 	}

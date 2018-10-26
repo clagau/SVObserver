@@ -28,7 +28,7 @@ namespace SvTrc
 			if (0 > value)
 			{
 				assert(false);
-				SvStl::MessageMgrStd e(SvStl::LogOnly);
+				SvStl::MessageMgrStd e(SvStl::MsgType::Log);
 				e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_ResetLocker, SvStl::SourceFileParams(StdMessageParams));
 				InterlockedExchange(&m_rRefCount, 0);
 			}

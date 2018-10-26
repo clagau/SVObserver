@@ -104,7 +104,7 @@ void SVLuminanceAnalyzerClass::init()
 
 	if(nullptr == pAnalyzerResult)
 	{
-		SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+		SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16092);
 	}
 	else
@@ -151,7 +151,7 @@ bool SVLuminanceAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rC
 
 	if (! SVImageAnalyzerClass::CreateObject( rCreateStructure ) )
 	{
-		SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+		SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16095);
 		bError = true;
 	}
@@ -160,7 +160,7 @@ bool SVLuminanceAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rC
 		pSVImage = getInputImage ();
 		if (nullptr == pSVImage )
 		{
-			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16096);
 			bError = true;
 		}
@@ -172,7 +172,7 @@ bool SVLuminanceAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rC
 		msvplHistValues.resize( msvlHistValueArraySize );
 		if (msvplHistValues.size() == 0)
 		{
-			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16097);
 			bError = true;
 		}
@@ -195,7 +195,7 @@ bool SVLuminanceAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rC
 
 		if (M_NULL == m_HistResultID)
 		{
-			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16098);
 			bError = true;
 		}

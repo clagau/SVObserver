@@ -38,7 +38,7 @@ namespace SvSml
 		{
 			errorCode = GetLastError();
 			std::string  text = SvUl::Format(_T("Create Change event  Failed Errorcode: %x"),errorCode); 
-			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
+			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log );
 			Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, text.c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16221_FailToCreateEvent );
 			
 		}
@@ -47,7 +47,7 @@ namespace SvSml
 		{
 			errorCode = GetLastError();
 			std::string  text = SvUl::Format(_T("Create Ready event  Failed Errorcode: %x"),errorCode); 
-			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
+			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log );
 			Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, text.c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16222_FailToCreateEvent );
 		}
 

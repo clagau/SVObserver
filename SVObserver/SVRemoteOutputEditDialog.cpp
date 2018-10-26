@@ -71,7 +71,7 @@ BOOL SVRemoteOutputEditDialog::OnInitDialog()
 
 	if( nullptr == pConfig )
 	{
-		SvStl::MessageMgrStd e( SvStl::LogOnly );
+		SvStl::MessageMgrStd e(SvStl::MsgType::Log );
 		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingPPQCount, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17048_ErrorGettingPPQCount );
 		DebugBreak();
 	}
@@ -83,7 +83,7 @@ BOOL SVRemoteOutputEditDialog::OnInitDialog()
 		pPPQ = pConfig->GetPPQ( k );
 		if( nullptr == pPPQ )
 		{
-			SvStl::MessageMgrStd e( SvStl::LogOnly );
+			SvStl::MessageMgrStd e(SvStl::MsgType::Log );
 			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingPPQ, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17049_ErrorGettingPPQ );
 			DebugBreak();
 		}

@@ -365,7 +365,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 			break;
 
 		default:
-			SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_CannotOpenTADlg, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10218);
 			delete pConditionalDlg;
 			pConditionalDlg = nullptr;
@@ -432,7 +432,7 @@ void SVToolAdjustmentDialogSheetClass::OnOK()
 				if (!l_pFormulaEditor->validateAndSetEquation())
 				{
 					// Equation must be valid or disabled
-					SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+					SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 					Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_InvalidFormula, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10219);
 					return;
 				}
@@ -492,7 +492,7 @@ void SVToolAdjustmentDialogSheetClass::OnOK()
 			textEnum = message.getMessage().m_AdditionalTextId;
 			textList = message.getMessage().m_AdditionalTextList;
 		}
-		SvStl::MessageMgrStd messageMgr(SvStl::LogAndDisplay);
+		SvStl::MessageMgrStd messageMgr(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		INT_PTR result = messageMgr.setMessage(SVMSG_SVO_104_TA_DIALOG_CLOSING_ERROR, textEnum, textList, SvStl::SourceFileParams(StdMessageParams), 0, pTool->GetUniqueObjectID(), MB_YESNO);
 		if (IDYES == result)
 		{

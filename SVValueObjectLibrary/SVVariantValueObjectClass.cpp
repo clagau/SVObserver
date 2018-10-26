@@ -302,7 +302,7 @@ _variant_t SVVariantValueObjectClass::ConvertString2Type( const std::string& rVa
 		{
 			SvDef::StringVector msgList;
 			msgList.push_back(GetName());
-			SvStl::MessageMgrStd Exception(SvStl::LogOnly);
+			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
 			Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValueObject_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 			Exception.Throw();
 		}

@@ -187,7 +187,7 @@ void SVRCCommand::GetConfig(const SvPb::GetConfigRequest& rRequest, SvRpc::Task<
 		else
 		{
 			// Log Exception (in case no one else did...)
-			SvStl::MessageMgrStd Exception(SvStl::LogOnly);
+			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
 			Exception.setMessage(Result, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 		}
 	}

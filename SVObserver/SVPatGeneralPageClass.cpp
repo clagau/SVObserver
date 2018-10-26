@@ -399,7 +399,7 @@ BOOL SVPatGeneralPageClass::ProcessOnKillfocus(UINT nId)
 			double	dThreshold = atof(strValue.Left(10));
 			if(dThreshold > 100 || strValue.IsEmpty())
 			{
-				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
+				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_InvalidThresholdValue, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10183 ); 
 				GetDlgItem(nId)->SetFocus();
 				((CEdit *)GetDlgItem(nId))->SetSel(0, -1);

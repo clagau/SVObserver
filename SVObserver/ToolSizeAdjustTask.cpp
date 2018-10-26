@@ -402,7 +402,7 @@ bool ToolSizeAdjustTask::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 		}
 		SvStl::MessageContainer message;
 		message.setMessage( SVMSG_SVO_58_TOOLADJUST_RESET_ERROR, messageId, msgList, SvStl::SourceFileParams(StdMessageParams), hresult, GetUniqueObjectID() );
-		SvStl::MessageMgrStd Exception(SvStl::LogOnly);
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
 		Exception.setMessage( message.getMessage() );
 		if (nullptr != pErrorMessages)
 		{

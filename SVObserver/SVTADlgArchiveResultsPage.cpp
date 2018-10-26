@@ -98,7 +98,7 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 		else
 		{
 			//don't allow to exit with invalid path
-			SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
+			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
 			Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_InvalidFileName, SvStl::SourceFileParams(StdMessageParams) );
 			return false;
 		}
@@ -113,7 +113,7 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 	{
 		SvDef::StringVector msgList;
 		msgList.push_back( Drive );
-		SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
 		Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_InvalidDrive, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
 		return false; 
@@ -334,7 +334,7 @@ void SVTADlgArchiveResultsPage::OnBrowse()
 		else
 		{
 			//don't allow to exit with invalid path
-			SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
+			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
 			Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_InvalidFileName, SvStl::SourceFileParams(StdMessageParams) );
 			return;
 		}

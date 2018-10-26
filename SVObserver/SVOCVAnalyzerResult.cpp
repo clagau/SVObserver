@@ -395,7 +395,7 @@ bool SVOCVAnalyzeResultClass::GenerateFontModel()
 		MatroxCode = SVMatroxOcrInterface::RestoreFont( m_milFontID, Path, SVOcrRestore );
 		if( m_milFontID.empty() )
 		{
-			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16126, GetUniqueObjectID());
 
 		}// end if
@@ -406,7 +406,7 @@ bool SVOCVAnalyzeResultClass::GenerateFontModel()
 			MatroxCode = SVMatroxOcrInterface::RestoreFont( m_milFontID, Path, SVOcrLoadControl );
 			if( m_milFontID.empty() )
 			{
-				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+				SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16127, GetUniqueObjectID());
 			}// end if
 		}// end if
@@ -418,7 +418,7 @@ bool SVOCVAnalyzeResultClass::GenerateFontModel()
 
 			if( m_milFontID.empty() )
 			{
-				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+				SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16128, GetUniqueObjectID());
 			}// end if
 		}// end if
@@ -426,7 +426,7 @@ bool SVOCVAnalyzeResultClass::GenerateFontModel()
 		HRESULT MatroxCode = SVMatroxOcrInterface::Get (m_milFontID, SVOcrIsFontPreprocessed, l_lIsFontPreprocessed);
 		if (S_OK != MatroxCode)
 		{
-			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16129, GetUniqueObjectID());
 		}
 
@@ -436,7 +436,7 @@ bool SVOCVAnalyzeResultClass::GenerateFontModel()
 
 			if (S_OK != MatroxCode)
 			{
-				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+				SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16130, GetUniqueObjectID());
 			}
 		}
@@ -444,21 +444,21 @@ bool SVOCVAnalyzeResultClass::GenerateFontModel()
 		MatroxCode = SVMatroxOcrInterface::CreateResult( m_milResultID );
 		if( M_NULL == m_milResultID )
 		{
-			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16131, GetUniqueObjectID());
 		}// end if
 
 		MatroxCode = SVMatroxOcrInterface::Get( m_milFontID, SVOcrStringSize, m_lFontStringLength );
 		if( m_lFontStringLength < 1 )
 		{
-			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16132, GetUniqueObjectID());
 		}// end if
 
 		MatroxCode = SVMatroxOcrInterface::Get( m_milFontID, SVOcrStringSizeMax, m_lFontStringLengthMax );
 		if( m_lFontStringLengthMax < 1 )
 		{
-			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16133, GetUniqueObjectID());
 		}// end if
 
@@ -474,7 +474,7 @@ bool SVOCVAnalyzeResultClass::GenerateFontModel()
 			MatroxCode = SVMatroxOcrInterface::Get( m_milFontID, SVOcrStringSize, m_lFontStringLength );
 			if( m_lFontStringLength < 1 )
 			{
-				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+				SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16134, GetUniqueObjectID());
 			}// end if
 		}
@@ -515,7 +515,7 @@ HRESULT SVOCVAnalyzeResultClass::LoadMatchString()
 				 // The file does not exist.  Set error and set defaults.
 				 //
 				 hrRet = S_FALSE;
-				 SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+				 SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 				 MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16194, GetUniqueObjectID());
 				 LastError = -SvStl::Err_16194;
 				 break;
@@ -528,7 +528,7 @@ HRESULT SVOCVAnalyzeResultClass::LoadMatchString()
 			 if( !matchFile.Open( MatchStringFileName.c_str(), CFile::modeRead | CFile::shareDenyNone ) )
 			 {
 				 hrRet = S_FALSE;
-				 SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+				 SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 				 MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16195, GetUniqueObjectID());
 				 LastError = SvStl::Err_16195;
 				 break;
@@ -544,7 +544,7 @@ HRESULT SVOCVAnalyzeResultClass::LoadMatchString()
 			 if(!m_pBuffer)
 			 {
 				 hrRet = S_FALSE;
-				 SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+				 SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 				 MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16196, GetUniqueObjectID());
 				 LastError = SvStl::Err_16196;
 				 break;
@@ -565,7 +565,7 @@ HRESULT SVOCVAnalyzeResultClass::LoadMatchString()
 				 if( !BuildHashTable( m_pBuffer ) )
 				 {
 					 m_nTotalCount = 0;
-					 SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+					 SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 					 MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16197, GetUniqueObjectID());
 					 LastError = SvStl::Err_16197;
 					 break;

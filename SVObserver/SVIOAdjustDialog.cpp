@@ -175,7 +175,7 @@ BOOL SVIOAdjustDialogClass::OnInitDialog()
 		// Get the number of PPQs
 		if( nullptr == pConfig )
 		{
-			SvStl::MessageMgrStd e( SvStl::LogOnly );
+			SvStl::MessageMgrStd e(SvStl::MsgType::Log );
 			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingPPQCount, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17029_ErrorGettingPPQCount );
 			DebugBreak();
 		}
@@ -213,7 +213,7 @@ BOOL SVIOAdjustDialogClass::OnInitDialog()
 			ppIOEntries.clear();
 			if( nullptr == pPPQ )
 			{
-				SvStl::MessageMgrStd e( SvStl::LogOnly );
+				SvStl::MessageMgrStd e(SvStl::MsgType::Log );
 				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingPPQ, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17030_ErrorGettingPPQ );
 				DebugBreak();
 			}

@@ -140,7 +140,7 @@ void SVMatroxApplicationInterface::Log( SVMatroxStatusInformation &p_rStatusInfo
 		msgList.push_back( SvUl::Format( _T("%d"), OsError ));
 		msgList.push_back( SvUl::Format( _T("0X%08X"), OsError ));
 		msgList.push_back( p_rStatusInfo.GetCompleteString() );
-		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log );
 		Exception.setMessage( MessageCode, SvStl::Tid_OS_Error_Message, msgList, SvStl::SourceFileParams(StdMessageParams), ProgramCode);
 	}
 }
@@ -492,7 +492,7 @@ void SVMatroxApplicationInterface::LocalInitialize()
 				msgList.push_back(SvUl::Format(_T("%4.2f"), SV_CURRENT_MIL_VERSION));
 				msgList.push_back(SvUl::Format(_T("%4.2f"), l_MilVersion));
 				
-				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
+				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 				Msg.setMessage( SVMSG_SVMATROXLIBRARY_GERNEAL_ERROR, SvStl::Tid_MilVersion_Error, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10249 );
 				::exit( EXIT_FAILURE );
 			}

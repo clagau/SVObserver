@@ -397,7 +397,7 @@ DWORD SVStatisticsToolClass::FreeResult (SVStatisticsFeatureEnum aFeatureIndex)
 		
 		if (!pResult)
 		{
-			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16208);
 			LastError = -SvStl::Err_16208;
 			break;

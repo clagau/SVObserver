@@ -2445,8 +2445,7 @@ void SVConfigurationObject::UpgradeConfiguration()
 	}
 	if (ConfigChanged)
 	{
-		SvStl::MsgTypeEnum  MsgType {SvStl::LogAndDisplay};
-		SvStl::MessageMgrStd Exception(MsgType);
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ColorToolExtentsChanged, SvStl::SourceFileParams(StdMessageParams));
 	}
 	if (ConfigChanged)
@@ -5636,12 +5635,12 @@ HRESULT SVConfigurationObject::LoadMonitoredObjectList(SVTreeType& rTree, SVTree
 			}
 			else
 			{
-				SvStl::MsgTypeEnum  MsgType {SvStl::LogAndDisplay};
-				SvStl::MessageMgrStd Exception(MsgType);
+				
+				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 				SvDef::StringVector msgList;
 				msgList.push_back(Name);
 				INT_PTR DlgResult = Exception.setMessage(SVMSG_SVO_106_MONITOR_LIST_OBJECT_MISSING, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GUID_NULL, MB_YESNO);
-				if (SvStl::LogAndDisplay == MsgType && IDNO == DlgResult)
+				if (IDNO == DlgResult)
 				{
 					rList.clear();
 					retValue = SVMSG_SVO_48_LOAD_CONFIGURATION_MONITOR_LIST;

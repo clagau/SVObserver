@@ -114,7 +114,7 @@ void SVUtilitiesClass::RunUtility(SVSecurityManager* pAccess, UINT uiUtilityId)
 			SvDef::StringVector msgList;
 			msgList.push_back(std::string(utilInfo.m_UtilityName));
 			msgList.push_back(std::string(utilInfo.m_Command));
-			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
+			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_UnableStart_Utility, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10237 );
 		}
 	}

@@ -618,7 +618,7 @@ bool SVBarCodeAnalyzerClass::LoadRegExpression( bool DisplayErrorMessage, SvStl:
 			}
 			if( DisplayErrorMessage )
 			{
-				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
+				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 				Msg.setMessage( message.getMessage() ); 
 			}
 			return false;

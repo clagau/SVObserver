@@ -143,7 +143,7 @@ void CSVRegressionFileSelectSheet::OnOK()
 		case SvStl::Tid_RegressionTest_NoFilesSelected:
 		case SvStl::Tid_RegressionTest_EmptyDirectory:
 		{
-			SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 			INT_PTR result = Msg.setMessage( rExp.getMessage(), GUID_NULL, MB_YESNO);
 			if (IDYES == result)
 			{
@@ -160,7 +160,7 @@ void CSVRegressionFileSelectSheet::OnOK()
 		case SvStl::Tid_RegressionTest_WrongListSize:
 		default:
 		{
-			SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 			Msg.setMessage(rExp.getMessage());
 			ClearRegressionList();
 			return;

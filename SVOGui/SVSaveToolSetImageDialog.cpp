@@ -115,12 +115,12 @@ namespace SvOg
 					{
 						if (E_INVALIDARG == hr)
 						{
-							SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
+							SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 							Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_UnKnownFileFormat, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10071 );
 						}
 						else
 						{
-							SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
+							SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 							Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_FailedToSaveImage, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10072 );
 						}
 					}

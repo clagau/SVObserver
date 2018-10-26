@@ -124,7 +124,7 @@ HRESULT SVImageProcessingClass::CreateImageChildBuffer(const SVImageInfoClass& r
 
 	if (S_OK != Result)
 	{
-		SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CreateBufferFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10066);
 	}
 
@@ -346,11 +346,11 @@ HRESULT SVImageProcessingClass::LoadImageBuffer(LPCTSTR tstrImagePathName, SVIma
 			}
 		}
 
-		SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_UnKnownFileFormat, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10068);
 	}
 
-	SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+	SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 	Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_FailedToLoadImage, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10069);
 
 	return E_FAIL;
@@ -490,7 +490,7 @@ HRESULT SVImageProcessingClass::LoadImageBuffer(void* pBuffer,
 
 	rBufferHandle.reset();
 
-	SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+	SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 	Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_FailedToLoadImage, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10070);
 
 	return S_FALSE;
@@ -929,7 +929,7 @@ HRESULT SVImageProcessingClass::FillChildBufferStructFromInfo(const SVImageInfoC
 				message.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CreateImageChildBuffer, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10065);
 			}
 
-			SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 			Msg.setMessage(message.getMessage());
 		}
 

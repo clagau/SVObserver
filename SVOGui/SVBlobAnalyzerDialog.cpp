@@ -355,14 +355,14 @@ namespace SvOg
 				}
 				else
 				{
-					SvStl::MessageMgrStd MesMan(SvStl::LogOnly);
+					SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log);
 					MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16088);
 				}
 			}
 		}
 		else
 		{
-			SvStl::MessageMgrStd MesMan(SvStl::LogOnly);
+			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log);
 			MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16087);
 		}
 	}
@@ -372,7 +372,7 @@ namespace SvOg
 		SetInspectionData();
 
 		//Reset the tool
-		SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		try
 		{
 			m_Values.ResetObject(m_rInspectionID, m_rTaskObjectID);

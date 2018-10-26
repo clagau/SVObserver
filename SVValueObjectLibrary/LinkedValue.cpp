@@ -137,7 +137,7 @@ _variant_t LinkedValue::ConvertString2Type( const std::string& rValue ) const
 			//! This means the linked object is invalid
 			SvDef::StringVector msgList;
 			msgList.push_back( GetName() );
-			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
+			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log );
 			Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_LinkedValue_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			Exception.Throw();
 		}
@@ -153,7 +153,7 @@ _variant_t LinkedValue::ConvertString2Type( const std::string& rValue ) const
 			{
 				SvDef::StringVector msgList;
 				msgList.push_back(GetName());
-				SvStl::MessageMgrStd Exception( SvStl::LogOnly );
+				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log );
 				Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_LinkedValue_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 				Exception.Throw();
 			}

@@ -412,7 +412,7 @@ void SVHistogramAnalyzerClass::init()
 		}
 		catch (const fail_to_create &)
 		{
-			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16089);
 			
 		}
@@ -479,7 +479,7 @@ bool SVHistogramAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rC
     {
         if (!SVImageAnalyzerClass::CreateObject(rCreateStructure) )
         {
-			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16153);
 			LastError = - SvStl::Err_16153;
 			break;
@@ -488,7 +488,7 @@ bool SVHistogramAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rC
         pSVImage = getInputImage();
         if (!pSVImage)
         {
-			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16154);
 			LastError = - SvStl::Err_16154;
 			break;
@@ -499,7 +499,7 @@ bool SVHistogramAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rC
 
         if (msvplHistValues.size() == 0)
         {
-			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16155);
 			LastError = - SvStl::Err_16155;
 			break;
@@ -520,7 +520,7 @@ bool SVHistogramAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rC
 
 		if (M_NULL == m_HistResultID)
 		{
-			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16156);
 			LastError = - SvStl::Err_16156;
 			break;
@@ -541,7 +541,7 @@ bool SVHistogramAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rC
 
 		if (S_OK != createHistogramImage())
 		{
-			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16157);
 			LastError = - SvStl::Err_16157;
 			break;

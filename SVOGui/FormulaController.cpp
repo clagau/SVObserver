@@ -127,7 +127,7 @@ std::string FormulaController::GetEquationText() const
 	{
 		SvDef::StringVector msgList;
 		msgList.push_back(SvUl::Format(_T("%d"), hr));
-		SvStl::MessageMgrStd e(SvStl::LogOnly);
+		SvStl::MessageMgrStd e(SvStl::MsgType::Log);
 		e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams));
 		ASSERT(false);
 	}
@@ -231,7 +231,7 @@ int FormulaController::ValidateEquation(const std::string& equationString, doubl
 	{
 		SvDef::StringVector msgList;
 		msgList.push_back(SvUl::Format(_T("%d"), hr));
-		SvStl::MessageMgrStd e(SvStl::LogOnly);
+		SvStl::MessageMgrStd e(SvStl::MsgType::Log);
 		e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams));
 		ASSERT(false);
 	}
@@ -296,7 +296,7 @@ void FormulaController::Init()
 			{
 				SvDef::StringVector msgList;
 				msgList.push_back(SvUl::Format(_T("%d"), hr));
-				SvStl::MessageMgrStd e(SvStl::LogOnly);
+				SvStl::MessageMgrStd e(SvStl::MsgType::Log);
 				e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams));
 				assert(false);
 			}
@@ -316,7 +316,7 @@ void FormulaController::Init()
 		{
 			SvDef::StringVector msgList;
 			msgList.push_back(SvUl::Format(_T("%d"), hr));
-			SvStl::MessageMgrStd e(SvStl::LogOnly);
+			SvStl::MessageMgrStd e(SvStl::MsgType::Log);
 			e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams));
 			assert(false);
 		}

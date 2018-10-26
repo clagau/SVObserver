@@ -270,7 +270,7 @@ void CSVOCameraDlg::OnBtnPropVc()
 						if( 1 < m_pParent->GetCameraListCount() && !pCameraObj->GetCameraFile().empty() )
 						{
 							m_bModified = true;
-							SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
+							SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 							INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_Camera_UseQuestion, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10137, GUID_NULL, MB_YESNO );
 							if (IDYES == result)
 							{
@@ -295,7 +295,7 @@ void CSVOCameraDlg::OnBtnPropVc()
 							svFiles.push_back(svFile);
 							if (S_OK != psvDevice->LoadFiles(svFiles))
 							{
-								SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+								SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 								SvDef::StringVector msgList;
 								msgList.push_back(pCameraObj->GetCameraFile());
 								Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Config_CameraFileInvalid, msgList, SvStl::SourceFileParams(StdMessageParams));

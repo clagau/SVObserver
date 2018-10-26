@@ -119,7 +119,7 @@ namespace SvOg
 		{
 			if ( svfncFileName.GetFullFileName().empty() )
 			{
-				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
+				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_NoFontFileSpec, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10171 ); 
 			}
 			else
@@ -128,7 +128,7 @@ namespace SvOg
 				{
 					SvDef::StringVector msgList;
 					msgList.push_back(svfncFileName.GetFullFileName());
-					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
+					SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_FontNotMfoExt, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10172 ); 
 				}
 				else
@@ -141,14 +141,14 @@ namespace SvOg
 					{
 						SvDef::StringVector msgList;
 						msgList.push_back(svfncFileName.GetFullFileName());
-						SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
+						SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_FontFileNotExist, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10173 ); 
 					}
 					else if ( rStatus.m_size <= 0 )
 					{
 						SvDef::StringVector msgList;
 						msgList.push_back(svfncFileName.GetFullFileName());
-						SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
+						SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_FontFileEmpty, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10174 );
 					}
 					else
@@ -185,7 +185,7 @@ namespace SvOg
 		{
 			if ( svfncFileName.GetFullFileName().empty() )
 			{
-				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
+				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_NoFontConstraintsFileSpec, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10175 ); 
 			}
 			else
@@ -194,7 +194,7 @@ namespace SvOg
 				{
 					SvDef::StringVector msgList;
 					msgList.push_back(svfncFileName.GetFullFileName());
-					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
+					SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_FontConstraintsRequiredMfoExt, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10176 ); 
 				}
 				else
@@ -207,14 +207,14 @@ namespace SvOg
 					{
 						SvDef::StringVector msgList;
 						msgList.push_back(svfncFileName.GetFullFileName() );
-						SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
+						SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_FontConstraintsFileNotExist, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10177 ); 
 					}
 					else if ( rStatus.m_size <= 0 )
 					{
 						SvDef::StringVector msgList;
 						msgList.push_back(svfncFileName.GetFullFileName() );
-						SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
+						SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_FontConstraintsFileEmpty, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10178 ); 
 					}
 					else
@@ -252,7 +252,7 @@ namespace SvOg
 		{
 			if ( svfncFileName.GetFullFileName().empty() )
 			{
-				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
+				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_NoFontControlsFileSpec, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10179 ); 
 			}
 			else
@@ -261,7 +261,7 @@ namespace SvOg
 				{
 					SvDef::StringVector msgList;
 					msgList.push_back( svfncFileName.GetFullFileName() );
-					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
+					SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_FontControlsRequiredMfoExt, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10180 ); 
 				}
 				else
@@ -274,14 +274,14 @@ namespace SvOg
 					{
 						SvDef::StringVector msgList;
 						msgList.push_back( svfncFileName.GetFullFileName() );
-						SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
+						SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_FontControlsFileNotExist, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10181 ); 
 					}
 					else if ( rStatus.m_size <= 0 )
 					{
 						SvDef::StringVector msgList;
 						msgList.push_back( svfncFileName.GetFullFileName() );
-						SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
+						SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_FontControlsFileEmpty, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10182 ); 
 					}
 					else

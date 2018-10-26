@@ -125,7 +125,7 @@ namespace SvOg
 		HRESULT hOK = SvUl::LoadDll::Instance().getDll(SvUl::ScintillaDll, ScintillaInstance);
 		if (S_OK != hOK || nullptr == ScintillaInstance)
 		{
-			SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
+			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
 			Exception.setMessage( SVMSG_SVO_88_LOADING_SCINTILLA_DLL_ERROR, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10028_LoadOfScintillaDllFailed );
 		}
 		else
@@ -653,7 +653,7 @@ namespace SvOg
 			const int result = m_FormulaController->ValidateEquation( equationText, value, true, ErrorMessages );
 			for (SvStl::MessageContainerVector::iterator iter = ErrorMessages.begin(); ErrorMessages.end() != iter; iter++ )
 			{
-				SvStl::MessageMgrStd message( SvStl::LogAndDisplay );
+				SvStl::MessageMgrStd message(SvStl::MsgType::Log | SvStl::MsgType::Display );
 				message.setMessage(iter->getMessage());
 			}
 			enableUndoButton();
@@ -674,7 +674,7 @@ namespace SvOg
 		const int result = m_FormulaController->ValidateEquation( equationText, value, false, ErrorMessages );
 		for (SvStl::MessageContainerVector::iterator iter = ErrorMessages.begin(); ErrorMessages.end() != iter; iter++ )
 		{
-			SvStl::MessageMgrStd message( SvStl::LogAndDisplay );
+			SvStl::MessageMgrStd message(SvStl::MsgType::Log | SvStl::MsgType::Display );
 			message.setMessage(iter->getMessage());
 		}
 		if(SvOi::IFormulaController::validateSuccessful == result || SvOi::IFormulaController::resetFailed == result)
@@ -691,7 +691,7 @@ namespace SvOg
 				msgList.push_back(SvUl::Format(_T("%lf"), value));
 				id = SvStl::Tid_FormulaValidated;
 			}
-			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
+			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, id, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10223 );
 		}
 		else // Something is wrong
@@ -731,7 +731,7 @@ namespace SvOg
 		if( !validateAndSetEquation() )
 		{
 			// Equation must be valid or disabled
-			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
+			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_InvalidFormula, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10222 );
 			return FALSE;
 		}

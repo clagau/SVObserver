@@ -240,7 +240,7 @@ HRESULT SVAcquisitionClass::CreateBuffers(SVImageInfoClass IInfo, unsigned long 
 		catch (const SvStl::MessageContainer& rExp)
 		{
 			//This is the topmost catch for MessageContainer exceptions
-			SvStl::MessageMgrStd Exception(SvStl::LogOnly);
+			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
 			Exception.setMessage(rExp.getMessage());
 			Result = E_FAIL;
 		}
@@ -312,12 +312,12 @@ HRESULT SVAcquisitionClass::LoadFiles(SVFileNameArrayClass &rArray)
 			LogOnly = SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD);
 			if (LogOnly)
 			{
-				SvStl::MessageMgrStd Exception(SvStl::LogOnly);
+				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
 				Exception.setMessage(SVMSG_SVO_74_LOAD_FILE, mFiles[l].GetFullFileName().c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25047_LoadFileFailed);
 			}
 			else
 			{
-				SvStl::MessageMgrStd Exception(SvStl::LogAndDisplay);
+				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 				if (IDYES == Exception.setMessage(SVMSG_SVO_74_LOAD_FILE, mFiles[l].GetFullFileName().c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25047_LoadFileFailed, GUID_NULL, MB_YESNO))
 				{
 					//All other missing files will only be logged

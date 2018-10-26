@@ -77,7 +77,7 @@ bool TableTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure 
 			bOk = false;
 			SvStl::MessageContainer message;
 			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_CreateFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
-			SvStl::MessageMgrStd Msg( SvStl::LogOnly );
+			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log );
 			Msg.setMessage( message.getMessage() );
 		}
 	}
@@ -165,7 +165,7 @@ bool TableTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		catch( const SvStl::MessageContainer& rSvE )
 		{
 			Result = false;
-			SvStl::MessageMgrStd e( SvStl::LogOnly );
+			SvStl::MessageMgrStd e(SvStl::MsgType::Log );
 			e.setMessage( rSvE.getMessage() );
 			if (nullptr != pErrorMessages)
 			{

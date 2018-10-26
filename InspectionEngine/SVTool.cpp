@@ -1016,7 +1016,7 @@ void SVToolClass::finishAddTool()
 	SetDefaultFormulas(&ErrorMessages);
 	for (SvStl::MessageContainerVector::iterator iter = ErrorMessages.begin(); ErrorMessages.end() != iter; ++iter)
 	{
-		SvStl::MessageMgrStd message(SvStl::LogAndDisplay);
+		SvStl::MessageMgrStd message(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		message.setMessage(iter->getMessage());
 	}
 }

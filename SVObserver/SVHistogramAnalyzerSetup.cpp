@@ -209,7 +209,7 @@ inline void SVHistogramAnalyzerSetupClass::SetResultRange(const GUID & resultGui
 	}
 	else
 	{
-		SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_NoResultObject, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10234);
 	}
 }

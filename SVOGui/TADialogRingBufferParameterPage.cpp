@@ -157,7 +157,7 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 				errorMessageList = m_Values.getFailedMessageList();
 				if (0 < errorMessageList.size())
 				{
-					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
+					SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 					Msg.setMessage( errorMessageList[0].getMessage() );
 				}
 			}
@@ -181,7 +181,7 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 		}
 		else
 		{
-			SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
+			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
 			SvDef::StringVector msgList;
 			msgList.push_back( SvUl::Format(_T("%d"), SvDef::cRingBufferDepthMin) );
 			msgList.push_back( SvUl::Format(_T("%d"), SvDef::cRingBufferDepthMax) );

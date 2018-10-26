@@ -97,7 +97,7 @@ SVDPointClass SVDPointValueObjectClass::ConvertString2Type( const std::string& r
 	SvDef::StringVector msgList;
 	msgList.push_back( rValue );
 	msgList.push_back( GetName() );
-	SvStl::MessageMgrStd Exception( SvStl::LogOnly );
+	SvStl::MessageMgrStd Exception(SvStl::MsgType::Log );
 	Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValueObject_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 	Exception.Throw();
 	return SVDPointClass(); //will never reached, because the exception will throw before. But this line avoid a warning

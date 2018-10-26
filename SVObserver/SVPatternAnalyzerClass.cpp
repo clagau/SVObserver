@@ -176,7 +176,7 @@ SVObjectClass* SVPatternAnalyzerClass::CreateResult()
 	SVLongResultClass* pResult = dynamic_cast<SVLongResultClass*> (resultClassInfo.Construct());
 	if (nullptr == pResult)
 	{
-		SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+		SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16199);
 		return nullptr;
 	}
@@ -185,7 +185,7 @@ SVObjectClass* SVPatternAnalyzerClass::CreateResult()
 	SVRangeClass *pRange = pResult->GetResultRange();
 	if (nullptr == pRange)
 	{
-		SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+		SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16200);
 		return nullptr;
 	}
@@ -628,7 +628,7 @@ bool SVPatternAnalyzerClass::SetSearchParameters ()
 	}
 	catch( ... )
 	{
-		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log );
 		Exception.setMessage( SVMSG_SVO_UNHANDLED_EXCEPTION, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 		bOk = false;
 	}

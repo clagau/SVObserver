@@ -99,7 +99,7 @@ void InitialInformationHandler::LoadIniFilesAndDlls()
 		if (S_OK != IniLoader.m_hrDecodeModelNumber)
 		{
 			ASSERT(FALSE);
-			SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_ModelNumberInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10236);
 		}
 
@@ -232,7 +232,7 @@ HRESULT InitialInformationHandler::LoadAcquisitionDLL()
 			//This is the error result which indicates that the Matrox Gige service is not running
 			if (ErrorMatroxServiceNotRunning == ResultLoadDLL)
 			{
-				SvStl::MessageMgrStd Exception(SvStl::LogAndDisplay);
+				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 				Exception.setMessage(SVMSG_SVO_90_MATROX_SERVICE_NOT_RUNNING, m_InitialInfo.m_DigitizerDLL.c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25048_NoMatroxService);
 			}
 			else

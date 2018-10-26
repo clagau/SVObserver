@@ -135,7 +135,7 @@ BOOL SVTADlgTranslationResizePage::OnInitDialog()
 
 	if (S_OK != hr)
 	{
-		SvStl::MessageMgrStd Exception(SvStl::LogAndDisplay);
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Exception.setMessage(hr, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 5015);
 	}
 	else
@@ -980,7 +980,7 @@ HRESULT	SVTADlgTranslationResizePage::ExitTabValidation()
 
 	if (!SUCCEEDED(message.getMessage().m_MessageCode))
 	{
-		SvStl::MessageMgrStd Exception(SvStl::LogAndDisplay);
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Exception.setMessage(message.getMessage().m_MessageCode, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvStl::ProgCode_5068_ValidateTabData);
 	}
 
@@ -1071,7 +1071,7 @@ HRESULT SVTADlgTranslationResizePage::ValidateCurrentTreeData(SVRPropertyItem* i
 			message = messageList[0];
 		}
 
-		SvStl::MessageMgrStd Exception(SvStl::LogAndDisplay);
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Exception.setMessage(message.getMessage());
 	}
 

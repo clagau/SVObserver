@@ -440,7 +440,7 @@ bool SVToolAdjustmentDialogSizePage::QueryAllowExit()
 				{
 					if( pEQ->GetEquationText().empty() )
 					{
-						SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
+						SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
 						Exception.setMessage( SVMSG_SVO_64_EMPTY_FORMULAS_ARE_NOT_ALLOWED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16038_EmptyFormula );
 						return false;
 					}
