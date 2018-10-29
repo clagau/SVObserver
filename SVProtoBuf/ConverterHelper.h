@@ -25,11 +25,11 @@ void GetGuidFromProtoBytes(const std::string& strguid, GUID& rGuid);
 //!GUID From protobufmessage 
 GUID GetGuidFromProtoBytes(const std::string& strguid);
 
-HRESULT ConvertVariantToProtobuf(const _variant_t& rPbVariant, int& rCount, SvPb::Variant* pVariant);
-HRESULT ConvertProtobufToVariant(const SvPb::Variant& rPbVariant, int Count, _variant_t& rVariant);
+HRESULT ConvertVariantToProtobuf(const _variant_t& rVariant, SvPb::Variant* pPbVariant);
+HRESULT ConvertProtobufToVariant(const SvPb::Variant& rPbVariant, _variant_t& rVariant);
 
 // Converts a list into a protobuf Variant by generating a semicolon separated string (The list should not contain any ;)
-int ConvertStringListToProtobuf(const SvDef::StringSet& rList, SvPb::Variant* pVariant);
+void ConvertStringListToProtobuf(const SvDef::StringSet& rList, SvPb::Variant* pVariant);
 
 UINT PbObjectAttributes2Attributes(const SvPb::ObjectAttributes& rAttributes);
 } //namespace SvPb

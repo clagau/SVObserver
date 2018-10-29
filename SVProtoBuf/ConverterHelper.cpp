@@ -37,7 +37,7 @@ GUID GetGuidFromProtoBytes(const std::string& strguid)
 	return guid;
 }
 
-HRESULT ConvertVariantToProtobuf(const _variant_t& rVariant, int& rCount, SvPb::Variant* pPbVariant)
+HRESULT ConvertVariantToProtobuf(const _variant_t& rVariant, SvPb::Variant* pPbVariant)
 {
 	HRESULT Result {S_OK};
 
@@ -55,7 +55,6 @@ HRESULT ConvertVariantToProtobuf(const _variant_t& rVariant, int& rCount, SvPb::
 				case VT_I1:
 				case VT_I2:
 				case VT_I4:
-				case VT_I8:
 				case VT_INT:
 					pPbVariant->set_type(VT_I4);
 					pPbVariant->set_lval(static_cast<long> (rVariant));
@@ -64,22 +63,20 @@ HRESULT ConvertVariantToProtobuf(const _variant_t& rVariant, int& rCount, SvPb::
 				case VT_UI1:
 				case VT_UI2:
 				case VT_UI4:
-				case VT_UI8:
 				case VT_UINT:
 					pPbVariant->set_type(VT_UI4);
 					pPbVariant->set_ulval(static_cast<unsigned long> (rVariant));
 					break;
 
-					//@TODO[gra][8.10][20.04.2018]: The script tester needs to handle this type for times
-					//case VT_I8:
-					//	pPbVariant->set_type(VT_I8);
-					//	pPbVariant->set_llval(rVariant);
-					//	break;
+				 case VT_I8:
+					 pPbVariant->set_type(VT_I8);
+					 pPbVariant->set_llval(rVariant);
+					 break;
 
-					//case VT_UI8:
-					//	pPbVariant->set_type(VT_UI8);
-					//	pPbVariant->set_ullval(rVariant);
-					//	break;
+				 case VT_UI8:
+					 pPbVariant->set_type(VT_UI8);
+					 pPbVariant->set_ullval(rVariant);
+					 break;
 
 				case VT_R4:
 					pPbVariant->set_type(VT_R4);
@@ -109,12 +106,12 @@ HRESULT ConvertVariantToProtobuf(const _variant_t& rVariant, int& rCount, SvPb::
 			VARTYPE Type = rVariant.vt & ~VT_ARRAY;
 			if (nullptr != rVariant.parray && 1 == rVariant.parray->cDims)
 			{
-				rCount = rVariant.parray->rgsabound[0].cElements;
+				int count = rVariant.parray->rgsabound[0].cElements;
 				//For string lists we will generate a semicolon separated string (no semicolons are allowed in the list)
 				if (VT_BSTR == Type)
 				{
 					std::string StringArray;
-					for (int i = 0; i < rCount; i++)
+					for (int i = 0; i < count; i++)
 					{
 						LONG Index = rVariant.parray->rgsabound[0].lLbound + i;
 						_bstr_t Value;
@@ -127,16 +124,18 @@ HRESULT ConvertVariantToProtobuf(const _variant_t& rVariant, int& rCount, SvPb::
 						Text.assign(Value);
 						StringArray += Text;
 					}
+					pPbVariant->set_count(count);
 					pPbVariant->set_type(rVariant.vt);
 					pPbVariant->set_bytesval(StringArray);
 				}
 				else
 				{
 					std::vector<char> DataBlock;
-					int BlockSize = rCount * rVariant.parray->cbElements;
+					int BlockSize = count * rVariant.parray->cbElements;
 					DataBlock.resize(BlockSize);
 					memcpy(&DataBlock[0], rVariant.parray->pvData, BlockSize);
 
+					pPbVariant->set_count(count);
 					pPbVariant->set_type(rVariant.vt);
 					pPbVariant->set_bytesval(&DataBlock[0], DataBlock.size());
 				}
@@ -147,7 +146,7 @@ HRESULT ConvertVariantToProtobuf(const _variant_t& rVariant, int& rCount, SvPb::
 	return Result;
 }
 
-HRESULT ConvertProtobufToVariant(const SvPb::Variant& rPbVariant, int Count, _variant_t& rVariant)
+HRESULT ConvertProtobufToVariant(const SvPb::Variant& rPbVariant, _variant_t& rVariant)
 {
 	HRESULT Result {S_OK};
 
@@ -197,7 +196,7 @@ HRESULT ConvertProtobufToVariant(const SvPb::Variant& rPbVariant, int Count, _va
 	if (VT_ARRAY == (rPbVariant.type() & VT_ARRAY))
 	{
 		VARTYPE Type = rPbVariant.type() & ~VT_ARRAY;
-		SAFEARRAY* pSafeArray = ::SafeArrayCreateVector(Type, 0, Count);
+		SAFEARRAY* pSafeArray = ::SafeArrayCreateVector(Type, 0, rPbVariant.count());
 		if (nullptr != pSafeArray)
 		{
 			if (VT_BSTR == Type)
@@ -205,7 +204,7 @@ HRESULT ConvertProtobufToVariant(const SvPb::Variant& rPbVariant, int Count, _va
 				const std::string& rStringArray = rPbVariant.strval();
 
 				std::vector<std::string> Items;
-				Items.reserve(Count);
+				Items.reserve(rPbVariant.count());
 				std::string Item;
 				std::istringstream tokenStream(rStringArray);
 				while (std::getline(tokenStream, Item, ';'))
@@ -246,10 +245,8 @@ HRESULT ConvertProtobufToVariant(const SvPb::Variant& rPbVariant, int Count, _va
 }
 
 
-int ConvertStringListToProtobuf(const SvDef::StringSet& rList, SvPb::Variant* pVariant)
+void ConvertStringListToProtobuf(const SvDef::StringSet& rList, SvPb::Variant* pVariant)
 {
-	int Result {0};
-
 	if (nullptr != pVariant)
 	{
 		std::string Text;
@@ -264,13 +261,12 @@ int ConvertStringListToProtobuf(const SvDef::StringSet& rList, SvPb::Variant* pV
 		}
 		if (0 < rList.size() && 0 < Text.size())
 		{
-			Result = static_cast<int> (rList.size());
 			//Set type to VT_ARRAY so that it is clear that a comma separated list is being sent
 			pVariant->set_type(VT_BSTR | VT_ARRAY);
 			pVariant->set_strval(Text);
+			pVariant->set_count(static_cast<int> (rList.size()));
 		}
 	}
-	return Result;
 }
 
 UINT PbObjectAttributes2Attributes(const SvPb::ObjectAttributes& rAttributes)

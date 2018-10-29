@@ -19,12 +19,12 @@
 #include "SVValueObjectList.h"
 #include "SVProtoBuf/ConverterHelper.h"
 
-CComVariant  GetComVariant(const SvPb::Variant& rPbVariant, ULONG Elements /*= 0L*/)
+CComVariant  GetComVariant(const SvPb::Variant& rPbVariant)
 {
 	CComVariant Result;
 
 	_variant_t Variant;
-	SvPb::ConvertProtobufToVariant(rPbVariant, Elements, Variant);
+	SvPb::ConvertProtobufToVariant(rPbVariant, Variant);
 	Result = Variant;
 
 	return Result;
@@ -42,8 +42,7 @@ ValuePtr GetValueObjectPtr(int Count, const std::string& rName, const SvPb::Vari
 	pValueObject->put_Status(0);
 	//If not array then Count is trigger count
 	pValueObject->put_TriggerCount(isArray ? 0 : Count);
-	//If array then Count is array size count
-	pValueObject->Add(GetComVariant(rValue, isArray ? Count : 0));
+	pValueObject->Add(GetComVariant(rValue));
 	return pvo;
 }
 

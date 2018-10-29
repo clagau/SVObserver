@@ -856,7 +856,7 @@ HRESULT SVControlCommands::QueryMonitorList(const _bstr_t& rListName, SvPb::List
  		if (S_OK == Result)
 		{
 			SvPb::Value* pValue = Response.mutable_names();
-			rItemNames = GetComVariant(*pValue->mutable_item(), pValue->count());
+			rItemNames = GetComVariant(*pValue->mutable_item());
 		}
 		else
 		{
@@ -1079,7 +1079,7 @@ HRESULT SVControlCommands::GetInspectionNames(CComVariant& rNames, SVCommandStat
 		if (S_OK == Result)
 		{
 			SvPb::Value* pValue = Response.mutable_names();
-			rNames = GetComVariant(*pValue->mutable_item(), pValue->count());
+			rNames = GetComVariant(*pValue->mutable_item());
 		}
 		else
 		{
@@ -1117,7 +1117,7 @@ HRESULT SVControlCommands::QueryMonitorListNames(CComVariant& rListName, SVComma
 		if (S_OK == Result)
 		{
 			SvPb::Value* pValue = Response.mutable_names();
-			rListName = GetComVariant(*pValue->mutable_item(), pValue->count());
+			rListName = GetComVariant(*pValue->mutable_item());
 		}
 		else
 		{

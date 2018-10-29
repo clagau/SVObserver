@@ -30,7 +30,6 @@ void SetValue(const ValuePtr& pValuePtr, SvPb::Value* pItemValue)
 	pItemValue->set_status(Status);
 	long Count {0L};
 	pValuePtr->get_Count(&Count);
-	pItemValue->set_count(Count);
 	std::string ValueData;
 	//The value list can only contain variant of type VT_BSTR
 	for (long i = 0; i < Count; ++i)
@@ -50,6 +49,7 @@ void SetValue(const ValuePtr& pValuePtr, SvPb::Value* pItemValue)
 	Type |= (Count > 1) ? VT_EMPTY : VT_ARRAY;
 	pItemValue->mutable_item()->set_type(Type);
 	pItemValue->mutable_item()->set_strval(ValueData);
+	pItemValue->mutable_item()->set_count(Count);
 }
 
 void SetStringList(const CComVariant& rVariant, ::google::protobuf::RepeatedPtrField< ::std::string>* pStringList)

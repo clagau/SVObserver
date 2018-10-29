@@ -27,7 +27,7 @@ message Value
 {
 	string name = 1;				//The name of the value item
 	sint32 status = 2;				//The status for this value item
-	sint32 count = 3;				//For arrays the number of elements otherwise it has the trigger count
+	sint32 count = 3;				//Trigger count
 
 	Variant item = 4;				//The value item as a variant
 }

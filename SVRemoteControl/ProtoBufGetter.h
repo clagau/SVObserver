@@ -23,7 +23,7 @@ typedef CComPtr<ISVDataDefObject> DataDefPtr;
 typedef CComPtr<ISVDataDefObjectList> DataDefListPtr;
 
 
-CComVariant  GetComVariant(const SvPb::Variant& rValue, ULONG Elements=0L);
+CComVariant  GetComVariant(const SvPb::Variant& rValue);
 ProductPtr GetProductPtr(SvWsl::SVRCClientServicePtr& rpSvrcClientService, const SvPb::Product& resp);
 ValuePtr GetValueObjectPtr(int Count, const std::string& rName, const SvPb::Variant& rValue);
 ErrorPtr GetErrorObjectPtr(LONG Status, const std::string& rName, const SvPb::Variant& rValue);

@@ -692,8 +692,7 @@ void SVRCCommand::GetInspectionNames(const SvPb::GetInspectionNamesRequest& rReq
 	SvPb::Value* pValue = Response.mutable_names();
 	if (S_OK == Result && nullptr != pValue)
 	{
-		int Count = SvPb::ConvertStringListToProtobuf(InspectionNames, pValue->mutable_item());
-		pValue->set_count(Count);
+		SvPb::ConvertStringListToProtobuf(InspectionNames, pValue->mutable_item());
 	}
 
 	Response.set_hresult(Result);
@@ -845,8 +844,7 @@ void SVRCCommand::QueryMonitorList(const SvPb::QueryMonitorListRequest& rRequest
 	SvPb::Value* pValue = Response.mutable_names();
 	if (S_OK == Result && nullptr != pValue)
 	{
-		int Count = SvPb::ConvertStringListToProtobuf(Items, pValue->mutable_item());
-		pValue->set_count(Count);
+		SvPb::ConvertStringListToProtobuf(Items, pValue->mutable_item());
 	}
 
 	Response.set_hresult(Result);
@@ -866,8 +864,7 @@ void SVRCCommand::QueryMonitorListNames(const SvPb::QueryMonitorListNamesRequest
 	SvPb::Value* pValue = Response.mutable_names();
 	if (S_OK == Result && nullptr != pValue)
 	{
-		int Count = SvPb::ConvertStringListToProtobuf(Items, pValue->mutable_item());
-		pValue->set_count(Count);
+		SvPb::ConvertStringListToProtobuf(Items, pValue->mutable_item());
 	}
 
 	Response.set_hresult(Result);
@@ -1078,8 +1075,7 @@ HRESULT SVRCCommand::ConvertStorageValueToProtobuf(const std::string& rName, con
 		HRESULT ItemStatus = rStorage.m_Status;
 		if (S_OK == rStorage.m_Status)
 		{
-			int Count {0};
-			ItemStatus = SvPb::ConvertVariantToProtobuf(rStorage.m_Storage.m_Variant, Count, pValue->mutable_item());
+			ItemStatus = SvPb::ConvertVariantToProtobuf(rStorage.m_Storage.m_Variant, pValue->mutable_item());
 		}
 		pValue->set_status(ItemStatus);
 	}
@@ -1143,7 +1139,7 @@ HRESULT SVRCCommand::AddValuesToStorageItems(const SvPb::SetItemsRequest& rReque
 		SVStorage Storage;
 		Storage.m_StorageType = SVVisionProcessor::SVStorageValue;
 
-		Result = SvPb::ConvertProtobufToVariant(rValue.item(), rValue.count(), Storage.m_Variant);
+		Result = SvPb::ConvertProtobufToVariant(rValue.item(), Storage.m_Variant);
 
 		if (S_OK == Result)
 		{

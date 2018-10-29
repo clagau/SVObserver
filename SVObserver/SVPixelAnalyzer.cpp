@@ -11,7 +11,7 @@
 
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
-
+#include "SVMatroxLibrary/SVMatroxResourceMonitor.h"
 #include "InspectionEngine/SVDataBuffer.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
@@ -119,6 +119,11 @@ bool SVPixelAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCreat
 			isError = true;
 			break;
         }
+		else
+		{
+			SVMatroxResourceMonitor::InsertIdentifier(SVImageID, m_contextID);
+			SVMatroxResourceMonitor::InsertIdentifier(SVImageID, m_ResultID);
+		}
         break;
     }
 	
