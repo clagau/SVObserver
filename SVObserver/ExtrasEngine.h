@@ -69,12 +69,6 @@ public:
 	//************************************
 	void ResetAutoSaveInformation();
 
-	/// Used for copying the contents of sourceDir to the Autosave temp directory path.
-	/// Since this path (in keeping with the somewhat unfortunate specification for SVO-168)
-	/// does not always exist care must be exercised in using this function
-	/// \param SourceDir [in] the path of the directory the contents of which are to be copied
-	void CopyDirectoryToTempDirectory( LPCTSTR SourceDir) const ;
-
 #pragma endregion Public Methods
 
 #pragma region Private Methods

@@ -39,10 +39,11 @@ namespace SvStl
 
 	///subdirectories and sub-subdirectories of DefaultSecondObserverPath 
 	static const TCHAR* const AutoSaveRelativePath = _T( "Autosave" );	
-	const TCHAR* const AutoSaveTempRelativePath = _T("Temp");///< the "temporary" autosave temp directory name
 	const TCHAR* const AutoSaveTemp1FileName = _T("Temp1MostRecent.svz");///< the first autosave temp file name
 	const TCHAR* const AutoSaveTemp2FileName = _T("Temp2.svz");///< the second autosave temp file name
 	const TCHAR* const AutoSaveTemp3FileName = _T("Temp3.svz");///< the third autosave temp file name
+
+	const TCHAR* const TempRelativePath = _T("Temp");	///< the "temporary" temp directory name
 
 	///TAGS 
 	static const TCHAR* const SVIMDirectorySectionTag = _T("SVIM Directories");
@@ -63,7 +64,6 @@ namespace SvStl
 		m_SVObserverRunFolder{DefaultRunFolder},
 		m_TempFolder{DefaultTempFolder},
 		m_SVObserverExternalToolFolder{DefaultExternalToolPath},
-		m_AutosaveTempDirectoryName{AutoSaveTempRelativePath},
 		m_AutosaveTemp1FileName{AutoSaveTemp1FileName},
 		m_AutosaveTemp2FileName{AutoSaveTemp2FileName},
 		m_AutosaveTemp3FileName{AutoSaveTemp3FileName}
@@ -175,11 +175,6 @@ namespace SvStl
 	std::string GlobalPath::GetAutoSaveRootPath(LPCTSTR filename)
 	{
 		return AppendFilename(GetSecondObserverPath(AutoSaveRelativePath), filename);
-	}
-
-	std::string GlobalPath::GetAutoSaveTempPath(LPCTSTR filename)
-	{
-		return AppendFilename(GetAutoSaveRootPath(AutoSaveTempRelativePath), filename);
 	}
 
 	std::string  GlobalPath::GetLastValidPath(LPCTSTR filename )

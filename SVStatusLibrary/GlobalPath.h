@@ -36,9 +36,7 @@ namespace SvStl
 		std::string GetObserverPath(LPCTSTR filename = nullptr);
 		std::string GetSecondObserverPath(LPCTSTR filename = nullptr);
 		std::string GetAutoSaveRootPath(LPCTSTR filename = nullptr);
-		std::string GetAutoSaveTempPath(LPCTSTR filename = nullptr);
 		std::string GetRamDrive(LPCTSTR filename = nullptr);
-		std::string GetAutosaveTempDirectoryName(){return m_AutosaveTempDirectoryName;}
 		std::string GetAutosaveTemp1FileName(){return m_AutosaveTemp1FileName;}
 		std::string GetAutosaveTemp2FileName(){return m_AutosaveTemp2FileName;}
 		std::string GetAutosaveTemp3FileName(){return m_AutosaveTemp3FileName;}
@@ -78,7 +76,6 @@ namespace SvStl
 		std::string m_LastValidFolder;
 		std::string m_SvimRamDrive;
 
-		std::string m_AutosaveTempDirectoryName;
 		std::string m_AutosaveTemp1FileName;
 		std::string m_AutosaveTemp2FileName;
 		std::string m_AutosaveTemp3FileName;

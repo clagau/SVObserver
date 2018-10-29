@@ -409,26 +409,26 @@ void SVObserverApp::OnFileNewConfig()
 ////////////////////////////////////////////////////////////////////////////////
 void SVObserverApp::OnFileSaveConfig()
 {
-	std::string RunTimePath{SVFileNameManagerClass::Instance().GetRunPathName()};
-	if (getConfigFullFileName().empty() || getConfigPathName().empty() || RunTimePath == getConfigPathName())
+	if(getConfigPathName().empty())
 	{
-		fileSaveAsSVX();
+		if(false == DetermineConfigurationSaveName())
+		{
+			return;
+		}
+
 	}
-	else
+	std::string fileName {getConfigFullFileName()};
+
+	if(fileSaveAsSVX(fileName))
 	{
-		std::string TempName = SVFileNameManagerClass::Instance().GetConfigurationPathName();
-
-		if (TempName.empty())
+		setConfigFullFileName(fileName.c_str(), false);
+		if (0 == _access(fileName.c_str(), 0))
 		{
-			TempName = getConfigFullFileName();
-		}
-		else
-		{
-			TempName += _T("\\");
-			TempName += getConfigFileName();
+			AddToRecentFileList(fileName.c_str());
+			SVSVIMStateClass::RemoveState(SV_STATE_MODIFIED);
 		}
 
-		fileSaveAsSVX(TempName);
+		((CMDIFrameWnd*)AfxGetMainWnd())->OnUpdateFrameTitle(TRUE);
 	}
 }
 
@@ -1417,7 +1417,7 @@ void SVObserverApp::OnFileSaveAsSVC()
 		if (SVSVIMStateClass::CheckState(SV_STATE_READY))
 		{
 			// Call save as svx with file dialog...
-			fileSaveAsSVX();
+			OnFileSaveConfig();
 		}
 	}
 }
@@ -1539,34 +1539,7 @@ void SVObserverApp::OnRCSaveAllAndGetConfig()
 
 	if (SVSVIMStateClass::CheckState(SV_STATE_READY))
 	{
-		bool bModified = SVSVIMStateClass::CheckState(SV_STATE_MODIFIED);
-
-		std::string ConfigPath = SVFileNameManagerClass::Instance().GetConfigurationPathName();
-
-		if (!ConfigPath.empty())
-		{
-			SVFileNameManagerClass::Instance().SetConfigurationPathName(_T(""));
-		}
-
-		SVFileNameClass svFileName;
-
-		svFileName.SetFullFileName(getConfigFullFileName().c_str());
-		svFileName.SetPathName(SvStl::GlobalPath::Inst().GetRunPath().c_str());
-		svFileName.SetExtension(SvDef::cConfigExtension);
-
-		fileSaveAsSVX(svFileName.GetFullFileName(), false);
-
-		SVRCSetSVCPathName(getConfigFullFileName().c_str());
-
-		if (!ConfigPath.empty())
-		{
-			SVFileNameManagerClass::Instance().SetConfigurationPathName(ConfigPath.c_str());
-		}
-
-		if (bModified)
-		{
-			SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
-		}
+		fileSaveAsSVX();
 
 		if (bRunning)
 		{
@@ -2377,6 +2350,15 @@ HRESULT SVObserverApp::OpenFile(LPCTSTR PathName, bool editMode /*= false*/)
 		setConfigFullFileName(FileName.c_str(), true);
 		SVRCSetSVCPathName(getConfigFullFileName().c_str());
 		result = OpenSVXFile();
+		//Only if loaded locally then add to recent list
+		if(editMode && S_OK == result)
+		{
+			FileName = getConfigFullFileName();
+			if (0 == _access(FileName.c_str(), 0))
+			{
+				AddToRecentFileList(FileName.c_str());
+			}
+		}
 	}
 	else
 	{
@@ -2592,24 +2574,6 @@ HRESULT SVObserverApp::OpenSVXFile()
 				}
 				return S_FALSE;
 			} // if (hr & 0xc000)
-
-			// ************************************* JMS
-
-			// IsSECModified = FALSE; 03 Dec 1999 - frb. delay until 
-			// .ipd parsing is completed.
-			std::string FileName = SVFileNameManagerClass::Instance().GetConfigurationPathName();
-			if (FileName.empty())
-			{
-				FileName = getConfigFullFileName();
-			}
-			else
-			{
-				FileName += _T("\\") + getConfigFileName();
-			}
-			if (0 == _access(FileName.c_str(), 0))
-			{
-				AddToRecentFileList(FileName.c_str());
-			}
 
 			//Finished loading notify load
 			long loadConfigNotify {static_cast<long> (SvStl::NotificationType::loadConfig)};
@@ -5429,48 +5393,61 @@ HRESULT SVObserverApp::InitializeSecurity()
 	return S_OK;
 }
 
-//@TODO [Arvid][7.40][25.10.2016] a configuration handler class should be separated out from SVObserverApp
-// this class should receive at least the following methods from SVObserverApp:
-// fileSaveAsSVX(), DetermineConfigurationSaveName(), SaveConfigurationAndRelatedFiles();
-
-void SVObserverApp::fileSaveAsSVX(const std::string& rFileName /*= std::string()*/, bool makeZipFile /*= true*/, bool isAutoSave /*= false*/)
+bool SVObserverApp::fileSaveAsSVX(const std::string& rFileName /*= std::string()*/)
 {
-	CWaitCursor wait;
-
-	bool bOk = true;
-
-	SVSVIMStateClass::AddState(SV_STATE_SAVING);
-	ResetAllIPDocModifyFlag(false);
-	//
-	// Is the input parameter for save as path empty?
-	//
-	if (!isAutoSave)// in an AutoSave the configuration name must not be changed
-	{
-		if (rFileName.empty())
-		{
-			bOk = DetermineConfigurationSaveName();
-			if (!bOk)
-			{
-				//! Return here to avoid error being displayed because bOk is false (when IDCANCEL returned)
-				SVSVIMStateClass::RemoveState(SV_STATE_SAVING);
-				return;
-			}
-		}
-		else
-		{
-			bOk = setConfigFullFileName(rFileName.c_str(), false);
-		}
-	}
-	if (bOk && !SvUl::CompareNoCase(m_ConfigFileName.GetExtension(), std::string(SvDef::cPackedConfigExtension)))
-	{
-		SaveConfigurationAndRelatedFiles(makeZipFile, isAutoSave);
-	}
-	else
+	//When a file name is present it must have the correct extension
+	if (!rFileName.empty() && std::string::npos == rFileName.find(SvDef::cPackedConfigExtension))
 	{
 		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVObserver_WrongPathnameEntered, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10134);
+		return false;
+	}
+
+	CWaitCursor wait;
+	bool result{true};
+	SVSVIMStateClass::AddState(SV_STATE_SAVING);
+	ResetAllIPDocModifyFlag(false);
+
+	SVConfigurationObject* pConfig(nullptr);
+	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+
+	if (nullptr != pConfig)
+	{
+		m_SvxFileName.SetFileName(m_ConfigFileName.GetFileName().c_str());
+		m_SvxFileName.SetPathName(SVFileNameManagerClass::Instance().GetRunPathName().c_str());
+		m_SvxFileName.SetExtension(SvDef::cConfigExtension);
+		std::string svxFilePath = m_SvxFileName.GetFullFileName();
+
+		pConfig->ValidateRemoteMonitorList(); // sanity check
+		std::ofstream os;
+		os.open(svxFilePath.c_str());
+		if (os.is_open())
+		{
+			SvXml::SVObjectXMLWriter writer(os);
+			pConfig->SaveConfiguration(writer);
+			os.close();
+		}
+		//If the file name is not empty we compress all files into a .svz file
+		if (!rFileName.empty())
+		{
+			SvDef::StringVector FileNameList = SVFileNameManagerClass::Instance().GetFileNameList();
+			if (SvUl::makeZipFile(rFileName, FileNameList, _T(""), false))
+			{
+				ExtrasEngine::Instance().ResetAutoSaveInformation();
+			}
+			else
+			{
+				SvDef::StringVector msgList;
+				msgList.emplace_back(svxFilePath);
+				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ZipFileFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
+				result = false;
+			}
+
+		}
 	}
 	SVSVIMStateClass::RemoveState(SV_STATE_SAVING);
+	return result;
 }
 
 
@@ -5512,73 +5489,6 @@ bool SVObserverApp::DetermineConfigurationSaveName()
 	}
 	return true;
 }
-
-void SVObserverApp::SaveConfigurationAndRelatedFiles(bool makeZipFile, bool isAutoSave)
-{
-	SVConfigurationObject* pConfig(nullptr);
-	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-
-	if (nullptr != pConfig)
-	{
-		std::string  filePath;
-		if (isAutoSave)
-		{
-			ExtrasEngine::Instance().CopyDirectoryToTempDirectory(SvStl::GlobalPath::Inst().GetRunPath().c_str());
-			//@TODO [Arvid][7.40][25.10.2016] shouldn't CopyDirectoryToTempDirectory() be someplace else (instead of a member of ExtrasEngine)?
-			ExtrasEngine::Instance().ResetAutoSaveInformation(); //update autosave timestamp
-
-			//in an AutoSave the configuration is not to be saved into its standard directory!
-			filePath = SvStl::GlobalPath::Inst().GetAutoSaveTempPath(m_ConfigFileName.GetFileName().c_str());
-		}
-		else
-		{
-			m_SvxFileName.SetFileName(m_ConfigFileName.GetFileName().c_str());
-			m_SvxFileName.SetPathName(SVFileNameManagerClass::Instance().GetRunPathName().c_str());
-			m_SvxFileName.SetExtension(SvDef::cConfigExtension);
-			filePath = m_SvxFileName.GetFullFileName();
-		}
-		
-		//Before saving the configuration we need to first change the ending for the configuration file
-		pConfig->ValidateRemoteMonitorList(); // sanity check
-		std::ofstream os;
-		os.open(filePath.c_str());
-		if (os.is_open())
-		{
-			SvXml::SVObjectXMLWriter writer(os);
-			pConfig->SaveConfiguration(writer);
-			os.close();
-		}
-
-		if (makeZipFile && !isAutoSave)
-		{
-			SvDef::StringVector FileNameList = SVFileNameManagerClass::Instance().GetFileNameList();
-			filePath = m_ConfigFileName.GetFullFileName();
-			if(!SvUl::makeZipFile(filePath, FileNameList, _T(""), false))
-			{
-				SvDef::StringVector msgList;
-				msgList.emplace_back(filePath);
-				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ZipFileFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
-				return;
-			}
-
-			SVFileNameManagerClass::Instance().RemoveUnusedFiles();
-
-			SVSVIMStateClass::RemoveState(SV_STATE_MODIFIED);
-
-			if (0 == _access(filePath.c_str(), 0))
-			{
-				AddToRecentFileList(filePath.c_str());
-			}
-
-			((CMDIFrameWnd*)AfxGetMainWnd())->OnUpdateFrameTitle(TRUE);
-			// Success...
-		}
-	}
-	ExtrasEngine::Instance().ResetAutoSaveInformation(); //update autosave timestamp
-
-}
-
 
 /////////////////////////////////////////////////////////////////////////////
 //

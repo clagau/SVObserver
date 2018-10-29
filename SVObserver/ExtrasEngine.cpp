@@ -97,9 +97,15 @@ void ExtrasEngine::ExecuteAutoSaveIfAppropriate(bool always)
 
 	SvStl::GlobalPath& rGlobalPath = SvStl::GlobalPath::Inst();
 	//ensure that the autosave directory exists: create it step by step
-	::CreateDirectory(rGlobalPath.GetSecondObserverPath().c_str(), nullptr); //this will fail if the directory already exists, but so what?
+	if(-1 == _access(rGlobalPath.GetSecondObserverPath().c_str(), 0))
+	{
+		::CreateDirectory(rGlobalPath.GetSecondObserverPath().c_str(), nullptr);
+	}
 	std::string  AutosavePath = rGlobalPath.GetAutoSaveRootPath();
-	::CreateDirectory(AutosavePath.c_str(), nullptr); //this will fail if the directory already exists, but so what?
+	if (-1 == _access(AutosavePath.c_str(), 0))
+	{
+		::CreateDirectory(AutosavePath.c_str(), nullptr);
+	}
 
 	//now move the temporary files around (if they exist already)
 	std::string Temp1Name {rGlobalPath.GetAutoSaveRootPath(rGlobalPath.GetAutosaveTemp1FileName().c_str())};
@@ -110,15 +116,9 @@ void ExtrasEngine::ExecuteAutoSaveIfAppropriate(bool always)
 	::MoveFile(Temp2Name.c_str(), Temp3Name.c_str());
 	::MoveFile(Temp1Name.c_str(), Temp2Name.c_str());
 
-	CreateDirectory(rGlobalPath.GetAutoSaveTempPath().c_str(), nullptr);
-
 	//save the current configuration in the AutoSave Directory
-	TheSVObserverApp.fileSaveAsSVX(_T(""), false, true);
+	TheSVObserverApp.fileSaveAsSVX(Temp1Name);
 
-	SvDef::StringVector fileNameList = findFiles(rGlobalPath.GetAutoSaveTempPath().c_str());
-
-	SvUl::makeZipFile(Temp1Name, fileNameList, _T(""), true);
- 
 	autosavePopupDialog.DestroyWindow();
 }
 
@@ -129,11 +129,6 @@ void ExtrasEngine::ResetAutoSaveInformation()
 	SVSVIMStateClass::SetAutoSaveRequired(false);
 }
 
-
-void ExtrasEngine::CopyDirectoryToTempDirectory(LPCTSTR SourceDir ) const 
-{
-	CopyFilesInDirectory( SourceDir, SvStl::GlobalPath::Inst().GetAutoSaveTempPath().c_str() );
-}
 
 void ExtrasEngine::ToggleEnableAutoSave()
 {

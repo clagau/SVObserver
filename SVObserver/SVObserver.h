@@ -267,7 +267,7 @@ public:
 
 	HRESULT CheckDrive(const std::string& p_strDrive) const;
 
-	void fileSaveAsSVX(const std::string& rFileName = std::string(), bool makeZipFile = true, bool isAutoSave=false);
+	bool fileSaveAsSVX(const std::string& rFileName = std::string());
 
 
 #pragma region Encapsulation Methods
@@ -319,7 +319,6 @@ private:
 	static int FindMenuItem(CMenu* Menu, LPCTSTR MenuString);
 
 	bool DetermineConfigurationSaveName(); ///< determines the name under which a configuration is to be changed
-	void SaveConfigurationAndRelatedFiles(bool makeZipFile, bool isAutoSave);
 
 
 #pragma endregion Private Methods

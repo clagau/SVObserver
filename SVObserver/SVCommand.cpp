@@ -220,7 +220,6 @@ STDMETHODIMP CSVCommand::SVSetSVIMState(unsigned long ulSVIMState)
 
 STDMETHODIMP CSVCommand::SVGetSVIMConfig(long lOffset, long *lBlockSize, BSTR *bstrFileData, BOOL *bLastFlag)
 {
-	std::string PackedFileName;
 	std::string ConfigName;
 	CFile binFile;
 	CFileStatus Status;
@@ -238,10 +237,6 @@ STDMETHODIMP CSVCommand::SVGetSVIMConfig(long lOffset, long *lBlockSize, BSTR *b
 		ConfigName = GlobalRCGetConfigurationName();
 
 		bSuccess = !ConfigName.empty();
-		if (bSuccess)
-		{
-			PackedFileName = ConfigName + SvDef::cPackedConfigExtension;
-		}
 
 		// check offset: if zero then it is first time in
 		if (lOffset < 1)
@@ -251,7 +246,7 @@ STDMETHODIMP CSVCommand::SVGetSVIMConfig(long lOffset, long *lBlockSize, BSTR *b
 
 			if (bSuccess)
 			{
-				bSuccess = S_OK == TheSVObserverApp.SavePackedConfiguration(PackedFileName);
+				bSuccess = S_OK == TheSVObserverApp.SavePackedConfiguration(ConfigName);
 			}
 		}//offset < 1  end of the fist time
 
@@ -260,7 +255,7 @@ STDMETHODIMP CSVCommand::SVGetSVIMConfig(long lOffset, long *lBlockSize, BSTR *b
 		if (bSuccess)
 		{
 			ex = new CFileException;
-			if (binFile.Open(PackedFileName.c_str(), CFile::shareDenyNone | CFile::modeRead | CFile::typeBinary, ex))
+			if (binFile.Open(ConfigName.c_str(), CFile::shareDenyNone | CFile::modeRead | CFile::typeBinary, ex))
 			{
 				lFileSize = (long)binFile.GetLength();
 				lBytesToGo = lFileSize - lOffset;

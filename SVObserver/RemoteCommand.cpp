@@ -147,23 +147,7 @@ bool GlobalRCOpenConfiguration( LPCTSTR ConfigName )
 {
 	SVRCSetSVCPathName( ConfigName );
 
-	TCHAR szDrive[_MAX_DRIVE];
-	TCHAR szDir[_MAX_DIR];
-	TCHAR szFile[_MAX_FNAME];
-	TCHAR szExt[_MAX_EXT];
-	std::string Extension;
-
-	_tsplitpath( ConfigName, szDrive, szDir, szFile, szExt );
-	Extension = szExt;
-
-	if( 0 == SvUl::CompareNoCase( Extension, _T(".svx") ) )
-	{
-		SendMessage (AfxGetApp()->m_pMainWnd->m_hWnd, WM_COMMAND, MAKEWPARAM (ID_RC_OPEN_CURRENT_SVX, 0), 0);
-	}
-	else
-	{
-		return false;
-	}
+	SendMessage (AfxGetApp()->m_pMainWnd->m_hWnd, WM_COMMAND, MAKEWPARAM (ID_RC_OPEN_CURRENT_SVX, 0), 0);
 
 	return true;
 }
