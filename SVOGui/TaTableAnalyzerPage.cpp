@@ -168,7 +168,7 @@ void TaTableAnalyzerPage::OnButtonClearAll()
 		if (GUID_NULL != analyzerGUID)
 		{
 			// Close, Disconnect and Delete it
-			SvPb::InspectionCmdMsgs Request,Response;
+			SvPb::InspectionCmdMsgs Request, Response;
 			SvPb::DestroyChildRequest* pDestroyChildRequest = Request.mutable_destroychildrequest(); ;
 			pDestroyChildRequest->set_flag(SvPb::DestroyChildRequest::Flag_None);
 			SvPb::SetGuidInProtoBytes(pDestroyChildRequest->mutable_taskobjectlistid(), m_TaskObjectID);
@@ -188,7 +188,7 @@ void TaTableAnalyzerPage::OnButtonDeleteCurrentAnalyzer()
 	if (GUID_NULL != m_selectedAnalyzerID)
 	{
 		// Close, Disconnect and Delete it
-		SvPb::InspectionCmdMsgs Request,Response;
+		SvPb::InspectionCmdMsgs Request, Response;
 		SvPb::DestroyChildRequest* pDestroyChildRequest = Request.mutable_destroychildrequest(); ;
 		SvPb::SetGuidInProtoBytes(pDestroyChildRequest->mutable_taskobjectlistid(), m_TaskObjectID);
 		SvPb::SetGuidInProtoBytes(pDestroyChildRequest->mutable_objectid(), m_selectedAnalyzerID);
@@ -321,6 +321,12 @@ void TaTableAnalyzerPage::OnAddColumnFormula()
 		m_AddFormulaString = m_pSelectedAddEquationFormula->GetEquationText().c_str();
 	}
 	UpdateData(false);
+}
+
+BOOL TaTableAnalyzerPage::OnSetActive()
+{
+	refresh();
+	return CPropertyPage::OnSetActive();
 }
 
 BOOL TaTableAnalyzerPage::OnKillActive()

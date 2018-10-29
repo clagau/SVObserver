@@ -57,6 +57,7 @@ namespace SvOg
 		void OnButtonClickLimitValue();
 		void OnAddColumnFormula();
 
+		virtual BOOL OnSetActive() override;
 		virtual BOOL OnKillActive() override;
 
 		HRESULT SetInspectionData();
