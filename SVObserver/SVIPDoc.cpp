@@ -453,6 +453,7 @@ bool SVIPDoc::AddTool(const SVGUID& rClassId)
 	{
 		return false;
 	}
+	pView->getListCtrl().EnsureOneIsSelected();
 
 	int SelectedListIndex(-1);
 	PtrNavigatorElement  NavElement = pView->GetSelectedNavigatorElement(&SelectedListIndex);
@@ -531,12 +532,13 @@ bool SVIPDoc::AddTool(const SVGUID& rClassId)
 	if (Success)
 	{
 		SVToolSetClass* pToolSet = GetToolSet();
-
+		RunOnce();
 		// Refresh all views...
 		UpdateAllViews(nullptr, SVIPDoc::RefreshView);
 		SetSelectedToolID(newObjectID);
 		SetModifiedFlag();
 		pToolSet->updateToolPosition();
+		
 		return true;
 	}
 	else

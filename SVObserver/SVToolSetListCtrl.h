@@ -62,6 +62,9 @@ public:
 
 	SVGUID GetSelectedTool() const;
 	void SetSelectedTool(const SVGUID& rGuid);
+	
+	///Select the last element in the list if no Element was selected.
+	void EnsureOneIsSelected();
 
 	void GetSelectedItemScreenPosition(POINT& rPoint) const;
 

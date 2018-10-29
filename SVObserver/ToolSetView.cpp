@@ -83,6 +83,7 @@ SVGUID ToolSetView::GetSelectedTool() const
 	return m_toolSetListCtrl.GetSelectedTool();
 }
 
+
 PtrNavigatorElement ToolSetView::GetSelectedNavigatorElement(int* ptrSelectedIndex) const
 {
 	return m_toolSetListCtrl.GetSelectedNavigatorElement(ptrSelectedIndex);

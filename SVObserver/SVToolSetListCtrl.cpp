@@ -594,6 +594,15 @@ bool SVToolSetListCtrl::AllowedToEdit() const
 	return false;
 }
 
+void SVToolSetListCtrl::EnsureOneIsSelected()
+{
+	int ItemCount = GetItemCount();
+	if (ItemCount > 0 && GetSelectedCount() == 0)
+	{
+		SetItemState(ItemCount - 1, LVIS_SELECTED, LVIS_SELECTED);
+		Invalidate();
+	}
+}
 void SVToolSetListCtrl::SetSelectedTool(const SVGUID& rGuid)
 {
 	for (int i = 0; i < GetItemCount(); ++i)
@@ -715,9 +724,9 @@ void SVToolSetListCtrl::CreateImageLists()
 		m_fullParameterinML = m_ImageList.Add(pApp->LoadIcon(IDI_HMI_ICON));
 		m_collapseState = m_ImageList.Add(pApp->LoadIcon(IDI_COLLAPSE));
 		m_expandState = m_ImageList.Add(pApp->LoadIcon(IDI_EXPAND));
-		m_expandStateLoopToolValid = m_expandState; 
+		m_expandStateLoopToolValid = m_expandState;
 		m_collapseStateLoopToolValid = m_collapseState;
-		m_expandStateLoopToolInvalid = m_expandState; 
+		m_expandStateLoopToolInvalid = m_expandState;
 		m_collapseStateLoopToolInvalid = m_collapseState;
 	}
 	SetImageList(&m_ImageList, LVSIL_SMALL);
