@@ -194,8 +194,6 @@ bool SVImageTransformClass::onRun( SVRunStatusClass& runStatus, SvStl::MessageCo
 	double angle = 0.0;
 	double dstX = 0.0;
 	double dstY = 0.0;
-	double width = 0.0;
-	double height = 0.0;
 
 	SVImageClass* pInputImage = SvOl::getInput<SVImageClass>(m_inputImageObjectInfo, true);
 
@@ -247,8 +245,6 @@ bool SVImageTransformClass::onRun( SVRunStatusClass& runStatus, SvStl::MessageCo
 			bRetVal = bRetVal && S_OK == l_svExtents.GetExtentProperty( SvDef::SVExtentPropertyRotationAngle, angle );
 		}
 
-		bRetVal = bRetVal && S_OK == l_svExtents.GetExtentProperty( SvDef::SVExtentPropertyWidth, width );
-		bRetVal = bRetVal && S_OK == l_svExtents.GetExtentProperty( SvDef::SVExtentPropertyHeight, height );
 		bRetVal = bRetVal && S_OK == l_svExtents.GetExtentProperty( SvDef::SVExtentPropertyOutputPositionPointX, dstX );
 		bRetVal = bRetVal && S_OK == l_svExtents.GetExtentProperty( SvDef::SVExtentPropertyOutputPositionPointY, dstY );
 
@@ -306,7 +302,7 @@ bool SVImageTransformClass::onRun( SVRunStatusClass& runStatus, SvStl::MessageCo
 
 		if( bRetVal && nullptr != pOutputImageBuffer->getHandle()->GetBufferAddress() )
 		{
-			memset(pOutputImageBuffer->getHandle()->GetBufferAddress(), 0, static_cast<size_t>(width * height) );
+			SVMatroxBufferInterface::ClearBuffer(pOutputImageBuffer->getHandle()->GetBuffer(), 0);
 		}
 
 		if( bRetVal )
