@@ -179,7 +179,7 @@ namespace SVRemoteTest
                                     break;
                                 }
 
-                            case SVNotificationTypesEnum.LoadConfig:
+                            case SVNotificationTypesEnum.ConfigLoaded:
                                 {
                                     SVObserverMessage SVError = ExtractErrorFromXML(e.data.ToString()); ;
                                     label_ErrorNr.Text = "";
