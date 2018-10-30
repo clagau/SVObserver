@@ -99,7 +99,7 @@ typedef enum SVNotificationTypes
 	[helpstring("Connected")] Connected = 3,
 	[helpstring("Disconnected")] Disconnected = 4,
 	[helpstring("MessageNotification")] MessageNotification = 5,
-	[helpstring("Load Configuration")] LoadConfig = 6,
+	[helpstring("Configuration Loaded")] ConfigLoaded = 6,
 } SVNotificationTypesEnum;
 
 [
