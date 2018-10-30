@@ -42,7 +42,7 @@ std::future<void>  NotificationHandler::OnNext(SvPb::GetNotificationStreamRespon
 		}
 		case SvPb::GetNotificationStreamResponse::kConfigFileLoaded:
 		{
-			type = SVNotificationTypes::LoadConfig;
+			type = SVNotificationTypes::ConfigLoaded;
 			std::string loadText{_T("The following configuration has been loaded:\n")};
 			loadText += rResponse.configfileloaded();
 			propTree.put("SVRC.Notification", "loadConfigNotification");
