@@ -238,7 +238,6 @@ public:
 	void OpenToolAdjustmentDialog(int tab); 
 	virtual BOOL OnNewDocument() override;
 	virtual BOOL CanCloseFrame(CFrameWnd* pFrame) override;
-	virtual void OnCloseDocument() override;
 	virtual void SetTitle(LPCTSTR lpszTitle) override;
 	virtual CFile* GetFile( LPCTSTR lpszFileName, UINT nOpenFlags, CFileException* pError ) override;
 	virtual void SetModifiedFlag(BOOL bModified = TRUE) override;

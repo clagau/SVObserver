@@ -772,23 +772,6 @@ BOOL SVIPDoc::OnNewDocument()
 	return TRUE;
 }
 
-void SVIPDoc::OnCloseDocument()
-{
-	if (this)
-	{
-		// Do not save unsaved IPDoc without updating config
-		if (TheSVObserverApp.getConfigFullFileName().empty() &&
-			!SVSVIMStateClass::CheckState(SV_STATE_CANCELING))
-		{
-			TheSVObserverApp.OnFileSaveConfig();
-		}
-
-		Sleep(100);
-	}
-
-	CDocument::OnCloseDocument();
-}
-
 void SVIPDoc::CloseDocument()
 {
 	if (!SVSVIMStateClass::CheckState(SV_STATE_CANCELING | SV_STATE_CLOSING) &&

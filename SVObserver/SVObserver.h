@@ -59,7 +59,7 @@ public:
 	//{{AFX_MSG(SVObserverApp)
 	afx_msg void OnAppAbout();
 	afx_msg void OnFileNewConfig();
-	afx_msg void OnFileSaveConfig();
+	afx_msg void OnFileSaveConfig(bool saveAs = false);
 	afx_msg void OnFileOpenSVC();
 	afx_msg void OnEditEnvironment();
 	afx_msg void OnTestMode();

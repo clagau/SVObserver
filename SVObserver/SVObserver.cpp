@@ -407,15 +407,14 @@ void SVObserverApp::OnFileNewConfig()
 // -----------------------------------------------------------------------------
 // .Description : ...
 ////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::OnFileSaveConfig()
+void SVObserverApp::OnFileSaveConfig(bool saveAs /*= false*/)
 {
-	if(getConfigPathName().empty())
+	if(saveAs || getConfigPathName().empty())
 	{
 		if(false == DetermineConfigurationSaveName())
 		{
 			return;
 		}
-
 	}
 	std::string fileName {getConfigFullFileName()};
 
@@ -1417,7 +1416,7 @@ void SVObserverApp::OnFileSaveAsSVC()
 		if (SVSVIMStateClass::CheckState(SV_STATE_READY))
 		{
 			// Call save as svx with file dialog...
-			OnFileSaveConfig();
+			OnFileSaveConfig(true);
 		}
 	}
 }
