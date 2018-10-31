@@ -249,6 +249,11 @@ namespace SvDef
 			SVThickeningFilterObjectType                = 0x00002018,
 			SVShapeMaskHelperObjectType					= 0x00002019,
 			SVCustom2FilterObjectType					= 0x0000201a,
+			EraseBorderBlobsFilterObjectType			= 0x0000201b,
+			ExtractHolesFilterObjectType				= 0x0000201c,
+			FillHolesFilterObjectType					= 0x0000201d,
+			ReconstructFilterObjectType			= 0x0000201e,
+
 			// Operator SubTypes
 			SVColorThresholdObjectType					= 0x00003000,
 

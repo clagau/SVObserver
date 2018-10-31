@@ -270,5 +270,33 @@ void SVUnaryImageOperatorListClass::init()
 	filterClassInfo.m_ClassId = SVMaxMinusMinFilterClassGuid;
 	filterClassInfo.m_ClassName = SvUl::LoadStdString(IDS_CLASSNAME_SVMAXMINUSMINFILTER);
 	m_availableChildren.push_back(filterClassInfo);
+
+	// Add the Erase Border Blobs Filter
+	filterClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVFilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.SubType = SvDef::EraseBorderBlobsFilterObjectType;
+	filterClassInfo.m_ClassId = SVEraseBorderBlobsFilterClassGuid;
+	filterClassInfo.m_ClassName = SvUl::LoadStdString(IDS_CLASSNAME_ERASEBORDERBLOBSFILTER);
+	m_availableChildren.push_back(filterClassInfo);
+
+	// Add the Extract Holes Filter
+	filterClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVFilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.SubType = SvDef::ExtractHolesFilterObjectType;
+	filterClassInfo.m_ClassId = SVExtractHolesFilterClassGuid;
+	filterClassInfo.m_ClassName = SvUl::LoadStdString(IDS_CLASSNAME_EXTRACTHOLESFILTER);
+	m_availableChildren.push_back(filterClassInfo);
+
+	// Add the Fill Holes Filter
+	filterClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVFilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.SubType = SvDef::FillHolesFilterObjectType;
+	filterClassInfo.m_ClassId = SVFillHolesFilterClassGuid;
+	filterClassInfo.m_ClassName = SvUl::LoadStdString(IDS_CLASSNAME_FILLHOLESFILTER);
+	m_availableChildren.push_back(filterClassInfo);
+
+	// Add the Reconstruct Filter
+	filterClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVFilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.SubType = SvDef::ReconstructFilterObjectType;
+	filterClassInfo.m_ClassId = SVReconstructFilterClassGuid;
+	filterClassInfo.m_ClassName = SvUl::LoadStdString(IDS_CLASSNAME_RECONSTRUCTFILTER);
+	m_availableChildren.push_back(filterClassInfo);
 }
 #pragma endregion Private Methods

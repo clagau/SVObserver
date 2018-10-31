@@ -11,7 +11,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BlobReconstructBasicFilter.cpp" />
     <ClCompile Include="Custom2Filter.cpp" />
+    <ClCompile Include="EraseBorderBlobsFilter.cpp" />
+    <ClCompile Include="ExtractHolesFilter.cpp" />
+    <ClCompile Include="FillHolesFilter.cpp" />
+    <ClCompile Include="ReconstructFilter.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -39,7 +44,12 @@
     <ClCompile Include="SVWaterShedFilter.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BlobReconstructBasicFilter.h" />
     <ClInclude Include="Custom2Filter.h" />
+    <ClInclude Include="EraseBorderBlobsFilter.h" />
+    <ClInclude Include="ExtractHolesFilter.h" />
+    <ClInclude Include="FillHolesFilter.h" />
+    <ClInclude Include="ReconstructFilter.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVClosingFilterClass.h" />
     <ClInclude Include="SVCustomFilters.h" />

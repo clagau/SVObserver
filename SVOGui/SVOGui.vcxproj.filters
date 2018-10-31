@@ -201,6 +201,12 @@
     <ClCompile Include="TADialogLoopToolParameterPage.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="BlobReconstructFilterDlg.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="ReconstructFilterDlg.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdAfx.h">
@@ -417,6 +423,12 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="TADialogLoopToolParameterPage.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="BlobReconstructFilterDlg.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ReconstructFilterDlg.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

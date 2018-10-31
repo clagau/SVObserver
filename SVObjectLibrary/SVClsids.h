@@ -763,8 +763,12 @@ extern/*const*/ GUID SVThickeningFilterItterationsGuid;
 extern/*const*/ GUID SVThickeningFilterGrayOnGuid;
 extern/*const*/ GUID SVThinningFilterClassGuid;
 extern/*const*/ GUID SVThinningFilterItterationsGuid;
-extern/*const*/ GUID SVThinningFilterGrayOnGuid;
+extern/*const*/ GUID SVGrayOnGuid;
 extern/*const*/ GUID SVBCUnevenGridGuid;
+extern/*const*/ GUID SVEraseBorderBlobsFilterClassGuid;
+extern/*const*/ GUID SVExtractHolesFilterClassGuid;
+extern/*const*/ GUID SVFillHolesFilterClassGuid;
+extern/*const*/ GUID SVReconstructFilterClassGuid;
 
 // GUID for the SVUpperThresholdEquationClass
 extern /*const*/ GUID SVUpperThresholdEquationClassGuid;

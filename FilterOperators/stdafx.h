@@ -53,6 +53,9 @@
 #include <vector>
 #include <comdef.h>
 
+#include <mil.h>
+#include <MILDyn\milblob.h>
+
 #include <boost/any.hpp>
 
 #include <boost/bind.hpp>

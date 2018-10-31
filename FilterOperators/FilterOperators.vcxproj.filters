@@ -84,6 +84,21 @@
     <ClCompile Include="SVWaterShedFilter.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="EraseBorderBlobsFilter.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="BlobReconstructBasicFilter.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="ExtractHolesFilter.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="FillHolesFilter.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="ReconstructFilter.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Custom2Filter.h">
@@ -153,6 +168,21 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVWaterShedFilter.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="EraseBorderBlobsFilter.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="BlobReconstructBasicFilter.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ExtractHolesFilter.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="FillHolesFilter.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ReconstructFilter.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

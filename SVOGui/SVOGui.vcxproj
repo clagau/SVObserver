@@ -113,6 +113,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AuxiliaryExtentsController.cpp" />
+    <ClCompile Include="BlobReconstructFilterDlg.cpp" />
     <ClCompile Include="CDSVPictureDisplay.cpp" />
     <ClCompile Include="Custom2FilterDlg.cpp" />
     <ClCompile Include="Displayhelper.cpp" />
@@ -125,6 +126,7 @@
     <ClCompile Include="PictureDisplay.cpp" />
     <ClCompile Include="RangeController.cpp" />
     <ClCompile Include="RangeValidator.cpp" />
+    <ClCompile Include="ReconstructFilterDlg.cpp" />
     <ClCompile Include="ResultTableSelectionDlg.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -179,6 +181,7 @@
     <ClCompile Include="ZoomHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BlobReconstructFilterDlg.h" />
     <ClInclude Include="DisplayHelper.h" />
     <ClInclude Include="GuiValueHelper.h" />
     <ClInclude Include="AuxiliaryExtentsController.h" />
@@ -196,6 +199,7 @@
     <ClInclude Include="PictureDisplay.h" />
     <ClInclude Include="RangeController.h" />
     <ClInclude Include="RangeValidator.h" />
+    <ClInclude Include="ReconstructFilterDlg.h" />
     <ClInclude Include="ResultTableSelectionDlg.h" />
     <ClInclude Include="SciLexer.h" />
     <ClInclude Include="Scintilla.h" />

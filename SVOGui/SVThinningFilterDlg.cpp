@@ -44,7 +44,7 @@ namespace SvOg
 
 		UpdateData( TRUE ); // get data from dialog
 
-		m_Values.Set<bool>(SVThinningFilterGrayOnGuid, m_bGrayScale ? true : false);
+		m_Values.Set<bool>(SVGrayOnGuid, m_bGrayScale ? true : false);
 		m_Values.Set<long>(SVThinningFilterItterationsGuid, m_lIterations);
 		m_Values.Commit();
 
@@ -75,7 +75,7 @@ namespace SvOg
 		CDialog::OnInitDialog();
 
 		m_Values.Init();
-		m_bGrayScale = m_Values.Get<bool>(SVThinningFilterGrayOnGuid);
+		m_bGrayScale = m_Values.Get<bool>(SVGrayOnGuid);
 		m_lIterations = m_Values.Get<long>(SVThinningFilterItterationsGuid);
 
 		UpdateData( FALSE );
