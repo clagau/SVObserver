@@ -13,6 +13,7 @@
 #include "SVMatroxLibrary\SVMatroxBufferCreateChildStruct.h"
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"
 #include "SVImageLibrary\SVImageBufferHandleImage.h"
+#include "IImage.h"
 #include "Image.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage\SVMessage.h"
@@ -37,6 +38,7 @@ ImageBufferController& ImageBufferController::getImageBufferControllerInstance()
 }
 
 ImageBufferController::ImageBufferController()
+	: m_memoryHelper(m_bufferVector)
 {
 }
 
@@ -54,6 +56,8 @@ void ImageBufferController::clearAll()
 	m_imageRefCountArray = nullptr;
 	m_imageRefCountSize = 0;
 	m_imageStructList = SvPb::ImageStructList();
+
+	m_memoryHelper.clearAll();
 }
 
 std::vector<std::pair<int, int>> ImageBufferController::reset(const SvPb::ImageStructList& rImageStructList)
@@ -77,6 +81,8 @@ std::vector<std::pair<int, int>> ImageBufferController::reset(const SvPb::ImageS
 				auto bufferIter = m_bufferVector.begin() + vectorPos;
 				m_bufferVector.erase(bufferIter, bufferIter + pStructData->numberofbuffers());
 				m_imageStructList.mutable_list()->erase(m_imageStructList.list().begin() + groupPos);
+
+				m_memoryHelper.removeMemory(pStructData->memoryname());
 				continue;
 			}
 			else
@@ -90,37 +96,26 @@ std::vector<std::pair<int, int>> ImageBufferController::reset(const SvPb::ImageS
 			pStructData->set_type(rImageStruct.type());
 		}
 
-		pStructData->set_numberofbuffersrequired(rImageStruct.numberofbuffersrequired());
+		int requiredNumbers = rImageStruct.numberofbuffersrequired();
+		pStructData->set_numberofbuffersrequired(requiredNumbers);
 		pStructData->set_structid(rImageStruct.structid());
 
-		if (pStructData->numberofbuffers() < rImageStruct.numberofbuffersrequired())
+		if (pStructData->numberofbuffers() < requiredNumbers)
 		{ //add more buffer of this size if necessary
-			SVMatroxBufferCreateStruct bufferStruct;
-			memcpy(&bufferStruct, pStructData->type().c_str(), sizeof(SVMatroxBufferCreateStruct));
-			for (int i = pStructData->numberofbuffers(); i < rImageStruct.numberofbuffersrequired(); i++)
+			try
 			{
-				SVMatroxBuffer buffer;
-				HRESULT errCode = SVMatroxBufferInterface::Create(buffer, bufferStruct);
-				if (S_OK != errCode || buffer.empty())
-				{
-					clearAll();
-					SvDef::StringVector msgList;
-					msgList.push_back(SvUl::Format(_T("%X"), errCode));
-					SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
-					Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_CreateBuffer, msgList, SvStl::SourceFileParams(StdMessageParams));
-					Exception.Throw();
-				}
-				if (m_bufferVector.size() <= vectorPos)
-				{
-					m_bufferVector.push_back(buffer);
-				}
-				else
-				{
-					m_bufferVector.insert(m_bufferVector.begin() + vectorPos, buffer);
-				}
-				vectorPos++;
+				vectorPos = m_memoryHelper.createMilBufferinMemory(requiredNumbers, *pStructData, vectorPos);
 			}
-			pStructData->set_numberofbuffers(rImageStruct.numberofbuffersrequired());
+			catch (const SvStl::MessageContainer& rSvE)
+			{
+				clearAll();
+				//This is the topmost catch for MessageContainer exceptions
+				SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+				Exception.setMessage(rSvE.getMessage());
+				Exception.Throw();
+			}
+
+			pStructData->set_numberofbuffers(requiredNumbers);
 		}
 
 		//correct offset
@@ -282,6 +277,7 @@ IImagePtr ImageBufferController::createNewImageHandle(int structId, int& rImageP
 	}
 	return nullptr;
 }
+
 #pragma endregion Public Methods
 
 #pragma region Protected Methods

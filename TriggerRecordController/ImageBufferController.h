@@ -8,16 +8,26 @@
 #pragma once
 
 #pragma region Includes
-#include <mil.h>
-#include "SVMatroxLibrary\SVMatroxBufferCreateStruct.h"
-#include "SVMatroxLibrary/SVMatroxBufferCreateChildStruct.h"
-#include "SVMatroxLibrary\SVMatroxBuffer.h"
+#include "ImageBufferSMHelper.h"
+#include "ImageBufferLocalHelper.h"
+
 #pragma warning( disable: 4244 )	//Disable warning for prototype conversion
 #include "SVProtoBuf/TriggerRecordController.h"
-#include "IImage.h"
 #pragma endregion Includes
 
 #pragma region Declarations
+struct MatroxBufferChildDataStruct;
+struct MatroxImageProps;
+class SVMatroxBufferCreateStruct;
+class SVMatroxBufferCreateChildStruct;
+class SVMatroxBuffer;
+class ImageBufferSMHelper;
+
+namespace SvTrc
+{
+class IImage;
+typedef std::shared_ptr<IImage> IImagePtr;
+}
 #pragma endregion Declarations
 
 namespace SvTrc
@@ -105,6 +115,10 @@ private:
 	long* m_imageRefCountArray = nullptr; //an array of the reference counts.
 	int m_imageRefCountSize = 0; //the numbers of refCounts reserved in m_imageRefCountArray.
 	std::vector<SVMatroxBuffer> m_bufferVector;
+
+	//This is the memoryHelper. To use SharedMemory use here ImageBufferSMHelper, for local memory ImageBufferLocalHelper
+	//ImageBufferSMHelper m_memoryHelper;
+	ImageBufferLocalHelper m_memoryHelper;
 #pragma endregion Member Variables
 };
 } //namespace SvTrc

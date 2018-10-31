@@ -44,6 +44,7 @@
 #include <atomic>			//Used by static library
 #include <comdef.h>
 #include <memory>
+#include <map>
 #include <set>
 #include <vector>
 #include <ctime>			//Used by static library

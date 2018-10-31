@@ -8,11 +8,15 @@
 #pragma once
 
 #pragma region Includes
-#include "ObjectInterfaces\SVImageBufferHandleInterface.h"
 #include "IImage.h"
 #pragma endregion Includes
 
 #pragma region Declarations
+namespace SvOi
+{
+class SVImageBufferHandleInterface;
+typedef std::shared_ptr< SVImageBufferHandleInterface > SVImageBufferHandlePtr;
+}
 #pragma endregion Declarations
 namespace SvTrc
 {

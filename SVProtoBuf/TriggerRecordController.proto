@@ -29,6 +29,8 @@ message ImageStructData
 	int32 numberOfBuffersRequired = 3; //number of required buffers
 	int32 numberOfBuffers = 4; //number of buffer avaiable
 	int32 offset = 5;
+	bytes memoryName = 6; //This is the name of the sharedMemory block.
+	bytes imageProps = 7; //should from struct MatroxImageProps (used for sharedMemory)
 }
 
 message ImageStructList

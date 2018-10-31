@@ -11,7 +11,7 @@
 #pragma warning(pop)
 namespace SvSml
 {
-	const DWORD MonitorListCpy::ImageBufferHeaderSize = 1024;
+	const DWORD MonitorListCpy::ImageBufferHeaderSize = 0;
 
 	MonitorListCpy::MonitorListCpy(void)
 	{

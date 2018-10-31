@@ -48,6 +48,12 @@
     <ClInclude Include="ResetLocker.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="ImageBufferSMHelper.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageBufferLocalHelper.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TriggerRecordController.cpp">
@@ -63,6 +69,12 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="Image.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageBufferSMHelper.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageBufferLocalHelper.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>

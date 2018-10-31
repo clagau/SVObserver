@@ -26,6 +26,6 @@ namespace SvSml
 
 		}
 		int SMCreateTimeout;
-		int  SMCreateWaitTime;
+		int SMCreateWaitTime;
 	};
 }

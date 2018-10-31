@@ -83,6 +83,8 @@
     <ClInclude Include="IImage.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="ImageBufferController.h" />
+    <ClInclude Include="ImageBufferLocalHelper.h" />
+    <ClInclude Include="ImageBufferSMHelper.h" />
     <ClInclude Include="ITriggerRecordControllerR.h" />
     <ClInclude Include="ITriggerRecordControllerRW.h" />
     <ClInclude Include="ITriggerRecordR.h" />
@@ -95,6 +97,8 @@
   <ItemGroup>
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="ImageBufferController.cpp" />
+    <ClCompile Include="ImageBufferLocalHelper.cpp" />
+    <ClCompile Include="ImageBufferSMHelper.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="TriggerRecord.cpp" />
     <ClCompile Include="TriggerRecordController.cpp" />

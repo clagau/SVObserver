@@ -67,7 +67,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>SVCommandLibrary.lib;SVImageLibrary.lib;SVMatroxLibrary.lib;SVMFCControls.lib;SVOGui.lib;SVProtoBuf.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVUtilityLibrary.lib;TriggerRecordController.lib;Rpcrt4.lib;mil.lib;milim.lib;libprotobufd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SVCommandLibrary.lib;SVImageLibrary.lib;SVMatroxLibrary.lib;SVMFCControls.lib;SVOGui.lib;SVProtoBuf.lib;SVSharedMemoryLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVUtilityLibrary.lib;TriggerRecordController.lib;Rpcrt4.lib;mil.lib;milim.lib;libprotobufd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);$(PATH_3RDPARTY)\Matrox\MIL10_64bit\Lib;C:\Program Files\boost_1_65_1\stage\x64\lib;$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Midl>
@@ -96,7 +96,7 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>SVCommandLibrary.lib;SVImageLibrary.lib;SVMatroxLibrary.lib;SVMFCControls.lib;SVOGui.lib;SVProtoBuf.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVUtilityLibrary.lib;TriggerRecordController.lib;Rpcrt4.lib;mil.lib;milim.lib;libprotobuf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SVCommandLibrary.lib;SVImageLibrary.lib;SVMatroxLibrary.lib;SVMFCControls.lib;SVOGui.lib;SVProtoBuf.lib;SVSharedMemoryLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVUtilityLibrary.lib;TriggerRecordController.lib;Rpcrt4.lib;mil.lib;milim.lib;libprotobuf.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);$(PATH_3RDPARTY)\Matrox\MIL10_64bit\Lib;C:\Program Files\boost_1_65_1\stage\x64\lib;$(PATH_3RDPARTY)\protobuf\protobuf-3.4.0\lib;C:\Program Files\Matrox Imaging\mil\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Midl>

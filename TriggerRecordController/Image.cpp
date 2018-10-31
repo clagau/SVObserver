@@ -12,6 +12,7 @@
 #include "Image.h"
 #include "ResetLocker.h"
 #include "ImageBufferController.h"
+#include "ObjectInterfaces\SVImageBufferHandleInterface.h"
 #pragma endregion Includes
 
 namespace SvTrc
