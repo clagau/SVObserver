@@ -29,35 +29,32 @@ private:
 	{
 		struct statusStruct
 		{
-			unsigned int passed					     : 1;	// everything is OK!
-			unsigned int failed					     : 1;	// ran, but failed
-			unsigned int warned					     : 1;	// ran, but warned
-			unsigned int valid               : 1;	// did anything say it was not valid
-			unsigned int run                 : 1;	// did it run ? (inspection started)
-			unsigned int disabled            : 1;	// not enabled ?
+			unsigned int passed : 1;	// everything is OK!
+			unsigned int failed : 1;	// ran, but failed
+			unsigned int warned : 1;	// ran, but warned
+			unsigned int valid : 1;	// did anything say it was not valid
+			unsigned int run : 1;	// did it run ? (inspection started)
+			unsigned int disabled : 1;	// not enabled ?
 			unsigned int disabledByCondition : 1;	// disabled because of condition
-			unsigned int criticalFailure     : 1;	// a critical error occurred and will NAK the inspection
+			unsigned int criticalFailure : 1;	// a critical error occurred and will NAK the inspection
 		} status;
 		unsigned int state;		// did anything run ?
 	} run;
 
 public:
 	SVRunStatusClass();
-
-	void ResetRunStatus();
-	void ResetRunStateAndToolSetTimes(); 
-	void ResetTriggerInformation(); ///< clears trigger-related information
+	void ResetRunStateAndToolSetTimes();
 
 	void SetPassed();
 	void SetFailed();
 	void SetWarned();
 	void SetInvalid();
 	void SetValid();
-	void SetInspectionStarted( bool state );
+	void SetInspectionStarted(bool state);
 	void SetDisabled();
 	void SetDisabledByCondition();
 	void SetCriticalFailure();
-	
+
 	bool IsPassed() const;
 	bool IsFailed() const;
 	bool IsWarned() const;
@@ -71,85 +68,85 @@ public:
 	DWORD GetState() const;
 	DWORD GetStatusColor() const;
 
-	long m_lResultDataIndex;
-	long m_lTriggerCount;	// TB
-	bool m_UpdateCounters;
+	long m_lResultDataIndex {1};
+	long m_lTriggerCount {-1};	// TB
+	bool m_UpdateCounters {true};
 
-	double m_ToolSetEndTime;
-	double m_ToolSetAvgTime;
+	double m_ToolSetEndTime {0.0};
+	double m_ToolSetAvgTime {0.0};
 
-	double m_PreviousTriggerTime; ///< time stamp at which the previous Inspection was started
-	double m_CurrentTriggerTime; ///< time stamp at which the current Inspection was started
+	double m_PreviousTriggerTime {0.0}; ///< time stamp at which the previous Inspection was started
+	double m_CurrentTriggerTime {0.0}; ///< time stamp at which the current Inspection was started
 	SvTrc::ITriggerRecordRWPtr m_triggerRecord = nullptr;
 
 	ProductWorkloadInformation m_WorkloadInfoRsc; ///< workload information for the most recently completed product 
 };
 
-inline void SVRunStatusClass::SetPassed() 
-{ 
-	run.status.passed = ( ( !run.status.failed && !run.status.warned && run.status.valid ) ? true : false );
+inline void SVRunStatusClass::SetPassed()
+{
+	run.status.passed = ((!run.status.failed && !run.status.warned && run.status.valid) ? true : false);
 }
 
-inline void SVRunStatusClass::SetFailed() 
-{ 
-	run.status.failed = true; 
-	run.status.warned = false; 
-	run.status.passed = false; 
+inline void SVRunStatusClass::SetFailed()
+{
+	run.status.failed = true;
+	run.status.warned = false;
+	run.status.passed = false;
 }
 
-inline void SVRunStatusClass::SetWarned() 
-{ 
-	run.status.warned = ( ( !run.status.failed ) ? true : false ); 
+inline void SVRunStatusClass::SetWarned()
+{
+	run.status.warned = ((!run.status.failed) ? true : false);
 }
 
-inline void SVRunStatusClass::SetInvalid() 
-{ 
-	run.status.valid = false; 
+inline void SVRunStatusClass::SetInvalid()
+{
+	run.status.valid = false;
 }
 
-inline void SVRunStatusClass::SetValid() 
-{ 
+inline void SVRunStatusClass::SetValid()
+{
 	run.status.valid = true;
 }
 
-inline void SVRunStatusClass::SetDisabled() 
-{ 
+inline void SVRunStatusClass::SetDisabled()
+{
 	run.status.disabled = true;
 }
 
-inline void SVRunStatusClass::SetDisabledByCondition() 
-{ 
+inline void SVRunStatusClass::SetDisabledByCondition()
+{
 	run.status.disabledByCondition = true;
 }
 
-inline void SVRunStatusClass::SetCriticalFailure() 
-{ 
+inline void SVRunStatusClass::SetCriticalFailure()
+{
 	run.status.criticalFailure = true;
 }
 
-inline void SVRunStatusClass::SetInspectionStarted( bool state ) 
-{ 
+inline void SVRunStatusClass::SetInspectionStarted(bool state)
+{
 	run.status.run = state;
 }
 
 inline bool SVRunStatusClass::IsPassed() const
-{ 
-	return ( run.status.passed && !run.status.failed && !run.status.warned && run.status.valid );
+{
+	return (run.status.passed && !run.status.failed && !run.status.warned && run.status.valid);
 }
 
 inline bool SVRunStatusClass::IsFailed() const
-{ 
-	return ( run.status.failed && !run.status.warned && run.status.valid ); 
+{
+	return (run.status.failed && !run.status.warned && run.status.valid);
 }
 
 inline bool SVRunStatusClass::IsWarned() const
-{ 
-	return ( run.status.warned && run.status.valid ); 
+{
+	return (run.status.warned && run.status.valid);
 }
 
 inline bool SVRunStatusClass::IsValid() const
-{ 
-	return run.status.valid; 
+{
+	return run.status.valid;
 }
 
 inline bool SVRunStatusClass::IsDisabled() const
