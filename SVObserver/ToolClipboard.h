@@ -59,7 +59,8 @@ public:
 
 	//************************************
 	// Description: Read tool from the clipboard
-	// Parameter: ToolListindex <in> The tool list index where the tool will be inserted
+	// Parameter: rPostGuid <out> Reference to the tool GUID selected where the tool is to be inserted
+	// Parameter: rOwnerGuid <out> Reference to the owner GUID 
 	// Parameter: rToolGuid <out> Reference to the tool GUID generated from reading the clipboard
 	// Return: S_OK on success
 	//************************************
@@ -145,13 +146,23 @@ protected:
 	//************************************
 	HRESULT checkVersion( SVTreeType& rTree ) const;
 
-	/// This method validates Guids and replaces the image if required
+	/// This method reads the tools data
 	/// \param rXmlData [in,out] Reference to the XML data to search and replace
 	/// \param rTree [in] Reference to the tree generated from the clipboard
-	/// \param rPostGuid [in] The Guid of the object before the new object should be insert.
-	/// \param rOwnerClassId [in] The Guid of the owner of the new object.
+	/// \param rPostGuid [in] The Guid of the object currently selected where the new object should be inserted
+	/// \param rOwnerGuid [in] The Guid of the owner of the new object.
 	/// \returns HRESULT S_OK on success
-	HRESULT validateGuids( std::string& rXmlData, SVTreeType& rTree, const SVGUID& rPostGuid, const SVGUID& rOwnerClassId) const;
+	HRESULT readTool( std::string& rXmlData, SVTreeType& rTree, const SVGUID& rPostGuid, const SVGUID& rOwnerGuid) const;
+
+	/// This method validates the tools GUIDs
+	/// \param rXmlData [in,out] Reference to the XML data to search and replace
+	/// \param rPostGuid [in] The Guid of the object currently selected where the new object should be inserted
+	/// \param rOwnerGuid [in] The Guid of the owner of the new object.
+	/// \param rInspectionId [in] The Guid of the inspection
+	/// \param rToolTypeGuid [in] The class Guid of the tool
+	/// \param rInputImages [in] The input images of the tool
+	/// \returns HRESULT S_OK on success
+	HRESULT validateGuids(std::string& rXmlData, const SVGUID& rPostGuid, const SVGUID& rOwnerGuid, const SVGUID& rInspectionGuid, const SVGUID& rToolTypeGuid, SVGuidSet rInputImages) const;
 
 	//************************************
 	/// This method replaces the tool name and the dotted name (e.g. in Equation)
@@ -176,7 +187,6 @@ protected:
 	// Return: S_OK on success
 	//************************************
 	HRESULT parseTreeToTool( SVTreeType& rTree, SVObjectClass* pOwner, SVGUID& rToolGuid);
-
 #pragma endregion Protected Methods
 
 private:

@@ -198,7 +198,7 @@ namespace  SvXml
 	const TCHAR* const ToolCopyTag = _T( "Tool-Copy" );
 	const TCHAR* const ToolsTag = _T( "Tools" );
 	const TCHAR* const ToolTypeTag = _T( "ToolType" );
-	const TCHAR* const ToolImageTag = _T("ToolImage");
+	const TCHAR* const InputImageTag = _T("InputImage%d");
 	const TCHAR* const FullToolNameTag = _T("FullToolName");
 	const TCHAR* const BaseTag = _T( "Base" );
 	const TCHAR* const TypeTag = _T( "Type" );

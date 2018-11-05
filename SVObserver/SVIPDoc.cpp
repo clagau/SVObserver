@@ -1322,13 +1322,13 @@ void SVIPDoc::OnEditPaste()
 		return;
 	}
 	SVGUID postToolGuid(GUID_NULL);
-	SVGUID owerGuid(pToolSet->GetUniqueObjectID());
+	SVGUID ownerGuid(pToolSet->GetUniqueObjectID());
 	switch (pNavElement->m_Type)
 	{
 		case NavElementType::SubTool:
 		case NavElementType::EndDelimiterLoopTool:
 		case NavElementType::SubLoopTool:
-			owerGuid = pNavElement->m_OwnerGuid;
+			ownerGuid = pNavElement->m_OwnerGuid;
 			postToolGuid = pNavElement->m_Guid;
 			break;
 		case NavElementType::StartGrouping:
@@ -1358,7 +1358,7 @@ void SVIPDoc::OnEditPaste()
 
 	ToolClipboard Clipboard(*pInspection);
 	SVGUID toolGuid(GUID_NULL);
-	Clipboard.readFromClipboard(postToolGuid, owerGuid, toolGuid);
+	Clipboard.readFromClipboard(postToolGuid, ownerGuid, toolGuid);
 
 	SVObjectClass* pObject(SVObjectManagerClass::Instance().GetObject(toolGuid));
 
@@ -1371,7 +1371,7 @@ void SVIPDoc::OnEditPaste()
 		
 		SvPb::InspectionCmdMsgs Request, Response;
 		SvPb::MoveTaskObjectRequest* pMovetaskobjectrequest = Request.mutable_movetaskobjectrequest();
-		SvPb::SetGuidInProtoBytes(pMovetaskobjectrequest->mutable_parentid(), owerGuid);
+		SvPb::SetGuidInProtoBytes(pMovetaskobjectrequest->mutable_parentid(), ownerGuid);
 		SvPb::SetGuidInProtoBytes(pMovetaskobjectrequest->mutable_taskobjectid(), toolGuid);
 		SvPb::SetGuidInProtoBytes(pMovetaskobjectrequest->mutable_movepreid(), postToolGuid);
 
