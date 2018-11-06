@@ -183,6 +183,7 @@ long SVPPQShiftRegister::GetIndexByTriggerTimeStamp(SvTl::SVTimeStamp timeStamp,
 
 	if(0.0 < timeStamp)
 	{
+		auto ppqStart = m_Products.crend() - 1;
 		for(auto iter=m_Products.crbegin(); m_Products.crend() != iter; ++iter)
 		{
 			if(nullptr != *iter)
@@ -191,15 +192,16 @@ long SVPPQShiftRegister::GetIndexByTriggerTimeStamp(SvTl::SVTimeStamp timeStamp,
 				//If product already has camera image then skip
 				if(!hasCameraImage && (*iter)->bTriggered)
 				{
-					if( 0.0 < (*iter)->TimeStamp() && (*iter)->TimeStamp() - cPreTriggerTimeWindow < timeStamp)
+					SvTl::SVTimeStamp triggerTimeStamp{(*iter)->TimeStamp()};
+					if( 0.0 < triggerTimeStamp && triggerTimeStamp - cPreTriggerTimeWindow < timeStamp)
 					{
 						result = static_cast<long>(m_Products.size() - std::distance(m_Products.crbegin(), iter) - 1);
 						break;
 					}
 				}
 				//When we have reached the first position of the PPQ and have no match is it still possible to obtain a match ?
-				//When the oldest trigger is older then the acquisition time stamp then acquisition can no longer be correlated
-				else if(m_Products.crbegin() == iter &&  (*iter)->TimeStamp() > timeStamp)
+				//When the newest trigger is older then the acquisition time stamp then acquisition can no longer be correlated
+				if(ppqStart == iter &&  (*ppqStart)->TimeStamp() > timeStamp)
 				{
 						result = static_cast<long>(m_Products.size());
 						break;
