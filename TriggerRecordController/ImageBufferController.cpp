@@ -80,9 +80,11 @@ std::vector<std::pair<int, int>> ImageBufferController::reset(const SvPb::ImageS
 				//this size is not longer used, delete the buffers.
 				auto bufferIter = m_bufferVector.begin() + vectorPos;
 				m_bufferVector.erase(bufferIter, bufferIter + pStructData->numberofbuffers());
+				//memoryName temporary store, because it will be with the next erase
+				std::string memoryName = pStructData->memoryname();
 				m_imageStructList.mutable_list()->erase(m_imageStructList.list().begin() + groupPos);
 
-				m_memoryHelper.removeMemory(pStructData->memoryname());
+				m_memoryHelper.removeMemory(memoryName);;
 				continue;
 			}
 			else
