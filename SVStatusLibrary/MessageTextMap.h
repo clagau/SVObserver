@@ -566,8 +566,8 @@ namespace SvStl
 		{Tid_RunInspection_ResetTR, _T("TriggerRecord is old. Get new TriggerRecord.")},
 		{Tid_RunInspection_TRFailed, _T("RunInspection failed, because TriggerRecord could not be created.")},
 		{Tid_SetParameterToMonitorListFailed, _T("Not all parameter could be set.")},
-		{Tid_SetAuxiliaryParameterToMonitorListFailed, _T("Not all auxiliary parameter could be set. Check if auxiliary is turn on correctly.") },
-		{Tid_SetResultParameterToMonitorListFailed, _T("Not all result parameter could be set. Check if all needed results added to the analyzer.")},
+		{Tid_SetAuxiliaryParameterToMonitorListFailed, _T("Not all auxiliary parameters could be set. Check if auxiliary is turned on correctly.") },
+		{Tid_SetResultParameterToMonitorListFailed, _T("Not all result parameters could be set. Check if all needed results added to the analyzer: %s")},
 
 		{Tid_InvalidMemoryPointer, _T("Invalid Memory Pointer")},
 		{Tid_InvalidMatroxType, _T("Invalid Matrox Type")},

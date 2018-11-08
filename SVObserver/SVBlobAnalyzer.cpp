@@ -1604,16 +1604,19 @@ void SVBlobAnalyzerClass::addParameterForMonitorList(SvStl::MessageContainerVect
 				tmp += "[1]";
 			}
 			inserter = SvOi::ParameterPairForML(tmp, m_Value[i].GetUniqueObjectID());
-		}
-	}
 
-	auto* pResultObject = SVObjectManagerClass::Instance().GetObject(m_guidResults[SvOi::SV_AREA]);
-	if (nullptr != pResultObject)
-	{
-		SVRangeClass* pRangeObject = dynamic_cast<SVRangeClass*>(pResultObject->getFirstObject(SvDef::SVObjectTypeInfoStruct(SvDef::SVObjectTypeEnum::SVRangeObjectType)));
-		if (nullptr != pRangeObject)
-		{
-			pRangeObject->addEntriesToMonitorList(inserter);
+			if (SvOi::SV_BOXX_MAX > i || SvOi::SV_BOXY_MIN < i)
+			{
+				auto* pResultObject = SVObjectManagerClass::Instance().GetObject(m_guidResults[i]);
+				if (nullptr != pResultObject)
+				{
+					SVRangeClass* pRangeObject = dynamic_cast<SVRangeClass*>(pResultObject->getFirstObject(SvDef::SVObjectTypeInfoStruct(SvDef::SVObjectTypeEnum::SVRangeObjectType)));
+					if (nullptr != pRangeObject)
+					{
+						pRangeObject->addEntriesToMonitorList(inserter);
+					}
+				}
+			}
 		}
 	}
 }

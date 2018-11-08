@@ -36,6 +36,8 @@ public:
 
 	virtual HRESULT GetImageExtent( SVImageExtentClass &p_rsvImageExtent ) override;
 
+	virtual void addParameterForMonitorList(SvStl::MessageContainerVector& rMessages, std::back_insert_iterator<SvOi::ParametersForML> inserter) const override;
+
 	SVLinearEdgeProcessingClass* GetEdgeA();
 	SVLinearEdgeProcessingClass* GetEdgeB();
 
@@ -59,6 +61,8 @@ protected:
 	/// \param inserter [in] backinsert iterator to added the parameter.
 	/// \returns bool True if successfully.
 	bool setParameterToList(const std::string& rName, std::back_insert_iterator<SvOi::ParametersForML> inserter) const;
+
+	virtual std::vector<std::string> getParameterNamesForML() const;
 
 	SvOl::SVInObjectInfoStruct m_InputImageObjectInfo;
 	SvOl::SVInObjectInfoStruct m_InputProfileOrientation;

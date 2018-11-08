@@ -934,6 +934,7 @@ void SVPatternAnalyzerClass::addParameterForMonitorList(SvStl::MessageContainerV
 {
 	inserter = SvOi::ParameterPairForML(msv_dpatResultX.GetCompleteName(), msv_dpatResultX.GetUniqueObjectID());
 	inserter = SvOi::ParameterPairForML(msv_dpatResultY.GetCompleteName(), msv_dpatResultY.GetUniqueObjectID());
+	inserter = SvOi::ParameterPairForML(msv_dpatResultAngle.GetCompleteName(), msv_dpatResultAngle.GetUniqueObjectID());
 	inserter = SvOi::ParameterPairForML(msv_dpatResultMatchScore.GetCompleteName(), msv_dpatResultMatchScore.GetUniqueObjectID());
 	inserter = SvOi::ParameterPairForML(msv_lpatNumFoundOccurances.GetCompleteName(), msv_lpatNumFoundOccurances.GetUniqueObjectID());
 }

@@ -219,6 +219,30 @@ HRESULT SVLinearAnalyzerClass::GetImageExtent( SVImageExtentClass &rImageExtent 
 	return l_hrOk;
 }
 
+void SVLinearAnalyzerClass::addParameterForMonitorList(SvStl::MessageContainerVector& rMessages, std::back_insert_iterator<SvOi::ParametersForML> inserter) const
+{
+	std::vector<std::string> nameList = getParameterNamesForML();
+
+	bool isNoError = true;
+	for (auto name : nameList)
+	{
+		std::string fullName = GetCompleteName() + "." + name;
+		isNoError &= setParameterToList(fullName, inserter);
+	}
+
+	if (!isNoError)
+	{
+		SvDef::StringVector msgData;
+		msgData.push_back("");
+		for (auto name : nameList)
+		{
+			msgData[0] += "\n" + name;
+		}
+		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetResultParameterToMonitorListFailed, msgData, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+		rMessages.push_back(Msg);
+	}
+}
+
 SVLinearEdgeProcessingClass *SVLinearAnalyzerClass::GetEdgeA()
 {
 	SVLinearEdgeProcessingClass *l_psvEdge = nullptr;
@@ -460,4 +484,9 @@ bool SVLinearAnalyzerClass::setParameterToList(const std::string& rName, std::ba
 	{
 		return false;
 	}
+}
+
+std::vector<std::string> SVLinearAnalyzerClass::getParameterNamesForML() const
+{
+	return {};
 }

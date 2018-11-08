@@ -26,10 +26,10 @@ public:
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	virtual void addParameterForMonitorList(SvStl::MessageContainerVector& rMessages, std::back_insert_iterator<SvOi::ParametersForML> inserter) const override;
-
 protected:
 	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	
+	virtual std::vector<std::string> getParameterNamesForML() const override;
 
 	SVDPointValueObjectClass mdpEdgeA;	// Point
 	SVDPointValueObjectClass mdpEdgeB;	// Point
