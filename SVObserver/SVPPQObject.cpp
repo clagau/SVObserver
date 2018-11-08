@@ -3662,56 +3662,57 @@ void CALLBACK SVPPQObject::APCThreadProcess(DWORD_PTR dwParam)
 
 void SVPPQObject::ThreadProcess(bool& p_WaitForEvents)
 {
-	bool l_Processed = false;
+	//PPQ thread will only start when in run mode
+	bool processed{!SVSVIMStateClass::CheckState(SV_STATE_RUNNING)};
 
-	// will only execute if 0 < m_oTriggerQueue.size().
-	// will then pop trigger queue.
-	// pushes onto notify inspection queue.
-	ProcessTrigger(l_Processed);
-
-	if (!l_Processed)
+	if (!processed)
 	{
-		ProcessDelayOutputs(l_Processed);
+		ProcessTrigger(processed);
 	}
 
-	if (!l_Processed)
+	if (!processed)
 	{
-		ProcessResetOutputs(l_Processed);
+		ProcessDelayOutputs(processed);
 	}
 
-	if (!l_Processed)
+	if (!processed)
 	{
-		ProcessDataValidDelay(l_Processed);
+		ProcessResetOutputs(processed);
 	}
 
-	if (!l_Processed)
+	if (!processed)
+	{
+		ProcessDataValidDelay(processed);
+	}
+
+	if (!processed)
 	{
 		// Inserts items onto the m_oCamerasQueue.
-		ProcessCameraResponses(l_Processed);
+		ProcessCameraResponses(processed);
 	}
 
-	if (!l_Processed)
+	if (!processed)
 	{
-		ProcessNotifyInspections(l_Processed);
+		ProcessNotifyInspections(processed);
 	}
 
-	if (!l_Processed)
+	if (!processed)
 	{
 		// will only execute if 0 == m_oTriggerQueue.size().
-		ProcessInspections(l_Processed);
+		ProcessInspections(processed);
 	}
 
-	if (!l_Processed)
+	if (!processed)
 	{
-		ProcessCompleteInspections(l_Processed);
+		ProcessCompleteInspections(processed);
 	}
 
-	if (!l_Processed)
+	if (!processed)
 	{
-		ProcessProductRequests(l_Processed);
+		ProcessProductRequests(processed);
 	}
 
-	p_WaitForEvents = !l_Processed;
+	p_WaitForEvents = !processed;
 }
 
 HRESULT SVPPQObject::NotifyProcessTimerOutputs()
