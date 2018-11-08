@@ -680,6 +680,7 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 	SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*> (pObject);
 	if( nullptr != pValueObject )
 	{
+		sLabel = pObject->GetName();
 		if ( pObject->ObjectAttributesAllowed() & SvDef::SV_PRINTABLE )
 		{
 			BOOL bGotValue = FALSE;
