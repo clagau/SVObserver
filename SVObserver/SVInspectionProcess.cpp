@@ -3513,7 +3513,7 @@ HRESULT SVInspectionProcess::RunOnce()
 
 	SingleRunModeLoop(true);
 
-	return bRet ? S_OK : E_FAIL;
+	return bRet ? S_OK : SvStl::cCustomHRSVO_RunOnceFailed;
 }
 
 long SVInspectionProcess::GetLastIndex() const

@@ -154,8 +154,8 @@ HRESULT SVCommandInspectionExtentUpdater::Execute()
 
 			if ( result )
 			{
-				retVal = pInspection->RunOnce() ? S_OK : SvStl::Err_10006_SVCommandInspectionExtentUpdater_RunOnce;
-				
+				retVal = pInspection->RunOnce();
+			
 			}
 			else
 			{

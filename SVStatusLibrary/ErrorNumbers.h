@@ -12,6 +12,7 @@
 //******************************************************************************
 
 #pragma once
+#include "SVMessage\SVMessage.h"
 
 namespace SvStl
 {
@@ -27,7 +28,6 @@ namespace SvStl
 	//SVCommandInspectionExtentUpdater
 	static const int Err_10004_SVCommandInspectionExtentUpdater_InvalidMode = Maz_ErrorBase + 4;
 	static const int Err_10005_SVCommandInspectionExtentUpdater_ResetAllObjects = Maz_ErrorBase + 5;
-	static const int Err_10006_SVCommandInspectionExtentUpdater_RunOnce = Maz_ErrorBase + 6;
 	static const int Err_10007_SVCommandInspectionExtentUpdater_InvalidParameter = Maz_ErrorBase + 7;
 	//Misc
 	static const int Err_10008_ImportInspectionWrongVersion = Maz_ErrorBase + 8;
@@ -582,6 +582,14 @@ namespace SvStl
 	static const int Rpy_ErrorBase = 45000;
 	static const int Err_45000 = Rpy_ErrorBase + 0;
 	static const int Memory_Log_45001 = Rpy_ErrorBase + 1;
+
+
+
+	//Customer HRESULTs
+	constexpr DWORD cSuccessSVObserver = (1 << 29)/*customer flag*/ + (FAC_SVOBSERVER << 16)/*facility*/;
+	constexpr DWORD cFailureSVObserver = cSuccessSVObserver + static_cast<DWORD>(1 << 31)/*Severity-flag to failure*/;
+
+	constexpr DWORD cCustomHRSVO_RunOnceFailed = cFailureSVObserver + 1;
 
 } //namespace SvStl
 
