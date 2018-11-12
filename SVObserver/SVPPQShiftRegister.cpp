@@ -189,8 +189,8 @@ long SVPPQShiftRegister::GetIndexByTriggerTimeStamp(SvTl::SVTimeStamp timeStamp,
 			if(nullptr != *iter)
 			{
 				bool hasCameraImage = (cameraID >= 0 && cameraID < SvDef::cMaximumCameras) ? (*iter)->bhasCameraImage[cameraID] : false;
-				//If product already has camera image then skip
-				if(!hasCameraImage && (*iter)->bTriggered)
+				//If product already has camera image or product inactive then skip
+				if (!hasCameraImage && (*iter)->bTriggered && (*iter)->IsProductActive())
 				{
 					SvTl::SVTimeStamp triggerTimeStamp{(*iter)->TimeStamp()};
 					if( 0.0 < triggerTimeStamp && triggerTimeStamp - cPreTriggerTimeWindow < timeStamp)

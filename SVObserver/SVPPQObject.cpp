@@ -2708,6 +2708,9 @@ HRESULT SVPPQObject::NotifyInspections(long offset)
 					// l_Status, so the returned status will still be S_OK
 					// which indicates NOT "Processed".
 					l_Status = S_FALSE; // 1
+#if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
+					::OutputDebugString(SvUl::Format(_T("Cannot Process Inspection TRI=%d\n"), pTempProduct->ProcessCount()).c_str());
+#endif
 				}
 			} // if( !( l_rInfo.m_CanProcess ) && !( l_rInfo.m_InProcess ) && pTempProduct->IsProductActive() )
 		}
@@ -3466,6 +3469,9 @@ bool SVPPQObject::FinishCamera(void *pCaller, SVODataResponseClass *pResponse)
 		if (nullptr != pCamera)
 		{
 			m_CameraResponseQueue.AddTail(SVCameraQueueElement(pCamera, *pResponse));
+#if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
+			::OutputDebugString(SvUl::Format(_T("Finished Camera Acquisition %s\n"), pCamera->GetName()).c_str());
+#endif
 		}
 	}
 	m_AsyncProcedure.Signal(nullptr);
@@ -3473,7 +3479,7 @@ bool SVPPQObject::FinishCamera(void *pCaller, SVODataResponseClass *pResponse)
 	return l_Status;
 }
 
-bool SVPPQObject::FinishTrigger(void *pCaller, SvTi::SVTriggerInfoStruct& p_rTriggerInfo)
+bool SVPPQObject::FinishTrigger(void *pCaller, SvTi::SVTriggerInfoStruct& rTriggerInfo)
 {
 	bool l_Status = m_bOnline;
 
@@ -3481,7 +3487,7 @@ bool SVPPQObject::FinishTrigger(void *pCaller, SvTi::SVTriggerInfoStruct& p_rTri
 	{
 		SVTriggerQueueElement l_TriggerInfo;
 
-		l_TriggerInfo.m_TriggerInfo = p_rTriggerInfo;
+		l_TriggerInfo.m_TriggerInfo = rTriggerInfo;
 
 		l_TriggerInfo.m_TriggerInfo.m_CallbackReceived = SvTl::GetTimeStamp();
 
@@ -3515,6 +3521,10 @@ bool SVPPQObject::FinishTrigger(void *pCaller, SvTi::SVTriggerInfoStruct& p_rTri
 #endif
 
 		m_oTriggerQueue.PushTail(l_TriggerInfo);
+
+#if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
+		::OutputDebugString(SvUl::Format(_T("Finished Trigger TRI=%d\n"), rTriggerInfo.lTriggerCount).c_str());
+#endif
 
 		m_AsyncProcedure.Signal(nullptr);
 	}
