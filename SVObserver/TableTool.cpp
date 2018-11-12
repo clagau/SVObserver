@@ -82,18 +82,9 @@ bool TableTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure 
 		}
 	}
 
-	// Override base class exposure of the drawflag
-	// This value will not be exposed for the Table Tool.
-	drawToolFlag.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
-
-	// Override base class exposure of the auxillaryextent variables
-	// These values will not be exposed for the Table Tool.
-	m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
-	m_svAuxiliarySourceX.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
-	m_svAuxiliarySourceY.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
-	m_svAuxiliarySourceAngle.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
-	m_svAuxiliarySourceImageName.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
-	m_svAuxiliaryDrawType.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	// These values will not be exposed for the this Tool.
+	constexpr UINT cAttribute {SvDef::SV_SELECTABLE_ATTRIBUTES | SvDef::SV_PRINTABLE};
+	m_drawToolFlag.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
 
 	m_isCreated = bOk;
 
@@ -231,6 +222,10 @@ bool TableTool::ValidateLocal( SvStl::MessageContainerVector * pErrorMessages ) 
 
 void TableTool::LocalInitialize ()
 {
+	// Override base class exposure of the auxiliary extent variables
+	// These values will not be exposed for this Tool.
+	m_hasToolExtents = false;
+
 	BuildInputObjectList ();
 	BuildEmbeddedObjectList ();
 

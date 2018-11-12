@@ -57,6 +57,10 @@ SVArchiveTool::SVArchiveTool( SVObjectClass* POwner, int StringResourceID )
 
 void SVArchiveTool::initializeArchiveTool()
 {
+	// Override base class exposure of the auxiliary extent variables
+	// These values will not be exposed for this Tool.
+	m_hasToolExtents = false;
+
 	m_ArchiveImagePathUsingKW = false;
 	m_ImageTranslatedPath = "";
 
@@ -231,18 +235,9 @@ bool SVArchiveTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStruct
 	m_HeaderObjectGUIDs.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 	m_bvoUseHeaders.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 
-	// Override base class exposure of the drawflag
-	// This value will not be exposed for the Archive Tool.
-	drawToolFlag.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
-
-	// Override base class exposure of the auxillaryextent variables
-	// These values will not be exposed for the Archive Tool.
-	m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
-	m_svAuxiliarySourceX.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
-	m_svAuxiliarySourceY.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
-	m_svAuxiliarySourceAngle.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
-	m_svAuxiliarySourceImageName.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
-	m_svAuxiliaryDrawType.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	// These values will not be exposed for the this Tool.
+	constexpr UINT cAttribute {SvDef::SV_SELECTABLE_ATTRIBUTES | SvDef::SV_PRINTABLE};
+	m_drawToolFlag.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
 
 	m_isCreated = bOk;
 

@@ -191,7 +191,7 @@ protected:
 	SvOl::SVInObjectInfoStruct m_AuxSourceImageObjectInfo;
 
 	// Conditional tool set drawing flag.
-	SVEnumerateValueObjectClass	drawToolFlag;
+	SVEnumerateValueObjectClass	m_drawToolFlag;
 	SVTimerValueObjectClass m_ToolTime;
 
 	// Passed, if TRUE ( Reset Value: FALSE )
@@ -238,5 +238,6 @@ protected:
 	SVToolExtentClass m_svToolExtent;
 
 	bool m_canResizeToParent;
+	bool m_hasToolExtents{true};
 };
 

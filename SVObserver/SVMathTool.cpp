@@ -56,6 +56,10 @@ SVMathToolClass::SVMathToolClass( SVObjectClass* POwner, int StringResourceID )
 ////////////////////////////////////////////////////////////////////////////////
 void SVMathToolClass::init(void)
 {
+	// Override base class exposure of the auxiliary extent variables
+	// These values will not be exposed for this Tool.
+	m_hasToolExtents = false;
+
 	// Set up your type...
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVToolObjectType;
 	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvDef::SVMathToolObjectType;
@@ -104,18 +108,9 @@ bool SVMathToolClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStruc
 {
 	m_isCreated = SVToolClass::CreateObject(rCreateStructure);
 
-	// Override base class exposure of the drawflag
-	// This value will not be exposed for the Math Tool.
-	drawToolFlag.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
-
-	// Override base class exposure of the auxillaryextent variables
-	// These values will not be exposed for the Math Tool.
-	m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
-	m_svAuxiliarySourceX.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
-	m_svAuxiliarySourceY.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
-	m_svAuxiliarySourceAngle.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
-	m_svAuxiliarySourceImageName.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
-	m_svAuxiliaryDrawType.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	// These values will not be exposed for this Tool.
+	constexpr UINT cAttribute {SvDef::SV_SELECTABLE_ATTRIBUTES | SvDef::SV_PRINTABLE};
+	m_drawToolFlag.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
 
 	return m_isCreated;
 }

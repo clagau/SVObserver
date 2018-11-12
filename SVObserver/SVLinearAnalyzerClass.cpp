@@ -475,7 +475,8 @@ bool SVLinearAnalyzerClass::setParameterToList(const std::string& rName, std::ba
 {
 	SVObjectClass* pObject = nullptr;
 	SVObjectManagerClass::Instance().GetObjectByDottedName(rName, pObject);
-	if (nullptr != pObject && 0 == (pObject->ObjectAttributesAllowed() &  SvDef::SV_HIDDEN))
+	//Value objects need to have the SV_VIEWABLE attribute to insert it to the monitor list
+	if (nullptr != pObject && 0 != (pObject->ObjectAttributesAllowed() &  SvDef::SV_VIEWABLE))
 	{
 		inserter = SvOi::ParameterPairForML(pObject->GetCompleteName(), pObject->GetUniqueObjectID());
 		return true;

@@ -95,6 +95,5 @@ enum ObjectAttributes
 	remotely_setable = 9;			//Object can be set remotely
 	setable_online = 10;			//Object can be set when SVObserver is Online
 	extent_object = 11;				//Object is an extent value object
-	hidden = 12;					//Object is not displayed in the object selector irrelevant of the other settings
 	publish_result_image = 13;		//Object result image can be published
 };

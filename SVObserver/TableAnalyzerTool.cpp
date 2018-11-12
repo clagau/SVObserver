@@ -101,18 +101,10 @@ bool TableAnalyzerTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStr
 		Msg.setMessage(message.getMessage());
 	}
 
-	// Override base class exposure of the drawflag
-	// This value will not be exposed for the Table Tool.
-	drawToolFlag.SetObjectAttributesAllowed(SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute);
+	// These values will not be exposed for the this Tool.
+	constexpr UINT cAttribute {SvDef::SV_SELECTABLE_ATTRIBUTES | SvDef::SV_PRINTABLE};
+	m_drawToolFlag.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
 
-	// Override base class exposure of the auxillaryextent variables
-	// These values will not be exposed for the Table Tool.
-	m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed(SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute);
-	m_svAuxiliarySourceX.SetObjectAttributesAllowed(SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute);
-	m_svAuxiliarySourceY.SetObjectAttributesAllowed(SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute);
-	m_svAuxiliarySourceAngle.SetObjectAttributesAllowed(SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute);
-	m_svAuxiliarySourceImageName.SetObjectAttributesAllowed(SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute);
-	m_svAuxiliaryDrawType.SetObjectAttributesAllowed(SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute);
 	m_Index.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
 
 	m_isCreated = bOk;
@@ -240,6 +232,10 @@ bool TableAnalyzerTool::ValidateLocal(SvStl::MessageContainerVector * pErrorMess
 
 void TableAnalyzerTool::LocalInitialize()
 {
+	// Override base class exposure of the auxiliary extent variables
+	// These values will not be exposed for this Tool.
+	m_hasToolExtents = false;
+
 	BuildInputObjectList();
 	RegisterEmbeddedObject(&m_Index, TableAnalyzerIndexObjectGuid, IDS_OBJECTNAME_INDEXVARIABLE, false, SvOi::SVResetItemNone);
 	m_Index.setSaveValueFlag(false);

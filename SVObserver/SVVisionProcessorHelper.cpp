@@ -739,19 +739,21 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition(const SVObjectClass& rObjec
 	HRESULT l_Status = S_OK;
 
 	//Check using the filter if object should be included
-	bool l_bValueIncluded = false;
+	bool includeValue = false;
 	if ((SvDef::SV_DD_VALUE == Filter) || (SvDef::SV_DD_IMAGE == Filter))
 	{
 		//This is called when selected values or images
-		l_bValueIncluded = (rObject.ObjectAttributesSet() & Filter) != 0;
+		includeValue = (rObject.ObjectAttributesSet() & Filter) != 0;
 	}
 	else
 	{
 		//This is called when all values or all images
-		l_bValueIncluded = (rObject.ObjectAttributesAllowed() & Filter) != 0;
+		includeValue = (rObject.ObjectAttributesAllowed() & Filter) != 0;
 	}
-	l_bValueIncluded = l_bValueIncluded && ((rObject.ObjectAttributesAllowed() & SvDef::SV_HIDDEN) == 0);
-	if (l_bValueIncluded)
+	//Is valid if it has selectable or archivable image attribute
+	constexpr UINT cAttribute {SvDef::SV_SELECTABLE_ATTRIBUTES | SvDef::SV_ARCHIVABLE_IMAGE};
+	includeValue = includeValue && 0 != (rObject.ObjectAttributesAllowed() & cAttribute);
+	if (includeValue)
 	{
 		std::string Temp;
 		Temp = _T("Inspections.") + rObject.GetCompleteName();

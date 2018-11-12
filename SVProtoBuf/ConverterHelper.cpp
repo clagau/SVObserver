@@ -311,9 +311,6 @@ UINT PbObjectAttributes2Attributes(const SvPb::ObjectAttributes& rAttributes)
 		case SvPb::ObjectAttributes::extent_object:
 			Result = SvDef::SV_EXTENT_OBJECT;
 			break;
-		case SvPb::ObjectAttributes::hidden:
-			Result = SvDef::SV_HIDDEN;
-			break;
 		case SvPb::ObjectAttributes::publish_result_image:
 			Result = SvDef::SV_PUBLISH_RESULT_IMAGE;
 			break;

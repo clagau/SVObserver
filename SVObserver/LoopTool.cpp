@@ -28,6 +28,10 @@ LoopTool::LoopTool(SVObjectClass* POwner, int StringResourceID)
 
 void LoopTool::Initialize()
 {
+	// Override base class exposure of the auxiliary extent variables
+	// These values will not be exposed for this Tool.
+	m_hasToolExtents = false;
+
 	m_canResizeToParent = false;
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVToolObjectType;
 	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::LoopToolObjectType;
@@ -202,20 +206,16 @@ bool LoopTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 	m_isCreated &= (nullptr != GetTool());
 	m_isCreated &= (nullptr != GetInspection());
 
-	drawToolFlag.SetObjectAttributesAllowed(SvDef::SV_NO_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute);
-	m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed(SvDef::SV_NO_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute);
-	m_svAuxiliarySourceX.SetObjectAttributesAllowed(SvDef::SV_NO_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute);
-	m_svAuxiliarySourceY.SetObjectAttributesAllowed(SvDef::SV_NO_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute);
-	m_svAuxiliarySourceAngle.SetObjectAttributesAllowed(SvDef::SV_NO_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute);
-	m_svAuxiliarySourceImageName.SetObjectAttributesAllowed(SvDef::SV_NO_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute);
-	m_svAuxiliaryDrawType.SetObjectAttributesAllowed(SvDef::SV_NO_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute);
-	m_Passed.SetObjectAttributesAllowed(SvDef::SV_NO_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute);
-	m_Failed.SetObjectAttributesAllowed(SvDef::SV_NO_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute);
-	m_Warned.SetObjectAttributesAllowed(SvDef::SV_NO_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute);
-	m_ExplicitFailed.SetObjectAttributesAllowed(SvDef::SV_NO_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute);
-	m_PassedCount.SetObjectAttributesAllowed(SvDef::SV_NO_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute);
-	m_FailedCount.SetObjectAttributesAllowed(SvDef::SV_NO_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute);
-	m_WarnedCount.SetObjectAttributesAllowed(SvDef::SV_NO_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute);
+	// These values will not be exposed for this Tool.
+	constexpr UINT cAttribute{ SvDef::SV_SELECTABLE_ATTRIBUTES | SvDef::SV_PRINTABLE };
+	m_drawToolFlag.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
+	m_Passed.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
+	m_Failed.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
+	m_Warned.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
+	m_ExplicitFailed.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
+	m_PassedCount.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
+	m_FailedCount.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
+	m_WarnedCount.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
 
 	return m_isCreated;
 }

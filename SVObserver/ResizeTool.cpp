@@ -176,7 +176,7 @@ bool ResizeTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 	bOk &= (S_OK == m_LogicalROIImage.InitializeImage(pInputImage));
 
 	// We do not want the ROI image showing up as an output image.
-	m_LogicalROIImage.SetObjectAttributesAllowed(SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute);
+	m_LogicalROIImage.SetObjectAttributesAllowed(SvDef::SV_NO_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute);
 
 	bOk &= (S_OK == m_svToolExtent.SetTranslation(SvDef::SVExtentTranslationResize));
 

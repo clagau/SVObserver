@@ -82,7 +82,7 @@ void SVToolClass::init()
 	RegisterEmbeddedObject(&m_ExtentHeightScaleFactor, SVExtentHeightScaleFactorObjectGuid, IDS_OBJECTNAME_EXTENT_HEIGHTSF, false, SvOi::SVResetItemTool);
 	RegisterEmbeddedObject(&m_ExtentWidthScaleFactor, SVExtentWidthScaleFactorObjectGuid, IDS_OBJECTNAME_EXTENT_WIDTHSF, false, SvOi::SVResetItemTool);
 	RegisterEmbeddedObject(&ToolSelectedForOperatorMove, SVToolSelectedForOperatorMoveObjectGuid, IDS_OBJECTNAME_TOOL_SELECTED_FOR_OPERATOR_MOVE, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&drawToolFlag, SVConditionalToolDrawFlagObjectGuid, IDS_OBJECTNAME_DRAWTOOL_FLAG, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_drawToolFlag, SVConditionalToolDrawFlagObjectGuid, IDS_OBJECTNAME_DRAWTOOL_FLAG, false, SvOi::SVResetItemNone);
 	RegisterEmbeddedObject(&m_svUpdateAuxiliaryExtents, SVUpdateAuxiliaryExtentsObjectGuid, IDS_OBJECTNAME_UPDATE_AUXILIARY_EXTENTS_OBJECT, false, SvOi::SVResetItemTool);
 	RegisterEmbeddedObject(&m_svAuxiliarySourceX, SVAuxiliarySourceXObjectGuid, IDS_OBJECTNAME_AUXILIARY_SOURCE_X, false, SvOi::SVResetItemNone);
 	RegisterEmbeddedObject(&m_svAuxiliarySourceY, SVAuxiliarySourceYObjectGuid, IDS_OBJECTNAME_AUXILIARY_SOURCE_Y, false, SvOi::SVResetItemNone);
@@ -145,8 +145,8 @@ void SVToolClass::init()
 	m_ExtentWidthScaleFactor.SetDefaultValue(SvDef::cDefaultWindowToolWidthScaleFactor, true);
 	m_ExtentHeightScaleFactor.SetDefaultValue(SvDef::cDefaultWindowToolHeightScaleFactor, true);
 
-	drawToolFlag.SetEnumTypes(IDS_TOOLDRAW_ENUMOBJECT_LIST);
-	drawToolFlag.SetDefaultValue(0L, true);
+	m_drawToolFlag.SetEnumTypes(IDS_TOOLDRAW_ENUMOBJECT_LIST);
+	m_drawToolFlag.SetDefaultValue(0L, true);
 
 	m_svUpdateAuxiliaryExtents.SetDefaultValue(BOOL(false), true);
 
@@ -234,7 +234,7 @@ bool SVToolClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure
 	// Auxiliary Tool Source Extent
 	m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE | SvDef::SV_SETABLE_ONLINE | SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute);
 
-	drawToolFlag.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute);
+	m_drawToolFlag.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute);
 
 	// Tool Comment attributes...
 	m_ToolComment.setStatic(true);
@@ -320,7 +320,7 @@ HRESULT SVToolClass::GetDrawInfo(SVExtentMultiLineStruct& rMultiLine)
 		}
 	}
 
-	drawToolFlag.GetValue(rMultiLine.m_ToolDrawFlag);
+	m_drawToolFlag.GetValue(rMultiLine.m_ToolDrawFlag);
 
 	BOOL bPassed = true;
 	BOOL bFailed = true;
@@ -586,23 +586,14 @@ HRESULT SVToolClass::TranslatePointToSource(SVExtentPointStruct p_svIn, SVExtent
 	return m_svToolExtent.TranslatePointToSource(p_svIn, p_rsvOut);
 }
 
-HRESULT SVToolClass::EnableAuxiliaryExtents(bool p_bEnable)
+HRESULT SVToolClass::EnableAuxiliaryExtents(bool enableExtents)
 {
-	const UINT cAttributes = SvDef::SV_VIEWABLE | SvDef::SV_ARCHIVABLE | SvDef::SV_SELECTABLE_FOR_EQUATION | SvDef::SV_SELECTABLE_FOR_STATISTICS | SvDef::SV_PUBLISHABLE;
-
-	SvOi::SetAttributeType AllowedAttribute = p_bEnable ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-	m_svAuxiliarySourceX.SetObjectAttributesAllowed(cAttributes, AllowedAttribute);
-	m_svAuxiliarySourceY.SetObjectAttributesAllowed(cAttributes, AllowedAttribute);
-	m_svAuxiliarySourceAngle.SetObjectAttributesAllowed(cAttributes, AllowedAttribute);
-	m_svAuxiliaryDrawType.SetObjectAttributesAllowed(cAttributes, AllowedAttribute);
-	m_svAuxiliarySourceImageName.SetObjectAttributesAllowed(cAttributes, AllowedAttribute);
-
-	AllowedAttribute = p_bEnable ? SvOi::SetAttributeType::RemoveAttribute : SvOi::SetAttributeType::AddAttribute;
-	m_svAuxiliarySourceX.SetObjectAttributesAllowed(SvDef::SV_HIDDEN, AllowedAttribute);
-	m_svAuxiliarySourceY.SetObjectAttributesAllowed(SvDef::SV_HIDDEN, AllowedAttribute);
-	m_svAuxiliarySourceAngle.SetObjectAttributesAllowed(SvDef::SV_HIDDEN, AllowedAttribute);
-	m_svAuxiliaryDrawType.SetObjectAttributesAllowed(SvDef::SV_HIDDEN, AllowedAttribute);
-	m_svAuxiliarySourceImageName.SetObjectAttributesAllowed(SvDef::SV_HIDDEN, AllowedAttribute);
+	SvOi::SetAttributeType AllowedAttribute = (enableExtents && m_hasToolExtents) ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
+	m_svAuxiliarySourceX.SetObjectAttributesAllowed(SvDef::SV_SELECTABLE_ATTRIBUTES, AllowedAttribute);
+	m_svAuxiliarySourceY.SetObjectAttributesAllowed(SvDef::SV_SELECTABLE_ATTRIBUTES, AllowedAttribute);
+	m_svAuxiliarySourceAngle.SetObjectAttributesAllowed(SvDef::SV_SELECTABLE_ATTRIBUTES, AllowedAttribute);
+	m_svAuxiliaryDrawType.SetObjectAttributesAllowed(SvDef::SV_SELECTABLE_ATTRIBUTES, AllowedAttribute);
+	m_svAuxiliarySourceImageName.SetObjectAttributesAllowed(SvDef::SV_SELECTABLE_ATTRIBUTES, AllowedAttribute);
 
 	m_svAuxiliarySourceX.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
 	m_svAuxiliarySourceY.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
@@ -644,19 +635,15 @@ bool SVToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 
 	// Auxiliary Extents
 	BOOL bValue(false);
-	const UINT cAttributes = SvDef::SV_VIEWABLE | SvDef::SV_ARCHIVABLE | SvDef::SV_SELECTABLE_FOR_EQUATION | SvDef::SV_SELECTABLE_FOR_STATISTICS | SvDef::SV_PUBLISHABLE;
-
-	if (GetInspectionInterface()->getEnableAuxiliaryExtent())
+	if (GetInspectionInterface()->getEnableAuxiliaryExtent() && m_hasToolExtents)
 	{
-		m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed(cAttributes, SvOi::SetAttributeType::AddAttribute);
-		m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed(SvDef::SV_HIDDEN, SvOi::SetAttributeType::RemoveAttribute);
+		m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed(SvDef::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::AddAttribute);
 		m_svUpdateAuxiliaryExtents.GetValue(bValue);
 	}
 	else
 	{
-		m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed(cAttributes, SvOi::SetAttributeType::RemoveAttribute);
-		m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed(SvDef::SV_HIDDEN, SvOi::SetAttributeType::AddAttribute);
-		m_svUpdateAuxiliaryExtents.SetObjectAttributesSet(cAttributes, SvOi::SetAttributeType::RemoveAttribute);
+		m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed(SvDef::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute);
+		m_svUpdateAuxiliaryExtents.SetObjectAttributesSet(SvDef::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute);
 	}
 
 	EnableAuxiliaryExtents(bValue ? true : false);
@@ -921,7 +908,7 @@ bool SVToolClass::addEntryToMonitorList(SvOi::ParametersForML &retList, const SV
 	auto* pResultObject = getFirstObject(SvDef::SVObjectTypeInfoStruct(SvDef::SVObjectTypeEnum::SVNotSetObjectType, SvDef::SVObjectSubTypeEnum::SVNotSetSubObjectType, rEmbeddedId));
 	if (nullptr != pResultObject)
 	{
-		if (0 == (pResultObject->ObjectAttributesAllowed() &  SvDef::SV_HIDDEN))
+		if (SvDef::SV_NO_ATTRIBUTES != (pResultObject->ObjectAttributesAllowed()))
 		{
 			retList.push_back(SvOi::ParameterPairForML(pResultObject->GetCompleteName(), pResultObject->GetUniqueObjectID()));
 			return true;

@@ -43,7 +43,6 @@ namespace SvDef
 	const UINT SV_REMOTELY_SETABLE           = 0x00000100;  // RY 2002 12 19
 	const UINT SV_SETABLE_ONLINE             = 0x00000200;
 	const UINT SV_EXTENT_OBJECT              = 0x00000400;
-	const UINT SV_HIDDEN                     = 0x00000800;  // EB/TB 2004 05 10
 	const UINT SV_PUBLISH_RESULT_IMAGE       = 0x00001000;
 	//Conditional History has been deprecated, these are used to check and reset the attributes of previously saved configurations
 	const UINT SV_CH_CONDITIONAL             = 0x00002000;  // conditional history
@@ -51,18 +50,6 @@ namespace SvDef
 	const UINT SV_CH_VALUE                   = 0x00008000;  // conditional history 
 	const UINT SV_DD_VALUE                   = 0x00010000;  // Selected for DataDefinition Value
 	const UINT SV_DD_IMAGE                   = 0x00020000;  // Selected for DataDefinition Image
-
-	// this was the mis-named SV_ALL_ATTRIBUTES
-	const UINT SV_DEFAULT_ATTRIBUTES  = (
-		SV_VIEWABLE
-		| SV_PUBLISHABLE
-		| SV_ARCHIVABLE
-		| SV_SELECTABLE_FOR_EQUATION
-		| SV_EMBEDABLE
-		| SV_SELECTABLE_FOR_STATISTICS
-		| SV_PRINTABLE
-		| SV_ARCHIVABLE_IMAGE
-		);
 
 	const UINT SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES = 
 		(
@@ -82,6 +69,5 @@ namespace SvDef
 		| SV_ARCHIVABLE
 		| SV_SELECTABLE_FOR_EQUATION
 		| SV_SELECTABLE_FOR_STATISTICS
-		| SV_ARCHIVABLE_IMAGE
 		);
 } //namespace SvDef

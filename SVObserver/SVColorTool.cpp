@@ -65,7 +65,7 @@ bool SVColorToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStr
 			{
 				//! We do not want the Logical ROI image showing up as an output image.
 				m_LogicalROIImage.InitializeImage(pInputImage);
-				m_LogicalROIImage.SetObjectAttributesAllowed(SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute);
+				m_LogicalROIImage.SetObjectAttributesAllowed(SvDef::SV_NO_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute);
 				m_OutputImage.InitializeImage(pInputImage);
 
 				BOOL hasROI(false);
@@ -120,7 +120,8 @@ bool SVColorToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStr
 
 	// Set / Reset Printable Flag
 	m_convertToHSI.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_hasROI.SetObjectAttributesAllowed(SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute);
+	constexpr UINT cAttribute {SvDef::SV_SELECTABLE_ATTRIBUTES | SvDef::SV_PRINTABLE};
+	m_hasROI.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
 
 	m_SourceImageNames.setStatic( true );
 	m_SourceImageNames.setSaveValueFlag(false);

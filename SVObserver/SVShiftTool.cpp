@@ -72,7 +72,8 @@ bool SVShiftTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructur
 	m_LearnedTranslationY.SetObjectAttributesAllowed( SvDef::SV_EXTENT_OBJECT, SvOi::SetAttributeType::RemoveAttribute );
 
 	// This value object is obsolete, hide it.
-	m_EnableSourceImageExtents.SetObjectAttributesAllowed( SvDef::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	constexpr UINT cAttribute {SvDef::SV_SELECTABLE_ATTRIBUTES | SvDef::SV_PRINTABLE};
+	m_EnableSourceImageExtents.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_isCreated = l_Status;
 

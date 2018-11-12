@@ -240,9 +240,7 @@ void SVExternalToolTask::SetAllAttributes()
 
 	for ( i = 0; i < SVExternalToolTaskData::NUM_RESULT_IMAGES; i++)
 	{
-		SvOi::SetAttributeType AddRemoveType = (i >= m_Data.m_lNumResultImages) ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-		m_aResultImages[i].SetObjectAttributesAllowed( SvDef::SV_HIDDEN, AddRemoveType );
-		AddRemoveType = (i < m_Data.m_lNumResultImages) ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
+		SvOi::SetAttributeType AddRemoveType = (i < m_Data.m_lNumResultImages) ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
 		m_aResultImages[i].SetObjectAttributesAllowed( SvDef::SV_ARCHIVABLE_IMAGE, AddRemoveType );
 	}
 
@@ -1377,7 +1375,8 @@ HRESULT SVExternalToolTask::AllocateResult (int iIndex)
 			throw -12347;
 		}
 		
-		pValue->SetObjectAttributesAllowed( SvDef::SV_DEFAULT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
+		constexpr UINT cAttribute {SvDef::SV_SELECTABLE_ATTRIBUTES | SvDef::SV_PRINTABLE};
+		pValue->SetObjectAttributesAllowed( cAttribute, SvOi::SetAttributeType::RemoveAttribute );
 		
 		// Ensure this Object's inputs get connected
 		pResult->ConnectAllInputs();
