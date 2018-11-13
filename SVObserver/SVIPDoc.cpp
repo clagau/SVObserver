@@ -2031,20 +2031,20 @@ bool SVIPDoc::checkOkToDelete(SVTaskObjectClass* pTaskObject)
 
 void SVIPDoc::RunRegressionTest()
 {
-	bool l_bWasRunMode = false;
-	bool l_bWasTestMode = false;
 
 	if (SVSVIMStateClass::CheckState(SV_STATE_REGRESSION))
 	{  // already in regression mode, do nothing...
 		return;
 	}
 
-	//check to see if in Run Mode, if so stop
-	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING)) { l_bWasRunMode = true; }
+	bool hasRunMode = SVSVIMStateClass::CheckState(SV_STATE_RUNNING);
 
-	if (SVSVIMStateClass::CheckState(SV_STATE_TEST)) { l_bWasTestMode = true; }
+	bool hasTestMode = SVSVIMStateClass::CheckState(SV_STATE_TEST);
 
-	if (l_bWasRunMode || l_bWasTestMode) { TheSVObserverApp.OnStop(); }
+	if (hasRunMode || hasTestMode)
+	{
+		TheSVObserverApp.OnStop();
+	}
 
 	SVInspectionProcess* pInspection(GetInspectionProcess());
 
@@ -2067,7 +2067,7 @@ void SVIPDoc::RunRegressionTest()
 	{
 		bool l_bAllowAccess = false;
 
-		if (l_bWasRunMode)
+		if (hasRunMode)
 		{
 			// Dual Security access point
 			if (S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_MODE_MENU_REGRESSION_TEST,
@@ -2087,15 +2087,7 @@ void SVIPDoc::RunRegressionTest()
 
 		if (l_bAllowAccess)
 		{
-			if (SVSVIMStateClass::CheckState(SV_STATE_TEST))
-			{
-				SVSVIMStateClass::RemoveState(SV_STATE_TEST);
-			}
-
-			if (SVSVIMStateClass::CheckState(SV_STATE_EDIT))
-			{
-				SVSVIMStateClass::RemoveState(SV_STATE_EDIT);
-			}
+			SVSVIMStateClass::RemoveState(SV_STATE_TEST | SV_STATE_EDIT | SV_STATE_STOP);
 
 			TheSVObserverApp.DeselectTool();
 

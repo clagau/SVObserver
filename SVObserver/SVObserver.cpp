@@ -4587,7 +4587,7 @@ void SVObserverApp::SetTestMode(bool p_bNoSecurity)
 				SetAllIPDocumentsOnline();
 
 				SVSVIMStateClass::AddState(SV_STATE_TEST);
-				SVSVIMStateClass::RemoveState(SV_STATE_EDIT);
+				SVSVIMStateClass::RemoveState(SV_STATE_EDIT | SV_STATE_STOP);
 
 				if (nullptr != pConfig) { pConfig->SetModuleReady(true); }
 
