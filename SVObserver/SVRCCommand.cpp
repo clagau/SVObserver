@@ -980,28 +980,34 @@ void SVRCCommand::GetObjectSelectorItems(const SvPb::GetObjectSelectorItemsReque
 
 	for(const auto& rItem : SelectorItems)
 	{
-		SVObjectNameInfo nameInfo;
-		SVObjectNameInfo::ParseObjectName(nameInfo, rItem.m_Location);
-		if(nameInfo.m_NameArray.size() > 0 && nameInfo.m_NameArray[0] == inspectionName)
+		std::string displayLocation = rItem.m_DisplayLocation.empty() ? rItem.m_Location : rItem.m_DisplayLocation;
+		if(0 == displayLocation.find(inspectionName))
 		{
-			nameInfo.RemoveTopName();
+			//Inspection name and dot must be removed
+			displayLocation = displayLocation.substr(inspectionName.size() + 1);
 		}
 		//If object is array then place an additional level with the array group name
-		if (rItem.m_Array && nameInfo.m_NameArray.size() > 0)
+		if (rItem.m_Array)
 		{
-			std::string ObjectName{nameInfo.m_NameArray[nameInfo.m_NameArray.size() - 1]};
-			//Set the group name
-			nameInfo.m_NameArray[nameInfo.m_NameArray.size() - 1] = rItem.m_Name;
-			//Set the object name at the end of the list
-			nameInfo.m_NameArray.emplace_back(ObjectName);
+			std::string groupName = rItem.m_Name;
+			groupName.insert(0, _T("."));
+			size_t pos = displayLocation.rfind(_T('.'));
+			if (std::string::npos != pos)
+			{
+				displayLocation.insert(pos, groupName.c_str());
+			}
 		}
 		SvPb::TreeItem* pTreeItem = Response.mutable_tree();
-		for(int i=0; i < nameInfo.m_NameArray.size(); i++)
+
+		size_t startPos{0LL};
+		size_t endPos = displayLocation.find(_T('.'), startPos);
+		std::string branchName = displayLocation.substr(startPos, endPos-startPos);
+		while(!branchName.empty())
 		{
 			bool bFound{false};
 			for(int j=0; j < pTreeItem->children_size(); j++)
 			{
-				if(pTreeItem->children(j).name() == nameInfo.m_NameArray[i])
+				if(pTreeItem->children(j).name() == branchName)
 				{
 					bFound = true;
 					pTreeItem = pTreeItem->mutable_children(j);
@@ -1010,12 +1016,22 @@ void SVRCCommand::GetObjectSelectorItems(const SvPb::GetObjectSelectorItemsReque
 			if(!bFound)
 			{
 				pTreeItem = pTreeItem->add_children();
-				pTreeItem->set_name(nameInfo.m_NameArray[i]);
+				pTreeItem->set_name(branchName);
 				//If it is the object name then add the ObjectID
-				if(i == nameInfo.m_NameArray.size() -1 )
+				if(endPos == std::string::npos)
 				{
 					SvPb::SetGuidInProtoBytes(pTreeItem->mutable_objectid(), rItem.m_ItemKey.ToGUID());
 				}
+			}
+			if(std::string::npos != endPos)
+			{
+				startPos = endPos + 1;
+				endPos = displayLocation.find(_T('.'), startPos);
+				branchName = displayLocation.substr(startPos, (std::string::npos == endPos) ? endPos : endPos - startPos);
+			}
+			else
+			{
+				branchName.clear();
 			}
 		}
 	}

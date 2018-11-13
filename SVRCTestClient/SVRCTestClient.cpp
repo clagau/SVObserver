@@ -170,6 +170,8 @@ int main(int argc, char* argv[])
 				///GetObjectSelector
 				SvPb::GetObjectSelectorItemsRequest request;
 				request.set_inspectionid(_T("Inspection_1"));
+				request.set_filter(SvPb::ObjectAttributes::viewable);
+				request.set_wholearray(true);
 				request.add_types(SvPb::ObjectSelectorType::globalConstantItems);
 				request.add_types(SvPb::ObjectSelectorType::ppqItems);
 				request.add_types(SvPb::ObjectSelectorType::toolsetItems);
