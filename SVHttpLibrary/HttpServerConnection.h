@@ -43,6 +43,7 @@ public:
 	bool isOpen() const;
 
 	void start();
+	void close();
 
 	std::future<void> sendTextMessage(const std::vector<char>&);
 	std::future<void> sendBinaryMessage(const std::vector<char>&);

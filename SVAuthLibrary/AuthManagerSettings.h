@@ -48,6 +48,22 @@ struct AuthManagerSettings
 	/// for the user to change it, he can gain access to all the data without
 	/// being authorized.
 	bool AllowUnauthorizedRpcClients {false};
+
+	/// Defines how long a generated access token is valid, by defining its
+	/// exp field (a.k.a expiration) as now plus configured validity.
+	/// The access token should not be valid for too long as it is used during
+	/// login phase only. The user will receive an auth token for on successful
+	/// login which should be valid for longer.
+	/// Default value is 1 hour which should be enough to finish the login.
+	int JwtAccessTokenValidityInSeconds {60 * 60};
+
+	/// Defines how long a generated auth token is valid, by defining its
+	/// exp field (a.k.a expiration) as now plus configured validity.
+	/// As long as we do not have a refresh token, the auth token should be
+	/// valid for as long as you expect the user to use the website before
+	/// having to login again.
+	/// Default value is 10 years which is common practice for refresh token.
+	int JwtAuthTokenValidityInSeconds {60 * 60 * 24 * 30 * 12 * 10};
 };
 
 } // namespace SvAuth

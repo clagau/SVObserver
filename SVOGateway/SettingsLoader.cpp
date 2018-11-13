@@ -116,7 +116,8 @@ void SettingsLoader::loadFromIni(Settings& settings)
 	RegGetStringIfExists(pt, settings.authSettings.JwtRsaPublicKeyFile, "Auth.JwtRsaPublicKeyFile");
 	RegGetStringIfExists(pt, settings.authSettings.JwtRsaPrivateKeyFile, "Auth.JwtRsaPrivateKeyFile");
 	RegGetBoolIfExists(pt, settings.authSettings.AllowUnauthorizedRpcClients, "Auth.AllowUnauthorizedRpcClients");
-
+	RegGetIntIfExists(pt, settings.authSettings.JwtAccessTokenValidityInSeconds, "Auth.JwtAccessTokenValidityInSeconds");
+	RegGetIntIfExists(pt, settings.authSettings.JwtAuthTokenValidityInSeconds, "Auth.JwtAuthTokenValidityInSeconds");
 
 	m_iniPath = path;
 }

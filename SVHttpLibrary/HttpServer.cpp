@@ -28,7 +28,7 @@ HttpServer::HttpServer(const HttpServerSettings& rSettings, boost::asio::io_cont
 	: m_rSettings(rSettings)
 	, m_rIoContext(rIoContext)
 	, m_CleanupTimer(rIoContext)
-	, m_Acceptor(rIoContext, build_endpoint(rSettings))
+	, m_Acceptor(rIoContext, build_endpoint(rSettings), false)
 	, m_Socket(rIoContext)
 	, m_NextConnectionId(0)
 {
@@ -36,14 +36,38 @@ HttpServer::HttpServer(const HttpServerSettings& rSettings, boost::asio::io_cont
 
 void HttpServer::start()
 {
+	if (m_bIsRunning)
+	{
+		return;
+	}
+
 	start_accept();
 	schedule_cleanup();
+	m_bIsRunning = true;
 }
 
 void HttpServer::stop()
 {
+	if (!m_bIsRunning)
+	{
+		return;
+	}
+
+	m_bIsRunning = false;
 	m_Acceptor.cancel();
+	m_Acceptor.close();
 	m_CleanupTimer.cancel();
+	close_connections(m_ConnectionsMarkedForDeletion);
+	close_connections(m_Connections);
+}
+
+void HttpServer::close_connections(std::vector<std::shared_ptr<HttpServerConnection>>& connections)
+{
+	for (auto& conn : connections)
+	{
+		conn->close();
+	}
+	connections.clear();
 }
 
 void HttpServer::start_accept()

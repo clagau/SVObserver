@@ -163,7 +163,7 @@ bool AuthManager::generateAccessToken(const std::string& username, std::string& 
 {
 	auto jwt = Jwt<AccessTokenClaims>();
 	jwt.setAlgorithm(HS256);
-	jwt.setValidityInSeconds(3600);
+	jwt.setValidityInSeconds(m_rSettings.JwtAccessTokenValidityInSeconds);
 	jwt.getPayload().set_name(username);
 
 	return m_JwtFactory.generate(token, jwt);
@@ -173,8 +173,8 @@ bool AuthManager::generateAuthToken(const std::string& username, std::string& to
 {
 	auto jwt = Jwt<AuthTokenClaims>();
 	jwt.setAlgorithm(RS256);
-	jwt.setValidityInSeconds(3600);
-	
+	jwt.setValidityInSeconds(m_rSettings.JwtAuthTokenValidityInSeconds);
+
 	if (!m_UserDatabase.getUserClaims(username, jwt.getPayload()))
 	{
 		return false;

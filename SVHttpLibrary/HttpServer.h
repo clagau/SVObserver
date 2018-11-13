@@ -43,12 +43,15 @@ private:
 	void schedule_cleanup();
 	void do_cleanup(const boost::system::error_code& error);
 
+	void close_connections(std::vector<std::shared_ptr<HttpServerConnection>>&);
+
 private:
 	const HttpServerSettings& m_rSettings;
 	boost::asio::io_context& m_rIoContext;
 	boost::asio::deadline_timer m_CleanupTimer;
 	boost::asio::ip::tcp::acceptor m_Acceptor;
 	boost::asio::ip::tcp::socket m_Socket;
+	std::atomic_bool m_bIsRunning {false};
 	int m_NextConnectionId;
 	std::vector<std::shared_ptr<HttpServerConnection>> m_Connections;
 	std::vector<std::shared_ptr<HttpServerConnection>> m_ConnectionsMarkedForDeletion;

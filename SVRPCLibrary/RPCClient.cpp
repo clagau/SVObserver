@@ -8,9 +8,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
-
 #include "SVLogLibrary/Logging.h"
-
 #include "ClientStreamContext.h"
 #include "ErrorUtil.h"
 #include "RPCClient.h"
@@ -134,6 +132,7 @@ ClientStreamContext RPCClient::stream(SvPenv::Envelope&& Request, Observer<SvPen
 	Request.set_type(SvPenv::MessageType::streamRequest);
 
 	m_PendingStreams.insert({txId, Observer});
+	SV_LOG_GLOBAL(debug) << "RPCClient::stream TransactionId: " << txId << " Pending Nr " << m_PendingStreams.size() << std::endl;
 
 	send_envelope(std::move(Request));
 
@@ -153,7 +152,7 @@ void RPCClient::on_connect()
 	}
 	m_ConnectCV.notify_all();
 
-	if(nullptr != m_pStatusCallback)
+	if (nullptr != m_pStatusCallback)
 	{
 		m_pStatusCallback(ClientStatus::Connected);
 	}
@@ -339,7 +338,7 @@ void RPCClient::cancel_all_pending_streams()
 			m_PendingStreams.erase(it);
 		}
 	}
-	catch(const std::exception&)
+	catch (const std::exception&)
 	{
 	}
 }

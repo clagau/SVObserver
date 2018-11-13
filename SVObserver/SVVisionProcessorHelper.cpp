@@ -1144,7 +1144,7 @@ HRESULT SVVisionProcessorHelper::FireNotification(long notifyType, long value, l
 		::PostMessage(AfxGetMainWnd()->m_hWnd, SV_REFRESH_STATUS_BAR, 0, 0);
 	}
 
-	if (nullptr != m_pIoService)
+	if (nullptr != m_pIoService && m_bNotify.load())
 	{
 		//We need to place the message in a std::string due to the post call
 		std::string msgString {(nullptr != msg) ? msg : std::string()};

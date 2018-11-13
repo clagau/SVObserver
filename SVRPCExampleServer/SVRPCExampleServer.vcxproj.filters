@@ -24,15 +24,6 @@
     <ClInclude Include="AutoBuild.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SeidenaderLogo200px.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SeidenaderLogo300px.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SeidenaderLogo100px.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="..\SVOGateway\Settings.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>

@@ -57,6 +57,14 @@ void HttpServerConnection::start()
 	http_do_read();
 }
 
+void HttpServerConnection::close()
+{
+	auto cc = boost::beast::websocket::close_code::service_restart;
+	auto cr = boost::beast::websocket::close_reason(cc);
+	boost::system::error_code ec;
+	m_WsSocket.close(cr, ec);
+}
+
 std::future<void> HttpServerConnection::sendTextMessage(const std::vector<char>& buf)
 {
 	return ws_send_message_impl(buf, false);

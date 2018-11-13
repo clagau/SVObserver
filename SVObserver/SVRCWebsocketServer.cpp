@@ -18,6 +18,11 @@ SVRCWebsocketServer::SVRCWebsocketServer()
 
 void SVRCWebsocketServer::Start(std::shared_ptr<SVRCCommand> pCmd, std::unique_ptr<SvHttp::HttpServerSettings>&&  rpSettings)
 {
+	if (m_bIsRunning)
+	{
+		return;
+	}
+
 	m_pSettings = std::move(rpSettings);
 	m_pCommand = pCmd;
 	m_pRequestHandler = std::make_unique<SVRCRequestHandler>(m_pCommand.get());
@@ -25,6 +30,7 @@ void SVRCWebsocketServer::Start(std::shared_ptr<SVRCCommand> pCmd, std::unique_p
 	m_pSettings->pEventHandler = m_pRpcServer.get();
 	m_pHttpserver = std::make_unique<SvHttp::HttpServer>(*m_pSettings.get(), m_io_service);
 	m_pHttpserver->start();
+	m_bIsRunning = true;
 
 	m_pThread.reset(new std::thread([this]()
 	{
@@ -35,6 +41,12 @@ void SVRCWebsocketServer::Start(std::shared_ptr<SVRCCommand> pCmd, std::unique_p
 
 void SVRCWebsocketServer::Stop()
 {
+	if (!m_bIsRunning)
+	{
+		return;
+	}
+
+	m_bIsRunning = false;
 	if(nullptr != m_pHttpserver.get())
 	{
 		m_pHttpserver->stop();
@@ -49,7 +61,7 @@ void SVRCWebsocketServer::Stop()
 }
 SVRCWebsocketServer::~SVRCWebsocketServer()
 {
-	Stop();
+	//stop is called in int SVObserverApp::ExitInstance()
 }
 
 SVRCWebsocketServer* SVRCWebsocketServer::Instance()

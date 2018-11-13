@@ -849,11 +849,9 @@ HRESULT SVRemoteCtrl::SetControlServer(SVCommandStatus& p_rStatus)
 
 STDMETHODIMP SVRemoteCtrl::Disconnect(void)
 {
-	m_dispatcher->SetConnectionData("",  boost::posix_time::seconds(10));
-
+	m_dispatcher->ResetConnection();
 	m_servername = _T("");
 	m_VPName = _T("");
-
 	return S_OK;
 }
 

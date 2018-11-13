@@ -29,6 +29,7 @@ private:
 
 	std::unique_ptr<SvHttp::HttpServerSettings> m_pSettings;
 
+	std::atomic_bool m_bIsRunning {false};
 	boost::asio::io_context m_io_service;
 	std::unique_ptr<SvHttp::HttpServer> m_pHttpserver;
 	std::unique_ptr<std::thread> m_pThread;

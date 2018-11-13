@@ -77,11 +77,10 @@ SV_LOG_GLOBAL(error) << "Unknown exception"  << std::endl; \
 }
 
 SVControlCommands::SVControlCommands(NotifyFunctor p_Func)
-	:m_Connected(false),
-	m_Notifier(p_Func),
+	:m_Notifier(p_Func),
 	m_notificationHandler(this)
 {
-	
+
 	std::string IniFile;
 	SvStl::CommandLineArgs::GetModulDirName(IniFile);
 	IniFile.append("\\SVRemoteCtrl.ini");
@@ -97,6 +96,16 @@ SVControlCommands::SVControlCommands(NotifyFunctor p_Func)
 SVControlCommands::~SVControlCommands()
 {
 }
+void SVControlCommands::ResetConnection()
+{
+	if (m_pRpcClient)
+	{
+		m_pRpcClient->stop();
+	}
+	m_pRpcClient.reset(nullptr);
+	m_pSvrcClientService.reset(nullptr);
+
+}
 
 HRESULT SVControlCommands::SetConnectionData(const _bstr_t& rServerName, boost::posix_time::time_duration timeout)
 {
@@ -104,7 +113,7 @@ HRESULT SVControlCommands::SetConnectionData(const _bstr_t& rServerName, boost::
 	HRESULT hr = S_OK;
 	m_pRpcClient.reset();
 	m_pSvrcClientService.reset();
-	m_Connected = false;
+
 
 	std::string host(rServerName);
 	if (0 < host.length())
@@ -127,9 +136,9 @@ HRESULT SVControlCommands::SetConnectionData(const _bstr_t& rServerName, boost::
 		}
 		if (nullptr != m_pRpcClient && m_pRpcClient->isConnected())
 		{
-			m_Connected = true;
+
 			StartNotificationStreaming();
-			
+
 		}
 		else
 		{
@@ -153,8 +162,10 @@ void SVControlCommands::StartNotificationStreaming()
 		boost::bind(&NotificationHandler::OnFinish, &m_notificationHandler),
 		boost::bind(&NotificationHandler::OnError, &m_notificationHandler, _1));
 
-	m_csx = m_pSvrcClientService->GetNotificationStream(SvPb::GetNotificationStreamRequest(), NotifikationObserver);
-
+	if (m_pSvrcClientService)
+	{
+		m_csx = m_pSvrcClientService->GetNotificationStream(SvPb::GetNotificationStreamRequest(), NotifikationObserver);
+	}
 }
 
 void  SVControlCommands::StopNotificationStreaming()
@@ -271,7 +282,7 @@ HRESULT SVControlCommands::GetConfigReport(BSTR& rReport, SVCommandStatus& rStat
 			std::move(Request)).get();
 
 		rReport = _bstr_t(Response.report().c_str()).Detach();
-		
+
 		Result = Response.hresult();
 		rStatus.hResult = Result;
 		rStatus.errorText = ConvertResult(Result);
@@ -460,14 +471,14 @@ HRESULT SVControlCommands::RunOnce(const _bstr_t& rInspectionName, SVCommandStat
 		}
 
 		std::string Inspection = SVStringConversions::to_utf8(rInspectionName);
-		
-		if(!Inspection.empty())
+
+		if (!Inspection.empty())
 		{
 			SvPb::RunOnceRequest Request;
 			Request.set_inspectionname(Inspection);
 			SvPb::StandardResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
-																	&SvWsl::SVRCClientService::RunOnce,
-																	std::move(Request)).get();
+				&SvWsl::SVRCClientService::RunOnce,
+				std::move(Request)).get();
 			Result = Response.hresult();
 			rStatus.hResult = Result;
 			rStatus.errorText = ConvertResult(Result);
@@ -483,7 +494,7 @@ HRESULT SVControlCommands::RunOnce(const _bstr_t& rInspectionName, SVCommandStat
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
 
-	return Result;
+		return Result;
 }
 
 HRESULT SVControlCommands::GetConfig(const _bstr_t& rFilePath, SVCommandStatus& rStatus)
@@ -603,7 +614,7 @@ HRESULT SVControlCommands::PutConfig(const _bstr_t& rFilePath, SVCommandStatus& 
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
 
-	return Result;
+		return Result;
 }
 
 HRESULT SVControlCommands::LoadConfig(const _bstr_t& rFilePath, SVCommandStatus& rStatus)
@@ -618,13 +629,13 @@ HRESULT SVControlCommands::LoadConfig(const _bstr_t& rFilePath, SVCommandStatus&
 		}
 
 		std::string fPath = SVStringConversions::to_utf8(rFilePath);
-		if(!fPath.empty())
+		if (!fPath.empty())
 		{
 			SvPb::LoadConfigRequest Request;
 			Request.set_filename(fPath.c_str());
 			SvPb::StandardResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
-																&SvWsl::SVRCClientService::LoadConfig,
-																std::move(Request)).get();
+				&SvWsl::SVRCClientService::LoadConfig,
+				std::move(Request)).get();
 			Result = Response.hresult();
 			rStatus.hResult = Result;
 			rStatus.errorText = ConvertResult(Result);
@@ -641,7 +652,7 @@ HRESULT SVControlCommands::LoadConfig(const _bstr_t& rFilePath, SVCommandStatus&
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
 
-	return Result;
+		return Result;
 }
 
 HRESULT SVControlCommands::GetFile(const _bstr_t& rSourcePath, const _bstr_t& rDestinationPath, SVCommandStatus& rStatus)
@@ -758,7 +769,7 @@ HRESULT SVControlCommands::PutFile(const _bstr_t& rSourcePath, const _bstr_t& rD
 		{
 			Result = E_INVALIDARG;
 			SVLOG(Result);
- 
+
 			rStatus.hResult = Result;
 			rStatus.errorText = L"Invalid File Path";
 		}
@@ -791,7 +802,7 @@ HRESULT SVControlCommands::GetDataDefinitionList(const _bstr_t& rInspectionName,
 		Result = Response.hresult();
 		rStatus.hResult = Result;
 		rStatus.errorText = ConvertResult(Result);
- 		SVLOG(Result);
+		SVLOG(Result);
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
 
@@ -827,11 +838,11 @@ HRESULT SVControlCommands::RegisterMonitorList(const _bstr_t& rListName, const _
 		Result = Response.hresult();
 		rStatus.hResult = Result;
 		rStatus.errorText = ConvertResult(Result);
- 		SVLOG(Result);
+		SVLOG(Result);
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
 
-	return Result;
+		return Result;
 }
 
 HRESULT SVControlCommands::QueryMonitorList(const _bstr_t& rListName, SvPb::ListType Type, CComVariant& rItemNames, SVCommandStatus& rStatus)
@@ -853,7 +864,7 @@ HRESULT SVControlCommands::QueryMonitorList(const _bstr_t& rListName, SvPb::List
 			std::move(Request)).get();
 
 		Result = Response.hresult();
- 		if (S_OK == Result)
+		if (S_OK == Result)
 		{
 			SvPb::Value* pValue = Response.mutable_names();
 			rItemNames = GetComVariant(*pValue->mutable_item());
@@ -911,7 +922,7 @@ HRESULT SVControlCommands::GetProduct(const _bstr_t& rListName, long TriggerCoun
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
 
-	return Result;
+		return Result;
 }
 HRESULT SVControlCommands::GetRejects(const _bstr_t& rListName, long TriggerCount, long ImageScale, ISVProductItems** ppViewItems, SVCommandStatus& rStatus)
 {
@@ -952,7 +963,7 @@ HRESULT SVControlCommands::GetRejects(const _bstr_t& rListName, long TriggerCoun
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
 
-	return Result;
+		return Result;
 }
 
 HRESULT SVControlCommands::ActivateMonitorList(const _bstr_t& rListName, bool Active, SVCommandStatus& rStatus)
@@ -1023,7 +1034,7 @@ HRESULT SVControlCommands::GetFailStatus(const _bstr_t& rListName, CComVariant& 
 		SVLOG(Result);
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
-	return Result;
+		return Result;
 }
 
 
@@ -1053,7 +1064,7 @@ HRESULT SVControlCommands::ShutDown(SVShutdownOptionsEnum Option, SVCommandStatu
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
 
-	return Result;
+		return Result;
 }
 
 
@@ -1092,7 +1103,7 @@ HRESULT SVControlCommands::GetInspectionNames(CComVariant& rNames, SVCommandStat
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
 
-	return Result;
+		return Result;
 }
 
 
@@ -1160,7 +1171,7 @@ HRESULT SVControlCommands::GetMonitorListProperties(const _bstr_t & rListName, l
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
 
-	return Result;
+		return Result;
 }
 
 HRESULT SVControlCommands::GetMaxRejectQeueDepth(unsigned long& rDepth, SVCommandStatus& rStatus)
@@ -1183,7 +1194,7 @@ HRESULT SVControlCommands::GetMaxRejectQeueDepth(unsigned long& rDepth, SVComman
 		SVLOG(Result);
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
-	return Result;
+		return Result;
 }
 
 HRESULT SVControlCommands::GetProductFilter(const _bstr_t& rListName, unsigned long& rFilter, SVCommandStatus& rStatus)
@@ -1211,7 +1222,7 @@ HRESULT SVControlCommands::GetProductFilter(const _bstr_t& rListName, unsigned l
 	}
 	HANDLE_EXCEPTION(Result, rStatus)
 
-	return Result;
+		return Result;
 }
 
 HRESULT SVControlCommands::SetProductFilter(const _bstr_t& rListName, unsigned long Filter, SVCommandStatus& rStatus)
@@ -1248,9 +1259,12 @@ void SVControlCommands::OnConnectionStatus(SvRpc::ClientStatus Status)
 	switch (Status)
 	{
 		case SvRpc::ClientStatus::Connected:
+			SV_LOG_GLOBAL(info) << "OnConnectionStatus Connect";
 			m_Notifier(_variant_t(_T("Conneted")), SVNotificationTypesEnum::Connected);
+			StartNotificationStreaming();
 			break;
 		case SvRpc::ClientStatus::Disconnected:
+			SV_LOG_GLOBAL(info) << "OnConnectionStatus Disconnect";
 			m_Notifier(_variant_t(_T("Disconneted")), SVNotificationTypesEnum::Disconnected);
 			break;
 	}
@@ -1260,7 +1274,7 @@ std::wstring SVControlCommands::ConvertResult(HRESULT hResult)
 {
 	std::wstring ResultText;
 
-	if(S_OK != hResult)
+	if (S_OK != hResult)
 	{
 		wchar_t Text[50];
 		swprintf_s(Text, 50, L"Fehlernummer: 0X%08X", hResult);

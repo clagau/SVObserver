@@ -34,6 +34,7 @@ public:
 	SVControlCommands() = delete;
 
 	HRESULT SetConnectionData(const _bstr_t& p_rServerName, boost::posix_time::time_duration timeout);
+	void ResetConnection();
 	void  StartNotificationStreaming();
 	void  StopNotificationStreaming();
 
@@ -69,14 +70,13 @@ public:
 
 	HRESULT GetProductFilter(const _bstr_t& rListName, unsigned long& rFilter, SVCommandStatus& p_rStatus);
 	HRESULT SetProductFilter(const _bstr_t& rListName, unsigned long filter, SVCommandStatus& p_rStatus);
-	bool isConnected() const { return m_Connected; }
+	bool isConnected() const { return (m_pRpcClient && m_pRpcClient->isConnected()); }
 	friend class NotificationHandler;
 private:
 	void OnConnectionStatus(SvRpc::ClientStatus Status);
 
 	std::wstring ConvertResult(HRESULT hResult);
-	
-	bool m_Connected {false};
+
 	NotifyFunctor m_Notifier;
 
 	SvRpc::ClientStreamContext m_csx {nullptr};

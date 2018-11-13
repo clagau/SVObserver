@@ -25,9 +25,7 @@
 #include "SVOGateway/SettingsLoader.h"
 #include "SVProtoBuf/SVRC.h"
 #include "SVRPCExampleLibrary/format.h"
-#include "SVRPCExampleServer/SeidenaderLogo100px.h"
-#include "SVRPCExampleServer/SeidenaderLogo200px.h"
-#include "SVRPCExampleServer/SeidenaderLogo300px.h"
+#include "SVRPCExampleServer/bitmap_image.hpp"
 #include "SVRPCLibrary/RPCServer.h"
 #include "SVRPCLibrary/RequestHandler.h"
 
@@ -37,6 +35,7 @@ using namespace SvPb;
 using namespace SvRpc;
 using namespace SvRpc::Example;
 
+static std::atomic_bool s_restartServer = false;
 static DeviceModeType s_deviceMode = DeviceModeType::runMode;
 
 void register_auth_handler(RequestHandler& requestHandler, AuthManager* am)
@@ -121,6 +120,33 @@ void register_example_handler(RequestHandler& requestHandler, boost::asio::io_se
 	});
 }
 
+static void createImageOfSize(std::string& data, unsigned int width, unsigned int height)
+{
+	bitmap_image fractal(width, height);
+	fractal.clear();
+
+	static int iter = 0;
+	int curr_iter = ++iter;
+	int red_mult = curr_iter % 3 > 0 ? 1 : 0;
+	int green_mult = (curr_iter + 1) % 3 > 0 ? 1 : 0;
+	int blue_mult = (curr_iter + 2) % 3 > 0 ? 1 : 0;
+
+	for (unsigned int y = 0; y < height; ++y)
+	{
+		for (unsigned int x = 0; x < width; ++x)
+		{
+			const unsigned char red = red_mult * std::round(255 * x / (1.0 * width));
+			const unsigned char green = green_mult * std::round(255 * x / (1.0 * width));
+			const unsigned char blue = blue_mult * std::round(255 * x / (1.0 * width));
+			fractal.set_pixel(x, y, red, green, blue);
+		}
+	}
+
+	std::ostringstream ss;
+	fractal.save_image(ss);
+	data = ss.str();
+}
+
 static void getImageForId(Image& img, const ImageId& id)
 {
 	if (id.imageindex() == 0)
@@ -132,19 +158,19 @@ static void getImageForId(Image& img, const ImageId& id)
 	{
 		img.set_height(1);
 		img.set_width(1);
-		*img.mutable_rgbdata() = std::string(reinterpret_cast<const char*>(SEIDENADER_LOGO_100PX), SEIDENADER_LOGO_100PX_LEN);
+		createImageOfSize(*img.mutable_rgbdata(), 100, 100);
 	}
 	if (id.imageindex() == 200)
 	{
 		img.set_height(200);
 		img.set_width(200);
-		*img.mutable_rgbdata() = std::string(reinterpret_cast<const char*>(SEIDENADER_LOGO_200PX), SEIDENADER_LOGO_200PX_LEN);
+		createImageOfSize(*img.mutable_rgbdata(), 128, 128);
 	}
 	if (id.imageindex() == 300)
 	{
 		img.set_height(300);
 		img.set_width(300);
-		*img.mutable_rgbdata() = std::string(reinterpret_cast<const char*>(SEIDENADER_LOGO_300PX), SEIDENADER_LOGO_300PX_LEN);
+		createImageOfSize(*img.mutable_rgbdata(), 300, 300);
 	}
 }
 
@@ -205,6 +231,7 @@ static void register_dummy_handler(RequestHandler& requestHandler)
 		s_deviceMode = req.mode();
 		StandardResponse res;
 		task.finish(std::move(res));
+		s_restartServer = true;
 	});
 	requestHandler.registerRequestHandler<
 		SVRCMessages,
@@ -465,7 +492,21 @@ int main()
 
 		while (true)
 		{
-			std::this_thread::sleep_for(std::chrono::seconds(5));
+			std::this_thread::sleep_for(std::chrono::seconds(1));
+			if (s_restartServer)
+			{
+				SV_LOG_GLOBAL(warning) << "Stopping current http server!";
+				server->stop();
+				server.reset();
+
+				std::this_thread::sleep_for(std::chrono::seconds(3));
+				SV_LOG_GLOBAL(warning) << "Starting new http server!";
+				server = std::make_unique<HttpServer>(httpSettings, io_service);
+				server->start();
+				SV_LOG_GLOBAL(warning) << "Server running on ws://" << httpSettings.Host << ":" << httpSettings.Port << "/";
+				
+				s_restartServer = false;
+			}
 		}
 
 		server->stop();

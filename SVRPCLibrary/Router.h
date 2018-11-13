@@ -21,12 +21,13 @@ class Router
 {
 public:
 	Router::Router(RPCClient& rClient, RequestHandler* pRequestHandler);
-	Router::Router(const SvHttp::WebsocketClientSettings& rClientSettings, RequestHandler* pRequestHandler);
+	Router::Router(const SvHttp::WebsocketClientSettings& rClientSettings, RequestHandler* pRequestHandler, std::function<void(ClientStatus)> StatusCallback);
 
 private:
 	bool Router::ConnectToRouter();
 	SvHttp::WebsocketClientSettings m_Settings;
 	std::unique_ptr<SvRpc::RPCClient> m_pClientRouter {nullptr};
+	std::function<void(ClientStatus)> m_pStatusCallback {nullptr};
 };
 
 } // namespace SvRpc

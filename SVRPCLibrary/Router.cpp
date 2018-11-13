@@ -35,9 +35,10 @@ Router::Router(RPCClient& rClient, RequestHandler* pRequestHandler)
 	}
 }
 
-Router::Router(const SvHttp::WebsocketClientSettings& rClientSettings, RequestHandler* pRequestHandler)
+Router::Router(const SvHttp::WebsocketClientSettings& rClientSettings, RequestHandler* pRequestHandler, std::function<void(ClientStatus)> StatusCallback)
 {
 	m_Settings  = rClientSettings;
+	m_pStatusCallback = StatusCallback;
 	if (nullptr != pRequestHandler)
 	{
 		pRequestHandler->registerDefaultRequestHandler([this](SvPenv::Envelope&& Request, Task<SvPenv::Envelope> Task)
@@ -86,7 +87,7 @@ bool Router::ConnectToRouter()
 	}
 	if (nullptr == m_pClientRouter)
 	{
-		m_pClientRouter = std::make_unique<SvRpc::RPCClient>(m_Settings);
+		m_pClientRouter = std::make_unique<SvRpc::RPCClient>(m_Settings, m_pStatusCallback);
 	}
 	if (!m_pClientRouter->isConnected())
 	{
@@ -98,7 +99,6 @@ bool Router::ConnectToRouter()
 	}
 	else
 	{
-		m_pClientRouter.reset();
 		return false;
 	}
 }

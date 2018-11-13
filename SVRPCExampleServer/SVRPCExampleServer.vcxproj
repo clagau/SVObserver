@@ -127,9 +127,6 @@
     <ClInclude Include="..\SVOGateway\SettingsLoader.h" />
     <ClInclude Include="AutoBuild.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="SeidenaderLogo100px.h" />
-    <ClInclude Include="SeidenaderLogo200px.h" />
-    <ClInclude Include="SeidenaderLogo300px.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>

@@ -62,10 +62,11 @@ bool on_http_request(SvAuth::RestHandler& rRestHandler, const SvHttp::HttpReques
 	return false;
 }
 
+
+
 void StartWebServer(DWORD argc, LPTSTR  *argv)
 {
 	SvLog::bootstrap_logging();
-
 	SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
 	Exception.setMessage(SVMSG_SVGateway_2_GENERAL_INFORMATIONAL, SvStl::Tid_Started, SvStl::SourceFileParams(StdMessageParams));
 	try
@@ -78,7 +79,7 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 		SvLog::init_logging(settings.logSettings);
 		SV_LOG_GLOBAL(info) << "SVOGatewayIniPath:" << settingsLoader.GetIni();
 		SV_LOG_GLOBAL(info) << "WebsocketServer is starting";
-		
+
 		SV_LOG_GLOBAL(debug) << "Initializing Matrox Image Library";
 		// Allocate MilSystem
 		MIL_ID MilId = MappAlloc(M_DEFAULT, M_NULL);
@@ -93,16 +94,43 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 
 		auto sharedMemoryAccess = std::make_unique<SvOgw::SharedMemoryAccess>();
 		SvOgw::ServerRequestHandler requestHandler(sharedMemoryAccess.get(), &authManager);
-		SvRpc::Router SVObserverRouter {settings.observerSetting, &requestHandler};
+
+
 		SvRpc::RPCServer rpcServer(&requestHandler);
 		settings.httpSettings.pEventHandler = &rpcServer;
+
 		settings.httpSettings.HttpRequestHandler = std::bind(&on_http_request, std::ref(restHandler), std::placeholders::_1, std::placeholders::_2);
 		boost::asio::io_service IoService {1};
+		boost::asio::io_service::work work(IoService);
 
-		SvHttp::HttpServer Server(settings.httpSettings, IoService);
-		Server.start();
+		std::unique_ptr<SvHttp::HttpServer> pServer = std::make_unique<SvHttp::HttpServer>(settings.httpSettings, IoService);
+
+		//The callback function of  the router Stops the httpServer when the connection to the svobserver is broken.
+		SvRpc::Router SVObserverRouter {settings.observerSetting, &requestHandler,  [&settings, &IoService, &pServer](SvRpc::ClientStatus status)
+		{
+			if (status == SvRpc::ClientStatus::Connected &&  nullptr == pServer)
+			{
+				pServer = std::make_unique<SvHttp::HttpServer>(settings.httpSettings, IoService);
+				pServer->start();
+				SV_LOG_GLOBAL(debug) << "Start HTTP server in callback in Router";
+			}
+			else if (status == SvRpc::ClientStatus::Disconnected &&  pServer.get())
+			{
+				SV_LOG_GLOBAL(debug) << "Stop HTTP server incallback in Router";
+				pServer->stop();
+				pServer.reset(nullptr);
+			}
+			;
+
+		}};
+
+
+		if (pServer)
+		{
+			pServer->start();
+		}
+
 		std::thread ServerThread([&] { IoService.run(); });
-
 		if (CheckCommandLineArgs(argc, argv, _T("/cmd")))
 		{
 			bool exit {false};
@@ -121,7 +149,12 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 			::WaitForSingleObject(gServiceStopEvent, INFINITE);
 		}
 
-		Server.stop();
+		if (pServer)
+		{
+			pServer->stop();
+		}
+
+		///Stop work
 		IoService.stop();
 		ServerThread.join();
 
@@ -162,9 +195,7 @@ int main(int argc, _TCHAR* argv[])
 
 		if (!StartServiceCtrlDispatcher(ServiceTable))
 		{
-#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)	
-			OutputDebugString(_T("StartServiceCtrlDispatcher returned error"));
-#endif		
+			SV_LOG_GLOBAL(error) << "StartServiceCtrlDispatcher returned error";
 			Result = GetLastError();
 			// running as console (for Debug?)
 			if (ERROR_FAILED_SERVICE_CONTROLLER_CONNECT == Result)
