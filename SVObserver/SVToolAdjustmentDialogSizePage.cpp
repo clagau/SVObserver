@@ -198,7 +198,7 @@ HRESULT SVToolAdjustmentDialogSizePage::SetInspectionData()
 					Controller EquationValues{ SvOg::BoundValues{ pEquation->GetInspection()->GetUniqueObjectID(), pEquation->GetUniqueObjectID() } };
 					EquationValues.Init();
 					EquationValues.Set<bool>(pEquation->enabled.GetEmbeddedID(), bEnabled);
-					EquationValues.Commit(SvOg::doNothing);
+					EquationValues.Commit(SvOg::PostAction::doNothing);
 				}
 			}
 			else

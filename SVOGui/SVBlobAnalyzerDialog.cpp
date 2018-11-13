@@ -253,9 +253,7 @@ namespace SvOg
 			m_Values.Set<CString>(SVBlobEnabledFeaturesObjectGuid, m_FeaturesEnabled.c_str());
 
 			//! Reset the Blob Analyzer
-			m_Values.Commit(SvOg::doResetRunOnce);
-			//! Initialize the embedded values
-			m_Values.Init();
+			m_Values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
 
 			//List of not enabled.
 			initFeatureListBox(m_lbAvailableFeatures, false);
@@ -319,9 +317,7 @@ namespace SvOg
 			}
 
 			//! Reset the Blob Analyzer and then call initFeatureListBox to display the new feature lists
-			m_Values.Commit(SvOg::doResetRunOnce);
-			//! Initialize the embedded values
-			m_Values.Init();
+			m_Values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
 
 			//List of not enabled.
 			initFeatureListBox(m_lbAvailableFeatures, false);

@@ -74,32 +74,9 @@ public:
 
 		if (S_OK == hr)
 		{
-			bool bReset {false};
-			bool bRunOnce {false};
+			bool bReset {doAction & PostAction::doReset};
+			bool bRunOnce {doAction & PostAction::doRunOnce};
 
-			switch (doAction)
-			{
-				case doReset:
-				{
-					bReset = true;
-					break;
-				}
-				case doRunOnce:
-				{
-					bRunOnce = true;
-					break;
-				}
-				case doResetRunOnce:
-				{
-					bReset = true;
-					bRunOnce = true;
-					break;
-				}
-				default:
-				{
-					break;
-				}
-			}
 			if (bReset)
 			{
 				// Do a reset of the Tool

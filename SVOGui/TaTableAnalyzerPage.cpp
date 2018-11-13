@@ -369,7 +369,7 @@ HRESULT TaTableAnalyzerPage::SetInspectionData()
 				m_pValues->Set<CString>(TableAnaylzerExcludeHighGuid, Value);
 				m_EditExcludeLow.GetWindowText(Value);
 				m_pValues->Set<CString>(TableAnaylzerExcludeLowGuid, Value);
-				hrOk = m_pValues->Commit(SvOg::doResetRunOnce);
+				hrOk = m_pValues->Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
 				errorMessageList = m_pValues->getFailedMessageList();
 			}
 			break;
@@ -378,7 +378,7 @@ HRESULT TaTableAnalyzerPage::SetInspectionData()
 				CString Value;
 				m_EditLimitValue.GetWindowText(Value);
 				m_pValues->Set<CString>(TableAnaylzerLimitValueGuid, Value);
-				hrOk = m_pValues->Commit(SvOg::doResetRunOnce);
+				hrOk = m_pValues->Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
 				errorMessageList = m_pValues->getFailedMessageList();
 			}
 			break;

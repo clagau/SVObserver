@@ -1083,7 +1083,10 @@ namespace SvOg
 		m_values.Set<long>(SVpatModelCenterYObjectGuid, m_CenterY);
 		m_values.Set<CString>(SVpatDontCareImageFileGuid, m_strDontCareName);
 		m_values.Set<bool>(SVpatDontCareObjectGuid, m_bDontCare ? true : false);
-		HRESULT result = m_values.Commit(shouldResetTask ? SvOg::doResetRunOnce : SvOg::doRunOnce);
+
+		SvOg::PostAction commitAction {SvOg::PostAction::doRunOnce};
+		commitAction = commitAction | (shouldResetTask ? SvOg::PostAction::doReset : SvOg::PostAction::doNothing);
+		HRESULT result = m_values.Commit(commitAction);
 		if (S_OK != result && nullptr != pErrorMessages)
 		{
 			*pErrorMessages = m_values.getFailedMessageList();

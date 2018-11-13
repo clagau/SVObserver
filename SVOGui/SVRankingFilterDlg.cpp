@@ -79,7 +79,7 @@ namespace SvOg
 			}// end for
 		}// end for
 
-		m_Values.Commit(SvOg::doResetRunOnce);
+		m_Values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
 
 		UpdateData( FALSE );
 

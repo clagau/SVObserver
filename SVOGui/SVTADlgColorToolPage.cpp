@@ -61,7 +61,7 @@ namespace SvOg
 		UpdateData( true ); // get data from dialog
 
 		m_Values.Set<bool>(SVConvertToHSIObjectGuid, m_convertToHSI ? true : false);
-		Result = m_Values.Commit(SvOg::doResetRunOnce);
+		Result = m_Values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
 
 		UpdateData( false );
 		return Result;

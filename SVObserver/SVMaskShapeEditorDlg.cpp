@@ -195,7 +195,9 @@ HRESULT SVMaskShapeEditorDlg::SetInspectionData(bool bResetObject/* = false*/)
 	m_ShapeHelperValues.Commit();
 
 	//This needs to be called due to SetInspectionData being called by UpdateMask which has values set but not commited
-	m_Values.Commit(bResetObject ? SvOg::doResetRunOnce : SvOg::doRunOnce);
+	SvOg::PostAction commitAction{SvOg::PostAction::doRunOnce};
+	commitAction = commitAction | (bResetObject ? SvOg::PostAction::doReset : SvOg::PostAction::doNothing);
+	m_Values.Commit(commitAction);
 
 	m_ShapeHelperValues.Init();
 

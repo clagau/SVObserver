@@ -100,7 +100,7 @@ namespace SvOg
 		m_Values.Set<bool>(SVCustomFilterClippingGuid, m_ClippingEnabled ? true : false);
 		_variant_t value = ConvertVectorToVariantSafeArray<LongArray>(m_KernelArray);
 		m_Values.Set<_variant_t>(Custom2FilterKernelGuid, value);
-		m_Values.Commit(SvOg::doResetRunOnce);
+		m_Values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
 
 		return Result;
 	}

@@ -361,7 +361,7 @@ void SVExternalToolInputSelectPage::OnOK()
 			pGroup = pGroup->GetSibling();
 		}
 		m_Tree.SaveState( m_pTask->m_Data.m_PropTreeState );
-		m_Values.Commit(SvOg::doResetRunOnce);
+		m_Values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
 		CPropertyPage::OnOK();
 	}
 }

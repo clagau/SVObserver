@@ -44,8 +44,7 @@ namespace SvOg
 		HRESULT hr = S_OK;
 
 		SetData();
-		hr = m_Values.Commit(SvOg::doResetRunOnce);
-		m_Values.Init(); // because we want to show C:\run and not C:\Images, etc...
+		hr = m_Values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
 		GetData();
 
 		return hr;

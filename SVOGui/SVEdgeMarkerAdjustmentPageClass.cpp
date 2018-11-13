@@ -373,8 +373,6 @@ namespace SvOg
 		}
 
 		m_Values.Commit();
-		//After setting the values read them as some are changed in the RunOnce routine
-		m_Values.Init();
 
 		if( S_OK != GetInspectionData() )
 		{

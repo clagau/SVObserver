@@ -87,7 +87,7 @@ namespace SvOg
 		UpdateData(true); // get data from dialog
 
 		m_LutEquation.Set<bool>(SVLUTEquationClipFlagObjectGuid, m_isFormulaClip ? true : false);
-		m_LutEquation.Commit(SvOg::doNothing);
+		m_LutEquation.Commit(SvOg::PostAction::doNothing);
 
 		long lUpperClip = static_cast<long> (m_upperSlider.GetPos());
 		m_Values.Set<long>(SVLUTUpperClipObjectGuid, lUpperClip);
@@ -105,10 +105,7 @@ namespace SvOg
 			m_Values.Set<long>(SVLUTModeObjectGuid, lValue);
 		}
 	
-		Result = m_Values.Commit(SvOg::doResetRunOnce);
-
-		//This is needed to read the new values into the controller
-		m_Values.Init();
+		Result = m_Values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
 
 		return Result;
 	}

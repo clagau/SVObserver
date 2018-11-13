@@ -76,7 +76,9 @@ namespace SvOg
 			m_Values.Set<long>(SVWarpTypeObjectGuid, Value);
 		}
 		m_Values.Set<double>(SVWarpAngleObjectGuid, m_dWarpAngle);
-		Result = m_Values.Commit(ResetTool ? SvOg::doResetRunOnce : SvOg::doRunOnce);
+		SvOg::PostAction commitAction {SvOg::PostAction::doRunOnce};
+		commitAction = commitAction | (ResetTool ? SvOg::PostAction::doReset : SvOg::PostAction::doNothing);
+		Result = m_Values.Commit(commitAction);
 
 		return Result;
 	}

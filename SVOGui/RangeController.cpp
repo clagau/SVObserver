@@ -65,7 +65,7 @@ namespace SvOg
 
 	HRESULT RangeController::Commit()
 	{
-		return m_RangeValues.Commit(SvOg::doResetRunOnce, true);
+		return m_RangeValues.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce, true);
 	}
 
 	std::string RangeController::Get(const std::string& rName) const

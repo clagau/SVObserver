@@ -150,7 +150,7 @@ void SVToolAdjustmentDialogMaskPageClass::SetInspectionData()
 		m_Values.Set<long>(SVDrawCriteriaObjectGuid, Value);
 	}
 
-	m_Values.Commit(SvOg::doResetRunOnce);
+	m_Values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
 }
 
 void SVToolAdjustmentDialogMaskPageClass::DoDataExchange(CDataExchange* pDX)
@@ -386,7 +386,7 @@ void SVToolAdjustmentDialogMaskPageClass::OnImportMaskButton()
 
 void SVToolAdjustmentDialogMaskPageClass::OnEditShapeMaskButton() 
 {
-	m_Values.Commit(SvOg::doResetRunOnce);
+	m_Values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
 
 	SVMaskShapeEditorDlg dlg(m_InspectionID, m_TaskObjectID, m_maskController.GetInstanceID(), m_maskController.GetShapeMaskHelperID());
 
@@ -593,7 +593,7 @@ UINT_PTR CALLBACK SVToolAdjustmentDialogMaskPageClass::ColorDlgHookFn( HWND hdlg
 				pWndRed->GetWindowText(sText);
 
 				m_pThis->m_Values.Set<CString>(SVMaskFillColorGuid, sText);
-				m_pThis->m_Values.Commit(SvOg::doResetRunOnce);
+				m_pThis->m_Values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
 				m_pThis->setImages();
 			}
 		}

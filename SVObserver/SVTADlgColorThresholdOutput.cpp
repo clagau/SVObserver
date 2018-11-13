@@ -101,7 +101,7 @@ void SVTADlgColorThresholdOutput::OnEnabledThreshold()
 		Controller Values{ SvOg::BoundValues{ m_pThreshold->GetInspection()->GetUniqueObjectID(), m_pThreshold->GetUniqueObjectID() } };
 		Values.Init();
 		Values.Set<bool>(m_pEnabled->GetEmbeddedID(), m_Enabled ? true : false);
-		Values.Commit(SvOg::doResetRunOnce);
+		Values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
 	};
 	m_svDlgImage.refresh();
 }

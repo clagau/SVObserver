@@ -61,7 +61,7 @@ namespace SvOg
 			long lValue = static_cast<long> (m_ctlProfileOrientation.GetItemData(iCurSel));
 			m_Values.Set<long>(SVProfileOrientationGuid, lValue);
 		}
-		Result = m_Values.Commit(SvOg::doResetRunOnce);
+		Result = m_Values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
 
 		return Result;
 	}

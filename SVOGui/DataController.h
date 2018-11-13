@@ -71,11 +71,17 @@ namespace SvOg
 			return GetObjectName(m_Data.GetInspectionID(), m_Data.GetObjectID(rEmbeddedID));
 		}
 
-		HRESULT Commit(PostAction doAction = doRunOnce, bool shouldDisplayErrors = false)
+		HRESULT Commit(PostAction doAction = PostAction::doRunOnce, bool shouldDisplayErrors = false)
 		{
 			try
 			{
 				SetValues(m_Data, doAction);
+
+				//If a runonce is done then read values as they may have changed
+				if(doAction & PostAction::doRunOnce)
+				{
+					GetValues(m_Data);
+				}
 			}
 			catch (const SvStl::MessageContainerVector& rSvE)
 			{

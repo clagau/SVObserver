@@ -169,8 +169,6 @@ void SVTADlgTranslationShiftPageClass::refresh()
 	if (nullptr != m_pTool)
 	{
 		SetInspectionData();
-		//Fetch new values
-		m_Values.Init();
 
 		FillShiftProperties();
 

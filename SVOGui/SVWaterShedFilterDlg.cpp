@@ -76,7 +76,7 @@ namespace SvOg
 		m_Values.Set<long>(SVWatershedFilterControlFlagGuid, lControlFlag);
 		m_Values.Set<long>(SVWatershedFilterMinVariationGuid, m_lMinVariation);
 		m_Values.Set<bool>(SVWatershedFilterUseMarkerGuid, m_bUseMarker ? true : false);
-		m_Values.Commit(SvOg::doResetRunOnce);
+		m_Values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
 
 		UpdateData( FALSE );
 
