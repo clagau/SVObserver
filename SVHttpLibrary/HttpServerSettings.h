@@ -14,6 +14,7 @@
 #include <filesystem>
 #include <functional>
 #include <string>
+#include "DefaultSettings.h"
 
 namespace SvHttp
 {
@@ -58,7 +59,7 @@ struct HttpServerSettings
 
 	/// Port the tcp server binds to. Make sure you start the service with
 	/// an administrative account when binding to ports <1024.
-	uint16_t Port {8080};
+	uint16_t Port {SvHttp::Default_Port};
 
 	/// Size of the read buffer in bytes. Tweak to get an optimal trade-off
 	/// between memory usage and throughput. A value between 2k and 64k is

@@ -14,7 +14,6 @@
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
 #include "WebsocketLibrary/SVRCClientService.h"
-#include "WebsocketLibrary\Definition.h"
 #include "WebsocketLibrary\RunRequest.inl"
 #include "SVLogLibrary/Logging.h"
 
@@ -82,7 +81,7 @@ int main(int argc, char* argv[])
 {
 	SvHttp::WebsocketClientSettings ClientSettings;
 	ClientSettings.Host = "192.168.10.110";
-	ClientSettings.Port = SvWsl::Default_Port;
+	ClientSettings.Port = SvHttp::Default_Port;
 	if (argc > 1)
 		ClientSettings.Host = argv[1];
 	if (argc > 2)

@@ -11,7 +11,6 @@
 #include "SVAuthLibrary/AuthManagerSettings.h"
 #include "SVHttpLibrary/HttpServerSettings.h"
 #include "SVLogLibrary/LogSettings.h"
-#include "WebsocketLibrary/Definition.h"
 #include "SVHttpLibrary/WebsocketClientSettings.h"
 
 namespace SvOgw
@@ -20,7 +19,7 @@ struct Settings
 {
 	Settings()
 	{
-		observerSetting.Port = SvWsl::Default_SecondPort;
+		observerSetting.Port = SvHttp::Default_SecondPort;
 		observerSetting.Host = "127.0.0.1";
 		logSettings.FileLogEnabled = false;
 		logSettings.StdoutLogEnabled = false;

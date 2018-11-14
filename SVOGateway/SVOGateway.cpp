@@ -19,7 +19,6 @@
 #include <conio.h>
 
 #include "SVLogLibrary/Logging.h"
-#include "WebsocketLibrary/Definition.h"
 #include "SharedMemoryAccess.h"
 #include "ServerRequestHandler.h"
 #include "SettingsLoader.h"

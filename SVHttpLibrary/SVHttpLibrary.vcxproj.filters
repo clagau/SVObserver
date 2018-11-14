@@ -51,6 +51,9 @@
     <ClInclude Include="HttpClient.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="DefaultSettings.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

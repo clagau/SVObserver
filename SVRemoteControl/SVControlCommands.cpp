@@ -22,7 +22,6 @@
 #include "ProtoBufGetter.h"
 #include "ProtoBufSetter.h"
 #include "WebsocketLibrary\RunRequest.inl"
-#include "WebsocketLibrary\Definition.h"
 #include "NotificationHandler.h"
 #include "SVLogLibrary/Logging.h"
 #include "RCSettings.h"

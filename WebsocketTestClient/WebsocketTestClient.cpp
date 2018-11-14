@@ -28,7 +28,7 @@
 #include "SVRPCLibrary/RPCClient.h"
 #include "SVLogLibrary/Logging.h"
 #include "WebsocketLibrary/RunRequest.inl"
-#include "WebsocketLibrary/Definition.h"
+#include "SvHttpLibrary/DefaultSettings.h"
 
 
 void PrintCurImage(const SvPb::ImageId& rCurrentImage)
@@ -262,7 +262,7 @@ int main(int argc, char* argv[])
 	SvHttp::WebsocketClientSettings clientSettings;
 	clientSettings.Host = "127.0.0.1";
 //	clientSettings.Host = "192.168.10.111";
-	clientSettings.Port = SvWsl::Default_Port;
+	clientSettings.Port = SvHttp::Default_Port;
 	if (argc > 1)
 		clientSettings.Host = argv[1];
 	if (argc > 2)
@@ -297,7 +297,7 @@ int main(int argc, char* argv[])
 			{
 				if (wordsize > 1)
 				{
-					uint16_t port = SvWsl::Default_Port;
+					uint16_t port = SvHttp::Default_Port;
 					if (wordsize > 2)
 					{
 						port = atoi(words[2].c_str());
@@ -326,7 +326,7 @@ int main(int argc, char* argv[])
 					<< "  b1 [iterations=1000] [repeats=1] (Benchmark 1)" << std::endl
 					<< "  b2 [image_width=200] [iterations=1000] [repeats=1] (Benchmark 2)" << std::endl;
 				std::cout << "dis disconnect" << std::endl;
-				std::cout << "con  connect [ip adress] [portnr  = 8080] " << std::endl;
+				std::cout << "con  connect [ip adress] [portnr  = " << SvHttp::Default_Port   <<  "]\n";
 				std::cout << "qli [monitorlistname] [p,r,f,a] [Image=1]  [val=1]" << std::endl;
 			}
 			else if (!pRpcClient ||  !pRpcClient->isConnected() )

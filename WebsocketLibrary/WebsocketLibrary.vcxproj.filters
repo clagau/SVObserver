@@ -12,9 +12,6 @@
     <ClInclude Include="stdafx.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="Definition.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVRCClientService.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>

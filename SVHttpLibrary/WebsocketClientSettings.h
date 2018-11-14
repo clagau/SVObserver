@@ -12,6 +12,7 @@
 
 #include <cstdint>
 #include <string>
+#include "DefaultSettings.h"
 
 namespace SvHttp
 {
@@ -21,7 +22,7 @@ struct WebsocketClientSettings
 	std::string Host {"127.0.0.1"};
 
 	/// Port of the WebSocket server to connect to.
-	uint16_t Port {8080};
+	uint16_t Port {SvHttp::Default_Port};
 
 	/// Path of the WebSocket server to connect to.
 	std::string Path {"/"};

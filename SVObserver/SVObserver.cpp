@@ -114,7 +114,6 @@
 #include "InspectionCommands\CommandFunctionHelper.h"
 #include "SVRCWebsocketServer.h"
 #include "SVRCCommand.h"
-#include "WebsocketLibrary\Definition.h"
 #include "SVLogLibrary\Logging.h"
 #include "WebSocketSettingsLoader.h"
 #pragma endregion Includes

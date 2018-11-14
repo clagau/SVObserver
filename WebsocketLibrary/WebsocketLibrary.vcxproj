@@ -193,7 +193,6 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Definition.h" />
     <ClInclude Include="SVRCClientService.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
