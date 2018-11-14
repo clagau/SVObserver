@@ -2692,12 +2692,12 @@ SVIPDoc* SVObserverApp::NewSVIPDoc(LPCTSTR DocName, SVInspectionProcess& Inspect
 }
 #pragma endregion virtual
 
-HRESULT SVObserverApp::LoadPackedConfiguration(const std::string& rPackedFileName)
+HRESULT SVObserverApp::LoadPackedConfiguration(const std::string& rFileName, bool bPacFileFormat)
 {
 	HRESULT l_Status = S_OK;
-	std::string fileName{rPackedFileName};
+	std::string fileName{rFileName};
 
-	if (0 == _access(rPackedFileName.c_str(), 0))
+	if (0 == _access(rFileName.c_str(), 0))
 	{
 		//@WARNING [gra][8.10][11.06.2018] SendMessage is used to avoid problems by accessing the SVObserverApp instance from another thread
 		//This should be changed using inspection commands
@@ -2710,10 +2710,10 @@ HRESULT SVObserverApp::LoadPackedConfiguration(const std::string& rPackedFileNam
 
 	if (S_OK == l_Status)
 	{
-		if(std::string::npos != fileName.find(_T(".pac")))
+		if(bPacFileFormat)
 		{
 			SVPackedFile PackedFile;
-			if (PackedFile.UnPackFiles(rPackedFileName.c_str(), SvStl::GlobalPath::Inst().GetRunPath().c_str()))
+			if (PackedFile.UnPackFiles(rFileName.c_str(), SvStl::GlobalPath::Inst().GetRunPath().c_str()))
 			{
 				if (PackedFile.getConfigFilePath().empty() || (_access(PackedFile.getConfigFilePath().c_str(), 0) != 0))
 				{

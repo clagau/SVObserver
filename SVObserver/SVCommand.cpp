@@ -332,6 +332,7 @@ STDMETHODIMP CSVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR* pF
 	//The file name is set only when the first block is sent (lOffset == 0) but is needed when the following blocks are sent
 	//After the last block the file name is cleared
 	static std::string PackedFileName;
+	static bool bPacFileFormat {false};
 	std::string configFileName;
 	HRESULT hrResult = S_OK;
 	CFile binFile;
@@ -358,16 +359,10 @@ STDMETHODIMP CSVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR* pF
 			if (lOffset < 1)
 			{
 				PackedFileName = SvStl::GlobalPath::Inst().GetTempPath(_T("Temp"));
+				PackedFileName += SvDef::cPackedConfigExtension;
 				//For old .pac file format the first 4 bytes are always 1
-				DWORD FileVersion = (lBlockSize > sizeof(DWORD)) ? *(reinterpret_cast<DWORD*> (*pFileData)) : 0;
-				if(1 == FileVersion)
-				{
-					PackedFileName += _T(".pac");
-				}
-				else
-				{
-					PackedFileName += SvDef::cPackedConfigExtension;
-				}
+				DWORD fileVersion = (lBlockSize > sizeof(DWORD)) ? *(reinterpret_cast<DWORD*> (*pFileData)) : 0;
+				bPacFileFormat = (1 == fileVersion) ? true : false;
 				if (binFile.Open(PackedFileName.c_str(), CFile::shareDenyNone | CFile::modeWrite | CFile::modeCreate | CFile::typeBinary, ex))
 				{
 					bRet = true;
@@ -401,7 +396,7 @@ STDMETHODIMP CSVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR* pF
 
 		if (bLastFlag)
 		{
-			bSuccess = S_OK == TheSVObserverApp.LoadPackedConfiguration(PackedFileName);
+			bSuccess = S_OK == TheSVObserverApp.LoadPackedConfiguration(PackedFileName, bPacFileFormat);
 			PackedFileName.clear();
 		}
 	}

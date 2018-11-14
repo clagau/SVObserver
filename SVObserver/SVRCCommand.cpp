@@ -227,23 +227,18 @@ void SVRCCommand::PutConfig(const SvPb::PutConfigRequest& rRequest, SvRpc::Task<
 			RemoteFilePath += SvDef::cPackedConfigExtension;
 		}
 
-		std::string TempFileName = GetTempFileNameFromFilePath(RemoteFilePath);
+		std::string TempFileName = GetTempFileNameFromFilePath(RemoteFilePath, SvDef::cPackedConfigExtension);
 		if (0 != rRequest.filedata().length() && !TempFileName.empty())
 		{
-			//For old .pac file format the first 4 bytes are always 1
-			DWORD FileVersion = (rRequest.filedata().length() > sizeof(DWORD)) ? *(reinterpret_cast<const DWORD*> (rRequest.filedata().c_str())) : 0;
-			if (1 == FileVersion)
-			{
-				//If old file format then make sure it has .pac extension
-				SvUl::searchAndReplace(TempFileName, SvDef::cPackedConfigExtension, _T(".pac"));
-			}
 			Result = SVEncodeDecodeUtilities::StringContentToFile(TempFileName, rRequest.filedata());
 			if (S_OK == Result)
 			{
+				//For old .pac file format the first 4 bytes are always 1
+				DWORD fileVersion = (rRequest.filedata().length() > sizeof(DWORD)) ? *(reinterpret_cast<const DWORD*> (rRequest.filedata().c_str())) : 0;
 				SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-				Result = TheSVObserverApp.LoadPackedConfiguration(TempFileName);
-				::remove(TempFileName.c_str());
+				Result = TheSVObserverApp.LoadPackedConfiguration(TempFileName, (1 == fileVersion) ? true : false);
 				SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
+				::remove(TempFileName.c_str());
 			}
 		}
 		else
@@ -1047,7 +1042,7 @@ void SVRCCommand::RegisterNotificationStream(boost::asio::io_service* pIoService
 	SVVisionProcessorHelper::Instance().RegisterNotificationStream(pIoService, rRequest, rObserver, ctx);
 }
 
-std::string SVRCCommand::GetFileNameFromFilePath(const std::string& rFilePath)
+std::string SVRCCommand::GetFileNameFromFilePath(const std::string& rFilePath, const std::string& rExtension /*= std::string()*/)
 {
 	std::string Result;
 
@@ -1059,15 +1054,15 @@ std::string SVRCCommand::GetFileNameFromFilePath(const std::string& rFilePath)
 		_splitpath(rFilePath.c_str(), nullptr, nullptr, fname, ext);
 
 		Result = fname;
-		Result += ext;
+		Result += rExtension.empty() ? ext : rExtension;
 	}
 
 	return Result;
 }
 
-std::string SVRCCommand::GetTempFileNameFromFilePath(const std::string& rFilePath)
+std::string SVRCCommand::GetTempFileNameFromFilePath(const std::string& rFilePath, const std::string& rExtension /*= std::string()*/)
 {
-	std::string Result = GetFileNameFromFilePath(rFilePath);
+	std::string Result = GetFileNameFromFilePath(rFilePath, rExtension);
 
 	if (!Result.empty())
 	{

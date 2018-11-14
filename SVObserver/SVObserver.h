@@ -182,8 +182,8 @@ public:
 	HRESULT  LoadConfiguration( unsigned long& ulSVOConfigVersion, BSTR bstrFileName, SVTreeType& p_rTree);
 
 
-	HRESULT LoadPackedConfiguration( const std::string& p_rPackedFileName );
-	HRESULT SavePackedConfiguration( const std::string& p_rPackedFileName );
+	HRESULT LoadPackedConfiguration(const std::string& rFileName, bool bPacFileFormat);
+	HRESULT SavePackedConfiguration(const std::string& rFileName);
 
 	SVMainFrame* GetMainFrame() const;
 	HRESULT CanCloseMainFrame();
