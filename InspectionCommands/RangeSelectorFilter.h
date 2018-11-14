@@ -12,6 +12,7 @@
 //Moved to precompiled header: #include <boost\assign\list_of.hpp>
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "ObjectInterfaces\IObjectClass.h"
+#include "ObjectInterfaces\IValueObject.h"
 
 #pragma endregion Includes
 
@@ -27,18 +28,7 @@ public:
 
 	virtual ~RangeSelectorFilter() {};
 private:
-	std::set<SvDef::SVObjectSubTypeEnum> m_filter;
 	std::string m_excludePath;
-
-	static bool IsExcluded(SvDef::SVObjectSubTypeEnum type, const std::set<SvDef::SVObjectSubTypeEnum>& rFilter)
-	{
-		return (rFilter.size() > 0 && rFilter.end() == rFilter.find(type));
-	}
-
-	static bool HasAttribute(unsigned int attributesMask, unsigned int attributes)
-	{
-		return attributesMask == (attributes & attributesMask);
-	}
 
 	static bool IsSameLineage(const std::string& name, const std::string& excludedPath)
 	{
@@ -52,33 +42,25 @@ private:
 		return bSame;
 	}
 
-	static bool IsAllowed(SvDef::SVObjectSubTypeEnum type, UINT attributesFilter, UINT attributesAllowed, const std::string& name, const std::set<SvDef::SVObjectSubTypeEnum>& filter, const std::string& excludePath)
-	{
-		return (HasAttribute(attributesFilter, attributesAllowed) && !IsSameLineage(name, excludePath) && !IsExcluded(type, filter));
-	}
-
 public:
 	RangeSelectorFilter(const std::string& rExcludePath)
 		: m_excludePath(rExcludePath)
-		, m_filter {SvDef::SVDWordValueObjectType,
-		SvDef::SVLongValueObjectType,
-		SvDef::SVDoubleValueObjectType,
-		SvDef::DoubleSortValueObjectType,
-		SvDef::SVBoolValueObjectType,
-		SvDef::SVPointValueObjectType,
-		SvDef::SVByteValueObjectType}
 	{
 	}
 
 	bool RangeSelectorFilter::operator()(const SvOi::IObjectClass* pObject, unsigned int attributeMask, int ArrayIndex) const
 	{
 		bool bRetVal = false;
-		if (pObject)
+		auto pValueObject = dynamic_cast<const SvOi::IValueObject*>(pObject);
+		if (nullptr != pValueObject)
 		{
-			const SvDef::SVObjectSubTypeEnum& type = pObject->GetObjectSubType();
+			DWORD type = pValueObject->GetType();
 			const UINT attributesAllowed = pObject->ObjectAttributesAllowed();
 			const std::string& name = pObject->GetCompleteName();
-			bRetVal = IsAllowed(type, attributeMask, attributesAllowed, name, m_filter, m_excludePath);
+			constexpr std::array<DWORD, 11> filter {VT_I2, VT_I4, VT_I8, VT_R4, VT_R8, VT_UI2, VT_UI4, VT_UI8, VT_INT, VT_UINT, VT_BOOL};
+			bRetVal = (attributeMask == (attributesAllowed & attributeMask) &&
+				!IsSameLineage(name, m_excludePath) &&
+				filter.end() != std::find(filter.begin(), filter.end(), type));
 		}
 		return bRetVal;
 	}
