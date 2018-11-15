@@ -1576,14 +1576,14 @@ HRESULT SVExternalToolTask::FindInvalidatedObjects(SVObjectPtrVector& rList, con
 	const SVExternalToolTaskData* pOriginalData = dynamic_cast <const SVExternalToolTaskData*> (pCancelData);
 	SVExternalToolTaskData* pNewData = &m_Data;
 
-	if ( eWhich & FIND_VALUES )
+	if ( eWhich & FindEnum::FIND_VALUES )
 	{
 		// inputs
-		if ( pOriginalData->m_lNumInputValues > pNewData->m_lNumInputValues )
+		if (pOriginalData->m_lNumInputValues > pNewData->m_lNumInputValues)
 		{
-			for ( int i = pNewData->m_lNumInputValues ; i < pOriginalData->m_lNumInputValues; i++ )
+			for (int i = pNewData->m_lNumInputValues; i < pOriginalData->m_lNumInputValues; i++)
 			{
-				rList.push_back( &(m_Data.m_aInputObjects[i]) );
+				rList.push_back(&(m_Data.m_aInputObjects[i]));
 			}
 		}
 
@@ -1597,18 +1597,21 @@ HRESULT SVExternalToolTask::FindInvalidatedObjects(SVObjectPtrVector& rList, con
 		}
 	}// end if ( eWhich & FIND_VALUES )
 	
-	if ( eWhich & FIND_IMAGES )
+	if (eWhich & FindEnum::FIND_INPUT_IMAGES)
 	{
 		// input images
-		if ( pOriginalData->m_lNumInputImages > pNewData->m_lNumInputImages )
+		if (pOriginalData->m_lNumInputImages > pNewData->m_lNumInputImages)
 		{
-			for ( int i = pNewData->m_lNumInputImages ; i < pOriginalData->m_lNumInputImages; i++ )
+			for (int i = pNewData->m_lNumInputImages; i < pOriginalData->m_lNumInputImages; i++)
 			{
 				const SvOl::SVInObjectInfoStruct* pStruct = &(pOriginalData->m_aInputImageInfo[i]);
-				rList.push_back( pStruct->GetInputObjectInfo().getObject());
+				rList.push_back(pStruct->GetInputObjectInfo().getObject());
 			}
 		}
-
+	}
+		
+	if (eWhich & FindEnum::FIND_RESULT_IMAGES)
+	{
 		// result images
 		if ( pOriginalData->m_lNumResultImages > pNewData->m_lNumResultImages )
 		{
@@ -1617,7 +1620,7 @@ HRESULT SVExternalToolTask::FindInvalidatedObjects(SVObjectPtrVector& rList, con
 				rList.push_back( &(m_aResultImages[i]) );
 			}
 		}
-	}// end if ( eWhich & FIND_IMAGES )
+	}// end if ( eWhich & FIND_RESULT_IMAGES )
 
 	return S_OK;
 }

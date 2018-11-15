@@ -472,7 +472,7 @@ bool SVExternalToolDlg::ShowDependentsDlg()
 	if( nullptr != m_pTask )
 	{
 		SVObjectPtrVector list;
-		m_pTask->FindInvalidatedObjects( list, m_pCancelData, SVExternalToolTask::FIND_ALL_OBJECTS );
+		m_pTask->FindInvalidatedObjects( list, m_pCancelData, SVExternalToolTask::FindEnum::FIND_ALL_OBJECTS_EXP_INPUT_IMAGES);
 
 		std::string DisplayText = SvUl::LoadStdString( IDS_CHANGE_DLL_EXTERNAL_TOOL );
 		std::string Name( m_pTask->GetName() );
@@ -563,11 +563,11 @@ HRESULT SVExternalToolDlg::RestoreOriginalData()
 HRESULT SVExternalToolDlg::CleanUpOldToolInfo()
 {
 	SVObjectPtrVector list;
-	m_pTask->FindInvalidatedObjects( list, m_pCancelData, SVExternalToolTask::FIND_IMAGES );
+	m_pTask->FindInvalidatedObjects( list, m_pCancelData, SVExternalToolTask::FindEnum::FIND_IMAGES );
 	m_pTask->DisconnectInputsOutputs(list);
 
 	list.clear();
-	m_pTask->FindInvalidatedObjects( list, m_pCancelData, SVExternalToolTask::FIND_VALUES );
+	m_pTask->FindInvalidatedObjects( list, m_pCancelData, SVExternalToolTask::FindEnum::FIND_VALUES );
 	m_pTask->HideInputsOutputs(list);
 
 	SVIPDoc* l_pIPDoc = GetIPDoc();

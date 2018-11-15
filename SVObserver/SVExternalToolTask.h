@@ -110,8 +110,11 @@ public:
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 	enum FindEnum
 	{
-		FIND_IMAGES = 1,
-		FIND_VALUES = 2,
+		FIND_VALUES = 1,
+		FIND_INPUT_IMAGES = 1 << 1,
+		FIND_RESULT_IMAGES = 1 << 2,
+		FIND_IMAGES = FIND_INPUT_IMAGES | FIND_RESULT_IMAGES,
+		FIND_ALL_OBJECTS_EXP_INPUT_IMAGES = FIND_RESULT_IMAGES | FIND_VALUES, //This flag is to find all objects expect of the input images.
 		FIND_ALL_OBJECTS = FIND_IMAGES | FIND_VALUES
 	};
 	HRESULT FindInvalidatedObjects(SVObjectPtrVector& rList, const SVCancelData* pOriginalData, FindEnum eWhich );
