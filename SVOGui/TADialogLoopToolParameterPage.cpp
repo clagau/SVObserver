@@ -88,10 +88,10 @@ BOOL TADialogLoopToolParameterPage::OnInitDialog()
 	}
 	m_EditLoopsValue.SetWindowText(valueString.GetString());
 
-	valueString = m_Values.Get<CString>(LoopBreakGuid);
+	valueString = m_Values.Get<CString>(LoopBreak_LinkedGuid);
 	if (valueString.IsEmpty())
 	{
-		valueString = m_Values.Get<CString>(LoopBreak_LinkedGuid);
+		valueString = m_Values.Get<CString>(LoopBreakGuid);
 	}
 	m_EditBreakCondition.SetWindowText(valueString.GetString());
 	UpdateData(FALSE);
@@ -126,6 +126,32 @@ HRESULT TADialogLoopToolParameterPage::SetPageData()
 		m_Values.Set<CString>(LoopBreakGuid, Value);
 
 		hResult = m_Values.Commit();
+		if (S_OK == hResult)
+		{
+			//m_Values.Init();
+			CString valueString = m_Values.Get<CString>(LinkedLoops_LinkedGuid);
+			if (valueString.IsEmpty())
+			{
+				long MaxLoopCount = m_Values.Get<long>(MaxLoopsGuid);
+				long LoopCount = m_Values.Get<long>(LinkedLoopsGuid);
+				if (LoopCount > MaxLoopCount)
+				{
+					SvDef::StringVector messageList;
+					std::string Value = m_Values.Get<CString>(MaxLoopsGuid);
+					messageList.push_back(Value);
+					Value = m_Values.Get<CString>(LinkedLoopsGuid);
+					messageList.push_back(Value);
+					
+					SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_IsLessThan, messageList, SvStl::SourceFileParams(StdMessageParams), 0);
+					
+					
+					return E_FAIL;
+				}
+			
+			}
+		}
+
 		if (S_OK != hResult)
 		{
 			SvStl::MessageContainerVector messages = m_Values.getFailedMessageList();
