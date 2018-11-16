@@ -683,7 +683,7 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 		sLabel = pObject->GetName();
 		if ( pObject->ObjectAttributesAllowed() & SvDef::SV_PRINTABLE )
 		{
-			BOOL bGotValue = FALSE;
+			bool bGotValue = false;
 
 			if ( SVDWordValueObjectClass* pdwValueObject = dynamic_cast <SVDWordValueObjectClass*> ( pObject ) )
 			{
@@ -696,20 +696,11 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 				bGotValue = (S_OK == pValueObject->getValue( sValue ));
 			}
 
-			if ( bGotValue )
+			if (bGotValue && !sValue.empty())
 			{
-				if (sValue.empty())
-				{
-					sValue = _T("< I N V A L I D ! >");
-				}
+				ptCurPos.x = (nIndentLevel + 1) * m_shortTabPixels;
+				PrintValueObject(pDC, ptCurPos, sLabel.c_str(), sValue.c_str());
 			}
-			else
-			{
-				sValue = _T("< I N V A L I D ! >");
-			}
-				
-			ptCurPos.x   = (nIndentLevel + 1) * m_shortTabPixels;
-			PrintValueObject(pDC, ptCurPos, sLabel.c_str(), sValue.c_str());
 		}   // end if ( pObj->uObjectAttributesAllowed & SvDef::SV_PRINTABLE )
 	}  // end if( nullptr != pValueObject )
 	else

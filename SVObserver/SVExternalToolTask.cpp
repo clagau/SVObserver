@@ -232,7 +232,7 @@ void SVExternalToolTask::SetAllAttributes()
 	for ( i = 0; i < SVExternalToolTaskData::NUM_INPUT_OBJECTS; i++)
 	{
 		SvOi::SetAttributeType AddRemoveType = (i < m_Data.m_lNumInputValues) ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-		m_Data.m_aInputObjects[i].SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE | SvDef::SV_VIEWABLE | SvDef::SV_PRINTABLE | SvDef::SV_SETABLE_ONLINE, AddRemoveType );
+		m_Data.m_aInputObjects[i].SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE | SvDef::SV_VIEWABLE | SvDef::SV_SETABLE_ONLINE, AddRemoveType );
 		m_Data.m_aInputObjectNames[i].SetObjectAttributesAllowed( SvDef::SV_VIEWABLE, SvOi::SetAttributeType::RemoveAttribute );
 		m_Data.m_aInputObjectNames[i].SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, AddRemoveType );
 		m_Data.m_aInputObjects[i].SetObjectAttributesAllowed( SvDef::SV_SELECTABLE_FOR_EQUATION , AddRemoveType );

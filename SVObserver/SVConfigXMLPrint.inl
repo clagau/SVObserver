@@ -919,11 +919,7 @@ inline void SVConfigXMLPrint::WriteValueObject(Writer writer, SVObjectClass* pOb
 			bGotValue = (S_OK == pValueObject->getValue(sValue));
 		}
 
-		if (!bGotValue || sValue.empty())
-		{
-			writer->WriteAttributeString(nullptr, L"Value", nullptr, invalid);
-		}
-		else
+		if (bGotValue && !sValue.empty())
 		{
 			writer->WriteAttributeString(nullptr, L"Value", nullptr, SvUl::to_utf16(sValue, cp_dflt).c_str());
 		}
