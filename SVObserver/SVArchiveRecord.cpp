@@ -29,7 +29,6 @@ SVArchiveRecord::SVArchiveRecord()
 	m_lLastIndex = m_lCountImages;
 	m_lMaxIndex = 0;
 	m_eArchiveMethod = SVArchiveInvalidMethod;
-	m_MaxNumberOfBuffer4Async = 0;
 }
 
 SVArchiveRecord::~SVArchiveRecord()
@@ -199,7 +198,7 @@ HRESULT SVArchiveRecord::QueueImage(SvTrc::IImagePtr& rImage, const std::string&
 	if (m_eArchiveMethod == SVArchiveAsynchronous)
 	{
 		// the QueueImage function will copy the buffer, so pass in the original here
-		SVArchiveImageThreadClass::BufferInfo info(rImage, rFileName, m_MaxNumberOfBuffer4Async, m_ImageInfo, this);
+		SVArchiveImageThreadClass::BufferInfo info(rImage, rFileName, m_ImageInfo, this);
 		TheSVArchiveImageThreadClass().QueueImage(info);
 	}
 	else
@@ -247,10 +246,6 @@ HRESULT SVArchiveRecord::AllocateBuffers(long lBufferNumber, BufferStructCountMa
 			{
 				m_ImageStoreVector.clear();
 				m_ImageStoreVector.resize(lBufferNumber);
-			}
-			else
-			{
-				m_MaxNumberOfBuffer4Async = lBufferNumber;
 			}
 		}
 		hr = S_OK;

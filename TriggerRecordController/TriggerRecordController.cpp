@@ -747,20 +747,17 @@ void TriggerRecordController::ResetTriggerRecordStructure()
 		std::vector<std::pair<int, int>> changeVect = ImageBufferController::getImageBufferControllerInstance().reset(m_imageStructListResetTmp);
 		for (const auto& rChangePair : changeVect)
 		{
-			if (0 <= m_resetStarted4IP)
+			//update per Inspection
+			for (int i = 0; i < m_IPDataNumber; i++)
 			{
-				//update per Inspection
-				for (int i = 0; i < m_IPDataNumber; i++)
+				auto* pImageList = m_pData[i].m_pImageList;
+				if (nullptr != pImageList)
 				{
-					auto* pImageList = m_pData[i].m_pImageList;
-					if (nullptr != pImageList)
+					for (auto& rImageData : (*pImageList->mutable_list()))
 					{
-						for (auto& rImageData : (*pImageList->mutable_list()))
+						if (rImageData.structid() == rChangePair.first)
 						{
-							if (rImageData.structid() == rChangePair.first)
-							{
-								rImageData.set_structid(rChangePair.second);
-							}
+							rImageData.set_structid(rChangePair.second);
 						}
 					}
 				}

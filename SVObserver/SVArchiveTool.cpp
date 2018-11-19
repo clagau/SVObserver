@@ -638,6 +638,12 @@ bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector *pErrorMe
 		BufferStructCountMap bufferMap;
 		HRESULT hrAllocate = m_arrayImagesInfoObjectsToArchive.AllocateBuffers(dwMaxImages, bufferMap);
 
+		if (SVArchiveAsynchronous == m_eArchiveMethod)
+		{
+			long imageCount = std::accumulate(bufferMap.begin(), bufferMap.end(), 0, [](long sum, std::pair<SVMatroxBufferCreateStruct, long> val) { return sum + val.second; });
+			TheSVArchiveImageThreadClass().setMaxNumberOfBuffer(dwMaxImages*imageCount);
+		}
+
 		ASSERT( S_OK == hrAllocate );
 		if (S_OK == hrAllocate)
 		{

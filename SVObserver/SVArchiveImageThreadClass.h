@@ -25,20 +25,28 @@ public:
 		// passed into the thread class
 		SvTrc::IImagePtr m_pImageBuffer;
 		std::string m_FileName;
-		long m_MaxNumberOfBuffer4Async;
 		SVImageInfoClass info;
-		SVArchiveRecord* pRecord;
+		SVArchiveRecord* pRecord = nullptr;
 
 		// maintained by the thread class
-		SvTl::SVTimeStamp m_Timestamp;
+		SvTl::SVTimeStamp m_Timestamp = 0;
 
-		BufferInfo() : m_MaxNumberOfBuffer4Async(0), m_Timestamp(0), pRecord(nullptr) {}
+		BufferInfo() {}
+
 		BufferInfo( const BufferInfo& rhs )
-			: m_pImageBuffer(rhs.m_pImageBuffer), m_FileName(rhs.m_FileName), m_MaxNumberOfBuffer4Async(rhs.m_MaxNumberOfBuffer4Async), m_Timestamp(rhs.m_Timestamp), info(rhs.info), pRecord(rhs.pRecord) {}
-		BufferInfo(SvTrc::IImagePtr pImageBuffer, const std::string& rFileName, long maxNumberOfBuffer4Async, SVImageInfoClass p_info, SVArchiveRecord* p_pRecord )
-			: m_pImageBuffer(pImageBuffer), m_FileName(rFileName), m_MaxNumberOfBuffer4Async(maxNumberOfBuffer4Async), info(p_info), pRecord(p_pRecord) {}
+			: m_pImageBuffer(rhs.m_pImageBuffer), m_FileName(rhs.m_FileName), m_Timestamp(rhs.m_Timestamp), info(rhs.info), pRecord(rhs.pRecord) {}
+
+		BufferInfo(SvTrc::IImagePtr pImageBuffer, const std::string& rFileName, SVImageInfoClass p_info, SVArchiveRecord* p_pRecord )
+			: m_pImageBuffer(pImageBuffer), m_FileName(rFileName), info(p_info), pRecord(p_pRecord) {}
+
 		const BufferInfo& operator = ( const BufferInfo& rhs )
-			{ if ( this != &rhs ) { m_pImageBuffer = rhs.m_pImageBuffer; m_FileName = rhs.m_FileName; m_MaxNumberOfBuffer4Async = rhs.m_MaxNumberOfBuffer4Async; m_Timestamp = rhs.m_Timestamp; info = rhs.info; pRecord = rhs.pRecord; } return *this; }
+		{ 
+			if ( this != &rhs ) 
+			{ 
+				m_pImageBuffer = rhs.m_pImageBuffer; m_FileName = rhs.m_FileName; m_Timestamp = rhs.m_Timestamp; info = rhs.info; pRecord = rhs.pRecord; 
+			} 
+			return *this; 
+		}
 	};
 
 #pragma region Constructor
@@ -50,6 +58,7 @@ public:
 	HRESULT GoOnline();
 	HRESULT GoOffline();
 	HRESULT QueueImage( BufferInfo info );
+	void setMaxNumberOfBuffer(long maxNumber) { m_MaxNumberOfBuffer = maxNumber; };
 #pragma endregion Public Methods
 
 private:
@@ -69,6 +78,7 @@ private:
 	typedef std::deque<BufferInfo> QueueType;
 	QueueType m_Queue;
 	volatile HANDLE    m_hExitEvent;
+	long m_MaxNumberOfBuffer = 1;
 
 	typedef std::pair<SVArchiveImageThreadClass*, BufferInfo> APCDataType;
 #pragma endregion Private Members

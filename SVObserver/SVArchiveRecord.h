@@ -67,7 +67,6 @@ private:
 	SVImageInfoClass    m_ImageInfo;                   // images only
 	long                m_lLastIndex;
 	long                m_lMaxIndex;
-	long                m_MaxNumberOfBuffer4Async;
 
 	//Attributes
 	SVArchiveMethodEnum m_eArchiveMethod;

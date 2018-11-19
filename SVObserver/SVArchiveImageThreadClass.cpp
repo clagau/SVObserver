@@ -105,7 +105,7 @@ HRESULT SVArchiveImageThreadClass::QueueImage( BufferInfo p_BufferInfo )
 		}// end if ( iter != m_Queue.end() )	// found filename
 		else
 		{
-			if (p_BufferInfo.m_MaxNumberOfBuffer4Async > m_Queue.size())
+			if (m_MaxNumberOfBuffer > m_Queue.size())
 			{
 				// ** ADD NEW BUFFER TO QUEUE **
 				p_BufferInfo.m_Timestamp = SvTl::GetTimeStamp();
