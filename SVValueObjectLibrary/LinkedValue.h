@@ -52,6 +52,8 @@ public:
 
 	void setIndirectValueSaveFlag(bool shouldSaveValue);
 
+	virtual DWORD GetType() const override;
+
 #pragma region Methods to replace processMessage
 	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override { UpdateLinkedName(); };
 #pragma endregion Methods to replace processMessage

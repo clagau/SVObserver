@@ -54,16 +54,17 @@ HRESULT LinkedValue::GetValue(_variant_t& rValue, int Index /*= -1*/,  int Bucke
 	if( S_OK ==  Result )
 	{
 		//! When getting the value from an indirect value make sure it is not referencing this object
-		m_CircularReference = true;
 		if (nullptr != m_LinkedObjectRef.getValueObject())
 		{
+			m_CircularReference = true;
 			Result = m_LinkedObjectRef.getValue(rValue, Bucket);
+			m_CircularReference = false;
 		}
 		else
 		{
 			Result = __super::GetValue(rValue, Index, Bucket);
 		}
-		m_CircularReference = false;
+		
 		if( S_OK == Result )
 		{
 			//If the Linked Value is of type BOOL and is to be converted to the default type then we need the absolute value
@@ -117,6 +118,22 @@ void LinkedValue::setIndirectValueSaveFlag(bool shouldSaveValue)
 		m_LinkedObjectRef.getValueObject()->setSaveValueFlag(shouldSaveValue);
 	}
 }
+
+DWORD LinkedValue::GetType() const
+{ 
+	DWORD result;
+	if (!m_CircularReference && nullptr != m_LinkedObjectRef.getValueObject())
+	{
+		m_CircularReference = true;
+		result = m_LinkedObjectRef.getValueObject()->GetType();
+		m_CircularReference = false;
+	}
+	else
+	{
+		result = __super::GetType();
+	}
+	return result;
+};
 
 #pragma endregion Public Methods
 
