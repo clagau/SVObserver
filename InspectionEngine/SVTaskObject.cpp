@@ -62,6 +62,8 @@ HRESULT SVTaskObjectClass::LocalInitialize()
 
 	m_bUseOverlays = true;	// most objects use overlays; must change if needed in derived classes
 
+	SetObjectAttributesAllowed(SvDef::SV_TASK_OBJECT, SvOi::SetAttributeType::AddAttribute);
+
 	// SetObjectDepth has already been called in SVObjectClass Ctor
 	// Register Embedded Objects
 	RegisterEmbeddedObject(&m_isObjectValid, SVTaskObjectClassIsObjectValidGuid, IDS_OBJECTNAME_ISVALID, false, SvOi::SVResetItemNone);

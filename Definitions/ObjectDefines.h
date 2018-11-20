@@ -42,7 +42,8 @@ namespace SvDef
 	const UINT SV_PRINTABLE                  = 0x00000080;
 	const UINT SV_REMOTELY_SETABLE           = 0x00000100;  // RY 2002 12 19
 	const UINT SV_SETABLE_ONLINE             = 0x00000200;
-	const UINT SV_EXTENT_OBJECT              = 0x00000400;
+	const UINT SV_EXTENT_OBJECT				 = 0x00000400;
+	const UINT SV_TASK_OBJECT				 = 0x00000800;
 	const UINT SV_PUBLISH_RESULT_IMAGE       = 0x00001000;
 	//Conditional History has been deprecated, these are used to check and reset the attributes of previously saved configurations
 	const UINT SV_CH_CONDITIONAL             = 0x00002000;  // conditional history

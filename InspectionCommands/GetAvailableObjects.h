@@ -25,7 +25,7 @@ class SVGUID;
 
 namespace SvCmd
 {
-constexpr UINT cAttribute {SvDef::SV_SELECTABLE_ATTRIBUTES | SvDef::SV_ARCHIVABLE_IMAGE};
+constexpr UINT cAttribute {SvDef::SV_SELECTABLE_ATTRIBUTES | SvDef::SV_ARCHIVABLE_IMAGE | SvDef::SV_TASK_OBJECT};
 
 class IsValidObject
 {
@@ -35,16 +35,16 @@ public:
 		bool Result {false};
 		if (nullptr != pObject)
 		{
-			Result = !isHidden(pObject);
+			Result = hasAttributes(pObject);
 		}
 		return Result;
 	}
 
 private:
-	bool isHidden(const SvOi::IObjectClass* pObject) const
+	bool hasAttributes(const SvOi::IObjectClass* pObject) const
 	{
-		//Is hidden if it has no selectable or archivable image attribute
-		return (0 == (cAttribute & pObject->ObjectAttributesAllowed())) ? true : false;
+		//Has attributes if it is selectable or archivable image or task object
+		return (0 != (cAttribute & pObject->ObjectAttributesAllowed())) ? true : false;
 	}
 };
 
@@ -64,14 +64,14 @@ public:
 	bool operator()(const SvOi::IObjectClass* pObject, bool& bStop) const
 	{
 		bStop = !isObjectAboveTask(pObject);
-		return !bStop && !isHidden(pObject);
+		return !bStop && hasAttributes(pObject);
 	}
 
 private:
-	bool isHidden(const SvOi::IObjectClass* pObject) const
+	bool hasAttributes(const SvOi::IObjectClass* pObject) const
 	{
-		//Is hidden if it has no selectable or archivable image attribute
-		return (0 == (cAttribute & pObject->ObjectAttributesAllowed())) ? true : false;
+		//Has attributes if it is selectable or archivable image or task object
+		return (0 != (cAttribute & pObject->ObjectAttributesAllowed())) ? true : false;
 	}
 
 	bool isObjectAboveTask(const SvOi::IObjectClass* pObject) const
