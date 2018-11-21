@@ -15,6 +15,8 @@ if ($LastExitCode -ne 0)
   write-eventlog -logname Application -source SVException -eventID 13  -entrytype Information -message "Could not create empty V-Drive via imdisk. $cmdout"  -Category 0
 }
 
+DisplaySwitch.exe /clone
+
 c:\SVObserver\bin\SVRemoveKeyboards.exe
 
 #Endable disk caching for harddrive
