@@ -3327,7 +3327,7 @@ afx_msg void SVIPDoc::OnUpdateAddLoopTool(CCmdUI* PCmdUI)
 {
 	bool Enabled = !SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST);
 	// Check current user access...
-	Enabled = Enabled && TheSVObserverApp.OkToEdit();
+	Enabled = Enabled && TheSVObserverApp.OkToEdit() && isImageAvailable(SvDef::SVImageMonoType);;
 	ToolSetView* pView = GetToolSetView();
 	if (!pView || pView->IsLoopToolSelected())
 	{
