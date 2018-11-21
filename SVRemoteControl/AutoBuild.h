@@ -24,7 +24,7 @@
 //    d is unused
 
 
-#define FILEVER        8,20,002,0
+#define FILEVER        8,20,003,0
 #define PRODUCTVER     FILEVER
 #define STRFILEVER     SV_STRINGIZE( FILEVER )
 #define STRPRODUCTVER  SV_STRINGIZE( PRODUCTVER )
