@@ -401,13 +401,9 @@ void CSVRegressionRunDlg::OnBtnSettings()
 
 void CSVRegressionRunDlg::OnBtnExit()
 {
-	SVRegressionExitDlg* pDlg = new SVRegressionExitDlg();
+	SVRegressionExitDlg Dlg;
 
-	if ( nullptr != pDlg )
-	{
-		pDlg->DoModal();
-		delete pDlg;
-	}
+	Dlg.DoModal();
 }
 
 LRESULT  CSVRegressionRunDlg::SetNextFiles(WPARAM wParam, LPARAM lParam)

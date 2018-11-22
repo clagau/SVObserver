@@ -154,7 +154,6 @@ BEGIN_MESSAGE_MAP(SVIPDoc, CDocument)
 	ON_COMMAND(ID_VIEW_RESETCOUNTSALLIPS, OnViewResetAllCounts)
 	ON_COMMAND(ID_VIEW_RESETCOUNTSCURRENTIP, OnViewResetCountsCurrentIP)
 	ON_COMMAND(WM_REGRESSION_TEST_COMPLETE, RegressionTestComplete)
-	ON_COMMAND(WM_REGRESSION_MODE_CHANGED, RegressionTestModeChanged)
 	ON_COMMAND(ID_EDIT_DATA_DEFINITION_LISTS, OnEditDataDefinitionLists)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_RESETCOUNTSALLIPS, OnUpdateViewResetCountsAllIPs)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_RESETCOUNTSCURRENTIP, OnUpdateViewResetCountsCurrentIP)
@@ -3733,7 +3732,6 @@ void SVIPDoc::RegressionTestModeChanged()
 	m_bRegressionTestStopping = true;
 	m_regtestRunMode = RegModeStopExit;  //should cause dialog to go away...
 
-	SVSVIMStateClass::RemoveState(SV_STATE_REGRESSION);
 
 	SVToolSetClass* pToolSet = GetToolSet();
 	if (nullptr != pToolSet)

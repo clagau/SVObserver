@@ -706,7 +706,7 @@ void SVObserverApp::OnStop()
 
 	DisableTriggerSettings();
 
-	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_EDIT))
+	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_EDIT | SV_STATE_REGRESSION))
 	{
 		return;
 	}
@@ -1146,9 +1146,7 @@ void SVObserverApp::OnGoOffline()
 		{
 			StopRegression();
 		}
-
-			OnStop();
-
+		OnStop();
 	}// end if ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
 }
 
