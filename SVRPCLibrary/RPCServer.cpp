@@ -71,6 +71,7 @@ void RPCServer::onBinaryMessage(int id, const std::vector<char>& buf)
 void RPCServer::onDisconnect(int id)
 {
 	m_Connections.erase(id);
+	cancel_stream_contexts(id);
 	m_ServerStreamContexts.erase(id);
 }
 
@@ -117,6 +118,21 @@ void RPCServer::on_stream_cancel(int id, SvPenv::Envelope&& Request)
 		if (ctxIt != it->second.end())
 		{
 			if (auto ctx = ctxIt->second.lock())
+			{
+				ctx->cancel();
+			}
+		}
+	}
+}
+
+void RPCServer::cancel_stream_contexts(int id)
+{
+	auto it = m_ServerStreamContexts.find(id);
+	if (it != m_ServerStreamContexts.end())
+	{
+		for (auto& entry : it->second)
+		{
+			if (auto ctx = entry.second.lock())
 			{
 				ctx->cancel();
 			}
@@ -178,7 +194,7 @@ std::future<void> RPCServer::send_envelope(int id, const SvPenv::Envelope& rEnve
 	auto it = m_Connections.find(id);
 	if (it == m_Connections.end())
 	{
-		SV_LOG_GLOBAL(error) << "Can not send envelope to connection " << id << ". not found. PayloadType: " << rEnvelope.payloadtype();
+		SV_LOG_GLOBAL(warning) << "Can not send envelope to connection " << id << ". not found. PayloadType: " << rEnvelope.payloadtype();
 		throw ConnectionLostException("Connection lost");
 	}
 

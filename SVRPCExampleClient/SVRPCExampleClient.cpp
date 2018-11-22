@@ -34,7 +34,7 @@ int main()
 	{
 		SvHttp::WebsocketClientSettings Settings;
 		Settings.Host = "127.0.0.1";
-		Settings.Port = 8080;
+		Settings.Port = 80;
 		auto pRpcClient = std::make_unique<RPCClient>(Settings);
 		auto ConnectTimeout = boost::posix_time::seconds(6);
 		pRpcClient->waitForConnect(ConnectTimeout);
@@ -93,7 +93,7 @@ int main()
 			GetCounterStreamRequest getCounterStreamRequest;
 			getCounterStreamRequest.set_start(0);
 			auto ctx = streamClient.stream(std::move(getCounterStreamRequest), observer);
-			std::this_thread::sleep_for(std::chrono::seconds(2));
+			std::this_thread::sleep_for(std::chrono::seconds(60));
 			ctx.cancel();
 
 			auto res = CounterPromise->get_future().get();

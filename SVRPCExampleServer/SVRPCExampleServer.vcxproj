@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
@@ -45,7 +45,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LinkIncremental>true</LinkIncremental>
+    <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)$(Configuration)\$(Platform)\bin\</OutDir>
     <IntDir>$(SolutionDir)$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
     <PreBuildEventUseInBuild>false</PreBuildEventUseInBuild>
@@ -72,8 +72,11 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SVRPCExampleLibrary.lib;SVRPCLibrary.lib;SVLogLibrary.lib;SVHttpLibrary.lib;SVXMLLibrary.lib;SVSystemLibrary.lib;SVUtilityLibrary.lib;SVStatusLibrary.lib;SVAuthLibrary.lib;libprotobufd.lib;Rpcrt4.lib;Version.lib;SVProtobuf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>nafxcwd.lib;LIBCMTD.lib;SVRPCExampleLibrary.lib;SVRPCLibrary.lib;SVLogLibrary.lib;SVHttpLibrary.lib;SVXMLLibrary.lib;SVSystemLibrary.lib;SVUtilityLibrary.lib;SVStatusLibrary.lib;SVAuthLibrary.lib;libprotobufd.lib;Rpcrt4.lib;Version.lib;SVProtobuf.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration)\$(Platform)\bin\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>nafxcwd.lib;LIBCMTD.lib;</IgnoreSpecificDefaultLibraries>
+      <AddModuleNamesToAssembly>
+      </AddModuleNamesToAssembly>
     </Link>
     <ResourceCompile>
       <AdditionalIncludeDirectories>..</AdditionalIncludeDirectories>

@@ -97,6 +97,8 @@ SVControlCommands::~SVControlCommands()
 }
 void SVControlCommands::ResetConnection()
 {
+	SV_LOG_GLOBAL(info) << "ResetConnection";
+	StopNotificationStreaming();
 	if (m_pRpcClient)
 	{
 		m_pRpcClient->stop();
@@ -112,7 +114,7 @@ HRESULT SVControlCommands::SetConnectionData(const _bstr_t& rServerName, boost::
 	HRESULT hr = S_OK;
 	m_pRpcClient.reset();
 	m_pSvrcClientService.reset();
-
+	SV_LOG_GLOBAL(info) << "SetConnectionData";
 
 	std::string host(rServerName);
 	if (0 < host.length())
@@ -163,6 +165,7 @@ void SVControlCommands::StartNotificationStreaming()
 
 	if (m_pSvrcClientService)
 	{
+		SV_LOG_GLOBAL(info) << "StartNotificationStreaming";
 		m_csx = m_pSvrcClientService->GetNotificationStream(SvPb::GetNotificationStreamRequest(), NotifikationObserver);
 	}
 }
@@ -170,6 +173,7 @@ void SVControlCommands::StartNotificationStreaming()
 void  SVControlCommands::StopNotificationStreaming()
 {
 	m_csx.cancel();
+	SV_LOG_GLOBAL(info) << "StopNotificationStreaming";
 
 }
 

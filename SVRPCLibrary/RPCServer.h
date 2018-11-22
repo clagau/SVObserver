@@ -52,6 +52,7 @@ private:
 	void on_stream(int id, SvPenv::Envelope&&);
 	void on_stream_cancel(int id, SvPenv::Envelope&&);
 
+	void cancel_stream_contexts(int id);
 	void remove_stream_context(int id, uint64_t txId);
 
 	std::future<void> send_response(int id, uint64_t txId, SvPenv::Envelope&& Response);

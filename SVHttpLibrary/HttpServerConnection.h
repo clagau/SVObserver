@@ -49,6 +49,9 @@ public:
 	std::future<void> sendBinaryMessage(const std::vector<char>&);
 
 private:
+	void close_impl();
+
+private:
 	void http_do_read();
 	void http_on_read(const boost::system::error_code& error, size_t bytes_read);
 	void http_on_write(const boost::system::error_code& error, size_t bytes_read, bool close);
@@ -113,6 +116,7 @@ private:
 		std::shared_ptr<std::promise<void>> Promise;
 	};
 	std::queue<PendingFrame> m_FrameQueue;
+	bool m_IsWebsocketHandshakeDone {false};
 	bool m_IsDisconnectErrorHandled {false};
 };
 

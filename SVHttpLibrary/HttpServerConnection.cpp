@@ -59,10 +59,33 @@ void HttpServerConnection::start()
 
 void HttpServerConnection::close()
 {
-	auto cc = boost::beast::websocket::close_code::service_restart;
-	auto cr = boost::beast::websocket::close_reason(cc);
-	boost::system::error_code ec;
-	m_WsSocket.close(cr, ec);
+	m_rIoContext.dispatch([this]()
+	{
+		close_impl();
+	});
+}
+
+void HttpServerConnection::close_impl()
+{
+	if (!m_IsUpgraded)
+	{
+		if (m_Socket.is_open())
+		{
+			m_Socket.close();
+		}
+	}
+	else
+	{
+		if (m_WsSocket.is_open())
+		{
+			boost::system::error_code ec;
+			m_WsSocket.next_layer().close(ec);
+			if (ec)
+			{
+				SV_LOG_GLOBAL(warning) << "Error while closing websocket connection: " << ec;
+			}
+		}
+	}
 }
 
 std::future<void> HttpServerConnection::sendTextMessage(const std::vector<char>& buf)
@@ -548,6 +571,8 @@ void HttpServerConnection::ws_on_handshake(const boost::system::error_code& erro
 		return;
 	}
 
+	m_IsWebsocketHandshakeDone = true;
+
 	if (m_rSettings.pEventHandler)
 	{
 		m_rSettings.pEventHandler->onConnect(m_ConnectionId, *this);
@@ -573,15 +598,7 @@ void HttpServerConnection::ws_on_read(const boost::system::error_code& error, si
 	if (error)
 	{
 		ws_on_error(error, "ws_on_read()");
-		if (m_WsSocket.is_open())
-		{
-			boost::system::error_code ec;
-			m_WsSocket.next_layer().close(ec);
-			if (ec)
-			{
-				SV_LOG_GLOBAL(warning) << "Error while closing websocket connection: " << ec;
-			}
-		}
+		close();
 		return;
 	}
 
@@ -658,15 +675,7 @@ void HttpServerConnection::ws_on_frame_sent(const boost::system::error_code& err
 	if (error)
 	{
 		ws_on_error(error, "ws_on_frame_sent()");
-		if (m_WsSocket.is_open())
-		{
-			boost::system::error_code ec;
-			m_WsSocket.next_layer().close(ec);
-			if (ec)
-			{
-				SV_LOG_GLOBAL(warning) << "Error while closing websocket connection: " << ec;
-			}
-		}
+		close();
 		return;
 	}
 
@@ -680,9 +689,21 @@ void HttpServerConnection::ws_on_error(const boost::system::error_code& error, c
 		return;
 	}
 
-	if (error == boost::asio::error::eof || error == boost::asio::error::connection_reset ||
-		error == boost::asio::error::connection_aborted ||
-		error.value() == WSAEBADF) // bad file descriptor, when connection already closed
+	// Do not print one of the known/common errors that are emitted when connection is closed
+	if (error != boost::asio::error::eof &&
+		error != boost::asio::error::connection_reset &&
+		error != boost::asio::error::connection_aborted &&
+		error != boost::asio::error::operation_aborted &&
+		error != boost::beast::websocket::error::closed &&
+		error.value() != WSAEBADF) // bad file descriptor, when connection already closed
+	{
+		SV_LOG_GLOBAL(warning) << "client connection error in "
+			<< source << ": "
+			<< error.category().name() << " "
+			<< error.message();
+	}
+
+	if (m_IsWebsocketHandshakeDone)
 	{
 		if (!m_IsDisconnectErrorHandled)
 		{
@@ -693,10 +714,7 @@ void HttpServerConnection::ws_on_error(const boost::system::error_code& error, c
 			}
 		}
 		m_IsDisconnectErrorHandled = true;
-		return;
 	}
-
-	SV_LOG_GLOBAL(warning) << "client connection error in " << source << ": " << error;
 }
 
 bool HttpServerConnection::base64decode(std::string& out, const boost::beast::string_view& in)
