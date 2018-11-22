@@ -83,11 +83,3 @@ SVMatroxBuffer& SVImageBufferHandleImage::GetBuffer()
 {
 	return m_Buffer;
 }
-
-HBITMAP SVImageBufferHandleImage::GetHBitmap() const
-{
-	HBITMAP hBitmap = nullptr;
-	HRESULT status = SVMatroxBufferInterface::Create(hBitmap, GetBuffer());
-
-	return hBitmap;
-}

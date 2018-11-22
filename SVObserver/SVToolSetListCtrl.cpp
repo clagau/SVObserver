@@ -16,15 +16,14 @@
 #include "ToolSetView.h"
 #include "ObjectInterfaces\ISVOApp_Helper.h"
 #include "TextDefinesSvO.h"
-#include "InspectionCommands/CommandFunctionHelper.h"
-#include "InspectionCommands/GetPPQObjectName.h"
-#include "InspectionCommands\GetTaskObjects.h"
+#include "InspectionCommands/CommandExternalHelper.h"
 #include "SVCommandLibrary\SVObjectSynchronousCommandTemplate.h"
 #include "SVOResource\ConstGlobalSvOr.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "NavigatorElement.h"
 #include "ObjectInterfaces/ObjectInfo.h"
+#include "SVProtoBuf/ConverterHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -352,13 +351,13 @@ bool SVToolSetListCtrl::isToolValid(const SVGUID& tool) const
 {
 	bool isToolValid = false;
 	SvPb::InspectionCmdMsgs Request, Response;
-	SvPb::IsValidRequest* pIsValidRequest = Request.mutable_isvalidrequest();
+	SvPb::GetObjectParametersRequest* pIsValidRequest = Request.mutable_getobjectparametersrequest();
 	SvPb::SetGuidInProtoBytes(pIsValidRequest->mutable_objectid(), tool);
 
 	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionId, &Request, &Response);
-	if (S_OK == hr && Response.has_isvalidresponse())
+	if (S_OK == hr && Response.has_getobjectparametersresponse())
 	{
-		isToolValid = Response.isvalidresponse().isvalid();
+		isToolValid = Response.getobjectparametersresponse().isvalid();
 	}
 	return isToolValid;
 }
@@ -373,12 +372,15 @@ void SVToolSetListCtrl::RebuildImages()
 	}
 
 	int ItemCount = GetItemCount();
-
-	SvCmd::GetPPQObjectName cmd(m_InspectionId);
 	std::string ppqName;
-	if (S_OK == cmd.Execute())
+
+	SvPb::InspectionCmdMsgs request, response;
+	SvPb::GetPPQNameRequest* pPPQNameRequest = request.mutable_getppqnamerequest();
+	SvPb::SetGuidInProtoBytes(pPPQNameRequest->mutable_inspectionid(), m_InspectionId);
+	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionId, &request, &response);
+	if (S_OK == hr && response.has_getppqnameresponse())
 	{
-		ppqName = cmd.GetName();
+		ppqName =  response.getppqnameresponse().ppqname();
 	}
 
 	LVITEM item;

@@ -880,10 +880,9 @@ bool SVPatternAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 	return Result;
 }
 
-void SVPatternAnalyzerClass::getSpecialImageList(SvDef::StringVector& rList) const
+SvDef::StringVector SVPatternAnalyzerClass::getSpecialImageList() const
 {
-	rList.push_back(SvDef::PatternModelImageName);
-	rList.push_back(SvDef::PatternDontCareImageName);
+	return {SvDef::PatternModelImageName, SvDef::PatternDontCareImageName};
 }
 
 bool SVPatternAnalyzerClass::getSpecialImage(const std::string& rName, SvOi::SVImageBufferHandlePtr& rImagePtr) const

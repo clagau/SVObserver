@@ -29,8 +29,6 @@ public:
 	virtual const SVMatroxBuffer& GetBuffer() const { throw E_NOTIMPL; };
 	virtual SVMatroxBuffer& GetBuffer() { throw E_NOTIMPL; };
 
-	virtual HBITMAP GetHBitmap() const override { throw E_NOTIMPL; };
-
 	bool UpdateDisplayBufferInfo( long bufWidth, long bufHeight, int iFormat );
 	bool DestroyDisplayBuffer();
 

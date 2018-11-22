@@ -90,9 +90,6 @@
     <ClCompile Include="RangeController.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="RangeValidator.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="AuxiliaryExtentsController.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -297,9 +294,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="RangeController.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="RangeValidator.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="AuxiliaryExtentsController.h">

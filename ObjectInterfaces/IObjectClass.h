@@ -63,6 +63,9 @@ namespace SvOi
 		//Get the complete object name before selected SvDef::SVObjectTypeEnum value.
 		virtual std::string GetObjectNameBeforeObjectType(SvDef::SVObjectTypeEnum objectTypeToInclude) const = 0;
 
+		// Check if the object if valid.
+		virtual bool IsValid() const = 0;
+
 		/**********
 			The method gets the type of this object.
 		***********/

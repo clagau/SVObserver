@@ -17,9 +17,9 @@
 #include "SVValueObjectLibrary/SVValueObject.h"
 #include "SVClassInfoStruct.h"
 #include "SVTaskObject.h"
-#pragma endregion Includes
 #include "SVProtoBuf/SVRC.h"
 #include "SVProtoBuf/InspectionCommands.h"
+#pragma endregion Includes
 
 
 class SVTaskObjectListClass : public SVTaskObjectClass, public SvOi::ITaskObjectListClass
@@ -87,7 +87,6 @@ public:
 	bool DestroyChildObject( SVTaskObjectClass* pTaskObject, DWORD context = 0 );
 
 #pragma region virtual methods (ITaskObjectListClass)
-	virtual SvUl::NameGuidList GetTaskObjectList( ) const override;
 	virtual void Delete(const SVGUID& rObjectID) override;
 	virtual void InsertAt(int index, SvOi::ITaskObject& rObject, int Count = 1) override;
 	virtual void InsertAfter(const SVGUID& rPostObjectId, ITaskObject& rObject) override;

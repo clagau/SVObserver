@@ -272,7 +272,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessFriend(typename SVTreeType:
 
 	// Build the Object
 	GUID objectID = SVGUID(uniqueID);
-	hr = SVObjectBuilder::CreateFriendObject(SVGUID(classID), objectID, SvUl::createStdString(objectName), ownerID);
+	hr = (nullptr != SVObjectBuilder::CreateFriendObject(SVGUID(classID), objectID, SvUl::createStdString(objectName), ownerID)) ? S_OK : E_FAIL;
 	if (S_OK == hr)
 	{
 		// this will be different for embeddeds, it will use the owning object ID and the embedded object ID

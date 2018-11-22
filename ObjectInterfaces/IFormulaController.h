@@ -34,8 +34,6 @@ namespace SvOi
 		virtual std::string GetEquationText() const = 0;
 
 		virtual std::string GetInspectionName() const = 0;
-		virtual std::string GetPPQName() const = 0;
-		virtual std::string GetOwnerName() const = 0;
 		virtual std::string GetEquationName() const = 0;
 		virtual HRESULT SetEquationName(const std::string& rNewName) = 0;
 		virtual GUID GetTaskId() const = 0;

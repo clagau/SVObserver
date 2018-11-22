@@ -54,7 +54,6 @@
 #include <boost/any.hpp>
 #include <boost/bind.hpp>
 #include <boost/config.hpp>
-#include <boost/function.hpp>
 #define BOOST_DATE_TIME_NO_LIB
 //
 #include <boost/multi_index_container.hpp>				//Used by static library

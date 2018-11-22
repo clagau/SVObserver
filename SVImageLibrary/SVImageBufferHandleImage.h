@@ -31,7 +31,6 @@ public:
 	virtual const SVMatroxBuffer& GetBuffer() const override;
 	virtual SVMatroxBuffer& GetBuffer() override;
 
-	virtual HBITMAP GetHBitmap() const override;
 protected:
 
 	SVMatroxBuffer m_Buffer;

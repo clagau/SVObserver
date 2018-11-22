@@ -11,12 +11,10 @@
 //Moved to precompiled header: #include <sstream>
 //Moved to precompiled header: #include <boost/lexical_cast.hpp>
 #include "RangeController.h"
-#include "InspectionCommands\GetObjectName.h"
-#include "InspectionCommands\GetPPQObjectName.h"
 #include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
 #include "SVObjectLibrary\SVClsIds.h"
 #include "SVCommandLibrary\SVObjectSynchronousCommandTemplate.h"
-#include "RangeValidator.h"
+#include "SVProtoBuf/ConverterHelper.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -153,15 +151,14 @@ namespace SvOg
 	std::string RangeController::GetOwnerName() const
 	{
 		std::string name;
-		typedef SvCmd::GetObjectName Command;
-		typedef std::shared_ptr<Command> CommandPtr;
+		SvPb::InspectionCmdMsgs request, response;
+		SvPb::GetObjectParametersRequest* pGetObjectNameRequest = request.mutable_getobjectparametersrequest();
 
-		CommandPtr commandPtr(new Command(m_rTaskObjectID));
-		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_rInspectionID, commandPtr);
-		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-		if (S_OK == hr)
+		SvPb::SetGuidInProtoBytes(pGetObjectNameRequest->mutable_objectid(), m_rTaskObjectID);
+		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_rInspectionID, &request, &response);
+		if (S_OK == hr && response.has_getobjectparametersresponse())
 		{
-			name = commandPtr->GetName();
+			name = response.getobjectparametersresponse().name();
 		}
 		return name;
 	}
@@ -170,37 +167,48 @@ namespace SvOg
 	std::string RangeController::GetInspectionName() const
 	{
 		std::string inspectionName;
-		typedef SvCmd::GetObjectName Command;
-		typedef std::shared_ptr<Command> CommandPtr;
+		SvPb::InspectionCmdMsgs request, response;
+		SvPb::GetObjectParametersRequest* pGetObjectNameRequest = request.mutable_getobjectparametersrequest();
 
-		CommandPtr commandPtr(new Command(m_rInspectionID));
-		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_rInspectionID, commandPtr);
-		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-		if (S_OK == hr)
+		SvPb::SetGuidInProtoBytes(pGetObjectNameRequest->mutable_objectid(), m_rInspectionID);
+		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_rInspectionID, &request, &response);
+		if (S_OK == hr && response.has_getobjectparametersresponse())
 		{
-			inspectionName = commandPtr->GetName();
+			inspectionName = response.getobjectparametersresponse().name();
 		}
 		return inspectionName;
 	}
 
-	std::string RangeController::GetPPQName() const
-	{
-		std::string PPQName;
-		typedef SvCmd::GetPPQObjectName Command;
-		typedef std::shared_ptr<Command> CommandPtr;
-
-		CommandPtr commandPtr(new Command(m_rInspectionID));
-		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_rInspectionID, commandPtr);
-		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-		if (S_OK == hr)
-		{
-			PPQName = commandPtr->GetName();
-		}
-		return PPQName;
-	}
-
 	void RangeController::IsFieldValid(SvStl::MessageTextEnum fieldName, const std::string& rValue)
 	{
-		RangeValidator::IsFieldValid(fieldName, rValue);
+		size_t len = rValue.size();
+
+		if (!len)
+		{
+			SvDef::StringVector msgList;
+			msgList.push_back(SvStl::MessageData::convertId2AddtionalText(fieldName));
+			SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RangeValue_EmptyString, msgList, SvStl::SourceFileParams(StdMessageParams));
+			throw message;
+		}
+		else
+		{
+			double val = 0.0;
+			std::string tmp = rValue;
+			bool isNumber = SvUl::Convert2Number<double>(tmp, val, true);
+			if (isNumber)
+			{
+				const double s_RangeMax = 17000000;
+				const double s_RangeMin = -s_RangeMax;
+				if (val > s_RangeMax || val < s_RangeMin)
+				{
+					SvDef::StringVector msgList;
+					msgList.push_back(SvStl::MessageData::convertId2AddtionalText(fieldName));
+					msgList.push_back(SvUl::Format(_T("%d"), static_cast<int>(s_RangeMin)));
+					msgList.push_back(SvUl::Format(_T("%d"), static_cast<int>(s_RangeMax)));
+					SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RangeValue_WrongRange, msgList, SvStl::SourceFileParams(StdMessageParams));
+					throw message;
+				}
+			}
+		}
 	}
 } //namespace SvOg

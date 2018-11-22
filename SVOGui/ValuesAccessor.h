@@ -15,9 +15,10 @@
 #include "InspectionCommands/TaskObjectGetEmbeddedValues.h"
 #include "InspectionCommands/TaskObjectSetEmbeddedValues.h"
 #include "InspectionCommands/ValueObjectGetEnums.h"
-#include "InspectionCommands/GetObjectName.h"
-#include "InspectionCommands/CommandFunctionHelper.h"
+#include "InspectionCommands/CommandExternalHelper.h"
 #include "SVMessage/SVMessage.h"
+#include "SVProtoBuf/ConverterHelper.h"
+#include "SVStatusLibrary/MessageContainer.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
@@ -123,16 +124,14 @@ public:
 
 	std::string GetObjectName(const GUID& rInspectionID, const GUID& rObjectID) const
 	{
-		typedef SvCmd::GetObjectName Command;
-		typedef std::shared_ptr<Command> CommandPtr;
+		SvPb::InspectionCmdMsgs request, response;
+		SvPb::GetObjectParametersRequest* pGetObjectNameRequest = request.mutable_getobjectparametersrequest();
 
-		CommandPtr commandPtr(new Command(rObjectID));
-		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(rInspectionID, commandPtr);
-		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-
-		if (S_OK == hr)
+		SvPb::SetGuidInProtoBytes(pGetObjectNameRequest->mutable_objectid(), rObjectID);
+		HRESULT hr = SvCmd::InspectionCommandsSynchronous(rInspectionID, &request, &response);
+		if (S_OK == hr && response.has_getobjectparametersresponse())
 		{
-			return commandPtr->GetName();
+			return response.getobjectparametersresponse().name();
 		}
 		return std::string();
 	}

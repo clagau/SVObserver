@@ -19,6 +19,11 @@
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
+namespace SvOi
+{
+class IObjectClass;
+}
+
 class SVObjectBuilder
 {
 public:
@@ -30,7 +35,7 @@ public:
 	/// \param ownerUniqueID [in] The owner of the friend list. Must not be GUID_NULL.
 	/// \param rAddPreGuid [in] If this a valid GUID of a friend in the list, the new object will be added before this.
 	/// \returns HRESULT
-	static HRESULT CreateFriendObject(const GUID& classID, const GUID& uniqueID, const std::string& objectName, const GUID& ownerUniqueID, const GUID& rAddPreGuid = GUID_NULL);
+	static SvOi::IObjectClass* CreateFriendObject(const GUID& classID, const GUID& uniqueID, const std::string& objectName, const GUID& ownerUniqueID, const GUID& rAddPreGuid = GUID_NULL);
 	static HRESULT DestroyFriends(const GUID& objectID);
 	/// Search embedded object in owner and change Guid and name
 	/// \param embeddedID [in] Embedded Id of the object to overwrite

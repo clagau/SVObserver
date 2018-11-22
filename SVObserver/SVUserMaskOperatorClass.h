@@ -59,7 +59,7 @@ public:
 
 	SVShapeMaskHelperClass* GetShapeHelper();
 
-	virtual void getSpecialImageList(SvDef::StringVector& rList) const override;
+	virtual SvDef::StringVector getSpecialImageList() const override;
 	virtual bool getSpecialImage(const std::string& rName, SvOi::SVImageBufferHandlePtr& rImagePtr) const override;
 
 #pragma region IMask

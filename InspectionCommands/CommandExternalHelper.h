@@ -1,6 +1,6 @@
 //*****************************************************************************
 /// \copyright COPYRIGHT (c) 2017 by Seidenader Maschinenbau GmbH
-/// \file CommandFunctionHelper.h
+/// \file CommandExternalHelper.h
 /// All Rights Reserved
 //*****************************************************************************
 /// This file contains the helper function for the extern use.
@@ -8,13 +8,37 @@
 #pragma once
 
 #pragma region Includes
-#include "SVStatusLibrary\MessageContainer.h"
-#include "SVUtilityLibrary\SVGUID.h"
-#include "SVProtoBuf\ConverterHelper.h"
 #include "SVProtoBuf/InspectionCommands.h"
-#include "ObjectInterfaces/ObjectInfo.h"
 #pragma endregion Includes
 
+#pragma region Declarations
+class SVGUID;
+
+namespace SvStl
+{
+class MessageContainer;
+typedef std::vector<MessageContainer> MessageContainerVector;
+}
+
+namespace SvOi
+{
+/// struct  holds data for one TaskObject which are relevant 
+/// for displaying the object in the navigator
+struct ObjectInfo;
+typedef std::vector<ObjectInfo> ObjectInfoVector;
+}
+
+namespace SvUl
+{
+typedef std::pair<std::string, SVGUID> NameGuidPair;
+typedef std::deque<NameGuidPair> NameGuidList;
+}
+
+namespace SvDef
+{
+struct SVObjectTypeInfoStruct;
+}
+#pragma endregion Declarations
 
 namespace SvCmd
 {
@@ -38,5 +62,11 @@ SvStl::MessageContainerVector setMessageContainerFromMessagePB(const SvPb::Messa
 
 ///convert protobuf message to a vector of objectinfos
 bool ResponseToObjectInfo(const SvPb::InspectionCmdMsgs& rResponse, SvOi::ObjectInfoVector&  rToolSetInfos);
+
+SvUl::NameGuidPair convertNameGuidPair(const SvPb::ObjectNameGuidPair& rPbPair);
+
+SvUl::NameGuidList convertNameGuidList(const ::google::protobuf::RepeatedPtrField< ::SvPb::ObjectNameGuidPair >& rPbList);
+
+void setTypeInfos(const SvDef::SVObjectTypeInfoStruct& destInfo, SvPb::SVObjectTypeInfoStruct& sourceInfo);
 
 } //namespace SvCmd

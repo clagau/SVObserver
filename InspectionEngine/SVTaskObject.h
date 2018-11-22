@@ -121,7 +121,6 @@ public:
 	virtual void GetConnectedImages(SvUl::InputNameGuidPairList& rList, int maxEntries) override;
 	virtual void GetInputs(SvUl::InputNameGuidPairList& rList, const SvDef::SVObjectTypeInfoStruct& typeInfo = SvDef::SVObjectTypeInfoStruct(SvDef::SVNotSetObjectType), SvDef::SVObjectTypeEnum objectTypeToInclude = SvDef::SVNotSetObjectType, bool shouldExcludeFirstObjectName = false) override;
 	virtual HRESULT ConnectToObject(const std::string& rInputName, const SVGUID& rNewID, SvDef::SVObjectTypeEnum objectType = SvDef::SVNotSetObjectType) override;
-	virtual bool IsObjectValid() const override;
 	virtual const SvStl::MessageContainerVector& getResetErrorMessages() const override { return m_ResetErrorMessages; };
 	virtual const SvStl::MessageContainerVector& getRunErrorMessages() const override { return m_RunErrorMessages; };
 	virtual SvStl::MessageContainerVector getErrorMessages() const override;
@@ -133,7 +132,7 @@ public:
 	//! \return a const reference to the first task message
 	//************************************
 	virtual SvStl::MessageContainer getFirstTaskMessage() const override;
-	virtual void getSpecialImageList(SvDef::StringVector& rList) const override {};
+	virtual SvDef::StringVector getSpecialImageList() const override { return {}; };
 	virtual bool getSpecialImage(const std::string& rName, SvOi::SVImageBufferHandlePtr& rImagePtr) const override { return false; };
 	virtual SVGuidVector getEmbeddedList() const override;
 #pragma endregion virtual method (ITaskObject)

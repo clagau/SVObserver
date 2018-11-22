@@ -553,20 +553,6 @@ int SVTaskObjectListClass::GetSize() const
 }
 
 #pragma region virtual method (ITaskObjectListClass)
-SvUl::NameGuidList SVTaskObjectListClass::GetTaskObjectList( ) const
-{
-	SvUl::NameGuidList list;
-	for (int i = 0; i < static_cast<int> (m_TaskObjectVector.size()); ++ i)
-	{
-		SVTaskObjectClass* pObject = m_TaskObjectVector[i];
-		if (pObject)
-		{
-			list.push_back(SvUl::NameGuidPair(pObject->GetName(), pObject->GetUniqueObjectID()));
-		}
-	}
-	return list;
-}
-
 void   SVTaskObjectListClass::GetTaskObjectListInfo(SvPb::TaskObjectListResponse &rResponse) const
 {
 	

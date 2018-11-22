@@ -31,11 +31,6 @@ public:
 	virtual ~ITaskObjectListClass() {}
 
 	/**********
-		The method gets the name/Guid list of the task object of this taskObjectList.
-	***********/
-	virtual SvUl::NameGuidList GetTaskObjectList() const = 0;
-
-	/**********
 		The method deletes one object from the this task object list object.
 		/param objectID <in> SVGUID of the object to deleted.
 	***********/

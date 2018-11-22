@@ -206,7 +206,6 @@
     <ClInclude Include="SVHandleManager.h" />
     <ClInclude Include="SVHistogramBase.h" />
     <ClInclude Include="SVHistogramStats.h" />
-    <ClInclude Include="SVImageCopyUtility.h" />
     <ClInclude Include="SVMetrics.h" />
     <ClInclude Include="SVNameVariantList.h" />
     <ClInclude Include="SVNullDeleter.h" />

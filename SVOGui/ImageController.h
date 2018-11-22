@@ -12,7 +12,7 @@
 #include "SVUtilityLibrary\NameGuidList.h"
 #include "Definitions/StringTypeDef.h"
 #include "Definitions/SVImageEnums.h"
-#include "InspectionCommands\GetAllowedImageList.h"
+#include "Definitions\SVObjectTypeInfoStruct.h"
 #include "SVStatusLibrary\MessageContainer.h"
 #pragma endregion Includes
 

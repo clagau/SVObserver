@@ -68,12 +68,6 @@ namespace SvOi
 		/// \returns HRESULT
 		virtual HRESULT ConnectToObject(const std::string& rInputName, const SVGUID& rNewID, SvDef::SVObjectTypeEnum objectType = SvDef::SVNotSetObjectType) = 0;
 
-		//************************************
-		/// Check if the object if valid.
-		/// \returns the valid state as a boolean
-		//************************************
-		virtual bool IsObjectValid() const = 0;
-
 		/// Gets the list of error messages happen in offline modus and will be reset if object is reset.
 		/// \return a const reference to the message list
 		virtual const SvStl::MessageContainerVector& getResetErrorMessages() const = 0;
@@ -105,8 +99,8 @@ namespace SvOi
 
 		/// Get a list of special images from this task. If this task has no special images this list is empty.
 		/// Special images are images which are not from type SVImageClass and is not in ObjectManager and so it has no GUID. An example for special image is the model in the pattern analyzer.
-		/// \param rList [in,out] A list of names of available special image of this task.
-		virtual void getSpecialImageList(SvDef::StringVector& rList) const = 0;
+		/// \returns a list of names of available special image of this task.
+		virtual SvDef::StringVector getSpecialImageList() const = 0;
 
 		/// Get a special image from this task. A list of available images can be get by getSpecialImageList.
 		/// Special images are images which are not from type SVImageClass and is not in ObjectManager and so it has no GUID. An example for special image is the model in the pattern analyzer.

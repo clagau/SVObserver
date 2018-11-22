@@ -88,11 +88,6 @@ namespace SvOg
 		m_FormulaController->SetDefaultInputs();
 	}
 
-	std::string SVFormulaEditorPageClass::GetOwnerName() const
-	{
-		return m_FormulaController->GetOwnerName();
-	}
-
 	void SVFormulaEditorPageClass::DoDataExchange(CDataExchange* pDX)
 	{
 	CPropertyPage::DoDataExchange(pDX);

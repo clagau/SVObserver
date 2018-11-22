@@ -4,11 +4,50 @@ package SvPb;
 import "BasicStructure.proto";
 
 //***************************************************************************
+// Help Structs
+//***************************************************************************
+message InputNameObjectNameGuidPair
+{
+	bytes objectId = 1; //GUID of the object.
+	bytes objectName = 2; //name of the object.
+	bytes inputName = 3; //input name.
+}
+
+message ObjectNameGuidPair
+{
+	bytes objectId = 1; //GUID of the object.
+	bytes objectName = 2; //name of the object.
+}
+
+message SVObjectTypeInfoStruct
+{
+	int32 objectType = 1;	// Main Type (is from type SVObjectTypeEnum)
+	int32 subType = 2;		// Sub Type  (is from type SVObjectSubTypeEnum)
+	bytes embeddedID = 3;
+}
+
+//info for one taskobject 
+message TaskObjectInfo
+{
+	string displayname =1;
+	bytes  taskObjectId = 2;  //GUID of the object
+	sint32 objecttype = 3; //SvDef::SVObjectTypeEnum
+	sint32 objectsubtype = 4; //SvDef::SVObjectSubTypeEnum
+	bool isvalid = 5; 
+} 
+
+message IsBeforeToolMethod
+{ 
+	bytes toolId = 1;
+}
+
+message DefaultPlusHidden
+{
+}
+
+//***************************************************************************
 // InspectionCommands - can be send with method InspectionCommandsSynchronous
 //***************************************************************************
-
-
-
 // This message do a runOnce for an inspection or taskObject
 message InspectionRunOnceRequest
 {
@@ -58,7 +97,6 @@ message ResetObjectResponse
 	MessageContainerVector Messages = 1; //list of messages
 }
 
-
 //This is the message to create a model for the pattern-analyzer. The model will copy from the current source image of the analyzer.
 message CreateModelRequest
 {
@@ -76,18 +114,18 @@ message CreateModelResponse
 	MessageContainerVector Messages = 1; //list of messages
 }
 
-// This is the message to return the state if an object is valid
-message IsValidRequest
+message GetObjectParametersRequest
 {
 	bytes objectId = 1; //GUID of the object.
 }
 
-// This is the message response-message from IsValidRequest
-message IsValidResponse
+message GetObjectParametersResponse
 {
-	bool IsValid = 1; //flag if valid
+	bool isValid = 1; //flag if valid
+	bytes name = 2;
+	uint32 allowedAttributes = 3;
+	SVObjectTypeInfoStruct typeInfo = 4;
 }
-
 
 // This is the message to return the equation string
 message GetEquationRequest
@@ -123,24 +161,25 @@ message GetObjectsForMonitorListRequest
 	bytes objectId = 1; //GUID of the tool.
 }
 
-message ObjectNameGuidPair
-{
-	bytes objectId = 1; //GUID of the object.
-	bytes objectName = 2; //name of the object.
-}
-
 // This is the message response-message from GetObjectsForMonitorListRequest
 message GetObjectsForMonitorListResponse
 {
 	repeated ObjectNameGuidPair list = 1;
 	MessageContainerVector Messages = 2; //list of messages
 }
-// This message moved a taskObject in a taskObjectList to another position.
-message MoveTaskObjectRequest
+// This message moved an object in a taskObject- or friend-list to another position.
+message MoveObjectRequest
 {
-	bytes parentId = 1; //GUID of the parent object, which contain the taskObject-list (must be a ITaskObjectList-Object)
-	bytes taskObjectId = 2; //GUID of the object, which should be moved (must be a taskObject)
+	enum ListEnum
+	{
+		TaskObjectList = 0;
+		FriendList = 1;
+	}
+
+	bytes parentId = 1; //GUID of the parent object, which contain the list (for taskObjectList it must be a ITaskObjectList-Object)
+	bytes objectId = 2; //GUID of the object, which should be moved (must be a taskObject)
 	bytes movePreId = 3; //GUID of the object, before which the other object should be moved. If it is GUID_NULL, the object will be moved to the end.
+	ListEnum listMode = 4;
 }
 
 // Request TaskObjectInfo for all taskobject in the taskobjectlist
@@ -149,19 +188,219 @@ message TaskObjectListRequest
 	bytes taskObjectId = 1;  //GUID of the object
 }
 
-//info for one taskobject 
-message TaskObjectInfo
-{
-	string displayname =1;
-	bytes  taskObjectId = 2;  //GUID of the object
-	sint32 objecttype = 3; //SvDef::SVObjectTypeEnum
-	sint32 objectsubtype = 4; //SvDef::SVObjectSubTypeEnum
-	bool isvalid = 5; 
-} 
-
 message TaskObjectListResponse
 {
 	repeated TaskObjectInfo taskobjectinfos = 1; 
+}
+
+//get an image(if imageId is set, return this, else try to get image with name and parent)
+message GetImageRequest
+{
+	bytes imageId = 1;  //GUID of the image
+	bytes imageName = 2; //Name of the image at parent object
+	bytes parentId = 3; //GUID of the parent
+} 
+
+message GetImageResponse
+{
+	Image imageData = 1;
+	MessageContainerVector Messages = 2; //list of error messages
+}
+
+//get an image(if imageId is set, return this, else try to get image with name and parent)
+message AreAuxiliaryExtentsAvailableRequest
+{
+	bytes objectId = 1;  //GUID of the tool
+} 
+
+message AreAuxiliaryExtentsAvailableResponse
+{
+	bool areAvailable = 1;
+}
+
+message GetAvailableAuxImagesRequest
+{
+	bytes objectId = 1;  //GUID of the tool
+}
+
+message GetAvailableAuxImagesResponse
+{
+	repeated ObjectNameGuidPair list = 1;
+}
+
+message GetAuxImageObjectRequest
+{
+	bytes objectId = 1;  //GUID of the tool
+}
+
+message GetAuxImageObjectResponse
+{
+	ObjectNameGuidPair auxObject = 1;
+}
+
+message SetAuxImageObjectRequest
+{
+	bytes objectId = 1;  //GUID of the tool
+	bytes sourceImageId = 2;  //GUID of the source image
+}
+
+message SetAuxImageObjectResponse
+{
+	MessageContainerVector Messages = 1; //list of error messages
+}
+
+message GetInputsRequest
+{
+	bytes objectId = 1;  //GUID of the tool
+	SVObjectTypeInfoStruct typeInfo = 2;
+	int32 objectTypeToInclude = 3; //define until which type the name should displayed (is from type SvDef::SVObjectTypeEnum) (not used for image objects, it has the own name conventions)
+	bool shouldExcludeFirstObjectName = 4; //Is true it remove first object name. (If objectTypeToInclude == SvDef::SVNotsetObjectType this parameter will not used) e.g. SvDef::SVToolSetObjectType means "Window Tool....". (not used for image objects, it has the own name conventions)
+	int32 maxRequested = 5; //only used for image object, it define after how many founded entry it stops.
+}
+
+message GetInputsResponse
+{
+	repeated InputNameObjectNameGuidPair list = 1;
+}
+
+message ConnectToObjectRequest
+{
+	bytes objectId = 1;
+	bytes inputName = 2;
+	bytes newConnectedId = 3;
+	int32 objectType = 4;
+}
+
+message SaveImageRequest
+{
+	bytes objectId = 1;
+	bytes imageName = 2;
+}
+
+message SetObjectNameRequest
+{
+	bytes objectId = 1;
+	bytes objectName = 2;
+}
+
+message GetAvailableObjectsRequest
+{
+	bytes objectId = 1;
+	SVObjectTypeInfoStruct typeInfo = 2;
+	int32 objectTypeToInclude = 3; //SvDef::SVNotSetObjectType //	SvDef::SVObjectTypeEnum
+	bool shouldExcludeFirstObjectName = 4;
+
+	oneof allowedMode  //default is check of valid object and not hidden. In this case do not set a oneof-message.
+	{
+		IsBeforeToolMethod isBeforeToolMethod=5; //same then default, but stop searching if required tool reached.
+		DefaultPlusHidden defaultPlusHidden=6;
+	}	
+}
+
+message GetAvailableObjectsResponse
+{
+	repeated ObjectNameGuidPair list = 1;
+	MessageContainerVector Messages = 2; //list of messages
+}
+
+message GetSpecialImageListRequest
+{
+	bytes taskObjectId = 1;
+}
+
+message GetSpecialImageListResponse
+{
+	repeated bytes specialImageNames = 1;
+}
+
+message ExportMaskRequest
+{
+	bytes objectId = 1;
+	bytes fileName = 2;
+}
+
+message ImportMaskRequest
+{
+	bytes objectId = 1;
+	bytes fileName = 2;
+}
+
+message GetObjectIdRequest
+{
+	message InfoStruct
+	{
+		bytes ownerId = 1;
+		SVObjectTypeInfoStruct infoStruct = 2;
+	}
+
+	oneof message
+	{
+		bytes name = 1;
+		InfoStruct info = 2;
+	}
+}
+
+message GetObjectIdResponse
+{
+	bytes objectId = 1;
+}
+
+message ConstructAndInsertRequest
+{
+	message FriendTask
+	{
+		bytes name = 1; //the name of the new object
+		bytes preGuid = 2; //Add new object before the object with this GUID. If object not found (e.g. GUID_NULL), it will be added at the end.
+	}
+
+	bytes ownerId = 1;
+	bytes classId = 2;
+
+	oneof message
+	{
+		FriendTask friend = 3;	//Add the new object to the friend list.
+		int32 taskObjectPos = 4; //Add the new object to the taskObject list at the pos. 
+		bytes taskObjectAfterId = 5; //Add the new object to the taskObject-list after the object with this GUID. if GUID_NULL, add at the end.
+	}
+}
+
+message ConstructAndInsertResponse
+{
+	bytes objectId = 1;
+	bytes name = 2;
+}
+
+message GetCreatableObjectsRequest
+{
+	bytes objectId = 1;
+	SVObjectTypeInfoStruct typeInfo = 2;
+}
+
+message GetCreatableObjectsResponse
+{
+	repeated ObjectNameGuidPair list = 1;
+}
+
+//Return if the inspection should be reset. By now it is only used for the filter, because some filters must be reset the whole inspection after changes.
+message ShouldInspectionResetRequest
+{
+	bytes objectId = 1;
+}
+
+message ShouldInspectionResetResponse
+{
+	bool shouldReset = 1;
+}
+
+//Get the ppq-name of the inspection
+message GetPPQNameRequest
+{
+	bytes inspectionId = 1;
+}
+
+message GetPPQNameResponse
+{
+	bytes ppqName = 1;
 }
 
 message InspectionCmdMsgs
@@ -176,18 +415,48 @@ message InspectionCmdMsgs
 		ResetObjectResponse resetObjectResponse =6;
 		CreateModelRequest  createModelRequest =7;
 		CreateModelResponse createModelResponse =8;
-		IsValidRequest  isValidRequest = 9;
-		IsValidResponse isValidResponse  =10;
+		GetObjectParametersRequest getObjectParametersRequest = 9;
+		GetObjectParametersResponse getObjectParametersResponse = 10;
 		GetEquationRequest getEquationRequest = 11;
 		GetEquationResponse  getEquationResponse=12; 
 		ValidateAndSetEquationRequest  validateAndSetEquationRequest =13;
 		ValidateAndSetEquationResponse  validateAndSetEquationResponse =14;
 		GetObjectsForMonitorListRequest getObjectsForMonitorListRequest =15;
 		GetObjectsForMonitorListResponse getObjectsForMonitorListResponse = 16;
-		MoveTaskObjectRequest moveTaskObjectRequest =17;
+		MoveObjectRequest moveObjectRequest =17;
 		TaskObjectListRequest taskObjectListRequest = 18;
 		TaskObjectListResponse taskObjectListResponse = 19;
-
+		GetImageRequest getImageRequest = 20;
+		GetImageResponse getImageResponse = 21;
+		AreAuxiliaryExtentsAvailableRequest areAuxiliaryExtentsAvailableRequest = 22;
+		AreAuxiliaryExtentsAvailableResponse areAuxiliaryExtentsAvailableResponse = 23;
+		GetAvailableAuxImagesRequest getAvailableAuxImagesRequest = 24;
+		GetAvailableAuxImagesResponse getAvailableAuxImagesResponse = 25;
+		GetAuxImageObjectRequest getAuxImageObjectRequest = 26;
+		GetAuxImageObjectResponse getAuxImageObjectResponse = 27;
+		SetAuxImageObjectRequest setAuxImageObjectRequest = 28;
+		SetAuxImageObjectResponse setAuxImageObjectResponse = 29;
+		GetInputsRequest getInputsRequest = 30;
+		GetInputsResponse getInputsResponse = 31;
+		ConnectToObjectRequest connectToObjectRequest = 32;
+		SaveImageRequest saveImageRequest = 33;
+		SetObjectNameRequest setObjectNameRequest = 34;
+		GetAvailableObjectsRequest getAvailableObjectsRequest = 35;
+		GetAvailableObjectsResponse getAvailableObjectsResponse = 36;
+		GetSpecialImageListRequest getSpecialImageListRequest = 37;
+		GetSpecialImageListResponse getSpecialImageListResponse = 38;
+		ExportMaskRequest exportMaskRequest = 39;
+		ImportMaskRequest importMaskRequest = 40;
+		GetObjectIdRequest getObjectIdRequest = 41;
+		GetObjectIdResponse getObjectIdResponse = 42;
+		ConstructAndInsertRequest constructAndInsertRequest = 43;
+		ConstructAndInsertResponse constructAndInsertResponse = 44;
+		GetCreatableObjectsRequest getCreatableObjectsRequest = 45;
+		GetCreatableObjectsResponse getCreatableObjectsResponse = 46;
+		ShouldInspectionResetRequest shouldInspectionResetRequest = 47;
+		ShouldInspectionResetResponse shouldInspectionResetResponse = 48;
+		GetPPQNameRequest getPPQNameRequest = 49;
+		GetPPQNameResponse getPPQNameResponse = 50;
 	}
 }
 

@@ -48,6 +48,7 @@ namespace SvOg
 		virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV
 		virtual BOOL OnInitDialog() override;
 		void OnButtonClearAll();
+
 		void OnButtonDeleteCurrentAnalyzer();
 		void OnButtonInsertNewAnalyzer();
 		void OnSelchangeAnalyzerList();
@@ -103,6 +104,8 @@ namespace SvOg
 		/// \param rErrorMessageList [in,out] List of ErrorMessages.
 		/// \returns HRESULT S_OK, if setting correct.
 		HRESULT SetAddAnalyzerData(SvStl::MessageContainerVector &rErrorMessageList);
+
+		SvUl::NameGuidList getTableAnalyzer();
 #pragma endregion Private Methods
 
 #pragma region Member Variables

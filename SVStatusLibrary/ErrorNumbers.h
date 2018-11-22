@@ -207,8 +207,6 @@ namespace SvStl
 	static const int Err_10226 = Maz_ErrorBase + 226;
 	static const int Err_10227 = Maz_ErrorBase + 227;
 	static const int Err_10228 = Maz_ErrorBase + 228;
-	static const int Err_10229 = Maz_ErrorBase + 229;
-	static const int Err_10230 = Maz_ErrorBase + 230;
 	static const int Err_10231 = Maz_ErrorBase + 231;
 	static const int Err_10232 = Maz_ErrorBase + 232;
 	static const int Err_10233 = Maz_ErrorBase + 233;

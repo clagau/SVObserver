@@ -13,6 +13,9 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "DisplayHelper.h"
+#pragma warning (push ,2)
+#include "SVProtoBuf\BasicStructure.pb.h"
+#pragma warning(pop)
 #pragma endregion Includes
 
 namespace SvOg
@@ -108,6 +111,33 @@ namespace SvOg
 		saParameterValue.UnaccessData();
 
 		return static_cast< long >( pamap.size() );
+	}
+
+	HRESULT DisplayHelper::convertPBImageToIPictureDisp(const SvPb::Image& rImage, long &rWidth, long &rHeight, IPictureDisp** idisp)
+	{
+		HRESULT hr = S_OK;
+		rWidth = rImage.width();
+		rHeight = rImage.height();
+
+		size_t len = rImage.rgbdata().length();
+		HGLOBAL hg = ::GlobalAlloc(GHND, len);
+		if (hg)
+		{
+			memcpy(::GlobalLock(hg), rImage.rgbdata().data(), len);
+			::GlobalUnlock(hg);
+			CComPtr<IStream> stream;
+			hr = ::CreateStreamOnHGlobal(hg, TRUE, &stream);
+			// Create IPictureDisp from IStream
+			if (SUCCEEDED(hr))
+			{
+				hr = ::OleLoadPicture(stream, static_cast<LONG>(len), false, __uuidof(IPictureDisp), (LPVOID *)idisp);
+			}
+		}
+		else
+		{
+			hr = E_OUTOFMEMORY;
+		}
+		return hr;
 	}
 	#pragma endregion Public Methods
 

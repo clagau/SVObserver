@@ -12,9 +12,11 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <algorithm>
 #include "SVDlgImage.h"
-#include "InspectionCommands/GetImage.h"
+#include "InspectionCommands/CommandExternalHelper.h"
 #include "InspectionCommands/GetOutputRectangle.h"
 #include "SVCommandLibrary/SVObjectSynchronousCommandTemplate.h"
+#include "DisplayHelper.h"
+#include "SVProtoBuf/ConverterHelper.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -240,15 +242,17 @@ namespace SvOg
 		{
 			HBITMAP hbm = nullptr;
 			CComPtr<IPicture> picture;
+			SvPb::InspectionCmdMsgs request, response;
+			SvPb::GetImageRequest* pGetImageRequest = request.mutable_getimagerequest();
 
-			typedef SvCmd::GetImage Command;
-			typedef std::shared_ptr<Command> CommandPtr;
-			CommandPtr commandPtr{ new Command(m_imageId) };
-			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_inspectionId, commandPtr);
-			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-			if (S_OK == hr)
+			SvPb::SetGuidInProtoBytes(pGetImageRequest->mutable_imageid(), m_imageId);
+			HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_inspectionId, &request, &response);
+			if (S_OK == hr && response.has_getimageresponse() && 0 == response.getimageresponse().messages().messages().size())
 			{
-				CComPtr<IPictureDisp> picDisp = commandPtr->Image();
+				CComPtr<IPictureDisp> picDisp;
+				long width, height;
+				hr = DisplayHelper::convertPBImageToIPictureDisp(response.getimageresponse().imagedata(), width, height, &picDisp);
+				
 				if (picDisp)
 				{
 					picDisp.QueryInterface<IPicture>(&picture);

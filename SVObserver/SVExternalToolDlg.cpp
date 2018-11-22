@@ -25,7 +25,6 @@
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVStatusLibrary\GlobalPath.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "InspectionCommands/GetInstanceIDByTypeInfo.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -76,17 +75,15 @@ SVExternalToolDlg::SVExternalToolDlg( const SVGUID& rInspectionID, const SVGUID&
 {
 	m_pSheet = pSheet;
 
-	typedef SvCmd::GetInstanceIDByTypeInfo Command;
-	typedef std::shared_ptr<Command> CommandPtr;
+	SvPb::InspectionCmdMsgs requestMessage, responseMessage;
+	auto* pRequest = requestMessage.mutable_getobjectidrequest()->mutable_info();
+	SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_ToolObjectID);
+	pRequest->mutable_infostruct()->set_objecttype(SvDef::SVExternalToolTaskObjectType);
 
-	SvDef::SVObjectTypeInfoStruct info(SvDef::SVExternalToolTaskObjectType, SvDef::SVNotSetSubObjectType);
-
-	CommandPtr commandPtr = CommandPtr(new Command(m_ToolObjectID, info));
-	SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-	HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-	if (S_OK == hr)
+	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, &responseMessage);
+	if (S_OK == hr && responseMessage.has_getobjectidresponse())
 	{
-		m_TaskObjectID = commandPtr->GetInstanceID();
+		m_TaskObjectID = SvPb::GetGuidFromProtoBytes(responseMessage.getobjectidresponse().objectid());
 	}
 
 	m_pTask = dynamic_cast<SVExternalToolTask*>(SVObjectManagerClass::Instance().GetObject(m_TaskObjectID));

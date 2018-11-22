@@ -25,7 +25,7 @@
 #include "SVSystemLibrary/SVVersionInfo.h"
 #include "SVStorageResult.h"
 #include "SVProtoBuf/ConverterHelper.h"
-#include "InspectionCommands/CommandFunctionHelper.h"
+#include "InspectionCommands/CommandExternalHelper.h"
 #include "InspectionCommands/BuildSelectableItems.h"
 #pragma endregion Includes
 

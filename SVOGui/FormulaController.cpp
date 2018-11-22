@@ -17,15 +17,10 @@
 //Moved to precompiled header: #include <iterator>
 //Moved to precompiled header: #include <string>
 #include "FormulaController.h"
-#include "InspectionCommands/GetInstanceIDByTypeInfo.h"
-#include "InspectionCommands/GetObjectName.h"
-#include "InspectionCommands/GetObjectTypeInfo.h"
-#include "InspectionCommands/GetPPQObjectName.h"
 #include "InspectionCommands/BuildSelectableItems.h"
 #include "InspectionCommands/TaskObjectGetEmbeddedValues.h"
 #include "InspectionCommands/TaskObjectSetEmbeddedValues.h"
 #include "InspectionCommands/SetDefaultInputs.h"
-#include "InspectionCommands/SetObjectName.h"
 #include "SVObjectLibrary\SVClsIds.h"
 #include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
 #include "SVCommandLibrary\SVObjectSynchronousCommandTemplate.h"
@@ -33,6 +28,7 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
 #include "Definitions/StringTypeDef.h"
+#include "SVProtoBuf/ConverterHelper.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
@@ -83,33 +79,17 @@ FormulaController::~FormulaController()
 std::string FormulaController::GetInspectionName() const
 {
 	std::string inspectionName;
-	typedef SvCmd::GetObjectName Command;
-	typedef std::shared_ptr<Command> CommandPtr;
+	SvPb::InspectionCmdMsgs request, response;
+	SvPb::GetObjectParametersRequest* pGetObjectNameRequest = request.mutable_getobjectparametersrequest();
 
-	CommandPtr commandPtr(new Command(m_InspectionID));
-	SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-	HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-	if (S_OK == hr)
+	SvPb::SetGuidInProtoBytes(pGetObjectNameRequest->mutable_objectid(), m_InspectionID);
+	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+	if (S_OK == hr && response.has_getobjectparametersresponse())
 	{
-		inspectionName = commandPtr->GetName();
+		inspectionName = response.getobjectparametersresponse().name();
 	}
+
 	return inspectionName;
-}
-
-std::string FormulaController::GetPPQName() const
-{
-	std::string PPQName;
-	typedef SvCmd::GetPPQObjectName Command;
-	typedef std::shared_ptr<Command> CommandPtr;
-
-	CommandPtr commandPtr(new Command(m_InspectionID));
-	SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-	HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-	if (S_OK == hr)
-	{
-		PPQName = commandPtr->GetName();
-	}
-	return PPQName;
 }
 
 std::string FormulaController::GetEquationText() const
@@ -137,26 +117,27 @@ std::string FormulaController::GetEquationText() const
 std::string FormulaController::GetEquationName() const
 {
 	std::string name;
-	typedef SvCmd::GetObjectName Command;
-	typedef std::shared_ptr<Command> CommandPtr;
+	SvPb::InspectionCmdMsgs request, response;
+	SvPb::GetObjectParametersRequest* pGetObjectNameRequest = request.mutable_getobjectparametersrequest();
 
-	CommandPtr commandPtr(new Command(m_EquationID));
-	SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-	HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-	if (S_OK == hr)
+	SvPb::SetGuidInProtoBytes(pGetObjectNameRequest->mutable_objectid(), m_EquationID);
+	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+	if (S_OK == hr && response.has_getobjectparametersresponse())
 	{
-		name = commandPtr->GetName();
+		name = response.getobjectparametersresponse().name();
 	}
+
 	return name;
 }
 
 HRESULT FormulaController::SetEquationName(const std::string& rNewName)
 {
-	typedef SvCmd::SetObjectName Command;
-	typedef std::shared_ptr<Command> CommandPtr;
-	CommandPtr commandPtr {new Command(m_EquationID, rNewName.c_str())};
-	SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-	return cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+	SvPb::InspectionCmdMsgs request, response;
+	SvPb::SetObjectNameRequest* pSetObjectNameRequest = request.mutable_setobjectnamerequest();
+
+	SvPb::SetGuidInProtoBytes(pSetObjectNameRequest->mutable_objectid(), m_EquationID);
+	pSetObjectNameRequest->set_objectname(rNewName.c_str());
+	return SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
 }
 
 void FormulaController::BuildSelectableItems()
@@ -251,46 +232,32 @@ HRESULT FormulaController::SetDefaultInputs()
 
 #pragma endregion virtual Methods IFormulaController
 
-std::string FormulaController::GetOwnerName() const
-{
-	std::string name;
-	typedef SvCmd::GetObjectName Command;
-	typedef std::shared_ptr<Command> CommandPtr;
-
-	CommandPtr commandPtr(new Command(m_TaskObjectID));
-	SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-	HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-	if (S_OK == hr)
-	{
-		name = commandPtr->GetName();
-	}
-	return name;
-}
 #pragma endregion Public Methods
 
 #pragma region Private Methods
 void FormulaController::Init()
 {
-	typedef SvCmd::GetInstanceIDByTypeInfo Command;
-	typedef std::shared_ptr<Command> CommandPtr;
+	SvPb::InspectionCmdMsgs requestMessage, responseMessage;
+	auto* pRequest = requestMessage.mutable_getobjectidrequest()->mutable_info();
+
 	// check for Math Container...
 	if (SvDef::SVMathContainerObjectType == m_Info.ObjectType)
 	{
-		// Get the Math Container
-		CommandPtr commandPtr(new Command(m_TaskObjectID, m_Info));
-		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-		if (S_OK == hr)
+		SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_TaskObjectID);
+		SvCmd::setTypeInfos(m_Info, *pRequest->mutable_infostruct());
+		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, &responseMessage);
+		if (S_OK == hr && responseMessage.has_getobjectidresponse())
 		{
+			GUID containerID = SvPb::GetGuidFromProtoBytes(responseMessage.getobjectidresponse().objectid());
+			SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), containerID);
 			// Get the Equation
 			SvDef::SVObjectTypeInfoStruct info(SvDef::SVEquationObjectType, SvDef::SVMathEquationObjectType);
-			GUID containerID = commandPtr->GetInstanceID();
-			commandPtr = CommandPtr(new Command(containerID, info));
-			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-			if (S_OK == hr)
+			SvCmd::setTypeInfos(info, *pRequest->mutable_infostruct());
+
+			HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, &responseMessage);
+			if (S_OK == hr && responseMessage.has_getobjectidresponse())
 			{
-				m_EquationID = commandPtr->GetInstanceID();
+				m_EquationID = SvPb::GetGuidFromProtoBytes(responseMessage.getobjectidresponse().objectid());
 			}
 			else
 			{
@@ -304,13 +271,13 @@ void FormulaController::Init()
 	}
 	else if (SvDef::SVNotSetObjectType != m_Info.ObjectType)
 	{
-		// Get the Equation
-		CommandPtr commandPtr(new Command(m_TaskObjectID, m_Info));
-		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-		if (S_OK == hr)
+		SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_TaskObjectID);
+		SvCmd::setTypeInfos(m_Info, *pRequest->mutable_infostruct());
+
+		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, &responseMessage);
+		if (S_OK == hr && responseMessage.has_getobjectidresponse())
 		{
-			m_EquationID = commandPtr->GetInstanceID();
+			m_EquationID = SvPb::GetGuidFromProtoBytes(responseMessage.getobjectidresponse().objectid());
 		}
 		else
 		{
@@ -323,18 +290,17 @@ void FormulaController::Init()
 	}
 	if (m_isConditional)
 	{
-		typedef SvCmd::GetObjectTypeInfo Command;
-		typedef std::shared_ptr<Command> CommandPtr;
-		CommandPtr commandPtr {new Command(m_TaskObjectID)};
-		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-		if (S_OK == hr)
+		SvPb::InspectionCmdMsgs request, response;
+		SvPb::GetObjectParametersRequest* pGetObjectNameRequest = request.mutable_getobjectparametersrequest();
+
+		SvPb::SetGuidInProtoBytes(pGetObjectNameRequest->mutable_objectid(), m_TaskObjectID);
+		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+		if (S_OK == hr && response.has_getobjectparametersresponse())
 		{
-			if (SvDef::SVToolSetObjectType == commandPtr->GetTypeInfo().ObjectType)
+			if (SvDef::SVToolSetObjectType == response.getobjectparametersresponse().typeinfo().objecttype())
 			{
 				m_EnableID = SVToolSetEnabledObjectGuid;
 			}
-
 		}
 		m_EquationValues.SetTaskID(m_EquationID);
 

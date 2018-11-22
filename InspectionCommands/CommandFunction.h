@@ -40,11 +40,8 @@ namespace SvCmd
 	/// \returns HRESULT
 	HRESULT CreateModel(const SvPb::CreateModelRequest& rRequestMessage, SvPb::CreateModelResponse& rResponseMessage);
 
-	/// Return the state if an object is valid.
-	/// \param rRequestMessage [in] The request-protoBuf-message.
-	/// \param rResponseMessage [in,out] The response-protoBuf-message.
-	/// \returns HRESULT
-	HRESULT IsValid(const SvPb::IsValidRequest& rRequestMessage, SvPb::IsValidResponse& rResponseMessage);
+	//Return the parameter of an object.
+	HRESULT getObjectParameters(const SvPb::GetObjectParametersRequest& rRequest, SvPb::GetObjectParametersResponse& rResponse);
 
 	/// Return the equation string.
 	/// \param rRequestMessage [in] The request-protoBuf-message.
@@ -64,11 +61,65 @@ namespace SvCmd
 	/// \returns HRESULT
 	HRESULT getObjectsForMonitorList(const SvPb::GetObjectsForMonitorListRequest& rRequestMessage, SvPb::GetObjectsForMonitorListResponse& rResponseMessage);
 
-	/// Moved a taskObject to a new position in the taskObjectList.
+	/// Moved a taskObject to a new position in the taskObject- or friend-list.
 	/// \param rRequestMessage [in] The request-protoBuf-message.
 	/// \returns HRESULT
-	HRESULT MoveTaskObject(const SvPb::MoveTaskObjectRequest& rRequestMessage);
+	HRESULT MoveObject(const SvPb::MoveObjectRequest& rRequestMessage);
 
 	/// Get Definitions for all Taskobject in taskobjectlist
 	HRESULT GetTaskObjectsList(const SvPb::TaskObjectListRequest& rRequest, SvPb::TaskObjectListResponse &rResponse);
+
+	/// Get an required image
+	HRESULT getImage(const SvPb::GetImageRequest& rRequest, SvPb::GetImageResponse& rResponse);
+
+	// Get if Auxiliary extents are available
+	HRESULT areAuxiliaryExtentsAvailable(const SvPb::AreAuxiliaryExtentsAvailableRequest& rRequest, SvPb::AreAuxiliaryExtentsAvailableResponse& rResponse);
+
+	// Get the list of possible auxiliary extents images.
+	HRESULT getAvailableAuxImages(const SvPb::GetAvailableAuxImagesRequest& rRequest, SvPb::GetAvailableAuxImagesResponse& rResponse);
+
+	// Get the connected auxiliary extents image.
+	HRESULT getAuxImageObject(const SvPb::GetAuxImageObjectRequest& rRequest, SvPb::GetAuxImageObjectResponse& rResponse);
+
+	// Set the connected auxiliary extents image.
+	HRESULT setAuxImageObject(const SvPb::SetAuxImageObjectRequest& rRequest, SvPb::SetAuxImageObjectResponse& rResponse);
+
+	// Get the connected input of this object.
+	HRESULT getInputs(const SvPb::GetInputsRequest& rRequest, SvPb::GetInputsResponse& rResponse);
+
+	// Connect an object to an input.
+	HRESULT connectToObject(const SvPb::ConnectToObjectRequest& rRequest);
+
+	// Save an image to a file.
+	HRESULT saveImage(const SvPb::SaveImageRequest& rRequest);
+
+	//Set object name.
+	HRESULT setObjectName(const SvPb::SetObjectNameRequest& rRequest);
+
+	//Get a list of available objects.
+	HRESULT getAvailableObjects(const SvPb::GetAvailableObjectsRequest& rRequest, SvPb::GetAvailableObjectsResponse& rResponse);
+
+	//Get a name list of special iamge of a task.
+	HRESULT getSpecialImageList(const SvPb::GetSpecialImageListRequest& rRequest, SvPb::GetSpecialImageListResponse& rResponse);
+
+	//Export the mask to a file.
+	HRESULT exportMask(const SvPb::ExportMaskRequest& rRequest);
+
+	//Import the mask from a file.
+	HRESULT importMask(const SvPb::ImportMaskRequest& rRequest);
+
+	//Get GUID of a object
+	HRESULT getObjectId(const SvPb::GetObjectIdRequest& rRequest, SvPb::GetObjectIdResponse& rResponse);
+
+	//Construct a new object and insert it in the friend- or taskObject-list.
+	HRESULT constructAndInsert(const SvPb::ConstructAndInsertRequest& rRequest, SvPb::ConstructAndInsertResponse& rResponse);
+
+	//Get the creatable Objects based on the type.
+	HRESULT getCreatableObjects(const SvPb::GetCreatableObjectsRequest& rRequest, SvPb::GetCreatableObjectsResponse& rResponse);
+
+	//Return if the inspection should be reset if the task has changed. (in the first step it works only with filters.)
+	HRESULT shouldInspectionReset(const SvPb::ShouldInspectionResetRequest& rRequest, SvPb::ShouldInspectionResetResponse& rResponse);
+
+	//Get the ppqName of the inspection
+	HRESULT getPPQName(const SvPb::GetPPQNameRequest& rRequest, SvPb::GetPPQNameResponse& rResponse);
 } //namespace SvCmd

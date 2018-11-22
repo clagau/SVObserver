@@ -19,7 +19,6 @@
 class SVBarCodeBufferInfoClass;
 class SVDataBufferInfoClass;
 class SVImageInfoClass;
-class SVImageCopyUtility;
 
 class SVImageProcessingClass
 {
@@ -40,14 +39,8 @@ public:
 
 	static HRESULT SaveImageBuffer( LPCTSTR tstrImagePathName, SVMatroxFileTypeEnum efileFormat,const SvOi::SVImageBufferHandlePtr& rHandle );
 
-	static HRESULT ConvertImageBuffer( SVByteVector& p_rToDIB, const SvOi::SVImageBufferHandlePtr& rFromHandle, SVImageOperationTypeEnum p_lConversionType );
-
-	static HRESULT CopyImageBuffer( SvOi::SVImageBufferHandlePtr& rToHandle, const SvOi::SVImageBufferHandlePtr& rFromHandle );
 	static HRESULT CopyImageBuffer( SVByteVector& p_rToDIB, const SvOi::SVImageBufferHandlePtr& rFromHandle );
 	static HRESULT CopyImageBuffer( SVByteVector& p_rToDIB, const SVBitmapInfo& p_rToBitmapInfo, const SvOi::SVImageBufferHandlePtr& rFromHandle );
-
-	static HRESULT CopyImageBufferToFileDIB( SVByteVector& p_rToDIB, const SvOi::SVImageBufferHandlePtr& rFromHandle );
-	static HRESULT CopyImageBuffer( SVImageCopyUtility& copier, const SvOi::SVImageBufferHandlePtr& rFromHandle );
 
 	static HRESULT CreateDataBuffer( SVDataBufferInfoClass* pDataInfo );
 	static HRESULT DestroyDataBuffer( SVDataBufferInfoClass* pDataInfo );

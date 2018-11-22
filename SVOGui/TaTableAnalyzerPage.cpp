@@ -14,18 +14,11 @@
 #include "Definitions/StringTypeDef.h"
 #include "SVCommandLibrary/SVObjectSynchronousCommandTemplate.h"
 #include "TextDefinesSvOg.h"
-#include "InspectionCommands/GetCreatableObjects.h"
-#include "InspectionCommands/GetAvailableObjects.h"
-#include "InspectionCommands/GetObjectTypeInfo.h"
-#include "InspectionCommands/GetInstanceIDByTypeInfo.h"
-#include "InspectionCommands/ConstructAndInsertTaskObject.h"
-#include "InspectionCommands/ConnectToObject.h"
-#include "InspectionCommands/GetInputs.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
 #include "SVObjectLibrary/SVClsids.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "InspectionCommands/CommandFunctionHelper.h"
+#include "InspectionCommands/CommandExternalHelper.h"
 #include "FormulaController.h"
 #include "SVFormulaEditorSheet.h"
 #pragma endregion Includes
@@ -116,16 +109,19 @@ BOOL TaTableAnalyzerPage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
-	typedef SvCmd::GetCreatableObjects Command;
-	typedef std::shared_ptr<Command> CommandPtr;
-
 	SvUl::NameGuidList availableList;
-	CommandPtr commandPtr {new Command(m_TaskObjectID, SvDef::SVObjectTypeInfoStruct(SvDef::TableAnalyzerType, SvDef::SVNotSetSubObjectType))};
-	SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-	HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-	if (S_OK == hr)
+	SvPb::InspectionCmdMsgs request, response;
+	SvPb::GetCreatableObjectsRequest* pGetCreatableObjectsRequest = request.mutable_getcreatableobjectsrequest();
+	SvPb::SetGuidInProtoBytes(pGetCreatableObjectsRequest->mutable_objectid(), m_TaskObjectID);
+	pGetCreatableObjectsRequest->mutable_typeinfo()->set_objecttype(SvDef::TableAnalyzerType);
+	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+	SvUl::InputNameGuidPairList connectedList;
+	if (S_OK == hr && response.has_getcreatableobjectsresponse())
 	{
-		availableList = commandPtr->AvailableObjects();
+		for (auto item : response.getcreatableobjectsresponse().list())
+		{
+			availableList.push_back({item.objectname(), SvPb::GetGuidFromProtoBytes(item.objectid())});
+		}
 	}
 
 	m_availableAnaylzerCB.Init(availableList, _T(""), Analyzer_NoAnalyzerAvailable);
@@ -149,17 +145,8 @@ BOOL TaTableAnalyzerPage::OnInitDialog()
 void TaTableAnalyzerPage::OnButtonClearAll()
 {
 	// For all Items in the Selected (Instantiated) Analyzer list
-	typedef SvCmd::GetAvailableObjects Command;
-	typedef std::shared_ptr<Command> CommandPtr;
-	SvUl::NameGuidList availableList;
-	CommandPtr commandPtr {new Command(m_TaskObjectID, SvDef::SVObjectTypeInfoStruct(SvDef::TableAnalyzerType, SvDef::SVNotSetSubObjectType))};
-	SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-	HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-	if (S_OK == hr)
-	{
-		availableList = commandPtr->AvailableObjects();
-	}
-
+	SvUl::NameGuidList availableList = getTableAnalyzer();
+	
 	// remove all Analyzer items (instantiated)
 	size_t listSize = availableList.size();
 	for (int i = 0; i < listSize; ++i)
@@ -220,11 +207,13 @@ void TaTableAnalyzerPage::OnButtonInsertNewAnalyzer()
 		}
 
 		// Construct and Create the Analyzer Class Object
-		typedef SvCmd::ConstructAndInsertTaskObject Command;
-		typedef std::shared_ptr<Command> CommandPtr;
-		CommandPtr commandPtr {new Command(m_TaskObjectID, classID, destinyIndex)};
-		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+		SvPb::InspectionCmdMsgs requestMessage, responseMessage;
+		SvPb::ConstructAndInsertRequest* pRequest = requestMessage.mutable_constructandinsertrequest();
+		SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_TaskObjectID);
+		SvPb::SetGuidInProtoBytes(pRequest->mutable_classid(), classID);
+		pRequest->set_taskobjectpos(destinyIndex);
+
+		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, &responseMessage);
 		if (S_OK != hr)
 		{
 			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
@@ -257,12 +246,14 @@ void TaTableAnalyzerPage::OnChangeColumnSelection()
 	SVGUID columnGuid = m_columnSelectionCB.getSelectedGUID();
 	if (GUID_NULL != columnGuid && GUID_NULL != m_selectedAnalyzerID)
 	{
-		HRESULT hr = E_INVALIDARG;
-		typedef SvCmd::ConnectToObject Command;
-		typedef std::shared_ptr<Command> CommandPtr;
-		CommandPtr commandPtr {new Command(m_selectedAnalyzerID, m_inputName, columnGuid, SvDef::SVValueObjectType)};
-		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-		hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+		SvPb::InspectionCmdMsgs Request, Response;
+		SvPb::ConnectToObjectRequest* pConnectToObjectRequest = Request.mutable_connecttoobjectrequest();
+
+		SvPb::SetGuidInProtoBytes(pConnectToObjectRequest->mutable_objectid(), m_selectedAnalyzerID);
+		pConnectToObjectRequest->set_inputname(m_inputName);
+		SvPb::SetGuidInProtoBytes(pConnectToObjectRequest->mutable_newconnectedid(), columnGuid);
+		pConnectToObjectRequest->set_objecttype(SvDef::SVValueObjectType);
+		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &Request, &Response);
 		if (S_OK != hr)
 		{
 			SvDef::StringVector msgList;
@@ -418,18 +409,7 @@ HRESULT TaTableAnalyzerPage::SetInspectionData()
 #pragma region Private Methods
 void TaTableAnalyzerPage::refresh()
 {
-	typedef SvCmd::GetAvailableObjects Command;
-	typedef std::shared_ptr<Command> CommandPtr;
-
-	SvUl::NameGuidList availableList;
-	CommandPtr commandPtr {new Command(m_TaskObjectID, SvDef::SVObjectTypeInfoStruct(SvDef::TableAnalyzerType, SvDef::SVNotSetSubObjectType))};
-	SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-	HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-	if (S_OK == hr)
-	{
-		availableList = commandPtr->AvailableObjects();
-	}
-
+	SvUl::NameGuidList availableList = getTableAnalyzer();
 	// Populate Analyzer list box and run Analyzer...
 	m_analyzerListBox.init(availableList, Analyzer_NoAnalyzer);
 	int index = m_analyzerListBox.GetCurSel();
@@ -443,15 +423,14 @@ void TaTableAnalyzerPage::SetPropertyControls()
 	m_selectedSubType = SvDef::SVNotSetSubObjectType;
 	if (GUID_NULL != m_selectedAnalyzerID)
 	{
-		typedef SvCmd::GetObjectTypeInfo Command;
-		typedef std::shared_ptr<Command> CommandPtr;
-		CommandPtr commandPtr {new Command(m_selectedAnalyzerID)};
-		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-		if (S_OK == hr)
+		SvPb::InspectionCmdMsgs request, response;
+		SvPb::GetObjectParametersRequest* pGetObjectNameRequest = request.mutable_getobjectparametersrequest();
+
+		SvPb::SetGuidInProtoBytes(pGetObjectNameRequest->mutable_objectid(), m_selectedAnalyzerID);
+		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+		if (S_OK == hr && response.has_getobjectparametersresponse())
 		{
-			SvDef::SVObjectTypeInfoStruct info = commandPtr->GetTypeInfo();
-			m_selectedSubType = info.SubType;
+			m_selectedSubType = response.getobjectparametersresponse().typeinfo().subtype();
 		}
 	}// end if
 
@@ -478,15 +457,17 @@ void TaTableAnalyzerPage::SetPropertyControls()
 
 HRESULT TaTableAnalyzerPage::RetrieveAvailableColumnList()
 {
-	typedef SvCmd::GetAvailableObjects Command;
-	typedef std::shared_ptr<Command> CommandPtr;
+	SvPb::InspectionCmdMsgs request, response;
+	SvPb::GetAvailableObjectsRequest* pGetAvailableObjectsRequest = request.mutable_getavailableobjectsrequest();
 
-	CommandPtr commandPtr {new Command(m_TaskObjectID, SvDef::SVObjectTypeInfoStruct(SvDef::SVValueObjectType, SvDef::DoubleSortValueObjectType))};
-	SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-	HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-	if (S_OK == hr)
+	SvPb::SetGuidInProtoBytes(pGetAvailableObjectsRequest->mutable_objectid(), m_TaskObjectID);
+	pGetAvailableObjectsRequest->mutable_typeinfo()->set_objecttype(SvDef::SVValueObjectType);
+	pGetAvailableObjectsRequest->mutable_typeinfo()->set_subtype(SvDef::DoubleSortValueObjectType);
+	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+	SvUl::NameGuidList availableList;
+	if (S_OK == hr && response.has_getavailableobjectsresponse())
 	{
-		m_availableColumn = commandPtr->AvailableObjects();
+		m_availableColumn = SvCmd::convertNameGuidList(response.getavailableobjectsresponse().list());
 	}
 	return hr;
 }
@@ -597,19 +578,17 @@ void TaTableAnalyzerPage::setColumnSelectionCB()
 {
 	RetrieveAvailableColumnList();
 	std::string selectedTableName;
-	typedef SvCmd::GetInputs Command;
-	typedef std::shared_ptr<Command> CommandPtr;
-	CommandPtr commandPtr {new Command(m_selectedAnalyzerID, SvDef::SVObjectTypeInfoStruct(SvDef::SVValueObjectType, SvDef::DoubleSortValueObjectType))};
-	SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-	HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-	if (S_OK == hr)
+	SvPb::InspectionCmdMsgs request, response;
+	SvPb::GetInputsRequest* pGetInputsRequest = request.mutable_getinputsrequest();
+	SvPb::SetGuidInProtoBytes(pGetInputsRequest->mutable_objectid(), m_selectedAnalyzerID);
+	pGetInputsRequest->mutable_typeinfo()->set_objecttype(SvDef::SVValueObjectType);
+	pGetInputsRequest->mutable_typeinfo()->set_subtype(SvDef::DoubleSortValueObjectType);
+	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+	SvUl::InputNameGuidPairList connectedList;
+	if (S_OK == hr && response.has_getinputsresponse() && 0 < response.getinputsresponse().list_size())
 	{
-		const SvUl::InputNameGuidPairList& rConnectedList = commandPtr->ConnectedObjects();
-		if (rConnectedList.size())
-		{
-			m_inputName = rConnectedList.begin()->first;
-			selectedTableName = rConnectedList.begin()->second.first;
-		}
+		m_inputName = response.getinputsresponse().list(0).inputname();
+		selectedTableName = response.getinputsresponse().list(0).objectname();
 	}
 
 	m_columnSelectionCB.Init(m_availableColumn, selectedTableName, NoColumnTag);
@@ -756,6 +735,22 @@ HRESULT TaTableAnalyzerPage::SetAddAnalyzerData(SvStl::MessageContainerVector &r
 		}
 	}
 	return hrOk;
+}
+
+SvUl::NameGuidList TaTableAnalyzerPage::getTableAnalyzer()
+{
+	SvPb::InspectionCmdMsgs request, response;
+	SvPb::GetAvailableObjectsRequest* pGetAvailableObjectsRequest = request.mutable_getavailableobjectsrequest();
+
+	SvPb::SetGuidInProtoBytes(pGetAvailableObjectsRequest->mutable_objectid(), m_TaskObjectID);
+	pGetAvailableObjectsRequest->mutable_typeinfo()->set_objecttype(SvDef::TableAnalyzerType);
+	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+
+	if (S_OK == hr && response.has_getavailableobjectsresponse())
+	{
+		return SvCmd::convertNameGuidList(response.getavailableobjectsresponse().list());
+	}	
+	return SvUl::NameGuidList();
 }
 
 #pragma endregion Private Methods

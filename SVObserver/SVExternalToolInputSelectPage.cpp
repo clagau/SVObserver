@@ -26,8 +26,6 @@
 #include "SVOGui/BoundValue.h"
 #include "TextDefinesSvO.h"
 #include "InspectionCommands/BuildSelectableItems.h"
-#include "InspectionCommands/GetObjectName.h"
-#include "InspectionCommands/GetInstanceIDByTypeInfo.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -445,15 +443,14 @@ int SVExternalToolInputSelectPage::GetItemIndex(SVRPropertyItem* pItem)
 std::string SVExternalToolInputSelectPage::GetName(const SVGUID& guid) const
 {
 	std::string inspectionName;
-	typedef SvCmd::GetObjectName Command;
-	typedef std::shared_ptr<Command> CommandPtr;
+	SvPb::InspectionCmdMsgs request, response;
+	SvPb::GetObjectParametersRequest* pGetObjectNameRequest = request.mutable_getobjectparametersrequest();
 
-	CommandPtr commandPtr(new Command(guid));
-	SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-	HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-	if (S_OK == hr)
+	SvPb::SetGuidInProtoBytes(pGetObjectNameRequest->mutable_objectid(), guid);
+	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+	if (S_OK == hr && response.has_getobjectparametersresponse())
 	{
-		inspectionName = commandPtr->GetName();
+		inspectionName = response.getobjectparametersresponse().name();
 	}
 	return inspectionName;
 }
@@ -462,16 +459,15 @@ GUID SVExternalToolInputSelectPage::GetToolSetGUID() const
 {
 	GUID toolsetGUID = GUID_NULL;
 
-	typedef SvCmd::GetInstanceIDByTypeInfo Command;
-	typedef std::shared_ptr<Command> CommandPtr;
+	SvPb::InspectionCmdMsgs requestMessage, responseMessage;
+	auto* pRequest = requestMessage.mutable_getobjectidrequest()->mutable_info();
+	SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_InspectionID);
+	pRequest->mutable_infostruct()->set_objecttype(SvDef::SVToolSetObjectType);
 
-	SvDef::SVObjectTypeInfoStruct info(SvDef::SVToolSetObjectType);
-	CommandPtr commandPtr = CommandPtr(new Command(m_InspectionID, info));
-	SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-	HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-	if (S_OK == hr)
+	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, &responseMessage);
+	if (S_OK == hr && responseMessage.has_getobjectidresponse())
 	{
-		toolsetGUID = commandPtr->GetInstanceID();
+		toolsetGUID = SvPb::GetGuidFromProtoBytes(responseMessage.getobjectidresponse().objectid());
 	}
 
 	return toolsetGUID;

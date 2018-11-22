@@ -10,7 +10,6 @@
 #include "stdafx.h"
 #include "TADialogLoopToolParameterPage.h"
 #include "SVObjectLibrary\SVClsids.h"
-#include "InspectionCommands\GetAvailableObjects.h"
 #include "Definitions/TextDefineSVDef.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage\SVMessage.h"

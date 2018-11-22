@@ -19,7 +19,6 @@
 #include "SVDataBuffer.h"
 #include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
-#include "SVUtilityLibrary/SVImageCopyUtility.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVMatroxLibrary/SVMatroxImagingLibrary.h"  // has MIL includes
 #include "SVMessage/SVMessage.h"
@@ -516,49 +515,6 @@ HRESULT SVImageProcessingClass::SaveImageBuffer(LPCTSTR tstrImagePathName, SVMat
 	return Result;
 }
 
-HRESULT SVImageProcessingClass::ConvertImageBuffer(SVByteVector& rToDIB, const SvOi::SVImageBufferHandlePtr& rFromHandle, SVImageOperationTypeEnum ConversionType)
-{
-	HRESULT Result(S_OK);
-
-	if (nullptr != rFromHandle)
-	{
-		SVMatroxBuffer l_Temp;
-		Result = SVMatroxBufferInterface::Create(l_Temp, rFromHandle->GetBuffer());
-
-		if (S_OK == Result)
-		{
-			Result = SVMatroxImageInterface::Convert(l_Temp, rFromHandle->GetBuffer(), ConversionType);
-		}
-
-		if (S_OK == Result)
-		{
-			Result = SVMatroxBufferInterface::CopyBuffer(rToDIB, l_Temp);
-		}
-	}
-	else
-	{
-		Result = E_FAIL;
-	}
-
-	return Result;
-}
-
-HRESULT SVImageProcessingClass::CopyImageBuffer(SvOi::SVImageBufferHandlePtr& rToHandle, const SvOi::SVImageBufferHandlePtr& rFromHandle)
-{
-	HRESULT Result(S_OK);
-
-	if (nullptr != rToHandle && nullptr != rFromHandle)
-	{
-		Result = SVMatroxBufferInterface::CopyBuffer(rToHandle->GetBuffer(), rFromHandle->GetBuffer());
-	}
-	else
-	{
-		Result = E_FAIL;
-	}
-
-	return Result;
-}
-
 HRESULT SVImageProcessingClass::CopyImageBuffer(SVByteVector& rToDIB, const SvOi::SVImageBufferHandlePtr& rFromHandle)
 {
 	HRESULT Result(S_OK);
@@ -588,37 +544,6 @@ HRESULT SVImageProcessingClass::CopyImageBuffer(SVByteVector& rToDIB, const SVBi
 		Result = E_FAIL;
 	}
 
-	return Result;
-}
-
-HRESULT SVImageProcessingClass::CopyImageBufferToFileDIB(SVByteVector& rToDIB, const SvOi::SVImageBufferHandlePtr& rFromHandle)
-{
-	HRESULT Result(S_OK);
-
-	if (nullptr != rFromHandle)
-	{
-		Result = SVMatroxBufferInterface::CopyBufferToFileDIB(rToDIB, rFromHandle->GetBuffer());
-	}
-	else
-	{
-		Result = E_FAIL;
-	}
-
-	return Result;
-}
-
-HRESULT SVImageProcessingClass::CopyImageBuffer(SVImageCopyUtility& rImageCopier, const SvOi::SVImageBufferHandlePtr& rFromHandle)
-{
-	HRESULT Result(S_OK);
-
-	if (nullptr != rFromHandle)
-	{
-		Result = SVMatroxBufferInterface::CopyDIBBufferToMemory(rImageCopier, rFromHandle->GetBuffer());
-	}
-	else
-	{
-		Result = E_FAIL;
-	}
 	return Result;
 }
 

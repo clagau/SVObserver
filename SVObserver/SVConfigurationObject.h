@@ -36,20 +36,22 @@
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVProtoBuf/TriggerRecordController.h"
-#include "InspectionCommands/CommandFunctionHelper.h"
 #pragma endregion Includes
 
 
+#pragma region Declarations
 //Namespace used only for forward declaration
 namespace SvTh
 {
-	class SVSoftwareTriggerClass;
-	class SVCameraTriggerClass;
+class SVSoftwareTriggerClass;
+class SVCameraTriggerClass;
 } //namespace SvTh
 
+namespace SvPb
+{
+class InspectionCmdMsgs;
+}
 
-
-#pragma region Declarations
 class SVDeviceParamCollection;
 class SVDeviceParam;
 class SVIOController;

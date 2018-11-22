@@ -28,7 +28,6 @@
 #pragma endregion Includes
 
 
-class SVImageCopyUtility;
 /**
 @SVObjectName Matrox Buffer Interface
 
@@ -88,7 +87,6 @@ public:
 	// MilHandleToNewHBitmap
 	static HRESULT Create( HBITMAP& p_rHbm, const SVMatroxBuffer& p_rFromId );
 
-
 	// ****** Copy Buffer  **********
 	// MbufCopy
 	static HRESULT CopyBuffer( SVMatroxBuffer& p_rTo, const SVMatroxBuffer& p_rFrom );
@@ -105,14 +103,9 @@ public:
 	static HRESULT CopyBuffer( SVByteVector& p_rToDIB, const SVMatroxBuffer& p_rFromId );
 	static HRESULT CopyBuffer( SVByteVector& p_rToDIB, const SVBitmapInfo& p_rToBitmapInfo, const SVMatroxBuffer& p_rFromId );
 	
-	///copies ImageBuffer to ByteVector rToDIB starting with rToDIB[offset], ensures positive height if normalize_y = true   
-	static  HRESULT CopyBufferToFileDIB(SVByteVector& rToDIB, const SVMatroxBuffer& rFromId, DWORD  offset =0, bool normalize_y = true);
-	
 	///copies ImageBuffer to  string rToDIB starting with rToDIB[offset], ensures positive height if normalize_y = true   
-	static HRESULT CopyBufferToFileDIB(std::string& rToDib,  SVBitmapInfo& rBitMapInfo, const SVMatroxBuffer& rFromId, const  DWORD  offset, bool normalize_y);
+	static HRESULT CopyBufferToFileDIB(std::string& rToDib,  SVBitmapInfo& rBitMapInfo, const SVMatroxBuffer& rFromId);
 	
-
-	static HRESULT CopyDIBBufferToMemory( SVImageCopyUtility& p_rImageCopier, const SVMatroxBuffer& p_rFromId );
 
 	// ****** Information 
 	static HRESULT IsParent( const SVMatroxBuffer& p_rParentBuffer, const SVMatroxBuffer& p_rChildBuffer );
@@ -120,10 +113,8 @@ public:
 	static HRESULT GetPositionPoint( POINT& p_rPoint, const SVMatroxBuffer& p_rBuffer );
 	static HRESULT GetPositionPoint( SVPoint& p_rPoint, const SVMatroxBuffer& p_rBuffer );
 
-	static HRESULT GetBitmapInfo( LPBITMAPINFO& p_rpBitmapInfo, const SVMatroxBuffer& p_rBuffer );
-	static HRESULT GetBitmapInfo( LPBITMAPINFO& p_rpBitmapInfo, SVMatroxIdentifier p_Identifier);
-	static HRESULT GetBitmapInfo( SVBitmapInfo& p_rBitmapInfo, const SVMatroxBuffer& p_rBuffer );
-	static HRESULT GetBitmapInfo( SVBitmapInfo& p_rBitmapInfo, SVMatroxIdentifier p_Identifier );
+public:
+	static HRESULT GetBitmapInfo( SVBitmapInfo& p_rBitmapInfo, const SVMatroxBuffer& p_rBuffer, bool* pIsMilInfo = nullptr );
 
 	static HRESULT GetHostAddress( LPVOID p_rpHostAddress, const SVMatroxBuffer& p_rBuffer );
 
@@ -181,11 +172,11 @@ public:
 protected:
 	static HRESULT CopyBuffer( SVMatroxBuffer& p_rTo, SVMatroxIdentifier p_From );
 	static HRESULT CopyBuffer( SVMatroxIdentifier p_To, const SVMatroxBuffer& p_rFrom );
-	static HRESULT CopyBuffer( const SVBitmapInfo& dstInfo, unsigned char* p_rTo, const SVMatroxBuffer& p_rFrom );
-	static HRESULT CopyBuffer( const SVBitmapInfo& dstInfo, unsigned char* p_rTo, const SVMatroxIdentifier& p_rFrom );
 
 	static void createImageBufferPtr(SVMatroxBuffer& rBuffer, SVMatroxIdentifier MatroxID, const std::string& rCreatorName);
+
 private:
+	static HRESULT GetBitmapInfo( LPBITMAPINFO& p_rpBitmapInfo, const SVMatroxBuffer& p_rBuffer );
 	static __int64 Convert2MatroxType( SVMatroxBufferAttributeEnum p_eType );
 	static long Convert2MatroxType   ( SVMatroxBufferTypeEnum p_eType );
 	static long Convert2MatroxType   ( SVMatroxBufferInfoEnum p_eType );

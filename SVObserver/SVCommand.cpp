@@ -54,7 +54,7 @@
 #include "TextDefinesSvO.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVStatusLibrary/GlobalPath.h"
-#include "InspectionCommands/CommandFunctionHelper.h"
+#include "InspectionCommands/CommandExternalHelper.h"
 #include "ObjectInterfaces/ICommand.h"
 #pragma endregion Includes
 

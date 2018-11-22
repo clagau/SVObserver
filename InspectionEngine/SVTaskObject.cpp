@@ -1031,11 +1031,6 @@ bool SVTaskObjectClass::ConnectAllInputs()
 	return Result;
 }
 
-bool SVTaskObjectClass::IsObjectValid() const
-{
-	return const_cast<SVTaskObjectClass*>(this)->IsValid() ? true : false;
-}
-
 SvStl::MessageContainerVector SVTaskObjectClass::getErrorMessages() const
 {
 	SvStl::MessageContainerVector list = m_ResetErrorMessages;

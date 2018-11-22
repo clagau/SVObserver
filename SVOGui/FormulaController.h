@@ -38,8 +38,6 @@ public:
 public:
 #pragma region Virtual Methods (IFormulaController)
 	virtual std::string GetInspectionName() const override;
-	virtual std::string GetPPQName() const override;
-	virtual std::string GetOwnerName() const override;
 	virtual std::string GetEquationText() const override;
 	virtual std::string GetEquationName() const override;
 	virtual HRESULT SetEquationName(const std::string& rNewName) override;

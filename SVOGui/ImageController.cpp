@@ -10,16 +10,14 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <boost/bind.hpp>
 #include "ImageController.h"
-#include "InspectionCommands\GetImage.h"
-#include "InspectionCommands\GetConnectedObjects.h"
-#include "InspectionCommands\ConnectToObject.h"
-#include "InspectionCommands\GetResultImage.h"
-#include "InspectionCommands\SaveImage.h"
+#include "DisplayHelper.h"
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "SVCommandLibrary\SVObjectSynchronousCommandTemplate.h"
 #include "ObjectInterfaces\IObjectManager.h"
 #include "ObjectInterfaces\ISVImage.h"
-#include "InspectionCommands\CommandFunctionHelper.h"
+#include "InspectionCommands\CommandExternalHelper.h"
+#include "SVProtoBuf/ConverterHelper.h"
+#include "SVStatusLibrary\MessageManager.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -39,16 +37,38 @@ namespace SvOg
 
 	HRESULT ImageController::RetrieveAvailableImageList()
 	{ 
-		typedef SvCmd::GetAllowedImageList Command;
-		typedef std::shared_ptr<Command> CommandPtr;
+		SvPb::InspectionCmdMsgs request, response;
+		SvPb::GetAvailableObjectsRequest* pGetAvailableObjectsRequest = request.mutable_getavailableobjectsrequest();
 
-		CommandPtr commandPtr{ new Command(m_InspectionID, SvDef::SVObjectTypeInfoStruct(SvDef::SVImageObjectType, m_ImageSubType), m_TaskObjectID, m_OnlyAboveImages) };
-		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+		SvPb::SetGuidInProtoBytes(pGetAvailableObjectsRequest->mutable_objectid(), m_InspectionID);
+		pGetAvailableObjectsRequest->mutable_typeinfo()->set_objecttype(SvDef::SVImageObjectType);
+		pGetAvailableObjectsRequest->mutable_typeinfo()->set_subtype(m_ImageSubType);
+		if (m_OnlyAboveImages)
+		{
+			SvPb::SetGuidInProtoBytes(pGetAvailableObjectsRequest->mutable_isbeforetoolmethod()->mutable_toolid(), m_TaskObjectID);
+		}
+		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+		if (S_OK == hr && response.has_getavailableobjectsresponse())
+		{
+			m_availableList = SvCmd::convertNameGuidList(response.getavailableobjectsresponse().list());
+		}
+
 		if (S_OK == hr)
 		{
-			m_availableList = commandPtr->AvailableObjects();
-			m_specialImageList = commandPtr->AvailableSpecialImages();
+			SvPb::InspectionCmdMsgs requestSpecial, responseSpecial;
+			SvPb::GetSpecialImageListRequest* pGetSpecialImageListRequest = requestSpecial.mutable_getspecialimagelistrequest();
+
+			SvPb::SetGuidInProtoBytes(pGetSpecialImageListRequest->mutable_taskobjectid(), m_TaskObjectID);
+			hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestSpecial, &responseSpecial);
+			if (S_OK == hr && responseSpecial.has_getspecialimagelistresponse())
+			{
+				m_specialImageList.clear();
+				m_specialImageList.reserve(responseSpecial.getspecialimagelistresponse().specialimagenames().size());
+				for (auto tmp : responseSpecial.getspecialimagelistresponse().specialimagenames())
+				{
+					m_specialImageList.emplace_back(tmp);
+				}
+			}
 		}
 		return hr;
 	}
@@ -65,38 +85,45 @@ namespace SvOg
 
 	SvUl::NameGuidList ImageController::GetResultImages() const
 	{
-		SvUl::NameGuidList list;
+		SvPb::InspectionCmdMsgs request, response;
+		SvPb::GetAvailableObjectsRequest* pGetAvailableObjectsRequest = request.mutable_getavailableobjectsrequest();
 
-		typedef SvCmd::GetResultImage Command;
-		typedef std::shared_ptr<Command> CommandPtr;
-	
-		CommandPtr commandPtr{ new Command(m_TaskObjectID) };
-		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-		if (S_OK == hr)
+		SvPb::SetGuidInProtoBytes(pGetAvailableObjectsRequest->mutable_objectid(), m_TaskObjectID);
+		pGetAvailableObjectsRequest->mutable_typeinfo()->set_objecttype(SvDef::SVImageObjectType);
+		pGetAvailableObjectsRequest->mutable_defaultplushidden();
+		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+		if (S_OK == hr && response.has_getavailableobjectsresponse())
 		{
-			list = commandPtr->ResultImages();
+			return SvCmd::convertNameGuidList(response.getavailableobjectsresponse().list());
 		}
-		return list;
+
+		return {};
 	}
 
 	const SvUl::InputNameGuidPairList& ImageController::GetConnectedImageList(const GUID& rInstanceID, int maxImages) const
 	{
-		typedef SvCmd::GetConnectedObjects Command;
-		typedef std::shared_ptr<Command> CommandPtr;
-
 		GUID objectID = m_TaskObjectID;
 		if (GUID_NULL != rInstanceID)
 		{
 			objectID = rInstanceID;
 		}
-		CommandPtr commandPtr{ new Command(objectID, SvDef::SVObjectTypeInfoStruct(SvDef::SVImageObjectType, SvDef::SVNotSetSubObjectType), maxImages) };
-		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-		if (S_OK == hr)
+		SvPb::InspectionCmdMsgs request, response;
+		SvPb::GetInputsRequest* pGetInputsRequest = request.mutable_getinputsrequest();
+		SvPb::SetGuidInProtoBytes(pGetInputsRequest->mutable_objectid(), objectID);
+		pGetInputsRequest->mutable_typeinfo()->set_objecttype(SvDef::SVImageObjectType);
+		pGetInputsRequest->set_maxrequested(maxImages);
+		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+		SvUl::InputNameGuidPairList connectedList;
+		if (S_OK == hr && response.has_getinputsresponse())
 		{
-			m_connectedList = commandPtr->ConnectedObjects();
+			m_connectedList.clear();
+			for (auto item : response.getinputsresponse().list())
+			{
+				SvUl::NameGuidPair tmp {item.objectname(), SvPb::GetGuidFromProtoBytes(item.objectid())};
+				m_connectedList[item.inputname()] = tmp;
+			}
 		}
+
 		return m_connectedList;
 	}
 
@@ -124,25 +151,38 @@ namespace SvOg
 		}
 		else
 		{
+			IPictureDisp* idisp {nullptr};
 			SvDef::StringVector::const_iterator itVector = std::find_if(m_specialImageList.begin(), m_specialImageList.end(), ByName(name));
 			if (itVector != m_specialImageList.end())
 			{
-				typedef SvCmd::GetImage Command;
-				typedef std::shared_ptr<Command> CommandPtr;
+				SvPb::InspectionCmdMsgs request, response;
+				SvPb::GetImageRequest* pGetImageRequest = request.mutable_getimagerequest();
 
-				CommandPtr commandPtr{ new Command(*itVector, m_TaskObjectID) };
-				SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-				HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-				if (S_OK == hr)
+				pGetImageRequest->set_imagename(*itVector);
+				SvPb::SetGuidInProtoBytes(pGetImageRequest->mutable_parentid(), m_TaskObjectID);
+				HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+				if (S_OK == hr && response.has_getimageresponse() && 0 == response.getimageresponse().messages().messages().size())
 				{
-					m_picture = commandPtr->Image();
-					rWidth = commandPtr->getWidth();
-					rHeight = commandPtr->getHeight();
+					DisplayHelper::convertPBImageToIPictureDisp(response.getimageresponse().imagedata(), rWidth, rHeight, &idisp);
 				}
-				return m_picture;
+				else
+				{
+					assert(false);
+					SvStl::MessageContainerVector messageList;
+					if (response.has_getimageresponse())
+					{
+						messageList = SvCmd::setMessageContainerFromMessagePB(response.getimageresponse().messages());
+					}
+
+					if (0 < messageList.size())
+					{
+						SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+						Exception.setMessage(messageList[0].getMessage());
+					}
+				}
 			}
+			return idisp;
 		}
-		return nullptr; 
 	}
 
 	IPictureDisp* ImageController::GetImage(const GUID& rImageID) const 
@@ -153,52 +193,70 @@ namespace SvOg
 
 	IPictureDisp* ImageController::GetImage(const GUID& rImageID, long& rWidth, long& rHeight) const 
 	{
-		typedef SvCmd::GetImage Command;
-		typedef std::shared_ptr<Command> CommandPtr;
-	
-		CommandPtr commandPtr{ new Command(rImageID) };
-		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-		if (S_OK == hr)
+		IPictureDisp* idisp {nullptr};
+		SvPb::InspectionCmdMsgs request, response;
+		SvPb::GetImageRequest* pGetImageRequest = request.mutable_getimagerequest();
+
+		SvPb::SetGuidInProtoBytes(pGetImageRequest->mutable_imageid(), rImageID);
+		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+		if (S_OK == hr && response.has_getimageresponse() && 0 == response.getimageresponse().messages().messages().size())
 		{
-			m_picture = commandPtr->Image();
-			rWidth = commandPtr->getWidth();
-			rHeight = commandPtr->getHeight();
+			DisplayHelper::convertPBImageToIPictureDisp(response.getimageresponse().imagedata(), rWidth, rHeight, &idisp);
 		}
-		return m_picture;
+		else
+		{
+			assert(false);
+			SvStl::MessageContainerVector messageList;
+			if (response.has_getimageresponse())
+			{
+				messageList = SvCmd::setMessageContainerFromMessagePB(response.getimageresponse().messages());
+			}
+
+			if (0 < messageList.size())
+			{
+				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+				Exception.setMessage(messageList[0].getMessage());
+			}
+		}
+
+		return idisp;
 	}
 
 	HRESULT ImageController::ConnectToImage(const std::string& inputName, const std::string& name, const GUID& rInstanceID) const 
 	{ 
 		HRESULT hr = E_INVALIDARG;
-		typedef SvCmd::ConnectToObject Command;
-		typedef std::shared_ptr<Command> CommandPtr;
+		GUID objectID = m_TaskObjectID;
+		if (GUID_NULL != rInstanceID)
+		{
+			objectID = rInstanceID;
+		}
 		SvUl::NameGuidList::const_iterator it = std::find_if(m_availableList.begin(), m_availableList.end(), ByName(name));
 		if (it != m_availableList.end())
 		{
-			GUID objectID = m_TaskObjectID;
-			if (GUID_NULL != rInstanceID)
-			{
-				objectID = rInstanceID;
-			}
-			CommandPtr commandPtr{ new Command(objectID, inputName, it->second, SvDef::SVImageObjectType) };
-			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-			hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-		}	
+			SvPb::InspectionCmdMsgs Request, Response;
+			SvPb::ConnectToObjectRequest* pConnectToObjectRequest = Request.mutable_connecttoobjectrequest();
+
+			SvPb::SetGuidInProtoBytes(pConnectToObjectRequest->mutable_objectid(), objectID);
+			pConnectToObjectRequest->set_inputname(inputName);
+			SvPb::SetGuidInProtoBytes(pConnectToObjectRequest->mutable_newconnectedid(), it->second);
+			pConnectToObjectRequest->set_objecttype(SvDef::SVImageObjectType);
+			hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &Request, &Response);
+		}
 		return hr; 
 	}
 
 	HRESULT ImageController::SaveImage(const std::string& rImageName, const std::string& rFilename)
 	{
 		HRESULT hr = E_INVALIDARG;
-		typedef SvCmd::SaveImage Command;
-		typedef std::shared_ptr<Command> CommandPtr;
 		SvUl::NameGuidList::const_iterator it = std::find_if(m_availableList.begin(), m_availableList.end(), ByName(rImageName));
 		if (it != m_availableList.end())
 		{
-			CommandPtr commandPtr{ new Command(it->second, rFilename) };
-			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-			hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+			SvPb::InspectionCmdMsgs Request, Response;
+			SvPb::SaveImageRequest* pSaveImageRequest = Request.mutable_saveimagerequest();
+
+			SvPb::SetGuidInProtoBytes(pSaveImageRequest->mutable_objectid(), it->second);
+			pSaveImageRequest->set_imagename(rFilename);
+			hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &Request, &Response);
 		}	
 		return hr; 
 	}
@@ -207,13 +265,13 @@ namespace SvOg
 	{
 		bool bIsValid = false;
 		SvPb::InspectionCmdMsgs Request, Response; 
-		SvPb::IsValidRequest* pIsValidRequest = Request.mutable_isvalidrequest();
+		SvPb::GetObjectParametersRequest* pIsValidRequest = Request.mutable_getobjectparametersrequest();
 		
 		SvPb::SetGuidInProtoBytes(pIsValidRequest->mutable_objectid(), m_TaskObjectID);
 		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &Request, &Response);
-		if (S_OK == hr && Response.has_isvalidresponse())
+		if (S_OK == hr && Response.has_getobjectparametersresponse())
 		{
-			bIsValid = Response.isvalidresponse().isvalid();
+			bIsValid = Response.getobjectparametersresponse().isvalid();
 		}
 		return bIsValid;
 	}

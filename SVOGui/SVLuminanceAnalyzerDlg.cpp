@@ -16,7 +16,6 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVObjectLibrary/SVClsids.h"
-#include "InspectionCommands/GetInstanceIDByTypeInfo.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -98,25 +97,22 @@ namespace SvOg
 
 	void SVLuminanceAnalyzerDlg::OnRange() 
 	{
-		typedef SvCmd::GetInstanceIDByTypeInfo Command;
-		typedef std::shared_ptr<Command> CommandPtr;
+		SvPb::InspectionCmdMsgs requestMessage, responseMessage;
+		auto* pRequest = requestMessage.mutable_getobjectidrequest()->mutable_info();
+		SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_rTaskObjectID);
+		pRequest->mutable_infostruct()->set_objecttype(SvDef::SVResultObjectType);
+		pRequest->mutable_infostruct()->set_objecttype(SvDef::SVResultLongObjectType);
 
-		SvDef::SVObjectTypeInfoStruct info(SvDef::SVResultObjectType, SvDef::SVResultLongObjectType);
-
-		CommandPtr commandPtr = CommandPtr(new Command(m_rTaskObjectID, info));
-		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_rInspectionID, commandPtr);
-		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-		if (S_OK != hr)
+		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_rInspectionID, &requestMessage, &responseMessage);
+		if (S_OK != hr || !responseMessage.has_getobjectidresponse())
 		{
 			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16090);
 		}
-		else  if ( S_OK != SvOi::SetupDialogManager(SVLongResultClassGuid, commandPtr->GetInstanceID(), GetSafeHwnd()))
+		else  if ( S_OK != SvOi::SetupDialogManager(SVLongResultClassGuid, SvPb::GetGuidFromProtoBytes(responseMessage.getobjectidresponse().objectid()), GetSafeHwnd()))
 		{
-		
 			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16091);
 		}
-
 	}
 } //namespace SvOg

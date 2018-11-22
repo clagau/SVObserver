@@ -36,12 +36,6 @@ namespace SvOi
 		virtual const SVMatroxBuffer& GetBuffer() const = 0;
 		virtual SVMatroxBuffer& GetBuffer() = 0;
 
-		//************************************
-		//! GetHBitmap - convert matrox buffer into a HBITMAP
-		//! \returns a HBITMAP handle.
-		//************************************
-		virtual HBITMAP GetHBitmap() const = 0;
-
 	protected:
 		SVImageBufferHandleInterface() {};
 

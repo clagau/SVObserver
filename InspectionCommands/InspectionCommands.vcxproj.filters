@@ -21,31 +21,7 @@
     <ClInclude Include="TaskObjectSetEmbeddedValues.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="GetObjectName.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SetDefaultInputs.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="GetInstanceIDByDottedName.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="GetAttributesAllowed.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="GetAvailableObjects.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="ConnectToObject.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="GetImage.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="GetConnectedObjects.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="GetResultImage.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="ValueObjectGetEnums.h">
@@ -57,55 +33,13 @@
     <ClInclude Include="SetMaskData.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="ImportMask.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="ExportMask.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="GetObjectTypeInfo.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SaveImage.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="GetAvailableAuxSourceImages.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="AreAuxiliaryExtentsAvailable.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="GetAuxSourceImage.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SetAuxSourceImage.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="GetCreatableObjects.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="ShouldInspectionReset.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="ConstructAndInsertTaskObject.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="GetSelectorList.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="GetPPQSelectorList.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="GetPPQObjectName.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="GetOutputRectangle.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="GetTaskObjects.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="GetAllowedImageList.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="AttributesAllowedFilter.h">
@@ -117,22 +51,7 @@
     <ClInclude Include="RangeSelectorFilter.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="ConstructAndInsertFriend.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SetObjectName.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="GetInputs.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="GetInstanceIDByTypeInfo.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="MLRejectValueFilter.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="MoveFriendObject.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="InspectionCommand_protoBuf.h">
@@ -144,13 +63,16 @@
     <ClInclude Include="stdafx.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="CommandFunctionHelper.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SelectorOptions.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="BuildSelectableItems.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandExternalHelper.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandInternalHelper.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
@@ -161,7 +83,10 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="CommandFunctionHelper.cpp">
+    <ClCompile Include="CommandExternalHelper.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandInternalHelper.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>

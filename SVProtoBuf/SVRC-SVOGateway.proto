@@ -11,6 +11,7 @@ package SvPb;
 
 import "Variant.proto";
 import "SVRC-Enum.proto";
+import "BasicStructure.proto";
 
 //Retrieves the Gateway version
 message GetGatewayVersionRequest 
@@ -48,13 +49,6 @@ message ImageId
 	sint32 imageIndex = 2;			//The image index value
 	sint32 slotIndex = 3;			//The image slot index value
 }
-
-message Image
-{
-	bytes rgbData = 1;				//The raw RGB image data as a byte array
-	uint32 width = 2;				//The width of the image
-	uint32 height = 3;				//The height of the image
-} 
 
 message Product
 {

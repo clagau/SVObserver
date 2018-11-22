@@ -27,11 +27,10 @@
 #include "SVSetupDialogManager.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "InspectionCommands/BuildSelectableItems.h"
-#include "InspectionCommands/GetCreatableObjects.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "InspectionCommands/CommandFunctionHelper.h"
+#include "InspectionCommands/CommandExternalHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -148,17 +147,19 @@ BOOL SVToolAdjustmentDialogAnalyzerPageClass::OnInitDialog()
 			analyzerSelection = m_pCurrentAnalyzer->GetObjectName();
 		}
 
-
-		typedef SvCmd::GetCreatableObjects Command;
-		typedef std::shared_ptr<Command> CommandPtr;
-
 		SvUl::NameGuidList availableList;
-		CommandPtr commandPtr {new Command(m_TaskObjectID, SvDef::SVObjectTypeInfoStruct(SvDef::SVAnalyzerObjectType, SvDef::SVNotSetSubObjectType))};
-		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-		if (S_OK == hr)
+		SvPb::InspectionCmdMsgs request, response;
+		SvPb::GetCreatableObjectsRequest* pGetCreatableObjectsRequest = request.mutable_getcreatableobjectsrequest();
+		SvPb::SetGuidInProtoBytes(pGetCreatableObjectsRequest->mutable_objectid(), m_TaskObjectID);
+		pGetCreatableObjectsRequest->mutable_typeinfo()->set_objecttype(SvDef::SVAnalyzerObjectType);
+		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+		SvUl::InputNameGuidPairList connectedList;
+		if (S_OK == hr && response.has_getcreatableobjectsresponse())
 		{
-			availableList = commandPtr->AvailableObjects();
+			for (auto item : response.getcreatableobjectsresponse().list())
+			{
+				availableList.push_back({item.objectname(), SvPb::GetGuidFromProtoBytes(item.objectid())});
+			}
 		}
 
 		//This is to add the analyzer due to MIL License restrictions.

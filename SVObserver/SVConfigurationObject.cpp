@@ -67,8 +67,9 @@
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "TextDefinesSvO.h"
 #include "SVColorTool.h"
-#include "InspectionCommands/CommandFunctionHelper.h"
+#include "InspectionCommands/CommandExternalHelper.h"
 #include "SVFileSystemLibrary/SVFileNameManagerClass.h"
+#include "SVProtoBuf/ConverterHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations

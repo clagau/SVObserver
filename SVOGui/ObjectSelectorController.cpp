@@ -10,10 +10,9 @@
 #include "stdafx.h"
 #include "ObjectSelectorController.h"
 #include "InspectionCommands/BuildSelectableItems.h"
-#include "InspectionCommands/GetObjectName.h"
-#include "InspectionCommands/GetPPQObjectName.h"
-#include "InspectionCommands/GetInstanceIDByTypeInfo.h"
+#include "InspectionCommands/CommandExternalHelper.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
+#include "SVProtoBuf/ConverterHelper.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
@@ -85,49 +84,44 @@ bool ObjectSelectorController::Show(std::string& rName, const std::string& rTitl
 std::string ObjectSelectorController::GetInspectionName() const
 {
 	std::string inspectionName;
-	typedef SvCmd::GetObjectName Command;
-	typedef std::shared_ptr<Command> CommandPtr;
+	SvPb::InspectionCmdMsgs request, response;
+	SvPb::GetObjectParametersRequest* pGetObjectNameRequest = request.mutable_getobjectparametersrequest();
 
-	CommandPtr commandPtr(new Command(m_InspectionID));
-	SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-	HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-	if (S_OK == hr)
+	SvPb::SetGuidInProtoBytes(pGetObjectNameRequest->mutable_objectid(), m_InspectionID);
+	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+	if (S_OK == hr && response.has_getobjectparametersresponse())
 	{
-		inspectionName = commandPtr->GetName();
+		inspectionName = response.getobjectparametersresponse().name();
 	}
 	return inspectionName;
 }
 
 std::string ObjectSelectorController::GetPPQName() const
 {
-	std::string PPQName;
-	typedef SvCmd::GetPPQObjectName Command;
-	typedef std::shared_ptr<Command> CommandPtr;
-
-	CommandPtr commandPtr(new Command(m_InspectionID));
-	SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-	HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-	if (S_OK == hr)
+	SvPb::InspectionCmdMsgs request, response;
+	SvPb::GetPPQNameRequest* pPPQNameRequest = request.mutable_getppqnamerequest();
+	SvPb::SetGuidInProtoBytes(pPPQNameRequest->mutable_inspectionid(), m_InspectionID);
+	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+	if (S_OK == hr && response.has_getppqnameresponse())
 	{
-		PPQName = commandPtr->GetName();
+		return response.getppqnameresponse().ppqname();
 	}
-	return PPQName;
+	return {};
 }
 
 GUID ObjectSelectorController::GetToolSetGUID() const
 {
 	GUID toolsetGUID = GUID_NULL;
+	
+	SvPb::InspectionCmdMsgs requestMessage, responseMessage;
+	auto* pRequest = requestMessage.mutable_getobjectidrequest()->mutable_info();
+	SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_InspectionID);
+	pRequest->mutable_infostruct()->set_objecttype(SvDef::SVToolSetObjectType);
 
-	typedef SvCmd::GetInstanceIDByTypeInfo Command;
-	typedef std::shared_ptr<Command> CommandPtr;
-
-	SvDef::SVObjectTypeInfoStruct info(SvDef::SVToolSetObjectType);
-	CommandPtr commandPtr = CommandPtr(new Command(m_InspectionID, info));
-	SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-	HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-	if (S_OK == hr)
+	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, &responseMessage);
+	if (S_OK == hr && responseMessage.has_getobjectidresponse())
 	{
-		toolsetGUID = commandPtr->GetInstanceID();
+		toolsetGUID = SvPb::GetGuidFromProtoBytes(responseMessage.getobjectidresponse().objectid());
 	}
 
 	return toolsetGUID;

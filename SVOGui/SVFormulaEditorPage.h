@@ -25,7 +25,6 @@ namespace SvOg
 		SVFormulaEditorPageClass( SvOi::IFormulaControllerPtr controller, bool isDisableCheckboxesVisible = false, UINT captionID = IDS_FORMULA_STRING, UINT disableExtentionID = IDS_TOOL_STRING );   // standard constructor
 		virtual ~SVFormulaEditorPageClass();
 
-		std::string GetOwnerName() const;
 		void SetDefaultInputs();
 		bool validateAndSetEquation();
 

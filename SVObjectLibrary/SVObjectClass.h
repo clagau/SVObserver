@@ -82,7 +82,7 @@ public:
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure );
 	virtual void ConnectObject( const SVObjectLevelCreateStruct& rCreateStructure );
 	virtual bool CloseObject();
-	virtual bool IsValid() const { return m_isObjectValid; }
+	virtual bool IsValid() const override { return m_isObjectValid; }
 	virtual bool SetObjectOwner( SVObjectClass* pNewOwner );
 	virtual bool SetObjectOwner( const GUID& rNewOwnerGUID );
 

@@ -111,7 +111,7 @@
 #include "SVMatroxLibrary\SVMatroxSystemInterface.h"
 #include "SVSharedMemoryLibrary\ShareEvents.h"
 #include "SVSharedMemoryLibrary\MLPPQInfo.h"
-#include "InspectionCommands\CommandFunctionHelper.h"
+#include "InspectionCommands\CommandExternalHelper.h"
 #include "SVRCWebsocketServer.h"
 #include "SVRCCommand.h"
 #include "SVLogLibrary\Logging.h"

@@ -18,3 +18,10 @@ message MessageContainerVector
 {
 	repeated MessageContainer Messages = 1; //list of messages
 }
+
+message Image
+{
+	bytes rgbData = 1;				//The raw RGB image data as a byte array
+	uint32 width = 2;				//The width of the image
+	uint32 height = 3;				//The height of the image
+} 

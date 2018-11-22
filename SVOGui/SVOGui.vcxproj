@@ -125,7 +125,6 @@
     <ClCompile Include="ObjectSelectorController.cpp" />
     <ClCompile Include="PictureDisplay.cpp" />
     <ClCompile Include="RangeController.cpp" />
-    <ClCompile Include="RangeValidator.cpp" />
     <ClCompile Include="ReconstructFilterDlg.cpp" />
     <ClCompile Include="ResultTableSelectionDlg.cpp" />
     <ClCompile Include="StdAfx.cpp">
@@ -198,7 +197,6 @@
     <ClInclude Include="ObjectSelectorController.h" />
     <ClInclude Include="PictureDisplay.h" />
     <ClInclude Include="RangeController.h" />
-    <ClInclude Include="RangeValidator.h" />
     <ClInclude Include="ReconstructFilterDlg.h" />
     <ClInclude Include="ResultTableSelectionDlg.h" />
     <ClInclude Include="SciLexer.h" />

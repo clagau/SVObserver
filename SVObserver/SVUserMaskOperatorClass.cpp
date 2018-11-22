@@ -246,10 +246,9 @@ SVShapeMaskHelperClass* SVUserMaskOperatorClass::GetShapeHelper()
 	return pMaskHelper;
 }
 
-void SVUserMaskOperatorClass::getSpecialImageList(SvDef::StringVector& rList) const
+SvDef::StringVector SVUserMaskOperatorClass::getSpecialImageList() const
 {
-	rList.push_back(SvDef::MaskImageName);
-	rList.push_back(SvDef::ReferenceImageName);
+	return {SvDef::MaskImageName, SvDef::ReferenceImageName};
 }
 
 bool SVUserMaskOperatorClass::getSpecialImage(const std::string& rName, SvOi::SVImageBufferHandlePtr& rImagePtr) const

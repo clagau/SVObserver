@@ -189,21 +189,19 @@ HRESULT SVObjectBuilder::DestroyFriends(const GUID& objectID)
 	return hr;
 }
 
-HRESULT SVObjectBuilder::CreateFriendObject(const GUID& classID, const GUID& uniqueID, const std::string& objectName, const GUID& ownerUniqueID, const GUID& rAddPreGuid)
+SvOi::IObjectClass* SVObjectBuilder::CreateFriendObject(const GUID& classID, const GUID& uniqueID, const std::string& objectName, const GUID& ownerUniqueID, const GUID& rAddPreGuid)
 {
-	HRESULT hr = S_OK;
-
 	if ( GUID_NULL == ownerUniqueID )
 	{
 		assert(false);
-		return E_FAIL;
+		return nullptr;
 	}
 
 	SVObjectClass* pOwnerObject = nullptr;
 	SVObjectManagerClass::Instance().GetObjectByIdentifier(ownerUniqueID, pOwnerObject);
 	if(nullptr == pOwnerObject)
 	{
-		return E_FAIL;
+		return nullptr;
 	}
 
 	SVObjectClass* pObject = nullptr;
@@ -236,17 +234,14 @@ HRESULT SVObjectBuilder::CreateFriendObject(const GUID& classID, const GUID& uni
 			else
 			{
 				delete pObject;
-				hr = E_FAIL;
+				pObject = nullptr;
 				assert(false);
 			}
 			
 		}
 	}
-	else
-	{
-		hr = E_FAIL;
-	}
-	return hr;
+
+	return pObject;
 }
 
 HRESULT SVObjectBuilder::OverwriteEmbeddedObject(const GUID& embeddedID, const GUID& uniqueID, const std::string& objectName, const GUID& ownerUniqueID)

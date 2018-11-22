@@ -11,7 +11,6 @@
 #include "TADialogTableParameterPage.h"
 #include "SVObjectLibrary\SVClsids.h"
 #include "SVFormulaEditorSheet.h"
-#include "InspectionCommands\GetAvailableObjects.h"
 #include "Definitions/TextDefineSVDef.h"
 #include "FormulaController.h"
 #include "SVStatusLibrary\MessageManager.h"
@@ -75,20 +74,20 @@ BOOL TADialogTableParameterPage::OnInitDialog()
 
 	m_Values.Init();
 
-	typedef SvCmd::GetAvailableObjects Command;
-	typedef std::shared_ptr<Command> CommandPtr;
-	SvUl::NameGuidList availableList;
-	CommandPtr commandPtr {new Command(m_TaskObjectID, SvDef::SVObjectTypeInfoStruct(SvDef::SVEquationObjectType))};
-	SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-	HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-	if (S_OK == hr)
+	SvPb::InspectionCmdMsgs request, response;
+	SvPb::GetAvailableObjectsRequest* pGetAvailableObjectsRequest = request.mutable_getavailableobjectsrequest();
+
+	SvPb::SetGuidInProtoBytes(pGetAvailableObjectsRequest->mutable_objectid(), m_TaskObjectID);
+	pGetAvailableObjectsRequest->mutable_typeinfo()->set_objecttype(SvDef::SVEquationObjectType);
+	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+	if (S_OK == hr && response.has_getavailableobjectsresponse())
 	{
-		availableList = commandPtr->AvailableObjects();
-		for (int i = 0; i < availableList.size(); i++)
+		auto availableList = SvCmd::convertNameGuidList(response.getavailableobjectsresponse().list());
+		for (auto entry : availableList)
 		{
-			if (SvDef::TableClearEquationName == availableList[i].first)
+			if (SvDef::TableClearEquationName == entry.first)
 			{
-				m_ClearEquationID = availableList[i].second;
+				m_ClearEquationID = entry.second;
 				m_pFormulaController = SvOi::IFormulaControllerPtr {new FormulaController(m_InspectionID, m_TaskObjectID, m_ClearEquationID)};
 				break;
 			}

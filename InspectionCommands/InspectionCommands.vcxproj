@@ -11,48 +11,22 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AreAuxiliaryExtentsAvailable.h" />
     <ClInclude Include="AttributesAllowedFilter.h" />
     <ClInclude Include="AttributesSetFilter.h" />
     <ClInclude Include="CommandFunction.h" />
-    <ClInclude Include="CommandFunctionHelper.h" />
-    <ClInclude Include="ConnectToObject.h" />
-    <ClInclude Include="ConstructAndInsertFriend.h" />
-    <ClInclude Include="ExportMask.h" />
-    <ClInclude Include="GetAllowedImageList.h" />
-    <ClInclude Include="GetAttributesAllowed.h" />
-    <ClInclude Include="GetAuxSourceImage.h" />
-    <ClInclude Include="GetAvailableAuxSourceImages.h" />
-    <ClInclude Include="GetAvailableObjects.h" />
-    <ClInclude Include="GetCreatableObjects.h" />
-    <ClInclude Include="GetConnectedObjects.h" />
-    <ClInclude Include="GetImage.h" />
-    <ClInclude Include="GetInputs.h" />
-    <ClInclude Include="GetInstanceIDByDottedName.h" />
+    <ClInclude Include="CommandExternalHelper.h" />
+    <ClInclude Include="CommandInternalHelper.h" />
     <ClInclude Include="GetMaskData.h" />
-    <ClInclude Include="GetObjectName.h" />
-    <ClInclude Include="GetObjectTypeInfo.h" />
     <ClInclude Include="GetOutputRectangle.h" />
-    <ClInclude Include="GetPPQObjectName.h" />
     <ClInclude Include="GetPPQSelectorList.h" />
-    <ClInclude Include="GetResultImage.h" />
-    <ClInclude Include="GetInstanceIDByTypeInfo.h" />
     <ClInclude Include="GetSelectorList.h" />
-    <ClInclude Include="GetTaskObjects.h" />
-    <ClInclude Include="ImportMask.h" />
-    <ClInclude Include="ConstructAndInsertTaskObject.h" />
     <ClInclude Include="InspectionCommand_protoBuf.h" />
     <ClInclude Include="MLRejectValueFilter.h" />
-    <ClInclude Include="MoveFriendObject.h" />
     <ClInclude Include="BuildSelectableItems.h" />
     <ClInclude Include="RangeSelectorFilter.h" />
-    <ClInclude Include="SaveImage.h" />
     <ClInclude Include="SelectorOptions.h" />
-    <ClInclude Include="SetAuxSourceImage.h" />
     <ClInclude Include="SetDefaultInputs.h" />
     <ClInclude Include="SetMaskData.h" />
-    <ClInclude Include="SetObjectName.h" />
-    <ClInclude Include="ShouldInspectionReset.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TaskObjectGetEmbeddedValues.h" />
     <ClInclude Include="TaskObjectSetEmbeddedValues.h" />
@@ -60,7 +34,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CommandFunction.cpp" />
-    <ClCompile Include="CommandFunctionHelper.cpp" />
+    <ClCompile Include="CommandExternalHelper.cpp" />
+    <ClCompile Include="CommandInternalHelper.cpp" />
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

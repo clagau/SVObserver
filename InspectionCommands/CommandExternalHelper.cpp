@@ -1,16 +1,22 @@
 //*****************************************************************************
 /// \copyright COPYRIGHT (c) 2017 by Seidenader Maschinenbau GmbH
-/// \file CommandFunctionHelper.cpp
+/// \file CommandExternalHelper.cpp
 /// All Rights Reserved
 //*****************************************************************************
 /// This file contains the helper function for the extern use.
 //******************************************************************************
 #pragma region Includes
 #include "StdAfx.h"
-#include "SVCommandLibrary/SVObjectSynchronousCommandTemplate.h"
-#include "CommandFunctionHelper.h"
+#include "CommandExternalHelper.h"
 #include "InspectionCommand_protoBuf.h"
 #include "ObjectInterfaces/ObjectInfo.h"
+#include "SVCommandLibrary/SVObjectSynchronousCommandTemplate.h"
+#include "SVProtoBuf\ConverterHelper.h"
+#include "SVProtoBuf/InspectionCommands.h"
+#include "SVStatusLibrary\MessageContainer.h"
+#include "SVUtilityLibrary/NameGuidList.h"
+#include "SVUtilityLibrary/SVGUID.h"
+#include "Definitions/SVObjectTypeInfoStruct.h"
 #pragma endregion Includes
 
 
@@ -19,7 +25,7 @@ namespace SvCmd
 
 HRESULT InspectionCommandsSynchronous(const SVGUID& rInspectionID, SvPb::InspectionCmdMsgs* pRequest, SvPb::InspectionCmdMsgs* pResponse)
 {
-	InspectionCommands_protoBufPtr CommandPtr = InspectionCommands_protoBufPtr(new InspectionCommands_protoBuf(pRequest, pResponse));
+	InspectionCommands_protoBufPtr CommandPtr = std::make_shared<InspectionCommands_protoBuf>(pRequest, pResponse);
 	SVObjectSynchronousCommandTemplate<InspectionCommands_protoBufPtr> Command(rInspectionID, CommandPtr);
 
 	HRESULT Result = Command.Execute(TWO_MINUTE_CMD_TIMEOUT);
@@ -96,6 +102,28 @@ bool ResponseToObjectInfo(const SvPb::InspectionCmdMsgs& rResponse, SvOi::Object
 		rToolSetInfos.push_back(objectInfo);
 	}
 	return true;
+}
+
+SvUl::NameGuidPair convertNameGuidPair(const SvPb::ObjectNameGuidPair& rPbPair)
+{
+	return {rPbPair.objectname(), SvPb::GetGuidFromProtoBytes(rPbPair.objectid())};
+}
+
+SvUl::NameGuidList convertNameGuidList(const ::google::protobuf::RepeatedPtrField< ::SvPb::ObjectNameGuidPair >& rPbList)
+{
+	SvUl::NameGuidList list;
+	for (auto& rEntry : rPbList)
+	{
+		list.push_back(convertNameGuidPair(rEntry));
+	}
+	return list;
+}
+
+void setTypeInfos(const SvDef::SVObjectTypeInfoStruct& destInfo, SvPb::SVObjectTypeInfoStruct& sourceInfo)
+{
+	sourceInfo.set_objecttype(destInfo.ObjectType);
+	sourceInfo.set_subtype(destInfo.SubType);
+	SvPb::SetGuidInProtoBytes(sourceInfo.mutable_embeddedid(), destInfo.EmbeddedID);
 }
 
 } //namespace SvCmd

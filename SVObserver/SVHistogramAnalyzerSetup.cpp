@@ -21,7 +21,7 @@
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "InspectionCommands/CommandFunctionHelper.h"
+#include "InspectionCommands/CommandExternalHelper.h"
 #pragma endregion Includes
 
 IMPLEMENT_DYNAMIC(SVSquare, CStatic)

@@ -132,7 +132,7 @@ bool ShareControl::GetImageFromId(const  SvPb::GetImageFromIdRequest& req, SvPb:
 	const SVMatroxBuffer& rFromId = m_MemReader.m_DataContainer.GetImageBuffer(slotindex, storeindex, Imageindex);
 	//@Todo[MEC][8.00] [22.11.2017] true is for testscript for binary compare  false is faster 
 	std::string ImageBuffer;
-	SVMatroxBufferInterface::CopyBufferToFileDIB(ImageBuffer, bitmapInfo, rFromId, 0, true);
+	SVMatroxBufferInterface::CopyBufferToFileDIB(ImageBuffer, bitmapInfo, rFromId);
 	pData->mutable_rgbdata()->swap(ImageBuffer);
 	pData->set_width(std::abs(bitmapInfo.GetWidth()));
 	pData->set_height(std::abs(bitmapInfo.GetHeight()));

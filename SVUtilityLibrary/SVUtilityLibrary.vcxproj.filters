@@ -101,9 +101,6 @@
     <ClInclude Include="SVHandleManager.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVImageCopyUtility.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVNameVariantList.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>

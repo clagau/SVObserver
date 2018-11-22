@@ -6,13 +6,12 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "MaskController.h"
-#include "InspectionCommands\GetInstanceIDByTypeInfo.h"
-#include "InspectionCommands\ImportMask.h"
-#include "InspectionCommands\ExportMask.h"
+#include "InspectionCommands\CommandExternalHelper.h"
 #include "InspectionCommands\GetMaskData.h"
 #include "InspectionCommands\SetMaskData.h"
 #include "SVCommandLibrary\SVObjectSynchronousCommandTemplate.h"
 #include "Definitions\TextDefineSvDef.h"
+#include "SVProtoBuf\ConverterHelper.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -33,16 +32,16 @@ namespace SvOg
 		m_TaskImageController.Init();
 
 		// Get Instance GUID for the Mask Operator...
-		typedef SvCmd::GetInstanceIDByTypeInfo Command;
-		typedef std::shared_ptr<Command> CommandPtr;
-	
-		SvDef::SVObjectTypeInfoStruct ObjectInfo(SvDef::SVUnaryImageOperatorObjectType, SvDef::SVShapeMaskHelperObjectType);
-		CommandPtr commandPtr = CommandPtr{ new Command(m_maskOperatorID, ObjectInfo) };
-		SVObjectSynchronousCommandTemplate<CommandPtr> cmdShapeHelper(m_InspectionID, commandPtr);
-		HRESULT Result = cmdShapeHelper.Execute(TWO_MINUTE_CMD_TIMEOUT);
-		if (S_OK == Result)
+		SvPb::InspectionCmdMsgs requestMessage, responseMessage;
+		auto* pRequest = requestMessage.mutable_getobjectidrequest()->mutable_info();
+		SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_maskOperatorID);
+		pRequest->mutable_infostruct()->set_objecttype(SvDef::SVUnaryImageOperatorObjectType);
+		pRequest->mutable_infostruct()->set_subtype(SvDef::SVShapeMaskHelperObjectType);
+
+		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, &responseMessage);
+		if (S_OK == hr && responseMessage.has_getobjectidresponse())
 		{
-			m_ShapeMaskHelperID = commandPtr->GetInstanceID();
+			m_ShapeMaskHelperID = SvPb::GetGuidFromProtoBytes(responseMessage.getobjectidresponse().objectid());
 		}
 	}
 
@@ -81,24 +80,22 @@ namespace SvOg
 
 	HRESULT MaskController::ImportMask(const std::string& filename)
 	{
-		typedef SvCmd::ImportMask Command;
-		typedef std::shared_ptr<Command> CommandPtr;
+		SvPb::InspectionCmdMsgs requestCmd, response;
+		SvPb::ImportMaskRequest* pImportMaskRequest = requestCmd.mutable_importmaskrequest();
 
-		CommandPtr commandPtr{ new Command(m_maskOperatorID, filename) };
-		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-		return hr;
+		SvPb::SetGuidInProtoBytes(pImportMaskRequest->mutable_objectid(), m_maskOperatorID);
+		pImportMaskRequest->set_filename(filename);
+		return SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestCmd, &response);
 	}
 
 	HRESULT MaskController::ExportMask(const std::string& filename)
 	{
-		typedef SvCmd::ExportMask Command;
-		typedef std::shared_ptr<Command> CommandPtr;
+		SvPb::InspectionCmdMsgs requestCmd, response;
+		SvPb::ExportMaskRequest* pExportMaskRequest = requestCmd.mutable_exportmaskrequest();
 
-		CommandPtr commandPtr{ new Command(m_maskOperatorID, filename) };
-		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-		return hr;
+		SvPb::SetGuidInProtoBytes(pExportMaskRequest->mutable_objectid(), m_maskOperatorID);
+		pExportMaskRequest->set_filename(filename);
+		return SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestCmd, &response);
 	}
 
 	HGLOBAL MaskController::GetMaskData() const

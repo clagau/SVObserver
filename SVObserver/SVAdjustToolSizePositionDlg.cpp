@@ -28,7 +28,7 @@
 #include "SVMainFrm.h"
 #include "ToolSizeAdjustTask.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "InspectionCommands/CommandFunctionHelper.h"
+#include "InspectionCommands/CommandExternalHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations

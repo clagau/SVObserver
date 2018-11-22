@@ -845,19 +845,17 @@ HRESULT SVToolClass::SetAuxSourceImage(SVImageClass* pImage)
 	{
 		SVImageClass* pConnectImage = nullptr;
 
-		long l_lCount = static_cast<long> (svImageList.size());
-
-		if (0 < l_lCount)
+		if (0 < svImageList.size())
 		{
 			pConnectImage = svImageList[0];
 
-			for (int i = l_lCount - 1; S_OK != l_hr && i > 0; i--)
+			for (auto* pTmpImage : svImageList)
 			{
-				if (svImageList[i] == pImage)
+				if (pTmpImage == pImage)
 				{
-					pConnectImage = svImageList[i];
-
+					pConnectImage = pTmpImage;
 					l_hr = S_OK;
+					break;
 				}
 			}
 		}

@@ -15,13 +15,9 @@
 #include "Definitions/TextDefineSVDef.h"
 #include "SVFormulaEditorSheet.h"
 #include "FormulaController.h"
-#include "InspectionCommands\GetAvailableObjects.h"
-#include "InspectionCommands\ConstructAndInsertFriend.h"
-#include "InspectionCommands\SetObjectName.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage\SVMessage.h"
-#include "InspectionCommands\MoveFriendObject.h"
-#include "InspectionCommands/CommandFunctionHelper.h"
+#include "InspectionCommands/CommandExternalHelper.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
@@ -255,11 +251,12 @@ void TADialogTableDefinesPage::OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pRes
 				{
 					if (m_gridList.size() >= pItem->iRow)
 					{
-						typedef SvCmd::SetObjectName Command;
-						typedef std::shared_ptr<Command> CommandPtr;
-						CommandPtr commandPtr {new Command(m_gridList[pItem->iRow - 1].second.ToGUID(), newName.c_str())};
-						SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-						HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+						SvPb::InspectionCmdMsgs request, response;
+						SvPb::SetObjectNameRequest* pSetObjectNameRequest = request.mutable_setobjectnamerequest();
+
+						SvPb::SetGuidInProtoBytes(pSetObjectNameRequest->mutable_objectid(), m_gridList[pItem->iRow - 1].second.ToGUID());
+						pSetObjectNameRequest->set_objectname(newName.c_str());
+						HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
 						if (S_OK != hr)
 						{
 							bAcceptChange = false;
@@ -369,15 +366,17 @@ void TADialogTableDefinesPage::initGridControl()
 
 void TADialogTableDefinesPage::FillGridControl()
 {
-	typedef SvCmd::GetAvailableObjects Command;
-	typedef std::shared_ptr<Command> CommandPtr;
 	m_gridList.clear();
-	CommandPtr commandPtr {new Command(m_TaskObjectID, SvDef::SVObjectTypeInfoStruct(SvDef::SVEquationObjectType, SvDef::TableColumnEquationObjectType))};
-	SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-	HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-	if (S_OK == hr)
+	SvPb::InspectionCmdMsgs request, response;
+	SvPb::GetAvailableObjectsRequest* pGetAvailableObjectsRequest = request.mutable_getavailableobjectsrequest();
+
+	SvPb::SetGuidInProtoBytes(pGetAvailableObjectsRequest->mutable_objectid(), m_TaskObjectID);
+	pGetAvailableObjectsRequest->mutable_typeinfo()->set_objecttype(SvDef::SVEquationObjectType);
+	pGetAvailableObjectsRequest->mutable_typeinfo()->set_subtype(SvDef::TableColumnEquationObjectType);
+	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+	if (S_OK == hr && response.has_getavailableobjectsresponse())
 	{
-		m_gridList = commandPtr->AvailableObjects();
+		m_gridList = SvCmd::convertNameGuidList(response.getavailableobjectsresponse().list());
 		m_Grid.SetRowCount(cHeaderSize + static_cast<int>(m_gridList.size()) + 1); //the last one is the empty line "----"
 		SvGcl::GV_ITEM Item;
 		Item.mask = GVIF_TEXT | GVIF_FORMAT | GVIF_BKCLR;
@@ -441,11 +440,14 @@ void TADialogTableDefinesPage::showContextMenu(CPoint point)
 
 void TADialogTableDefinesPage::MoveColumn(SVGUID moveGuid, SVGUID preGuid)
 {
-	typedef SvCmd::MoveFriendObject Command;
-	typedef std::shared_ptr<Command> CommandPtr;
-	CommandPtr commandPtr {new Command(m_TaskObjectID, moveGuid, preGuid)};
-	SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-	HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+	SvPb::InspectionCmdMsgs Request, Response;
+	SvPb::MoveObjectRequest* pMovetaskobjectrequest = Request.mutable_moveobjectrequest();
+	SvPb::SetGuidInProtoBytes(pMovetaskobjectrequest->mutable_parentid(), m_TaskObjectID);
+	SvPb::SetGuidInProtoBytes(pMovetaskobjectrequest->mutable_objectid(), moveGuid);
+	SvPb::SetGuidInProtoBytes(pMovetaskobjectrequest->mutable_movepreid(), preGuid);
+	pMovetaskobjectrequest->set_listmode(SvPb::MoveObjectRequest_ListEnum_FriendList);
+
+	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &Request, &Response);
 	if (S_OK != hr)
 	{
 		SvDef::StringVector msgList;
@@ -482,12 +484,14 @@ void TADialogTableDefinesPage::UpdateEnableButtons()
 
 HRESULT TADialogTableDefinesPage::AddColumn(const std::string& rName, SVGUID addPreGuid)
 {
-	// Construct and Create the Filter Class Object
-	typedef SvCmd::ConstructAndInsertFriend Command;
-	typedef std::shared_ptr<Command> CommandPtr;
-	CommandPtr commandPtr {new Command(m_TaskObjectID, TableColumnEquationGuid, rName.c_str(), addPreGuid)};
-	SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-	HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+	SvPb::InspectionCmdMsgs requestMessage, responseMessage;
+	SvPb::ConstructAndInsertRequest* pRequest = requestMessage.mutable_constructandinsertrequest();
+	SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_TaskObjectID);
+	SvPb::SetGuidInProtoBytes(pRequest->mutable_classid(), TableColumnEquationGuid);
+	pRequest->mutable_friend_()->set_name(rName);
+	SvPb::SetGuidInProtoBytes(pRequest->mutable_friend_()->mutable_preguid(), addPreGuid);
+
+	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, &responseMessage);
 	if (S_OK != hr)
 	{
 		SvDef::StringVector msgList;

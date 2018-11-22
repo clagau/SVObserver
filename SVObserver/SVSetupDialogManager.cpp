@@ -53,7 +53,7 @@
 #include "SVRange.h"
 #include "SVToolSet.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "InspectionCommands/CommandFunctionHelper.h"
+#include "InspectionCommands/CommandExternalHelper.h"
 #pragma endregion Inlcudes
 
 SVSetupDialogManager& SVSetupDialogManager::Instance()
