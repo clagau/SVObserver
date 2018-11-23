@@ -68,7 +68,7 @@ BOOL SVRemoteOutputGroup::Clear()
 
 BOOL SVRemoteOutputGroup::Create()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVRemoteOutputGroupType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVRemoteOutputGroupType;
 
 	m_bCreated = true;
 

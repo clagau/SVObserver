@@ -36,8 +36,8 @@ SVBarCodeResultClass::SVBarCodeResultClass(SVObjectClass* POwner, int StringReso
 {
 
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVResultObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVResultBarCodeObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVResultBarCodeObjectType;
 
 	RegisterEmbeddedObject(
 		&msv_bUseSingleMatchString,
@@ -77,10 +77,10 @@ SVBarCodeResultClass::SVBarCodeResultClass(SVObjectClass* POwner, int StringReso
 	m_dReadScore.SetDefaultValue(-1.0, true);
 	m_dReadScore.setSaveValueFlag(false);
 	// Specify which string SVResultString should require
-	m_inputObjectInfo.SetInputObjectType(SvDef::SVNotSetObjectType, SvDef::SVNotSetSubObjectType, SVBarCodeObjectGuid);
+	m_inputObjectInfo.SetInputObjectType(SvPb::SVNotSetObjectType, SvPb::SVNotSetSubObjectType, SVBarCodeObjectGuid);
 
 	// Identify our input type needs
-	m_SVRegExpressionObjectInfo.SetInputObjectType(SvDef::SVValueObjectType, SvDef::SVStringValueObjectType, SVRegExpressionObjectGuid);
+	m_SVRegExpressionObjectInfo.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVStringValueObjectType, SVRegExpressionObjectGuid);
 	m_SVRegExpressionObjectInfo.SetObject(GetObjectInfo());
 	RegisterInputObject(&m_SVRegExpressionObjectInfo, _T("BarCodeResultString"));
 }

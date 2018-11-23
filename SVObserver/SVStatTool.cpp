@@ -47,8 +47,8 @@ void SVStatisticsToolClass::init(void)
 	// These values will not be exposed for this Tool.
 	m_hasToolExtents = false;
 
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvDef::SVStatisticsToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvPb::SVStatisticsToolObjectType;
 	
 	// Register an empty input object
 	m_inputObjectInfo.SetObject( GetObjectInfo() );
@@ -320,8 +320,8 @@ void SVStatisticsToolClass::AllocateResult (SVStatisticsFeatureEnum aFeatureInde
 		interfaceInfo.EmbeddedID = m_Value [aFeatureIndex].GetEmbeddedID();
 		resultClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
 
-		resultClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVResultObjectType;
-		resultClassInfo.m_ObjectTypeInfo.SubType	= SvDef::SVResultDoubleObjectType;
+		resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
+		resultClassInfo.m_ObjectTypeInfo.SubType	= SvPb::SVResultDoubleObjectType;
 		resultClassInfo.m_ClassId = SVDoubleResultClassGuid;
 		resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_RESULT );
 		resultClassInfo.m_ClassName += _T(" ") + std::string(m_Value [aFeatureIndex].GetName());
@@ -338,8 +338,8 @@ void SVStatisticsToolClass::AllocateResult (SVStatisticsFeatureEnum aFeatureInde
 		Add( pResult );
 
 		SvDef::SVObjectTypeInfoStruct info;
-		info.ObjectType = SvDef::SVValueObjectType;
-		info.SubType = SvDef::SVDoubleValueObjectType;
+		info.ObjectType = SvPb::SVValueObjectType;
+		info.SubType = SvPb::SVDoubleValueObjectType;
 		info.EmbeddedID = SVValueObjectGuid;
 
 		// Get the output of the result
@@ -419,8 +419,8 @@ SVResultClass* SVStatisticsToolClass::GetResult(SVStatisticsFeatureEnum aFeature
 	
 	bool                    bDone = false;
 	
-	info.ObjectType = SvDef::SVResultObjectType;
-	info.SubType = SvDef::SVResultDoubleObjectType;
+	info.ObjectType = SvPb::SVResultObjectType;
+	info.SubType = SvPb::SVResultDoubleObjectType;
 	
 	SVGetObjectDequeByTypeVisitor l_Visitor( info );
 
@@ -766,7 +766,7 @@ bool SVStatisticsToolClass::Test(SvStl::MessageContainerVector *pErrorMessages)
 			{
 				if (nullptr != pErrorMessages)
 				{
-					std::string CompleteName = ObjectRef.getObject()->GetObjectNameToObjectType(SvDef::SVInspectionObjectType);
+					std::string CompleteName = ObjectRef.getObject()->GetObjectNameToObjectType(SvPb::SVInspectionObjectType);
 					SvDef::StringVector msgList;
 					msgList.push_back( CompleteName );
 					SvStl::MessageContainer message;

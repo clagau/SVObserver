@@ -138,7 +138,7 @@ std::string SVObjectReference::GetCompleteName(bool OneBased /*=false*/) const
 	return Result;
 }
 
-std::string SVObjectReference::GetObjectNameToObjectType(SvDef::SVObjectTypeEnum objectTypeToInclude, bool OneBased /*=false*/) const
+std::string SVObjectReference::GetObjectNameToObjectType(SvPb::SVObjectTypeEnum objectTypeToInclude, bool OneBased /*=false*/) const
 {
 	std::string Result;
 

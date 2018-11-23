@@ -82,7 +82,7 @@ SVPatternAnalyzerClass::SVPatternAnalyzerClass(SVObjectClass* POwner, int String
   : SVImageAnalyzerClass(POwner, StringResourceID)
   , m_bReloadModelFromFile(false)
 {
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVPatternAnalyzerObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVPatternAnalyzerObjectType;
 	m_nPatternIndex = -1;
 
 	// Register Embedded Objects
@@ -165,8 +165,8 @@ SVObjectClass* SVPatternAnalyzerClass::CreateResult()
 	interfaceInfo.EmbeddedID = SVpatResultNumFoundOccurancesObjectGuid;
 	resultClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
 
-	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVResultObjectType;
-	resultClassInfo.m_ObjectTypeInfo.SubType	= SvDef::SVResultLongObjectType;
+	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
+	resultClassInfo.m_ObjectTypeInfo.SubType	= SvPb::SVResultLongObjectType;
 	resultClassInfo.m_ClassId = SVLongResultClassGuid;
 	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_RESULT );
 	std::string Title = SvUl::LoadStdString( IDS_OBJECTNAME_PAT_NBRFOUNDOCCURANCES );

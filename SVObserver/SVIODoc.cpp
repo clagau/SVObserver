@@ -231,7 +231,7 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 
 					std::string RemoteInputName = SvUl::Format(SvO::cRemoteInputNumberLabel, j + 1);
 
-					pRemoteInput = dynamic_cast<SVRemoteInputObject*> (pInputList->GetInputFlyweight( RemoteInputName, SvDef::SVRemoteInputObjectType, j));
+					pRemoteInput = dynamic_cast<SVRemoteInputObject*> (pInputList->GetInputFlyweight( RemoteInputName, SvPb::SVRemoteInputObjectType, j));
 
 					if( nullptr != pRemoteInput )
 					{

@@ -209,7 +209,7 @@ void SVHistogramAnalyzerClass::init()
 
 	
 		// Identify our output type
-		m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVHistogramAnalyzerObjectType;
+		m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVHistogramAnalyzerObjectType;
 
 		// Register Embedded Objects
 		RegisterEmbeddedObject( 
@@ -425,8 +425,8 @@ void SVHistogramAnalyzerClass::AddResult(const std::pair<GUID, DWORD> & p)
 
 	l_ifceInfo.EmbeddedID = p.first;
 	l_resultInfo.m_DesiredInputVector.push_back( l_ifceInfo );
-	l_resultInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVResultObjectType;
-	l_resultInfo.m_ObjectTypeInfo.SubType	= SvDef::SVResultLongObjectType;
+	l_resultInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
+	l_resultInfo.m_ObjectTypeInfo.SubType	= SvPb::SVResultLongObjectType;
 	l_resultInfo.m_ClassId = SVLongResultClassGuid;
 	l_resultInfo.m_ClassName = SvUl::LoadStdString(p.second);
 

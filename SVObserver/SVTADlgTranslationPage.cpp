@@ -60,20 +60,20 @@ BOOL SVToolAdjustmentDialogTranslationPageClass::OnInitDialog()
 	{
 		// Get Evaluate Object...
 		SvDef::SVObjectTypeInfoStruct evaluateObjectInfo;
-		evaluateObjectInfo.ObjectType = SvDef::SVMathContainerObjectType;
+		evaluateObjectInfo.ObjectType = SvPb::SVMathContainerObjectType;
 
 		// Get Evaluate Object for the X coordinate...
-		evaluateObjectInfo.SubType = SvDef::SVEvaluateTranslationXObjectType;
+		evaluateObjectInfo.SubType = SvPb::SVEvaluateTranslationXObjectType;
 		m_pEvaluateTranslationX = dynamic_cast<SVEvaluateClass*> (pTool->getFirstObject(evaluateObjectInfo));
 
 		// Get Evaluate Object for the Y coordinate...
-		evaluateObjectInfo.SubType = SvDef::SVEvaluateTranslationYObjectType;
+		evaluateObjectInfo.SubType = SvPb::SVEvaluateTranslationYObjectType;
 		m_pEvaluateTranslationY = dynamic_cast<SVEvaluateClass*> (pTool->getFirstObject(evaluateObjectInfo));
 
 		//Image Transformation
 		SvDef::SVObjectTypeInfoStruct objectInfo;
-		objectInfo.ObjectType = SvDef::SVTransformObjectType;
-		objectInfo.SubType = SvDef::SVImageTransformObjectType;
+		objectInfo.ObjectType = SvPb::SVTransformObjectType;
+		objectInfo.SubType = SvPb::SVImageTransformObjectType;
 
 		SvOi::IObjectClass* pImageTransform = pTool->getFirstObject(objectInfo);
 		if (nullptr != pImageTransform)
@@ -126,7 +126,7 @@ void SVToolAdjustmentDialogTranslationPageClass::OnXFormulaButton()
 		std::string Caption = m_pEvaluateTranslationX->GetName();
 		Caption += _T(" Formula");
 
-		SvDef::SVObjectTypeInfoStruct info(SvDef::SVMathContainerObjectType, SvDef::SVEvaluateTranslationXObjectType);
+		SvDef::SVObjectTypeInfoStruct info(SvPb::SVMathContainerObjectType, SvPb::SVEvaluateTranslationXObjectType);
 		SvOg::SVFormulaEditorSheetClass dlg(m_InspectionID, m_TaskObjectID, info, Caption.c_str());
 		dlg.DoModal();
 		
@@ -141,7 +141,7 @@ void SVToolAdjustmentDialogTranslationPageClass::OnYFormulaButton()
 		std::string Caption = m_pEvaluateTranslationY->GetName();
 		Caption += _T(" Formula");
 
-		SvDef::SVObjectTypeInfoStruct info(SvDef::SVMathContainerObjectType, SvDef::SVEvaluateTranslationYObjectType);
+		SvDef::SVObjectTypeInfoStruct info(SvPb::SVMathContainerObjectType, SvPb::SVEvaluateTranslationYObjectType);
 		SvOg::SVFormulaEditorSheetClass dlg(m_InspectionID, m_TaskObjectID, info, Caption.c_str());
 		dlg.DoModal();
 		

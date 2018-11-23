@@ -34,17 +34,17 @@ SVLinearAnalyzerClass::SVLinearAnalyzerClass( SVObjectClass* POwner, int StringR
 					            :SVAnalyzerClass( POwner, StringResourceID )
 {
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVAnalyzerObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVAnalyzerObjectType;
 
-	m_InputImageObjectInfo.SetInputObjectType(SvDef::SVImageObjectType, SvDef::SVImageMonoType);
+	m_InputImageObjectInfo.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
 	m_InputImageObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_InputImageObjectInfo, _T( "LinearAnalyzerImage" ) );
 
-	m_InputProfileOrientation.SetInputObjectType(SvDef::SVValueObjectType, SvDef::SVEnumValueObjectType, SVProfileOrientationGuid);
+	m_InputProfileOrientation.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVEnumValueObjectType, SVProfileOrientationGuid);
 	m_InputProfileOrientation.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_InputProfileOrientation, _T( "LinearAnalyzerOrientation" ) );
 
-	m_InputUseRotationAngle.SetInputObjectType(SvDef::SVValueObjectType, SvDef::SVBoolValueObjectType, SVLinearToolUseRotationGuid);
+	m_InputUseRotationAngle.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVBoolValueObjectType, SVLinearToolUseRotationGuid);
 	m_InputUseRotationAngle.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_InputUseRotationAngle, _T( "LinearAnalyzerUseRotationAngle" ) );
 
@@ -249,8 +249,8 @@ SVLinearEdgeProcessingClass *SVLinearAnalyzerClass::GetEdgeA()
 
 	SvDef::SVObjectTypeInfoStruct  info;
 
-	info.ObjectType = SvDef::SVLinearEdgeProcessingObjectType;
-	info.SubType = SvDef::SVLinearEdgeAProcessingObjectType;
+	info.ObjectType = SvPb::SVLinearEdgeProcessingObjectType;
+	info.SubType = SvPb::SVLinearEdgeAProcessingObjectType;
 
 	l_psvEdge = dynamic_cast<SVLinearEdgeProcessingClass *>(getFirstObject(info));
 
@@ -263,8 +263,8 @@ SVLinearEdgeProcessingClass *SVLinearAnalyzerClass::GetEdgeB()
 
 	SvDef::SVObjectTypeInfoStruct  info;
 
-	info.ObjectType = SvDef::SVLinearEdgeProcessingObjectType;
-	info.SubType = SvDef::SVLinearEdgeBProcessingObjectType;
+	info.ObjectType = SvPb::SVLinearEdgeProcessingObjectType;
+	info.SubType = SvPb::SVLinearEdgeBProcessingObjectType;
 
 	l_psvEdge = dynamic_cast<SVLinearEdgeProcessingClass *>(getFirstObject(info));
 

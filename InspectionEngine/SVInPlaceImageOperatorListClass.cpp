@@ -33,8 +33,8 @@ SVInPlaceImageOperatorListClass::SVInPlaceImageOperatorListClass( SVObjectClass*
 void SVInPlaceImageOperatorListClass::init()
 {
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVUnaryImageOperatorListObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType	= SvDef::SVInPlaceImageOperatorListObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVUnaryImageOperatorListObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType	= SvPb::SVInPlaceImageOperatorListObjectType;
 
 	// SetObjectDepth() already called in SVObjectClass Ctor
 

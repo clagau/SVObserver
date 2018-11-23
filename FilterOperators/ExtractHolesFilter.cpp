@@ -31,6 +31,6 @@ ExtractHolesFilter::~ExtractHolesFilter()
 
 void ExtractHolesFilter::init()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::ExtractHolesFilterObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::ExtractHolesFilterObjectType;
 
 }

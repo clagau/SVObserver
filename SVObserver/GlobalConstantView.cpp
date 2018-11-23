@@ -437,7 +437,7 @@ bool GlobalConstantView::checkAllDependencies( BasicValueObject* pObject, bool C
 			Type =  SvOg::SVShowDependentsDialog::DeleteConfirm;
 		}
 
-		SvOg::SVShowDependentsDialog DependentsDialog( ObjectCheckList, SvDef::SVInspectionObjectType, DisplayText.c_str(), Type );
+		SvOg::SVShowDependentsDialog DependentsDialog( ObjectCheckList, SvPb::SVInspectionObjectType, DisplayText.c_str(), Type );
 
 		if( IDCANCEL == DependentsDialog.DoModal() )
 		{

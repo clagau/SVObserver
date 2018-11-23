@@ -11,6 +11,7 @@
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <vector>
 #include "Definitions/SVObjectTypeInfoStruct.h"
+#include "SVProtobuf/SVO-Enum.h"
 #include "SVUtilityLibrary/NameGuidList.h"
 #pragma endregion Includes
 
@@ -52,16 +53,16 @@ namespace SvOi
 			This method gets the complete name of this object, to a certain lineage.
 			Note: this method builds the name by removing the parts of the ancestry younger than the objectType.
 		***********/
-		virtual HRESULT GetCompleteNameToType(SvDef::SVObjectTypeEnum objectType, std::string& rName) const = 0;
+		virtual HRESULT GetCompleteNameToType(SvPb::SVObjectTypeEnum objectType, std::string& rName) const = 0;
 
 		/**********
 			This method gets the complete name of this object, to a certain lineage.
 			Note: this method builds the name in reverse by ancestry (meaning that the lineage is traversed by youngest to oldest)
 		***********/
-		virtual std::string GetObjectNameToObjectType(SvDef::SVObjectTypeEnum objectTypeToInclude) const = 0;
+		virtual std::string GetObjectNameToObjectType(SvPb::SVObjectTypeEnum objectTypeToInclude) const = 0;
 
-		//Get the complete object name before selected SvDef::SVObjectTypeEnum value.
-		virtual std::string GetObjectNameBeforeObjectType(SvDef::SVObjectTypeEnum objectTypeToInclude) const = 0;
+		//Get the complete object name before selected SVObjectTypeEnum value.
+		virtual std::string GetObjectNameBeforeObjectType(SvPb::SVObjectTypeEnum objectTypeToInclude) const = 0;
 
 		// Check if the object if valid.
 		virtual bool IsValid() const = 0;
@@ -69,12 +70,12 @@ namespace SvOi
 		/**********
 			The method gets the type of this object.
 		***********/
-		virtual const SvDef::SVObjectTypeEnum& GetObjectType() const = 0;
+		virtual const SvPb::SVObjectTypeEnum& GetObjectType() const = 0;
 
 		/**********
 			The method gets the subtype of this object.
 		***********/
-		virtual SvDef::SVObjectSubTypeEnum GetObjectSubType() const = 0;
+		virtual SvPb::SVObjectSubTypeEnum GetObjectSubType() const = 0;
 
 		/**********
 			The method gets the parent or nullptr if no parent.
@@ -85,8 +86,8 @@ namespace SvOi
 			The method gets the ancestor with a special type or nullptr if not found.
 			/param ancestorObjectType <in> 
 		***********/
-		virtual IObjectClass* GetAncestorInterface(SvDef::SVObjectTypeEnum ancestorObjectType) = 0;
-		virtual const IObjectClass* GetAncestorInterface(SvDef::SVObjectTypeEnum ancestorObjectType) const = 0;
+		virtual IObjectClass* GetAncestorInterface(SvPb::SVObjectTypeEnum ancestorObjectType) = 0;
+		virtual const IObjectClass* GetAncestorInterface(SvPb::SVObjectTypeEnum ancestorObjectType) const = 0;
 
 		/**********
 		This method gets the attributes allowed for the object.

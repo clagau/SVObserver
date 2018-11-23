@@ -47,7 +47,7 @@ SVOutputObjectList::~SVOutputObjectList()
 
 bool SVOutputObjectList::Create()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVOutputObjectListType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVOutputObjectListType;
 
 	try
 	{
@@ -127,7 +127,7 @@ SVOutputObject* SVOutputObjectList::GetOutput(const std::string& rName) const
 	return pResult;
 }
 
-SVOutputObject* SVOutputObjectList::GetOutputFlyweight(const std::string& rName, SvDef::SVObjectSubTypeEnum ObjectSubType, int GuidIndex)
+SVOutputObject* SVOutputObjectList::GetOutputFlyweight(const std::string& rName, SvPb::SVObjectSubTypeEnum ObjectSubType, int GuidIndex)
 {
 	SVOutputObject* pResult(nullptr);
 
@@ -139,14 +139,14 @@ SVOutputObject* SVOutputObjectList::GetOutputFlyweight(const std::string& rName,
 		{
 			switch (ObjectSubType)
 			{
-			case SvDef::SVDigitalOutputObjectType:
+			case SvPb::SVDigitalOutputObjectType:
 			{
 				SVDigitalOutputObject* pDigOutput = new SVDigitalOutputObject;
 				pDigOutput->updateGuid(GuidIndex);
 				pResult = pDigOutput;
 				break;
 			}
-			case SvDef::SVRemoteOutputObjectType:
+			case SvPb::SVRemoteOutputObjectType:
 				pResult = new SVRemoteOutputObject;
 				break;
 			}
@@ -631,10 +631,10 @@ bool SVOutputObjectList::FillOutputs( SVIOEntryHostStructPtrVector& rIOEntries )
 
 				switch (Iter->second->GetObjectSubType())
 				{
-				case SvDef::SVDigitalOutputObjectType:
+				case SvPb::SVDigitalOutputObjectType:
 					pIOEntry->m_ObjectType = IO_DIGITAL_OUTPUT;
 					break;
-				case SvDef::SVRemoteOutputObjectType:
+				case SvPb::SVRemoteOutputObjectType:
 					pIOEntry->m_ObjectType = IO_REMOTE_OUTPUT;
 					break;
 				default:

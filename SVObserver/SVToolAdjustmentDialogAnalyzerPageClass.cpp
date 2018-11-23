@@ -66,7 +66,7 @@ SVToolAdjustmentDialogAnalyzerPageClass::SVToolAdjustmentDialogAnalyzerPageClass
 		if (m_pTool)
 		{
 			SvDef::SVObjectTypeInfoStruct info;
-			info.ObjectType = SvDef::SVAnalyzerObjectType;
+			info.ObjectType = SvPb::SVAnalyzerObjectType;
 
 			m_pCurrentAnalyzer = dynamic_cast<SVAnalyzerClass *>(m_pTool->getFirstObject(info));
 		}
@@ -108,7 +108,7 @@ BOOL SVToolAdjustmentDialogAnalyzerPageClass::OnInitDialog()
 		// Set Result/Publish button...
 		switch (rToolType.SubType)
 		{
-			case SvDef::SVLinearToolObjectType:
+			case SvPb::SVLinearToolObjectType:
 				if (pWnd = GetDlgItem(IDC_PUBLISH_BUTTON))
 				{
 					pWnd->EnableWindow(FALSE);
@@ -116,7 +116,7 @@ BOOL SVToolAdjustmentDialogAnalyzerPageClass::OnInitDialog()
 				}
 				break;
 
-			case SvDef::SVWindowToolObjectType:  // fall through...
+			case SvPb::SVWindowToolObjectType:  // fall through...
 			default:
 				if (pWnd = GetDlgItem(IDC_RESULT_BUTTON))
 				{
@@ -151,7 +151,7 @@ BOOL SVToolAdjustmentDialogAnalyzerPageClass::OnInitDialog()
 		SvPb::InspectionCmdMsgs request, response;
 		SvPb::GetCreatableObjectsRequest* pGetCreatableObjectsRequest = request.mutable_getcreatableobjectsrequest();
 		SvPb::SetGuidInProtoBytes(pGetCreatableObjectsRequest->mutable_objectid(), m_TaskObjectID);
-		pGetCreatableObjectsRequest->mutable_typeinfo()->set_objecttype(SvDef::SVAnalyzerObjectType);
+		pGetCreatableObjectsRequest->mutable_typeinfo()->set_objecttype(SvPb::SVAnalyzerObjectType);
 		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
 		SvUl::InputNameGuidPairList connectedList;
 		if (S_OK == hr && response.has_getcreatableobjectsresponse())
@@ -379,7 +379,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnResultButton()
 		// Get Available Results...
 		SVClassInfoStructVector	availableResults;
 		SvDef::SVObjectTypeInfoStruct		resultTypeInfo;
-		resultTypeInfo.ObjectType = SvDef::SVResultObjectType;
+		resultTypeInfo.ObjectType = SvPb::SVResultObjectType;
 		//@TODO[MZA][7.40][14.10.2016] The getAvailableObject method should be replaced by the SvCmd::GetAvailableObjects
 		m_pCurrentAnalyzer->getAvailableObjects(&availableResults, &resultTypeInfo);
 

@@ -31,6 +31,6 @@ FillHolesFilter::~FillHolesFilter()
 
 void FillHolesFilter::init()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::FillHolesFilterObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::FillHolesFilterObjectType;
 
 }

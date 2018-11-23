@@ -119,7 +119,7 @@ void SVObjectAppClass::UpdateConnections(const SVObjectLevelCreateStruct& rCreat
 {
 	const SVObjectInfoStruct& rInfo = GetObjectInfo();
 
-	if( SvDef::SVAnalyzerObjectType == rInfo.m_ObjectTypeInfo.ObjectType )
+	if(SvPb::SVAnalyzerObjectType == rInfo.m_ObjectTypeInfo.ObjectType )
 	{
 		m_pAnalyzer = this;
 	}
@@ -128,7 +128,7 @@ void SVObjectAppClass::UpdateConnections(const SVObjectLevelCreateStruct& rCreat
 		m_pAnalyzer = rCreateStructure.m_pAnalyzer;
 	}
 
-	if( SvDef::SVToolObjectType == rInfo.m_ObjectTypeInfo.ObjectType )
+	if(SvPb::SVToolObjectType == rInfo.m_ObjectTypeInfo.ObjectType )
 	{
 		m_pTool = this;
 		m_pToolInterface = dynamic_cast<SvOi::ITool*> (m_pTool);
@@ -139,7 +139,7 @@ void SVObjectAppClass::UpdateConnections(const SVObjectLevelCreateStruct& rCreat
 		m_pToolInterface = dynamic_cast<SvOi::ITool*> (m_pTool);
 	}
 
-	if( SvDef::SVInspectionObjectType == rInfo.m_ObjectTypeInfo.ObjectType )
+	if(SvPb::SVInspectionObjectType == rInfo.m_ObjectTypeInfo.ObjectType )
 	{
 		m_pInspection = this;
 		m_pInspectionInterface = dynamic_cast<SvOi::IInspectionProcess*> (m_pInspection);

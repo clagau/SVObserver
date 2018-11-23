@@ -36,7 +36,7 @@ void SVToolClass::init()
 {
 	m_canResizeToParent = false;
 	// Indentify our type in the Output List
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVToolObjectType;
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject(&enabled, SVToolEnabledObjectGuid, IDS_OBJECTNAME_ENABLED, false, SvOi::SVResetItemNone);
@@ -159,7 +159,7 @@ void SVToolClass::init()
 	m_pCurrentToolSet = nullptr;
 
 	// Auxiliary Source Image.
-	m_AuxSourceImageObjectInfo.SetInputObjectType(SvDef::SVImageObjectType, SvDef::SVImageMonoType);
+	m_AuxSourceImageObjectInfo.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
 	m_AuxSourceImageObjectInfo.SetObject(GetObjectInfo());
 	RegisterInputObject(&m_AuxSourceImageObjectInfo, _T("ToolAuxSourceImage"));
 
@@ -168,7 +168,7 @@ void SVToolClass::init()
 	AddFriend(pCondition->GetUniqueObjectID());
 
 	// Identify our input type needs
-	m_inputConditionBoolObjectInfo.SetInputObjectType(SvDef::SVValueObjectType, SvDef::SVBoolValueObjectType, SVConditionalResultObjectGuid);
+	m_inputConditionBoolObjectInfo.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVBoolValueObjectType, SVConditionalResultObjectGuid);
 	m_inputConditionBoolObjectInfo.SetObject(GetObjectInfo());
 	RegisterInputObject(&m_inputConditionBoolObjectInfo, _T("ToolConditionalValue"));
 
@@ -891,7 +891,7 @@ HRESULT SVToolClass::IsAuxInputImage(const SvOl::SVInObjectInfoStruct* p_psvInfo
 const SVImageInfoClass* SVToolClass::getFirstImageInfo() const
 {
 	const SVImageInfoClass* pRetVal = nullptr;
-	SvDef::SVObjectTypeInfoStruct objectInfo(SvDef::SVImageObjectType);
+	SvDef::SVObjectTypeInfoStruct objectInfo(SvPb::SVImageObjectType);
 	SVImageClass* pImage = dynamic_cast<SVImageClass*>(getFirstObject(objectInfo, false));
 	if (nullptr != pImage)
 	{
@@ -903,7 +903,7 @@ const SVImageInfoClass* SVToolClass::getFirstImageInfo() const
 
 bool SVToolClass::addEntryToMonitorList(SvOi::ParametersForML &retList, const SVGUID& rEmbeddedId) const
 {
-	auto* pResultObject = getFirstObject(SvDef::SVObjectTypeInfoStruct(SvDef::SVObjectTypeEnum::SVNotSetObjectType, SvDef::SVObjectSubTypeEnum::SVNotSetSubObjectType, rEmbeddedId));
+	auto* pResultObject = getFirstObject(SvDef::SVObjectTypeInfoStruct(SvPb::SVObjectTypeEnum::SVNotSetObjectType, SvPb::SVObjectSubTypeEnum::SVNotSetSubObjectType, rEmbeddedId));
 	if (nullptr != pResultObject)
 	{
 		if (SvDef::SV_NO_ATTRIBUTES != (pResultObject->ObjectAttributesAllowed()))

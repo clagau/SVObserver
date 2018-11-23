@@ -429,7 +429,7 @@ HRESULT SVSetupDialogManager::SVColorToolClassSetupDialog(const SVGUID& p_rObjec
 		std::string Title = SvUl::LoadStdString(IDS_ADJUSTMENT_STRING);
 
 		// Get Complete Name up to the tool level...
-		Title = l_pTool->GetObjectNameBeforeObjectType(SvDef::SVToolSetObjectType) + _T(" ") + Title;
+		Title = l_pTool->GetObjectNameBeforeObjectType(SvPb::SVToolSetObjectType) + _T(" ") + Title;
 
 		SVObjectClass* pInspection(l_pTool->GetInspection());
 
@@ -536,7 +536,7 @@ HRESULT SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog(const SVGUID& rOb
 	{
 		std::string Title = SvUl::LoadStdString(IDS_ADJUSTMENT_STRING);
 		// Get Complete Name up to the tool level...
-		Title = pAnalyzer->GetObjectNameBeforeObjectType(SvDef::SVToolSetObjectType) + _T(" ") + Title;
+		Title = pAnalyzer->GetObjectNameBeforeObjectType(SvPb::SVToolSetObjectType) + _T(" ") + Title;
 
 		SVIPDoc* pIPDoc = TheSVObserverApp.GetIPDoc(pInspection->GetUniqueObjectID());
 
@@ -630,7 +630,7 @@ HRESULT SVSetupDialogManager::SVLuminanceAnalyzerClassSetupDialog(const SVGUID& 
 
 	SVAnalyzerClass* pAnalyzer = dynamic_cast<SVAnalyzerClass*> (SVObjectManagerClass::Instance().GetObject(rObjectId));
 
-	if (nullptr != pAnalyzer && SvDef::SVLuminanceAnalyzerObjectType == pAnalyzer->GetObjectSubType())
+	if (nullptr != pAnalyzer && SvPb::SVLuminanceAnalyzerObjectType == pAnalyzer->GetObjectSubType())
 	{
 		SvOg::SVLuminanceAnalyzerDlg dlg {pAnalyzer->GetInspection()->GetUniqueObjectID(), rObjectId};
 		dlg.DoModal();

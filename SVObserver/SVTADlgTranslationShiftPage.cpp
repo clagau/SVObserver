@@ -91,14 +91,14 @@ BOOL SVTADlgTranslationShiftPageClass::OnInitDialog()
 		m_Values.Init();
 
 		SvDef::SVObjectTypeInfoStruct evaluateObjectInfo;
-		evaluateObjectInfo.ObjectType = SvDef::SVMathContainerObjectType;
+		evaluateObjectInfo.ObjectType = SvPb::SVMathContainerObjectType;
 
 		// Get Evaluate Object for the X coordinate...
-		evaluateObjectInfo.SubType = SvDef::SVEvaluateTranslationXObjectType;		
+		evaluateObjectInfo.SubType = SvPb::SVEvaluateTranslationXObjectType;
 		pEvaluateTranslationX = dynamic_cast<SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		
 		// Get Evaluate Object for the Y coordinate...
-		evaluateObjectInfo.SubType = SvDef::SVEvaluateTranslationYObjectType;
+		evaluateObjectInfo.SubType = SvPb::SVEvaluateTranslationYObjectType;
 		pEvaluateTranslationY = dynamic_cast<SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
 
 		m_pvoShiftMode = &m_pTool->m_evoShiftMode;
@@ -210,7 +210,7 @@ void SVTADlgTranslationShiftPageClass::OnBnClickedTranslationXFormulaButton()
 
 		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
 		const GUID& rObjectID = m_pParentDialog->GetToolID();
-		SvDef::SVObjectTypeInfoStruct info(SvDef::SVMathContainerObjectType, SvDef::SVEvaluateTranslationXObjectType);
+		SvDef::SVObjectTypeInfoStruct info(SvPb::SVMathContainerObjectType, SvPb::SVEvaluateTranslationXObjectType);
 		SvOg::SVFormulaEditorSheetClass dlg(rInspectionID, rObjectID, info, Caption.c_str());
 		dlg.DoModal();
 		
@@ -227,7 +227,7 @@ void SVTADlgTranslationShiftPageClass::OnBnClickedTranslationYFormulaButton()
 
 		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
 		const GUID& rObjectID = m_pParentDialog->GetToolID();
-		SvDef::SVObjectTypeInfoStruct info(SvDef::SVMathContainerObjectType, SvDef::SVEvaluateTranslationYObjectType);
+		SvDef::SVObjectTypeInfoStruct info(SvPb::SVMathContainerObjectType, SvPb::SVEvaluateTranslationYObjectType);
 		SvOg::SVFormulaEditorSheetClass dlg(rInspectionID, rObjectID, info, Caption.c_str());
 		dlg.DoModal();
 		

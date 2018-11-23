@@ -12,6 +12,7 @@
 #include "IValueObject.h"
 #include "SVContainerLibrary/SelectorItem.h"
 #include "ISVImage.h"
+#include "SVProtobuf/SVO-Enum.h"
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/NameGuidList.h"
@@ -56,17 +57,17 @@ namespace SvOi
 
 		/// Get the List of inputs (and connected object) to this Task Object.
 		/// \param rList [in,out] The List to be populated.
-		/// \param typeInfo [in] Type of the requested inputs. SvDef::SVNotSetObjectType return all inputs.
-		/// \param objectTypeToInclude [in] Object type until the name of the connected object will set. SvDef::SVNotSetObjectType means only object name and e.g. SvDef::SVToolSetObjectType means "Tool Set.Window Tool....". This parameter will not used for image objects.
-		/// \param shouldExcludeFirstObjectType [in] Remove first object name. (If objectTypeToInclude == SvDef::SVNotsetObjectType this parameter will not used) e.g. SvDef::SVToolSetObjectType means "Window Tool....". This parameter will not used for image objects.
-		virtual void GetInputs(SvUl::InputNameGuidPairList& rList, const SvDef::SVObjectTypeInfoStruct& typeInfo = SvDef::SVObjectTypeInfoStruct(SvDef::SVNotSetObjectType), SvDef::SVObjectTypeEnum objectTypeToInclude = SvDef::SVNotSetObjectType, bool shouldExcludeFirstObjectName = false) = 0;
+		/// \param typeInfo [in] Type of the requested inputs. SVNotSetObjectType return all inputs.
+		/// \param objectTypeToInclude [in] Object type until the name of the connected object will set. SVNotSetObjectType means only object name and e.g. SVToolSetObjectType means "Tool Set.Window Tool....". This parameter will not used for image objects.
+		/// \param shouldExcludeFirstObjectType [in] Remove first object name. (If objectTypeToInclude == SVNotsetObjectType this parameter will not used) e.g. SVToolSetObjectType means "Window Tool....". This parameter will not used for image objects.
+		virtual void GetInputs(SvUl::InputNameGuidPairList& rList, const SvDef::SVObjectTypeInfoStruct& typeInfo = SvDef::SVObjectTypeInfoStruct(SvPb::SVNotSetObjectType), SvPb::SVObjectTypeEnum objectTypeToInclude = SvPb::SVNotSetObjectType, bool shouldExcludeFirstObjectName = false) = 0;
 
 		/// Connects an input to an object.
 		/// \param rInputName [in] Name of the input.
 		/// \param rNewID [in] Guid of the new object connected to the input
 		/// \param objectType [in] Type of the new object (this type will be checked if it fit), if not set, it will not check and also tried to connected.
 		/// \returns HRESULT
-		virtual HRESULT ConnectToObject(const std::string& rInputName, const SVGUID& rNewID, SvDef::SVObjectTypeEnum objectType = SvDef::SVNotSetObjectType) = 0;
+		virtual HRESULT ConnectToObject(const std::string& rInputName, const SVGUID& rNewID, SvPb::SVObjectTypeEnum objectType = SvPb::SVNotSetObjectType) = 0;
 
 		/// Gets the list of error messages happen in offline modus and will be reset if object is reset.
 		/// \return a const reference to the message list

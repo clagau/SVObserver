@@ -40,8 +40,8 @@ void SVLoadImageToolClass::init()
 {
 	m_canResizeToParent = true;
 	// Set up your type...
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvDef::SVToolLoadImageObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvPb::SVToolLoadImageObjectType;
 
 	// Identify our input type needs
 	

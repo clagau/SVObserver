@@ -111,14 +111,14 @@ int SVToolSetListCtrl::InsertSubTools(int itemNo, int indent, const GUID& rGuidT
 
 	for (auto &ObjectInfo : ObjectInfos)
 	{
-		if (ObjectInfo.ObjectType == SvDef::SVToolObjectType)
+		if (ObjectInfo.ObjectType == SvPb::SVToolObjectType)
 		{
 			auto pNavElement = std::make_shared<NavigatorElement>(ObjectInfo.DisplayName.c_str());
 			pNavElement->m_Collapsed = false;
 			pNavElement->m_OwnerGuid = rGuidToolId;
 			pNavElement->m_Guid = ObjectInfo.guid;
 			pNavElement->m_Valid = ObjectInfo.isValid;
-			pNavElement->m_Type = ObjectInfo.ObjectSubType == SvDef::LoopToolObjectType ?
+			pNavElement->m_Type = ObjectInfo.ObjectSubType == SvPb::LoopToolObjectType ?
 				NavElementType::SubLoopTool : NavElementType::SubTool;
 			itemNo = InsertElement(itemNo, indent, pNavElement);
 			//if loopTool would be allowed in a LoopTool this has to be insert here.
@@ -191,13 +191,13 @@ void SVToolSetListCtrl::Rebuild()
 					{
 						return objInfo.DisplayName == pNavElement->m_DisplayName;
 					});
-					if (ToolSetIt == ToolSetInfos.end() || ToolSetIt->ObjectType != SvDef::SVToolObjectType)
+					if (ToolSetIt == ToolSetInfos.end() || ToolSetIt->ObjectType != SvPb::SVToolObjectType)
 					{
 						//object kein tool oder nicht im toolset
 						continue;
 					}
 
-					if (ToolSetIt->ObjectSubType == SvDef::LoopToolObjectType)
+					if (ToolSetIt->ObjectSubType == SvPb::LoopToolObjectType)
 					{
 						pNavElement->m_Type = NavElementType::LoopTool;
 					}

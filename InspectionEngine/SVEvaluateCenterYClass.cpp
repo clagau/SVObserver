@@ -18,7 +18,7 @@ SVEvaluateCenterYClass::SVEvaluateCenterYClass( SVObjectClass* pOwner, int Strin
 : SVEvaluateClass( pOwner, StringResourceID )
 {
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVEvaluateCenterYObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVEvaluateCenterYObjectType;
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &m_outputMathResult, SVOutputEvaluateCenterYResultObjectGuid, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone );

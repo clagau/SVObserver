@@ -42,7 +42,7 @@ SVWatershedFilterClass::~SVWatershedFilterClass()
 
 void SVWatershedFilterClass::init()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVWatershedFilterObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVWatershedFilterObjectType;
 
 	RegisterEmbeddedObject( &m_lvoMinVariation,		SVWatershedFilterMinVariationGuid, IDS_OBJECTNAME_WATERSHEDFILTER_MINVARIATION, false, SvOi::SVResetItemNone );
 	RegisterEmbeddedObject( &m_lvoControlFlag,		SVWatershedFilterControlFlagGuid, IDS_OBJECTNAME_WATERSHEDFILTER_CONTROLFLAG, false, SvOi::SVResetItemNone );
@@ -60,7 +60,7 @@ void SVWatershedFilterClass::init()
 	m_lvoMinVariation.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	m_lvoControlFlag.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 
-	m_MarkerImageInfo.SetInputObjectType(SvDef::SVImageObjectType, SvDef::SVImageMonoType);
+	m_MarkerImageInfo.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
 	m_MarkerImageInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_MarkerImageInfo, SvDef::WatershedMarkerImageConnectionName );
 

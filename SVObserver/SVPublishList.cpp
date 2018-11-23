@@ -192,7 +192,7 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 
 					pPPQ = m_pInspection->GetPPQ();
 
-					if(SvDef::SVBoolValueObjectType == pObject->GetObjectSubType())
+					if(SvPb::SVBoolValueObjectType == pObject->GetObjectSubType())
 					{
 						pIOEntry = SVIOEntryHostStructPtr{ new SVIOEntryHostStruct };
 						pIOEntry->m_DeleteValueObject = false;

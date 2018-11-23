@@ -40,8 +40,8 @@ bool SVRemoteInputObject::Create()
 {
 	if( !m_isCreated )
 	{
-		m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVIoObjectType;
-		m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVRemoteInputObjectType;
+		m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVIoObjectType;
+		m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVRemoteInputObjectType;
 
 		m_isCreated = true;
 
@@ -145,6 +145,6 @@ void SVRemoteInputObject::LocalInitialize()
 	m_isCreated = false;
 	m_lIndex = -1;
 	m_vtRemoteCache = 0.0;
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVIoObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVRemoteInputObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVIoObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVRemoteInputObjectType;
 }

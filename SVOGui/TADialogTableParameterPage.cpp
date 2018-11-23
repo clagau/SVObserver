@@ -78,7 +78,7 @@ BOOL TADialogTableParameterPage::OnInitDialog()
 	SvPb::GetAvailableObjectsRequest* pGetAvailableObjectsRequest = request.mutable_getavailableobjectsrequest();
 
 	SvPb::SetGuidInProtoBytes(pGetAvailableObjectsRequest->mutable_objectid(), m_TaskObjectID);
-	pGetAvailableObjectsRequest->mutable_typeinfo()->set_objecttype(SvDef::SVEquationObjectType);
+	pGetAvailableObjectsRequest->mutable_typeinfo()->set_objecttype(SvPb::SVEquationObjectType);
 	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
 	if (S_OK == hr && response.has_getavailableobjectsresponse())
 	{

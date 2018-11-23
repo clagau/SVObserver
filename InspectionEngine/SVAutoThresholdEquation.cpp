@@ -34,8 +34,8 @@ SVAutoThresholdEquationClass::SVAutoThresholdEquationClass( SVObjectClass* POwne
 void SVAutoThresholdEquationClass::init()
 {
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVEquationObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType	= SvDef::SVAutoThresholdEquationObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVEquationObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType	= SvPb::SVAutoThresholdEquationObjectType;
 
 	// Identify our input type needs - this is a bit different here
 	// Since out inputs are dynamic via the script specified

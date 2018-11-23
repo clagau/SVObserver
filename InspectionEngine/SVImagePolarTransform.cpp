@@ -37,11 +37,11 @@ SVImagePolarTransformClass::SVImagePolarTransformClass( SVObjectClass* POwner, i
 						   :SVPolarTransformClass( POwner, StringResourceID ) 
 {
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVImagePolarTransformObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVImagePolarTransformObjectType;
 
 	// Identify our input type needs...
 	// Image
-	m_inputImageObjectInfo.SetInputObjectType(SvDef::SVImageObjectType, SvDef::SVImageMonoType);
+	m_inputImageObjectInfo.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
 	m_inputImageObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputImageObjectInfo, _T( "ImagePolarTransformImage" ) );
 
@@ -194,12 +194,12 @@ bool SVImagePolarTransformClass::SetDefaultFormulas(SvStl::MessageContainerVecto
 	bool bOk;
 	SvDef::SVObjectTypeInfoStruct objectInfo;
 	SvDef::SVObjectTypeInfoStruct equationObjectInfo;
-	equationObjectInfo.ObjectType = SvDef::SVEquationObjectType;
-	equationObjectInfo.SubType    = SvDef::SVMathEquationObjectType;
+	equationObjectInfo.ObjectType = SvPb::SVEquationObjectType;
+	equationObjectInfo.SubType    = SvPb::SVMathEquationObjectType;
 	
 	// Find the evaluation center x object...
 	bOk = false;
-	objectInfo.SubType = SvDef::SVEvaluateCenterXObjectType;
+	objectInfo.SubType = SvPb::SVEvaluateCenterXObjectType;
 	SVEvaluateCenterXClass* pEvaluateCenterX = dynamic_cast<SVEvaluateCenterXClass*>( GetTool()->getFirstObject(objectInfo) );
 	if( pEvaluateCenterX )
 	{
@@ -215,7 +215,7 @@ bool SVImagePolarTransformClass::SetDefaultFormulas(SvStl::MessageContainerVecto
 
 	// Find the evaluation center y object...
 	bOk = false;
-	objectInfo.SubType = SvDef::SVEvaluateCenterYObjectType;
+	objectInfo.SubType = SvPb::SVEvaluateCenterYObjectType;
 	SVEvaluateCenterYClass* pEvaluateCenterY = dynamic_cast<SVEvaluateCenterYClass*>(GetTool()->getFirstObject(objectInfo));
 	if( pEvaluateCenterY )
 	{
@@ -231,7 +231,7 @@ bool SVImagePolarTransformClass::SetDefaultFormulas(SvStl::MessageContainerVecto
 
 	// Find the evaluation start radius object...
 	bOk = false;
-	objectInfo.SubType = SvDef::SVEvaluateStartRadiusObjectType;
+	objectInfo.SubType = SvPb::SVEvaluateStartRadiusObjectType;
 	SVEvaluateStartRadiusClass* pEvaluateStartRadius = dynamic_cast<SVEvaluateStartRadiusClass*>(GetTool()->getFirstObject(objectInfo));
 	if( pEvaluateStartRadius )
 	{
@@ -247,7 +247,7 @@ bool SVImagePolarTransformClass::SetDefaultFormulas(SvStl::MessageContainerVecto
 
 	// Find the evaluation end radius object...
 	bOk = false;
-	objectInfo.SubType = SvDef::SVEvaluateEndRadiusObjectType;
+	objectInfo.SubType = SvPb::SVEvaluateEndRadiusObjectType;
 	SVEvaluateEndRadiusClass* pEvaluateEndRadius = dynamic_cast<SVEvaluateEndRadiusClass*>(GetTool()->getFirstObject(objectInfo));
 	if( pEvaluateEndRadius )
 	{
@@ -263,7 +263,7 @@ bool SVImagePolarTransformClass::SetDefaultFormulas(SvStl::MessageContainerVecto
 
 	// Find the evaluation start angle object...
 	bOk = false;
-	objectInfo.SubType = SvDef::SVEvaluateStartAngleObjectType;
+	objectInfo.SubType = SvPb::SVEvaluateStartAngleObjectType;
 	SVEvaluateStartAngleClass* pEvaluateStartAngle = dynamic_cast<SVEvaluateStartAngleClass*>(GetTool()->getFirstObject(objectInfo));
 	if( pEvaluateStartAngle )
 	{
@@ -279,7 +279,7 @@ bool SVImagePolarTransformClass::SetDefaultFormulas(SvStl::MessageContainerVecto
 
 	// Find the evaluation end angle object...
 	bOk = false;
-	objectInfo.SubType = SvDef::SVEvaluateEndAngleObjectType;
+	objectInfo.SubType = SvPb::SVEvaluateEndAngleObjectType;
 	SVEvaluateEndAngleClass* pEvaluateEndAngle = dynamic_cast<SVEvaluateEndAngleClass*>(GetTool()->getFirstObject(objectInfo));
 	if( pEvaluateEndAngle )
 	{

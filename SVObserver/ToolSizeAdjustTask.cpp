@@ -48,8 +48,8 @@ ToolSizeAdjustTask::ToolSizeAdjustTask(bool AllowFullsize , bool AllowAdjustSize
 , m_AllowAdjustPosition(AllowAdjustPosition)
 {
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVToolSizeAdjustTaskType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVNotSetSubObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVToolSizeAdjustTaskType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVNotSetSubObjectType;
 
 	RegisterEmbeddedObject( &m_InputModes[TSWidth], ToolSizeAdjustSizeWidthModeGuid, IDS_OBJECTNAME_TOOLSIZEADJUSTSIZEWIDTH, false, SvOi::SVResetItemNone );
 	RegisterEmbeddedObject( &m_InputModes[TSHeight], ToolSizeAdjustSizeHeightModeGuid, IDS_OBJECTNAME_TOOLSIZEADJUSTSIZEHEIGHT, false, SvOi::SVResetItemNone );
@@ -109,7 +109,7 @@ bool ToolSizeAdjustTask::AddEvaluationObject(SvOl::SVInObjectInfoStruct* pInfo, 
 		return false;
 	}
 
-	pInfo->SetInputObjectType(SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType, pAdjustSize->GetResultGuid());
+	pInfo->SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, pAdjustSize->GetResultGuid());
 	pInfo->SetObject( GetObjectInfo() );
 	return RegisterInputObject( pInfo, Name );
 }
@@ -650,8 +650,8 @@ ToolSizeAdjustTask* ToolSizeAdjustTask::GetToolSizeAdjustTask(SVObjectClass *pOb
 	if (nullptr != pObject)
 	{
 		SvDef::SVObjectTypeInfoStruct ToolSizeAdjustTaskInfo;
-		ToolSizeAdjustTaskInfo.ObjectType = SvDef::SVToolSizeAdjustTaskType;
-		ToolSizeAdjustTaskInfo.SubType = SvDef::SVNotSetSubObjectType;
+		ToolSizeAdjustTaskInfo.ObjectType = SvPb::SVToolSizeAdjustTaskType;
+		ToolSizeAdjustTaskInfo.SubType = SvPb::SVNotSetSubObjectType;
 		pToolSizeAdjustTask = dynamic_cast<ToolSizeAdjustTask*>(pObject->GetFriend(ToolSizeAdjustTaskInfo));
 	}
 	return pToolSizeAdjustTask;

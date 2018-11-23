@@ -68,7 +68,7 @@ private:
 	bool isObjectAboveTask(const SvOi::IObjectClass* pObject) const
 	{
 		bool bRetVal = true;
-		const SvOi::ITool* pOwnerTool = dynamic_cast<const SvOi::ITool*> (pObject->GetAncestorInterface(SvDef::SVToolObjectType));
+		const SvOi::ITool* pOwnerTool = dynamic_cast<const SvOi::ITool*> (pObject->GetAncestorInterface(SvPb::SVToolObjectType));
 
 		if (nullptr != pOwnerTool)
 		{

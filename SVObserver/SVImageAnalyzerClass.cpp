@@ -33,11 +33,11 @@ SVImageAnalyzerClass::SVImageAnalyzerClass( SVObjectClass* pOwner, int StringRes
 void SVImageAnalyzerClass::init()
 {
 	// Set object type info...
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVAnalyzerObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVAnalyzerObjectType;
 	// Set sub type only in derived classes!
 
 	// Set Input requirement
-	m_inputImageObjectInfo.SetInputObjectType(SvDef::SVImageObjectType, SvDef::SVImageMonoType);
+	m_inputImageObjectInfo.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
 	m_inputImageObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputImageObjectInfo, SvDef::ImageAnalyzerImageName );
 

@@ -84,8 +84,8 @@ BOOL SVDisplayImageSelect::OnInitDialog()
 
 		SvDef::SVObjectTypeInfoStruct info;
 
-		info.ObjectType = SvDef::SVImageObjectType;
-		info.SubType = SvDef::SVNotSetSubObjectType;
+		info.ObjectType = SvPb::SVImageObjectType;
+		info.SubType = SvPb::SVNotSetSubObjectType;
 
 		SVGetObjectDequeByTypeVisitor l_Visitor( info );
 

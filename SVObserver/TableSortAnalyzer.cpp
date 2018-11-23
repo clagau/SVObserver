@@ -153,8 +153,8 @@ bool TableSortAnalyzer::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageConta
 void TableSortAnalyzer::Initialize()
 {
 	// Set up your type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::TableAnalyzerType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvDef::TableAnalyzerSortType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::TableAnalyzerType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvPb::TableAnalyzerSortType;
 
 	BuildInputObjectList();
 	BuildEmbeddedObjectList();
@@ -169,7 +169,7 @@ void TableSortAnalyzer::BuildEmbeddedObjectList()
 void TableSortAnalyzer::BuildInputObjectList()
 {
 	// Source Table.
-	m_sortColumnObjectInfo.SetInputObjectType(SvDef::SVValueObjectType, SvDef::DoubleSortValueObjectType );
+	m_sortColumnObjectInfo.SetInputObjectType(SvPb::SVValueObjectType, SvPb::DoubleSortValueObjectType );
 	m_sortColumnObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_sortColumnObjectInfo, SvO::cInputTag_SortColumn );
 

@@ -60,7 +60,7 @@ FormulaController::FormulaController(const SVGUID& rInspectionID, const SVGUID& 
 	, m_TaskObjectID {rTaskObjectID}
 	, m_EnableID {SVToolEnabledObjectGuid}
 	, m_Info{rInfo}
-	, m_isConditional {SvDef::SVConditionalObjectType == rInfo.SubType}
+	, m_isConditional {SvPb::SVConditionalObjectType == rInfo.SubType}
 	, m_Values {SvOg::BoundValues {rInspectionID, rTaskObjectID, !m_isConditional}}
 	, m_EquationValues {SvOg::BoundValues {rInspectionID, GUID_NULL, !m_isConditional}}
 {
@@ -241,7 +241,7 @@ void FormulaController::Init()
 	auto* pRequest = requestMessage.mutable_getobjectidrequest()->mutable_info();
 
 	// check for Math Container...
-	if (SvDef::SVMathContainerObjectType == m_Info.ObjectType)
+	if (SvPb::SVMathContainerObjectType == m_Info.ObjectType)
 	{
 		SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_TaskObjectID);
 		SvCmd::setTypeInfos(m_Info, *pRequest->mutable_infostruct());
@@ -251,7 +251,7 @@ void FormulaController::Init()
 			GUID containerID = SvPb::GetGuidFromProtoBytes(responseMessage.getobjectidresponse().objectid());
 			SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), containerID);
 			// Get the Equation
-			SvDef::SVObjectTypeInfoStruct info(SvDef::SVEquationObjectType, SvDef::SVMathEquationObjectType);
+			SvDef::SVObjectTypeInfoStruct info(SvPb::SVEquationObjectType, SvPb::SVMathEquationObjectType);
 			SvCmd::setTypeInfos(info, *pRequest->mutable_infostruct());
 
 			HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, &responseMessage);
@@ -269,7 +269,7 @@ void FormulaController::Init()
 			}
 		}
 	}
-	else if (SvDef::SVNotSetObjectType != m_Info.ObjectType)
+	else if (SvPb::SVNotSetObjectType != m_Info.ObjectType)
 	{
 		SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_TaskObjectID);
 		SvCmd::setTypeInfos(m_Info, *pRequest->mutable_infostruct());
@@ -297,7 +297,7 @@ void FormulaController::Init()
 		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
 		if (S_OK == hr && response.has_getobjectparametersresponse())
 		{
-			if (SvDef::SVToolSetObjectType == response.getobjectparametersresponse().typeinfo().objecttype())
+			if (SvPb::SVToolSetObjectType == response.getobjectparametersresponse().typeinfo().objecttype())
 			{
 				m_EnableID = SVToolSetEnabledObjectGuid;
 			}

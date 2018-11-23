@@ -258,7 +258,7 @@ void SVStringValueObjectClass::WriteDefaultValues(SvOi::IObjectWriter& rWriter)
 
 void SVStringValueObjectClass::LocalInitialize()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVStringValueObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVStringValueObjectType;
 	
 	SetObjectAttributesAllowed( SvDef::SV_VIEWABLE | SvDef::SV_PUBLISHABLE | SvDef::SV_ARCHIVABLE | SvDef::SV_EMBEDABLE | SvDef::SV_PRINTABLE | SvDef::SV_DD_VALUE, SvOi::SetAttributeType::OverwriteAttribute );
 	SetTypeName( _T("Text") );

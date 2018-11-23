@@ -26,7 +26,7 @@ SVCameraImageTemplate::SVCameraImageTemplate(LPCSTR ObjectName)
 	, mpCamera(nullptr)
 	, digitizerObjectID()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVImageObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVImageObjectType;
 
 	// SVMainImageClass is not a result image.
 	// We need to remove the PUBLISH attribute.
@@ -38,7 +38,7 @@ SVCameraImageTemplate::SVCameraImageTemplate(SVObjectClass* POwner, int StringRe
 	, mpCamera(nullptr)
 	, digitizerObjectID()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVImageObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVImageObjectType;
 
 	// SVMainImageClass is not a result image.
 	// We need to remove the PUBLISH attribute.
@@ -231,7 +231,7 @@ HRESULT SVCameraImageTemplate::RebuildCameraImage()
 		pCamera = dynamic_cast<SVVirtualCamera*>(SVObjectManagerClass::Instance().GetObject(digitizerObjectID.ToGUID()));
 	}
 
-	if ((nullptr == pCamera) || (nullptr != pOwner && pOwner->GetObjectType() == SvDef::SVToolSetObjectType))
+	if ((nullptr == pCamera) || (nullptr != pOwner && pOwner->GetObjectType() == SvPb::SVToolSetObjectType))
 	{
 		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(GetInspection());
 

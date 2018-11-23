@@ -36,7 +36,7 @@ SVLinearMaximumBackgroundObjectLineAnalyzerClass::SVLinearMaximumBackgroundObjec
 void SVLinearMaximumBackgroundObjectLineAnalyzerClass::init()
 {
 	// Identify our type
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVLineMaximumBackgroundObjectAnalyzerObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVLineMaximumBackgroundObjectAnalyzerObjectType;
 
 	SVLinearEdgeProcessingClass *l_pEdgeA = new SVLinearEdgeAProcessingClass(this);
 	SVLinearEdgeProcessingClass *l_pEdgeB = new SVLinearEdgeBProcessingClass(this);
@@ -103,8 +103,8 @@ void SVLinearMaximumBackgroundObjectLineAnalyzerClass::init()
 	resultClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
 
 	// Add the Sub-pixel EdgeA X Result...
-	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVResultObjectType;
-	resultClassInfo.m_ObjectTypeInfo.SubType	= SvDef::SVResultDPointXObjectType;
+	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
+	resultClassInfo.m_ObjectTypeInfo.SubType	= SvPb::SVResultDPointXObjectType;
 	resultClassInfo.m_ClassId = SVDPointXResultClassGuid;
 	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_DPEDGE_A );
 	std::string Title = SvUl::LoadStdString( IDS_CLASSNAME_RESULT_POINT_X );
@@ -112,8 +112,8 @@ void SVLinearMaximumBackgroundObjectLineAnalyzerClass::init()
 	m_availableChildren.push_back( resultClassInfo );
 
 	// Add the Sub-pixel EdgeA Y Result...
-	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVResultObjectType;
-	resultClassInfo.m_ObjectTypeInfo.SubType	= SvDef::SVResultDPointYObjectType;
+	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
+	resultClassInfo.m_ObjectTypeInfo.SubType	= SvPb::SVResultDPointYObjectType;
 	resultClassInfo.m_ClassId = SVDPointYResultClassGuid;
 	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_DPEDGE_A );
 	Title = SvUl::LoadStdString( IDS_CLASSNAME_RESULT_POINT_Y );
@@ -126,8 +126,8 @@ void SVLinearMaximumBackgroundObjectLineAnalyzerClass::init()
 	resultClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
 
 	// Add the Sub-pixel EdgeB X Result...
-	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVResultObjectType;
-	resultClassInfo.m_ObjectTypeInfo.SubType	= SvDef::SVResultDPointXObjectType;
+	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
+	resultClassInfo.m_ObjectTypeInfo.SubType	= SvPb::SVResultDPointXObjectType;
 	resultClassInfo.m_ClassId = SVDPointXResultClassGuid;
 	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_DPEDGE_B );
 	Title = SvUl::LoadStdString( IDS_CLASSNAME_RESULT_POINT_X );
@@ -135,8 +135,8 @@ void SVLinearMaximumBackgroundObjectLineAnalyzerClass::init()
 	m_availableChildren.push_back( resultClassInfo );
 
 	// Add the Sub-pixel EdgeB Y Result...
-	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVResultObjectType;
-	resultClassInfo.m_ObjectTypeInfo.SubType	= SvDef::SVResultDPointYObjectType;
+	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
+	resultClassInfo.m_ObjectTypeInfo.SubType	= SvPb::SVResultDPointYObjectType;
 	resultClassInfo.m_ClassId = SVDPointYResultClassGuid;
 	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_DPEDGE_B );
 	Title = SvUl::LoadStdString( IDS_CLASSNAME_RESULT_POINT_Y );
@@ -149,8 +149,8 @@ void SVLinearMaximumBackgroundObjectLineAnalyzerClass::init()
 	resultClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
 
 	// Add the Sub-pixel Center X Result...
-	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVResultObjectType;
-	resultClassInfo.m_ObjectTypeInfo.SubType	= SvDef::SVResultDPointXObjectType;
+	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
+	resultClassInfo.m_ObjectTypeInfo.SubType	= SvPb::SVResultDPointXObjectType;
 	resultClassInfo.m_ClassId = SVDPointXResultClassGuid;
 	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_DPCENTER );
 	Title = SvUl::LoadStdString( IDS_CLASSNAME_RESULT_POINT_X );
@@ -158,8 +158,8 @@ void SVLinearMaximumBackgroundObjectLineAnalyzerClass::init()
 	m_availableChildren.push_back( resultClassInfo );
 
 	// Add the Sub-pixel Center Y Result...
-	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVResultObjectType;
-	resultClassInfo.m_ObjectTypeInfo.SubType	= SvDef::SVResultDPointYObjectType;
+	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
+	resultClassInfo.m_ObjectTypeInfo.SubType	= SvPb::SVResultDPointYObjectType;
 	resultClassInfo.m_ClassId = SVDPointYResultClassGuid;
 	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_DPCENTER );
 	Title = SvUl::LoadStdString( IDS_CLASSNAME_RESULT_POINT_Y );
@@ -172,8 +172,8 @@ void SVLinearMaximumBackgroundObjectLineAnalyzerClass::init()
 	resultClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
 
 	// Add the Sub-pixel Width Result...
-	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVResultObjectType;
-	resultClassInfo.m_ObjectTypeInfo.SubType	= SvDef::SVResultDoubleObjectType;
+	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
+	resultClassInfo.m_ObjectTypeInfo.SubType	= SvPb::SVResultDoubleObjectType;
 	resultClassInfo.m_ClassId = SVDoubleResultClassGuid;
 	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_DWIDTH );
 	Title = SvUl::LoadStdString( IDS_RESULT_STRING );
@@ -185,8 +185,8 @@ void SVLinearMaximumBackgroundObjectLineAnalyzerClass::init()
 	resultClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
 
 	// Add the Linear Distance Result...
-	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVResultObjectType;
-	resultClassInfo.m_ObjectTypeInfo.SubType	= SvDef::SVResultDoubleObjectType;
+	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
+	resultClassInfo.m_ObjectTypeInfo.SubType	= SvPb::SVResultDoubleObjectType;
 	resultClassInfo.m_ClassId = SVDoubleResultClassGuid;
 	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_A );
 	Title = SvUl::LoadStdString( IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_A_RESULT );
@@ -198,8 +198,8 @@ void SVLinearMaximumBackgroundObjectLineAnalyzerClass::init()
 	resultClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
 
 	// Add the Linear Distance Result...
-	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVResultObjectType;
-	resultClassInfo.m_ObjectTypeInfo.SubType	= SvDef::SVResultDoubleObjectType;
+	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
+	resultClassInfo.m_ObjectTypeInfo.SubType	= SvPb::SVResultDoubleObjectType;
 	resultClassInfo.m_ClassId = SVDoubleResultClassGuid;
 	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_B );
 	Title = SvUl::LoadStdString( IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_B_RESULT );

@@ -59,7 +59,7 @@ namespace SvOg
 		SvPb::InspectionCmdMsgs requestMessage, responseMessage;
 		auto* pRequest = requestMessage.mutable_getobjectidrequest()->mutable_info();
 		SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_TaskObjectID);
-		pRequest->mutable_infostruct()->set_objecttype(SvDef::SVUnaryImageOperatorListObjectType);
+		pRequest->mutable_infostruct()->set_objecttype(SvPb::SVUnaryImageOperatorListObjectType);
 
 		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, &responseMessage);
 		if (S_OK == hr && responseMessage.has_getobjectidresponse())
@@ -98,7 +98,7 @@ namespace SvOg
 		SvPb::GetAvailableObjectsRequest* pGetAvailableObjectsRequest = request.mutable_getavailableobjectsrequest();
 
 		SvPb::SetGuidInProtoBytes(pGetAvailableObjectsRequest->mutable_objectid(), m_UnaryImageOperatorID);
-		pGetAvailableObjectsRequest->mutable_typeinfo()->set_objecttype(SvDef::SVFilterObjectType);
+		pGetAvailableObjectsRequest->mutable_typeinfo()->set_objecttype(SvPb::SVFilterObjectType);
 		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
 		SvUl::NameGuidList availableList;
 		if (S_OK == hr && response.has_getavailableobjectsresponse())
@@ -128,18 +128,18 @@ namespace SvOg
 			HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
 			if (S_OK == hr && response.has_getobjectparametersresponse())
 			{
-				SvDef::SVObjectSubTypeEnum subType = static_cast<SvDef::SVObjectSubTypeEnum>(response.getobjectparametersresponse().typeinfo().subtype());
+				SvPb::SVObjectSubTypeEnum subType = response.getobjectparametersresponse().typeinfo().subtype();
 
-				m_btnProperties.EnableWindow( SvDef::SVCustomFilterObjectType == subType
-				|| SvDef::SVCustom2FilterObjectType == subType
-				|| SvDef::SVRankingFilterObjectType == subType
-				|| SvDef::SVThinningFilterObjectType == subType
-				|| SvDef::SVThickeningFilterObjectType == subType
-				|| SvDef::SVWatershedFilterObjectType == subType
-				|| SvDef::EraseBorderBlobsFilterObjectType == subType
-				|| SvDef::ExtractHolesFilterObjectType == subType
-				|| SvDef::FillHolesFilterObjectType == subType
-				|| SvDef::ReconstructFilterObjectType == subType);
+				m_btnProperties.EnableWindow(SvPb::SVCustomFilterObjectType == subType
+				|| SvPb::SVCustom2FilterObjectType == subType
+				|| SvPb::SVRankingFilterObjectType == subType
+				|| SvPb::SVThinningFilterObjectType == subType
+				|| SvPb::SVThickeningFilterObjectType == subType
+				|| SvPb::SVWatershedFilterObjectType == subType
+				|| SvPb::EraseBorderBlobsFilterObjectType == subType
+				|| SvPb::ExtractHolesFilterObjectType == subType
+				|| SvPb::FillHolesFilterObjectType == subType
+				|| SvPb::ReconstructFilterObjectType == subType);
 			}
 		}// end if
 	}// end OnSelchangeList1
@@ -177,7 +177,7 @@ namespace SvOg
 		SvPb::InspectionCmdMsgs request, response;
 		SvPb::GetCreatableObjectsRequest* pGetCreatableObjectsRequest = request.mutable_getcreatableobjectsrequest();
 		SvPb::SetGuidInProtoBytes(pGetCreatableObjectsRequest->mutable_objectid(), m_UnaryImageOperatorID);
-		pGetCreatableObjectsRequest->mutable_typeinfo()->set_objecttype(SvDef::SVFilterObjectType);
+		pGetCreatableObjectsRequest->mutable_typeinfo()->set_objecttype(SvPb::SVFilterObjectType);
 		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
 		SvUl::InputNameGuidPairList connectedList;
 		if (S_OK == hr && response.has_getcreatableobjectsresponse())
@@ -246,7 +246,7 @@ namespace SvOg
 		SvPb::GetAvailableObjectsRequest* pGetAvailableObjectsRequest = request.mutable_getavailableobjectsrequest();
 
 		SvPb::SetGuidInProtoBytes(pGetAvailableObjectsRequest->mutable_objectid(), m_UnaryImageOperatorID);
-		pGetAvailableObjectsRequest->mutable_typeinfo()->set_objecttype(SvDef::SVFilterObjectType);
+		pGetAvailableObjectsRequest->mutable_typeinfo()->set_objecttype(SvPb::SVFilterObjectType);
 		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
 		SvUl::NameGuidList availableList;
 		if (S_OK == hr && response.has_getavailableobjectsresponse())
@@ -353,51 +353,51 @@ namespace SvOg
 			{
 				switch (response.getobjectparametersresponse().typeinfo().subtype())
 				{
-				case SvDef::SVCustomFilterObjectType:
+				case SvPb::SVCustomFilterObjectType:
 					{
 						SVCustomFilterDlg l_svDlg( m_InspectionID, filterGUID, this );
 						l_svDlg.DoModal();
 					}
 					break;
-				case SvDef::SVCustom2FilterObjectType:
+				case SvPb::SVCustom2FilterObjectType:
 					{
 						Custom2FilterDlg l_svDlg( m_InspectionID, filterGUID, this );
 						l_svDlg.DoModal();
 					}
 					break;
-				case SvDef::SVRankingFilterObjectType:
+				case SvPb::SVRankingFilterObjectType:
 					{
 						SVRankingFilterDlg l_svDlg( m_InspectionID, filterGUID, this );
 						l_svDlg.DoModal();
 					}
 					break;
-				case SvDef::SVThinningFilterObjectType:
+				case SvPb::SVThinningFilterObjectType:
 					{
 						SVThinningFilterDlg l_svDlg( m_InspectionID, filterGUID, this );
 						l_svDlg.DoModal();
 					}
 					break;
-				case SvDef::SVThickeningFilterObjectType:
+				case SvPb::SVThickeningFilterObjectType:
 					{
 						SVThickeningFilterDlg l_svDlg( m_InspectionID, filterGUID, this );
 						l_svDlg.DoModal();
 					}
 					break;
-				case SvDef::SVWatershedFilterObjectType:
+				case SvPb::SVWatershedFilterObjectType:
 					{
 						SVWatershedFilterDlg l_svDlg( m_InspectionID, m_TaskObjectID, filterGUID, this );
 						l_svDlg.DoModal();
 					}
 					break;
-				case SvDef::EraseBorderBlobsFilterObjectType:
-				case SvDef::ExtractHolesFilterObjectType:
-				case SvDef::FillHolesFilterObjectType:
+				case SvPb::EraseBorderBlobsFilterObjectType:
+				case SvPb::ExtractHolesFilterObjectType:
+				case SvPb::FillHolesFilterObjectType:
 				{
 					BlobReconstructFilterDlg dlg(m_InspectionID, filterGUID, this);
 					dlg.DoModal();
 				}
 				break;
-				case SvDef::ReconstructFilterObjectType:
+				case SvPb::ReconstructFilterObjectType:
 				{
 					ReconstructFilterDlg dlg(m_InspectionID, m_TaskObjectID, filterGUID, this);
 					dlg.DoModal();

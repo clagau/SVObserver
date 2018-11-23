@@ -21,7 +21,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-EQAdjustSize::EQAdjustSize(SvDef::SVObjectSubTypeEnum subType, GUID resultGuid, SVObjectClass* POwner, int StringResourceID)
+EQAdjustSize::EQAdjustSize(SvPb::SVObjectSubTypeEnum subType, GUID resultGuid, SVObjectClass* POwner, int StringResourceID)
 : SVEquationClass( POwner, StringResourceID )
 {
 	m_ResultGuid = resultGuid;
@@ -48,7 +48,7 @@ void EQAdjustSize::Init()
 	enabled.SetDefaultValue( BOOL(false) );
 	m_bUseOverlays = false;
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVEquationObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVEquationObjectType;
 	m_outObjectInfo.m_ObjectTypeInfo.SubType = m_SubType;
 	RegisterEmbeddedObject( &m_result, m_ResultGuid, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone );
 	// Set Embedded defaults

@@ -35,8 +35,8 @@ namespace SvOg
 		SvPb::InspectionCmdMsgs requestMessage, responseMessage;
 		auto* pRequest = requestMessage.mutable_getobjectidrequest()->mutable_info();
 		SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_maskOperatorID);
-		pRequest->mutable_infostruct()->set_objecttype(SvDef::SVUnaryImageOperatorObjectType);
-		pRequest->mutable_infostruct()->set_subtype(SvDef::SVShapeMaskHelperObjectType);
+		pRequest->mutable_infostruct()->set_objecttype(SvPb::SVUnaryImageOperatorObjectType);
+		pRequest->mutable_infostruct()->set_subtype(SvPb::SVShapeMaskHelperObjectType);
 
 		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, &responseMessage);
 		if (S_OK == hr && responseMessage.has_getobjectidresponse())

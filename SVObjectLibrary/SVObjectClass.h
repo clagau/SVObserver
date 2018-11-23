@@ -134,10 +134,10 @@ public:
 	//************************************
 	// Method:    GetAncestor
 	// Description: This method returns Ancestor Object of specified Object Type of this Object, if any.  Otherwise it returns nullptr.
-	// Parameter: SvDef::SVObjectTypeEnum AncestorObjectType 
+	// Parameter: SVObjectTypeEnum AncestorObjectType 
 	// Returns:   SVObjectClass*
 	//************************************
-	SVObjectClass* GetAncestor( SvDef::SVObjectTypeEnum AncestorObjectType ) const;
+	SVObjectClass* GetAncestor(SvPb::SVObjectTypeEnum AncestorObjectType ) const;
 	int GetNameLength() const;
 	LPCTSTR GetObjectName() const;
 	int GetObjectNameLength() const;
@@ -153,15 +153,15 @@ public:
 #pragma region virtual method (IObjectClass)
 	virtual LPCTSTR GetName() const override;
 	virtual std::string GetCompleteName() const override;
-	virtual HRESULT GetCompleteNameToType(SvDef::SVObjectTypeEnum objectType, std::string& rName) const override;
-	virtual std::string GetObjectNameToObjectType(SvDef::SVObjectTypeEnum objectTypeToInclude = SvDef::SVToolSetObjectType) const override;
-	//Get the complete object name before selected SvDef::SVObjectTypeEnum value.
-	virtual std::string GetObjectNameBeforeObjectType(SvDef::SVObjectTypeEnum objectTypeToInclude) const override; 
-	virtual const SvDef::SVObjectTypeEnum& GetObjectType() const override;
-	virtual SvDef::SVObjectSubTypeEnum GetObjectSubType() const override;
+	virtual HRESULT GetCompleteNameToType(SvPb::SVObjectTypeEnum objectType, std::string& rName) const override;
+	virtual std::string GetObjectNameToObjectType(SvPb::SVObjectTypeEnum objectTypeToInclude = SvPb::SVToolSetObjectType) const override;
+	//Get the complete object name before selected SvPb::SVObjectTypeEnum value.
+	virtual std::string GetObjectNameBeforeObjectType(SvPb::SVObjectTypeEnum objectTypeToInclude) const override;
+	virtual const SvPb::SVObjectTypeEnum& GetObjectType() const override;
+	virtual SvPb::SVObjectSubTypeEnum GetObjectSubType() const override;
 	virtual const SVGUID& GetParentID() const override;
-	virtual SvOi::IObjectClass* GetAncestorInterface(SvDef::SVObjectTypeEnum ancestorObjectType) override;
-	virtual const SvOi::IObjectClass* GetAncestorInterface(SvDef::SVObjectTypeEnum ancestorObjectType) const override;
+	virtual SvOi::IObjectClass* GetAncestorInterface(SvPb::SVObjectTypeEnum ancestorObjectType) override;
+	virtual const SvOi::IObjectClass* GetAncestorInterface(SvPb::SVObjectTypeEnum ancestorObjectType) const override;
 	virtual UINT ObjectAttributesAllowed() const override;
 	virtual UINT SetObjectAttributesAllowed( UINT Attributes, SvOi::SetAttributeType Type ) override;
 	virtual UINT ObjectAttributesSet(int iIndex=0) const override;

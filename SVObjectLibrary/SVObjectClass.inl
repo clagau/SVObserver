@@ -39,14 +39,14 @@ inline const SVGUID& SVObjectClass::GetParentID() const
 /*
 This method returns the object's type.
 */
-inline const SvDef::SVObjectTypeEnum& SVObjectClass::GetObjectType() const
+inline const SvPb::SVObjectTypeEnum& SVObjectClass::GetObjectType() const
 {
 	return m_outObjectInfo.m_ObjectTypeInfo.ObjectType;
 }
 #pragma endregion virtual method (IObjectClass)
 
 /*
-This metthod return the pointer to the owner object.
+This method return the pointer to the owner object.
 */
 inline SVObjectClass* SVObjectClass::GetParent() const
 {

@@ -182,15 +182,15 @@ namespace SvOg
 
 		SvOi::IObjectClass* pObject = SvOi::getObject(m_rTaskObjectID);
 		SvDef::SVObjectTypeInfoStruct lutObjectInfo;
-		lutObjectInfo.ObjectType = SvDef::SVUnaryImageOperatorObjectType;
-		lutObjectInfo.SubType = SvDef::SVLUTOperatorObjectType;
+		lutObjectInfo.ObjectType = SvPb::SVUnaryImageOperatorObjectType;
+		lutObjectInfo.SubType = SvPb::SVLUTOperatorObjectType;
 		SvOi::IObjectClass* pLUTOperator = pObject->getFirstObject(lutObjectInfo);
 
 		std::string Caption = pLUTOperator->GetName();
 		Caption += _T( " " )+ Text;
 
 		const GUID& rObjectID = pLUTOperator->GetUniqueObjectID();
-		SvDef::SVObjectTypeInfoStruct info(SvDef::SVEquationObjectType, SvDef::SVLUTEquationObjectType);
+		SvDef::SVObjectTypeInfoStruct info(SvPb::SVEquationObjectType, SvPb::SVLUTEquationObjectType);
 		SVFormulaEditorSheetClass dlg( m_rInspectionID, rObjectID, info, Caption.c_str() );
 
 		dlg.DoModal();

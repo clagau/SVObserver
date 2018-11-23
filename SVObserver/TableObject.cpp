@@ -280,7 +280,7 @@ SVGUID TableObject::getNextFreeEmbeddedColumGUID()
 void TableObject::Initialize()
 {
 	// Set up your type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::TableObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::TableObjectType;
 
 	BuildEmbeddedObjectList();
 }

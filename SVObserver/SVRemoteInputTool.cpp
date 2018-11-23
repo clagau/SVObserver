@@ -21,8 +21,8 @@ SVRemoteInputTool::SVRemoteInputTool( SVObjectClass* POwner, int StringResourceI
 : SVToolClass( POwner, StringResourceID )
 , m_ElementIdentifier( 0 )
 {
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvDef::SVRemoteInputToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvPb::SVRemoteInputToolObjectType;
 
 	// Register an empty input object
 	m_InputObjectInfo.SetObject( GetObjectInfo() );

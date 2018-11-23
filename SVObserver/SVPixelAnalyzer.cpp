@@ -38,7 +38,7 @@ SVPixelAnalyzerClass::SVPixelAnalyzerClass(SVObjectClass* POwner, int StringReso
 void SVPixelAnalyzerClass::init()
 {
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVPixelAnalyzerObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVPixelAnalyzerObjectType;
 
 	// Identify our input type needs
 
@@ -209,7 +209,7 @@ void SVPixelAnalyzerClass::addParameterForMonitorList(SvStl::MessageContainerVec
 	bool isNoError = true;
 
 	inserter = SvOi::ParameterPairForML(m_pixelCount.GetCompleteName(), m_pixelCount.GetUniqueObjectID());
-	SVRangeClass* pRangeObject = dynamic_cast<SVRangeClass*>(getFirstObject(SvDef::SVObjectTypeInfoStruct(SvDef::SVObjectTypeEnum::SVRangeObjectType)));
+	SVRangeClass* pRangeObject = dynamic_cast<SVRangeClass*>(getFirstObject(SvDef::SVObjectTypeInfoStruct(SvPb::SVObjectTypeEnum::SVRangeObjectType)));
 	if (nullptr != pRangeObject)
 	{
 		pRangeObject->addEntriesToMonitorList(inserter);

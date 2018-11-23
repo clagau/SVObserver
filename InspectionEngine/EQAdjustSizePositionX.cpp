@@ -23,7 +23,7 @@ static char THIS_FILE[] = __FILE__;
 SV_IMPLEMENT_CLASS( EQAdjustSizePositionX, EQAdjustSizePositionXGuid );
 
 EQAdjustSizePositionX::EQAdjustSizePositionX( SVObjectClass* POwner, int StringResourceID )
-: EQAdjustSize(SvDef::EQSizePositionXType,EQAdjustSizePositionXResultGuid , POwner, StringResourceID )
+: EQAdjustSize(SvPb::EQSizePositionXType,EQAdjustSizePositionXResultGuid , POwner, StringResourceID )
 {
 }
 

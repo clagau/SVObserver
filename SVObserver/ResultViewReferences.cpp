@@ -234,7 +234,7 @@ void  ResultViewReferences::GetResultData( SVIPResultData& p_rResultData) const
 
 
 		std::string Value;
-		if( it->getObject()->GetObjectSubType() == SvDef::SVStringValueObjectType )
+		if( it->getObject()->GetObjectSubType() == SvPb::SVStringValueObjectType )
 		{
 			std::string ValueString;
 			it->getValueObject()->getValue( ValueString, it->getValidArrayIndex() );

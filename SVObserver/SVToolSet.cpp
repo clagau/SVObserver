@@ -36,7 +36,7 @@ SVToolSetClass::SVToolSetClass( SVObjectClass* POwner, int StringResourceID )
 void SVToolSetClass::init()
 {
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVToolSetObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVToolSetObjectType;
 
 	// Identify our input type needs
 
@@ -151,7 +151,7 @@ void SVToolSetClass::init()
 	AddFriend( l_pConditional->GetUniqueObjectID() );
 
 	// Identify our input type needs
-	m_inputConditionBoolObjectInfo.SetInputObjectType(SvDef::SVValueObjectType, SvDef::SVBoolValueObjectType, SVConditionalResultObjectGuid);
+	m_inputConditionBoolObjectInfo.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVBoolValueObjectType, SVConditionalResultObjectGuid);
 	m_inputConditionBoolObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputConditionBoolObjectInfo, _T( "ToolSetConditionalValue" ) );
 

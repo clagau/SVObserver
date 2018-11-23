@@ -77,7 +77,7 @@ namespace SvTi
 		{
 			mpsvDevice = psvDevice;
 
-			m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVTriggerObjectType;
+			m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVTriggerObjectType;
 
 			bOk = S_OK == psvDevice->Create();
 		}

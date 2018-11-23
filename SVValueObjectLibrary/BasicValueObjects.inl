@@ -25,7 +25,7 @@ HRESULT BasicValueObjects::getValue( LPCTSTR DottedName, ELEMENT_TYPE& rValue ) 
 }
 
 template <typename ELEMENT_TYPE>
-BasicValueObjectPtr BasicValueObjects::setValueObject( LPCTSTR DottedName, const ELEMENT_TYPE Value, SVObjectClass* pOwner, SvDef::SVObjectSubTypeEnum ObjectType )
+BasicValueObjectPtr BasicValueObjects::setValueObject( LPCTSTR DottedName, const ELEMENT_TYPE Value, SVObjectClass* pOwner, SvPb::SVObjectSubTypeEnum ObjectType )
 {
 	vt_const_iterator Iter = findValueObject( DottedName );
 	if( m_Tree.end() == Iter )
@@ -48,7 +48,7 @@ inline const BasicValueObjects::ValueTree& BasicValueObjects::getTree() const
 
 #pragma region Private Methods
 template <typename ELEMENT_TYPE>
-BasicValueObjects::vt_const_iterator BasicValueObjects::createValueObject( LPCTSTR DottedName, const ELEMENT_TYPE Value, SVObjectClass* pOwner, SvDef::SVObjectSubTypeEnum ObjectSubType )
+BasicValueObjects::vt_const_iterator BasicValueObjects::createValueObject( LPCTSTR DottedName, const ELEMENT_TYPE Value, SVObjectClass* pOwner, SvPb::SVObjectSubTypeEnum ObjectSubType )
 {
 	vt_const_iterator Iter( m_Tree.end() );
 	vt_iterator IterParent( m_Tree.end() );
@@ -74,7 +74,7 @@ BasicValueObjects::vt_const_iterator BasicValueObjects::createValueObject( LPCTS
 			if( IterEnd == Iter )
 			{
 				//If default object type then check parent
-				if (nullptr != pParent && SvDef::SVNotSetSubObjectType == ObjectSubType)
+				if (nullptr != pParent && SvPb::SVNotSetSubObjectType == ObjectSubType)
 				{
 					ObjectSubType = pParent->GetObjectInfo().m_ObjectTypeInfo.SubType;
 				}

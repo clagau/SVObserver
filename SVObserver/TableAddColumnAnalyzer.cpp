@@ -57,7 +57,7 @@ bool TableAddColumnAnalyzer::CreateObject(const SVObjectLevelCreateStruct& rCrea
 	TableAnalyzerTool* pTool = dynamic_cast<TableAnalyzerTool*> (m_ownerObjectInfo.getObject());
 	if (nullptr != pTool && nullptr != m_pColumnEquation)
 	{
-		SvDef::SVObjectTypeInfoStruct info(SvDef::SVNotSetObjectType, SvDef::SVNotSetSubObjectType, TableAnalyzerIndexObjectGuid);
+		SvDef::SVObjectTypeInfoStruct info(SvPb::SVNotSetObjectType, SvPb::SVNotSetSubObjectType, TableAnalyzerIndexObjectGuid);
 		IObjectClass* pIndex = pTool->getFirstObject(info);
 		m_pColumnEquation->setIndexObject(dynamic_cast<SVLongValueObjectClass*>(pIndex));
 
@@ -109,14 +109,14 @@ bool TableAddColumnAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMe
 void TableAddColumnAnalyzer::Initialize()
 {
 	// Set up your type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::TableAnalyzerType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::TableAnalyzerAddColumnType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::TableAnalyzerType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::TableAnalyzerAddColumnType;
 
 	m_pColumnEquation = new TableAddColumnEquation(this);
 	AddFriend(m_pColumnEquation->GetUniqueObjectID());
 
 	// New Column Input.
-	m_newColumnObjectInfo.SetInputObjectType(SvDef::SVValueObjectType, SvDef::DoubleSortValueObjectType);
+	m_newColumnObjectInfo.SetInputObjectType(SvPb::SVValueObjectType, SvPb::DoubleSortValueObjectType);
 	m_newColumnObjectInfo.SetObject(GetObjectInfo());
 	RegisterInputObject(&m_newColumnObjectInfo, SvO::cInputTag_NewColumn);
 

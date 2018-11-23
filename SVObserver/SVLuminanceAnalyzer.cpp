@@ -56,7 +56,7 @@ void SVLuminanceAnalyzerClass::init()
 
 
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVLuminanceAnalyzerObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVLuminanceAnalyzerObjectType;
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( 
@@ -235,7 +235,7 @@ void SVLuminanceAnalyzerClass::addParameterForMonitorList(SvStl::MessageContaine
 	bool isNoError = true;
 
 	inserter = SvOi::ParameterPairForML(msvLuminanceValue.GetCompleteName(), msvLuminanceValue.GetUniqueObjectID());
-	SVRangeClass* pRangeObject = dynamic_cast<SVRangeClass*>(getFirstObject(SvDef::SVObjectTypeInfoStruct(SvDef::SVObjectTypeEnum::SVRangeObjectType)));
+	SVRangeClass* pRangeObject = dynamic_cast<SVRangeClass*>(getFirstObject(SvDef::SVObjectTypeInfoStruct(SvPb::SVObjectTypeEnum::SVRangeObjectType)));
 	if (nullptr != pRangeObject)
 	{
 		pRangeObject->addEntriesToMonitorList(inserter);

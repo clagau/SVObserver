@@ -78,7 +78,7 @@ SVExternalToolDlg::SVExternalToolDlg( const SVGUID& rInspectionID, const SVGUID&
 	SvPb::InspectionCmdMsgs requestMessage, responseMessage;
 	auto* pRequest = requestMessage.mutable_getobjectidrequest()->mutable_info();
 	SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_ToolObjectID);
-	pRequest->mutable_infostruct()->set_objecttype(SvDef::SVExternalToolTaskObjectType);
+	pRequest->mutable_infostruct()->set_objecttype(SvPb::SVExternalToolTaskObjectType);
 
 	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, &responseMessage);
 	if (S_OK == hr && responseMessage.has_getobjectidresponse())
@@ -482,7 +482,7 @@ bool SVExternalToolDlg::ShowDependentsDlg()
 			ObjectCheckList.insert( (*Iter)->GetUniqueObjectID());
 		}
 
-		SvOg::SVShowDependentsDialog Dlg( ObjectCheckList, SvDef::SVToolObjectType, DisplayText.c_str() );
+		SvOg::SVShowDependentsDialog Dlg( ObjectCheckList, SvPb::SVToolObjectType, DisplayText.c_str() );
 
 		Result = (IDOK == Dlg.DoModal());
 	}

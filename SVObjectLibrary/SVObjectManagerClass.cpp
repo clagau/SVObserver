@@ -645,7 +645,7 @@ SVGUID SVObjectManagerClass::GetObjectIdFromCompleteName( LPCTSTR Name )
 
 	return Result;
 }
-void SVObjectManagerClass::getObjectsOfType(SVObjectPtrVectorInserter Inserter, SvDef::SVObjectTypeEnum ObjectType, SvDef::SVObjectSubTypeEnum ObjectSubType) const
+void SVObjectManagerClass::getObjectsOfType(SVObjectPtrVectorInserter Inserter, SvPb::SVObjectTypeEnum ObjectType, SvPb::SVObjectSubTypeEnum ObjectSubType) const
 {
 	SVAutoLockAndReleaseTemplate< SVCriticalSection > AutoLock;
 
@@ -667,7 +667,7 @@ void SVObjectManagerClass::getObjectsOfType(SVObjectPtrVectorInserter Inserter, 
 			if (nullptr != pObject)
 			{
 				//Check only 
-				if (SvDef::SVNotSetSubObjectType != ObjectSubType)
+				if (SvPb::SVNotSetSubObjectType != ObjectSubType)
 				{
 					if(pObject->GetObjectType() == ObjectType && pObject->GetObjectSubType() == ObjectSubType )
 					{
@@ -1769,13 +1769,13 @@ HRESULT SVObjectManagerClass::RegisterSubObject( const SVGUID& rSubObjectID )
 	SVObjectClass* pObject = GetObject(rSubObjectID);
 	if (pObject)
 	{
-		SVObjectClass* pTool = pObject->GetAncestor(SvDef::SVToolObjectType);
+		SVObjectClass* pTool = pObject->GetAncestor(SvPb::SVToolObjectType);
 		if (pTool)
 		{
 			pTool->RegisterSubObject(pObject);
 			hr = S_OK;
 		}
-		SVObjectClass* pInspection = pObject->GetAncestor(SvDef::SVInspectionObjectType);
+		SVObjectClass* pInspection = pObject->GetAncestor(SvPb::SVInspectionObjectType);
 		if (pInspection)
 		{
 			pInspection->RegisterSubObject(pObject);
@@ -1793,13 +1793,13 @@ HRESULT SVObjectManagerClass::UnregisterSubObject( const SVGUID& rSubObjectID )
 	SVObjectClass* pObject = GetObject(rSubObjectID);
 	if (pObject)
 	{
-		SVObjectClass* pTool = pObject->GetAncestor(SvDef::SVToolObjectType);
+		SVObjectClass* pTool = pObject->GetAncestor(SvPb::SVToolObjectType);
 		if (pTool)
 		{
 			pTool->UnregisterSubObject(pObject);
 			hr = S_OK;
 		}
-		SVObjectClass* pInspection = pObject->GetAncestor(SvDef::SVInspectionObjectType);
+		SVObjectClass* pInspection = pObject->GetAncestor(SvPb::SVInspectionObjectType);
 		if (pInspection)
 		{
 			pInspection->UnregisterSubObject(pObject);

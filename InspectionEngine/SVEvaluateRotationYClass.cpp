@@ -18,7 +18,7 @@ SVEvaluateRotationYClass::SVEvaluateRotationYClass( SVObjectClass* pOwner, int S
 : SVEvaluateClass( pOwner, StringResourceID ) 
 {
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVEvaluateRotationYObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVEvaluateRotationYObjectType;
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &m_outputMathResult, SVOutputEvaluateRotationYResultObjectGuid, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone );

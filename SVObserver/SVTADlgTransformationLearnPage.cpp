@@ -208,15 +208,15 @@ BOOL SVToolAdjustmentDialogTransformationLearnPageClass::OnInitDialog()
 	{
 		// Get EvaluateX Object...
 		SvDef::SVObjectTypeInfoStruct evaluateObjectInfo;
-		evaluateObjectInfo.ObjectType = SvDef::SVMathContainerObjectType;
+		evaluateObjectInfo.ObjectType = SvPb::SVMathContainerObjectType;
 
 		// Prep Requestor for Results
 		SvDef::SVObjectTypeInfoStruct resultObjectInfo;
-		resultObjectInfo.ObjectType = SvDef::SVValueObjectType;
-		resultObjectInfo.SubType = SvDef::SVDoubleValueObjectType;
+		resultObjectInfo.ObjectType = SvPb::SVValueObjectType;
+		resultObjectInfo.SubType = SvPb::SVDoubleValueObjectType;
 
 		// Get Evaluate Object for Translation X Coordinate...
-		evaluateObjectInfo.SubType	   = SvDef::SVEvaluateTranslationXObjectType;
+		evaluateObjectInfo.SubType	   = SvPb::SVEvaluateTranslationXObjectType;
 		m_pEvaluateTranslationX = dynamic_cast<SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateTranslationX )
 		{
@@ -226,7 +226,7 @@ BOOL SVToolAdjustmentDialogTransformationLearnPageClass::OnInitDialog()
 		}
 
 		// Get Evaluate Object for the Translation Y coordinate...
-		evaluateObjectInfo.SubType	   = SvDef::SVEvaluateTranslationYObjectType;
+		evaluateObjectInfo.SubType	   = SvPb::SVEvaluateTranslationYObjectType;
 		m_pEvaluateTranslationY = dynamic_cast<SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateTranslationY )
 		{
@@ -236,7 +236,7 @@ BOOL SVToolAdjustmentDialogTransformationLearnPageClass::OnInitDialog()
 		}
 
 		// Get Evaluate Object for Translation X Coordinate...
-		evaluateObjectInfo.SubType = SvDef::SVEvaluateRotationXObjectType;
+		evaluateObjectInfo.SubType = SvPb::SVEvaluateRotationXObjectType;
 		m_pEvaluateRotationX = dynamic_cast<SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateRotationX )
 		{
@@ -246,7 +246,7 @@ BOOL SVToolAdjustmentDialogTransformationLearnPageClass::OnInitDialog()
 		}
 
 		// Get Evaluate Object for the Rotation Y coordinate...
-		evaluateObjectInfo.SubType	   = SvDef::SVEvaluateRotationYObjectType;
+		evaluateObjectInfo.SubType	   = SvPb::SVEvaluateRotationYObjectType;
 		m_pEvaluateRotationY = dynamic_cast<SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateRotationY )
 		{
@@ -256,7 +256,7 @@ BOOL SVToolAdjustmentDialogTransformationLearnPageClass::OnInitDialog()
 		}
 
 		// Get Evaluate Object for the Rotation Angle...
-		evaluateObjectInfo.SubType	   = SvDef::SVEvaluateRotationAngleObjectType;
+		evaluateObjectInfo.SubType	   = SvPb::SVEvaluateRotationAngleObjectType;
 		m_pEvaluateRotationAngle = dynamic_cast<SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateRotationAngle )
 		{
@@ -267,8 +267,8 @@ BOOL SVToolAdjustmentDialogTransformationLearnPageClass::OnInitDialog()
 
 		// Get Rotation enabled...
 		SvDef::SVObjectTypeInfoStruct objectInfo;
-		objectInfo.ObjectType = SvDef::SVValueObjectType;
-		objectInfo.SubType = SvDef::SVBoolValueObjectType;
+		objectInfo.ObjectType = SvPb::SVValueObjectType;
+		objectInfo.SubType = SvPb::SVBoolValueObjectType;
 		objectInfo.EmbeddedID = SVPerformRotationObjectGuid;
 		m_pPerformRotation = dynamic_cast<SVBoolValueObjectClass*>(m_pTool->getFirstObject(objectInfo));
 
@@ -278,16 +278,16 @@ BOOL SVToolAdjustmentDialogTransformationLearnPageClass::OnInitDialog()
 
 		// Get SVImageTransformClass Object...
 		SvDef::SVObjectTypeInfoStruct transformObjectInfo;
-		transformObjectInfo.ObjectType = SvDef::SVTransformObjectType;
-		transformObjectInfo.SubType = SvDef::SVImageTransformObjectType;
+		transformObjectInfo.ObjectType = SvPb::SVTransformObjectType;
+		transformObjectInfo.SubType = SvPb::SVImageTransformObjectType;
 
 		m_pImageTransform = dynamic_cast<SVImageTransformClass*>(m_pTool->getFirstObject(transformObjectInfo));
 		if( m_pImageTransform )
 		{
 			// Get learned Objects...
 			SvDef::SVObjectTypeInfoStruct learnedObjectInfo;
-			learnedObjectInfo.ObjectType = SvDef::SVValueObjectType;
-			learnedObjectInfo.SubType = SvDef::SVDoubleValueObjectType;
+			learnedObjectInfo.ObjectType = SvPb::SVValueObjectType;
+			learnedObjectInfo.SubType = SvPb::SVDoubleValueObjectType;
 
 			// Get learned Translation X Object...
 			learnedObjectInfo.EmbeddedID = SVLearnedTranslationXObjectGuid;

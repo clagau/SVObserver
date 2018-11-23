@@ -65,11 +65,11 @@ SVOCVAnalyzeResultClass::SVOCVAnalyzeResultClass( SVObjectClass* POwner, int Str
 void SVOCVAnalyzeResultClass::clearAll()
 {	
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVResultObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVResultOCVObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVResultOCVObjectType;
 
 	// Identify our input type needs
-	m_inputObjectInfo.SetInputObjectType(SvDef::SVImageObjectType, SvDef::SVImageMonoType);
+	m_inputObjectInfo.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
 	m_inputObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputObjectInfo, _T( "OCVAnalyzerResultImage" ) );
 

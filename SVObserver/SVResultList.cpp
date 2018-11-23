@@ -65,7 +65,7 @@ void SVResultListClass::Refresh(SVTaskObjectClass* pRootObject)
 	// find all result classes
 	// pRootObject is a pointer to SVToolSetClass at this time
 	SvDef::SVObjectTypeInfoStruct info;
-	info.ObjectType = SvDef::SVResultObjectType;
+	info.ObjectType = SvPb::SVResultObjectType;
 
 	SVGetObjectDequeByTypeVisitor l_Visitor( info );
 

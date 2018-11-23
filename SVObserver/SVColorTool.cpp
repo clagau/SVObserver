@@ -84,8 +84,8 @@ bool SVColorToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStr
 					SetImageExtentToParent();
 					// Converting configuration without ROI has to set all the thresholds to enabled
 					SvDef::SVObjectTypeInfoStruct objectInfo;
-					objectInfo.ObjectType = SvDef::SVOperatorObjectType;
-					objectInfo.SubType = SvDef::SVColorThresholdObjectType;
+					objectInfo.ObjectType = SvPb::SVOperatorObjectType;
+					objectInfo.SubType = SvPb::SVColorThresholdObjectType;
 					SVColorThresholdClass* pColorThreshold = dynamic_cast<SVColorThresholdClass*> (getFirstObject(objectInfo));
 					if (nullptr != pColorThreshold)
 					{
@@ -303,10 +303,10 @@ void SVColorToolClass::LocalInitialize()
 	m_canResizeToParent = true;
 	m_ConvertTool = false;
 	// Set up your type...
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVColorToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVColorToolObjectType;
 
-	m_InputImageObjectInfo.SetInputObjectType(SvDef::SVImageObjectType, SvDef::SVImageColorType);
+	m_InputImageObjectInfo.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageColorType);
 	m_InputImageObjectInfo.SetObject(GetObjectInfo());
 	RegisterInputObject(&m_InputImageObjectInfo, SvDef::cColorToolInputImage);
 

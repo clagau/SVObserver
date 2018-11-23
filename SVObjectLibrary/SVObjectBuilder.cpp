@@ -32,23 +32,23 @@
 #pragma warning (pop)
 #pragma endregion Includes
 
-typedef std::map<SvDef::SVObjectSubTypeEnum, SVObjectScriptDataObjectTypeEnum> ObjectTypeTable;
+typedef std::map<SvPb::SVObjectSubTypeEnum, SVObjectScriptDataObjectTypeEnum> ObjectTypeTable;
 
 static const ObjectTypeTable cTypeTable
 {
-	{SvDef::SVBoolValueObjectType, SV_BOOL_Type},
-	{SvDef::SVByteValueObjectType, SV_BYTE_Type},
-	{SvDef::SVDWordValueObjectType, SV_DWORD_Type},
-	{SvDef::SVLongValueObjectType, SV_LONG_Type},
-	{SvDef::SVEnumValueObjectType, SV_LONG_Type},
-	{SvDef::SVDoubleValueObjectType, SV_DOUBLE_Type},
-	{SvDef::DoubleSortValueObjectType, SV_DOUBLE_Type},
-	{SvDef::SVPointValueObjectType, SV_POINT_Type},
-	{SvDef::SVStringValueObjectType, SV_STRING_Type},
-	{SvDef::SVDPointValueObjectType, SV_DPOINT_Type},
-	{SvDef::SVCharValueObjectType, SV_BYTE_Type},
-	{SvDef::SVVariantValueObjectType, SV_VARIANT_Type},
-	{SvDef::SVInt64ValueObjectType, SV_INT64_Type}
+	{SvPb::SVBoolValueObjectType, SV_BOOL_Type},
+	{SvPb::SVByteValueObjectType, SV_BYTE_Type},
+	{SvPb::SVDWordValueObjectType, SV_DWORD_Type},
+	{SvPb::SVLongValueObjectType, SV_LONG_Type},
+	{SvPb::SVEnumValueObjectType, SV_LONG_Type},
+	{SvPb::SVDoubleValueObjectType, SV_DOUBLE_Type},
+	{SvPb::DoubleSortValueObjectType, SV_DOUBLE_Type},
+	{SvPb::SVPointValueObjectType, SV_POINT_Type},
+	{SvPb::SVStringValueObjectType, SV_STRING_Type},
+	{SvPb::SVDPointValueObjectType, SV_DPOINT_Type},
+	{SvPb::SVCharValueObjectType, SV_BYTE_Type},
+	{SvPb::SVVariantValueObjectType, SV_VARIANT_Type},
+	{SvPb::SVInt64ValueObjectType, SV_INT64_Type}
 };
 
 template<typename Separator>
@@ -451,7 +451,7 @@ HRESULT SVObjectBuilder::GetObjectDataType(const GUID& ownerID, const GUID& obje
 	/////////////////////////////////////////////////////////////////////
 	if (pOwnerObject && pObject)
 	{
-		SvDef::SVObjectSubTypeEnum type = pObject->GetObjectSubType();
+		SvPb::SVObjectSubTypeEnum type = pObject->GetObjectSubType();
 		dataType = SV_UNKNOWN_Type;
 		ObjectTypeTable::const_iterator it = cTypeTable.find(type);
 		if (it != cTypeTable.end())

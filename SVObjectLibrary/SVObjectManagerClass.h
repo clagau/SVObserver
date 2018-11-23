@@ -91,7 +91,7 @@ public:
 
 	SVGUID GetObjectIdFromCompleteName( LPCTSTR Name );
 
-	void getObjectsOfType(SVObjectPtrVectorInserter Inserter, SvDef::SVObjectTypeEnum ObjectType, SvDef::SVObjectSubTypeEnum ObjectSubType=SvDef::SVNotSetSubObjectType) const;
+	void getObjectsOfType(SVObjectPtrVectorInserter Inserter, SvPb::SVObjectTypeEnum ObjectType, SvPb::SVObjectSubTypeEnum ObjectSubType= SvPb::SVNotSetSubObjectType) const;
 
 	std::string GetCompleteObjectName( const SVGUID& rGuid );
 

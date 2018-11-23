@@ -18,7 +18,7 @@ SVEvaluateEndAngleClass::SVEvaluateEndAngleClass( SVObjectClass* pOwner, int Str
 : SVEvaluateClass( pOwner, StringResourceID )
 {
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVEvaluateEndAngleObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVEvaluateEndAngleObjectType;
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &m_outputMathResult, SVOutputEvaluateEndAngleResultObjectGuid, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone );

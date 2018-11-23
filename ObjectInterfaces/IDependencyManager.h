@@ -8,7 +8,8 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <iterator>
-#include "Definitions/SVObjectTypeInfoStruct.h"
+#include "SVUtilityLibrary/SVGUID.h"
+#include "SVProtobuf/SVO-Enum.h"
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
@@ -32,7 +33,7 @@ namespace SvOi
 	//! \param rSourceSet [in] reference to the source set of GUIDs
 	//! \param nameToObjectType [in] Object type to define the dotted name start
 	//! \param rFileName [in] Optional file name to save the graph file 
-	void getToolDependency( StringPairInserter Inserter, const SVGuidSet& rSourceSet, SvDef::SVObjectTypeEnum nameToObjectType, ToolDependencyEnum ToolDependency = Client, const std::string& rFileName = std::string());
+	void getToolDependency( StringPairInserter Inserter, const SVGuidSet& rSourceSet, SvPb::SVObjectTypeEnum nameToObjectType, ToolDependencyEnum ToolDependency = Client, const std::string& rFileName = std::string());
 
 	//! Return the tool dependency of the given sources
 	//! \param Inserter [in] Iterator to insert the tool GUID

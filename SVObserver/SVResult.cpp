@@ -48,7 +48,7 @@ void SVResultClass::init()
 	m_bUseOverlays = false;
 
 	// Identify our type in the Output List
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVResultObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &m_Failed, SVFailedObjectGuid, IDS_OBJECTNAME_FAILED, false, SvOi::SVResetItemNone );
@@ -118,7 +118,7 @@ bool SVResultClass::IsGood()
 SVRangeClass* SVResultClass::GetResultRange()
 {
 	SvDef::SVObjectTypeInfoStruct info;
-	info.ObjectType = SvDef::SVRangeObjectType;
+	info.ObjectType = SvPb::SVRangeObjectType;
 	SVRangeClass* pRange = dynamic_cast<SVRangeClass*>(getFirstObject(info));
 	return pRange;
 }

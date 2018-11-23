@@ -25,7 +25,7 @@ namespace SvOg
 	class SVToolAdjustmentDialogImagePageClass : public CPropertyPage
 	{
 	public:
-		SVToolAdjustmentDialogImagePageClass(const SVGUID & rInspectionID, const SVGUID& rTaskObjectID, SvDef::SVObjectSubTypeEnum SubType =  SvDef::SVImageMonoType, int id = IDD );
+		SVToolAdjustmentDialogImagePageClass(const SVGUID & rInspectionID, const SVGUID& rTaskObjectID, SvPb::SVObjectSubTypeEnum SubType = SvPb::SVImageMonoType, int id = IDD );
 		virtual ~SVToolAdjustmentDialogImagePageClass();
 		HRESULT SetInspectionData();
 

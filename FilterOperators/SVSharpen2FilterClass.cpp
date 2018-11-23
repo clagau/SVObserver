@@ -23,7 +23,7 @@ SV_IMPLEMENT_CLASS(SVSharpen2FilterClass, SVSharpen2FilterClassGuid)
 SVSharpen2FilterClass::SVSharpen2FilterClass( SVObjectClass* POwner, int StringResourceID )
 					  :SVFilterClass( POwner, StringResourceID ) 
 {
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVSharpen2FilterObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVSharpen2FilterObjectType;
 }
 
 SVSharpen2FilterClass::~SVSharpen2FilterClass()

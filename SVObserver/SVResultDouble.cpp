@@ -22,11 +22,11 @@ SVDoubleResultClass::SVDoubleResultClass( SVObjectClass* POwner, int StringResou
 				  :SVResultClass( POwner, StringResourceID )
 {
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVResultObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVResultDoubleObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVResultDoubleObjectType;
 
 	// Identify our input type needs
-	m_inputObjectInfo.SetInputObjectType( SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType );
+	m_inputObjectInfo.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType );
 	m_inputObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputObjectInfo, _T( "DoubleResultValue" ) );
 
@@ -43,14 +43,14 @@ SVDoubleResultClass::SVDoubleResultClass( SVObjectClass* POwner, int StringResou
 	SvDef::SVObjectTypeInfoStruct interfaceInfo;
 
 	// Declare Input Interface of the SVRangeClass...
-	interfaceInfo.ObjectType = SvDef::SVValueObjectType;
-	interfaceInfo.SubType = SvDef::SVDoubleValueObjectType;
+	interfaceInfo.ObjectType = SvPb::SVValueObjectType;
+	interfaceInfo.SubType = SvPb::SVDoubleValueObjectType;
 	interfaceInfo.EmbeddedID = SVValueObjectGuid;
 	rangeClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
 
 	// Describe the SVRangeClass...
-	rangeClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVRangeObjectType;
-	rangeClassInfo.m_ObjectTypeInfo.SubType = SvDef::SVNotSetSubObjectType;
+	rangeClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVRangeObjectType;
+	rangeClassInfo.m_ObjectTypeInfo.SubType = SvPb::SVNotSetSubObjectType;
 	rangeClassInfo.m_ClassId = SVRangeClassGuid;
 	rangeClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_SVRANGE );
 

@@ -36,7 +36,7 @@ SVLinearPixelCountingLineAnalyzerClass::SVLinearPixelCountingLineAnalyzerClass( 
 void SVLinearPixelCountingLineAnalyzerClass::init()
 {
 	// Identify our type
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVLinearPixelCountingAnalyzerObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVLinearPixelCountingAnalyzerObjectType;
 
 	SVLinearEdgeProcessingClass *l_pEdge = new SVLinearEdgeAProcessingClass( this );
 
@@ -71,8 +71,8 @@ void SVLinearPixelCountingLineAnalyzerClass::init()
 	resultClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
 
 	// Add the Black Pixel Count Result...
-	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVResultObjectType;
-	resultClassInfo.m_ObjectTypeInfo.SubType	= SvDef::SVResultLongObjectType;
+	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
+	resultClassInfo.m_ObjectTypeInfo.SubType	= SvPb::SVResultLongObjectType;
 	resultClassInfo.m_ClassId = SVLongResultClassGuid;
 	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_BLACKPIXELCOUNT );
 	strTitle.LoadString( IDS_RESULT_STRING );
@@ -85,8 +85,8 @@ void SVLinearPixelCountingLineAnalyzerClass::init()
 	resultClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
 
 	// Add the White Pixel Count Result...
-	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVResultObjectType;
-	resultClassInfo.m_ObjectTypeInfo.SubType	= SvDef::SVResultLongObjectType;
+	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
+	resultClassInfo.m_ObjectTypeInfo.SubType	= SvPb::SVResultLongObjectType;
 	resultClassInfo.m_ClassId = SVLongResultClassGuid;
 	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_WHITEPIXELCOUNT );
 	strTitle.LoadString( IDS_RESULT_STRING );

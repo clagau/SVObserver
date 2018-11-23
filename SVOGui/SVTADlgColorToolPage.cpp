@@ -42,7 +42,7 @@ namespace SvOg
 
 	SVTADlgColorToolPage::SVTADlgColorToolPage( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID ) 
 	: CPropertyPage(SVTADlgColorToolPage::IDD)
-	, m_Images(rInspectionID, rTaskObjectID, SvDef::SVImageColorType)
+	, m_Images(rInspectionID, rTaskObjectID, SvPb::SVImageColorType)
 	, m_InspectionID(rInspectionID)
 	, m_TaskObjectID(rTaskObjectID)
 	, m_Values{ SvOg::BoundValues{ rInspectionID, rTaskObjectID } }

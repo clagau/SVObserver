@@ -2251,7 +2251,7 @@ bool SVPPQObject::RebuildOutputList()
 
 				if (pNewOutput->m_ObjectType == pOldOutput->m_ObjectType && NewName == OldName)
 				{
-					if (SvDef::SVIoObjectType == pObject->GetObjectType())
+					if (SvPb::SVIoObjectType == pObject->GetObjectType())
 					{
 						//IO object types require the complete name
 						pObject->SetName(pOldOutput->getObject()->GetCompleteName().c_str());
@@ -3581,7 +3581,7 @@ bool SVPPQObject::ReserveNextRunOnceProductInfoStruct(SVProductInfoStruct& p_rsv
 bool SVPPQObject::IsObjectInPPQ(const SVObjectClass& object) const
 {
 	bool retValue = false;
-	const SVObjectClass *inspectObject = object.GetAncestor(SvDef::SVInspectionObjectType);
+	const SVObjectClass *inspectObject = object.GetAncestor(SvPb::SVInspectionObjectType);
 
 	if (nullptr != inspectObject)
 	{

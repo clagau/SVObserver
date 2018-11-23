@@ -68,8 +68,8 @@ void SVArchiveTool::initializeArchiveTool()
 	m_arrayImagesInfoObjectsToArchive.SetArchiveTool( this );
 
 	// Set up your type...
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvDef::SVToolArchiveObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvPb::SVToolArchiveObjectType;
 	
 	// Hide and Remove Embedded Extents
 	removeEmbeddedExtents();
@@ -1067,18 +1067,18 @@ void SVArchiveTool::OnObjectRenamed( const SVObjectClass& rRenamedObject, const 
 	std::string newPrefix;
 	std::string oldPrefix;
 
-	SvDef::SVObjectTypeEnum type = rRenamedObject.GetObjectType();
-	if(SvDef::SVInspectionObjectType == type)
+	SvPb::SVObjectTypeEnum type = rRenamedObject.GetObjectType();
+	if(SvPb::SVInspectionObjectType == type)
 	{
-		newPrefix = rRenamedObject.GetObjectNameToObjectType(SvDef::SVInspectionObjectType) + _T( "." );
+		newPrefix = rRenamedObject.GetObjectNameToObjectType(SvPb::SVInspectionObjectType) + _T( "." );
 	}
-	else if(SvDef::SVBasicValueObjectType == type)
+	else if(SvPb::SVBasicValueObjectType == type)
 	{
-		newPrefix = rRenamedObject.GetObjectNameToObjectType(SvDef::SVRootObjectType);
+		newPrefix = rRenamedObject.GetObjectNameToObjectType(SvPb::SVRootObjectType);
 	}
-	else if(SvDef::SVValueObjectType == type)
+	else if(SvPb::SVValueObjectType == type)
 	{
-		newPrefix = rRenamedObject.GetObjectNameToObjectType(SvDef::SVInspectionObjectType);
+		newPrefix = rRenamedObject.GetObjectNameToObjectType(SvPb::SVInspectionObjectType);
 	}
 	else
 	{

@@ -44,8 +44,8 @@ namespace SvOg
 		if (GUID_NULL == m_RangeID)
 		{
 			SvDef::SVObjectTypeInfoStruct ObjectInfo;
-			ObjectInfo.ObjectType = SvDef::SVRangeObjectType;
-			ObjectInfo.SubType = SvDef::SVNotSetSubObjectType;
+			ObjectInfo.ObjectType = SvPb::SVRangeObjectType;
+			ObjectInfo.SubType = SvPb::SVNotSetSubObjectType;
 			SvOi::IObjectClass* pTool = SvOi::getObject(m_rTaskObjectID);
 			if (nullptr != pTool)
 			{

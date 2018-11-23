@@ -28,7 +28,7 @@ SV_IMPLEMENT_CLASS( SVLinearEdgeAProcessingClass, SVLinearEdgeAProcessingClassGu
 SVLinearEdgeAProcessingClass::SVLinearEdgeAProcessingClass(SVObjectClass* POwner, int StringResourceID)
 	:SVLinearEdgeProcessingClass(POwner, StringResourceID)
 {
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVLinearEdgeAProcessingObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVLinearEdgeAProcessingObjectType;
 
 	RegisterEmbeddedObject( &m_svDirection, SVEdgeADirectionGuid, IDS_OBJECTNAME_EDGE_A_DIRECTION, false, SvOi::SVResetItemNone );
 	RegisterEmbeddedObject( &m_svPolarisation, SVEdgeAPolarisationGuid, IDS_OBJECTNAME_EDGE_A_POLARISATION, false, SvOi::SVResetItemNone );

@@ -256,7 +256,7 @@ public:
 	/// \returns bool
 	bool shouldPauseRegressionTestByCondition();
 
-	bool isImageAvailable(SvDef::SVObjectSubTypeEnum ImageType) const;
+	bool isImageAvailable(SvPb::SVObjectSubTypeEnum ImageType) const;
 
 protected:
 	virtual BOOL SaveModified() override;

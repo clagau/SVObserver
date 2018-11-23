@@ -60,7 +60,7 @@ SVBarCodeAnalyzerClass::SVBarCodeAnalyzerClass (SVObjectClass* POwner, int Strin
 void SVBarCodeAnalyzerClass::init()
 {
 	
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVBarCodeAnalyzerObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVBarCodeAnalyzerObjectType;
 	
 	// Register Embedded Objects
 	RegisterEmbeddedObject (&msv_szBarCodeValue, SVBarCodeObjectGuid, IDS_OBJECTNAME_BARCODEVALUE, false, SvOi::SVResetItemNone);

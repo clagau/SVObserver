@@ -40,8 +40,8 @@ void SVImageToolClass::init()
 {
 	m_canResizeToParent = true;
 	// Set up your type...
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvDef::SVToolImageObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvPb::SVToolImageObjectType;
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &outputEnableOffsetA, SVEnableOffsetAObjectGuid, IDS_OBJECTNAME_ENABLEOFFSETA, false, SvOi::SVResetItemNone );
@@ -212,8 +212,8 @@ bool SVImageToolClass::SetDefaultFormulas(SvStl::MessageContainerVector *pErrorM
 
 	// Set Default Formula of LUTEquation, if any...
 	SvDef::SVObjectTypeInfoStruct lutEquationInfo;
-	lutEquationInfo.ObjectType	= SvDef::SVEquationObjectType;
-	lutEquationInfo.SubType		= SvDef::SVLUTEquationObjectType;
+	lutEquationInfo.ObjectType	= SvPb::SVEquationObjectType;
+	lutEquationInfo.SubType		= SvPb::SVLUTEquationObjectType;
 	SVLUTEquationClass* pLUTEquation = dynamic_cast<SVLUTEquationClass*>(getFirstObject(lutEquationInfo));
 	if( pLUTEquation )
 	{

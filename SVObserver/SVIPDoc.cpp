@@ -1573,7 +1573,7 @@ void SVIPDoc::OnEditToolSetCondition()
 		{
 			SVSVIMStateClass::AddState(SV_STATE_EDITING);
 
-			SvDef::SVObjectTypeInfoStruct Info(SvDef::SVEquationObjectType, SvDef::SVConditionalObjectType);
+			SvDef::SVObjectTypeInfoStruct Info(SvPb::SVEquationObjectType, SvPb::SVConditionalObjectType);
 			std::string Title {_T("ToolSet Adjustment: ")};
 			Title += GetToolSet()->GetName();
 			SvOg::SVFormulaEditorSheetClass dlg(GetInspectionID(), GetToolSet()->GetUniqueObjectID(), Info, Title.c_str());
@@ -1695,8 +1695,8 @@ void SVIPDoc::OnResultsTablePicker()
 			SvPb::GetAvailableObjectsRequest* pGetAvailableObjectsRequest = request.mutable_getavailableobjectsrequest();
 
 			SvPb::SetGuidInProtoBytes(pGetAvailableObjectsRequest->mutable_objectid(), GetInspectionID());
-			pGetAvailableObjectsRequest->mutable_typeinfo()->set_objecttype(SvDef::TableObjectType);
-			pGetAvailableObjectsRequest->set_objecttypetoinclude(SvDef::SVToolSetObjectType);
+			pGetAvailableObjectsRequest->mutable_typeinfo()->set_objecttype(SvPb::TableObjectType);
+			pGetAvailableObjectsRequest->set_objecttypetoinclude(SvPb::SVToolSetObjectType);
 			HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
 			if (S_OK == hr && response.has_getavailableobjectsresponse())
 			{
@@ -1783,7 +1783,7 @@ void SVIPDoc::OnSaveResultsToFile()
 					{
 						Name = l_pObject->GetName();
 					}
-					NameToType = l_pObject->GetObjectNameBeforeObjectType(SvDef::SVToolSetObjectType);
+					NameToType = l_pObject->GetObjectNameBeforeObjectType(SvPb::SVToolSetObjectType);
 				}
 
 				ItemIndex = SvUl::Format(_T("%d"), i);
@@ -3088,8 +3088,8 @@ bool SVIPDoc::deleteTool(NavigatorElement* pNaviElement)
 		if (S_OK == hr && response.has_getobjectparametersresponse())
 		{
 			parentGuid = pNaviElement->m_OwnerGuid;
-			if (SvDef::SVToolObjectType != response.getobjectparametersresponse().typeinfo().objecttype() || 
-				SvDef::LoopToolObjectType != response.getobjectparametersresponse().typeinfo().subtype())
+			if (SvPb::SVToolObjectType != response.getobjectparametersresponse().typeinfo().objecttype() ||
+				SvPb::LoopToolObjectType != response.getobjectparametersresponse().typeinfo().subtype())
 			{
 				return false;
 			}
@@ -3253,7 +3253,7 @@ void SVIPDoc::OnShowToolRelations()
 	{
 		SVGuidSet DependencySet;
 		DependencySet.insert(selectedToolID);
-		SvOg::SVShowDependentsDialog Dlg(DependencySet, SvDef::SVToolObjectType, nullptr, SvOg::SVShowDependentsDialog::Show);
+		SvOg::SVShowDependentsDialog Dlg(DependencySet, SvPb::SVToolObjectType, nullptr, SvOg::SVShowDependentsDialog::Show);
 		Dlg.DoModal();
 	}
 }
@@ -3278,7 +3278,7 @@ void SVIPDoc::OnToolDependencies()
 		std::string FileName;
 		//Don't need to check inspection pointer because ToolSet pointer is valid
 		FileName = SvUl::Format(_T("%s\\%s.dot"), SvStl::GlobalPath::Inst().GetTempPath().c_str(), GetInspectionProcess()->GetName());
-		SvOi::getToolDependency(std::back_inserter(m_dependencyList), ToolIDSet, SvDef::SVToolObjectType, SvOi::ToolDependencyEnum::Client, FileName);
+		SvOi::getToolDependency(std::back_inserter(m_dependencyList), ToolIDSet, SvPb::SVToolObjectType, SvOi::ToolDependencyEnum::Client, FileName);
 	}
 }
 
@@ -3289,7 +3289,7 @@ void SVIPDoc::OnUpdateToolDependencies(CCmdUI* pCmdUI)
 
 void SVIPDoc::OnUpdateAddGeneralTool(CCmdUI* PCmdUI)
 {
-	bool Enabled = TheSVObserverApp.OkToEdit() && isImageAvailable(SvDef::SVImageMonoType);
+	bool Enabled = TheSVObserverApp.OkToEdit() && isImageAvailable(SvPb::SVImageMonoType);
 
 	PCmdUI->Enable(Enabled);
 }
@@ -3298,7 +3298,7 @@ void SVIPDoc::OnUpdateAddCylindricalWarpTool(CCmdUI* pCmdUI)
 {
 	bool Enabled = !SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST);
 
-	Enabled = Enabled && TheSVObserverApp.OkToEdit() && isImageAvailable(SvDef::SVImageMonoType);
+	Enabled = Enabled && TheSVObserverApp.OkToEdit() && isImageAvailable(SvPb::SVImageMonoType);
 
 	if (pCmdUI->m_pSubMenu)
 	{
@@ -3314,7 +3314,7 @@ void SVIPDoc::OnUpdateAddCylindricalWarpTool(CCmdUI* pCmdUI)
 void SVIPDoc::OnUpdateAddTransformationTool(CCmdUI* pCmdUI)
 {
 	bool Enabled = !SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST);
-	Enabled = Enabled && TheSVObserverApp.OkToEdit() && isImageAvailable(SvDef::SVImageMonoType);
+	Enabled = Enabled && TheSVObserverApp.OkToEdit() && isImageAvailable(SvPb::SVImageMonoType);
 
 	pCmdUI->Enable(Enabled);
 }
@@ -3323,7 +3323,7 @@ void SVIPDoc::OnUpdateAddColorTool(CCmdUI* PCmdUI)
 {
 	bool Enabled = !SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST);
 	// Check current user access...
-	Enabled = Enabled && TheSVObserverApp.OkToEdit() && isImageAvailable(SvDef::SVImageColorType);
+	Enabled = Enabled && TheSVObserverApp.OkToEdit() && isImageAvailable(SvPb::SVImageColorType);
 
 	PCmdUI->Enable(Enabled);
 }
@@ -3331,7 +3331,7 @@ afx_msg void SVIPDoc::OnUpdateAddLoopTool(CCmdUI* PCmdUI)
 {
 	bool Enabled = !SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST);
 	// Check current user access...
-	Enabled = Enabled && TheSVObserverApp.OkToEdit() && isImageAvailable(SvDef::SVImageMonoType);;
+	Enabled = Enabled && TheSVObserverApp.OkToEdit() && isImageAvailable(SvPb::SVImageMonoType);;
 	ToolSetView* pView = GetToolSetView();
 	if (!pView || pView->IsLoopToolSelected())
 	{
@@ -3798,7 +3798,7 @@ std::string SVIPDoc::GetCompleteToolSetName() const
 
 	if (nullptr != l_pToolSet)
 	{
-		Result = l_pToolSet->GetObjectNameToObjectType(SvDef::SVToolObjectType);
+		Result = l_pToolSet->GetObjectNameToObjectType(SvPb::SVToolObjectType);
 	}
 
 	return Result;
@@ -4421,7 +4421,7 @@ int SVIPDoc::GetToolToInsertBefore(const std::string& rName, int listIndex) cons
 	return toolListIndex;
 }
 
-bool SVIPDoc::isImageAvailable(SvDef::SVObjectSubTypeEnum ImageSubType) const
+bool SVIPDoc::isImageAvailable(SvPb::SVObjectSubTypeEnum ImageSubType) const
 {
 	bool Result {false};
 
@@ -4429,7 +4429,7 @@ bool SVIPDoc::isImageAvailable(SvDef::SVObjectSubTypeEnum ImageSubType) const
 	SvPb::GetAvailableObjectsRequest* pGetAvailableObjectsRequest = request.mutable_getavailableobjectsrequest();
 
 	SvPb::SetGuidInProtoBytes(pGetAvailableObjectsRequest->mutable_objectid(), m_InspectionID);
-	pGetAvailableObjectsRequest->mutable_typeinfo()->set_objecttype(SvDef::SVImageObjectType);
+	pGetAvailableObjectsRequest->mutable_typeinfo()->set_objecttype(SvPb::SVImageObjectType);
 	pGetAvailableObjectsRequest->mutable_typeinfo()->set_subtype(ImageSubType);
 	SvPb::SetGuidInProtoBytes(pGetAvailableObjectsRequest->mutable_isbeforetoolmethod()->mutable_toolid(), GetSelectedToolID());
 	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);

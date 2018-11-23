@@ -35,13 +35,13 @@ HRESULT SVGetObjectDequeByTypeVisitor::VisitElement( SVObjectClass& p_rElement )
 
 	// Find best match....EmbeddedID, Type, SubType...
 	if( ( GUID_NULL          == m_ObjectInfo.EmbeddedID || m_ObjectInfo.EmbeddedID == p_rElement.GetEmbeddedID() ) &&
-		( SvDef::SVNotSetObjectType    == m_ObjectInfo.ObjectType || m_ObjectInfo.ObjectType == p_rElement.GetObjectType() ) &&
-		( SvDef::SVNotSetSubObjectType == m_ObjectInfo.SubType    || m_ObjectInfo.SubType    == p_rElement.GetObjectSubType() )
+		(SvPb::SVNotSetObjectType == m_ObjectInfo.ObjectType || m_ObjectInfo.ObjectType == p_rElement.GetObjectType()) &&
+		(SvPb::SVNotSetSubObjectType == m_ObjectInfo.SubType    || m_ObjectInfo.SubType    == p_rElement.GetObjectSubType() )
 	  )
 	{
 		if( GUID_NULL          != m_ObjectInfo.EmbeddedID ||
-			SvDef::SVNotSetObjectType    != m_ObjectInfo.ObjectType ||
-			SvDef::SVNotSetSubObjectType != m_ObjectInfo.SubType 
+			SvPb::SVNotSetObjectType    != m_ObjectInfo.ObjectType ||
+			SvPb::SVNotSetSubObjectType != m_ObjectInfo.SubType
 		  )
 		{
 			m_Objects.push_back( &p_rElement );

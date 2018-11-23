@@ -27,8 +27,8 @@ TableColumnEquation::~TableColumnEquation()
 void TableColumnEquation::init()
 {
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVEquationObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::TableColumnEquationObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVEquationObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::TableColumnEquationObjectType;
 
 	// Set default inputs and outputs
 	addDefaultInputObjects();

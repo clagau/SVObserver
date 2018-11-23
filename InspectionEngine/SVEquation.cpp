@@ -24,6 +24,7 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "SVProtobuf/SVO-Enum.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -269,7 +270,7 @@ void SVEquationClass::init()
 	m_bUseOverlays = false;
 
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVEquationObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVEquationObjectType;
 
 	// Identify our input type needs - this is a bit different here
 	// Since out inputs are dynamic via the script specified
@@ -453,7 +454,7 @@ SvOi::EquationTestResult SVEquationClass::Test( SvStl::MessageContainerVector *p
 	
 			if (m_Yacc.yacc_err)
 			{
-				std::string fullObjectName = GetObjectNameToObjectType(SvDef::SVInspectionObjectType);
+				std::string fullObjectName = GetObjectNameToObjectType(SvPb::SVInspectionObjectType);
 				SvDef::StringVector msgList;
 				msgList.push_back(fullObjectName);
 				if( S_OK != m_Yacc.m_StatusCode )
@@ -546,7 +547,7 @@ SvOi::EquationTestResult SVEquationClass::lexicalScan(LPCTSTR inBuffer)
 
 	if (m_Lex.lex_err)
 	{
-		std::string fullObjectName = GetObjectNameToObjectType(SvDef::SVInspectionObjectType);
+		std::string fullObjectName = GetObjectNameToObjectType(SvPb::SVInspectionObjectType);
 		ret.bPassed = false;
 		ret.iPositionFailed = static_cast< int >( m_Lex.position + 1 );
 		SvDef::StringVector msgList;
@@ -732,16 +733,16 @@ void SVEquationClass::OnObjectRenamed(const SVObjectClass& rRenamedObject, const
 	std::string newPrefix;
 	std::string oldPrefix;
 
-	SvDef::SVObjectTypeEnum type = rRenamedObject.GetObjectType();
-	if (SvDef::SVInspectionObjectType == type)
+	SvPb::SVObjectTypeEnum type = rRenamedObject.GetObjectType();
+	if (SvPb::SVInspectionObjectType == type)
 	{
-		newPrefix = _T(".") + rRenamedObject.GetObjectNameToObjectType(SvDef::SVInspectionObjectType) + _T(".");
+		newPrefix = _T(".") + rRenamedObject.GetObjectNameToObjectType(SvPb::SVInspectionObjectType) + _T(".");
 	}
-	else if (SvDef::SVBasicValueObjectType == type)
+	else if (SvPb::SVBasicValueObjectType == type)
 	{
-		newPrefix = _T("\"") + rRenamedObject.GetObjectNameToObjectType(SvDef::SVRootObjectType) + _T("\"");
+		newPrefix = _T("\"") + rRenamedObject.GetObjectNameToObjectType(SvPb::SVRootObjectType) + _T("\"");
 	}
-	else if (SvDef::SVValueObjectType == type)
+	else if (SvPb::SVValueObjectType == type)
 	{
 		newPrefix = _T("\"") + rRenamedObject.GetObjectNameToObjectType() + _T("\"");
 	}

@@ -22,7 +22,7 @@
 
 namespace SvOg
 {
-	ImageController::ImageController(const GUID& rInspectionID, const GUID& rTaskObjectID, SvDef::SVObjectSubTypeEnum ImageSubType, bool OnlyAboveImages)
+	ImageController::ImageController(const GUID& rInspectionID, const GUID& rTaskObjectID, SvPb::SVObjectSubTypeEnum ImageSubType, bool OnlyAboveImages)
 	: m_InspectionID(rInspectionID)
 	, m_TaskObjectID(rTaskObjectID)
 	, m_ImageSubType(ImageSubType)
@@ -41,7 +41,7 @@ namespace SvOg
 		SvPb::GetAvailableObjectsRequest* pGetAvailableObjectsRequest = request.mutable_getavailableobjectsrequest();
 
 		SvPb::SetGuidInProtoBytes(pGetAvailableObjectsRequest->mutable_objectid(), m_InspectionID);
-		pGetAvailableObjectsRequest->mutable_typeinfo()->set_objecttype(SvDef::SVImageObjectType);
+		pGetAvailableObjectsRequest->mutable_typeinfo()->set_objecttype(SvPb::SVImageObjectType);
 		pGetAvailableObjectsRequest->mutable_typeinfo()->set_subtype(m_ImageSubType);
 		if (m_OnlyAboveImages)
 		{
@@ -89,7 +89,7 @@ namespace SvOg
 		SvPb::GetAvailableObjectsRequest* pGetAvailableObjectsRequest = request.mutable_getavailableobjectsrequest();
 
 		SvPb::SetGuidInProtoBytes(pGetAvailableObjectsRequest->mutable_objectid(), m_TaskObjectID);
-		pGetAvailableObjectsRequest->mutable_typeinfo()->set_objecttype(SvDef::SVImageObjectType);
+		pGetAvailableObjectsRequest->mutable_typeinfo()->set_objecttype(SvPb::SVImageObjectType);
 		pGetAvailableObjectsRequest->mutable_defaultplushidden();
 		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
 		if (S_OK == hr && response.has_getavailableobjectsresponse())
@@ -110,7 +110,7 @@ namespace SvOg
 		SvPb::InspectionCmdMsgs request, response;
 		SvPb::GetInputsRequest* pGetInputsRequest = request.mutable_getinputsrequest();
 		SvPb::SetGuidInProtoBytes(pGetInputsRequest->mutable_objectid(), objectID);
-		pGetInputsRequest->mutable_typeinfo()->set_objecttype(SvDef::SVImageObjectType);
+		pGetInputsRequest->mutable_typeinfo()->set_objecttype(SvPb::SVImageObjectType);
 		pGetInputsRequest->set_maxrequested(maxImages);
 		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
 		SvUl::InputNameGuidPairList connectedList;
@@ -239,7 +239,7 @@ namespace SvOg
 			SvPb::SetGuidInProtoBytes(pConnectToObjectRequest->mutable_objectid(), objectID);
 			pConnectToObjectRequest->set_inputname(inputName);
 			SvPb::SetGuidInProtoBytes(pConnectToObjectRequest->mutable_newconnectedid(), it->second);
-			pConnectToObjectRequest->set_objecttype(SvDef::SVImageObjectType);
+			pConnectToObjectRequest->set_objecttype(SvPb::SVImageObjectType);
 			hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &Request, &Response);
 		}
 		return hr; 

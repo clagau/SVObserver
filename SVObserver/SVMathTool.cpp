@@ -61,8 +61,8 @@ void SVMathToolClass::init(void)
 	m_hasToolExtents = false;
 
 	// Set up your type...
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvDef::SVMathToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvPb::SVMathToolObjectType;
 
 	// Hide and Remove Embedded Extents
 	removeEmbeddedExtents();
@@ -80,8 +80,8 @@ void SVMathToolClass::init(void)
 	interfaceInfo.EmbeddedID = SVMathEquationResultObjectGuid;
 	resultClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
 
-	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVResultObjectType;
-	resultClassInfo.m_ObjectTypeInfo.SubType	= SvDef::SVResultDoubleObjectType;
+	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
+	resultClassInfo.m_ObjectTypeInfo.SubType	= SvPb::SVResultDoubleObjectType;
 	resultClassInfo.m_ClassId = SVDoubleResultClassGuid;
 	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_RESULT );
 	strTitle.LoadString( IDS_CLASSNAME_RESULT_DOUBLE );
@@ -129,7 +129,7 @@ SvOi::ParametersForML SVMathToolClass::getParameterForMonitorList(SvStl::Message
 		isNoError = false;
 	}
 	isNoError = addEntryToMonitorList(retList, SVValueObjectGuid) && isNoError;
-	SVRangeClass* pRangeObject = dynamic_cast<SVRangeClass*>(getFirstObject(SvDef::SVObjectTypeInfoStruct(SvDef::SVObjectTypeEnum::SVRangeObjectType)));
+	SVRangeClass* pRangeObject = dynamic_cast<SVRangeClass*>(getFirstObject(SvDef::SVObjectTypeInfoStruct(SvPb::SVObjectTypeEnum::SVRangeObjectType)));
 	if (nullptr != pRangeObject)
 	{
 		pRangeObject->addEntriesToMonitorList(std::back_inserter(retList));

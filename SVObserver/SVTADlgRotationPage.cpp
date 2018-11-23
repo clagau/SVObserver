@@ -97,23 +97,23 @@ BOOL SVToolAdjustmentDialogRotationPageClass::OnInitDialog()
 	{
 		// Get Evaluate Object...
 		SvDef::SVObjectTypeInfoStruct evaluateObjectInfo;
-		evaluateObjectInfo.ObjectType = SvDef::SVMathContainerObjectType;
+		evaluateObjectInfo.ObjectType = SvPb::SVMathContainerObjectType;
 
 		// Get Evaluate Object for the X coordinate...
-		evaluateObjectInfo.SubType = SvDef::SVEvaluateRotationXObjectType;
+		evaluateObjectInfo.SubType = SvPb::SVEvaluateRotationXObjectType;
 		m_pEvaluateRotationX = dynamic_cast<SVEvaluateClass*> (pTool->getFirstObject(evaluateObjectInfo));
 
 		// Get Evaluate Object for the Y coordinate...
-		evaluateObjectInfo.SubType = SvDef::SVEvaluateRotationYObjectType;
+		evaluateObjectInfo.SubType = SvPb::SVEvaluateRotationYObjectType;
 		m_pEvaluateRotationY = dynamic_cast<SVEvaluateClass*> (pTool->getFirstObject(evaluateObjectInfo));
 
-		evaluateObjectInfo.SubType = SvDef::SVEvaluateRotationAngleObjectType;
+		evaluateObjectInfo.SubType = SvPb::SVEvaluateRotationAngleObjectType;
 		m_pEvaluateRotationAngle = dynamic_cast<SVEvaluateClass*>(pTool->getFirstObject(evaluateObjectInfo));
 
 		//Image Transformation
 		SvDef::SVObjectTypeInfoStruct objectInfo;
-		objectInfo.ObjectType = SvDef::SVTransformObjectType;
-		objectInfo.SubType = SvDef::SVImageTransformObjectType;
+		objectInfo.ObjectType = SvPb::SVTransformObjectType;
+		objectInfo.SubType = SvPb::SVImageTransformObjectType;
 
 		SvOi::IObjectClass* pImageTransform = pTool->getFirstObject(objectInfo);
 		if (nullptr != pImageTransform)
@@ -146,7 +146,7 @@ void SVToolAdjustmentDialogRotationPageClass::OnAngleFormulaButton()
 		std::string Caption = m_pEvaluateRotationAngle->GetName();
 		Caption += _T( " Formula" );
 
-		SvDef::SVObjectTypeInfoStruct info(SvDef::SVMathContainerObjectType, SvDef::SVEvaluateRotationAngleObjectType);
+		SvDef::SVObjectTypeInfoStruct info(SvPb::SVMathContainerObjectType, SvPb::SVEvaluateRotationAngleObjectType);
 		SvOg::SVFormulaEditorSheetClass dlg( m_InspectionID, m_TaskObjectID, info, Caption.c_str() );
 		dlg.DoModal();
 
@@ -161,7 +161,7 @@ void SVToolAdjustmentDialogRotationPageClass::OnXFormulaButton()
 		std::string Caption = m_pEvaluateRotationX->GetName();
 		Caption += _T( " Formula" );
 
-		SvDef::SVObjectTypeInfoStruct info(SvDef::SVMathContainerObjectType, SvDef::SVEvaluateRotationXObjectType);
+		SvDef::SVObjectTypeInfoStruct info(SvPb::SVMathContainerObjectType, SvPb::SVEvaluateRotationXObjectType);
 		SvOg::SVFormulaEditorSheetClass dlg(m_InspectionID, m_TaskObjectID, info, Caption.c_str() );
 		dlg.DoModal();
 
@@ -176,7 +176,7 @@ void SVToolAdjustmentDialogRotationPageClass::OnYFormulaButton()
 		std::string Caption = m_pEvaluateRotationY->GetName();
 		Caption += _T( " Formula" );
 
-		SvDef::SVObjectTypeInfoStruct info(SvDef::SVMathContainerObjectType, SvDef::SVEvaluateRotationYObjectType);
+		SvDef::SVObjectTypeInfoStruct info(SvPb::SVMathContainerObjectType, SvPb::SVEvaluateRotationYObjectType);
 		SvOg::SVFormulaEditorSheetClass dlg( m_InspectionID, m_TaskObjectID, info, Caption.c_str() );
 		dlg.DoModal();
 

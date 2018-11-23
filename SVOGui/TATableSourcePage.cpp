@@ -66,8 +66,8 @@ BOOL TATableSourcePage::OnInitDialog()
 	SvPb::InspectionCmdMsgs request, response;
 	SvPb::GetInputsRequest* pGetInputsRequest = request.mutable_getinputsrequest();
 	SvPb::SetGuidInProtoBytes(pGetInputsRequest->mutable_objectid(), m_TaskObjectID);
-	pGetInputsRequest->mutable_typeinfo()->set_objecttype(SvDef::TableObjectType);
-	pGetInputsRequest->set_objecttypetoinclude(SvDef::SVToolSetObjectType);
+	pGetInputsRequest->mutable_typeinfo()->set_objecttype(SvPb::TableObjectType);
+	pGetInputsRequest->set_objecttypetoinclude(SvPb::SVToolSetObjectType);
 	pGetInputsRequest->set_shouldexcludefirstobjectname(true);
 	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
 	SvUl::InputNameGuidPairList connectedList;
@@ -121,8 +121,8 @@ HRESULT TATableSourcePage::RetrieveAvailableList()
 	SvPb::GetAvailableObjectsRequest* pGetAvailableObjectsRequest = request.mutable_getavailableobjectsrequest();
 
 	SvPb::SetGuidInProtoBytes(pGetAvailableObjectsRequest->mutable_objectid(), m_InspectionID);
-	pGetAvailableObjectsRequest->mutable_typeinfo()->set_objecttype(SvDef::TableObjectType);
-	pGetAvailableObjectsRequest->set_objecttypetoinclude(SvDef::SVToolSetObjectType);
+	pGetAvailableObjectsRequest->mutable_typeinfo()->set_objecttype(SvPb::TableObjectType);
+	pGetAvailableObjectsRequest->set_objecttypetoinclude(SvPb::SVToolSetObjectType);
 	pGetAvailableObjectsRequest->set_shouldexcludefirstobjectname(true);
 	SvPb::SetGuidInProtoBytes(pGetAvailableObjectsRequest->mutable_isbeforetoolmethod()->mutable_toolid(), m_TaskObjectID);
 	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
@@ -154,7 +154,7 @@ HRESULT TATableSourcePage::ConnectToObject(const std::string& inputName, const s
 		SvPb::SetGuidInProtoBytes(pConnectToObjectRequest->mutable_objectid(), m_TaskObjectID);
 		pConnectToObjectRequest->set_inputname(inputName);
 		SvPb::SetGuidInProtoBytes(pConnectToObjectRequest->mutable_newconnectedid(), it->second);
-		pConnectToObjectRequest->set_objecttype(SvDef::TableObjectType);
+		pConnectToObjectRequest->set_objecttype(SvPb::TableObjectType);
 		hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &Request, &Response);
 	}
 	return hr;

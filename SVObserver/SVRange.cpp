@@ -60,7 +60,7 @@ void SVRangeClass::init()
 	m_bUseOverlays = false;
 
 	// Identify our type in the Output List
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVRangeObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVRangeObjectType;
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject(&m_LinkedValues[RangeEnum::ER_FailHigh], SVRangeClassFailHighObjectGuid, IDS_OBJECTNAME_FAIL_HIGH, false, SvOi::SVResetItemNone);

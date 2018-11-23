@@ -33,8 +33,8 @@ void LoopTool::Initialize()
 	m_hasToolExtents = false;
 
 	m_canResizeToParent = false;
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::LoopToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::LoopToolObjectType;
 	removeEmbeddedExtents();
 	BuildEmbeddedObjectList();
 }

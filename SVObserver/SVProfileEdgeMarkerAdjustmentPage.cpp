@@ -103,8 +103,8 @@ BOOL SVProfileEdgeMarkerAdjustmentPageClass::OnInitDialog()
 	SVEdgeMarkerAdjustmentPageClass::OnInitDialog();
 
 	m_pEdge = dynamic_cast<SVLinearEdgeProcessingClass*> (SvOi::getObject(m_rTaskObjectID));
-	m_pTool = (m_pEdge == nullptr ) ? nullptr : dynamic_cast<SVToolClass*> (m_pEdge->GetAncestorInterface(SvDef::SVToolObjectType));
-	m_pAnalyzer = (m_pEdge == nullptr) ? nullptr : dynamic_cast<SVAnalyzerClass*> (m_pEdge->GetAncestorInterface(SvDef::SVAnalyzerObjectType));
+	m_pTool = (m_pEdge == nullptr ) ? nullptr : dynamic_cast<SVToolClass*> (m_pEdge->GetAncestorInterface(SvPb::SVToolObjectType));
+	m_pAnalyzer = (m_pEdge == nullptr) ? nullptr : dynamic_cast<SVAnalyzerClass*> (m_pEdge->GetAncestorInterface(SvPb::SVAnalyzerObjectType));
 	if (nullptr != m_pAnalyzer)
 	{
 		m_pAnalyzerValues = std::shared_ptr<Controller> {new Controller {SvOg::BoundValues {m_rInspectionID, m_pAnalyzer->GetUniqueObjectID()}}};

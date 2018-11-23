@@ -18,7 +18,7 @@ SVEvaluateTranslationXClass::SVEvaluateTranslationXClass( SVObjectClass* pOwner,
 : SVEvaluateClass( pOwner, StringResourceID ) 
 {
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVEvaluateTranslationXObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVEvaluateTranslationXObjectType;
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &m_outputMathResult, SVOutputEvaluateTranslationXResultObjectGuid, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone );

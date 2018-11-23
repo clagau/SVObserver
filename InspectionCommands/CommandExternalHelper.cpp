@@ -97,8 +97,8 @@ bool ResponseToObjectInfo(const SvPb::InspectionCmdMsgs& rResponse, SvOi::Object
 		objectInfo.DisplayName = rTOI.displayname().c_str();
 		SvPb::GetGuidFromProtoBytes(rTOI.taskobjectid(), objectInfo.guid);
 		objectInfo.isValid = rTOI.isvalid();
-		objectInfo.ObjectSubType = SvDef::SVObjectSubTypeEnum(rTOI.objectsubtype());
-		objectInfo.ObjectType = SvDef::SVObjectTypeEnum(rTOI.objecttype());
+		objectInfo.ObjectSubType = rTOI.objectsubtype();
+		objectInfo.ObjectType = rTOI.objecttype();
 		rToolSetInfos.push_back(objectInfo);
 	}
 	return true;

@@ -40,8 +40,8 @@ void SVThresholdClass::init()
 	m_bUseOverlays = false;
 
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVUnaryImageOperatorObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVThresholdObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVUnaryImageOperatorObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVThresholdObjectType;
 
 	// Register Embedded Object(s)
 	RegisterEmbeddedObject( &m_upperThresh, SVUpperThresholdObjectGuid, IDS_OBJECTNAME_UPPERTHRESHOLD, false, SvOi::SVResetItemNone );
@@ -91,15 +91,15 @@ void SVThresholdClass::init()
 
 	// Identify our input type needs...
 
-	m_inputUT.SetInputObjectType(SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType, SVUpperThresholdEquationResultObjectGuid);
+	m_inputUT.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SVUpperThresholdEquationResultObjectGuid);
 	m_inputUT.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputUT, _T( "UpperThreshold" ) );
 
-	m_inputLT.SetInputObjectType(SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType, SVLowerThresholdEquationResultObjectGuid);
+	m_inputLT.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SVLowerThresholdEquationResultObjectGuid);
 	m_inputLT.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputLT, _T( "LowerThreshold" ) );
 
-	m_inputATM.SetInputObjectType(SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType, SVAutoThresholdEquationResultObjectGuid);
+	m_inputATM.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SVAutoThresholdEquationResultObjectGuid);
 	m_inputATM.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputATM, _T( "AutoThreshold" ) );
 

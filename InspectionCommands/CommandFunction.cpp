@@ -456,15 +456,15 @@ HRESULT getInputs(const SvPb::GetInputsRequest& rRequest, SvPb::GetInputsRespons
 	SvOi::ITaskObject* pTaskObject = dynamic_cast<SvOi::ITaskObject *>(SvOi::getObject(SvPb::GetGuidFromProtoBytes(rRequest.objectid())));
 	if (nullptr != pTaskObject)
 	{
-		SvDef::SVObjectTypeInfoStruct typeInfo {static_cast<SvDef::SVObjectTypeEnum>(rRequest.typeinfo().objecttype()), static_cast<SvDef::SVObjectSubTypeEnum>(rRequest.typeinfo().subtype()), SvPb::GetGuidFromProtoBytes(rRequest.typeinfo().embeddedid())};
+		SvDef::SVObjectTypeInfoStruct typeInfo {rRequest.typeinfo().objecttype(), rRequest.typeinfo().subtype(), SvPb::GetGuidFromProtoBytes(rRequest.typeinfo().embeddedid())};
 		SvUl::InputNameGuidPairList list;
-		if (SvDef::SVImageObjectType == typeInfo.ObjectType)
+		if (SvPb::SVImageObjectType == typeInfo.ObjectType)
 		{
 			pTaskObject->GetConnectedImages(list, rRequest.maxrequested());
 		}
 		else
 		{
-			pTaskObject->GetInputs(list, typeInfo, static_cast<SvDef::SVObjectTypeEnum>(rRequest.objecttypetoinclude()), rRequest.shouldexcludefirstobjectname());
+			pTaskObject->GetInputs(list, typeInfo, rRequest.objecttypetoinclude(), rRequest.shouldexcludefirstobjectname());
 		}
 		for (auto& item : list)
 		{
@@ -488,7 +488,7 @@ HRESULT connectToObject(const SvPb::ConnectToObjectRequest& rRequest)
 	SvOi::ITaskObject* pObject = dynamic_cast<SvOi::ITaskObject *>(SvOi::getObject(SvPb::GetGuidFromProtoBytes(rRequest.objectid())));
 	if (pObject)
 	{
-		hr = pObject->ConnectToObject(rRequest.inputname(), SvPb::GetGuidFromProtoBytes(rRequest.newconnectedid()), static_cast<SvDef::SVObjectTypeEnum>(rRequest.objecttype()));
+		hr = pObject->ConnectToObject(rRequest.inputname(), SvPb::GetGuidFromProtoBytes(rRequest.newconnectedid()), rRequest.objecttype());
 	}
 	else
 	{
@@ -532,8 +532,8 @@ HRESULT setObjectName(const SvPb::SetObjectNameRequest& rRequest)
 HRESULT getAvailableObjects(const SvPb::GetAvailableObjectsRequest& rRequest, SvPb::GetAvailableObjectsResponse& rResponse)
 {
 	HRESULT hr = S_OK;
-	SvDef::SVObjectTypeInfoStruct typeInfo {static_cast<SvDef::SVObjectTypeEnum>(rRequest.typeinfo().objecttype()), static_cast<SvDef::SVObjectSubTypeEnum>(rRequest.typeinfo().subtype()), SvPb::GetGuidFromProtoBytes(rRequest.typeinfo().embeddedid())};
-	SvDef::SVObjectTypeEnum objectTypeToInclude = static_cast<SvDef::SVObjectTypeEnum>(rRequest.objecttypetoinclude());
+	SvDef::SVObjectTypeInfoStruct typeInfo {rRequest.typeinfo().objecttype(), rRequest.typeinfo().subtype(), SvPb::GetGuidFromProtoBytes(rRequest.typeinfo().embeddedid())};
+	SvPb::SVObjectTypeEnum objectTypeToInclude = rRequest.objecttypetoinclude();
 	SVGUID instanceId = SvPb::GetGuidFromProtoBytes(rRequest.objectid());
 	SVGetObjectDequeByTypeVisitor visitor(typeInfo);
 	SvOi::visitElements(visitor, instanceId);
@@ -552,7 +552,7 @@ HRESULT getAvailableObjects(const SvPb::GetAvailableObjectsRequest& rRequest, Sv
 					std::string name;
 					switch (typeInfo.ObjectType)
 					{
-						case SvDef::SVImageObjectType:
+						case SvPb::SVImageObjectType:
 						{
 							const SvOi::ISVImage* pImage = dynamic_cast<const SvOi::ISVImage*>(pObject);
 							if (pImage)
@@ -563,7 +563,7 @@ HRESULT getAvailableObjects(const SvPb::GetAvailableObjectsRequest& rRequest, Sv
 						break;
 						default:
 						{
-							if (SvDef::SVNotSetObjectType == objectTypeToInclude)
+							if (SvPb::SVNotSetObjectType == objectTypeToInclude)
 							{
 								name = pObject->GetName();
 							}
@@ -668,7 +668,7 @@ HRESULT getObjectId(const SvPb::GetObjectIdRequest& rRequest, SvPb::GetObjectIdR
 		case SvPb::GetObjectIdRequest::kInfo:
 		{
 			auto& rInfoStruct = rRequest.info().infostruct();
-			SvDef::SVObjectTypeInfoStruct typeInfo {static_cast<SvDef::SVObjectTypeEnum>(rInfoStruct.objecttype()), static_cast<SvDef::SVObjectSubTypeEnum>(rInfoStruct.subtype()), SvPb::GetGuidFromProtoBytes(rInfoStruct.embeddedid())};
+			SvDef::SVObjectTypeInfoStruct typeInfo {rInfoStruct.objecttype(), rInfoStruct.subtype(), SvPb::GetGuidFromProtoBytes(rInfoStruct.embeddedid())};
 			pObject = SvOi::FindObject(SvPb::GetGuidFromProtoBytes(rRequest.info().ownerid()) , typeInfo);
 			break;
 		}
@@ -777,7 +777,7 @@ HRESULT getCreatableObjects(const SvPb::GetCreatableObjectsRequest& rRequest, Sv
 	SvOi::IObjectClass* pObject = SvOi::getObject(SvPb::GetGuidFromProtoBytes(rRequest.objectid()));
 	if (nullptr != pObject)
 	{
-		SvDef::SVObjectTypeInfoStruct typeInfo {static_cast<SvDef::SVObjectTypeEnum>(rRequest.typeinfo().objecttype()), static_cast<SvDef::SVObjectSubTypeEnum>(rRequest.typeinfo().subtype()), SvPb::GetGuidFromProtoBytes(rRequest.typeinfo().embeddedid())};
+		SvDef::SVObjectTypeInfoStruct typeInfo {rRequest.typeinfo().objecttype(), rRequest.typeinfo().subtype(), SvPb::GetGuidFromProtoBytes(rRequest.typeinfo().embeddedid())};
 		auto list = pObject->GetCreatableObjects(typeInfo);
 		for (auto& item : list)
 		{

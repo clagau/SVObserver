@@ -745,7 +745,7 @@ HRESULT SVConfigurationObject::AddImportedRemoteInput(SVPPQObject* pPPQ, const s
 			SVRemoteInputObject* pRemoteInput = nullptr;
 			int number = -1;
 			sscanf_s(name.c_str(), SvO::cRemoteInputNumberLabel, &number);
-			pRemoteInput = dynamic_cast<SVRemoteInputObject*> (m_pInputObjectList->GetInputFlyweight(name, SvDef::SVRemoteInputObjectType, number - 1));
+			pRemoteInput = dynamic_cast<SVRemoteInputObject*> (m_pInputObjectList->GetInputFlyweight(name, SvPb::SVRemoteInputObjectType, number - 1));
 			if (nullptr != pRemoteInput)
 			{
 				pRemoteInput->m_lIndex = index;
@@ -776,7 +776,7 @@ HRESULT SVConfigurationObject::AddImportedDigitalInput(SVPPQObject* pPPQ, const 
 		if (!pIOEntry->m_Enabled)
 		{
 			SVDigitalInputObject* pDigitalInput = nullptr;
-			pDigitalInput = dynamic_cast<SVDigitalInputObject*> (m_pInputObjectList->GetInputFlyweight(name, SvDef::SVDigitalInputObjectType));
+			pDigitalInput = dynamic_cast<SVDigitalInputObject*> (m_pInputObjectList->GetInputFlyweight(name, SvPb::SVDigitalInputObjectType));
 
 			pIOEntry->m_ObjectType = IO_DIGITAL_INPUT;
 			pIOEntry->m_PPQIndex = ppqPosition;
@@ -799,7 +799,7 @@ HRESULT SVConfigurationObject::AddRemoteInput(SVPPQObject* pPPQ, const std::stri
 	SVRemoteInputObject* pRemoteInput = nullptr;
 	int number = -1;
 	sscanf_s(name.c_str(), SvO::cRemoteInputNumberLabel, &number);
-	pRemoteInput = dynamic_cast<SVRemoteInputObject*> (m_pInputObjectList->GetInputFlyweight(name, SvDef::SVRemoteInputObjectType, number - 1));
+	pRemoteInput = dynamic_cast<SVRemoteInputObject*> (m_pInputObjectList->GetInputFlyweight(name, SvPb::SVRemoteInputObjectType, number - 1));
 
 	// Add Remote Input to the PPQ
 	SVVariantValueObjectClass* pValueObject = new SVVariantValueObjectClass();
@@ -840,7 +840,7 @@ HRESULT SVConfigurationObject::AddDigitalInput(SVPPQObject* pPPQ, const std::str
 
 	SVDigitalInputObject* pDigitalInput = nullptr;
 
-	pDigitalInput = dynamic_cast<SVDigitalInputObject*> (m_pInputObjectList->GetInputFlyweight(name, SvDef::SVDigitalInputObjectType));
+	pDigitalInput = dynamic_cast<SVDigitalInputObject*> (m_pInputObjectList->GetInputFlyweight(name, SvPb::SVDigitalInputObjectType));
 
 	// Add Digital Input to the PPQ
 	SVBoolValueObjectClass* pValueObject = new SVBoolValueObjectClass();
@@ -877,7 +877,7 @@ HRESULT SVConfigurationObject::AddCameraDataInput(SVPPQObject* pPPQ, SVIOEntryHo
 
 	SVCameraDataInputObject* pInput = nullptr;
 	std::string name = pIOEntry->getObject()->GetName();
-	pInput = dynamic_cast<SVCameraDataInputObject*> (m_pInputObjectList->GetInputFlyweight(name, SvDef::SVCameraDataInputObjectType));
+	pInput = dynamic_cast<SVCameraDataInputObject*> (m_pInputObjectList->GetInputFlyweight(name, SvPb::SVCameraDataInputObjectType));
 
 	// Add Input to the PPQ
 	if (nullptr != pInput)
@@ -1125,7 +1125,7 @@ bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
 			if (bOutput)
 			{
 				SVDigitalOutputObject* pOutput(nullptr);
-				pOutput = dynamic_cast<SVDigitalOutputObject*> (pOutputsList->GetOutputFlyweight(IOName.c_str(), SvDef::SVDigitalOutputObjectType, dwChannel));
+				pOutput = dynamic_cast<SVDigitalOutputObject*> (pOutputsList->GetOutputFlyweight(IOName.c_str(), SvPb::SVDigitalOutputObjectType, dwChannel));
 
 				if (nullptr != pOutput)
 				{
@@ -1147,7 +1147,7 @@ bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
 			else
 			{
 				SVDigitalInputObject* pInput = nullptr;
-				pInput = dynamic_cast<SVDigitalInputObject*> (pInputsList->GetInputFlyweight(IOName, SvDef::SVDigitalInputObjectType, dwChannel));
+				pInput = dynamic_cast<SVDigitalInputObject*> (pInputsList->GetInputFlyweight(IOName, SvPb::SVDigitalInputObjectType, dwChannel));
 
 				if (nullptr != pInput)
 				{
@@ -1195,7 +1195,7 @@ bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
 	if (l_ModuleReadyId.empty())
 	{
 		SVDigitalOutputObject* pOutput(nullptr);
-		pOutput = dynamic_cast<SVDigitalOutputObject*> (m_pOutputObjectList->GetOutputFlyweight(SvO::cModuleReady, SvDef::SVDigitalOutputObjectType));
+		pOutput = dynamic_cast<SVDigitalOutputObject*> (m_pOutputObjectList->GetOutputFlyweight(SvO::cModuleReady, SvPb::SVDigitalOutputObjectType));
 
 		if (nullptr != pOutput)
 		{
@@ -2434,7 +2434,7 @@ void SVConfigurationObject::UpgradeConfiguration()
 	bool ConfigChanged(false);
 
 	SVObjectPtrVector ColorTools;
-	SVObjectManagerClass::Instance().getObjectsOfType(std::back_inserter(ColorTools), SvDef::SVToolObjectType, SvDef::SVColorToolObjectType);
+	SVObjectManagerClass::Instance().getObjectsOfType(std::back_inserter(ColorTools), SvPb::SVToolObjectType, SvPb::SVColorToolObjectType);
 	SVObjectPtrVector::iterator Iter = ColorTools.begin();
 	for (; ColorTools.end() != Iter; ++Iter)
 	{
@@ -5881,7 +5881,7 @@ bool SVConfigurationObject::getObjectsForMonitorList(const SVGUID& rToolId, SvPb
 	{
 		return false;
 	}
-	auto* pInspection = pObject->GetAncestorInterface(SvDef::SVObjectTypeEnum::SVInspectionObjectType);
+	auto* pInspection = pObject->GetAncestorInterface(SvPb::SVObjectTypeEnum::SVInspectionObjectType);
 	if (nullptr == pInspection)
 	{
 		return false;

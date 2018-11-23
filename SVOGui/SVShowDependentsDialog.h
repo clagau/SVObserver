@@ -34,7 +34,7 @@ namespace SvOg
 
 	#pragma region Constructor
 	public:
-		SVShowDependentsDialog( const SVGuidSet& rSourceSet, SvDef::SVObjectTypeEnum objectType = SvDef::SVToolObjectType, LPCTSTR DisplayText = nullptr, DialogType Type = DeleteConfirm, CWnd* pParent = nullptr );
+		SVShowDependentsDialog( const SVGuidSet& rSourceSet, SvPb::SVObjectTypeEnum objectType = SvPb::SVToolObjectType, LPCTSTR DisplayText = nullptr, DialogType Type = DeleteConfirm, CWnd* pParent = nullptr );
 	#pragma endregion Constructor
 
 	public:
@@ -64,7 +64,7 @@ namespace SvOg
 		CRect m_Gripper;
 		CListCtrl m_ListCtrl;
 		const SVGuidSet& m_rSourceSet;
-		SvDef::SVObjectTypeEnum m_objectType;
+		SvPb::SVObjectTypeEnum m_objectType;
 		SvDef::StringPairVector m_dependencyList;
 		std::string m_DisplayText;
 		DialogType m_DialogType;

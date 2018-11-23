@@ -35,7 +35,7 @@ namespace SvSml
 
 		DWORD InspectionStoreId{ UINT_MAX }; //<Inspection Store Index  
 		DWORD ItemId{UINT_MAX };	//<Index in the Inspection Store
-		DWORD ObjectType{ 0 };		//<SvDef::SVObjectTypeEnum 
+		SvPb::SVObjectTypeEnum ObjectType{SvPb::SVNotSetObjectType};
 		DWORD variant_type{ VT_EMPTY };  ///vt value from variant
 		DWORD Store_Offset{ 0 };  ///offset in Inspection Store
 
@@ -71,7 +71,7 @@ namespace SvSml
 		///set values from serializing 
 		void BuildFromProtoMessage(const SvPml::MesMonitorEntry &rMesMonitorEntry);
 		void AddListItem(SvPb::QueryListItemResponse& rResp) const;
-		bool IsImage() const { return (data.ObjectType == SvDef::SVImageObjectType); };
+		bool IsImage() const { return (data.ObjectType == SvPb::SVImageObjectType); };
 	public:	
 		GUID m_Guid;   //Object Guid 
 		std::string name; //<Full name 

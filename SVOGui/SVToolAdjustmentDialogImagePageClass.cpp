@@ -37,7 +37,7 @@ namespace SvOg
 		//}}AFX_MSG_MAP
 	END_MESSAGE_MAP()
 
-	SVToolAdjustmentDialogImagePageClass::SVToolAdjustmentDialogImagePageClass(const SVGUID & rInspectionID, const SVGUID& rTaskObjectID, SvDef::SVObjectSubTypeEnum SubType /*= SvDef::SVImageMonoType*/, int id /*=IDD*/ )
+	SVToolAdjustmentDialogImagePageClass::SVToolAdjustmentDialogImagePageClass(const SVGUID & rInspectionID, const SVGUID& rTaskObjectID, SvPb::SVObjectSubTypeEnum SubType /*= SvPb::SVImageMonoType*/, int id /*=IDD*/ )
 	: CPropertyPage( id )
 		, m_ImageController{rInspectionID, rTaskObjectID, SubType}
 	{

@@ -18,7 +18,7 @@ SVEvaluateCenterXClass::SVEvaluateCenterXClass( SVObjectClass* pOwner, int Strin
 : SVEvaluateClass( pOwner, StringResourceID )
 {
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVEvaluateCenterXObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVEvaluateCenterXObjectType;
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &m_outputMathResult, SVOutputEvaluateCenterXResultObjectGuid, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone );

@@ -113,7 +113,7 @@ const SVExternalToolTaskData& SVExternalToolTaskData::operator = (const SVExtern
 SVExternalToolTask::SVExternalToolTask( SVObjectClass* POwner, int StringResourceID )
 				 :SVTaskObjectListClass(POwner, StringResourceID ), ISVCancel() 
 {
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVExternalToolTaskObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVExternalToolTaskObjectType;
 
 	size_t i;
 
@@ -129,7 +129,7 @@ SVExternalToolTask::SVExternalToolTask( SVObjectClass* POwner, int StringResourc
 
 		// this object will be filled in SVTaskObject::ConnectAllInputs
 		// we supply the base object type (Image) and ConnectAllInputs finds the nearest match (Toolset main image)
-		m_Data.m_aInputImageInfo[i].SetInputObjectType( SvDef::SVImageObjectType, SvDef::SVImageMonoType);
+		m_Data.m_aInputImageInfo[i].SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
 		m_Data.m_aInputImageInfo[i].SetObject( GetObjectInfo() );
 		RegisterInputObject( &m_Data.m_aInputImageInfo[i], l_Name );
 	}
@@ -1202,7 +1202,7 @@ HRESULT SVExternalToolTask::SetCancelData(SVCancelData* pCancelData)
 			SVObjectManagerClass::Instance().ConnectObjectInput(pImageInfo->GetInputObjectInfo().getUniqueObjectID(), pImageInfo);
 		}
 
-		SVToolClass* pTool = dynamic_cast <SVToolClass*> (GetAncestor( SvDef::SVToolObjectType ));
+		SVToolClass* pTool = dynamic_cast <SVToolClass*> (GetAncestor(SvPb::SVToolObjectType ));
 		// Reset all objects again...
 		if (nullptr != pTool)
 		{
@@ -1346,8 +1346,8 @@ HRESULT SVExternalToolTask::AllocateResult (int iIndex)
 		interfaceInfo.EmbeddedID = m_Data.m_aResultObjects[iIndex].GetEmbeddedID();
 		resultClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
 		
-		resultClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVResultObjectType;
-		resultClassInfo.m_ObjectTypeInfo.SubType	= SvDef::SVResultVariantObjectType;
+		resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
+		resultClassInfo.m_ObjectTypeInfo.SubType	= SvPb::SVResultVariantObjectType;
 		resultClassInfo.m_ClassId = SVVariantResultClassGuid;
 		resultClassInfo.m_ClassName = _T("Range");
 		strTitle = m_Data.m_aResultObjects [iIndex].GetName(); 
@@ -1364,8 +1364,8 @@ HRESULT SVExternalToolTask::AllocateResult (int iIndex)
 		Add( pResult );
 		
 		SvDef::SVObjectTypeInfoStruct info;
-		info.ObjectType = SvDef::SVValueObjectType;
-		info.SubType = SvDef::SVVariantValueObjectType;
+		info.ObjectType = SvPb::SVValueObjectType;
+		info.SubType = SvPb::SVVariantValueObjectType;
 		info.EmbeddedID = SVValueObjectGuid;
 		
 		SVVariantValueObjectClass* pValue = dynamic_cast<SVVariantValueObjectClass*>(pResult->getFirstObject(info));
@@ -1432,8 +1432,8 @@ SVResultClass* SVExternalToolTask::GetResultRangeObject(int iIndex)
 	
 	lDone = FALSE;
 	
-	info.ObjectType = SvDef::SVResultObjectType;
-	info.SubType = SvDef::SVResultVariantObjectType;
+	info.ObjectType = SvPb::SVResultObjectType;
+	info.SubType = SvPb::SVResultVariantObjectType;
 	
 	SVGetObjectDequeByTypeVisitor l_Visitor( info );
 
@@ -1471,8 +1471,8 @@ std::vector<SVResultClass*> SVExternalToolTask::GetResultRangeObjects()
 	SvDef::SVObjectTypeInfoStruct  info;
 	SVVariantResultClass*   pResult;
 	
-	info.ObjectType = SvDef::SVResultObjectType;
-	info.SubType = SvDef::SVResultVariantObjectType;
+	info.ObjectType = SvPb::SVResultObjectType;
+	info.SubType = SvPb::SVResultVariantObjectType;
 	
 	SVGetObjectDequeByTypeVisitor l_Visitor( info );
 
@@ -1648,7 +1648,7 @@ bool SVExternalToolTask::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObje
 					SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*> (GetInspection());
 					SVToolSetClass* pToolSet = (nullptr != pInspection) ? pInspection->GetToolSet() : nullptr;
 					SvDef::SVObjectTypeInfoStruct imageObjectInfo;
-					imageObjectInfo.ObjectType = SvDef::SVImageObjectType;
+					imageObjectInfo.ObjectType = SvPb::SVImageObjectType;
 					SVImageClass* pToolSetImage = (nullptr != pToolSet) ? dynamic_cast <SVImageClass*> (pToolSet->getFirstObject(imageObjectInfo)) : nullptr;
 
 					rInfo.SetInputObject( pToolSetImage );

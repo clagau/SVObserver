@@ -24,7 +24,7 @@ CString  Type2String(DWORD type)
 	CString ret;
 	switch (type)
 	{
-	case SvDef::SVImageObjectType:
+	case SvPb::SVImageObjectType:
 		ret = _T("Image");
 		break;
 	

@@ -383,8 +383,8 @@ void SVColorThresholdClass::LocalInitialize()
 	m_GraphFigures[2].SetDrawPen(TRUE, PS_SOLID, 1, SvDef::DefaultSubFunctionColor1);
 
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVOperatorObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVColorThresholdObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVOperatorObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVColorThresholdObjectType;
 
 	// Register Embedded Object(s)
 	RegisterEmbeddedObject(&m_OutputThresholdEnabled, SVColorThresholdEnabledObjectGuid, IDS_OBJECTNAME_OUTPUT_THRESHOLDENABLED, false, SvOi::SVResetItemNone);
@@ -454,15 +454,15 @@ void SVColorThresholdClass::LocalInitialize()
 	m_OutputImage.InitializeImage(SvDef::SVImageTypeEnum::SVImageTypeIndependent);
 
 	// Identify our input type needs...
-	m_BandThreshold[BandEnum::Band0].m_InputImage.SetInputObjectType(SvDef::SVImageObjectType, SvDef::SVImageMonoType, SVBand0ImageObjectGuid);
+	m_BandThreshold[BandEnum::Band0].m_InputImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType, SVBand0ImageObjectGuid);
 	m_BandThreshold[BandEnum::Band0].m_InputImage.SetObject(GetObjectInfo());
 	RegisterInputObject(&m_BandThreshold[BandEnum::Band0].m_InputImage, _T("ColorThresholdBand0Image"));
 
-	m_BandThreshold[BandEnum::Band1].m_InputImage.SetInputObjectType(SvDef::SVImageObjectType, SvDef::SVImageMonoType, SVBand1ImageObjectGuid);
+	m_BandThreshold[BandEnum::Band1].m_InputImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType, SVBand1ImageObjectGuid);
 	m_BandThreshold[BandEnum::Band1].m_InputImage.SetObject(GetObjectInfo());
 	RegisterInputObject(&m_BandThreshold[BandEnum::Band1].m_InputImage, _T("ColorThresholdBand1Image"));
 
-	m_BandThreshold[BandEnum::Band2].m_InputImage.SetInputObjectType(SvDef::SVImageObjectType, SvDef::SVImageMonoType, SVBand2ImageObjectGuid);
+	m_BandThreshold[BandEnum::Band2].m_InputImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType, SVBand2ImageObjectGuid);
 	m_BandThreshold[BandEnum::Band2].m_InputImage.SetObject(GetObjectInfo());
 	RegisterInputObject(&m_BandThreshold[BandEnum::Band2].m_InputImage, _T("ColorThresholdBand2Image"));
 

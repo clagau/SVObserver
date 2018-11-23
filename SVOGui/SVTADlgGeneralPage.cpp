@@ -232,7 +232,7 @@ namespace SvOg
 	{
 		SVGuidSet DependencySet;
 		DependencySet.insert(m_TaskObjectID);
-		SVShowDependentsDialog Dlg( DependencySet, SvDef::SVToolObjectType, nullptr, SVShowDependentsDialog::Show );
+		SVShowDependentsDialog Dlg( DependencySet, SvPb::SVToolObjectType, nullptr, SVShowDependentsDialog::Show );
 		Dlg.DoModal();
 	}
 

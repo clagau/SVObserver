@@ -35,7 +35,7 @@ bool RangeClassHelper::IsOwnedByRangeObject(const SVObjectClass& rObject)
 
 	if(rObject.GetParent())
 	{
-		if(SvDef::SVRangeObjectType == rObject.GetParent()->GetObjectType())
+		if(SvPb::SVRangeObjectType == rObject.GetParent()->GetObjectType())
 		{
 			result = true;
 		}

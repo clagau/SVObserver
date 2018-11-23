@@ -22,7 +22,7 @@ namespace SvOg
 	{
 		GUID m_InspectionID;
 		GUID m_TaskObjectID;
-		SvDef::SVObjectSubTypeEnum m_ImageSubType;
+		SvPb::SVObjectSubTypeEnum m_ImageSubType;
 		bool m_OnlyAboveImages; //When true only returns images which are above the m_TaskObjectID
 
 		mutable SvUl::NameGuidList m_availableList;
@@ -31,7 +31,7 @@ namespace SvOg
 		mutable CComPtr<IPictureDisp> m_picture;
 
 	public:
-		ImageController(const GUID& rInspectionID, const GUID& rTaskObjectID, SvDef::SVObjectSubTypeEnum ImageSubType = SvDef::SVImageMonoType, bool OnlyAboveImages = true);
+		ImageController(const GUID& rInspectionID, const GUID& rTaskObjectID, SvPb::SVObjectSubTypeEnum ImageSubType = SvPb::SVImageMonoType, bool OnlyAboveImages = true);
 	
 		HRESULT Init();
 

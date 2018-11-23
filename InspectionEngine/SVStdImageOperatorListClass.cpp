@@ -38,8 +38,8 @@ void SVStdImageOperatorListClass::init()
 	m_bUseOverlays = false;
 
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVUnaryImageOperatorListObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVStdImageOperatorListObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVUnaryImageOperatorListObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVStdImageOperatorListObjectType;
 
 	// SetObjectDepth() already called in SVObjectClass Ctor
 

@@ -13,7 +13,7 @@ namespace SvSml
 	
 	bool MonitorEntryData::GetMatroxImageProps(MatroxImageProps& rImageProps) const
 	{
-		if (ObjectType != SvDef::SVObjectTypeEnum::SVImageObjectType)
+		if (ObjectType != SvPb::SVObjectTypeEnum::SVImageObjectType)
 		{
 			return false;
 		}
@@ -29,7 +29,7 @@ namespace SvSml
 	}
 	void MonitorEntryData::SetMatroxImageProps(const MatroxImageProps& rImageProps)
 	{
-		ObjectType = SvDef::SVImageObjectType;
+		ObjectType = SvPb::SVImageObjectType;
 		Pitch = rImageProps.Pitch;
 		sizeX = rImageProps.sizeX;
 		sizeY = rImageProps.sizeY;

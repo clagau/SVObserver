@@ -30,8 +30,8 @@ SVMaxMinusMinFilterClass::SVMaxMinusMinFilterClass( SVObjectClass* POwner, int S
 void SVMaxMinusMinFilterClass::init()
 {
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVFilterObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVMaxMinusMinFilterObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVFilterObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVMaxMinusMinFilterObjectType;
 }
 
 SVMaxMinusMinFilterClass::~SVMaxMinusMinFilterClass()

@@ -32,8 +32,8 @@ SVLUTEquationClass::SVLUTEquationClass( SVObjectClass* POwner, int StringResourc
 void SVLUTEquationClass::init()
 {
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVEquationObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVLUTEquationObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVEquationObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVLUTEquationObjectType;
 
 	// Identify our input type needs - this is a bit different here
 	// Since out inputs are dynamic via the script specified

@@ -149,8 +149,8 @@ void SVImageClass::init()
 
 	m_ImageType = SvDef::SVImageTypeEnum::SVImageTypeUnknown;
 
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVImageObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVImageMonoType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVImageObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVImageMonoType;
 
 	// derived classes that are not result images (i.e. SVMainImageClass)
 	// need to remove the PUBLISH attribute.
@@ -1262,7 +1262,7 @@ std::string SVImageClass::getDisplayedName() const
 		SVImageInfoClass imageInfo = GetImageInfo();
 		if (imageInfo.GetOwner())
 		{
-			strName = GetObjectNameBeforeObjectType(SvDef::SVToolSetObjectType);
+			strName = GetObjectNameBeforeObjectType(SvPb::SVToolSetObjectType);
 		}
 	}
 	return strName;
@@ -1322,11 +1322,11 @@ void SVImageClass::setImageSubType()
 	m_ImageInfo.GetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, bandNumber);
 	if (1 == bandNumber)
 	{
-		m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVImageMonoType;
+		m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVImageMonoType;
 	}
 	else if (3 == bandNumber)
 	{
-		m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVImageColorType;
+		m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVImageColorType;
 	}
 }
 

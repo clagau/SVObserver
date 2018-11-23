@@ -1,12 +1,14 @@
 syntax = "proto3";
 package SvPml;
 
+import "SVO-Enum.proto";
+
 //for Serialization class MonitorEntryData
 message MesMonitorEntryData
 {
 	uint32 InspectionStoreId = 1;
 	uint32 ItemId = 2; //<Index in the Inspection Store
-	uint32 ObjectType = 3; //<SvDef::SVObjectTypeEnum
+	SvPb.SVObjectTypeEnum ObjectType = 3;
 	uint32 variant_type = 4; ///vt value from variant
 	uint32 Store_Offset = 5; ///offset in Inspection Store
 	bool isArray = 6;

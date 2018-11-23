@@ -513,7 +513,7 @@ HRESULT SVVisionProcessorHelper::GetStandardItems(const SvDef::StringSet& rNames
 				{
 					_variant_t Value;
 					//Enumeration Value objects need to return the text and not the value
-					if (SvDef::SVEnumValueObjectType == ObjectRef.getObject()->GetObjectSubType())
+					if (SvPb::SVEnumValueObjectType == ObjectRef.getObject()->GetObjectSubType())
 					{
 						std::string StringValue;
 						if (S_OK == pValueObject->getValue(StringValue))
@@ -772,7 +772,7 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition(const SVObjectClass& rObjec
 			rDataDef.m_Type = _T("Image");
 		}
 		//This part fills the additional info section
-		if (SvDef::SVEnumValueObjectType == rObject.GetObjectSubType())
+		if (SvPb::SVEnumValueObjectType == rObject.GetObjectSubType())
 		{
 			// Get the strings from the enumeration value object class.
 			const SVEnumerateValueObjectClass* pEnumVO = dynamic_cast<const SVEnumerateValueObjectClass*> (&rObject);
@@ -784,7 +784,7 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition(const SVObjectClass& rObjec
 				}
 			}
 		}
-		else if (SvDef::SVBoolValueObjectType == rObject.GetObjectSubType())
+		else if (SvPb::SVBoolValueObjectType == rObject.GetObjectSubType())
 		{
 			// Get the strings from the enumeration value object class.
 			const SVBoolValueObjectClass* l_pBoolVO = dynamic_cast<const SVBoolValueObjectClass*> (&rObject);

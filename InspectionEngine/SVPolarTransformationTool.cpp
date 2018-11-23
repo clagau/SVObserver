@@ -36,8 +36,8 @@ SVPolarTransformationToolClass::SVPolarTransformationToolClass( SVObjectClass* P
 void SVPolarTransformationToolClass::init()
 {
 	// Set up your type...
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvDef::SVPolarTransformationToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvPb::SVPolarTransformationToolObjectType;
 
 	// Identify our input type needs
 
@@ -152,7 +152,7 @@ bool SVPolarTransformationToolClass::SetDefaultFormulas(SvStl::MessageContainerV
 {
 	// Find image polar transform child...
 	SvDef::SVObjectTypeInfoStruct objectInfo;
-	objectInfo.SubType = SvDef::SVImagePolarTransformObjectType;
+	objectInfo.SubType = SvPb::SVImagePolarTransformObjectType;
 	SVImagePolarTransformClass* pImagePolarTransform = dynamic_cast<SVImagePolarTransformClass*>(getFirstObject(objectInfo));
 	if( pImagePolarTransform )
 	{

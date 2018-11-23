@@ -462,7 +462,7 @@ GUID SVExternalToolInputSelectPage::GetToolSetGUID() const
 	SvPb::InspectionCmdMsgs requestMessage, responseMessage;
 	auto* pRequest = requestMessage.mutable_getobjectidrequest()->mutable_info();
 	SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_InspectionID);
-	pRequest->mutable_infostruct()->set_objecttype(SvDef::SVToolSetObjectType);
+	pRequest->mutable_infostruct()->set_objecttype(SvPb::SVToolSetObjectType);
 
 	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, &responseMessage);
 	if (S_OK == hr && responseMessage.has_getobjectidresponse())

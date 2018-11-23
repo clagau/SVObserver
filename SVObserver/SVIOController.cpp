@@ -53,7 +53,7 @@ SVIOController::SVIOController( SVObjectClass *pOwner, int StringResourceID )
 void SVIOController::LocalIntialize()
 {
 	// Set up your type...
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVIOControllerType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVIOControllerType;
 
 	m_pModuleReady = SVIOEntryHostStructPtr{ new SVIOEntryHostStruct };
 	m_pModuleReady->m_ObjectType = IO_DIGITAL_OUTPUT;

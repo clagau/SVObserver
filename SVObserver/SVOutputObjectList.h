@@ -33,7 +33,7 @@ public:
 
 	SVOutputObject* GetOutput(const std::string& rName) const;
 
-	SVOutputObject* GetOutputFlyweight(const std::string& rName, SvDef::SVObjectSubTypeEnum ObjectSubType, int GuidIndex = -1);
+	SVOutputObject* GetOutputFlyweight(const std::string& rName, SvPb::SVObjectSubTypeEnum ObjectSubType, int GuidIndex = -1);
 
 	HRESULT AttachOutput( SVOutputObject *pOutput );
 	HRESULT DetachOutput( const SVGUID& rOutputID );

@@ -48,17 +48,17 @@ namespace SvCmd
 			return Result;
 		}
 	private:
-		static bool IsAllowedType(SvDef::SVObjectSubTypeEnum type)
+		static bool IsAllowedType(SvPb::SVObjectSubTypeEnum type)
 		{
 			switch (type)
 			{
-			case  	SvDef::SVDWordValueObjectType: ///Fall throu 
-			case    SvDef::SVLongValueObjectType:
-			case 	SvDef::SVDoubleValueObjectType:
-			case	SvDef::SVBoolValueObjectType:
-			case	SvDef::SVByteValueObjectType:
-			case 	SvDef::SVInt64ValueObjectType:
-			case	SvDef::DoubleSortValueObjectType:
+			case  	SvPb::SVDWordValueObjectType: ///Fall throu 
+			case    SvPb::SVLongValueObjectType:
+			case 	SvPb::SVDoubleValueObjectType:
+			case	SvPb::SVBoolValueObjectType:
+			case	SvPb::SVByteValueObjectType:
+			case 	SvPb::SVInt64ValueObjectType:
+			case	SvPb::DoubleSortValueObjectType:
 				return true;
 			default:
 				return false;

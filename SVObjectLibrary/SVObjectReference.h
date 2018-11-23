@@ -87,7 +87,7 @@ public:
 
 	std::string GetName(bool OneBased=false) const;
 	std::string GetCompleteName(bool OneBased = false) const;
-	std::string GetObjectNameToObjectType(SvDef::SVObjectTypeEnum objectTypeToInclude = SvDef::SVToolSetObjectType, bool OneBased = false) const;
+	std::string GetObjectNameToObjectType(SvPb::SVObjectTypeEnum objectTypeToInclude = SvPb::SVToolSetObjectType, bool OneBased = false) const;
 
 	/// Get a string first with the GUID and if array and index this attached. (e.g.{7407F882-3AA5-48E2-B2E9-542538CB1650}[1])
 	/// \returns std::string

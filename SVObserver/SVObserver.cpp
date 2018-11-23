@@ -4011,7 +4011,7 @@ bool SVObserverApp::ShowConfigurationAssistant(int Page /*= 3*/,
 
 						std::string Name = SvUl::Format(_T("DIO.Input%d"), l + 1);
 
-						pInput = dynamic_cast<SVDigitalInputObject*> (pInputObjectList->GetInputFlyweight(Name, SvDef::SVDigitalInputObjectType, l));
+						pInput = dynamic_cast<SVDigitalInputObject*> (pInputObjectList->GetInputFlyweight(Name, SvPb::SVDigitalInputObjectType, l));
 
 						if (nullptr != pInput)
 						{
@@ -4036,7 +4036,7 @@ bool SVObserverApp::ShowConfigurationAssistant(int Page /*= 3*/,
 				{
 					SVDigitalOutputObject* pOutput(nullptr);
 					const int moduleReadyChannel = 15;
-					pOutput = dynamic_cast<SVDigitalOutputObject*> (pOutputObjectList->GetOutputFlyweight(SvO::cModuleReady, SvDef::SVDigitalOutputObjectType, moduleReadyChannel));
+					pOutput = dynamic_cast<SVDigitalOutputObject*> (pOutputObjectList->GetOutputFlyweight(SvO::cModuleReady, SvPb::SVDigitalOutputObjectType, moduleReadyChannel));
 
 					// @HACK:  JAB082212 HACK!!!!!
 					if (nullptr != pOutput)

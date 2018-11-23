@@ -100,8 +100,8 @@ namespace SvOg
 		SvPb::InspectionCmdMsgs requestMessage, responseMessage;
 		auto* pRequest = requestMessage.mutable_getobjectidrequest()->mutable_info();
 		SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_rTaskObjectID);
-		pRequest->mutable_infostruct()->set_objecttype(SvDef::SVResultObjectType);
-		pRequest->mutable_infostruct()->set_objecttype(SvDef::SVResultLongObjectType);
+		pRequest->mutable_infostruct()->set_objecttype(SvPb::SVResultObjectType);
+		pRequest->mutable_infostruct()->set_subtype(SvPb::SVResultLongObjectType);
 
 		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_rInspectionID, &requestMessage, &responseMessage);
 		if (S_OK != hr || !responseMessage.has_getobjectidresponse())

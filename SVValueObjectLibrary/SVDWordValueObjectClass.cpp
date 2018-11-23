@@ -136,7 +136,7 @@ void SVDWordValueObjectClass::WriteDefaultValues(SvOi::IObjectWriter& rWriter)
 
 void SVDWordValueObjectClass::LocalInitialize()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVDWordValueObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVDWordValueObjectType;
 	DefaultValue() = 0;
 	SetTypeName( _T("Integer32Hex") );
 	InitializeBuckets();

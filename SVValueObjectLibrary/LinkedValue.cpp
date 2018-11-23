@@ -98,7 +98,7 @@ void LinkedValue::UpdateLinkedName()
 
 	if( nullptr != m_LinkedObjectRef.getObject() )
 	{
-		m_LinkedName.SetValue(m_LinkedObjectRef.GetObjectNameToObjectType(SvDef::SVObjectTypeEnum::SVToolSetObjectType, true));
+		m_LinkedName.SetValue(m_LinkedObjectRef.GetObjectNameToObjectType(SvPb::SVObjectTypeEnum::SVToolSetObjectType, true));
 		m_LinkedName.SetObjectAttributesAllowed( cAttribute, SvOi::SetAttributeType::AddAttribute );
 		SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
 	}
@@ -236,7 +236,7 @@ bool LinkedValue::UpdateConnection(SvStl::MessageContainerVector *pErrorMessages
 			//If the tool set name is at the start then add the inspection name at the beginning
 			if (0 == ObjectName.find(ToolSetName))
 			{
-				SvOi::IObjectClass* pInspection = GetAncestorInterface(SvDef::SVInspectionObjectType);
+				SvOi::IObjectClass* pInspection = GetAncestorInterface(SvPb::SVInspectionObjectType);
 				if (nullptr != pInspection)
 				{
 					ObjectName = pInspection->GetName();
@@ -350,7 +350,7 @@ SVObjectReference LinkedValue::ConvertStringInObject( const std::string& rValue 
 	//If the tool set name is at the start then add the inspection name at the beginning
 	if( 0 == rValue.find( ToolSetName.c_str() ) )
 	{
-		const SvOi::IObjectClass* pInspection = GetAncestorInterface( SvDef::SVInspectionObjectType );
+		const SvOi::IObjectClass* pInspection = GetAncestorInterface(SvPb::SVInspectionObjectType );
 		if( nullptr != pInspection )
 		{
 			ObjectName = pInspection->GetName();
@@ -386,8 +386,8 @@ bool LinkedValue::CheckLinkedObject( const SVObjectClass* const pLinkedObject, S
 	{
 		//! This is important when copying tools that the value of another inspection is not used due to the GUID being valid
 		//! That is why check that the linked value of an object is in the same inspection
-		const IObjectClass* pLinkedObjectInspection =  pLinkedObject->GetAncestorInterface( SvDef::SVInspectionObjectType );
-		bool isSameInpection = GetAncestorInterface( SvDef::SVInspectionObjectType ) == pLinkedObjectInspection;
+		const IObjectClass* pLinkedObjectInspection =  pLinkedObject->GetAncestorInterface(SvPb::SVInspectionObjectType );
+		bool isSameInpection = GetAncestorInterface(SvPb::SVInspectionObjectType ) == pLinkedObjectInspection;
 		//! If linked object has no inspection (e.g. Global Constants) then we don't need to check that the inspections are the same
 		if( nullptr != pLinkedObjectInspection && !isSameInpection )
 		{

@@ -37,21 +37,21 @@ SV_IMPLEMENT_CLASS( SVLinearEdgeProcessingClass, SVLinearEdgeProcessingClassGuid
 SVLinearEdgeProcessingClass::SVLinearEdgeProcessingClass( SVObjectClass* POwner, int StringResourceID )
 					                  :SVTaskObjectClass( POwner, StringResourceID )
 {
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVLinearEdgeProcessingObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVLinearEdgeProcessingObjectType;
 
-	m_InputImageObjectInfo.SetInputObjectType(SvDef::SVImageObjectType, SvDef::SVImageMonoType);
+	m_InputImageObjectInfo.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
 	m_InputImageObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_InputImageObjectInfo, _T( "LinearEdgeProcessingImage" ) );
 
-	m_InputMinThreshold.SetInputObjectType(SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType, SVLinearThresholdMinObjectGuid);
+	m_InputMinThreshold.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SVLinearThresholdMinObjectGuid);
 	m_InputMinThreshold.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_InputMinThreshold, _T( "LinearEdgeProcessingMinThreshold" ) );
 
-	m_InputMaxThreshold.SetInputObjectType(SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType, SVLinearThresholdMaxObjectGuid);
+	m_InputMaxThreshold.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SVLinearThresholdMaxObjectGuid);
 	m_InputMaxThreshold.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_InputMaxThreshold, _T( "LinearEdgeProcessingMaxThreshold" ) );
 
-	m_InputLinearData.SetInputObjectType(SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType, SVLinearDataClassGuid);
+	m_InputLinearData.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SVLinearDataClassGuid);
 	m_InputLinearData.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_InputLinearData, _T( "LinearEdgeProcessingInputLinearData" ) );
 

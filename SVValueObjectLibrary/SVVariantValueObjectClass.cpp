@@ -514,7 +514,7 @@ void SVVariantValueObjectClass::WriteDefaultValues(SvOi::IObjectWriter& rWriter)
 
 void SVVariantValueObjectClass::LocalInitialize()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVVariantValueObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVVariantValueObjectType;
 	DefaultValue().Clear();
 
 	SetTypeName( _T("Variant") );

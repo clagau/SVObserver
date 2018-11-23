@@ -259,7 +259,7 @@ HRESULT SVTaskObjectClass::FindNextInputImageInfo(SvOl::SVInObjectInfoStruct*& p
 		if (l_bFoundLast)
 		{
 			if (nullptr != l_psvInputInfo &&
-				SvDef::SVImageObjectType == l_psvInputInfo->GetInputObjectInfo().m_ObjectTypeInfo.ObjectType)
+				SvPb::SVImageObjectType == l_psvInputInfo->GetInputObjectInfo().m_ObjectTypeInfo.ObjectType)
 			{
 				if (S_FALSE == IsAuxInputImage(l_psvInputInfo))
 				{
@@ -459,7 +459,7 @@ void SVTaskObjectClass::GetConnectedImages(SvUl::InputNameGuidPairList& rList, i
 	}
 }
 
-void SVTaskObjectClass::GetInputs(SvUl::InputNameGuidPairList& rList, const SvDef::SVObjectTypeInfoStruct& typeInfo, SvDef::SVObjectTypeEnum objectTypeToInclude, bool shouldExcludeFirstObjectName)
+void SVTaskObjectClass::GetInputs(SvUl::InputNameGuidPairList& rList, const SvDef::SVObjectTypeInfoStruct& typeInfo, SvPb::SVObjectTypeEnum objectTypeToInclude, bool shouldExcludeFirstObjectName)
 {
 	SvOl::SVInputInfoListClass toolInputList;
 	// Try to get input interface...
@@ -470,9 +470,9 @@ void SVTaskObjectClass::GetInputs(SvUl::InputNameGuidPairList& rList, const SvDe
 	{
 		SvOl::SVInObjectInfoStruct* pInputInfo = toolInputList[i];
 
-		if (nullptr != pInputInfo && (SvDef::SVNotSetObjectType == typeInfo.ObjectType ||
+		if (nullptr != pInputInfo && (SvPb::SVNotSetObjectType == typeInfo.ObjectType ||
 			(typeInfo.ObjectType == pInputInfo->GetInputObjectInfo().m_ObjectTypeInfo.ObjectType &&
-			(SvDef::SVNotSetSubObjectType == typeInfo.SubType || typeInfo.SubType == pInputInfo->GetInputObjectInfo().m_ObjectTypeInfo.SubType))))
+			(SvPb::SVNotSetSubObjectType == typeInfo.SubType || typeInfo.SubType == pInputInfo->GetInputObjectInfo().m_ObjectTypeInfo.SubType))))
 		{
 			SvOi::IObjectClass* pObject = dynamic_cast<SvOi::IObjectClass*> (pInputInfo->GetInputObjectInfo().getObject());
 			std::string name = "";
@@ -486,7 +486,7 @@ void SVTaskObjectClass::GetInputs(SvUl::InputNameGuidPairList& rList, const SvDe
 				}
 				else
 				{
-					if (SvDef::SVNotSetObjectType == objectTypeToInclude)
+					if (SvPb::SVNotSetObjectType == objectTypeToInclude)
 					{
 						name = pObject->GetName();
 					}
@@ -636,8 +636,8 @@ void SVTaskObjectClass::ResolveDesiredInputs(const SvDef::SVObjectTypeInfoVector
 
 		assert(GUID_NULL != pInInfo->GetInputObjectInfo().getUniqueObjectID() ||
 			GUID_NULL != info.EmbeddedID ||
-			SvDef::SVNotSetObjectType != info.ObjectType ||
-			SvDef::SVNotSetSubObjectType != info.SubType);
+			SvPb::SVNotSetObjectType != info.ObjectType ||
+			SvPb::SVNotSetSubObjectType != info.SubType);
 	}
 }
 
@@ -898,8 +898,8 @@ void SVTaskObjectClass::ResetPrivateInputInterface()
 
 			if (GUID_NULL == pInInfo->GetInputObjectInfo().getUniqueObjectID() &&
 				GUID_NULL == info.EmbeddedID &&
-				SvDef::SVNotSetObjectType == info.ObjectType &&
-				SvDef::SVNotSetSubObjectType == info.SubType)
+				SvPb::SVNotSetObjectType == info.ObjectType &&
+				SvPb::SVNotSetSubObjectType == info.SubType)
 			{
 				//assert( false );
 			}
@@ -910,8 +910,8 @@ void SVTaskObjectClass::ResetPrivateInputInterface()
 
 			if (GUID_NULL == pInInfo->GetInputObjectInfo().getUniqueObjectID() &&
 				GUID_NULL == info.EmbeddedID &&
-				SvDef::SVNotSetObjectType == info.ObjectType &&
-				SvDef::SVNotSetSubObjectType == info.SubType)
+				SvPb::SVNotSetObjectType == info.ObjectType &&
+				SvPb::SVNotSetSubObjectType == info.SubType)
 			{
 				//assert( false );
 			}
@@ -953,7 +953,7 @@ bool SVTaskObjectClass::ConnectAllInputs()
 					// Input Object is not set...Try to get one...
 					SvDef::SVObjectTypeInfoStruct info = pInputInfo->GetInputObjectInfo().m_ObjectTypeInfo;
 					// At least one item from the SvDef::SVObjectTypeInfoStruct is required, but not all
-					if (GUID_NULL != info.EmbeddedID || SvDef::SVNotSetObjectType != info.ObjectType || SvDef::SVNotSetSubObjectType != info.SubType)
+					if (GUID_NULL != info.EmbeddedID || SvPb::SVNotSetObjectType != info.ObjectType || SvPb::SVNotSetSubObjectType != info.SubType)
 					{
 						SVObjectClass* pOwner = GetParent();
 						SVObjectClass* pRequestor = pInputInfo->getObject();
@@ -981,14 +981,14 @@ bool SVTaskObjectClass::ConnectAllInputs()
 						{
 							//GetInspection is still nullptr because in SVToolSetClass::createAllObjectsFromChild SetDefaultInputs is called before CreateObject !
 							//To still get the appropriate inspection we call GetAncestor
-							SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*> (GetAncestor(SvDef::SVInspectionObjectType));
+							SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*> (GetAncestor(SvPb::SVInspectionObjectType));
 							while (pOwner)
 							{
 								bool isColorInspection = (nullptr != pInspection) ? pInspection->IsColorCamera() : false;
 								pObject = nullptr;
 								// if color system & pOwner == SVToolSetClass
 								const SVObjectInfoStruct& ownerInfo = pOwner->GetObjectInfo();
-								if (isColorInspection && SvDef::SVToolSetObjectType == ownerInfo.m_ObjectTypeInfo.ObjectType && SvDef::SVImageObjectType == info.ObjectType && SvDef::SVImageMonoType == info.SubType)
+								if (isColorInspection && SvPb::SVToolSetObjectType == ownerInfo.m_ObjectTypeInfo.ObjectType && SvPb::SVImageObjectType == info.ObjectType && SvPb::SVImageMonoType == info.SubType)
 								{
 									SvOi::IToolSet* pToolSet(dynamic_cast<SvOi::IToolSet*> (pOwner));
 									if (nullptr != pToolSet)
@@ -1045,7 +1045,7 @@ struct CompareInputName
 	bool operator()(const SvOl::SVInObjectInfoStruct* pInfo) const { return pInfo->GetInputName() == m_Name; }
 };
 
-HRESULT SVTaskObjectClass::ConnectToObject(const std::string& rInputName, const SVGUID& newGUID, SvDef::SVObjectTypeEnum objectType)
+HRESULT SVTaskObjectClass::ConnectToObject(const std::string& rInputName, const SVGUID& newGUID, SvPb::SVObjectTypeEnum objectType)
 {
 	HRESULT hr = S_OK;
 
@@ -1056,7 +1056,7 @@ HRESULT SVTaskObjectClass::ConnectToObject(const std::string& rInputName, const 
 	if (it != toolInputList.end())
 	{
 		SVObjectClass* pNewObject = SVObjectManagerClass::Instance().GetObject(newGUID);
-		if (nullptr != pNewObject && (SvDef::SVNotSetObjectType == objectType || pNewObject->GetObjectType() == objectType))
+		if (nullptr != pNewObject && (SvPb::SVNotSetObjectType == objectType || pNewObject->GetObjectType() == objectType))
 		{
 			hr = ConnectToObject((*it), pNewObject);
 		}
@@ -1267,8 +1267,8 @@ void SVTaskObjectClass::addDefaultInputObjects(SvOl::SVInputInfoListClass* PInpu
 
 			if (GUID_NULL == pInInfo->GetInputObjectInfo().getUniqueObjectID() &&
 				GUID_NULL == info.EmbeddedID &&
-				SvDef::SVNotSetObjectType == info.ObjectType &&
-				SvDef::SVNotSetSubObjectType == info.SubType)
+				SvPb::SVNotSetObjectType == info.ObjectType &&
+				SvPb::SVNotSetSubObjectType == info.SubType)
 			{
 				//assert( false );
 			}
@@ -1901,8 +1901,8 @@ HRESULT SVTaskObjectClass::GetImageList(SVImageClassPtrVector& p_rImageList, UIN
 
 	SvDef::SVObjectTypeInfoStruct  info;
 
-	info.ObjectType = SvDef::SVImageObjectType;
-	info.SubType = SvDef::SVNotSetSubObjectType;
+	info.ObjectType = SvPb::SVImageObjectType;
+	info.SubType = SvPb::SVNotSetSubObjectType;
 
 	SVGetObjectDequeByTypeVisitor l_Visitor(info);
 

@@ -2,6 +2,7 @@ syntax = "proto3";
 package SvPb;
 
 import "BasicStructure.proto";
+import "SVO-Enum.proto";
 
 //***************************************************************************
 // Help Structs
@@ -21,8 +22,8 @@ message ObjectNameGuidPair
 
 message SVObjectTypeInfoStruct
 {
-	int32 objectType = 1;	// Main Type (is from type SVObjectTypeEnum)
-	int32 subType = 2;		// Sub Type  (is from type SVObjectSubTypeEnum)
+	SVObjectTypeEnum objectType = 1;	// Main Type
+	SVObjectSubTypeEnum subType = 2;	// Sub Type  
 	bytes embeddedID = 3;
 }
 
@@ -31,8 +32,8 @@ message TaskObjectInfo
 {
 	string displayname =1;
 	bytes  taskObjectId = 2;  //GUID of the object
-	sint32 objecttype = 3; //SvDef::SVObjectTypeEnum
-	sint32 objectsubtype = 4; //SvDef::SVObjectSubTypeEnum
+	SVObjectTypeEnum objecttype = 3; 
+	SVObjectSubTypeEnum objectsubtype = 4;
 	bool isvalid = 5; 
 } 
 
@@ -253,8 +254,8 @@ message GetInputsRequest
 {
 	bytes objectId = 1;  //GUID of the tool
 	SVObjectTypeInfoStruct typeInfo = 2;
-	int32 objectTypeToInclude = 3; //define until which type the name should displayed (is from type SvDef::SVObjectTypeEnum) (not used for image objects, it has the own name conventions)
-	bool shouldExcludeFirstObjectName = 4; //Is true it remove first object name. (If objectTypeToInclude == SvDef::SVNotsetObjectType this parameter will not used) e.g. SvDef::SVToolSetObjectType means "Window Tool....". (not used for image objects, it has the own name conventions)
+	SVObjectTypeEnum objectTypeToInclude = 3; //define until which type the name should displayed (not used for image objects, it has the own name conventions)
+	bool shouldExcludeFirstObjectName = 4; //Is true it remove first object name. (If objectTypeToInclude == SVNotsetObjectType this parameter will not used) e.g. SVToolSetObjectType means "Window Tool....". (not used for image objects, it has the own name conventions)
 	int32 maxRequested = 5; //only used for image object, it define after how many founded entry it stops.
 }
 
@@ -268,7 +269,7 @@ message ConnectToObjectRequest
 	bytes objectId = 1;
 	bytes inputName = 2;
 	bytes newConnectedId = 3;
-	int32 objectType = 4;
+	SVObjectTypeEnum objectType = 4;
 }
 
 message SaveImageRequest
@@ -287,7 +288,7 @@ message GetAvailableObjectsRequest
 {
 	bytes objectId = 1;
 	SVObjectTypeInfoStruct typeInfo = 2;
-	int32 objectTypeToInclude = 3; //SvDef::SVNotSetObjectType //	SvDef::SVObjectTypeEnum
+	SVObjectTypeEnum objectTypeToInclude = 3; //default = SVNotSetObjectType
 	bool shouldExcludeFirstObjectName = 4;
 
 	oneof allowedMode  //default is check of valid object and not hidden. In this case do not set a oneof-message.

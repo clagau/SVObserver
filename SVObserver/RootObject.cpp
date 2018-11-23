@@ -73,7 +73,7 @@ HRESULT RootObject::RefreshObject( const SVObjectClass* const pSender, RefreshOb
 	if (!m_Initialize && PostRefresh == Type)
 	{
 		//When it is of type Global Constant we need to update the IO view
-		if (SvDef::SVGlobalConstantObjectType == pSender->GetObjectInfo().m_ObjectTypeInfo.SubType)
+		if (SvPb::SVGlobalConstantObjectType == pSender->GetObjectInfo().m_ObjectTypeInfo.SubType)
 		{
 			SVIODoc* pIODoc = TheSVObserverApp.GetIODoc();
 			if(nullptr != pIODoc )
@@ -202,7 +202,7 @@ void RootObject::destroyConfigurationObject()
 		SVObjectManagerClass::Instance().GetRootChildObject( pRootChild, Name );
 		if( nullptr != pRootChild )
 		{
-			SvDef::SVObjectSubTypeEnum ObjectSubType = pRootChild->GetObjectInfo().m_ObjectTypeInfo.SubType;
+			SvPb::SVObjectSubTypeEnum ObjectSubType = pRootChild->GetObjectInfo().m_ObjectTypeInfo.SubType;
 			Result = pRoot->m_RootChildren.deleteValue( Name );
 			if( S_OK == Result )
 			{
@@ -221,7 +221,7 @@ bool RootObject::Initialize()
 	bool Result(true);
 
 	m_Initialize = true;
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType =  SvDef::SVRootObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVRootObjectType;
 	SVObjectManagerClass::Instance().ChangeUniqueObjectID(this, RootUidGuid);
 	//The Root object should have an empty name
 	SetName(_T(""));
@@ -236,7 +236,7 @@ bool RootObject::createRootChildren()
 {
 	bool Result( false );
 
-	Result = createRootChild( SvDef::FqnEnvironment, SvDef::SVEnvironmentObjectType );
+	Result = createRootChild( SvDef::FqnEnvironment, SvPb::SVEnvironmentObjectType );
 	if( Result )
 	{
 		//Default values for the mode
@@ -297,12 +297,12 @@ bool RootObject::createRootChildren()
 			pValueObject->SetObjectAttributesAllowed(SvDef::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute);
 		}
 
-		Result = createRootChild( SvDef::FqnGlobal, SvDef::SVGlobalConstantObjectType );
+		Result = createRootChild( SvDef::FqnGlobal, SvPb::SVGlobalConstantObjectType );
 	}
 
 	return Result;
 }
-bool RootObject::createRootChild( LPCTSTR ChildName, SvDef::SVObjectSubTypeEnum ObjectSubType ) 
+bool RootObject::createRootChild( LPCTSTR ChildName, SvPb::SVObjectSubTypeEnum ObjectSubType )
 {
 	bool Result( false );
 	_variant_t Node;

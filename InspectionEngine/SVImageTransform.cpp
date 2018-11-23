@@ -30,11 +30,11 @@ SVImageTransformClass::SVImageTransformClass( SVObjectClass* POwner, int StringR
 {
 
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVImageTransformObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVImageTransformObjectType;
 
 	// Identify our input type needs...
 	// Image
-	m_inputImageObjectInfo.SetInputObjectType(SvDef::SVImageObjectType, SvDef::SVImageMonoType);
+	m_inputImageObjectInfo.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
 	m_inputImageObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputImageObjectInfo, _T("ImageTransformImage") );
 

@@ -92,7 +92,7 @@ BOOL SVToolAdjustmentDialogSizePage::OnInitDialog()
 	{
 		// Get ToolSizeAdjustTask 
 		SvDef::SVObjectTypeInfoStruct ToolSizeAdjustTaskInfo;
-		ToolSizeAdjustTaskInfo.ObjectType = SvDef::SVToolSizeAdjustTaskType;
+		ToolSizeAdjustTaskInfo.ObjectType = SvPb::SVToolSizeAdjustTaskType;
 		
 		m_pToolSizeAdjustTask = dynamic_cast<ToolSizeAdjustTask*>(m_pTool->getFirstObject(ToolSizeAdjustTaskInfo));
 		if( m_pToolSizeAdjustTask )
@@ -118,18 +118,18 @@ BOOL SVToolAdjustmentDialogSizePage::OnInitDialog()
 		
 		// Get the Evaluate Objects..
 		SvDef::SVObjectTypeInfoStruct evaluateObjectInfo;
-		evaluateObjectInfo.ObjectType = SvDef::SVEquationObjectType;
+		evaluateObjectInfo.ObjectType = SvPb::SVEquationObjectType;
 
-		evaluateObjectInfo.SubType = SvDef::EQSizePositionXType;		
+		evaluateObjectInfo.SubType = SvPb::EQSizePositionXType;
 		m_pEQAdjustSize[ToolSizeAdjustTask::TSPositionX] = dynamic_cast<EQAdjustSize*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		
-		evaluateObjectInfo.SubType = SvDef::EQSizePositionYType;
+		evaluateObjectInfo.SubType = SvPb::EQSizePositionYType;
 		m_pEQAdjustSize[ToolSizeAdjustTask::TSPositionY]  = dynamic_cast<EQAdjustSize*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		
-		evaluateObjectInfo.SubType = SvDef::EQSizeWidthType;		
+		evaluateObjectInfo.SubType = SvPb::EQSizeWidthType;
 		m_pEQAdjustSize[ToolSizeAdjustTask::TSWidth] = dynamic_cast<EQAdjustSize*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		
-		evaluateObjectInfo.SubType = SvDef::EQSizeHeightType;		
+		evaluateObjectInfo.SubType = SvPb::EQSizeHeightType;
 		m_pEQAdjustSize[ToolSizeAdjustTask::TSHeight] = dynamic_cast<EQAdjustSize*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		
 		Refresh( false );

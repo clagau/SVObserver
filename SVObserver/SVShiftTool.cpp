@@ -379,8 +379,8 @@ SVDoubleValueObjectClass* SVShiftTool::GetTranslationYInput(bool bRunMode /*= fa
 void SVShiftTool::LocalInitialize()
 {
 	m_canResizeToParent = true;
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVShiftToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVShiftToolObjectType;
 
 	SVObjectClass* l_pObject = nullptr;
 
@@ -405,15 +405,15 @@ void SVShiftTool::LocalInitialize()
 	ToolSizeAdjustTask::AddToFriendlist(this, false, true, true);
 
 	// Identify our input type needs...
-	m_ImageInput.SetInputObjectType(SvDef::SVImageObjectType, SvDef::SVImageMonoType);
+	m_ImageInput.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
 	m_ImageInput.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_ImageInput, _T( "ShiftToolImage" ) );
 
-	m_TranslationXInput.SetInputObjectType(SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType, SVOutputEvaluateTranslationXResultObjectGuid);
+	m_TranslationXInput.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SVOutputEvaluateTranslationXResultObjectGuid);
 	m_TranslationXInput.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_TranslationXInput, _T( "ShiftToolTranslationX" ) );
 
-	m_TranslationYInput.SetInputObjectType(SvDef::SVValueObjectType, SvDef::SVDoubleValueObjectType, SVOutputEvaluateTranslationYResultObjectGuid);
+	m_TranslationYInput.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SVOutputEvaluateTranslationYResultObjectGuid);
 	m_TranslationYInput.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_TranslationYInput, _T( "ShiftToolTranslationY" ) );
 

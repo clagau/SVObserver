@@ -108,7 +108,7 @@ void SVBlobAnalyzerClass::init()
 	m_pResultBlob = nullptr;
 
 	//Indentify our output type.
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVBlobAnalyzerObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVBlobAnalyzerObjectType;
 
 	//Register embedded objects.
 	RegisterEmbeddedObject(
@@ -295,8 +295,8 @@ DWORD SVBlobAnalyzerClass::AllocateResult(int FeatureIndex)
 	interfaceInfo.EmbeddedID = m_Value[FeatureIndex].GetEmbeddedID();
 	resultClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
 
-	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVResultObjectType;
-	resultClassInfo.m_ObjectTypeInfo.SubType	= SvDef::SVResultDoubleObjectType;
+	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
+	resultClassInfo.m_ObjectTypeInfo.SubType	= SvPb::SVResultDoubleObjectType;
 	resultClassInfo.m_ClassId = SVDoubleResultClassGuid;
 	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_RESULT );
 	std::string Title = m_Value[FeatureIndex].GetName();
@@ -316,8 +316,8 @@ DWORD SVBlobAnalyzerClass::AllocateResult(int FeatureIndex)
 	Add(pResult);
 
 	SvDef::SVObjectTypeInfoStruct info;
-	info.ObjectType = SvDef::SVValueObjectType;
-	info.SubType = SvDef::SVDoubleValueObjectType;
+	info.ObjectType = SvPb::SVValueObjectType;
+	info.SubType = SvPb::SVDoubleValueObjectType;
 	info.EmbeddedID = SVValueObjectGuid;
 
 	SVDoubleValueObjectClass* pValue = dynamic_cast<SVDoubleValueObjectClass*>( getFirstObject( info ) );
@@ -388,8 +388,8 @@ DWORD SVBlobAnalyzerClass::AllocateBlobResult ()
 		interfaceInfo.EmbeddedID = m_lvoNumberOfBlobsFound.GetEmbeddedID();
 		resultClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
 		
-		resultClassInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVResultObjectType;
-		resultClassInfo.m_ObjectTypeInfo.SubType	= SvDef::SVResultLongObjectType;
+		resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
+		resultClassInfo.m_ObjectTypeInfo.SubType	= SvPb::SVResultLongObjectType;
 		resultClassInfo.m_ClassId = SVLongResultClassGuid;
 		resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_RESULT );
 		std::string Title = m_lvoNumberOfBlobsFound.GetName();
@@ -409,7 +409,7 @@ DWORD SVBlobAnalyzerClass::AllocateBlobResult ()
 		Add( m_pResultBlob );
 		
 		SvDef::SVObjectTypeInfoStruct info;
-		info.SubType = SvDef::SVLongValueObjectType;
+		info.SubType = SvPb::SVLongValueObjectType;
 		info.EmbeddedID = SVValueObjectGuid;
 		
 		SVLongValueObjectClass* pValue = dynamic_cast<SVLongValueObjectClass*>( getFirstObject( info ) );
@@ -488,8 +488,8 @@ void SVBlobAnalyzerClass::RebuildResultObjectArray()
 	
 	SvDef::SVObjectTypeInfoStruct info;
 
-	info.ObjectType = SvDef::SVResultObjectType;
-	info.SubType = SvDef::SVResultDoubleObjectType;
+	info.ObjectType = SvPb::SVResultObjectType;
+	info.SubType = SvPb::SVResultDoubleObjectType;
 
 	SVGetObjectDequeByTypeVisitor l_Visitor( info );
 
@@ -540,8 +540,8 @@ SVLongResultClass* SVBlobAnalyzerClass::GetBlobResultObject()
 
 	SvDef::SVObjectTypeInfoStruct info;
 
-	info.ObjectType = SvDef::SVResultObjectType;
-	info.SubType = SvDef::SVResultLongObjectType;
+	info.ObjectType = SvPb::SVResultObjectType;
+	info.SubType = SvPb::SVResultLongObjectType;
 
 	SVGetObjectDequeByTypeVisitor l_Visitor( info );
 
@@ -586,7 +586,7 @@ bool SVBlobAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateS
 			break;
 		}
 
-		m_pResultTable = dynamic_cast<TableObject*>(SvOi::FindObject(GetUniqueObjectID(), SvDef::SVObjectTypeInfoStruct(SvDef::TableObjectType, SvDef::SVNotSetSubObjectType)));
+		m_pResultTable = dynamic_cast<TableObject*>(SvOi::FindObject(GetUniqueObjectID(), SvDef::SVObjectTypeInfoStruct(SvPb::TableObjectType, SvPb::SVNotSetSubObjectType)));
 		if (nullptr == m_pResultTable)
 		{
 			m_pResultTable = new TableObject(this);
@@ -1610,7 +1610,7 @@ void SVBlobAnalyzerClass::addParameterForMonitorList(SvStl::MessageContainerVect
 				auto* pResultObject = SVObjectManagerClass::Instance().GetObject(m_guidResults[i]);
 				if (nullptr != pResultObject)
 				{
-					SVRangeClass* pRangeObject = dynamic_cast<SVRangeClass*>(pResultObject->getFirstObject(SvDef::SVObjectTypeInfoStruct(SvDef::SVObjectTypeEnum::SVRangeObjectType)));
+					SVRangeClass* pRangeObject = dynamic_cast<SVRangeClass*>(pResultObject->getFirstObject(SvDef::SVObjectTypeInfoStruct(SvPb::SVObjectTypeEnum::SVRangeObjectType)));
 					if (nullptr != pRangeObject)
 					{
 						pRangeObject->addEntriesToMonitorList(inserter);

@@ -41,10 +41,10 @@ SVUserMaskOperatorClass::~SVUserMaskOperatorClass()
 void SVUserMaskOperatorClass::init()
 {
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvDef::SVUnaryImageOperatorObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVUserMaskOperatorObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVUnaryImageOperatorObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVUserMaskOperatorObjectType;
 
-	m_inObjectInfo.SetInputObjectType(SvDef::SVImageObjectType, SvDef::SVImageMonoType);
+	m_inObjectInfo.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
 	m_inObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inObjectInfo, _T( "UserMaskImage" ) );
 
@@ -913,7 +913,7 @@ SVImageClass* SVUserMaskOperatorClass::getMaskInputImage(bool bRunMode /*= false
 bool SVUserMaskOperatorClass::hasToAskFriendForConnection( const SvDef::SVObjectTypeInfoStruct& rInfo, SVObjectClass*& rPOwner ) const
 {
 	bool Result(true);
-	if ( SvDef::SVImageObjectType == rInfo.ObjectType )
+	if (SvPb::SVImageObjectType == rInfo.ObjectType )
 	{
 		rPOwner = GetInspection();
 		Result = false;

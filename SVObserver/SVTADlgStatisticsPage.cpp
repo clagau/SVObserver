@@ -70,7 +70,7 @@ SVToolAdjustmentDialogStatisticsPageClass::SVToolAdjustmentDialogStatisticsPageC
 
 	if( m_pTool = dynamic_cast <SVStatisticsToolClass*> (SvOi::getObject(rTaskObjectID)) )
 	{
-		auto pParentObject = m_pTool->GetAncestor(SvDef::SVToolSetObjectType);
+		auto pParentObject = m_pTool->GetAncestor(SvPb::SVToolSetObjectType);
 		m_pToolSet = dynamic_cast <SVToolSetClass*> (pParentObject);
 	}
 }
@@ -88,7 +88,7 @@ BOOL SVToolAdjustmentDialogStatisticsPageClass::OnInitDialog()
 		getParameters();
 
 		SVObjectReference ObjectRef = m_pTool->GetVariableSelected();
-		m_strVariableToMonitor = ObjectRef.GetObjectNameToObjectType(SvDef::SVToolSetObjectType, true).c_str();
+		m_strVariableToMonitor = ObjectRef.GetObjectNameToObjectType(SvPb::SVToolSetObjectType, true).c_str();
 		m_strFullNameOfVariable = ObjectRef.GetCompleteName(true).c_str();
 	}
 
@@ -362,7 +362,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnBtnObjectPicker()
 		{
 			ObjectRef.SetArrayIndex(SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().m_ArrayIndex);
 		}
-		m_strVariableToMonitor = ObjectRef.GetObjectNameToObjectType(SvDef::SVToolSetObjectType, true).c_str();
+		m_strVariableToMonitor = ObjectRef.GetObjectNameToObjectType(SvPb::SVToolSetObjectType, true).c_str();
 		m_pTool->SetVariableSelected(ObjectRef.GetCompleteName(true));
 		m_strFullNameOfVariable = ObjectRef.GetCompleteName(true).c_str();
 

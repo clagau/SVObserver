@@ -55,7 +55,7 @@ namespace SvOg
 
 	void SVFormulaEditorSheetClass::init(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SvDef::SVObjectTypeInfoStruct& rInfo)
 	{
-		bool isConditional = SvDef::SVConditionalObjectType == rInfo.SubType;
+		bool isConditional = SvPb::SVConditionalObjectType == rInfo.SubType;
 		init(SvOi::IFormulaControllerPtr{ new FormulaController(rInspectionID, rTaskObjectID, rInfo) }, isConditional);
 	}
 

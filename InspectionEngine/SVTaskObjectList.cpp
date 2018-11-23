@@ -612,7 +612,7 @@ SvUl::NameGuidList SVTaskObjectListClass::GetCreatableObjects(const SvDef::SVObj
 	{
 		SVClassInfoStruct classInfo = m_availableChildren[i];
 		if (classInfo.m_ObjectTypeInfo.ObjectType == pObjectTypeInfo.ObjectType &&
-			(pObjectTypeInfo.SubType == SvDef::SVNotSetSubObjectType ||
+			(pObjectTypeInfo.SubType == SvPb::SVNotSetSubObjectType ||
 			classInfo.m_ObjectTypeInfo.SubType == pObjectTypeInfo.SubType) 
 			)
 		{
@@ -957,7 +957,7 @@ bool SVTaskObjectListClass::getAvailableObjects(SVClassInfoStructVector* pList, 
 	{
 		SVClassInfoStruct classInfo = m_availableChildren[i];
 		if (classInfo.m_ObjectTypeInfo.ObjectType == pObjectTypeInfo->ObjectType &&
-			(pObjectTypeInfo->SubType == SvDef::SVNotSetSubObjectType ||
+			(pObjectTypeInfo->SubType == SvPb::SVNotSetSubObjectType ||
 			classInfo.m_ObjectTypeInfo.SubType == pObjectTypeInfo->SubType) 
 			)
 		{

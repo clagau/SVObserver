@@ -96,7 +96,7 @@ void SVTADlgRemoteInputToolPage::OnBnClickedSelectInputButton()
 {
 	if( nullptr == m_pTool ) { return; }
 
-	SVToolSetClass* pToolSet = dynamic_cast<SVToolSetClass*>( m_pTool->GetAncestor( SvDef::SVToolSetObjectType ) );
+	SVToolSetClass* pToolSet = dynamic_cast<SVToolSetClass*>( m_pTool->GetAncestor(SvPb::SVToolSetObjectType ) );
 
 	if( nullptr == pToolSet ) { return; }
 

@@ -314,7 +314,7 @@ void ToolClipboard::writeSourceGuids(SvXml::SVObjectXMLWriter& rXmlWriter, SVToo
 	rXmlWriter.WriteAttribute(SvXml::ToolTypeTag, Value );
 
 	Value.Clear();
-	std::string tmpString = rTool.GetObjectNameToObjectType(SvDef::SVObjectTypeEnum::SVToolSetObjectType);
+	std::string tmpString = rTool.GetObjectNameToObjectType(SvPb::SVObjectTypeEnum::SVToolSetObjectType);
 	Value = tmpString.c_str();
 	rXmlWriter.WriteAttribute(SvXml::FullToolNameTag, Value);
 
@@ -328,7 +328,7 @@ void ToolClipboard::writeSourceGuids(SvXml::SVObjectXMLWriter& rXmlWriter, SVToo
 			SVObjectClass* pImage = pImageInfo->GetInputObjectInfo().getObject();
 			if( pImageInfo->IsConnected() && nullptr !=  pImage)
 			{
-				SVObjectClass* pTool = pImage->GetAncestor(SvDef::SVObjectTypeEnum::SVToolObjectType);
+				SVObjectClass* pTool = pImage->GetAncestor(SvPb::SVObjectTypeEnum::SVToolObjectType);
 				//Add input image only if not from the tool being copied
 				if(nullptr == pTool || pTool->GetUniqueObjectID() != rTool.GetUniqueObjectID())
 				{
@@ -575,7 +575,7 @@ HRESULT ToolClipboard::validateGuids(std::string& rXmlData, const SVGUID& rPostG
 	if (nullptr != pDoc)
 	{
 		//Color tool can not be inserted into a IPD without color images
-		if (SVColorToolClassGuid == rToolTypeGuid && !pDoc->isImageAvailable(SvDef::SVImageColorType))
+		if (SVColorToolClassGuid == rToolTypeGuid && !pDoc->isImageAvailable(SvPb::SVImageColorType))
 		{
 			Result = E_FAIL;
 			SvStl::MessageMgrStd e(SvStl::MsgType::Data);
@@ -600,7 +600,7 @@ HRESULT ToolClipboard::validateGuids(std::string& rXmlData, const SVGUID& rPostG
 					SVObjectClass* pImage = SVObjectManagerClass::Instance().GetObject(rInputImageGuid);
 					if (nullptr != pImage)
 					{
-						SVToolClass* pTool = dynamic_cast<SVToolClass*> (pImage->GetAncestor(SvDef::SVToolObjectType));
+						SVToolClass* pTool = dynamic_cast<SVToolClass*> (pImage->GetAncestor(SvPb::SVToolObjectType));
 						if (nullptr != pTool && nullptr != m_rInspection.GetToolSet())
 						{
 							int toolPositionOfImage = pTool->getToolPosition();
@@ -699,7 +699,7 @@ HRESULT ToolClipboard::replaceToolName( std::string& rXmlData, SVTreeType& rTree
 				std::string fullToolNameNewStr = fullToolNameStr;
 				if (nullptr != pOwner)
 				{
-					fullToolNameNewStr = pOwner->GetObjectNameToObjectType(SvDef::SVObjectTypeEnum::SVToolSetObjectType) + _T(".") + NewName + _T(".");
+					fullToolNameNewStr = pOwner->GetObjectNameToObjectType(SvPb::SVObjectTypeEnum::SVToolSetObjectType) + _T(".") + NewName + _T(".");
 				}
 				else
 				{

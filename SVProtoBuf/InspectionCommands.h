@@ -10,5 +10,6 @@
 
 #pragma warning( push )
 #pragma warning( disable : 4800 )
+#pragma warning( disable : 4244 )
 #include "InspectionCommands.pb.h"
 #pragma warning( pop )

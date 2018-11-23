@@ -1606,7 +1606,7 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo, SvOi::SVImageBuff
 		if (nullptr != pImage)
 		{
 			l_lType = pImage->GetImageType();
-			SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(pImage->GetAncestor(SvDef::SVInspectionObjectType));
+			SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(pImage->GetAncestor(SvPb::SVInspectionObjectType));
 			if (nullptr != pInspection)
 			{
 				IsColor = pInspection->IsColorCamera();
@@ -3683,7 +3683,7 @@ STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionNam
 			// Enumeration List.
 			l_Index[1] = 3;
 			Value.Clear();
-			if (SelectedObjects[i]->GetObjectSubType() == SvDef::SVEnumValueObjectType)
+			if (SelectedObjects[i]->GetObjectSubType() == SvPb::SVEnumValueObjectType)
 			{
 				// Get the strings from the enumeration value object class.
 				SVEnumerateValueObjectClass* pEnumVO = dynamic_cast<SVEnumerateValueObjectClass*>(SelectedObjects[i]);
@@ -3703,7 +3703,7 @@ STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionNam
 					Value.parray = l_psaTemp;
 				}
 			}
-			else if (SelectedObjects[i]->GetObjectSubType() == SvDef::SVBoolValueObjectType)
+			else if (SelectedObjects[i]->GetObjectSubType() == SvPb::SVBoolValueObjectType)
 			{
 				// Get the strings from the enumeration value object class.
 				SVBoolValueObjectClass* l_pBoolVO = dynamic_cast<SVBoolValueObjectClass*>(SelectedObjects[i]);

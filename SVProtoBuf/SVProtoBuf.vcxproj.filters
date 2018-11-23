@@ -54,6 +54,9 @@
     <ClCompile Include="SVAuth.pb.cc">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="SVO-Enum.pb.cc">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="BasicStructure.proto">
@@ -87,6 +90,9 @@
       <Filter>Ressourcendateien</Filter>
     </CustomBuild>
     <CustomBuild Include="SVAuth.proto">
+      <Filter>Ressourcendateien</Filter>
+    </CustomBuild>
+    <CustomBuild Include="SVO-Enum.proto">
       <Filter>Ressourcendateien</Filter>
     </CustomBuild>
   </ItemGroup>
@@ -158,6 +164,12 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVRC-Enum.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVO-Enum.pb.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVO-Enum.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

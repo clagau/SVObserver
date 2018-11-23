@@ -62,7 +62,7 @@ TaTableAnalyzerPage::TaTableAnalyzerPage(const SVGUID& rInspectionID, const SVGU
 	, m_TaskObjectID(rTaskObjectID)
 	, m_selectedAnalyzerID(GUID_NULL)
 	, m_SortDirection(-1)
-	, m_selectedSubType(SvDef::SVNotSetSubObjectType)
+	, m_selectedSubType(SvPb::SVNotSetSubObjectType)
 	, m_inputName(_T(""))
 	, m_objectSelector(rInspectionID)
 {
@@ -113,7 +113,7 @@ BOOL TaTableAnalyzerPage::OnInitDialog()
 	SvPb::InspectionCmdMsgs request, response;
 	SvPb::GetCreatableObjectsRequest* pGetCreatableObjectsRequest = request.mutable_getcreatableobjectsrequest();
 	SvPb::SetGuidInProtoBytes(pGetCreatableObjectsRequest->mutable_objectid(), m_TaskObjectID);
-	pGetCreatableObjectsRequest->mutable_typeinfo()->set_objecttype(SvDef::TableAnalyzerType);
+	pGetCreatableObjectsRequest->mutable_typeinfo()->set_objecttype(SvPb::TableAnalyzerType);
 	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
 	SvUl::InputNameGuidPairList connectedList;
 	if (S_OK == hr && response.has_getcreatableobjectsresponse())
@@ -181,7 +181,7 @@ void TaTableAnalyzerPage::OnButtonDeleteCurrentAnalyzer()
 		SvPb::SetGuidInProtoBytes(pDestroyChildRequest->mutable_objectid(), m_selectedAnalyzerID);
 		SvCmd::InspectionCommandsSynchronous(m_InspectionID, &Request, &Response);
 		m_selectedAnalyzerID = GUID_NULL;
-		m_selectedSubType = SvDef::SVNotSetSubObjectType;
+		m_selectedSubType = SvPb::SVNotSetSubObjectType;
 
 		// Refresh Dialog...
 		refresh();
@@ -252,7 +252,7 @@ void TaTableAnalyzerPage::OnChangeColumnSelection()
 		SvPb::SetGuidInProtoBytes(pConnectToObjectRequest->mutable_objectid(), m_selectedAnalyzerID);
 		pConnectToObjectRequest->set_inputname(m_inputName);
 		SvPb::SetGuidInProtoBytes(pConnectToObjectRequest->mutable_newconnectedid(), columnGuid);
-		pConnectToObjectRequest->set_objecttype(SvDef::SVValueObjectType);
+		pConnectToObjectRequest->set_objecttype(SvPb::SVValueObjectType);
 		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &Request, &Response);
 		if (S_OK != hr)
 		{
@@ -348,12 +348,12 @@ HRESULT TaTableAnalyzerPage::SetInspectionData()
 	{
 		switch (m_selectedSubType)
 		{
-			case SvDef::TableAnalyzerSortType:
+			case SvPb::TableAnalyzerSortType:
 				m_pValues->Set<bool>(TableAnaylzerSortIsASCGuid, 0 == m_SortDirection);
 				hrOk = m_pValues->Commit();
 				errorMessageList = m_pValues->getFailedMessageList();
 				break;
-			case SvDef::TableAnalyzerExcludeType:
+			case SvPb::TableAnalyzerExcludeType:
 			{
 				CString Value;
 				m_EditExcludeHigh.GetWindowText(Value);
@@ -364,7 +364,7 @@ HRESULT TaTableAnalyzerPage::SetInspectionData()
 				errorMessageList = m_pValues->getFailedMessageList();
 			}
 			break;
-			case SvDef::TableAnalyzerLimitType:
+			case SvPb::TableAnalyzerLimitType:
 			{
 				CString Value;
 				m_EditLimitValue.GetWindowText(Value);
@@ -378,7 +378,7 @@ HRESULT TaTableAnalyzerPage::SetInspectionData()
 		}
 	}
 
-	if (m_selectedSubType == SvDef::TableAnalyzerAddColumnType)
+	if (m_selectedSubType == SvPb::TableAnalyzerAddColumnType)
 	{
 		hrOk = SetAddAnalyzerData(errorMessageList);
 	}
@@ -420,7 +420,7 @@ void TaTableAnalyzerPage::refresh()
 
 void TaTableAnalyzerPage::SetPropertyControls()
 {
-	m_selectedSubType = SvDef::SVNotSetSubObjectType;
+	m_selectedSubType = SvPb::SVNotSetSubObjectType;
 	if (GUID_NULL != m_selectedAnalyzerID)
 	{
 		SvPb::InspectionCmdMsgs request, response;
@@ -437,16 +437,16 @@ void TaTableAnalyzerPage::SetPropertyControls()
 	ShowControls(m_selectedSubType);
 	switch (m_selectedSubType)
 	{
-		case SvDef::TableAnalyzerSortType:
+		case SvPb::TableAnalyzerSortType:
 			setSortProperties();
 			break;
-		case SvDef::TableAnalyzerExcludeType:
+		case SvPb::TableAnalyzerExcludeType:
 			setExcludeProperties();
 			break;
-		case SvDef::TableAnalyzerLimitType:
+		case SvPb::TableAnalyzerLimitType:
 			setLimitProperties();
 			break;
-		case SvDef::TableAnalyzerAddColumnType:
+		case SvPb::TableAnalyzerAddColumnType:
 			setAddColumnProperties();
 			break;
 		default:
@@ -461,8 +461,8 @@ HRESULT TaTableAnalyzerPage::RetrieveAvailableColumnList()
 	SvPb::GetAvailableObjectsRequest* pGetAvailableObjectsRequest = request.mutable_getavailableobjectsrequest();
 
 	SvPb::SetGuidInProtoBytes(pGetAvailableObjectsRequest->mutable_objectid(), m_TaskObjectID);
-	pGetAvailableObjectsRequest->mutable_typeinfo()->set_objecttype(SvDef::SVValueObjectType);
-	pGetAvailableObjectsRequest->mutable_typeinfo()->set_subtype(SvDef::DoubleSortValueObjectType);
+	pGetAvailableObjectsRequest->mutable_typeinfo()->set_objecttype(SvPb::SVValueObjectType);
+	pGetAvailableObjectsRequest->mutable_typeinfo()->set_subtype(SvPb::DoubleSortValueObjectType);
 	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
 	SvUl::NameGuidList availableList;
 	if (S_OK == hr && response.has_getavailableobjectsresponse())
@@ -474,29 +474,29 @@ HRESULT TaTableAnalyzerPage::RetrieveAvailableColumnList()
 
 void TaTableAnalyzerPage::ShowControls(long SubType)
 {
-	GetDlgItem(IDC_COLUMN_SELECT_CBOX)->ShowWindow((SvDef::TableAnalyzerSortType == SubType || SvDef::TableAnalyzerExcludeType == SubType) ? SW_SHOW : SW_HIDE);
+	GetDlgItem(IDC_COLUMN_SELECT_CBOX)->ShowWindow((SvPb::TableAnalyzerSortType == SubType || SvPb::TableAnalyzerExcludeType == SubType) ? SW_SHOW : SW_HIDE);
 
-	GetDlgItem(IDC_SORT_LABEL)->ShowWindow((SvDef::TableAnalyzerSortType == SubType) ? SW_SHOW : SW_HIDE);
-	GetDlgItem(IDC_ASC_RADIO)->ShowWindow((SvDef::TableAnalyzerSortType == SubType) ? SW_SHOW : SW_HIDE);
-	GetDlgItem(IDC_DESC_RADIO)->ShowWindow((SvDef::TableAnalyzerSortType == SubType) ? SW_SHOW : SW_HIDE);
-	GetDlgItem(IDC_STATIC_ASC)->ShowWindow((SvDef::TableAnalyzerSortType == SubType) ? SW_SHOW : SW_HIDE);
+	GetDlgItem(IDC_SORT_LABEL)->ShowWindow((SvPb::TableAnalyzerSortType == SubType) ? SW_SHOW : SW_HIDE);
+	GetDlgItem(IDC_ASC_RADIO)->ShowWindow((SvPb::TableAnalyzerSortType == SubType) ? SW_SHOW : SW_HIDE);
+	GetDlgItem(IDC_DESC_RADIO)->ShowWindow((SvPb::TableAnalyzerSortType == SubType) ? SW_SHOW : SW_HIDE);
+	GetDlgItem(IDC_STATIC_ASC)->ShowWindow((SvPb::TableAnalyzerSortType == SubType) ? SW_SHOW : SW_HIDE);
 
-	GetDlgItem(IDC_EXCLUDE_LABEL)->ShowWindow((SvDef::TableAnalyzerExcludeType == SubType) ? SW_SHOW : SW_HIDE);
-	GetDlgItem(IDC_EXCLUDE_LABEL2)->ShowWindow((SvDef::TableAnalyzerExcludeType == SubType) ? SW_SHOW : SW_HIDE);
-	GetDlgItem(IDC_EXCLUDE_LABEL3)->ShowWindow((SvDef::TableAnalyzerExcludeType == SubType) ? SW_SHOW : SW_HIDE);
-	m_EditExcludeHigh.ShowWindow((SvDef::TableAnalyzerExcludeType == SubType) ? SW_SHOW : SW_HIDE);
-	m_EditExcludeLow.ShowWindow((SvDef::TableAnalyzerExcludeType == SubType) ? SW_SHOW : SW_HIDE);
-	GetDlgItem(IDC_BUTTON_EXCLUDE_HIGH)->ShowWindow((SvDef::TableAnalyzerExcludeType == SubType) ? SW_SHOW : SW_HIDE);
-	GetDlgItem(IDC_BUTTON_EXCLUDE_LOW)->ShowWindow((SvDef::TableAnalyzerExcludeType == SubType) ? SW_SHOW : SW_HIDE);
+	GetDlgItem(IDC_EXCLUDE_LABEL)->ShowWindow((SvPb::TableAnalyzerExcludeType == SubType) ? SW_SHOW : SW_HIDE);
+	GetDlgItem(IDC_EXCLUDE_LABEL2)->ShowWindow((SvPb::TableAnalyzerExcludeType == SubType) ? SW_SHOW : SW_HIDE);
+	GetDlgItem(IDC_EXCLUDE_LABEL3)->ShowWindow((SvPb::TableAnalyzerExcludeType == SubType) ? SW_SHOW : SW_HIDE);
+	m_EditExcludeHigh.ShowWindow((SvPb::TableAnalyzerExcludeType == SubType) ? SW_SHOW : SW_HIDE);
+	m_EditExcludeLow.ShowWindow((SvPb::TableAnalyzerExcludeType == SubType) ? SW_SHOW : SW_HIDE);
+	GetDlgItem(IDC_BUTTON_EXCLUDE_HIGH)->ShowWindow((SvPb::TableAnalyzerExcludeType == SubType) ? SW_SHOW : SW_HIDE);
+	GetDlgItem(IDC_BUTTON_EXCLUDE_LOW)->ShowWindow((SvPb::TableAnalyzerExcludeType == SubType) ? SW_SHOW : SW_HIDE);
 
-	GetDlgItem(IDC_LIMIT_LABEL)->ShowWindow((SvDef::TableAnalyzerLimitType == SubType) ? SW_SHOW : SW_HIDE);
-	m_EditLimitValue.ShowWindow((SvDef::TableAnalyzerLimitType == SubType) ? SW_SHOW : SW_HIDE);
-	GetDlgItem(IDC_BUTTON_LIMIT_VALUE)->ShowWindow((SvDef::TableAnalyzerLimitType == SubType) ? SW_SHOW : SW_HIDE);
+	GetDlgItem(IDC_LIMIT_LABEL)->ShowWindow((SvPb::TableAnalyzerLimitType == SubType) ? SW_SHOW : SW_HIDE);
+	m_EditLimitValue.ShowWindow((SvPb::TableAnalyzerLimitType == SubType) ? SW_SHOW : SW_HIDE);
+	GetDlgItem(IDC_BUTTON_LIMIT_VALUE)->ShowWindow((SvPb::TableAnalyzerLimitType == SubType) ? SW_SHOW : SW_HIDE);
 
-	GetDlgItem(IDC_ADDCOLUMN_LABEL)->ShowWindow((SvDef::TableAnalyzerAddColumnType == SubType) ? SW_SHOW : SW_HIDE);
-	m_EditAddColumnName.ShowWindow((SvDef::TableAnalyzerAddColumnType == SubType) ? SW_SHOW : SW_HIDE);
-	GetDlgItem(IDC_BUTTON_ADDCOLUMN_FORMULA)->ShowWindow((SvDef::TableAnalyzerAddColumnType == SubType) ? SW_SHOW : SW_HIDE);
-	GetDlgItem(IDC_EDIT_ADDCOLUMN_FORMULA)->ShowWindow((SvDef::TableAnalyzerAddColumnType == SubType) ? SW_SHOW : SW_HIDE);
+	GetDlgItem(IDC_ADDCOLUMN_LABEL)->ShowWindow((SvPb::TableAnalyzerAddColumnType == SubType) ? SW_SHOW : SW_HIDE);
+	m_EditAddColumnName.ShowWindow((SvPb::TableAnalyzerAddColumnType == SubType) ? SW_SHOW : SW_HIDE);
+	GetDlgItem(IDC_BUTTON_ADDCOLUMN_FORMULA)->ShowWindow((SvPb::TableAnalyzerAddColumnType == SubType) ? SW_SHOW : SW_HIDE);
+	GetDlgItem(IDC_EDIT_ADDCOLUMN_FORMULA)->ShowWindow((SvPb::TableAnalyzerAddColumnType == SubType) ? SW_SHOW : SW_HIDE);
 
 	RedrawWindow();
 }
@@ -563,7 +563,7 @@ void TaTableAnalyzerPage::setAddColumnProperties()
 	if (nullptr == m_pSelectedAddEquationFormula || m_selectedAnalyzerID != m_pSelectedAddEquationFormula->GetTaskId())
 	{
 		m_pSelectedAddEquationFormula.reset();
-		SvDef::SVObjectTypeInfoStruct Info {SvDef::SVEquationObjectType, SvDef::TableAddColumnEquationObjectType};
+		SvDef::SVObjectTypeInfoStruct Info {SvPb::SVEquationObjectType, SvPb::TableAddColumnEquationObjectType};
 		m_pSelectedAddEquationFormula = SvOi::IFormulaControllerPtr {new FormulaController {m_InspectionID, m_selectedAnalyzerID, Info}};
 	}
 
@@ -581,8 +581,8 @@ void TaTableAnalyzerPage::setColumnSelectionCB()
 	SvPb::InspectionCmdMsgs request, response;
 	SvPb::GetInputsRequest* pGetInputsRequest = request.mutable_getinputsrequest();
 	SvPb::SetGuidInProtoBytes(pGetInputsRequest->mutable_objectid(), m_selectedAnalyzerID);
-	pGetInputsRequest->mutable_typeinfo()->set_objecttype(SvDef::SVValueObjectType);
-	pGetInputsRequest->mutable_typeinfo()->set_subtype(SvDef::DoubleSortValueObjectType);
+	pGetInputsRequest->mutable_typeinfo()->set_objecttype(SvPb::SVValueObjectType);
+	pGetInputsRequest->mutable_typeinfo()->set_subtype(SvPb::DoubleSortValueObjectType);
 	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
 	SvUl::InputNameGuidPairList connectedList;
 	if (S_OK == hr && response.has_getinputsresponse() && 0 < response.getinputsresponse().list_size())
@@ -743,7 +743,7 @@ SvUl::NameGuidList TaTableAnalyzerPage::getTableAnalyzer()
 	SvPb::GetAvailableObjectsRequest* pGetAvailableObjectsRequest = request.mutable_getavailableobjectsrequest();
 
 	SvPb::SetGuidInProtoBytes(pGetAvailableObjectsRequest->mutable_objectid(), m_TaskObjectID);
-	pGetAvailableObjectsRequest->mutable_typeinfo()->set_objecttype(SvDef::TableAnalyzerType);
+	pGetAvailableObjectsRequest->mutable_typeinfo()->set_objecttype(SvPb::TableAnalyzerType);
 	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
 
 	if (S_OK == hr && response.has_getavailableobjectsresponse())

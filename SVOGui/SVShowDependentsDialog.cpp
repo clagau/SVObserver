@@ -37,7 +37,7 @@ END_MESSAGE_MAP()
 const int DependentColumnNumber = 2;
 const TCHAR* const ColumnHeadings[] = {_T("Client"), _T("Supplier")};
 
-SVShowDependentsDialog::SVShowDependentsDialog(const SVGuidSet& rSourceSet, SvDef::SVObjectTypeEnum objectType, LPCTSTR DisplayText, DialogType Type /*= DeleteConfirm*/, CWnd* pParent /*=nullptr*/)
+SVShowDependentsDialog::SVShowDependentsDialog(const SVGuidSet& rSourceSet, SvPb::SVObjectTypeEnum objectType, LPCTSTR DisplayText, DialogType Type /*= DeleteConfirm*/, CWnd* pParent /*=nullptr*/)
 	: CDialog(SVShowDependentsDialog::IDD, pParent)
 	, m_rSourceSet(rSourceSet)
 	, m_objectType(objectType)
@@ -58,7 +58,7 @@ SVShowDependentsDialog::SVShowDependentsDialog(const SVGuidSet& rSourceSet, SvDe
 
 		SVGuidSet SourceSet;
 		SourceSet.insert(rTaskObjectID);
-		SVShowDependentsDialog Dlg(SourceSet, SvDef::SVToolObjectType, DisplayText.c_str());
+		SVShowDependentsDialog Dlg(SourceSet, SvPb::SVToolObjectType, DisplayText.c_str());
 
 		Result = Dlg.DoModal();
 	}
@@ -228,13 +228,13 @@ void SVShowDependentsDialog::RetreiveList()
 			std::string Name;
 			if (m_objectType == pSourceObject->GetObjectType())
 			{
-				if (SvDef::SVToolObjectType != m_objectType)
+				if (SvPb::SVToolObjectType != m_objectType)
 				{
 					Name = pSourceObject->GetName();
 				}
 				else
 				{	//To add also add the parent tool e.g. LoopTool if available
-					Name = pSourceObject->GetObjectNameBeforeObjectType(SvDef::SVToolSetObjectType);
+					Name = pSourceObject->GetObjectNameBeforeObjectType(SvPb::SVToolSetObjectType);
 				}
 			}
 			else

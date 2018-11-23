@@ -69,7 +69,7 @@ public:
 	//! \returns reference to the value object
 	//************************************
 	template <typename ELEMENT_TYPE>
-	BasicValueObjectPtr setValueObject( LPCTSTR DottedName, const ELEMENT_TYPE Value, SVObjectClass* pOwner = nullptr, SvDef::SVObjectSubTypeEnum ObjectType = SvDef::SVNotSetSubObjectType);
+	BasicValueObjectPtr setValueObject( LPCTSTR DottedName, const ELEMENT_TYPE Value, SVObjectClass* pOwner = nullptr, SvPb::SVObjectSubTypeEnum ObjectType = SvPb::SVNotSetSubObjectType);
 
 	//************************************
 	//! The method gets the value list which fit the dotted branch name
@@ -104,7 +104,7 @@ private:
 	//! \returns the created iterator
 	//************************************
 	template <typename ELEMENT_TYPE>
-	vt_const_iterator createValueObject( LPCTSTR DottedName, const ELEMENT_TYPE Value, SVObjectClass* pOwner, SvDef::SVObjectSubTypeEnum ObjectType );
+	vt_const_iterator createValueObject( LPCTSTR DottedName, const ELEMENT_TYPE Value, SVObjectClass* pOwner, SvPb::SVObjectSubTypeEnum ObjectType );
 
 	//************************************
 	//! The method attempts to find the requested dotted name

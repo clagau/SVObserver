@@ -176,7 +176,7 @@ HRESULT SVCommandInspectionGetItems::UpdateResultsWithValueData(const std::strin
 	if( nullptr != pValueObject && !rValueRef.isEntireArray())
 	{
 		//Enumeration Value objects need to return the text and not the value
-		if (SvDef::SVEnumValueObjectType == rValueRef.getObject()->GetObjectSubType())
+		if (SvPb::SVEnumValueObjectType == rValueRef.getObject()->GetObjectSubType())
 		{
 			std::string Value;
 			GetStatus = pValueObject->getValue(Value, rValueRef.getValidArrayIndex());

@@ -173,7 +173,7 @@ void SVPointValueObjectClass::WriteDefaultValues(SvOi::IObjectWriter& rWriter)
 
 void SVPointValueObjectClass::LocalInitialize()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvDef::SVPointValueObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVPointValueObjectType;
 	SetObjectAttributesAllowed( SvDef::SV_VIEWABLE | SvDef::SV_ARCHIVABLE | SvDef::SV_EMBEDABLE | SvDef::SV_PRINTABLE | SvDef::SV_DD_VALUE, SvOi::SetAttributeType::OverwriteAttribute );
 
 	SetTypeName( _T("Point") );

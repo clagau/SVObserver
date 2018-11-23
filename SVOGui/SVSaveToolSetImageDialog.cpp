@@ -30,7 +30,7 @@ namespace SvOg
 {
 	SVSaveToolSetImageDialogClass::SVSaveToolSetImageDialogClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, CWnd* pParent /*=nullptr*/)
 	: CDialog(SVSaveToolSetImageDialogClass::IDD, pParent)
-	, m_ImageController(rInspectionID, rTaskObjectID, SvDef::SVNotSetSubObjectType, false)
+	, m_ImageController(rInspectionID, rTaskObjectID, SvPb::SVNotSetSubObjectType, false)
 	{
 		//{{AFX_DATA_INIT(SVSaveToolSetImageDialogClass)
 			// NOTE: the ClassWizard will add member initialization here
