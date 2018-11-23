@@ -5434,7 +5434,7 @@ bool SVObserverApp::fileSaveAsSVX(const std::string& rFileName /*= std::string()
 			else
 			{
 				SvDef::StringVector msgList;
-				msgList.emplace_back(svxFilePath);
+				msgList.emplace_back(rFileName);
 				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ZipFileFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 				result = false;
