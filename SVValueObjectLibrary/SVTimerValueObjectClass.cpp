@@ -56,6 +56,6 @@ void SVTimerValueObjectClass::LocalInitialize()
 {
 	m_Start = SvTl::GetTimeStamp();
 	SetTypeName(_T("Timer"));
-	setOutputFormat(_T("%I64u (µs)"));
+	setOutputFormat(_T("%I64d (µs)"));
 }
 
