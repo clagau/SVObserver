@@ -320,7 +320,7 @@ SVRCRequestHandler::SVRCRequestHandler(SVRCCommand* pCommand) :
 		SvPb::GetNotificationStreamResponse>(
 		[this,pCommand](SvPb::GetNotificationStreamRequest&& req, SvRpc::Observer<SvPb::GetNotificationStreamResponse> observer, SvRpc::ServerStreamContext::Ptr ctx)
 	{
-		pCommand->RegisterNotificationStream(&m_IoRunService,req, observer,ctx);
+		pCommand->RegisterNotificationStream(req, observer,ctx);
 	});
 }
 

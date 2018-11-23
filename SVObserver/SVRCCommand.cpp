@@ -1034,12 +1034,11 @@ void SVRCCommand::GetObjectSelectorItems(const SvPb::GetObjectSelectorItemsReque
 	task.finish(std::move(Response));
 }
 
-void SVRCCommand::RegisterNotificationStream(boost::asio::io_service* pIoService,
-											 const SvPb::GetNotificationStreamRequest& rRequest,
+void SVRCCommand::RegisterNotificationStream(const SvPb::GetNotificationStreamRequest& rRequest,
 											 SvRpc::Observer<SvPb::GetNotificationStreamResponse>& rObserver,
 											 SvRpc::ServerStreamContext::Ptr ctx)
 {
-	SVVisionProcessorHelper::Instance().RegisterNotificationStream(pIoService, rRequest, rObserver, ctx);
+	SVVisionProcessorHelper::Instance().RegisterNotificationStream(rRequest, rObserver, ctx);
 }
 
 std::string SVRCCommand::GetFileNameFromFilePath(const std::string& rFilePath, const std::string& rExtension /*= std::string()*/)

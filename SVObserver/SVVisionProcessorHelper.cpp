@@ -1144,81 +1144,79 @@ HRESULT SVVisionProcessorHelper::FireNotification(long notifyType, long value, l
 		::PostMessage(AfxGetMainWnd()->m_hWnd, SV_REFRESH_STATUS_BAR, 0, 0);
 	}
 
-	if (nullptr != m_pIoService && m_bNotify.load())
-	{
-		//We need to place the message in a std::string due to the post call
-		std::string msgString {(nullptr != msg) ? msg : std::string()};
-		//All the parameters are passed by value because the function is called at a later stage
-		m_pIoService->post([this, fireNotifyType, value, msgNr, msgString] { ProcessNotifications(fireNotifyType, value, msgNr, msgString); });
-	}
-	else
-	{
-		Result = E_FAIL;
-	}
-
+	ProcessNotifications(fireNotifyType, value, msgNr, msg);
 
 	return Result;
 }
 
 
-void SVVisionProcessorHelper::ProcessNotifications(SvStl::NotificationType notifyType, long value, long msgNr, std::string msg)
+void SVVisionProcessorHelper::ProcessNotifications(SvStl::NotificationType notifyType, long value, long msgNr, LPCTSTR msg)
 {
-	if (!m_bNotify.load())
+	std::lock_guard<std::mutex> lk(m_SubscriptionsMutex);
+	for (auto it = m_Subscriptions.begin(); it != m_Subscriptions.end(); )
 	{
-		return;
-	}
-	if (m_NotificationObserver.m_OnNext == nullptr || m_pIoService == nullptr)
-	{
-		return;
-	}
-	else if (m_spServerStreamContex && m_spServerStreamContex->isCancelled())
-	{
-		m_NotificationObserver.finish();
-		m_bNotify.store(false);
-		//TODO release 
-		return;
-	}
-	if (m_NotificationObserver.m_OnNext)
-	{
+		// client either unsubscribed or disconnected. remove from list.
+		if (it->Context->isCancelled())
+		{
+			it = m_Subscriptions.erase(it);
+			continue;
+		}
+
 		SvPb::GetNotificationStreamResponse response;
-		switch (notifyType)
+		if (BuildNotificationStreamResponse(response, notifyType, value, msgNr, msg))
 		{
-			case SvStl::NotificationType::mode:
+			try
 			{
-				if(SvPb::DeviceModeType_IsValid(value))
-				{
-					response.set_currentmode(static_cast<SvPb::DeviceModeType> (value));
-				}
-				break;
+				it->Observer.onNext(std::move(response));
 			}
-			case SvStl::NotificationType::lastModified:
+			catch (const SvRpc::ConnectionLostException&)
 			{
-				response.set_lastmodified(value);
-				break;
+				// should not happen, because all streams of a connection are marked as
+				// cancelled when the client disconnects and therefore catched by the
+				// isCancelled check above. lets keep it here in case we have some
+				// race condition.
+				it = m_Subscriptions.erase(it);
+				continue;
 			}
-			case SvStl::NotificationType::message:
-			{
-				auto pMsgNotify = response.mutable_msgnotification();
-				pMsgNotify->set_type(static_cast<SvPb::MessageType>(value));
-				pMsgNotify->set_errornumber(msgNr);
-				pMsgNotify->set_messagetext(msg);
-				break;
-			}
-			case SvStl::NotificationType::loadConfig:
-			{
-				response.set_configfileloaded(msg);
-				break;
-			}
-			default:
-				return;
 		}
-		try
+
+		++it;
+	}
+}
+
+bool SVVisionProcessorHelper::BuildNotificationStreamResponse(SvPb::GetNotificationStreamResponse& response, SvStl::NotificationType notifyType, long value, long msgNr, LPCTSTR msg)
+{
+	switch (notifyType)
+	{
+		case SvStl::NotificationType::mode:
 		{
-			m_NotificationObserver.onNext(std::move(response));
+			if (SvPb::DeviceModeType_IsValid(value))
+			{
+				response.set_currentmode(static_cast<SvPb::DeviceModeType> (value));
+			}
+			return true;
 		}
-		catch (const SvRpc::ConnectionLostException&)
+		case SvStl::NotificationType::lastModified:
 		{
-			return;
+			response.set_lastmodified(value);
+			return true;
+		}
+		case SvStl::NotificationType::message:
+		{
+			auto pMsgNotify = response.mutable_msgnotification();
+			pMsgNotify->set_type(static_cast<SvPb::MessageType>(value));
+			pMsgNotify->set_errornumber(msgNr);
+			pMsgNotify->set_messagetext(msg);
+			return true;
+		}
+		case SvStl::NotificationType::loadConfig:
+		{
+			response.set_configfileloaded(msg);
+			return true;
+		}
+		default:
+		{
+			return false;
 		}
 	}
 }
@@ -1269,13 +1267,10 @@ void SVVisionProcessorHelper::SetValuesOrImagesMonitoredObjectLists(const SvDef:
 	}
 }
 
-void SVVisionProcessorHelper::RegisterNotificationStream(boost::asio::io_service* pIoService, const SvPb::GetNotificationStreamRequest& request,
+void SVVisionProcessorHelper::RegisterNotificationStream(const SvPb::GetNotificationStreamRequest& request,
 	SvRpc::Observer<SvPb::GetNotificationStreamResponse> observer,
 	SvRpc::ServerStreamContext::Ptr ctx)
 {
-	m_spServerStreamContex = ctx;
-	m_NotificationObserver = observer;
-	m_pIoService = pIoService;
-	m_bNotify.store(true);
-
+	std::lock_guard<std::mutex> lk(m_SubscriptionsMutex);
+	m_Subscriptions.push_back({std::move(observer), ctx});
 }

@@ -47,7 +47,7 @@ public:
 	void LoadConfig(const SvPb::LoadConfigRequest&, SvRpc::Task<SvPb::StandardResponse>);
 	void GetObjectSelectorItems(const SvPb::GetObjectSelectorItemsRequest&, SvRpc::Task<SvPb::GetObjectSelectorItemsResponse>);
 
-	void RegisterNotificationStream(boost::asio::io_service* pIoservice,  const SvPb::GetNotificationStreamRequest& rRequest,
+	void RegisterNotificationStream(const SvPb::GetNotificationStreamRequest& rRequest,
 		SvRpc::Observer<SvPb::GetNotificationStreamResponse>& rObserver,
 		SvRpc::ServerStreamContext::Ptr ctx);
 	

@@ -122,8 +122,7 @@ public:
 
 	void Startup(); // This method is only meant to be called by the main application class
 	void Shutdown();	// This method is only meant to be called by the main application certain class
-	void RegisterNotificationStream(boost::asio::io_service* pIoservice,
-		const SvPb::GetNotificationStreamRequest& request,
+	void RegisterNotificationStream(const SvPb::GetNotificationStreamRequest& request,
 		SvRpc::Observer<SvPb::GetNotificationStreamResponse> observer,
 		SvRpc::ServerStreamContext::Ptr ctx);
 private:
@@ -146,7 +145,8 @@ private:
 	HRESULT GetObjectDefinition(const SVObjectClass& rObj, const long p_Filter, SVDataDefinitionStruct& rDataDef) const;
 
 
-	void ProcessNotifications(SvStl::NotificationType notifyType, long value, long msgNr, std::string msg);
+	void ProcessNotifications(SvStl::NotificationType notifyType, long value, long msgNr, LPCTSTR msg);
+	bool BuildNotificationStreamResponse(SvPb::GetNotificationStreamResponse& response, SvStl::NotificationType notifyType, long value, long msgNr, LPCTSTR msg);
 
 	SVGetItemsFunctorMap m_GetItemsFunctors;
 	SVSetItemsFunctorMap m_SetItemsFunctors;
@@ -172,11 +172,14 @@ private:
 
 #pragma region Private Members
 private:
+	struct NotificationSubscription
+	{
+		SvRpc::Observer<SvPb::GetNotificationStreamResponse> Observer;
+		SvRpc::ServerStreamContext::Ptr Context;
+	};
 
-	std::atomic<bool> m_bNotify {false};
-	boost::asio::io_service* m_pIoService {nullptr};
-	SvRpc::Observer<SvPb::GetNotificationStreamResponse>  m_NotificationObserver {NULL,NULL,NULL};
-	SvRpc::ServerStreamContext::Ptr m_spServerStreamContex;
+	std::list<NotificationSubscription> m_Subscriptions;
+	std::mutex m_SubscriptionsMutex;
 #pragma endregion Private Members
 };
 
