@@ -188,7 +188,7 @@ SVObjectClass* TableObject::OverwriteEmbeddedObject(const GUID& rUniqueID, const
 		DoubleSortValueObject* pObject = nullptr;
 		// Construct new object...
 		SVObjectManagerClass::Instance().ConstructObject(DoubleSortValueObjectGuid, pObject);
-		RegisterEmbeddedObject( pObject, rEmbeddedID, pObject->GetName(), true, SvOi::SVResetItemTool );
+		RegisterEmbeddedObject( pObject, rEmbeddedID, IDS_OBJECTNAME_TABLEOBJECT_COLUMN, true, SvOi::SVResetItemTool );
 		m_ValueList.push_back(DoubleSortValuePtr{ pObject });
 	}
 
@@ -206,7 +206,8 @@ DoubleSortValuePtr TableObject::createColumnObject(SVGUID embeddedID, LPCTSTR na
 
 	if( CreateChildObject(pObject) )
 	{
-		RegisterEmbeddedObject( pObject, embeddedID, name, true, SvOi::SVResetItemTool );
+		RegisterEmbeddedObject( pObject, embeddedID, IDS_OBJECTNAME_TABLEOBJECT_COLUMN, true, SvOi::SVResetItemTool );
+		pObject->SetName(name);
 		pObject->SetArraySize(arraySize);
 		pRetObject = DoubleSortValuePtr {pObject};
 		m_ValueList.push_back(pRetObject);
