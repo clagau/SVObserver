@@ -14,7 +14,6 @@
 #include "SVSetupDialogManager.h"
 #include "SVObserver.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVCommandLibrary/SVObjectSynchronousCommandTemplate.h"
 
 #include "InspectionEngine/SVAnalyzer.h"
 #include "SVOGui/ValuesAccessor.h"
@@ -319,8 +318,7 @@ HRESULT SVSetupDialogManager::SVBarCodeAnalyzerClassSetupDialog(const SVGUID& rO
 			MultiFile = dlgProp.m_dlgBarCodeStringMatch.GetMultiFileName();
 
 			//@TODO[gra][8.00][15.01.2018]: The data controller should be moved into the dialog
-			typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
-			typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
+			typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 			Controller Values {SvOg::BoundValues{ pInspection->GetUniqueObjectID(), rObjectId }};
 			Values.Init();
 
@@ -835,8 +833,7 @@ HRESULT SVSetupDialogManager::SVPatternAnalyzerClassSetupDialog(const SVGUID& rO
 			l_pAnalyzer->m_bAngleAccuracy = GeneralPage.m_bAccuracy ? true : false;
 
 			//@TODO[gra][8.00][15.01.2018]: The data controller should be moved into the dialog
-			typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
-			typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
+			typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 			Controller Values {SvOg::BoundValues{ pInspection->GetUniqueObjectID(), rObjectId }};
 			Values.Init();
 

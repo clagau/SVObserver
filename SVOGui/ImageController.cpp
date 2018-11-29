@@ -12,7 +12,6 @@
 #include "ImageController.h"
 #include "DisplayHelper.h"
 #include "Definitions/SVObjectTypeInfoStruct.h"
-#include "SVCommandLibrary\SVObjectSynchronousCommandTemplate.h"
 #include "ObjectInterfaces\IObjectManager.h"
 #include "ObjectInterfaces\ISVImage.h"
 #include "InspectionCommands\CommandExternalHelper.h"

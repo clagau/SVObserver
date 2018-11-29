@@ -79,8 +79,8 @@ private:
 	const SVGUID m_ToolObjectID;
 	const SVGUID m_TaskObjectID;
 
-	typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
-	SvOg::DataController<ValueCommand, ValueCommand::value_type> m_Values;
+	typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
+	Controller m_Values;
 };
 
 

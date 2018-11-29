@@ -18,12 +18,8 @@
 //Moved to precompiled header: #include <string>
 #include "FormulaController.h"
 #include "InspectionCommands/BuildSelectableItems.h"
-#include "InspectionCommands/TaskObjectGetEmbeddedValues.h"
-#include "InspectionCommands/TaskObjectSetEmbeddedValues.h"
-#include "InspectionCommands/SetDefaultInputs.h"
 #include "SVObjectLibrary\SVClsIds.h"
 #include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
-#include "SVCommandLibrary\SVObjectSynchronousCommandTemplate.h"
 #include "BoundValue.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
@@ -218,18 +214,6 @@ int FormulaController::ValidateEquation(const std::string& equationString, doubl
 	}
 	return retValue;
 }
-
-HRESULT FormulaController::SetDefaultInputs()
-{
-	typedef SvCmd::SetDefaultInputs<SvOi::IInspectionProcess> Command;
-	typedef std::shared_ptr<Command> CommandPtr;
-
-	CommandPtr commandPtr(new Command(m_InspectionID));
-	SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-	HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-	return hr;
-}
-
 #pragma endregion virtual Methods IFormulaController
 
 #pragma endregion Public Methods

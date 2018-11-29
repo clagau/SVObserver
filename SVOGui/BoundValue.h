@@ -38,8 +38,8 @@ class BoundValue
 #pragma region Constructor
 public:
 	BoundValue() {};
-	BoundValue(const GUID& rEmbeddedID, const GUID& rInstanceID, const variant_t& rValue, const variant_t& rDefaultValue)
-		: m_embeddedID(rEmbeddedID), m_instanceID(rInstanceID), m_Value(rValue), m_DefaultValue(rDefaultValue)
+	BoundValue(const GUID& rInstanceID, const variant_t& rValue, const variant_t& rDefaultValue)
+		: m_instanceID(rInstanceID), m_Value(rValue), m_DefaultValue(rDefaultValue)
 	{
 	}
 
@@ -75,7 +75,6 @@ public:
 		}
 	}
 
-	const GUID& GetEmbeddedID() const { return m_embeddedID; }
 	const GUID& GetObjectID() const { return m_instanceID; }
 
 	bool isModified() const { return m_bModified; }
@@ -88,7 +87,6 @@ public:
 
 #pragma region Member Variables
 private:
-	GUID m_embeddedID {GUID_NULL};
 	GUID m_instanceID {GUID_NULL};
 	variant_t m_DefaultValue;
 	variant_t m_Value;

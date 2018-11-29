@@ -206,7 +206,7 @@ protected:
 
 #pragma region Member variables
 private:
-	SVByteVector m_ImageDIB;
+	std::string m_ImageDIB;
 	SVExtentMultiLineStructVector m_OverlayData;
 
 	ZoomHelper m_ZoomHelper;

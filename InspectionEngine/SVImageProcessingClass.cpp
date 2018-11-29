@@ -18,7 +18,6 @@
 #include "SVBarCodeBuffer.h"
 #include "SVDataBuffer.h"
 #include "SVFileSystemLibrary/SVFileNameClass.h"
-#include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVMatroxLibrary/SVMatroxImagingLibrary.h"  // has MIL includes
 #include "SVMessage/SVMessage.h"
@@ -506,38 +505,6 @@ HRESULT SVImageProcessingClass::SaveImageBuffer(LPCTSTR tstrImagePathName, SVMat
 			std::string l_strPath = tstrImagePathName;
 			Result = SVMatroxBufferInterface::Export(rHandle->GetBuffer(), l_strPath, efileFormat);
 		}
-	}
-	else
-	{
-		Result = E_FAIL;
-	}
-
-	return Result;
-}
-
-HRESULT SVImageProcessingClass::CopyImageBuffer(SVByteVector& rToDIB, const SvOi::SVImageBufferHandlePtr& rFromHandle)
-{
-	HRESULT Result(S_OK);
-
-	if (nullptr != rFromHandle)
-	{
-		Result = SVMatroxBufferInterface::CopyBuffer(rToDIB, rFromHandle->GetBuffer());
-	}
-	else
-	{
-		Result = E_FAIL;
-	}
-
-	return Result;
-}
-
-HRESULT SVImageProcessingClass::CopyImageBuffer(SVByteVector& rToDIB, const SVBitmapInfo& rToBitmapInfo, const SvOi::SVImageBufferHandlePtr& rFromHandle)
-{
-	HRESULT Result(S_OK);
-
-	if (nullptr != rFromHandle)
-	{
-		Result = SVMatroxBufferInterface::CopyBuffer(rToDIB, rToBitmapInfo, rFromHandle->GetBuffer());
 	}
 	else
 	{

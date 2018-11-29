@@ -122,4 +122,12 @@ namespace SvCmd
 
 	//Get the ppqName of the inspection
 	HRESULT getPPQName(const SvPb::GetPPQNameRequest& rRequest, SvPb::GetPPQNameResponse& rResponse);
+
+	HRESULT getValueObjectEnums(const SvPb::GetValueObjectEnumsRequest& rRequest, SvPb::GetValueObjectEnumsResponse& rResponse);
+
+	HRESULT getEmbeddedValues(const SvPb::GetEmbeddedValuesRequest& rRequest, SvPb::GetEmbeddedValuesResponse& rResponse);
+
+	HRESULT setEmbeddedValues(const SvPb::SetEmbeddedValuesRequest& rRequest, SvPb::SetEmbeddedValuesResponse& rResponse);
+
+	HRESULT getOutputRectangle(const SvPb::GetOutputRectangleRequest& rRequest, SvPb::GetOutputRectangleResponse& rResponse);
 } //namespace SvCmd

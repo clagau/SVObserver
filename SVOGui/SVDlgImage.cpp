@@ -13,8 +13,6 @@
 //Moved to precompiled header: #include <algorithm>
 #include "SVDlgImage.h"
 #include "InspectionCommands/CommandExternalHelper.h"
-#include "InspectionCommands/GetOutputRectangle.h"
-#include "SVCommandLibrary/SVObjectSynchronousCommandTemplate.h"
 #include "DisplayHelper.h"
 #include "SVProtoBuf/ConverterHelper.h"
 
@@ -395,14 +393,18 @@ namespace SvOg
 	CRect SVDlgImageClass::GetOutputRectFromImage()
 	{
 		CRect rect;
-		typedef SvCmd::GetOutputRectangle Command;
-		typedef std::shared_ptr<Command> CommandPtr;
-		CommandPtr commandPtr{ new Command(m_imageId) };
-		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_inspectionId, commandPtr);
-		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-		if (S_OK == hr)
+
+		SvPb::InspectionCmdMsgs request, response;
+		SvPb::GetOutputRectangleRequest* pGetRectRequest = request.mutable_getoutputrectanglerequest();
+
+		SvPb::SetGuidInProtoBytes(pGetRectRequest->mutable_imageid(), m_imageId);
+		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_inspectionId, &request, &response);
+		if (S_OK == hr && response.has_getoutputrectangleresponse())
 		{
-			rect = commandPtr->getRectangle();
+			rect.left = response.getoutputrectangleresponse().left();
+			rect.top = response.getoutputrectangleresponse().top();
+			rect.right = response.getoutputrectangleresponse().right();
+			rect.bottom = response.getoutputrectangleresponse().bottom();
 		}
 		return rect;
 	}

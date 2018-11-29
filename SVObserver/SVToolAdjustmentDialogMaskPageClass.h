@@ -29,8 +29,7 @@
 
 class SVToolAdjustmentDialogMaskPageClass : public CPropertyPage
 {
-	typedef SvOg::ValuesAccessor<SvOg::BoundValues> Values;
-	typedef SvOg::DataController<Values, Values::value_type> ValueController;
+	typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> ValueController;
 
 public:
 	SVToolAdjustmentDialogMaskPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SVGUID& rMaskOperatorID);

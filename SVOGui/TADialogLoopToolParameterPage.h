@@ -62,8 +62,7 @@ private:
 	long m_MaxLoopCount;
 	GUID m_InspectionID;
 	GUID m_TaskObjectID;
-	typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
-	typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
+	typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 	Controller m_Values;
 	CBitmap m_downArrowBitmap;
 };

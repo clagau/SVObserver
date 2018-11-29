@@ -73,8 +73,7 @@ void SVToolAdjustmentDialogPolarTransformPageClass::SetInspectionData()
 		UpdateData( true ); // get data from dialog
 
 		//@TODO[gra][8.00][15.01.2018]: The data controller should be used like the rest of SVOGui
-		typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
-		typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
+		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 		Controller PolarTransformValues{ SvOg::BoundValues{ m_pTool->GetInspection()->GetUniqueObjectID(), m_ImagePolarTransformID} };
 		PolarTransformValues.Init();
 

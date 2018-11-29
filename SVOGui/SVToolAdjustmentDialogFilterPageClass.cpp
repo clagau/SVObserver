@@ -20,7 +20,6 @@
 #include "SVThickeningFilterDlg.h"
 #include "Custom2FilterDlg.h"
 #include "SVWatershedFilterDlg.h"
-#include "SVCommandLibrary/SVObjectSynchronousCommandTemplate.h"
 #include "TextDefinesSvOg.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "TextDefinesSvOg.h"

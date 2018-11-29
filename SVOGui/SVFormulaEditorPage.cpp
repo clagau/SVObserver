@@ -83,11 +83,6 @@ namespace SvOg
 		m_FormulaController.reset();
 	}
 
-	void SVFormulaEditorPageClass::SetDefaultInputs()
-	{
-		m_FormulaController->SetDefaultInputs();
-	}
-
 	void SVFormulaEditorPageClass::DoDataExchange(CDataExchange* pDX)
 	{
 	CPropertyPage::DoDataExchange(pDX);

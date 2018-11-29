@@ -13,13 +13,12 @@
 //Moved to precompiled header: #include <map>
 
 #include "SVImageLibrary/SVExtentMultiLineStruct.h"
-#include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
 struct SVIPImageDataElement
 {
-	SVByteVector m_ImageDIB;
+	std::string m_ImageDIB;
 	SVExtentMultiLineStructVector m_OverlayData;
 
 	SVIPImageDataElement() : m_ImageDIB(), m_OverlayData() {}

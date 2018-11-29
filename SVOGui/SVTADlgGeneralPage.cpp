@@ -14,7 +14,6 @@
 #include "SVTADlgGeneralPage.h"
 #include "SVObjectLibrary\SVClsids.h"
 #include "ObjectInterfaces\NameValueVector.h"
-#include "SVCommandLibrary\SVObjectSynchronousCommandTemplate.h"
 #include "SVShowDependentsDialog.h"
 #pragma endregion Includes
 

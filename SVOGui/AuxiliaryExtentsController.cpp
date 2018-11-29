@@ -8,7 +8,6 @@
 #pragma region Includes
 #include "Stdafx.h"
 #include "AuxiliaryExtentsController.h"
-#include "SVCommandLibrary\SVObjectSynchronousCommandTemplate.h"
 #include "SVObjectLibrary\SVClsids.h"
 #include "InspectionCommands\CommandExternalHelper.h"
 #include "SVProtoBuf\ConverterHelper.h"

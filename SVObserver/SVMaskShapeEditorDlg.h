@@ -27,8 +27,7 @@ class SVUserMaskOperatorClass;
 
 class SVMaskShapeEditorDlg : public CDialog
 {
-	typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
-	typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
+	typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 #pragma region Construction
 public:
 	SVMaskShapeEditorDlg(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SVGUID& rMaskOperatorID, const SVGUID& rShapeMaskHelperID, CWnd* pParent = nullptr);   // standard constructor

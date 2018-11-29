@@ -66,11 +66,6 @@ namespace SvOi
 		/// \param rErrorMessages [out] Return a list of ErrorMessages.
 		/// \returns int return the position of the failure. If the validation is successful, the value will be "validateSuccessful".
 		virtual int ValidateEquation(const std::string &equationString, double& result, bool bSetValue, SvStl::MessageContainerVector& rErrorMessages) const = 0;
-
-		/**********
-		/// Set the Default Inputs
-		**********/
-		virtual HRESULT SetDefaultInputs() = 0;
 #pragma endregion Public Methods
 
 #pragma region Constants

@@ -56,8 +56,7 @@ protected:
 private:
 	const SVGUID& m_rInspectionID;
 	const SVGUID& m_filterID;
-	typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
-	typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
+	typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 	Controller m_Values;
 };
 } //namespace SvOg

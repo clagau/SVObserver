@@ -17,7 +17,6 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
 #include "TextDefinesSvOg.h"
-#include "SVCommandLibrary/SVObjectSynchronousCommandTemplate.h"
 #include "SVObjectLibrary/SVClsids.h"
 
 #include "Definitions/StringTypeDef.h"

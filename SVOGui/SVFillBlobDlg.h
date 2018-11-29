@@ -22,8 +22,7 @@ namespace SvOg
 {
 	class SVFillBlobDlg : public CDialog
 	{
-		typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
-		typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
+		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 	public:
 		SVFillBlobDlg(Controller& rValues, CWnd* pParent = nullptr);   // standard constructor
 		virtual ~SVFillBlobDlg();

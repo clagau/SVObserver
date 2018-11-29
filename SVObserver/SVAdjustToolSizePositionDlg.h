@@ -16,7 +16,6 @@
 #include "SVImageLibrary/SVImageExtentClass.h"
 #include "SVRPropertyTree/SVRPropTree.h"
 #include "SVMFCControls\SVUpDownButton.h"
-#include "SVObjectLibrary\SVObjectClass.h"
 #pragma endregion Includes
 
 #pragma region Declarations

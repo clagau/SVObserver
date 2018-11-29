@@ -65,8 +65,7 @@ protected:
 
 	const SVGUID m_InspectionID;
 	const SVGUID m_TaskObjectID;
-	typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
-	typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
+	typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 	Controller m_Values;
 #pragma endregion
 };

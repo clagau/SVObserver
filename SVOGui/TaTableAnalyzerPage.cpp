@@ -12,7 +12,6 @@
 #include "Definitions/GlobalConst.h"
 #include "Definitions/ObjectDefines.h"
 #include "Definitions/StringTypeDef.h"
-#include "SVCommandLibrary/SVObjectSynchronousCommandTemplate.h"
 #include "TextDefinesSvOg.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"

@@ -39,9 +39,6 @@ public:
 
 	static HRESULT SaveImageBuffer( LPCTSTR tstrImagePathName, SVMatroxFileTypeEnum efileFormat,const SvOi::SVImageBufferHandlePtr& rHandle );
 
-	static HRESULT CopyImageBuffer( SVByteVector& p_rToDIB, const SvOi::SVImageBufferHandlePtr& rFromHandle );
-	static HRESULT CopyImageBuffer( SVByteVector& p_rToDIB, const SVBitmapInfo& p_rToBitmapInfo, const SvOi::SVImageBufferHandlePtr& rFromHandle );
-
 	static HRESULT CreateDataBuffer( SVDataBufferInfoClass* pDataInfo );
 	static HRESULT DestroyDataBuffer( SVDataBufferInfoClass* pDataInfo );
 	static HRESULT ResizeDataBuffer( SVDataBufferInfoClass* pDataInfo, long lNewLength );

@@ -4181,7 +4181,7 @@ HRESULT SVIPDoc::GetBitmapInfo(const SVGUID& p_rImageId, SVBitmapInfo& p_rBitmap
 	return l_Status;
 }
 
-HRESULT SVIPDoc::GetImageData(const SVGUID& p_rImageId, SVByteVector& p_rImageData, SVExtentMultiLineStructVector& p_rMultiLineArray) const
+HRESULT SVIPDoc::GetImageData(const SVGUID& p_rImageId, std::string& p_rImageData, SVExtentMultiLineStructVector& p_rMultiLineArray) const
 {
 	HRESULT l_Status = S_OK;
 
@@ -4203,7 +4203,7 @@ HRESULT SVIPDoc::GetImageData(const SVGUID& p_rImageId, SVByteVector& p_rImageDa
 	return l_Status;
 }
 
-HRESULT SVIPDoc::SetImageData(const SVGUID& p_rImageId, const SVByteVector& p_rImageData, const SVExtentMultiLineStructVector& p_rMultiLineArray)
+HRESULT SVIPDoc::SetImageData(const SVGUID& p_rImageId, const std::string& p_rImageData, const SVExtentMultiLineStructVector& p_rMultiLineArray)
 {
 	HRESULT l_Status = S_OK;
 

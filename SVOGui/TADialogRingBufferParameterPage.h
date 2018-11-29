@@ -84,8 +84,7 @@ namespace SvOg
 		CButton m_ButtonImageIndex1;
 		CButton m_ButtonImageIndex2;
 		CBitmap m_downArrowBitmap;
-		typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
-		typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
+		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 		Controller m_Values;
 		ObjectSelectorController m_objectSelector;
 #pragma endregion Member Variables

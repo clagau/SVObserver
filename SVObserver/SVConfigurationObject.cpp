@@ -16,7 +16,6 @@
 #include "SVConfigurationObject.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVCommandLibrary/SVObjectAsynchronousCommandTemplate.h"
-#include "SVCommandLibrary/SVObjectSynchronousCommandTemplate.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
 #include "SVUtilityLibrary/SVGUID.h"

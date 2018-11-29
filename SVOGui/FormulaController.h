@@ -15,6 +15,7 @@
 
 #pragma region Includes
 #include "ObjectInterfaces/IFormulaController.h"
+#include "Definitions/SVObjectTypeInfoStruct.h"
 #include "DataController.h"
 #include "ValuesAccessor.h"
 #include "BoundValue.h"
@@ -56,7 +57,6 @@ public:
 	/// \return return the position of the failure. If the validation is successful, the value will be "validateSuccessful". If the reset of the object failed the value will be "resetFailed", but the string will be set (if bSetValue == true).
 	//**********
 	virtual int ValidateEquation(const std::string &equationString, double& result, bool bSetValue, SvStl::MessageContainerVector& rErrorMessages) const override;
-	virtual HRESULT SetDefaultInputs() override;
 #pragma endregion Virtual Methods (IFormulaController)
 #pragma endregion Public Methods
 
@@ -75,8 +75,7 @@ private:
 	SVGUID m_EquationID;		// Instance ID of the Equation
 	SVGUID m_EnableID;
 
-	typedef SvOg::ValuesAccessor<SvOg::BoundValues> FormulaCommand;
-	typedef SvOg::DataController<FormulaCommand, FormulaCommand::value_type> Controller;
+	typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 	Controller m_Values;
 	Controller m_EquationValues;
 #pragma endregion Member Variables

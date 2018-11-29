@@ -17,7 +17,6 @@
 #include "ObjectInterfaces\ISVOApp_Helper.h"
 #include "TextDefinesSvO.h"
 #include "InspectionCommands/CommandExternalHelper.h"
-#include "SVCommandLibrary\SVObjectSynchronousCommandTemplate.h"
 #include "SVOResource\ConstGlobalSvOr.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"

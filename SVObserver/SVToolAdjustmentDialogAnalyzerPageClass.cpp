@@ -12,10 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVToolAdjustmentDialogAnalyzerPageClass.h"
-
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVCommandLibrary/SVObjectSynchronousCommandTemplate.h"
-
 #include "InspectionEngine/SVAnalyzer.h"
 #include "SVChildrenSetupDialog.h"
 #include "SVGlobal.h"

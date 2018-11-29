@@ -1,6 +1,7 @@
 syntax = "proto3";
 package SvPb;
 
+import "Variant.proto";
 import "BasicStructure.proto";
 import "SVO-Enum.proto";
 
@@ -35,7 +36,29 @@ message TaskObjectInfo
 	SVObjectTypeEnum objecttype = 3; 
 	SVObjectSubTypeEnum objectsubtype = 4;
 	bool isvalid = 5; 
+}
+
+message NameValuePair
+{
+	bytes name = 1;
+	int32 value = 2;
 } 
+
+message ValueObjectValues
+{
+	bytes objectId = 1;
+	bytes embeddedId = 2;
+	Variant value = 3;
+	Variant defaultValue = 4;
+}
+
+message SetValueObjectValues
+{
+	ValueObjectValues values = 1;
+	bool isModified = 2;
+	bool isDefaultModified = 3;
+	int32 arrayIndex = 4;
+}
 
 message IsBeforeToolMethod
 { 
@@ -404,6 +427,51 @@ message GetPPQNameResponse
 	bytes ppqName = 1;
 }
 
+//Request the Enumerations(name/value) from a SVEnumerateValueObject
+message GetValueObjectEnumsRequest
+{
+	bytes objectId = 1;
+}
+
+message GetValueObjectEnumsResponse
+{
+	repeated NameValuePair list = 1;
+}
+
+message GetEmbeddedValuesRequest
+{
+	bytes objectId = 1;
+}
+
+message GetEmbeddedValuesResponse
+{
+	repeated ValueObjectValues list = 1;
+}
+
+message SetEmbeddedValuesRequest
+{
+	bytes objectId = 1;
+	repeated SetValueObjectValues list = 2;
+}
+
+message SetEmbeddedValuesResponse
+{
+	MessageContainerVector messages = 1; //list of messages
+}
+
+message GetOutputRectangleRequest
+{
+	bytes imageId = 1;
+}
+
+message GetOutputRectangleResponse
+{
+	int32 left = 1;
+	int32 top = 2;
+	int32 right = 3;
+	int32 bottom = 4;
+}
+
 message InspectionCmdMsgs
 {
 	oneof message
@@ -458,6 +526,14 @@ message InspectionCmdMsgs
 		ShouldInspectionResetResponse shouldInspectionResetResponse = 48;
 		GetPPQNameRequest getPPQNameRequest = 49;
 		GetPPQNameResponse getPPQNameResponse = 50;
+		GetValueObjectEnumsRequest getValueObjectEnumsRequest = 51;
+		GetValueObjectEnumsResponse getValueObjectEnumsResponse = 52;
+		GetEmbeddedValuesRequest getEmbeddedValuesRequest = 53;
+		GetEmbeddedValuesResponse getEmbeddedValuesResponse = 54;
+		SetEmbeddedValuesRequest setEmbeddedValuesRequest = 55;
+		SetEmbeddedValuesResponse setEmbeddedValuesResponse = 56;
+		GetOutputRectangleRequest getOutputRectangleRequest = 57;
+		GetOutputRectangleResponse getOutputRectangleResponse = 58;
 	}
 }
 

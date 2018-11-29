@@ -20,8 +20,7 @@ namespace SvOg
 {
 	class RangeController
 	{
-		typedef SvOg::ValuesAccessor<SvOg::BoundValues> Values;
-		typedef SvOg::DataController<Values, Values::value_type> Controller;
+		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 
 	public:
 		RangeController(const GUID& rInspectionID, const GUID& rTaskObjectID, const GUID& rRangeID = GUID_NULL);

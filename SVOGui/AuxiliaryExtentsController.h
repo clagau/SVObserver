@@ -22,8 +22,7 @@ namespace SvOg
 {
 	class AuxiliaryExtentsController : public boost::noncopyable
 	{
-		typedef ValuesAccessor<BoundValues> Values;
-		typedef DataController<Values, Values::value_type> ValuesController;
+		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> ValuesController;
 		const SVGUID m_InspectionID;
 		const SVGUID m_TaskObjectID;
 		ImageController m_ImageController;

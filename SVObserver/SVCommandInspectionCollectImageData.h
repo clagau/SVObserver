@@ -15,7 +15,6 @@
 //Moved to precompiled header: #include <memory>
 //Moved to precompiled header: #include <set>
 #include "SVImageLibrary/SVExtentMultiLineStruct.h"
-#include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "SVIPProductStruct.h"
 #include "InspectionEngine/SVCameraInfoStruct.h"
 #include "TriggerRecordController/ITriggerRecordR.h"
@@ -44,7 +43,7 @@ struct SVCommandInspectionCollectImageData
 protected:
 	HRESULT UpdateResults( SVInspectionProcess* p_pInspection, SVIPResultData& p_rResultData );
 
-	HRESULT UpdateBuffer(const SVGUID& rImageId, const SvTrc::ITriggerRecordRPtr& pTriggerRecord, SVByteVector& rImageDIB, SVExtentMultiLineStructVector& rMultiLineArray);
+	HRESULT UpdateBuffer(const SVGUID& rImageId, const SvTrc::ITriggerRecordRPtr& pTriggerRecord, std::string& rImageDIB, SVExtentMultiLineStructVector& rMultiLineArray);
 
 private:
 	SVGUID m_InspectionId;

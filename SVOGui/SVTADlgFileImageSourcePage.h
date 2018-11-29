@@ -25,9 +25,8 @@ namespace SvOg
 {
 	class SVToolAdjustmentDialogFileImageSourcePageClass : public CPropertyPage
 	{
-		typedef SvOg::ValuesAccessor<SvOg::BoundValues> Values;
-		typedef SvOg::DataController<Values, Values::value_type> ValueController;
-
+		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> ValueController;
+		
 	#pragma region Constructor
 	public:
 		SVToolAdjustmentDialogFileImageSourcePageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID);

@@ -659,8 +659,7 @@ void ToolSetView::EditToolComment(SVGUID& rToolGuid)
 	{
 		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(pToolSet->GetInspection());
 
-		typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
-		typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
+		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 		Controller Values {SvOg::BoundValues{ pInspection->GetUniqueObjectID(), rToolGuid }};
 		Values.Init();
 

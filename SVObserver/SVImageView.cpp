@@ -1985,7 +1985,7 @@ const unsigned char* SVImageViewClass::GetBitmapBits() const
 
 	if( !( m_ImageDIB.empty() ) && !( l_Info.empty() ) )
 	{
-		return &( m_ImageDIB[ l_Info.GetBitmapInfoSizeInBytes() ] );
+		return reinterpret_cast<const unsigned char*>(&( m_ImageDIB[ l_Info.GetBitmapInfoSizeInBytes() ] ));
 	}
 
 	return nullptr;

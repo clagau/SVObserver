@@ -136,8 +136,7 @@ HRESULT SVToolAdjustmentDialogThresholdPageClass::SetInspectionData()
 	if (nullptr != m_pCurrentThreshold)
 	{
 		//@TODO[gra][8.00][15.01.2018]: The data controller should be used like the rest of SVOGui
-		typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
-		typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
+		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 		Controller Values{ SvOg::BoundValues{ m_pCurrentThreshold->GetInspection()->GetUniqueObjectID(), m_pCurrentThreshold->GetUniqueObjectID() } };
 		Values.Init();
 

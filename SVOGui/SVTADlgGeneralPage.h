@@ -26,8 +26,7 @@ namespace SvOg
 {
 	class SVToolAdjustmentDialogGeneralPageClass : public CPropertyPage
 	{
-		typedef SvOg::ValuesAccessor<SvOg::BoundValues> Values;
-		typedef SvOg::DataController<Values, Values::value_type> ValuesController;
+		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> ValuesController;
 	public:
 		SVToolAdjustmentDialogGeneralPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID);
 		virtual ~SVToolAdjustmentDialogGeneralPageClass();

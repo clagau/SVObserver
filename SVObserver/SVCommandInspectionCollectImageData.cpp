@@ -156,7 +156,7 @@ HRESULT SVCommandInspectionCollectImageData::UpdateResults( SVInspectionProcess*
 	return hRet;
 }
 
-HRESULT SVCommandInspectionCollectImageData::UpdateBuffer(const SVGUID& rImageId, const SvTrc::ITriggerRecordRPtr& pTriggerRecord, SVByteVector& rImageDIB, SVExtentMultiLineStructVector& rMultiLineArray)
+HRESULT SVCommandInspectionCollectImageData::UpdateBuffer(const SVGUID& rImageId, const SvTrc::ITriggerRecordRPtr& pTriggerRecord, std::string& rImageDIB, SVExtentMultiLineStructVector& rMultiLineArray)
 {
 	HRESULT l_Status = S_OK;
 
@@ -169,19 +169,7 @@ HRESULT SVCommandInspectionCollectImageData::UpdateBuffer(const SVGUID& rImageId
 		if(nullptr != pImageBuffer && !pImageBuffer->isEmpty())
 		{
 			SVBitmapInfo BitmapInfo;
-
-			BITMAPINFOHEADER l_Header = pImage->GetImageInfo().GetBitmapInfoHeader();
-
-			BitmapInfo.Assign( l_Header.biWidth, l_Header.biHeight, l_Header.biBitCount, SVBitmapInfo::GetDefaultColorTable( l_Header.biBitCount ) );
-
-			if( BitmapInfo == pImageBuffer->getHandle()->GetBitmapInfo() )
-			{
-				l_Status = SVImageProcessingClass::CopyImageBuffer( rImageDIB, pImageBuffer->getHandle());
-			}
-			else
-			{
-				l_Status = SVImageProcessingClass::CopyImageBuffer( rImageDIB, BitmapInfo, pImageBuffer->getHandle());
-			}
+			l_Status = SVMatroxBufferInterface::CopyBufferToFileDIB(rImageDIB, BitmapInfo, pImageBuffer->getHandle()->GetBuffer(), false);
 		}
 		else
 		{

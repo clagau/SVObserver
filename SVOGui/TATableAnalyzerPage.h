@@ -132,8 +132,7 @@ namespace SvOg
 		SvUl::NameGuidList m_availableColumn;
 		std::string m_inputName; 
 
-		typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
-		typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
+		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 		std::shared_ptr<Controller> m_pValues;
 
 		SvOi::IFormulaControllerPtr m_pSelectedAddEquationFormula;

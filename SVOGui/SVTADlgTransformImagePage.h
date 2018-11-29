@@ -47,8 +47,7 @@ namespace SvOg
 		HRESULT SetInspectionData();
 
 	private:
-		typedef SvOg::ValuesAccessor<SvOg::BoundValues> Values;
-		typedef SvOg::DataController<Values, Values::value_type> ValuesController;
+		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> ValuesController;
 		ValuesController m_Values;
 	};
 } //namespace SvOg

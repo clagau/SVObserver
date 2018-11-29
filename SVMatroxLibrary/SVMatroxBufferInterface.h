@@ -99,12 +99,8 @@ public:
 	static HRESULT CopyBuffer( SVMatroxBuffer& p_rMilId, HBITMAP& p_rHbm );
 	static HRESULT CopyBuffer( HBITMAP& p_rsvDestDIB, SVMatroxBuffer& p_rFromId );
 
-	// MilHandleToDIB
-	static HRESULT CopyBuffer( SVByteVector& p_rToDIB, const SVMatroxBuffer& p_rFromId );
-	static HRESULT CopyBuffer( SVByteVector& p_rToDIB, const SVBitmapInfo& p_rToBitmapInfo, const SVMatroxBuffer& p_rFromId );
-	
 	///copies ImageBuffer to  string rToDIB starting with rToDIB[offset], ensures positive height if normalize_y = true   
-	static HRESULT CopyBufferToFileDIB(std::string& rToDib,  SVBitmapInfo& rBitMapInfo, const SVMatroxBuffer& rFromId);
+	static HRESULT CopyBufferToFileDIB(std::string& rToDib,  SVBitmapInfo& rBitMapInfo, const SVMatroxBuffer& rFromId, bool addFileHeader = true);
 	
 
 	// ****** Information 

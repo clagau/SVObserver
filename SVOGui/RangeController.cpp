@@ -13,8 +13,8 @@
 #include "RangeController.h"
 #include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
 #include "SVObjectLibrary\SVClsIds.h"
-#include "SVCommandLibrary\SVObjectSynchronousCommandTemplate.h"
 #include "SVProtoBuf/ConverterHelper.h"
+#include "ObjectInterfaces/IObjectManager.h"
 #pragma endregion Includes
 
 namespace SvOg

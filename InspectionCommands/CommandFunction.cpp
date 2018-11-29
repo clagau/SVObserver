@@ -37,6 +37,7 @@
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVProtoBuf\ConverterHelper.h"
 #include "CommandInternalHelper.h"
+#include "..\ObjectInterfaces\IEnumerateValueObject.h"
 #pragma endregion Includes
 
 namespace SvCmd
@@ -825,4 +826,142 @@ HRESULT getPPQName(const SvPb::GetPPQNameRequest& rRequest, SvPb::GetPPQNameResp
 	}
 	return hr;
 }
+
+HRESULT getValueObjectEnums(const SvPb::GetValueObjectEnumsRequest& rRequest, SvPb::GetValueObjectEnumsResponse& rResponse)
+{
+	HRESULT hr = S_OK;
+	SvOi::IEnumerateValueObject* pValueObject = dynamic_cast<SvOi::IEnumerateValueObject *>(SvOi::getObject(SvPb::GetGuidFromProtoBytes(rRequest.objectid())));
+	if (pValueObject)
+	{
+		for (const auto pairValue : pValueObject->GetEnumVector())
+		{
+			auto* pEntry = rResponse.add_list();
+			pEntry->set_name(pairValue.first);
+			pEntry->set_value(pairValue.second);
+		}
+	}
+	else
+	{
+		hr = E_POINTER;
+	}
+	return hr;
+}
+
+HRESULT getEmbeddedValues(const SvPb::GetEmbeddedValuesRequest& rRequest, SvPb::GetEmbeddedValuesResponse& rResponse)
+{
+	HRESULT Result = S_OK;
+
+	SvOi::ITaskObject* pTaskObj = dynamic_cast<SvOi::ITaskObject*> (SvOi::getObject(SvPb::GetGuidFromProtoBytes(rRequest.objectid())));
+	SVGuidVector EmbeddedVector = pTaskObj->getEmbeddedList();
+
+	for (auto const& rEntry : EmbeddedVector)
+	{
+		SvOi::IObjectClass* pObject = SvOi::getObject(rEntry);
+		SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*> (pObject);
+		if (nullptr != pValueObject)
+		{
+			_variant_t DefaultValue {pValueObject->getDefaultValue()};
+			_variant_t Value;
+			HRESULT tmpHr = pValueObject->getValue(Value);
+			if (S_OK == tmpHr)
+			{
+				auto* pElement = rResponse.add_list();
+				SvPb::SetGuidInProtoBytes(pElement->mutable_objectid(), rEntry);
+				SvPb::SetGuidInProtoBytes(pElement->mutable_embeddedid(), pObject->GetEmbeddedID());
+				ConvertVariantToProtobuf(Value, pElement->mutable_value());
+				ConvertVariantToProtobuf(DefaultValue, pElement->mutable_defaultvalue());
+			}
+			else if (E_BOUNDS == tmpHr)
+			{
+				Value.Clear();
+				auto* pElement = rResponse.add_list();
+				SvPb::SetGuidInProtoBytes(pElement->mutable_objectid(), rEntry);
+				SvPb::SetGuidInProtoBytes(pElement->mutable_embeddedid(), pObject->GetEmbeddedID());
+				ConvertVariantToProtobuf(Value, pElement->mutable_value());
+				ConvertVariantToProtobuf(DefaultValue, pElement->mutable_defaultvalue());
+			}
+			else
+			{
+				Result = tmpHr;
+				return Result;
+			}
+		}
+	}
+
+	return Result;
+}
+
+HRESULT setEmbeddedValues(const SvPb::SetEmbeddedValuesRequest& rRequest, SvPb::SetEmbeddedValuesResponse& rResponse)
+{
+	HRESULT hr = S_OK;
+	SvOi::SetValueStructVector ChangedValues;
+	SvOi::SetValueStructVector ChangedDefaultValues;
+	for (const auto& rItem : rRequest.list())
+	{
+		SvOi::IObjectClass* pObject = SvOi::getObject(SvPb::GetGuidFromProtoBytes(rItem.values().objectid()));
+		SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*> (pObject);
+		if (nullptr != pValueObject)
+		{
+			if (rItem.ismodified())
+			{
+				_variant_t value;
+				ConvertProtobufToVariant(rItem.values().value(), value);
+				ChangedValues.push_back(SvOi::SetValueStruct {pValueObject, value, rItem.arrayindex()});
+			}
+			if (rItem.isdefaultmodified())
+			{
+				// Default value has no array index
+				_variant_t value;
+				ConvertProtobufToVariant(rItem.values().defaultvalue(), value);
+				ChangedDefaultValues.push_back(SvOi::SetValueStruct {pValueObject, value, -1});
+			}
+		}
+		else
+		{
+			hr = E_POINTER;
+		}
+	}
+
+	SvOi::ITaskObject* pTaskObject = dynamic_cast<SvOi::ITaskObject*> (SvOi::getObject(SvPb::GetGuidFromProtoBytes(rRequest.objectid())));
+	if (nullptr != pTaskObject)
+	{
+		SvStl::MessageContainerVector messages = pTaskObject->validateAndSetEmbeddedValues(ChangedValues, true);
+		if (0 == messages.size())
+		{
+			messages = pTaskObject->setEmbeddedDefaultValues(ChangedDefaultValues);
+		}
+
+		rResponse.mutable_messages()->CopyFrom(setMessageContainerToMessagePB(messages));
+		if (0 != messages.size())
+		{
+			hr = E_FAIL;
+		}
+	}
+	else
+	{
+		hr = E_POINTER;
+	}
+	return hr;
+}
+
+HRESULT getOutputRectangle(const SvPb::GetOutputRectangleRequest& rRequest, SvPb::GetOutputRectangleResponse& rResponse)
+{
+	HRESULT hr = S_OK;
+
+	SvOi::ISVImage* pImage = dynamic_cast<SvOi::ISVImage*>(SvOi::getObject(SvPb::GetGuidFromProtoBytes(rRequest.imageid())));
+	if (pImage)
+	{
+		auto rect = pImage->GetOutputRectangle();
+		rResponse.set_left(rect.left);
+		rResponse.set_top(rect.top);
+		rResponse.set_right(rect.right);
+		rResponse.set_bottom(rect.bottom);
+	}
+	else
+	{
+		hr = E_POINTER;
+	}
+	return hr;
+}
+
 } //namespace SvCmd

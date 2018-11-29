@@ -15,18 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="TaskObjectGetEmbeddedValues.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="TaskObjectSetEmbeddedValues.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SetDefaultInputs.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="ValueObjectGetEnums.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="GetMaskData.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -37,9 +25,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="GetPPQSelectorList.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="GetOutputRectangle.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="AttributesAllowedFilter.h">

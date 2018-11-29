@@ -11,10 +11,6 @@
 //Moved to precompiled header: #include <guiddef.h>
 #include "BoundValue.h"
 #include "ObjectInterfaces/NameValueVector.h"
-#include "SVCommandLibrary/SVObjectSynchronousCommandTemplate.h"
-#include "InspectionCommands/TaskObjectGetEmbeddedValues.h"
-#include "InspectionCommands/TaskObjectSetEmbeddedValues.h"
-#include "InspectionCommands/ValueObjectGetEnums.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "SVMessage/SVMessage.h"
 #include "SVProtoBuf/ConverterHelper.h"
@@ -24,11 +20,10 @@
 
 namespace SvOg
 {
-template<typename Values>
 class ValuesAccessor
 {
 public:
-	typedef Values value_type;
+	typedef BoundValues value_type;
 
 #pragma region Constructor
 public:
@@ -40,22 +35,28 @@ public:
 
 #pragma region Public Methods
 public:
-	HRESULT GetValues(Values& rValues)
+	HRESULT GetValues(BoundValues& rValues)
 	{
 		const GUID& rInspectionID = rValues.GetInspectionID();
 		const GUID& rTaskID = rValues.GetTaskID();
 		rValues.clear();
 
-		typedef SvCmd::TaskObjectGetEmbeddedValues<Values> Command;
-		typedef std::shared_ptr<Command> CommandPtr;
+		SvPb::InspectionCmdMsgs request, response;
+		SvPb::GetEmbeddedValuesRequest* pGetEmbeddedValuesRequest = request.mutable_getembeddedvaluesrequest();
 
-		CommandPtr commandPtr(new Command(rInspectionID, rTaskID));
-		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(rInspectionID, commandPtr);
-		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-		if (S_OK == hr)
+		SvPb::SetGuidInProtoBytes(pGetEmbeddedValuesRequest->mutable_objectid(), rTaskID);
+		HRESULT hr = SvCmd::InspectionCommandsSynchronous(rInspectionID, &request, &response);
+		if (S_OK == hr && response.has_getembeddedvaluesresponse())
 		{
-			rValues = commandPtr->GetItems();
+			for (auto& rItem : response.getembeddedvaluesresponse().list())
+			{
+				_variant_t value, defaultValue;
+				ConvertProtobufToVariant(rItem.value(), value);
+				ConvertProtobufToVariant(rItem.defaultvalue(), defaultValue);
+				rValues[SvPb::GetGuidFromProtoBytes(rItem.embeddedid())] = {SvPb::GetGuidFromProtoBytes(rItem.objectid()), value, defaultValue};
+			}
 		}
+
 		return hr;
 	}
 
@@ -65,16 +66,37 @@ public:
 		const GUID& rTaskID = rValues.GetTaskID();
 		const GUID& rInspectionID = rValues.GetInspectionID();
 
-		typedef SvCmd::TaskObjectSetEmbeddedValues<Values> Command;
-		typedef std::shared_ptr<Command> CommandPtr;
+		SvPb::InspectionCmdMsgs request, response;
+		SvPb::SetEmbeddedValuesRequest* pSetEmbeddedValuesRequest = request.mutable_setembeddedvaluesrequest();
 
-		CommandPtr commandPtr(new Command(rTaskID, rValues));
-		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(rInspectionID, commandPtr);
-		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-		m_MessageFailList = commandPtr->getErrorMessages();
+		SvPb::SetGuidInProtoBytes(pSetEmbeddedValuesRequest->mutable_objectid(), rTaskID);
+		for (const auto& rValue : rValues)
+		{
+			auto* pEntry = pSetEmbeddedValuesRequest->add_list();
+			pEntry->set_ismodified(rValue.second.isModified());
+			pEntry->set_isdefaultmodified(rValue.second.isDefaultModified());
+			pEntry->set_arrayindex(rValue.second.GetArrayIndex());
+			SvPb::SetGuidInProtoBytes(pEntry->mutable_values()->mutable_objectid(), rValue.second.GetObjectID());
+			SvPb::SetGuidInProtoBytes(pEntry->mutable_values()->mutable_embeddedid(), rValue.first);
+			ConvertVariantToProtobuf(rValue.second.GetValue(), pEntry->mutable_values()->mutable_value());
+			ConvertVariantToProtobuf(rValue.second.GetDefaultValue(), pEntry->mutable_values()->mutable_defaultvalue());
+		}
+		HRESULT hr = SvCmd::InspectionCommandsSynchronous(rInspectionID, &request, &response);
+		if (response.has_setembeddedvaluesresponse())
+		{
+			m_MessageFailList = SvCmd::setMessageContainerFromMessagePB(response.setembeddedvaluesresponse().messages());
+		}
 
 		if (S_OK == hr)
 		{
+			//Reset modified flags
+			for (auto& rValue : rValues)
+			{
+				rValue.second.ClearModified();
+				rValue.second.ClearDefaultModified();
+				rValue.second.ClearArrayIndex();
+			}
+
 			bool bReset {doAction & PostAction::doReset};
 			bool bRunOnce {doAction & PostAction::doRunOnce};
 
@@ -108,16 +130,20 @@ public:
 
 	SvOi::NameValueVector GetEnums(const GUID& rInspectionID, const GUID& rObjectID) const
 	{
-		typedef SvCmd::ValueObjectGetEnums Command;
-		typedef std::shared_ptr<Command> CommandPtr;
+		SvPb::InspectionCmdMsgs request, response;
+		SvPb::GetValueObjectEnumsRequest* pGetObjectEnumsRequest = request.mutable_getvalueobjectenumsrequest();
 
-		CommandPtr commandPtr(new Command(rObjectID));
-		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(rInspectionID, commandPtr);
-		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-
-		if (S_OK == hr)
+		SvPb::SetGuidInProtoBytes(pGetObjectEnumsRequest->mutable_objectid(), rObjectID);
+		HRESULT hr = SvCmd::InspectionCommandsSynchronous(rInspectionID, &request, &response);
+		if (S_OK == hr && response.has_getvalueobjectenumsresponse())
 		{
-			return commandPtr->GetEnumList();
+			SvOi::NameValueVector retValue;
+			retValue.reserve(response.getvalueobjectenumsresponse().list().size());
+			for(auto& valuePair: response.getvalueobjectenumsresponse().list())
+			{
+				retValue.emplace_back(valuePair.name(), valuePair.value());
+			}
+			return retValue;
 		}
 		return SvOi::NameValueVector();
 	}

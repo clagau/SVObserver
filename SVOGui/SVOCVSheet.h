@@ -23,8 +23,7 @@ namespace SvOg
 {
 	class SVOCVSheet : public CPropertySheet
 	{
-		typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
-		typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
+		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 	public:
 		SVOCVSheet(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, CWnd* pParent = nullptr);   // standard constructor
 		virtual ~SVOCVSheet();

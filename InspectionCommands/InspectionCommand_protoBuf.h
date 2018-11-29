@@ -128,6 +128,18 @@ public:
 			case SvPb::InspectionCmdMsgs::kGetPPQNameRequest:
 				hr = getPPQName(m_pRequest->getppqnamerequest(), *m_pResponse->mutable_getppqnameresponse());
 				break;
+			case SvPb::InspectionCmdMsgs::kGetValueObjectEnumsRequest:
+				hr = getValueObjectEnums(m_pRequest->getvalueobjectenumsrequest(), *m_pResponse->mutable_getvalueobjectenumsresponse());
+				break;
+			case SvPb::InspectionCmdMsgs::kGetEmbeddedValuesRequest:
+				hr = getEmbeddedValues(m_pRequest->getembeddedvaluesrequest(), *m_pResponse->mutable_getembeddedvaluesresponse());
+				break;
+			case SvPb::InspectionCmdMsgs::kSetEmbeddedValuesRequest:
+				hr = setEmbeddedValues(m_pRequest->setembeddedvaluesrequest(), *m_pResponse->mutable_setembeddedvaluesresponse());
+				break;
+			case SvPb::InspectionCmdMsgs::kGetOutputRectangleRequest:
+				hr = getOutputRectangle(m_pRequest->getoutputrectanglerequest(), *m_pResponse->mutable_getoutputrectangleresponse());
+				break;
 			default:;
 		}
 

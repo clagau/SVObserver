@@ -42,8 +42,7 @@ namespace SvOg
 		DECLARE_MESSAGE_MAP()
 
 	private:
-		typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
-		typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
+		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 
 		const SVGUID& m_rInspectionID;
 		const SVGUID& m_rTaskObjectID;

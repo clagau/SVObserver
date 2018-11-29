@@ -17,7 +17,6 @@
     <ClInclude Include="CommandExternalHelper.h" />
     <ClInclude Include="CommandInternalHelper.h" />
     <ClInclude Include="GetMaskData.h" />
-    <ClInclude Include="GetOutputRectangle.h" />
     <ClInclude Include="GetPPQSelectorList.h" />
     <ClInclude Include="GetSelectorList.h" />
     <ClInclude Include="InspectionCommand_protoBuf.h" />
@@ -25,12 +24,8 @@
     <ClInclude Include="BuildSelectableItems.h" />
     <ClInclude Include="RangeSelectorFilter.h" />
     <ClInclude Include="SelectorOptions.h" />
-    <ClInclude Include="SetDefaultInputs.h" />
     <ClInclude Include="SetMaskData.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="TaskObjectGetEmbeddedValues.h" />
-    <ClInclude Include="TaskObjectSetEmbeddedValues.h" />
-    <ClInclude Include="ValueObjectGetEnums.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CommandFunction.cpp" />
