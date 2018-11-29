@@ -163,8 +163,8 @@ STDMETHODIMP ArchiveUpdateCallback::GetProperty(UInt32 index, PROPID propID, PRO
 					}
 				}
 			}
-
-			prop = RelativePath.c_str();
+			_bstr_t bstrPath{RelativePath.c_str()};
+			prop = bstrPath.Detach();
 			break;
 		}
 		case kpidIsDir:
@@ -212,9 +212,8 @@ STDMETHODIMP ArchiveUpdateCallback::GetStream(UInt32 index, ISequentialInStream*
 
 	CComPtr<IStream> fileStream;
 
-	WCHAR filePathStr[MAX_PATH];
-	MultiByteToWideChar(CP_UTF8, 0, rFile.c_str(), static_cast<int> (rFile.length()) + 1, filePathStr, MAX_PATH);
-	if (FAILED(SHCreateStreamOnFileEx(filePathStr, STGM_READ, FILE_ATTRIBUTE_NORMAL, FALSE, NULL, &fileStream)))
+	_bstr_t wFile{rFile.c_str()};
+	if (FAILED(SHCreateStreamOnFileEx(wFile, STGM_READ, FILE_ATTRIBUTE_NORMAL, FALSE, NULL, &fileStream)))
 	{
 		return HRESULT_FROM_WIN32(GetLastError());
 	}

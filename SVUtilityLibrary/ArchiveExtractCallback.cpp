@@ -139,9 +139,8 @@ STDMETHODIMP ArchiveExtractCallback::GetStream( UInt32 index, ISequentialOutStre
 	m_rUnzippedFiles.emplace_back(m_absPath);
 
 	CComPtr<IStream> pFileStream;
-	WCHAR filePathStr[MAX_PATH];
-	MultiByteToWideChar(CP_UTF8, 0, m_absPath.c_str(), static_cast<int> (m_absPath.length()) + 1, filePathStr, MAX_PATH);
-	SHCreateStreamOnFileEx(filePathStr, STGM_CREATE | STGM_WRITE, FILE_ATTRIBUTE_NORMAL, TRUE, NULL, &pFileStream);
+	_bstr_t wFileName{m_absPath.c_str()};
+	SHCreateStreamOnFileEx(wFileName, STGM_CREATE | STGM_WRITE, FILE_ATTRIBUTE_NORMAL, TRUE, NULL, &pFileStream);
 	if (nullptr ==  pFileStream)
 	{
 		m_absPath.clear();
@@ -213,9 +212,7 @@ void ArchiveExtractCallback::GetPropertyFilePath( UInt32 index )
 #ifdef _UNICODE
 		m_relPath = bstr;
 #else
-		char relPath[MAX_PATH];
-		int size = WideCharToMultiByte( CP_UTF8, 0, bstr, bstr.length(), relPath, MAX_PATH, NULL, NULL );
-		m_relPath.assign( relPath, size );
+		m_relPath = std::string{bstr};
 #endif
 	}
 }

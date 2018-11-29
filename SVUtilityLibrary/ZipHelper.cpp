@@ -84,8 +84,7 @@ bool makeZipFile( const std::string& rZipFileName, const SvDef::StringVector& rZ
 						if(S_OK == pSetProperties->SetProperties(PropertyNames, PropertyValues, PropertyCount))
 						{
 							CComPtr<IStream> pFileStream{nullptr};
-							WCHAR wFileName[MAX_PATH];
-							MultiByteToWideChar(CP_UTF8, 0, rZipFileName.c_str(), static_cast<int> (rZipFileName.size()) + 1, wFileName, MAX_PATH);
+							_bstr_t wFileName{rZipFileName.c_str()};
 							if (S_OK == SHCreateStreamOnFileEx(wFileName, STGM_CREATE | STGM_WRITE, FILE_ATTRIBUTE_NORMAL, TRUE, NULL, &pFileStream))
 							{
 								CComPtr<OutStreamWrapper> pOutputFile = new OutStreamWrapper(pFileStream);
@@ -134,8 +133,7 @@ bool unzipAll( const std::string& rZipFileName, const std::string& rDestinationF
 					if (S_OK == pCreateObject(&rUnzipFormat, &IID_IInArchive, reinterpret_cast<void **> (&pArchive)))
 					{
 						CComPtr<IStream> pFileStream;
-						WCHAR wFileName[MAX_PATH];
-						MultiByteToWideChar(CP_UTF8, 0, rZipFileName.c_str(), static_cast<int> (rZipFileName.size()) + 1, wFileName, MAX_PATH);
+						_bstr_t wFileName {rZipFileName.c_str()};
 						if (S_OK == SHCreateStreamOnFileEx(wFileName, STGM_READ, FILE_ATTRIBUTE_NORMAL, false, nullptr, &pFileStream))
 						{
 							CComPtr<InStreamWrapper> pInputFile = new InStreamWrapper(pFileStream);
