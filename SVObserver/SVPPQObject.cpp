@@ -3473,8 +3473,8 @@ bool SVPPQObject::FinishCamera(void *pCaller, SVODataResponseClass *pResponse)
 			::OutputDebugString(SvUl::Format(_T("Finished Camera Acquisition %s\n"), pCamera->GetName()).c_str());
 #endif
 		}
+		m_AsyncProcedure.Signal(nullptr);
 	}
-	m_AsyncProcedure.Signal(nullptr);
 
 	return l_Status;
 }
