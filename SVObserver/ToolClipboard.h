@@ -16,6 +16,7 @@
 #pragma region Includes
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
 //Forward declarations

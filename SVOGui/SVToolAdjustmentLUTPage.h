@@ -65,6 +65,7 @@ namespace SvOg
 		afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 		afx_msg void OnLowerEditLostFocus();
 		afx_msg void OnUpperEditLostFocus();
+		afx_msg void OnEditLostFocus(UINT nID);
 		//}}AFX_MSG
 		afx_msg LRESULT OnGraphRefresh( WPARAM mp1, LPARAM mp2 );
 		DECLARE_MESSAGE_MAP()
@@ -94,6 +95,9 @@ namespace SvOg
 		//************************************
 		void refreshClip();
 
+
+		void refreshStretch();
+
 		//************************************
 		// Method:    showFormulaControls
 		// Description: Show formula controls and hide the others (e.g. clip controls).
@@ -109,6 +113,8 @@ namespace SvOg
 		// Returns:   void
 		//************************************
 		void showClipControls();
+
+		void showStretchControls();
 
 		//************************************
 		// Method:    hideAllUncommonControls
@@ -135,12 +141,15 @@ namespace SvOg
 	private:
 		//{{AFX_DATA(SVToolAdjustmentDialogLUTPageClass)
 		enum { IDD = IDD_TA_LUT_DIALOG };
+		static const int MAX_STRETCH_CONTROLS = 4;
 		CSliderCtrl m_upperSlider;
 		CSliderCtrl m_lowerSlider;
+		CSliderCtrl m_stretchSliders[MAX_STRETCH_CONTROLS];
 		SvMc::SVDlgGraphClass m_LUTGraph;
 		SvMc::SVEnumerateComboClass m_LUTModeCombo;
 		CString m_strUpperClipValue;
 		CString m_strLowerClipValue;
+		CString m_strStretchValues[MAX_STRETCH_CONTROLS];
 		CLabel m_yAxisLabel;
 		BOOL m_bUseLUT;
 		BOOL m_bContinuousRecalcLUT;

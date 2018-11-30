@@ -274,3 +274,14 @@ enum SVObjectSubTypeEnum
 	SVVariantValueObjectType				= 0x0000500B;
 	DoubleSortValueObjectType				= 0x0000500C;
 }
+
+enum LUTModeEnum
+{
+	LUTIdentity = 0;
+	LUTInversion = 1;
+	LUTSign = 2;
+	LUTClip = 3;
+	LUTFormula = 4;
+	LUTFreeForm = 5;
+	LUTStretch = 6;
+}

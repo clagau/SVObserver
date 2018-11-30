@@ -21,6 +21,7 @@
 #pragma endregion Includes
 
 #pragma region Declarations
+static const std::array<SVGUID, 4> m_stretchValueGuids {SVLUTMinInputObjectGuid, SVLUTMaxInputObjectGuid, SVLUTMinOutputObjectGuid, SVLUTMaxOutputObjectGuid};
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -31,6 +32,14 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
+
+const std::vector<int> cCommonControls = {IDC_CONTINUOUS_RECALC_CHECK, IDC_LUT_MODE_COMBO, IDC_LUT_GRAPH};
+const std::vector<int> cFormulaControls = {IDC_FORMULA_BUTTON, IDC_CLIP_MODE_CHECK};
+const std::vector<int> cClipControls = {IDC_UPPER_EDIT, IDC_UPPER_SLIDER, IDC_UPPER_STATIC, IDC_LOWER_EDIT, IDC_LOWER_SLIDER, IDC_LOWER_STATIC};
+const std::vector<int> cStretchnControls = {IDC_LUT_MIN_INPUT_EDIT, IDC_LUT_MAX_INPUT_EDIT, IDC_LUT_MIN_OUTPUT_EDIT, IDC_LUT_MAX_OUTPUT_EDIT,
+IDC_LUT_MIN_INPUT_SLIDER, IDC_LUT_MAX_INPUT_SLIDER, IDC_LUT_MIN_OUTPUT_SLIDER, IDC_LUT_MAX_OUTPUT_SLIDER,
+IDC_LUT_MIN_INPUT_STATIC, IDC_LUT_MAX_INPUT_STATIC, IDC_LUT_MIN_OUTPUT_STATIC, IDC_LUT_MAX_OUTPUT_STATIC};
+
 	BEGIN_MESSAGE_MAP(SVToolAdjustmentLUTPage, CPropertyPage)
 		ON_BN_CLICKED(IDC_ACTIVATE_CHECK, OnActivateCheck)
 		ON_CBN_SELCHANGE(IDC_LUT_MODE_COMBO, OnSelChangeLutModeCombo)
@@ -44,6 +53,7 @@ namespace SvOg
 		ON_WM_HSCROLL()
 		ON_EN_KILLFOCUS(IDC_LOWER_EDIT, OnLowerEditLostFocus)
 		ON_EN_KILLFOCUS(IDC_UPPER_EDIT, OnUpperEditLostFocus)
+		ON_CONTROL_RANGE(EN_KILLFOCUS, IDC_LUT_MIN_INPUT_EDIT, IDC_LUT_MAX_OUTPUT_EDIT, OnEditLostFocus)
 		ON_MESSAGE(SV_REFRESH_DIALOG, OnGraphRefresh)
 	END_MESSAGE_MAP()
 
@@ -96,6 +106,12 @@ namespace SvOg
 		long lLowerClip = static_cast<long> (m_lowerSlider.GetPos());
 		m_Values.Set<long>(SVLUTLowerClipObjectGuid, lLowerClip);
 
+		for (int i = 0; i < MAX_STRETCH_CONTROLS; i++)
+		{
+			long value = static_cast<long> (m_stretchSliders[i].GetPos());
+			m_Values.Set<long>(m_stretchValueGuids[i], value);
+		}
+
 		m_Values.Set<bool>(SVContinuousRecalcLUTObjectGuid, m_bContinuousRecalcLUT ? true : false);
 		m_Values.Set<bool>(SVUseLUTObjectGuid, m_bUseLUT ? true : false);
 
@@ -121,11 +137,19 @@ namespace SvOg
 		//{{AFX_DATA_MAP(SVToolAdjustmentLUTPage)
 		DDX_Control(pDX, IDC_UPPER_SLIDER, m_upperSlider);
 		DDX_Control(pDX, IDC_LOWER_SLIDER, m_lowerSlider);
+		DDX_Control(pDX, IDC_LUT_MIN_INPUT_SLIDER, m_stretchSliders[0]);
+		DDX_Control(pDX, IDC_LUT_MAX_INPUT_SLIDER, m_stretchSliders[1]);
+		DDX_Control(pDX, IDC_LUT_MIN_OUTPUT_SLIDER, m_stretchSliders[2]);
+		DDX_Control(pDX, IDC_LUT_MAX_OUTPUT_SLIDER, m_stretchSliders[3]);
 		DDX_Control(pDX, IDC_LUT_GRAPH, m_LUTGraph);
 		DDX_Control(pDX, IDC_LUT_MODE_COMBO, m_LUTModeCombo);
 		DDX_Control(pDX, IDC_YAXISLABEL, m_yAxisLabel);
 		DDX_Text(pDX, IDC_UPPER_EDIT, m_strUpperClipValue);
 		DDX_Text(pDX, IDC_LOWER_EDIT, m_strLowerClipValue);
+		DDX_Text(pDX, IDC_LUT_MIN_INPUT_EDIT, m_strStretchValues[0]);
+		DDX_Text(pDX, IDC_LUT_MAX_INPUT_EDIT, m_strStretchValues[1]);
+		DDX_Text(pDX, IDC_LUT_MIN_OUTPUT_EDIT, m_strStretchValues[2]);
+		DDX_Text(pDX, IDC_LUT_MAX_OUTPUT_EDIT, m_strStretchValues[3]);
 		DDX_Check(pDX, IDC_ACTIVATE_CHECK, m_bUseLUT);
 		DDX_Check(pDX, IDC_CONTINUOUS_RECALC_CHECK, m_bContinuousRecalcLUT);
 		DDX_Check(pDX, IDC_CLIP_MODE_CHECK, m_isFormulaClip);
@@ -148,6 +172,12 @@ namespace SvOg
 		// Set Clip Slider Data...
 		m_upperSlider.SetRange( 0, 255 );
 		m_lowerSlider.SetRange( 0, 255 );
+
+		// Set Stretch Slider Data...
+		for (auto& slider : m_stretchSliders)
+		{
+			slider.SetRange(0, 255);
+		}
 
 		// Get Use Lut Flag...
 		m_bUseLUT = m_Values.Get<bool>(SVUseLUTObjectGuid);
@@ -179,23 +209,20 @@ namespace SvOg
 
 	void SVToolAdjustmentLUTPage::OnLUTFormulaButton()
 	{
-		std::string Text = SvUl::LoadStdString(IDS_FORMULA_STRING);
+		std::string Caption;
+		SvPb::InspectionCmdMsgs request, response;
+		SvPb::GetObjectParametersRequest* pGetObjectNameRequest = request.mutable_getobjectparametersrequest();
 
-		SvOi::IObjectClass* pObject = SvOi::getObject(m_rTaskObjectID);
-		SvDef::SVObjectTypeInfoStruct lutObjectInfo;
-		lutObjectInfo.ObjectType = SvPb::SVUnaryImageOperatorObjectType;
-		lutObjectInfo.SubType = SvPb::SVLUTOperatorObjectType;
-		SvOi::IObjectClass* pLUTOperator = pObject->getFirstObject(lutObjectInfo);
-
-		std::string Caption = pLUTOperator->GetName();
-		Caption += _T( " " )+ Text;
-
-		const GUID& rObjectID = pLUTOperator->GetUniqueObjectID();
-		SvDef::SVObjectTypeInfoStruct info(SvPb::SVEquationObjectType, SvPb::SVLUTEquationObjectType);
-		SVFormulaEditorSheetClass dlg( m_rInspectionID, rObjectID, info, Caption.c_str() );
-
+		SvPb::SetGuidInProtoBytes(pGetObjectNameRequest->mutable_objectid(), m_rTaskObjectID);
+		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_rInspectionID, &request, &response);
+		if (S_OK == hr && response.has_getobjectparametersresponse())
+		{
+			Caption = response.getobjectparametersresponse().name();
+		}
+		
+		Caption += _T(" ") + SvUl::LoadStdString(IDS_FORMULA_STRING);
+		SVFormulaEditorSheetClass dlg(m_rInspectionID, m_rTaskObjectID, {SvPb::SVEquationObjectType, SvPb::SVLUTEquationObjectType}, Caption.c_str());
 		dlg.DoModal();
-
 		refresh();
 	}
 
@@ -267,18 +294,15 @@ namespace SvOg
 
 		CSliderCtrl* pSlider = ( CSliderCtrl* ) pScrollBar;
 
-		if( pSlider == &m_upperSlider )
+		if (pSlider == &m_upperSlider || pSlider == &m_lowerSlider ||
+			pSlider == &m_stretchSliders[0] || pSlider == &m_stretchSliders[1] ||
+			pSlider == &m_stretchSliders[2] || pSlider == &m_stretchSliders[3])
 		{
 			refresh();
 
 			return;
 		}
-		else if( pSlider == &m_lowerSlider )
-		{
-			refresh();
 
-			return;
-		}
 
 		CPropertyPage::OnVScroll(nSBCode, nPos, pScrollBar);
 	}
@@ -289,13 +313,9 @@ namespace SvOg
 
 		CSliderCtrl* pSlider = ( CSliderCtrl* ) pScrollBar;
 
-		if( pSlider == &m_upperSlider )
-		{
-			refresh();
-
-			return;
-		}
-		else if( pSlider == &m_lowerSlider )
+		if (pSlider == &m_upperSlider || pSlider == &m_lowerSlider ||
+			pSlider == &m_stretchSliders[0] || pSlider == &m_stretchSliders[1] ||
+			pSlider == &m_stretchSliders[2] || pSlider == &m_stretchSliders[3])
 		{
 			refresh();
 
@@ -329,6 +349,22 @@ namespace SvOg
 		refresh();
 	}
 
+	void SVToolAdjustmentLUTPage::OnEditLostFocus(UINT nID)
+	{
+		int buttonIndex(nID - IDC_LUT_MIN_INPUT_EDIT);
+		if (0 <= buttonIndex && MAX_STRETCH_CONTROLS > buttonIndex)
+		{
+			int lClip = 0;
+			UpdateData(true); // Get data from dialog...
+			int valNumbers = sscanf(m_strStretchValues[buttonIndex], _T("%d"), &lClip);
+			if (1 == valNumbers)
+			{
+				m_stretchSliders[buttonIndex].SetPos(lClip);
+			}
+			refresh();
+		}		
+	}
+
 	void SVToolAdjustmentLUTPage::refresh(bool bSave /*= true*/)
 	{
 		if( bSave )
@@ -338,6 +374,7 @@ namespace SvOg
 
 		refreshLUTGraph();
 		refreshClip();
+		refreshStretch();
 
 		m_bUseLUT = m_Values.Get<bool>(SVUseLUTObjectGuid);
 
@@ -345,9 +382,9 @@ namespace SvOg
 		m_LUTModeCombo.SetCurSelItemData(lLUTMode);
 		switch( lLUTMode )
 		{
-			case 0:	// Identity...
-			case 1: // Inversion...
-			case 2: // Sign...
+			case SvPb::LUTIdentity:	// Identity...
+			case SvPb::LUTInversion: // Inversion...
+			case SvPb::LUTSign: // Sign...
 			{
 				// Deactivate Mouse Proc Func of SVDlgGraph Control...
 				m_LUTGraph.SetMousePointProcFunc(nullptr, nullptr);
@@ -355,7 +392,7 @@ namespace SvOg
 				break;
 			}
 				
-			case 3: // Clip...
+			case SvPb::LUTClip: // Clip...
 			{
 				// Deactivate Mouse Proc Func of SVDlgGraph Control...
 				m_LUTGraph.SetMousePointProcFunc(nullptr, nullptr);
@@ -363,7 +400,7 @@ namespace SvOg
 				break;
 			}
 
-			case 4: // Formula...
+			case SvPb::LUTFormula: // Formula...
 			{
 				// Deactivate Mouse Proc Func of SVDlgGraph Control...
 				m_LUTGraph.SetMousePointProcFunc(nullptr, nullptr);
@@ -372,11 +409,19 @@ namespace SvOg
 				break;
 			}
 
-			case 5: // Free Form...
+			case SvPb::LUTFreeForm: // Free Form...
 			{
 				// Set Mouse Proc Func of SVDlgGraph Control...
 				m_LUTGraph.SetMousePointProcFunc(SVLutGraphMousePointFunction, this);
 				hideAllUncommonControls();
+				break;
+			}
+
+			case SvPb::LUTStretch: // Stretch...
+			{
+				// Deactivate Mouse Proc Func of SVDlgGraph Control...
+				m_LUTGraph.SetMousePointProcFunc(nullptr, nullptr);
+				showStretchControls();
 				break;
 			}
 
@@ -419,100 +464,121 @@ namespace SvOg
 		m_lowerSlider.SetPos(static_cast<int> (lLowerClip));
 	}
 
+	void SVToolAdjustmentLUTPage::refreshStretch()
+	{
+		for (int i = 0; i < MAX_STRETCH_CONTROLS; i++)
+		{
+			long value = m_Values.Get<long>(m_stretchValueGuids[i]);
+			m_strStretchValues[i].Format(_T("%d"), value);
+			m_stretchSliders[i].SetPos(static_cast<int> (value));
+		}
+	}
+
 	void SVToolAdjustmentLUTPage::showFormulaControls()
 	{
+		std::vector<int> otherControls = cClipControls;
+		otherControls.insert(otherControls.end(), cStretchnControls.begin(), cStretchnControls.end());
+
 		CWnd* pWnd = nullptr;
+		for (const int id : otherControls)
+		{
+			if (pWnd = GetDlgItem(id))
+			{
+				pWnd->ShowWindow(SW_HIDE);
+			}
+		}
 		// Show Formula Button...
-		if( pWnd = GetDlgItem( IDC_FORMULA_BUTTON ) )
-			pWnd->ShowWindow( SW_SHOW );
-		if( pWnd = GetDlgItem( IDC_CLIP_MODE_CHECK ) )
-			pWnd->ShowWindow( SW_SHOW );
-		// Hide Clip Mode controls and others...
-		if( pWnd = GetDlgItem( IDC_UPPER_EDIT ) )
-			pWnd->ShowWindow( SW_HIDE );
-		if( pWnd = GetDlgItem( IDC_UPPER_SLIDER ) )
-			pWnd->ShowWindow( SW_HIDE );
-		if( pWnd = GetDlgItem( IDC_UPPER_STATIC ) )
-			pWnd->ShowWindow( SW_HIDE );
-		if( pWnd = GetDlgItem( IDC_LOWER_EDIT ) )
-			pWnd->ShowWindow( SW_HIDE );
-		if( pWnd = GetDlgItem( IDC_LOWER_SLIDER ) )
-			pWnd->ShowWindow( SW_HIDE );
-		if( pWnd = GetDlgItem( IDC_LOWER_STATIC ) )
-			pWnd->ShowWindow( SW_HIDE );
+		for (const int id : cFormulaControls)
+		{
+			if (pWnd = GetDlgItem(id))
+			{
+				pWnd->ShowWindow(SW_SHOW);
+			}
+		}
 	}
 
 	void SVToolAdjustmentLUTPage::showClipControls()
 	{
+		std::vector<int> otherControls = cStretchnControls;
+		otherControls.insert(otherControls.end(), cFormulaControls.begin(), cFormulaControls.end());
+
 		CWnd* pWnd = nullptr;
+		for (const int id : otherControls)
+		{
+			if (pWnd = GetDlgItem(id))
+			{
+				pWnd->ShowWindow(SW_HIDE);
+			}
+		}
+
 		// Show Clip Slider, Edit, Captions...
-		if( pWnd = GetDlgItem( IDC_UPPER_EDIT ) )
-			pWnd->ShowWindow( SW_SHOW );
-		if( pWnd = GetDlgItem( IDC_UPPER_SLIDER ) )
-			pWnd->ShowWindow( SW_SHOW );
-		if( pWnd = GetDlgItem( IDC_UPPER_STATIC ) )
-			pWnd->ShowWindow( SW_SHOW );
-		if( pWnd = GetDlgItem( IDC_LOWER_EDIT ) )
-			pWnd->ShowWindow( SW_SHOW );
-		if( pWnd = GetDlgItem( IDC_LOWER_SLIDER ) )
-			pWnd->ShowWindow( SW_SHOW );
-		if( pWnd = GetDlgItem( IDC_LOWER_STATIC ) )
-			pWnd->ShowWindow( SW_SHOW );
-		// Hide Formula Button and others...
-		if( pWnd = GetDlgItem( IDC_FORMULA_BUTTON ) )
-			pWnd->ShowWindow( SW_HIDE );
-		if( pWnd = GetDlgItem( IDC_CLIP_MODE_CHECK ) )
-			pWnd->ShowWindow( SW_HIDE );
+		for (const int id : cClipControls)
+		{
+			if (pWnd = GetDlgItem(id))
+			{
+				pWnd->ShowWindow(SW_SHOW);
+			}
+		}
+	}
+
+	void SVToolAdjustmentLUTPage::showStretchControls()
+	{
+		std::vector<int> otherControls = cClipControls;
+		otherControls.insert(otherControls.end(), cFormulaControls.begin(), cFormulaControls.end());
+
+		CWnd* pWnd = nullptr;
+		for (const int id : otherControls)
+		{
+			if (pWnd = GetDlgItem(id))
+			{
+				pWnd->ShowWindow(SW_HIDE);
+			}
+		}
+
+		for (const int id : cStretchnControls)
+		{
+			if (pWnd = GetDlgItem(id))
+			{
+				pWnd->ShowWindow(SW_SHOW);
+			}
+		}
 	}
 
 	void SVToolAdjustmentLUTPage::hideAllUncommonControls()
 	{
+		std::vector<int> allControls = cFormulaControls;
+		allControls.insert(allControls.end(), cClipControls.begin(), cClipControls.end());
+		allControls.insert(allControls.end(), cStretchnControls.begin(), cStretchnControls.end());
+
 		CWnd* pWnd = nullptr;
 		// Hide all controls...
-		if( pWnd = GetDlgItem( IDC_FORMULA_BUTTON ) )
-			pWnd->ShowWindow( SW_HIDE );
-		if( pWnd = GetDlgItem( IDC_CLIP_MODE_CHECK ) )
-			pWnd->ShowWindow( SW_HIDE );
-		if( pWnd = GetDlgItem( IDC_UPPER_EDIT ) )
-			pWnd->ShowWindow( SW_HIDE );
-		if( pWnd = GetDlgItem( IDC_UPPER_SLIDER ) )
-			pWnd->ShowWindow( SW_HIDE );
-		if( pWnd = GetDlgItem( IDC_UPPER_STATIC ) )
-			pWnd->ShowWindow( SW_HIDE );
-		if( pWnd = GetDlgItem( IDC_LOWER_EDIT ) )
-			pWnd->ShowWindow( SW_HIDE );
-		if( pWnd = GetDlgItem( IDC_LOWER_SLIDER ) )
-			pWnd->ShowWindow( SW_HIDE );
-		if( pWnd = GetDlgItem( IDC_LOWER_STATIC ) )
-			pWnd->ShowWindow( SW_HIDE );
+		for (const int id : allControls)
+		{
+			if (pWnd = GetDlgItem(id))
+			{
+				pWnd->ShowWindow(SW_HIDE);
+			}
+		}
 	}
 
 	void SVToolAdjustmentLUTPage::enableAllControls(BOOL isEnable)
 	{
 		CWnd* pWnd = nullptr;
+
+		std::vector<int> allControls = cCommonControls;
+		allControls.insert(allControls.end(), cFormulaControls.begin(), cFormulaControls.end());
+		allControls.insert(allControls.end(), cClipControls.begin(), cClipControls.end());
+		allControls.insert(allControls.end(), cStretchnControls.begin(), cStretchnControls.end());
+
 		// Set controls activation states...
-		if( pWnd = GetDlgItem( IDC_CONTINUOUS_RECALC_CHECK ) )
-			pWnd->EnableWindow( isEnable );
-		if( pWnd = GetDlgItem( IDC_LUT_MODE_COMBO ) )
-			pWnd->EnableWindow( isEnable );
-		if( pWnd = GetDlgItem( IDC_LUT_GRAPH ) )
-			pWnd->EnableWindow( isEnable );
-		if( pWnd = GetDlgItem( IDC_FORMULA_BUTTON ) )
-			pWnd->EnableWindow( isEnable );
-		if( pWnd = GetDlgItem( IDC_CLIP_MODE_CHECK ) )
-			pWnd->EnableWindow( isEnable );
-		if( pWnd = GetDlgItem( IDC_UPPER_EDIT ) )
-			pWnd->EnableWindow( isEnable );
-		if( pWnd = GetDlgItem( IDC_UPPER_SLIDER ) )
-			pWnd->EnableWindow( isEnable );
-		if( pWnd = GetDlgItem( IDC_UPPER_STATIC ) )
-			pWnd->EnableWindow( isEnable );
-		if( pWnd = GetDlgItem( IDC_LOWER_EDIT ) )
-			pWnd->EnableWindow( isEnable );
-		if( pWnd = GetDlgItem( IDC_LOWER_SLIDER ) )
-			pWnd->EnableWindow( isEnable );
-		if( pWnd = GetDlgItem( IDC_LOWER_STATIC ) )
-			pWnd->EnableWindow( isEnable );
+		for (const int id : allControls)
+		{
+			if (pWnd = GetDlgItem(id))
+			{
+				pWnd->EnableWindow(isEnable);
+			}
+		}
+
 	}
 	#pragma endregion Protected Methods
 } //namespace SvOg

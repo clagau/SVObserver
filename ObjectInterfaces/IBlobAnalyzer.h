@@ -7,12 +7,14 @@
 #pragma once
 
 #pragma region Includes
-#include "IObjectClass.h"
 #include "NameValueVector.h"
 #pragma endregion Includes
 
 namespace SvOi
 {
+class IObjectClass;
+
+
 	enum { SV_MAX_NUMBER_OF_BLOBS = 100 };
 
 	enum SVBlobFeatureEnum

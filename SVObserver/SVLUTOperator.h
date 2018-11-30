@@ -64,7 +64,13 @@ protected:
 	SVLongValueObjectClass m_upperClip;
 	// Used in Clip mode...
 	SVLongValueObjectClass m_lowerClip;
-	
+
+	// used in Stretch mode...
+	SVLongValueObjectClass m_minInput;
+	SVLongValueObjectClass m_maxInput;
+	SVLongValueObjectClass m_minOutput;
+	SVLongValueObjectClass m_maxOutput;
+
 	// Inputs:
 
 	// LUT Vector Input, calculated by LUTEquation.

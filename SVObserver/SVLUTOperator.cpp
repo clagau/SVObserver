@@ -50,6 +50,10 @@ void SVLUTOperatorClass::init()
 	RegisterEmbeddedObject( &m_lutMode, SVLUTModeObjectGuid, IDS_OBJECTNAME_LUT_MODE, false, SvOi::SVResetItemOwner  );
 	RegisterEmbeddedObject( &m_upperClip, SVLUTUpperClipObjectGuid, IDS_OBJECTNAME_LUT_UPPER_CLIP, false, SvOi::SVResetItemOwner  );
 	RegisterEmbeddedObject( &m_lowerClip, SVLUTLowerClipObjectGuid, IDS_OBJECTNAME_LUT_LOWER_CLIP, false, SvOi::SVResetItemOwner  );
+	RegisterEmbeddedObject(&m_minInput, SVLUTMinInputObjectGuid, IDS_OBJECTNAME_LUT_MIN_INPUT, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_maxInput, SVLUTMaxInputObjectGuid, IDS_OBJECTNAME_LUT_MAX_INPUT, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_minOutput, SVLUTMinOutputObjectGuid, IDS_OBJECTNAME_LUT_MIN_OUTPUT, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_maxOutput, SVLUTMaxOutputObjectGuid, IDS_OBJECTNAME_LUT_MAX_OUTPUT, false, SvOi::SVResetItemOwner);
 
 	// Set Embedded defaults...
 
@@ -77,6 +81,11 @@ void SVLUTOperatorClass::init()
 
 	// Lower Clip Value for Clip Mode...
 	m_lowerClip.SetDefaultValue( 0, true);
+
+	m_minInput.SetDefaultValue(0, true);
+	m_maxInput.SetDefaultValue(255, true);
+	m_minOutput.SetDefaultValue(0, true);
+	m_maxOutput.SetDefaultValue(255, true);
 
 	// Trivial mil lut buffer...
 	m_lutElementNumber = 0;
@@ -122,6 +131,10 @@ bool SVLUTOperatorClass::CreateObject( const SVObjectLevelCreateStruct& rCreateS
 	m_lutMode.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 	m_upperClip.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 	m_lowerClip.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_minInput.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute);
+	m_maxInput.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute);
+	m_minOutput.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute);
+	m_maxOutput.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute);
 
 	m_isCreated = bOk;
 
@@ -203,7 +216,7 @@ bool SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& rRunStatus )
 
 		switch( lLutMode )
 		{
-			case 0:	// Identity...
+			case SvPb::LUTIdentity:	// Identity...
 			{
 				// Fill lut vector with [ 0 ... ( m_lutElementNumber - 1 ) ]
 				std::vector<BYTE> byteVec;
@@ -222,7 +235,7 @@ bool SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& rRunStatus )
 			}
 			break;
 
-			case 1: // Inversion...
+			case SvPb::LUTInversion: // Inversion...
 			{
 				// Fill lut vector with [ ( m_lutElementNumber - 1 ) ... 0 ]
 				std::vector<BYTE> byteVec;
@@ -240,7 +253,7 @@ bool SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& rRunStatus )
 			}
 			break;
 
-			case 2: // Sign...
+			case SvPb::LUTSign: // Sign...
 			{
 				// Fill lut vector with [ ( m_lutElementNumber / 2 + 0 ) ( m_lutElementNumber / 2 + 1 ) ... ( m_lutElementNumber / 2 + ( m_lutElementNumber - 1 ) ) ]
 				std::vector<BYTE> byteVec;
@@ -258,14 +271,10 @@ bool SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& rRunStatus )
 			}
 			break;
 
-			case 3: // Clip...
+			case SvPb::LUTClip: // Clip...
 			{
 				// Set all LUT entries lower  than lower clip to value of lower clip.
 				// Set all LUT entries higher than upper clip to value of upper clip.
-
-				// Prepare lut vector...
-				std::vector<BYTE> byteVec;
-				byteVec.resize( m_lutElementNumber );
 
 				// Get clip values...
 				long lUpperClip = 0;
@@ -274,6 +283,10 @@ bool SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& rRunStatus )
 				{
 					return false;
 				}
+
+				// Prepare lut vector...
+				std::vector<BYTE> byteVec;
+				byteVec.resize(m_lutElementNumber);
 
 				// Clip...
 				for( long i = 0; i < m_lutElementNumber; ++ i )
@@ -299,7 +312,7 @@ bool SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& rRunStatus )
 			}
 			break;
 
-			case 4: // Formula...
+			case SvPb::LUTFormula: // Formula...
 			{
 				bool l_bOk = runFriends( rRunStatus );
 
@@ -318,10 +331,44 @@ bool SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& rRunStatus )
 			}
 			break;
 
-			case 5: // Free Form...
+			case SvPb::LUTFreeForm: // Free Form...
 				// Do nothing !
 				break;
 
+			case SvPb::LUTStretch: // Stretch...
+			{
+				// Prepare lut vector...
+				long minInput = 0, maxInput = 0, minOutput = 0, maxOutput = 0;
+				if ((S_OK != m_minInput.GetValue(minInput)) || (S_OK != m_maxInput.GetValue(maxInput)) ||
+					(S_OK != m_minOutput.GetValue(minOutput)) || (S_OK != m_maxOutput.GetValue(maxOutput)))
+				{
+					return false;
+				}
+				std::vector<BYTE> byteVec;
+				byteVec.resize(m_lutElementNumber);
+
+				if (minInput != maxInput)
+				{
+					long aMin = std::min(minOutput, maxOutput);
+					long aMax = std::max(minOutput, maxOutput);
+					double factor = static_cast<double>(maxOutput - minOutput) / (maxInput - minInput);
+					for (long i = 0; i < m_lutElementNumber; ++i)
+					{
+						long z = static_cast<long>((i - minInput) * factor + minOutput);
+						byteVec[i] = static_cast<BYTE>(std::max(std::min(z, aMax), aMin));
+					}
+				}
+				else
+				{
+					std::fill(byteVec.begin(), byteVec.end(), static_cast<BYTE>(minOutput));
+				}
+
+				if (S_OK != m_lutVector.SetArrayValues(byteVec))
+				{
+					return false;
+				}
+				break;
+			}
 			default:
 				// Unknown Mode...
 				return false;

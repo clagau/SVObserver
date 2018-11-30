@@ -999,6 +999,10 @@ extern /*const*/ GUID SVContinuousRecalcLUTObjectGuid;
 extern /*const*/ GUID SVLUTModeObjectGuid;
 extern /*const*/ GUID SVLUTUpperClipObjectGuid;
 extern /*const*/ GUID SVLUTLowerClipObjectGuid;
+extern /*const*/ GUID SVLUTMinInputObjectGuid;
+extern /*const*/ GUID SVLUTMaxInputObjectGuid;
+extern /*const*/ GUID SVLUTMaxOutputObjectGuid;
+extern /*const*/ GUID SVLUTMinOutputObjectGuid;
 
 // GUID for the SVPatternAnalyzerClass
 extern /*const*/ GUID SVPatternAnalyzerClassGuid;
