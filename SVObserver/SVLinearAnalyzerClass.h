@@ -34,8 +34,6 @@ public:
 
 	virtual HRESULT GetSelectedEdgeOverlays( SVExtentMultiLineStruct &p_MultiLine );
 
-	virtual HRESULT GetImageExtent( SVImageExtentClass &p_rsvImageExtent ) override;
-
 	virtual void addParameterForMonitorList(SvStl::MessageContainerVector& rMessages, std::back_insert_iterator<SvOi::ParametersForML> inserter) const override;
 
 	SVLinearEdgeProcessingClass* GetEdgeA();
@@ -49,6 +47,7 @@ public:
 protected:
 	virtual HRESULT onCollectOverlays(SVImageClass *p_Image, SVExtentMultiLineStructVector &p_MultiLineArray ) override;
 
+	virtual HRESULT updateImageExtent() override;
 	HRESULT GetProjectedExtent( long p_lIndex, long &p_rlBottom, SVImageExtentClass &p_rsvImageExtent );
 
 	HRESULT GetInputProfileOrientation(long& rProfileOrientation);

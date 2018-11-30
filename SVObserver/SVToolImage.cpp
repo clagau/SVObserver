@@ -50,7 +50,7 @@ void SVImageToolClass::init()
 	RegisterEmbeddedObject( &outputOffsetBPoint, SVOffsetBPointObjectGuid, IDS_OBJECTNAME_OFFSETBPOINT, false, SvOi::SVResetItemNone );
 	RegisterEmbeddedObject( &outputOperator, SVArithmeticOperatorObjectGuid, IDS_OBJECTNAME_ARITHMETICOPERATOR, false, SvOi::SVResetItemOwner);
 
-	m_svToolExtent.SetTranslation(SvDef::SVExtentTranslationFigureShift);
+	m_toolExtent.SetTranslation(SvDef::SVExtentTranslationFigureShift);
 
 	// Register SourceImageNames Value Object
 	RegisterEmbeddedObject( &m_SourceImageNames, SVSourceImageNamesGuid, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool );
@@ -156,19 +156,16 @@ bool SVImageToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStr
 	return bOk;
 }
 
-SVTaskObjectClass *SVImageToolClass::GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint )
+SVTaskObjectClass *SVImageToolClass::GetObjectAtPoint(const SVPoint<double>& rPoint)
 {
-	SVImageExtentClass l_svExtents;
+	SVTaskObjectClass *pObject {nullptr};
 
-	SVTaskObjectClass *l_psvObject = nullptr;
-
-	if( S_OK == m_svToolExtent.GetImageExtent( l_svExtents ) &&
-	    SvDef::SVExtentLocationPropertyUnknown != l_svExtents.GetLocationPropertyAt( p_rsvPoint ) )
+	if (SvDef::SVExtentLocationPropertyUnknown != GetImageExtent().GetLocationPropertyAt(rPoint))
 	{
-		l_psvObject = this;
+		pObject = this;
 	}
 
-	return l_psvObject;
+	return pObject;
 }
 
 bool SVImageToolClass::DoesObjectHaveExtents() const
@@ -180,11 +177,9 @@ HRESULT SVImageToolClass::SetImageExtent(const SVImageExtentClass& rImageExtent)
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	SVExtentFigureStruct l_svFigure;
+	const SVExtentFigureStruct& rFigure = rImageExtent.GetFigure();
 
-	rImageExtent.GetFigure(l_svFigure);
-
-	if ( (l_svFigure.m_svTopLeft.m_dPositionX >= 0) && (l_svFigure.m_svTopLeft.m_dPositionY >= 0) )
+	if ( (rFigure.m_svTopLeft.m_x >= 0) && (rFigure.m_svTopLeft.m_y >= 0) )
 	{
 		l_hrOk = SVToolClass::SetImageExtent( rImageExtent );
 	}
@@ -250,47 +245,50 @@ HRESULT SVImageToolClass::UpdateTranslation()
 	long	l_lValue =		0;
 	bool	extentChanged = false;
 
-	HRESULT l_hrOK =		S_FALSE;
+	HRESULT result{S_OK};
 
-	SVImageExtentClass toolImageExtents;
+	SVImageExtentClass toolImageExtents = GetImageExtent();
 
-	if( S_OK == outputOperator.GetValue(l_lValue) )
+	if( S_OK == outputOperator.GetValue(l_lValue))
 	{
 		//change translation type on extents to match operator if:
 		//			Height Double, Flip Horizontal of Flip Vertical
-		GetImageExtent	(toolImageExtents);
 		double	heightScaleFactor = 1.0;
 		
 		if ( l_lValue == SvDef::SVImageOperatorDoubleHeight )
 		{
-			l_hrOK = toolImageExtents.SetTranslation (SvDef::SVExtentTranslationDoubleHeight);
+			toolImageExtents.SetTranslation(SvDef::SVExtentTranslationDoubleHeight);
 			heightScaleFactor = 2.0;
-			toolImageExtents.SetExtentProperty (SvDef::SVExtentPropertyHeightScaleFactor, heightScaleFactor);
+			toolImageExtents.SetExtentProperty(SvDef::SVExtentPropertyHeightScaleFactor, heightScaleFactor);
 			extentChanged = true;
 		}
 		else if ( l_lValue == SvDef::SVImageOperatorFlipVertical )
 		{
-			l_hrOK = toolImageExtents.SetTranslation(SvDef::SVExtentTranslationFlipVertical);
+			toolImageExtents.SetTranslation(SvDef::SVExtentTranslationFlipVertical);
 			extentChanged = true;
 		}
 		else if ( l_lValue == SvDef::SVImageOperatorFlipHorizontal )
 		{
-			l_hrOK = toolImageExtents.SetTranslation(SvDef::SVExtentTranslationFlipHorizontal);
+			toolImageExtents.SetTranslation(SvDef::SVExtentTranslationFlipHorizontal);
 			extentChanged = true;
 		}
 		else
 		{
-			l_hrOK = toolImageExtents.SetTranslation(SvDef::SVExtentTranslationFigureShift);
+			toolImageExtents.SetTranslation(SvDef::SVExtentTranslationFigureShift);
 			extentChanged = true;
 		}
-	} // if( S_OK == outputOperator.GetValue(l_lValue)  )
-
-	if ((true == extentChanged) && (S_OK == l_hrOK))
+	}
+	else
 	{
-		SetImageExtent(toolImageExtents);
+		result = E_FAIL;
 	}
 
-	return l_hrOK;
+	if ((true == extentChanged) && (S_OK == result))
+	{
+		result = SetImageExtent(toolImageExtents);
+	}
+
+	return result;
 }
 
 SVStringValueObjectClass* SVImageToolClass::GetInputImageNames()
@@ -303,7 +301,7 @@ HRESULT SVImageToolClass::SetImageExtentToParent()
 	HRESULT l_hrOk = S_OK;
 	SVImageExtentClass NewExtent;
 
-	l_hrOk = m_svToolExtent.UpdateExtentToParentExtents( NewExtent );
+	l_hrOk = m_toolExtent.UpdateExtentToParentExtents( NewExtent );
 
 	if( S_OK == l_hrOk )
 	{

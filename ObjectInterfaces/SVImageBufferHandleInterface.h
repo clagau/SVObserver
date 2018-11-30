@@ -14,7 +14,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <memory>
 #include "SVUtilityLibrary/SVBitmapInfo.h"
-#include "SVUtilityLibrary/SVPOINT.h"
+#include "SVUtilityLibrary/SVPoint.h"
 #pragma endregion Includes
 
 class SVMatroxBuffer;
@@ -29,7 +29,7 @@ namespace SvOi
 		virtual bool empty() const = 0;
 		virtual void clear() = 0;
 
-		virtual SVPoint GetPositionPoint() const = 0;
+		virtual SVPoint<long> GetPositionPoint() const = 0;
 		virtual SVBitmapInfo GetBitmapInfo() const = 0;
 		virtual unsigned char* GetBufferAddress() const = 0;
 

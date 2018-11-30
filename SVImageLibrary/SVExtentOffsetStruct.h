@@ -12,8 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVExtentPointStruct.h"
-
+#include "SVUtilityLibrary/SVPoint.h"
 #pragma endregion Includes
 
 class SVImageClass;
@@ -58,8 +57,8 @@ struct SVExtentOffsetStruct
 		m_bIsLinear = true;
 		m_bAlwaysUpdate = false;
 
-		m_svRotationPoint.Initialize();
-		m_svOffset.Initialize();
+		m_svRotationPoint.clear();
+		m_svOffset.clear();
 
 		m_dRotationAngle = 0.0;
 
@@ -74,8 +73,8 @@ struct SVExtentOffsetStruct
 	bool m_bIsLinear;
 	bool m_bAlwaysUpdate;
 
-	SVExtentPointStruct m_svRotationPoint;
-	SVExtentPointStruct m_svOffset;
+	SVPoint<double> m_svRotationPoint;
+	SVPoint<double> m_svOffset;
 
 	double m_dRotationAngle;
 };

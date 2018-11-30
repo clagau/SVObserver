@@ -24,7 +24,7 @@ public:
 	bool empty() const;
 	void clear();
 
-	virtual SVPoint GetPositionPoint() const override;
+	virtual SVPoint<long> GetPositionPoint() const override;
 	virtual SVBitmapInfo GetBitmapInfo() const override;
 	virtual unsigned char* GetBufferAddress() const override;
 

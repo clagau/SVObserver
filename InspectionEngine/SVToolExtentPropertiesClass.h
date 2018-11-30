@@ -30,7 +30,7 @@ public:
 	HRESULT GetProperties( SVImageExtentClass &rExtents ) const;
 
 	HRESULT GetExtentObject( SvDef::SVExtentPropertyEnum eProperty, SvOi::IValueObject *&rpValueObject ) const;
-	HRESULT SetExtentObject( SvDef::SVExtentPropertyEnum eProperty, SvOi::IValueObject *pValueObject );
+	void SetExtentObject( SvDef::SVExtentPropertyEnum eProperty, SvOi::IValueObject *pValueObject );
 
 	HRESULT GetPropertyInfo( SvDef::SVExtentPropertyEnum eProperty, SVExtentPropertyInfoStruct& rInfo ) const;
 	HRESULT SetPropertyInfo( SvDef::SVExtentPropertyEnum eProperty, const SVExtentPropertyInfoStruct& rInfo );

@@ -892,11 +892,11 @@ BOOL SVObjectScriptParserSVXClass::ExtractValue( SVObjectAttributeClass& dataObj
 
 		case SV_DPOINT_Type:
 		{
-			SVDPointClass pointValue;
-			_stscanf( rExpressionStack.GetAt( riIndex++ ), "%lf", &pointValue.x );
+			SVPoint<double> pointValue;
+			_stscanf( rExpressionStack.GetAt( riIndex++ ), "%lf", &pointValue.m_x );
 			// Next expression on stack is a comma!!!
 			riIndex++;
-			_stscanf( rExpressionStack.GetAt( riIndex ), "%lf", &pointValue.y );
+			_stscanf( rExpressionStack.GetAt( riIndex ), "%lf", &pointValue.m_y );
 
 			bOk = dataObject.AddData( pointValue );
 

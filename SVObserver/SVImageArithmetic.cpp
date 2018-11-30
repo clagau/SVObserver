@@ -196,7 +196,7 @@ bool SVImageArithmeticClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Message
 			return false;
 		}
 
-		SVPoint offsetA;
+		SVPoint<long> offsetA;
 		if( S_OK != pOffsetAPoint->GetValue( offsetA ) )
 		{
 			if (nullptr != pErrorMessages)
@@ -222,7 +222,7 @@ bool SVImageArithmeticClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Message
 			return false;
 		}
 
-		SVPoint offsetB;
+		SVPoint<long> offsetB;
 		if( S_OK != pOffsetBPoint->GetValue( offsetB ) )
 		{
 			if (nullptr != pErrorMessages)

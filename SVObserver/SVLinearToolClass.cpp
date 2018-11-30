@@ -57,11 +57,11 @@ bool SVLinearToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateSt
 	{
 		if( l_bValue )
 		{
-			bOk &= S_OK == m_svToolExtent.SetTranslation( SvDef::SVExtentTranslationProfile );
+			m_toolExtent.SetTranslation(SvDef::SVExtentTranslationProfile);
 		}
 		else
 		{
-			bOk &= S_OK == m_svToolExtent.SetTranslation( SvDef::SVExtentTranslationProfileShift );
+			m_toolExtent.SetTranslation(SvDef::SVExtentTranslationProfileShift);
 		}
 	}
 	UINT Attributes = SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE | SvDef::SV_PRINTABLE;
@@ -99,30 +99,30 @@ bool SVLinearToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 	{
 		if( UseProfileRotation )
 		{
-			if( m_svToolExtent.GetTranslation() != SvDef::SVExtentTranslationProfile )
+			if( m_toolExtent.GetTranslation() != SvDef::SVExtentTranslationProfile )
 			{
 				m_voProfileOrientation.setValue( std::string( _T("Horizontal") ) );
 
-				hrOk = m_svToolExtent.SetLinearTranslation(SvDef::SVExtentTranslationProfile);
+				hrOk = m_toolExtent.SetLinearTranslation(SvDef::SVExtentTranslationProfile);
 			}
 		}
 		else
 		{
-			if( m_svToolExtent.GetTranslation() != SvDef::SVExtentTranslationProfileShift )
+			if( m_toolExtent.GetTranslation() != SvDef::SVExtentTranslationProfileShift )
 			{
 				m_svRotationAngle.SetValue( 0.0 );
 
-				hrOk = m_svToolExtent.SetLinearTranslation(SvDef::SVExtentTranslationProfileShift);
+				hrOk = m_toolExtent.SetLinearTranslation(SvDef::SVExtentTranslationProfileShift);
 			}
 		}
 
 		SVExtentPropertyInfoStruct info;
 
-		if( S_OK == m_svToolExtent.GetExtentPropertyInfo( SvDef::SVExtentPropertyRotationAngle, info ) )
+		if( S_OK == m_toolExtent.GetExtentPropertyInfo( SvDef::SVExtentPropertyRotationAngle, info ) )
 		{
 			info.bHidden = ! UseProfileRotation;
 
-			if( S_OK != m_svToolExtent.SetExtentPropertyInfo( SvDef::SVExtentPropertyRotationAngle, info ) )
+			if( S_OK != m_toolExtent.SetExtentPropertyInfo( SvDef::SVExtentPropertyRotationAngle, info ) )
 			{
 				hrOk = S_FALSE;
 			}
@@ -147,23 +147,21 @@ bool SVLinearToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 
 	if ( Result )
 	{
-		SVImageExtentClass l_svExtents;
+		//This update call is required for the image extents which may have changed above
+		updateImageExtent();
 
-		if ( S_OK == GetImageExtent( l_svExtents ) )
+		if(GetImageExtent().hasFigure())
 		{
-			SVExtentFigureStruct l_svFigure;
+			SVExtentFigureStruct rFigure = GetImageExtent().GetFigure();
 
-			if ( S_OK == l_svExtents.GetFigure( l_svFigure ) )
+			if( m_ExtentLeft.ObjectAttributesAllowed() != SvDef::SV_NO_ATTRIBUTES )
 			{
-				if( m_ExtentLeft.ObjectAttributesAllowed() != SvDef::SV_NO_ATTRIBUTES )
-				{
-					m_ExtentLeft.SetValue( l_svFigure.m_svTopLeft.m_dPositionX );
-				}
+				m_ExtentLeft.SetValue(rFigure.m_svTopLeft.m_x);
+			}
 				
-				if( m_ExtentTop.ObjectAttributesAllowed() != SvDef::SV_NO_ATTRIBUTES )
-				{
-					m_ExtentTop.SetValue( l_svFigure.m_svTopLeft.m_dPositionY );
-				}
+			if( m_ExtentTop.ObjectAttributesAllowed() != SvDef::SV_NO_ATTRIBUTES )
+			{
+				m_ExtentTop.SetValue(rFigure.m_svTopLeft.m_y);
 			}
 		}
 		else
@@ -185,7 +183,7 @@ HRESULT SVLinearToolClass::SetImageExtentToParent()
 	HRESULT l_hrOk = S_OK;
 	SVImageExtentClass NewExtent;
 
-	l_hrOk = m_svToolExtent.UpdateExtentToParentExtents( NewExtent );
+	l_hrOk = m_toolExtent.UpdateExtentToParentExtents( NewExtent );
 
 	if( S_OK == l_hrOk )
 	{
@@ -194,19 +192,16 @@ HRESULT SVLinearToolClass::SetImageExtentToParent()
 	return l_hrOk;
 }
 
-SVTaskObjectClass* SVLinearToolClass::GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint )
+SVTaskObjectClass* SVLinearToolClass::GetObjectAtPoint(const SVPoint<double>& rPoint)
 {
-	SVImageExtentClass l_svExtents;
+	SVTaskObjectClass *pObject {nullptr};
 
-	SVTaskObjectClass *l_psvObject = nullptr;
-
-	if( S_OK == m_svToolExtent.GetImageExtent( l_svExtents ) &&
-	    SvDef::SVExtentLocationPropertyUnknown != l_svExtents.GetLocationPropertyAt( p_rsvPoint ) )
+	if (SvDef::SVExtentLocationPropertyUnknown != GetImageExtent().GetLocationPropertyAt(rPoint))
 	{
-		l_psvObject = this;
+		pObject = this;
 	}
 
-	return l_psvObject;
+	return pObject;
 }
 
 bool SVLinearToolClass::DoesObjectHaveExtents() const
@@ -330,10 +325,10 @@ void SVLinearToolClass::init()
 	m_voProfileOrientation.SetDefaultValue( "Horizontal", true);
 	m_voUseProfileRotation.SetDefaultValue( BOOL(true), true);
 
-	m_svToolExtent.SetTranslation( SvDef::SVExtentTranslationProfile );
-	m_svToolExtent.SetExtentObject( SvDef::SVExtentPropertyPositionPointX, &m_svRotationPointX );
-	m_svToolExtent.SetExtentObject( SvDef::SVExtentPropertyPositionPointY, &m_svRotationPointY );
-	m_svToolExtent.SetExtentObject( SvDef::SVExtentPropertyRotationAngle, &m_svRotationAngle );
+	m_toolExtent.SetTranslation( SvDef::SVExtentTranslationProfile );
+	m_toolExtent.SetExtentObject( SvDef::SVExtentPropertyPositionPointX, &m_svRotationPointX );
+	m_toolExtent.SetExtentObject( SvDef::SVExtentPropertyPositionPointY, &m_svRotationPointY );
+	m_toolExtent.SetExtentObject( SvDef::SVExtentPropertyRotationAngle, &m_svRotationAngle );
 
 	// Populate the available analyzer list
 	SVClassInfoStruct analyzerClassInfo;

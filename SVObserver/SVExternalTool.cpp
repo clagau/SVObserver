@@ -38,14 +38,9 @@ bool SVExternalTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStruc
 	return bOk;
 }
 
-SVTaskObjectClass *SVExternalTool::GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint )
+SVTaskObjectClass *SVExternalTool::GetObjectAtPoint(const SVPoint<double>& rPoint)
 {
 	return nullptr;
-}
-
-HRESULT SVExternalTool::GetImageExtent(SVImageExtentClass& rImageExtent)
-{
-	return E_FAIL;
 }
 
 HRESULT SVExternalTool::UpdateImageWithExtent()

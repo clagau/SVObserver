@@ -351,7 +351,7 @@ bool SVImageClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 HRESULT SVImageClass::RebuildStorage(SvStl::MessageContainerVector *pErrorMessages)
 {
 	HRESULT hr = S_OK;
-	
+
 	if (m_LastReset <= m_LastUpdate)
 	{
 		// One of the use cases for RebuildStorage() is, when a Tool is added 
@@ -387,14 +387,14 @@ HRESULT SVImageClass::RebuildStorage(SvStl::MessageContainerVector *pErrorMessag
 	return hr;
 }
 
-SVImageExtentClass SVImageClass::GetImageExtents() const
+const SVImageExtentClass& SVImageClass::GetImageExtents() const
 {
 	return m_ImageInfo.GetExtents();
 }
 
-HRESULT SVImageClass::GetImageExtentsToFit(SVImageExtentClass p_svInExtent, SVImageExtentClass &p_rsvOutExtent)
+HRESULT SVImageClass::GetImageExtentsToFit(SVImageExtentClass inExtent, SVImageExtentClass &rOutExtent)
 {
-	HRESULT l_hrOk = m_ImageInfo.GetImageExtentsToFit(p_svInExtent, p_rsvOutExtent);
+	HRESULT l_hrOk = m_ImageInfo.GetImageExtentsToFit(inExtent, rOutExtent);
 
 	return l_hrOk;
 }
@@ -409,31 +409,24 @@ HRESULT SVImageClass::UpdateFromParentInformation(SvStl::MessageContainerVector 
 
 		if (nullptr != l_pParentImage && (m_LastReset < l_pParentImage->GetLastResetTimeStamp() || m_LastReset < m_LastUpdate))
 		{
-			SVImageExtentClass l_ImageExtent = GetImageExtents();
+			SVImageExtentClass imageExtent = GetImageExtents();
 			SVImagePropertiesClass l_ImageProperties = m_ImageInfo.GetImageProperties();
 			SVImageInfoClass l_ImageInfo = l_pParentImage->GetImageInfo();
 
 			l_ImageInfo.SetOwnerImage(GetUniqueObjectID());
 
-			Result = l_ImageInfo.SetImageProperties(l_ImageProperties);
+			l_ImageInfo.SetImageProperties(l_ImageProperties);
 
 			if (m_ImageType == SvDef::SVImageTypeEnum::SVImageTypeDependent)
 			{
-				l_ImageExtent = l_ImageInfo.GetExtents();
+				imageExtent = l_ImageInfo.GetExtents();
 
-				SVExtentPositionClass l_Position = l_ImageExtent.GetPosition();
-
-				Result = l_Position.SetExtentProperty(SvDef::SVExtentPropertyPositionPoint, 0.0);
-
-				if (S_OK == Result)
-				{
-					Result = l_ImageExtent.SetPosition(l_Position);
-				}
+				Result = imageExtent.SetExtentProperty(SvDef::SVExtentPropertyPositionPoint, SVPoint<double>(0.0, 0.0));
 			}
 
 			if (S_OK == Result)
 			{
-				Result = l_ImageInfo.SetExtents(l_ImageExtent);
+				Result = l_ImageInfo.SetExtents(imageExtent);
 			}
 
 			if (S_OK == Result)
@@ -470,22 +463,19 @@ HRESULT SVImageClass::UpdateFromToolInformation()
 	HRESULT l_Status = S_OK;
 
 	SVGUID ToolID;
-	SVImageExtentClass l_ToolExtent = m_ImageInfo.GetExtents();
+	SVImageExtentClass toolExtent = m_ImageInfo.GetExtents();
 
 	// When initialized from CreateObject(), tool is nullptr.
 	SVTaskObjectClass*	pParentTask = dynamic_cast <SVTaskObjectClass*> (GetTool());
 	if (nullptr != pParentTask)
 	{
-		SVImageExtentClass TempExtent;
-
 		if ((SvDef::SVImageTypeEnum::SVImageTypeMain != m_ImageType) &&
 			(SvDef::SVImageTypeEnum::SVImageTypeIndependent != m_ImageType) &&
 			(SvDef::SVImageTypeEnum::SVImageTypeDependent != m_ImageType) &&
-			(S_OK == pParentTask->GetImageExtent(TempExtent)))
+			pParentTask->DoesObjectHaveExtents())
 		{
-
-
 			RECT l_Rect;
+			SVImageExtentClass tempExtent = pParentTask->GetImageExtent();
 
 			if (SvDef::SVImageTypeEnum::SVImageTypeLogical == m_ImageType)
 			{
@@ -497,19 +487,19 @@ HRESULT SVImageClass::UpdateFromToolInformation()
 				// The usage that this is specifically excluded for is for 
 				// creating a logical ROI buffer, which should not reflect the 
 				// output buffer translation.
-				TempExtent.SetTranslation(SvDef::SVExtentTranslationShift);
-				l_Status = TempExtent.GetLogicalRectangle(l_Rect);
+				tempExtent.SetTranslation(SvDef::SVExtentTranslationShift);
+				l_Status = tempExtent.GetLogicalRectangle(l_Rect);
 			}
 			else
 			{
-				l_Status = TempExtent.GetOutputRectangle(l_Rect);
+				l_Status = tempExtent.GetOutputRectangle(l_Rect);
 			}
 
 			if (S_OK == l_Status)
 			{
 				if (0 < (l_Rect.bottom - l_Rect.top + 1) && 0 < (l_Rect.right - l_Rect.left + 1))
 				{
-					l_ToolExtent = TempExtent;
+					toolExtent = tempExtent;
 				}
 			}
 		}
@@ -537,7 +527,7 @@ HRESULT SVImageClass::UpdateFromToolInformation()
 
 	if ((SvDef::SVImageTypeEnum::SVImageTypeMain != m_ImageType) && (SvDef::SVImageTypeEnum::SVImageTypeIndependent != m_ImageType))
 	{
-		l_Status = m_ImageInfo.SetExtents(l_ToolExtent);
+		l_Status = m_ImageInfo.SetExtents(toolExtent);
 
 		if (S_OK == l_Status)
 		{
@@ -589,7 +579,7 @@ HRESULT SVImageClass::UpdateChild(const SVGUID& rChildID, const SVImageInfoClass
 			}
 			else
 			{
-				l_hrOk = E_FAIL; 
+				l_hrOk = E_FAIL;
 			}
 		}
 		else
@@ -1188,35 +1178,26 @@ SvTrc::IImagePtr SVImageClass::getImageToWrite(const SvTrc::ITriggerRecordRWPtr&
 	return pImage;
 }
 
-/*
-Updated method to use GetParentImage() method which validates the Parent Image pointer attribute.
-The Parent Image attribute should not be used unless it is validated first.
-*/
-HRESULT SVImageClass::TranslateFromOutputSpaceToImage(SVImageClass* p_pImage, SVExtentPointStruct p_InPt, SVExtentPointStruct& p_OutPt)
+HRESULT SVImageClass::TranslateFromOutputSpaceToImage(SVImageClass* pImage, SVPoint<double> inPoint, SVPoint<double>& rOutPoint) const
 {
 	HRESULT l_hr = E_FAIL;
 
-	p_OutPt.Initialize();
+	rOutPoint.clear();
 
-	if (nullptr != p_pImage)
+	if (nullptr != pImage)
 	{
-		SVImageClass* l_pImage = this;
-		SVImageExtentClass l_Extents;
-		SVExtentPointStruct l_svPoint;
-
+		const SVImageClass* pCurrentImage {this};
 		do
 		{
-			l_Extents = l_pImage->GetImageExtents();
-			l_Extents.TranslateFromOutputSpace(p_InPt, p_InPt);
+			//This translation needs to be done for each image until the required parent image is reached
+			const SVImageExtentClass rExtents = pCurrentImage->GetImageExtents();
+			rExtents.TranslateFromOutputSpace(inPoint, inPoint);
+			pCurrentImage = pCurrentImage->GetParentImage();
+		} while (pImage != pCurrentImage && nullptr != pCurrentImage);
 
-			l_pImage = l_pImage->GetParentImage();
-		} 
-		while (p_pImage != l_pImage && l_pImage != this && l_pImage);
-
-		if (p_pImage == l_pImage)
+		if (pImage == pCurrentImage)
 		{
-			p_OutPt = p_InPt;
-
+			rOutPoint = inPoint;
 			l_hr = S_OK;
 		}
 	}
@@ -1346,7 +1327,7 @@ void SVImageClass::setInspectionPosForTrc()
 bool SVImageClass::UpdateTRCBuffers(SvStl::MessageContainerVector *pErrorMessages)
 {
 	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
-	{ 
+	{
 		//[MZA][8.10][26.06.2018] In Run-mode it is not valid to updated TRC-Buffer. Return true to avoid abort of the run.
 		return true;
 	}

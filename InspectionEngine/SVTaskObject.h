@@ -49,13 +49,14 @@ public:
 
 	virtual bool isInputImage(const SVGUID& rImageGuid) const override;
 
-	virtual SVTaskObjectClass* GetObjectAtPoint(const SVExtentPointStruct &p_rsvPoint);
+	virtual SVTaskObjectClass* GetObjectAtPoint(const SVPoint<double>& rPoint);
 	virtual bool DoesObjectHaveExtents() const;
-	virtual HRESULT GetImageExtent(SVImageExtentClass& rImageExtent);
+	const SVImageExtentClass& GetImageExtent() const { return m_imageExtent; }
 	virtual HRESULT SetImageExtent(const SVImageExtentClass& rImageExtent);
 	virtual HRESULT SetImageExtentToParent();
 	virtual HRESULT SetImageExtentToFit(const SVImageExtentClass& rImageExtent);
-	virtual HRESULT GetFilteredImageExtentPropertyList(SVExtentPropertyListType& p_rPropertyList);
+	virtual HRESULT updateImageExtent() {return S_OK;}
+	virtual HRESULT GetFilteredImageExtentPropertyList(SVExtentPropertyVector& p_rPropertyList);
 	virtual HRESULT GetPropertyInfo(SvDef::SVExtentPropertyEnum p_eProperty, SVExtentPropertyInfoStruct& p_rInfo) const;
 
 
@@ -245,6 +246,8 @@ protected:
 	// outputInterfaceList.
 	SvOl::SVInputInfoListClass m_inputInterfaceList;
 
+	SVImageExtentClass m_imageExtent;	//NOTE! this object is directly accessed by m_toolExtent (SVToolClass) via reference
+
 	bool m_bUseOverlays;
 
 	SvStl::MessageContainerVector m_ResetErrorMessages;  ///The list of task messages
@@ -254,5 +257,5 @@ private:
 	//The next two parameter are used only for the method FindNextInputImageInfo to save the input-list to avoid to rebuild it every run.
 	mutable SvOl::SVInputInfoListClass m_svToolInputList;
 	mutable long m_lLastToolInputListIndex = -1;
-};	// end class SVTaskObjectClass
+};
 

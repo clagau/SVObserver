@@ -14,8 +14,8 @@
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
 #include "Definitions/SVExtentEnums.h"
-#include "SVExtentPointStruct.h"
 #include "SVExtentSizeStruct.h"
+#include "SVUtilityLibrary/SVPoint.h"
 #pragma endregion Includes
 
 struct SVExtentFigureStruct  
@@ -28,12 +28,12 @@ struct SVExtentFigureStruct
 	const SVExtentFigureStruct& operator = ( const SVExtentFigureStruct &p_rsvValue );
 	const SVExtentFigureStruct& operator = ( RECT p_oRect );
 
-	const SVExtentFigureStruct& operator += ( const SVExtentPointStruct& p_rsvOffset );
-	const SVExtentFigureStruct& operator -= ( const SVExtentPointStruct& p_rsvOffset );
+	const SVExtentFigureStruct& operator += ( const SVPoint<double>& rOffset );
+	const SVExtentFigureStruct& operator -= ( const SVPoint<double>& rOffset );
 
 	HRESULT Initialize();
 
-	HRESULT IsPointOverFigure( const SVExtentPointStruct& p_rPoint ) const;
+	HRESULT IsPointOverFigure( const SVPoint<double>& rPoint ) const;
 
 	HRESULT GetRect(RECT& p_rRect) const;
 	RECT Rect() const;
@@ -47,14 +47,14 @@ struct SVExtentFigureStruct
 
 	SvDef::SVExtentShapeEnum m_eShape;
 
-	SVExtentPointStruct m_svTopLeft;
-	SVExtentPointStruct m_svTopRight;
-	SVExtentPointStruct m_svBottomRight;
-	SVExtentPointStruct m_svBottomLeft;
-	SVExtentPointStruct m_svCenterLeft;
-	SVExtentPointStruct m_svCenterRight;
-	SVExtentPointStruct m_svTopCenter;
-	SVExtentPointStruct m_svBottomCenter;
-	SVExtentPointStruct m_svCenter;
+	SVPoint<double> m_svTopLeft;
+	SVPoint<double> m_svTopRight;
+	SVPoint<double> m_svBottomRight;
+	SVPoint<double> m_svBottomLeft;
+	SVPoint<double> m_svCenterLeft;
+	SVPoint<double> m_svCenterRight;
+	SVPoint<double> m_svTopCenter;
+	SVPoint<double> m_svBottomCenter;
+	SVPoint<double> m_svCenter;
 
 };

@@ -106,14 +106,14 @@ bool SVLinearImageOperatorListClass::Run(SVRunStatusClass& rRunStatus, SvStl::Me
 {
 	clearRunErrorMessages();
 
-	SVImageExtentClass l_svImageExtent;
 	SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
-	bool bRetVal = (pTool && S_OK == pTool->GetImageExtent(l_svImageExtent));
+	bool result = nullptr != pTool;
+	const SVImageExtentClass&  rImageExtent = result ? pTool->GetImageExtent() : SVImageExtentClass{};
 
 	BOOL UseRotation = true;
-	bRetVal = bRetVal && (S_OK == getUseRotationAngle(UseRotation));
+	result = result && (S_OK == getUseRotationAngle(UseRotation));
 
-	if (!bRetVal)
+	if (!result)
 	{
 		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 		m_RunErrorMessages.push_back(Msg);
@@ -123,27 +123,27 @@ bool SVLinearImageOperatorListClass::Run(SVRunStatusClass& rRunStatus, SvStl::Me
 	if (nullptr == pInputImage)
 	{
 		// Signal something is wrong...
-		bRetVal = false;
+		result = false;
 		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 		m_RunErrorMessages.push_back(Msg);
 	}
 		SvTrc::IImagePtr pOutputBuffer = m_OutputImage.getImageToWrite(rRunStatus.m_triggerRecord);
 
-	if (bRetVal)
+	if (result)
 	{
 		if (UseRotation)
 		{
 			SvTrc::IImagePtr pInputBuffer = (nullptr != pInputImage) ? pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord) : nullptr;
-			bRetVal = RunLocalRotation(rRunStatus, pInputBuffer, pOutputBuffer, l_svImageExtent);
+			result = RunLocalRotation(rRunStatus, pInputBuffer, pOutputBuffer, rImageExtent);
 		}
 		else
 		{
 			SvTrc::IImagePtr pInputImageBuffer = m_LogicalROIImage.getImageReadOnly(rRunStatus.m_triggerRecord);
-			bRetVal = RunLocal(rRunStatus, pInputImageBuffer, pOutputBuffer);
+			result = RunLocal(rRunStatus, pInputImageBuffer, pOutputBuffer);
 		}
 	}
 
-	if (bRetVal)
+	if (result)
 	{
 		SVDataBufferInfoClass& rDataBufferInfo = m_svProfileResultData.GetDataBufferInfo();
 
@@ -151,7 +151,7 @@ bool SVLinearImageOperatorListClass::Run(SVRunStatusClass& rRunStatus, SvStl::Me
 
 		if (0 == m_aulLineData.size() || S_OK != getInputProfileOrientation(ProjectAngle))
 		{
-			bRetVal = false;
+			result = false;
 			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 			m_RunErrorMessages.push_back(Msg);
 		}
@@ -159,7 +159,7 @@ bool SVLinearImageOperatorListClass::Run(SVRunStatusClass& rRunStatus, SvStl::Me
 		double dMin(9999999.0);
 		double dMax(0.0);
 
-		if (bRetVal)
+		if (result)
 		{
 			double l_dProjectHeight = 0.0;
 			SVMatroxBuffer buffer;
@@ -173,11 +173,11 @@ bool SVLinearImageOperatorListClass::Run(SVRunStatusClass& rRunStatus, SvStl::Me
 
 			if (0 == ProjectAngle)
 			{
-				l_svImageExtent.GetExtentProperty(SvDef::SVExtentPropertyHeight, l_dProjectHeight);
+				rImageExtent.GetExtentProperty(SvDef::SVExtentPropertyHeight, l_dProjectHeight);
 			}
 			else
 			{
-				l_svImageExtent.GetExtentProperty(SvDef::SVExtentPropertyWidth, l_dProjectHeight);
+				rImageExtent.GetExtentProperty(SvDef::SVExtentPropertyWidth, l_dProjectHeight);
 			}
 
 			if (l_dProjectHeight == 0.0 || l_dProjectHeight == 1.0)
@@ -205,12 +205,12 @@ bool SVLinearImageOperatorListClass::Run(SVRunStatusClass& rRunStatus, SvStl::Me
 				}
 			}
 
-			bRetVal = (S_OK == m_svMinThreshold.SetValue(dMin)) && bRetVal;
-			bRetVal = (S_OK == m_svMaxThreshold.SetValue(dMax)) && bRetVal;
+			result = (S_OK == m_svMinThreshold.SetValue(dMin)) && result;
+			result = (S_OK == m_svMaxThreshold.SetValue(dMax)) && result;
 
-			bRetVal = (S_OK == m_svLinearData.SetArrayValues(m_svArray)) && bRetVal;
-			ASSERT(bRetVal);
-			if (!bRetVal)
+			result = (S_OK == m_svLinearData.SetArrayValues(m_svArray)) && result;
+			ASSERT(result);
+			if (!result)
 			{
 				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetValueFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 				m_RunErrorMessages.push_back(Msg);
@@ -223,7 +223,7 @@ bool SVLinearImageOperatorListClass::Run(SVRunStatusClass& rRunStatus, SvStl::Me
 		pErrorMessages->insert(pErrorMessages->end(), m_RunErrorMessages.begin(), m_RunErrorMessages.end());
 	}
 
-	if (!bRetVal)
+	if (!result)
 	{
 		// Something was wrong...
 
@@ -239,7 +239,7 @@ bool SVLinearImageOperatorListClass::Run(SVRunStatusClass& rRunStatus, SvStl::Me
 	dwValue = rRunStatus.GetState();
 	m_statusTag.SetValue(dwValue);
 
-	return bRetVal;
+	return result;
 }
 
 HRESULT SVLinearImageOperatorListClass::getUseRotationAngle(BOOL& rUseRotationAngle)
@@ -315,8 +315,7 @@ HRESULT SVLinearImageOperatorListClass::UpdateLineExtentData()
 	// This is the new Absolute Extent of the Image
 	SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
 	if (nullptr != pTool &&
-		S_OK == pTool->GetImageExtent(l_svExtents) &&
-		S_OK == l_svExtents.GetOutputRectangle(l_oRect) &&
+		S_OK == pTool->GetImageExtent().GetOutputRectangle(l_oRect) &&
 		(S_OK == getInputProfileOrientation(projAngle)))
 	{
 		if (0 == projAngle)

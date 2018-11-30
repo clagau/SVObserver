@@ -190,7 +190,7 @@ SVExternalToolTask::SVExternalToolTask( SVObjectClass* POwner, int StringResourc
 		imageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, 8 );
 		imageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatMono8 ); 
 
-		imageInfo.SetExtentProperty( SvDef::SVExtentPropertyOutputPositionPoint, 0 );
+		imageInfo.SetExtentProperty( SvDef::SVExtentPropertyOutputPositionPoint, SVPoint<double>(0.0, 0.0));
 		imageInfo.SetExtentProperty( SvDef::SVExtentPropertyWidth, 100 );
 		imageInfo.SetExtentProperty( SvDef::SVExtentPropertyHeight, 100 );
 
@@ -617,7 +617,7 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 				imageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, 8 );
 				imageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatMono8 ); 
 
-				imageInfo.SetExtentProperty( SvDef::SVExtentPropertyOutputPositionPoint, 0 );
+				imageInfo.SetExtentProperty( SvDef::SVExtentPropertyOutputPositionPoint, SVPoint<double>(0.0, 0.0));
 				imageInfo.SetExtentProperty( SvDef::SVExtentPropertyWidth, 100 );
 				imageInfo.SetExtentProperty( SvDef::SVExtentPropertyHeight, 100 );
 
@@ -765,10 +765,8 @@ bool SVExternalToolTask::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 				SVImageClass* pInputImage = GetInputImage(i, true);
 				if ( pInputImage )
 				{
-					SVImageExtentClass l_InputImageExtents(pInputImage->GetImageExtents());
-
 					CRect rectInput;
-					l_InputImageExtents.GetOutputRectangle( rectInput );
+					pInputImage->GetImageExtents().GetOutputRectangle(rectInput);
 
 					CRect rectPrevious(m_aPreviousInputImageRect[i]);
 					
@@ -1285,7 +1283,7 @@ HRESULT SVExternalToolTask::GetImageInfo(const SVImageDefinitionStruct* pDefinit
 	rInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, 8 ); 
 	rInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, pDefinitionStruct->eImageFormat ); 
 
-	rInfo.SetExtentProperty( SvDef::SVExtentPropertyOutputPositionPoint, 0 );
+	rInfo.SetExtentProperty( SvDef::SVExtentPropertyOutputPositionPoint, SVPoint<double>(0.0, 0.0));
 	rInfo.SetExtentProperty( SvDef::SVExtentPropertyWidth, pDefinitionStruct->lWidth );
 	rInfo.SetExtentProperty( SvDef::SVExtentPropertyHeight, pDefinitionStruct->lHeight );
 

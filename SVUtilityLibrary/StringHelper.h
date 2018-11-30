@@ -119,8 +119,8 @@ namespace SvUl
 	/// \param  [in] A list of objects
 	/// \returns std::string New created object
 	//************************************
-	std::string Format( LPCTSTR pFormat, ... );
-	std::string Format( const wchar_t* pFormat, ... );
+	std::string Format(LPCSTR pFormat, ...); //NOTE! Output maximum is 2000 characters
+	std::string Format(LPCWSTR pFormat, ...); //NOTE! Output maximum is 2000 characters
 
 	//************************************
 	/// Check if string can convert to a number and return this if possible.

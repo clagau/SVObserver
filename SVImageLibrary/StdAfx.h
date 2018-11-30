@@ -47,17 +47,15 @@
 //! Precompiled headers section
 //************************************
 #pragma region Precompiled Headers
-#include <Windows.h>
-//#include <afx.h>
-//#include <afxwin.h>
-//#include <afxtempl.h>
+#include <windows.h>
 
+#define _USE_MATH_DEFINES
+#include <cmath>
 #include <concrt.h>			//Used by static library
 #include <comutil.h>		//Used by static library
 #include <ctime>			//Used by static library
 #include <deque>			//Used by static library
 #include <fstream>
-#include <math.h>
 #include <map>
 #include <memory>
 #include <set>				//Used by static library

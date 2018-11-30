@@ -109,7 +109,7 @@ bool SVTransformationToolClass::ResetObject(SvStl::MessageContainerVector *pErro
 }
 
 
-SVTaskObjectClass *SVTransformationToolClass::GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint )
+SVTaskObjectClass* SVTransformationToolClass::GetObjectAtPoint( const SVPoint<double>& rPoint )
 {
 	return nullptr;
 }
@@ -123,7 +123,7 @@ HRESULT SVTransformationToolClass::UpdateImageWithExtent()
 {
 	HRESULT l_Status = S_OK;
 
-	l_Status = m_svToolExtent.UpdateImageWithExtent( SVToolExtentClass::SVTransformationToolExtent );
+	l_Status = m_toolExtent.UpdateImageWithExtent( SVToolExtentClass::SVTransformationToolExtent );
 
 	return l_Status;
 }

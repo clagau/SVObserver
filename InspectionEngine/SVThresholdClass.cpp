@@ -493,9 +493,9 @@ bool SVThresholdClass::Rebuild()
 			double l_dHeight = 0.0;
 
 			SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
-			if ( pTool && S_OK == pTool->GetImageExtent( l_svExtents ) &&
-				S_OK == l_svExtents.GetExtentProperty( SvDef::SVExtentPropertyOutputWidth, l_dWidth ) &&
-				S_OK == l_svExtents.GetExtentProperty( SvDef::SVExtentPropertyOutputHeight, l_dHeight ) )
+			if ( nullptr != pTool && 
+				S_OK == pTool->GetImageExtent().GetExtentProperty( SvDef::SVExtentPropertyOutputWidth, l_dWidth ) &&
+				S_OK == pTool->GetImageExtent().GetExtentProperty( SvDef::SVExtentPropertyOutputHeight, l_dHeight ) )
 			{
 				// Recalculate pixel number...
 				m_pixelNumber = ( ( __int64 ) l_dWidth ) * ( ( __int64 ) l_dHeight );

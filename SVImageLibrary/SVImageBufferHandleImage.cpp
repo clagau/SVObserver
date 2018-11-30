@@ -38,16 +38,16 @@ void SVImageBufferHandleImage::clear()
 	m_Buffer.clear();
 }
 
-SVPoint SVImageBufferHandleImage::GetPositionPoint() const
+SVPoint<long> SVImageBufferHandleImage::GetPositionPoint() const
 {
-	SVPoint l_Point;
+	SVPoint<long> result;
 
 	if (!(m_Buffer.empty()))
 	{
-		SVMatroxBufferInterface::GetPositionPoint(l_Point, m_Buffer);
+		SVMatroxBufferInterface::GetPositionPoint(result, m_Buffer);
 	}
 
-	return l_Point;
+	return result;
 }
 
 SVBitmapInfo SVImageBufferHandleImage::GetBitmapInfo() const

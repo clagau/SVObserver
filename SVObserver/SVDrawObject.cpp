@@ -66,11 +66,11 @@ const SVDrawObjectClass &SVDrawObjectClass::operator=( const SVDrawObjectClass& 
 
 void SVDrawObjectClass::AddExtentLineData( SVExtentLineStruct p_svLine, int PenStyle )
 {
-	long l_lCount = static_cast<long> (p_svLine.m_svPointArray.size());
+	long l_lCount = static_cast<long> (p_svLine.m_PointVector.size());
 
 	for( long l = 0; l < l_lCount; l++ )
 	{
-		AddPoint( p_svLine.m_svPointArray[l] );
+		AddPoint(static_cast<POINT> (p_svLine.m_PointVector[l]));
 	}
 
 	SetDrawPen( TRUE, PenStyle, 1, p_svLine.m_dwColor );

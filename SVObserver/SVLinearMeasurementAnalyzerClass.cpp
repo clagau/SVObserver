@@ -233,10 +233,8 @@ bool SVLinearMeasurementAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvSt
 {
 	bool Result = __super::onRun( rRunStatus, pErrorMessages ) && ValidateEdgeA(pErrorMessages) && ValidateEdgeB(pErrorMessages);
 
-	SVDPointClass DPointA, DPointB;
-	SVExtentPointStruct EdgePointA;
-	SVExtentPointStruct EdgePointB;
-	SVDPointClass CenterPoint;
+	SVPoint<double> edgePointA;
+	SVPoint<double> edgePointB;
 	double DistanceA( 0.0 );
 	double DistanceB( 0.0 );
 
@@ -254,7 +252,7 @@ bool SVLinearMeasurementAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvSt
 	{
 		SVImageExtentClass l_svExtents;
 
-		if ( S_OK != GetEdgeA()->GetOutputEdgePoint(EdgePointA) )
+		if ( S_OK != GetEdgeA()->GetOutputEdgePoint(edgePointA) )
 		{
 			rRunStatus.SetFailed();
 		}
@@ -264,7 +262,7 @@ bool SVLinearMeasurementAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvSt
 			rRunStatus.SetFailed();
 		}
 
-		if ( S_OK != GetEdgeB()->GetOutputEdgePoint(EdgePointB) )
+		if ( S_OK != GetEdgeB()->GetOutputEdgePoint(edgePointB) )
 		{
 			rRunStatus.SetFailed();
 		}
@@ -274,32 +272,26 @@ bool SVLinearMeasurementAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvSt
 			rRunStatus.SetFailed();
 		}
 
-		Result &= S_OK == GetImageExtent( l_svExtents ) &&
-				S_OK == l_svExtents.TranslateFromOutputSpace(EdgePointA, EdgePointA) &&
-				S_OK == l_svExtents.TranslateFromOutputSpace(EdgePointB, EdgePointB);
+		Result &= S_OK == GetImageExtent().TranslateFromOutputSpace(edgePointA, edgePointA) &&
+				S_OK == GetImageExtent().TranslateFromOutputSpace(edgePointB, edgePointB);
 
 		SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
-		Result &= pTool && S_OK == pTool->GetImageExtent( l_svExtents ) &&
-				S_OK == l_svExtents.TranslateFromOutputSpace(EdgePointA, EdgePointA) &&
-				S_OK == l_svExtents.TranslateFromOutputSpace(EdgePointB, EdgePointB);
+		Result &= pTool && S_OK == pTool->GetImageExtent().TranslateFromOutputSpace(edgePointA, edgePointA) &&
+				S_OK == pTool->GetImageExtent().TranslateFromOutputSpace(edgePointB, edgePointB);
 
-		DPointA.x = EdgePointA.m_dPositionX;
-		DPointA.y = EdgePointA.m_dPositionY;
-
-		DPointB.x = EdgePointB.m_dPositionX;
-		DPointB.y = EdgePointB.m_dPositionY;
-
-
-		CenterPoint.x = DPointA.x + ((DPointB.x - DPointA.x) / 2.0);
-		CenterPoint.y = DPointA.y + ((DPointB.y - DPointA.y) / 2.0);
+		SVPoint<double> CenterPoint
+		{
+			edgePointA.m_x + ((edgePointB.m_x - edgePointA.m_x) / 2.0),
+			edgePointA.m_y + ((edgePointB.m_y - edgePointA.m_y) / 2.0)
+		};
 
 		double Width = fabs( DistanceB - DistanceA + 1.0 );
 
 		Result = ( S_OK == m_svLinearDistanceA.SetValue(DistanceA) ) && Result;
 		Result = ( S_OK == m_svLinearDistanceB.SetValue(DistanceB) ) && Result;
 		
-		Result = ( S_OK == mdpEdgeA.SetValue(DPointA) ) && Result;
-		Result = ( S_OK == mdpEdgeB.SetValue(DPointB) ) && Result;
+		Result = ( S_OK == mdpEdgeA.SetValue(edgePointA) ) && Result;
+		Result = ( S_OK == mdpEdgeB.SetValue(edgePointB) ) && Result;
 		Result = ( S_OK == mdpCenter.SetValue(CenterPoint) ) && Result;
 		Result = ( S_OK == mdWidth.SetValue(Width) ) && Result;
 	}

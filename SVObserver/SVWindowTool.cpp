@@ -193,7 +193,7 @@ bool SVWindowToolClass::SetDefaultFormulas(SvStl::MessageContainerVector *pError
 
 HRESULT SVWindowToolClass::SetImageExtent(const SVImageExtentClass& rImageExtent)
 {
-	HRESULT l_hrOk = m_svToolExtent.ValidExtentAgainstParentImage( rImageExtent );
+	HRESULT l_hrOk = m_toolExtent.ValidExtentAgainstParentImage( rImageExtent );
 
 	if( S_OK == l_hrOk )
 	{
@@ -208,7 +208,7 @@ HRESULT SVWindowToolClass::SetImageExtentToParent()
 	HRESULT l_hrOk = S_OK;
 	SVImageExtentClass NewExtent;
 
-	l_hrOk = m_svToolExtent.UpdateExtentToParentExtents( NewExtent );
+	l_hrOk = m_toolExtent.UpdateExtentToParentExtents( NewExtent );
 
 	if( S_OK == l_hrOk )
 	{
@@ -222,24 +222,21 @@ HRESULT SVWindowToolClass::SetImageExtentToFit( const SVImageExtentClass& rImage
 {
 	HRESULT l_hrOk = S_OK;
 
-	l_hrOk = m_svToolExtent.UpdateExtentAgainstParentImage( rImageExtent );
+	l_hrOk = m_toolExtent.UpdateExtentAgainstParentImage( rImageExtent );
 
 	return l_hrOk;
 }
 
-SVTaskObjectClass *SVWindowToolClass::GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint )
+SVTaskObjectClass* SVWindowToolClass::GetObjectAtPoint(const SVPoint<double>& rPoint )
 {
-	SVImageExtentClass l_svExtents;
+	SVTaskObjectClass *pObject{nullptr};
 
-	SVTaskObjectClass *l_psvObject = nullptr;
-
-	if( S_OK == m_svToolExtent.GetImageExtent( l_svExtents ) &&
-		SvDef::SVExtentLocationPropertyUnknown  != l_svExtents.GetLocationPropertyAt( p_rsvPoint ) )
+	if (SvDef::SVExtentLocationPropertyUnknown != GetImageExtent().GetLocationPropertyAt(rPoint))
 	{
-		l_psvObject = this;
+		pObject = this;
 	}
 
-	return l_psvObject;
+	return pObject;
 }
 
 bool SVWindowToolClass::DoesObjectHaveExtents() const

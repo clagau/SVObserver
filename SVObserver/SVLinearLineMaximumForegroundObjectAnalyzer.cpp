@@ -233,56 +233,43 @@ bool SVLinearMaximumForegroundObjectLineAnalyzerClass::ResetObject(SvStl::Messag
 	return __super::ResetObject(pErrorMessages) && ValidateEdgeA(pErrorMessages) && ValidateEdgeB(pErrorMessages);
 }
 
-HRESULT SVLinearMaximumForegroundObjectLineAnalyzerClass::GetSelectedEdgeOverlays( SVExtentMultiLineStruct &p_MultiLine )
+HRESULT SVLinearMaximumForegroundObjectLineAnalyzerClass::GetSelectedEdgeOverlays( SVExtentMultiLineStruct& rMultiLine )
 {
-	double l_dDistance = 0.0;
+	double dDistance = 0.0;
 
-	SVImageExtentClass l_svAnalyzerExtents;
-
-	HRESULT l_hrOk = GetImageExtent( l_svAnalyzerExtents );
-
-	if( S_OK == l_hrOk && nullptr != GetEdgeA() && 
-	    ( S_OK == m_svLinearDistanceA.GetValue( l_dDistance ) ) )
+	if(nullptr != GetEdgeA() && S_OK == m_svLinearDistanceA.GetValue( dDistance ))
 	{
-		SVExtentLineStruct svLine;
+		SVExtentLineStruct line;
 
-		if( S_OK == GetEdgeA()->GetEdgeOverlayFromDistance( l_dDistance, svLine ) )
+		if( S_OK == GetEdgeA()->GetEdgeOverlayFromDistance( dDistance, line ) )
 		{
-			l_svAnalyzerExtents.TranslateFromOutputSpace( svLine, svLine );
+			GetImageExtent().TranslateFromOutputSpace( line, line );
 
-			p_MultiLine.m_svLineArray.push_back( svLine );
-
-			l_hrOk = S_OK;
+			rMultiLine.m_svLineArray.push_back( line );
 		}
 	}
 
-	if( S_OK == l_hrOk && nullptr != GetEdgeB() &&
-	    ( S_OK == m_svLinearDistanceB.GetValue( l_dDistance ) ) )
+	if(nullptr != GetEdgeB() && S_OK == m_svLinearDistanceB.GetValue( dDistance ))
 	{
-		SVExtentLineStruct l_svLine;
+		SVExtentLineStruct line;
 
-		if( S_OK == GetEdgeB()->GetEdgeOverlayFromDistance( l_dDistance, l_svLine ) )
+		if( S_OK == GetEdgeB()->GetEdgeOverlayFromDistance( dDistance, line ) )
 		{
-			l_svAnalyzerExtents.TranslateFromOutputSpace( l_svLine, l_svLine );
+			GetImageExtent().TranslateFromOutputSpace( line, line );
 
-			p_MultiLine.m_svLineArray.push_back( l_svLine );
-
-			l_hrOk = S_OK;
+			rMultiLine.m_svLineArray.push_back( line );
 		}
 	}
 
-	return l_hrOk;
+	return S_OK;
 }
 
 bool SVLinearMaximumForegroundObjectLineAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	SVImageExtentClass Extents;
 	std::vector<double> AEdges;
 	std::vector<double> BEdges;
-	SVDPointClass DPointA, DPointB;
-	SVExtentPointStruct EdgePointA;
-	SVExtentPointStruct EdgePointB;
-	SVDPointClass CenterPoint;
+	SVPoint<double> edgePointA;
+	SVPoint<double> edgePointB;
 	double DistanceA( 0.0 );
 	double DistanceB( 0.0 );
 
@@ -345,37 +332,31 @@ bool SVLinearMaximumForegroundObjectLineAnalyzerClass::onRun( SVRunStatusClass& 
 			rRunStatus.SetFailed();
 		}
 
-		l_bOk &= S_OK == GetEdgeA()->GetPointFromDistance( DistanceA, EdgePointA );
-		l_bOk &= S_OK == GetEdgeB()->GetPointFromDistance( DistanceB, EdgePointB );
+		l_bOk &= S_OK == GetEdgeA()->GetPointFromDistance( DistanceA, edgePointA );
+		l_bOk &= S_OK == GetEdgeB()->GetPointFromDistance( DistanceB, edgePointB );
 	}
 
-	l_bOk &= S_OK == GetImageExtent( Extents ) &&
-			S_OK == Extents.TranslateFromOutputSpace(EdgePointA, EdgePointA) &&
-			S_OK == Extents.TranslateFromOutputSpace(EdgePointB, EdgePointB);
+	l_bOk &= S_OK == GetImageExtent().TranslateFromOutputSpace(edgePointA, edgePointA) &&
+			S_OK == GetImageExtent().TranslateFromOutputSpace(edgePointB, edgePointB);
 
 	SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
-	l_bOk &= pTool && S_OK == pTool->GetImageExtent( Extents ) &&
-			S_OK == Extents.TranslateFromOutputSpace(EdgePointA, EdgePointA) &&
-			S_OK == Extents.TranslateFromOutputSpace(EdgePointB, EdgePointB);
+	l_bOk &= pTool && S_OK == pTool->GetImageExtent().TranslateFromOutputSpace(edgePointA, edgePointA) &&
+			S_OK == pTool->GetImageExtent().TranslateFromOutputSpace(edgePointB, edgePointB);
 
-	DPointA.x = EdgePointA.m_dPositionX;
-	DPointA.y = EdgePointA.m_dPositionY;
-
-	DPointB.x = EdgePointB.m_dPositionX;
-	DPointB.y = EdgePointB.m_dPositionY;
-
-
-	CenterPoint.x = DPointA.x + ((DPointB.x - DPointA.x) / 2.0);
-	CenterPoint.y = DPointA.y + ((DPointB.y - DPointA.y) / 2.0);
+	SVPoint<double> centerPoint
+	{
+		edgePointA.m_x + ((edgePointB.m_x - edgePointA.m_x) / 2.0),
+		edgePointA.m_y + ((edgePointB.m_y - edgePointA.m_y) / 2.0)
+	};
 
 	double Width = fabs( DistanceB - DistanceA );
 
 	l_bOk = ( S_OK == m_svLinearDistanceA.SetValue(DistanceA) ) && l_bOk;
 	l_bOk = ( S_OK == m_svLinearDistanceB.SetValue(DistanceB) ) && l_bOk;
 	
-	l_bOk = ( S_OK == mdpEdgeA.SetValue(DPointA) ) && l_bOk;
-	l_bOk = ( S_OK == mdpEdgeB.SetValue(DPointB) ) && l_bOk;
-	l_bOk = ( S_OK == mdpCenter.SetValue(CenterPoint) ) && l_bOk;
+	l_bOk = ( S_OK == mdpEdgeA.SetValue(edgePointA) ) && l_bOk;
+	l_bOk = ( S_OK == mdpEdgeB.SetValue(edgePointB) ) && l_bOk;
+	l_bOk = ( S_OK == mdpCenter.SetValue(centerPoint) ) && l_bOk;
 	l_bOk = ( S_OK == mdWidth.SetValue(Width) ) && l_bOk;
 
 	if ( !l_bOk )

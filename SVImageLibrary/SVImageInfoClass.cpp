@@ -108,27 +108,26 @@ HRESULT SVImageInfoClass::Initialize()
 
 	m_OwnerObjectID.clear();
 
-	if ( S_OK != m_svExtents.Initialize() )
-	{
-		l_hrOk = S_FALSE;
-	}
+	m_svExtents.Initialize();
 
 	if ( S_OK != m_svProperties.Initialize() )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if ( S_OK != m_svExtents.SetTranslation( SvDef::SVExtentTranslationShift ) )
+	m_svExtents.SetTranslation(SvDef::SVExtentTranslationShift);
+
+	if ( S_OK != m_svExtents.SetExtentProperty( SvDef::SVExtentPropertyPositionPoint, SVPoint<double>(10.0, 10.0)) )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if ( S_OK != m_svExtents.SetExtentProperty( SvDef::SVExtentPropertyPositionPoint, 10.0 ) )
+	if (S_OK != m_svExtents.SetExtentProperty(SvDef::SVExtentPropertyWidth, 100.0))
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if ( S_OK != m_svExtents.SetExtentProperty( SvDef::SVExtentPropertyRectangle, 100.0 ) )
+	if (S_OK != m_svExtents.SetExtentProperty(SvDef::SVExtentPropertyHeight, 100.0))
 	{
 		l_hrOk = S_FALSE;
 	}
@@ -148,7 +147,7 @@ HRESULT SVImageInfoClass::Initialize()
 		l_hrOk = S_FALSE;
 	}
 
-	if ( S_OK != m_svExtents.SetExtentProperty( SvDef::SVExtentPropertyTranslationOffset, 0.0 ) )
+	if ( S_OK != m_svExtents.SetExtentProperty( SvDef::SVExtentPropertyTranslationOffset, SVPoint<double>(0.0, 0.0)) )
 	{
 		l_hrOk = S_FALSE;
 	}
@@ -181,21 +180,19 @@ SVImagePropertiesClass SVImageInfoClass::GetImageProperties() const
 	return m_svProperties;
 }
 
-HRESULT SVImageInfoClass::SetImageProperties( SVImagePropertiesClass p_svImageProperties )
+void SVImageInfoClass::SetImageProperties(const SVImagePropertiesClass& rImageProperties )
 {
-	m_svProperties = p_svImageProperties;
-
-	return S_OK;
+	m_svProperties = rImageProperties;
 }
 
-SVImageExtentClass SVImageInfoClass::GetExtents() const
+const SVImageExtentClass& SVImageInfoClass::GetExtents() const
 {
 	return m_svExtents;
 }
 
-HRESULT SVImageInfoClass::SetExtents( SVImageExtentClass p_svExtents )
+HRESULT SVImageInfoClass::SetExtents(const SVImageExtentClass& rExtents )
 {
-	m_svExtents = p_svExtents;
+	m_svExtents = rExtents;
 
 	HRESULT l_hrOk = m_svExtents.UpdateData();
 
@@ -209,41 +206,23 @@ SvDef::SVExtentTranslationEnum SVImageInfoClass::GetTranslation()
 
 HRESULT SVImageInfoClass::SetTranslation( SvDef::SVExtentTranslationEnum p_eTranslation )
 {
-	HRESULT l_hrOk = m_svExtents.SetTranslation( p_eTranslation );
-
-	if ( S_OK == l_hrOk )
-	{
-		l_hrOk = m_svExtents.UpdateData();
-	}
-
-	return l_hrOk;
+	m_svExtents.SetTranslation( p_eTranslation );
+	return m_svExtents.UpdateData();
 }
 
 HRESULT SVImageInfoClass::GetImageProperty( SvDef::SVImagePropertyEnum p_eProperty, int &p_riValue ) const
 {
-	HRESULT l_hrOk = S_FALSE;
-
-	l_hrOk = m_svProperties.GetImageProperty( p_eProperty, p_riValue );
-
-	return l_hrOk;
+	return m_svProperties.GetImageProperty( p_eProperty, p_riValue );
 }
 
 HRESULT SVImageInfoClass::GetImageProperty( SvDef::SVImagePropertyEnum p_eProperty, long &p_rlValue ) const
 {
-	HRESULT l_hrOk = S_FALSE;
-
-	l_hrOk = m_svProperties.GetImageProperty( p_eProperty, p_rlValue );
-
-	return l_hrOk;
+	return m_svProperties.GetImageProperty( p_eProperty, p_rlValue );
 }
 
 HRESULT SVImageInfoClass::SetImageProperty( SvDef::SVImagePropertyEnum p_eProperty, long p_lValue )
 {
-	HRESULT l_hrOk = S_FALSE;
-
-	l_hrOk = m_svProperties.SetImageProperty( p_eProperty, p_lValue );
-
-	return l_hrOk;
+	return m_svProperties.SetImageProperty( p_eProperty, p_lValue );
 }
 
 HRESULT SVImageInfoClass::GetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, long &p_rlValue ) const
@@ -264,71 +243,55 @@ HRESULT SVImageInfoClass::GetExtentProperty( SvDef::SVExtentPropertyEnum p_eProp
 
 HRESULT SVImageInfoClass::GetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, double &p_rdValue ) const
 {
-	HRESULT l_hrOk = S_FALSE;
-
-	l_hrOk = m_svExtents.GetExtentProperty( p_eProperty, p_rdValue );
-
-	return l_hrOk;
+	return m_svExtents.GetExtentProperty( p_eProperty, p_rdValue );
 }
 
 HRESULT SVImageInfoClass::GetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, POINT &p_roValue ) const
 {
-	HRESULT l_hrOk = S_FALSE;
-
-	l_hrOk = m_svExtents.GetExtentProperty( p_eProperty, p_roValue );
-
-	return l_hrOk;
+	return m_svExtents.GetExtentProperty( p_eProperty, p_roValue );
 }
 
-HRESULT SVImageInfoClass::GetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, SVExtentPointStruct &p_rsvValue ) const
+HRESULT SVImageInfoClass::GetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, SVPoint<double> &rValue ) const
 {
-	HRESULT l_hrOk = S_FALSE;
-
-	l_hrOk = m_svExtents.GetExtentProperty( p_eProperty, p_rsvValue );
-
-	return l_hrOk;
+	return m_svExtents.GetExtentProperty( p_eProperty, rValue );
 }
 
 HRESULT SVImageInfoClass::SetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, double p_dValue )
 {
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT result = m_svExtents.SetExtentProperty( p_eProperty, p_dValue );
 
-	l_hrOk = m_svExtents.SetExtentProperty( p_eProperty, p_dValue );
-
-	if ( S_OK == l_hrOk )
+	if ( S_OK == result )
 	{
-		l_hrOk = m_svExtents.UpdateData();
+		result = m_svExtents.UpdateData();
 	}
 
-	return l_hrOk;
+	return result;
 }
 
-HRESULT SVImageInfoClass::SetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, SVExtentPointStruct p_svValue )
+HRESULT SVImageInfoClass::SetExtentProperty( SvDef::SVExtentPropertyEnum eProperty, const SVPoint<double>& rValue )
 {
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT result = m_svExtents.SetExtentProperty( eProperty, rValue );
 
-	l_hrOk = m_svExtents.SetExtentProperty( p_eProperty, p_svValue );
-
-	if ( S_OK == l_hrOk )
+	if ( S_OK == result )
 	{
-		l_hrOk = m_svExtents.UpdateData();
+		result = m_svExtents.UpdateData();
 	}
 
-	return l_hrOk;
+	return result;
 }
 
-HRESULT SVImageInfoClass::GetImageExtentsToFit( SVImageExtentClass p_svInExtent, SVImageExtentClass &p_rsvOutExtent )
+HRESULT SVImageInfoClass::GetImageExtentsToFit( SVImageExtentClass inExtent, SVImageExtentClass& rOutExtent )
 {
 	HRESULT l_hrOk = S_FALSE;
 
 	RECT l_oNewRect;
 	RECT l_oParentRect;
 
-	SVExtentPointStruct l_svPositionPoint;
+	SVPoint<double> position;
 
 	if( S_OK == GetOutputRectangle( l_oParentRect ) &&
-		S_OK == p_svInExtent.GetRectangle( l_oNewRect ) &&
-		S_OK == p_svInExtent.GetExtentProperty( SvDef::SVExtentPropertyPositionPoint, l_svPositionPoint ) )
+		S_OK == inExtent.GetRectangle( l_oNewRect ) &&
+		S_OK == inExtent.GetExtentProperty( SvDef::SVExtentPropertyPositionPoint, position ) )
 	{
 		long l_lWidth = l_oNewRect.right - l_oNewRect.left;
 		long l_lHeight = l_oNewRect.bottom - l_oNewRect.top;
@@ -345,37 +308,37 @@ HRESULT SVImageInfoClass::GetImageExtentsToFit( SVImageExtentClass p_svInExtent,
 
 		if( l_oNewRect.left < 0 || ( l_oParentRect.right - l_oParentRect.left < l_oNewRect.right - l_oNewRect.left ) )
 		{
-			l_svPositionPoint.m_dPositionX = 0.0;
+			position.m_x = 0.0;
 		}
 		else if( l_oParentRect.right < l_oNewRect.right )
 		{
-			l_svPositionPoint.m_dPositionX -= l_oNewRect.right - l_oParentRect.right;
+			position.m_x -= l_oNewRect.right - l_oParentRect.right;
 		}
 
 		if( l_oNewRect.top < 0  || ( l_oParentRect.bottom - l_oParentRect.top < l_oNewRect.bottom - l_oNewRect.top ) )
 		{
-			l_svPositionPoint.m_dPositionY = 0.0;
+			position.m_y = 0.0;
 		}
 		else if( l_oParentRect.bottom < l_oNewRect.bottom )
 		{
-			l_svPositionPoint.m_dPositionY -= l_oNewRect.bottom - l_oParentRect.bottom;
+			position.m_y -= l_oNewRect.bottom - l_oParentRect.bottom;
 		}
 
-		l_hrOk = p_svInExtent.SetExtentProperty( SvDef::SVExtentPropertyPositionPoint, l_svPositionPoint );
+		l_hrOk = inExtent.SetExtentProperty( SvDef::SVExtentPropertyPositionPoint, position );
 
 		if( S_OK == l_hrOk )
 		{
-			l_hrOk = p_svInExtent.SetExtentProperty( SvDef::SVExtentPropertyWidth, l_lWidth );
-		}
-
-		if( S_OK == l_hrOk )
-		{
-			l_hrOk = p_svInExtent.SetExtentProperty( SvDef::SVExtentPropertyHeight, l_lHeight );
+			l_hrOk = inExtent.SetExtentProperty( SvDef::SVExtentPropertyWidth, l_lWidth );
 		}
 
 		if( S_OK == l_hrOk )
 		{
-			p_rsvOutExtent = p_svInExtent;
+			l_hrOk = inExtent.SetExtentProperty( SvDef::SVExtentPropertyHeight, l_lHeight );
+		}
+
+		if( S_OK == l_hrOk )
+		{
+			rOutExtent = inExtent;
 		}
 	}
 	
@@ -387,23 +350,23 @@ HRESULT SVImageInfoClass::GetOutputRectangle( RECT &p_roRect ) const
 	return m_svExtents.GetOutputRectangle( p_roRect );
 }
 
-HRESULT SVImageInfoClass::GetFigure( SVExtentFigureStruct &p_rsvFigure )
+const SVExtentFigureStruct& SVImageInfoClass::GetFigure() const
 {
-	return m_svExtents.GetFigure( p_rsvFigure );
+	return m_svExtents.GetFigure();
 }
 
-HRESULT SVImageInfoClass::GetOwnerImage( SVObjectClass*& p_rpObject ) const
+HRESULT SVImageInfoClass::GetOwnerImage( SVObjectClass*& rpObject ) const
 {
-	HRESULT l_Status = S_OK;
+	HRESULT result = S_OK;
 
-	p_rpObject = SVObjectManagerClass::Instance().GetObject( m_OwnerImageID );
+	rpObject = SVObjectManagerClass::Instance().GetObject( m_OwnerImageID );
 
-	if( nullptr == p_rpObject )
+	if( nullptr == rpObject )
 	{
-		l_Status = E_FAIL;
+		result = E_FAIL;
 	}
 
-	return l_Status;
+	return result;
 }
 
 void SVImageInfoClass::SetOwnerImage( const GUID& p_rObjectID )
@@ -413,11 +376,9 @@ void SVImageInfoClass::SetOwnerImage( const GUID& p_rObjectID )
 
 SVObjectClass* SVImageInfoClass::GetOwner() const
 {
-	SVObjectClass* l_pObject = nullptr;
+	SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( m_OwnerObjectID );
 
-	l_pObject = SVObjectManagerClass::Instance().GetObject( m_OwnerObjectID );
-
-	return l_pObject;
+	return pObject;
 }
 
 const SVGUID& SVImageInfoClass::GetOwnerID() const
@@ -433,23 +394,6 @@ void SVImageInfoClass::SetOwner( const GUID& p_rObjectID )
 HRESULT SVImageInfoClass::ValidateAgainstOutputSpace( const SVImageExtentClass &p_rsvValue ) const
 {
 	return m_svExtents.ValidateAgainstOutputSpace( p_rsvValue );
-}
-
-bool SVImageInfoClass::IsEqualExcludePosition( const SVImageInfoClass &p_rsvValue ) const
-{
-	bool l_bOk = true;
-	
-	l_bOk = l_bOk && m_OwnerImageID == p_rsvValue.m_OwnerImageID;
-	l_bOk = l_bOk && m_OwnerObjectID == p_rsvValue.m_OwnerObjectID;
-	l_bOk = l_bOk && m_svExtents.IsEqualExcludePosition( p_rsvValue.m_svExtents );
-	l_bOk = l_bOk && m_svProperties == p_rsvValue.m_svProperties;
-
-	return l_bOk;
-}
-
-bool SVImageInfoClass::IsPositionEqual( const SVImageInfoClass &p_rsvValue ) const
-{
-	return m_svExtents.IsPositionEqual( p_rsvValue.m_svExtents );
 }
 
 bool SVImageInfoClass::operator==( const SVImageInfoClass &p_rsvValue ) const
@@ -501,30 +445,33 @@ long SVImageInfoClass::GetBufferSize()
 
 BITMAPINFOHEADER SVImageInfoClass::GetBitmapInfoHeader() const
 {
-	HRESULT l_hr = S_OK;
 	BITMAPINFOHEADER l_info;
-	int l_iPixelDepth=0;
-	long l_iWidth = 0;
-	long l_iHeight = 0;
-	int l_iFormat = 0;
-	int l_iBands = 0;
+	int pixelDepth{0};
+	long width{0L};
+	long height{0L};
+	int format{0};
+	int bands{0};
 
-	l_hr = GetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, l_iPixelDepth );
-	l_hr = m_svExtents.GetExtentProperty( SvDef::SVExtentPropertyOutputWidth, l_iWidth );
-	l_hr = m_svExtents.GetExtentProperty( SvDef::SVExtentPropertyOutputHeight, l_iHeight );
-	l_hr = GetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, l_iFormat );
-	l_hr = GetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, l_iBands );
+	GetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, pixelDepth );
+	m_svExtents.GetExtentProperty( SvDef::SVExtentPropertyOutputWidth, width );
+	m_svExtents.GetExtentProperty( SvDef::SVExtentPropertyOutputHeight, height );
+	GetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, format );
+	GetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, bands );
 
 
-	l_info.biWidth = l_iWidth;
-	l_info.biHeight = l_iHeight;
-	l_info.biBitCount = l_iPixelDepth;
+	l_info.biWidth = width;
+	l_info.biHeight = height;
+	l_info.biBitCount = pixelDepth;
 
 	WORD wClrBits = 8;
-	if ( l_iFormat == SvDef::SVImageFormatRGB888 )
+	if ( format == SvDef::SVImageFormatRGB888 )
+	{
 		wClrBits = 24;
-	else if ( l_iFormat == SvDef::SVImageFormatRGB8888 )
+	}
+	else if ( format == SvDef::SVImageFormatRGB8888 )
+	{
 		wClrBits = 32;
+	}
 
 	l_info.biSize = sizeof(BITMAPINFOHEADER); 
 	l_info.biPlanes = 1;

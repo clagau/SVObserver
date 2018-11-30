@@ -35,7 +35,7 @@ public:
 	///  Tests to see if the passed in point (usually from a mouse location)
 	///  is contained within itself (the ROI).  If so it returns itself (this),
 	///  otherwise returns a nullptr.
-	virtual SVTaskObjectClass *GetObjectAtPoint(const SVExtentPointStruct &rsvPoint) override;
+	virtual SVTaskObjectClass* GetObjectAtPoint(const SVPoint<double>& rPoint) override;
 	virtual bool DoesObjectHaveExtents() const override;
 	
 	/// GetInputImageNames
@@ -52,7 +52,7 @@ public:
 	bool ValidatePerformance(const SVPerformanceOptions::SVPerformanceOptionsEnum performance, SvStl::MessageContainerVector *pErrorMessages=nullptr);
 
 
-	HRESULT	BackupInspectionParameters ();
+	void BackupInspectionParameters();
 	HRESULT	GetBackupInspectionParameters (	double*	oldHeightScaleFactor,
 		double*	oldWidthScaleFactor,
 		long*	oldInterpolationMode,

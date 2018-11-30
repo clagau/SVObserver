@@ -1257,24 +1257,24 @@ HRESULT SVMatroxBufferInterface::IsParent(const SVMatroxBuffer& p_rParentBuffer,
 	return l_Status;
 }
 
-HRESULT SVMatroxBufferInterface::GetPositionPoint(POINT& p_rPoint, const SVMatroxBuffer& p_rBuffer)
+HRESULT SVMatroxBufferInterface::GetPositionPoint(POINT& rPoint, const SVMatroxBuffer& p_rBuffer)
 {
 	HRESULT l_Status(S_OK);
 
-	SVPoint l_Point;
+	SVPoint<long> point;
 
-	l_Status = GetPositionPoint(l_Point, p_rBuffer);
+	l_Status = GetPositionPoint(point, p_rBuffer);
 
-	p_rPoint = l_Point;
+	rPoint = static_cast<POINT> (point);
 
 	return l_Status;
 }
 
-HRESULT SVMatroxBufferInterface::GetPositionPoint(SVPoint& p_rPoint, const SVMatroxBuffer& p_rBuffer)
+HRESULT SVMatroxBufferInterface::GetPositionPoint(SVPoint<long>& rPoint, const SVMatroxBuffer& p_rBuffer)
 {
 	HRESULT l_Status(S_OK);
 
-	p_rPoint = SVPoint(0, 0);
+	rPoint = SVPoint<long>{};
 
 	if (!(p_rBuffer.empty()))
 	{
@@ -1288,19 +1288,19 @@ HRESULT SVMatroxBufferInterface::GetPositionPoint(SVPoint& p_rPoint, const SVMat
 			{
 				if (l_ParentID != p_rBuffer.GetIdentifier())
 				{
-					long l_OffsetX = 0;
-					long l_OffsetY = 0;
+					long offsetX{0L};
+					long offsetY{0L};
 
-					l_Status = SVMatroxBufferInterface::Get(p_rBuffer, SVParentOffsetX, l_OffsetX);
+					l_Status = SVMatroxBufferInterface::Get(p_rBuffer, SVParentOffsetX, offsetX);
 
 					if (S_OK == l_Status)
 					{
-						l_Status = SVMatroxBufferInterface::Get(p_rBuffer, SVParentOffsetY, l_OffsetY);
+						l_Status = SVMatroxBufferInterface::Get(p_rBuffer, SVParentOffsetY, offsetY);
 					}
 
 					if (S_OK == l_Status)
 					{
-						p_rPoint = SVPoint(static_cast<long>(l_OffsetX), static_cast<long>(l_OffsetY));
+						rPoint = SVPoint<long>{offsetX, offsetY};
 					}
 				}
 				else

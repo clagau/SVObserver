@@ -326,7 +326,7 @@ HRESULT SVImageProcessingClass::LoadImageBuffer(LPCTSTR tstrImagePathName, SVIma
 					rInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatRGB8888);
 				}
 
-				rInfo.SetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, 0);
+				rInfo.SetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, SVPoint<double>(0.0, 0.0));
 				rInfo.SetExtentProperty(SvDef::SVExtentPropertyWidth, l_lSizeX);
 				rInfo.SetExtentProperty(SvDef::SVExtentPropertyHeight, l_lSizeY);
 

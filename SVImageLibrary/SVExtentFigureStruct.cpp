@@ -55,45 +55,45 @@ const SVExtentFigureStruct& SVExtentFigureStruct::operator = ( const SVExtentFig
 	return *this;
 }
 
-const SVExtentFigureStruct& SVExtentFigureStruct::operator += ( const SVExtentPointStruct& p_rsvOffset )
+const SVExtentFigureStruct& SVExtentFigureStruct::operator += ( const SVPoint<double>& rOffset )
 {
-	m_svTopLeft += p_rsvOffset;
-	m_svTopRight += p_rsvOffset;
-	m_svBottomLeft += p_rsvOffset;
-	m_svBottomRight += p_rsvOffset;
-	m_svCenterLeft += p_rsvOffset;
-	m_svCenterRight += p_rsvOffset;
-	m_svTopCenter += p_rsvOffset;
-	m_svBottomCenter += p_rsvOffset;
-	m_svCenter += p_rsvOffset;
+	m_svTopLeft += rOffset;
+	m_svTopRight += rOffset;
+	m_svBottomLeft += rOffset;
+	m_svBottomRight += rOffset;
+	m_svCenterLeft += rOffset;
+	m_svCenterRight += rOffset;
+	m_svTopCenter += rOffset;
+	m_svBottomCenter += rOffset;
+	m_svCenter += rOffset;
 	return *this;
 }
 
-const SVExtentFigureStruct& SVExtentFigureStruct::operator -= ( const SVExtentPointStruct& p_rsvOffset )
+const SVExtentFigureStruct& SVExtentFigureStruct::operator -= ( const SVPoint<double>& rOffset )
 {
-	m_svTopLeft -= p_rsvOffset;
-	m_svTopRight -= p_rsvOffset;
-	m_svBottomLeft -= p_rsvOffset;
-	m_svBottomRight -= p_rsvOffset;
-	m_svCenterLeft -= p_rsvOffset;
-	m_svCenterRight -= p_rsvOffset;
-	m_svTopCenter -= p_rsvOffset;
-	m_svBottomCenter -= p_rsvOffset;
-	m_svCenter -= p_rsvOffset;
+	m_svTopLeft -= rOffset;
+	m_svTopRight -= rOffset;
+	m_svBottomLeft -= rOffset;
+	m_svBottomRight -= rOffset;
+	m_svCenterLeft -= rOffset;
+	m_svCenterRight -= rOffset;
+	m_svTopCenter -= rOffset;
+	m_svBottomCenter -= rOffset;
+	m_svCenter -= rOffset;
 	return *this;
 }
 
-const SVExtentFigureStruct& SVExtentFigureStruct::operator = ( RECT p_oRect )
+const SVExtentFigureStruct& SVExtentFigureStruct::operator = ( RECT oRect )
 {
 	//SetRect(p_oRect.top, p_oRect.left, p_oRect.bottom, p_oRect.right);
 	// leave original behavior in place (width/2 truncates, etc.)
 	POINT l_oPoint;
 
-	long l_lWidth = p_oRect.right - p_oRect.left;
-	long l_lHeight = p_oRect.bottom - p_oRect.top;
+	long width = oRect.right - oRect.left;
+	long height = oRect.bottom - oRect.top;
 
-	l_oPoint.x = p_oRect.left;
-	l_oPoint.y = p_oRect.top;
+	l_oPoint.x = oRect.left;
+	l_oPoint.y = oRect.top;
 
 	Initialize();
 
@@ -109,25 +109,25 @@ const SVExtentFigureStruct& SVExtentFigureStruct::operator = ( RECT p_oRect )
 	m_svBottomCenter = l_oPoint;
 	m_svCenter = l_oPoint;
 
-	m_svTopCenter.m_dPositionX += (long) ( l_lWidth / 2 );
+	m_svTopCenter.m_x += width / 2;
 
-	m_svTopRight.m_dPositionX += (long) ( l_lWidth );
+	m_svTopRight.m_x += width;
 
-	m_svCenterLeft.m_dPositionY += (long) ( l_lHeight / 2 );
+	m_svCenterLeft.m_y += height / 2;
 
-	m_svCenterRight.m_dPositionY += (long) ( l_lHeight / 2 );
-	m_svCenterRight.m_dPositionX += (long) ( l_lWidth );
+	m_svCenterRight.m_y += height / 2;
+	m_svCenterRight.m_x += width;
 
-	m_svBottomLeft.m_dPositionY += (long) ( l_lHeight );
+	m_svBottomLeft.m_y += height;
 
-	m_svBottomCenter.m_dPositionY += (long) ( l_lHeight );
-	m_svBottomCenter.m_dPositionX += (long) ( l_lWidth / 2 );
+	m_svBottomCenter.m_y += height;
+	m_svBottomCenter.m_x += width / 2;
 
-	m_svBottomRight.m_dPositionY += (long) ( l_lHeight );
-	m_svBottomRight.m_dPositionX += (long) ( l_lWidth );
+	m_svBottomRight.m_y += height;
+	m_svBottomRight.m_x += width;
 
-	m_svCenter.m_dPositionX += (long) ( l_lWidth / 2 );
-	m_svCenter.m_dPositionY += (long) ( l_lHeight / 2 );
+	m_svCenter.m_x += width / 2;
+	m_svCenter.m_y += height / 2;
 
 	return *this;
 }
@@ -137,10 +137,10 @@ HRESULT SVExtentFigureStruct::GetRect(RECT& p_rRect) const
 	HRESULT hr = (m_eShape == SvDef::SVExtentShapeRectangle) ? S_OK : E_FAIL;
 	if ( S_OK == hr )
 	{
-		p_rRect.top = (long) m_svTopLeft.m_dPositionY;
-		p_rRect.left = (long) m_svTopLeft.m_dPositionX;
-		p_rRect.bottom = (long) m_svBottomRight.m_dPositionY;
-		p_rRect.right = (long) m_svBottomRight.m_dPositionX;
+		p_rRect.top = static_cast<long> (m_svTopLeft.m_y);
+		p_rRect.left = static_cast<long> (m_svTopLeft.m_x);
+		p_rRect.bottom = static_cast<long> (m_svBottomRight.m_y);
+		p_rRect.right = static_cast<long> (m_svBottomRight.m_x);
 	}
 	return hr;
 }
@@ -149,159 +149,119 @@ RECT SVExtentFigureStruct::Rect() const
 {
 	RECT rect;
 	
-	rect.top = (long) m_svTopLeft.m_dPositionY;
-	rect.left = (long) m_svTopLeft.m_dPositionX;
-	rect.bottom = (long) m_svBottomRight.m_dPositionY;
-	rect.right = (long) m_svBottomRight.m_dPositionX;
+	rect.top = static_cast<long> (m_svTopLeft.m_y);
+	rect.left = static_cast<long> (m_svTopLeft.m_x);
+	rect.bottom = static_cast<long> (m_svBottomRight.m_y);
+	rect.right = static_cast<long> (m_svBottomRight.m_x);
 
 	return rect;
 }
 
 SVExtentSizeStruct SVExtentFigureStruct::Size() const
 {
-	return SVExtentSizeStruct( m_svBottomRight.m_dPositionX - m_svTopLeft.m_dPositionX,  m_svBottomRight.m_dPositionY - m_svTopLeft.m_dPositionY );
+	return SVExtentSizeStruct( m_svBottomRight.m_x - m_svTopLeft.m_x,  m_svBottomRight.m_y - m_svTopLeft.m_y );
 }
 
 double SVExtentFigureStruct::Top() const
 {
-	return m_svTopLeft.m_dPositionY;
+	return m_svTopLeft.m_y;
 }
 
 double SVExtentFigureStruct::Left() const
 {
-	return m_svTopLeft.m_dPositionX;
+	return m_svTopLeft.m_x;
 }
 
 double SVExtentFigureStruct::Right() const
 {
-	return m_svBottomRight.m_dPositionX;
+	return m_svBottomRight.m_x;
 }
 
-HRESULT SVExtentFigureStruct::SetRect( double p_dTop, double p_dLeft, double p_dBottom, double p_dRight )
+HRESULT SVExtentFigureStruct::SetRect( double dTop, double dLeft, double dBottom, double dRight )
 {
-	SVExtentPointStruct l_svPoint;
+	SVPoint<double> point(dLeft, dTop);
 
-	double l_dWidth = p_dRight - p_dLeft;
-	double l_dHeight = p_dBottom - p_dTop;
-
-	l_svPoint.m_dPositionX = p_dLeft;
-	l_svPoint.m_dPositionY = p_dTop;
+	double dWidth = dRight - dLeft;
+	double dHeight = dBottom - dTop;
 
 	Initialize();
 
 	m_eShape = SvDef::SVExtentShapeRectangle;
 
-	m_svTopLeft = l_svPoint;
-	m_svTopRight = l_svPoint;
-	m_svBottomRight = l_svPoint;
-	m_svBottomLeft = l_svPoint;
-	m_svCenterLeft = l_svPoint;
-	m_svCenterRight = l_svPoint;
-	m_svTopCenter = l_svPoint;
-	m_svBottomCenter = l_svPoint;
-	m_svCenter = l_svPoint;
+	m_svTopLeft = point;
+	m_svTopRight = point;
+	m_svBottomRight = point;
+	m_svBottomLeft = point;
+	m_svCenterLeft = point;
+	m_svCenterRight = point;
+	m_svTopCenter = point;
+	m_svBottomCenter = point;
+	m_svCenter = point;
 
-	m_svTopCenter.m_dPositionX += (l_dWidth / 2.0);
+	m_svTopCenter.m_x += (dWidth / 2.0);
 
-	m_svTopRight.m_dPositionX += l_dWidth;
+	m_svTopRight.m_x += dWidth;
 
-	m_svCenterLeft.m_dPositionY += ( l_dHeight / 2.0 );
+	m_svCenterLeft.m_y += ( dHeight / 2.0 );
 
-	m_svCenterRight.m_dPositionY += ( l_dHeight / 2.0 );
-	m_svCenterRight.m_dPositionX += ( l_dWidth );
+	m_svCenterRight.m_y += ( dHeight / 2.0 );
+	m_svCenterRight.m_x += ( dWidth );
 
-	m_svBottomLeft.m_dPositionY += ( l_dHeight );
+	m_svBottomLeft.m_y += ( dHeight );
 
-	m_svBottomCenter.m_dPositionY += ( l_dHeight );
-	m_svBottomCenter.m_dPositionX += ( l_dWidth / 2.0 );
+	m_svBottomCenter.m_y += ( dHeight );
+	m_svBottomCenter.m_x += ( dWidth / 2.0 );
 
-	m_svBottomRight.m_dPositionY += ( l_dHeight );
-	m_svBottomRight.m_dPositionX += ( l_dWidth );
+	m_svBottomRight.m_y += ( dHeight );
+	m_svBottomRight.m_x += ( dWidth );
 
-	m_svCenter.m_dPositionX += ( l_dWidth / 2.0 );
-	m_svCenter.m_dPositionY += ( l_dHeight / 2.0 );
+	m_svCenter.m_x += ( dWidth / 2.0 );
+	m_svCenter.m_y += ( dHeight / 2.0 );
 
 	return S_OK;
 }
 
 HRESULT SVExtentFigureStruct::Initialize()
 {
-	HRESULT l_hrOk = S_OK;
-
 	m_eShape = SvDef::SVExtentShapeUnknown;
 
-	if ( S_OK != m_svTopLeft.Initialize() )
-	{
-		l_hrOk = S_FALSE;
-	}
+	m_svTopLeft.clear();
+	m_svTopRight.clear();
+	m_svBottomRight.clear();
+	m_svBottomLeft.clear();
+	m_svCenterLeft.clear();
+	m_svCenterRight.clear();
+	m_svTopCenter.clear();
+	m_svBottomCenter.clear();
+	m_svCenter.clear();
 
-	if ( S_OK != m_svTopRight.Initialize() )
-	{
-		l_hrOk = S_FALSE;
-	}
-
-	if ( S_OK != m_svBottomRight.Initialize() )
-	{
-		l_hrOk = S_FALSE;
-	}
-
-	if ( S_OK != m_svBottomLeft.Initialize() )
-	{
-		l_hrOk = S_FALSE;
-	}
-
-	if ( S_OK != m_svCenterLeft.Initialize() )
-	{
-		l_hrOk = S_FALSE;
-	}
-
-	if ( S_OK != m_svCenterRight.Initialize() )
-	{
-		l_hrOk = S_FALSE;
-	}
-
-	if ( S_OK != m_svTopCenter.Initialize() )
-	{
-		l_hrOk = S_FALSE;
-	}
-
-	if ( S_OK != m_svBottomCenter.Initialize() )
-	{
-		l_hrOk = S_FALSE;
-	}
-
-	if ( S_OK != m_svCenter.Initialize() )
-	{
-		l_hrOk = S_FALSE;
-	}
-
-	return l_hrOk;
+	return S_OK;
 }
 
-HRESULT SVExtentFigureStruct::IsPointOverFigure( const SVExtentPointStruct& p_rPoint ) const
+HRESULT SVExtentFigureStruct::IsPointOverFigure( const SVPoint<double>& rPoint ) const
 {
 	HRESULT l_hrOk = S_OK;
 
 	if( m_eShape != SvDef::SVExtentShapeUnknown )
 	{
-		POINT l_IntersectPt = { 0, 0 };
+		POINT intersectPoint = { 0, 0 };
 
-		SVExtentPointStruct l_Center = ( m_svTopCenter + m_svBottomCenter ) / 2.0;
+		SVPoint<double> center = ( m_svTopCenter + m_svBottomCenter ) / 2.0;
 
-		if( l_Center != p_rPoint )
+		if( center != rPoint )
 		{
-			bool l_Intersect = ( l_Center == m_svTopCenter ) || ( l_Center == m_svBottomCenter );
+			bool bIntersect = ( center == m_svTopCenter ) || ( center == m_svBottomCenter );
 
-			l_Intersect = l_Intersect || Intersect::Lines( l_Center, p_rPoint, m_svTopCenter, m_svTopRight, l_IntersectPt ) == Intersect::DO_INTERSECT;
-			l_Intersect = l_Intersect || Intersect::Lines( l_Center, p_rPoint, m_svTopRight, m_svCenterRight, l_IntersectPt ) == Intersect::DO_INTERSECT;
-			l_Intersect = l_Intersect || Intersect::Lines( l_Center, p_rPoint, m_svCenterRight, m_svBottomRight, l_IntersectPt ) == Intersect::DO_INTERSECT;
-			l_Intersect = l_Intersect || Intersect::Lines( l_Center, p_rPoint, m_svBottomRight, m_svBottomCenter, l_IntersectPt ) == Intersect::DO_INTERSECT;
-			l_Intersect = l_Intersect || Intersect::Lines( l_Center, p_rPoint, m_svBottomCenter, m_svBottomLeft, l_IntersectPt ) == Intersect::DO_INTERSECT;
-			l_Intersect = l_Intersect || Intersect::Lines( l_Center, p_rPoint, m_svBottomLeft, m_svCenterLeft, l_IntersectPt ) == Intersect::DO_INTERSECT;
-			l_Intersect = l_Intersect || Intersect::Lines( l_Center, p_rPoint, m_svCenterLeft, m_svTopLeft, l_IntersectPt ) == Intersect::DO_INTERSECT;
-			l_Intersect = l_Intersect || Intersect::Lines( l_Center, p_rPoint, m_svTopLeft, m_svTopCenter, l_IntersectPt ) == Intersect::DO_INTERSECT;
+			bIntersect = bIntersect || Intersect::Lines( center.getPoint(), rPoint.getPoint(), m_svTopCenter.getPoint(), m_svTopRight.getPoint(), intersectPoint) == Intersect::DO_INTERSECT;
+			bIntersect = bIntersect || Intersect::Lines( center.getPoint(), rPoint.getPoint(), m_svTopRight.getPoint(), m_svCenterRight.getPoint(), intersectPoint) == Intersect::DO_INTERSECT;
+			bIntersect = bIntersect || Intersect::Lines( center.getPoint(), rPoint.getPoint(), m_svCenterRight.getPoint(), m_svBottomRight.getPoint(), intersectPoint) == Intersect::DO_INTERSECT;
+			bIntersect = bIntersect || Intersect::Lines( center.getPoint(), rPoint.getPoint(), m_svBottomRight.getPoint(), m_svBottomCenter.getPoint(), intersectPoint) == Intersect::DO_INTERSECT;
+			bIntersect = bIntersect || Intersect::Lines( center.getPoint(), rPoint.getPoint(), m_svBottomCenter.getPoint(), m_svBottomLeft.getPoint(), intersectPoint) == Intersect::DO_INTERSECT;
+			bIntersect = bIntersect || Intersect::Lines( center.getPoint(), rPoint.getPoint(), m_svBottomLeft.getPoint(), m_svCenterLeft.getPoint(), intersectPoint) == Intersect::DO_INTERSECT;
+			bIntersect = bIntersect || Intersect::Lines( center.getPoint(), rPoint.getPoint(), m_svCenterLeft.getPoint(), m_svTopLeft.getPoint(), intersectPoint) == Intersect::DO_INTERSECT;
+			bIntersect = bIntersect || Intersect::Lines( center.getPoint(), rPoint.getPoint(), m_svTopLeft.getPoint(), m_svTopCenter.getPoint(), intersectPoint ) == Intersect::DO_INTERSECT;
 
-			if( l_Intersect )
+			if( bIntersect )
 			{
 				l_hrOk = S_FALSE;
 			}

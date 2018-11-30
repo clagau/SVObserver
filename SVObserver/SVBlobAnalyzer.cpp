@@ -1217,43 +1217,31 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 
 			for(int n=0; n < m_lBlobSampleSize; n++)
 			{
-				double l_dMaxX = 0.0;
-				double l_dMinX = 0.0;
-				double l_dMaxY = 0.0;
-				double l_dMinY = 0.0;
-				double l_dCenterX = 0.0;
-				double l_dCenterY = 0.0;
-				SVExtentPointStruct ptSt;
-
-				l_dMaxX = pBoxXMaxData[n];
-				l_dMinX = pBoxXMinData[n];
-				l_dMaxY = pBoxYMaxData[n];
-				l_dMinY = pBoxYMinData[n];
-
-				l_dCenterX = (l_dMaxX - l_dMinX)/2 + l_dMinX;
-				l_dCenterY = (l_dMaxY - l_dMinY)/2 + l_dMinY;
-
-				ptSt.m_dPositionX = l_dCenterX;
-				ptSt.m_dPositionY = l_dCenterY;
-
-				SVImageClass* pTmpImage = nullptr;
+				double dMaxX{pBoxXMaxData[n]};
+				double dMinX{pBoxXMinData[n]};
+				double dMaxY{pBoxYMaxData[n]};
+				double dMinY{pBoxYMinData[n]};
+				double dCenterX{(dMaxX - dMinX)/2 + dMinX};
+				double dCenterY{(dMaxY - dMinY)/2 + dMinY};
 
 				if (nullptr != pInputImage)
 				{
-					pTmpImage = pInputImage;
+					SVImageClass* pTmpImage {pInputImage};
 					while ( nullptr != pTmpImage->GetParentImage() )
 					{
 						pTmpImage = pTmpImage->GetParentImage();
 					}
-					pInputImage->TranslateFromOutputSpaceToImage(pTmpImage,ptSt,ptSt);
+	
+					SVPoint<double> point{dCenterX, dCenterY};
+					pInputImage->TranslateFromOutputSpaceToImage(pTmpImage,point,point);
 
 					if ( l_bCenterXSet )
 					{
-						pCenterXData[n] = ptSt.m_dPositionX;
+						pCenterXData[n] = point.m_x;
 					}
 					if ( l_bCenterYSet )
 					{
-						pCenterYData[n] = ptSt.m_dPositionY;
+						pCenterYData[n] = point.m_y;
 					}
 						
 				} // if (pImage) 
@@ -1524,41 +1512,35 @@ bool SVBlobAnalyzerClass::IsPtOverResult( const POINT& rPoint )
 	if (( S_OK == m_lvoNumberOfBlobsFound.GetValue( l_lCurrentNbrOfBlobs ) ) &&
 		(0 != l_lCurrentNbrOfBlobs))
 	{
-		SVImageExtentClass l_svExtents;
 		SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
-		if (pTool)
+		if (nullptr != pTool)
 		{
-			HRESULT hr = pTool->GetImageExtent( l_svExtents );
+			double* pxMax = &(m_vec2dBlobResults[SvOi::SV_BOXX_MAX][0]);
+			double* pxMin = &(m_vec2dBlobResults[SvOi::SV_BOXX_MIN][0]);
+			double* pyMax = &(m_vec2dBlobResults[SvOi::SV_BOXY_MAX][0]);
+			double* pyMin = &(m_vec2dBlobResults[SvOi::SV_BOXY_MIN][0]);
 
-			if (S_OK == hr )
-			{
-				double* pxMax = &(m_vec2dBlobResults[SvOi::SV_BOXX_MAX][0]);
-				double* pxMin = &(m_vec2dBlobResults[SvOi::SV_BOXX_MIN][0]);
-				double* pyMax = &(m_vec2dBlobResults[SvOi::SV_BOXY_MAX][0]);
-				double* pyMin = &(m_vec2dBlobResults[SvOi::SV_BOXY_MIN][0]);
-
-				int iMapSize = static_cast<int> (m_SortVector.size());
+			int iMapSize = static_cast<int> (m_SortVector.size());
 			
-				for (int i = 0; i < (int)l_lCurrentNbrOfBlobs && i < iMapSize ; i++)
-				{
-					RECT l_oRect;
+			for (int i = 0; i < (int)l_lCurrentNbrOfBlobs && i < iMapSize ; i++)
+			{
+				RECT l_oRect;
 
-					long l = m_SortVector[i];
+				long l = m_SortVector[i];
 
-					l_oRect.top = static_cast<long>(pyMin[l]);
-					l_oRect.left = static_cast<long>(pxMin[l]);
-					l_oRect.bottom = static_cast<long>(pyMax[l]);
-					l_oRect.right = static_cast<long>(pxMax[l]);
+				l_oRect.top = static_cast<long>(pyMin[l]);
+				l_oRect.left = static_cast<long>(pxMin[l]);
+				l_oRect.bottom = static_cast<long>(pyMax[l]);
+				l_oRect.right = static_cast<long>(pxMax[l]);
 				
-					SVExtentFigureStruct l_svFigure = l_oRect;
-					l_svExtents.TranslateFromOutputSpace( l_svFigure, l_svFigure );
+				SVExtentFigureStruct l_svFigure = l_oRect;
+				pTool->GetImageExtent().TranslateFromOutputSpace( l_svFigure, l_svFigure );
 
 				if( S_OK == l_svFigure.IsPointOverFigure( rPoint ) )
-					{
-						m_nBlobIndex = m_SortVector[i]; 
+				{
+					m_nBlobIndex = m_SortVector[i]; 
 
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -1710,8 +1692,7 @@ HRESULT SVBlobAnalyzerClass::onCollectOverlays(SVImageClass* p_pImage, SVExtentM
 
 		if ( l_lCurrentNbrOfBlobs > 0 )
 		{
-			SVImageExtentClass l_svExtents;
-			pTool->GetImageExtent(l_svExtents);
+			const SVImageExtentClass& rImageExtents = pTool->GetImageExtent();
 
 			// if running only show N Blob Figures according to the specified
 			// MaxBlobDataArraySize variable
@@ -1736,7 +1717,7 @@ HRESULT SVBlobAnalyzerClass::onCollectOverlays(SVImageClass* p_pImage, SVExtentM
 
 					SVExtentFigureStruct l_svFigure = Rect;
 					
-					l_svExtents.TranslateFromOutputSpace( l_svFigure, l_svFigure );
+					rImageExtents.TranslateFromOutputSpace( l_svFigure, l_svFigure );
 
 					SVExtentMultiLineStruct l_multiLine;
 
@@ -1767,7 +1748,7 @@ HRESULT SVBlobAnalyzerClass::onCollectOverlays(SVImageClass* p_pImage, SVExtentM
 					l_oRect.right = static_cast<long> (pxMax[l]);
 
 					SVExtentFigureStruct l_svFigure = l_oRect;
-					l_svExtents.TranslateFromOutputSpace( l_svFigure, l_svFigure );
+					rImageExtents.TranslateFromOutputSpace( l_svFigure, l_svFigure );
 
 					SVExtentMultiLineStruct l_multiLine;
 					l_multiLine.m_Color = SvDef::DefaultSubFunctionColor1;

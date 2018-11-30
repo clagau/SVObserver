@@ -24,7 +24,7 @@ public:
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 
-	virtual SVTaskObjectClass *GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint ) override;
+	virtual SVTaskObjectClass* GetObjectAtPoint(const SVPoint<double>& rPoint) override;
 	virtual bool DoesObjectHaveExtents() const override;
 	virtual HRESULT SetImageExtent( const SVImageExtentClass& rImageExtent ) override;
 	virtual HRESULT SetImageExtentToParent() override;

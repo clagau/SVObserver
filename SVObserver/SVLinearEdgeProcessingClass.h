@@ -34,11 +34,11 @@ public:
 
 	HRESULT GetPixelDepth();
 
-	HRESULT GetPointFromDistance( double p_dDistance, SVExtentPointStruct &p_rsvPoint );
-	HRESULT GetEdgeOverlayFromDistance( double p_dDistance, SVExtentLineStruct &p_rsvLine );
+	HRESULT GetPointFromDistance( double p_dDistance, SVPoint<double>& rPoint );
+	HRESULT GetEdgeOverlayFromDistance( double p_dDistance, SVExtentLineStruct& rLine );
 
-	HRESULT GetOutputEdgeDistance( double &p_rdValue );
-	HRESULT GetOutputEdgePoint( SVExtentPointStruct &p_rsvPoint );
+	HRESULT GetOutputEdgeDistance( double& rValue );
+	HRESULT GetOutputEdgePoint(SVPoint<double>& rPoint );
 
 	HRESULT GetThresholdBarsOverlay( SVExtentMultiLineStruct &p_rsvMiltiLine );
 	HRESULT GetHistogramOverlay( SVExtentLineStruct &p_rsvLine );

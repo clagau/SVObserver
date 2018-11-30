@@ -178,7 +178,7 @@ bool ResizeTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 	// We do not want the ROI image showing up as an output image.
 	m_LogicalROIImage.SetObjectAttributesAllowed(SvDef::SV_NO_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute);
 
-	bOk &= (S_OK == m_svToolExtent.SetTranslation(SvDef::SVExtentTranslationResize));
+	m_toolExtent.SetTranslation(SvDef::SVExtentTranslationResize);
 
 	bOk &= (S_OK == m_OutputImage.InitializeImage(pInputImage));
 
@@ -205,7 +205,7 @@ SVImageClass* ResizeTool::getInputImage(bool bRunMode /*= false*/) const
 HRESULT ResizeTool::SetImageExtentToParent()
 {
 	SVImageExtentClass l_NewExtent;
-	HRESULT Result = m_svToolExtent.UpdateExtentToParentExtents(l_NewExtent);
+	HRESULT Result = m_toolExtent.UpdateExtentToParentExtents(l_NewExtent);
 
 	if (S_OK == Result)
 	{
@@ -219,7 +219,7 @@ HRESULT ResizeTool::SetImageExtentToParent()
 
 HRESULT ResizeTool::SetImageExtent(const SVImageExtentClass& rImageExtent)
 {
-	HRESULT l_hrOk = m_svToolExtent.ValidExtentAgainstParentImage(rImageExtent);
+	HRESULT l_hrOk = m_toolExtent.ValidExtentAgainstParentImage(rImageExtent);
 
 	if (S_OK == l_hrOk)
 	{
@@ -229,18 +229,16 @@ HRESULT ResizeTool::SetImageExtent(const SVImageExtentClass& rImageExtent)
 	return l_hrOk;
 }
 
-SVTaskObjectClass* ResizeTool::GetObjectAtPoint(const SVExtentPointStruct &p_rsvPoint)
+SVTaskObjectClass* ResizeTool::GetObjectAtPoint(const SVPoint<double>& rPoint)
 {
-	SVImageExtentClass l_svExtents;
+	SVTaskObjectClass *pObject {nullptr};
 
-	SVTaskObjectClass *l_psvObject = nullptr;
-
-	if (S_OK == m_svToolExtent.GetImageExtent(l_svExtents) &&
-		l_svExtents.GetLocationPropertyAt(p_rsvPoint) != SvDef::SVExtentLocationPropertyUnknown)
+	if (SvDef::SVExtentLocationPropertyUnknown != GetImageExtent().GetLocationPropertyAt(rPoint))
 	{
-		l_psvObject = this;
+		pObject = this;
 	}
-	return l_psvObject;
+
+	return pObject;
 }
 
 bool ResizeTool::DoesObjectHaveExtents() const
@@ -315,28 +313,14 @@ bool ResizeTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 
 bool ResizeTool::ValidateParameters(SvStl::MessageContainerVector *pErrorMessages)
 {
-	SVImageExtentClass toolImageExtents;
-	bool Result = true;
-	HRESULT hr = GetImageExtent(toolImageExtents);
-	if (S_OK == hr)
-	{
-		double newWidthScaleFactor = 0.0;
-		toolImageExtents.GetExtentProperty(SvDef::SVExtentPropertyWidthScaleFactor, newWidthScaleFactor);
-		Result = ValidateScaleFactor(newWidthScaleFactor, pErrorMessages) && Result;
+	double newWidthScaleFactor = 0.0;
+	GetImageExtent().GetExtentProperty(SvDef::SVExtentPropertyWidthScaleFactor, newWidthScaleFactor);
+	bool Result = ValidateScaleFactor(newWidthScaleFactor, pErrorMessages);
 
-		double newHeightScaleFactor = 0.0;
-		toolImageExtents.GetExtentProperty(SvDef::SVExtentPropertyHeightScaleFactor, newHeightScaleFactor);
-		Result = ValidateScaleFactor(newHeightScaleFactor, pErrorMessages) && Result;
-	}
-	else
-	{
-		Result = false;
-		if (nullptr != pErrorMessages)
-		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_5071_CAPTUREDSFALSE, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
-			pErrorMessages->push_back(Msg);
-		}
-	}
+	double newHeightScaleFactor = 0.0;
+	GetImageExtent().GetExtentProperty(SvDef::SVExtentPropertyHeightScaleFactor, newHeightScaleFactor);
+	Result = ValidateScaleFactor(newHeightScaleFactor, pErrorMessages) && Result;
+
 	return Result;
 }
 
@@ -467,28 +451,13 @@ bool ResizeTool::ValidateScaleFactor(const double value, SvStl::MessageContainer
 	return Result;
 }
 
-HRESULT	ResizeTool::BackupInspectionParameters()
+void ResizeTool::BackupInspectionParameters()
 {
-	SVImageExtentClass toolImageExtents;
-
-	HRESULT hr = GetImageExtent(toolImageExtents);
-	//  Embedded functions such as SVImageExtentClass::SetExtentProperty can return
-	//  S_FALSE.  This violates the HRESULT standard.
-	if (S_FALSE == hr)
-	{
-		hr = SVMSG_SVO_5063_ERRORGETTINGIMAGEEXTENTS;
-	}
-
-	if (SUCCEEDED(hr))
-	{
-		toolImageExtents.GetExtentProperty(SvDef::SVExtentPropertyHeightScaleFactor, m_ResizeHeightSF_Backup);
-		toolImageExtents.GetExtentProperty(SvDef::SVExtentPropertyWidthScaleFactor, m_ResizeWidthSF_Backup);
-		m_ResizeInterpolationMode.GetValue(m_ResizeInterpolationMode_Backup);
-		m_ResizeOverscan.GetValue(m_ResizeOverscan_Backup);
-		m_ResizePerformance.GetValue(m_ResizePerformance_Backup);
-	}
-
-	return hr;
+	GetImageExtent().GetExtentProperty(SvDef::SVExtentPropertyHeightScaleFactor, m_ResizeHeightSF_Backup);
+	GetImageExtent().GetExtentProperty(SvDef::SVExtentPropertyWidthScaleFactor, m_ResizeWidthSF_Backup);
+	m_ResizeInterpolationMode.GetValue(m_ResizeInterpolationMode_Backup);
+	m_ResizeOverscan.GetValue(m_ResizeOverscan_Backup);
+	m_ResizePerformance.GetValue(m_ResizePerformance_Backup);
 }
 
 HRESULT	ResizeTool::GetBackupInspectionParameters(double*	oldHeightScaleFactor,
@@ -525,19 +494,8 @@ bool ResizeTool::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVect
 {
 	bool Result = __super::onRun(rRunStatus, pErrorMessages);
 
-	SVImageExtentClass toolImageExtents;
-	if (!SUCCEEDED(GetImageExtent(toolImageExtents)))
-	{
-		Result = false;
-		if (nullptr != pErrorMessages)
-		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_5029_GETEXTENTSFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
-			pErrorMessages->push_back(Msg);
-		}
-	}
-
 	double heightScaleFactor = 0.0;
-	if (!SUCCEEDED(toolImageExtents.GetExtentProperty(SvDef::SVExtentPropertyHeightScaleFactor, heightScaleFactor)))
+	if (!SUCCEEDED(GetImageExtent().GetExtentProperty(SvDef::SVExtentPropertyHeightScaleFactor, heightScaleFactor)))
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
@@ -548,7 +506,7 @@ bool ResizeTool::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVect
 	}
 
 	double widthScaleFactor = 0.0;
-	if (!SUCCEEDED(toolImageExtents.GetExtentProperty(SvDef::SVExtentPropertyWidthScaleFactor, widthScaleFactor)))
+	if (!SUCCEEDED(GetImageExtent().GetExtentProperty(SvDef::SVExtentPropertyWidthScaleFactor, widthScaleFactor)))
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)

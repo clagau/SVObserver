@@ -33,22 +33,22 @@ public:
 		SVTransformationToolExtent = 2,
 	};
 
-	SVToolExtentClass();
+	SVToolExtentClass(SVImageExtentClass& rImageExtent);
 	~SVToolExtentClass();
 
-	inline HRESULT Initialize();
+	HRESULT Initialize();
 
-	inline SVToolClass* GetTool() const;
-	inline void SetTool( SVToolClass* p_psvTool );
+	SVToolClass* GetTool() const { return m_pTool; }
+	void SetTool( SVToolClass* pTool ) { m_pTool = pTool; }
 
-	inline SVImageClass* GetToolImage() const;
-	inline void SetToolImage( SVImageClass* p_psvToolImage );
+	SVImageClass* GetToolImage() const { return m_pToolImage; }
+	void SetToolImage( SVImageClass* p_psvToolImage );
 
-	inline SVImageClass* GetSelectedImage() const;
-	inline void SetSelectedImage( SVImageClass* p_psvSelectedImage );
+	SVImageClass* GetSelectedImage() const { return m_pSelectedImage; }
+	void SetSelectedImage( SVImageClass* p_psvSelectedImage );
 
-	inline bool GetAlwaysUpdate() const;
-	inline void SetAlwaysUpdate( bool p_bAlwaysUpdate );
+	bool GetAlwaysUpdate() const { return m_bAlwaysUpdate; }
+	void SetAlwaysUpdate( bool bAlwaysUpdate ) { m_bAlwaysUpdate = bAlwaysUpdate; }
 
 	HRESULT ValidExtentAgainstParentImage( const SVImageExtentClass& p_rImageExtent ) const;
 	HRESULT UpdateExtentToParentExtents( SVImageExtentClass& p_rNewExtent  );
@@ -58,13 +58,11 @@ public:
 	HRESULT UpdateImageWithExtent( SVToolExtentTypeEnum p_ToolExtentType );
 
 	SvDef::SVExtentTranslationEnum GetTranslation();
-	HRESULT SetTranslation( SvDef::SVExtentTranslationEnum eTranslation );
+	void SetTranslation( SvDef::SVExtentTranslationEnum eTranslation );
 	HRESULT SetLinearTranslation(SvDef::SVExtentTranslationEnum eTranslation);
 
-	HRESULT GetExtentShape( SvDef::SVExtentPropertyEnum p_eProperty, SvDef::SVExtentShapeEnum &p_reValue ) const;
-
 	HRESULT GetExtentObject( SvDef::SVExtentPropertyEnum p_eProperty, SvOi::IValueObject*& rpValueObject ) const;
-	HRESULT SetExtentObject( SvDef::SVExtentPropertyEnum p_eProperty, SvOi::IValueObject* pValueObject );
+	void SetExtentObject( SvDef::SVExtentPropertyEnum p_eProperty, SvOi::IValueObject* pValueObject );
 
 	HRESULT GetExtentValue( SvDef::SVExtentPropertyEnum p_eProperty, _variant_t& rValue ) const;
 	HRESULT SetExtentValue( SvDef::SVExtentPropertyEnum p_eProperty, const _variant_t& rValue );
@@ -73,15 +71,15 @@ public:
 	HRESULT SetExtentPropertyInfo( SvDef::SVExtentPropertyEnum p_eProperty, const SVExtentPropertyInfoStruct& p_rInfo );
 
 	
-//- GetImageExtent -----------------------------------------------------------
+//- updateImageExtent -----------------------------------------------------------
 //- There appears to be little direct connection between the SVToolExtentClass
 //- and the SVImageExtentClass.  This function appears to attempt to translate  
 //- between the two.  Translating and copying from the SVToolExtentClass based 
 //- structure into the SVImageExtentClass based structure. -------------------
-	HRESULT GetImageExtent( SVImageExtentClass& rImageExtent )const ;
+	HRESULT updateImageExtent();
 
 	HRESULT SetImageExtent( const SVImageExtentClass& rImageExtent );
-	HRESULT GetFilteredImageExtentPropertyList( SVExtentPropertyListType& p_rPropertyList );
+	HRESULT GetFilteredImageExtentPropertyList( SVExtentPropertyVector& p_rPropertyList );
 
 	// ******* Begin Source Extent Data
 	// *
@@ -90,18 +88,18 @@ public:
 	// *
 	// *******
 
-	HRESULT GetRootOffsetData( SVExtentOffsetStruct& p_rsvOffsetData );
-	HRESULT GetSelectedOffsetData( SVExtentOffsetStruct& p_rsvOffsetData );
-	HRESULT UpdateOffsetDataToImage( SVExtentOffsetStruct& p_rsvOffsetData, SVImageClass* p_svToolImage );
-	HRESULT UpdateOffsetData( bool p_bForceUpdate );
-	HRESULT UpdateOffsetData( bool p_bForceUpdate, SVImageClass* p_svToolImage );
-	HRESULT TranslatePointToSource( SVExtentPointStruct p_svIn, SVExtentPointStruct& p_rsvOut );
-	HRESULT TranslatePositionPointToSource( SVExtentPointStruct& p_rsvOut );
+	HRESULT GetRootOffsetData( SVExtentOffsetStruct& rOffsetData );
+	HRESULT GetSelectedOffsetData( SVExtentOffsetStruct& rOffsetData );
+	HRESULT UpdateOffsetDataToImage( SVExtentOffsetStruct& rOffsetData, SVImageClass* pToolImage );
+	HRESULT UpdateOffsetData( bool bForceUpdate );
+	HRESULT UpdateOffsetData( bool bForceUpdate, SVImageClass* pToolImage );
+	HRESULT TranslatePointToSource(SVPoint<double> inPoint, SVPoint<double>& rOutPoint );
 	std::string GetAuxiliaryDrawTypeString() const;
 
 	// ******* End Source Extent Data
 
-protected:
+private:
+	typedef std::set< SvDef::SVExtentTranslationEnum > SVTranslationFilterSet;
 
 	// ******* Begin Source Extent Data
 	// *
@@ -112,27 +110,23 @@ protected:
 
 	bool m_bAlwaysUpdate;
 
-	SVImageClass* m_psvSelectedImage;
+	SVImageClass* m_pSelectedImage;
+	SVToolClass* m_pTool;
 
 	SVExtentOffsetStruct m_svRootOffsetData;
 	SVExtentOffsetStruct m_svSelectedOffsetData;
 
 	// ******* End Source Extent Data
 
-private:
-	typedef std::set< SvDef::SVExtentTranslationEnum > SVTranslationFilterSet;
-
-	SVToolClass* m_psvTool;
-
-	SVImageClass* m_psvToolImage;
+	SVImageClass* m_pToolImage;
 
 	SvDef::SVExtentTranslationEnum m_eTranslation;
 	SvDef::SVExtentShapeEnum m_eShape;
 
-	SVToolExtentPropertiesClass m_svProperties;
+	SVToolExtentPropertiesClass m_Properties;
+
+	SVImageExtentClass& m_rImageExtent;			//NOTE! This accesses the variable m_imageExtent directly in SVTaskObject
 
 	static SVTranslationFilterSet m_LinearToolTranslations;
 };
-
-#include "SVToolExtentClass.inl"
 

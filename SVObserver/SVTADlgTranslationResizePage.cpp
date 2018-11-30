@@ -634,31 +634,33 @@ void SVTADlgTranslationResizePage::UpdateOtherInfo()
 
 HRESULT SVTADlgTranslationResizePage::UpdatePropertyTreeData()
 {
-	SVImageExtentClass toolImageExtents;
-	HRESULT hr = m_pTool->GetImageExtent(toolImageExtents);
-	if (S_OK == hr)
+	if (nullptr != m_pTool)
 	{
+		const SVImageExtentClass& rToolImageExtents = m_pTool->GetImageExtent();
+
 		double newHeightScaleFactor = 0.0;
-		toolImageExtents.GetExtentProperty(SvDef::SVExtentPropertyHeightScaleFactor, newHeightScaleFactor);
+		rToolImageExtents.GetExtentProperty(SvDef::SVExtentPropertyHeightScaleFactor, newHeightScaleFactor);
 		double newWidthScaleFactor = 0.0;
-		toolImageExtents.GetExtentProperty(SvDef::SVExtentPropertyWidthScaleFactor, newWidthScaleFactor);
+		rToolImageExtents.GetExtentProperty(SvDef::SVExtentPropertyWidthScaleFactor, newWidthScaleFactor);
 		UpdateScaleFactors(newWidthScaleFactor, newHeightScaleFactor);
 
 		long newInputROIWidth(0);
 		long newInputROIHeight(0);
-		toolImageExtents.GetExtentProperty(SvDef::SVExtentPropertyWidth, newInputROIWidth);
-		toolImageExtents.GetExtentProperty(SvDef::SVExtentPropertyHeight, newInputROIHeight);
+		rToolImageExtents.GetExtentProperty(SvDef::SVExtentPropertyWidth, newInputROIWidth);
+		rToolImageExtents.GetExtentProperty(SvDef::SVExtentPropertyHeight, newInputROIHeight);
 		UpdateInputImageInfo(newInputROIWidth, newInputROIHeight);
 
 		long newOutputWidth(0);
 		long newOutputHeight(0);
-		toolImageExtents.GetExtentProperty(SvDef::SVExtentPropertyOutputWidth, newOutputWidth);
-		toolImageExtents.GetExtentProperty(SvDef::SVExtentPropertyOutputHeight, newOutputHeight);
+		rToolImageExtents.GetExtentProperty(SvDef::SVExtentPropertyOutputWidth, newOutputWidth);
+		rToolImageExtents.GetExtentProperty(SvDef::SVExtentPropertyOutputHeight, newOutputHeight);
 		UpdateOutputImageInfo(newOutputWidth, newOutputHeight);
 
 		UpdateOtherInfo();
+		return S_OK;
 	}
-	return hr;
+
+	return E_POINTER;
 }
 
 HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerVector *pErrorMessages)
@@ -677,32 +679,18 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 	double	oldWidthScaleFactor = 0.0;
 	double	oldHeightScaleFactor = 0.0;
 
-	long	longOldInterpolationValue = 0;
-	SVInterpolationModeOptions::SVInterpolationModeOptionsEnum oldInterpolationValue =
-		SVInterpolationModeOptions::InterpolationModeInitialize;
-	long	longDefaultInterpolationValue = 0;
-	SVInterpolationModeOptions::SVInterpolationModeOptionsEnum defaultInterpolationValue =
-		SVInterpolationModeOptions::InterpolationModeInitialize;
-	long	longOldOverscanValue = 0;
-	SVOverscanOptions::SVOverscanOptionsEnum oldOverscanValue =
-		SVOverscanOptions::OverscanInitialize;
-	long	longDefaultOverscanValue = 0;
-	SVOverscanOptions::SVOverscanOptionsEnum defaultOverscanValue =
-		SVOverscanOptions::OverscanInitialize;
-	long	longOldPerformanceValue = 0;
-	SVPerformanceOptions::SVPerformanceOptionsEnum oldPerformanceValue =
-		SVPerformanceOptions::PerformanceInitialize;
-	long	longDefaultPerformanceValue = 0;
-	SVPerformanceOptions::SVPerformanceOptionsEnum defaultPerformanceValue =
-		SVPerformanceOptions::PerformanceInitialize;
+	SVInterpolationModeOptions::SVInterpolationModeOptionsEnum oldInterpolationValue = SVInterpolationModeOptions::InterpolationModeInitialize;
+	SVInterpolationModeOptions::SVInterpolationModeOptionsEnum defaultInterpolationValue = SVInterpolationModeOptions::InterpolationModeInitialize;
+	SVOverscanOptions::SVOverscanOptionsEnum oldOverscanValue = SVOverscanOptions::OverscanInitialize;
+	SVOverscanOptions::SVOverscanOptionsEnum defaultOverscanValue = SVOverscanOptions::OverscanInitialize;
+	SVPerformanceOptions::SVPerformanceOptionsEnum oldPerformanceValue = SVPerformanceOptions::PerformanceInitialize;
+	SVPerformanceOptions::SVPerformanceOptionsEnum defaultPerformanceValue = SVPerformanceOptions::PerformanceInitialize;
 
 	SVRPropertyItemEdit*	editItem = nullptr;
 	SVRPropertyItemCombo*	comboItem = nullptr;
 
-	SVImageExtentClass toolImageExtents;
-
 	// Retrieve current values --------------------------------------------------
-	hr1 = m_pTool->GetImageExtent(toolImageExtents);
+	SVImageExtentClass toolImageExtents = m_pTool->GetImageExtent();
 
 	if (SUCCEEDED(hr1))
 	{
@@ -710,22 +698,23 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 		toolImageExtents.GetExtentProperty(SvDef::SVExtentPropertyWidthScaleFactor, oldWidthScaleFactor);
 
 		SVEnumerateValueObjectClass& rInterpolationMode = m_pTool->getInterpolationMode();
-		rInterpolationMode.GetValue(longOldInterpolationValue);
-		oldInterpolationValue = static_cast<SVInterpolationModeOptions::SVInterpolationModeOptionsEnum> (longOldInterpolationValue);
-		longDefaultInterpolationValue = rInterpolationMode.GetDefaultValue();
-		defaultInterpolationValue = static_cast<SVInterpolationModeOptions::SVInterpolationModeOptionsEnum> (longDefaultInterpolationValue);
+		long lValue{0L};
+		rInterpolationMode.GetValue(lValue);
+		oldInterpolationValue = static_cast<SVInterpolationModeOptions::SVInterpolationModeOptionsEnum> (lValue);
+		lValue = rInterpolationMode.GetDefaultValue();
+		defaultInterpolationValue = static_cast<SVInterpolationModeOptions::SVInterpolationModeOptionsEnum> (lValue);
 
 		SVEnumerateValueObjectClass& rOverscan = m_pTool->getOverscan();
-		rOverscan.GetValue(longOldOverscanValue);
-		oldOverscanValue = static_cast<SVOverscanOptions::SVOverscanOptionsEnum> (longOldOverscanValue);
-		longDefaultOverscanValue = rOverscan.GetDefaultValue();
-		defaultOverscanValue = static_cast<SVOverscanOptions::SVOverscanOptionsEnum> (longDefaultOverscanValue);
+		rOverscan.GetValue(lValue);
+		oldOverscanValue = static_cast<SVOverscanOptions::SVOverscanOptionsEnum> (lValue);
+		lValue = rOverscan.GetDefaultValue();
+		defaultOverscanValue = static_cast<SVOverscanOptions::SVOverscanOptionsEnum> (lValue);
 
 		SVEnumerateValueObjectClass& rPerformance = m_pTool->getPerformance();
-		rPerformance.GetValue(longOldPerformanceValue);
-		oldPerformanceValue = static_cast<SVPerformanceOptions::SVPerformanceOptionsEnum> (longOldPerformanceValue);
-		longDefaultPerformanceValue = rPerformance.GetDefaultValue();
-		defaultPerformanceValue = static_cast<SVPerformanceOptions::SVPerformanceOptionsEnum> (longDefaultPerformanceValue);
+		rPerformance.GetValue(lValue);
+		oldPerformanceValue = static_cast<SVPerformanceOptions::SVPerformanceOptionsEnum> (lValue);
+		lValue = rPerformance.GetDefaultValue();
+		defaultPerformanceValue = static_cast<SVPerformanceOptions::SVPerformanceOptionsEnum> (lValue);
 	}
 
 	// Validate new values --------------------------------------------------

@@ -1085,7 +1085,7 @@ HRESULT SVHistogramAnalyzerClass::createHistogramImage()
 	ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
 	ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
 
-	ImageInfo.SetExtentProperty( SvDef::SVExtentPropertyPositionPoint, 0 );
+	ImageInfo.SetExtentProperty( SvDef::SVExtentPropertyPositionPoint, SVPoint<double>(0.0, 0.0));
 	ImageInfo.SetExtentProperty( SvDef::SVExtentPropertyWidth, l_dWidth );
 	ImageInfo.SetExtentProperty( SvDef::SVExtentPropertyHeight, l_dHeight );
 	ImageInfo.SetTranslation( SvDef::SVExtentTranslationNone );

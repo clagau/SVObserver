@@ -103,13 +103,14 @@ bool SVDPointXResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCo
 	if( SVResultClass::onRun( rRunStatus, pErrorMessages ) )
 	{
 		SVDPointValueObjectClass* pPoint = getInputPoint();
-		ASSERT( pPoint );
+		assert( pPoint );
 
-		SVDPointClass DPoint;
-		pPoint->GetValue( DPoint );
-
-		// Set X
-		x.SetValue(DPoint.x);
+		SVPoint<double> dPoint;
+		if(nullptr != pPoint)
+		{
+			pPoint->GetValue(dPoint);
+		}
+		x.SetValue(dPoint.m_x);
 
 		return true;
 	}

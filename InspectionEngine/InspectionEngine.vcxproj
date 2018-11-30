@@ -214,9 +214,6 @@
     <ClCompile Include="TableAddColumnEquation.cpp" />
     <ClCompile Include="TableColumnEquation.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="SVToolExtentClass.inl" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

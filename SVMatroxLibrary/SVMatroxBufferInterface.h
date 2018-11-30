@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary/SVPOINT.h"
+#include "SVUtilityLibrary/SVPoint.h"
 #include "SVUtilityLibrary/SVBitmapInfo.h"
 
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
@@ -106,8 +106,8 @@ public:
 	// ****** Information 
 	static HRESULT IsParent( const SVMatroxBuffer& p_rParentBuffer, const SVMatroxBuffer& p_rChildBuffer );
 
-	static HRESULT GetPositionPoint( POINT& p_rPoint, const SVMatroxBuffer& p_rBuffer );
-	static HRESULT GetPositionPoint( SVPoint& p_rPoint, const SVMatroxBuffer& p_rBuffer );
+	static HRESULT GetPositionPoint( POINT& rPoint, const SVMatroxBuffer& p_rBuffer );
+	static HRESULT GetPositionPoint( SVPoint<long>& rPoint, const SVMatroxBuffer& p_rBuffer );
 
 public:
 	static HRESULT GetBitmapInfo( SVBitmapInfo& p_rBitmapInfo, const SVMatroxBuffer& p_rBuffer, bool* pIsMilInfo = nullptr );

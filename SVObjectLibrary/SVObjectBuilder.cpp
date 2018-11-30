@@ -85,17 +85,17 @@ static POINT GetPointFromString(const std::string& rValue)
 	return pointValue;
 }
 
-static SVDPointClass GetDPointFromString(const std::string& rValue)
+static SVPoint<double> GetDPointFromString(const std::string& rValue)
 {
-	SVDPointClass pointValue(0.0, 0.0);
+	SVPoint<double> pointValue(0.0, 0.0);
 	SvDef::StringVector SplitVec;
 	SplitVec.reserve(2);
 	Separator sep(",");
 	SplitString<Separator>(rValue, SplitVec, sep);
 	if (SplitVec.size() == 2)
 	{
-		_stscanf( SplitVec[0].c_str(), _T("%lf"), &pointValue.x );
-		_stscanf( SplitVec[1].c_str(), _T("%lf"), &pointValue.y );
+		_stscanf( SplitVec[0].c_str(), _T("%lf"), &pointValue.m_x );
+		_stscanf( SplitVec[1].c_str(), _T("%lf"), &pointValue.m_y );
 	}
 	else
 	{
@@ -306,7 +306,7 @@ static void BuildDataArray(SVObjectAttributeClass& dataObject, const std::string
 						}
 						else if (dstDataType == SV_DPOINT_Type)
 						{
-							const SVDPointClass& point = GetDPointFromString(strVal);
+							const SVPoint<double>& point = GetDPointFromString(strVal);
 							dataObject.AddData(point);
 						}
 						else

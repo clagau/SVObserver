@@ -33,9 +33,9 @@ void SVDisplayImageBufferClass::clear()
 	DestroyDisplayBuffer();
 }
 
-SVPoint SVDisplayImageBufferClass::GetPositionPoint() const
+SVPoint<long> SVDisplayImageBufferClass::GetPositionPoint() const
 {
-	return SVPoint();
+	return SVPoint<long>{};
 }
 
 SVBitmapInfo SVDisplayImageBufferClass::GetBitmapInfo() const

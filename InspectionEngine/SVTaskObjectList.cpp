@@ -152,22 +152,22 @@ void SVTaskObjectListClass::Persist(SvOi::IObjectWriter& rWriter)
 	rWriter.EndElement();
 }
 
-SVTaskObjectClass* SVTaskObjectListClass::GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint )
+SVTaskObjectClass* SVTaskObjectListClass::GetObjectAtPoint( const SVPoint<double>& rPoint )
 {
-	SVTaskObjectClass* l_psvObject = SVTaskObjectClass::GetObjectAtPoint( p_rsvPoint );
+	SVTaskObjectClass* pObject = SVTaskObjectClass::GetObjectAtPoint(rPoint);
 
 	// Get Object from our children
-	for (int i = 0; nullptr == l_psvObject && i < static_cast<int> (m_TaskObjectVector.size()); i++)
+	for (int i = 0; nullptr == pObject && i < static_cast<int> (m_TaskObjectVector.size()); i++)
 	{
-		l_psvObject = m_TaskObjectVector[i];
+		pObject = m_TaskObjectVector[i];
 
-		if ( nullptr != l_psvObject )
+		if ( nullptr != pObject )
 		{
-			l_psvObject = l_psvObject->GetObjectAtPoint( p_rsvPoint );
+			pObject = pObject->GetObjectAtPoint( rPoint );
 		}
 	}
 
-	return l_psvObject;
+	return pObject;
 }
 
 bool SVTaskObjectListClass::CloseObject()

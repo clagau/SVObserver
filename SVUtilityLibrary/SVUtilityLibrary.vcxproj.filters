@@ -27,13 +27,7 @@
     <ClCompile Include="SVBitmapInfo.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVDPointClass.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVGUID.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVPoint.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVSafeArray.cpp">
@@ -89,9 +83,6 @@
     <ClInclude Include="SVBitmapInfo.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVDPointClass.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVGUID.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -108,9 +99,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVObjectID.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVPoint.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVSafeArray.h">
@@ -211,6 +199,9 @@
     </ClInclude>
     <ClInclude Include="7zTypes.h">
       <Filter>Headerdateien\7Zip</Filter>
+    </ClInclude>
+    <ClInclude Include="SVPoint.h">
+      <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

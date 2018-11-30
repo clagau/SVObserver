@@ -381,9 +381,4 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="SVToolExtentClass.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
-  </ItemGroup>
 </Project>

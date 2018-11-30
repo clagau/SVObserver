@@ -2542,16 +2542,12 @@ SVProductInfoStruct* SVPPQObject::IndexPPQ(SvTi::SVTriggerInfoStruct& p_rTrigger
 			l_pNewProduct->oTriggerInfo.m_PreviousTrigger = l_pPrevProduct->oTriggerInfo.m_BeginProcess;
 		}
 
-		//This is faster than SvUl::Format
-		TCHAR TriggerCount[50];
-		sprintf_s(TriggerCount, 50, _T("%ld"), p_rTriggerInfo.lTriggerCount);
-
 		l_pNewProduct->bTriggered = true;
 
 		l_pNewProduct->m_ProductState += _T("|");
 		l_pNewProduct->m_ProductState += GetName();
 		l_pNewProduct->m_ProductState += _T("|TRI=");
-		l_pNewProduct->m_ProductState += TriggerCount;
+		l_pNewProduct->m_ProductState += SvUl::Format(_T("%ld"), p_rTriggerInfo.lTriggerCount);
 
 		l_pNewProduct->SetProductActive();
 

@@ -130,18 +130,21 @@ SVImagePolarTransformClass::~SVImagePolarTransformClass()
 
 bool SVImagePolarTransformClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool l_bOk = SVPolarTransformClass::CreateObject(rCreateStructure);
+	bool result = SVPolarTransformClass::CreateObject(rCreateStructure);
 	SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
-	l_bOk = l_bOk && nullptr != pTool;
+	result = result && nullptr != pTool;
 
-	l_bOk = l_bOk && S_OK == pTool->SetImageExtentProperty( SvDef::SVExtentPropertyPositionPointX, &m_centerX );
-	l_bOk = l_bOk && S_OK == pTool->SetImageExtentProperty( SvDef::SVExtentPropertyPositionPointY, &m_centerY );
-	l_bOk = l_bOk && S_OK == pTool->SetImageExtentProperty( SvDef::SVExtentPropertyInnerRadius, &m_endRadius );
-	l_bOk = l_bOk && S_OK == pTool->SetImageExtentProperty( SvDef::SVExtentPropertyOuterRadius, &m_startRadius );
-	l_bOk = l_bOk && S_OK == pTool->SetImageExtentProperty( SvDef::SVExtentPropertyStartAngle, &m_startAngle );
-	l_bOk = l_bOk && S_OK == pTool->SetImageExtentProperty( SvDef::SVExtentPropertyEndAngle, &m_endAngle );
+	if(result)
+	{
+		pTool->SetImageExtentProperty( SvDef::SVExtentPropertyPositionPointX, &m_centerX );
+		pTool->SetImageExtentProperty( SvDef::SVExtentPropertyPositionPointY, &m_centerY );
+		pTool->SetImageExtentProperty( SvDef::SVExtentPropertyInnerRadius, &m_endRadius );
+		pTool->SetImageExtentProperty( SvDef::SVExtentPropertyOuterRadius, &m_startRadius );
+		pTool->SetImageExtentProperty( SvDef::SVExtentPropertyStartAngle, &m_startAngle );
+		pTool->SetImageExtentProperty( SvDef::SVExtentPropertyEndAngle, &m_endAngle );
+	}
 
-	l_bOk &= S_OK == ( outputImageObject.InitializeImage(SvOl::getInput<SVImageClass>(m_inputImageObjectInfo)));
+	result &= S_OK == ( outputImageObject.InitializeImage(SvOl::getInput<SVImageClass>(m_inputImageObjectInfo)));
 
 	// Set / Reset Printable Flag
 	const UINT cAttributes = SvDef::SV_PRINTABLE | SvDef::SV_REMOTELY_SETABLE | SvDef::SV_EXTENT_OBJECT | SvDef::SV_SETABLE_ONLINE;
@@ -156,7 +159,7 @@ bool SVImagePolarTransformClass::CreateObject( const SVObjectLevelCreateStruct& 
 
 	SetCalculatedPrintableFlags();
 
-	m_isCreated = l_bOk;
+	m_isCreated = result;
 
 	return m_isCreated;
 }
@@ -435,11 +438,11 @@ bool SVImagePolarTransformClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Mes
 	BOOL bUseFormula( false );
 	long AngularMethod = 0;
 
-	bool l_bOk = __super::onRun( rRunStatus, pErrorMessages ) && ValidateLocal(pErrorMessages);
+	bool result = __super::onRun( rRunStatus, pErrorMessages ) && ValidateLocal(pErrorMessages);
 
 	if (S_OK != m_useFormulaInput.GetValue( bUseFormula ))
 	{
-		l_bOk = false;
+		result = false;
 		if (nullptr != pErrorMessages)
 		{
 			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
@@ -453,7 +456,7 @@ bool SVImagePolarTransformClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Mes
 	{
 		if( S_OK != pTool->m_svAngularMethod.GetValue( AngularMethod ) )
 		{
-			l_bOk = false;
+			result = false;
 			if (nullptr != pErrorMessages)
 			{
 				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
@@ -464,11 +467,12 @@ bool SVImagePolarTransformClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Mes
 	else
 	{
 		assert( false );
+		result = false;
 	}
 
 
 
-	if ( l_bOk )
+	if ( result )
 	{
 		double dStartAngle = 0.0;
 		double dEndAngle = 0.0;
@@ -480,31 +484,31 @@ bool SVImagePolarTransformClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Mes
 		if ( bUseFormula )
 		{
 			SVDoubleValueObjectClass* pValue = SvOl::getInput<SVDoubleValueObjectClass>(m_inputStartAngleResult, true);
-			l_bOk = l_bOk && nullptr != pValue && S_OK == (pValue->GetValue(dStartAngle));
+			result = result && nullptr != pValue && S_OK == (pValue->GetValue(dStartAngle));
 			pValue = SvOl::getInput<SVDoubleValueObjectClass>(m_inputEndAngleResult, true);
-			l_bOk = l_bOk && nullptr != pValue && S_OK == (pValue->GetValue(dEndAngle));
+			result = result && nullptr != pValue && S_OK == (pValue->GetValue(dEndAngle));
 			pValue = SvOl::getInput<SVDoubleValueObjectClass>(m_inputCenterXResult, true);
-			l_bOk = l_bOk && nullptr != pValue && S_OK == (pValue->GetValue(dCenterX));
+			result = result && nullptr != pValue && S_OK == (pValue->GetValue(dCenterX));
 			pValue = SvOl::getInput<SVDoubleValueObjectClass>(m_inputCenterYResult, true);
-			l_bOk = l_bOk && nullptr != pValue && S_OK == (pValue->GetValue(dCenterY));
+			result = result && nullptr != pValue && S_OK == (pValue->GetValue(dCenterY));
 			pValue = SvOl::getInput<SVDoubleValueObjectClass>(m_inputStartRadiusResult, true);
-			l_bOk = l_bOk && nullptr != pValue && ( S_OK == pValue->GetValue(dStartRadius));
+			result = result && nullptr != pValue && ( S_OK == pValue->GetValue(dStartRadius));
 			pValue = SvOl::getInput<SVDoubleValueObjectClass>(m_inputEndRadiusResult, true);
-			l_bOk = l_bOk && nullptr != pValue && ( S_OK == pValue->GetValue(dEndRadius));
+			result = result && nullptr != pValue && ( S_OK == pValue->GetValue(dEndRadius));
 
-			if (!l_bOk && nullptr != pErrorMessages)
+			if (!result && nullptr != pErrorMessages)
 			{
 				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_NoResultObject, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 				pErrorMessages->push_back(Msg);
 			}
 
-			if ( l_bOk )
+			if ( result )
 			{
-				l_bOk = l_bOk && ( S_OK == m_centerX.SetValue(dCenterX) );
-				l_bOk = l_bOk && ( S_OK == m_centerY.SetValue(dCenterY) );
-				l_bOk = l_bOk && ( S_OK == m_startRadius.SetValue(dStartRadius) );
-				l_bOk = l_bOk && ( S_OK == m_endRadius.SetValue(dEndRadius) );
-				if (!l_bOk && nullptr != pErrorMessages)
+				result = result && ( S_OK == m_centerX.SetValue(dCenterX) );
+				result = result && ( S_OK == m_centerY.SetValue(dCenterY) );
+				result = result && ( S_OK == m_startRadius.SetValue(dStartRadius) );
+				result = result && ( S_OK == m_endRadius.SetValue(dEndRadius) );
+				if (!result && nullptr != pErrorMessages)
 				{
 					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetValueFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 					pErrorMessages->push_back(Msg);
@@ -513,9 +517,9 @@ bool SVImagePolarTransformClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Mes
 		}
 		else
 		{
-			l_bOk = l_bOk && ( S_OK == m_startAngle.GetValue( dStartAngle ) );
-			l_bOk = l_bOk && ( S_OK == m_endAngle.GetValue( dEndAngle ) );
-			if (!l_bOk && nullptr != pErrorMessages)
+			result = result && ( S_OK == m_startAngle.GetValue( dStartAngle ) );
+			result = result && ( S_OK == m_endAngle.GetValue( dEndAngle ) );
+			if (!result && nullptr != pErrorMessages)
 			{
 				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_NoResultObject, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 				pErrorMessages->push_back(Msg);
@@ -539,40 +543,40 @@ bool SVImagePolarTransformClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Mes
 		// Write back modified angles...
 		if ( S_OK != m_startAngle.SetValue(dStartAngle) || S_OK != m_endAngle.SetValue(dEndAngle) )
 		{
-			l_bOk = false;
+			result = false;
 			if (nullptr != pErrorMessages)
 			{
 				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetValueFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 				pErrorMessages->push_back(Msg);
-	}
+			}
 		}
 	}
 
-	if ( l_bOk )
+	if ( result )
 	{
-		SVImageExtentClass l_svExtents;
-
-		SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
-		l_bOk = l_bOk && (nullptr != pTool) && (S_OK == pTool->GetImageExtent( l_svExtents ));
+		//This update call is required for the image extents which may have changed above
+		pTool->updateImageExtent();
+		
+		const SVImageExtentClass& rImageToolExtents = pTool->GetImageExtent();
 
 		//added "true" to the call of UpdateImage - if the tool only changes position the output image does not need to be re-created
-		l_bOk = l_bOk && S_OK == outputImageObject.UpdateImage( l_svExtents, true );
+		result = result && S_OK == outputImageObject.UpdateImage(rImageToolExtents, true);
 
 		SvTrc::IImagePtr pOutputImageBuffer = outputImageObject.getImageToWrite(rRunStatus.m_triggerRecord);
-		l_bOk = l_bOk && nullptr != pOutputImageBuffer && !pOutputImageBuffer->isEmpty();
+		result = result && nullptr != pOutputImageBuffer && !pOutputImageBuffer->isEmpty();
 
-		l_svExtents = outputImageObject.GetImageExtents( );
+		const SVImageExtentClass& rExtents = outputImageObject.GetImageExtents();
 
 		SvTrc::IImagePtr pInputImageBuffer = SvOl::getInput<SVImageClass>(m_inputImageObjectInfo, true)->getImageReadOnly(rRunStatus.m_triggerRecord);
-		l_bOk = l_bOk && nullptr != pInputImageBuffer && !pInputImageBuffer->isEmpty();
+		result = result && nullptr != pInputImageBuffer && !pInputImageBuffer->isEmpty();
 
-		if (!l_bOk && nullptr != pErrorMessages)
+		if (!result && nullptr != pErrorMessages)
 		{
 			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RunImagePolarFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
 
-		if ( l_bOk )
+		if ( result )
 		{
 			long l_lInterpolationMode;
 
@@ -585,18 +589,18 @@ bool SVImagePolarTransformClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Mes
 			double dOutputWidth = 0.0;
 			double dOutputHeight = 0.0;
 
-			l_bOk = l_bOk && S_OK == l_svExtents.GetExtentProperty( SvDef::SVExtentPropertyPositionPointX, dCenterX );
-			l_bOk = l_bOk && S_OK == l_svExtents.GetExtentProperty( SvDef::SVExtentPropertyPositionPointY, dCenterY );
-			l_bOk = l_bOk && S_OK == l_svExtents.GetExtentProperty( SvDef::SVExtentPropertyInnerRadius, dStartRadius );
-			l_bOk = l_bOk && S_OK == l_svExtents.GetExtentProperty( SvDef::SVExtentPropertyOuterRadius, dEndRadius );
-			l_bOk = l_bOk && S_OK == l_svExtents.GetExtentProperty( SvDef::SVExtentPropertyStartAngle, dStartAngle );
-			l_bOk = l_bOk && S_OK == l_svExtents.GetExtentProperty( SvDef::SVExtentPropertyEndAngle, dEndAngle );
-			l_bOk = l_bOk && S_OK == l_svExtents.GetExtentProperty( SvDef::SVExtentPropertyOutputWidth, dOutputWidth );
-			l_bOk = l_bOk && S_OK == l_svExtents.GetExtentProperty( SvDef::SVExtentPropertyOutputHeight, dOutputHeight );
+			result = result && S_OK == rExtents.GetExtentProperty( SvDef::SVExtentPropertyPositionPointX, dCenterX );
+			result = result && S_OK == rExtents.GetExtentProperty( SvDef::SVExtentPropertyPositionPointY, dCenterY );
+			result = result && S_OK == rExtents.GetExtentProperty( SvDef::SVExtentPropertyInnerRadius, dStartRadius );
+			result = result && S_OK == rExtents.GetExtentProperty( SvDef::SVExtentPropertyOuterRadius, dEndRadius );
+			result = result && S_OK == rExtents.GetExtentProperty( SvDef::SVExtentPropertyStartAngle, dStartAngle );
+			result = result && S_OK == rExtents.GetExtentProperty( SvDef::SVExtentPropertyEndAngle, dEndAngle );
+			result = result && S_OK == rExtents.GetExtentProperty( SvDef::SVExtentPropertyOutputWidth, dOutputWidth );
+			result = result && S_OK == rExtents.GetExtentProperty( SvDef::SVExtentPropertyOutputHeight, dOutputHeight );
 
-			l_bOk = l_bOk && ( S_OK == m_interpolationMode.GetValue( l_lInterpolationMode ) );
+			result = result && ( S_OK == m_interpolationMode.GetValue( l_lInterpolationMode ) );
 
-			if ( !l_bOk )
+			if ( !result )
 			{
 				if (nullptr != pErrorMessages)
 				{
@@ -661,7 +665,7 @@ bool SVImagePolarTransformClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Mes
 
 					if (S_OK != MatroxCode)
 					{
-						l_bOk = false;
+						result = false;
 						if (nullptr != pErrorMessages)
 						{
 							SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RunImagePolarFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
@@ -677,7 +681,7 @@ bool SVImagePolarTransformClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Mes
 				{
 					_clearfp();
 
-					l_bOk = false;
+					result = false;
 					if (nullptr != pErrorMessages)
 					{
 						SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownException, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
@@ -685,7 +689,7 @@ bool SVImagePolarTransformClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Mes
 				}
 				}
 
-				if( l_bOk )
+				if( result )
 				{
 					rRunStatus.SetPassed();
 				}
@@ -693,13 +697,13 @@ bool SVImagePolarTransformClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Mes
 		}
 	}
 
-	if ( ! l_bOk )
+	if ( ! result )
 	{
 		SetInvalid();
 		rRunStatus.SetInvalid();
 	}
 
-	return l_bOk;
+	return result;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -736,33 +740,33 @@ bool SVImagePolarTransformClass::ResetObject(SvStl::MessageContainerVector *pErr
 	bool bUseFormula = Value ? true : false;
 	SVExtentPropertyInfoStruct info;
 
-	hr = pTool->m_svToolExtent.GetExtentPropertyInfo( SvDef::SVExtentPropertyPositionPointX, info );
+	hr = pTool->m_toolExtent.GetExtentPropertyInfo( SvDef::SVExtentPropertyPositionPointX, info );
 	info.bFormula = bUseFormula;
-	hr = pTool->m_svToolExtent.SetExtentPropertyInfo( SvDef::SVExtentPropertyPositionPointX, info );
+	hr = pTool->m_toolExtent.SetExtentPropertyInfo( SvDef::SVExtentPropertyPositionPointX, info );
 
-	hr = pTool->m_svToolExtent.GetExtentPropertyInfo( SvDef::SVExtentPropertyPositionPointY, info );
+	hr = pTool->m_toolExtent.GetExtentPropertyInfo( SvDef::SVExtentPropertyPositionPointY, info );
 	info.bFormula = bUseFormula;
-	hr = pTool->m_svToolExtent.SetExtentPropertyInfo( SvDef::SVExtentPropertyPositionPointY, info );
+	hr = pTool->m_toolExtent.SetExtentPropertyInfo( SvDef::SVExtentPropertyPositionPointY, info );
 
-	hr = pTool->m_svToolExtent.GetExtentPropertyInfo( SvDef::SVExtentPropertyInnerRadius, info );
+	hr = pTool->m_toolExtent.GetExtentPropertyInfo( SvDef::SVExtentPropertyInnerRadius, info );
 	info.bFormula = bUseFormula;
-	hr = pTool->m_svToolExtent.SetExtentPropertyInfo( SvDef::SVExtentPropertyInnerRadius, info );
+	hr = pTool->m_toolExtent.SetExtentPropertyInfo( SvDef::SVExtentPropertyInnerRadius, info );
 
-	hr = pTool->m_svToolExtent.GetExtentPropertyInfo( SvDef::SVExtentPropertyOuterRadius, info );
+	hr = pTool->m_toolExtent.GetExtentPropertyInfo( SvDef::SVExtentPropertyOuterRadius, info );
 	info.bFormula = bUseFormula;
-	hr = pTool->m_svToolExtent.SetExtentPropertyInfo( SvDef::SVExtentPropertyOuterRadius, info );
+	hr = pTool->m_toolExtent.SetExtentPropertyInfo( SvDef::SVExtentPropertyOuterRadius, info );
 
-	hr = pTool->m_svToolExtent.GetExtentPropertyInfo( SvDef::SVExtentPropertyStartAngle, info );
+	hr = pTool->m_toolExtent.GetExtentPropertyInfo( SvDef::SVExtentPropertyStartAngle, info );
 	info.bFormula = bUseFormula;
-	hr = pTool->m_svToolExtent.SetExtentPropertyInfo( SvDef::SVExtentPropertyStartAngle, info );
+	hr = pTool->m_toolExtent.SetExtentPropertyInfo( SvDef::SVExtentPropertyStartAngle, info );
 
-	hr = pTool->m_svToolExtent.GetExtentPropertyInfo( SvDef::SVExtentPropertyEndAngle, info );
+	hr = pTool->m_toolExtent.GetExtentPropertyInfo( SvDef::SVExtentPropertyEndAngle, info );
 	info.bFormula = bUseFormula;
-	hr = pTool->m_svToolExtent.SetExtentPropertyInfo( SvDef::SVExtentPropertyEndAngle, info );
+	hr = pTool->m_toolExtent.SetExtentPropertyInfo( SvDef::SVExtentPropertyEndAngle, info );
 
-	hr = pTool->m_svToolExtent.GetExtentPropertyInfo( SvDef::SVExtentPropertyRotationAngle, info );
+	hr = pTool->m_toolExtent.GetExtentPropertyInfo( SvDef::SVExtentPropertyRotationAngle, info );
 	info.bFormula = bUseFormula;
-	hr = pTool->m_svToolExtent.SetExtentPropertyInfo( SvDef::SVExtentPropertyRotationAngle, info );
+	hr = pTool->m_toolExtent.SetExtentPropertyInfo( SvDef::SVExtentPropertyRotationAngle, info );
 
 	if (S_OK != outputImageObject.InitializeImage(SvOl::getInput<SVImageClass>(m_inputImageObjectInfo)))
 	{

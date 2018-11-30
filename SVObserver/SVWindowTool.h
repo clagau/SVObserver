@@ -32,7 +32,7 @@ public:
 	virtual HRESULT SetImageExtentToParent() override;
 	virtual HRESULT SetImageExtentToFit( const SVImageExtentClass& rImageExtent ) override;
 
-	virtual SVTaskObjectClass *GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint ) override;
+	virtual SVTaskObjectClass *GetObjectAtPoint(const SVPoint<double>& rPoint) override;
 	virtual bool DoesObjectHaveExtents() const override;
 
 	virtual SvOi::ParametersForML getParameterForMonitorList(SvStl::MessageContainerVector& rMessages) const override;

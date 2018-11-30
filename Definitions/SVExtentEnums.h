@@ -31,7 +31,6 @@ enum SVExtentPropertyEnum
 	SVExtentPropertyOutputPositionPoint     = 0x00000300,
 
 	SVExtentPropertyHeightScaleFactor		= 0x00040000, ///< Used by Resize Tool and the Image Tool Height Doubling operation
-	
 	SVExtentPropertyWidthScaleFactor		= 0x00080000, ///< Used by Resize Tool
 
 	SVExtentPropertyStartAngle              = 0x01000000,

@@ -529,13 +529,13 @@ bool SVColorThresholdClass::createHistogramImage(SVImageClass* pInputImage, SVIm
 		ImageInfo = pOutputImage->GetImageInfo();
 	}
 
-	SVExtentPointStruct l_svPoint;
+	SVPoint<double> point;
 
 	double l_dWidth = 0.0;
 	double l_dHeight = 0.0;
 
-	m_ExtentLeft.GetValue(l_svPoint.m_dPositionX);
-	m_ExtentTop.GetValue(l_svPoint.m_dPositionY);
+	m_ExtentLeft.GetValue(point.m_x);
+	m_ExtentTop.GetValue(point.m_y);
 	m_ExtentWidth.GetValue(l_dWidth);
 	m_ExtentHeight.GetValue(l_dHeight);
 
@@ -547,7 +547,7 @@ bool SVColorThresholdClass::createHistogramImage(SVImageClass* pInputImage, SVIm
 	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, 0);
 	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1);
 
-	ImageInfo.SetExtentProperty(SvDef::SVExtentPropertyPositionPoint, 0);
+	ImageInfo.SetExtentProperty(SvDef::SVExtentPropertyPositionPoint, SVPoint<double>(0.0, 0.0));
 	ImageInfo.SetExtentProperty(SvDef::SVExtentPropertyWidth, l_dWidth);
 	ImageInfo.SetExtentProperty(SvDef::SVExtentPropertyHeight, l_dHeight);
 	ImageInfo.SetTranslation(SvDef::SVExtentTranslationNone);

@@ -332,12 +332,12 @@ SVMaskShape::SortedMapViewType SVMaskShape::GetTempSortedPropertyMapView(const M
 	return set;
 }
 
-HRESULT SVMaskShape::TranslateToDisplay(const CRect rectViewport, const CRect rectDisplay, std::vector<POINT>& p_rvecPoints)
+HRESULT SVMaskShape::TranslateToDisplay(const CRect rectViewport, const CRect rectDisplay, std::vector<POINT>& rvecPoints)
 {
 	HRESULT hr = S_OK;
 	
-	std::vector<SVExtentPointStruct> vecPoints(p_rvecPoints.size());
-	std::copy( p_rvecPoints.begin(), p_rvecPoints.end(), vecPoints.begin() );	// from POINT to ExtentPoint
+	std::vector<SVPoint<double>> vecPoints(rvecPoints.size());
+	std::copy( rvecPoints.begin(), rvecPoints.end(), vecPoints.begin() );	// from POINT to ExtentPoint
 	
 
 	CRect rectImage = GetMaskImageRect();
@@ -346,9 +346,9 @@ HRESULT SVMaskShape::TranslateToDisplay(const CRect rectViewport, const CRect re
 	SVExtentFigureStruct figureDest(rectViewport); // viewport is the output
 
 	// translate mask image to viewport
-	SVExtentPointStruct ptOffset = figureDest.m_svTopLeft - figureSource.m_svTopLeft;
+	SVPoint<double> ptOffset = figureDest.m_svTopLeft - figureSource.m_svTopLeft;
 	std::transform( vecPoints.begin(), vecPoints.end(), vecPoints.begin(),
-	                std::bind2nd( std::minus<SVExtentPointStruct>(), ptOffset) );	// subtract the offset from each point
+	                std::bind2nd( std::minus<SVPoint<double>>(), ptOffset) );	// subtract the offset from each point
 
 	if ( S_OK == hr )
 	{
@@ -358,7 +358,8 @@ HRESULT SVMaskShape::TranslateToDisplay(const CRect rectViewport, const CRect re
 		hr = TranslateCoordinates(rectViewport, rectDisplay, vecPoints);
 	}
 
-	std::copy( vecPoints.begin(), vecPoints.end(), p_rvecPoints.begin() );	// from ExtentPoint back to POINT
+
+	std::transform( vecPoints.begin(), vecPoints.end(), rvecPoints.begin(), [](SVPoint<double> point) { return static_cast<POINT> (point); });
 
 	return hr;
 }// SVMaskShape::TranslateToDisplay
@@ -394,27 +395,27 @@ HRESULT SVMaskShape::TranslateToDisplay(const CRect rectViewport, const CRect re
 
 HRESULT SVMaskShape::TranslateCoordinates(const SVExtentFigureStruct& rectSource, const SVExtentFigureStruct& rectDest, SVExtentFigureStruct& rRect)
 {
-	SVExtentPointStruct ptTopLeft = rRect.m_svTopLeft;
-	SVExtentPointStruct ptBottomRight = rRect.m_svBottomRight;
+	SVPoint<double> ptTopLeft = rRect.m_svTopLeft;
+	SVPoint<double> ptBottomRight = rRect.m_svBottomRight;
 	TranslateCoordinates(rectSource, rectDest, ptTopLeft);
 	TranslateCoordinates(rectSource, rectDest, ptBottomRight);
-	rRect.SetRect( ptTopLeft.m_dPositionY, ptTopLeft.m_dPositionX, ptBottomRight.m_dPositionY, ptBottomRight.m_dPositionX);
+	rRect.SetRect( ptTopLeft.m_y, ptTopLeft.m_x, ptBottomRight.m_y, ptBottomRight.m_x);
 	return S_OK;
 }
 
-HRESULT SVMaskShape::TranslateCoordinates(const SVExtentFigureStruct& rectSource, const SVExtentFigureStruct& rectDest, SVExtentPointStruct& rPoint)
+HRESULT SVMaskShape::TranslateCoordinates(const SVExtentFigureStruct& rectSource, const SVExtentFigureStruct& rectDest, SVPoint<double>& rPoint)
 {
 	double dScaleX = rectDest.Size().m_dCX / rectSource.Size().m_dCX;
 	double dScaleY = rectDest.Size().m_dCY / rectSource.Size().m_dCY;
 
 	rPoint -= rectDest.m_svTopLeft;
 
-	rPoint.m_dPositionX *= dScaleX;
-	rPoint.m_dPositionY *= dScaleY;
+	rPoint.m_x *= dScaleX;
+	rPoint.m_y *= dScaleY;
 	return S_OK;
 }
 
-HRESULT SVMaskShape::TranslateCoordinates(const SVExtentFigureStruct& rectSource, const SVExtentFigureStruct& rectDest, std::vector<SVExtentPointStruct>& rvecPoints)
+HRESULT SVMaskShape::TranslateCoordinates(const SVExtentFigureStruct& rectSource, const SVExtentFigureStruct& rectDest, std::vector<SVPoint<double>>& rvecPoints)
 {
 	HRESULT hr = S_OK;
 	for ( size_t i=0; i < rvecPoints.size(); i++ )

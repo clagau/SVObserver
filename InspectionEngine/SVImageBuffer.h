@@ -12,7 +12,7 @@
 
 #pragma region Includes
 #include "SVImageLibrary/SVExtentMultiLineStruct.h"
-#include "SVImageLibrary/SVExtentPointStruct.h"
+#include "SVUtilityLibrary/SVPoint.h"
 #pragma endregion Includes
 
 struct SVOverlayFigureStruct
@@ -37,13 +37,12 @@ struct SVOverlayFigureStruct
 
 		oFigureColor = p_ExtentLineStruct.m_dwColor;
 
-		lFigureSize = static_cast<long> (p_ExtentLineStruct.m_svPointArray.size());
+		lFigureSize = static_cast<long> (p_ExtentLineStruct.m_PointVector.size());
 
 		pFigurePoints = new POINT[lFigureSize];
 		for ( int i = 0; i < lFigureSize; i++ )
 		{
-			SVExtentPointStruct svExtentPtStruct = p_ExtentLineStruct.m_svPointArray[i];
-			pFigurePoints[i] = svExtentPtStruct.operator POINT();
+			pFigurePoints[i] = static_cast<POINT> (p_ExtentLineStruct.m_PointVector[i]);
 		}
 		
 		return *this;

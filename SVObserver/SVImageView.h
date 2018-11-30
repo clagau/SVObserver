@@ -221,7 +221,7 @@ private:
 
 	// JMS - Extent Objects
 
-	SVTaskObjectClass* m_psvObject;
+	SVTaskObjectClass* m_pTaskObject;
 
 	SvDef::SVExtentLocationPropertyEnum m_svLocation;
 

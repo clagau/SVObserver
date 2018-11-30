@@ -27,7 +27,6 @@ class SVExtentClass;
 class SVToolSetClass;
 class SVThresholdClass;
 class SVConditionalClass;
-class SVToolClass;
 
 enum EAutoSize
 {
@@ -68,11 +67,10 @@ public:
 
 	virtual bool SetDefaultFormulas(SvStl::MessageContainerVector *pErrorMessages = nullptr);
 
-	HRESULT SetImageExtentProperty(SvDef::SVExtentPropertyEnum p_eProperty, SvOi::IValueObject* pValueObject);
+	void SetImageExtentProperty(SvDef::SVExtentPropertyEnum p_eProperty, SvOi::IValueObject* pValueObject);
 
-	virtual HRESULT GetImageExtent(SVImageExtentClass& rImageExtent) override;
 	virtual HRESULT SetImageExtent(const SVImageExtentClass& rImageExtent) override;
-	virtual HRESULT GetFilteredImageExtentPropertyList(SVExtentPropertyListType& p_rPropertyList) override;
+	virtual HRESULT GetFilteredImageExtentPropertyList(SVExtentPropertyVector& p_rPropertyList) override;
 
 	const SVImageClass* GetToolImage() const;
 
@@ -80,7 +78,7 @@ public:
 
 	HRESULT GetRootOffsetData(SVExtentOffsetStruct& p_rsvOffsetData);
 	HRESULT UpdateOffsetData(SVImageClass* p_svToolImage);
-	HRESULT TranslatePointToSource(SVExtentPointStruct p_svIn, SVExtentPointStruct& p_rsvOut);
+	HRESULT TranslatePointToSource(SVPoint<double> inPoint, SVPoint<double>& rOutPoint);
 	HRESULT EnableAuxiliaryExtents(bool p_bEnable);
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
@@ -104,7 +102,7 @@ public:
 	virtual SVStringValueObjectClass* GetInputImageNames();
 	virtual bool SetFirstInputImageName(LPCTSTR FirstName) override;
 
-
+	virtual HRESULT updateImageExtent() override;
 	virtual HRESULT UpdateImageWithExtent() override;
 	virtual HRESULT GetParentExtent(SVImageExtentClass& p_rParent) const;
 
@@ -235,7 +233,7 @@ protected:
 	// Tool Comments
 	SVStringValueObjectClass m_ToolComment;
 
-	SVToolExtentClass m_svToolExtent;
+	SVToolExtentClass m_toolExtent;
 
 	bool m_canResizeToParent;
 	bool m_hasToolExtents{true};

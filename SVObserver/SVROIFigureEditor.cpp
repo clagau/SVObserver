@@ -117,23 +117,23 @@ HRESULT SVROIShape::TranslateToDisplay( CRect rectViewport, CRect rectDisplay, C
 
 HRESULT SVROIShape::TranslateCoordinates(const SVExtentFigureStruct& rectSource, const SVExtentFigureStruct& rectDest, SVExtentFigureStruct& rRect)
 {
-	SVExtentPointStruct ptTopLeft = rRect.m_svTopLeft;
-	SVExtentPointStruct ptBottomRight = rRect.m_svBottomRight;
+	SVPoint<double> ptTopLeft = rRect.m_svTopLeft;
+	SVPoint<double> ptBottomRight = rRect.m_svBottomRight;
 	TranslateCoordinates(rectSource, rectDest, ptTopLeft);
 	TranslateCoordinates(rectSource, rectDest, ptBottomRight);
-	rRect.SetRect( ptTopLeft.m_dPositionY, ptTopLeft.m_dPositionX, ptBottomRight.m_dPositionY, ptBottomRight.m_dPositionX);
+	rRect.SetRect( ptTopLeft.m_y, ptTopLeft.m_x, ptBottomRight.m_y, ptBottomRight.m_x);
 	return S_OK;
 }
 
-HRESULT SVROIShape::TranslateCoordinates(const SVExtentFigureStruct& rectSource, const SVExtentFigureStruct& rectDest, SVExtentPointStruct& rPoint)
+HRESULT SVROIShape::TranslateCoordinates(const SVExtentFigureStruct& rectSource, const SVExtentFigureStruct& rectDest, SVPoint<double>& rPoint)
 {
 	double dScaleX = rectDest.Size().m_dCX / rectSource.Size().m_dCX;
 	double dScaleY = rectDest.Size().m_dCY / rectSource.Size().m_dCY;
 
 	rPoint -= rectDest.m_svTopLeft;
 	
-	rPoint.m_dPositionX *= dScaleX;
-	rPoint.m_dPositionY *= dScaleY;
+	rPoint.m_x *= dScaleX;
+	rPoint.m_y *= dScaleY;
 	return S_OK;
 }
 

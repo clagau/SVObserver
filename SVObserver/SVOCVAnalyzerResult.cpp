@@ -1454,9 +1454,6 @@ HRESULT SVOCVAnalyzeResultClass::onCollectOverlays(SVImageClass* p_pImage, SVExt
 
 		if( m_lCurrentFoundStringLength )
 		{
-			SVImageExtentClass l_svExtents;
-			pTool->GetImageExtent( l_svExtents);
-
 			for( long i = 0; i < m_lCurrentFoundStringLength; i++ )
 			{
 				SVExtentFigureStruct l_svFigure;
@@ -1477,7 +1474,7 @@ HRESULT SVOCVAnalyzeResultClass::onCollectOverlays(SVImageClass* p_pImage, SVExt
 
 				l_svFigure = l_oRect;
 
-				l_svExtents.TranslateFromOutputSpace( l_svFigure, l_svFigure);
+				pTool->GetImageExtent().TranslateFromOutputSpace( l_svFigure, l_svFigure);
 
 				SVExtentMultiLineStruct l_multiLine;
 

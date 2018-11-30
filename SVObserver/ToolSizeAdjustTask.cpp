@@ -265,14 +265,12 @@ bool ToolSizeAdjustTask::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 	{
 		long ParentOutputWidth(0), ParentOutputHeight(0), oldWidth(0), oldHeight(0);
 		long  oldPosX, oldPosY;
-		SVImageExtentClass ImageExtent;
+		SVImageExtentClass ImageExtent = pTool->GetImageExtent();
 		SVImageExtentClass ParentImageExtent;
-
-		hresult = pTool->GetImageExtent(ImageExtent);
 
 		if (S_OK == hresult)
 		{
-			hresult =pTool->GetParentExtent(ParentImageExtent);
+			hresult = pTool->GetParentExtent(ParentImageExtent);
 		}
 
 		if (S_OK == hresult)
@@ -459,31 +457,27 @@ HRESULT ToolSizeAdjustTask::GetExtentValues( TSValues val, long &value) const
 	SVToolClass* pTool = GetTool();
 	if (nullptr == pTool)
 	{
-		ASSERT(false);
-		hresult = SvStl::Err_16027_InvalidOwner;
+		assert(false);
+		return SvStl::Err_16027_InvalidOwner;
 	}
 
-	SVImageExtentClass ImageExtent;
-	if (S_OK == hresult)
-	{
-		hresult = pTool->GetImageExtent(ImageExtent); 
-	}
+	const SVImageExtentClass& rImageExtent = pTool->GetImageExtent();
 
 	if (S_OK == hresult)
 	{
 		switch(val)
 		{
 		case TSPositionX:
-			hresult = ImageExtent.GetExtentProperty( SvDef::SVExtentPropertyPositionPointX, value );
+			hresult = rImageExtent.GetExtentProperty( SvDef::SVExtentPropertyPositionPointX, value );
 			break;
 		case TSPositionY:
-			hresult = ImageExtent.GetExtentProperty( SvDef::SVExtentPropertyPositionPointY, value );
+			hresult = rImageExtent.GetExtentProperty( SvDef::SVExtentPropertyPositionPointY, value );
 			break;
 		case TSWidth:
-			hresult = ImageExtent.GetExtentProperty( SvDef::SVExtentPropertyWidth, value );
+			hresult = rImageExtent.GetExtentProperty( SvDef::SVExtentPropertyWidth, value );
 			break;
 		case TSHeight:
-			hresult = ImageExtent.GetExtentProperty( SvDef::SVExtentPropertyHeight, value );
+			hresult = rImageExtent.GetExtentProperty( SvDef::SVExtentPropertyHeight, value );
 			break;
 		default:
 			hresult = SvStl::Err_16037_InvalidSelection;

@@ -122,21 +122,20 @@ namespace SvOg
 			SVToolClass* pTool = dynamic_cast<SVToolClass*> (SvOi::getObject(m_rInspectionID));
 			if (nullptr != pTool)
 			{
-				SVImageExtentClass Extents;
-				pTool->GetImageExtent(Extents);
+				SVImageExtentClass imageExtents = pTool->GetImageExtent();
 				WarpType eWarpType = static_cast<WarpType> (lType);
 				if (eWarpType == WarpTypeVertical)
 				{
-					Extents.SetExtentProperty(SvDef::SVExtentPropertyTranslationOffsetY, 10);
-					Extents.SetExtentProperty(SvDef::SVExtentPropertyTranslationOffsetX, 0);
+					imageExtents.SetExtentProperty(SvDef::SVExtentPropertyTranslationOffsetY, 10);
+					imageExtents.SetExtentProperty(SvDef::SVExtentPropertyTranslationOffsetX, 0);
 				}
 				else
 					if (eWarpType == WarpTypeHorizontal)
 					{
-						Extents.SetExtentProperty(SvDef::SVExtentPropertyTranslationOffsetX, 10);
-						Extents.SetExtentProperty(SvDef::SVExtentPropertyTranslationOffsetY, 0);
+						imageExtents.SetExtentProperty(SvDef::SVExtentPropertyTranslationOffsetX, 10);
+						imageExtents.SetExtentProperty(SvDef::SVExtentPropertyTranslationOffsetY, 0);
 					}
-				pTool->SetImageExtent(Extents);
+				pTool->SetImageExtent(imageExtents);
 			}
 		}
 		CPropertyPage::OnDestroy();

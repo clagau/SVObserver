@@ -27,10 +27,10 @@ struct SVExtentMultiLineStruct
 
 	const SVExtentMultiLineStruct &operator=( const SVExtentMultiLineStruct &p_rsvValue );
 
-	void Assign( SVExtentFigureStruct &p_rsvValue, COLORREF p_Color = 0 );
-	void AssignExtentFigure( SVExtentFigureStruct &p_rsvValue, COLORREF p_Color = 0 );
+	void Assign(const SVExtentFigureStruct &rValue, COLORREF Color = 0 );
+	void AssignExtentFigure(const SVExtentFigureStruct &rValue, COLORREF Color = 0 );
 
-	HRESULT Initialize();
+	void Initialize();
 
 	SVGUID m_InspectionID;
 	SVGUID m_ToolID;
@@ -46,7 +46,7 @@ struct SVExtentMultiLineStruct
 
 	COLORREF m_Color;
 
-	SVExtentPointStruct m_StringPoint;
+	SVPoint<double> m_StringPoint;
 	std::string m_csString;
 
 	SVExtentLineStructVector m_svLineArray;

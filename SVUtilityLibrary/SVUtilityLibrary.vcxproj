@@ -165,11 +165,9 @@
     </ClCompile>
     <ClCompile Include="SVBitmapInfo.cpp" />
     <ClCompile Include="SVDottedName.cpp" />
-    <ClCompile Include="SVDPointClass.cpp" />
     <ClCompile Include="SVGUID.cpp" />
     <ClCompile Include="SVHistogramBase.cpp" />
     <ClCompile Include="SVMetrics.cpp" />
-    <ClCompile Include="SVPoint.cpp" />
     <ClCompile Include="SVSafeArray.cpp" />
     <ClCompile Include="StringHelper.cpp" />
     <ClCompile Include="SVUtilityGlobals.cpp" />
@@ -200,7 +198,7 @@
     <ClInclude Include="StringToEnum.h" />
     <ClInclude Include="SVBitmapInfo.h" />
     <ClInclude Include="SVDottedName.h" />
-    <ClInclude Include="SVDPointClass.h" />
+    <ClInclude Include="SVPoint.h" />
     <ClInclude Include="SVGUID.h" />
     <ClInclude Include="SVGuidList.h" />
     <ClInclude Include="SVHandleManager.h" />
@@ -210,7 +208,6 @@
     <ClInclude Include="SVNameVariantList.h" />
     <ClInclude Include="SVNullDeleter.h" />
     <ClInclude Include="SVObjectID.h" />
-    <ClInclude Include="SVPoint.h" />
     <ClInclude Include="SVSafeArray.h" />
     <ClInclude Include="StringHelper.h" />
     <ClInclude Include="SVUniqueIDGenerator.h" />

@@ -1107,74 +1107,67 @@ std::vector<SVExtentFigureStruct> SVPatternAnalyzerClass::GetResultExtentFigureL
 	std::vector<SVExtentFigureStruct> retList;
 	if (lOccurances > 0)
 	{
-		SVImageExtentClass l_svExtents;
 		SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
-		if (pTool)
+		if (nullptr != pTool)
 		{
-			HRESULT hr = pTool->GetImageExtent( l_svExtents );
+			long lpatModelWidth = 0;
+			long lpatModelHeight = 0;
+			m_lpatModelWidth.GetValue(lpatModelWidth);
+			m_lpatModelHeight.GetValue(lpatModelHeight);
 
-			if (S_OK == hr)
+			// Check if CircularOverscan was used
+			BOOL bCircularScan;
+			msv_bpatCircularOverscan.GetValue(bCircularScan);
+			if( bCircularScan )
 			{
-				long lpatModelWidth = 0;
-				long lpatModelHeight = 0;
-				m_lpatModelWidth.GetValue(lpatModelWidth);
-				m_lpatModelHeight.GetValue(lpatModelHeight);
+				POINT pos = { 0, 0 };
+				SIZE size = { lpatModelWidth, lpatModelHeight};
 
-				// Check if CircularOverscan was used
-				BOOL bCircularScan;
-				msv_bpatCircularOverscan.GetValue(bCircularScan);
-				if( bCircularScan )
+				RECT rect = SVMatroxPatternInterface::CalculateOverscanInnerRect(pos, size);
+				lpatModelWidth = rect.right - rect.left;
+				lpatModelHeight = rect.bottom - rect.top;
+			}
+
+			BOOL bAngleMode;
+			msv_bpatSearchAngleMode.GetValue(bAngleMode); 
+
+			long centerX = 0;
+			long centerY = 0;
+			m_lpatModelCenterX.GetValue(centerX);
+			m_lpatModelCenterY.GetValue(centerY);
+
+			// Add the Poly line Draw Object to the SVDrawObjectList
+			bool bError = false;
+			for (int i = 0; !bError && i < (int)lOccurances; i++)
+			{
+				double dResultXPos = 0;
+				double dResultYPos = 0;
+				double dResultAngle = 0.0;
+
+				msv_dpatResultX.GetValue( dResultXPos, i );
+				msv_dpatResultY.GetValue( dResultYPos, i );
+				msv_dpatResultAngle.GetValue( dResultAngle, i );
+				SVPoint<double> moveVector = SVRotatePoint(SVPoint<double>(0, 0), SVPoint<double>(centerX, centerY), -dResultAngle);
+				dResultXPos -= moveVector.m_x;
+				dResultYPos -= moveVector.m_y;
+				bError = dResultXPos < 0.0 || dResultYPos < 0.0	||dResultAngle < 0.0;
+
+				if ( !bError )
 				{
-					POINT pos = { 0, 0 };
-					SIZE size = { lpatModelWidth, lpatModelHeight};
+					SVImageExtentClass patternExtents;
 
-					RECT rect = SVMatroxPatternInterface::CalculateOverscanInnerRect(pos, size);
-					lpatModelWidth = rect.right - rect.left;
-					lpatModelHeight = rect.bottom - rect.top;
-				}
+					patternExtents.SetTranslation( SvDef::SVExtentTranslationFlippedRotate );
+					patternExtents.SetExtentProperty( SvDef::SVExtentPropertyPositionPointX, dResultXPos );
+					patternExtents.SetExtentProperty( SvDef::SVExtentPropertyPositionPointY, dResultYPos );
+					patternExtents.SetExtentProperty( SvDef::SVExtentPropertyWidth, lpatModelWidth );
+					patternExtents.SetExtentProperty( SvDef::SVExtentPropertyHeight, lpatModelHeight );
+					patternExtents.SetExtentProperty( SvDef::SVExtentPropertyRotationAngle, dResultAngle );
+					patternExtents.UpdateData();
+					SVExtentFigureStruct figure=patternExtents.GetFigure();
 
-				BOOL bAngleMode;
-				msv_bpatSearchAngleMode.GetValue(bAngleMode); 
+					pTool->GetImageExtent().TranslateFromOutputSpace(figure, figure);
 
-				long centerX = 0;
-				long centerY = 0;
-				m_lpatModelCenterX.GetValue(centerX);
-				m_lpatModelCenterY.GetValue(centerY);
-
-				// Add the Poly line Draw Object to the SVDrawObjectList
-				bool bError = false;
-				for (int i = 0; !bError && i < (int)lOccurances; i++)
-				{
-					double dResultXPos = 0;
-					double dResultYPos = 0;
-					double dResultAngle = 0.0;
-
-					msv_dpatResultX.GetValue( dResultXPos, i );
-					msv_dpatResultY.GetValue( dResultYPos, i );
-					msv_dpatResultAngle.GetValue( dResultAngle, i );
-					SVExtentPointStruct moveVector = SVRotatePoint(SVExtentPointStruct(0, 0), SVExtentPointStruct(centerX, centerY), -dResultAngle);
-					dResultXPos -= moveVector.m_dPositionX;
-					dResultYPos -= moveVector.m_dPositionY;
-					bError = dResultXPos < 0.0 || dResultYPos < 0.0	||dResultAngle < 0.0;
-
-					if ( !bError )
-					{
-						SVExtentFigureStruct l_svFigure;
-						SVImageExtentClass l_svPatternExtents;
-
-						l_svPatternExtents.SetTranslation( SvDef::SVExtentTranslationFlippedRotate );
-						l_svPatternExtents.SetExtentProperty( SvDef::SVExtentPropertyPositionPointX, dResultXPos );
-						l_svPatternExtents.SetExtentProperty( SvDef::SVExtentPropertyPositionPointY, dResultYPos );
-						l_svPatternExtents.SetExtentProperty( SvDef::SVExtentPropertyWidth, lpatModelWidth );
-						l_svPatternExtents.SetExtentProperty( SvDef::SVExtentPropertyHeight, lpatModelHeight );
-						l_svPatternExtents.SetExtentProperty( SvDef::SVExtentPropertyRotationAngle, dResultAngle );
-						l_svPatternExtents.UpdateData();
-						l_svPatternExtents.GetFigure( l_svFigure );
-
-						l_svExtents.TranslateFromOutputSpace( l_svFigure, l_svFigure );
-
-						retList.push_back(l_svFigure);
-					}
+					retList.push_back(figure);
 				}
 			}
 		}
@@ -1461,13 +1454,12 @@ bool SVPatternAnalyzerClass::IsValidSize(SvStl::MessageContainerVector *pErrorMe
 bool SVPatternAnalyzerClass::IsValidSize(long modelWidth, long modelHeight, bool useDontCare, long dontCareWidth, long dontCareHeight, SvStl::MessageContainerVector *pErrorMessages) const
 {
 	bool bRet = true;
-	SVImageExtentClass svExtents;
 
 	SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
-	if (pTool && S_OK == pTool->GetImageExtent(svExtents))
+	if (nullptr != pTool)
 	{
 		RECT oRec;
-		HRESULT hrOk = svExtents.GetOutputRectangle(oRec);
+		HRESULT hrOk = pTool->GetImageExtent().GetOutputRectangle(oRec);
 
 		if (S_OK == hrOk)
 		{
@@ -1525,7 +1517,7 @@ bool SVPatternAnalyzerClass::CreateBuffer(long width, long height, SvOi::SVImage
 	patBuffer.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, SV8BitUnsigned);
 	patBuffer.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1);
 
-	patBuffer.SetExtentProperty(SvDef::SVExtentPropertyPositionPoint, 0);
+	patBuffer.SetExtentProperty(SvDef::SVExtentPropertyPositionPoint, SVPoint<double>(0.0, 0.0));
 	patBuffer.SetExtentProperty(SvDef::SVExtentPropertyWidth, width);
 	patBuffer.SetExtentProperty(SvDef::SVExtentPropertyHeight, height);
 

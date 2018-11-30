@@ -340,7 +340,7 @@ bool SVObjectAttributeClass::GetData(SvCl::SVObjectStdStringArrayClass& rData)
 		{
 			for ( int i = 0; i < static_cast<int> (m_PointArray.size()); i++)
 			{
-				rData.push_back(m_PointArray[i].ToString());
+				rData.push_back(m_PointArray[i].toString());
 			}
 
 			bOk = true;
@@ -351,7 +351,7 @@ bool SVObjectAttributeClass::GetData(SvCl::SVObjectStdStringArrayClass& rData)
 		{
 			for ( int i = 0; i < static_cast<int> (m_DPointArray.size()); i++)
 			{
-				rData.push_back(  m_DPointArray[i].ToString() );
+				rData.push_back(  m_DPointArray[i].toString() );
 			}
 
 			bOk = true;
@@ -726,12 +726,10 @@ bool SVObjectAttributeClass::GetData(SVObjectSVPointArrayClass& rData)
 	}
 	case SV_DPOINT_Type:
 	{
+		rData.resize(m_DPointArray.size());
 		for (int i = 0; bOk && i < static_cast<int> (m_DPointArray.size()); i++)
 		{
-			POINT Point;
-			m_DPointArray[i].GetValue(Point);
-
-			rData.push_back(SVPoint(Point));
+			rData.emplace_back(SVPoint<long>(static_cast<long> (m_DPointArray[i].m_x), static_cast<long> (m_DPointArray[i].m_y)));
 		}
 		bOk = true;
 		break;
@@ -787,13 +785,10 @@ bool SVObjectAttributeClass::GetData(SVObjectDPointArrayClass& rData)
 		case SV_POINT_Type:
 		{
 			bOk = true;
-
+			rData.resize(m_PointArray.size());
 			for ( int i = 0; bOk && i < static_cast<int> (m_PointArray.size()); i++)
 			{
-				SVDPointClass DPoint;
-				
-				DPoint = m_PointArray[i];
-				rData.push_back(DPoint);
+				rData.emplace_back(SVPoint<double>{static_cast<double> (m_PointArray[i].m_x), static_cast<double> (m_PointArray[i].m_y)});
 			}
 
 			break;
@@ -1157,7 +1152,7 @@ bool SVObjectAttributeClass::AddData(POINT Value)
 	return bOk;
 }
 
-bool SVObjectAttributeClass::AddData(SVDPointClass Value)
+bool SVObjectAttributeClass::AddData(SVPoint<double> Value)
 {
 	bool bOk = true;
 

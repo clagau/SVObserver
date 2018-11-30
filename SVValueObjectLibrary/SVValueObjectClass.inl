@@ -1144,10 +1144,7 @@ std::string SVValueObjectClass<T>::FormatOutput(const T& rValue) const
 	std::string Result;
 	if (!m_OutFormat.empty())
 	{
-		//This is faster than SvUl::Format
-		TCHAR Text[100];
-		sprintf_s(Text, 100, m_OutFormat.c_str(), rValue);
-		Result = Text;
+		Result = SvUl::Format(m_OutFormat.c_str(), rValue);
 	}
 	return Result;
 }

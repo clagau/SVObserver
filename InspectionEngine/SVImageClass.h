@@ -22,6 +22,7 @@
 #include "SVObjectAppClass.h"
 #include "TriggerRecordController/IImage.h"
 #include "TriggerRecordController/ITriggerRecordRW.h"
+#include "SVUtilityLibrary/SVPoint.h"
 #pragma endregion Includes
 
 class SVImageClass : public SVObjectAppClass, public SvOi::ISVImage
@@ -60,8 +61,8 @@ public:
 	
 	HRESULT RebuildStorage( SvStl::MessageContainerVector *pErrorMessages=nullptr );
 
-	SVImageExtentClass GetImageExtents() const;
-	HRESULT GetImageExtentsToFit( SVImageExtentClass p_svInExtent, SVImageExtentClass &p_rsvOutExtent );
+	const SVImageExtentClass& GetImageExtents() const;
+	HRESULT GetImageExtentsToFit(SVImageExtentClass inExtent, SVImageExtentClass& rOutExtent);
 
 	HRESULT ValidateAgainstParentExtents( SVImageExtentClass& rExtent );
 	HRESULT ValidateAgainstOutputExtents( const SVImageExtentClass& rExtent );
@@ -77,7 +78,7 @@ public:
 	void PersistImageAttributes( SvOi::IObjectWriter& rWriter );
 
 	const SVImageClass* const GetRootImage() const;
-	HRESULT TranslateFromOutputSpaceToImage(SVImageClass* p_pImage, SVExtentPointStruct p_InPt, SVExtentPointStruct& p_OutPt); //@TODO:  Change method to const?
+	HRESULT TranslateFromOutputSpaceToImage(SVImageClass* pImage, SVPoint<double> inPoint, SVPoint<double>& rOutPoint) const;
 
 	void SetTranslationOffset(double offsetX, double offsetY);
 

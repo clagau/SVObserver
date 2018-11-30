@@ -16,7 +16,6 @@
 #include "SVObjectScriptEnums.h"
 #include "SVContainerLibrary/SVObjectArrayClassTemplate.h"
 #include "SVUtilityLibrary/SVPoint.h"
-#include "SVUtilityLibrary/SVDPointClass.h"
 #pragma endregion Includes
 
 //This class contains the information about one of the 
@@ -37,8 +36,8 @@ public:
 	LPCTSTR GetName() const;
 	SVObjectScriptDataObjectTypeEnum GetType() const;
 
-	typedef std::vector<SVPoint> SVObjectSVPointArrayClass;
-	typedef std::vector<SVDPointClass> SVObjectDPointArrayClass;
+	typedef std::vector<SVPoint<long>> SVObjectSVPointArrayClass;
+	typedef std::vector<SVPoint<double>> SVObjectDPointArrayClass;
 
 	//These functions return the configuration object attribute data.
 	bool GetData(SvCl::SVObjectBoolArrayClass& rData);
@@ -138,7 +137,7 @@ public:
 	bool AddData(DWORD Value);
 	bool AddData(long Value);
 	bool AddData(POINT Value);
-	bool AddData(SVDPointClass Value);
+	bool AddData(SVPoint<double> Value);
 	bool AddData(VARIANT Value);
 	bool AddData(__int64 Value);
 

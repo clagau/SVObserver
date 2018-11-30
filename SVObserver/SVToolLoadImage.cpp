@@ -59,7 +59,7 @@ void SVLoadImageToolClass::init()
 	// Default taskObjectList items:
 
 	// Set Translation
-	m_svToolExtent.SetTranslation(SvDef::SVExtentTranslationFigureShift);
+	m_toolExtent.SetTranslation(SvDef::SVExtentTranslationFigureShift);
 	ToolSizeAdjustTask::AddToFriendlist(this, true, true, false);
 	// Set default inputs and outputs
 	addDefaultInputObjects();
@@ -192,19 +192,16 @@ bool SVLoadImageToolClass::isInputImage(const SVGUID& rImageGuid) const
 	return Result;
 }
 
-SVTaskObjectClass *SVLoadImageToolClass::GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint )
+SVTaskObjectClass* SVLoadImageToolClass::GetObjectAtPoint(const SVPoint<double>& rPoint)
 {
-	SVImageExtentClass l_svExtents;
+	SVTaskObjectClass *pObject {nullptr};
 
-	SVTaskObjectClass *l_psvObject = nullptr;
-
-	if( S_OK == m_svToolExtent.GetImageExtent( l_svExtents ) &&
-	    SvDef::SVExtentLocationPropertyUnknown != l_svExtents.GetLocationPropertyAt( p_rsvPoint ) )
+	if (SvDef::SVExtentLocationPropertyUnknown != GetImageExtent().GetLocationPropertyAt(rPoint))
 	{
-		l_psvObject = this;
+		pObject = this;
 	}
 
-	return l_psvObject;
+	return pObject;
 }
 
 bool SVLoadImageToolClass::DoesObjectHaveExtents() const
@@ -216,11 +213,9 @@ HRESULT SVLoadImageToolClass::SetImageExtent(const SVImageExtentClass& rImageExt
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	SVExtentFigureStruct l_svFigure;
+	const SVExtentFigureStruct& rFigure = rImageExtent.GetFigure();
 
-	rImageExtent.GetFigure(l_svFigure);
-
-	if ( (l_svFigure.m_svTopLeft.m_dPositionX >= 0) && (l_svFigure.m_svTopLeft.m_dPositionY >= 0) )
+	if ( (rFigure.m_svTopLeft.m_x >= 0) && (rFigure.m_svTopLeft.m_y >= 0) )
 	{
 		l_hrOk = SVToolClass::SetImageExtent(rImageExtent);
 	}

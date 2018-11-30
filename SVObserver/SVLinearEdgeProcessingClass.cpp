@@ -457,65 +457,57 @@ HRESULT SVLinearEdgeProcessingClass::GetOutputEdgeDistance( double& rValue )
 	return l_hrOk;
 }
 
-HRESULT SVLinearEdgeProcessingClass::GetPointFromDistance( double p_dDistance, SVExtentPointStruct &p_rsvPoint )
+HRESULT SVLinearEdgeProcessingClass::GetPointFromDistance(double p_dDistance, SVPoint<double>& rPoint)
 {
 	RECT l_oRect;
 
-	SVImageExtentClass l_svExtents;
-
-	HRESULT l_hrOk = p_rsvPoint.Initialize();
+	HRESULT l_hrOk{S_OK};
+	rPoint.clear();
 
 	SVAnalyzerClass* pAnalyzer = dynamic_cast<SVAnalyzerClass*>(GetAnalyzer());
 	if( nullptr == pAnalyzer ||
-		S_OK != pAnalyzer->GetImageExtent( l_svExtents ) ||
-		S_OK != l_svExtents.GetOutputRectangle( l_oRect ) )
+		S_OK != pAnalyzer->GetImageExtent().GetOutputRectangle( l_oRect ) )
 	{
 		l_hrOk = S_FALSE;
 	}
 
 	if( S_OK == l_hrOk )
 	{
-		p_rsvPoint.m_dPositionX = p_dDistance;
-		p_rsvPoint.m_dPositionY = l_oRect.bottom / 2;
+		rPoint.m_x = p_dDistance;
+		rPoint.m_y = l_oRect.bottom / 2;
 	}
 
 	return l_hrOk;
 }
 
-HRESULT SVLinearEdgeProcessingClass::GetEdgeOverlayFromDistance( double p_dDistance, SVExtentLineStruct &rLine )
+HRESULT SVLinearEdgeProcessingClass::GetEdgeOverlayFromDistance( double dDistance, SVExtentLineStruct &rLine )
 {
 	RECT l_oRect;
-
-	SVImageExtentClass l_svExtents;
-
-	long l_lBottom = 0;
-
-	HRESULT l_hrOk = rLine.Initialize();
+	HRESULT l_hrOk{S_OK};
+	
+	rLine.Initialize();
 
 	SVAnalyzerClass* pAnalyzer = dynamic_cast<SVAnalyzerClass*>(GetAnalyzer());
 	if( nullptr == pAnalyzer ||
-		S_OK != pAnalyzer->GetImageExtent( l_svExtents ) ||
-		S_OK != l_svExtents.GetOutputRectangle( l_oRect ) )
+		S_OK != pAnalyzer->GetImageExtent().GetOutputRectangle( l_oRect ) )
 	{
 		l_hrOk = S_FALSE;
 	}
 
 	if( S_OK == l_hrOk )
 	{
-		SVExtentPointStruct l_oGraphPoint;
 
 		rLine.m_bIsAngleValid = true;
 		rLine.m_dAngle = 90.0;
 
-		l_oGraphPoint.m_dPositionX = p_dDistance;
-		l_oGraphPoint.m_dPositionY = l_oRect.bottom / 2 - 10;
+		SVPoint<double> graphPoint{dDistance, static_cast<double> (l_oRect.bottom / 2 - 10)};
 		
-		rLine.m_svPointArray.push_back( l_oGraphPoint );
+		rLine.m_PointVector.emplace_back(graphPoint);
 
-		l_oGraphPoint.m_dPositionX = p_dDistance;
-		l_oGraphPoint.m_dPositionY = l_oRect.bottom / 2 + 10;
+		graphPoint.m_x = dDistance;
+		graphPoint.m_y = static_cast<double> (l_oRect.bottom / 2 + 10);
 		
-		rLine.m_svPointArray.push_back( l_oGraphPoint );
+		rLine.m_PointVector.emplace_back(graphPoint);
 
 		rLine.m_dwColor = GetObjectColor();
 	}
@@ -524,21 +516,20 @@ HRESULT SVLinearEdgeProcessingClass::GetEdgeOverlayFromDistance( double p_dDista
 
 }
 
-HRESULT SVLinearEdgeProcessingClass::GetOutputEdgePoint( SVExtentPointStruct &p_rsvPoint )
+HRESULT SVLinearEdgeProcessingClass::GetOutputEdgePoint(SVPoint<double>& rPoint)
 {
 	RECT l_oRect;
-
-	SVImageExtentClass l_svExtents;
 
 	unsigned long l_ulUpper = 0;
 	unsigned long l_ulLower = 0;
 
-	HRESULT l_hrOk = p_rsvPoint.Initialize();
+	HRESULT l_hrOk{S_OK};
+	
+	rPoint.clear();
 
 	SVAnalyzerClass* pAnalyzer = dynamic_cast<SVAnalyzerClass*>(GetAnalyzer());
 	if( nullptr == pAnalyzer ||
-		S_OK != pAnalyzer->GetImageExtent( l_svExtents ) ||
-		S_OK != l_svExtents.GetOutputRectangle( l_oRect ) ||
+		S_OK != pAnalyzer->GetImageExtent().GetOutputRectangle( l_oRect ) ||
 		( S_OK != m_svLowerThresholdValue.GetValue( l_ulLower ) ) ||
 		( S_OK != m_svUpperThresholdValue.GetValue( l_ulUpper ) ) )
 	{
@@ -553,29 +544,27 @@ HRESULT SVLinearEdgeProcessingClass::GetOutputEdgePoint( SVExtentPointStruct &p_
 
 		if( S_OK == l_hrOk )
 		{
-			p_rsvPoint.m_dPositionX = l_dDistance;
-			p_rsvPoint.m_dPositionY = l_oRect.bottom / 2;
+			rPoint.m_x = l_dDistance;
+			rPoint.m_y = l_oRect.bottom / 2;
 		}
 	}
 
 	return l_hrOk;
 }
 
-HRESULT SVLinearEdgeProcessingClass::GetThresholdBarsOverlay( SVExtentMultiLineStruct &p_rsvMiltiLine )
+HRESULT SVLinearEdgeProcessingClass::GetThresholdBarsOverlay( SVExtentMultiLineStruct& rMultiLine )
 {
-	RECT l_oRect;
-
-	SVImageExtentClass l_svExtents;
+	RECT rect;
 
 	unsigned long l_ulUpper = 0;
 	unsigned long l_ulLower = 0;
 
-	HRESULT l_hrOk = p_rsvMiltiLine.Initialize();
+	HRESULT l_hrOk{S_OK};
+	rMultiLine.Initialize();
 
 	SVAnalyzerClass* pAnalyzer = dynamic_cast<SVAnalyzerClass*>(GetAnalyzer());
 	if( nullptr == pAnalyzer ||
-		S_OK != pAnalyzer->GetImageExtent( l_svExtents ) ||
-		S_OK != l_svExtents.GetOutputRectangle( l_oRect ) ||
+		S_OK != pAnalyzer->GetImageExtent().GetOutputRectangle( rect ) ||
 		( S_OK != m_svLowerThresholdValue.GetValue( l_ulLower ) ) ||
 		( S_OK != m_svUpperThresholdValue.GetValue( l_ulUpper ) ) )
 	{
@@ -589,8 +578,6 @@ HRESULT SVLinearEdgeProcessingClass::GetThresholdBarsOverlay( SVExtentMultiLineS
 
 		double divisor = m_dwColorNumber;
 
-		SVExtentPointStruct l_svPoint;
-	
 		l_svUpperLine.m_bIsAngleValid = true;
 		l_svUpperLine.m_dAngle = 0.0;
 		l_svUpperLine.m_dwColor = m_cfThresholds;
@@ -600,34 +587,32 @@ HRESULT SVLinearEdgeProcessingClass::GetThresholdBarsOverlay( SVExtentMultiLineS
 		l_svLowerLine.m_dwColor = m_cfThresholds;
 
 		// Calc current Threshold bars...
-		long lMaxThresholdValue = ( long ) ( l_ulUpper / divisor * ( ( double ) l_oRect.bottom ) );
-		long lMinThresholdValue = ( long ) ( l_ulLower / divisor * ( ( double ) l_oRect.bottom ) );
+		long lMaxThresholdValue = ( long ) ( l_ulUpper / divisor * ( ( double ) rect.bottom ) );
+		long lMinThresholdValue = ( long ) ( l_ulLower / divisor * ( ( double ) rect.bottom ) );
 
 		// MaxThresholdBar
 		// Max left...
-		SVExtentPointStruct l_oGraphPoint;
-		l_oGraphPoint.m_dPositionX = 0;
-		l_oGraphPoint.m_dPositionY = l_oRect.bottom - lMaxThresholdValue;
+		SVPoint<double> graphPoint{0.0, static_cast<double> (rect.bottom - lMaxThresholdValue)};
 		
-		l_svUpperLine.m_svPointArray.push_back( l_oGraphPoint );
+		l_svUpperLine.m_PointVector.emplace_back(graphPoint);
 
-		l_oGraphPoint.m_dPositionX = l_oRect.right;
+		graphPoint.m_x = rect.right;
 
-		l_svUpperLine.m_svPointArray.push_back( l_oGraphPoint );
+		l_svUpperLine.m_PointVector.emplace_back(graphPoint);
 
 		// MinThresholdBar
 		// Min left...
-		l_oGraphPoint.m_dPositionX = 0;
-		l_oGraphPoint.m_dPositionY = l_oRect.bottom - lMinThresholdValue;
+		graphPoint.m_x = 0;
+		graphPoint.m_y = static_cast<double> (rect.bottom - lMinThresholdValue);
 		
-		l_svLowerLine.m_svPointArray.push_back( l_oGraphPoint );
+		l_svLowerLine.m_PointVector.emplace_back(graphPoint);
 
-		l_oGraphPoint.m_dPositionX = l_oRect.right;
+		graphPoint.m_x = rect.right;
 
-		l_svLowerLine.m_svPointArray.push_back( l_oGraphPoint );
+		l_svLowerLine.m_PointVector.emplace_back(graphPoint);
 
-		p_rsvMiltiLine.m_svLineArray.push_back( l_svUpperLine );
-		p_rsvMiltiLine.m_svLineArray.push_back( l_svLowerLine );
+		rMultiLine.m_svLineArray.emplace_back( l_svUpperLine );
+		rMultiLine.m_svLineArray.emplace_back( l_svLowerLine );
 	}
 
 	return l_hrOk;
@@ -635,18 +620,16 @@ HRESULT SVLinearEdgeProcessingClass::GetThresholdBarsOverlay( SVExtentMultiLineS
 
 HRESULT SVLinearEdgeProcessingClass::GetHistogramOverlay( SVExtentLineStruct &rLine )
 {
-	RECT l_oRect;
-
-	SVImageExtentClass Extents;
+	RECT rect;
 
 	std::vector<double> Data;
 
-	HRESULT l_hrOk = rLine.Initialize();
+	HRESULT l_hrOk{S_OK};
+	rLine.Initialize();
 
 	SVAnalyzerClass* pAnalyzer = dynamic_cast<SVAnalyzerClass*>(GetAnalyzer());
 	if( nullptr == pAnalyzer ||
-		S_OK != pAnalyzer->GetImageExtent( Extents ) ||
-		S_OK != Extents.GetOutputRectangle( l_oRect ) ||
+		S_OK != pAnalyzer->GetImageExtent().GetOutputRectangle( rect ) ||
 		(S_OK != GetInputLinearVectorData( Data )) )
 	{
 		l_hrOk = S_FALSE;
@@ -656,19 +639,13 @@ HRESULT SVLinearEdgeProcessingClass::GetHistogramOverlay( SVExtentLineStruct &rL
 	{
 		double divisor = m_dwColorNumber;
 
-		SVExtentPointStruct l_svPoint;
-	
 		rLine.m_dwColor = m_cfHistogram;
 
 		for( size_t l = 0; l < Data.size(); l++ )
 		{
-			long l_lPixel = ( long ) ( Data[ l ] / divisor * ( ( double ) l_oRect.bottom ) );
+			long pixel = static_cast<long> ( Data[l] / divisor * static_cast<double> (rect.bottom) );
 
-			SVExtentPointStruct l_oGraphPoint;
-			l_oGraphPoint.m_dPositionX = static_cast<double>(l);
-			l_oGraphPoint.m_dPositionY = l_oRect.bottom - l_lPixel;
-
-			rLine.m_svPointArray.push_back( l_oGraphPoint );
+			rLine.m_PointVector.emplace_back(static_cast<double> (l), static_cast<double> (rect.bottom - pixel));
 		}
 	}
 
@@ -681,14 +658,14 @@ HRESULT SVLinearEdgeProcessingClass::GetEdgesOverlay( SVExtentMultiLineStruct &r
 
 	SVImageExtentClass Extents;
 
-	HRESULT l_hrOk = rMultiLine.Initialize();
+	HRESULT l_hrOk{S_OK};
+	rMultiLine.Initialize();
 
 	std::vector<double> Edges;
 
 	SVAnalyzerClass* pAnalyzer = dynamic_cast<SVAnalyzerClass*>(GetAnalyzer());
 	if( nullptr == pAnalyzer ||
-		S_OK != pAnalyzer->GetImageExtent( Extents ) ||
-		S_OK != Extents.GetOutputRectangle( l_oRect ) ||
+		S_OK != pAnalyzer->GetImageExtent().GetOutputRectangle( l_oRect ) ||
 		 ( S_OK != m_svLinearEdges.GetArrayValues( Edges ) ) )
 	{
 		l_hrOk = S_FALSE;
@@ -708,11 +685,11 @@ HRESULT SVLinearEdgeProcessingClass::GetEdgesOverlay( SVExtentMultiLineStruct &r
 
 		for( size_t l = 0; l < Edges.size(); l++ )
 		{
-			double l_dX = Edges[ l ];
+			double dX = Edges[l];
 
 			if(SvDef::SV_UNDEFINED_DIRECTION == Direction)
 			{
-				l_dX = static_cast<int>(l);
+				dX = static_cast<int>(l);
 
 				if( Edges[ l ] == 0 )
 				{
@@ -727,20 +704,17 @@ HRESULT SVLinearEdgeProcessingClass::GetEdgesOverlay( SVExtentMultiLineStruct &r
 					EdgeLine.m_dwColor = m_cfEdges;
 				}
 			}
-			EdgeLine.m_svPointArray.clear();
-			SVExtentPointStruct l_oGraphPoint;
+			EdgeLine.m_PointVector.clear();
 
-			l_oGraphPoint.m_dPositionX = l_dX;
-			l_oGraphPoint.m_dPositionY = l_oRect.bottom / 2 - 5;
+			SVPoint<double> graphPoint{dX, static_cast<double> (l_oRect.bottom / 2 - 5)};
 			
-			EdgeLine.m_svPointArray.push_back( l_oGraphPoint );
+			EdgeLine.m_PointVector.emplace_back( graphPoint );
 
-			l_oGraphPoint.m_dPositionX = l_dX;
-			l_oGraphPoint.m_dPositionY = l_oRect.bottom / 2 + 5;
+			graphPoint.m_y = static_cast<double> (l_oRect.bottom / 2 + 5);
 			
-			EdgeLine.m_svPointArray.push_back( l_oGraphPoint );
+			EdgeLine.m_PointVector.emplace_back(graphPoint);
 
-			rMultiLine.m_svLineArray.push_back( EdgeLine );
+			rMultiLine.m_svLineArray.emplace_back( EdgeLine );
 		}
 	}
 
@@ -756,12 +730,12 @@ HRESULT SVLinearEdgeProcessingClass::GetSelectedEdgeOverlay( SVExtentLineStruct 
 	long l_lBottom = 0;
 	double l_dDistance = 0.0;
 
-	HRESULT l_hrOk = rLine.Initialize();
+	HRESULT l_hrOk{S_OK};
+	rLine.Initialize();
 
 	SVAnalyzerClass* pAnalyzer = dynamic_cast<SVAnalyzerClass*>(GetAnalyzer());
 	if( nullptr == pAnalyzer ||
-		S_OK != pAnalyzer->GetImageExtent( l_svExtents ) ||
-		S_OK != l_svExtents.GetOutputRectangle( l_oRect ) ||
+		S_OK != pAnalyzer->GetImageExtent().GetOutputRectangle( l_oRect ) ||
 		S_OK != GetOutputEdgeDistance( l_dDistance ) )
 	{
 		l_hrOk = S_FALSE;
@@ -769,20 +743,20 @@ HRESULT SVLinearEdgeProcessingClass::GetSelectedEdgeOverlay( SVExtentLineStruct 
 
 	if( S_OK == l_hrOk )
 	{
-		SVExtentPointStruct l_oGraphPoint;
+		SVPoint<double> graphPoint;
 
 		rLine.m_bIsAngleValid = true;
 		rLine.m_dAngle = 90.0;
 
-		l_oGraphPoint.m_dPositionX = l_dDistance;
-		l_oGraphPoint.m_dPositionY = l_oRect.bottom / 2 - 10;
+		graphPoint.m_x = l_dDistance;
+		graphPoint.m_y = l_oRect.bottom / 2 - 10;
 		
-		rLine.m_svPointArray.push_back( l_oGraphPoint );
+		rLine.m_PointVector.push_back( graphPoint );
 
-		l_oGraphPoint.m_dPositionX = l_dDistance;
-		l_oGraphPoint.m_dPositionY = l_oRect.bottom / 2 + 10;
+		graphPoint.m_x = l_dDistance;
+		graphPoint.m_y = l_oRect.bottom / 2 + 10;
 		
-		rLine.m_svPointArray.push_back( l_oGraphPoint );
+		rLine.m_PointVector.push_back( graphPoint );
 
 		rLine.m_dwColor = GetObjectColor();
 	}

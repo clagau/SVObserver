@@ -136,20 +136,16 @@ bool SVLinearEdgeCountingLineAnalyzerClass::onRun( SVRunStatusClass& rRunStatus,
 
 HRESULT SVLinearEdgeCountingLineAnalyzerClass::GetSelectedEdgeOverlays( SVExtentMultiLineStruct &p_MultiLine )
 {
-	SVImageExtentClass l_svAnalyzerExtents;
-
-	HRESULT l_hrOk = GetImageExtent( l_svAnalyzerExtents );
-
-	if( S_OK == l_hrOk && nullptr != GetEdgeA() )
+	if(nullptr != GetEdgeA())
 	{
 		if( S_OK == GetEdgeA()->GetEdgesOverlay( p_MultiLine ) )
 		{
-			l_svAnalyzerExtents.TranslateFromOutputSpace( p_MultiLine, p_MultiLine );
+			GetImageExtent().TranslateFromOutputSpace( p_MultiLine, p_MultiLine );
 
-			l_hrOk = S_OK;
+			return S_OK;
 		}
 	}
 
-	return l_hrOk;
+	return E_FAIL;
 }
 

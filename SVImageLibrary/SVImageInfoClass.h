@@ -33,10 +33,10 @@ public:
 	HRESULT Initialize();
 
 	SVImagePropertiesClass GetImageProperties() const;
-	HRESULT SetImageProperties( SVImagePropertiesClass p_svImageProperties );
+	void SetImageProperties( const SVImagePropertiesClass& rImageProperties );
 
-	SVImageExtentClass GetExtents() const;
-	HRESULT SetExtents( SVImageExtentClass p_svExtents );
+	const SVImageExtentClass& GetExtents() const;
+	HRESULT SetExtents(const SVImageExtentClass& rExtents );
 
 	SvDef::SVExtentTranslationEnum GetTranslation();
 	HRESULT SetTranslation( SvDef::SVExtentTranslationEnum p_eTranslation );
@@ -48,15 +48,15 @@ public:
 	HRESULT GetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, long &p_rlValue ) const;
 	HRESULT GetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, double &p_rdValue ) const;
 	HRESULT GetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, POINT &p_roValue ) const;
-	HRESULT GetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, SVExtentPointStruct &p_rsvValue ) const;
+	HRESULT GetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, SVPoint<double> &rValue ) const;
 	HRESULT SetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, double p_dValue );
-	HRESULT SetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, SVExtentPointStruct p_svValue );
+	HRESULT SetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, const SVPoint<double>& rValue );
 
-	HRESULT GetImageExtentsToFit( SVImageExtentClass p_svInExtent, SVImageExtentClass &p_rsvOutExtent );
+	HRESULT GetImageExtentsToFit(SVImageExtentClass inExtent, SVImageExtentClass &rOutExtent);
 
-	HRESULT GetOutputRectangle( RECT &p_roRect ) const;
+	HRESULT GetOutputRectangle( RECT& rRect ) const;
 
-	HRESULT GetFigure( SVExtentFigureStruct &p_rsvFigure );
+	const SVExtentFigureStruct& GetFigure() const;
 
 	long GetBufferSize();
 
@@ -71,9 +71,6 @@ public:
 	void SetOwner( const GUID& p_rObjectID );
 
 	HRESULT ValidateAgainstOutputSpace( const SVImageExtentClass &p_rsvValue ) const;
-
-	bool IsEqualExcludePosition( const SVImageInfoClass &p_rsvValue ) const;
-	bool IsPositionEqual( const SVImageInfoClass &p_rsvValue ) const;
 
 	bool operator==( const SVImageInfoClass &p_rsvValue ) const;
 	bool operator!=( const SVImageInfoClass &p_rsvValue ) const;

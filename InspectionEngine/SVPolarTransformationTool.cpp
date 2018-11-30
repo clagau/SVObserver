@@ -41,9 +41,9 @@ void SVPolarTransformationToolClass::init()
 
 	// Identify our input type needs
 
-	m_svToolExtent.SetTool( this );
-	m_svToolExtent.SetTranslation( SvDef::SVExtentTranslationPolarUnwrap );
-	m_svToolExtent.SetAlwaysUpdate( true );
+	m_toolExtent.SetTool( this );
+	m_toolExtent.SetTranslation( SvDef::SVExtentTranslationPolarUnwrap );
+	m_toolExtent.SetAlwaysUpdate( true );
 
 	// Hide and Remove Embedded Extents
 	removeEmbeddedExtents();
@@ -119,19 +119,16 @@ bool SVPolarTransformationToolClass::CreateObject( const SVObjectLevelCreateStru
 	return m_isCreated;
 }
 
-SVTaskObjectClass *SVPolarTransformationToolClass::GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint )
+SVTaskObjectClass *SVPolarTransformationToolClass::GetObjectAtPoint(const  SVPoint<double>& rPoint)
 {
-	SVImageExtentClass l_svExtents;
+	SVTaskObjectClass *pObject {nullptr};
 
-	SVTaskObjectClass* l_psvObject = nullptr;
-
-	if( S_OK == m_svToolExtent.GetImageExtent( l_svExtents ) &&
-	    l_svExtents.GetLocationPropertyAt( p_rsvPoint ) != SvDef::SVExtentLocationPropertyUnknown )
+	if (SvDef::SVExtentLocationPropertyUnknown != GetImageExtent().GetLocationPropertyAt(rPoint))
 	{
-		l_psvObject = this;
+		pObject = this;
 	}
 
-	return l_psvObject;
+	return pObject;
 }
 
 bool SVPolarTransformationToolClass::DoesObjectHaveExtents() const

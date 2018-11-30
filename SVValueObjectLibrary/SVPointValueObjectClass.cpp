@@ -29,20 +29,20 @@ static char THIS_FILE[] = __FILE__;
 SV_IMPLEMENT_CLASS(SVPointValueObjectClass, SVPointValueObjectClassGuid);
 
 SVPointValueObjectClass::SVPointValueObjectClass( LPCTSTR ObjectName )
-: SVValueObjectClass<SVPoint>( ObjectName )
+: SVValueObjectClass<SVPoint<long>>( ObjectName )
 {
 	LocalInitialize();
 }
 
 
 SVPointValueObjectClass::SVPointValueObjectClass( SVObjectClass* pOwner, int StringResourceID )
-: SVValueObjectClass<SVPoint>( pOwner, StringResourceID )
+: SVValueObjectClass<SVPoint<long>>( pOwner, StringResourceID )
 {
 	LocalInitialize();
 }
 
 SVPointValueObjectClass::SVPointValueObjectClass( const SVPointValueObjectClass& rhs )
-: SVValueObjectClass<SVPoint>()
+: SVValueObjectClass<SVPoint<long>>()
 {
 	LocalInitialize();
 	*this = rhs;
@@ -58,7 +58,7 @@ SVPointValueObjectClass::~SVPointValueObjectClass()
 {
 }
 
-_variant_t SVPointValueObjectClass::ValueType2Variant( const SVPoint& rValue ) const
+_variant_t SVPointValueObjectClass::ValueType2Variant( const SVPoint<long>& rValue ) const
 {
 	_variant_t Result;
 
@@ -67,9 +67,9 @@ _variant_t SVPointValueObjectClass::ValueType2Variant( const SVPoint& rValue ) c
 	return Result;
 }
 
-SVPoint SVPointValueObjectClass::Variant2ValueType( const _variant_t& rValue ) const
+SVPoint<long> SVPointValueObjectClass::Variant2ValueType( const _variant_t& rValue ) const
 {
-	SVPoint Result;
+	SVPoint<long> Result;
 
 	if( VT_BSTR == rValue.vt )
 	{
@@ -86,7 +86,7 @@ SVPoint SVPointValueObjectClass::Variant2ValueType( const _variant_t& rValue ) c
 	return Result;
 }
 
-SVPoint SVPointValueObjectClass::ConvertString2Type( const std::string& rValue ) const
+SVPoint<long> SVPointValueObjectClass::ConvertString2Type( const std::string& rValue ) const
 {
 	std::string LegalChars = SvUl::ValidateString( rValue, _T("0123456789()-, ") );	// only integers
 	if ( LegalChars == rValue )
@@ -97,7 +97,7 @@ SVPoint SVPointValueObjectClass::ConvertString2Type( const std::string& rValue )
 		{
 			std::string XValue = SvUl::Left( LegalChars, Pos );
 			std::string YValue = SvUl::Mid( LegalChars, Pos + 1 );
-			return SVPoint( atol(XValue.c_str()), atol(YValue.c_str()) );
+			return SVPoint<long>( atol(XValue.c_str()), atol(YValue.c_str()) );
 		}
 	}
 	SvDef::StringVector msgList;
@@ -106,17 +106,7 @@ SVPoint SVPointValueObjectClass::ConvertString2Type( const std::string& rValue )
 	SvStl::MessageMgrStd Exception(SvStl::MsgType::Log );
 	Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValueObject_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 	Exception.Throw();
-	return SVPoint(); //will never reached, because the exception will throw before. But this line avoid a warning
-}
-
-std::string SVPointValueObjectClass::ConvertType2String( const SVPoint& rValue ) const
-{
-	std::string Result;
-	//This is faster than SvUl::Format
-	TCHAR Text[100];
-	sprintf_s(Text, 100, _T("( %d, %d)"), rValue.x(), rValue.y());
-	Result = Text;
-	return Result;
+	return SVPoint<long>(); //will never reached, because the exception will throw before. But this line avoid a warning
 }
 
 HRESULT SVPointValueObjectClass::CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD MemByteSize, int Index /* = -1*/) const
@@ -125,13 +115,11 @@ HRESULT SVPointValueObjectClass::CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD Mem
 
 	if (S_OK == Result)
 	{
-		SVPoint Value;
+		SVPoint<long> Value;
 		SVPointValueObjectClass::GetValue(Value, Index);
-		long PointX = Value.x();
-		long PointY = Value.y();
 
-		memcpy(pMemoryBlock, &PointX, sizeof(PointX));
-		memcpy(pMemoryBlock + sizeof(PointX), &PointY, sizeof(PointY));
+		memcpy(pMemoryBlock, &Value.m_x, sizeof(Value.m_x));
+		memcpy(pMemoryBlock + sizeof(Value.m_x), &Value.m_y, sizeof(Value.m_y));
 	}
 
 	return Result;
@@ -151,10 +139,10 @@ void SVPointValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)
 	// for all elements in the array
 	for (int i = 0; i < getArraySize(); i++)
 	{
-		SVPoint PointValue;
+		SVPoint<long> PointValue;
 		//Make sure this is not a derived virtual method which is called
 		SVPointValueObjectClass::GetValue(PointValue, i);
-		TempValue = SvUl::Format(_T("%d, %d"), PointValue.x(), PointValue.y());
+		TempValue = SvUl::Format(_T("%d, %d"), PointValue.m_x, PointValue.m_y);
 		Value.SetString(TempValue.c_str());
 		list.push_back(Value);
 		Value.Clear();
@@ -165,7 +153,7 @@ void SVPointValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)
 void SVPointValueObjectClass::WriteDefaultValues(SvOi::IObjectWriter& rWriter)
 {
 	std::string TempValue;
-	TempValue = SvUl::Format(_T("%d, %d"), GetDefaultValue().x(), GetDefaultValue().y());
+	TempValue = SvUl::Format(_T("%d, %d"), GetDefaultValue().m_x, GetDefaultValue().m_y);
 	_variant_t Value;
 	Value.SetString(TempValue.c_str());
 	rWriter.WriteAttribute(scDefaultTag, Value);

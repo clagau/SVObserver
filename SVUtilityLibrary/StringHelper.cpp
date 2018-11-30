@@ -23,7 +23,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-static const long cBufferSize = 1024;
+constexpr unsigned long cBufferSize = 2000;
 
 namespace SvUl
 {
@@ -193,9 +193,9 @@ namespace SvUl
 		return rStringValue;
 	}
 
-	std::string Format( LPCTSTR pFormat, ...)
+	std::string Format( LPCSTR pFormat, ...)
 	{
-		std::string stringValue(_T(""));
+		std::string result;
 		assert(pFormat);
 
 		if (nullptr != pFormat)
@@ -203,22 +203,18 @@ namespace SvUl
 			va_list argList;
 			va_start(argList, pFormat);
 
-			size_t nMaxLen = _vsctprintf( pFormat, argList ) + 1;
-
-			TCHAR* pData = new TCHAR[nMaxLen];
-			vsprintf(pData, pFormat, argList);
-			stringValue = pData;
-			delete [] pData;
-
+			char Text[cBufferSize];
+			vsprintf_s(Text, cBufferSize, pFormat, argList);
+			result = Text;
 			va_end(argList);
 		}
-		return stringValue;
+		return result;
 	}
 
 	// formatting (using wsprintf style formatting)
-	std::string Format( const wchar_t* pFormat, ...)
+	std::string Format(LPCWSTR pFormat, ...)
 	{
-		std::string stringValue(_T(""));
+		std::string result;
 		assert(pFormat);
 
 		if (nullptr != pFormat)
@@ -226,16 +222,12 @@ namespace SvUl
 			va_list argList;
 			va_start(argList, pFormat);
 
-			size_t nMaxLen = _vscwprintf( pFormat, argList ) + 1;
-
-			wchar_t* pData = new wchar_t[nMaxLen];
-			vswprintf(pData, pFormat, argList);
-			stringValue = _bstr_t( pData );
-			delete [] pData;
-
+			wchar_t Text[cBufferSize];
+			vswprintf_s(Text, cBufferSize, pFormat, argList);
+			result = _bstr_t(Text);
 			va_end(argList);
 		}
-		return stringValue;
+		return result;
 	}
 
 	template<typename T>

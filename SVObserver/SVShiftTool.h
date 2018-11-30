@@ -47,7 +47,7 @@ public:
 	virtual HRESULT SetImageExtentToParent() override;
 	virtual SVStringValueObjectClass* GetInputImageNames() override;
 
-	virtual SVTaskObjectClass* GetObjectAtPoint( const SVExtentPointStruct &p_rPoint ) override;
+	virtual SVTaskObjectClass* GetObjectAtPoint(const SVPoint<double>& rPoint) override;
 	virtual bool DoesObjectHaveExtents() const override;
 	//************************************
 	//! return Flag with enabled Autosize

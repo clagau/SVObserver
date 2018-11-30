@@ -104,9 +104,9 @@ SVTaskObjectClass::~SVTaskObjectClass()
 
 bool SVTaskObjectClass::resetAllObjects(SvStl::MessageContainerVector *pErrorMessages/*=nullptr */)
 {
-	bool Result = true;
 	clearTaskMessages();
-	m_isObjectValid.SetValue(BOOL(true));
+
+	bool Result = (S_OK == updateImageExtent());
 
 	// Notify friends...
 	for (size_t i = 0; i < m_friendList.size(); ++i)
@@ -114,19 +114,20 @@ bool SVTaskObjectClass::resetAllObjects(SvStl::MessageContainerVector *pErrorMes
 		const SVObjectInfoStruct& rfriend = m_friendList[i];
 		if (nullptr != rfriend.getObject())
 		{
-			Result = rfriend.getObject()->resetAllObjects(&m_ResetErrorMessages) && Result;
+			Result &= rfriend.getObject()->resetAllObjects(&m_ResetErrorMessages);
 		}
 	}
 
-	Result = resetAllOutputListObjects(&m_ResetErrorMessages) && Result;
+	Result &= resetAllOutputListObjects(&m_ResetErrorMessages);
 
-	Result = __super::resetAllObjects(&m_ResetErrorMessages) && Result;
-
+	Result &= __super::resetAllObjects(&m_ResetErrorMessages);
+ 
 	if (nullptr != pErrorMessages && !m_ResetErrorMessages.empty())
 	{
 		pErrorMessages->insert(pErrorMessages->end(), m_ResetErrorMessages.begin(), m_ResetErrorMessages.end());
 	}
 	m_isObjectValid.SetValue(BOOL(Result));
+
 	return Result;
 }
 
@@ -822,7 +823,7 @@ bool SVTaskObjectClass::isInputImage(const SVGUID& rImageGuid) const
 	return Result;
 }
 
-SVTaskObjectClass* SVTaskObjectClass::GetObjectAtPoint(const SVExtentPointStruct &rPoint)
+SVTaskObjectClass* SVTaskObjectClass::GetObjectAtPoint(const SVPoint<double>& rPoint)
 {
 	SVTaskObjectClass* pObject = nullptr;
 
@@ -858,14 +859,10 @@ bool SVTaskObjectClass::DoesObjectHaveExtents() const
 	return false;
 }
 
-HRESULT SVTaskObjectClass::GetImageExtent(SVImageExtentClass& rImageExtent)
-{
-	return S_FALSE;
-}
-
 HRESULT SVTaskObjectClass::SetImageExtent(const SVImageExtentClass& rImageExtent)
 {
-	return S_FALSE;
+	m_imageExtent = rImageExtent;
+	return S_OK;
 }
 
 HRESULT SVTaskObjectClass::SetImageExtentToParent()
@@ -1143,6 +1140,8 @@ HRESULT SVTaskObjectClass::ConnectToObject(SvOl::SVInObjectInfoStruct* p_psvInpu
 bool SVTaskObjectClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
 	bool Result = SVObjectAppClass::CreateObject(rCreateStructure);
+
+	Result &= (S_OK == updateImageExtent());
 
 	// Create our friends
 	for (size_t j = 0; j < m_friendList.size(); ++j)
@@ -1671,8 +1670,11 @@ bool SVTaskObjectClass::Run(SVRunStatusClass& rRunStatus, SvStl::MessageContaine
 
 bool SVTaskObjectClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
+	bool bRetVal = (S_OK == updateImageExtent());
+
 	// Run first friends...
-	bool bRetVal = runFriends(rRunStatus, pErrorMessages);
+	bRetVal &= runFriends(rRunStatus, pErrorMessages);
+
 
 	// Now Validate yourself...
 	if (bRetVal && IsErrorMessageEmpty())
@@ -2020,7 +2022,7 @@ HRESULT SVTaskObjectClass::HideInputsOutputs(SVObjectPtrVector& rListOfObjects)
 	return S_OK;
 }
 
-HRESULT SVTaskObjectClass::GetFilteredImageExtentPropertyList(SVExtentPropertyListType& p_rPropertyList)
+HRESULT SVTaskObjectClass::GetFilteredImageExtentPropertyList(SVExtentPropertyVector& p_rPropertyList)
 {
 	return S_FALSE;
 }
@@ -2083,11 +2085,11 @@ HRESULT SVTaskObjectClass::UpdateOverlayName(SVExtentMultiLineStruct& p_rMultiLi
 {
 	HRESULT l_Status = S_OK;
 
-	SVExtentPointStruct l_Point(0, 0);
+	SVPoint<double> point;
 
-	if (S_OK == p_pImageExtents.GetTitlePoint(l_Point))
+	if (S_OK == p_pImageExtents.GetTitlePoint(point))
 	{
-		p_rMultiLine.m_StringPoint = l_Point;
+		p_rMultiLine.m_StringPoint = point;
 		p_rMultiLine.m_csString = GetName();
 	}
 
@@ -2129,10 +2131,7 @@ HRESULT SVTaskObjectClass::onCollectOverlays(SVImageClass* p_Image, SVExtentMult
 
 	if (nullptr != p_Image)
 	{
-		SVExtentFigureStruct l_ImageFigureStruct;
-		SVImageExtentClass l_ImageExtents;
-
-		if (S_OK == GetImageExtent(l_ImageExtents) && S_OK == l_ImageExtents.GetFigure(l_ImageFigureStruct))
+		if (GetImageExtent().hasFigure())
 		{
 			SVExtentMultiLineStruct l_MultiLine;
 
@@ -2140,7 +2139,7 @@ HRESULT SVTaskObjectClass::onCollectOverlays(SVImageClass* p_Image, SVExtentMult
 
 			if (S_OK == l_Status)
 			{
-				l_Status = UpdateOverlayName(l_MultiLine, l_ImageExtents);
+				l_Status = UpdateOverlayName(l_MultiLine, GetImageExtent());
 			}
 
 			if (S_OK == l_Status)
@@ -2169,7 +2168,7 @@ HRESULT SVTaskObjectClass::onCollectOverlays(SVImageClass* p_Image, SVExtentMult
 
 			if (S_OK == l_Status)
 			{
-				l_MultiLine.AssignExtentFigure(l_ImageFigureStruct, l_MultiLine.m_Color);
+				l_MultiLine.AssignExtentFigure(GetImageExtent().GetFigure(), l_MultiLine.m_Color);
 
 				p_MultiLineArray.push_back(l_MultiLine);
 			}

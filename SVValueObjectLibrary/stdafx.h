@@ -49,6 +49,7 @@
 #include <string>
 #include <sequential_tree.h>
 #include <tchar.h>
+#include <type_traits>
 #include <vector>
 
 #include <boost/circular_buffer.hpp>

@@ -48,7 +48,7 @@ bool RingBufferTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStruc
 	SVImageClass* pInputImage = SvOl::getInput<SVImageClass>(m_InputImageObjectInfo);
 	bOk &= (nullptr != pInputImage);
 
-	bOk &= (S_OK == m_svToolExtent.SetTranslation( SvDef::SVExtentTranslationNone ));
+	m_toolExtent.SetTranslation(SvDef::SVExtentTranslationNone);
 	SetToolROIExtentToFullInputImage ();
 
 	m_BufferDepth.SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
@@ -330,17 +330,17 @@ void RingBufferTool::SetToolROIExtentToFullInputImage ()
 
 	if (nullptr != pInputImage)
 	{
-		SVImageExtentClass inputImageExtents = pInputImage->GetImageExtents ();
+		const SVImageExtentClass& rImageExtents = pInputImage->GetImageExtents ();
 
 		double inputHeight( 0.0 );
 		double inputWidth( 0.0 );
-		inputImageExtents.GetExtentProperty (SvDef::SVExtentPropertyHeight, inputHeight);
-		inputImageExtents.GetExtentProperty (SvDef::SVExtentPropertyWidth, inputWidth);
+		rImageExtents.GetExtentProperty(SvDef::SVExtentPropertyHeight, inputHeight);
+		rImageExtents.GetExtentProperty(SvDef::SVExtentPropertyWidth, inputWidth);
 
-		m_svToolExtent.SetExtentValue (SvDef::SVExtentPropertyHeight, inputHeight);
-		m_svToolExtent.SetExtentValue (SvDef::SVExtentPropertyWidth, inputWidth);
-		m_svToolExtent.SetExtentValue (SvDef::SVExtentPropertyPositionPointX, 0.0);
-		m_svToolExtent.SetExtentValue (SvDef::SVExtentPropertyPositionPointY, 0.0);
+		m_toolExtent.SetExtentValue(SvDef::SVExtentPropertyHeight, inputHeight);
+		m_toolExtent.SetExtentValue(SvDef::SVExtentPropertyWidth, inputWidth);
+		m_toolExtent.SetExtentValue(SvDef::SVExtentPropertyPositionPointX, 0.0);
+		m_toolExtent.SetExtentValue(SvDef::SVExtentPropertyPositionPointY, 0.0);
 	}
 }
 #pragma endregion Private Methods

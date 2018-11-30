@@ -13,7 +13,7 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
-#include "SVExtentPointStruct.h"
+#include "SVUtilityLibrary/SVPoint.h"
 #pragma endregion Includes
 
 struct SVExtentLineStruct  
@@ -24,9 +24,9 @@ struct SVExtentLineStruct
 
 	const SVExtentLineStruct &operator=( const SVExtentLineStruct &p_rsvValue );
 
-	HRESULT Initialize();
+	void Initialize();
 
-	SVExtentPointStructVector m_svPointArray;
+	std::vector<SVPoint<double>> m_PointVector;
 	COLORREF m_dwColor;
 	
 	bool m_bIsAngleValid;

@@ -129,8 +129,7 @@ std::vector<std::string> SVLinearEdgePositionLineAnalyzerClass::getParameterName
 
 bool SVLinearEdgePositionLineAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	SVDPointClass DPoint;
-	SVExtentPointStruct EdgePoint;
+	SVPoint<double> edgePoint;
 	double Distance( 0.0 );
 
 	// All inputs and outputs must be validated first
@@ -147,9 +146,7 @@ bool SVLinearEdgePositionLineAnalyzerClass::onRun( SVRunStatusClass& rRunStatus,
 
 	if( Result )
 	{
-		SVImageExtentClass Extents;
-
-		if( S_OK != GetEdgeA()->GetOutputEdgePoint( EdgePoint ) )
+		if( S_OK != GetEdgeA()->GetOutputEdgePoint( edgePoint ) )
 		{
 			rRunStatus.SetFailed();	
 		}
@@ -159,10 +156,10 @@ bool SVLinearEdgePositionLineAnalyzerClass::onRun( SVRunStatusClass& rRunStatus,
 			rRunStatus.SetFailed();	
 		}
 
-		Result &= S_OK == GetImageExtent( Extents ) && S_OK == Extents.TranslateFromOutputSpace( EdgePoint, EdgePoint );
+		Result &= S_OK == GetImageExtent().TranslateFromOutputSpace( edgePoint, edgePoint );
 
 		SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
-		Result &= pTool && S_OK == pTool->GetImageExtent( Extents ) && S_OK == Extents.TranslateFromOutputSpace( EdgePoint, EdgePoint );
+		Result &= pTool && S_OK == pTool->GetImageExtent().TranslateFromOutputSpace( edgePoint, edgePoint );
 
 		if (!Result && nullptr != pErrorMessages)
 		{
@@ -171,10 +168,7 @@ bool SVLinearEdgePositionLineAnalyzerClass::onRun( SVRunStatusClass& rRunStatus,
 		}
 	}
 
-	DPoint.x = EdgePoint.m_dPositionX;
-	DPoint.y = EdgePoint.m_dPositionY;
-
-	if( S_OK != m_svLinearDistance.SetValue(Distance) || S_OK != dpEdge.SetValue(DPoint) ) 
+	if( S_OK != m_svLinearDistance.SetValue(Distance) || S_OK != dpEdge.SetValue(edgePoint) )
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)

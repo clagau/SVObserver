@@ -23,7 +23,7 @@
 #include "Definitions/TextDefineSvDef.h"
 #include "SVMessage/SVMessage.h"
 #include "SVMatroxLibrary/SVMatroxPatternInterface.h"
-#include "SVImageLibrary/SVExtentPointStruct.h"
+#include "SVUtilityLibrary/SVPoint.h"
 #include "SVImageLibrary/SVImageExtentClass.h"
 #include "Definitions/GlobalConst.h"
 #include "SVFileSystemLibrary/SVFileNameClass.h"
@@ -593,9 +593,9 @@ namespace SvOg
 			if (0 < ResultAngleArray.size())
 			{
 				angle = ResultAngleArray[0];
-				SVExtentPointStruct moveVector = SVRotatePoint(SVExtentPointStruct(0, 0), SVExtentPointStruct(m_CenterX, m_CenterY), -angle);
-				m_nXPos = static_cast<int>(dPosX - moveVector.m_dPositionX);
-				m_nYPos = static_cast<int>(dPoxY - moveVector.m_dPositionY);
+				SVPoint<double> moveVector = SVRotatePoint(SVPoint<double>(0, 0), SVPoint<double>(m_CenterX, m_CenterY), -angle);
+				m_nXPos = static_cast<int>(dPosX - moveVector.m_x);
+				m_nYPos = static_cast<int>(dPoxY - moveVector.m_y);
 			}
 		}
 

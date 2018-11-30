@@ -89,9 +89,9 @@ bool SVPointXResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 
 		if( nullptr != pValueObject )
 		{
-			SVPoint Value;
+			SVPoint<long> Value;
 			pValueObject->GetValue(Value);
-			m_X.SetValue(Value.x());
+			m_X.SetValue(Value.m_x);
 			return true;
 		}
 	}

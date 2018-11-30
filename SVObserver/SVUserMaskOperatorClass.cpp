@@ -363,14 +363,13 @@ HRESULT SVUserMaskOperatorClass::BuildMaskLines( SVExtentMultiLineStruct& p_Mult
 	m_Data.dwvoMaskType.GetValue( dwMaskType );
 
 	SVImageClass* pInputImage = getMaskInputImage();
-	SVImageExtentClass l_svExtents;
 	if( l_eCriteria != SVNone && Activated && nullptr != m_MaskBufferHandlePtr &&
 		( MASK_TYPE_IMAGE != dwMaskType || nullptr != pInputImage ) )
 	{
 		SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
 		if (pTool)
 		{
-			pTool->GetImageExtent( l_svExtents );
+			const SVImageExtentClass& rImageExtents = pTool->GetImageExtent();
 
 			RECT l_rec;
 
@@ -387,16 +386,12 @@ HRESULT SVUserMaskOperatorClass::BuildMaskLines( SVExtentMultiLineStruct& p_Mult
 
 			long l_lSkip = 1;
 		
-			SVExtentPointStruct l_svPoint;
 			SVExtentLineStruct l_Line;
-			l_Line.m_svPointArray.push_back( l_svPoint );
-			l_Line.m_svPointArray.push_back( l_svPoint );
-
 			l_Line.m_dwColor = RGB( 0, 255, 255 );
 
 			for( int l_iRow = 0 ; l_iRow < l_rec.bottom ; l_iRow += l_lSkip )
 			{
-				SVExtentPointStruct l_svStartPoint;
+				SVPoint<double> startPoint;
 
 				bool l_bDrewLastPixel = false;
 
@@ -411,15 +406,15 @@ HRESULT SVUserMaskOperatorClass::BuildMaskLines( SVExtentMultiLineStruct& p_Mult
 								if( ! l_bDrewLastPixel )
 								{
 									l_bDrewLastPixel = true;
-									l_svStartPoint.m_dPositionX = l_iCol;
-									l_svStartPoint.m_dPositionY = l_iRow;
-									l_svExtents.TranslateFromOutputSpace( l_svStartPoint, l_svStartPoint );
+									startPoint.m_x = l_iCol;
+									startPoint.m_y = l_iRow;
+									rImageExtents.TranslateFromOutputSpace( startPoint, startPoint );
 								}
 							}
 							else if( l_bDrewLastPixel )
 							{
 								l_bDrewLastPixel = false;
-								AddLine( l_iCol, l_iRow, l_svStartPoint, l_svExtents, l_Line, p_MultiLine  );
+								AddLine( l_iCol, l_iRow, startPoint, rImageExtents, l_Line, p_MultiLine  );
 							}
 							break;
 						}
@@ -430,15 +425,15 @@ HRESULT SVUserMaskOperatorClass::BuildMaskLines( SVExtentMultiLineStruct& p_Mult
 								if( ! l_bDrewLastPixel )
 								{
 									l_bDrewLastPixel = true;
-									l_svStartPoint.m_dPositionX = l_iCol;
-									l_svStartPoint.m_dPositionY = l_iRow;
-									l_svExtents.TranslateFromOutputSpace( l_svStartPoint, l_svStartPoint );
+									startPoint.m_x = l_iCol;
+									startPoint.m_y = l_iRow;
+									rImageExtents.TranslateFromOutputSpace( startPoint, startPoint );
 								}
 							}
 							else if( l_bDrewLastPixel ) 
 							{
 								l_bDrewLastPixel = false;
-								AddLine( l_iCol, l_iRow, l_svStartPoint, l_svExtents, l_Line, p_MultiLine  );
+								AddLine( l_iCol, l_iRow, startPoint, rImageExtents, l_Line, p_MultiLine  );
 							}
 							break;
 						}
@@ -447,7 +442,7 @@ HRESULT SVUserMaskOperatorClass::BuildMaskLines( SVExtentMultiLineStruct& p_Mult
 
 				if( l_bDrewLastPixel )  // Finish the last line if the pixels were the same to the end.
 				{
-					AddLine( l_rec.right-1, l_iRow, l_svStartPoint, l_svExtents, l_Line, p_MultiLine );
+					AddLine( l_rec.right-1, l_iRow, startPoint, rImageExtents, l_Line, p_MultiLine );
 				}
 
 				pSrcLine += l_lSrcBytes*l_lSkip;
@@ -464,17 +459,19 @@ HRESULT SVUserMaskOperatorClass::BuildMaskLines( SVExtentMultiLineStruct& p_Mult
 	return l_hr;
 }
 
-HRESULT SVUserMaskOperatorClass::AddLine(int iCol, int iRow, SVExtentPointStruct& rStartPoint, SVImageExtentClass& rExtent, SVExtentLineStruct& rLine, SVExtentMultiLineStruct& rMultiLine  )
+HRESULT SVUserMaskOperatorClass::AddLine(int iCol, int iRow, SVPoint<double>& rStartPoint, const SVImageExtentClass& rExtent, SVExtentLineStruct& rLine, SVExtentMultiLineStruct& rMultiLine  )
 {
 	HRESULT l_hr = S_OK;
 
-	SVExtentPointStruct l_svEndPoint;
-	l_svEndPoint.m_dPositionX = iCol;
-	l_svEndPoint.m_dPositionY = iRow;
-	rExtent.TranslateFromOutputSpace( l_svEndPoint, l_svEndPoint);
-	rLine.m_svPointArray[0] = rStartPoint ;
-	rLine.m_svPointArray[1] = l_svEndPoint ;
-	rMultiLine.m_svLineArray.push_back( rLine );
+	SVPoint<double> endPoint{static_cast<double> (iCol),  static_cast<double> (iRow)};
+	rExtent.TranslateFromOutputSpace(endPoint, endPoint);
+	if(rLine.m_PointVector.size() < 2)
+	{
+		rLine.m_PointVector.resize(2);
+	}
+	rLine.m_PointVector[0] = rStartPoint ;
+	rLine.m_PointVector[1] = endPoint ;
+	rMultiLine.m_svLineArray.emplace_back( rLine );
 	return l_hr;
 }
 	
@@ -750,16 +747,16 @@ bool SVUserMaskOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rI
 				if ( nullptr != l_pRefImage &&
 					nullptr != l_pMaskInputImage )
 				{
-					SVExtentPointStruct l_svPoint;
+					SVPoint<double> point;
 
 					SvTrc::IImagePtr pMaskBuffer = l_pMaskInputImage->getImageReadOnly(rRunStatus.m_triggerRecord);
 
-					SVImageExtentClass l_svExtents = l_pRefImage->GetImageExtents();
+					const SVImageExtentClass& rExtents = l_pRefImage->GetImageExtents();
 
-					if ( S_OK == l_svExtents.GetExtentProperty( SvDef::SVExtentPropertyPositionPoint, l_svPoint ) &&
+					if ( S_OK == rExtents.GetExtentProperty( SvDef::SVExtentPropertyPositionPoint, point ) &&
 						nullptr != pMaskBuffer && !pMaskBuffer->isEmpty() )
 					{
-						if ( S_OK != l_pMaskInputImage->ValidateAgainstOutputExtents( l_svExtents ) )
+						if ( S_OK != l_pMaskInputImage->ValidateAgainstOutputExtents(rExtents) )
 						{
 							MatroxCode = SVMatroxBufferInterface::ClearBuffer(m_MaskBufferHandlePtr->GetBuffer(), 0.0 );
 
@@ -777,7 +774,7 @@ bool SVUserMaskOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rI
 							}
 						}
 
-						MatroxCode = SVMatroxBufferInterface::CopyBuffer(m_MaskBufferHandlePtr->GetBuffer(), pMaskBuffer->getHandle()->GetBuffer(), (long)-l_svPoint.m_dPositionX, (long)-l_svPoint.m_dPositionY );
+						MatroxCode = SVMatroxBufferInterface::CopyBuffer(m_MaskBufferHandlePtr->GetBuffer(), pMaskBuffer->getHandle()->GetBuffer(), static_cast<long> (-point.m_x), static_cast<long> (-point.m_y));
 
 						if (S_OK != MatroxCode)
 						{

@@ -14,71 +14,64 @@
 #pragma region Includes
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <vector>
-#include "SVExtentDimensionsClass.h"
 #include "Definitions/SVExtentEnums.h"
 #include "SVExtentFigureStruct.h"
 #include "SVExtentOffsetStruct.h"
-#include "SVExtentPointStruct.h"
-#include "SVExtentPositionClass.h"
 #include "SVExtentLineStruct.h"
 #include "SVExtentMultiLineStruct.h"
-
+#include "SVUtilityLibrary/SVPoint.h"
 #pragma endregion Includes
 
-extern double SVGetRadius( SVExtentPointStruct p_svCenter, SVExtentPointStruct p_svPoint );
-extern double SVGetRotationAngle( SVExtentPointStruct p_svCenter, SVExtentPointStruct p_svPoint );
+extern double SVGetRadius(const SVPoint<double>& rCenter, const SVPoint<double>& rPoint);
+extern double SVGetRotationAngle(const SVPoint<double>& rCenter, const SVPoint<double>& rPoint);
 
-extern SVExtentPointStruct SVRotatePoint( SVExtentPointStruct p_svCenter, double p_dRadius, double p_dAngle );
-extern SVExtentPointStruct SVRotatePoint( SVExtentPointStruct p_svCenter, SVExtentPointStruct p_svStart, double p_dAngle );
+extern SVPoint<double> SVRotatePoint(const SVPoint<double>& rCenter, double dRadius, double dAngle );
+extern SVPoint<double> SVRotatePoint(const SVPoint<double>& rCenter, const SVPoint<double>& rStartPoint, double dAngle );
 
-extern double SVGetFlippedRotationAngle( SVExtentPointStruct p_svCenter, SVExtentPointStruct p_svPoint );
-extern SVExtentPointStruct SVRotateAndFlipPoint( SVExtentPointStruct p_svCenter, double p_dRadius, double p_dAngle );
-extern SVExtentPointStruct SVRotateAndFlipPoint( SVExtentPointStruct p_svCenter, SVExtentPointStruct p_svStart, double p_dAngle );
+extern double SVGetFlippedRotationAngle(const SVPoint<double>& rCenter, const SVPoint<double>& rPoint);
+extern SVPoint<double> SVRotateAndFlipPoint(const SVPoint<double>& rCenter, double dRadius, double dAngle);
+extern SVPoint<double> SVRotateAndFlipPoint(const SVPoint<double>& rCenter, const SVPoint<double>& rStartPoint, double dAngle);
 
-typedef std::vector<SvDef::SVExtentPropertyEnum> SVExtentPropertyListType;
-typedef std::map< SvDef::SVExtentPropertyEnum, std::string > SVExtentPropertyMapType;
+typedef std::vector<SvDef::SVExtentPropertyEnum> SVExtentPropertyVector;
+typedef std::map<SvDef::SVExtentPropertyEnum, std::string> SVExtentPropertyStringMap;
+typedef std::map<SvDef::SVExtentPropertyEnum, double> SVExtentPropertyValueMap;
+typedef std::map<SvDef::SVExtentPropertyEnum, std::pair<SvDef::SVExtentPropertyEnum, SvDef::SVExtentPropertyEnum>> SVExtentPropertyPointMap;
 
 class SVImageExtentClass
 {
 public:
 	SVImageExtentClass();
-	SVImageExtentClass( const SVImageExtentClass &p_rsvValue );
+	SVImageExtentClass(const SVImageExtentClass& rRhs);
 	~SVImageExtentClass();
 
-	const SVImageExtentClass &operator=( const SVImageExtentClass &p_rsvValue );
+	const SVImageExtentClass &operator=(const SVImageExtentClass &rRhs);
 
-	HRESULT Initialize();
+	void Initialize();
 
 	SvDef::SVExtentTranslationEnum GetTranslation() const;
-	HRESULT SetTranslation( SvDef::SVExtentTranslationEnum p_eTranslation );
+	void SetTranslation( SvDef::SVExtentTranslationEnum p_eTranslation );
 
-	const SVExtentDimensionsClass& GetDimensions() const;
-	HRESULT SetDimensions( SVExtentDimensionsClass p_svDimensions );
+	void DisableExtentProperty( SvDef::SVExtentPropertyEnum eProperty );
 
-	const SVExtentPositionClass &GetPosition() const;
-	HRESULT SetPosition( SVExtentPositionClass p_svPosition );
+	HRESULT GetExtentProperty( SvDef::SVExtentPropertyEnum eProperty, long &rValue ) const;
+	HRESULT GetExtentProperty( SvDef::SVExtentPropertyEnum eProperty, double &rValue ) const;
+	HRESULT GetExtentProperty( SvDef::SVExtentPropertyEnum eProperty, POINT &rValue ) const;
+	HRESULT GetExtentProperty( SvDef::SVExtentPropertyEnum eProperty, SVPoint<double>& rValue ) const;
+	SVExtentPropertyStringMap GetExtentPropertyMap(SvDef::SVExtentPropertyEnum eWhichProperties) const;
+	SVExtentPropertyVector GetExtentPropertyVector(SvDef::SVExtentPropertyEnum eWhichProperties) const;
 
-	HRESULT DisableExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty );
-
-	HRESULT GetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, long &p_rlValue ) const;
-	HRESULT GetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, double &p_rdValue ) const;
-	HRESULT GetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, POINT &p_roValue ) const;
-	HRESULT GetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, SVExtentPointStruct &p_rsvValue ) const;
-	HRESULT GetExtentPropertyList( SvDef::SVExtentPropertyEnum p_eWhichProperties, SVExtentPropertyListType& p_rPropertyList ) const;
-	HRESULT GetExtentPropertyList( SvDef::SVExtentPropertyEnum p_eWhichProperties, SVExtentPropertyMapType& p_rPropertyMap ) const;
-	static std::string GetExtentPropertyName( SvDef::SVExtentPropertyEnum p_eProperty );
-
-	HRESULT SetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, double p_dValue );
-	HRESULT SetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, SVExtentPointStruct p_svValue );
+	HRESULT SetExtentProperty(SvDef::SVExtentPropertyEnum eProperty, double dValue);
+	HRESULT SetExtentProperty(SvDef::SVExtentPropertyEnum eProperty, const SVPoint<double>& rValue);
 
 	HRESULT UpdateData();
 
-	HRESULT GetFigure( SVExtentFigureStruct &p_rsvFigure ) const;
+	bool hasFigure() const;
+	const SVExtentFigureStruct& GetFigure() const { return m_figure; }
 
-	SvDef::SVExtentLocationPropertyEnum GetLocationPropertyAt( SVExtentPointStruct p_svPoint );
+	SvDef::SVExtentLocationPropertyEnum GetLocationPropertyAt(const SVPoint<double>& rPoint) const;
 
-	HRESULT Update( SvDef::SVExtentLocationPropertyEnum p_eLocation, SVExtentPointStruct p_svStart, SVExtentPointStruct p_svEnd );
-	HRESULT UpdateFromOutputSpace( SvDef::SVExtentLocationPropertyEnum p_eLocation, long p_lX, long p_lY );
+	HRESULT Update( SvDef::SVExtentLocationPropertyEnum eLocation, const SVPoint<double>& rStartPoint, const SVPoint<double>& rEndPoint);
+	HRESULT UpdateFromOutputSpace( SvDef::SVExtentLocationPropertyEnum eLocation, long lX, long lY );
 
 	/// GetRectangle  
 	///  Retrieves the rect values for the input/parent image that is 
@@ -95,56 +88,55 @@ public:
 	///  Retrieves the rect values based on the ROI of the current extents.
 	HRESULT GetLogicalRectangle( RECT &p_roRect ) const;
 
-	HRESULT TranslateToOutputSpace( SVExtentPointStruct p_svValue, SVExtentPointStruct &p_rsvResult );
+	HRESULT TranslateToOutputSpace(SVPoint<double> value, SVPoint<double> &rResult) const;
 
-	HRESULT TranslateFromOutputSpace( SVExtentPointStruct p_svValue, SVExtentPointStruct &p_rsvResult ) const;
+	HRESULT TranslateFromOutputSpace(SVPoint<double> value, SVPoint<double> &rResult) const;
 	HRESULT TranslateFromOutputSpace( SVExtentFigureStruct p_svValue, SVExtentFigureStruct &p_rsvResult ) const;
 	HRESULT TranslateFromOutputSpace( SVExtentLineStruct p_svValue, SVExtentLineStruct &p_rsvResult ) const;
 	HRESULT TranslateFromOutputSpace( SVExtentMultiLineStruct p_svValue, SVExtentMultiLineStruct &p_rsvResult ) const;
 
-	HRESULT TranslateLineFromOutputSpace( SVExtentPointStruct p_svRadiusPoint, SVExtentPointStruct p_svRotatePoint, double p_dLineAngle, SVExtentPointStruct p_svValue, SVExtentPointStruct &p_rsvResult ) const;
+	HRESULT TranslateLineFromOutputSpace(const SVPoint<double>& rRadiusPoint, const SVPoint<double>& rRotatePoint, double p_dLineAngle, const SVPoint<double>& rValue, SVPoint<double> &rResult) const;
 
 	HRESULT ValidateAgainstOutputSpace( const SVImageExtentClass &p_rsvValue ) const;
 
-	HRESULT GetTitlePoint(POINT &p_ptTitlePoint) const;
-	HRESULT GetTitlePoint(SVExtentPointStruct &p_svTitlePoint) const;
+	HRESULT GetTitlePoint(POINT& rTitlePoint) const;
+	HRESULT GetTitlePoint(SVPoint<double>& rTitlePoint) const;
 
-	bool IsEqualExcludePosition( const SVImageExtentClass &p_rsvValue ) const;
-	bool IsPositionEqual( const SVImageExtentClass &p_rsvValue ) const;
+	bool operator==(const SVImageExtentClass& rRhs) const;
+	bool operator!=(const SVImageExtentClass& rRhs) const;
 
-	bool operator==( const SVImageExtentClass &p_rsvValue ) const;
-	bool operator!=( const SVImageExtentClass &p_rsvValue ) const;
-
-	HRESULT UpdateSourceOffset( SVExtentOffsetStruct& p_rsvOffsetData );
+	HRESULT UpdateSourceOffset( SVExtentOffsetStruct& rOffsetData ) const;
 
 	/// Set the image extent data depending of an image file.
 	/// \param pFileName [in] Filename of the image.
 	/// \returns HRESULT S_OK on success.
 	HRESULT SetDataFromFile(LPCTSTR pFileName);
 
-protected:
-	HRESULT UpdateLine( SvDef::SVExtentLocationPropertyEnum p_eLocation, SVExtentPointStruct p_svStart, SVExtentPointStruct p_svEnd );
-	HRESULT UpdatePolar( SvDef::SVExtentLocationPropertyEnum p_eLocation, SVExtentPointStruct p_svStart, SVExtentPointStruct p_svEnd );
-	HRESULT UpdatePolarFromOutputSpace( SvDef::SVExtentLocationPropertyEnum p_eLocation, long p_dX, long p_dY );
-	HRESULT UpdateHorizontalPerspective( SvDef::SVExtentLocationPropertyEnum p_eLocation, SVExtentPointStruct p_svStart, SVExtentPointStruct p_svEnd );
-	HRESULT UpdateVerticalPerspective( SvDef::SVExtentLocationPropertyEnum p_eLocation, SVExtentPointStruct p_svStart, SVExtentPointStruct p_svEnd );
+private:
+	HRESULT UpdateLine( SvDef::SVExtentLocationPropertyEnum eLocation, const SVPoint<double>& rStart, const SVPoint<double>& rEnd );
+	HRESULT UpdatePolar( SvDef::SVExtentLocationPropertyEnum eLocation, const SVPoint<double>& rStart, const SVPoint<double>& rEnd );
+	HRESULT UpdatePolarFromOutputSpace(SvDef::SVExtentLocationPropertyEnum eLocation, long p_dX, long p_dY );
+	HRESULT UpdateHorizontalPerspective(SvDef::SVExtentLocationPropertyEnum eLocation, const SVPoint<double>& rStart, const SVPoint<double>& rEnd);
+	HRESULT UpdateVerticalPerspective(SvDef::SVExtentLocationPropertyEnum eLocation, const SVPoint<double>& rStart, const SVPoint<double>& rEnd);
 
-	HRESULT ClearOutputData();
+	void ClearOutputData();
 
 	HRESULT BuildOutputDimensions();
 	HRESULT BuildFigure();
 
-private:
+	HRESULT setProperty(SvDef::SVExtentPropertyEnum eProperty, double dValue);
+
 	/// TranslateToLocalSpace
 	///	 Translate the point to be relative (local space).  Usually this relates 
 	///  to the ROI of the parent image.
-	HRESULT TranslateToLocalSpace(const SVExtentPointStruct& rValue, SVExtentPointStruct& rResult);
+	HRESULT TranslateToLocalSpace(SVPoint<double> value, SVPoint<double>& rResult);
 	// Input Attributes
 	SvDef::SVExtentTranslationEnum m_eTranslation;
-	SVExtentPositionClass m_svPosition;
-	SVExtentDimensionsClass m_svDimensions;
-
 	// Output Attributes
-	SVExtentFigureStruct m_svFigure;
+	SVExtentFigureStruct m_figure;
+
+	unsigned long m_properties{0UL};
+
+	SVExtentPropertyValueMap m_extentValues;
 };
 

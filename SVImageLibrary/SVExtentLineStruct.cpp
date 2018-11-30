@@ -39,7 +39,7 @@ const SVExtentLineStruct &SVExtentLineStruct::operator=( const SVExtentLineStruc
 	{
 		Initialize();
 
-		m_svPointArray = rValue.m_svPointArray;
+		m_PointVector = rValue.m_PointVector;
 
 		m_dwColor = rValue.m_dwColor;
 		
@@ -50,17 +50,13 @@ const SVExtentLineStruct &SVExtentLineStruct::operator=( const SVExtentLineStruc
 }
 
 
-HRESULT SVExtentLineStruct::Initialize()
+void SVExtentLineStruct::Initialize()
 {
-	HRESULT l_hrOk = S_OK;
-
-	m_svPointArray.clear();
+	m_PointVector.clear();
 
 	m_dwColor = 0;
 
 	m_bIsAngleValid = false;
 	m_dAngle = 0.0;
-
-	return l_hrOk;
 }
 

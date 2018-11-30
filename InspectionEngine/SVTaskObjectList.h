@@ -45,7 +45,7 @@ public:
 	virtual void GetAllInputObjects() override;
 	virtual void Persist(SvOi::IObjectWriter& rWriter) override;
 
-	virtual SVTaskObjectClass* GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint ) override;
+	virtual SVTaskObjectClass* GetObjectAtPoint( const SVPoint<double>& rPoint ) override;
 
 	virtual bool isInputImage(const SVGUID& rImageGuid) const override;
 

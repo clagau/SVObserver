@@ -289,11 +289,7 @@ STDMETHODIMP CSVCommand::SVGetSVIMConfig(long lOffset, long *lBlockSize, BSTR *b
 	{
 		TCHAR szCause[255];
 		memEx->GetErrorMessage(szCause, 255);
-#ifdef _DEBUG
-		std::string Formatted = _T("ERROR - ");
-		Formatted += szCause;
-		ASSERT(false);// szFormatted
-#endif
+		assert(false);
 		hrResult = SVMSG_CMDCOMSRV_MEMORY_ERROR;
 		bHrSet = true;
 		memEx->Delete();
@@ -302,11 +298,7 @@ STDMETHODIMP CSVCommand::SVGetSVIMConfig(long lOffset, long *lBlockSize, BSTR *b
 	{
 		TCHAR szCause[255];
 		ex->GetErrorMessage(szCause, 255);
-#ifdef _DEBUG
-		std::string Formatted = _T("ERROR - ");
-		Formatted += szCause;
-		ASSERT(false);//szFormatted
-#endif
+		assert(false);
 		hrResult = SVMSG_CMDCOMSRV_FILE_ERROR;
 		bHrSet = true;
 		ex->Delete();
@@ -404,11 +396,7 @@ STDMETHODIMP CSVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR* pF
 	{
 		TCHAR szCause[255];
 		theEx->GetErrorMessage(szCause, 255);
-#ifdef _DEBUG
-		std::string Formatted = _T("Error - ");
-		Formatted += szCause;
-		ASSERT(false);//sFormatted
-#endif
+		assert(false);
 		hrResult = theEx->m_lOsError;
 		theEx->Delete();
 	}
@@ -486,28 +474,12 @@ STDMETHODIMP CSVCommand::SVGetSVIMFile(BSTR bstrSourceFile, long lOffset, long *
 			}
 			catch (CFileException* theException)
 			{
-#ifdef _DEBUG
-				TCHAR   szCause[255];
-				theException->GetErrorMessage(szCause, 255);
-				std::string Formatted = _T("ERROR - ");
-				Formatted += szCause;
-#endif
-
 				hrResult = SVMSG_CMDCOMSRV_FILE_ERROR;
-
 				theException->Delete();
 			}
 			catch (CMemoryException* memEx)
 			{
-#ifdef _DEBUG
-				TCHAR szCause[255];
-				memEx->GetErrorMessage(szCause, 255);
-				std::string Formatted = _T("ERROR - ");
-				Formatted += szCause;
-#endif
-
 				hrResult = SVMSG_CMDCOMSRV_MEMORY_ERROR; //use this value for now...
-
 				memEx->Delete();
 			}
 			catch (...)
@@ -586,15 +558,7 @@ STDMETHODIMP CSVCommand::SVPutSVIMFile(BSTR bstrDestFile, long lOffset, long lBl
 		}
 		catch (CFileException *theEx)
 		{
-#ifdef _DEBUG
-			TCHAR szCause[255];
-			theEx->GetErrorMessage(szCause, 255);
-			std::string Formatted = _T("ERROR - ");
-			Formatted += szCause;
-#endif
-
 			hrResult = SVMSG_CMDCOMCTRL_FILE_ERROR;
-
 			theEx->Delete();
 
 			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
@@ -3376,7 +3340,7 @@ STDMETHODIMP CSVCommand::SVGetFontCharacter(long lFontIdentifier, long  lCharID,
 
 				long l_lValue = 0;
 
-				ImageInfo.SetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, 0);
+				ImageInfo.SetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, SVPoint<double>(0.0, 0.0));
 				l_Code = SVMatroxBufferInterface::Get(lCharHandle, SVSizeX, l_lValue);
 				ImageInfo.SetExtentProperty(SvDef::SVExtentPropertyWidth, l_lValue);
 

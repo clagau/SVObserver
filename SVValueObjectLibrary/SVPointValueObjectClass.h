@@ -13,11 +13,11 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
-#include "SVUtilityLibrary/SVPOINT.h"
+#include "SVUtilityLibrary/SVPoint.h"
 #include "SVValueObjectClass.h"
 #pragma endregion Includes
 
-class SVPointValueObjectClass : public SVValueObjectClass<SVPoint>
+class SVPointValueObjectClass : public SVValueObjectClass<SVPoint<long>>
 {
 	SV_DECLARE_CLASS( SVPointValueObjectClass );
 
@@ -30,19 +30,19 @@ public:
 	virtual ~SVPointValueObjectClass();
 
 protected:
-	virtual double ValueType2Double(const SVPoint& rValue) const override { return E_NOTIMPL; };
-	virtual _variant_t ValueType2Variant( const SVPoint& rValue ) const override;
-	virtual SVPoint Variant2ValueType( const _variant_t& rValue ) const override;
+	virtual double ValueType2Double(const SVPoint<long>& rValue) const override { return E_NOTIMPL; };
+	virtual _variant_t ValueType2Variant( const SVPoint<long>& rValue ) const override;
+	virtual SVPoint<long> Variant2ValueType( const _variant_t& rValue ) const override;
 
 	/// Convert a string in a SVPOINT. Throw an exception if the string isn't convertible into a SVPOINT
 	/// \param strValue [in] The input string
 	/// \returns the converted.
-	virtual SVPoint ConvertString2Type(const std::string& rValue ) const override;
+	virtual SVPoint<long> ConvertString2Type(const std::string& rValue ) const override;
 
 	//! Convert SVDPointClass to std::string 
 	//! \param rValue [in] Type to convert
 	/// \returns the std::string
-	virtual std::string ConvertType2String( const SVPoint& rValue ) const override;
+	virtual std::string ConvertType2String( const SVPoint<long>& rValue ) const override { return rValue.toString(); }
 
 	//! Returns the value object byte size (SVPOINT has x and y value both of type long)
 	//! \returns the number of bytes for the data

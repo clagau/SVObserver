@@ -78,8 +78,6 @@ bool SVColorToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStr
 				//! If this is true then we need to convert it
 				if (m_ConvertTool)
 				{
-					//! This is required to receive the correct extents when the camera image has an ROI set
-					pInputImage->ResetObject();
 					//! Converting configuration without ROI has to set the image to the full parent extents
 					SetImageExtentToParent();
 					// Converting configuration without ROI has to set all the thresholds to enabled
@@ -185,7 +183,7 @@ bool SVColorToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages
 
 HRESULT SVColorToolClass::SetImageExtent(const SVImageExtentClass& rImageExtent)
 {
-	HRESULT l_hrOk = m_svToolExtent.ValidExtentAgainstParentImage(rImageExtent);
+	HRESULT l_hrOk = m_toolExtent.ValidExtentAgainstParentImage(rImageExtent);
 
 	if (S_OK == l_hrOk)
 	{
@@ -198,7 +196,7 @@ HRESULT SVColorToolClass::SetImageExtent(const SVImageExtentClass& rImageExtent)
 HRESULT SVColorToolClass::SetImageExtentToParent()
 {
 	SVImageExtentClass NewExtent;
-	HRESULT l_hrOk = m_svToolExtent.UpdateExtentToParentExtents(NewExtent);
+	HRESULT l_hrOk = m_toolExtent.UpdateExtentToParentExtents(NewExtent);
 
 	if (S_OK == l_hrOk)
 	{
@@ -211,22 +209,20 @@ HRESULT SVColorToolClass::SetImageExtentToFit(const SVImageExtentClass& rImageEx
 {
 	HRESULT l_hrOk = S_OK;
 
-	l_hrOk = m_svToolExtent.UpdateExtentAgainstParentImage(rImageExtent);
+	l_hrOk = m_toolExtent.UpdateExtentAgainstParentImage(rImageExtent);
 
 	return l_hrOk;
 }
 
-SVTaskObjectClass* SVColorToolClass::GetObjectAtPoint(const SVExtentPointStruct &rPoint)
+SVTaskObjectClass* SVColorToolClass::GetObjectAtPoint(const SVPoint<double>& rPoint)
 {
-	SVImageExtentClass l_Extents;
+	SVTaskObjectClass *pObject {nullptr};
 
-	SVTaskObjectClass* pObject(nullptr);
-
-	if (S_OK == m_svToolExtent.GetImageExtent(l_Extents) &&
-		l_Extents.GetLocationPropertyAt(rPoint) != SvDef::SVExtentLocationPropertyUnknown)
+	if (SvDef::SVExtentLocationPropertyUnknown != GetImageExtent().GetLocationPropertyAt(rPoint))
 	{
 		pObject = this;
 	}
+
 	return pObject;
 }
 #pragma endregion Public Methods
