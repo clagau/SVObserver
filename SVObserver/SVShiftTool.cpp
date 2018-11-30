@@ -201,7 +201,7 @@ bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 		double dLeft(0.0);
 		double dTop(0.0);
 
-		if (S_OK != m_ExtentLeft.GetValue(dLeft) || S_OK != m_ExtentTop.GetValue(dTop))
+		if (S_OK != m_ExtentLeft.GetValue(dLeft) || !std::isfinite(dLeft)  || S_OK != m_ExtentTop.GetValue(dTop) || !std::isfinite(dTop))
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)
@@ -228,8 +228,11 @@ bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 				Result = Result && (S_OK == m_LearnedTranslationY.GetValue(Value));
 				LearnedTranslationY = static_cast<long> (Value);
 
-				Result = Result && (nullptr != pTranslationXInput && S_OK == pTranslationXInput->GetValue(dInputTranslationX));
-				Result = Result && (nullptr != pTranslationYInput && S_OK == pTranslationYInput->GetValue(dInputTranslationY));
+				Result = Result &&  (nullptr != pTranslationXInput && S_OK == pTranslationXInput->GetValue(dInputTranslationX) );
+				Result = Result && std::isfinite(dInputTranslationX);
+				Result = Result && (nullptr != pTranslationYInput && S_OK == pTranslationYInput->GetValue(dInputTranslationY) );
+				Result = Result && std::isfinite(dInputTranslationY);
+				
 
 				if (!Result)
 				{
@@ -307,8 +310,8 @@ bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 			double l_OffsetX = 0.0;
 			double l_OffsetY = 0.0;
 
-			Result = Result && (S_OK == m_LeftResult.GetValue(l_OffsetX));
-			Result = Result && (S_OK == m_TopResult.GetValue(l_OffsetY));
+			Result = Result && (S_OK == m_LeftResult.GetValue(l_OffsetX) && std::isfinite(l_OffsetX));
+			Result = Result && (S_OK == m_TopResult.GetValue(l_OffsetY) && std::isfinite(l_OffsetY));
 			Result = Result && (nullptr != pImageInput);
 			Result = Result && (nullptr != pInputImageBuffer);
 			Result = Result && !(pInputImageBuffer->isEmpty());
