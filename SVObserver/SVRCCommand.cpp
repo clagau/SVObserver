@@ -609,7 +609,14 @@ void SVRCCommand::PutFile(const SvPb::PutFileRequest& rRequest, SvRpc::Task<SvPb
 		{
 			DestinationPath = SvStl::GlobalPath::Inst().GetRunPath(DestinationPath.c_str());
 		}
-		Result = SVEncodeDecodeUtilities::StringContentToFile(DestinationPath, rRequest.filedata());
+		if(rRequest.saveinconfig() && 0 != DestinationPath.find(SvStl::GlobalPath::Inst().GetRunPath()))
+		{
+			Result = E_INVALIDARG;
+		}
+		else
+		{
+			Result = SVEncodeDecodeUtilities::StringContentToFile(DestinationPath, rRequest.filedata());
+		}
 		
 		if(S_OK == Result && rRequest.saveinconfig())
 		{

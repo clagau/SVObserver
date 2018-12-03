@@ -2544,7 +2544,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 				long l_lTime = static_cast<long>(l_FinishLoad - l_StartLoading);
 
 				SvDef::StringVector msgList;
-				msgList.push_back(m_SvxFileName.GetFullFileName());
+				msgList.push_back(getConfigFullFileName());
 				msgList.push_back(SvUl::Format(_T("%d"), l_lTime));
 
 				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
@@ -2572,7 +2572,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 
 			//Finished loading notify load
 			long loadConfigNotify {static_cast<long> (SvStl::NotificationType::loadConfig)};
-			SVVisionProcessorHelper::Instance().FireNotification(loadConfigNotify, 0L, 0L, m_SvxFileName.GetFullFileName().c_str());
+			SVVisionProcessorHelper::Instance().FireNotification(loadConfigNotify, 0L, 0L, getConfigFullFileName().c_str());
 		} // try
 		catch (CUserException* pUE)
 		{
