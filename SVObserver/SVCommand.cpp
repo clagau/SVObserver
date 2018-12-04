@@ -388,7 +388,7 @@ STDMETHODIMP CSVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR* pF
 
 		if (bLastFlag)
 		{
-			bSuccess = S_OK == TheSVObserverApp.LoadPackedConfiguration(PackedFileName, bPacFileFormat);
+			bSuccess = S_OK == GlobalRCLoadPackedConfiguration(PackedFileName.c_str(), bPacFileFormat);
 			PackedFileName.clear();
 		}
 	}

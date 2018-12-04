@@ -2689,16 +2689,14 @@ SVIPDoc* SVObserverApp::NewSVIPDoc(LPCTSTR DocName, SVInspectionProcess& Inspect
 }
 #pragma endregion virtual
 
-HRESULT SVObserverApp::LoadPackedConfiguration(const std::string& rFileName, bool bPacFileFormat)
+HRESULT SVObserverApp::LoadPackedConfiguration(LPCTSTR pFileName, bool bPacFileFormat)
 {
 	HRESULT l_Status = S_OK;
-	std::string fileName{rFileName};
+	std::string fileName{pFileName};
 
-	if (0 == _access(rFileName.c_str(), 0))
+	if (0 == _access(fileName.c_str(), 0))
 	{
-		//@WARNING [gra][8.10][11.06.2018] SendMessage is used to avoid problems by accessing the SVObserverApp instance from another thread
-		//This should be changed using inspection commands
-		SendMessage(m_pMainWnd->m_hWnd, WM_COMMAND, MAKEWPARAM(ID_RC_CLOSE_AND_CLEAN_RUN_DIR, 0), 0);
+		OnRCCloseAndCleanUpDownloadDirectory();
 	}
 	else
 	{
@@ -2710,7 +2708,7 @@ HRESULT SVObserverApp::LoadPackedConfiguration(const std::string& rFileName, boo
 		if(bPacFileFormat)
 		{
 			SVPackedFile PackedFile;
-			if (PackedFile.UnPackFiles(rFileName.c_str(), SvStl::GlobalPath::Inst().GetRunPath().c_str()))
+			if (PackedFile.UnPackFiles(fileName.c_str(), SvStl::GlobalPath::Inst().GetRunPath().c_str()))
 			{
 				if (PackedFile.getConfigFilePath().empty() || (_access(PackedFile.getConfigFilePath().c_str(), 0) != 0))
 				{
@@ -2731,9 +2729,9 @@ HRESULT SVObserverApp::LoadPackedConfiguration(const std::string& rFileName, boo
 	if (S_OK == l_Status)
 	{
 		SVRCSetSVCPathName(fileName.c_str());
-		//@WARNING [gra][8.10][11.06.2018] SendMessage is used to avoid problems by accessing the SVObserverApp instance from another thread
-		//This should be changed using inspection commands
-		l_Status = static_cast<HRESULT>(SendMessage(m_pMainWnd->m_hWnd, SV_LOAD_CONFIGURATION, 0, 0));
+		l_Status = LoadConfiguration();
+		//Need to remove the config file path when loaded via remote so that when saved a new file name is required
+		m_ConfigFileName.SetPathName(nullptr);
 	}
 
 	return l_Status;

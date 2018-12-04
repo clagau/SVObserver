@@ -23,4 +23,5 @@ extern void GlobalRCSaveConfiguration();
 extern bool GlobalRCOpenConfiguration( LPCTSTR ConfigName );
 extern void GlobalRCCloseAndCleanConfiguration();
 extern void GlobalRCCloseConfiguration();
+extern HRESULT GlobalRCLoadPackedConfiguration(LPCTSTR pFileName, bool bPackedFileFormat);
 

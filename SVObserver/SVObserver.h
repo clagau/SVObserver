@@ -182,7 +182,7 @@ public:
 	HRESULT  LoadConfiguration( unsigned long& ulSVOConfigVersion, BSTR bstrFileName, SVTreeType& p_rTree);
 
 
-	HRESULT LoadPackedConfiguration(const std::string& rFileName, bool bPacFileFormat);
+	HRESULT LoadPackedConfiguration(LPCTSTR pFileName, bool bPacFileFormat);
 	HRESULT SavePackedConfiguration(const std::string& rFileName);
 
 	SVMainFrame* GetMainFrame() const;

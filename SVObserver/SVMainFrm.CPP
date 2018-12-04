@@ -115,7 +115,7 @@ BEGIN_MESSAGE_MAP(SVMainFrame, CMDIFrameWnd)
 	ON_MESSAGE(WM_DISPLAYCHANGE, OnDisplayChange)
 	ON_WM_ACTIVATEAPP()
 	ON_MESSAGE(SV_SET_MODE, OnSetMode)
-	ON_MESSAGE(SV_LOAD_CONFIGURATION, OnLoadConfiguration)
+	ON_MESSAGE(SV_LOAD_PACKED_CONFIGURATION, OnLoadPackedConfiguration)
 	ON_MESSAGE(SV_REFRESH_STATUS_BAR, InvalidateStatusBar )
 	ON_MESSAGE(SV_SHUTDOWN, Shutdown )
 	ON_COMMAND(ID_TOOLBAR_ZOOM, &SVMainFrame::OnToolbarZoom)
@@ -1265,9 +1265,9 @@ LRESULT SVMainFrame::OnSetMode( WPARAM wParam, LPARAM lParam )
 	return TheSVObserverApp.SetMode( static_cast<unsigned long>(lParam ));
 }
 
-LRESULT SVMainFrame::OnLoadConfiguration( WPARAM wParam, LPARAM lParam )
+LRESULT SVMainFrame::OnLoadPackedConfiguration( WPARAM wParam, LPARAM lParam )
 {
-	return TheSVObserverApp.LoadConfiguration();
+	return TheSVObserverApp.LoadPackedConfiguration(reinterpret_cast<LPCTSTR> (lParam), (0 == wParam) ? false : true);
 }
 
 #ifdef _DEBUG

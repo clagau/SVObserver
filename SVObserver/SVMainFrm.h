@@ -61,7 +61,7 @@ private:
 	afx_msg void OnSizing(UINT fwSide, LPRECT pRect);
 	afx_msg LRESULT OnDisplayChange(WPARAM p_p1, LPARAM p_p2);
 	afx_msg LRESULT OnSetMode( WPARAM wParam, LPARAM lParam );
-	afx_msg LRESULT OnLoadConfiguration( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnLoadPackedConfiguration( WPARAM wParam, LPARAM lParam );
 	afx_msg void OnExtrasStartLastConfiguration();
 	afx_msg void OnUpdateExtrasStartLastConfiguration(CCmdUI* PCmdUI);
 	afx_msg void OnExtrasEnableAutoSave();

@@ -163,3 +163,9 @@ void GlobalRCCloseConfiguration()
 }
 #pragma endregion Global functions
 
+HRESULT GlobalRCLoadPackedConfiguration(LPCTSTR pFileName, bool bPackedFileFormat)
+{
+	WPARAM wParam = static_cast<WPARAM> (bPackedFileFormat);
+	LPARAM lParam = reinterpret_cast<LPARAM> (pFileName);
+	return static_cast<HRESULT> (::SendMessage(AfxGetApp()->m_pMainWnd->m_hWnd, SV_LOAD_PACKED_CONFIGURATION, wParam, lParam));
+}

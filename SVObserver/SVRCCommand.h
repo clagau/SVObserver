@@ -53,7 +53,6 @@ public:
 	
 private:
 	std::string GetFileNameFromFilePath(const std::string& rFilePath, const std::string& rExtension = std::string());
-	std::string GetTempFileNameFromFilePath(const std::string& rFilePath, const std::string& rExtension = std::string());
 	HRESULT ConvertStorageValueToProtobuf(const std::string& rName, const SVStorageResult& rStorage, SvPb::Value* pValue);
 	HRESULT ConvertStorageImageToProtobuf(const std::string& rName, const SVStorageResult& rStorage, SvPb::Value* pValue);
 	HRESULT AddValuesToStorageItems(const SvPb::SetItemsRequest& rRequest, SVNameStorageMap& rItems);

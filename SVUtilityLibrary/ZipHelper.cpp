@@ -59,6 +59,18 @@ bool makeZipFile( const std::string& rZipFileName, const SvDef::StringVector& rZ
 {
 	bool Result{false};
 
+	if(!rFolderPrefix.empty())
+	{
+		//Check that all files to be zipped have the folder prefix
+		for(const auto rFile : rZipFiles)
+		{
+			if(0 != rFile.find(rFolderPrefix))
+			{
+				return false;
+			}
+		}
+	}
+
 	if( 0 != rZipFiles.size() )
 	{
 		HINSTANCE hZipInstance{nullptr};

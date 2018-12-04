@@ -151,7 +151,7 @@ void SVRCCommand::GetConfig(const SvPb::GetConfigRequest& rRequest, SvRpc::Task<
 			RemoteFilePath = DefaultConfigurationName;
 			RemoteFilePath += SvDef::cPackedConfigExtension;
 		}
-		std::string TempFileName = GetTempFileNameFromFilePath(RemoteFilePath);
+		std::string TempFileName = SvStl::GlobalPath::Inst().GetRamDrive(GetFileNameFromFilePath(RemoteFilePath).c_str());
 
 		//Old .pac file extension is no longer valid!
 		if (!TempFileName.empty() && std::string::npos == TempFileName.find(_T(".pac")))
@@ -227,7 +227,8 @@ void SVRCCommand::PutConfig(const SvPb::PutConfigRequest& rRequest, SvRpc::Task<
 			RemoteFilePath += SvDef::cPackedConfigExtension;
 		}
 
-		std::string TempFileName = GetTempFileNameFromFilePath(RemoteFilePath, SvDef::cPackedConfigExtension);
+		std::string TempFileName = SvStl::GlobalPath::Inst().GetRamDrive(GetFileNameFromFilePath(RemoteFilePath, SvDef::cPackedConfigExtension).c_str());
+
 		if (0 != rRequest.filedata().length() && !TempFileName.empty())
 		{
 			Result = SVEncodeDecodeUtilities::StringContentToFile(TempFileName, rRequest.filedata());
@@ -236,7 +237,11 @@ void SVRCCommand::PutConfig(const SvPb::PutConfigRequest& rRequest, SvRpc::Task<
 				//For old .pac file format the first 4 bytes are always 1
 				DWORD fileVersion = (rRequest.filedata().length() > sizeof(DWORD)) ? *(reinterpret_cast<const DWORD*> (rRequest.filedata().c_str())) : 0;
 				SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-				Result = TheSVObserverApp.LoadPackedConfiguration(TempFileName, (1 == fileVersion) ? true : false);
+				//@WARNING [gra][8.10][11.06.2018] SendMessage is used to avoid problems by accessing the SVObserverApp instance from another thread
+				//This should be changed using inspection commands
+				WPARAM wParam = static_cast<WPARAM> ((1 == fileVersion) ? true : false);
+				LPARAM lParam = reinterpret_cast<LPARAM> (TempFileName.c_str());
+				Result = static_cast<HRESULT> (::SendMessage(AfxGetApp()->m_pMainWnd->m_hWnd, SV_LOAD_PACKED_CONFIGURATION,  wParam, lParam));
 				SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 				::remove(TempFileName.c_str());
 			}
@@ -1066,21 +1071,6 @@ std::string SVRCCommand::GetFileNameFromFilePath(const std::string& rFilePath, c
 	return Result;
 }
 
-std::string SVRCCommand::GetTempFileNameFromFilePath(const std::string& rFilePath, const std::string& rExtension /*= std::string()*/)
-{
-	std::string Result = GetFileNameFromFilePath(rFilePath, rExtension);
-
-	if (!Result.empty())
-	{
-		__int64 TimeStamp = static_cast<__int64>(SvTl::GetTimeStamp());
- 		std::string Temp = SvUl::Format("%I64d-%s", TimeStamp, Result.c_str());
-
-		Result = SvStl::GlobalPath::Inst().GetRamDrive(Temp.c_str());
-	}
-
-	return Result;
-}
-
 HRESULT SVRCCommand::ConvertStorageValueToProtobuf(const std::string& rName, const SVStorageResult& rStorage, SvPb::Value* pValue)
 {
 	HRESULT Result {S_OK};
@@ -1182,7 +1172,7 @@ HRESULT SVRCCommand::AddImagesToStorageItems(const SvPb::SetItemsRequest& rReque
 			const std::string& rContent = rImage.item().bytesval();
 			std::string FileName {Name};
 			FileName += _T(".bmp");
-			FilePath = GetTempFileNameFromFilePath(FileName);
+			FilePath = SvStl::GlobalPath::Inst().GetRamDrive(GetFileNameFromFilePath(FileName).c_str());
 			if (!FilePath.empty())
 			{
 				Result = SVEncodeDecodeUtilities::StringContentToFile(FilePath, rContent);
