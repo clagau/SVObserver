@@ -181,7 +181,6 @@ long SVPPQShiftRegister::GetIndexByTriggerTimeStamp(SvTl::SVTimeStamp checkTime,
 
 	if (0.0 < checkTime)
 	{
-		SvTl::SVTimeStamp previousTriggerTime {0.0};
 		auto ppqStart = m_Products.crend() - 1;
 		for (auto iter = m_Products.crbegin(); m_Products.crend() != iter; ++iter)
 		{
@@ -192,20 +191,18 @@ long SVPPQShiftRegister::GetIndexByTriggerTimeStamp(SvTl::SVTimeStamp checkTime,
 				//If product already has camera image or product inactive then skip
 				if (!hasCameraImage && (*iter)->bTriggered && (*iter)->IsProductActive())
 				{
-					if (findTimeMatch(checkTime, triggerTime, previousTriggerTime, ppqStart == iter))
+					if(findTimeMatch(checkTime, triggerTime, ppqStart == iter))
 					{
 						result = static_cast<long>(m_Products.size() - std::distance(m_Products.crbegin(), iter) - 1);
-						break;
 					}
 				}
 				//When we have reached the first position of the PPQ and have no match is it still possible to obtain a match ?
 				//When the newest trigger is older then the acquisition time stamp then acquisition can no longer be correlated
-				if (ppqStart == iter && (*ppqStart)->TimeStamp() > checkTime)
+				if(-1 == result && ppqStart == iter &&  (*ppqStart)->TimeStamp() > checkTime)
 				{
 					result = static_cast<long>(m_Products.size());
 					break;
 				}
-				previousTriggerTime = triggerTime;
 			}
 		}
 	}
@@ -239,20 +236,12 @@ HRESULT SVPPQShiftRegister::GetProductStates( std::string& p_rProductStates ) co
 	return l_Status;
 }
 
-bool SVPPQShiftRegister::findTimeMatch(SvTl::SVTimeStamp checkTime, SvTl::SVTimeStamp triggerTime, SvTl::SVTimeStamp previousTriggerTime, bool isPPQ1)  const
+bool SVPPQShiftRegister::findTimeMatch(SvTl::SVTimeStamp checkTime, SvTl::SVTimeStamp triggerTime, bool isPPQ1)  const
 {
 	constexpr double cPreTriggerTimeWindow = 0.5;	//This is a to compensate that the trigger may be recorded after the start frame (in milli seconds)
 
-	bool result = 0.0 < triggerTime && 0.0 < previousTriggerTime;
-	//Trigger time must be smaller than check time
-	result &= triggerTime < checkTime;
-	//Check time must be smaller than previous trigger
-	result &= checkTime < previousTriggerTime;
+	//If this is the first PPQ position then use the pre-trigger time!
+	double PreTriggerTime = isPPQ1 ? cPreTriggerTimeWindow : 0.0;
 
-	//If this is the first PPQ position and have not found a correlation then check if check time is just before the trigger time!
-	if(!result && isPPQ1)
-	{
-		result = 0.0 < triggerTime && (triggerTime - cPreTriggerTimeWindow) < checkTime;
-	}
-	return result;
+	return 0.0 < triggerTime && (triggerTime - PreTriggerTime) < checkTime;
 }

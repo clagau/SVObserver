@@ -3292,7 +3292,7 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& rElement)
 					::OutputDebugString(SvUl::Format(_T("Camera %s | TRI=%d\n"), rElement.m_pCamera->GetName(), pProduct->ProcessCount()).c_str());
 #endif
 			}
-			else if (position < 0 && !notPending)
+			else if (position <= 0 && !notPending)
 			{
 				m_PendingCameraResponses[rElement.m_pCamera] = rElement;
 
