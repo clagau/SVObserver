@@ -519,7 +519,7 @@ HRESULT SVFileAcquisitionDevice::CameraUnregisterBufferInterface( unsigned long 
 
 HRESULT SVFileAcquisitionDevice::CameraStart( unsigned long p_ulIndex )
 {
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT result = S_FALSE;
 
 	if ( p_ulIndex < m_cameras.size() )
 	{
@@ -532,16 +532,21 @@ HRESULT SVFileAcquisitionDevice::CameraStart( unsigned long p_ulIndex )
 				SVFileCamera::EventHandler startHandler = boost::bind(&SVFileAcquisitionDevice::CameraProcessStartFrame, this, _1);
 				SVFileCamera::EventHandler endHandler = boost::bind(&SVFileAcquisitionDevice::CameraProcessEndFrame, this, _1);
 
-				l_hrOk = rCamera.Start( startHandler, endHandler, p_ulIndex);
+				result = rCamera.Start( startHandler, endHandler, p_ulIndex);
 			}
 			
-			if( S_OK != l_hrOk )
+			if( S_OK != result )
 			{
 				::InterlockedExchange( &(rCamera.m_lIsStarted), 0 );
 			}
 		}
+		else
+		{
+			// Camera is already started.
+			result = S_OK;
+		}
 	}
-	return l_hrOk;
+	return result;
 }
 
 HRESULT SVFileAcquisitionDevice::CameraStop( unsigned long p_ulIndex )
