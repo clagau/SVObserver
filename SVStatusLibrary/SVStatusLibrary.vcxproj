@@ -178,7 +178,6 @@
     <ClInclude Include="MessageTextGenerator.h" />
     <ClInclude Include="MessageTextMap.h" />
     <ClInclude Include="NotificationTypeEnum.h" />
-    <ClInclude Include="ProductWorkloadInformation.h" />
     <ClInclude Include="SourceFileParams.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVEventLogClass.h" />

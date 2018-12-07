@@ -425,6 +425,8 @@ protected:
 	std::string m_ToolSetCameraName;
 	std::string m_DeviceName;
 
+	SVVirtualCamera* m_pToolSetCamera{nullptr};
+
 #ifdef EnableTracking
 	SVInspectionTracking m_InspectionTracking;
 #endif

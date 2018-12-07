@@ -21,6 +21,16 @@
 
 class SVConditionalClass;
 
+enum ToolSetTimes
+{
+	TriggerDelta,				///The time interval between two triggers
+	TriggerToStart,				///The time interval between the trigger that started the product and the start of the inspection in microseconds
+	TriggerToCompletion,		///The time interval between the trigger that started the product and inspection completion in microseconds
+	TriggerToAcquisitionStart,	///The time interval between the trigger that started the product and the start of tool set image acquisition in microseconds
+	AcquisitionTime,			///The time interval between the tool set image acquisition start and end in microseconds
+	MaxCount
+};
+
 // This class encapsules basic properties to handle and execute an Image Processing Tool Set
 
 class SVToolSetClass : public SVTaskObjectListClass, public SvOi::IToolSet 
@@ -81,6 +91,9 @@ public:
 	};
 
 	HRESULT getResetCounts( bool& rResetCounts ) const override;
+
+	void setTime(double time, ToolSetTimes timeType) { m_Times[timeType].SetValue(static_cast<__int64> (time)); }
+	void setPpqPosition(long ppqPosition) { m_PPQIndexAtCompletion.SetValue(ppqPosition); }
 
 	virtual void goingOffline() override;
 #pragma region virtual method (IToolSet)
@@ -169,12 +182,8 @@ protected:
 private:
 	// Embedded Object:
 	SVMainImageClass m_MainImageObject;	// Main toolset image
-	SVLongValueObjectClass m_latestCompletionPPQIndex; // the PPQ position at which the most recently completed product was located when it was completed
-	SVTimerValueObjectClass m_TriggerDelta; ///< The time interval between the two most recent triggers
-	SVTimerValueObjectClass m_LastTriggerToPPQCompletion; ///< for the most recently completed product: The time interval between the trigger that started the product and inspection completion in microsceconds
-	SVTimerValueObjectClass m_LastTriggerToStart; ///< for the most recently completed product: The time interval between the trigger that started the product and the start of the inspection in microsceconds
-	SVTimerValueObjectClass m_TriggerToAcquisitionStart; ///< for the most recently completed product: The time interval between the trigger that started the product and the start of image acquisition in microsceconds
-	SVTimerValueObjectClass m_AcquisitionTime; ///< for the most recently completed product: The time interval between the image acquisition start and end in microsceconds
+	SVLongValueObjectClass m_PPQIndexAtCompletion; // the PPQ position at which the product was located when at completion
+	SVTimerValueObjectClass m_Times[ToolSetTimes::MaxCount]; ///The times relevant to the tool set see the enums for detailed description
 	SVDoubleValueObjectClass m_Width;	//! The toolset image width			
 	SVDoubleValueObjectClass m_Height;	//! The toolset image height
 #pragma endregion Member Variables

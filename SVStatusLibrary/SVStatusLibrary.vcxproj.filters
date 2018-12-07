@@ -98,9 +98,6 @@
     <ClInclude Include="MessageTextEnum.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="ProductWorkloadInformation.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVRunStatus.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>

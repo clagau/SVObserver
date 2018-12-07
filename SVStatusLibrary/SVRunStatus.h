@@ -12,7 +12,6 @@
 #pragma once
 
 //Moved to precompiled header: #include <deque>
-#include "ProductWorkloadInformation.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "TriggerRecordController/ITriggerRecordRW.h"
 
@@ -75,11 +74,7 @@ public:
 	double m_ToolSetEndTime {0.0};
 	double m_ToolSetAvgTime {0.0};
 
-	double m_PreviousTriggerTime {0.0}; ///< time stamp at which the previous Inspection was started
-	double m_CurrentTriggerTime {0.0}; ///< time stamp at which the current Inspection was started
 	SvTrc::ITriggerRecordRWPtr m_triggerRecord = nullptr;
-
-	ProductWorkloadInformation m_WorkloadInfoRsc; ///< workload information for the most recently completed product 
 };
 
 inline void SVRunStatusClass::SetPassed()

@@ -62,14 +62,43 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed, SVProductInfoSt
 #ifdef EnableTracking
 		m_InspectionTracking.EventStart(_T("Process Inspections"));
 #endif
-		SVInspectionInfoStruct* pIPInfo = nullptr;
-
 		size_t l_InputXferCount = 0;
 		m_bInspecting = true;	// do this before RemoveHead
 
 		// Get the info struct for this inspection
-		pIPInfo = &(rProduct.m_svInspectionInfos[GetUniqueObjectID()]);
-		pIPInfo->m_BeginInspection = SvTl::GetTimeStamp();
+		SVInspectionInfoStruct& rIPInfo = rProduct.m_svInspectionInfos[GetUniqueObjectID()];
+		rIPInfo.m_BeginInspection = SvTl::GetTimeStamp();
+
+		double time{0.0};
+		if (rProduct.oTriggerInfo.m_PreviousTrigger > 0.0)
+		{
+			time = (rProduct.oTriggerInfo.m_BeginProcess - rProduct.oTriggerInfo.m_PreviousTrigger) * SvTl::c_MicrosecondsPerMillisecond;
+		}
+		m_pCurrentToolset->setTime(time, ToolSetTimes::TriggerDelta);
+
+		time = (rIPInfo.m_BeginInspection - rProduct.oTriggerInfo.m_BeginProcess) * SvTl::c_MicrosecondsPerMillisecond;
+		m_pCurrentToolset->setTime(time, ToolSetTimes::TriggerToStart);
+
+		bool cameraFound{false};
+		if(nullptr != m_pToolSetCamera)
+		{
+			SVGuidSVCameraInfoStructMap::const_iterator iterCamera(rProduct.m_svCameraInfos.find(m_pToolSetCamera->GetUniqueObjectID()));
+			if(rProduct.m_svCameraInfos.cend() != iterCamera)
+			{
+				cameraFound = true;
+				time = (iterCamera->second.m_StartFrameTimeStamp - rProduct.oTriggerInfo.m_BeginProcess) * SvTl::c_MicrosecondsPerMillisecond;
+				m_pCurrentToolset->setTime(time, ToolSetTimes::TriggerToAcquisitionStart);
+				time = (iterCamera->second.m_EndFrameTimeStamp - iterCamera->second.m_StartFrameTimeStamp) * SvTl::c_MicrosecondsPerMillisecond;
+				m_pCurrentToolset->setTime(time, ToolSetTimes::AcquisitionTime);
+			}
+		}
+		//If tool set camera not found set values to 0.0
+		if(!cameraFound)
+		{
+			time = 0.0;
+			m_pCurrentToolset->setTime(time, ToolSetTimes::TriggerToAcquisitionStart);
+			m_pCurrentToolset->setTime(time, ToolSetTimes::AcquisitionTime);
+		}
 
 		// Copy inputs to Inspection Process's Value objects
 		for (size_t iList = 0; iList < m_PPQInputs.size(); iList++)
@@ -145,7 +174,7 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed, SVProductInfoSt
 		if (!l_Process)
 		{
 			// Product has left the PPQ ... don't inspect
-			pIPInfo->oInspectedState = PRODUCT_NOT_INSPECTED;
+			rIPInfo.oInspectedState = PRODUCT_NOT_INSPECTED;
 		}
 		else
 		{
@@ -155,13 +184,24 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed, SVProductInfoSt
 			//					   NOT running!
 			RunInspection(rProduct.oPPQInfo.m_ResultDataDMIndexHandle.GetIndex(), &rProduct);
 
-			if (PRODUCT_INSPECTION_NOT_RUN != (pIPInfo->oInspectedState & PRODUCT_INSPECTION_NOT_RUN))
+			if (PRODUCT_INSPECTION_NOT_RUN != (rIPInfo.oInspectedState & PRODUCT_INSPECTION_NOT_RUN))
 			{
-				pIPInfo->oInspectedState = GetToolSet()->GetResultList()->GetInspectionState();
+				rIPInfo.oInspectedState = GetToolSet()->GetResultList()->GetInspectionState();
 
-				pIPInfo->m_EndInspection = SvTl::GetTimeStamp();
-				pIPInfo->setTriggerRecordCompleted();
+				rIPInfo.m_EndInspection = SvTl::GetTimeStamp();
+				rIPInfo.setTriggerRecordCompleted();
 
+				time = (rIPInfo.m_EndInspection - rProduct.oTriggerInfo.m_BeginProcess) * SvTl::c_MicrosecondsPerMillisecond;
+				m_pCurrentToolset->setTime(time, ToolSetTimes::TriggerToCompletion);
+
+
+				long ppqPosition{0L};
+				SVPPQObject* pPpq = GetPPQ();
+				if(nullptr != pPpq)
+				{
+					ppqPosition = pPpq->getPpqPosition(rProduct.ProcessCount());
+				}
+				m_pCurrentToolset->setPpqPosition(ppqPosition);
 #ifdef _DEBUG
 				//					std::string l_TempStateString = SvUl::Format( _T( "SVInspectionProcess::ProcessInspection|%s|TRI=%ld\n" ),
 				//						GetName(), p_rProduct.ProcessCount() );
@@ -179,7 +219,7 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed, SVProductInfoSt
 		{
 			::InterlockedIncrement(&m_NotifyWithLastInspected);
 
-			pIPInfo->ClearIndexes();
+			rIPInfo.ClearIndexes();
 		}
 
 		m_bInspecting = false;
@@ -2750,6 +2790,8 @@ bool SVInspectionProcess::ResetObject(SvStl::MessageContainerVector *pErrorMessa
 		}
 	}
 
+	m_pToolSetCamera = GetFirstCamera();
+	
 	BuildValueObjectMap();
 
 	m_bForceOffsetUpdate = true;
@@ -2914,9 +2956,6 @@ bool SVInspectionProcess::RunInspection(long lResultDataIndex, SVProductInfoStru
 
 	m_runStatus.ResetRunStateAndToolSetTimes();
 
-	m_runStatus.m_PreviousTriggerTime = m_runStatus.m_CurrentTriggerTime;
-	m_runStatus.m_CurrentTriggerTime = pProduct->oTriggerInfo.m_BeginProcess;
-
 	m_runStatus.m_lResultDataIndex = lResultDataIndex;
 	m_runStatus.m_lTriggerCount = pProduct->oTriggerInfo.lTriggerCount;
 	m_runStatus.m_UpdateCounters = p_UpdateCounts;
@@ -3059,7 +3098,6 @@ bool SVInspectionProcess::RunInspection(long lResultDataIndex, SVProductInfoStru
 
 	SVPPQObject *pPPQ = GetPPQ();
 
-	m_runStatus.m_WorkloadInfoRsc = (nullptr != pPPQ) ? pPPQ->GetMostRecentWorkLoadInformation() : ProductWorkloadInformation();
 	m_runStatus.m_triggerRecord = nullptr;
 
 	return l_bOk;

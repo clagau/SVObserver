@@ -27,7 +27,6 @@
 #include "InspectionEngine/SVCameraInfoStruct.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVObjectLibrary/SVIOEntryHostStruct.h"
-#include "SVStatusLibrary/ProductWorkloadInformation.h" 
 #include "TriggerInformation/SVTriggerObject.h"
 #include "TriggerInformation/SVTriggerInfoStruct.h"
 #include "TriggerRecordController/ITriggerRecordRW.h"
@@ -232,8 +231,6 @@ struct SVProductInfoStruct
 	/// \param rIPGuid [in] Guid of the IP. If GUID_NULL then for inspection will done the action.
 	void setInspectionTriggerRecordComplete(const SVGUID& rIPGuid);
 
-	ProductWorkloadInformation GetWorkloadInformation(){return m_WorkloadInfo;}
-
 	std::string m_ProductState;
 	bool bTriggered;
 	bool bhasCameraImage[SvDef::cMaximumCameras];
@@ -241,8 +238,6 @@ struct SVProductInfoStruct
 	bool bDataComplete;
 	bool bStreamed;
 	HRESULT hrPPQStatus;
-
-	ProductWorkloadInformation m_WorkloadInfo;
 
 	SvTi::SVTriggerInfoStruct oTriggerInfo;
 	SVInputsInfoStruct oInputsInfo;

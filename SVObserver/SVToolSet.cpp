@@ -68,12 +68,12 @@ void SVToolSetClass::init()
 	RegisterEmbeddedObject(&m_DrawFlag, SVConditionalToolSetDrawFlagObjectGuid, IDS_OBJECTNAME_DRAWTOOL_FLAG, false, SvOi::SVResetItemNone);
 	RegisterEmbeddedObject(&m_ResetCounts, SVResetInspectionCountsGuid, IDS_OBJECTNAME_RESET_COUNTS, false, SvOi::SVResetItemIP);
 	RegisterEmbeddedObject(&m_TriggerCount, SVTriggerCountGuid, IDS_OBJECTNAME_TRIGGER_COUNT, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_latestCompletionPPQIndex, SVLatestCompletionPPQIndexGuid, IDS_LATEST_PPQ_INDEX_AT_COMPLETION, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_TriggerDelta, SVTriggerDeltaGuid, IDS_TRIGGER_DELTA, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_LastTriggerToPPQCompletion, SVLastTriggerToPPQCompletionGuid, IDS_TRIGGER_TO_COMPLETION_TIME, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_LastTriggerToStart, SVLastTriggerToStartGuid, IDS_TRIGGER_TO_START_TIME, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_TriggerToAcquisitionStart, SVTriggerToAcquisitionStartGuid, IDS_TRIGGER_TO_ACQUISITION_START_TIME, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_AcquisitionTime, SVAcquisitionTimeGuid, IDS_ACQUISITION_TIME, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_PPQIndexAtCompletion, SVPPQIndexGuid, IDS_PPQ_INDEX_AT_COMPLETION, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_Times[ToolSetTimes::TriggerDelta], SVTriggerDeltaGuid, IDS_TRIGGER_DELTA, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_Times[ToolSetTimes::TriggerToCompletion], SVTriggerToCompletionGuid, IDS_TRIGGER_TO_COMPLETION_TIME, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_Times[ToolSetTimes::TriggerToStart], SVTriggerToStartGuid, IDS_TRIGGER_TO_START_TIME, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_Times[ToolSetTimes::TriggerToAcquisitionStart], SVTriggerToAcquisitionStartGuid, IDS_TRIGGER_TO_ACQUISITION_START_TIME, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_Times[ToolSetTimes::AcquisitionTime], SVAcquisitionTimeGuid, IDS_ACQUISITION_TIME, false, SvOi::SVResetItemNone);
 	RegisterEmbeddedObject(&m_Width, SVExtentWidthObjectGuid, IDS_OBJECTNAME_EXTENT_WIDTH, false, SvOi::SVResetItemTool);
 	RegisterEmbeddedObject(&m_Height, SVExtentHeightObjectGuid, IDS_OBJECTNAME_EXTENT_HEIGHT, false, SvOi::SVResetItemTool);
 	RegisterEmbeddedObject(&m_EnableAuxiliaryExtents, EnableAuxiliaryExtentsObjectGuid, IDS_OBJECTNAME_AUXILIARYEXTENTS, false, SvOi::SVResetItemNone);
@@ -121,19 +121,13 @@ void SVToolSetClass::init()
 	m_DrawFlag.SetDefaultValue( 0l ); // 0 Should be show 'All Tools'
 	m_TriggerCount.SetDefaultValue( 0 );
 	m_TriggerCount.setSaveValueFlag(false);
-	m_latestCompletionPPQIndex.SetDefaultValue( 0 );
-	m_latestCompletionPPQIndex.setSaveValueFlag(false);
-	m_TriggerDelta.SetDefaultValue( 0 );
-	m_TriggerDelta.setSaveValueFlag(false);
-	m_LastTriggerToPPQCompletion.SetDefaultValue( 0 );
-	m_LastTriggerToPPQCompletion.setSaveValueFlag(false);
-	m_LastTriggerToStart.SetDefaultValue(0LL);
-	m_LastTriggerToStart.setSaveValueFlag(false);
-	m_TriggerToAcquisitionStart.SetDefaultValue(0LL);
-	m_TriggerToAcquisitionStart.setSaveValueFlag(false);
-	m_AcquisitionTime.SetDefaultValue(0LL);
-	m_AcquisitionTime.setSaveValueFlag(false);
-
+	m_PPQIndexAtCompletion.SetDefaultValue( 0 );
+	m_PPQIndexAtCompletion.setSaveValueFlag(false);
+	for(int i=0; i < ToolSetTimes::MaxCount; ++i)
+	{
+		m_Times[i].SetDefaultValue(0LL);
+		m_Times[i].setSaveValueFlag(false);
+	}
 	m_Width.SetDefaultValue( 0.0 );
 	m_Height.SetDefaultValue( 0.0 );
 
@@ -194,13 +188,11 @@ bool SVToolSetClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStruc
 	m_ToolTime.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 	m_ResetCounts.SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE | SvDef::SV_EMBEDABLE, SvOi::SetAttributeType::OverwriteAttribute );
 	m_TriggerCount.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_latestCompletionPPQIndex.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_TriggerDelta.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_LastTriggerToPPQCompletion.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_LastTriggerToStart.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_TriggerToAcquisitionStart.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
-	m_AcquisitionTime.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
-
+	m_PPQIndexAtCompletion.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	for (int i = 0; i < ToolSetTimes::MaxCount; ++i)
+	{
+		m_Times[i].SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
+	}
 	m_MinToolsetTime.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 	m_MaxToolsetTime.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 	m_Width.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
@@ -410,21 +402,6 @@ SvOi::IObjectClass* SVToolSetClass::getBand0Image() const
 bool SVToolSetClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	m_TriggerCount.SetValue(rRunStatus.m_lTriggerCount > 0L ? rRunStatus.m_lTriggerCount : 0L);
-
-	m_latestCompletionPPQIndex.SetValue(rRunStatus.m_WorkloadInfoRsc.m_PPQIndexAtCompletion);
-
-	//before calculating the trigger delta: make sure both trigger times are valid:
-	bool bothTriggersValid = (rRunStatus.m_CurrentTriggerTime * rRunStatus.m_PreviousTriggerTime > 0.1);
-	__int64 Value = bothTriggersValid ? static_cast<__int64>(SvTl::c_MicrosecondsPerMillisecond * (rRunStatus.m_CurrentTriggerTime - rRunStatus.m_PreviousTriggerTime)) : 0LL;
-	m_TriggerDelta.SetValue(Value);
-	Value = static_cast<__int64> (rRunStatus.m_WorkloadInfoRsc.TriggerToCompletionInMilliseconds() * SvTl::c_MicrosecondsPerMillisecond);
-	m_LastTriggerToPPQCompletion.SetValue(Value);
-	Value = static_cast<__int64> (rRunStatus.m_WorkloadInfoRsc.TriggerToStartInMilliseconds() * SvTl::c_MicrosecondsPerMillisecond);
-	m_LastTriggerToStart.SetValue( Value);
-	Value = static_cast<__int64> (rRunStatus.m_WorkloadInfoRsc.TriggerToAcquisitionStartInMilliseconds() * SvTl::c_MicrosecondsPerMillisecond);
-	m_TriggerToAcquisitionStart.SetValue(Value);
-	Value = static_cast<__int64> (rRunStatus.m_WorkloadInfoRsc.m_AcquisitionTime * SvTl::c_MicrosecondsPerMillisecond);
-	m_AcquisitionTime.SetValue(Value);
 
 	bool Result = __super::onRun( rRunStatus, pErrorMessages );
 	if( Result )

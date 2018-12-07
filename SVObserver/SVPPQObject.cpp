@@ -44,9 +44,6 @@
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
 #include "Definitions/Color.h"
-#ifdef _DEBUG_PERFORMANCE_INFO //Arvid 160212 this is helpful for debugging the creation of Performance Information
-#include "SVTimerLibrary\SVProfiler.h"
-#endif
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVVisionProcessorHelper.h"
 #include "SVToolSet.h"
@@ -112,38 +109,6 @@ HRESULT CALLBACK SVFinishCameraCallback(void *pOwner, void *pCaller, void *pResp
 		return S_FALSE;
 	}
 }
-
-#ifdef _DEBUG_PERFORMANCE_INFO //Arvid 160212 this is helpful for debugging the creation of Performance Information
-
-void logWorkloadInformation(const ProductWorkloadInformation &pwi, LPCSTR heading)
-{
-	std::string infostring;
-	infostring = SvUl::Format(_T("!\t.%7.1lf: %s:\n"), SvTl::GetRelTimeStamp(), heading);
-	::OutputDebugString(infostring.c_str());
-	infostring = SvUl::(_T("!\t\ttt = %7.1lf, pst = %7.1lf, ct = %7.1lf, "),
-		pwi.m_TriggerTime - SvTl::getReferenceTime(),
-		pwi.m_ProcessingStartTime - SvTl::getReferenceTime(),
-		pwi.m_CompletionTime - SvTl::getReferenceTime());
-	::OutputDebugString(infostring.c_str());
-	infostring = SvUl::(_T("TtoCo = %7.1lf, TtoSt = %7.1lf\n"),
-		pwi.TriggerToCompletionInMilliseconds(),
-
-		pwi.TriggerToStartInMilliseconds());
-	::OutputDebugString(infostring.c_str());
-	infostring = SvUl::(_T("!\trd\ttt = %.0lf, pst = %.0lf, ct = %.0lf, "),
-		pwi.m_TriggerTime,
-		pwi.m_ProcessingStartTime,
-		pwi.m_CompletionTime);
-	::OutputDebugString(infostring.c_str());
-	infostring = SvUl::(_T("pst-tt = %7.1lf, ct-tt = %7.1lf, ct-pst= %7.1lf\n"),
-		pwi.m_ProcessingStartTime - pwi.m_TriggerTime,
-		pwi.m_CompletionTime - pwi.m_TriggerTime,
-		pwi.m_CompletionTime - pwi.m_ProcessingStartTime);
-	::OutputDebugString(infostring.c_str());
-}
-
-#endif
-
 
 HRESULT SVPPQObject::ProcessDelayOutputs( bool& rProcessed )
 /// Used in data completion mode, but not in next trigger mode.
@@ -2725,11 +2690,6 @@ HRESULT SVPPQObject::NotifyInspections(long offset)
 
 HRESULT SVPPQObject::StartInspection(const SVGUID& p_rInspectionID)
 {
-#ifdef _DEBUG_PERFORMANCE_INFO //Arvid 160212 this is helpful for debugging the creation of Performance Information
-	std::string infostring = SvUl::Format(_T("!\t.%7.1lf: SVPPQObject::StartInspection(%s)\n"), SvTl::GetRelTimeStamp(), p_rInspectionID.ToString().c_str());
-	::OutputDebugString(infostring.c_str());
-#endif
-
 	HRESULT l_Status = S_OK;
 
 	SVProductInfoStruct* l_pProduct = nullptr;
@@ -2822,13 +2782,6 @@ HRESULT SVPPQObject::StartInspection(const SVGUID& p_rInspectionID)
 
 	if (nullptr != l_pProduct && nullptr != l_pProduct->m_svInspectionInfos[p_rInspectionID].pInspection)
 	{
-
-		l_pProduct->m_WorkloadInfo.m_ProcessingStartTime = SvTl::GetTimeStamp(); //ProductWorkloadInformation may be incorrect if there are several inspections per product
-#ifdef _DEBUG_PERFORMANCE_INFO //Arvid 160212 this is helpful for debugging the creation of Performance Information
-
-		std::string infostring = SvUl::Format(_T("set m_ProcessingStartTime, trID = %ld"), l_pProduct->ProcessCount());
-		logWorkloadInformation(l_pProduct->m_WorkloadInfo, infostring.c_str());
-#endif
 
 		l_Status = l_pProduct->m_svInspectionInfos[p_rInspectionID].pInspection->StartProcess(l_pProduct);
 
@@ -3111,19 +3064,6 @@ bool SVPPQObject::SetProductComplete(long p_PPQIndex)
 
 	if (nullptr != pProduct)
 	{
-		// record the current time and PPQ position for later display
-		pProduct->m_WorkloadInfo.m_CompletionTime = SvTl::GetTimeStamp();
-		pProduct->m_WorkloadInfo.m_PPQIndexAtCompletion = p_PPQIndex;
-
-		pProduct->m_WorkloadInfo.m_TriggerTime = pProduct->oTriggerInfo.m_BeginProcess;
-
-#ifdef _DEBUG_PERFORMANCE_INFO //Arvid 160212 this is helpful for debugging the creation of Performance Information
-		std::string infostring = SvUl::Format(_T("SVPPQObject::SetProductComplete(@ppq: %d) >> m_CompletionTime\n\t\t(oTriggerInfo.m_BeginProcess -> m_TriggerTime)"), p_PPQIndex);
-		logWorkloadInformation(pProduct->m_WorkloadInfo, infostring.c_str());
-#endif
-
-		m_MostRecentWorkLoadInfo = pProduct->GetWorkloadInformation();
-
 		CommitSharedMemory(*pProduct);
 		l_Status = SetProductComplete(*pProduct);
 
@@ -3337,8 +3277,6 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& rElement)
 
 					if (rElement.m_Data.isComplete())
 					{
-						pProduct->m_WorkloadInfo.m_AcquisitionStartTime = startTime;
-						pProduct->m_WorkloadInfo.m_AcquisitionTime = endTime - startTime;
 						IterCamera->second.Assign(startTime, endTime, rElement.m_Data.getImage());
 					}
 					else
@@ -3798,7 +3736,7 @@ HRESULT SVPPQObject::ProcessTrigger( bool& rProcessed )
 			if (m_bOnline)
 			{
 				SVProductInfoStruct* pProduct = IndexPPQ(poppedFromQueue.m_TriggerInfo);
-
+				
 				if (nullptr != pProduct)
 				{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)

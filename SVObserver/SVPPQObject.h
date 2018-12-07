@@ -208,8 +208,7 @@ public:
 
 	virtual DWORD GetObjectColor() const override;
 
-	/// \returns workload information for the most recently completed product 
-	ProductWorkloadInformation GetMostRecentWorkLoadInformation(){return m_MostRecentWorkLoadInfo;}
+	long getPpqPosition(long triggerCount) const {return m_ppPPQPositions.GetIndexByTriggerCount(triggerCount);}
 
 protected:
 	struct SVTriggerQueueElement
@@ -446,8 +445,6 @@ private:
 	std::string m_conditionalOutputName; // persist this
 	SVGUID m_conditionalOutputValueID; // do not persist this
 
-	ProductWorkloadInformation m_MostRecentWorkLoadInfo; ///< workload information for the most recently completed product
-
 	void AssignCameraToAcquisitionTrigger();
 	bool ResolveConditionalOutput();
 	bool AlwaysWriteOutputs() const;
@@ -520,7 +517,7 @@ private:
 	long m_NAKCount;
 	long m_FirstNAKProcessCount;		///only trigger >= m_FirstNAKProcessCount will be inspected 
 	long m_NewNAKCount;					//!Nak count will be set to 0 if no NAK occurs 
-	long m_ReducedPPQPosition;			/// min number of inspection that will be checked for startInspection  for nakMode =2 
+	long m_ReducedPPQPosition;			/// min number of inspection that will be checked for startInspection  for nakMode =2
 
 	SVObjectPtrDeque m_childObjects;
 
