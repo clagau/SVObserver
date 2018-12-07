@@ -605,28 +605,32 @@ void SVRCCommand::PutFile(const SvPb::PutFileRequest& rRequest, SvRpc::Task<SvPb
 	HRESULT Result {S_OK};
 	SvPb::StandardResponse Response;
 
-	std::string DestinationPath = rRequest.destinationpath();
+	std::string destinationPath = rRequest.destinationpath();
 
-	if (!DestinationPath.empty())
+	if (!destinationPath.empty())
 	{
 		//If only file name then add default path which is Run path
-		if(std::string::npos == DestinationPath.find('\\'))
+		if(std::string::npos == destinationPath.find('\\'))
 		{
-			DestinationPath = SvStl::GlobalPath::Inst().GetRunPath(DestinationPath.c_str());
+			destinationPath = SvStl::GlobalPath::Inst().GetRunPath(destinationPath.c_str());
 		}
-		if(rRequest.saveinconfig() && 0 != DestinationPath.find(SvStl::GlobalPath::Inst().GetRunPath()))
+		std::string runPath{SvStl::GlobalPath::Inst().GetRunPath()};
+		std::string comparePath{destinationPath};
+		SvUl::MakeLower(comparePath);
+		SvUl::MakeLower(runPath);
+		if(rRequest.saveinconfig() && 0 != comparePath.find(runPath))
 		{
 			Result = E_INVALIDARG;
 		}
 		else
 		{
-			Result = SVEncodeDecodeUtilities::StringContentToFile(DestinationPath, rRequest.filedata());
+			Result = SVEncodeDecodeUtilities::StringContentToFile(destinationPath, rRequest.filedata());
 		}
 		
 		if(S_OK == Result && rRequest.saveinconfig())
 		{
 			//Note this needs to be done using SendMessage due to this being a worker thread
-			Result = static_cast<HRESULT>(SendMessage(AfxGetApp()->m_pMainWnd->m_hWnd, SV_ADD_FILE_TO_CONFIG, 0, reinterpret_cast<LPARAM> (DestinationPath.c_str())));
+			Result = static_cast<HRESULT>(SendMessage(AfxGetApp()->m_pMainWnd->m_hWnd, SV_ADD_FILE_TO_CONFIG, 0, reinterpret_cast<LPARAM> (destinationPath.c_str())));
 		}
 
 	}

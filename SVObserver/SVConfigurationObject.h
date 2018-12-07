@@ -187,7 +187,7 @@ public:
 	void SetInputObjectList( SVInputObjectList* pInputObjectList );
 	SVInputObjectList* GetInputObjectList( ) const;
 
-	std::vector<SVFileNameClass>& getAdditionalFiles() {return m_AdditionalFiles;}
+	std::list<SVFileNameClass>& getAdditionalFiles() {return m_AdditionalFiles;}
 
 	void SetOutputObjectList( SVOutputObjectList* pOutputObjectList );
 	SVOutputObjectList* GetOutputObjectList( ) const;
@@ -488,7 +488,7 @@ private:
 
 	bool getObjectsForMonitorList(const SVGUID& rToolId, SvPb::InspectionCmdMsgs &rResponse) const;
 
-	std::vector<SVFileNameClass>    m_AdditionalFiles;
+	std::list<SVFileNameClass>    m_AdditionalFiles;  //We need a list as the file manager has pointers to these objects!
 	SvTi::SVTriggerObjectPtrVector  m_arTriggerArray;
 	SVPPQObjectPtrVector            m_arPPQArray;
 	SVVirtualCameraPtrVector        m_arCameraArray;
