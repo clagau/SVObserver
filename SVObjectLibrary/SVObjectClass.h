@@ -135,9 +135,10 @@ public:
 	// Method:    GetAncestor
 	// Description: This method returns Ancestor Object of specified Object Type of this Object, if any.  Otherwise it returns nullptr.
 	// Parameter: SVObjectTypeEnum AncestorObjectType 
+	// Parameter: topLevel If true searches further if another parent is of object type
 	// Returns:   SVObjectClass*
 	//************************************
-	SVObjectClass* GetAncestor(SvPb::SVObjectTypeEnum AncestorObjectType ) const;
+	SVObjectClass* GetAncestor( SvPb::SVObjectTypeEnum AncestorObjectType, bool topLevel=false ) const;
 	int GetNameLength() const;
 	LPCTSTR GetObjectName() const;
 	int GetObjectNameLength() const;
@@ -160,8 +161,8 @@ public:
 	virtual const SvPb::SVObjectTypeEnum& GetObjectType() const override;
 	virtual SvPb::SVObjectSubTypeEnum GetObjectSubType() const override;
 	virtual const SVGUID& GetParentID() const override;
-	virtual SvOi::IObjectClass* GetAncestorInterface(SvPb::SVObjectTypeEnum ancestorObjectType) override;
-	virtual const SvOi::IObjectClass* GetAncestorInterface(SvPb::SVObjectTypeEnum ancestorObjectType) const override;
+	virtual SvOi::IObjectClass* GetAncestorInterface(SvPb::SVObjectTypeEnum ancestorObjectType, bool topLevel = false) override;
+	virtual const SvOi::IObjectClass* GetAncestorInterface(SvPb::SVObjectTypeEnum ancestorObjectType, bool topLevel = false) const override;
 	virtual UINT ObjectAttributesAllowed() const override;
 	virtual UINT SetObjectAttributesAllowed( UINT Attributes, SvOi::SetAttributeType Type ) override;
 	virtual UINT ObjectAttributesSet(int iIndex=0) const override;

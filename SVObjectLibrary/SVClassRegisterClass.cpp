@@ -24,7 +24,7 @@ SVClassRegisterClass::~SVClassRegisterClass()
 {
 }
 
-SVGUID SVClassRegisterClass::GetClassID() 
+SVGUID SVClassRegisterClass::GetClassID() const 
 { 
 	assert( 0 );
 	return GUID_NULL; 
@@ -36,7 +36,7 @@ SVObjectClass* SVClassRegisterClass::Construct()
 	return nullptr; 
 }
 
-LPCTSTR SVClassRegisterClass::GetClassName()	
+LPCTSTR SVClassRegisterClass::GetClassName() const
 { 
 	assert( 0 );
 	return _T( "" ); 

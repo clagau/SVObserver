@@ -25,8 +25,8 @@ class SVObjectClass;
 // Should be in the class definition...
 #define SV_DECLARE_CLASS( XCLASSNAME )					\
 		public:	\
-			virtual SVGUID GetClassID(); \
-			virtual LPCTSTR GetClassName();
+			virtual SVGUID GetClassID() const; \
+			virtual LPCTSTR GetClassName() const;
 
 
 // Should be in the implementation file... ( .cpp )
@@ -41,11 +41,11 @@ class SVObjectClass;
 					OutputDebugString( SVGUID( XCLASSID ).ToString().c_str() ); \
 					OutputDebugString( _T( "\n" ) ); \
 				} \
-				virtual SVGUID GetClassID() override { return XCLASSID; } \
+				virtual SVGUID GetClassID() const override { return XCLASSID; } \
 				virtual SVObjectClass* Construct() override { return new ( XCLASSNAME ); } \
-				virtual LPCTSTR GetClassName() override { return #XCLASSNAME; } \
+				virtual LPCTSTR GetClassName() const override { return #XCLASSNAME; } \
 		};	\
 		XCLASSNAME##RegisterClass The##XCLASSNAME##Register; \
-		SVGUID XCLASSNAME::GetClassID() { return XCLASSID; } \
-		LPCTSTR XCLASSNAME::GetClassName() { return #XCLASSNAME; }
+		SVGUID XCLASSNAME::GetClassID() const { return XCLASSID; } \
+		LPCTSTR XCLASSNAME::GetClassName() const { return #XCLASSNAME; }
 

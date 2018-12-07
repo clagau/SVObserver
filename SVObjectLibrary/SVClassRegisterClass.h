@@ -23,10 +23,10 @@ public:
 	SVClassRegisterClass();
 	virtual ~SVClassRegisterClass();
 
-	virtual SVGUID GetClassID();
+	virtual SVGUID GetClassID() const;
 	
 	virtual SVObjectClass* Construct();
 
-	virtual LPCTSTR GetClassName();
+	virtual LPCTSTR GetClassName() const;
 };	
 

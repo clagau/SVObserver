@@ -342,22 +342,14 @@ HRESULT SVObjectClass::GetCompleteNameToType(SvPb::SVObjectTypeEnum objectType, 
 	return hr;
 }
 
-SvOi::IObjectClass* SVObjectClass::GetAncestorInterface(SvPb::SVObjectTypeEnum ancestorObjectType)
+SvOi::IObjectClass* SVObjectClass::GetAncestorInterface(SvPb::SVObjectTypeEnum ancestorObjectType, bool topLevel /*= false*/)
 {
-	if (ancestorObjectType == GetObjectType())
-	{
-		return this;
-	}
-	return GetAncestor(ancestorObjectType);
+	return static_cast<SvOi::IObjectClass*> (GetAncestor(ancestorObjectType, topLevel));
 }
 
-const SvOi::IObjectClass* SVObjectClass::GetAncestorInterface(SvPb::SVObjectTypeEnum ancestorObjectType) const
+const SvOi::IObjectClass* SVObjectClass::GetAncestorInterface(SvPb::SVObjectTypeEnum ancestorObjectType, bool topLevel /*= false*/) const
 {
-	if (GetObjectType() == ancestorObjectType)
-	{
-		return this;
-	}
-	return GetAncestor(ancestorObjectType);
+	return static_cast<SvOi::IObjectClass*> (GetAncestor(ancestorObjectType, topLevel));
 }
 
 SvPb::SVObjectSubTypeEnum SVObjectClass::GetObjectSubType() const
@@ -699,19 +691,25 @@ void SVObjectClass::SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetI
 /*
 This method returns Ancestor Object of specified Object Type of this Object, if any.  Otherwise it returns NULL.
 */
-SVObjectClass* SVObjectClass::GetAncestor(SvPb::SVObjectTypeEnum AncestorObjectType ) const
+SVObjectClass* SVObjectClass::GetAncestor( SvPb::SVObjectTypeEnum AncestorObjectType, bool topLevel /*= false*/) const
 {
+	SVObjectClass* pResult{nullptr};
+
 	SVObjectClass* pOwner = this->GetParent();
 	
 	while( nullptr != pOwner )
 	{
 		if( pOwner->GetObjectType() == AncestorObjectType )
 		{
-			return pOwner;
+			pResult = pOwner;
+			if(!topLevel)
+			{
+				break;
+		}
 		}
 		pOwner = pOwner->GetParent();
 	}
-	return nullptr;
+	return pResult;
 }
 
 // Get the local object color...

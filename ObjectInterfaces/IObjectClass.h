@@ -86,8 +86,8 @@ namespace SvOi
 			The method gets the ancestor with a special type or nullptr if not found.
 			/param ancestorObjectType <in> 
 		***********/
-		virtual IObjectClass* GetAncestorInterface(SvPb::SVObjectTypeEnum ancestorObjectType) = 0;
-		virtual const IObjectClass* GetAncestorInterface(SvPb::SVObjectTypeEnum ancestorObjectType) const = 0;
+		virtual IObjectClass* GetAncestorInterface(SvPb::SVObjectTypeEnum ancestorObjectType, bool topLevel = false) = 0;
+		virtual const IObjectClass* GetAncestorInterface(SvPb::SVObjectTypeEnum ancestorObjectType, bool topLevel = false) const = 0;
 
 		/**********
 		This method gets the attributes allowed for the object.
@@ -144,7 +144,7 @@ namespace SvOi
 		virtual bool resetAllObjects(SvStl::MessageContainerVector *pErrorMessages=nullptr) = 0;
 
 		/// Get the object class ID
-		virtual SVGUID GetClassID() = 0;
+		virtual SVGUID GetClassID() const = 0;
 			
 		//! Gets the value for Value object NOTE: This is placed here instead of IValueObject for performance reasons !
 		//! \param rValue [out] The reference to write the value to

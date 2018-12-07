@@ -318,9 +318,9 @@ void ToolClipboard::writeSourceGuids(SvXml::SVObjectXMLWriter& rXmlWriter, SVToo
 	Value = tmpString.c_str();
 	rXmlWriter.WriteAttribute(SvXml::FullToolNameTag, Value);
 
+	std::set<SVGUID> imageGuidVector;
 	SvOl::SVInObjectInfoStruct* pImageInfo = nullptr;
 	SvOl::SVInObjectInfoStruct* pLastImageInfo = nullptr;
-	int imageIndex{0};
 	while( nullptr == pImageInfo && S_OK ==  rTool.FindNextInputImageInfo( pImageInfo, pLastImageInfo ) )
 	{
 		if( nullptr != pImageInfo )
@@ -328,20 +328,24 @@ void ToolClipboard::writeSourceGuids(SvXml::SVObjectXMLWriter& rXmlWriter, SVToo
 			SVObjectClass* pImage = pImageInfo->GetInputObjectInfo().getObject();
 			if( pImageInfo->IsConnected() && nullptr !=  pImage)
 			{
-				SVObjectClass* pTool = pImage->GetAncestor(SvPb::SVObjectTypeEnum::SVToolObjectType);
+				SVObjectClass* pTool = pImage->GetAncestor(SvPb::SVObjectTypeEnum::SVToolObjectType, true);
 				//Add input image only if not from the tool being copied
 				if(nullptr == pTool || pTool->GetUniqueObjectID() != rTool.GetUniqueObjectID())
 				{
-					Value.Clear();
-					Value = pImageInfo->GetInputObjectInfo().getUniqueObjectID().ToVARIANT();
-					std::string inputImageName{SvUl::Format(SvXml::InputImageTag, imageIndex)};
-					rXmlWriter.WriteAttribute(inputImageName.c_str(), Value);
-					imageIndex++;
+					imageGuidVector.insert(pImageInfo->GetInputObjectInfo().getUniqueObjectID());
 				}
 			}
 		}
 		pLastImageInfo = pImageInfo;
 		pImageInfo = nullptr;
+	}
+
+	int imageIndex {0};
+	for(const auto& rImageGuid : imageGuidVector)
+	{
+		std::string inputImageName {SvUl::Format(SvXml::InputImageTag, imageIndex)};
+		rXmlWriter.WriteAttribute(inputImageName.c_str(), rImageGuid.ToVARIANT());
+		imageIndex++;
 	}
 }
 

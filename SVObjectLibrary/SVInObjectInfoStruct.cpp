@@ -11,6 +11,8 @@
 
 #include "stdafx.h"
 #include "SVInObjectInfoStruct.h"
+#include "SVObjectClass.h"
+#include "SVObjectManagerClass.h"
 
 #pragma region Declarations
 #ifdef _DEBUG
@@ -81,14 +83,12 @@ void SVInObjectInfoStruct::SetInputObject( const SVGUID& rObjectID )
 void SVInObjectInfoStruct::SetInputObject( SVObjectClass* pObject )
 {
 	m_InputObjectInfo.SetObject( pObject );
-
 	m_IsConnected = ( nullptr != m_InputObjectInfo.getObject() );
 }
 
 void SVInObjectInfoStruct::SetInputObject( const SVObjectReference& rObject )
 {
 	m_InputObjectInfo.SetObject(rObject);
-
 	m_IsConnected = (nullptr != m_InputObjectInfo.getObject());
 }
 
@@ -97,7 +97,7 @@ const std::string& SVInObjectInfoStruct::GetInputName() const
 	return m_InputName;
 }
 
-void SVInObjectInfoStruct::SetInputName( const std::string& rInputName )
+void SVInObjectInfoStruct::SetInputName(const std::string& rInputName)
 {
 	m_InputName = rInputName;
 }
@@ -108,6 +108,22 @@ void ValidateInput(SVInObjectInfoStruct& rInputObject)
 	if (rInputObject.IsConnected() && !rInputObject.GetInputObjectInfo().CheckExistence())
 	{
 		rInputObject.SetInputObject(nullptr);
+	}
+	
+	//Check if input object and owner object on the same inspection
+	SVObjectClass* pOwnerObject{rInputObject.m_ObjectRef.getObject()};
+	SVObjectClass* pInputObject {rInputObject.GetInputObjectInfo().m_ObjectRef.getObject()};
+	if (nullptr != pOwnerObject && nullptr != pInputObject)
+	{
+		SVObjectClass* pOwnerInspection = pOwnerObject->GetAncestor(SvDef::SVInspectionObjectType);
+		SVObjectClass* pInputInspection = pInputObject->GetAncestor(SvDef::SVInspectionObjectType);
+		if (nullptr != pOwnerInspection && nullptr != pInputInspection)
+		{
+			if (pOwnerInspection->GetUniqueObjectID() != pInputInspection->GetUniqueObjectID())
+			{
+				rInputObject.SetInputObject(nullptr);
+			}
+		}
 	}
 }
 
