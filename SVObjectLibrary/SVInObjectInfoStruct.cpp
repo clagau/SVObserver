@@ -115,8 +115,8 @@ void ValidateInput(SVInObjectInfoStruct& rInputObject)
 	SVObjectClass* pInputObject {rInputObject.GetInputObjectInfo().m_ObjectRef.getObject()};
 	if (nullptr != pOwnerObject && nullptr != pInputObject)
 	{
-		SVObjectClass* pOwnerInspection = pOwnerObject->GetAncestor(SvDef::SVInspectionObjectType);
-		SVObjectClass* pInputInspection = pInputObject->GetAncestor(SvDef::SVInspectionObjectType);
+		SVObjectClass* pOwnerInspection = pOwnerObject->GetAncestor(SvPb::SVInspectionObjectType);
+		SVObjectClass* pInputInspection = pInputObject->GetAncestor(SvPb::SVInspectionObjectType);
 		if (nullptr != pOwnerInspection && nullptr != pInputInspection)
 		{
 			if (pOwnerInspection->GetUniqueObjectID() != pInputInspection->GetUniqueObjectID())
