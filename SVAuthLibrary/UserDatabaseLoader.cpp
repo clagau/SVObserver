@@ -238,7 +238,7 @@ public:
 				std::string errMsg;
 				if (!isValidUser(*m_CurrUser, errMsg))
 				{
-					SV_LOG_GLOBAL(warning) << "Found invalid user in user database: " << errMsg;
+					SV_LOG_GLOBAL(debug) << "Found invalid user in user database: " << errMsg;
 					break;
 				}
 				m_rDb.insert(std::make_pair(m_CurrUser->username(), *m_CurrUser));

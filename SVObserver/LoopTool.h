@@ -25,6 +25,8 @@ public:
 private:
 	void BuildEmbeddedObjectList();
 	void Initialize();
+	/// Similar to SVTaskObjectListClass::Run but avoid to propagate ChildRunStatus.IsDisabled()
+	bool RunAllChildren(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages);
 private:
 	static const int DefaultMaxLoops = 10;
 	static const int DefaultLinkedLoops = 1;

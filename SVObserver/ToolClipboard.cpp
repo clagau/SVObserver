@@ -29,6 +29,7 @@
 #include "SVObjectScriptParser.h"
 #include "SVToolSet.h"
 #include "InspectionEngine/SVTool.h"
+#include "InspectionEngine/SVTaskObjectList.h"
 #include "SVParserProgressDialog.h"
 #include "SVInspectionTreeParser.h"
 #include "SVIPDoc.h"
@@ -680,11 +681,18 @@ HRESULT ToolClipboard::replaceToolName( std::string& rXmlData, SVTreeType& rTree
 			std::string ToolName = SvUl::createStdString(ObjectName.bstrVal);
 			std::string NewName;
 
-			SVIPDoc* pDoc = TheSVObserverApp.GetIPDoc( m_rInspection.GetUniqueObjectID() );
-			if( nullptr != pDoc )
+			if (nullptr != pOwner && LoopToolClassGuid == pOwner->GetClassID())
 			{
-				// Check to make sure the tool name is unique
-				NewName = pDoc->CheckName( ToolName );
+				NewName = static_cast<const SVTaskObjectListClass*>(pOwner)->checkName(ToolName.c_str());
+			}
+			else
+			{
+				SVIPDoc* pDoc = TheSVObserverApp.GetIPDoc(m_rInspection.GetUniqueObjectID());
+				if (nullptr != pDoc)
+				{
+					// Check to make sure the tool name is unique
+					NewName = pDoc->CheckName(ToolName);
+				}
 			}
 			if (NewName != ToolName)
 			{

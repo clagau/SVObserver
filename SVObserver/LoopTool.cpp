@@ -125,7 +125,7 @@ bool LoopTool::Run(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *
 			for (int count = 1; count <= MaxLoops; count++)
 			{
 				m_LoopCounter.SetValue(count);
-				retVal = SVTaskObjectListClass::Run(rRunStatus, &m_RunErrorMessages);
+				retVal = RunAllChildren(rRunStatus, &m_RunErrorMessages);
 				if (retVal)
 				{
 					rRunStatus.SetValid();
@@ -220,3 +220,53 @@ bool LoopTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 	return m_isCreated;
 }
 
+
+bool LoopTool::RunAllChildren(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+{
+	clearRunErrorMessages();
+	SVRunStatusClass ChildRunStatus;
+	ChildRunStatus.m_lResultDataIndex = rRunStatus.m_lResultDataIndex;
+	ChildRunStatus.m_triggerRecord = rRunStatus.m_triggerRecord;
+	ChildRunStatus.m_UpdateCounters = rRunStatus.m_UpdateCounters;
+
+	// Run yourself...
+	bool bRetVal = onRun(rRunStatus, &m_RunErrorMessages);
+
+	if (!rRunStatus.IsDisabled() && !rRunStatus.IsDisabledByCondition())
+	{
+		// Run your children...
+		for (int i = 0; i < static_cast<int> (m_TaskObjectVector.size()); i++)
+		{
+			SVTaskObjectClass* pTaskObject = m_TaskObjectVector[i];
+			if (nullptr != pTaskObject)
+			{
+				ChildRunStatus.ResetRunStateAndToolSetTimes();
+
+				bRetVal = pTaskObject->Run(ChildRunStatus, &m_RunErrorMessages) & bRetVal;
+
+				if (ChildRunStatus.IsWarned()) { rRunStatus.SetWarned(); }
+
+				if (ChildRunStatus.IsFailed()) { rRunStatus.SetFailed(); }
+
+				if (ChildRunStatus.IsPassed()) { rRunStatus.SetPassed(); }
+
+				if (ChildRunStatus.IsCriticalFailure()) { rRunStatus.SetCriticalFailure(); }
+			}
+		}
+	}
+
+	// Get Status Color...
+	DWORD dwValue = rRunStatus.GetStatusColor();
+	m_statusColor.SetValue(dwValue);
+
+	// Get Status...
+	dwValue = rRunStatus.GetState();
+	m_statusTag.SetValue(dwValue);
+
+	if (nullptr != pErrorMessages && !m_RunErrorMessages.empty())
+	{
+		pErrorMessages->insert(pErrorMessages->end(), m_RunErrorMessages.begin(), m_RunErrorMessages.end());
+	}
+
+	return bRetVal;
+}
