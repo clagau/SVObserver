@@ -13,6 +13,7 @@
 #include "ImageBufferController.h"
 #include "SVProtoBuf\ConverterHelper.h"
 #include "ResetLocker.h"
+#include "CopyData.h"
 #include "SVMatroxLibrary\SVMatroxBufferCreateChildStruct.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary\MessageTextEnum.h"
@@ -21,8 +22,13 @@
 
 namespace SvTrc
 {
-TriggerRecord::TriggerRecord(int inspectionPos, TriggerRecordData& rData, const SvPb::ImageList& rImageList, const long& rResetId)
-	: m_inspectionPos(inspectionPos), m_rData(rData), m_rImageList(rImageList), m_ResetId(rResetId)
+TriggerRecord::TriggerRecord(int inspectionPos, TriggerRecordData& rData, const SvPb::ImageList& rImageList, const SvPb::DataDefinitionList& rDataDefList, const int& rDataListSize, long resetId)
+: m_inspectionPos(inspectionPos)
+, m_rData(rData)
+, m_rImageList(rImageList)
+, m_rDataDefList(rDataDefList)
+, m_rDataListSize(rDataListSize)
+, m_ResetId(resetId)
 {
 }
 
@@ -31,7 +37,7 @@ TriggerRecord::~TriggerRecord()
 	auto pLock = ResetLocker::lockReset(m_ResetId);
 	if (nullptr != pLock)
 	{
-		bool finishedTR = (TriggerRecord::m_WriteBlocked == m_rData.m_referenceCount);
+		bool finishedTR = (cWriteBlocked == m_rData.m_referenceCount);
 		long value = InterlockedDecrement(&(m_rData.m_referenceCount));
 		if (0 > value)
 		{
@@ -49,14 +55,14 @@ IImagePtr TriggerRecord::getImage(const GUID& imageId, bool lockImage) const
 	IImagePtr pImage;
 	std::string ImageIdBytes;
 	SvPb::SetGuidInProtoBytes(&ImageIdBytes, imageId);
-	int pos = findImagePos(m_rImageList.list(), ImageIdBytes);
+	int pos = findGuidPos(m_rImageList.list(), ImageIdBytes);
 	if (-1 < pos)
 	{
 		pImage = getImage(pos, lockImage);
 	}
 	else //check if child image
 	{
-		pos = findImagePos(m_rImageList.childlist(), ImageIdBytes);
+		pos = findGuidPos(m_rImageList.childlist(), ImageIdBytes);
 		if (-1 < pos)
 		{
 			pImage = getChildImage(pos, lockImage);
@@ -73,7 +79,7 @@ IImagePtr TriggerRecord::getImage(int pos, bool lockImage) const
 	{
 		auto& rImageController = ImageBufferController::getImageBufferControllerInstance();
 		const auto& rImageList = m_rImageList.list();
-		int*const pImagePos = m_rData.getImagePos();
+		int* const pImagePos = m_rData.getImagePos();
 		if (0 <= pos && rImageList.size() > pos)
 		{
 			if (0 <= pImagePos[pos])
@@ -118,7 +124,7 @@ IImagePtr TriggerRecord::getChildImage(int childPos, bool lockImage) const
 	{
 		auto& rImageController = ImageBufferController::getImageBufferControllerInstance();
 		const auto& rChildDef = m_rImageList.childlist(childPos);
-		int pos = findImagePos(m_rImageList.list(), rChildDef.parentimageid());
+		int pos = findGuidPos(m_rImageList.list(), rChildDef.parentimageid());
 
 		MatroxBufferChildDataStruct bufferDataStruct;
 		memcpy(&bufferDataStruct, rChildDef.type().c_str(), sizeof(MatroxBufferChildDataStruct));
@@ -133,7 +139,7 @@ IImagePtr TriggerRecord::getChildImage(int childPos, bool lockImage) const
 		}
 		else
 		{
-			int childPos2 = findImagePos(m_rImageList.childlist(), rChildDef.parentimageid());
+			int childPos2 = findGuidPos(m_rImageList.childlist(), rChildDef.parentimageid());
 			IImagePtr pChildImage = getChildImage(childPos2, lockImage);
 			if (!pChildImage->isEmpty())
 			{
@@ -144,6 +150,40 @@ IImagePtr TriggerRecord::getChildImage(int childPos, bool lockImage) const
 		}
 	}
 	return pImage;
+}
+
+_variant_t TriggerRecord::getDataValue(const GUID& dataId) const
+{
+	_variant_t result;
+
+	std::string guidIdBytes;
+	SvPb::SetGuidInProtoBytes(&guidIdBytes, dataId);
+	int pos = findGuidPos(m_rDataDefList.list(), guidIdBytes);
+	if(-1 < pos)
+	{
+		std::atomic_int* pSize = reinterpret_cast<std::atomic_int*> (m_rData.getValueData());
+		int DataSize = *pSize;
+		if(DataSize > 0)
+		{
+			SvPb::DataList valueList;
+
+			//The next position is where the value data list is streamed
+			void* pSource = reinterpret_cast<void*> (pSize + 1);
+			valueList.ParseFromArray(pSource, DataSize);
+			if(valueList.valuelist_size() > pos)
+			{
+				SvPb::ConvertProtobufToVariant(valueList.valuelist()[pos], result);
+			}
+		}
+	}
+
+	return result;
+}
+
+bool TriggerRecord::isValueDataValid() const
+{
+	bool* pDataValid = reinterpret_cast<bool*> (m_rData.getValueData());
+	return *pDataValid;
 }
 
 bool TriggerRecord::isObjectUpToTime() const
@@ -220,7 +260,7 @@ void TriggerRecord::setImage(const GUID& rImageId, const IImagePtr& pImage)
 {
 	std::string ImageIdBytes;
 	SvPb::SetGuidInProtoBytes(&ImageIdBytes, rImageId);
-	int pos = findImagePos(m_rImageList.list(), ImageIdBytes);
+	int pos = findGuidPos(m_rImageList.list(), ImageIdBytes);
 	setImage(pos, pImage->getBufferPos());
 }
 
@@ -233,7 +273,7 @@ void TriggerRecord::setImage(const GUID& rImageId, int bufferPos)
 {
 	std::string ImageIdBytes;
 	SvPb::SetGuidInProtoBytes(&ImageIdBytes, rImageId);
-	int pos = findImagePos(m_rImageList.list(), ImageIdBytes);
+	int pos = findGuidPos(m_rImageList.list(), ImageIdBytes);
 	setImage(pos, bufferPos);
 }
 
@@ -291,7 +331,7 @@ IImagePtr TriggerRecord::createNewImageHandle(const GUID& imageId)
 	std::string ImageIdBytes;
 	SvPb::SetGuidInProtoBytes(&ImageIdBytes, imageId);
 
-	int pos = findImagePos(m_rImageList.list(), ImageIdBytes);
+	int pos = findGuidPos(m_rImageList.list(), ImageIdBytes);
 	if (-1 < pos)
 	{
 		pImage = createNewImageHandle(pos);
@@ -320,4 +360,11 @@ IImagePtr TriggerRecord::createNewImageHandle(int pos)
 	}
 	return pImage;
 }
+
+void TriggerRecord::writeValueData(std::vector<_variant_t>&& valueObjectList)
+{
+	void* pData = m_rData.getValueData();
+	auto copyDataThread = std::async(std::launch::async, [&] { copyDataList(std::move(valueObjectList), pData, m_rDataListSize, m_ResetId); });
+}
+
 } //namespace SvTrc

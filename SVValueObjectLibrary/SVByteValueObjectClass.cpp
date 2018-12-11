@@ -159,7 +159,7 @@ void SVByteValueObjectClass::LocalInitialize()
 	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVByteValueObjectType;
 	DefaultValue() = 0;
 	SetTypeName( _T("Integer8") );
-	InitializeBuckets();
+	init();
 
 	SetOutputFormat( OutputFormat_hex );
 }

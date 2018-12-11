@@ -14,21 +14,21 @@
 struct SVIODigitalStruct  
 {
 	SVIODigitalStruct() {};
-	SVIODigitalStruct(const SVIODigitalStruct& rOriginal) {*this = rOriginal;};
+	SVIODigitalStruct(const SVIODigitalStruct& rRhs) {*this = rRhs;};
 
-	const SVIODigitalStruct& operator= (const SVIODigitalStruct& rOriginal)
+	const SVIODigitalStruct& operator= (const SVIODigitalStruct& rRhs)
 	{
-		m_bIsInverted = rOriginal.m_bIsInverted;
-		m_bIsForced = rOriginal.m_bIsForced;
-		m_bForcedValue = rOriginal.m_bForcedValue;
-		m_bValue = rOriginal.m_bValue;
+		m_bIsInverted = rRhs.m_bIsInverted;
+		m_bIsForced = rRhs.m_bIsForced;
+		m_bForcedValue = rRhs.m_bForcedValue;
+		m_bValue = rRhs.m_bValue;
 		return *this;
 	};
 
-	bool m_bIsInverted = false;
-	bool m_bIsForced = false;
-	bool m_bForcedValue = false;
-	bool m_bValue = false;
+	bool m_bIsInverted{true};
+	bool m_bIsForced{false};
+	bool m_bForcedValue{false};
+	bool m_bValue{false};
 };
 
 typedef std::vector<SVIODigitalStruct> SVIODigitalStructVector;

@@ -65,15 +65,14 @@ HRESULT SVFileNameValueObjectClass::SetObjectValue(SVObjectAttributeClass* pData
 	HRESULT Result( E_FAIL );
 	bool	bOk( false );
 	
-	std::vector<ValueType> ObjectArray;	// for default values
-	BucketVector BucketArray;
-	ValueVector ReadValueArray;
-	
-	if (bOk = pDataObject->GetAttributeData(scDefaultTag, ObjectArray))
+	std::vector<ValueVector> BucketArray;		//This is for backward compatibility
+	ValueVector ValueArray;
+
+	if (bOk = pDataObject->GetAttributeData(scDefaultTag, ValueArray))
 	{
-		if (0 < ObjectArray.size())
+		if (0 < ValueArray.size())
 		{
-			DefaultValue() = ObjectArray[ObjectArray.size() - 1];
+			DefaultValue() = ValueArray[ValueArray.size() - 1];
 			SvUl::RemoveEscapedSpecialCharacters(DefaultValue(), false);
 		}
 
@@ -86,36 +85,15 @@ HRESULT SVFileNameValueObjectClass::SetObjectValue(SVObjectAttributeClass* pData
 			SvUl::RemoveEscapedSpecialCharacters(BucketArray[i][0], false);
 		}
 
-		if( !isBucketized() )
+		if ( 1 == getArraySize() )
 		{
-			if ( 1 == getArraySize() )
-			{
-				// In configurations the value are placed in bucket 1
-				Value() = BucketArray[1][0];
-			}
-			else
-			{
-				// In configurations the values are placed in bucket 1
-				std::swap( ValueArray(), BucketArray[1] );
-			}
+			// In configurations the value are placed in bucket 1
+			Value() = BucketArray[1][0];
 		}
 		else
 		{
-			if ( 1 == getArraySize() )
-			{
-				if(nullptr != getBucket().get())
-				{
-					getBucket()->at(0) = BucketArray[0][0];
-					getBucket()->at(1) = BucketArray[1][0];
-				}
-			}
-			else
-			{
-				if(nullptr != getBucketArray().get())
-				{
-					std::swap( *getBucketArray(), BucketArray );
-				}
-			}
+			// In configurations the values are placed in bucket 1
+			std::swap(__super::ValueArray(), BucketArray[1] );
 		}
 		//! Note this is required to set the path correctly as it calls the SetValue version of SVFileNameValueObjectClass
 		std::string  Value;
@@ -123,36 +101,33 @@ HRESULT SVFileNameValueObjectClass::SetObjectValue(SVObjectAttributeClass* pData
 		SetValue(Value);
 	}
 	// new-style: store all array elements:
-	else if ( bOk = pDataObject->GetArrayData( SvDef::cArrayTag, ReadValueArray, DefaultValue() ) )
+	else if ( bOk = pDataObject->GetArrayData( SvDef::cArrayTag, ValueArray, DefaultValue() ) )
 	{
-		for (size_t i = 0; i < ReadValueArray.size(); i++)
+		for (size_t i = 0; i < ValueArray.size(); i++)
 		{
 			// Remove any escapes
-			SvUl::RemoveEscapedSpecialCharacters(ReadValueArray[i], false);
+			SvUl::RemoveEscapedSpecialCharacters(ValueArray[i], false);
 		}
 
-		SetArraySize( static_cast< int >( ReadValueArray.size() ) );
-		if( !isBucketized() )
+		SetArraySize( static_cast< int >(ValueArray.size() ) );
+		if ( 1 == getArraySize() )
 		{
-			if ( 1 == getArraySize() )
-			{
-				Value() = ReadValueArray[0];
-			}
-			else
-			{
-				std::swap( ValueArray(), ReadValueArray );
-			}
+			Value() = ValueArray[0];
+		}
+		else
+		{
+			std::swap(__super::ValueArray(), ValueArray);
 		}
 		//! Note this is required to set the path correctly as it calls the SetValue version of SVFileNameValueObjectClass
 		std::string  Value;
 		GetValue(Value);
 		SetValue(Value);
 	}
-	else if ( bOk = pDataObject->GetAttributeData(_T("StrDefault"), ObjectArray) )
+	else if ( bOk = pDataObject->GetAttributeData(_T("StrDefault"), ValueArray) )
 	{
-		if ( 0 < ObjectArray.size() )
+		if ( 0 < ValueArray.size() )
 		{
-			DefaultValue() = ObjectArray[ ObjectArray.size()-1 ];
+			DefaultValue() = ValueArray[ValueArray.size()-1];
 			SvUl::RemoveEscapedSpecialCharacters( DefaultValue(), false );
 		}
 
@@ -165,36 +140,15 @@ HRESULT SVFileNameValueObjectClass::SetObjectValue(SVObjectAttributeClass* pData
 			SvUl::RemoveEscapedSpecialCharacters(BucketArray[i][0], false);
 		}
 
-		if( !isBucketized() )
+		if ( 1 == getArraySize() )
 		{
-			if ( 1 == getArraySize() )
-			{
-				// In configurations the value are placed in bucket 1
-				Value() = BucketArray[1][0];
-			}
-			else
-			{
-				// In configurations the values are placed in bucket 1
-				std::swap( ValueArray(), BucketArray[1] );
-			}
+			// In configurations the value are placed in bucket 1
+			Value() = BucketArray[1][0];
 		}
 		else
 		{
-			if ( 1 == getArraySize() )
-			{
-				if( nullptr != getBucket().get() )
-				{
-					getBucket()->at(0) = BucketArray[0][0];
-					getBucket()->at(1) = BucketArray[1][0];
-				}
-			}
-			else
-			{
-				if( nullptr != getBucketArray() )
-				{
-					std::swap( *getBucketArray(), BucketArray );
-				}
-			}
+			// In configurations the values are placed in bucket 1
+			std::swap(__super::ValueArray(), BucketArray[1]);
 		}
 		//! Note this is required to set the path correctly as it calls the SetValue version of SVFileNameValueObjectClass
 		std::string  Value;
@@ -294,7 +248,7 @@ void SVFileNameValueObjectClass::LocalInitialize()
 
 	SetTypeName( _T("FileName") );
 	
-	InitializeBuckets();
+	init();
 
 	SVFileNameManagerClass::Instance().AddItem(&m_FileName);
 }

@@ -6,20 +6,17 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVDigitalOutputObject.h"
-
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
+#include "SVObjectLibrary/SVClsids.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #pragma endregion Includes
 
 SVDigitalOutputObject::SVDigitalOutputObject( LPCSTR strObjectName )
 :SVOutputObject( strObjectName )
-, m_lChannel( -1 )
-, m_bForced( false )
-, m_bInverted( true )
+, m_Channel( -1 )
 , m_bCombined( false )
 , m_bLastValue( false )
 , m_bDefaultValue( false )
-, m_bForcedValue( false )
 , m_bCombinedACK( true )
 {
 	LocalInitialize();
@@ -27,13 +24,10 @@ SVDigitalOutputObject::SVDigitalOutputObject( LPCSTR strObjectName )
 
 SVDigitalOutputObject::SVDigitalOutputObject( SVObjectClass *pOwner, int StringResourceID )
 :SVOutputObject( pOwner, StringResourceID )
-, m_lChannel( -1 )
-, m_bForced( false )
-, m_bInverted( true )
+, m_Channel( -1 )
 , m_bCombined( false )
 , m_bLastValue( false )
 , m_bDefaultValue( false )
-, m_bForcedValue( false )
 , m_bCombinedACK( true )
 {
 	LocalInitialize();
@@ -68,7 +62,7 @@ HRESULT SVDigitalOutputObject::Write( const _variant_t& rValue )
 
 	m_bLastValue = rValue;
 
-	l_Status = SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue( m_lChannel, m_bLastValue );
+	l_Status = SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue( m_Channel, m_bLastValue );
 
 	return l_Status;
 }
@@ -77,29 +71,22 @@ HRESULT SVDigitalOutputObject::Reset()
 {
 	HRESULT l_Status = S_OK;
 
-	l_Status = SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue( m_lChannel, m_bDefaultValue );
+	l_Status = SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue( m_Channel, m_bDefaultValue );
 
 	return l_Status;
 }
 
-bool SVDigitalOutputObject::Force( bool bForce, bool bForcedValue )
+bool SVDigitalOutputObject::Force(bool bForced, bool bForcedValue)
 {
-	m_bForced = bForce;
-	m_bForcedValue = bForcedValue;
-
-	bool l_bOk = S_OK == SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsForced( m_lChannel, m_bForced );
-	l_bOk = S_OK == SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputForcedValue( m_lChannel, m_bForcedValue ) && l_bOk;
+	bool l_bOk = S_OK == SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsForced(m_Channel, bForced);
+	l_bOk = S_OK == SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputForcedValue(m_Channel, bForcedValue) && l_bOk;
 
 	return l_bOk;
 }
 
-bool SVDigitalOutputObject::Invert( bool bInvert )
+bool SVDigitalOutputObject::Invert(bool bInverted)
 {
-	m_bInverted = bInvert;
-
-	bool l_bOk = S_OK == SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsInverted( m_lChannel, m_bInverted );
-
-	return l_bOk;
+	return S_OK == SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsInverted( m_Channel, bInverted );
 }
 
 void SVDigitalOutputObject::Combine( bool bCombine, bool bCombineACK )
@@ -110,17 +97,26 @@ void SVDigitalOutputObject::Combine( bool bCombine, bool bCombineACK )
 
 bool SVDigitalOutputObject::IsForced() const
 {
-	return m_bForced;
+	bool bIsForced {false};
+	SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputIsForced(m_Channel, bIsForced);
+
+	return bIsForced;
 }
 
 bool SVDigitalOutputObject::GetForcedValue() const
 {
-	return m_bForcedValue;
+	bool bForcedValue {false};
+	SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputForcedValue(m_Channel, bForcedValue);
+
+	return bForcedValue;
 }
 
 bool SVDigitalOutputObject::IsInverted() const
 {
-	return m_bInverted;
+	bool bIsInverted {false};
+	SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputIsInverted(m_Channel, bIsInverted);
+
+	return bIsInverted;
 }
 
 bool SVDigitalOutputObject::IsCombined() const
@@ -140,12 +136,12 @@ bool SVDigitalOutputObject::GetValue() const
 
 void SVDigitalOutputObject::SetChannel( long lChannel )
 {
-	m_lChannel = lChannel;
+	m_Channel = lChannel;
 }
 
 long SVDigitalOutputObject::GetChannel() const
 {
-	return m_lChannel;
+	return m_Channel;
 }
 
 void SVDigitalOutputObject::updateGuid(int position)

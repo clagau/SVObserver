@@ -42,7 +42,6 @@ bool SVPerspectiveToolClass::CreateObject( const SVObjectLevelCreateStruct& rCre
 
 	l_bOk &= ( S_OK == m_OutputImage.InitializeImage(SvOl::getInput<SVImageClass>(m_InputImageObjectInfo)));
 
-	m_SourceImageNames.setStatic( true );
 	m_SourceImageNames.setSaveValueFlag(false);
 	m_SourceImageNames.SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
 

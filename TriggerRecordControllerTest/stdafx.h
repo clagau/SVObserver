@@ -34,8 +34,10 @@
 #include <afxcontrolbars.h>     // MFC-Unterstützung für Menübänder und Steuerleisten
 
 
+#include <comdef.h>
 #include <deque>
 #include <map>
+#include <set>
 #include <vector>
 #include <ctime>
 

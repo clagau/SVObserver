@@ -13,6 +13,7 @@
 #include "stdafx.h"
 #include "SVRemoteInputObject.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
+#include "SVObjectLibrary/SVClsids.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #pragma endregion Includes
 
@@ -40,9 +41,6 @@ bool SVRemoteInputObject::Create()
 {
 	if( !m_isCreated )
 	{
-		m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVIoObjectType;
-		m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVRemoteInputObjectType;
-
 		m_isCreated = true;
 
 		::InitializeCriticalSection( &m_hCriticalSection );

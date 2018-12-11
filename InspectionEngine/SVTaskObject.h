@@ -76,9 +76,6 @@ public:
 	virtual HRESULT DisconnectInputsOutputs(SVObjectPtrVector& rListOfObjects);
 	virtual HRESULT HideInputsOutputs(SVObjectPtrVector& rListOfObjects);
 
-	virtual void SetObjectDepth(int NewObjectDepth) override;
-	virtual void SetObjectDepthWithIndex(int NewObjectDepth, int NewLastSetIndex) override;
-
 	virtual void SetInvalid() override;
 	virtual void SetDisabled() override;
 

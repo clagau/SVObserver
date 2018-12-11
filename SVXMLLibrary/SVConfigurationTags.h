@@ -146,7 +146,6 @@ namespace  SvXml
 	LPCTSTR const CTAG_MAX_VALUE                      = _T("MaxValue");
 
 	LPCTSTR const CTAG_IODOC                          = _T("IODoc");
-	LPCTSTR const CTAG_PPQ_STATE_UNIQUEID             = _T("PpqStateUniqueID");
 
 	LPCTSTR const CTAG_REMOTE_OUTPUT_PARAMETERS       = _T("RemoteOutputParameters");
 	LPCTSTR const CTAG_REMOTE_OUTPUT_INPUT_OBJECT_GUID = _T("RemoteOutputObjectId");

@@ -139,7 +139,7 @@ void SVDWordValueObjectClass::LocalInitialize()
 	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVDWordValueObjectType;
 	DefaultValue() = 0;
 	SetTypeName( _T("Integer32Hex") );
-	InitializeBuckets();
+	init();
 
 	SetOutputFormat( OutputFormat_hex );
 }

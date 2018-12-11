@@ -173,19 +173,20 @@ HRESULT SVCommandInspectionGetItems::UpdateResultsWithValueData(const std::strin
 	unsigned long TriggerCount = TriggerCnt;
 	
 	SvOi::IValueObject* pValueObject = rValueRef.getValueObject();
-	if( nullptr != pValueObject && !rValueRef.isEntireArray())
+	if( nullptr != pValueObject)
 	{
+		int index = rValueRef.isEntireArray() ? -1 : rValueRef.getValidArrayIndex();
 		//Enumeration Value objects need to return the text and not the value
 		if (SvPb::SVEnumValueObjectType == rValueRef.getObject()->GetObjectSubType())
 		{
 			std::string Value;
-			GetStatus = pValueObject->getValue(Value, rValueRef.getValidArrayIndex());
+			GetStatus = pValueObject->getValue(Value, index);
 			Storage.m_Variant.SetString(Value.c_str());
 		}
 		else
 		{
 			///if this is an Array this is Zero based!!!!
-			GetStatus = pValueObject->getValue( Storage.m_Variant, rValueRef.getValidArrayIndex() );
+			GetStatus = pValueObject->getValue(Storage.m_Variant, index);
 		}
 
 		if (S_OK == GetStatus)
@@ -193,28 +194,6 @@ HRESULT SVCommandInspectionGetItems::UpdateResultsWithValueData(const std::strin
 			Storage.m_StorageType = SVVisionProcessor::SVStorageValue;
 		}
 		else
-		{
-			TriggerCount = 0;
-			Status = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
-		}
-	}
-	else
-	{
-		std::vector<_variant_t> Value;
-
-		if( nullptr != pValueObject )
-		GetStatus = pValueObject->getValues( Value );
-
-		if (S_OK == GetStatus)
-		{
-			SVSAFEARRAY SafeArray;
-
-			SafeArray.assign(Value.begin(), Value.end());
-
-			Storage.m_StorageType = SVVisionProcessor::SVStorageValue;
-			Storage.m_Variant = SafeArray;
-		}
-		else 
 		{
 			TriggerCount = 0;
 			Status = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;

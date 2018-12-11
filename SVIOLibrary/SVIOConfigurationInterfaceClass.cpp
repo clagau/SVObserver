@@ -17,18 +17,7 @@ constexpr size_t OutputsDefaultNr = 16;
 
 SVIOConfigurationInterfaceClass::SVIOConfigurationInterfaceClass()
 {
-	m_Opto22InputInvert = true;
-	m_Opto22OutputInvert = true;
-
-	for ( int i = 0; i < 4; i++ )
-	{
-		m_pbSVIMTriggerRising[i] = true;
-		m_pbSVIMStrobeRising[i] = true;
-		m_abSVIMStrobeStartFrame[i] = false;
-	}
-
-	m_DigitalInputs.resize(InputsDefaultNr);
-	m_DigitalOutputs.resize(OutputsDefaultNr);
+	Init();
 }
 
 SVIOConfigurationInterfaceClass::~SVIOConfigurationInterfaceClass()
@@ -39,6 +28,24 @@ SVIOConfigurationInterfaceClass::~SVIOConfigurationInterfaceClass()
 void SVIOConfigurationInterfaceClass::Shutdown()
 {
 	CloseDigital();
+}
+
+void SVIOConfigurationInterfaceClass::Init()
+{
+	m_Opto22InputInvert = true;
+	m_Opto22OutputInvert = true;
+
+	for (int i = 0; i < 4; i++)
+	{
+		m_pbSVIMTriggerRising[i] = true;
+		m_pbSVIMStrobeRising[i] = true;
+		m_abSVIMStrobeStartFrame[i] = false;
+	}
+
+	m_DigitalInputs.clear();
+	m_DigitalOutputs.clear();
+	m_DigitalInputs.resize(InputsDefaultNr);
+	m_DigitalOutputs.resize(OutputsDefaultNr);
 }
 
 HRESULT SVIOConfigurationInterfaceClass::OpenDigital( LPCTSTR p_szName )

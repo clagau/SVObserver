@@ -36,8 +36,6 @@ void SVInPlaceImageOperatorListClass::init()
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVUnaryImageOperatorListObjectType;
 	m_outObjectInfo.m_ObjectTypeInfo.SubType	= SvPb::SVInPlaceImageOperatorListObjectType;
 
-	// SetObjectDepth() already called in SVObjectClass Ctor
-
 	// Register Embedded Objects
 
 	// Set Embedded defaults

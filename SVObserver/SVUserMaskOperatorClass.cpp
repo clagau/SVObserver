@@ -24,6 +24,7 @@
 #include "SVShapeMaskHelperClass.h"
 #include "InspectionEngine/SVUnaryImageOperatorList.h"
 #include "Definitions/TextDefineSvDef.h"
+#include "SVUtilityLibrary/SVSafeArray.h"
 
 SV_IMPLEMENT_CLASS( SVUserMaskOperatorClass, SVUserMaskOperatorClassGuid )
 

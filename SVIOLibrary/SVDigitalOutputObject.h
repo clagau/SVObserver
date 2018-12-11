@@ -6,17 +6,18 @@
 #pragma once
 
 #pragma region Includes
-#include "SVInputObject.h"
+#include "SVOResource/resource.h"
+#include "SVOutputObject.h"
 #pragma endregion Includes
 
-class SVDigitalInputObject : public SVInputObject
+class SVDigitalOutputObject : public SVOutputObject
 {
 #pragma region Constructor
 public:
-	SVDigitalInputObject( LPCSTR strObjectName );
-	SVDigitalInputObject( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVDIGITALINPUTOBJECT );
+	SVDigitalOutputObject( LPCSTR strObjectName );
+	SVDigitalOutputObject( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVDIGITALOUTPUTOBJECT );
 
-	virtual ~SVDigitalInputObject();
+	virtual ~SVDigitalOutputObject();
 #pragma endregion Constructor
 
 #pragma region Public Methods
@@ -24,10 +25,14 @@ public:
 	virtual bool Create() override;
 	virtual bool Destroy() override;
 
-	virtual HRESULT Read( _variant_t& p_rValue ) override;
+	virtual HRESULT Write( const _variant_t& rValue ) override;
+	virtual HRESULT Reset() override;
+	virtual bool IsCombined() const override;
+	virtual bool GetCombinedValue() const override;
 
 	bool Force( bool bForce, bool bForcedValue );
 	bool Invert( bool bInvert );
+	void Combine( bool bCombine, bool bCombineACK );
 
 	bool IsForced() const;
 	bool GetForcedValue() const;
@@ -49,15 +54,11 @@ private:
 
 #pragma region Member Variables
 private:
-	//! Note that these member variables are mirrored in SVIODigitalStruct
-	//! Take care that these stay synchronous
-	//@WARNING [gra][7.40][07.11.2016] Try to remove the mirrored values in SVIODigitalStruct and keep only one copy of the data
-	// Values for this digital input
-	long m_lChannel;
-	bool m_bForced;
-	bool m_bInverted;
+	// Values for this digital output
+	long m_Channel;
+	bool m_bCombined;
 	bool m_bLastValue;
 	bool m_bDefaultValue;
-	bool m_bForcedValue;
+	bool m_bCombinedACK;
 #pragma endregion Member Variables
 };

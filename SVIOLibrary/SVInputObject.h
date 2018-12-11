@@ -12,6 +12,7 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <map>
+#include "SVOResource/resource.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 #pragma endregion Includes
 

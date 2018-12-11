@@ -64,16 +64,15 @@ HRESULT SVVariantValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 	HRESULT Result( E_FAIL );
 	bool	bOk( false );
 
-	std::vector<ValueType> ObjectArray;	// for default values
-	BucketVector BucketArray;
-	ValueVector ReadValueArray;
+	std::vector<ValueVector> BucketArray;		//This is for backward compatibility
+	ValueVector ValueArray;
 	
 	// new-style: store all array elements:
-	if ( bOk = pDataObject->GetArrayData( SvDef::cArrayTag, ReadValueArray, DefaultValue() ) )
+	if ( bOk = pDataObject->GetArrayData( SvDef::cArrayTag, ValueArray, DefaultValue() ) )
 	{
-		for (size_t i = 0; i < ReadValueArray.size(); i++)
+		for (size_t i = 0; i < ValueArray.size(); i++)
 		{
-			_variant_t& rValue = ReadValueArray[i];
+			_variant_t& rValue = ValueArray[i];
 			if( rValue.vt == VT_BSTR )
 			{
 				std::string Temp = SvUl::createStdString( rValue.bstrVal );
@@ -84,24 +83,21 @@ HRESULT SVVariantValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 			}
 		}
 
-		SetArraySize( static_cast< int >( ReadValueArray.size() ) );
-		if( !isBucketized() )
+		SetArraySize( static_cast<int> (ValueArray.size()));
+		if ( 1 == getArraySize() )
 		{
-			if ( 1 == getArraySize() )
-			{
-				Value() = ReadValueArray[0];
-			}
-			else
-			{
-				std::swap( ValueArray(), ReadValueArray );
-			}
+			Value() = ValueArray[0];
+		}
+		else
+		{
+			std::swap(__super::ValueArray(), ValueArray);
 		}
 	}
-	else if ( bOk = pDataObject->GetAttributeData(_T("m_vtDefault"), ObjectArray) )
+	else if ( bOk = pDataObject->GetAttributeData(_T("m_vtDefault"), ValueArray) )
 	{
-		if ( 0 < ObjectArray.size() )
+		if ( 0 < ValueArray.size() )
 		{
-			DefaultValue() = ObjectArray[ObjectArray.size()-1];
+			DefaultValue() = ValueArray[ValueArray.size()-1];
 		}
 	}
 	else if ( bOk = pDataObject->GetAttributeData(_T("m_pavtArray"), BucketArray, DefaultValue() ) )
@@ -119,36 +115,15 @@ HRESULT SVVariantValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 			}
 		}
 
-		if( !isBucketized() )
+		if ( 1 == getArraySize() )
 		{
-			if ( 1 == getArraySize() )
-			{
-				// In configurations the value are placed in bucket 1
-				Value() = BucketArray[1][0];
-			}
-			else
-			{
-				// In configurations the values are placed in bucket 1
-				std::swap( ValueArray(), BucketArray[1] );
-			}
+			// In configurations the value are placed in bucket 1
+			Value() = BucketArray[1][0];
 		}
 		else
 		{
-			if ( 1 == getArraySize() )
-			{
-				if( nullptr != getBucket().get() )
-				{
-					getBucket()->at(0) = BucketArray[0][0];
-					getBucket()->at(1) = BucketArray[1][0];
-				}
-			}
-			else
-			{
-				if( nullptr != getBucketArray() )
-				{
-					std::swap( *getBucketArray(), BucketArray );
-				}
-			}
+			// In configurations the values are placed in bucket 1
+			std::swap(__super::ValueArray(), BucketArray[1] );
 		}
 	}
 	else
@@ -519,6 +494,6 @@ void SVVariantValueObjectClass::LocalInitialize()
 
 	SetTypeName( _T("Variant") );
 
-	InitializeBuckets();
+	init();
 }
 

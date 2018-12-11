@@ -66,25 +66,6 @@ HRESULT DoubleSortValueObject::setSortContainer(const ValueObjectSortContainer& 
 	return result;
 }
 
-HRESULT DoubleSortValueObject::CopyValue(int DestBucket)
-{
-	HRESULT Result(S_OK);
-
-	if (isBucketized())
-	{
-		//When copying the value to a bucket sort it
-		for (int i = 0; i < getResultSize() && S_OK == Result; i++)
-		{
-			double *pValue = getValuePointer(i, DestBucket);
-			if (nullptr != pValue)
-			{
-				//We need to get the non bucketized value
-				Result = GetValue(*pValue, i);
-			}
-		}
-	}
-	return Result;
-}
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -97,7 +78,7 @@ HRESULT DoubleSortValueObject::SetValue(const double& rValue, int Index )
 	return E_FAIL;
 }
 
-HRESULT DoubleSortValueObject::GetValue( double& rValue, int Index, int Bucket) const
+HRESULT DoubleSortValueObject::GetValue( double& rValue, int Index) const
 {
 	//! When Value Object is an array and index is -1 then use first index
 	if (0 > Index)
@@ -109,12 +90,8 @@ HRESULT DoubleSortValueObject::GetValue( double& rValue, int Index, int Bucket) 
 	{
 		if (m_sortContainer.size() > Index)
 		{
-			//Only when getting the non bucketized value then get the sorted index as bucketized values are already sorted
-			if (-1 == Bucket || !isBucketized())
-			{
-				Index = m_sortContainer[Index];
-			}
-			return SVValueObjectClass<double>::GetValue(rValue, Index, Bucket);
+			Index = m_sortContainer[Index];
+			return SVValueObjectClass<double>::GetValue(rValue, Index);
 		}
 		else
 		{
@@ -147,7 +124,7 @@ HRESULT DoubleSortValueObject::CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD MemBy
 	return E_FAIL;
 }
 
-HRESULT DoubleSortValueObject::getValues( std::vector<_variant_t>&  rValues, int Bucket ) const
+HRESULT DoubleSortValueObject::getValues( std::vector<_variant_t>&  rValues) const
 {
 	HRESULT Result( S_OK );
 
@@ -158,14 +135,14 @@ HRESULT DoubleSortValueObject::getValues( std::vector<_variant_t>&  rValues, int
 	for( int i=0; i < ResultSize && S_OK == Result; i++ )
 	{
 		//must be get once by once, because values can be disorder and not in a row.
-		Result = getValue(Value, i, Bucket);
+		Result = getValue(Value, i);
 		rValues[i] = Value;
 	}
 
 	return Result;
 }
 
-HRESULT DoubleSortValueObject::GetArrayValues( std::vector<double>& rValues, int Bucket ) const
+HRESULT DoubleSortValueObject::GetArrayValues(std::vector<double>& rValues) const
 {
 	HRESULT Result(S_OK);
 
@@ -176,7 +153,7 @@ HRESULT DoubleSortValueObject::GetArrayValues( std::vector<double>& rValues, int
 	for (int i=0; i<iResultSize && S_OK==Result; i++)
 	{
 		//must be get once by once, because values can be disorder and not in a row.
-		Result = GetValue(value, i, Bucket);
+		Result = GetValue(value, i);
 		rValues[i] = value;
 	}
 

@@ -77,6 +77,8 @@ public:
 	virtual bool removeImageBuffer(const GUID& ownerID, const SVMatroxBufferCreateStruct& bufferStruct) override;
 	virtual bool removeAllImageBuffer(const GUID& ownerID) override;
 
+	virtual bool changeDataDef(SvPb::DataDefinitionList&& rDataDefList, std::vector<_variant_t>&& rValueObjectList, int inspectionPos) override;
+
 	virtual bool lockReset() override;
 	virtual void unlockReset() override { m_isResetLocked = false; };
 	virtual bool isResetLocked() const override { return m_isResetLocked; };
@@ -113,7 +115,6 @@ private:
 	ResetEnum calcResetEnum(int inspectionPos);
 
 	void sendResetCall();
-
 #pragma endregion Private Methods
 
 #pragma region Member variables
@@ -125,17 +126,21 @@ private:
 	{
 		~TRControllerDataPerIP()
 		{
-			delete m_pImageList;
-			free(m_pTriggerRecords);
+			if(nullptr != m_pTriggerRecords)
+			{
+				::free(m_pTriggerRecords);
+			}
 		}
 
 		bool m_bInit = false;
 		int m_TriggerRecordNumber = 50 + m_TriggerRecordAddOn;  //maximal number of trigger record to use
-		int m_lastFinishedTRID = -1;
-		int m_lastStartedTRID = -1;
-		int m_triggerRecordBufferSize = 0; //This is the size of the buffer reserved for one trigger Record.
-		int m_nextPosForFreeCheck = 0; //This variable contains on which position it should be started for searching for a free slot.
-		SvPb::ImageList* m_pImageList = nullptr;
+		int m_lastFinishedTRID{-1};
+		int m_lastStartedTRID{-1};
+		int m_triggerRecordBufferSize{0}; //This is the size of the buffer reserved for one trigger Record.
+		int m_nextPosForFreeCheck{0}; //This variable contains which position it should start searching for a free slot.
+		int m_dataListSize{0}; //data List byte size
+		SvPb::ImageList m_ImageList;
+		SvPb::DataDefinitionList m_DataDefList;
 		void* m_pTriggerRecords = nullptr;
 	};
 

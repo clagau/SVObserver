@@ -17,7 +17,6 @@
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVUtilityLibrary/SVSafeArray.h"
 #include "SVValueObjectLibrary/BasicValueObject.h"
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
 #include "Definitions/GlobalConst.h"
@@ -276,8 +275,6 @@ void SVEquationClass::init()
 	// Since out inputs are dynamic via the script specified
 	// So the input will be identified when the script is created.
 	
-	// SetObjectDepth() already called in SVObjectClass Ctor
-
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &enabled, SVEquationEnabledObjectGuid, IDS_OBJECTNAME_ENABLED, false, SvOi::SVResetItemNone );
 

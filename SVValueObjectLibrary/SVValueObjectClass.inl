@@ -13,8 +13,6 @@
 template <typename T>
 SVValueObjectClass<T>::SVValueObjectClass(LPCSTR ObjectName)
 	: SVObjectClass(ObjectName)
-	, m_pBucket(nullptr)
-	, m_pBucketArray(nullptr)
 	, m_shouldSaveValue(true)
 	, m_shouldSaveDefaultValue(false)
 {
@@ -24,8 +22,6 @@ SVValueObjectClass<T>::SVValueObjectClass(LPCSTR ObjectName)
 template <typename T>
 SVValueObjectClass<T>::SVValueObjectClass(SVObjectClass* POwner, int StringResourceID)
 	: SVObjectClass(POwner, StringResourceID)
-	, m_pBucket(nullptr)
-	, m_pBucketArray(nullptr)
 	, m_shouldSaveValue(true)
 	, m_shouldSaveDefaultValue(false)
 {
@@ -36,7 +32,6 @@ template <typename T>
 SVValueObjectClass<T>::~SVValueObjectClass()
 {
 	SVObjectManagerClass::Instance().UnregisterSubObject(GetUniqueObjectID());
-	SetObjectDepth(-1);
 }
 
 template <typename T>
@@ -44,38 +39,7 @@ const SVValueObjectClass<T>& SVValueObjectClass<T>::operator= (const SVValueObje
 {
 	if (this != &rRhs)
 	{
-		SetObjectDepth(rRhs.m_NumberOfBuckets);
 		SetArraySize(rRhs.getArraySize());
-		CreateBuckets();
-
-		if (!m_isBucketized)
-		{
-			if (1 == m_ArraySize)
-			{
-				m_Value = rRhs.m_Value;
-			}
-			else
-			{
-				m_ValueArray = rRhs.m_ValueArray;
-			}
-		}
-		else
-		{
-			if (1 == m_ArraySize)
-			{
-				if (nullptr != m_pBucket.get() && nullptr != rRhs.m_pBucket.get())
-				{
-					*m_pBucket = *rRhs.m_pBucket;
-				}
-			}
-			else
-			{
-				if (nullptr != m_pBucketArray.get() && nullptr != rRhs.m_pBucketArray.get())
-				{
-					*m_pBucketArray = *rRhs.m_pBucketArray;
-				}
-			}
-		}
 		m_DefaultValue = rRhs.GetDefaultValue();
 	}
 
@@ -92,20 +56,6 @@ bool SVValueObjectClass<T>::CreateObject(const SVObjectLevelCreateStruct& rCreat
 	SVObjectManagerClass::Instance().RegisterSubObject(GetUniqueObjectID());
 	SetObjectAttributesAllowed(SvDef::SV_DD_VALUE, SvOi::SetAttributeType::AddAttribute);	// derived classes need to reset this
 
-	if (m_NumberOfBuckets < 2)
-	{
-		SetObjectDepth(2);
-	}
-
-	//A ValueObject with SvDef::SV_PUBLISHABLE set needs to be bucketized
-	const UINT cAttributes = SvDef::SV_PUBLISHABLE;
-	if (0 != (ObjectAttributesSet() & cAttributes))
-	{
-		setBucketized(true);
-	}
-
-	CreateBuckets();
-
 	return l_bOk;
 }
 
@@ -114,24 +64,6 @@ bool SVValueObjectClass<T>::CloseObject()
 {
 	SVObjectManagerClass::Instance().UnregisterSubObject(GetUniqueObjectID());
 	return SVObjectClass::CloseObject();
-}
-
-template <typename T>
-bool SVValueObjectClass<T>::ResetObject(SvStl::MessageContainerVector *pErrorMessages = nullptr)
-{
-	CreateBuckets();
-	return __super::ResetObject(pErrorMessages);
-}
-
-template <typename T>
-void SVValueObjectClass<T>::SetObjectDepthWithIndex(int iNewObjectDepth, int NewLastSetIndex)
-{
-	if (0 < iNewObjectDepth)
-	{
-		CopyValue(NewLastSetIndex);
-	}
-
-	SVObjectClass::SetObjectDepthWithIndex(iNewObjectDepth, NewLastSetIndex);
 }
 
 template <typename T>
@@ -160,48 +92,21 @@ HRESULT SVValueObjectClass<T>::SetArraySize(int iSize)
 
 	m_ObjectAttributesSet.resize(m_ArraySize, m_DefaultObjectAttributesSet);
 
-	if (!m_isBucketized)
+	if (1 == m_ArraySize)
 	{
-		if (1 == m_ArraySize)
+		if (iSize == 0)
 		{
-			if (iSize == 0)
-			{
-				m_Value = GetDefaultValue();
-			}
-			m_ValueArray.clear();
+			m_Value = GetDefaultValue();
 		}
-		else
-		{
-			if (iSize == 0)
-			{
-				m_ValueArray.clear();	// minimum array size is 1. If iSize == 0, clear the array then resize back to 1 below with the default value.
-			}
-			m_ValueArray.resize(m_ArraySize, GetDefaultValue());
-		}
+		m_ValueArray.clear();
 	}
 	else
 	{
-		if (1 == m_ArraySize)
+		if (iSize == 0)
 		{
-			if (nullptr != m_pBucket.get())
-			{
-				std::fill(m_pBucket->begin(), m_pBucket->end(), GetDefaultValue());
-			}
+			m_ValueArray.clear();	// minimum array size is 1. If iSize == 0, clear the array then resize back to 1 below with the default value.
 		}
-		else
-		{
-			//When bucketized the standard array needs to increase in size too
-			m_ValueArray.resize(m_ArraySize, GetDefaultValue());
-			if (nullptr != m_pBucketArray.get())
-			{
-				for (int i = 0; i < m_NumberOfBuckets; i++)
-				{
-					ValueVector& rBucket = m_pBucketArray->at(i);
-					rBucket.resize(m_ArraySize, GetDefaultValue());
-				}
-			}
-		}
-
+		m_ValueArray.resize(m_ArraySize, GetDefaultValue());
 	}
 
 	return hr;
@@ -212,68 +117,43 @@ HRESULT SVValueObjectClass<T>::SetObjectValue(SVObjectAttributeClass* pDataObjec
 {
 	HRESULT Result(E_FAIL);
 
-	std::vector<T> ObjectArray;	// for default values
 	SvCl::SVObjectLongArrayClass LongArray;
-	BucketVector BucketArray;
+	std::vector<ValueVector> BucketArray;		//This is for backward compatibility
 	ValueVector ValueArray;
 
-	if (pDataObject->GetAttributeData(scDefaultTag, ObjectArray))
+	if (pDataObject->GetAttributeData(scDefaultTag, ValueArray))
 	{
-		if (0 < ObjectArray.size())
+		if (0 < ValueArray.size())
 		{
-			DefaultValue() = ObjectArray[ObjectArray.size() - 1];
+			DefaultValue() = ValueArray[ValueArray.size() - 1];
 		}
 	}
 	//  BUCKET_TAG_LOAD; get buckets, not array; for backward compatibility;
 	else if (pDataObject->GetAttributeData(SvDef::cBucketTag, BucketArray, DefaultValue()))
 	{
 
-		if (!m_isBucketized)
+		if (1 == m_ArraySize)
 		{
-			if (1 == m_ArraySize)
-			{
-				// In configurations the value are placed in bucket 1
-				m_Value = BucketArray[1][0];
-			}
-			else
-			{
-				// In configurations the values are placed in bucket 1
-				std::swap(m_ValueArray, BucketArray[1]);
-			}
+			// In configurations the value are placed in bucket 1
+			m_Value = BucketArray[1][0];
 		}
 		else
 		{
-			if (1 == m_ArraySize)
-			{
-				if (nullptr != m_pBucket.get())
-				{
-					m_pBucket->at(0) = BucketArray[1][0];
-					m_pBucket->at(1) = BucketArray[1][0];
-				}
-			}
-			else
-			{
-				if (nullptr != m_pBucketArray.get())
-				{
-					std::swap(*m_pBucketArray, BucketArray);
-				}
-			}
+			// In configurations the values are placed in bucket 1
+			std::swap(m_ValueArray, BucketArray[1]);
 		}
 	}
 	// new-style: store all array elements:
 	else if (pDataObject->GetArrayData(SvDef::cArrayTag, ValueArray, DefaultValue()))
 	{
 		SetArraySize(static_cast<int>(ValueArray.size()));
-		if (!m_isBucketized)
+		if (1 == m_ArraySize)
 		{
-			if (1 == m_ArraySize)
-			{
-				m_Value = ValueArray[0];
-			}
-			else
-			{
-				std::swap(m_ValueArray, ValueArray);
-			}
+			m_Value = ValueArray[0];
+		}
+		else
+		{
+			std::swap(m_ValueArray, ValueArray);
 		}
 	}
 	else if (pDataObject->GetAttributeData(scArraySizeTag, LongArray))
@@ -312,14 +192,14 @@ __forceinline HRESULT SVValueObjectClass<T>::SetValue(const T& rValue, int Index
 	}
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_VALUE_OBJECT)
-	std::string DebugString = SvUl::Format(_T("SetValue, %s, %s, %d, %d\r\n"), GetName(), ConvertType2String(rValue).c_str(), Index, Bucket);
+	std::string DebugString = SvUl::Format(_T("SetValue, %s, %s, %d, %d\r\n"), GetName(), ConvertType2String(rValue).c_str(), Index);
 	::OutputDebugString(DebugString.c_str());
 #endif
 	return Result;
 }
 
 template <typename T>
-__forceinline HRESULT SVValueObjectClass<T>::GetValue(T& rValue, int Index, int Bucket) const
+__forceinline HRESULT SVValueObjectClass<T>::GetValue(T& rValue, int Index) const
 {
 	//! When Value Object is an array and index is -1 then use first index
 	if (isArray() && 0 > Index)
@@ -332,48 +212,17 @@ __forceinline HRESULT SVValueObjectClass<T>::GetValue(T& rValue, int Index, int 
 	if (S_OK == Result)
 	{
 		m_isObjectValid = true;
-		if (!m_isBucketized || -1 == Bucket)
+		if (1 == m_ArraySize)
 		{
-			if (1 == m_ArraySize)
-			{
-				rValue = m_Value;
-			}
-			else
-			{
-				rValue = m_ValueArray[Index];
-			}
+			rValue = m_Value;
 		}
 		else
 		{
-			if (1 == m_ArraySize)
-			{
-				assert(nullptr != m_pBucket.get());
-				if (nullptr != m_pBucket.get())
-				{
-					rValue = m_pBucket->at(Bucket);
-				}
-				else
-				{
-					Result = E_POINTER;
-				}
-			}
-			else
-			{
-				assert(nullptr != m_pBucketArray.get());
-				if (nullptr != m_pBucketArray.get())
-				{
-					rValue = m_pBucketArray->at(Bucket)[Index];
-				}
-				else
-				{
-					Result = E_POINTER;
-				}
-			}
+			rValue = m_ValueArray[Index];
 		}
 	}
 	else if (SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == Result)
 	{
-		// inside the allocated array size but bucket does
 		// not contain a value for the current run so use
 		// the default value.
 		rValue = m_DefaultValue;
@@ -386,7 +235,7 @@ __forceinline HRESULT SVValueObjectClass<T>::GetValue(T& rValue, int Index, int 
 		m_isObjectValid = false;
 	}
 #if defined (TRACE_THEM_ALL) || defined (TRACE_VALUE_OBJECT)
-	std::string DebugString = SvUl::Format(_T("GetValue, %s, %s, %d, %d\r\n"), GetName(), ConvertType2String(rValue).c_str(), Index, Bucket);
+	std::string DebugString = SvUl::Format(_T("GetValue, %s, %s, %d, %d\r\n"), GetName(), ConvertType2String(rValue).c_str(), Index);
 	::OutputDebugString(DebugString.c_str());
 #endif
 	return Result;
@@ -400,43 +249,13 @@ HRESULT SVValueObjectClass<T>::SetDefaultValue(const T& rValue, bool bResetAll)
 	m_DefaultValue = rValue;
 	if (bResetAll)
 	{
-		if (!m_isBucketized)
+		if (1 == m_ArraySize)
 		{
-			if (1 == m_ArraySize)
-			{
-				m_Value = rValue;
-			}
-			else
-			{
-				std::fill(m_ValueArray.begin(), m_ValueArray.end(), rValue);
-			}
+			m_Value = rValue;
 		}
 		else
 		{
-			if (1 == m_ArraySize)
-			{
-				m_Value = rValue;
-				if (nullptr != m_pBucket.get())
-				{
-					std::fill(m_pBucket->begin(), m_pBucket->end(), rValue);
-				}
-				else
-				{
-					Result = E_POINTER;
-				}
-			}
-			else
-			{
-				std::fill(m_ValueArray.begin(), m_ValueArray.end(), rValue);
-				if (nullptr != m_pBucketArray.get() && static_cast<int> (m_pBucketArray->size()) == m_NumberOfBuckets)
-				{
-					std::fill(m_pBucketArray->at(0).begin(), m_pBucketArray->at(m_NumberOfBuckets - 1).end(), rValue);
-				}
-				else
-				{
-					Result = E_POINTER;
-				}
-			}
+			std::fill(m_ValueArray.begin(), m_ValueArray.end(), rValue);
 		}
 	}
 	return Result;
@@ -479,7 +298,7 @@ HRESULT SVValueObjectClass<T>::SetArrayValues(const ValueVector& rValues)
 }
 
 template <typename T>
-HRESULT SVValueObjectClass<T>::GetArrayValues(ValueVector& rValues, int Bucket /*= -1*/) const
+HRESULT SVValueObjectClass<T>::GetArrayValues(ValueVector& rValues) const
 {
 	HRESULT Result = S_OK;
 	if (0 == m_ResultSize)
@@ -488,41 +307,14 @@ HRESULT SVValueObjectClass<T>::GetArrayValues(ValueVector& rValues, int Bucket /
 	}
 	assert(m_ResultSize <= m_ArraySize);
 	rValues.resize(m_ResultSize);
-	if (!m_isBucketized || -1 == Bucket)
+
+	if (1 == m_ArraySize)
 	{
-		if (1 == m_ArraySize)
-		{
-			rValues[0] = m_Value;
-		}
-		else
-		{
-			std::copy(m_ValueArray.begin(), m_ValueArray.begin() + m_ResultSize, rValues.begin());
-		}
+		rValues[0] = m_Value;
 	}
 	else
 	{
-		if (1 == m_ArraySize)
-		{
-			if (nullptr != m_pBucket.get())
-			{
-				rValues[0] = m_pBucket->at(Bucket);
-			}
-			else
-			{
-				Result = E_POINTER;
-			}
-		}
-		else
-		{
-			if (nullptr != m_pBucketArray.get())
-			{
-				std::copy(m_pBucketArray->at(Bucket).begin(), m_pBucketArray->at(Bucket).begin() + m_ResultSize, rValues.begin());
-			}
-			else
-			{
-				Result = E_POINTER;
-			}
-		}
+		std::copy(m_ValueArray.begin(), m_ValueArray.begin() + m_ResultSize, rValues.begin());
 	}
 	return Result;
 }
@@ -548,44 +340,20 @@ bool SVValueObjectClass<T>::CompareWithCurrentValue(const std::string& rCompare)
 	return Result;
 }
 
-#pragma region  virtual method
 template <typename T>
-UINT SVValueObjectClass<T>::SetObjectAttributesSet(UINT Attributes, SvOi::SetAttributeType Type, int Index)
-{
-	UINT newAttribute = __super::SetObjectAttributesSet(Attributes, Type, Index);
-
-	const UINT cBucketizedAttributes = SvDef::SV_PUBLISHABLE;
-	if (0 != (cBucketizedAttributes & Attributes))
-	{
-		if (0 != (cBucketizedAttributes & newAttribute))
-		{
-			setBucketized(true);
-		}
-		else if (SvOi::SetAttributeType::RemoveAttribute == Type)
-		{
-			//! Set this only if attributes are being removed as other objects may be set to bucketized for other reasons
-			setBucketized(false);
-		}
-		//! We need to reset the object to create or delete the buckets
-		ResetObject();
-	}
-	return newAttribute;
-}
-
-template <typename T>
-HRESULT SVValueObjectClass<T>::getValue(double& rValue, int Index /*= -1*/, int Bucket /*= -1*/) const
+HRESULT SVValueObjectClass<T>::getValue(double& rValue, int Index /*= -1*/) const
 {
 	HRESULT Result(E_FAIL);
 
 	ValueType Value;
-	Result = GetValue(Value, Index, Bucket);
+	Result = GetValue(Value, Index);
 	rValue = ValueType2Double(Value);
 
 	return Result;
 }
 
 template <typename T>
-HRESULT SVValueObjectClass<T>::getValues(std::vector<double>&  rValues, int Bucket = -1) const
+HRESULT SVValueObjectClass<T>::getValues(std::vector<double>&  rValues) const
 {
 	HRESULT Result(S_OK);
 
@@ -595,7 +363,7 @@ HRESULT SVValueObjectClass<T>::getValues(std::vector<double>&  rValues, int Buck
 	for (int i = 0; i < ResultSize && S_OK == Result; i++)
 	{
 		ValueType Value;
-		Result = GetValue(Value, i, Bucket);
+		Result = GetValue(Value, i);
 		rValues[i] = ValueType2Double(Value);
 	}
 
@@ -639,57 +407,78 @@ void SVValueObjectClass<T>::Persist(SvOi::IObjectWriter& rWriter)
 template <typename T>
 HRESULT SVValueObjectClass<T>::setValue(const _variant_t& rValue, int Index /*= -1*/)
 {
-	HRESULT hr = S_OK;
+	HRESULT result{S_OK};
+
+	std::vector<T> valueVector = variant2VectorType(rValue);
+
 	if (!isArray() || 0 == (VT_ARRAY & rValue.vt) || nullptr == rValue.parray)
 	{
-		hr = SetVariantValue(rValue, Index);
+		if(1 == valueVector.size())
+		{
+			result = SetValue(valueVector[0], Index);
+		}
 	}
 	else
 	{
-		SVSAFEARRAY safeArray(rValue);
-
-		if (safeArray.size() > 0)
+		int arraySize = static_cast<int> (valueVector.size());
+		if(arraySize > 0)
 		{
 			//fit array size to safeArray-size
-			if (m_ArraySize != safeArray.size())
+			if (m_ArraySize != arraySize)
 			{
-				hr = SetArraySize(static_cast<int>(safeArray.size()));
+				result = SetArraySize((arraySize));
 			}
-
-			//set all value to array
-			for (int i = 0; i < static_cast<int> (safeArray.size()); i++)
+			if(S_OK == result)
 			{
-				_variant_t tmpVar;
-				HRESULT tempHr = safeArray.GetElement(i, tmpVar);
-				if (S_OK == hr)
+				for(int i=0; i < arraySize && S_OK == result; i++)
 				{
-					hr = tempHr;
-				}
-
-				tempHr = SetVariantValue(tmpVar, i);
-				if (S_OK == hr)
-				{
-					hr = tempHr;
+					result = SetValue(valueVector[i], i);
 				}
 			}
 		}
 		else
 		{
-			hr = SvStl::Err_10029_ValueObject_Parameter_WrongSize;
+			result = SvStl::Err_10029_ValueObject_Parameter_WrongSize;
 		}
 	}
 
-	return hr;
+	return result;
 }
 
 template <typename T>
-HRESULT SVValueObjectClass<T>::getValue(_variant_t& rValue, int Index /*= -1*/, int Bucket /*= -1*/) const
+HRESULT SVValueObjectClass<T>::getValue(_variant_t& rValue, int Index /*= -1*/) const
 {
-	return GetVariantValue(rValue, Index, Bucket);
+	HRESULT Result(E_FAIL);
+
+	//! If index is -1 and it is an array then get the whole array
+	if (-1 == Index && isArray())
+	{
+		std::vector<_variant_t> valueVector;
+		Result = getValues(valueVector);
+		if (S_OK == Result)
+		{
+			rValue = variantVector2SafeArray(std::move(valueVector));
+		}
+	}
+	else
+	{
+		ValueType Value;
+		Result = GetValue(Value, Index);
+		if (S_OK == Result)
+		{
+			rValue = ValueType2Variant(Value);
+		}
+		else
+		{
+			rValue.Clear();
+		}
+	}
+
+	return Result;
 }
 
 template <typename T>
-HRESULT SVValueObjectClass<T>::getValues(std::vector<_variant_t>&  rValues, int Bucket = -1) const
+HRESULT SVValueObjectClass<T>::getValues(std::vector<_variant_t>&  rValues) const
 {
 	HRESULT Result = E_FAIL;
 
@@ -703,7 +492,7 @@ HRESULT SVValueObjectClass<T>::getValues(std::vector<_variant_t>&  rValues, int 
 	if (1 == m_ArraySize)
 	{
 		ValueType Value;
-		Result = GetValue(Value, -1, Bucket);
+		Result = GetValue(Value, -1);
 		if (S_OK == Result)
 		{
 			rValues[0] = ValueType2Variant(Value);
@@ -712,7 +501,7 @@ HRESULT SVValueObjectClass<T>::getValues(std::vector<_variant_t>&  rValues, int 
 	else
 	{
 		ValueVector ValueArray;
-		Result = GetArrayValues(ValueArray, Bucket);
+		Result = GetArrayValues(ValueArray);
 		if (S_OK == Result)
 		{
 			ValueVector::const_iterator FromIter(ValueArray.begin());
@@ -750,7 +539,7 @@ HRESULT SVValueObjectClass<T>::setValue(const std::string& rValue, int Index /*=
 }
 
 template <typename T>
-HRESULT SVValueObjectClass<T>::getValue(std::string& rValue, int Index /*= -1*/, int Bucket /*= -1*/) const
+HRESULT SVValueObjectClass<T>::getValue(std::string& rValue, int Index /*= -1*/) const
 {
 	HRESULT Result(E_FAIL);
 
@@ -758,7 +547,7 @@ HRESULT SVValueObjectClass<T>::getValue(std::string& rValue, int Index /*= -1*/,
 	if (isArray() && -1 == Index)
 	{
 		ValueVector Values;
-		Result = GetArrayValues(Values, Bucket);
+		Result = GetArrayValues(Values);
 		if (S_OK == Result)
 		{
 			ValueVector::const_iterator Iter(Values.begin());
@@ -775,7 +564,7 @@ HRESULT SVValueObjectClass<T>::getValue(std::string& rValue, int Index /*= -1*/,
 	else
 	{
 		ValueType Value;
-		Result = GetValue(Value, Index, Bucket);
+		Result = GetValue(Value, Index);
 		if (S_OK == Result || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == Result)
 		{
 			rValue = ConvertType2String(Value);
@@ -794,40 +583,8 @@ void SVValueObjectClass<T>::setResetOptions(bool bResetAlways, SvOi::SVResetItem
 template <typename T>
 void SVValueObjectClass<T>::validateValue(const _variant_t& rValue) const
 {
-	if (!isArray() || 0 == (VT_ARRAY & rValue.vt) || nullptr == rValue.parray)
-	{
-		ConvertString2Type(SvUl::createStdString(rValue));
-	}
-	else
-	{
-		SVSAFEARRAY safeArray(rValue);
-
-		if (safeArray.size() > 0)
-		{
-			//set all value to array
-			for (int i = 0; i < safeArray.size(); i++)
-			{
-				_variant_t tmpVar;
-				HRESULT tempHr = safeArray.GetElement(i, tmpVar);
-				if (S_OK != tempHr)
-				{
-					SvDef::StringVector msgList;
-					msgList.push_back(SvUl::Format(_T("%d"), tempHr));
-					SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
-					Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_InvalidElementInVariantArray, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
-					Exception.Throw();
-				}
-
-				ConvertString2Type(SvUl::createStdString(tmpVar));
-			}
-		}
-		else
-		{
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
-			Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_ArraySizeInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10029_ValueObject_Parameter_WrongSize, GetUniqueObjectID());
-			Exception.Throw();
-		}
-	}
+	//This function throws an exception if not valid
+	variant2VectorType(rValue);
 }
 
 #pragma endregion virtual method
@@ -837,120 +594,14 @@ void SVValueObjectClass<T>::validateValue(const _variant_t& rValue) const
 template <typename T>
 void SVValueObjectClass<T>::Initialize()
 {
-	m_NumberOfBuckets = 0;
 	m_ArraySize = 1;
 	m_LegacyVectorObjectCompatibility = false;
 	m_ResetAlways = false;
 	m_eResetItem = SvOi::SVResetItemIP;
-	m_isBucketized = false;
-	m_isStatic = false;
 	m_ResultSize = 1;
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVValueObjectType;
 
 	SetObjectAttributesAllowed(SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute);
-}
-
-template <typename T>
-HRESULT SVValueObjectClass<T>::SetVariantValue(const _variant_t& rValue, int Index)
-{
-	if (VT_BSTR == rValue.vt)
-	{
-		std::string Value = SvUl::createStdString(rValue);
-		return setValue(Value, Index);
-	}
-	//!For type safety check that the VT type is either the default value main value or when not set yet (VT_EMPTY)
-	else if (ValueType2Variant(m_DefaultValue).vt == rValue.vt || ValueType2Variant(m_Value).vt == rValue.vt || ValueType2Variant(m_Value).vt == VT_EMPTY)
-	{
-		return SetValue(Variant2ValueType(rValue), Index);
-	}
-
-	assert(false);
-	SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
-	Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_WrongType, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
-
-	return E_FAIL;
-}
-
-template <typename T>
-HRESULT SVValueObjectClass<T>::GetVariantValue(_variant_t& rValue, int Index, int Bucket) const
-{
-	HRESULT Result(E_FAIL);
-
-	//! If index is -1 and it is an array then get the whole array
-	if (-1 == Index && isArray())
-	{
-		std::vector<_variant_t> AllValues;
-		Result = getValues(AllValues, Bucket);
-		if (S_OK == Result)
-		{
-			SVSAFEARRAY SafeArray;
-
-			SafeArray.assign(AllValues.begin(), AllValues.end());
-
-			rValue = SafeArray;
-		}
-	}
-	else
-	{
-		ValueType Value;
-		Result = GetValue(Value, Index, Bucket);
-		if (S_OK == Result)
-		{
-			rValue = ValueType2Variant(Value);
-		}
-		else
-		{
-			rValue.Clear();
-		}
-	}
-
-	return Result;
-}
-
-template <typename T>
-__forceinline HRESULT SVValueObjectClass<T>::CopyValue(int DestBucket)
-{
-	HRESULT Result(E_FAIL);
-
-	if (m_isBucketized)
-	{
-		if (DestBucket >= 0 && DestBucket < m_NumberOfBuckets)
-		{
-			if (1 == m_ArraySize)
-			{
-				assert(nullptr != m_pBucket.get());
-				if (nullptr != m_pBucket.get())
-				{
-					m_pBucket->at(DestBucket) = m_Value;
-				}
-				else
-				{
-					Result = E_POINTER;
-				}
-			}
-			else
-			{
-				assert(nullptr != m_pBucketArray.get());
-				if (nullptr != m_pBucketArray.get())
-				{
-					m_pBucketArray->at(DestBucket) = m_ValueArray;
-				}
-				else
-				{
-					Result = E_POINTER;
-				}
-			}
-
-			Result = S_OK;
-		}
-	}
-	else
-	{
-		//If not bucketized does not need to be copied
-		Result = S_OK;
-	}
-
-	return Result;
 }
 
 template <typename T>
@@ -993,65 +644,12 @@ HRESULT SVValueObjectClass<T>::CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD MemBy
 	return Result;
 }
 
-
 template <typename T>
-void SVValueObjectClass<T>::CreateBuckets()
+void SVValueObjectClass<T>::init()
 {
-	m_objectDepth = (m_objectDepth < 2) ? 2 : m_objectDepth;
-	m_NumberOfBuckets = m_objectDepth;
-
-	if (isBucketized())
-	{
-		if (!isArray())
-		{
-			if (nullptr == m_pBucket.get())
-			{
-				SVObjectManagerClass::Instance().createBucket(m_pBucket, m_DefaultValue, m_NumberOfBuckets);
-				m_pBucket->at(1) = m_Value;
-			}
-			else if (static_cast<int> (m_pBucket->size()) != m_NumberOfBuckets)
-			{
-				m_pBucket->resize(m_NumberOfBuckets, m_DefaultValue);
-			}
-
-		}
-		else
-		{
-			ValueVector DefaultArray;
-			DefaultArray.resize(m_ArraySize, m_DefaultValue);
-			if (nullptr == m_pBucketArray.get())
-			{
-				SVObjectManagerClass::Instance().createBucket(m_pBucketArray, DefaultArray, m_NumberOfBuckets);
-				//Now set the array size for each bucket
-				BucketVector::iterator Iter = m_pBucketArray->begin();
-				for (; m_pBucketArray->end() != Iter; ++Iter)
-				{
-					Iter->resize(m_ArraySize);
-				}
-				m_pBucketArray->at(1) = m_ValueArray;
-			}
-			else if (static_cast<int> (m_pBucketArray->size()) != m_NumberOfBuckets)
-			{
-				m_pBucketArray->resize(m_NumberOfBuckets, DefaultArray);
-			}
-		}
-	}
-	else
-	{
-		m_pBucket.reset();
-		m_pBucketArray.reset();
-	}
-}
-
-template <typename T>
-void SVValueObjectClass<T>::InitializeBuckets()
-{
-	m_objectDepth = 2;
 	m_ArraySize = 1;
 
 	m_Value = m_DefaultValue;
-
-	CreateBuckets();
 }
 
 template <typename T>
@@ -1102,37 +700,17 @@ inline HRESULT SVValueObjectClass<T>::ValidateMemoryBlockParameters(BYTE* pMemor
 	return Result;
 }
 template <typename T>
-typename T* SVValueObjectClass<T>::getValuePointer(int Index, int Bucket)
+typename T* SVValueObjectClass<T>::getValuePointer(int Index)
 {
 	ValueType* pResult(nullptr);
 
-	if (!m_isBucketized || -1 == Bucket)
+	if (1 == m_ArraySize)
 	{
-		if (1 == m_ArraySize)
-		{
-			pResult = &m_Value;
-		}
-		else
-		{
-			pResult = &m_ValueArray[Index];
-		}
+		pResult = &m_Value;
 	}
 	else
 	{
-		if (1 == m_ArraySize)
-		{
-			if (nullptr != m_pBucket.get())
-			{
-				pResult = &m_pBucket->at(Bucket);
-			}
-		}
-		else
-		{
-			if (nullptr != m_pBucketArray.get())
-			{
-				pResult = &m_pBucketArray->at(Bucket)[Index];
-			}
-		}
+		pResult = &m_ValueArray[Index];
 	}
 
 	return pResult;
@@ -1159,21 +737,126 @@ inline void SVValueObjectClass<T>::swap(SVValueObjectClass& rRhs)
 		std::swap(m_DefaultValue, rRhs.m_DefaultValue);
 		std::swap(m_Value, rRhs.m_Value);
 		std::swap(m_ValueArray, rRhs.m_ArrayValues);
-		std::swap(m_NumberOfBuckets, rRhs.m_NumberOfBuckets);
 		std::swap(m_ArraySize, rRhs.m_ArraySize);
 		std::swap(m_ResultSize, rRhs.m_ResultSize);
 		std::swap(m_bLegacyVectorObjectCompatibility, rRhs.m_bLegacyVectorObjectCompatibility);
 		std::swap(m_bResetAlways, m_bResetAlways);
 		std::swap(m_eResetItem, m_eResetItem);
-		if (!m_pBucket.empty() && !rRhs.m_pBucket.empty())
-		{
-			std::swap(*m_pBucket, *rRhs.m_pBucket);
-		}
-		if (!m_pBucketArray.empty() && !rRhs.m_pBucketArray.empty())
-		{
-			std::swap(*m_pBucketArray, *rRhs.m_pBucketArray);
-		}
 	}
 }
+
+template <typename T>
+T SVValueObjectClass<T>::convertVariantValue(const _variant_t& rValue) const
+{
+	T result;
+
+	//From GUI values are set using VT_BSTR
+	if (VT_BSTR == rValue.vt)
+	{
+		result = ConvertString2Type(SvUl::createStdString(rValue));
+	}
+	//!For type safety check that the VT type is either the default value main value or when not set yet (VT_EMPTY)
+	else if (ValueType2Variant(m_DefaultValue).vt == rValue.vt || ValueType2Variant(m_Value).vt == rValue.vt || ValueType2Variant(m_Value).vt == VT_EMPTY)
+	{
+		result = Variant2ValueType(rValue);
+	}
+	else
+	{
+		//This happens if the variant to convert is of a different type then this value object!
+		assert(false);
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+		Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_WrongType, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+		Exception.Throw();
+	}
+	return result;
+}
+
+template <typename T>
+std::vector<T> SVValueObjectClass<T>::variant2VectorType(const _variant_t& rValue) const
+{
+	std::vector<T> result;
+
+	if (!isArray() || 0 == (VT_ARRAY & rValue.vt) || nullptr == rValue.parray)
+	{
+		T value = convertVariantValue(rValue);
+		result.emplace_back(value);
+	}
+	else
+	{
+		long arraySize {0L};
+		if (1 == ::SafeArrayGetDim(rValue.parray))
+		{
+			long lowerBound {0L};
+			long upperBound {0L};
+
+			if (S_OK == ::SafeArrayGetLBound(rValue.parray, 1, &lowerBound))
+			{
+				if (S_OK == ::SafeArrayGetUBound(rValue.parray, 1, &upperBound))
+				{
+					arraySize = upperBound - lowerBound + 1;
+				}
+			}
+		}
+
+		if (arraySize > 0)
+		{
+			result.resize(arraySize);
+			//set all value to array
+			for (long i = 0; i < arraySize; i++)
+			{
+				_variant_t variantValue;
+				HRESULT tempHr = ::SafeArrayGetElement(rValue.parray, &i, variantValue.GetAddress());
+			
+				T value = convertVariantValue(variantValue);
+				result[i] = value;
+			}
+		}
+		else
+		{
+			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+			Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_ArraySizeInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10029_ValueObject_Parameter_WrongSize, GetUniqueObjectID());
+			Exception.Throw();
+		}
+	}
+
+	return result;
+}
+
+template <typename T>
+_variant_t SVValueObjectClass<T>::variantVector2SafeArray(std::vector<_variant_t>&& valueVector) const
+{
+	_variant_t result;
+
+	const long size = static_cast<unsigned long> (valueVector.size());
+
+	if(size > 0)
+	{
+		SAFEARRAYBOUND arrayBound;
+		arrayBound.lLbound = 0;
+		arrayBound.cElements = size;
+		VARTYPE varType = valueVector[0].vt;
+		result.parray = ::SafeArrayCreate(varType, 1, &arrayBound);
+		result.vt = varType | VT_ARRAY;
+
+		if (nullptr != result.parray)
+		{
+			for (long i = 0; i < size; ++i)
+			{
+				if (VT_BSTR == varType)
+				{
+					_bstr_t stringValue(valueVector[i].bstrVal);
+					::SafeArrayPutElement(result.parray, &i, stringValue.Detach());
+				}
+				else
+				{
+					::SafeArrayPutElement(result.parray, &i, &valueVector[i]);
+				}
+			}
+		}
+	}
+
+	return result;
+}
+
 #pragma endregion Protected Methods
 

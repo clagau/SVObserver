@@ -42,7 +42,7 @@
 #include "SVConfigurationObject.h"
 #include "SVInspectionProcess.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
-#include "SVInputObjectList.h"
+#include "SVIOLibrary/SVInputObjectList.h"
 #include "InspectionEngine/SVTool.h"
 #include "SVCommandInspectionCollectImageData.h"
 
@@ -53,6 +53,7 @@
 #include "SVVisionProcessorHelper.h"
 #include "TextDefinesSvO.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "SVUtilityLibrary/SVSafeArray.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "ObjectInterfaces/ICommand.h"
@@ -1120,7 +1121,7 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 
 				if (!ObjectRef.isEntireArray())
 				{
-					HRESULT hrGet = ObjectRef.getValueObject()->getValue(Value, ObjectRef.getValidArrayIndex(), l_BucketHandle.GetIndex());
+					HRESULT hrGet = ObjectRef.getValueObject()->getValue(Value, ObjectRef.getValidArrayIndex());
 					if (S_OK == hrGet)
 					{
 						// put value in return array
@@ -1166,7 +1167,7 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 					std::string ArrayValues;
 					for (int iArrayIndex = 0; iArrayIndex < NumResults; iArrayIndex++)
 					{
-						HRESULT hrGet = ObjectRef.getValueObject()->getValue(Value, iArrayIndex, l_BucketHandle.GetIndex());
+						HRESULT hrGet = ObjectRef.getValueObject()->getValue(Value, iArrayIndex);
 						if (S_OK == hrGet)
 						{
 							if (iArrayIndex > 0)
@@ -1256,7 +1257,6 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 		{
 			HRESULT hrTemp = SafeArrayPutElement(*ppsaStatus, &lIndex, &lDefaultStatus);
 			// No overlays for no for product source images
-			// overlays are not bucketized
 			bstr = nullptr;
 			hrTemp = SafeArrayPutElement(*ppsaOverlays, &lIndex, bstr);
 		}

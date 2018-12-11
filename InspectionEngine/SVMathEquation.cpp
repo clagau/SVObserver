@@ -43,8 +43,6 @@ void SVMathEquationClass::init()
 	// Since out inputs are dynamic via the script specified
 	// So the input will be identified when the script is created.
 	
-	// SetObjectDepth() already called in SVObjectClass Ctor
-
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &result, SVMathEquationResultObjectGuid, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone );
 

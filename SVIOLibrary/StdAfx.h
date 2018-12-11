@@ -44,7 +44,21 @@
 //! Precompiled headers section
 //************************************
 #pragma region Precompiled Headers
-#include <Windows.h>
+#include <windows.h>
 
-#include <vector>							//Used by static library
+#include <comdef.h>
+#include <concrt.h>							//Used by static library
+#include <ctime>							//Used by static library
+#include <deque>
+#include <map>
+#include <memory>
+#include <ppl.h>							//Used by static library
+#include <sequential_tree.h>				//Used by static library
+#include <set>
+#include <string>
+#include <tchar.h>
+#include <vector>
+#include <utility>							//Used by static library
+
+#include <boost/function.hpp>				//Used by static library
 #pragma endregion Precompiled Headers

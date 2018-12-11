@@ -243,26 +243,6 @@ HRESULT SVObjectManagerClass::UpdateObservers( const std::string& rSubjectDataNa
 	return Result;
 }
 
-template< typename DataType >
-bool SVObjectManagerClass::createBucket( std::unique_ptr<std::vector<DataType>>& rpBucket, const DataType& rDefault, int NumberOfBuckets )
-{
-	if(nullptr != rpBucket.get())
-	{
-		rpBucket.reset();
-	}
-	
-	try
-	{
-		rpBucket = std::unique_ptr<std::vector<DataType>> (new std::vector<DataType>);
-		rpBucket->resize( NumberOfBuckets, rDefault );
-		return true;
-	}
-	catch( std::exception& )
-	{
-		return false;
-	}
-}
-
 template<typename ObjectVisitor>
 HRESULT SvOi::visitElements( ObjectVisitor& rVisitor, const SVGUID& rStartingObjectID )
 {

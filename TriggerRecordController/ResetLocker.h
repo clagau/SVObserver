@@ -15,13 +15,12 @@ namespace SvTrc
 {
 	class ResetLocker final
 	{
-	private:
-		ResetLocker(long& rRefCount) : m_rRefCount(rRefCount) 
+	public:
+		ResetLocker(long& rRefCount) : m_rRefCount(rRefCount)
 		{
 			InterlockedIncrement(&m_rRefCount);
 		};
 
-	public:
 		~ResetLocker()
 		{
 			long value = InterlockedDecrement(&m_rRefCount);
@@ -40,12 +39,12 @@ namespace SvTrc
 		{
 			static auto& controller = TriggerRecordController::getTriggerRecordControllerInstance();
 			long& resetLockCounter = controller.getResetLockCounterRef();
-			ResetLockerPtr retValue = ResetLockerPtr(new ResetLocker(resetLockCounter));
+			ResetLockerPtr retValue = std::make_unique<ResetLocker>(resetLockCounter);
 			if (controller.getResetId() == resetId)
 			{
-				return retValue;
+				return std::move(retValue);
 			}
-			return ResetLockerPtr();
+			return nullptr;
 		}
 
 	private:

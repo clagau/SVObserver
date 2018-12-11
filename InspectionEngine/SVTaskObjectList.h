@@ -68,9 +68,6 @@ public:
 	int Add( SVTaskObjectClass* pTaskObject, bool atBegin = false );
 	HRESULT RemoveChild( SVTaskObjectClass* pChildObject );	
 
-	virtual void SetObjectDepth( int NewObjectDepth ) override;
-	virtual void SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex ) override;
-
 	virtual void SetInvalid() override;
 	virtual void SetDisabled() override;
 

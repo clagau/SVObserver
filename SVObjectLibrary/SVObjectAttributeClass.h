@@ -31,7 +31,7 @@ public:
 
 	virtual ~SVObjectAttributeClass();
 
-	SVObjectAttributeClass& operator=(const SVObjectAttributeClass& rRhs); // @WARNING Should be const & - See Implementation
+	SVObjectAttributeClass& operator=(const SVObjectAttributeClass& rRhs);
 
 	LPCTSTR GetName() const;
 	SVObjectScriptDataObjectTypeEnum GetType() const;

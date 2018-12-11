@@ -483,7 +483,7 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 
 				// get Input object name
 				SVStringValueObjectClass& rvo = m_Data.m_aInputObjectNames[i];
-				rvo.SetDefaultValue(SvUl::createStdString(paInputValueDefs[i].m_bDisplayName), true);	// set to all buckets
+				rvo.SetDefaultValue(SvUl::createStdString(paInputValueDefs[i].m_bDisplayName), true);
 			
 			}// end for ( int i = 0 ; i < m_Data.m_lNumInputValues ; i++)
 
@@ -907,7 +907,6 @@ bool SVExternalToolTask::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 					// collect result image copies
 					for ( i=0; i < m_Data.m_lNumResultImages; i++)
 					{
-						// Always use bucket 0 for copy
 						SvOi::SVImageBufferHandlePtr l_ImageBuffer = m_aResultImagesCopy[i];
 						SVMatroxBuffer buffer;
 

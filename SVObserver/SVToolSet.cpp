@@ -40,8 +40,6 @@ void SVToolSetClass::init()
 
 	// Identify our input type needs
 
-	// SetObjectDepth() already called in SVObjectClass Ctor
-
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &m_Enabled, SVToolSetEnabledObjectGuid, IDS_OBJECTNAME_ENABLED, false, SvOi::SVResetItemNone );
 	RegisterEmbeddedObject( &m_MainImageObject, SVOutputImageObjectGuid, IDS_OBJECTNAME_IMAGE1 );

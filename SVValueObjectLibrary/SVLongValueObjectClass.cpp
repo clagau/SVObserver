@@ -116,5 +116,5 @@ void SVLongValueObjectClass::LocalInitialize()
 	SetTypeName( _T("Integer32") );
 
 	setOutputFormat( _T("%d") );
-	InitializeBuckets();
+	init();
 }

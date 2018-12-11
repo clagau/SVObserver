@@ -72,9 +72,6 @@
     <ClCompile Include="DependencyManager.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVIOEntryHostStruct.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdAfx.h">
@@ -162,9 +159,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="DottedNameLookup.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVIOEntryHostStruct.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

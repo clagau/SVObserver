@@ -351,6 +351,6 @@ void SVEnumerateValueObjectClass::LocalInitialize()
 
 	SetTypeName( _T("Enumeration") );
 
-	InitializeBuckets();
+	init();
 }
 

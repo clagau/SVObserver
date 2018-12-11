@@ -18,7 +18,7 @@
 #include "SVObjectCommandDataJson.h"
 #include "SVRemoteOutputGroup.h"
 #include "SVRemoteOutputGroupAddRemoveDlg.h"
-#include "SVRemoteOutputObject.h"
+#include "SVIOLibrary/SVRemoteOutputObject.h"
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 

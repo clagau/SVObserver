@@ -12,6 +12,7 @@
 #pragma once
 
 #pragma region Includes
+#include "SVOResource/resource.h"
 #include "SVInputObject.h"
 #pragma endregion Includes
 

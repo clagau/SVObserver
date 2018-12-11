@@ -17,7 +17,7 @@
 #include "SVUtilityLibrary/SVGUID.h"
 
 #include "SVInfoStructs.h"
-#include "SVRemoteOutputObject.h"
+#include "SVIOLibrary/SVRemoteOutputObject.h"
 #include "SVXMLLibrary\SVObjectXMLWriter.h"
 
 #pragma endregion Includes

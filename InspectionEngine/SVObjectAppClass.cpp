@@ -89,9 +89,6 @@ bool SVObjectAppClass::CreateChildObject( SVObjectClass* pChildObject, DWORD con
 			l_LastIndex = m_pInspectionInterface->GetLastIndex();
 		}
 
-		// Set first object depth...
-		pChildObject->SetObjectDepthWithIndex( m_objectDepth, l_LastIndex );
-
 		bool Result = createAllObjectsFromChild( *pChildObject );
 
 		if( SvDef::SVMFResetObject == ( context & SvDef::SVMFResetObject ) )

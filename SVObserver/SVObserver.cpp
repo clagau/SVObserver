@@ -49,10 +49,10 @@
 #include "SVToolSet.h"
 #include "ExtrasEngine.h"
 
-#include "SVInputObjectList.h"
-#include "SVOutputObjectList.h"
-#include "SVDigitalInputObject.h"
-#include "SVDigitalOutputObject.h"
+#include "SVIOLibrary/SVInputObjectList.h"
+#include "SVIOLibrary/SVOutputObjectList.h"
+#include "SVIOLibrary/SVDigitalInputObject.h"
+#include "SVIOLibrary/SVDigitalOutputObject.h"
 
 
 #include "SVXMLLibrary\LoadConfiguration.h"
@@ -1145,7 +1145,7 @@ void SVObserverApp::OnGoOffline()
 		{
 			StopRegression();
 		}
-		OnStop();
+			OnStop();
 	}// end if ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
 }
 
@@ -3994,6 +3994,7 @@ bool SVObserverApp::ShowConfigurationAssistant(int Page /*= 3*/,
 			long lPPQ = 0;
 			long lPPQCount = 0;
 
+			SVIOConfigurationInterfaceClass::Instance().Init();
 			SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount(ulCount);
 
 			if (nullptr != pConfig)
@@ -4033,7 +4034,7 @@ bool SVObserverApp::ShowConfigurationAssistant(int Page /*= 3*/,
 				{
 					SVDigitalOutputObject* pOutput(nullptr);
 					const int moduleReadyChannel = 15;
-					pOutput = dynamic_cast<SVDigitalOutputObject*> (pOutputObjectList->GetOutputFlyweight(SvO::cModuleReady, SvPb::SVDigitalOutputObjectType, moduleReadyChannel));
+					pOutput = dynamic_cast<SVDigitalOutputObject*> (pOutputObjectList->GetOutputFlyweight(SvDef::cModuleReady, SvPb::SVDigitalOutputObjectType, moduleReadyChannel));
 
 					// @HACK:  JAB082212 HACK!!!!!
 					if (nullptr != pOutput)
@@ -5117,8 +5118,6 @@ void SVObserverApp::Start()
 			l_trgrDlg.SelectTrigger();
 		}
 	}
-
-
 	catch (const SvStl::MessageContainer& rExp)
 	{
 		//cleanup goOnline, after fail, before exception leave this method

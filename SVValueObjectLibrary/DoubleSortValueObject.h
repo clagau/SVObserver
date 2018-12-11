@@ -35,10 +35,9 @@ public:
 public:
 	const ValueObjectSortContainer& getSortContainer() const { return m_sortContainer; };
 	HRESULT setSortContainer(const ValueObjectSortContainer& sortMap);
-	virtual HRESULT CopyValue(int iDestBucket) override;
 	virtual HRESULT SetValue(const double& rValue, int Index) override;
-	virtual HRESULT GetValue(double& rValue, int Index = -1, int Bucket = -1) const override;
-	virtual HRESULT getValues(std::vector<_variant_t>&  rValues, int Bucket = -1) const override;
+	virtual HRESULT GetValue(double& rValue, int Index = -1) const override;
+	virtual HRESULT getValues(std::vector<_variant_t>&  rValues) const override;
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -47,7 +46,7 @@ protected:
 	/// ATTENTION: Do not use m_aiResultSize, this must be on ArraySize because otherwise ValidateIndexes can failed even if index valid.
 	/// \returns int Result size
 	virtual int getResultSize() const override { return static_cast<int> (m_sortContainer.size()); };
-	virtual HRESULT GetArrayValues( std::vector<double>& rValues, int Bucket ) const override;
+	virtual HRESULT GetArrayValues( std::vector<double>& rValues) const override;
 
 	//! Copies the value object to the memory block
 	//! \param pMemoryBlock [in] Pointer to the byte address of the memory block

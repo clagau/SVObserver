@@ -29,12 +29,12 @@
 #include "SVAcquisitionDevice.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVObserver.h"
-#include "SVInputObjectList.h"
-#include "SVOutputObjectList.h"
-#include "SVRemoteInputObject.h"
 #include "SVCommandInspectionGetItems.h"
-#include "SVDigitalInputObject.h"
-#include "SVDigitalOutputObject.h"
+#include "SVIOLibrary/SVInputObjectList.h"
+#include "SVIOLibrary/SVOutputObjectList.h"
+#include "SVIOLibrary/SVRemoteInputObject.h"
+#include "SVIOLibrary/SVDigitalInputObject.h"
+#include "SVIOLibrary/SVDigitalOutputObject.h"
 #include "SVMainFrm.h"
 #include "SVIODoc.h"
 #include "SVIOController.h"
@@ -47,7 +47,7 @@
 #include "SVConfigurationTreeWriter.h"
 #include "TriggerInformation/SVCameraTriggerClass.h"
 #include "TriggerInformation/SVHardwareManifest.h"
-#include "SVCameraDataInputObject.h"
+#include "SVIOLibrary/SVCameraDataInputObject.h"
 #include "SVGlobal.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVStorageResult.h"
@@ -804,9 +804,7 @@ HRESULT SVConfigurationObject::AddRemoteInput(SVPPQObject* pPPQ, const std::stri
 	SVVariantValueObjectClass* pValueObject = new SVVariantValueObjectClass();
 	pValueObject->SetName(name.c_str());
 	pValueObject->SetObjectOwner(pPPQ);
-	pValueObject->SetObjectDepth(10);
 	pValueObject->setResetOptions(false, SvOi::SVResetItemNone);
-	pValueObject->setBucketized(true);
 	pValueObject->SetObjectAttributesAllowed(SvDef::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute);
 	pValueObject->ResetObject();
 
@@ -845,9 +843,7 @@ HRESULT SVConfigurationObject::AddDigitalInput(SVPPQObject* pPPQ, const std::str
 	SVBoolValueObjectClass* pValueObject = new SVBoolValueObjectClass();
 	pValueObject->SetName(name.c_str());
 	pValueObject->SetObjectOwner(pPPQ);
-	pValueObject->SetObjectDepth(10);
 	pValueObject->setResetOptions(false, SvOi::SVResetItemNone);
-	pValueObject->setBucketized(true);
 	pValueObject->SetObjectAttributesAllowed(SvDef::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute);
 	pValueObject->ResetObject();
 
@@ -1133,11 +1129,11 @@ bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
 					pOutput->Invert(bInverted);
 					pOutput->Combine(bCombined, bCombinedACK);
 
-					if (SvO::cModuleReady == IOName)
+					if (SvDef::cModuleReady == IOName)
 					{
 						l_ModuleReadyId = pOutput->GetUniqueObjectID();
 					}
-					else if (SvO::cRaidErrorIndicator == IOName)
+					else if (SvDef::cRaidErrorIndicator == IOName)
 					{
 						l_RaidErrorId = pOutput->GetUniqueObjectID();
 					}
@@ -1194,7 +1190,7 @@ bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
 	if (l_ModuleReadyId.empty())
 	{
 		SVDigitalOutputObject* pOutput(nullptr);
-		pOutput = dynamic_cast<SVDigitalOutputObject*> (m_pOutputObjectList->GetOutputFlyweight(SvO::cModuleReady, SvPb::SVDigitalOutputObjectType));
+		pOutput = dynamic_cast<SVDigitalOutputObject*> (m_pOutputObjectList->GetOutputFlyweight(SvDef::cModuleReady, SvPb::SVDigitalOutputObjectType));
 
 		if (nullptr != pOutput)
 		{
@@ -1954,24 +1950,6 @@ bool SVConfigurationObject::LoadInspection(SVTreeType& rTree)
 				{
 					pInspection->setEnableAuxiliaryExtent(1 == EnableAuxiliaryExtent);
 				}
-
-				SVTreeType::SVBranchHandle hDataChild(nullptr);
-
-				if (SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::CTAG_VIEWED_INPUTS, hSubChild, hDataChild))
-				{
-					SVTreeType::SVBranchHandle hViewed(nullptr);
-
-					hViewed = rTree.getFirstBranch(hDataChild);
-
-					while (nullptr != hViewed)
-					{
-						std::string Name = rTree.getBranchName(hViewed);
-
-						pInspection->getViewedInputNames().push_back(Name);
-
-						hViewed = rTree.getNextBranch(hDataChild, hViewed);
-					}
-				}
 			}
 		}
 
@@ -2109,23 +2087,8 @@ bool SVConfigurationObject::LoadPPQ(SVTreeType& rTree)
 				pPPQ->SetConditionalOutputName(condition);
 			}
 		}
-		// Update source to remove SVOVariant
-		// PPQ State Variable
-		// Load the Unique Reference ID for the PPQ
-		bool bTmp = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_PPQ_STATE_UNIQUEID, hSubChild, Value);
 
-		if (bTmp)
-		{
-			SVGUID UniqueID(Value);
-
-			SVObjectManagerClass::Instance().CloseUniqueObjectID(&pPPQ->m_voOutputState);
-
-			pPPQ->m_voOutputState.m_outObjectInfo.GetObjectReference().setGuid(UniqueID);
-
-			SVObjectManagerClass::Instance().OpenUniqueObjectID(&pPPQ->m_voOutputState);
-		}// end if
-
-		bTmp = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_PPQ_TRIGGER_COUNT_ID, hSubChild, Value);
+		bool bTmp = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_PPQ_TRIGGER_COUNT_ID, hSubChild, Value);
 		if (bTmp)
 		{
 			SVGUID UniqueID(Value);
@@ -3407,12 +3370,6 @@ void SVConfigurationObject::SavePPQ_Attributes(SvXml::SVObjectXMLWriter& rWriter
 	svValue.SetString(l_condition.c_str());
 	rWriter.WriteAttribute(SvXml::CTAG_PPQ_CONDITIONAL_OUTPUT, svValue);
 	svValue.Clear();
-
-	// Save State Objects unique ID
-	ObjectGuid = rPPQ.m_voOutputState.GetUniqueObjectID();
-	svValue = ObjectGuid.ToVARIANT();
-	rWriter.WriteAttribute(SvXml::CTAG_PPQ_STATE_UNIQUEID, svValue);
-	svValue.Clear();
 }
 
 void SVConfigurationObject::SavePPQ_Cameras(SvXml::SVObjectXMLWriter& rWriter, const SVPPQObject& rPPQ) const
@@ -4073,15 +4030,11 @@ void SVConfigurationObject::SetupCameraTrigger(SvTi::SVCameraTriggerClass* pTrig
 
 	if (pPPQ)
 	{
-		long depth;
-		pPPQ->GetPPQLength(depth);
-		depth += pPPQ->GetExtraBufferSize();
-
 		SvTi::SVCameraTriggerData& rCameraTriggerData = pPPQ->GetCameraInputData();
-		SVIOEntryHostStructPtr ioEntry = rCameraTriggerData.SetupLineStateInput(depth);
+		SVIOEntryHostStructPtr ioEntry = rCameraTriggerData.SetupLineStateInput();
 		AddCameraDataInput(pPPQ, ioEntry);
 
-		ioEntry = rCameraTriggerData.SetupTimestampInput(depth);
+		ioEntry = rCameraTriggerData.SetupTimestampInput();
 		AddCameraDataInput(pPPQ, ioEntry);
 	}
 }

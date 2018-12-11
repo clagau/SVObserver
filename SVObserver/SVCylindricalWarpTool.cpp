@@ -41,7 +41,6 @@ bool SVCylindricalWarpToolClass::CreateObject( const SVObjectLevelCreateStruct& 
 		l_bOk = S_OK == LocalCreate();
 	}
 
-	m_SourceImageNames.setStatic( true );
 	m_SourceImageNames.setSaveValueFlag(false);
 	m_SourceImageNames.SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
 

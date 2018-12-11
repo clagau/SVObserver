@@ -168,12 +168,6 @@
     <ClCompile Include="SVInfoStructs.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVInputObject.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVInputObjectList.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVInspectionProcess.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -339,12 +333,6 @@
     <ClCompile Include="SVOTriggerDeviceDlg.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVOutputObject.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVOutputObjectList.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVParserProgressDialog.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -417,9 +405,6 @@
     <ClCompile Include="SVRemoteFontManager.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVRemoteInputObject.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVRemoteInputsView.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -439,9 +424,6 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVRemoteOutputGroupAddRemoveDlg.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVRemoteOutputObject.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVRemoteOutputsView.cpp">
@@ -588,9 +570,6 @@
     <ClCompile Include="SVCommandInspectionGetItems.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVCameraDataInputObject.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVImportedInspectionInfo.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -733,12 +712,6 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVMeasureAnalyzerAdjustmentSheet.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVDigitalInputObject.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVDigitalOutputObject.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="TableTool.cpp">
@@ -982,12 +955,6 @@
     <ClInclude Include="SVImageViewScroll.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVInputObject.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVInputObjectList.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVInspectionProcess.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -1171,12 +1138,6 @@
     <ClInclude Include="SVOTriggerDeviceDlg.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVOutputObject.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVOutputObjectList.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVParserProgressDialog.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -1255,9 +1216,6 @@
     <ClInclude Include="SVRemoteFontManager.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVRemoteInputObject.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVRemoteInputsView.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -1267,7 +1225,7 @@
     <ClInclude Include="SVRemoteIOAdjustDialog.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVRemoteOutputDataController.H">
+    <ClInclude Include="SVRemoteOutputDataController.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVRemoteOutputEditDialog.h">
@@ -1277,9 +1235,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVRemoteOutputGroupAddRemoveDlg.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVRemoteOutputObject.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVRemoteOutputsView.h">
@@ -1412,9 +1367,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVTriggerSelectionDlg.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVCameraDataInputObject.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVCommandInspectionGetItems.h">
@@ -1589,12 +1541,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMeasureAnalyzerAdjustmentSheet.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVDigitalInputObject.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVDigitalOutputObject.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVAcquisitionDevice.h">

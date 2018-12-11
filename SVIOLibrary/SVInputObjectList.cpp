@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVInputObjectList.h"
-#include "SVInfoStructs.h"
+#include "SVIOEntryStruct.h"
 #include "SVCameraDataInputObject.h"
 #include "SVDigitalInputObject.h"
 #include "SVRemoteInputObject.h"
@@ -242,18 +242,18 @@ HRESULT SVInputObjectList::DetachInput( const SVGUID& p_rOutputID )
 	return l_Status;
 }// end RemoveInput
 
-bool SVInputObjectList::ReadInputs( const SVIOEntryHostStructPtrVector& p_rInputs, SVVariantBoolVector& p_rInputValues )
+bool SVInputObjectList::ReadInputs( const SVIOEntryHostStructPtrVector& rInputs, VariantBoolPairVector& rInputValues )
 {
-	size_t l_IOSize( p_rInputs.size() );
+	size_t inputSize( rInputs.size() );
 	size_t i( 0 );
 
 	if( Lock() )
 	{
-		p_rInputValues.resize( l_IOSize );
+		rInputValues.resize( inputSize );
 
-		for( i = 0; i < l_IOSize; i++ )
+		for( i = 0; i < inputSize; i++ )
 		{
-			SVIOEntryHostStructPtr pIOEntry = p_rInputs[i];
+			SVIOEntryHostStructPtr pIOEntry = rInputs[i];
 
 			// Check if output is enabled for this call
 			if(nullptr != pIOEntry && pIOEntry->m_Enabled )
@@ -269,12 +269,12 @@ bool SVInputObjectList::ReadInputs( const SVIOEntryHostStructPtrVector& p_rInput
 
 				if( nullptr != pInput )
 				{
-					p_rInputValues[ i ].second = ( S_OK == pInput->Read( p_rInputValues[ i ].first ) );
+					rInputValues[ i ].second = ( S_OK == pInput->Read( rInputValues[ i ].first ) );
 				}
 				else
 				{
-					p_rInputValues[ i ].first.Clear();
-					p_rInputValues[ i ].second = false;
+					rInputValues[ i ].first.Clear();
+					rInputValues[ i ].second = false;
 				}
 			}// end if
 		}// end for

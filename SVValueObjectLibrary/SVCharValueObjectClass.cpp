@@ -127,7 +127,7 @@ void SVCharValueObjectClass::LocalInitialize()
 	DefaultValue() = 0;
 	SetTypeName( _T("Char") );
 	setOutputFormat( _T("%c") );
-	InitializeBuckets();
+	init();
 }
 
 

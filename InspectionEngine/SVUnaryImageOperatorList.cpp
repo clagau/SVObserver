@@ -111,8 +111,6 @@ void SVUnaryImageOperatorListClass::init()
 	m_inputImageObjectInfo.SetObject(GetObjectInfo());
 	RegisterInputObject(&m_inputImageObjectInfo, _T("UnaryImageOperatorListImage"));
 
-	// SetObjectDepth() already called in SVObjectClass Ctor
-
 	// Register Embedded Objects
 
 	// Set Embedded defaults

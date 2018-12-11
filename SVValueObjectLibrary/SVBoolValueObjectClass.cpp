@@ -129,7 +129,7 @@ void SVBoolValueObjectClass::LocalInitialize()
 	DefaultValue() = false;
 	SetTypeName( _T("Bool") );
 
-	InitializeBuckets();
+	init();
 }
 
 

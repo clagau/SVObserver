@@ -35,9 +35,9 @@
 #include "SVObserver.h"
 #include "InspectionEngine/SVTool.h"
 #include "SVToolSet.h"
-#include "SVInputObjectList.h"
-#include "SVDigitalInputObject.h"
-#include "SVDigitalOutputObject.h"
+#include "SVIOLibrary/SVInputObjectList.h"
+#include "SVIOLibrary/SVDigitalInputObject.h"
+#include "SVIOLibrary/SVDigitalOutputObject.h"
 #include "SVArchiveTool.h"
 #include "SVArchiveRecord.h"
 #include "SVArchiveRecordsArray.h"
@@ -1998,18 +1998,11 @@ void SVConfigurationPrint::PrintPPQBarSection(CDC* pDC, CPoint& ptCurPos, int nI
 				}
 			}
 
-			long lIOEntries;
-			SVIOEntryHostStructPtrVector ppIOEntries;
-
-			pPPQ->GetAllInputs( ppIOEntries );
-
-			lIOEntries = static_cast< long >( ppIOEntries.size() );
-
-			for (int intIOEntry = 0; intIOEntry < lIOEntries; intIOEntry++)
+			for(const auto& pEntry : pPPQ->GetAllInputs())
 			{
-				if (ppIOEntries[intIOEntry]->m_PPQIndex == intPPQPos)
+				if (pEntry->m_PPQIndex == intPPQPos)
 				{
-					SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( ppIOEntries[intIOEntry]->m_IOId );
+					SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( pEntry->m_IOId );
 
 					if (!bPosPrint)
 					{
@@ -2031,9 +2024,9 @@ void SVConfigurationPrint::PrintPPQBarSection(CDC* pDC, CPoint& ptCurPos, int nI
                     }
                     else
                     {
-                        if ( ppIOEntries[intIOEntry]->getObject()->IsValid() )
+                        if ( pEntry->getObject()->IsValid() )
                         {
-                            ptCurPos.y += PrintString(pDC, ptTemp, ppIOEntries[intIOEntry]->getObject()->GetName());
+                            ptCurPos.y += PrintString(pDC, ptTemp, pEntry->getObject()->GetName());
                         } // end if
                     } //end else
 				}

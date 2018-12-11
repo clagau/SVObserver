@@ -149,14 +149,12 @@ namespace SvOi
 		//! Gets the value for Value object NOTE: This is placed here instead of IValueObject for performance reasons !
 		//! \param rValue [out] The reference to write the value to
 		//! \param Index [in] The corresponding array index to write to, if required
-		//! \param Bucket [in] The corresponding bucket index to get, if required
 		//! \returns S_OK if succeeded
-		virtual HRESULT getValue(double& rValue, int Index = -1, int Bucket = -1) const = 0;
+		virtual HRESULT getValue(double& rValue, int Index = -1) const = 0;
 
 		//! Gets the values for Value object NOTE: This is placed here instead of IValueObject for performance reasons !
 		//! \param rValue [out] The reference to double vector to store the values
-		//! \param Bucket [in] The corresponding bucket index to get, if required
 		//! \returns S_OK if succeeded
-		virtual HRESULT getValues(std::vector<double>& rValues, int Bucket = -1) const = 0;
+		virtual HRESULT getValues(std::vector<double>& rValues) const = 0;
 	};
 } //namespace SvOi

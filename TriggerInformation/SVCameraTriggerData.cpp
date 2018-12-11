@@ -73,9 +73,8 @@ namespace SvTi
 	{
 	}
 
-	SVIOEntryHostStructPtr SVCameraTriggerData::SetupLineStateInput(long objectDepth)
+	SVIOEntryHostStructPtr SVCameraTriggerData::SetupLineStateInput()
 	{
-		m_lineInState.SetObjectDepth(objectDepth);
 		m_lineInState.SetObjectOwner(this);
 		m_lineInState.SetDefaultValue(BOOL(false), false);
 		m_lineInState.SetValue(BOOL(false));
@@ -91,9 +90,8 @@ namespace SvTi
 		return pIOEntry;
 	}
 
-	SVIOEntryHostStructPtr SVCameraTriggerData::SetupTimestampInput(long objectDepth)
+	SVIOEntryHostStructPtr SVCameraTriggerData::SetupTimestampInput()
 	{
-		m_timestamp.SetObjectDepth(objectDepth);
 		m_timestamp.SetObjectOwner(this);
 		m_timestamp.SetDefaultValue( 0.0, false );
 		m_timestamp.SetValue(0.0);

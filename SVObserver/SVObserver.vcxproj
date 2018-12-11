@@ -220,7 +220,6 @@ echo %time%
     <ClCompile Include="SVArchiveRecordsArray.cpp" />
     <ClCompile Include="SVBarCodeAnalyzerClass.cpp" />
     <ClCompile Include="SVBinaryOperatorClass.cpp" />
-    <ClCompile Include="SVCameraDataInputObject.cpp" />
     <ClCompile Include="SVCommandInspectionGetItems.cpp" />
     <ClCompile Include="SVCommandInspectionExtentUpdater.cpp" />
     <ClCompile Include="SVDataDefinitionStruct.cpp" />
@@ -276,8 +275,6 @@ echo %time%
     <ClCompile Include="SVConfigurationPrint.cpp" />
     <ClCompile Include="SVCylindricalWarpTool.cpp" />
     <ClCompile Include="SVDataDefinitionSheet.cpp" />
-    <ClCompile Include="SVDigitalInputObject.cpp" />
-    <ClCompile Include="SVDigitalOutputObject.cpp" />
     <ClCompile Include="SVDigitizerProcessingClass.cpp" />
     <ClCompile Include="SVDirectX.cpp" />
     <ClCompile Include="SVDiscreteInputsView.cpp" />
@@ -306,8 +303,6 @@ echo %time%
     <ClCompile Include="SVImageView.cpp" />
     <ClCompile Include="SVImageViewScroll.cpp" />
     <ClCompile Include="SVInfoStructs.cpp" />
-    <ClCompile Include="SVInputObject.cpp" />
-    <ClCompile Include="SVInputObjectList.cpp" />
     <ClCompile Include="SVInspectionProcess.cpp" />
     <ClCompile Include="SVIOAdjustDialog.cpp" />
     <ClCompile Include="SVIOBoardCapabilities.cpp" />
@@ -369,8 +364,6 @@ echo %time%
     <ClCompile Include="SVOPropertyPageDlg.cpp" />
     <ClCompile Include="SVOProPosQueDlg.cpp" />
     <ClCompile Include="SVOTriggerDeviceDlg.cpp" />
-    <ClCompile Include="SVOutputObject.cpp" />
-    <ClCompile Include="SVOutputObjectList.cpp" />
     <ClCompile Include="SVParserProgressDialog.cpp" />
     <ClCompile Include="SVPatAdvancedPageClass.cpp" />
     <ClCompile Include="SVPatAnalyzeSetupDlgSheet.cpp" />
@@ -395,7 +388,6 @@ echo %time%
     <ClCompile Include="SVRemoteCommand.cpp" />
     <ClCompile Include="SVRemoteCommandData.cpp" />
     <ClCompile Include="SVRemoteFontManager.cpp" />
-    <ClCompile Include="SVRemoteInputObject.cpp" />
     <ClCompile Include="SVRemoteInputsView.cpp" />
     <ClCompile Include="SVRemoteInputTool.cpp" />
     <ClCompile Include="SVRemoteIOAdjustDialog.cpp" />
@@ -403,7 +395,6 @@ echo %time%
     <ClCompile Include="SVRemoteOutputEditDialog.cpp" />
     <ClCompile Include="SVRemoteOutputGroup.cpp" />
     <ClCompile Include="SVRemoteOutputGroupAddRemoveDlg.cpp" />
-    <ClCompile Include="SVRemoteOutputObject.cpp" />
     <ClCompile Include="SVRemoteOutputsView.cpp" />
     <ClCompile Include="SVResult.cpp" />
     <ClCompile Include="SVResultDouble.cpp" />
@@ -513,7 +504,6 @@ echo %time%
     <ClInclude Include="SVArchiveRecord.h" />
     <ClInclude Include="SVArchiveRecordsArray.h" />
     <ClInclude Include="SVBinaryOperatorClass.h" />
-    <ClInclude Include="SVCameraDataInputObject.h" />
     <ClInclude Include="SVCommandInspectionGetItems.h" />
     <ClInclude Include="SVCommandInspectionExtentUpdater.h" />
     <ClInclude Include="SVConfigXMLPrint.h" />
@@ -583,8 +573,6 @@ echo %time%
     <ClInclude Include="SVConfigurationTreeWriter.h" />
     <ClInclude Include="SVCylindricalWarpTool.h" />
     <ClInclude Include="SVDataDefinitionSheet.h" />
-    <ClInclude Include="SVDigitalInputObject.h" />
-    <ClInclude Include="SVDigitalOutputObject.h" />
     <ClInclude Include="SVDigitizerProcessingClass.h" />
     <ClInclude Include="SVDirectX.h" />
     <ClInclude Include="SVDiscreteInputsView.h" />
@@ -613,8 +601,6 @@ echo %time%
     <ClInclude Include="SVImageArithmetic.h" />
     <ClInclude Include="SVImageView.h" />
     <ClInclude Include="SVImageViewScroll.h" />
-    <ClInclude Include="SVInputObject.h" />
-    <ClInclude Include="SVInputObjectList.h" />
     <ClInclude Include="SVInspectionProcess.h" />
     <ClInclude Include="SVInspectionProcessResetStruct.h" />
     <ClInclude Include="SVInspectionTreeParser.h" />
@@ -677,8 +663,6 @@ echo %time%
     <ClInclude Include="SVOPropertyPageDlg.h" />
     <ClInclude Include="SVOProPosQueDlg.h" />
     <ClInclude Include="SVOTriggerDeviceDlg.h" />
-    <ClInclude Include="SVOutputObject.h" />
-    <ClInclude Include="SVOutputObjectList.h" />
     <ClInclude Include="SVParserProgressDialog.h" />
     <ClInclude Include="SVParserProgressStruct.h" />
     <ClInclude Include="SVPatAdvancedPageClass.h" />
@@ -705,15 +689,13 @@ echo %time%
     <ClInclude Include="SVRemoteCommand.h" />
     <ClInclude Include="SVRemoteCommandData.h" />
     <ClInclude Include="SVRemoteFontManager.h" />
-    <ClInclude Include="SVRemoteInputObject.h" />
     <ClInclude Include="SVRemoteInputsView.h" />
     <ClInclude Include="SVRemoteInputTool.h" />
     <ClInclude Include="SVRemoteIOAdjustDialog.h" />
-    <ClInclude Include="SVRemoteOutputDataController.H" />
+    <ClInclude Include="SVRemoteOutputDataController.h" />
     <ClInclude Include="SVRemoteOutputEditDialog.h" />
     <ClInclude Include="SVRemoteOutputGroup.h" />
     <ClInclude Include="SVRemoteOutputGroupAddRemoveDlg.h" />
-    <ClInclude Include="SVRemoteOutputObject.h" />
     <ClInclude Include="SVRemoteOutputsView.h" />
     <ClInclude Include="SVResult.h" />
     <ClInclude Include="SVResultDouble.h" />

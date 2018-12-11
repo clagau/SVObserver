@@ -64,6 +64,10 @@ namespace SvTrc
 		/// \param imageId [in] ID of the image in this triggerRecord.
 		/// \returns SvTrc::IImagePtr
 		virtual IImagePtr createNewImageHandle(const GUID& imageId) = 0;
+
+		/// Write inspection value data 
+		/// \param ValueObjectList [in] Value object list (Move semantics!)
+		virtual void writeValueData(std::vector<_variant_t>&& ValueObjectList) = 0;
 	};
 
 	typedef std::shared_ptr< ITriggerRecordRW > ITriggerRecordRWPtr;

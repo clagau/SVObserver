@@ -31,7 +31,6 @@ static char THIS_FILE[] = __FILE__;
 LinkedValue::LinkedValue() : 
  m_CircularReference(false)
 {
-	m_LinkedName.setStatic( true );
 }
 
 LinkedValue::~LinkedValue()
@@ -40,7 +39,7 @@ LinkedValue::~LinkedValue()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-HRESULT LinkedValue::GetValue(_variant_t& rValue, int Index /*= -1*/,  int Bucket /*= -1*/) const
+HRESULT LinkedValue::GetValue(_variant_t& rValue, int Index /*= -1*/) const
 {
 	HRESULT Result( ValidateIndex(Index) );
 
@@ -57,12 +56,12 @@ HRESULT LinkedValue::GetValue(_variant_t& rValue, int Index /*= -1*/,  int Bucke
 		if (nullptr != m_LinkedObjectRef.getValueObject())
 		{
 			m_CircularReference = true;
-			Result = m_LinkedObjectRef.getValue(rValue, Bucket);
+			Result = m_LinkedObjectRef.getValue(rValue);
 			m_CircularReference = false;
 		}
 		else
 		{
-			Result = __super::GetValue(rValue, Index, Bucket);
+			Result = __super::GetValue(rValue, Index);
 		}
 		
 		if( S_OK == Result )

@@ -21,11 +21,11 @@
 #include "SVInfoStructs.h"
 #include "SVValueObjectLibrary/SVValueObject.h"
 #include "SVConfigurationObject.h"
-#include "SVOutputObjectList.h"
-#include "SVInputObjectList.h"
+#include "SVIOLibrary/SVInputObjectList.h"
+#include "SVIOLibrary/SVOutputObjectList.h"
+#include "SVIOLibrary/SVRemoteInputObject.h"
 #include "SVMFCControls\SVRemoteInputDialog.h"
 #include "SVUtilities.h"
-#include "SVRemoteInputObject.h"
 #include "SVMessage\SVMessage.h"
 #include "SVFileSystemLibrary/SVFileNameManagerClass.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
@@ -251,7 +251,6 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 									pValueObject->SetName( RemoteInputName.c_str() );
 									pValueObject->SetObjectOwner(GetIOController());
 									pValueObject->setResetOptions( false, SvOi::SVResetItemNone );
-									pValueObject->setBucketized(true);
 									pIOEntry->m_IOId = pRemoteInput->GetUniqueObjectID();
 									pIOEntry->m_Enabled = FALSE;
 									pIOEntry->m_ObjectType = IO_REMOTE_INPUT;

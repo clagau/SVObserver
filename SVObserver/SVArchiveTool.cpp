@@ -158,8 +158,6 @@ void SVArchiveTool::initializeArchiveTool()
 
 	// no need to register image buffer
 	
-//EB???	SetObjectDepth(2);
-	
 	// Set Embedded defaults
 	
 	//
@@ -214,9 +212,6 @@ bool SVArchiveTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStruct
 
 		bOk = true;
 	}
-
-	m_HeaderLabelNames.setStatic( true );
-	m_HeaderObjectGUIDs.setStatic( true );
 
 	m_stringFileArchivePath.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE | SvDef::SV_REMOTELY_SETABLE & ~SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute );
 	m_stringFileArchivePath.SetObjectAttributesAllowed( SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
@@ -312,31 +307,6 @@ SVArchiveTool::~SVArchiveTool()
 	TheSVMemoryManager().ReleasePoolMemory(SvO::ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, this);
 	TheSVMemoryManager().ReleasePoolMemory(SvO::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, this);
 }
-
-// Should be overridden and must be called in derived classes...
-// Sets Depth of Array for historical purposes 
-// (i.e. to get images/results N events ago)
-void SVArchiveTool::SetObjectDepth( int NewObjectDepth )
-{
-	// Set object depth of members here...
-	DWORD dwMaxImages;
-	m_dwArchiveMaxImagesCount.GetValue( dwMaxImages );
-
-	SVToolClass::SetObjectDepth( NewObjectDepth );
-}
-
-// Should be overridden and must be called in derived classes...
-// Sets Depth of Array for historical purposes 
-// (i.e. to get images/results N events ago)
-void SVArchiveTool::SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex )
-{
-	// Set object depth of members here...
-	DWORD dwMaxImages;
-	m_dwArchiveMaxImagesCount.GetValue( dwMaxImages );
-
-	SVToolClass::SetObjectDepthWithIndex( NewObjectDepth, NewLastSetIndex );
-}
-
 
 // Create a file to store selected results in text format.
 //

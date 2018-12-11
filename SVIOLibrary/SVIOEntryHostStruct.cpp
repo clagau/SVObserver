@@ -13,7 +13,7 @@
 #include "stdafx.h"
 
 #include "SVIOEntryHostStruct.h"
-#include "SVObjectClass.h"
+#include "SVObjectLibrary/SVObjectClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 

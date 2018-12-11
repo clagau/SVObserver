@@ -27,7 +27,7 @@ SVRCRequestHandler::~SVRCRequestHandler()
 SVRCRequestHandler::SVRCRequestHandler(SVRCCommand* pCommand) :
 	m_IoRunService(),
 	m_IoWork(m_IoRunService),
-	m_IoThread(boost::bind(&boost::asio::io_service::run, &m_IoRunService))
+	m_IoThread([&] {m_IoRunService.run();})
 {
 	registerRequestHandler<
 		SvPb::SVRCMessages,

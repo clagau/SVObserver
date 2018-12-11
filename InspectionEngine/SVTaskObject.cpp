@@ -64,7 +64,6 @@ HRESULT SVTaskObjectClass::LocalInitialize()
 
 	SetObjectAttributesAllowed(SvDef::SV_TASK_OBJECT, SvOi::SetAttributeType::AddAttribute);
 
-	// SetObjectDepth has already been called in SVObjectClass Ctor
 	// Register Embedded Objects
 	RegisterEmbeddedObject(&m_isObjectValid, SVTaskObjectClassIsObjectValidGuid, IDS_OBJECTNAME_ISVALID, false, SvOi::SVResetItemNone);
 	RegisterEmbeddedObject(&m_statusTag, SVStatusObjectGuid, IDS_OBJECTNAME_STATUS, false, SvOi::SVResetItemNone);
@@ -1193,62 +1192,6 @@ bool SVTaskObjectClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStr
 bool SVTaskObjectClass::IsValid() const
 {
 	return IsErrorMessageEmpty();
-}
-
-void SVTaskObjectClass::SetObjectDepth(int NewObjectDepth)
-{
-	// Set object depth of members here...
-
-	// Set Depth of our Friends...
-	for (size_t i = 0; i < m_friendList.size(); ++i)
-	{
-		const SVObjectInfoStruct& rFriend = m_friendList[i];
-		// Check if Friend is alive...
-		SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.getUniqueObjectID());
-		if (pFriend)
-		{
-			pFriend->SetObjectDepth(NewObjectDepth);
-		}
-	}
-
-	for (SVObjectPtrVector::iterator Iter = m_embeddedList.begin(); m_embeddedList.end() != Iter; ++Iter)
-	{
-		SVObjectClass* pObject = *Iter;
-		if (nullptr != pObject)
-		{
-			pObject->SetObjectDepth(NewObjectDepth);
-		}
-	}
-
-	SVObjectAppClass::SetObjectDepth(NewObjectDepth);
-}
-
-void SVTaskObjectClass::SetObjectDepthWithIndex(int NewObjectDepth, int NewLastSetIndex)
-{
-	// Set object depth of members here...
-
-	// Set Depth of our Friends...
-	for (size_t i = 0; i < m_friendList.size(); ++i)
-	{
-		const SVObjectInfoStruct& rFriend = m_friendList[i];
-		// Check if Friend is alive...
-		SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.getUniqueObjectID());
-		if (pFriend)
-		{
-			pFriend->SetObjectDepthWithIndex(NewObjectDepth, NewLastSetIndex);
-		}
-	}
-
-	for (SVObjectPtrVector::iterator Iter = m_embeddedList.begin(); m_embeddedList.end() != Iter; ++Iter)
-	{
-		SVObjectClass* pObject = *Iter;
-		if (nullptr != pObject)
-		{
-			pObject->SetObjectDepthWithIndex(NewObjectDepth, NewLastSetIndex);
-		}
-	}
-
-	SVObjectAppClass::SetObjectDepthWithIndex(NewObjectDepth, NewLastSetIndex);
 }
 
 void SVTaskObjectClass::addDefaultInputObjects(SvOl::SVInputInfoListClass* PInputListToFill)

@@ -46,9 +46,6 @@ public:
 	bool SetFileArchive( LPCTSTR lpszName );
 	bool SetImageArchivePath( LPCTSTR lpszName );
 
-	virtual void SetObjectDepth( int NewObjectDepth ) override;
-	virtual void SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex ) override;
-
 	static long CalculateImageMemory( SVImageClass* p_pImage );
 	static long CalculateImageMemory( std::vector<SVImageClass*> p_apImages );
 

@@ -121,7 +121,6 @@
     <ClCompile Include="SVGetObjectDequeByTypeVisitor.cpp" />
     <ClCompile Include="SVInObjectInfoStruct.cpp" />
     <ClCompile Include="SVInputInfoListClass.cpp" />
-    <ClCompile Include="SVIOEntryHostStruct.cpp" />
     <ClCompile Include="SVObjectAttributeClass.cpp" />
     <ClCompile Include="SVObjectBuilder.cpp" />
     <ClCompile Include="SVObjectClass.cpp" />
@@ -147,7 +146,6 @@
     <ClInclude Include="SVGetObjectListVisitor.h" />
     <ClInclude Include="SVInObjectInfoStruct.h" />
     <ClInclude Include="SVInputInfoListClass.h" />
-    <ClInclude Include="SVIOEntryHostStruct.h" />
     <ClInclude Include="SVObjectAttributeClass.h" />
     <ClInclude Include="SVObjectBuilder.h" />
     <ClInclude Include="SVObjectClass.h" />

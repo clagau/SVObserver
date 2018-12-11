@@ -41,13 +41,14 @@
 #pragma region Precompiled Headers
 #include <assert.h>
 #include <algorithm>
-#include <atomic>			//Used by static library
+#include <atomic>
 #include <comdef.h>
+#include <future>
 #include <memory>
 #include <map>
 #include <set>
 #include <vector>
-#include <ctime>			//Used by static library
+#include <ctime>				//Used by static library
 #include <tchar.h>
 #include <WinBase.h>
 

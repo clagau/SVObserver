@@ -207,14 +207,6 @@ public:
 	/// \returns bool
 	bool DisconnectObjectInput( const SVGUID& rSourceId, SvOl::SVInObjectInfoStruct* pObjectInInfo );
 
-	//! Create Bucket for value object
-	//! \param rpBucket [in/out] reference to the Bucket shared pointer
-	//! \param RDefault [in] reference to the default value
-	//! \param NumberOfBuckets [in] the number of buckets
-	//! \returns bool
-	template<typename DataType>
-	bool createBucket( std::unique_ptr<std::vector<DataType>>& rpBucket, const DataType& rDefault, int NumberOfBuckets );
-
 protected:
 	typedef std::map<std::string, SVGUID> SVSubjectDataNameSubjectIDMap;
 

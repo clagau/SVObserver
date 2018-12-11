@@ -41,8 +41,6 @@ void SVStdImageOperatorListClass::init()
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVUnaryImageOperatorListObjectType;
 	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVStdImageOperatorListObjectType;
 
-	// SetObjectDepth() already called in SVObjectClass Ctor
-
 	// Register Embedded Objects
 	RegisterEmbeddedObject(&m_OutputImage, SVOutputImageObjectGuid, IDS_OBJECTNAME_IMAGE1);
 	RegisterEmbeddedObject(&m_LogicalROIImage, SVLogicalROIImageGuid, IDS_OBJECTNAME_ROIIMAGE);

@@ -44,6 +44,7 @@
 #include "InspectionEngine/SVEquation.h"
 #include "SVSharedMemoryLibrary/MonitorEntry.h"
 #include "SVSharedMemoryLibrary/SMRingbuffer.h"
+#include "SVProtoBuf/TriggerRecordController.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -82,9 +83,6 @@ public:
 
 	virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0 ) const override;
 	
-	virtual void SetObjectDepth( int NewObjectDepth ) override;
-	virtual void SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex ) override;
-
 	virtual void ResetName() override;
 	virtual void SetName( LPCTSTR StrString ) override;
 
@@ -273,8 +271,6 @@ public:
 
 	bool m_bForceOffsetUpdate; // Force Global Extent data to update
 
-	SvDef::StringVector& getViewedInputNames() { return m_arViewedInputNames; };
-
 	/// Get the controller for the play condition equation
 	/// \returns SvOi::IFormulaControllerPtr
 	SvOi::IFormulaControllerPtr getRegressionTestPlayConditionController();
@@ -375,7 +371,7 @@ protected:
 
 	void SingleRunModeLoop( bool p_Refresh = false );
 
-	HRESULT CopyForward( SVRunStatusClass& rRunStatus );
+	HRESULT copyValues2TriggerRecord(SVRunStatusClass& rRunStatus) const;
 
 	static void CALLBACK APCThreadProcess( DWORD_PTR dwParam );
 
@@ -434,6 +430,9 @@ protected:
 private:
 	void Init();
 
+	void buildValueObjectDefList() const;
+	std::vector<_variant_t> copyValueObjectList() const;
+
 	HRESULT FindPPQInputObjectByName( SVObjectClass*& p_rpObject, LPCTSTR p_FullName ) const;
 
 	SVCriticalSectionPtr m_LastRunLockPtr;
@@ -455,8 +454,6 @@ private:
 	
 	int m_StoreIndex; 
 	SvSml::RingBufferPointer m_SlotManager;
-
-	SvDef::StringVector m_arViewedInputNames;
 
 	//For RegressionTest
 	SVEquationClass m_RegressionTestPlayEquation;

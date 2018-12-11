@@ -111,18 +111,39 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="SVCameraDataInputObject.cpp" />
+    <ClCompile Include="SVDigitalInputObject.cpp" />
+    <ClCompile Include="SVDigitalOutputObject.cpp" />
+    <ClCompile Include="SVInputObject.cpp" />
+    <ClCompile Include="SVInputObjectList.cpp" />
     <ClCompile Include="SVIOConfigurationInterfaceClass.cpp" />
+    <ClCompile Include="SVIOEntryHostStruct.cpp" />
+    <ClCompile Include="SVIOEntryStruct.cpp" />
+    <ClCompile Include="SVOutputObject.cpp" />
+    <ClCompile Include="SVOutputObjectList.cpp" />
+    <ClCompile Include="SVRemoteInputObject.cpp" />
+    <ClCompile Include="SVRemoteOutputObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="SVCameraDataInputObject.h" />
+    <ClInclude Include="SVDigitalInputObject.h" />
+    <ClInclude Include="SVDigitalOutputObject.h" />
+    <ClInclude Include="SVInputObject.h" />
+    <ClInclude Include="SVInputObjectList.h" />
     <ClInclude Include="SVIOConfigurationInterfaceClass.h" />
     <ClInclude Include="SVIODigitalLoadLibraryClass.h" />
     <ClInclude Include="SVIODigitalStruct.h" />
+    <ClInclude Include="SVIOEntryHostStruct.h" />
+    <ClInclude Include="SVIOEntryStruct.h" />
     <ClInclude Include="SVIOParameterEnum.h" />
     <ClInclude Include="SVIOTriggerLoadLibraryClass.h" />
+    <ClInclude Include="SVOutputObject.h" />
+    <ClInclude Include="SVOutputObjectList.h" />
+    <ClInclude Include="SVRemoteInputObject.h" />
+    <ClInclude Include="SVRemoteOutputObject.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="SVIOConfigurationInterfaceClass.inl" />
     <None Include="SVIODigitalLoadLibraryClass.inl" />
     <None Include="SVIOTriggerLoadLibraryClass.inl" />
   </ItemGroup>

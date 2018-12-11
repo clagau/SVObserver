@@ -30,8 +30,8 @@
 #include "TriggerInformation/SVOTriggerObj.h"
 #include "SVOCameraObj.h"
 #include "SVVirtualCamera.h"
-#include "SVInputObjectList.h"
-#include "SVOutputObjectList.h"
+#include "SVIOLibrary/SVInputObjectList.h"
+#include "SVIOLibrary/SVOutputObjectList.h"
 #include "SVDigitizerProcessingClass.h"
 #include "SVAcquisitionClass.h"
 #include "SVIPDoc.h"
@@ -2825,28 +2825,25 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 				pPPQObj->SetConditionalOutputName(pcfgPPQ->GetConditionalOutputName());
 
 				// Get List Of Inputs
-				SVIOEntryHostStructPtrVector ppIOEntries; 
-				pcfgPPQ->GetAvailableInputs( ppIOEntries );
 				SVNameGuidPairList availableInputs;
-				for (SVIOEntryHostStructPtrVector::const_iterator it = ppIOEntries.begin(); it != ppIOEntries.end(); ++it)
+				for (const auto rEntry : pcfgPPQ->GetUsedInputs())
 				{
-					SVIOEntryHostStructPtr entry = (*it);
-					if (entry->m_ObjectType == IO_DIGITAL_INPUT)
+					if (IO_DIGITAL_INPUT == rEntry->m_ObjectType)
 					{
 						if (!IsNonIOSVIM(GetProductType()))
 						{
-							availableInputs.push_back(std::make_pair(entry->getObject()->GetName(), entry->m_IOId));
+							availableInputs.push_back(std::make_pair(rEntry->getObject()->GetName(), rEntry->m_IOId));
 						}
 					}
-					else if (entry->m_ObjectType == IO_CAMERA_DATA_INPUT)
+					else if (IO_CAMERA_DATA_INPUT == rEntry->m_ObjectType)
 					{
 						// check for Camera Input Line State...
-						if (nullptr != entry->getObject())
+						if (nullptr != rEntry->getObject())
 						{
-							if (entry->getObject()->GetEmbeddedID() == SVCameraTriggerLineInStateGuid)
+							if (rEntry->getObject()->GetEmbeddedID() == SVCameraTriggerLineInStateGuid)
 							{
 								// Only if the camera supports it ?
-								availableInputs.push_back(std::make_pair(entry->getObject()->GetName(), entry->m_IOId));
+								availableInputs.push_back(std::make_pair(rEntry->getObject()->GetName(), rEntry->m_IOId));
 							}
 						}
 					}

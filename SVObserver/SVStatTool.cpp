@@ -125,9 +125,6 @@ void SVStatisticsToolClass::init(void)
 			IDS_OBJECTNAME_ENABLEDFEATURES,
 			false, SvOi::SVResetItemTool );
 
-	// Kludge
-	SetObjectDepth (2);	
-
 	// Save default attributes
 	m_Value[SV_STATS_MIN_VALUE].SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
 	m_DefaultAttributes = m_Value [ SV_STATS_MIN_VALUE ].ObjectAttributesAllowed();

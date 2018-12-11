@@ -843,24 +843,17 @@ inline void SVConfigXMLPrint::WritePPQBar(Writer writer) const
 					}
 				}
 
-				long					lIOEntries;
-				SVIOEntryHostStructPtrVector ppIOEntries;
-
-				pPPQ->GetAllInputs(ppIOEntries);
-
-				lIOEntries = static_cast<long>(ppIOEntries.size());
-
-				if (0 == lIOEntries)
+				if (0 == pPPQ->GetAllInputs().size())
 				{
 					writer->WriteComment(L"No IO Entries");
 				}
 
-				for (int intIOEntry = 0; intIOEntry < lIOEntries; intIOEntry++)
+				for(const auto& pEntry : pPPQ->GetAllInputs())
 				{
 					bool bValid = false;
-					if (ppIOEntries[intIOEntry]->m_PPQIndex == intPPQPos)
+					if (pEntry->m_PPQIndex == intPPQPos)
 					{
-						SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject(ppIOEntries[intIOEntry]->m_IOId);
+						SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject(pEntry->m_IOId);
 
 						if (nullptr != l_pObject)
 						{
@@ -872,9 +865,9 @@ inline void SVConfigXMLPrint::WritePPQBar(Writer writer) const
 						}
 						else
 						{
-							if (ppIOEntries[intIOEntry]->getObject()->IsValid())
+							if (pEntry->getObject()->IsValid())
 							{
-								writer->WriteStartElement(nullptr, SvUl::to_utf16(ppIOEntries[intIOEntry]->getObject()->GetName(), cp_dflt).c_str(), nullptr);
+								writer->WriteStartElement(nullptr, SvUl::to_utf16(pEntry->getObject()->GetName(), cp_dflt).c_str(), nullptr);
 								bValid = true;
 							} // end if
 						} //end else

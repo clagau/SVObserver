@@ -49,17 +49,16 @@ public:
 
 #pragma region virtual method (IObjectClass/IValueObject)
 	//! For these methods see IObject documentation
-	virtual HRESULT getValue(double& rValue, int Index = -1, int Bucket = -1) const override;
+	virtual HRESULT getValue(double& rValue, int Index = -1) const override;
 
 	//! For these methods see IValueObject documentation
 	virtual HRESULT setDefaultValue(const _variant_t& rValue) override { return E_NOTIMPL; }
 	virtual _variant_t getDefaultValue() const override { return _variant_t(); };
 	virtual HRESULT setValue(const _variant_t& rValue, int Index = -1) override;
-	virtual HRESULT getValue(_variant_t& rValue, int Index = -1, int Bucket = -1) const override;
-	virtual HRESULT getValues(std::vector<_variant_t>& rValues, int Bucket = -1) const override { return E_NOTIMPL; }
+	virtual HRESULT getValue(_variant_t& rValue, int Index = -1) const override;
+	virtual HRESULT getValues(std::vector<_variant_t>& rValues) const override { return E_NOTIMPL; }
 	virtual HRESULT setValue(const std::string& rValue, int Index = -1) override;
-	virtual HRESULT getValue(std::string& rValue, int Index = -1, int Bucket = -1) const override;
-	virtual void setBucketized( bool isBucketized ) override {};
+	virtual HRESULT getValue(std::string& rValue, int Index = -1) const override;
 	virtual void setResetOptions( bool bResetAlways, SvOi::SVResetItemEnum eResetItem ) override {};
 	virtual void validateValue( const _variant_t& rValue ) const override {};
 	virtual bool isArray() const override { return false; };
@@ -67,7 +66,6 @@ public:
 	virtual int getResultSize() const override { return 0; };
 	virtual SvOi::SVResetItemEnum getResetItem() const override { return SvOi::SVResetItemNone; };
 	virtual bool ResetAlways() const override { return false; };
-	virtual HRESULT CopyValue( int DestBucket ) { return E_NOTIMPL; };
 	virtual DWORD GetByteSize() const override;
 	virtual DWORD GetType() const override { return m_Value.vt; };
 	virtual HRESULT CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD MemByteSize, int Index = -1) const override;

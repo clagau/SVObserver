@@ -78,14 +78,6 @@ inline SVOutObjectInfoStruct& SVObjectClass::GetObjectOutputInfo()
 }
 
 /*
-This method return the object's data depth.
-*/
-inline int SVObjectClass::GetObjectDepth() const
-{
-	return m_objectDepth;
-}
-
-/*
 This method returns the creation state of the object.
 */
 inline bool SVObjectClass::IsCreated() const

@@ -239,6 +239,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SVImportTransform", "SVImportTransform\SVImportTransform.csproj", "{D9C2D151-5369-4E8C-8931-BBB92DBB22FE}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVIOLibrary", "SVIOLibrary\SVIOLibrary.vcxproj", "{1E640802-4CA8-4BA7-A9A3-71A15D829080}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5796BBF7-F64D-4B14-816E-B9012A52A225} = {5796BBF7-F64D-4B14-816E-B9012A52A225}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVIOTest", "SVIOTest\SVIOTest.vcxproj", "{F2FB7A6B-462C-43CF-A2A7-61516FF4EB8E}"
 	ProjectSection(ProjectDependencies) = postProject

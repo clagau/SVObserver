@@ -19,7 +19,7 @@
 
 #include "SVInfoStructs.h"
 #include "SVRemoteOutputDataController.h"
-#include "SVRemoteOutputObject.h"
+#include "SVIOLibrary/SVRemoteOutputObject.h"
 #include "RemoteMonitorListController.h"
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
@@ -35,9 +35,6 @@ public:
 	SVIOController( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVIOCONTROLLER );
 
 	virtual ~SVIOController();
-
-	virtual void SetObjectDepth( int NewObjectDepth ) override;
-	virtual void SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex ) override;
 
 	virtual void ResetName() override;
 	virtual void SetName( LPCTSTR StrString ) override;

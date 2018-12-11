@@ -21,7 +21,7 @@
 #include "SVObjectLibrary\SVClsIds.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVObserver.h"
-#include "SVRemoteOutputObject.h"
+#include "SVIOLibrary/SVRemoteOutputObject.h"
 #include "TextDefinesSvO.h"
 #pragma endregion Includes
 

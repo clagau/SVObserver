@@ -161,6 +161,6 @@ void SVDPointValueObjectClass::LocalInitialize()
 
 	SetTypeName( _T("Point") );
 
-	InitializeBuckets();
+	init();
 }
 

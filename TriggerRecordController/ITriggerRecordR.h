@@ -6,20 +6,20 @@
 /// The interface-class for the TriggerRecord in read-modus.
 //******************************************************************************
 #pragma once
-#include "stdafx.h"
-#include "IImage.h"
 //Moved to precompiled header: #include <memory>
+#include "IImage.h"
 
 namespace SvTrc
 {
 	struct TriggerData
 	{
-		int m_TriggerId = 0;
+		int m_TriggerCount {0};
 	};
 
 	class ITriggerRecordR
 	{
 	public:
+
 		virtual ~ITriggerRecordR() = default;
 
 		/// Return the unique id of this trigger record.
@@ -49,6 +49,15 @@ namespace SvTrc
 		/// \param lockImage (default:false) [in] If true the (physical) buffer of this child image will locked by is own and unlock if IImagePtr freed. If false image will not separated lock, but by the TriggerRecord (ATTENTION: In this case, use this instance only as long as this TriggerRecord-instance existing.)
 		/// \returns SvTrc::IImagePtr
 		virtual IImagePtr getChildImage(int childPos, bool lockImage = false) const = 0;
+
+		/// Return the data corresponding to the GUID
+		/// \param dataId [in] GUID of the value object.
+		/// \returns _variant_t
+		virtual _variant_t getDataValue(const GUID& dataId) const = 0;
+
+		/// Return true if value data has been written to the trigger record
+		/// \returns bool
+		virtual bool isValueDataValid() const = 0;
 
 		/// Return if this triggerRecord is up-to-date and can be used.
 		/// \returns bool

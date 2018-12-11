@@ -145,15 +145,17 @@ long SVPPQShiftRegister::GetIndexByTriggerCount(long triggerCount) const
 {
 	long Result{-1};
 
-	if( 0 < triggerCount )
+	//@TODO[gra][8.20][03.12.2018]: The trigger count check < 0 needs to be removed so that
+	//reset output timer works when PPQ not yet full
+	if(0 < triggerCount)
 	{
-		for(auto iter{m_Products.cbegin()}; m_Products.cend() != iter; ++iter)
+		for(auto iter{m_Products.crbegin()}; m_Products.crend() != iter; ++iter)
 		{
 			if(nullptr != *iter)
 			{
 				if((*iter)->ProcessCount() == triggerCount)
 				{
-					Result = static_cast<long>(std::distance(m_Products.cbegin(), iter));
+					Result = static_cast<long>(std::distance(iter, m_Products.crend())-1);
 					return Result;
 				}
 			}

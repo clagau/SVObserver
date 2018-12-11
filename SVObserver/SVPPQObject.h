@@ -43,10 +43,21 @@ class SVPPQObject :
 	public SVObjectClass,
 	public SVObserverTemplate< SVInspectionCompleteInfoStruct >
 {
-// Setup Functions
+	enum PpqOutputEnums
+	{
+		TriggerToggle,
+		OutputToggle,
+		ACK,
+		NAK,
+		MasterFault,
+		MasterWarning,
+		NotInspected,
+		DataValid,
+		OutputNr
+	};
+
 
 public:
-	typedef std::vector< std::pair< _variant_t, bool > > SVVariantBoolVector;
 
 	SVPPQObject( LPCSTR ObjectName );
 	SVPPQObject( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVPPQOBJECT );
@@ -129,11 +140,10 @@ public:
 
 	void AddInput( SVIOEntryHostStructPtr pInput );
 	bool RemoveInput( SVIOEntryHostStructPtr pInput );
-	HRESULT GetInputIOValues( SVVariantBoolVector& rInputValues ) const;
-	bool AssignInputs( const SVVariantBoolVector& rInputValues );
+	HRESULT GetInputIOValues(VariantBoolPairVector& rInputValues ) const;
 	bool RebuildInputList(bool bHasCameraTrigger);
-	void GetAvailableInputs( SVIOEntryHostStructPtrVector& p_IOEntries ) const;
-	void GetAllInputs( SVIOEntryHostStructPtrVector& p_IOEntries ) const;
+	const SVIOEntryHostStructPtrVector& GetUsedInputs() const {return m_UsedInputs;}
+	const SVIOEntryHostStructPtrVector& GetAllInputs() const {return m_AllInputs;}
 	void AddDefaultInputs();
 	bool AddToAvailableInputs(SVIOObjectType eType, const std::string& rName );
 	SVIOEntryHostStructPtr GetInput( const std::string& rName ) const;
@@ -146,7 +156,7 @@ public:
 
 	void AddOutput( SVIOEntryHostStructPtr pOutput );
 	bool RemoveOutput( SVIOEntryHostStructPtr pOutput );
-	bool WriteOutputs( SVProductInfoStruct* pProduct );
+	bool WriteOutputs(SVProductInfoStruct* pProduct);
 	bool ResetOutputs();
 	bool RebuildOutputList();
 	void GetAllOutputs( SVIOEntryHostStructPtrVector& p_IOEntries ) const;
@@ -178,13 +188,11 @@ public:
 	SVInputObjectList*    m_pInputList;
 	SVOutputObjectList*   m_pOutputList;
 
-	SVDWordValueObjectClass m_voOutputState;
 	SVLongValueObjectClass m_voTriggerCount;
 
 	void PersistInputs(SvOi::IObjectWriter& rWriter);
 
 	SvTi::SVCameraTriggerData& GetCameraInputData();
-	long GetExtraBufferSize() const;
 
 	/// Set or unset Monitor list and activated the shared memory for it.
 	/// \param rActiveList [in] The new monitor list.
@@ -219,7 +227,7 @@ protected:
 		virtual ~SVTriggerQueueElement();
 
 		SvTi::SVTriggerInfoStruct m_TriggerInfo;
-		SVVariantBoolVector m_Inputs;
+		VariantBoolPairVector m_Inputs;
 	};
 
 	struct SVCameraQueueElement
@@ -349,12 +357,12 @@ protected:
 	SVProductInfoStruct* GetProductInfoStruct(long processCount) const;
 
 	SVProductInfoStruct* IndexPPQ( SvTi::SVTriggerInfoStruct& p_rTriggerInfo );
-	void InitializeProduct( SVProductInfoStruct* p_pNewProduct, const SVVariantBoolVector& p_rInputValues );
+	void InitializeProduct( SVProductInfoStruct* pNewProduct);
 	bool StartOutputs( SVProductInfoStruct* p_pProduct );
 	HRESULT NotifyInspections( long p_Offset );
 	HRESULT StartInspection( const SVGUID& p_rInspectionID );
 
-	bool AddResultsToPPQ( long p_PPQIndex );
+	void AddResultsToPPQ(SVProductInfoStruct& rProduct);
 	bool SetInspectionComplete( long p_PPQIndex );
 	bool SetProductComplete( long p_PPQIndex );
 	bool SetProductComplete( SVProductInfoStruct& p_rProduct );
@@ -424,14 +432,7 @@ protected:
 	SVSmartIndexArrayHandlePtr m_pResultDataCircleBuffer;
 
 	// Value Objects used by the PPQ
-	SVBoolValueObjectClass  m_voTriggerToggle;	
-	SVBoolValueObjectClass  m_voOutputToggle;
-	SVBoolValueObjectClass  m_voACK;
-	SVBoolValueObjectClass  m_voNAK;
-	SVBoolValueObjectClass  m_voMasterFault;
-	SVBoolValueObjectClass  m_voMasterWarning;
-	SVBoolValueObjectClass  m_voNotInspected;
-	SVBoolValueObjectClass  m_voDataValid;
+	SVBoolValueObjectClass  m_PpqOutputs[PpqOutputEnums::OutputNr];
 
 	SvTi::SVCameraTriggerData m_CameraInputData;
 
@@ -495,7 +496,7 @@ private:
 	SVPPQTracking m_PPQTracking;
 #endif // EnableTracking
 
-	void ResetOutputValueObjects(long DataIndex);
+	void ResetOutputValueObjects();
 	void ReleaseSharedMemory(SVProductInfoStruct& rProduct);
 	void CommitSharedMemory( SVProductInfoStruct& rProduct);
 
@@ -519,12 +520,7 @@ private:
 	long m_NewNAKCount;					//!Nak count will be set to 0 if no NAK occurs 
 	long m_ReducedPPQPosition;			/// min number of inspection that will be checked for startInspection  for nakMode =2
 
-	SVObjectPtrDeque m_childObjects;
-
-	//This parameter a temporary parameter to speed up the method fillChildObjectList. 
-	//They are not a state of the object only a help for the method. To be able to set the method const, this parameter are muteable.
-	mutable SVObjectPtrDeque m_childObjectsForFillChildObjectList;  //<This list is saved for the method fillChildObjectList, to reuse it if the same filter (m_AttributesAllowedFilterForFillChildObjectList) is used. 
-	mutable UINT m_AttributesAllowedFilterForFillChildObjectList; //<This filter flag was used in the last run of the method fillChildObjectList.
+	SVObjectPtrVector m_childObjects;
 };
 
 typedef std::vector<SVPPQObject*> SVPPQObjectPtrVector;

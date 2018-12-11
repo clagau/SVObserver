@@ -72,7 +72,6 @@ bool SVLinearToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateSt
 	m_voUseProfileRotation.SetObjectAttributesAllowed( Attributes, SvOi::SetAttributeType::AddAttribute );
 
 	Attributes = SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE;
-	m_SourceImageNames.setStatic( true );
 	m_SourceImageNames.setSaveValueFlag(false);
 	m_SourceImageNames.SetObjectAttributesAllowed( Attributes, SvOi::SetAttributeType::RemoveAttribute );
 	m_ExtentLeft.SetObjectAttributesAllowed( Attributes, SvOi::SetAttributeType::RemoveAttribute );

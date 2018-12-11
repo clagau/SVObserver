@@ -238,7 +238,6 @@ bool SVToolClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure
 	m_drawToolFlag.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute);
 
 	// Tool Comment attributes...
-	m_ToolComment.setStatic(true);
 	m_ToolComment.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute);
 	m_ToolComment.SetObjectAttributesAllowed(SvDef::SV_VIEWABLE, SvOi::SetAttributeType::RemoveAttribute);	// We do not want this to show up in the results picker.
 
@@ -504,40 +503,6 @@ bool SVToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVec
 
 	if (Result)
 	{
-		if (SvDef::SV_NO_ATTRIBUTES != (m_ExtentTop.ObjectAttributesAllowed() & SvDef::SV_NO_ATTRIBUTES))
-		{
-			Result = (S_OK == m_ExtentTop.CopyValue(rRunStatus.m_lResultDataIndex)) && Result;
-		}
-		if (SvDef::SV_NO_ATTRIBUTES != (m_ExtentLeft.ObjectAttributesAllowed() & SvDef::SV_NO_ATTRIBUTES))
-		{
-			Result = (S_OK == m_ExtentLeft.CopyValue(rRunStatus.m_lResultDataIndex)) && Result;
-		}
-		if (SvDef::SV_NO_ATTRIBUTES != (m_ExtentWidth.ObjectAttributesAllowed() & SvDef::SV_NO_ATTRIBUTES))
-		{
-			Result = (S_OK == m_ExtentWidth.CopyValue(rRunStatus.m_lResultDataIndex)) && Result;
-		}
-		if (SvDef::SV_NO_ATTRIBUTES != (m_ExtentHeight.ObjectAttributesAllowed() & SvDef::SV_NO_ATTRIBUTES))
-		{
-			Result = (S_OK == m_ExtentHeight.CopyValue(rRunStatus.m_lResultDataIndex)) && Result;
-		}
-		if (SvDef::SV_NO_ATTRIBUTES != (m_ExtentWidthScaleFactor.ObjectAttributesAllowed() & SvDef::SV_NO_ATTRIBUTES))
-		{
-			Result = (S_OK == m_ExtentWidthScaleFactor.CopyValue(rRunStatus.m_lResultDataIndex)) && Result;
-		}
-		if (SvDef::SV_NO_ATTRIBUTES != (m_ExtentHeightScaleFactor.ObjectAttributesAllowed() & SvDef::SV_NO_ATTRIBUTES))
-		{
-			Result = (S_OK == m_ExtentHeightScaleFactor.CopyValue(rRunStatus.m_lResultDataIndex)) && Result;
-		}
-
-		if (!Result)
-		{
-			if (nullptr != pErrorMessages)
-			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_5076_EXTENTSNOTCOPIED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
-				pErrorMessages->push_back(Msg);
-			}
-		}
-
 		// Friends were running, validation was successfully
 		// Check conditional execution
 		if (!getConditionalResult(true))

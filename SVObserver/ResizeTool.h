@@ -89,12 +89,6 @@ protected:
 #pragma endregion Protected Methods
 
 #pragma region Protected Members
-	// Source Image Name - embedded
-	// It is desired for the Input Image name to be exposed as a value 
-	// object, but it is not desired for it to be buckettized.  It can not 
-	// change while in Run Mode and buckettized data is all reset when going 
-	// online.  If the Input Image is changed, Output Image buffers will all 
-	// be destroyed and recreated anyway.
 	SVStringValueObjectClass m_SourceImageNames;
 
 	// Output Image - embedded

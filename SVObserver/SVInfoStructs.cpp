@@ -20,62 +20,14 @@
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #pragma endregion Includes
 
-SVIOEntryStruct::SVIOEntryStruct()
-: m_IOEntryPtr()
-, m_EntryValid( false )
-, m_CombinedValue( false )
-{
-}
-
-SVIOEntryStruct::SVIOEntryStruct( const SVIOEntryStruct& p_rsvObject )
-: m_IOEntryPtr( p_rsvObject.m_IOEntryPtr )
-, m_EntryValid( p_rsvObject.m_EntryValid )
-, m_CombinedValue( p_rsvObject.m_CombinedValue )
-{
-}
-
-SVIOEntryStruct::~SVIOEntryStruct()
-{
-	clear();
-}
-
-bool SVIOEntryStruct::operator<( const SVIOEntryStruct& p_rsvObject ) const
-{
-	return ( m_IOEntryPtr < p_rsvObject.m_IOEntryPtr );
-}
-
-bool SVIOEntryStruct::empty() const
-{
-	return (nullptr == m_IOEntryPtr);
-}
-
-void SVIOEntryStruct::clear()
-{
-	m_IOEntryPtr.reset();
-
-	m_EntryValid = false;
-	m_CombinedValue = false;
-}
-
-void SVIOEntryStruct::InitEntry()
-{
-	m_EntryValid = false;
-	m_CombinedValue = false;
-}
-
 
 SVInputsInfoStruct::SVInputsInfoStruct()
-: pInputsList( nullptr )
-, m_BeginProcess( 0.0 )
-, m_EndProcess( 0.0 )
 {
 }
 
-SVInputsInfoStruct::SVInputsInfoStruct( const SVInputsInfoStruct& p_rsvObject )
-: pInputsList( p_rsvObject.pInputsList )
-, m_BeginProcess( p_rsvObject.m_BeginProcess )
-, m_EndProcess( p_rsvObject.m_EndProcess )
+SVInputsInfoStruct::SVInputsInfoStruct( const SVInputsInfoStruct& rRhs )
 {
+	m_Inputs = rRhs.m_Inputs;
 }
 
 SVInputsInfoStruct::~SVInputsInfoStruct()
@@ -83,13 +35,11 @@ SVInputsInfoStruct::~SVInputsInfoStruct()
 	Reset();
 }
 
-const SVInputsInfoStruct& SVInputsInfoStruct::operator=( const SVInputsInfoStruct& p_rsvObject )
+const SVInputsInfoStruct& SVInputsInfoStruct::operator=( const SVInputsInfoStruct& rRhs )
 {
-	if( this != &p_rsvObject )
+	if( this != &rRhs )
 	{
-		pInputsList = p_rsvObject.pInputsList;
-		m_BeginProcess = p_rsvObject.m_BeginProcess;
-		m_EndProcess = p_rsvObject.m_EndProcess;
+		m_Inputs = rRhs.m_Inputs;
 	}
 
 	return *this;
@@ -97,68 +47,65 @@ const SVInputsInfoStruct& SVInputsInfoStruct::operator=( const SVInputsInfoStruc
 
 void SVInputsInfoStruct::Reset()
 {
-	pInputsList		= nullptr;
-	m_BeginProcess	= 0;
-	m_EndProcess	= 0;
+	m_Inputs.clear();
 }// end Reset
 
 void SVInputsInfoStruct::Init()
 {
-	m_BeginProcess = 0;
-	m_EndProcess = 0;
 }// end Init
 
 
 SVOutputsInfoStruct::SVOutputsInfoStruct()
-: pOutputsList( nullptr )
-, lOutputDelay( 0 )
-, lResetDelay( 0 )
-, lDataValidDelay( 0 )
-, DataValidResult( false )
-, OutputToggleResult( false )
-, m_EndOutputDelay( 0 )
-, m_EndResetDelay( 0 )
-, m_EndDataValidDelay( 0 )
-, m_BeginProcess( 0 )
-, m_EndProcess( 0 )
+: m_OutputDelay{0L}
+, m_ResetDelay{0L}
+, m_DataValidDelay{0L}
+, m_DataValidResult{false}
+, m_OutputToggleResult{false}
+, m_NakResult{true}
+, m_EndOutputDelay {0LL}
+, m_EndResetDelay {0LL}
+, m_EndDataValidDelay {0LL}
+, m_BeginProcess {0LL}
+, m_EndProcess {0LL}
 {
 }
 
-SVOutputsInfoStruct::SVOutputsInfoStruct( const SVOutputsInfoStruct& p_rsvObject )
-: pOutputsList( p_rsvObject.pOutputsList )
-, lOutputDelay( p_rsvObject.lOutputDelay )
-, lResetDelay( p_rsvObject.lResetDelay )
-, lDataValidDelay( p_rsvObject.lDataValidDelay )
-, DataValidResult( p_rsvObject.DataValidResult )
-, OutputToggleResult( p_rsvObject.OutputToggleResult )
-, m_EndOutputDelay( p_rsvObject.m_EndOutputDelay )
-, m_EndResetDelay( p_rsvObject.m_EndResetDelay )
-, m_EndDataValidDelay( p_rsvObject.m_EndDataValidDelay )
-, m_BeginProcess( p_rsvObject.m_BeginProcess )
-, m_EndProcess( p_rsvObject.m_EndProcess )
+SVOutputsInfoStruct::SVOutputsInfoStruct( const SVOutputsInfoStruct& rRhs )
+: m_OutputDelay{rRhs.m_OutputDelay}
+, m_ResetDelay{rRhs.m_ResetDelay}
+, m_DataValidDelay{rRhs.m_DataValidDelay}
+, m_DataValidResult{rRhs.m_DataValidResult}
+, m_OutputToggleResult {rRhs.m_OutputToggleResult}
+, m_NakResult {rRhs.m_NakResult}
+, m_EndOutputDelay{rRhs.m_EndOutputDelay}
+, m_EndResetDelay{rRhs.m_EndResetDelay}
+, m_EndDataValidDelay{rRhs.m_EndDataValidDelay}
+, m_BeginProcess{rRhs.m_BeginProcess}
+, m_EndProcess{rRhs.m_EndProcess}
+, m_Outputs{rRhs.m_Outputs}
 {
 }
 
 SVOutputsInfoStruct::~SVOutputsInfoStruct()
 {
-	Reset();
 }
 
-const SVOutputsInfoStruct& SVOutputsInfoStruct::operator=( const SVOutputsInfoStruct& p_rsvObject )
+const SVOutputsInfoStruct& SVOutputsInfoStruct::operator=( const SVOutputsInfoStruct& rRhs )
 {
-	if( this != &p_rsvObject )
+	if( this != &rRhs )
 	{
-		pOutputsList = p_rsvObject.pOutputsList;
-		lOutputDelay = p_rsvObject.lOutputDelay;
-		lResetDelay = p_rsvObject.lResetDelay;
-		lDataValidDelay = p_rsvObject.lDataValidDelay;
-		DataValidResult = p_rsvObject.DataValidResult;
-		OutputToggleResult = p_rsvObject.OutputToggleResult;
-		m_EndOutputDelay = p_rsvObject.m_EndOutputDelay;
-		m_EndResetDelay = p_rsvObject.m_EndResetDelay;
-		m_EndDataValidDelay = p_rsvObject.m_EndDataValidDelay;
-		m_BeginProcess = p_rsvObject.m_BeginProcess;
-		m_EndProcess = p_rsvObject.m_EndProcess;
+		m_OutputDelay = rRhs.m_OutputDelay;
+		m_ResetDelay = rRhs.m_ResetDelay;
+		m_DataValidDelay = rRhs.m_DataValidDelay;
+		m_DataValidResult = rRhs.m_DataValidResult;
+		m_OutputToggleResult = rRhs.m_OutputToggleResult;
+		m_NakResult = rRhs.m_NakResult;
+		m_EndOutputDelay = rRhs.m_EndOutputDelay;
+		m_EndResetDelay = rRhs.m_EndResetDelay;
+		m_EndDataValidDelay = rRhs.m_EndDataValidDelay;
+		m_BeginProcess = rRhs.m_BeginProcess;
+		m_EndProcess = rRhs.m_EndProcess;
+		m_Outputs = rRhs.m_Outputs;
 	}
 
 	return *this;
@@ -166,17 +113,18 @@ const SVOutputsInfoStruct& SVOutputsInfoStruct::operator=( const SVOutputsInfoSt
 
 void SVOutputsInfoStruct::Reset()
 {
-	pOutputsList	= nullptr;
-	lOutputDelay	= 0;
-	lResetDelay		= 0;
-	lDataValidDelay	= 0;
-	DataValidResult = false;
-	OutputToggleResult = false;
+	m_OutputDelay	= 0;
+	m_ResetDelay		= 0;
+	m_DataValidDelay	= 0;
+	m_DataValidResult = false;
+	m_OutputToggleResult = false;
+	m_NakResult = true;
 	m_EndOutputDelay			= 0;
 	m_EndResetDelay				= 0;
 	m_EndDataValidDelay			= 0;
 	m_BeginProcess				= 0;
 	m_EndProcess				= 0;
+	m_Outputs.clear();
 }// end Reset
 
 void SVOutputsInfoStruct::Init()
@@ -187,20 +135,20 @@ void SVOutputsInfoStruct::Init()
 	m_EndDataValidDelay			= 0;
 	m_BeginProcess				= 0;
 	m_EndProcess				= 0;
+	m_NakResult = true;
+	m_Outputs.clear();
 }// end Init
 
 
 SVPPQInfoStruct::SVPPQInfoStruct()
 : pPPQ()
 , m_ResultDataDMIndexHandle()
-,	m_InputData()
 {
 }
 
 SVPPQInfoStruct::SVPPQInfoStruct( const SVPPQInfoStruct& p_rsvObject )
 : pPPQ( p_rsvObject.pPPQ )
 , m_ResultDataDMIndexHandle()
-,	m_InputData( p_rsvObject.m_InputData )
 {
 	m_ResultDataDMIndexHandle.Assign( p_rsvObject.m_ResultDataDMIndexHandle, p_rsvObject.m_ResultDataDMIndexHandle.GetLockType() );
 }
@@ -218,8 +166,6 @@ HRESULT SVPPQInfoStruct::Assign( const SVPPQInfoStruct &p_rsvObject )
 	{
 		pPPQ = p_rsvObject.pPPQ;
 
-		m_InputData = p_rsvObject.m_InputData;
-
 		l_Status = m_ResultDataDMIndexHandle.Assign( p_rsvObject.m_ResultDataDMIndexHandle, p_rsvObject.m_ResultDataDMIndexHandle.GetLockType() );
 	}
 	
@@ -230,20 +176,11 @@ void SVPPQInfoStruct::Reset()
 {
 	pPPQ = nullptr;
 
-	m_InputData.clear();
-
 	ClearIndexes();
 }
 
 void SVPPQInfoStruct::InitPPQInfo()
 {
-	SVIOEntryStructVector::iterator l_svIter;
-	
-	for( l_svIter = m_InputData.begin(); l_svIter != m_InputData.end(); ++l_svIter )
-	{
-		( *l_svIter ).InitEntry();
-	}
-
 	ClearIndexes();
 }
 

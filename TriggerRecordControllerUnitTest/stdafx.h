@@ -35,8 +35,10 @@
 #include <atlstr.h>
 
 
+#include <comdef.h>
 #include <deque>
 #include <map>
+#include <set>
 #include <vector>
 #include <ctime>
 #include <tchar.h>

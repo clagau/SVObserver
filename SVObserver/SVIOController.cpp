@@ -19,10 +19,10 @@
 
 #include "SVIODoc.h"
 #include "SVConfigurationObject.h"
-#include "SVDigitalOutputObject.h"
+#include "SVIOLibrary/SVDigitalOutputObject.h"
+#include "SVIOLibrary/SVOutputObjectList.h"
 #include "SVInfoStructs.h"
 #include "SVObserver.h"
-#include "SVOutputObjectList.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "TextDefinesSvO.h"
@@ -60,8 +60,7 @@ void SVIOController::LocalIntialize()
 	SVBoolValueObjectClass* pValueObject = new SVBoolValueObjectClass;
 	m_pModuleReady->setObject(dynamic_cast<SVObjectClass*> (pValueObject));
 	//! For Module Ready do not set the parent owner
-	pValueObject->SetName(SvO::cModuleReady);
-	pValueObject->SetObjectDepth( 100 );
+	pValueObject->SetName(SvDef::cModuleReady);
 	pValueObject->ResetObject();
 	pValueObject->setValue( _variant_t(true) );
 
@@ -70,8 +69,7 @@ void SVIOController::LocalIntialize()
 	pValueObject = new SVBoolValueObjectClass;
 	m_pRaidErrorBit->setObject(dynamic_cast<SVObjectClass*> (pValueObject));
 	//! For Raid Error Indicator do not set the parent owner
-	pValueObject->SetName(SvO::cRaidErrorIndicator);
-	pValueObject->SetObjectDepth( 100 );
+	pValueObject->SetName(SvDef::cRaidErrorIndicator);
 	pValueObject->ResetObject();
 	pValueObject->setValue( _variant_t(false) );
 }
@@ -201,34 +199,6 @@ bool SVIOController::GetParameters( SvXml::SVObjectXMLWriter& rWriter ) const
 		bOk &= m_pRemoteOutputController->GetParameters( rWriter );
 	}
 	return bOk;
-}
-
-void SVIOController::SetObjectDepth( int NewObjectDepth )
-{
-	SVObjectClass::SetObjectDepth( NewObjectDepth );
-
-	if (nullptr != m_pModuleReady)
-	{
-		m_pModuleReady->getObject()->SetObjectDepth(NewObjectDepth);
-	}
-	if (nullptr != m_pRaidErrorBit)
-	{
-		m_pRaidErrorBit->getObject()->SetObjectDepth(NewObjectDepth);
-	}
-}
-
-void SVIOController::SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex )
-{
-	SVObjectClass::SetObjectDepthWithIndex( NewObjectDepth, NewLastSetIndex );
-
-	if (nullptr != m_pModuleReady)
-	{
-		m_pModuleReady->getObject()->SetObjectDepthWithIndex(NewObjectDepth, NewLastSetIndex);
-	}
-	if (nullptr != m_pRaidErrorBit)
-	{
-		m_pRaidErrorBit->getObject()->SetObjectDepthWithIndex(NewObjectDepth, NewLastSetIndex);
-	}
 }
 
 void SVIOController::ResetName()

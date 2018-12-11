@@ -100,6 +100,6 @@ void SVInt64ValueObjectClass::LocalInitialize()
 	SetTypeName( _T("Integer64") );
 
 	setOutputFormat( _T("%I64d") );
-	InitializeBuckets();
+	init();
 }
 

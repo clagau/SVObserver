@@ -32,4 +32,7 @@ const TCHAR* const SVO_PRODUCT_KONTRON_X2_GD8A_NONIO = _T("SVIM Non I/O");
 
 const TCHAR* const cBucketTag = _T("Array");			// for backwards compatibility
 const TCHAR* const cArrayTag = _T("Array_Elements");	// new style; one bucket, all array values
+
+const TCHAR* const cModuleReady = _T("Module Ready");
+const TCHAR* const cRaidErrorIndicator = _T("Raid Error Indicator");
 } //namespace SvDef

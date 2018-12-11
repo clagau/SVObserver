@@ -33,10 +33,9 @@ public:
 	/// Return the current value. If a valid linked value this will be returned otherwise it will return the the variant value.
 	/// \param rValue [out] reference to the value to write to
 	/// \param Index [in]  index of array to get
-	/// \param Bucket [in] bucket to get
 	/// \returns S_OK if successful
 	//************************************
-	virtual HRESULT GetValue(_variant_t& rValue, int Index = -1, int Bucket = -1) const override;
+	virtual HRESULT GetValue(_variant_t& rValue, int Index = -1) const override;
 
 	virtual bool DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo ) override;
 

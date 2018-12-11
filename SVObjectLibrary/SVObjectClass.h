@@ -75,10 +75,6 @@ public:
 
 	virtual void ResetPrivateInputInterface();
 
-	int GetObjectDepth() const;
-	virtual void SetObjectDepth( int NewObjectDepth );
-	virtual void SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex );
-
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure );
 	virtual void ConnectObject( const SVObjectLevelCreateStruct& rCreateStructure );
 	virtual bool CloseObject();
@@ -175,8 +171,8 @@ public:
 	virtual SvOi::IObjectClass* getFirstObject(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends = true, const SvOi::IObjectClass* pRequestor = nullptr) const override;
 	virtual void moveFriendObject(const SVGUID& objectToMoveId, const SVGUID& preObjectId = GUID_NULL) override;
 	virtual bool resetAllObjects( SvStl::MessageContainerVector *pErrorMessages=nullptr ) override { return ResetObject(pErrorMessages); };
-	virtual HRESULT getValue(double& rValue, int Index = -1, int Bucket = -1) const override { return E_NOTIMPL; };
-	virtual HRESULT getValues(std::vector<double>& rValues, int Bucket = -1) const override { return E_NOTIMPL; };
+	virtual HRESULT getValue(double& rValue, int Index = -1) const override { return E_NOTIMPL; };
+	virtual HRESULT getValues(std::vector<double>& rValues) const override { return E_NOTIMPL; };
 #pragma endregion virtual method (IObjectClass)
 
 	const SVObjectInfoStruct& GetOwnerInfo() const;
@@ -242,9 +238,6 @@ protected:
 	std::vector<UINT> m_ObjectAttributesSet;
 	//This attribute holds the enumerated bits of default object attributes.
 	UINT m_DefaultObjectAttributesSet;
-
-	//This attribute holds the data depth of the embedded data elements.
-	int m_objectDepth;
 
 	//This attribute holds the validity state of the object.
 	mutable bool m_isObjectValid;

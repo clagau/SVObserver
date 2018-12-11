@@ -14,7 +14,7 @@
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
-#include "SVObjectLibrary/SVIOEntryHostStruct.h"
+#include "SVIOLibrary/SVIOEntryHostStruct.h"
 #pragma endregion Includes
 
 namespace SvTi
@@ -32,8 +32,8 @@ namespace SvTi
 		SVCameraTriggerData();
 		virtual ~SVCameraTriggerData();
 
-		SVIOEntryHostStructPtr SetupLineStateInput(long objectDepth);
-		SVIOEntryHostStructPtr SetupTimestampInput(long objectDepth);
+		SVIOEntryHostStructPtr SetupLineStateInput();
+		SVIOEntryHostStructPtr SetupTimestampInput();
 
 		std::string GetTimestampName() const;
 		std::string GetLineStateName() const;

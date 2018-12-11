@@ -85,7 +85,6 @@ If this Object is NOT valid, the validationReferenceID refers to the object on t
 void SVObjectClass::init()
 {
 	m_isCreated	  = false;
-	m_objectDepth = 0;	// Standard Depth
 
 	m_isObjectValid		  = false;
 	m_embeddedID = GUID_NULL;
@@ -670,22 +669,6 @@ SVObjectClass*  SVObjectClass::GetFriend( const SvDef::SVObjectTypeInfoStruct& r
 		}
 	}
 	return nullptr;
-}
-
-/*
-Set the object data depth. ( Data Table )  Should be overridden and must be called in derived classes...
-*/
-void SVObjectClass::SetObjectDepth( int NewObjectDepth )
-{
-	m_objectDepth = NewObjectDepth;
-}
-
-/*
-Set the object data depth. ( Data Table )  Should be overridden and must be called in derived classes...
-*/
-void SVObjectClass::SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex )
-{
-	m_objectDepth = NewObjectDepth;
 }
 
 /*

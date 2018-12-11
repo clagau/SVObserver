@@ -19,7 +19,6 @@
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary\SVGUID.h"
-#include "SVPPQObject.h"
 #pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVRemoteOutputObject, SVRemoteOutputObjectGUID );

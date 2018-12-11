@@ -27,7 +27,6 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVUtilityLibrary/SVSafeArray.h"
 #include "Definitions/GlobalConst.h"
 #pragma endregion Includes
 
@@ -45,10 +44,6 @@ class SVValueObjectClass : public SVObjectClass, public SvOi::IValueObject
 protected:
 	typedef typename T					ValueType;
 	typedef std::vector<ValueType>		ValueVector;
-	typedef std::vector<ValueType>		Bucket;
-	typedef std::vector<ValueVector>	BucketVector;
-	typedef std::unique_ptr<Bucket>		BucketPtr;
-	typedef std::unique_ptr<BucketVector> BucketVectorPtr;
 
 #pragma region Constructor
 	SVValueObjectClass( LPCTSTR ObjectName );
@@ -63,40 +58,35 @@ protected:
 public:
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure );
 	virtual bool CloseObject() override;
-	virtual bool ResetObject( SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
-	virtual void SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex ) override;
 	virtual HRESULT SetArraySize(int iSize);
 	virtual HRESULT SetOutputFormat(OutputFormat outputFormat) { return E_NOTIMPL; };
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject );
 	virtual HRESULT SetValue( const T& rValue, int Index = -1 );
-	virtual HRESULT GetValue(T&  rValue, int Index = -1, int Bucket = -1) const;
+	virtual HRESULT GetValue(T&  rValue, int Index = -1) const;
 	virtual HRESULT SetDefaultValue( const T& rValue, bool bResetAll = true );
 	const ValueType& GetDefaultValue() const { return m_DefaultValue; };
 
 	HRESULT SetArrayValues(typename ValueVector::const_iterator BeginIter, typename ValueVector::const_iterator EndIter);
 	HRESULT SetArrayValues(const ValueVector& rValues);
-	virtual HRESULT GetArrayValues(ValueVector& rValues, int Bucket = -1) const;
+	virtual HRESULT GetArrayValues(ValueVector& rValues) const;
 
 	HRESULT SetResultSize(int  ResultSize) { m_ResultSize = (ResultSize <= m_ArraySize) ? ResultSize : 0; return S_OK; };
 	HRESULT SetTypeName( LPCTSTR TypeName );
 	bool CompareWithCurrentValue( const std::string& rCompare ) const;
-	void setStatic( bool isStatic ) { m_isStatic = isStatic; };
 	
 #pragma region virtual method (IObjectClass/IValueObject)
 	//! For these methods see IObject documentation
-	virtual UINT SetObjectAttributesSet(UINT Attributes, SvOi::SetAttributeType Type, int iIndex = 0) override;
-	virtual HRESULT getValue(double& rValue, int Index = -1, int Bucket = -1) const override;
-	virtual HRESULT getValues(std::vector<double>& rValues, int Bucket = -1) const override;
+	virtual HRESULT getValue(double& rValue, int Index = -1) const override;
+	virtual HRESULT getValues(std::vector<double>& rValues) const override;
 	virtual void Persist(SvOi::IObjectWriter& rWriter) override;
 	//! For these methods see IValueObject documentation
 	virtual HRESULT setDefaultValue(const _variant_t& rValue) override { return SetDefaultValue(Variant2ValueType(rValue), false); }
 	virtual _variant_t getDefaultValue() const override { return ValueType2Variant(m_DefaultValue); };
 	virtual HRESULT setValue(const _variant_t& rValue, int Index = -1) override;
-	virtual HRESULT getValue(_variant_t& rValue, int Index = -1, int Bucket = -1) const override;
-	virtual HRESULT getValues(std::vector<_variant_t>&  rValues, int Bucket = -1) const override;
+	virtual HRESULT getValue(_variant_t& rValue, int Index = -1) const override;
+	virtual HRESULT getValues(std::vector<_variant_t>&  rValues) const override;
 	virtual HRESULT setValue(const std::string& rValue, int Index = -1) override;
-	virtual HRESULT getValue(std::string& rValue, int Index = -1, int Bucket = -1) const override;
-	virtual void setBucketized(bool isBucketized) override { m_isBucketized = m_isStatic ? false : isBucketized; };
+	virtual HRESULT getValue(std::string& rValue, int Index = -1) const override;
 	virtual void setResetOptions(bool p_bResetAlways, SvOi::SVResetItemEnum p_eResetItem) override;
 	virtual void validateValue(const _variant_t& rValue) const override;
 	virtual std::string getTypeName() const override { return m_TypeName; };
@@ -105,7 +95,6 @@ public:
 	virtual int getResultSize() const override { return m_ResultSize; };
 	virtual SvOi::SVResetItemEnum getResetItem() const override { return m_eResetItem; };
 	virtual bool ResetAlways() const override {	return m_ResetAlways; };
-	virtual HRESULT CopyValue( int DestBucket ) override;
 	virtual DWORD GetByteSize() const override;
 	virtual DWORD GetType() const override { return ValueType2Variant(m_Value).vt; };
 	virtual HRESULT CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD MemByteSize, int Index = -1) const override;
@@ -113,8 +102,6 @@ public:
 #pragma endregion virtual method (IObjectClass/IValueObject)
 	
 	void SetLegacyVectorObjectCompatibility() { m_LegacyVectorObjectCompatibility = true; }
-
-	bool isBucketized() const { return m_isBucketized; };
 
 	/// getter and setter for ShouldSaveValue-Flag
 	bool shouldSaveValue() { return m_shouldSaveValue; };
@@ -128,20 +115,16 @@ public:
 protected:
 	void Initialize();
 
-	HRESULT SetVariantValue(const _variant_t& rValue, int iIndex = -1);
-	virtual HRESULT GetVariantValue(_variant_t& rValue, int Index = -1, int Bucket = -1) const;
-
 	virtual double ValueType2Double(const T& rValue) const = 0;
 	virtual _variant_t ValueType2Variant(const T& rValue) const = 0;
 	virtual T Variant2ValueType(const _variant_t& rValue) const = 0;
 
-	virtual void CreateBuckets();
-	void InitializeBuckets();
+	void init();
 
-	//! Convert String to template type 
+	//! Convert String to template type !!can throw Exception!!
 	//! If value invalid an exception message will be thrown.
 	//! \param rValue [in] String to convert
-	/// \returns the Value converted or throws an exception!
+	/// \returns the Value converted!
 	virtual T ConvertString2Type( const std::string& rValue ) const = 0;
 
 	//! Convert template type to String
@@ -163,9 +146,7 @@ protected:
 	const ValueType& Value() const { return m_Value; };
 	ValueVector& ValueArray() { return m_ValueArray; };
 
-	ValueType* getValuePointer( int Index, int Bucket );
-	BucketPtr& getBucket() { return m_pBucket; };
-	BucketVectorPtr& getBucketArray() { return m_pBucketArray; };
+	ValueType* getValuePointer(int Index);
 
 	std::string FormatOutput(const T& rValue) const;
 	void setOutputFormat( LPCTSTR OutFormat ) { m_OutFormat = OutFormat; };
@@ -181,13 +162,18 @@ protected:
 	/// Write the Default-Values of this object to the IObjectWriter
 	/// \param rWriter [in,out] The IObjectWriter
 	virtual void WriteDefaultValues(SvOi::IObjectWriter& rWriter) = 0;
+
+	/// !!can throw Exception!!
+	T convertVariantValue(const _variant_t& rValue) const;
+	/// !!can throw Exception!!
+	std::vector<T> variant2VectorType(const _variant_t& rValue) const;
+	/// Uses move semantics
+	_variant_t variantVector2SafeArray(std::vector<_variant_t>&& valueVector) const;
 #pragma endregion Protected Methods
 
 #pragma region Member Variables
 private:
 	std::string m_TypeName;					//The data type name
-	bool m_isBucketized;					//This is set to make the value object bucketized
-	bool m_isStatic;						//If this is set then the value object cannot be bucketized (For values that don't change during run)
 	bool m_shouldSaveValue;					//If true, the value will be saved in configuration file, else it will not be saved and after loading the configuration it is default value.
 	bool m_shouldSaveDefaultValue;			//If true, the default value will be saved in configuration file, else it will not be saved and after loading the configuration it is default of the default value.
 	bool m_ResetAlways;
@@ -196,16 +182,12 @@ private:
 
 	SvOi::SVResetItemEnum m_eResetItem;
 
-	int m_NumberOfBuckets;
 	int m_ArraySize;
 	int m_ResultSize;
 
 	ValueType m_DefaultValue;
 	ValueType m_Value;
 	ValueVector m_ValueArray;
-
-	BucketPtr m_pBucket;					//Bucket unique pointer
-	BucketVectorPtr m_pBucketArray;			//Bucket array unique pointer
 #pragma endregion Member Variables
 };
 

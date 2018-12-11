@@ -106,9 +106,8 @@ public:
 
 	/// Get the value of object depend of the index. If object is not a value object, it will return an error.
 	/// \param rValue [out] The return value.
-	/// \param Bucket [in] The bucket. Default = -1
 	/// \returns HRESULT
-	HRESULT getValue(_variant_t& rValue, int Bucket = -1) const;
+	HRESULT getValue(_variant_t& rValue) const;
 
 	//************************************
 	//! Increments the array index if the reference points to a single array variable. 

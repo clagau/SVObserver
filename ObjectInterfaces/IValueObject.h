@@ -58,15 +58,13 @@ namespace SvOi
 		//! Gets the value for Value object
 		//! \param rValue [out] The reference to write the value to
 		//! \param Index [in] The corresponding array index to write to, if required
-		//! \param Bucket [in] The corresponding bucket index to get, if required
 		//! \returns S_OK if succeeded
-		virtual HRESULT getValue(_variant_t& rValue, int Index = -1, int Bucket = -1) const = 0;
+		virtual HRESULT getValue(_variant_t& rValue, int Index = -1) const = 0;
 
 		//! Gets the values for Value object
 		//! \param rValue [out] The reference to _variant_t vector to store the values
-		//! \param Bucket [in] The corresponding bucket index to get, if required
 		//! \returns S_OK if succeeded
-		virtual HRESULT getValues(std::vector<_variant_t>& rValues, int Bucket = -1) const = 0;
+		virtual HRESULT getValues(std::vector<_variant_t>& rValues) const = 0;
 
 		//! Sets the value for Value object
 		//! \param rValue [in] The value to set the Value object to
@@ -77,13 +75,8 @@ namespace SvOi
 		//! Gets the value for Value object
 		//! \param rValue [out] The reference to write the value to
 		//! \param Index [in] The corresponding array index to write to, if required
-		//! \param Bucket [in] The corresponding bucket index to get, if required
 		//! \returns S_OK if succeeded
-		virtual HRESULT getValue(std::string& rValue, int Index = -1, int Bucket = -1) const = 0;
-
-		//! Set the value object bucketized flag
-		//! \param isBucketized [in] true if bucketized
-		virtual void setBucketized( bool isBucketized ) = 0;
+		virtual HRESULT getValue(std::string& rValue, int Index = -1) const = 0;
 
 		//! Set the reset options for the value object
 		//! \param bResetAlways [in] 
@@ -117,11 +110,6 @@ namespace SvOi
 		//! Gets the reset always value object flag
 		//! \returns true if reset always
 		virtual bool ResetAlways() const = 0;
-
-		//! Copies the value to the destination bucket
-		//! \param DestBucket [in] The bucket index to copy the value to
-		//! \returns the result of copying
-		virtual HRESULT CopyValue( int DestBucket ) = 0;
 
 		//! Returns he value object byte size
 		//! \returns the number of bytes for the data

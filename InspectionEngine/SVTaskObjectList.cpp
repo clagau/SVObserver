@@ -337,38 +337,6 @@ HRESULT SVTaskObjectListClass::RemoveChild( SVTaskObjectClass* pChildObject )
 	return Result;
 }
 
-// Should be overridden and must be called in derived classes...
-void SVTaskObjectListClass::SetObjectDepth(int NewObjectDepth)
-{
-	// Set object depth of members here...
-
-	// Set object depth of all task list members...
-	for (int j = 0; j < static_cast<int> (m_TaskObjectVector.size()); ++ j)
-	{
-		if (m_TaskObjectVector[j])
-		{
-			m_TaskObjectVector[j]->SetObjectDepth(NewObjectDepth);
-		}
-	}
-	SVTaskObjectClass::SetObjectDepth(NewObjectDepth);
-}
-
-// Should be overridden and must be called in derived classes...
-void SVTaskObjectListClass::SetObjectDepthWithIndex(int NewObjectDepth, int NewLastSetIndex)
-{
-	// Set object depth of members here...
-
-	// Set object depth of all task list members...
-	for (int j = 0; j < static_cast<int> (m_TaskObjectVector.size()); ++ j)
-	{
-		if (m_TaskObjectVector[j])
-		{
-			m_TaskObjectVector[j]->SetObjectDepthWithIndex(NewObjectDepth, NewLastSetIndex);
-		}
-	}
-	SVTaskObjectClass::SetObjectDepthWithIndex(NewObjectDepth, NewLastSetIndex);
-}
-
 void SVTaskObjectListClass::SetInvalid()
 {
 	// Set this object and all own embedded objects to invalid

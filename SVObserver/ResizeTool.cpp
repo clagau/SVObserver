@@ -188,7 +188,6 @@ bool ResizeTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 
 	bOk &= (S_OK == ToolSizeAdjustTask::EnsureInFriendList(this, true, true, true));
 
-	m_SourceImageNames.setStatic(true);
 	m_SourceImageNames.setSaveValueFlag(false);
 	m_SourceImageNames.SetObjectAttributesAllowed(SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute);
 

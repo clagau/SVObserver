@@ -16,12 +16,12 @@
 #include "Image.h"
 #include "TriggerRecordController.h"
 #include "ImageBufferController.h"
+#include "CopyData.h"
 #include "SVImageLibrary\SVImageBufferHandleImage.h"
 #include "SVMatroxLibrary\SVMatroxBufferCreateStruct.h"
 #include "SVMatroxLibrary\SVMatroxResourceMonitor.h"
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"
 #include "SVMessage\SVMessage.h"
-#include "SVProtoBuf\ConverterHelper.h"
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVUtilityLibrary\SVGUID.h"
@@ -84,10 +84,7 @@ const SvPb::ImageList& TriggerRecordController::getImageDefList(int inspectionPo
 	{
 		if (0 <= inspectionPos && m_IPDataNumber > inspectionPos && m_pData[inspectionPos].m_bInit)
 		{
-			if (nullptr != m_pData[inspectionPos].m_pImageList)
-			{
-				return *m_pData[inspectionPos].m_pImageList;
-			}
+			return m_pData[inspectionPos].m_ImageList;
 		}
 	}
 
@@ -101,8 +98,7 @@ ITriggerRecordRPtr TriggerRecordController::createTriggerRecordObject(int inspec
 {
 	assert(-1 == m_resetStarted4IP);
 
-	if (-1 == m_resetStarted4IP && 0 <= inspectionPos && m_IPDataNumber > inspectionPos
-		&& m_pData[inspectionPos].m_bInit && nullptr != m_pData[inspectionPos].m_pImageList)
+	if (-1 == m_resetStarted4IP && 0 <= inspectionPos && m_IPDataNumber > inspectionPos	 && m_pData[inspectionPos].m_bInit)
 	{
 		if (0 <= trId)
 		{
@@ -116,7 +112,8 @@ ITriggerRecordRPtr TriggerRecordController::createTriggerRecordObject(int inspec
 					{
 						if (InterlockedCompareExchange(&(rCurrentTR.m_referenceCount), refTemp + 1, refTemp) == refTemp)
 						{
-							return ITriggerRecordRPtr(new TriggerRecord(inspectionPos, rCurrentTR, *m_pData[inspectionPos].m_pImageList, m_resetId));
+							TRControllerDataPerIP& rIPData = m_pData[inspectionPos];
+							return std::make_shared<TriggerRecord>(inspectionPos, rCurrentTR, rIPData.m_ImageList, rIPData.m_DataDefList, rIPData.m_dataListSize, m_resetId);
 						}
 						refTemp = rCurrentTR.m_referenceCount;
 					}
@@ -259,31 +256,31 @@ ITriggerRecordRWPtr TriggerRecordController::createTriggerRecordObjectToWrite(in
 {
 	assert(-1 == m_resetStarted4IP && 0 <= inspectionPos && m_IPDataNumber > inspectionPos && m_pData[inspectionPos].m_bInit);
 
-	if (-1 == m_resetStarted4IP && 0 <= inspectionPos && m_IPDataNumber > inspectionPos
-		&& m_pData[inspectionPos].m_bInit && nullptr != m_pData[inspectionPos].m_pImageList)
+	if (-1 == m_resetStarted4IP && 0 <= inspectionPos && m_IPDataNumber > inspectionPos && m_pData[inspectionPos].m_bInit)
 	{
 		int currentPos = m_pData[inspectionPos].m_nextPosForFreeCheck;
 		do
 		{
 			TriggerRecord::TriggerRecordData& rCurrentTR = getTRData(inspectionPos, currentPos);
 			long count = rCurrentTR.m_referenceCount;
-			while (TriggerRecord::m_InvalidData == count || 0 == count)
+			while (TriggerRecord::cInvalidData == count || 0 == count)
 			{
-				if (InterlockedCompareExchange(&(rCurrentTR.m_referenceCount), TriggerRecord::m_WriteBlocked, count) == count)
+				if (InterlockedCompareExchange(&(rCurrentTR.m_referenceCount), TriggerRecord::cWriteBlocked, count) == count)
 				{
 					rCurrentTR.m_trId = m_nextTRID++;
-					m_pData[inspectionPos].m_lastStartedTRID = rCurrentTR.m_trId;
-					m_pData[inspectionPos].m_nextPosForFreeCheck = (currentPos + 1) % (m_pData[inspectionPos].m_TriggerRecordNumber);
-					return ITriggerRecordRWPtr(new TriggerRecord(inspectionPos, rCurrentTR, *m_pData[inspectionPos].m_pImageList, m_resetId));
+					TRControllerDataPerIP& rIPData =  m_pData[inspectionPos];
+					rIPData.m_lastStartedTRID = rCurrentTR.m_trId;
+					rIPData.m_nextPosForFreeCheck = (currentPos + 1) % (rIPData.m_TriggerRecordNumber);
+					return std::make_shared<TriggerRecord>(inspectionPos, rCurrentTR, rIPData.m_ImageList, rIPData.m_DataDefList, rIPData.m_dataListSize, m_resetId);
 				}
 			}
 			currentPos++;
-			currentPos = currentPos%m_pData[inspectionPos].m_TriggerRecordNumber;
+			currentPos = currentPos % m_pData[inspectionPos].m_TriggerRecordNumber;
 		} while (currentPos != m_pData[inspectionPos].m_nextPosForFreeCheck);
 		assert(false);
 	}
 
-	return ITriggerRecordRWPtr();
+	return nullptr;
 };
 
 ITriggerRecordRPtr TriggerRecordController::closeWriteAndOpenReadTriggerRecordObject(ITriggerRecordRWPtr& pTriggerRecord)
@@ -366,13 +363,9 @@ void TriggerRecordController::startResetTriggerRecordStructure(int inspectionPos
 		m_resetStarted4IP = inspectionPos;
 
 		//clear imageList and reset ImageStructList
-		m_imageListResetTmp.Clear();
 		int TRNumber = 0;
-		if (nullptr != m_pData[m_resetStarted4IP].m_pImageList)
-		{
-			m_imageListResetTmp = *m_pData[m_resetStarted4IP].m_pImageList;
-			TRNumber = m_pData[m_resetStarted4IP].m_TriggerRecordNumber;
-		}
+		m_imageListResetTmp = m_pData[m_resetStarted4IP].m_ImageList;
+		TRNumber = m_pData[m_resetStarted4IP].m_TriggerRecordNumber;
 		m_imageStructListResetTmp.Clear();
 		m_imageStructListResetTmp = ImageBufferController::getImageBufferControllerInstance().getImageStructList();
 		//remove number of buffers from required list from old reserved images of this inspection.
@@ -440,11 +433,7 @@ int TriggerRecordController::addOrChangeImage(const GUID& rImageId, const SVMatr
 		//prefer reset
 		m_resetStarted4IP = inspectionPos;
 		m_TriggerRecordNumberResetTmp = TriggerRecordSize + m_TriggerRecordAddOn;
-		m_imageListResetTmp.Clear();
-		if (nullptr != m_pData[m_resetStarted4IP].m_pImageList)
-		{
-			m_imageListResetTmp = *m_pData[m_resetStarted4IP].m_pImageList;
-		}
+		m_imageListResetTmp = m_pData[m_resetStarted4IP].m_ImageList;
 		m_imageStructListResetTmp.Clear();
 		m_imageStructListResetTmp = ImageBufferController::getImageBufferControllerInstance().getImageStructList();
 	}
@@ -468,7 +457,7 @@ int TriggerRecordController::addOrChangeImage(const GUID& rImageId, const SVMatr
 	//check if image with this GUID already in list (this is not allowed.)
 	auto pImageIter = std::find_if(pList->begin(), pList->end(), [&ImageIdBytes](auto data)->bool
 	{
-		return (0 == data.imageid().compare(ImageIdBytes));
+		return (0 == data.guidid().compare(ImageIdBytes));
 	});
 	int imagePos = -1;
 	SvPb::ImageDefinition* pImageDefinition = nullptr;
@@ -496,7 +485,7 @@ int TriggerRecordController::addOrChangeImage(const GUID& rImageId, const SVMatr
 	{
 		pImageDefinition = m_imageListResetTmp.add_list();
 		imagePos = pList->size() - 1;
-		pImageDefinition->set_imageid(ImageIdBytes);
+		pImageDefinition->set_guidid(ImageIdBytes);
 	}
 
 	setStructData(pStructData, pImageDefinition, typeStr);
@@ -520,11 +509,7 @@ int TriggerRecordController::addOrChangeChildImage(const GUID& rImageId, const G
 
 	if (ResetEnum::NewReset == resetEnum)
 	{
-		m_imageListResetTmp.Clear();
-		if (nullptr != m_pData[inspectionPos].m_pImageList)
-		{
-			m_imageListResetTmp = *m_pData[inspectionPos].m_pImageList;
-		}
+		m_imageListResetTmp = m_pData[inspectionPos].m_ImageList;
 	}
 
 	std::string ImageIdBytes;
@@ -533,7 +518,7 @@ int TriggerRecordController::addOrChangeChildImage(const GUID& rImageId, const G
 	//check if image with this GUID already in list (this is not allowed.)
 	auto imageIter = std::find_if(pList->begin(), pList->end(), [&ImageIdBytes](auto data)->bool
 	{
-		return (0 == data.imageid().compare(ImageIdBytes));
+		return (0 == data.guidid().compare(ImageIdBytes));
 	});
 
 	int imagePos = -1;
@@ -548,14 +533,14 @@ int TriggerRecordController::addOrChangeChildImage(const GUID& rImageId, const G
 		pImageDefinition = m_imageListResetTmp.add_childlist();
 		imagePos = pList->size() - 1;
 	}
-	pImageDefinition->set_imageid(ImageIdBytes);
+	pImageDefinition->set_guidid(ImageIdBytes);
 	SvPb::SetGuidInProtoBytes(pImageDefinition->mutable_parentimageid(), rParentId);
 	std::string typeStr(reinterpret_cast<const char*>(&rBufferStruct), sizeof(rBufferStruct));
 	pImageDefinition->set_type(typeStr);
 
 	if (ResetEnum::NewReset == resetEnum)
 	{
-		m_pData[inspectionPos].m_pImageList = new SvPb::ImageList(m_imageListResetTmp);
+		m_pData[inspectionPos].m_ImageList = std::move(m_imageListResetTmp);
 	}
 	return imagePos;
 }
@@ -669,6 +654,21 @@ bool TriggerRecordController::removeAllImageBuffer(const GUID& ownerID)
 	return true;
 }
 
+bool TriggerRecordController::changeDataDef(SvPb::DataDefinitionList&& rDataDefList, std::vector<_variant_t>&& rValueObjectList, int inspectionPos)
+{
+	bool result{false};
+
+	if(nullptr != m_pData)
+	{
+		//Only obtain the size of the data
+		m_pData[inspectionPos].m_dataListSize = copyDataList(std::move(rValueObjectList));
+		m_pData[inspectionPos].m_DataDefList.Swap(&rDataDefList);
+		result = true;
+	}
+	
+	return result;
+}
+
 bool TriggerRecordController::lockReset()
 {
 	if (-1 == m_resetStarted4IP)
@@ -693,7 +693,7 @@ TriggerRecord::TriggerRecordData& TriggerRecordController::getTRData(int inspect
 
 void TriggerRecordController::ResetInspectionData(int inspectionID)
 {
-	if (0 <= inspectionID && m_IPDataNumber > inspectionID)
+	if (nullptr != m_pData && 0 <= inspectionID && m_IPDataNumber > inspectionID)
 	{
 		m_pData[inspectionID].m_lastFinishedTRID = -1;
 		m_pData[inspectionID].m_lastStartedTRID = -1;
@@ -702,11 +702,12 @@ void TriggerRecordController::ResetInspectionData(int inspectionID)
 			free(m_pData[inspectionID].m_pTriggerRecords);
 			m_pData[inspectionID].m_pTriggerRecords = nullptr;
 			m_pData[inspectionID].m_triggerRecordBufferSize = 0;
-			delete m_pData[inspectionID].m_pImageList;
-			m_pData[inspectionID].m_pImageList = nullptr;
 		}
 		m_pData[inspectionID].m_bInit = false;
-		m_pData[m_resetStarted4IP].m_nextPosForFreeCheck = 0;
+		if(-1 != m_resetStarted4IP)
+		{
+			m_pData[m_resetStarted4IP].m_nextPosForFreeCheck = 0;
+		}
 	}
 }
 
@@ -722,15 +723,17 @@ void TriggerRecordController::ResetTriggerRecordStructure()
 			ResetInspectionData(i);
 			m_pData[i].m_TriggerRecordNumber = m_TriggerRecordNumberResetTmp;
 			m_pData[i].m_triggerRecordBufferSize = (sizeof(TriggerRecord::TriggerRecordData) + sizeof(int)*m_imageListResetTmp.list_size());
-			m_pData[i].m_pImageList = new SvPb::ImageList(m_imageListResetTmp);
-			m_pData[i].m_pTriggerRecords = malloc(m_pData[i].m_triggerRecordBufferSize*m_pData[i].m_TriggerRecordNumber);
+			//Reserve memory space for the data size and the data
+			m_pData[i].m_triggerRecordBufferSize += sizeof(int) + m_pData[i].m_dataListSize;
+			m_pData[i].m_ImageList = std::move(m_imageListResetTmp);
+			m_pData[i].m_pTriggerRecords = malloc(m_pData[i].m_triggerRecordBufferSize * m_pData[i].m_TriggerRecordNumber);
 		}
 		if (nullptr != m_pData[i].m_pTriggerRecords && 0 < m_pData[i].m_triggerRecordBufferSize)
 		{
 			memset(m_pData[i].m_pTriggerRecords, -1, m_pData[i].m_triggerRecordBufferSize*m_pData[i].m_TriggerRecordNumber);
 			for (int j = 0; j < m_pData[i].m_TriggerRecordNumber; j++)
 			{	//initialize buffer
-				getTRData(i, j).init();
+				getTRData(i, j).init(m_pData[i].m_ImageList.list_size());
 			}
 		}
 		else
@@ -750,15 +753,11 @@ void TriggerRecordController::ResetTriggerRecordStructure()
 			//update per Inspection
 			for (int i = 0; i < m_IPDataNumber; i++)
 			{
-				auto* pImageList = m_pData[i].m_pImageList;
-				if (nullptr != pImageList)
+				for (auto& rImageData : (*m_pData[i].m_ImageList.mutable_list()))
 				{
-					for (auto& rImageData : (*pImageList->mutable_list()))
+					if (rImageData.structid() == rChangePair.first)
 					{
-						if (rImageData.structid() == rChangePair.first)
-						{
-							rImageData.set_structid(rChangePair.second);
-						}
+						rImageData.set_structid(rChangePair.second);
 					}
 				}
 			}
@@ -843,6 +842,7 @@ void TriggerRecordController::sendResetCall()
 		}
 	}
 }
+
 #pragma endregion Private Methods
 
 ITriggerRecordControllerRW& getTriggerRecordControllerRWInstance()

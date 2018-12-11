@@ -185,12 +185,12 @@ std::string SVObjectReference::GetIndexString(bool OneBased /*=false*/) const
 	return Result;
 }
 
-HRESULT SVObjectReference::getValue(_variant_t& rValue, int Bucket) const
+HRESULT SVObjectReference::getValue(_variant_t& rValue) const
 {
 	SvOi::IValueObject* pValueObject = getValueObject();
 	if (nullptr != pValueObject)
 	{
-		return pValueObject->getValue(rValue, ArrayIndex(), Bucket);
+		return pValueObject->getValue(rValue, ArrayIndex());
 	}
 	return E_POINTER;
 }

@@ -17,7 +17,7 @@
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVPPQEntryDialog.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVRemoteInputObject.h"
+#include "SVIOLibrary/SVRemoteInputObject.h"
 #include "SVInfoStructs.h"
 #include "SVPPQObject.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
@@ -76,40 +76,28 @@ END_MESSAGE_MAP()
 BOOL SVPPQEntryDialogRemotePageClass::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
-	ASSERT( m_pSheet );
+	assert( m_pSheet );
 
-	long lSize;
-	int j;
-	int nIndex;
-	SVIOEntryHostStructPtrVector ppIOEntries;
-	SVIOEntryHostStructPtr pIOEntry;
-
-	// Get list of available inputs
-	m_pSheet->m_pPPQ->GetAllInputs(ppIOEntries);
-	lSize = static_cast<long>(ppIOEntries.size());
-
-	for( j = 0; j < lSize; ++ j )
+	for(const auto& pEntry : m_pSheet->m_pPPQ->GetAllInputs())
 	{
-		pIOEntry = ppIOEntries[j];
-
-		if( pIOEntry->m_ObjectType != IO_REMOTE_INPUT ) { continue; }
+		if(pEntry->m_ObjectType != IO_REMOTE_INPUT ) { continue; }
 
 		// Fill selected input list box...
-		if( pIOEntry->m_PPQIndex == m_pSheet->m_lCurrentPosition )
+		if(pEntry->m_PPQIndex == m_pSheet->m_lCurrentPosition )
 		{
-			SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( pIOEntry->m_IOId );
+			SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject(pEntry->m_IOId);
 
-			nIndex = selectedInputListCtrl.AddString( l_pObject->GetName() );
-			m_SelectedItems.SetItemData( nIndex, pIOEntry );
+			int nIndex = selectedInputListCtrl.AddString( l_pObject->GetName() );
+			m_SelectedItems.SetItemData(nIndex, pEntry);
 		}// end if
 
 		// Fill available input list box...
-		if( pIOEntry->m_PPQIndex == -1 )
+		if(pEntry->m_PPQIndex == -1 )
 		{
-			SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( pIOEntry->m_IOId );
+			SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject(pEntry->m_IOId);
 
-			nIndex = availableInputListCtrl.AddString( l_pObject->GetName() );
-			m_AvailableItems.SetItemData( nIndex, pIOEntry );
+			int nIndex = availableInputListCtrl.AddString( l_pObject->GetName() );
+			m_AvailableItems.SetItemData( nIndex, pEntry);
 		}// end if
 	}// end for
 

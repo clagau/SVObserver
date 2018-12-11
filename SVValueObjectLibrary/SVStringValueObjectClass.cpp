@@ -63,15 +63,14 @@ HRESULT  SVStringValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 	HRESULT Result( E_FAIL );
 	bool	bOk( false );
 
-	std::vector<ValueType> ObjectArray;	// for default values
-	BucketVector BucketArray;
-	ValueVector ReadValueArray;
+	std::vector<ValueVector> BucketArray;		//This is for backward compatibility
+	ValueVector ValueArray;
 
-	if (bOk = pDataObject->GetAttributeData(scDefaultTag, ObjectArray))
+	if (bOk = pDataObject->GetAttributeData(scDefaultTag, ValueArray))
 	{
-		if (0 < ObjectArray.size())
+		if (0 < ValueArray.size())
 		{
-			DefaultValue() = ObjectArray[ObjectArray.size() - 1];
+			DefaultValue() = ValueArray[ValueArray.size() - 1];
 			SvUl::RemoveEscapedSpecialCharacters(DefaultValue(), true);
 		}
 
@@ -84,65 +83,41 @@ HRESULT  SVStringValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 			SvUl::RemoveEscapedSpecialCharacters(BucketArray[i][0], true);
 		}
 
-		if( !isBucketized() )
+		if ( 1 == getArraySize() )
 		{
-			if ( 1 == getArraySize() )
-			{
-				// In configurations the value are placed in bucket 1
-				Value() = BucketArray[1][0];
-			}
-			else
-			{
-				// In configurations the values are placed in bucket 1
-				std::swap( ValueArray(), BucketArray[1] );
-			}
+			// In configurations the value are placed in bucket 1
+			Value() = BucketArray[1][0];
 		}
 		else
 		{
-			if ( 1 == getArraySize() )
-			{
-				if(nullptr != getBucket().get())
-				{
-					getBucket()->at(0) = BucketArray[0][0];
-					getBucket()->at(1) = BucketArray[1][0];
-				}
-			}
-			else
-			{
-				if(nullptr != getBucketArray().get())
-				{
-					std::swap( *getBucketArray(), BucketArray );
-				}
-			}
+			// In configurations the values are placed in bucket 1
+			std::swap( __super::ValueArray(), BucketArray[1] );
 		}
 	}
 	// new-style: store all array elements:
-	else if ( bOk = pDataObject->GetArrayData( SvDef::cArrayTag, ReadValueArray, DefaultValue() ) )
+	else if ( bOk = pDataObject->GetArrayData( SvDef::cArrayTag, ValueArray, DefaultValue() ) )
 	{
-		for (size_t i = 0; i < ReadValueArray.size(); i++)
+		for (size_t i = 0; i < ValueArray.size(); i++)
 		{
 			// Remove any escapes
-			SvUl::RemoveEscapedSpecialCharacters(ReadValueArray[i], true);
+			SvUl::RemoveEscapedSpecialCharacters(ValueArray[i], true);
 		}
 
-		SetArraySize( static_cast< int >( ReadValueArray.size() ) );
-		if( !isBucketized() )
+		SetArraySize(static_cast<int> (ValueArray.size()));
+		if ( 1 == getArraySize() )
 		{
-			if ( 1 == getArraySize() )
-			{
-				Value() = ReadValueArray[0];
-			}
-			else
-			{
-				std::swap( ValueArray(), ReadValueArray );
-			}
+			Value() = ValueArray[0];
+		}
+		else
+		{
+			std::swap(__super::ValueArray(), ValueArray);
 		}
 	}
-	else if ( bOk = pDataObject->GetAttributeData(_T("StrDefault"), ObjectArray) )
+	else if ( bOk = pDataObject->GetAttributeData(_T("StrDefault"), ValueArray) )
 	{
-		if ( 0 < ObjectArray.size() )
+		if ( 0 < ValueArray.size() )
 		{
-			DefaultValue() = ObjectArray[ ObjectArray.size()-1 ];
+			DefaultValue() = ValueArray[ValueArray.size() - 1];
 			SvUl::RemoveEscapedSpecialCharacters( DefaultValue(), true );
 		}
 
@@ -155,36 +130,15 @@ HRESULT  SVStringValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 			SvUl::RemoveEscapedSpecialCharacters(BucketArray[i][0], true);
 		}
 
-		if( !isBucketized() )
+		if ( 1 == getArraySize() )
 		{
-			if ( 1 == getArraySize() )
-			{
-				// In configurations the value are placed in bucket 1
-				Value() = BucketArray[1][0];
-			}
-			else
-			{
-				// In configurations the values are placed in bucket 1
-				std::swap( ValueArray(), BucketArray[1] );
-			}
+			// In configurations the value are placed in bucket 1
+			Value() = BucketArray[1][0];
 		}
 		else
 		{
-			if ( 1 == getArraySize() )
-			{
-				if( nullptr != getBucket() )
-				{
-					getBucket()->at(0) = BucketArray[0][0];
-					getBucket()->at(1) = BucketArray[0][0];
-				}
-			}
-			else
-			{
-				if( nullptr != getBucketArray() )
-				{
-					std::swap( *getBucketArray(), BucketArray );
-				}
-			}
+			// In configurations the values are placed in bucket 1
+			std::swap(__super::ValueArray(), BucketArray[1] );
 		}
 	}
 	else
@@ -263,5 +217,5 @@ void SVStringValueObjectClass::LocalInitialize()
 	SetObjectAttributesAllowed( SvDef::SV_VIEWABLE | SvDef::SV_PUBLISHABLE | SvDef::SV_ARCHIVABLE | SvDef::SV_EMBEDABLE | SvDef::SV_PRINTABLE | SvDef::SV_DD_VALUE, SvOi::SetAttributeType::OverwriteAttribute );
 	SetTypeName( _T("Text") );
 
-	InitializeBuckets();
+	init();
 }

@@ -60,7 +60,7 @@ bool BasicValueObject::operator==(const BasicValueObject& rRhs) const
 	return Result;
 }
 
-HRESULT BasicValueObject::getValue(double& rValue, int Index /*= -1*/, int Bucket /*= -1*/) const
+HRESULT BasicValueObject::getValue(double& rValue, int Index /*= -1*/) const
 {
 	return getValue<double>(rValue);
 }
@@ -122,7 +122,7 @@ HRESULT BasicValueObject::setValue( const std::string& rValue, int Index /*= -1*
 	return Result;
 }
 
-HRESULT BasicValueObject::getValue(_variant_t& rValue, int Index /*= -1*/, int Bucket /*= -1*/) const
+HRESULT BasicValueObject::getValue(_variant_t& rValue, int Index /*= -1*/) const
 {
 	RefreshOwner( SVObjectClass::PreRefresh );
 
@@ -131,7 +131,7 @@ HRESULT BasicValueObject::getValue(_variant_t& rValue, int Index /*= -1*/, int B
 	return S_OK;
 }
 
-HRESULT BasicValueObject::getValue(std::string& rValue, int Index /*= -1*/, int Bucket /*= -1*/ ) const
+HRESULT BasicValueObject::getValue(std::string& rValue, int Index /*= -1*/) const
 {
 	HRESULT	Result = S_OK;
 
@@ -447,7 +447,6 @@ DWORD BasicValueObject::GetObjectColor() const
 void BasicValueObject::Create( SVObjectClass* pOwner )
 {
 	m_Value.Clear();
-	SetObjectDepth( 1 );
 	if( !m_Node )
 	{
 		SetObjectAttributesAllowed( SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute );
@@ -469,7 +468,6 @@ void BasicValueObject::Destroy()
 	if( m_Created )
 	{
 		m_Value.Clear();
-		SetObjectDepth( -1 );
 		::DeleteCriticalSection( &m_CriticalSection );
 		m_Created = false;
 	}

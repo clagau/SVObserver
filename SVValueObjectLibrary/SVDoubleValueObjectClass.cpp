@@ -136,5 +136,5 @@ void SVDoubleValueObjectClass::LocalInitialize()
 	DefaultValue() = 0.0;
 	SetTypeName( _T("Decimal") );
 	setOutputFormat( _T("%lf") );
-	InitializeBuckets();
+	init();
 }

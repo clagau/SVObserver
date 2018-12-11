@@ -16,13 +16,11 @@
 #include "SVValueObjectLibrary/SVValueObject.h"
 #include "SVDigitalOutputObject.h"
 #include "SVRemoteOutputObject.h"
-#include "SVInfoStructs.h"
-#include "SVObserver.h"
-#include "SVPPQObject.h"
+#include "SVIOEntryStruct.h"
 #include "SVInputObjectList.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVMessage\SVMessage.h"
-#include "TextDefinesSvO.h"
+#include "Definitions/TextDefineSvDef.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
@@ -229,185 +227,51 @@ HRESULT SVOutputObjectList::DetachOutput( const SVGUID& rOutputID )
 	return l_Status;
 }
 
-bool SVOutputObjectList::WriteOutputs( SVIOEntryStructVector& rIOEntries, long lDataIndex, bool p_ACK, bool p_NAK )
+GuidVariantPairVector SVOutputObjectList::getOutputValues(const SVIOEntryHostStructPtrVector& rIOEntries, long lDataIndex, bool ACK, bool NAK)
 {
-	
-	SVOutputObject	*pStateOutput = nullptr;
-	SVDigitalOutputObject	*pDigOutput = nullptr;
-	_variant_t OutputValue;
-	double dValue = 0.0;
-	DWORD dwValue = 0;
-	long lValue = 0;
-	TCHAR *pStrValue = nullptr;
+	GuidVariantPairVector Result;
 
 	if( Lock() )
 	{
-		pStateOutput = nullptr;
-
-		for( size_t i = 0; i < rIOEntries.size(); i++ )
+		for(const auto& pIOEntry :rIOEntries)
 		{
-			SVIOEntryStruct& pIOEntry = rIOEntries[i];
-
-			// Check if output is enabled for this call
-			if( !( pIOEntry.empty() ) && pIOEntry.m_IOEntryPtr->m_Enabled )
-			{
-				if( pIOEntry.m_IOEntryPtr->m_ObjectType == IO_DIGITAL_OUTPUT )
-				{
-					WriteDigitalOutput( pIOEntry, lDataIndex, p_ACK, p_NAK );
-				}// end if
-				else if( pIOEntry.m_IOEntryPtr->m_ObjectType == IO_REMOTE_OUTPUT )
-				{
-					SVOutputObject* pOutput = nullptr;
-
-					SVGuidSVOutputObjectPtrMap::iterator l_Iter = m_OutputObjects.find( pIOEntry.m_IOEntryPtr->m_IOId );
-
-					if( l_Iter != m_OutputObjects.end() )
-					{
-						pOutput = l_Iter->second;
-					}
-					
-					if( nullptr != pIOEntry.m_IOEntryPtr->getValueObject())
-					{
-						if( lDataIndex == -1 )
-						{
-							OutputValue = pIOEntry.m_IOEntryPtr->getValueObject()->getDefaultValue();
-						}
-						else
-						{
-							pIOEntry.m_IOEntryPtr->getValueObject()->getValue( OutputValue, -1, lDataIndex );
-						}
-					}
-					
-					pOutput->Write( &OutputValue );
-				}// end else if
-
-			}// end if
-
-		}// end for
-
-		if( pStateOutput )
-		{
-			dwValue = 0;
-
-			SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputState( sizeof dwValue, (unsigned char *)&dwValue );
-			pStateOutput->Write( SvUl::AsString(dwValue).c_str() );
-		}// end if
-
-		Unlock();
-
-		return true;
-	}// end if
-
-	return false;
-}// end WriteOutputs
-
-bool SVOutputObjectList::WriteOutputs( SVIOEntryHostStructPtrVector& rIOEntries, long lDataIndex, bool p_ACK, bool p_NAK )
-{
-	SVOutputObject	*pStateOutput = nullptr;
-	SVDigitalOutputObject	*pDigOutput = nullptr;
-	_variant_t OutputValue;
-	double dValue = 0.0;
-	DWORD dwValue = 0;
-	long lValue = 0;
-	TCHAR *pStrValue = nullptr;
-
-	if( Lock() )
-	{
-		pStateOutput = nullptr;
-
-		for( size_t i = 0; i < rIOEntries.size(); i++ )
-		{
-			SVIOEntryHostStructPtr pIOEntry = rIOEntries[i];
-
-			// Check if output is enabled for this call
+			// Check if output is enabled for this call (This is to filter outputs which are set later eg. Data Valid and Output toggle
 			if(nullptr != pIOEntry && pIOEntry->m_Enabled )
 			{
+				std::pair<GUID, _variant_t> OutputValue;
+
 				if( pIOEntry->m_ObjectType == IO_DIGITAL_OUTPUT )
 				{
-					SVIOEntryStruct l_Entry;
-
-					l_Entry.m_EntryValid = true;
-					l_Entry.m_IOEntryPtr = pIOEntry;
-
-					WriteDigitalOutput( l_Entry, lDataIndex, p_ACK, p_NAK );
+					OutputValue = getDigitalOutputValue(pIOEntry, lDataIndex, ACK, NAK);
 				}// end if
 				else if( pIOEntry->m_ObjectType == IO_REMOTE_OUTPUT )
 				{
-					SVOutputObject* pOutput = nullptr;
-
-					SVGuidSVOutputObjectPtrMap::iterator l_Iter = m_OutputObjects.find( pIOEntry->m_IOId );
-
-					if( l_Iter != m_OutputObjects.end() )
-					{
-						pOutput = l_Iter->second;
-					}
-					
 					if( nullptr != pIOEntry->getValueObject())
 					{
+						OutputValue.first = pIOEntry->m_IOId;
 						if( lDataIndex == -1 )
 						{
-							OutputValue = pIOEntry->getValueObject()->getDefaultValue();
+							OutputValue.second = pIOEntry->getValueObject()->getDefaultValue();
 						}
 						else
 						{
-							pIOEntry->getValueObject()->getValue( OutputValue, -1, lDataIndex );
+							pIOEntry->getValueObject()->getValue(OutputValue.second);
 						}
 					}
-					
-					pOutput->Write( &OutputValue );
-				}// end else if
+				}
 
-			}// end if
-
-		}// end for
-
-		if( pStateOutput )
-		{
-			dwValue = 0;
-
-			SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputState( sizeof dwValue, (unsigned char*)&dwValue );
-			pStateOutput->Write( SvUl::AsString(dwValue).c_str() );
-		}// end if
-
-		Unlock();
-
-		return true;
-	}// end if
-
-	return false;
-}// end WriteOutputs
-
-bool SVOutputObjectList::ResetOutputs( SVIOEntryStructVector& rIOEntries )
-{
-	if( Lock() )
-	{
-		for( size_t i = 0; i < rIOEntries.size(); i++ )
-		{
-			SVIOEntryStruct pIOEntry = rIOEntries[i];
-
-			// Check if output is enabled for this call
-			if( !( pIOEntry.empty() ) && pIOEntry.m_IOEntryPtr->m_Enabled )
-			{
-				SVOutputObject* pOutput = nullptr;
-
-				SVGuidSVOutputObjectPtrMap::iterator l_Iter = m_OutputObjects.find( pIOEntry.m_IOEntryPtr->m_IOId );
-
-				if( l_Iter != m_OutputObjects.end() )
+				if(GUID_NULL != OutputValue.first && VT_EMPTY != OutputValue.second.vt)
 				{
-					pOutput	= l_Iter->second;
-
-					pOutput->Reset();
+					Result.push_back(OutputValue);
 				}
 			}
 		}
 
 		Unlock();
+	}
 
-		return true;
-	}// end if
-
-	return false;
-}// end ResetOutputs
+	return Result;
+}
 
 bool SVOutputObjectList::ResetOutputs( SVIOEntryHostStructPtrVector& rIOEntries )
 {
@@ -420,14 +284,10 @@ bool SVOutputObjectList::ResetOutputs( SVIOEntryHostStructPtrVector& rIOEntries 
 			// Check if output is enabled for this call
 			if(nullptr != pIOEntry && pIOEntry->m_Enabled )
 			{
-				SVOutputObject* pOutput = nullptr;
+				SVOutputObject* pOutput = GetOutput(pIOEntry->m_IOId);
 
-				SVGuidSVOutputObjectPtrMap::iterator l_Iter = m_OutputObjects.find( pIOEntry->m_IOId );
-
-				if( l_Iter != m_OutputObjects.end() )
+				if(nullptr != pOutput)
 				{
-					pOutput	= l_Iter->second;
-
 					pOutput->Reset();
 				}
 			}
@@ -441,57 +301,28 @@ bool SVOutputObjectList::ResetOutputs( SVIOEntryHostStructPtrVector& rIOEntries 
 	return false;
 }// end ResetOutputs
 
-bool SVOutputObjectList::WriteOutput( SVIOEntryStruct IOEntry, long lDataIndex, bool p_ACK, bool p_NAK )
+bool SVOutputObjectList::WriteOutputs(const GuidVariantPairVector& rOutputValues)
 {
-	bool Result( false );
-	_variant_t OutputValue;
+	bool Result(false);
 
-	if( Lock() )
+	if (Lock())
 	{
-
-		// We are only writing one output, don't worry if it is marked enabled for this call
-		if( !( IOEntry.empty() ) )
+		for(const auto& rOutputValue : rOutputValues)
 		{
-			if( IOEntry.m_IOEntryPtr->m_ObjectType == IO_DIGITAL_OUTPUT )
+			SVOutputObject* pOutput = GetOutput(rOutputValue.first);
+			if(nullptr != pOutput)
 			{
-				Result = (S_OK == WriteDigitalOutput( IOEntry, lDataIndex, p_ACK, p_NAK ));
-			}// end if
-			else if( IOEntry.m_IOEntryPtr->m_ObjectType == IO_REMOTE_OUTPUT )
-			{
-				SVOutputObject* pOutput = nullptr;
-
-				SVGuidSVOutputObjectPtrMap::iterator l_Iter = m_OutputObjects.find( IOEntry.m_IOEntryPtr->m_IOId );
-
-				if( l_Iter != m_OutputObjects.end() )
-				{
-					pOutput	= l_Iter->second;
-				}
-				
-				if(nullptr != IOEntry.m_IOEntryPtr->getValueObject())
-				{
-					if( lDataIndex == -1 )
-					{
-						OutputValue = IOEntry.m_IOEntryPtr->getValueObject()->getDefaultValue();
-					}
-					else
-					{
-						IOEntry.m_IOEntryPtr->getValueObject()->getValue( OutputValue, -1, lDataIndex );
-					}
-				}
-
-				Result = ( S_OK ==  pOutput->Write( OutputValue ) );
-			}// end else if
-
-		}// end if
-
+				Result = (S_OK == pOutput->Write(rOutputValue.second));
+			}
+		}
 		Unlock();
 
-	}// end if
+	}
 
 	return Result;
-}// end WriteOutput
+}
 
-bool SVOutputObjectList::WriteOutput( SVIOEntryHostStructPtr pIOEntry, long lDataIndex, bool p_ACK, bool p_NAK )
+bool SVOutputObjectList::WriteOutput( SVIOEntryHostStructPtr pIOEntry, long lDataIndex, bool ACK, bool NAK )
 {
 	bool Result( false );
 	_variant_t OutputValue;
@@ -504,12 +335,13 @@ bool SVOutputObjectList::WriteOutput( SVIOEntryHostStructPtr pIOEntry, long lDat
 		{
 			if( pIOEntry->m_ObjectType == IO_DIGITAL_OUTPUT )
 			{
-				SVIOEntryStruct l_Entry;
+				std::pair<GUID, _variant_t> ValueOutput = getDigitalOutputValue(pIOEntry, lDataIndex, ACK, NAK);
 
-				l_Entry.m_EntryValid = true;
-				l_Entry.m_IOEntryPtr = pIOEntry;
-
-				Result = (S_OK == WriteDigitalOutput( l_Entry, lDataIndex, p_ACK, p_NAK ));
+				SVOutputObject* pOutput = GetOutput(ValueOutput.first);
+				if (nullptr != pOutput)
+				{
+					Result = (S_OK == pOutput->Write(ValueOutput.second));
+				}
 			}// end if
 			else if( pIOEntry->m_ObjectType == IO_REMOTE_OUTPUT )
 			{
@@ -530,7 +362,7 @@ bool SVOutputObjectList::WriteOutput( SVIOEntryHostStructPtr pIOEntry, long lDat
 					}
 					else
 					{
-						pIOEntry->getValueObject()->getValue( OutputValue, -1, lDataIndex );
+						pIOEntry->getValueObject()->getValue(OutputValue);
 					}
 				}
 
@@ -548,25 +380,19 @@ bool SVOutputObjectList::WriteOutput( SVIOEntryHostStructPtr pIOEntry, long lDat
 
 bool SVOutputObjectList::WriteOutputValue( SVIOEntryHostStructPtr pIOEntry, const _variant_t& p_rValue )
 {
-	SVOutputObject* pOutput = nullptr;
 
 	if( Lock() )
 	{
 		// We are only writing one output, don't worry if it is marked enabled for this call
 		if(nullptr != pIOEntry)
 		{
-			SVGuidSVOutputObjectPtrMap::const_iterator l_Iter = m_OutputObjects.find( pIOEntry->m_IOId );
-
-			if( l_Iter != m_OutputObjects.end() )
+			SVOutputObject* pOutput = GetOutput(pIOEntry->m_IOId);
+			
+			if (SV_IS_KIND_OF(pOutput, SVDigitalOutputObject) || SV_IS_KIND_OF(pOutput, SVRemoteOutputObject))
 			{
-				pOutput = l_Iter->second;
-			}
+				pOutput->Write(p_rValue);
+			}// end if
 		}
-
-		if( SV_IS_KIND_OF( pOutput, SVDigitalOutputObject ) || SV_IS_KIND_OF( pOutput, SVRemoteOutputObject ) )
-		{
-			pOutput->Write( p_rValue );
-		}// end if
 
 		Unlock();
 
@@ -583,14 +409,14 @@ bool SVOutputObjectList::ResetOutput( SVIOEntryHostStructPtr pIOEntry )
 		// Check if output is enabled for this call
 		if(nullptr != pIOEntry)
 		{
-			SVGuidSVOutputObjectPtrMap::const_iterator Iter = m_OutputObjects.find(pIOEntry->m_IOId);
-			if (m_OutputObjects.end() != Iter && nullptr != Iter->second)
+			SVOutputObject* pOutput = GetOutput(pIOEntry->m_IOId);
+			if (nullptr != pOutput)
 			{
 				bool l_bEnable = pIOEntry->m_Enabled;
 				if (!l_bEnable)	// Act as if enabled when Module Ready or Raid Error 
 				{
-					std::string Name = Iter->second->GetName();
-					if (SvO::cModuleReady == Name || SvO::cRaidErrorIndicator == Name)
+					std::string Name = pOutput->GetName();
+					if (SvDef::cModuleReady == Name || SvDef::cRaidErrorIndicator == Name)
 					{
 						l_bEnable = true;
 					}
@@ -598,7 +424,7 @@ bool SVOutputObjectList::ResetOutput( SVIOEntryHostStructPtr pIOEntry )
 
 				if (l_bEnable)
 				{
-					Iter->second->Reset();
+					pOutput->Reset();
 				}
 			}
 		}// end if
@@ -655,13 +481,12 @@ bool SVOutputObjectList::FillOutputs( SVIOEntryHostStructPtrVector& rIOEntries )
 bool SVOutputObjectList::RenameInspection( LPCTSTR OldInspection, LPCTSTR NewInspectionName)
 {
 	bool l_bRet = false;
-	SVGuidSVOutputObjectPtrMap::const_iterator l_Iter = m_OutputObjects.begin();
 
-	while( l_Iter != m_OutputObjects.end() )
+	for(const auto rOutput : m_OutputObjects)
 	{
-		SVOutputObject* l_pOutput = l_Iter->second;
+		SVOutputObject* pOutput = rOutput.second;
 
-		std::string Name = l_pOutput->GetName();
+		std::string Name = pOutput->GetName();
 
 		size_t Pos = Name.find('.');
 		std::string InspectionName = SvUl::Left( Name, Pos );
@@ -669,11 +494,9 @@ bool SVOutputObjectList::RenameInspection( LPCTSTR OldInspection, LPCTSTR NewIns
 		if( OldInspection == InspectionName )
 		{
 			std::string NewName = NewInspectionName + SvUl::Mid( Name, Pos );
-			l_pOutput->SetName( NewName.c_str() );
+			pOutput->SetName( NewName.c_str() );
 			l_bRet = true;
 		}
-
-		++l_Iter;
 	}
 	return l_bRet;
 }
@@ -757,8 +580,8 @@ HRESULT SVOutputObjectList::RemoveUnusedOutputs( const SvDef::StringVector& rIns
 						}
 					}
 
-					l_Skip = l_Skip || (SvO::cModuleReady == OutputName );
-					l_Skip = l_Skip || (SvO::cRaidErrorIndicator == OutputName );
+					l_Skip = l_Skip || (SvDef::cModuleReady == OutputName );
+					l_Skip = l_Skip || (SvDef::cRaidErrorIndicator == OutputName );
 
 					if( ! l_Skip )
 					{
@@ -810,7 +633,7 @@ HRESULT SVOutputObjectList::RemoveUnusedOutputs( const SvDef::StringVector& rIns
 				{
 					SVDigitalOutputObject* l_pOutput = *l_OutputIter;
 
-					if( nullptr != l_pOutput && std::string(SvO::cModuleReady ) == l_pOutput->GetName() )
+					if( nullptr != l_pOutput && std::string(SvDef::cModuleReady ) == l_pOutput->GetName() )
 					{
 						l_pOutput->SetChannel( -1 );
 
@@ -898,72 +721,55 @@ void SVOutputObjectList::OnObjectRenamed(const SVObjectClass& rRenamedObject, co
 	}
 }
 
-HRESULT SVOutputObjectList::WriteDigitalOutput( SVIOEntryStruct& pIOEntry, long lDataIndex, bool p_ACK, bool p_NAK )
+std::pair<GUID, _variant_t>  SVOutputObjectList::getDigitalOutputValue(const SVIOEntryHostStructPtr& pIOEntry, long lDataIndex, bool ACK, bool NAK )
 {
-	HRESULT Result = S_OK;
-
-	SVOutputObject* pOutput = GetOutput(pIOEntry.m_IOEntryPtr->m_IOId);
+	std::pair<GUID, _variant_t> Result{GUID_NULL, _variant_t{}};
+	SVOutputObject* pOutput = GetOutput(pIOEntry->m_IOId);
 
 	if( nullptr != pOutput )
 	{
-		bool bValue = false;
+		_variant_t Value {false};
+		bool CombinedValue {false};
+		SvOi::IValueObject* pValueObject = pIOEntry->getValueObject();
 
 		if( 0 <= lDataIndex )
 		{
-			_variant_t Value( false );
-
 			std::string l_String = pOutput->GetName();
-
-			if( p_ACK || l_String.substr( 0, 3 ).compare( _T( "PPQ" ) ) == 0 )
+			if( ACK || l_String.substr( 0, 3 ).compare( _T( "PPQ" ) ) == 0 )
 			{
-				SvOi::IValueObject* pValueObject = pIOEntry.m_IOEntryPtr->getValueObject();
 				if( nullptr != pValueObject )
 				{
-					pValueObject->getValue( Value, -1, lDataIndex );
+					pValueObject->getValue(Value);
 				}
-
-				bValue = Value ? true : false;
 			}
 
 			if( pOutput->IsCombined() )
 			{
-				if( pOutput->GetCombinedValue() )
-				{
-					pIOEntry.m_CombinedValue = bValue && p_ACK;
-				}
-				else
-				{
-					pIOEntry.m_CombinedValue = bValue || p_NAK;
-				}
+				CombinedValue = pOutput->GetCombinedValue() ? Value && ACK : Value || NAK;
 			}
 		}
 
 		if( lDataIndex == -1 )
 		{
-			_variant_t Value(false);
-
-			if( nullptr != pIOEntry.m_IOEntryPtr->getValueObject())
+			if( nullptr != pIOEntry->getValueObject())
 			{
-				Value = pIOEntry.m_IOEntryPtr->getValueObject()->getDefaultValue();
+				Value = pIOEntry->getValueObject()->getDefaultValue();
 			}
-
-			bValue = Value ? true : false;
 		}
 		else if( pOutput->IsCombined() )
 		{
-			bValue = pIOEntry.m_CombinedValue;
+			Value = CombinedValue;
 		}
 		else
 		{
-			double Value(0.0);
-			if( nullptr != pIOEntry.m_IOEntryPtr->getObject())
+			if (nullptr != pValueObject)
 			{
-				pIOEntry.m_IOEntryPtr->getObject()->getValue( Value, -1, lDataIndex );
+				pValueObject->getValue(Value);
 			}
-			bValue = 0.0 < Value ? true : false;
 		}
 
-		Result = pOutput->Write( bValue );
+		Result.first = pIOEntry->m_IOId;
+		Result.second = Value;
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_OUTPUT_VALUES)
 		std::string DebugString = SvUl::Format(_T("%s, %c, %d\r\n"), pOutput->GetName(), bValue ? '1' : '0', lDataIndex);

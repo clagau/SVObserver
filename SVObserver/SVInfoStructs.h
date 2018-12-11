@@ -26,7 +26,8 @@
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "InspectionEngine/SVCameraInfoStruct.h"
 #include "SVUtilityLibrary/SVGUID.h"
-#include "SVObjectLibrary/SVIOEntryHostStruct.h"
+#include "SVIOLibrary/SVIOEntryHostStruct.h"
+#include "SVIOLibrary/SVIOEntryStruct.h"
 #include "TriggerInformation/SVTriggerObject.h"
 #include "TriggerInformation/SVTriggerInfoStruct.h"
 #include "TriggerRecordController/ITriggerRecordRW.h"
@@ -57,29 +58,8 @@ class SVVirtualCamera;
 class SVInspectionProcess;
 class SVObjectClass;
 
-struct SVIOEntryStruct 
-{
-	SVIOEntryStruct();
-	SVIOEntryStruct( const SVIOEntryStruct& p_rsvObject );
-
-	virtual ~SVIOEntryStruct();
-
-	bool operator<( const SVIOEntryStruct& p_rsvObject ) const;
-
-	bool empty() const;
-	void clear();
-
-	void InitEntry();
-
-	SVIOEntryHostStructPtr m_IOEntryPtr;
-
-	bool m_EntryValid;
-	bool m_CombinedValue;
-
-};
-
-typedef std::vector< SVIOEntryStruct > SVIOEntryStructVector;
-
+typedef std::vector<std::pair<_variant_t, bool>> VariantBoolPairVector;
+typedef std::vector<std::pair<GUID, _variant_t>> GuidVariantPairVector;
 
 struct SVInputsInfoStruct 
 {
@@ -92,9 +72,7 @@ struct SVInputsInfoStruct
 	void Reset();
 	void Init();
 
-	SVInputObjectList	*pInputsList;
-	SvTl::SVTimeStamp m_BeginProcess;
-	SvTl::SVTimeStamp m_EndProcess;
+	VariantBoolPairVector m_Inputs;
 };
 
 
@@ -109,17 +87,18 @@ struct SVOutputsInfoStruct
 	void Reset();
 	void Init();
 
-	SVOutputObjectList *pOutputsList;
-	long lOutputDelay;
-	long lResetDelay;
-	long lDataValidDelay;
-	bool DataValidResult;
-	bool OutputToggleResult;
+	long m_OutputDelay;
+	long m_ResetDelay;
+	long m_DataValidDelay;
+	bool m_DataValidResult;
+	bool m_OutputToggleResult;
+	bool m_NakResult;
 	SvTl::SVTimeStamp m_EndOutputDelay;
 	SvTl::SVTimeStamp m_EndResetDelay;
 	SvTl::SVTimeStamp m_EndDataValidDelay;
 	SvTl::SVTimeStamp m_BeginProcess;
 	SvTl::SVTimeStamp m_EndProcess;
+	GuidVariantPairVector m_Outputs;
 };
 
 
@@ -141,8 +120,6 @@ struct SVPPQInfoStruct
 	SVPPQObject* pPPQ;
 
 	SVDataManagerHandle m_ResultDataDMIndexHandle;
-
-	SVIOEntryStructVector m_InputData;
 };
 
 struct SVInspectionInfoStruct 
@@ -231,7 +208,7 @@ struct SVProductInfoStruct
 	/// \param rIPGuid [in] Guid of the IP. If GUID_NULL then for inspection will done the action.
 	void setInspectionTriggerRecordComplete(const SVGUID& rIPGuid);
 
-	std::string m_ProductState;
+	mutable std::string m_ProductState;
 	bool bTriggered;
 	bool bhasCameraImage[SvDef::cMaximumCameras];
 	bool bDelayExpired;

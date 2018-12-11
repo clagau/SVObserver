@@ -165,5 +165,5 @@ void SVPointValueObjectClass::LocalInitialize()
 	SetObjectAttributesAllowed( SvDef::SV_VIEWABLE | SvDef::SV_ARCHIVABLE | SvDef::SV_EMBEDABLE | SvDef::SV_PRINTABLE | SvDef::SV_DD_VALUE, SvOi::SetAttributeType::OverwriteAttribute );
 
 	SetTypeName( _T("Point") );
-	InitializeBuckets();
+	init();
 }

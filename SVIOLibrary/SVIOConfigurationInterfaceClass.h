@@ -17,11 +17,16 @@
 class SVIOConfigurationInterfaceClass  
 {
 public:
-	inline static SVIOConfigurationInterfaceClass& Instance();
-
 	virtual ~SVIOConfigurationInterfaceClass();
 
+	static SVIOConfigurationInterfaceClass& Instance()
+	{
+		static SVIOConfigurationInterfaceClass Object; 
+		return Object;
+	}
+
 	void Shutdown();
+	void Init();
 
 	HRESULT OpenDigital( LPCTSTR p_szName );
 	HRESULT CloseDigital();
@@ -87,8 +92,4 @@ private:
 
 	SVIODigitalStructVector m_DigitalInputs;
 	SVIODigitalStructVector m_DigitalOutputs;
-
 };
-
-#include "SVIOConfigurationInterfaceClass.inl"
-

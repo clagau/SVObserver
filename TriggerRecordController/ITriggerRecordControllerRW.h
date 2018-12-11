@@ -8,8 +8,9 @@
 #pragma once
 
 #pragma region Includes
-#include "SVMatroxLibrary\SVMatroxBufferCreateStruct.h"
-#include "SVMatroxLibrary\SVMatroxBufferCreateChildStruct.h"
+#include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
+#include "SVMatroxLibrary/SVMatroxBufferCreateChildStruct.h"
+#include "SVProtoBuf/TriggerRecordController.h"
 #include "ITriggerRecordControllerR.h"
 #include "ITriggerRecordRW.h"
 #pragma endregion Includes
@@ -84,6 +85,13 @@ namespace SvTrc
 		/// \param ownerID [in] Guid of the owner of this buffers.
 		/// \returns bool
 		virtual bool removeAllImageBuffer(const GUID& ownerID) = 0;
+
+		/// Change of inspection data definition list
+		/// \param rDataDefList [in] Reference to the data definition list (Move semantics!)
+		/// \param rValueObjectList [in] Reference to the value object list (Move semantics!)
+		/// \param inspectionPos [in] ID of the inspection
+		/// \returns bool
+		virtual bool changeDataDef(SvPb::DataDefinitionList&& rDataDefList, std::vector<_variant_t>&& rValueObjectList, int inspectionPos) = 0;
 
 		/// Locked all reset-Methods in this controller. (e.g. In Run-Mode there should no reset possible). Is not possible if reset already started.
 		/// \returns bool Return the state if reset locked. Normally it returns true, only if reset is already started the lock is not possible and it returns false.

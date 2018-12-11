@@ -1386,8 +1386,6 @@ void SVIPDoc::OnEditPaste()
 			m_toolGroupings.AddTool(pTool->GetName(), pNavElement->m_DisplayName);
 		}
 
-		pTool->SetObjectDepthWithIndex(pInspection->GetObjectDepth(), 1);
-
 		SVObjectLevelCreateStruct createStruct;
 		createStruct.OwnerObjectInfo.SetObject(pInspection);
 		createStruct.m_pInspection = pInspection;

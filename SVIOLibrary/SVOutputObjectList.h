@@ -14,9 +14,11 @@
 //Moved to precompiled header: #include <comdef.h>
 
 #include "SVOutputObject.h"
-#include "SVInfoStructs.h"
+#include "SVIOEntryStruct.h"
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
+
+typedef std::vector<std::pair<GUID, _variant_t>> GuidVariantPairVector;
 
 class SVOutputObjectList : public SVObjectClass
 {
@@ -38,11 +40,9 @@ public:
 	HRESULT AttachOutput( SVOutputObject *pOutput );
 	HRESULT DetachOutput( const SVGUID& rOutputID );
 
-	bool WriteOutputs( SVIOEntryStructVector& rIOEntries, long lDataIndex, bool p_ACK, bool p_NAK );
-	bool WriteOutputs( SVIOEntryHostStructPtrVector& rIOEntries, long lDataIndex, bool p_ACK, bool p_NAK );
-	bool ResetOutputs( SVIOEntryStructVector& rIOEntries );
-	bool ResetOutputs( SVIOEntryHostStructPtrVector& rIOEntries );
-	bool WriteOutput( SVIOEntryStruct pIOEntry, long lDataIndex, bool p_ACK, bool p_NAK );
+	GuidVariantPairVector getOutputValues(const SVIOEntryHostStructPtrVector& rIOEntries, long lDataIndex, bool p_ACK, bool p_NAK);
+	bool ResetOutputs(SVIOEntryHostStructPtrVector& rIOEntries);
+	bool WriteOutputs(const GuidVariantPairVector& rOutputValues);
 	bool WriteOutput( SVIOEntryHostStructPtr pIOEntry, long lDataIndex, bool p_ACK, bool p_NAK );
 	bool WriteOutputValue( SVIOEntryHostStructPtr pIOEntry, const _variant_t& rValue );
 	bool ResetOutput( SVIOEntryHostStructPtr pIOEntry );
@@ -58,7 +58,7 @@ public:
 #pragma endregion Methods to replace processMessage
 
 private:
-	HRESULT WriteDigitalOutput( SVIOEntryStruct& pIOEntry, long lDataIndex, bool p_ACK, bool p_NAK );
+	std::pair<GUID, _variant_t> getDigitalOutputValue(const SVIOEntryHostStructPtr& pIOEntry, long lDataIndex, bool p_ACK, bool p_NAK );
 
 	void ClearOutputList();
 
