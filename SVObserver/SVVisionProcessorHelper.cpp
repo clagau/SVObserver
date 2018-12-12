@@ -505,41 +505,7 @@ HRESULT SVVisionProcessorHelper::GetStandardItems(const SvDef::StringSet& rNames
 					LoopStatus = SVMSG_OBJECT_WRONG_TYPE;
 				}
 			}
-			else
-			{
-				SvOi::IValueObject* pValueObject = ObjectRef.getValueObject();
-
-				if (nullptr != pValueObject)
-				{
-					_variant_t Value;
-					//Enumeration Value objects need to return the text and not the value
-					if (SvPb::SVEnumValueObjectType == ObjectRef.getObject()->GetObjectSubType())
-					{
-						std::string StringValue;
-						if (S_OK == pValueObject->getValue(StringValue))
-						{
-							Value.SetString(StringValue.c_str());
-							ValueStorage.m_Variant = Value;
-							ValueStorage.m_StorageType = SVVisionProcessor::SVStorageValue;
-							LoopStatus = S_OK;
 						}
-					}
-					else
-					{
-						if (S_OK == pValueObject->getValue(Value))
-						{
-							ValueStorage.m_Variant = Value;
-							ValueStorage.m_StorageType = SVVisionProcessor::SVStorageValue;
-							LoopStatus = S_OK;
-						}
-					}
-				}
-				else // This is an error, was a request for a non value object.
-				{
-					LoopStatus = SVMSG_OBJECT_WRONG_TYPE;
-				}
-			}
-		}
 		rItems[l_Iter->c_str()] = SVStorageResult(ValueStorage, LoopStatus, 0);
 
 		if (S_OK == Status  && S_OK != LoopStatus)
