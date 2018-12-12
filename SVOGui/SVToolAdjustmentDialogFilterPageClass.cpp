@@ -16,6 +16,7 @@
 #include "Definitions/ObjectDefines.h"
 #include "SVCustomFilterDlg.h"
 #include "SVRankingFilterDlg.h"
+#include "Ranking2FilterDlg.h"
 #include "SVThinningFilterDlg.h"
 #include "SVThickeningFilterDlg.h"
 #include "Custom2FilterDlg.h"
@@ -132,6 +133,7 @@ namespace SvOg
 				m_btnProperties.EnableWindow(SvPb::SVCustomFilterObjectType == subType
 				|| SvPb::SVCustom2FilterObjectType == subType
 				|| SvPb::SVRankingFilterObjectType == subType
+				|| SvPb::Ranking2FilterObjectType == subType
 				|| SvPb::SVThinningFilterObjectType == subType
 				|| SvPb::SVThickeningFilterObjectType == subType
 				|| SvPb::SVWatershedFilterObjectType == subType
@@ -370,6 +372,12 @@ namespace SvOg
 						l_svDlg.DoModal();
 					}
 					break;
+				case SvPb::Ranking2FilterObjectType:
+				{
+					Ranking2FilterDlg l_svDlg(m_InspectionID, filterGUID, this);
+					l_svDlg.DoModal();
+				}
+				break;
 				case SvPb::SVThinningFilterObjectType:
 					{
 						SVThinningFilterDlg l_svDlg( m_InspectionID, filterGUID, this );

@@ -17,7 +17,6 @@
 //Moved to precompiled header: #include <vector>
 #include "SVOResource/resource.h"
 #include "GridCtrlLibrary\GridCtrl.h"
-#include "ObjectInterfaces\ICustom2Filter.h"
 #include "ValuesAccessor.h"
 #include "DataController.h"
 #pragma endregion Includes
@@ -167,8 +166,7 @@ namespace SvOg
 
 	private:
 #pragma region Member Variables
-		typedef SvOi::ICustom2Filter::LongArray LongArray;
-		LongArray m_KernelArray;						//List of values for the kernel
+		std::vector<long> m_KernelArray;						//List of values for the kernel
 		SvGcl::CGridCtrl m_Grid;						//The grid displaying the kernel
 		CComboBox m_WidthCtrl;							//The kernel width control
 		CComboBox m_HeightCtrl;							//The kernel height control

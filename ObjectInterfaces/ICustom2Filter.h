@@ -12,16 +12,6 @@
 
 namespace SvOi
 {
-	class ICustom2Filter
-	{
-	public:
-		typedef std::vector<long> LongArray;
-
-		static const long StandardKernelSize = 3;
-		static const int MaxKernelSize = 21;
-	};
-
-
 	//@TODO: this two const used for the error message in importCustom2Filter. The function should later be void and throw an exception. Then this const can be removed.
 	const HRESULT E_CUSTOM_IMPORT_FORMAT_INVALID = E_INVALIDARG;
 	const HRESULT E_CUSTOM_IMPORT_VERSION_MISMATCH = RPC_E_VERSION_MISMATCH;
@@ -44,7 +34,7 @@ namespace SvOi
 		long &normalizationFactor, 
 		BOOL &absoluteValue, 
 		BOOL &clippingEnabled,
-		ICustom2Filter::LongArray &kernelArray);
+		std::vector<long> &kernelArray);
 
 	//************************************
 	/// Save a custom 2 filter to a file
@@ -64,6 +54,6 @@ namespace SvOi
 		long normalizationFactor, 
 		BOOL absoluteValue, 
 		BOOL clippingEnabled,
-		const ICustom2Filter::LongArray::const_iterator kernelIteratorBegin,
-		const ICustom2Filter::LongArray::const_iterator kernelIteratorEnd);
+		const std::vector<long>::const_iterator kernelIteratorBegin,
+		const std::vector<long>::const_iterator kernelIteratorEnd);
 } //namespace SvOi

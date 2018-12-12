@@ -171,6 +171,13 @@ void SVUnaryImageOperatorListClass::init()
 	filterClassInfo.m_ClassName = SvUl::LoadStdString(IDS_CLASSNAME_SVRANKINGFILTER);
 	m_availableChildren.push_back(filterClassInfo);
 
+	// Add the Ranking2 Filter
+	filterClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVFilterObjectType;
+	filterClassInfo.m_ObjectTypeInfo.SubType = SvPb::Ranking2FilterObjectType;
+	filterClassInfo.m_ClassId = Ranking2FilterClassGuid;
+	filterClassInfo.m_ClassName = SvUl::LoadStdString(IDS_CLASSNAME_RANKING2FILTER);
+	m_availableChildren.push_back(filterClassInfo);
+
 	// Add the Smooth Filter
 	filterClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVFilterObjectType;
 	filterClassInfo.m_ObjectTypeInfo.SubType = SvPb::SVSmoothFilterObjectType;

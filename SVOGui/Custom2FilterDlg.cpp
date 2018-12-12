@@ -15,7 +15,9 @@
 #include "Custom2FilterDlg.h"
 #include "BoundValue.h"
 #include "ObjectInterfaces/ISVOApp_Helper.h"
+#include "ObjectInterfaces\ICustom2Filter.h"
 #include "SVMFCControls/SVFileDialog.h"
+#include "Definitions\GlobalConst.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVObjectLibrary\SVClsids.h"
@@ -98,8 +100,8 @@ namespace SvOg
 		m_Values.Set<long>(SVCustomFilterTransformGuid, m_NormalizationFactor);
 		m_Values.Set<bool>(SVCustomFilterAbsoluteGuid, m_AbsoluteValue ? true : false);
 		m_Values.Set<bool>(SVCustomFilterClippingGuid, m_ClippingEnabled ? true : false);
-		_variant_t value = ConvertVectorToVariantSafeArray<LongArray>(m_KernelArray);
-		m_Values.Set<_variant_t>(Custom2FilterKernelGuid, value);
+		_variant_t value = ConvertVectorToVariantSafeArray<std::vector<long>>(m_KernelArray);
+		m_Values.Set<_variant_t>(FilterKernelGuid, value);
 		m_Values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
 
 		return Result;
@@ -131,7 +133,7 @@ namespace SvOg
 		initializeFilter();
 
 		std::string Entry;
-		for( int i=1; i <= SvOi::ICustom2Filter::MaxKernelSize; i++ )
+		for( int i=1; i <= SvDef::cMaxKernelSize; i++ )
 		{
 			//Check that its an odd value
 			if( 1 == (i % 2) )
@@ -319,7 +321,7 @@ namespace SvOg
 			long NormalizationFactor( m_NormalizationFactor );
 			BOOL AbsoluteValue( m_AbsoluteValue );
 			BOOL ClippingEnabled( m_ClippingEnabled );
-			SvOi::ICustom2Filter::LongArray KernelArray;
+			std::vector<long> KernelArray;
 			m_KernelArray.swap( KernelArray );
 
 			try
@@ -442,7 +444,7 @@ namespace SvOg
 		m_ClippingEnabled = m_Values.Get<bool>(SVCustomFilterClippingGuid);
 
 		m_KernelArray.clear();
-		m_KernelArray = ConvertVariantSafeArrayToVector<long>(m_Values.Get<_variant_t>(Custom2FilterKernelGuid));
+		m_KernelArray = ConvertVariantSafeArrayToVector<long>(m_Values.Get<_variant_t>(FilterKernelGuid));
 	}
 
 	bool Custom2FilterDlg::inputGridCtrlCharacter( WPARAM Character )
@@ -589,7 +591,7 @@ namespace SvOg
 					}
 					int ValueIndex = (i - 1)*m_KernelWidth + (j - 1);
 					long Value( 1 );
-					LongArray::iterator Iter = m_KernelArray.begin() + ValueIndex;
+					std::vector<long>::iterator Iter = m_KernelArray.begin() + ValueIndex;
 					if( Iter != m_KernelArray.end() )
 					{
 						Value = *Iter;
@@ -613,7 +615,7 @@ namespace SvOg
 
 		if( 0 == Width )
 		{
-			m_KernelWidth = SvOi::ICustom2Filter::StandardKernelSize;
+			m_KernelWidth = SvDef::cStandardKernelSize;
 		}
 		else if( -1 != Width )
 		{
@@ -622,7 +624,7 @@ namespace SvOg
 
 		if(0 == Height)
 		{
-			m_KernelHeight = SvOi::ICustom2Filter::StandardKernelSize;
+			m_KernelHeight = SvDef::cStandardKernelSize;
 		}
 		else if( -1 != Height )
 		{
@@ -670,7 +672,7 @@ namespace SvOg
 		//Copy kernel only if the source and destination are different in size
 		if( m_KernelWidth != SourceKernelWidth || m_KernelHeight != SourceKernelHeight)
 		{
-			LongArray KernelArrayCopy;
+			std::vector<long> KernelArrayCopy;
 			KernelArrayCopy = m_KernelArray;
 
 			m_KernelArray.clear();
@@ -683,10 +685,10 @@ namespace SvOg
 				for( int i=0; i < SourceKernelHeight; i++ )
 				{
 					long CopyIndex = (i + OffsetHeight)*m_KernelWidth + OffsetWidth;
-					LongArray::iterator IterKernel = m_KernelArray.begin() + CopyIndex;
+					std::vector<long>::iterator IterKernel = m_KernelArray.begin() + CopyIndex;
 					if( IterKernel != m_KernelArray.end() && IterKernel + SourceKernelWidth - 1 != m_KernelArray.end() )
 					{
-						LongArray::iterator IterCopy = KernelArrayCopy.begin() + i*SourceKernelWidth;
+						std::vector<long>::iterator IterCopy = KernelArrayCopy.begin() + i*SourceKernelWidth;
 						if( IterCopy != KernelArrayCopy.end() && IterCopy + SourceKernelWidth - 1 != KernelArrayCopy.end() )
 						{
 							std::copy( IterCopy, IterCopy + SourceKernelWidth, IterKernel );
@@ -701,10 +703,10 @@ namespace SvOg
 				for( int i=0; i < m_KernelHeight; i++ )
 				{
 					long CopyIndex = i*m_KernelWidth;
-					LongArray::iterator IterKernel = m_KernelArray.begin() + CopyIndex;
+					std::vector<long>::iterator IterKernel = m_KernelArray.begin() + CopyIndex;
 					if( IterKernel != m_KernelArray.end() && IterKernel + m_KernelWidth - 1 != m_KernelArray.end() )
 					{
-						LongArray::iterator IterCopy = KernelArrayCopy.begin() + (i + OffsetHeight)*SourceKernelWidth + OffsetWidth;
+						std::vector<long>::iterator IterCopy = KernelArrayCopy.begin() + (i + OffsetHeight)*SourceKernelWidth + OffsetWidth;
 						if( IterCopy != KernelArrayCopy.end() && IterCopy + OffsetWidth - 1 != KernelArrayCopy.end() )
 						{
 							std::copy( IterCopy, IterCopy + m_KernelWidth, IterKernel );
@@ -788,7 +790,7 @@ namespace SvOg
 				{
 					m_Grid.SetItemText( i, j, Value );
 					int EditIndex = (i - 1)*m_KernelWidth + (j - 1);
-					LongArray::iterator Iter = m_KernelArray.begin() + EditIndex;
+					std::vector<long>::iterator Iter = m_KernelArray.begin() + EditIndex;
 					if( Iter != m_KernelArray.end() )
 					{
 						*Iter = atol( Value );
@@ -894,19 +896,19 @@ namespace SvOg
 		}
 
 		//Check that the Kernel Width and Height are odd and between 1 and MaxKernelSize
-		if( 1 != m_KernelWidth % 2 || 1 > m_KernelWidth || SvOi::ICustom2Filter::MaxKernelSize < m_KernelWidth )
+		if (1 != m_KernelWidth % 2 || 1 > m_KernelWidth || SvDef::cMaxKernelSize < m_KernelWidth)
 		{
 			SvDef::StringVector msgList;
 			msgList.push_back(SvUl::Format(_T("%d"), m_KernelWidth));
-			msgList.push_back(SvUl::Format(_T("%d"), SvOi::ICustom2Filter::MaxKernelSize));
+			msgList.push_back(SvUl::Format(_T("%d"), SvDef::cMaxKernelSize));
 			SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_DataInvalidKernelWidth, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10228);
 			throw message;
 		}
-		if( 1 != m_KernelHeight % 2 || 1 > m_KernelHeight || SvOi::ICustom2Filter::MaxKernelSize < m_KernelHeight )
+		if( 1 != m_KernelHeight % 2 || 1 > m_KernelHeight || SvDef::cMaxKernelSize < m_KernelHeight )
 		{
 			SvDef::StringVector msgList;
 			msgList.push_back(SvUl::Format(_T("%d"), m_KernelHeight));
-			msgList.push_back(SvUl::Format(_T("%d"), SvOi::ICustom2Filter::MaxKernelSize));
+			msgList.push_back(SvUl::Format(_T("%d"), SvDef::cMaxKernelSize));
 			SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_DataInvalidKernelHeight, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10228);
 			throw message;
 		}

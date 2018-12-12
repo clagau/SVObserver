@@ -106,5 +106,9 @@ namespace SvDef
 	const TCHAR* const cPackedConfigExtension = _T(".svz");
 
 	static const LCID LCID_USA = MAKELCID(MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), SORT_DEFAULT);
+
+	//Filter constants
+	constexpr long cStandardKernelSize = 3;
+	constexpr int cMaxKernelSize = 21;
 #pragma endregion Declarations
 } //namespace SvDef

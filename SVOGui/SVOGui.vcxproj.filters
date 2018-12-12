@@ -204,6 +204,9 @@
     <ClCompile Include="ReconstructFilterDlg.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="Ranking2FilterDlg.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdAfx.h">
@@ -423,6 +426,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="ReconstructFilterDlg.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Ranking2FilterDlg.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

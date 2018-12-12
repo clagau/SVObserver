@@ -298,7 +298,7 @@ extern /*const*/ GUID SVCustomFilterClassGuid;
 extern /*const*/ GUID Custom2FilterClassGuid;
 
 // GUID for the Custom2FilterKernel
-extern /*const*/ GUID Custom2FilterKernelGuid;
+extern /*const*/ GUID FilterKernelGuid;
 
 // GUIDs for the Embedded Objects of the SVCustomFilterClass
 extern /*const*/ GUID SVCustomFilterCell01Guid;
@@ -359,6 +359,7 @@ extern /*const*/ GUID SVCustomFilterTransformGuid;
 
 // GUID for the SVRankingFilterClassGuid
 extern /*const*/ GUID SVRankingFilterClassGuid;
+extern /*const*/ GUID Ranking2FilterClassGuid;
 
 // GUIDs for the Embedded Objects of the SVRankingFilterClass
 extern /*const*/ GUID SVRankingFilterCell01Guid;

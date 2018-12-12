@@ -99,6 +99,9 @@
     <ClCompile Include="ReconstructFilter.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="Ranking2Filter.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Custom2Filter.h">
@@ -183,6 +186,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="ReconstructFilter.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Ranking2Filter.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

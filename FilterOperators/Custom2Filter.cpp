@@ -86,7 +86,7 @@ void Custom2Filter::RebuildKernel()
 	CreateStruct.m_lSizeY = Height;
 	StatusCode = SVMatroxBufferInterface::Create( m_milKernel, CreateStruct );
 
-	SvOi::ICustom2Filter::LongArray KernelArray;
+	std::vector<long> KernelArray;
 	m_KernelArray.GetArrayValues( KernelArray );
 	long unsigned Index(0);
 
@@ -182,7 +182,7 @@ void Custom2Filter::init()
 {
 	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVCustom2FilterObjectType;
 
-	RegisterEmbeddedObject( &m_KernelArray, Custom2FilterKernelGuid, IDS_OBJECTNAME_CUSTOMFILTER_KERNELCELL, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_KernelArray, FilterKernelGuid, IDS_OBJECTNAME_CUSTOMFILTER_KERNELCELL, false, SvOi::SVResetItemOwner );
 
 	RegisterEmbeddedObject( &m_KernelWidth, SVCustomFilterKernelWidthGuid, IDS_OBJECTNAME_CUSTOMFILTER_KERNELWIDTH, false, SvOi::SVResetItemOwner );
 	RegisterEmbeddedObject( &m_KernelHeight, SVCustomFilterKernelHeightGuid, IDS_OBJECTNAME_CUSTOMFILTER_KERNELHEIGHT, false, SvOi::SVResetItemOwner );
@@ -190,14 +190,14 @@ void Custom2Filter::init()
 	RegisterEmbeddedObject( &m_AbsoluteValue, SVCustomFilterAbsoluteGuid, IDS_OBJECTNAME_CUSTOMFILTER_ABSOLUTE, false, SvOi::SVResetItemOwner );
 	RegisterEmbeddedObject( &m_ClippingEnabled, SVCustomFilterClippingGuid, IDS_OBJECTNAME_CUSTOMFILTER_CLIPPING, false, SvOi::SVResetItemOwner );
 
-	m_KernelArray.SetArraySize( SvOi::ICustom2Filter::StandardKernelSize*SvOi::ICustom2Filter::StandardKernelSize );
+	m_KernelArray.SetArraySize(SvDef::cStandardKernelSize*SvDef::cStandardKernelSize );
 	m_KernelArray.SetDefaultValue( 1 );
 
-	m_KernelWidth.SetDefaultValue( SvOi::ICustom2Filter::StandardKernelSize );
-	m_KernelHeight.SetDefaultValue( SvOi::ICustom2Filter::StandardKernelSize );
+	m_KernelWidth.SetDefaultValue(SvDef::cStandardKernelSize );
+	m_KernelHeight.SetDefaultValue(SvDef::cStandardKernelSize );
 	m_ClippingEnabled.SetDefaultValue(BOOL(true));
 	m_AbsoluteValue.SetDefaultValue(BOOL(true));
-	m_NormalizationFactor.SetDefaultValue( SvOi::ICustom2Filter::StandardKernelSize*SvOi::ICustom2Filter::StandardKernelSize );
+	m_NormalizationFactor.SetDefaultValue(SvDef::cStandardKernelSize*SvDef::cStandardKernelSize );
 
 	const UINT cAttributes = SvDef::SV_PRINTABLE | SvDef::SV_SETABLE_ONLINE | SvDef::SV_REMOTELY_SETABLE;
 	m_KernelArray.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
@@ -228,9 +228,9 @@ long Custom2Filter::validateKernelSize( SVLongValueObjectClass& rKernelSize )
 	{
 		Size = 1;
 	}
-	else if( SvOi::ICustom2Filter::MaxKernelSize < Size )
+	else if(SvDef::cMaxKernelSize < Size )
 	{
-		Size = SvOi::ICustom2Filter::MaxKernelSize; 
+		Size = SvDef::cMaxKernelSize;
 	}
 	rKernelSize.SetValue(Size);
 
@@ -244,14 +244,14 @@ bool Custom2Filter::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages)
 	//Check that Width and Height are odd and between 1 and MaxKernelSize
 	long Width( 0 );
 	m_KernelWidth.GetValue( Width );
-	if( 1 != Width % 2 || 1 > Width || SvOi::ICustom2Filter::MaxKernelSize < Width )
+	if( 1 != Width % 2 || 1 > Width || SvDef::cMaxKernelSize < Width )
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
 			SvDef::StringVector msgList;
 			msgList.push_back(SvUl::Format(_T("%d"), Width));
-			msgList.push_back(SvUl::Format(_T("%d"), SvOi::ICustom2Filter::MaxKernelSize));
+			msgList.push_back(SvUl::Format(_T("%d"), SvDef::cMaxKernelSize));
 			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_DataInvalidKernelWidth, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
@@ -259,14 +259,14 @@ bool Custom2Filter::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages)
 
 	long Height( 0 );
 	m_KernelHeight.GetValue( Height );
-	if( 1 != Height % 2 || 1 > Height || SvOi::ICustom2Filter::MaxKernelSize < Height )
+	if( 1 != Height % 2 || 1 > Height || SvDef::cMaxKernelSize < Height )
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
 			SvDef::StringVector msgList;
 			msgList.push_back(SvUl::Format(_T("%d"), Height));
-			msgList.push_back(SvUl::Format(_T("%d"), SvOi::ICustom2Filter::MaxKernelSize));
+			msgList.push_back(SvUl::Format(_T("%d"), SvDef::cMaxKernelSize));
 			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_DataInvalidKernelHeight, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}

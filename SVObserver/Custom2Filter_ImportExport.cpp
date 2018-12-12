@@ -66,7 +66,7 @@ bool readCustom2FilterBranch( SvXml::SVXMLMaterialsTree& rTree,
 	long &normalizationFactor, 
 	BOOL &absoluteValue, 
 	BOOL &clippingEnabled,
-	SvOi::ICustom2Filter::LongArray &kernelArray)
+	std::vector<long> &kernelArray)
 {
 	SvXml::SVXMLMaterialsTree::SVBranchHandle Branch;
 	bool Result(false);
@@ -112,8 +112,8 @@ void SvOi::exportCustom2Filter(const std::string &filePath,
 	long normalizationFactor, 
 	BOOL absoluteValue, 
 	BOOL clippingEnabled,
-	const ICustom2Filter::LongArray::const_iterator kernelIteratorBegin,
-	const ICustom2Filter::LongArray::const_iterator kernelIteratorEnd)
+	const std::vector<long>::const_iterator kernelIteratorBegin,
+	const std::vector<long>::const_iterator kernelIteratorEnd)
 {
 	std::ofstream FileStream;
 	FileStream.open( filePath.c_str() );
@@ -153,7 +153,7 @@ void SvOi::exportCustom2Filter(const std::string &filePath,
 		Label = SvUl::LoadStdString( IDS_OBJECTNAME_CUSTOMFILTER_KERNELCELL );
 		XmlWriter.StartElement( Label.c_str() );
 		SVVariantList KernelArray;
-		ICustom2Filter::LongArray::const_iterator Iter( kernelIteratorBegin );
+		std::vector<long>::const_iterator Iter( kernelIteratorBegin );
 		while( kernelIteratorEnd != Iter )
 		{
 			KernelArray.push_back( *Iter );
@@ -177,7 +177,7 @@ HRESULT SvOi::importCustom2Filter(const std::string& rFileName,
 	long &normalizationFactor, 
 	BOOL &absoluteValue, 
 	BOOL &clippingEnabled,
-	ICustom2Filter::LongArray &kernelArray)
+	std::vector<long> &kernelArray)
 {
 	SvXml::SVXMLMaterialsTree Tree;
 	SvXml::SaxXMLHandler<SVTreeType>  SaxHandler;

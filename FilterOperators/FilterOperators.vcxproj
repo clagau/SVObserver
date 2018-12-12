@@ -16,6 +16,7 @@
     <ClCompile Include="EraseBorderBlobsFilter.cpp" />
     <ClCompile Include="ExtractHolesFilter.cpp" />
     <ClCompile Include="FillHolesFilter.cpp" />
+    <ClCompile Include="Ranking2Filter.cpp" />
     <ClCompile Include="ReconstructFilter.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -49,6 +50,7 @@
     <ClInclude Include="EraseBorderBlobsFilter.h" />
     <ClInclude Include="ExtractHolesFilter.h" />
     <ClInclude Include="FillHolesFilter.h" />
+    <ClInclude Include="Ranking2Filter.h" />
     <ClInclude Include="ReconstructFilter.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVClosingFilterClass.h" />
