@@ -308,7 +308,7 @@ IImagePtr TriggerRecordController::getImageBuffer(const SVMatroxBufferCreateStru
 		SVMatroxBuffer ImageBufId;
 		SVMatroxBufferInterface::Create(ImageBufId, rBufferStruct);
 		SvOi::SVImageBufferHandlePtr pImagePtr = SvOi::SVImageBufferHandlePtr {new SVImageBufferHandleImage(ImageBufId)};
-		retImage = IImagePtr {new Image(pImagePtr, 0, -1, false, false)};
+		retImage = std::make_shared<Image>(pImagePtr, 0, Image::cLocalTmpImagePos, false, false);
 	}
 	assert(nullptr != retImage);
 	return retImage;
@@ -713,9 +713,9 @@ void TriggerRecordController::ResetInspectionData(int inspectionID)
 
 void TriggerRecordController::ResetTriggerRecordStructure()
 {
+	sendResetCall();
 	m_resetId = std::max(1l, m_resetId + 1);
 	while (0 < m_resetLockCounter) {}; //wait if any other method have left the access of this structure
-	sendResetCall();
 	for (int i = 0; i < m_IPDataNumber; i++)
 	{
 		if (i == m_resetStarted4IP)

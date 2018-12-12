@@ -140,6 +140,16 @@ const void SVCameraInfoStruct::setCamera( const SVGUID& rCameraGuid, NextImageHa
 	m_CameraGuid = rCameraGuid;
 	m_NextImageFunctor = NextImageHandleFunctor;
 }
+
+bool SVCameraInfoStruct::setImage(SvTrc::IImagePtr pImage) 
+{
+	if (nullptr == pImage || pImage->isValid())
+	{
+		m_pImage = pImage;
+		return true;
+	}
+	return false;
+};
 #pragma endregion Public Methods
 
 #pragma region Private Methods

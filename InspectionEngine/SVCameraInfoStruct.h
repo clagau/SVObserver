@@ -46,7 +46,7 @@ public:
 	const void setCamera( const SVGUID& rCameraGuid, NextImageHandleFunctor NextImageHandleFunctor );
 	const SVGUID& getCameraGuid() const { return m_CameraGuid; };
 	const SvTrc::IImagePtr getImage() const { return m_pImage; };
-	void setImage(SvTrc::IImagePtr pImage) { m_pImage = pImage; };
+	bool setImage(SvTrc::IImagePtr pImage);
 
 	SvTl::SVTimeStamp m_StartFrameTimeStamp;
 	SvTl::SVTimeStamp m_EndFrameTimeStamp;

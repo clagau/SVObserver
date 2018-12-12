@@ -32,6 +32,10 @@ namespace SvTrc
 		/// Return if not empty image buffer available. 
 		/// \returns bool
 		virtual bool isEmpty() const = 0;
+
+		/// Check if this class still valid (after a reset of the TRC, the class become invalid)
+		/// \returns bool
+		virtual bool isValid() const = 0;
 	};
 
 	typedef std::shared_ptr<IImage> IImagePtr;

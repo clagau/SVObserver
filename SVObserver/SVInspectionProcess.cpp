@@ -2112,6 +2112,7 @@ bool SVInspectionProcess::ProcessInputImageRequests(SVProductInfoStruct *p_psvPr
 					l_bOk = (nullptr != inspectionIter.m_triggerRecordWrite);
 
 					SvTrc::IImagePtr pImageBuffer;
+					SVVirtualCamera* pVirtualCamera = nullptr;
 					if (SVMainImageClass* l_psvMainImage = dynamic_cast<SVMainImageClass*>(pImage))
 					{
 						SVGuidSVCameraInfoStructMap::iterator l_svIter;
@@ -2123,6 +2124,7 @@ bool SVInspectionProcess::ProcessInputImageRequests(SVProductInfoStruct *p_psvPr
 							pImageBuffer = l_psvMainImage->GetTempImageBuffer();
 							l_svIter->second.setImage(pImageBuffer);
 						}
+						pVirtualCamera = l_psvMainImage->GetCamera();
 					}
 					else
 					{
@@ -2138,6 +2140,10 @@ bool SVInspectionProcess::ProcessInputImageRequests(SVProductInfoStruct *p_psvPr
 							if (nullptr != l_pInRequest->m_ImageHandlePtr)
 							{
 								HRESULT l_Code = SVMatroxBufferInterface::CopyBuffer(pImageBuffer->getHandle()->GetBuffer(), l_pInRequest->m_ImageHandlePtr->GetBuffer());
+								if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING) && nullptr != pVirtualCamera)
+								{
+									pVirtualCamera->setTempImage(l_pInRequest->m_ImageHandlePtr->GetBuffer());
+								}
 							}
 							else
 							{
@@ -2386,14 +2392,21 @@ HRESULT SVInspectionProcess::LastProductCopySourceImagesTo(SVProductInfoStruct *
 			{
 				bool Copied(false);
 				SVVirtualCamera* pCamera(dynamic_cast<SVVirtualCamera*> (SvOi::getObject(Iter->first)));
-				if (nullptr != pCamera && nullptr != LastIter->second.getImage() && !LastIter->second.getImage()->isEmpty())
+				if (nullptr != pCamera)
 				{
 					Iter = p_psvProduct->m_svCameraInfos.find(pCamera->GetUniqueObjectID());
 
 					if (Iter != p_psvProduct->m_svCameraInfos.end())
 					{
-						Iter->second.setImage(LastIter->second.getImage());
-						Copied = true;
+						if (nullptr != LastIter->second.getImage() && !LastIter->second.getImage()->isEmpty())
+						{
+							Copied = Iter->second.setImage(LastIter->second.getImage());
+						}
+						else
+						{
+							auto pImage = Iter->second.GetNextImage();
+							Copied = (S_OK == SVMatroxBufferInterface::CopyBuffer(pImage->getHandle()->GetBuffer(), pCamera->getTempImage()));
+						}
 					}
 				}
 				if (!Copied)

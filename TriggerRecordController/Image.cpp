@@ -12,6 +12,7 @@
 #include "Image.h"
 #include "ResetLocker.h"
 #include "ImageBufferController.h"
+#include "TriggerRecordController.h"
 #include "ObjectInterfaces\SVImageBufferHandleInterface.h"
 #pragma endregion Includes
 
@@ -32,6 +33,11 @@ Image::~Image()
 			ImageBufferController::getImageBufferControllerInstance().decreaseRefCounter(m_bufferPos);
 		}
 	}
+}
+
+bool Image::isValid() const
+{
+	return (TriggerRecordController::getTriggerRecordControllerInstance().getResetId() == m_ResetId) || (cLocalTmpImagePos == m_bufferPos);
 }
 
 } //namespace SvTRC

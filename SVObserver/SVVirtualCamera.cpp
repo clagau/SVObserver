@@ -20,6 +20,7 @@
 #include "SVObjectLibrary/SVClsids.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -722,3 +723,11 @@ HRESULT SVVirtualCamera::updateDeviceParameters(SVDeviceParamCollection& rCamera
 	return Result;
 }
 
+void SVVirtualCamera::setTempImage(const SVMatroxBuffer pImage)
+{
+	m_tmpImage.clear();
+	if (S_OK == SVMatroxBufferInterface::Create(m_tmpImage, pImage))
+	{
+		SVMatroxBufferInterface::CopyBuffer(m_tmpImage, pImage);
+	}
+}

@@ -40,7 +40,8 @@ public:
 	virtual bool isReadOnly() const override { return m_isReadOnly; };
 	virtual SvOi::SVImageBufferHandlePtr getHandle() const override { return m_pBuffer; };
 	virtual int getBufferPos() const override {	return m_bufferPos;	};
-	virtual bool isEmpty() const override { return (nullptr == m_pBuffer || m_pBuffer->empty()); };
+	virtual bool isEmpty() const override { return !isValid() || (nullptr == m_pBuffer || m_pBuffer->empty()); };
+	virtual bool isValid() const override;
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -54,6 +55,9 @@ private:
 #pragma endregion Private Methods
 
 #pragma region Member Variables
+public:
+	static const int cLocalTmpImagePos = -10;
+
 private:
 	const bool m_isReadOnly = true;
 	const bool m_shouldUnlockAuto = false;

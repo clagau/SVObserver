@@ -398,40 +398,40 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 
 					// remember MIL handle
 					SvTrc::IImagePtr pImageBuffer = pImage->getLastImage(true);
-					if(nullptr != pImageBuffer && !pImageBuffer->isEmpty())
+					if (nullptr != pImageBuffer && !pImageBuffer->isEmpty())
 					{
 						// this cast assumes that a mil handle will never be larger 32 bits.
 						m_aInspectionInputImages[i] = static_cast<long>(pImageBuffer->getHandle()->GetBuffer().GetIdentifier());
+					}
 
-						if( !m_dll.UseMil() )
+					if (!m_dll.UseMil())
+					{
+						if (nullptr != m_aInspectionInputHBMImages[i].hbm)
 						{
-							if ( nullptr != m_aInspectionInputHBMImages[i].hbm )
-							{
-								::DeleteObject(m_aInspectionInputHBMImages[i].hbm);
-								m_aInspectionInputHBMImages[i].FreeBitmapInfo();
-								m_aInspectionInputHBMImages[i].Clear();
-							}
-							HRESULT hrInitialCopy = SVIHBitmapUtilities::SVImageInfoToNewDIB( imageInfo, m_aInspectionInputHBMImages[i] );
+							::DeleteObject(m_aInspectionInputHBMImages[i].hbm);
+							m_aInspectionInputHBMImages[i].FreeBitmapInfo();
+							m_aInspectionInputHBMImages[i].Clear();
 						}
-						else
+						HRESULT hrInitialCopy = SVIHBitmapUtilities::SVImageInfoToNewDIB(imageInfo, m_aInspectionInputHBMImages[i]);
+					}
+					else
+					{
+						if (m_bUseImageCopies)
 						{
-							if( m_bUseImageCopies )
+							SVImageInfoClass imageInfoCopy;
+							GetImageInfo(&(aInputImages[i]), imageInfoCopy);	// get the physical info from our definition struct
+
+							if (nullptr != GetTool())
 							{
-								SVImageInfoClass imageInfoCopy;
-								GetImageInfo(&(aInputImages[i]), imageInfoCopy);	// get the physical info from our definition struct
-
-								if( nullptr != GetTool() )
-								{
-									imageInfoCopy.SetOwner( GetTool()->GetUniqueObjectID() );
-								}
-								else
-								{
-									imageInfoCopy.SetOwner( GUID_NULL );
-								}
-
-								// create buffer
-								SVImageProcessingClass::CreateImageBuffer(imageInfoCopy, m_aInputImagesCopy[i]);
+								imageInfoCopy.SetOwner(GetTool()->GetUniqueObjectID());
 							}
+							else
+							{
+								imageInfoCopy.SetOwner(GUID_NULL);
+							}
+
+							// create buffer
+							SVImageProcessingClass::CreateImageBuffer(imageInfoCopy, m_aInputImagesCopy[i]);
 						}
 					}
 				}// end if( pImage )

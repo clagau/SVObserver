@@ -122,6 +122,9 @@ public:
 
 	inline void setCameraID( long CameraID ) { m_CameraID = CameraID; };
 	inline long getCameraID() const { return m_CameraID; };
+
+	void setTempImage(const SVMatroxBuffer pImage);
+	SVMatroxBuffer getTempImage() { return m_tmpImage; };
 #pragma endregion Public Methods
 
 protected:
@@ -152,6 +155,8 @@ private:
 	SIZE m_imageSize;
 	SvTi::SVTriggerRelayClass<SvTi::SVFileAcquisitionInitiator> m_triggerRelay;
 	long m_CameraID;
+
+	SVMatroxBuffer m_tmpImage;
 #pragma endregion Member Variables
 };
 
