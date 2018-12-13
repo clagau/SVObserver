@@ -91,7 +91,7 @@ bool LoopTool::Run(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *
 	bool retVal = true;
 	clearRunErrorMessages();
 	m_ToolTime.Start();
-
+	
 	if (IsEnabled())
 	{
 
@@ -110,6 +110,10 @@ bool LoopTool::Run(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *
 
 		if (!m_pToolConditional || getConditionalResult())
 		{
+			
+			//write the toolTime
+			m_ToolTime.Stop();
+
 			double Value;
 			m_MaxLoops.getValue(Value);
 			long MaxLoops = static_cast<long> (Value);
@@ -136,7 +140,7 @@ bool LoopTool::Run(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *
 					SetInvalid();
 					break;
 				}
-
+				m_ToolTime.Stop();
 				double value;
 				m_LinkedBreak.getValue(value);
 				if (static_cast<long> (value) > 0)
