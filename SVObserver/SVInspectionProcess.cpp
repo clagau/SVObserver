@@ -829,6 +829,20 @@ bool SVInspectionProcess::GoOffline()
 
 	m_AsyncProcedure.SetPriority(THREAD_PRIORITY_NORMAL);
 
+	//save the last image to have it in the edit-mode
+	for (SVCameraImageTemplate* pCameraImage : m_CameraImages)
+	{
+		if (nullptr != pCameraImage)
+		{
+			SVVirtualCamera* pCamera = pCameraImage->GetCamera();
+			auto pImageData = pCameraImage->getImageData();
+			if (nullptr != pCamera && nullptr != pImageData && !pImageData->empty())
+			{
+				pCamera->setTempImage(pImageData->GetBuffer());
+			}
+		}
+	}
+
 	if (nullptr != m_pCurrentToolset)
 	{
 		m_pCurrentToolset->goingOffline();
@@ -2794,6 +2808,10 @@ void SVInspectionProcess::UpdateMainImagesByProduct(SVProductInfoStruct* p_psvPr
 						try
 						{
 							l_pImage->setImage(Iter->second.getImage(), l_rIPInfo.m_triggerRecordWrite);
+							if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING) && nullptr != pCamera && Iter->second.getImage()->isValid())
+							{
+								pCamera->setTempImage(Iter->second.getImage()->getHandle()->GetBuffer());
+							}
 						}
 						catch (const SvStl::MessageContainer& rExp)
 						{
