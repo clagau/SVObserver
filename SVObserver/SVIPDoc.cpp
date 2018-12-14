@@ -1386,6 +1386,11 @@ void SVIPDoc::OnEditPaste()
 			m_toolGroupings.AddTool(pTool->GetName(), pNavElement->m_DisplayName);
 		}
 
+		//@TODO[gra][8.10][13.12.2018]: This is a low risk fix to avoid other problems and should be solved in another way
+		//This reset is required when pasting an acquisition tool which otherwise adds a non existent camera to the PPQ
+		//The inspection pointer is still nullptr at this stage which avoids adding the camera to the PPQ in SVCameraImageTemplate::RebuildCameraImage
+		pTool->resetAllObjects();
+
 		SVObjectLevelCreateStruct createStruct;
 		createStruct.OwnerObjectInfo.SetObject(pInspection);
 		createStruct.m_pInspection = pInspection;

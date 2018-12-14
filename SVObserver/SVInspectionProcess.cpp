@@ -2404,8 +2404,11 @@ HRESULT SVInspectionProcess::LastProductCopySourceImagesTo(SVProductInfoStruct *
 						}
 						else
 						{
-							auto pImage = Iter->second.GetNextImage();
-							Copied = (S_OK == SVMatroxBufferInterface::CopyBuffer(pImage->getHandle()->GetBuffer(), pCamera->getTempImage()));
+							if (!pCamera->getTempImage().empty())
+							{
+								auto pImage = Iter->second.GetNextImage();
+								Copied = (S_OK == SVMatroxBufferInterface::CopyBuffer(pImage->getHandle()->GetBuffer(), pCamera->getTempImage()));
+							}
 						}
 					}
 				}
