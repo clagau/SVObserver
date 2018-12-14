@@ -2395,35 +2395,28 @@ HRESULT SVInspectionProcess::LastProductCopySourceImagesTo(SVProductInfoStruct *
 	if (nullptr != p_psvProduct)
 	{
 		SVProductInfoStruct l_Product = LastProductGet();
-
-		SVGuidSVCameraInfoStructMap::iterator Iter(p_psvProduct->m_svCameraInfos.begin());
-
-		for (; Iter != p_psvProduct->m_svCameraInfos.end(); ++Iter)
+		for (auto& rCameraInfoPair : p_psvProduct->m_svCameraInfos)
 		{
-			SVGuidSVCameraInfoStructMap::iterator LastIter(l_Product.m_svCameraInfos.find(Iter->first));
-
-			if (LastIter != l_Product.m_svCameraInfos.end())
+			SVVirtualCamera* pCamera(dynamic_cast<SVVirtualCamera*> (SvOi::getObject(rCameraInfoPair.first)));
+			if (nullptr != pCamera)
 			{
 				bool Copied(false);
-				SVVirtualCamera* pCamera(dynamic_cast<SVVirtualCamera*> (SvOi::getObject(Iter->first)));
-				if (nullptr != pCamera)
-				{
-					Iter = p_psvProduct->m_svCameraInfos.find(pCamera->GetUniqueObjectID());
+				const SVGuidSVCameraInfoStructMap::iterator LastIter(l_Product.m_svCameraInfos.find(rCameraInfoPair.first));
 
-					if (Iter != p_psvProduct->m_svCameraInfos.end())
+				if (LastIter != l_Product.m_svCameraInfos.end() && nullptr != LastIter->second.getImage() && !LastIter->second.getImage()->isEmpty())
+				{
+					Copied = rCameraInfoPair.second.setImage(LastIter->second.getImage());
+				}
+				else
+				{
+					auto pImage = rCameraInfoPair.second.GetNextImage();
+					if (!pCamera->getTempImage().empty())
 					{
-						if (nullptr != LastIter->second.getImage() && !LastIter->second.getImage()->isEmpty())
-						{
-							Copied = Iter->second.setImage(LastIter->second.getImage());
-						}
-						else
-						{
-							if (!pCamera->getTempImage().empty())
-							{
-								auto pImage = Iter->second.GetNextImage();
-								Copied = (S_OK == SVMatroxBufferInterface::CopyBuffer(pImage->getHandle()->GetBuffer(), pCamera->getTempImage()));
-							}
-						}
+						Copied = (S_OK == SVMatroxBufferInterface::CopyBuffer(pImage->getHandle()->GetBuffer(), pCamera->getTempImage()));
+					}
+					else
+					{
+						SVMatroxBufferInterface::ClearBuffer(pImage->getHandle()->GetBuffer(), 0);
 					}
 				}
 				if (!Copied)
