@@ -552,9 +552,21 @@ HRESULT SVToolClass::TranslatePointToSource(SVPoint<double> inPoint, SVPoint<dou
 	return m_toolExtent.TranslatePointToSource(inPoint, rOutPoint);
 }
 
-HRESULT SVToolClass::EnableAuxiliaryExtents(bool enableExtents)
+void SVToolClass::setAuxiliaryExtents()
 {
-	SvOi::SetAttributeType AllowedAttribute = (enableExtents && m_hasToolExtents) ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
+	BOOL bEnabled{false};
+	SvOi::IInspectionProcess* pInspection = GetInspectionInterface();
+	SvOi::SetAttributeType AllowedAttribute = bEnabled ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
+	if (nullptr != pInspection && pInspection->getEnableAuxiliaryExtent())
+	{
+		m_svUpdateAuxiliaryExtents.GetValue(bEnabled);
+	}
+	else
+	{
+		m_svUpdateAuxiliaryExtents.SetObjectAttributesSet(SvDef::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute);
+	}
+
+	m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed(SvDef::SV_SELECTABLE_ATTRIBUTES, AllowedAttribute);
 	m_svAuxiliarySourceX.SetObjectAttributesAllowed(SvDef::SV_SELECTABLE_ATTRIBUTES, AllowedAttribute);
 	m_svAuxiliarySourceY.SetObjectAttributesAllowed(SvDef::SV_SELECTABLE_ATTRIBUTES, AllowedAttribute);
 	m_svAuxiliarySourceAngle.SetObjectAttributesAllowed(SvDef::SV_SELECTABLE_ATTRIBUTES, AllowedAttribute);
@@ -564,16 +576,11 @@ HRESULT SVToolClass::EnableAuxiliaryExtents(bool enableExtents)
 	m_svAuxiliarySourceX.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
 	m_svAuxiliarySourceY.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
 	m_svAuxiliarySourceAngle.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
-
-	return S_OK;
 }
 
 bool SVToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages) && ValidateLocal(pErrorMessages);
-
-	SvOl::ValidateInput(m_AuxSourceImageObjectInfo);
-	SvOl::ValidateInput(m_inputConditionBoolObjectInfo);
 
 	SvOi::IInspectionProcess* pInspection = GetInspectionInterface();
 	if (nullptr != pInspection)
@@ -593,26 +600,17 @@ bool SVToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 			}
 		}
 	}
+
 	///UpdateBottomAndRight is called again when imageExtents are changed by ToolsizeAdjust
 	if (Result)
 	{
 		UpdateBottomAndRight();
 	}
 
-	// Auxiliary Extents
-	BOOL bValue(false);
-	if (GetInspectionInterface()->getEnableAuxiliaryExtent() && m_hasToolExtents)
-	{
-		m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed(SvDef::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::AddAttribute);
-		m_svUpdateAuxiliaryExtents.GetValue(bValue);
-	}
-	else
-	{
-		m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed(SvDef::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute);
-		m_svUpdateAuxiliaryExtents.SetObjectAttributesSet(SvDef::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute);
-	}
+	setAuxiliaryExtents();
 
-	EnableAuxiliaryExtents(bValue ? true : false);
+	SvOl::ValidateInput(m_AuxSourceImageObjectInfo);
+	SvOl::ValidateInput(m_inputConditionBoolObjectInfo);
 
 	return Result;
 }

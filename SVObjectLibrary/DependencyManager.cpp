@@ -62,7 +62,7 @@ namespace SvOl
 		}
 
 		//! This filters dependencies which are dependent on the same tool
-		std::copy_if(ObjectDependencies.begin(), ObjectDependencies.end(), std::back_inserter(DependencyVector), [](const Dependency &rDependency)
+		std::copy_if(ObjectDependencies.begin(), ObjectDependencies.end(), std::back_inserter(DependencyVector), [&rSourceSet](const Dependency &rDependency)
 		{
 			bool CopyItem( false );
 			//! Check if same Tool
@@ -70,15 +70,22 @@ namespace SvOl
 			SVObjectClass* pClient = SVObjectManagerClass::Instance().GetObject( rDependency.second );
 			if (nullptr != pSupplier && nullptr != pClient)
 			{
-				//Global constant objects don't have tools then use the Global constant object and check if main object is of type ToolObjectType
-				bool isSupplier = pSupplier->GetObjectSubType() == SvPb::SVGlobalConstantObjectType || pSupplier->GetObjectType() == SvPb::SVToolObjectType;
+				//Basic value objects don't have tools check if main object is of type ToolObjectType
+				bool isSupplier = pSupplier->GetObjectType() == SvPb::SVBasicValueObjectType || pSupplier->GetObjectType() == SvPb::SVToolObjectType;
 				bool isClient = pClient->GetObjectType() == SvPb::SVToolObjectType;
-				SVObjectClass* pToolSupplier = isSupplier ? pSupplier : pSupplier->GetAncestor(SvPb::SVToolObjectType);
+				SVObjectClass* pParent = pSupplier->GetParent();
+				bool isParentToolset = (nullptr != pParent) && (SvPb::SVToolSetObjectType == pParent->GetObjectType());
+				SvPb::SVObjectTypeEnum supplierAncestorType = isParentToolset ? SvPb::SVToolSetObjectType	: SvPb::SVToolObjectType;
+				SVObjectClass* pToolSupplier = isSupplier ? pSupplier : pSupplier->GetAncestor(supplierAncestorType);
 				SVObjectClass* pToolClient = isClient ? pClient : pClient->GetAncestor(SvPb::SVToolObjectType);
 				if (nullptr != pToolSupplier && nullptr != pToolClient && pToolSupplier != pToolClient)
 				{
+					//One of the dependency tools must be in the source set
+					if (rSourceSet.end() != rSourceSet.find(pToolSupplier->GetUniqueObjectID()) || rSourceSet.end() != rSourceSet.find(pToolClient->GetUniqueObjectID()))
+					{
 					CopyItem = true;
 				}
+			}
 			}
 			return CopyItem;
 		});
@@ -94,12 +101,15 @@ namespace SvOl
 			SVObjectClass* pSupplier = SVObjectManagerClass::Instance().GetObject(IterDependency->first);
 			SVObjectClass* pClient = SVObjectManagerClass::Instance().GetObject(IterDependency->second);
 			if (nullptr != pSupplier && nullptr != pClient)
-			{//To add also add the parent tool e.g. LoopTool if available
-				std::string SupplierName = pSupplier->GetObjectNameBeforeObjectType(SvPb::SVToolSetObjectType);
+			{	
+				SVObjectClass* pParent = pSupplier->GetParent();
+				bool isParentToolset = (nullptr != pParent) && (SvPb::SVToolSetObjectType == pParent->GetObjectType());
+				//To add also add the parent tool e.g. LoopTool if available
+				std::string SupplierName = isParentToolset ? pSupplier->GetObjectNameToObjectType(SvPb::SVToolSetObjectType) : pSupplier->GetObjectNameBeforeObjectType(SvPb::SVToolSetObjectType);
 				std::string ClientName = pClient->GetObjectNameBeforeObjectType(SvPb::SVToolSetObjectType);
 				if (SvPb::SVToolObjectType != nameToObjectType)
 				{
-					SupplierName = pSupplier->GetObjectNameToObjectType(nameToObjectType);
+					SupplierName = isParentToolset ? pSupplier->GetObjectNameToObjectType(SvPb::SVToolSetObjectType) : pSupplier->GetObjectNameToObjectType(nameToObjectType);
 					ClientName = pClient->GetObjectNameToObjectType(nameToObjectType);
 				}
 
@@ -108,8 +118,8 @@ namespace SvOl
 				// If the file name is not empty we want to save a tool dependency graph
 				if (!rFileName.empty())
 				{
-					//Global constant objects don't have tools then use the Global constant object and check if main object is of type ToolObjectType
-					bool isSupplier = pSupplier->GetObjectSubType() == SvPb::SVGlobalConstantObjectType || pSupplier->GetObjectType() == SvPb::SVToolObjectType;
+					//Basic value objects don't have tools check if main object is of type ToolObjectType
+					bool isSupplier = pSupplier->GetObjectType() == SvPb::SVBasicValueObjectType || pSupplier->GetObjectType() == SvPb::SVToolObjectType;
 					bool isClient = pClient->GetObjectType() == SvPb::SVToolObjectType;
 					SVObjectClass* pToolSupplier = isSupplier ? pSupplier : pSupplier->GetAncestor(SvPb::SVToolObjectType);
 					SVObjectClass* pToolClient = isClient ? pClient : pClient->GetAncestor(SvPb::SVToolObjectType);

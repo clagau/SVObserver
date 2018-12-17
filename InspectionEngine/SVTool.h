@@ -79,7 +79,7 @@ public:
 	HRESULT GetRootOffsetData(SVExtentOffsetStruct& p_rsvOffsetData);
 	HRESULT UpdateOffsetData(SVImageClass* p_svToolImage);
 	HRESULT TranslatePointToSource(SVPoint<double> inPoint, SVPoint<double>& rOutPoint);
-	HRESULT EnableAuxiliaryExtents(bool p_bEnable);
+	void setAuxiliaryExtents();
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
 
