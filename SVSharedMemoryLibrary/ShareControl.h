@@ -18,7 +18,7 @@ namespace SvSml
 class ShareControl
 {
 public:
-	ShareControl();
+	ShareControl(const ShareControlSettings& ControlParameter);
 	~ShareControl();
 	bool EventHandler(DWORD event);
 	bool QueryListName(const SvPb::QueryListNameRequest& rRequest, SvPb::QueryListNameResponse& rResponse, SvPenv::Error& rError);
@@ -27,6 +27,8 @@ public:
 	bool GetReject(const SvPb::GetRejectRequest& rRequest, SvPb::GetRejectResponse& rResponse, SvPenv::Error& rError);
 	bool GetFailstatus(const SvPb::GetFailStatusRequest& rRequest, SvPb::GetFailStatusResponse& rResponse, SvPenv::Error& rError);
 	bool GetImageFromId(const  SvPb::GetImageFromIdRequest& rRequest, SvPb::GetImageFromIdResponse& rResponse, SvPenv::Error& rError);
+	
+
 private:
 	bool isReady(SvPenv::Error& rError);
 	bool isMonitorListActive(const std::string& rListName, SvPenv::Error& rError);
@@ -36,6 +38,7 @@ private:
 private:
 	SvSml::SharedMemReader   m_MemReader;
 	std::unique_ptr<LastResponseData> m_pLastResponseData;
+	DWORD m_DelayBeforeClearShare {30};
 };
 }
 

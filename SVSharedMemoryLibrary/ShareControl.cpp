@@ -19,9 +19,15 @@
 namespace SvSml
 {
 
-ShareControl::ShareControl()
+ShareControl::ShareControl(const ShareControlSettings& ControlParameter )
 {
+	
+	if (ControlParameter.DelayBeforeClearShare > 0)
+	{
+		m_DelayBeforeClearShare = ControlParameter.DelayBeforeClearShare;
+	}
 	m_pLastResponseData = std::make_unique<LastResponseData>();
+	SvSml::ShareEvents::GetInstance().SetParameter(ControlParameter);
 	SvSml::ShareEvents::GetInstance().SetCallbackFunction(boost::bind(&SvSml::ShareControl::EventHandler, boost::ref((*this)), _1));
 	SvSml::ShareEvents::GetInstance().StartWatch();
 }
@@ -147,7 +153,7 @@ bool ShareControl::EventHandler(DWORD event)
 		case SvSml::ShareEvents::Change:
 			try
 			{
-				Sleep(SvSml::ShareEvents::Delay_Before_ClearShare);
+				Sleep(m_DelayBeforeClearShare);
 				m_MemReader.Clear();
 				res = true;
 			}
@@ -375,4 +381,5 @@ bool ShareControl::GetFailstatus(SvSml::vecpProd* pFailstatus, const SvPb::GetFa
 	}
 	return true;
 }
+
 } //namespace SvSml

@@ -2116,6 +2116,8 @@ BOOL SVObserverApp::InitInstance()
 	SvLog::init_logging(Settings.logSettings);
 	SV_LOG_GLOBAL(info) << "SVObserverIniPath:" << settingsLoader.GetIni();
 
+	SvSml::ShareEvents::GetInstance().SetParameter(Settings.shareControlSettings);
+
 	std::unique_ptr<SvHttp::HttpServerSettings>  pSettings = std::make_unique<SvHttp::HttpServerSettings>();
 	*pSettings.get() = Settings.httpSettings;
 

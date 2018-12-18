@@ -14,9 +14,6 @@ namespace SvSml
 {
 	const LPCTSTR ShareEvents::GNameChangeEvent  = _T("Global\\Seidenader_ChangeEvent");
 	const LPCTSTR ShareEvents::GNameReadyEvent  = _T("Global\\Seidenader_ReadyEvent");
-	const  DWORD ShareEvents::Delay_Before_CreateShare =  60; //SVObserver waittime after setting Change Event
-	const  DWORD ShareEvents::Delay_Before_ClearShare = 30; 
-
 	ShareEvents::ShareEvents()
 	{
 		m_isReady.store(false);
@@ -74,7 +71,7 @@ namespace SvSml
 	void ShareEvents::QuiesceSharedMemory()
 	{
 		SignalChangingStatus();
-		::Sleep(Delay_Before_CreateShare);
+		::Sleep(m_DelayBeforeCreateShare);
 	}
 
 	bool ShareEvents::GetIsReady()  const
@@ -96,7 +93,13 @@ namespace SvSml
 	{
 		m_isInit = true;
 	}
-
+	void ShareEvents::SetParameter(const ShareControlSettings& ControlParameter)
+	{
+		if (ControlParameter.DelayBeforeCreateShare > 0)
+		{
+			m_DelayBeforeCreateShare = ControlParameter.DelayBeforeCreateShare;
+		}
+	}
 
 	
 

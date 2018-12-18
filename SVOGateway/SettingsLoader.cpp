@@ -118,6 +118,9 @@ void SettingsLoader::loadFromIni(Settings& settings)
 	RegGetBoolIfExists(pt, settings.authSettings.AllowUnauthorizedRpcClients, "Auth.AllowUnauthorizedRpcClients");
 	RegGetIntIfExists(pt, settings.authSettings.JwtAccessTokenValidityInSeconds, "Auth.JwtAccessTokenValidityInSeconds");
 	RegGetIntIfExists(pt, settings.authSettings.JwtAuthTokenValidityInSeconds, "Auth.JwtAuthTokenValidityInSeconds");
+	RegGetIntIfExists(pt, settings.shareControlSettings.DelayBeforeCreateShare, "ShareControl.DelayBeforeCreateShareInMiliSeconds");
+	RegGetIntIfExists(pt, settings.shareControlSettings.DelayBeforeClearShare, "ShareControl.DelayBeforeClearShareInMiliSeconds");
+
 
 	m_iniPath = path;
 }

@@ -11,6 +11,7 @@
 #include "SVHttpLibrary/HttpServerSettings.h"
 #include "SVLogLibrary/LogSettings.h"
 #include "SvHttpLibrary/DefaultSettings.h"
+#include "SVSharedMemoryLibrary/ShareControlSetting.h"
 
 
 struct WebSocketSettings
@@ -27,6 +28,7 @@ struct WebSocketSettings
 	};
 	SvLog::LogSettings logSettings;
 	SvHttp::HttpServerSettings httpSettings;
+	SvSml::ShareControlSettings shareControlSettings;
 };
 
 

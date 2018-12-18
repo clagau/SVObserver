@@ -8,10 +8,12 @@
 //******************************************************************************
 #pragma once
 #include <atomic>
+#include "ShareControlSetting.h" 
 namespace SvSml
 {
-	//!Singleton class handles two global events 
-	///The events are used to signal status of shared memory  
+
+//!Singleton class handles two global events 
+///The events are used to signal status of shared memory  
 class ShareEvents
 {
 private:
@@ -22,9 +24,7 @@ private:
 
 
 public:
-	const static DWORD Delay_Before_CreateShare;
-	const  static DWORD Delay_Before_ClearShare;
-	typedef enum { Change, Ready, UKnown } CallBackParam;
+typedef enum { Change, Ready, UKnown } CallBackParam;
 
 	static ShareEvents& GetInstance()
 	{
@@ -53,13 +53,15 @@ public:
 
 	//! The Ready counter is incremented when the ready flag is set to true
 	//!The ready Counter is used in RRS because there exist two Nonitorlistcopies 
-	long ShareEvents::GetReadyCounter() const;
+	long GetReadyCounter() const;
 
 	//!True if Init Flag isSet
 	bool GetIsInit() const;
 
 	//!Set Init flag. The init flag will bee reseted when changing event occurs
 	void SetIsInit();
+	void SetParameter(const ShareControlSettings& ControlParameter);
+	
 private:
 	static const LPCTSTR GNameChangeEvent;
 	static const LPCTSTR GNameReadyEvent;
@@ -76,6 +78,9 @@ private:
 	///Handles for WatchThread
 	HANDLE m_StopEvent {NULL};
 	HANDLE m_hWatchThread {NULL};
-	DWORD m_ThreadId{0};
-	};
+	DWORD m_ThreadId {0};
+	DWORD m_DelayBeforeCreateShare {60}; //SVObserver wait time after setting Change Event
+	
+
+};
 } //namespace SvSml

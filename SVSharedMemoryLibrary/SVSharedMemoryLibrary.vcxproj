@@ -108,6 +108,7 @@
     <ClInclude Include="MesManHelper.h" />
     <ClInclude Include="MonitorListStore.h" />
     <ClInclude Include="ShareControl.h" />
+    <ClInclude Include="ShareControlSetting.h" />
     <ClInclude Include="SMParameterStruct.h" />
     <ClInclude Include="MLCpyContainer.h" />
     <ClInclude Include="MLInspectionInfo.h" />

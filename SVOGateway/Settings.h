@@ -12,6 +12,7 @@
 #include "SVHttpLibrary/HttpServerSettings.h"
 #include "SVLogLibrary/LogSettings.h"
 #include "SVHttpLibrary/WebsocketClientSettings.h"
+#include "SVSharedMemoryLibrary/ShareControlSetting.h"
 
 namespace SvOgw
 {
@@ -33,5 +34,6 @@ struct Settings
 	SvLog::LogSettings logSettings;
 	SvHttp::HttpServerSettings httpSettings;
 	SvAuth::AuthManagerSettings authSettings;
+	SvSml::ShareControlSettings shareControlSettings;
 };
 }

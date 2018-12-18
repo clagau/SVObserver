@@ -20,11 +20,12 @@
 
 namespace SvOgw
 {
-SharedMemoryAccess::SharedMemoryAccess()
+
+SharedMemoryAccess::SharedMemoryAccess(const SvSml::ShareControlSettings& ControlParameter)
 	: m_io_service(), m_io_work(m_io_service), m_io_thread(boost::bind(&boost::asio::io_service::run, &m_io_service))
 {
 
-	m_pShareControlInstance = std::make_unique<SvSml::ShareControl>();
+	m_pShareControlInstance = std::make_unique<SvSml::ShareControl>(ControlParameter);
 
 }
 SharedMemoryAccess::~SharedMemoryAccess()

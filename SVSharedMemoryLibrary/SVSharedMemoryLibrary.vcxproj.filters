@@ -123,6 +123,9 @@
     <ClInclude Include="MesManHelper.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="ShareControlSetting.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Headerdateien">

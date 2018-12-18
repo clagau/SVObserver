@@ -16,13 +16,16 @@
 #include "SVSharedMemoryLibrary/ShareControl.h"
 #include "SVRPCLibrary/Observer.h"
 #include "SVRPCLibrary/Task.h"
+#include "SVSharedMemoryLibrary/ShareControlSetting.h" 
+
+
 
 namespace SvOgw
 {
 class SharedMemoryAccess : public SharedMemoryAccessInterface
 {
 public:
-	SharedMemoryAccess();
+	SharedMemoryAccess(const SvSml::ShareControlSettings& ControlParameter);
 	~SharedMemoryAccess();
 
 public:

@@ -91,7 +91,7 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 		SvAuth::AuthManager authManager(settings.authSettings);
 		SvAuth::RestHandler restHandler(authManager);
 
-		auto sharedMemoryAccess = std::make_unique<SvOgw::SharedMemoryAccess>();
+		auto sharedMemoryAccess = std::make_unique<SvOgw::SharedMemoryAccess>(settings.shareControlSettings);
 		SvOgw::ServerRequestHandler requestHandler(sharedMemoryAccess.get(), &authManager);
 
 
