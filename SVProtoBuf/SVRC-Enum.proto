@@ -83,17 +83,20 @@ enum ObjectSelectorType
 ///SVObserver object attributes
 enum ObjectAttributes
 {
-	noAttributes = 0;				//None
-	viewable = 1;					//Object is viewable in object selector
-	publishable = 2;				//Object value can be published
-	archivable = 3;					//Object value is displayed in the object selector when used for archiving
-	selectableForEquation = 4;		//Object is displayed in the object selector when used for equations
-	embedable = 5; 					//Object is an embedded value
-	selectableForStatistics = 6;	//Object is displayed in the object selector when used for statistics tool
-	archivable_image = 7;			//Object image is displayed in the object selector when used for archiving
-	printable = 8;					//Object is printed in the configuration report
-	remotely_setable = 9;			//Object can be set remotely
-	setable_online = 10;			//Object can be set when SVObserver is Online
-	extent_object = 11;				//Object is an extent value object
-	publish_result_image = 13;		//Object result image can be published
+	noAttributes				= 0x00000000;	//None
+	viewable					= 0x00000001;	//Object is viewable in object selector
+	publishable					= 0x00000002;	//Object value can be published
+	archivable					= 0x00000004;	//Object value is displayed in the object selector when used for archiving
+	selectableForEquation		= 0x00000008;	//Object is displayed in the object selector when used for equations
+	embedable					= 0x00000010;	//Object is an embedded value
+	selectableForStatistics		= 0x00000020;	//Object is displayed in the object selector when used for statistics tool
+	archivableImage				= 0x00000040;	//Object image is displayed in the object selector when used for archiving
+	printable					= 0x00000080;	//Object is printed in the configuration report
+	remotelySetable				= 0x00000100;	//Object can be set remotely
+	setableOnline				= 0x00000200;	//Object can be set when SVObserver is Online
+	extentObject				= 0x00000400;	//Object is an extent value object
+	hidden						= 0x00000800;	//Object is hidden
+	publishResultImage			= 0x00001000;	//Object result image can be published
+	dataDefinitionValue			= 0x00010000;	//Object is selected for the data definition list
+	dataDefinitionImage			= 0x00020000;	//Object is selected for the data definition list
 };

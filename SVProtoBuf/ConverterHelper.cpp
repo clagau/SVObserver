@@ -296,23 +296,29 @@ UINT PbObjectAttributes2Attributes(const SvPb::ObjectAttributes& rAttributes)
 		case SvPb::ObjectAttributes::selectableForStatistics:
 			Result = SvDef::SV_SELECTABLE_FOR_STATISTICS;
 			break;
-		case SvPb::ObjectAttributes::archivable_image:
+		case SvPb::ObjectAttributes::archivableImage:
 			Result = SvDef::SV_ARCHIVABLE_IMAGE;
 			break;
 		case SvPb::ObjectAttributes::printable:
 			Result = SvDef::SV_PRINTABLE;
 			break;
-		case SvPb::ObjectAttributes::remotely_setable:
+		case SvPb::ObjectAttributes::remotelySetable:
 			Result = SvDef::SV_REMOTELY_SETABLE;
 			break;
-		case SvPb::ObjectAttributes::setable_online:
+		case SvPb::ObjectAttributes::setableOnline:
 			Result = SvDef::SV_SETABLE_ONLINE;
 			break;
-		case SvPb::ObjectAttributes::extent_object:
+		case SvPb::ObjectAttributes::extentObject:
 			Result = SvDef::SV_EXTENT_OBJECT;
 			break;
-		case SvPb::ObjectAttributes::publish_result_image:
+		case SvPb::ObjectAttributes::publishResultImage:
 			Result = SvDef::SV_PUBLISH_RESULT_IMAGE;
+			break;
+		case SvPb::ObjectAttributes::dataDefinitionValue:
+			Result = SvDef::SV_DD_VALUE;
+			break;
+		case SvPb::ObjectAttributes::dataDefinitionImage:
+			Result = SvDef::SV_DD_IMAGE;
 			break;
 		default:
 			break;
