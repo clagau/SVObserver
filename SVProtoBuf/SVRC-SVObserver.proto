@@ -292,7 +292,7 @@ message LoadConfigRequest
 message GetObjectSelectorItemsRequest
 {
 	repeated ObjectSelectorType Types = 1;	//The list of item types required
-	bytes inspectionID = 2;				//The inspection GUID to query for the items
+	string inspectionID = 2;			//The inspection GUID to query for the items or the inspection name (changed from bytes to string until inspection ID available)
 	bytes instanceID = 3;				//The object instance GUID to query if required can be GUID_NULL
 	ObjectAttributes Filter = 4;		//The object attribute to filter with
 	bool wholeArray = 5;				//True to display whole array values (All values in the Array eg. Blob Analyzer.Box X Max[]) 
