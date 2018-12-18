@@ -137,8 +137,8 @@ bool SVColorToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages
 
 	for (BandEnum Band : BandList)
 	{
+		//Create band already calls reset for the image!
 		createBandChildLayer(Band);
-		m_bandImage[Band].ResetObject();
 	}
 	
 	SVImageClass* pInputImage = SvOl::getInput<SVImageClass>(m_InputImageObjectInfo);
@@ -355,6 +355,8 @@ bool SVColorToolClass::createBandChildLayer(BandEnum Band)
 
 	// Setup...
 	ImageInfo.SetOwner(GetUniqueObjectID());
+	//The single bands do not need the offset position only width and size!
+	ImageInfo.SetExtentProperty(SvDef::SVExtentPropertyEnum::SVExtentPropertyPositionPoint, {0.0, 0.0});
 	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatMono8);
 	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1L);
 	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, static_cast<long> (Band));
