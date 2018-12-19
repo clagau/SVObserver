@@ -1383,7 +1383,7 @@ void SVIPDoc::OnEditPaste()
 		
 		bool OwnerIsLooptool {false};
 		SVObjectClass*  pOwnwerObject(SVObjectManagerClass::Instance().GetObject(ownerGuid));
-		if (pOwnwerObject && SvDef::LoopToolObjectType == pOwnwerObject->GetObjectSubType())
+		if (pOwnwerObject && SvPb::LoopToolObjectType == pOwnwerObject->GetObjectSubType())
 		{
 			OwnerIsLooptool = true;
 		}
