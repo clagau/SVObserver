@@ -2410,13 +2410,16 @@ HRESULT SVInspectionProcess::LastProductCopySourceImagesTo(SVProductInfoStruct *
 				else
 				{
 					auto pImage = rCameraInfoPair.second.GetNextImage();
-					if (!pCamera->getTempImage().empty())
+					if (nullptr != pImage && pImage->isValid())
 					{
-						Copied = (S_OK == SVMatroxBufferInterface::CopyBuffer(pImage->getHandle()->GetBuffer(), pCamera->getTempImage()));
-					}
-					else
-					{
-						SVMatroxBufferInterface::ClearBuffer(pImage->getHandle()->GetBuffer(), 0);
+						if (!pCamera->getTempImage().empty())
+						{
+							Copied = (S_OK == SVMatroxBufferInterface::CopyBuffer(pImage->getHandle()->GetBuffer(), pCamera->getTempImage()));
+						}
+						else
+						{
+							SVMatroxBufferInterface::ClearBuffer(pImage->getHandle()->GetBuffer(), 0);
+						}
 					}
 				}
 				if (!Copied)
