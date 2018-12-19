@@ -392,6 +392,38 @@ bool SVTaskObjectListClass::IsNameUnique(LPCSTR  pName, LPCTSTR pExclude) const
 	return bRetVal;
 }
 
+const std::string  SVTaskObjectListClass::MakeUniqueToolName(LPCTSTR ToolName) const
+{
+	bool found(false);
+	for (const auto pObj : m_TaskObjectVector)
+	{
+		if (nullptr != pObj)
+		{
+			if (0 == _tcscmp(pObj->GetName(), ToolName))
+			{
+				found = true;
+				break;
+			}
+
+		}
+	 }
+	if (!found)
+	{
+		return ToolName;
+	}
+	
+	std::string ToolNameCore = ToolName;
+
+	//This strips any numbers at the end of the name
+	 auto pos = ToolNameCore.find_last_not_of(_T("0123456789"));
+	if (pos  != std::string::npos)
+	{
+		ToolNameCore = ToolNameCore.substr(0, pos + 1);
+	}
+	return checkName(ToolNameCore.c_str());
+
+}
+
 const std::string SVTaskObjectListClass::checkName( LPCTSTR ToolName ) const
 {
 	std::string objectName;

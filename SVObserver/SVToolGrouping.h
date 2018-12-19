@@ -75,11 +75,12 @@ public:
 	bool IsCollapsed(const std::string& rName) const;
 	bool Collapse(const std::string& rName, bool bCollapse);
 
-	typedef ToolGroupList::const_iterator const_iterator;
-	const_iterator begin() const;
-	const_iterator end() const;
+	typedef ToolGroupList::iterator iterator;
+	iterator begin() ;
+	iterator end() ;
+	iterator erase(iterator it);
 
-	const_iterator find(const std::string& rName) const;
+	iterator find(const std::string& rName) ;
 	bool empty() const;
 	size_t size() const;
 

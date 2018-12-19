@@ -80,6 +80,7 @@
 #include "Definitions/ObjectDefines.h"
 #include "SVColorTool.h"
 #include "SVProtoBuf/InspectionCommands.h"
+#include "LoopTool.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -1379,10 +1380,17 @@ void SVIPDoc::OnEditPaste()
 
 		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &Request,&Response);
 		assert(S_OK == hr);
-
-		//If this is the first tool then it has already been inserted otherwise the name is unique
-		if (m_toolGroupings.IsNameUnique(pTool->GetName()))
+		
+		bool OwnerIsLooptool {false};
+		SVObjectClass*  pOwnwerObject(SVObjectManagerClass::Instance().GetObject(ownerGuid));
+		if (pOwnwerObject && SvDef::LoopToolObjectType == pOwnwerObject->GetObjectSubType())
 		{
+			OwnerIsLooptool = true;
+		}
+	
+		if (!OwnerIsLooptool)
+		{
+			
 			m_toolGroupings.AddTool(pTool->GetName(), pNavElement->m_DisplayName);
 		}
 

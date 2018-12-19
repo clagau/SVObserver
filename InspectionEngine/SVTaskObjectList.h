@@ -75,6 +75,8 @@ public:
 	//insensitive compare with name in m_TaskObjectVector
 	bool SVTaskObjectListClass::IsNameUnique(LPCSTR  pName, LPCTSTR pExclude) const;
 
+	const std::string  SVTaskObjectListClass::MakeUniqueToolName(LPCTSTR ToolName) const;
+
 	virtual HRESULT CollectOverlays( SVImageClass* p_Image, SVExtentMultiLineStructVector &p_MultiLineArray ) override;
 
 	/// The method destroys a child object. 

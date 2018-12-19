@@ -1171,7 +1171,7 @@ void SVConfigXMLPrint::WriteChildren(Writer writer, SVObjectClass* pObj) const
 			if (rToolGroupings.size())
 			{
 				bool bToolGroupActive = false;
-				for (SVToolGrouping::const_iterator it = rToolGroupings.begin(); it != rToolGroupings.end(); ++it)
+				for (SVToolGrouping::iterator it = rToolGroupings.begin(); it != rToolGroupings.end(); ++it)
 				{
 					switch (it->second.m_type)
 					{

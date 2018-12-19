@@ -706,19 +706,25 @@ bool SVToolGrouping::GetParameters(SvOi::IObjectWriter& rWriter)
 	return bRetVal;
 }
 
-SVToolGrouping::const_iterator SVToolGrouping::begin() const
+SVToolGrouping::iterator SVToolGrouping::begin() 
 {
 	return m_list.begin();
 }
 
-SVToolGrouping::const_iterator SVToolGrouping::end() const
+SVToolGrouping::iterator SVToolGrouping::end() 
 {
 	return m_list.end();
 }
 
-SVToolGrouping::const_iterator SVToolGrouping::find(const std::string& rName) const
+
+SVToolGrouping::iterator SVToolGrouping::erase(SVToolGrouping::iterator it)
 {
-	SVToolGrouping::const_iterator it = std::find_if(begin(), end(),
+	return m_list.erase(it);
+}
+
+SVToolGrouping::iterator SVToolGrouping::find(const std::string& rName) 
+{
+	SVToolGrouping::iterator it = std::find_if(begin(), end(),
 		[&rName](const ToolGroup& rGroup)->bool { return rGroup.first == rName; });
 	return it;
 }

@@ -982,7 +982,7 @@ void ToolSetView::GetParameters(SvOi::IObjectWriter& rWriter)
 	svVariant.Clear();
 }
 
-const SVToolGrouping& ToolSetView::GetToolGroupings() const
+SVToolGrouping& ToolSetView::GetToolGroupings() 
 {
 	return GetIPDoc()->GetToolGroupings();
 }

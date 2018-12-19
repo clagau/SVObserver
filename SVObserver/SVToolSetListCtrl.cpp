@@ -132,7 +132,7 @@ void SVToolSetListCtrl::Rebuild()
 
 	if (pView)
 	{
-		const SVToolGrouping& groupings = pView->GetToolGroupings();
+		SVToolGrouping& groupings = pView->GetToolGroupings();
 		if (nullptr == m_ImageList.GetSafeHandle())
 		{
 			CreateImageLists();
@@ -151,8 +151,9 @@ void SVToolSetListCtrl::Rebuild()
 		int itemNo {0};
 		bool bGroupingCollapsed {false};
 		int indent {0};
+		std::list<SVToolGrouping::iterator> ToDelete;
 
-		for (SVToolGrouping::const_iterator GroupingIt = groupings.begin(); GroupingIt != groupings.end(); ++GroupingIt)
+		for (SVToolGrouping::iterator GroupingIt = groupings.begin(); GroupingIt != groupings.end(); GroupingIt++)
 		{
 			auto pNavElement = std::make_shared<NavigatorElement>(GroupingIt->first.c_str());
 			switch (GroupingIt->second.m_type)
@@ -193,6 +194,7 @@ void SVToolSetListCtrl::Rebuild()
 					if (ToolSetIt == ToolSetInfos.end() || ToolSetIt->ObjectType != SvPb::SVToolObjectType)
 					{
 						//object kein tool oder nicht im toolset
+					ToDelete.push_back(GroupingIt);
 						continue;
 					}
 
@@ -216,6 +218,10 @@ void SVToolSetListCtrl::Rebuild()
 					}
 				}
 			}
+		}
+		for (auto& rIt : ToDelete)
+		{
+			groupings.erase(rIt);
 		}
 		if (!GetItemCount())
 		{

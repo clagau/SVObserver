@@ -683,7 +683,7 @@ HRESULT ToolClipboard::replaceToolName( std::string& rXmlData, SVTreeType& rTree
 
 			if (nullptr != pOwner && LoopToolClassGuid == pOwner->GetClassID())
 			{
-				NewName = static_cast<const SVTaskObjectListClass*>(pOwner)->checkName(ToolName.c_str());
+				NewName = static_cast<const SVTaskObjectListClass*>(pOwner)->MakeUniqueToolName(ToolName.c_str());
 			}
 			else
 			{

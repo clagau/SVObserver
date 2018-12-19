@@ -39,7 +39,7 @@ class ToolSetView : public CFormView
 public:
 	SVIPDoc* GetIPDoc() const;
 	void GetParameters(SvOi::IObjectWriter& rWriter);
-	const SVToolGrouping& GetToolGroupings() const;
+	SVToolGrouping& GetToolGroupings() ;
 	typedef SvXml::SVXMLMaterialsTree SVTreeType;
 	bool SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent);
 	bool CheckParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent);
