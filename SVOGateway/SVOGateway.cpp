@@ -75,7 +75,16 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 		settingsLoader.loadFromIni(settings);
 		settings.httpSettings.ServerVersionString = SvSyl::SVVersionInfo::GetVersion();
 		settings.httpSettings.Host = "0.0.0.0";
-		SvLog::init_logging(settings.logSettings);
+
+		try
+		{
+			SvLog::init_logging(settings.logSettings);
+		}
+		catch (std::runtime_error& rRuntimeError)
+		{
+			SV_LOG_GLOBAL(error) << std::string(rRuntimeError.what());
+		}
+		
 		SV_LOG_GLOBAL(info) << "SVOGatewayIniPath:" << settingsLoader.GetIni();
 		SV_LOG_GLOBAL(info) << "WebsocketServer is starting";
 

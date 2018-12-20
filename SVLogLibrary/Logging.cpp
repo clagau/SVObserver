@@ -285,6 +285,7 @@ void bootstrap_logging()
 
 void init_logging(const LogSettings& settings)
 {
+	std::string ErrorMsg;
 	core::get()->remove_all_sinks(); // remove all default sinks
 	add_common_attributes(); // adds common log attributes like timestamp
 	auto min_LogLevel = trivial::info;
@@ -295,8 +296,9 @@ void init_logging(const LogSettings& settings)
 		{
 			if (!parse_severity(settings.StdoutLogLevel, stdout_log_level))
 			{
-				auto msg = "Unknown stdout log level " + settings.StdoutLogLevel;
-				throw std::runtime_error(msg.c_str());
+				ErrorMsg += "Unknown stdout log level " + settings.StdoutLogLevel ;
+				
+
 			}
 		}
 
@@ -316,8 +318,11 @@ void init_logging(const LogSettings& settings)
 		{
 			if (!parse_severity(settings.FileLogLevel, file_log_level))
 			{
-				auto msg = "Unknown file log level " + settings.FileLogLevel;
-				throw std::runtime_error(msg.c_str());
+				if (!ErrorMsg.empty())
+				{
+					ErrorMsg += ", ";
+				}
+				ErrorMsg += "Unknown file log level " + settings.FileLogLevel;
 			}
 		}
 
@@ -338,8 +343,12 @@ void init_logging(const LogSettings& settings)
 		{
 			if (!parse_severity(settings.WindowsEventLogLevel, event_log_level))
 			{
-				auto msg = "Unknown event log level " + settings.WindowsEventLogLevel;
-				throw std::runtime_error(msg.c_str());
+				if (!ErrorMsg.empty())
+				{
+					ErrorMsg += ", ";
+				}
+				ErrorMsg +=  "Unknown event log level " + settings.WindowsEventLogLevel;
+
 			}
 		}
 		auto facility = settings.eventLogFacility;
@@ -350,6 +359,12 @@ void init_logging(const LogSettings& settings)
 		min_LogLevel = min_LogLevel < event_log_level ? min_LogLevel : event_log_level;
 	}
 	core::get()->set_filter(trivial::severity >= min_LogLevel);
+
+	if(!ErrorMsg.empty())
+	{
+		throw std::runtime_error(ErrorMsg.c_str());
+	}
+
 }
 
 } // namespace SvLog

@@ -2113,11 +2113,19 @@ BOOL SVObserverApp::InitInstance()
 	WebSocketSettings Settings;
 	WebSocketSettingsLoader settingsLoader;
 	settingsLoader.loadFromIni(Settings);
-	SvLog::init_logging(Settings.logSettings);
+
+	try
+	{
+		SvLog::init_logging(Settings.logSettings);
+	}
+	catch (std::runtime_error& rRuntimeError)
+	{
+		SV_LOG_GLOBAL(error) << std::string(rRuntimeError.what());
+	}
+
+	
 	SV_LOG_GLOBAL(info) << "SVObserverIniPath:" << settingsLoader.GetIni();
-
 	SvSml::ShareEvents::GetInstance().SetParameter(Settings.shareControlSettings);
-
 	std::unique_ptr<SvHttp::HttpServerSettings>  pSettings = std::make_unique<SvHttp::HttpServerSettings>();
 	*pSettings.get() = Settings.httpSettings;
 

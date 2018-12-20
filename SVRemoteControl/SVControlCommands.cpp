@@ -86,7 +86,14 @@ SVControlCommands::SVControlCommands(NotifyFunctor p_Func)
 	RCSettings settings;
 	RCSettingsLoader settingsLoader;
 	settingsLoader.loadFromIni(IniFile.c_str(), settings);
-	SvLog::init_logging(settings.logSettings);
+	try
+	{
+		SvLog::init_logging(settings.logSettings);
+	}
+	catch (std::runtime_error& rRuntimeError)
+	{
+		SV_LOG_GLOBAL(error) << std::string(rRuntimeError.what());
+	}
 	SV_LOG_GLOBAL(info) << "SVRemotecontrolIniPath:" << IniFile;
 	m_ClientSettings = settings.httpClientSettings;
 }
