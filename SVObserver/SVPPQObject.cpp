@@ -62,7 +62,6 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-const long g_lPPQExtraBufferSize = 5;
 static const double TwentyPercent = .20;
 
 const long MinReducedPPQPosition = 2;
@@ -477,7 +476,7 @@ bool SVPPQObject::Rebuild()
 	// Create buckets for the PPQ positions
 	m_ppPPQPositions.resize(GetPPQLength());
 
-	SetupProductInfoStructs();
+	bool result = SetupProductInfoStructs();
 
 	// Force the Inspections to rebuild as well
 	for (auto pInspection : m_arInspections)
@@ -485,7 +484,7 @@ bool SVPPQObject::Rebuild()
 		pInspection->RebuildInspection();
 	}// end for
 
-	return true;
+	return result;
 }// end Rebuild
 
 void SVPPQObject::Destroy()
@@ -4476,7 +4475,7 @@ void SVPPQObject::SetNAKMode(SvDef::NakGeneration nakMode, int NAKPar)
 	m_NAKParameter = NAKPar;
 }
 
-void SVPPQObject::SetupProductInfoStructs()
+bool SVPPQObject::SetupProductInfoStructs()
 {
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
@@ -4497,14 +4496,17 @@ void SVPPQObject::SetupProductInfoStructs()
 			pInspPB->set_numberofrecords(GetPPQLength() + g_lPPQExtraBufferSize);
 		}
 	}
-	SvTrc::getTriggerRecordControllerRWInstance().setInspections(inspListMessage);
-	pConfig->UpdateInspectionList4TRC();
+	bool result = SvTrc::getTriggerRecordControllerRWInstance().setInspections(inspListMessage);
+	if (result)
+	{
+		pConfig->UpdateInspectionList4TRC();
+	}
 
 	// Set up all the ProductInfo Structs
 	SVGuidSVCameraInfoStructMap l_CameraInfos;
 	BuildCameraInfos(l_CameraInfos);
 	m_pMasterProductInfos = new SVProductInfoStruct[GetPPQLength() + g_lPPQExtraBufferSize];
-	
+
 	std::vector<int> inspPosVec;
 	for (auto pInspection : m_arInspections)
 	{
@@ -4517,7 +4519,7 @@ void SVPPQObject::SetupProductInfoStructs()
 		m_pMasterProductInfos[j].m_svCameraInfos = l_CameraInfos;
 		m_pMasterProductInfos[j].m_svInspectionInfos.clear();
 
-		for (int i= 0; i< m_arInspections.size(); i++)
+		for (int i = 0; i < m_arInspections.size(); i++)
 		{
 			SVInspectionInfoStruct& rInspectionStruct = m_pMasterProductInfos[j].m_svInspectionInfos[m_arInspections[i]->GetUniqueObjectID()];
 			rInspectionStruct.pInspection = m_arInspections[i];
@@ -4526,4 +4528,6 @@ void SVPPQObject::SetupProductInfoStructs()
 
 		m_qAvailableProductInfos.AddTail(&m_pMasterProductInfos[j]);
 	}// end for
+
+	return result;
 }

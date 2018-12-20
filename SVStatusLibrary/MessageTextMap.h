@@ -550,12 +550,14 @@ namespace SvStl
 		{Tid_TRC_Error_CreateBuffer, _T("Create Buffer failed (%s): Maybe to many buffer required.")},
 		{Tid_TRC_Error_ResetAllReadyStarted, _T("Reset of TriggerRecord-structure already started with %s. Restart with %s not possible.")},
 		{Tid_TRC_Error_ResetLocked, _T("Reset not possible, because it is locked.")},
-		{Tid_TRC_Error_ResetWrongInspectionId, _T("Reset not possible, %d is invalid inspectionId, number of inspection is %s")},
+		{Tid_TRC_Error_ResetWrongInspectionId, _T("Reset not possible, %s is invalid inspectionId, number of inspection is %s")},
 		{Tid_TRC_Error_TriggerRecordSize2Big, _T("TriggerRecordSize of %s is too big. Maximal %s is valid.")},
 		{Tid_TRC_Error_ResetNotStart, _T("Reset of TriggerRecord-structure not started. Reset can not be finished.")},
 		{Tid_TRC_Error_InvalidResetState, _T("Invalid Reset-state. Action can not be done.")},
 		{Tid_TRC_Error_GetImageDefList, _T("Error in method GetImagDefList.")},
 		{Tid_TRC_Error_CopyValueObjData, _T("Error copying value object data")},
+
+		{Tid_TRC_Error_ResetInspectionFailed, _T("Reset of TRC failed, because buffer creation failed.\nPossible Reason is too little resources, maybe the PPQs are too long.")},
 
 		{Tid_NAK_Error_MissingEndFrame, _T("NAK! Acquisition End Frame missing for device %s [Time %s ms]")},
 

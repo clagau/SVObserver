@@ -521,6 +521,8 @@ enum MessageTextEnum
 	Tid_TRC_Error_GetImageDefList,
 	Tid_TRC_Error_CopyValueObjData,
 
+	Tid_TRC_Error_ResetInspectionFailed,
+
 	Tid_NAK_Error_MissingEndFrame,
 
 	Tid_UpdateMainImages_InvalidImageBuffer,

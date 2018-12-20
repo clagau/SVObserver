@@ -1555,7 +1555,18 @@ bool SVInspectionProcess::resetAllObjects(SvStl::MessageContainerVector *pErrorM
 	}
 	catch (const SvStl::MessageContainer& rExp)
 	{
-		ErrorMessages.push_back(rExp);
+		if (SVMSG_TRC_GENERAL_ERROR == rExp.getMessage().m_MessageCode && SvStl::Tid_TRC_Error_CreateBuffer == rExp.getMessage().m_AdditionalTextId)
+		{
+			SvStl::MessageMgrStd oldException(SvStl::MsgType::Log);
+			oldException.setMessage(rExp.getMessage());
+			SvStl::MessageMgrStd newException(SvStl::MsgType::Display);
+			newException.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TRC_Error_ResetInspectionFailed, SvStl::SourceFileParams(StdMessageParams));
+			ErrorMessages.insert(ErrorMessages.begin(), newException.getMessageContainer());
+		}
+		else
+		{
+			ErrorMessages.push_back(rExp);
+		}
 		Result = false;
 	}
 

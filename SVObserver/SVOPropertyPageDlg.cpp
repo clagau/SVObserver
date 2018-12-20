@@ -1629,9 +1629,9 @@ void CSVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 							iLen = 2;
 							m_Tree.FindItem(PROP_PPQ_LENGTH)->SetItemValue(iLen);
 						}
-						if (iLen > 300)
+						if (iLen > getMaxPpqLength())
 						{
-							iLen = 300;
+							iLen = getMaxPpqLength();
 							m_Tree.FindItem(PROP_PPQ_LENGTH)->SetItemValue(iLen);
 						}
 					}

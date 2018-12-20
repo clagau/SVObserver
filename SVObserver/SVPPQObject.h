@@ -22,6 +22,7 @@
 #include "SVOLibrary/SVQueueObject.h"
 #include "SVSharedMemoryLibrary/SMRingbuffer.h"
 #include "SVSystemLibrary/SVAsyncProcedure.h"
+#include "TriggerRecordController/TriggerRecordController.h"
 #include "SVInfoStructs.h"
 #include "Definitions/SVPPQEnums.h"
 #include "SVPPQShiftRegister.h"
@@ -35,9 +36,15 @@
 
 
 #pragma region Declarations
-const long	StandardPpqLength	= 2;
+constexpr long	StandardPpqLength	= 2;
+constexpr long g_lPPQExtraBufferSize = 5;
 
 #pragma endregion Declarations
+
+constexpr long getMaxPpqLength()
+{
+	return SvTrc::TriggerRecordController::cMaxTriggerRecords - 5;// g_lPPQExtraBufferSize;
+};
 
 class SVPPQObject : 
 	public SVObjectClass,
@@ -217,6 +224,8 @@ public:
 	virtual DWORD GetObjectColor() const override;
 
 	long getPpqPosition(long triggerCount) const {return m_ppPPQPositions.GetIndexByTriggerCount(triggerCount);}
+
+	
 
 protected:
 	struct SVTriggerQueueElement
@@ -500,7 +509,7 @@ private:
 	void ReleaseSharedMemory(SVProductInfoStruct& rProduct);
 	void CommitSharedMemory( SVProductInfoStruct& rProduct);
 
-	void SetupProductInfoStructs();
+	bool SetupProductInfoStructs();
 
 	BasicValueObjects	m_PpqValues;
 	SvDef::SVPPQOutputModeEnum m_oOutputMode;

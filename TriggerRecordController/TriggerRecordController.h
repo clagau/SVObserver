@@ -118,10 +118,12 @@ private:
 #pragma endregion Private Methods
 
 #pragma region Member variables
+public:
+	static const int cMaxTriggerRecords = 305;
+
 private:
 	static const int m_TriggerRecordAddOn = 2; //number of additional slots for internal use
-	static const int m_maxTriggerRecords = 100;
-
+	
 	struct TRControllerDataPerIP
 	{
 		~TRControllerDataPerIP()

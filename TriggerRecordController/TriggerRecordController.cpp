@@ -198,7 +198,7 @@ bool TriggerRecordController::setInspections(const SvPb::InspectionList& rInspec
 
 	for (auto& rInspection : rInspectionList.list())
 	{
-		if (m_maxTriggerRecords < rInspection.numberofrecords())
+		if (cMaxTriggerRecords < rInspection.numberofrecords())
 		{
 			assert(false);
 			return false;
@@ -349,12 +349,12 @@ void TriggerRecordController::startResetTriggerRecordStructure(int inspectionPos
 	if (m_cResetStartedAddBuffer != inspectionPos)
 	{
 		int TriggerRecordSize = m_inspectionList.list(inspectionPos).numberofrecords();
-		if (0 >= TriggerRecordSize || m_maxTriggerRecords < TriggerRecordSize)
+		if (0 >= TriggerRecordSize || cMaxTriggerRecords < TriggerRecordSize)
 		{
 			assert(false);
 			SvDef::StringVector msgList;
 			msgList.push_back(SvUl::Format(_T("%d"), TriggerRecordSize));
-			msgList.push_back(SvUl::Format(_T("%d"), m_maxTriggerRecords));
+			msgList.push_back(SvUl::Format(_T("%d"), cMaxTriggerRecords));
 			SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
 			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_TriggerRecordSize2Big, msgList, SvStl::SourceFileParams(StdMessageParams));
 			Exception.Throw();
@@ -421,7 +421,7 @@ int TriggerRecordController::addOrChangeImage(const GUID& rImageId, const SVMatr
 	if (ResetEnum::NewReset == resetEnum)
 	{
 		int TriggerRecordSize = m_inspectionList.list(inspectionPos).numberofrecords();
-		if (0 >= TriggerRecordSize || m_maxTriggerRecords < TriggerRecordSize)
+		if (0 >= TriggerRecordSize || cMaxTriggerRecords < TriggerRecordSize)
 		{
 			assert(false);
 			SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
