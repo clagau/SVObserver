@@ -2947,6 +2947,7 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& rElement)
 				m_PendingCameraResponses[rElement.m_pCamera] = rElement;
 
 				SVObjectManagerClass::Instance().IncrementPendingImageIndicator();
+				l_Status = E_FAIL;
 #ifdef EnableTracking
 
 				std::string l_Title = _T("Pending ");

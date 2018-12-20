@@ -189,11 +189,12 @@ long SVPPQShiftRegister::GetIndexByTriggerTimeStamp(SvTl::SVTimeStamp checkTime,
 			if (nullptr != *iter)
 			{
 				bool hasCameraImage = (cameraID >= 0 && cameraID < SvDef::cMaximumCameras) ? (*iter)->bhasCameraImage[cameraID] : false;
-				SvTl::SVTimeStamp triggerTime {(*iter)->TimeStamp()};
 				//If product already has camera image or product inactive then skip
 				if (!hasCameraImage && (*iter)->bTriggered && (*iter)->IsProductActive())
 				{
-					if(findTimeMatch(checkTime, triggerTime, ppqStart == iter))
+					SvTl::SVTimeStamp triggerTime {(*iter)->TimeStamp()};
+					SvTl::SVTimeStamp nextTriggerTime = (ppqStart == iter) ? 0.0 : (*(iter+1))->TimeStamp();
+					if(findTimeMatch(checkTime, triggerTime, nextTriggerTime, ppqStart == iter))
 					{
 						result = static_cast<long>(m_Products.size() - std::distance(m_Products.crbegin(), iter) - 1);
 					}
@@ -238,12 +239,18 @@ HRESULT SVPPQShiftRegister::GetProductStates( std::string& p_rProductStates ) co
 	return l_Status;
 }
 
-bool SVPPQShiftRegister::findTimeMatch(SvTl::SVTimeStamp checkTime, SvTl::SVTimeStamp triggerTime, bool isPPQ1)  const
+bool SVPPQShiftRegister::findTimeMatch(SvTl::SVTimeStamp checkTime, SvTl::SVTimeStamp triggerTime, SvTl::SVTimeStamp nextTriggerTime, bool isPPQ1)  const
 {
 	constexpr double cPreTriggerTimeWindow = 0.5;	//This is a to compensate that the trigger may be recorded after the start frame (in milli seconds)
 
 	//If this is the first PPQ position then use the pre-trigger time!
 	double PreTriggerTime = isPPQ1 ? cPreTriggerTimeWindow : 0.0;
 
-	return 0.0 < triggerTime && (triggerTime - PreTriggerTime) < checkTime;
+	bool result = 0.0 < triggerTime && (triggerTime - PreTriggerTime) < checkTime;
+	if(result && nextTriggerTime > 0.0)
+	{
+		result = checkTime < nextTriggerTime;
+	}
+
+	return result;
 }

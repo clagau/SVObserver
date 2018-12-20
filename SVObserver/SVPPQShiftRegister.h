@@ -43,7 +43,7 @@ public:
 	HRESULT GetProductStates( std::string& p_rProductStates ) const;
 
 private:
-	bool findTimeMatch(SvTl::SVTimeStamp checkTime, SvTl::SVTimeStamp triggerTime, bool isPPQ1) const;
+	bool findTimeMatch(SvTl::SVTimeStamp checkTime, SvTl::SVTimeStamp triggerTime, SvTl::SVTimeStamp nextTriggerTime, bool isPPQ1) const;
 
 	typedef std::vector< SVProductInfoStruct* > SVProductVector;
 
