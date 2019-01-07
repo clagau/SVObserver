@@ -88,7 +88,14 @@ std::vector<std::pair<int, int>> ImageBufferController::reset(const SvPb::ImageS
 				continue;
 			}
 			else
-			{	//this size is used, move vectorPos to the end of this bufferSize in Vector.
+			{	
+				if (pStructData->numberofbuffers() > rImageStruct.numberofbuffersrequired())
+				{
+					auto bufferIter = m_bufferVector.begin() + vectorPos + rImageStruct.numberofbuffersrequired();
+					m_bufferVector.erase(bufferIter, bufferIter + (pStructData->numberofbuffers()-rImageStruct.numberofbuffersrequired()));
+					pStructData->set_numberofbuffers(rImageStruct.numberofbuffersrequired());
+				}
+				//this size is used, move vectorPos to the end of this bufferSize in Vector.
 				vectorPos += pStructData->numberofbuffers();
 			}
 		}

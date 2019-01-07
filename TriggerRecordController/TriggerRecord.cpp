@@ -141,7 +141,7 @@ IImagePtr TriggerRecord::getChildImage(int childPos, bool lockImage) const
 		{
 			int childPos2 = findGuidPos(m_rImageList.childlist(), rChildDef.parentimageid());
 			IImagePtr pChildImage = getChildImage(childPos2, lockImage);
-			if (!pChildImage->isEmpty())
+			if (nullptr != pChildImage && !pChildImage->isEmpty())
 			{
 				SVMatroxBufferCreateChildStruct bufferStruct(pChildImage->getHandle()->GetBuffer());
 				bufferStruct.m_data = bufferDataStruct;

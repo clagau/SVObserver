@@ -127,7 +127,8 @@ bool SVLinearImageOperatorListClass::Run(SVRunStatusClass& rRunStatus, SvStl::Me
 		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 		m_RunErrorMessages.push_back(Msg);
 	}
-		SvTrc::IImagePtr pOutputBuffer = m_OutputImage.getImageToWrite(rRunStatus.m_triggerRecord);
+
+	SvTrc::IImagePtr pOutputBuffer = m_OutputImage.getImageToWrite(rRunStatus.m_triggerRecord);
 
 	if (result)
 	{
@@ -407,7 +408,7 @@ bool SVLinearImageOperatorListClass::RunLocalRotation(SVRunStatusClass &rRunStat
 			ChildRunStatus.ResetRunStateAndToolSetTimes();
 
 			SVUnaryImageOperatorClass*  pOperator = dynamic_cast<SVUnaryImageOperatorClass *>(GetAt(i));
-			if (pOperator)
+			if (nullptr != pOperator && nullptr != pOutputBuffer && !pOutputBuffer->isEmpty())
 			{
 				pOperator->Run(false, pOutputBuffer->getHandle(), pOutputBuffer->getHandle(), ChildRunStatus);
 			}

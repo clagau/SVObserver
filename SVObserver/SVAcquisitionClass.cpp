@@ -782,7 +782,7 @@ HRESULT SVAcquisitionClass::UpdateWithCompletedBuffer(const SvTrc::IImagePtr& rI
 {
 	if (nullptr != m_SingleGrabHandle)
 	{
-		if (!(rImage->getHandle()->empty()) && !(m_SingleGrabHandle->empty()))
+		if (nullptr != rImage && nullptr != rImage->getHandle() && !(rImage->getHandle()->empty()) && !(m_SingleGrabHandle->empty()))
 		{
 			SVMatroxBufferInterface::CopyBuffer(m_SingleGrabHandle->GetBuffer(), rImage->getHandle()->GetBuffer());
 		}

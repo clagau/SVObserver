@@ -778,11 +778,10 @@ void TriggerRecordController::ResetTriggerRecordStructure()
 	}
 	catch (const SvStl::MessageContainer& rSvE)
 	{
+		clearAll();
 		m_resetStarted4IP = -1;
 		//This is the topmost catch for MessageContainer exceptions
 		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
-		//SvStl::MessageData Msg(rExp.getMessage());
-		//Msg.m_MessageCode = SVMSG_SVO_40_INFO_UPDATE_MAINIMAGE_FAILED;
 		Exception.setMessage(rSvE.getMessage());
 		Exception.Throw();
 	}
