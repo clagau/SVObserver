@@ -2984,7 +2984,7 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& rElement)
 				// possibly inspected).  This scenario occurs when the Camera
 				// Response Queue notification arrives before the Trigger 
 				// Queue notification.
-				if ((priorCameraSF == 0) && !pProduct->bDataComplete)
+				if (priorCameraSF == 0.0)
 				{
 					SvTl::SVTimeStamp endTime = rElement.m_Data.getEndTime();
 
@@ -3063,6 +3063,7 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& rElement)
 					m_PendingCameraResponses[rElement.m_pCamera] = rElement;
 
 					SVObjectManagerClass::Instance().IncrementPendingImageIndicator();
+					l_Status = E_FAIL;
 
 #ifdef EnableTracking
 					std::string l_Title = _T("Pending ");
