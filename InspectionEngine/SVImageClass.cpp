@@ -1234,9 +1234,9 @@ std::string SVImageClass::getDisplayedName() const
 		auto pParent = GetParent();
 		if (nullptr != pParent)
 		{
-			if (pParent->GetObjectType() == SvDef::SVToolObjectType)
+			if (pParent->GetObjectType() == SvPb::SVToolObjectType)
 			{
-				strName = pParent->GetObjectNameBeforeObjectType(SvDef::SVToolSetObjectType);
+				strName = pParent->GetObjectNameBeforeObjectType(SvPb::SVToolSetObjectType);
 				strName += _T(".Image1");
 			}
 			else
