@@ -1229,13 +1229,21 @@ SvOi::SVImageBufferHandlePtr SVImageClass::getImageData() const
 std::string SVImageClass::getDisplayedName() const
 {
 	std::string strName;
-
 	if (SvDef::SVImageTypeMain == m_ImageType)
 	{
-		if (GetParent())
+		auto pParent = GetParent();
+		if (nullptr != pParent)
 		{
-			strName = GetParent()->GetName();
-			strName += _T(".Image1");
+			if (pParent->GetObjectType() == SvDef::SVToolObjectType)
+			{
+				strName = pParent->GetObjectNameBeforeObjectType(SvDef::SVToolSetObjectType);
+				strName += _T(".Image1");
+			}
+			else
+			{
+				strName = pParent->GetName();
+				strName += _T(".Image1");
+			}
 		}
 	}
 	else
