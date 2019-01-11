@@ -702,6 +702,8 @@ void TriggerRecordController::ResetInspectionData(int inspectionID)
 			free(m_pData[inspectionID].m_pTriggerRecords);
 			m_pData[inspectionID].m_pTriggerRecords = nullptr;
 			m_pData[inspectionID].m_triggerRecordBufferSize = 0;
+			ImageBufferController::getImageBufferControllerInstance().reduceRequiredBuffers(m_pData[inspectionID].m_ImageList, m_pData[inspectionID].m_TriggerRecordNumber);
+			m_pData[inspectionID].m_ImageList.Clear();
 		}
 		m_pData[inspectionID].m_bInit = false;
 		if(-1 != m_resetStarted4IP)

@@ -1563,6 +1563,12 @@ bool SVInspectionProcess::resetAllObjects(SvStl::MessageContainerVector *pErrorM
 			newException.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TRC_Error_ResetInspectionFailed, SvStl::SourceFileParams(StdMessageParams));
 			ErrorMessages.insert(ErrorMessages.begin(), newException.getMessageContainer());
 		}
+		else if (SVMSG_TRC_GENERAL_ERROR == rExp.getMessage().m_MessageCode && SvStl::Tid_TRC_Error_ResetBuffer_TooMany == rExp.getMessage().m_AdditionalTextId)
+		{
+			SvStl::MessageMgrStd oldException(SvStl::MsgType::Display| SvStl::MsgType::Log);
+			oldException.setMessage(rExp.getMessage());
+			ErrorMessages.insert(ErrorMessages.begin(), oldException.getMessageContainer());
+		}
 		else
 		{
 			ErrorMessages.push_back(rExp);

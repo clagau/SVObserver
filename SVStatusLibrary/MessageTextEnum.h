@@ -511,6 +511,7 @@ enum MessageTextEnum
 	Tid_TRC_Error_NoBufferFree,
 	Tid_TRC_Error_UnknownStructID,
 	Tid_TRC_Error_NewBufferFailed,
+	Tid_TRC_Error_ResetBuffer_TooMany,
 	Tid_TRC_Error_CreateBuffer,
 	Tid_TRC_Error_ResetAllReadyStarted,
 	Tid_TRC_Error_ResetLocked,

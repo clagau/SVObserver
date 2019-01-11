@@ -18,6 +18,7 @@
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage\SVMessage.h"
 #include "SVUtilityLibrary\StringHelper.h"
+#include "SVStatusLibrary\SVRegistry.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -40,6 +41,20 @@ ImageBufferController& ImageBufferController::getImageBufferControllerInstance()
 ImageBufferController::ImageBufferController()
 	: m_memoryHelper(m_bufferVector)
 {
+	constexpr int handleForReset = 1000;
+	SVRegistryClass reg(_T(R"(HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\\Windows\)"));
+	DWORD value = 0;
+	if (reg.GetRegistryValue(_T("GDIProcessHandleQuota"), &value) || 0 < value)
+	{
+		if (handleForReset < value)
+		{
+			m_maxNumberOfRequiredBuffer = static_cast<int>(value) - handleForReset;
+}
+		else
+		{
+			m_maxNumberOfRequiredBuffer = static_cast<int>(value) * 0.9;
+		}
+	}
 }
 
 ImageBufferController::~ImageBufferController()
@@ -67,6 +82,21 @@ std::vector<std::pair<int, int>> ImageBufferController::reset(const SvPb::ImageS
 
 	assert(rImageStructList.list_size() >= m_imageStructList.list_size());
 	assert(0 == m_imageStructList.list_size() || rImageStructList.list(m_imageStructList.list_size() - 1).structid() == m_imageStructList.list(m_imageStructList.list_size() - 1).structid());
+
+	int completeNumberOfRequiredBuffer = 0;
+	for (const auto& rImageStruct : rImageStructList.list())
+	{
+		completeNumberOfRequiredBuffer += rImageStruct.numberofbuffersrequired();
+	}
+	if (m_maxNumberOfRequiredBuffer < completeNumberOfRequiredBuffer)
+	{
+		SvDef::StringVector msgList;
+		msgList.push_back(SvUl::Format(_T("%d"), completeNumberOfRequiredBuffer));
+		msgList.push_back(SvUl::Format(_T("%d"), m_maxNumberOfRequiredBuffer));
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_ResetBuffer_TooMany, msgList, SvStl::SourceFileParams(StdMessageParams));
+		Exception.Throw();
+	}
 
 	//step through new imageSize list to fit buffer to the new required structure
 	for (const auto& rImageStruct : rImageStructList.list())
@@ -287,6 +317,22 @@ IImagePtr ImageBufferController::createNewImageHandle(int structId, int& rImageP
 	return nullptr;
 }
 
+void ImageBufferController::reduceRequiredBuffers(const SvPb::ImageList& imageList, int numbers)
+{
+	for (const auto& rSizeData : imageList.list())
+	{
+		int id = rSizeData.structid();
+		if (0 <= id && m_imageStructList.list_size() > id)
+		{
+			auto* pImageStruct = m_imageStructList.mutable_list(id);
+			if (nullptr != pImageStruct)
+			{
+				assert(0 > pImageStruct->numberofbuffersrequired() - numbers);
+				pImageStruct->set_numberofbuffersrequired(pImageStruct->numberofbuffersrequired() - numbers);
+			}
+		}
+	}
+}
 #pragma endregion Public Methods
 
 #pragma region Protected Methods

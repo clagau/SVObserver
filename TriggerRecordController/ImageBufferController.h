@@ -98,6 +98,11 @@ public:
 	/// \param shouldUnlockAutomatically [in] If true, the lock data will be set to the Image-instance and if Image-instance will be destructed it will be unlocked automatically.
 	/// \returns SvTrc::IImagePtr The image handle in write mode.
 	IImagePtr createNewImageHandle(int structId, int& rImagePos, long resetId, bool shouldUnlockAutomatically = false) const;
+
+	/// Reduced the required numbers of buffer from the imageList by numbers.
+	/// \param imageList [in] The image list.
+	/// \param numbers [in] Numbers of buffer to reduce per image.
+	void reduceRequiredBuffers(const SvPb::ImageList& imageList, int numbers);
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -111,6 +116,7 @@ private:
 
 #pragma region Member Variables
 private:
+	int m_maxNumberOfRequiredBuffer = 9000;
 	SvPb::ImageStructList m_imageStructList;
 	long* m_imageRefCountArray = nullptr; //an array of the reference counts.
 	int m_imageRefCountSize = 0; //the numbers of refCounts reserved in m_imageRefCountArray.
