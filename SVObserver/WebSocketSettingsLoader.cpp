@@ -95,8 +95,8 @@ void WebSocketSettingsLoader::loadFromIni(WebSocketSettings& settings)
 	RegGetStringIfExists(pt, settings.httpSettings.DefaultIndexHtmlFile, "Http.DefaultIndexHtmlFile");
 	RegGetStringIfExists(pt, settings.httpSettings.DefaultErrorHtmlFile, "Http.DefaultErrorHtmlFile");
 
-	RegGetIntIfExists(pt, settings.shareControlSettings.DelayBeforeCreateShare, "ShareControl.DelayBeforeCreateShareInMiliSeconds");
-	RegGetIntIfExists(pt, settings.shareControlSettings.DelayBeforeClearShare, "ShareControl.DelayBeforeClearShareInMiliSeconds");
+	RegGetIntIfExists(pt, settings.shareControlSettings.DelayBeforeCreateShare, "ShareControl.DelayBeforeCreateShareInMilliSeconds");
+	RegGetIntIfExists(pt, settings.shareControlSettings.DelayBeforeClearShare, "ShareControl.DelayBeforeClearShareInMilliSeconds");
 	m_iniPath = path;
 }
 
