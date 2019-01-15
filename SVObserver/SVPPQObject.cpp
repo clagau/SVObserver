@@ -3321,7 +3321,7 @@ void CALLBACK SVPPQObject::APCThreadProcess(DWORD_PTR dwParam)
 void SVPPQObject::ThreadProcess(bool& p_WaitForEvents)
 {
 	//PPQ thread will only start when in run or test mode
-	bool processed{!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST)};
+	bool processed{!m_bOnline};
 
 	if (!processed)
 	{
