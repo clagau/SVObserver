@@ -1041,6 +1041,12 @@ void SVImageViewClass::OnMouseMove( UINT nFlags, CPoint point )
 	if( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&
 		TheSVObserverApp.OkToEdit() )
 	{
+		if (m_lastMouseMovePoint == point)
+		{
+			//avoid calling this function when mous is not moving
+			return;
+		}
+		
 		CPoint l_point = point;
 		CPoint l_clientPoint = point;
 		CPoint l_screenPoint = point;

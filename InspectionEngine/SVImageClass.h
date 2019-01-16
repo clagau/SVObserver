@@ -24,6 +24,7 @@
 #include "TriggerRecordController/ITriggerRecordRW.h"
 #include "SVUtilityLibrary/SVPoint.h"
 #pragma endregion Includes
+#define S_NoParent                                ((HRESULT)80000L)
 
 class SVImageClass : public SVObjectAppClass, public SvOi::ISVImage
 {
@@ -133,7 +134,7 @@ protected:
 	HRESULT UpdateChild( const SVGUID& rChildID, const SVImageInfoClass& rImageInfo);
 	HRESULT RemoveChild( const SVGUID& rChildID );
 
-	HRESULT UpdatePosition();
+	HRESULT UpdatePosition( );
 
 	HRESULT UpdateChildren();
 	HRESULT RemoveChildren();

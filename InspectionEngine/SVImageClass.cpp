@@ -352,6 +352,7 @@ HRESULT SVImageClass::RebuildStorage(SvStl::MessageContainerVector *pErrorMessag
 {
 	HRESULT hr = S_OK;
 
+	
 	if (m_LastReset <= m_LastUpdate)
 	{
 		// One of the use cases for RebuildStorage() is, when a Tool is added 
@@ -378,13 +379,13 @@ HRESULT SVImageClass::RebuildStorage(SvStl::MessageContainerVector *pErrorMessag
 		m_LastReset = SvTl::GetTimeStamp();
 	}
 
-	if (S_OK != hr && nullptr != pErrorMessages && pErrorMessages->empty())
+	if (S_OK != hr  && S_NoParent != hr && nullptr != pErrorMessages && pErrorMessages->empty())
 	{
 		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RebuildFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 		pErrorMessages->push_back(Msg);
 	}
-
-	return hr;
+	
+	return hr==S_OK? S_OK : E_FAIL;
 }
 
 const SVImageExtentClass& SVImageClass::GetImageExtents() const
@@ -964,7 +965,8 @@ HRESULT SVImageClass::UpdatePosition()
 		}
 		else
 		{
-			l_Status = E_FAIL;
+			
+			l_Status = S_NoParent;
 		}
 	}
 

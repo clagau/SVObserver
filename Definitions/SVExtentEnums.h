@@ -157,11 +157,11 @@ enum SVExtentTranslationEnum
 {
 	SVExtentTranslationUnknown         = 0,
 	SVExtentTranslationNone            = 10,
-	SVExtentTranslationShift           = 20,
+	SVExtentTranslationShift           = 20, //<default e.g WindowTool Shifttool
 	SVExtentTranslationRotate          = 30,
 	SVExtentTranslationFlippedRotate   = 31,
-	SVExtentTranslationProfile         = 40,
-	SVExtentTranslationProfileShift    = 41,
+	SVExtentTranslationProfile         = 40, //<LinearTool with Rotation
+	SVExtentTranslationProfileShift    = 41, //<LinearTool without Rotation
 	SVExtentTranslationTransformShift  = 50,
 	SVExtentTranslationTransformRotate = 51,
 	SVExtentTranslationPolarUnwrap     = 60,
