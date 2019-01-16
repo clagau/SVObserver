@@ -242,10 +242,13 @@ bool SVArchiveTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStruct
 bool SVArchiveTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool result = SVToolClass::ResetObject(pErrorMessages);
+	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
+	{
+		m_lastBufferMap.clear();
+	}
+	
 	long l_lArchiveMethod = 0;
-
 	m_evoArchiveMethod.GetValue( l_lArchiveMethod );
-
 	m_eArchiveMethod = static_cast<SVArchiveMethodEnum>( l_lArchiveMethod );
 
 	// Put the archive tool text in the thread affinity list.

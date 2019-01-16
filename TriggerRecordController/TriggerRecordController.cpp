@@ -566,7 +566,7 @@ bool TriggerRecordController::addImageBuffer(const GUID& ownerID, const SVMatrox
 		auto iter = bufferMap.find(imageIter->structid());
 		if (bufferMap.end() != iter)
 		{
-			int number = std::max(imageIter->numberofbuffersrequired() - iter->second + numberOfBuffers, 0);
+			int number = std::max(imageIter->numberofbuffersrequired() - iter->second + numberOfBuffers, numberOfBuffers);
 			iter->second = numberOfBuffers;
 			imageIter->set_numberofbuffersrequired(number);
 		}

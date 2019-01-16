@@ -327,7 +327,7 @@ void ImageBufferController::reduceRequiredBuffers(const SvPb::ImageList& imageLi
 			auto* pImageStruct = m_imageStructList.mutable_list(id);
 			if (nullptr != pImageStruct)
 			{
-				assert(0 > pImageStruct->numberofbuffersrequired() - numbers);
+				assert(0 < pImageStruct->numberofbuffersrequired() - numbers);
 				pImageStruct->set_numberofbuffersrequired(pImageStruct->numberofbuffersrequired() - numbers);
 			}
 		}
