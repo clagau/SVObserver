@@ -2935,16 +2935,24 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& rElement)
 				if (l_ProductIndex < ppqSize)
 				{
 					pProduct = m_ppPPQPositions.GetProductAt(l_ProductIndex);
-					if(cameraID >= 0 && cameraID < SvDef::cMaximumCameras)
+					if(nullptr != pProduct && pProduct->IsProductActive() && !pProduct->bDataComplete)
 					{
-						pProduct->bhasCameraImage[cameraID] = true;
-					}
+						if (cameraID >= 0 && cameraID < SvDef::cMaximumCameras)
+						{
+							pProduct->bhasCameraImage[cameraID] = true;
+						}
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-					::OutputDebugString(SvUl::Format(_T("Camera %s | TRI=%d\n"), rElement.m_pCamera->GetName(), pProduct->ProcessCount()).c_str());
+						::OutputDebugString(SvUl::Format(_T("Camera %s | TRI=%d\n"), rElement.m_pCamera->GetName(), pProduct->ProcessCount()).c_str());
 #endif
+					}
+					else
+					{
+						pProduct = nullptr;
+						position = -1;
+					}
 				}
 			}
-			else if (position < 0 && !notPending)
+			if(position < 0 && !notPending)
 			{
 				m_PendingCameraResponses[rElement.m_pCamera] = rElement;
 
