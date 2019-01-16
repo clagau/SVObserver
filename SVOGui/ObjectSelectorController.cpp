@@ -14,6 +14,7 @@
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "SVProtoBuf/ConverterHelper.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "SVOResource/ConstGlobalSvOr.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -46,7 +47,7 @@ bool ObjectSelectorController::Show(std::string& rName, const std::string& rTitl
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter(SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, std::string(_T("")));
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter(SvOsl::ObjectTreeGenerator::FilterOutput, InspectionName, std::string(_T("")));
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter(SvOsl::ObjectTreeGenerator::FilterOutput, PPQName, std::string(_T("")));
-	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::TypeSingleObject);
+	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::TypeSingleObject, IDD_OUTPUT_SELECTOR + SvOr::HELPFILE_DLG_IDD_OFFSET);
 
 	SVGUID InstanceGuid = m_InstanceID;
 	if (GUID_NULL == InstanceGuid)

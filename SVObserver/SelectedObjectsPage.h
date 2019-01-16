@@ -45,6 +45,8 @@ private:
 	afx_msg void OnSelectObjects();
 	afx_msg void OnRemoveItem();
 	afx_msg void OnRemoveAllItems();
+	afx_msg void OnHelp();
+	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
 
 	void ReadSelectedObjects();
 	void ShowObjectSelector();
@@ -60,5 +62,6 @@ private:
 	CButton m_Select;							//The tree select button
 	CBitmap m_TreeBitmap;						//The bitmap for the tree button
 	UINT	m_AttributeFilter;					//The attribute filter for the object selector
+	int m_helpID;								//The help ID for help file
 #pragma endregion Member variables
 };

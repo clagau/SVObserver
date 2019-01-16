@@ -24,10 +24,12 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 BEGIN_MESSAGE_MAP(SelectedObjectsPage, CPropertyPage)
-    ON_NOTIFY(NM_DBLCLK, IDC_LIST_SELECTED, OnDblClickListSelected)
+	ON_NOTIFY(NM_DBLCLK, IDC_LIST_SELECTED, OnDblClickListSelected)
 	ON_BN_CLICKED(IDC_SELECT_BUTTON, OnSelectObjects)
 	ON_BN_CLICKED(IDC_BTN_CLEAR, OnRemoveItem)
 	ON_BN_CLICKED(IDC_BTN_CLEAR_ALL, OnRemoveAllItems)
+	ON_COMMAND(ID_HELP, OnHelp)
+	ON_WM_HELPINFO()
 END_MESSAGE_MAP()
 
 static const int ItemSelectedCol = 1;
@@ -37,12 +39,13 @@ static const int IconGrowBy = 1;
 #pragma endregion Declarations
 
 #pragma region Constructor
-SelectedObjectsPage::SelectedObjectsPage( const std::string& rInspectionName, const SVGUID& rInspectionID, LPCTSTR Caption, const SvCl::SelectorItemVector& rList, UINT AttributeFilters, int id )
-: CPropertyPage(id)
-, m_InspectionName( rInspectionName )
-, m_InspectionID ( rInspectionID )
-, m_List( rList )
-, m_AttributeFilter( AttributeFilters )
+SelectedObjectsPage::SelectedObjectsPage(const std::string& rInspectionName, const SVGUID& rInspectionID, LPCTSTR Caption, const SvCl::SelectorItemVector& rList, UINT AttributeFilters, int id)
+	: CPropertyPage(id)
+	, m_InspectionName(rInspectionName)
+	, m_InspectionID(rInspectionID)
+	, m_List(rList)
+	, m_AttributeFilter(AttributeFilters)
+	, m_helpID{0}
 {
 	m_strCaption = Caption;
 	m_psp.pszTitle = m_strCaption;
@@ -87,20 +90,38 @@ BOOL SelectedObjectsPage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
-	m_ItemsSelected.InsertColumn( ItemSelectedCol, _T(""), 0, ItemsSelectedWidth );
-	m_StateImageList.Create( SvOr::IconSize, SvOr::IconSize, ILC_COLOR24 | ILC_MASK, IconNumber, IconGrowBy );
-	m_StateImageList.Add( AfxGetApp()->LoadIcon( IDI_CHECKED_ENABLED ) );
-	m_ItemsSelected.SetImageList( &m_StateImageList, LVSIL_STATE );
+	switch (m_AttributeFilter)
+	{
+		case SvDef::SV_DD_VALUE:
+		{
+			m_helpID = ID_EDIT_DATA_DEFINITION_LISTS + SvOr::HELPFILE_ID_OFFSET;
+		}
+		break;
+
+		case SvDef::SV_DD_IMAGE:
+		{
+			m_helpID = ID_EDIT_DATA_DEFINITION_LISTS + SvOr::HELPFILE_ID_OFFSET;
+		}
+		break;
+
+		default:
+			break;
+	}
+
+	m_ItemsSelected.InsertColumn(ItemSelectedCol, _T(""), 0, ItemsSelectedWidth);
+	m_StateImageList.Create(SvOr::IconSize, SvOr::IconSize, ILC_COLOR24 | ILC_MASK, IconNumber, IconGrowBy);
+	m_StateImageList.Add(AfxGetApp()->LoadIcon(IDI_CHECKED_ENABLED));
+	m_ItemsSelected.SetImageList(&m_StateImageList, LVSIL_STATE);
 
 	ReadSelectedObjects();
 
-	m_TreeBitmap.LoadBitmap( IDB_TREE );
-	m_Select.SetBitmap( static_cast<HBITMAP> (m_TreeBitmap.GetSafeHandle()) );
-	
+	m_TreeBitmap.LoadBitmap(IDB_TREE);
+	m_Select.SetBitmap(static_cast<HBITMAP> (m_TreeBitmap.GetSafeHandle()));
+
 	return TRUE;
 }
 
-void SelectedObjectsPage::OnDblClickListSelected( NMHDR *pNMHDR, LRESULT *pResult )
+void SelectedObjectsPage::OnDblClickListSelected(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	ShowObjectSelector();
 }
@@ -120,18 +141,18 @@ void SelectedObjectsPage::OnRemoveItem()
 {
 	POSITION Pos = m_ItemsSelected.GetFirstSelectedItemPosition();
 	std::vector<int> SelectedVector;
-	
-	while( nullptr != Pos )
+
+	while (nullptr != Pos)
 	{
-		int ItemIndex = m_ItemsSelected.GetNextSelectedItem( Pos );
-		SelectedVector.push_back( ItemIndex );
+		int ItemIndex = m_ItemsSelected.GetNextSelectedItem(Pos);
+		SelectedVector.push_back(ItemIndex);
 	}
 
 	//Remove in reverse order
 	std::vector<int>::const_reverse_iterator Iter;
-	for( Iter = SelectedVector.crbegin(); SelectedVector.crend() != Iter; ++Iter )
+	for (Iter = SelectedVector.crbegin(); SelectedVector.crend() != Iter; ++Iter)
 	{
-		m_List.erase( m_List.begin() + *Iter );
+		m_List.erase(m_List.begin() + *Iter);
 	}
 
 	ReadSelectedObjects();
@@ -149,40 +170,41 @@ void SelectedObjectsPage::ReadSelectedObjects()
 	{
 		std::string Name;
 		Name = rEntry.m_Location;
-		SvUl::searchAndReplace( Name, Prefix.c_str(), _T("") );
+		SvUl::searchAndReplace(Name, Prefix.c_str(), _T(""));
 
 		m_ItemsSelected.InsertItem(LVIF_STATE | LVIF_TEXT,
-									Index,
-									Name.c_str(),
-									INDEXTOSTATEIMAGEMASK(1),
-									LVIS_STATEIMAGEMASK,
-									1,
-									0);
+								   Index,
+								   Name.c_str(),
+								   INDEXTOSTATEIMAGEMASK(1),
+								   LVIS_STATEIMAGEMASK,
+								   1,
+								   0);
 		Index++;
 	}
 }
 
 void SelectedObjectsPage::ShowObjectSelector()
 {
-	UINT AttributeFilters( m_AttributeFilter );
+	UINT AttributeFilters(m_AttributeFilter);
 
 	//For values and conditions only use viewable objects
-	switch( AttributeFilters )
+	switch (AttributeFilters)
 	{
-	case SvDef::SV_DD_VALUE:
+		case SvDef::SV_DD_VALUE:
 		{
 			AttributeFilters |= SvDef::SV_VIEWABLE;
 		}
 		break;
-	default:
-		break;
+
+		default:
+			break;
 	}
 
-	std::string InspectionName( m_InspectionName );
-	SVGUID InspectionGuid( m_InspectionID );
+	std::string InspectionName(m_InspectionName);
+	SVGUID InspectionGuid(m_InspectionID);
 
-	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject );
-	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, std::string( _T("") ) );
+	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, m_helpID);
+	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter(SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, std::string(_T("")));
 
 	SvCmd::SelectorOptions BuildOptions {{SvCmd::ObjectSelectorType::toolsetItems}, InspectionGuid, AttributeFilters};
 	SvCl::SelectorItemVector SelectorItems;
@@ -194,17 +216,30 @@ void SelectedObjectsPage::ShowObjectSelector()
 	{
 		CheckItems.insert(rEntry.m_Location);
 	}
-	SvOsl::ObjectTreeGenerator::Instance().setCheckItems( CheckItems );
+	SvOsl::ObjectTreeGenerator::Instance().setCheckItems(CheckItems);
 
-	std::string Title = SvUl::Format( _T("%s - %s"), m_strCaption, InspectionName.c_str() );
-	std::string Filter = SvUl::LoadStdString( IDS_FILTER );
-	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), m_strCaption, Filter.c_str(), this );
+	std::string Title = SvUl::Format(_T("%s - %s"), m_strCaption, InspectionName.c_str());
+	std::string Filter = SvUl::LoadStdString(IDS_FILTER);
+	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog(Title.c_str(), m_strCaption, Filter.c_str(), this);
 
-	if( IDOK == Result )
+	if (IDOK == Result)
 	{
 		m_List = SvOsl::ObjectTreeGenerator::Instance().getSelectedObjects();
 
 		ReadSelectedObjects();
 	}
 }
+
+void SelectedObjectsPage::OnHelp()
+{
+	AfxGetApp()->HtmlHelp(m_helpID);
+}
+
+BOOL SelectedObjectsPage::OnHelpInfo(HELPINFO* pHelpInfo)
+{
+	pHelpInfo->iCtrlId = m_helpID;
+	AfxGetApp()->HtmlHelp(pHelpInfo->iCtrlId, HH_HELP_CONTEXT);
+	return TRUE;
+}
+
 #pragma endregion Private Methods

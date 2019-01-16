@@ -12,8 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "ObjectSelectorPpg.h"
-
-
 #include "SVOResource\ConstGlobalSvOr.h"
 #pragma endregion Includes
 
@@ -122,12 +120,12 @@ namespace SvOsl
 
 	void ObjectSelectorPpg::OnHelp()
 	{
-		AfxGetApp()->HtmlHelp( m_HelpID + SvOr::HELPFILE_SVORESOURCE_OFFSET );
+		AfxGetApp()->HtmlHelp( m_HelpID );
 	}
 
 	BOOL ObjectSelectorPpg::OnHelpInfo(HELPINFO* pHelpInfo)
 	{
-		pHelpInfo->iCtrlId = m_HelpID + SvOr::HELPFILE_SVORESOURCE_OFFSET;
+		pHelpInfo->iCtrlId = m_HelpID;
 		AfxGetApp()->HtmlHelp( pHelpInfo->iCtrlId, HH_HELP_CONTEXT );
 		return TRUE ;
 	}

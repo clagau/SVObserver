@@ -156,11 +156,11 @@ namespace SvOg
 	{
 		if (m_isConditionalPage)
 		{
-			AfxGetApp()->HtmlHelp( IDD_CONDITIONAL_PAGE + SvOr::HELPFILE_SVORESOURCE_OFFSET );
+			AfxGetApp()->HtmlHelp( IDD_CONDITIONAL_PAGE + SvOr::HELPFILE_DLG_IDD_OFFSET );
 		}
 		else
 		{
-			AfxGetApp()->HtmlHelp( IDD_FORMULA_DIALOG + SvOr::HELPFILE_SVORESOURCE_OFFSET );
+			AfxGetApp()->HtmlHelp( IDD_FORMULA_DIALOG + SvOr::HELPFILE_DLG_IDD_OFFSET );
 		}
 	}
 
@@ -168,11 +168,11 @@ namespace SvOg
 	{
 		if (m_isConditionalPage)
 		{
-			pHelpInfo->iCtrlId = IDD_CONDITIONAL_PAGE + SvOr::HELPFILE_SVORESOURCE_OFFSET;
+			pHelpInfo->iCtrlId = IDD_CONDITIONAL_PAGE + SvOr::HELPFILE_DLG_IDD_OFFSET;
 		}
 		else
 		{
-			pHelpInfo->iCtrlId = IDD_FORMULA_DIALOG + SvOr::HELPFILE_SVORESOURCE_OFFSET;
+			pHelpInfo->iCtrlId = IDD_FORMULA_DIALOG + SvOr::HELPFILE_DLG_IDD_OFFSET;
 		}
 
 		AfxGetApp()->HtmlHelp( pHelpInfo->iCtrlId, HH_HELP_CONTEXT );
@@ -375,7 +375,7 @@ namespace SvOg
 	
 		std::string Filter = SvUl::LoadStdString( IDS_CLASSNAME_ROOTOBJECT );
 
-		SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::TypeSingleObject );
+		SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::TypeSingleObject, IDD_OUTPUT_SELECTOR + SvOr::HELPFILE_DLG_IDD_OFFSET);
 		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, std::string( _T("") ) );
 		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, Filter, std::string( _T("") ) );
 		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterOutput, SvDef::FqnPPQVariables, std::string( _T("") ) );

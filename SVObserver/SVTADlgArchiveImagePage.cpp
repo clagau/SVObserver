@@ -397,7 +397,7 @@ void SVTADlgArchiveImagePage::ShowObjectSelector()
 	std::string InspectionName( m_pTool->GetInspection()->GetName() );
 	SVGUID InspectionGuid( m_pTool->GetInspection()->GetUniqueObjectID() );
 
-	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject );
+	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, IDD + SvOr::HELPFILE_DLG_IDD_OFFSET);
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, std::string( _T("") ) );
 
 	SvCmd::SelectorOptions BuildOptions {{SvCmd::ObjectSelectorType::toolsetItems}, InspectionGuid, SvDef::SV_ARCHIVABLE_IMAGE};

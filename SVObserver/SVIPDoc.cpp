@@ -81,6 +81,7 @@
 #include "SVColorTool.h"
 #include "SVProtoBuf/InspectionCommands.h"
 #include "LoopTool.h"
+#include "SVOResource/ConstGlobalSvOr.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -1646,7 +1647,7 @@ void SVIPDoc::OnResultsPicker()
 		{
 			std::string InspectionName(pInspection->GetName());
 
-			SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject);
+			SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, IDD_RESULTS_PICKER + SvOr::HELPFILE_DLG_IDD_OFFSET);
 			SvOsl::ObjectTreeGenerator::Instance().setLocationFilter(SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, std::string(_T("")));
 
 			SvCmd::SelectorOptions BuildOptions {{SvCmd::ObjectSelectorType::globalConstantItems, SvCmd::ObjectSelectorType::ppqItems, SvCmd::ObjectSelectorType::toolsetItems},
@@ -1919,7 +1920,7 @@ void SVIPDoc::OnPublishedResultsPicker()
 		SVSVIMStateClass::AddState(SV_STATE_EDITING);
 		std::string InspectionName(pInspection->GetName());
 
-		SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes, SvDef::SV_PUBLISHABLE);
+		SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes, IDD_PUBLISHED_RESULTS + SvOr::HELPFILE_DLG_IDD_OFFSET, SvDef::SV_PUBLISHABLE);
 		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter(SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, std::string(_T("")));
 
 		SvCmd::SelectorOptions BuildOptions {{SvCmd::ObjectSelectorType::toolsetItems}, GetInspectionID(), SvDef::SV_PUBLISHABLE};
@@ -1973,7 +1974,7 @@ void SVIPDoc::OnPublishedResultImagesPicker()
 
 		std::string InspectionName(pInspection->GetName());
 
-		SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes, SvDef::SV_PUBLISH_RESULT_IMAGE);
+		SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes, ID_PUBLISHED_RESULT_IMAGES_PICKER + SvOr::HELPFILE_ID_OFFSET, SvDef::SV_PUBLISH_RESULT_IMAGE);
 
 		std::string RootName = SvUl::LoadStdString(IDS_CLASSNAME_ROOTOBJECT);
 		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter(SvOsl::ObjectTreeGenerator::FilterInput, RootName, std::string(_T("")));

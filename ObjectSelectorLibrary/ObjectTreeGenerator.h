@@ -130,7 +130,7 @@ namespace SvOsl
 		//! \param rSelectorType <in> reference to the object selector type
 		//! \param Attribute <in> the attribute filter
 		//************************************
-		inline void setSelectorType( const SelectorTypeEnum& rSelectorType, UINT attributeFilter = 0);
+		inline void setSelectorType( const SelectorTypeEnum& rSelectorType, int helpID = 0, UINT attributeFilter = 0);
 
 	#pragma endregion Public Methods
 
@@ -176,6 +176,7 @@ namespace SvOsl
 		SvDef::TranslateMap m_LocationOutputFilters;//The location output filters
 		SelectorTypeEnum m_SelectorType;			//The selector type
 		UINT m_AttributesFilter;					//The attributes filter
+		int m_helpID;								//The help ID for help file
 		long m_LeafCount;							//The number of leafs in the selector (only as debug information)
 	#pragma endregion Member Variables
 	};

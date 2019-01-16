@@ -93,7 +93,7 @@ BOOL CSVOCameraDlg::OnInitDialog()
 		m_btnCameraManager.ShowWindow(SW_HIDE);
 	}
 
-	SetWindowContextHelpId(IDD+SvOr::HELPFILE_SVORESOURCE_OFFSET);
+	SetWindowContextHelpId(IDD+SvOr::HELPFILE_DLG_IDD_OFFSET);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE

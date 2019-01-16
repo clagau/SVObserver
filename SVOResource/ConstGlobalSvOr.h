@@ -10,7 +10,8 @@
 namespace SvOr
 {
 	#pragma region Declarations
-	const int IconSize = 16;
-	const int HELPFILE_SVORESOURCE_OFFSET = 0x20000;
-	#pragma endregion Declarations
+	constexpr int IconSize = 16;
+	constexpr int HELPFILE_ID_OFFSET = 0x10000;
+	constexpr int HELPFILE_DLG_IDD_OFFSET = 0x20000;
+#pragma endregion Declarations
 } //namespace SvOr

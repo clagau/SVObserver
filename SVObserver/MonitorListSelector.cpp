@@ -18,6 +18,7 @@
 #include "SVOGui\TADialogTableParameterPage.h"
 #include "RemoteMonitorListHelper.h"
 #include "InspectionCommands\BuildSelectableItems.h"
+#include "SVOResource/ConstGlobalSvOr.h"
 
 
 
@@ -80,7 +81,7 @@ int  MonitorlistSelector::DisplayDialog()
 		return -1;
 	}
 
-	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject);
+	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, IDD_MONITOR_LIST_SELECTOR + SvOr::HELPFILE_DLG_IDD_OFFSET);
 	long numInspections(0);
 	pPPQ->GetInspectionCount(numInspections);
 	for (int inspIndex = 0; inspIndex < numInspections; inspIndex++)

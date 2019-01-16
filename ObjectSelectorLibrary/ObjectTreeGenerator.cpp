@@ -44,6 +44,7 @@ namespace SvOsl
 		, m_LocationOutputFilters()
 		, m_SelectorType( ObjectTreeGenerator::TypeNone )
 		, m_AttributesFilter( SvDef::SV_NO_ATTRIBUTES )
+		, m_helpID{0}
 		, m_LeafCount( 0 )
 	{
 	}
@@ -115,31 +116,7 @@ namespace SvOsl
 
 		Sheet.AddPage( &selectorPage );
 		Sheet.AddPage( &filterPage );
-		//@TODO[gra][7.50][30.08.2017]: The help ID's should be done differently this is becoming to complicated
-		int HelpID( IDD_OBJECT_SELECTOR_PPG );
-		if( isSingleObject)
-		{
-			HelpID = IDD_OUTPUT_SELECTOR;
-		}
-		else
-		{
-			if( SvDef::SV_VIEWABLE == m_AttributesFilter )
-			{
-				HelpID = IDD_RESULTS_PICKER;
-			}
-			else if( SvDef::SV_PUBLISHABLE == m_AttributesFilter )
-			{
-				if (TypeSetAttributes == (m_SelectorType & TypeSetAttributes))
-				{
-					HelpID = IDD_PUBLISHED_RESULTS;
-				}
-				else
-				{
-					HelpID = IDD_MONITOR_LIST_SELECTOR;
-				}
-			}
-		}
-		selectorPage.setHelpID( HelpID );
+		selectorPage.setHelpID( m_helpID );
 
 		delete pWait;
 		pWait = nullptr;

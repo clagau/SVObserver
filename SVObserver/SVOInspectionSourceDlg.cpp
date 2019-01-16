@@ -381,7 +381,7 @@ BOOL CSVOInspectionSourceDlg::OnInitDialog()
 		m_ctlExportIPDbtn.EnableWindow(FALSE);
 	}
 
-	SetWindowContextHelpId(IDD+SvOr::HELPFILE_SVORESOURCE_OFFSET);
+	SetWindowContextHelpId(IDD+SvOr::HELPFILE_DLG_IDD_OFFSET);
 	
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // EXCEPTION: OCX Property Pages should return FALSE
